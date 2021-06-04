@@ -4,42 +4,42 @@ class CTreeListCtrl;
 class CTreeListItem;
 
 struct CONTROL_CUSTOM_DRAW_INFO {
-	HDC hdc;///< Äåâàéñ êîíòåêñò
-	RECT rc;///< Ïðÿìîóãîëüíèê ïåðåðèñîâêè
-	COLORREF clrBckgrnd;///< Öâåò ôîíà
-	HBITMAP hbmpBckgrnd;///< êàðòèíêà, êîòîðóþ ïîëîæèì íà ôîí
+	HDC hdc;///< Ð”ÐµÐ²Ð°Ð¹Ñ ÐºÐ¾Ð½Ñ‚ÐµÐºÑÑ‚
+	RECT rc;///< ÐŸÑ€ÑÐ¼Ð¾ÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº Ð¿ÐµÑ€ÐµÑ€Ð¸ÑÐ¾Ð²ÐºÐ¸
+	COLORREF clrBckgrnd;///< Ð¦Ð²ÐµÑ‚ Ñ„Ð¾Ð½Ð°
+	HBITMAP hbmpBckgrnd;///< ÐºÐ°Ñ€Ñ‚Ð¸Ð½ÐºÐ°, ÐºÐ¾Ñ‚Ð¾Ñ€ÑƒÑŽ Ð¿Ð¾Ð»Ð¾Ð¶Ð¸Ð¼ Ð½Ð° Ñ„Ð¾Ð½
 };
 
 struct ITEM_CUSTOM_DRAW_INFO {
-	HDC hdc;				///< Äåâàéñ êîíòåêñò
-	RECT rc;				///< Ïðÿìîóãîëüíèê ïåðåðèñîâêè
-	COLORREF clrTextBk;		///< Öâåò ôîíà ïîä òåêñòîì
-	COLORREF clrText;		///< Öâåò òåêñòà
-	CTreeListItem* item;	///< Óçåë, êîòîðûé ïðîðèñîâûâàåòñÿ
-	int iRow;				///< Íîìåð ñòðîêè
-	bool useBackgrndClr;	///< Èñïîëüçîâàòü ëè clrTextBk.Åñëè ó êîíòðîëà åñòü 
-							///< ñòèëü TLC_BKGNDIMAGE, òî false
+	HDC hdc;				///< Ð”ÐµÐ²Ð°Ð¹Ñ ÐºÐ¾Ð½Ñ‚ÐµÐºÑÑ‚
+	RECT rc;				///< ÐŸÑ€ÑÐ¼Ð¾ÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº Ð¿ÐµÑ€ÐµÑ€Ð¸ÑÐ¾Ð²ÐºÐ¸
+	COLORREF clrTextBk;		///< Ð¦Ð²ÐµÑ‚ Ñ„Ð¾Ð½Ð° Ð¿Ð¾Ð´ Ñ‚ÐµÐºÑÑ‚Ð¾Ð¼
+	COLORREF clrText;		///< Ð¦Ð²ÐµÑ‚ Ñ‚ÐµÐºÑÑ‚Ð°
+	CTreeListItem* item;	///< Ð£Ð·ÐµÐ», ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¿Ñ€Ð¾Ñ€Ð¸ÑÐ¾Ð²Ñ‹Ð²Ð°ÐµÑ‚ÑÑ
+	int iRow;				///< ÐÐ¾Ð¼ÐµÑ€ ÑÑ‚Ñ€Ð¾ÐºÐ¸
+	bool useBackgrndClr;	///< Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ Ð»Ð¸ clrTextBk.Ð•ÑÐ»Ð¸ Ñƒ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð° ÐµÑÑ‚ÑŒ 
+							///< ÑÑ‚Ð¸Ð»ÑŒ TLC_BKGNDIMAGE, Ñ‚Ð¾ false
 };
 
 struct SUBITEM_CUSTOM_DRAW_INFO {
-	HDC hdc;				///< Äåâàéñ êîíòåêñò
-	RECT rc;				///< Ïðÿìîóãîëüíèê ïåðåðèñîâêè
-	RECT rcText;			///< Ïðÿìîóãîëüíèê, â êîòîðûé áóäåò ðèñîâàòüñÿ òåêñò
-	COLORREF clrText;		///< Öâåò òåêñòà
-	COLORREF clrTextBk;		///< Öâåò ôîíà ïîä òåêñòîì
-	UINT uTextFormat;			///< Âûðàâíèâàíèå òåñòà
-	CTreeListItem* item;	///< Óçåë, êîòîðûé ïðîðèñîâûâàåòñÿ
+	HDC hdc;				///< Ð”ÐµÐ²Ð°Ð¹Ñ ÐºÐ¾Ð½Ñ‚ÐµÐºÑÑ‚
+	RECT rc;				///< ÐŸÑ€ÑÐ¼Ð¾ÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº Ð¿ÐµÑ€ÐµÑ€Ð¸ÑÐ¾Ð²ÐºÐ¸
+	RECT rcText;			///< ÐŸÑ€ÑÐ¼Ð¾ÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº, Ð² ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð±ÑƒÐ´ÐµÑ‚ Ñ€Ð¸ÑÐ¾Ð²Ð°Ñ‚ÑŒÑÑ Ñ‚ÐµÐºÑÑ‚
+	COLORREF clrText;		///< Ð¦Ð²ÐµÑ‚ Ñ‚ÐµÐºÑÑ‚Ð°
+	COLORREF clrTextBk;		///< Ð¦Ð²ÐµÑ‚ Ñ„Ð¾Ð½Ð° Ð¿Ð¾Ð´ Ñ‚ÐµÐºÑÑ‚Ð¾Ð¼
+	UINT uTextFormat;			///< Ð’Ñ‹Ñ€Ð°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ Ñ‚ÐµÑÑ‚Ð°
+	CTreeListItem* item;	///< Ð£Ð·ÐµÐ», ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¿Ñ€Ð¾Ñ€Ð¸ÑÐ¾Ð²Ñ‹Ð²Ð°ÐµÑ‚ÑÑ
 	int iSubItem;			///< Subitem
-	bool useBackgrndClr;	///< Èñïîëüçîâàòü ëè clrTextBk.Åñëè ó êîíòðîëà åñòü 
-							///< ñòèëü TLC_BKGNDIMAGE, òî false
+	bool useBackgrndClr;	///< Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ Ð»Ð¸ clrTextBk.Ð•ÑÐ»Ð¸ Ñƒ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð° ÐµÑÑ‚ÑŒ 
+							///< ÑÑ‚Ð¸Ð»ÑŒ TLC_BKGNDIMAGE, Ñ‚Ð¾ false
 };
 
 class ICustomDrawNotifyListener
 {
 public:
 /*!
- 	âñå ôóíêöèè âîçâðàùàþò çíà÷åíèÿ çàðåçåðâèðîâàííûå äëÿ ïðîðèñîâêè êîíòðîëîâ â
-	Windows. Ñì. äîêóìåíòàöèþ ïî NM_CUSTOMDRAW
+ 	Ð²ÑÐµ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÑŽÑ‚ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ Ð·Ð°Ñ€ÐµÐ·ÐµÑ€Ð²Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ðµ Ð´Ð»Ñ Ð¿Ñ€Ð¾Ñ€Ð¸ÑÐ¾Ð²ÐºÐ¸ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð¾Ð² Ð²
+	Windows. Ð¡Ð¼. Ð´Ð¾ÐºÑƒÐ¼ÐµÐ½Ñ‚Ð°Ñ†Ð¸ÑŽ Ð¿Ð¾ NM_CUSTOMDRAW
 */
 	virtual DWORD onPrepaint(CTreeListCtrl& source, CONTROL_CUSTOM_DRAW_INFO* pcdi) = 0;
 	virtual DWORD onPostpaint(CTreeListCtrl& source, CONTROL_CUSTOM_DRAW_INFO* pcdi) = 0;

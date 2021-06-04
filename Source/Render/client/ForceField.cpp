@@ -212,13 +212,13 @@ void FieldDispatcher::setBorder(FieldCluster* cluster, const Vect2sVect& border)
 	{
 		Vect2sVect::const_iterator i1 = i + 1 != border.end() ? i + 1 : border.begin();
 		if(i1->y < i->y)
-		{ // Ñêà÷åê ââåðõ 
+		{ // Ð¡ÐºÐ°Ñ‡ÐµÐº Ð²Ð²ÐµÑ€Ñ… 
 			Vect2sVect::const_iterator k;
 			Vect2sVect::const_iterator k_best = border.end();
 			Vect2sVect::const_iterator k0 = border.end() - 1;
 			int d, dist = 0x7fffffff;
 			FOR_EACH(border, k)
-			{ // Íàõîäèì áëèæàéøèé ñêà÷åê âíèç ñïðàâà
+			{ // ÐÐ°Ñ…Ð¾Ð´Ð¸Ð¼ Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑˆÐ¸Ð¹ ÑÐºÐ°Ñ‡ÐµÐº Ð²Ð½Ð¸Ð· ÑÐ¿Ñ€Ð°Ð²Ð°
 				if(i->y == k->y && k0->y < k->y && (d = k->x - i->x) > 0 && d < dist)
 				{
 					k_best = k;
@@ -229,7 +229,7 @@ void FieldDispatcher::setBorder(FieldCluster* cluster, const Vect2sVect& border)
 
 			//xassert(k_best != border.end());
 
-			if(k_best == border.end()) // ìîãóò òåðÿòüñÿ 1-èíòåðâàëû
+			if(k_best == border.end()) // Ð¼Ð¾Ð³ÑƒÑ‚ Ñ‚ÐµÑ€ÑÑ‚ÑŒÑÑ 1-Ð¸Ð½Ñ‚ÐµÑ€Ð²Ð°Ð»Ñ‹
 				continue;
 
 			intervals.push_back(FieldInterval(i->x, k_best->x, i->y));
@@ -438,8 +438,8 @@ bool FieldDispatcher::checkPlace(const Vect2f& pos, const Vect2f& delta)
 	int attr = attribute(p.x, p.y);								
 	for(int y = p.y - d.y; y <= p.y + d.y; y++)
 		for(int x = p.x - d.x; x <= p.x + d.x; x++)
-			if(attribute(x, y) != attr || // äðóãîé àòðèáóò
-				attr && map(x, y).height_initial < FieldCluster::ZeroGround + force_field_check_place_height) // ñëèøêîì íèçêî ïîä ïîëåì
+			if(attribute(x, y) != attr || // Ð´Ñ€ÑƒÐ³Ð¾Ð¹ Ð°Ñ‚Ñ€Ð¸Ð±ÑƒÑ‚
+				attr && map(x, y).height_initial < FieldCluster::ZeroGround + force_field_check_place_height) // ÑÐ»Ð¸ÑˆÐºÐ¾Ð¼ Ð½Ð¸Ð·ÐºÐ¾ Ð¿Ð¾Ð´ Ð¿Ð¾Ð»ÐµÐ¼
 					return false;
 	return true;
 }
@@ -558,7 +558,7 @@ int FieldDispatcher::castRay(const Vect3f& origin, const Vect3f& direction_or_po
 		t_zero = direction.z < -FLT_EPS ? (FieldCluster::ZeroGround - origin.z)/direction.z : FLT_INF;
 		}
 	else {
-		xassert(0 && "ïåðåäàâàé åäèíè÷íîå íàïðàâëåíèå");
+		xassert(0 && "Ð¿ÐµÑ€ÐµÐ´Ð°Ð²Ð°Ð¹ ÐµÐ´Ð¸Ð½Ð¸Ñ‡Ð½Ð¾Ðµ Ð½Ð°Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ");
 		direction -= origin;
 		}
 

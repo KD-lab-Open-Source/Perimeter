@@ -429,7 +429,7 @@ double clockf(void);
 
 void xtDeleteFile(char* fname);
 
-const char* check_command_line(const char* switch_str); // 0 или строка после ключа для анализа
+const char* check_command_line(const char* switch_str); // 0 РёР»Рё СЃС‚СЂРѕРєР° РїРѕСЃР»Рµ РєР»СЋС‡Р° РґР»СЏ Р°РЅР°Р»РёР·Р°
 
 
 ///////////////////////////////////

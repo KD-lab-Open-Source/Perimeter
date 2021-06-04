@@ -1,4 +1,4 @@
-// François Faure, iMAGIS-GRAVIR / UJF, 2001
+// FranÐ·ois Faure, iMAGIS-GRAVIR / UJF, 2001
 
 #include <boost/config.hpp>
 

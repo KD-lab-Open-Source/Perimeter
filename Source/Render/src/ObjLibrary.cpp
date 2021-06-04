@@ -30,7 +30,7 @@ bool ResourceIsZIP()
 	return ZIPIsOpen();
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-// вспомогательные инлайновые функции чтения
+// РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РёРЅР»Р°Р№РЅРѕРІС‹Рµ С„СѓРЅРєС†РёРё С‡С‚РµРЅРёСЏ
 //////////////////////////////////////////////////////////////////////////////////////////
 
 class CM3DError
@@ -46,8 +46,8 @@ static CM3DError m3derror;
 void GetMatrixObj(int time,MatXf &Matrix,sLodObject *LodObject,sNodeObject *NodeObject)
 {
 	Identity(Matrix);
-	MatXf AnimationMatrix; // матрица положения объекта относительного родителя
-	Identity(AnimationMatrix); // установка матрицы анимации
+	MatXf AnimationMatrix; // РјР°С‚СЂРёС†Р° РїРѕР»РѕР¶РµРЅРёСЏ РѕР±СЉРµРєС‚Р° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕРіРѕ СЂРѕРґРёС‚РµР»СЏ
+	Identity(AnimationMatrix); // СѓСЃС‚Р°РЅРѕРІРєР° РјР°С‚СЂРёС†С‹ Р°РЅРёРјР°С†РёРё
 	sAnimationPosition &AnimationPosition=NodeObject->AnimationPosition;
 	sAnimationRotation &AnimationRotation=NodeObject->AnimationRotation;
 	sAnimationScale &AnimationScale=NodeObject->AnimationScale;
@@ -101,7 +101,7 @@ void GetMatrixObj(int time,MatXf &Matrix,sLodObject *LodObject,sNodeObject *Node
 }
 
 static void ReadMeshBound(int time,sBound *Bound,sObjectMesh *ObjectMesh,sLodObject *LodObject,const char *parent)
-{ // импорт геометрии объекта
+{ // РёРјРїРѕСЂС‚ РіРµРѕРјРµС‚СЂРёРё РѕР±СЉРµРєС‚Р°
 	sAnimationMesh *AnimationMesh=0;
 	for(int nAnimMesh=0;nAnimMesh<ObjectMesh->AnimationMeshLibrary.length();nAnimMesh++)
 		if(ObjectMesh->AnimationMeshLibrary[nAnimMesh]->time<=time)
@@ -110,7 +110,7 @@ static void ReadMeshBound(int time,sBound *Bound,sObjectMesh *ObjectMesh,sLodObj
 	sVertexMesh	&Vert=AnimationMesh->Vertex;
 	if(Face.length()<=0||Vert.length()<3)
 		m3derror()<<"Object "<<ObjectMesh->name.c_str()<<" don't has polygons"<<VERR_END;
-	// импорт пространственных координат
+	// РёРјРїРѕСЂС‚ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµРЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚
 	MatXf Matrix;
 	GetMatrixObj(time,Matrix,LodObject,ObjectMesh);
 	Bound->Vertex.resize(Vert.length());
@@ -127,7 +127,7 @@ static void ReadMeshBound(int time,sBound *Bound,sObjectMesh *ObjectMesh,sLodObj
 }
 
 static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMeshBank* pBanks)
-{ // импорт геометрии объекта
+{ // РёРјРїРѕСЂС‚ РіРµРѕРјРµС‚СЂРёРё РѕР±СЉРµРєС‚Р°
 	sAnimationMesh *AnimationMesh=0;
 	for(int nAnimMesh=0;nAnimMesh<ObjectMesh->AnimationMeshLibrary.length();nAnimMesh++)
 		if(ObjectMesh->AnimationMeshLibrary[nAnimMesh]->time<=time)
@@ -136,7 +136,7 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 	sFaceMesh &Face=AnimationMesh->Face;
 	vector<Vect2f> Texel;
 	vector<Vect3f> Vertex(Vert.length());
-	// импорт пространственных координат
+	// РёРјРїРѕСЂС‚ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµРЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚
 	int k;
 	for(k=0;k<Vertex.size();k++) 
 	{
@@ -160,7 +160,7 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 	for(k=0;k<Face.length();k++)
 		Polygon[k].set(Face[k][0],Face[k][1],Face[k][2]);
 	if(AnimationMesh->ChannelMappingLibrary.length())
-	{ // импорт текстурных координат
+	{ // РёРјРїРѕСЂС‚ С‚РµРєСЃС‚СѓСЂРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚
 		sChannelMapping *ChannelMapping=AnimationMesh->ChannelMappingLibrary[0];
 		sTexFaceMesh &TexFace=ChannelMapping->TexFace;
 		sTexVertexMesh &TexVertex=ChannelMapping->TexVertex;
@@ -222,7 +222,7 @@ cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,
 static
 cMeshBank* ReadMeshMat(cAllMeshBank *pBanks,sObjectMesh *ObjectMesh,cMaterialObjectLibrary& MaterialLibrary,
 						char *TexturePath,char* DefTexturePath,cObjLibrary *ObjLibrary)
-{ // импорт материала объекта
+{ // РёРјРїРѕСЂС‚ РјР°С‚РµСЂРёР°Р»Р° РѕР±СЉРµРєС‚Р°
 	if(ObjectMesh->AnimationMeshLibrary.length()==0)
 	{
 		m3derror()<<"not found Animation Mesh in "<<ObjectMesh->name.c_str()<<VERR_END;
@@ -341,7 +341,7 @@ int isAnimateMaterial(cMeshScene &MeshScene,const char *name,int nLOD=0)
 }
 
 inline void ReadMeshAnimMat(cMeshScene &MeshScene,int nChannel,int nLOD,cAnimChannelMaterial *AnimChannel,sObjectMesh *ObjectMesh)
-{ // импорт материала объекта
+{ // РёРјРїРѕСЂС‚ РјР°С‚РµСЂРёР°Р»Р° РѕР±СЉРµРєС‚Р°
 	VISASSERT(ObjectMesh->AnimationMeshLibrary[0]);
 	int nMaterial=ObjectMesh->AnimationMeshLibrary[0]->Face[0][3];
 	sChannelAnimation *Channel=MeshScene.ChannelLibrary[nChannel];
@@ -457,7 +457,7 @@ inline void ReadMeshAnimMat(cMeshScene &MeshScene,int nChannel,int nLOD,cAnimCha
 	AnimChannel->EndBuild();
 }
 inline void ReadLightAnimMat(cMeshScene &MeshScene,int nChannel,cAnimChannelMaterial *AnimChannel,sLightObject *LightObject)
-{ // импорт анимации материала источника света
+{ // РёРјРїРѕСЂС‚ Р°РЅРёРјР°С†РёРё РјР°С‚РµСЂРёР°Р»Р° РёСЃС‚РѕС‡РЅРёРєР° СЃРІРµС‚Р°
 	VISASSERT(LightObject->AnimationLightLibrary[0]);
 	sChannelAnimation *Channel=MeshScene.ChannelLibrary[nChannel];
 	cAnimChainMaterial *AnimChain=AnimChannel->GetChannel(nChannel);
@@ -474,7 +474,7 @@ inline void ReadLightAnimMat(cMeshScene &MeshScene,int nChannel,cAnimChannelMate
 }
 
 void ReadAnimNode(sChannelAnimation *Channel,sLodObject *LodObject,cAnimChannelNode *AnimChannel,sNodeObject *NodeObject,const char *parent)
-{ // импорт анимации узла
+{ // РёРјРїРѕСЂС‚ Р°РЅРёРјР°С†РёРё СѓР·Р»Р°
 	float StartTime=Channel->FirstFrame*Channel->TicksPerFrame,
 		AnimTime=(Channel->LastFrame-Channel->FirstFrame)*Channel->TicksPerFrame;
 	cAnimChainNode *AnimChain=AnimChannel->GetChannel(Channel->ID);
@@ -528,7 +528,7 @@ void cAllMeshBank::SetFrame(cMeshScene *MeshScene)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// реализация cObjLibrary
+// СЂРµР°Р»РёР·Р°С†РёСЏ cObjLibrary
 //////////////////////////////////////////////////////////////////////////////////////////
 cObjLibrary::cObjLibrary() : cUnknownClass(KIND_LIB_OBJECT)
 {
@@ -551,8 +551,8 @@ void cObjLibrary::FreeOne(FILE* f)
 #endif 
 	if(f)fprintf(f,"Object freeing\n");
 
-	//temp_freeone - количество объектов в cObjLibrary::objects
-	//ссылающихся на cAnimChannelNode
+	//temp_freeone - РєРѕР»РёС‡РµСЃС‚РІРѕ РѕР±СЉРµРєС‚РѕРІ РІ cObjLibrary::objects
+	//СЃСЃС‹Р»Р°СЋС‰РёС…СЃСЏ РЅР° cAnimChannelNode
 	int compacted=0;
 	OBJECTS::iterator it;
 	FOR_EACH(objects,it)
@@ -765,7 +765,7 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 		return 0;
 	}
 	
-	cMeshScene MeshScene; // загрузка MeshScene сцены из файла
+	cMeshScene MeshScene; // Р·Р°РіСЂСѓР·РєР° MeshScene СЃС†РµРЅС‹ РёР· С„Р°Р№Р»Р°
 	cMeshFile f;
 
 	if(f.OpenRead(buf,size)==MESHFILE_NOT_FOUND) return 0;
@@ -785,7 +785,7 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 		char* name=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
 		_strlwr(name);
 	}
-/*	// поиск и установка первым канала анимации с именем "main"
+/*	// РїРѕРёСЃРє Рё СѓСЃС‚Р°РЅРѕРІРєР° РїРµСЂРІС‹Рј РєР°РЅР°Р»Р° Р°РЅРёРјР°С†РёРё СЃ РёРјРµРЅРµРј "main"
 	int nChannelMain=-1;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
@@ -821,9 +821,9 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 		}
 	}
 
-	// создание объекта по описаннию в сцене
+	// СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РїРѕ РѕРїРёСЃР°РЅРЅРёСЋ РІ СЃС†РµРЅРµ
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
-	{ // импорт канала анимации
+	{ // РёРјРїРѕСЂС‚ РєР°РЅР°Р»Р° Р°РЅРёРјР°С†РёРё
 		sChannelAnimation *Channel=MeshScene.ChannelLibrary[nChannel];
 		Channel->ID=nChannel;
 		int FirstTime=Channel->FirstFrame*Channel->TicksPerFrame;
@@ -831,16 +831,16 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 		int LevelDetail=0;
 		sLodObject *LodObject=Channel->LodLibrary[LevelDetail];
 		for(int nNodeObject=0;nNodeObject<LodObject->NodeObjectLibrary.length();nNodeObject++)
-		{ // импорт корневого объекта
+		{ // РёРјРїРѕСЂС‚ РєРѕСЂРЅРµРІРѕРіРѕ РѕР±СЉРµРєС‚Р°
 			sNodeObject *NodeObject=LodObject->NodeObjectLibrary[nNodeObject];
 			if(!NodeObject->parent.empty() && stricmp(NodeObject->parent.c_str(),"scene root")==0)
 				NodeObject->parent.clear();
 			if( !NodeObject->name.empty() && (TestFirstName(NodeObject->name.c_str(),"Bip")))
-				continue; // пропустить "Bip" из CharacterStudio
+				continue; // РїСЂРѕРїСѓСЃС‚РёС‚СЊ "Bip" РёР· CharacterStudio
 
 			cObjectNode* CurrentNode=NULL;
 			if(NodeObject->type==NODEOBJECT_MESH && !NodeObject->name.empty() && stricmp(NodeObject->name.c_str(),"_base_")==0)
-			{// импорт основы для постановки объектов
+			{// РёРјРїРѕСЂС‚ РѕСЃРЅРѕРІС‹ РґР»СЏ РїРѕСЃС‚Р°РЅРѕРІРєРё РѕР±СЉРµРєС‚РѕРІ
 				if( BaseNode->GetBase()==0 )
 				{
 					sBound	*Base;
@@ -899,7 +899,7 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 				BaseNode->SetFileName(fname);
 				CurrentNode->SetRoot(pAllMeshBank);
 			}
-			// импорт анимации объекта
+			// РёРјРїРѕСЂС‚ Р°РЅРёРјР°С†РёРё РѕР±СЉРµРєС‚Р°
 			if(CurrentNode->GetAnimChannel()==0) 
 			{
 				CurrentNode->SetAnimChannel(new cAnimChannelNode);
@@ -908,7 +908,7 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 				CurrentNode->SetGroup(isGroupName(NodeObject->name.c_str()));
 				GetMatrixObj(Channel->FirstFrame,CurrentNode->LocalMatrix,LodObject,NodeObject);
 			}
-			// импорт анимации узла
+			// РёРјРїРѕСЂС‚ Р°РЅРёРјР°С†РёРё СѓР·Р»Р°
 			ReadAnimNode(Channel,LodObject,CurrentNode->GetAnimChannel(),NodeObject,CurrentNode->GetParentNodeName());
 
 			if(Option_EnableLinkEffectToModel)
@@ -921,13 +921,13 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 			}
 
 			if(NodeObject->type==NODEOBJECT_MESH)
-			{ // импорт 3d-объекта
+			{ // РёРјРїРѕСЂС‚ 3d-РѕР±СЉРµРєС‚Р°
 				VISASSERT(CurrentNode->GetKind()==KIND_OBJMESH);
 				sObjectMesh *ObjectMesh=(sObjectMesh*)NodeObject;
 				cObjMesh *Mesh=(cObjMesh*)CurrentNode;
 				if(firstpass)
-				{ // импорт статического объекта
-					// импорт материала объекта
+				{ // РёРјРїРѕСЂС‚ СЃС‚Р°С‚РёС‡РµСЃРєРѕРіРѕ РѕР±СЉРµРєС‚Р°
+					// РёРјРїРѕСЂС‚ РјР°С‚РµСЂРёР°Р»Р° РѕР±СЉРµРєС‚Р°
 					cMeshBank* pBank=ReadMeshMat(pAllMeshBank,ObjectMesh,LodObject->MaterialLibrary,
 						TexturePath,DefTexturePath,this);
 					if(pBank==NULL)
@@ -939,38 +939,38 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 
 					Mesh->SetBank(pBank,true);
 					Mesh->SetAttribute(Mesh->GetBank()->GetObjectAttribute().GetAttribute());
-					// импорт геометрии объекта
+					// РёРјРїРѕСЂС‚ РіРµРѕРјРµС‚СЂРёРё РѕР±СЉРµРєС‚Р°
 					ReadMeshTri(FirstTime,Mesh,ObjectMesh,pAllMeshBank);
 				}
 
-				// импорт анимации материала объекта
+				// РёРјРїРѕСЂС‚ Р°РЅРёРјР°С†РёРё РјР°С‚РµСЂРёР°Р»Р° РѕР±СЉРµРєС‚Р°
 				ReadMeshAnimMat(MeshScene,nChannel,LevelDetail,Mesh->GetBank()->GetAnimChannelMat(),ObjectMesh);
 			}
 			else if(NodeObject->type==NODEOBJECT_LIGHT)
-			{ // импорт объекта источника света
+			{ // РёРјРїРѕСЂС‚ РѕР±СЉРµРєС‚Р° РёСЃС‚РѕС‡РЅРёРєР° СЃРІРµС‚Р°
 				VISASSERT(CurrentNode->GetKind()==KIND_LIGHT);
-				// импорт объекта
+				// РёРјРїРѕСЂС‚ РѕР±СЉРµРєС‚Р°
 				sLightObject *LightObject=(sLightObject*)NodeObject;
 				cObjLight *Light=(cObjLight*)CurrentNode;
 				if(firstpass)
-				{ // импорт статического объекта
-					// импорт текстуры объекта
+				{ // РёРјРїРѕСЂС‚ СЃС‚Р°С‚РёС‡РµСЃРєРѕРіРѕ РѕР±СЉРµРєС‚Р°
+					// РёРјРїРѕСЂС‚ С‚РµРєСЃС‚СѓСЂС‹ РѕР±СЉРµРєС‚Р°
 					const char *TextureName=::GetFileName(LightObject->TexProj.c_str());
 					cTexture* Texture=LoadTextureDef(TextureName,TexturePath,DefTexturePath);
 					Light->SetTextureLight(Texture);
-					// импорт положения объекта
+					// РёРјРїРѕСЂС‚ РїРѕР»РѕР¶РµРЅРёСЏ РѕР±СЉРµРєС‚Р°
 					Light->GetRadius()=LightObject->AnimationLightLibrary[0]->FarBeginAttenuation;
 					Light->GetFarAttenuation()=LightObject->AnimationLightLibrary[0]->FarFinishAttenuation;
 					if(LightObject->UseGlobal)
 						Light->SetAttribute(ATTRUNKOBJ_COLLISIONTRACE);
 				}
-				// импорт анимации объекта
+				// РёРјРїРѕСЂС‚ Р°РЅРёРјР°С†РёРё РѕР±СЉРµРєС‚Р°
 				if(Light->GetAnimChannelMat()==0)
 				{
 					Light->SetAnimChannelMat(new cAnimChannelMaterial);
 					Light->GetAnimChannelMat()->NewChannel(pAllMeshBank);
 				}
-				// импорт анимации узла
+				// РёРјРїРѕСЂС‚ Р°РЅРёРјР°С†РёРё СѓР·Р»Р°
 				ReadLightAnimMat(MeshScene,nChannel,Light->GetAnimChannelMat(),LightObject);
 			}else
 				VISASSERT(NodeObject->type==NODEOBJECT_MESH||NodeObject->type==NODEOBJECT_HELPER);

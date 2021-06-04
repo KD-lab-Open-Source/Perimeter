@@ -394,7 +394,7 @@ bool terBuildingInstaller::checkScriptInstructions()
 			const SaveBuildingInstallerInstruction& instruction = *ii;
 			terUnitBase* unit = universe()->findUnitByLabel(instruction.label);
 			if(!unit){
-				xassert_s(0 && "Îáúåêò ïî ìåòêå íå íàéäåí: ", instruction.label);
+				xassert_s(0 && "ÐžÐ±ÑŠÐµÐºÑ‚ Ð¿Ð¾ Ð¼ÐµÑ‚ÐºÐµ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½: ", instruction.label);
 			}												
 			else{
 				if((unit->activity() && instruction.labeledObjectActivity || !unit->activity() && !instruction.labeledObjectActivity) &&

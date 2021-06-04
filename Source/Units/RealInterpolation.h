@@ -39,7 +39,7 @@ public:
 
 	void setVolume(float volume) { volume_ = volume; }
 	void setFrequency(float frequency) { frequency_ = frequency; }
-	void setPosition(const Vect3f& position); // не интерполируется!
+	void setPosition(const Vect3f& position); // РЅРµ РёРЅС‚РµСЂРїРѕР»РёСЂСѓРµС‚СЃСЏ!
 
 	void update();
 
@@ -71,8 +71,8 @@ protected:
 	PhaseListType PhaseControlList;
 	SoundControllerList soundControllers_;
 
-	//ObjectPoint должен меняться атомарно,
-	//то есть после инициализации ObjectPoint должен всегда указывать на валидный объект.
+	//ObjectPoint РґРѕР»Р¶РµРЅ РјРµРЅСЏС‚СЊСЃСЏ Р°С‚РѕРјР°СЂРЅРѕ,
+	//С‚Рѕ РµСЃС‚СЊ РїРѕСЃР»Рµ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё ObjectPoint РґРѕР»Р¶РµРЅ РІСЃРµРіРґР° СѓРєР°Р·С‹РІР°С‚СЊ РЅР° РІР°Р»РёРґРЅС‹Р№ РѕР±СЉРµРєС‚.
 	cObjectNodeRoot* ObjectPoint;
 
 	int HideFlag;

@@ -898,7 +898,7 @@ these can be found [@../../v2/reference.html#models_of_call_policies here].
 * [*with_custodian_and_ward_postcall][br] Ties lifetimes of the arguments and results
 * [*return_internal_reference][br] Ties lifetime of one argument to that of result
 * [*return_value_policy<T> with T one of:][br]
-* [*reference_existing_object][br]naïve (dangerous) approach
+* [*reference_existing_object][br]naÐ¿ve (dangerous) approach
 * [*copy_const_reference][br]Boost.Python v1 approach
 * [*copy_non_const_reference][br]
 * [*manage_new_object][br] Adopt a pointer and hold the instance

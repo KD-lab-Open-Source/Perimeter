@@ -442,14 +442,14 @@ int Runtime::initRenderDevice(CWnd *wnd) {
 	SetPosition(cameraMatrix, cameraPos, Vect3f(0, 0, 0));
 	setCameraPosition(gb_Camera, cameraMatrix);
 
-	gb_Camera->SetFrustum(							// óñòàíàâëèâàåòñÿ ïèðàìèäà âèäèìîñòè
-		&Vect2f(0.5f, 0.5f),						// öåíòð êàìåðû
-		&sRectangle4f(-0.5f, -0.5f, 0.5f, 0.5f),	// âèäèìàÿ îáëàñòü êàìåðû
-		&Vect2f(1.f, 1.f),							// ôîêóñ êàìåðû
+	gb_Camera->SetFrustum(							// ÑƒÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ÑÑ Ð¿Ð¸Ñ€Ð°Ð¼Ð¸Ð´Ð° Ð²Ð¸Ð´Ð¸Ð¼Ð¾ÑÑ‚Ð¸
+		&Vect2f(0.5f, 0.5f),						// Ñ†ÐµÐ½Ñ‚Ñ€ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+		&sRectangle4f(-0.5f, -0.5f, 0.5f, 0.5f),	// Ð²Ð¸Ð´Ð¸Ð¼Ð°Ñ Ð¾Ð±Ð»Ð°ÑÑ‚ÑŒ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+		&Vect2f(1.f, 1.f),							// Ñ„Ð¾ÐºÑƒÑ ÐºÐ°Ð¼ÐµÑ€Ñ‹
 		&Vect2f(10.0f, 9000.0f)
 		);
 
-	// ñîçäàåòñÿ èñòî÷íèê ñâåòà, èíà÷å êðîìåøíàÿ òüìà è îáúåêòîâ íå âèäíî
+	// ÑÐ¾Ð·Ð´Ð°ÐµÑ‚ÑÑ Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸Ðº ÑÐ²ÐµÑ‚Ð°, Ð¸Ð½Ð°Ñ‡Ðµ ÐºÑ€Ð¾Ð¼ÐµÑˆÐ½Ð°Ñ Ñ‚ÑŒÐ¼Ð° Ð¸ Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð² Ð½Ðµ Ð²Ð¸Ð´Ð½Ð¾
 	gb_ULight1=terScene->CreateLight(ATTRLIGHT_DIRECTION);
 	gb_ULight1->SetPosition( MatXf(Mat3f::ID, Vect3f(0, 0, 0)) );
 

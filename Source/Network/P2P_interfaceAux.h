@@ -1,7 +1,7 @@
 #ifndef __P2P_INTERFACEAUX_H__
 #define __P2P_INTERFACEAUX_H__
 
-#include "CommonEvents.h"//убрать перенеся SIMPLE_GAME_CURRENT_VERSION сюда!
+#include "CommonEvents.h"//СѓР±СЂР°С‚СЊ РїРµСЂРµРЅРµСЃСЏ SIMPLE_GAME_CURRENT_VERSION СЃСЋРґР°!
 
 #include "..\terra\crc.h"
 
@@ -21,7 +21,7 @@ struct sDigitalGameVersion {
 			i++;
 			if(i < sizeof(buf)) gameVersion+=atoi(&buf[i]);
 		}
-		else gameVersion=0;//можно -1
+		else gameVersion=0;//РјРѕР¶РЅРѕ -1
 	}
 	bool operator == (const sDigitalGameVersion &ro) const { return (gameVersion==ro.gameVersion); }
 	bool operator != (const sDigitalGameVersion &ro) const { return (gameVersion!=ro.gameVersion); }

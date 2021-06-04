@@ -66,7 +66,7 @@ void terPlayer::UpdateStructureAccessible()
 			const AttributeBuilding& attr = *safe_cast<const AttributeBuilding*>(unitAttribute(evolution_id));
 			EnableData& evolution = GetEvolutionBuildingData(evolution_id);
 			bool enabled = true;
-			// Если уже есть построенная структура, то не требуется иметь downgrade
+			// Р•СЃР»Рё СѓР¶Рµ РµСЃС‚СЊ РїРѕСЃС‚СЂРѕРµРЅРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР°, С‚Рѕ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ РёРјРµС‚СЊ downgrade
 			terUnitAttributeID downgrade_id = countUnits(evolution_id) ? attr.downgrade() : UNIT_ATTRIBUTE_NONE;
 			for(int j = 0; j < attr.EnableStructure.size(); j++){
 				terUnitAttributeID id = attr.EnableStructure[j];
@@ -93,7 +93,7 @@ void terPlayer::UpdateStructureAccessible()
 				}
 			}
 			
-			// Устанавливаем Requested и Construction независимо от Enable
+			// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј Requested Рё Construction РЅРµР·Р°РІРёСЃРёРјРѕ РѕС‚ Enable
 			terBuildingList::iterator bi;
 			int downgrades_constructed = 0;
 			FOR_EACH(BuildingList[i], bi){
@@ -215,7 +215,7 @@ void terPlayer::UpdatePowering()
 
 	terBuildingList accums = buildingList(UNIT_ATTRIBUTE_COLLECTOR);
 
-	// Вся энергия - на зарядку
+	// Р’СЃСЏ СЌРЅРµСЂРіРёСЏ - РЅР° Р·Р°СЂСЏРґРєСѓ
 	float chargeEnergy = EnergyData.produced() + EnergyData.returned();
 	EnergyData.clearReturned();
 	if(chargeEnergy > 0){
@@ -234,7 +234,7 @@ void terPlayer::UpdatePowering()
 		}
 	}
 
-	// Перерасчет запасов
+	// РџРµСЂРµСЂР°СЃС‡РµС‚ Р·Р°РїР°СЃРѕРІ
 	EnergyData.clearCapacity();
 	EnergyData.clearAccumulated();
 	EnergyData.addCapacity(frame()->attr().energyCapacity);
@@ -252,7 +252,7 @@ void terPlayer::UpdatePowering()
 //	energyUsing < "\n";
 //#endif
 
-	// Использование по приоритетам
+	// РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РїРѕ РїСЂРёРѕСЂРёС‚РµС‚Р°Рј
 	EnergyData.clearUsed();
 	EnergyConsumerMap::iterator ei;
 	FOR_EACH(energyConsumers, ei){
@@ -271,7 +271,7 @@ void terPlayer::UpdatePowering()
 //		watch_i(energyUsing, playerID());
 //#endif
 
-	// Удаление заряженных потребителей
+	// РЈРґР°Р»РµРЅРёРµ Р·Р°СЂСЏР¶РµРЅРЅС‹С… РїРѕС‚СЂРµР±РёС‚РµР»РµР№
 	for(;;){
 		bool run = false;
 		EnergyConsumerMap::iterator ei;
@@ -286,7 +286,7 @@ void terPlayer::UpdatePowering()
 			break;
 	}
 
-	// Вычитаем запросы из аккумуляторов
+	// Р’С‹С‡РёС‚Р°РµРј Р·Р°РїСЂРѕСЃС‹ РёР· Р°РєРєСѓРјСѓР»СЏС‚РѕСЂРѕРІ
 	float dischargeEnergy = -EnergyData.used();
 	if(dischargeEnergy < 0){
 		if(!accums.empty()){
@@ -398,14 +398,14 @@ public:
 		if(!p->alive() || !p->attr().ConnectionRadius)
 			return;
 
-		if(p->attr().ID != UNIT_ATTRIBUTE_FRAME){ // Ядра и трансмиттеры
+		if(p->attr().ID != UNIT_ATTRIBUTE_FRAME){ // РЇРґСЂР° Рё С‚СЂР°РЅСЃРјРёС‚С‚РµСЂС‹
 			if(p->playerID() == playerID_){
 				if(p->includingCluster() && FieldCluster::get_player_id(p->includingCluster()) != playerID_)
-					return; // Мои под вражеским полем
+					return; // РњРѕРё РїРѕРґ РІСЂР°Р¶РµСЃРєРёРј РїРѕР»РµРј
 			}
 			else if(!p->Player->isWorld())
 				if(!p->includingCluster() || FieldCluster::get_player_id(p->includingCluster()) != playerID_)
-					return; // Чужие не под моим
+					return; // Р§СѓР¶РёРµ РЅРµ РїРѕРґ РјРѕРёРј
 
 			terBuilding* b = safe_cast<terBuilding*>(p);
 			if(b->buildingStatus() & (BUILDING_STATUS_CONSTRUCTED | BUILDING_STATUS_UPGRADING) && !b->isConnected()){
@@ -496,7 +496,7 @@ void terPlayer::UpdateEnergyStructure()
 	start_timer_auto(AnalyzeEnergyStructure, 2);
 	MTL();
 
-	// Сбросить статус подключенности.
+	// РЎР±СЂРѕСЃРёС‚СЊ СЃС‚Р°С‚СѓСЃ РїРѕРґРєР»СЋС‡РµРЅРЅРѕСЃС‚Рё.
 	for(int i = UNIT_ATTRIBUTE_CORE; i <= UNIT_ATTRIBUTE_RELAY; i++){
 		terBuildingList::iterator bi;
 		int flags = BUILDING_STATUS_CONNECTED | BUILDING_STATUS_ENABLED;
@@ -506,7 +506,7 @@ void terPlayer::UpdateEnergyStructure()
 			(*bi)->setBuildingStatus((*bi)->buildingStatus() & ~flags);
 	}
 
-	// Рекурсивно просканировать, начиная с фрейма, размер сканирования 2*ConnectionRadiusMax
+	// Р РµРєСѓСЂСЃРёРІРЅРѕ РїСЂРѕСЃРєР°РЅРёСЂРѕРІР°С‚СЊ, РЅР°С‡РёРЅР°СЏ СЃ С„СЂРµР№РјР°, СЂР°Р·РјРµСЂ СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ 2*ConnectionRadiusMax
 	EnergyLineList energy_lines;
 	if(frame()){
 		ConnectCoreOp op(frame(), universe()->UnitGrid, energy_lines);
@@ -526,7 +526,7 @@ void terPlayer::UpdateEnergyStructure()
 void terPlayer::UpdateEnergyLines(EnergyLineList& energy_lines)
 {
 	MTL();
-	// Обновить энергетические связи
+	// РћР±РЅРѕРІРёС‚СЊ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРёРµ СЃРІСЏР·Рё
 	LightList::iterator current_light = Lights.begin();
 	EnergyLineList::iterator li;
 	FOR_EACH(energy_lines, li){
@@ -615,7 +615,7 @@ void terPlayer::updateField()
 	terBuildingList& cores = buildingList(UNIT_ATTRIBUTE_CORE);
 	ProtectorList freeGenerators;
 
-	// Построить новый регион
+	// РџРѕСЃС‚СЂРѕРёС‚СЊ РЅРѕРІС‹Р№ СЂРµРіРёРѕРЅ
 	core_column_.clear();
 	terBuildingList::const_iterator gi;
 	FOR_EACH(cores, gi){
@@ -654,7 +654,7 @@ void terPlayer::updateField()
 	field_region_.postOperateAnalyze();
 	FrameStatData.ProtectedArea = field_region_.getEditColumn().area();
 
-	// Оставить только стационарные кластера 
+	// РћСЃС‚Р°РІРёС‚СЊ С‚РѕР»СЊРєРѕ СЃС‚Р°С†РёРѕРЅР°СЂРЅС‹Рµ РєР»Р°СЃС‚РµСЂР° 
 	int cluster_id = 0;
 	ClusterList::iterator ci;
 	FOR_EACH(clusters_, ci){

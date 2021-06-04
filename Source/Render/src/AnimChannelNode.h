@@ -2,7 +2,7 @@
 #define __ANIMCHANNELNODE_H__
 
 template <class cAnimChainBase> class cAnimChannelBase : protected vector<cAnimChainBase>
-{ // шаблонный базовый класс анимации
+{ // С€Р°Р±Р»РѕРЅРЅС‹Р№ Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ Р°РЅРёРјР°С†РёРё
 public:
 	cAnimChannelBase()									{ }
 	~cAnimChannelBase()									{ }
@@ -33,13 +33,13 @@ struct sKeyMatrix
 };
 
 class cAnimChainNode
-{ // одна цепочка анимации
+{ // РѕРґРЅР° С†РµРїРѕС‡РєР° Р°РЅРёРјР°С†РёРё
 protected:
 	friend class cAnimChannelNode;
-	vector<sKeyVisible>			KeyVisible;			// анимация видимости объекта
-	vector<sKeyMatrix>			KeyMatrix;			// анимация масштаба объекта
-	float						Time;				// продолжительность цепочки анимации
-	string						name;				// имя анимационной цепочки
+	vector<sKeyVisible>			KeyVisible;			// Р°РЅРёРјР°С†РёСЏ РІРёРґРёРјРѕСЃС‚Рё РѕР±СЉРµРєС‚Р°
+	vector<sKeyMatrix>			KeyMatrix;			// Р°РЅРёРјР°С†РёСЏ РјР°СЃС€С‚Р°Р±Р° РѕР±СЉРµРєС‚Р°
+	float						Time;				// РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ С†РµРїРѕС‡РєРё Р°РЅРёРјР°С†РёРё
+	string						name;				// РёРјСЏ Р°РЅРёРјР°С†РёРѕРЅРЅРѕР№ С†РµРїРѕС‡РєРё
 public:
 	cAnimChainNode();
 	~cAnimChainNode();
@@ -49,11 +49,11 @@ public:
 	int GetNumberMatrix()							{ return KeyMatrix.size(); }
 	int GetNumberVisible()							{ return KeyVisible.size(); }
 
-	//Используются в LogicGeneric
+	//РСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ РІ LogicGeneric
 	void SetName(const char *NameChain)					{ name=NameChain; }
 	const char* GetName() const							{ return name.c_str(); }
 
-	// анимационные действия
+	// Р°РЅРёРјР°С†РёРѕРЅРЅС‹Рµ РґРµР№СЃС‚РІРёСЏ
 	void GetMatrix(float phase,MatXf &Matrix);
 	void GetVisible(float phase,int &visible);
 
@@ -62,9 +62,9 @@ public:
 
 class cAnimChannelNode : public cUnknownClass,public cAnimChannelBase<cAnimChainNode>
 { 
-	// Неизменная часть cObjectNode, которая не копируется при создании 
-	// следующего объекта из одной и той-же m3d
-	// список каналов анимации
+	// РќРµРёР·РјРµРЅРЅР°СЏ С‡Р°СЃС‚СЊ cObjectNode, РєРѕС‚РѕСЂР°СЏ РЅРµ РєРѕРїРёСЂСѓРµС‚СЃСЏ РїСЂРё СЃРѕР·РґР°РЅРёРё 
+	// СЃР»РµРґСѓСЋС‰РµРіРѕ РѕР±СЉРµРєС‚Р° РёР· РѕРґРЅРѕР№ Рё С‚РѕР№-Р¶Рµ m3d
+	// СЃРїРёСЃРѕРє РєР°РЅР°Р»РѕРІ Р°РЅРёРјР°С†РёРё
 public:
 	string			ObjectName;
 	class EffectKey*		effect_key;
@@ -79,7 +79,7 @@ public:
 };
 
 template<class cBase> __forceinline int BinaryFind(int key,vector<cBase> &Array)
-{ // методом половинного деления поиск элемента
+{ // РјРµС‚РѕРґРѕРј РїРѕР»РѕРІРёРЅРЅРѕРіРѕ РґРµР»РµРЅРёСЏ РїРѕРёСЃРє СЌР»РµРјРµРЅС‚Р°
 	int start;
 	int finish;
 	for(start=0,finish=Array.size()-1; ; )

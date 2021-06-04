@@ -71,10 +71,10 @@ public:
 	float angleZ() const { return atan2f(rotation()[1][0], rotation()[0][0]); }
 	const Se3f& posePrev() const { return posePrev_; }
 
-	void initPose(const Se3f& pose); // ¬˚Á˚‚‡Ú¸ ÔË ÔÂ‚ÓÈ ÛÒÚ‡ÌÓ‚ÍÂ
+	void initPose(const Se3f& pose); // –í—ã–∑—ã–≤–∞—Ç—å –ø—Ä–∏ –ø–µ—Ä–≤–æ–π —É—Å—Ç–∞–Ω–æ–≤–∫–µ
 	void initPose(const Se3f& pose, bool modify_z);
 
-	void setPosition(const Vect3f& position) { pose_.trans() = position; matrix_.trans() = position; } // ƒÎˇ ÔÂÂÏÂ˘ÂÌËˇ
+	void setPosition(const Vect3f& position) { pose_.trans() = position; matrix_.trans() = position; } // –î–ª—è –ø–µ—Ä–µ–º–µ—â–µ–Ω–∏—è
 	void setOrientation(const QuatF& orientation) { pose_.rot() = orientation; matrix_.rot() = orientation; }
 	void setPose(const Se3f& pose) { pose_ = pose; matrix_ = pose; }
 
@@ -98,26 +98,26 @@ public:
 	float forwardVelocity() const { return forwardVelocity_; }
 	void setForwardVelocity(float v){ forwardVelocity_ = v; }
 	bool is_point_reached(const Vect2f& point) const;
-	bool on_upper_position() const { return kangaroo_mode > kangaroo_mode_avr_threshould; } // ˛ÌËÚ ‡ÒÔÓÎÓÊÂÌ Ì‡‰ ‰Û„ËÏ 
+	bool on_upper_position() const { return kangaroo_mode > kangaroo_mode_avr_threshould; } // —é–Ω–∏—Ç —Ä–∞—Å–ø–æ–ª–æ–∂–µ–Ω –Ω–∞–¥ –¥—Ä—É–≥–∏–º 
 	float speed() const { return fabs(average_forward_velocity); }
 	float speedFactor() const { float f = fabs(average_forward_velocity*prm().speed_map_factor); return f < 1 ? f : 1; }
 	void stopMovement() { velocity_factor = 0; velocity_ = Vect3f::ZERO; }
 
 	// States
-	bool groundColliding() const { return ground_colliding; } // ÒÚ‡ÎÍË‚‡ÂÚÒˇ, ÒÚÓËÚ Ì‡ ÁÂÏÎÂ
-	bool chaosColliding() const { return chaos_colliding; } // ÒÚ‡ÎÍË‚‡ÂÚÒˇ Ò ı‡ÓÒÓÏ
-	float chaosCollidingFactor() const { return !flyingMode() ? chaosCollidingFactor_ : 0; } // ÒÚ‡ÎÍË‚‡ÂÚÒˇ Ò ı‡ÓÒÓÏ 0..1
-	int clusterColliding() const { return cluster_colliding; } // ÒÚ‡ÎÍË‚‡ÂÚÒˇ Ò ÒËÎÓ‚˚Ï ÔÓÎÂÏ ÍÎ‡ÒÚÂ‡ (ID)
-	bool gravicapMode() const { return gravicap_mode; } // Ô‡ËÚ Ì‡ ‚ÓÁ‰Û¯ÌÓÈ ÔÓ‰Û¯ÍÂ
+	bool groundColliding() const { return ground_colliding; } // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è, —Å—Ç–æ–∏—Ç –Ω–∞ –∑–µ–º–ª–µ
+	bool chaosColliding() const { return chaos_colliding; } // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è —Å —Ö–∞–æ—Å–æ–º
+	float chaosCollidingFactor() const { return !flyingMode() ? chaosCollidingFactor_ : 0; } // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è —Å —Ö–∞–æ—Å–æ–º 0..1
+	int clusterColliding() const { return cluster_colliding; } // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è —Å —Å–∏–ª–æ–≤—ã–º –ø–æ–ª–µ–º –∫–ª–∞—Å—Ç–µ—Ä–∞ (ID)
+	bool gravicapMode() const { return gravicap_mode; } // –ø–∞—Ä–∏—Ç –Ω–∞ –≤–æ–∑–¥—É—à–Ω–æ–π –ø–æ–¥—É—à–∫–µ
 
-	float velocityFactor() const { return velocity_factor; } // ÏÓ‰ÛÎˇˆËˇ ÒÍÓÓÒÚË
+	float velocityFactor() const { return velocity_factor; } // –º–æ–¥—É–ª—è—Ü–∏—è —Å–∫–æ—Ä–æ—Å—Ç–∏
 	void setVelocityFactor(float factor) { velocity_factor = factor; }
 	
 	bool unmovable() const { return unmovable_; }
 	void makeStatic() { unmovable_ = 1;  }
 	void makeDynamic() { unmovable_ = 0; }
 
-	void setFlyingMode(bool mode) {	flying_mode = mode; } // ‚ÍÎ˛˜‡ÂÚ ÔÓÎÂÚ
+	void setFlyingMode(bool mode) {	flying_mode = mode; } // –≤–∫–ª—é—á–∞–µ—Ç –ø–æ–ª–µ—Ç
 	bool flyingMode() const { return flying_mode && (controlled() || !prm().flying_down_without_way_points) && !underMutation(); }
 	float flyingHeight() const { return flyingHeight_; }
 	void setFlyingHeight(float flyingHeight) { flyingHeight_ = flyingHeight; }
@@ -126,7 +126,7 @@ public:
 	bool diggingModeLagged() const { return diggingMode_ || diggingModeTimer_(); }
 	bool underGround() const { return diggingMode() && deltaZ_ == -prm().digging_depth; }
 	bool onGround() const { return !diggingMode() && deltaZ_ == 0; }
-	void setDiggingMode(bool mode) { diggingMode_ = mode; diggingModeTimer_.start(diggingModeDelay); } // ÔÓ‰ÁÂÏÌ˚È ÂÊËÏ
+	void setDiggingMode(bool mode) { diggingMode_ = mode; diggingModeTimer_.start(diggingModeDelay); } // –ø–æ–¥–∑–µ–º–Ω—ã–π —Ä–µ–∂–∏–º
 	
 	// Missiles
 	void startMissile(const RigidBody& firing_object, const Vect3f& position, const Vect3f& target, const Vect3f& direction); // direction used while keep_direction_time 
@@ -201,14 +201,14 @@ private:
 	float dz_max_avr;
 
 	// States
-	bool ground_colliding; // ÒÚ‡ÎÍË‚‡ÂÚÒˇ, ÒÚÓËÚ Ì‡ ÁÂÏÎÂ
-	bool chaos_colliding; // ÒÚ‡ÎÍË‚‡ÂÚÒˇ Ò ı‡ÓÒÓÏ
-	float chaosCollidingFactor_; // ÒÚ‡ÎÍË‚‡ÂÚÒˇ Ò ı‡ÓÒÓÏ 0..1
-	int cluster_colliding; // ÒÚ‡ÎÍË‚‡ÂÚÒˇ Ò ÒËÎÓ‚˚Ï ÔÓÎÂÏ ÍÎ‡ÒÚÂ‡ (ID)
-	int including_cluster; // Ì‡ıÓ‰ËÚÒˇ ‚ÌÛÚË ÍÎ‡ÒÚÂ‡ (ID)
-	bool gravicap_mode; // Ô‡ËÚ Ì‡ ‚ÓÁ‰Û¯ÌÓÈ ÔÓ‰Û¯ÍÂ
+	bool ground_colliding; // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è, —Å—Ç–æ–∏—Ç –Ω–∞ –∑–µ–º–ª–µ
+	bool chaos_colliding; // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è —Å —Ö–∞–æ—Å–æ–º
+	float chaosCollidingFactor_; // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è —Å —Ö–∞–æ—Å–æ–º 0..1
+	int cluster_colliding; // —Å—Ç–∞–ª–∫–∏–≤–∞–µ—Ç—Å—è —Å —Å–∏–ª–æ–≤—ã–º –ø–æ–ª–µ–º –∫–ª–∞—Å—Ç–µ—Ä–∞ (ID)
+	int including_cluster; // –Ω–∞—Ö–æ–¥–∏—Ç—Å—è –≤–Ω—É—Ç—Ä–∏ –∫–ª–∞—Å—Ç–µ—Ä–∞ (ID)
+	bool gravicap_mode; // –ø–∞—Ä–∏—Ç –Ω–∞ –≤–æ–∑–¥—É—à–Ω–æ–π –ø–æ–¥—É—à–∫–µ
 
-	float velocity_factor; // ÏÓ‰ÛÎˇˆËˇ ÒÍÓÓÒÚË
+	float velocity_factor; // –º–æ–¥—É–ª—è—Ü–∏—è —Å–∫–æ—Ä–æ—Å—Ç–∏
 	float forwardVelocity_;
 	float flyingHeight_;
 	RigidBodyPrm::Oscillator flying_oscillator_z;
@@ -218,8 +218,8 @@ private:
 	float obstacle_turn_avr;
 	
 	bool unmovable_;
-	bool flying_mode; // ‚ÍÎ˛˜‡ÂÚ ÔÓÎÂÚ
-	bool diggingMode_;  // Á‡ÍÓÔ‡ÌÌ˚È
+	bool flying_mode; // –≤–∫–ª—é—á–∞–µ—Ç –ø–æ–ª–µ—Ç
+	bool diggingMode_;  // –∑–∞–∫–æ–ø–∞–Ω–Ω—ã–π
 	DurationTimer diggingModeTimer_;
 	
 	// Kangaroo

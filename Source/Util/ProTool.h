@@ -10,9 +10,9 @@ void write_container(S& stream, const C& container)
 }
 
 enum ReadContainerMode {
-	READ_CONTAINER_CLEAR, // стирает содержимое контейнера
-	READ_CONTAINER_APPEND, // дописывает в конец
-	READ_CONTAINER_REWRITE // пишет поверху и далее добавляет
+	READ_CONTAINER_CLEAR, // СЃС‚РёСЂР°РµС‚ СЃРѕРґРµСЂР¶РёРјРѕРµ РєРѕРЅС‚РµР№РЅРµСЂР°
+	READ_CONTAINER_APPEND, // РґРѕРїРёСЃС‹РІР°РµС‚ РІ РєРѕРЅРµС†
+	READ_CONTAINER_REWRITE // РїРёС€РµС‚ РїРѕРІРµСЂС…Сѓ Рё РґР°Р»РµРµ РґРѕР±Р°РІР»СЏРµС‚
 };
 
 template<class C, class S> 

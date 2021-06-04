@@ -5,9 +5,9 @@
 	file path:	D:\Projects\Quest\QuestEditor
 	file base:	te_helpers
 	file ext:	cpp
-	Powerd by:	Илюха
+	Powerd by:	РР»СЋС…Р°
 	
-	purpose:	невстроенные вспомогательные функции
+	purpose:	РЅРµРІСЃС‚СЂРѕРµРЅРЅС‹Рµ РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё
 *********************************************************************/
 #include "stdafx.h"
 
@@ -29,7 +29,7 @@ BYTE check_inters(const CPoint& a, const CPoint& b, const CPoint* pts,
 		if(cross_segms(a, b, pts[i], pts[i+1],pkx, pky))
 			return i;
 	}
-	//какая-то одна сторона должна пересекаться. Если не первые 3 то точно последняя
+	//РєР°РєР°СЏ-С‚Рѕ РѕРґРЅР° СЃС‚РѕСЂРѕРЅР° РґРѕР»Р¶РЅР° РїРµСЂРµСЃРµРєР°С‚СЊСЃСЏ. Р•СЃР»Рё РЅРµ РїРµСЂРІС‹Рµ 3 С‚Рѕ С‚РѕС‡РЅРѕ РїРѕСЃР»РµРґРЅСЏСЏ
 	VERIFY(cross_segms(a,b, pts[3], pts[0], pkx, pky));
 	return 3;
 }
@@ -66,11 +66,11 @@ bool pointInTrg(CPoint const& test, TRIANGLE const& trg)
 void getLinkTriangle(CPoint const& pt_from, CPoint const& pt_to, TRIANGLE &trg)
 {
 	Vect2f ort_f(pt_to.x - pt_from.x, pt_to.y - pt_from.y);
-	ort_f.normalize(10.f);//получаем  единичные вектор * параметр функции
+	ort_f.normalize(10.f);//РїРѕР»СѓС‡Р°РµРј  РµРґРёРЅРёС‡РЅС‹Рµ РІРµРєС‚РѕСЂ * РїР°СЂР°РјРµС‚СЂ С„СѓРЅРєС†РёРё
 	Vect2f normal(ort_f.y, -ort_f.x);
 
 	const CPoint ort_x2(round(ort_f.x)<<1, round(ort_f.y)<<1);
-	//точка, к которой будет сходиться стрела
+	//С‚РѕС‡РєР°, Рє РєРѕС‚РѕСЂРѕР№ Р±СѓРґРµС‚ СЃС…РѕРґРёС‚СЊСЃСЏ СЃС‚СЂРµР»Р°
 	trg[0] = pt_to;
 	trg[1] = CPoint(pt_to - ort_x2);
 	trg[2] = CPoint(pt_to - ort_x2);

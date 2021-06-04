@@ -594,11 +594,11 @@ void hideAuxBriefingButtons() {
 void showStartMissionButton() {
 	CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_START_MISSION_BTN);
 	wnd->Show(1);
-	_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+	_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 //	bgScene.markToPlay(wnd->m_attr->bgObject.name, wnd->m_attr->bgObject.chainName, true);
 
 	_shellIconManager.GetWnd(SQSH_MM_START_BRIEFING_BORDER)->Show(1);
-	_shellIconManager.Effect(effectButtonsFadeIn, _shellIconManager.GetWnd(SQSH_MM_START_BRIEFING_BORDER)); //запустить разлет
+	_shellIconManager.Effect(effectButtonsFadeIn, _shellIconManager.GetWnd(SQSH_MM_START_BRIEFING_BORDER)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 }
 
 STARFORCE_API void fillProfileList() {
@@ -623,7 +623,7 @@ int SwitchMenuScreenQuant2( float, float ) {
 //		if(_id_on<0) return 0;
 		if (_id_on >= 0) {
 			_shellIconManager.SetFocus( _id_on );
-			_shellIconManager.UnEffectControls( _shellIconManager.GetWnd(_id_on), effectButtonsFadeIn ); //запустить слет
+			_shellIconManager.UnEffectControls( _shellIconManager.GetWnd(_id_on), effectButtonsFadeIn ); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЃР»РµС‚
 //			_shellIconManager.GetWnd( _id_on )->ClearEffect();
 			switch (_id_on) {
 				case SQSH_MM_BRIEFING_SCR:
@@ -687,9 +687,9 @@ int SwitchMenuBGQuant2( float, float ) {
 			if (_id_on == SQSH_MM_SUBMIT_DIALOG_SCR) {
 				prepareMessageBoxToShow();
 			}
-			_shellIconManager.UnEffectControls(_shellIconManager.GetWnd(_id_on), effectCtrlRollOut); //запустить слет
-			_shellIconManager.Effect(effectButtonsFadeIn, _shellIconManager.GetWnd(_id_on)); //запустить слет
-			_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant2, CBCODE_QUANT); //ждать пока не слетится
+			_shellIconManager.UnEffectControls(_shellIconManager.GetWnd(_id_on), effectCtrlRollOut); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЃР»РµС‚
+			_shellIconManager.Effect(effectButtonsFadeIn, _shellIconManager.GetWnd(_id_on)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЃР»РµС‚
+			_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant2, CBCODE_QUANT); //Р¶РґР°С‚СЊ РїРѕРєР° РЅРµ СЃР»РµС‚РёС‚СЃСЏ
 			switch (_id_on) {
 				case SQSH_MM_SINGLE_SCR:
 					if (!debug_allow_replay) {
@@ -775,21 +775,21 @@ int SwitchMenuBGQuant2( float, float ) {
 						//continue briefing after skip mission
 						CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 						wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BORDER);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
-						_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant2, CBCODE_QUANT); //ждать пока не слетится
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
+						_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant2, CBCODE_QUANT); //Р¶РґР°С‚СЊ РїРѕРєР° РЅРµ СЃР»РµС‚РёС‚СЃСЏ
 					}
 					break;
 				case SHOW_START_SKIP_MISSION:
 					{
 						CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_MISSION_BTN);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 						wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_MISSION_BORDER);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 					}
 				case SHOW_START_HIDE_SKIP_MISSION:
 				case SHOW_START_MISSION:
@@ -797,10 +797,10 @@ int SwitchMenuBGQuant2( float, float ) {
 						//show start mission button
 						CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_START_MISSION_BTN);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 						wnd = _shellIconManager.GetWnd(SQSH_MM_START_BRIEFING_BORDER);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 						menuChangingDone = true;
 					}
 					break;
@@ -808,20 +808,20 @@ int SwitchMenuBGQuant2( float, float ) {
 					{
 						CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 						wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BORDER);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 					}
 				case SHOW_CONTINUE:
 					{
 						//show continue button
 						CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BTN);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 						wnd = _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BORDER);
 						wnd->Show(1);
-						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //запустить разлет
+						_shellIconManager.Effect(effectButtonsFadeIn, wnd); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 						menuChangingDone = true;
 					}
 					break;
@@ -864,7 +864,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				}
 			}
 		}
-		_shellIconManager.AddDynamicHandler(SwitchMenuBGQuant2, CBCODE_QUANT); //ждать пока не слетится BG
+		_shellIconManager.AddDynamicHandler(SwitchMenuBGQuant2, CBCODE_QUANT); //Р¶РґР°С‚СЊ РїРѕРєР° РЅРµ СЃР»РµС‚РёС‚СЃСЏ BG
 		if (_id_on >= 0) {
 			if (!gb_Music.IsPlay()) {
 				PlayMusic( mainMenuMusic );
@@ -1139,7 +1139,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 			}
 			//!!!
 			_shellIconManager.GetWnd(_id_on)->Show(true, effectCtrlRollIn);
-			_shellIconManager.Effect(effectCtrlRollIn, _shellIconManager.GetWnd(_id_on)); //запустить разлет
+			_shellIconManager.Effect(effectCtrlRollIn, _shellIconManager.GetWnd(_id_on)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 		} else {
 			switch (_id_on) {
 				case SHOW_LAST_SPLASH:
@@ -1235,7 +1235,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 			}
 		}
 		if (_id_on != SQSH_MM_SUBMIT_DIALOG_SCR) {
-			bgScene.play(); //запустить слет BG
+			bgScene.play(); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЃР»РµС‚ BG
 		}
 		return 0;
 	}
@@ -1257,9 +1257,9 @@ int SwitchMenuBGQuant1( float, float ) {
 //				_shellIconManager.SetModalWnd(0);
 //				menuChangingDone = true;
 				_shellIconManager.GetWnd(_id_off)->Show(false, effectButtonsFadeOut);
-				_shellIconManager.UnEffectControls(_shellIconManager.GetWnd(_id_off), effectButtonsFadeOut); //запустить слет
-				_shellIconManager.Effect(effectCtrlRollOut, _shellIconManager.GetWnd(_id_off)); //запустить разлет
-				_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant1, CBCODE_QUANT); //ждать пока не разлетится BG
+				_shellIconManager.UnEffectControls(_shellIconManager.GetWnd(_id_off), effectButtonsFadeOut); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЃР»РµС‚
+				_shellIconManager.Effect(effectCtrlRollOut, _shellIconManager.GetWnd(_id_off)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
+				_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant1, CBCODE_QUANT); //Р¶РґР°С‚СЊ РїРѕРєР° РЅРµ СЂР°Р·Р»РµС‚РёС‚СЃСЏ BG
 				return 0;
 			}
 			bgScene.markAllToPlay(false);
@@ -1273,8 +1273,8 @@ int SwitchMenuBGQuant1( float, float ) {
 			}
 			//!!!
 			_shellIconManager.GetWnd(_id_off)->Show(false, effectButtonsFadeOut);
-			_shellIconManager.UnEffectControls(_shellIconManager.GetWnd(_id_off), effectButtonsFadeOut); //запустить слет
-			_shellIconManager.Effect(effectCtrlRollOut, _shellIconManager.GetWnd(_id_off)); //запустить разлет
+			_shellIconManager.UnEffectControls(_shellIconManager.GetWnd(_id_off), effectButtonsFadeOut); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЃР»РµС‚
+			_shellIconManager.Effect(effectCtrlRollOut, _shellIconManager.GetWnd(_id_off)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 		} else {
 			switch (_id_off) {
 				case CONTINUE_BRIEFING:
@@ -1326,9 +1326,9 @@ int SwitchMenuBGQuant1( float, float ) {
 			}
 		}
 		if (_id_on != SQSH_MM_SUBMIT_DIALOG_SCR) {
-			bgScene.play(); //запустить разлет BG
+			bgScene.play(); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚ BG
 		}
-		_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant1, CBCODE_QUANT); //ждать пока не разлетится BG
+		_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant1, CBCODE_QUANT); //Р¶РґР°С‚СЊ РїРѕРєР° РЅРµ СЂР°Р·Р»РµС‚РёС‚СЃСЏ BG
 		return 0;
 	}
 	return 1;
@@ -1347,19 +1347,19 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
 	_id_off = id_off;
 	if (_id_off >= 0) {
 		if (_shellIconManager.GetWnd(SQSH_MM_SUBMIT_DIALOG_SCR)->isVisible()) {
-			Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SUBMIT_DIALOG_SCR)); //запустить разлет
+			Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SUBMIT_DIALOG_SCR)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 		}
-		Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(_id_off)); //запустить разлет
+		Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(_id_off)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 	} else {
 		switch (_id_off) {
 			case CONTINUE_BRIEFING:
 				//continue briefing after pause
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BTN)); //запустить разлет
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BORDER)); //запустить разлет
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BTN)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BORDER)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 				break;
 			case READY:
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_LOBBY_START_BTN)); //запустить разлет
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_LOBBY_START_BORDER)); //запустить разлет
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_LOBBY_START_BTN)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_LOBBY_START_BORDER)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 				break;
 			case SKIP_MISSION:
 				//continue briefing after skip mission
@@ -1374,15 +1374,15 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
 				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN));
 				break;
 			case SKIP_BRIEFING_AFTER_PAUSE:
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BTN)); //запустить разлет
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BORDER)); //запустить разлет
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BTN)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_CONTINUE_BRIEFING_BORDER)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 			case SKIP_BRIEFING:
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BORDER)); //запустить разлет
-				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN)); //запустить разлет
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BORDER)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
+				_shellIconManager.Effect(effectButtonsFadeOut, _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN)); //Р·Р°РїСѓСЃС‚РёС‚СЊ СЂР°Р·Р»РµС‚
 				break;
 		}
 	}
-	AddDynamicHandler(SwitchMenuBGQuant1, CBCODE_QUANT); //ждать пока не разлетится
+	AddDynamicHandler(SwitchMenuBGQuant1, CBCODE_QUANT); //Р¶РґР°С‚СЊ РїРѕРєР° РЅРµ СЂР°Р·Р»РµС‚РёС‚СЃСЏ
 }
 
 /////////////////////////////////////////////////////////////

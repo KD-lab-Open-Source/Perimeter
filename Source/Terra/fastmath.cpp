@@ -99,7 +99,7 @@ float  fastsqrtN (float x)
     if (x < 0.0f)
         return -1.0f;
     if (x == 0.0f)
-        return 0.0f;  /* ìîæåò ïğèâåñòè ê äåëåíèş íà 0 */
+        return 0.0f;  /* Ğ¼Ğ¾Ğ¶ĞµÑ‚ Ğ¿Ñ€Ğ¸Ğ²ĞµÑÑ‚Ğ¸ Ğº Ğ´ĞµĞ»ĞµĞ½Ğ¸Ñ Ğ½Ğ° 0 */
     EPS = x * eps;
     sq = x;
     sqold = x + 30.0f;         /* != sq */

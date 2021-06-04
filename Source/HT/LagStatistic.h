@@ -6,9 +6,9 @@ public:
 	LagStatistic();
 	~LagStatistic();
 
-	void SetLagQuant(int lag_quant);//Что возвращает getInternalLagQuant
-	void SetNetSkip();// true Слишком быстро идут кванты, этот был проскипован.
-	void SetNetWait(float net_wait);// true Слишком медленно идут кванты (сек)
+	void SetLagQuant(int lag_quant);//Р§С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚ getInternalLagQuant
+	void SetNetSkip();// true РЎР»РёС€РєРѕРј Р±С‹СЃС‚СЂРѕ РёРґСѓС‚ РєРІР°РЅС‚С‹, СЌС‚РѕС‚ Р±С‹Р» РїСЂРѕСЃРєРёРїРѕРІР°РЅ.
+	void SetNetWait(float net_wait);// true РЎР»РёС€РєРѕРј РјРµРґР»РµРЅРЅРѕ РёРґСѓС‚ РєРІР°РЅС‚С‹ (СЃРµРє)
 
 	void NextLogicQuant();
 	void Show();

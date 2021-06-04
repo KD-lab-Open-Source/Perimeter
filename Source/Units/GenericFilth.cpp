@@ -994,7 +994,7 @@ void terFilthSwarm::FindComplexTarget(list<terUnitBase*>& target_list,int max_ta
 	float a=attack_direction*M_PI/180.0f;
 	Vect2f direction(cos(a),sin(a));
 
-	//На фрэйм нападать только, если нет других целей.
+	//РќР° С„СЂСЌР№Рј РЅР°РїР°РґР°С‚СЊ С‚РѕР»СЊРєРѕ, РµСЃР»Рё РЅРµС‚ РґСЂСѓРіРёС… С†РµР»РµР№.
 	float md = FLT_MAX;
 	PlayerVect::iterator pi;
 
@@ -1166,7 +1166,7 @@ Se3f terSplineController::quantPosition(float dt)
 	{
 		Vect3f line2=HermitSplineDerivation2(cur_way_point,p[0],p[1],p[2],p[3]);
 		Vect3f a=(line2-(line2.dot(front))*front)*k_acceleration;
-		a.z=0;//Учитывать только горизонтальную составляющую
+		a.z=0;//РЈС‡РёС‚С‹РІР°С‚СЊ С‚РѕР»СЊРєРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅСѓСЋ СЃРѕСЃС‚Р°РІР»СЏСЋС‰СѓСЋ
 		acceleration=acceleration*(1-damphing)+a*damphing;
 
 		up=Normalize(Vect3f(0,0,1)+acceleration);

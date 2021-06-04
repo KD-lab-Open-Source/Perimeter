@@ -8,7 +8,7 @@ class ScaleMgr :
 {
 public:
 	void SetScalable(IScalable* pscalable);
-	//обновляем информацию о масштабе
+	//РѕР±РЅРѕРІР»СЏРµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РјР°СЃС€С‚Р°Р±Рµ
 	void UpdateScaleInfo();
 
 	ScaleMgr(void);
@@ -19,7 +19,7 @@ public:
 	void Hide() const;
 	bool IsVisible() const;
 
-	//возвращает указатель на окно
+	//РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РѕРєРЅРѕ
 	CWnd* getWindow();
 
 	void dockBar(UINT dockBarID);

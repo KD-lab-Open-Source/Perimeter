@@ -152,8 +152,8 @@ public:
 	float get_offset() const { return offset; }
 
 	Vect2f operator()(float t);   // function
-	Vect2f cw_tangent(float t); // касательная по часовой
-	Vect2f inward_normal(float t); // нормаль внутрь
+	Vect2f cw_tangent(float t); // РєР°СЃР°С‚РµР»СЊРЅР°СЏ РїРѕ С‡Р°СЃРѕРІРѕР№
+	Vect2f inward_normal(float t); // РЅРѕСЂРјР°Р»СЊ РІРЅСѓС‚СЂСЊ
 
 	void find_x_min_max(float& t_min, float& x_min, float& t_max, float& x_max);
 	void find_y_min_max(float& t_min, float& y_min, float& t_max, float& y_max);
@@ -162,7 +162,7 @@ public:
 };
 
 ////////////////////////////////////////////////
-//		Регион
+//		Р РµРіРёРѕРЅ
 ////////////////////////////////////////////////
 class Region : public list<ShareHandle<Region> >, public ShareHandleBase
 {
@@ -285,7 +285,7 @@ protected:
 };
 
 //////////////////////////////////////////////////////////
-//	Контейнер регионов
+//	РљРѕРЅС‚РµР№РЅРµСЂ СЂРµРіРёРѕРЅРѕРІ
 //////////////////////////////////////////////////////////
 class RegionDispatcher : public Region
 {
@@ -316,10 +316,10 @@ public:
 	const Column& getEditColumn() const { return edit_column; }
 	const Column& getRasterizeColumn() const { xassert(rasterized_); return rasterize_column; }
 
-	// Ручная работа с регионами
+	// Р СѓС‡РЅР°СЏ СЂР°Р±РѕС‚Р° СЃ СЂРµРіРёРѕРЅР°РјРё
 	void operateByCircle(const Point& pos, float radius, int add) { edit_column.operateByCircle(pos, radius, add); }
 	void vectorize(int minimalRegionSize, bool initSpline);
-	void postOperateAnalyze(); // Перестраивает регионы и растр для быстрого доступа (rasterize_column)
+	void postOperateAnalyze(); // РџРµСЂРµСЃС‚СЂР°РёРІР°РµС‚ СЂРµРіРёРѕРЅС‹ Рё СЂР°СЃС‚СЂ РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РґРѕСЃС‚СѓРїР° (rasterize_column)
 
 	// Debug
 	void write_state(XBuffer& out);
@@ -364,7 +364,7 @@ private:
 };
 
 //////////////////////////////////////////////////////////
-//	Контейнер слоев
+//	РљРѕРЅС‚РµР№РЅРµСЂ СЃР»РѕРµРІ
 //////////////////////////////////////////////////////////
 
 class MetaLockRegionDispatcher
@@ -402,15 +402,15 @@ class RegionMetaDispatcher
 	typedef vector<ShareHandle<RegionDispatcher> >::const_iterator const_iterator;
 	
 	bool multithreaded;
-	mutable int locked;//для assert
+	mutable int locked;//РґР»СЏ assert
 	mutable MTDECLARE(lock);
 public:
 	RegionMetaDispatcher(int layers, int sy,bool multithreaded=true);
 	~RegionMetaDispatcher();
 	void clear() {	checkLocked(); iterator i; FOR_EACH(regions, i) (*i)->clear(); }
 
-	//Lock,Unlock вызываются при любом обращении к данным 
-	//желательно вызывать как можно реже.
+	//Lock,Unlock РІС‹Р·С‹РІР°СЋС‚СЃСЏ РїСЂРё Р»СЋР±РѕРј РѕР±СЂР°С‰РµРЅРёРё Рє РґР°РЅРЅС‹Рј 
+	//Р¶РµР»Р°С‚РµР»СЊРЅРѕ РІС‹Р·С‹РІР°С‚СЊ РєР°Рє РјРѕР¶РЅРѕ СЂРµР¶Рµ.
 	void Lock() const;
 	void Unlock() const;
 	void checkLocked()const{xassert(locked);}
@@ -430,8 +430,8 @@ public:
 
 	void operate(); 
 	void beginLine(const Point& p);
-	void lineto(const Point& p, int permanent); // Рисует линию текущей операцией от текущей позиции
-	void endLine(); // Убирает временную линию
+	void lineto(const Point& p, int permanent); // Р РёСЃСѓРµС‚ Р»РёРЅРёСЋ С‚РµРєСѓС‰РµР№ РѕРїРµСЂР°С†РёРµР№ РѕС‚ С‚РµРєСѓС‰РµР№ РїРѕР·РёС†РёРё
+	void endLine(); // РЈР±РёСЂР°РµС‚ РІСЂРµРјРµРЅРЅСѓСЋ Р»РёРЅРёСЋ
 	void postOperateAnalyze();
 
 	Region* locate(const Vect2i& p);

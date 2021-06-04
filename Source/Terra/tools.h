@@ -91,7 +91,7 @@ extern int curBmpIndex;
 extern void PutTrackPoints(int num_track);
 
 
-//возвращает в указателе на слово следующее слово, а указатель на буфер передвигает
+//РІРѕР·РІСЂР°С‰Р°РµС‚ РІ СѓРєР°Р·Р°С‚РµР»Рµ РЅР° СЃР»РѕРІРѕ СЃР»РµРґСѓСЋС‰РµРµ СЃР»РѕРІРѕ, Р° СѓРєР°Р·Р°С‚РµР»СЊ РЅР° Р±СѓС„РµСЂ РїРµСЂРµРґРІРёРіР°РµС‚
 inline int get_world_in_buf(char*& buf, char* world)
 {
 	int counter=0;
@@ -247,7 +247,7 @@ public:
 				ia++;
 			}
 		}
-		//Эта операция должна быть совмещена с рендером
+		//Р­С‚Р° РѕРїРµСЂР°С†РёСЏ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ СЃРѕРІРјРµС‰РµРЅР° СЃ СЂРµРЅРґРµСЂРѕРј
 		vMap.recalcArea2Grid(vMap.XCYCL(begx-1), vMap.YCYCL(begy-1), vMap.XCYCL(begx + sx+1), vMap.YCYCL(begy + sy+1) );
 		vMap.regRender(vMap.XCYCL(begx-1), vMap.YCYCL(begy-1), vMap.XCYCL(begx + sx+1), vMap.YCYCL(begy + sy+1) );
 
@@ -326,7 +326,7 @@ public:
 			locp++;
 		}
 		else {
-			const int DH_MEAN = 1; //дельта по которой усредняются высоты
+			const int DH_MEAN = 1; //РґРµР»СЊС‚Р° РїРѕ РєРѕС‚РѕСЂРѕР№ СѓСЃСЂРµРґРЅСЏСЋС‚СЃСЏ РІС‹СЃРѕС‚С‹
 			int cx,h,cy,cx_;
 			if(eql){
 				mean = k = 0;
@@ -473,7 +473,7 @@ public:
 		}
 		//regRender(x - rad,y - rad,x + rad,y + rad);
 
-		//Эта операция должна быть совмещена с рендером
+		//Р­С‚Р° РѕРїРµСЂР°С†РёСЏ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ СЃРѕРІРјРµС‰РµРЅР° СЃ СЂРµРЅРґРµСЂРѕРј
 		vMap.recalcArea2Grid(vMap.XCYCL(begx-1), vMap.YCYCL(begy-1), vMap.XCYCL(begx + 2*rad+1), vMap.YCYCL(begy + 2*rad+1) );
 		vMap.regRender(vMap.XCYCL(begx-1), vMap.YCYCL(begy-1), vMap.XCYCL(begx + 2*rad+1), vMap.YCYCL(begy + 2*rad+1) );
 
@@ -539,18 +539,18 @@ public:
 			break;
 
 		case T2TE_ALIGNMENT_TERRAIN_4ZP:
-			if( (vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST ) return 0; //break нет специально
+			if( (vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST ) return 0; //break РЅРµС‚ СЃРїРµС†РёР°Р»СЊРЅРѕ
 			if( dV >0 ){
-				if(v < hAppr){//Воздействие если инструмент добавляет и высота меньше hAppr
+				if(v < hAppr){//Р’РѕР·РґРµР№СЃС‚РІРёРµ РµСЃР»Рё РёРЅСЃС‚СЂСѓРјРµРЅС‚ РґРѕР±Р°РІР»СЏРµС‚ Рё РІС‹СЃРѕС‚Р° РјРµРЅСЊС€Рµ hAppr
 					v+=dV;
 					if(v>hAppr) v=hAppr;
-					if(VD==0){ //если был гео слой
+					if(VD==0){ //РµСЃР»Рё Р±С‹Р» РіРµРѕ СЃР»РѕР№
 						vMap.SurBuf[offB]=vMap.GetGeoType(offB,v);
 						vMap.VxGBuf[offB]=v>>VX_FRACTION;
 						vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
 						//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 					}
-					else{ //если был дам слой
+					else{ //РµСЃР»Рё Р±С‹Р» РґР°Рј СЃР»РѕР№
 						vMap.VxDBuf[offB]=v>>VX_FRACTION;
 						vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
 						//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
@@ -559,10 +559,10 @@ public:
 				}
 			}
 			else {
-				if(v > hAppr){//Воздействие если инструмент убирает и высота больше hAppr
+				if(v > hAppr){//Р’РѕР·РґРµР№СЃС‚РІРёРµ РµСЃР»Рё РёРЅСЃС‚СЂСѓРјРµРЅС‚ СѓР±РёСЂР°РµС‚ Рё РІС‹СЃРѕС‚Р° Р±РѕР»СЊС€Рµ hAppr
 					v+=dV;
 					if(v<hAppr) v=hAppr;
-					if(v <= VG){ //Если получился гео слой
+					if(v <= VG){ //Р•СЃР»Рё РїРѕР»СѓС‡РёР»СЃСЏ РіРµРѕ СЃР»РѕР№
 						//if(v<hAppr) v=hAppr;
 						vMap.SurBuf[offB]=vMap.GetGeoType(offB,v);
 						vMap.VxGBuf[offB]=v>>VX_FRACTION;
@@ -570,7 +570,7 @@ public:
 						//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 						if(VD!=0) vMap.VxDBuf[offB]=0;
 					}
-					else { //если остался дам слой
+					else { //РµСЃР»Рё РѕСЃС‚Р°Р»СЃСЏ РґР°Рј СЃР»РѕР№
 						//if(v<hAppr) v=hAppr;
 						vMap.VxDBuf[offB]=v>>VX_FRACTION;
 						vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
@@ -583,18 +583,18 @@ public:
 			return 0;
 			break;
 		case T2TE_ALIGNMENT_TERRAIN_VARIABLE_H:
-			if( (vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST ) return 0; //break нет специально
+			if( (vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST ) return 0; //break РЅРµС‚ СЃРїРµС†РёР°Р»СЊРЅРѕ
 			if( dV >0 ){
-				if(v < hAppr){//Воздействие если инструмент добавляет и высота меньше hAppr
+				if(v < hAppr){//Р’РѕР·РґРµР№СЃС‚РІРёРµ РµСЃР»Рё РёРЅСЃС‚СЂСѓРјРµРЅС‚ РґРѕР±Р°РІР»СЏРµС‚ Рё РІС‹СЃРѕС‚Р° РјРµРЅСЊС€Рµ hAppr
 					v+=dV;
 					if(v>hAppr) v=hAppr;
-					if(VD==0){ //если был гео слой
+					if(VD==0){ //РµСЃР»Рё Р±С‹Р» РіРµРѕ СЃР»РѕР№
 						vMap.SurBuf[offB]=vMap.GetGeoType(offB,v);
 						vMap.VxGBuf[offB]=v>>VX_FRACTION;
 						vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
 						//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 					}
-					else{ //если был дам слой
+					else{ //РµСЃР»Рё Р±С‹Р» РґР°Рј СЃР»РѕР№
 						vMap.VxDBuf[offB]=v>>VX_FRACTION;
 						vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
 						//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
@@ -603,10 +603,10 @@ public:
 				}
 			}
 			else {
-				if(v > hAppr){//Воздействие если инструмент убирает и высота больше hAppr
+				if(v > hAppr){//Р’РѕР·РґРµР№СЃС‚РІРёРµ РµСЃР»Рё РёРЅСЃС‚СЂСѓРјРµРЅС‚ СѓР±РёСЂР°РµС‚ Рё РІС‹СЃРѕС‚Р° Р±РѕР»СЊС€Рµ hAppr
 					v+=dV;
 					if(v<hAppr) v=hAppr;
-					if(v <= VG){ //Если получился гео слой
+					if(v <= VG){ //Р•СЃР»Рё РїРѕР»СѓС‡РёР»СЃСЏ РіРµРѕ СЃР»РѕР№
 						//if(v<hAppr) v=hAppr;
 						vMap.SurBuf[offB]=vMap.GetGeoType(offB,v);
 						vMap.VxGBuf[offB]=v>>VX_FRACTION;
@@ -614,7 +614,7 @@ public:
 						//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 						if(VD!=0) vMap.VxDBuf[offB]=0;
 					}
-					else { //если остался дам слой
+					else { //РµСЃР»Рё РѕСЃС‚Р°Р»СЃСЏ РґР°Рј СЃР»РѕР№
 						//if(v<hAppr) v=hAppr;
 						vMap.VxDBuf[offB]=v>>VX_FRACTION;
 						vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
@@ -626,27 +626,27 @@ public:
 			return 0;
 			break;
 		case T2TE_CHANGING_TERRAIN_HEIGHT_IFNOTZP:
-			if( (vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST ) return 0; //break нет специально
+			if( (vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST ) return 0; //break РЅРµС‚ СЃРїРµС†РёР°Р»СЊРЅРѕ
 		case T2TE_CHANGING_TERRAIN_HEIGHT:
-			if( dV >0 ){ //инструмент добавляет
+			if( dV >0 ){ //РёРЅСЃС‚СЂСѓРјРµРЅС‚ РґРѕР±Р°РІР»СЏРµС‚
 				v+=dV;
 				if(v>MAX_VX_HEIGHT) v=MAX_VX_HEIGHT;
-				if(VD==0){ //если был гео слой
+				if(VD==0){ //РµСЃР»Рё Р±С‹Р» РіРµРѕ СЃР»РѕР№
 					vMap.SurBuf[offB]=vMap.GetGeoType(offB,v);
 					vMap.VxGBuf[offB]=v>>VX_FRACTION;
 					vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
 					//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 				}
-				else{ //если был дам слой
+				else{ //РµСЃР»Рё Р±С‹Р» РґР°Рј СЃР»РѕР№
 					vMap.VxDBuf[offB]=v>>VX_FRACTION;
 					vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
 					//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 				}
 				return dV;
 			}
-			else { //if(dV <=0)  инструмент убирает 
+			else { //if(dV <=0)  РёРЅСЃС‚СЂСѓРјРµРЅС‚ СѓР±РёСЂР°РµС‚ 
 				v+=dV;
-				if(v <= VG){ //Если получился гео слой
+				if(v <= VG){ //Р•СЃР»Рё РїРѕР»СѓС‡РёР»СЃСЏ РіРµРѕ СЃР»РѕР№
 					if(v< MIN_VX_HEIGHT) v=MIN_VX_HEIGHT;
 					vMap.SurBuf[offB]=vMap.GetGeoType(offB,v);
 					vMap.VxGBuf[offB]=v>>VX_FRACTION;
@@ -654,7 +654,7 @@ public:
 					//vMap.AtrBuf[offB]=(v&VX_FRACTION_MASK) | (vMap.AtrBuf[offB]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 					if(VD!=0) vMap.VxDBuf[offB]=0;
 				}
-				else { //если остался дам слой
+				else { //РµСЃР»Рё РѕСЃС‚Р°Р»СЃСЏ РґР°Рј СЃР»РѕР№
 					if(v< MIN_VX_HEIGHT) v=MIN_VX_HEIGHT;
 					vMap.VxDBuf[offB]=v>>VX_FRACTION;
 					vMap.AtrBuf[offB]=v&VX_FRACTION_MASK;
@@ -732,7 +732,7 @@ inline void clearAtrBaseOfBuildingCorrupt(int x, int y, int rad)
 		int offGB=vMap.offsetGBuf(0,vMap.YCYCLG(j));
 		for(i=begxg; i<=endxg; i++){
 			int curoff=offGB+vMap.XCYCLG(i);
-			if(vMap.GABuf[curoff]&GRIDAT_BUILDING && ((vMap.GABuf[curoff]&GRIDAT_LEVELED)==0) ) continue; //в случае здания только с полностью выровненной поверхноти снимается аттрибут поврежденной
+			if(vMap.GABuf[curoff]&GRIDAT_BUILDING && ((vMap.GABuf[curoff]&GRIDAT_LEVELED)==0) ) continue; //РІ СЃР»СѓС‡Р°Рµ Р·РґР°РЅРёСЏ С‚РѕР»СЊРєРѕ СЃ РїРѕР»РЅРѕСЃС‚СЊСЋ РІС‹СЂРѕРІРЅРµРЅРЅРѕР№ РїРѕРІРµСЂС…РЅРѕС‚Рё СЃРЅРёРјР°РµС‚СЃСЏ Р°С‚С‚СЂРёР±СѓС‚ РїРѕРІСЂРµР¶РґРµРЅРЅРѕР№
 			vMap.GABuf[curoff]&=~GRIDAT_BASE_OF_BUILDING_CORRUPT;
 		}
 	}

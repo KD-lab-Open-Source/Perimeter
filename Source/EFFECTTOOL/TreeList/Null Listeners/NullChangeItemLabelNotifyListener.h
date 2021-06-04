@@ -9,22 +9,22 @@ public:
 	virtual ~NullChangeItemLabelNotifyListener(void);
 
 
-	//! Вызывается перед началам редактирования текста.
+	//! Р’С‹Р·С‹РІР°РµС‚СЃСЏ РїРµСЂРµРґ РЅР°С‡Р°Р»Р°Рј СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ С‚РµРєСЃС‚Р°.
 	virtual bool onBeginLabelEdit(CTreeListCtrl& source, 
 		CHANGE_LABEL_NOTIFY_INFO* pclns);
 
-	//! Уведомляет о том, что редактирование закончено
+	//! РЈРІРµРґРѕРјР»СЏРµС‚ Рѕ С‚РѕРј, С‡С‚Рѕ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ Р·Р°РєРѕРЅС‡РµРЅРѕ
 	virtual bool onEndLabelEdit(CTreeListCtrl& source, 
 		CHANGE_LABEL_NOTIFY_INFO* pclns);
 
-	//! Спрашиваем контрол, которым будет редактироваться текст
+	//! РЎРїСЂР°С€РёРІР°РµРј РєРѕРЅС‚СЂРѕР», РєРѕС‚РѕСЂС‹Рј Р±СѓРґРµС‚ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊСЃСЏ С‚РµРєСЃС‚
 	virtual DWORD onRequestCtrl(CTreeListCtrl& source, 
 		CHANGE_LABEL_NOTIFY_INFO* pclns);
-	//! Уведомление приходит перед тем, как показать контрол редактирования
+	//! РЈРІРµРґРѕРјР»РµРЅРёРµ РїСЂРёС…РѕРґРёС‚ РїРµСЂРµРґ С‚РµРј, РєР°Рє РїРѕРєР°Р·Р°С‚СЊ РєРѕРЅС‚СЂРѕР» СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
 	virtual bool onBeginControl(CTreeListCtrl& source, 
 		CHANGE_LABEL_NOTIFY_INFO* pclns);
 
-	//! Уведомление приходит после закрытия контрола
+	//! РЈРІРµРґРѕРјР»РµРЅРёРµ РїСЂРёС…РѕРґРёС‚ РїРѕСЃР»Рµ Р·Р°РєСЂС‹С‚РёСЏ РєРѕРЅС‚СЂРѕР»Р°
 	virtual void onEndControl(CTreeListCtrl& source, 
 		CHANGE_LABEL_NOTIFY_INFO* pclns);
 };

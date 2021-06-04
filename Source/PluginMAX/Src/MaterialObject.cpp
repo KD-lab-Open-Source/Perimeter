@@ -1,7 +1,7 @@
 #include "SceneMesh.h"
 
 int sMaterialObject::ReadOld(cMeshFile &f)
-{ // для совместимости с предыдущими версиями
+{ // РґР»СЏ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё СЃ РїСЂРµРґС‹РґСѓС‰РёРјРё РІРµСЂСЃРёСЏРјРё
 	int id,time=0;
 	while(!f.eof())
 		switch(f.ReadFieldType())
@@ -96,7 +96,7 @@ int sMaterialObject::Read(cMeshFile &f)
 			case MF_TYPE_NUMBERSUBOBJECT:
 				f.ReadField(&NumberSubObject);
 				break;
-			// для совместимости версий с анимацией материала и без анимации материала
+			// РґР»СЏ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё РІРµСЂСЃРёР№ СЃ Р°РЅРёРјР°С†РёРµР№ РјР°С‚РµСЂРёР°Р»Р° Рё Р±РµР· Р°РЅРёРјР°С†РёРё РјР°С‚РµСЂРёР°Р»Р°
 			case MF_TYPE_AMBIENTCOLOR:
 				AmbientAnim.New(1);
 				f.ReadField(&AmbientAnim[0][1]);

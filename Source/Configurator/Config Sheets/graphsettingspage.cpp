@@ -122,7 +122,7 @@ void GraphSettingsPage::reloadLanguage()
 		UpdateData(FALSE);
 }
 
-//! Сравнивает пресеты с текущим и возвращает константу для combobox'a
+//! РЎСЂР°РІРЅРёРІР°РµС‚ РїСЂРµСЃРµС‚С‹ СЃ С‚РµРєСѓС‰РёРј Рё РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅСЃС‚Р°РЅС‚Сѓ РґР»СЏ combobox'a
 int GraphSettingsPage::comparePresets() const{
 	if (currentGraphSet_ == fastGraphSet_)
 		return FAST_GRAPH_SET;

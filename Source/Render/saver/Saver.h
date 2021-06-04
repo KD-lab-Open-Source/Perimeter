@@ -18,8 +18,8 @@ public:
 
 	bool Init(const char* name);
 
-	void push(const unsigned long id);//Вызывать при начале записи блока
-	void pop();//Вызывать при окончании записи блока
+	void push(const unsigned long id);//Р’С‹Р·С‹РІР°С‚СЊ РїСЂРё РЅР°С‡Р°Р»Рµ Р·Р°РїРёСЃРё Р±Р»РѕРєР°
+	void pop();//Р’С‹Р·С‹РІР°С‚СЊ РїСЂРё РѕРєРѕРЅС‡Р°РЅРёРё Р·Р°РїРёСЃРё Р±Р»РѕРєР°
 
 protected:
 	void push();
@@ -86,7 +86,7 @@ public:
 	bool Load(LPCSTR filename);
 };
 
-///Читает лишь в случае, если rd_cur_pos+sizeof(x)<=ld->size
+///Р§РёС‚Р°РµС‚ Р»РёС€СЊ РІ СЃР»СѓС‡Р°Рµ, РµСЃР»Рё rd_cur_pos+sizeof(x)<=ld->size
 #define RD(x) if(rd_cur_pos+(int)sizeof(x)<=ld->size){memcpy(&x,ld->data+rd_cur_pos,sizeof(x));rd_cur_pos+=sizeof(x);}
 class CLoadIterator
 {

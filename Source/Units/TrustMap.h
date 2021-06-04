@@ -17,9 +17,9 @@ public:
 
 	bool Alive(){ return alive; }
 
-	virtual void Kill();  // Вызывается главным владельцем объекта, после ее вызова гарантированно
-	// работает только Alive(). В производных функциях (которые обязательно должны вызывать базовую) должны очищаться
-	// собственные Shared Links объекта, чтобы исключить образование циклических остатков.
+	virtual void Kill();  // Р’С‹Р·С‹РІР°РµС‚СЃСЏ РіР»Р°РІРЅС‹Рј РІР»Р°РґРµР»СЊС†РµРј РѕР±СЉРµРєС‚Р°, РїРѕСЃР»Рµ РµРµ РІС‹Р·РѕРІР° РіР°СЂР°РЅС‚РёСЂРѕРІР°РЅРЅРѕ
+	// СЂР°Р±РѕС‚Р°РµС‚ С‚РѕР»СЊРєРѕ Alive(). Р’ РїСЂРѕРёР·РІРѕРґРЅС‹С… С„СѓРЅРєС†РёСЏС… (РєРѕС‚РѕСЂС‹Рµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РЅС‹ РІС‹Р·С‹РІР°С‚СЊ Р±Р°Р·РѕРІСѓСЋ) РґРѕР»Р¶РЅС‹ РѕС‡РёС‰Р°С‚СЊСЃСЏ
+	// СЃРѕР±СЃС‚РІРµРЅРЅС‹Рµ Shared Links РѕР±СЉРµРєС‚Р°, С‡С‚РѕР±С‹ РёСЃРєР»СЋС‡РёС‚СЊ РѕР±СЂР°Р·РѕРІР°РЅРёРµ С†РёРєР»РёС‡РµСЃРєРёС… РѕСЃС‚Р°С‚РєРѕРІ.
 
 private:
 	bool alive;
@@ -52,13 +52,13 @@ enum terTerraformType
 	TERRAFORM_TYPE_OTHER=16,
 
 	TERRAFORM_TYPE_GARBAGE=32,
-//Битовая маска - для быстрой проверки в FindNear
+//Р‘РёС‚РѕРІР°СЏ РјР°СЃРєР° - РґР»СЏ Р±С‹СЃС‚СЂРѕР№ РїСЂРѕРІРµСЂРєРё РІ FindNear
 };
 
 struct terTerraformGeneral : GridElementType, SharedObject
 {
 	terTerraformType Type;
-	TerraformList::iterator it_self;//Если Type==TERRAFORM_STATUS_NONE то неиницализирован.
+	TerraformList::iterator it_self;//Р•СЃР»Рё Type==TERRAFORM_STATUS_NONE С‚Рѕ РЅРµРёРЅРёС†Р°Р»РёР·РёСЂРѕРІР°РЅ.
 
 	int PositionX,PositionY;
 
@@ -76,7 +76,7 @@ struct terTerraformGeneral : GridElementType, SharedObject
 
 	void ShowRect(sColor4c color,bool line1,bool line2);
 
-	//Осторожно, модифицирует внутри TerraformsDigFill,TerraformsOther
+	//РћСЃС‚РѕСЂРѕР¶РЅРѕ, РјРѕРґРёС„РёС†РёСЂСѓРµС‚ РІРЅСѓС‚СЂРё TerraformsDigFill,TerraformsOther
 	void Quant(class terTerraformDispatcher* dispatcher,bool first);
 
 	virtual int GetDigPosition(int& cx,int& cy){ return NULL; };
@@ -216,7 +216,7 @@ public:
 
 	void GetWorkAreaStats(int& zero_request,int& zero_complete,int& abyss_request,int& abyss_complete);
 
-	terTrustGrid TrustGrid; // Сетка не содержит мертвых элементов
+	terTrustGrid TrustGrid; // РЎРµС‚РєР° РЅРµ СЃРѕРґРµСЂР¶РёС‚ РјРµСЂС‚РІС‹С… СЌР»РµРјРµРЅС‚РѕРІ
 	terPlayer* GetPlayer(){return Player;}
 private:
 	int Count;

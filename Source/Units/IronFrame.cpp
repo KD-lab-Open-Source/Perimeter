@@ -24,12 +24,12 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeFrame, "Фрейм");
+REGISTER_CLASS(AttributeBase, AttributeFrame, "Р¤СЂРµР№Рј");
 
 AttributeFrame::AttributeFrame()
 {
 	heightMax = 30;
-	accumulatedEnergyInitial = 1; // 0..1, только для вновь установленного фрейма, иначе - в редакторе миссий
+	accumulatedEnergyInitial = 1; // 0..1, С‚РѕР»СЊРєРѕ РґР»СЏ РІРЅРѕРІСЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅРѕРіРѕ С„СЂРµР№РјР°, РёРЅР°С‡Рµ - РІ СЂРµРґР°РєС‚РѕСЂРµ РјРёСЃСЃРёР№
 	repairElementsPerQuant = FrameRepairElementsPerQuant;
 
 	oneStepMovement = 5;

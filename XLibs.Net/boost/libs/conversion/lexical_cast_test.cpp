@@ -2,7 +2,7 @@
 //
 // See http://www.boost.org for most recent version, including documentation.
 //
-// Copyright Terje Slettebø and Kevlin Henney, 2003.
+// Copyright Terje SlettebÑˆ and Kevlin Henney, 2003.
 //
 // Permission to use, copy, modify, and distribute this software for any
 // purpose is hereby granted without fee, provided that this copyright and

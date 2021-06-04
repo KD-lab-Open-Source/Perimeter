@@ -24,7 +24,7 @@ bool ExportMaterial::Export(IGameMaterial * mat)
 		   mat->GetSpecularLevelData()==NULL
 		)
 		{
-			Msg("Error: %s - Неподдерживаемый тип материала\n",mat_name);
+			Msg("Error: %s - РќРµРїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Р№ С‚РёРї РјР°С‚РµСЂРёР°Р»Р°\n",mat_name);
 			return false;
 		}
 

@@ -10,7 +10,7 @@
 int RigidBody::IDs;
 
 SINGLETON_PRM(RigidBodyPrmLibrary, "RigidBodyPrmLibrary", "Scripts\\RigidBodyPrmLibrary") rigidBodyPrmLibrary;
-REGISTER_CLASS(RigidBodyPrm, RigidBodyPrm, "Базовая физика");
+REGISTER_CLASS(RigidBodyPrm, RigidBodyPrm, "Р‘Р°Р·РѕРІР°СЏ С„РёР·РёРєР°");
 
 RigidBody::RigidBody()
 {
@@ -265,7 +265,7 @@ void RigidBody::ground_analysis(float dt)
 	chaos_colliding = chaosCollidingCounter;
 	chaosCollidingFactor_ = chaosCollidingCounter/float((2*Dx + 1)*(2*Dy + 1));
 
-	if(flyingMode()){ // Леталка
+	if(flyingMode()){ // Р›РµС‚Р°Р»РєР°
 		gravicap_mode = 1;
 		ground_colliding = 0;
 		set_debug_color(YELLOW);
@@ -291,7 +291,7 @@ void RigidBody::ground_analysis(float dt)
 		z_axis.normalize();
 	}
 	else{
-		// Находим нормаль
+		// РќР°С…РѕРґРёРј РЅРѕСЂРјР°Р»СЊ
 		float t14 = Dx*Dy;
 		float t13 = 2.0f*Dx+1.0f;
 		float t9 = 2.0f*Dy;
@@ -325,7 +325,7 @@ void RigidBody::ground_analysis(float dt)
 		if((prm().gravicap_enabled && !diggingMode() && 
 		  (fabs(z_axis.x) > prm().gravicap_pitch_roll_threshould || fabs(z_axis.y) > prm().gravicap_pitch_roll_threshould 
 		  || z_max - zc > prm().gravicap_dz_treshould || zc - z_min > prm().gravicap_dz_treshould)) 
-		  || on_upper_position()){ // Гравицапа
+		  || on_upper_position()){ // Р“СЂР°РІРёС†Р°РїР°
 			gravicap_mode = 1;
 			set_debug_color(MAGENTA);
 	
@@ -347,7 +347,7 @@ void RigidBody::ground_analysis(float dt)
 			angular_acceleration.scaleAdd(rotation().ycol(), gravicap_oscillator_roll(dt, average_forward_velocity));
 			z_axis = Vect3f::K;
 		}
-		else{ // Наземный режим
+		else{ // РќР°Р·РµРјРЅС‹Р№ СЂРµР¶РёРј
 			gravicap_mode = 0;
 			ground_colliding = 1;
 			set_debug_color(CYAN);
@@ -377,7 +377,7 @@ void RigidBody::ground_analysis(float dt)
 		general_velocity_factor = 1;
 	}
 
-	// Устраняет ступор перед вертикальными стенками
+	// РЈСЃС‚СЂР°РЅСЏРµС‚ СЃС‚СѓРїРѕСЂ РїРµСЂРµРґ РІРµСЂС‚РёРєР°Р»СЊРЅС‹РјРё СЃС‚РµРЅРєР°РјРё
 	float norm_xy = sqrtf(sqr(velocity().x) + sqr(velocity().y));
 	if((norm_xy < prm().minimal_velocity_xy || gravicap_mode && dz_max > deep_penetration_dz) && norm_xy > FLT_EPS){
 		float k = prm().minimal_velocity_xy*general_velocity_factor/norm_xy;
@@ -414,7 +414,7 @@ void RigidBody::apply_control_force()
 	float v_local_y = dot(rotation().ycol(), velocity());
 	average(average_forward_velocity, v_local_y, average_forward_velocity_tau);
 
-	// Коэффициент скорости - замедление перед последней точкой
+	// РљРѕСЌС„С„РёС†РёРµРЅС‚ СЃРєРѕСЂРѕСЃС‚Рё - Р·Р°РјРµРґР»РµРЅРёРµ РїРµСЂРµРґ РїРѕСЃР»РµРґРЅРµР№ С‚РѕС‡РєРѕР№
 	general_velocity_factor = 1;
 	switch(way_points.size())
 	{
@@ -464,7 +464,7 @@ void RigidBody::apply_control_force_isotropic()
 	float v_forward = Vect2f(velocity()).norm();
 	average(average_forward_velocity, v_forward, average_forward_velocity_tau);
 
-	// Коэффициент скорости - замедление перед последней точкой
+	// РљРѕСЌС„С„РёС†РёРµРЅС‚ СЃРєРѕСЂРѕСЃС‚Рё - Р·Р°РјРµРґР»РµРЅРёРµ РїРµСЂРµРґ РїРѕСЃР»РµРґРЅРµР№ С‚РѕС‡РєРѕР№
 	general_velocity_factor = 1;
 	switch(way_points.size())
 	{
@@ -756,7 +756,7 @@ bool RigidBody::is_point_reached(const Vect2f& point) const
 
 void RigidBody::setBound(const Vect3f box_min_, const Vect3f box_max_)
 {
-	ID = ++IDs; // используется как ключ при хешировании polytree.feature
+	ID = ++IDs; // РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєР°Рє РєР»СЋС‡ РїСЂРё С…РµС€РёСЂРѕРІР°РЅРёРё polytree.feature
 	box_min = Vect3f(min(box_min_.x, -prm().radius_min), min(box_min_.y, -prm().radius_min), box_min_.z);
 	box_max = Vect3f(max(box_max_.x, prm().radius_min), max(box_max_.y, prm().radius_min), box_max_.z);
 	radius_ = max(box_max.distance(box_min)/2, prm().radius_min);

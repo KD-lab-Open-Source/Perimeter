@@ -1,4 +1,4 @@
-// © Copyright Jeremy Siek 2002. 
+// Â© Copyright Jeremy Siek 2002. 
 
 // Permission to copy, use, modify, sell and distribute this software
 // is granted provided this copyright notice appears in all

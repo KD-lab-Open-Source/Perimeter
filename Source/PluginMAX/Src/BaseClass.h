@@ -257,7 +257,7 @@ public:
 		return size; 
 	}
 	inline void Detach(int number)
-	{ // ищет указатель элемент Base в списке и удаляет его из списка
+	{ // РёС‰РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ СЌР»РµРјРµРЅС‚ Base РІ СЃРїРёСЃРєРµ Рё СѓРґР°Р»СЏРµС‚ РµРіРѕ РёР· СЃРїРёСЃРєР°
 		if(number>=length()) return;
 		if(length()==1) { Delete(); return; }
 		length()--;
@@ -315,12 +315,12 @@ public:
 		return 0;
 	}
 	inline void Attach(cBase *base)
-	{ // добавляет указатель в конец списка
+	{ // РґРѕР±Р°РІР»СЏРµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РІ РєРѕРЅРµС† СЃРїРёСЃРєР°
 		Resize(length()+BASEDYNARRAY_DSIZE);
 		Base[length()-1]=base;
 	}
 	inline void Detach(cBase *base)
-	{ // ищет указатель элемент Base в списке и удаляет его из списка
+	{ // РёС‰РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ СЌР»РµРјРµРЅС‚ Base РІ СЃРїРёСЃРєРµ Рё СѓРґР°Р»СЏРµС‚ РµРіРѕ РёР· СЃРїРёСЃРєР°
 		for(int number=0;number<length();number++)
 			if(Base[number]==base) 
 				break;
@@ -330,7 +330,7 @@ public:
 		Resize(length()-1);
 	}
 	inline void Delete(int number)
-	{ // удаляет из списка элемент с номером number, и удаляет сам эелемент с номером
+	{ // СѓРґР°Р»СЏРµС‚ РёР· СЃРїРёСЃРєР° СЌР»РµРјРµРЅС‚ СЃ РЅРѕРјРµСЂРѕРј number, Рё СѓРґР°Р»СЏРµС‚ СЃР°Рј СЌРµР»РµРјРµРЅС‚ СЃ РЅРѕРјРµСЂРѕРј
 		if(Base[number]) { delete Base[number]; Base[number]=0; }
 		memcpy(&Base[number],&Base[number+1],(length()-number-1)*sizeof(cBase*));
 		Resize(length()-1);

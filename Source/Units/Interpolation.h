@@ -9,15 +9,15 @@ class terAnimationPhaseIteratorType
 public:
 	terAnimationPhaseIteratorType();
 
-	//period - задаётся в милисекундах
-	// в случае period<terLogicTimePeriod через квант перескакивает на конец цепочки.
+	//period - Р·Р°РґР°С‘С‚СЃСЏ РІ РјРёР»РёСЃРµРєСѓРЅРґР°С…
+	// РІ СЃР»СѓС‡Р°Рµ period<terLogicTimePeriod С‡РµСЂРµР· РєРІР°РЅС‚ РїРµСЂРµСЃРєР°РєРёРІР°РµС‚ РЅР° РєРѕРЅРµС† С†РµРїРѕС‡РєРё.
 	void startPeriod(float phase, float period, bool cycling);
 	void startPhase(float phase, float delta_phase, bool cycling); 
 
 	void restart() { stopped_ = false; }
 	void setPeriod(float period);
 	void setPhase(float phase) { phase_ = phase; }
-	void setEndPhase(float endPhase, bool cycled); // устанавливает фазу, на которой остановится анимация, ближайшую с учетм/без зацикливания
+	void setEndPhase(float endPhase, bool cycled); // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ С„Р°Р·Сѓ, РЅР° РєРѕС‚РѕСЂРѕР№ РѕСЃС‚Р°РЅРѕРІРёС‚СЃСЏ Р°РЅРёРјР°С†РёСЏ, Р±Р»РёР¶Р°Р№С€СѓСЋ СЃ СѓС‡РµС‚Рј/Р±РµР· Р·Р°С†РёРєР»РёРІР°РЅРёСЏ
 	
 	int Quant();
 	bool isEnd() const { return stopped_; };
@@ -162,8 +162,8 @@ public:
 	}
 	
 	bool fresh() const { return update_; }
-	const T& x0() const { return x_[0]; } //Устаревшее роложение
-	const T& x1() const { return x_[1]; } //Положение на текущий логический квант
+	const T& x0() const { return x_[0]; } //РЈСЃС‚Р°СЂРµРІС€РµРµ СЂРѕР»РѕР¶РµРЅРёРµ
+	const T& x1() const { return x_[1]; } //РџРѕР»РѕР¶РµРЅРёРµ РЅР° С‚РµРєСѓС‰РёР№ Р»РѕРіРёС‡РµСЃРєРёР№ РєРІР°РЅС‚
 
 	void operator()(cIUnkObj* cur)
 	{ 
@@ -354,16 +354,16 @@ public:
 	virtual void SetChain(const char* name);
 
 	void setChain(ChainID chain);
-	void requestChain(ChainID requestedChain, float phase = -1); // Проиграть цепочку от текущей с учетом графа
+	void requestChain(ChainID requestedChain, float phase = -1); // РџСЂРѕРёРіСЂР°С‚СЊ С†РµРїРѕС‡РєСѓ РѕС‚ С‚РµРєСѓС‰РµР№ СЃ СѓС‡РµС‚РѕРј РіСЂР°С„Р°
 	void requestChainNode(ChainNodeID requestedNode);
-	void requestPhase(float phase); // Проиграть текущую цепочку до phase по кратчайшему, потом остановиться, выставив requestDone()
-	bool requestDone() const { return requestDone_; } // В конце запрошенной цепочки для зацикленных и незацикленных цепочек одинаково
-	bool isEnd() const {return phaseIterator_.isEnd();}// В конце незацикленной цепочки. Если выставил setChain и хочешь узнать, кончилась ли цепочка.
-	ChainID chainID() const { return currentChain() ? currentChain()->chainID : CHAIN_NONE; } // Текущая цепочка
-	ChainID requestedChainID() const { return !chainPath_.empty() ? chainPath_.front()->chainID : chainID(); } // Запрошенная цепочка
+	void requestPhase(float phase); // РџСЂРѕРёРіСЂР°С‚СЊ С‚РµРєСѓС‰СѓСЋ С†РµРїРѕС‡РєСѓ РґРѕ phase РїРѕ РєСЂР°С‚С‡Р°Р№С€РµРјСѓ, РїРѕС‚РѕРј РѕСЃС‚Р°РЅРѕРІРёС‚СЊСЃСЏ, РІС‹СЃС‚Р°РІРёРІ requestDone()
+	bool requestDone() const { return requestDone_; } // Р’ РєРѕРЅС†Рµ Р·Р°РїСЂРѕС€РµРЅРЅРѕР№ С†РµРїРѕС‡РєРё РґР»СЏ Р·Р°С†РёРєР»РµРЅРЅС‹С… Рё РЅРµР·Р°С†РёРєР»РµРЅРЅС‹С… С†РµРїРѕС‡РµРє РѕРґРёРЅР°РєРѕРІРѕ
+	bool isEnd() const {return phaseIterator_.isEnd();}// Р’ РєРѕРЅС†Рµ РЅРµР·Р°С†РёРєР»РµРЅРЅРѕР№ С†РµРїРѕС‡РєРё. Р•СЃР»Рё РІС‹СЃС‚Р°РІРёР» setChain Рё С…РѕС‡РµС€СЊ СѓР·РЅР°С‚СЊ, РєРѕРЅС‡РёР»Р°СЃСЊ Р»Рё С†РµРїРѕС‡РєР°.
+	ChainID chainID() const { return currentChain() ? currentChain()->chainID : CHAIN_NONE; } // РўРµРєСѓС‰Р°СЏ С†РµРїРѕС‡РєР°
+	ChainID requestedChainID() const { return !chainPath_.empty() ? chainPath_.front()->chainID : chainID(); } // Р—Р°РїСЂРѕС€РµРЅРЅР°СЏ С†РµРїРѕС‡РєР°
 	const AnimationChain* currentChain() const { return currentChain_; }
 
-	void setAnimationSpeed(float speed); // модуляция скорости анимации (..1..)
+	void setAnimationSpeed(float speed); // РјРѕРґСѓР»СЏС†РёСЏ СЃРєРѕСЂРѕСЃС‚Рё Р°РЅРёРјР°С†РёРё (..1..)
 	void setPhase(float phase) 
 	{ 
 		phase_ = phase; 
@@ -383,7 +383,7 @@ public:
 
 protected:
 	InterpolatorPhase phase_;
-	friend class terInterpolationReal;// Должно потом исчезнуть
+	friend class terInterpolationReal;// Р”РѕР»Р¶РЅРѕ РїРѕС‚РѕРј РёСЃС‡РµР·РЅСѓС‚СЊ
 private:
 	cObjectNode* visualObject_;
 	
@@ -417,8 +417,8 @@ public:
 	
 	virtual void setPose(const Se3f& pose)=0;
 	const MatXf& matrix() const { return matrix_; }
-	virtual const Vect3f& pos0() const =0; //Устаревшее роложение
-	virtual const Vect3f& pos1() const =0; //Положение на текущий логический квант
+	virtual const Vect3f& pos0() const =0; //РЈСЃС‚Р°СЂРµРІС€РµРµ СЂРѕР»РѕР¶РµРЅРёРµ
+	virtual const Vect3f& pos1() const =0; //РџРѕР»РѕР¶РµРЅРёРµ РЅР° С‚РµРєСѓС‰РёР№ Р»РѕРіРёС‡РµСЃРєРёР№ РєРІР°РЅС‚
 
 	virtual NodeController* animationGroup(AnimationGroupID groupID);
 

@@ -24,7 +24,7 @@ bool MakeLinkActive::run(TEBaseWorkMode* pmode,
 						int linkIndex, 
 						int linkOwnerIndex)
 {
-	//! åñëè óæå àêòèâíûé, ...
+	//! ÐµÑÐ»Ð¸ ÑƒÐ¶Ðµ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹, ...
 	if (linkOwnerIndex == pmode->getLinkOwnerIndex()
 		&&linkIndex == pmode->getActiveLinkIndex()) 
 		return false;

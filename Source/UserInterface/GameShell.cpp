@@ -274,7 +274,7 @@ windowClientSize_(1024, 768)
 			_bCursorVisible = 0;
 //			_shellIconManager.GetWnd(SQSH_MM_SPLASH1)->Show(1);
 //			_shellIconManager.SetModalWnd(SQSH_MM_SPLASH1);
-			_shellIconManager.AddDynamicHandler(showReels, CBCODE_QUANT); //ждать пока не слетится
+			_shellIconManager.AddDynamicHandler(showReels, CBCODE_QUANT); //Р¶РґР°С‚СЊ РїРѕРєР° РЅРµ СЃР»РµС‚РёС‚СЃСЏ
 		} else {
 			startWithScreen(SQSH_MM_START_SCR);
 		}
@@ -1151,7 +1151,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 			size_t pos = saveName.rfind("RESOURCE\\");
 			if(pos != string::npos)
 				saveName.erase(0, pos);
-			//Несколько кривой участок кода, не будет работать с HT
+			//РќРµСЃРєРѕР»СЊРєРѕ РєСЂРёРІРѕР№ СѓС‡Р°СЃС‚РѕРє РєРѕРґР°, РЅРµ Р±СѓРґРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ СЃ HT
 			HTManager::instance()->GameClose();
 			HTManager::instance()->GameStart(MissionDescription(saveName.c_str()));
 		}
@@ -1566,7 +1566,7 @@ void GameShell::ControlUnpressed(int key)
 				if(_shellIconManager.IsInterface())
 					_shellCursorManager.ShowCursor();
 				
-				//восстановить положение курсора
+				//РІРѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ РїРѕР»РѕР¶РµРЅРёРµ РєСѓСЂСЃРѕСЂР°
 				//Vect2f v;
 				//ConvertWorldToScreen(_MapMoveStartPoint, v);
 				//SetCursorPos(v.x, v.y);
@@ -1923,14 +1923,14 @@ void GameShell::CameraQuant()
 {
 	if(!cameraMouseTrack && cameraCursorInWindow && !_bMenuMode && 
 		!cameraMouseShift && !cameraMouseZoom && !isScriptReelEnabled()){
-		//сдвиг когда курсор у края окна
+		//СЃРґРІРёРі РєРѕРіРґР° РєСѓСЂСЃРѕСЂ Сѓ РєСЂР°СЏ РѕРєРЅР°
 		//if(!CursorOverInterface)
 		terCamera->mouseQuant(mousePosition());
 	}
 	
 	MousePositionLock = 0;
 	
-	//поворот вслед за мышью
+	//РїРѕРІРѕСЂРѕС‚ РІСЃР»РµРґ Р·Р° РјС‹С€СЊСЋ
 	if(cameraMouseTrack && MouseMoveFlag){
 		terCamera->tilt(mousePositionDelta());
 		
@@ -1938,7 +1938,7 @@ void GameShell::CameraQuant()
 		setCursorPosition(Vect2f::ZERO);
 	}
 	
-	//смещение вслед за мышью
+	//СЃРјРµС‰РµРЅРёРµ РІСЃР»РµРґ Р·Р° РјС‹С€СЊСЋ
 	if(cameraMouseShift && MouseMoveFlag){
 		terCamera->shift(mousePositionDelta());
 		setCursorPosition(mapMoveStartPoint());
@@ -2017,7 +2017,7 @@ void CShellLogicDispatcher::init()
 	
 	initFonts();
 
-	//камера и сцена для моделей в окошке
+	//РєР°РјРµСЂР° Рё СЃС†РµРЅР° РґР»СЏ РјРѕРґРµР»РµР№ РІ РѕРєРѕС€РєРµ
 	m_hScene = terVisGeneric->CreateScene();
 
 	m_hLight = m_hScene->CreateLight(ATTRLIGHT_DIRECTION);
@@ -2026,7 +2026,7 @@ void CShellLogicDispatcher::init()
 	m_hLight->SetDirection(Vect3f(0,0,-1));
 
 	m_hCamera = m_hScene->CreateCamera();
-	m_hCamera->SetAttr(ATTRCAMERA_PERSPECTIVE); // перспектива
+	m_hCamera->SetAttr(ATTRCAMERA_PERSPECTIVE); // РїРµСЂСЃРїРµРєС‚РёРІР°
 
 	MatXf CameraMatrix;
 	Identity(CameraMatrix);
@@ -2045,14 +2045,14 @@ void CShellLogicDispatcher::init()
 	float _small_camera_rect_dx  = small_camera_rect_dx/2.f;
 	float _small_camera_rect_dy  = small_camera_rect_dy/2.f;
 
-	m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
+	m_hCamera->SetFrustum(                          // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РїРёСЂР°РјРёРґР° РІРёРґРёРјРѕСЃС‚Рё
 		&Vect2f(_small_camera_x + _small_camera_rect_dx, 
-				_small_camera_y + _small_camera_rect_dy), // центр камеры
+				_small_camera_y + _small_camera_rect_dy), // С†РµРЅС‚СЂ РєР°РјРµСЂС‹
 
 		&sRectangle4f(-_small_camera_rect_dx, -_small_camera_rect_dy, 
-						_small_camera_rect_dx, _small_camera_rect_dy),// видимая область камеры
-		&Vect2f(1.0f, 1.0f),                        // фокус камеры
-		&Vect2f(30.0f, 10000.0f)                    // ближайший и дальний z-плоскости отсечения
+						_small_camera_rect_dx, _small_camera_rect_dy),// РІРёРґРёРјР°СЏ РѕР±Р»Р°СЃС‚СЊ РєР°РјРµСЂС‹
+		&Vect2f(1.0f, 1.0f),                        // С„РѕРєСѓСЃ РєР°РјРµСЂС‹
+		&Vect2f(30.0f, 10000.0f)                    // Р±Р»РёР¶Р°Р№С€РёР№ Рё РґР°Р»СЊРЅРёР№ z-РїР»РѕСЃРєРѕСЃС‚Рё РѕС‚СЃРµС‡РµРЅРёСЏ
 		);
 
 	m_hCamera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
@@ -2488,15 +2488,15 @@ void GameShell::editParameters()
 	bool reloadParameters = false;
 	savePrm().manualData.zeroLayerHeight = vMap.hZeroPlast;
     
-	const char* header = "Заголовок миссии";
-	const char* mission = "Миссия";
-	const char* missionAll = "Миссия все данные";
+	const char* header = "Р—Р°РіРѕР»РѕРІРѕРє РјРёСЃСЃРёРё";
+	const char* mission = "РњРёСЃСЃРёСЏ";
+	const char* missionAll = "РњРёСЃСЃРёСЏ РІСЃРµ РґР°РЅРЅС‹Рµ";
 	const char* debugPrm = "Debug.prm";
-	const char* global = "Глобальные параметры";
-	const char* attribute = "Атрибуты";
-	const char* sounds = "Звуки";
-	const char* interface_ = "Интерфейс";
-	const char* physics = "Физические параметры";
+	const char* global = "Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹";
+	const char* attribute = "РђС‚СЂРёР±СѓС‚С‹";
+	const char* sounds = "Р—РІСѓРєРё";
+	const char* interface_ = "РРЅС‚РµСЂС„РµР№СЃ";
+	const char* physics = "Р¤РёР·РёС‡РµСЃРєРёРµ РїР°СЂР°РјРµС‚СЂС‹";
 	const char* separator = "--------------";
 
 	vector<const char*> items;

@@ -3,42 +3,42 @@
 enum eKindUnknownClass
 {	// unsigned short
 	KIND_NULL				=		0,
-//	1	..	7	- интерфейсы классов
-	KIND_UI_VISGENERIC		=		1,				// базовая библиотека визуализации
-	KIND_UI_RENDERDEVICE	=		2,				// интерфейс для работы с растеризацией
-//	8	..	15	- классы для работы с текстурами
-//	16	..	23	- классы-объекты наследованы от cIUnkObj
+//	1	..	7	- РёРЅС‚РµСЂС„РµР№СЃС‹ РєР»Р°СЃСЃРѕРІ
+	KIND_UI_VISGENERIC		=		1,				// Р±Р°Р·РѕРІР°СЏ Р±РёР±Р»РёРѕС‚РµРєР° РІРёР·СѓР°Р»РёР·Р°С†РёРё
+	KIND_UI_RENDERDEVICE	=		2,				// РёРЅС‚РµСЂС„РµР№СЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ СЂР°СЃС‚РµСЂРёР·Р°С†РёРµР№
+//	8	..	15	- РєР»Р°СЃСЃС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ С‚РµРєСЃС‚СѓСЂР°РјРё
+//	16	..	23	- РєР»Р°СЃСЃС‹-РѕР±СЉРµРєС‚С‹ РЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cIUnkObj
 	KIND_OBJ_NODE_ROOT		=		15,
-	KIND_OBJ_NODE			=		16,				// cObjectNode - узел-группа объектов 
-	KIND_OBJMESH			=		18,				// cObjMesh - класс объектa
-	KIND_LIGHT				=		19,				// cUnkLight - источники света
-	KIND_POLYGRID			=		20,				// cPolyGrid - регулярная полигональная сетка
-	KIND_SPRITE2D			=		21,				// cSprite2d - двумерный экранный спрайт
-	KIND_TILEMAP			=		22,				// cTileMap -  карта мира
-	KIND_SPRITE_NODE		=		23,				// cSpriteNode - node-спрайт
-	// классы спецэффектов высокого уровня реализации
-	KIND_PIPE				=		24,				// cPipe - класс "водопровод" - связанные линии
-	KIND_GLOBALFOG			=		27,				// cGlobalFog - класс глобального тумана
-	KIND_OBJLIGHT			=		28,				// cObjLight -  класс-подобъект источника света
-	KIND_ENVGRID			=		29,				// cEnvGrid -  класс полигональная карта горизонта
-	KIND_EXTERNALOBJ		=		30,				// cExternalObj -  класс внешних вызовов
-	KIND_FLARE				=		31,				// cFlare -  класс линзовых эффектов
-	KIND_PARTICLE			=		32,				// cParticle -  класс эффектов системы частиц
-	KIND_FONT				=		34,				// cFont - класс фонт
-	KIND_LINE3D				=		39,				// cLine3d - Эффект линий
-//	50	..	63	- прочие классы 
-	KIND_SCENE				=		50,				// cScene - класс сцены 
-	KIND_CAMERA				=		51,				// cCamera - класс камера
-	KIND_ARRAYCAMERA		=		52,				// cUnkClassDynArrayPointer - класс накопитель cCamera
-	KIND_ARRAYSCENE			=		53,				// cUnkClassDynArrayPointer - класс накопитель cScene
-	KIND_DRAWNODE			=		54,				// cDrawNode - древовидный класс списоков растеризации
-	KIND_TEXTURE			=		55,				// cTexture - класс текстур
-	KIND_LOGIC_OBJ			=		56,				// класс логических объектов
-	KIND_LOGIC_BOUND		=		57,				// класс логических боунд-объектов 
-	KIND_FORCEFIELD			=		58,				// класс диспетчер регионов FieldDispatcher
-	KIND_ELASTICSPHERE		=		59,				// класс для работы с ElasticSphere
-	KIND_ELASTICLINK		=		60,				// класс для работы с OscillatingSphere
-//	64	..	128	- классы библиотеки
+	KIND_OBJ_NODE			=		16,				// cObjectNode - СѓР·РµР»-РіСЂСѓРїРїР° РѕР±СЉРµРєС‚РѕРІ 
+	KIND_OBJMESH			=		18,				// cObjMesh - РєР»Р°СЃСЃ РѕР±СЉРµРєС‚a
+	KIND_LIGHT				=		19,				// cUnkLight - РёСЃС‚РѕС‡РЅРёРєРё СЃРІРµС‚Р°
+	KIND_POLYGRID			=		20,				// cPolyGrid - СЂРµРіСѓР»СЏСЂРЅР°СЏ РїРѕР»РёРіРѕРЅР°Р»СЊРЅР°СЏ СЃРµС‚РєР°
+	KIND_SPRITE2D			=		21,				// cSprite2d - РґРІСѓРјРµСЂРЅС‹Р№ СЌРєСЂР°РЅРЅС‹Р№ СЃРїСЂР°Р№С‚
+	KIND_TILEMAP			=		22,				// cTileMap -  РєР°СЂС‚Р° РјРёСЂР°
+	KIND_SPRITE_NODE		=		23,				// cSpriteNode - node-СЃРїСЂР°Р№С‚
+	// РєР»Р°СЃСЃС‹ СЃРїРµС†СЌС„С„РµРєС‚РѕРІ РІС‹СЃРѕРєРѕРіРѕ СѓСЂРѕРІРЅСЏ СЂРµР°Р»РёР·Р°С†РёРё
+	KIND_PIPE				=		24,				// cPipe - РєР»Р°СЃСЃ "РІРѕРґРѕРїСЂРѕРІРѕРґ" - СЃРІСЏР·Р°РЅРЅС‹Рµ Р»РёРЅРёРё
+	KIND_GLOBALFOG			=		27,				// cGlobalFog - РєР»Р°СЃСЃ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С‚СѓРјР°РЅР°
+	KIND_OBJLIGHT			=		28,				// cObjLight -  РєР»Р°СЃСЃ-РїРѕРґРѕР±СЉРµРєС‚ РёСЃС‚РѕС‡РЅРёРєР° СЃРІРµС‚Р°
+	KIND_ENVGRID			=		29,				// cEnvGrid -  РєР»Р°СЃСЃ РїРѕР»РёРіРѕРЅР°Р»СЊРЅР°СЏ РєР°СЂС‚Р° РіРѕСЂРёР·РѕРЅС‚Р°
+	KIND_EXTERNALOBJ		=		30,				// cExternalObj -  РєР»Р°СЃСЃ РІРЅРµС€РЅРёС… РІС‹Р·РѕРІРѕРІ
+	KIND_FLARE				=		31,				// cFlare -  РєР»Р°СЃСЃ Р»РёРЅР·РѕРІС‹С… СЌС„С„РµРєС‚РѕРІ
+	KIND_PARTICLE			=		32,				// cParticle -  РєР»Р°СЃСЃ СЌС„С„РµРєС‚РѕРІ СЃРёСЃС‚РµРјС‹ С‡Р°СЃС‚РёС†
+	KIND_FONT				=		34,				// cFont - РєР»Р°СЃСЃ С„РѕРЅС‚
+	KIND_LINE3D				=		39,				// cLine3d - Р­С„С„РµРєС‚ Р»РёРЅРёР№
+//	50	..	63	- РїСЂРѕС‡РёРµ РєР»Р°СЃСЃС‹ 
+	KIND_SCENE				=		50,				// cScene - РєР»Р°СЃСЃ СЃС†РµРЅС‹ 
+	KIND_CAMERA				=		51,				// cCamera - РєР»Р°СЃСЃ РєР°РјРµСЂР°
+	KIND_ARRAYCAMERA		=		52,				// cUnkClassDynArrayPointer - РєР»Р°СЃСЃ РЅР°РєРѕРїРёС‚РµР»СЊ cCamera
+	KIND_ARRAYSCENE			=		53,				// cUnkClassDynArrayPointer - РєР»Р°СЃСЃ РЅР°РєРѕРїРёС‚РµР»СЊ cScene
+	KIND_DRAWNODE			=		54,				// cDrawNode - РґСЂРµРІРѕРІРёРґРЅС‹Р№ РєР»Р°СЃСЃ СЃРїРёСЃРѕРєРѕРІ СЂР°СЃС‚РµСЂРёР·Р°С†РёРё
+	KIND_TEXTURE			=		55,				// cTexture - РєР»Р°СЃСЃ С‚РµРєСЃС‚СѓСЂ
+	KIND_LOGIC_OBJ			=		56,				// РєР»Р°СЃСЃ Р»РѕРіРёС‡РµСЃРєРёС… РѕР±СЉРµРєС‚РѕРІ
+	KIND_LOGIC_BOUND		=		57,				// РєР»Р°СЃСЃ Р»РѕРіРёС‡РµСЃРєРёС… Р±РѕСѓРЅРґ-РѕР±СЉРµРєС‚РѕРІ 
+	KIND_FORCEFIELD			=		58,				// РєР»Р°СЃСЃ РґРёСЃРїРµС‚С‡РµСЂ СЂРµРіРёРѕРЅРѕРІ FieldDispatcher
+	KIND_ELASTICSPHERE		=		59,				// РєР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ ElasticSphere
+	KIND_ELASTICLINK		=		60,				// РєР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ OscillatingSphere
+//	64	..	128	- РєР»Р°СЃСЃС‹ Р±РёР±Р»РёРѕС‚РµРєРё
 	KIND_LIB_TEXTURE		=		64,				// cTextureLibrary 
 	KIND_LIB_OBJECT			=		65,				// cObjectLibrary
 	KIND_LIB_LOGIC			=		67,				// cLogicLibrary
@@ -72,8 +72,8 @@ public:
 
 #endif C_CHECK_DELETE
 
-// базовый класс для всех
-// любой класс наследованный как TYPE_CLASS_POINTER, должен уметь удаляться по обращению к Release()
+// Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РІСЃРµС…
+// Р»СЋР±РѕР№ РєР»Р°СЃСЃ РЅР°СЃР»РµРґРѕРІР°РЅРЅС‹Р№ РєР°Рє TYPE_CLASS_POINTER, РґРѕР»Р¶РµРЅ СѓРјРµС‚СЊ СѓРґР°Р»СЏС‚СЊСЃСЏ РїРѕ РѕР±СЂР°С‰РµРЅРёСЋ Рє Release()
 class cUnknownClass
 #ifdef C_CHECK_DELETE
 : public cCheckDelete

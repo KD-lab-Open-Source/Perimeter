@@ -110,7 +110,7 @@ void MutationProcess::start(const Vect3f& position)
 	phase_time = scale_time();
 	
 	int time = 0;
-	for(int j = 0; j <= MutationPhaseMax; j++) // ïàóçà ïîñëå ïðîöåññà
+	for(int j = 0; j <= MutationPhaseMax; j++) // Ð¿Ð°ÑƒÐ·Ð° Ð¿Ð¾ÑÐ»Ðµ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ°
 		time += mutation_times[j];
 	logic_timer.start(time);
 

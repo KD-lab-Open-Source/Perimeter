@@ -237,7 +237,7 @@ void AIPlayer::FrameQuant()
 void AIPlayer::MoveBrigadiersToPoint(const Vect2f& pos,float radius)
 {
 //	return;
-	//Даёт указание list двигаться в точку не доезжая radius до pos 
+	//Р”Р°С‘С‚ СѓРєР°Р·Р°РЅРёРµ list РґРІРёРіР°С‚СЊСЃСЏ РІ С‚РѕС‡РєСѓ РЅРµ РґРѕРµР·Р¶Р°СЏ radius РґРѕ pos 
 	Vect2f dir = pos - GetBrigadierCenter();
 	dir /= FLT_EPS + dir.norm();
 	Vect2f target = pos - dir*radius;

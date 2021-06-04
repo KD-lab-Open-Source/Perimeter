@@ -5,9 +5,9 @@
 	file path:	d:\Projects\Quest\QuestEditor
 	file base:	ITEDrawer
 	file ext:	h
-	Powerd by:	Илюха
+	Powerd by:	РР»СЋС…Р°
 	
-	purpose:	Базовый интерфейс для отрисовщика
+	purpose:	Р‘Р°Р·РѕРІС‹Р№ РёРЅС‚РµСЂС„РµР№СЃ РґР»СЏ РѕС‚СЂРёСЃРѕРІС‰РёРєР°
 *********************************************************************/
 
 #pragma once

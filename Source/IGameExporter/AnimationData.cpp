@@ -96,7 +96,7 @@ void AnimationData::LoadGroupOne(CLoadDirectory rd)
 				if(node)
 					ag.groups.push_back(node);
 				else
-					Msg("Не могу найти ноду %s. Она исчезнет из анимационной группы %s\n",node_name.c_str(),ag.name.c_str());
+					Msg("РќРµ РјРѕРіСѓ РЅР°Р№С‚Рё РЅРѕРґСѓ %s. РћРЅР° РёСЃС‡РµР·РЅРµС‚ РёР· Р°РЅРёРјР°С†РёРѕРЅРЅРѕР№ РіСЂСѓРїРїС‹ %s\n",node_name.c_str(),ag.name.c_str());
 			}
 		}
 		break;
@@ -109,7 +109,7 @@ void AnimationData::SaveChain(CSaver& s)
 {
 	if(animation_chain.empty())
 	{
-		Msg("Error: Нет ни одной анимационной цепочки.");
+		Msg("Error: РќРµС‚ РЅРё РѕРґРЅРѕР№ Р°РЅРёРјР°С†РёРѕРЅРЅРѕР№ С†РµРїРѕС‡РєРё.");
 	}
 
 	s.push(C3DX_ANIMATION_CHAIN);
@@ -189,7 +189,7 @@ void AnimationData::LoadChainGroup(CLoadDirectory rd)
 					ag.invisible_object.push_back(node);
 				else
 				{
-					Msg("Не могу найти ноду %s. Она станет видимой в группе видимости %s.\n",node_name.c_str(),ag.name.c_str());
+					Msg("РќРµ РјРѕРіСѓ РЅР°Р№С‚Рё РЅРѕРґСѓ %s. РћРЅР° СЃС‚Р°РЅРµС‚ РІРёРґРёРјРѕР№ РІ РіСЂСѓРїРїРµ РІРёРґРёРјРѕСЃС‚Рё %s.\n",node_name.c_str(),ag.name.c_str());
 				}
 			}
 			animation_chain_group.push_back(ag);

@@ -134,14 +134,14 @@ bool TGA::load(const char *fileName) {
 bool TGA::loadTest(const char *fileName) {
 	clean();
 
-	// Для наглядности
+	// Р”Р»СЏ РЅР°РіР»СЏРґРЅРѕСЃС‚Рё
 	#define TGA_TYPE_COLOR 2
 	#define TGA_TYPE_GRAY 3
 
 	unsigned char GrayMask[12] = {0, 0, TGA_TYPE_GRAY, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned char RGBMask[12]={0, 0, TGA_TYPE_COLOR, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	
-	// Заголовок TGA фала
+	// Р—Р°РіРѕР»РѕРІРѕРє TGA С„Р°Р»Р°
 	unsigned char Header[18];
 
 	FILE *File = fopen(fileName, "rb");
@@ -151,7 +151,7 @@ bool TGA::loadTest(const char *fileName) {
 		return false;
 	}
 
-	// Читаем заголовок TGA
+	// Р§РёС‚Р°РµРј Р·Р°РіРѕР»РѕРІРѕРє TGA
 //	if (fseek(File, 0, SEEK_SET) || fread(Header, sizeof(Header), 1, File) != true)
 	if (fseek(File, 0, SEEK_SET) || (fread(Header, sizeof(Header), 1, File) == 0) )
 	{

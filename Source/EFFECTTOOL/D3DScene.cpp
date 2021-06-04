@@ -109,10 +109,10 @@ void CD3DCamera::Resize(const CRect& rcWindow, const CRect& rcCamera,bool bPersp
 	Vect2f vC = (vLT + vRB)/2;
 
 	m_pCamera->SetFrustum(
-		&vC,          // öåíòğ êàìåğû
-		&sRectangle4f(-vSize.x/2,-vSize.y/2,vSize.x/2,vSize.y/2),// âèäèìàÿ îáëàñòü êàìåğû
-		bPerspective ? &Vect2f(1.f,1.f) : &Vect2f(bNonPerspFocus, bNonPerspFocus), // ôîêóñ êàìåğû
-		&Vect2f(10.0f,5000.0f)); // áëèæàéøèé è äàëüíèé z-ïëîñêîñòè îòñå÷åíèÿ
+		&vC,          // Ñ†ĞµĞ½Ñ‚Ñ€ ĞºĞ°Ğ¼ĞµÑ€Ñ‹
+		&sRectangle4f(-vSize.x/2,-vSize.y/2,vSize.x/2,vSize.y/2),// Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ ĞºĞ°Ğ¼ĞµÑ€Ñ‹
+		bPerspective ? &Vect2f(1.f,1.f) : &Vect2f(bNonPerspFocus, bNonPerspFocus), // Ñ„Ğ¾ĞºÑƒÑ ĞºĞ°Ğ¼ĞµÑ€Ñ‹
+		&Vect2f(10.0f,5000.0f)); // Ğ±Ğ»Ğ¸Ğ¶Ğ°Ğ¹ÑˆĞ¸Ğ¹ Ğ¸ Ğ´Ğ°Ğ»ÑŒĞ½Ğ¸Ğ¹ z-Ğ¿Ğ»Ğ¾ÑĞºĞ¾ÑÑ‚Ğ¸ Ğ¾Ñ‚ÑĞµÑ‡ĞµĞ½Ğ¸Ñ
 
 	m_rcCamera = rcCamera;
 }
@@ -129,10 +129,10 @@ void CD3DCamera::Init(cScene* pScene, cInterfaceRenderDevice* pRenderDevice, con
 	Vect2f vC = (vLT + vRB)/2;
 
 	m_pCamera->SetFrustum(
-		&vC,          // öåíòğ êàìåğû
-		&sRectangle4f(-vSize.x/2,-vSize.y/2,vSize.x/2,vSize.y/2),// âèäèìàÿ îáëàñòü êàìåğû
-		bPerspective ? &Vect2f(1.f,1.f) : &Vect2f(bNonPerspFocus, bNonPerspFocus), // ôîêóñ êàìåğû
-		&Vect2f(10.0f,5000.0f)); // áëèæàéøèé è äàëüíèé z-ïëîñêîñòè îòñå÷åíèÿ
+		&vC,          // Ñ†ĞµĞ½Ñ‚Ñ€ ĞºĞ°Ğ¼ĞµÑ€Ñ‹
+		&sRectangle4f(-vSize.x/2,-vSize.y/2,vSize.x/2,vSize.y/2),// Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ ĞºĞ°Ğ¼ĞµÑ€Ñ‹
+		bPerspective ? &Vect2f(1.f,1.f) : &Vect2f(bNonPerspFocus, bNonPerspFocus), // Ñ„Ğ¾ĞºÑƒÑ ĞºĞ°Ğ¼ĞµÑ€Ñ‹
+		&Vect2f(10.0f,5000.0f)); // Ğ±Ğ»Ğ¸Ğ¶Ğ°Ğ¹ÑˆĞ¸Ğ¹ Ğ¸ Ğ´Ğ°Ğ»ÑŒĞ½Ğ¸Ğ¹ z-Ğ¿Ğ»Ğ¾ÑĞºĞ¾ÑÑ‚Ğ¸ Ğ¾Ñ‚ÑĞµÑ‡ĞµĞ½Ğ¸Ñ
 
 	m_rcCamera = rcCamera;
 	m_plane = plane;
@@ -289,7 +289,7 @@ void CD3DCamera::Camera2World(Vect3f& v_to, float x, float y, Vect3f* pvObjDist)
 	m_pCamera->GetWorldRay(Vect2f(x, y), vRayOrg, vRayDir);
 
 	float d = 0;
-	if(pvObjDist) //áóäåò ğàáîòàòü òîëüêî äëÿ CAMERA_PLANE_Z
+	if(pvObjDist) //Ğ±ÑƒĞ´ĞµÑ‚ Ñ€Ğ°Ğ±Ğ¾Ñ‚Ğ°Ñ‚ÑŒ Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ CAMERA_PLANE_Z
 		d = pvObjDist->z;
 	
 	switch(m_plane)
@@ -434,10 +434,10 @@ bool CD3DScene::InitRenderDevice(CWnd* pWnd)
 	if(m_pRenderDevice->Init(rcWnd.Width(), rcWnd.Height(), RENDERDEVICE_MODE_WINDOW|RENDERDEVICE_MODE_RGB16, pWnd->m_hWnd))
 		return false;
 	m_pVisGeneric->SetData(m_pRenderDevice);
-	// ñîçäàíèå ñöåíû
+	// ÑĞ¾Ğ·Ğ´Ğ°Ğ½Ğ¸Ğµ ÑÑ†ĞµĞ½Ñ‹
 	m_pScene=m_pVisGeneric->CreateScene(); 
 
-	// ñîçäàåòñÿ èñòî÷íèê ñâåòà, èíà÷å êğîìåøíàÿ òüìà è îáúåêòîâ íå âèäíî
+	// ÑĞ¾Ğ·Ğ´Ğ°ĞµÑ‚ÑÑ Ğ¸ÑÑ‚Ğ¾Ñ‡Ğ½Ğ¸Ğº ÑĞ²ĞµÑ‚Ğ°, Ğ¸Ğ½Ğ°Ñ‡Ğµ ĞºÑ€Ğ¾Ğ¼ĞµÑˆĞ½Ğ°Ñ Ñ‚ÑŒĞ¼Ğ° Ğ¸ Ğ¾Ğ±ÑŠĞµĞºÑ‚Ğ¾Ğ² Ğ½Ğµ Ğ²Ğ¸Ğ´Ğ½Ğ¾
 	m_pLight = m_pScene->CreateLight(ATTRLIGHT_DIRECTION);
 	m_pLight->SetPosition(MatXf(Mat3f::ID,Vect3f(0,0,0)));
 	m_pLight->SetColor(&sColor4f(0,0,0,1),&sColor4f(1,1,1,1));
@@ -489,7 +489,7 @@ bool CD3DScene::InitRenderDevice(CWnd* pWnd)
 	m_pActiveCamera = m_cameras[2];
 	m_pActiveCamera->m_bVisible = true;
 	if(!m_pDoc->m_WorldPath.IsEmpty()){
-		// Çàãğóçêà ìèğà
+		// Ğ—Ğ°Ğ³Ñ€ÑƒĞ·ĞºĞ° Ğ¼Ğ¸Ñ€Ğ°
 //		m_pVisGeneric->SetShadowType(SHADOW_MAP_SELF, 3);
 
 		terMapPoint = m_pScene->CreateMap(new StandartTerraInterface,0);

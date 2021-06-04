@@ -516,7 +516,7 @@ void CKeyLinePoint::OnChange()
 	else m_key(m_nNumber) = y;
 
 	bool bLastPoint = m_nNumber == m_key.size() - 1;
-	if(bLastPoint) //последняя точка - изменяем время жизни частиц
+	if(bLastPoint) //РїРѕСЃР»РµРґРЅСЏСЏ С‚РѕС‡РєР° - РёР·РјРµРЅСЏРµРј РІСЂРµРјСЏ Р¶РёР·РЅРё С‡Р°СЃС‚РёС†
 	{
 		m_key.time(m_nNumber) = 1.0f;
 
@@ -987,7 +987,7 @@ void CDrawGraph::RemoveObject(CGraphObject* pObject)
 }
 void CDrawGraph::ShowKeys(list<CKey*>& keys, BSKey* pKeyBS, bool b, bool last,list<CKeyWithParam>& emit_param )
 {
-	//удалить все CGraphKeyLine
+	//СѓРґР°Р»РёС‚СЊ РІСЃРµ CGraphKeyLine
 	ObjectVectorType::iterator i = m_objects.begin();
 	while(i != m_objects.end())
 	{

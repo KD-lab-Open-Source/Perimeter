@@ -22,9 +22,9 @@ public:
 	inline float GetFinish()						{ return finish; }
 
 private:
-	float			count;							// счетчик
-	float			finish;							// конечная фаза
-	float			dcount;							// приращение в секунду
+	float			count;							// СЃС‡РµС‚С‡РёРє
+	float			finish;							// РєРѕРЅРµС‡РЅР°СЏ С„Р°Р·Р°
+	float			dcount;							// РїСЂРёСЂР°С‰РµРЅРёРµ РІ СЃРµРєСѓРЅРґСѓ
 };
 
 #endif // _FRAME_H_

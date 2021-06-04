@@ -41,7 +41,7 @@ int main(){
     //                 "%|NTf|" => tabulation of N times the character <f>.
     //  are useful when printing lines with several fields whose width can vary a lot
     //    but we'd like to print some fields at the same place when possible :
-    vector<string>  names(1, "Marc-François Michel"), 
+    vector<string>  names(1, "Marc-FranÐ·ois Michel"), 
       surname(1,"Durand"), 
       tel(1, "+33 (0) 123 456 789");
 
@@ -55,7 +55,7 @@ int main(){
     /* prints :
 
        
-    Marc-François Michel, Durand,       +33 (0) 123 456 789
+    Marc-FranÐ·ois Michel, Durand,       +33 (0) 123 456 789
     Jean, de Lattre de Tassigny,        +33 (0) 987 654 321
     
     

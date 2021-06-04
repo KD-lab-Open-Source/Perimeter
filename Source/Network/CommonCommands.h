@@ -82,7 +82,7 @@ public:
 		commandData_=donor.commandData_;
 		position_=donor.position_;
 		unitID_=donor.unitID_;
-		unit_=donor.unit_; // ! отличие от Read Write
+		unit_=donor.unit_; // ! РѕС‚Р»РёС‡РёРµ РѕС‚ Read Write
 		return *this;
 	}
 

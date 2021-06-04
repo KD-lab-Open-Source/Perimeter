@@ -78,7 +78,7 @@ void RootExport::Export(const char* filename,bool logic)
 
 	if(!saver.Init(filename))
 	{
-		Msg("Не могу открыть файл: %s",filename);
+		Msg("РќРµ РјРѕРіСѓ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»: %s",filename);
 		return;
 	}
 
@@ -300,8 +300,8 @@ void RootExport::ExportMatrix(IGameNode * node,IGameNode* pParent,int interval_b
 		rot[1]=ap.q.y;
 		rot[2]=ap.q.z;
 		rot[3]=ap.q.w;
-		//Матрица вращения может скачком менять знак.
-		//Необходимо препятствовать этому явлению.
+		//РњР°С‚СЂРёС†Р° РІСЂР°С‰РµРЅРёСЏ РјРѕР¶РµС‚ СЃРєР°С‡РєРѕРј РјРµРЅСЏС‚СЊ Р·РЅР°Рє.
+		//РќРµРѕР±С…РѕРґРёРјРѕ РїСЂРµРїСЏС‚СЃС‚РІРѕРІР°С‚СЊ СЌС‚РѕРјСѓ СЏРІР»РµРЅРёСЋ.
 		if(rotation.empty())
 		{
 			rotation.push_back(rot);
@@ -341,9 +341,9 @@ void RootExport::ExportMatrix(IGameNode * node,IGameNode* pParent,int interval_b
 	}
 
 	if(scale_error)
-		Msg("Node %s. Не поддерживается анизотропный scale\n",node->GetName());
+		Msg("Node %s. РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ Р°РЅРёР·РѕС‚СЂРѕРїРЅС‹Р№ scale\n",node->GetName());
 	if(sign_error)
-		Msg("Node %s. Матрица должна иметь положительный детерминант\n",node->GetName());
+		Msg("Node %s. РњР°С‚СЂРёС†Р° РґРѕР»Р¶РЅР° РёРјРµС‚СЊ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Р№ РґРµС‚РµСЂРјРёРЅР°РЅС‚\n",node->GetName());
 /*
 	if(strcmp(node->GetName(),"Mesh01")==0)
 	{
@@ -540,7 +540,7 @@ void RootExport::SaveBasement()
 			base.Export((IGameMesh*)node_base_->GetIGameObject(),node_base_,m_root);
 		}else
 		{
-			Msg("Объект с именем _base_ должен состоять из треугольников.\n");
+			Msg("РћР±СЉРµРєС‚ СЃ РёРјРµРЅРµРј _base_ РґРѕР»Р¶РµРЅ СЃРѕСЃС‚РѕСЏС‚СЊ РёР· С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ.\n");
 		}
 	}
 }
@@ -554,7 +554,7 @@ void RootExport::SaveLogicBound()
 		{
 			if(!(node.node->GetIGameObject() && node.node->GetIGameObject()->GetIGameType()==IGameObject::IGAME_MESH))
 			{
-				Msg("Объект с именем logic bound должен состоять из треугольников.\n");
+				Msg("РћР±СЉРµРєС‚ СЃ РёРјРµРЅРµРј logic bound РґРѕР»Р¶РµРЅ СЃРѕСЃС‚РѕСЏС‚СЊ РёР· С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ.\n");
 				break;
 			}
 
@@ -599,7 +599,7 @@ void RootExport::SaveVisibility(vector<bool>& visibility,int interval_begin,int 
 	if(visibility.empty())
 		return;
 	vector<OneVisibility> intervals;
-	//В принципе аналог кода из InterpolatePosition, но для констант.
+	//Р’ РїСЂРёРЅС†РёРїРµ Р°РЅР°Р»РѕРі РєРѕРґР° РёР· InterpolatePosition, РЅРѕ РґР»СЏ РєРѕРЅСЃС‚Р°РЅС‚.
 	int size=visibility.size();
 	bool cur=visibility[0];
 	int begin=0;

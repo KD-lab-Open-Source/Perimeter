@@ -180,7 +180,7 @@ private:
 	InterpolatorAngle valueInterpolator_;
 };
 
-/// Базовый класс для управления наведением оружия.
+/// Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РЅР°РІРµРґРµРЅРёРµРј РѕСЂСѓР¶РёСЏ.
 class AimControllerBase
 {
 public:
@@ -210,7 +210,7 @@ private:
 	mutable terUnitBase* owner_;
 };
 
-/// Управление наведением для оружия, не требующего наведения на цель.
+/// РЈРїСЂР°РІР»РµРЅРёРµ РЅР°РІРµРґРµРЅРёРµРј РґР»СЏ РѕСЂСѓР¶РёСЏ, РЅРµ С‚СЂРµР±СѓСЋС‰РµРіРѕ РЅР°РІРµРґРµРЅРёСЏ РЅР° С†РµР»СЊ.
 class AimControllerOmnidirectional : public AimControllerBase
 {
 public:
@@ -235,7 +235,7 @@ public:
 private:
 };
 
-/// Управление наведением для оружия, требующего наведения на цель.
+/// РЈРїСЂР°РІР»РµРЅРёРµ РЅР°РІРµРґРµРЅРёРµРј РґР»СЏ РѕСЂСѓР¶РёСЏ, С‚СЂРµР±СѓСЋС‰РµРіРѕ РЅР°РІРµРґРµРЅРёСЏ РЅР° С†РµР»СЊ.
 class AimControllerDirectional : public AimControllerBase
 {
 public:
@@ -322,17 +322,17 @@ protected:
 	const RigidBodyPrm* turnSuggestPrm() const { return turnSuggestPrm_; }
 
 private:
-	/// управление наведением оружия
+	/// СѓРїСЂР°РІР»РµРЅРёРµ РЅР°РІРµРґРµРЅРёРµРј РѕСЂСѓР¶РёСЏ
 	AimType aimController_;
 
-	/// используется для расчёта углов при наведении
+	/// РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ СЂР°СЃС‡С‘С‚Р° СѓРіР»РѕРІ РїСЂРё РЅР°РІРµРґРµРЅРёРё
 	const RigidBodyPrm* turnSuggestPrm_;
 };
 
 typedef WeaponDerivedBase<AimControllerDirectional> WeaponDirectionalBase;
 typedef WeaponDerivedBase<AimControllerOmnidirectional> WeaponOmnidirectionalBase;
 
-/// Оружие, стреляющее снарядами по навесной траектории.
+/// РћСЂСѓР¶РёРµ, СЃС‚СЂРµР»СЏСЋС‰РµРµ СЃРЅР°СЂСЏРґР°РјРё РїРѕ РЅР°РІРµСЃРЅРѕР№ С‚СЂР°РµРєС‚РѕСЂРёРё.
 class terWeaponArtillery : public WeaponDirectionalBase
 {
 public:
@@ -341,7 +341,7 @@ public:
 	int estimatedDamage() const;
 };
 
-/// Оружие, стреляющее ракетами.
+/// РћСЂСѓР¶РёРµ, СЃС‚СЂРµР»СЏСЋС‰РµРµ СЂР°РєРµС‚Р°РјРё.
 class terWeaponLauncher : public WeaponDirectionalBase
 {
 public:
@@ -358,11 +358,11 @@ public:
 
 private:
 
-	/// индекс для управления пуском ракет
+	/// РёРЅРґРµРєСЃ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РїСѓСЃРєРѕРј СЂР°РєРµС‚
 	int missileIndex_;
 };
 
-/// Лазерное оружие.
+/// Р›Р°Р·РµСЂРЅРѕРµ РѕСЂСѓР¶РёРµ.
 class terWeaponLaser : public WeaponDirectionalBase
 {
 public:
@@ -378,7 +378,7 @@ public:
 	void disable();
 };
 
-/// Замораживающее оружие - стреляет как лазер, лишает на время способности атаковать.
+/// Р—Р°РјРѕСЂР°Р¶РёРІР°СЋС‰РµРµ РѕСЂСѓР¶РёРµ - СЃС‚СЂРµР»СЏРµС‚ РєР°Рє Р»Р°Р·РµСЂ, Р»РёС€Р°РµС‚ РЅР° РІСЂРµРјСЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚Рё Р°С‚Р°РєРѕРІР°С‚СЊ.
 class terWeaponFreezeLaser : public terWeaponLaser
 {
 public:
@@ -395,7 +395,7 @@ public:
 	bool fire(const Vect3f& to,terUnitBase* target);
 };
 
-/// Электроразрядник - бьёт врага молнией.
+/// Р­Р»РµРєС‚СЂРѕСЂР°Р·СЂСЏРґРЅРёРє - Р±СЊС‘С‚ РІСЂР°РіР° РјРѕР»РЅРёРµР№.
 class terWeaponLighting : public WeaponDirectionalBase
 {
 public:
@@ -415,10 +415,10 @@ public:
 	void disable();
 
 private:
-	/// визуализация молнии
+	/// РІРёР·СѓР°Р»РёР·Р°С†РёСЏ РјРѕР»РЅРёРё
 	cLighting* lighting_;
 
-	/// цель
+	/// С†РµР»СЊ
 	terUnitBase* target_;
 
 	bool releaseLighting()
@@ -434,9 +434,9 @@ private:
 	}
 };
 
-/// Спецоружие - piercer.
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - piercer.
 /**
-Юнит-владелец после задания цели превращается в неуправляемую подземную торпеду.
+Р®РЅРёС‚-РІР»Р°РґРµР»РµС† РїРѕСЃР»Рµ Р·Р°РґР°РЅРёСЏ С†РµР»Рё РїСЂРµРІСЂР°С‰Р°РµС‚СЃСЏ РІ РЅРµСѓРїСЂР°РІР»СЏРµРјСѓСЋ РїРѕРґР·РµРјРЅСѓСЋ С‚РѕСЂРїРµРґСѓ.
 */
 class terWeaponPiercer : public WeaponOmnidirectionalBase
 {
@@ -454,9 +454,9 @@ private:
 	Vect3f targetPos_;
 };
 
-/// Спецоружие - disintegrator.
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - disintegrator.
 /**
-Разваливает все вражеские юниты в зоне действия на базовые.
+Р Р°Р·РІР°Р»РёРІР°РµС‚ РІСЃРµ РІСЂР°Р¶РµСЃРєРёРµ СЋРЅРёС‚С‹ РІ Р·РѕРЅРµ РґРµР№СЃС‚РІРёСЏ РЅР° Р±Р°Р·РѕРІС‹Рµ.
 */
 class terWeaponDisintegrator : public WeaponOmnidirectionalBase
 {
@@ -469,7 +469,7 @@ public:
 	int estimatedDamage() const { return 0; }
 };
 
-/// Спецоружие - Scum Heater
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - Scum Heater
 class terWeaponScumHeater : public WeaponOmnidirectionalBase
 {
 public:
@@ -481,7 +481,7 @@ public:
 	int estimatedDamage() const { return 0; }
 };
 
-/// Электрооружие - Conductor, бьёт молниями сразу много целей
+/// Р­Р»РµРєС‚СЂРѕРѕСЂСѓР¶РёРµ - Conductor, Р±СЊС‘С‚ РјРѕР»РЅРёСЏРјРё СЃСЂР°Р·Сѓ РјРЅРѕРіРѕ С†РµР»РµР№
 class terWeaponConductor : public WeaponOmnidirectionalBase
 {
 public:
@@ -512,7 +512,7 @@ private:
 	}
 };
 
-/// Спецоружие - Scum Twister
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - Scum Twister
 class terWeaponScumTwister : public WeaponOmnidirectionalBase
 {
 public:
@@ -556,7 +556,7 @@ private:
 	terUnitBase* missile_;
 };
 
-/// Спецоружие - Leech, присасывается к вражеской энергосистеме и парализует ядра.
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - Leech, РїСЂРёСЃР°СЃС‹РІР°РµС‚СЃСЏ Рє РІСЂР°Р¶РµСЃРєРѕР№ СЌРЅРµСЂРіРѕСЃРёСЃС‚РµРјРµ Рё РїР°СЂР°Р»РёР·СѓРµС‚ СЏРґСЂР°.
 class terWeaponLeech : public WeaponOmnidirectionalBase
 {
 public:
@@ -573,19 +573,19 @@ public:
 	void destroyLink();
 
 private:
-	/// воруемая у врага энергия
+	/// РІРѕСЂСѓРµРјР°СЏ Сѓ РІСЂР°РіР° СЌРЅРµСЂРіРёСЏ
 	EnergyConsumer weaponConsumption_;
 
-	/// визуализация энергосвязи
+	/// РІРёР·СѓР°Р»РёР·Р°С†РёСЏ СЌРЅРµСЂРіРѕСЃРІСЏР·Рё
 	cLine3d* link_;
 
-	/// цель
+	/// С†РµР»СЊ
 	terUnitBase* target_;
 
 	bool allowDischarge() const { xassert(owner()); return (owner()->realAvatar()->chainID() == CHAIN_FIRE); }
 };
 
-/// Спецоружие - Scum Disruptor, коробит поверхность в случайных местах в заданном направлении.
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - Scum Disruptor, РєРѕСЂРѕР±РёС‚ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ РІ СЃР»СѓС‡Р°Р№РЅС‹С… РјРµСЃС‚Р°С… РІ Р·Р°РґР°РЅРЅРѕРј РЅР°РїСЂР°РІР»РµРЅРёРё.
 class terWeaponScumDisruptor : public WeaponOmnidirectionalBase
 {
 public:
@@ -609,7 +609,7 @@ private:
 	bool allowDischarge() const { xassert(owner()); return (owner()->realAvatar()->chainID() == CHAIN_FIRE); }
 };
 
-/// Спецоружие - Filth Navigator, вызывает скверну в заданной точке.
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - Filth Navigator, РІС‹Р·С‹РІР°РµС‚ СЃРєРІРµСЂРЅСѓ РІ Р·Р°РґР°РЅРЅРѕР№ С‚РѕС‡РєРµ.
 class terWeaponFilthNavigator : public WeaponOmnidirectionalBase
 {
 public:
@@ -625,15 +625,15 @@ public:
 
 private:
 
-	/// позиция, в которой взывалась скверна в прошлый раз
+	/// РїРѕР·РёС†РёСЏ, РІ РєРѕС‚РѕСЂРѕР№ РІР·С‹РІР°Р»Р°СЃСЊ СЃРєРІРµСЂРЅР° РІ РїСЂРѕС€Р»С‹Р№ СЂР°Р·
 	Vect3f targetPos_;
-	/// вызванная в прошлый раз скверна - индекс terFilthNavigatorPrm[]
+	/// РІС‹Р·РІР°РЅРЅР°СЏ РІ РїСЂРѕС€Р»С‹Р№ СЂР°Р· СЃРєРІРµСЂРЅР° - РёРЅРґРµРєСЃ terFilthNavigatorPrm[]
 	int prmIndex_;
 
 	bool allowDischarge() const { xassert(owner()); return (owner()->realAvatar()->chainID() == CHAIN_FIRE); }
 };
 
-/// Спецоружие - создает спот скверны.
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - СЃРѕР·РґР°РµС‚ СЃРїРѕС‚ СЃРєРІРµСЂРЅС‹.
 class terWeaponFilthSpot : public WeaponOmnidirectionalBase
 {
 public:
@@ -643,7 +643,7 @@ public:
 	int estimatedDamage() const { return 0; }
 };
 
-/// Спецоружие - делает невидимыми юнитов вокруг себя.
+/// РЎРїРµС†РѕСЂСѓР¶РёРµ - РґРµР»Р°РµС‚ РЅРµРІРёРґРёРјС‹РјРё СЋРЅРёС‚РѕРІ РІРѕРєСЂСѓРі СЃРµР±СЏ.
 class terWeaponInvisibilityGenerator : public WeaponOmnidirectionalBase
 {
 public:
@@ -1237,7 +1237,7 @@ bool terWeaponLauncher::fire(const Vect3f& to,terUnitBase* target)
 			p->setDockMode(DOCK_MODE_LEAVE);
 			missileIndex_ = ++missileIndex_ % owner()->docksCount();
 
-			if(turnSuggestPrm()){ // Баллистическая ракета
+			if(turnSuggestPrm()){ // Р‘Р°Р»Р»РёСЃС‚РёС‡РµСЃРєР°СЏ СЂР°РєРµС‚Р°
 				Vect3f trg0,trg1;
 				aimController()->getTargetingPosition(trg0,trg1);
 

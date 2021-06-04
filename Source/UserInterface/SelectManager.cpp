@@ -57,19 +57,19 @@ void cSelectManager::Quant()
 int cSelectManager::getUnitSelectionPriority(terUnitBase* p) 
 {
 	if (p->GetSquadPoint() && (p->attr().MilitaryUnit || p->GetSquadPoint() == p)){
-		//ñêâàä
+		//ÑĞºĞ²Ğ°Ğ´
 		return 1;
 	} else if (p->attr().ID == UNIT_ATTRIBUTE_TERRAIN_MASTER || p->attr().ID == UNIT_ATTRIBUTE_BUILD_MASTER){
-		//ïğîğàáû, áğèãàäèğû
+		//Ğ¿Ñ€Ğ¾Ñ€Ğ°Ğ±Ñ‹, Ğ±Ñ€Ğ¸Ğ³Ğ°Ğ´Ğ¸Ñ€Ñ‹
 		return 2;
 	} else if (p->attr().ID == UNIT_ATTRIBUTE_CORE){
-		//ÿäğî
+		//ÑĞ´Ñ€Ğ¾
 		return 3;
 	} else if (p->attr().MilitaryUnit && p->attr().isBuilding()){
-		//ñòàö. îğóäèå
+		//ÑÑ‚Ğ°Ñ†. Ğ¾Ñ€ÑƒĞ´Ğ¸Ğµ
 		return 4;
 	} else {
-		//îñòàëüíûå
+		//Ğ¾ÑÑ‚Ğ°Ğ»ÑŒĞ½Ñ‹Ğµ
 		return 5;
 	}
 }
@@ -278,7 +278,7 @@ void cSelectManager::selectUnitAndCurrentSelection(terUnitBase* p, int mode) {
 					p = p->GetSquadPoint();
 				}
 				if (findInSelection(p) != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
-					//ìîæíî çàìåíèòü íà âûáîğî÷íûé ñåëåêò
+					//Ğ¼Ğ¾Ğ¶Ğ½Ğ¾ Ğ·Ğ°Ğ¼ĞµĞ½Ğ¸Ñ‚ÑŒ Ğ½Ğ° Ğ²Ñ‹Ğ±Ğ¾Ñ€Ğ¾Ñ‡Ğ½Ñ‹Ğ¹ ÑĞµĞ»ĞµĞºÑ‚
 					selectCurrentSelection();
 					p->Deselect();
 				} else {
@@ -371,7 +371,7 @@ void cSelectManager::makeCommandSubtle(CommandID command_id, const Vect3f& posit
 				++ui;
 			}
 
-			while(ui != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()){ // Îñòàòîê ÷åòíûé
+			while(ui != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()){ // ĞÑÑ‚Ğ°Ñ‚Ğ¾Ğº Ñ‡ĞµÑ‚Ğ½Ñ‹Ğ¹
 				(*ui)->commandOutcoming(UnitCommand(command_id, To3D(left -= delta*(*ui)->radius()), 0, mode));
 				left -= delta*(*ui)->radius();
 				++ui;

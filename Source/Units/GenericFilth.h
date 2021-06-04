@@ -52,8 +52,8 @@ struct terSplineController
 
 	Se3f quantPosition(float dt);
 
-	//Для нормальной работы way_points должно быть не меньше 4.
-	//Удаление точек  нежелательно, так как приведёт к изменению скорости либо положения
+	//Р”Р»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№ СЂР°Р±РѕС‚С‹ way_points РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµ РјРµРЅСЊС€Рµ 4.
+	//РЈРґР°Р»РµРЅРёРµ С‚РѕС‡РµРє  РЅРµР¶РµР»Р°С‚РµР»СЊРЅРѕ, С‚Р°Рє РєР°Рє РїСЂРёРІРµРґС‘С‚ Рє РёР·РјРµРЅРµРЅРёСЋ СЃРєРѕСЂРѕСЃС‚Рё Р»РёР±Рѕ РїРѕР»РѕР¶РµРЅРёСЏ
 	typedef list<Vect3f> WayPoints;
 	WayPoints way_points;
 protected:
@@ -127,7 +127,7 @@ protected:
 	typedef set<terUnitBase*> UnitSet;
 	bool find_attack_target_point;
 
-	//Заполняет TargetPoint наиболее подходящим для атаки юнитом
+	//Р—Р°РїРѕР»РЅСЏРµС‚ TargetPoint РЅР°РёР±РѕР»РµРµ РїРѕРґС…РѕРґСЏС‰РёРј РґР»СЏ Р°С‚Р°РєРё СЋРЅРёС‚РѕРј
 	virtual void FindTargetPoint(UnitSet* exclude=NULL);
 	virtual void FindComplexTarget(list<terUnitBase*>& target_list,int max_target,UnitSet* exclude);
 	virtual terUnitBase* CalcDistance(terUnitBase* unit,float& dist,const Vect2f& direction);
@@ -165,9 +165,9 @@ struct terFilthSpot : terUnitBase
 	void setActivity(bool activate);
 	bool activity() const { return !sleep_; } 
 
-	//Устанавливает параметры.
-	//Заодно (так как эта функция вызывается только оружием)
-	//attack_player=FILTH_ATTACK_NOSELF и возможность генерации скверны на зеропласте
+	//РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РїР°СЂР°РјРµС‚СЂС‹.
+	//Р—Р°РѕРґРЅРѕ (С‚Р°Рє РєР°Рє СЌС‚Р° С„СѓРЅРєС†РёСЏ РІС‹Р·С‹РІР°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ РѕСЂСѓР¶РёРµРј)
+	//attack_player=FILTH_ATTACK_NOSELF Рё РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹ РЅР° Р·РµСЂРѕРїР»Р°СЃС‚Рµ
 	void setParameters(const terFilthSpotParameters* prm);
 
 	void startKillTimer(int time){ killTimer_.start(time); }
@@ -195,8 +195,8 @@ struct terFilthSpot : terUnitBase
 		bool inited;
 	};
 
-	//Не выбирать цель, атаковать только этого юнита.
-	//после его смерти включится поиск цели.
+	//РќРµ РІС‹Р±РёСЂР°С‚СЊ С†РµР»СЊ, Р°С‚Р°РєРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ СЌС‚РѕРіРѕ СЋРЅРёС‚Р°.
+	//РїРѕСЃР»Рµ РµРіРѕ СЃРјРµСЂС‚Рё РІРєР»СЋС‡РёС‚СЃСЏ РїРѕРёСЃРє С†РµР»Рё.
 	void SetAttackTarget(terUnitBase* AttackUnit){pExclusiveAttackUnit=AttackUnit;};
 	bool terCheckFilthPoint(int x,int y);
 
@@ -241,9 +241,9 @@ protected:
 	bool create_first;
 	terFilthAttackType attack_player;
 	bool initial_geoprocess;
-	bool harkback;//Это скверна возвратников.
-	bool kill_of_end;//Удалить спот, когда кночилась скверна
-	bool kill_after_generate;//Подождать генерации скверны, подождать уничтожения скверны, удалить спот.
+	bool harkback;//Р­С‚Рѕ СЃРєРІРµСЂРЅР° РІРѕР·РІСЂР°С‚РЅРёРєРѕРІ.
+	bool kill_of_end;//РЈРґР°Р»РёС‚СЊ СЃРїРѕС‚, РєРѕРіРґР° РєРЅРѕС‡РёР»Р°СЃСЊ СЃРєРІРµСЂРЅР°
+	bool kill_after_generate;//РџРѕРґРѕР¶РґР°С‚СЊ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹, РїРѕРґРѕР¶РґР°С‚СЊ СѓРЅРёС‡С‚РѕР¶РµРЅРёСЏ СЃРєРІРµСЂРЅС‹, СѓРґР°Р»РёС‚СЊ СЃРїРѕС‚.
 
 	void GetDifficity(int& creature_num,float& sleep_mul);
 	int GetDifficityCreatureNum();
@@ -260,7 +260,7 @@ bool terCheckFilthZero(const Vect3f& pos);
 bool terCheckFilthChaos(const Vect3f& pos);
 
 
-//Равномерно распределяет на периодgeneration_period 
+//Р Р°РІРЅРѕРјРµСЂРЅРѕ СЂР°СЃРїСЂРµРґРµР»СЏРµС‚ РЅР° РїРµСЂРёРѕРґgeneration_period 
 class terGenerate
 {
 public:
@@ -270,7 +270,7 @@ public:
 	void Set(int creature_num,int generation_period);
 
 	bool InProcess(){return GenerationCount>0;};
-	int Quant();//Возвращает количество юнитов, которые создаются в этот кадр
+	int Quant();//Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СЋРЅРёС‚РѕРІ, РєРѕС‚РѕСЂС‹Рµ СЃРѕР·РґР°СЋС‚СЃСЏ РІ СЌС‚РѕС‚ РєР°РґСЂ
 
 	void Save(SaveTerGenerate& data);
 	void Load(const SaveTerGenerate& data);

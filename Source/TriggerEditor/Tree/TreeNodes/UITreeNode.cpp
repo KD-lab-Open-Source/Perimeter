@@ -52,7 +52,7 @@ int UITreeNode::getOrdinalNumber() const{
 void UITreeNode::setOrdinalNumber(int iNum){
 	ordinalNumber_ = iNum;
 }
-//! Загрузка узла в дерево
+//! Р—Р°РіСЂСѓР·РєР° СѓР·Р»Р° РІ РґРµСЂРµРІРѕ
 bool UITreeNode::load(xTreeListCtrl& tree, CTreeListItem* pParent)
 {
 	setTreeListItem(tree.InsertItem(action_.c_str(), pParent));
@@ -62,7 +62,7 @@ bool UITreeNode::load(xTreeListCtrl& tree, CTreeListItem* pParent)
 		reinterpret_cast<DWORD_PTR>(this));
 	return true;
 }
-//! Обработка команд от пунктов  меню
+//! РћР±СЂР°Р±РѕС‚РєР° РєРѕРјР°РЅРґ РѕС‚ РїСѓРЅРєС‚РѕРІ  РјРµРЅСЋ
 bool UITreeNode::onCommand(TETreeLogic& logic, WPARAM wParam, LPARAM lParam)
 {
 	return false;
@@ -73,7 +73,7 @@ void UITreeNode::onDeleteItem(TETreeLogic& logic)
 	delete this;
 }
 
-//! Обработка начал перетаскивания
+//! РћР±СЂР°Р±РѕС‚РєР° РЅР°С‡Р°Р» РїРµСЂРµС‚Р°СЃРєРёРІР°РЅРёСЏ
 void UITreeNode::onBeginDrag(TETreeLogic& logic)
 {
 	std::auto_ptr<COleDataSource> source(new COleDataSource);

@@ -26,7 +26,7 @@
 
 [h2 Influences and Related Work]
 
-The design and implementation of Phoenix is highly influenced by FC++ by Yannis Smaragdakis and Brian McNamara and the (Boost Lambda Library) boost_lambda by Jaakko Järvi and Gary Powell. Phoenix is a blend of FC++ and boost_lambda using the implementation techniques used in the Spirit inline parser.
+The design and implementation of Phoenix is highly influenced by FC++ by Yannis Smaragdakis and Brian McNamara and the (Boost Lambda Library) boost_lambda by Jaakko JÐ´rvi and Gary Powell. Phoenix is a blend of FC++ and boost_lambda using the implementation techniques used in the Spirit inline parser.
 
 Is Phoenix better than FC++ or boost_lambda? Well, there are concepts found in Phoenix that are not found in either library. FC++ has rank-2 polymorphic functions (FC++ jargon) which Phoenix also has, boost_lambda has syntactic sugared operators which FC++ lack, that Phoenix also has.
 
@@ -1713,7 +1713,7 @@ So there you have it. Have fun! See you in the FP world.
 
 Why Functional Programming Matters, John Hughes, 1989.[br] Available online at [@http://www.math.chalmers.se/~rjmh/Papers/whyfp.html http://www.math.chalmers.se/~rjmh/Papers/whyfp.html].
 
-Boost.Lambda library, Jaakko Jarvi, 1999-2002 Jaakko Järvi, Gary Powell.[br] Available online at [@http://www.boost.org/libs/lambda/ http://www.boost.org/libs/lambda/].
+Boost.Lambda library, Jaakko Jarvi, 1999-2002 Jaakko JÐ´rvi, Gary Powell.[br] Available online at [@http://www.boost.org/libs/lambda/ http://www.boost.org/libs/lambda/].
 
 Functional Programming in C++ using the FC++ Library: a short article introducing FC++, Brian McNamara and Yannis Smaragdakis, April 2001. Available online at [@http://www.cc.gatech.edu/~yannis/fc++/ http://www.cc.gatech.edu/~yannis/fc++/].
 

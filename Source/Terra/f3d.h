@@ -47,13 +47,13 @@ struct s_f3d {
 	void saveVariable(void);
 	void loadVariable(void);
 
-	//Таблица соделжащая названия и адреса функций 3D текстуры
+	//РўР°Р±Р»РёС†Р° СЃРѕРґРµР»Р¶Р°С‰Р°СЏ РЅР°Р·РІР°РЅРёСЏ Рё Р°РґСЂРµСЃР° С„СѓРЅРєС†РёР№ 3D С‚РµРєСЃС‚СѓСЂС‹
 	struct s_table {
 		char * nameFunction;
 		PF function;
 	};
 	s_table tableF[MAX_3D_FUNCTION];
-	int currentFunction; //Номер текущей функции 3D текстуры
+	int currentFunction; //РќРѕРјРµСЂ С‚РµРєСѓС‰РµР№ С„СѓРЅРєС†РёРё 3D С‚РµРєСЃС‚СѓСЂС‹
 
 	void setKM(int _kmx, int _kmy, int _kmz){
 		kmx=_kmx; kmy=_kmy; kmz=_kmz;
@@ -61,8 +61,8 @@ struct s_f3d {
 		dr_kmy=(1<<NOISE_FRACTION)/kmy;
 		dr_kmz=(1<<NOISE_FRACTION)/(kmz*(1<<VX_FRACTION));
 	};
-	//float kmx, kmy, kmz; //Коэф. масштабирования значений по X,Y,Z
-	int kmx, kmy, kmz; //Коэф. масштабирования значений по X,Y,Z
+	//float kmx, kmy, kmz; //РљРѕСЌС„. РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ Р·РЅР°С‡РµРЅРёР№ РїРѕ X,Y,Z
+	int kmx, kmy, kmz; //РљРѕСЌС„. РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ Р·РЅР°С‡РµРЅРёР№ РїРѕ X,Y,Z
 	int dr_kmx, dr_kmy, dr_kmz;
 	
 };

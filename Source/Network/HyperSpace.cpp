@@ -19,10 +19,10 @@ const char* autoSavePlayReelDir = "AUTOSAVE";
 const char * KEY_SAVE_PLAY_REEL="saveplay";
 const char * KEY_REPLAY_REEL="replay";
 
-//Old RePlayReel date (до патча 1.2)
+//Old RePlayReel date (РґРѕ РїР°С‚С‡Р° 1.2)
 // {62177A85-C27C-4F6A-9837-922F635C7B08}
 //static const GUID filePlayReelID = { 0x62177a85, 0xc27c, 0x4f6a, { 0x98, 0x37, 0x92, 0x2f, 0x63, 0x5c, 0x7b, 0x8 } };
-//RePlayReel date (с патча 1.2)
+//RePlayReel date (СЃ РїР°С‚С‡Р° 1.2)
 // {BDFBD2AD-F686-4dd1-A5E1-9544C782AAB1}
 static const GUID filePlayReelID = { 0xbdfbd2ad, 0xf686, 0x4dd1, { 0xa5, 0xe1, 0x95, 0x44, 0xc7, 0x82, 0xaa, 0xb1 } };
 
@@ -42,7 +42,7 @@ public:
 	}
 	cFont* getFont(){
 		if(!pfont) {
-			pfont=terVisGeneric->CreateFont("Courier New", 16, 1);//Тихая ошибка
+			pfont=terVisGeneric->CreateFont("Courier New", 16, 1);//РўРёС…Р°СЏ РѕС€РёР±РєР°
 			if(!pfont)pfont=terVisGeneric->CreateFont("Arial", 16);
 		}
 		return pfont;
@@ -109,7 +109,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	pMonowideFont= new cMonowideFont();
 #endif _FINAL_VERSION_
 
-	//Очистка списков команд
+	//РћС‡РёСЃС‚РєР° СЃРїРёСЃРєРѕРІ РєРѕРјР°РЅРґ
 	{
 		//Lock!
 		CAutoLock lock(&m_FullListGameCommandLock);
@@ -139,7 +139,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-		//поиск автосэйв каталога и создание, если его нет
+		//РїРѕРёСЃРє Р°РІС‚РѕСЃСЌР№РІ РєР°С‚Р°Р»РѕРіР° Рё СЃРѕР·РґР°РЅРёРµ, РµСЃР»Рё РµРіРѕ РЅРµС‚
 		WIN32_FIND_DATA FindFileData;
 		HANDLE hFind;
 		hFind = FindFirstFile(autoSavePlayReelDir, &FindFileData);
@@ -163,7 +163,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 //	if(terGameMode == PERIMETER_GAME_MODE_SINGLEPLAYER)
 //		GameStart();
 
-	//if(flag_rePlayReel) mission=curMission; //Порядок Важен!
+	//if(flag_rePlayReel) mission=curMission; //РџРѕСЂСЏРґРѕРє Р’Р°Р¶РµРЅ!
 	if(flag_savePlayReel || flag_autoSavePlayReel) curMission=mission;
 
 	vMap.selectUsedWorld(mission.worldID());
@@ -216,7 +216,7 @@ bool terHyperSpace::loadPlayReel(const char* fname)
 	xassert(sizePlayReelData >= 0);
 //	unsigned char* tbuf=new unsigned char[sizePlayReelData];
 //	fi.read(tbuf, sizePlayReelData);
-	InOutNetComBuffer in_buffer(sizePlayReelData, 1); //проверить необходимость автоувелечения!
+	InOutNetComBuffer in_buffer(sizePlayReelData, 1); //РїСЂРѕРІРµСЂРёС‚СЊ РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚СЊ Р°РІС‚РѕСѓРІРµР»РµС‡РµРЅРёСЏ!
 	in_buffer.putBufferPacket((unsigned char*)(mdBuf.address()+mdBuf.tell()), sizePlayReelData);
 //	delete [] tbuf;
 
@@ -323,9 +323,9 @@ terHyperSpace::~terHyperSpace()
 {
 	allSavePlayReel();
 
-	//Очистка логов
+	//РћС‡РёСЃС‚РєР° Р»РѕРіРѕРІ
 	clearLogList();
-	//Очистка списков команд
+	//РћС‡РёСЃС‚РєР° СЃРїРёСЃРєРѕРІ РєРѕРјР°РЅРґ
 	{
 		//Lock!
 		CAutoLock lock(&m_FullListGameCommandLock);
@@ -362,11 +362,11 @@ bool terHyperSpace::MultiQuant()
 	setLogicFp();
 
 	if(allowedRealizingQuant > lastRealizedQuant){
-		//Начало кванта
+		//РќР°С‡Р°Р»Рѕ РєРІР°РЅС‚Р°
 		currentQuant++;		//currentQuant=lastQuant_inFullListGameCommands;
 
 		lastQuant_inFullListGameCommands=currentQuant;
-		//поиск первой команды в последнем кванте
+		//РїРѕРёСЃРє РїРµСЂРІРѕР№ РєРѕРјР°РЅРґС‹ РІ РїРѕСЃР»РµРґРЅРµРј РєРІР°РЅС‚Рµ
 		vector<netCommandGame*>::iterator p;
 		p=fullListGameCommands.end();
 		while(p!=fullListGameCommands.begin()) {
@@ -375,9 +375,9 @@ bool terHyperSpace::MultiQuant()
 				p++; break;
 			}
 		}
-		// p сейчас указывает на первую команду кванта
+		// p СЃРµР№С‡Р°СЃ СѓРєР°Р·С‹РІР°РµС‚ РЅР° РїРµСЂРІСѓСЋ РєРѕРјР°РЅРґСѓ РєРІР°РЅС‚Р°
 		for(; p!=fullListGameCommands.end(); p++) {
-			if((*p)->curCommandQuant_ != currentQuant ) break; //проверка на конец команд кванта
+			if((*p)->curCommandQuant_ != currentQuant ) break; //РїСЂРѕРІРµСЂРєР° РЅР° РєРѕРЅРµС† РєРѕРјР°РЅРґ РєРІР°РЅС‚Р°
 			if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND){
 				netCommand4G_UnitCommand* pNC_UnitCommant=static_cast<netCommand4G_UnitCommand*>(*p);
 				receiveCommand(*pNC_UnitCommant);
@@ -398,7 +398,7 @@ bool terHyperSpace::MultiQuant()
 			else xassert(0&&"Incorrect net comman in fullListGameCommands");
 		}
 
-		lagQuant=getInternalLagQuant(); //Для визуализации
+		lagQuant=getInternalLagQuant(); //Р”Р»СЏ РІРёР·СѓР°Р»РёР·Р°С†РёРё
 
 		///xassert(currentQuant==lastQuant_inFullListGameCommands);
 		//net_log_buffer.init();
@@ -412,7 +412,7 @@ bool terHyperSpace::MultiQuant()
 		//vMap.generateChAreasInformation(vmapbuf);
 		//pNetCenter->SendEvent(&netCommand4H_BackGameInformation(currentQuant, vmapbuf, net_log_buffer));
 
-		//конец кванта
+		//РєРѕРЅРµС† РєРІР°РЅС‚Р°
 		///unsigned int gridCRC=vMap.getGridCRC(false, currentQuant);
 		log_var(vMap.getGridCRC(false, currentQuant));
 		///XBuffer vmapbuf(4096, 1);
@@ -422,7 +422,7 @@ bool terHyperSpace::MultiQuant()
 		log_var(vMap.getChAreasInformationCRC());
 
 		//signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
-		//if((currentQuant&0x07)==0){ //Каждый 8 квант отсылается сигнатура
+		//if((currentQuant&0x07)==0){ //РљР°Р¶РґС‹Р№ 8 РєРІР°РЅС‚ РѕС‚СЃС‹Р»Р°РµС‚СЃСЏ СЃРёРіРЅР°С‚СѓСЂР°
 		//	pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame));
 		//	signatureGame=startCRC32;
 		//}
@@ -439,14 +439,14 @@ bool terHyperSpace::MultiQuant()
 
 }
 
-const unsigned int periodSendLogQuant=8; //степень двойки!
+const unsigned int periodSendLogQuant=8; //СЃС‚РµРїРµРЅСЊ РґРІРѕР№РєРё!
 const unsigned int maskPeriodSendLogQuant=periodSendLogQuant-1;//
 void terHyperSpace::logQuant()
 {
-	lagQuant=getInternalLagQuant(); //Для сервера
+	lagQuant=getInternalLagQuant(); //Р”Р»СЏ СЃРµСЂРІРµСЂР°
 
 	signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
-	if((currentQuant & maskPeriodSendLogQuant)==0){ //Каждый 8 квант отсылается сигнатура
+	if((currentQuant & maskPeriodSendLogQuant)==0){ //РљР°Р¶РґС‹Р№ 8 РєРІР°РЅС‚ РѕС‚СЃС‹Р»Р°РµС‚СЃСЏ СЃРёРіРЅР°С‚СѓСЂР°
 		pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state));
 		signatureGame=startCRC32;
 	}
@@ -456,7 +456,7 @@ void terHyperSpace::logQuant()
 }
 void terHyperSpace::sendLog(unsigned int quant)
 {
-	xassert(quant);//Проверка, что не нулевой квант(кванты начинаются с 1-цы!)
+	xassert(quant);//РџСЂРѕРІРµСЂРєР°, С‡С‚Рѕ РЅРµ РЅСѓР»РµРІРѕР№ РєРІР°РЅС‚(РєРІР°РЅС‚С‹ РЅР°С‡РёРЅР°СЋС‚СЃСЏ СЃ 1-С†С‹!)
 	if(quant && ((quant & maskPeriodSendLogQuant)==0) ){
 		unsigned int begLogQuant=((quant-1) & (~maskPeriodSendLogQuant)) +1;
 		unsigned int sgn=startCRC32;
@@ -472,7 +472,7 @@ void terHyperSpace::sendLog(unsigned int quant)
 }
 
 
-// !!! Вызывается из логического кванта !!!
+// !!! Р’С‹Р·С‹РІР°РµС‚СЃСЏ РёР· Р»РѕРіРёС‡РµСЃРєРѕРіРѕ РєРІР°РЅС‚Р° !!!
 void terHyperSpace::sendCommand(const netCommand4G_UnitCommand& command) 
 { 
 	if(!pNetCenter){
@@ -489,7 +489,7 @@ void terHyperSpace::sendCommand(const netCommand4G_UnitCommand& command)
 	}
 }
 
-// !!! Вызывается из Графического кванта !!!
+// !!! Р’С‹Р·С‹РІР°РµС‚СЃСЏ РёР· Р“СЂР°С„РёС‡РµСЃРєРѕРіРѕ РєРІР°РЅС‚Р° !!!
 void terHyperSpace::sendCommand(const netCommand4G_Region& command) 
 { 
 	if(!pNetCenter){
@@ -512,7 +512,7 @@ bool terHyperSpace::SingleQuant()
 	setLogicFp();
 
 	//if(allowedRealizingQuant > lastRealizedQuant)
-	//Начало кванта
+	//РќР°С‡Р°Р»Рѕ РєРІР°РЅС‚Р°
 	currentQuant++;
 	if(!flag_stopSavePlayReel) lastQuant_inFullListGameCommands=currentQuant;
 
@@ -583,7 +583,7 @@ bool terHyperSpace::SingleQuant()
 
 	Quant();
 
-	//конец кванта
+	//РєРѕРЅРµС† РєРІР°РЅС‚Р°
 	///unsigned int gridCRC=vMap.getGridCRC(false, currentQuant);
 	log_var(vMap.getGridCRC(false, currentQuant));
 
@@ -643,7 +643,7 @@ void terHyperSpace::ShowInfo()
 #endif
 }
 
-//По идее вызов корректный т.к. reJoin не пошлется пока игра не остановлена(stopGame_HostMigrate)
+//РџРѕ РёРґРµРµ РІС‹Р·РѕРІ РєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚.Рє. reJoin РЅРµ РїРѕС€Р»РµС‚СЃСЏ РїРѕРєР° РёРіСЂР° РЅРµ РѕСЃС‚Р°РЅРѕРІР»РµРЅР°(stopGame_HostMigrate)
 void terHyperSpace::sendListGameCommand2Host(unsigned int begQuant, unsigned int endQuant)
 {
 	vector<netCommandGame*>::iterator p;
@@ -665,7 +665,7 @@ void terHyperSpace::sendListGameCommand2Host(unsigned int begQuant, unsigned int
 void terHyperSpace::stopGame_HostMigrate()
 {
 	///clearLastQuantListGameCommand();
-	//Очистка всех не выполненных команд из списка
+	//РћС‡РёСЃС‚РєР° РІСЃРµС… РЅРµ РІС‹РїРѕР»РЅРµРЅРЅС‹С… РєРѕРјР°РЅРґ РёР· СЃРїРёСЃРєР°
 //	vector<netCommandGame*>::reverse_iterator p;
 //	for(p=fullListGameCommands.rbegin(); p!=fullListGameCommands.rend(); ){
 //		if((*p)->curCommandQuant_ > lastQuant_inFullListGameCommands) {
@@ -704,24 +704,24 @@ void terHyperSpace::stopGame_HostMigrate()
 
 void terHyperSpace::putInputGameCommand2fullListGameCommandAndCheckAllowedRun(netCommandGame* pnc)
 {
-	///if(pnc->curCommandQuant_ >= lastQuant_inFullListGameCommands) //В случае смены хоста - пропускать выполненные комманды
-	if(pnc->curCommandQuant_ > allowedRealizingQuant) {//В случае смены хоста - пропускать выполненные комманды
+	///if(pnc->curCommandQuant_ >= lastQuant_inFullListGameCommands) //Р’ СЃР»СѓС‡Р°Рµ СЃРјРµРЅС‹ С…РѕСЃС‚Р° - РїСЂРѕРїСѓСЃРєР°С‚СЊ РІС‹РїРѕР»РЅРµРЅРЅС‹Рµ РєРѕРјРјР°РЅРґС‹
+	if(pnc->curCommandQuant_ > allowedRealizingQuant) {//Р’ СЃР»СѓС‡Р°Рµ СЃРјРµРЅС‹ С…РѕСЃС‚Р° - РїСЂРѕРїСѓСЃРєР°С‚СЊ РІС‹РїРѕР»РЅРµРЅРЅС‹Рµ РєРѕРјРјР°РЅРґС‹
 		fullListGameCommands.push_back(pnc);
 		xassert(pnc->curCommandCounter_==clientGeneralCommandCounterInListCommand);
 		clientGeneralCommandCounterInListCommand++;
 //		receiveCommand(*pnc);
 
-		//Разрешение проигрывания комманд
-		if(pnc->flag_lastCommandInQuant_){ //Комманда была последняя в кванте, поэтому разрешаем проигрывать до кванта включительно
+		//Р Р°Р·СЂРµС€РµРЅРёРµ РїСЂРѕРёРіСЂС‹РІР°РЅРёСЏ РєРѕРјРјР°РЅРґ
+		if(pnc->flag_lastCommandInQuant_){ //РљРѕРјРјР°РЅРґР° Р±С‹Р»Р° РїРѕСЃР»РµРґРЅСЏСЏ РІ РєРІР°РЅС‚Рµ, РїРѕСЌС‚РѕРјСѓ СЂР°Р·СЂРµС€Р°РµРј РїСЂРѕРёРіСЂС‹РІР°С‚СЊ РґРѕ РєРІР°РЅС‚Р° РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ
 			allowedRealizingQuant=pnc->curCommandQuant_;
 		}
-		else { //Комманда была не последняя в кванте, поэтому разрешаем проигрывать до предыдущего кванта
+		else { //РљРѕРјРјР°РЅРґР° Р±С‹Р»Р° РЅРµ РїРѕСЃР»РµРґРЅСЏСЏ РІ РєРІР°РЅС‚Рµ, РїРѕСЌС‚РѕРјСѓ СЂР°Р·СЂРµС€Р°РµРј РїСЂРѕРёРіСЂС‹РІР°С‚СЊ РґРѕ РїСЂРµРґС‹РґСѓС‰РµРіРѕ РєРІР°РЅС‚Р°
 			if(pnc->curCommandQuant_>0){
 				allowedRealizingQuant=pnc->curCommandQuant_-1;
 			}
 		} 
-		//Если количество комманд совпадает со счетчиком команд в последней NEXT_COMMAND(TimeCommand)
-		// и при этом более позднее чем разрешенное сейчас  то разрешается проигрывание до кванта указанного в последней TimeComand-е
+		//Р•СЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРјР°РЅРґ СЃРѕРІРїР°РґР°РµС‚ СЃРѕ СЃС‡РµС‚С‡РёРєРѕРј РєРѕРјР°РЅРґ РІ РїРѕСЃР»РµРґРЅРµР№ NEXT_COMMAND(TimeCommand)
+		// Рё РїСЂРё СЌС‚РѕРј Р±РѕР»РµРµ РїРѕР·РґРЅРµРµ С‡РµРј СЂР°Р·СЂРµС€РµРЅРЅРѕРµ СЃРµР№С‡Р°СЃ  С‚Рѕ СЂР°Р·СЂРµС€Р°РµС‚СЃСЏ РїСЂРѕРёРіСЂС‹РІР°РЅРёРµ РґРѕ РєРІР°РЅС‚Р° СѓРєР°Р·Р°РЅРЅРѕРіРѕ РІ РїРѕСЃР»РµРґРЅРµР№ TimeComand-Рµ
 		if( (clientGeneralCommandCounterInListCommand==generalCommandCounter4TimeCommand) &&
 			(lastQuantAllowedTimeCommand > allowedRealizingQuant) ){
 			allowedRealizingQuant=lastQuantAllowedTimeCommand;
@@ -729,7 +729,7 @@ void terHyperSpace::putInputGameCommand2fullListGameCommandAndCheckAllowedRun(ne
 	}
 	else {
 		xassert(0&&"host migrate ?");
-		//можно вставить поиск в списке и подтверждение
+		//РјРѕР¶РЅРѕ РІСЃС‚Р°РІРёС‚СЊ РїРѕРёСЃРє РІ СЃРїРёСЃРєРµ Рё РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ
 		vector<netCommandGame*>::iterator p;
 		for(p=fullListGameCommands.begin(); p!=fullListGameCommands.end(); p++){
 			if((*p)->curCommandCounter_==pnc->curCommandCounter_) break;
@@ -789,9 +789,9 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 				if(clientGeneralCommandCounterInListCommand==generalCommandCounter4TimeCommand){
 					allowedRealizingQuant=lastQuantAllowedTimeCommand;
 				}
-				//Не работает ! 
+				//РќРµ СЂР°Р±РѕС‚Р°РµС‚ ! 
 				/*if(nc.numberQuant_ <= lastQuant_inFullListGameCommands) {
-					XBuffer* pCurLogQuant=getLogInLogList(nc.numberQuant_); //В случае смены хоста - пропускать выполненные комманды но отсылать backGameInformation
+					XBuffer* pCurLogQuant=getLogInLogList(nc.numberQuant_); //Р’ СЃР»СѓС‡Р°Рµ СЃРјРµРЅС‹ С…РѕСЃС‚Р° - РїСЂРѕРїСѓСЃРєР°С‚СЊ РІС‹РїРѕР»РЅРµРЅРЅС‹Рµ РєРѕРјРјР°РЅРґС‹ РЅРѕ РѕС‚СЃС‹Р»Р°С‚СЊ backGameInformation
 					if(pCurLogQuant){
 						unsigned int signature=crc32((unsigned char*)pCurLogQuant->address(), pCurLogQuant->tell(), startCRC32);
 						pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(0, nc.numberQuant_, signature));
@@ -799,7 +799,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 					else xassert(0&&"No log(after migrate host)!");
 					break;
 				}*/
-				if(nc.quantConfirmation_!=netCommandNextQuant::NOT_QUANT_CONFIRMATION){ //Сейчас quantConfirmation_ посылается во всех коммандах
+				if(nc.quantConfirmation_!=netCommandNextQuant::NOT_QUANT_CONFIRMATION){ //РЎРµР№С‡Р°СЃ quantConfirmation_ РїРѕСЃС‹Р»Р°РµС‚СЃСЏ РІРѕ РІСЃРµС… РєРѕРјРјР°РЅРґР°С…
 					confirmQuant=nc.quantConfirmation_;
 					//clear list 
 					eraseLogListUntil(nc.quantConfirmation_);
@@ -807,7 +807,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 	#ifdef NETCOM_DBG_LOG
 				netCommandLog < "Quant=" <=nc.numberQuant_ <"\n";
 	#endif
-				///xassert(nc.numberQuant_==(lastQuant_inFullListGameCommands+1));//Проверка на пропуск кванта(в случае выпадения!? пакета) PS. сейчас они выпадают!
+				///xassert(nc.numberQuant_==(lastQuant_inFullListGameCommands+1));//РџСЂРѕРІРµСЂРєР° РЅР° РїСЂРѕРїСѓСЃРє РєРІР°РЅС‚Р°(РІ СЃР»СѓС‡Р°Рµ РІС‹РїР°РґРµРЅРёСЏ!? РїР°РєРµС‚Р°) PS. СЃРµР№С‡Р°СЃ РѕРЅРё РІС‹РїР°РґР°СЋС‚!
 
 				netPause=nc.flag_pause_;
 			}

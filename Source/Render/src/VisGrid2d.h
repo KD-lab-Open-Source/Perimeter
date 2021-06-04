@@ -24,13 +24,13 @@ public:
 	MTGVector();
 	~MTGVector();
 
-	//Attach, Detach - можно вызывать из другого потока
+	//Attach, Detach - РјРѕР¶РЅРѕ РІС‹Р·С‹РІР°С‚СЊ РёР· РґСЂСѓРіРѕРіРѕ РїРѕС‚РѕРєР°
 	void Attach(cIUnkClass *UnkObj);
 	void Detach(cIUnkClass *UnkObj);
 	void Release();
 
-	//очищает add_list и erase_list в безопасный момент
-	//cur_quant == INT_MAX очистить всё
+	//РѕС‡РёС‰Р°РµС‚ add_list Рё erase_list РІ Р±РµР·РѕРїР°СЃРЅС‹Р№ РјРѕРјРµРЅС‚
+	//cur_quant == INT_MAX РѕС‡РёСЃС‚РёС‚СЊ РІСЃС‘
 	void mtUpdate(int cur_quant);
 };
 

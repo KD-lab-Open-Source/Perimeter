@@ -13,8 +13,8 @@ class terUnitBase;
 enum
 {
 	STATE_DEFAULT         = 0x00000000,
-	STATE_EDIT_REGION     = 0x00000001, //редактирование рабочей зоны
-	STATE_TRACKING        = 0x00000006  //селект прямоугольником
+	STATE_EDIT_REGION     = 0x00000001, //СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ СЂР°Р±РѕС‡РµР№ Р·РѕРЅС‹
+	STATE_TRACKING        = 0x00000006  //СЃРµР»РµРєС‚ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРј
 };
 
 enum
@@ -74,7 +74,7 @@ struct CShellLogicDispatcher
 
 	cFont*            m_hFontUnitsLabel;
 
-	//камера и сцена для отображения моделей в окошке
+	//РєР°РјРµСЂР° Рё СЃС†РµРЅР° РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РјРѕРґРµР»РµР№ РІ РѕРєРѕС€РєРµ
 	cCamera*          m_hCamera;
 	cScene*           m_hScene;
 	cUnkLight*       m_hLight;

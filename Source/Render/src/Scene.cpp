@@ -126,7 +126,7 @@ void cScene::Animate()
 	if(dTime==0) return;
 	MTEnter enter(lock_draw);
 
-	// анимация объектов
+	// Р°РЅРёРјР°С†РёСЏ РѕР±СЉРµРєС‚РѕРІ
 	grid.SetDetachNow(false);
 	for(sGrid2d::iterator it=grid.begin();it!=grid.end();)
 	{
@@ -142,7 +142,7 @@ void cScene::Animate()
 	if(TileMap)
 		TileMap->Animate(dTime);
 
-	// анимация источников света
+	// Р°РЅРёРјР°С†РёСЏ РёСЃС‚РѕС‡РЅРёРєРѕРІ СЃРІРµС‚Р°
 	for(int i=0;i<GetNumberLight();i++)
 		if(GetLight(i)&&GetLight(i)->GetAttr(ATTRUNKOBJ_IGNORE)==0) 
 			GetLight(i)->Animate(dTime);
@@ -309,7 +309,7 @@ bool cScene::GetLighting(sColor4f &Ambient,sColor4f &Diffuse,sColor4f &Specular,
 #define PREC_TRACE							10
 #define PREC_TRACE_RAY						18
 bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace)
-{ // тест на пересечение луча с объектами сцены, в том числе и с ландшафтом
+{ // С‚РµСЃС‚ РЅР° РїРµСЂРµСЃРµС‡РµРЅРёРµ Р»СѓС‡Р° СЃ РѕР±СЉРµРєС‚Р°РјРё СЃС†РµРЅС‹, РІ С‚РѕРј С‡РёСЃР»Рµ Рё СЃ Р»Р°РЅРґС€Р°С„С‚РѕРј
 
 	TerraInterface* terra=TileMap->GetTerra();
 
@@ -389,7 +389,7 @@ cUnkLight* cScene::CreateLight(int Attribute,cTexture *pTexture)
 }
 
 cUnkLight* cScene::CreateLight(int Attribute, const char* TextureName)
-{ // реализация cUnkLight
+{ // СЂРµР°Р»РёР·Р°С†РёСЏ cUnkLight
 	cUnkLight *Light=new cUnkLight();
 	Light->SetAttr(Attribute);
 	if(TextureName) 

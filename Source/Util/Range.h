@@ -1,7 +1,7 @@
 #ifndef __RANGE_H_INCLUDED__
 #define __RANGE_H_INCLUDED__
 
-/// Абстракция закрытого интервала (отрезка).
+/// РђР±СЃС‚СЂР°РєС†РёСЏ Р·Р°РєСЂС‹С‚РѕРіРѕ РёРЅС‚РµСЂРІР°Р»Р° (РѕС‚СЂРµР·РєР°).
 template<typename ScalarType = float>
 class Range
 {
@@ -35,24 +35,24 @@ public:
       return (maximum () - minimum ());
   }
 
-  /// Корректен ли интервал (нет - в случае когда minimum > maximum);
+  /// РљРѕСЂСЂРµРєС‚РµРЅ Р»Рё РёРЅС‚РµСЂРІР°Р» (РЅРµС‚ - РІ СЃР»СѓС‡Р°Рµ РєРѕРіРґР° minimum > maximum);
   inline bool is_valid () const
   {
       return (minimum () <= maximum ());
   }
 
-  /// Включает ли отрезок (закрытый интервал) точку \c _value.
+  /// Р’РєР»СЋС‡Р°РµС‚ Р»Рё РѕС‚СЂРµР·РѕРє (Р·Р°РєСЂС‹С‚С‹Р№ РёРЅС‚РµСЂРІР°Р») С‚РѕС‡РєСѓ \c _value.
   inline bool include (ScalarType _value) const
   {
       return (minimum () <= _value) && (maximum () >= _value);
   }
-  /// Включает ли интервал в себя \c _range.
+  /// Р’РєР»СЋС‡Р°РµС‚ Р»Рё РёРЅС‚РµСЂРІР°Р» РІ СЃРµР±СЏ \c _range.
   inline bool include (const RangeType& _range) const
   {
       return (minimum () <= _range.minimum ()) && (maximum () >= _range.maximum ());
   }
 
-  /// Возвращает пересечение интервала *this и \c _range.
+  /// Р’РѕР·РІСЂР°С‰Р°РµС‚ РїРµСЂРµСЃРµС‡РµРЅРёРµ РёРЅС‚РµСЂРІР°Р»Р° *this Рё \c _range.
   inline RangeType intersection (const RangeType& _range)
   {
       ScalarType begin;
@@ -69,7 +69,7 @@ public:
       return RangeType (begin, end);
   }
 
-  /// Возвращает \c _value в пределах интервала [minimum, maximum].
+  /// Р’РѕР·РІСЂР°С‰Р°РµС‚ \c _value РІ РїСЂРµРґРµР»Р°С… РёРЅС‚РµСЂРІР°Р»Р° [minimum, maximum].
   inline ScalarType clip (ScalarType& _value)
   {
       if (include (_value))
@@ -86,8 +86,8 @@ public:
   template<class Archive>
   void serialize (Archive& ar)
   {
-      ar & TRANSLATE_OBJECT (min_, "Минимум");
-      ar & TRANSLATE_OBJECT (max_, "Максимум");
+      ar & TRANSLATE_OBJECT (min_, "РњРёРЅРёРјСѓРј");
+      ar & TRANSLATE_OBJECT (max_, "РњР°РєСЃРёРјСѓРј");
   }
 
 private:

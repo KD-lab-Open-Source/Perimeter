@@ -97,7 +97,7 @@ public:
 	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)=0;
 	virtual void SetMaterial(sDataRenderMaterial *Data){};
 	void SetLight(SHADER_HANDLE& pos,SHADER_HANDLE& color,SHADER_HANDLE& param,cUnkLight* l);
-	virtual void SetWorldSize(Vect2f sz){};//для tilemap
+	virtual void SetWorldSize(Vect2f sz){};//РґР»СЏ tilemap
 };
 
 ////////////////////////////9700/////////////////////////////////////

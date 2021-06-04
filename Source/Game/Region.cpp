@@ -271,7 +271,7 @@ void CellLine::analyze(CellLine& line1, CellLine& line2, SeedList& seeds)
 		if(i1 == line1.end()){				   //	 --i1--
 			do {							   //	         --i2--  ----
 				i2->l_cw = &*i2;			   
-				seeds.push_back(&*i2);	// начало положительного региона 			  
+				seeds.push_back(&*i2);	// РЅР°С‡Р°Р»Рѕ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРіРѕ СЂРµРіРёРѕРЅР° 			  
 			} while(++i2 != line2.end());
 			break;
 		}
@@ -282,7 +282,7 @@ void CellLine::analyze(CellLine& line1, CellLine& line2, SeedList& seeds)
 		}
 		else if(i2->xr < i1->xl){ 			  //		 --i1--
 			i2->l_cw = &*i2;				  //  --i2--
-			seeds.push_back(&*i2);	// начало положительного региона 			  
+			seeds.push_back(&*i2);	// РЅР°С‡Р°Р»Рѕ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРіРѕ СЂРµРіРёРѕРЅР° 			  
 			++i2;				  
 			target = 0;
 			target_flag = false;
@@ -293,7 +293,7 @@ void CellLine::analyze(CellLine& line1, CellLine& line2, SeedList& seeds)
 			i2->l_cw = target;
 			target = &*i2;
 			if(target_flag)
-				seeds.push_back(&*i2); // начало отрицательного региона (дырки)	   ---- hole --hanle--
+				seeds.push_back(&*i2); // РЅР°С‡Р°Р»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРіРѕ СЂРµРіРёРѕРЅР° (РґС‹СЂРєРё)	   ---- hole --hanle--
 			target_flag = true;
 
 			while(i1 != line1.end() && i1->xr < i2->xr)		 //  --i1-- ---- --x---
@@ -545,12 +545,12 @@ void Column::operateByCycledHermite(CycledHermite& hermite, int add)
 	Vect2sVect::iterator i;
 	FOR_EACH(border, i){
 		Vect2sVect::iterator i1 = i + 1 != border.end() ? i + 1 : border.begin();
-		if(i1->y < i->y){ // Скачек вверх 
+		if(i1->y < i->y){ // РЎРєР°С‡РµРє РІРІРµСЂС… 
 			Vect2sVect::iterator k;
 			Vect2sVect::iterator k_best = border.end();
 			Vect2sVect::iterator k0 = border.end() - 1;
 			int d, dist = 0x7fffffff;
-			FOR_EACH(border, k){ // Находим ближайший скачек вниз справа
+			FOR_EACH(border, k){ // РќР°С…РѕРґРёРј Р±Р»РёР¶Р°Р№С€РёР№ СЃРєР°С‡РµРє РІРЅРёР· СЃРїСЂР°РІР°
 				if(i->y == k->y && k0->y < k->y && (d = k->x - i->x) > 0 && d < dist){
 					k_best = k;
 					dist = d;
@@ -560,7 +560,7 @@ void Column::operateByCycledHermite(CycledHermite& hermite, int add)
 
 			//xassert(k_best != border.end());
 
-			if(k_best == border.end()) // могут теряться 1-интервалы
+			if(k_best == border.end()) // РјРѕРіСѓС‚ С‚РµСЂСЏС‚СЊСЃСЏ 1-РёРЅС‚РµСЂРІР°Р»С‹
 				continue;
 			
 			int y = i->y;
@@ -1211,7 +1211,7 @@ Vect2f CycledHermite::inward_normal(float t)
 
 void CycledHermite::getBorder(vector<Vect2s>& border, float scale)
 {
-	// Создаем четырехсвязную границу.
+	// РЎРѕР·РґР°РµРј С‡РµС‚С‹СЂРµС…СЃРІСЏР·РЅСѓСЋ РіСЂР°РЅРёС†Сѓ.
 	border.clear();
 
 	Vect2s v0 = (*this)(0)*scale;
@@ -1224,7 +1224,7 @@ void CycledHermite::getBorder(vector<Vect2s>& border, float scale)
 		Vect2s v = vf;
 		
 		float ddt = dt;
-		while((v - v0).norm2() > 2) // скачек, больший 1
+		while((v - v0).norm2() > 2) // СЃРєР°С‡РµРє, Р±РѕР»СЊС€РёР№ 1
 		{
 			v = vf = (*this)(t -= (ddt /= 2))*scale;
 			if(ddt < FLT_EPS)
@@ -1249,14 +1249,14 @@ void CycledHermite::getBorder(vector<Vect2s>& border, float scale)
 		v0 = v;
 	}
 
-	// Удаляем добавочные точки, чтобы точно сшить границу.
+	// РЈРґР°Р»СЏРµРј РґРѕР±Р°РІРѕС‡РЅС‹Рµ С‚РѕС‡РєРё, С‡С‚РѕР±С‹ С‚РѕС‡РЅРѕ СЃС€РёС‚СЊ РіСЂР°РЅРёС†Сѓ.
 	while(!border.empty() && !(border.front() == border.back()))
 	{
 		border.pop_back();
 	}
 
 	xassert(!border.empty());
-	border.pop_back(); // удаляем совпадающую с началом точку
+	border.pop_back(); // СѓРґР°Р»СЏРµРј СЃРѕРІРїР°РґР°СЋС‰СѓСЋ СЃ РЅР°С‡Р°Р»РѕРј С‚РѕС‡РєСѓ
 }
 
 
@@ -1763,7 +1763,7 @@ void RegionDispatcher::clip_by_circle(const Point& p, float clip_radius, int sav
 }
 
 //////////////////////////////////////////////////////////
-//	Контейнер слоев
+//	РљРѕРЅС‚РµР№РЅРµСЂ СЃР»РѕРµРІ
 //////////////////////////////////////////////////////////
 RegionMetaDispatcher::RegionMetaDispatcher(int layers, int sy,bool multithreaded_) 
 { 

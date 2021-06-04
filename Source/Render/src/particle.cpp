@@ -32,7 +32,7 @@ void cParticle::Animate(float dt)
 	CurrentTime+=dt;
 	dTime+=dt;
 	GetFrame()->AddPhase(dt);
-	if(GetRef()>1) return; // запрещено удаление
+	if(GetRef()>1) return; // Р·Р°РїСЂРµС‰РµРЅРѕ СѓРґР°Р»РµРЅРёРµ
 	if(Particle.empty()||(CurrentTime-Particle[LastParticle].time*TimeLife)>TimeLife||
 		CurrentTime>30000) 
 		Release();
@@ -59,7 +59,7 @@ void cParticle::PreDraw(cCamera *DrawNode)
 	}
 }
 void cParticle::Update()
-{	// эволюция системы
+{	// СЌРІРѕР»СЋС†РёСЏ СЃРёСЃС‚РµРјС‹
 	float dt=(CurrentTime-dTime)/TimeLife;
 	if(Dumping.norm2())
 		if(Force.norm2())

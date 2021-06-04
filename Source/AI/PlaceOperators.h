@@ -110,11 +110,11 @@ public:
 
 	void operator()(terUnitBase* unit2)
 	{
-		// Учитыаем только здания и Фрейм
+		// РЈС‡РёС‚С‹Р°РµРј С‚РѕР»СЊРєРѕ Р·РґР°РЅРёСЏ Рё Р¤СЂРµР№Рј
 		if(!unit2->isBuilding() && unit2->attr().ID != UNIT_ATTRIBUTE_FRAME)
 			return;
 
-		// Касание здания
+		// РљР°СЃР°РЅРёРµ Р·РґР°РЅРёСЏ
 		Vect2f pos2 = unit2->position2D();
 		Vect2f p = pos2 - position_;
 		Vect2f p1 = p + unit2->attr().BasementMin;
@@ -124,13 +124,13 @@ public:
 			return;
 		}
 
-		// Учитываем только свои юниты
+		// РЈС‡РёС‚С‹РІР°РµРј С‚РѕР»СЊРєРѕ СЃРІРѕРё СЋРЅРёС‚С‹
 		if(PlayerID != unit2->playerID())
 				return;
 
 		float distance = position_.distance(pos2);
 
-		// Проверяем подключение Core to Frame, Core, CoreGenerator, Transmitter
+		// РџСЂРѕРІРµСЂСЏРµРј РїРѕРґРєР»СЋС‡РµРЅРёРµ Core to Frame, Core, CoreGenerator, Transmitter
 		if(!zeroLayerConnection_ && unit2->attr().ConnectionRadius && (unit2->attr().ID == UNIT_ATTRIBUTE_FRAME || safe_cast<terBuilding*>(unit2)->isConnected())
 		  && unit2->attr().ConnectionRadius - ai_connection_radius_tolerance - distance > 0){
 			connected_ = true;
@@ -141,7 +141,7 @@ public:
 			good_factor += prm_.sameTypeDistanceFactor*prm_.scanRadius/(distance + 1);
 		
 		if(prm_.connectBuildingFactor && !unit2->attr().MakeEnergy){
-			if(distance < attribute_->ZeroLayerRadius + unit2->attr().BasementInscribedRadius) // позволяем свободно перемещать ядро, лишь бы оно покрывало здание
+			if(distance < attribute_->ZeroLayerRadius + unit2->attr().BasementInscribedRadius) // РїРѕР·РІРѕР»СЏРµРј СЃРІРѕР±РѕРґРЅРѕ РїРµСЂРµРјРµС‰Р°С‚СЊ СЏРґСЂРѕ, Р»РёС€СЊ Р±С‹ РѕРЅРѕ РїРѕРєСЂС‹РІР°Р»Рѕ Р·РґР°РЅРёРµ
 				good_factor += prm_.connectBuildingFactor;
 		}
 
@@ -238,5 +238,5 @@ protected:
 	int buildDuration_;
 };
 
-// Размещение ядер - максимально удалять на некоторое расстояние
+// Р Р°Р·РјРµС‰РµРЅРёРµ СЏРґРµСЂ - РјР°РєСЃРёРјР°Р»СЊРЅРѕ СѓРґР°Р»СЏС‚СЊ РЅР° РЅРµРєРѕС‚РѕСЂРѕРµ СЂР°СЃСЃС‚РѕСЏРЅРёРµ
 #endif //__PLACE_OPERATORS_H__

@@ -508,7 +508,7 @@ void cTileMapRender::RestoreTilemapPool()
 		int ys = TileSize.y >> bumpGeoScale[iLod];
 
 		index_offset[iLod]=cur_offset;
-		index_size[iLod]=6*xs*ys;//?????? ìîæåò 2 à íå 6
+		index_size[iLod]=6*xs*ys;//?????? Ð¼Ð¾Ð¶ÐµÑ‚ 2 Ð° Ð½Ðµ 6
 		cur_offset+=index_size[iLod];
 	}
 
@@ -639,7 +639,7 @@ sTilemapTexturePool::sTilemapTexturePool(cD3DRender *aRenderer, int w, int h)
 	RDCALL(renderer->lpD3DDevice->CreateTexture(
 		texture_width, texture_height, 1,
 		0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture,NULL));
-/* Ýòîò êóñîê òåîðåòè÷åñêè ëó÷øå, íî íàäî ïðîâåðèòü íà Geforce 2
+/* Ð­Ñ‚Ð¾Ñ‚ ÐºÑƒÑÐ¾Ðº Ñ‚ÐµÐ¾Ñ€ÐµÑ‚Ð¸Ñ‡ÐµÑÐºÐ¸ Ð»ÑƒÑ‡ÑˆÐµ, Ð½Ð¾ Ð½Ð°Ð´Ð¾ Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð½Ð° Geforce 2
 	RDCALL(renderer->lpD3DDevice->CreateTexture(
 		texture_width, texture_height, 1,
 		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture,NULL));
@@ -982,8 +982,8 @@ int st_VBSw = 0, st_TexSw = 0, st_Poly = 0;
 		sTile &Tile = TileMap->GetTile(k, n);
 		int &bumpTileID = Tile.bumpTileID;
 
-		// calc LOD ñ÷èòàåòñÿ âñåãäà ïî îòãîøåíèþ ê ïðÿìîé êàìåðå äëÿ 
-		// èçáåæàíèÿ ñëó÷àÿ 2 ðàçíûõ LOD â îäíî âðåìÿ 
+		// calc LOD ÑÑ‡Ð¸Ñ‚Ð°ÐµÑ‚ÑÑ Ð²ÑÐµÐ³Ð´Ð° Ð¿Ð¾ Ð¾Ñ‚Ð³Ð¾ÑˆÐµÐ½Ð¸ÑŽ Ðº Ð¿Ñ€ÑÐ¼Ð¾Ð¹ ÐºÐ°Ð¼ÐµÑ€Ðµ Ð´Ð»Ñ 
+		// Ð¸Ð·Ð±ÐµÐ¶Ð°Ð½Ð¸Ñ ÑÐ»ÑƒÑ‡Ð°Ñ 2 Ñ€Ð°Ð·Ð½Ñ‹Ñ… LOD Ð² Ð¾Ð´Ð½Ð¾ Ð²Ñ€ÐµÐ¼Ñ 
 		float dist = pNormalCamera->GetPos().distance(coord + dcoord/2);
 		int iLod;
 		for (iLod = 0; iLod < TILEMAP_LOD; iLod++)

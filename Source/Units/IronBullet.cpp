@@ -12,7 +12,7 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeProjectile, "Снаряды");
+REGISTER_CLASS(AttributeBase, AttributeProjectile, "РЎРЅР°СЂСЏРґС‹");
 
 AttributeProjectile::AttributeProjectile()
 {

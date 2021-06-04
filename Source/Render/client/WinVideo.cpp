@@ -123,7 +123,7 @@ void sWinVideo::Close()
     if(pVideoWindow) 
 	{
 		pVideoWindow->put_Visible(FALSE);
-//		pVideoWindow->put_Owner(NULL);   // может произойти потеря фокуса в полноэкранном режиме
+//		pVideoWindow->put_Owner(NULL);   // РјРѕР¶РµС‚ РїСЂРѕРёР·РѕР№С‚Рё РїРѕС‚РµСЂСЏ С„РѕРєСѓСЃР° РІ РїРѕР»РЅРѕСЌРєСЂР°РЅРЅРѕРј СЂРµР¶РёРјРµ
 	}
     if(pMediaControl)
 	{

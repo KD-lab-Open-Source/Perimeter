@@ -6,11 +6,11 @@
 enum eAttributeCamera
 {
 // general
-	ATTRCAMERA_IGNORE				=	1<<0,	// êàìåðà èãíîðèðóåòñÿ
+	ATTRCAMERA_IGNORE				=	1<<0,	// ÐºÐ°Ð¼ÐµÑ€Ð° Ð¸Ð³Ð½Ð¾Ñ€Ð¸Ñ€ÑƒÐµÑ‚ÑÑ
 // private
-	ATTRCAMERA_PERSPECTIVE			=	1<<4,	// ïåðñïåêòèâà
-	ATTRCAMERA_REFLECTION			=	1<<16,	// êàìåðà ðåíäåðèò ïîðòàë-îòðàæåíèå
-	ATTRCAMERA_SHADOW				=	1<<17,	// êàìåðà ðåíäåðèò ïîðòàë-òåíü
+	ATTRCAMERA_PERSPECTIVE			=	1<<4,	// Ð¿ÐµÑ€ÑÐ¿ÐµÐºÑ‚Ð¸Ð²Ð°
+	ATTRCAMERA_REFLECTION			=	1<<16,	// ÐºÐ°Ð¼ÐµÑ€Ð° Ñ€ÐµÐ½Ð´ÐµÑ€Ð¸Ñ‚ Ð¿Ð¾Ñ€Ñ‚Ð°Ð»-Ð¾Ñ‚Ñ€Ð°Ð¶ÐµÐ½Ð¸Ðµ
+	ATTRCAMERA_SHADOW				=	1<<17,	// ÐºÐ°Ð¼ÐµÑ€Ð° Ñ€ÐµÐ½Ð´ÐµÑ€Ð¸Ñ‚ Ð¿Ð¾Ñ€Ñ‚Ð°Ð»-Ñ‚ÐµÐ½ÑŒ
 	ATTRCAMERA_SHADOW_STRENCIL		=	1<<18,
 	ATTRCAMERA_CLEARZBUFFER			=	1<<19,
 	ATTRCAMERA_SHOWCLIP				=	1<<20,
@@ -24,33 +24,33 @@ enum eAttributeCamera
 enum eAttributeUnkObj
 {
 // general
-	ATTRUNKOBJ_IGNORE				=	1<<0,	// îáúåêò èãíîðèðóåòñÿ = ÿâëÿåòñÿ íåâèäèìûìû = íå âûâîäèòñÿ
+	ATTRUNKOBJ_IGNORE				=	1<<0,	// Ð¾Ð±ÑŠÐµÐºÑ‚ Ð¸Ð³Ð½Ð¾Ñ€Ð¸Ñ€ÑƒÐµÑ‚ÑÑ = ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð½ÐµÐ²Ð¸Ð´Ð¸Ð¼Ñ‹Ð¼Ñ‹ = Ð½Ðµ Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ñ‚ÑÑ
 	ATTRUNKOBJ_DELETED				=	1<<1,
 //	ATTRUNKOBJ_TEMP_USED			=	1<<2,		
-	ATTRUNKOBJ_CREATED_IN_LOGIC		=	1<<3,	//Îáúåêòû ñîçäàííûå â ëîãè÷åñêîì ïîòîêå äîëæíû óäàëÿòüñÿ ïîñëå òîãî êàê íà íèõ íåò ññûëîê â èíòåðïîëÿöèè
+	ATTRUNKOBJ_CREATED_IN_LOGIC		=	1<<3,	//ÐžÐ±ÑŠÐµÐºÑ‚Ñ‹ ÑÐ¾Ð·Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð² Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¾Ð¼ Ð¿Ð¾Ñ‚Ð¾ÐºÐµ Ð´Ð¾Ð»Ð¶Ð½Ñ‹ ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒÑÑ Ð¿Ð¾ÑÐ»Ðµ Ñ‚Ð¾Ð³Ð¾ ÐºÐ°Ðº Ð½Ð° Ð½Ð¸Ñ… Ð½ÐµÑ‚ ÑÑÑ‹Ð»Ð¾Ðº Ð² Ð¸Ð½Ñ‚ÐµÑ€Ð¿Ð¾Ð»ÑÑ†Ð¸Ð¸
 // private
 
-	ATTRUNKOBJ_ADDBLEND				=	1<<7,	// ñëîæåíèå öâåòîâ, äîëæåí ñîâïàäàòü ñ MAT_ALPHA_ADDBLEND
-	ATTRUNKOBJ_COLLISIONTRACE		=	1<<9,	// ó÷èòûâàòü ïðè òðàññèðîâêå
-	ATTRUNKOBJ_WIREFRAME			=	1<<11,	// òåñòîâàÿ ôè÷à, âûâîä ãðàíåé îáúåêòà 
+	ATTRUNKOBJ_ADDBLEND				=	1<<7,	// ÑÐ»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ñ†Ð²ÐµÑ‚Ð¾Ð², Ð´Ð¾Ð»Ð¶ÐµÐ½ ÑÐ¾Ð²Ð¿Ð°Ð´Ð°Ñ‚ÑŒ Ñ MAT_ALPHA_ADDBLEND
+	ATTRUNKOBJ_COLLISIONTRACE		=	1<<9,	// ÑƒÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°Ñ‚ÑŒ Ð¿Ñ€Ð¸ Ñ‚Ñ€Ð°ÑÑÐ¸Ñ€Ð¾Ð²ÐºÐµ
+	ATTRUNKOBJ_WIREFRAME			=	1<<11,	// Ñ‚ÐµÑÑ‚Ð¾Ð²Ð°Ñ Ñ„Ð¸Ñ‡Ð°, Ð²Ñ‹Ð²Ð¾Ð´ Ð³Ñ€Ð°Ð½ÐµÐ¹ Ð¾Ð±ÑŠÐµÐºÑ‚Ð° 
 
-	ATTRUNKOBJ_REFLECTION			=	ATTRCAMERA_REFLECTION,//==16 îáúåêò ìîæåò îòðàæàòüñÿ
-	ATTRUNKOBJ_SHADOW				=	ATTRCAMERA_SHADOW,	//==17 îáúåêò îòêèäûâàåò ïðàâèëüíóþ òåíü
-	ATTRUNKOBJ_SHOWBOUND			=	1<<19,	// ïîêàçûâàòü áîóíä
+	ATTRUNKOBJ_REFLECTION			=	ATTRCAMERA_REFLECTION,//==16 Ð¾Ð±ÑŠÐµÐºÑ‚ Ð¼Ð¾Ð¶ÐµÑ‚ Ð¾Ñ‚Ñ€Ð°Ð¶Ð°Ñ‚ÑŒÑÑ
+	ATTRUNKOBJ_SHADOW				=	ATTRCAMERA_SHADOW,	//==17 Ð¾Ð±ÑŠÐµÐºÑ‚ Ð¾Ñ‚ÐºÐ¸Ð´Ñ‹Ð²Ð°ÐµÑ‚ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½ÑƒÑŽ Ñ‚ÐµÐ½ÑŒ
+	ATTRUNKOBJ_SHOWBOUND			=	1<<19,	// Ð¿Ð¾ÐºÐ°Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ Ð±Ð¾ÑƒÐ½Ð´
 
-	ATTRUNKOBJ_IGNORE_NORMALCAMERA	=	1<<20,	// îáúåêò íå âûâîäèòñÿ â íîðìàëüíîé êàìåðå
+	ATTRUNKOBJ_IGNORE_NORMALCAMERA	=	1<<20,	// Ð¾Ð±ÑŠÐµÐºÑ‚ Ð½Ðµ Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ñ‚ÑÑ Ð² Ð½Ð¾Ñ€Ð¼Ð°Ð»ÑŒÐ½Ð¾Ð¹ ÐºÐ°Ð¼ÐµÑ€Ðµ
 
-	ATTRUNKOBJ_NOLIGHT				=	1<<31,	// îáúåêò íå îñâåùàåòñÿ èñòî÷íèêàìè ñâåòà ñöåíû
+	ATTRUNKOBJ_NOLIGHT				=	1<<31,	// Ð¾Ð±ÑŠÐµÐºÑ‚ Ð½Ðµ Ð¾ÑÐ²ÐµÑ‰Ð°ÐµÑ‚ÑÑ Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸ÐºÐ°Ð¼Ð¸ ÑÐ²ÐµÑ‚Ð° ÑÑ†ÐµÐ½Ñ‹
 };
 
 enum eAttributeLight
 {
 // general
-	ATTRLIGHT_IGNORE				=	1<<0,	// èñòî÷íèê ñâåòà èãíîðèðóåòñÿ = ÿâëÿåòñÿ íåâèäèìûìû = íå âûâîäèòñÿ
+	ATTRLIGHT_IGNORE				=	1<<0,	// Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸Ðº ÑÐ²ÐµÑ‚Ð° Ð¸Ð³Ð½Ð¾Ñ€Ð¸Ñ€ÑƒÐµÑ‚ÑÑ = ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð½ÐµÐ²Ð¸Ð´Ð¸Ð¼Ñ‹Ð¼Ñ‹ = Ð½Ðµ Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ñ‚ÑÑ
 // private
-	ATTRLIGHT_DIRECTION				=	1<<4,	// íàïðâëåííûé èñòî÷íèê ñâåòà
-	ATTRLIGHT_SPHERICAL				=	1<<5,	// ñôåðè÷åñêèé èñòî÷íèê ñâåòà, îòáðàñûâàåò ñâåò íà îáúåêòû
-	ATTRLIGHT_SPHERICAL_SPRITE		=	1<<6,	// èñòî÷íèê ñâåòà ðèñóåòñÿ êó÷åé ñïðàéòîâ
+	ATTRLIGHT_DIRECTION				=	1<<4,	// Ð½Ð°Ð¿Ñ€Ð²Ð»ÐµÐ½Ð½Ñ‹Ð¹ Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸Ðº ÑÐ²ÐµÑ‚Ð°
+	ATTRLIGHT_SPHERICAL				=	1<<5,	// ÑÑ„ÐµÑ€Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸Ðº ÑÐ²ÐµÑ‚Ð°, Ð¾Ñ‚Ð±Ñ€Ð°ÑÑ‹Ð²Ð°ÐµÑ‚ ÑÐ²ÐµÑ‚ Ð½Ð° Ð¾Ð±ÑŠÐµÐºÑ‚Ñ‹
+	ATTRLIGHT_SPHERICAL_SPRITE		=	1<<6,	// Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸Ðº ÑÐ²ÐµÑ‚Ð° Ñ€Ð¸ÑÑƒÐµÑ‚ÑÑ ÐºÑƒÑ‡ÐµÐ¹ ÑÐ¿Ñ€Ð°Ð¹Ñ‚Ð¾Ð²
 };
 
 #endif // _VISGENERIC_DEFINE_H_

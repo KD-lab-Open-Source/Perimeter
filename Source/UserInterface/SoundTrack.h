@@ -13,8 +13,8 @@ public:
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ar & WRAP_NAME(fileName_, "fileName");
-		ar & TRANSLATE_OBJECT(fileNames, "Имена файлов");
-		ar & TRANSLATE_OBJECT(randomChoice, "Случайный выбор");
+		ar & TRANSLATE_OBJECT(fileNames, "РРјРµРЅР° С„Р°Р№Р»РѕРІ");
+		ar & TRANSLATE_OBJECT(randomChoice, "РЎР»СѓС‡Р°Р№РЅС‹Р№ РІС‹Р±РѕСЂ");
 		if(ar.isInput() && fileNames.empty() && !fileName_.empty())
 			fileNames.push_back(fileName_);
 	}

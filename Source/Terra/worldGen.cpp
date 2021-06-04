@@ -81,7 +81,7 @@ static unsigned short* current_map;
 
 //static unsigned short lastlineA[H_SIZE];
 //static unsigned short lastlineC[H_SIZE];
-static unsigned char lastlineF[MAX_H_SIZE]; //Тип поверхности
+static unsigned char lastlineF[MAX_H_SIZE]; //РўРёРї РїРѕРІРµСЂС…РЅРѕСЃС‚Рё
 static unsigned short* r_net_map;
 static unsigned short* m_net_map;
 static unsigned short* proto_m_net_map;
@@ -568,13 +568,13 @@ void vrtMap::partWrite(XStream& ff,int mode, int Stage)
 				pw[j]=pa[j]>>VX_FRACTION;
 			}
 			ff.seek(sizeof(VmpHeader)+(Stage*(int)part_map_size_y*H_SIZE)+i*H_SIZE,XS_BEG);
-			//Запись в VxGBuf
+			//Р—Р°РїРёСЃСЊ РІ VxGBuf
 			ff.write(pw, H_SIZE*sizeof(unsigned char));
 			for(j=0; j<H_SIZE; j++) {
 				pw[j]=pa[j]&VX_FRACTION_MASK;
 			}
-			ff.seek(sizeof(VmpHeader)+(Stage*(int)part_map_size_y*H_SIZE)+i*H_SIZE+ H_SIZE*V_SIZE*2,XS_BEG); //Буфер атрибутов, где содержится дробная часть идет 3-м
-			//Запись в буфер атрибутов
+			ff.seek(sizeof(VmpHeader)+(Stage*(int)part_map_size_y*H_SIZE)+i*H_SIZE+ H_SIZE*V_SIZE*2,XS_BEG); //Р‘СѓС„РµСЂ Р°С‚СЂРёР±СѓС‚РѕРІ, РіРґРµ СЃРѕРґРµСЂР¶РёС‚СЃСЏ РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ РёРґРµС‚ 3-Рј
+			//Р—Р°РїРёСЃСЊ РІ Р±СѓС„РµСЂ Р°С‚СЂРёР±СѓС‚РѕРІ
 			ff.write(pw, H_SIZE*sizeof(unsigned char));
 
 		}
@@ -585,22 +585,22 @@ void vrtMap::worldPreWrite(XStream& ff) //attribute
 	int i;
 	memset(lastlineF,0,H_SIZE);
 
-	//Запись Geo Surface
+	//Р—Р°РїРёСЃСЊ Geo Surface
 	for(i = 0;i < V_SIZE;i++){
 		ff.write(lastlineF,H_SIZE);
 	}
-	//Запись Dam Surface
+	//Р—Р°РїРёСЃСЊ Dam Surface
 	for(i = 0;i < V_SIZE;i++){
 		ff.write(lastlineF,H_SIZE);
 	}
 
-	//Запись AtrBuf
+	//Р—Р°РїРёСЃСЊ AtrBuf
 	memset(lastlineF,0,H_SIZE);
 	for(i = 0;i < V_SIZE;i++){
 		ff.write(lastlineF,H_SIZE);
 	}
 
-	//Запись RnrBuf 
+	//Р—Р°РїРёСЃСЊ RnrBuf 
 	memset(lastlineF,DEFAULT_TERRAIN,H_SIZE);
 	for(i = 0;i < V_SIZE;i++){
 		ff.write(lastlineF,H_SIZE);
@@ -654,10 +654,10 @@ void vrtMap::LoadVPR(int ind)
 {
 	XStream ff(0);
 	if(!ff.open(vrtMap::worldNetDataFile,XS_IN) ){
-//Времменно до перехода на новый стандарт
+//Р’СЂРµРјРјРµРЅРЅРѕ РґРѕ РїРµСЂРµС…РѕРґР° РЅР° РЅРѕРІС‹Р№ СЃС‚Р°РЅРґР°СЂС‚
 //!!	if(ff.size() != 2*4 + (1 + 4 + 4)*4 + 2*(int)net_size + 2*GEONET_POWER*4 + 2*(int)PART_MAX*POWER*4 ) ErrH.Abort("Incorrect VPR size");//+ (int)PART_MAX*4
 
-//	В случае отсутсвия VPR файла
+//	Р’ СЃР»СѓС‡Р°Рµ РѕС‚СЃСѓС‚СЃРІРёСЏ VPR С„Р°Р№Р»Р°
 		r_net_init();
 		m_net_init();
 		//SaveVPR();
@@ -669,7 +669,7 @@ void vrtMap::LoadVPR(int ind)
 		ff > realRNDVAL;
 
 		int nul_MESH;
-		ff > nul_MESH;//GeonetMESH; Сейчас MESH хранится в swmv.dat
+		ff > nul_MESH;//GeonetMESH; РЎРµР№С‡Р°СЃ MESH С…СЂР°РЅРёС‚СЃСЏ РІ swmv.dat
 		ff.seek(2*4*4,XS_CUR);
 
 		ff.read(r_net_map,net_size*sizeof(unsigned short));
@@ -756,7 +756,7 @@ int vrtMap::buildWorld(void)
 
 void vrtMap::GeoRecalc(int n, int level, int delta)
 {
-	//delta необходима для нормализации(приведения к диапозону 0-1) разницы между зашумленной и не зашумленной новой картой
+	//delta РЅРµРѕР±С…РѕРґРёРјР° РґР»СЏ РЅРѕСЂРјР°Р»РёР·Р°С†РёРё(РїСЂРёРІРµРґРµРЅРёСЏ Рє РґРёР°РїРѕР·РѕРЅСѓ 0-1) СЂР°Р·РЅРёС†С‹ РјРµР¶РґСѓ Р·Р°С€СѓРјР»РµРЅРЅРѕР№ Рё РЅРµ Р·Р°С€СѓРјР»РµРЅРЅРѕР№ РЅРѕРІРѕР№ РєР°СЂС‚РѕР№
 	int r_delta=delta; //if(r_delta==0)r_delta=1; //if (absdelta<0)absdelta=-absdelta; 
 	int y0 = n << WPART_POWER;
 	int y1 = (((n + 1) << WPART_POWER) - 1) & clip_mask_y;
@@ -767,38 +767,38 @@ void vrtMap::GeoRecalc(int n, int level, int delta)
 
 	register int i,j;
 	int y1m = (y1 + 1) & clip_mask_y;
-	//Если дельта не равна 0 
+	//Р•СЃР»Рё РґРµР»СЊС‚Р° РЅРµ СЂР°РІРЅР° 0 
 	if(r_delta!=0){
-		//1-й проход: генерация первоначального  и нового ладшафта без шума(параметр GeonetMESH=1000)
-		memcpy(m_net_map,proto_m_net_map,net_size*sizeof(unsigned short));//копирование старой сетки высот в рабочий буфер
+		//1-Р№ РїСЂРѕС…РѕРґ: РіРµРЅРµСЂР°С†РёСЏ РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅРѕРіРѕ  Рё РЅРѕРІРѕРіРѕ Р»Р°РґС€Р°С„С‚Р° Р±РµР· С€СѓРјР°(РїР°СЂР°РјРµС‚СЂ GeonetMESH=1000)
+		memcpy(m_net_map,proto_m_net_map,net_size*sizeof(unsigned short));//РєРѕРїРёСЂРѕРІР°РЅРёРµ СЃС‚Р°СЂРѕР№ СЃРµС‚РєРё РІС‹СЃРѕС‚ РІ СЂР°Р±РѕС‡РёР№ Р±СѓС„РµСЂ
 		int archivGeonetMESH=GeonetMESH;
-		GeonetMESH=1000; //Отсутствие средне и высоко частотного шума
-		generate_alt_map(); //генерация первоначального ладшафта //по сетке m_net_map создается поверхность в alt_map
-		memcpy(proto_map,alt_map,part_map_size*sizeof(unsigned short)); //сохранение ландшафта в proto_map 
+		GeonetMESH=1000; //РћС‚СЃСѓС‚СЃС‚РІРёРµ СЃСЂРµРґРЅРµ Рё РІС‹СЃРѕРєРѕ С‡Р°СЃС‚РѕС‚РЅРѕРіРѕ С€СѓРјР°
+		generate_alt_map(); //РіРµРЅРµСЂР°С†РёСЏ РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅРѕРіРѕ Р»Р°РґС€Р°С„С‚Р° //РїРѕ СЃРµС‚РєРµ m_net_map СЃРѕР·РґР°РµС‚СЃСЏ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ РІ alt_map
+		memcpy(proto_map,alt_map,part_map_size*sizeof(unsigned short)); //СЃРѕС…СЂР°РЅРµРЅРёРµ Р»Р°РЅРґС€Р°С„С‚Р° РІ proto_map 
 
-		memcpy(m_net_map,new_m_net_map,net_size*sizeof(unsigned short));//копирование новой сетки высот в рабочий буфер
-		generate_alt_map(); //генерация нового ладшафта
+		memcpy(m_net_map,new_m_net_map,net_size*sizeof(unsigned short));//РєРѕРїРёСЂРѕРІР°РЅРёРµ РЅРѕРІРѕР№ СЃРµС‚РєРё РІС‹СЃРѕС‚ РІ СЂР°Р±РѕС‡РёР№ Р±СѓС„РµСЂ
+		generate_alt_map(); //РіРµРЅРµСЂР°С†РёСЏ РЅРѕРІРѕРіРѕ Р»Р°РґС€Р°С„С‚Р°
 
-		//подсчет разности изменения ландшафта
+		//РїРѕРґСЃС‡РµС‚ СЂР°Р·РЅРѕСЃС‚Рё РёР·РјРµРЅРµРЅРёСЏ Р»Р°РЅРґС€Р°С„С‚Р°
 		unsigned short* pa = alt_map;
 		unsigned short* pp = proto_map;
-		short* pcm = (short*)current_map; //необходимо сохранять знак разности
+		short* pcm = (short*)current_map; //РЅРµРѕР±С…РѕРґРёРјРѕ СЃРѕС…СЂР°РЅСЏС‚СЊ Р·РЅР°Рє СЂР°Р·РЅРѕСЃС‚Рё
 		for(i = y0;i != y1m;i = (i + 1) & clip_mask_y){
 			for(j = 0;j < H_SIZE;j++,pa++,pp++,pcm++){
 				*pcm=(int)*pa-(int)*pp;
 			}
 		}
-		GeonetMESH=archivGeonetMESH; //Восстановление первоначального меша
-		memcpy(proto_map,alt_map,part_map_size*sizeof(unsigned short));//сохранение не зашумленной новой поверхности
+		GeonetMESH=archivGeonetMESH; //Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅРѕРіРѕ РјРµС€Р°
+		memcpy(proto_map,alt_map,part_map_size*sizeof(unsigned short));//СЃРѕС…СЂР°РЅРµРЅРёРµ РЅРµ Р·Р°С€СѓРјР»РµРЅРЅРѕР№ РЅРѕРІРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё
 	//////
 		//memcpy(m_net_map,proto_m_net_map,net_size*sizeof(unsigned short));
 		//generate_alt_map();
 		//memcpy(proto_map,alt_map,part_map_size*sizeof(unsigned short));
 
-		//2-й проход: генерация нового ландшафта с шумом(параметр MESH восстановлен)
+		//2-Р№ РїСЂРѕС…РѕРґ: РіРµРЅРµСЂР°С†РёСЏ РЅРѕРІРѕРіРѕ Р»Р°РЅРґС€Р°С„С‚Р° СЃ С€СѓРјРѕРј(РїР°СЂР°РјРµС‚СЂ MESH РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅ)
 
-		memcpy(m_net_map,new_m_net_map,net_size*sizeof(unsigned short));//копирование новой сетки высот в рабочий буфер(можно не делать)
-		generate_alt_map(); //генерация нового ландшафта с шумом
+		memcpy(m_net_map,new_m_net_map,net_size*sizeof(unsigned short));//РєРѕРїРёСЂРѕРІР°РЅРёРµ РЅРѕРІРѕР№ СЃРµС‚РєРё РІС‹СЃРѕС‚ РІ СЂР°Р±РѕС‡РёР№ Р±СѓС„РµСЂ(РјРѕР¶РЅРѕ РЅРµ РґРµР»Р°С‚СЊ)
+		generate_alt_map(); //РіРµРЅРµСЂР°С†РёСЏ РЅРѕРІРѕРіРѕ Р»Р°РЅРґС€Р°С„С‚Р° СЃ С€СѓРјРѕРј
 
 		unsigned char* ch = changedT;
 		pa = alt_map;
@@ -806,7 +806,7 @@ void vrtMap::GeoRecalc(int n, int level, int delta)
 		pcm = (short*)current_map;
 		for(i = y0;i != y1m;i = (i + 1) & clip_mask_y){
 			for(j = 0;j < H_SIZE;j++,pa++,pp++,pcm++){//p = lt[i],//,p++ ///!pc++,
-				//добавляем разницу высот-pcm; добавляем нормализованный(*pcm/r_delta) для плавности по краям шум ("*pa-*pp")
+				//РґРѕР±Р°РІР»СЏРµРј СЂР°Р·РЅРёС†Сѓ РІС‹СЃРѕС‚-pcm; РґРѕР±Р°РІР»СЏРµРј РЅРѕСЂРјР°Р»РёР·РѕРІР°РЅРЅС‹Р№(*pcm/r_delta) РґР»СЏ РїР»Р°РІРЅРѕСЃС‚Рё РїРѕ РєСЂР°СЏРј С€СѓРј ("*pa-*pp")
 				if(*pcm) voxSet(j,i,( (int)*pa -(int)*pp )*((int)*pcm)/r_delta + (int)*pcm );
 				//if(*pa != *pp) pixSet(j,i,((int)*pa - GetAlt(j,i))*((int)*pa - (int)*pp)/absdelta );
 				//pixSet(j,i,(int)*pa - (int)*pp);
@@ -814,24 +814,24 @@ void vrtMap::GeoRecalc(int n, int level, int delta)
 			ch[i] = 1;
 		}
 	}
-	else {//если delta==0
+	else {//РµСЃР»Рё delta==0
 	//////
-		//1-й проход: генерация старого ландшафта с шумом
+		//1-Р№ РїСЂРѕС…РѕРґ: РіРµРЅРµСЂР°С†РёСЏ СЃС‚Р°СЂРѕРіРѕ Р»Р°РЅРґС€Р°С„С‚Р° СЃ С€СѓРјРѕРј
 		memcpy(m_net_map,proto_m_net_map,net_size*sizeof(unsigned short));
 		generate_alt_map();
 		memcpy(proto_map,alt_map,part_map_size*sizeof(unsigned short));
 
-		//2-й проход: генерация нового ландшафта с шумом
+		//2-Р№ РїСЂРѕС…РѕРґ: РіРµРЅРµСЂР°С†РёСЏ РЅРѕРІРѕРіРѕ Р»Р°РЅРґС€Р°С„С‚Р° СЃ С€СѓРјРѕРј
 
-		memcpy(m_net_map,new_m_net_map,net_size*sizeof(unsigned short));//копирование новой сетки высот в рабочий буфер(можно не делать)
-		generate_alt_map(); //генерация нового ландшафта с шумом
+		memcpy(m_net_map,new_m_net_map,net_size*sizeof(unsigned short));//РєРѕРїРёСЂРѕРІР°РЅРёРµ РЅРѕРІРѕР№ СЃРµС‚РєРё РІС‹СЃРѕС‚ РІ СЂР°Р±РѕС‡РёР№ Р±СѓС„РµСЂ(РјРѕР¶РЅРѕ РЅРµ РґРµР»Р°С‚СЊ)
+		generate_alt_map(); //РіРµРЅРµСЂР°С†РёСЏ РЅРѕРІРѕРіРѕ Р»Р°РЅРґС€Р°С„С‚Р° СЃ С€СѓРјРѕРј
 
 		unsigned char* ch = changedT;
 		unsigned short* pa = alt_map;
 		unsigned short* pp = proto_map;
 		for(i = y0;i != y1m;i = (i + 1) & clip_mask_y){
 			for(j = 0;j < H_SIZE;j++,pa++,pp++){//p = lt[i],//,p++ ///!pc++,
-				//добавляем разницу высот-pcm; добавляем нормализованный(*pcm/r_delta) для плавности по краям шум ("*pa-*pp")
+				//РґРѕР±Р°РІР»СЏРµРј СЂР°Р·РЅРёС†Сѓ РІС‹СЃРѕС‚-pcm; РґРѕР±Р°РІР»СЏРµРј РЅРѕСЂРјР°Р»РёР·РѕРІР°РЅРЅС‹Р№(*pcm/r_delta) РґР»СЏ РїР»Р°РІРЅРѕСЃС‚Рё РїРѕ РєСЂР°СЏРј С€СѓРј ("*pa-*pp")
 				//if(*pcm) pixSet(j,i,( (int)*pa -(int)*pp )*((int)*pcm)/r_delta + (int)*pcm );
 				//if(*pa != *pp) pixSet(j,i,((int)*pa - GetAlt(j,i))*((int)*pa - (int)*pp)/absdelta );
 				voxSet(j,i,(int)*pa - (int)*pp);
@@ -847,42 +847,42 @@ void vrtMap::GeoPoint(int x,int y,int level,int delta,int mode)
 	int v,vm;
 	switch(mode){
 		case 0:
-			//в вершины сетки ставим изменения высоты
-			if(!(x%QUANT) && !(y%QUANT)){ //проверка на попадание в вершины сетки
+			//РІ РІРµСЂС€РёРЅС‹ СЃРµС‚РєРё СЃС‚Р°РІРёРј РёР·РјРµРЅРµРЅРёСЏ РІС‹СЃРѕС‚С‹
+			if(!(x%QUANT) && !(y%QUANT)){ //РїСЂРѕРІРµСЂРєР° РЅР° РїРѕРїР°РґР°РЅРёРµ РІ РІРµСЂС€РёРЅС‹ СЃРµС‚РєРё
 				v = ((y - 3*QUANT) & clip_mask_y) >> WPART_POWER;
 				vm = (1 + (((y + 3*QUANT) & clip_mask_y) >> WPART_POWER)) & (PART_MAX - 1);
 				for(;v != vm;v = (v + 1) & (PART_MAX - 1)) geoUsed[v] = 1;
-				x >>= GEONET_POWER; //приведение к координатам сетки
+				x >>= GEONET_POWER; //РїСЂРёРІРµРґРµРЅРёРµ Рє РєРѕРѕСЂРґРёРЅР°С‚Р°Рј СЃРµС‚РєРё
 				y >>= GEONET_POWER;
 				if(!delta)
 					v = level;
 				else {
 					v = M_NET_MAP(y,x);
 					v += delta;
-					RestrictMinMax(v);// ограничение по min-max
+					RestrictMinMax(v);// РѕРіСЂР°РЅРёС‡РµРЅРёРµ РїРѕ min-max
 					//if(delta > 0){ if(v > 255) v = 255; }
 					//else if(v < 0) v = 0;
 					}
-				M_NET_MAP(y,x) = (unsigned short)v; //занесение в сетку высот новой высоты
+				M_NET_MAP(y,x) = (unsigned short)v; //Р·Р°РЅРµСЃРµРЅРёРµ РІ СЃРµС‚РєСѓ РІС‹СЃРѕС‚ РЅРѕРІРѕР№ РІС‹СЃРѕС‚С‹
 				}
 			break;
 		case 1:
-			// Инициализируем буфера, сохраняем первоначальную сетку в proto_m_net_map
+			// РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј Р±СѓС„РµСЂР°, СЃРѕС…СЂР°РЅСЏРµРј РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅСѓСЋ СЃРµС‚РєСѓ РІ proto_m_net_map
 			worldInit();
 			for(v = 0;v < (int)PART_MAX;v++) geoUsed[v] = 0;
 			geoFirst = 0;
 			memcpy(proto_m_net_map,m_net_map,net_size*sizeof(unsigned short));
 			break;
 		case 2:
-			//сохраняем новую сетку высот в new_m_net_map
+			//СЃРѕС…СЂР°РЅСЏРµРј РЅРѕРІСѓСЋ СЃРµС‚РєСѓ РІС‹СЃРѕС‚ РІ new_m_net_map
 			memcpy(new_m_net_map,m_net_map,net_size*sizeof(unsigned short));
 			v = geoFirst;
-			//в случае если в секторе изменялась сетка высот вызываем генерацию ландшафта
+			//РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РІ СЃРµРєС‚РѕСЂРµ РёР·РјРµРЅСЏР»Р°СЃСЊ СЃРµС‚РєР° РІС‹СЃРѕС‚ РІС‹Р·С‹РІР°РµРј РіРµРЅРµСЂР°С†РёСЋ Р»Р°РЅРґС€Р°С„С‚Р°
 			do {
 				if(geoUsed[v]) GeoRecalc(v,level,delta);
 				v = (v + 1) & (PART_MAX - 1);
 				} while(v != geoFirst);
-			//освобождение буферов
+			//РѕСЃРІРѕР±РѕР¶РґРµРЅРёРµ Р±СѓС„РµСЂРѕРІ
 			worldRelease();
 			break;
 		}

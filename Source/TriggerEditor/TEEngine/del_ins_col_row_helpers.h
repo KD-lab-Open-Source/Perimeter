@@ -4,9 +4,9 @@
 	filename: 	del_ins_col_row_helpers.h
 	file base:	del_ins_col_row_helpers
 	file ext:	h
-	powerd by:	Илюха
+	powerd by:	РР»СЋС…Р°
 	
-	purpose:	функторы для удалления добавления 
+	purpose:	С„СѓРЅРєС‚РѕСЂС‹ РґР»СЏ СѓРґР°Р»Р»РµРЅРёСЏ РґРѕР±Р°РІР»РµРЅРёСЏ 
 *********************************************************************/
 #include <limits>
 #include "TEEngine/TEGrid.h"
@@ -52,11 +52,11 @@ public:
 };
 
 class offset_ele{
-	//! вспомогательаня переменная
+	//! РІСЃРїРѕРјРѕРіР°С‚РµР»СЊР°РЅСЏ РїРµСЂРµРјРµРЅРЅР°СЏ
 	mutable CRect r_;
-	//! сдвиг
+	//! СЃРґРІРёРі
 	CSize offset_;
-	//! полные ширина и высота ячейки
+	//! РїРѕР»РЅС‹Рµ С€РёСЂРёРЅР° Рё РІС‹СЃРѕС‚Р° СЏС‡РµР№РєРё
 	TEGrid const& grid_;
 public:
 	offset_ele(CSize offset, TEGrid const& grid):
@@ -83,7 +83,7 @@ class test_can_shift_element
 	TriggerEditorLogic const& logic_;
 	TriggerChain const& chain_;
 public:
-	//для стандартной библиотеки
+	//РґР»СЏ СЃС‚Р°РЅРґР°СЂС‚РЅРѕР№ Р±РёР±Р»РёРѕС‚РµРєРё
 	typedef Trigger const argument_type;
 	typedef bool result_type;
 

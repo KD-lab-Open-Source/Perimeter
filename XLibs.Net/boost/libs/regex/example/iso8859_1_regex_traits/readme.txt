@@ -19,7 +19,7 @@ character class cntrl only, whereas most of them belong to print graph punct
 in Windows.  This reflects a true difference between the ISO8859-1 and
 Windows character sets, so it should be pretty uncontroversial.
 
-2) The superscript digits ¹²³ (octal 271, 262 and 263) belong to print graph
+2) The superscript digits â„–Ð†Ñ– (octal 271, 262 and 263) belong to print graph
 punct only in iso8859_1_regex_traits.  In w32_regex_traits these characters
 are defined to belong to digit as well, which automatically makes them
 members of alnum and word too.  I consider this to be a mistake made by
@@ -44,6 +44,6 @@ As stated above I look forward to any comments, both relating to the
 implementation as such and to the choices I have made in the definition of
 the character classes.
 
-Christian Engström
+Christian EngstrÑ†m
 
 

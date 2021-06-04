@@ -233,7 +233,7 @@ void InOutNetComBuffer::reset()
 //Out
 int InOutNetComBuffer::send(PNetCenter& conn, DPNID dpnid, bool flag_guaranted)
 {
-///	Тест 
+///	РўРµСЃС‚ 
 ///	unsigned int size=filled_size;
 ///	unsigned int msize=size;
 ///	while(msize>0){
@@ -245,7 +245,7 @@ int InOutNetComBuffer::send(PNetCenter& conn, DPNID dpnid, bool flag_guaranted)
 
 
 	unsigned int sent=0; 
-	while(sent < filled_size){ // подразумевается ==
+	while(sent < filled_size){ // РїРѕРґСЂР°Р·СѓРјРµРІР°РµС‚СЃСЏ ==
 		sent+=conn.Send(buf+sent, filled_size-sent, dpnid, flag_guaranted);
 	};
 	xassert(filled_size==sent);
@@ -285,7 +285,7 @@ void InOutNetComBuffer::putNetCommand(const netCommandGeneral* event)
 	set(off);
 	filled_size=off;
 	set(0);
-	//для нормального next event
+	//РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ next event
 	event_ID = NETCOM_ID_NONE;
 	size_of_event=0;
 }

@@ -13,7 +13,7 @@ cSpriteNode::~cSpriteNode()
 }
 void cSpriteNode::Animate(float dt)
 {
-	if(GetFrame()) // обновить фазу
+	if(GetFrame()) // РѕР±РЅРѕРІРёС‚СЊ С„Р°Р·Сѓ
 		GetFrame()->AddPhase(dt);
 }
 void cSpriteNode::PreDraw(cCamera *DrawNode)
@@ -21,7 +21,7 @@ void cSpriteNode::PreDraw(cCamera *DrawNode)
 	if(!DrawNode->TestVisible(GetGlobalMatrix(),-cUnkObj::GetScale(),cUnkObj::GetScale()))
 		return;
 
-	DrawNode->Attach(SCENENODE_OBJECTSORT,this); // спрайты всегда выводятся последними
+	DrawNode->Attach(SCENENODE_OBJECTSORT,this); // СЃРїСЂР°Р№С‚С‹ РІСЃРµРіРґР° РІС‹РІРѕРґСЏС‚СЃСЏ РїРѕСЃР»РµРґРЅРёРјРё
 }
 void cSpriteNode::Draw(cCamera *DrawNode)
 {
@@ -29,7 +29,7 @@ void cSpriteNode::Draw(cCamera *DrawNode)
 		return;
 	sColor4c Diffuse;
 	if(GetAttribute(ATTRUNKOBJ_NOLIGHT)==0)
-	{ // расчет освещения объкта
+	{ // СЂР°СЃС‡РµС‚ РѕСЃРІРµС‰РµРЅРёСЏ РѕР±СЉРєС‚Р°
 		sColor4f fDiffuse(0,0,0,1),fSpecular(0,0,0,1);
 		DrawNode->GetScene()->GetLighting(GetGlobalMatrix().trans(),fDiffuse,fSpecular);
 		Diffuse.set(fDiffuse*GetDiffuse());
@@ -67,13 +67,13 @@ cSpriteManager::~cSpriteManager()
 
 void cSpriteManager::Animate(float dt)
 {
-	if(GetFrame()) // обновить фазу
+	if(GetFrame()) // РѕР±РЅРѕРІРёС‚СЊ С„Р°Р·Сѓ
 		GetFrame()->AddPhase(dt);
 }
 
 void cSpriteManager::PreDraw(cCamera *camera)
 {
-	camera->Attach(SCENENODE_OBJECTSORT,this); // спрайты всегда выводятся последними
+	camera->Attach(SCENENODE_OBJECTSORT,this); // СЃРїСЂР°Р№С‚С‹ РІСЃРµРіРґР° РІС‹РІРѕРґСЏС‚СЃСЏ РїРѕСЃР»РµРґРЅРёРјРё
 }
 
 void cSpriteManager::Draw(cCamera *camera)

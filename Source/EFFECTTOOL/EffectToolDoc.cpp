@@ -387,7 +387,7 @@ void  CEffectToolDoc::set_particle_key_time(int nGenPoint, int nParticleKey, flo
 	if(tm < 0)
 		tm = 0;
 
-/*	if(nParticleKey > 0) //âðåìÿ äîëæíî áûòü íåóáûâàþùèì
+/*	if(nParticleKey > 0) //Ð²Ñ€ÐµÐ¼Ñ Ð´Ð¾Ð»Ð¶Ð½Ð¾ Ð±Ñ‹Ñ‚ÑŒ Ð½ÐµÑƒÐ±Ñ‹Ð²Ð°ÑŽÑ‰Ð¸Ð¼
 	{
 		if(m_pActiveEmitter->velocity[nParticleKey - 1].x > tm)
 			tm = m_pActiveEmitter->velocity[nParticleKey - 1].x;
@@ -652,11 +652,11 @@ bool BrowseFolder(LPCTSTR szTitle, CString& s, CString& path, int mode)
 void CEffectToolDoc::OnToolbarOpen() 
 {
 	CString fx, sprite;
-	if(BrowseFolder("Âûáåðèòå ýôôåêò èëè ýìèòòåð", fx, m_StorePath, 1)){
+	if(BrowseFolder("Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ ÑÑ„Ñ„ÐµÐºÑ‚ Ð¸Ð»Ð¸ ÑÐ¼Ð¸Ñ‚Ñ‚ÐµÑ€", fx, m_StorePath, 1)){
 		if(GetFileAttributes(fx) != FILE_ATTRIBUTE_DIRECTORY&&(fx.Find(".effect")>=0))
 			LoadEffectFromFile(fx);
 		else
-			if(BrowseFolder("Óêàæèòå áèáëèîòåêó ñïðàéòîâ", sprite, m_StorePath, 0))
+			if(BrowseFolder("Ð£ÐºÐ°Ð¶Ð¸Ñ‚Ðµ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÑƒ ÑÐ¿Ñ€Ð°Ð¹Ñ‚Ð¾Ð²", sprite, m_StorePath, 0))
 			{
 				if(GetFileAttributes(fx) == FILE_ATTRIBUTE_DIRECTORY) 
 					LoadEffect(fx, sprite);
@@ -708,7 +708,7 @@ bool BrowseWorldFolder(CString& s)
 
 		memset(&bri, 0, sizeof(bri));
 		bri.hwndOwner = AfxGetMainWnd()->GetSafeHwnd();
-		bri.lpszTitle = "Óêàæèòå ôàéë 'worlds.prm'";
+		bri.lpszTitle = "Ð£ÐºÐ°Ð¶Ð¸Ñ‚Ðµ Ñ„Ð°Ð¹Ð» 'worlds.prm'";
 		bri.ulFlags = BIF_RETURNONLYFSDIRS|BIF_BROWSEINCLUDEFILES;
 		bri.lpfn = BrowseCallbackProc;
 		bri.lParam = (LPARAM)&cb_data;
@@ -756,7 +756,7 @@ void CEffectToolDoc::SaveCurrentEffect()
 	ASSERT(m_pActiveGroup);
 
 	CString s;
-	s.Format("Ñîõðàíèòü ýôôåêò %s?", m_pActiveEffect->name.c_str());
+	s.Format("Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ ÑÑ„Ñ„ÐµÐºÑ‚ %s?", m_pActiveEffect->name.c_str());
 	if(AfxMessageBox(s, MB_YESNO|MB_ICONQUESTION) == IDYES)
 		SaveEffect(m_pActiveGroup->m_name, m_pActiveEffect);
 }
@@ -766,9 +766,9 @@ void CEffectToolDoc::SaveCurrentEmitter()
 
 	CString s;
 	if(m_pActiveEmitter->data)
-		s.Format("Ñîõðàíèòü ýìèòòåð %s?", m_pActiveEmitter->data->name.c_str());
+		s.Format("Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ ÑÐ¼Ð¸Ñ‚Ñ‚ÐµÑ€ %s?", m_pActiveEmitter->data->name.c_str());
 	else
-		s.Format("Ñîõðàíèòü ýìèòòåð %s?", m_pActiveEmitter->data_light->name.c_str());
+		s.Format("Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ ÑÐ¼Ð¸Ñ‚Ñ‚ÐµÑ€ %s?", m_pActiveEmitter->data_light->name.c_str());
 
 	if(AfxMessageBox(s, MB_YESNO|MB_ICONQUESTION) == IDYES)
 		SaveEmitter(m_pActiveEmitter, theApp.m_szDirEmitters);

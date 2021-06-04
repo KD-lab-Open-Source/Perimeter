@@ -21,11 +21,11 @@ class AttributeBuilding : public AttributeReal
 {
 public:
 	vector<EnumWrapper<terUnitAttributeID> > EnableStructure;
-	vector<EnumWrapper<terUnitAttributeID> > Downgrades; // для сканирования, в _обратном_ порядке
-	EnumWrapper<terUnitAttributeID> Upgrade; // Только ближайший апгрейд
+	vector<EnumWrapper<terUnitAttributeID> > Downgrades; // РґР»СЏ СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ, РІ _РѕР±СЂР°С‚РЅРѕРј_ РїРѕСЂСЏРґРєРµ
+	EnumWrapper<terUnitAttributeID> Upgrade; // РўРѕР»СЊРєРѕ Р±Р»РёР¶Р°Р№С€РёР№ Р°РїРіСЂРµР№Рґ
 
-    int constructionPriority; // приоритет строительства
-	bool disconnectAnimation; // есть анимация для отключенного состояния (иначе просто останавливается текущая анимация)
+    int constructionPriority; // РїСЂРёРѕСЂРёС‚РµС‚ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР°
+	bool disconnectAnimation; // РµСЃС‚СЊ Р°РЅРёРјР°С†РёСЏ РґР»СЏ РѕС‚РєР»СЋС‡РµРЅРЅРѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ (РёРЅР°С‡Рµ РїСЂРѕСЃС‚Рѕ РѕСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ С‚РµРєСѓС‰Р°СЏ Р°РЅРёРјР°С†РёСЏ)
    
 	AttributeBuilding();
 
@@ -33,15 +33,15 @@ public:
 	void serialize(Archive& ar) {
 		__super::serialize(ar);
 		
-		if(ar.openBlock("attributeBuilding", "Здание")){
-			ar & TRANSLATE_OBJECT(EnableStructure, "Требуемые для работы строения");
-			ar & TRANSLATE_OBJECT(Downgrades, "Даунгрейды для сканирования, в _обратном_ порядке");
-			ar & TRANSLATE_OBJECT(Upgrade, "Ближайший апгрейд");
+		if(ar.openBlock("attributeBuilding", "Р—РґР°РЅРёРµ")){
+			ar & TRANSLATE_OBJECT(EnableStructure, "РўСЂРµР±СѓРµРјС‹Рµ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃС‚СЂРѕРµРЅРёСЏ");
+			ar & TRANSLATE_OBJECT(Downgrades, "Р”Р°СѓРЅРіСЂРµР№РґС‹ РґР»СЏ СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ, РІ _РѕР±СЂР°С‚РЅРѕРј_ РїРѕСЂСЏРґРєРµ");
+			ar & TRANSLATE_OBJECT(Upgrade, "Р‘Р»РёР¶Р°Р№С€РёР№ Р°РїРіСЂРµР№Рґ");
 			ar & TRANSLATE_OBJECT(isUpgrade, "isUpgrade");
 
 			ar & TRANSLATE_OBJECT(constructionSpeedCoeff, "constructionSpeedCoeff");
-			ar & TRANSLATE_OBJECT(constructionPriority, "Приоритет строительства");
-			ar & TRANSLATE_OBJECT(disconnectAnimation, "есть анимация для отключенного состояния (иначе просто останавливается текущая анимация)");
+			ar & TRANSLATE_OBJECT(constructionPriority, "РџСЂРёРѕСЂРёС‚РµС‚ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР°");
+			ar & TRANSLATE_OBJECT(disconnectAnimation, "РµСЃС‚СЊ Р°РЅРёРјР°С†РёСЏ РґР»СЏ РѕС‚РєР»СЋС‡РµРЅРЅРѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ (РёРЅР°С‡Рµ РїСЂРѕСЃС‚Рѕ РѕСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ С‚РµРєСѓС‰Р°СЏ Р°РЅРёРјР°С†РёСЏ)");
 
 			ar & TRANSLATE_OBJECT(iconDistanceFactor, "iconDistanceFactor");
 			ar.closeBlock();
@@ -147,7 +147,7 @@ public:
 	bool isUnseen() const { return !visible_; }
 
 protected:
-	/// Возвращает ID желаемой цепочки анимации.
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ ID Р¶РµР»Р°РµРјРѕР№ С†РµРїРѕС‡РєРё Р°РЅРёРјР°С†РёРё.
 	ChainID chainRequest() const;
 	bool needWeaponDisable() const { return (!isConnected() || !(buildingStatus() & BUILDING_STATUS_POWERED) || terUnitReal::needWeaponDisable()); }
 
@@ -173,7 +173,7 @@ public:
 	int repairRequest() const;
 };
 
-/// "труп" здания
+/// "С‚СЂСѓРї" Р·РґР°РЅРёСЏ
 class terFallStructure : public terUnitCorpse
 {
 public:

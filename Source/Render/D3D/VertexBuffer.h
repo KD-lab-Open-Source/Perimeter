@@ -80,7 +80,7 @@ public:
 	}
 
 	inline void BeginDraw(const MatXf &m=MatXf::ID){buf.SetMatrix(m);buf.BeginDraw();};
-	//Возвращает указатель на 4 вершины
+	//Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° 4 РІРµСЂС€РёРЅС‹
 	inline vertex* Get(){return (vertex*)buf.Get();}
 	inline void EndDraw(){buf.EndDraw();};
 };

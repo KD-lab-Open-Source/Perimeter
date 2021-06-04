@@ -13,7 +13,7 @@ class cLogicObject : public cIUnkObjScale
 protected:
 	typedef vector<cLogicTileInt*> vtiles;
 	vtiles				tiles;
-	string				fname;								// имя файла из которого он был загружен
+	string				fname;								// РёРјСЏ С„Р°Р№Р»Р° РёР· РєРѕС‚РѕСЂРѕРіРѕ РѕРЅ Р±С‹Р» Р·Р°РіСЂСѓР¶РµРЅ
 
 public:
 	cLogicObject(const char *fname);
@@ -41,7 +41,7 @@ public:
 class cLogicGeneric : public cUnknownClass
 {
 public:
-	//Для общего использования
+	//Р”Р»СЏ РѕР±С‰РµРіРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ
 	cLogicGeneric();
 	virtual ~cLogicGeneric();
 	void Free();

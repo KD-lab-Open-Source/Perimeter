@@ -6,7 +6,7 @@
 #include "Squad.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-//	Интерфейс с юнитами
+//	РРЅС‚РµСЂС„РµР№СЃ СЃ СЋРЅРёС‚Р°РјРё
 ////////////////////////////////////////////////////////////////////////////////
 enum LegionFireStatus
 {
@@ -55,7 +55,7 @@ public:
 	template<class Archive>
 	void serialize(Archive& ar) {
 		__super::serialize(ar);
-		if(ar.openBlock("attributeLegionary", "Легионер")){
+		if(ar.openBlock("attributeLegionary", "Р›РµРіРёРѕРЅРµСЂ")){
 			ar & TRANSLATE_OBJECT(is_base_unit, "is_base_unit");
 			ar & TRANSLATE_OBJECT(formationRadiusFactor, "formationRadiusFactor");
 			ar & TRANSLATE_OBJECT(dynamicAttack, "dynamicAttack");
@@ -64,7 +64,7 @@ public:
 			ar & TRANSLATE_OBJECT(ignoreUninstalledFrame, "ignoreUninstalledFrame");
 			ar & TRANSLATE_OBJECT(dontUseDamageMapPathFind, "dontUseDamageMapPathFind");
 			ar & TRANSLATE_OBJECT(LegionType, "LegionType");
-			ar & TRANSLATE_OBJECT(destroyZeroLayer, "Разрушает зерослой");
+			ar & TRANSLATE_OBJECT(destroyZeroLayer, "Р Р°Р·СЂСѓС€Р°РµС‚ Р·РµСЂРѕСЃР»РѕР№");
 			ar & TRANSLATE_OBJECT(EnableStructure, "EnableStructure");
 			ar.closeBlock();
 		}
@@ -169,7 +169,7 @@ public:
 	bool effectsEnabled() const { return (!isUnseen() && !BodyPoint->underMutation()); }
 
 protected:
-	/// Возвращает ID желаемой цепочки анимации.
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ ID Р¶РµР»Р°РµРјРѕР№ С†РµРїРѕС‡РєРё Р°РЅРёРјР°С†РёРё.
 	ChainID chainRequest() const;
 
 private:
@@ -181,24 +181,24 @@ private:
 		
 	bool inSquad_;
 
-	/// бкдет развален на базовые в ближайшее время
+	/// Р±РєРґРµС‚ СЂР°Р·РІР°Р»РµРЅ РЅР° Р±Р°Р·РѕРІС‹Рµ РІ Р±Р»РёР¶Р°Р№С€РµРµ РІСЂРµРјСЏ
 	bool isDisintegrating_;
 	
 	Vect2f localPosition_;
 	float speed_factor;
 	
-	/// true если цель для атаки выбрана
+	/// true РµСЃР»Рё С†РµР»СЊ РґР»СЏ Р°С‚Р°РєРё РІС‹Р±СЂР°РЅР°
 	bool manualAttackTarget_;
 	terUnitBase* attackTarget_;
 	DurationTimer targetEventTimer_;
 
-	/// true если цель для атаки - точка на мире
+	/// true РµСЃР»Рё С†РµР»СЊ РґР»СЏ Р°С‚Р°РєРё - С‚РѕС‡РєР° РЅР° РјРёСЂРµ
 	bool hasAttackPosition_;
 	Vect3f attackPosition_;
 
 	DurationTimer invisibilityTimer_;
 
-	vector<Vect2f> out_path; // Путь к цели, персонально для этого юнита
+	vector<Vect2f> out_path; // РџСѓС‚СЊ Рє С†РµР»Рё, РїРµСЂСЃРѕРЅР°Р»СЊРЅРѕ РґР»СЏ СЌС‚РѕРіРѕ СЋРЅРёС‚Р°
 	mutable float deltaPath_;
 	
 	//-------------------

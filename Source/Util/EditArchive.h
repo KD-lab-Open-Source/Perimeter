@@ -232,8 +232,8 @@ private:
 	template<class T1, class T2>
 	EditOArchive& operator&(const std::pair<T1, T2>& t)
 	{
-		(*this) & TRANSLATE_NAME(t.first, "first", "& Î˛˜");
-		(*this) & TRANSLATE_NAME(t.second, "second", "«Ì‡˜ÂÌËÂ");
+		(*this) & TRANSLATE_NAME(t.first, "first", "&–ö–ª—é—á");
+		(*this) & TRANSLATE_NAME(t.second, "second", "–ó–Ω–∞—á–µ–Ω–∏–µ");
 
 		string name = currentNode_->name();
 		TreeNode::const_iterator i;
@@ -311,8 +311,8 @@ private:
 
 	EditOArchive& operator&(const bool& value)
     {
-		currentNode_->setValue(value ? "ƒ‡" : "ÕÂÚ");
-		currentNode_->setComboList(TreeNode::COMBO, "ƒ‡|ÕÂÚ");
+		currentNode_->setValue(value ? "–î–∞" : "–ù–µ—Ç");
+		currentNode_->setComboList(TreeNode::COMBO, "–î–∞|–ù–µ—Ç");
 		return *this;
 	}
 };
@@ -520,8 +520,8 @@ private:
 	template<class T1, class T2>
 	EditIArchive& operator&(std::pair<T1, T2>& t)
 	{
-		(*this) & TRANSLATE_NAME(t.first, "first", " Î˛˜");
-		(*this) & TRANSLATE_NAME(t.second, "second", "«Ì‡˜ÂÌËÂ");
+		(*this) & TRANSLATE_NAME(t.first, "first", "–ö–ª—é—á");
+		(*this) & TRANSLATE_NAME(t.second, "second", "–ó–Ω–∞—á–µ–Ω–∏–µ");
 		return *this;
 	}
 
@@ -592,7 +592,7 @@ private:
 	}
 
 	EditIArchive& operator&(bool& value){
-		value = currentNode_->value() == "ƒ‡";
+		value = currentNode_->value() == "–î–∞";
 		return *this;
 	}
 };
@@ -613,7 +613,7 @@ public:
 	template<class T>
 	bool edit(T& t, const char* name = 0) { 
     	static_cast<EditOArchive&>(*this) << WRAP_NAME(t, 0);
-		if(name) // ÂÒÎË Â‰‡ÍÚËÛÂÚÒˇ ÛÍ‡Á‡ÚÂÎ¸, ÚÓ ËÏˇ ÍÓÌÙÎËÍÚÛÂÚ Ò Â„Ó ÚËÔÓÏ
+		if(name) // –µ—Å–ª–∏ —Ä–µ–¥–∞–∫—Ç–∏—Ä—É–µ—Ç—Å—è —É–∫–∞–∑–∞—Ç–µ–ª—å, —Ç–æ –∏–º—è –∫–æ–Ω—Ñ–ª–∏–∫—Ç—É–µ—Ç —Å –µ–≥–æ —Ç–∏–ø–æ–º
 			const_cast<TreeNode*>(rootNode())->setValue(name);
 		if(edit()){
 			static_cast<EditIArchive&>(*this) >> WRAP_NAME(t, 0);

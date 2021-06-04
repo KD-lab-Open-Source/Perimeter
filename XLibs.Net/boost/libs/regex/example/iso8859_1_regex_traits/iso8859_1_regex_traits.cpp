@@ -185,102 +185,102 @@ bool iso8859_1_regex_traits::is_class(char c, boost::uint_fast32_t f) const
   cntrl                  , //  9d  235 157
   cntrl                  , //  9e  236 158
   cntrl                  , //  9f  237 159
-  punct                  , //  a0  240 160  †    |  Non-breaking space
-  punct                  , //  a1  241 161  °    |  Inverted exclamation mark
-  punct                  , //  a2  242 162  ¢    |  Cent sign
-  punct                  , //  a3  243 163  £    |  Pound sign
-  punct                  , //  a4  244 164  §    |  Currency sign
-  punct                  , //  a5  245 165  •    |  Yen sign
-  punct                  , //  a6  246 166  ¶    |  Broken bar
-  punct                  , //  a7  247 167  ß    |  Section sign
-  punct                  , //  a8  250 168  ®    |  Diaeresis
-  punct                  , //  a9  251 169  ©    |  Copyright sign
-  punct                  , //  aa  252 170  ™    |  Feminine ordinal indicator
-  punct                  , //  ab  253 171  ´    |  Left-pointing double angle
-  punct                  , //  ac  254 172  ¨    |  Not sign
-  punct                  , //  ad  255 173  ≠    |  Soft hyphen
-  punct                  , //  ae  256 174  Æ    |  Registered trademark sign
-  punct                  , //  af  257 175  Ø    |  Macron
-  punct                  , //  b0  260 176  ∞    |  Degree sign
-  punct                  , //  b1  261 177  ±    |  Plus-minus sign
-  punct                  , //  b2  262 178  ≤    |  Superscript two
-  punct                  , //  b3  263 179  ≥    |  Superscript three
-  punct                  , //  b4  264 180  ¥    |  Acute accent
-  punct                  , //  b5  265 181  µ    |  Micro sign
-  punct                  , //  b6  266 182  ∂    |  Pilcrow sign
-  punct                  , //  b7  267 183  ∑    |  Middle dot
-  punct                  , //  b8  270 184  ∏    |  Cedilla
-  punct                  , //  b9  271 185  π    |  Superscript one
-  punct                  , //  ba  272 186  ∫    |  Masculine ordinal indicator
-  punct                  , //  bb  273 187  ª    |  Right-pointing double angle
-  punct                  , //  bc  274 188  º    |  Fraction one quarter
-  punct                  , //  bd  275 189  Ω    |  Fraction one half
-  punct                  , //  be  276 190  æ    |  Fraction three quarters
-  punct                  , //  bf  277 191  ø    |  Inverted question mark
-  upper                  , //  c0  300 192  ¿    |  "A" with grave accent
-  upper                  , //  c1  301 193  ¡    |  "A" with acute accent
-  upper                  , //  c2  302 194  ¬    |  "A" with circumflex
-  upper                  , //  c3  303 195  √    |  "A" with tilde
-  upper                  , //  c4  304 196  ƒ    |  "A" with diaeresis
-  upper                  , //  c5  305 197  ≈    |  "A" with ring above
-  upper                  , //  c6  306 198  ∆    |  "AE" ligature
-  upper                  , //  c7  307 199  «    |  "C" with cedilla
-  upper                  , //  c8  310 200  »    |  "E" with grave accent
-  upper                  , //  c9  311 201  …    |  "E" with acute accent
-  upper                  , //  ca  312 202       |  "E" with circumflex
-  upper                  , //  cb  313 203  À    |  "E" with diaeresis
-  upper                  , //  cc  314 204  Ã    |  "I" with grave accent
-  upper                  , //  cd  315 205  Õ    |  "I" with acute accent
-  upper                  , //  ce  316 206  Œ    |  "I" with circumflex
-  upper                  , //  cf  317 207  œ    |  "I" with diaeresis
-  upper                  , //  d0  320 208  –    |  Upper Icelandic D (Eth)
-  upper                  , //  d1  321 209  —    |  "N" with tilde
-  upper                  , //  d2  322 210  “    |  "O" with grave accent
-  upper                  , //  d3  323 211  ”    |  "O" with acute accent
-  upper                  , //  d4  324 212  ‘    |  "O" with circumflex
-  upper                  , //  d5  325 213  ’    |  "O" with tilde
-  upper                  , //  d6  326 214  ÷    |  "O" with diaeresis
-  punct                  , //  d7  327 215  ◊    |  Multiplication sign
-  upper                  , //  d8  330 216  ÿ    |  "O" with stroke
-  upper                  , //  d9  331 217  Ÿ    |  "U" with grave accent
-  upper                  , //  da  332 218  ⁄    |  "U" with acute accent
-  upper                  , //  db  333 219  €    |  "U" with circumflex
-  upper                  , //  dc  334 220  ‹    |  "U" with diaeresis
-  upper                  , //  dd  335 221  ›    |  "Y" with acute accent
-  upper                  , //  de  336 222  ﬁ    |  Upper Icelandic T (Thorn)
-  lower                  , //  df  337 223  ﬂ    |  German sharp s
-  lower                  , //  e0  340 224  ‡    |  "a" with grave accent
-  lower                  , //  e1  341 225  ·    |  "a" with acute accent
-  lower                  , //  e2  342 226  ‚    |  "a" with circumflex
-  lower                  , //  e3  343 227  „    |  "a" with tilde
-  lower                  , //  e4  344 228  ‰    |  "a" with diaeresis
-  lower                  , //  e5  345 229  Â    |  "a" with ring above
-  lower                  , //  e6  346 230  Ê    |  Latin small ligature ae
-  lower                  , //  e7  347 231  Á    |  "c" with cedilla
-  lower                  , //  e8  350 232  Ë    |  "e" with grave accent
-  lower                  , //  e9  351 233  È    |  "e" with acute accent
-  lower                  , //  ea  352 234  Í    |  "e" with circumflex
-  lower                  , //  eb  353 235  Î    |  "e" with diaeresis
-  lower                  , //  ec  354 236  Ï    |  "i" with grave accent
-  lower                  , //  ed  355 237  Ì    |  "i" with acute accent
-  lower                  , //  ee  356 238  Ó    |  "i" with circumflex
-  lower                  , //  ef  357 239  Ô    |  "i" with diaeresis
-  lower                  , //  f0  360 240      |  Lower Icelandic d (eth)
-  lower                  , //  f1  361 241  Ò    |  "n" with tilde
-  lower                  , //  f2  362 242  Ú    |  "o" with grave accent
-  lower                  , //  f3  363 243  Û    |  "o" with acute accent
-  lower                  , //  f4  364 244  Ù    |  "o" with circumflex
-  lower                  , //  f5  365 245  ı    |  "o" with tilde
-  lower                  , //  f6  366 246  ˆ    |  "o" with diaeresis
-  punct                  , //  f7  367 247  ˜    |  Division sign
-  lower                  , //  f8  370 248  ¯    |  "o" with oblique bar
-  lower                  , //  f9  371 249  ˘    |  "u" with grave accent
-  lower                  , //  fa  372 250  ˙    |  "u" with acute accent
-  lower                  , //  fb  373 251  ˚    |  "u" with circumflex
-  lower                  , //  fc  374 252  ¸    |  "u" with diaeresis
-  lower                  , //  fd  375 253  ˝    |  "y" with acute accent
-  lower                  , //  fe  376 254  ˛    |  Lower Icelandic t (thorn)
-  lower                    //  ff  377 255  ˇ    |  "y" with diaeresis
+  punct                  , //  a0  240 160  ¬†    |  Non-breaking space
+  punct                  , //  a1  241 161  –é    |  Inverted exclamation mark
+  punct                  , //  a2  242 162  —û    |  Cent sign
+  punct                  , //  a3  243 163  –à    |  Pound sign
+  punct                  , //  a4  244 164  ¬§    |  Currency sign
+  punct                  , //  a5  245 165  “ê    |  Yen sign
+  punct                  , //  a6  246 166  ¬¶    |  Broken bar
+  punct                  , //  a7  247 167  ¬ß    |  Section sign
+  punct                  , //  a8  250 168  –Å    |  Diaeresis
+  punct                  , //  a9  251 169  ¬©    |  Copyright sign
+  punct                  , //  aa  252 170  –Ñ    |  Feminine ordinal indicator
+  punct                  , //  ab  253 171  ¬´    |  Left-pointing double angle
+  punct                  , //  ac  254 172  ¬¨    |  Not sign
+  punct                  , //  ad  255 173  ¬≠    |  Soft hyphen
+  punct                  , //  ae  256 174  ¬Æ    |  Registered trademark sign
+  punct                  , //  af  257 175  –á    |  Macron
+  punct                  , //  b0  260 176  ¬∞    |  Degree sign
+  punct                  , //  b1  261 177  ¬±    |  Plus-minus sign
+  punct                  , //  b2  262 178  –Ü    |  Superscript two
+  punct                  , //  b3  263 179  —ñ    |  Superscript three
+  punct                  , //  b4  264 180  “ë    |  Acute accent
+  punct                  , //  b5  265 181  ¬µ    |  Micro sign
+  punct                  , //  b6  266 182  ¬∂    |  Pilcrow sign
+  punct                  , //  b7  267 183  ¬∑    |  Middle dot
+  punct                  , //  b8  270 184  —ë    |  Cedilla
+  punct                  , //  b9  271 185  ‚Ññ    |  Superscript one
+  punct                  , //  ba  272 186  —î    |  Masculine ordinal indicator
+  punct                  , //  bb  273 187  ¬ª    |  Right-pointing double angle
+  punct                  , //  bc  274 188  —ò    |  Fraction one quarter
+  punct                  , //  bd  275 189  –Ö    |  Fraction one half
+  punct                  , //  be  276 190  —ï    |  Fraction three quarters
+  punct                  , //  bf  277 191  —ó    |  Inverted question mark
+  upper                  , //  c0  300 192  –ê    |  "A" with grave accent
+  upper                  , //  c1  301 193  –ë    |  "A" with acute accent
+  upper                  , //  c2  302 194  –í    |  "A" with circumflex
+  upper                  , //  c3  303 195  –ì    |  "A" with tilde
+  upper                  , //  c4  304 196  –î    |  "A" with diaeresis
+  upper                  , //  c5  305 197  –ï    |  "A" with ring above
+  upper                  , //  c6  306 198  –ñ    |  "AE" ligature
+  upper                  , //  c7  307 199  –ó    |  "C" with cedilla
+  upper                  , //  c8  310 200  –ò    |  "E" with grave accent
+  upper                  , //  c9  311 201  –ô    |  "E" with acute accent
+  upper                  , //  ca  312 202  –ö    |  "E" with circumflex
+  upper                  , //  cb  313 203  –õ    |  "E" with diaeresis
+  upper                  , //  cc  314 204  –ú    |  "I" with grave accent
+  upper                  , //  cd  315 205  –ù    |  "I" with acute accent
+  upper                  , //  ce  316 206  –û    |  "I" with circumflex
+  upper                  , //  cf  317 207  –ü    |  "I" with diaeresis
+  upper                  , //  d0  320 208  –†    |  Upper Icelandic D (Eth)
+  upper                  , //  d1  321 209  –°    |  "N" with tilde
+  upper                  , //  d2  322 210  –¢    |  "O" with grave accent
+  upper                  , //  d3  323 211  –£    |  "O" with acute accent
+  upper                  , //  d4  324 212  –§    |  "O" with circumflex
+  upper                  , //  d5  325 213  –•    |  "O" with tilde
+  upper                  , //  d6  326 214  –¶    |  "O" with diaeresis
+  punct                  , //  d7  327 215  –ß    |  Multiplication sign
+  upper                  , //  d8  330 216  –®    |  "O" with stroke
+  upper                  , //  d9  331 217  –©    |  "U" with grave accent
+  upper                  , //  da  332 218  –™    |  "U" with acute accent
+  upper                  , //  db  333 219  –´    |  "U" with circumflex
+  upper                  , //  dc  334 220  –¨    |  "U" with diaeresis
+  upper                  , //  dd  335 221  –≠    |  "Y" with acute accent
+  upper                  , //  de  336 222  –Æ    |  Upper Icelandic T (Thorn)
+  lower                  , //  df  337 223  –Ø    |  German sharp s
+  lower                  , //  e0  340 224  –∞    |  "a" with grave accent
+  lower                  , //  e1  341 225  –±    |  "a" with acute accent
+  lower                  , //  e2  342 226  –≤    |  "a" with circumflex
+  lower                  , //  e3  343 227  –≥    |  "a" with tilde
+  lower                  , //  e4  344 228  –¥    |  "a" with diaeresis
+  lower                  , //  e5  345 229  –µ    |  "a" with ring above
+  lower                  , //  e6  346 230  –∂    |  Latin small ligature ae
+  lower                  , //  e7  347 231  –∑    |  "c" with cedilla
+  lower                  , //  e8  350 232  –∏    |  "e" with grave accent
+  lower                  , //  e9  351 233  –π    |  "e" with acute accent
+  lower                  , //  ea  352 234  –∫    |  "e" with circumflex
+  lower                  , //  eb  353 235  –ª    |  "e" with diaeresis
+  lower                  , //  ec  354 236  –º    |  "i" with grave accent
+  lower                  , //  ed  355 237  –Ω    |  "i" with acute accent
+  lower                  , //  ee  356 238  –æ    |  "i" with circumflex
+  lower                  , //  ef  357 239  –ø    |  "i" with diaeresis
+  lower                  , //  f0  360 240  —Ä    |  Lower Icelandic d (eth)
+  lower                  , //  f1  361 241  —Å    |  "n" with tilde
+  lower                  , //  f2  362 242  —Ç    |  "o" with grave accent
+  lower                  , //  f3  363 243  —É    |  "o" with acute accent
+  lower                  , //  f4  364 244  —Ñ    |  "o" with circumflex
+  lower                  , //  f5  365 245  —Ö    |  "o" with tilde
+  lower                  , //  f6  366 246  —Ü    |  "o" with diaeresis
+  punct                  , //  f7  367 247  —á    |  Division sign
+  lower                  , //  f8  370 248  —à    |  "o" with oblique bar
+  lower                  , //  f9  371 249  —â    |  "u" with grave accent
+  lower                  , //  fa  372 250  —ä    |  "u" with acute accent
+  lower                  , //  fb  373 251  —ã    |  "u" with circumflex
+  lower                  , //  fc  374 252  —å    |  "u" with diaeresis
+  lower                  , //  fd  375 253  —ç    |  "y" with acute accent
+  lower                  , //  fe  376 254  —é    |  Lower Icelandic t (thorn)
+  lower                    //  ff  377 255  —è    |  "y" with diaeresis
   };
 
   return (flag_table[unsigned char(c)] & f) != 0;
@@ -292,7 +292,7 @@ char iso8859_1_regex_traits::translate(char c, bool icase) const
 {
 //----------------------------------------------------------------------------
 //      "ABCDEFGHIJKLMNOPQRSTUVWXYZ" -> "abcdefghijklmnopqrstuvwxyz"
-//  "¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷ÿŸ⁄€‹›ﬁ" -> "‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ¯˘˙˚¸˝˛"
+//  "–ê–ë–í–ì–î–ï–ñ–ó–ò–ô–ö–õ–ú–ù–û–ü–†–°–¢–£–§–•–¶–®–©–™–´–¨–≠–Æ" -> "–∞–±–≤–≥–¥–µ–∂–∑–∏–π–∫–ª–º–Ω–æ–ø—Ä—Å—Ç—É—Ñ—Ö—Ü—à—â—ä—ã—å—ç—é"
 //----------------------------------------------------------------------------
   static const char lower_case_map[UCHAR_MAX + 1] = {
     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,

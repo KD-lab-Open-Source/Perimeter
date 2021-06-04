@@ -53,11 +53,11 @@ struct PlayerData {
 	void serialize(Archive& ar) {
 		ar & WRAP_OBJECT(playerID);
 		ar & WRAP_OBJECT(realPlayerType);
-		ar & TRANSLATE_OBJECT(belligerent, "Сторона");
-		ar & TRANSLATE_OBJECT(colorIndex, "Цвет");
-		ar & TRANSLATE_OBJECT(clan, "Клан");
-		ar & TRANSLATE_OBJECT(difficulty, "Сложность");
-		ar & TRANSLATE_OBJECT(handicap, "Гандикап");
+		ar & TRANSLATE_OBJECT(belligerent, "РЎС‚РѕСЂРѕРЅР°");
+		ar & TRANSLATE_OBJECT(colorIndex, "Р¦РІРµС‚");
+		ar & TRANSLATE_OBJECT(clan, "РљР»Р°РЅ");
+		ar & TRANSLATE_OBJECT(difficulty, "РЎР»РѕР¶РЅРѕСЃС‚СЊ");
+		ar & TRANSLATE_OBJECT(handicap, "Р“Р°РЅРґРёРєР°Рї");
 
 		ar & WRAP_OBJECT(flag_playerStartReady);
 		ar & WRAP_OBJECT(flag_playerGameReady);
@@ -167,13 +167,13 @@ public:
 	template<class Archive>
 	void serialize(Archive& ar) {
 		ar & WRAP_OBJECT(version);
-		ar & TRANSLATE_OBJECT(worldName, "Имя мира");
-		ar & TRANSLATE_NAME(missionDescriptionID, "missionDescription", "Описание миссии");
-		ar & TRANSLATE_OBJECT(difficulty, "Уровень сложности");
-		ar & TRANSLATE_OBJECT(playersData, "Игроки");
+		ar & TRANSLATE_OBJECT(worldName, "РРјСЏ РјРёСЂР°");
+		ar & TRANSLATE_NAME(missionDescriptionID, "missionDescription", "РћРїРёСЃР°РЅРёРµ РјРёСЃСЃРёРё");
+		ar & TRANSLATE_OBJECT(difficulty, "РЈСЂРѕРІРµРЅСЊ СЃР»РѕР¶РЅРѕСЃС‚Рё");
+		ar & TRANSLATE_OBJECT(playersData, "РРіСЂРѕРєРё");
 		ar & WRAP_OBJECT(missionNumber);
 		
-		ar & TRANSLATE_OBJECT(playerAmountScenarioMax, "Максимальное количество игроков");
+		ar & TRANSLATE_OBJECT(playerAmountScenarioMax, "РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РёРіСЂРѕРєРѕРІ");
 		ar & WRAP_OBJECT(playersShufflingIndices);
 		ar & WRAP_OBJECT(activePlayerID);
 		

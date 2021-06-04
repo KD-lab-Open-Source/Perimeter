@@ -23,7 +23,7 @@ public:
 		TriggerClipBuffer& clipBuffer, 
 		SelectionManager const& selMngr);
 protected:
-	//! Оставляет только те линки, которые связывают элементы в группе элементов
+	//! РћСЃС‚Р°РІР»СЏРµС‚ С‚РѕР»СЊРєРѕ С‚Рµ Р»РёРЅРєРё, РєРѕС‚РѕСЂС‹Рµ СЃРІСЏР·С‹РІР°СЋС‚ СЌР»РµРјРµРЅС‚С‹ РІ РіСЂСѓРїРїРµ СЌР»РµРјРµРЅС‚РѕРІ
 	void filterLinks(TriggerList& triggers);
 	void makeTriggerCellIndexesRelative(
 				TriggerList& triggers) const;

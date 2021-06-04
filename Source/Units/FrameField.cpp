@@ -27,7 +27,7 @@ terProtector::~terProtector()
 
 terUnitMonk* terProtector::createMonk()
 {
-	//Поривет Шуре, не забыть переписать.
+	//РџРѕСЂРёРІРµС‚ РЁСѓСЂРµ, РЅРµ Р·Р°Р±С‹С‚СЊ РїРµСЂРµРїРёСЃР°С‚СЊ.
 	UnitTemplate data(Player->unitAttribute(UNIT_ATTRIBUTE_MONK),Player);
 	terUnitMonk* p=universe()->monks.create(data);
 	p->setPosition(position());
@@ -39,7 +39,7 @@ void terProtector::setPose(const Se3f& poseIn, bool initPose)
 {
 	terBuildingEnergy::setPose(poseIn, initPose);
 
-	//Неожиданно криво, привет Шуре.
+	//РќРµРѕР¶РёРґР°РЅРЅРѕ РєСЂРёРІРѕ, РїСЂРёРІРµС‚ РЁСѓСЂРµ.
 	if(initPose && monks_.empty())
 	for(int i = 0; i < fieldPrm.monksPerCore; i++)
 	{

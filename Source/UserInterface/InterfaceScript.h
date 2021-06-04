@@ -10,7 +10,7 @@
 #include "SquadShellEnums.inl"
 #endif // _UNIT_ATTRIBUTE_INL_
 
-/// интерфейсное событие
+/// РёРЅС‚РµСЂС„РµР№СЃРЅРѕРµ СЃРѕР±С‹С‚РёРµ
 struct iEvent
 {
 	EnumWrapper<iEventID> ID;
@@ -27,9 +27,9 @@ struct iEvent
 	template<class Archive>
 	void serialize(Archive& ar)
 	{
-		ar & TRANSLATE_OBJECT(ID, "код события");
+		ar & TRANSLATE_OBJECT(ID, "РєРѕРґ СЃРѕР±С‹С‚РёСЏ");
 		ar & TRANSLATE_OBJECT(controlID, "controlID");
-		ar & TRANSLATE_OBJECT(data, "данные события");
+		ar & TRANSLATE_OBJECT(data, "РґР°РЅРЅС‹Рµ СЃРѕР±С‹С‚РёСЏ");
 	}
 };
 
@@ -47,8 +47,8 @@ struct ControlAction {
 	template<class Archive>
 	void serialize(Archive& ar) {
 		ar & TRANSLATE_OBJECT(name, "&name");
-		ar & TRANSLATE_OBJECT(code, "Код");
-		ar & TRANSLATE_OBJECT(param, "Параметр");
+		ar & TRANSLATE_OBJECT(code, "РљРѕРґ");
+		ar & TRANSLATE_OBJECT(param, "РџР°СЂР°РјРµС‚СЂ");
 		ar & TRANSLATE_OBJECT(hotKeyPopup, "hotKeyPopup");
 	}
 };
@@ -146,7 +146,7 @@ struct sqshControl
 
 	BGObj bgObject;
 
-	//текст и его смещение для кнопок меню
+	//С‚РµРєСЃС‚ Рё РµРіРѕ СЃРјРµС‰РµРЅРёРµ РґР»СЏ РєРЅРѕРїРѕРє РјРµРЅСЋ
 	PrmString text;
 	float    txt_dx;
 	float    txt_dy;

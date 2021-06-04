@@ -48,9 +48,9 @@ bool DeleteRows::run(size_t rowsCount,
 	FilterIter first(predicate, lst.begin(), lst.end());
 	FilterIter last(predicate, lst.end(), lst.end());
 
-	//если не можем сдвинуть хотя бы один элемент, 
-	//из тех, что находятся в удаляемом столбце
-	//то операцию проводить не будем
+	//РµСЃР»Рё РЅРµ РјРѕР¶РµРј СЃРґРІРёРЅСѓС‚СЊ С…РѕС‚СЏ Р±С‹ РѕРґРёРЅ СЌР»РµРјРµРЅС‚, 
+	//РёР· С‚РµС…, С‡С‚Рѕ РЅР°С…РѕРґСЏС‚СЃСЏ РІ СѓРґР°Р»СЏРµРјРѕРј СЃС‚РѕР»Р±С†Рµ
+	//С‚Рѕ РѕРїРµСЂР°С†РёСЋ РїСЂРѕРІРѕРґРёС‚СЊ РЅРµ Р±СѓРґРµРј
 	int const fullCellHeight = grid.getFullCellHeight();
 	std::unary_negate<te_h::test_can_shift_element> 
 		shift_predicate(te_h::test_can_shift_element(
@@ -59,7 +59,7 @@ bool DeleteRows::run(size_t rowsCount,
 	if (std::find_if(first, last, shift_predicate) != last)
 		return false;
 
-	//чтобы рассматривать все элементы находящиеся справа от удаляемого столбца
+	//С‡С‚РѕР±С‹ СЂР°СЃСЃРјР°С‚СЂРёРІР°С‚СЊ РІСЃРµ СЌР»РµРјРµРЅС‚С‹ РЅР°С…РѕРґСЏС‰РёРµСЃСЏ СЃРїСЂР°РІР° РѕС‚ СѓРґР°Р»СЏРµРјРѕРіРѕ СЃС‚РѕР»Р±С†Р°
 	predicate.setIdxMax(std::numeric_limits<int>::max());
 	{
 		FilterIter first(predicate, lst.begin(), lst.end());

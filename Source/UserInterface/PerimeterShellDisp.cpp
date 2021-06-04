@@ -350,7 +350,7 @@ _handlertbl[] = {
 	{SQSH_INGAME_CHAT_EDIT_ID, onMMInGameChatInputButton},
 
 			
-	//внутренний интерфейс
+	//РІРЅСѓС‚СЂРµРЅРЅРёР№ РёРЅС‚РµСЂС„РµР№СЃ
 	{SQSH_WORKAREA2_ID, OnButtonWorkArea},
 	{SQSH_WORKAREA3_ID, OnButtonWorkArea},
 	{SQSH_WORKAREA4_ID, OnButtonWorkArea},
@@ -569,7 +569,7 @@ void CShellCursorManager::OnWMSetCursor()
 	{
 		if(m_nCursorShift)
 		{
-			//сдвиг карты
+			//СЃРґРІРёРі РєР°СЂС‚С‹
 			if(m_cursors[m_nCursorShift].bCursorSystem)
 				SetCursor(m_cursors[m_nCursorShift].hCursorSystem);
 			else
@@ -580,7 +580,7 @@ void CShellCursorManager::OnWMSetCursor()
 
 		if(_shellIconManager.m_pCtrlHover)
 		{
-			//курсор на элементе интерфейса
+			//РєСѓСЂСЃРѕСЂ РЅР° СЌР»РµРјРµРЅС‚Рµ РёРЅС‚РµСЂС„РµР№СЃР°
 			SetCursor(m_hCursorDefault);
 			return;
 		}
@@ -611,7 +611,7 @@ void CShellCursorManager::OnMouseMove(float x, float y)
 		}
 	}
 
-	//проверка на курсор сдвига карты
+	//РїСЂРѕРІРµСЂРєР° РЅР° РєСѓСЂСЃРѕСЂ СЃРґРІРёРіР° РєР°СЂС‚С‹
 	m_nCursorShift = 0;
 
 	if(m_bShowSideArrows/* && !gameShell->CursorOverInterface*/)
@@ -652,7 +652,7 @@ void CShellCursorManager::draw()
 	{
 		if(gameShell->cameraMouseShift)
 		{
-			//курсор сдвига карты
+			//РєСѓСЂСЃРѕСЂ СЃРґРІРёРіР° РєР°СЂС‚С‹
 			Vect3f v1,e1;
 			terCamera->GetCamera()->ConvertorWorldToViewPort(&gameShell->mapMoveStartPoint(), &v1, &e1);
 
@@ -713,7 +713,7 @@ void CShellCursorManager::draw()
 			break;
 		}
 
-		//сдвиг карты
+		//СЃРґРІРёРі РєР°СЂС‚С‹
 		terRenderDevice->DrawSprite(round(terScreenSizeX*cur_x) + dx,round(terScreenSizeY*cur_y) + dy,
 			m_cursors[m_nCursorShift].sx, m_cursors[m_nCursorShift].sy,
 			0, 0, 1, 1, m_cursors[m_nCursorShift].hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
@@ -735,7 +735,7 @@ void CShellCursorManager::draw()
 			0, 0, 1, 1, m_pActiveCursor->hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
 	}
 
-	//высота до зерослоя
+	//РІС‹СЃРѕС‚Р° РґРѕ Р·РµСЂРѕСЃР»РѕСЏ
 	if(!_pShellDispatcher->m_bToolzerSizeChangeMode)
 		if((m_pActiveCursor == &m_cursors[workarea_in]) || (m_pActiveCursor == &m_cursors[workarea_out]))
 		{
@@ -1200,7 +1200,7 @@ void CShellIconManager::LoadTabSheets()
 }
 void CShellIconManager::PostLoadTabSheets()
 {
-	//подставить SQSH_BACKGRND_ID как parent для tabsheets 
+	//РїРѕРґСЃС‚Р°РІРёС‚СЊ SQSH_BACKGRND_ID РєР°Рє parent РґР»СЏ tabsheets 
 	CShellWindow* pBkg = GetWnd(SQSH_BACKGRND_ID);
 	if(pBkg)
 	{
@@ -1244,7 +1244,7 @@ char* CShellIconManager::FormatMessageText(const char* cbTag, char* cb, ...)
 	static char cbTempBuffer[bufferSize];
 
 	string text;
-	//ищем тэг
+	//РёС‰РµРј С‚СЌРі
 	if (*cbTag == '<') {
 		string tag = cbTag;
 		tag = tag.substr(1, tag.length() - 2);
@@ -2010,7 +2010,7 @@ void CShellIconManager::quant(float dTime)
 	m_fEffectTime -= dTime;
 	if(m_pFocus)
 	{
-		//проверка на удерживание кнопки
+		//РїСЂРѕРІРµСЂРєР° РЅР° СѓРґРµСЂР¶РёРІР°РЅРёРµ РєРЅРѕРїРєРё
 		if(frame_time() - m_fTimePressed > nButtonHoldDelay)
 			m_pFocus->OnLButtonHold();
 	}
@@ -2416,7 +2416,7 @@ void CShellIconManager::draw()
 				terRenderDevice->SetFont(0);
 			}
 
-			//общее кол-во базовых юнитов
+			//РѕР±С‰РµРµ РєРѕР»-РІРѕ Р±Р°Р·РѕРІС‹С… СЋРЅРёС‚РѕРІ
 			static char _cb[25];
 			sprintf(_cb, units.c_str(), m_nTotalUnitsBaseCount, globalAttr().baseUnitsMax);
 			terRenderDevice->SetFont(m_hFontPopup);
@@ -2784,7 +2784,7 @@ void CShellIconManager::UpdateMiscIcons() {
 
 	((CReplayPlayerPushButton*)GetWnd(SQSH_REPLAY_PLAYER_BUTTON_ID))->setPlayer(logicData->activePlayerName, logicData->activePlayerColor);
 
-	//кнопка поля
+	//РєРЅРѕРїРєР° РїРѕР»СЏ
 	CShellComplexPushButton* fieldOnBtn = ((CShellComplexPushButton*)GetWnd(SQSH_FIELD_ON_ID));
 	fieldOnBtn->Show(1);
 	fieldOnBtn->SetCheck(logicData->fieldOnBtn.checked);
@@ -2795,7 +2795,7 @@ void CShellIconManager::UpdateMiscIcons() {
 
 	CShellComplexPushButton* pBtn;
 
-	//тулзеры
+	//С‚СѓР»Р·РµСЂС‹
 //	GetWnd(SQSH_WORKAREA4_ID)->Enable(isControlAccessible(SQSH_WORKAREA4_ID));
 	GetWnd(SQSH_WORKAREA4_ID)->Enable(true);
 
@@ -2823,7 +2823,7 @@ void CShellIconManager::UpdateMiscIcons() {
 		((CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_SPEED_50))->SetCheck(true);
 	}
 
-	//кнопки фрейма
+	//РєРЅРѕРїРєРё С„СЂРµР№РјР°
 	pBtn = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_FRAME_INSTALL_ID);
 	if (pBtn) {
 		pBtn->SetCheck(logicData->frameInstallBtn.checked);
@@ -2901,7 +2901,7 @@ void CShellIconManager::UpdateGunsIcons() {
 
 	CUITabSheet* pSheetBuild = (CUITabSheet*)GetWnd(SQSH_TAB_BUILD_ID);
 
-	//стационарные орудия
+	//СЃС‚Р°С†РёРѕРЅР°СЂРЅС‹Рµ РѕСЂСѓРґРёСЏ
 //	if (pSheetBuild->getActivePageNumber() == 2) {
 //		pSheetBuild->MarkPage(2, false);
 //	}
@@ -2918,8 +2918,8 @@ void CShellIconManager::UpdateGunsIcons() {
 		}
 	}
 
-	//страница "стац. орудия недоступна" при неустановленном фрейме и 
-	//  если недоступно ни одно орудие
+	//СЃС‚СЂР°РЅРёС†Р° "СЃС‚Р°С†. РѕСЂСѓРґРёСЏ РЅРµРґРѕСЃС‚СѓРїРЅР°" РїСЂРё РЅРµСѓСЃС‚Р°РЅРѕРІР»РµРЅРЅРѕРј С„СЂРµР№РјРµ Рё 
+	//  РµСЃР»Рё РЅРµРґРѕСЃС‚СѓРїРЅРѕ РЅРё РѕРґРЅРѕ РѕСЂСѓРґРёРµ
 //	pSheetBuild->EnablePage(2, logicData->hasGun);
 }
 
@@ -3028,7 +3028,7 @@ void CShellIconManager::ShowActionIcons(const UnitInterfacePrm& intf_prm, const 
 		pBtnOffDef->Show(TRUE);
 		pBtnOffDef->SetCheck(true);
 		CSELECT_AUTOLOCK();
-		//!!! В SelectList не обязательно сквад !!!
+		//!!! Р’ SelectList РЅРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ СЃРєРІР°Рґ !!!
 		const UnitList& selList = universe()->select.GetSelectList();
 		UnitList::const_iterator selIt;
 		for (selIt = selList.begin(); selIt != selList.end(); selIt++) {
@@ -3135,7 +3135,7 @@ void CShellIconManager::UpdateActionStatus(terUnitBase* pUnit)
 	}
 	
 
-	//состояние offensive/defensive
+	//СЃРѕСЃС‚РѕСЏРЅРёРµ offensive/defensive
 //	if(pUnit->Attribute.ID == UNIT_ATTRIBUTE_SQUAD){
 //		pBtn = (CShellComplexPushButton*)GetWnd(SQSH_SELPANEL_SQ_OFDEF_ID);
 //		pBtn->SetCheck(safe_cast<terUnitSquad*>(pUnit)->GetInterfaceOffensiveMode() == 0);
@@ -3265,7 +3265,7 @@ void CShellIconManager::UpdateSelectionIcons()
 
 			case UNIT_ATTRIBUTE_TERRAIN_MASTER:
 			case UNIT_ATTRIBUTE_BUILD_MASTER:
-				unit_prm = &attr->interfacePrm; //даже если фрейм не установлен
+				unit_prm = &attr->interfacePrm; //РґР°Р¶Рµ РµСЃР»Рё С„СЂРµР№Рј РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ
 				break;
 
 			case UNIT_ATTRIBUTE_FILTH_SPOT:
@@ -3308,7 +3308,7 @@ void CShellIconManager::UpdateBrigFrameIcons()
 //	HT-SELECT!!!
 	if (mt_interface_quant) {
 
-		//бригадиры	 
+		//Р±СЂРёРіР°РґРёСЂС‹	 
 		for (int tid = SQSH_FRAME_TERRAIN_BUILD1_ID; tid <= SQSH_FRAME_TERRAIN_BUILD5_ID; tid++)	{
 			CTerrainBuildButton* pBtn = (CTerrainBuildButton*) GetWnd(tid);
 			TerrainButtonData* slotData = &(gameShell->getLogicUpdater().getLogicData()->slots[tid - SQSH_FRAME_TERRAIN_BUILD1_ID]);
@@ -3414,7 +3414,7 @@ void CShellIconManager::UpdateSquadIcons()
 			terUnitSquad* pSquad = page->squad;
 			if(pSquad)
 			{
-				//переключить страничку для селекченного сквада
+				//РїРµСЂРµРєР»СЋС‡РёС‚СЊ СЃС‚СЂР°РЅРёС‡РєСѓ РґР»СЏ СЃРµР»РµРєС‡РµРЅРЅРѕРіРѕ СЃРєРІР°РґР°
 				if (pSquad->selected() && (!pSquadSelected || !pSquadSelected->selected())) {
 					pSquadSheet->SwitchPage(sq, false);
 					nActivePage = pSquadSheet->GetActivePage();
@@ -3783,7 +3783,7 @@ void LogicUpdater::updateBuildingsData() {
 		if (id >= UNIT_ATTRIBUTE_LASER_STATION1 && id <= UNIT_ATTRIBUTE_HARKBACK_STATION3) {
 			visible = !evolution.Constructed;
 
-			//кнопки снанций невидимы, если станция уже есть
+			//РєРЅРѕРїРєРё СЃРЅР°РЅС†РёР№ РЅРµРІРёРґРёРјС‹, РµСЃР»Рё СЃС‚Р°РЅС†РёСЏ СѓР¶Рµ РµСЃС‚СЊ
 			button->visible = visible;
 		}
 
@@ -3793,7 +3793,7 @@ void LogicUpdater::updateBuildingsData() {
 			button->visible = visible;
 		}
 
-		//только 5 ком.центров
+		//С‚РѕР»СЊРєРѕ 5 РєРѕРј.С†РµРЅС‚СЂРѕРІ
 		if (id == UNIT_ATTRIBUTE_COMMANDER) {
 			visible = visible && player->countUnits(UNIT_ATTRIBUTE_COMMANDER) < 4;
 		}
@@ -3854,7 +3854,7 @@ void LogicUpdater::updateMiscData() {
 		logicData->offPlantEnable = player->countBuildingsPowered(UNIT_ATTRIBUTE_OFFICER_PLANT);
 		logicData->techPlantEnable = player->countBuildingsPowered(UNIT_ATTRIBUTE_TECHNIC_PLANT);
 
-		//кнопка поля
+		//РєРЅРѕРїРєР° РїРѕР»СЏ
 		logicData->fieldOnBtn.checked = player->totalDefenceMode();
 		logicData->fieldOnBtn.enabled = player->isFieldOn() || player->canStartField();
 		logicData->fieldOffBtn.enabled = player->totalDefenceMode() || player->isFieldOn();
@@ -3864,7 +3864,7 @@ void LogicUpdater::updateMiscData() {
 		logicData->offPlantEnable = false;
 		logicData->techPlantEnable = false;
 
-		//кнопка поля
+		//РєРЅРѕРїРєР° РїРѕР»СЏ
 		logicData->fieldOnBtn.checked = false;
 		logicData->fieldOnBtn.enabled = false;
 		logicData->fieldOffBtn.enabled = false;
@@ -4028,7 +4028,7 @@ void LogicUpdater::updateSquadsData() {
 			}
 
 			bool bEmpty = pSquad->Empty();
-			//статус кнопок производных юнитов
+			//СЃС‚Р°С‚СѓСЃ РєРЅРѕРїРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… СЋРЅРёС‚РѕРІ
 			bool bNoMutEnergy = pSquad->mutationEnergy() < 1.f - FLT_EPS;
 
 			int atom_data[3] = {0, 0, 0};

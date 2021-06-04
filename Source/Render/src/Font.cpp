@@ -46,7 +46,7 @@ public:
 		return 0;
 	}
 
-	//Если убрать &, то начинает падать в release в VC7.1 (Microsoft Visual C++ .NET   69586-335-0000007-18787) 
+	//Р•СЃР»Рё СѓР±СЂР°С‚СЊ &, С‚Рѕ РЅР°С‡РёРЅР°РµС‚ РїР°РґР°С‚СЊ РІ release РІ VC7.1 (Microsoft Visual C++ .NET   69586-335-0000007-18787) 
 	virtual void Create(BYTE* gray_in,const Vect2i& size)
 	{
 		x=size.x;
@@ -133,7 +133,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	}
 	rd.close();
 
-	//Рассчитываем величину текстуры
+	//Р Р°СЃСЃС‡РёС‚С‹РІР°РµРј РІРµР»РёС‡РёРЅСѓ С‚РµРєСЃС‚СѓСЂС‹
 	Vect2i sizes[]={
 		Vect2i(128,128),
 		Vect2i(256,128),
@@ -180,7 +180,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 
 	FontHeight=height/float(size.y);
 
-	//Создаём текстуру
+	//РЎРѕР·РґР°С‘Рј С‚РµРєСЃС‚СѓСЂСѓ
 	Vect2i real_size(round(size.x/mul),round(size.y/mul));
 	BYTE* gray_in=new BYTE[real_size.x*real_size.y];
 	memset(gray_in,0,real_size.x*real_size.y);
@@ -197,7 +197,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 			x=0;
 		}
 
-		//Рисуем
+		//Р РёСЃСѓРµРј
 		int realx=int(x/mul),realy=int(y/mul);
 		for(int yy=0;yy<real_height;yy++)
 		for(int xx=0;xx<w;xx++)

@@ -381,23 +381,23 @@ void SoftSound3D::RecalculateVolume()
 }
 //////////////////////info//////////////////////
 /*
-	Предположения о том, как работает 3D Sound
+	РџСЂРµРґРїРѕР»РѕР¶РµРЅРёСЏ Рѕ С‚РѕРј, РєР°Рє СЂР°Р±РѕС‚Р°РµС‚ 3D Sound
 
-	Vect3f front,top,right,pos;//Местоположение слушателя
-	Vect3f center;//Местоположение звука
+	Vect3f front,top,right,pos;//РњРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёРµ СЃР»СѓС€Р°С‚РµР»СЏ
+	Vect3f center;//РњРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёРµ Р·РІСѓРєР°
 	Vect3f to=center-pos;
 	float dist=length(center-pos);
 
-----Rolloff - Скорость затухания звука с расстоянием 
-	1.0 - стандартное, 0.0 - нет затухания, 10.0 - максимальное
-	Формула по идее встроенная в Listener
+----Rolloff - РЎРєРѕСЂРѕСЃС‚СЊ Р·Р°С‚СѓС…Р°РЅРёСЏ Р·РІСѓРєР° СЃ СЂР°СЃСЃС‚РѕСЏРЅРёРµРј 
+	1.0 - СЃС‚Р°РЅРґР°СЂС‚РЅРѕРµ, 0.0 - РЅРµС‚ Р·Р°С‚СѓС…Р°РЅРёСЏ, 10.0 - РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ
+	Р¤РѕСЂРјСѓР»Р° РїРѕ РёРґРµРµ РІСЃС‚СЂРѕРµРЅРЅР°СЏ РІ Listener
 	
 	flScale = 1.0f - (( sqrt(dist) - pSound->GetMinDist()) / ( pSound0->GetMaxDist() - pSound->GetMinDist()));
 	flScale *= g_pSoundMgr->m_fRolloffFactor;
-	flScale - умножается на громкость звука, 
-	dist - расстояние от звука до слушателя
+	flScale - СѓРјРЅРѕР¶Р°РµС‚СЃСЏ РЅР° РіСЂРѕРјРєРѕСЃС‚СЊ Р·РІСѓРєР°, 
+	dist - СЂР°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ Р·РІСѓРєР° РґРѕ СЃР»СѓС€Р°С‚РµР»СЏ
 
-----doppler - Эффект доплера.
+----doppler - Р­С„С„РµРєС‚ РґРѕРїР»РµСЂР°.
 	// Get doppler shifted frequency. Formula is:  Fr = Fs( C + Ur ) / ( C - Us ), 
 	// where Fr = Frequency to receiver, Fs = Frequency at source, C = speed of
 	// sound in medium, Ur = Speed of receiver in direction of source, Us = Speed

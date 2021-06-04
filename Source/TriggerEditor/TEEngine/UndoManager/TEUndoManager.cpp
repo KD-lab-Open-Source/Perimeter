@@ -43,7 +43,7 @@ TEUndoManager::~TEUndoManager(void)
 
 bool TEUndoManager::addAction(Action const& actionDO, Action const& actionREDO)
 {
-	//очищаем от текущей позиции до конца
+	//РѕС‡РёС‰Р°РµРј РѕС‚ С‚РµРєСѓС‰РµР№ РїРѕР·РёС†РёРё РґРѕ РєРѕРЅС†Р°
 	m_buffer.erase(m_itrREDOPointer, m_buffer.end());
 	setREDOPointer(m_buffer.end());
 	m_buffer.insert(m_buffer.end(), std::make_pair(actionDO, actionREDO));
@@ -102,14 +102,14 @@ bool TEUndoManager::canREDO(){
 	return !(m_buffer.empty()||getREDOPointer() == m_buffer.end());;
 }
 
-//сдвигаем итераторы на операцию undo
+//СЃРґРІРёРіР°РµРј РёС‚РµСЂР°С‚РѕСЂС‹ РЅР° РѕРїРµСЂР°С†РёСЋ undo
 void TEUndoManager::undoMoveIterators()
 {
 	++m_itrUNDOPointer;
 	--m_itrREDOPointer;
 //	setREDOPointer(m_itrUNDOPointer.base());
 }
-//сдвигаем итераторы на операцию redo
+//СЃРґРІРёРіР°РµРј РёС‚РµСЂР°С‚РѕСЂС‹ РЅР° РѕРїРµСЂР°С†РёСЋ redo
 void TEUndoManager::redoMoveIterators()
 {
 	--m_itrUNDOPointer;

@@ -42,7 +42,7 @@ const char * const boost::random_device::default_token = "/dev/urandom";
 
 #if defined(__GNUC__) && defined(_CXXRT_STD_NAME)
 // I have severe difficulty to get the POSIX includes to work with
-// -fhonor-std and Dietmar Kühl's standard C++ library.  Hack around that
+// -fhonor-std and Dietmar KÑŒhl's standard C++ library.  Hack around that
 // problem for now.
 extern "C" {
 static const int O_RDONLY = 0;

@@ -57,23 +57,23 @@ struct SoundEventSetup
 	EnumWrapper<SoundEventID> ID;
 	PrmString name;
 
-	// = 1 если звук на мире
+	// = 1 РµСЃР»Рё Р·РІСѓРє РЅР° РјРёСЂРµ
 	bool is3D;
 
-	// = 1 если голосовое сообщение, вызывается только для активного игрока
+	// = 1 РµСЃР»Рё РіРѕР»РѕСЃРѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ, РІС‹Р·С‹РІР°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ РґР»СЏ Р°РєС‚РёРІРЅРѕРіРѕ РёРіСЂРѕРєР°
 	bool isVoice;
 
-	// = 1 если событие должно звучать только для активного игрока
+	// = 1 РµСЃР»Рё СЃРѕР±С‹С‚РёРµ РґРѕР»Р¶РЅРѕ Р·РІСѓС‡Р°С‚СЊ С‚РѕР»СЊРєРѕ РґР»СЏ Р°РєС‚РёРІРЅРѕРіРѕ РёРіСЂРѕРєР°
 	bool activePlayer;
 
-	// время в миллисекундах, в течении которого после 
-	// старта звука нельзя запустить его ещё раз
+	// РІСЂРµРјСЏ РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С…, РІ С‚РµС‡РµРЅРёРё РєРѕС‚РѕСЂРѕРіРѕ РїРѕСЃР»Рµ 
+	// СЃС‚Р°СЂС‚Р° Р·РІСѓРєР° РЅРµР»СЊР·СЏ Р·Р°РїСѓСЃС‚РёС‚СЊ РµРіРѕ РµС‰С‘ СЂР°Р·
 	int pauseTime;
 
-	// задержка перед проигрыванием звука в миллисекундах
+	// Р·Р°РґРµСЂР¶РєР° РїРµСЂРµРґ РїСЂРѕРёРіСЂС‹РІР°РЅРёРµРј Р·РІСѓРєР° РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С…
 	int startDelay;
 
-	// максимальное время, которое событие будет стоять в очереди на проигрывание (для голосов)
+	// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ, РєРѕС‚РѕСЂРѕРµ СЃРѕР±С‹С‚РёРµ Р±СѓРґРµС‚ СЃС‚РѕСЏС‚СЊ РІ РѕС‡РµСЂРµРґРё РЅР° РїСЂРѕРёРіСЂС‹РІР°РЅРёРµ (РґР»СЏ РіРѕР»РѕСЃРѕРІ)
 	int queueTime;
 
 	SoundEventSetup() {
@@ -142,7 +142,7 @@ struct SoundSetup
 extern SoundSetup playerSound;
 
 /////////////////////////////////////////////
-// Параметры анимационной цепочки
+// РџР°СЂР°РјРµС‚СЂС‹ Р°РЅРёРјР°С†РёРѕРЅРЅРѕР№ С†РµРїРѕС‡РєРё
 struct AnimationChain
 {
 	EnumWrapper<ChainID> chainID;
@@ -152,7 +152,7 @@ struct AnimationChain
 	EnumWrapper<ChainNodeID> begin;
 	EnumWrapper<ChainNodeID> end;
 	int periodDeviation; // !0: period += rnd(perionDeviation), phase = rnd(1)
-	int enableReverse; // Разрешить реверс между смежными цепочками
+	int enableReverse; // Р Р°Р·СЂРµС€РёС‚СЊ СЂРµРІРµСЂСЃ РјРµР¶РґСѓ СЃРјРµР¶РЅС‹РјРё С†РµРїРѕС‡РєР°РјРё
 	int counter; // for path finding
 	EnumWrapper<SoundEventID> soundID;
 
@@ -163,7 +163,7 @@ struct AnimationChain
 		begin = CHAIN_NODE_NONE;
 		end = CHAIN_NODE_NONE;
 		periodDeviation = 0; // !0: period += rnd(perionDeviation), phase = rnd(1)
-		enableReverse = 0; // Разрешить реверс между смежными цепочками
+		enableReverse = 0; // Р Р°Р·СЂРµС€РёС‚СЊ СЂРµРІРµСЂСЃ РјРµР¶РґСѓ СЃРјРµР¶РЅС‹РјРё С†РµРїРѕС‡РєР°РјРё
 		counter = 0; // for path finding
 		soundID = SOUND_EVENT_NONE;
 	}
@@ -186,7 +186,7 @@ struct AnimationChain
 	float phaseEnd() const { return period > 0 ? 1 : (period < 0 ? 0 : phase); }
 };
 
-// Набор анимационных цепочек для определенного узла
+// РќР°Р±РѕСЂ Р°РЅРёРјР°С†РёРѕРЅРЅС‹С… С†РµРїРѕС‡РµРє РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ СѓР·Р»Р°
 struct AnimationData
 {
 	EnumWrapper<AnimationGroupID> groupID;
@@ -208,7 +208,7 @@ struct AnimationData
 		ar & TRANSLATE_OBJECT(setPhaseRecursive, "setPhaseRecursive");
 	}
 
-	const AnimationChain* initial() const { return !chains.empty() ? &chains[0] : 0; }	// первая цепочка включается при создании объекта
+	const AnimationChain* initial() const { return !chains.empty() ? &chains[0] : 0; }	// РїРµСЂРІР°СЏ С†РµРїРѕС‡РєР° РІРєР»СЋС‡Р°РµС‚СЃСЏ РїСЂРё СЃРѕР·РґР°РЅРёРё РѕР±СЉРµРєС‚Р°
 	const AnimationChain* find(ChainID chainID) const  { for(int i = 0; i < chains.size(); i++) if(chains[i].chainID == chainID) return &chains[i]; return 0; }
 };
 
@@ -381,10 +381,10 @@ struct UnitInterfacePrm
 };
 
 ////////////////////////////////////////
-// параметры воздействия тулзера
+// РїР°СЂР°РјРµС‚СЂС‹ РІРѕР·РґРµР№СЃС‚РІРёСЏ С‚СѓР»Р·РµСЂР°
 struct ToolzerActionData
 {
-	// тип воздействия
+	// С‚РёРї РІРѕР·РґРµР№СЃС‚РІРёСЏ
 	EnumWrapper<ToolzerActionID> actionID;
 
 	// int influenceDZ(int x, int y, int rad, short dh, int smMode);
@@ -417,26 +417,26 @@ struct ToolzerActionData
 	}
 };
 
-// параметры воздействий тулзера в определенной фазе
+// РїР°СЂР°РјРµС‚СЂС‹ РІРѕР·РґРµР№СЃС‚РІРёР№ С‚СѓР»Р·РµСЂР° РІ РѕРїСЂРµРґРµР»РµРЅРЅРѕР№ С„Р°Р·Рµ
 struct ToolzerStepData
 {
 	EnumWrapper<ToolzerPhaseID> phaseID;
 
-	// время работы шага в логических квантах
+	// РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹ С€Р°РіР° РІ Р»РѕРіРёС‡РµСЃРєРёС… РєРІР°РЅС‚Р°С…
 	int duration;
 
-	// следующая фаза
-	// TOOLZER_PHASE_DEFAULT - переходить к следующей по порядку
-	// TOOLZER_PHASE_NONE - остановить работу тулзера
+	// СЃР»РµРґСѓСЋС‰Р°СЏ С„Р°Р·Р°
+	// TOOLZER_PHASE_DEFAULT - РїРµСЂРµС…РѕРґРёС‚СЊ Рє СЃР»РµРґСѓСЋС‰РµР№ РїРѕ РїРѕСЂСЏРґРєСѓ
+	// TOOLZER_PHASE_NONE - РѕСЃС‚Р°РЅРѕРІРёС‚СЊ СЂР°Р±РѕС‚Сѓ С‚СѓР»Р·РµСЂР°
 	EnumWrapper<ToolzerPhaseID> nextPhaseID;
 
-	// минимальное изменение координат тулзера для наложнения воздействия
+	// РјРёРЅРёРјР°Р»СЊРЅРѕРµ РёР·РјРµРЅРµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚СѓР»Р·РµСЂР° РґР»СЏ РЅР°Р»РѕР¶РЅРµРЅРёСЏ РІРѕР·РґРµР№СЃС‚РІРёСЏ
 	//
-	// сделано, чтобы избежать наваливания куч до небес когда тулзер стоит
-	// или движется медленно
+	// СЃРґРµР»Р°РЅРѕ, С‡С‚РѕР±С‹ РёР·Р±РµР¶Р°С‚СЊ РЅР°РІР°Р»РёРІР°РЅРёСЏ РєСѓС‡ РґРѕ РЅРµР±РµСЃ РєРѕРіРґР° С‚СѓР»Р·РµСЂ СЃС‚РѕРёС‚
+	// РёР»Рё РґРІРёР¶РµС‚СЃСЏ РјРµРґР»РµРЅРЅРѕ
 	float dr;
 
-	// повреждения зданиям, режим и радиус
+	// РїРѕРІСЂРµР¶РґРµРЅРёСЏ Р·РґР°РЅРёСЏРј, СЂРµР¶РёРј Рё СЂР°РґРёСѓСЃ
 	EnumWrapper<ToolzerBuildingDamageMode> buildingDamageMode;
 	int buildingDamageRadius;
 	
@@ -465,21 +465,21 @@ struct ToolzerStepData
 	const ToolzerActionData& operator[](int idx) const { xassert(!actions.empty()); return actions[idx]; }
 };
 
-// параметры тулзера
+// РїР°СЂР°РјРµС‚СЂС‹ С‚СѓР»Р·РµСЂР°
 struct ToolzerSetup
 {
 	vector<ToolzerStepData> steps;
 
-	// коэфф. масштабирования тулзера
+	// РєРѕСЌС„С„. РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ С‚СѓР»Р·РµСЂР°
 	float scale;
 
-	// = 1 если тулзер рушит собственный зеро-слой
+	// = 1 РµСЃР»Рё С‚СѓР»Р·РµСЂ СЂСѓС€РёС‚ СЃРѕР±СЃС‚РІРµРЅРЅС‹Р№ Р·РµСЂРѕ-СЃР»РѕР№
 	bool destroyOwnZeroLayer;
 
-	// = 1 если работает на хаосе
+	// = 1 РµСЃР»Рё СЂР°Р±РѕС‚Р°РµС‚ РЅР° С…Р°РѕСЃРµ
 	bool workOnChaos;
 
-	// радиус для пересчёта масштаба
+	// СЂР°РґРёСѓСЃ РґР»СЏ РїРµСЂРµСЃС‡С‘С‚Р° РјР°СЃС€С‚Р°Р±Р°
 	float radius;
 
 	ToolzerSetup() {
@@ -519,18 +519,18 @@ struct ToolzerSetup
 };
 
 ////////////////////////////////////////
-// параметры повреждений, наносимых юниту
+// РїР°СЂР°РјРµС‚СЂС‹ РїРѕРІСЂРµР¶РґРµРЅРёР№, РЅР°РЅРѕСЃРёРјС‹С… СЋРЅРёС‚Сѓ
 struct DamageData
 {
-	// ширина атаки
+	// С€РёСЂРёРЅР° Р°С‚Р°РєРё
 	int width;
-	// мощность атаки
+	// РјРѕС‰РЅРѕСЃС‚СЊ Р°С‚Р°РєРё
 	int power;
 
-	// фильтр на элементы, из которых берутся атомы для атаки
-	// значения: DAMAGE_FILTER_ALL или комбинация из других значений DamageElementFilter
+	// С„РёР»СЊС‚СЂ РЅР° СЌР»РµРјРµРЅС‚С‹, РёР· РєРѕС‚РѕСЂС‹С… Р±РµСЂСѓС‚СЃСЏ Р°С‚РѕРјС‹ РґР»СЏ Р°С‚Р°РєРё
+	// Р·РЅР°С‡РµРЅРёСЏ: DAMAGE_FILTER_ALL РёР»Рё РєРѕРјР±РёРЅР°С†РёСЏ РёР· РґСЂСѓРіРёС… Р·РЅР°С‡РµРЅРёР№ DamageElementFilter
 	BitVector<DamageElementFilter> attackFilter;
-	// фильтр на элементы, которые будут гибнуть при успешном попадании
+	// С„РёР»СЊС‚СЂ РЅР° СЌР»РµРјРµРЅС‚С‹, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РіРёР±РЅСѓС‚СЊ РїСЂРё СѓСЃРїРµС€РЅРѕРј РїРѕРїР°РґР°РЅРёРё
 	BitVector<DamageElementFilter> damageFilter;
 		
 	DamageData() {
@@ -544,35 +544,35 @@ struct DamageData
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(width, "ширина атаки");
-		ar & TRANSLATE_OBJECT(power, "мощность атаки");
-		ar & TRANSLATE_OBJECT(attackFilter, "фильтр на элементы, из которых берутся атомы для атаки");
-		ar & TRANSLATE_OBJECT(damageFilter, "фильтр на элементы, которые будут гибнуть при успешном попадании");
+		ar & TRANSLATE_OBJECT(width, "С€РёСЂРёРЅР° Р°С‚Р°РєРё");
+		ar & TRANSLATE_OBJECT(power, "РјРѕС‰РЅРѕСЃС‚СЊ Р°С‚Р°РєРё");
+		ar & TRANSLATE_OBJECT(attackFilter, "С„РёР»СЊС‚СЂ РЅР° СЌР»РµРјРµРЅС‚С‹, РёР· РєРѕС‚РѕСЂС‹С… Р±РµСЂСѓС‚СЃСЏ Р°С‚РѕРјС‹ РґР»СЏ Р°С‚Р°РєРё");
+		ar & TRANSLATE_OBJECT(damageFilter, "С„РёР»СЊС‚СЂ РЅР° СЌР»РµРјРµРЅС‚С‹, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РіРёР±РЅСѓС‚СЊ РїСЂРё СѓСЃРїРµС€РЅРѕРј РїРѕРїР°РґР°РЅРёРё");
 	}
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-// параметры повреждений, наносимых миром (хаос, поврежденный зерослой под зданиями)
+// РїР°СЂР°РјРµС‚СЂС‹ РїРѕРІСЂРµР¶РґРµРЅРёР№, РЅР°РЅРѕСЃРёРјС‹С… РјРёСЂРѕРј (С…Р°РѕСЃ, РїРѕРІСЂРµР¶РґРµРЅРЅС‹Р№ Р·РµСЂРѕСЃР»РѕР№ РїРѕРґ Р·РґР°РЅРёСЏРјРё)
 struct EnvironmentalDamage
 {
-	// тип повреждений
+	// С‚РёРї РїРѕРІСЂРµР¶РґРµРЅРёР№
 	EnumWrapper<EnvironmentalDamageType> damageType;
-	// параметры повреждений, [0] - минимум, [1] - максимум
-	// если width == -1, то туда
-	// подставляется общее количество атомов юнита
+	// РїР°СЂР°РјРµС‚СЂС‹ РїРѕРІСЂРµР¶РґРµРЅРёР№, [0] - РјРёРЅРёРјСѓРј, [1] - РјР°РєСЃРёРјСѓРј
+	// РµСЃР»Рё width == -1, С‚Рѕ С‚СѓРґР°
+	// РїРѕРґСЃС‚Р°РІР»СЏРµС‚СЃСЏ РѕР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р°С‚РѕРјРѕРІ СЋРЅРёС‚Р°
 	DamageData damageData[2];
 
-	// периодичность нанесения повреждений, все в миллисекундах
+	// РїРµСЂРёРѕРґРёС‡РЅРѕСЃС‚СЊ РЅР°РЅРµСЃРµРЅРёСЏ РїРѕРІСЂРµР¶РґРµРЅРёР№, РІСЃРµ РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С…
 	//
-	// повреждения наносятся через время t = period + periodDelta * (1 - damage_ratio)
-	// damage_ratio - величина, определяющая интенсивность повреждений,
-	// отношение площади наносящей повреждение поверхности (хаос или нарушенный зерослой)
-	// к общей площади, занимаемой юнитом
+	// РїРѕРІСЂРµР¶РґРµРЅРёСЏ РЅР°РЅРѕСЃСЏС‚СЃСЏ С‡РµСЂРµР· РІСЂРµРјСЏ t = period + periodDelta * (1 - damage_ratio)
+	// damage_ratio - РІРµР»РёС‡РёРЅР°, РѕРїСЂРµРґРµР»СЏСЋС‰Р°СЏ РёРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ РїРѕРІСЂРµР¶РґРµРЅРёР№,
+	// РѕС‚РЅРѕС€РµРЅРёРµ РїР»РѕС‰Р°РґРё РЅР°РЅРѕСЃСЏС‰РµР№ РїРѕРІСЂРµР¶РґРµРЅРёРµ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё (С…Р°РѕСЃ РёР»Рё РЅР°СЂСѓС€РµРЅРЅС‹Р№ Р·РµСЂРѕСЃР»РѕР№)
+	// Рє РѕР±С‰РµР№ РїР»РѕС‰Р°РґРё, Р·Р°РЅРёРјР°РµРјРѕР№ СЋРЅРёС‚РѕРј
 	int period;
 	int periodDelta;
 
-	// минимальное значение damage_ratio,
-	// при котором юниту начинают наноситься повреждения
+	// РјРёРЅРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ damage_ratio,
+	// РїСЂРё РєРѕС‚РѕСЂРѕРј СЋРЅРёС‚Сѓ РЅР°С‡РёРЅР°СЋС‚ РЅР°РЅРѕСЃРёС‚СЊСЃСЏ РїРѕРІСЂРµР¶РґРµРЅРёСЏ
 	float damageRatioMin;
 
 	EnvironmentalDamage() {
@@ -584,8 +584,8 @@ struct EnvironmentalDamage
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(damageType, "тип повреждений");
-		ar & TRANSLATE_OBJECT(damageData, "параметры повреждений, [0] - минимум, [1] - максимум");
+		ar & TRANSLATE_OBJECT(damageType, "С‚РёРї РїРѕРІСЂРµР¶РґРµРЅРёР№");
+		ar & TRANSLATE_OBJECT(damageData, "РїР°СЂР°РјРµС‚СЂС‹ РїРѕРІСЂРµР¶РґРµРЅРёР№, [0] - РјРёРЅРёРјСѓРј, [1] - РјР°РєСЃРёРјСѓРј");
 		ar & TRANSLATE_OBJECT(period, "period");
 		ar & TRANSLATE_OBJECT(periodDelta, "periodDelta");
 		ar & TRANSLATE_OBJECT(damageRatioMin, "damageRatioMin");
@@ -610,14 +610,14 @@ struct EnvironmentalDamage
 
 
 
-// параметры наносимых юнитом повреждений
+// РїР°СЂР°РјРµС‚СЂС‹ РЅР°РЅРѕСЃРёРјС‹С… СЋРЅРёС‚РѕРј РїРѕРІСЂРµР¶РґРµРЅРёР№
 struct UnitDamage
 {
-	// повреждения, наносимые непосредственно в точке попадания
+	// РїРѕРІСЂРµР¶РґРµРЅРёСЏ, РЅР°РЅРѕСЃРёРјС‹Рµ РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ РІ С‚РѕС‡РєРµ РїРѕРїР°РґР°РЅРёСЏ
 	DamageData mainDamage;
 
 	int splashDamageRadius;
-	// повреждения, наносимые в радиусе splashDamageRadius от точки попадания
+	// РїРѕРІСЂРµР¶РґРµРЅРёСЏ, РЅР°РЅРѕСЃРёРјС‹Рµ РІ СЂР°РґРёСѓСЃРµ splashDamageRadius РѕС‚ С‚РѕС‡РєРё РїРѕРїР°РґР°РЅРёСЏ
 	DamageData splashDamage;
 
 	UnitDamage() {
@@ -631,7 +631,7 @@ struct UnitDamage
 		ar & TRANSLATE_OBJECT(splashDamage, "splashDamage");
 	}
 
-	// оценка количества элементов, вышибаемых с одного раза
+	// РѕС†РµРЅРєР° РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ, РІС‹С€РёР±Р°РµРјС‹С… СЃ РѕРґРЅРѕРіРѕ СЂР°Р·Р°
 	int estimatedDamage() const { 
 		return ((mainDamage.power + splashDamage.power + 3)/8 + 1); 
 	}
@@ -671,11 +671,11 @@ struct FieldPrm
 {
 	int monksPerCore; 
 	int monksPerCoreMin;
-	float monksVelocity; // Скорость при нормальных условиях
+	float monksVelocity; // РЎРєРѕСЂРѕСЃС‚СЊ РїСЂРё РЅРѕСЂРјР°Р»СЊРЅС‹С… СѓСЃР»РѕРІРёСЏС…
 	float monksAccelerationFactor; 
 	float monksPositionFactor;
-	int monksWetPlace; // Радиус выравниваемой поверхности при смерти молельщика
-	float chargeLevelToStartMin; // Ядро с таким уровнем зарядки включится при тотальном режиме
+	int monksWetPlace; // Р Р°РґРёСѓСЃ РІС‹СЂР°РІРЅРёРІР°РµРјРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РїСЂРё СЃРјРµСЂС‚Рё РјРѕР»РµР»СЊС‰РёРєР°
+	float chargeLevelToStartMin; // РЇРґСЂРѕ СЃ С‚Р°РєРёРј СѓСЂРѕРІРЅРµРј Р·Р°СЂСЏРґРєРё РІРєР»СЋС‡РёС‚СЃСЏ РїСЂРё С‚РѕС‚Р°Р»СЊРЅРѕРј СЂРµР¶РёРјРµ
 	ConsumptionData fieldConsumption;
 	float checkFieldRadiusMin;
 	DamageData fieldDamage;
@@ -686,11 +686,11 @@ struct FieldPrm
 	{
 		monksPerCore = 20; 
 		monksPerCoreMin = 3;
-		monksVelocity = 5; // Скорость при нормальных условиях
+		monksVelocity = 5; // РЎРєРѕСЂРѕСЃС‚СЊ РїСЂРё РЅРѕСЂРјР°Р»СЊРЅС‹С… СѓСЃР»РѕРІРёСЏС…
 		monksAccelerationFactor = 0.2f; 
 		monksPositionFactor = 0.1f;
-		monksWetPlace = 8; // Радиус выравниваемой поверхности при смерти молельщика
-		chargeLevelToStartMin = 0.1f; // Ядро с таким уровнем зарядки включится при тотальном режиме
+		monksWetPlace = 8; // Р Р°РґРёСѓСЃ РІС‹СЂР°РІРЅРёРІР°РµРјРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РїСЂРё СЃРјРµСЂС‚Рё РјРѕР»РµР»СЊС‰РёРєР°
+		chargeLevelToStartMin = 0.1f; // РЇРґСЂРѕ СЃ С‚Р°РєРёРј СѓСЂРѕРІРЅРµРј Р·Р°СЂСЏРґРєРё РІРєР»СЋС‡РёС‚СЃСЏ РїСЂРё С‚РѕС‚Р°Р»СЊРЅРѕРј СЂРµР¶РёРјРµ
 		checkFieldRadiusMin = 8;
 		impulseDuration = 2000; 
 	}
@@ -702,8 +702,8 @@ struct FieldPrm
 		ar & TRANSLATE_OBJECT(monksVelocity, "monksVelocity"); 
 		ar & TRANSLATE_OBJECT(monksAccelerationFactor, "monksAccelerationFactor"); 
 		ar & TRANSLATE_OBJECT(monksPositionFactor, "monksPositionFactor"); 
-		ar & TRANSLATE_OBJECT(monksWetPlace, "Радиус выравниваемой поверхности при смерти молельщика"); 
-		ar & TRANSLATE_OBJECT(chargeLevelToStartMin, "Ядро с таким уровнем зарядки включится при тотальном режиме"); 
+		ar & TRANSLATE_OBJECT(monksWetPlace, "Р Р°РґРёСѓСЃ РІС‹СЂР°РІРЅРёРІР°РµРјРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РїСЂРё СЃРјРµСЂС‚Рё РјРѕР»РµР»СЊС‰РёРєР°"); 
+		ar & TRANSLATE_OBJECT(chargeLevelToStartMin, "РЇРґСЂРѕ СЃ С‚Р°РєРёРј СѓСЂРѕРІРЅРµРј Р·Р°СЂСЏРґРєРё РІРєР»СЋС‡РёС‚СЃСЏ РїСЂРё С‚РѕС‚Р°Р»СЊРЅРѕРј СЂРµР¶РёРјРµ"); 
 		ar & TRANSLATE_OBJECT(fieldConsumption, "fieldConsumption"); 
 		ar & TRANSLATE_OBJECT(checkFieldRadiusMin, "checkFieldRadiusMin"); 
 		ar & TRANSLATE_OBJECT(fieldDamage, "fieldDamage"); 
@@ -717,46 +717,46 @@ extern FieldPrm fieldPrm;
 //-------------------------
 struct DebugScales
 {
-	float frame; // фрейм
-	float legion; // легион
-	float buildins; // здания
-	float spheres; // капли
-	float other; // остальные
+	float frame; // С„СЂРµР№Рј
+	float legion; // Р»РµРіРёРѕРЅ
+	float buildins; // Р·РґР°РЅРёСЏ
+	float spheres; // РєР°РїР»Рё
+	float other; // РѕСЃС‚Р°Р»СЊРЅС‹Рµ
 
 	DebugScales() {
-		frame = 1; // фрейм
-		legion = 0.5; // легион
-		buildins = 0.5; // здания
-		spheres = 0.5; // капли
-		other = 0.5; // остальные
+		frame = 1; // С„СЂРµР№Рј
+		legion = 0.5; // Р»РµРіРёРѕРЅ
+		buildins = 0.5; // Р·РґР°РЅРёСЏ
+		spheres = 0.5; // РєР°РїР»Рё
+		other = 0.5; // РѕСЃС‚Р°Р»СЊРЅС‹Рµ
 	}
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(frame, "фрейм"); 
-		ar & TRANSLATE_OBJECT(legion, "легион"); 
-		ar & TRANSLATE_OBJECT(buildins, "здания"); 
-		ar & TRANSLATE_OBJECT(spheres, "капли"); 
-		ar & TRANSLATE_OBJECT(other, "остальные"); 
+		ar & TRANSLATE_OBJECT(frame, "С„СЂРµР№Рј"); 
+		ar & TRANSLATE_OBJECT(legion, "Р»РµРіРёРѕРЅ"); 
+		ar & TRANSLATE_OBJECT(buildins, "Р·РґР°РЅРёСЏ"); 
+		ar & TRANSLATE_OBJECT(spheres, "РєР°РїР»Рё"); 
+		ar & TRANSLATE_OBJECT(other, "РѕСЃС‚Р°Р»СЊРЅС‹Рµ"); 
 	}
 };
 
-extern DebugScales debuScales; // Отладочное масштабирование
+extern DebugScales debuScales; // РћС‚Р»Р°РґРѕС‡РЅРѕРµ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
 
 //-----------------------------
 struct DifficultyPrm
 {
 	PrmString name;
 
-	//filthDensity - влияет на количество генерируемой скверны и период генерации.
-	//mul=1 - все значения без изменения.
-	//При уменьшении - уменьшается сначало количество скверны, когда
-	//количество скверны уменьшится до 1, начинает увеличиваиться период генерации.
+	//filthDensity - РІР»РёСЏРµС‚ РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ РіРµРЅРµСЂРёСЂСѓРµРјРѕР№ СЃРєРІРµСЂРЅС‹ Рё РїРµСЂРёРѕРґ РіРµРЅРµСЂР°С†РёРё.
+	//mul=1 - РІСЃРµ Р·РЅР°С‡РµРЅРёСЏ Р±РµР· РёР·РјРµРЅРµРЅРёСЏ.
+	//РџСЂРё СѓРјРµРЅСЊС€РµРЅРёРё - СѓРјРµРЅСЊС€Р°РµС‚СЃСЏ СЃРЅР°С‡Р°Р»Рѕ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРєРІРµСЂРЅС‹, РєРѕРіРґР°
+	//РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРєРІРµСЂРЅС‹ СѓРјРµРЅСЊС€РёС‚СЃСЏ РґРѕ 1, РЅР°С‡РёРЅР°РµС‚ СѓРІРµР»РёС‡РёРІР°РёС‚СЊСЃСЏ РїРµСЂРёРѕРґ РіРµРЅРµСЂР°С†РёРё.
 	float filthDensity;
 
-	int aiDelay; // Задержка АИ
+	int aiDelay; // Р—Р°РґРµСЂР¶РєР° РђР
 
-	float triggerDelayFactor; // Коэффициент триггера задержка
+	float triggerDelayFactor; // РљРѕСЌС„С„РёС†РёРµРЅС‚ С‚СЂРёРіРіРµСЂР° Р·Р°РґРµСЂР¶РєР°
 
 	DifficultyPrm() {
 		filthDensity = 1;
@@ -768,15 +768,15 @@ struct DifficultyPrm
 	void serialize(Archive& ar) {
 		ar & TRANSLATE_OBJECT(name, "&name"); 
 		ar & TRANSLATE_OBJECT(filthDensity, "filthDensity"); 
-		ar & TRANSLATE_OBJECT(aiDelay, "Задержка АИ"); 
-		ar & TRANSLATE_OBJECT(triggerDelayFactor, "Коэффициент триггера задержка"); 
+		ar & TRANSLATE_OBJECT(aiDelay, "Р—Р°РґРµСЂР¶РєР° РђР"); 
+		ar & TRANSLATE_OBJECT(triggerDelayFactor, "РљРѕСЌС„С„РёС†РёРµРЅС‚ С‚СЂРёРіРіРµСЂР° Р·Р°РґРµСЂР¶РєР°"); 
 	}
 };
 
 extern DifficultyPrm difficultyPrmArray[DIFFICULTY_MAX];
 
 //-----------------------------
-//Параметры настраивающие ковшей
+//РџР°СЂР°РјРµС‚СЂС‹ РЅР°СЃС‚СЂР°РёРІР°СЋС‰РёРµ РєРѕРІС€РµР№
 struct TrucksIntrumentParameter 
 {
 	float kRadius4DigZL;
@@ -896,7 +896,7 @@ struct GlobalAttributes
 {
 	int baseUnitsMax;
 	int changePlayerDelay;
-	float sellBuildingEfficiency; // Возвращаемая при продаже энергия
+	float sellBuildingEfficiency; // Р’РѕР·РІСЂР°С‰Р°РµРјР°СЏ РїСЂРё РїСЂРѕРґР°Р¶Рµ СЌРЅРµСЂРіРёСЏ
     float FallTreeTime;
 
 	GlobalAttributes() 
@@ -909,17 +909,17 @@ struct GlobalAttributes
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(debuScales, "Отладочное масштабирование"); 
-		ar & TRANSLATE_OBJECT(belligerentPropertyTable, "Параметры рас"); 
-		ar & TRANSLATE_OBJECT(buildingBlockConsumption, "Затраты на строительные блоки"); 
-		ar & TRANSLATE_OBJECT(fieldPrm, "Параметры поля"); 
-		ar & TRANSLATE_OBJECT(difficultyPrmArray, "Уровни сложности"); 
-		ar & TRANSLATE_OBJECT(soundEventsPrm, "Звуковые события"); 
-		ar & TRANSLATE_OBJECT(playerSound, "Звуки игрока"); 
-		ar & TRANSLATE_OBJECT(baseUnitsMax, "Максимальное количество базовых юнитов");
-		ar & TRANSLATE_OBJECT(changePlayerDelay, "Задержка потери неподключенного здания");
-		ar & TRANSLATE_OBJECT(sellBuildingEfficiency, "Возвращаемая при продаже энергия");
-		ar & TRANSLATE_OBJECT(trucksIntrumentParameter, "Параметры инструментов ковшей"); 
+		ar & TRANSLATE_OBJECT(debuScales, "РћС‚Р»Р°РґРѕС‡РЅРѕРµ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ"); 
+		ar & TRANSLATE_OBJECT(belligerentPropertyTable, "РџР°СЂР°РјРµС‚СЂС‹ СЂР°СЃ"); 
+		ar & TRANSLATE_OBJECT(buildingBlockConsumption, "Р—Р°С‚СЂР°С‚С‹ РЅР° СЃС‚СЂРѕРёС‚РµР»СЊРЅС‹Рµ Р±Р»РѕРєРё"); 
+		ar & TRANSLATE_OBJECT(fieldPrm, "РџР°СЂР°РјРµС‚СЂС‹ РїРѕР»СЏ"); 
+		ar & TRANSLATE_OBJECT(difficultyPrmArray, "РЈСЂРѕРІРЅРё СЃР»РѕР¶РЅРѕСЃС‚Рё"); 
+		ar & TRANSLATE_OBJECT(soundEventsPrm, "Р—РІСѓРєРѕРІС‹Рµ СЃРѕР±С‹С‚РёСЏ"); 
+		ar & TRANSLATE_OBJECT(playerSound, "Р—РІСѓРєРё РёРіСЂРѕРєР°"); 
+		ar & TRANSLATE_OBJECT(baseUnitsMax, "РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р±Р°Р·РѕРІС‹С… СЋРЅРёС‚РѕРІ");
+		ar & TRANSLATE_OBJECT(changePlayerDelay, "Р—Р°РґРµСЂР¶РєР° РїРѕС‚РµСЂРё РЅРµРїРѕРґРєР»СЋС‡РµРЅРЅРѕРіРѕ Р·РґР°РЅРёСЏ");
+		ar & TRANSLATE_OBJECT(sellBuildingEfficiency, "Р’РѕР·РІСЂР°С‰Р°РµРјР°СЏ РїСЂРё РїСЂРѕРґР°Р¶Рµ СЌРЅРµСЂРіРёСЏ");
+		ar & TRANSLATE_OBJECT(trucksIntrumentParameter, "РџР°СЂР°РјРµС‚СЂС‹ РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ РєРѕРІС€РµР№"); 
 		ar & TRANSLATE_OBJECT(FallTreeTime, "FallTreeTime");
 	}
 };
@@ -928,13 +928,13 @@ extern SingletonPrm<GlobalAttributes> globalAttr;
 
 ////////////////////////////////////////////////////
 
-// параметры осколков
+// РїР°СЂР°РјРµС‚СЂС‹ РѕСЃРєРѕР»РєРѕРІ
 struct terDebrisData
 {
 	EnumWrapper<terUnitAttributeID> debrisID;
 
 	int count;
-	// если равно -1, то осколков будет count + round(pow(radius / 4,1.5f));
+	// РµСЃР»Рё СЂР°РІРЅРѕ -1, С‚Рѕ РѕСЃРєРѕР»РєРѕРІ Р±СѓРґРµС‚ count + round(pow(radius / 4,1.5f));
 	int countRnd;
 
 	float speed;
@@ -955,18 +955,18 @@ struct terDebrisData
 	}
 };
 
-// спецэффект
+// СЃРїРµС†СЌС„С„РµРєС‚
 struct terUnitEffectData
 {
-	// идентификатор эффекта
+	// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЌС„С„РµРєС‚Р°
 	EnumWrapper<terEffectID> effectID;
-	// имя для поиска в библиотеке
+	// РёРјСЏ РґР»СЏ РїРѕРёСЃРєР° РІ Р±РёР±Р»РёРѕС‚РµРєРµ
 	PrmString effectName;
-	// == 1 если эффекту надо передавать ориентацию юнита
+	// == 1 РµСЃР»Рё СЌС„С„РµРєС‚Сѓ РЅР°РґРѕ РїРµСЂРµРґР°РІР°С‚СЊ РѕСЂРёРµРЅС‚Р°С†РёСЋ СЋРЅРёС‚Р°
 	bool needOrientation;
 
-	// (для огня/дыма от горящих зданий)
-	// уровень повреждений, при котором включается эффект
+	// (РґР»СЏ РѕРіРЅСЏ/РґС‹РјР° РѕС‚ РіРѕСЂСЏС‰РёС… Р·РґР°РЅРёР№)
+	// СѓСЂРѕРІРµРЅСЊ РїРѕРІСЂРµР¶РґРµРЅРёР№, РїСЂРё РєРѕС‚РѕСЂРѕРј РІРєР»СЋС‡Р°РµС‚СЃСЏ СЌС„С„РµРєС‚
 	// [0, 1]
 	float startupDamage;
 
@@ -985,37 +985,37 @@ struct terUnitEffectData
 	}
 };
 
-// параметры спецэффектов юнита/здания - имя файла, имена эффектов и т.д.
+// РїР°СЂР°РјРµС‚СЂС‹ СЃРїРµС†СЌС„С„РµРєС‚РѕРІ СЋРЅРёС‚Р°/Р·РґР°РЅРёСЏ - РёРјСЏ С„Р°Р№Р»Р°, РёРјРµРЅР° СЌС„С„РµРєС‚РѕРІ Рё С‚.Рґ.
 struct terUnitEffects
 {
 	PrmString libraryFileName;
 	vector<terUnitEffectData> effects;
 
-	// осколки
+	// РѕСЃРєРѕР»РєРё
 	vector<terDebrisData> debrisData;
 
-	// время существования трупа от юнита
+	// РІСЂРµРјСЏ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ С‚СЂСѓРїР° РѕС‚ СЋРЅРёС‚Р°
 	int corpseLifeTime;
 
-	// тип трупа
-	// UNIT_ATTRIBUTE_CORPSE_DYNAMIC - для юнитов
-	// UNIT_ATTRIBUTE_FALL_STRUCTURE - для зданий
-	// UNIT_ATTRIBUTE_NONE - если трупа нету
+	// С‚РёРї С‚СЂСѓРїР°
+	// UNIT_ATTRIBUTE_CORPSE_DYNAMIC - РґР»СЏ СЋРЅРёС‚РѕРІ
+	// UNIT_ATTRIBUTE_FALL_STRUCTURE - РґР»СЏ Р·РґР°РЅРёР№
+	// UNIT_ATTRIBUTE_NONE - РµСЃР»Рё С‚СЂСѓРїР° РЅРµС‚Сѓ
 	EnumWrapper<terUnitAttributeID> corpseID;
 
-	// радиус воронки от взрыва
-	// ноль если воронки нету
+	// СЂР°РґРёСѓСЃ РІРѕСЂРѕРЅРєРё РѕС‚ РІР·СЂС‹РІР°
+	// РЅРѕР»СЊ РµСЃР»Рё РІРѕСЂРѕРЅРєРё РЅРµС‚Сѓ
 	float craterRadius;
-	// тип кратера
+	// С‚РёРї РєСЂР°С‚РµСЂР°
 	EnumWrapper<terUnitAttributeID> craterID;
 
-	// задержка перед появлением кратера от взрыва
+	// Р·Р°РґРµСЂР¶РєР° РїРµСЂРµРґ РїРѕСЏРІР»РµРЅРёРµРј РєСЂР°С‚РµСЂР° РѕС‚ РІР·СЂС‹РІР°
 	int craterDelay;
 
-	// кратер, вызывающийся при движении юнита, для подземных снарядов
+	// РєСЂР°С‚РµСЂ, РІС‹Р·С‹РІР°СЋС‰РёР№СЃСЏ РїСЂРё РґРІРёР¶РµРЅРёРё СЋРЅРёС‚Р°, РґР»СЏ РїРѕРґР·РµРјРЅС‹С… СЃРЅР°СЂСЏРґРѕРІ
 	EnumWrapper<terUnitAttributeID> movementCraterID;
-	// чарез какое расстояние класть кратер при движении
-	// если обнулить, будет вызываться непрерывно при движении
+	// С‡Р°СЂРµР· РєР°РєРѕРµ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РєР»Р°СЃС‚СЊ РєСЂР°С‚РµСЂ РїСЂРё РґРІРёР¶РµРЅРёРё
+	// РµСЃР»Рё РѕР±РЅСѓР»РёС‚СЊ, Р±СѓРґРµС‚ РІС‹Р·С‹РІР°С‚СЊСЃСЏ РЅРµРїСЂРµСЂС‹РІРЅРѕ РїСЂРё РґРІРёР¶РµРЅРёРё
 	float movementCraterDelta;
 
 	terUnitEffects() 
@@ -1044,33 +1044,33 @@ struct terUnitEffects
 	}
 };
 
-// параметры управления наведением оружия
+// РїР°СЂР°РјРµС‚СЂС‹ СѓРїСЂР°РІР»РµРЅРёСЏ РЅР°РІРµРґРµРЅРёРµРј РѕСЂСѓР¶РёСЏ
 struct terWeaponControllerSetup
 {
-	// имена дамми для управления моделью башни и ствола
+	// РёРјРµРЅР° РґР°РјРјРё РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РјРѕРґРµР»СЊСЋ Р±Р°С€РЅРё Рё СЃС‚РІРѕР»Р°
 	PrmString objectName[2];
-	// имена логических объектов для управления башней и стволом
+	// РёРјРµРЅР° Р»РѕРіРёС‡РµСЃРєРёС… РѕР±СЉРµРєС‚РѕРІ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ Р±Р°С€РЅРµР№ Рё СЃС‚РІРѕР»РѕРј
 	PrmString logicObjectName[2];
 
-	// имена логических объектов для прицеливания (центр башни и конец ствола)
+	// РёРјРµРЅР° Р»РѕРіРёС‡РµСЃРєРёС… РѕР±СЉРµРєС‚РѕРІ РґР»СЏ РїСЂРёС†РµР»РёРІР°РЅРёСЏ (С†РµРЅС‚СЂ Р±Р°С€РЅРё Рё РєРѕРЅРµС† СЃС‚РІРѕР»Р°)
 	PrmString targetingObjectName;
 
-	// точность прицеливания, в долях PI
+	// С‚РѕС‡РЅРѕСЃС‚СЊ РїСЂРёС†РµР»РёРІР°РЅРёСЏ, РІ РґРѕР»СЏС… PI
 	float targetingPrecision[2];
 
-	// скорость поворотов по горизонтали и по ветрикали
-	// в долях PI
+	// СЃРєРѕСЂРѕСЃС‚СЊ РїРѕРІРѕСЂРѕС‚РѕРІ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё Рё РїРѕ РІРµС‚СЂРёРєР°Р»Рё
+	// РІ РґРѕР»СЏС… PI
 	float turnSpeed[2];
 
-	// ограничения поворота ствола по горизонтали
-	// в долях PI
+	// РѕРіСЂР°РЅРёС‡РµРЅРёСЏ РїРѕРІРѕСЂРѕС‚Р° СЃС‚РІРѕР»Р° РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+	// РІ РґРѕР»СЏС… PI
 	float psiLimit[2];
 
-	// ограничения поворота ствола по вертикали
-	// в долях PI
+	// РѕРіСЂР°РЅРёС‡РµРЅРёСЏ РїРѕРІРѕСЂРѕС‚Р° СЃС‚РІРѕР»Р° РїРѕ РІРµСЂС‚РёРєР°Р»Рё
+	// РІ РґРѕР»СЏС… PI
 	float thetaLimit[2];
 
-	// направление ствола по умолчанию, в долях PI
+	// РЅР°РїСЂР°РІР»РµРЅРёРµ СЃС‚РІРѕР»Р° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, РІ РґРѕР»СЏС… PI
 	float defaultAngles[2];
 
 	terWeaponControllerSetup()
@@ -1103,71 +1103,71 @@ struct terWeaponControllerSetup
 	}
 };
 
-// оружие
+// РѕСЂСѓР¶РёРµ
 struct terWeaponSetup
 {
-	// тип оружия
+	// С‚РёРї РѕСЂСѓР¶РёСЏ
 	EnumWrapper<WeaponType> weaponType;
 
-	// флаги, комбинация значений enum WeaponFlags
+	// С„Р»Р°РіРё, РєРѕРјР±РёРЅР°С†РёСЏ Р·РЅР°С‡РµРЅРёР№ enum WeaponFlags
 	BitVector<WeaponFlags> flags;
 
-	// ID снаряда
+	// ID СЃРЅР°СЂСЏРґР°
 	EnumWrapper<terUnitAttributeID> missileID;
-	// максимальное количество одновременно живущих на мире снарядов
-	// 0 если нет ограничения
+	// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ Р¶РёРІСѓС‰РёС… РЅР° РјРёСЂРµ СЃРЅР°СЂСЏРґРѕРІ
+	// 0 РµСЃР»Рё РЅРµС‚ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ
 	int missileLimit;
 
-	// время после наведения, по истечении которого
-	// оружие разворачивается в направлении по-умолчанию
+	// РІСЂРµРјСЏ РїРѕСЃР»Рµ РЅР°РІРµРґРµРЅРёСЏ, РїРѕ РёСЃС‚РµС‡РµРЅРёРё РєРѕС‚РѕСЂРѕРіРѕ
+	// РѕСЂСѓР¶РёРµ СЂР°Р·РІРѕСЂР°С‡РёРІР°РµС‚СЃСЏ РІ РЅР°РїСЂР°РІР»РµРЅРёРё РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ
 	//
-	// в милиисекундах
+	// РІ РјРёР»РёРёСЃРµРєСѓРЅРґР°С…
 	int aimResetDelay;
 
-	// время, в течении которого после выстрела нельзя стрельнуть ещё
+	// РІСЂРµРјСЏ, РІ С‚РµС‡РµРЅРёРё РєРѕС‚РѕСЂРѕРіРѕ РїРѕСЃР»Рµ РІС‹СЃС‚СЂРµР»Р° РЅРµР»СЊР·СЏ СЃС‚СЂРµР»СЊРЅСѓС‚СЊ РµС‰С‘
 	int fireDisableTime;
 
-	// задержка между выстрелами
-	// для оружия, которое какое-то время заряжается,
-	// потом некоторое время работает
+	// Р·Р°РґРµСЂР¶РєР° РјРµР¶РґСѓ РІС‹СЃС‚СЂРµР»Р°РјРё
+	// РґР»СЏ РѕСЂСѓР¶РёСЏ, РєРѕС‚РѕСЂРѕРµ РєР°РєРѕРµ-С‚Рѕ РІСЂРµРјСЏ Р·Р°СЂСЏР¶Р°РµС‚СЃСЏ,
+	// РїРѕС‚РѕРј РЅРµРєРѕС‚РѕСЂРѕРµ РІСЂРµРјСЏ СЂР°Р±РѕС‚Р°РµС‚
 	int fireDelay;
 
-	// задержка перезарядки после выстрела,
-	// используется для ракетниц
+	// Р·Р°РґРµСЂР¶РєР° РїРµСЂРµР·Р°СЂСЏРґРєРё РїРѕСЃР»Рµ РІС‹СЃС‚СЂРµР»Р°,
+	// РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ СЂР°РєРµС‚РЅРёС†
 	int missileLoadDelay;
 
-	// prm для расчета наведения
+	// prm РґР»СЏ СЂР°СЃС‡РµС‚Р° РЅР°РІРµРґРµРЅРёСЏ
 	RigidBodyPrmLibrary::Reference turnSuggestPrm;
 
-	// управление наведением
+	// СѓРїСЂР°РІР»РµРЅРёРµ РЅР°РІРµРґРµРЅРёРµРј
 	terWeaponControllerSetup controllerSetup;
 
 	float dischargeSpeed;
 
-	// дальность стрельбы, min/max
+	// РґР°Р»СЊРЅРѕСЃС‚СЊ СЃС‚СЂРµР»СЊР±С‹, min/max
 	float fireRadius[2];
 
-	// радиус видимости цели
+	// СЂР°РґРёСѓСЃ РІРёРґРёРјРѕСЃС‚Рё С†РµР»Рё
 	float sightRadius;
 
-	// радиус, в котром ложатся снаряды
+	// СЂР°РґРёСѓСЃ, РІ РєРѕС‚СЂРѕРј Р»РѕР¶Р°С‚СЃСЏ СЃРЅР°СЂСЏРґС‹
 	float accuracyRadius;
 
-	// внутренний индекс, назначение зависит от оружия
+	// РІРЅСѓС‚СЂРµРЅРЅРёР№ РёРЅРґРµРєСЃ, РЅР°Р·РЅР°С‡РµРЅРёРµ Р·Р°РІРёСЃРёС‚ РѕС‚ РѕСЂСѓР¶РёСЏ
 	int weaponIndex;
 
-	// для лазера - толщина луча
+	// РґР»СЏ Р»Р°Р·РµСЂР° - С‚РѕР»С‰РёРЅР° Р»СѓС‡Р°
 	float laserWidth;
 
 	ConsumptionData reloadConsumption;
 
-	float thetaForced; // Игнорировать theta, возвращаемое suggest 
+	float thetaForced; // РРіРЅРѕСЂРёСЂРѕРІР°С‚СЊ theta, РІРѕР·РІСЂР°С‰Р°РµРјРѕРµ suggest 
 
-	// 0 - индивидуальная проверка расстояния до цели
-	// 1 - проверка расстояния до цели по скваду
+	// 0 - РёРЅРґРёРІРёРґСѓР°Р»СЊРЅР°СЏ РїСЂРѕРІРµСЂРєР° СЂР°СЃСЃС‚РѕСЏРЅРёСЏ РґРѕ С†РµР»Рё
+	// 1 - РїСЂРѕРІРµСЂРєР° СЂР°СЃСЃС‚РѕСЏРЅРёСЏ РґРѕ С†РµР»Рё РїРѕ СЃРєРІР°РґСѓ
 	int squadMode;
 
-	// true если не может автоматом наводиться на голограммы
+	// true РµСЃР»Рё РЅРµ РјРѕР¶РµС‚ Р°РІС‚РѕРјР°С‚РѕРј РЅР°РІРѕРґРёС‚СЊСЃСЏ РЅР° РіРѕР»РѕРіСЂР°РјРјС‹
 	bool excludeHolograms;
 
 	terWeaponSetup()
@@ -1246,29 +1246,29 @@ public:
 	DamageMolecula();
 	DamageMolecula(int s,int o,int t);
 
-	// Загрузка сейвов
+	// Р—Р°РіСЂСѓР·РєР° СЃРµР№РІРѕРІ
 	const DamageMolecula& operator=(const struct SaveDamageMolecula& data);
 
 	bool isAlive() const { return isAlive_; }
 
-	/// проверка, что молекула стабильна, т.е. в ней не выбит полностью какой-либо ти элементов
+	/// РїСЂРѕРІРµСЂРєР°, С‡С‚Рѕ РјРѕР»РµРєСѓР»Р° СЃС‚Р°Р±РёР»СЊРЅР°, С‚.Рµ. РІ РЅРµР№ РЅРµ РІС‹Р±РёС‚ РїРѕР»РЅРѕСЃС‚СЊСЋ РєР°РєРѕР№-Р»РёР±Рѕ С‚Рё СЌР»РµРјРµРЅС‚РѕРІ
 	bool isStable() const;
 
-	/// Количество элементов типа type без учета мертвых (если тип - DAMAGE_ELEMENT_TYPE_MAX возвращает общее количество).
+	/// РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ С‚РёРїР° type Р±РµР· СѓС‡РµС‚Р° РјРµСЂС‚РІС‹С… (РµСЃР»Рё С‚РёРї - DAMAGE_ELEMENT_TYPE_MAX РІРѕР·РІСЂР°С‰Р°РµС‚ РѕР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ).
 	int elementCount(int element_filter = DAMAGE_FILTER_ALL) const;
-	/// Количество живых элементов типа type.
+	/// РљРѕР»РёС‡РµСЃС‚РІРѕ Р¶РёРІС‹С… СЌР»РµРјРµРЅС‚РѕРІ С‚РёРїР° type.
 	int aliveElementCount(int element_filter = DAMAGE_FILTER_ALL) const;
-	/// Количество мертвых элементов типа type.
+	/// РљРѕР»РёС‡РµСЃС‚РІРѕ РјРµСЂС‚РІС‹С… СЌР»РµРјРµРЅС‚РѕРІ С‚РёРїР° type.
 	int deadElementCount(int element_filter = DAMAGE_FILTER_ALL) const;
 
-	/// Количество атомов элементов типа type без учета мертвых (если тип - DAMAGE_ELEMENT_TYPE_MAX возвращает общее количество атомов).
+	/// РљРѕР»РёС‡РµСЃС‚РІРѕ Р°С‚РѕРјРѕРІ СЌР»РµРјРµРЅС‚РѕРІ С‚РёРїР° type Р±РµР· СѓС‡РµС‚Р° РјРµСЂС‚РІС‹С… (РµСЃР»Рё С‚РёРї - DAMAGE_ELEMENT_TYPE_MAX РІРѕР·РІСЂР°С‰Р°РµС‚ РѕР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р°С‚РѕРјРѕРІ).
 	int atomCount(int element_filter = DAMAGE_FILTER_ALL) const { return elementCount(element_filter) * 4; }
 
-	/// Количество элементов типа i, без учета выбитых.
+	/// РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ С‚РёРїР° i, Р±РµР· СѓС‡РµС‚Р° РІС‹Р±РёС‚С‹С….
 	int& operator[](int i){ return elements_[i]; }
 	int operator[](int i) const { return elements_[i]; }
 
-	/// Покомпонентная сумма и разность.
+	/// РџРѕРєРѕРјРїРѕРЅРµРЅС‚РЅР°СЏ СЃСѓРјРјР° Рё СЂР°Р·РЅРѕСЃС‚СЊ.
 	DamageMolecula& operator += (const DamageMolecula& rhs) { for(int i = 0; i < DAMAGE_ELEMENT_TYPE_MAX; i++){ elements_[i] += rhs.elements_[i]; elementsDead_[i] += rhs.elementsDead_[i]; } return *this; }
 	DamageMolecula& operator -= (const DamageMolecula& rhs) { for(int i = 0; i < DAMAGE_ELEMENT_TYPE_MAX; i++){ elements_[i] -= rhs.elements_[i]; elementsDead_[i] -= rhs.elementsDead_[i]; } return *this; }
 	DamageMolecula operator + (const DamageMolecula& rhs) const { return DamageMolecula(*this) += rhs; }
@@ -1279,33 +1279,33 @@ public:
 
 	DamageMolecula operator * (int value) { return DamageMolecula(*this) *= value; }
 
-	/// Наименьшее частное - сколько можно произвести юнитов, рассчитывается по первым трём типам элементов.
+	/// РќР°РёРјРµРЅСЊС€РµРµ С‡Р°СЃС‚РЅРѕРµ - СЃРєРѕР»СЊРєРѕ РјРѕР¶РЅРѕ РїСЂРѕРёР·РІРµСЃС‚Рё СЋРЅРёС‚РѕРІ, СЂР°СЃСЃС‡РёС‚С‹РІР°РµС‚СЃСЏ РїРѕ РїРµСЂРІС‹Рј С‚СЂС‘Рј С‚РёРїР°Рј СЌР»РµРјРµРЅС‚РѕРІ.
 	int operator / (const DamageMolecula& rhs) const { int n, nmin = 1000; for(int i = 0; i < 3; i++) if(rhs[i] && nmin > (n = (elements_[i] - elementsDead_[i])/rhs[i])) nmin = n; xassert(nmin != 1000); return nmin; }
 
-	/// Количество мягких атомов в элементах молекулы.
+	/// РљРѕР»РёС‡РµСЃС‚РІРѕ РјСЏРіРєРёС… Р°С‚РѕРјРѕРІ РІ СЌР»РµРјРµРЅС‚Р°С… РјРѕР»РµРєСѓР»С‹.
 	int softAtomCount(int element_filter = DAMAGE_FILTER_ALL) const;
-	/// Количество твердых атомов в элементач молекулы.
+	/// РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РІРµСЂРґС‹С… Р°С‚РѕРјРѕРІ РІ СЌР»РµРјРµРЅС‚Р°С‡ РјРѕР»РµРєСѓР»С‹.
 	int hardAtomCount(int element_filter = DAMAGE_FILTER_ALL) const;
 
-	/// Возвращает true, если в молекуле есть хотя бы один мертвый элемент.
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РІ РјРѕР»РµРєСѓР»Рµ РµСЃС‚СЊ С…РѕС‚СЏ Р±С‹ РѕРґРёРЅ РјРµСЂС‚РІС‹Р№ СЌР»РµРјРµРЅС‚.
 	bool needRepair() const { for(int i = 0; i < DAMAGE_ELEMENT_TYPE_MAX; i++) if(elementsDead_[i]) return true; return false; }
-	/// Восстановление мертвых элементов.
+	/// Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РјРµСЂС‚РІС‹С… СЌР»РµРјРµРЅС‚РѕРІ.
 	/**
-	Возвращает количество реально восстановленных элементов.
+	Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР°Р»СЊРЅРѕ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ.
 	*/
 	int repair(int element_count = 1);
-	/// Восстановление мертвых элементов определенного типа.
+	/// Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РјРµСЂС‚РІС‹С… СЌР»РµРјРµРЅС‚РѕРІ РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ С‚РёРїР°.
 	void repair(DamageElementType element_type,int element_count);
 
-	/// Атака на молекулу.
+	/// РђС‚Р°РєР° РЅР° РјРѕР»РµРєСѓР»Сѓ.
 	/**
-	attack_width - ширина атаки (количество атакуемых атомов)
-	attack_power - мощность атаки (количество выстрелов по атомам)
-	shield - количество мягких атомов, преобразуемых в твердые на время атаки
-	attack_filter - фильтр на элементы, из которых берутся атомы для атаки
-	damage_filter - фильтр на элементы, которые будут гибнуть при успешном попадании
+	attack_width - С€РёСЂРёРЅР° Р°С‚Р°РєРё (РєРѕР»РёС‡РµСЃС‚РІРѕ Р°С‚Р°РєСѓРµРјС‹С… Р°С‚РѕРјРѕРІ)
+	attack_power - РјРѕС‰РЅРѕСЃС‚СЊ Р°С‚Р°РєРё (РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹СЃС‚СЂРµР»РѕРІ РїРѕ Р°С‚РѕРјР°Рј)
+	shield - РєРѕР»РёС‡РµСЃС‚РІРѕ РјСЏРіРєРёС… Р°С‚РѕРјРѕРІ, РїСЂРµРѕР±СЂР°Р·СѓРµРјС‹С… РІ С‚РІРµСЂРґС‹Рµ РЅР° РІСЂРµРјСЏ Р°С‚Р°РєРё
+	attack_filter - С„РёР»СЊС‚СЂ РЅР° СЌР»РµРјРµРЅС‚С‹, РёР· РєРѕС‚РѕСЂС‹С… Р±РµСЂСѓС‚СЃСЏ Р°С‚РѕРјС‹ РґР»СЏ Р°С‚Р°РєРё
+	damage_filter - С„РёР»СЊС‚СЂ РЅР° СЌР»РµРјРµРЅС‚С‹, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РіРёР±РЅСѓС‚СЊ РїСЂРё СѓСЃРїРµС€РЅРѕРј РїРѕРїР°РґР°РЅРёРё
 
-	возвращает количество убитых в результате атаки элементов
+	РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СѓР±РёС‚С‹С… РІ СЂРµР·СѓР»СЊС‚Р°С‚Рµ Р°С‚Р°РєРё СЌР»РµРјРµРЅС‚РѕРІ
 	*/
 	int hit(int attack_width,int attack_power,int attack_filter = DAMAGE_FILTER_ALL,int damage_filter = DAMAGE_FILTER_ALL,int shield = 0);
 
@@ -1315,7 +1315,7 @@ public:
 		zeroize(); isAlive_ = false;
 	}
 
-	/// обнуление количества живых элементов
+	/// РѕР±РЅСѓР»РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° Р¶РёРІС‹С… СЌР»РµРјРµРЅС‚РѕРІ
 	void zeroize(){ for(int i = 0; i < DAMAGE_ELEMENT_TYPE_MAX; i++) elementsDead_[i] = elements_[i]; isAlive_ = true; }
 
 	float phase() const { if(elementCount()) return float(aliveElementCount())/float(elementCount()); return 0.0f; }
@@ -1325,7 +1325,7 @@ public:
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_NAME(elements_, "elements", "элементы"); 
+		ar & TRANSLATE_NAME(elements_, "elements", "СЌР»РµРјРµРЅС‚С‹"); 
 	}
 
 	//friend ostream& operator << (ostream& os, const DamageMolecula& m) { os << m.elements_[DAMAGE_ELEMENT_SOLDIER] << " \t"  << m.elements_[DAMAGE_ELEMENT_OFFICER] << " \t" << m.elements_[DAMAGE_ELEMENT_TECHNIC]; return os; }
@@ -1370,8 +1370,8 @@ struct ModelData
 	void serialize(Archive& ar) {
 		ar & TRANSLATE_OBJECT(modelName, "&modelName");
 		ar & TRANSLATE_OBJECT(logicName, "logicName");
-		ar & TRANSLATE_OBJECT(boundScale, "Масштабирование");
-		ar & TRANSLATE_OBJECT(boundRadius, "Радиус объекта (0 - использовать масштабирование)");
+		ar & TRANSLATE_OBJECT(boundScale, "РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ");
+		ar & TRANSLATE_OBJECT(boundRadius, "Р Р°РґРёСѓСЃ РѕР±СЉРµРєС‚Р° (0 - РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ)");
 	}
 };
 
@@ -1441,7 +1441,7 @@ public:
 	EnumWrapper<terUnitAttributeID> ID;
 	EnumWrapper<terUnitClassID> ClassID;
 	EnumWrapper<terInterpolationID> InterpolationType;
-	EnumWrapper<terBelligerent> belligerent; // выделяет специализации по воюющей стороне, массив _общий_
+	EnumWrapper<terBelligerent> belligerent; // РІС‹РґРµР»СЏРµС‚ СЃРїРµС†РёР°Р»РёР·Р°С†РёРё РїРѕ РІРѕСЋСЋС‰РµР№ СЃС‚РѕСЂРѕРЅРµ, РјР°СЃСЃРёРІ _РѕР±С‰РёР№_
 
 	ModelData modelData;
 	vector<ModelData> additionalModelsData;
@@ -1456,7 +1456,7 @@ public:
 	ToolzerSetup toolzerSetup;
 
 	bool SelectAble;
-	bool saveAsCommonObject; // Записывать объект (нельзя ставить для объектов, которые уже пишутся в составе общей иерархии)
+	bool saveAsCommonObject; // Р—Р°РїРёСЃС‹РІР°С‚СЊ РѕР±СЉРµРєС‚ (РЅРµР»СЊР·СЏ СЃС‚Р°РІРёС‚СЊ РґР»СЏ РѕР±СЉРµРєС‚РѕРІ, РєРѕС‚РѕСЂС‹Рµ СѓР¶Рµ РїРёС€СѓС‚СЃСЏ РІ СЃРѕСЃС‚Р°РІРµ РѕР±С‰РµР№ РёРµСЂР°СЂС…РёРё)
 	
 	float GroundPlaneSpeed;
 	float GroundAngleSpeed;
@@ -1464,7 +1464,7 @@ public:
 	bool MilitaryUnit;
 	BitVector<terUnitClassType> UnitClass;
 	BitVector<terUnitClassType> AttackClass;
-	bool enemyWorld; // Оъекты, принадлежащие миру, будут атаковаться. Скверна.
+	bool enemyWorld; // РћСЉРµРєС‚С‹, РїСЂРёРЅР°РґР»РµР¶Р°С‰РёРµ РјРёСЂСѓ, Р±СѓРґСѓС‚ Р°С‚Р°РєРѕРІР°С‚СЊСЃСЏ. РЎРєРІРµСЂРЅР°.
 
 	PrmString SoundName;
 	bool SoundCycled;
@@ -1477,7 +1477,7 @@ public:
 	int ExcludeCollision;
 	BitVector<CollisionGroupID> CollisionGroup;
 
-	float MakeEnergy; // в секунду
+	float MakeEnergy; // РІ СЃРµРєСѓРЅРґСѓ
 	float energyCapacity;
 
 	float ConnectionRadius;
@@ -1486,8 +1486,8 @@ public:
 
 	int LifeTime;
 
-	// коэффициент, на который умножается количество элементов, 
-	// приносимых строительным блоком при постройке здания
+	// РєРѕСЌС„С„РёС†РёРµРЅС‚, РЅР° РєРѕС‚РѕСЂС‹Р№ СѓРјРЅРѕР¶Р°РµС‚СЃСЏ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ, 
+	// РїСЂРёРЅРѕСЃРёРјС‹С… СЃС‚СЂРѕРёС‚РµР»СЊРЅС‹Рј Р±Р»РѕРєРѕРј РїСЂРё РїРѕСЃС‚СЂРѕР№РєРµ Р·РґР°РЅРёСЏ
 	float constructionSpeedCoeff;
 
 	float SelectionDistance;
@@ -1512,7 +1512,7 @@ public:
 	float forwardVelocity;
 	float flyingHeight;
 	
-	RigidBodyPrmLibrary::Reference rigidBodyPrm; // Параметры физики
+	RigidBodyPrmLibrary::Reference rigidBodyPrm; // РџР°СЂР°РјРµС‚СЂС‹ С„РёР·РёРєРё
 	UnitInterfacePrm interfacePrm;
 	InterfaceTV interfaceTV;
     vector<AnimationData> animationDataTable;
@@ -1576,23 +1576,23 @@ public:
 		ar & TRANSLATE_OBJECT(InterpolationType, "InterpolationType");
 
 		ar & TRANSLATE_OBJECT(InterfaceNameTag, "InterfaceName");
-		ar & TRANSLATE_OBJECT(modelData, "Модель");
-		ar & TRANSLATE_OBJECT(additionalModelsData, "Дополнительные модели");
-		ar & TRANSLATE_OBJECT(animationDataTable, "Описание анимации");
-		ar & TRANSLATE_OBJECT(ConnectionPointNames, "Точки dummy");
+		ar & TRANSLATE_OBJECT(modelData, "РњРѕРґРµР»СЊ");
+		ar & TRANSLATE_OBJECT(additionalModelsData, "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РјРѕРґРµР»Рё");
+		ar & TRANSLATE_OBJECT(animationDataTable, "РћРїРёСЃР°РЅРёРµ Р°РЅРёРјР°С†РёРё");
+		ar & TRANSLATE_OBJECT(ConnectionPointNames, "РўРѕС‡РєРё dummy");
 
-		if(ar.openBlock("interaction", "Взаимодействие")){
+		if(ar.openBlock("interaction", "Р’Р·Р°РёРјРѕРґРµР№СЃС‚РІРёРµ")){
 			ar & TRANSLATE_OBJECT(UnitClass, "UnitClass");
 			ar & TRANSLATE_OBJECT(AttackClass, "AttackClass");
 			ar & TRANSLATE_OBJECT(MilitaryUnit, "MilitaryUnit");
-			ar & TRANSLATE_OBJECT(enemyWorld, "enemyWorld (Оъекты, принадлежащие миру, будут атаковаться. Скверна.)");
+			ar & TRANSLATE_OBJECT(enemyWorld, "enemyWorld (РћСЉРµРєС‚С‹, РїСЂРёРЅР°РґР»РµР¶Р°С‰РёРµ РјРёСЂСѓ, Р±СѓРґСѓС‚ Р°С‚Р°РєРѕРІР°С‚СЊСЃСЏ. РЎРєРІРµСЂРЅР°.)");
 			ar & TRANSLATE_OBJECT(ExcludeCollision, "ExcludeCollision");
 			ar & TRANSLATE_OBJECT(CollisionGroup, "CollisionGroup");
 			ar & TRANSLATE_OBJECT(kill_priority, "kill_priority");
 			ar.closeBlock();
 		}
 
-		if(ar.openBlock("energyModel", "Энергетическая модель")){
+		if(ar.openBlock("energyModel", "Р­РЅРµСЂРіРµС‚РёС‡РµСЃРєР°СЏ РјРѕРґРµР»СЊ")){
 			ar & TRANSLATE_OBJECT(MakeEnergy, "MakeEnergy");
 			ar & TRANSLATE_OBJECT(energyCapacity, "energyCapacity");
 		
@@ -1603,24 +1603,24 @@ public:
 		}
 
 		ar & TRANSLATE_OBJECT(damageMolecula, "damageMolecula");
-		ar & TRANSLATE_OBJECT(unitDamage, "Наносимые повреждения");
-		ar & TRANSLATE_OBJECT(environmentalDamage, "Повреждения от окружающей среды");
+		ar & TRANSLATE_OBJECT(unitDamage, "РќР°РЅРѕСЃРёРјС‹Рµ РїРѕРІСЂРµР¶РґРµРЅРёСЏ");
+		ar & TRANSLATE_OBJECT(environmentalDamage, "РџРѕРІСЂРµР¶РґРµРЅРёСЏ РѕС‚ РѕРєСЂСѓР¶Р°СЋС‰РµР№ СЃСЂРµРґС‹");
 
-		ar & TRANSLATE_OBJECT(weaponSetup, "Оружие");
-		ar & TRANSLATE_OBJECT(effectsData, "Эффекты");
-		ar & TRANSLATE_OBJECT(toolzerSetup, "Тулзера");
-		ar & TRANSLATE_OBJECT(soundSetup, "Звуки");
-		ar & TRANSLATE_OBJECT(interfacePrm, "Параметры интерфейса");
-		ar & TRANSLATE_OBJECT(interfaceTV, "ИнтерфейсТВ");
+		ar & TRANSLATE_OBJECT(weaponSetup, "РћСЂСѓР¶РёРµ");
+		ar & TRANSLATE_OBJECT(effectsData, "Р­С„С„РµРєС‚С‹");
+		ar & TRANSLATE_OBJECT(toolzerSetup, "РўСѓР»Р·РµСЂР°");
+		ar & TRANSLATE_OBJECT(soundSetup, "Р—РІСѓРєРё");
+		ar & TRANSLATE_OBJECT(interfacePrm, "РџР°СЂР°РјРµС‚СЂС‹ РёРЅС‚РµСЂС„РµР№СЃР°");
+		ar & TRANSLATE_OBJECT(interfaceTV, "РРЅС‚РµСЂС„РµР№СЃРўР’");
    
-		if(ar.openBlock("Physics", "Физика")){
-			ar & TRANSLATE_OBJECT(rigidBodyPrm, "Параметры");
-			ar & TRANSLATE_OBJECT(forwardVelocity, "Скорость движения");
-			ar & TRANSLATE_OBJECT(flyingHeight, "Высота полета");
+		if(ar.openBlock("Physics", "Р¤РёР·РёРєР°")){
+			ar & TRANSLATE_OBJECT(rigidBodyPrm, "РџР°СЂР°РјРµС‚СЂС‹");
+			ar & TRANSLATE_OBJECT(forwardVelocity, "РЎРєРѕСЂРѕСЃС‚СЊ РґРІРёР¶РµРЅРёСЏ");
+			ar & TRANSLATE_OBJECT(flyingHeight, "Р’С‹СЃРѕС‚Р° РїРѕР»РµС‚Р°");
 			ar.closeBlock();
 		}
 
-		if(ar.openBlock("garbage", "Разное")){
+		if(ar.openBlock("garbage", "Р Р°Р·РЅРѕРµ")){
 			ar & TRANSLATE_OBJECT(LifeTime, "LifeTime");
 			ar & TRANSLATE_OBJECT(SoundName, "SoundName");
 			ar & TRANSLATE_OBJECT(SoundCycled, "SoundCycled");
@@ -1640,7 +1640,7 @@ public:
 			ar & TRANSLATE_OBJECT(showPath, "showPath");
 			ar & TRANSLATE_OBJECT(ShowCircles, "ShowCircles");
 
-			ar & TRANSLATE_OBJECT(saveAsCommonObject, "saveAsCommonObject (Записывать объект (нельзя ставить для объектов, которые уже пишутся в составе общей иерархии)");
+			ar & TRANSLATE_OBJECT(saveAsCommonObject, "saveAsCommonObject (Р—Р°РїРёСЃС‹РІР°С‚СЊ РѕР±СЉРµРєС‚ (РЅРµР»СЊР·СЏ СЃС‚Р°РІРёС‚СЊ РґР»СЏ РѕР±СЉРµРєС‚РѕРІ, РєРѕС‚РѕСЂС‹Рµ СѓР¶Рµ РїРёС€СѓС‚СЃСЏ РІ СЃРѕСЃС‚Р°РІРµ РѕР±С‰РµР№ РёРµСЂР°СЂС…РёРё)");
 	
 			ar & TRANSLATE_OBJECT(GroundPlaneSpeed, "GroundPlaneSpeed");
 			ar & TRANSLATE_OBJECT(GroundAngleSpeed, "GroundAngleSpeed");

@@ -34,7 +34,7 @@ public:
 	cStream	*f;
 	char	type;
 	int		error;
-	int		ofs;						// смещение в текстовом формате
+	int		ofs;						// СЃРјРµС‰РµРЅРёРµ РІ С‚РµРєСЃС‚РѕРІРѕРј С„РѕСЂРјР°С‚Рµ
 	int		version;
 
 	cMeshFile();

@@ -107,7 +107,7 @@ public:
 
 	virtual int SetRenderState(eRenderStateOption option,int value);
 
-	// вспомогательные функции, могут быть не реализованы
+	// РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё, РјРѕРіСѓС‚ Р±С‹С‚СЊ РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅС‹
 	virtual int	GetSizeX()														{ return xScr; }
 	virtual int	GetSizeY()														{ return yScr; }
 	virtual int GetScrFormatData(sTextureFormatData &TexFmt)					{ return -1; }
@@ -189,7 +189,7 @@ public:
 	DrawType*	dtAdvanceOriginal;
 
 	virtual bool IsEnableSelfShadow();
-	void SetAdvance();//Вызывать при изменении Option_ShadowType Option_EnableBump
+	void SetAdvance();//Р’С‹Р·С‹РІР°С‚СЊ РїСЂРё РёР·РјРµРЅРµРЅРёРё Option_ShadowType Option_EnableBump
 
 	bool PossibleAnisotropic();
 	void SetAnisotropic(bool enable);
@@ -436,7 +436,7 @@ protected:
 	IDirect3DPixelShader9 *		CurrentPixelShader;
 	DWORD						CurrentFVF;
 	int							CurrentCullMode;
-	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
+	int							CurrentBumpMap,CurrentMod4; // РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Рµ С‚РёРї С‚РµРєСЃС‚СѓСЂРЅС‹С… РѕРїРµСЂР°С†РёР№
 
 	cSlotManagerInit<sSlotVB>	LibVB;
 	cSlotManagerInit<sSlotIB>	LibIB;

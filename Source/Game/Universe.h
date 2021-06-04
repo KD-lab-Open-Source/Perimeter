@@ -18,7 +18,7 @@ typedef void(*PROGRESSCALLBACK)(float);
 typedef Grid2D<terUnitGeneric, 5, GridVector<terUnitGeneric, 8> > terUnitGridType;
 
 ///////////////////////////////////////
-//		Игровая вселенная
+//		РРіСЂРѕРІР°СЏ РІСЃРµР»РµРЅРЅР°СЏ
 ///////////////////////////////////////
 class terUniverse : public terHyperSpace
 {
@@ -245,6 +245,6 @@ public:
 	}
 };
 
-extern cAutoUnmark _pUnitHover; // Юнит под курсором
+extern cAutoUnmark _pUnitHover; // Р®РЅРёС‚ РїРѕРґ РєСѓСЂСЃРѕСЂРѕРј
 
 #endif //__UNIVERSE_H__

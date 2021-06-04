@@ -7,7 +7,7 @@
 #include "EnergyConsumer.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//		Реализация логики сквада
+//		Р РµР°Р»РёР·Р°С†РёСЏ Р»РѕРіРёРєРё СЃРєРІР°РґР°
 //////////////////////////////////////////////////////////////////////////////////////////
 class AttributeSquad : public AttributeBase
 {
@@ -16,8 +16,8 @@ public:
 	float formationRadiusBase;
 	float followDistanceFactor; // followDistanceFactor*(radius1 + radius2)
 
-	// квадрат радиуса, в котором базовый сквад
-	// ремонтирует и защищает другие сквады своими техниками
+	// РєРІР°РґСЂР°С‚ СЂР°РґРёСѓСЃР°, РІ РєРѕС‚РѕСЂРѕРј Р±Р°Р·РѕРІС‹Р№ СЃРєРІР°Рґ
+	// СЂРµРјРѕРЅС‚РёСЂСѓРµС‚ Рё Р·Р°С‰РёС‰Р°РµС‚ РґСЂСѓРіРёРµ СЃРєРІР°РґС‹ СЃРІРѕРёРјРё С‚РµС…РЅРёРєР°РјРё
 	float supportRadius;
 
 	ConsumptionData productionConsumption;
@@ -33,12 +33,12 @@ public:
 	template<class Archive>
 	void serialize(Archive& ar) {
 		__super::serialize(ar);
-		if(ar.openBlock("attributeSquad", "Сквад")){
+		if(ar.openBlock("attributeSquad", "РЎРєРІР°Рґ")){
 			ar & TRANSLATE_OBJECT(homePositionOffsetFactor, "homePositionOffsetFactor");
 			ar & TRANSLATE_OBJECT(formationRadiusBase, "formationRadiusBase");
 			ar & TRANSLATE_OBJECT(followDistanceFactor, "followDistanceFactor");
 			ar & TRANSLATE_OBJECT(supportRadius, "supportRadius");
-			ar & TRANSLATE_OBJECT(productionConsumption, "Энергия на производство");
+			ar & TRANSLATE_OBJECT(productionConsumption, "Р­РЅРµСЂРіРёСЏ РЅР° РїСЂРѕРёР·РІРѕРґСЃС‚РІРѕ");
 			ar.closeBlock();
 		}
 	}
@@ -73,7 +73,7 @@ public:
 	void setCommander(terUnitBase* p) { commander_ = p; }
 	terUnitBase* commander() { return commander_; }
 
-	// Точка атаки
+	// РўРѕС‡РєР° Р°С‚Р°РєРё
 	class AttackPoint
 	{
 	public:
@@ -178,23 +178,23 @@ public:
 	bool patrolMode() const { return patrolPoints_.size() > 1; }
 	bool mutationFinished() const { return mutation_process.finished(); }
 	
-	// Базовые и составные
-	const DamageMolecula& squadMolecula() const { return squadMolecula_; } // Всего 
-	const DamageMolecula& squadMutationMolecula() const { return squadMutationMolecula_; } // Готовых к мутации
+	// Р‘Р°Р·РѕРІС‹Рµ Рё СЃРѕСЃС‚Р°РІРЅС‹Рµ
+	const DamageMolecula& squadMolecula() const { return squadMolecula_; } // Р’СЃРµРіРѕ 
+	const DamageMolecula& squadMutationMolecula() const { return squadMutationMolecula_; } // Р“РѕС‚РѕРІС‹С… Рє РјСѓС‚Р°С†РёРё
 	const DamageMolecula& atomsRequested() const { return atomsRequested_; }
 	const DamageMolecula& atomsPaused() const { return atomsPaused_; }
 	void addSquadMutationMolecula(const DamageMolecula& molecula) { squadMutationMolecula_ += molecula; }
 
 	int complexUnitsNumber() const { return n_complex_units; }
 	
-	// Передвижение
+	// РџРµСЂРµРґРІРёР¶РµРЅРёРµ
 	void clearWayPoints();
 	void addWayPoint(const Vect2f& way_point);
 	void goHome();
 	bool noWayPoints() const { return wayPoints_.empty(); }
 	int wayPointsNumber() const { return wayPoints_.size(); }
 	
-	// Стрельба
+	// РЎС‚СЂРµР»СЊР±Р°
 	void clearTargets();
 	void addTarget(terUnitBase* target);
 	void addTarget(const Vect3f& v);
@@ -243,11 +243,11 @@ private:
 	Vect2f average_velocity;
 	int including_cluster;
 	
-	MatX2f stablePose_; // Центр сквада, куда он стремится.
+	MatX2f stablePose_; // Р¦РµРЅС‚СЂ СЃРєРІР°РґР°, РєСѓРґР° РѕРЅ СЃС‚СЂРµРјРёС‚СЃСЏ.
 	Vect2f homePosition_; 
 	bool stablePoseRestarted_;
 	
-	bool check_readiness_to_move; // ожидать после начала движения, пока включаться цепочки у всех юнитов
+	bool check_readiness_to_move; // РѕР¶РёРґР°С‚СЊ РїРѕСЃР»Рµ РЅР°С‡Р°Р»Р° РґРІРёР¶РµРЅРёСЏ, РїРѕРєР° РІРєР»СЋС‡Р°С‚СЊСЃСЏ С†РµРїРѕС‡РєРё Сѓ РІСЃРµС… СЋРЅРёС‚РѕРІ
 	
 	DurationTimer patrol_mode_attack_timer;
 	DurationTimer patrol_mode_ignore_targets_timer;
@@ -311,19 +311,19 @@ private:
 	void initMutation(SquadUnitList& sources, SquadUnitList& destinations);
 	bool mutate(terUnitAttributeID id);
 	bool killBaseUnit(const UnitCommand& command);
-	/// разваливает юнитов, у которых isDisintegrating() возвращает true на базовых
+	/// СЂР°Р·РІР°Р»РёРІР°РµС‚ СЋРЅРёС‚РѕРІ, Сѓ РєРѕС‚РѕСЂС‹С… isDisintegrating() РІРѕР·РІСЂР°С‰Р°РµС‚ true РЅР° Р±Р°Р·РѕРІС‹С…
 	void disintegrateUnitsQuant();
 
-	/// назначает юнитам цель
+	/// РЅР°Р·РЅР°С‡Р°РµС‚ СЋРЅРёС‚Р°Рј С†РµР»СЊ
 	/** 
-	unit_id - юнитам какого типа назначать (задаётся в случае базового сквада)
-	for_free_units_only - true, если надо назначить цель только тем юнитам, у которых цели ещё нет
+	unit_id - СЋРЅРёС‚Р°Рј РєР°РєРѕРіРѕ С‚РёРїР° РЅР°Р·РЅР°С‡Р°С‚СЊ (Р·Р°РґР°С‘С‚СЃСЏ РІ СЃР»СѓС‡Р°Рµ Р±Р°Р·РѕРІРѕРіРѕ СЃРєРІР°РґР°)
+	for_free_units_only - true, РµСЃР»Рё РЅР°РґРѕ РЅР°Р·РЅР°С‡РёС‚СЊ С†РµР»СЊ С‚РѕР»СЊРєРѕ С‚РµРј СЋРЅРёС‚Р°Рј, Сѓ РєРѕС‚РѕСЂС‹С… С†РµР»Рё РµС‰С‘ РЅРµС‚
 
-	возвращает false, если цель никому не назначена
+	РІРѕР·РІСЂР°С‰Р°РµС‚ false, РµСЃР»Рё С†РµР»СЊ РЅРёРєРѕРјСѓ РЅРµ РЅР°Р·РЅР°С‡РµРЅР°
 	*/
 	bool distributeAttackTarget(const AttackPoint& attack_point, terUnitAttributeID unit_id = UNIT_ATTRIBUTE_NONE, bool for_free_units_only = false);
 
-	/// обсчёт техников - поиск и распределение целей для ремонта и т.д.
+	/// РѕР±СЃС‡С‘С‚ С‚РµС…РЅРёРєРѕРІ - РїРѕРёСЃРє Рё СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ С†РµР»РµР№ РґР»СЏ СЂРµРјРѕРЅС‚Р° Рё С‚.Рґ.
 	void techniciansQuant();
 
 	void followQuant();

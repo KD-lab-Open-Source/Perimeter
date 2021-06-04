@@ -24,11 +24,11 @@ protected:
 
 	void destruct();
 	void explode();
-	/// радиус кратера, ноль если кратера нету
+	/// СЂР°РґРёСѓСЃ РєСЂР°С‚РµСЂР°, РЅРѕР»СЊ РµСЃР»Рё РєСЂР°С‚РµСЂР° РЅРµС‚Сѓ
 	float craterRadius_;
-	/// задержка перед созданием кратера
+	/// Р·Р°РґРµСЂР¶РєР° РїРµСЂРµРґ СЃРѕР·РґР°РЅРёРµРј РєСЂР°С‚РµСЂР°
 	int craterDelay_;
-	/// тип кратера
+	/// С‚РёРї РєСЂР°С‚РµСЂР°
 	terUnitAttributeID craterID_;
 
 	const AttributeBase* OriginalAttribute;

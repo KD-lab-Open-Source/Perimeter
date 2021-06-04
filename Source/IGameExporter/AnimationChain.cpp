@@ -189,7 +189,7 @@ void DlgAnimationChain::OnAddChain()
 		AnimationChain& ac=animation_chain[ichain];
 		if(ac.name==dlg.name)
 		{
-			MessageBox(hwnd,"Такая анимационная цепочка уже существует","Error",MB_OK);
+			MessageBox(hwnd,"РўР°РєР°СЏ Р°РЅРёРјР°С†РёРѕРЅРЅР°СЏ С†РµРїРѕС‡РєР° СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚","Error",MB_OK);
 			return;
 		}
 	}
@@ -294,7 +294,7 @@ void DlgAnimationChain::OnAddChainGroup()
 
 	if(hfound)
 	{
-		MessageBox(hwnd,"Такая группа анимаций уже существует","Error",MB_OK);
+		MessageBox(hwnd,"РўР°РєР°СЏ РіСЂСѓРїРїР° Р°РЅРёРјР°С†РёР№ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚","Error",MB_OK);
 		return;
 	}
 
@@ -372,7 +372,7 @@ HTREEITEM DlgAnimationChain::GetSelectionGroup(int* index)
 	HTREEITEM hgroup=TreeView_GetSelection(hTreeGroup);
 	if(hgroup==NULL)
 	{
-		MessageBox(hwnd,"Группа не выделена","Error",MB_OK);
+		MessageBox(hwnd,"Р“СЂСѓРїРїР° РЅРµ РІС‹РґРµР»РµРЅР°","Error",MB_OK);
 		if(index)
 			*index=NULL;
 		return NULL;

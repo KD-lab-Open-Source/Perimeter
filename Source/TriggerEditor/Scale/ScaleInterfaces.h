@@ -5,14 +5,14 @@
 	file path:	d:\Projects\Quest\QuestEditor
 	file base:	ScaleInterfaces
 	file ext:	h
-	author:		Илюха
+	author:		РР»СЋС…Р°
 	
-	purpose:	содержит интерфейсы управления масштабом
+	purpose:	СЃРѕРґРµСЂР¶РёС‚ РёРЅС‚РµСЂС„РµР№СЃС‹ СѓРїСЂР°РІР»РµРЅРёСЏ РјР°СЃС€С‚Р°Р±РѕРј
 *********************************************************************/
 #pragma once
 
 interface IScaleMgr;
-//реализует тот кого можно масштабировать.
+//СЂРµР°Р»РёР·СѓРµС‚ С‚РѕС‚ РєРѕРіРѕ РјРѕР¶РЅРѕ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°С‚СЊ.
 interface IScalable
 {
 	virtual void SetScaleMgr(IScaleMgr* psmgr) = 0;
@@ -22,10 +22,10 @@ interface IScalable
 	virtual void SetScale(float fscale) = 0;
 };
 
-//реализует тот, кто масштабирует
+//СЂРµР°Р»РёР·СѓРµС‚ С‚РѕС‚, РєС‚Рѕ РјР°СЃС€С‚Р°Р±РёСЂСѓРµС‚
 interface IScaleMgr
 {
 	virtual void SetScalable(IScalable* pscalable) = 0;
-	//обновляем информацию о масштабе
+	//РѕР±РЅРѕРІР»СЏРµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РјР°СЃС€С‚Р°Р±Рµ
 	virtual void UpdateScaleInfo() = 0;
 };

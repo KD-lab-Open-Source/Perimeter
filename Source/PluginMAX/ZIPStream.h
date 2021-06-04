@@ -9,7 +9,7 @@ public:
 	ZIPStream(const char* name);
 };
 
-//Если не вызывать ZIPOpen, то файл будет открываться просто файл
+//Р•СЃР»Рё РЅРµ РІС‹Р·С‹РІР°С‚СЊ ZIPOpen, С‚Рѕ С„Р°Р№Р» Р±СѓРґРµС‚ РѕС‚РєСЂС‹РІР°С‚СЊСЃСЏ РїСЂРѕСЃС‚Рѕ С„Р°Р№Р»
 void ZIPOpen(const char* zip_filename);
 void ZIPClose();
 bool ZIPIsOpen();

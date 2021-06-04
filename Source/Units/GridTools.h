@@ -5,9 +5,9 @@
 
 struct Segment
 {
-	Vect3f begin; // начало орезка
-	Vect3f direct; // единичное направление
-	float length; // длина
+	Vect3f begin; // РЅР°С‡Р°Р»Рѕ РѕСЂРµР·РєР°
+	Vect3f direct; // РµРґРёРЅРёС‡РЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ
+	float length; // РґР»РёРЅР°
 
 	void set(const Vect3f& begin_, const Vect3f& end)
 	{
@@ -291,7 +291,7 @@ private:
 
 	terUnitBase* sourceUnit_;
 
-	/// Юниты, попавшие в область действия дизинтегратора.
+	/// Р®РЅРёС‚С‹, РїРѕРїР°РІС€РёРµ РІ РѕР±Р»Р°СЃС‚СЊ РґРµР№СЃС‚РІРёСЏ РґРёР·РёРЅС‚РµРіСЂР°С‚РѕСЂР°.
 	TargetContainer targets_;
 };
 

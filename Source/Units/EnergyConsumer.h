@@ -18,8 +18,8 @@ public:
 	bool attached() const { return player_; }
 
 	void start(const ConsumptionData& data);
-	void requestCharge() { requested_ = true; } // Обязательно запрашивать каждый квант
-	bool charged() const { return energy_ < FLT_EPS; } // Для мгновенных процессов первый вызов после старта всегда true
+	void requestCharge() { requested_ = true; } // РћР±СЏР·Р°С‚РµР»СЊРЅРѕ Р·Р°РїСЂР°С€РёРІР°С‚СЊ РєР°Р¶РґС‹Р№ РєРІР°РЅС‚
+	bool charged() const { return energy_ < FLT_EPS; } // Р”Р»СЏ РјРіРЅРѕРІРµРЅРЅС‹С… РїСЂРѕС†РµСЃСЃРѕРІ РїРµСЂРІС‹Р№ РІС‹Р·РѕРІ РїРѕСЃР»Рµ СЃС‚Р°СЂС‚Р° РІСЃРµРіРґР° true
 	float progress() const { return energy()/total_; }
 	float energy() const { return total_ - energy_; }
 

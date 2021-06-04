@@ -130,7 +130,7 @@ struct LogicData {
 					frame(0)
 	{
 
-		//memset(m_nProgress, 0, sizeof(int) * UNIT_ATTRIBUTE_STRUCTURE_MAX);//Плохой стиль
+		//memset(m_nProgress, 0, sizeof(int) * UNIT_ATTRIBUTE_STRUCTURE_MAX);//РџР»РѕС…РѕР№ СЃС‚РёР»СЊ
 		miniMapSquads.resize(30);
 		for (int i = 0; i < UNIT_ATTRIBUTE_STRUCTURE_MAX; i++) {
 			sProgress& p = progress[i];

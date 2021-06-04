@@ -610,7 +610,7 @@ void terFilthDragonHead::addWayPoint()
 		terUnitBase* target=swarm->GetNextTarget();
 		if(target)
 		{
-			//Ëåòåòü ïî òîìó-æå íàïðàâëåíèþ è ïîìåíÿòü öåëü
+			//Ð›ÐµÑ‚ÐµÑ‚ÑŒ Ð¿Ð¾ Ñ‚Ð¾Ð¼Ñƒ-Ð¶Ðµ Ð½Ð°Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸ÑŽ Ð¸ Ð¿Ð¾Ð¼ÐµÐ½ÑÑ‚ÑŒ Ñ†ÐµÐ»ÑŒ
 			TargetPosition=target->position();
 
 			Vect3f last_pos=prev_pos;

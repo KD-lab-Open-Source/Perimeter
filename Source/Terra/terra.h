@@ -19,16 +19,16 @@ const int MAX_V_SIZE=1<<MAX_V_SIZE_POWER;
 const int MAX_SURFACE_TYPE = 256;
 const int MAX_GEO_SURFACE_TYPE = MAX_SURFACE_TYPE;
 const int MAX_DAM_SURFACE_TYPE = MAX_SURFACE_TYPE;
-const int SIZE_GEO_PALETTE=MAX_GEO_SURFACE_TYPE*3; // 3-это RGB
-const int SIZE_DAM_PALETTE=MAX_DAM_SURFACE_TYPE*3; // 3-это RGB
+const int SIZE_GEO_PALETTE=MAX_GEO_SURFACE_TYPE*3; // 3-СЌС‚Рѕ RGB
+const int SIZE_DAM_PALETTE=MAX_DAM_SURFACE_TYPE*3; // 3-СЌС‚Рѕ RGB
 
-const int MAX_SURFACE_LIGHTING =128; //максимальная освещенность поверхности от 0 до 127
-									 //старший бит идентифицирует Geo-0 или Dam-1
+const int MAX_SURFACE_LIGHTING =128; //РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РѕСЃРІРµС‰РµРЅРЅРѕСЃС‚СЊ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РѕС‚ 0 РґРѕ 127
+									 //СЃС‚Р°СЂС€РёР№ Р±РёС‚ РёРґРµРЅС‚РёС„РёС†РёСЂСѓРµС‚ Geo-0 РёР»Рё Dam-1
 
-const int VX_FRACTION=5; // 6 младших бит - дробь вокселя
+const int VX_FRACTION=5; // 6 РјР»Р°РґС€РёС… Р±РёС‚ - РґСЂРѕР±СЊ РІРѕРєСЃРµР»СЏ
 const int VX_FRACTION_MASK= ((1<<VX_FRACTION)-1);
 
-const int MAX_VX_HEIGHT=((1<<(VX_FRACTION + 8))-1);//это 0x3fff//0xFFFF;
+const int MAX_VX_HEIGHT=((1<<(VX_FRACTION + 8))-1);//СЌС‚Рѕ 0x3fff//0xFFFF;
 const int MIN_VX_HEIGHT=0;
 const int MAX_VX_HEIGHT_WHOLE=(MAX_VX_HEIGHT>>VX_FRACTION);
 
@@ -36,8 +36,8 @@ const int MAX_SIMPLE_DAM_SURFACE=10;
 
 const int MAX_RADIUS_CIRCLEARR = 210;//175;
 
-//------Атрибуты------//
-//старшие биты: 10 - выровненная поверхность; 11 - зеропласт; 01-гарь; 00-просто поверхность
+//------РђС‚СЂРёР±СѓС‚С‹------//
+//СЃС‚Р°СЂС€РёРµ Р±РёС‚С‹: 10 - РІС‹СЂРѕРІРЅРµРЅРЅР°СЏ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ; 11 - Р·РµСЂРѕРїР»Р°СЃС‚; 01-РіР°СЂСЊ; 00-РїСЂРѕСЃС‚Рѕ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ
 #define At_ZEROPLAST (0xC0)
 //#define At_ZEROPLASTEMPTY (0x40)
 #define At_LEVELED (0x80)

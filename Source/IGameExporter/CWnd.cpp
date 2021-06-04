@@ -14,7 +14,7 @@ void ClientToScreen(HWND hWnd,LPRECT rc)
 }
 
 void MouseTrack(HWND hWnd)
-{//Вызывается в WM_MOUSEMOVE для пролучения WM_MOUSELEAVE
+{//Р’С‹Р·С‹РІР°РµС‚СЃСЏ РІ WM_MOUSEMOVE РґР»СЏ РїСЂРѕР»СѓС‡РµРЅРёСЏ WM_MOUSELEAVE
 	TRACKMOUSEEVENT tme;
 	tme.cbSize  = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE;

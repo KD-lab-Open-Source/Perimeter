@@ -156,7 +156,7 @@ void HTManager::logic_thread()
 			lag_stat->NextLogicQuant();
 		}
 
-		//если logic_fps<10, то не пытаться догонять за счёт графики
+		//РµСЃР»Рё logic_fps<10, С‚Рѕ РЅРµ РїС‹С‚Р°С‚СЊСЃСЏ РґРѕРіРѕРЅСЏС‚СЊ Р·Р° СЃС‡С‘С‚ РіСЂР°С„РёРєРё
 		if(time < syncro_timer())
 		{
 			lag_stat->SetNetWait((syncro_timer()-time)*1e-3f);
@@ -198,7 +198,7 @@ bool HTManager::Quant()
 			time = syncro_timer();
 		}
 
-		tls_is_graph=MT_LOGIC_THREAD;//Для MTG, MTL ассертов.
+		tls_is_graph=MT_LOGIC_THREAD;//Р”Р»СЏ MTG, MTL Р°СЃСЃРµСЂС‚РѕРІ.
 		syncro_timer.next_frame();
 		while((time < syncro_timer()))
 		{
@@ -220,7 +220,7 @@ bool HTManager::Quant()
 
 		tls_is_graph=MT_GRAPH_THREAD;
 
-		//если logic_fps<10, то не пытаться догонять за счёт графики
+		//РµСЃР»Рё logic_fps<10, С‚Рѕ РЅРµ РїС‹С‚Р°С‚СЊСЃСЏ РґРѕРіРѕРЅСЏС‚СЊ Р·Р° СЃС‡С‘С‚ РіСЂР°С„РёРєРё
 		if(time < syncro_timer())
 		{
 			lag_stat->SetNetWait((syncro_timer()-time)*1e-3f);
@@ -253,8 +253,8 @@ void HTManager::DeleteUnit(terUnitBase* unit)
 void HTManager::ClearDeleteUnit(bool delete_all)
 {
 	int quant=0;
-	const int wait_to_delete=10;//Количество квантов, котороё ждётся
-							//в логическом кванте, прежде, чем удалить объект
+	const int wait_to_delete=10;//РљРѕР»РёС‡РµСЃС‚РІРѕ РєРІР°РЅС‚РѕРІ, РєРѕС‚РѕСЂРѕС‘ Р¶РґС‘С‚СЃСЏ
+							//РІ Р»РѕРіРёС‡РµСЃРєРѕРј РєРІР°РЅС‚Рµ, РїСЂРµР¶РґРµ, С‡РµРј СѓРґР°Р»РёС‚СЊ РѕР±СЉРµРєС‚
 
 	if(!delete_all)
 	{

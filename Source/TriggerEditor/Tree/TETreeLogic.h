@@ -18,15 +18,15 @@ public:
 	bool loadTree();
 protected:
 	bool loadTree(xTreeListCtrl& tree);
-	//выравниваем ширину столбцов по тексту
+	//РІС‹СЂР°РІРЅРёРІР°РµРј С€РёСЂРёРЅСѓ СЃС‚РѕР»Р±С†РѕРІ РїРѕ С‚РµРєСЃС‚Сѓ
 	void adjustTreeColumnsWidth();
 protected:
-	//нотификация
+	//РЅРѕС‚РёС„РёРєР°С†РёСЏ
 	void onRClick(NMHDR* phdr, LRESULT *pResult);
 	void onDeleteItem(NMHDR* phdr, LRESULT *pResult);
 	void onKeyDown(NMHDR* phdr, LRESULT *pResult);
 	void onBeginDrag(NMHDR* phdr, LRESULT *pResult);
 private:
-	//! Оконное представление дерева
+	//! РћРєРѕРЅРЅРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ РґРµСЂРµРІР°
 	TETreeManager *treeManager_;
 };

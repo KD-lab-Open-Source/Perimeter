@@ -42,7 +42,7 @@ const char* currentVersion =
 
 #ifdef _SINGLE_DEMO_
 const char* currentShortVersion = 
-"Комтек'04 демо, v"
+"РљРѕРјС‚РµРє'04 РґРµРјРѕ, v"
 #include "..\version.h" 
 ;
 #endif

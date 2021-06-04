@@ -258,10 +258,10 @@ private:
 
 struct EnableData
 {
-	bool Enabled; // разрешена для строительства, разрешена мутация для юнитов
-	int Requested; // кол-во запрошенных и построенных
-	int Constructed; // кол-во построенных
-	int Worked; // работает
+	bool Enabled; // СЂР°Р·СЂРµС€РµРЅР° РґР»СЏ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР°, СЂР°Р·СЂРµС€РµРЅР° РјСѓС‚Р°С†РёСЏ РґР»СЏ СЋРЅРёС‚РѕРІ
+	int Requested; // РєРѕР»-РІРѕ Р·Р°РїСЂРѕС€РµРЅРЅС‹С… Рё РїРѕСЃС‚СЂРѕРµРЅРЅС‹С…
+	int Constructed; // РєРѕР»-РІРѕ РїРѕСЃС‚СЂРѕРµРЅРЅС‹С…
+	int Worked; // СЂР°Р±РѕС‚Р°РµС‚
 
 	EnableData() {
 		clear();
@@ -272,7 +272,7 @@ struct EnableData
 
 
 ///////////////////////////////////////
-//			Игрок
+//			РРіСЂРѕРє
 ///////////////////////////////////////
 class terPlayer
 {
@@ -438,7 +438,7 @@ public:
 	bool findPathToPoint(DefenceMap& defenceMap, const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i>& out_path);
 	terUnitBase* findPathToTarget(DefenceMap& defenceMap, terUnitAttributeID id, terUnitBase* ignoreUnit, const Vect2f& nearPosition, Vect2iVect& path);
 	terUnitBase* findPathToTarget(DefenceMap& defenceMap, int unitClass, terUnitBase* ignoreUnit, const Vect2f& nearPosition, Vect2iVect& path);
-	DefenceMap& defenceMap() { return defenceMap_; } // Ищем цель у врага, подставляя свою карту защищенности
+	DefenceMap& defenceMap() { return defenceMap_; } // РС‰РµРј С†РµР»СЊ Сѓ РІСЂР°РіР°, РїРѕРґСЃС‚Р°РІР»СЏСЏ СЃРІРѕСЋ РєР°СЂС‚Сѓ Р·Р°С‰РёС‰РµРЅРЅРѕСЃС‚Рё
 
 	bool soundEvent(SoundEventID event_id);
 	bool soundEvent(const SoundEventSetup* ev);
@@ -492,8 +492,8 @@ public:
 	//-----------------------------------------
 	terTerraformDispatcher* TrustMap;
 	
-	//При обращении из графического потока к RegionPoint,ZeroRegionPoint,AbyssRegionPoint
-	//не забывать про RegionPoint->Lock,Unlock
+	//РџСЂРё РѕР±СЂР°С‰РµРЅРёРё РёР· РіСЂР°С„РёС‡РµСЃРєРѕРіРѕ РїРѕС‚РѕРєР° Рє RegionPoint,ZeroRegionPoint,AbyssRegionPoint
+	//РЅРµ Р·Р°Р±С‹РІР°С‚СЊ РїСЂРѕ RegionPoint->Lock,Unlock
 	RegionMetaDispatcher* RegionPoint;
 	MetaLockRegionDispatcher ZeroRegionPoint;
 	MetaLockRegionDispatcher AbyssRegionPoint;
@@ -574,8 +574,8 @@ private:
 	
 	Column structure_column_; 
 
-	//!!!! energy_region_ может изменяться только в terPlayer::CalcEnergyRegion()
-	//иначе будут пороблемы с многопоточностью
+	//!!!! energy_region_ РјРѕР¶РµС‚ РёР·РјРµРЅСЏС‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РІ terPlayer::CalcEnergyRegion()
+	//РёРЅР°С‡Рµ Р±СѓРґСѓС‚ РїРѕСЂРѕР±Р»РµРјС‹ СЃ РјРЅРѕРіРѕРїРѕС‚РѕС‡РЅРѕСЃС‚СЊСЋ
 	RegionDispatcher energy_region_;
 	Column core_column_;
 	RegionDispatcher field_region_;

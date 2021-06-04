@@ -87,9 +87,9 @@ public:
 	void serialize(Archive& ar) {
 		__super::serialize(ar);
 		if(ar.openBlock("attributeReal", "Real unit")){
-			ar & TRANSLATE_OBJECT(dockingSlots, "Слоты");
-			ar & TRANSLATE_OBJECT(productionConsumption, "Энергия на производство");
-			ar & TRANSLATE_OBJECT(movementConsumption, "Энергия на перемещение");
+			ar & TRANSLATE_OBJECT(dockingSlots, "РЎР»РѕС‚С‹");
+			ar & TRANSLATE_OBJECT(productionConsumption, "Р­РЅРµСЂРіРёСЏ РЅР° РїСЂРѕРёР·РІРѕРґСЃС‚РІРѕ");
+			ar & TRANSLATE_OBJECT(movementConsumption, "Р­РЅРµСЂРіРёСЏ РЅР° РїРµСЂРµРјРµС‰РµРЅРёРµ");
 
 			ar & TRANSLATE_OBJECT(FallDelay, "FallDelay");
 			ar & TRANSLATE_OBJECT(FallSpeed, "FallSpeed");
@@ -224,9 +224,9 @@ public:
 	void splashDamage();
 
 	float accumulatedEnergy() const { return accumulatedEnergy_; }
-	float addAccumulatedEnergy(float delta); // Возвращает, сколько реально принял/отдал
+	float addAccumulatedEnergy(float delta); // Р’РѕР·РІСЂР°С‰Р°РµС‚, СЃРєРѕР»СЊРєРѕ СЂРµР°Р»СЊРЅРѕ РїСЂРёРЅСЏР»/РѕС‚РґР°Р»
 
-	float productionProgress();	// Запрашивает энергию на производство, восвращает прогресс производства
+	float productionProgress();	// Р—Р°РїСЂР°С€РёРІР°РµС‚ СЌРЅРµСЂРіРёСЋ РЅР° РїСЂРѕРёР·РІРѕРґСЃС‚РІРѕ, РІРѕСЃРІСЂР°С‰Р°РµС‚ РїСЂРѕРіСЂРµСЃСЃ РїСЂРѕРёР·РІРѕРґСЃС‚РІР°
 	bool productionCompleted(){ return productionProgress() > 1 - FLT_EPS; }
 
 	virtual void checkField();
@@ -239,7 +239,7 @@ public:
 
 	bool isDocked() const { return DockPoint; }//dockMode_ != DOCK_MODE_NONE; }
 
-	/// Юнит, по которому стреляет в данный момент.
+	/// Р®РЅРёС‚, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ СЃС‚СЂРµР»СЏРµС‚ РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚.
 	terUnitBase* weaponTarget();
 
 	virtual bool effectsEnabled() const { return true; }
@@ -270,7 +270,7 @@ protected:
 	class terWeapon* weapon_;
 	ToolzerController toolzerController_;
 
-	/// Возвращает ID желаемой цепочки анимации.
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ ID Р¶РµР»Р°РµРјРѕР№ С†РµРїРѕС‡РєРё Р°РЅРёРјР°С†РёРё.
 	virtual ChainID chainRequest() const;
 	virtual bool needWeaponDisable() const { return (!isConstructed() || BodyPoint->underMutation() || freezeTimer_()); }
 
@@ -282,7 +282,7 @@ private:
 	Vect2i pathFindTarget_;
 	vector<Vect2i> pathFindList_;
 
-	/// таймер для расчета повреждений от хаоса и нарушенного зерослоя
+	/// С‚Р°Р№РјРµСЂ РґР»СЏ СЂР°СЃС‡РµС‚Р° РїРѕРІСЂРµР¶РґРµРЅРёР№ РѕС‚ С…Р°РѕСЃР° Рё РЅР°СЂСѓС€РµРЅРЅРѕРіРѕ Р·РµСЂРѕСЃР»РѕСЏ
 	DelayTimer envDamageTimer_;
 
 	DurationTimer freezeTimer_;

@@ -5,9 +5,9 @@
 	file path:	F:\PERIMETER\TriggerEditor
 	file base:	gdi_resource
 	file ext:	h
-	author:		Илюха
+	author:		РР»СЋС…Р°
 	
-	purpose:	Класс, ухаживающий за gdi ресурcами
+	purpose:	РљР»Р°СЃСЃ, СѓС…Р°Р¶РёРІР°СЋС‰РёР№ Р·Р° gdi СЂРµСЃСѓСЂcР°РјРё
 *********************************************************************/
 #ifndef GDI_RESOURCE_HDR
 #define GDI_RESOURCE_HDR

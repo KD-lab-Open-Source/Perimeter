@@ -122,9 +122,9 @@ void BaseTEDrawer::drawNet(CDC* pdc, TriggerEditorView* source, CRect const& rcP
 
 	TEGrid const& grid = source->getGrid();
 
-	//äëÿ ñëó÷àÿ, êîãäà LEFT ñòàíîâèòüñÿ îòðèöàòåëüíûì
-	//ñòðàõóåìñÿ è âû÷èòàåì -1, ÷òîáû ñåòêà ðèñîâàëàñü 
-	//èç-çà ëåâîãî êðàÿ îêíà. Òî æå äëÿ TOP
+	//Ð´Ð»Ñ ÑÐ»ÑƒÑ‡Ð°Ñ, ÐºÐ¾Ð³Ð´Ð° LEFT ÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒÑÑ Ð¾Ñ‚Ñ€Ð¸Ñ†Ð°Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¼
+	//ÑÑ‚Ñ€Ð°Ñ…ÑƒÐµÐ¼ÑÑ Ð¸ Ð²Ñ‹Ñ‡Ð¸Ñ‚Ð°ÐµÐ¼ -1, Ñ‡Ñ‚Ð¾Ð±Ñ‹ ÑÐµÑ‚ÐºÐ° Ñ€Ð¸ÑÐ¾Ð²Ð°Ð»Ð°ÑÑŒ 
+	//Ð¸Ð·-Ð·Ð° Ð»ÐµÐ²Ð¾Ð³Ð¾ ÐºÑ€Ð°Ñ Ð¾ÐºÐ½Ð°. Ð¢Ð¾ Ð¶Ðµ Ð´Ð»Ñ TOP
 	int const union_cell_sx = grid.getFullCellWidth();
 	int const union_cell_sy = grid.getFullCellHeight();
 	r.left = (r.left/union_cell_sx - 1)* union_cell_sx;
@@ -269,7 +269,7 @@ void BaseTEDrawer::DrawLink(TriggerEditorView* source, HDC dc, CPoint pf,
 
 		source->log2Scr(&pf, 1);
 		source->log2Scr(&pt, 1);
-		linkTrg[0] = pt;//ïðèñâàèâàåì çäåñü, ÷òîáû èçáåæàòü ïîâòîðíîãî ïåðåñ÷åòà 
+		linkTrg[0] = pt;//Ð¿Ñ€Ð¸ÑÐ²Ð°Ð¸Ð²Ð°ÐµÐ¼ Ð·Ð´ÐµÑÑŒ, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¸Ð·Ð±ÐµÐ¶Ð°Ñ‚ÑŒ Ð¿Ð¾Ð²Ñ‚Ð¾Ñ€Ð½Ð¾Ð³Ð¾ Ð¿ÐµÑ€ÐµÑÑ‡ÐµÑ‚Ð° 
 		source->log2Scr(linkTrg + 1, 2);
 		if (link.autoRestarted())
 			DrawLink(dc, pf, pt, linkTrg, autoRestartedLinkPen_, GetStockObject(NULL_BRUSH));

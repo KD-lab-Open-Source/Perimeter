@@ -138,7 +138,7 @@ void cObject3dx::UpdateMatrix()
 		cNode3dx& node=nodes[i];
 		cStaticNode& sn=pStatic->nodes[i];
 
-		if(sn.iparent<0)//временно
+		if(sn.iparent<0)//РІСЂРµРјРµРЅРЅРѕ
 			continue;
 
 		xassert(sn.iparent>=0 && sn.iparent<size);
@@ -264,11 +264,11 @@ void cObject3dx::Draw(cCamera* pCamera)
 		//	pStatic->vb,0,pStatic->vb.ptr->NumberVertex,
 		//	pStatic->ib,0,pStatic->ib_polygon);
 /*/
-	//Из плюсов - выводит стабильное количество полигонов вне зависимости
-	//от количества подобъектов. Из минусов - для больших объектов не слишком
-	//эффективен. indexed 14 mtrtis, nonindexed 26 mtris - пиковые значения на FX 5950.
+	//РР· РїР»СЋСЃРѕРІ - РІС‹РІРѕРґРёС‚ СЃС‚Р°Р±РёР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»РёРіРѕРЅРѕРІ РІРЅРµ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё
+	//РѕС‚ РєРѕР»РёС‡РµСЃС‚РІР° РїРѕРґРѕР±СЉРµРєС‚РѕРІ. РР· РјРёРЅСѓСЃРѕРІ - РґР»СЏ Р±РѕР»СЊС€РёС… РѕР±СЉРµРєС‚РѕРІ РЅРµ СЃР»РёС€РєРѕРј
+	//СЌС„С„РµРєС‚РёРІРµРЅ. indexed 14 mtrtis, nonindexed 26 mtris - РїРёРєРѕРІС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РЅР° FX 5950.
 
-	//!!! Не забыть сортировку по материалам.
+	//!!! РќРµ Р·Р°Р±С‹С‚СЊ СЃРѕСЂС‚РёСЂРѕРІРєСѓ РїРѕ РјР°С‚РµСЂРёР°Р»Р°Рј.
 
 	int size=pGroup->skin_group.size();
 	vector<MatXf> world;
@@ -292,7 +292,7 @@ void cObject3dx::Draw(cCamera* pCamera)
 		gb_RenderDevice3D->SetTexture(material.Tex[0],material.Phase,0);
 		gb_RenderDevice3D->SetTexture(material.Tex[1],material.Phase,1);
 
-		world.resize(s.node_index.size());//статический массив должен быть
+		world.resize(s.node_index.size());//СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РјР°СЃСЃРёРІ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ
 		for(int j=0;j<s.node_index.size();j++)
 		{
 			int inode=s.node_index[j];
@@ -873,7 +873,7 @@ void cObject3dx::ProcessEffect(cCamera *pCamera)
 
 		if(se.is_cycled)
 		{
-			xassert(0 && "Непроверенно");
+			xassert(0 && "РќРµРїСЂРѕРІРµСЂРµРЅРЅРѕ");
 			e.index_visibility=chain.visibility.FindIndexRelative(node.phase,e.index_visibility);
 			bool visible=false;
 			chain.visibility.Interpolate(node.phase,&visible,e.index_visibility);
@@ -887,7 +887,7 @@ void cObject3dx::ProcessEffect(cCamera *pCamera)
 				e.pEffect->SetParticleRate(visible?1.0f:0);
 		}else
 		{
-			///Ищем 
+			///РС‰РµРј 
 			float delta_plus,delta_minus;
 			if(node.phase>e.prev_phase)
 			{

@@ -40,7 +40,7 @@ class AttributeFrame : public AttributeReal
 {
 public:
 	int heightMax;
-	float accumulatedEnergyInitial; // 0..1, только для вновь установленного фрейма, иначе - в редакторе миссий
+	float accumulatedEnergyInitial; // 0..1, С‚РѕР»СЊРєРѕ РґР»СЏ РІРЅРѕРІСЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅРѕРіРѕ С„СЂРµР№РјР°, РёРЅР°С‡Рµ - РІ СЂРµРґР°РєС‚РѕСЂРµ РјРёСЃСЃРёР№
 
 	ConsumptionData antigravConsumption;
 	ConsumptionData annihilationConsumption;
@@ -62,7 +62,7 @@ public:
 	template<class Archive>
 	void serialize(Archive& ar) {
 		__super::serialize(ar);
-		if(ar.openBlock("attributeFrame", "Фрейм")){
+		if(ar.openBlock("attributeFrame", "Р¤СЂРµР№Рј")){
 			ar & TRANSLATE_OBJECT(heightMax, "heightMax");
 			ar & TRANSLATE_OBJECT(accumulatedEnergyInitial, "accumulatedEnergyInitial");
 

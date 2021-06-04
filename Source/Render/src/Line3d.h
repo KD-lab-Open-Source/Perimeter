@@ -4,7 +4,7 @@ struct sVertexLine
 {
 	Vect3f		pos;
 	sColor4c	color;
-	float		v;//Сдвиг текстуры
+	float		v;//РЎРґРІРёРі С‚РµРєСЃС‚СѓСЂС‹
 	float		width;
 };
 
@@ -23,7 +23,7 @@ public:
 	virtual void Draw(cCamera *UClass);
 	void UpdateVertex(int num_vertex, sVertexLine* varray);
 
-	//num_vertex должно совпадать с Vertex.size()
+	//num_vertex РґРѕР»Р¶РЅРѕ СЃРѕРІРїР°РґР°С‚СЊ СЃ Vertex.size()
 	void UpdateVertexPos(int num_vertex, Vect3f* varray);
 
 	virtual Vect3f GetCenterObject()	{return (Bound.min+Bound.max)*0.5f;}

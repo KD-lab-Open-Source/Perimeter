@@ -17,23 +17,23 @@ public:
 	ToolTip();
 	virtual ~ToolTip();
 	CString const& getToolTipText() const;
-	//! Назначает текст тултипа
+	//! РќР°Р·РЅР°С‡Р°РµС‚ С‚РµРєСЃС‚ С‚СѓР»С‚РёРїР°
 	void setToolTipText(CString const& str) const;
-	//! показывает тултип
+	//! РїРѕРєР°Р·С‹РІР°РµС‚ С‚СѓР»С‚РёРї
 	void trackToolTip(CPoint const& pos) const;
-	//! создание тултипа
+	//! СЃРѕР·РґР°РЅРёРµ С‚СѓР»С‚РёРїР°
 	HWND create(HWND owner);
 	void setOwnerWindow(HWND owner);
 	HWND getOnwenerWindow() const;
 
-	//! Вызывать из OnTTNGetDispInfo окна
+	//! Р’С‹Р·С‹РІР°С‚СЊ РёР· OnTTNGetDispInfo РѕРєРЅР°
 	BOOL OnTTNGetDispInfo(UINT id, NMHDR * pTTTStruct, LRESULT * pResult ) const;
 private:
-	//! Текст туллтипа
+	//! РўРµРєСЃС‚ С‚СѓР»Р»С‚РёРїР°
 	mutable CString toolTipText_;
-	//! Окно тултипа
+	//! РћРєРЅРѕ С‚СѓР»С‚РёРїР°
 	HWND toolTipWindow_;
-	//! Окно владельца
+	//! РћРєРЅРѕ РІР»Р°РґРµР»СЊС†Р°
 	HWND ownerWindow_;
 };
 

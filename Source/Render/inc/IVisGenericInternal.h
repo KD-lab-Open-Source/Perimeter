@@ -15,12 +15,12 @@ class cCamera;
 class cIUnkClass : public cUnknownClass, protected sAttribute
 {
 public:
-	// инициализационная часть 
+	// РёРЅРёС†РёР°Р»РёР·Р°С†РёРѕРЅРЅР°СЏ С‡Р°СЃС‚СЊ 
 	cIUnkClass(int kind) : cUnknownClass(kind),IParent(0){ }
 	virtual ~cIUnkClass(){}
 	virtual	int Release();
 
-	// общие функции для работы объектами cIUnkClass
+	// РѕР±С‰РёРµ С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ РѕР±СЉРµРєС‚Р°РјРё cIUnkClass
 	virtual void PreDraw(cCamera *UCamera)=0;
 	virtual void Draw(cCamera *UCamera)=0;
 	virtual void Animate(float dt)													{ }
@@ -41,8 +41,8 @@ public:
 
 	inline class cScene* GetScene()													{ return IParent; }
 	inline void SetScene(cScene* pScene)											{ IParent=pScene; }
-	//В локальных коорлинатах, для получения Box в глобальных координатах,
-	//нужно умножить на GetGlobalMatrix()
+	//Р’ Р»РѕРєР°Р»СЊРЅС‹С… РєРѕРѕСЂР»РёРЅР°С‚Р°С…, РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ Box РІ РіР»РѕР±Р°Р»СЊРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚Р°С…,
+	//РЅСѓР¶РЅРѕ СѓРјРЅРѕР¶РёС‚СЊ РЅР° GetGlobalMatrix()
 	virtual void GetBoundBox(sBox6f& Box);
 	virtual void GetLocalBorder(int *nVertex,Vect3f **Vertex,int *nIndex,short **Index);
 
@@ -58,14 +58,14 @@ public:
 	
 	virtual void SetRotate(Mat3f* rotate);
 
-	//Пересчитывает местоположение объекта.
-	//Нужно вызывать, если хочется узнать положение одного из узлов в cObjectNode.
+	//РџРµСЂРµСЃС‡РёС‚С‹РІР°РµС‚ РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёРµ РѕР±СЉРµРєС‚Р°.
+	//РќСѓР¶РЅРѕ РІС‹Р·С‹РІР°С‚СЊ, РµСЃР»Рё С…РѕС‡РµС‚СЃСЏ СѓР·РЅР°С‚СЊ РїРѕР»РѕР¶РµРЅРёРµ РѕРґРЅРѕРіРѕ РёР· СѓР·Р»РѕРІ РІ cObjectNode.
 	virtual void Update();
 
-	// функции для работы с системой частиц (cParticle,cParticleCollision)
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ СЃРёСЃС‚РµРјРѕР№ С‡Р°СЃС‚РёС† (cParticle,cParticleCollision)
 	virtual void SetProperties(const Vect3f *Dumping,const Vect3f *Force,const Vect3f *ReflectionImpulse=0)	{ }
 protected:
-	cScene			*IParent;		// интерфейс породивший данный класс
+	cScene			*IParent;		// РёРЅС‚РµСЂС„РµР№СЃ РїРѕСЂРѕРґРёРІС€РёР№ РґР°РЅРЅС‹Р№ РєР»Р°СЃСЃ
 };
 
 class cEmitter3dObject
@@ -79,8 +79,8 @@ public:
 #include "..\src\visgeneric.h"
 
 /*
-	Нельзя создать два объекта cVisGeneric или cLogicGeneric.
-	При повторном вызове этих функций возвращается тот-же объект.
+	РќРµР»СЊР·СЏ СЃРѕР·РґР°С‚СЊ РґРІР° РѕР±СЉРµРєС‚Р° cVisGeneric РёР»Рё cLogicGeneric.
+	РџСЂРё РїРѕРІС‚РѕСЂРЅРѕРј РІС‹Р·РѕРІРµ СЌС‚РёС… С„СѓРЅРєС†РёР№ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ С‚РѕС‚-Р¶Рµ РѕР±СЉРµРєС‚.
 */
 cVisGeneric* CreateIVisGeneric();
 cLogicGeneric* CreateILogicGeneric();
@@ -88,7 +88,7 @@ cLogicGeneric* CreateILogicGeneric();
 struct sParticleKey
 {
 	sColor4c	diffuse;	// diffuse of particle
-	Vect2f		rotate;		// sin & cos угла поворота * size of particle
+	Vect2f		rotate;		// sin & cos СѓРіР»Р° РїРѕРІРѕСЂРѕС‚Р° * size of particle
 	Vect2f		TexPos;		// texture position
 	inline void SetRotate(float angle,float size)		{ rotate.x=size*cosf(angle); rotate.y=size*sinf(angle); }
 };

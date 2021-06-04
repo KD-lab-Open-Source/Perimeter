@@ -137,7 +137,7 @@ void terUnitGeneric::explode()
 			Vect3f v;
 			v.setSpherical(terLogicRNDfrand() * M_PI * 2.0f,M_PI * 0.45 * terLogicRNDfrand(),terLogicRNDfrand() * db.speed);
 
-			terProjectileBase* p = safe_cast<terProjectileBase*>(Player->buildUnit(db.debrisID)); // RND внутри
+			terProjectileBase* p = safe_cast<terProjectileBase*>(Player->buildUnit(db.debrisID)); // RND РІРЅСѓС‚СЂРё
 			p->setSource(NULL,(Vect3f&)position(),v);
 			p->Start();	
 		}

@@ -121,14 +121,14 @@ void cCamera::DrawScene()
 	DrawObjectFirst();
 
 	if(GetAttribute(ATTRUNKOBJ_NOLIGHT)==0) 
-	{ // объекты освещаются
+	{ // РѕР±СЉРµРєС‚С‹ РѕСЃРІРµС‰Р°СЋС‚СЃСЏ
 		Vect3f vLight(0,0,0);
 		sColor4f Ambient(0,0,0,0),Diffuse(0,0,0,0),Specular(0,0,0,0);
 		if(GetScene()->GetLighting(Ambient,Diffuse,Specular,vLight))
 			RenderDevice->SetGlobalLight(&vLight,&Ambient,&Diffuse,&Specular);
 		else
 			RenderDevice->SetGlobalLight(NULL);
-	}else // объекты не освещаются
+	}else // РѕР±СЉРµРєС‚С‹ РЅРµ РѕСЃРІРµС‰Р°СЋС‚СЃСЏ
 		RenderDevice->SetGlobalLight(NULL);
 
 	RenderDevice->SetRenderState( RS_ZWRITEENABLE, TRUE );
@@ -381,7 +381,7 @@ void cCamera::Update()
 	WorldI=GetMatrix().rot().xrow();
 	WorldJ=GetAttribute(ATTRCAMERA_REFLECTION)?-GetMatrix().rot().yrow():GetMatrix().rot().yrow();
 	WorldK=GetMatrix().rot().zrow();
-	// определение местоположения камеры в мировом пространстве
+	// РѕРїСЂРµРґРµР»РµРЅРёРµ РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёСЏ РєР°РјРµСЂС‹ РІ РјРёСЂРѕРІРѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ
 	GetPos() = GetMatrix().invXformPoint(Vect3f(0,0,0));
 
 	CalcClipPlane();
@@ -562,7 +562,7 @@ void cCamera::GetFrustum(Vect2f *center,sRectangle4f *clip,Vect2f *focus,Vect2f 
 
 void cCamera::UpdateVieport()
 {
-	// обновление данных ViewPort
+	// РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С… ViewPort
 	if(RenderTarget==0)
 		RenderSize.set(RenderDevice->GetSizeX(),RenderDevice->GetSizeY());
 	else
@@ -1047,7 +1047,7 @@ eTestVisible cCamera::GridTest(Vect3f p[8])
 }
 
 eTestVisible cCamera::TestVisible(const MatXf &matrix,const Vect3f &min,const Vect3f &max)
-{ // для BoundingBox с границами min && max
+{ // РґР»СЏ BoundingBox СЃ РіСЂР°РЅРёС†Р°РјРё min && max
 	Vect3f	p[8];
 	matrix.xformPoint(Vect3f(min.x,min.y,min.z),p[0]);
 	matrix.xformPoint(Vect3f(max.x,min.y,min.z),p[1]);
@@ -1078,7 +1078,7 @@ eTestVisible cCamera::TestVisible(const MatXf &matrix,const Vect3f &min,const Ve
 
 //*
 eTestVisible cCamera::TestVisible(const Vect3f &min,const Vect3f &max)
-{ // для BoundingBox с границами min && max, заданными в глобальным координатах
+{ // РґР»СЏ BoundingBox СЃ РіСЂР°РЅРёС†Р°РјРё min && max, Р·Р°РґР°РЅРЅС‹РјРё РІ РіР»РѕР±Р°Р»СЊРЅС‹Рј РєРѕРѕСЂРґРёРЅР°С‚Р°С…
 	for(int i=0;i<GetNumberPlaneClip3d();i++)
 	{
 		sPlane4f& p=GetPlaneClip3d(i);
@@ -1097,7 +1097,7 @@ eTestVisible cCamera::TestVisible(const Vect3f &min,const Vect3f &max)
 /**/
 /*
 int cCamera::TestVisible(const Vect3f &vmin,const Vect3f &vmax)
-{ // для BoundingBox с границами min && max, заданными в глобальным координатах
+{ // РґР»СЏ BoundingBox СЃ РіСЂР°РЅРёС†Р°РјРё min && max, Р·Р°РґР°РЅРЅС‹РјРё РІ РіР»РѕР±Р°Р»СЊРЅС‹Рј РєРѕРѕСЂРґРёРЅР°С‚Р°С…
 	Vect3f v[8];
 	matViewProj.Convert(vmin,v[0]);
 	matViewProj.Convert(Vect3f(vmax.x,vmin.y,vmin.z),v[1]);

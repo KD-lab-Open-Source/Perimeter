@@ -336,7 +336,7 @@ void CEffectTreeView::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult)
 				if(!GetDocument()->CheckGroupName(pTVDispInfo->item.pszText))
 				{
 					CString s;
-					s.Format("Группа '%s' уже существует", pTVDispInfo->item.pszText);
+					s.Format("Р“СЂСѓРїРїР° '%s' СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚", pTVDispInfo->item.pszText);
 					AfxMessageBox(s, MB_OK|MB_ICONWARNING);
 
 					*pResult = 0;
@@ -352,7 +352,7 @@ void CEffectTreeView::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult)
 				if(!GetDocument()->CheckEffectName(pTVDispInfo->item.pszText))
 				{
 					CString s;
-					s.Format("Эффект '%s' уже существует", pTVDispInfo->item.pszText);
+					s.Format("Р­С„С„РµРєС‚ '%s' СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚", pTVDispInfo->item.pszText);
 					AfxMessageBox(s, MB_OK|MB_ICONWARNING);
 
 					*pResult = 0;
@@ -367,15 +367,15 @@ void CEffectTreeView::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult)
 
 				hItem = tree.GetParentItem(hItem);
 				CEffectData* pEffect = (CEffectData*)tree.GetItemData(hItem);
-				if (CString(pTVDispInfo->item.pszText)=="" || CString(pTVDispInfo->item.pszText)=="не связан")
+				if (CString(pTVDispInfo->item.pszText)=="" || CString(pTVDispInfo->item.pszText)=="РЅРµ СЃРІСЏР·Р°РЅ")
 				{
-					AfxMessageBox("Не допустимое имя эмиттера", MB_OK|MB_ICONWARNING);
+					AfxMessageBox("РќРµ РґРѕРїСѓСЃС‚РёРјРѕРµ РёРјСЏ СЌРјРёС‚С‚РµСЂР°", MB_OK|MB_ICONWARNING);
 					*pResult = 0;
 				}
 				else if(!pEffect->CheckName(pTVDispInfo->item.pszText))
 				{
 					CString s;
-					s.Format("Эмиттер '%s' уже существует", pTVDispInfo->item.pszText);
+					s.Format("Р­РјРёС‚С‚РµСЂ '%s' СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚", pTVDispInfo->item.pszText);
 					AfxMessageBox(s, MB_OK|MB_ICONWARNING);
 					*pResult = 0;
 				}
@@ -753,7 +753,7 @@ void CEffectTreeView::OnMouseMove(UINT nFlags, CPoint point)
 		m_pimagelist->DragLeave(this);
 
 		if(nFlags & MK_CONTROL){
-			if(tree.GetParentItem(m_hitemDrag)==tree.GetParentItem(m_hitemDrop)) // тот же эффект
+			if(tree.GetParentItem(m_hitemDrag)==tree.GetParentItem(m_hitemDrop)) // С‚РѕС‚ Р¶Рµ СЌС„С„РµРєС‚
 				GetTreeCtrl().SelectDropTarget(hitem);
 		}else
 			GetTreeCtrl().SelectDropTarget(hitem);

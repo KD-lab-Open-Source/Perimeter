@@ -11,7 +11,7 @@ void RDWriteLog(char *exp,int size=-1);
 #define RDCALL(exp)									{ HRESULT hr=exp; if(hr!=DD_OK) RDWriteLog(hr,#exp,__FILE__,__LINE__); VISASSERT(SUCCEEDED(hr)); }
 #define RDERR(exp)									{ HRESULT hr=exp; if(hr!=DD_OK) return RDWriteLog(hr,#exp,__FILE__,__LINE__); }
 
-//Âîçâðàùàåò ìèíèìàëüíîå ÷èñëî,ÿâëÿþùååñÿ ñòåïåíüþ äâîéêè è íå ìåíüøå, ÷åì n
+//Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ðµ Ñ‡Ð¸ÑÐ»Ð¾,ÑÐ²Ð»ÑÑŽÑ‰ÐµÐµÑÑ ÑÑ‚ÐµÐ¿ÐµÐ½ÑŒÑŽ Ð´Ð²Ð¾Ð¹ÐºÐ¸ Ð¸ Ð½Ðµ Ð¼ÐµÐ½ÑŒÑˆÐµ, Ñ‡ÐµÐ¼ n
 inline int Power2up(int n)
 {
 	int i=1;
@@ -181,7 +181,7 @@ protected:
 
 	int							NumberPolygon,NumDrawObject;
 	int							RenderMode,xScrMin,yScrMin,xScrMax,yScrMax;
-	int							xScr,yScr;//Âåëè÷èíà ýêðàíà
+	int							xScr,yScr;//Ð’ÐµÐ»Ð¸Ñ‡Ð¸Ð½Ð° ÑÐºÑ€Ð°Ð½Ð°
 
 };
 
@@ -192,7 +192,7 @@ void BuildBumpMap(int x,int y,void *pSrc,void *pDst,int fmtBumpMap);
 
 extern class cURenderDevice *gb_RenderDevice;
 
-//Âåëè÷èíà visMap äîëæíà áûòü TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
+//Ð’ÐµÐ»Ð¸Ñ‡Ð¸Ð½Ð° visMap Ð´Ð¾Ð»Ð¶Ð½Ð° Ð±Ñ‹Ñ‚ÑŒ TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
 void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,BYTE* visMap,bool clear);
 void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box);
 

@@ -33,7 +33,7 @@ int get_line(XStream& f, char* buf, int maxL){
 	char b;
 	if (maxL==0) return 0;
 	int len=0;
-	f.read(&b,1);// Пропуск служебных символов в начале строки
+	f.read(&b,1);// РџСЂРѕРїСѓСЃРє СЃР»СѓР¶РµР±РЅС‹С… СЃРёРјРІРѕР»РѕРІ РІ РЅР°С‡Р°Р»Рµ СЃС‚СЂРѕРєРё
 	while(isspace(b)) {f.read(&b,1);}
 	do {
 		*buf=b;
@@ -85,11 +85,11 @@ int s_sur_scr::load_scr(char* fname)
 	char* buf,*buft,*world;
 	buft=buf=new char[256]; world=new char[256];
 	char b;
-	//ОПОЗНАНИЕ скрипта и версии
+	//РћРџРћР—РќРђРќРР• СЃРєСЂРёРїС‚Р° Рё РІРµСЂСЃРёРё
 	f.read(buf,7); buf[7]=0;
 	if(strcmp(buf,"SUR_SCR")!=0) { delete world; delete buft; f.close(); return 0;}
 	f >=version;
-	//Определение типа ячейки (обычная или направленная)
+	//РћРїСЂРµРґРµР»РµРЅРёРµ С‚РёРїР° СЏС‡РµР№РєРё (РѕР±С‹С‡РЅР°СЏ РёР»Рё РЅР°РїСЂР°РІР»РµРЅРЅР°СЏ)
 	get_line(f,buf=buft,255);
 	type=CELL_NOT_CLEAR;
 	if(get_lex(buf,world))
@@ -112,23 +112,23 @@ int s_sur_scr::load_scr(char* fname)
 			}
 	if(type==CELL_NOT_CLEAR) return 0;
 
-	// Поиск скрипта { script }
+	// РџРѕРёСЃРє СЃРєСЂРёРїС‚Р° { script }
 	f.seek(7, XS_BEG);
 	struct { int begin,end;
 	} script={0,0};
-	while( !f.eof()){ //Поиск начала скрипта
+	while( !f.eof()){ //РџРѕРёСЃРє РЅР°С‡Р°Р»Р° СЃРєСЂРёРїС‚Р°
 		f.read(&b,1); if(b=='{') { 
 			script.begin=f.tell();
 			break;
 		}
 	}
-	while( !f.eof()){ //Поиск конца скрипта
+	while( !f.eof()){ //РџРѕРёСЃРє РєРѕРЅС†Р° СЃРєСЂРёРїС‚Р°
 		f.read(&b,1); if(b=='}') { 
 			script.end=f.tell();
 			break;
 		}
 	}
-	if(script.end <= script.begin) {delete world; delete buft; f.close(); return 0;} //Выход если нет скрипта
+	if(script.end <= script.begin) {delete world; delete buft; f.close(); return 0;} //Р’С‹С…РѕРґ РµСЃР»Рё РЅРµС‚ СЃРєСЂРёРїС‚Р°
 	f.seek(script.begin+1, XS_BEG);
 	while(f.tell() < script.end){
 		//f.getline(buf,255);
@@ -163,7 +163,7 @@ void s_sur_scr::load_data()
 	int t_int;
 	double t_double;
 
-	while( !f.eof()) { f.read(&b,1); if(b=='}') break; }//Поиск конца скрипта
+	while( !f.eof()) { f.read(&b,1); if(b=='}') break; }//РџРѕРёСЃРє РєРѕРЅС†Р° СЃРєСЂРёРїС‚Р°
 
 	int x,y,a,i;
 	while( !f.eof()){
@@ -207,7 +207,7 @@ void s_sur_scr::save_data_release()
 	double t_double;
 	char* t_char;
 
-	while( !fi.eof() ) { fi.read(&b,1); fo.write(&b,1); if(b=='}') break; } //Поиск конца скрипта
+	while( !fi.eof() ) { fi.read(&b,1); fo.write(&b,1); if(b=='}') break; } //РџРѕРёСЃРє РєРѕРЅС†Р° СЃРєСЂРёРїС‚Р°
 	for( j=0; j<numbers_cell; j++){
 		for(i=0; i<numbers_rows; i++){
 			if( row[i].type==INT_VARIABLE){
@@ -258,14 +258,14 @@ void s_sur_scr::lex2convert(char* world, char*& buf, XStream &fout)
 	if(strcmp(world,"convert")==0){ // conver AK last double AKM = 11
 		get_lex(buf, world);
 
-		int temp=numbers_rows; //Для того что-бы поиск шел толко по старым строкам
+		int temp=numbers_rows; //Р”Р»СЏ С‚РѕРіРѕ С‡С‚Рѕ-Р±С‹ РїРѕРёСЃРє С€РµР» С‚РѕР»РєРѕ РїРѕ СЃС‚Р°СЂС‹Рј СЃС‚СЂРѕРєР°Рј
 		numbers_rows=beg_num_rows;
 		int num_old_row=findRow(world);
 		numbers_rows=temp;
 
 		fout < buf <"\n";
 
-		if(num_old_row==-1) ErrH.Abort("Не существующее имя переменной старого скрипта",XERR_USER,0,world);
+		if(num_old_row==-1) ErrH.Abort("РќРµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРµ РёРјСЏ РїРµСЂРµРјРµРЅРЅРѕР№ СЃС‚Р°СЂРѕРіРѕ СЃРєСЂРёРїС‚Р°",XERR_USER,0,world);
 		get_lex(buf, world);
 		if(strcmp(world,"last")==0){ row[numbers_rows].flag_last_value=1; }
 		if(strcmp(world,"default")==0){ row[numbers_rows].flag_last_value=0; }
@@ -294,7 +294,7 @@ void s_sur_scr::lex2convert(char* world, char*& buf, XStream &fout)
 		int i;
 		for(i=0; i<numbers_cell; i++){
 			row[numbers_rows].add_el_d();
-			if(row[num_old_row].type==INT_VARIABLE){ //Если старая ячейка - Int
+			if(row[num_old_row].type==INT_VARIABLE){ //Р•СЃР»Рё СЃС‚Р°СЂР°СЏ СЏС‡РµР№РєР° - Int
 				row[num_old_row].get_el(i,t_int);
 				if(row[numbers_rows].type==INT_VARIABLE) row[numbers_rows].set_el(i,t_int);
 				if(row[numbers_rows].type==DOUBLE_VARIABLE){ t_double=t_int; row[numbers_rows].set_el(i,t_double); }
@@ -363,24 +363,24 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 	if(load_scr(name_scr)==0) return 0;
 	load_data();
 
-// Расшифровка Updata скрипта
+// Р Р°СЃС€РёС„СЂРѕРІРєР° Updata СЃРєСЂРёРїС‚Р°
 	XStream f(0);
 	if(!f.open(name_update_scr,XS_IN)) return 0;
 	char* buf,*buft,*world;
 	buft=buf=new char[256]; world=new char[256];
 	char b;
-	//ОПОЗНАНИЕ скрипта и версии
+	//РћРџРћР—РќРђРќРР• СЃРєСЂРёРїС‚Р° Рё РІРµСЂСЃРёРё
 	f.read(buf,10); buf[10]=0;
 	if(strcmp(buf,"SUR_SCR_UP")!=0) { delete world; delete buft; f.close(); return 0;}
 	int ver_up;
 	f >=ver_up;
-	if(ver_up <= version ) ErrH.Abort("Старая версия Updata скрипта");
+	if(ver_up <= version ) ErrH.Abort("РЎС‚Р°СЂР°СЏ РІРµСЂСЃРёСЏ Updata СЃРєСЂРёРїС‚Р°");
 
 	XStream fout(0);
 	if(!fout.open(name_scr,XS_OUT)) return 0;
 	fout < "SUR_SCR " <=ver_up < "\n";
 
-	//Определение типа ячейки (обычная или направленная)
+	//РћРїСЂРµРґРµР»РµРЅРёРµ С‚РёРїР° СЏС‡РµР№РєРё (РѕР±С‹С‡РЅР°СЏ РёР»Рё РЅР°РїСЂР°РІР»РµРЅРЅР°СЏ)
 	get_line(f,buf=buft,255);
 	int newtype;
 	newtype=CELL_NOT_CLEAR;
@@ -406,23 +406,23 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 			}
 	if(newtype==CELL_NOT_CLEAR) return 0;
 
-	// Поиск скрипта { script }
+	// РџРѕРёСЃРє СЃРєСЂРёРїС‚Р° { script }
 	f.seek(10, XS_BEG);
 	struct { int begin,end;
 	} script={0,0};
-	while( !f.eof()){ //Поиск начала скрипта
+	while( !f.eof()){ //РџРѕРёСЃРє РЅР°С‡Р°Р»Р° СЃРєСЂРёРїС‚Р°
 		f.read(&b,1); if(b=='{') { 
 			script.begin=f.tell();
 			break;
 		}
 	}
-	while( !f.eof()){ //Поиск конца скрипта
+	while( !f.eof()){ //РџРѕРёСЃРє РєРѕРЅС†Р° СЃРєСЂРёРїС‚Р°
 		f.read(&b,1); if(b=='}') { 
 			script.end=f.tell();
 			break;
 		}
 	}
-	if(script.end <= script.begin) {delete world; delete buft; f.close(); return 0;} //Выход если нет скрипта
+	if(script.end <= script.begin) {delete world; delete buft; f.close(); return 0;} //Р’С‹С…РѕРґ РµСЃР»Рё РЅРµС‚ СЃРєСЂРёРїС‚Р°
 	f.seek(script.begin+1, XS_BEG);
 	beg_num_rows=numbers_rows;
 	fout < "{\n";
@@ -433,7 +433,7 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 	}
 	fout < "}\n";
 
-// Запись данных в файл
+// Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ С„Р°Р№Р»
 	int j,i,t_int;
 	double t_double;
 	char* t_char;
@@ -443,7 +443,7 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 				row[i].get_el(j,t_int);
 				fout< "\n" <=t_int;
 			}
-			else ErrH.Abort("Фигня заместо X,Y");
+			else ErrH.Abort("Р¤РёРіРЅСЏ Р·Р°РјРµСЃС‚Рѕ X,Y");
 		}
 		if(newtype==CELL_DIRECTED){
 			if(type==CELL_DIRECTED)	row[i].get_el(j,t_int);
@@ -470,14 +470,14 @@ int s_sur_scr::convert(char* name_scr, char* name_update_scr)
 //	delete world;
 	fout < "\n";
 	fout.close();
-// Конец записи в файл
+// РљРѕРЅРµС† Р·Р°РїРёСЃРё РІ С„Р°Р№Р»
 //	strcpy(name_scr,fname);
 	delete world; delete buft;
 	f.close();
 	return 1;
 
 //
-	return 0;//Ошибка
+	return 0;//РћС€РёР±РєР°
 	return 1;
 }
 

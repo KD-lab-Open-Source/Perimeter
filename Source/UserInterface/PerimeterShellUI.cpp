@@ -30,12 +30,12 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID);
 
 terUnitSquad* GetSquadByNumber(int n);
 
-//цвета для кнопок
+//С†РІРµС‚Р° РґР»СЏ РєРЅРѕРїРѕРє
 sColor4c clrNormal(255, 255, 255, 255);
 sColor4c clrMark(255, 0, 0, 255);
 sColor4c clrDisabled(128, 128, 128, 255);
 
-//фонты для кнопок главного меню
+//С„РѕРЅС‚С‹ РґР»СЏ РєРЅРѕРїРѕРє РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ
 cFont* hFontMainmenu1 = 0;
 cFont* hFontMainmenu2 = 0;
 cFont* hFontMainmenu3 = 0;
@@ -423,12 +423,12 @@ void CShellWindow::OnLButtonHold()
 void CShellWindow::OnRButtonDown(float _x, float _y)
 {
 	//SND2DPlaySound( m_sound, x );
-	if(m_handler /*&& (state & SQSH_ENABLED)*/ && m_effect == 0) //нужен правый клик в задизабленые кнопки!
+	if(m_handler /*&& (state & SQSH_ENABLED)*/ && m_effect == 0) //РЅСѓР¶РµРЅ РїСЂР°РІС‹Р№ РєР»РёРє РІ Р·Р°РґРёР·Р°Р±Р»РµРЅС‹Рµ РєРЅРѕРїРєРё!
 		m_handler(this, EVENT_RPRESSED, 0);
 }
 void CShellWindow::OnRButtonUp(float _x, float _y)
 {
-	if(m_handler /*&& (state & SQSH_ENABLED)*/ && m_effect == 0)// нужен правый клик в задизабленые кнопки!
+	if(m_handler /*&& (state & SQSH_ENABLED)*/ && m_effect == 0)// РЅСѓР¶РµРЅ РїСЂР°РІС‹Р№ РєР»РёРє РІ Р·Р°РґРёР·Р°Р±Р»РµРЅС‹Рµ РєРЅРѕРїРєРё!
 		m_handler(this, EVENT_RUNPRESSED, 0);
 }
 
@@ -1459,7 +1459,7 @@ STARFORCE_API_NEW void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffe
 	terPlayer* player = universe()->activePlayer();
 	const AttributeBase* attrUnit = universe()->activePlayer()->unitAttribute(nAttrID);
 
-	//необходимые строения
+	//РЅРµРѕР±С…РѕРґРёРјС‹Рµ СЃС‚СЂРѕРµРЅРёСЏ
 	string sRequired;
 	const EnableData& mutationElement = player->GetMutationElement(nAttrID);
 	const AttributeLegionary& attrL = *safe_cast<const AttributeLegionary*>(player->unitAttribute(nAttrID));
@@ -1483,7 +1483,7 @@ STARFORCE_API_NEW void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffe
 	static char cbTemp[256];
 	PopupFormatAttack(attrUnit, cbTemp, false);
 	if(pSquad){
-		//наличие базовых юнитов
+		//РЅР°Р»РёС‡РёРµ Р±Р°Р·РѕРІС‹С… СЋРЅРёС‚РѕРІ
 		DamageMolecula damage_molecula(player->unitAttribute(nAttrID)->damageMolecula);
 		bool bSold = pSquad->soldierButton.val >= damage_molecula[0];
 		bool bOff  = pSquad->officerButton.val >= damage_molecula[1];
@@ -1911,7 +1911,7 @@ void CTerrainBuildButton::draw(int bFocus)
 				}
 			}
 
-			//диаграмма производства вещ-ва
+			//РґРёР°РіСЂР°РјРјР° РїСЂРѕРёР·РІРѕРґСЃС‚РІР° РІРµС‰-РІР°
 
 			if (partDisable != 1) {
 				draw_rect(Vect2i(x, y), Vect2i(x + int(productionPhase * half_sx), y + sy), sColor4c(255, 255, 0, 64));
@@ -2091,7 +2091,7 @@ void CUITabSheet::SwitchPage(int nNewPage, bool bForceSelectUnit)
 	if((m_nEnabledPagesBits & (1 << nNewPage)) == 0)
 		return;
 
-	//спрятать контролы деактивируемой страницы
+	//СЃРїСЂСЏС‚Р°С‚СЊ РєРѕРЅС‚СЂРѕР»С‹ РґРµР°РєС‚РёРІРёСЂСѓРµРјРѕР№ СЃС‚СЂР°РЅРёС†С‹
 	const sqshTabElement* pOldPageAttr = tabAttrs[m_nActivePage];
 	for(i=0; i<pOldPageAttr->ctrls.size(); i++)
 	{
@@ -2103,7 +2103,7 @@ void CUITabSheet::SwitchPage(int nNewPage, bool bForceSelectUnit)
 	}
 
 
-	//показать контролы активируемой страницы
+	//РїРѕРєР°Р·Р°С‚СЊ РєРѕРЅС‚СЂРѕР»С‹ Р°РєС‚РёРІРёСЂСѓРµРјРѕР№ СЃС‚СЂР°РЅРёС†С‹
 	const sqshTabElement* pNewPageAttr = tabAttrs[nNewPage];
 	for(i=0; i<pNewPageAttr->ctrls.size(); i++)
 	{
@@ -2499,7 +2499,7 @@ void CUITabSheet::draw(int bFocus)
 			}
 		}
 		
-		//цифры на страницах
+		//С†РёС„СЂС‹ РЅР° СЃС‚СЂР°РЅРёС†Р°С…
 		if(!m_page_numbers[i].empty())
 		{
 			terRenderDevice->SetFont(m_hFont);
@@ -2751,7 +2751,7 @@ void CMapWindow::draw(int bFocus)
 
 			universe()->MapUnitInfo(); 
 
-			//отрисовка кластеров
+			//РѕС‚СЂРёСЃРѕРІРєР° РєР»Р°СЃС‚РµСЂРѕРІ
 			drawBitmap(m_bitmap);
 */
 			if(terCamera->restricted())
@@ -3363,13 +3363,13 @@ void CListBoxWindow::draw(int bFocus)
 	if (m_bScroller) {
 		m_fScrollerThumbPos = y + vScrollSY + 1 + float(m_nTopItem)/(m_pItem[0].m_data.size() - int(sy/m_fStringHeight))*(sy - 2*vScrollSY - vScrollThmbSY);
 	}
-	//контур
+	//РєРѕРЅС‚СѓСЂ
 //	draw_rect_empty(Vect2f(x, y), Vect2f(x+sx, y+sy), sColor4f(1, 1, 1, Alpha));
 
 	float _sx_client = sx - vScrollSX;
 	if(m_bScroller)
 	{
-		//нужен скроллер
+		//РЅСѓР¶РµРЅ СЃРєСЂРѕР»Р»РµСЂ
 
 //		draw_rect_empty(Vect2f(x + sx - vScrollSX, y), Vect2f(x+sx, y+sy), sColor4f(0.5f, 0.5f, 0.5f, Alpha));
 //		draw_line(Vect2f(x + sx - vScrollSX, y + vScrollSY), Vect2f(x + sx, y + vScrollSY), sColor4f(0.5f, 0.5f, 0.5f, Alpha));
@@ -3394,7 +3394,7 @@ void CListBoxWindow::draw(int bFocus)
 		draw_rect_empty( Vect2i(x, y), Vect2i(x + sx,y + sy), sColor4f(1, 1, 0, 1) );
 	}
 
-	//подсветка выделенного элемента
+	//РїРѕРґСЃРІРµС‚РєР° РІС‹РґРµР»РµРЅРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 	if ((m_nCurSel - m_nTopItem >= 0)) {
 		if (m_attr->alnum) {
 			float _y = y + (m_nCurSel - m_nTopItem)*m_fStringHeight;
@@ -3607,7 +3607,7 @@ void CStatListBoxWindow::draw(int bFocus) {
 		{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
 
 
-	//контур
+	//РєРѕРЅС‚СѓСЂ
 	if (debug_show_intf_borders) {
 		draw_rect_empty( Vect2i(x, y), Vect2i(x + sx,y + sy), sColor4f(1, 1, 0, 1) );
 	}
@@ -3877,7 +3877,7 @@ void ChatWindow::draw(int bFocus)
 	float _sx_client = sx - vScrollSX;
 	if(m_bScroller)
 	{
-		//нужен скроллер
+		//РЅСѓР¶РµРЅ СЃРєСЂРѕР»Р»РµСЂ
 
 		if (m_hTextureBG) {
 			terRenderDevice->DrawSprite2(
@@ -4806,7 +4806,7 @@ void CEditWindow::draw(int bFocus)
 {
 	if(state & SQSH_VISIBLE)
 	{
-		//контур
+		//РєРѕРЅС‚СѓСЂ
 //		draw_rect_empty(Vect2f(x, y), Vect2f(x+sx, y+sy), sColor4f(0.5f, 0.5f, 0.5f, 1));
 		m_ftime += frame_time.delta();
 
@@ -4925,7 +4925,7 @@ void CChatInGameEditWindow::draw(int bFocus) {
 			Show(0);
 			_shellIconManager.hideChatInfo();
 		} else {
-				//контур
+				//РєРѕРЅС‚СѓСЂ
 		//		draw_rect_empty(Vect2f(x, y), Vect2f(x+sx, y+sy), sColor4f(0.5f, 0.5f, 0.5f, 1));
 				m_ftime += frame_time.delta();
 
@@ -5736,7 +5736,7 @@ void CShellIconManager::Effect(int effect, CShellWindow* pWnd)
 	if(pWnd)
 		eff = EffectControls(pWnd, effect);
 
-	//установить время работы эффекта
+	//СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹ СЌС„С„РµРєС‚Р°
 	switch(effect)
 	{
 	case effectButtonsFadeIn:

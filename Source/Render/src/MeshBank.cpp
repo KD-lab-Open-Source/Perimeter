@@ -5,7 +5,7 @@
 
 struct Points
 {
-	vector<int> texel;//Текстурные координаты соответствующие этому пикселю
+	vector<int> texel;//РўРµРєСЃС‚СѓСЂРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёРµ СЌС‚РѕРјСѓ РїРёРєСЃРµР»СЋ
 	Vect3f normal;
 	int new_base_index;
 };
@@ -62,7 +62,7 @@ cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
 
 	VISASSERT(Polygon.size()==TexPoly.size() || TexPoly.size()==0);
 
-	//Разбиваем вершины так, что-бы у каждой было по однму текселю
+	//Р Р°Р·Р±РёРІР°РµРј РІРµСЂС€РёРЅС‹ С‚Р°Рє, С‡С‚Рѕ-Р±С‹ Сѓ РєР°Р¶РґРѕР№ Р±С‹Р»Рѕ РїРѕ РѕРґРЅРјСѓ С‚РµРєСЃРµР»СЋ
 	vector<Points> pnt(Vertex.size());
 	int n_polygon=Polygon.size();
 	int i;
@@ -85,7 +85,7 @@ cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
 		AddUnicalInt(pnt[p.p3].texel,s.p3);
 	}
 
-	//Считаем нормали
+	//РЎС‡РёС‚Р°РµРј РЅРѕСЂРјР°Р»Рё
 	for(i=0;i<Polygon.size();i++)
 	{
 		sPolygon &p=Polygon[i];
@@ -269,7 +269,7 @@ void cMeshStatic::DeleteSingularPolygon(vector<Vect3f> &Vertex,vector<sPolygon> 
 								vector<sPolygon> &TexPoly,vector<Vect2f> &Texel)
 {
 	for(int i=0;i<Polygon.size();i++)
-	{ // удаление вырожденных треугольников
+	{ // СѓРґР°Р»РµРЅРёРµ РІС‹СЂРѕР¶РґРµРЅРЅС‹С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
 		sPolygon &p=Polygon[i];
 		if(p.p1==p.p2||p.p1==p.p3||p.p2==p.p3)
 		{
@@ -398,7 +398,7 @@ void cMeshBank::GetMaterial(int nChannel,float phase,double MaterialAnimTime,
 {
 
 	if(bank->AnimChannelMat.IsAnimTexMatrix(nChannel)) 
-	{ // анимация текстурного маппинга
+	{ // Р°РЅРёРјР°С†РёСЏ С‚РµРєСЃС‚СѓСЂРЅРѕРіРѕ РјР°РїРїРёРЅРіР°
 		bank->AnimChannelMat.GetChannel(nChannel)->GetTexMatrix(phase,Data.TexMatrix);
 		Mat.SetAttribute(MAT_TEXMATRIX_STAGE1);
 	}else
@@ -408,7 +408,7 @@ void cMeshBank::GetMaterial(int nChannel,float phase,double MaterialAnimTime,
 	}
 
 	if(!Mat.GetAttribute(MAT_LIGHT))
-	{ // расчет освещения объкта
+	{ // СЂР°СЃС‡РµС‚ РѕСЃРІРµС‰РµРЅРёСЏ РѕР±СЉРєС‚Р°
 		sColor4f zero(0,0,0,1);
 		Data.Ambient=zero;
 		Data.Diffuse=Mat.Diffuse;

@@ -1391,8 +1391,8 @@ public:
 
   template<class Archive>
   void serialize(Archive& ar) {
-	ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-	ar & makeObjectWrapper(trans(), "position", "Позиция");
+	ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+	ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
   }
 
   // MatXf constants ////////////////////////////////////////////////////////////
@@ -1499,8 +1499,8 @@ public:
 
   template<class Archive>
   void serialize(Archive& ar) {
-	ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-	ar & makeObjectWrapper(trans(), "position", "Позиция");
+	ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+	ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
   }
 
   // MatXd constants ////////////////////////////////////////////////////////////
@@ -1885,8 +1885,8 @@ public:
 
   template<class Archive>
   void serialize(Archive& ar) {
-	ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-	ar & makeObjectWrapper(trans(), "position", "Позиция");
+	ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+	ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
   }
 
   // Se3f constants /////////////////////////////////////////////////////////////
@@ -1967,8 +1967,8 @@ public:
 
   template<class Archive>
   void serialize(Archive& ar) {
-	ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-	ar & makeObjectWrapper(trans(), "position", "Позиция");
+	ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+	ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
   }
 
   // Se3d constants /////////////////////////////////////////////////////////////

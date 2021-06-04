@@ -10,7 +10,7 @@ struct cMeshStatic:public cUnknownClass
 {
 	sPtrIndexBuffer				ib;
 	sPtrVertexBuffer			vb;
-	int							ib_polygon;//Количество полигонов в ib
+	int							ib_polygon;//РљРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»РёРіРѕРЅРѕРІ РІ ib
 	string						MaterialName;
 	vector<cMeshTri*>			meshes;
 	sAttribute				Material;
@@ -79,14 +79,14 @@ public:
 	cAnimChannelMaterial* GetAnimChannelMat(){return &bank->AnimChannelMat;};
 	sAttribute&	GetObjectAttribute(){return bank->ObjectAttribute;};
 
-	cMeshBank* BuildStaticCopy();//Копия материала без анимации
+	cMeshBank* BuildStaticCopy();//РљРѕРїРёСЏ РјР°С‚РµСЂРёР°Р»Р° Р±РµР· Р°РЅРёРјР°С†РёРё
 	cMeshBank* BuildCopyWithAnotherTexture(const char* texture_path,const char* def_texture_path,cAllMeshBank* parent);
 	bool IsBump();
 	cMeshStatic* GetBank(){return bank;}
 };
 
 /*
-	Класс в котором хранится общая по загруженному M3D информация.
+	РљР»Р°СЃСЃ РІ РєРѕС‚РѕСЂРѕРј С…СЂР°РЅРёС‚СЃСЏ РѕР±С‰Р°СЏ РїРѕ Р·Р°РіСЂСѓР¶РµРЅРЅРѕРјСѓ M3D РёРЅС„РѕСЂРјР°С†РёСЏ.
 */
 class cAllMeshBank : public cUnknownClass
 {
@@ -102,14 +102,14 @@ public:
 	cAllMeshBank(const char* file_name,const char* texture_path);
 	virtual ~cAllMeshBank();
 
-	//Функции загрузки
+	//Р¤СѓРЅРєС†РёРё Р·Р°РіСЂСѓР·РєРё
 	void SetFrame(class cMeshScene *MeshScene);
 	void BeginLoad();
 	void EndLoad();
 
 	cMeshBank* FindUnical(const char* materialname,sAttribute ObjectAttribute,sAttribute MatAttribute);
 	cMeshBank* CreateUnical(const char* materialname,sAttribute ObjectAttribute,sAttribute MatAttribute);
-	//Функции доступа
+	//Р¤СѓРЅРєС†РёРё РґРѕСЃС‚СѓРїР°
 	const char* GetFileName(){return filename.c_str();};
 	const char* GetTexturePath(){return texture_path.c_str();};
 	const char* GetDefTexturePath(){return def_texture_path.c_str();};

@@ -20,10 +20,10 @@ struct KeyParticleInt
 {
 	float dtime;
 
-	float vel;//скорость частицы, абсолютное значение
+	float vel;//СЃРєРѕСЂРѕСЃС‚СЊ С‡Р°СЃС‚РёС†С‹, Р°Р±СЃРѕР»СЋС‚РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ
 	float angle_vel;
 	sColor4f color;
-	float size;//величина частицы
+	float size;//РІРµР»РёС‡РёРЅР° С‡Р°СЃС‚РёС†С‹
 	float gravity;
 //protected:
 	friend class cEmitterInt;
@@ -37,7 +37,7 @@ struct KeyParticleSpl
 
 	float angle_vel;
 	sColor4f color;
-	float size;//величина частицы
+	float size;//РІРµР»РёС‡РёРЅР° С‡Р°СЃС‚РёС†С‹
 //protected:
 	friend class cEmitterSpl;
 	float inv_dtime;//inv_dtime=1/dtime
@@ -103,7 +103,7 @@ enum EMITTER_BLEND
 struct EmitterType
 {
 	EMITTER_TYPE_POSITION type;
-	//Последующие значения зависят от типа эмиттера
+	//РџРѕСЃР»РµРґСѓСЋС‰РёРµ Р·РЅР°С‡РµРЅРёСЏ Р·Р°РІРёСЃСЏС‚ РѕС‚ С‚РёРїР° СЌРјРёС‚С‚РµСЂР°
 	Vect3f size;
 	bool fix_pos;
 	struct CountXYZ{short x,y,z;}num;
@@ -254,7 +254,7 @@ struct EmitterKeyInterface
 #endif
 	string name;
 	string texture_name;
-	bool cycled;//После emitter_life_time эмиттер начинает работать заново
+	bool cycled;//РџРѕСЃР»Рµ emitter_life_time СЌРјРёС‚С‚РµСЂ РЅР°С‡РёРЅР°РµС‚ СЂР°Р±РѕС‚Р°С‚СЊ Р·Р°РЅРѕРІРѕ
 	float emitter_create_time,emitter_life_time;
 
 	float LocalTime(float t);
@@ -289,7 +289,7 @@ struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 	virtual EMITTER_CLASS GetType()=0;
 	virtual void BuildKey()=0;
 
-	//Параметры эмиттера
+	//РџР°СЂР°РјРµС‚СЂС‹ СЌРјРёС‚С‚РµСЂР°
 	EMITTER_BLEND sprite_blend;
 	bool generate_prolonged;
 	float particle_life_time;
@@ -299,7 +299,7 @@ struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 	CKeyRotate emitter_rotation;
 	EmitterType particle_position;
 
-	///Общие параметры частиц
+	///РћР±С‰РёРµ РїР°СЂР°РјРµС‚СЂС‹ С‡Р°СЃС‚РёС†
 	CKey life_time;
 	CKey life_time_delta;
 	CKey begin_size;
@@ -314,17 +314,17 @@ struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 	float PlumeInterval;
 	bool smooth;
 
-	CVectVect3f begin_position; //Распределение по 3D модели for EMP_3DMODEL_INSIDE
-	CVectVect3f normal_position;//Распределение по 3D модели  for EMP_3DMODEL_INSIDE
+	CVectVect3f begin_position; //Р Р°СЃРїСЂРµРґРµР»РµРЅРёРµ РїРѕ 3D РјРѕРґРµР»Рё for EMP_3DMODEL_INSIDE
+	CVectVect3f normal_position;//Р Р°СЃРїСЂРµРґРµР»РµРЅРёРµ РїРѕ 3D РјРѕРґРµР»Рё  for EMP_3DMODEL_INSIDE
 
-	//Параметры отдельной частицы
+	//РџР°СЂР°РјРµС‚СЂС‹ РѕС‚РґРµР»СЊРЅРѕР№ С‡Р°СЃС‚РёС†С‹
 	CKey	  p_size;
 	CKeyColor p_color;
 	CKeyColor p_alpha;
 	CKey	  p_angle_velocity;
 
 
-	//Возвращает в секундах, принимает в LocalTime
+	//Р’РѕР·РІСЂР°С‰Р°РµС‚ РІ СЃРµРєСѓРЅРґР°С…, РїСЂРёРЅРёРјР°РµС‚ РІ LocalTime
 	void GetParticleLifeTime(float t,float& mid_t,float& min_t,float& max_t);
 
 	KeyPos* GetOrCreatePosKey(float t,bool* create);
@@ -349,10 +349,10 @@ struct EmitterKeyInt:public EmitterKeyBase
 	void RelativeScale(float scale);
 	EmitterKeyInterface* Clone();
 public:
-	bool use_light;//Освещение частиц, только при EMP_3DMODEL,EMP_3DMODEL_INSIDE. 
-				//Используется из первого попавшегося материала diffuse и ambient.
+	bool use_light;//РћСЃРІРµС‰РµРЅРёРµ С‡Р°СЃС‚РёС†, С‚РѕР»СЊРєРѕ РїСЂРё EMP_3DMODEL,EMP_3DMODEL_INSIDE. 
+				//РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РёР· РїРµСЂРІРѕРіРѕ РїРѕРїР°РІС€РµРіРѕСЃСЏ РјР°С‚РµСЂРёР°Р»Р° diffuse Рё ambient.
 
-	//Параметры отдельной частицы
+	//РџР°СЂР°РјРµС‚СЂС‹ РѕС‚РґРµР»СЊРЅРѕР№ С‡Р°СЃС‚РёС†С‹
 	CKey	  p_velocity;
 	CKey	  p_gravity;
 
@@ -382,7 +382,7 @@ struct EmitterKeyZ:public EmitterKeyInt
 
 	float add_z;
 	bool planar;
-	bool angle_by_center;//Не имеет смысла ставить true, если planar=false
+	bool angle_by_center;//РќРµ РёРјРµРµС‚ СЃРјС‹СЃР»Р° СЃС‚Р°РІРёС‚СЊ true, РµСЃР»Рё planar=false
 	float base_angle;
 	bool use_force_field;
 protected:
@@ -399,7 +399,7 @@ struct EmitterKeySpl:public EmitterKeyBase
 	void RelativeScale(float scale);
 	EmitterKeyInterface* Clone();
 public:	
-	bool p_position_auto_time;//Автоматически прределять время для наиболее равномерного движения
+	bool p_position_auto_time;//РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё РїСЂСЂРµРґРµР»СЏС‚СЊ РІСЂРµРјСЏ РґР»СЏ РЅР°РёР±РѕР»РµРµ СЂР°РІРЅРѕРјРµСЂРЅРѕРіРѕ РґРІРёР¶РµРЅРёСЏ
 	CKeyPosHermit    p_position;
 
 	EMITTER_TYPE_DIRECTION_SPL direction;
@@ -515,13 +515,13 @@ protected:
 	EMITTER_TYPE_ROTATION_DIRECTION rotation_direction;
 	CKeyRotate rotation;
 
-	vector<Vect3f> begin_position; //Распределение по 3D модели for EMP_3DMODEL_INSIDE
+	vector<Vect3f> begin_position; //Р Р°СЃРїСЂРµРґРµР»РµРЅРёРµ РїРѕ 3D РјРѕРґРµР»Рё for EMP_3DMODEL_INSIDE
 	//if (cEmitterInt::use_light || cEmitterSpl::direction == ETDS_BURST1,ETDS_BURST2) 
-	vector<Vect3f> normal_position;//Распределение по 3D модели  for EMP_3DMODEL_INSIDE
+	vector<Vect3f> normal_position;//Р Р°СЃРїСЂРµРґРµР»РµРЅРёРµ РїРѕ 3D РјРѕРґРµР»Рё  for EMP_3DMODEL_INSIDE
 	//endif
 	EmitterType particle_position;
 public:
-	int cur_one_pos;//Индекс в begin_position
+	int cur_one_pos;//РРЅРґРµРєСЃ РІ begin_position
 	virtual Vect3f GetVdir(int i)=0;
 protected:
 
@@ -588,15 +588,15 @@ class cEmitterInt:public cEmitterBase
 public:
 	struct nParticle
 	{
-		float time;//текущее время в пределах ключа анимации 0..1
-		int key;//номер ключа анимации
+		float time;//С‚РµРєСѓС‰РµРµ РІСЂРµРјСЏ РІ РїСЂРµРґРµР»Р°С… РєР»СЋС‡Р° Р°РЅРёРјР°С†РёРё 0..1
+		int key;//РЅРѕРјРµСЂ РєР»СЋС‡Р° Р°РЅРёРјР°С†РёРё
 		float inv_life_time;
 
 		Vect3f pos0;
-		Vect3f vdir;//начальное направление движения
+		Vect3f vdir;//РЅР°С‡Р°Р»СЊРЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ
 		float angle0,angle_dir;
 		float gvel0;
-		//color0,size0 - константы
+		//color0,size0 - РєРѕРЅСЃС‚Р°РЅС‚С‹
 		float begin_size;
 
 		float time_summary;
@@ -626,7 +626,7 @@ protected:
 	vector<KeyParticleInt>	keys;
 	vector<EffectBeginSpeedMatrix> begin_speed;
 
-	Vect3f g;	//ускорение
+	Vect3f g;	//СѓСЃРєРѕСЂРµРЅРёРµ
 
 	/////
 	CKey velocity_delta;
@@ -737,18 +737,18 @@ class cEmitterSpl:public cEmitterBase
 	};
 	struct nParticle
 	{
-		int   key;//номер ключа анимации
-		float time;//текущее время в пределах ключа анимации 0..dtime
+		int   key;//РЅРѕРјРµСЂ РєР»СЋС‡Р° Р°РЅРёРјР°С†РёРё
+		float time;//С‚РµРєСѓС‰РµРµ РІСЂРµРјСЏ РІ РїСЂРµРґРµР»Р°С… РєР»СЋС‡Р° Р°РЅРёРјР°С†РёРё 0..dtime
 		float inv_life_time;
 		float time_summary;
 
-		//То-же, но для сплайнов
+		//РўРѕ-Р¶Рµ, РЅРѕ РґР»СЏ СЃРїР»Р°Р№РЅРѕРІ
 		int   hkey;
 		float htime;
 		vector<Vect3f> plume_pos;
 		MatXf pos;
 		float angle0,angle_dir;
-		//color0,size0 - константы
+		//color0,size0 - РєРѕРЅСЃС‚Р°РЅС‚С‹
 		float begin_size;
 /*		void PutToBuf(const float& dtime_global, HeritKey& k, const KeyParticleSpl& k0, 
 								const KeyParticleSpl& k1, sBox6f& Bound, 
@@ -876,11 +876,11 @@ public:
 	void SetTime(float time);
 	void MoveToTime(float time);
 
-	//Этой функцией следует пользоваться с осторожностью, лучше использовать StopAndReleaseAfterEnd
+	//Р­С‚РѕР№ С„СѓРЅРєС†РёРµР№ СЃР»РµРґСѓРµС‚ РїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ СЃ РѕСЃС‚РѕСЂРѕР¶РЅРѕСЃС‚СЊСЋ, Р»СѓС‡С€Рµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ StopAndReleaseAfterEnd
 	void SetAutoDeleteAfterLife(bool auto_delete_after_life_);
 	bool IsAutoDeleteAfterLife()const{return auto_delete_after_life;}
 
-	//Остановить генерацию спрайтов и удалить спецэффект после исчезновения спрайтов 
+	//РћСЃС‚Р°РЅРѕРІРёС‚СЊ РіРµРЅРµСЂР°С†РёСЋ СЃРїСЂР°Р№С‚РѕРІ Рё СѓРґР°Р»РёС‚СЊ СЃРїРµС†СЌС„С„РµРєС‚ РїРѕСЃР»Рµ РёСЃС‡РµР·РЅРѕРІРµРЅРёСЏ СЃРїСЂР°Р№С‚РѕРІ 
 	void StopAndReleaseAfterEnd();
 
 	void SetParticleRate(float rate){particle_rate=rate;};
@@ -893,7 +893,7 @@ public:
 	vector<Vect3f>& GetPos(){return begin_position;}
 	vector<Vect3f>& GetNorm(){return normal_position;}
 	cEmitterBase* GetEmitN(int n){xassert((UINT)n<emitters.size()); return (cEmitterBase*)emitters[n];}
-	void SetFunctorGetZ(FunctorGetZ* func);//Делается вовремя addref,release
+	void SetFunctorGetZ(FunctorGetZ* func);//Р”РµР»Р°РµС‚СЃСЏ РІРѕРІСЂРµРјСЏ addref,release
 protected:
 #ifdef  NEED_TREANGLE_COUNT
 	int count_triangle;
@@ -908,11 +908,11 @@ public:
 protected:
 	friend class cScene;
 	void Init(EffectKey& el,cEmitter3dObject* models,float scale=1.0f);
-	void Add(cEmitterInterface*);//Предполагается, что эмиттер уже инициализированн
+	void Add(cEmitterInterface*);//РџСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ, С‡С‚Рѕ СЌРјРёС‚С‚РµСЂ СѓР¶Рµ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅ
 
 	const MatXf& GetCenter3DModel();
-	vector<Vect3f> begin_position;//Распределение по 3D модели
-	vector<Vect3f> normal_position;//Распределение по 3D модели
+	vector<Vect3f> begin_position;//Р Р°СЃРїСЂРµРґРµР»РµРЅРёРµ РїРѕ 3D РјРѕРґРµР»Рё
+	vector<Vect3f> normal_position;//Р Р°СЃРїСЂРµРґРµР»РµРЅРёРµ РїРѕ 3D РјРѕРґРµР»Рё
 
 
 #ifdef _DEBUG
@@ -933,7 +933,7 @@ public:
 	EffectKey* Get (const char* name) const;
 
 	const char* GetFileName()const{return filename.c_str();}
-	//Для редактора спецэффектов
+	//Р”Р»СЏ СЂРµРґР°РєС‚РѕСЂР° СЃРїРµС†СЌС„С„РµРєС‚РѕРІ
 	typedef vector<EffectKey*>::iterator iterator;
 	inline iterator begin(){return lst.begin();}
 	inline iterator end(){return lst.end();}

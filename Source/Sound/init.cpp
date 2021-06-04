@@ -368,8 +368,8 @@ bool SNDScriptPrmEnableAll()
 
 bool RestoreBuffer(LPDIRECTSOUNDBUFFER pDSB)
 {
-	//Вообще-то после Restore для hardvare buffer неплохо 
-	//бы его преречитать
+	//Р’РѕРѕР±С‰Рµ-С‚Рѕ РїРѕСЃР»Рµ Restore РґР»СЏ hardvare buffer РЅРµРїР»РѕС…Рѕ 
+	//Р±С‹ РµРіРѕ РїСЂРµСЂРµС‡РёС‚Р°С‚СЊ
     HRESULT hr;
     DWORD dwStatus;
     if( FAILED( hr = pDSB->GetStatus( &dwStatus ) ) )
@@ -962,7 +962,7 @@ bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
 
 bool SND3DPlaySound(LPCSTR name,
 					const Vect3f* pos,
-					const Vect3f* velocity//По умолчанию объект считается неподвижным
+					const Vect3f* velocity//РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕР±СЉРµРєС‚ СЃС‡РёС‚Р°РµС‚СЃСЏ РЅРµРїРѕРґРІРёР¶РЅС‹Рј
 					)
 {
 	if(!g_enable_sound)

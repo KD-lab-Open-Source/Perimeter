@@ -31,7 +31,7 @@ protected:
 	TriggerEditorLogic& getTriggerEditorLogic();
 	TriggerEditorLogic const& getTriggerEditorLogic() const;
 
-	//! Находит место для расположения элементов и перемещает туда элементы
+	//! РќР°С…РѕРґРёС‚ РјРµСЃС‚Рѕ РґР»СЏ СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ СЌР»РµРјРµРЅС‚РѕРІ Рё РїРµСЂРµРјРµС‰Р°РµС‚ С‚СѓРґР° СЌР»РµРјРµРЅС‚С‹
 	void arrangeTriggersUnderMouse(TriggerList& triggers) const;
 
 	void addTriggers(TriggerChain& chain,

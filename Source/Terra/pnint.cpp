@@ -28,7 +28,7 @@ static int start = 1;
 	_asm{
 		mov eax, v1
 		imul dword ptr v2
-		shrd eax, edx, NOISE_FRACTION //edx не меняется !
+		shrd eax, edx, NOISE_FRACTION //edx РЅРµ РјРµРЅСЏРµС‚СЃСЏ !
 		mov var, eax
 	}
 	return var;

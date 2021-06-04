@@ -9,7 +9,7 @@ const char SIMPLE_GAME_CURRENT_VERSION[]=
 extern const unsigned int INTERNAL_BUILD_VERSION;
 //-------------------------------
 
-// Адаптация строк для передачи по сети
+// РђРґР°РїС‚Р°С†РёСЏ СЃС‚СЂРѕРє РґР»СЏ РїРµСЂРµРґР°С‡Рё РїРѕ СЃРµС‚Рё
 class StringInWrapper
 {
 	string& value_;
@@ -163,7 +163,7 @@ public:
 	bool operator == (const netCommandGame &secop) const;
 };
 
-//Внимание ! можно защитить простым "плавающим" паролем
+//Р’РЅРёРјР°РЅРёРµ ! РјРѕР¶РЅРѕ Р·Р°С‰РёС‚РёС‚СЊ РїСЂРѕСЃС‚С‹Рј "РїР»Р°РІР°СЋС‰РёРј" РїР°СЂРѕР»РµРј
 class netCommand4G_ForcedDefeat : public netCommandGame
 {
 public:
@@ -436,7 +436,7 @@ public:
 	}
 
 	bool operator == (const netCommand4H_BackGameInformation2 &secop) const {
-		//lagQuant не сравнивается !
+		//lagQuant РЅРµ СЃСЂР°РІРЅРёРІР°РµС‚СЃСЏ !
 		return ( (quant_ == secop.quant_) && 
 			(signature_== secop.signature_) );
 	}
@@ -611,7 +611,7 @@ struct terEventError : netCommandGeneral
 };
 
 
-//Сейчас фактически не используется т.к. запускается её внутренний аналог - ExecuteInternalCommand(PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST, true);
+//РЎРµР№С‡Р°СЃ С„Р°РєС‚РёС‡РµСЃРєРё РЅРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С‚.Рє. Р·Р°РїСѓСЃРєР°РµС‚СЃСЏ РµС‘ РІРЅСѓС‚СЂРµРЅРЅРёР№ Р°РЅР°Р»РѕРі - ExecuteInternalCommand(PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST, true);
 struct netCommand4H_CreateGame : netCommandGeneral {
 	MissionDescription missionDescription_;
 	PlayerData createPlayerData_;

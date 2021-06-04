@@ -42,7 +42,7 @@ public:
 	unsigned long getCurrentGameQuant() { return currentQuant; }
 	unsigned long getConfirmQuant() { return confirmQuant; }
 protected:
-	PNetCenter* pNetCenter; // живет дольше this, !0 == MultiPlayer
+	PNetCenter* pNetCenter; // Р¶РёРІРµС‚ РґРѕР»СЊС€Рµ this, !0 == MultiPlayer
 
 private:
 
@@ -93,7 +93,7 @@ private:
 public:
 	//Command History
 	vector<netCommandGame*> fullListGameCommands;
-	unsigned int lastQuant_inFullListGameCommands; //Кванты считаются с 1-го!
+	unsigned int lastQuant_inFullListGameCommands; //РљРІР°РЅС‚С‹ СЃС‡РёС‚Р°СЋС‚СЃСЏ СЃ 1-РіРѕ!
 	unsigned int curGameComPosition;
 
 	vector<netCommandGame*> replayListGameCommands;
@@ -193,8 +193,8 @@ public:
 		}
 	}
 
-	unsigned long clientGeneralCommandCounterInListCommand;// аналог fullListGameCommands.size()
-	unsigned long lastRealizedQuant; //по идее это currentQuant
+	unsigned long clientGeneralCommandCounterInListCommand;// Р°РЅР°Р»РѕРі fullListGameCommands.size()
+	unsigned long lastRealizedQuant; //РїРѕ РёРґРµРµ СЌС‚Рѕ currentQuant
 	unsigned long allowedRealizingQuant;
 
 	unsigned long lastQuantAllowedTimeCommand;

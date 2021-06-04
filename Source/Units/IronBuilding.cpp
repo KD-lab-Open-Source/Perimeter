@@ -18,8 +18,8 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeBuilding, "«‰‡ÌËÂ");
-REGISTER_CLASS(AttributeBase, AttributeSquad, "—Í‚‡‰");
+REGISTER_CLASS(AttributeBase, AttributeBuilding, "–ó–¥–∞–Ω–∏–µ");
+REGISTER_CLASS(AttributeBase, AttributeSquad, "–°–∫–≤–∞–¥");
 
 AttributeBuilding::AttributeBuilding() 
 {

@@ -32,7 +32,7 @@ MissionEditor::MissionEditor()
 MissionEditor::~MissionEditor()
 {
 	if(hardnessChanged_ && 
-		MessageBox(0, "Редактирование неразрушаемости незаписано. Записать?", "Mission editor", MB_YESNO | MB_ICONQUESTION) 
+		MessageBox(0, "Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РЅРµСЂР°Р·СЂСѓС€Р°РµРјРѕСЃС‚Рё РЅРµР·Р°РїРёСЃР°РЅРѕ. Р—Р°РїРёСЃР°С‚СЊ?", "Mission editor", MB_YESNO | MB_ICONQUESTION) 
 			== IDYES)
 				vMap.saveHardness();
 }
@@ -134,17 +134,17 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		
 	case VK_DELETE:
 		if(editingHardness_){
-			if(MessageBox(0, "Стереть всю неразрушаемость?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES)
+			if(MessageBox(0, "РЎС‚РµСЂРµС‚СЊ РІСЃСЋ РЅРµСЂР°Р·СЂСѓС€Р°РµРјРѕСЃС‚СЊ?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES)
 				clearHardness();
 		}
-		else if(universe()->selectedObject() && ::MessageBox(0, "Удалить выделенный объект?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
+		else if(universe()->selectedObject() && ::MessageBox(0, "РЈРґР°Р»РёС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Р№ РѕР±СЉРµРєС‚?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
 			universe()->DeleteSelectedObjects();
 			_pUnitHover = 0;
 		}
 		return true;
 
 	case 'D':
-		if(universe()->selectedObject() && ::MessageBox(0, "Удалить выделенный объект?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
+		if(universe()->selectedObject() && ::MessageBox(0, "РЈРґР°Р»РёС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Р№ РѕР±СЉРµРєС‚?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
 			universe()->DeleteSelectedObjects();
 			_pUnitHover = 0;
 		}
@@ -257,30 +257,30 @@ terFilthSpotID SelectFilth()
 		terFilthSpotID id;
 	} name[]=
 	{
-		{"дракон",FILTH_SPOT_ID_DRAGON},
-		{"муравей",FILTH_SPOT_ID_ANTS},
-		{"пчела",FILTH_SPOT_ID_WASP},
-		{"приведение",FILTH_SPOT_ID_GHOST},
-		{"глаз",FILTH_SPOT_ID_EYE},
-		{"ворона",FILTH_SPOT_ID_CROW},
-		{"демон",FILTH_SPOT_ID_DAEMON},
-		{"крыса",FILTH_SPOT_ID_RAT},
-		{"червь",FILTH_SPOT_ID_WORM},
-		{"рыба",FILTH_SPOT_ID_SHARK},
-		{"вулкан",FILTH_SPOT_ID_VOLCANO},
-		{"муравей2",FILTH_SPOT_ID_ANTS2},
-		{"змеи",FILTH_SPOT_ID_SNAKE},
-		{"дракон2",FILTH_SPOT_ID_DRAGON2},
-		{"Вулкан от скамдизраптора",FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR},
-		{"Новые муравьи",FILTH_SPOT_ID_A_ANTS}, //Муравьи aant.M3D
-		{"Новые вороны",FILTH_SPOT_ID_A_CROW}, //Вороны abird.M3D
-		{"Новые демоны",FILTH_SPOT_ID_A_DAEMON}, //Демоны ad_DAEMON.M3D
-		{"Новый дракон",FILTH_SPOT_ID_A_DRAGON}, //Дракон adragon_body.M3D adragon_head.M3D adragon_tail.M3D
-		{"Новые глаза",FILTH_SPOT_ID_A_EYE},  //Глаза aeye.M3D
-		{"Новые крысы",FILTH_SPOT_ID_A_RAT}, //Крысы arat.M3D
-		{"Новые пауки",FILTH_SPOT_ID_A_SPIDER}, //Муравьи2 aspider.M3D aspider1.M3D
-		{"Новые осы",FILTH_SPOT_ID_A_WASP}, //Осы awasp.M3D
-		{"Новый червь",FILTH_SPOT_ID_A_WORM},// Червь aworm.M3D
+		{"РґСЂР°РєРѕРЅ",FILTH_SPOT_ID_DRAGON},
+		{"РјСѓСЂР°РІРµР№",FILTH_SPOT_ID_ANTS},
+		{"РїС‡РµР»Р°",FILTH_SPOT_ID_WASP},
+		{"РїСЂРёРІРµРґРµРЅРёРµ",FILTH_SPOT_ID_GHOST},
+		{"РіР»Р°Р·",FILTH_SPOT_ID_EYE},
+		{"РІРѕСЂРѕРЅР°",FILTH_SPOT_ID_CROW},
+		{"РґРµРјРѕРЅ",FILTH_SPOT_ID_DAEMON},
+		{"РєСЂС‹СЃР°",FILTH_SPOT_ID_RAT},
+		{"С‡РµСЂРІСЊ",FILTH_SPOT_ID_WORM},
+		{"СЂС‹Р±Р°",FILTH_SPOT_ID_SHARK},
+		{"РІСѓР»РєР°РЅ",FILTH_SPOT_ID_VOLCANO},
+		{"РјСѓСЂР°РІРµР№2",FILTH_SPOT_ID_ANTS2},
+		{"Р·РјРµРё",FILTH_SPOT_ID_SNAKE},
+		{"РґСЂР°РєРѕРЅ2",FILTH_SPOT_ID_DRAGON2},
+		{"Р’СѓР»РєР°РЅ РѕС‚ СЃРєР°РјРґРёР·СЂР°РїС‚РѕСЂР°",FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR},
+		{"РќРѕРІС‹Рµ РјСѓСЂР°РІСЊРё",FILTH_SPOT_ID_A_ANTS}, //РњСѓСЂР°РІСЊРё aant.M3D
+		{"РќРѕРІС‹Рµ РІРѕСЂРѕРЅС‹",FILTH_SPOT_ID_A_CROW}, //Р’РѕСЂРѕРЅС‹ abird.M3D
+		{"РќРѕРІС‹Рµ РґРµРјРѕРЅС‹",FILTH_SPOT_ID_A_DAEMON}, //Р”РµРјРѕРЅС‹ ad_DAEMON.M3D
+		{"РќРѕРІС‹Р№ РґСЂР°РєРѕРЅ",FILTH_SPOT_ID_A_DRAGON}, //Р”СЂР°РєРѕРЅ adragon_body.M3D adragon_head.M3D adragon_tail.M3D
+		{"РќРѕРІС‹Рµ РіР»Р°Р·Р°",FILTH_SPOT_ID_A_EYE},  //Р“Р»Р°Р·Р° aeye.M3D
+		{"РќРѕРІС‹Рµ РєСЂС‹СЃС‹",FILTH_SPOT_ID_A_RAT}, //РљСЂС‹СЃС‹ arat.M3D
+		{"РќРѕРІС‹Рµ РїР°СѓРєРё",FILTH_SPOT_ID_A_SPIDER}, //РњСѓСЂР°РІСЊРё2 aspider.M3D aspider1.M3D
+		{"РќРѕРІС‹Рµ РѕСЃС‹",FILTH_SPOT_ID_A_WASP}, //РћСЃС‹ awasp.M3D
+		{"РќРѕРІС‹Р№ С‡РµСЂРІСЊ",FILTH_SPOT_ID_A_WORM},// Р§РµСЂРІСЊ aworm.M3D
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
@@ -308,10 +308,10 @@ terUnitAttributeID SelectGeo()
 		terUnitAttributeID id;
 	} name[]=
 	{
-		{"гора",UNIT_ATTRIBUTE_GEO_INFLUENCE},
-		{"разлом",UNIT_ATTRIBUTE_GEO_BREAK},
-		{"деффект",UNIT_ATTRIBUTE_GEO_FAULT},
-		{"лицо",UNIT_ATTRIBUTE_GEO_HEAD},
+		{"РіРѕСЂР°",UNIT_ATTRIBUTE_GEO_INFLUENCE},
+		{"СЂР°Р·Р»РѕРј",UNIT_ATTRIBUTE_GEO_BREAK},
+		{"РґРµС„С„РµРєС‚",UNIT_ATTRIBUTE_GEO_FAULT},
+		{"Р»РёС†Рѕ",UNIT_ATTRIBUTE_GEO_HEAD},
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
@@ -336,11 +336,11 @@ void MissionEditor::createUnit()
 	terUnitAttributeID attributeID = UNIT_ATTRIBUTE_NONE;
 	const char* modelDirectory = 0;
 
-	const char* itemBuildings = "Здания";
-	const char* itemNature = "Деревья";
-	const char* itemFilth = "Скверна";
-	const char* itemSensors = "Сенсора";
-	const char* itemGeoprocess = "Геопроцессы";
+	const char* itemBuildings = "Р—РґР°РЅРёСЏ";
+	const char* itemNature = "Р”РµСЂРµРІСЊСЏ";
+	const char* itemFilth = "РЎРєРІРµСЂРЅР°";
+	const char* itemSensors = "РЎРµРЅСЃРѕСЂР°";
+	const char* itemGeoprocess = "Р“РµРѕРїСЂРѕС†РµСЃСЃС‹";
 	vector<const char*> items;
 	items.push_back(itemBuildings);
 	items.push_back(itemNature);
@@ -373,7 +373,7 @@ void MissionEditor::createUnit()
 	else if(item == itemSensors){
 		setPlayer(-1);
 		items.clear();
-		const char* itemAlphaPotential = "Полюса для Альфы";
+		const char* itemAlphaPotential = "РџРѕР»СЋСЃР° РґР»СЏ РђР»СЊС„С‹";
 		items.push_back(itemAlphaPotential);
 		const char* item = popupMenu(items);
 		if(item == itemAlphaPotential)
@@ -442,38 +442,38 @@ const char* MissionEditor::info()
 	size_t pos = missionName.rfind("RESOURCE\\");
 	if(pos != string::npos)
 		missionName.erase(0, pos);
-	info_ < "Миссия: " < missionName.c_str() < "\n";
+	info_ < "РњРёСЃСЃРёСЏ: " < missionName.c_str() < "\n";
 
 	terPlayer* player = universe()->activePlayer();
 	if(player->isWorld())
-		info_ < "Игрок \"Мир\"\n";
+		info_ < "РРіСЂРѕРє \"РњРёСЂ\"\n";
 	else 
 		switch(player->playerID()){
 		case 0:
-			info_ < "Игрок1 \"Я\"\n";
+			info_ < "РРіСЂРѕРє1 \"РЇ\"\n";
 			break;
 		case 1:
-			info_ < "Игрок2 \"Враг\"\n";
+			info_ < "РРіСЂРѕРє2 \"Р’СЂР°Рі\"\n";
 			break;
 		default:
-			info_ < "Игрок" <= player->playerID() < "\n";
+			info_ < "РРіСЂРѕРє" <= player->playerID() < "\n";
 		}
 
 	terUnitBase* unit = universe()->selectedObject();
 	if(unit){
-		info_ < "Объект: " < unit->attr().internalName() < "\n";
+		info_ < "РћР±СЉРµРєС‚: " < unit->attr().internalName() < "\n";
 		if(unit->GetModelName())
-			info_ < "Модель: " < unit->GetModelName() < "\n";
+			info_ < "РњРѕРґРµР»СЊ: " < unit->GetModelName() < "\n";
 	}
 
 	if(copiedData_)
-		info_ < "Запомнен: " < getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(copiedData_->attributeID) < "\n";
+		info_ < "Р—Р°РїРѕРјРЅРµРЅ: " < getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(copiedData_->attributeID) < "\n";
 
 	if(editingHardness_)
-		info_ < (!isShiftPressed() ? "Редактирование некопаемых областей\n" : "Редактирование копаемых областей\n");
+		info_ < (!isShiftPressed() ? "Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РЅРµРєРѕРїР°РµРјС‹С… РѕР±Р»Р°СЃС‚РµР№\n" : "Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РєРѕРїР°РµРјС‹С… РѕР±Р»Р°СЃС‚РµР№\n");
 
 	if(terCamera->pathSize())
-		info_ < (terCamera->restricted() ? "Camera: " : "Camera (ограничена): ") <= terCamera->pathSize() < "\n";
+		info_ < (terCamera->restricted() ? "Camera: " : "Camera (РѕРіСЂР°РЅРёС‡РµРЅР°): ") <= terCamera->pathSize() < "\n";
 
 	return info_.address();
 }

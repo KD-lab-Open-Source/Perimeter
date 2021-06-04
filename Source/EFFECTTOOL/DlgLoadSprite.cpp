@@ -108,7 +108,7 @@ INT_PTR CDlgLoadSprite::DoModal()
 {
 //	char fn[1024];
 //	memcpy(fn,m_str[0],m_str[0].GetLength()+1);
-	m_ofn.lpstrTitle = "Загрузить спрайт";
+	m_ofn.lpstrTitle = "Р—Р°РіСЂСѓР·РёС‚СЊ СЃРїСЂР°Р№С‚";
 //	m_ofn.lpstrFile = fn;
 //	m_ofn.nMaxFile = 512;
 	return CFileDialog::DoModal();
@@ -154,14 +154,14 @@ void CDlgLoadSprite::SetTitleImage()
 {
 	for(int i=0;i<2;++i)
 	{
-		std::string title = i==0 ? "Частица" : "Шлейф";
+		std::string title = i==0 ? "Р§Р°СЃС‚РёС†Р°" : "РЁР»РµР№С„";
 		int n = m_Image[i].GetFramesCount();
 		if (n<m_Image[i].GetRealyFramesCount())
 		{
-			title+= ": только "+ToStr(n)+" кадр";
+			title+= ": С‚РѕР»СЊРєРѕ "+ToStr(n)+" РєР°РґСЂ";
 			if (n!=1)
-				if(n<5)title+="а";
-				else		title+="ов";
+				if(n<5)title+="Р°";
+				else		title+="РѕРІ";
 		}
 		m_title[i].SetWindowText(title.c_str());
 	}

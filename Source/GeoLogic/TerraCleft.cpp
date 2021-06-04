@@ -211,7 +211,7 @@ void CTerraCleftSystem::init_direct(Vect2i& pos1, Vect2i& pos2)
 	{
 		Vect2i vc = pos1 + dir*i*cleftSlipSpacing;
 
-		//расширение в начале
+		//СЂР°СЃС€РёСЂРµРЅРёРµ РІ РЅР°С‡Р°Р»Рµ
 		if(i<cleftSlipWidth/2)
 		{
 			if(i)
@@ -227,7 +227,7 @@ void CTerraCleftSystem::init_direct(Vect2i& pos1, Vect2i& pos2)
 		}
 		else
 		{
-			//распространение полосы
+			//СЂР°СЃРїСЂРѕСЃС‚СЂР°РЅРµРЅРёРµ РїРѕР»РѕСЃС‹
 			for(int j=0; j<cleftSlipWidth; j++)
 			{
 				Vect2i v = vc + dirp*(j - cleftSlipWidth/2)*cleftSlipSpacing + Vect2i(_xnoise(), _xnoise());
@@ -254,7 +254,7 @@ void CTerraCleftSystem::init_direct_thin(Vect2i& pos1, Vect2i& pos2)
 
 	for(int i=0; i<nSlips; i++)
 	{
-		//распространение полосы
+		//СЂР°СЃРїСЂРѕСЃС‚СЂР°РЅРµРЅРёРµ РїРѕР»РѕСЃС‹
 		Vect2i vc = pos1 + dir*i*cleftSlipSpacing;
 		m_nodes[ID(i, 0)] = vc + Vect2i(_xnoise(), _xnoise());
 
@@ -321,7 +321,7 @@ void CTerraCleftSystem::grow_radial(CTerraCleft& par, int i, int j)
 	if(i == cleftRadCount)
 		return;
 
-	if(_xmp.find(ID(i, j)) != _xmp.end()) //уже включено
+	if(_xmp.find(ID(i, j)) != _xmp.end()) //СѓР¶Рµ РІРєР»СЋС‡РµРЅРѕ
 		return;
 
 	Vect2i* b;
@@ -365,7 +365,7 @@ inline Vect2i* CTerraCleftSystem::find_node(int id)
 
 void CTerraCleftSystem::grow_direct(CTerraCleft& par, int i, int j)
 {
-	if(_xmp.find(ID(i, j)) != _xmp.end()) //уже включено
+	if(_xmp.find(ID(i, j)) != _xmp.end()) //СѓР¶Рµ РІРєР»СЋС‡РµРЅРѕ
 		return;
 
 	Vect2i* a = find_node(ID(i, j)); 
@@ -376,7 +376,7 @@ void CTerraCleftSystem::grow_direct(CTerraCleft& par, int i, int j)
 
 	if(i<cleftSlipWidth/2)
 	{
-		//расширение в начале
+		//СЂР°СЃС€РёСЂРµРЅРёРµ РІ РЅР°С‡Р°Р»Рµ
 		if(j < 2*i)
 		{
 			m_clefts.push_back(CTerraCleft(*a, m_nodes[ID(i, j+1)]));
@@ -397,7 +397,7 @@ void CTerraCleftSystem::grow_direct(CTerraCleft& par, int i, int j)
 	}
 	else
 	{
-		//основная полоса
+		//РѕСЃРЅРѕРІРЅР°СЏ РїРѕР»РѕСЃР°
 		if(i != nSlips-1)
 		{
 			m_clefts.push_back(CTerraCleft(*a, m_nodes[ID(i+1, j)]));

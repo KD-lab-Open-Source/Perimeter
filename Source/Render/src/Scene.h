@@ -14,40 +14,40 @@ class cScene : public cUnknownClass
 public:
 	cScene();
 	~cScene();
-	// отрисовка
+	// РѕС‚СЂРёСЃРѕРІРєР°
 	virtual void Compact();
-	virtual void Draw(cCamera *UCamera);		// отрисовка указанной части мира
-	virtual void PreDraw(cCamera *UCamera);		// подготовка к прорисовке, определение видимости, выставление анимации и т.д. 
-	virtual void PostDraw(cCamera *UCamera);	// действия после прорисовки, освобождение временных буферов и т.д. 
+	virtual void Draw(cCamera *UCamera);		// РѕС‚СЂРёСЃРѕРІРєР° СѓРєР°Р·Р°РЅРЅРѕР№ С‡Р°СЃС‚Рё РјРёСЂР°
+	virtual void PreDraw(cCamera *UCamera);		// РїРѕРґРіРѕС‚РѕРІРєР° Рє РїСЂРѕСЂРёСЃРѕРІРєРµ, РѕРїСЂРµРґРµР»РµРЅРёРµ РІРёРґРёРјРѕСЃС‚Рё, РІС‹СЃС‚Р°РІР»РµРЅРёРµ Р°РЅРёРјР°С†РёРё Рё С‚.Рґ. 
+	virtual void PostDraw(cCamera *UCamera);	// РґРµР№СЃС‚РІРёСЏ РїРѕСЃР»Рµ РїСЂРѕСЂРёСЃРѕРІРєРё, РѕСЃРІРѕР±РѕР¶РґРµРЅРёРµ РІСЂРµРјРµРЅРЅС‹С… Р±СѓС„РµСЂРѕРІ Рё С‚.Рґ. 
 	virtual void SetTime(double Time);
 	virtual void dSetTime(float dTime);
 	virtual int GetTime();
-	// функции для работы с объектами
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РѕР±СЉРµРєС‚Р°РјРё
 	virtual cObjectNodeRoot* CreateObject(const char* fname,const char *TexturePath=NULL);
 	virtual cObject3dx* CreateObject3dx(const char* fname,const char *TexturePath=NULL);
 	virtual cObject3dx* CreateLogic3dx(const char* fname);
-	// функции для работы с объектами
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РѕР±СЉРµРєС‚Р°РјРё
 	virtual cIUnkClass* CreateSprite(const char* TexFName);
 	virtual cSpriteManager* CreateSpriteManager(const char* TexFName);
-	// функции для работы с источниками света, влияющими на освещение объектов текущей сцены
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РёСЃС‚РѕС‡РЅРёРєР°РјРё СЃРІРµС‚Р°, РІР»РёСЏСЋС‰РёРјРё РЅР° РѕСЃРІРµС‰РµРЅРёРµ РѕР±СЉРµРєС‚РѕРІ С‚РµРєСѓС‰РµР№ СЃС†РµРЅС‹
 	virtual cUnkLight* CreateLight(int Attribute=0, const char* TextureName = 0);
 	virtual cUnkLight* CreateLight(int Attribute,cTexture *pTexture);
-	// функции для работы с ломанными
-	//TexFName - основная текстура
-	//TexFNameZ - текстура которая видна после закрытия ландшафтом
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Р»РѕРјР°РЅРЅС‹РјРё
+	//TexFName - РѕСЃРЅРѕРІРЅР°СЏ С‚РµРєСЃС‚СѓСЂР°
+	//TexFNameZ - С‚РµРєСЃС‚СѓСЂР° РєРѕС‚РѕСЂР°СЏ РІРёРґРЅР° РїРѕСЃР»Рµ Р·Р°РєСЂС‹С‚РёСЏ Р»Р°РЅРґС€Р°С„С‚РѕРј
 	virtual class cLine3d* CreateLine3d(const char* TexFName,
 							const char* TexFNameZ=NULL);
-	// функции для работы со следами
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃРѕ СЃР»РµРґР°РјРё
 	virtual class cTrail* CreateTrail(const char* TextureName,float TimeLife=1000.f);
-	// функции для работы с системой частиц
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ СЃРёСЃС‚РµРјРѕР№ С‡Р°СЃС‚РёС†
 	virtual class cParticle* CreateParticle(const char* TextureName,float TimeLife=1000.f,Vect2f *vTexSize=&Vect2f(1,1));
 	virtual cEffect* CreateEffect(EffectKey& el,cEmitter3dObject* models,float scale=1.0f,bool auto_delete_after_life=false);
 
-	//Берет размеры по модели
+	//Р‘РµСЂРµС‚ СЂР°Р·РјРµСЂС‹ РїРѕ РјРѕРґРµР»Рё
 	virtual cEffect* CreateScaledEffect(EffectKey& el,cObjectNodeRoot* models,bool auto_delete_after_life=false);
 	virtual cEffect* CreateScaledEffect(EffectKey& el,cObject3dx* models,bool auto_delete_after_life=false);
 
-	// функции для работы с полигональным объектом
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РїРѕР»РёРіРѕРЅР°Р»СЊРЅС‹Рј РѕР±СЉРµРєС‚РѕРј
 	virtual cPlane* CreatePlaneObj();
 
 	virtual cIUnkClass* CreateZPlaneObj(const char* Tex0,const char* Tex1,float k0,float k1,int op,float v0x,float v0y,float v1x,float v1y);
@@ -55,28 +55,28 @@ public:
 	virtual cIUnkClass* CreateBox(Vect3f size,LPCSTR str_cube);
 	virtual cIUnkClass* CreateSkySpere(LPCSTR str_name,LPCSTR str_texture,int h_size);
 
-	// функции для работы с диспетчером регионов
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РґРёСЃРїРµС‚С‡РµСЂРѕРј СЂРµРіРёРѕРЅРѕРІ
 	virtual class FieldDispatcher* CreateForceFieldDispatcher(int xmax,int ymax, int zeroLayerHeight, const char* TextureName1=0, const char* TextureName2=0);
 	virtual class cExternalObj* CreateExternalObj(ExternalObjFunction func, const char* TextureName1=0);
 
-	// функции для работы с ElasticSphere
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ ElasticSphere
 	virtual cIUnkClass* CreateElasticSphere(const char* TextureName1=0, const char* TextureName2=0);
 
-	// функции для работы с картой мира
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РєР°СЂС‚РѕР№ РјРёСЂР°
 	virtual class cTileMap* CreateMap(class TerraInterface* terra,int zeroplastnumber=0);
 	virtual bool Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace=0);
 
-	// эффекты верхнего уровня
+	// СЌС„С„РµРєС‚С‹ РІРµСЂС…РЅРµРіРѕ СѓСЂРѕРІРЅСЏ
 	virtual void AttachObj(cIUnkClass *UObj);
 	virtual void DetachObj(cIUnkClass *UObj);
 
-	// работа с анимацией сцены
+	// СЂР°Р±РѕС‚Р° СЃ Р°РЅРёРјР°С†РёРµР№ СЃС†РµРЅС‹
 	inline double GetCurrentTime()									{ return CurrentTime; }
 
-	// для работы с библиотекой объектов
+	// РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Р±РёР±Р»РёРѕС‚РµРєРѕР№ РѕР±СЉРµРєС‚РѕРІ
 	cObjLibrary* GetObjLibrary()									{ return ObjLibrary; }
 	virtual void SetObjLibrary(cObjLibrary *pObjLibrary);
-	// доступ к переменным
+	// РґРѕСЃС‚СѓРї Рє РїРµСЂРµРјРµРЅРЅС‹Рј
 	inline int GetNumberLight()									{ return UnkLightArray.size(); }
 	inline cUnkLight* GetLight(int number)						{ return (cUnkLight*)UnkLightArray[number]; }
 	void AttachLight(cUnkLight* ULight);
@@ -86,7 +86,7 @@ public:
 	void GetLighting(Vect3f *LightDirection);
 
 	class cTileMap *GetTileMap(){return TileMap;}
-	// функции для работы с камерами
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РєР°РјРµСЂР°РјРё
 	virtual cCamera* CreateCamera();
 
 	inline Vect2i GetWorldSize(){return Size;}
@@ -113,10 +113,10 @@ public:
 	CRITICAL_SECTION& GetLockDraw(){return lock_draw;}
 private:
 	void Animate();
-	cObjLibrary			*ObjLibrary;				// библиотека 3d-объектов
-	double				CurrentTime,PreviousTime;	// текущее и предыдущее время
-	Vect2i				Size;						// размер мира
-	MTGVector			UnkLightArray;				// массив источников света сцены
+	cObjLibrary			*ObjLibrary;				// Р±РёР±Р»РёРѕС‚РµРєР° 3d-РѕР±СЉРµРєС‚РѕРІ
+	double				CurrentTime,PreviousTime;	// С‚РµРєСѓС‰РµРµ Рё РїСЂРµРґС‹РґСѓС‰РµРµ РІСЂРµРјСЏ
+	Vect2i				Size;						// СЂР°Р·РјРµСЂ РјРёСЂР°
+	MTGVector			UnkLightArray;				// РјР°СЃСЃРёРІ РёСЃС‚РѕС‡РЅРёРєРѕРІ СЃРІРµС‚Р° СЃС†РµРЅС‹
 	sGrid2d				grid;
 	QuatTree			tree;
 

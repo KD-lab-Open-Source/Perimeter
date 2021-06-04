@@ -228,7 +228,7 @@ void DrawBWCyrcle(int r, unsigned char * bitmap, int xcenter, int ycenter, int s
 		unsigned char mask=x&0x07; mask=0x80>>mask;
 		bitmap[(x>>3) + (y*(sizex>>3))] |=mask;
 	}
-	//Ñòàâèì òî÷êó â öåíòğå
+	//Ğ¡Ñ‚Ğ°Ğ²Ğ¸Ğ¼ Ñ‚Ğ¾Ñ‡ĞºÑƒ Ğ² Ñ†ĞµĞ½Ñ‚Ñ€Ğµ
 	int x=xcenter; int y=ycenter;
 	unsigned char mask=x&0x07; mask=0x80>>mask;
 	bitmap[(x>>3) + (y*(sizex>>3))] |=mask;
@@ -266,7 +266,7 @@ void DrawBWQuadrate(int r, unsigned char * bitmap, int xcenter, int ycenter, int
 		mask=x&0x07; mask=0x80>>mask;
 		bitmap[(x>>3) + (y*(sizex>>3))] |=mask;
 	}
-	//Ñòàâèì òî÷êó â öåíòğå
+	//Ğ¡Ñ‚Ğ°Ğ²Ğ¸Ğ¼ Ñ‚Ğ¾Ñ‡ĞºÑƒ Ğ² Ñ†ĞµĞ½Ñ‚Ñ€Ğµ
 	int x=xcenter; int y=ycenter;
 	unsigned char mask=x&0x07; mask=0x80>>mask;
 	bitmap[(x>>3) + (y*(sizex>>3))] |=mask;

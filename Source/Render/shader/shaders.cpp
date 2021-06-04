@@ -6,14 +6,14 @@
 #define VAR_HANDLE(x) GetVariableByName(x,#x);
 
 /*
-О HLSL:
- Для ускорения 
-	вместо
+Рћ HLSL:
+ Р”Р»СЏ СѓСЃРєРѕСЂРµРЅРёСЏ 
+	РІРјРµСЃС‚Рѕ
 		pConstantTable->SetFloat
-	используется
+	РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ
 		gb_RenderDevice3D->SetVertexShaderConstant
 
-  Константы по умолчанию не устанапливаются!!!
+  РљРѕРЅСЃС‚Р°РЅС‚С‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РЅРµ СѓСЃС‚Р°РЅР°РїР»РёРІР°СЋС‚СЃСЏ!!!
   
 */
 
@@ -206,7 +206,7 @@ void cVertexShader::GetVariableByName(SHADER_HANDLE& sh,const char* name)
 	ConstShaderInfo& desc=pShaderInfo[i];
 	if(!pShader.empty() && sh.num_register)
 	{
-		//Потому как SHADER_HANDLE один, а шейдеров много
+		//РџРѕС‚РѕРјСѓ РєР°Рє SHADER_HANDLE РѕРґРёРЅ, Р° С€РµР№РґРµСЂРѕРІ РјРЅРѕРіРѕ
 		VISASSERT(sh.begin_register==desc.begin_register && sh.num_register==desc.num_register);
 	}
 	sh.begin_register=desc.begin_register;

@@ -4,21 +4,21 @@
 
 enum eModeRenderDevice
 {
-	RENDERDEVICE_MODE_WINDOW	=	1<<0,	// âûâîä â îêíî
+	RENDERDEVICE_MODE_WINDOW	=	1<<0,	// Ð²Ñ‹Ð²Ð¾Ð´ Ð² Ð¾ÐºÐ½Ð¾
 
 	//d3d only
-	RENDERDEVICE_MODE_RGB16		=	1<<8,	// 16 áèòíûé öâåò
-	RENDERDEVICE_MODE_RGB32		=	1<<9,	// 32 áèòíûé öâåò
-	RENDERDEVICE_MODE_COMPRESS	=	1<<10,	// êîìïðåñîâàííûå òåêñòóðû
-	RENDERDEVICE_MODE_VSYNC		=	1<<11,	// èñïîëüçîâàòü âåðòèêàëüíóþ ñèíõðîíèçàöèþ
+	RENDERDEVICE_MODE_RGB16		=	1<<8,	// 16 Ð±Ð¸Ñ‚Ð½Ñ‹Ð¹ Ñ†Ð²ÐµÑ‚
+	RENDERDEVICE_MODE_RGB32		=	1<<9,	// 32 Ð±Ð¸Ñ‚Ð½Ñ‹Ð¹ Ñ†Ð²ÐµÑ‚
+	RENDERDEVICE_MODE_COMPRESS	=	1<<10,	// ÐºÐ¾Ð¼Ð¿Ñ€ÐµÑÐ¾Ð²Ð°Ð½Ð½Ñ‹Ðµ Ñ‚ÐµÐºÑÑ‚ÑƒÑ€Ñ‹
+	RENDERDEVICE_MODE_VSYNC		=	1<<11,	// Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ Ð²ÐµÑ€Ñ‚Ð¸ÐºÐ°Ð»ÑŒÐ½ÑƒÑŽ ÑÐ¸Ð½Ñ…Ñ€Ð¾Ð½Ð¸Ð·Ð°Ñ†Ð¸ÑŽ
 	RENDERDEVICE_MODE_STRENCIL	=	1<<12,
-	RENDERDEVICE_MODE_Z24		=	1<<13,	// 24 áèòíûé  
+	RENDERDEVICE_MODE_Z24		=	1<<13,	// 24 Ð±Ð¸Ñ‚Ð½Ñ‹Ð¹  
 	RENDERDEVICE_MODE_REF		=	1<<14,
 	RENDERDEVICE_MODE_MULTITHREAD = 1<<15,
-	RENDERDEVICE_MODE_ALPHA		=   1<<16,  //Ïðè ñîçäàíèè rendertarget èñïîëüçîâàòü alpha 
+	RENDERDEVICE_MODE_ALPHA		=   1<<16,  //ÐŸÑ€Ð¸ ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ð¸ rendertarget Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ alpha 
 
 	//Internal
-	RENDERDEVICE_MODE_RETURNERROR=	1<<17, //Òîëüêî äëÿ ChangeSize
+	RENDERDEVICE_MODE_RETURNERROR=	1<<17, //Ð¢Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ ChangeSize
 	RENDERDEVICE_MODE_ONEBACKBUFFER=1<<18,
 };
 
@@ -133,7 +133,7 @@ public:
 
 	virtual bool IsFullScreen() {return false;}
 	
-	virtual int Done()															{ return -1; } // çàêðûòèå ãðàôè÷åñêîãî ðåæèìà
+	virtual int Done()															{ return -1; } // Ð·Ð°ÐºÑ€Ñ‹Ñ‚Ð¸Ðµ Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¾Ð³Ð¾ Ñ€ÐµÐ¶Ð¸Ð¼Ð°
 
 	virtual int BeginScene()													{ return -1; }
 	virtual int EndScene()														{ return -1; }
@@ -141,7 +141,7 @@ public:
 	virtual int Flush(HWND wnd=NULL)											{ return -1; }
 	virtual int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f)		{ return -1; }
 
-	// âñïîìîãàòåëüíûå ôóíêöèè, ìîãóò áûòü íå ðåàëèçîâàíû
+	// Ð²ÑÐ¿Ð¾Ð¼Ð¾Ð³Ð°Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸, Ð¼Ð¾Ð³ÑƒÑ‚ Ð±Ñ‹Ñ‚ÑŒ Ð½Ðµ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð¾Ð²Ð°Ð½Ñ‹
 	virtual int	GetSizeX()														{ return 0; }
 	virtual int	GetSizeY()														{ return 0; }
 	virtual void* GetStripBuffer()												{	return NULL;}
@@ -160,8 +160,8 @@ public:
 	virtual float GetFontLength(const char *string)									{ return -1; }
 	virtual float GetCharLength(const char c)=0;
 
-	/*Âíóòðåííèé ìòîä. Èñïîëüçîâàòü ñ êðàéíåé îñòîðîæíîñòüþ.
-	  Ïåðåä èñïîëüçîâàíèåì ïîñìîòðåòü êàê èñïîëüçóåòñÿ âíóòðè Render.
+	/*Ð’Ð½ÑƒÑ‚Ñ€ÐµÐ½Ð½Ð¸Ð¹ Ð¼Ñ‚Ð¾Ð´. Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ Ñ ÐºÑ€Ð°Ð¹Ð½ÐµÐ¹ Ð¾ÑÑ‚Ð¾Ñ€Ð¾Ð¶Ð½Ð¾ÑÑ‚ÑŒÑŽ.
+	  ÐŸÐµÑ€ÐµÐ´ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ð½Ð¸ÐµÐ¼ Ð¿Ð¾ÑÐ¼Ð¾Ñ‚Ñ€ÐµÑ‚ÑŒ ÐºÐ°Ðº Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ÑÑ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ Render.
 	*/
 	virtual void ChangeTextColor(const char* &str,sColor4c& diffuse)=0;
 
@@ -170,11 +170,11 @@ public:
 	virtual void OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax)	{ }
 	virtual void OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
 		                 cTexture* pTexture,eColorMode mode,
-						 Vect2f uv,//Êîîðäèíàòû òåêñòóðû â òî÷êå x,y
-						 Vect2f duv,//du,dv íà îäèí ëîãè÷åñêèé ïèêñåëü 
-						//(ëîã ïèêñåëü ðàâåí ãðàôè÷åñêîìó â ðàçðåøåíèè 1024x768)
+						 Vect2f uv,//ÐšÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ñ‚ÐµÐºÑÑ‚ÑƒÑ€Ñ‹ Ð² Ñ‚Ð¾Ñ‡ÐºÐµ x,y
+						 Vect2f duv,//du,dv Ð½Ð° Ð¾Ð´Ð¸Ð½ Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ð¿Ð¸ÐºÑÐµÐ»ÑŒ 
+						//(Ð»Ð¾Ð³ Ð¿Ð¸ÐºÑÐµÐ»ÑŒ Ñ€Ð°Ð²ÐµÐ½ Ð³Ñ€Ð°Ñ„Ð¸Ñ‡ÐµÑÐºÐ¾Ð¼Ñƒ Ð² Ñ€Ð°Ð·Ñ€ÐµÑˆÐµÐ½Ð¸Ð¸ 1024x768)
 						float phase=0,
-						float lerp_factor=1//0..1 Íàñêîëüêî ñèëüíî âëèÿåò pTexture
+						float lerp_factor=1//0..1 ÐÐ°ÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÑÐ¸Ð»ÑŒÐ½Ð¾ Ð²Ð»Ð¸ÑÐµÑ‚ pTexture
 						 ) { }
 
 
@@ -233,7 +233,7 @@ public:
 cInterfaceRenderDevice* CreateIRenderDevice();
 
 
-//Èç RenderDevice.h
+//Ð˜Ð· RenderDevice.h
 enum eSurfaceFormat
 {
 	SURFMT_COLOR		=	0,
@@ -244,7 +244,7 @@ enum eSurfaceFormat
 	SURFMT_COLOR32,
 	SURFMT_COLORALPHA32,
 	SURFMT_RENDERMAP_FLOAT,
-	SURFMT_GRAYALPHA,//A8L8 - â ëóäøåì ñëó÷àå
+	SURFMT_GRAYALPHA,//A8L8 - Ð² Ð»ÑƒÐ´ÑˆÐµÐ¼ ÑÐ»ÑƒÑ‡Ð°Ðµ
 	SURFMT_UV,
 	SURFMT_U16V16,
 	SURFMT_NUMBER

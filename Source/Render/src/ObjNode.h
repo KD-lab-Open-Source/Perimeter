@@ -31,12 +31,12 @@ class cObjectGroup : public cBaseNode<class cObjectGroup>
 {
 protected:
 	/*
-		Введён для ускорения работы. 
-		Так как груп значительно меньше, чем объектов.
+		Р’РІРµРґС‘РЅ РґР»СЏ СѓСЃРєРѕСЂРµРЅРёСЏ СЂР°Р±РѕС‚С‹. 
+		РўР°Рє РєР°Рє РіСЂСѓРї Р·РЅР°С‡РёС‚РµР»СЊРЅРѕ РјРµРЅСЊС€Рµ, С‡РµРј РѕР±СЉРµРєС‚РѕРІ.
 	*/
 	friend class cObjectNode;
 	friend class cObjectNodeRoot;
-	int			ChannelNumber;			// номер текущей анимационной цепочки
+	int			ChannelNumber;			// РЅРѕРјРµСЂ С‚РµРєСѓС‰РµР№ Р°РЅРёРјР°С†РёРѕРЅРЅРѕР№ С†РµРїРѕС‡РєРё
 	float 		phase;
 	cObjectNode* lod;
 public:
@@ -48,7 +48,7 @@ protected:
 };
 
 class cObjectNode : public cIUnkObj, public cBaseNode <class cObjectNode>
-{ // класс группы объектов
+{ // РєР»Р°СЃСЃ РіСЂСѓРїРїС‹ РѕР±СЉРµРєС‚РѕРІ
 protected:
 	friend class cObjLibrary;
 	friend class cObjectNodeRoot;
@@ -67,13 +67,13 @@ public:
 
 	cObjectNode(int kind=KIND_OBJ_NODE);
 	virtual ~cObjectNode();
-	// общие интерфейсные функции унаследованы от cUnkObj
+	// РѕР±С‰РёРµ РёРЅС‚РµСЂС„РµР№СЃРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cUnkObj
 	virtual void SetPosition(const MatXf& Matrix);
 
-	//SetRotate(NULL) - запретить вращение, предпочтительнее, чем SetRotate(&Mat3f::ID);
+	//SetRotate(NULL) - Р·Р°РїСЂРµС‚РёС‚СЊ РІСЂР°С‰РµРЅРёРµ, РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅРµРµ, С‡РµРј SetRotate(&Mat3f::ID);
 	virtual void SetRotate(Mat3f* rotate);
 
-	//specular->a -> 0 - цвет по умолчанию, 1 - устанавливаемый цвет.
+	//specular->a -> 0 - С†РІРµС‚ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, 1 - СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРјС‹Р№ С†РІРµС‚.
 	virtual void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0);
 	virtual float GetBoundRadius();
 
@@ -101,21 +101,21 @@ public:
 	virtual void SetTexture(cTexture *Tex1,cTexture *Tex2);
 	virtual void CalcObj();
 
-	// функции cObjectNode
+	// С„СѓРЅРєС†РёРё cObjectNode
 	void CalcMatrix();
-	cObjectNode* FindObject(const char *name);						// поиск группы по имени объекта в группе или имени самой группы
+	cObjectNode* FindObject(const char *name);						// РїРѕРёСЃРє РіСЂСѓРїРїС‹ РїРѕ РёРјРµРЅРё РѕР±СЉРµРєС‚Р° РІ РіСЂСѓРїРїРµ РёР»Рё РёРјРµРЅРё СЃР°РјРѕР№ РіСЂСѓРїРїС‹
 	virtual cIUnkClass* NextObject(cIUnkClass *UObj);
 	
 	const char* GetNameObj() const;
 	void SetGroup(bool is_group);
 
-	// инлайновые функции доступа к переменным
+	// РёРЅР»Р°Р№РЅРѕРІС‹Рµ С„СѓРЅРєС†РёРё РґРѕСЃС‚СѓРїР° Рє РїРµСЂРµРјРµРЅРЅС‹Рј
 	inline cAnimChannelNode* GetAnimChannel()					{ return AnimChannel; }
 	void SetAnimChannel(cAnimChannelNode* p)					{ AnimChannel=p; }
 
-	// общие интерфейсные функции унаследованы от cUnkObj
-	void AttachChild(cObjectNode *child);						// присоединение ребенка к дереву 
-	void DetachChild(cObjectNode *child);						// отсоединение ребенка от дерева 
+	// РѕР±С‰РёРµ РёРЅС‚РµСЂС„РµР№СЃРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cUnkObj
+	void AttachChild(cObjectNode *child);						// РїСЂРёСЃРѕРµРґРёРЅРµРЅРёРµ СЂРµР±РµРЅРєР° Рє РґРµСЂРµРІСѓ 
+	void DetachChild(cObjectNode *child);						// РѕС‚СЃРѕРµРґРёРЅРµРЅРёРµ СЂРµР±РµРЅРєР° РѕС‚ РґРµСЂРµРІР° 
 	
 	inline cObjectNode* GetSibling() const						{ return Sibling; }
 	inline cObjectNode* GetChild() const						{ return Child; }
@@ -144,7 +144,7 @@ protected:
 	
 	virtual void GetBoundingBox(Vect3f &min,Vect3f &max);
 
-	//Для void SetTexture(cTexture *Tex1,cTexture *Tex2);
+	//Р”Р»СЏ void SetTexture(cTexture *Tex1,cTexture *Tex2);
 	struct AnotherMaterial
 	{
 		class cMeshBank* pOriginalMaterial;
@@ -211,9 +211,9 @@ class cObjectNodeRoot : public cObjectNode,public cEmitter3dObject
 protected:
 	friend class cObjLibrary;
 	AllAnotherMaterial* AnnoterRoot;
-	string				fname;		// имя файла из которого загружен
+	string				fname;		// РёРјСЏ С„Р°Р№Р»Р° РёР· РєРѕС‚РѕСЂРѕРіРѕ Р·Р°РіСЂСѓР¶РµРЅ
 	sBound*				Base;
-	Vect3f				Scale;	// масштаб
+	Vect3f				Scale;	// РјР°СЃС€С‚Р°Р±
 	vector<cObjectNode*> all_child;
 	vector<cObjMesh*>	 mesh_child;
 	vector<cObjLight*>	 light_child;
@@ -278,7 +278,7 @@ public:
 
 	void RootLodRelease(){RELEASE(RootLod);}
 
-	//Функции упрощённого доступа к геометрии объекта
+	//Р¤СѓРЅРєС†РёРё СѓРїСЂРѕС‰С‘РЅРЅРѕРіРѕ РґРѕСЃС‚СѓРїР° Рє РіРµРѕРјРµС‚СЂРёРё РѕР±СЉРµРєС‚Р°
 	void GetAllPoints(vector<Vect3f>& point);
 	void GetAllNormals(vector<Vect3f>& point);
 	void GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& polygon);

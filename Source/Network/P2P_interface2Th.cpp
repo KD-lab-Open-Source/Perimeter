@@ -132,7 +132,7 @@ bool PNetCenter::SecondThread(void)
 	m_state=PNC_STATE__CLIENT_FIND_HOST;
 
 
-	//Инициализация завершена - XDPConnection создан
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р·Р°РІРµСЂС€РµРЅР° - XDPConnection СЃРѕР·РґР°РЅ
 	SetEvent(hSecondThreadInitComplete);
 
 	bool flag_end=0;
@@ -142,7 +142,7 @@ bool PNetCenter::SecondThread(void)
 		//decoding command 
 		if(internalCommandList.size() > 0){
 			e_PNCInternalCommand curInternalCommand;
-			//{ //Сейчас сделано так, что нельзя поместить команду если другая выполняется
+			//{ //РЎРµР№С‡Р°СЃ СЃРґРµР»Р°РЅРѕ С‚Р°Рє, С‡С‚Рѕ РЅРµР»СЊР·СЏ РїРѕРјРµСЃС‚РёС‚СЊ РєРѕРјР°РЅРґСѓ РµСЃР»Рё РґСЂСѓРіР°СЏ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ
 			curInternalCommand=*internalCommandList.begin();
 			internalCommandList.pop_front();
 			//}
@@ -198,7 +198,7 @@ bool PNetCenter::SecondThread(void)
 					m_bStarted = false;
 
 					////if(WaitForSingleObject(hStartServer, INFINITE) != WAIT_OBJECT_0) xassert(0&&"Network server: run error.");
-					m_state=PNC_STATE__HOST_TUNING_GAME; //Необходимо для DPN_MSGID_ENUM_HOSTS_QUERY чтоб сразу выдавал правильную инфу
+					m_state=PNC_STATE__HOST_TUNING_GAME; //РќРµРѕР±С…РѕРґРёРјРѕ РґР»СЏ DPN_MSGID_ENUM_HOSTS_QUERY С‡С‚РѕР± СЃСЂР°Р·Сѓ РІС‹РґР°РІР°Р» РїСЂР°РІРёР»СЊРЅСѓСЋ РёРЅС„Сѓ
 					StopFindHostDP();
 
 					LogMsg("starting server...");
@@ -251,13 +251,13 @@ bool PNetCenter::SecondThread(void)
 					///}
 					///else xassert(0&&"Disconnect: command order error(not game)");
 				}
-				//break; !!!Специально!!!
+				//break; !!!РЎРїРµС†РёР°Р»СЊРЅРѕ!!!
 			case PNC_COMMAND__STOP_HOST_AND_ABORT_GAME_AND_START_FIND_HOST:
 				{
 					m_bStarted = false;
 					if(isConnected()) {
 						Close();
-						Init();//Close DirectPlay-я выполняет полную деинициализацию
+						Init();//Close DirectPlay-СЏ РІС‹РїРѕР»РЅСЏРµС‚ РїРѕР»РЅСѓСЋ РґРµРёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ
 					}
 					StartFindHostDP();
 					m_state=PNC_STATE__CLIENT_FIND_HOST;
@@ -270,7 +270,7 @@ bool PNetCenter::SecondThread(void)
 					m_bStarted = false;
 					if(isConnected()) {
 						if(isHost()){
-							//Гарантированная отсылка последнего кванта
+							//Р“Р°СЂР°РЅС‚РёСЂРѕРІР°РЅРЅР°СЏ РѕС‚СЃС‹Р»РєР° РїРѕСЃР»РµРґРЅРµРіРѕ РєРІР°РЅС‚Р°
 							netCommandNextQuant com(m_numberGameQuant, 0, hostGeneralCommandCounter, 0);
 							SendEvent(com, DPNID_ALL_PLAYERS_GROUP, true);
 						}
@@ -327,7 +327,7 @@ bool PNetCenter::SecondThread(void)
 
 		delete _pLock;
 
-		if(flag_end) break; //для быстрого выхода
+		if(flag_end) break; //РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РІС‹С…РѕРґР°
 
 		//Logic quant
 		
@@ -353,7 +353,7 @@ bool PNetCenter::SecondThread(void)
 
 	StopFindHostDP();
 
-	SetConnectionTimeout(1);//Для быстрого завершения
+	SetConnectionTimeout(1);//Р”Р»СЏ Р±С‹СЃС‚СЂРѕРіРѕ Р·Р°РІРµСЂС€РµРЅРёСЏ
 	//if(m_pConnection->Connected()) m_pConnection->Close();
 	Close();
 
@@ -375,7 +375,7 @@ void PNetCenter::Start()
 
 void PNetCenter::UpdateBattleData()
 {
-	//!!! Сервер не может нормально сконфигурить игру
+	//!!! РЎРµСЂРІРµСЂ РЅРµ РјРѕР¶РµС‚ РЅРѕСЂРјР°Р»СЊРЅРѕ СЃРєРѕРЅС„РёРіСѓСЂРёС‚СЊ РёРіСЂСѓ
 	///MissionDescription battle(m_missionName.c_str());
 
 	if(hostMissionDescription.gameType_==GT_createMPGame){
@@ -447,7 +447,7 @@ void PNetCenter::ResetAllClients()
 	for(k=m_clients.begin(); k!=m_clients.end(); k++){
 		///ResetEvent(i->second->m_hReady);
 		(*k)->m_flag_Ready=0;
-		(*k)->lastTimeBackPacket=curTime;//Необходимо для корректного начального таймаута
+		(*k)->lastTimeBackPacket=curTime;//РќРµРѕР±С…РѕРґРёРјРѕ РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ РЅР°С‡Р°Р»СЊРЅРѕРіРѕ С‚Р°Р№РјР°СѓС‚Р°
 		(*k)->backGameInf2List.clear();
 	}
 }
@@ -469,7 +469,7 @@ void PNetCenter::DumpClients()
 
 bool PNetCenter::AddClientToMigratedHost(const DPNID _dpnid, unsigned int _curLastQuant, unsigned int _confirmQuant)
 {
-	//поиск есть-ли такой клиент
+	//РїРѕРёСЃРє РµСЃС‚СЊ-Р»Рё С‚Р°РєРѕР№ РєР»РёРµРЅС‚
 	ClientMapType::iterator p;
 	for(p=m_clients.begin(); p!=m_clients.end(); p++){
 		if( (*p)->dpnidPlayer == _dpnid) return 0;
@@ -528,7 +528,7 @@ void PNetCenter::LLogicQuant()
 {
 	//LogMsg("q=%d\n", m_nQuantDelay + nDbgServerLag + int(nDbgServerLagNoise*float(rand())/RAND_MAX));
 
-	//Не залоченный поток !
+	//РќРµ Р·Р°Р»РѕС‡РµРЅРЅС‹Р№ РїРѕС‚РѕРє !
 	//CAutoLock* _pLock=new CAutoLock(&m_GeneralLock);
 	//delete _pLock;
 
@@ -598,7 +598,7 @@ void PNetCenter::LLogicQuant()
 				LogMsg("Wait for all clients ready. \n");
 				///WaitForAllClientsReady(nWaitClientsReady*1000);
 
-				//Для удаления игроков отпавших при загрузке
+				//Р”Р»СЏ СѓРґР°Р»РµРЅРёСЏ РёРіСЂРѕРєРѕРІ РѕС‚РїР°РІС€РёС… РїСЂРё Р·Р°РіСЂСѓР·РєРµ
 				ClearDeletePlayerGameCommand();
 
 				m_state=PNC_STATE__HOST_LOADING_GAME;
@@ -654,7 +654,7 @@ void PNetCenter::LLogicQuant()
 
 			///list<netCommand4H_BackGameInformation*>::iterator m;
 			vector<netCommand4H_BackGameInformation2> & firstList=(*m_clients.begin())->backGameInf2List;
-			while(!firstList.empty()) { //проверка что первый список не пустой
+			while(!firstList.empty()) { //РїСЂРѕРІРµСЂРєР° С‡С‚Рѕ РїРµСЂРІС‹Р№ СЃРїРёСЃРѕРє РЅРµ РїСѓСЃС‚РѕР№
 				ClientMapType::iterator k=m_clients.begin();
 				k++;
 				unsigned int countCompare=0;
@@ -685,7 +685,7 @@ void PNetCenter::LLogicQuant()
 								return;
 							}
 							else {
-								// Сравнение для netCommand4H_BackGameInformation2
+								// РЎСЂР°РІРЅРµРЅРёРµ РґР»СЏ netCommand4H_BackGameInformation2
 								if( (*firstList.begin()).signature_ != (*secondList.begin()).signature_ ){
 									SendEvent(netCommand4C_SaveLog(), DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
 									XBuffer to(1024,1);
@@ -700,10 +700,10 @@ void PNetCenter::LLogicQuant()
 									return;
 								}
 							}
-							///else xassert(0 && "Нераспознанная десинхронизация");
+							///else xassert(0 && "РќРµСЂР°СЃРїРѕР·РЅР°РЅРЅР°СЏ РґРµСЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ");
 						}
 					}
-					else goto end_while_01; //break; //завершение while если один из спмсков кончится раньше первого
+					else goto end_while_01; //break; //Р·Р°РІРµСЂС€РµРЅРёРµ while РµСЃР»Рё РѕРґРёРЅ РёР· СЃРїРјСЃРєРѕРІ РєРѕРЅС‡РёС‚СЃСЏ СЂР°РЅСЊС€Рµ РїРµСЂРІРѕРіРѕ
 				}
 				if(countCompare+1>=m_clients.size()) {
 						quantConfirmation=(*(*m_clients.begin())->backGameInf2List.begin()).quant_;
@@ -724,10 +724,10 @@ end_while_01:;
 			unsigned int maxInternalLagQuant=0;
 			unsigned short minClientExecutionQuat=m_numberGameQuant;
 			for(k=m_clients.begin(); k!=m_clients.end(); k++){
-				if((*k)->lagQuant > maxInternalLagQuant) {//Для подгонки всех клиентов
+				if((*k)->lagQuant > maxInternalLagQuant) {//Р”Р»СЏ РїРѕРґРіРѕРЅРєРё РІСЃРµС… РєР»РёРµРЅС‚РѕРІ
 					maxInternalLagQuant=(*k)->lagQuant; 
 				}
-				if((*k)->lastExecuteQuant < minClientExecutionQuat) {//Для подгонки всех клиентов
+				if((*k)->lastExecuteQuant < minClientExecutionQuat) {//Р”Р»СЏ РїРѕРґРіРѕРЅРєРё РІСЃРµС… РєР»РёРµРЅС‚РѕРІ
 					minClientExecutionQuat=(*k)->lastExecuteQuant;
 				}
 				if(clocki() > ((*k)->lastTimeBackPacket + TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION)){
@@ -736,7 +736,7 @@ end_while_01:;
 					if(n!=-1) { notResponceClientList+=hostMissionDescription.playersData[n].name(); notResponceClientList+=' '; }
 				}
 			}
-			/// Подгонка под всех клиентов !
+			/// РџРѕРґРіРѕРЅРєР° РїРѕРґ РІСЃРµС… РєР»РёРµРЅС‚РѕРІ !
 			//const unsigned int MAX_LAG_QUANT_WAIT=4;
 			//if(maxInternalLagQuant > MAX_LAG_QUANT_WAIT) m_nextQuantTime+=m_quantInterval*(maxInternalLagQuant/2);
 			const unsigned int MAX_EXTERNAL_LAG_QUANT_WAIT=8*3;
@@ -768,13 +768,13 @@ end_while_01:;
 			}
 			for(k=m_clients.begin(); k!=m_clients.end(); k++){
 				if((*k)->requestPause && ((clocki()-(*k)->timeRequestPause) > MAX_TIME_PAUSE_GAME) ) {
-					RemovePlayer((*k)->dpnidPlayer); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
-					break;//по одному клиенту за квант!
+					RemovePlayer((*k)->dpnidPlayer); //РџРѕР»РЅРѕРµ СѓРґР°Р»РµРЅРёРµ РїРѕ DPN_MSGID_DESTROY_PLAYER
+					break;//РїРѕ РѕРґРЅРѕРјСѓ РєР»РёРµРЅС‚Сѓ Р·Р° РєРІР°РЅС‚!
 				}
 			}
 
 			if(hostPause && (!flag_requestPause) ){
-				//Отмена паузы
+				//РћС‚РјРµРЅР° РїР°СѓР·С‹
 				netCommand4C_Pause ncp(playersIDArr, false);
 				SendEvent(ncp, DPNID_ALL_PLAYERS_GROUP);
 				hostPause=false;
@@ -787,7 +787,7 @@ end_while_01:;
 			if(hostPause)
 				break;
 
-			//перенесение всех команд удаления в список комманд на выполнение
+			//РїРµСЂРµРЅРµСЃРµРЅРёРµ РІСЃРµС… РєРѕРјР°РЅРґ СѓРґР°Р»РµРЅРёСЏ РІ СЃРїРёСЃРѕРє РєРѕРјРјР°РЅРґ РЅР° РІС‹РїРѕР»РЅРµРЅРёРµ
 			list<netCommand4G_ForcedDefeat*>::iterator p;
 			for(p=m_DeletePlayerCommand.begin(); p!=m_DeletePlayerCommand.end(); p++){
 				PutGameCommand2Queue_andAutoDelete(*p);
@@ -795,20 +795,20 @@ end_while_01:;
 			m_DeletePlayerCommand.clear();
 
 
-			//Установка последней команде, признака, последняя
+			//РЈСЃС‚Р°РЅРѕРІРєР° РїРѕСЃР»РµРґРЅРµР№ РєРѕРјР°РЅРґРµ, РїСЂРёР·РЅР°РєР°, РїРѕСЃР»РµРґРЅСЏСЏ
 			if(!m_CommandList.empty()){
 				list<netCommandGeneral*>::iterator p=m_CommandList.end();
-				p--; //последняя команда
+				p--; //РїРѕСЃР»РµРґРЅСЏСЏ РєРѕРјР°РЅРґР°
 				if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND || (*p)->EventID==NETCOM_4G_ID_REGION || (*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
 					(static_cast<netCommandGame*>(*p))->setFlagLastCommandInQuant();
 				}
 				else xassert("Error in commands list on server");
 			}
 
-			///hostGeneralCommandCounter+=m_CommandList.size(); //сейчас добавляется при PutGameCommand2Queue_andAutoDelete
+			///hostGeneralCommandCounter+=m_CommandList.size(); //СЃРµР№С‡Р°СЃ РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РїСЂРё PutGameCommand2Queue_andAutoDelete
 
 			if(0){
-				static bool flag_timeOut=0; //Надо перенести в тело класса!!!
+				static bool flag_timeOut=0; //РќР°РґРѕ РїРµСЂРµРЅРµСЃС‚Рё РІ С‚РµР»Рѕ РєР»Р°СЃСЃР°!!!
 				if(!flag_timeOut) {
 					if(!notResponceClientList.empty()){
 						netCommandNextQuant* pcom=new netCommandNextQuant(m_numberGameQuant, m_nQuantCommandCounter, hostGeneralCommandCounter, quantConfirmation, true);
@@ -835,7 +835,7 @@ end_while_01:;
 				}
 			}
 			else {
-				//Или сверху или это
+				//РР»Рё СЃРІРµСЂС…Сѓ РёР»Рё СЌС‚Рѕ
 				netCommandNextQuant* pcom=new netCommandNextQuant(m_numberGameQuant, m_nQuantCommandCounter, hostGeneralCommandCounter, quantConfirmation);
 				m_CommandList.push_back(pcom);
 			}
@@ -847,7 +847,7 @@ end_while_01:;
 				FOR_EACH(m_CommandList, i)
 				{
 					if((**i).EventID==NETCOM_ID_NEXT_QUANT || (**i).EventID==NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
-						SendEvent(**i, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/, false);//Не гарантированная доставка!!!
+						SendEvent(**i, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/, false);//РќРµ РіР°СЂР°РЅС‚РёСЂРѕРІР°РЅРЅР°СЏ РґРѕСЃС‚Р°РІРєР°!!!
 					}
 					else { 
 						SendEvent(**i, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
@@ -877,30 +877,30 @@ end_while_01:;
 		break;
 	case PNC_STATE__NEWHOST_PHASE_0:
 		{
-			//Ожидание обработки всех комманд игрой
+			//РћР¶РёРґР°РЅРёРµ РѕР±СЂР°Р±РѕС‚РєРё РІСЃРµС… РєРѕРјРјР°РЅРґ РёРіСЂРѕР№
 			{
 				CAutoLock _Lock(&m_GeneralLock); //! Lock
 				if(universe()){
 					if(in_ClientBuf.currentNetCommandID()!=NETCOM_ID_NONE) break;
 					if(universe()->allowedRealizingQuant > universe()->lastRealizedQuant) break;
-					//по идее безопасно вызывать т.к. верхнее условие выполнится только при прошедшем кванте, но лучше переделать
-					universe()->stopGame_HostMigrate();//Очистка всех команд текущего кванта
+					//РїРѕ РёРґРµРµ Р±РµР·РѕРїР°СЃРЅРѕ РІС‹Р·С‹РІР°С‚СЊ С‚.Рє. РІРµСЂС…РЅРµРµ СѓСЃР»РѕРІРёРµ РІС‹РїРѕР»РЅРёС‚СЃСЏ С‚РѕР»СЊРєРѕ РїСЂРё РїСЂРѕС€РµРґС€РµРј РєРІР°РЅС‚Рµ, РЅРѕ Р»СѓС‡С€Рµ РїРµСЂРµРґРµР»Р°С‚СЊ
+					universe()->stopGame_HostMigrate();//РћС‡РёСЃС‚РєР° РІСЃРµС… РєРѕРјР°РЅРґ С‚РµРєСѓС‰РµРіРѕ РєРІР°РЅС‚Р°
 				}
 				flag_SkipProcessingGameCommand=1;
-				//По идее список пуст т.к. только выполнился ClientPredReceiveQuant
+				//РџРѕ РёРґРµРµ СЃРїРёСЃРѕРє РїСѓСЃС‚ С‚.Рє. С‚РѕР»СЊРєРѕ РІС‹РїРѕР»РЅРёР»СЃСЏ ClientPredReceiveQuant
 				m_DPPacketList.clear();
 			}
 
 			///m_dpnidGroupGame=m_groupDPNID;
-			//Разблокирование входных пакетов, заблокированных при поступлении сообщения о смене Host-а
-			//Необходимо для того, чтобы не пропустить сообщение о reJoin-е
+			//Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅРёРµ РІС…РѕРґРЅС‹С… РїР°РєРµС‚РѕРІ, Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹С… РїСЂРё РїРѕСЃС‚СѓРїР»РµРЅРёРё СЃРѕРѕР±С‰РµРЅРёСЏ Рѕ СЃРјРµРЅРµ Host-Р°
+			//РќРµРѕР±С…РѕРґРёРјРѕ РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РЅРµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ Рѕ reJoin-Рµ
 			UnLockInputPacket();
 
-			//Уничтожение всех не выполнившихся команд ?
+			//РЈРЅРёС‡С‚РѕР¶РµРЅРёРµ РІСЃРµС… РЅРµ РІС‹РїРѕР»РЅРёРІС€РёС…СЃСЏ РєРѕРјР°РЅРґ ?
 			///////CAutoLock lock(&m_ClientInOutBuffLock);
 
 			ClearClientData();
-			//Т.к. миграция разрешается только после START_LOAD_GAME clientMissionDescription корректен
+			//Рў.Рє. РјРёРіСЂР°С†РёСЏ СЂР°Р·СЂРµС€Р°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ START_LOAD_GAME clientMissionDescription РєРѕСЂСЂРµРєС‚РµРЅ
 			hostMissionDescription=clientMissionDescription;
 			hostMissionDescription.clearAllPlayerStartReady();
 			//missionDescription.clearAllPlayerGameReady();
@@ -908,7 +908,7 @@ end_while_01:;
 
 			m_beginWaitTime=clocki();
 
-			//очистка InHostBuffer в него пришли уже не те подтверждения!
+			//РѕС‡РёСЃС‚РєР° InHostBuffer РІ РЅРµРіРѕ РїСЂРёС€Р»Рё СѓР¶Рµ РЅРµ С‚Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ!
 			{
 				CAutoLock _Lock(&m_GeneralLock); //! Lock
 				clearInOutClientHostBuffers();
@@ -940,7 +940,7 @@ end_while_01:;
 			}
 			else result=0;
 			
-			if( result==1 ) { //если все существующие в группе игроки
+			if( result==1 ) { //РµСЃР»Рё РІСЃРµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РІ РіСЂСѓРїРїРµ РёРіСЂРѕРєРё
 				unsigned int maxConfirmedQuant=0;
 				///unsigned int maxQuant=0;
 				///unsigned int minQuant=UINT_MAX;
@@ -961,7 +961,7 @@ end_while_01:;
 				netCommand4C_sendLog2Host ncslh(maxConfirmedQuant+1);
 				SendEvent(ncslh, DPNID_ALL_PLAYERS_GROUP);
 
-				///minQuant+=1; //Запрос следующего кванта за мин квантом
+				///minQuant+=1; //Р—Р°РїСЂРѕСЃ СЃР»РµРґСѓСЋС‰РµРіРѕ РєРІР°РЅС‚Р° Р·Р° РјРёРЅ РєРІР°РЅС‚РѕРј
 				///netCommand4C_RequestLastQuantsCommands nc(minQuant);
 				///SendEvent(nc, maxQuantClientDPNID);
 				dpnidClientWhichWeWait=-1;//maxQuantClientDPNID;
@@ -976,7 +976,7 @@ end_while_01:;
 		{
 			//if( ((clocki()-m_beginWaitTime) > MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST) ) {
 			//}
-			if( (dpnidClientWhichWeWait==-1) || (hostMissionDescription.findPlayer(dpnidClientWhichWeWait)==-1) ){ //игрок выбыл до прихода нужных хосту игровых комманд
+			if( (dpnidClientWhichWeWait==-1) || (hostMissionDescription.findPlayer(dpnidClientWhichWeWait)==-1) ){ //РёРіСЂРѕРє РІС‹Р±С‹Р» РґРѕ РїСЂРёС…РѕРґР° РЅСѓР¶РЅС‹С… С…РѕСЃС‚Сѓ РёРіСЂРѕРІС‹С… РєРѕРјРјР°РЅРґ
 				unsigned int maxQuant=0;
 				unsigned int minQuant=UINT_MAX;
 				DPNID maxQuantClientDPNID=0;
@@ -990,7 +990,7 @@ end_while_01:;
 						minQuant=(*p)->curLastQuant;
 					}
 				}
-				minQuant+=1; //Запрос следующего кванта за мин квантом
+				minQuant+=1; //Р—Р°РїСЂРѕСЃ СЃР»РµРґСѓСЋС‰РµРіРѕ РєРІР°РЅС‚Р° Р·Р° РјРёРЅ РєРІР°РЅС‚РѕРј
 				netCommand4C_RequestLastQuantsCommands nc(minQuant);
 				SendEvent(nc, maxQuantClientDPNID);
 				dpnidClientWhichWeWait=maxQuantClientDPNID;
@@ -999,24 +999,24 @@ end_while_01:;
 		break;
 	case PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_0:
 		{
-			//Ожидание обработки всех комманд игрой
+			//РћР¶РёРґР°РЅРёРµ РѕР±СЂР°Р±РѕС‚РєРё РІСЃРµС… РєРѕРјРјР°РЅРґ РёРіСЂРѕР№
 			{
 				CAutoLock _Lock(&m_GeneralLock); //! Lock
 				if(universe()){
 					if(in_ClientBuf.currentNetCommandID()!=NETCOM_ID_NONE) break;
 					if(universe()->allowedRealizingQuant > universe()->lastRealizedQuant) break;
-					//по идее безопасно вызывать т.к. верхнее условие выполнится только при прошедшем кванте, но лучше переделать
-					universe()->stopGame_HostMigrate();//Очистка всех команд текущего кванта
+					//РїРѕ РёРґРµРµ Р±РµР·РѕРїР°СЃРЅРѕ РІС‹Р·С‹РІР°С‚СЊ С‚.Рє. РІРµСЂС…РЅРµРµ СѓСЃР»РѕРІРёРµ РІС‹РїРѕР»РЅРёС‚СЃСЏ С‚РѕР»СЊРєРѕ РїСЂРё РїСЂРѕС€РµРґС€РµРј РєРІР°РЅС‚Рµ, РЅРѕ Р»СѓС‡С€Рµ РїРµСЂРµРґРµР»Р°С‚СЊ
+					universe()->stopGame_HostMigrate();//РћС‡РёСЃС‚РєР° РІСЃРµС… РєРѕРјР°РЅРґ С‚РµРєСѓС‰РµРіРѕ РєРІР°РЅС‚Р°
 				}
 				flag_SkipProcessingGameCommand=1;
-				//По идее список пуст т.к. только выполнился ClientPredReceiveQuant
+				//РџРѕ РёРґРµРµ СЃРїРёСЃРѕРє РїСѓСЃС‚ С‚.Рє. С‚РѕР»СЊРєРѕ РІС‹РїРѕР»РЅРёР»СЃСЏ ClientPredReceiveQuant
 				m_DPPacketList.clear();
 			}
 
-			//Разблокирование входных пакетов, заблокированных при поступлении сообщения о смене Host-а
+			//Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅРёРµ РІС…РѕРґРЅС‹С… РїР°РєРµС‚РѕРІ, Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹С… РїСЂРё РїРѕСЃС‚СѓРїР»РµРЅРёРё СЃРѕРѕР±С‰РµРЅРёСЏ Рѕ СЃРјРµРЅРµ Host-Р°
 			UnLockInputPacket();
 
-			//очистка out_ClientBuf в него пришли уже не те подтверждения!
+			//РѕС‡РёСЃС‚РєР° out_ClientBuf РІ РЅРµРіРѕ РїСЂРёС€Р»Рё СѓР¶Рµ РЅРµ С‚Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ!
 			{
 				CAutoLock _Lock(&m_GeneralLock); //! Lock
 				clearInOutClientHostBuffers();
@@ -1028,10 +1028,10 @@ end_while_01:;
 		break;
 	case PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_AB:
 		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock для senda
+			CAutoLock _Lock(&m_GeneralLock); //! Lock РґР»СЏ senda
 
 			static unsigned char bandPassFilter=0;
-			if((bandPassFilter&0x7)==0){//каждый 8й квант
+			if((bandPassFilter&0x7)==0){//РєР°Р¶РґС‹Р№ 8Р№ РєРІР°РЅС‚
 				netCommand4H_ReJoinRequest ncrjr(universe()->getCurrentGameQuant(), universe()->getConfirmQuant() );
 				SendEvent(ncrjr, m_hostDPNID);
 				///m_state=PNC_STATE__CLIENT_GAME;
@@ -1040,7 +1040,7 @@ end_while_01:;
 
 			if((clocki()-m_beginWaitTime) < MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST){
 			}
-			else { //все время вышло
+			else { //РІСЃРµ РІСЂРµРјСЏ РІС‹С€Р»Рѕ
 			}
 		}
 		break;
@@ -1054,7 +1054,7 @@ end_while_01:;
 		{
 			StopFindHostDP();
 			Close(false);
-			Init();//Close DirectPlay-я выполняет полную деинициализацию
+			Init();//Close DirectPlay-СЏ РІС‹РїРѕР»РЅСЏРµС‚ РїРѕР»РЅСѓСЋ РґРµРёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ
 			CAutoLock _Lock(&m_GeneralLock); //! Lock
 			ClearClients();
 			m_state=PNC_STATE__NONE;
@@ -1081,7 +1081,7 @@ void PNetCenter::ClientPredReceiveQuant()
 	while(p!=m_DPPacketList.end()){
 		if(p->dpnid==m_hostDPNID){
 
-			//отфильтровывание команды
+			//РѕС‚С„РёР»СЊС‚СЂРѕРІС‹РІР°РЅРёРµ РєРѕРјР°РЅРґС‹
 			InOutNetComBuffer tmp(2048, true);
 			tmp.putBufferPacket(p->buffer, p->size);
 			if(tmp.currentNetCommandID()==NETCOM_4C_ID_START_LOAD_GAME){
@@ -1093,7 +1093,7 @@ void PNetCenter::ClientPredReceiveQuant()
 				}
 			}
 
-			//комманды клиенту
+			//РєРѕРјРјР°РЅРґС‹ РєР»РёРµРЅС‚Сѓ
 			if(in_ClientBuf.putBufferPacket(p->buffer, p->size)){
 				p=m_DPPacketList.erase(p);
 				cnt++;
@@ -1114,7 +1114,7 @@ void PNetCenter::HostReceiveQuant()
 	if(flag_LockIputPacket) return; //return 0;
 
 	DPNID dpnid=m_localDPNID;
-	do { //Первый проход для внутреннего клиента
+	do { //РџРµСЂРІС‹Р№ РїСЂРѕС…РѕРґ РґР»СЏ РІРЅСѓС‚СЂРµРЅРЅРµРіРѕ РєР»РёРµРЅС‚Р°
 
 
 		//NETCOM_4H_ID_CHANGE_REAL_PLAYER_TYPE
@@ -1166,23 +1166,23 @@ void PNetCenter::HostReceiveQuant()
 							hostMissionDescription.setChanged();
 							if(dpnid==m_hostDPNID){
 								xassert(ncChRT.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-								if( ncChRT.idxPlayerData_!=hostMissionDescription.findPlayer(m_hostDPNID) ){//Проверка на то, что меняется не у Host-а
-									if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER) ncChRT.newRealPlayerType_=REAL_PLAYER_TYPE_OPEN; //Дополнительная проверка
+								if( ncChRT.idxPlayerData_!=hostMissionDescription.findPlayer(m_hostDPNID) ){//РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ, С‡С‚Рѕ РјРµРЅСЏРµС‚СЃСЏ РЅРµ Сѓ Host-Р°
+									if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER) ncChRT.newRealPlayerType_=REAL_PLAYER_TYPE_OPEN; //Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РїСЂРѕРІРµСЂРєР°
 									if(hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-										//Отбрасывание игрока
+										//РћС‚Р±СЂР°СЃС‹РІР°РЅРёРµ РёРіСЂРѕРєР°
 										DPNID delPlayerDPNID=hostMissionDescription.playersData[ncChRT.idxPlayerData_].dpnid;
 										hostMissionDescription.disconnect2PlayerData(ncChRT.idxPlayerData_);
 										hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
-										RemovePlayer(delPlayerDPNID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
+										RemovePlayer(delPlayerDPNID); //РџРѕР»РЅРѕРµ СѓРґР°Р»РµРЅРёРµ РїРѕ DPN_MSGID_DESTROY_PLAYER
 
 									}
-									else if(hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType==REAL_PLAYER_TYPE_AI){ //Если был AI
+									else if(hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType==REAL_PLAYER_TYPE_AI){ //Р•СЃР»Рё Р±С‹Р» AI
 										if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_CLOSE){
-											//Закрывать AI
+											//Р—Р°РєСЂС‹РІР°С‚СЊ AI
 											hostMissionDescription.disconnect2PlayerData(ncChRT.idxPlayerData_);
 										}
 									}
-									else { //Если был Close Или Open
+									else { //Р•СЃР»Рё Р±С‹Р» Close РР»Рё Open
 										if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_AI){ 
 											hostMissionDescription.connectAI2PlayersData(ncChRT.idxPlayerData_);
 										}
@@ -1201,7 +1201,7 @@ void PNetCenter::HostReceiveQuant()
 
 							hostMissionDescription.setChanged();
 							xassert(ncChB.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-							//Host может менять у любого
+							//Host РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ Сѓ Р»СЋР±РѕРіРѕ
 							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerBelligerent(ncChB.idxPlayerData_, ncChB.newBelligerent_);//
 							else hostMissionDescription.changePlayerBelligerent(dpnid, ncChB.newBelligerent_);//
 						}
@@ -1214,7 +1214,7 @@ void PNetCenter::HostReceiveQuant()
 
 							hostMissionDescription.setChanged();
 							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-							//Host может менять цвет любого
+							//Host РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ С†РІРµС‚ Р»СЋР±РѕРіРѕ
 							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerColor(ncChC.idxPlayerData_, ncChC.newColor_);
 							else hostMissionDescription.changePlayerColor(dpnid, ncChC.newColor_);
 						}
@@ -1226,7 +1226,7 @@ void PNetCenter::HostReceiveQuant()
 
 							hostMissionDescription.setChanged();
 							xassert(ncChD.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-							//Host может менять у любого
+							//Host РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ Сѓ Р»СЋР±РѕРіРѕ
 							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerDifficulty(ncChD.idxPlayerData_, ncChD.difficulty_);
 							else hostMissionDescription.changePlayerDifficulty(dpnid, ncChD.difficulty_);
 						}
@@ -1238,7 +1238,7 @@ void PNetCenter::HostReceiveQuant()
 
 							hostMissionDescription.setChanged();
 							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-							//Host может менять у любого
+							//Host РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ Сѓ Р»СЋР±РѕРіРѕ
 							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerClan(ncChC.idxPlayerData_, ncChC.clan_);
 							else hostMissionDescription.changePlayerClan(dpnid, ncChC.clan_);
 						}
@@ -1250,7 +1250,7 @@ void PNetCenter::HostReceiveQuant()
 
 							hostMissionDescription.setChanged();
 							xassert(ncChH.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-							//Host может менять у любого
+							//Host РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ Сѓ Р»СЋР±РѕРіРѕ
 							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerHandicap(ncChH.idxPlayerData_, ncChH.handicap_);
 							else hostMissionDescription.changePlayerHandicap(dpnid, ncChH.handicap_);
 						}
@@ -1261,7 +1261,7 @@ void PNetCenter::HostReceiveQuant()
 							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
 
 							hostMissionDescription.setChanged();
-							if(dpnid==m_hostDPNID){//только Host может менять карту
+							if(dpnid==m_hostDPNID){//С‚РѕР»СЊРєРѕ Host РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ РєР°СЂС‚Сѓ
 								int i;
 								for(i=0; i< nc_changeMap.missionDescription_.playerAmountScenarioMax; i++){
 									nc_changeMap.missionDescription_.playersData[i]=hostMissionDescription.playersData[i];
@@ -1271,7 +1271,7 @@ void PNetCenter::HostReceiveQuant()
 										DPNID delPlayerDPNID=hostMissionDescription.playersData[i].dpnid;
 										hostMissionDescription.disconnect2PlayerData(i);
 										//hostMissionDescription.playersData[i].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
-										RemovePlayer(delPlayerDPNID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
+										RemovePlayer(delPlayerDPNID); //РџРѕР»РЅРѕРµ СѓРґР°Р»РµРЅРёРµ РїРѕ DPN_MSGID_DESTROY_PLAYER
 									}
 								}
 								hostMissionDescription=nc_changeMap.missionDescription_;
@@ -1348,7 +1348,7 @@ void PNetCenter::HostReceiveQuant()
 
 							vector<netCommandGame*> tmpListGameCommands;
 
-							InOutNetComBuffer in_buffer(nci.sizeCommandBuf, 1); //проверить необходимость автоувелечения!
+							InOutNetComBuffer in_buffer(nci.sizeCommandBuf, 1); //РїСЂРѕРІРµСЂРёС‚СЊ РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚СЊ Р°РІС‚РѕСѓРІРµР»РµС‡РµРЅРёСЏ!
 							in_buffer.putBufferPacket(nci.pData, nci.sizeCommandBuf);
 
 							while(in_buffer.currentNetCommandID()!=NETCOM_ID_NONE) {
@@ -1377,10 +1377,10 @@ void PNetCenter::HostReceiveQuant()
 								}
 								in_buffer.nextNetCommand();
 							}
-							//Запуск продолжения
+							//Р—Р°РїСѓСЃРє РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ
 							netCommand4C_ContinueGameAfterHostMigrate ncContinueGame;
 							SendEvent(ncContinueGame, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
-							//Выполнение команд, которые не у всех были выполнены
+							//Р’С‹РїРѕР»РЅРµРЅРёРµ РєРѕРјР°РЅРґ, РєРѕС‚РѕСЂС‹Рµ РЅРµ Сѓ РІСЃРµС… Р±С‹Р»Рё РІС‹РїРѕР»РЅРµРЅС‹
 							for(m_numberGameQuant=nci.beginQuantCommandTransmit; m_numberGameQuant<=nci.endQuantCommandTransmit; m_numberGameQuant++){
 								m_nQuantCommandCounter=0;
 								vector<netCommandGame*>::iterator p;
@@ -1401,13 +1401,13 @@ void PNetCenter::HostReceiveQuant()
 							terHyperSpace::clearListGameCommands(tmpListGameCommands);
 
 							//Init game counter afte MigrateHost
-							//hostGeneralCommandCounter; //уже уставится выше
+							//hostGeneralCommandCounter; //СѓР¶Рµ СѓСЃС‚Р°РІРёС‚СЃСЏ РІС‹С€Рµ
 							quantConfirmation=netCommandNextQuant::NOT_QUANT_CONFIRMATION;
 							m_nQuantCommandCounter=0;
-							m_numberGameQuant=nci.endQuantCommandTransmit+1;//!выше
+							m_numberGameQuant=nci.endQuantCommandTransmit+1;//!РІС‹С€Рµ
 							///ClearDeletePlayerGameCommand();
 							ClearCommandList();
-							//отмена паузы если была
+							//РѕС‚РјРµРЅР° РїР°СѓР·С‹ РµСЃР»Рё Р±С‹Р»Р°
 							hostPause=0;
 							int playersIDArr[NETWORK_PLAYERS_MAX];
 							for(int m=0; m<NETWORK_PLAYERS_MAX; m++) playersIDArr[m]=netCommand4C_Pause::NOT_PLAYER_ID;
@@ -1432,7 +1432,7 @@ void PNetCenter::HostReceiveQuant()
 						break;
 					case NETCOM_4H_ID_REJOIN_REQUEST:
 						{
-							//Опустошение лишней команды(сейчас клиент продолжает посылать ее до NEXT_QUANT)
+							//РћРїСѓСЃС‚РѕС€РµРЅРёРµ Р»РёС€РЅРµР№ РєРѕРјР°РЅРґС‹(СЃРµР№С‡Р°СЃ РєР»РёРµРЅС‚ РїСЂРѕРґРѕР»Р¶Р°РµС‚ РїРѕСЃС‹Р»Р°С‚СЊ РµРµ РґРѕ NEXT_QUANT)
 							netCommand4H_ReJoinRequest nc(in_HostBuf);
 						}
 						break;
@@ -1443,13 +1443,13 @@ void PNetCenter::HostReceiveQuant()
 						}
 						break;
 					}
-					//Запрещается вызывать currentNetCommandID(т.к. используется ignoreNetCommand)
+					//Р—Р°РїСЂРµС‰Р°РµС‚СЃСЏ РІС‹Р·С‹РІР°С‚СЊ currentNetCommandID(С‚.Рє. РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ ignoreNetCommand)
 					in_HostBuf.nextNetCommand();
 				}
 				break; //for-a
 			}
 		}
-		if(p==m_clients.end()){ //Ни один существующий клиент не соответствует DPNID
+		if(p==m_clients.end()){ //РќРё РѕРґРёРЅ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёР№ РєР»РёРµРЅС‚ РЅРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ DPNID
 			while(in_HostBuf.currentNetCommandID()) {
 				if(in_HostBuf.currentNetCommandID()==NETCOMC_ID_JOIN_REQUEST){
 					//HandleNewPlayer(dpnid);
@@ -1467,7 +1467,7 @@ void PNetCenter::HostReceiveQuant()
 					in_HostBuf.ignoreNetCommand();
 				}
 
-				in_HostBuf.nextNetCommand();//Завершение обработки комманды
+				in_HostBuf.nextNetCommand();//Р—Р°РІРµСЂС€РµРЅРёРµ РѕР±СЂР°Р±РѕС‚РєРё РєРѕРјРјР°РЅРґС‹
 			}
 		}
 		

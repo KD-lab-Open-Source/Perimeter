@@ -1,4 +1,4 @@
-#ifndef _PARAMBLOCK_H_//Чтение параметров
+#ifndef _PARAMBLOCK_H_//Р§С‚РµРЅРёРµ РїР°СЂР°РјРµС‚СЂРѕРІ
 #define _PARAMBLOCK_H_
 #include <stdio.h>
 

@@ -5,9 +5,9 @@
 	file path:	d:\Projects\Quest\QuestEditor
 	file base:	ITEWorkMode
 	file ext:	h
-	Powerd by:	Илюха
+	Powerd by:	РР»СЋС…Р°
 	
-	purpose:	Интерфейс рабочего режима для редактора триггеров
+	purpose:	РРЅС‚РµСЂС„РµР№СЃ СЂР°Р±РѕС‡РµРіРѕ СЂРµР¶РёРјР° РґР»СЏ СЂРµРґР°РєС‚РѕСЂР° С‚СЂРёРіРіРµСЂРѕРІ
 *********************************************************************/
 #pragma once
 
@@ -50,9 +50,9 @@ interface ITEWorkMode
 	virtual void OnShowWindow(TriggerEditorView* source, 
 								BOOL bShow, UINT nStatus)					= 0;
 
-	//начал работу
+	//РЅР°С‡Р°Р» СЂР°Р±РѕС‚Сѓ
 	virtual bool OnStart()													= 0;
-	//закончил
+	//Р·Р°РєРѕРЅС‡РёР»
 	virtual bool OnEnd()													= 0;
 
 	virtual BOOL OnDropData(TriggerEditorView* source, 
@@ -62,7 +62,7 @@ interface ITEWorkMode
 	virtual bool OnCommandUpdateUI(TriggerEditorView *source, 
 								CCmdUI* pCmdUI)								= 0;
 protected:
-	//чтобы нельзя было удалять напрямую указатель на этот интрефейс
+	//С‡С‚РѕР±С‹ РЅРµР»СЊР·СЏ Р±С‹Р»Рѕ СѓРґР°Р»СЏС‚СЊ РЅР°РїСЂСЏРјСѓСЋ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЌС‚РѕС‚ РёРЅС‚СЂРµС„РµР№СЃ
 	inline virtual ~ITEWorkMode()											= 0;
 };
 ITEWorkMode::~ITEWorkMode(){}

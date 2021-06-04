@@ -26,7 +26,7 @@ bool bNoTracking = false;
 
 terUnitSquad* GetSquadByNumber(int n);
 
-//проверка наличия прорабов/бригадиров, создание если нет
+//РїСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ РїСЂРѕСЂР°Р±РѕРІ/Р±СЂРёРіР°РґРёСЂРѕРІ, СЃРѕР·РґР°РЅРёРµ РµСЃР»Рё РЅРµС‚
 void CheckBuildTerrainUnit(terUnitAttributeID nAttrID)
 {
 	MTG();
@@ -67,7 +67,7 @@ void CheckBuildTerrainUnit(terUnitAttributeID nAttrID)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-// Редактирование рабочей области
+// Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ СЂР°Р±РѕС‡РµР№ РѕР±Р»Р°СЃС‚Рё
 
 const float ToolzerCursorMax   = shellCursorAddRegionSize*6;
 const float ToolzerCursorMin   = shellCursorAddRegionSize/6;
@@ -314,7 +314,7 @@ STARFORCE_API_NEW void ToolzerSizeChangeQuant()
 		}
 //	}
 }
-//конец редактирования рабочей области
+//РєРѕРЅРµС† СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ СЂР°Р±РѕС‡РµР№ РѕР±Р»Р°СЃС‚Рё
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -727,7 +727,7 @@ int Structure2ButtonID(int i)
 
 	return id;
 }
-int Structure2ButtonID_(int i)// только для подсказок по строениям
+int Structure2ButtonID_(int i)// С‚РѕР»СЊРєРѕ РґР»СЏ РїРѕРґСЃРєР°Р·РѕРє РїРѕ СЃС‚СЂРѕРµРЅРёСЏРј
 {
 	int id = -1;
 

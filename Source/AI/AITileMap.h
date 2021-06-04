@@ -9,21 +9,21 @@ class ClusterFind;
 struct AITile
 {
 	enum { 
-		tile_size_world_shl = 4, // размер тайла в мировых координатах
-		tile_size = 1 << (tile_size_world_shl - kmGrid), // размер тайла в масштабе карты атрибутов
-		tile_area = tile_size*tile_size // нормировка
+		tile_size_world_shl = 4, // СЂР°Р·РјРµСЂ С‚Р°Р№Р»Р° РІ РјРёСЂРѕРІС‹С… РєРѕРѕСЂРґРёРЅР°С‚Р°С…
+		tile_size = 1 << (tile_size_world_shl - kmGrid), // СЂР°Р·РјРµСЂ С‚Р°Р№Р»Р° РІ РјР°СЃС€С‚Р°Р±Рµ РєР°СЂС‚С‹ Р°С‚СЂРёР±СѓС‚РѕРІ
+		tile_area = tile_size*tile_size // РЅРѕСЂРјРёСЂРѕРІРєР°
 		};
 
-	unsigned char height; // Средняя высота точки 
-	unsigned char height_min; // Средняя высота точки 
-	unsigned char delta_height; // Средняя высота точки 
-	int dig_work;	// Работа по выравниванию
-	bool dig_less; // Не копается
+	unsigned char height; // РЎСЂРµРґРЅСЏСЏ РІС‹СЃРѕС‚Р° С‚РѕС‡РєРё 
+	unsigned char height_min; // РЎСЂРµРґРЅСЏСЏ РІС‹СЃРѕС‚Р° С‚РѕС‡РєРё 
+	unsigned char delta_height; // РЎСЂРµРґРЅСЏСЏ РІС‹СЃРѕС‚Р° С‚РѕС‡РєРё 
+	int dig_work;	// Р Р°Р±РѕС‚Р° РїРѕ РІС‹СЂР°РІРЅРёРІР°РЅРёСЋ
+	bool dig_less; // РќРµ РєРѕРїР°РµС‚СЃСЏ
 	bool building;
 
 	AITile() : height(0),dig_work(0),dig_less(0),building(false) {}
 	bool update(int x,int y); // returns whether the state (completeness) was changed
-	bool completed() const { return !dig_work; } // обработан
+	bool completed() const { return !dig_work; } // РѕР±СЂР°Р±РѕС‚Р°РЅ
 };
 
 class AITileMap : public Map2D<AITile, AITile::tile_size_world_shl>
@@ -38,7 +38,7 @@ public:
 	void InitialUpdate();
 	void UpdateRect(int x,int y,int dx,int dy); // world coords
 
-	// Установка зданий 
+	// РЈСЃС‚Р°РЅРѕРІРєР° Р·РґР°РЅРёР№ 
 	void placeBuilding(const Vect2i& v1, const Vect2i& size, bool place); // map coords
 	bool readyForBuilding(const Vect2i& v1, const Vect2i& size); // map coords
 
@@ -48,7 +48,7 @@ public:
 		PATH_HARD,
 	};
 
-	// Поиск пути
+	// РџРѕРёСЃРє РїСѓС‚Рё
 	bool findPath(const Vect2i& from, const Vect2i& to, vector<Vect2i>& out_path, PathType type);
 	void recalcPathFind();
 

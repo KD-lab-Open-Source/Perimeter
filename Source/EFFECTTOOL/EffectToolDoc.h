@@ -120,8 +120,8 @@ public:
 
 	void  ResetEmitterType(EMITTER_CLASS cls);
 
-	//интервал времени - от начала жизни эмитера до гибели последней его частицы - 
-	//  масштабируется в [0..1]
+	//РёРЅС‚РµСЂРІР°Р» РІСЂРµРјРµРЅРё - РѕС‚ РЅР°С‡Р°Р»Р° Р¶РёР·РЅРё СЌРјРёС‚РµСЂР° РґРѕ РіРёР±РµР»Рё РїРѕСЃР»РµРґРЅРµР№ РµРіРѕ С‡Р°СЃС‚РёС†С‹ - 
+	//  РјР°СЃС€С‚Р°Р±РёСЂСѓРµС‚СЃСЏ РІ [0..1]
 	float get_gen_point_time(int nPoint, EmitterKeyBase* pEmitter = 0);
 	void  set_gen_point_time(int nPoint, float tm, CEmitterData* pEmitter = NULL);
 

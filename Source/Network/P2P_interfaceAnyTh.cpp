@@ -4,8 +4,8 @@
 
 
 
-//Запускается из 1 2 3-го потока
-//Может вызываться с фдагом waitExecution только из одного потока (сейчас 1-го)
+//Р—Р°РїСѓСЃРєР°РµС‚СЃСЏ РёР· 1 2 3-РіРѕ РїРѕС‚РѕРєР°
+//РњРѕР¶РµС‚ РІС‹Р·С‹РІР°С‚СЊСЃСЏ СЃ С„РґР°РіРѕРј waitExecution С‚РѕР»СЊРєРѕ РёР· РѕРґРЅРѕРіРѕ РїРѕС‚РѕРєР° (СЃРµР№С‡Р°СЃ 1-РіРѕ)
 bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution)
 {
 	if( WaitForSingleObject(hSecondThread, 0) == WAIT_OBJECT_0) {
@@ -33,10 +33,10 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 
 
 
-//Запускается из 2 3-го потока
+//Р—Р°РїСѓСЃРєР°РµС‚СЃСЏ РёР· 2 3-РіРѕ РїРѕС‚РѕРєР°
 int PNetCenter::AddClient(PlayerData& pd, const DPNID dpnid, const char* descr)
 {
-	CAutoLock _lock(&m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
+	CAutoLock _lock(&m_GeneralLock); //Р’ СЌС‚РѕР№ С„СѓРЅРєС†РёРё РІ РЅРµРєРѕС‚РѕСЂС‹С… РІС‹Р·РѕРІР°С… Р±СѓРґРµС‚ РІР»РѕР¶РµРЅРЅС‹Р№
 
 	int idxPlayerData=-1;
 	if(hostMissionDescription.gameType_==GT_createMPGame){
@@ -51,7 +51,7 @@ int PNetCenter::AddClient(PlayerData& pd, const DPNID dpnid, const char* descr)
 		//missionDescription.playersData[idxPlayerData].flag_playerStartReady=1;
 
 		PClientData* pCD=new PClientData(idxPlayerData, dpnid, descr);
-		pCD->backGameInf2List.reserve(20000);//резерв под 20000 квантов
+		pCD->backGameInf2List.reserve(20000);//СЂРµР·РµСЂРІ РїРѕРґ 20000 РєРІР°РЅС‚РѕРІ
 		m_clients.push_back(pCD);
 
 		///m_pConnection->AddPlayerToGroup(m_dpnidGroupGame, dpnid);
@@ -69,7 +69,7 @@ int PNetCenter::AddClient(PlayerData& pd, const DPNID dpnid, const char* descr)
 
 }
 
-//Запускается из 1-го(деструктор) и 2-го потока
+//Р—Р°РїСѓСЃРєР°РµС‚СЃСЏ РёР· 1-РіРѕ(РґРµСЃС‚СЂСѓРєС‚РѕСЂ) Рё 2-РіРѕ РїРѕС‚РѕРєР°
 void PNetCenter::ClearClients()
 {
 	ClientMapType::iterator i;
@@ -78,10 +78,10 @@ void PNetCenter::ClearClients()
 	m_clients.clear();
 }
 
-//Запускается из 1 и 2-го потока
+//Р—Р°РїСѓСЃРєР°РµС‚СЃСЏ РёР· 1 Рё 2-РіРѕ РїРѕС‚РѕРєР°
 void PNetCenter::clearInternalFoundHostList(void) 
 {
-	CAutoLock _lock(&m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
+	CAutoLock _lock(&m_GeneralLock); //Р’ СЌС‚РѕР№ С„СѓРЅРєС†РёРё РІ РЅРµРєРѕС‚РѕСЂС‹С… РІС‹Р·РѕРІР°С… Р±СѓРґРµС‚ РІР»РѕР¶РµРЅРЅС‹Р№
 	vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
 		delete *p;
@@ -90,8 +90,8 @@ void PNetCenter::clearInternalFoundHostList(void)
 }
 
 
-//Запускается из 2 и 3-го потока
-/// !!! педается указатель !!! удаление происходит автоматом после осылки !!!
+//Р—Р°РїСѓСЃРєР°РµС‚СЃСЏ РёР· 2 Рё 3-РіРѕ РїРѕС‚РѕРєР°
+/// !!! РїРµРґР°РµС‚СЃСЏ СѓРєР°Р·Р°С‚РµР»СЊ !!! СѓРґР°Р»РµРЅРёРµ РїСЂРѕРёСЃС…РѕРґРёС‚ Р°РІС‚РѕРјР°С‚РѕРј РїРѕСЃР»Рµ РѕСЃС‹Р»РєРё !!!
 void PNetCenter::PutGameCommand2Queue_andAutoDelete(netCommandGame* pCommand)
 {
 	pCommand->setCurCommandQuantAndCounter(m_numberGameQuant, hostGeneralCommandCounter);

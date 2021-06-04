@@ -12,7 +12,7 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeLegionary, "Ëåãèîíåğ");
+REGISTER_CLASS(AttributeBase, AttributeLegionary, "Ğ›ĞµĞ³Ğ¸Ğ¾Ğ½ĞµÑ€");
 
 AttributeLegionary::AttributeLegionary()
 {
@@ -421,9 +421,9 @@ public:
 
 	void operator()(terUnitBase* unit2)
 	{
-		if(!unit1->isEnemy(unit2) || !unit1->checkFireClass(unit2)) // íåëüçÿ ñòğåëÿòü
+		if(!unit1->isEnemy(unit2) || !unit1->checkFireClass(unit2)) // Ğ½ĞµĞ»ÑŒĞ·Ñ ÑÑ‚Ñ€ĞµĞ»ÑÑ‚ÑŒ
 			return;
-		if(unit1->includingCluster() != unit2->includingCluster()) // çàêğûò êóïîëîì
+		if(unit1->includingCluster() != unit2->includingCluster()) // Ğ·Ğ°ĞºÑ€Ñ‹Ñ‚ ĞºÑƒĞ¿Ğ¾Ğ»Ğ¾Ğ¼
 			return;
 		if(unit2->isUnseen())
 			return;

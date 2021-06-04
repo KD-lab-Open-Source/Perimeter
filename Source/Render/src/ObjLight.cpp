@@ -23,7 +23,7 @@ cObjLight::~cObjLight()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// реализация интерфейса cUnkObj
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° cUnkObj
 //////////////////////////////////////////////////////////////////////////////////////////
 
 void cObjLight::OcclusionTest()
@@ -52,18 +52,18 @@ void cObjLight::PreDraw(cCamera *DrawNode)
 	cObjectNode::PreDraw(DrawNode);
 
 	if(NodeAttribute.GetAttribute(ATTRNODE_IGNORE)) return;
-//	if(AnimChannelMat->IsAnimMaterial(GetCurrentChannel())) // анимация материала
+//	if(AnimChannelMat->IsAnimMaterial(GetCurrentChannel())) // Р°РЅРёРјР°С†РёСЏ РјР°С‚РµСЂРёР°Р»Р°
 		AnimChannelMat->GetChannel(GetCurrentChannel())->GetDiffuse(GetPhase(),Diffuse);
 	if((GetDiffuse().a<0.004f) || 
 		(GetDiffuse().r<0.004f && GetDiffuse().g<0.004f && GetDiffuse().b<0.004f)) return;
 
-	// тест на видимость источника света
+	// С‚РµСЃС‚ РЅР° РІРёРґРёРјРѕСЃС‚СЊ РёСЃС‚РѕС‡РЅРёРєР° СЃРІРµС‚Р°
 	Vect3f PosCamera=DrawNode->GetPos();//DrawNode->GetMatrix().trans();
 
 	Vect3f &PosLight=GlobalMatrix.trans();
 	Intensity=1-PosCamera.distance2(PosLight)/(GetFarAttenuation()*GetFarAttenuation());
 	if(Intensity>0)
-		DrawNode->Attach(SCENENODE_OBJECTSORT,this); // спрайты всегда выводятся последними
+		DrawNode->Attach(SCENENODE_OBJECTSORT,this); // СЃРїСЂР°Р№С‚С‹ РІСЃРµРіРґР° РІС‹РІРѕРґСЏС‚СЃСЏ РїРѕСЃР»РµРґРЅРёРјРё
 
 }
 void cObjLight::SetAttr(int attribute)
@@ -129,7 +129,7 @@ cIUnkObj* cObjLight::BuildCopy()
 	return Light;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-// реализация интерфейса cUnkTile
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° cUnkTile
 //////////////////////////////////////////////////////////////////////////////////////////
 void cObjLight::GetBoundingBox(Vect3f &Min,Vect3f &Max)
 { 

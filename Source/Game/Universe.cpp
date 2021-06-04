@@ -86,7 +86,7 @@ void UpdateRegionMap(int x1,int y1,int x2,int y2)
 }
 
 terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, SavePrm& data, PROGRESSCALLBACK loadProgressUpdate) :
-	terHyperSpace(net_client, mission), //mission может измениться в случае rePlay-а
+	terHyperSpace(net_client, mission), //mission РјРѕР¶РµС‚ РёР·РјРµРЅРёС‚СЊСЃСЏ РІ СЃР»СѓС‡Р°Рµ rePlay-Р°
 	UnitGrid(vMap.H_SIZE, vMap.V_SIZE),
 	cluster_column_(vMap.V_SIZE)
 {
@@ -133,7 +133,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	//UniversalLoad
 
 	//---------------------
-	global_time.setTime(mission.globalTime); // Нужно установить время до загрузки spg
+	global_time.setTime(mission.globalTime); // РќСѓР¶РЅРѕ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РІСЂРµРјСЏ РґРѕ Р·Р°РіСЂСѓР·РєРё spg
 
 	//---------------------
 	data = SavePrm();
@@ -160,7 +160,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	//---------------------
 	gameShell->changeControlState(manualData.controls);
 	
-	// Загрузка игроков
+	// Р—Р°РіСЂСѓР·РєР° РёРіСЂРѕРєРѕРІ
 	xassert(manualData.players.size() <= NETWORK_PLAYERS_MAX);
 	vector<int> playerLoadIndices;
 	for(int i = 0; i < manualData.players.size(); i++){
@@ -723,13 +723,13 @@ MissionDescription::MissionDescription(const char* fname, GameType gameType)
 		}
 
 		worldID_ = vMap.getWorldID(worldName);
-		xassert_s(worldID() != -1 && "Не найден мир в worlds.prm: ", worldName);
+		xassert_s(worldID() != -1 && "РќРµ РЅР°Р№РґРµРЅ РјРёСЂ РІ worlds.prm: ", worldName);
 
 		missionDescriptionStr_ = qdTextDB::instance().getText(missionDescriptionID);
 		if(missionDescriptionStr_ == "")
 			missionDescriptionStr_ = missionDescriptionID;
 
-		// Установка АИ
+		// РЈСЃС‚Р°РЅРѕРІРєР° РђР
 		for(int i = 0; i < min(NETWORK_PLAYERS_MAX, playerAmountScenarioMax); i++){
 			playersData[i].clan = i;
 			switch(gameType_){
@@ -1242,7 +1242,7 @@ void terUniverse::clearLinkAndDelete()
 	PlayerVect::iterator pi;
 	FOR_EACH(Players, pi)
 		(*pi)->DestroyLink();
-	select.Quant();//Потом перенести в graph
+	select.Quant();//РџРѕС‚РѕРј РїРµСЂРµРЅРµСЃС‚Рё РІ graph
 	FOR_EACH(Players, pi)
 		(*pi)->DeleteQuant();
 	monks.deleteQuant();

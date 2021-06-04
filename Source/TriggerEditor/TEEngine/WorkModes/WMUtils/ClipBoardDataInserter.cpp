@@ -73,7 +73,7 @@ bool ClipBoardDataInserter::insert(TriggerClipBuffer& clipBuffer,
 	TEUndoManager::Bunch undoDeleteBunch, redoDeleteBunch;
 	getMode().deleteSelection(undoDeleteBunch, redoDeleteBunch);
 
-	// Удаляем для того, чтобы имена зменяемых не мешали при получении уникальных имен
+	// РЈРґР°Р»СЏРµРј РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РёРјРµРЅР° Р·РјРµРЅСЏРµРјС‹С… РЅРµ РјРµС€Р°Р»Рё РїСЂРё РїРѕР»СѓС‡РµРЅРёРё СѓРЅРёРєР°Р»СЊРЅС‹С… РёРјРµРЅ
 	renameTriggersForChain(chain, temp_container);
 	arrangeTriggersUnderMouse(temp_container);
 

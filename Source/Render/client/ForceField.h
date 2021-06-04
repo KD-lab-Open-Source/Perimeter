@@ -54,7 +54,7 @@ public:
 
 	const Vect2sVect& border() const { return border_; }
 
-	//SetTransparent,SetDiffuseColor - не правильно изменяет свойства при включенном куполе
+	//SetTransparent,SetDiffuseColor - РЅРµ РїСЂР°РІРёР»СЊРЅРѕ РёР·РјРµРЅСЏРµС‚ СЃРІРѕР№СЃС‚РІР° РїСЂРё РІРєР»СЋС‡РµРЅРЅРѕРј РєСѓРїРѕР»Рµ
 	void SetColor(const sColor4c& c) { Diffuse = c; }
 	int GetColor() const { return CurrentDiffuse.RGBA(); }
 
@@ -87,10 +87,10 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
-//  Верхняя полусфера нормалей с равномерным 
-//  распределением
-//  cell_size - расстояние, на котором определяют
-//  dz_x, dz_y. Обычно удвоенный размер сетки
+//  Р’РµСЂС…РЅСЏСЏ РїРѕР»СѓСЃС„РµСЂР° РЅРѕСЂРјР°Р»РµР№ СЃ СЂР°РІРЅРѕРјРµСЂРЅС‹Рј 
+//  СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµРј
+//  cell_size - СЂР°СЃСЃС‚РѕСЏРЅРёРµ, РЅР° РєРѕС‚РѕСЂРѕРј РѕРїСЂРµРґРµР»СЏСЋС‚
+//  dz_x, dz_y. РћР±С‹С‡РЅРѕ СѓРґРІРѕРµРЅРЅС‹Р№ СЂР°Р·РјРµСЂ СЃРµС‚РєРё
 ///////////////////////////////////////////////////////////////////////////////////////
 template <int cell_size, int normals_per_Pi_shift = 8, int atan_max = 2048>
 class NormalsBox
@@ -155,8 +155,8 @@ public:
 	enum { 
 		POTENTIAL = 1,
 
-		scale = 4, // масштаб поля
-		tile_scale = 6, // масштаб тайлов
+		scale = 4, // РјР°СЃС€С‚Р°Р± РїРѕР»СЏ
+		tile_scale = 6, // РјР°СЃС€С‚Р°Р± С‚Р°Р№Р»РѕРІ
 
 		half = (scale ? 1 << (scale - 1) : 0)
 		};
@@ -275,7 +275,7 @@ private:
 	
 	BYTE tile_global;
 
-	class FFDData* pDrawData; //Используется Draw(class FieldDispatcher *rd);
+	class FFDData* pDrawData; //РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ Draw(class FieldDispatcher *rd);
 
 	double prev_real_time;
 
@@ -290,8 +290,8 @@ private:
 	HMap *hmap_prev,*hmap_cur,*hmap_logic;
 	int hmap_index;
 	void hmapRotate();
-	//Везде, где обращаются из графического потока к hmap_prev,hmap_cur,hmap_logic
-	//хотя, если lock не сделать, ничего фатального не случится.
+	//Р’РµР·РґРµ, РіРґРµ РѕР±СЂР°С‰Р°СЋС‚СЃСЏ РёР· РіСЂР°С„РёС‡РµСЃРєРѕРіРѕ РїРѕС‚РѕРєР° Рє hmap_prev,hmap_cur,hmap_logic
+	//С…РѕС‚СЏ, РµСЃР»Рё lock РЅРµ СЃРґРµР»Р°С‚СЊ, РЅРёС‡РµРіРѕ С„Р°С‚Р°Р»СЊРЅРѕРіРѕ РЅРµ СЃР»СѓС‡РёС‚СЃСЏ.
 	MTDECLARE(hmap_lock)
 
 	inline float interpolateHeight(int x,int y,float t,float t_)

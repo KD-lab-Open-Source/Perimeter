@@ -372,7 +372,7 @@ void cStatic3dx::LoadMeshes(CLoadDirectory rd)
 				cur_mesh.push_back(*itm);
 		}
 
-		//temp_mesh - íå çàáûòü ãåíåíððîâàòü ïî temp_invisible_object
+		//temp_mesh - Ð½Ðµ Ð·Ð°Ð±Ñ‹Ñ‚ÑŒ Ð³ÐµÐ½ÐµÐ½Ñ€Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð¿Ð¾ temp_invisible_object
 		BuildChainGroup(cur_mesh,cur);
 		cur->temp_invisible_object.clear();
 	}
@@ -683,7 +683,7 @@ void cStaticMaterial::Load(CLoadDirectory rd,const char* path_name)
 		break;
 	}
 
-	gb_RenderDevice3D->SetCurrentConvertDot3Mul(1.0f);//Ïîòîì ÷èòàòü èç ôàéëà
+	gb_RenderDevice3D->SetCurrentConvertDot3Mul(1.0f);//ÐŸÐ¾Ñ‚Ð¾Ð¼ Ñ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð¸Ð· Ñ„Ð°Ð¹Ð»Ð°
 	if(!tex_bump.empty())
 	{
 		pBumpTexture=GetTexLibrary()->GetElement(tex_bump.c_str(),"Bump");
@@ -749,7 +749,7 @@ retry:
 						node_index.clear();
 						for(int vi=0;vi<vertex_realloc.size();vi++)
 							vertex_realloc[vi]=-1;
-						goto retry;//Ýòà òî÷êà óæå íå âëåçàåò.
+						goto retry;//Ð­Ñ‚Ð° Ñ‚Ð¾Ñ‡ÐºÐ° ÑƒÐ¶Ðµ Ð½Ðµ Ð²Ð»ÐµÐ·Ð°ÐµÑ‚.
 					}
 
 					node_index.push_back(p.inode[ibone]);

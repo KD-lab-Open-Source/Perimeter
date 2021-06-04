@@ -4,7 +4,7 @@
 #include "Utils/AdjustComboboxWidth.h"
 
 
-//должны совпадать, чтобы текст подсказки был правильный
+//РґРѕР»Р¶РЅС‹ СЃРѕРІРїР°РґР°С‚СЊ, С‡С‚РѕР±С‹ С‚РµРєСЃС‚ РїРѕРґСЃРєР°Р·РєРё Р±С‹Р» РїСЂР°РІРёР»СЊРЅС‹Р№
 int const COMBO_ID = IDS_SCALE_COMBO_TOOLTIP_TEXT;
 
 CScaleBar::CScaleBar():

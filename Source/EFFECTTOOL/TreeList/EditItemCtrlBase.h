@@ -3,7 +3,7 @@
 
 class CTreeListCtrl;
 
-//данные из контрола должны получаться через метод GetWindowText
+//РґР°РЅРЅС‹Рµ РёР· РєРѕРЅС‚СЂРѕР»Р° РґРѕР»Р¶РЅС‹ РїРѕР»СѓС‡Р°С‚СЊСЃСЏ С‡РµСЂРµР· РјРµС‚РѕРґ GetWindowText
 template<class Base>
 class EditItemCtrlBase :public Base
 {
@@ -13,9 +13,9 @@ public:
 	  {}
 	  virtual ~EditItemCtrlBase(void){}
 protected:
-	//! Должна быть вызвана из порожденного класса
+	//! Р”РѕР»Р¶РЅР° Р±С‹С‚СЊ РІС‹Р·РІР°РЅР° РёР· РїРѕСЂРѕР¶РґРµРЅРЅРѕРіРѕ РєР»Р°СЃСЃР°
 	/*!
-		Устанавливает указатель на TreeListCtrl
+		РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° TreeListCtrl
 	*/
 	void OnKillFocus(CWnd* pNewWnd)
 	{

@@ -261,34 +261,34 @@ void TriggerEditorView::setScale(float fOldScale, float fNewScale)
 	if (fOldScale == fNewScale)
 		return;
 
-	//левый верхний угол окна до изменения масштаба
-	CPoint ptViewportOrg(viewportOrg_);//в логических координатах
-	descalePoint(&ptViewportOrg);//перевели в логические без учета сдвига
+	//Р»РµРІС‹Р№ РІРµСЂС…РЅРёР№ СѓРіРѕР» РѕРєРЅР° РґРѕ РёР·РјРµРЅРµРЅРёСЏ РјР°СЃС€С‚Р°Р±Р°
+	CPoint ptViewportOrg(viewportOrg_);//РІ Р»РѕРіРёС‡РµСЃРєРёС… РєРѕРѕСЂРґРёРЅР°С‚Р°С…
+	descalePoint(&ptViewportOrg);//РїРµСЂРµРІРµР»Рё РІ Р»РѕРіРёС‡РµСЃРєРёРµ Р±РµР· СѓС‡РµС‚Р° СЃРґРІРёРіР°
 
-	//получили реальную точку,
-	//которая соответсвует углу
+	//РїРѕР»СѓС‡РёР»Рё СЂРµР°Р»СЊРЅСѓСЋ С‚РѕС‡РєСѓ,
+	//РєРѕС‚РѕСЂР°СЏ СЃРѕРѕС‚РІРµС‚СЃРІСѓРµС‚ СѓРіР»Сѓ
 	ptViewportOrg = -ptViewportOrg;
 
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	//не подвижная точка это центр окна
+	//РЅРµ РїРѕРґРІРёР¶РЅР°СЏ С‚РѕС‡РєР° СЌС‚Рѕ С†РµРЅС‚СЂ РѕРєРЅР°
 	CPoint ptConst(rectClient.CenterPoint());
-	scr2Log(&ptConst,1);//центр в лог. координатах
+	scr2Log(&ptConst,1);//С†РµРЅС‚СЂ РІ Р»РѕРі. РєРѕРѕСЂРґРёРЅР°С‚Р°С…
 	setViewportOrg(0, 0);
 	scr2Log(rectClient);
 
 	CRect const& workArea = getWorkArea();
 	if(workArea.Width() <= rectClient.Width())
 	{
-		//если изображение полностью влазит в окно, 
-		//то просто ставим его в центер
+		//РµСЃР»Рё РёР·РѕР±СЂР°Р¶РµРЅРёРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РІР»Р°Р·РёС‚ РІ РѕРєРЅРѕ, 
+		//С‚Рѕ РїСЂРѕСЃС‚Рѕ СЃС‚Р°РІРёРј РµРіРѕ РІ С†РµРЅС‚РµСЂ
 		ptViewportOrg.x = (rectClient.left + rectClient.right - 
 			workArea.left - workArea.right)>>1;
 	}
 	else
 	{
-		//иначе стягиваем(расстягиваем) к(от) неподвижной точки
+		//РёРЅР°С‡Рµ СЃС‚СЏРіРёРІР°РµРј(СЂР°СЃСЃС‚СЏРіРёРІР°РµРј) Рє(РѕС‚) РЅРµРїРѕРґРІРёР¶РЅРѕР№ С‚РѕС‡РєРё
 		ptViewportOrg.x = ptConst.x - 
 			round((ptConst.x - ptViewportOrg.x)*fOldScale/fNewScale);
 	}
@@ -309,7 +309,7 @@ void TriggerEditorView::setScale(float fOldScale, float fNewScale)
 	scalePoint(&ptViewportOrg);
 	setViewportOrg(-ptViewportOrg);
 
-	//пересозадем фонт с нужной нам высотой
+	//РїРµСЂРµСЃРѕР·Р°РґРµРј С„РѕРЅС‚ СЃ РЅСѓР¶РЅРѕР№ РЅР°Рј РІС‹СЃРѕС‚РѕР№
 	createFont();
 
 	setScrollRanges();
@@ -456,7 +456,7 @@ void TriggerEditorView::ensureVisibleRect(const CRect& r){
 	setViewportOrg(-(scaled_r.left - viewportOrg_.x), -(scaled_r.top - viewportOrg_.y));
 	while (extendWorkArea());
 	
-	//перевыставляем скроллеры, потому что изменили
+	//РїРµСЂРµРІС‹СЃС‚Р°РІР»СЏРµРј СЃРєСЂРѕР»Р»РµСЂС‹, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РёР·РјРµРЅРёР»Рё
 	//viewportOrg_
 	updateScrollers();
 }
@@ -499,14 +499,14 @@ DWORD TriggerEditorView::pointInScrollArea(CPoint const& p)
 	
 	DWORD dwRes = 0;
 	
-	if (p.x <= rcClt.left + OFFSET)//левый край
+	if (p.x <= rcClt.left + OFFSET)//Р»РµРІС‹Р№ РєСЂР°Р№
 		dwRes |= SAP_LEFT;
-	else if (p.x >= rcClt.right - OFFSET)//правый край
+	else if (p.x >= rcClt.right - OFFSET)//РїСЂР°РІС‹Р№ РєСЂР°Р№
 		dwRes |= SAP_RIGHT;
 	
-	if (p.y <= rcClt.top + OFFSET)//верхний
+	if (p.y <= rcClt.top + OFFSET)//РІРµСЂС…РЅРёР№
 		dwRes |= SAP_TOP;
-	else if (p.y >= rcClt.bottom - OFFSET)//нижний 
+	else if (p.y >= rcClt.bottom - OFFSET)//РЅРёР¶РЅРёР№ 
 		dwRes |= SAP_BOTTOM;
 	return dwRes;
 }

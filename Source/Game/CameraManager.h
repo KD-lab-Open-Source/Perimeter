@@ -19,7 +19,7 @@ public:
 	void interpolate(const CameraCoordinate& coord0, const CameraCoordinate& coord1, float t);
 	void interpolateHermite(const CameraCoordinate coords[4], float t);
 
-	void uncycle(const CameraCoordinate& coord0); // расцикливает углы по coord0
+	void uncycle(const CameraCoordinate& coord0); // СЂР°СЃС†РёРєР»РёРІР°РµС‚ СѓРіР»С‹ РїРѕ coord0
 
 	void save(SaveCameraData& data) const;
 	void load(const SaveCameraData& data);

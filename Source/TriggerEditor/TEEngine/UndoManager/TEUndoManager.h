@@ -21,7 +21,7 @@ public:
 	bool addAction(Action const& actionUNDO, Action const& actionREDO);
 	bool undo();
 	bool redo();
-	//можем	ли ундить
+	//РјРѕР¶РµРј	Р»Рё СѓРЅРґРёС‚СЊ
 	bool canUNDO();
 	bool canREDO();
 public://types
@@ -32,8 +32,8 @@ public://types
 		bool operator()() const;
 		bool addAction(Action const& action);
 		bool empty() const;
-		//меняем порядок на обратный
-		//потому как undo надо делать в обратном порядке
+		//РјРµРЅСЏРµРј РїРѕСЂСЏРґРѕРє РЅР° РѕР±СЂР°С‚РЅС‹Р№
+		//РїРѕС‚РѕРјСѓ РєР°Рє undo РЅР°РґРѕ РґРµР»Р°С‚СЊ РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ
 		void reverse();
 	private:
 		ActionContainer m_buffer;
@@ -44,9 +44,9 @@ protected:
 	void setREDOPointer(iterator const& itr);
 	iterator const& getREDOPointer() const;
 
-	//сдвигаем итераторы на операцию undo
+	//СЃРґРІРёРіР°РµРј РёС‚РµСЂР°С‚РѕСЂС‹ РЅР° РѕРїРµСЂР°С†РёСЋ undo
 	void undoMoveIterators();
-	//сдвигаем итераторы на операцию redo
+	//СЃРґРІРёРіР°РµРј РёС‚РµСЂР°С‚РѕСЂС‹ РЅР° РѕРїРµСЂР°С†РёСЋ redo
 	void redoMoveIterators();
 
 	bool undo(DOREDOPair const& pair) const;

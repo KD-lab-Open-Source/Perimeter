@@ -6,12 +6,12 @@ class CTreeListItem;
 
 interface IUITreeNode
 {
-	//! Загрузка узла в дерево
+	//! Р—Р°РіСЂСѓР·РєР° СѓР·Р»Р° РІ РґРµСЂРµРІРѕ
 	virtual bool load(xTreeListCtrl& tree, CTreeListItem* pParent) = 0;
-	//! Обработка команд от пунктов  меню
+	//! РћР±СЂР°Р±РѕС‚РєР° РєРѕРјР°РЅРґ РѕС‚ РїСѓРЅРєС‚РѕРІ  РјРµРЅСЋ
 	virtual bool onCommand(TETreeLogic& logic, WPARAM wParam, LPARAM lParam) = 0;
-	//! Обработка начал перетаскивания
+	//! РћР±СЂР°Р±РѕС‚РєР° РЅР°С‡Р°Р» РїРµСЂРµС‚Р°СЃРєРёРІР°РЅРёСЏ
 	virtual void onBeginDrag(TETreeLogic& logic) = 0;
-	//! Обработчик сообщения об удалении узла
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± СѓРґР°Р»РµРЅРёРё СѓР·Р»Р°
 	virtual void onDeleteItem(TETreeLogic& logic) = 0;
 };

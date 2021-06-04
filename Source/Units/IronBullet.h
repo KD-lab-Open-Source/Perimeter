@@ -15,7 +15,7 @@ private:
 	RigidBodyPrm rigidBodyPrm_;
 };
 
-/// Базовый класс для снарядов, ракет, бомб и т.д.
+/// Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЃРЅР°СЂСЏРґРѕРІ, СЂР°РєРµС‚, Р±РѕРјР± Рё С‚.Рґ.
 class terProjectileBase : public terUnitReal
 {
 public:
@@ -48,7 +48,7 @@ public:
 
 protected:
 
-	/// подтверждение столкновения - надо ли взрываться
+	/// РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ СЃС‚РѕР»РєРЅРѕРІРµРЅРёСЏ - РЅР°РґРѕ Р»Рё РІР·СЂС‹РІР°С‚СЊСЃСЏ
 	virtual bool confirmCollision(const terUnitBase* p) const;
 	bool playMoveSound();
 

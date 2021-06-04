@@ -264,7 +264,7 @@ void AIPlayer::CircleShape::make(int radius_)
 
 int AIPlayer::calcWork(Circle& c) // circle in map's scale!
 {
-	//НЕ копать близко к границе
+	//РќР• РєРѕРїР°С‚СЊ Р±Р»РёР·РєРѕ Рє РіСЂР°РЅРёС†Рµ
 	if(c.x - c.radius < ai_border_offset || c.y - c.radius < ai_border_offset || 
 	  c.x + c.radius >= clear_map.sizeX() - ai_border_offset || c.y + c.radius >= clear_map.sizeY() - ai_border_offset)
 		return -1;
@@ -295,7 +295,7 @@ int AIPlayer::calcWork(const Vect2i& left_top_, const Vect2i& size)
 	Vect2i left_top = clear_map.w2mFloor(left_top_);	 
 	Vect2i right_bottom = clear_map.w2mCeil(left_top_ + size);
 
-	//НЕ копать близко к границе
+	//РќР• РєРѕРїР°С‚СЊ Р±Р»РёР·РєРѕ Рє РіСЂР°РЅРёС†Рµ
 	if(left_top.x < ai_border_offset || left_top.y < ai_border_offset || 
 	  right_bottom.x >= clear_map.sizeX() - ai_border_offset || right_bottom.y >= clear_map.sizeY() - ai_border_offset)
 		return -1;
