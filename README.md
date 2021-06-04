@@ -24,7 +24,7 @@
 
 https://developer.microsoft.com/ru-ru/windows/downloads/sdk-archive/
 
-В самом низу есть версия для Windows XP.
+В самом низу есть версия для Windows XP и Windows 7.
 
 ## Сборка
 
