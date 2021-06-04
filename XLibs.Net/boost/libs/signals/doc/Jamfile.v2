@@ -1,0 +1,5 @@
+project boost/doc ;
+import boostbook : boostbook ;
+
+boostbook doc : signals.xml ;
+

@@ -1,0 +1,45 @@
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+	float4  diffuse: COLOR0;
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float2  t0 : TEXCOORD0;
+    float2  t1 : TEXCOORD1;
+    float2  t2 : TEXCOORD2;
+    float2  t3 : TEXCOORD3;
+	float4  diffuse: COLOR0;
+	float4  specular: COLOR1;
+};
+
+float4x4 mVP;
+float4 uvScaleOffset;
+float4 uvScaleOffset1;
+float2 worldScale;
+float4 uvScaleOffsetSky;
+float3 vCameraPos;
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+	float2 uv_offset=uvScaleOffset.zw;
+	float2 uv_scale=uvScaleOffset.xy;
+	o.t0=uv_offset+v.pos.xy*uv_scale;
+	float2 uv_offset1=uvScaleOffset1.zw;
+	float2 uv_scale1=uvScaleOffset1.xy;
+	o.t1=uv_offset1+v.pos.yx*uv_scale1;
+	o.pos=mul(v.pos,mVP);
+	o.t3=v.pos.xy*worldScale;
+	
+	float2 uv_offset_sky=uvScaleOffsetSky.zw;
+	float2 uv_scale_sky=uvScaleOffsetSky.xy;
+	o.t2=uv_offset_sky+v.pos.yx*uv_scale_sky;
+
+	o.diffuse=v.diffuse;
+	o.specular=0;
+
+    return o;
+}

@@ -1,0 +1,17 @@
+@import "btl-structure.css";
+@import "btl-headers.css";
+@import "btl-links.css";
+@import "btl-paragraphs.css";
+@import "btl-tables.css";
+@import "btl-code.css";
+
+SPAN.test-output
+{
+    font-family:    Arial; 
+    font-size:      12pt;
+    white-space:    nowrap
+}
+SPAN.current_article
+{
+    font-weight:    bold;
+}

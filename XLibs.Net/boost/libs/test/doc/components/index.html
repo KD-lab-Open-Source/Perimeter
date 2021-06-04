@@ -1,0 +1,59 @@
+<HTML>
+<HEAD>
+<TITLE>Boost Test Library components</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../index.html">Boost.Test</A> > <SPAN class="current_article">Components</SPAN> </DIV>
+<DIV class="body"> <IMG src='../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">Components</H1>
+  <UL>
+    <LI>The <A href="execution_monitor/index.html">Execution Monitor</A> - a basic exception and error detection and reporting 
+      facility for use in both production and test programs. The Execution Monitor calls a user-supplied function and reports 
+      all caught runtime exceptions. It is used internally by other Boost Test Library components. It also could be used in 
+      some production environment to make controlled calls of functions which might otherwise crash the program.</LI>
+  </UL>
+  <UL>
+    <LI>The <A href="prg_exec_monitor/index.html">Program Execution Monitor</A> - a simple helper facility to be used to monitor 
+      a program execution. The Program Execution Monitor provides the function main() and uses the Execution Monitor to control 
+      a program execution. It should be used in production environment to produce uniform error reports. To control programs 
+      working in test environment, use the Test Execution Monitor instead.</LI>
+  </UL>
+  <UL>
+    <LI>The <A href="test_tools/index.html">Test Tools</A> - a toolbox for various testing needs. Test Tools are used by test 
+      programs working under control of the Test Execution Monitor or the Unit Test Framework. </LI>
+  </UL>
+  <UL>
+    <LI>The <A href="test_exec_monitor/index.html">Test Execution Monitor</A> - causes a test program to run in a monitored 
+      environment. The Test Execution Monitor provides the main() function to control a simple test program execution and 
+      allows to use the Test Tools to implement test logic. It is intended to be used in test environment. To control production 
+      code execution use the Program Execution Monitor.</LI>
+  </UL>
+  <UL>
+    <LI>The <A href="unit_test_framework/index.html">Unit Test Framework</A> - a framework that simplifies writing and organizing 
+      test cases. The framework supports test cases written as simple free functions or member functions and organizes them 
+      into a tree of test suites. The framework allows to use the Test Tools to implement a test cases and provides a facility 
+      to manage a log report level and a result report level.</LI>
+  </UL>
+  <UL>
+    <LI>The <A href="minimal_testing/index.html">minimal testing facility</A> - simple facility designed to provide the functionality 
+      presented by the original version of Boost Test. The same as the Test Execution Monitor it causes the test program to 
+      run in a monitored environment. In addition it defines several simple test tools that behave similarly to ones defined 
+      in Test Tools. Minimal testing facility does not require linking with external components, so could be a component of 
+      choice for simple and quick testing needs.</LI>
+  </UL>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+      <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

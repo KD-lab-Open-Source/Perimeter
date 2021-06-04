@@ -1,0 +1,45 @@
+
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+    float2 t0 : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float2  t0 : TEXCOORD0;
+	float2  t1 : TEXCOORD1;
+    float2  t2 : TEXCOORD2;
+	float2  t3 : TEXCOORD3;
+	float fog: FOG;
+};
+
+float4x4 mWVP;
+float4 mUV;
+float4 mUVBump;
+
+float4x4 mWorldView;
+float3 vFog;//fog_min,fog_max/(fog_max-fog_min),-1/(fog_max-fog_min)
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+
+	o.pos=mul(v.pos,mWVP);
+	o.t0=v.t0+mUV.xy;
+	o.t1=v.t0+mUV.zw;
+	o.t2=v.t0+mUVBump.xy;
+	o.t3=v.t0*0.5+mUVBump.zw;
+
+#ifdef VERTEX_FOG
+	//fog
+	float fogz=mul(v.pos,mWorldView).z;
+	float fog=fogz*vFog.z+vFog.y;
+	o.fog=clamp(fog,0,1);
+#else
+	o.fog=1;
+#endif
+
+    return o;
+}

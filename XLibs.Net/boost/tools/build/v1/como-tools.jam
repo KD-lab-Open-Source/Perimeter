@@ -1,0 +1,96 @@
+
+# modify, sell and distribute this software is granted provided this
+# copyright notice appears in all copies. This software is provided
+# "as is" without express or implied warranty, and with no claim as
+# to its suitability for any purpose.
+
+# The following #// line will be used by the regression test table generation
+# program as the column heading for HTML tables. Must not include version number.
+#//<a href="http://www.comeaucomputing.com/">Comeau<br>C++</a>
+
+# variables used to configure como-tools.jam
+#
+# COMO_PATH - path to installation
+# COMO - name of como executable
+
+COMO_PATH ?= "" ;
+COMO ?= $(COMO_PATH)/bin/como ;
+
+flags como C++FLAGS <exception-handling>off : --no_exceptions ;
+flags como C++FLAGS <exception-handling>on : --exceptions ;
+
+flags como CFLAGS <inlining>off : --no_inlining ;
+flags como CFLAGS <inlining>on <inlining>full : --inlining ;
+
+flags como CFLAGS <optimization>off : -O0 ;
+flags como CFLAGS <optimization>speed : -O3 ;
+flags como CFLAGS <optimization>size : -Os ;
+
+flags como CFLAGS <debug-symbols>on : -g ;
+flags como LINKFLAGS <debug-symbols>on : -g ;
+
+flags como FINDLIBS : m ;
+flags como FINDLIBS : rt ;
+
+flags como CFLAGS <cflags> ;
+flags como C++FLAGS <cxxflags> ;
+flags como DEFINES <define> ;
+flags como UNDEFS <undef> ;
+flags como HDRS <include> ;
+flags como STDHDRS <sysinclude> ;
+flags como LINKFLAGS <linkflags> ;
+flags como ARFLAGS <arflags> ;
+
+flags como LIBPATH <library-path> ;
+flags como NEEDLIBS <library-file> ;
+flags como FINDLIBS <find-library> ;
+
+#### Link ####
+
+rule Link-action
+{
+    como-Link-action $(<) : $(>) ;
+}
+
+# for como, we repeat all libraries so that dependencies are always resolved
+actions como-Link-action bind NEEDLIBS
+{
+    $(COMO) $(LINKFLAGS) -o "$(<[1])" "$(>)" "$(NEEDLIBS)" "$(NEEDLIBS)" -l"$(FINDLIBS)"
+}
+
+
+#### Cc #####
+
+rule Cc-action
+{
+    como-Cc-action $(<) : $(>) ;
+}
+
+actions como-Cc-action
+{
+    $(COMO) -c --c99 -U$(UNDEFS) -D$(DEFINES) $(CFLAGS) -I"$(HDRS)" -I"$(STDHDRS)" -o "$(<)" "$(>)"
+}
+
+#### C++ ####
+rule C++-action
+{
+    como-C++-action $(<) : $(>) ;
+}
+
+actions como-C++-action
+{
+    $(COMO) -tused -c -U$(UNDEFS) -D$(DEFINES) $(CFLAGS) $(C++FLAGS) -I"$(HDRS)" -I"$(STDHDRS)"  -o "$(<)" "$(>)"
+}
+
+#### Archive ####
+
+rule Archive-action
+{
+    como-Archive-action $(<) : $(>) ;
+}
+
+actions como-Archive-action
+{
+    ar rcu $(<) $(>)
+}
+

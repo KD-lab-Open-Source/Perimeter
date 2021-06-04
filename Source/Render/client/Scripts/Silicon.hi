@@ -1,0 +1,35 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: SiliconPrm
+//	Number of variables: 26
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+extern float silicon_time_step;
+extern float elastic_sphere_stiffness;
+extern float elastic_sphere_damping;
+extern float elastic_sphere_damping2;
+extern float elastic_sphere_spawn_factor;
+extern float elastic_sphere_spawn_factor_dz;
+extern float elastic_sphere_velocity_factor;
+extern float elastic_sphere_CM_stiffness;
+extern float elastic_sphere_CM_damping;
+extern float elastic_sphere_CM_damping2;
+extern float elastic_sphere_get_point_radius_factor;
+extern float elastic_link_CM_stiffness;
+extern float elastic_link_CM_damping;
+extern float elastic_link_CM_damping2;
+extern float elastic_link_stiffness;
+extern float elastic_link_damping;
+extern float elastic_link_damping2;
+extern float elastic_link_thickness_pow;
+extern float oscillating_link_density;
+extern float oscillating_link_stiffness;
+extern float oscillating_link_damping;
+extern float oscillating_link_damping2;
+extern float oscillating_link_spawn_factor;
+extern float oscillating_link_spawn_factor_dz;
+extern float oscillating_link_velocity_factor;
+extern float oscillating_link_tail_length;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: SiliconPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

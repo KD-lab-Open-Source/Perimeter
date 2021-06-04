@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: Introduction</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">Introduction</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <p></p>
+      <P>Regular expressions are a form of pattern-matching that are often used in text 
+         processing; many users will be familiar with the Unix utilities <I>grep</I>, <I>sed</I>
+         and <I>awk</I>, and the programming language <I>Perl</I>, each of which make 
+         extensive use of regular expressions. Traditionally C++ users have been limited 
+         to the POSIX C API's for manipulating regular expressions, and while regex++ 
+         does provide these API's, they do not represent the best way to use the 
+         library. For example regex++ can cope with wide character strings, or search 
+         and replace operations (in a manner analogous to either sed or Perl), something 
+         that traditional C libraries can not do.</P>
+      <P>The class <A href="basic_regex.html">boost::basic_regex</A> is the key class in 
+         this library; it represents a "machine readable" regular expression, and is 
+         very closely modeled on std::basic_string, think of it as a string plus the 
+         actual state-machine required by the regular expression algorithms. Like 
+         std::basic_string there are two typedefs that are almost always the means by 
+         which this class is referenced:</P>
+      <pre><B>namespace </B>boost{
+
+<B>template</B> &lt;<B>class</B> charT, 
+<B>          class</B> traits = regex_traits&lt;charT&gt;, 
+          <B>class</B> Allocator = std::allocator&lt;charT&gt; &gt;
+<B>class</B> basic_regex;
+
+<B>typedef</B> basic_regex&lt;<B>char</B>&gt; regex;
+<B>typedef</B> basic_regex&lt;<B>wchar_t&gt;</B> wregex;
+
+}</pre>
+      <P>To see how this library can be used, imagine that we are writing a credit card 
+         processing application. Credit card numbers generally come as a string of 
+         16-digits, separated into groups of 4-digits, and separated by either a space 
+         or a hyphen. Before storing a credit card number in a database (not necessarily 
+         something your customers will appreciate!), we may want to verify that the 
+         number is in the correct format. To match any digit we could use the regular 
+         expression [0-9], however ranges of characters like this are actually locale 
+         dependent. Instead we should use the POSIX standard form [[:digit:]], or the 
+         regex++ and Perl shorthand for this \d (note that many older libraries tended 
+         to be hard-coded to the C-locale, consequently this was not an issue for them). 
+         That leaves us with the following regular expression to validate credit card 
+         number formats:</P>
+      <PRE>(\d{4}[- ]){3}\d{4}</PRE>
+      <P>Here the parenthesis act to group (and mark for future reference) 
+         sub-expressions, and the {4} means "repeat exactly 4 times". This is an example 
+         of the extended regular expression syntax used by Perl, awk and egrep. Regex++ 
+         also supports the older "basic" syntax used by sed and grep, but this is 
+         generally less useful, unless you already have some basic regular expressions 
+         that you need to reuse.</P>
+      <P>Now let's take that expression and place it in some C++ code to validate the 
+         format of a credit card number:</P>
+      <PRE><B>bool</B> validate_card_format(<B>const</B> std::string s)
+{
+   <B>static</B> <B>const</B> <A href="basic_regex.html">boost::regex</A> e("(\\d{4}[- ]){3}\\d{4}");
+   <B>return</B> <A href="regex_match.html">regex_match</A>(s, e);
+}</PRE>
+      <P>Note how we had to add some extra escapes to the expression: remember that the 
+         escape is seen once by the C++ compiler, before it gets to be seen by the 
+         regular expression engine, consequently escapes in regular expressions have to 
+         be doubled up when embedding them in C/C++ code. Also note that all the 
+         examples assume that your compiler supports Koenig lookup, if yours doesn't 
+         (for example VC6), then you will have to add some boost:: prefixes to some of 
+         the function calls in the examples.</P>
+      <P>Those of you who are familiar with credit card processing, will have realized 
+         that while the format used above is suitable for human readable card numbers, 
+         it does not represent the format required by online credit card systems; these 
+         require the number as a string of 16 (or possibly 15) digits, without any 
+         intervening spaces. What we need is a means to convert easily between the two 
+         formats, and this is where search and replace comes in. Those who are familiar 
+         with the utilities <I>sed</I> and <I>Perl</I> will already be ahead here; we 
+         need two strings - one a regular expression - the other a "<A href="format_syntax.html">format 
+            string</A>" that provides a description of the text to replace the match 
+         with. In regex++ this search and replace operation is performed with the 
+         algorithm<A href="regex_replace.html"> regex_replace</A>, for our credit card 
+         example we can write two algorithms like this to provide the format 
+         conversions:</P>
+      <PRE><I>// match any format with the regular expression:
+</I><B>const</B> boost::regex e("\\A(\\d{3,4})[- ]?(\\d{4})[- ]?(\\d{4})[- ]?(\\d{4})\\z");
+<B>const</B> std::string machine_format("\\1\\2\\3\\4");
+<B>const</B> std::string human_format("\\1-\\2-\\3-\\4");
+
+std::string machine_readable_card_number(<B>const</B> std::string s)
+{
+   <B>return</B> <A href="regex_replace.html">regex_replace</A>(s, e, machine_format, boost::match_default | boost::format_sed);
+}
+
+std::string human_readable_card_number(<B>const</B> std::string s)
+{
+   <B>return</B> <A href="regex_replace.html">regex_replace</A>(s, e, human_format, boost::match_default | boost::format_sed);
+}</PRE>
+      <P>Here we've used marked sub-expressions in the regular expression to split out 
+         the four parts of the card number as separate fields, the format string then 
+         uses the sed-like syntax to replace the matched text with the reformatted 
+         version.</P>
+      <P>In the examples above, we haven't directly manipulated the results of a regular 
+         expression match, however in general the result of a match contains a number of 
+         sub-expression matches in addition to the overall match. When the library needs 
+         to report a regular expression match it does so using an instance of the class <A href="match_results.html">
+            match_results</A>, as before there are typedefs of this class for the most 
+         common cases:
+      </P>
+      <PRE><B>namespace </B>boost{
+<B>typedef</B> match_results&lt;<B>const</B> <B>char</B>*&gt; cmatch;
+<B>typedef</B> match_results&lt;<B>const</B> <B>wchar_t</B>*&gt; wcmatch;
+<STRONG>typedef</STRONG> match_results&lt;std::string::const_iterator&gt; smatch;
+<STRONG>typedef</STRONG> match_results&lt;std::wstring::const_iterator&gt; wsmatch; 
+}</PRE>
+      <P>The algorithms <A href="regex_search.html">regex_search</A> and&nbsp;<A href="regex_match.html">regex_match</A>
+         make use of match_results to report what matched; the difference between these 
+         algorithms is that <A href="regex_match.html">regex_match</A> will only find 
+         matches that consume <EM>all</EM> of the input text, where as <A href="regex_search.html">
+            regex_search</A> will <EM>search</EM> for a match anywhere within the text 
+         being matched.</P>
+      <P>Note that these algorithms are not restricted to searching regular C-strings, 
+         any bidirectional iterator type can be searched, allowing for the possibility 
+         of seamlessly searching almost any kind of data.
+      </P>
+      <P>For search and replace operations, in addition to the algorithm <A href="regex_replace.html">
+            regex_replace</A> that we have already seen, the <A href="match_results.html">match_results</A>
+         class has a format member that takes the result of a match and a format string, 
+         and produces a new string by merging the two.</P>
+      <P>For iterating through all occurences of an expression within a text, there are 
+         two iterator types: <A href="regex_iterator.html">regex_iterator</A> will 
+         enumerate over the <A href="match_results.html">match_results</A> objects 
+         found, while <A href="regex_token_iterator.html">regex_token_iterator</A> will 
+         enumerate a series of strings (similar to perl style split operations).</P>
+      <P>For those that dislike templates, there is a high level wrapper class RegEx 
+         that is an encapsulation of the lower level template code - it provides a 
+         simplified interface for those that don't need the full power of the library, 
+         and supports only narrow characters, and the "extended" regular expression 
+         syntax. This class is now deprecated as it does not form part of the regular 
+         expressions C++ standard library proposal.
+      </P>
+      <P>The <A href="posix_api.html">POSIX API</A> functions: regcomp, regexec, regfree 
+         and regerror, are available in both narrow character and Unicode versions, and 
+         are provided for those who need compatibility with these API's.
+      </P>
+      <P>Finally, note that the library now has run-time <A href="localisation.html">localization</A>
+         support, and recognizes the full POSIX regular expression syntax - including 
+         advanced features like multi-character collating elements and equivalence 
+         classes - as well as providing compatibility with other regular expression 
+         libraries including GNU and BSD4 regex packages, and to a more limited extent 
+         Perl 5.
+      </P>
+      <P>
+         <HR>
+      <P></P>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         24 Oct 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 
+            2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+   </body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<title>Boost.Regex: regbase</title>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../../boost.css">
+</head>
+<body>
+<p></p>
+
+<table id="Table1" cellspacing="1" cellpadding="1" width="100%"
+border="0">
+<tr>
+<td valign="top" width="300">
+<h3><a href="../../../index.htm"><img height="86" width="277" alt=
+"C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+</td>
+<td width="353">
+<h1 align="center">Boost.Regex</h1>
+
+<h2 align="center">regbase</h2>
+</td>
+<td width="50">
+<h3><a href="index.html"><img height="45" width="43" alt=
+"Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<hr>
+<p>Use of the type <code>boost::regbase</code> is now deprecated,
+and the type does not form a part of the <a href="http://anubis.dkuug.dk/jtc1/sc22/wg21/docs/papers/2003/n1429.htm">
+regular expression standardization proposal</a>.&nbsp; This type
+still exists as a base class of <code>boost::basic_regex</code>,
+and you can still refer to <code>
+boost::regbase::constant_name</code> in your code, however for
+maximum portability to other std regex implementations you should
+instead use either:</p>
+
+<pre>
+boost::regex_constants::constant_name
+</pre>
+
+<p>or</p>
+
+<pre>
+boost::regex::constant_name
+</pre>
+
+<p>or</p>
+
+<pre>
+boost::wregex::constant_name
+</pre>
+
+<p></p>
+
+<hr>
+<br>
+<br>
+ 
+
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         24 Oct 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 
+            2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+</body>
+</html>
+
+

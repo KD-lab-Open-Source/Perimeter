@@ -1,0 +1,164 @@
+# copyright John Maddock 2003
+
+subproject libs/regex/test ;
+
+# bring in the rules for testing
+import testing ;
+subinclude libs/regex/test/captures ;
+
+#
+# this template defines the options common to
+# all regex tests:
+#
+template test 
+   : <template>../build/regex-options 
+     <lib>../build/boost_regex            # sources
+   : <threading>multi
+   ;
+ 
+#
+# this template defines the options common to
+# all builds of the test/regression program:
+#
+template regression
+    : <template>test                    # sources
+      regress/parse.cpp
+      regress/regress.cpp 
+      regress/tests.cpp
+      <lib>../../test/build/boost_prg_exec_monitor
+    ;
+
+#
+# rule for simple regex test programs:
+#
+rule regex-test ( name : sources + : requirements * : input-files * )
+{
+    return [ run $(sources)
+               :
+               : $(input-files)
+               : $(requirements)
+               : $(name) ] ;
+}
+
+#
+# this template defines the options common to
+# all regex dll tests:
+#
+template test-dll 
+   : <template>../build/regex-dll-options 
+     <dll>../build/boost_regex            # sources
+   : <threading>multi
+   ;
+ 
+#
+# this template defines the options common to
+# all builds of the test/regression program:
+#
+template regression-dll
+    : <template>test-dll                    # sources
+      regress/parse.cpp
+      regress/regress.cpp 
+      regress/tests.cpp
+      <lib>../../test/build/boost_prg_exec_monitor
+    ;
+
+test-suite regex
+      : 
+      [ regex-test regex_regress
+          : <template>regression     # sources
+          :                          # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ regex-test regex_wide_regress
+          : <template>regression     # sources
+            <template>../build/msvc-stlport-tricky
+          : <define>TEST_UNICODE=1   # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ regex-test posix_api_check
+          : <template>test                      # sources
+            c_compiler_checks/posix_api_check.c
+      ]
+
+      [ compile <template>test c_compiler_checks/wide_posix_api_check.c 
+          : : wide_posix_api_check_c ]
+
+      [ regex-test posix_api_check_cpp
+          : <template>test                      # sources
+            c_compiler_checks/posix_api_check.cpp
+      ]
+
+      [ regex-test wide_posix_api_check_cpp
+          : <template>test                      # sources
+            c_compiler_checks/wide_posix_api_check.cpp
+      ]
+
+      [ regex-test bad_expression_test
+          : <template>test                      # sources
+            pathology/bad_expression_test.cpp
+            <lib>../../test/build/boost_test_exec_monitor
+      ]
+
+      [ regex-test recursion_test
+          : <template>test                      # sources
+            pathology/recursion_test.cpp
+            <lib>../../test/build/boost_test_exec_monitor
+      ]
+      
+      [ run config_info/regex_config_info.cpp <template>test 
+      : : : <test-info>always_show_run_output ]
+
+      [ run config_info/regex_config_info.cpp <template>test 
+      : : : <test-info>always_show_run_output
+      : regex_dll_config_info ]
+
+      [ regex-test regex_regress_dll
+          : <template>regression-dll     # sources
+          :                          # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ regex-test regex_wide_regress_dll
+          : <template>regression-dll     # sources
+            <template>../build/msvc-stlport-tricky
+          : <define>TEST_UNICODE=1   # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ compile concepts/concept_check.cpp
+      ]
+      [ compile concepts/wide_concept_check.cpp
+      ]
+      
+     [ run
+    # sources
+    captures/captures_test.cpp
+    <template>../build/regex-options
+    # dependencies
+    <lib>captures/boost_regex_extra
+    <lib>../../test/build/boost_test_exec_monitor
+ :  # additional args
+ :  # test-files
+ :  # requirements
+    <threading>multi
+    <define>BOOST_REGEX_MATCH_EXTRA=1
+    <define>BOOST_REGEX_NO_LIB=1
+ :  # test name
+    captures_test
+ ]
+
+;
+
+
+
+
+
+
+
+
+
+
+
+

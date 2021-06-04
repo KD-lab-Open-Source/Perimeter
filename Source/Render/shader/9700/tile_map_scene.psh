@@ -1,0 +1,35 @@
+ps.2.0
+
+// ambient color
+//def c17, 0.25, 0.25, 0.25, 1.0
+
+//c8 - texture factor (color)
+def c9,2,2,2,0.5
+
+dcl t0.xy
+dcl t3.xy
+
+dcl_2d s0
+dcl_2d s3
+#ifdef c2x2
+#include "2x2.inl"
+#else
+#include "4x4.inl"
+#endif
+
+//Load texture color
+texld r1, t0, s0
+// add lighting
+//mad r0.rgb, r10, r1, c17
+texld r2, t3, s3
+//mul r2, r2, c9
+mad r10.rgb, r2, c9, r10
+
+mul r0.rgb, r10, r1
+
+mov r0.a, r1
+mul r0,r0,c8
+//mul r0.rgb, r0, r2
+
+// output
+mov oC0, r0

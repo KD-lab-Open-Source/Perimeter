@@ -1,0 +1,247 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: GameConfig
+//	Number of variables: 156
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+extern char const* MainModelPath;
+extern char const* MainIconPath;
+extern char const* MainFontPath;
+extern char const* MainCursorPath;
+extern char const* MainSpritePath;
+extern char const* MainEffectPath;
+extern char const* MainVideoPath;
+extern char const* MainWorldPath;
+extern char const* MainToolPath;
+extern int terLogicTimePeriod;
+extern float terLogicTimePeriodInv;
+extern float terGlobalTimePeriodSeconds;
+extern float PerimeterCameraControlFPS;
+extern float HardwareCameraFocus;
+extern char const* shellMainFont;
+extern float CAMERA_SCROLL_SPEED_DELTA;
+extern float CAMERA_BORDER_SCROLL_SPEED_DELTA;
+extern float CAMERA_SHIFT_SPEED_DELTA;
+extern float CAMERA_SCROLL_SPEED_DAMP;
+extern float CAMERA_SCROLL_SPEED_MASS;
+extern float CAMERA_BORDER_SCROLL_AREA_UP;
+extern float CAMERA_BORDER_SCROLL_AREA_DN;
+extern float CAMERA_BORDER_SCROLL_AREA_HORZ;
+extern float HISTORY_CAMERA_ANGLE_SPEED_DELTA;
+extern float CAMERA_KBD_ANGLE_SPEED_DELTA;
+extern float CAMERA_MOUSE_ANGLE_SPEED_DELTA;
+extern float CAMERA_ANGLE_SPEED_DAMP;
+extern float CAMERA_ANGLE_SPEED_MASS;
+extern float CAMERA_ZOOM_SPEED_DELTA;
+extern float CAMERA_ZOOM_MOUSE_MULT;
+extern float CAMERA_ZOOM_SPEED_DAMP;
+extern float CAMERA_ZOOM_SPEED_MASS;
+extern float CAMERA_FOLLOW_AVERAGE_TAU;
+extern float CAMERA_MAX_HEIGHT;
+extern float CAMERA_MIN_HEIGHT;
+extern float CAMERA_DEFAULT_HEIGHT;
+extern float CAMERA_MOVE_ZOOM_SCALE;
+extern float CAMERA_ZOOM_MIN;
+extern float CAMERA_ZOOM_MAX;
+extern float CAMERA_THETA_MIN;
+extern float CAMERA_THETA_MAX;
+extern float CAMERA_ZOOM_TERRAIN_THRESOLD1;
+extern float CAMERA_ZOOM_TERRAIN_THRESOLD2;
+extern float CAMERA_WORLD_SCROLL_BORDER;
+extern int CAMERA_REPLAY_DURATION;
+extern float fSoundWidthPower;
+extern float fSoundZMultiple;
+extern int dbgShowCursorPos;
+extern int terEnableSoundLog;
+extern int bShowSplash;
+extern float terSelectImageSizeX;
+extern float terSelectImageSizeY;
+extern float terSelectMainLeft;
+extern float terSelectMainRight;
+extern float terSelectMainTop;
+extern float terSelectMainBottom;
+extern float terSelectMarkLeft;
+extern float terSelectMarkRight;
+extern float terSelectMarkTop;
+extern float terSelectMarkBottom;
+extern float terSelectLifePositionLeft;
+extern float terSelectLifePositionTop;
+extern float terSelectLifeLeft;
+extern float terSelectLifeRight;
+extern float terSelectLifeTop;
+extern float terSelectLifeBottom;
+extern char const* terScreenShotsPath;
+extern char const* terScreenShotName;
+extern char const* terScreenShotExt;
+extern char const* terMoviePath;
+extern char const* terMovieName;
+extern char const* terMovieFrameName;
+#ifndef __XScript_struct_PlayerColor__
+#define __XScript_struct_PlayerColor__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct PlayerColor {
+	float unitColor[4];
+	float fieldColor[4];
+	float zeroLayerColor[4];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_PlayerColor__
+extern int playerColorsSize;
+extern PlayerColor playerColors[];
+extern int playerWorldColorIdx;
+extern int playerAllowedColorSize;
+extern char const* sRegionTextureCircle;
+extern char const* sRegionTextureCircleDotted;
+extern float RegionUSpeedDotted;
+#ifndef __XScript_struct_CircleColor__
+#define __XScript_struct_CircleColor__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct CircleColor {
+	int color[4];
+	float width;
+	float length;
+	int dotted;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_CircleColor__
+#ifndef __XScript_struct_CircleColors__
+#define __XScript_struct_CircleColors__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct CircleColors {
+	CircleColor connectionRadius;
+	CircleColor connectionRadiusSelected;
+	CircleColor zeroLayerRadius;
+	CircleColor fireRadius;
+	CircleColor fireRadiusMin;
+	CircleColor selectRadius;
+	CircleColor targetRadius;
+	CircleColor targetTriangles;
+	CircleColor targetCross;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_CircleColors__
+extern float targetCircleCount;
+extern float targetCircleMaxRadius;
+extern float targetCircleStep;
+extern float targetTrianglesRadius;
+extern float maxAlphaCircleColorHeight;
+extern CircleColors circleColors;
+#ifndef __XScript_struct_sRegionMain__
+#define __XScript_struct_sRegionMain__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sRegionMain {
+	char const* texture;
+	int line_color[4];
+	int area_color[4];
+	int vertical_color[4];
+	int column_step;
+	char const* column_model;
+	float column_model_size;
+	int column_red[4];
+	int column_green[4];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sRegionMain__
+extern sRegionMain RegionMain;
+#ifndef __XScript_struct_ZeroplastBurn__
+#define __XScript_struct_ZeroplastBurn__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ZeroplastBurn {
+	float fade_time;
+	float strength;
+	float reflection_strength;
+	float reflection;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ZeroplastBurn__
+extern ZeroplastBurn zeroplastBurn;
+extern int pathColor[4];
+extern int patrolColor[4];
+extern int IronDiggerVolume;
+extern char const* missionDifficultyPostfix[3];
+extern float markHealth1;
+extern float markHealth2;
+extern float markWidth1;
+extern float markWidth2;
+extern float markHealthWidthCoeffA;
+extern float markHealthWidthCoeffB;
+extern char const* mainCurrUserRegFolder;
+extern char const* regLanName;
+#ifndef __XScript_struct_sCorpseDynamic__
+#define __XScript_struct_sCorpseDynamic__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sCorpseDynamic {
+	float dark_duration;
+	float min_dark;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sCorpseDynamic__
+extern sCorpseDynamic dataCorpseDynamic;
+extern float UNITS_WEIGHT;
+extern float BUILDINGS_WEIGHT;
+extern float SCOURGE_WEIGHT;
+extern float ENERGY_WEIGHT;
+extern float music_change_time;
+#ifndef __XScript_struct_ModelProperty__
+#define __XScript_struct_ModelProperty__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ModelProperty {
+	char const* name;
+	float size;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ModelProperty__
+extern char const* terModelUnitSelection;
+extern char const* terModelLightRay;
+extern char const* terModelDefaultTree;
+extern ModelProperty terModelBuildingNoConnection;
+extern ModelProperty terModelBuildingLowEnergy;
+extern ModelProperty terOmegaMinedIcon;
+extern float terModelBuildingSpeed;
+extern char const* terModelWayFlag;
+extern float terModelWayFlagRadius;
+extern float terModelWayFlagSpeed;
+extern char const* terTextureField01;
+extern char const* terTextureField02;
+extern char const* terTextureHologram;
+extern char const* terTextureUnitSelection;
+extern char const* terTextureCongregationUnit;
+extern char const* terTextureCongregationProtection;
+extern char const* terTextureCongregationAnnihilation;
+extern char const* terTextureATCFireTrail;
+extern char const* terTextureBlockFireTrail;
+extern char const* terTextureFighterFlyTrail;
+extern char const* terTextureFighterFireTrail;
+extern char const* terTextureSoldierFireTrail;
+extern char const* terTextureBomberFlyTrail;
+extern char const* terTextureOfficerFireTrail;
+extern char const* terTextureTechnicFireTrail;
+extern char const* terTexturePortFireTrail;
+extern char const* terTextureLaserFireTrail;
+extern char const* terTextureDebrisFlyTrail;
+extern char const* terTextureLaserTrail;
+extern char const* terTextureEnergyLinkTrail;
+extern char const* terTextureFreezeTrail;
+extern int terTextureLaserSize;
+extern char const* terTextureLaser[];
+extern int terTextureLaserSizeZ;
+extern char const* terTextureLaserZ[];
+extern int terShootMapTest;
+extern int terShootUnitTest;
+extern int terOfficerFreezeTime;
+extern int terTechnicHealTime;
+extern float terScumStormTurnAngle;
+extern float terScumStormTurnAngleDelta;
+extern int terScumStormTurnDelay;
+extern int terInvisibilityTime;
+extern int terInvisibilityTimeMax;
+extern float terInvisibilityCoeff;
+extern int FrameRepairElementsPerQuant;
+extern float small_camera_x;
+extern float small_camera_y;
+extern float small_camera_rect_dx;
+extern float small_camera_rect_dy;
+extern float small_model_rate;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: GameConfig
+//////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>posix_time::time iterators Documentation</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<a href="../../../index.htm">
+<img align="left" src="../../../c++boost.gif" alt="C++ Boost">
+</a>  
+
+<h1>posix_time::time_iterator</h1>
+<p>&nbsp;<p>
+<hr>
+<a href="index.html">Overall Index</a> --
+<a href="gregorian.html">Gregorian Index</a> --
+<a href="posix_time.html">Posix Time Index</a>
+<p>
+<font class="bold">Time Iterators</font>
+<p>
+<a href="#intro">Introduction</a> --
+<a href="#header">Header</a> --
+<a href="#classoverview">Class Overview</a> --
+<a href="#operators">Operators</a>
+
+<p>
+<h2><a name="intro">Introduction</a></h2>
+
+<p>
+Time iterators provide a mechanism for iteration through times. Time iterators are similar to <a href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">Bidirectional Iterators</a>. 
+However, time_iterators are different than standard iterators in that there is no underlying sequence, just a calculation function.  In addition, time_iterators are directly comparable against instances of <a href="class_ptime.html">class ptime</a>.  Thus a second iterator for the end point of the iteration is not required, but rather a point in time can be used directly.  For example, the following code iterates using a 15 minute iteration interval.  The <a href="exp-print_hours.html">print hours</a> example also illustrates the use of the time_iterator.
+
+<p>
+<div class="fragment">
+<pre>
+<font class="preprocessor">#include "boost/date_time/posix_time/posix_time.hpp"</font>
+<font class="preprocessor">#include &lt;iostream&gt;</font>
+
+
+<font class="keywordtype">int</font>
+<a name="a0"></a><a class="code" href="time__iter_8cpp.html#a0">main</a>()
+{
+  <font class="keyword">using</font> <font class="keyword">namespace </font>boost::gregorian;
+  <font class="keyword">using</font> <font class="keyword">namespace </font>boost::posix_time;
+  date d(2000,Jan,20);
+  ptime start(d);
+  ptime end = start + hours(1);
+  time_iterator titr(start,minutes(15)); <font class="comment">//increment by 15 minutes</font>
+  <font class="comment">//produces 00:00:00, 00:15:00, 00:30:00, 00:45:00</font>
+  <font class="keywordflow">while</font> (titr &lt; end) {
+    std::cout &lt;&lt; to_simple_string(*titr) &lt;&lt; std::endl;
+    ++titr;
+  }
+  std::cout &lt;&lt; <font class="stringliteral">"Now backward"</font> &lt;&lt; std::endl;
+  <font class="comment">//produces 01:00:00, 00:45:00, 00:30:00, 00:15:00</font>
+  <font class="keywordflow">while</font> (titr &gt; start) {
+    std::cout &lt;&lt; to_simple_string(*titr) &lt;&lt; std::endl;
+    --titr;
+  }
+}
+</pre>
+
+</div>
+<p>
+
+<p>
+<h2><a name="header">Header</a></h2>
+<pre>
+#include "boost/date_time/posix_time/posix_time.hpp" //include all types plus i/o
+or
+#include "boost/date_time/posix_time/posix_time_types.hpp" //no i/o just types
+</pre>
+<p>
+<h2><a name="classoverview">Class Overview</a></h2>
+<p>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr><td><b>Class</b></td>
+    <td><b>Construction Parameters</b></td>
+    <td><b>Description</b></td></tr>
+<tr><td>time_iterator</td>
+    <td>ptime start_time, time_duration increment</td>
+    <td>Iterate incrementing by the specified duration.</td></tr>
+</table>
+
+<p>
+
+<h2><a name="operators">Operators</a></h2>
+
+<p>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr><td><b>Syntax</b></td><td><b>Description</b></td><td><b>Example</b></td></tr>
+<tr><td class="nowrap">operator==(const ptime&amp; rhs),
+        <br> operator!=(const ptime&amp; rhs),
+        <br> operator&gt;, operator&lt; 
+        <br> operator&gt;=, operator&lt;=</td>
+        <td>A full complement of comparison operators</td>
+	<td class="nowrap">date d(2002,Jan,1);<br>
+            ptime start_time(d, hours(1));<br>
+            //increment by 10 minutes<br>
+            time_iterator titr(start_time, minutes(10));<br>
+            ptime end_time = start_time + hours(2);<br>
+            if (titr == end_time)  // false<br>
+            if (titr != end_time)  // true<br>
+            if (titr &gt;= end_time)  // false<br>
+            if (titr &lt;= end_time)  // true<br>
+         </td></tr>
+<tr><td><font class="func">prefix increment</font></td>
+        <td>Increment the iterator by the specified duration.</td>
+	<td class="nowrap">
+            //increment by 10 milli seconds<br>
+            time_iterator titr(start_time, milliseconds(10));<br>
+            ++titr; // == start_time + 10 milliseconds
+        </td></tr>
+<tr><td><font class="func">prefix decrement</font></td>
+        <td>Decrement the iterator by the specified time duration.</td>
+	<td  class="nowrap">Example
+            time_iterator titr(start_time, time_duration(1,2,3)); <br>
+            --titr; // == start_time - 1 hour, 2 minutes, and 3 seconds
+         </td></tr>
+</table>
+
+<p>
+
+
+<hr><address><small>
+<!-- hhmts start -->
+Last modified: Sun Nov  2 20:02:29 MST 2003
+<!-- hhmts end -->
+ by <a href="mailto:jeff&#64;crystalclearsoftware.com">Jeff Garland</a> &copy; 2000-2003
+</small></address>
+
+</body>
+</html>
+

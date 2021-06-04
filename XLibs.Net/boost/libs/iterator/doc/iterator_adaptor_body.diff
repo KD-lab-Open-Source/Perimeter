@@ -1,0 +1,35 @@
+Index: iterator_adaptor_body.rst
+===================================================================
+RCS file: /cvsroot/boost/boost/libs/iterator/doc/iterator_adaptor_body.rst,v
+retrieving revision 1.2
+retrieving revision 1.3
+diff -b -d -u -r1.2 -r1.3
+--- iterator_adaptor_body.rst	22 Sep 2003 19:55:00 -0000	1.2
++++ iterator_adaptor_body.rst	24 Nov 2003 05:02:46 -0000	1.3
+@@ -1,3 +1,9 @@
++.. Version 1.2 of this ReStructuredText document corresponds to
++   n1530_, the paper accepted by the LWG for TR1.
++
++.. Copyright David Abrahams, Jeremy Siek, and Thomas Witt 2003. All
++   rights reserved
++
+ The ``iterator_adaptor`` class template adapts some ``Base`` [#base]_
+ type to create a new iterator.  Instantiations of ``iterator_adaptor``
+ are derived from a corresponding instantiation of ``iterator_facade``
+@@ -19,7 +25,7 @@  Issue 9.1 et al
+ redefined in the user's derived class.
+ 
+ Several of the template parameters of ``iterator_adaptor`` default
+-to ``use_default`` (or ``use_default_access``). This allows the
++to ``use_default``. This allows the
+ user to make use of a default parameter even when she wants to
+ specify a parameter later in the parameter list.  Also, the
+ defaults for the corresponding associated types are somewhat
+@@ -28,6 +34,6 @@  Issue 9.45y
+ the identity of the ``use_default`` type is not left unspecified
+ because specification helps to highlight that the ``Reference``
+ template parameter may not always be identical to the iterator's
+-``reference`` type, and will keep users making mistakes based on
++``reference`` type, and will keep users from making mistakes based on
+ that assumption.
+ 

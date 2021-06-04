@@ -1,0 +1,160 @@
+<HTML>
+<HEAD>
+<TITLE>Unit Test Framework</TITLE>
+<META name="vs_snapToGrid" content="False">
+<META name="vs_showGrid" content="False">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css"> H4 { TEXT-DECORATION: underline } </STYLE>
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> &gt; <A href="../index.html">Components</A> 
+  &gt; <SPAN class="current_article">Unit Test Framework</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo" id="IMG1"> 
+  <H1>Boost Test Library: Unit Test Framework</H1>
+  <P class="epigraph"> The acceptance test makes the customer satisfied that the<BR>
+    software provides the business value that makes them willing<BR>
+    to pay for it. The unit test makes the programmer satisfied<BR>
+    that the software does what the programmer thinks it does. </P>
+  <P class="epigraph">XP maxim</P>
+  <P class="page-toc"> <A href="#Introduction">Introduction</A><BR>
+    <A href="getting_started/index.html">Getting started</A><BR> 
+    <A href="#Usage">Usage</A><BR>
+  <A href="components/index.html">Components</A></P>
+  <P class="page-toc-indented"> <A href="components/test_case/index.html">The Test Case</A><BR>
+    <A href="components/test_suite/index.html">The Test Suite</A><BR>
+    <A href="components/test_result/index.html">The Test Result</A><BR>
+  <A href="components/test_log/index.html">The Test Log</A>  </P>
+  <P class="page-toc"><A href="parameters/index.html">Configuration</A><BR>
+    <A href="compilation.html">Compilation</A><BR>
+    <A href="#Example">Example and test programs</A><BR>
+    <BR>
+    See also: <A href="../test_tools/index.html">Test Tools</A> </P>
+  <H2><A name="Introduction">Introduction</A></H2>
+  <P class="first-line-indented">What is the first thing to do when you start working on new library/class/program? 
+    Exactly - you need the unit test module. There are many different sometime conflicting requirements 
+    programmers impose on a unit testing framework. Writing of the unit test module should be simple and 
+    obvious. On the other hand the framework should allow us to do a lot of nontrivial things. We want 
+    to be able to have a lot of small test cases and we want to be able to group them in test suites. 
+    At the beginning of the development we want to see as much descriptive error message as possible, 
+    while during regression testing we just want to know is there any errors at all. For small test programs 
+    a run time should prevail over a compilation time - who want to wait a 1 min to start the test that 
+    run a 1 sec?. For a long and complex test we want to be able to see the test progress.</P>
+  <P class="first-line-indented">The Boost Test Library's Unit Test Framework based on above rationale 
+    provides facilities to simplify writing test cases using <A href="../test_tools/index.html"> Test 
+    Tools</A> and organizing them into test suites hierarchy. The framework relieves users from messy 
+    a error detection, reporting duties and parameter processing. It provides function main() that initialize 
+    the framework, setups parameters based on command line arguments and/or environment variables, calls 
+    the user-supplied function init_unit_test_suite(argc, argv) and then runs the user's test suite. The 
+    framework keeps track of all passed/failed <A href="../test_tools/index.html">Test Tools</A> assertions, 
+    provides an ability to check the testing progress based on the amount of test cases run as part of 
+    the total amount of test cases and generates the result report in several different formats. The Unit 
+    Test Framework intended to be used both for a simple testing needs and a complex non trivial testing. 
+    It is not intended to be used with the production code, where the <A href="../prg_exec_monitor/index.html">Program 
+    Execution Monitor</A> could be used. This was one of the design rationale to make the library implemented 
+    off-line vs. an inline implementation to allows us to speed up a compilation at an expense of a runtime 
+    efficiency. The Unit Test Framework should be preferred over <A href="../test_exec_monitor/index.html">Test 
+    Execution Monitor</A> while working on creating new test programs. </P>
+  <H2><A name="Usage">Usage</A></H2>
+  <P class="first-line-indented">As mentioned above the Unit Test Framework is responsible for supplying 
+    function main() that initializing testing environment and taking care about results reporting. The 
+    main function also includes a hook for the function that should be supplied by the user. So, to integrate 
+    test program with the framework you should provide the function with the following specification:</P>
+  <P>boost::unit_test_framework::test_suite* <SPAN class="new-term">init_unit_test_suite</SPAN> ( int 
+    argc, char* argv[] )</P>
+  <P class="first-line-indented">This function should create and initialize top 
+    level instance of the class test_suite. The NULL pointer returned by the function 
+    is treated as a non-initialized test_suite - testing aborted and boost::<SPAN class="new-term">exit_test_failure</SPAN> 
+    is returned. In other case the framework runs created instance of the class 
+    test_suite. The framework forwards command line argument specified during 
+    test invocation. It's guarantied that any framework-specific command line 
+    arguments are excluded. The framework is responsible for the lifetime of this 
+    instance of class test_suite. It gets destroyed at the end of test execution. 
+    If you are not using regular mechanisms of test suite creation, make sure 
+    that this instance is allocated dynamically.</P>
+  <P class="first-line-indented">If you are using only zero arity free function 
+    based test cases, you could employ automatic registration facility, that allows 
+    to eliminate need in init_unit_test_suite and test cases registration. For 
+    more details see <a href="components/test_case/auto_register_facility.html">here</a>. </P>
+  <P class="first-line-indented">In case if your test cases may throw custom  exceptions (see <a href="../execution_monitor/index.html#caught_exception">here</a> for list of exceptions translated by default), you could register  translator specific for that exception. For more details on translator specification you could see <a href="../execution_monitor/execution_monitor.html">excecution_monitor</a> description. To register translator in test case monitor use following template function defined in the framework:</P>
+  <P>template&lt;typename Exception, typename ExceptionTranslator&gt;<br>
+    void <br>
+    boost::unit_test_framework::<SPAN class="new-term">register_exception_translator</span>( ExceptionTranslator const&amp; tr, boost::type&lt;Exception&gt;* d = 0 )
+  </P>
+  <P class="first-line-indented">Once testing is finished, the framework reports the results and returns 
+    the result code. Here the list of values returned by the test programs integrated with the unit test 
+    framework:</P>
+  <DIV class="centered"> 
+    <TABLE id="two-column-table" cellspacing="0" width="100%">
+      <THEAD> 
+      <TR> 
+        <TD>Value</TD>
+        <TD>Meaning</TD>
+      </TR>
+      </THEAD> <TBODY> 
+      <TR> 
+        <TD>boost::<SPAN class="new-term">exit_success</SPAN></TD>
+        <TD>returned if no errors occurred during test or success result code was explicitly requested 
+          with the <A href="parameters/no_result_code.html">no result code</A> framework parameter </TD>
+      </TR>
+      <TR> 
+        <TD>boost::<SPAN class="new-term">exit_test_failure</SPAN></TD>
+        <TD>returned if nonfatal errors detected and no uncaught exceptions thrown or the framework fails 
+          to initialize the test suite</TD>
+      </TR>
+      <TR> 
+        <TD>boost::<SPAN class="new-term">exit_exception_failure</SPAN></TD>
+        <TD>returned if fatal errors detected or uncaught exceptions thrown </TD>
+      </TR>
+      </TBODY> 
+    </TABLE>
+  </DIV>
+  <H3>Example</H3>
+  <PRE class="code"><SPAN class="cpp-type">void</SPAN>
+my_test_function()
+{
+    ...
+}
+
+test_suite*
+init_unit_test_suite( <SPAN class="cpp-type">int</SPAN> argc, <SPAN class="cpp-type">char</SPAN>* argv[] )
+{
+    test_suite* test = BOOST_TEST_SUITE( <SPAN class="literal">"Master test suite"</SPAN> );
+
+    test-&gt;add( BOOST_TEST_CASE( &amp;my_test_function ) );
+
+    <SPAN class="reserv-word">return</SPAN> test;
+}</PRE>
+  <H2><A name="Example">Example and test programs</A></H2>
+  <P class="indented"> <A href="../../examples/unit_test_example1.html">unit_test_example1</A><BR>
+    <A href="../../examples/unit_test_example2.html">unit_test_example2</A><BR>
+    <A href="../../examples/unit_test_example3.html">unit_test_example3</A><BR>
+    <A href="../../examples/unit_test_example4.html">unit_test_example4</A><BR>
+    <A href="../../examples/unit_test_example5.html">unit_test_example5</A><BR>
+	<A href="../../examples/test_case_template_example.html">test_case_template_example</A></P>
+  <P class="indented"><BR>
+    <A href="../../tests/online_test.html">online_test</A><BR>
+    <A href="../../tests/errors_handling_test.html">errors_handling_test</A><BR>
+    <A href="../../tests/parameterized_test_test.html">parameterized_test_test</A><BR>
+    <A href="../../tests/auto_unit_test_test.html">auto_unit_test_test</A><BR>
+    <A href="../../tests/auto_unit_test_test_mult.html">auto_unit_test_test_mult</A><BR>
+    <A href="../../tests/custom_exception_test.html">custom_exception_test</A><BR>
+    <A href="../../tests/test_case_template_test.html">test_case_template_test</A><BR>	
+    <A href="../../tests/result_report_test.html">result_report_test</A></P>
+  <P class="indented"></P>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+    <P>Revised: 
+      <!-- #BeginDate format:Sw1 -->18 January, 2004<!-- #EndDate -->
+    </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

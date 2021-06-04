@@ -1,0 +1,43 @@
+section MutationPrm(declaration = "Game\Scripts\Mutation.hi", definition = "Game\Scripts\Mutation.cppi")
+{
+
+enum MutationPhase {
+		PreMelting,
+		Melting,
+		MovingIn,
+		Merging,
+		Separation,
+		MovingOut,
+		Freesing,
+		PostFreesing,
+		MutationPhaseMax
+};
+
+int mutation_times[] = {
+	300, // PreMelting
+	500, // Melting
+	900, // MovingIn
+	500, // Merging
+	500, // Separation
+	900, // MovingOut
+	500, // Freesing
+	200, // PostFreesing
+	10 // MutationPhaseMax
+	};
+
+float mutation_sphere_delta_z = 3;
+float mutation_upper_stiffness = 0.25;
+float mutation_lower_stiffness = 0.25;
+
+float mutation_compact_step = 1;
+float mutation_compact_iterations = 20;
+float mutation_compact_penetration_factor = 0.87;
+float mutation_compact_softer = 0.15;
+
+float mutation_base_volumes[3] = { 500, 500, 800 };
+
+float mutation_specular_color[] = { 0.6, 0.6, 0.6, 1 };
+
+float mutation_move_sound_start_phase = 0.15;
+
+}

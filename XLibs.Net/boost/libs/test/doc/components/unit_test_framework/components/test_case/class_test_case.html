@@ -1,0 +1,113 @@
+<HTML>
+<HEAD>
+<TITLE>The class test case</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../../index.html">Boost.Test</A> > <A href="../../../index.html">Components</A> 
+  > <A href="../../index.html">The Unit Test Framework</A> > <A href="../index.html">Components</A> > 
+  <A href="index.html">The Test Case</A> > <SPAN class="current_article">The class member function based 
+  test case</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The class member function based test cases</H1>
+  <H5>Definition</H5>
+  <P class="first-line-indented"> defined in <A href="../../../../../../../boost/test/unit_test_suite.hpp">unit_test_suite.hpp</A> 
+  <H5>Synopsis</H5>
+  <PRE class="code"><SPAN class="reserv-word">template</SPAN>&lt;<SPAN class="reserv-word">class</SPAN> UserTestClass&gt;
+<SPAN class="reserv-word">class</SPAN> <SPAN class="new-term">class_test_case</SPAN> : <SPAN class="reserv-word">public</SPAN> test_case
+{
+<SPAN class="reserv-word">public</SPAN>:
+    class_test_case( <SPAN class="cpp-type">void</SPAN> (UserTestCase::*function_type)(),
+                     <SPAN class="cpp-type">std::string </SPAN><SPAN class="reserv-word">const</SPAN>&amp; name,
+                     boost::shared_ptr&lt;UserTestCase&gt;&amp; user_test_case );
+
+    ... <SPAN class="comment">// Implementation</SPAN>
+};</PRE>
+  <H5>Description</H5>
+  <P class="first-line-indented">Instances of the class class_test_case are created by the framework for 
+    the supplied member function and instance of the user's test class with the following specification: 
+    void (UserTestClass::*fct)(). To allow sharing on the same instance, so that one test case could use 
+    results of another, class_test_case is constructed based on boost::shared_ptr to the user test case 
+    class instance. Note, though, that we could achieve similar effect with use of free function like 
+    this: 
+  <PRE class="code"><SPAN class="cpp-type">void</SPAN> compound_test() {
+    UserTestCase instance;
+
+    instance.test1();
+    instance.test2();
+    ...
+};</PRE>
+  The only drawback of this version that you could not separate results of one test case from another. 
+  Another reason to use class member function based test cases is to test non default constructable user 
+  test case. In other words, if user test case need command line arguments or some other parameters to 
+  be constructed. As a general rule it is recommended to use the class_test_case only if you can't implement 
+  a test logic in a free function. Due to usage of templates in an implementation of the class_test_case, 
+  a compilation can be longer would you use the function_test_case. 
+  <H5>Construction</H5>
+  <P class="first-line-indented">To create an instance of the class class_test_case use the following 
+    macro:</P>
+  <P><SPAN class="new-term">BOOST_CLASS_TEST_CASE</SPAN>( member_function_address, shared_test_case_instance 
+    ).</P>
+  <P class="first-line-indented">BOOST_CLASS_TEST_CASE creates a new instance of the class class_test_case 
+    and returns a pointer to the base class test_case. In most cases you will use it as an argument to 
+    the method <A href="../test_suite/index.html">test_suite</A>::add(...). The first parameter of above 
+    macro is the pointer to the class member function - body of the test case. The second parameter is 
+    the shared instance of class that should be used when invoking this test case.</P>
+  <H5>Examples</H5>
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> my_complex_test {
+<SPAN class="reserv-word">public</SPAN>:
+    <SPAN class="cpp-type">void</SPAN> test_feature1() {
+        ...
+    }
+};
+...
+
+ts-&gt;add( BOOST_CLASS_TEST_CASE( &amp;my_complex_test::test_feature1 ) );</PRE>
+  ______________________________________________________ 
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> class_under_test {
+<SPAN class="reserv-word">public</SPAN>:
+    <SPAN class="comment">// i should be positive; throw an exception otherwise</SPAN>
+    <SPAN class="reserv-word">explicit</SPAN> class_under_test( <SPAN class="cpp-type">int</SPAN> i );
+    ...
+    <SPAN class="comment">// access methods</SPAN>
+    <SPAN class="cpp-type">int</SPAN> get_value() <SPAN class="reserv-word">const</SPAN>;
+};
+
+<SPAN class="reserv-word">class</SPAN> compound_test {
+<SPAN class="reserv-word">public</SPAN>:
+    <SPAN class="cpp-type">void</SPAN> test_construction() {
+        BOOST_CHECK_THROW( <SPAN class="reserv-word">new</SPAN> class_under_test( <SPAN class="literal">-1</SPAN> ) );
+
+        v = <SPAN class="reserv-word">new</SPAN> class_under_test( <SPAN class="literal">1</SPAN> );
+
+        BOOST_CHECK( v is valid );
+        ...
+    }
+
+    <SPAN class="cpp-type">void</SPAN> test_access_methods() {
+        BOOST_CHECK_EQUAL( v->get_value(), <SPAN class="literal">1</SPAN> );
+        ...
+    }
+<SPAN class="reserv-word">private</SPAN>:
+    class_under_test* v;
+};
+...
+
+boost::shared_ptr&lt;compound_test&gt; instance( <SPAN class="reserv-word">new</SPAN> compound_test );
+Ts&gt;add( BOOST_CLASS_TEST_CASE( &amp;compound_test::constructor, instance ) );
+Ts&gt;add( BOOST_CLASS_TEST_CASE( &amp;compound_test::test_access_methods, instance ) );</PRE>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

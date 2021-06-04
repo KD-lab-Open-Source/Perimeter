@@ -1,0 +1,367 @@
+#include "UnitAttribute.inl"
+#include "GameBalance.inl"
+
+section FilthPrm( declaration = "Game\Scripts\filth.hi", definition = "Game\Scripts\filth.cppi")
+{
+
+struct terFilthSwarmParameter
+{
+	float SwarmRadius = 100;		//Радиус генерации роев
+	int SwarmMax = 1;				//Кол-во роев
+	int CreatureNum = 1;			//Кол-во скверны в рое
+	int GenerationPeriod = 1;		//Время генерации скверны
+};
+
+struct terFilthSpotParameters
+{
+	// все параметры передаются напрямую в terFilthSpot
+	// все времена в секундах
+
+	// ID спота
+	terFilthSpotID spotID = FILTH_SPOT_ID_NONE;
+
+	// время до первой генерации
+	float firstSleepTime = 0;
+
+	// время, через которое происходит следующая генерация
+	float sleepPeriod = 5;
+	float sleepPeriodDelta = 0;
+
+	// время жизни сгенеренной скверны
+	float attackPeriod = 5;
+	float attackPeriodDelta = 0;
+
+	// ширина полосы поиска целей для сверны
+	float attackWidth = -1;
+	// направление, в котором ищутся цели
+	float attackDirection = 0;
+
+	// количество юнитов скверны, которые будут сгенерированы в одном цикле генерации
+	int creatureNum = 1;
+	// если сверны много, она появляется не вся сразу, а через это время
+	int creatureGenerationPeriod = 1;
+
+	// время жизни спота
+	float lifeTime = 0;
+};
+
+terFilthSwarmParameter terFilthAntBaseParameter = 
+{
+	SwarmRadius = 50;
+	SwarmMax = 20;
+	CreatureNum = 10;
+};
+
+terFilthSwarmParameter terFilthAnt2BaseParameter = 
+{
+	SwarmRadius = 50;
+	SwarmMax = 20;
+	CreatureNum = 10;
+};
+
+terFilthSwarmParameter terFilthWaspBaseParameter = 
+{
+	SwarmRadius = 100;
+	SwarmMax = 20;
+	CreatureNum = 20;
+	GenerationPeriod = 30;
+};
+
+struct terFilthWaspStruct
+{
+	float speed=80;
+	float attack_speed=100;
+	float height = 120;
+	float rand_delta = 20;
+	float rand_max = 60;
+	float swarm_speed = 50;
+
+	float max_dh=30;
+	float move_len=30;
+	float move_width=100;
+
+	float creature_attack_count=0.5;//ос на квант
+};
+terFilthWaspStruct terFilthWaspPrm={};
+terFilthWaspStruct terFilthWaspEyePrm={};
+
+terFilthSwarmParameter terFilthDragonBaseParameter = 
+{
+	SwarmRadius = 100;
+	SwarmMax = 5;
+};
+
+terFilthSwarmParameter terFilthDragonBaseParameter2 = 
+{
+	SwarmRadius = 100;
+	SwarmMax = 5;
+};
+
+struct terFilthDragonStruct
+{
+	float AngleFactor = 0.5f;
+	float PositionFactor = 0.8f;
+	float MinHeight = 60.0f;
+	float MaxHeight = 90.0f;
+	int HeightMinTime = 50;
+	int HeightDeltaTime = 50;
+
+	float AnimationHeadPeriod = 2000;
+	float AnimationBodyPeriod = 1000;
+
+	int BrushNum = 40;		//Длина хвоста
+	int CreatureGenerationRadius = 12;
+
+	float fire_distance=150;
+	float free_die_time=2.0; //сек
+
+	terUnitAttributeID id_head=UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD;
+	terUnitAttributeID id_body=UNIT_ATTRIBUTE_FILTH_DRAGON_BODY;
+	terUnitAttributeID id_tail=UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL;
+};
+terFilthDragonStruct terFilthDragonPrm={};
+terFilthDragonStruct terFilthDragonPrm2=
+{
+	BrushNum = 40;
+	id_head=UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD2;
+	id_body=UNIT_ATTRIBUTE_FILTH_DRAGON_BODY2;
+	id_tail=UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL2;
+};
+terFilthDragonStruct terFilthDragonPrmA=
+{
+	BrushNum = 40;
+	id_head=UNIT_ATTRIBUTE_FILTH_A_DRAGON_HEAD;
+	id_body=UNIT_ATTRIBUTE_FILTH_A_DRAGON_BODY;
+	id_tail=UNIT_ATTRIBUTE_FILTH_A_DRAGON_TAIL;
+};
+
+terFilthSwarmParameter terFilthGhostBaseParameter = 
+{
+	CreatureNum = 10;
+	GenerationPeriod = 100;
+};
+
+struct terFilthGhostStruct
+{
+	float CreatureGenerationRadius = 10; //Радиус генерации скверны
+};
+terFilthGhostStruct terFilthGhostPrm={};
+
+terFilthSwarmParameter terFilthEyeBaseParameter = 
+{
+	SwarmMax = 20;
+	CreatureNum = 10;
+	GenerationPeriod = 20;
+};
+
+struct terFilthEyeStruct
+{
+	float CreatureGenerationRadius = 100; //Радиус генерации скверны
+	float height_down=-50;
+	float speed_angle_z= 0.3f;
+	float destruct_angle_acceleration = 1.0f;
+};
+terFilthEyeStruct terFilthEyePrm={};
+
+terFilthSwarmParameter terFilthCrowBaseParameter = 
+{
+	CreatureNum = 30;
+};
+
+struct terFilthCrowStruct
+{
+	float linear_speed = 50;
+	float swarm_speed = 2;
+	float z = 200;
+	float free_destroy_len = 100;
+	int at_one_time_atrack = 4;//Количество одновременно атакующих
+};
+terFilthCrowStruct terFilthCrowPrm={};
+
+
+terFilthSwarmParameter terFilthDaemonBaseParameter = 
+{
+	CreatureNum = 10;
+	GenerationPeriod = 30;
+};
+
+struct terFilthDaemonStruct
+{
+	float CreatureGenerationRadius = 200; //Радиус генерации скверны
+	float DaemonHeight=5;
+};
+terFilthDaemonStruct terFilthDaemonPrm={};
+
+terFilthSwarmParameter terFilthRatBaseParameter = 
+{
+	SwarmRadius = 100;
+	SwarmMax = 20;
+	CreatureNum = 20;
+	GenerationPeriod = 20;
+};
+
+terFilthSwarmParameter terFilthSnakeBaseParameter = 
+{
+	SwarmRadius = 100;
+	SwarmMax = 20;
+	CreatureNum = 20;
+	GenerationPeriod = 20;
+};
+
+struct terFilthRatStruct
+{
+	int CreatureGenerationRadius = 30; //Радиус генерации скверны
+	float follow_distance = 5.0;
+	float brake_distance = 30.0;
+	int noise_change_time = 30;
+	float noise_angle_delta=40;//Градусов
+	float radius_mul=1.2;
+};
+terFilthRatStruct terFilthRatPrm={};
+
+terFilthSwarmParameter terFilthWormBaseParameter = 
+{
+	SwarmRadius = 100;
+	SwarmMax = 5;
+	CreatureNum = 20;
+	GenerationPeriod = 20;
+};
+
+terFilthSwarmParameter terFilthSharkBaseParameter = 
+{
+	CreatureNum = 15;
+	GenerationPeriod = 15;
+};
+
+struct terFilthSharkStruct
+{
+	int CreatureGenerationRadius = 100; //Радиус генерации скверны
+	float test_z_up=-6;
+	float test_z_down=15;
+	int geo_radius=16+18;
+	float free_die_time=2.0; //сек
+	float show_z=-12;
+};
+terFilthSharkStruct terFilthSharkPrm={};
+
+struct terFilthVolcanoStruct
+{
+	float speed_min_horizontal=10;
+	float speed_max_horizontal=40;
+	float speed_min_vertical=50;
+	float speed_max_vertical=250;
+
+	float size_min=1.5;
+	float size_max=3;
+
+	int volcano_size=80;
+	float crater_scale=1.2;
+	float collision_damage_rate=0.1;//сек (меньше 0.1 не имеет смысла ставить.)
+
+	terUnitAttributeID unit_id=UNIT_ATTRIBUTE_FILTH_VOLCANO;
+};
+
+terFilthVolcanoStruct terFilthVolcanoPrm={};
+terFilthVolcanoStruct terFilthVolcanoScumDisruptorPrm=
+{
+	speed_max_horizontal=60;
+	speed_max_vertical=300;
+
+	unit_id=UNIT_ATTRIBUTE_FILTH_VOLCANO_SCUM_DISRUPTOR;
+	collision_damage_rate=0.5;
+};
+
+terFilthSwarmParameter terFilthVolcanoBaseParameter= 
+{
+	CreatureNum = 100;
+	GenerationPeriod = 300;
+};
+
+terFilthSpotParameters terScumDisruptorPrm = 
+{
+	spotID = FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR;
+	creatureNum = 150;
+	attackPeriod = 50;
+	sleepPeriod = 10;
+};
+
+struct terFilthAntsStruct
+{
+	float follow_distance=5.0;
+	float brake_distance=30.0;
+	int noise_change_time=30;//Логических квантов
+	float noise_angle_delta = 3.1459 * 0.4;
+};
+
+terFilthAntsStruct terFilthAntsPrm={};
+terFilthAntsStruct terFilthAnts2Prm={};
+
+terFilthSpotParameters terFilthNavigatorPrm[int terFilthNavigatorPrmCount] = 
+{
+	{
+		spotID =		balance.ScourgeNavigatorPhase0.Type;
+		creatureNum =	balance.ScourgeNavigatorPhase0.Number;
+		lifeTime =		balance.ScourgeNavigatorPhase0.LifeTime;
+
+		attackPeriod =	60;
+		sleepPeriod =	60;
+	},
+	{
+		spotID =		balance.ScourgeNavigatorPhase1.Type;
+		creatureNum =	balance.ScourgeNavigatorPhase1.Number;
+		lifeTime =		balance.ScourgeNavigatorPhase1.LifeTime;
+
+		attackPeriod =	60;
+		sleepPeriod =	60;
+	},
+	{
+		spotID =		balance.ScourgeNavigatorPhase2.Type;
+		creatureNum =	balance.ScourgeNavigatorPhase2.Number;
+		lifeTime =		balance.ScourgeNavigatorPhase2.LifeTime;
+
+		attackPeriod =	60;
+		sleepPeriod =	60;
+	},
+	{
+		spotID =		balance.ScourgeNavigatorPhase3.Type;
+		creatureNum =	balance.ScourgeNavigatorPhase3.Number;
+		lifeTime =		balance.ScourgeNavigatorPhase3.LifeTime;
+
+		attackPeriod =	60;
+		sleepPeriod =	60;
+	}
+};
+
+terFilthSpotParameters terFilthMutationsPrm[int terFilthMutationsPrmCount] = 
+{
+	{
+		spotID =		balance.Scourge0.Type;
+		creatureNum =	balance.Scourge0.Number;
+		lifeTime =		balance.Scourge0.LifeTime;
+		attackPeriod = 30;
+		sleepPeriod = 60;
+	},
+	{
+		spotID =		balance.Scourge1.Type;
+		creatureNum =	balance.Scourge1.Number;
+		lifeTime =		balance.Scourge1.LifeTime;
+		attackPeriod = 30;
+		sleepPeriod = 60;
+	},
+	{
+		spotID =		balance.Scourge2.Type;
+		creatureNum =	balance.Scourge2.Number;
+		lifeTime =		balance.Scourge2.LifeTime;
+		attackPeriod = 30;
+		sleepPeriod = 60;
+	},
+	{
+		spotID =		balance.Scourge3.Type;
+		creatureNum =	balance.Scourge3.Number;
+		lifeTime =		balance.Scourge3.LifeTime;
+		attackPeriod = 30;
+		sleepPeriod = 60;
+	}
+};
+
+}

@@ -1,0 +1,354 @@
+section GameConfig ( declaration = "Game\Scripts\Config.hi", definition = "Game\Scripts\Config.cppi")
+{
+string MainModelPath = "RESOURCE\\MODELS\\MAIN";
+string MainIconPath = "RESOURCE\\ICONS\\";
+string MainFontPath = "RESOURCE\\FONTS\\";
+string MainCursorPath = "RESOURCE\\CURSORS\\";
+string MainSpritePath = "RESOURCE\\SPRITES\\";
+string MainEffectPath = "RESOURCE\\EFFECT\\";
+string MainVideoPath = "RESOURCE\\VIDEO\\";
+string MainWorldPath = "RESOURCE\\WORLDS\\";
+string MainToolPath = "RESOURCE\\TOOLS\\";
+
+//int terMaxTimeInterval = 100;
+int terLogicTimePeriod = 100;
+float terLogicTimePeriodInv = 1/terLogicTimePeriod;
+float terGlobalTimePeriodSeconds = terLogicTimePeriod / 1000.f;
+
+float PerimeterCameraControlFPS = 20.0;
+float HardwareCameraFocus = 0.8;
+  		
+string shellMainFont = "aero";
+
+static float _PI = 3.14159265358979323846;
+
+//горизонтальное перемещение камеры
+float CAMERA_SCROLL_SPEED_DELTA = 10.0f;
+float CAMERA_BORDER_SCROLL_SPEED_DELTA = 10.0f;
+float CAMERA_SHIFT_SPEED_DELTA = 400.0f;
+float CAMERA_SCROLL_SPEED_DAMP = 0.7f;
+float CAMERA_SCROLL_SPEED_MASS = 1.0f;
+
+float CAMERA_BORDER_SCROLL_AREA_UP = 0.008;
+float CAMERA_BORDER_SCROLL_AREA_DN = 0.014;
+float CAMERA_BORDER_SCROLL_AREA_HORZ = 0.008;
+
+//вращение и наклон
+float HISTORY_CAMERA_ANGLE_SPEED_DELTA = _PI/4000;
+float CAMERA_KBD_ANGLE_SPEED_DELTA = _PI/30;
+float CAMERA_MOUSE_ANGLE_SPEED_DELTA = _PI/1;
+float CAMERA_ANGLE_SPEED_DAMP = 0.7f;
+float CAMERA_ANGLE_SPEED_MASS = 1.0f;
+
+//zoom
+float CAMERA_ZOOM_SPEED_DELTA = 10.0f;
+float CAMERA_ZOOM_MOUSE_MULT = 300.0f;
+float CAMERA_ZOOM_SPEED_DAMP = 0.7f;
+float CAMERA_ZOOM_SPEED_MASS = 2.0f;
+
+float CAMERA_FOLLOW_AVERAGE_TAU = 0.1;
+
+//ограничения
+float CAMERA_MAX_HEIGHT = 1000.0f;
+float CAMERA_MIN_HEIGHT = 200.0f;
+float CAMERA_DEFAULT_HEIGHT = 500.0f;
+float CAMERA_MOVE_ZOOM_SCALE = 500.0f;
+
+float CAMERA_ZOOM_MIN = 300.0f;
+float CAMERA_ZOOM_MAX = 1000.0f;
+float CAMERA_THETA_MIN = _PI/10;
+float CAMERA_THETA_MAX = _PI/3;
+
+float CAMERA_ZOOM_TERRAIN_THRESOLD1 = 300.0f;
+float CAMERA_ZOOM_TERRAIN_THRESOLD2 = 1000.0f;
+
+float CAMERA_WORLD_SCROLL_BORDER = 200.0f;
+
+int CAMERA_REPLAY_DURATION = 4000;
+
+//ширина звука
+float fSoundWidthPower = 0.5;
+
+//fSoundZMultiple=0..1 коэффициэнт масштабирования громкости по оси Z
+float fSoundZMultiple =0.5;
+
+int dbgShowCursorPos = 0;
+
+//Делает в окошке аналог полного экрана для этого нужно чтобы экранное разрешение совпадало с выбранным
+int terEnableSoundLog = 0;
+
+int bShowSplash = 0;
+
+float terSelectImageSizeX = 64;
+float terSelectImageSizeY = 64;
+
+float terSelectMainLeft = 0;
+float terSelectMainRight = 64;
+float terSelectMainTop = 0;
+float terSelectMainBottom = 4;
+
+float terSelectMarkLeft = 0;
+float terSelectMarkRight = 64;
+float terSelectMarkTop = 4;
+float terSelectMarkBottom = 7;
+
+float terSelectLifePositionLeft = 0;
+float terSelectLifePositionTop = 1;
+float terSelectLifeLeft = 0;
+float terSelectLifeRight = 64;
+float terSelectLifeTop = 14;
+float terSelectLifeBottom = 18;
+
+string terScreenShotsPath = "ScreenShots";
+string terScreenShotName = "shot";
+string terScreenShotExt = ".bmp";
+string terMoviePath = "Movie";
+string terMovieName = "Track";
+string terMovieFrameName = "frame";
+
+//--------------------------------
+// Цвета игроков
+struct PlayerColor
+{
+	float unitColor[4] = { 1, 1, 1, 1 };
+	float fieldColor[4] = { 1, 1, 1, 1 };
+	float zeroLayerColor[4] = { 1, 1, 1, 1 };
+};
+
+PlayerColor playerColors[int playerColorsSize] =
+{
+	{ unitColor = { 0, 0, 0.8, 1 }; fieldColor =	{ 0, 0, 0.6, 1 }; zeroLayerColor =		{ 0.4, 0.4, 0.5, 0.8 }; },
+	{ unitColor = { 0, 0.8, 0.8, 1 }; fieldColor =	{ 0, 0.6, 0.6, 1 }; zeroLayerColor =	{ 0.4, 0.6, 0.5, 0.8 }; },
+	{ unitColor = { 0.8, 0, 0, 1 }; fieldColor =	{ 0.6, 0, 0, 1 }; zeroLayerColor =		{ 0.6, 0.25, 0.1, 0.8 }; },
+	{ unitColor = { 0.8, 0.4, 0, 1 }; fieldColor =	{ 0.6, 0.2, 0, 1 }; zeroLayerColor =	{ 0.6, 0.4, 0.1, 0.8 }; },
+	{ unitColor = { 0, 0.8, 0, 1 }; fieldColor =	{ 0, 0.6, 0, 1 }; zeroLayerColor =		{ 0.4, 0.6, 0.3, 0.8 }; },
+	{ unitColor = { 0.8, 0.8, 0, 1 }; fieldColor =	{ 0.6, 0.6, 0, 1 }; zeroLayerColor =	{ 0.6, 0.6, 0.3, 0.8 }; },
+	{ unitColor = { 1.0, 1.0, 0.7, 1 }; }
+};
+
+int playerWorldColorIdx = playerColorsSize - 1;
+int playerAllowedColorSize = playerColorsSize - 1;
+
+//--------------------------------
+// Цвета радиусов стрельбы и ядер
+string sRegionTextureCircle = "Resource\\Effect\\Region.tga";
+string sRegionTextureCircleDotted = "Resource\\Effect\\dotted_line.tga";
+float RegionUSpeedDotted=1;
+
+struct CircleColor
+{
+	int color[4] = { 255, 255, 255, 255 };
+	float width = 1;
+	float length = 30;
+	int dotted = 0; 
+};
+
+struct CircleColors
+{
+	CircleColor connectionRadius = {
+		color = { 137, 205, 249, 140 };
+		width = 6;
+	};
+	CircleColor connectionRadiusSelected = {
+		color = { 119, 223, 242, 128 };
+		width = 3;
+	};
+	CircleColor zeroLayerRadius = {
+		color = { 137, 205, 249, 120 };
+		width = 3;
+	};
+	CircleColor fireRadius = {
+		color = { 255, 255, 255, 160 };
+		width = 4;
+		dotted = 1;
+	};
+	CircleColor fireRadiusMin = {
+		color = { 255, 216, 0, 128 };
+		width = 2;
+	};
+	CircleColor selectRadius = {
+		color = { 0, 255, 0, 255 };
+		width = -0.0025f;
+		length = 10;
+		dotted = 0;
+	};
+	CircleColor targetRadius = {
+		color = { 255, 0, 0, 158 };
+		length = 30;
+		width = 2;
+	};
+	CircleColor targetTriangles = {
+		color = { 255, 0, 0, 158 };
+		length = 30;
+		width = 8;
+		dotted = 2;
+	};
+	CircleColor targetCross = {
+		color = { 255, 0, 0, 158 };
+		width = 4;
+		dotted = 3;
+	};
+};
+
+float targetCircleCount = 5;
+float targetCircleMaxRadius = 50;
+float targetCircleStep = 10;
+float targetTrianglesRadius = 45;
+float maxAlphaCircleColorHeight = 500.0f;
+
+CircleColors circleColors = {};
+
+struct sRegionMain
+{
+	string texture = "Resource\\Effect\\Region Main.tga";
+	int line_color[4] = { 0, 200, 0, 128 };
+	int area_color[4] = { 0, 200, 0, 64 };
+	int vertical_color[4]={160, 160, 160, 128 };
+
+	int column_step=16;
+	string column_model="RESOURCE\\Models\\Interface\\column.M3D";
+	float column_model_size=3;
+	int column_red[4] = { 255, 0, 0, 64 };
+	int column_green[4] = { 0, 255, 0, 64 };
+};
+
+sRegionMain RegionMain={};
+
+
+struct ZeroplastBurn
+{
+	float fade_time=1000;//ms
+	float strength=0.3f;//0..1
+	float reflection_strength=0.5f;
+	float reflection=0.7f;
+};
+
+ZeroplastBurn zeroplastBurn = {};
+
+int pathColor[4] = { 200,255,180,128 };
+int patrolColor[4] = { 200,200,180,128 };
+
+int IronDiggerVolume=64;//Объём переносимого ковша (64 было)
+
+string missionDifficultyPostfix[] = {
+	"_easy",
+	"_normal",
+	""
+};
+
+float markHealth1 = 100;
+float markHealth2 = 9000;
+float markWidth1 = 20;
+float markWidth2 = 200;
+
+float markHealthWidthCoeffA = (markWidth2 - markWidth1) / (markHealth2 - markHealth1) / 1024.0f;
+float markHealthWidthCoeffB = (markHealth2 * markWidth1 - markWidth2 * markHealth1) / (markHealth2 - markHealth1) / 1024.0f;
+
+string mainCurrUserRegFolder = "SOFTWARE\\Codemasters\\Perimeter\\Intf";
+
+string regLanName = "LanName";
+
+struct sCorpseDynamic
+{
+	float dark_duration=1000;//ms
+	float min_dark=0.4f;
+};
+
+sCorpseDynamic dataCorpseDynamic ={ };
+
+//total statistic weights
+float UNITS_WEIGHT = 1;
+float BUILDINGS_WEIGHT = 1;
+float SCOURGE_WEIGHT = 1;
+float ENERGY_WEIGHT = 10000;
+
+
+float music_change_time=30;//сек. Время задержки до изменения музыки.
+
+
+struct ModelProperty
+{
+	string name = "";
+	float size = 0;
+};
+
+string terModelUnitSelection = "RESOURCE\\MODELS\\FX\\Select.m3d";
+string terModelLightRay = "RESOURCE\\MODELS\\FX\\Lightray.m3d";
+
+string terModelDefaultTree = "RESOURCE\\MODELS\\ENVIRONMENT\\Tree_Troam2.m3d";
+
+ModelProperty terModelBuildingNoConnection = { name = "RESOURCE\\MODELS\\Main\\energy.m3d";  size = 8.3; };
+ModelProperty terModelBuildingLowEnergy = { name = "RESOURCE\\MODELS\\Main\\energy1.m3d"; size = 10; };
+ModelProperty terOmegaMinedIcon = { name = "RESOURCE\\MODELS\\Main\\mine_indicator.m3d";  size = 8.3; };
+float terModelBuildingSpeed = 2000;
+
+//string terModelWayFlag = "RESOURCE\\MODELS\\MAIN\\arrow.m3d";
+//string terModelWayFlag = "RESOURCE\\MODELS\\MAIN\\arrow.m3d";
+string terModelWayFlag = "RESOURCE\\MODELS\\MAIN\\obelisk.m3d";
+float terModelWayFlagRadius = 16.0f;
+float terModelWayFlagSpeed = 2000.0f;
+
+//----------------------------------------
+
+string terTextureField01 = "RESOURCE\\EFFECT\\envmap01.tga";
+string terTextureField02 = "RESOURCE\\EFFECT\\tesla01.tga";
+string terTextureHologram = "RESOURCE\\EFFECT\\lightmap.tga";
+string terTextureUnitSelection = "RESOURCE\\EFFECT\\select.tga";
+
+string terTextureCongregationUnit = "RESOURCE\\SPRITES\\Molel.tga";
+string terTextureCongregationProtection = "RESOURCE\\SPRITES\\Protect.tga";
+string terTextureCongregationAnnihilation = "RESOURCE\\SPRITES\\Annihilation.tga";
+
+string terTextureATCFireTrail = "RESOURCE\\EFFECT\\sh_btr.tga";
+string terTextureBlockFireTrail = "RESOURCE\\EFFECT\\sh_btr.tga";
+string terTextureFighterFlyTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+string terTextureFighterFireTrail = "RESOURCE\\EFFECT\\corona.tga";
+string terTextureSoldierFireTrail = "RESOURCE\\EFFECT\\sh_pulemet.tga";
+string terTextureBomberFlyTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+string terTextureOfficerFireTrail = "RESOURCE\\EFFECT\\freeze.tga";
+string terTextureTechnicFireTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+string terTexturePortFireTrail = "RESOURCE\\EFFECT\\corona.tga";
+string terTextureLaserFireTrail = "RESOURCE\\EFFECT\\corona.tga";
+string terTextureDebrisFlyTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+
+string terTextureLaserTrail = "RESOURCE\\EFFECT\\laser.tga";
+string terTextureEnergyLinkTrail = "RESOURCE\\EFFECT\\corona.tga";
+string terTextureFreezeTrail = "RESOURCE\\EFFECT\\corona.tga";
+
+string terTextureLaser[int terTextureLaserSize] = { "RESOURCE\\EFFECT\\laser.tga", "RESOURCE\\EFFECT\\freeze.tga", "RESOURCE\\EFFECT\\laser_tech.tga" };
+string terTextureLaserZ[int terTextureLaserSizeZ] = { "RESOURCE\\EFFECT\\laserZ.tga", "RESOURCE\\EFFECT\\freezeZ.tga", "RESOURCE\\EFFECT\\laser_techZ.tga" };
+
+
+int terShootMapTest = 0;
+int terShootUnitTest = 0;
+
+// Время, на которое офицер замораживает базовый юнит, в миллисекундах.
+int terOfficerFreezeTime = 10000;
+// Время, на которое пролеченный юнит зеленеет, в миллисекундах.
+int terTechnicHealTime = 1000;
+
+static float M_PI = 3.14159265358979323846;
+static float G2R = M_PI/180;
+
+float terScumStormTurnAngle = 30 * G2R;
+float terScumStormTurnAngleDelta = 10 * G2R;
+int terScumStormTurnDelay = 400;
+
+// Время, на которое unseen делает юнита невидимым, мс.
+int terInvisibilityTime = 4000;
+// Максимальное время невидимости, мс.
+int terInvisibilityTimeMax = 8000;
+
+// Коэфф. прозрачности для собственных невидимых юнитов.
+float terInvisibilityCoeff = 0.5;
+
+int FrameRepairElementsPerQuant = 10;
+
+float small_camera_x = 416.0f / 1024.0f;
+float small_camera_y = (885.0f - 256.0f) / 768.0f;
+float small_camera_rect_dx  = 135.0f / 1024.0f;
+float small_camera_rect_dy  = 115.0f / 768.0f;
+
+float small_model_rate = 200;
+
+}

@@ -1,0 +1,92 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript definition
+//	Section: RegionPrm
+//	Number of variables: 34
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+int toolzer_radius_min = 20;
+int toolzer_radius_max = 120;
+int toolzer_clear_back_layers_radius_delta = 32;
+int toolzer_radius_fixed = 8;
+int toolzer_segment_autoclip_radius = 34;
+int toolzer_lineto_saved_segments_number = 1;
+float toolzer_lineto_radius_factor = 0.3f;
+float region_segment_length = 40.f;
+int minimal_region_size = 20;
+float region_perimeter_epsilon = 0.5f;
+float rasterize_dlen = 0.65f;
+int energy_region_vectorize_minimal_region_size = 8;
+int enable_check = 1;
+int enable_write_state = 1;
+int cells_show_by_pixel = 0;
+int cells_show_by_line = 0;
+int region_show_cells = 0;
+int region_show_cells_ccw = 0;
+int region_show_cells_space = 20;
+int region_show_spline = 1;
+float region_show_spline_space = 10.f;
+float region_show_spline_animate_dlen = 0.f;
+int region_show_spline_cp = 0;
+int region_show_spline_cp_number = 0;
+int region_show_including_level = 0;
+int region_show_spline_y_min_max = 0;
+int region_show_spline_tangents = 0;
+int region_show_spline_normals = 0;
+float region_show_tangent_len = 0.2f;
+int show_locate = 0;
+int show_scan = 0;
+int show_scan_space = 10;
+int show_edit_column = 0;
+int show_rasterize_column = 1;
+
+#ifdef _PRM_EDIT_
+struct RegionPrm_ParameterSection : ParameterSection
+{
+	RegionPrm_ParameterSection() : ParameterSection("RegionPrm")
+{
+	add_dependency(".\\Scripts\\Region.prm");
+	sourceCRC = 656068011;
+	description = 3221165053;
+	reserve(34);
+	add(&toolzer_radius_min, "toolzer_radius_min");
+	add(&toolzer_radius_max, "toolzer_radius_max");
+	add(&toolzer_clear_back_layers_radius_delta, "toolzer_clear_back_layers_radius_delta");
+	add(&toolzer_radius_fixed, "toolzer_radius_fixed");
+	add(&toolzer_segment_autoclip_radius, "toolzer_segment_autoclip_radius");
+	add(&toolzer_lineto_saved_segments_number, "toolzer_lineto_saved_segments_number");
+	add(&toolzer_lineto_radius_factor, "toolzer_lineto_radius_factor");
+	add(&region_segment_length, "region_segment_length");
+	add(&minimal_region_size, "minimal_region_size");
+	add(&region_perimeter_epsilon, "region_perimeter_epsilon");
+	add(&rasterize_dlen, "rasterize_dlen");
+	add(&energy_region_vectorize_minimal_region_size, "energy_region_vectorize_minimal_region_size");
+	add(&enable_check, "enable_check");
+	add(&enable_write_state, "enable_write_state");
+	add(&cells_show_by_pixel, "cells_show_by_pixel");
+	add(&cells_show_by_line, "cells_show_by_line");
+	add(&region_show_cells, "region_show_cells");
+	add(&region_show_cells_ccw, "region_show_cells_ccw");
+	add(&region_show_cells_space, "region_show_cells_space");
+	add(&region_show_spline, "region_show_spline");
+	add(&region_show_spline_space, "region_show_spline_space");
+	add(&region_show_spline_animate_dlen, "region_show_spline_animate_dlen");
+	add(&region_show_spline_cp, "region_show_spline_cp");
+	add(&region_show_spline_cp_number, "region_show_spline_cp_number");
+	add(&region_show_including_level, "region_show_including_level");
+	add(&region_show_spline_y_min_max, "region_show_spline_y_min_max");
+	add(&region_show_spline_tangents, "region_show_spline_tangents");
+	add(&region_show_spline_normals, "region_show_spline_normals");
+	add(&region_show_tangent_len, "region_show_tangent_len");
+	add(&show_locate, "show_locate");
+	add(&show_scan, "show_scan");
+	add(&show_scan_space, "show_scan_space");
+	add(&show_edit_column, "show_edit_column");
+	add(&show_rasterize_column, "show_rasterize_column");
+	add_parameter_section(this);
+}
+};
+static RegionPrm_ParameterSection RegionPrm_ParameterSectionObject;
+#endif  //  _PRM_EDIT_
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: RegionPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: Algorithm regex_split (deprecated)</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">Algorithm regex_split (deprecated)</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <p></p>
+      <P>The algorithm regex_split has been deprecated in favor of the iterator <A href="regex_token_iterator.html">
+            regex_token_iterator</A> which has a more flexible and powerful interface, 
+         as well as following the more usual standard library "pull" rather than "push" 
+         semantics.</P>
+      <P>Code which uses regex_split will continue to compile, the following 
+         documentation is taken from the previous boost.regex version:</P>
+      <H3><A name="regex_split"></A>Algorithm regex_split</H3>
+      <PRE>#include &lt;<A href="../../../boost/regex.hpp">boost/regex.hpp</A>&gt; </PRE>
+      <P>Algorithm regex_split performs a similar operation to the perl split operation, 
+         and comes in three overloaded forms:
+      </P>
+      <PRE><B>template</B> &lt;<B>class</B> OutputIterator, <B>class</B> charT, <B>class</B> Traits1, <B>class</B> Alloc1, <B>class</B> Traits2, <B>class</B> Alloc2&gt;
+std::size_t regex_split(OutputIterator out,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::basic_string&lt;charT, Traits1, Alloc1&gt;&amp; s,&nbsp;
+&nbsp;<B> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const</B> basic_regex&lt;charT, Traits2, Alloc2&gt;&amp; e,
+&nbsp;<STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>boost::match_flag_type flags,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::size_t max_split);
+
+<B>template</B> &lt;<B>class</B> OutputIterator, <B>class</B> charT, <B>class</B> Traits1, <B>class</B> Alloc1, <B>class</B> Traits2, <B>class</B> Alloc2&gt;
+std::size_t regex_split(OutputIterator out,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::basic_string&lt;charT, Traits1, Alloc1&gt;&amp; s,&nbsp;
+&nbsp;<B> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const</B> basic_regex&lt;charT, Traits2, Alloc2&gt;&amp; e,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boost::match_flag_type flags = match_default);
+
+<B>template</B> &lt;<B>class</B> OutputIterator, <B>class</B> charT, <B>class</B> Traits1, <B>class</B> Alloc1&gt;
+std::size_t regex_split(OutputIterator out, 
+                        std::basic_string&lt;charT, Traits1, Alloc1&gt;&amp; s);</PRE>
+      <P><STRONG>Effects: </STRONG>Each version of the algorithm takes an 
+         output-iterator for output, and a string for input. If the expression contains 
+         no marked sub-expressions, then the algorithm writes one string onto the 
+         output-iterator for each section of input that does not match the expression. 
+         If the expression does contain marked sub-expressions, then each time a match 
+         is found, one string for each marked sub-expression will be written to the 
+         output-iterator. No more than <I>max_split </I>strings will be written to the 
+         output-iterator. Before returning, all the input processed will be deleted from 
+         the string <I>s</I> (if <I>max_split </I>is not reached then all of <I>s</I> will 
+         be deleted). Returns the number of strings written to the output-iterator. If 
+         the parameter <I>max_split</I> is not specified then it defaults to UINT_MAX. 
+         If no expression is specified, then it defaults to "\s+", and splitting occurs 
+         on whitespace.
+      </P>
+      <P><STRONG>Throws:</STRONG> <CODE>std::runtime_error</CODE> if the complexity of 
+         matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
+      <P><A href="../example/snippets/regex_split_example_1.cpp">Example</A>: the 
+         following function will split the input string into a series of tokens, and 
+         remove each token from the string <I>s</I>:
+      </P>
+      <PRE><B>unsigned</B> tokenise(std::list&lt;std::string&gt;&amp; l, std::string&amp; s)
+{
+<B>&nbsp;&nbsp; return</B> boost::regex_split(std::back_inserter(l), s);
+}</PRE>
+      <P><A href="../example/snippets/regex_split_example_2.cpp">Example</A>: the 
+         following short program will extract all of the URL's from a html file, and 
+         print them out to <I>cout</I>:
+      </P>
+      <PRE><FONT color=#008000>#include &lt;list&gt;
+#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;boost/regex.hpp&gt;
+</FONT>
+boost::regex e(<FONT color=#000080>"&lt;\\s*A\\s+[^&gt;]*href\\s*=\\s*\"([^\"]*)\""</FONT>,
+               boost::regbase::normal | boost::regbase::icase);
+
+<B>void</B> load_file(std::string&amp; s, std::istream&amp; is)
+{
+   s.erase();
+   <FONT color=#000080>//
+   // attempt to grow string buffer to match file size,
+   // this doesn't always work...
+</FONT>   s.reserve(is.rdbuf()-&amp;gtin_avail());
+   <B>char</B> c;
+   <B>while</B>(is.get(c))
+   {
+      <FONT color=#000080>// use logarithmic growth stategy, in case
+      // in_avail (above) returned zero:
+</FONT>      <B>if</B>(s.capacity() == s.size())
+         s.reserve(s.capacity() * 3);
+      s.append(1, c);
+   }
+}
+
+
+<B>int</B> main(<B>int</B> argc, <B>char</B>** argv)
+{
+   std::string s;
+   std::list&lt;std::string&gt; l;
+
+   <B>for</B>(<B>int</B> i = 1; i &lt; argc; ++i)
+   {
+      std::cout &lt;&lt; <FONT color=#000080>"Findings URL's in "</FONT> &lt;&lt; argv[i] &lt;&lt; <FONT color=#000080>":"</FONT> &lt;&lt; std::endl;
+      s.erase();
+      std::ifstream is(argv[i]);
+      load_file(s, is);
+      boost::regex_split(std::back_inserter(l), s, e);
+      <B>while</B>(l.size())
+      {
+         s = *(l.begin());
+         l.pop_front();
+         std::cout &lt;&lt; s &lt;&lt; std::endl;
+      }
+   }
+   <B>return</B> 0;
+}</PRE>
+      <HR>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         04 Feb 2004 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2004<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+   </body>
+</html>

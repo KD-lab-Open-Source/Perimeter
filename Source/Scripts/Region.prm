@@ -1,0 +1,56 @@
+section RegionPrm(declaration = "Game\Scripts\Region.hi", definition = "Game\Scripts\Region.cppi" )
+{
+int toolzer_radius_min = 20;
+int toolzer_radius_max = 120;
+int toolzer_clear_back_layers_radius_delta = 32; // Запас для стирающих толзеров фоновых слоев
+int toolzer_radius_fixed = 8; // Радиус рвов и насыпей
+int toolzer_segment_autoclip_radius = 34; // Радиус взаимного клиппинга отрезков 
+int toolzer_lineto_saved_segments_number = 1; // Число незатираемых отрезков с конца
+float toolzer_lineto_radius_factor = 0.3;
+
+float region_segment_length = 40; // Определяет степень усреднения
+
+int minimal_region_size = 20;
+float region_perimeter_epsilon = 0.5;
+float rasterize_dlen = 0.65;
+
+int energy_region_vectorize_minimal_region_size = 8;
+
+/////////////////////////////////////////////
+//         Show & Debug
+////////////////////////////////////////////
+
+int enable_check = 1;
+int enable_write_state = 1;
+
+int cells_show_by_pixel = 0;
+int cells_show_by_line = 0;
+
+int region_show_cells = 0;
+int region_show_cells_ccw = 0;
+int region_show_cells_space = 20;
+
+int region_show_spline = 1;
+float region_show_spline_space = 10;
+float region_show_spline_animate_dlen = 0;
+
+int region_show_spline_cp = 0;
+int region_show_spline_cp_number = 0;
+int region_show_including_level = 0;
+
+int region_show_spline_y_min_max = 0;
+
+int region_show_spline_tangents = 0;
+int region_show_spline_normals = 0;
+float region_show_tangent_len = 0.2;
+
+int show_locate = 0;
+
+int show_scan = 0;
+int show_scan_space = 10;
+
+int show_edit_column = 0;
+int show_rasterize_column = 1;
+
+}
+

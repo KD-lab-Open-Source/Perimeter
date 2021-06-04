@@ -1,0 +1,246 @@
+TriggerChain = {
+	name = "";
+	triggers = {
+		5;
+		{
+			name = "START";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "победа";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_GUN_HOWITZER;
+							counter = 5;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionVictory" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "поражение";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_GUN_HOWITZER;
+							counter = 5;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionDefeat" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Camera";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSetCamera" {
+				internalColor_ = 0;
+				cameraSplineName = "Camera0";
+				stepTime = 0.;
+				cycles = 1083179008;
+				smoothTransition = false;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "UserCamera";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		}
+	};
+	left_ = -2147483648;
+	top_ = -2147483648;
+	right_ = -2147483648;
+	bottom_ = -2147483648;
+	boundingRect = {
+		left = -2147483648;
+		top = -2147483648;
+		right = -2147483648;
+		bottom = -2147483648;
+	};
+	viewRect = {
+		left = -2147483648;
+		top = -2147483648;
+		right = -2147483648;
+		bottom = -2147483648;
+	};
+};

@@ -1,0 +1,88 @@
+# copyright John Maddock 2003
+
+project
+    : requirements <threading>multi
+    ;
+
+#
+# rule for simple regex test programs:
+#
+rule regex-test ( name : sources + : requirements * : input-files * )
+{
+    return [ run $(sources) ../build//boost_regex
+               :
+               : $(input-files)
+               : $(requirements)
+               : $(name) ] ;
+}
+
+local regress-sources = regress/parse.cpp
+                        regress/regress.cpp 
+                        regress/tests.cpp
+                        ../../test/build//boost_prg_exec_monitor ;
+
+test-suite regex
+      : 
+      [ regex-test regex_regress
+          : $(regress-sources)       # sources
+          :                          # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ regex-test regex_wide_regress
+          : $(regress-sources)       # sources
+          : <define>TEST_UNICODE=1   # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ regex-test regex_regress_dll
+          : $(regress-sources)       # sources
+          : <link>shared             # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ regex-test regex_wide_regress_dll
+          : $(regress-sources)       # sources
+          : <define>TEST_UNICODE=1   
+            <link>shared             # requirements
+          : regress/tests.txt        # input files
+      ]
+
+      [ regex-test posix_api_check
+          : c_compiler_checks/posix_api_check.c
+      ]
+
+      [ compile c_compiler_checks/wide_posix_api_check.c 
+          : : wide_posix_api_check_c ]
+
+      [ regex-test posix_api_check_cpp
+          : c_compiler_checks/posix_api_check.cpp
+      ]
+
+      [ regex-test wide_posix_api_check_cpp
+          : c_compiler_checks/wide_posix_api_check.cpp
+      ]
+
+      [ regex-test bad_expression_test
+          : pathology/bad_expression_test.cpp
+            ../../test/build//boost_test_exec_monitor
+      ]
+
+      [ regex-test recursion_test
+          : pathology/recursion_test.cpp
+            ../../test/build//boost_test_exec_monitor
+      ]
+
+      [ run config_info/regex_config_info.cpp 
+      : : : <test-info>always_show_run_output ]
+
+      [ run config_info/regex_config_info.cpp 
+      : : : <test-info>always_show_run_output <link>shared
+      : regex_dll_config_info ]
+
+      [ compile concepts/concept_check.cpp
+      ]
+      [ compile concepts/wide_concept_check.cpp
+      ]
+      ;
+      

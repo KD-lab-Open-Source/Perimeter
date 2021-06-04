@@ -1,0 +1,205 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: FilthPrm
+//	Number of variables: 34
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef __XScript_struct_terFilthSwarmParameter__
+#define __XScript_struct_terFilthSwarmParameter__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthSwarmParameter {
+	float SwarmRadius;
+	int SwarmMax;
+	int CreatureNum;
+	int GenerationPeriod;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthSwarmParameter__
+#ifndef __XScript_struct_terFilthSpotParameters__
+#define __XScript_struct_terFilthSpotParameters__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthSpotParameters {
+	terFilthSpotID spotID;
+	float firstSleepTime;
+	float sleepPeriod;
+	float sleepPeriodDelta;
+	float attackPeriod;
+	float attackPeriodDelta;
+	float attackWidth;
+	float attackDirection;
+	int creatureNum;
+	int creatureGenerationPeriod;
+	float lifeTime;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthSpotParameters__
+extern terFilthSwarmParameter terFilthAntBaseParameter;
+extern terFilthSwarmParameter terFilthAnt2BaseParameter;
+extern terFilthSwarmParameter terFilthWaspBaseParameter;
+#ifndef __XScript_struct_terFilthWaspStruct__
+#define __XScript_struct_terFilthWaspStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthWaspStruct {
+	float speed;
+	float attack_speed;
+	float height;
+	float rand_delta;
+	float rand_max;
+	float swarm_speed;
+	float max_dh;
+	float move_len;
+	float move_width;
+	float creature_attack_count;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthWaspStruct__
+extern terFilthWaspStruct terFilthWaspPrm;
+extern terFilthWaspStruct terFilthWaspEyePrm;
+extern terFilthSwarmParameter terFilthDragonBaseParameter;
+extern terFilthSwarmParameter terFilthDragonBaseParameter2;
+#ifndef __XScript_struct_terFilthDragonStruct__
+#define __XScript_struct_terFilthDragonStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthDragonStruct {
+	float AngleFactor;
+	float PositionFactor;
+	float MinHeight;
+	float MaxHeight;
+	int HeightMinTime;
+	int HeightDeltaTime;
+	float AnimationHeadPeriod;
+	float AnimationBodyPeriod;
+	int BrushNum;
+	int CreatureGenerationRadius;
+	float fire_distance;
+	float free_die_time;
+	terUnitAttributeID id_head;
+	terUnitAttributeID id_body;
+	terUnitAttributeID id_tail;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthDragonStruct__
+extern terFilthDragonStruct terFilthDragonPrm;
+extern terFilthDragonStruct terFilthDragonPrm2;
+extern terFilthDragonStruct terFilthDragonPrmA;
+extern terFilthSwarmParameter terFilthGhostBaseParameter;
+#ifndef __XScript_struct_terFilthGhostStruct__
+#define __XScript_struct_terFilthGhostStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthGhostStruct {
+	float CreatureGenerationRadius;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthGhostStruct__
+extern terFilthGhostStruct terFilthGhostPrm;
+extern terFilthSwarmParameter terFilthEyeBaseParameter;
+#ifndef __XScript_struct_terFilthEyeStruct__
+#define __XScript_struct_terFilthEyeStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthEyeStruct {
+	float CreatureGenerationRadius;
+	float height_down;
+	float speed_angle_z;
+	float destruct_angle_acceleration;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthEyeStruct__
+extern terFilthEyeStruct terFilthEyePrm;
+extern terFilthSwarmParameter terFilthCrowBaseParameter;
+#ifndef __XScript_struct_terFilthCrowStruct__
+#define __XScript_struct_terFilthCrowStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthCrowStruct {
+	float linear_speed;
+	float swarm_speed;
+	float z;
+	float free_destroy_len;
+	int at_one_time_atrack;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthCrowStruct__
+extern terFilthCrowStruct terFilthCrowPrm;
+extern terFilthSwarmParameter terFilthDaemonBaseParameter;
+#ifndef __XScript_struct_terFilthDaemonStruct__
+#define __XScript_struct_terFilthDaemonStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthDaemonStruct {
+	float CreatureGenerationRadius;
+	float DaemonHeight;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthDaemonStruct__
+extern terFilthDaemonStruct terFilthDaemonPrm;
+extern terFilthSwarmParameter terFilthRatBaseParameter;
+extern terFilthSwarmParameter terFilthSnakeBaseParameter;
+#ifndef __XScript_struct_terFilthRatStruct__
+#define __XScript_struct_terFilthRatStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthRatStruct {
+	int CreatureGenerationRadius;
+	float follow_distance;
+	float brake_distance;
+	int noise_change_time;
+	float noise_angle_delta;
+	float radius_mul;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthRatStruct__
+extern terFilthRatStruct terFilthRatPrm;
+extern terFilthSwarmParameter terFilthWormBaseParameter;
+extern terFilthSwarmParameter terFilthSharkBaseParameter;
+#ifndef __XScript_struct_terFilthSharkStruct__
+#define __XScript_struct_terFilthSharkStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthSharkStruct {
+	int CreatureGenerationRadius;
+	float test_z_up;
+	float test_z_down;
+	int geo_radius;
+	float free_die_time;
+	float show_z;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthSharkStruct__
+extern terFilthSharkStruct terFilthSharkPrm;
+#ifndef __XScript_struct_terFilthVolcanoStruct__
+#define __XScript_struct_terFilthVolcanoStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthVolcanoStruct {
+	float speed_min_horizontal;
+	float speed_max_horizontal;
+	float speed_min_vertical;
+	float speed_max_vertical;
+	float size_min;
+	float size_max;
+	int volcano_size;
+	float crater_scale;
+	float collision_damage_rate;
+	terUnitAttributeID unit_id;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthVolcanoStruct__
+extern terFilthVolcanoStruct terFilthVolcanoPrm;
+extern terFilthVolcanoStruct terFilthVolcanoScumDisruptorPrm;
+extern terFilthSwarmParameter terFilthVolcanoBaseParameter;
+extern terFilthSpotParameters terScumDisruptorPrm;
+#ifndef __XScript_struct_terFilthAntsStruct__
+#define __XScript_struct_terFilthAntsStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthAntsStruct {
+	float follow_distance;
+	float brake_distance;
+	int noise_change_time;
+	float noise_angle_delta;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthAntsStruct__
+extern terFilthAntsStruct terFilthAntsPrm;
+extern terFilthAntsStruct terFilthAnts2Prm;
+extern int terFilthNavigatorPrmCount;
+extern terFilthSpotParameters terFilthNavigatorPrm[];
+extern int terFilthMutationsPrmCount;
+extern terFilthSpotParameters terFilthMutationsPrm[];
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: FilthPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

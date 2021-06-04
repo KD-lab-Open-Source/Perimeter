@@ -1,0 +1,4 @@
+#!/bin/sh
+PYTHONPATH="c:/src/docutils/docutils;c:/src/docutils/docutils/extras"
+export PYTHONPATH
+python c:/src/docutils/docutils/tools/rst2latex.py --documentoptions pdftex --stylesheet=docutils.sty --embed-stylesheet $1 `echo $1 | sed 's/\(.*\)\..*/\1.tex/'`

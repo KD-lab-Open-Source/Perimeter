@@ -1,0 +1,7 @@
+#!/bin/sh
+PYTHONPATH="c:/src/docutils/docutils;c:/src/docutils/docutils/extras"
+export PYTHONPATH
+python c:/src/docutils/docutils/tools/html.py -gs $1 `echo $1 | sed 's/\(.*\)\..*/\1.html/'`
+
+
+

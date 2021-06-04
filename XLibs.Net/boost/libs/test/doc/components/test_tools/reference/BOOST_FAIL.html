@@ -1,0 +1,36 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_FAIL( message )</H3>
+  <P class="first-line-indented">BOOST_FAIL behave the same way as <A href="BOOST_CHECK_MESSAGE.html">BOOST_REQUIRE_MESSAGE</A>( 
+    false, message ). This tool is used for an unconditional error message logging and the current test 
+    case aborting.</P>
+  <P class="first-line-indented">The only tool's parameter is an error message to log.</P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+     BOOST_FAIL( <SPAN class="literal">&quot;Test is not ready yet&quot;</SPAN> );
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(3) : fatal error in test_main: Test is not ready yet</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK_MESSAGE.html" target="descr">BOOST_REQUIRE_MESSAGE</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

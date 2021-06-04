@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<TITLE>The parameterized class member function based test case</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../../index.html">Boost.Test</A> > <A href="../../../index.html">Components</A> 
+  > <A href="../../index.html">The Unit Test Framework</A> > <A href="../index.html">Components</A> > 
+  <A href="index.html">The Test Case</A> > <SPAN class="current_article">The parameterized class member 
+  function based test case</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The parameterized class member function based test case</H1>
+  <H5>Definition</H5>
+  <P class="first-line-indented"> defined in <A href="../../../../../../../boost/test/unit_test_suite.hpp">unit_test_suite.hpp</A> 
+  <H5>Synopsis</H5>
+  <PRE class="code"><SPAN class="reserv-word">template</SPAN>&lt;<SPAN class="reserv-word">class</SPAN> UserTestClass, <SPAN class="reserv-word">typename</SPAN> ParamIterator, <SPAN class="reserv-word">typename</SPAN> ParameterType&gt;
+<SPAN class="reserv-word">class</SPAN> <SPAN class="new-term">parametrized_class_test_case</SPAN> : <SPAN class="reserv-word">public</SPAN> test_case
+{
+    ... // Implementation
+};</PRE>
+  <H5>Description</H5>
+  <P class="first-line-indented">Instances of the class parametrized_class_test_case are created by the 
+    framework for the supplied method of the user's test class with the following specification: void 
+    (UserTestClass::*fct)( ParameterType ). The parametrized_class_test_case is responsible for the creation 
+    and the destroying of the user's test class instance. 
+  <H5>Construction</H5>
+  <P class="first-line-indented">To create an instance of the class parameterized_class_test_case use 
+    the following macro: 
+  <P><SPAN class="new-term">BOOST_PARAM_CLASS_TEST_CASE</SPAN>( test_class_method_pointer, first_parameter, 
+    last_parameter ). 
+  <P class="first-line-indented">The macro's first parameter is the pointer to the member function - body 
+    of the test case. The first_parameter and last_parameter are begin and end iterators for the list 
+    of parameters accordingly. BOOST_PARAM_CLASS_TEST_CASE creates a new instance of the class parametrized_class_test_case 
+    and returns a pointer to the abstract class test_case. In most cases you will use it as an argument 
+    to the method <A href="../test_suite/index.html">test_suite</A>::add(...). Be aware that the parametrized_class_test_case 
+    does not store list of parameters internally. The user should make sure that parameters list will 
+    not be destroyed until the test case is run. That's why it not recommended to create a parameters 
+    list as local variable in <A href="../../index.html">init_unit_test_suite</A>. For example, you can 
+    place parameters list in file scope. 
+  <H5>Example:</H5>
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> my_complex_test
+{
+    <SPAN class="cpp-type">void</SPAN> test_assignment( <SPAN class="cpp-type">double</SPAN> tolerance )
+    {
+        ...
+    }
+};
+...
+<SPAN class="cpp-type">std::list</SPAN>&lt;<SPAN class="cpp-type">double</SPAN>&gt; possible_tolerances;
+ts-&gt;add( BOOST_PARAM_CLASS_TEST_CASE( &amp;my_complex_test::test_assignment,
+                                      possible_tolerances.begin(),
+                                      possible_tolerances.end() ) ); </PRE>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

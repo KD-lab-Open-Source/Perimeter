@@ -1,0 +1,21 @@
+subproject libs/dynamic_bitset ;
+
+unit-test dyn_bitset_unit_tests1
+    : dyn_bitset_unit_tests1.cpp
+    : <include>$(BOOST_ROOT)
+    ;
+
+unit-test dyn_bitset_unit_tests2
+    : dyn_bitset_unit_tests2.cpp
+    : <include>$(BOOST_ROOT)
+    ;
+
+unit-test dyn_bitset_unit_tests3
+    : dyn_bitset_unit_tests3.cpp
+    : <include>$(BOOST_ROOT)
+    ;
+
+unit-test dyn_bitset_unit_tests4
+    : dyn_bitset_unit_tests4.cpp
+    : <include>$(BOOST_ROOT)
+    ;

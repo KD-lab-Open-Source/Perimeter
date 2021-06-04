@@ -1,0 +1,45 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_WARN_MESSAGE( predicate, message )<BR>
+    BOOST_CHECK_MESSAGE( predicate, message )<BR>
+    BOOST_REQUIRE_MESSAGE( predicate, message )</H3>
+  <P class="first-line-indented">This group of tools works the same way as their non _MESSAGE form. The 
+    only difference is that instead of generating an error/confirm message these tools use the supplied 
+    one.</P>
+  <P class="first-line-indented">The tool's first parameter should be boolean predicate value that gets 
+    validated. The tool's second parameter is the message logged in case of check failure. The message 
+    argument can be of any type and can be a result of concatenations using the operator &lt;&lt;(). See 
+    <A href="BOOST_MESSAGE.html" target="descr">BOOST_MESSAGE</A> tool for complex message examples.</P>
+  <H4>Example: test.cpp</H4>
+<PRE class="code"><SPAN class="cpp-type">int</SPAN> test.cpp( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    <SPAN class="cpp-type">double</SPAN> res = sin( <SPAN class="literal">45</SPAN> );
+
+    BOOST_CHECK_MESSAGE( res &gt; <SPAN class="literal">3</SPAN>, <SPAN class="literal">&quot;Why not?!?!&quot;</SPAN> );
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}
+</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(3) : error in test_main: Why not?!?! </P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK.html" target="descr">BOOST_CHECK</A>, <A href="BOOST_WARN.html" target="descr">BOOST_WARN</A>, 
+      <A href="BOOST_REQUIRE.html" target="descr">BOOST_REQUIRE</A>, <A href="BOOST_MESSAGE.html" target="descr">BOOST_MESSAGE</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

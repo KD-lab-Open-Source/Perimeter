@@ -1,0 +1,12 @@
+subproject libs/mpl/test/aux_ ;
+
+# bring in rules for testing
+import testing ;
+
+compile debug_print.cpp ;
+compile has_rebind.cpp ;
+compile has_distance.cpp ;
+compile has_xxx.cpp ;
+compile no_has_xxx.cpp ;
+compile typeof.cpp ;
+compile template_arity.cpp ;

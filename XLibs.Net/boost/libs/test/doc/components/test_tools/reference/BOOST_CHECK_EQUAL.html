@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_CHECK_EQUAL( left, right )</H3>
+  <P class="first-line-indented">The same as <A href="BOOST_CHECK.html">BOOST_CHECK</A>( <I>left</I> == 
+    <I>right</I> ). Use this tool to see mismatched values. Note that it most probably bad idea to use 
+    this tool to compare floating point values. Use <A href="BOOST_CHECK_CLOSE.html">BOOST_CHECK_CLOSE</A> 
+    tool instead.</P>
+  <P class="first-line-indented"> If comparison is successful, the tool produces a confirmation message 
+    (note: to manage what messages appear in the test output stream set the proper log level) in other 
+    case it produces an error message in a form &quot;error in &lt;test case name&gt;: test &lt;<I>left</I> 
+    argument name&gt; == &lt;<I>right</I> argument name&gt; failed [ &lt;<I>left</I> argument value&gt; 
+    != &lt;<I>right</I> argument value&gt;]&quot;.</P>
+  <P class="first-line-indented">The tool's first parameter is the <I>left</I> compared value. Second 
+    parameter is the <I>right</I> compared value. Parameters are not required to be of the same type. 
+    But there should exist comparison operator for <I>left</I> and <I>right</I> type (this may involve 
+    implicit conversions).</P>
+  <H4>Example: test.cpp</H4>
+<PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    <SPAN class="cpp-type">int</SPAN> i = <SPAN class="literal">2</SPAN>;
+    <SPAN class="cpp-type">int</SPAN> j = <SPAN class="literal">1</SPAN>;
+    BOOST_CHECK_EQUAL( i, j );
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output"> test.cpp(4) : error in test_main: test i == j failed [2 != 1] 
+  </P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK.html" target="descr">BOOST_CHECK</A>, <A href="BOOST_CHECK_CLOSE.html" target="descr">BOOST_CHECK_CLOSE</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

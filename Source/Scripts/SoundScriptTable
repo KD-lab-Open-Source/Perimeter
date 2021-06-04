@@ -1,0 +1,5636 @@
+SoundScriptTable = {
+	table = {
+		4;
+		{
+			name = "interface";
+			is3D = false;
+			data = {
+				4;
+				{
+					name = "Struct_Event_Just_Stoped";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Event_Just_Stoped";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "building_set";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Event_Hologram_Set";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "button_press";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "button_press";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "unable_build";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "unable_build";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				}
+			};
+		},
+		{
+			name = "mainmenu";
+			is3D = false;
+			data = {
+				6;
+				{
+					name = "mainmenu_button";
+					volume = 0.8;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "menu\\mainmenu_button";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "menu_toggle";
+					volume = 0.4;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "menu\\menu_toggle";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "menu_rectangle";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "menu\\menu_rectangle";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 2;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "menu_button_switth_1";
+					volume = 0.2;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "menu\\menu_button_switch_1";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 2;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "menu_button_switth_2";
+					volume = 0.4;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "menu\\menu_button_switch_2";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 2;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "mainmenu_clock";
+					volume = 0.4;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "clock";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 8;
+					delta = {
+						enable = true;
+						random = true;
+						up = 2.2;
+						down = 0.4;
+					};
+				}
+			};
+		},
+		{
+			name = "voices";
+			is3D = false;
+			data = {
+				63;
+				{
+					name = "BallisticGun_Charged";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_BallisticGun_Charged";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "BallisticGun_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_BallisticGun_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "BallisticGun_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_BallisticGun_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "BMaster_Back2Frame";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_BMaster_Back2Frame0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_BMaster_Back2Frame1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "BMaster_Moves";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_BMaster_Moves0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_BMaster_Moves1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "BMaster_Selected";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_BMaster_Selected0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_BMaster_Selected1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Brigadier_Back2Frame";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Brigadier_Back2Frame0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Brigadier_Back2Frame1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Brigadier_Moves";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Brigadier_Moves0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Brigadier_Moves1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Brigadier_Selected";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Brigadier_Selected";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Building_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Building_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Building_Disassembled";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Building_Disassembled";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Building_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Building_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Building_Under_Attack";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Building_Under_Attack";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ECore_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ECore_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ECore_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ECore_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ECore_Under_Attack";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ECore_Under_Attack";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Energy_Collector_Empty";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Energy_Collector_Empty";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Energy_Not_Enough";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Energy_Not_Enough0";
+					additionalNames = {
+						2;
+						"Voice\\Voice_Energy_Not_Enough1",
+						"Voice\\Voice_Energy_Not_Enough2"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Allarm";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Allarm";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_BMaster_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_BMaster_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Brigadier_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Brigadier_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Deinstalled";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Deinstalled";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Installed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Installed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Move";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Move0";
+					additionalNames = {
+						3;
+						"Voice\\Voice_Frame_Move1",
+						"Voice\\Voice_Frame_Move2",
+						"Voice\\Voice_Frame_Move3"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Prod_Started";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Prod_Started";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Selected";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Selected";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Teleportation";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Teleportation";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Frame_Under_Attack";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Frame_Under_Attack0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Frame_Under_Attack1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "HowitzerGun_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_HowitzerGun_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "HowitzerGun_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_HowitzerGun_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Labor_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Labor_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Labor_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Labor_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Labor_Under_Attack";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Labor_Under_Attack";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Labor_Upgrade_Finished";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Labor_Upgrade_Finished";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "LaserGun_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_LaserGun_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "LaserGun_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_LaserGun_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ElectroGun_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ElectroGun_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ElectroGun_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ElectroGun_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "MMP_Convert_Command";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_MMP_Convert_Command";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "PShield_Global_Active";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_PShield_Global_Active";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "PShield_Global_Off";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_PShield_Global_Off";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "PShield_Local_Active";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_PShield_Local_Active";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "PShield_Local_Off";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_PShield_Local_Off";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "RocketGun_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_RocketGun_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "RocketGun_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_RocketGun_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ScourgeNavigator_Charged";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ScourgeNavigator_Charged";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ScourgeNavigator_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ScourgeNavigator_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ScourgeNavigator_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ScourgeNavigator_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Scourge_activity_detected";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Scourge_activity_detected";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ScumDisruptor_Charged";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ScumDisruptor_Charged";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ScumDisruptor_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ScumDisruptor_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ScumDisruptor_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_ScumDisruptor_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Squad_Attacks";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Squad_Attacks0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Squad_Attacks1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Squad_Moves";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Squad_Moves0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Squad_Moves1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Squad_Selected";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Squad_Selected0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Squad_Selected1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Squad_Transform_Finished";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Squad_Transform_Finished";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Squad_Transform_Start";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Squad_Transform_Start";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Squad_Under_Attack";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Squad_Under_Attack0";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Squad_Under_Attack1"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "SubchaserGun_Destroyed";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_SubchaserGun_Destroyed";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "SubchaserGun_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_SubchaserGun_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Terraforming_Finished";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Terraforming_Complete";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Terraforming_Finished"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Terraforming_Started";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Terraforming_initiated";
+					additionalNames = {
+						1;
+						"Voice\\Voice_Terraforming_Started"
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Ready";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = true;
+					belligerent_dependency = true;
+					soundName = "Voice\\Voice_Unit_Ready";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = -1.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				}
+			};
+		},
+		{
+			name = "units";
+			is3D = true;
+			data = {
+				206;
+				{
+					name = "field_start";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Process\\Proc_Field_Deactivate";
+					additionalNames = {
+						0;
+					};
+					radius = 400.;
+					max_radius = 2000.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "field_stop";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Process\\Proc_Field_Activate";
+					additionalNames = {
+						0;
+					};
+					radius = 400.;
+					max_radius = 2000.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "frame_install";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Frame_Installation";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "frame_uninstall";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Frame_Uninstallation";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "core_install";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Core_Installation";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "core_uninstall";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Core_Uninstallation";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "core_connect";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_EnergyCore_Connecting";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "digger_active";
+					volume = 0.3;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Proc_Prod_TerrainMaster";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.2;
+						down = 0.9;
+					};
+				},
+				{
+					name = "block_put";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Proc_Prod_BuildMaster";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 5;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "tree_falling";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "tree_falling";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1500.;
+					max_num_sound = 25;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.2;
+						down = 0.8;
+					};
+				},
+				{
+					name = "move_brigadier";
+					volume = 0.8;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_TerrainMaster";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = true;
+						random = false;
+						up = 2.5;
+						down = 1.;
+					};
+				},
+				{
+					name = "move_build_master";
+					volume = 0.8;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_BuildMaster";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = true;
+						random = false;
+						up = 2.5;
+						down = 1.;
+					};
+				},
+				{
+					name = "move_frame";
+					volume = 0.6;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Move_Frame";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = true;
+						random = false;
+						up = 1.8;
+						down = 0.8;
+					};
+				},
+				{
+					name = "light_unit_move";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "move_tank_mid";
+					additionalNames = {
+						0;
+					};
+					radius = 50.;
+					max_radius = 250.;
+					max_num_sound = 4;
+					delta = {
+						enable = true;
+						random = false;
+						up = 1.2;
+						down = 0.8;
+					};
+				},
+				{
+					name = "subterra_missile_move";
+					volume = 0.4;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Extirpator";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 25;
+					delta = {
+						enable = true;
+						random = false;
+						up = 1.2;
+						down = 0.8;
+					};
+				},
+				{
+					name = "Unit_Shot_Ceptor";
+					volume = 0.7;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Ceptor";
+					additionalNames = {
+						0;
+					};
+					radius = 150.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "soldier_fire";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Soldier";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1000.;
+					max_num_sound = 10;
+					delta = {
+						enable = true;
+						random = false;
+						up = 2.;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Officer";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Officer";
+					additionalNames = {
+						0;
+					};
+					radius = 150.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Technician";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Technician";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Gyroid";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Gyroid";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Disintegrator";
+					volume = 0.6;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Disintegrator";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Splitter";
+					volume = 0.6;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Splitter";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Twister";
+					volume = 0.6;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Twister";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Leamo";
+					volume = 0.8;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Leamo";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Strafer";
+					volume = 0.6;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Strafer";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Sniper";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Sniper";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1000.;
+					max_num_sound = 4;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Rocker";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Rocker";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_RProjector";
+					volume = 0.8;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_RProjector";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Extirpator";
+					volume = 0.6;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Extirpator";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Leech";
+					volume = 0.7;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Leech";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Thrower";
+					volume = 0.7;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Thrower";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Mortar";
+					volume = 0.8;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Mortar";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Wargon";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Wargon";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Bombie";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Bombie";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Conductor";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Conductor";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Eflair";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Eflair";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Impaler";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Impaler";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "explosion_heavy";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Explosion_Heavy";
+					additionalNames = {
+						0;
+					};
+					radius = 350.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "explosion_mid";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Explosion_Middle";
+					additionalNames = {
+						0;
+					};
+					radius = 350.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "explosion_lite";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Explosion_Light";
+					additionalNames = {
+						0;
+					};
+					radius = 350.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "explosion_start";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "explosion_start";
+					additionalNames = {
+						0;
+					};
+					radius = 350.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_mid_move";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_mid_move";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_small_move";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_small_move";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_units_disappear";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_units_disappear";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_base_appear";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_base_appear";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_large_appear";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_large_appear";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_divide";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_divide";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_base_collapse";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_base_collapse";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_units_appear";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_units_appear";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_small_appear";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_small_appear";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "transforming_units_collapse";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "transforming_units_collapse";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ant_die";
+					volume = 0.7;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Ant";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.3;
+						down = 0.7;
+					};
+				},
+				{
+					name = "wasp_die";
+					volume = 0.7;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Wasp";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.;
+						down = 0.7;
+					};
+				},
+				{
+					name = "Filth_Move_Wasp";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Wasp";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 450.;
+					max_num_sound = 4;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.3;
+						down = 0.7;
+					};
+				},
+				{
+					name = "Filth_Move_Ant";
+					volume = 0.4;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Ant";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 12;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.;
+						down = 0.6;
+					};
+				},
+				{
+					name = "wasp_nexus";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "wasp_nexus";
+					additionalNames = {
+						0;
+					};
+					radius = 350.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "ant_nexus";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "ant_nexus";
+					additionalNames = {
+						0;
+					};
+					radius = 350.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Open_Alpha";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Open_Alpha";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Open_Omega";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Open_Omega";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_Omega";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_Omega";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Move_Frame";
+					volume = 1.;
+					volmin = 0.9;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Move_Frame";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_Frame_Closed";
+					volume = 0.6;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_Frame_Closed";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_Frame_Opened";
+					volume = 0.8;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_Frame_Opened";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_EnergyCore";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_EnergyCore";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_Transmitter";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_EnergyCore";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_EnergyCollector";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_EnergyCollector";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_SoldierPlant";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_SoldierPlant";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_OfficerPlant";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_OfficerPlant";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_TechnicPlant";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_TechnicPlant";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_LaserLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_LaserLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_ElectroLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_ElectroLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_RocketLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_RocketLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_BombLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_BombLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_FlyLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_FlyLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_SubLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_SubLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_ExodusLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_ExodusLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_EmpireLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_EmpireLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_HarkbackLab";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_HarkbackLab";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_CommandCenter";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_CommandCenter";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_LaserGun";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_LaserGun";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_ElectroGun";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_ElectroGun";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_RocketGun";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_RocketGun";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_HowitzerGun";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_HowitzerGun";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_SubterraGun";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_SubterraGun";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_Ballistic";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_Ballistic";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_Disruptor";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_Disruptor";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Work_Navigator";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Work_Navigator";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2500.;
+					max_num_sound = 1;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_LaserGun";
+					volume = 0.5;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_LaserGun";
+					additionalNames = {
+						0;
+					};
+					radius = 250.;
+					max_radius = 1000.;
+					max_num_sound = 5;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_ElectroGun";
+					volume = 0.5;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_ElectroGun";
+					additionalNames = {
+						0;
+					};
+					radius = 250.;
+					max_radius = 1000.;
+					max_num_sound = 5;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_RocketGun";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_RocketGun";
+					additionalNames = {
+						0;
+					};
+					radius = 250.;
+					max_radius = 2000.;
+					max_num_sound = 5;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.2;
+						down = 0.7;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_HowitzerGun";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_HowitzerGun";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 5;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.2;
+						down = 0.7;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_SubterraGun";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_SubterraGun";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 5;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_Ballistic";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_Ballistic";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_Disruptor";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_Disruptor";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Proc_Shot_Navigator";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Proc_Shot_Navigator";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_Frame";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_Frame";
+					additionalNames = {
+						0;
+					};
+					radius = 500.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_Core";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_Core";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_Collector";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_Collector";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_Transmitter";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_Transmitter";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_LaserLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_LaserLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_RocketLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_RocketLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_BombLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_BombLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_FlyLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_FlyLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_SubLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_SubLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_ExodusLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_ExodusLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_EmpireLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_EmpireLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_HarkbackLab";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_HarkbackLab";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_CommandCenter";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_CommandCenter";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_LaserGun";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_LaserGun";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_RocketGun";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_RocketGun";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_HowitzerGun";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_HowitzerGun";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_SubterraGun";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_SubterraGun";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_Ballistic";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_Ballistic";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_Disruptor";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_Disruptor";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Struct_Explosion_Navigator";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Structures\\Struct_Explosion_Navigator";
+					additionalNames = {
+						0;
+					};
+					radius = 300.;
+					max_radius = 2000.;
+					max_num_sound = 25;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Piercer";
+					volume = 0.9;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Piercer";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Shot_Heater";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Shot_Heater";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Soldier";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Soldier";
+					additionalNames = {
+						0;
+					};
+					radius = 50.;
+					max_radius = 250.;
+					max_num_sound = 4;
+					delta = {
+						enable = true;
+						random = false;
+						up = 1.2;
+						down = 0.8;
+					};
+				},
+				{
+					name = "Unit_Move_Strafer";
+					volume = 0.8;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Strafer";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Sniper";
+					volume = 0.8;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Sniper";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Digger";
+					volume = 0.9;
+					volmin = 0.4;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Digger";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Scumer";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Scumer";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Gyroid";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Gyroid";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 5;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Leamo";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Leamo";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Rocker";
+					volume = 0.8;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Rocker";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_RProjector";
+					volume = 0.8;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_RProjector";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Ceptor";
+					volume = 0.8;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Ceptor";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Extirpator";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Extirpator";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Mortar";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Mortar";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Bombie";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Bombie";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Wargon";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Wargon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Leech";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Leech";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Unseen";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Unseen";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Disintegrator";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Disintegrator";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Piercer";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Piercer";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Splitter";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Splitter";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Twister";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Twister";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Heater";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Heater";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Thrower";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Thrower";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Move_Harkback";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Move_Harkback";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Unit_Explosion_Base";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Units\\Unit_Explosion_Base";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Bomb_Mortar";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Bomb_Mortar";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Bomb_Wargon";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Bomb_Wargon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Bomb_Bombie";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Bomb_Bombie";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Bomb_Howitzer";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Bomb_Howitzer";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Scum_Thrower";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Scum_Thrower";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Rocket_Rocker";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Rocket_Rocker";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Rocket_RProjector";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Rocket_RProjector";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Rocket_Ceptor";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Rocket_Ceptor";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Rocket_Ballistic";
+					volume = 0.9;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Rocket_Ballistic";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 6;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Bomb_Extirpator";
+					volume = 1.2;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Bomb_Extirpator";
+					additionalNames = {
+						0;
+					};
+					radius = 150.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Bomb_SubterraGun";
+					volume = 0.8;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Bomb_SubterraGun";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Bomb_Mortar";
+					volume = 0.8;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Bomb_Mortar";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Bomb_Wargon";
+					volume = 1.2;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Bomb_Wargon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Bomb_Bombie";
+					volume = 1.2;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Bomb_Bombie";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Bomb_Howitzer";
+					volume = 1.4;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Bomb_Howitzer";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Scum_Thrower";
+					volume = 1.2;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Scum_Thrower";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Rocket_Rocker";
+					volume = 1.;
+					volmin = 0.4;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Rocket_Rocker";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Rocket_RProjector";
+					volume = 1.;
+					volmin = 0.7;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Rocket_RProjector";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Rocket_Ceptor";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Rocket_Ceptor";
+					additionalNames = {
+						0;
+					};
+					radius = 250.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Rocket_Ballistic";
+					volume = 1.;
+					volmin = 0.5;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Rocket_Ballistic";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Ant";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Ant";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Rat";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Rat";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Worm";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Worm";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Wasp";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Wasp";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Ghost";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Ghost";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Eye";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Eye";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Crow";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Crow";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Daemon";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Daemon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Dragon";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Dragon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Create_Shark";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Create_Shark";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Rat";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Rat";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Worm";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Worm";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Ghost";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Ghost";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Eye";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Eye";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Crow";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Crow";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Daemon";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Daemon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Dragon";
+					volume = 0.5;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Dragon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Shark1";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Shark1";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Move_Shark2";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Move_Shark2";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Rat";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Rat";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Worm";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Worm";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = true;
+						random = true;
+						up = 1.;
+						down = 0.6;
+					};
+				},
+				{
+					name = "Filth_Attack_Wasp";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Wasp";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Ghost";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Ghost";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Eye";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Eye";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Crow";
+					volume = 0.7;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Crow";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Daemon";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Daemon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Dragon";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Dragon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Attack_Shark";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Attack_Shark";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Ant";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Ant";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Rat";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Rat";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Worm";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Worm";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Wasp";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Wasp";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Ghost";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Ghost";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Eye";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Eye";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Crow";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Crow";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Daemon";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Daemon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Dragon";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Dragon";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Filth_Die_Shark";
+					volume = 0.9;
+					volmin = 0.1;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Filth\\Filth_Die_Shark";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Proc_Geo_Face";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Process\\Proc_Geo_Face";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Proc_Geo_Vulcan";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Process\\Proc_Geo_Vulcan";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Proc_Geo_Rift";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Process\\Proc_Geo_Rift";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Proc_Geo_Mountain";
+					volume = 1.;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Process\\Proc_Geo_Mountain";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Proc_Geo_Crevice";
+					volume = 0.4;
+					volmin = 0.;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Process\\Proc_Geo_Crevice";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 1500.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Fly_Vulcan";
+					volume = 0.6;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Fly_Vulcan";
+					additionalNames = {
+						0;
+					};
+					radius = 100.;
+					max_radius = 1000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				},
+				{
+					name = "Missile_Explosion_Vulcan";
+					volume = 1.;
+					volmin = 0.3;
+					language_dependency = false;
+					belligerent_dependency = false;
+					soundName = "Missiles\\Missile_Explosion_Vulcan";
+					additionalNames = {
+						0;
+					};
+					radius = 200.;
+					max_radius = 2000.;
+					max_num_sound = 7;
+					delta = {
+						enable = false;
+						random = false;
+						up = 1.5;
+						down = 0.5;
+					};
+				}
+			};
+		}
+	};
+	belligerentPrefix = {
+		3;
+		"exodus_",
+		"harkback_",
+		"empire_"
+	};
+};

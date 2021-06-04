@@ -1,0 +1,21 @@
+# Boost.Signals Library 
+
+# Copyright Doug Gregor 2001-2003. Use, modification and
+# distribution is subject to the Boost Software License, Version
+# 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+# For more information, see http://www.boost.org
+
+project boost/signals 
+    : source-location ../src
+    ;
+
+# Base names of the source files for libboost_signals
+SOURCES = trackable connection signal_base slot ;
+
+lib boost_signals : $(SOURCES).cpp 
+    :         
+        <link>static:<define>BOOST_SIGNALS_NO_LIB=1
+        <link>dynamic:<define>BOOST_SIGNALS_DYN_LINK=1
+    ;

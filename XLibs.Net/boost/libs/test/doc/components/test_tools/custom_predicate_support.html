@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools: custom predicate support</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY> 
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> > <A href="../index.html">Components</A> > <A href="index.html">The
+    Test Tools</A> > <SPAN class="current_article">custom predicate support </SPAN></DIV> 
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The custom predicate support</H1> 
+  <H2 class="first-line-indented">Synopsis</H2> 
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> <SPAN class="new-term">extended_predicate_value</SPAN> {
+<SPAN class="reserv-word">public</SPAN>:
+    extended_predicate_value( <SPAN class="cpp-type">bool</SPAN> predicate_value_ );
+    extended_predicate_value( extended_predicate_value const& rhs );
+
+    <SPAN class="cpp-type">bool</SPAN>    operator!() <SPAN class="reserv-word">const</SPAN>;
+    <SPAN class="cpp-type">void</SPAN>    operator=( <SPAN class="cpp-type">bool</SPAN> predicate_value_ );
+
+    readonly_property&lt;bool&gt;              p_predicate_value;
+    boost::shared_ptr&lt;wrap_stringstream&gt; p_message;
+};</PRE> 
+  <H3>Description</H3> 
+  <P class="first-line-indented">There two layers of custom predicate support
+    implemented by the Test Tools:</P> 
+  <UL> 
+    <LI>Simple  predicate one or two arity without custom error message support</LI> 
+    <LI>Arbitrary predicate with custom error message support</LI> 
+  </UL> 
+  <P class="first-line-indented">To use first layer use BOOST_CHECK_PREDICATE
+    tool. You could implement any custom check and report the result by returning
+    boolean value from your predicate. For detailed description of this see <A href="reference/index.html">reference</A>.</P>
+  <P class="first-line-indented">To
+      use second layer you predicate should be defined to return boost::test_tools::<SPAN class="new-term">extended_predicate_value</SPAN>.
+      This class encapsulate both boolean result value and error/info message
+      in case if result is true/false. Be aware that message returned in extended_predicate_value
+      will be the only one logged by the framework in case of error (actually
+      plus error location). Usual error notification gets skipped. </P>
+  <P class="first-line-indented">Usually you construct the instance of extended_predicate_value
+    inside your predicate and return it by value. The constructor expects one
+    argument - the boolean result value. The constructor is implicit, meaning
+    that you could simply return boolean value from your predicate - extended_predicate_value
+    get implicitly constructed to hold your value and empty error message. In
+    case if you want to update this value after construction use method <SPAN class="new-term">operator=(
+    bool )</SPAN>.
+    Would you need to check the current predicate value use method <SPAN class="new-term">operator!()</SPAN> or
+    directly access public read only property  <SPAN class="code"><SPAN class="new-term">p_predicate_value</SPAN></SPAN>. To
+    create/modify error message you should use public read/write property <SPAN class="new-term">p_message</SPAN>.
+    p_message is a shared pointer to the <SPAN class="code">class
+    wrap_stringstream</SPAN>. You will need to allocate instance of it dynamically
+    in you predicate. It gets destroyed after error is logged. Use usual ostream
+    interface to create the error message.</P> 
+  <H3>Example</H3>
+  <PRE class="code"><SPAN class="comment">// custom comparison predicate that only checks for lists size</SPAN>
+extended_predicate_value
+compare_lists( <SPAN class="cpp-type">std::list<INT></SPAN> <SPAN class="reserv-word">const</SPAN>&amp; l1, <SPAN class="cpp-type">std::list</SPAN><INT> <SPAN class="reserv-word">const</SPAN>&amp; l2 )
+{
+    <SPAN class="reserv-word">if</SPAN>( l1.size() != l2.size() ) {
+        extended_predicate_value res( <SPAN class="reserv-word">false</SPAN> );
+
+        res.p_message.reset( <SPAN class="reserv-word">new</SPAN> boost::wrap_stringstream );
+
+        *res.p_message << <SPAN class="literal">" Different sizes ["</SPAN> << l1.size() << <SPAN class="literal">"!="</SPAN> << l2.size() << <SPAN class="literal">"]"</SPAN>;
+
+        <SPAN class="reserv-word">return</SPAN> res;
+    }
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="reserv-word">true</SPAN>;
+}
+
+...
+
+<SPAN class="cpp-type">void</SPAN> my_test_case()
+{
+    ...
+    BOOST_CHECK( compare_lists( l1, l2 ) );
+}
+</PRE>
+</DIV> 
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy
+        Rozental</A> 2001-2004. <BR> 
+      Use, modification, and distribution are subject to the Boost Software License,
+      Version 1.0. (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or
+      copy at <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P> 
+    <P>Revised:
+      <!-- #BeginDate format:Sw1 -->18 January, 2004<!-- #EndDate --> 
+    </P> 
+  </DIV> 
+</DIV> 
+</BODY>
+</HTML>

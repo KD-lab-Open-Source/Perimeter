@@ -1,0 +1,11 @@
+<texture type='Primitive'>
+	<persistence value='0.6'/>
+	<octaveCount value='4'/>
+	<shift value='0.000000,0.000000,0.000000'/>
+	<scale value='0.04,0.04,0.04'/>
+	<colorizer type='MarbleSolidX'>
+		<bgColor value='1.00,0.75,1.00'/>
+		<fgColor value='0.35,0.10,0.35'/>
+	</colorizer>
+	<interpolator type='Cubic'/>
+</texture>

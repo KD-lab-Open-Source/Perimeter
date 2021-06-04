@@ -1,0 +1,89 @@
+Tree777 = {
+	flag_tree_build = false;
+	treeSDTB = {
+		4;
+		"class CSDTBExt<class CExtWRB<class CSurToolEmpty> >" {
+			NodeName = "Рельеф";
+			treeSDTB = {
+				6;
+				"class CSDTBExt<class CExtWRB<class CSurToolToolzer> >" {
+					NodeName = "Toolzer1";
+					treeSDTB = {
+						0;
+					};
+					m_LevelingH = 0;
+					state_radio_button_DigPut = 0;
+					state_level_ZL_or_level_h = 1;
+				},
+				"class CSDTBExt<class CExtWRB<class CSurToolToolzer> >" {
+					NodeName = "Toolzer-насыпать";
+					treeSDTB = {
+						0;
+					};
+					m_LevelingH = 0;
+					state_radio_button_DigPut = 1;
+					state_level_ZL_or_level_h = 0;
+				},
+				"class CSDTBExt<class CExtWRB<class CSurToolGeoNet> >" {
+					NodeName = "Горка 1";
+					treeSDTB = {
+						0;
+					};
+					m_H = 1480;
+				},
+				"class CSDTBExt<class CExtWRB<class CSurToolGeoNet> >" {
+					NodeName = "Горка большая";
+					treeSDTB = {
+						0;
+					};
+					m_H = 4046;
+				},
+				"class CSDTBExt<class CExtWRB<class CSurToolBlur> >" {
+					NodeName = "Смусинг1";
+					treeSDTB = {
+						0;
+					};
+				},
+				"class CSDTBExt<class CExtWRB<class CSurToolBlur> >" {
+					NodeName = "Смусинг сильный";
+					treeSDTB = {
+						0;
+					};
+				}
+			};
+		},
+		"class CSDTBExt<class CExtWRB<class CSurToolEmpty> >" {
+			NodeName = "Water";
+			treeSDTB = {
+				2;
+				"class CSDTBExt<class CExtWRB<class CSurToolWater> >" {
+					NodeName = "Налить";
+					treeSDTB = {
+						0;
+					};
+				},
+				"class CSDTBExt<class CExtWRB<class CSurToolWater> >" {
+					NodeName = "Осушить";
+					treeSDTB = {
+						0;
+					};
+				}
+			};
+		},
+		"class CSDTBExt<class CExtWRB<class CSurToolEmpty> >" {
+			NodeName = "Рельеф объектами";
+			treeSDTB = {
+				1;
+				"class CSDTBExt<class CExtWRB<class CSurTool3DM> >" {
+					NodeName = "3DM";
+					treeSDTB = {
+						0;
+					};
+				}
+			};
+		},
+		"class CSDTBExt<class CExtWRB<class CSurToolSoundFolder> >" {
+			NodeName = "Звуки";
+		}
+	};
+};

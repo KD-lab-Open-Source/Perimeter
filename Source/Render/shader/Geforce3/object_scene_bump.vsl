@@ -1,0 +1,109 @@
+
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+	float3 n : NORMAL;
+    float2 t0 : TEXCOORD0;
+	float3 T : TEXCOORD1; //tangent
+	float3 S : TEXCOORD2; //binormal
+	float3 SxT : TEXCOORD3; //normal
+};
+
+struct VS_OUTPUT
+{
+    float4  pos: POSITION;
+#ifdef SHADOW
+    float4  t0 : TEXCOORD0;
+#endif
+	float2  t1 : TEXCOORD1;
+	float2  t2 : TEXCOORD2;
+	float3  t3 : TEXCOORD3;
+	float3  diffuse: COLOR0;
+	float3  specular: COLOR1;
+	float   fog: FOG;
+};
+
+float4x4 mWVP;
+float4x4 mWorldToLight;
+float4x4 mShadow;
+float4x4 mWorld;
+float4x4 mView;
+float4x4 mInvWorld;
+float4x4 mWorldView;
+
+float3 vCameraPos;
+float3 vLightDirection;
+float3 vLightDirectionInvWorld;
+
+float3 vFog;//fog_min,fog_max/(fog_max-fog_min),-1/(fog_max-fog_min)
+
+float3 vPointPos0;
+float3 vPointColor0;
+float4 vPointParam0;//(att0,att2,,);
+
+float3 vPointPos1;
+float3 vPointColor1;
+float4 vPointParam1;//(att0,att2,,);
+
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+
+	o.pos=mul(v.pos,mWVP);
+	o.t1=v.t0;
+	o.t2=v.t0;
+#ifdef SHADOW
+	o.t0=mul(v.pos,mShadow);
+#endif
+	//fog
+	float fogz=mul(v.pos,mWorldView).z;
+	float fog=fogz*vFog.z+vFog.y;
+	o.fog=clamp(fog,0,1);
+	////bump
+	float3 world_pos=mul(v.pos,mWorld);
+
+//	float3 ldir=-vLightDirection;
+//	float3 light=normalize(mul(ldir,(float3x3)mInvWorld));
+	float3 light=vLightDirectionInvWorld;
+	// move light vector into tangent space
+	float3 light_obj;
+	light_obj.x=dot(light,v.T);
+	light_obj.y=dot(light,v.S);
+	light_obj.z=dot(light,v.SxT);
+	o.diffuse.xyz=light_obj*0.5+0.5;
+
+	float3 dir=normalize(vCameraPos-world_pos);
+	float3 half_v=dir-vLightDirection;
+	float3 half_obj=normalize(mul(half_v,(float3x3)mInvWorld));
+
+	float3 half_st;
+	half_st.x=dot(half_obj,v.T);
+	half_st.y=dot(half_obj,v.S);
+	half_st.z=dot(half_obj,v.SxT);
+	o.specular.xyz=half_st*0.5+0.5;
+
+#ifdef POINT1
+	//point light
+	float3 delta_point=world_pos-vPointPos0;
+	float r2=dot(delta_point,delta_point);
+	float point_c=1/(vPointParam0.y*r2+vPointParam0.x);
+	float3 point_color=vPointColor0*point_c;
+
+	o.t3=point_color;
+#else
+	o.t3=(float3)0;
+#endif
+
+#ifdef POINT2
+	//point light
+	delta_point=world_pos-vPointPos1;
+	r2=dot(delta_point,delta_point);
+	point_c=1/(vPointParam1.y*r2+vPointParam1.x);
+	point_color=vPointColor1*point_c;
+
+	o.t3+=point_color;
+#endif
+	
+    return o;
+}

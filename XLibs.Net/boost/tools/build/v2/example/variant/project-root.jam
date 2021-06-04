@@ -1,0 +1,10 @@
+
+# Define a build variant which is just combination
+# of four properties. 
+variant crazy : <optimization>speed <inlining>off 
+                <debug-symbols>on <profiling>on ;
+		
+# Define a built variant inherited from 'release'.
+# It defines one new property and get all properties
+# from parent variant.		
+variant super_release : release : <define>USE_ASM ;

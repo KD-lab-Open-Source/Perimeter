@@ -1,0 +1,11 @@
+DictionaryPrm = {
+	dictionaryRecords = {
+		1;
+		{
+			parentName = "SaveUnitData";
+			oldName = "SaveUnitBuildingEnergyData";
+			newName = "SaveUnitBuildingData";
+		}
+
+	};
+};

@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Result</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../../index.html">Boost.Test</A> > <A href="../../../index.html">Components</A> 
+  > <A href="../../index.html">The Unit Test Framework</A> > <A href="../index.html">Components</A> > 
+  <SPAN class="current_article">The Test Result</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The Test Result</H1>
+  <H5>Definition</H5>
+  <P class="first-line-indented"> defined in <A href="../../../../../../../boost/test/unit_test_suite.hpp">unit_test_result.hpp</A> 
+  <H5>Synopsis</H5>
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> unit_test_result
+{
+    <SPAN class="reserv-word">static</SPAN> unit_test_result&amp; instance();
+    <SPAN class="reserv-word">static</SPAN> <SPAN class="cpp-type">void</SPAN>              set_report_format( <SPAN class="cpp-type">std::string</SPAN> <SPAN class="reserv-word">const</SPAN>&amp; reportformat );
+
+    <SPAN class="cpp-type">void</SPAN>                     report( <SPAN class="cpp-type">std::string</SPAN> <SPAN class="reserv-word">const</SPAN>&amp; reportlevel, <SPAN class="cpp-type">std::ostream</SPAN>&amp; where_to );
+    <SPAN class="cpp-type">void</SPAN>                     confirmation_report( <SPAN class="cpp-type">std::ostream</SPAN>&amp; where_to );
+    <SPAN class="cpp-type">void</SPAN>                     short_report( <SPAN class="cpp-type">std::ostream</SPAN>&amp; where_to );
+    <SPAN class="cpp-type">void</SPAN>                     detailed_report( <SPAN class="cpp-type">std::ostream</SPAN>&amp; where_to );
+
+    <SPAN class="cpp-type">int</SPAN>                      result_code() <SPAN class="reserv-word">const</SPAN>;
+    <SPAN class="cpp-type">bool</SPAN>                     has_passed() <SPAN class="reserv-word">const</SPAN>;
+};
+</PRE>
+  <H5>Description</H5>
+  <P class="first-line-indented">The Unit Test Framework keeps testing results as the instances of the 
+    class unit_test_result. This class is responsible for test result storage, analysis and presentation 
+    to the user in output stream. There two formats supported for results presentation: human readable 
+    format and XML format. This class provides several methods for the result reporting. In most cases 
+    you do not need to use this interface directly. The framework provides a report for overall testing 
+    results automatically. You could also configure report format using the framework parameter. See the 
+    <A href="../../parameters/index.html">Framework parameters</A> for details.</P>
+  <UL>
+    <LI> unit_test_result::<SPAN class="new-term">confirmation_report</SPAN>(...)<BR>
+      reports the success/failure confirmation message only. The <I>where_to</I> parameter defines target 
+      output stream. </LI>
+    <LI>unit_test_result::<SPAN class="new-term">short_report</SPAN>(...)<BR>
+      reports testing results for the current test_case. The report includes an amount of passed and failed 
+      tests and an amount of passed and failed <A href="../../../test_tools/index.html">Test Tools</A> 
+      assertions. The <I>where_to</I> parameter defines target output stream.</LI>
+    <LI>unit_test_result::<SPAN class="new-term">detailed_report</SPAN>(...)<BR>
+      reports testing results for the current test_case and all test cases it consist of. The <I>where_to</I> 
+      parameter defines target output stream.</LI>
+    <LI>unit_test_result::<SPAN class="new-term">report</SPAN>(...)<BR>
+      reports testing result based on <I>reportlevel</I> parameter. The <I>where_to</I> parameter defines 
+      target output stream.</LI>
+    <LI>unit_test_result::<SPAN class="new-term">result_code</SPAN>(...)<BR>
+      provides an access to result code to be returned from main.</LI>
+    <LI>unit_test_result::<SPAN class="new-term">has_passed</SPAN>(...)<BR>
+      returns true if all assertions and sub test cases has passed.</LI>
+    <LI>unit_test_result::<SPAN class="new-term">set_report_format</SPAN>(...)<BR>
+      sets the format to be used by all instances of class unit_test_result for results report. For the 
+      list of acceptable values see the <A href="../../parameters/index.html">Framework parameters</A>.</LI>
+  </UL>
+  <H5>Construction</H5>
+  <P class="first-line-indented">The instances of this class are created automatically by the framework 
+    for each test case. To access instance of class unit_test_result holding results for the current test 
+    case use static method unit_test_result::<SPAN class="new-term">instance</SPAN>(). </P>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

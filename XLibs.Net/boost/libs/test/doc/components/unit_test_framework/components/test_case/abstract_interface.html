@@ -1,0 +1,51 @@
+<HTML>
+<HEAD>
+<TITLE>The abstract test case interface</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../../index.html">Boost.Test</A> > <A href="../../../index.html">Components</A>
+   > <A href="../../index.html">The Unit Test Framework</A> > <A href="../index.html">Components</A> 
+   > <A href="index.html">The Test Case</A> > <SPAN class="current_article">Abstract Interface</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../../../btl1.gif' width='252' height='43' alt="Boost Test logo">
+  <H1 class="subtitle">The abstract Test Case interface</H1>
+  <H5>Definition</H5>
+  <P class="first-line-indented"> defined in <A href="../../../../../../../boost/test/unit_test_suite.hpp">unit_test_suite.hpp</A></P>
+  <H5>Synopsis</H5>
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> <SPAN class="new-term">test_case</SPAN>
+{
+<SPAN class="reserv-word">public</SPAN>:
+    <SPAN class="cpp-type">void</SPAN> set_timeout( <SPAN class="cpp-type">int</SPAN> timeout );
+    <SPAN class="cpp-type">void</SPAN> set_expected_failures( unit_test_counter exp_fail );
+    <SPAN class="cpp-type">void</SPAN> depends_on( test_case const* rhs );
+
+    <SPAN class="cpp-type">void</SPAN> run();
+};
+</PRE>
+  <H5>Description</H5>
+  <P class="first-line-indented">Abstract class test_case define the test case interface. You could use methods of this interface to manage test case behavior. <P class="first-line-indented">Use method test_case:<SPAN class="new-term">set_timeout</SPAN>(...) 
+  to set the timeout value for the test case. See method <A href="../../../execution_monitor/execution_monitor.html">execution_monitor::execute(...)</A> for more details about the timeout value.   
+  <P class="first-line-indented">Use method test_case::<SPAN class="new-term">set_expected_failures</SPAN>(...) 
+        to set the expected amount of <A href="../../../test_tools/index.html">Test Tools</A> failures in 
+        the test case. In most cases it's more convenient to set these parameters while adding this test_case 
+        to a test_suite. See the method <A href="../test_suite/index.html">test_suite</A>::add(...) for more 
+  details.
+  <P class="first-line-indented">Use method test_case::<SPAN class="new-term">depends_on</span>(...) to define inter test cases dependencies. You could use this feature to prohibit one test case from running if test case it depends on failed. See <a href="../../../../examples/unit_test_example3.html">unit_test_example3</a> for example. 
+  <P class="first-line-indented">Use method test_case::<SPAN class="new-term">run</SPAN>() to start the test case processing. In majority of the cases you don't need to call this method directly: test cases invokation is done and managed by the framework. 
+  <H5>Construction</H5>
+ <P class="first-line-indented">You will never need to create instances of the class test_case.</P>
+</DIV>
+<DIV class="footer"> 
+<DIV class="footer-body"> 
+  <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+      <P>Revised:        <!-- #BeginDate format:Sw1 -->10 January, 2004<!-- #EndDate -->     </P>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

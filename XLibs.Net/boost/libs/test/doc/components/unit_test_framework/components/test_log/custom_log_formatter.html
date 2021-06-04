@@ -1,0 +1,73 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Log formatter interface</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY> 
+<DIV class="header"> <A href="../../../../index.html">Boost.Test</A> > <A href="../../../index.html">Components</A> > <A href="../../index.html">The Unit Test Framework</A> > <A href="../index.html">Components</A> > <SPAN class="current_article">The Test Log formatter interface </SPAN></DIV> 
+<DIV class="body"> <IMG src='../../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The test log formatter interface </H1> 
+  <H4 class="underlined">Definition</H4> 
+  <P>defined in <A href="../../../../../../../boost/test/unit_test_log_formatter.hpp">unit_test_log_formatter.hpp</A> </P> 
+  <H5>Synopsis</H5> 
+  <PRE class="code"><SPAN class="reserv-word">struct</SPAN> log_entry_data
+{
+    <SPAN class="cpp-type">std::string</SPAN>     m_file;
+    <SPAN class="cpp-type">std::size_t</SPAN>     m_line;
+    <A href="index.html#log_level">log_level</A>       m_level;
+};
+
+<SPAN class="reserv-word">struct</SPAN> log_checkpoint_data
+{
+    <SPAN class="cpp-type">std::string</SPAN>     m_file;
+    <SPAN class="cpp-type">std::size_t</SPAN>     m_line;
+    <SPAN class="cpp-type">std::string</SPAN>     m_message;
+};
+
+<SPAN class="reserv-word">class</SPAN> unit_test_log_formatter {
+<SPAN class="reserv-word">public</SPAN>:
+    <SPAN class="reserv-word">enum</SPAN> log_entry_types { BOOST_UTL_ET_INFO, 
+                           BOOST_UTL_ET_MESSAGE,
+                           BOOST_UTL_ET_WARNING,
+                           BOOST_UTL_ET_ERROR,
+                           BOOST_UTL_ET_FATAL_ERROR };
+
+    <SPAN class="comment">// Constructor</SPAN>
+    <SPAN class="reserv-word">explicit</SPAN> unit_test_log_formatter( unit_test_log <SPAN class="reserv-word">return</SPAN>& log );
+
+    <SPAN class="comment">// Destructor</SPAN>
+    <SPAN class="reserv-word">virtual</SPAN>             ~unit_test_log_formatter() {}
+
+    // Formatter interface
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        start_log( <SPAN class="cpp-type">std::ostream</SPAN>& output, <SPAN class="cpp-type">void</SPAN> log_build_info ) = 0;
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        log_header( <SPAN class="cpp-type">std::ostream</SPAN>& output, unit_test_counter test_cases_amount ) = 0;
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        finish_log( <SPAN class="cpp-type">std::ostream</SPAN>& output ) = 0;
+
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        track_test_case_scope( <SPAN class="cpp-type">std::ostream</SPAN>& output, test_case <SPAN class="reserv-word">const</SPAN>& tc, <SPAN class="cpp-type">void</SPAN> in_out ) = 0;
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        log_exception( <SPAN class="cpp-type">std::ostream</SPAN>& output, <SPAN class="cpp-type">std::string</SPAN> <SPAN class="reserv-word">const</SPAN>& test_case_name, c_string_literal explanation ) = 0;
+
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        begin_log_entry( <SPAN class="cpp-type">std::ostream</SPAN>& output, log_entry_types let ) = 0;
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        log_entry_value( <SPAN class="cpp-type">std::ostream</SPAN>& output, <SPAN class="cpp-type">std::string</SPAN> <SPAN class="reserv-word">const</SPAN>& value ) = 0;
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">void</SPAN>        end_log_entry( <SPAN class="cpp-type">std::ostream</SPAN>& output ) = 0;
+
+<SPAN class="reserv-word">protected</SPAN>:
+    <SPAN class="comment">// Implementation interface
+</SPAN>    log_entry_data      <SPAN class="reserv-word">const</SPAN>& entry_data() <SPAN class="reserv-word">const</SPAN>;
+    log_checkpoint_data <SPAN class="reserv-word">const</SPAN>& checkpoint_data() <SPAN class="reserv-word">const</SPAN>;</PRE> 
+  <H5>Description</H5> 
+  <P class="first-line-indented">To create custom log formatter you need to implement unit_test_log_formatter interface above. You could inherit  either directly from unit_test_log_formatter or from two implementations supplied in the framework. For example you could see <A href="../../../../../test/errors_handling_test.cpp">errors_handling_test.cpp</A>. You should specify custom formatter before start of the testing using method <SPAN class="code"><A href="index.html#set_log_formatter">unit_test_log::set_log_formatter</A>. Note that you need to create it dynamically since framework is taking an ownership of this instance and will delete it at the end of testing. unit_test_formatter constructor require reference ot the instance of the log. Call <A href="index.html#instance">unit_test_log::instance</A> to get an access to the single log instance.</SPAN></P> 
+</DIV> 
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR> 
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. (See accompanying file <A href="../../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P> 
+    <P>Revised:
+      <!-- #BeginDate format:Sw1 -->18 January, 2004<!-- #EndDate --> 
+    </P> 
+  </DIV> 
+</DIV> 
+</BODY>
+</HTML>

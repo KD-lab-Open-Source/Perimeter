@@ -1,0 +1,119 @@
+#include "..\shade.inl"
+
+#ifdef c2x2
+
+/*
+ps.2.0
+// ambient color
+def c0, SHADE4, MSHADE4, 0, 1.0
+//c2 -diffuse color
+
+dcl t0.xyzw
+dcl t4.xy
+dcl t5.xy
+
+dcl_2d s0
+dcl_2d s4
+dcl_2d s5
+
+texld_pp  r0, t0, s0
+texld_pp  r1, t4, s4	// diffuse map
+mad_pp r0.rgb, r0, c0.y, c0.x
+mul_pp r0.rgb, r0, r1
+texld_pp  r1, t5, s5	// lightmap
+mul_pp r0.rgb, r0, r1
+mul_pp r0, r0, c2
+
+mov_pp oC0,r0
+*/
+
+ps.1.4
+// ambient color
+def c0, SHADE, MSHADE, 0, 1.0
+//c2 -diffuse color
+
+// fetch two rows
+texld r0, t0
+texld r4, t4	// diffuse map
+texld r5, t5	// lightmap
+
+mad r0.rgb, r0, c0.y, c0.x
+
+mul r0.rgb, r0, r4	// shadow * diffuse
+mul r0, r0, c2
+mul_x4 r0.rgb, r0, r5
++mov r0.a, c2.a
+
+#else
+/*
+ps.2.0
+// ambient color
+def c0, SHADE4, MSHADE, 0, 1.0
+//c2 -diffuse color
+
+dcl t0.xyzw
+dcl t1.xyzw
+dcl t2.xyzw
+dcl t3.xyzw
+dcl t4.xy
+dcl t5.xy
+
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s4
+dcl_2d s5
+
+texld_pp  r0, t0, s0
+texld_pp  r1, t1, s0
+add_pp r0.rgb,r0,r1
+texld_pp  r1, t2, s0
+add_pp r0.rgb,r0,r1
+texld_pp  r1, t3, s0
+add_pp r0.rgb,r0,r1
+//mul_pp r0.rgb,r0,c4 //Делим на 4
+
+mad_pp r0.rgb, r0, c0.y, c0.x
+texld_pp r1, t4, s4	// diffuse map
+mul_pp r0.rgb, r0, r1
+texld_pp r2, t5, s5	// lightmap
+mul_pp r0.rgb, r0, r2 
+mul_pp r0, r0, c2
+
+mov_pp oC0,r0
+*/
+
+ps.1.4
+// ambient color
+def c4, 0.25f, 0.25f, 0.25f, 0.25f
+def c0, SHADE, MSHADE, 0.25f, 1.0
+//c2 -diffuse color
+
+// fetch two rows
+texld r0, t0
+texld r1, t1
+texld r2, t2
+texld r3, t3
+
+mul	r0.rgb, r0, c4
+mad	r0.rgb, r1, c4, r0
+mad	r0.rgb, r2, c4, r0
+mad	r0.rgb, r3, c4, r0
+mad r0.rgb, r0, c0.y, c0.x
+
+phase
+
+texld r4, t4	// diffuse map
+texld r5, t5	// lightmap
+
+
+mul r0.rgb, r0, r4	// shadow * diffuse
++mov r0.a, c2.a
+mul r0.rgb, r0, c2
+mul_x4	r0.rgb, r0, r5 
+
+#endif //c2x2
+//FX5950 4 sample ps.2.0 67.1 fps , ps.1.4 67.1 fps
+//FX5200 4 sample ps.2.0 16.7 fps , ps.1.4 17.6 fps (old 18.3 fps)
+//FX5200 1 sample ps.2.0 24.2 fps , ps.1.4 32.4 fps 
+

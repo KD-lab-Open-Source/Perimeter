@@ -1,0 +1,44 @@
+# Copyright David Abrahams 2003. Permission to copy, use,
+# modify, sell and distribute this software is granted provided this
+# copyright notice appears in all copies. This software is provided
+# "as is" without express or implied warranty, and with no claim as
+# to its suitability for any purpose.
+
+import testing ;
+
+test-suite iterator
+  : 
+    # These first two tests will run last, and are expected to fail
+    # for many less-capable compilers.
+  
+    [ compile-fail interoperable_fail.cpp ]
+    # test uses expected success, so that we catch unrelated
+    # compilation problems.
+    [ run is_convertible_fail.cpp ]  
+
+    # These tests should work for just about everything.
+    [ run unit_tests.cpp ]
+    [ run concept_tests.cpp ]
+    [ run iterator_adaptor_cc.cpp ]
+    [ run iterator_adaptor_test.cpp ]
+    [ compile iterator_archetype_cc.cpp ]
+    [ run transform_iterator_test.cpp ]
+    [ run indirect_iterator_test.cpp ]
+    [ run filter_iterator_test.cpp ]
+    [ run reverse_iterator_test.cpp ]
+    [ run counting_iterator_test.cpp ]
+    [ run permutation_iterator_test.cpp : : : # <stlport-iostream>on 
+    ]
+    [ run zip_iterator_test.cpp ]
+      
+    [ run ../../utility/iterator_adaptor_examples.cpp ]
+    [ run ../../utility/counting_iterator_example.cpp ]
+    [ run ../../utility/filter_iterator_example.cpp ]
+    [ run ../../utility/fun_out_iter_example.cpp ]
+    [ run ../../utility/indirect_iterator_example.cpp ]
+    [ run ../../utility/projection_iterator_example.cpp ]
+    [ run ../../utility/reverse_iterator_example.cpp ]
+    [ run ../../utility/transform_iterator_example.cpp ]
+    [ run ../../utility/iterator_traits_test.cpp ]
+      
+;

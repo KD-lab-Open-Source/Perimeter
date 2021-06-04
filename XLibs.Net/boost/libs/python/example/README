@@ -1,0 +1,19 @@
+To get started with the Boost Python Library, use the examples
+getting_started1.cpp and getting_started2.cpp.
+
+    bjam -sTOOLS=your-toolset test
+
+in this directory will build and run the examples.
+
+Other configuration variables may need to be set as described in
+http://www.boost.org/libs/python/doc/building.html.  These can be
+supplied by the environment, on the command-line with
+
+  -sVARIABLENAME=value
+
+or in the local Jamrules file.
+
+If you move this example from its place in the Boost development tree
+you'll need to edit at least one line in Jamrules and one line in
+boost-build.jam.
+

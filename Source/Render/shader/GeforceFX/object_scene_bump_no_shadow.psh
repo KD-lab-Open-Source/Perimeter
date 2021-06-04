@@ -1,0 +1,64 @@
+#include "..\shade.inl"
+//c4 - ambient
+//c5 - diffuse
+//c6 - specular
+
+ps.1.4
+
+// ambient color
+def c0, MSHADE, MSHADE, MSHADE, SHADE
+def c3, -0.75,-0.75,-0.75,-0.75
+
+texld r1,t1   //texture
+texld r2,t2	 //bump map
+texcrd r3.rgb,t3 //light_st
+texcrd r4.rgb,t4 //half_st
+
+//mov r0.rgb,v0
+//+mov r0.a, c5.a
+
+//diffuse bump
+dp3_sat r0, r2, r3
+mul r0.rgb,r0,c5
+add r0.rgb,r0,c4
+mul r0.rgb,r0,r1
+
+//specular bump
+dp3_sat r1.rgb, r2, r4
+mad_x4_sat r1.rgb, r1, r1, c3
+mad r1.rgb,r1,c6,r0
+
+add r0.rgb, r1, v0 //point color
+
+/*
+ps.2.0
+dcl t1.xy
+dcl t2.xy
+dcl t4.xyz //light angle
+dcl t5.xyz //half angle
+dcl_2d s1
+dcl_2d s2
+
+// ambient color
+def c3, -0.75,-0.75,-0.75,4
+
+texld r2,t2,s2	 //bump map
+
+//diffuse bump
+dp3_sat_pp r1, r2, t4
+mov_pp r4, c4
+mad_pp r1.rgb,r1,c5,r4
+
+texld r0,t1,s1   //texture
+mul_pp r0.rgb,r1,r0
+
+//specular bump
+dp3_sat_pp r1.rgb, r2, t5
+pow_pp r1, r1.x, c6.w
+mad_sat_pp r0.rgb,r1,c6,r0
+//mul_sat r0.rgb,r1,c6
+
+
+mov_pp oC0,r0
+
+*/

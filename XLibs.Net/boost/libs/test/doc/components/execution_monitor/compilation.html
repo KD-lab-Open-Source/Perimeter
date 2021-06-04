@@ -1,0 +1,33 @@
+<HTML>
+<HEAD>
+<TITLE>The Execution Monitor: compilation</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> > <A href="../index.html">Components</A> > <A href="index.html">The Execution Monitor</A> > <SPAN class="current_article">Compilation</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The Execution Monitor compilation</H1>
+
+  <P class="first-line-indented">To compile the Execution Monitor as standalone library compose it using 
+    only <A href="../../../src/execution_monitor.cpp">execution_monitor.cpp</A> as a source file. You 
+    could add this file also directly to the list of source files for your project. Boost Test Library's 
+    components include this file as a part of their compilation procedure. In some cases you may want 
+    to include the source file along with header file into your sources. But be aware that to be able 
+    to catch all kinds of standard exceptions and to implement signal handling logic this file will bring 
+    a lot of dependencies. You may use this component in both debug and release modes. But be aware that 
+    in release mode the Execution Monitor wouldn't catch Microsoft C runtime debug events.</P>
+</DIV>
+<DIV class="footer"> 
+<DIV class="footer-body"> 
+  <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+      <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

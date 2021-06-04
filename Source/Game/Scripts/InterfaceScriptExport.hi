@@ -1,0 +1,232 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: InterfaceScriptExportPrm
+//	Number of variables: 30
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef __XScript_struct_ControlAction__
+#define __XScript_struct_ControlAction__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ControlAction {
+	char const* name;
+	InterfaceEventCode code;
+	int param;
+	char const* hotKeyPopup;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ControlAction__
+#ifndef __XScript_struct_BGObj__
+#define __XScript_struct_BGObj__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct BGObj {
+	char const* name;
+	char const* chainName;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_BGObj__
+#ifndef __XScript_struct_sqshImage__
+#define __XScript_struct_sqshImage__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sqshImage {
+	char const* texture;
+	float _ix;
+	float _iy;
+	float ix;
+	float iy;
+	float dx;
+	float dy;
+	float dsx;
+	float dsy;
+	int hasResolutionVersion;
+	int hasBelligerentVersion;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sqshImage__
+#ifndef __XScript_struct_sqshControl__
+#define __XScript_struct_sqshControl__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sqshControl {
+	ShellControlType type;
+	ShellControlID id;
+	int state;
+	float x;
+	float y;
+	float sx;
+	float sy;
+	float xstart;
+	float ystart;
+	sqshImage image;
+	sqshImage image_h;
+	sqshImage image_check;
+	sqshImage image_disabled;
+	sqshImage image2;
+	sqshImage image2_h;
+	sqshImage image2_check;
+	sqshImage image2_disabled;
+	char const* sound;
+	char const* popup;
+	char const* popupChecked;
+	int target;
+	int parent_id;
+	int diagram_delta_x;
+	int diagram_delta_sx;
+	int diagram_delta_y;
+	int diagram_delta_sy;
+	BGObj bgObject;
+	char const* text;
+	float txt_dx;
+	float txt_dy;
+	SHELL_ALIGN txt_align;
+	SHELL_ALIGN txt_vert_align;
+	int font_group;
+	int flashR;
+	int flashG;
+	int flashB;
+	int flashA;
+	int flashBG_R;
+	int flashBG_G;
+	int flashBG_B;
+	int flashBG_A;
+	float tickTime;
+	int diaR;
+	int diaG;
+	int diaB;
+	int diaA;
+	int actionCount;
+	ControlAction actions[6];
+	int passive;
+	int flashWithImage;
+	int alnum;
+	ControlHitTestMode hitTestMode;
+	int canHandleDisabledInput;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sqshControl__
+#ifndef __XScript_struct_sqshControlContainer__
+#define __XScript_struct_sqshControlContainer__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sqshControlContainer {
+	ShellControlType type;
+	int id;
+	int state;
+	int load_group;
+	int x;
+	int y;
+	int sx;
+	int sy;
+	sqshImage image;
+	sqshImage image2;
+	int ControlCount;
+	sqshControl const* controls;
+	int bgObjCount;
+	BGObj const* bgObjects;
+	ShellControlID defaultEnterBtnID;
+	ShellControlID defaultEnterBtnIDAux;
+	ShellControlID defaultEscBtnID;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sqshControlContainer__
+#ifndef __XScript_struct_TabIcon__
+#define __XScript_struct_TabIcon__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct TabIcon {
+	sqshImage image;
+	sqshImage image_h;
+	sqshImage image_check;
+	sqshImage image_disabled;
+	sqshImage image_flashing;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_TabIcon__
+#ifndef __XScript_struct_sqshTabElement__
+#define __XScript_struct_sqshTabElement__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sqshTabElement {
+	float x;
+	float y;
+	float sx;
+	float sy;
+	TabIcon icon;
+	float activeX;
+	float activeY;
+	float activeSX;
+	float activeSY;
+	sqshImage activeTabImage;
+	int ctrl_count;
+	int ctrls[21];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sqshTabElement__
+#ifndef __XScript_struct_sqshTabSheet__
+#define __XScript_struct_sqshTabSheet__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sqshTabSheet {
+	int id;
+	float x;
+	float y;
+	float sx;
+	float sy;
+	float dx;
+	float dy;
+	float dsx;
+	float dsy;
+	int page_count;
+	sqshTabElement pages[6];
+	int actionCount;
+	ControlAction actions[16];
+	int flashR;
+	int flashG;
+	int flashB;
+	int flashA;
+	int flashBG_R;
+	int flashBG_G;
+	int flashBG_B;
+	int flashBG_A;
+	float tickTime;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sqshTabSheet__
+extern float statsTableWidth;
+extern float topStatsTableEdge;
+extern float headStatsTableHeight;
+extern float leftStatsTableEdge;
+extern float listBoxTextLeftOffset;
+#ifndef __XScript_struct_SqshBorder__
+#define __XScript_struct_SqshBorder__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SqshBorder {
+	float x;
+	float y;
+	float sx;
+	float sy;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SqshBorder__
+extern float leftSolidEdge;
+extern float leftSolidWidth;
+extern float littleBtnHeight;
+extern SqshBorder leftBottomBtn;
+extern SqshBorder rightBottomBtn;
+extern SqshBorder leftSeparateBottomBtn;
+extern SqshBorder middleSeparateBottomBtn;
+extern SqshBorder rightSeparateBottomBtn;
+extern SqshBorder mainMenuMap;
+extern int customUp;
+extern int customStep;
+extern int ingameCustomUp;
+extern int ingameCustomStep;
+extern int battleUp;
+extern int battleStep;
+extern int startUp;
+extern int startStep;
+extern int optionsUp;
+extern int optionsStep;
+extern int _sqsh_control_count;
+extern sqshControlContainer _sqsh_controls[];
+extern int _sqsh_sheet_count;
+extern sqshTabSheet _sqsh_sheets[];
+extern int squad_icon_count;
+extern TabIcon _squad_icons_table[];
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: InterfaceScriptExportPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

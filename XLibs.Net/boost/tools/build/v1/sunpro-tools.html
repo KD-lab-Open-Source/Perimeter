@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux/x86 (vers 1st September 2003), see www.w3.org">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+  <link rel="stylesheet" type="text/css" href="../../../boost.css">
+
+  <title>Boost.Build - sunpro toolset</title>
+</head>
+
+<body bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
+  <table border="0" cellpadding="7" cellspacing="0" width="100%" summary=
+  "header">
+    <tr>
+      <td valign="top" width="300">
+        <h3><a href="http://www.boost.org"><img height="86" width="277" alt=
+        "C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+      </td>
+
+      <td valign="top">
+        <h1 align="center">Boost.Build</h1>
+
+        <h2 align="center">sunpro toolset</h2>
+      </td>
+    </tr>
+  </table>
+  <hr>
+
+  <h2>Introduction</h2>
+
+  <p>Boost.Build's <code>sunpro</code> toolset supports the <a href=
+  "http://wwws.sun.com/software/sundev/suncc/index.html"
+  >Sun ONE Studio</a> compiler. This compiler has been known under
+  several trade names including Sun WorkShop and Forte Developer. For
+  convenience, this document will refer to numbered releases of the
+  compiler when differention is neccessary; this release number can be
+  obtained by running <code>CC &#8209;V</code> at the command line.</p>
+
+  <h2>Compatibility</h2>
+
+  <p>As of this writing (November 2003) the Sun C++ compiler has
+  difficulty building many of the libraries included with Boost. <a
+  href="http://boost.sourceforge.net/regression-logs/cs-SunOS.html"
+  >Complete regression test information is available</a>, although
+  absent from the regression tables are some libraries that Sun C++
+  has particular difficulty with, including <code><a href=
+  "../../../libs/mpl/doc/index.html">mpl</a></code> and
+  <code><a href="../../../libs/spirit/index.html">spirit</a></code>.
+
+  <h3>Notes on specific versions</h3>
+
+  <p>Best results can be obtained by being up-to-date on the most
+  recent patches for your compiler version. Information on patches
+  is <a href="http://access1.sun.com/sundev/index.html"
+  >available from Sun Microsystems.</a>
+
+  <p style="text-align: center">
+  <table border="1" summary="Version notes">
+    <tr>
+      <th>Compiler Version</th>
+      <th>Trade Name(s)</th>
+      <th>Notes</th>
+    </tr>
+    <tr>
+      <td>&lt;= 5.2</td>
+      <td>Sun&nbsp;WorkShop&nbsp;5<br>
+          Sun&nbsp;WorkShop&nbsp;6<br>
+          Sun&nbsp;WorkShop&nbsp;6&nbsp;update&nbsp;1</td>
+      <td><p>No current information available. Boost is unlikely to be
+          very functional with these older releases, as they do not
+          support some of the necessary parts of the C++ language.
+          Patches and workarounds are welcome.</p></td>
+    </tr>
+    <tr>
+      <td>5.3</td>
+      <td>Sun&nbsp;WorkShop&nbsp;6&nbsp;update&nbsp;2</td>
+      <td><p>The most recent reports seem to imply that this release is
+          <a href=
+          "http://article.gmane.org/gmane.comp.lib.boost.devel/27660"
+          >&ldquo;hopeless for Boost&rdquo;</a>, but patches and
+          workarounds are welcome.</p>
+    </tr>
+    <tr>
+      <td>5.4</td>
+      <td>Forte&nbsp;Developer&nbsp;7</td>
+      <td><p>This version recognizes an undocumented, unsupported flag
+          that improves its success in compiling templates:</p>
+
+          <blockquote><code>&#8209;Qoption CC
+          &#8209;xcomdat</code></blockquote>
+
+          <p>This flag changes the template instantiation method from
+          &ldquo;exported&rdquo; to an improved &ldquo;global&rdquo;
+          which has been found to eliminate some compiler bugs
+          regarding the instantiation of template run-time type
+          information. This option, if used, is required for both
+          compiling and linking.</p>
+    </tr>
+    <tr>
+      <td>5.5</td>
+      <td>Sun ONE Studio 8</td>
+      <td><p>No current information is available. This version changes
+             the default template instantiation method from
+             &ldquo;exported&rdquo; (using a template repository) to
+             &ldquo;global&rdquo; (storing instances in object files
+             with global linkage). The linker should then automatically
+             detect and eliminate duplicate definitions. This change
+             <i>should</i> improve template performace over previous
+             releases.</p>
+      </td>
+    </tr> 
+  </table>
+  </p>
+
+  <h2>Configuration Variables</h2>
+
+  <p>The sunpro toolset responds to the following variables which can
+  be set in the environment or configured on the bjam command line using
+  <code>&#8209;s<i>VARIABLE_NAME</i>=</code><i>value</i>:</p>
+
+  <p style="text-align: center">
+  <table border="1" summary="settings">
+    <tr>
+      <th>Variable Name</th>
+
+      <th>Semantics</th>
+
+      <th>Default</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td><code>SUNPRO_ROOT_DIRECTORY</code></td>
+
+      <td>Path to installation directory of compiler tools.</td>
+
+      <td>(none)</td>
+
+      <td>Usually there is no need to set this variable at all.
+          However, if <code>CC</code> is not in the path is is usually
+          sufficient to configure this one variable. A typical value
+          for this variable is <code>/opt/SUNWspro</code>.</td>
+    </tr>
+
+    <tr>
+      <td><code>SUNPRO_BIN_DIRECTORY</code></td>
+
+      <td>Path to bin directory.</td>
+
+      <td><code>$(SUNPRO_ROOT_DIRECTORY)/bin/</code></td>
+
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td><code>SUNPRO_CXX</code></td>
+
+      <td>The name by which the C++ compiler is invoked</td>
+
+      <td><code>$(SUNPRO_BIN_DIRECTORY)CC</code></td>
+
+      <td>You can also use this in lieu of setting the &lt;cxxflags&gt;
+          property to force options such as <code>&#8209;Qoption CC
+          &#8209;xcomdat</code> into the CC command line:
+          <code>&ldquo;&#8209;sSUNPRO_CXX=CC &#8209;Qoption CC
+          &#8209;xcomdat&rdquo;</code>.</td>
+    </tr>
+
+    <tr>
+      <td><code>SUNPRO_CC</code></td>
+
+      <td>The name by which the C compiler is invoked</td>
+
+      <td><code>$(SUNPRO_BIN_DIRECTORY)cc</code></td>
+
+      <td>&nbsp;</td>
+    </tr>
+
+  </table>
+  </p>
+
+  <hr>
+
+  <p>Revised 
+  <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan -->
+   03 Nov, 2003 <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+
+  <p>Christopher Currie, Gennadiy Rozental, Jens Maurer</p>
+</body>
+</html>

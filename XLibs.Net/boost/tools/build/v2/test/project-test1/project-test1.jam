@@ -1,0 +1,16 @@
+import project ;
+import targets ;
+import assert ;
+import project-roots ;
+
+project.load "." ;
+
+import standalone-project ;
+
+project-roots.print ;
+
+assert.result standalone-project : project.find /teeest : "." ;
+
+NOTFILE all ;
+
+

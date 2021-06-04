@@ -1,0 +1,40 @@
+# Boost Filesystem Library test Jamfile
+
+# Copyright Beman Dawes 2003
+
+# Use, modification, and distribution is subject to the Boost Software
+# License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+# See library home page at http://www.boost.org/libs/filesystem
+
+subproject libs/filesystem/test ;
+
+# bring in rules for testing
+import testing ;
+
+# Make tests run by default.
+DEPENDS all : test ;
+
+{
+    # look in BOOST_ROOT for sources first, just in this Jamfile
+    local SEARCH_SOURCE = $(BOOST_ROOT) $(SEARCH_SOURCE) ;
+    
+   test-suite "filesystem"
+       : [ run libs/filesystem/test/path_test.cpp
+               <lib>../../../libs/filesystem/build/boost_filesystem
+         ]
+         [ run libs/filesystem/test/default_name_check_test.cpp
+               <lib>../../../libs/filesystem/build/boost_filesystem
+         ]
+         [ run libs/filesystem/test/operations_test.cpp
+               <lib>../../../libs/filesystem/build/boost_filesystem
+         ]
+         [ run libs/filesystem/test/fstream_test.cpp
+               <lib>../../../libs/filesystem/build/boost_filesystem
+         ]
+         [ run libs/filesystem/test/convenience_test.cpp
+               <lib>../../../libs/filesystem/build/boost_filesystem
+         ]
+       ;
+}

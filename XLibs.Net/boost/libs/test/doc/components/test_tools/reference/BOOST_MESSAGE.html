@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_MESSAGE( message )</H3>
+  <P class="first-line-indented">This tool is used to log the message in the test output stream. The message 
+    is logged as it is without any modifications.</P>
+  <P class="first-line-indented">The only tool's parameter is a message to log. The message argument can 
+    be of any type and can be a result of concatenations using the operator &lt;&lt;().</P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="reserv-word">struct</SPAN> A {
+    <SPAN class="reserv-word">friend</SPAN> <SPAN class="cpp-type">std::ostream</SPAN>&amp; <SPAN class=keyword>operator</SPAN>&lt;&lt;( <SPAN class="cpp-type">std::ostream</SPAN>&amp; str, A <SPAN class="reserv-word">const</SPAN>&amp; a ) {
+        str &lt;&lt; <SPAN class="literal">&quot;struct A&quot;</SPAN>;
+        
+        <SPAN class="reserv-word">return</SPAN> str;
+    }
+};
+
+<SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    BOOST_MESSAGE( <SPAN class="literal">&quot;Starting test&quot;</SPAN> );
+
+    <SPAN class="cpp-type">int</SPAN> i = <SPAN class="literal">2</SPAN>;
+    BOOST_MESSAGE( <SPAN class="literal">&quot;i=&quot;</SPAN> &lt;&lt; i );
+
+    BOOST_MESSAGE( <SPAN class="literal">&quot;still testing...&quot;</SPAN> );
+
+    <SPAN class="reserv-word">struct</SPAN> A a;
+    BOOST_MESSAGE( a &lt;&lt; <SPAN class="literal">'.'</SPAN> );
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">Starting test<BR>
+    i=2<BR>
+    still testing...<BR>
+    struct A.</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK_MESSAGE.html" target="descr">BOOST_CHECK_MESSAGE</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

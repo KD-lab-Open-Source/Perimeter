@@ -1,0 +1,119 @@
+<HTML>
+<HEAD>
+<TITLE>The Program Execution Monitor</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> > <A href="../index.html">Components</A> > <SPAN class="current_article">The 
+  Program Execution Monitor</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1>Boost Test Library: The Program Execution Monitor</H1>
+  <P class="page-toc"> <A href="#Introduction">Introduction</A><BR>
+    <A href="#Usage">Usage</A><BR>
+    <A href="#Configuration">Configuration</A><BR>
+    <A href="#Implementation">Implementation</A><BR>
+    <A href="compilation.html">Compilation</A><BR>
+    <A href="#Examples">Examples and tests</A><BR>
+  </P>
+  <H2><A name="Introduction">Introduction</A></H2>
+  <P class="first-line-indented">The components of a C++ program may report user-detected errors in several ways, such as 
+    via a return value or throwing an exception. System-detected errors such as dereferencing an invalid pointer are reported 
+    in other ways, totally operating system and compiler dependent.</P>
+  <P class="first-line-indented">Yet many C++ programs, both production and test, must run in an environment where uniform 
+    reporting of errors is necessary. For example, converting otherwise uncaught exceptions to non-zero program return codes 
+    allows many command line, script, or batch environments to continue processing in a controlled manner. Even some GUI environments 
+    benefit from the unification of errors into program return codes.</P>
+  <P class="first-line-indented">The Boost Test Library's Program Execution Monitor relieves users from messy error detection 
+    and reporting duties by providing a replacement function main() which calls a user-supplied <SPAN class="new-term">cpp_main()</SPAN> 
+    function within a monitored environment. The supplied main() then uniformly detects and reports the occurrence of several 
+    types of errors, reducing them to a uniform return code which is returned to the host environment.</P>
+  <P class="first-line-indented">Uniform error reporting is particularly useful for programs running unattended under control 
+    of scripts or batch files. Some operating systems pop up message boxes if an uncaught exception occurs, and this requires 
+    operator intervention. By converting such exceptions to non-zero program return codes, the library makes the program a 
+    better citizen. More uniform reporting of errors isn't a benefit to some programs, particularly programs always run by 
+    hand by a knowledgeable person. So the Program Execution Monitor wouldn't be worth using in that environment.</P>
+  <P class="first-line-indented">Uniform error reporting could be also useful in test environments such as the boost regression 
+    tests. Be aware though in such case it might be preferable to use the <A href="../test_exec_monitor/index.html">Test Execution Monitor</A> 
+    or the <A href="../unit_test_framework/index.html">Unit Test Framework</A>, cause they allows one to use <A href="../test_tools/index.html">Test 
+    Tools</A> and generate more detailed errors information.</P>
+  <H2><A name="Usage">Usage</A></H2>
+  <P>Using the Program Execution Monitor, the traditional Hello World program becomes:</P>
+  <PRE class="code">#<SPAN class="reserv-word">include</SPAN> &lt;iostream&gt;
+
+<SPAN class="cpp-type">int</SPAN> cpp_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) <SPAN class="comment">// note name</SPAN>
+{
+    std::cout &lt;&lt; <SPAN class="literal">&quot;Hello, world\n&quot;</SPAN>;
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}
+</PRE>
+  <P class="first-line-indented">It really is that simple - just change the name of your initial function from main() to cpp_main(). 
+    Do make sure the argc and arcv parameters are specified (although you don't have to name them if you don't use them). 
+    Now you can compile it and link with the Program Execution Monitor library.</P>
+  <P class="first-line-indented">When the above program executes, the output will be:</P>
+  <P class="test-output"> Hello, world<BR>
+    no errors detected </P>
+  <P class="first-line-indented">But what if some lower-level function had thrown a runtime_error with the message &quot;big 
+    trouble&quot;? Then the output would look something like this:</P>
+  <P class="test-output"> **** exception(205): std::runtime_error: big trouble<BR>
+    ******** errors detected; see standard output for details ********</P>
+  <P class="first-line-indented">And if a function cpp_main() had bubbled up a return code of 5, the output would look something 
+    like this:</P>
+  <P class="test-output"> **** error return code: 5<BR>
+    ******** errors detected; see standard output for details ********</P>
+  <P class="first-line-indented">Note that the primary error messages appear on standard output stream, while the final errors 
+    notification message appears on standard error stream. This increases the visibility of error notification if standard 
+    output and error streams are directed to different devices or files. </P>
+  <H2><A name="Configuration">Configuration</A></H2>
+  <P class="first-line-indented">There are two aspects of the Program Execution Monitor behavior that you can customize at 
+    runtime. Customization performed using environment variables.</P>
+  <P class="indented">BOOST_TEST_CATCH_SYSTEM_ERRORS - allows to customize behavior of the Execution Monitor in regards of 
+    catching system errors. For more details about the meaning of this option see the Execution Monitor <A href="../execution_monitor/index.html#catch_system_errors">documentation</A>. 
+    If you want to prevent the Program Execution Monitor from catching system exception, set the value of this variable to 
+    <U>&quot;no&quot;</U>. The default value is &quot;yes&quot;.</P>
+        <BR>
+  <P class="indented">BOOST_PRG_MON_CONFIRM - allows to avoid success confirmation message. Some users prefer to see a confirmation 
+    message in case if program successfully executed. While others don't like the clutter or any output is prohibited by organization 
+    standards. To avoid the message set the value of this variable to <U>&quot;no&quot;</U>. The default value is &quot;yes&quot;.</P>
+  <H2><A name="Implementation">Implementation</A></H2>
+  <P class="first-line-indented">To monitor execution of user supplied function cpp_main() the Program Execution Monitor relies 
+    on the Boost Test's <A href="../execution_monitor/index.html">Execution Monitor</A> . Also the Program Execution Monitor 
+    supply function main() in &lt;<A href="../../../src/cpp_main.cpp">libs/test/src/cpp_main.cpp</A>&gt;. For the program 
+    to link successfully user is required to supply a function cpp_main() with same interface as the main(). The Program Execution 
+    Monitor treat as errors:</P>
+  <UL>
+    <LI>Exceptions thrown from cpp_main().</LI>
+    <LI>Non-zero return from cpp_main().</LI>
+  </UL>
+  <P class="first-line-indented">The Program Execution Monitor reports errors to both cout (with details) and cerr (summary). 
+    Detailed error reporting goes to cout so that it is properly interlaced with other output, thus aiding error analysis. 
+    Summary goes to cerr in case cout is redirected. The Program Execution Monitor's supplied main() will return following 
+    result codes: </P>
+  <UL>
+    <LI>boost::exit_success - no errors</LI>
+    <LI>boost::exit_failure - non-zero and non-boost::exit_success return code from cpp_main().</LI>
+    <LI>boost::exit_exception_failure - cpp_main() throw an exception.</LI>
+  </UL>
+  <P class="first-line-indented">Check <A href="compilation.html">compilation</A> instructions to see 
+    how to build standalone library for this component.</P>
+  <H2><A name="Examples">Examples and tests</A></H2>
+  <P class ="indented"> <A href="../../examples/prog_exec_monitor_example.html">prg_exec_example</A><BR>
+    <A href="../../tests/prg_exec_fail1.html">prg_exec_fail1</A><BR>
+    <A href="../../tests/prg_exec_fail2.html">prg_exec_fail2</A><BR>
+    <A href="../../tests/prg_exec_fail3.html">prg_exec_fail3</A><BR>
+    <A href="../../tests/prg_exec_fail4.html">prg_exec_fail4</A><BR>        
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->11 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

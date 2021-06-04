@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appendix PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/boostbook.dtd">
+
+  <appendix id="bbv2.extender">
+    <title>Extender Manual</title>
+
+    <section id="bbv2.extender.intro">
+      <title>Introduction</title>
+
+  <para>This document explains how to extend Boost.Build to accomodate
+  your local requirements. Let's start with quite simple, but
+  realistic example.</para>
+
+  <para>Say you're writing an application which generates C++ code. If
+  you ever did this, you know that it's not nice. Embedding large
+  portions of C++ code in string literals is very awkward. A much
+  better solution is:</para>
+
+  <orderedlist>
+    <listitem>
+      <simpara>
+        Write the template of the code to be generated, leaving
+    placeholders at the points which will change
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>
+        Access the template in your application and replace
+    placeholders with appropriate text.
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>Write the result.</simpara>
+    </listitem>
+  </orderedlist>
+
+  <para>It's quite easy to archive. You write special verbatim files,
+  which are just C++, except that the very first line of the file
+  gives a name of variable that should be generated. A simple tool
+  is created which takes verbatim file and creates a cpp file with
+  a single char* variable, which name is taken from the first line
+  of verbatim file, and which value is properly quoted content of
+  the verbatim file.</para>
+
+  <para>Let's see what Boost.Build can do.</para>
+
+  <para>First off, Boost.Build has no idea about "verbatim files". So,
+  you must register a new type. The following code does it:</para>
+
+<programlisting>
+import type ;
+type.register VERBATIM : verbatim ;
+</programlisting>
+
+  <para>The first parameter to 'type.register' gives the name of
+  declared type. By convention, it's uppercase. The second
+  parameter is suffix for this type. So, if Boost.Build sees
+  "code.verbatim" in the list of sources, it knows that it's of
+  type <literal>VERBATIM</literal>.</para>
+
+  <para>Lastly, you need a tool to convert verbatim files to C++. Say
+  you've sketched such a tool in Python. Then, you have to inform
+  Boost.Build about the tool. The Boost.Build concept which
+  represents a tool is <emphasis>generator</emphasis>.</para>
+
+  <para>First, you say that generator 'inline-file' is able to convert
+  VERBATIM type into C++:</para>
+
+<programlisting>
+import generators ;
+generators.register-standard verbatim.inline-file : VERBATIM : CPP ;
+</programlisting>
+
+  <para>Second, you must specify the commands to be run to actually
+  perform convertion:</para>
+
+<programlisting>
+actions inline-file
+{
+    "./inline-file.py" $(&lt;) $(&gt;)
+}
+</programlisting>
+<!-- We use verbatim.inline-file in one place and just inline-file in
+             another. Is this confusing for user?
+        -->
+
+  <para>Now, we're ready to tie it all together. Put all the code
+  above in file "verbatim.jam", add "import verbatim ;" to
+  "project-root.jam", and it's possible to write the following in
+  Jamfile:</para>
+
+<programlisting>
+exe codegen : codegen.cpp class_template.verbatim usage.verbatim ;
+</programlisting>
+
+  <para>
+The verbatim files will be automatically converted into C++
+and linked it.
+  </para>
+
+  <para>The complete code is available in <ulink url=
+  "../../example/customization">example/customization</ulink>
+  directory.</para>
+
+    </section>
+    <section id="bbv2.extending.targets">
+      <title>Target types</title>
+      <para/>
+    </section>
+
+    <section id="bbv2.extending.tools">
+      <title>Tools</title>
+      <para/>
+    </section>
+
+    <section id="bbv2.extending.rules">
+      <title>Main target rules</title>
+      <para/>
+    </section>
+
+    <section id="bbv2.extending.scanners">
+      <title>Scanners</title>
+      <para/>
+    </section>
+  </appendix>

@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: Index</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">Installation</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <P>When you extract the library from its zip file, you must preserve its internal 
+         directory structure (for example by using the -d option when extracting). If 
+         you didn't do that when extracting, then you'd better stop reading this, delete 
+         the files you just extracted, and try again!
+      </P>
+      <P>This library should not need configuring before use; most popular 
+         compilers/standard libraries/platforms are already supported "as is". If you do 
+         experience configuration problems, or just want to test the configuration with 
+         your compiler, then the process is the same as for all of boost; see the <A href="../../config/config.htm">
+            configuration library documentation</A>.</P>
+      <P>The library will encase all code inside namespace boost.
+      </P>
+      <P>Unlike some other template libraries, this library consists of a mixture of 
+         template code (in the headers) and static code and data (in cpp files). 
+         Consequently it is necessary to build the library's support code into a library 
+         or archive file before you can use it, instructions for specific platforms are 
+         as follows:
+      </P>
+      <P><B><A name="bcb"></A>Borland C++ Builder:</B>
+      </P>
+      <UL>
+         <LI>
+         Open up a console window and change to the &lt;boost&gt;\libs\regex\build 
+         directory.
+         <LI>
+         Select the appropriate makefile (bcb4.mak for C++ Builder 4, bcb5.mak for C++ 
+         Builder 5, and bcb6.mak for C++ Builder 6).
+         <LI>
+            Invoke the makefile (pass the full path to your version of make if you have 
+            more than one version installed, the makefile relies on the path to make to 
+            obtain your C++ Builder installation directory and tools) for example:
+         </LI>
+      </UL>
+      <PRE>make -fbcb5.mak</PRE>
+      <P>The build process will build a variety of .lib and .dll files (the exact number 
+         depends upon the version of Borland's tools you are using) the .lib and dll 
+         files will be in a sub-directory called bcb4 or bcb5 depending upon the 
+         makefile used. To install the libraries into your development system use:</P>
+      <PRE>make -fbcb5.mak install</PRE>
+      <P>library files will be copied to &lt;BCROOT&gt;/lib and the dll's to 
+         &lt;BCROOT&gt;/bin, where &lt;BCROOT&gt; corresponds to the install path of 
+         your Borland C++ tools.
+      </P>
+      <P>You may also remove temporary files created during the build process (excluding 
+         lib and dll files) by using:</P>
+      <PRE>make -fbcb5.mak clean</PRE>
+      <P>Finally when you use regex++ it is only necessary for you to add the 
+         &lt;boost&gt; root director to your list of include directories for that 
+         project. It is not necessary for you to manually add a .lib file to the 
+         project; the headers will automatically select the correct .lib file for your 
+         build mode and tell the linker to include it. There is one caveat however: the 
+         library can not tell the difference between VCL and non-VCL enabled builds when 
+         building a GUI application from the command line, if you build from the command 
+         line with the 5.5 command line tools then you must define the pre-processor 
+         symbol _NO_VCL in order to ensure that the correct link libraries are selected: 
+         the C++ Builder IDE normally sets this automatically. Hint, users of the 5.5 
+         command line tools may want to add a -D_NO_VCL to bcc32.cfg in order to set 
+         this option permanently.
+      </P>
+      <P>If you would prefer to do a dynamic link to the regex libraries when using the 
+         dll runtime then define BOOST_REGEX_DYN_LINK (you must do this if you want to 
+         use boost.regex in multiple dll's), otherwise Boost.regex will be staically 
+         linked by default.&nbsp;</P>
+      <P>If you want to suppress automatic linking altogether (and supply your own 
+         custom build of the lib) then define BOOST_REGEX_NO_LIB.</P>
+      <P>If you are building with C++ Builder 6, you will find that 
+         &lt;boost/regex.hpp&gt; can not be used in a pre-compiled header (the actual 
+         problem is in &lt;locale&gt; which gets included by &lt;boost/regex.hpp&gt;), 
+         if this causes problems for you, then try defining BOOST_NO_STD_LOCALE when 
+         building, this will disable some features throughout boost, but may save you a 
+         lot in compile times!</P>
+      <P><B><A name="vc"></A>Microsoft Visual C++ 6</B><STRONG> and 7</STRONG></P>
+      <P>You need version 6 of MSVC to build this library. If you are using VC5 then you 
+         may want to look at one of the previous releases of this <A href="http://ourworld.compuserve.com/homepages/john_maddock/regexpp.htm">
+            library</A>
+      </P>
+      <P>Open up a command prompt, which has the necessary MSVC environment variables 
+         defined (for example by using the batch file Vcvars32.bat installed by the 
+         Visual Studio installation), and change to the &lt;boost&gt;\libs\regex\build 
+         directory.
+      </P>
+      <P>Select the correct makefile - vc6.mak for "vanilla" Visual C++ 6 or 
+         vc6-stlport.mak if you are using STLPort.</P>
+      <P>Invoke the makefile like this:</P>
+      <PRE>nmake -fvc6.mak</PRE>
+      <P>You will now have a collection of lib and dll files in a "vc6" subdirectory, to 
+         install these into your development system use:</P>
+      <PRE>nmake -fvc6.mak install</PRE>
+      <P>The lib files will be copied to your &lt;VC6&gt;\lib directory and the dll 
+         files to &lt;VC6&gt;\bin, where &lt;VC6&gt; is the root of your Visual C++ 6 
+         installation.</P>
+      <P>You can delete all the temporary files created during the build (excluding lib 
+         and dll files) using:</P>
+      <PRE>nmake -fvc6.mak clean </PRE>
+      <P>Finally when you use regex++ it is only necessary for you to add the 
+         &lt;boost&gt; root directory to your list of include directories for that 
+         project. It is not necessary for you to manually add a .lib file to the 
+         project; the headers will automatically select the correct .lib file for your 
+         build mode and tell the linker to include it.
+      </P>
+      <P>
+         Note that if you want to dynamically link to the regex library when using the 
+         dynamic C++ runtime, define BOOST_REGEX_DYN_LINK when building your project.</P>
+      <P>If you want to add the source directly to your project then define 
+         BOOST_REGEX_NO_LIB to disable automatic library selection.</P>
+      <P>There are several important caveats to remember when using boost.regex with 
+         Microsoft's Compiler:</P>
+      <UL>
+         <LI>
+            There have been some reports of compiler-optimization bugs affecting this 
+            library, (particularly with VC6 versions prior to service patch 5) the 
+            workaround is to build the library using /Oityb1 rather than /O2. That is to 
+            use all optimization settings except /Oa. This problem is reported to affect 
+            some standard library code as well (in fact I'm not sure if the problem is with 
+            the regex code or the underlying standard library), so it's probably worthwhile 
+            applying this workaround in normal practice in any case.</LI>
+         <LI>
+            If you have replaced the C++ standard library that comes with VC6, then when 
+            you build the library you must ensure that the environment variables "INCLUDE" 
+            and "LIB" have been updated to reflect the include and library paths for the 
+            new library - see vcvars32.bat (part of your Visual Studio installation) for 
+            more details.
+         </LI>
+         <LI>
+            If you are building with the full STLPort v4.x, then use the vc6-stlport.mak 
+            file provided and set the environment variable STLPORT_PATH to point to the 
+            location of your STLPort installation (Note that the full STLPort libraries 
+            appear not to support single-thread static builds).</LI>
+         <LI>
+            If you are building your application with /Zc:wchar_t then you will need to 
+            modify the makefile to add /Zc:wchar_t before building the library.
+         </LI>
+      </UL>
+      <P><B><A name="gcc"></A>GCC(2.95 and 3.x)</B>
+      </P>
+      <P>You can build with gcc using the normal boost Jamfile in 
+         &lt;boost&gt;/libs/regex/build, alternatively there is a conservative makefile 
+         for the g++ compiler. From the command prompt change to the 
+         &lt;boost&gt;/libs/regex/build directory and type:
+      </P>
+      <PRE>make -fgcc.mak </PRE>
+      <P>At the end of the build process you should have a gcc sub-directory containing 
+         release and debug versions of the library (libboost_regex.a and 
+         libboost_regex_debug.a). When you build projects that use regex++, you will 
+         need to add the boost install directory to your list of include paths and add 
+         &lt;boost&gt;/libs/regex/build/gcc/libboost_regex.a to your list of library 
+         files.
+      </P>
+      <P>There is also a makefile to build the library as a shared library:</P>
+      <PRE>make -fgcc-shared.mak</PRE>
+      <P>which will build libboost_regex.so and libboost_regex_debug.so.</P>
+      <P>Both of the these makefiles support the following environment variables:</P>
+      <P>CXXFLAGS: extra compiler options - note that this applies to both the debug and 
+         release builds.</P>
+      <P>INCLUDES: additional include directories.</P>
+      <P>LDFLAGS: additional linker options.</P>
+      <P>LIBS: additional library files.</P>
+      <P>For the more adventurous there is a configure script in 
+         &lt;boost&gt;/libs/config; see the <A href="../../config/config.htm">config library 
+            documentation</A>.</P>
+      <P><B><A name="sun"></A>Sun Workshop 6.1</B></P>
+      <P>There is a makefile for the sun (6.1) compiler (C++ version 3.12). From the 
+         command prompt change to the &lt;boost&gt;/libs/regex/build directory and type:
+      </P>
+      <PRE>dmake -f sunpro.mak </PRE>
+      <P>At the end of the build process you should have a sunpro sub-directory 
+         containing single and multithread versions of the library (libboost_regex.a, 
+         libboost_regex.so, libboost_regex_mt.a and libboost_regex_mt.so). When you 
+         build projects that use regex++, you will need to add the boost install 
+         directory to your list of include paths and add 
+         &lt;boost&gt;/libs/regex/build/sunpro/ to your library search path.
+      </P>
+      <P>Both of the these makefiles support the following environment variables:</P>
+      <P>CXXFLAGS: extra compiler options - note that this applies to both the single 
+         and multithreaded builds.</P>
+      <P>INCLUDES: additional include directories.</P>
+      <P>LDFLAGS: additional linker options.</P>
+      <P>LIBS: additional library files.</P>
+      <P>LIBSUFFIX: a suffix to mangle the library name with (defaults to nothing).</P>
+      <P>This makefile does not set any architecture specific options like -xarch=v9, 
+         you can set these by defining the appropriate macros, for example:</P>
+      <PRE>dmake CXXFLAGS="-xarch=v9" LDFLAGS="-xarch=v9" LIBSUFFIX="_v9" -f sunpro.mak</PRE>
+      <P>will build v9 variants of the regex library named libboost_regex_v9.a etc.</P>
+      <P><B><A name="other"></A>Other compilers:</B>
+      </P>
+      <P>There is a generic makefile (<A href="../build/generic.mak">generic.mak</A>
+      ) provided in &lt;boost-root&gt;/libs/regex/build - see that makefile for 
+      details of environment variables that need to be set before use.
+      <P>
+         Alternatively you can using the <A href="../../../tools/build/index.html">Jam based 
+            build system</A>: cd into &lt;boost&gt;/libs/regex/build and run:<PRE>bjam -sTOOLS=mytoolset</PRE>
+      <P>
+         If you need to configure the library for your platform, then refer to the <A href="../../config/config.htm">
+            config library documentation</A>
+      .
+      <P>
+         <HR>
+      <P></P>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         24 Oct 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 
+            2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+   </body>
+</html>

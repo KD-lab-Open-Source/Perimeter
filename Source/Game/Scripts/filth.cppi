@@ -1,0 +1,294 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript definition
+//	Section: FilthPrm
+//	Number of variables: 34
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef __XScript_struct_terFilthSwarmParameter__
+#define __XScript_struct_terFilthSwarmParameter__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthSwarmParameter {
+	float SwarmRadius;
+	int SwarmMax;
+	int CreatureNum;
+	int GenerationPeriod;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthSwarmParameter__
+#ifndef __XScript_struct_terFilthSpotParameters__
+#define __XScript_struct_terFilthSpotParameters__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthSpotParameters {
+	terFilthSpotID spotID;
+	float firstSleepTime;
+	float sleepPeriod;
+	float sleepPeriodDelta;
+	float attackPeriod;
+	float attackPeriodDelta;
+	float attackWidth;
+	float attackDirection;
+	int creatureNum;
+	int creatureGenerationPeriod;
+	float lifeTime;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthSpotParameters__
+terFilthSwarmParameter terFilthAntBaseParameter = { 50.f 
+ , 20, 10, 1 };
+terFilthSwarmParameter terFilthAnt2BaseParameter = { 50.f, 20, 10 
+ , 1 };
+terFilthSwarmParameter terFilthWaspBaseParameter = { 100.f, 20, 20, 30 };
+#ifndef __XScript_struct_terFilthWaspStruct__
+#define __XScript_struct_terFilthWaspStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthWaspStruct {
+	float speed;
+	float attack_speed;
+	float height;
+	float rand_delta;
+	float rand_max;
+	float swarm_speed;
+	float max_dh;
+	float move_len;
+	float move_width;
+	float creature_attack_count;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthWaspStruct__
+terFilthWaspStruct terFilthWaspPrm = { 80.f 
+ , 100.f, 120.f, 20.f, 60.f, 50.f, 30.f, 30.f, 100.f, 0.5f };
+terFilthWaspStruct terFilthWaspEyePrm = { 80.f 
+ , 100.f, 120.f, 20.f, 60.f, 50.f, 30.f, 30.f, 100.f, 0.5f };
+terFilthSwarmParameter terFilthDragonBaseParameter = { 100.f 
+ , 5, 1, 1 };
+terFilthSwarmParameter terFilthDragonBaseParameter2 = { 100.f, 5, 1 
+ , 1 };
+#ifndef __XScript_struct_terFilthDragonStruct__
+#define __XScript_struct_terFilthDragonStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthDragonStruct {
+	float AngleFactor;
+	float PositionFactor;
+	float MinHeight;
+	float MaxHeight;
+	int HeightMinTime;
+	int HeightDeltaTime;
+	float AnimationHeadPeriod;
+	float AnimationBodyPeriod;
+	int BrushNum;
+	int CreatureGenerationRadius;
+	float fire_distance;
+	float free_die_time;
+	terUnitAttributeID id_head;
+	terUnitAttributeID id_body;
+	terUnitAttributeID id_tail;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthDragonStruct__
+terFilthDragonStruct terFilthDragonPrm = { 0.5f 
+ , 0.8f, 60.f, 90.f, 50, 50, 2000.f, 1000.f, 40, 12, 150.f, 2.f, UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD 
+ , UNIT_ATTRIBUTE_FILTH_DRAGON_BODY, UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL };
+terFilthDragonStruct terFilthDragonPrm2 = { 0.5f 
+ , 0.8f, 60.f, 90.f, 50, 50, 2000.f, 1000.f, 40, 12, 150.f, 2.f, UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD2 
+ , UNIT_ATTRIBUTE_FILTH_DRAGON_BODY2, UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL2 };
+terFilthDragonStruct terFilthDragonPrmA = { 0.5f 
+ , 0.8f, 60.f, 90.f, 50, 50, 2000.f, 1000.f, 40, 12, 150.f, 2.f, UNIT_ATTRIBUTE_FILTH_A_DRAGON_HEAD 
+ , UNIT_ATTRIBUTE_FILTH_A_DRAGON_BODY, UNIT_ATTRIBUTE_FILTH_A_DRAGON_TAIL };
+terFilthSwarmParameter terFilthGhostBaseParameter = { 100.f 
+ , 1, 10, 100 };
+#ifndef __XScript_struct_terFilthGhostStruct__
+#define __XScript_struct_terFilthGhostStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthGhostStruct {
+	float CreatureGenerationRadius;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthGhostStruct__
+terFilthGhostStruct terFilthGhostPrm = { 10.f 
+  };
+terFilthSwarmParameter terFilthEyeBaseParameter = { 100.f, 20, 10, 20 };
+#ifndef __XScript_struct_terFilthEyeStruct__
+#define __XScript_struct_terFilthEyeStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthEyeStruct {
+	float CreatureGenerationRadius;
+	float height_down;
+	float speed_angle_z;
+	float destruct_angle_acceleration;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthEyeStruct__
+terFilthEyeStruct terFilthEyePrm = { 100.f 
+ , -50.f, 0.3f, 1.f };
+terFilthSwarmParameter terFilthCrowBaseParameter = { 100.f 
+ , 1, 30, 1 };
+#ifndef __XScript_struct_terFilthCrowStruct__
+#define __XScript_struct_terFilthCrowStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthCrowStruct {
+	float linear_speed;
+	float swarm_speed;
+	float z;
+	float free_destroy_len;
+	int at_one_time_atrack;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthCrowStruct__
+terFilthCrowStruct terFilthCrowPrm = { 50.f 
+ , 2.f, 200.f, 100.f, 4 };
+terFilthSwarmParameter terFilthDaemonBaseParameter = { 100.f 
+ , 1, 10, 30 };
+#ifndef __XScript_struct_terFilthDaemonStruct__
+#define __XScript_struct_terFilthDaemonStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthDaemonStruct {
+	float CreatureGenerationRadius;
+	float DaemonHeight;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthDaemonStruct__
+terFilthDaemonStruct terFilthDaemonPrm = { 200.f 
+ , 5.f };
+terFilthSwarmParameter terFilthRatBaseParameter = { 100.f, 20, 20, 20 };
+terFilthSwarmParameter terFilthSnakeBaseParameter = { 100.f 
+ , 20, 20, 20 };
+#ifndef __XScript_struct_terFilthRatStruct__
+#define __XScript_struct_terFilthRatStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthRatStruct {
+	int CreatureGenerationRadius;
+	float follow_distance;
+	float brake_distance;
+	int noise_change_time;
+	float noise_angle_delta;
+	float radius_mul;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthRatStruct__
+terFilthRatStruct terFilthRatPrm = { 30 
+ , 5.f, 30.f, 30, 40.f, 1.2f };
+terFilthSwarmParameter terFilthWormBaseParameter = { 100.f 
+ , 5, 20, 20 };
+terFilthSwarmParameter terFilthSharkBaseParameter = { 100.f, 1, 15 
+ , 15 };
+#ifndef __XScript_struct_terFilthSharkStruct__
+#define __XScript_struct_terFilthSharkStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthSharkStruct {
+	int CreatureGenerationRadius;
+	float test_z_up;
+	float test_z_down;
+	int geo_radius;
+	float free_die_time;
+	float show_z;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthSharkStruct__
+terFilthSharkStruct terFilthSharkPrm = { 100 
+ , -6.f, 15.f, 34, 2.f, -12.f };
+#ifndef __XScript_struct_terFilthVolcanoStruct__
+#define __XScript_struct_terFilthVolcanoStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthVolcanoStruct {
+	float speed_min_horizontal;
+	float speed_max_horizontal;
+	float speed_min_vertical;
+	float speed_max_vertical;
+	float size_min;
+	float size_max;
+	int volcano_size;
+	float crater_scale;
+	float collision_damage_rate;
+	terUnitAttributeID unit_id;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthVolcanoStruct__
+terFilthVolcanoStruct terFilthVolcanoPrm = { 10.f 
+ , 40.f, 50.f, 250.f, 1.5f, 3.f, 80, 1.2f, 0.1f, UNIT_ATTRIBUTE_FILTH_VOLCANO };
+terFilthVolcanoStruct terFilthVolcanoScumDisruptorPrm = { 10.f 
+ , 60.f, 50.f, 300.f, 1.5f, 3.f, 80, 1.2f, 0.5f, UNIT_ATTRIBUTE_FILTH_VOLCANO_SCUM_DISRUPTOR 
+  };
+terFilthSwarmParameter terFilthVolcanoBaseParameter = { 100.f, 1, 100, 300 };
+terFilthSpotParameters terScumDisruptorPrm = { FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR 
+ , 0.f, 10.f, 0.f, 50.f, 0.f, -1.f, 0.f, 150, 1, 0.f };
+#ifndef __XScript_struct_terFilthAntsStruct__
+#define __XScript_struct_terFilthAntsStruct__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terFilthAntsStruct {
+	float follow_distance;
+	float brake_distance;
+	int noise_change_time;
+	float noise_angle_delta;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terFilthAntsStruct__
+terFilthAntsStruct terFilthAntsPrm = { 5.f 
+ , 30.f, 30, 1.25836f };
+terFilthAntsStruct terFilthAnts2Prm = { 5.f, 30.f, 30, 1.25836f 
+  };
+int terFilthNavigatorPrmCount = 4;
+terFilthSpotParameters terFilthNavigatorPrm[] = { { FILTH_SPOT_ID_RAT 
+ , 0.f, 60.f, 0.f, 60.f, 0.f, -1.f, 0.f, 50, 1, 20.f }, { FILTH_SPOT_ID_EYE, 0.f, 60.f 
+ , 0.f, 60.f, 0.f, -1.f, 0.f, 25, 1, 20.f }, { FILTH_SPOT_ID_DAEMON, 0.f, 60.f, 0.f 
+ , 60.f, 0.f, -1.f, 0.f, 12, 1, 20.f }, { FILTH_SPOT_ID_WORM, 0.f, 60.f, 0.f, 60.f 
+ , 0.f, -1.f, 0.f, 1, 1, 40.f } };
+int terFilthMutationsPrmCount = 4;
+terFilthSpotParameters terFilthMutationsPrm[] = { { FILTH_SPOT_ID_SNAKE 
+ , 0.f, 60.f, 0.f, 30.f, 0.f, -1.f, 0.f, 5, 1, 20.f }, { FILTH_SPOT_ID_SHARK, 0.f, 60.f 
+ , 0.f, 30.f, 0.f, -1.f, 0.f, 2, 1, 10.f }, { FILTH_SPOT_ID_DAEMON, 0.f, 60.f, 0.f 
+ , 30.f, 0.f, -1.f, 0.f, 3, 1, 20.f }, { FILTH_SPOT_ID_DRAGON, 0.f, 60.f, 0.f, 30.f 
+ , 0.f, -1.f, 0.f, 1, 1, 20.f } };
+
+#ifdef _PRM_EDIT_
+struct FilthPrm_ParameterSection : ParameterSection
+{
+	FilthPrm_ParameterSection() : ParameterSection("FilthPrm")
+{
+	add_dependency(".\\Scripts\\Filth.prm");
+	add_dependency(".\\Scripts\\UnitAttribute.inl");
+	add_dependency(".\\Scripts\\GameBalance.inl");
+	sourceCRC = 3834147157;
+	description = 59125036;
+	reserve(34);
+	add(&terFilthAntBaseParameter, "terFilthAntBaseParameter");
+	add(&terFilthAnt2BaseParameter, "terFilthAnt2BaseParameter");
+	add(&terFilthWaspBaseParameter, "terFilthWaspBaseParameter");
+	add(&terFilthWaspPrm, "terFilthWaspPrm");
+	add(&terFilthWaspEyePrm, "terFilthWaspEyePrm");
+	add(&terFilthDragonBaseParameter, "terFilthDragonBaseParameter");
+	add(&terFilthDragonBaseParameter2, "terFilthDragonBaseParameter2");
+	add(&terFilthDragonPrm, "terFilthDragonPrm");
+	add(&terFilthDragonPrm2, "terFilthDragonPrm2");
+	add(&terFilthDragonPrmA, "terFilthDragonPrmA");
+	add(&terFilthGhostBaseParameter, "terFilthGhostBaseParameter");
+	add(&terFilthGhostPrm, "terFilthGhostPrm");
+	add(&terFilthEyeBaseParameter, "terFilthEyeBaseParameter");
+	add(&terFilthEyePrm, "terFilthEyePrm");
+	add(&terFilthCrowBaseParameter, "terFilthCrowBaseParameter");
+	add(&terFilthCrowPrm, "terFilthCrowPrm");
+	add(&terFilthDaemonBaseParameter, "terFilthDaemonBaseParameter");
+	add(&terFilthDaemonPrm, "terFilthDaemonPrm");
+	add(&terFilthRatBaseParameter, "terFilthRatBaseParameter");
+	add(&terFilthSnakeBaseParameter, "terFilthSnakeBaseParameter");
+	add(&terFilthRatPrm, "terFilthRatPrm");
+	add(&terFilthWormBaseParameter, "terFilthWormBaseParameter");
+	add(&terFilthSharkBaseParameter, "terFilthSharkBaseParameter");
+	add(&terFilthSharkPrm, "terFilthSharkPrm");
+	add(&terFilthVolcanoPrm, "terFilthVolcanoPrm");
+	add(&terFilthVolcanoScumDisruptorPrm, "terFilthVolcanoScumDisruptorPrm");
+	add(&terFilthVolcanoBaseParameter, "terFilthVolcanoBaseParameter");
+	add(&terScumDisruptorPrm, "terScumDisruptorPrm");
+	add(&terFilthAntsPrm, "terFilthAntsPrm");
+	add(&terFilthAnts2Prm, "terFilthAnts2Prm");
+	add(&terFilthNavigatorPrmCount, "terFilthNavigatorPrmCount");
+	add(&terFilthNavigatorPrm, "terFilthNavigatorPrm");
+	add(&terFilthMutationsPrmCount, "terFilthMutationsPrmCount");
+	add(&terFilthMutationsPrm, "terFilthMutationsPrm");
+	add_parameter_section(this);
+}
+};
+static FilthPrm_ParameterSection FilthPrm_ParameterSectionObject;
+#endif  //  _PRM_EDIT_
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: FilthPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

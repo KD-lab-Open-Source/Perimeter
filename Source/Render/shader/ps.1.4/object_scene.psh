@@ -1,0 +1,53 @@
+// Pixel shader for shadows maps
+// with 4 higher than 8-bit precision samples
+// and percentage closer filtering
+#include "..\shade.inl"
+
+ps.1.4
+// Intensity in shadow
+def c0, SHADE, SHADE, SHADE, 1
+// Intensity in the light
+def c1, 1, 1, 1, 1
+// Fudge factor for back face occlusion
+def c2, 0.1, 0, 0, 0
+// Sample weights (1/4)
+def c3, 0.25, 0.25, 0.25, 0.25
+// Ambient color
+def c4, 0.25, 0.25, 0.25, 0.25
+
+def c5, 0.0, 0.0, 0.0, 1
+// Fetch 4 shadow map samples
+
+texld r1, t1
+texld r2, t2
+texld r3, t3
+texld r4, t4
+// Light space depth from vertex shader
+texcrd r5.rgb, t4
+
+// Unpack sample 0
+mov_d8 r1.r, r1.r
+add r1.r, r1.r, r1.g
+// Unpack sample 1
+mov_d8 r2.r, r2.r
+add r1.g, r2.r, r2.g
+// Unpack sample 2
+mov_d8 r3.r, r3.r
+add r1.b, r3.r, r3.g
+//// Unpack sample 3
+mov_d8 r4.r, r4.r
+add r2.r, r4.r, r4.g
+	
+phase
+texld r0, t0
+// Restore sample 3
+mov r1.a, r2.r
+// Compare shadow map samples to surface depth
+sub r1, r5.b, r1
+cmp r1, -r1, c1, c0
+// Compute average
+dp4 r3, r1, c3
+//r3 - shadow coefficient
+
+mul r0.rgb,r0,v0
+mul r0,r0,r3

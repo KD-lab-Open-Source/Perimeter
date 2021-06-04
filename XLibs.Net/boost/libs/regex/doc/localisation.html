@@ -1,0 +1,1023 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<title>Boost.Regex: Localisation</title>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../../boost.css">
+</head>
+<body>
+<p></p>
+
+<table id="Table1" cellspacing="1" cellpadding="1" width="100%"
+border="0">
+<tr>
+<td valign="top" width="300">
+<h3><a href="../../../index.htm"><img height="86" width="277" alt=
+"C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+</td>
+<td width="353">
+<h1 align="center">Boost.Regex</h1>
+
+<h2 align="center">Localisation</h2>
+</td>
+<td width="50">
+<h3><a href="index.html"><img height="45" width="43" alt=
+"Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<hr>
+<p>Boost.regex&nbsp;provides extensive support for run-time
+localization, the localization model used can be split into two
+parts: front-end and back-end.</p>
+
+<p>Front-end localization deals with everything which the user sees
+- error messages, and the regular expression syntax itself. For
+example a French application could change [[:word:]] to [[:mot:]]
+and \w to \m. Modifying the front end locale requires active
+support from the developer, by providing the library with a message
+catalogue to load, containing the localized strings. Front-end
+locale is affected by the LC_MESSAGES category only.</p>
+
+<p>Back-end localization deals with everything that occurs after
+the expression has been parsed - in other words everything that the
+user does not see or interact with directly. It deals with case
+conversion, collation, and character class membership. The back-end
+locale does not require any intervention from the developer - the
+library will acquire all the information it requires for the
+current locale from the underlying operating system / run time
+library. This means that if the program user does not interact with
+regular expressions directly - for example if the expressions are
+embedded in your C++ code - then no explicit localization is
+required, as the library will take care of everything for you. For
+example embedding the expression [[:word:]]+ in your code will
+always match a whole word, if the program is run on a machine with,
+for example, a Greek locale, then it will still match a whole word,
+but in Greek characters rather than Latin ones. The back-end locale
+is affected by the LC_TYPE and LC_COLLATE categories.</p>
+
+<p>There are three separate localization mechanisms supported by
+boost.regex:</p>
+
+<h3>Win32 localization model.</h3>
+
+<p>This is the default model when the library is compiled under
+Win32, and is encapsulated by the traits class w32_regex_traits.
+When this model is in effect there is a single global locale as
+defined by the user's control panel settings, and returned by
+GetUserDefaultLCID. All the settings used by boost.regex are
+acquired directly from the operating system bypassing the C run
+time library. Front-end localization requires a resource dll,
+containing a string table with the user-defined strings. The traits
+class exports the function:</p>
+
+<p>static std::string set_message_catalogue(const std::string&amp;
+s);</p>
+
+<p>which needs to be called with a string identifying the name of
+the resource dll, <i>before</i> your code compiles any regular
+expressions (but not necessarily before you construct any <i>
+basic_regex</i> instances):</p>
+
+<p>
+boost::w32_regex_traits&lt;char&gt;::set_message_catalogue("mydll.dll");</p>
+
+<p>Note that this API sets the dll name for <i>both</i> the narrow
+and wide character specializations of w32_regex_traits.</p>
+
+<p>This model does not currently support thread specific locales
+(via SetThreadLocale under Windows NT), the library provides full
+Unicode support under NT, under Windows 9x the library degrades
+gracefully - characters 0 to 255 are supported, the remainder are
+treated as "unknown" graphic characters.</p>
+
+<h3>C localization model.</h3>
+
+<p>This is the default model when the library is compiled under an
+operating system other than Win32, and is encapsulated by the
+traits class <i>c_regex_traits</i>, Win32 users can force this
+model to take effect by defining the pre-processor symbol
+BOOST_REGEX_USE_C_LOCALE. When this model is in effect there is a
+single global locale, as set by <i>setlocale</i>. All settings are
+acquired from your run time library, consequently Unicode support
+is dependent upon your run time library implementation. Front end
+localization requires a POSIX message catalogue. The traits class
+exports the function:</p>
+
+<p>static std::string set_message_catalogue(const std::string&amp;
+s);</p>
+
+<p>which needs to be called with a string identifying the name of
+the message catalogue, <i>before</i> your code compiles any regular
+expressions (but not necessarily before you construct any <i>
+basic_regex</i> instances):</p>
+
+<p>
+boost::c_regex_traits&lt;char&gt;::set_message_catalogue("mycatalogue");</p>
+
+<p>Note that this API sets the dll name for <i>both</i> the narrow
+and wide character specializations of c_regex_traits. If your run
+time library does not support POSIX message catalogues, then you
+can either provide your own implementation of &lt;nl_types.h&gt; or
+define BOOST_RE_NO_CAT to disable front-end localization via
+message catalogues.</p>
+
+<p>Note that calling <i>setlocale</i> invalidates all compiled
+regular expressions, calling <tt>setlocale(LC_ALL, "C")</tt> will
+make this library behave equivalent to most traditional regular
+expression libraries including version 1 of this library.</p>
+
+<h3>C++ localization model.</h3>
+
+<p>This model is only in effect if the library is built with the
+pre-processor symbol BOOST_REGEX_USE_CPP_LOCALE defined. When this
+model is in effect each instance of basic_regex&lt;&gt; has its own
+instance of std::locale, class basic_regex&lt;&gt; also has a
+member function <i>imbue</i> which allows the locale for the
+expression to be set on a per-instance basis. Front end
+localization requires a POSIX message catalogue, which will be
+loaded via the std::messages facet of the expression's locale, the
+traits class exports the symbol:</p>
+
+<p>static std::string set_message_catalogue(const std::string&amp;
+s);</p>
+
+<p>which needs to be called with a string identifying the name of
+the message catalogue, <i>before</i> your code compiles any regular
+expressions (but not necessarily before you construct any <i>
+basic_regex</i> instances):</p>
+
+<p>
+boost::cpp_regex_traits&lt;char&gt;::set_message_catalogue("mycatalogue");</p>
+
+<p>Note that calling basic_regex&lt;&gt;::imbue will invalidate any
+expression currently compiled in that instance of
+basic_regex&lt;&gt;. This model is the one which closest fits the
+ethos of the C++ standard library, however it is the model which
+will produce the slowest code, and which is the least well
+supported by current standard library implementations, for example
+I have yet to find an implementation of std::locale which supports
+either message catalogues, or locales other than "C" or
+"POSIX".</p>
+
+<p>Finally note that if you build the library with a non-default
+localization model, then the appropriate pre-processor symbol
+(BOOST_REGEX_USE_C_LOCALE or BOOST_REGEX_USE_CPP_LOCALE) must be
+defined both when you build the support library, and when you
+include &lt;boost/regex.hpp&gt; or &lt;boost/cregex.hpp&gt; in your
+code. The best way to ensure this is to add the #define to
+&lt;boost/regex/user.hpp&gt;.</p>
+
+<h3>Providing a message catalogue:</h3>
+
+<p>In order to localize the front end of the library, you need to
+provide the library with the appropriate message strings contained
+either in a resource dll's string table (Win32 model), or a POSIX
+message catalogue (C or C++ models). In the latter case the
+messages must appear in message set zero of the catalogue. The
+messages and their id's are as follows:<br>
+ &nbsp;</p>
+
+<p></p>
+
+<table id="Table2" cellspacing="0" cellpadding="6" width="624"
+border="0">
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">Message id</td>
+<td valign="top" width="32%">Meaning</td>
+<td valign="top" width="29%">Default value</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">101</td>
+<td valign="top" width="32%">The character used to start a
+sub-expression.</td>
+<td valign="top" width="29%">"("</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">102</td>
+<td valign="top" width="32%">The character used to end a
+sub-expression declaration.</td>
+<td valign="top" width="29%">")"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">103</td>
+<td valign="top" width="32%">The character used to denote an end of
+line assertion.</td>
+<td valign="top" width="29%">"$"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">104</td>
+<td valign="top" width="32%">The character used to denote the start
+of line assertion.</td>
+<td valign="top" width="29%">"^"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">105</td>
+<td valign="top" width="32%">The character used to denote the
+"match any character expression".</td>
+<td valign="top" width="29%">"."</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">106</td>
+<td valign="top" width="32%">The match zero or more times
+repetition operator.</td>
+<td valign="top" width="29%">"*"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">107</td>
+<td valign="top" width="32%">The match one or more repetition
+operator.</td>
+<td valign="top" width="29%">"+"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">108</td>
+<td valign="top" width="32%">The match zero or one repetition
+operator.</td>
+<td valign="top" width="29%">"?"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">109</td>
+<td valign="top" width="32%">The character set opening
+character.</td>
+<td valign="top" width="29%">"["</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">110</td>
+<td valign="top" width="32%">The character set closing
+character.</td>
+<td valign="top" width="29%">"]"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">111</td>
+<td valign="top" width="32%">The alternation operator.</td>
+<td valign="top" width="29%">"|"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">112</td>
+<td valign="top" width="32%">The escape character.</td>
+<td valign="top" width="29%">"\\"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">113</td>
+<td valign="top" width="32%">The hash character (not currently
+used).</td>
+<td valign="top" width="29%">"#"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">114</td>
+<td valign="top" width="32%">The range operator.</td>
+<td valign="top" width="29%">"-"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">115</td>
+<td valign="top" width="32%">The repetition operator opening
+character.</td>
+<td valign="top" width="29%">"{"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">116</td>
+<td valign="top" width="32%">The repetition operator closing
+character.</td>
+<td valign="top" width="29%">"}"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">117</td>
+<td valign="top" width="32%">The digit characters.</td>
+<td valign="top" width="29%">"0123456789"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">118</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the word boundary assertion.</td>
+<td valign="top" width="29%">"b"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">119</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the non-word boundary
+assertion.</td>
+<td valign="top" width="29%">"B"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">120</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the word-start boundary
+assertion.</td>
+<td valign="top" width="29%">"&lt;"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">121</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the word-end boundary
+assertion.</td>
+<td valign="top" width="29%">"&gt;"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">122</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any word character.</td>
+<td valign="top" width="29%">"w"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">123</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents a non-word character.</td>
+<td valign="top" width="29%">"W"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">124</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents a start of buffer assertion.</td>
+<td valign="top" width="29%">"`A"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">125</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents an end of buffer assertion.</td>
+<td valign="top" width="29%">"'z"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">126</td>
+<td valign="top" width="32%">The newline character.</td>
+<td valign="top" width="29%">"\n"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">127</td>
+<td valign="top" width="32%">The comma separator.</td>
+<td valign="top" width="29%">","</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">128</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the bell character.</td>
+<td valign="top" width="29%">"a"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">129</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the form feed character.</td>
+<td valign="top" width="29%">"f"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">130</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the newline character.</td>
+<td valign="top" width="29%">"n"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">131</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the carriage return character.</td>
+<td valign="top" width="29%">"r"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">132</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the tab character.</td>
+<td valign="top" width="29%">"t"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">133</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the vertical tab character.</td>
+<td valign="top" width="29%">"v"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">134</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the start of a hexadecimal character
+constant.</td>
+<td valign="top" width="29%">"x"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">135</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the start of an ASCII escape
+character.</td>
+<td valign="top" width="29%">"c"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">136</td>
+<td valign="top" width="32%">The colon character.</td>
+<td valign="top" width="29%">":"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">137</td>
+<td valign="top" width="32%">The equals character.</td>
+<td valign="top" width="29%">"="</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">138</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the ASCII escape character.</td>
+<td valign="top" width="29%">"e"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">139</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any lower case character.</td>
+<td valign="top" width="29%">"l"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">140</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any non-lower case character.</td>
+<td valign="top" width="29%">"L"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">141</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any upper case character.</td>
+<td valign="top" width="29%">"u"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">142</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any non-upper case character.</td>
+<td valign="top" width="29%">"U"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">143</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any space character.</td>
+<td valign="top" width="29%">"s"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">144</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any non-space character.</td>
+<td valign="top" width="29%">"S"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">145</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any digit character.</td>
+<td valign="top" width="29%">"d"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">146</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any non-digit character.</td>
+<td valign="top" width="29%">"D"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">147</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the end quote operator.</td>
+<td valign="top" width="29%">"E"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">148</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the start quote operator.</td>
+<td valign="top" width="29%">"Q"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">149</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents a Unicode combining character
+sequence.</td>
+<td valign="top" width="29%">"X"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">150</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents any single character.</td>
+<td valign="top" width="29%">"C"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">151</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents end of buffer operator.</td>
+<td valign="top" width="29%">"Z"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="21%">152</td>
+<td valign="top" width="32%">The character which when preceded by
+an escape character represents the continuation assertion.</td>
+<td valign="top" width="29%">"G"</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+<td>153</td>
+<td>The character which when preceeded by (? indicates a zero width
+negated forward lookahead assert.</td>
+<td>!</td>
+<td>&nbsp;</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<p>Custom error messages are loaded as follows:&nbsp;</p>
+
+<p></p>
+
+<table id="Table3" cellspacing="0" cellpadding="7" width="624"
+border="0">
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">Message ID</td>
+<td valign="top" width="32%">Error message ID</td>
+<td valign="top" width="31%">Default string</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">201</td>
+<td valign="top" width="32%">REG_NOMATCH</td>
+<td valign="top" width="31%">"No match"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">202</td>
+<td valign="top" width="32%">REG_BADPAT</td>
+<td valign="top" width="31%">"Invalid regular expression"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">203</td>
+<td valign="top" width="32%">REG_ECOLLATE</td>
+<td valign="top" width="31%">"Invalid collation character"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">204</td>
+<td valign="top" width="32%">REG_ECTYPE</td>
+<td valign="top" width="31%">"Invalid character class name"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">205</td>
+<td valign="top" width="32%">REG_EESCAPE</td>
+<td valign="top" width="31%">"Trailing backslash"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">206</td>
+<td valign="top" width="32%">REG_ESUBREG</td>
+<td valign="top" width="31%">"Invalid back reference"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">207</td>
+<td valign="top" width="32%">REG_EBRACK</td>
+<td valign="top" width="31%">"Unmatched [ or [^"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">208</td>
+<td valign="top" width="32%">REG_EPAREN</td>
+<td valign="top" width="31%">"Unmatched ( or \\("</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">209</td>
+<td valign="top" width="32%">REG_EBRACE</td>
+<td valign="top" width="31%">"Unmatched \\{"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">210</td>
+<td valign="top" width="32%">REG_BADBR</td>
+<td valign="top" width="31%">"Invalid content of \\{\\}"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">211</td>
+<td valign="top" width="32%">REG_ERANGE</td>
+<td valign="top" width="31%">"Invalid range end"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">212</td>
+<td valign="top" width="32%">REG_ESPACE</td>
+<td valign="top" width="31%">"Memory exhausted"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">213</td>
+<td valign="top" width="32%">REG_BADRPT</td>
+<td valign="top" width="31%">"Invalid preceding regular
+expression"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">214</td>
+<td valign="top" width="32%">REG_EEND</td>
+<td valign="top" width="31%">"Premature end of regular
+expression"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">215</td>
+<td valign="top" width="32%">REG_ESIZE</td>
+<td valign="top" width="31%">"Regular expression too big"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">216</td>
+<td valign="top" width="32%">REG_ERPAREN</td>
+<td valign="top" width="31%">"Unmatched ) or \\)"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">217</td>
+<td valign="top" width="32%">REG_EMPTY</td>
+<td valign="top" width="31%">"Empty expression"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">218</td>
+<td valign="top" width="32%">REG_E_UNKNOWN</td>
+<td valign="top" width="31%">"Unknown error"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<p>Custom character class names are loaded as followed:&nbsp;</p>
+
+<p></p>
+
+<table id="Table4" cellspacing="0" cellpadding="7" width="624"
+border="0">
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">Message ID</td>
+<td valign="top" width="32%">Description</td>
+<td valign="top" width="31%">Equivalent default class name</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">300</td>
+<td valign="top" width="32%">The character class name for
+alphanumeric characters.</td>
+<td valign="top" width="31%">"alnum"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">301</td>
+<td valign="top" width="32%">The character class name for
+alphabetic characters.</td>
+<td valign="top" width="31%">"alpha"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">302</td>
+<td valign="top" width="32%">The character class name for control
+characters.</td>
+<td valign="top" width="31%">"cntrl"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">303</td>
+<td valign="top" width="32%">The character class name for digit
+characters.</td>
+<td valign="top" width="31%">"digit"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">304</td>
+<td valign="top" width="32%">The character class name for graphics
+characters.</td>
+<td valign="top" width="31%">"graph"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">305</td>
+<td valign="top" width="32%">The character class name for lower
+case characters.</td>
+<td valign="top" width="31%">"lower"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">306</td>
+<td valign="top" width="32%">The character class name for printable
+characters.</td>
+<td valign="top" width="31%">"print"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">307</td>
+<td valign="top" width="32%">The character class name for
+punctuation characters.</td>
+<td valign="top" width="31%">"punct"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">308</td>
+<td valign="top" width="32%">The character class name for space
+characters.</td>
+<td valign="top" width="31%">"space"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">309</td>
+<td valign="top" width="32%">The character class name for upper
+case characters.</td>
+<td valign="top" width="31%">"upper"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">310</td>
+<td valign="top" width="32%">The character class name for
+hexadecimal characters.</td>
+<td valign="top" width="31%">"xdigit"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">311</td>
+<td valign="top" width="32%">The character class name for blank
+characters.</td>
+<td valign="top" width="31%">"blank"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">312</td>
+<td valign="top" width="32%">The character class name for word
+characters.</td>
+<td valign="top" width="31%">"word"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="8%">&nbsp;</td>
+<td valign="top" width="22%">313</td>
+<td valign="top" width="32%">The character class name for Unicode
+characters.</td>
+<td valign="top" width="31%">"unicode"</td>
+<td valign="top" width="7%">&nbsp;</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<p>Finally, custom collating element names are loaded starting from
+message id 400, and terminating when the first load thereafter
+fails. Each message looks something like: "tagname string" where
+<i>tagname</i> is the name used inside [[.tagname.]] and <i>
+string</i> is the actual text of the collating element. Note that
+the value of collating element [[.zero.]] is used for the
+conversion of strings to numbers - if you replace this with another
+value then that will be used for string parsing - for example use
+the Unicode character 0x0660 for [[.zero.]] if you want to use
+Unicode Arabic-Indic digits in your regular expressions in place of
+Latin digits.</p>
+
+<p>Note that the POSIX defined names for character classes and
+collating elements are always available - even if custom names are
+defined, in contrast, custom error messages, and custom syntax
+messages replace the default ones.</p>
+
+<p></p>
+
+<hr>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         24 Oct 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 
+            2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+</body>
+</html>
+
+

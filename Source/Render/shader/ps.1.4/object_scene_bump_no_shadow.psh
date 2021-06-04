@@ -1,0 +1,21 @@
+//
+//c5 - diffuse
+//c6 - specular
+
+ps.1.4
+def c4, -0.75,-0.75,-0.75,-0.75
+
+texld r0, t0
+texld r1, t1
+
+//diffuse bump
+dp3_sat r2, r1, v0_bx2
+mad r2,r2,c5,c5
+mul r2,r2,r0
+
+//specular bump
+dp3_sat r1, r1, v1_bx2
+mad_x4_sat r1, r1, r1, c4
+mad r0,r1,c6,r2
+
+

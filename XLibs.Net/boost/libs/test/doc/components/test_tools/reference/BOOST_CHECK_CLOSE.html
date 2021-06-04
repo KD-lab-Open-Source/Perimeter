@@ -1,0 +1,69 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_CHECK_CLOSE( left, right, tolerance_src )</H3>
+  <P class="first-line-indented">This tool is used to check <I>left</I> and <I>right</I> values on closeness 
+    using strong relationship defined by the predicate <A href="../floating_point_comparison.html" target="_top">close_at_tolerance 
+    </A>( tolerance_src ). To check for the weak relationship use <A href="BOOST_CHECK_PREDICATE.html">BOOST_CHECK_PREDICATE</A> 
+    tool. Note that to use this tool you need to include additional header<A href="../../../../../../boost/test/floating_point_comparison.hpp"> 
+    floating_point_comparison.hpp</A>, since tools implementation depends on this file that does not get 
+    included automatically to minimize code dependency. </P>
+  <P class="first-line-indented">If comparison is successful, the tool produces a confirmation message 
+    (note: to manage what messages appear in the test output stream set the proper log level) in other 
+    case it produces an error message in a form &quot;error in &lt;test case name&gt;: test &lt;<I>left</I> 
+    argument name&gt; (==) &lt;<I>right</I> argument name&gt; failed [ &lt;<I>left</I> argument value&gt; 
+    != &lt;<I>right</I> argument value&gt; (&lt;real predicate value&gt;)]&quot;.</P>
+  <P class="first-line-indented"></P>
+  <P class="first-line-indented">The tool's first parameter is the <I>left</I> compared value. The tool's 
+    second parameter is the <I>right</I> compared value. Last third parameter defines the tolerance for 
+    the comparison. It could be floating point or integer value. For more details how to treat this value 
+    see <A href="../floating_point_comparison.html" target="_top">close_at_tolerance </A>description. 
+    Note that it required for <I>left</I> and <I>right</I> parameters to be of the same floating point 
+    type. You need to explicitly resolve any type mismatch to select which type to use for comparison.</P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    <SPAN class="cpp-type">double</SPAN> v1 = <SPAN class="literal">1.23456e-10</SPAN>;
+    <SPAN class="cpp-type">double</SPAN> v2 = <SPAN class="literal">1.23457e-10</SPAN>;
+
+    BOOST_CHECK_CLOSE( v1, v2, <SPAN class="literal">1e-6</SPAN> ); <SPAN class="comment">// should fail at tolerance supplied</SPAN>
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(4) : error in test_main: test v1 (==) v2 failed [1.23456e-10 != 1.23457e-10 
+    (1e-06)] </P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    <SPAN class="cpp-type">double</SPAN> v1 = <SPAN class="literal">4.1;</SPAN>
+
+    v1 = v1 * v1;
+    BOOST_CHECK_CLOSE( v1, <SPAN class="literal">16.81</SPAN>, <SPAN class="literal">1</SPAN>+<SPAN class="literal">2</SPAN> );
+    <SPAN class="comment">// 1(arithmetic operation) + 
+    // 2(decimal to binary conversions) - 
+    // number of rounding errors; should pass</SPAN>
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">&nbsp;</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK_EQUAL.html" target="descr">BOOST_CHECK_EQUAL</A>, 
+      <A href="../floating_point_comparison.html" target="_top">Floating point comparison algorithms</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

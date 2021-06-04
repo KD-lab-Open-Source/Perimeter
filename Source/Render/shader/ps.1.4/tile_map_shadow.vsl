@@ -1,0 +1,16 @@
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float  t0 : TEXCOORD0;
+};
+
+float4x4 mWVP;
+
+VS_OUTPUT main(float4 pos : POSITION )
+{
+	VS_OUTPUT o;
+	o.pos=mul(pos,mWVP);
+	o.t0=o.pos.z;
+	return o;
+}
+

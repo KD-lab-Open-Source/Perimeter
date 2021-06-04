@@ -1,0 +1,11 @@
+# (C) Copyright Rene Rivera, 2003.
+#
+# See accompanying license for terms and conditions of use.
+#
+
+# Example of how to define and depend on a library target.
+# This is for Boost.Build-V1
+
+project-root ;
+subinclude sublib ;
+subinclude subexe ;

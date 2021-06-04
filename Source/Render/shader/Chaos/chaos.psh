@@ -1,0 +1,25 @@
+ps.2.0
+
+#define CC 0.1
+
+def c0,CC,CC,CC,CC
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl t0.xy
+dcl t1.xy
+dcl t2.xy
+dcl t3.xy
+
+texld r2,t2,s2
+texld r3,t3,s2
+add r3.rgb,r2,r3
+mul r3.rgb,r3,c0
+
+add r2.xy,r3,t0
+texld r0,r2,s0
+add r2.xy,r3,t1
+texld r1,r2,s1
+add r0,r0,r1
+mov oC0,r0

@@ -1,0 +1,181 @@
+<HTML>
+<HEAD>
+<TITLE>Boost Test Library: release rotes</TITLE>
+<LINK rel="stylesheet" type="text/css" href="style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY> 
+<DIV class="header"> <A href="index.html">Boost.Test</A> > <SPAN class="current_article">Release
+    Notes</SPAN> </DIV> 
+<DIV class="body"> <IMG src='btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">Release Notes</H1> 
+  <P class="page-toc"><A href="#v1_31_0">Boost release 1.31.0</A> </P>
+  <P class="page-toc"><A href="#v1_30_0">Boost release 1.30.0</A><BR> 
+    <A href="#Migration">Migration guide from Boost Test v1</A> </P>
+      <H2><A name="v1_31_0">Boost release 1.31.0</A></H2>
+  <UL>
+    <LI><A href="components/unit_test_framework/components/test_case/test_case_template.html">Zero arity function template based test case</A> </LI>
+    <LI><A href="components/execution_monitor/execution_monitor.html#register_exception_translator">Custom
+        exception translators support </A> in execution monitor and <A href="components/unit_test_framework/index.html">register_exception_translator</A>      added for unit test framework </LI>
+    <LI><A href="components/unit_test_framework/components/test_case/abstract_interface.html">Test
+    cases dependency support </A></LI>
+    <LI><A href="components/unit_test_framework/components/test_case/auto_register_facility.html">Added
+        support for multi-module unit tests in automatic registration facility </A></LI>
+    <LI>Floating point comaprison algorithm reworked (Is not backward compatible!!!)
+      <UL>
+        <LI><u>tolerance now expected in persent units</u></LI>
+          <LI>eliminated tolerance definition by number of rounding errors</LI>
+          <LI>switch to comparison type enumeration instead of boolean value </LI>
+      </UL>
+    </LI>
+    <LI><A href="usage/generic.html#t1">First failed assertion support</A></LI>
+    <LI>Major
+      documentation structure rework and update<BR>
+      I hope you will find handy new navigation system </LI>
+    <LI>Switched to new boost license</LI>
+    <LI><A href="components/test_tools/custom_predicate_support.html">Added support
+        for custom users predicate returning both boolean result code and possibly
+    error message </A></LI>
+    <LI><A href="components/test_tools/reference/BOOST_CHECK_EXCEPTION.html">BOOST_CHECK_EXCEPTION</A> test
+      tool introduced - to perform complex validation of expected exception </LI>
+    <LI>BOOST_IGNORE_CHECK test tool introduced - to be used with BOOST_CHECK_EXCEPTION </LI>
+    <LI>Straiten return code logic for Program Execution Monitor and in case
+    of failed initialization in Unit Test Framework </LI>
+    <LI>Added position in the collection comparison results error message </LI>
+    <LI>Disable SEH if BOOST_DISABLE_WIN32 in effect</LI>
+    <LI>Como can't do structured exceptions</LI>
+    <LI>Added support for catch_system_error in Test Execution Monitor</LI>
+    <LI><A href="components/unit_test_framework/components/test_log/custom_log_formatter.html">Move
+    log formatter in public interface</A></LI>
+    <LI>Custom char value log print procedures</LI>
+    <LI>Support for logging variable values of types that does not support operator&lt;&lt; </LI>
+    <LI>match_pattern updated to show an error mismatch snippet</LI>
+    <LI>force UNIX slash for file name </LI>
+    <LI>Some annoying MSVC warnings suppressed </LI>
+    <LI>test_case_scope_tracker introduced for correct exception unwinding handling </LI>
+    <LI>unit_test_result_tracker introduced for correct exception handling </LI>
+    <LI>several minor bug and warnings fixes </LI>
+  </UL>
+  <H2><A name="v1_30_0">Boost release 1.30.0</A></H2>
+  <UL> 
+    <LI>Facility for automatic registration of unit tests is introduced<BR> 
+      It was requested during original Boost Test review and now it supports
+        automatic registration for free function based test cases. Here an example:<BR> 
+      <PRE class="code">#<SPAN class="reserv-word">include</SPAN> &lt;boost/test/auto_unit_test.hpp&gt;
+
+BOOST_AUTO_UNIT_TEST( test1 )
+{
+  BOOST_CHECK( true );
+}
+
+BOOST_AUTO_UNIT_TEST( test2 )
+{
+  BOOST_CHECK( true );
+}</PRE> 
+    </LI> 
+    <LI>XML log format is introduced<BR> 
+      Now user willing to automate errors processing could get a log in XML format.
+        Command line switch is introduced that manage log format:<BR> 
+      --log_format=[XML|HRF] will force XML or human readable format respectively</LI> 
+    <LI>XML report format is introduced<BR> 
+      Now user willing to automate results analysis could get a result report
+        in XML format. Command line switch is introduced that manage report format:<BR> 
+      --report_format=[XML|HRF] will force XML or human readable format respectively</LI> 
+    <LI>BOOST_CHECK_NO_THROW test tool is introduced</LI> 
+    <LI>BOOST_BITWISE_EQUAL test tool is introduced</LI> 
+    <LI>libraries file names changed to:<BR> 
+      boost_prg_exec_monitor<BR> 
+      boost_test_exec_monitor<BR> 
+      boost_unit_test_framework</LI> 
+    <LI>Components examples and test documentation page is introduced<BR> 
+      Now all test/examples links lead to this page that has summary information
+        about all of them, that include expected output, type of test and so
+    on</LI> 
+    <LI>Catch system errors switch introduced<BR> 
+      This will work among the lines described in <A href="http://lists.boost.org/MailArchives/boost/msg40028.php"> http://lists.boost.org/MailArchives/boost/msg40028.php</A><BR> 
+      Environment variable name: BOOST_TEST_CATCH_SYSTEM_ERRORS[=&quot;no&quot;]<BR> 
+      Unit test framework command line argument: --catch_system_errors[=&quot;no&quot;]</LI> 
+    <LI>Added building dynamic libraries into Jamfile</LI> 
+    <LI>MS C runtime debug hooks introduced<BR> 
+      It allows to catch _ASSERT bases assertion for MSVC</LI> 
+    <LI>SIGABRT catch added</LI> 
+    <LI>Eliminated NULLs all over the place<BR> 
+      I switched to use typedef c_string literal instead of char const* and to
+        c_string literal() instead of NULL. Different definition of NULL symbol
+        causing small problems for some compilers</LI> 
+    <LI>class wrapstrstream separated in standalone file and renamed to wrap_stringstream<BR> 
+      For now it will be located in test/detail. Once I prepare doc page for
+        it I will present it for adding into utility</LI> 
+    <LI>unit_test_result_saver introduced to properly managed reset_current_test_set
+      calls in case of exceptions</LI> 
+    <LI>switch back to use scoped_ptr instead of raw test_suite pointer in unit_test_main.cpp</LI> 
+    <LI>BOOST_CPP_MAIN_CONFIRMATION renamed to BOOST_PRG_MON_CONFIRM and changed
+      it's logic a bit<BR> 
+      It now should have value &quot;no&quot; to turn off pass confirmation</LI> 
+    <LI>added tests for auto unit test facility and catching assert statements</LI> 
+    <LI>Jamfile added info examples directory</LI> 
+    <LI>Added example input for the unit_test_example5</LI> 
+    <LI>Command line option --output_format is introduced that both log/report
+      format simultaneously</LI> 
+    <LI>Allows to perform bitwise comparisons of the two arguments provided.
+      Will report as many errors as many bits mismatch. Mismatch position is
+      reported.</LI> 
+    <LI>Documentation default palette changed to white</LI> 
+    <LI>Signal handling selection algorithm fixed<BR> 
+      BOOST_HAS_SIGACTION is used to select sigaction based signal handling alternative.
+        It allowed use of signal handling with gcc on win32 platform.</LI> 
+    <LI>C strings usage in minimized as much as possible</LI> 
+    <LI>class_properties header modified to use Boost.Preprocessor for friends
+      declaration</LI> 
+    <LI>other minor code/doc changes and bug fixes</LI> 
+  </UL> 
+  <H2><A name="Migration">Boost Test migration guide</A></H2> 
+  <P class="first-line-indented">This version of Boost.Test library substitute
+    the original testing library used in a Boost. These are several simple steps
+    you need to follow to smoothly migrate to the latest software.</P> 
+  <P class="first-line-indented">If your code were using the original version
+    of cpp_main facility, to migrate you will need to delete the inclusion of
+    the &lt;boost/test/cpp_main.cpp&gt;, since this file is not present any more.
+    After that you have following choices:</P> 
+  <UL> 
+    <LI>Link with Program Execution Monitor (exact library name depends on compiler
+      you are using, but most probably it will be libboost_prg_exec_monitor.lib). </LI> 
+    <LI>Include &lt;boost/test/included/prg_exec_monitor.hpp&gt;, in which case
+      you need not link with precompiled component but it may incur probably
+      some compile time overhead.</LI> 
+  </UL> 
+  <P class="first-line-indented">If your code were using the original version
+    of test_main and test tools facilitates of Boost.Test library, to migrate
+    to use of latest one you have following choices:</P> 
+  <UL> 
+    <LI>Without changing of the code that were using Boost.Test facilities link
+      with Test Execution Monitor (exact library name depends on compiler you
+      are using, but most probably it will be libtest_exec_monitor.lib).</LI> 
+    <LI>Include &lt;boost/test/included/test_exec_monitor.hpp&gt;, in which case
+      you need not link with precompiled component but it may incur probably
+      some compile time overhead. Definition of BOOST_INCLUDE_MAIN could be deleted
+      either.</LI> 
+    <LI>Include &lt;boost/test/minimal.hpp&gt;, in which case you need not link
+      with precompiled component and it most probably does not incur a compile
+      time overhead, but you will be limited ti the set of features defined in
+      the original test library. Definition of BOOST_INCLUDE_MAIN could be deleted
+      either. Would you decide in a future to use any of newer Boost Test features
+      you will be enforced to snitch to one the two chaises above. </LI> 
+  </UL> 
+</DIV> 
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy
+        Rozental</A> 2001-2004. <BR> 
+      Use, modification, and distribution are subject to the Boost Software License,
+      Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or
+      copy at <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P> 
+    <P>Revised:
+      <!-- #BeginDate format:Sw1 -->26 January, 2004<!-- #EndDate --> 
+    </P> 
+  </DIV> 
+</DIV> 
+</BODY>
+</HTML>

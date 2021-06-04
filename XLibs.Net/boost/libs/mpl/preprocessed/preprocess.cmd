@@ -1,0 +1,1 @@
+c:\home\mingw\bin\gcc.exe -E -C -P -I%1 -D BOOST_USER_CONFIG="<%1/libs/mpl/preprocessed/include/%2/user.hpp>" %3 >%4

@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: Algorithm regex_search</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <LINK href="../../../boost.css" type="text/css" rel="stylesheet"></head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td vAlign="top" width="300">
+                  <h3><A href="../../../index.htm"><IMG height="86" alt="C++ Boost" src="../../../c++boost.gif" width="277" border="0"></A></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">Algorithm regex_search</H2>
+               </TD>
+               <td width="50">
+                  <h3><A href="index.html"><IMG height="45" alt="Boost.Regex Index" src="uarrow.gif" width="43" border="0"></A></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <H3>Contents</H3>
+      <dl class="index">
+         <dt><A href="#synopsis">Synopsis</A> <dt><a href="#description">Description</a> <dt><A href="#examples">
+                     Examples</A></dt></dl>
+      <H3><A name="synopsis"></A>Synopsis</H3>
+      <PRE>#include &lt;<A href="../../../boost/regex.hpp">boost/regex.hpp</A>&gt; </PRE>
+      <P></P>
+      <P>The algorithm regex_search will search a range denoted by a pair of 
+         bidirectional-iterators for a given regular expression. The algorithm uses 
+         various heuristics to reduce the search time by only checking for a match if a 
+         match could conceivably start at that position. The algorithm is defined as 
+         follows:
+         <PRE>template &lt;class BidirectionalIterator, 
+          class Allocator, class charT,
+          class traits, class Allocator2&gt;
+bool <A href="#f1">regex_search</A>(BidirectionalIterator first, BidirectionalIterator last,
+                  <a href="match_results.html">match_results</a>&lt;BidirectionalIterator, Allocator&gt;&amp; m,
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator2&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);
+                  
+template &lt;class ST, class SA, 
+          class Allocator, class charT,
+          class traits, class Allocator2&gt; 
+bool <A href="#f2">regex_search</A>(const basic_string&lt;charT, ST, SA&gt;&amp; s, 
+                  <a href="match_results.html">match_results</a>&lt;
+                      typename basic_string&lt;charT, ST,SA&gt;::const_iterator, 
+                      Allocator&gt;&amp; m, 
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator2&gt;&amp; e, 
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default); 
+          
+template&lt;class charT, class Allocator, class traits, 
+         class Allocator2&gt; 
+bool <A href="#f3">regex_search</A>(const charT* str, 
+                  <a href="match_results.html">match_results</a>&lt;const charT*, Allocator&gt;&amp; m, 
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator2&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);
+                  
+template &lt;class BidirectionalIterator, class Allocator,
+          class charT, class traits&gt;                
+bool <A href="#f4">regex_search</A>(BidirectionalIterator first, BidirectionalIterator last, 
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator&gt;&amp; e, 
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default); 
+                  
+template &lt;class charT, class Allocator, 
+          class traits&gt; 
+bool <A href="#f5">regex_search</A>(const charT* str, 
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator&gt;&amp; e, 
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default); 
+                  
+template&lt;class ST, class SA,
+         class Allocator, class charT, 
+         class traits&gt;
+bool <A href="#f6">regex_search</A>(const basic_string&lt;charT, ST, SA&gt;&amp; s,
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);
+</PRE>
+         <H3><A name="description"></A>Description</H3>
+         <PRE><A name=f1></A>template &lt;class BidirectionalIterator, class Allocator, class charT,
+          class traits, class Allocator2&gt;
+bool regex_search(BidirectionalIterator first, BidirectionalIterator last,
+                  <a href="match_results.html">match_results</a>&lt;BidirectionalIterator, Allocator&gt;&amp; m,
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator2&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);</PRE>
+      <P><B> Requires:</B> Type BidirectionalIterator meets the requirements of a 
+         Bidirectional Iterator (24.1.4).</P>
+      <P><B> Effects: </B>Determines whether there is some sub-sequence within 
+         [first,last) that matches the regular expression <I>e</I>, parameter <I>flags</I>
+         is used to control how the expression is matched against the character 
+         sequence. Returns true if such a sequence exists, false otherwise.</P>
+      <P><STRONG>Throws:</STRONG> <CODE>std::runtime_error</CODE> if the complexity of 
+         matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
+      <P><B> Postconditions: </B>If the function returns false, then the effect on 
+         parameter <I>m</I> is undefined, otherwise the effects on parameter <I>m</I> are 
+         given in the table:</P>
+      <DIV align="center">
+         <CENTER>
+            <TABLE id="Table2" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P><B> Element</B></P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P><B> Value</B>
+                     </P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.size()</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>e.mark_count()</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.empty()</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>false</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.prefix().first</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>first</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.prefix().last</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>m[0].first</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.prefix().matched</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>m.prefix().first != m.prefix().second</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.suffix().first</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>m[0].second</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.suffix().last</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>last</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m.suffix().matched</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>m.suffix().first != m.suffix().second</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m[0].first</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>The start of the sequence of characters that matched the regular expression</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m[0].second</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>The end of the sequence of characters that matched the regular expression</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m[0].matched</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P><CODE> true</CODE> if a full match was found, and <CODE>false</CODE> if it was 
+                        a partial match (found as a result of the <CODE>match_partial</CODE> flag being 
+                        set).</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m[n].first</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>For all integers n &lt; m.size(), the start of the sequence that matched 
+                        sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
+                        in the match, then <I>last</I>.</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m[n].second</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>For all integers n &lt; m.size(), the end of the sequence that matched 
+                        sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
+                        in the match, then <I>last</I>.</P>
+                  </TD>
+               </TR>
+               <TR>
+                  <TD vAlign="top" width="50%">
+                     <P>m[n].matched</P>
+                  </TD>
+                  <TD vAlign="top" width="50%">
+                     <P>For all integers n &lt; m.size(), true if sub-expression <I>n</I> participated 
+                        in the match, false otherwise.</P>
+                  </TD>
+               </TR>
+               </TD></TR></TABLE>
+         </CENTER>
+      </DIV>
+      <PRE><A name=f2></A>template &lt;class charT, class Allocator, class traits, class Allocator2&gt;
+bool regex_search(const charT* str, <a href="match_results.html">match_results</a>&lt;const charT*, Allocator&gt;&amp; m,
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator2&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);</PRE>
+      <P><B> Effects:</B> Returns the result of <CODE>regex_search(str, str + 
+            char_traits&lt;charT&gt;::length(str), m, e, flags)</CODE>.</P>
+      <PRE><A name=f3></A>template &lt;class ST, class SA, class Allocator, class charT,
+          class traits, class Allocator2&gt;
+bool regex_search(const basic_string&lt;charT, ST, SA&gt;&amp; s,
+                  <a href="match_results.html">match_results</a>&lt;typename basic_string&lt;charT, ST, SA&gt;::const_iterator, Allocator&gt;&amp; m,
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator2&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);</PRE>
+      <P><B> Effects:</B> Returns the result of <CODE>regex_search(s.begin(), s.end(), m, 
+            e, flags)</CODE>.</P>
+      <PRE><A name=f4></A>template &lt;class iterator, class Allocator, class charT,
+          class traits&gt;
+bool regex_search(iterator first, iterator last,
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);</PRE>
+      <P><B> Effects:</B> Behaves "as if" by constructing an instance of <CODE><a href="match_results.html">
+               match_results</a>&lt;</CODE>BidirectionalIterator<CODE>&gt; what</CODE>, 
+         and then returning the result of <CODE>regex_search(first, last, what, e, flags)</CODE>.</P>
+      <PRE><A name=f5></A>template &lt;class charT, class Allocator, class traits&gt;
+bool regex_search(const charT* str
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);</PRE>
+      <P><B> Effects:</B> Returns the result of <CODE>regex_search(str, str + 
+            char_traits&lt;charT&gt;::length(str), e, flags)</CODE>.</P>
+      <PRE><A name=f6></A>template &lt;class ST, class SA, class Allocator, class charT,
+          class traits&gt;
+bool regex_search(const basic_string&lt;charT, ST, SA&gt;&amp; s,
+                  const <a href="basic_regex.html">basic_regex</a>&lt;charT, traits, Allocator&gt;&amp; e,
+                  <a href="match_flag_type.html">match_flag_type</a> flags = match_default);</PRE>
+      <P><B> Effects:</B> Returns the result of <CODE>regex_search(s.begin(), s.end(), e, 
+            flags)</CODE>.
+         <H3><A name="examples"></A>Examples</H3>
+      <P>The following <A href="../example/snippets/regex_search_example.cpp">example</A>, 
+         takes the contents of a file in the form of a string, and searches for all the 
+         C++ class declarations in the file. The code will work regardless of the way 
+         that std::string is implemented, for example it could easily be modified to 
+         work with the SGI rope class, which uses a non-contiguous storage strategy.</P>
+      <P></P>
+      <PRE><FONT color=#008000>#include &lt;string&gt; 
+#include &lt;map&gt; 
+#include &lt;boost/regex.hpp&gt; 
+</FONT><FONT color=#000080><I>
+// purpose: 
+// takes the contents of a file in the form of a string 
+// and searches for all the C++ class definitions, storing 
+// their locations in a map of strings/int's 
+</I></FONT><B>typedef</B> std::map&lt;std::string, <B>int</B>, std::less&lt;std::string&gt; &gt; map_type; 
+
+boost::regex expression("^(template[[:space:]]*&lt;[^;:{]+&gt;[[:space:]]*)?(class|struct)[[:space:]]*(\\&lt;\\w+\\&gt;([[:blank:]]*\\([^)]*\\))?[[:space:]]*)*(\\&lt;\\w*\\&gt;)[[:space:]]*(&lt;[^;:{]+&gt;[[:space:]]*)?(\\{|:[^;\\{()]*\\{)"); 
+<B>
+void</B> IndexClasses(map_type&amp; m, <B>const</B> std::string&amp; file) 
+{ 
+&nbsp;&nbsp; std::string::const_iterator start, end; 
+&nbsp;&nbsp; start = file.begin(); 
+&nbsp;&nbsp; end = file.end();&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; boost::<a href="match_results.html">match_results</a>&lt;std::string::const_iterator&gt; what; 
+&nbsp;&nbsp; boost::match_flag_type flags = boost::match_default; 
+&nbsp;&nbsp; <B>while</B>(regex_search(start, end, what, expression, flags))&nbsp;
+&nbsp;&nbsp; { 
+<FONT color=#000080>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>// what[0] contains the whole string 
+</I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>// what[5] contains the class name. 
+</I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>// what[6] contains the template specialisation if any. 
+</I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>// add class name and position to map: 
+</I></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m[std::string(what[5].first, what[5].second) + std::string(what[6].first, what[6].second)] =&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; what[5].first - file.begin();&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT color=#000080><I>// update search position: 
+</I></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start = what[0].second;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT color=#000080><I>// update flags: 
+</I></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flags |= boost::match_prev_avail;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flags |= boost::match_not_bob;&nbsp;
+&nbsp;&nbsp; } 
+}
+     </PRE>
+      <HR>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         04 Feb 2004 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2004<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+   </body>
+</html>

@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3><A name="BOOST_IS_DEFINED">BOOST_IS_DEFINED</A>( symbol )</H3>
+  <P class="first-line-indented">Unlike the rest of the tools in the toolbox this tool does not perform 
+    the logging itself. It's only purpose is to check at runtime whether or not the supplied preprocessor 
+    symbol is defined. Use it in combination with BOOST_CHECK to perform and log validation. Macros of 
+    any arity could be checked. To check the macro definition with non-zero arity specify dummy arguments 
+    for it. See below for example.</P>
+  <P class="first-line-indented">The only tool's argument is a preprocessor symbol that gets validated. 
+  </P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    BOOST_CHECK( BOOST_IS_DEFINED(SYMBOL1) );
+    BOOST_CHECK( BOOST_IS_DEFINED(SYMBOL2(arg)) );
+    
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(2) : error in test_main: test BOOST_IS_DEFINED(SYMBOL1) 
+    failed<BR>
+    test.cpp(3) : error in test_main: test BOOST_IS_DEFINED(SYMBOL2(arg)) failed  
+  </P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK.html" target="descr">BOOST_CHECK</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

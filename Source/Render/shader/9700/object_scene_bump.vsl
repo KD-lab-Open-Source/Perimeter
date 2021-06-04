@@ -1,0 +1,100 @@
+
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+	float3 n : NORMAL;
+    float2 t0 : TEXCOORD0;
+	float3 T : TEXCOORD1; //tangent
+	float3 S : TEXCOORD2; //binormal
+	float3 SxT : TEXCOORD3; //normal
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float2  t0 : TEXCOORD0;
+#ifdef SHADOW
+	float2  t1 : TEXCOORD1;
+	float1  t2 : TEXCOORD2;
+#endif
+	float3  t3 : TEXCOORD3;
+	float3  t4 : TEXCOORD4;
+	float3  specular: COLOR1;
+};
+
+float4x4 mWVP;
+float4x4 mWorldToLight;
+float4x4 mShadow;
+float4x4 mWorld;
+float4x4 mView;
+float4x4 mInvWorld;
+
+float3 vCameraPos;
+float3 vLightDirection;
+float3 vLightDirectionInvWorld;
+
+float3 vPointPos0;
+float3 vPointColor0;
+float4 vPointParam0;//(att0,att2,,);
+
+float3 vPointPos1;
+float3 vPointColor1;
+float4 vPointParam1;//(att0,att2,,);
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+
+	o.pos=mul(v.pos,mWVP);
+	o.t0=v.t0;
+#ifdef SHADOW
+	o.t1=mul(v.pos,mShadow);
+
+	float4 sh=mul(v.pos,mWorldToLight);
+	o.t2=sh.z;
+#endif
+	////bump
+	float3 world_pos=mul(v.pos,mWorld);
+
+//	float3 ldir=-vLightDirection;
+//	float3 light=normalize(mul(ldir,(float3x3)mInvWorld));
+	float3 light=vLightDirectionInvWorld;
+	// move light vector into tangent space
+	float3 light_obj;
+	light_obj.x=dot(light,v.T);
+	light_obj.y=dot(light,v.S);
+	light_obj.z=dot(light,v.SxT);
+	o.t3=light_obj;
+
+	float3 dir=normalize(vCameraPos-world_pos);
+	float3 half_v=dir-vLightDirection;
+	float3 half_obj=normalize(mul(half_v,(float3x3)mInvWorld));
+
+	o.t4.x=dot(half_obj,v.T);
+	o.t4.y=dot(half_obj,v.S);
+	o.t4.z=dot(half_obj,v.SxT);
+
+#ifdef POINT1
+	//point light
+	float3 delta_point=world_pos-vPointPos0;
+	float r2=dot(delta_point,delta_point);
+	float point_c=1/(vPointParam0.y*r2+vPointParam0.x);
+	float3 point_color=vPointColor0*point_c;
+
+	o.specular=point_color;
+#else
+	o.specular=(float3)0;
+#endif
+
+#ifdef POINT2
+	//point light
+	delta_point=world_pos-vPointPos1;
+	r2=dot(delta_point,delta_point);
+	point_c=1/(vPointParam1.y*r2+vPointParam1.x);
+	point_color=vPointColor1*point_c;
+
+	o.specular.xyz+=point_color;
+#endif
+
+    return o;
+}

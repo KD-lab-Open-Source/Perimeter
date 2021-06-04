@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+  <head>
+    <meta name="generator" content=
+    "HTML Tidy for Linux/x86 (vers 1st April 2002), see www.w3.org">
+    <!--tidy options: -i -wrap 78 -->
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" type="text/css" href="../../boost.css">
+
+    <title>Boost.Build v2 extender manual</title>
+
+    <style type="text/css">
+        hr { color: black }
+        p.revision { text-align: right; font-style: italic }
+        pre.code { margin-left: 2em } 
+        pre.output { margin-left: 2em }
+        img.banner { border: 0; float: left }
+        h1 { text-align: right }
+        br.clear { clear: left }
+        div.alert { color: red }
+        table { align: center; border: thin; }     
+           </style>
+  </head>
+  <!-- Things yet to document:
+         - build request, build request expansion and directly requested targets
+         - conditional properties
+       -->
+
+  <body>
+    <p><a href="../../../../index.htm"><img class="banner" height="86" width="277"
+    alt="C++ Boost" src="../c++boost.gif"></a></p>
+
+    <h1>Boost.Build v2 extender manual<br class="clear">
+    </h1>
+    <hr>
+
+    <dl class="page-index">
+      <dt><a href="#introduction">Introduction</a></dt>
+
+      <dt><a href="#target_types">Target types</a></dt>
+
+      <dt><a href="#tools">Tools</a></dt>
+
+      <dt><a href="#main_target_rules">Main target rules</a></dt>
+
+      <dt><a href="#scanners">Scanners</a></dt>
+    </dl>
+    <hr>
+
+    <h2 id="introduction">Introduction</h2>
+
+    <p>This document explains how to extend Boost.Build to accomodate your
+    local requirements. Let's start with quite simple, but realistic
+    example.</p>
+
+    <p>Say you're writing an application which generates C++ code. If you
+    ever did this, you know that it's not nice. Embedding large portions of
+    C++ code in string literals is very awkward. A much better solution
+    is:</p>
+
+    <ol>
+      <li>Write the template of the code to be generated, leaving
+      placeholders at the points which will change</li>
+
+      <li>Access the template in your application and replace placeholders
+      with appropriate text.</li>
+
+      <li>Write the result.</li>
+    </ol>
+
+    <p>It's quite easy to archive. You write special verbatim files, which
+    are just C++, except that the very first line of the file gives a name of
+    variable that should be generated. A simple tool is created which takes
+    verbatim file and creates a cpp file with a single char* variable, which
+    name is taken from the first line of verbatim file, and which value is
+    properly quoted content of the verbatim file.</p>
+
+    <p>Let's see what Boost.Build can do.</p>
+
+    <p>First off, Boost.Build has no idea about "verbatim files". So, you
+    must register a new type. The following code does it:</p>
+<pre>
+    import type ;
+    type.register VERBATIM : verbatim ;
+   
+</pre>
+
+    <p>The first parameter to 'type.register' gives the name of declared
+    type. By convention, it's uppercase. The second parameter is suffix for
+    this type. So, if Boost.Build sees "code.verbatim" in the list of
+    sources, it knows that it's of type <tt>VERBATIM</tt>.</p>
+
+    <p>Lastly, you need a tool to convert verbatim files to C++. Say you've
+    sketched such a tool in Python. Then, you have to inform Boost.Build
+    about the tool. The Boost.Build concept which represents a tool is
+    <em>generator</em>.</p>
+
+    <p>First, you say that generator 'inline-file' is able to convert
+    VERBATIM type into C++:</p>
+<pre>
+    import generators ;
+    generators.register-standard verbatim.inline-file : VERBATIM : CPP ;
+   
+</pre>
+
+    <p>Second, you must specify the commands to be run to actually perform
+    convertion:</p>
+<pre>
+    actions inline-file
+    {
+        &quot;./inline-file.py&quot; $(&lt;) $(&gt;)
+    }
+   
+</pre>
+    <!-- We use verbatim.inline-file in one place and just inline-file in
+             another. Is this confusing for user?
+        -->
+
+    <p>Now, we're ready to tie it all together. Put all the code above in
+    file "verbatim.jam", add "import verbatim ;" to "project-root.jam", and
+    it's possible to write the following in Jamfile:</p>
+<pre>
+    exe codegen : codegen.cpp class_template.verbatim usage.verbatim ;
+   
+</pre>
+    The verbatim files will be automatically converted into C++ and linked
+    it. 
+
+    <p>The complete code is available in <a href=
+    "../example/customization">example/customization</a>
+    directory.</p>
+
+    <h2 id="target_types">Target types</h2>
+
+    <h2 id="tools">Tools</h2>
+
+    <h2 id="main_target_rules">Main target rules</h2>
+
+    <h2 id="scanners">Scanners</h2>
+    <hr>
+
+    <p class="revision">Last modified: Jule 3, 2003</p>
+
+    <p>&copy; Copyright Vladimir Prus 2002-2003. Permission to copy, use,
+    modify, sell and distribute this document is granted provided this
+    copyright notice appears in all copies. This document is provided ``as
+    is'' without express or implied warranty, and with no claim as to its
+    suitability for any purpose.</p>
+    <!-- sf logo -->
+  </body>
+</html>
+

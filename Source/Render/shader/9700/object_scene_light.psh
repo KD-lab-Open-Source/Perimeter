@@ -1,0 +1,28 @@
+ps.2.0
+
+dcl t0.xy
+dcl v0.rgba
+dcl v1.rgba
+
+dcl_2d s0
+
+#ifdef c2x2
+#include "2x2.inl"
+#else
+#include "4x4.inl"
+#endif
+
+//Load texture color
+texld r1, t0, s0
+// add lighting
+mul r0, r1, v0
+add r0.rgb, r0, v1
+
+mul r0.rgb, r10, r0
+//mov r0,v0
+//mov r0.rgb,v0
+
+mov r0.a, r1
+
+// output
+mov oC0,r0

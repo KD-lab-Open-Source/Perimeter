@@ -1,0 +1,6 @@
+<location type='Sphere'>
+	<center value='0.0,0.0,0.0'/>
+	<radius value='255.0'/>
+	<blanking value='0.0'/>
+	<fading value='1.0'/>
+</location>

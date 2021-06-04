@@ -1,0 +1,108 @@
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+	float3 n : NORMAL;
+    float2 t0 : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float4  t0 : TEXCOORD0;
+	float2  t1 : TEXCOORD1;
+#ifdef TEX2
+	float2  t2 : TEXCOORD2;
+#endif 
+	float4  diffuse: COLOR0;
+	float4  specular: COLOR1;
+	float fog: FOG;
+};
+
+float4x4 mWVP;
+float4x4 mShadow;
+float4x4 mWorld;
+float4x4 mView;
+float4x4 mWorldView;
+
+float4 vAmbient;
+float4 vDiffuse;
+float4 vSpecular;
+float fSpecularPower;
+float3 vCameraPos;
+float3 vLightDirection;
+
+float3 vFog;//fog_min,fog_max/(fog_max-fog_min),-1/(fog_max-fog_min)
+
+float3 vUtrans; 
+float3 vVtrans;
+
+float3 vPointPos0;
+float3 vPointColor0;
+float4 vPointParam0;//(att0,att2,,);
+
+float3 vPointPos1;
+float3 vPointColor1;
+float4 vPointParam1;//(att0,att2,,);
+
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+
+	o.pos=mul(v.pos,mWVP);
+#ifdef TRANS
+	float3 vt0=float3(v.t0.x,v.t0.y,1);
+	o.t1.x=dot(vt0,vUtrans);
+	o.t1.y=dot(vt0,vVtrans);
+#else
+	o.t1=v.t0;
+#endif
+	o.t0=mul(v.pos,mShadow);
+
+	//fog
+	float fogz=mul(v.pos,mWorldView).z;
+	float fog=fogz*vFog.z+vFog.y;
+	o.fog=clamp(fog,0,1);
+
+	//light
+	float3 world_pos=mul(v.pos,(float4x3)mWorld);
+	float3 world_n=normalize(mul(v.n,(float3x3)mWorld));
+
+	float3 ldir=-vLightDirection;
+	float3 dir=normalize(vCameraPos-world_pos);
+	float3 half_v=normalize(dir+ldir);
+	float4 ret=lit(dot(world_n,ldir),dot(world_n,half_v),fSpecularPower); 
+
+	float mdiffuse=ret.y;
+	float mspecular=ret.z;
+	o.diffuse=mdiffuse*vDiffuse+vAmbient;
+	o.specular=mspecular*vSpecular;
+#ifdef TEX2
+	o.t2=mul(world_n,(float3x2)mView)*float2(0.5,0.5)+float2(0.5,0.5);
+#endif
+
+#ifdef POINT1
+	//point light
+	float3 delta_point=world_pos-vPointPos0;
+	float r2=dot(delta_point,delta_point);
+	float point_c=1/(vPointParam0.y*r2+vPointParam0.x);
+	float3 point_color=vPointColor0*point_c;
+
+	o.diffuse.xyz+=point_color;
+	o.specular.xyz+=point_color;
+#endif
+
+#ifdef POINT2
+	//point light
+	delta_point=world_pos-vPointPos1;
+	r2=dot(delta_point,delta_point);
+	point_c=1/(vPointParam1.y*r2+vPointParam1.x);
+	point_color=vPointColor1*point_c;
+
+	o.diffuse.xyz+=point_color;
+	o.specular.xyz+=point_color;
+#endif
+
+    return o;
+}
+

@@ -1,0 +1,24 @@
+#  Boost.Bind Library test Jamfile
+#
+#  Copyright (c) 2003, 2004 Peter Dimov
+#
+#  Permission to copy, use, modify, sell and distribute this software
+#  is granted provided this copyright notice appears in all copies.
+#  This software is provided "as is" without express or implied
+#  warranty, and with no claim as to its suitability for any purpose.
+
+# bring in rules for testing
+import testing ;
+
+test-suite "bind"
+    : [ run bind_test.cpp ]
+      [ run bind_eq_test.cpp ]
+      [ run bind_const_test.cpp ]
+      [ run bind_cv_test.cpp ]
+      [ run bind_stateful_test.cpp ]
+      [ run mem_fn_test.cpp ]
+      [ run mem_fn_void_test.cpp ]
+      [ run mem_fn_derived_test.cpp ]
+      [ run mem_fn_eq_test.cpp ]
+    ;
+

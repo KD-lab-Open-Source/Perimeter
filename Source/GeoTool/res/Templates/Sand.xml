@@ -1,0 +1,13 @@
+<texture type='Primitive'>
+	<persistence value='0.9'/>
+	<octaveCount value='4'/>
+	<shift value='0.000000,0.000000,0.000000'/>
+	<scale value='0.3,0.3,0.3'/>
+	<colorizer type='Sand'>
+		<fgColor value='0.7,0.45,0.0'/>
+		<bgColor value='0.94,0.8,0.1'/>
+		<grad value='3.0'/>
+		<step value='1.0'/>
+	</colorizer>
+	<interpolator type='Cubic'/>
+</texture>

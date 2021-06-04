@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_BITWISE_EQUAL( left, right )</H3>
+  <P class="first-line-indented">This tool is used to perform bitwise comparison of two values. This check 
+    shows all positions where <I>left</I> and <I>right</I> value's bits mismatch.</P>
+  <P class="first-line-indented">If comparisons are successful, the tool produces a confirmation messages 
+    (note: to manage what messages appear in the test output stream set the proper log level), in other 
+    case in every mismatch position it produces an error message in a form &quot;error in &lt;test case 
+    name&gt;: test &lt;<I>left</I>&gt; =.= &lt;<I>right</I>&gt; in a position &lt;<I>mismatch position</I>&gt; 
+    failed.</P>
+  <P class="first-line-indented">The tool's first parameter is the <I>left</I> compared value. Second 
+    parameter is the <I>right</I> compared value. Parameters are not required to be of the same type, 
+    but warning is issues if their size does not coincide.</P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    BOOST_BITWISE_EQUAL( (<SPAN class="cpp-type">char</SPAN>)<SPAN class="literal">0x26</SPAN>, (<SPAN class="cpp-type">char</SPAN>)<SPAN class="literal">0x04</SPAN> );
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(3) : error in test_main: test (char)0x26 =.= (char)0x04 in the position 1 failed<BR>
+	test.cpp(3) : error in test_main: test (char)0x26 =.= (char)0x04 in the position 5 failed</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK_EQUAL.html" target="descr">BOOST_CHECK_EQUAL</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

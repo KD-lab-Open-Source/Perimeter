@@ -1,0 +1,483 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\Configurator.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\Configurator.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_CUSTOM_GRAPHICS DIALOG  0, 0, 223, 284
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Graphics custom settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,166,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,166,24,50,14
+    LTEXT           "Landscape details",IDC_STATIC_MAP_LEVEL_LOD,7,7,153,8
+    COMBOBOX        IDC_COMBO_MAP_LEVEL_LOD,7,21,153,100,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Reflection",IDC_CHECK_REFLECTION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,41,209,8
+    CONTROL         "Occlusion",IDC_CHECK_OCCLUSION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,54,209,8
+    CONTROL         "Point light",IDC_CHECK_POINT_LIGHT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,67,209,8
+    CONTROL         "4",IDC_RADIO_SHADOW_SAMPLES1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,31,247,20,10
+    CONTROL         "16",IDC_RADIO_SHADOW_SAMPLES2,"Button",
+                    BS_AUTORADIOBUTTON,103,246,24,10
+    LTEXT           "Shadow Quality",IDC_STATIC_SHADOW_QUALITY,7,198,209,8
+    COMBOBOX        IDC_COMBO_SHADOW_QUALITY,7,209,153,91,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Bump mapping",IDC_CHECK_BUMP_MAPPING,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,80,209,8
+    CONTROL         "Bump chaos",IDC_CHECK_BUMP_CHAOS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,92,209,8
+    CONTROL         "Compress textures",IDC_CHECK_FAVORITE_LOAD_DDS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,106,209,8
+    CONTROL         "Slider1",IDC_SLIDER_PARTICLE_RATE,"msctls_trackbar32",
+                    WS_TABSTOP,5,133,211,10
+    LTEXT           "Particle rate",IDC_STATIC_PARTICLE_RATE,7,121,209,8
+    CONTROL         "Shadow map",IDC_RADIO_SHADOW_TYPE1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,17,161,193,10
+    CONTROL         "Self shadow map",IDC_RADIO_SHADOW_TYPE2,"Button",
+                    BS_AUTORADIOBUTTON,17,175,193,10
+    GROUPBOX        "Shadow type",IDC_STATIC_SHADOW_TYPE,7,150,209,42
+    GROUPBOX        "Shadow samples",IDC_STATIC_SHADOW_SAMPLES,7,230,153,34
+END
+
+IDD_PROPPAGE_ABOUT DIALOG  0, 0, 218, 127
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "About..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_EDIT_ABOUT,"RICHEDIT",TCS_HOTTRACK | TCS_VERTICAL | 
+                    TCS_RAGGEDRIGHT | TCS_MULTISELECT | WS_BORDER | 
+                    WS_VSCROLL | WS_TABSTOP,7,7,204,113
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIALOG_CUSTOM_GRAPHICS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 216
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 277
+    END
+
+    IDD_PROPPAGE_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 211
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Config..."
+    IDS_LANGUAGES           "English,French,German,Italian,Spanish,Shwedish,Polish,Russian"
+    IDS_RESOLUTIONS         "800x600,1024x768,1280x960,1600x1200"
+    IDS_SECTION_GAME        "Game"
+    IDS_KEY_MULTIPROC       "HT"
+    IDS_VALUE_LANGUAGE      "Locale"
+    IDS_LANGUAGE_DEFAULT    "Russian"
+    IDS_SECTION_GRAPHICS    "Graphics"
+    IDS_KEY_SCR_SIZE_X      "ScreenSizeX"
+    IDS_KEY_SCR_SIZE_Y      "ScreenSizeY"
+    IDS_MAIN_INI_MAIN_SECTION "Main"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MAIN_INI_VALUE_LANGUAGES "Languages"
+    IDS_MAIN_INI_VALUE_RESOLUTIONS "Resolutions"
+    IDS_MAIN_INI_VALUE_LOCDIR "LocDir"
+    IDS_PROPSHT_CAPTION     "ПЕРИМЕТР Конфигуратор"
+    IDS_KEY_COLOR_DEPTH     "BPP"
+    IDS_SECTION_SOUND       "Sound"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_KEY_SOUNDS_EFFECT   "SoundEnable"
+    IDS_KEY_MUSIC           "MusicEnable"
+    IDS_KEY_SOUND_VOLUME    "SoundVolume"
+    IDS_KEY_MUSIC_VOLUME    "MusicVolume"
+    IDS_MAIN_INI_VALUE_TEXTDIR "TextDir"
+    IDS_MAIN_INI_VALUE_TEXTFILE "TextFileName"
+    IDS_KEY_OCCLUSION       "EnableOcclusion"
+    IDS_KEY_POINT_LIGHT     "EnablePointLight"
+    IDS_KEY_BUMP            "EnableBump"
+    IDS_KEY_BUMP_CHAOS      "EnableBumpChaos"
+    IDS_KEY_PARTICLE_RATE   "ParticleRate"
+    IDS_KEY_COMPRESS_TEXTURES "FavoriteLoadDDS"
+    IDS_KEY_MAP_REFLECTION  "MapReflection"
+    IDS_KEY_OBJECT_REFLECTION "ObjectReflection"
+    IDS_SECTION_FAST_GRAPHICS "FastGraphics"
+    IDS_SECTION_PERFORMANCE_GRAPHICS "PerformanceGraphics"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SECTION_MAX_GRAPHICS "MaxGraphics"
+    IDS_SECTION_EXTREMALE_GRAPHICS "ExtremeGraphics"
+    IDS_COMBO_ITEMS_TDB_PREFIX "Config.ComboItems."
+    IDS_CONTROLS_TDB_PREFIX "Config.Controls."
+    IDS_KEY_SHADOW_TYPE     "ShadowType"
+    IDS_KEY_SHADOW_SAMPLES  "ShadowSamples"
+    IDS_KEY_MAP_LEVEL_LOD   "MapLevelLOD"
+    IDS_KEY_SHADOW_QUALITY  "DrawMeshShadow"
+    IDS_KEY_MOUSE_LOOK_RATE "MouseLookRate"
+    IDS_KEY_SCROLL_RATE     "ScrollRate"
+    IDS_KEY_TOOL_TIPS       "ShowTips"
+    IDS_NO_DATA             "No Data"
+    IDS_ABOUT_TEXT          "ПЕРИМЕТР: Завет Императора\n\n(c) 2004-2005 Фирма ""1С"". Все права защищены.\n(c) 2004-2005 Компания ""К-Д ЛАБ"". Все права защищены.\n\nСсылки:\nhttp://games.1c.ru/perimeter\nhttp://www.kdlab.com/perimeter"
+END
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG  0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Configurator"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Configurator Version 1.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 2004",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_CONFIGURATOR_DIALOG DIALOGEX 0, 0, 277, 294
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Config"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COMBO_LANGUAGE,57,7,143,192,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_RESOULUTION,57,33,138,156,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "No",IDC_RADIO_MULTIPROC_NO,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,15,97,25,10
+    CONTROL         "Yes",IDC_RADIO_MULTIPROC_YES,"Button",
+                    BS_AUTORADIOBUTTON,65,97,28,10
+    CONTROL         "Autodetect",IDC_RADIO_MULTIPROC_AUTO,"Button",
+                    BS_AUTORADIOBUTTON,118,97,51,10
+    DEFPUSHBUTTON   "OK",IDOK,220,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,220,22,50,14
+    LTEXT           "Language",IDC_STATIC,7,7,49,9
+    GROUPBOX        "Graphics",IDC_STATIC,7,24,194,54
+    LTEXT           "Resolution",IDC_STATIC,10,35,34,8
+    GROUPBOX        "Multiprocessor(HT)",IDC_STATIC,7,84,194,29
+END
+
+IDD_PROPPAGE_MISC DIALOG  0, 0, 223, 134
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Misc"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_LANGUAGE,7,22,153,192,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "No",IDC_RADIO_MULTIPROC_NO,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,14,54,70,10
+    CONTROL         "Autodetect",IDC_RADIO_MULTIPROC_AUTO,"Button",
+                    BS_AUTORADIOBUTTON,94,54,104,10
+    LTEXT           "Language",IDC_STATIC_LANGUAGE,7,7,153,9
+    GROUPBOX        "Multiprocessor(HT)",IDC_STATIC_HT,7,41,197,29
+END
+
+IDD_PROPPAGE_GRAPH DIALOG  0, 0, 223, 119
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Graphics"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_RESOULUTION,27,21,138,156,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Resolution",IDC_STATIC_RESOLUTION,7,9,209,8
+    LTEXT           "Preset",IDC_STATIC_PRESET,7,39,209,8
+    COMBOBOX        IDC_COMBO_PRESET,28,53,138,179,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "16",IDC_RADIO_COLOR_DEPTH_16,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,65,94,24,10
+    CONTROL         "32",IDC_RADIO_COLOR_DEPTH_32,"Button",
+                    BS_AUTORADIOBUTTON,139,94,24,10
+    GROUPBOX        "Color depth",IDC_STATIC_COLOR_DEPTH,7,79,186,33
+    PUSHBUTTON      "...",IDC_BUTTON_CUSTOM_GRAPH,170,53,21,12
+END
+
+IDD_PROPPAGE_SOUND DIALOG  0, 0, 223, 134
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Sound"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Sound volume",IDC_STATIC_SOUND_VOLUME,7,33,201,8
+    CONTROL         "Slider1",IDC_SLIDER_SOUND_VOLUME,"msctls_trackbar32",
+                    WS_TABSTOP,57,48,159,10
+    LTEXT           "Music volume",IDC_STATIC_MUSIC_VOLUME,7,82,209,8
+    CONTROL         "Slider1",IDC_SLIDER_MUSIC_VOLUME,"msctls_trackbar32",
+                    WS_TABSTOP,57,97,159,10
+    CONTROL         "Sound effects",IDC_CHECK_SOUND_EFFECTS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,17,183,8
+    CONTROL         "Music",IDC_CHECK_MUSIC,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,65,209,8
+END
+
+IDD_PROPPAGE_GAME DIALOG  0, 0, 218, 127
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Game"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Mouse look rate",IDC_STATIC_MOUSE_LOOK_RATE,7,7,204,8
+    CONTROL         "Slider1",IDC_SLIDER_MOUSE_LOOK_RATE,"msctls_trackbar32",
+                    WS_TABSTOP,7,20,155,11
+    LTEXT           "Scroll rate",IDC_STATIC_SCROLL_RATE,7,38,204,8
+    CONTROL         "Slider1",IDC_SLIDER_SCROLL_RATE,"msctls_trackbar32",
+                    WS_TABSTOP,7,52,155,11
+    CONTROL         "Tool tips",IDC_CHECK_TOOL_TIPS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,77,204,10
+END
+
+IDD_PROPPAGE_ABOUT DIALOG  0, 0, 218, 127
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "About..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_EDIT_ABOUT,"RICHEDIT",TCS_HOTTRACK | TCS_VERTICAL | 
+                    TCS_RAGGEDRIGHT | TCS_MULTISELECT | WS_BORDER | 
+                    WS_VSCROLL | WS_TABSTOP,7,7,204,113
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_CONFIGURATOR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 287
+    END
+
+    IDD_PROPPAGE_MISC, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 216
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 126
+    END
+
+    IDD_PROPPAGE_GRAPH, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 216
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_PROPPAGE_SOUND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 216
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 127
+    END
+
+    IDD_PROPPAGE_GAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 211
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+
+    IDD_PROPPAGE_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 211
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "Config MFC Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "Configurator"
+            VALUE "LegalCopyright", "Copyright (C) 2004"
+            VALUE "OriginalFilename", "Config.EXE"
+            VALUE "ProductName", "Config Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\Configurator.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

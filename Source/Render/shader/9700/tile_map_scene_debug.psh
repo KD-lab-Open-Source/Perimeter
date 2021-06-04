@@ -1,0 +1,46 @@
+ps.2.0
+
+// c0-c7 - unused
+
+// ambient color
+def c17, 0.25, 0.25, 0.25, 1.0
+// (0, 1, sample weight (1/16), z-bias)
+//def c18, 0.0, 1.0, 0.0625, -0.001
+def c18, 0.4, 1.0, 0.0625, -0.01
+
+dcl t0.xyzw
+dcl t1.xyzw
+dcl t2.xyzw
+dcl v0.rgba
+
+dcl_2d s0
+dcl_2d s1
+
+// add z-bias 
+mov r0, t2
+
+add r8, r0.x, c18.w
+
+// coordinates for first two rows
+mov r0, t1
+
+// fetch two rows
+texld r0, r0, s1
+
+// compare first row
+sub r0, r8, r0.r
+
+cmp r10, -r0, c18.y, c18.x
+
+//Load texture color
+texld r1, t0, s0
+//add lighting
+mad r0.rgb, r10, r1, c17
+mov r0.a,r1.a
+
+//mov r0,r10
+//mov r0,r0.x
+//mov r0,r8.x
+
+// output
+mov oC0, r0

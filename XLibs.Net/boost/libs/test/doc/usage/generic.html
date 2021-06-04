@@ -1,0 +1,125 @@
+<HTML>
+<HEAD>
+<TITLE>Boost Test Library generic recommendations</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY> 
+<DIV class="header"> <A href="../index.html">Boost.Test</A> > <A href="recomendations.html"> Usage
+    recommendations </A> > <SPAN class="current_article"> Generic</SPAN></DIV> 
+<DIV class="body"> <IMG src='../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle"><SPAN class="first-line-indented">Generic</SPAN> usage
+    recommendations</H1> 
+  <UL> 
+    <LI><A href="#t2">Prefer the unit test framework to the test execution monitor</A></LI> 
+    <LI><A href="#t3">Prefer offline compiled libraries to the inline included
+        components</A> </LI> 
+    <LI><A href="#t4">If you use only free function based test cases advance
+        to the automatic registration facility</A> </LI> 
+    <LI><A href="#t1">To find location of first error reported by test tool within
+        reused template function, use special hook within framework headers</A></LI> 
+    <LI><A href="#t5">To test reusable template base component with different
+        template parameter use test case template facility</A></LI> 
+    <LI><A href="#t6">Prefer BOOST_CHECK_EQUAL to BOOST_CHECK</A></LI> 
+  </UL> 
+  <H5>Prefer the unit test framework to the test execution monitor<A name="t2"></A> </H5> 
+  <P class="first-line-indented">In most cases when you start working on unit
+    test you have a choice to use either one of the components provided by the
+    Boost.Test. Even though in simple cases test cases based solution would be
+    couple lines longer in a long term I would opt to use unit test framework.
+    At some point you will anyway end up with code like this:</P> 
+  <PRE class="code"><SPAN class="cpp-type">void</SPAN> test_feature1()
+{
+    ...
+
+}
+
+
+<SPAN class="cpp-type">int</SPAN> test_main()
+
+{
+
+    test_feature1();
+    test_feature1();
+    ...
+    test_featureN();			
+}</PRE> 
+  <P class="first-line-indented">Why then not switch to test cases? In code like
+    above if any exception occurred in test_feature1() rest of test is skipped.
+    While with test cases each separate feature test is executed and monitored
+    separately and you are getting more from your test. </P> 
+  <H5>Prefer offline compiled libraries to the inline included components <A name="t3"></A></H5> 
+  <P class="first-line-indented">If you are just want to write quick simple test
+    in environment where you never used Bosst.Test before - yes, use included
+    components. But if you plan to use Boost.Test on permanent basis, small investment
+    of time needed to build (if not build yet), install and change you makefiles/project
+    settings will soon return to you in a form of shorter compilation time. Why
+    do you need to make your compiler do the same work over and over again? </P> 
+  <H5>If you use only free function based test cases advance to the automatic
+    registration facility<A name="t4"></A></H5> 
+  <P class="first-line-indented">It's really easy to switch to automatic registration.
+    And you don't need to worry about forgotten test case anymore.</P> 
+  <H5>To find location of first error reported by test tool within reused template
+    function, use special hook within framework headers<A name="t1"></A> </H5> 
+  <P>In some cases you are reusing the same template based code from within one
+    test case (actually I recommend better solution in such case- see below).
+    Now if an error gets reported by the test tool within that reused code you
+    may have difficulty locating were exactly error occurred. To address this
+    issue you could either a add BOOST_MESSAGE statements in templated code that
+    log current type id od template parameters or you could use special hook
+    located in unit_test_result.hpp called first_failed_assertion(). If you set
+    a breakpoint right on the line where this function is defined you will be
+    able to unroll the stack and see where error actually occurred.</P> 
+  <H5>To test reusable template base component with different template parameter
+    use test case template facility<A name="t5"></A></H5> 
+  <P class="first-line-indented">If you writing unit test for generic reusable
+    component you may have a need to test it against set of different template
+    parameter types . Most probably you will end up with a code like this:</P> 
+  <PRE class="code"><SPAN class="reserv-word">template</SPAN>&lt;<SPAN class="reserv-word">typename</SPAN> TestType&gt;
+<SPAN class="cpp-type">void</SPAN>
+specific_type_test( TestType* = <SPAN class="literal">0</SPAN> )
+{
+    MyComponent&lt;TestType&gt; c;
+    ... <SPAN class="comment">// here we perform actual testing</SPAN>
+}
+
+
+<SPAN class="cpp-type">void</SPAN> my_component_test()
+{
+    specific_type_test( (<SPAN class="cpp-type">int</SPAN>*)<SPAN class="literal">0</SPAN> );
+    specific_type_test( (<SPAN class="cpp-type">float</SPAN>*)<SPAN class="literal">0</SPAN> );
+    specific_type_test( (UDT*)<SPAN class="literal">0</SPAN> );
+    ... 
+}
+</PRE> 
+  <P class="first-line-indented">This is namely the situation where you would
+    use test case template facility. It's not only simplify this kind of unit
+    testing by automating some of the work, in addition every argument type gets
+    tested separately under unit test monitor. As a result if one of types produce
+    exception or non-fatal error you may still continue and get results from
+    testing with other types. </P> 
+  <H5>Prefer BOOST_CHECK_EQUAL to BOOST_CHECK<A name="t6"></A></H5> 
+  <P class="first-line-indented">Even though BOOSK_CHECK tool is most generic
+    and allows to validate any bool convertible expression, I would recommend
+    to use, if possible, more specific tools dedicated to the task. For example
+    if you need you validate some variable vs. some expected value use BOOST_CHECK_EQUAL
+    instead. The main advantage is that in case of failure you will see the mismatched
+    value - the information most useful for error identification. The same applies
+    to other tools supplied by the framework. </P> 
+</DIV> 
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy
+        Rozental</A> 2001-2004. <BR> 
+      Use, modification, and distribution are subject to the Boost Software License,
+      Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or
+      copy at <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P> 
+    <P>Revised:
+      <!-- #BeginDate format:Sw1 -->26 January, 2004<!-- #EndDate --> 
+    </P> 
+  </DIV> 
+</DIV> 
+</BODY>
+</HTML>

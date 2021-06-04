@@ -1,0 +1,2417 @@
+#include "UnitAttribute.inl"
+#include "SquadShellEnums.inl"
+
+section SavePrm ( declaration = "Game\Scripts\Save.hxx", definition = "Game\Scripts\Save.cxx") 
+{
+
+struct SaveDamageMolecula
+{
+	bool isAlive = true;
+	vector<int> elementsDead;
+
+delegate:
+	const SaveDamageMolecula& operator=(const class DamageMolecula& data);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(isAlive);
+		ar & ARCHIVE_WRAP_OBJECT(elementsDead);
+	}
+};
+
+struct SaveDurationTimer
+{
+	int time = 0;
+
+	initialize();
+
+delegate:
+	void start(int duration) { timer_.start(time = duration); }
+	int operator()() { return time = timer_(); }
+	int operator!() { time = timer_(); return !timer_; } 
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(time);
+		initialize();
+	}
+
+private:
+	DurationTimer timer_;											 
+};
+
+struct SaveUnitLink
+{
+	int unitID = 0;
+	int playerID = 0;
+
+delegate:
+	const SaveUnitLink& operator=(const terUnitBase* unit);
+	void setLink(terUnitBase*& unit) const;
+	void resolveLink() const;
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(unitID);
+		ar & ARCHIVE_WRAP_OBJECT(playerID);
+	}
+
+private:
+	mutable terUnitBase** unitLink_;
+};
+
+struct SaveNodeController
+{
+	ChainID currentChain = CHAIN_NONE;
+	float phase = 0;
+
+	ChainID requestedChain = CHAIN_NONE; 
+	float requestedPhase = -1;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(currentChain);
+		ar & ARCHIVE_WRAP_OBJECT(phase);
+		ar & ARCHIVE_WRAP_OBJECT(requestedChain);
+		ar & ARCHIVE_WRAP_OBJECT(requestedPhase);
+	}
+};
+
+struct SaveInterpolationReal
+{
+	SaveNodeController node;
+	vector<SaveNodeController> nodeControllers;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(node);
+		ar & ARCHIVE_WRAP_OBJECT(nodeControllers);
+	}
+};
+
+//---------------------------------
+
+struct SaveWeaponData
+{
+	bool isSwitchedOn = false;
+	Vect3f targetPosition = Vect3f::ZERO;
+	SaveUnitLink target;
+	SaveUnitLink missile;
+	int fireDelayTimer = 0;
+
+delegate:	
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(isSwitchedOn);
+		ar & ARCHIVE_WRAP_OBJECT(targetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(target);
+		ar & ARCHIVE_WRAP_OBJECT(missile);
+		ar & ARCHIVE_WRAP_OBJECT(fireDelayTimer);
+	}
+};
+
+struct SaveWeaponFilthNavigatorData : SaveWeaponData
+{
+	int prmIndex = 0;
+
+delegate:	
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(prmIndex);
+	}
+};
+
+//---------------------------------
+
+struct SaveToolzerControllerData
+{
+	float scale = 0;
+	int currentStep = -1;
+	int requestedPhase = 0;
+	int currentStepTime = 0;
+	bool isFinished = false;
+
+	Vect2i position = Vect2i(0,0);
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(scale);
+		ar & ARCHIVE_WRAP_OBJECT(currentStep);
+		ar & ARCHIVE_WRAP_OBJECT(requestedPhase);
+		ar & ARCHIVE_WRAP_OBJECT(currentStepTime);
+		ar & ARCHIVE_WRAP_OBJECT(isFinished);
+		ar & ARCHIVE_WRAP_OBJECT(position);
+	}
+};
+
+//---------------------------------
+struct SaveUnitData
+{
+	int unitID = 0;
+	terUnitAttributeID attributeID = UNIT_ATTRIBUTE_NONE;
+	Vect3f position = Vect3f::ZERO;
+	QuatF orientaion = QuatF::ID;
+	float radius = 0;
+	string label = ""; // Метка
+	SaveDamageMolecula damageMolecula;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(unitID);
+		ar & ARCHIVE_WRAP_OBJECT(attributeID);
+		ar & ARCHIVE_WRAP_OBJECT(position);
+		ar & ARCHIVE_WRAP_OBJECT(orientaion);
+		ar & ARCHIVE_WRAP_OBJECT(radius);
+		ar & ARCHIVE_WRAP_OBJECT(label);
+		ar & ARCHIVE_WRAP_OBJECT(damageMolecula);
+	}
+};
+
+struct SaveCraterData : SaveUnitData
+{
+	int lifeTimer = 0;
+	SaveToolzerControllerData toolzer;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitData, "");
+		ar & ARCHIVE_WRAP_OBJECT(lifeTimer);
+		ar & ARCHIVE_WRAP_OBJECT(toolzer);
+	}
+};
+															   
+struct SaveUnitRealData : SaveUnitData
+{
+	bool basementInstalled = false; 
+	float accumulatedEnergy = 0; // Зарядка аккумулятора (0..1)	
+	int zeroLayerCounter = 0;
+	float weaponChargeLevel = 1;
+	vector<Vect3f> wayPoints;
+	SaveWeaponData* weapon;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitData, "");
+		ar & ARCHIVE_WRAP_OBJECT(basementInstalled);
+		ar & ARCHIVE_WRAP_OBJECT(accumulatedEnergy);
+		ar & ARCHIVE_WRAP_OBJECT(zeroLayerCounter);
+		ar & ARCHIVE_WRAP_OBJECT(weaponChargeLevel);
+		ar & ARCHIVE_WRAP_OBJECT(wayPoints);
+		ar & ARCHIVE_WRAP_OBJECT(weapon);
+	}
+};
+
+struct SaveUnitProjectileData : SaveUnitRealData
+{
+	SaveUnitLink target;
+	SaveUnitLink owner;
+
+	Vect3f sourcePosition = Vect3f::ZERO;
+	Vect3f targetPosition = Vect3f::ZERO;
+
+	int killTimer = 0;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(target);
+		ar & ARCHIVE_WRAP_OBJECT(owner);
+		ar & ARCHIVE_WRAP_OBJECT(sourcePosition);
+		ar & ARCHIVE_WRAP_OBJECT(targetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(killTimer);
+	}	
+};
+	
+struct SaveUnitScumStormData : SaveUnitProjectileData
+{
+	int freeMovementTimer = 0;
+	bool freeMovement = false;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitProjectileData, "");
+		ar & ARCHIVE_WRAP_OBJECT(freeMovementTimer);
+		ar & ARCHIVE_WRAP_OBJECT(freeMovement);
+	}	
+};
+
+struct SaveUnitProjectileUndergroundData : SaveUnitProjectileData
+{
+	Vect2f lastCraterPosition = Vect2f(0,0);
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitProjectileData, "");
+		ar & ARCHIVE_WRAP_OBJECT(lastCraterPosition);
+	}	
+};
+
+struct SaveAttackPoint
+{
+	SaveUnitLink unit;
+	SaveUnitLink squad;
+	Vect3f position = Vect3f::ZERO;
+	bool positionTarget = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(unit);
+		ar & ARCHIVE_WRAP_OBJECT(squad);
+		ar & ARCHIVE_WRAP_OBJECT(position);
+		ar & ARCHIVE_WRAP_OBJECT(positionTarget);
+	}	
+};
+										
+struct SaveUnitSquadData : SaveUnitData						
+{
+	Vect2f stablePosition = Vect2f::ZERO;
+	terUnitAttributeID currentMutation = UNIT_ATTRIBUTE_NONE;
+	float curvatureRadius = 0;
+	vector<SaveUnitData*> squadMembers;
+
+	vector<Vect2f> wayPoints;
+
+	vector<Vect2f> patrolPoints;
+	int patrolIndex = 0;
+
+	vector<SaveAttackPoint> attackPoints;
+	SaveUnitLink squadToFollow;
+
+	bool offensiveMode = false;
+
+	array<int, DAMAGE_ELEMENT_TYPE_MAX> atomsRequested;
+	array<int, DAMAGE_ELEMENT_TYPE_MAX> atomsPaused;
+
+	float mutationEnergy = 0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitData, "");
+		ar & ARCHIVE_WRAP_OBJECT(stablePosition);
+		ar & ARCHIVE_WRAP_OBJECT(currentMutation);
+		ar & ARCHIVE_WRAP_OBJECT(curvatureRadius);
+		ar & ARCHIVE_WRAP_OBJECT(squadMembers);
+		
+		ar & ARCHIVE_WRAP_OBJECT(wayPoints);
+		
+		ar & ARCHIVE_WRAP_OBJECT(patrolPoints);
+		ar & ARCHIVE_WRAP_OBJECT(patrolIndex);
+		
+		ar & ARCHIVE_WRAP_OBJECT(attackPoints);
+		ar & ARCHIVE_WRAP_OBJECT(squadToFollow);
+		
+		ar & ARCHIVE_WRAP_OBJECT(offensiveMode);
+		
+		ar & ARCHIVE_WRAP_OBJECT(atomsRequested);
+		ar & ARCHIVE_WRAP_OBJECT(atomsPaused);
+		
+		ar & ARCHIVE_WRAP_OBJECT(mutationEnergy);
+	}	
+};
+
+struct SaveFrameSlotData
+{
+	terUnitAttributeID productionID = UNIT_ATTRIBUTE_NONE;
+	int status = -1;
+	float progress = 1;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(productionID);
+		ar & ARCHIVE_WRAP_OBJECT(status);
+		ar & ARCHIVE_WRAP_OBJECT(progress);
+	}
+};
+
+struct SaveUnitFrameData : SaveUnitRealData
+{
+	bool attached = false;
+	bool attaching = false;
+	bool powered = false;
+	float spiralLevel = 0; // Уровень зарядки спирали [0-1]
+	SaveUnitData* squad;
+	array<SaveUnitData*, 5> frameSlots;
+	array<SaveFrameSlotData, 5> slotsData;
+	
+	terBelligerent belligerent = BELLIGERENT_NONE;
+	bool catched = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(attached);
+		ar & ARCHIVE_WRAP_OBJECT(attaching);
+		ar & ARCHIVE_WRAP_OBJECT(powered);
+		ar & ARCHIVE_WRAP_OBJECT(spiralLevel);
+		ar & ARCHIVE_WRAP_OBJECT(squad);
+		ar & ARCHIVE_WRAP_OBJECT(frameSlots);
+		ar & ARCHIVE_WRAP_OBJECT(slotsData);
+		
+		ar & ARCHIVE_WRAP_OBJECT(belligerent);
+		ar & ARCHIVE_WRAP_OBJECT(catched);
+	}
+};																		   
+
+struct SaveUnitFrameChildData : SaveUnitRealData
+{
+	bool dockReadyStatus = false;
+	bool alarmStatus = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(dockReadyStatus);
+		ar & ARCHIVE_WRAP_OBJECT(alarmStatus);
+	}	
+};
+
+struct SaveUnitBuildingData : SaveUnitRealData
+{
+	BitVector<BuildingStatus> buildingStatusBV;
+	int fireCount = 0;
+	bool visible = true; // Видимый
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(buildingStatusBV);
+		ar & ARCHIVE_WRAP_OBJECT(fireCount);
+		ar & ARCHIVE_TRANS_OBJECT(visible, "Видимый");
+	}	
+};
+
+struct SaveUnitLegionaryData : SaveUnitRealData
+{
+	int transportedSoldiers = 0; 
+	int transportedOfficers = 0; 
+	int transportedTechnics = 0; 
+
+	bool flyingMode = false;
+	bool diggingMode = false;
+
+	bool inSquad = true;
+	Vect2f localPosition = Vect3f::ZERO;
+	bool localPositionValid = false;
+	vector<Vect2f> wayPoints;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(transportedSoldiers);
+		ar & ARCHIVE_WRAP_OBJECT(transportedOfficers);
+		ar & ARCHIVE_WRAP_OBJECT(transportedTechnics);
+		
+		ar & ARCHIVE_WRAP_OBJECT(flyingMode);
+		ar & ARCHIVE_WRAP_OBJECT(diggingMode);
+		
+		ar & ARCHIVE_WRAP_OBJECT(inSquad);
+		ar & ARCHIVE_WRAP_OBJECT(localPosition);
+		ar & ARCHIVE_WRAP_OBJECT(localPositionValid);
+		ar & ARCHIVE_WRAP_OBJECT(wayPoints);
+	}
+};
+
+struct SaveUnitCommandCenterData : SaveUnitBuildingData
+{
+	SaveUnitData* squad;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitBuildingData, "");
+		ar & ARCHIVE_WRAP_OBJECT(squad);
+	}
+};
+
+struct SaveUnitProtectorData : SaveUnitBuildingData
+{
+	int monksNumber = 0;
+	int fieldState = 1;
+	bool enableCharge = true;
+	bool startWhenCharged = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitBuildingData, "");
+		ar & ARCHIVE_WRAP_OBJECT(monksNumber);
+		ar & ARCHIVE_WRAP_OBJECT(fieldState);
+		ar & ARCHIVE_WRAP_OBJECT(enableCharge);
+		ar & ARCHIVE_WRAP_OBJECT(startWhenCharged);
+	}
+};
+
+struct SaveUnitBuildingMilitaryData : SaveUnitBuildingData
+{
+	SaveUnitLink attackTarget;
+	SaveUnitLink lastAttackTarget;
+	bool manualAttackTarget = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitBuildingData, "");
+		ar & ARCHIVE_WRAP_OBJECT(attackTarget);
+		ar & ARCHIVE_WRAP_OBJECT(lastAttackTarget);
+		ar & ARCHIVE_WRAP_OBJECT(manualAttackTarget);
+	}	
+};
+
+struct SaveUnitCorridorAlphaData : SaveUnitBuildingData // Телепорт Альфа
+{
+	bool free = true; // Свободно летящий
+	int passTime = 1200; // Время облета, секунды
+	int timeOffset = 0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitBuildingData, "");
+		ar & ARCHIVE_TRANS_OBJECT(free, "Свободно летящий");
+		ar & ARCHIVE_TRANS_OBJECT(passTime, "Время облета, секунды");
+		ar & ARCHIVE_WRAP_OBJECT(timeOffset);
+	}	
+};
+
+struct SaveUnitCorridorOmegaData : SaveUnitBuildingData // Телепорт Омега
+{
+	bool upgraded = false; // Проапгрейжен
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitBuildingData, "");
+		ar & ARCHIVE_TRANS_OBJECT(upgraded, "Проапгрейжен");
+	}
+};
+
+struct SaveUnitNatureData : SaveUnitData
+{
+	custom<editModelNameDialog> modelName = ""; // Имя модели
+	bool visible = true; // Видимый
+	BitVector<terMissionObjectType> natureFlag; // Свойства
+	string chainName = ""; // Имя цепочки анимации
+	float chainPhase = 0; // Начальная фаза анимации
+	float chainPeriod = 0; // Период анимации (милисекунд)
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitData, "");
+		ar & ARCHIVE_TRANS_OBJECT(modelName, "Имя модели");
+		ar & ARCHIVE_TRANS_OBJECT(visible, "Видимый");
+		ar & ARCHIVE_TRANS_OBJECT(natureFlag, "Свойства");
+		ar & ARCHIVE_TRANS_OBJECT(chainName, "Имя цепочки анимации");
+		ar & ARCHIVE_TRANS_OBJECT(chainPhase, "Начальная фаза анимации");
+		ar & ARCHIVE_TRANS_OBJECT(chainPeriod, "Период анимации (милисекунд)");
+	}
+};
+
+struct SaveUnitFilthData : SaveUnitData
+{
+	terFilthSpotID filthType = FILTH_SPOT_ID_NONE; // Тип скверны
+
+	float attackWidth    =-1;	//Ширина полосы, для атаки (-1 весь мир)
+	float attackDirection= 0;	//Направление атаки 0..360 град
+
+	bool sleep = false; // Спит
+
+	float firstSleepTime = 0;		//Задержка по времени до первого появления (сек)
+	float sleepPeriod = 20;			//Время спячки (сек)
+	float deltaSleepPeriod = 0;		//Разброс времени спячки (сек)
+
+	float attackPeriond = 20;		//Время активности скверны (сек)
+	float deltaAttackPeriond = 0;	//Разброс времени активности скверны (сек)
+
+	int creatureNum =10;			//Количество скверны генерируемой в одной точке
+
+	terUnitAttributeID activatingUnit = UNIT_ATTRIBUTE_NONE; // Активирующий объект
+	float activatingDistance = 100; // Радиус активации
+	terFilthAttackType attack_player=FILTH_ATTACK_ALL; //Атаковать: всех, игрока, AI
+	bool initial_geoprocess=true; //Начальный геопроцесс
+
+	int killTimer = 0;
+
+	int sleep_timer=0;
+	bool create_first=true;
+	vector<Vect2f> hole_position;
+	vector<int> hole_position_inited;
+	bool kill_of_end=false;
+
+	vector<SaveUnitData*> swarmList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitData, "");
+		ar & ARCHIVE_TRANS_OBJECT(filthType, "Тип скверны");
+		
+		ar & ARCHIVE_TRANS_OBJECT(attackWidth, "Ширина полосы, для атаки (-1 весь мир)");
+		ar & ARCHIVE_TRANS_OBJECT(attackDirection, "Направление атаки 0..360 град");
+		
+		ar & ARCHIVE_TRANS_OBJECT(sleep, "Спит");
+		
+		ar & ARCHIVE_TRANS_OBJECT(firstSleepTime, "Задержка по времени до первого появления (сек)");
+		ar & ARCHIVE_TRANS_OBJECT(sleepPeriod, "Время спячки (сек)");
+		ar & ARCHIVE_TRANS_OBJECT(deltaSleepPeriod, "Разброс времени спячки (сек)");
+		
+		ar & ARCHIVE_TRANS_OBJECT(attackPeriond, "Время активности скверны (сек)");
+		ar & ARCHIVE_TRANS_OBJECT(deltaAttackPeriond, "Разброс времени активности скверны (сек)");
+		
+		ar & ARCHIVE_TRANS_OBJECT(creatureNum, "Количество скверны генерируемой в одной точке");
+		
+		ar & ARCHIVE_TRANS_OBJECT(activatingUnit, "Активирующий объект");
+		ar & ARCHIVE_TRANS_OBJECT(activatingDistance, "Радиус активации");
+		ar & ARCHIVE_TRANS_OBJECT(attack_player, "Атаковать: всех, игрока, AI");
+		ar & ARCHIVE_TRANS_OBJECT(initial_geoprocess, "Начальный геопроцесс");
+		
+		ar & ARCHIVE_WRAP_OBJECT(killTimer);
+		
+		ar & ARCHIVE_WRAP_OBJECT(sleep_timer);
+		ar & ARCHIVE_WRAP_OBJECT(create_first);
+		ar & ARCHIVE_WRAP_OBJECT(hole_position);
+		ar & ARCHIVE_WRAP_OBJECT(hole_position_inited);
+		ar & ARCHIVE_WRAP_OBJECT(kill_of_end);
+		
+		ar & ARCHIVE_WRAP_OBJECT(swarmList);
+	}
+};
+
+struct SaveTerGenerate
+{
+	int GenerationCount = 0 ;
+	float GenerationFactor = 0;
+	float GenerationSpeed = 0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(GenerationCount);
+		ar & ARCHIVE_WRAP_OBJECT(GenerationFactor);
+		ar & ARCHIVE_WRAP_OBJECT(GenerationSpeed);
+	}
+	
+};
+
+struct SaveFilthSwarm : SaveUnitData
+{
+	Vect3f position = Vect3f::ZERO;
+	float attack_width=-1;
+	float attack_direction=-1;
+	terFilthAttackType attack_player=FILTH_ATTACK_ALL;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitData, "");
+		ar & ARCHIVE_WRAP_OBJECT(position);
+		ar & ARCHIVE_WRAP_OBJECT(attack_width);
+		ar & ARCHIVE_WRAP_OBJECT(attack_direction);
+		ar & ARCHIVE_WRAP_OBJECT(attack_player);
+	}
+};
+
+struct SaveFilthSwarmAnt : SaveFilthSwarm
+{
+	SaveTerGenerate generate;
+	float DeltaAngle=0;
+	float ChangeAngleCount=0;
+
+	int TargetCount=0;
+	Vect3f TargetPosition = Vect3f::ZERO;
+
+	int attack_period=0;
+
+	vector<SaveUnitData*> unitList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(generate);
+		ar & ARCHIVE_WRAP_OBJECT(DeltaAngle);
+		ar & ARCHIVE_WRAP_OBJECT(ChangeAngleCount);
+		
+		ar & ARCHIVE_WRAP_OBJECT(TargetCount);
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		
+		ar & ARCHIVE_WRAP_OBJECT(unitList);
+	}
+};
+
+struct SaveFilthAnt : SaveUnitRealData
+{
+	Vect3f TargetPosition = Vect3f::ZERO;
+	float SpeedScale = 0 ;
+	float SpeedFactor =0 ;
+
+	bool free_destroy = false;
+	bool death_requested = false;
+	bool initial_geoprocess = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(SpeedScale);
+		ar & ARCHIVE_WRAP_OBJECT(SpeedFactor);
+		
+		ar & ARCHIVE_WRAP_OBJECT(free_destroy);
+		ar & ARCHIVE_WRAP_OBJECT(death_requested);
+		ar & ARCHIVE_WRAP_OBJECT(initial_geoprocess);
+	}
+};
+
+struct SaveFilthSpline : SaveUnitRealData
+{
+	float delta_time =0;
+	float cur_way_point = 0;
+	Vect3f acceleration = Vect3f::ZERO;
+	float k_acceleration = 0;
+
+	float damphing = 0;
+	bool auto_up = false;
+	bool auto_front = false;
+	Vect3f user_up = Vect3f::ZERO;
+	Vect3f user_front = Vect3f::ZERO;
+	bool interpolation_linear =false;
+
+	vector<Vect3f> way_points;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(delta_time);
+		ar & ARCHIVE_WRAP_OBJECT(cur_way_point);
+		ar & ARCHIVE_WRAP_OBJECT(acceleration);
+		ar & ARCHIVE_WRAP_OBJECT(k_acceleration);
+		
+		ar & ARCHIVE_WRAP_OBJECT(damphing);
+		ar & ARCHIVE_WRAP_OBJECT(auto_up);
+		ar & ARCHIVE_WRAP_OBJECT(auto_front);
+		ar & ARCHIVE_WRAP_OBJECT(user_up);
+		ar & ARCHIVE_WRAP_OBJECT(user_front);
+		ar & ARCHIVE_WRAP_OBJECT(interpolation_linear);
+		
+		ar & ARCHIVE_WRAP_OBJECT(way_points);
+	}
+};
+
+struct SaveFilthSwarmCrow : SaveFilthSwarm
+{
+	int generate_creature_num=0;
+	Vect3f attack_pos = Vect3f::ZERO;
+	int attack_period = 0;
+	
+	vector<SaveUnitData*> unitList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(generate_creature_num);
+		ar & ARCHIVE_WRAP_OBJECT(attack_pos);
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		
+		ar & ARCHIVE_WRAP_OBJECT(unitList);
+	}
+};
+
+struct SaveFilthCrow : SaveFilthSpline
+{
+	bool free_destroy=false;
+	Vect3f target_position = Vect3f::ZERO;
+	Vect3f delta_target = Vect3f::ZERO;
+	bool go_out = false;
+	bool attack_mode = false;
+	bool must_die = false;
+	bool death_request = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSpline, "");
+		ar & ARCHIVE_WRAP_OBJECT(free_destroy);
+		ar & ARCHIVE_WRAP_OBJECT(target_position);
+		ar & ARCHIVE_WRAP_OBJECT(delta_target);
+		ar & ARCHIVE_WRAP_OBJECT(go_out);
+		ar & ARCHIVE_WRAP_OBJECT(attack_mode);
+		ar & ARCHIVE_WRAP_OBJECT(must_die);
+		ar & ARCHIVE_WRAP_OBJECT(death_request);
+	}
+};
+
+struct SaveFilthSwarmDaemon : SaveFilthSwarm
+{
+	bool must_init_pos=false;
+	vector<Vect3f> init_pos;
+	Vect3f attack_pos = Vect3f::ZERO;
+
+	int attack_period = 0;
+
+	bool berserk_mode = false;
+	int berserk_time = 0;
+
+	int GenerationCount = 0;
+	float GenerationFactor = 0;
+	float GenerationSpeed = 0;
+
+	Vect3f pin = Vect3f::ZERO;
+	vector<SaveUnitData*> unit_list;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(must_init_pos);
+		ar & ARCHIVE_WRAP_OBJECT(init_pos);
+		ar & ARCHIVE_WRAP_OBJECT(attack_pos);
+		
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		
+		ar & ARCHIVE_WRAP_OBJECT(berserk_mode);
+		ar & ARCHIVE_WRAP_OBJECT(berserk_time);
+		
+		ar & ARCHIVE_WRAP_OBJECT(GenerationCount);
+		ar & ARCHIVE_WRAP_OBJECT(GenerationFactor);
+		ar & ARCHIVE_WRAP_OBJECT(GenerationSpeed);
+		
+		ar & ARCHIVE_WRAP_OBJECT(pin);
+		ar & ARCHIVE_WRAP_OBJECT(unit_list);
+	}
+};
+
+struct SaveFilthDaemon: SaveUnitRealData
+{
+	bool free_destroy=false;
+	bool on_zeroplast=false;
+	bool berserk_mode=false;
+	bool go_up=false;
+	float start_phase=0;
+	float mul_speed=0;
+	Vect3f direction = Vect3f::ZERO;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(free_destroy);
+		ar & ARCHIVE_WRAP_OBJECT(on_zeroplast);
+		ar & ARCHIVE_WRAP_OBJECT(berserk_mode);
+		ar & ARCHIVE_WRAP_OBJECT(go_up);
+		ar & ARCHIVE_WRAP_OBJECT(start_phase);
+		ar & ARCHIVE_WRAP_OBJECT(mul_speed);
+		ar & ARCHIVE_WRAP_OBJECT(direction);
+	}
+};
+
+struct SaveFilthSwarmDragon: SaveFilthSwarm
+{
+	bool use_geo = false;
+	int AttackCount = 0;
+	Vect3f TargetPosition = Vect3f::ZERO;
+	int TargetCount = 0;
+	Vect3f distance_direction = Vect3f::ZERO;
+	SaveUnitData* HeadPoint;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(use_geo);
+		ar & ARCHIVE_WRAP_OBJECT(AttackCount);
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(TargetCount);
+		ar & ARCHIVE_WRAP_OBJECT(distance_direction);
+		ar & ARCHIVE_WRAP_OBJECT(HeadPoint);
+	}	
+};
+
+struct SaveFilthDragonHead : SaveFilthSpline
+{
+	float ObjectAnimationPhase = 0;
+	float timerDieFreePhase = 0;
+	bool attack = false;
+	float Height = 0;
+	bool height_flag = false;
+	Vect3f TargetPosition = Vect3f::ZERO;
+	bool is_die = false;
+	bool is_die_free = false;
+
+	SaveUnitData* NextPoint;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSpline, "");
+		ar & ARCHIVE_WRAP_OBJECT(ObjectAnimationPhase);
+		ar & ARCHIVE_WRAP_OBJECT(timerDieFreePhase);
+		ar & ARCHIVE_WRAP_OBJECT(attack);
+		ar & ARCHIVE_WRAP_OBJECT(Height);
+		ar & ARCHIVE_WRAP_OBJECT(height_flag);
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(is_die);
+		ar & ARCHIVE_WRAP_OBJECT(is_die_free);
+		
+		ar & ARCHIVE_WRAP_OBJECT(NextPoint);
+	}	
+};
+
+struct SaveFilthDragon : SaveUnitRealData
+{
+	float ObjectAnimationPhase=0;
+	float timerDieFreePhase=0;
+	float scale=0;
+	float crater_run=0;
+	bool is_die=false;
+	bool is_die_free=false;
+
+	SaveUnitData* NextPoint;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(ObjectAnimationPhase);
+		ar & ARCHIVE_WRAP_OBJECT(timerDieFreePhase);
+		ar & ARCHIVE_WRAP_OBJECT(scale);
+		ar & ARCHIVE_WRAP_OBJECT(crater_run);
+		ar & ARCHIVE_WRAP_OBJECT(is_die);
+		ar & ARCHIVE_WRAP_OBJECT(is_die_free);
+		
+		ar & ARCHIVE_WRAP_OBJECT(NextPoint);
+	}	
+};
+
+struct SaveFilthSwarmGhost : SaveFilthSwarm
+{
+	float angle_z = 0;
+	SaveTerGenerate generate;
+	int attack_period = 0;
+	Vect3f TargetPosition = Vect3f::ZERO;
+	int TargetCount = 0;
+	vector<SaveUnitData*> unitList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(angle_z);
+		ar & ARCHIVE_WRAP_OBJECT(generate);
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(TargetCount);
+		ar & ARCHIVE_WRAP_OBJECT(unitList);
+	}
+};
+
+struct SaveFilthGhost : SaveUnitRealData
+{
+	Vect3f target_position = Vect3f::ZERO;
+	Vect3f attack_position = Vect3f::ZERO;
+
+	bool destruction = false;
+
+	float ObjectAnimation = 0;
+	float DestroyAnimation = 0;
+	float BeginAnimation = 0;
+
+	bool last_attack = false;
+	bool request_attack = false;
+	float AttackAnimation = 0;
+
+	bool destroy_flag = false;
+
+	int zeroPositionTimer = 0;
+	float last_deltaz = 0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(target_position);
+		ar & ARCHIVE_WRAP_OBJECT(attack_position);
+		
+		ar & ARCHIVE_WRAP_OBJECT(destruction);
+		
+		ar & ARCHIVE_WRAP_OBJECT(ObjectAnimation);
+		ar & ARCHIVE_WRAP_OBJECT(DestroyAnimation);
+		ar & ARCHIVE_WRAP_OBJECT(BeginAnimation);
+		
+		ar & ARCHIVE_WRAP_OBJECT(last_attack);
+		ar & ARCHIVE_WRAP_OBJECT(request_attack);
+		ar & ARCHIVE_WRAP_OBJECT(AttackAnimation);
+		
+		ar & ARCHIVE_WRAP_OBJECT(destroy_flag);
+		
+		ar & ARCHIVE_WRAP_OBJECT(zeroPositionTimer);
+		ar & ARCHIVE_WRAP_OBJECT(last_deltaz);
+	}
+};
+
+struct SaveFilthSwarmRat : SaveFilthSwarm
+{
+	SaveTerGenerate generate;
+
+	float DeltaAngle = 0;
+	float ChangeAngleCount = 0;
+
+	int TargetCount = 0;
+	Vect3f TargetPosition = Vect3f::ZERO;
+
+	int attack_period = 0;
+	vector<SaveUnitData*> unitList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(generate);
+
+		ar & ARCHIVE_WRAP_OBJECT(DeltaAngle);
+		ar & ARCHIVE_WRAP_OBJECT(ChangeAngleCount);
+		
+		ar & ARCHIVE_WRAP_OBJECT(TargetCount);
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		ar & ARCHIVE_WRAP_OBJECT(unitList);
+	}
+};
+
+struct SaveFilthRat : SaveUnitRealData
+{
+	int FilthStatus = 0;
+
+	Vect3f TargetPosition = Vect3f::ZERO;
+	float SpeedScale = 0;
+	float SpeedFactor = 0;
+
+	bool free_destroy = false;
+	int zeroPositionTimer = 0;
+
+	bool first_z_negate = false;
+	float last_x_angle = 0;
+	float intrerpolate_x_angle = 0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(FilthStatus);
+
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(SpeedScale);
+		ar & ARCHIVE_WRAP_OBJECT(SpeedFactor);
+		
+		ar & ARCHIVE_WRAP_OBJECT(free_destroy);
+		ar & ARCHIVE_WRAP_OBJECT(zeroPositionTimer);
+		
+		ar & ARCHIVE_WRAP_OBJECT(first_z_negate);
+		ar & ARCHIVE_WRAP_OBJECT(last_x_angle);
+		ar & ARCHIVE_WRAP_OBJECT(intrerpolate_x_angle);
+	}
+};
+
+struct SaveFilthSwarmShark : SaveFilthSwarm
+{
+	int attack_period = 0;
+	SaveTerGenerate generate;
+
+	vector<SaveUnitData*> unitList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		ar & ARCHIVE_WRAP_OBJECT(generate);
+
+		ar & ARCHIVE_WRAP_OBJECT(unitList);
+	}
+};
+
+struct SaveFilthShark : SaveFilthSpline
+{
+	Vect3f target = Vect3f::ZERO;
+	Vect3f pin = Vect3f::ZERO;
+	bool is_hmax = false;
+	bool last_effect_up = false;
+	bool is_die = false;
+	bool is_die_free = false;
+	int attack_period = 0;
+	int timer_die_free = 0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSpline, "");
+		ar & ARCHIVE_WRAP_OBJECT(target);
+		ar & ARCHIVE_WRAP_OBJECT(pin);
+		ar & ARCHIVE_WRAP_OBJECT(is_hmax);
+		ar & ARCHIVE_WRAP_OBJECT(last_effect_up);
+		ar & ARCHIVE_WRAP_OBJECT(is_die);
+		ar & ARCHIVE_WRAP_OBJECT(is_die_free);
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		ar & ARCHIVE_WRAP_OBJECT(timer_die_free);
+	}	
+};
+
+struct SaveFilthSwarmVolcano : SaveFilthSwarm
+{
+	int generation_period=0;
+	int creature_num=0;
+	vector<SaveUnitData*> unitList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(generation_period);
+		ar & ARCHIVE_WRAP_OBJECT(creature_num);
+		ar & ARCHIVE_WRAP_OBJECT(unitList);
+	}	
+};
+
+struct SaveFilthVolcano : SaveUnitRealData
+{
+	int begin_wait_destroy=0;
+	float time_from_last_damage=0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitRealData, "");
+		ar & ARCHIVE_WRAP_OBJECT(begin_wait_destroy);
+		ar & ARCHIVE_WRAP_OBJECT(time_from_last_damage);
+	}		
+};
+
+struct SaveFilthSwarmWasp : SaveFilthSwarm
+{
+	terUnitAttributeID unit_id = UNIT_ATTRIBUTE_FILTH_WASP;
+	SaveTerGenerate generate;
+	int attack_period = 0;
+	Vect3f TargetPosition = Vect3f::ZERO;
+	float attack_count = 0;
+
+	vector<SaveUnitData*> unitList;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(unit_id);
+		ar & ARCHIVE_WRAP_OBJECT(generate);
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		ar & ARCHIVE_WRAP_OBJECT(TargetPosition);
+		ar & ARCHIVE_WRAP_OBJECT(attack_count);
+		
+		ar & ARCHIVE_WRAP_OBJECT(unitList);
+	}	
+};
+
+struct SaveFilthWasp : SaveFilthSpline
+{
+	bool free_destroy = false;
+	Vect3f target_position = Vect3f::ZERO;
+	Vect3f center_position = Vect3f::ZERO;
+	Vect3f delta_center = Vect3f::ZERO;
+	bool begin_move = false;
+	float summary_z = 0;
+	float swarm_height = 0;
+	bool attack = false;
+	float target_radius = 0;
+	bool no_add_point = false;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSpline, "");
+		ar & ARCHIVE_WRAP_OBJECT(free_destroy);
+		ar & ARCHIVE_WRAP_OBJECT(target_position);
+		ar & ARCHIVE_WRAP_OBJECT(center_position);
+		ar & ARCHIVE_WRAP_OBJECT(delta_center);
+		ar & ARCHIVE_WRAP_OBJECT(begin_move);
+		ar & ARCHIVE_WRAP_OBJECT(summary_z);
+		ar & ARCHIVE_WRAP_OBJECT(swarm_height);
+		ar & ARCHIVE_WRAP_OBJECT(attack);
+		ar & ARCHIVE_WRAP_OBJECT(target_radius);
+		ar & ARCHIVE_WRAP_OBJECT(no_add_point);
+	}	
+};
+
+struct SaveFilthSwarmWorm : SaveFilthSwarm
+{
+	int attack_period = 0;
+	int change_angle = 0;
+	float angle = 0;
+	float speed = 0;
+	bool first = false;
+	bool first_create = false;
+
+	SaveUnitData* pWormModel;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveFilthSwarm, "");
+		ar & ARCHIVE_WRAP_OBJECT(attack_period);
+		ar & ARCHIVE_WRAP_OBJECT(change_angle);
+		ar & ARCHIVE_WRAP_OBJECT(angle);
+		ar & ARCHIVE_WRAP_OBJECT(speed);
+		ar & ARCHIVE_WRAP_OBJECT(first);
+		ar & ARCHIVE_WRAP_OBJECT(first_create);
+		
+		ar & ARCHIVE_WRAP_OBJECT(pWormModel);
+	}
+};
+
+struct SaveFilthVorm : SaveUnitRealData
+{
+};
+
+//////////////////////////////////////////////////////////
+struct SaveGeoControl : SaveUnitData
+{
+	bool sleep = false; // Спит
+
+	float firstSleepTime = 0;		//Задержка по времени до первого появления (сек)
+	float sleepPeriod = 20;			//Время спячки (сек)
+	float deltaSleepPeriod = 0;		//Разброс времени спячки (сек)
+
+	float attackPeriond = 20;		//Время активности скверны (сек)
+	float deltaAttackPeriond = 0;	//Разброс времени активности скверны (сек)
+
+	terUnitAttributeID activatingUnit = UNIT_ATTRIBUTE_NONE; // Активирующий объект
+	float activatingDistance = 100; // Радиус активации
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveUnitData, "");
+		ar & ARCHIVE_TRANS_OBJECT(sleep, "Спит");
+
+		ar & ARCHIVE_TRANS_OBJECT(firstSleepTime, "Задержка по времени до первого появления (сек)" );
+		ar & ARCHIVE_TRANS_OBJECT(sleepPeriod, "Время спячки (сек)");
+		ar & ARCHIVE_TRANS_OBJECT(deltaSleepPeriod, "Разброс времени спячки (сек)");
+		
+		ar & ARCHIVE_TRANS_OBJECT(attackPeriond, "Время активности скверны (сек)");
+		ar & ARCHIVE_TRANS_OBJECT(deltaAttackPeriond, "Разброс времени активности скверны (сек)");
+		
+		ar & ARCHIVE_TRANS_OBJECT(activatingUnit, "Активирующий объект");
+		ar & ARCHIVE_TRANS_OBJECT(activatingDistance, "Радиус активации");
+	}
+};
+
+struct SaveGeoInfluence : SaveGeoControl
+{
+	float geoRadius = 8; //Радиус  
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveGeoControl, "");
+		ar & ARCHIVE_TRANS_OBJECT(geoRadius, "Радиус");
+	}	
+};
+
+struct SaveGeoBreak : SaveGeoInfluence
+{
+	int num_break = 0; 
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveGeoInfluence, "");
+		ar & ARCHIVE_WRAP_OBJECT(num_break);
+	}	
+};
+
+struct SaveGeoFault: SaveGeoControl
+{
+	float length = 1000; //Длина  
+	float angle = 0;    //Угол (град)
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(SaveGeoControl, "");
+		ar & ARCHIVE_TRANS_OBJECT(length, "Длина");
+		ar & ARCHIVE_TRANS_OBJECT(angle, "Угол (град)");
+	}	
+};
+
+//---------------------------------
+struct SaveSoundTrackData
+{
+	string trackName = ""; // Имя трека
+	string fileName = ""; // Имя файла
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(trackName, "Имя трека");
+		ar & ARCHIVE_TRANS_OBJECT(fileName, "Имя файла");
+	}
+};
+
+
+//---------------------------------
+struct SaveCameraData
+{
+	Vect2f position = Vect2f::ZERO;
+	float psi = 0;
+	float theta = 0;
+	float distance = 1;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(position);
+		ar & ARCHIVE_WRAP_OBJECT(psi);
+		ar & ARCHIVE_WRAP_OBJECT(theta);
+		ar & ARCHIVE_WRAP_OBJECT(distance);
+	}
+};
+
+struct SaveCameraSplineData // Сплайн камеры
+{
+	string name = ""; // Имя
+	vector<SaveCameraData> path; // Сплайн
+	bool useAsSpline = true;
+	Vect2f position = Vect2f::ZERO;
+	Vect2f angle = Vect2f::ZERO;
+	float distance = 0;
+
+	initialize();
+
+delegate:
+	void set(const Vect2f& position, float psi, float theta, float distance)
+	{
+		path.clear();
+		path.push_back(SaveCameraData());
+		path.back().position = position;
+		path.back().psi = psi;
+		path.back().theta = theta;
+		path.back().distance = distance;
+		useAsSpline = false;
+	}
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(name, "Имя");
+		ar & ARCHIVE_TRANS_OBJECT(path, "Сплайн");
+		ar & ARCHIVE_WRAP_OBJECT(useAsSpline);
+		ar & ARCHIVE_WRAP_OBJECT(position);
+		ar & ARCHIVE_WRAP_OBJECT(angle);
+		ar & ARCHIVE_WRAP_OBJECT(distance);
+		initialize();
+	}
+};
+
+//---------------------------------
+//			Triggers
+//---------------------------------
+#include "Conditions.inl"						
+										
+//------------------------------------
+// Действия							  					
+									   		
+struct Action // Пустое действие, вставлять не надо!
+{		
+	int internalColor_ = 0;
+
+delegate:
+	virtual bool automaticCondition(AIPlayer& aiPlayer) const { return true; }
+	virtual void activate(AIPlayer& aiPlayer) {}
+	virtual bool workedOut(AIPlayer& aiPlayer) { return true; }
+	virtual bool onlyIfAI() const { return false; }
+
+	string name() const;
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(internalColor_);
+	}
+};
+
+struct ActionForAI : Action // ---------------
+{
+	bool onlyIfAi = true; // Запускать только для АИ
+
+delegate:
+	bool onlyIfAI() const { return onlyIfAi; }
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(onlyIfAi, "Запускать только для АИ");
+	}
+};
+													
+struct ActionDelay : Action // Задержка времени
+{
+	int delay = 60; // Время, секунды
+	bool showTimer = true; // Показывать таймер
+	bool scaleByDifficulty = false; // Влияние уровня сложности
+	SaveDurationTimer timer;											 
+
+delegate:
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(delay, "Время, секунды");
+		ar & ARCHIVE_TRANS_OBJECT(showTimer, "Показывать таймер");
+		ar & ARCHIVE_TRANS_OBJECT(scaleByDifficulty, "Влияние уровня сложности");
+		ar & ARCHIVE_WRAP_OBJECT(timer);
+	}	
+};
+
+struct ActionSetCamera : Action // Установка Камеры
+{
+	custom<editCameraSplineName> cameraSplineName = ""; // Имя сплайна камеры
+	float stepTime = 4; // Время между контрольными точками сплайна, секунды
+	int cycles = 1; // Количество циклов
+	bool smoothTransition = false; // Плавный переход
+
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(cameraSplineName, "Имя сплайна камеры");
+		ar & ARCHIVE_TRANS_OBJECT(stepTime, "Время между контрольными точками сплайна, секунды");
+		ar & ARCHIVE_TRANS_OBJECT(cycles, "Количество циклов");
+		ar & ARCHIVE_TRANS_OBJECT(smoothTransition, "Плавный переход");
+	}	
+};
+
+struct ActionOscillateCamera : Action // Тряска Камеры
+{
+	int duration = 30; // Длительность, секунды
+	float factor = 1; // Амплитуда
+
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(duration, "Длительность, секунды");
+		ar & ARCHIVE_TRANS_OBJECT(factor, "Амплитуда");
+	}
+};
+
+
+//-------------------------------------
+struct ActionVictory : Action // Победа
+{
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+};
+
+struct ActionDefeat : Action // Поражение
+{
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+};
+
+//-------------------------------------
+struct ActionTeleportationOut : Action // Телепортировать Фрейм с мира
+{
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+};	
+
+struct ActionKillObject : Action // Уничтожить объект
+{
+	terUnitAttributeID object = UNIT_ATTRIBUTE_NONE; // Объект
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const { return findObject(); }
+	bool workedOut(AIPlayer& aiPlayer);
+	terUnitBase* findObject() const;
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(object, "Объект");
+	}
+};	
+
+//-------------------------------------
+struct ActionInstallFrame : ActionForAI // Инсталлировать фрейм
+{
+delegate:
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer); 
+};																													  
+
+struct ActionOrderBuilding : ActionForAI // Заказать здание
+{
+	terUnitAttributeID building = UNIT_ATTRIBUTE_CORE; // Тип здания
+	PlacementStrategy placementStrategy = PLACEMENT_STRATEGY_CORE; // Стратегия установки
+	float energyReserve = 50; // Резерв энергии
+	int buildDurationMax = 300; // Максимальная длительность строительства
+	int priority = 3; // Приоритет (0 - самый высокий)
+
+	initialize();
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	bool workedOut(AIPlayer& aiPlayer); 
+	void setAccepted() { workedOut_ = false; accepted_ = true; }
+	void setWorkedOut() { workedOut_ = true; }
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(building, "Тип здания");
+		ar & ARCHIVE_TRANS_OBJECT(placementStrategy, "Стратегия установки");
+		ar & ARCHIVE_TRANS_OBJECT(energyReserve, "Резерв энергии");
+		ar & ARCHIVE_TRANS_OBJECT(buildDurationMax, "Максимальная длительность строительства");
+		ar & ARCHIVE_TRANS_OBJECT(priority, "Приоритет (0 - самый высокий)");
+		initialize();
+	}
+
+protected:
+	bool accepted_;
+	mutable bool workedOut_;
+	mutable int waitingCounter_;
+};																													  
+
+struct ActionHoldBuilding : ActionForAI // Заморозить строительство
+{
+	terUnitAttributeID building = UNIT_ATTRIBUTE_ANY; // Тип здания
+	
+delegate:
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(building, "Тип здания");
+	}
+};
+
+struct ActionSellBuilding : ActionForAI // Продать здание
+{
+	enum AISellFactor
+	{
+		AI_SELL_CLOSEST_TO_FRAME, // Ближайший к фрейму
+		AI_SELL_FAREST_FROM_FRAME, // Удаленный от фрейма
+		AI_SELL_IF_DAMAGE_GREATER, // Продавать, если урон больше процента
+		AI_SELL_IF_GUN_CANT_REACH_BUILDINGS // Продавать, если пушка не может достать до зданий
+	};
+
+	terUnitAttributeID building = UNIT_ATTRIBUTE_CORE; // Тип здания
+	AISellFactor sellFactor = AI_SELL_CLOSEST_TO_FRAME; // Условие продажи
+	float damagePercent = 0; // процент урона
+
+	initialize();
+
+delegate:
+	mutable int index_;
+
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+	class terUnitBase* findBuilding(AIPlayer& aiPlayer) const;
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(building, "Тип здания");
+		ar & ARCHIVE_TRANS_OBJECT(sellFactor, "Условие продажи");
+		ar & ARCHIVE_TRANS_OBJECT(damagePercent, "процент урона");
+		initialize();
+	}
+};																													  
+
+struct ActionSwitchGuns : ActionForAI // Включить/выключить пушки
+{
+	enum Mode {
+		ON, // Включить
+		OFF // Выключить
+	};
+	Mode mode = OFF; // Действие
+	terUnitAttributeID gunID = UNIT_ATTRIBUTE_LASER_CANNON; // Тип пушки
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(mode, "Действие");
+		ar & ARCHIVE_TRANS_OBJECT(gunID, "Тип пушки");
+	}
+};
+
+struct ActionUpgradeOmega : ActionForAI // Апргрейд Омеги
+{
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+};																													  
+
+//-------------------------------------
+struct ActionChargeCores : ActionForAI // Зарядить ядра
+{
+	enum ChargeCoresStrategy // Стратегия зарядки ядер
+	{
+		CHARGE_CORES_NONE, // Никакие ядра
+		CHARGE_CORES_INNER, // Внутренние ядра
+		CHARGE_CORES_OUTER, // Внешние ядра
+		CHARGE_CORES_ALL // Все ядра
+	};
+
+	ChargeCoresStrategy chargeCoresStrategy = CHARGE_CORES_ALL; // Стратегия зарядки
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(chargeCoresStrategy, "Стратегия зарядки");
+	}	
+};
+
+struct ActionSwitchFieldOn : ActionForAI // Включить поле
+{
+	int duration = 60; // Время работы
+	float energyReserve = 0; // Резерв энергии
+	bool allCores = true; // Все ядра
+	bool onlyIfCoreDamaged = true; // Только когда атакуют ядро
+	SaveDurationTimer timer;
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(duration, "Время работы");
+		ar & ARCHIVE_TRANS_OBJECT(energyReserve, "Все ядра");
+		ar & ARCHIVE_TRANS_OBJECT(allCores, "Стратегия зарядки");
+		ar & ARCHIVE_TRANS_OBJECT(onlyIfCoreDamaged, "Только когда атакуют ядро");
+		ar & ARCHIVE_WRAP_OBJECT(timer);
+	}	
+};
+
+//-------------------------------------
+struct ActionSquadOrderUnits : ActionForAI // Заказать юнитов в сквад
+{
+	ChooseSquadID chooseSquadID = CHOOSE_SQUAD_1; // Сквад
+	int soldiers = 1; // Солдаты
+	int officers = 1; // Офицеры
+	int technics = 1; // Техники
+	float energyReserve = 100; // Резерв энергии
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(chooseSquadID, "Сквад");
+		ar & ARCHIVE_TRANS_OBJECT(soldiers, "Солдаты");
+		ar & ARCHIVE_TRANS_OBJECT(officers, "Офицеры");
+		ar & ARCHIVE_TRANS_OBJECT(technics, "Техники");
+		ar & ARCHIVE_TRANS_OBJECT(energyReserve, "Резерв энергии");
+	}	
+};
+
+struct ActionSquadAttack : ActionForAI // Атаковать сквадом
+{
+	ChooseSquadID chooseSquadID = CHOOSE_SQUAD_1; // Сквад
+	terUnitAttributeID attackByType = UNIT_ATTRIBUTE_NONE; // атаковать типом ('никто' - базовые)
+	vector<terUnitAttributeID> unitsToAttack; // атакуемые юниты
+	BitVector<terUnitClassType> unitClassToAttack; // атакуемые классы юнитов
+	bool offensive = true; // Агрессивный (оффенсив)
+	
+	int unitsNumber = 0; // Количество производных
+	int soldiers = 0; // Солдатов при базовой
+	int officers = 0; // Офицеров при базовой
+	int technics = 0; // Техников при базовой
+	
+	int attackTime = 180; // Время атаки
+	int remutateCounter = 1; // Домутировать при числе
+	bool holdProduction = false; // Заморозить производство на время атаки
+	
+	float squadFollowDistance = 0; // Следовать за сквадом на расстоянии (0 - выключено)
+	ChooseSquadID squadToFollowBy = CHOOSE_SQUAD_2; // Сквад, за которым следовать
+	bool ignoreLastTarget = false; // Игнорировать последнюю цель
+	bool returnToBase = true; // Возвращаться на базу
+	bool interruptable = false; // Прерываемое
+	SaveDurationTimer attackTimer;
+
+	initialize();
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer);
+	void interrupt(class terUnitSquad* squad);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(chooseSquadID, "Сквад");
+		ar & ARCHIVE_TRANS_OBJECT(attackByType, "атаковать типом ('никто' - базовые)");
+		ar & ARCHIVE_TRANS_OBJECT(unitsToAttack, "атакуемые юниты");
+		ar & ARCHIVE_TRANS_OBJECT(unitClassToAttack, "атакуемые классы юнитов");
+		ar & ARCHIVE_TRANS_OBJECT(offensive, "Агрессивный (оффенсив)");
+		
+		ar & ARCHIVE_TRANS_OBJECT(unitsNumber, "Количество производных");
+		ar & ARCHIVE_TRANS_OBJECT(soldiers, "Солдатов при базовой");
+		ar & ARCHIVE_TRANS_OBJECT(officers, "Офицеров при базовой");
+		ar & ARCHIVE_TRANS_OBJECT(technics, "Техников при базовой");
+		
+		ar & ARCHIVE_TRANS_OBJECT(attackTime, "Время атаки");
+		ar & ARCHIVE_TRANS_OBJECT(remutateCounter, "Домутировать при числе");
+		ar & ARCHIVE_TRANS_OBJECT(holdProduction, "Заморозить производство на время атаки");
+		
+		ar & ARCHIVE_TRANS_OBJECT(squadFollowDistance, "Следовать за сквадом на расстоянии (0 - выключено)");
+		ar & ARCHIVE_TRANS_OBJECT(squadToFollowBy, "Сквад, за которым следовать");
+		ar & ARCHIVE_TRANS_OBJECT(ignoreLastTarget, "Игнорировать последнюю цель");
+		ar & ARCHIVE_TRANS_OBJECT(returnToBase, "Возвращаться на базу");
+		ar & ARCHIVE_TRANS_OBJECT(interruptable, "Прерываемое");
+		ar & ARCHIVE_WRAP_OBJECT(attackTimer);
+		initialize();
+	}	
+
+private:
+	terUnitBase* lastTarget_;
+	Vect2f lastTargetPosition_;
+	bool interrupt_;
+
+	terUnitBase* findTarget(AIPlayer& aiPlayer, Vect2iVect& path) const;
+};
+
+struct ActionSquadMove : ActionForAI // Послать сквад в точку объекта по метке
+{
+	ChooseSquadID chooseSquadID = CHOOSE_SQUAD_1; // Сквад
+	custom<editLabelDialog> label = ""; // Метка объекта
+
+delegate:
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(chooseSquadID, "Сквад");
+		ar & ARCHIVE_TRANS_OBJECT(label, "Метка объекта");
+	}	
+};
+
+struct ActionAttackBySpecialWeapon : ActionForAI // Атаковать спецоружием
+{
+	terUnitAttributeID weapon = UNIT_ATTRIBUTE_GUN_BALLISTIC; // Спецоружие
+	vector<terUnitAttributeID> unitsToAttack; // атакуемые юниты
+	BitVector<terUnitClassType> unitClassToAttack; // Атакуемые классы юнитов
+
+delegate:
+	bool automaticCondition(AIPlayer& aiPlayer) const;
+	void activate(AIPlayer& aiPlayer);
+	terUnitBase* findTarget(AIPlayer& aiPlayer, const Vect2f& position, float radiusMin) const;
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(ActionForAI, "");
+		ar & ARCHIVE_TRANS_OBJECT(weapon, "Спецоружие");
+		ar & ARCHIVE_TRANS_OBJECT(unitsToAttack, "атакуемые юниты");
+		ar & ARCHIVE_TRANS_OBJECT(unitClassToAttack, "Атакуемые классы юнитов");
+	}
+};
+
+struct ActionRepareObjectByLabel : Action // Отремонтировать объекта по метке
+{
+	custom<editLabelDialog> label = ""; // Метка объекта
+
+delegate:
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(label, "Метка объекта");
+	}	
+};
+
+
+struct ActionActivateObjectByLabel : Action // Активировать объект по метке
+{
+	custom<editLabelDialog> label = ""; // Метка объекта
+
+delegate:
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(label, "Метка объекта");
+	}	
+};
+
+struct ActionDeactivateObjectByLabel : Action // Деактивировать объект по метке
+{
+	custom<editLabelDialog> label = ""; // Метка объекта
+
+delegate:
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(label, "Метка объекта");
+	}	
+};
+
+struct ActionActivateAllSpots : Action // Активировать все споты
+{
+delegate:
+	void activate(AIPlayer& aiPlayer);
+};
+
+struct ActionDeactivateAllSpots : Action // Деактивировать все споты
+{
+delegate:
+	void activate(AIPlayer& aiPlayer);
+};
+
+struct ActionSetControlEnabled : Action // Запретить/разрешить управление игрока
+{
+	bool controlEnabled = false; // Разрешить
+
+delegate:
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(controlEnabled, "Разрешить");
+	}	
+};
+
+//-------------------------------------
+struct ActionMessage : Action // Cообщение
+{
+	custom<editMessageID> messageID = ""; // Идентификатор сообщения
+	custom<editTextMultiLine> message = ""; // Сообщение
+	int delay = 0; // Задержка, секунды
+	int duration = 120; // Длительность, секунды
+	bool syncroBySound = false; // Синхронизировать со звуком
+	SaveDurationTimer delayTimer;											 
+	SaveDurationTimer durationTimer;											 
+
+delegate: 
+	bool started_;
+
+	void activate(AIPlayer& aiPlayer) { delayTimer.start(delay*1000); started_ = false; }
+	bool workedOut(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(messageID, "Идентификатор сообщения");
+		ar & ARCHIVE_TRANS_OBJECT(message, "Сообщение");
+		ar & ARCHIVE_TRANS_OBJECT(delay, "Задержка, секунды");
+		ar & ARCHIVE_TRANS_OBJECT(duration, "Длительность, секунды");
+		ar & ARCHIVE_TRANS_OBJECT(syncroBySound, "Синхронизировать со звуком");
+		ar & ARCHIVE_WRAP_OBJECT(delayTimer);
+		ar & ARCHIVE_WRAP_OBJECT(durationTimer);
+	}		
+};
+
+struct ActionTask : Action // Задача
+{
+	enum Type {
+		ASSIGNED, // Назначена
+		COMPLETED, // Выполнена
+		FAILED, // Провалена
+		TO_DELETE // Удалить
+	};
+	Type type = ASSIGNED; // Действие
+	custom<editTaskID> taskID = ""; // Идентификатор задачи
+	int duration = 120; // Длительность, секунды
+	bool syncroBySound = false; // Синхронизировать со звуком
+	bool showTips = true; // Выводить сообщение
+	SaveDurationTimer durationTimer;											 
+
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(type, "Действие");
+		ar & ARCHIVE_TRANS_OBJECT(taskID, "Идентификатор задачи");
+		ar & ARCHIVE_TRANS_OBJECT(duration, "Длительность, секунды");
+		ar & ARCHIVE_TRANS_OBJECT(syncroBySound, "Синхронизировать со звуком");
+		ar & ARCHIVE_TRANS_OBJECT(showTips, "Выводить сообщение");
+		ar & ARCHIVE_WRAP_OBJECT(durationTimer);
+	}	
+};
+
+struct ActionSetCameraAtObject : Action // Установить камеру на объект
+{
+	terUnitAttributeID object = UNIT_ATTRIBUTE_FRAME; // Объект
+	AIPlayerType playerType = AI_PLAYER_TYPE_ME; // Владелец объекта
+	int transitionTime = 0; // Время перехода, секунды
+	bool setFollow = false; // Установить слежение
+	int turnTime = 0; // Время поворота
+	
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+	bool workedOut(AIPlayer& aiPlayer);
+	terUnitBase* findUnit(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(object, "Объект");
+		ar & ARCHIVE_TRANS_OBJECT(playerType, "Владелец объекта");
+		ar & ARCHIVE_TRANS_OBJECT(transitionTime, "Время перехода, секунды");
+		ar & ARCHIVE_TRANS_OBJECT(setFollow, "Установить слежение");
+		ar & ARCHIVE_TRANS_OBJECT(turnTime, "Время поворота");
+	}
+
+private:
+	bool turnStarted_;
+};
+
+//---------------------------------
+struct SaveControlData
+{
+	ShellControlID controlID = SQSH_STATIC_ID; // Идентификатор кнопки
+	bool enabled = true; // Разрешена
+	bool visible = true; // Видима
+	bool flashing = false; // Мигает
+	int tabNumber = 0; // Номер закладки
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(controlID, "Идентификатор кнопки");	
+		ar & ARCHIVE_TRANS_OBJECT(enabled, "Разрешена");	
+		ar & ARCHIVE_TRANS_OBJECT(visible, "Видима");	
+		ar & ARCHIVE_TRANS_OBJECT(flashing, "Мигает");	
+		ar & ARCHIVE_TRANS_OBJECT(tabNumber, "Номер закладки");	
+	}
+};
+
+struct ActionSetControls : Action // Установить параметры кнопок
+{
+	vector<SaveControlData> controls; // Кнопки
+
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(controls, "Кнопки");
+	}
+};
+
+struct ActionSelectUnit : Action // Селектировать юнита
+{
+	terUnitAttributeID unitID = UNIT_ATTRIBUTE_SQUAD; // Идентификатор юнита
+
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(unitID, "Идентификатор юнита");
+	}	
+};
+
+struct ActionProduceBrigadierOrProrab : Action // Произвести бригадира или прораба
+{
+	bool produceBrigadier = true; // Произвести бригадира
+
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(produceBrigadier, "Произвести бригадира");
+	}	
+};
+
+struct ActionSetInterface : Action // Включить/выключить интерфейс
+{
+	bool enableInterface = true; // Включить интерфейс
+
+delegate: 
+	void activate(AIPlayer& aiPlayer);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ARCHIVE_SERIALIZE_BASE_OBJECT(Action, "");
+		ar & ARCHIVE_TRANS_OBJECT(enableInterface, "Включить интерфейс");
+	}	
+};
+
+
+//----------------------------------
+enum StrategyColor
+{
+	STRATEGY_RED, // Красный
+	STRATEGY_GREEN, // Зеленый
+	STRATEGY_BLUE, // Синий
+	STRATEGY_YELLOW, // Желтый
+	STRATEGY_COLOR_0,
+	STRATEGY_COLOR_1,
+	STRATEGY_COLOR_2,
+	STRATEGY_COLOR_3,
+	STRATEGY_COLOR_4,
+	STRATEGY_COLOR_5,
+	STRATEGY_COLOR_MAX
+};
+
+struct StrategyLink // Связь
+{
+	enum Type {
+		THIN, // Тонкая
+		THICK // Толстая
+	};
+	custom<setStrategyLinkTriggerName> triggerName = ""; // Триггер, на который указывает стрелка
+	StrategyColor color = STRATEGY_RED; // Цвет
+	Type type = THIN; // Тип
+	bool active_ = false; // Активная_
+	int internalColor_ = 0;
+
+	int parentOffsetX_ = INT_MIN;
+	int parentOffsetY_ = INT_MIN;
+
+	int childOffsetX_ = INT_MIN; 
+	int childOffsetY_ = INT_MIN; 
+	
+	initialize();
+	
+delegate:
+	bool isThin() const { return type == THIN; }
+	
+	void activate(struct PlayerStrategy& playerStrategy);
+	void deactivate(PlayerStrategy& playerStrategy);
+
+	struct Trigger* parent;
+	struct Trigger* child;
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(triggerName, "Триггер, на который указывает стрелка");
+		ar & ARCHIVE_TRANS_OBJECT(color, "Цвет");
+		ar & ARCHIVE_TRANS_OBJECT(type, "Тип");
+		ar & ARCHIVE_TRANS_OBJECT(active_, "Активная_");
+		ar & ARCHIVE_WRAP_OBJECT(internalColor_);
+		
+		ar & ARCHIVE_WRAP_OBJECT(parentOffsetX_);
+		ar & ARCHIVE_WRAP_OBJECT(parentOffsetY_);
+		
+		ar & ARCHIVE_WRAP_OBJECT(childOffsetX_);
+		ar & ARCHIVE_WRAP_OBJECT(childOffsetY_);
+		initialize();
+	}
+};
+
+//-------------------------------
+struct Trigger // Триггер
+{
+	enum State {
+		SLEEPING, // Проверяет входные связи
+		CHECKING, // Проверяет условия
+		WORKING, // Выполняется
+		DONE // Выполнен
+	};
+
+	string name = ""; // Имя
+	Condition* condition; // 
+	Action* action; // Действие
+	vector<StrategyLink> outcomingLinks; // Исходящие связи_
+	State state_ = SLEEPING; // Текущее состояние_
+	int executionCounter_ = 0; // Запускался_
+	int internalColor_ = 0;
+	
+	int cellNumberX = INT_MIN; // _
+	int cellNumberY = INT_MIN; // _
+	int left_	= INT_MIN;  
+	int top_	= INT_MIN;  
+	int right_	= INT_MIN;  
+	int bottom_ = INT_MIN;  
+	
+	initialize();
+
+delegate:
+	typedef vector<StrategyLink> OutcomingLinksList;
+	typedef vector<StrategyLink*> IncomingLinksList;
+	IncomingLinksList incomingLinks_; 
+	RECT boundingRect_;
+	bool selected_;
+
+	void quant(AIPlayer& aiPlayer, PlayerStrategy& playerStrategy);
+	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	void activate(AIPlayer& aiPlayer, PlayerStrategy& playerStrategy);
+	bool removeLinkByChild(Trigger* child);
+	void copy(const Trigger& trigger);
+	const char* debugDisplayText() const;
+	bool active() const;
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(name, "Имя");	
+		ar & ARCHIVE_TRANS_OBJECT(condition, "");
+		ar & ARCHIVE_TRANS_OBJECT(action, "Действие");
+		ar & ARCHIVE_TRANS_OBJECT(outcomingLinks, "Исходящие связи_");
+		ar & ARCHIVE_TRANS_OBJECT(state_, "Текущее состояние_");
+		ar & ARCHIVE_TRANS_OBJECT(executionCounter_, "Запускался_");
+		ar & ARCHIVE_WRAP_OBJECT(internalColor_);
+		
+		ar & ARCHIVE_TRANS_OBJECT(cellNumberX, "_");
+		ar & ARCHIVE_TRANS_OBJECT(cellNumberY, "_");
+		ar & ARCHIVE_WRAP_OBJECT(left_);
+		ar & ARCHIVE_WRAP_OBJECT(top_);
+		ar & ARCHIVE_WRAP_OBJECT(right_);
+		ar & ARCHIVE_WRAP_OBJECT(bottom_);
+		initialize();
+	}
+};
+
+//-----------------------------
+struct TriggerEvent
+{
+	string event = "";
+	int index = 0;
+	Trigger::State state = Trigger::SLEEPING;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(event);
+		ar & ARCHIVE_WRAP_OBJECT(index);
+		ar & ARCHIVE_WRAP_OBJECT(state);
+	}	
+};
+
+//-----------------------------
+struct PlayerStrategy // Стратегия игрока
+{
+	string name = ""; // Имя
+	vector<Trigger> triggers; // Триггера
+
+	int left_ = INT_MIN;
+	int top_ = INT_MIN;
+	int right_ = INT_MIN;
+	int bottom_ = INT_MIN;
+
+	initialize();
+
+delegate: 
+	typedef vector<Trigger> TriggerList;
+	typedef vector<TriggerEvent> TriggerEventList;
+
+	RECT boundingRect_;
+
+	PlayerStrategy& operator=(const PlayerStrategy& rhs);
+
+	void buildLinks();
+	void quant(AIPlayer& aiPlayer);
+	void checkEvent(AIPlayer& aiPlayer, const Event& event);
+	Trigger* find(const char* name);
+
+	bool removeLink(int parentIndex, int childIndex);
+	StrategyLink* addLink(int parentIndex, int childIndex, int type);
+
+	Trigger* addTrigger(Trigger const& trigger);
+	int addTriggersBunch(TriggerList const& triggers);
+	Trigger* insertTrigger(int pos, Trigger const& triger);
+	void removeTrigger(int triggerIndex);
+
+	void setLogData(const TriggerEventList& data);
+	const TriggerEventList& logData() const { return triggerEvents_; }
+	bool isLogValid() const;
+
+	int numLogRecords() const { return triggerEvents_.size(); }
+	const char* logRecordText(int index) const { return triggerEvents_[index].event; }
+	void setLogRecord(int index);
+	void addLogRecord(const Trigger& trigger, const char* event);
+
+	void initializeTriggersAndLinks(int palyerIndex);
+
+	void activateTrigger(Trigger* trigger);
+	void deactivateTrigger(Trigger* trigger);
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(name, "Имя");
+		ar & ARCHIVE_TRANS_OBJECT(triggers, "Триггера");
+			
+		ar & ARCHIVE_WRAP_OBJECT(left_);
+		ar & ARCHIVE_WRAP_OBJECT(top_);
+		ar & ARCHIVE_WRAP_OBJECT(right_);
+		ar & ARCHIVE_WRAP_OBJECT(bottom_);
+		initialize();
+	}
+
+private:
+	TriggerEventList triggerEvents_;
+
+	void initTriggersState();
+
+	typedef vector<Trigger*> ActiveTriggers;
+	ActiveTriggers activeTriggers_;
+};
+
+//---------------------------------
+struct SavePlayerManualData
+{
+	PlayerStrategy strategy; // Основная стратегия
+	vector<PlayerStrategy> strategies; // Дополнительные стратегии
+
+	initialize();
+
+delegate:
+	PlayerStrategy& getStrategyToEdit();
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(strategy, "Основная стратегия");
+		ar & ARCHIVE_TRANS_OBJECT(strategies, "Дополнительные стратегии");
+		initialize();
+	}	
+};
+
+
+struct SavePlayerStats
+{
+	int maxLeveledArea = 0;
+	int maxZeroedArea = 0;
+	int scourgeKilled = 0;
+	float medEfficiency = 0;
+	int effQuants = 0;
+	float energy = 0;
+
+	int unitCount = 0;
+	int unitKilled = 0; //?
+	int unitLost = 0;
+
+	int buildings = 0;
+	int buildingRazed = 0; //?
+	int buildingCaptured = 0;
+	int buildingLost = 0;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(maxLeveledArea);
+		ar & ARCHIVE_WRAP_OBJECT(maxZeroedArea);
+		ar & ARCHIVE_WRAP_OBJECT(scourgeKilled);
+		ar & ARCHIVE_WRAP_OBJECT(medEfficiency);
+		ar & ARCHIVE_WRAP_OBJECT(effQuants);
+		ar & ARCHIVE_WRAP_OBJECT(energy);
+		
+		ar & ARCHIVE_WRAP_OBJECT(unitCount);
+		ar & ARCHIVE_WRAP_OBJECT(unitKilled);
+		ar & ARCHIVE_WRAP_OBJECT(unitLost);
+		
+		ar & ARCHIVE_WRAP_OBJECT(buildings);
+		ar & ARCHIVE_WRAP_OBJECT(buildingRazed);
+		ar & ARCHIVE_WRAP_OBJECT(buildingCaptured);
+		ar & ARCHIVE_WRAP_OBJECT(buildingLost);
+	}
+};
+
+struct SavePlayerData
+{
+	SaveUnitData* frame;
+	vector<SaveUnitData*> buildings;
+	vector<SaveUnitData*> catchedFrames;
+	int compAndUserID = 0;
+	SavePlayerStats playerStats;
+	vector<SaveUnitData*> commonObjects;
+	
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(frame);
+		ar & ARCHIVE_WRAP_OBJECT(buildings);
+		ar & ARCHIVE_WRAP_OBJECT(catchedFrames);
+		ar & ARCHIVE_WRAP_OBJECT(compAndUserID);
+		ar & ARCHIVE_WRAP_OBJECT(playerStats);
+		ar & ARCHIVE_WRAP_OBJECT(commonObjects);
+	}
+};
+
+struct SaveObjectsData
+{
+	vector<SaveUnitData*> objects; // Объекты
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(objects, "Объекты");
+	}
+};
+
+struct SaveWorldObjects
+{
+	vector<SaveUnitData*> alphaPotentials;
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(alphaPotentials);
+	}
+};
+
+struct SaveBuildingInstallerInstruction // Предписание инсталлятору зданий
+{
+	terUnitAttributeID building = UNIT_ATTRIBUTE_NONE; // Здание
+	custom<editLabelDialog> label = ""; // Метка объекта
+	float distance = 50; // Максимальное расстояние
+	bool labeledObjectActivity = true; // Объект-метка должен быть активен
+
+delegate:
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(building, "Здание");
+		ar & ARCHIVE_TRANS_OBJECT(label, "Метка объекта");
+		ar & ARCHIVE_TRANS_OBJECT(distance, "Максимальное расстояние");
+		ar & ARCHIVE_TRANS_OBJECT(labeledObjectActivity, "Объект-метка должен быть активен");
+	}
+};
+
+//---------------------------------
+struct SaveTask
+{
+	string id = "";
+	ActionTask::Type type = ActionTask::ASSIGNED;
+	
+delegate:
+	SaveTask(const char* idIn, ActionTask::Type typeIn) : id(idIn), type(typeIn) {}
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_WRAP_OBJECT(id);
+		ar & ARCHIVE_WRAP_OBJECT(type);
+	}
+};
+
+//---------------------------------
+struct SaveManualData // Данные, редактируемые руками
+{
+	string missionDescription = ""; // Описание миссии_
+	vector<SaveSoundTrackData> soundTracks; // Музыкальные треки
+	vector<SavePlayerManualData> players; // Игроки
+	vector<SaveControlData> controls; // Кнопки
+	
+	float spiralChargingEnergy = 2; // Энергия зарядки спирали
+	int spiralChargingTime = 100000; // Время зарядки спирали
+	int spiralChargingPriority = 170; // Приоритет зарядки спирали
+	int zeroLayerHeight = -1; // Уровень зеропласта
+	vector<SaveCameraSplineData> cameras; // Камеры
+	vector<SaveBuildingInstallerInstruction> buildingInstallerInstructions; // Предписания инсталлятору зданий
+
+	enum OmegaMissionType { 
+		OMEGA_UPGRADE, // Проапгрейдить
+		OMEGA_MINE, // Заминировать
+		OMEGA_DEMINE // Разминировать
+	};
+	OmegaMissionType omegaMissionType = OMEGA_UPGRADE; // Задача Омега-миссии
+	float alphaActivationDistance = 200; // Расстояние активации Альфа-коридора
+	float omegaActivationDistance = 1000; // Расстояние активации Омега-коридора
+	bool interfaceEnabled = true; // Интерфейс включен
+	bool loadHardness = true; // Грузить карту некопаемости
+
+	initialize();
+	
+delegate:
+	const char* popupCameraSplineName() const;
+	const SaveCameraSplineData* findCameraSpline(const char* name) const;
+	void saveCamera(int playerID, const char* triggerName);
+	void initializeTriggersAndLinks();
+
+	template<class Archive>	
+	void serialize(Archive& ar, const unsigned int file_version) {
+		ar & ARCHIVE_TRANS_OBJECT(missionDescription, "Описание миссии_");
+		ar & ARCHIVE_TRANS_OBJECT(soundTracks, "Музыкальные треки");
+		ar & ARCHIVE_TRANS_OBJECT(players, "Игроки");
+		ar & ARCHIVE_TRANS_OBJECT(controls, "Кнопки");
+		
+		ar & ARCHIVE_TRANS_OBJECT(spiralChargingEnergy, "Энергия зарядки спирали");
+		ar & ARCHIVE_TRANS_OBJECT(spiralChargingTime, "Время зарядки спирали");
+		ar & ARCHIVE_TRANS_OBJECT(spiralChargingPriority, "Приоритет зарядки спирали");
+		ar & ARCHIVE_TRANS_OBJECT(zeroLayerHeight, "Уровень зеропласта");
+		ar & ARCHIVE_TRANS_OBJECT(cameras, "Камеры");
+		ar & ARCHIVE_TRANS_OBJECT(buildingInstallerInstructions, "Предписания инсталлятору зданий");
+		
+		ar & ARCHIVE_TRANS_OBJECT(omegaMissionType, "Задача Омега-миссии");
+		ar & ARCHIVE_TRANS_OBJECT(alphaActivationDistance, "Расстояние активации Альфа-коридора");
+		ar & ARCHIVE_TRANS_OBJECT(omegaActivationDistance, "Расстояние активации Омега-коридора");
+		ar & ARCHIVE_TRANS_OBJECT(interfaceEnabled, "Интерфейс включен");
+		ar & ARCHIVE_TRANS_OBJECT(loadHardness, "Грузить карту некопаемости");
+		initialize();
+	}
+
+private:
+	SaveCameraSplineData* findCameraSpline(const char* name);
+};
+
+//---------------------------------
+string version = "";
+string worldName = "";
+
+vector<SavePlayerData> players; 
+
+SaveObjectsData environment; // Объекты окружения
+SaveObjectsData filth; // Скверна
+SaveObjectsData nobodysBuildings; // Нейтральные здания
+
+SaveWorldObjects worldObjects; 
+
+vector<SaveTask> activeTasks;
+
+SaveManualData manualData; // Данные, редактируемые вручную
+
+initialize(); // version conversion
+
+}

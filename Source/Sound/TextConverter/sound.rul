@@ -1,0 +1,23 @@
+enum 
+{
+};
+
+type {
+	"*" {
+		volume=float;
+		volmin=float;
+		sound=string;
+		radius=float;
+		max_radius=float;
+		max_num_sound=int;
+		belligerent_dependency=null;
+		language_dependency=null;
+
+		delta {
+			random=null;
+			up=float;
+			down=float;
+			speed=float;
+		};
+	};
+};

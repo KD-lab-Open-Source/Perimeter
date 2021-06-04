@@ -1,0 +1,7 @@
+*.plg
+*.opt
+*.positions
+*.ncb
+Debug
+Release
+pattern.*

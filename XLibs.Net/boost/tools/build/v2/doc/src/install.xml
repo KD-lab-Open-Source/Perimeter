@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/boostbook.dtd">
+
+  <chapter id="bbv2.installation">
+    <title>Installation</title>
+
+    <para>
+      Assuming you're installing Boost.Build from released source
+      distribution, the following steps are needed. All paths are
+      given relatively to Boost.Build root directory, which is the
+      directory with the document you are reading.
+    </para>
+
+    <orderedlist>
+      <listitem>
+        <simpara>
+          Go to "jam_src" directory and build Boost.Jam. Two convenient
+          scripts are provided, "build.sh" (for Unix systems) and
+          "build.bat" (for Windows). Run the appropriate one and
+          Boost.Jam will be built to directory
+          <filename>bin.{platform_name}.</filename>. The <ulink url=
+          "../jam_src/index.html">Boost.Jam documentation</ulink> has
+          more details in case you need them.
+        </simpara>
+      </listitem>
+
+      <listitem>
+        <para>
+          Place the Boost.Jam binary, called "bjam" or "bjam.exe",
+          somewhere in your <envar>PATH</envar>. Go to the root
+          directory of Boost.Build and run "bjam --version". You should
+          get 
+
+          <screen>Boost.Build V2 (Milestone N)</screen>
+
+          (where N is the version you've downloaded).
+        </para>
+      </listitem>
+
+      <listitem>
+        <simpara>
+          Configure toolsets to use. Open the
+          <filename>user-config.jam</filename> file and follow
+          instructions there to specify what compiles/libraries you
+          have and where they are located.
+        </simpara>
+      </listitem>
+
+      <listitem>
+        <simpara>
+          You should now be able to go to
+          <filename>example/hello</filename>, and run
+          <command>bjam</command> there. A simple application will be
+          built. You can also play with other projects in
+          <filename>example</filename>. 
+    <!-- This part should not go into intoduction docs, but we need to
+         place it somewhere. 
+
+    <para>It is slighly better way is to copy
+    <filename>new/user-config.jam</filename> into one of the locations
+    where it can be found (given in <link linkend=
+    "bbv2.reference.init.config">this table</link>). This prevent you
+    from accidentally overwriting your config when updating.</para>
+
+    -->
+        </simpara>
+      </listitem>
+    </orderedlist>
+
+    <para>
+      If you use Boost distribution, or Boost CVS, the Boost.Build
+      root is located at <filename>$boost_root/tools/build/v2</filename>
+      and the installation steps are the same. However, don't skip
+      the bjam rebuilding step, even if you have a previous version.
+      CVS version of Boost.Build requires CVS version of Boost.Jam.
+    </para>
+
+    <para>
+      When starting a new project which uses Boost.Build, you need
+      to make sure that build system can be found. There are two
+      ways.
+    </para>
+
+    <itemizedlist>
+      <listitem>
+        <simpara>
+          Set enviromnetal variable <envar>BOOST_BUILD_PATH</envar>
+          to the absolute path to Boost.Build installation directory.
+        </simpara>
+      </listitem>
+
+      <listitem>
+        <para>
+          Create, at the top of your project, a file called
+          <filename>boost-build.jam</filename>, with a single line:
+
+<programlisting>
+boost-build /path/to/boost.build ;
+</programlisting>
+
+        </para>
+      </listitem>
+    </itemizedlist>
+
+  <para>If you're trying to use Boost.Build V2 on Boost itself, please
+  note that when building Boost, V1 is used by default. You'd have
+  to add <option>--v2</option> command line option to all "bjam"
+  invocations.</para>
+
+  </chapter>

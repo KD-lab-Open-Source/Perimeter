@@ -1,0 +1,1037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/boostbook.dtd">
+
+  <chapter id="bbv2.reference">
+    <title>Detailed reference</title>
+
+    <section id="bbv2.reference.features">
+      <title>Features and properties</title>
+
+      <section id="bbv2.reference.features.defined">
+        <title>Definitions</title>
+
+  <para>A <emphasis>feature</emphasis> is a normalized (toolset-independent)
+  aspect of a build configuration, such as whether inlining is
+  enabled. Feature names may not contain the '<literal>&gt;</literal>'
+  character.</para>
+
+  <!--
+    And what about dash?
+  -->
+
+  <para>Each feature in a build configuration has one or more
+  associated <emphasis>value</emphasis>s. Feature values for non-free features
+  may not contain the '<literal>&lt;</literal>', '<literal>:</literal>', or
+  '<literal>=</literal>' characters. Feature values for free features may not
+  contain the '<literal>&lt;</literal>' character.</para>
+
+  <para>A <emphasis>property</emphasis> is a (feature,value) pair, expressed as
+  &lt;feature&gt;value.</para>
+
+  <para>A <emphasis>subfeature</emphasis> is a feature which only exists in the
+  presence of its parent feature, and whose identity can be derived
+  (in the context of its parent) from its value. A subfeature's
+  parent can never be another subfeature. Thus, features and their
+  subfeatures form a two-level hierarchy.</para>
+
+  <para>A <emphasis>value-string</emphasis> for a feature <emphasis role="bold">F</emphasis> is a string of
+  the form
+  <literal>value-subvalue1-subvalue2</literal>...<literal>-subvalueN</literal>, where
+  <literal>value</literal> is a legal value for <emphasis role="bold">F</emphasis> and
+  <literal>subvalue1</literal>...<literal>subvalueN</literal> are legal values of some
+  of <emphasis role="bold">F</emphasis>'s subfeatures. For example, the properties
+  <literal>&lt;toolset&gt;gcc &lt;toolset-version&gt;3.0.1</literal> can be
+  expressed more conscisely using a value-string, as
+  <literal>&lt;toolset&gt;gcc-3.0.1</literal>.</para>
+
+  <para>A <emphasis>property set</emphasis> is a set of properties (i.e. a
+  collection without dublicates), for instance:
+  <literal>&lt;toolset&gt;gcc &lt;runtime-link&gt;static</literal>.</para>
+
+  <para>A <emphasis>property path</emphasis> is a property set whose elements have
+  been joined into a single string separated by slashes. A property
+  path representation of the previous example would be
+  <literal>&lt;toolset&gt;gcc/&lt;runtime-link&gt;static</literal>.</para>
+
+  <para>A <emphasis>build specification</emphasis> is a property set which fully
+  describes the set of features used to build a target.</para>
+
+      </section>
+      <section id="bbv2.reference.features.validity">
+        <title>Property Validity</title>
+
+          <para>
+            For <link linkend=
+            "bbv2.reference.features.attributes.free">free</link>
+            features, all values are valid. For all other features,
+            the valid values are explicitly specified, and the build
+            system will report an error for the use of an invalid
+            feature-value. Subproperty validity may be restricted so
+            that certain values are valid only in the presence of
+            certain other subproperties. For example, it is possible
+            to specify that the <code>&lt;gcc-target&gt;mingw</code>
+            property is only valid in the presence of
+            <code>&lt;gcc-version&gt;2.95.2</code>.
+          </para>
+
+      </section>
+      <section id="bbv2.reference.features.attributes">
+        <title>Feature Attributes</title>
+
+  <para>Each feature has a collection of zero or more of the following
+  attributes. Feature attributes are low-level descriptions of how
+  the build system should interpret a feature's values when they
+  appear in a build request. We also refer to the attributes of
+  properties, so that a <emphasis>incidental</emphasis> property, for example, is
+  one whose feature is has the <emphasis>incidental</emphasis> attribute.</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><emphasis>incidental</emphasis></para>
+
+      <para>Incidental features are assumed not to affect build
+      products at all. As a consequence, the build system may use
+      the same file for targets whose build specification differs
+      only in incidental features. A feature which controls a
+      compiler's warning level is one example of a likely
+      incidental feature.</para>
+
+      <para>Non-incidental features are assumed to affect build
+      products, so the files for targets whose build specification
+      differs in non-incidental features are placed in different
+      directories as described in "target paths" below. [ where? ]
+      </para>
+    </listitem>
+
+    <listitem>
+      <para>
+        <anchor id="bbv2.reference.features.attributes.propagated"/>
+        <emphasis>propagated</emphasis>
+      </para>
+
+      <para>Features of this kind are
+      propagated to dependencies. That is, if a <link linkend=
+      "bbv2.advanced.targets.main">main target</link> is built using a
+      propagated
+      property, the build systems attempts to use the same property
+      when building any of its dependencies as part of that main
+      target. For instance, when an optimized exectuable is
+      requested, one usually wants it to be linked with optimized
+      libraries. Thus, the <literal>&lt;optimization&gt;</literal> feature is
+      propagated.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+      <anchor id="bbv2.reference.features.attributes.free"/>
+      <emphasis>free</emphasis>
+      </para>
+
+      <para>Most features have a finite set of allowed values, and can
+      only take on a single value from that set in a given build
+      specification. Free features, on the other hand, can have
+      several values at a time and each value can be an arbitrary
+      string. For example, it is possible to have several
+      preprocessor symbols defined simultaneously:</para>
+
+<programlisting>
+&lt;define&gt;NDEBUG=1 &lt;define&gt;HAS_CONFIG_H=1
+</programlisting>
+
+    </listitem>
+
+    <listitem>
+      <para><emphasis>optional</emphasis></para>
+
+      <para>An optional feature is a feature which is not required to
+      appear in a build specification. Every non-optional non-free
+      feature has a default value which is used when a value for
+      the feature is not otherwise specified, either in a target's
+      requirements or in the user's build request. [A feature's
+      default value is given by the first value listed in the
+      feature's declaration. -- move this elsewhere - dwa]</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis>symmetric</emphasis></para>
+
+      <para>A symmetric feature's default value is not automatically
+      included in <link linkend=
+      "bbv2.reference.variants">build variants</link>.  Normally
+      a feature only generates a subvariant directory when its
+      value differs from the value specified by the build variant,
+      leading to an assymmetric subvariant directory structure for
+      certain values of the feature. A symmetric feature, when
+      relevant to the toolset, always generates a corresponding
+      subvariant directory.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis>path</emphasis></para>
+
+      <para>The value of a path feature specifies a path. The path is
+      treated as relative to the directory of Jamfile where path
+      feature is used and is translated appropriately by the build
+      system when the build is invoked from a different
+      directory</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis>implicit</emphasis></para>
+
+      <para>Values of implicit features alone identify the feature.
+      For example, a user is not required to write
+      "&lt;toolset&gt;gcc", but can simply write "gcc". Implicit
+      feature names also don't appear in variant paths, although
+      the values do. Thus: bin/gcc/... as opposed to
+      bin/toolset-gcc/.... There should typically be only a few
+      such features, to avoid possible name clashes.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis>composite</emphasis></para>
+
+      <para>Composite features actually correspond to groups of
+      properties. For example, a build variant is a composite
+      feature. When generating targets from a set of build
+      properties, composite features are recursively expanded and
+      <emphasis>added</emphasis> to the build property set, so rules can find
+      them if neccessary. Non-composite non-free features override
+      components of composite features in a build property set.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis>link-incompatible</emphasis></para>
+
+      <para>See <link linkend=
+      "bbv2.reference.variants.compat">below</link>.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis>dependency</emphasis></para>
+
+      <para>The value of dependency feature if a target reference.
+      When used for building of a main target, the value of
+      dependency feature is treated as additional dependency.</para>
+
+      <para>For example, dependency features allow to state that
+      library A depends on library B. As the result, whenever an
+      application will link to A, it will also link to B.
+      Specifying B as dependency of A is different from adding B to
+      the sources of A. <!-- Need to clarify this. --></para>
+    </listitem>
+  </itemizedlist>
+
+  <para>Features which are neither free nor incidental are called
+  <emphasis>base</emphasis> features.</para>
+
+  <para>TODO: document active features..</para>
+
+      </section>
+      <section id="bbv2.reference.features.declaration">
+        <title>Feature Declaration</title>
+
+        <para>The low-level feature declaration interface is the
+        <literal>feature</literal> rule from the
+        <literal>feature</literal> module:
+
+<programlisting>
+rule feature ( name : allowed-values * : attributes * )
+</programlisting>
+
+        A feature's allowed-values may be extended wit The build
+system will provide high-level rules which define features in terms
+of valid and useful combinations of attributes.
+        </para>
+
+      </section>
+    </section>
+
+    <section id="bbv2.reference.variants">
+      <title>Build Variants</title>
+
+      <para>
+A build variant, or (simply variant) is a special kind of composite
+  feature which automatically incorporates the default values of
+  features that . Typically you'll want at least two separate
+  variants: one for debugging, and one for your release code. [
+  Volodya says: "Yea, we'd need to mention that it's a composite
+  feature and describe how they are declared, in pacticular that
+  default values of non-optional features are incorporated into
+  build variant automagically. Also, do we wan't some variant
+  inheritance/extension/templates. I don't remember how it works in
+  V1, so can't document this for V2.". Will clean up soon -DWA ]
+      </para>
+
+      <section id="bbv2.reference.variants.compat">
+        <title>Link compatible and incompatible properties</title>
+
+  <para>When the build system tries to generate a target (such as
+  library dependency) matching a given build request, it may find
+  that an exact match isn't possible &#x2014; for example, the
+  target may impose additonal build requirements. We need to
+  determine whether a buildable version of that target can actually
+  be used.</para>
+
+  <para>The build request can originate in many ways: it may come
+  directly from the user's command-line, from a dependency of a
+  main target upon a library, or from a dependency of a target upon
+  an executable used to build that target, for example. For each
+  way, there are different rules whether we can use a given
+  subvariant or not. The current rules are described below.</para>
+
+  <para>Two property sets are called <emphasis>link-compatible</emphasis> when
+  targets with those property sets can be used interchangably. In
+  turn, two property sets are link compatible when there's no
+  link-incompatible feature which has different values in those
+  property sets.</para>
+
+  <para>When building of a main target is requested from a command
+  line or some project, link-compatibility is not considered. When
+  building is requested by other main target, via sources or
+  dependency properties, the requested and actual property sets
+  must be link-compatible, otherwise a warning is produced.</para>
+
+  <para><emphasis role="bold">Rationale:</emphasis>Link-compatibility is not considered when
+  main target is requested by a project, because it causes problems
+  in practice. For example, some parts of a project might be
+  single-threaded, while others &#x2014; multi-threaded. They are
+  not link-compatible, but they are not linked, either. So, there's
+  no need to issue error or warning. The errors used to be
+  generated, and only caused problems.</para>
+
+      </section>
+      <section id="bbv2.reference.variants.proprefine">
+        <title>Definition of property refinement</title>
+
+  <para>When a target with certain properties is requested, and that
+  target requires some set of properties, it is needed to find the
+  set of properties to use for building. This process is called
+  <emphasis>property refinement</emphasis> and is performed by these rules</para>
+
+  <orderedlist>
+    <listitem>
+      <simpara>
+        If original properties and required properties are not
+        link-compatible, refinement fails.
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>
+        Each property in the required set is added to the original
+        property set
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>
+        If the original property set includes property with a different
+        value of non free feature, that property is removed.
+      </simpara>
+    </listitem>
+  </orderedlist>
+      </section>
+
+      <section id="bbv2.reference.variants.propcond">
+        <title>Conditional properties</title>
+
+  <para>Sometime it's desirable to apply certain requirements only for
+  specific combination of other properties. For example, one of
+  compilers that you use issues a poinless warning that you want to
+  suppress by passing a command line option to it. You would not
+  want to pass that option to other compilers. Condititional
+  properties allow to do that. Their systax is:</para>
+
+<programlisting>
+property ( "," property ) * ":" property
+</programlisting>
+
+    <para>
+For example, the problem above would be solved by:
+
+<programlisting>
+exe hello : hello.cpp : &lt;toolset&gt;yfc:&lt;cxxflags&gt;-disable-pointless-warning ;
+</programlisting>
+    </para>
+
+      </section>
+    </section>
+
+    <section id="bbv2.reference.init">
+      <title>Initialization</title>
+
+  <para>bjam's first job upon startup is to load the Jam code which
+  implements the build system. To do this, it searches for a file
+  called "boost-build.jam", first in the invocation directory, then
+  in its parent and so forth up to the filesystem root, and finally
+  in the directories specified by the environment variable
+  BOOST_BUILD_PATH. When found, the file is interpreted, and should
+  specify the build system location by calling the boost-build
+  rule:</para>
+
+<programlisting>
+rule boost-build ( location ? )
+</programlisting>
+
+      <para>
+If location is a relative path, it is treated as relative to
+the directory of boost-build.jam. The directory specified by
+location and directories in BOOST_BUILD_PATH are then searched for
+a file called bootstrap.jam which is interpreted and is expected to
+bootstrap the build system. This arrangement allows the build
+system to work without any command-line or environment variable
+settings. For example, if the build system files were located in a
+directory "build-system/" at your project root, you might place a
+boost-build.jam at the project root containing:
+
+<programlisting>
+boost-build build-system ;
+</programlisting>
+
+In this case, running bjam anywhere in the project tree will
+automatically find the build system.</para>
+
+  <para>The default "bootstrap.jam", after loading some standard
+  definitions, loads two files, which can be provided/customised by
+  user: "site-config.jam" and "user-config.jam".</para>
+
+  <para>Locations where those files a search are summarized below:</para>
+
+  <table id="bbv2.reference.init.config">
+    <title>Search paths for configuration files</title>
+
+    <tgroup cols="3">
+      <thead>
+
+    <row>
+      <entry></entry>
+
+      <entry>site-config.jam</entry>
+
+      <entry>user-config.jam</entry>
+    </row>
+
+      </thead>
+      <tbody>
+
+    <row>
+      <entry>Linux</entry>
+
+      <entry>
+        <simpara>/etc</simpara>
+        <simpara>$HOME</simpara>
+        <simpara>$BOOST_BUILD_PATH</simpara>
+     </entry>
+
+      <entry>
+        <simpara>$HOME</simpara>
+        <simpara>$BOOST_BUILD_PATH</simpara>
+      </entry>
+    </row>
+
+    <row>
+      <entry>Windows</entry>
+
+      <entry>
+        <simpara>$SystemRoot</simpara>
+        <simpara>$HOME</simpara>
+        <simpara>$BOOST_BUILD_PATH</simpara>
+      </entry>
+
+      <entry>
+        <simpara>$HOME</simpara>
+        <simpara>$BOOST_BUILD_PATH</simpara>
+      </entry>
+    </row>
+      </tbody>
+    </tgroup>
+  </table>
+
+   <para>
+Boost.Build comes with default versions of those files,
+  which can serve as templates for customized versions.
+   </para>
+
+    </section>
+    <section id="bbv2.reference.commandline">
+      <title>Command line</title>
+
+  <para>The command line may contain:</para>
+
+  <itemizedlist>
+    <listitem><simpara>Jam options,</simpara></listitem>
+
+    <listitem><simpara>Boost.Build <link linkend=
+      "bbv2.reference.init.options">options</link>,</simpara></listitem>
+
+    <listitem><simpara>Command line arguments</simpara></listitem>
+  </itemizedlist>
+
+      <section id="bbv2.reference.init.args">
+        <title>Command line arguments</title>
+
+        <para>
+        Command line arguments specify targets and build
+  request using the following rules.
+        </para>
+
+  <itemizedlist>
+    <listitem>
+      <simpara>
+        An argument which does not contain slashes or the "="
+    symbol is either a value of an implicit feature, or target to
+    be built. It is taken to be value of a feature if appropriate
+    feature exists. Otherwise, it is considered a <link linkend=
+    "bbv2.advanced.ids">target id</link>. Special target name "clean"
+    has the same effect as "--clean" option.
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <para>
+        An argument with either slashes or the "=" symbol specifies
+    a number of <link linkend="bbv2.reference.buildreq">build
+    request</link>
+    elements. In the simplest form, it's just a set of properties,
+    separated by slashes, which become a single build request
+    element, for example:
+
+<programlisting>
+borland/&lt;runtime-link&gt;static
+</programlisting>
+
+More complex form is used to save typing. For example,
+instead of
+
+<programlisting>
+borland/runtime-link=static borland/runtime-link=dynamic
+</programlisting>
+
+one can use
+
+<programlisting>
+borland/runtime-link=static,dynamic
+</programlisting>
+
+Exactly, the conversion from argument to build request
+elements is performed by (1) splitting the argument at each slash,
+(2) converting each split part into a set of properties and (3)
+taking all possible combination of the property sets. Each split
+part should have the either the form
+
+<programlisting>
+<emphasis>feature-name</emphasis>=<emphasis>feature-value1</emphasis>[","<emphasis>feature-valueN</emphasis>]*   
+</programlisting>
+
+or, in case of implict feature
+
+<programlisting>
+<emphasis>feature-value1</emphasis>[","<emphasis>feature-valueN</emphasis>;]*   
+</programlisting>
+
+and will be converted into property set
+
+<programlisting>
+&lt;feature-name&gt;feature-value1 .... &lt;feature-name&gt;feature-valueN
+</programlisting>
+
+      </para>
+    </listitem>
+  </itemizedlist>
+
+      <para>
+For example, the command line
+
+<programlisting>
+target1 debug gcc/runtime-link=dynamic,static
+</programlisting>
+
+would cause target called <literal>target1</literal> to be rebuild in
+debug mode, except that for gcc, both dynamically and statically
+linked binaries would be created.
+      </para>
+
+      </section>
+      <section id="bbv2.reference.init.options">
+        <title>Command line options</title>
+
+  <para>All of the Boost.Build options start with the "--" prefix.
+  They are described in the following table.</para>
+
+  <table>
+    <title>Command line options</title>
+    <tgroup cols="2">
+
+    <thead>
+      <row>
+        <entry>Option</entry>
+
+        <entry>Description</entry>
+      </row>
+    </thead>
+
+    <tbody>
+      <row>
+        <entry><literal>--version</literal></entry>
+
+        <entry>Prints information on Boost.Build and Boost.Jam
+        versions.</entry>
+      </row>
+
+      <row id="bbv2.reference.init.options.help">
+        <entry><literal>--help</literal></entry>
+
+        <entry>Access to the online help system. This prints general
+        information on how to use the help system with additional
+        --help* options.</entry>
+      </row>
+
+      <row>
+        <entry><literal>--clean</literal></entry>
+
+        <entry>Removes everything instead of building. Unlike
+        <literal>clean</literal> target in make, it is possible to clean only
+        some targets.</entry>
+      </row>
+
+      <row>
+        <entry><literal>--debug</literal></entry>
+
+        <entry>Enables internal checks.</entry>
+      </row>
+
+      <row>
+        <entry><literal>--dump-projects</literal></entry>
+
+        <entry>Cause the project structure to be output.</entry>
+      </row>
+
+      <row>
+        <entry><literal>--no-error-backtrace</literal></entry>
+
+        <entry>Don't print backtrace on errors. Primary usefull for
+        testing.</entry>
+      </row>
+
+      <row>
+        <entry><literal>--ignore-config</literal></entry>
+
+        <entry>Do not load <literal>site-config.jam</literal> and
+        <literal>user-config.jam</literal></entry>
+      </row>
+    </tbody>
+    </tgroup>
+  </table>
+
+      </section>
+    </section>
+
+    <section id="bbv2.reference.buildreq">
+      <title>Build request</title>
+
+      <para/>
+    </section>
+
+    <section id="bbv2.reference.buildprocess">
+      <title>Build process</title>
+
+  <para>Construction of each main target begins with finding
+  properties for <emphasis>this</emphasis> main target. They are found by
+  processing both build request, and <emphasis>target requirements</emphasis>,
+  which give properties needed for the target to build. For
+  example, a given main target might require certian defines, or
+  will not work unless compiled in multithreaded mode. The process
+  of finding properties for main target is described in <link linkend=
+  "bbv2.reference.variants.proprefine">property refinement</link>.</para>
+
+  <para>After that, dependencies (i.e. other main targets) are build
+  recursively. Build request for dependencies is not always equal
+  to those of dependent &#x2014; certain properties are dropped and
+  user can explicitly specify desired properties for dependencies.
+  See <link linkend="bbv2.reference.features.attributes.propagated">
+  propagated features</link> and <xref linkend=
+  "bbv2.advanced.targets.references"/> for details.</para>
+
+  <para>When dependencies are constructed, the dependency graph for
+  this main target and for this property set is created, which
+  describes which files need to be created, on which other files
+  they depend and what actions are needed to construct those files.
+  There's more that one method, and user can define new ones, but
+  usually, this involves <emphasis>generators</emphasis> and <emphasis>target
+  types</emphasis>.</para>
+
+  <para>Target type is just a way to classify targets. For example,
+  there are builtin types <literal>EXE</literal>, <literal>OBJ</literal> and
+  <literal>CPP</literal>. <link linkend=
+  "bbv2.reference.generators">Generators</link> are objects
+  that know how to convert between different target type. When a
+  target of a given type must be created, all generators for that
+  type, which can handle needed properties, are found. Each is
+  passed the list of sources, and either fails, or returns a
+  dependency graph. If a generator cannot produce desired type from
+  given sources, it may try to recursively construct types that it
+  can handle from the types is was passed. This allows to try all
+  possible transformations. When all generators are tried, a
+  dependency graph is selected.</para>
+
+  <para>Finally, the dependency graph is passed to underlying
+  Boost.Jam program, which runs all actions needed to bring all
+  main targets up-to date. At this step, implicit dependencies are
+  also scanned and accounted for, as described "here." [ link? ]</para>
+
+  <para>Given a list of targets ids and a build request, building goes
+  this way. First, for each id we obtain the abstract targets
+  corresponding to it. This also loads all necessary projects. If
+  no target id is given, project in the current directory is used.
+  Build request is expanded, and for each resulting property set,
+  the <literal>generate</literal> method of all targets is called, which
+  yields a list of virtual targets. After that all virtual targets
+  are actualized, and target "all" is set to depend on all created
+  actual targets. Lastly, depending on whether <literal>--clean</literal>
+  option was given, either target "all" or target "clean" is
+  updated. Generation of virtual target from abstract one is
+  performed as follows:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para>For project targets, all of main targets are generated
+      with the same properties. Then all projects referred via
+      "build-project" are generated as well. If it's not possible
+      to refine requested properties with project requirements, the
+      project is skipped.</para>
+
+      <para id="bbv2.reference.buildprocess.explict">
+      It is possible to disable building of certain target using the
+      <literal>explicit</literal> rule, available in all project
+      modules. The syntax is
+
+<programlisting>
+rule explicit ( target-name )
+</programlisting>
+
+      If this rule is invoked on a target, it will be built only
+when it's explicitly requested on the command line.
+      </para>
+    </listitem>
+
+    <listitem>
+      <para>
+        For main target, with several alternatives, one of them is
+    selected as described <link linkend=
+      "bbv2.reference.buildprocess.alternatives">below</link>.
+    If there's only one
+    alternative, it's used unconditionally.
+
+      <orderedlist>
+        <listitem>
+          <simpara>
+            All main target alternatives which requirements are
+            satisfied by the build request are enumerated.
+          </simpara>
+        </listitem>
+
+        <listitem>
+          <simpara>
+            If there are several such alternatives, the one which
+            longer requirements list is selected.
+          </simpara>
+        </listitem>
+      </orderedlist>
+      </para>
+    </listitem>
+
+    <listitem>
+      <para>
+        For the selected alternative
+
+      <orderedlist>
+        <listitem>
+          <simpara>
+            Each target reference in the source list are
+        recursively constructed.
+          </simpara>
+        </listitem>
+
+        <listitem>
+          <simpara>
+            Properties are refined with alternative's requirements,
+        and active features in the resulting set are executed.
+          </simpara>
+        </listitem>
+
+        <listitem>
+          <simpara>
+            Conditional properties are evaluated.
+          </simpara>
+        </listitem>
+
+        <listitem>
+          <simpara>
+            The dependency graph for the target is constructed in a
+        way which depends on the kind of main target, typically
+        using generators.
+          </simpara>
+        </listitem>
+      </orderedlist>
+      </para>
+    </listitem>
+
+    <listitem>
+      <simpara>
+        If, when building sources, the properties on recursively
+    created targets are not link-compatibile with build properties,
+    a warning is issued.
+      </simpara>
+    </listitem>
+  </itemizedlist>
+
+      </section>
+
+      <section id="bbv2.reference.buildprocess.alternatives">
+        <title>Alternative selection</title>
+
+  <para>When there are several alternatives, one of them must be
+  selected. The process is as follows:</para>
+
+  <orderedlist>
+    <listitem>
+      <simpara>
+        For each alternative <emphasis>condition</emphasis> is defined
+        as the set of base properies in requirements. [Note: it might be
+    better to explicitly specify the condition explicitly, as in
+    conditional requirements].
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>
+        An alternative is viable only if all properties in condition
+        are present in build request.
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>
+        If there's one viable alternative, it's choosen. Otherwise,
+    an attempt is made to find one best alternative. An alternative
+    a is better than another alternative b, iff set of properties
+    in b's condition is stict subset of the set of properities of
+    'a's condition. If there's one viable alternative, which is
+    better than all other, it's selected. Otherwise, an error is
+    reported.
+      </simpara>
+    </listitem>
+  </orderedlist>
+
+    </section>
+
+    <section id="bbv2.reference.headers">
+      <title>Generated headers</title>
+
+  <para>Usually, Boost.Build handles implicit dependendies completely
+  automatically. For example, for C++ files, all <literal>#include</literal>
+  statements are found and handled. The only aspect where user help
+  might be needed is implicit dependency on generated files.</para>
+
+  <para>By default, Boost.Build handles such dependencies within one
+  main target. For example, assume that main target "app" has two
+  sources, "app.cpp" and "parser.y". The latter source is converted
+  into "parser.c" and "parser.h". Then, if "app.cpp" includes
+  "parser.h", Boost.Build will detect this dependency. Moreover,
+  since "parser.h" will be generated into a build directory, the
+  path to that directory will automatically added to include
+  path.</para>
+
+  <para>Making this mechanism work across main target boundaries is
+  possible, but imposes certain overhead. For that reason, if
+  there's implicit dependency on files from other main targets, the
+  <literal>&lt;implicit-dependency&gt;</literal> [ link ] feature must
+  be used, for example:</para>
+
+<programlisting>
+lib parser : parser.y ;
+exe app : app.cpp : &lt;implicit-dependency&gt;parser ;
+</programlisting>
+
+      <para>
+The above example tells the build system that when scanning
+all sources of "app" for implicit-dependencies, it should consider
+targets from "parser" as potential dependencies.
+      </para>
+
+    </section>
+    <section id="bbv2.reference.generators">
+      <title>Generators</title>
+
+  <para>To construct a main target with given properties from sources,
+  it is required to create a dependency graph for that main target,
+  which will also include actions to be run. The algorithm for
+  creating the dependency graph is described here.</para>
+
+  <para>The fundamental concept is <emphasis>generator</emphasis>. If encapsulates
+  the notion of build tool and is capable to converting a set of
+  input targets into a set of output targets, with some properties.
+  Generator matches a build tool as closely as possible: it works
+  only when the tool can work with requested properties (for
+  example, msvc compiler can't work when requested toolset is gcc),
+  and should produce exactly the same targets as the tool (for
+  example, if Borland's linker produces additional files with debug
+  information, generator should also).</para>
+
+  <para>Given a set of generators, the fundamental operation is to
+  construct a target of a given type, with given properties, from a
+  set of targets. That operation is performed by rule
+  <literal>generators.construct</literal> and the used algorithm is described
+  below.</para>
+
+      <section>
+        <title>Selecting and ranking viable generators</title>
+
+  <para>Each generator, in addition to target types that it can
+  produce, have attribute that affects its applicability in
+  particular sitiation. Those attributes are:</para>
+
+  <orderedlist>
+    <listitem>
+      <simpara>
+        Required properties, which are properties absolutely
+    necessary for the generator to work. For example, generator
+    encapsulating the gcc compiler would have &lt;toolset&gt;gcc as
+    required property.
+      </simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>
+        Optional properties, which increase the generators
+    suitability for a particual build.
+      </simpara>
+    </listitem>
+  </orderedlist>
+  
+  <para>
+  Generator's required and optional properties may not include
+  either free or incidental properties. (Allowing this would
+  greatly complicate caching targets).
+  </para>
+
+  <para>When trying to construct a target, the first step is to select
+  all possible generators for the requested target type, which
+  required properties are a subset of requested properties.
+  Generators which were already selected up the call stack are
+  excluded. In addition, if any composing generators were selected
+  up the call stack, all other composing generators are ignored
+  (TODO: define composing generators). The found generators
+  assigned a rank, which is the number of optional properties
+  present in requested properties. Finally, generators with highest
+  rank are selected for futher processing.</para>
+
+      </section>
+      <section>
+        <title>Running generators</title>
+
+  <para>When generators are selected, each is run to produce a list of
+  created targets. This list might include targets which are not of
+  requested types, because generators create the same targets as
+  some tool, and tool's behaviour is fixed. (Note: should specify
+  that in some cases we actually want extra targets). If generator
+  fails, it returns an empty list. Generator is free to call
+  'construct' again, to convert sources to the types it can handle.
+  It also can pass modified properties to 'constuct'. However, a
+  generator is not allowed to modify any propagated properties,
+  otherwise when actually consuming properties we might discover
+  that the set of propagated properties is different from what was
+  used for building sources.</para>
+
+  <para>For all targets which are not of requested types, we try to
+  convert them to requested type, using a second call to
+  <literal>construct</literal>. This is done in order to support
+  transformation sequences where single source file expands to
+  several later. See <ulink url=
+  "http://groups.yahoo.com/group/jamboost/message/1667">this
+  message</ulink> for details.</para>
+
+      </section>
+
+      <section>
+        <title>Selecting dependency graph</title>
+
+        <para>
+  After all generators are run,
+  it is necessary to decide which of successfull invocation will be
+  taken as final result. At the moment, this is not done. Instead,
+  it is checked whether all successfull generator invocation
+  returned the same target list. Error is issued otherwise.
+        </para>
+
+      </section>
+
+      <section>
+        <title>Property adjustment</title>
+
+  <para>Because target location is determined by the build system, it
+  is sometimes necessary to adjust properties, in order to not
+  break actions. For example, if there's an action which generates
+  a header, say "a_parser.h", and a source file "a.cpp" which
+  includes that file, we must make everything work as if a_parser.h
+  is generated in the same directory where it would be generated
+  without any subvariants.</para>
+
+  <para>Correct property adjustment can be done only after all targets
+  are created, so the approach taken is:</para>
+
+  <orderedlist>
+    <listitem>
+      <para>
+        When dependency graph is constructed, each action can be
+    assigned a rule for property adjustment.
+      </para>
+    </listitem>
+
+    <listitem>
+      <para>
+        When virtual target is actualized, that rule is run and
+    return the final set of properties. At this stage it can use
+    information of all created virtual targets.
+      </para>
+    </listitem>
+  </orderedlist>
+
+  <para>In case of quoted includes, no adjustment can give 100%
+  correct results. If target dirs are not changed by build system,
+  quoted includes are searched in "." and then in include path,
+  while angle includes are searched only in include path. When
+  target dirs are changed, we'd want to make quoted includes to be
+  search in "." then in additional dirs and then in the include
+  path and make angle includes be searched in include path,
+  probably with additional paths added at some position. Unless,
+  include path already has "." as the first element, this is not
+  possible. So, either generated headers should not be included
+  with quotes, or first element of include path should be ".",
+  which essentially erases the difference between quoted and angle
+  includes. <emphasis role="bold">Note:</emphasis> there only way to get "." as include path
+  into compiler command line is via verbatim compiler option. In
+  all other case, Boost.Build will convert "." into directory where
+  it occurs.</para>
+
+      </section>
+
+      <section>
+      <title>Transformations cache</title>
+
+      <para>
+  Under certain conditions, an
+  attempt is made to cache results of transformation search. First,
+  the sources are replaced with targets with special name and the
+  found target list is stored. Later, when properties, requested
+  type, and source type are the same, the store target list is
+  retrieved and cloned, with appropriate change in names.
+      </para>
+
+      </section>
+    </section>
+
+  </chapter>
+

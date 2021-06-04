@@ -1,0 +1,6691 @@
+#include "UnitAttribute.inl"
+#include "SquadShellEnums.inl"
+#include "ToolzerEnums.inl"
+#include "GameBalance.inl"
+
+section UnitAttributePrm( declaration = "Game\Scripts\UnitAttribute.hi", definition = "Game\Scripts\UnitAttribute.cppi")
+{
+#include "Models.inl"
+#include "UnitDynamics.inl"
+#include "SquadLogic.inl"
+#include "Toolzers.inl"
+#include "UnitInterface.inl"
+#include "UnitAnimation.inl"
+#include "Damage.inl"
+#include "UnitLogic.inl"
+#include "interfaceTV.inl" 
+#include "Sound.inl" 
+
+static float M_PI = 3.14159265358979323846;
+static float G2R = M_PI/180;
+
+//-------------------------
+int DAMAGE_CHECK_COUNT = 150;
+int MUTATION_CHECK_COUNT = 20;
+
+int terShootMapTest = 0;
+int terShootUnitTest = 0;
+
+// Время, на которое офицер замораживает базовый юнит, в миллисекундах.
+int terOfficerFreezeTime = 10000;
+// Время, на которое пролеченный юнит зеленеет, в миллисекундах.
+int terTechnicHealTime = 1000;
+
+float terScumStormTurnAngle = 30 * G2R;
+float terScumStormTurnAngleDelta = 10 * G2R;
+int terScumStormTurnDelay = 400;
+
+// Время, на которое unseen делает юнита невидимым, мс.
+int terInvisibilityTime = 4000;
+// Максимальное время невидимости, мс.
+int terInvisibilityTimeMax = 8000;
+
+// Коэфф. прозрачности для собственных невидимых юнитов.
+float terInvisibilityCoeff = 0.5;
+
+//------------------------------------------------------
+// параметры осколков
+struct terDebrisData
+{
+	terUnitAttributeID debrisID = UNIT_ATTRIBUTE_NONE;
+
+	int count = 10;
+	// если равно -1, то осколков будет count + round(pow(radius / 4,1.5f));
+	int countRnd = 10;
+
+	float speed = 150.0f;
+};
+
+// спецэффект
+struct terUnitEffectData
+{
+	// идентификатор эффекта
+	terEffectID effectID = EFFECT_ID_EXPLOSION;
+	// имя для поиска в библиотеке
+	string effectName = "";
+	// == 1 если эффекту надо передавать ориентацию юнита
+	int needOrientation = 1;
+
+	// (для огня/дыма от горящих зданий)
+	// уровень повреждений, при котором включается эффект
+	// [0, 1]
+	float startupDamage = 0.0;
+};
+
+// параметры спецэффектов юнита/здания - имя файла, имена эффектов и т.д.
+struct terUnitEffects
+{
+	string libraryFileName = "";
+	terUnitEffectData effects[int effectNum = 7] = {
+		{ effectID = EFFECT_ID_EXPLOSION;	effectName = "EXPLOD_01"; },
+		{ effectID = EFFECT_ID_UNIT_SMOKE; effectName = "EXPLOD_02"; },
+		{ effectID = EFFECT_ID_UNIT_SMOKE; effectName = "EXPLOD_04"; startupDamage = 0.3; },
+		{ effectID = EFFECT_ID_UNIT_SMOKE; effectName = "EXPLOD_05"; startupDamage = 0.6; },
+		{ effectID = EFFECT_ID_UNIT_MOVE; effectName = "smoke"; }
+	};
+
+	// осколки
+	terDebrisData debrisData[int debrisDataNum = 2] = { };
+
+	// время существования трупа от юнита
+	int corpseLifeTime = 0;
+
+	// тип трупа
+	// UNIT_ATTRIBUTE_CORPSE_DYNAMIC - для юнитов
+	// UNIT_ATTRIBUTE_FALL_STRUCTURE - для зданий
+	// UNIT_ATTRIBUTE_NONE - если трупа нету
+	terUnitAttributeID corpseID = UNIT_ATTRIBUTE_NONE;
+
+	// радиус воронки от взрыва
+	// ноль если воронки нету
+	float craterRadius = 0;
+	// тип кратера
+	terUnitAttributeID craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
+
+	// задержка перед появлением кратера от взрыва
+	int craterDelay = 0;
+
+	// кратер, вызывающийся при движении юнита, для подземных снарядов
+	terUnitAttributeID movementCraterID = UNIT_ATTRIBUTE_NONE;
+	// чарез какое расстояние класть кратер при движении
+	// если обнулить, будет вызываться непрерывно при движении
+	float movementCraterDelta = 1;
+};
+
+// параметры управления наведением оружия
+struct terWeaponControllerSetup
+{
+	// имена дамми для управления моделью башни и ствола
+	string objectName[2] = { "group bashnia","group dulo" };
+	// имена логических объектов для управления башней и стволом
+	string logicObjectName[2] = { "bashnia","dulo" };
+
+	// имена логических объектов для прицеливания (центр башни и конец ствола)
+	string targetingObjectName = 0;
+
+	// точность прицеливания, в долях PI
+	float targetingPrecision[2] = { 0.001, 0.001 };
+
+	// скорость поворотов по горизонтали и по ветрикали
+	// в долях PI
+	float turnSpeed[2] = { 0.2, 0.2 };
+
+	// ограничения поворота ствола по горизонтали
+	// в долях PI
+	float psiLimit[2] = { 0, 2 };
+
+	// ограничения поворота ствола по вертикали
+	// в долях PI
+	float thetaLimit[2] = { -0.5, 0.5 };
+
+	// направление ствола по умолчанию, в долях PI
+	float defaultAngles[2] = { 0, 0 };
+};
+
+// оружие
+struct terWeaponSetup
+{
+	// тип оружия
+	WeaponType weaponType = WEAPON_LASER;
+
+	// флаги, комбинация значений enum WeaponFlags
+	int flags = 0;
+
+	// ID снаряда
+	terUnitAttributeID missileID = UNIT_ATTRIBUTE_NONE;
+	// максимальное количество одновременно живущих на мире снарядов
+	// 0 если нет ограничения
+	int missileLimit = 0;
+
+	// время после наведения, по истечении которого
+	// оружие разворачивается в направлении по-умолчанию
+	//
+	// в милиисекундах
+	int aimResetDelay = 1500;
+
+	// время, в течении которого после выстрела нельзя стрельнуть ещё
+	int fireDisableTime = 0;
+
+	// задержка между выстрелами
+	// для оружия, которое какое-то время заряжается,
+	// потом некоторое время работает
+	int fireDelay = 1000;
+
+	// задержка перезарядки после выстрела,
+	// используется для ракетниц
+	int missileLoadDelay = 300;
+
+	// prm для расчета наведения
+	RigidBodyPrm* turnSuggestPrm = 0;
+
+	// управление наведением
+	terWeaponControllerSetup* controllerSetup = 0;
+
+	float dischargeSpeed = 0.3;
+
+	// дальность стрельбы, min/max
+	float fireRadius[2] = { 0, 100 };
+
+	// радиус видимости цели
+	float sightRadius = 100;
+
+	// радиус, в котром ложатся снаряды
+	float accuracyRadius = 0;
+
+	// внутренний индекс, назначение зависит от оружия
+	int weaponIndex = 0;
+
+	// для лазера - толщина луча
+	float laserWidth = 2.0;
+
+	ConsumptionData reloadConsumption = {
+		name = "reloadConsumption";
+	};
+
+	float thetaForced = -360; // Игнорировать theta, возвращаемое suggest 
+
+	// 0 - индивидуальная проверка расстояния до цели
+	// 1 - проверка расстояния до цели по скваду
+	int squadMode = 1;
+
+delegate:
+
+	bool checkFlag(int fl) const { if(flags & fl) return true; else return false; }
+
+	bool hasFireController() const { return checkFlag(WEAPON_HAS_FIRE_CONTROLLER); }
+	bool rootFireAnimation() const { return checkFlag(WEAPON_ROOT_FIRE_ANIMATION); }
+	bool cycleFireAnimation() const { return checkFlag(WEAPON_CYCLE_FIRE_ANIMATION); }
+	bool needCharge() const { return checkFlag(WEAPON_NEED_CHARGE); }
+	bool cleanTargetAfterFire() const { return checkFlag(WEAPON_CLEAN_TARGET_AFTER_FIRE); }
+};
+
+//------------------------------------------------------
+struct EnableDataPrm
+{
+	terUnitAttributeID EnableStructure[int StructureNum] =  { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE };
+	terUnitAttributeID Downgrades[int DowngradesNum] = { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }; // для сканирования, в _обратном_ порядке
+	terUnitAttributeID Upgrade = UNIT_ATTRIBUTE_NONE; // Только ближайший апгрейд
+
+	int Enabled = 0; // разрешена для строительства, разрешена мутация для юнитов
+	int Requested = 0; // кол-во запрошенных и построенных
+	int Constructed = 0; // кол-во построенных
+	int Worked = 0; // работает
+
+delegate:
+	void clear() { Enabled = Worked = Constructed = Requested = 0; }
+	bool hasUpgrade() const { return Upgrade != UNIT_ATTRIBUTE_NONE; }
+	bool hasDowngrade() const { return Downgrades[0] != UNIT_ATTRIBUTE_NONE; }
+	bool hasUnpowered() const { return Constructed != Worked; }
+};
+
+struct EnableDataPrmBase : EnableDataPrm 
+{
+	EnableStructure = {};
+	Downgrades = {};
+};
+
+//------------------------------------------------------
+struct terUnitAttributeData
+{
+	terUnitAttributeID ID = UNIT_ATTRIBUTE_NONE;
+	terUnitClassID ClassID = UNIT_CLASS_ID_NONE;
+	terInterpolationID InterpolationType = INTERPOLATION_ID_NONE;
+	terBelligerent belligerent = BELLIGERENT_NONE; // выделяет специализации по воюющей стороне, массив _общий_
+
+	string InterfaceName = "None";
+	string ModelNameArray[int ModelNameNum = 2] = { 0, 0 };
+	string LogicName = 0;
+	string ConnectionPointNames[int ConnectionPointNameNum = 4] = {};
+
+	terUnitEffects effectsData = {};
+
+	terUnitDamageData* damageData = 0;
+	int damageMolecula[] = { 0,0,0,1,0 }; 
+	EnvironmentalDamageData* environmentalDamage = 0;
+
+	terWeaponSetup* weaponSetup = 0;
+	ToolzerSetup* toolzerSetup = 0;
+
+	int SelectAble = 0;
+	int saveAsCommonObject = 0; // Записывать объект (нельзя ставить для объектов, которые уже пишутся в составе общей иерархии)
+	
+	float BoundScale = 1; // Относительное масштабирование 
+	float BoundRadius = 0; // Если задан, то используется абсолютное масштабирование до этого радиуса
+	float GroundPlaneSpeed = 0;
+	float GroundAngleSpeed = 0*G2R;
+	
+	int MilitaryUnit = 0;
+	int UnitClass = UNIT_CLASS_IGNORE;
+	int AttackClass = UNIT_CLASS_IGNORE;
+	int enemyWorld = 0; // Оъекты, принадлежащие миру, будут атаковаться. Скверна.
+
+	terLegionType LegionType = LEGION_GROUND;
+
+	terUnitAttributeID ProductionType = UNIT_ATTRIBUTE_NONE;
+
+	string SoundName = "";
+	int SoundCycled=1;
+
+	int InstallBound = 0;
+	int lockInitialPosition = 0;
+	int isUpgrade = 0;
+
+	int showPath = 0;
+
+	int ExcludeCollision = 0;
+	int CollisionGroup = 0;
+
+	float MakeEnergy = 0; // в секунду
+	float energyCapacity = 0;
+
+	float ConnectionRadius = 0;
+	float ZeroLayerRadius = 0;
+	float FieldRadius = 0;
+
+	int LifeTime = 0;
+
+	int destroyZeroLayer = 1;
+
+	// для зданий - приоритет строительства
+	int constructionPriority = 0;
+
+	// для зданий,
+	// = 1 если есть анимация для отключенного состояния
+	// иначе просто останавливается текущая анимация
+	int disconnectAnimation = 0;
+
+	// коэффициент, на который умножается количество элементов, 
+	// приносимых строительным блоком при постройке здания
+	float constructionSpeedCoeff = 1.0f;
+
+	int FallDelay = 20;
+	float FallSpeed = -2;
+	float FallAcceleration = 0;
+
+	float SelectionDistance = 1.0f;
+	float SelectionSize = 1.0f;
+
+	float iconDistanceFactor = 1.1f;
+
+	int MakingChainNum = -1;
+	string UpgradeChainName = "making";
+	string PrevChainName = "main";
+	int IgnoreTargetTrace = 0;
+
+	int changePlayerDelay = 3000;
+
+	int ShowCircles = 1;
+
+	float FallTreeTime = 0;
+
+	int enablePathFind = 0;
+	int enableFieldPathFind = 0;
+	int considerInFieldPathFind = 1;
+	
+	EnableDataPrmBase enableData = {};
+	RigidBodyPrm* rigidBodyPrm = 0; // Параметры физики
+	LegionaryPrm legionaryPrm = {}; // Параметы логики сквада
+	AttackablePrm attackablePrm = attackable_data.Default; 
+	UnitInterfacePrm interfacePrm = unit_interface_data.Default;
+	InterfaceTV* interfaceTV = 0;
+	AnimationSetup* animationSetup = 0;
+	SoundSetup* soundSetup = 0;
+	DockingSlotsSetup* dockingSlots = 0;
+	CorridorPrm* corridorPrm = 0;
+	FramePrm* framePrm = 0;
+	SetModelDataArray* setModelDataArray = 0;
+	ConsumptionData* productionConsumption = 0;
+	ConsumptionData* movementConsumption = 0;
+};
+
+//------------------------------------------------------
+// Таблица аттрибутов 
+struct terUnitAttributeDataTable
+{
+	////////////////////////////////////////////
+	//	Мелкие внутренние предустановки
+
+	// Военные юниты
+	struct Military : terUnitAttributeData
+	{
+		MilitaryUnit = 1;
+		
+		SelectAble = 1;
+		
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		effectsData = { 
+			corpseID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+			craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NO_DESTRUCT_ALL_ZEROPLAST;
+			corpseLifeTime = 5;
+		};
+
+		environmentalDamage = &chaosDamageDefault;
+		interfacePrm = unit_interface_data.squad;
+	};
+	
+	// Cнаряды, бомбы, мины
+	struct Missile : terUnitAttributeData 
+	{
+		UnitClass = UNIT_CLASS_MISSILE;
+		
+		lockInitialPosition = 1;
+		
+		ExcludeCollision = EXCLUDE_COLLISION_BULLET;
+		CollisionGroup = COLLISION_GROUP_ENEMY_ONLY | COLLISION_GROUP_REAL | COLLISION_GROUP_ENEMY;
+
+		effectsData = { 
+			effects = { 
+				{ needOrientation = 0; },
+				{ effectID = EFFECT_ID_UNIT_MOVE; effectName = "smoke"; }
+			}; 
+		};
+	};
+	
+	struct MilitaryStructure : Military
+	{
+		UnitClass = UNIT_CLASS_STRUCTURE_GUN;
+		
+		MilitaryUnit = 1;
+		InstallBound = 1;
+		
+		effectsData = {
+			effects = {
+				{ },
+				{ },
+				{ },
+				{ },
+				{ effectID = EFFECT_ID_BUILDING_UNINSTALL; effectName = "EXPLOD_07"; },
+				{ effectID = EFFECT_ID_LASER_HIT; effectName = "laser"; }
+			};
+			debrisData = { 
+				{ 
+					debrisID = UNIT_ATTRIBUTE_DEBRIS_UNIT; 
+					count = 5;
+					countRnd = -1;
+				}
+			};
+
+			corpseID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+			corpseLifeTime = 70;
+
+			craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
+			craterRadius = 30;
+			craterDelay = 10;
+		};
+
+		IgnoreTargetTrace = 1;
+		
+		environmentalDamage = &basementDamageDefault;
+
+		rigidBodyPrm = &rigidBodyTable.GunPrm;
+	};
+	
+	struct Structure : terUnitAttributeData
+	{
+		UnitClass = UNIT_CLASS_STRUCTURE;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		InstallBound = 1;
+		IgnoreTargetTrace = 1;
+
+		SelectAble = 1;
+
+		effectsData = {
+			effects = {
+				{ },
+				{ },
+				{ },
+				{ },
+				{ effectID = EFFECT_ID_BUILDING_UNINSTALL; effectName = "EXPLOD_07"; },
+				{ effectID = EFFECT_ID_LASER_HIT; effectName = "laser"; }
+			};
+			debrisData = { 
+				{ 
+					debrisID = UNIT_ATTRIBUTE_DEBRIS_UNIT; 
+					count = 5;
+					countRnd = -1;
+				}
+			};
+
+			corpseID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+			corpseLifeTime = 70;
+
+			craterRadius = 75;
+			craterDelay = 10;
+		};
+		
+		considerInFieldPathFind = 1;
+
+		environmentalDamage = &basementDamageDefault;
+		
+		rigidBodyPrm = &rigidBodyTable.GenericBuildingPrm;
+	};
+
+	struct Filth : terUnitAttributeData
+	{
+		SelectAble = 1;
+		enemyWorld = 1;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+	};
+	
+	struct Geo : terUnitAttributeData
+	{
+		InterfaceName = "GeoSpot";
+		BoundRadius = 32.0;
+	};
+	
+	////////////////////////////////////////////
+	//		Объекты
+	////////////////////////////////////////////
+	terUnitAttributeData Frame = 
+	{
+		ID = UNIT_ATTRIBUTE_FRAME;
+		InterfaceName = "FRAME";
+		ClassID = UNIT_CLASS_ID_FRAME;
+		InterpolationType = INTERPOLATION_ID_CONNECTION;
+
+		UnitClass = UNIT_CLASS_FRAME;
+		MakeEnergy = 12;
+		energyCapacity = 10000;
+		ConnectionRadius = 300;
+		ZeroLayerRadius = 200;
+				
+		SelectAble = 1;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\FrameII.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\FrameII.l3d";
+		
+		damageMolecula = { 0,0,0,0,3000 };
+
+		ConnectionPointNames = { "group lighting" };
+		CollisionGroup = COLLISION_GROUP_REAL;
+		
+		showPath = 1;
+		
+		InstallBound = 1;
+		
+		IgnoreTargetTrace = 1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.4f;
+
+		effectsData = {
+			corpseLifeTime = 200;
+			corpseID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+
+			craterID = UNIT_ATTRIBUTE_FRAME_KAPUT_CRATER;
+			craterRadius=150;
+		};
+		FallDelay = 100;
+		FallSpeed = -2;
+		FallAcceleration = 0;
+
+		framePrm = new FramePrm { };
+
+		productionConsumption = new ConsumptionData {
+			energy = 2;
+			time = 30000; 
+			priority = 60;
+			name = "productionConsumption Frame";
+		};
+
+		animationSetup = &frameAnimation;
+		soundSetup = &frameSound;
+		rigidBodyPrm = &rigidBodyTable.FramePrm;
+		attackablePrm = attackable_data.Frame;
+		interfacePrm = unit_interface_data.frame_installed;
+		dockingSlots = &dockingSlotsFrame; 
+		interfaceTV = &interfaceTV_Frame;
+	};
+
+	///////////////////////////////////////////////
+	//        Builders
+	///////////////////////////////////////////////
+	terUnitAttributeData TerrainMaster = 
+	{
+		ID = UNIT_ATTRIBUTE_TERRAIN_MASTER;
+		InterfaceName = "TerrainMaster";
+		ClassID = UNIT_CLASS_ID_TERRAIN_MASTER;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		UnitClass = UNIT_CLASS_BUILDER;
+
+		SelectAble = 1;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Brigadir.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Brigadir.l3d";
+		BoundRadius = 35.0;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Brigadier.effect"; 
+			corpseID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+			corpseLifeTime = 10;
+			craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NO_DESTRUCT_ALL_ZEROPLAST;
+			craterRadius=20;
+		};
+
+		damageMolecula = { 0,0,300,0,0 };
+
+		showPath = 1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;	
+
+		enablePathFind = 1;
+		enableFieldPathFind = 1;
+		considerInFieldPathFind = 1;
+
+		lockInitialPosition = 1;
+
+		productionConsumption = new ConsumptionData {
+			energy = .5;
+			time = 5000; 
+			priority = 40;
+			name = "productionConsumption Terrainmaster";
+		};
+
+		animationSetup = &terrainMasterAnimation;
+		soundSetup = &terrainMasterSound;
+
+		rigidBodyPrm = &rigidBodyTable.TerrainMasterPrm;
+		attackablePrm = attackable_data.Brigadier;
+		interfacePrm = unit_interface_data.brigadier;
+		interfaceTV = &interfaceTV_TerrainMaster;
+		environmentalDamage = &chaosDamageDefault;
+	};
+
+	terUnitAttributeData Truck = 
+	{
+		ID = UNIT_ATTRIBUTE_TRUCK;
+		InterfaceName = "TrustTruck";
+		ClassID = UNIT_CLASS_ID_TRUCK;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		UnitClass = UNIT_CLASS_TRUCK;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Covsh.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Covsh.l3d";
+		GroundPlaneSpeed = 4.0;
+		GroundAngleSpeed = 10*G2R;
+		BoundRadius = 5.0;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\scoop.effect"; 
+			craterRadius=10;
+		};
+
+		damageMolecula = { 0,0,15,0,0 };
+
+		soundSetup = &truckSound;
+
+		rigidBodyPrm = &rigidBodyTable.TruckPrm;
+		attackablePrm = attackable_data.Truck;
+	};
+
+	terUnitAttributeData BuildMaster = 
+	{
+		ID = UNIT_ATTRIBUTE_BUILD_MASTER;
+		InterfaceName = "BuildMaster";
+		ClassID = UNIT_CLASS_ID_BUILD_MASTER;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		
+		UnitClass = UNIT_CLASS_BUILDER; 
+
+		SelectAble = 1;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Prorab.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Prorab.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\BuildMaster.effect"; 
+			corpseID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+			corpseLifeTime = 10;
+			craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NO_DESTRUCT_ALL_ZEROPLAST;
+			craterRadius=20;
+		};
+
+		LegionType = LEGION_FLYING;
+
+		damageMolecula = { 0,0,300,0,0 };
+
+		animationSetup = &buildMasterAnimation;
+		soundSetup = &buildMasterSound;
+
+		showPath = 1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.4f;	
+		
+		enablePathFind = 0;
+		enableFieldPathFind = 1;
+		considerInFieldPathFind = 1;
+		
+		lockInitialPosition = 1; 
+
+		productionConsumption = &buildingBlockConsumption;
+		rigidBodyPrm = &rigidBodyTable.BuildMasterPrm;
+		attackablePrm = attackable_data.BuildMaster;
+		interfacePrm = unit_interface_data.prorab;
+		interfaceTV = &interfaceTV_BuildMaster;
+	};
+
+	terUnitAttributeData BuildingBlock = 
+	{
+		ID = UNIT_ATTRIBUTE_BUILDING_BLOCK;
+		InterfaceName = "BuildingBlock";
+		ClassID = UNIT_CLASS_ID_BUILDING_BLOCK;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		
+		UnitClass = UNIT_CLASS_BLOCK;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\block.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\block.l3d";
+
+		damageMolecula = { 0,0,0,10,0 };
+
+		BoundRadius = 4.0;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;		
+
+		rigidBodyPrm = &rigidBodyTable.BlockPrm;
+		attackablePrm = attackable_data.BuildingBlock;
+
+		soundSetup = &buildingBlockSound;
+	};
+
+	///////////////////////////////////////////////
+	//			Structures
+	///////////////////////////////////////////////
+	Structure Core = 
+	{
+		ID = UNIT_ATTRIBUTE_CORE;
+		InterfaceName = "Core";
+		ClassID = UNIT_CLASS_ID_CORE;
+		InterpolationType = INTERPOLATION_ID_CORE;
+
+		UnitClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_CORE;
+
+		constructionPriority = 10;
+
+		MakeEnergy = 3;
+		ConnectionRadius = 200;
+		ZeroLayerRadius = 100;
+		FieldRadius = 100;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\coreup.m3d","RESOURCE\\MODELS\\MAIN\\build_core.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\coreup.l3d";
+
+		disconnectAnimation = 1;
+		
+		effectsData = {
+			effects = {
+				{ },
+				{ },
+				{ },
+				{ },
+				{ },
+				{ },
+				{ effectID = EFFECT_ID_EXPLOSION_ALTERNATE; effectName = "EXPLOD_03"; }
+			};
+
+			libraryFileName = "RESOURCE\\FX\\CoreGenerator.effect";
+			corpseLifeTime = 120;
+			craterRadius = 50;
+		};
+		damageMolecula = { 0,0,0,0,75 };
+		constructionSpeedCoeff = 1.0;
+
+		ConnectionPointNames = { "group lighting" };
+
+		ProductionType = UNIT_ATTRIBUTE_MONK;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.4f;
+
+		FallDelay = 20;
+		FallSpeed = -2.0;
+		FallAcceleration = -0.1;
+
+		MakingChainNum = 5;
+
+		productionConsumption = new ConsumptionData {
+			energy = .5;
+			time = 1000; 
+			priority = 50;
+			name = "productionConsumption Core";
+		};
+		
+		animationSetup = &coreAnimation;
+		soundSetup = &coreSound;
+
+		attackablePrm = attackable_data.Core;
+		interfacePrm = unit_interface_data.protector;
+		interfaceTV = &interfaceTV_Core;
+	};
+	
+	Structure Transmitter = 
+	{
+		ID = UNIT_ATTRIBUTE_RELAY;
+		InterfaceName = "Energy Retransmitter";
+		ClassID = UNIT_CLASS_ID_BUILDING_ENERGY;
+		InterpolationType = INTERPOLATION_ID_CONNECTION;
+
+		constructionPriority = 8;
+	
+		ConnectionRadius = 500;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\transmiter.m3d", "RESOURCE\\MODELS\\MAIN\\build_transmiter.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\transmiter.l3d";
+
+		disconnectAnimation = 1;
+
+		effectsData = {
+			effects = {
+				{ },
+				{ },
+				{ },
+				{ },
+				{ },
+				{ effectID = EFFECT_ID_EXPLOSION_ALTERNATE; effectName = "EXPLOD_03"; }
+			};
+
+			libraryFileName = "RESOURCE\\FX\\Transmitter.effect";
+			corpseLifeTime = 100;
+			craterRadius = 20;
+		};
+		
+		damageMolecula = { 0,0,0,0,100 };
+		constructionSpeedCoeff = 2.0;
+
+		ConnectionPointNames = { "group lighting" };
+
+		FallDelay = 20;
+		FallSpeed = -2.0;
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;		
+
+		MakingChainNum = 4;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_CORE };
+		};
+
+		animationSetup = &transmitterAnimation;
+		soundSetup = &transmitterSound;
+
+		attackablePrm = attackable_data.Transmitter;
+		interfacePrm = unit_interface_data.relay;
+		interfaceTV = &interfaceTV_Transmitter;
+	};
+
+	Structure Collector = 
+	{
+		ID = UNIT_ATTRIBUTE_COLLECTOR;
+		InterfaceName = "Energy Collector";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 9;
+		
+		energyCapacity = 5000;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\amplifer.m3d", "RESOURCE\\MODELS\\MAIN\\build_amplifer.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\amplifer.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Amplifier.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,1000 };
+		constructionSpeedCoeff = 1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 5;
+
+		FallAcceleration = -0.1;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_CORE };
+		};
+
+		animationSetup = &collectorAnimation;
+		soundSetup = &collectorSound;
+
+		attackablePrm = attackable_data.EnergyApplifier;
+		interfacePrm = unit_interface_data.amplifier;
+		interfaceTV = &interfaceTV_Amplifier;
+	};
+
+	Structure PlantSoldier = 
+	{
+		ID = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+		InterfaceName = "Soldier Plant";
+		ClassID = UNIT_CLASS_ID_PLANT;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\solider_factory.m3d", "RESOURCE\\MODELS\\MAIN\\build_solider_factory.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\solider_factory.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\PlantSoldier.effect";
+			corpseLifeTime = 80;
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,250 };
+		constructionSpeedCoeff = 1;
+
+		ProductionType = UNIT_ATTRIBUTE_SOLDIER;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;
+
+		MakingChainNum = 5;
+
+		animationSetup = &plantAnimation;
+		soundSetup = &soldierPlantSound;
+
+		productionConsumption = new ConsumptionData {
+			energy = 0.2f;
+			time = 1000; 
+			priority = 80;
+			name = "productionConsumption Soldier Plant";
+		};
+
+		attackablePrm = attackable_data.PlantSoldier;
+		interfacePrm = unit_interface_data.plant_soldier;
+		dockingSlots = &dockingSlotsPlantSoldier;
+		interfaceTV = &interfaceTV_PlantSoldier;
+	};
+
+	Structure PlantOfficer = 
+	{
+		ID = UNIT_ATTRIBUTE_OFFICER_PLANT;
+		InterfaceName = "Officer Plant";
+		ClassID = UNIT_CLASS_ID_PLANT;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\oficer_factory.m3d", "RESOURCE\\MODELS\\MAIN\\build_oficer_factory.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\oficer_factory.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\PlantOfficer.effect";
+			corpseLifeTime = 80;
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,250 };
+		constructionSpeedCoeff = 1;
+
+		ProductionType = UNIT_ATTRIBUTE_OFFICER;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 6;
+
+		animationSetup = &plantAnimation;
+		soundSetup = &officerPlantSound;
+
+		productionConsumption = new ConsumptionData {
+			energy = 0.2f;
+			time = 1000; 
+			priority = 80;
+			name = "productionConsumption Officer Plant";
+		};
+
+		attackablePrm = attackable_data.PlantOfficer;
+		interfacePrm = unit_interface_data.plant_officer;
+		dockingSlots = &dockingSlotsPlantOfficer;
+		interfaceTV = &interfaceTV_PlantOfficer;
+	};
+
+	Structure PlantTechnician = 
+	{
+		ID = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+		InterfaceName = "Technician Plant";
+		ClassID = UNIT_CLASS_ID_PLANT;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\technic_factory.m3d", "RESOURCE\\MODELS\\MAIN\\build_technic_factory.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\technic_factory.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\PlantTechnician.effect";
+			corpseLifeTime = 80;
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,250 };
+		constructionSpeedCoeff = 1;
+
+		ProductionType = UNIT_ATTRIBUTE_TECHNIC;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 8;
+
+		animationSetup = &plantAnimation;
+		soundSetup = &technicianPlantSound;
+
+		productionConsumption = new ConsumptionData {
+			energy = 0.2f;
+			time = 1000; 
+			priority = 80;
+			name = "productionConsumption Plant Technician";
+		};
+
+		attackablePrm = attackable_data.PlantTechnician;
+		interfacePrm = unit_interface_data.plant_technic;
+		dockingSlots = &dockingSlotsPlantTechnician;
+		interfaceTV = &interfaceTV_PlantTechnician;
+	};
+
+	Structure CommandCenter = 
+	{
+		ID = UNIT_ATTRIBUTE_COMMANDER;
+		InterfaceName = "CommandCenter";
+		ClassID = UNIT_CLASS_ID_COMMANDER;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Command.m3d", "RESOURCE\\MODELS\\MAIN\\build_command.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Command.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\CommandCenter.effect";
+			craterRadius = 50;
+		};
+
+		damageMolecula = { 0,0,0,0,500 };
+		constructionSpeedCoeff = 1.0;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+//			EnableStructure = { UNIT_ATTRIBUTE_SOLDIER_PLANT, UNIT_ATTRIBUTE_OFFICER_PLANT, UNIT_ATTRIBUTE_TECHNIC_PLANT };
+		};
+
+		animationSetup = &commandCenterAnimation;
+		soundSetup = &commandCenterSound;
+
+		attackablePrm = attackable_data.CommandCenter;
+		interfacePrm = unit_interface_data.commander;
+		interfaceTV = &interfaceTV_CommandCenter;
+	};
+
+	Structure StaticBomb = 
+	{
+		ID = UNIT_ATTRIBUTE_STATIC_BOMB;
+		InterfaceName = "Bomb";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bomb.m3d", "RESOURCE\\MODELS\\MAIN\\build_bomb.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bomb.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Bomb_Explod.effect";
+			craterRadius = 50;
+		};
+
+		SelectAble = 0;
+
+		damageMolecula = { 0,0,0,0,10000 };
+		constructionSpeedCoeff = 1000.0;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+		};
+
+		animationSetup = &staticBombAnimation;
+//		soundSetup = &staticBombSound;
+
+		attackablePrm = attackable_data.StaticBomb;
+		interfacePrm = unit_interface_data.static_bomb;
+		interfaceTV = &interfaceTV_StaticBomb;
+	};
+
+	//---------------------Stations----------------------------
+	Structure LabExodus1 = 
+	{
+		ID = UNIT_ATTRIBUTE_EXODUS_STATION1;
+		belligerent = BELLIGERENT_EXODUS0;
+		InterfaceName = "Exodus Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\exodus_st.m3d", "RESOURCE\\MODELS\\MAIN\\build_exodus_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\exodus_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabExodus.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,2600 };
+		constructionSpeedCoeff = 1.0;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_EXODUS_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labExodusSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_exodus1;
+		interfaceTV = &interfaceTV_station_exodus;
+	};
+
+	Structure LabExodus2 = 
+	{
+		ID = UNIT_ATTRIBUTE_EXODUS_STATION2;
+		belligerent = BELLIGERENT_EXODUS0;
+		InterfaceName = "Exodus Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\exodus_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\exodus_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabExodus.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,3900 };
+		constructionSpeedCoeff = 1.0;
+
+		isUpgrade = 1;
+		
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EXODUS_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_EXODUS_STATION1 };
+			Upgrade = UNIT_ATTRIBUTE_EXODUS_STATION3;
+		};
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labExodusSound;
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_exodus2;
+		interfaceTV = &interfaceTV_station_exodus;
+	};
+
+	Structure LabExodus3 = 
+	{
+		ID = UNIT_ATTRIBUTE_EXODUS_STATION3;
+		belligerent = BELLIGERENT_EXODUS0;
+		InterfaceName = "Exodus Laboratory Level 3";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\exodus_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\exodus_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabExodus.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,5850 };
+		constructionSpeedCoeff = 1.0;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making2";
+		PrevChainName = "main1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EXODUS_STATION2 };
+			Downgrades = { UNIT_ATTRIBUTE_EXODUS_STATION2, UNIT_ATTRIBUTE_EXODUS_STATION1 };
+		};
+
+		animationSetup = &lab3Animation;
+		soundSetup = &labExodusSound;
+
+		attackablePrm = attackable_data.Laboratory_3;
+		interfacePrm = unit_interface_data.station_exodus3;
+		interfaceTV = &interfaceTV_station_exodus;
+	};
+
+	Structure LabEmpire1 = 
+	{
+		ID = UNIT_ATTRIBUTE_EMPIRE_STATION1;
+		belligerent = BELLIGERENT_EMPIRE0;
+		InterfaceName = "Empire Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\imperia_st.m3d", "RESOURCE\\MODELS\\MAIN\\build_imperia_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\imperia_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabEmpire.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,2600 };
+		constructionSpeedCoeff = 1;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_EMPIRE_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labEmpireSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_empire1;
+		interfaceTV = &interfaceTV_station_empire;
+	};
+
+	Structure LabEmpire2 = 
+	{
+		ID = UNIT_ATTRIBUTE_EMPIRE_STATION2;
+		belligerent = BELLIGERENT_EMPIRE0;
+		InterfaceName = "Empire Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\imperia_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\imperia_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabEmpire.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,3900 };
+		constructionSpeedCoeff = 1;
+
+		isUpgrade = 1;
+		
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EMPIRE_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_EMPIRE_STATION1 };
+			Upgrade = UNIT_ATTRIBUTE_EMPIRE_STATION3;
+		};
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labEmpireSound;
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_empire2;
+		interfaceTV = &interfaceTV_station_empire;
+	};
+
+	Structure LabEmpire3 = 
+	{
+		ID = UNIT_ATTRIBUTE_EMPIRE_STATION3;
+		belligerent = BELLIGERENT_EMPIRE0;
+		InterfaceName = "Empire Laboratory Level 3";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\imperia_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\imperia_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabEmpire.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,5850 };
+		constructionSpeedCoeff = 1;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making2";
+		PrevChainName = "main1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EMPIRE_STATION2 };
+			Downgrades = { UNIT_ATTRIBUTE_EMPIRE_STATION2, UNIT_ATTRIBUTE_EMPIRE_STATION1 };
+		};
+
+		animationSetup = &lab3Animation;
+		soundSetup = &labEmpireSound;
+
+		attackablePrm = attackable_data.Laboratory_3;
+		interfacePrm = unit_interface_data.station_empire3;
+		interfaceTV = &interfaceTV_station_empire;
+	};
+
+	Structure LabHarkback1 = 
+	{
+		ID = UNIT_ATTRIBUTE_HARKBACK_STATION1;
+		belligerent = BELLIGERENT_HARKBACKHOOD0;
+		InterfaceName = "Harkback Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\harkbackers_st.m3d", "RESOURCE\\MODELS\\MAIN\\build_harkbackers_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\harkbackers_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabHarkback.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,2600 };
+		constructionSpeedCoeff = 1;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_HARKBACK_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labHarkbarkhoodSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_harkback1;
+		interfaceTV = &interfaceTV_station_harkback;
+	};
+
+	Structure LabHarkback2 = 
+	{
+		ID = UNIT_ATTRIBUTE_HARKBACK_STATION2;
+		belligerent = BELLIGERENT_HARKBACKHOOD0;
+		InterfaceName = "Harkback Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\harkbackers_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\harkbackers_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabHarkback.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,3900 };
+		constructionSpeedCoeff = 1;
+
+		isUpgrade = 1;
+		
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_HARKBACK_STATION1 };
+			Upgrade = UNIT_ATTRIBUTE_HARKBACK_STATION3;
+		};
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labHarkbarkhoodSound;
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_harkback2;
+		interfaceTV = &interfaceTV_station_harkback;
+	};
+
+	Structure LabHarkback3 = 
+	{
+		ID = UNIT_ATTRIBUTE_HARKBACK_STATION3;
+		belligerent = BELLIGERENT_HARKBACKHOOD0;
+		InterfaceName = "Harkback Laboratory Level 3";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\harkbackers_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\harkbackers_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabHarkback.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,5850 };
+		constructionSpeedCoeff = 1;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making2";
+		PrevChainName = "main1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION2 };
+			Downgrades = { UNIT_ATTRIBUTE_HARKBACK_STATION2, UNIT_ATTRIBUTE_HARKBACK_STATION1 };
+		};
+
+		animationSetup = &lab3Animation;
+		soundSetup = &labHarkbarkhoodSound;
+
+		attackablePrm = attackable_data.Laboratory_3;
+		interfacePrm = unit_interface_data.station_harkback3;
+		interfaceTV = &interfaceTV_station_harkback;
+	};
+
+	Structure LabRocket1 = 
+	{
+		ID = UNIT_ATTRIBUTE_ROCKET_STATION1;
+		InterfaceName = "Rocket Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket_st_up1.m3d", "RESOURCE\\MODELS\\MAIN\\build_rocket_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket_st_up1.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabRocket.effect";
+			craterRadius = 70;
+		};
+
+		damageMolecula = { 0,0,0,0,1000 };
+		constructionSpeedCoeff = 2;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 7;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_ROCKET_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labRocketSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_rocket1;
+		interfaceTV = &interfaceTV_LabRocket1;
+	};
+
+	Structure LabRocket2 = 
+	{
+		ID = UNIT_ATTRIBUTE_ROCKET_STATION2;
+		InterfaceName = "Rocket Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket_st_up1.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket_st_up1.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabRocket.effect";
+			craterRadius = 70;
+		};
+
+		damageMolecula = { 0,0,0,0,1500 };
+		constructionSpeedCoeff = 2;
+
+		isUpgrade = 1;
+		
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ROCKET_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_ROCKET_STATION1 };
+			Upgrade = UNIT_ATTRIBUTE_ROCKET_STATION3;
+		};
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labRocketSound;
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_rocket2;
+		interfaceTV = &interfaceTV_LabRocket2;
+	};
+
+	Structure LabRocket3 = 
+	{
+		ID = UNIT_ATTRIBUTE_ROCKET_STATION3;
+		InterfaceName = "Rocket Station 3";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket_st_up1.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket_st_up1.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabRocket.effect";
+			craterRadius = 70;
+		};
+
+		damageMolecula = { 0,0,0,0,2250 };
+		constructionSpeedCoeff = 2;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making2";
+		PrevChainName = "main1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ROCKET_STATION2 };
+			Downgrades = { UNIT_ATTRIBUTE_ROCKET_STATION2, UNIT_ATTRIBUTE_ROCKET_STATION1 };
+		};
+
+		animationSetup = &lab3Animation;
+		soundSetup = &labRocketSound;
+
+		attackablePrm = attackable_data.Laboratory_3;
+		interfacePrm = unit_interface_data.station_rocket3;
+		interfaceTV = &interfaceTV_LabRocket3;
+	};
+
+	Structure LabLaser1 = 
+	{
+		ID = UNIT_ATTRIBUTE_LASER_STATION1;
+		InterfaceName = "Laser Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\laser_st_up1.m3d", "RESOURCE\\MODELS\\MAIN\\build_laser_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\laser_st_up1.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,600 };
+		constructionSpeedCoeff = 2;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		MakingChainNum = 6;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_LASER_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labLaserSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_laser1;
+		interfaceTV = &interfaceTV_LabLaser1;
+	};
+
+	Structure LabLaser2 = 
+	{
+		ID = UNIT_ATTRIBUTE_LASER_STATION2;
+		InterfaceName = "Laser Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\laser_st_up1.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\laser_st_up1.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,900 };
+		constructionSpeedCoeff = 2;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labLaserSound;
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_LASER_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_LASER_STATION1 };
+			Upgrade = UNIT_ATTRIBUTE_LASER_STATION3;
+		};
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_laser2;
+		interfaceTV = &interfaceTV_LabLaser2;
+	};
+
+	Structure LabLaser3 = 
+	{
+		ID = UNIT_ATTRIBUTE_LASER_STATION3;
+		InterfaceName = "Laser Laboratory Level 3";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\laser_st_up1.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\laser_st_up1.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,1350 };
+		constructionSpeedCoeff = 2;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		UpgradeChainName = "making2";
+		PrevChainName = "main1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_LASER_STATION2 };
+			Downgrades = { UNIT_ATTRIBUTE_LASER_STATION2, UNIT_ATTRIBUTE_LASER_STATION1 };
+		};
+
+		animationSetup = &lab3Animation;
+		soundSetup = &labLaserSound;
+
+		attackablePrm = attackable_data.Laboratory_3;
+		interfacePrm = unit_interface_data.station_laser3;
+		interfaceTV = &interfaceTV_LabLaser3;
+	};
+	
+	Structure LabBomb1 = 
+	{
+		ID = UNIT_ATTRIBUTE_BOMB_STATION1;
+		InterfaceName = "Bomb Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bomb_st_up1.m3d", "RESOURCE\\MODELS\\MAIN\\build_bomb_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bomb_st_up1.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabBomb.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,1600 };
+		constructionSpeedCoeff = 2;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.4f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_BOMB_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labBombSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_bomb1;
+		interfaceTV = &interfaceTV_LabBomb1;
+	};
+
+	Structure LabBomb2 = 
+	{
+		ID = UNIT_ATTRIBUTE_BOMB_STATION2;
+		InterfaceName = "Bomb Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bomb_st_up1.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bomb_st_up1.l3d";
+		BoundScale = 1.5;
+		isUpgrade = 1;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabBomb.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,2400 };
+		constructionSpeedCoeff = 2;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.4f;		
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_BOMB_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_BOMB_STATION1 };
+			Upgrade = UNIT_ATTRIBUTE_BOMB_STATION3;
+		};
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labBombSound;
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_bomb2;
+		interfaceTV = &interfaceTV_LabBomb2;
+	};
+
+	Structure LabBomb3 = 
+	{
+		ID = UNIT_ATTRIBUTE_BOMB_STATION3;
+		InterfaceName = "Bomb Laboratory Level 3";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bomb_st_up1.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bomb_st_up1.l3d";
+		BoundScale = 1.5;
+		isUpgrade = 1;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabBomb.effect";
+			craterRadius = 80;
+		};
+
+		damageMolecula = { 0,0,0,0,3600 };
+		constructionSpeedCoeff = 2;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.4f;		
+
+		UpgradeChainName = "making2";
+
+		PrevChainName = "main1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_BOMB_STATION2 };
+			Downgrades = { UNIT_ATTRIBUTE_BOMB_STATION2, UNIT_ATTRIBUTE_BOMB_STATION1 };
+		};
+
+		animationSetup = &lab3Animation;
+		soundSetup = &labBombSound;
+
+		attackablePrm = attackable_data.Laboratory_3;
+		interfacePrm = unit_interface_data.station_bomb3;
+		interfaceTV = &interfaceTV_LabBomb3;
+	};
+
+	Structure LabAntigrav1 = 
+	{
+		ID = UNIT_ATTRIBUTE_FLY_STATION1;
+		InterfaceName = "Anrigrav Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\fly_st.m3d", "RESOURCE\\MODELS\\MAIN\\build_fly_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\fly_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabAntigrav.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,1400 };
+		constructionSpeedCoeff = 2.0;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		MakingChainNum = 4;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_FLY_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labAntigravSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_fly1;
+		interfaceTV = &interfaceTV_LabAntigrav1;
+	};
+
+	Structure LabAntigrav2 = 
+	{
+		ID = UNIT_ATTRIBUTE_FLY_STATION2;
+		InterfaceName = "Anrigrav Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\fly_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\fly_st.l3d";
+		BoundScale = 1.5;
+		isUpgrade = 1;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabAntigrav.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,2100 };
+		constructionSpeedCoeff = 2.0;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_FLY_STATION1 };
+		};
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labAntigravSound;
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_fly2;
+		interfaceTV = &interfaceTV_LabAntigrav2;
+	};
+
+	Structure LabSubterra1 = 
+	{
+		ID = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+		InterfaceName = "Subterra Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\subterra_st.m3d", "RESOURCE\\MODELS\\MAIN\\build_subterra_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\subterra_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabSubterra.effect";
+			craterRadius = 90;
+		};
+
+		damageMolecula = { 0,0,0,0,2000 };
+		constructionSpeedCoeff = 2.0;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labSubterraSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_subterra1;
+		interfaceTV = &interfaceTV_LabSubterra1;
+	};
+
+	Structure LabSubterra2 = 
+	{
+		ID = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+		InterfaceName = "Subterra Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\subterra_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\subterra_st.l3d";
+		BoundScale = 1.5;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabSubterra.effect";
+			craterRadius = 90;
+		};
+
+		damageMolecula = { 0,0,0,0,3000 };
+		constructionSpeedCoeff = 2;
+
+		isUpgrade = 1;
+		
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_SUBTERRA_STATION1 };
+		};
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labSubterraSound;
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_subterra2;
+		interfaceTV = &interfaceTV_LabSubterra2;
+	};
+
+	///////////////////////////////////////////////
+	//		Military Units
+	///////////////////////////////////////////////
+	Military Soldier = 
+	{
+		ID = UNIT_ATTRIBUTE_SOLDIER;
+		InterfaceName = "Nano-Soldier";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_LASER;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\solider.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\solider.l3d";
+
+		UnitClass = UNIT_CLASS_BASE;
+		AttackClass = balance.Soldier.AttackClass;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Soldier.effect";
+			corpseID = UNIT_ATTRIBUTE_NONE;
+//			craterRadius=10;
+		};
+
+		damageMolecula = {	balance.Soldier.elSoldiers,
+							balance.Soldier.elOfficers,
+							balance.Soldier.elTechnicians,
+							0,
+							balance.Soldier.elShield };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = 1;
+				width = 4;
+			};
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+			missileID = UNIT_ATTRIBUTE_SOLDIER_BULLET;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.2, 0.2 };
+				targetingPrecision = { 0.05, 0.05 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Soldier.ReloadEnergy;
+				time =		balance.Soldier.ReloadTime;
+				priority =	balance.Soldier.ReloadPriority;
+
+				name = "reloadConsumption Soldier";
+			};
+
+			fireRadius = { 5,	balance.Soldier.RangeFire };
+			sightRadius =		balance.Soldier.RangeSight;
+		};
+
+		animationSetup = &soldierAnimation;
+		soundSetup = &soldierSound;
+
+		SelectionDistance = 0.7f;
+		SelectionSize = 0.7f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SOLDIER_PLANT};
+		};
+
+		rigidBodyPrm = &rigidBodyTable.SoldierPrm;
+		legionaryPrm = soldierSquadPrm;
+		attackablePrm = attackable_data.Soldier;
+		interfaceTV = &interfaceTV_Soldier;
+	};
+
+	Military Officer = 
+	{
+		ID = UNIT_ATTRIBUTE_OFFICER;
+		InterfaceName = "Nano-Officer";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_LASER;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\oficer.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\oficer.l3d";
+
+		UnitClass = UNIT_CLASS_BASE;
+		AttackClass = balance.Officer.AttackClass;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Officer.effect";
+			corpseID = UNIT_ATTRIBUTE_NONE;
+//			craterRadius=10;
+		};
+
+		damageMolecula = {	balance.Officer.elSoldiers,
+							balance.Officer.elOfficers,
+							balance.Officer.elTechnicians,
+							0,
+							balance.Soldier.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_FREEZE_LASER;
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.2, 0.2 };
+				targetingPrecision = { 0.05, 0.05 };
+			};
+
+			weaponIndex = 1;
+
+			reloadConsumption = {
+				energy =	balance.Officer.ReloadEnergy;
+				time =		balance.Officer.ReloadTime;
+				priority =	balance.Officer.ReloadPriority;
+
+				name = "reloadConsumption Officer";
+			};
+			fireRadius = { 5,	balance.Officer.RangeFire };
+			sightRadius =		balance.Officer.RangeSight;
+			laserWidth = 1;
+		};
+
+		animationSetup = &officerAnimation;
+		soundSetup = &officerSound;
+
+		GroundAngleSpeed = 10*G2R;
+
+		SelectionDistance = 0.7f;
+		SelectionSize = 0.7f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_OFFICER_PLANT};
+		};
+
+		rigidBodyPrm = &rigidBodyTable.OfficerPrm;
+		legionaryPrm = officierSquadPrm;
+		attackablePrm = attackable_data.Officer;
+	};
+
+	Military Technic = 
+	{
+		ID = UNIT_ATTRIBUTE_TECHNIC;
+		InterfaceName = "Nano-Technician";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_LASER;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\technic.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\technic.l3d";
+
+		UnitClass = UNIT_CLASS_BASE;
+
+		AttackClass = balance.Technician.AttackClass;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Technician.effect";
+			corpseID = UNIT_ATTRIBUTE_NONE;
+//			craterRadius=10;
+		};
+		damageMolecula = {	balance.Technician.elSoldiers,
+							balance.Technician.elOfficers,
+							balance.Technician.elTechnicians,
+							0,
+							balance.Technician.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_HEAL_LASER;
+
+			flags = WEAPON_ROOT_FIRE_ANIMATION;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.2, 0.2 };
+				targetingPrecision = { 0.05, 0.05 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Technician.ReloadEnergy;
+				time =		balance.Technician.ReloadTime;
+				priority =	balance.Technician.ReloadPriority;
+
+				name = "reloadConsumption Technician";
+			};
+
+			fireRadius = { 0,	balance.Technician.RangeFire };
+			sightRadius =		balance.Technician.RangeSight;
+
+			weaponIndex = 2;
+		};
+
+		animationSetup = &technicAnimation;
+		soundSetup = &technicSound;
+
+		SelectionDistance = 0.7f;
+		SelectionSize = 0.7f;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_TECHNIC_PLANT};
+		};
+
+		rigidBodyPrm = &rigidBodyTable.TechnicPrm;
+		legionaryPrm = technicSquadPrm;
+		attackablePrm = attackable_data.Technic;
+	};
+
+	Military Scumer = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUMER;
+		InterfaceName = "Scumer";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_SUBTERRANEAN;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\scumer.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\scumer.l3d";
+		BoundScale = 1.5;
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		AttackClass = balance.Scumer.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Scumer.effect";
+			craterRadius=10;
+		};
+		
+		damageMolecula = {	balance.Scumer.elSoldiers,
+							balance.Scumer.elOfficers,
+							balance.Scumer.elTechnicians,
+							0,
+							balance.Scumer.elShield };
+		
+		environmentalDamage = &chaosDamageSubterranean;
+
+		animationSetup = &subterraneanAnimation;
+		soundSetup = &scumerSound;
+		toolzerSetup = &scumerToolzer;
+
+		SelectionDistance = 0.35f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_LASER_STATION2, UNIT_ATTRIBUTE_SUBTERRA_STATION1 };
+		};
+
+		movementConsumption = new ConsumptionData {
+			energy = balance.Scumer.ReloadEnergy;
+			priority = balance.Scumer.ReloadPriority;
+
+			name = "Scumer movementConsumption";
+		};
+		
+		rigidBodyPrm = &rigidBodyTable.ScumerPrm;
+		legionaryPrm = scumerSquadPrm;
+		attackablePrm = attackable_data.Scumer;
+		interfaceTV = &interfaceTV_Scumer;
+	};
+
+	Military Digger = 
+	{
+		ID = UNIT_ATTRIBUTE_DIGGER;
+		InterfaceName = "Digger";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_SUBTERRANEAN;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\digger.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\digger.l3d";
+		BoundScale = 1.5;
+
+		AttackClass = balance.Digger.AttackClass;
+		UnitClass = UNIT_CLASS_LIGHT;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Digger.effect";
+			craterRadius=5;
+		};
+		damageMolecula = {	balance.Digger.elSoldiers,
+							balance.Digger.elOfficers,
+							balance.Digger.elTechnicians,
+							0,
+							balance.Digger.elShield };
+		
+		environmentalDamage = &chaosDamageSubterranean;
+
+		destroyZeroLayer = 0;
+
+		animationSetup = &subterraneanAnimation;
+		soundSetup = &diggerSound;
+		toolzerSetup = &diggerToolzer;
+
+		SelectionDistance = 0.35f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION1 };
+		};
+
+		movementConsumption = new ConsumptionData {
+			energy = balance.Digger.ReloadEnergy;
+			priority = balance.Digger.ReloadPriority;
+			name = "movementConsumption";
+		};
+		
+		rigidBodyPrm = &rigidBodyTable.DiggerPrm;
+		legionaryPrm = diggerSquadPrm;
+		attackablePrm = attackable_data.Digger;
+		interfaceTV = &interfaceTV_Digger;
+	};
+
+	Military Piercer = 
+	{
+		ID = UNIT_ATTRIBUTE_PIERCER;
+		InterfaceName = "Piercer";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_GROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\piercer.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\piercer.l3d";
+
+		AttackClass = balance.Piercer.AttackClass;
+		UnitClass = UNIT_CLASS_HEAVY;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Piercer.effect";
+			craterRadius=20;
+		};
+		damageMolecula = {	balance.Piercer.elSoldiers,
+							balance.Piercer.elOfficers,
+							balance.Piercer.elTechnicians,
+							0,
+							balance.Piercer.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_PIERCER;
+			flags = WEAPON_DISABLE_DEFENCIVE_ATTACK|WEAPON_IGNORE_FIELD;
+			missileID = UNIT_ATTRIBUTE_PIERCER_BULLET;
+
+			reloadConsumption = {
+				energy =	balance.Piercer.ReloadEnergy;
+				time =		balance.Piercer.ReloadTime;
+				priority =	balance.Piercer.ReloadPriority;
+
+				name = "reloadConsumption Piercer";
+			};
+			fireRadius = { 5,	balance.Piercer.RangeFire };
+			sightRadius =		balance.Piercer.RangeSight;
+
+			accuracyRadius = balance.Piercer.AccuracyRadius;
+		};
+
+		animationSetup = &subterraneanAnimation;
+		soundSetup = &piercerSound;
+
+		SelectionDistance = 0.35f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION2, UNIT_ATTRIBUTE_EMPIRE_STATION3 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.PiercerPrm;
+		legionaryPrm = piercerSquadPrm;
+		attackablePrm = attackable_data.Piercer;
+		interfaceTV = &interfaceTV_Piercer;
+	};
+
+	Military Sniper = 
+	{
+		ID = UNIT_ATTRIBUTE_SNIPER;
+		InterfaceName = "Sniper";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_LASER;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\sniper.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\sniper.l3d";
+		BoundScale = 1.5;
+
+		UnitClass = UNIT_CLASS_LIGHT;
+		AttackClass = balance.Sniper.AttackClass;
+		
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Sniper.effect";
+			corpseID = UNIT_ATTRIBUTE_NONE;
+//			craterRadius=10;
+		};
+		damageMolecula = {	balance.Sniper.elSoldiers,
+							balance.Sniper.elOfficers,
+							balance.Sniper.elTechnicians,
+							0,
+							balance.Sniper.elShield };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Sniper.maPower;
+				width = balance.Sniper.maWidth;
+			};
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LASER;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.5, 0.5 };
+				targetingPrecision = { 0.09, 0.09 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Sniper.ReloadEnergy;
+				time =		balance.Sniper.ReloadTime;
+				priority =	balance.Sniper.ReloadPriority;
+
+				name = "reloadConsumption Sniper";
+			};
+
+			dischargeSpeed = balance.Sniper.DischargeSpeed;
+			fireDisableTime = 300;
+
+			fireRadius = { 5,	balance.Sniper.RangeFire };
+			sightRadius =		balance.Sniper.RangeSight;
+		};
+
+		animationSetup = &sniperAnimation;
+		soundSetup = &sniperSound;
+
+		SelectionDistance = 0.25f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_LASER_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.SniperPrm;
+		legionaryPrm = sniperSquadPrm;
+		attackablePrm = attackable_data.Sniper;
+		interfaceTV = &interfaceTV_Sniper;
+	};
+
+	Military Leamo = 
+	{
+		ID = UNIT_ATTRIBUTE_LEAMO;
+		InterfaceName = "Leamo";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_LASER;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\limo.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\limo.l3d";
+
+		UnitClass = UNIT_CLASS_HEAVY;
+		AttackClass = balance.Leamo.AttackClass;
+		
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\leamo.effect";
+			craterRadius=20;
+		};
+
+		damageMolecula = {	balance.Leamo.elSoldiers,
+							balance.Leamo.elOfficers,
+							balance.Leamo.elTechnicians,
+							0,
+							balance.Leamo.elShield };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Leamo.maPower;
+				width = balance.Leamo.maWidth;
+			};
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LASER;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.2, 0.2 };
+				targetingPrecision = { 0.05, 0.05 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Leamo.ReloadEnergy;
+				time =		balance.Leamo.ReloadTime;
+				priority =	balance.Leamo.ReloadPriority;
+
+				name = "reloadConsumption Leamo";
+			};
+
+			dischargeSpeed = balance.Leamo.DischargeSpeed;
+			fireDisableTime = 300;
+
+			fireRadius = { 50,	balance.Leamo.RangeFire };
+			sightRadius =		balance.Leamo.RangeSight;
+			laserWidth = 4;
+		};
+
+		animationSetup = &leamoAnimation;
+		soundSetup = &leamoSound;
+
+		SelectionDistance = 0.25f;
+		SelectionSize = 0.3f;		
+
+//		toolzerSetup = &HeavyUnitTrackToolzer;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_LASER_STATION3 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.LeamoPrm;
+		legionaryPrm = leamoSquadPrm;
+		attackablePrm = attackable_data.Leamo;
+		interfaceTV = &interfaceTV_Leamo;
+	};
+
+	Military Rocker = 
+	{
+		ID = UNIT_ATTRIBUTE_ROCKER;
+		InterfaceName = "Rocker";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocker.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocker.l3d";
+		BoundScale = 1.5;
+
+		UnitClass = UNIT_CLASS_LIGHT;
+		AttackClass = balance.Rocker.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Rocker.effect";
+//			craterRadius=15;
+		};
+
+		damageMolecula = {	balance.Rocker.elSoldiers,
+							balance.Rocker.elOfficers,
+							balance.Rocker.elTechnicians,
+							0,
+							balance.Rocker.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LAUNCHER;
+			flags = WEAPON_UNLOAD_WHEN_DISABLED;
+			controllerSetup = new terWeaponControllerSetup {
+				targetingPrecision = { 0.1, 0.1 };
+			};
+			missileID = UNIT_ATTRIBUTE_ROCKER_MISSILE;
+
+			reloadConsumption = {
+				energy =	balance.Rocker.ReloadEnergy;
+				time =		balance.Rocker.ReloadTime;
+				priority =	balance.Rocker.ReloadPriority;
+
+				name = "reloadConsumption Rocker";
+			};
+
+			dischargeSpeed = balance.Rocker.DischargeSpeed;
+			fireDisableTime = 300;
+
+			fireRadius = { 50,	balance.Rocker.RangeFire };
+			sightRadius =		balance.Rocker.RangeSight;
+			thetaForced = 70;
+		};
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;		
+
+		soundSetup = &rockerSound;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ROCKET_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.RockerPrm;
+		legionaryPrm = rockerSquadPrm;
+		attackablePrm = attackable_data.Rocker;
+		dockingSlots = &dockingSlotsRocker;
+		interfaceTV = &interfaceTV_Rocker;
+	};
+
+	Military Mortar = 
+	{
+		ID = UNIT_ATTRIBUTE_MORTAR;
+		InterfaceName = "Mortar";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\mortar.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\mortar.l3d";
+		BoundScale = 1.5;
+
+		UnitClass = UNIT_CLASS_LIGHT;
+		AttackClass = balance.Mortar.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Mortar.effect";
+//			craterRadius=10;
+		};
+
+		damageMolecula = {	balance.Mortar.elSoldiers,
+							balance.Mortar.elOfficers,
+							balance.Mortar.elTechnicians,
+							0,
+							balance.Mortar.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				targetingPrecision = { 0.05, 0.05 };
+				defaultAngles = { 0, 0.25 };
+			};
+
+			missileID = UNIT_ATTRIBUTE_MORTAR_BULLET;
+
+			turnSuggestPrm = &MortarMissileSuggestPrm;
+
+			reloadConsumption = {
+				energy =	balance.Mortar.ReloadEnergy;
+				time =		balance.Mortar.ReloadTime;
+				priority =	balance.Mortar.ReloadPriority;
+
+				name = "reloadConsumption Mortar";
+			};
+
+			dischargeSpeed = balance.Mortar.DischargeSpeed;
+
+			fireRadius = { 100,	balance.Mortar.RangeFire };
+			sightRadius =		balance.Mortar.RangeSight;
+
+			accuracyRadius = balance.Mortar.AccuracyRadius;
+		};
+
+		animationSetup = &mortarAnimation;
+		soundSetup = &mortarSound;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_BOMB_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.MortarPrm;
+		legionaryPrm = mortarSquadPrm;
+		attackablePrm = attackable_data.Mortar;
+		interfaceTV = &interfaceTV_Mortar;
+	};
+
+	Military Ceptor = 
+	{
+		ID = UNIT_ATTRIBUTE_CEPTOR;
+		InterfaceName = "Ceptor";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\ceptor.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\ceptor.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_HEAVY;
+		AttackClass = balance.Ceptor.AttackClass;
+
+		damageMolecula = {	balance.Ceptor.elSoldiers,
+							balance.Ceptor.elOfficers,
+							balance.Ceptor.elTechnicians,
+							0,
+							balance.Ceptor.elShield };
+		
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LAUNCHER;
+			flags = WEAPON_UNLOAD_WHEN_DISABLED;
+			controllerSetup = new terWeaponControllerSetup {
+				objectName = { "group bashnia", 0 };
+				logicObjectName = { "bashnia", 0 };
+				targetingPrecision = { 0.1, 1 };
+				thetaLimit = { 0, 0 };
+			};
+			missileID = UNIT_ATTRIBUTE_CEPTOR_MISSILE;
+
+			reloadConsumption = {
+				energy =	balance.Ceptor.ReloadEnergy;
+				time =		balance.Ceptor.ReloadTime;
+				priority =	balance.Ceptor.ReloadPriority;
+
+				name = "reloadConsumption Ceptor";
+			};
+
+			fireRadius = { 100,	balance.Ceptor.RangeFire };
+			sightRadius =		balance.Ceptor.RangeSight;
+		};
+
+		animationSetup = &ceptorAnimation;
+		soundSetup = &ceptorSound;
+
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Ceptor.effect";
+			craterRadius=15;
+		};
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ROCKET_STATION2,UNIT_ATTRIBUTE_FLY_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.CeptorPrm;
+		legionaryPrm = ceptorSquadPrm;
+		attackablePrm = attackable_data.Ceptor;
+		dockingSlots = &dockingSlotsCeptor;
+		interfaceTV = &interfaceTV_Ceptor;
+	};
+
+	Military Gyroid = 
+	{
+		ID = UNIT_ATTRIBUTE_GYROID;
+		InterfaceName = "Gyroid";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_LASER;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\geroid.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\geroid.l3d";
+		BoundScale = 1.5;
+
+		UnitClass = UNIT_CLASS_AIR;
+		AttackClass = balance.Gyroid.AttackClass;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Gyroid.effect"; 
+			craterRadius=10;
+		};
+
+		damageMolecula = {	balance.Gyroid.elSoldiers,
+							balance.Gyroid.elOfficers,
+							balance.Gyroid.elTechnicians,
+							0,
+							balance.Gyroid.elShield };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Gyroid.maPower;
+				width = balance.Gyroid.maWidth;
+			};
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LASER;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.1, 0.1 };
+				targetingPrecision = { 0.05, 0.05 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Gyroid.ReloadEnergy;
+				time =		balance.Gyroid.ReloadTime;
+				priority =	balance.Gyroid.ReloadPriority;
+
+				name = "reloadConsumption Gyroid";
+			};
+
+			fireDisableTime = 300;
+			fireRadius = { 50,	balance.Gyroid.RangeFire };
+			sightRadius =		balance.Gyroid.RangeSight;
+		};
+
+		animationSetup = &gyroidAnimation;
+		soundSetup = &gyroidSound;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION1, UNIT_ATTRIBUTE_LASER_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.GyroidPrm;
+		legionaryPrm = gyroidSquadPrm;
+		attackablePrm = attackable_data.Gyroid;
+		interfaceTV = &interfaceTV_Gyroid;
+	};
+
+	Military Strafer = 
+	{
+		ID = UNIT_ATTRIBUTE_STRAFER;
+		InterfaceName = "Strafer";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_LASER;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\strafer.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\strafer.l3d";
+		BoundScale = 1.5;
+
+		UnitClass = UNIT_CLASS_AIR;
+		AttackClass = balance.Strafer.AttackClass;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Strafer.effect"; 
+			craterRadius=10;
+			debrisData = { 
+				{ 
+					debrisID = UNIT_ATTRIBUTE_DEBRIS_UNIT; 
+					count = 20;
+					countRnd = -1;
+				}
+			};
+		};
+
+		damageMolecula = {	balance.Strafer.elSoldiers,
+							balance.Strafer.elOfficers,
+							balance.Strafer.elTechnicians,
+							0,
+							balance.Strafer.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+			missileID = UNIT_ATTRIBUTE_STRAFER_BULLET;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.3, 0.3 };
+				targetingPrecision = { 0.05, 0.05 };
+
+				defaultAngles = { 0, -0.25 };
+
+//				thetaLimit = { -0.5, -0.01 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Strafer.ReloadEnergy;
+				time =		balance.Strafer.ReloadTime;
+				priority =	balance.Strafer.ReloadPriority;
+
+				name = "reloadConsumption Strafer";
+			};
+			fireRadius = { 50,	balance.Strafer.RangeFire };
+			sightRadius =		balance.Strafer.RangeSight;
+		};
+
+		animationSetup = &straferAnimation;
+		soundSetup = &straferSound;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.StraferPrm;
+		legionaryPrm = straferSquadPrm;
+		attackablePrm = attackable_data.Strafer;
+		interfaceTV = &interfaceTV_Strafer;
+	};
+
+	Military Disintegrator = 
+	{
+		ID = UNIT_ATTRIBUTE_DISINTEGRATOR;
+		InterfaceName = "Disintegrator";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\disintegrator.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\disintegrator.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_HEAVY;
+		AttackClass = balance.Disintegrator.AttackClass;
+		
+		damageMolecula = {	balance.Disintegrator.elSoldiers,
+							balance.Disintegrator.elOfficers,
+							balance.Disintegrator.elTechnicians,
+							0,
+							balance.Disintegrator.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_DISINTEGRATOR;
+//			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_DISABLE_DEFENCIVE_ATTACK;
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE;
+
+			reloadConsumption = {
+				energy =	balance.Disintegrator.ReloadEnergy;
+				time =		balance.Disintegrator.ReloadTime;
+				priority =	balance.Disintegrator.ReloadPriority;
+
+				name = "reloadConsumption Disintegrator";
+			};
+
+			dischargeSpeed = balance.Disintegrator.DischargeSpeed;
+
+			fireRadius = { 0,	balance.Disintegrator.RangeFire };
+			sightRadius =		balance.Disintegrator.RangeSight;
+
+			accuracyRadius = balance.Disintegrator.AccuracyRadius;
+		};
+
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Disintegrator.effect";
+			craterRadius=20;
+		};
+
+		animationSetup = &disintegratorAnimation;
+		soundSetup = &disintegratorSound;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION2, UNIT_ATTRIBUTE_EMPIRE_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.DisintegratorPrm;
+		legionaryPrm = disintegratorSquadPrm;
+		attackablePrm = attackable_data.Disintegrator;
+		interfaceTV = &interfaceTV_Disintegrator;
+	};
+
+	Military ScumSplitter = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_SPLITTER;
+		InterfaceName = "Scum Splitter";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_GROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\splitter.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\splitter.l3d";
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		AttackClass = balance.ScumSplitter.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\splitter.effect";
+//			craterRadius=20;
+		};
+		damageMolecula = {	balance.ScumSplitter.elSoldiers,
+							balance.ScumSplitter.elOfficers,
+							balance.ScumSplitter.elTechnicians,
+							0,
+							balance.ScumSplitter.elShield };
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_SCUM_SPLITTER;
+			missileID = UNIT_ATTRIBUTE_NATURE_RIFT;
+
+//			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_DISABLE_DEFENCIVE_ATTACK|WEAPON_IGNORE_FIELD;
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_IGNORE_FIELD;
+
+			reloadConsumption = {
+				energy =	balance.ScumSplitter.ReloadEnergy;
+				time =		balance.ScumSplitter.ReloadTime;
+				priority =	balance.ScumSplitter.ReloadPriority;
+
+				name = "reloadConsumption Splitter";
+			};
+
+			accuracyRadius = balance.ScumSplitter.AccuracyRadius;
+
+			dischargeSpeed = balance.ScumSplitter.DischargeSpeed;
+
+			fireRadius = { 5,	balance.ScumSplitter.RangeFire };
+			sightRadius =		balance.ScumSplitter.RangeSight;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EXODUS_STATION1 };
+		};
+
+		animationSetup = &scumSplitterAnimation;
+		soundSetup = &scumSplitterSound;
+
+		rigidBodyPrm = &rigidBodyTable.ScumSplitterPrm;
+		legionaryPrm = scumSplitterSquadPrm;
+		attackablePrm = attackable_data.ScumSplitter;
+		interfaceTV = &interfaceTV_ScumSplitter;
+	};
+
+	Military ScumTwister = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_TWISTER;
+		InterfaceName = "Scum Twister";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_GROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\scum_twister.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\scum_twister.l3d";
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		AttackClass = balance.ScumTwister.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Scum_twister.effect";
+			craterRadius=20;
+		};
+		damageMolecula = {	balance.ScumTwister.elSoldiers,
+							balance.ScumTwister.elOfficers,
+							balance.ScumTwister.elTechnicians,
+							0,
+							balance.ScumTwister.elShield };
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.ScumTwister.maPower;
+				width = balance.ScumTwister.maWidth;
+			};
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_SCUM_TWISTER;
+
+//			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_DISABLE_DEFENCIVE_ATTACK|WEAPON_IGNORE_FIELD;
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_IGNORE_FIELD;
+
+			reloadConsumption = {
+				energy =	balance.ScumTwister.ReloadEnergy;
+				time =		balance.ScumTwister.ReloadTime;
+				priority =	balance.ScumTwister.ReloadPriority;
+
+				name = "reloadConsumption Scum Twister";
+			};
+
+			dischargeSpeed = balance.ScumTwister.DischargeSpeed;
+
+			accuracyRadius = balance.ScumTwister.AccuracyRadius;
+
+			missileID = UNIT_ATTRIBUTE_SCUM_TWISTER_CRATER;
+
+			fireRadius = { 5,	balance.ScumTwister.RangeFire };
+			sightRadius =		balance.ScumTwister.RangeSight;
+
+			fireDelay = 300;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EXODUS_STATION2, UNIT_ATTRIBUTE_BOMB_STATION1 };
+		};
+
+		animationSetup = &scumTwisterAnimation;
+		soundSetup = &scumTwisterSound;
+
+		rigidBodyPrm = &rigidBodyTable.ScumTwisterPrm;
+		legionaryPrm = scumTwisterSquadPrm;
+		attackablePrm = attackable_data.ScumTwister;
+		interfaceTV = &interfaceTV_ScumTwister;
+	};
+
+	Military ScumHeater = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_HEATER;
+		InterfaceName = "Scum Heater";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\scum_heater.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\scum_heater.l3d";
+
+		UnitClass = UNIT_CLASS_AIR;
+		AttackClass = balance.ScumHeater.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Scum_heater.effect";
+			craterRadius=15;
+		};
+
+		damageMolecula = {	balance.ScumHeater.elSoldiers,
+							balance.ScumHeater.elOfficers,
+							balance.ScumHeater.elTechnicians,
+							0,
+							balance.ScumHeater.elShield };
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_SCUM_HEATER;
+
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE;
+
+			reloadConsumption = {
+				energy =	balance.ScumHeater.ReloadEnergy;
+				time =		balance.ScumHeater.ReloadTime;
+				priority =	balance.ScumHeater.ReloadPriority;
+
+				name = "reloadConsumption Scum Heater";
+			};
+
+			dischargeSpeed = balance.ScumHeater.DischargeSpeed;
+
+			missileID = UNIT_ATTRIBUTE_SCUM_HEATER_CRATER;
+
+			accuracyRadius = balance.ScumHeater.AccuracyRadius;
+
+			fireRadius = { 5,	balance.ScumHeater.RangeFire };
+			sightRadius =		balance.ScumHeater.RangeSight;
+
+			fireDelay = 500;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.ScumHeater.maPower;
+				width = balance.ScumHeater.maWidth;
+			};
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EXODUS_STATION2, UNIT_ATTRIBUTE_LASER_STATION3, UNIT_ATTRIBUTE_FLY_STATION2 };
+		};
+
+		animationSetup = &scumHeaterAnimation;
+		soundSetup = &scumHeaterSound;
+
+		rigidBodyPrm = &rigidBodyTable.ScumHeaterPrm;
+		legionaryPrm = scumHeaterSquadPrm;
+		attackablePrm = attackable_data.ScumHeater;
+		interfaceTV = &interfaceTV_ScumHeater;
+	};
+
+	Military ScumThrower = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_THROWER;
+		InterfaceName = "Scum Thrower";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_GROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\ScumThr.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\ScumThr.l3d";
+
+		UnitClass = UNIT_CLASS_HEAVY;
+		AttackClass = balance.ScumThrower.AttackClass;
+		
+		damageMolecula = {	balance.ScumThrower.elSoldiers,
+							balance.ScumThrower.elOfficers,
+							balance.ScumThrower.elTechnicians,
+							0,
+							balance.ScumThrower.elShield };
+
+
+		animationSetup = &scumThrowerAnimation;
+		soundSetup = &scumThrowerSound;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\ScumThrower.effect";
+			craterRadius=20;
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.1, 0.1 };
+
+				thetaLimit = { 0.20, 0.30 };
+				objectName = { "group bashnia", 0 };
+				logicObjectName = { "bashnia", 0 };
+				targetingPrecision = { 0.05, 0.2 };
+
+				defaultAngles = { 0, 0.25 };
+			};
+
+			missileID = UNIT_ATTRIBUTE_SCUM_THROWER_BULLET;
+
+			turnSuggestPrm = &ScumThrowerMissileSuggestPrm;
+
+			reloadConsumption = {
+				energy =	balance.ScumThrower.ReloadEnergy;
+				time =		balance.ScumThrower.ReloadTime;
+				priority =	balance.ScumThrower.ReloadPriority;
+
+				name = "reloadConsumption Scum Thrower";
+			};
+
+			dischargeSpeed = balance.ScumThrower.DischargeSpeed;
+
+			fireRadius = { 100,	balance.ScumThrower.RangeFire };
+			sightRadius =		balance.ScumThrower.RangeSight;
+
+			accuracyRadius = balance.ScumThrower.AccuracyRadius;
+		};
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &HeavyUnitTrackToolzer;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_BOMB_STATION3, UNIT_ATTRIBUTE_EXODUS_STATION3 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.ScumThrowerPrm;
+		legionaryPrm = scumThrowerSquadPrm;
+		attackablePrm = attackable_data.ScumThrower;
+		interfaceTV = &interfaceTV_ScumThrower;
+	};
+
+///////////////
+
+	Military Extirpator = 
+	{
+		ID = UNIT_ATTRIBUTE_EXTIRPATOR;
+		InterfaceName = "Extirpator";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_GROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Extirpator.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Extirpator.l3d";
+
+		UnitClass = UNIT_CLASS_HEAVY;
+		AttackClass = balance.Extirpator.AttackClass;
+
+		damageMolecula = {	balance.Extirpator.elSoldiers,
+							balance.Extirpator.elOfficers,
+							balance.Extirpator.elTechnicians,
+							0,
+							balance.Extirpator.elShield };
+		
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+			flags = WEAPON_HAS_FIRE_CONTROLLER|WEAPON_IGNORE_FIELD;
+
+			controllerSetup = new terWeaponControllerSetup {
+				thetaLimit = { 0, 0 };
+				psiLimit = { 0, 0 };
+
+				objectName = { 0, 0 };
+				logicObjectName = { 0, 0 };
+				targetingObjectName = "center";
+
+				targetingPrecision = { 2, 2 };
+
+				defaultAngles = { 0, 0 };
+			};
+
+			missileID = UNIT_ATTRIBUTE_EXTIRPATOR_BULLET;
+
+			reloadConsumption = {
+				energy =	balance.Extirpator.ReloadEnergy;
+				time =		balance.Extirpator.ReloadTime;
+				priority =	balance.Extirpator.ReloadPriority;
+
+				name = "reloadConsumption Extirpator";
+			};
+
+			dischargeSpeed = balance.Extirpator.DischargeSpeed;
+
+			fireRadius = { 50,	balance.Extirpator.RangeFire };
+			sightRadius =		balance.Extirpator.RangeSight;
+		};
+
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Extirpator.effect";
+			craterRadius=20;
+		};
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &HeavyUnitTrackToolzer;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION2, UNIT_ATTRIBUTE_ROCKET_STATION3, UNIT_ATTRIBUTE_LASER_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.ExtirpatorPrm;
+		legionaryPrm = extirpatorSquadPrm;
+		attackablePrm = attackable_data.Extirpator;
+		interfaceTV = &interfaceTV_Extirpator;
+
+		animationSetup = &extirpatorAnimation;
+		soundSetup = &extirpatorSound;
+	};
+
+	Military Wargon = 
+	{
+		ID = UNIT_ATTRIBUTE_WARGON;
+		InterfaceName = "Wargon Tank";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\wargon.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\wargon.l3d";
+
+		UnitClass = UNIT_CLASS_HEAVY;
+		AttackClass = balance.Wargon.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Wargon.effect";
+			craterRadius=15;
+		};
+
+		damageMolecula = {	balance.Wargon.elSoldiers,
+							balance.Wargon.elOfficers,
+							balance.Wargon.elTechnicians,
+							0,
+							balance.Wargon.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				targetingPrecision = { 0.05, 0.05 };
+				defaultAngles = { 0, 0.25 };
+			};
+
+			missileID = UNIT_ATTRIBUTE_WARGON_BULLET;
+
+			turnSuggestPrm = &WargonMissileSuggestPrm;
+
+			reloadConsumption = {
+				energy =	balance.Wargon.ReloadEnergy;
+				time =		balance.Wargon.ReloadTime;
+				priority =	balance.Wargon.ReloadPriority;
+
+				name = "reloadConsumption Wargon";
+			};
+			
+			dischargeSpeed = balance.Wargon.DischargeSpeed;
+
+			fireRadius = { 100,	balance.Wargon.RangeFire };
+			sightRadius =		balance.Wargon.RangeSight;
+			
+			accuracyRadius = balance.Wargon.AccuracyRadius;
+		};
+
+		animationSetup = &wargonAnimation;
+		soundSetup = &wargonSound;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_BOMB_STATION2, UNIT_ATTRIBUTE_ROCKET_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.WargonPrm;
+		legionaryPrm = wargonSquadPrm;
+		attackablePrm = attackable_data.Wargon;
+		interfaceTV = &interfaceTV_Wargon;
+	};
+
+	Military Bombie = 
+	{
+		ID = UNIT_ATTRIBUTE_BOMBER;
+		InterfaceName = "Bombie";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bombie.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bombie.l3d";
+		BoundScale = 1.5;
+
+		UnitClass = UNIT_CLASS_AIR_HEAVY;
+		AttackClass = balance.Bombie.AttackClass;
+
+		damageMolecula = {	balance.Bombie.elSoldiers,
+							balance.Bombie.elOfficers,
+							balance.Bombie.elTechnicians,
+							0,
+							balance.Bombie.elShield };
+		
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+
+			controllerSetup = new terWeaponControllerSetup {
+				psiLimit = { 0, 0 };
+				thetaLimit = { -0.35, -0.35 };
+				objectName = { 0, 0 };
+				logicObjectName = { 0, 0 };
+				targetingPrecision = { 2.1, 2.1 };
+
+				defaultAngles = { 0, -0.35 };
+
+				targetingObjectName = "center";
+			};
+
+			missileID = UNIT_ATTRIBUTE_BOMB_BULLET;
+
+			reloadConsumption = {
+				energy =	balance.Bombie.ReloadEnergy;
+				time =		balance.Bombie.ReloadTime;
+				priority =	balance.Bombie.ReloadPriority;
+
+				name = "reloadConsumption Bombie";
+			};
+
+			fireRadius = { 5,	balance.Bombie.RangeFire };
+			sightRadius =		balance.Bombie.RangeSight;
+
+			accuracyRadius = balance.Bombie.AccuracyRadius;
+		};
+
+		animationSetup = &bombieAnimation;
+		soundSetup = &bombieSound;
+
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Bombie.effect";
+			craterRadius=20;
+		};
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_BOMB_STATION2,UNIT_ATTRIBUTE_FLY_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.BomberPrm;
+		legionaryPrm = bomberSquadPrm;
+		attackablePrm = attackable_data.Bombie;
+		interfaceTV = &interfaceTV_Bombie;
+	};
+
+	Military RProjector = 
+	{
+		ID = UNIT_ATTRIBUTE_R_PROJECTOR;
+		InterfaceName = "R-Projector";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\r_progector.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\r_progector.l3d";
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		AttackClass = balance.RProjector.AttackClass;
+		
+		effectsData = 
+		{ 
+			libraryFileName = "RESOURCE\\FX\\RProjector.effect"; 
+			craterRadius=15;
+		};
+
+		damageMolecula = {	balance.RProjector.elSoldiers,
+							balance.RProjector.elOfficers,
+							balance.RProjector.elTechnicians,
+							0,
+							balance.RProjector.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LAUNCHER;
+			flags = WEAPON_UNLOAD_WHEN_DISABLED;
+			controllerSetup = new terWeaponControllerSetup { 
+				targetingPrecision = { 0.1, 0.1 };
+			};
+			missileID = UNIT_ATTRIBUTE_PROJECTOR_MISSILE;
+
+			reloadConsumption = {
+				energy =	balance.RProjector.ReloadEnergy;
+				time =		balance.RProjector.ReloadTime;
+				priority =	balance.RProjector.ReloadPriority;
+
+				name = "reloadConsumption R-Projector";
+			};
+
+			fireDisableTime = 300;
+
+			fireRadius = { 50,	balance.RProjector.RangeFire };
+			sightRadius =		balance.RProjector.RangeSight;
+			thetaForced = 70;
+		};
+
+		animationSetup = &rprojectorAnimation;
+		soundSetup = &rprojectorSound;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ROCKET_STATION2, UNIT_ATTRIBUTE_LASER_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.ProjectorPrm;
+		legionaryPrm = projectorSquadPrm;
+		attackablePrm = attackable_data.RProjector;
+		dockingSlots = &dockingSlotsRProjector;
+		interfaceTV = &interfaceTV_RProjector;
+	};
+
+	Military Unseen = 
+	{
+		ID = UNIT_ATTRIBUTE_UNSEEN;
+		InterfaceName = "Unseen";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\unseen.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\unseen.l3d";
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		LegionType = LEGION_FLYING;
+	
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Unseen.effect";
+			craterRadius=10;
+		};
+
+		damageMolecula = {	balance.Unseen.elSoldiers,
+							balance.Unseen.elOfficers,
+							balance.Unseen.elTechnicians,
+							0,
+							balance.Unseen.elShield };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_INVISIBILITY_GENERATOR;
+			flags = WEAPON_NEED_CHARGE;
+
+			reloadConsumption = {
+				energy =	balance.Unseen.ReloadEnergy;
+				time =		balance.Unseen.ReloadTime;
+				priority =	balance.Unseen.ReloadPriority;
+
+				name = "reloadConsumption Unseen";
+			};
+
+			fireRadius = { 0,	balance.Unseen.RangeFire };
+			sightRadius =		balance.Unseen.RangeSight;
+
+			accuracyRadius = balance.Unseen.AccuracyRadius;
+		};
+
+		animationSetup = &unseenAnimation;
+		soundSetup = &unseenSound;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EMPIRE_STATION2, UNIT_ATTRIBUTE_LASER_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.UnseenPrm;
+		legionaryPrm = unseenSquadPrm;
+		attackablePrm = attackable_data.Unseen;
+		interfaceTV = &interfaceTV_Unseen;
+	};
+
+	Military filthSpot0 = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_SPOT0;
+		InterfaceName = balance.Scourge0.Name;//"Scourge Ants";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\hrbck_filth_01.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\hrbck_filth_01.l3d";
+//		BoundRadius = 1.0;
+
+		AttackClass = balance.Scourge0.AttackClass;
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		LegionType = LEGION_GROUND;
+	
+		damageMolecula = {	balance.Scourge0.elSoldiers,
+							balance.Scourge0.elOfficers,
+							balance.Scourge0.elTechnicians,
+							0,
+							balance.Scourge0.elShield };
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Hrbck_filth.effect";
+			craterRadius=20;
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_FILTH_SPOT;
+			weaponIndex = 0;
+
+			reloadConsumption = {
+				energy =	balance.Scourge0.ReloadEnergy;
+				time =		balance.Scourge0.ReloadTime;
+				priority =	balance.Scourge0.ReloadPriority;
+
+				name = "reloadConsumption Scourge0";
+			};
+
+			fireRadius = { 10,	balance.Scourge0.RangeFire };
+			sightRadius =		balance.Scourge0.RangeSight;
+
+			accuracyRadius = balance.Scourge0.AccuracyRadius;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION1 };
+		};
+
+		soundSetup = &harkbackSound;
+
+		rigidBodyPrm = &rigidBodyTable.FilthSpot0Prm;
+		legionaryPrm = filthSpot0SquadPrm;
+		interfaceTV = &interfaceTV_FilthSpot0;
+	};
+
+	Military filthSpot1 = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_SPOT1;
+		InterfaceName = balance.Scourge1.Name;//"Scourge Shark";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\hrbck_filth_02.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\hrbck_filth_02.l3d";
+//		BoundRadius = 1.0;
+
+		AttackClass = balance.Scourge1.AttackClass;
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		LegionType = LEGION_GROUND;
+	
+		damageMolecula = {	balance.Scourge1.elSoldiers,
+							balance.Scourge1.elOfficers,
+							balance.Scourge1.elTechnicians,
+							0,
+							balance.Scourge1.elShield };
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		effectsData = {	
+			libraryFileName = "RESOURCE\\FX\\Hrbck_filth.effect"; 
+			craterRadius=20;
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_FILTH_SPOT;
+			weaponIndex = 1;
+
+			reloadConsumption = {
+				energy =	balance.Scourge1.ReloadEnergy;
+				time =		balance.Scourge1.ReloadTime;
+				priority =	balance.Scourge1.ReloadPriority;
+
+				name = "reloadConsumption Scourge1";
+			};
+
+			fireRadius = { 10,	balance.Scourge1.RangeFire };
+			sightRadius =		balance.Scourge1.RangeSight;
+
+			accuracyRadius = balance.Scourge1.AccuracyRadius;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION2, UNIT_ATTRIBUTE_SUBTERRA_STATION1 };
+		};
+
+		soundSetup = &harkbackSound;
+
+		rigidBodyPrm = &rigidBodyTable.FilthSpot1Prm;
+		legionaryPrm = filthSpot1SquadPrm;
+		interfaceTV = &interfaceTV_FilthSpot1;
+	};
+
+	Military filthSpot2 = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_SPOT2;
+		InterfaceName = balance.Scourge2.Name;//"Scourge Wasp";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\hrbck_filth_03.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\hrbck_filth_03.l3d";
+//		BoundRadius = 1.0;
+
+		AttackClass = balance.Scourge2.AttackClass;
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		LegionType = LEGION_GROUND;
+	
+		damageMolecula = {	balance.Scourge2.elSoldiers,
+							balance.Scourge2.elOfficers,
+							balance.Scourge2.elTechnicians,
+							0,
+							balance.Scourge2.elShield };
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		effectsData = {	
+			libraryFileName = "RESOURCE\\FX\\Hrbck_filth.effect"; 
+			craterRadius=20;
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_FILTH_SPOT;
+			weaponIndex = 2;
+
+			reloadConsumption = {
+				energy =	balance.Scourge2.ReloadEnergy;
+				time =		balance.Scourge2.ReloadTime;
+				priority =	balance.Scourge2.ReloadPriority;
+
+				name = "reloadConsumption Scourge2";
+			};
+
+			fireRadius = { 10,	balance.Scourge2.RangeFire };
+			sightRadius =		balance.Scourge2.RangeSight;
+
+			accuracyRadius = balance.Scourge2.AccuracyRadius;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION2, UNIT_ATTRIBUTE_FLY_STATION2 };
+		};
+
+		soundSetup = &harkbackSound;
+
+		rigidBodyPrm = &rigidBodyTable.FilthSpot2Prm;
+		legionaryPrm = filthSpot2SquadPrm;
+		interfaceTV = &interfaceTV_FilthSpot2;
+	};
+
+	Military filthSpot3 = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_SPOT3;
+		InterfaceName = balance.Scourge3.Name;//"Scourge Worm";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\hrbck_filth_04.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\hrbck_filth_04.l3d";
+//		BoundRadius = 1.0;
+
+		AttackClass = balance.Scourge3.AttackClass;
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		LegionType = LEGION_GROUND;
+	
+		damageMolecula = {	balance.Scourge3.elSoldiers,
+							balance.Scourge3.elOfficers,
+							balance.Scourge3.elTechnicians,
+							0,
+							balance.Scourge3.elShield };
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Hrbck_filth.effect"; 
+			craterRadius=20;
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_FILTH_SPOT;
+			weaponIndex = 3;
+
+			reloadConsumption = {
+				energy =	balance.Scourge3.ReloadEnergy;
+				time =		balance.Scourge3.ReloadTime;
+				priority =	balance.Scourge3.ReloadPriority;
+
+				name = "reloadConsumption Scourge3";
+			};
+
+			fireRadius = { 10,	balance.Scourge3.RangeFire };
+			sightRadius =		balance.Scourge3.RangeSight;
+
+			accuracyRadius = balance.Scourge3.AccuracyRadius;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION3, UNIT_ATTRIBUTE_FLY_STATION2, UNIT_ATTRIBUTE_LASER_STATION3 };
+		};
+
+		soundSetup = &harkbackSound;
+
+		rigidBodyPrm = &rigidBodyTable.FilthSpot3Prm;
+		legionaryPrm = filthSpot3SquadPrm;
+		interfaceTV = &interfaceTV_FilthSpot3;
+	};
+
+	Military Leech = 
+	{
+		ID = UNIT_ATTRIBUTE_LEECH;
+		InterfaceName = "Leech";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_LEECH;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\leech.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\leech.l3d";
+
+		UnitClass = UNIT_CLASS_MEDIUM;
+		AttackClass = balance.Leech.AttackClass;
+	
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Leech.effect";
+			craterRadius=10;
+		};
+
+		damageMolecula = {	balance.Leech.elSoldiers,
+							balance.Leech.elOfficers,
+							balance.Leech.elTechnicians,
+							0,
+							balance.Leech.elShield };
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+//		toolzerSetup = &MediumUnitTrackToolzer;
+
+		ConnectionPointNames = { "geosphere01" };
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LEECH;
+
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_IGNORE_FIELD;
+
+			reloadConsumption = {
+				energy =	balance.Leech.ReloadEnergy;
+				time =		balance.Leech.ReloadTime;
+				priority =	balance.Leech.ReloadPriority;
+
+				name = "reloadConsumption Leech";
+			};
+
+			dischargeSpeed = balance.Leech.DischargeSpeed;
+
+			fireRadius = { 10,	balance.Leech.RangeFire };
+			sightRadius =		balance.Leech.RangeSight;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_EMPIRE_STATION1 };
+		};
+
+		animationSetup = &leechAnimation;
+		soundSetup = &leechSound;
+
+		rigidBodyPrm = &rigidBodyTable.LeechPrm;
+		legionaryPrm = leechSquadPrm;
+		attackablePrm = attackable_data.Leech;
+		interfaceTV = &interfaceTV_Leech;
+
+		// энергия, которую юнит тратит у противника
+		productionConsumption = new ConsumptionData {
+			energy = balance.Leech.StealEnergy;
+			time = 0; 
+			priority = 60;
+			name = "productionConsumption enemy's Leech";
+		};
+	};
+
+	///////////////////////////////////////////////
+	//			Stationary Guns
+	///////////////////////////////////////////////
+	MilitaryStructure GunLaser = 
+	{
+		ID = UNIT_ATTRIBUTE_LASER_CANNON;
+		InterfaceName = "Laser-Gun";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_LASER;
+
+		iconDistanceFactor = 2.5f;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunLaser.AttackClass;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\laser_r.m3d","RESOURCE\\MODELS\\MAIN\\build_laser_canon.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\laser_r.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\GunLaser.effect";
+			corpseLifeTime = 50;
+			craterRadius = 20;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.GunLaser.maPower;
+				width = balance.GunLaser.maWidth;
+			};
+		};
+
+		damageMolecula = {0,0,0,balance.GunLaser.elSoft,balance.GunLaser.elHard };
+		constructionSpeedCoeff = 1;
+
+		disconnectAnimation = 1;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LASER;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.3, 0.3 };
+				targetingPrecision = { 0.09, 0.09 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.GunLaser.ReloadEnergy;
+				time =		balance.GunLaser.ReloadTime;
+				priority =	balance.GunLaser.ReloadPriority;
+
+				name = "reloadConsumption GunLaser";
+			};
+
+			dischargeSpeed = balance.GunLaser.DischargeSpeed;
+			fireDisableTime = 300;
+
+			fireRadius = { 10,	balance.GunLaser.RangeFire };
+			sightRadius =		balance.GunLaser.RangeSight;
+
+			squadMode = 0;
+		};
+		
+		FallDelay = 5;
+		FallSpeed = -3.0;
+		FallAcceleration = -0.2;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 4;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_LASER_STATION1 };
+		};
+
+		animationSetup = &laserGunAnimation;
+		soundSetup = &laserGunSound;
+
+		attackablePrm = attackable_data.LaserGun;
+		interfacePrm = unit_interface_data.gun_laser;
+		interfaceTV = &interfaceTV_GunLaser;
+	};
+
+	MilitaryStructure GunRocket = 
+	{
+		ID = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+		InterfaceName = "Rocket-Gun";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		iconDistanceFactor = 2.5f;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunRocket.AttackClass;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket_launcher.m3d", "RESOURCE\\MODELS\\MAIN\\build_rocket_launcher.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket_launcher.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\GunRocket.effect"; 
+			corpseLifeTime = 30;
+		};
+		
+		damageMolecula = {0,0,0,balance.GunRocket.elSoft,balance.GunRocket.elHard };
+		constructionSpeedCoeff = 1;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LAUNCHER;
+			controllerSetup = new terWeaponControllerSetup {
+				targetingPrecision = { 0.05, 0.05 };
+			};
+			missileID = UNIT_ATTRIBUTE_GUN_ROCKET_MISSILE;
+
+			reloadConsumption = {
+				energy =	balance.GunRocket.ReloadEnergy;
+				time =		balance.GunRocket.ReloadTime;
+				priority =	balance.GunRocket.ReloadPriority;
+
+				name = "reloadConsumption GunRocket";
+			};
+
+			aimResetDelay = 3000;
+			dischargeSpeed = balance.GunRocket.DischargeSpeed;
+
+			fireRadius = { 50,	balance.GunRocket.RangeFire };
+			sightRadius =		balance.GunRocket.RangeSight;
+
+			thetaForced = 70;
+
+			squadMode = 0;
+		};
+
+		FallDelay = 5;
+		FallSpeed = -3.0;
+		FallAcceleration = -0.2;
+
+		SelectionDistance = 0.25f;
+		SelectionSize = 0.5f;		
+
+		soundSetup = &rocketGunSound;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ROCKET_STATION2 };
+		};
+
+		attackablePrm = attackable_data.GunRocket;
+		interfacePrm = unit_interface_data.gun_rocket;
+		dockingSlots = &dockingSlotsGunRocket;
+		interfaceTV = &interfaceTV_GunRocket;
+	};
+
+	MilitaryStructure GunHowitzer = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_HOWITZER;
+		InterfaceName = "Gun-Howitzer";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		iconDistanceFactor = 2.5f;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunHowitzer.AttackClass;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\haubitz.m3d", "RESOURCE\\MODELS\\MAIN\\build_haubitz.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\haubitz.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\GunHowitzer.effect";
+			corpseLifeTime = 40;
+		};
+
+		damageMolecula = {0,0,0,balance.GunHowitzer.elSoft,balance.GunHowitzer.elHard };
+		constructionSpeedCoeff = 1;
+
+		disconnectAnimation = 1;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+			flags = WEAPON_HAS_FIRE_CONTROLLER;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				defaultAngles = { 0, 0.25 };
+			};
+
+			missileID = UNIT_ATTRIBUTE_GUN_HOWITZER_BULLET;
+
+			aimResetDelay = 3000;
+			turnSuggestPrm = &HowitzerMissileSuggestPrm;
+
+			reloadConsumption = {
+				energy =	balance.GunHowitzer.ReloadEnergy;
+				time =		balance.GunHowitzer.ReloadTime;
+				priority =	balance.GunHowitzer.ReloadPriority;
+
+				name = "reloadConsumption GunHowitzer";
+			};
+
+			dischargeSpeed = balance.GunHowitzer.DischargeSpeed;
+
+			fireRadius = { 100,	balance.GunHowitzer.RangeFire };
+			sightRadius =		balance.GunHowitzer.RangeSight;
+
+			accuracyRadius = balance.GunHowitzer.AccuracyRadius;
+
+			squadMode = 0;
+		};
+
+		FallDelay = 5;
+		FallSpeed = -3.0;
+		FallAcceleration = -0.2;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.7f;		
+
+		MakingChainNum = 4;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_BOMB_STATION3};
+		};
+
+		animationSetup = &howitzerGunAnimation;
+		soundSetup = &howitzerGunSound;
+
+		attackablePrm = attackable_data.GunHowitzer;
+		interfacePrm = unit_interface_data.gun_howitzer;
+		interfaceTV = &interfaceTV_GunHowitzer;
+	};
+
+	MilitaryStructure GunSubchaser = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+		InterfaceName = "Subchaser Gun";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunSubchaser.AttackClass;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\subchaser.m3d", "RESOURCE\\MODELS\\MAIN\\build_subchaser.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\subchaser.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\subchaser.effect";
+			corpseLifeTime = 50;
+		};
+
+		damageMolecula = {0,0,0,balance.GunSubchaser.elSoft,balance.GunSubchaser.elHard };
+		constructionSpeedCoeff = 1;
+
+		disconnectAnimation = 1;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_ARTILLERY;
+
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_IGNORE_FIELD;
+
+			controllerSetup = new terWeaponControllerSetup {
+				thetaLimit = { 0, 0 };
+
+				objectName = { "group bashnia", 0 };
+				logicObjectName = { "bashnia", 0 };
+				targetingObjectName = "center";
+
+				targetingPrecision = { 0.1, 2 };
+
+				defaultAngles = { 0, 0 };
+			};
+
+			missileID = UNIT_ATTRIBUTE_GUN_SUBCHASER_BULLET;
+			missileLimit = 3;
+
+			reloadConsumption = {
+				energy =	balance.GunSubchaser.ReloadEnergy;
+				time =		balance.GunSubchaser.ReloadTime;
+				priority =	balance.GunSubchaser.ReloadPriority;
+
+				name = "reloadConsumption Gun Subchaser";
+			};
+
+			dischargeSpeed = balance.GunSubchaser.DischargeSpeed;
+
+			fireRadius = { 10,	balance.GunSubchaser.RangeFire };
+			sightRadius =		balance.GunSubchaser.RangeSight;
+
+			squadMode = 0;
+		};
+
+		FallDelay = 5;
+		FallSpeed = -3.0;
+		FallAcceleration = -0.2;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.7f;		
+
+		MakingChainNum = 5;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION1 };
+		};
+
+		animationSetup = &subchaserGunAnimation;
+		soundSetup = &subchaserGunSound;
+
+		attackablePrm = attackable_data.GunSubchaser;
+		interfacePrm = unit_interface_data.gun_subchaser;
+		interfaceTV = &interfaceTV_GunSubchaser;
+	};
+
+	MilitaryStructure GunBallistic = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_BALLISTIC;
+		InterfaceName = "GunBallistic";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		UnitClass = UNIT_CLASS_STRUCTURE_SPECIAL;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunBallistic.AttackClass;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\ballistic.m3d", "RESOURCE\\MODELS\\MAIN\\build_ballistic.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\ballistic.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\GunBallistic.effect"; 
+			craterRadius = 100;
+		};
+
+		damageMolecula = {0,0,0,balance.GunBallistic.elSoft,balance.GunBallistic.elHard };
+		constructionSpeedCoeff = 0.5;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+		ShowCircles = 0;
+
+		MakingChainNum = 4;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LAUNCHER;
+
+			flags = WEAPON_NEED_CHARGE|WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CHARGE_ANIMATION|WEAPON_READY_ANIMATION|WEAPON_CLEAN_TARGET_AFTER_FIRE|WEAPON_DISABLE_DEFENCIVE_ATTACK|WEAPON_IGNORE_FIELD;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingPrecision = { 2, 2 };
+				psiLimit = { 0, 0 };
+				thetaLimit = { 0.5, 0.5 };
+				objectName = { 0, 0 };
+				logicObjectName = { 0, 0 };
+				targetingObjectName = "center";
+			};
+
+			turnSuggestPrm = &BallisticMissileSuggestPrm;
+
+			missileID = UNIT_ATTRIBUTE_BALLISTIC_MISSILE;
+			missileLimit = 1;
+			missileLoadDelay = 10000;
+
+			reloadConsumption = {
+				energy =	balance.GunBallistic.ReloadEnergy;
+				time =		balance.GunBallistic.ReloadTime;
+				priority =	balance.GunBallistic.ReloadPriority;
+
+				name = "reloadConsumption GunBallistic";
+			};
+
+			dischargeSpeed = balance.GunBallistic.DischargeSpeed;
+
+			fireRadius = { 300,	balance.GunBallistic.RangeFire };
+			sightRadius =		balance.GunBallistic.RangeSight;
+
+			squadMode = 0;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION2, UNIT_ATTRIBUTE_ROCKET_STATION3, UNIT_ATTRIBUTE_EMPIRE_STATION3};
+		};
+
+		animationSetup = &ballisticLauncherAnimation;
+		soundSetup = &ballisticLauncherSound;
+
+		dockingSlots = &dockingSlotsGunBallistic;
+
+		attackablePrm = attackable_data.GunBallistic;
+		interfacePrm = unit_interface_data.gun_ballistic;
+		interfaceTV = &interfaceTV_GunBallistic;
+	};
+
+	MilitaryStructure GunFilthNavigator = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR;
+		InterfaceName = "Filth Navigator";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		UnitClass = UNIT_CLASS_STRUCTURE_SPECIAL;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunScourgeNavigator.AttackClass;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\filth_navigator.m3d", "RESOURCE\\MODELS\\MAIN\\build_filth_navigator.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\filth_navigator.l3d";
+		BoundScale = 1.5;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\FilthNavigator.effect"; 
+			craterRadius = 70;
+		};
+
+		damageMolecula = {0,0,0,balance.GunScourgeNavigator.elSoft,balance.GunScourgeNavigator.elHard };
+		constructionSpeedCoeff = 0.5;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+		ShowCircles = 0;
+
+		MakingChainNum = 5;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_FILTH_NAVIGATOR;
+
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_CLEAN_TARGET_AFTER_FIRE|WEAPON_DISABLE_DEFENCIVE_ATTACK|WEAPON_IGNORE_FIELD;
+
+			reloadConsumption = {
+				energy =	balance.GunScourgeNavigator.ReloadEnergy;
+				time =		balance.GunScourgeNavigator.ReloadTime;
+				priority =	balance.GunScourgeNavigator.ReloadPriority;
+
+				name = "reloadConsumption GunFilthNavigator";
+			};
+
+			fireDelay = 10000;
+
+			dischargeSpeed = balance.GunScourgeNavigator.DischargeSpeed;
+
+			fireRadius = { 300,	balance.GunScourgeNavigator.RangeFire };
+			sightRadius =		balance.GunScourgeNavigator.RangeSight;
+
+			squadMode = 0;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION2, UNIT_ATTRIBUTE_SUBTERRA_STATION2, UNIT_ATTRIBUTE_HARKBACK_STATION3};
+		};
+
+		animationSetup = &filthNavigatorAnimation;
+		soundSetup = &filthNavigatorSound;
+
+		attackablePrm = attackable_data.GunFilthNavigator;
+		interfacePrm = unit_interface_data.gun_filth_navigator;
+		interfaceTV = &interfaceTV_FilthNavigator;
+	};
+
+	MilitaryStructure GunScumDisruptor = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_SCUM_DISRUPTOR;
+		InterfaceName = "Scum Disruptor";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		UnitClass = UNIT_CLASS_STRUCTURE_SPECIAL;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunScumDisruptor.AttackClass;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\scum_disruptor.m3d", "RESOURCE\\MODELS\\MAIN\\build_scum disruptor.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\scum_disruptor.l3d";
+		BoundScale = 1.5;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\ScumDisruptor.effect"; 
+			craterRadius = 70;
+		};
+
+		damageMolecula = {0,0,0,balance.GunScumDisruptor.elSoft,balance.GunScumDisruptor.elHard };
+		constructionSpeedCoeff = 0.5;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.3f;
+
+		ShowCircles = 0;
+
+		MakingChainNum = 5;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_SCUM_DISRUPTOR;
+
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE|WEAPON_CLEAN_TARGET_AFTER_FIRE|WEAPON_DISABLE_DEFENCIVE_ATTACK|WEAPON_IGNORE_FIELD;
+
+			reloadConsumption = {
+				energy =	balance.GunScumDisruptor.ReloadEnergy;
+				time =		balance.GunScumDisruptor.ReloadTime;
+				priority =	balance.GunScumDisruptor.ReloadPriority;
+
+				name = "reloadConsumption Gun Scum Disruptor";
+			};
+
+			// скорость разрядки при выстреле на расстояние в 1000
+			// на другие расстояния пропорционально меняется
+			dischargeSpeed = balance.GunScumDisruptor.DischargeSpeed;
+
+			fireRadius = { 300,	balance.GunScumDisruptor.RangeFire };
+			sightRadius =		balance.GunScumDisruptor.RangeSight;
+
+			squadMode = 0;
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_LASER_STATION3,UNIT_ATTRIBUTE_EXODUS_STATION3 };
+		};
+
+		animationSetup = &scumDisruptorAnimation;
+		soundSetup = &scumDisruptorSound;
+
+		attackablePrm = attackable_data.ScumDisruptor;
+		interfacePrm = unit_interface_data.gun_scum_disruptor;
+		interfaceTV = &interfaceTV_ScumDisruptor;
+	};
+
+	Structure ScumSpot = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_SPOT;
+		InterfaceName = "Scum Spot";
+		ClassID = UNIT_CLASS_ID_BUILDING_ENVIRONMENT;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+		
+		UnitClass = UNIT_CLASS_STRUCTURE_ENVIRONMENT;
+		enemyWorld = 1;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\filth_spot.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\filth_spot.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\ScumDisruptor.effect"; 
+			craterRadius = 90;
+		};
+
+		FallAcceleration = -0.1;
+
+		disconnectAnimation = 1;
+
+		damageMolecula = { 0,0,0,0,500 };
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;
+
+		environmentalDamage = 0;
+
+		iconDistanceFactor = 0.001f;
+
+		//attackablePrm = attackable_data.PlantSoldier;
+		//interfacePrm = unit_interface_data.plant_soldier;
+		//interfaceTV = &interfaceTV_PlantSoldier;
+	};
+
+	Structure ScumSpot2 = ScumSpot
+	{
+		damageMolecula = { 0,0,0,0,200 };
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\filth_spot.effect";
+		};
+
+		ID = UNIT_ATTRIBUTE_SCUM_SPOT2;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\filth_spot2.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\filth_spot2.l3d";
+	};
+
+	Structure ScumSpot3 = ScumSpot
+	{
+		damageMolecula = { 0,0,0,0,200 };
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\filth_spot.effect";
+		};
+
+		ID = UNIT_ATTRIBUTE_SCUM_SPOT3;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\filth_spot3.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\filth_spot3.l3d";
+	};
+
+	Structure ScumSpot4 = ScumSpot
+	{
+		damageMolecula = { 0,0,0,0,500 };
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\filth_spot.effect";
+		};
+
+		ID = UNIT_ATTRIBUTE_SCUM_SPOT4;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\filth_spot4.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\filth_spot4.l3d";
+
+		environmentalDamage = &basementDamageDefault;
+	};
+
+	Structure BlackHole = ScumSpot
+	{
+		ID = UNIT_ATTRIBUTE_BLACK_HOLE;
+		InterfaceName = "Black Hole";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\filth_spot.effect";
+		};
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\filth_inferno.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\filth_inferno.l3d";
+		animationSetup = &blackHoleAnimation;
+		damageMolecula = { 0,0,0,0,300 };
+	};
+
+
+	///////////////////////////////////////////////
+	//			Missile
+	///////////////////////////////////////////////
+	Missile rockerMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_ROCKER_MISSILE;
+		InterfaceName = "StormMissile";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_MISSILE;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket.l3d";
+
+//		AttackClass = balance.Rocker.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		LifeTime = 5000;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\rocket.effect"; 
+			craterRadius = balance.Rocker.saRadius;
+			craterID = UNIT_ATTRIBUTE_ROCKET_MISSILE_CRATER;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Rocker.maPower;
+				width = balance.Rocker.maWidth;
+			};
+			splashDamageRadius = balance.Rocker.saRadius;
+			splashDamage = {
+				power = balance.Rocker.saPower;
+				width = balance.Rocker.saWidth;
+			};
+		};
+
+		animationSetup = &rocketAnimation;
+		soundSetup = &rockerRocketSound;
+
+		rigidBodyPrm = &rigidBodyTable.RockerRocketPrm;
+	};
+
+	Missile R_ProjectorMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_PROJECTOR_MISSILE;
+		InterfaceName = "StormMissile";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_MISSILE;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket.l3d";
+
+//		AttackClass = balance.RProjector.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		LifeTime = 5000;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\rocket.effect"; 
+			craterRadius = balance.RProjector.saRadius;
+			craterID = UNIT_ATTRIBUTE_ROCKET_MISSILE_CRATER;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.RProjector.maPower;
+				width = balance.RProjector.maWidth;
+			};
+			splashDamageRadius = balance.RProjector.saRadius;
+			splashDamage = {
+				power = balance.RProjector.saPower;
+				width = balance.RProjector.saWidth;
+			};
+		};
+
+		animationSetup = &rocketAnimation;
+		soundSetup = &rprojectorRocketSound;
+
+		rigidBodyPrm = &rigidBodyTable.ProjectorRocketPrm;
+	};
+
+	Missile ceptorMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_CEPTOR_MISSILE;
+		InterfaceName = "StormMissile";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_MISSILE;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket.l3d";
+
+//		AttackClass = balance.Ceptor.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		LifeTime = 5000;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\rocket.effect"; 
+			craterRadius = balance.Ceptor.saRadius;
+			craterID = UNIT_ATTRIBUTE_ROCKET_MISSILE_CRATER;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Ceptor.maPower;
+				width = balance.Ceptor.maWidth;
+			};
+			splashDamageRadius = balance.Ceptor.saRadius;
+			splashDamage = {
+				power = balance.Ceptor.saPower;
+				width = balance.Ceptor.saWidth;
+			};
+		};
+
+		animationSetup = &rocketAnimation;
+		soundSetup = &ceptorRocketSound;
+
+		rigidBodyPrm = &rigidBodyTable.CeptorRocketPrm;
+	};
+
+	Missile gunRocketMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_ROCKET_MISSILE;
+		InterfaceName = "StormMissile";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_MISSILE;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rocket.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rocket.l3d";
+		BoundScale = 1.5f;
+
+//		AttackClass = balance.GunRocket.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		LifeTime = 5000;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\rocket.effect"; 
+			craterRadius = balance.GunRocket.saRadius;
+			craterID = UNIT_ATTRIBUTE_ROCKET_MISSILE_CRATER;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.GunRocket.maPower;
+				width = balance.GunRocket.maWidth;
+			};
+			splashDamageRadius = balance.GunRocket.saRadius;
+			splashDamage = {
+				power = balance.GunRocket.saPower;
+				width = balance.GunRocket.saWidth;
+			};
+		};
+
+		animationSetup = &rocketAnimation;
+		soundSetup = &rprojectorRocketSound;
+
+		rigidBodyPrm = &rigidBodyTable.GunRocketPrm;
+	};
+
+	Missile gunBallisticMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_BALLISTIC_MISSILE;
+		InterfaceName = "GunBallisticMissile";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_GUN;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\ballistic_rocket.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\ballistic_rocket.l3d";
+
+//		AttackClass = balance.GunBallistic.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\RocketBallistic.effect";
+			craterRadius = 100;//balance.GunBallistic.saRadius;
+			craterID = UNIT_ATTRIBUTE_ROCKET_MISSILE_CRATER;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.GunBallistic.maPower;
+				width = balance.GunBallistic.maWidth;
+			};
+			splashDamageRadius = balance.GunBallistic.saRadius;
+			splashDamage = {
+				power = balance.GunBallistic.saPower;
+				width = balance.GunBallistic.saWidth;
+			};
+		};
+
+		animationSetup = &ballisticRocketAnimation;
+		soundSetup = &ballisticMissileSound;
+
+		rigidBodyPrm = &rigidBodyTable.BallisticMissilePrm;
+	};
+
+	Missile wargonMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_WARGON_BULLET;
+		InterfaceName = "WargonBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bomb_wargon.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bomb_wargon.l3d";
+
+//		AttackClass = balance.Wargon.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Bomb.effect"; 
+			craterRadius = balance.Wargon.saRadius;
+			craterID = UNIT_ATTRIBUTE_BOMB_MISSILE_CRATER;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Wargon.maPower;
+				width = balance.Wargon.maWidth;
+			};
+			splashDamageRadius = balance.Wargon.saRadius*2;
+			splashDamage = {
+				power = balance.Wargon.saPower;
+				width = balance.Wargon.saWidth;
+			};
+		};
+
+		soundSetup = &wargonMissileSound;
+
+		rigidBodyPrm = &rigidBodyTable.WargonMissilePrm;
+	};
+
+	Missile extirpatorMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_EXTIRPATOR_BULLET;
+		InterfaceName = "ExtirpatorBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_UNDERGROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\subchaser_l.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\subchaser_l.l3d";
+
+		BoundRadius = 4.0;
+
+//		AttackClass = balance.Extirpator.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		LifeTime = 30000;
+		
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Subchaser_l.effect";
+			craterRadius = balance.Extirpator.saRadius;
+			craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NOZP;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Extirpator.maPower;
+				width = balance.Extirpator.maWidth;
+			};
+			splashDamageRadius = balance.Extirpator.saRadius;
+			splashDamage = {
+				power = balance.Extirpator.saPower;
+				width = balance.Extirpator.saWidth;
+			};
+		};
+
+		toolzerSetup = &extirpatorMissileToolzer;
+		soundSetup = &extirpatorMissileSound;
+
+		environmentalDamage = &chaosDamageSubterranean;
+		rigidBodyPrm = &rigidBodyTable.ExtirpatorMissilePrm;
+	};
+
+	Missile subchaserMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_SUBCHASER_BULLET;
+		InterfaceName = "SubchaserBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_UNDERGROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\subchaser_l.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\subchaser_l.l3d";
+
+		BoundRadius = 4.0;
+
+//		AttackClass = balance.GunSubchaser.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		LifeTime = 50000;
+		
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Subchaser_l.effect";
+//			craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NOZP;
+//			craterRadius = balance.GunSubchaser.saRadius;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.GunSubchaser.maPower;
+				width = balance.GunSubchaser.maWidth;
+			};
+			splashDamageRadius = balance.GunSubchaser.saRadius;
+			splashDamage = {
+				power = balance.GunSubchaser.saPower;
+				width = balance.GunSubchaser.saWidth;
+			};
+		};
+
+//		toolzerSetup = &subchaserMissileToolzer;
+		soundSetup = &subchaserMissileSound;
+
+		environmentalDamage = &chaosDamageSubterranean;
+		rigidBodyPrm = &rigidBodyTable.SubchaserMissilePrm;
+	};
+
+	Missile piercerMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_PIERCER_BULLET;
+		InterfaceName = "PiercerBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_UNDERGROUND;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\piercer.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\piercer.l3d";
+
+		CollisionGroup = 0;
+
+//		AttackClass = balance.Piercer.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		damageData = new terUnitDamageData {
+			splashDamageRadius = balance.Piercer.saRadius;
+			splashDamage = {
+				power = balance.Piercer.saPower;
+				width = balance.Piercer.saWidth;
+			};
+		};
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\Piercer_missile.effect";
+
+			movementCraterID = UNIT_ATTRIBUTE_PIERCER_MOVEMENT_CRATER;
+			movementCraterDelta = 50;
+
+			craterRadius = 30;
+		};
+
+		saveAsCommonObject = 1;
+
+		animationSetup = &subterraneanAnimation;
+		soundSetup = &piercerMissileSound;
+		
+		environmentalDamage = &chaosDamageSubterranean;
+		toolzerSetup = &piercerMissileToolzer;
+		rigidBodyPrm = &rigidBodyTable.PiercerMissilePrm;
+	};
+
+	Missile scumThrowerMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_THROWER_BULLET;
+		InterfaceName = "ScumThrowerBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\scum.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\scum.l3d";
+
+//		AttackClass = balance.ScumThrower.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		effectsData = { 
+			craterRadius = balance.ScumThrower.saRadius;
+			craterID = UNIT_ATTRIBUTE_SCUM_MISSILE_CRATER;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.ScumThrower.maPower;
+				width = balance.ScumThrower.maWidth;
+			};
+			splashDamageRadius = balance.ScumThrower.saRadius;
+			splashDamage = {
+				power = balance.ScumThrower.saPower;
+				width = balance.ScumThrower.saWidth;
+			};
+		};
+
+		soundSetup = &scumThrowerMissileSound;
+
+		rigidBodyPrm = &rigidBodyTable.ScumThrowerMissilePrm;
+	};
+
+	Missile soldierMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_SOLDIER_BULLET;
+		InterfaceName = "SoldierBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bullet.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bullet.l3d";
+
+		LifeTime = 3000;
+		
+//		AttackClass = balance.Soldier.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Soldier.maPower;
+				width = balance.Soldier.maWidth;
+			};
+			splashDamageRadius = balance.Soldier.saRadius;
+			splashDamage = {
+				power = balance.Soldier.saPower;
+				width = balance.Soldier.saWidth;
+			};
+		};
+
+		rigidBodyPrm = &rigidBodyTable.SoldierMissilePrm;
+	};
+
+	Missile straferMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_STRAFER_BULLET;
+		InterfaceName = "StraferBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bullet.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bullet.l3d";
+
+		AttackClass = UNIT_CLASS_ALL;
+
+		LifeTime = 3000;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Strafer.maPower;
+				width = balance.Strafer.maWidth;
+			};
+			splashDamageRadius = balance.Strafer.saRadius;
+			splashDamage = {
+				power = balance.Strafer.saPower;
+				width = balance.Strafer.saWidth;
+			};
+		};
+
+		rigidBodyPrm = &rigidBodyTable.StraferMissilePrm;
+	};
+
+	Missile mortarMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_MORTAR_BULLET;
+		InterfaceName = "MortarBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bomb_mortar.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bomb_mortar.l3d";
+
+//		AttackClass = balance.Mortar.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Bomb.effect"; 
+			craterRadius = balance.Mortar.saRadius;
+			craterID = UNIT_ATTRIBUTE_BOMB_MISSILE_CRATER;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Mortar.maPower;
+				width = balance.Mortar.maWidth;
+			};
+			splashDamageRadius = balance.Mortar.saRadius;
+			splashDamage = {
+				power = balance.Mortar.saPower;
+				width = balance.Mortar.saWidth;
+			};
+		};
+
+		soundSetup = &mortarMissileSound;
+
+		rigidBodyPrm = &rigidBodyTable.MortarMissilePrm;
+	};
+
+	Missile gunHowitzerMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_GUN_HOWITZER_BULLET;
+		InterfaceName = "HowitzerBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\snariad.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\snariad.l3d";
+
+//		AttackClass = balance.GunHowitzer.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\shell_howitzer.effect"; 
+			craterRadius = balance.GunHowitzer.saRadius;
+			craterID = UNIT_ATTRIBUTE_BOMB_MISSILE_CRATER;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.GunHowitzer.maPower;
+				width = balance.GunHowitzer.maWidth;
+			};
+			splashDamageRadius = balance.GunHowitzer.saRadius*3;
+			splashDamage = {
+				power = balance.GunHowitzer.saPower;
+				width = balance.GunHowitzer.saWidth;
+			};
+		};
+
+		soundSetup = &gunHowitzerMissileSound;
+
+		rigidBodyPrm = &rigidBodyTable.HowitzerMissilePrm;
+	};
+
+	Missile bombieMissile = 
+	{
+		ID = UNIT_ATTRIBUTE_BOMB_BULLET;
+		InterfaceName = "HowitzerBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_BULLET;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\avia_bomb.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\avia_bomb.l3d";
+
+//		AttackClass = balance.Bombie.AttackClass;
+		AttackClass = UNIT_CLASS_ALL;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Bomb.effect"; 
+			craterRadius = balance.Bombie.saRadius;
+			craterID = UNIT_ATTRIBUTE_BOMBIE_MISSILE_CRATER;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Bombie.maPower;
+				width = balance.Bombie.maWidth;
+			};
+			splashDamageRadius = balance.Bombie.saRadius*3;
+			splashDamage = {
+				power = balance.Bombie.saPower;
+				width = balance.Bombie.saWidth;
+			};
+		};
+
+		soundSetup = &bombieMissileSound;
+
+		rigidBodyPrm = &rigidBodyTable.BombMissilePrm;
+	};
+
+
+	///////////////////////////////////////////////
+	//			Filth
+	///////////////////////////////////////////////
+	terUnitAttributeData FILTH_SPOT =
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_SPOT;
+		InterfaceName = "FilthSpot";
+		ClassID = UNIT_CLASS_ID_FILTH_SPOT;
+		saveAsCommonObject = 1;
+
+		BoundRadius = 32.0;
+	};
+
+	Geo GeoInfluence =
+	{
+		ID = UNIT_ATTRIBUTE_GEO_INFLUENCE;
+		ClassID = UNIT_CLASS_GEO_INFLUENCE;
+		SoundName="Proc_Geo_Mountain";
+		SoundCycled=1;
+	};
+	Geo GeoBreak =
+	{
+		ID = UNIT_ATTRIBUTE_GEO_BREAK;
+		ClassID = UNIT_CLASS_GEO_BREAK;
+		SoundName="Proc_Geo_Crevice";
+		SoundCycled=0;
+	};
+
+	Geo GeoFault =
+	{
+		ID = UNIT_ATTRIBUTE_GEO_FAULT;
+		ClassID = UNIT_CLASS_GEO_FAULT;
+		SoundName="Proc_Geo_Rift";
+		SoundCycled=0;
+	};
+
+	Geo GeoHead =
+	{
+		ID = UNIT_ATTRIBUTE_GEO_HEAD;
+		ClassID = UNIT_CLASS_GEO_HEAD;
+		SoundName="Proc_Geo_Face";
+		SoundCycled=1;
+	};
+
+	
+	Filth AntsFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_ANTS;
+		InterfaceName = "FilthAnt";
+		ClassID = UNIT_CLASS_ID_FILTH_ANTS;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\ant.m3d","RESOURCE\\MODELS\\MAIN\\ant1.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\ant.l3d";
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Ants.AttackClass;
+		
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Ants.maPower;
+				width = balance.Ants.maWidth;
+			};
+			splashDamageRadius = balance.Ants.saRadius;
+			splashDamage = {
+				power = balance.Ants.saPower;
+				width = balance.Ants.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Ants.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.AntPrm;
+		attackablePrm = attackable_data.AntsFilth;
+		setModelDataArray = &setModelTable.ants; //?? Дублирование ModelNameArray??
+		animationSetup = &antAnimation;
+
+		soundSetup=&filthAntSound;
+	};
+
+	Filth Ants2Filth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_ANTS2;
+		InterfaceName = "FilthAnt2";
+		ClassID = UNIT_CLASS_ID_FILTH_ANTS;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\spider.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\spider.l3d";
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Ants2.AttackClass;
+		
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Ants2.maPower;
+				width = balance.Ants2.maWidth;
+			};
+			splashDamageRadius = balance.Ants2.saRadius;
+			splashDamage = {
+				power = balance.Ants2.saPower;
+				width = balance.Ants2.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Ants2.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.AntPrm;
+		attackablePrm = attackable_data.AntsFilth;
+		animationSetup = &ant2Animation;
+		soundSetup=&filthAntSound;
+	};
+
+	Filth RatFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_RAT;
+		InterfaceName = "FilthRat";
+		ClassID = UNIT_CLASS_ID_FILTH_RAT;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\rat.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\rat.l3d";
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Rat.AttackClass;
+		
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Rat.maPower;
+				width = balance.Rat.maWidth;
+			};
+			splashDamageRadius = balance.Rat.saRadius;
+			splashDamage = {
+				power = balance.Rat.saPower;
+				width = balance.Rat.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Rat.elTechnicians,0,0 };
+
+		rigidBodyPrm = &rigidBodyTable.RatPrm;
+		attackablePrm = attackable_data.RatFilth;
+		animationSetup = &ratAnimation;
+		soundSetup=&filthRatSound;
+	};
+
+	Filth SnakeFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_SNAKE;
+		InterfaceName = "SnakeRat";
+		ClassID = UNIT_CLASS_ID_FILTH_RAT;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Spider2.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Spider2.l3d";
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Snake.AttackClass;
+		
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Snake.maPower;
+				width = balance.Snake.maWidth;
+			};
+			splashDamageRadius = balance.Snake.saRadius;
+			splashDamage = {
+				power = balance.Snake.saPower;
+				width = balance.Snake.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Snake.elTechnicians,0,0 };
+
+		rigidBodyPrm = &rigidBodyTable.RatPrm;
+		attackablePrm = attackable_data.RatFilth;
+		animationSetup = &snakeAnimation;
+//		setModelDataArray = &setModelTable.snake;
+	};
+
+	Filth WormFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_WORM;
+		InterfaceName = "WormRat";
+		ClassID = UNIT_CLASS_ID_FILTH_WORM;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\worm.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\worm.l3d";
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Worm.AttackClass;
+		
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Worm.maPower;
+				width = balance.Worm.maWidth;
+			};
+			splashDamageRadius = balance.Worm.saRadius;
+			splashDamage = {
+				power = balance.Worm.saPower;
+				width = balance.Worm.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Worm.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION2,UNIT_ATTRIBUTE_HARKBACK_STATION3 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.WormPrm;
+		attackablePrm = attackable_data.WormFilth;
+		animationSetup = &wormAnimation;
+		soundSetup=&filthWormSound;
+	};
+
+	Filth WaspFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_WASP;
+		InterfaceName = "FilthWasp";
+		ClassID = UNIT_CLASS_ID_FILTH_WASP;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\wasp.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\wasp.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_FILTH;
+		AttackClass = balance.Wasp.AttackClass;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		ExcludeCollision = EXCLUDE_COLLISION_FILTH;
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Wasp.maPower;
+				width = balance.Wasp.maWidth;
+			};
+			splashDamageRadius = balance.Wasp.saRadius;
+			splashDamage = {
+				power = balance.Wasp.saPower;
+				width = balance.Wasp.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Wasp.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION1,UNIT_ATTRIBUTE_HARKBACK_STATION2 };
+		};
+				
+		rigidBodyPrm = &rigidBodyTable.WaspPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &waspAnimation;
+		soundSetup=&filthWaspSound;
+	};
+
+	Filth WaspEyeFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_WASP_EYE;
+		InterfaceName = "FilthWaspEye";
+		ClassID = UNIT_CLASS_ID_FILTH_WASP;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\eye.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\eye.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_FILTH;
+		AttackClass = balance.Eye.AttackClass;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		ExcludeCollision = EXCLUDE_COLLISION_FILTH;
+		CollisionGroup = COLLISION_GROUP_REAL;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Eye.maPower;
+				width = balance.Eye.maWidth;
+			};
+			splashDamageRadius = balance.Eye.saRadius;
+			splashDamage = {
+				power = balance.Eye.saPower;
+				width = balance.Eye.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Wasp.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION1,UNIT_ATTRIBUTE_HARKBACK_STATION2 };
+		};
+				
+		rigidBodyPrm = &rigidBodyTable.WaspPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &waspEyeAnimation;
+		soundSetup=&filthEyeSound;
+	};
+
+	Filth GhostFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_GHOST;
+		InterfaceName = "FilthGhost";
+		ClassID = UNIT_CLASS_ID_FILTH_GHOST;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\shadow.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\shadow.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_FILTH;
+		AttackClass = balance.Ghost.AttackClass;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		ExcludeCollision = EXCLUDE_COLLISION_FILTH;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Ghost.maPower;
+				width = balance.Ghost.maWidth;
+			};
+			splashDamageRadius = balance.Ghost.saRadius;
+			splashDamage = {
+				power = balance.Ghost.saPower;
+				width = balance.Ghost.saWidth;
+			};
+		};
+		
+		damageMolecula = {0,0,balance.Ghost.elTechnicians,0,0 };
+
+		rigidBodyPrm = &rigidBodyTable.GhostPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		soundSetup=&filthGhostSound;
+	};
+
+	Filth EyeFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_EYE;
+		InterfaceName = "FilthEye";
+		ClassID = UNIT_CLASS_ID_FILTH_EYE;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\eye.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\eye.l3d";
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Eye.AttackClass;
+
+		CollisionGroup = COLLISION_GROUP_REAL;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		ExcludeCollision = EXCLUDE_COLLISION_FILTH;
+
+		rigidBodyPrm = &rigidBodyTable.EyePrm;
+		attackablePrm = attackable_data.WaspFilth;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Eye.maPower;
+				width = balance.Eye.maWidth;
+			};
+			splashDamageRadius = balance.Eye.saRadius;
+			splashDamage = {
+				power = balance.Eye.saPower;
+				width = balance.Eye.saWidth;
+			};
+		};
+		effectsData = {
+			craterRadius = 20;
+		};
+
+		damageMolecula = {0,0,balance.Eye.elTechnicians,0,0 };
+	};
+
+	Filth CrowFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_CROW;
+		InterfaceName = "FilthCrow";
+		ClassID = UNIT_CLASS_ID_FILTH_CROW;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\bird.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\bird.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_FILTH;
+		AttackClass = balance.Crow.AttackClass;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		ExcludeCollision = EXCLUDE_COLLISION_FILTH;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Crow.maPower;
+				width = balance.Crow.maWidth;
+			};
+			splashDamageRadius = balance.Crow.saRadius;
+			splashDamage = {
+				power = balance.Crow.saPower;
+				width = balance.Crow.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Crow.elTechnicians,0,0 };
+
+		rigidBodyPrm = &rigidBodyTable.CrowPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &crowAnimation;
+		soundSetup=&filthCrowSound;
+	};
+
+	Filth DaemonFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_DAEMON;
+		InterfaceName = "FilthDaemon";
+		ClassID = UNIT_CLASS_ID_FILTH_DAEMON;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\daemon.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\daemon.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_FILTH;
+		AttackClass = balance.Daemon.AttackClass;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		ExcludeCollision = EXCLUDE_COLLISION_FILTH;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Daemon.maPower;
+				width = balance.Daemon.maWidth;
+			};
+			splashDamageRadius = balance.Daemon.saRadius;
+			splashDamage = {
+				power = balance.Daemon.saPower;
+				width = balance.Daemon.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Daemon.elTechnicians,0,0 };
+
+		rigidBodyPrm = &rigidBodyTable.WaspPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &daemonAnimation;
+		soundSetup=&filthDaemonSound;
+	};
+
+	Filth DragonHead = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD;
+		InterfaceName = "FilthDragonHead";
+		ClassID = UNIT_CLASS_ID_FILTH_DRAGON_HEAD;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\dragon_head.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\dragon_head.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_FILTH;
+		AttackClass = balance.DragonHead.AttackClass;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		SelectAble = 1;
+
+		rigidBodyPrm = &rigidBodyTable.DragonPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		dockingSlots = &dockingSlotsDragonHead;
+
+		damageMolecula = {0,0,balance.DragonHead.elTechnicians,0,0 };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.DragonHead.maPower;
+				width = balance.DragonHead.maWidth;
+			};
+			splashDamageRadius = balance.DragonHead.saRadius;
+			splashDamage = {
+				power = balance.DragonHead.saPower;
+				width = balance.DragonHead.saWidth;
+			};
+		};
+		animationSetup = &dragonHeadAnimation;
+		soundSetup=&filthDragonSound;
+	};
+
+	Filth DragonBody = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_DRAGON_BODY;
+		InterfaceName = "FilthDragonBody";
+		ClassID = UNIT_CLASS_ID_FILTH_DRAGON_BODY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\dragon_body.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\dragon_body.l3d";
+
+		UnitClass = 0;
+
+		SelectAble = 0;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		rigidBodyPrm = &rigidBodyTable.DragonPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		dockingSlots = &dockingSlotsDragonBody;
+
+		damageMolecula = {0,0,balance.DragonBody.elTechnicians,0,0 };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.DragonBody.maPower;
+				width = balance.DragonBody.maWidth;
+			};
+			splashDamageRadius = balance.DragonBody.saRadius;
+			splashDamage = {//В данном случае альтернативный mainDamage, наносящийся по фрейму
+				power = balance.DragonBody.saPower;
+				width = balance.DragonBody.saWidth;
+			};
+		};
+	};
+
+	Filth DragonTail = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL;
+		InterfaceName = "FilthDragonTail";
+		ClassID = UNIT_CLASS_ID_FILTH_DRAGON_BODY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\dragon_tail.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\dragon_tail.l3d";
+
+		UnitClass = 0;
+
+		SelectAble = 0;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		rigidBodyPrm = &rigidBodyTable.DragonPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		dockingSlots = &dockingSlotsDragonTail;
+
+		damageMolecula = {0,0,balance.DragonTail.elTechnicians,0,0 };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.DragonTail.maPower;
+				width = balance.DragonTail.maWidth;
+			};
+			splashDamageRadius = balance.DragonTail.saRadius;
+			splashDamage = {//В данном случае альтернативный mainDamage, наносящийся по фрейму
+				power = balance.DragonTail.saPower;
+				width = balance.DragonTail.saWidth;
+			};
+		};
+	};
+
+	Filth DragonHead2 = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD2;
+		InterfaceName = "FilthDragonHead2";
+		ClassID = UNIT_CLASS_ID_FILTH_DRAGON_HEAD;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\dragon_head2.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\dragon_head.l3d";
+
+		UnitClass = UNIT_CLASS_AIR_FILTH;
+		AttackClass = balance.Dragon2Head.AttackClass;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		SelectAble = 1;
+
+		rigidBodyPrm = &rigidBodyTable.DragonPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		dockingSlots = &dockingSlotsDragonHead;
+
+		damageMolecula = {0,0,balance.Dragon2Head.elTechnicians,0,0 };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Dragon2Head.maPower;
+				width = balance.Dragon2Head.maWidth;
+			};
+			splashDamageRadius = balance.Dragon2Head.saRadius;
+			splashDamage = {
+				power = balance.Dragon2Head.saPower;
+				width = balance.Dragon2Head.saWidth;
+			};
+		};
+		animationSetup = &dragonHeadAnimation;
+		soundSetup=&filthDragonSound;
+	};
+
+	Filth DragonBody2 = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_DRAGON_BODY2;
+		InterfaceName = "FilthDragonBody2";
+		ClassID = UNIT_CLASS_ID_FILTH_DRAGON_BODY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\dragon_body2.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\dragon_body.l3d";
+
+		UnitClass = 0;
+
+		SelectAble = 0;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		rigidBodyPrm = &rigidBodyTable.DragonPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		dockingSlots = &dockingSlotsDragonBody;
+
+		damageMolecula = {0,0,balance.Dragon2Body.elTechnicians,0,0 };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Dragon2Body.maPower;
+				width = balance.Dragon2Body.maWidth;
+			};
+			splashDamageRadius = balance.Dragon2Body.saRadius;
+			splashDamage = {
+				power = balance.Dragon2Body.saPower;
+				width = balance.Dragon2Body.saWidth;
+			};
+		};
+	};
+
+	Filth DragonTail2 = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL2;
+		InterfaceName = "FilthDragonTail2";
+		ClassID = UNIT_CLASS_ID_FILTH_DRAGON_BODY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\dragon_tail2.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\dragon_tail.l3d";
+
+		UnitClass = 0;
+
+		SelectAble = 0;
+
+		CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+
+		rigidBodyPrm = &rigidBodyTable.DragonPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		dockingSlots = &dockingSlotsDragonTail;
+
+		damageMolecula = {0,0,balance.Dragon2Tail.elTechnicians,0,0 };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Dragon2Tail.maPower;
+				width = balance.Dragon2Tail.maWidth;
+			};
+			splashDamageRadius = balance.Dragon2Tail.saRadius;
+			splashDamage = {
+				power = balance.Dragon2Tail.saPower;
+				width = balance.Dragon2Tail.saWidth;
+			};
+		};
+	};
+
+	Filth SharkFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_SHARK;
+		InterfaceName = "FilthShark";
+		ClassID = UNIT_CLASS_ID_FILTH_SHARK;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\shark.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\shark.l3d";
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Shark.AttackClass;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		ExcludeCollision = EXCLUDE_COLLISION_FILTH;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Shark.maPower;
+				width = balance.Shark.maWidth;
+			};
+			splashDamageRadius = balance.Shark.saRadius;
+			splashDamage = {
+				power = balance.Shark.saPower;
+				width = balance.Shark.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Shark.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION1,UNIT_ATTRIBUTE_HARKBACK_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.CrowPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &crowAnimation;
+		soundSetup=&filthSharkSound;
+	};
+
+	terUnitAttributeData CorpseDynamic = 
+	{
+		ID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+		InterfaceName = "CorpseDynamic";
+		ClassID = UNIT_CLASS_CORPSE_DYNAMIC;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		UnitClass = 0;//UNIT_CLASS_GROUND_FILTH;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		damageData = new terUnitDamageData {
+		};
+
+		damageMolecula = {0,0,1,0,0 };
+
+		rigidBodyPrm = &rigidBodyTable.CorpseDynamicPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &crowAnimation;
+	};
+
+	Filth VolcanoFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_VOLCANO;
+		InterfaceName = "FilthVolcano";
+		ClassID = UNIT_CLASS_ID_FILTH_VOLCANO;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\Main\\vol_stn.m3d" };
+		LogicName = "RESOURCE\\MODELS\\Main\\vol_stn.l3d";
+
+		UnitClass = 0;//UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Volcano.AttackClass;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		SelectAble = 0;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Volcano.maPower;
+				width = balance.Volcano.maWidth;
+			};
+			splashDamageRadius = balance.Volcano.saRadius;
+			splashDamage = {
+				power = balance.Volcano.saPower;
+				width = balance.Volcano.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Volcano.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION2,UNIT_ATTRIBUTE_HARKBACK_STATION3,UNIT_ATTRIBUTE_LASER_STATION3};
+		};
+		rigidBodyPrm = &rigidBodyTable.VolcanoPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &crowAnimation;
+	};
+
+	Filth VolcanoFilthScumDisruptor = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_VOLCANO_SCUM_DISRUPTOR;
+		InterfaceName = "FilthVolcano";
+		ClassID = UNIT_CLASS_ID_FILTH_VOLCANO;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\Main\\vol_stn.m3d" };
+		LogicName = "RESOURCE\\MODELS\\Main\\vol_stn.l3d";
+
+		UnitClass = 0;//UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Volcano.AttackClass;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		SelectAble = 0;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.VolcanoScumDisruptor.maPower;
+				width = balance.VolcanoScumDisruptor.maWidth;
+			};
+			splashDamageRadius = balance.Volcano.saRadius;
+			splashDamage = {
+				power = balance.VolcanoScumDisruptor.saPower;
+				width = balance.VolcanoScumDisruptor.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Volcano.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_SUBTERRA_STATION2,UNIT_ATTRIBUTE_HARKBACK_STATION3,UNIT_ATTRIBUTE_LASER_STATION3};
+		};
+		rigidBodyPrm = &rigidBodyTable.VolcanoPrm;
+		attackablePrm = attackable_data.WaspFilth;
+		animationSetup = &crowAnimation;
+	};
+
+	//new filth
+	
+	Filth AAntsFilth = 
+	{
+		ID = UNIT_ATTRIBUTE_FILTH_A_ANTS;
+		ClassID = UNIT_CLASS_ID_FILTH_ANTS;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\aant.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\aant.l3d";
+
+		InterfaceName = "FilthAnt";
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		UnitClass = UNIT_CLASS_GROUND_FILTH;
+		AttackClass = balance.Ants.AttackClass;
+		
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Ants.maPower;
+				width = balance.Ants.maWidth;
+			};
+			splashDamageRadius = balance.Ants.saRadius;
+			splashDamage = {
+				power = balance.Ants.saPower;
+				width = balance.Ants.saWidth;
+			};
+		};
+
+		damageMolecula = {0,0,balance.Ants.elTechnicians,0,0 };
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_HARKBACK_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.AntPrm;
+		attackablePrm = attackable_data.AntsFilth;
+		setModelDataArray = &setModelTable.ants; //?? Дублирование ModelNameArray??
+		animationSetup = &antAnimation;
+
+		soundSetup=&filthAntSound;
+	};
+	
+	///////////////////////////////////////////////
+	//			Debris
+	///////////////////////////////////////////////
+	terUnitAttributeData DebrisBullet = // Default for all Debris
+	{
+		ID = UNIT_ATTRIBUTE_DEBRIS_BULLET;
+		InterfaceName = "DebrisBullet";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_DEBRIS_CRATER;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		BoundRadius = 2.0;
+
+		lockInitialPosition = 1;
+		rigidBodyPrm = &rigidBodyTable.debris_prm;
+		setModelDataArray = &setModelTable.bullet;
+	};
+
+	terUnitAttributeData DebrisInsect = DebrisBullet
+	{
+		ID = UNIT_ATTRIBUTE_DEBRIS_INSECT;
+		InterfaceName = "DebrisInsect";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_DEBRIS;
+		BoundRadius = 6.0;
+		setModelDataArray = &setModelTable.insect;
+	};
+
+	terUnitAttributeData DebrisUnit = DebrisBullet
+	{
+		ID = UNIT_ATTRIBUTE_DEBRIS_UNIT;
+		InterfaceName = "DebrisUnit";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_DEBRIS;
+		BoundRadius = 1.5;
+		setModelDataArray = &setModelTable.unit;
+	};
+
+	terUnitAttributeData DebrisStructure = DebrisBullet
+	{
+		ID = UNIT_ATTRIBUTE_DEBRIS_STRUCTURE;
+		InterfaceName = "DebrisStructure";
+		ClassID = UNIT_CLASS_ID_PROJECTILE_DEBRIS;
+		BoundRadius = 10.0;
+		setModelDataArray = &setModelTable.structure;
+	};
+
+	terUnitAttributeData DestructionCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
+		InterfaceName = "DestructionCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+		toolzerSetup = &destructionCraterToolzer;
+	};
+
+	terUnitAttributeData DestructionCrater_NOZP = 
+	{
+		ID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NOZP;
+		InterfaceName = "DestructionCrater_NOZP";
+		ClassID = UNIT_CLASS_ID_CRATER;
+		toolzerSetup = &destructionCraterToolzer_NOZP;
+	};
+
+	terUnitAttributeData DestructionCraterNoDestructAllZeroplast = 
+	{
+		ID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NO_DESTRUCT_ALL_ZEROPLAST;
+		InterfaceName = "DestructionCraterNoDestructAllZeroplast";
+		ClassID = UNIT_CLASS_ID_CRATER;
+		toolzerSetup = &destructionCraterToolzerNoDestructAllZeroplast;
+	};
+
+	terUnitAttributeData ScumMissileCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_MISSILE_CRATER;
+		InterfaceName = "ScumMissileCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		toolzerSetup = &scumMissileCraterToolzer;
+	};
+
+	terUnitAttributeData BombMissileCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_BOMB_MISSILE_CRATER;
+		InterfaceName = "BombMissileCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		toolzerSetup = &bombMissileCraterToolzer;
+	};
+
+	terUnitAttributeData BombieMissileCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_BOMBIE_MISSILE_CRATER;
+		InterfaceName = "BombMissileCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		toolzerSetup = &bombBombieMissileCraterToolzer;
+	};
+
+	terUnitAttributeData RocketMissileCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_ROCKET_MISSILE_CRATER;
+		InterfaceName = "RocketMissileCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		toolzerSetup = &rocketMissileCraterToolzer;
+	};
+
+	terUnitAttributeData VolcanoCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_VOLCANO_CRATER;
+		InterfaceName = "VolcanoCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		toolzerSetup = &volcanoCraterToolzer;
+
+	};
+
+	terUnitAttributeData ScumDisruptorCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_DISRUPTOR_CRATER;
+		InterfaceName = "ScumDisruptorCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		toolzerSetup = &scumDisruptorCraterToolzer;
+	};
+
+	terUnitAttributeData DebrisCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_DEBRIS_CRATER;
+		InterfaceName = "DebrisCrater";
+		ClassID = UNIT_CLASS_ID_IRON_DEBRIS_CRATER;
+	};
+
+	terUnitAttributeData ScumHeaterCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_HEATER_CRATER;
+		InterfaceName = "ScumHeaterCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Scum_Heater.effect";
+			effects = { 
+				{ effectID = EFFECT_ID_CRATER_EFFECT; effectName = "effect"; }
+			};
+		};
+
+		LifeTime = 1000;
+
+		toolzerSetup = &scumHeaterCraterToolzer;
+	};
+
+	terUnitAttributeData PiercerMovementCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_PIERCER_MOVEMENT_CRATER;
+		InterfaceName = "PiercerMovementCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Scum_Heater.effect";
+			effects = { 
+				{ effectID = EFFECT_ID_CRATER_EFFECT; effectName = "effect"; }
+			};
+		};
+
+		saveAsCommonObject = 1;
+
+		LifeTime = 60000;
+
+		toolzerSetup = &scumPiercerCraterToolzer;
+	};
+
+	terUnitAttributeData FrameKaputCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_FRAME_KAPUT_CRATER;
+		InterfaceName = "FrameKaputCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Scum_Heater.effect";
+			effects = { 
+				{ effectID = EFFECT_ID_CRATER_EFFECT; effectName = "effect"; }
+			};
+		};
+
+		LifeTime = 10000;
+
+		toolzerSetup = &FrameKaputCraterToolzer;
+//		toolzerSetup = &bombMissileCraterToolzer;
+	};
+
+	terUnitAttributeData ScumTwisterCrater = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_TWISTER_CRATER;
+		InterfaceName = "ScumTwisterCrater";
+		ClassID = UNIT_CLASS_ID_CRATER;
+
+		toolzerSetup = &scumTwisterCraterToolzer;
+	};
+
+	Missile ScumStorm = 
+	{
+		ID = UNIT_ATTRIBUTE_SCUM_STORM;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		InterfaceName = "ScumStorm";
+		ClassID = UNIT_CLASS_ID_SCUM_STORM;
+
+		CollisionGroup = 0;
+
+		damageMolecula = { 0,0,0,0,1000 };
+		UnitClass = UNIT_CLASS_MISSILE;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\scum_twister_effect.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\scum_twister_effect.l3d";
+		PrevChainName = "twister";
+		saveAsCommonObject = 1;
+
+		environmentalDamage = 0;
+
+		animationSetup = &scumStormAnimation;
+		rigidBodyPrm = &rigidBodyTable.ScumStormPrm;
+	};
+
+	terUnitAttributeData StaticNature = 
+	{
+		ID = UNIT_ATTRIBUTE_STATIC_NATURE;
+		InterfaceName = "StaticNature";
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\dzot.m3d" };
+		SelectAble = 0;
+		ClassID = UNIT_CLASS_ID_STATIC_NATURE;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		BoundRadius = 10.0;
+		UnitClass = UNIT_CLASS_NATURE;
+		rigidBodyPrm = &rigidBodyTable.EnvironmentPrm;
+	};
+
+	terUnitAttributeData NatureMountain = 
+	{
+		ID = UNIT_ATTRIBUTE_NATURE_MOUNTAIN;
+		InterfaceName = "NatureMountain";
+		BoundRadius = 64.0f;
+		ClassID = UNIT_CLASS_ID_NATURE_MOUNTAIN;
+	};
+
+	terUnitAttributeData NatureRift = 
+	{
+		ID = UNIT_ATTRIBUTE_NATURE_RIFT;
+		InterfaceName = "NatureRift";
+		ClassID = UNIT_CLASS_ID_NATURE_RIFT;
+	};
+
+	terUnitAttributeData NatureCleft = 
+	{
+		ID = UNIT_ATTRIBUTE_NATURE_CLEFT;
+		InterfaceName = "NatureCleft";
+		ClassID = UNIT_CLASS_ID_NATURE_CLEFT;
+	};
+
+	terUnitAttributeData NatureWorm = 
+	{
+		ID = UNIT_ATTRIBUTE_NATURE_WORM;
+		InterfaceName = "NatureWorm";
+		ClassID = UNIT_CLASS_ID_NATURE_WORM;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+		BoundRadius = 10.0;
+	};
+
+	terUnitAttributeData NatureFace = 
+	{
+		ID = UNIT_ATTRIBUTE_NATURE_FACE;
+		InterfaceName = "NatureFace";
+		ClassID = UNIT_CLASS_ID_NATURE_FACE;
+
+		GroundPlaneSpeed = 3.0;
+		GroundAngleSpeed = 10*G2R;
+		BoundRadius = 150.0;
+	};
+
+	terUnitAttributeData Squad = 
+	{
+		ID = UNIT_ATTRIBUTE_SQUAD;
+		InterfaceName = "Squad";
+		ClassID = UNIT_CLASS_ID_SQUAD;
+		InterpolationType = INTERPOLATION_ID_DUMMY;
+		SelectAble = 1;
+
+		productionConsumption = new ConsumptionData { // зарядка энергии мутации
+			energy = 0.1;
+			time = 1000;  
+			priority = 90;
+			name = "productionConsumption Mutation Energy";
+		};
+
+		interfacePrm = unit_interface_data.squad;
+	};
+
+	terUnitAttributeData FallTree = 
+	{
+		ID = UNIT_ATTRIBUTE_FALL_TREE;
+		InterfaceName = "FallTree";
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ClassID = UNIT_CLASS_ID_FALL_TREE;
+		SelectAble = 0;
+		FallTreeTime = 1;
+	};
+
+	Structure CorridorAlpha = 
+	{
+		ID = UNIT_ATTRIBUTE_CORRIDOR_ALPHA;
+		InterfaceName = "Alpha Corridor";
+		ClassID = UNIT_CLASS_ID_CORRIDOR_ALPHA;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+		damageMolecula = { 0,0,0,0,1000 };
+
+		CollisionGroup = COLLISION_GROUP_ENEMY;
+
+		UnitClass = UNIT_CLASS_CORRIDOR;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Teleport_alfa.m3d", "RESOURCE\\MODELS\\MAIN\\build_teleport_alfa.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\teleport_alfa.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\PlantSoldier.effect";
+			corpseLifeTime = 80;
+			craterRadius = 75;
+		};
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+
+		corridorPrm = new CorridorPrm {
+			disappearingTime = 2000;
+			disappearingHeight = -200;
+			moveFrame = 0;
+		};
+
+		animationSetup = &corridorAlphaAnimation;
+		soundSetup = &corridorAlphaSound;
+
+		attackablePrm = attackable_data.PlantSoldier;
+		interfacePrm = unit_interface_data.corridor_alpha;
+		rigidBodyPrm = &rigidBodyTable.CorridorAlphaPrm;
+	};
+
+	Structure CorridorOmega = 
+	{
+		ID = UNIT_ATTRIBUTE_CORRIDOR_OMEGA;
+		InterfaceName = "Omega Corridor";
+		ClassID = UNIT_CLASS_ID_CORRIDOR_OMEGA;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+		damageMolecula = { 0,0,0,0,5000 };
+
+		UnitClass = UNIT_CLASS_CORRIDOR;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Teleport_omega.m3d", "RESOURCE\\MODELS\\MAIN\\build_teleport_omega.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\teleport_omega.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\PlantSoldier.effect";
+			corpseLifeTime = 80;
+			craterRadius = 75;
+		};
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.5f;		
+
+		disconnectAnimation = 1;
+
+		corridorPrm = new CorridorPrm {
+			disappearingTime = 5000;
+			disappearingHeight = 200;
+		};
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_CORRIDOR_OMEGA;
+		};
+
+		animationSetup = &corridorOmegaAnimation;
+		soundSetup = &corridorOmegaSound;
+
+		attackablePrm = attackable_data.PlantSoldier;
+		interfacePrm = unit_interface_data.corridor_omega;
+	};
+
+
+	terUnitAttributeData Monk = 
+	{
+		ID = UNIT_ATTRIBUTE_MONK;
+		InterfaceName = "Monk";
+		ClassID = UNIT_CLASS_ID_MONK;
+		InterpolationType = INTERPOLATION_ID_CONGREGATION;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Molelshik.m3d" };
+		GroundPlaneSpeed = 5.0;
+		GroundAngleSpeed = 90*G2R;
+		BoundRadius = 2.5;
+	};
+
+/*	terUnitAttributeData UnitCorpse = 
+	{
+		ID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+		InterfaceName = "UnitCorpse";
+		InterpolationType = INTERPOLATION_ID_COPY;
+		ClassID = UNIT_CLASS_ID_UNIT_CORPSE;
+		SelectAble = 0;
+	};
+*/
+	//------------------Building Destroy Effect-------------
+	terUnitAttributeData FallStructure = 
+	{
+		ID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+		InterfaceName = "FallStructure";
+		InterpolationType = INTERPOLATION_ID_COPY;
+		ClassID = UNIT_CLASS_ID_FALL_STRUCTURE;
+		SelectAble = 0;
+	};
+
+	terUnitAttributeData HologramStructure = 
+	{
+		ID = UNIT_ATTRIBUTE_BUILDING_HOLOGRAM;
+		InterfaceName = "HologramStructure";
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ClassID = UNIT_CLASS_ID_BUILDING_HOLOGRAM;
+		SelectAble = 0;
+	};
+
+	terUnitAttributeData UninstallingStructure = 
+	{
+		ID = UNIT_ATTRIBUTE_BUILDING_UNINSTALL;
+		InterfaceName = "UninstallingStructure";
+		InterpolationType = INTERPOLATION_ID_UNINSTALL;
+		ClassID = UNIT_CLASS_ID_BUILDING_UNINSTALL;
+		SelectAble = 0;
+		LifeTime = 2000;
+	};
+
+	terUnitAttributeData NatureTorpedo = 
+	{
+		ID = UNIT_ATTRIBUTE_NATURE_TORPEDO;
+		InterfaceName = "NatureTorpedo";
+		ClassID = UNIT_CLASS_ID_NATURE_TORPEDO;
+	};
+
+	terUnitAttributeData NatureFault = 
+	{
+		ID = UNIT_ATTRIBUTE_NATURE_FAULT;
+		InterfaceName = "NatureFault";
+		ClassID = UNIT_CLASS_ID_NATURE_FAULT;
+	}; 
+
+	terUnitAttributeData AlphaPotential = StaticNature
+	{
+		ID = UNIT_ATTRIBUTE_ALPHA_POTENTIAL;
+		ClassID = UNIT_CLASS_ID_ALPHA_POTENTIAL;
+		//ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Pochka.m3d" };
+		BoundRadius = 32.0;
+	};
+
+	//-----------------------------------
+	//	EXODUS
+	terUnitAttributeData FrameExodus0 = Frame
+	{
+		belligerent = BELLIGERENT_EXODUS0;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame_Exodus.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame_Exodus.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_exodus.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 445;
+			angle_x = 30;
+			pos_dy = -8;
+			channel = "fly";
+		};
+	};
+
+	terUnitAttributeData FrameExodus1 = Frame
+	{
+		belligerent = BELLIGERENT_EXODUS1;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame_Exodus2.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame_Exodus2.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_exodus.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 445;
+			angle_x = 30;
+			pos_dy = -8;
+			channel = "fly";
+		};
+	};
+	
+	// АДДОН
+/*
+	terUnitAttributeData FrameExodus2 = Frame
+	{
+		belligerent = BELLIGERENT_EXODUS2;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Add_Frame_Exodus_1.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Add_Frame_Exodus_1.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_exodus.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 445;
+			angle_x = 30;
+			pos_dy = -8;
+			channel = "fly";
+		};
+	};
+	
+	terUnitAttributeData FrameExodus3 = Frame
+	{
+		belligerent = BELLIGERENT_EXODUS3;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Add_Frame_Exodus_2.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Add_Frame_Exodus_2.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_exodus.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 445;
+			angle_x = 30;
+			pos_dy = -8;
+			channel = "fly";
+		};
+	};
+	
+	terUnitAttributeData FrameExodus4 = Frame
+	{
+		belligerent = BELLIGERENT_EXODUS4;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Add_Frame_Exodus_3.M3D" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Add_Frame_Exodus_3.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_exodus.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 445;
+			angle_x = 30;
+			pos_dy = -8;
+			channel = "fly";
+		};
+	};
+*/	
+	//-----------------------------------
+	//	HARKBACKHOOD
+	terUnitAttributeData FrameHarkBackHood0 = Frame
+	{
+		belligerent = BELLIGERENT_HARKBACKHOOD0;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\FrameII.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\FrameII.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_harkback.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 445;
+			angle_x = 30;
+			pos_dy = -8;
+			channel = "fly";
+		};
+	};
+
+	terUnitAttributeData FrameHarkBackHood1 = Frame
+	{
+		belligerent = BELLIGERENT_HARKBACKHOOD1;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_harkback.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 450;
+			angle_x = 30;
+			pos_dy = 70;
+			channel = "fly";
+		};
+	};
+
+	//-----------------------------------
+	//	EMPIRE
+	terUnitAttributeData FrameEmpire0 = Frame
+	{
+		belligerent = BELLIGERENT_EMPIRE0;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_v_2.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_v_2.l3d";
+
+		ConnectionPointNames = { "group lighting", "group lighting01", "group lighting02", "group lighting03" };
+
+		SelectionDistance = 0.7f;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_Empire.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 250;
+			angle_x = 45;
+			pos_dy = 10;
+			channel = "lighting_on";
+		};
+	};
+
+	terUnitAttributeData FrameEmpire1 = Frame
+	{
+		belligerent = BELLIGERENT_EMPIRE1;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame_Imperia.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame_Imperia.l3d";
+
+		ConnectionPointNames = { "group lighting", "group lighting01", "group lighting02", "group lighting03" };
+
+		SelectionDistance = 0.7f;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_Empire.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 250;
+			angle_x = 45;
+			pos_dy = 10;
+			channel = "lighting_on";
+		};
+	};
+
+	terUnitAttributeData FrameEmpireVice = Frame
+	{
+		belligerent = BELLIGERENT_EMPIRE_VICE;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_Vice.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_Vice.l3d";
+		interfaceTV = new InterfaceTV
+		{
+			radius = 250;
+			angle_x = 45;
+			pos_dy = 10;
+			channel = "lighting_on";
+		};
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\vice.effect";
+		};
+
+		damageMolecula = { 0,0,0,0,1000 };
+	};
+	
+	// АДДОН
+/*
+	terUnitAttributeData FrameEmpire2 = Frame
+	{
+		belligerent = BELLIGERENT_EMPIRE2;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_Add.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_Add.l3d";
+
+		ConnectionPointNames = { "group lighting", "group lighting01", "group lighting02", "group lighting03" };
+
+		SelectionDistance = 0.7f;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_Empire.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 250;
+			angle_x = 45;
+			pos_dy = 10;
+			channel = "lighting_on";
+		};
+	};
+	
+	terUnitAttributeData FrameEmpire3 = Frame
+	{
+		belligerent = BELLIGERENT_EMPIRE3;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Imperial.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Imperial.l3d";
+
+		ConnectionPointNames = { "group lighting", "group lighting01", "group lighting02", "group lighting03" };
+
+		SelectionDistance = 0.7f;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_Empire.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 250;
+			angle_x = 45;
+			pos_dy = 10;
+			channel = "lighting_on";
+		};
+	};
+	
+	terUnitAttributeData FrameEmpire4 = Frame
+	{
+		belligerent = BELLIGERENT_EMPIRE4;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_Vice.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\Frame_Imperia_Vice.l3d";
+
+		ConnectionPointNames = { "group lighting", "group lighting01", "group lighting02", "group lighting03" };
+
+		SelectionDistance = 0.7f;
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Frame_Empire.effect";
+		};
+
+		interfaceTV = new InterfaceTV
+		{
+			radius = 250;
+			angle_x = 45;
+			pos_dy = 10;
+			channel = "lighting_on";
+		};
+	};
+*/	
+	//-----------------------------------
+
+delegate: // Рассматриваем последовательность расположенных рядом структур как массив
+	int size() const { xassert(sizeof(*this) % sizeof(terUnitAttributeData) == 0); return sizeof(*this)/sizeof(terUnitAttributeData); }
+	const terUnitAttributeData& operator[](int i) const { xassert(i >= 0 && i < size()); return ((terUnitAttributeData*)this)[i]; }
+};
+														    
+terUnitAttributeDataTable unitAttributeDataTable = {};
+		
+}
+
+
+
+
+
+

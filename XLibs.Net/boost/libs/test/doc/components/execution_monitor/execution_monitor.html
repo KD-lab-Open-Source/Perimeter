@@ -1,0 +1,58 @@
+<HTML>
+<HEAD>
+<TITLE>boost::execution_monitor</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> > <A href="../index.html">Components</A> > <A href="index.html">The 
+  Execution Monitor</A> > <SPAN class="current_article">boost::execution_monitor</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">boost::execution_monitor</H1>
+  <P class="first-line-indented">boost::execution_monitor uniformly detects and reports the occurrence of several types of 
+    signals and exceptions, reducing various errors to a uniform <A href="execution_exception.html">boost::execution_exception</A> 
+    which is returned to a caller.</P>
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> <SPAN class="new-term">execution_monitor</SPAN> {
+<SPAN class="reserv-word">public</SPAN>:
+    <SPAN class="reserv-word">virtual</SPAN>     ~execution_monitor();
+    
+    <SPAN class="reserv-word">template</SPAN>&lt;<SPAN class="reserv-word">typename</SPAN> Exception, <SPAN class="reserv-word">typename</SPAN> ExceptionTranslator&gt;
+    <SPAN class="cpp-type">void</SPAN>        register_exception_translator( ExceptionTranslator <SPAN class="reserv-word">const</SPAN>&amp; tr, boost::type&lt;Exception&gt;* = <SPAN class="literal">0</SPAN> );
+	
+    <SPAN class="cpp-type">int</SPAN>         execute( <SPAN class="cpp-type">bool</SPAN> catch_system_errors = true, <SPAN class="cpp-type">int</SPAN> timeout = <SPAN class="literal">0</SPAN> );
+    
+    <SPAN class="reserv-word">virtual</SPAN> <SPAN class="cpp-type">int</SPAN> function() = <SPAN class="literal">0</SPAN>;
+    
+}; <SPAN class="comment">// exception monitor</SPAN>
+</PRE>
+  <H3>execution_monitor::~execution_monitor()</H3>
+  <P class="first-line-indented">Supplied cause this class intended to be used polymorphically.</P>
+  <H3>execution_monitor::<SPAN class="code">register_exception_translator</SPAN><A name="register_exception_translator"></A>( ExceptionTranslator const&amp; tr, boost::type&lt;Exception&gt;* )</H3>
+  <P class="first-line-indented">Use this template member function to register translator for any custom exceptions types of your choice. Translators gets chained, so you could register as many as you want. Translator function of functor should accept single parameter - const reference to the instance of the class Exception. The return value is ignored. An example usage is like this:</P>
+  <P class="first-line-indented">the_monitor.register_exception_translator&lt;my_exception1&gt;( translate_my_exception1 ) </P>
+  <H3>execution_monitor::execute( bool catch_system_errors, int timeout )</H3>
+  <P>Effects:</P>
+  <P class="indented"> Calls the execution_monitor::function() inside a try/catch block which may also include other unspecified 
+    platform dependent error detection code. Throws <A href="execution_exception.html">boost::execution_exception</A> on an 
+    uncaught C++ exception, timeout alarm and, if catch_system_errors flag is true, a hardware or software signal, trap, or 
+    other exception. If catch_system_errors flag is false program will crash in case of system level error occur. execution_monitor::execute() 
+    <SPAN style="text-decoration: underline">doesn't</SPAN> consider it an error for the execution_monitor::function() to 
+    return a non-zero value. </P>
+  <P>Returns: 
+  <P class="indented"> The integer value returned by the execution_monitor::function(). </P>
+  <H3>execution_monitor::function()</H3>
+  <P class="first-line-indented">User supplied function to monitor.</P>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->26 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

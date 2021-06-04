@@ -1,0 +1,5 @@
+ps.1.4
+texld r0, t0
+// Look up into 2Kx1 texture using Z value exported from vertex shader
+texld r1, t1
+mov r0.rgb, r1

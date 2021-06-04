@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<title>Boost.Regex: Algorithm regex_format (deprecated)</title>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../../boost.css">
+</head>
+<body>
+<p></p>
+
+<table id="Table1" cellspacing="1" cellpadding="1" width="100%"
+border="0">
+<tr>
+<td valign="top" width="300">
+<h3><a href="../../../index.htm"><img height="86" width="277" alt=
+"C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+</td>
+<td width="353">
+<h1 align="center">Boost.Regex</h1>
+
+<h2 align="center">Algorithm regex_format (deprecated)</h2>
+</td>
+<td width="50">
+<h3><a href="index.html"><img height="45" width="43" alt=
+"Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<hr>
+<p>The algorithm regex_format is deprecated; new code should use
+match_results::format instead.&nbsp; Existing code will continue to
+compile, the following documentation is taken from the previous
+version of boost.regex and will not be further updated:</p>
+
+<h3>Algorithm regex_format</h3>
+
+<pre>
+#include &lt;<a href="../../../boost/regex.hpp">boost/regex.hpp</a>&gt;
+</pre>
+
+<p>The algorithm regex_format takes the results of a match and
+creates a new string based upon a <a href="format_syntax.html">
+format string</a>, regex_format can be used for search and replace
+operations:</p>
+
+<pre>
+<b>template</b> &lt;<b>class</b> OutputIterator, <b>class</b> iterator, <b>class</b> Allocator, <b>class</b> charT&gt;
+OutputIterator regex_format(OutputIterator out,
+                            <b>const</b> match_results&lt;iterator, Allocator&gt;&amp; m,
+                            <b>const</b> charT* fmt,
+                            match_flag_type flags = 0);
+<b>template</b> &lt;<b>class</b> OutputIterator, <b>class</b> iterator, <b>class</b> Allocator, <b>class</b> charT&gt;
+OutputIterator regex_format(OutputIterator out,
+                            <b>const</b> match_results&lt;iterator, Allocator&gt;&amp; m,
+                            <b>const</b> std::basic_string&lt;charT&gt;&amp; fmt,
+                            match_flag_type flags = 0);
+</pre>
+
+<p>The library also defines the following convenience variation of
+regex_format, which returns the result directly as a string, rather
+than outputting to an iterator [note - this version may not be
+available, or may be available in a more limited form, depending
+upon your compilers capabilities]:</p>
+
+<pre>
+<b>template</b> &lt;<b>class</b> iterator, <b>class</b> Allocator, <b>class</b> charT&gt;
+std::basic_string&lt;charT&gt; regex_format
+                                 (<b>const</b> match_results&lt;iterator, Allocator&gt;&amp; m, 
+                                  <b>const</b> charT* fmt,
+                                  match_flag_type flags = 0);
+
+<b>template</b> &lt;<b>class</b> iterator, <b>class</b> Allocator, <b>class</b> charT&gt;
+std::basic_string&lt;charT&gt; regex_format
+                                 (<b>const</b> match_results&lt;iterator, Allocator&gt;&amp; m, 
+                                  <b>const</b> std::basic_string&lt;charT&gt;&amp; fmt,
+                                  match_flag_type flags = 0);
+</pre>
+
+<p>Parameters to the main version of the function are passed as
+follows:</p>
+
+<p></p>
+
+<table id="Table2" cellspacing="0" cellpadding="7" width="100%"
+border="0">
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%">OutputIterator out</td>
+<td valign="top" width="44%">An output iterator type, the output
+string is sent to this iterator. Typically this would be a
+std::ostream_iterator.</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%"><b>const</b>
+match_results&lt;iterator, Allocator&gt;&amp; m</td>
+<td valign="top" width="44%">An instance of match_results&lt;&gt;
+obtained from one of the matching algorithms above, and denoting
+what matched.</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%"><b>const</b> charT* fmt</td>
+<td valign="top" width="44%">A format string that determines how
+the match is transformed into the new string.</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%"><b>unsigned</b> flags</td>
+<td valign="top" width="44%">Optional flags which describe how the
+format string is to be interpreted.</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<p><a name="format_flags"></a>Format flags are defined as
+follows:</p>
+
+<p></p>
+
+<table id="Table3" cellspacing="0" cellpadding="7" width="100%"
+border="0">
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%">format_all</td>
+<td valign="top" width="43%">Enables all syntax options (perl-like
+plus extentions).</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%">format_sed</td>
+<td valign="top" width="43%">Allows only a sed-like syntax.</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%">format_perl</td>
+<td valign="top" width="43%">Allows only a perl-like syntax.</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top" width="9%">&nbsp;</td>
+<td valign="top" width="39%">format_no_copy</td>
+<td valign="top" width="43%">Disables copying of unmatched sections
+to the output string during <a href="regex_merge.html">
+regex_merge</a> operations.</td>
+<td valign="top" width="9%">&nbsp;</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+<td>format_first_only</td>
+<td>When this flag is set only the first occurance will be replaced
+(applies to regex_merge only).</td>
+<td>&nbsp;</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<p>The format string syntax (and available options) is described
+more fully under <a href="format_syntax.html">format strings</a>
+.</p>
+
+<p></p>
+
+<hr>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         24 Oct 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 
+            2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+</body>
+</html>
+
+

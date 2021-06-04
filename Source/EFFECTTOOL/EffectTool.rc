@@ -1,0 +1,633 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\EffectTool.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_LOAD_SPRITE DIALOGEX 0, 0, 266, 80
+STYLE DS_SETFONT | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_SYSMENU
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Alpha",IDC_ALPHA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    192,31,34,10
+    LTEXT           "",IDC_IMAGE,13,15,47,46,NOT WS_VISIBLE | WS_BORDER
+    LTEXT           "",IDC_IMAGE_PLUME,115,14,48,45,NOT WS_VISIBLE | 
+                    WS_BORDER
+    LTEXT           "Static",IDC_STATIC1,13,3,97,8,NOT WS_VISIBLE
+    LTEXT           "Static",IDC_STATIC2,115,3,105,8,NOT WS_VISIBLE
+END
+
+IDD_ALPHA DIALOGEX 0, 0, 224, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Edit alpha"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,119,34,41,14
+    PUSHBUTTON      "Cancel",IDCANCEL,176,34,41,14
+    CONTROL         "Slider1",IDC_SLIDER,"msctls_trackbar32",TBS_TOP | 
+                    TBS_NOTICKS | WS_TABSTOP,7,14,160,11
+    LTEXT           "0",IDC_STATIC,11,7,8,8
+    LTEXT           "255",IDC_STATIC,154,7,13,8
+    EDITTEXT        IDC_EDIT1,176,11,19,14,ES_AUTOHSCROLL
+    LTEXT           "",IDC_SAMPLE,198,11,19,14,0,WS_EX_CLIENTEDGE
+END
+
+IDD_ABOUTBOX DIALOG  0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About EffectTool"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "EffectTool Version 1.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 2003 K-D LAB Company",IDC_STATIC,40,25,
+                    119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDR_MAINFRAME DIALOG  0, 0, 561, 21
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_POS_TYPE,50,3,60,73,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_OUT_TYPE,114,3,48,60,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EMITTER_LIFE_TIME,169,3,21,12,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    CONTROL         "4 окна",IDC_VIEW_MODE,"Button",BS_AUTOCHECKBOX | 
+                    BS_PUSHLIKE | WS_TABSTOP,518,3,39,12
+    CONTROL         "Показать",IDC_SHOW,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,0,3,49,10
+    LTEXT           "X",IDC_STATIC_X,199,3,8,8
+    EDITTEXT        IDC_EDIT_X,207,3,18,12,ES_AUTOHSCROLL
+    LTEXT           "Y",IDC_STATIC_Y,232,3,8,8
+    EDITTEXT        IDC_EDIT_Y,240,3,18,12,ES_AUTOHSCROLL
+    LTEXT           "Z",IDC_STATIC_Z,265,3,8,8
+    EDITTEXT        IDC_EDIT_Z,273,3,18,12,ES_AUTOHSCROLL
+    LTEXT           "fps",IDC_FPS,298,3,34,8
+    CONTROL         "Сетка",IDC_CHECK_SHOW_GRID,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,333,3,34,8
+    EDITTEXT        IDC_EDIT_SCALE,408,3,21,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Масштаб",IDC_SET_SCALE,433,3,39,12
+    CONTROL         "Мир",IDC_CHECK_SHOW_WORLD,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,369,3,28,8
+    EDITTEXT        IDC_EDIT_RATE,492,3,21,12,ES_AUTOHSCROLL
+    LTEXT           "P",IDC_RATE,479,5,8,8
+END
+
+IDD_FORMVIEW DIALOGEX 0, 0, 667, 195
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_COLORS,0,177,667,8,0,WS_EX_CLIENTEDGE
+    LTEXT           "",IDC_ALPHA,0,186,667,8,0,WS_EX_CLIENTEDGE
+    CONTROL         "Slider1",IDC_SLIDER_TIME,"msctls_trackbar32",TBS_TOP | 
+                    TBS_NOTICKS | WS_TABSTOP,0,163,667,11
+    LTEXT           "",IDC_GRAPH,1,60,642,101,0,WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_EDIT_CUR_TIME,228,1,23,12,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_VISIBLE
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_LOAD_SPRITE, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 252
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 74
+    END
+
+    IDD_ALPHA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 217
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDR_MAINFRAME, DIALOG
+    BEGIN
+        RIGHTMARGIN, 557
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDR_MAINFRAME DLGINIT
+BEGIN
+    IDC_COMBO_POS_TYPE, 0x403, 4, 0
+0x6f42, 0x0078, 
+    IDC_COMBO_POS_TYPE, 0x403, 9, 0
+0x7943, 0x696c, 0x646e, 0x7265, "\000" 
+    IDC_COMBO_POS_TYPE, 0x403, 7, 0
+0x7053, 0x6568, 0x6572, "\000" 
+    IDC_COMBO_POS_TYPE, 0x403, 5, 0
+0x694c, 0x656e, "\000" 
+    IDC_COMBO_POS_TYPE, 0x403, 5, 0
+0x6952, 0x676e, "\000" 
+    IDC_COMBO_POS_TYPE, 0x403, 8, 0
+0x4433, 0x6f4d, 0x6564, 0x006c, 
+    IDC_COMBO_OUT_TYPE, 0x403, 10, 0
+0xecd3, 0xeeed, 0xe5e6, 0xe8ed, 0x00e5, 
+    IDC_COMBO_OUT_TYPE, 0x403, 9, 0
+0xebd1, 0xe6ee, 0xede5, 0xe5e8, "\000" 
+    IDC_COMBO_OUT_TYPE, 0x403, 10, 0
+0xfbc2, 0xe8f7, 0xe0f2, 0xe8ed, 0x00e5, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CURSOR_MOVE         CURSOR                  "res\\hmove.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_POPUP MENU 
+BEGIN
+    POPUP "_POPUP_"
+    BEGIN
+        POPUP "New"
+        BEGIN
+            MENUITEM "New Group",                   ID_GROUP_NEW
+            MENUITEM "New Effect",                  ID_EFFECT_NEW
+            MENUITEM "New Emitter",                 ID_EFFECT_EMITTER_NEW
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Delete",                      ID_ELEMENT_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Set 3D Model",                ID_SET3DMODEL
+        MENUITEM "Show 3D Model",               ID_SHOW3DMODEL
+        MENUITEM SEPARATOR
+        MENUITEM "Set 3D Background",           ID_SET3DBACKGROUND
+        MENUITEM "Show 3D Background",          ID_SHOW3DBACKGROUND
+    END
+END
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About EffectTool...",        ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_TOOLBAR_OPT         BITMAP                  "res\\bmp00002.bmp"
+IDR_TOOLBAR_TOOLS       BITMAP                  "res\\bmp00003.bmp"
+IDB_GRAPH_CHECKBOX      BITMAP                  "res\\bitmap1.bmp"
+IDB_EMPTY_TEXTURE       BITMAP                  "res\\empty.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_TOOLBAR_OPT TOOLBAR  24, 12
+BEGIN
+    BUTTON      ID_BUT_ONE
+    BUTTON      ID_BUT_TWO
+END
+
+IDR_TOOLBAR_TOOLS TOOLBAR  24, 24
+BEGIN
+    BUTTON      ID_TOOLS_DIR_
+    BUTTON      ID_TOOLS_POS_
+    BUTTON      ID_TOOLS_BS_DIR_
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "FXM\n\nFXM\nFXM Files (*.fxp)\n.fxp\nFXM.Document\nFXM Document"
+    IDS_CLOSEFRAMEDIRTY     "Есть измененные данные. Сохранить?"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "EffectTool"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Create new file"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EFFECT_NEW           "Create new Effect"
+    ID_ELEMENT_DELETE       "Delete selected effect"
+    ID_EFFECT_EMITTER_NEW   "Add new emeitter to the effect"
+    ID_EFFECT_EMITTER_DEL   "Delete selected emitter"
+    ID_TB_PAUSE             "Pause\nPause"
+    ID_TB_PLAY              "Play\nPlay"
+    ID_TOOLS_DIR            "Direction\nDirection"
+    ID_TOOLS_POS            "Position\nPosition"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TOOLBAR_SAVE         "Save\nSave"
+    ID_TOOLBAR_SPRITE       "Load Sprite\nLoad"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TOOLBAR_OPEN         "Open\nOpen"
+    ID_TOOLBAR_SAVEALL      "Save all\nSave all"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_NEW             "Create new document"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_BUT_ONE              "\nFirst page"
+    ID_BUT_TWO              "Second page"
+END
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_OPTTREE DIALOGEX 0, 0, 52, 48
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "Custom1",IDC_CUSTOM1,"TreeListCtrl.TigerX_And_KB-I",
+                    WS_TABSTOP,6,20,25,9
+    LTEXT           "fps",IDC_STATIC_FPS,6,7,11,8
+    LTEXT           "N",IDC_TRIANGLE_COUNT,20,7,8,8,NOT WS_VISIBLE
+    LTEXT           "S",IDC_TRIANGLE_SQUARE,30,7,8,8,NOT WS_VISIBLE
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_OPTTREE, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 48
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 41
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\toolbar1.bmp"
+IDR_TOOLBAR1            BITMAP                  "res\\bmp00001.bmp"
+IDB_TREE                BITMAP                  "res\\tree.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR  24, 24
+BEGIN
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    BUTTON      ID_TOOLBAR_OPEN
+    BUTTON      ID_TOOLBAR_SPRITE
+    BUTTON      ID_TOOLBAR_EXPORT
+    BUTTON      ID_TOOLS_DIR
+    BUTTON      ID_TOOLS_POS
+    BUTTON      ID_SPLINE_EDIT
+    BUTTON      ID_TOOLS_BS_DIR
+    SEPARATOR
+    BUTTON      ID_FULLSCREEN
+    BUTTON      ID_FINDCENTER
+END
+
+IDR_TOOLBAR1 TOOLBAR  22, 14
+BEGIN
+    BUTTON      ID_TB_PAUSE
+    BUTTON      ID_TB_NEXT
+    BUTTON      ID_TB_FIRST
+    BUTTON      ID_TB_LAST
+    SEPARATOR
+    BUTTON      ID_BUTTON_FORALL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\EffectTool.ico"
+IDR_EFFECTTYPE          ICON                    "res\\EffectToolDoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    "O",            ID_TOOLBAR_OPEN,        VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_TOOLBAR_SAVE,        VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "K-D LAB Company"
+            VALUE "FileDescription", "EffectTool - FX Management Software"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "EffectTool"
+            VALUE "LegalCopyright", "Copyright (C) 2003 K-D LAB Company"
+            VALUE "OriginalFilename", "EffectTool.EXE"
+            VALUE "ProductName", "EffectTool - FX Management Software"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ID_TOOLBAR_OPEN         "\n"
+    ID_TOOLS_BS_DIR         "\nSet velocity direction"
+    ID_TOOLBAR_EXPORT       "\nSave for game"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_OPEN            "\nOpen project"
+    ID_FILE_SAVE            "\nSave project"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TOOLBAR_SPRITE       "\nLoad texture"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TB_PAUSE             "\nPause"
+    ID_TB_NEXT              "Step next"
+    ID_TB_FIRST             "Goto begin"
+    ID_TB_LAST              "Goto end"
+    ID_TOOLS_DIR            "\nSet direction"
+    ID_TOOLS_POS            "\nSet position points"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FULLSCREEN           "\nFull Screen mode"
+    ID_FINDCENTER           "\nFind center"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_BUTTON_FORALL        "\nSet all points by current"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\EffectTool.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

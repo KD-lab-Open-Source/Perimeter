@@ -1,0 +1,84 @@
+section RigidBodyPrm(declaration = "Game\Scripts\RigidBody.hi", definition = "Game\Scripts\RigidBody.cppi")
+{
+
+int closestFeaturesHTsizeMax = 500; // Максимальный размер хеш-таблицы перед автоочищением
+
+// Terrain analyze
+float dz_max_avr_tau = 0.1;
+float deep_penetration_dz = 10;
+
+float average_forward_velocity_tau = 0.7;
+float obstacle_turn_avr_tau = 0.05;
+
+float general_velocity_factor_intermediate = 0.9;
+float is_point_reached_radius_max_intermediate = 40;
+
+// Body 2 Body collision
+float collision_detection_epsilon = 2;
+float collision_resolve_velocity_tolerance = 0.1;
+float collision_resolve_penetration_relaxation_factor = -0.3;
+float collision_resolve_penetration_relaxation_min = -4;
+float collision_resolve_velocity_relaxation = 0.1;
+float collision_resolve_restitution_plus_one = 1.2;
+int collision_resolve_iterations_per_contact = 4;
+
+// Kangaroo
+float kangaroo_mode_avr_tau = 0.3;
+float kangaroo_mode_avr_threshould = 0.2;
+float kangaroo_max_height_switch = 500;
+float kangaroo_min_mass_switch = 1e-5;
+float kangaroo_avoid_stoopor_acceleration = 0;
+float kangaroo_avoid_stoopor_epsilon = 1;
+
+// Analyze terrain
+float analyze_terrain_points_density = 0.5;
+float analyze_terrain_Dxy_minimal = 6;
+int analyze_terrain_upper_dz_max = 20;
+int analyze_terrain_lower_dz_min = -50;
+
+// steering_control
+float steering_control_negative_rudder_threshould = -0.95;
+float steering_control_min_distance = 1;
+
+// testMissileShot
+float test_missile_shot_distance2 = 50*50;
+
+// Sleep evolution system
+float average_movement_tau = 0.1;
+float average_movement_threshould = 0.5;
+int sleep_time = 2000;
+
+// Field Path Find
+float fieldPathFindFactor = 0.7;
+int fieldPathFindRadius = 100;
+
+// Digging
+float diggingModeDamping = 0.1;
+int diggingModeDelay = 500;
+
+// Camera exploding
+struct HarmonicOscillator // f(t) = exp(-t*decay)*(A[0]*sin(omega*t) + A[1]*sin(2*omega*t) + ...)
+{
+	float decay = 0.0;
+	float omega = 100;
+	float amplitude = 0;
+	float A[int N] = { 1, 0.5, 0.3, 0.1 };
+delegate:
+	float operator()(float t){ // in seconds
+		float phase = omega*t;
+		float f = 0;
+		for(int i = 0; i < N; i++)
+			f += A[i]*sin(phase*(i + 1));
+		return f*exp(-t*decay)*amplitude; 
+	}
+};
+
+struct CameraExplodingPrm
+{
+	HarmonicOscillator x = { amplitude = 20; };
+	HarmonicOscillator y = { omega = omega*0.1; amplitude = 20; };
+	HarmonicOscillator z = { omega = omega*0.99; amplitude = 20; };
+};
+CameraExplodingPrm cameraExplodingPrm = {};
+
+}

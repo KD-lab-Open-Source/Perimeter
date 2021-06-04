@@ -1,0 +1,31 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: MutationPrm
+//	Number of variables: 11
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+enum MutationPhase {
+PreMelting,
+Melting,
+MovingIn,
+Merging,
+Separation,
+MovingOut,
+Freesing,
+PostFreesing,
+MutationPhaseMax
+};
+extern int mutation_times[9];
+extern float mutation_sphere_delta_z;
+extern float mutation_upper_stiffness;
+extern float mutation_lower_stiffness;
+extern float mutation_compact_step;
+extern float mutation_compact_iterations;
+extern float mutation_compact_penetration_factor;
+extern float mutation_compact_softer;
+extern float mutation_base_volumes[3];
+extern float mutation_specular_color[4];
+extern float mutation_move_sound_start_phase;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: MutationPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

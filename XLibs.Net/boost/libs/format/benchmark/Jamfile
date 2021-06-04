@@ -1,0 +1,43 @@
+#  Boost.Bind Library test Jamfile
+#
+#  Copyright (c) 2003 Samuel Krempp
+#
+#  Permission to copy, use, modify, sell and distribute this software
+#  is granted provided this copyright notice appears in all copies.
+#  This software is provided "as is" without express or implied
+#  warranty, and with no claim as to its suitability for any purpose.
+
+subproject libs/format/benchmark ;
+
+
+
+#exe bench_format_overloads
+#    : bench_format.cpp
+#    : <include>$(BOOST_ROOT) <define>BOOST_FORMAT_OVERLOADS <define>BOOST_FORMAT_ONLY_BASICFMT
+#    ;
+
+#exe bench_format_basicfmt
+#    : bench_format.cpp
+#    : <include>$(BOOST_ROOT) <define>BOOST_FORMAT_ONLY_BASICFMT
+#    ;
+
+exe bench_format_no_locale
+    : bench_format.cpp
+    : <include>$(BOOST_ROOT) <define>BOOST_NO_STD_LOCALE
+    ;
+
+exe bench_format_normal
+    : bench_format.cpp
+    : <include>$(BOOST_ROOT)
+    ;
+
+exe bench_format_no_reuse_stream
+    : bench_format.cpp
+    : <include>alts <include>$(BOOST_ROOT) <define>BOOST_FORMAT_NO_OSS_MEMBER
+    ;
+
+exe format_test
+    : format_test.cpp
+    : <include>$(BOOST_ROOT)
+    ;
+

@@ -1,0 +1,1 @@
+#define BOOST_NO_CONFIG

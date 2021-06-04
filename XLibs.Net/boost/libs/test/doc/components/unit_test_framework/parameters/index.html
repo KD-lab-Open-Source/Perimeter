@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<TITLE>The Unit Test Framework parameters</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../index.html">Boost.Test</A> > <A href="../../index.html">Components</A> 
+  > <A href="../index.html">The Unit Test Framework</A> > <SPAN class="current_article">Parameters</SPAN> 
+</DIV>
+<DIV class="body"> <IMG src='../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The Unit Test Framework parameters</H1>
+  <P class="first-line-indented">The Unit Test Framework supports two ways to configure test program execution 
+    at runtime: using command line arguments and setting environment variables. Command line argument 
+    always prevails the environment variable value.</P>
+  <P class="first-line-indented">A parameter's specification includes: the full parameter name, corresponding 
+    environment variable name, command line argument name, acceptable values and long description. The 
+    default value for the parameter is bolded in a list of parameters. All values are case sensitive and 
+    are required to exactly match the parameter specification.</P>
+  <P class="first-line-indented"></P>
+  <P class="first-line-indented">The Unit Test Framework parses command line and exclude all framework 
+    parameters and their values from the arguments list forwarded to the user's function init_unit_test_suite. 
+    The command line arguments format expected by the framework is: --&lt;parameter name&gt;=&lt;parameter_value&gt;. 
+    The parameter name is case sensitive. The parameter name is required to exactly match the name in 
+    parameter specification. The should not be any spaces between '=' and both parameter name and parameter 
+    value.</P>
+  <P class="first-line-indented">The environment variable name is case sensitive and is required to exactly 
+    match the name in parameter specification.</P>
+  <P class="first-line-indented">Here is the list of all parameters:</P>
+  <UL>
+    <LI><A href="log_level.html">log level</A></LI>
+    <LI><A href="no_result_code.html">no result code</A></LI>
+    <LI><A href="report_level.html">report level</A></LI>
+    <LI><A href="build_info.html">build info</A></LI>
+    <LI><a href="log_format.html">log_format</a></LI>
+    <LI><a href="report_format.html">report_format</a></LI>
+    <LI><a href="output_format.html">output_format</a></LI>
+    <LI><a href="catch_system_errors.html">catch_system_errors</a></LI>
+  </UL>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->7 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

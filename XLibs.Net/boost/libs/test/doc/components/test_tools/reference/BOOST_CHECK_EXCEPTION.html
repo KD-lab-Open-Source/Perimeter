@@ -1,0 +1,56 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_CHECK_EXCEPTION( statement, exception, predicate )</H3>
+  <P class="first-line-indented">This tool is used to perform an exception detection and validation check. 
+    The tool executes the supplied statement and check that it throw the supplied exception or it's child 
+    and that exception comply to the supplied predicate. If the statement throw any other unrelated exception, 
+    doesn't throw at all or predicate evaluates to <I>false</I> with caught exception, check fails. In 
+    comparison with BOOST_CHECK_THROW this tool allows to perform more fine grained checks, for example 
+    that expected exception has specific error message e.t.c.</P>
+  <P class="first-line-indented">If check is successful, the tool produces a confirmation message (note: 
+    to manage what messages appear in the test output stream set the proper log level). In case if no 
+    exception thrown it produces an error message in a form &quot;error in &lt;test case name&gt;: exception 
+    &lt;<I>exception</I>&gt; expected. In case if exception does not comply to specified predicate the 
+    tool produces an error message in a form &quot;error in &lt;test case name&gt;: incorrect exception 
+    &lt;<I>exception</I>&gt; is caught.</P>
+  <P class="first-line-indented">The tool's first parameter is the statement to execute while checking 
+    for exception. Use block statement if you want to execute more than one statement. The tool's second 
+    parameter is an expected exception. The last third parameter is a predicate function used to validate 
+    caught exception.</P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="reserv-word">struct</SPAN> my_exception {
+    <SPAN class="reserv-word">explicit</SPAN> my_exception( <SPAN class="cpp-type">int</SPAN> ec = <SPAN class="literal">0</SPAN> ) : m_error_code( EC ) {}
+    
+    <SPAN class="cpp-type">int</SPAN> m_error_code;
+};
+
+<SPAN class="cpp-type">bool</SPAN> is_critical( my_exception <SPAN class="reserv-word">const</SPAN>& ex ) { <SPAN class="reserv-word">return </SPAN>ex.m_error_code < <SPAN class="literal">0</SPAN>; }
+<SPAN class="reserv-word">
+</SPAN><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    BOOST_CHECK_EXCEPTION( throw my_exception( 1 ), my_exception, is_critical );
+  
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(9) : error in test_main: incorrect exception my_exception is caught</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK_THROW.html" target="descr">BOOST_CHECK_THROW</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,20 @@
+subproject libs/iterator/example ;
+
+import testing ;
+
+# Make tests run by default.
+DEPENDS all : test ;
+
+test-suite iterator_examples
+  : [ run reverse_iterator.cpp ]
+    [ run node_iterator1.cpp ]
+    [ run node_iterator2.cpp ]
+    [ run node_iterator3.cpp ]
+    [ run counting_iterator_example.cpp ]
+    [ run filter_iterator_example.cpp ]
+    [ run function_output_iterator_example.cpp ]
+    [ run indirect_iterator_example.cpp ]
+    [ run permutation_iterator_example.cpp ]
+    [ run reverse_iterator_example.cpp ]
+    [ run transform_iterator_example.cpp ]
+      ;

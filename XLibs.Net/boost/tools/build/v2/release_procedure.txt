@@ -1,0 +1,48 @@
+
+   Boost.Build V2 release procedure.
+
+[ Must be done from a Unix shell ]
+
+
+
+0. Look for all issues for current milestone in the tracker. Close the fixed one,
+   if not already closed. Move to a later milestone, or fix all the unfixed
+   ones.
+
+   Make sure that "bjam --version" output is correct. Update version string if
+   needed. Update bjam version and the version check is necessary.  
+   Check the download locations in "index_v2.html". Check that "last modified"
+   strings in docs are correct.
+
+1. Make sure you don't have any local modification, and tag the CVS tree with 
+   Milestone_X tag.
+  
+2. Run
+
+   cvs -d :ext:<your_user_name>@cvs.boost.sourceforge.net:/cvsroot/boost co -r
+   Milestone_X -P -d  boost-build boost/tools/build
+
+   Note: it turns out that anonymous CVS access uses some backup server, which
+   is not up-to-date.
+
+3. Go to "boost-build/v2" directory.
+
+4. Run "./roll.sh". This will create "boost-build.zip" and
+   "boost-build.tar.bz2" in parent directory, and also upload
+   new docs to sourceforge.
+
+5. Unpack "boost-build.tar.bz2", and build jam.
+
+6. Go to "test" and copy "test-config.jam.in" to "test-config.jam". Run gcc
+   tests:
+      python test_all.py gcc
+
+7. Build all projects in examples-v2, using the bjam binary created at step 4.
+   Note: "threading=multi" might be needed to build QT examples.
+
+8. Announce the release, etc.
+
+9. Update the "next milestone query" in the tracker.
+
+
+   

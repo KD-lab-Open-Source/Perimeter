@@ -1,0 +1,5 @@
+project boost/doc ;
+import boostbook : boostbook ;
+
+boostbook variant-doc : variant.xml ;
+

@@ -1,0 +1,441 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript definition
+//	Section: GameConfig
+//	Number of variables: 156
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+char const* MainModelPath = "RESOURCE\\MODELS\\MAIN";
+char const* MainIconPath = "RESOURCE\\ICONS\\";
+char const* MainFontPath = "RESOURCE\\FONTS\\";
+char const* MainCursorPath = "RESOURCE\\CURSORS\\";
+char const* MainSpritePath = "RESOURCE\\SPRITES\\";
+char const* MainEffectPath = "RESOURCE\\EFFECT\\";
+char const* MainVideoPath = "RESOURCE\\VIDEO\\";
+char const* MainWorldPath = "RESOURCE\\WORLDS\\";
+char const* MainToolPath = "RESOURCE\\TOOLS\\";
+int terLogicTimePeriod = 100;
+float terLogicTimePeriodInv = 1.e-002f;
+float terGlobalTimePeriodSeconds = 0.1f;
+float PerimeterCameraControlFPS = 20.f;
+float HardwareCameraFocus = 0.8f;
+char const* shellMainFont = "aero";
+float CAMERA_SCROLL_SPEED_DELTA = 10.f;
+float CAMERA_BORDER_SCROLL_SPEED_DELTA = 10.f;
+float CAMERA_SHIFT_SPEED_DELTA = 400.f;
+float CAMERA_SCROLL_SPEED_DAMP = 0.7f;
+float CAMERA_SCROLL_SPEED_MASS = 1.f;
+float CAMERA_BORDER_SCROLL_AREA_UP = 8.e-003f;
+float CAMERA_BORDER_SCROLL_AREA_DN = 1.4e-002f;
+float CAMERA_BORDER_SCROLL_AREA_HORZ = 8.e-003f;
+float HISTORY_CAMERA_ANGLE_SPEED_DELTA = 7.8539816e-004f;
+float CAMERA_KBD_ANGLE_SPEED_DELTA = 0.10471976f;
+float CAMERA_MOUSE_ANGLE_SPEED_DELTA = 3.1415927f;
+float CAMERA_ANGLE_SPEED_DAMP = 0.7f;
+float CAMERA_ANGLE_SPEED_MASS = 1.f;
+float CAMERA_ZOOM_SPEED_DELTA = 10.f;
+float CAMERA_ZOOM_MOUSE_MULT = 300.f;
+float CAMERA_ZOOM_SPEED_DAMP = 0.7f;
+float CAMERA_ZOOM_SPEED_MASS = 2.f;
+float CAMERA_FOLLOW_AVERAGE_TAU = 0.1f;
+float CAMERA_MAX_HEIGHT = 1000.f;
+float CAMERA_MIN_HEIGHT = 200.f;
+float CAMERA_DEFAULT_HEIGHT = 500.f;
+float CAMERA_MOVE_ZOOM_SCALE = 500.f;
+float CAMERA_ZOOM_MIN = 300.f;
+float CAMERA_ZOOM_MAX = 1000.f;
+float CAMERA_THETA_MIN = 0.31415927f;
+float CAMERA_THETA_MAX = 1.0471976f;
+float CAMERA_ZOOM_TERRAIN_THRESOLD1 = 300.f;
+float CAMERA_ZOOM_TERRAIN_THRESOLD2 = 1000.f;
+float CAMERA_WORLD_SCROLL_BORDER = 200.f;
+int CAMERA_REPLAY_DURATION = 4000;
+float fSoundWidthPower = 0.5f;
+float fSoundZMultiple = 0.5f;
+int dbgShowCursorPos = 0;
+int terEnableSoundLog = 0;
+int bShowSplash = 0;
+float terSelectImageSizeX = 64.f;
+float terSelectImageSizeY = 64.f;
+float terSelectMainLeft = 0.f;
+float terSelectMainRight = 64.f;
+float terSelectMainTop = 0.f;
+float terSelectMainBottom = 4.f;
+float terSelectMarkLeft = 0.f;
+float terSelectMarkRight = 64.f;
+float terSelectMarkTop = 4.f;
+float terSelectMarkBottom = 7.f;
+float terSelectLifePositionLeft = 0.f;
+float terSelectLifePositionTop = 1.f;
+float terSelectLifeLeft = 0.f;
+float terSelectLifeRight = 64.f;
+float terSelectLifeTop = 14.f;
+float terSelectLifeBottom = 18.f;
+char const* terScreenShotsPath = "ScreenShots";
+char const* terScreenShotName = "shot";
+char const* terScreenShotExt = ".bmp";
+char const* terMoviePath = "Movie";
+char const* terMovieName = "Track";
+char const* terMovieFrameName = "frame";
+#ifndef __XScript_struct_PlayerColor__
+#define __XScript_struct_PlayerColor__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct PlayerColor {
+	float unitColor[4];
+	float fieldColor[4];
+	float zeroLayerColor[4];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_PlayerColor__
+int playerColorsSize = 7;
+PlayerColor playerColors[] = { { { 0.f 
+ , 0.f, 0.8f, 1.f }, { 0.f, 0.f, 0.6f, 1.f }, { 0.4f, 0.4f, 0.5f, 0.8f } }, { { 0.f 
+ , 0.8f, 0.8f, 1.f }, { 0.f, 0.6f, 0.6f, 1.f }, { 0.4f, 0.6f, 0.5f, 0.8f } }, { { 0.8f 
+ , 0.f, 0.f, 1.f }, { 0.6f, 0.f, 0.f, 1.f }, { 0.6f, 0.25f, 0.1f, 0.8f } }, { { 0.8f 
+ , 0.4f, 0.f, 1.f }, { 0.6f, 0.2f, 0.f, 1.f }, { 0.6f, 0.4f, 0.1f, 0.8f } }, { { 0.f 
+ , 0.8f, 0.f, 1.f }, { 0.f, 0.6f, 0.f, 1.f }, { 0.4f, 0.6f, 0.3f, 0.8f } }, { { 0.8f 
+ , 0.8f, 0.f, 1.f }, { 0.6f, 0.6f, 0.f, 1.f }, { 0.6f, 0.6f, 0.3f, 0.8f } }, { { 1.f 
+ , 1.f, 0.7f, 1.f }, { 1.f, 1.f, 1.f, 1.f }, { 1.f, 1.f, 1.f, 1.f } } };
+int playerWorldColorIdx = 6;
+int playerAllowedColorSize = 6;
+char const* sRegionTextureCircle = "Resource\\Effect\\Region.tga";
+char const* sRegionTextureCircleDotted = "Resource\\Effect\\dotted_line.tga";
+float RegionUSpeedDotted = 1.f;
+#ifndef __XScript_struct_CircleColor__
+#define __XScript_struct_CircleColor__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct CircleColor {
+	int color[4];
+	float width;
+	float length;
+	int dotted;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_CircleColor__
+#ifndef __XScript_struct_CircleColors__
+#define __XScript_struct_CircleColors__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct CircleColors {
+	CircleColor connectionRadius;
+	CircleColor connectionRadiusSelected;
+	CircleColor zeroLayerRadius;
+	CircleColor fireRadius;
+	CircleColor fireRadiusMin;
+	CircleColor selectRadius;
+	CircleColor targetRadius;
+	CircleColor targetTriangles;
+	CircleColor targetCross;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_CircleColors__
+float targetCircleCount = 5.f;
+float targetCircleMaxRadius = 50.f;
+float targetCircleStep = 10.f;
+float targetTrianglesRadius = 45.f;
+float maxAlphaCircleColorHeight = 500.f;
+CircleColors circleColors = { { { 137 
+ , 205, 249, 140 }, 6.f, 30.f, 0 }, { { 119, 223, 242, 128 }, 3.f, 30.f, 0 }, { { 137 
+ , 205, 249, 120 }, 3.f, 30.f, 0 }, { { 255, 255, 255, 160 }, 4.f, 30.f, 1 }, { { 255 
+ , 216, 0, 128 }, 2.f, 30.f, 0 }, { { 0, 255, 0, 255 }, -2.5e-003f, 10.f, 0 }, { { 255 
+ , 0, 0, 158 }, 2.f, 30.f, 0 }, { { 255, 0, 0, 158 }, 8.f, 30.f, 2 }, { { 255, 0, 0 
+ , 158 }, 4.f, 30.f, 3 } };
+#ifndef __XScript_struct_sRegionMain__
+#define __XScript_struct_sRegionMain__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sRegionMain {
+	char const* texture;
+	int line_color[4];
+	int area_color[4];
+	int vertical_color[4];
+	int column_step;
+	char const* column_model;
+	float column_model_size;
+	int column_red[4];
+	int column_green[4];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sRegionMain__
+sRegionMain RegionMain = { "Resource\\Effect\\Region Main.tga" 
+ , { 0, 200, 0, 128 }, { 0, 200, 0, 64 }, { 160, 160, 160, 128 }, 16, "RESOURCE\\Models\\Interface\\column.M3D" 
+ , 3.f, { 255, 0, 0, 64 }, { 0, 255, 0, 64 } };
+#ifndef __XScript_struct_ZeroplastBurn__
+#define __XScript_struct_ZeroplastBurn__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ZeroplastBurn {
+	float fade_time;
+	float strength;
+	float reflection_strength;
+	float reflection;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ZeroplastBurn__
+ZeroplastBurn zeroplastBurn = { 1000.f 
+ , 0.3f, 0.5f, 0.7f };
+int pathColor[4] = { 200, 255, 180, 128 };
+int patrolColor[4] = { 200 
+ , 200, 180, 128 };
+int IronDiggerVolume = 64;
+char const* missionDifficultyPostfix[3] = { "_easy" 
+ , "_normal", "" };
+float markHealth1 = 100.f;
+float markHealth2 = 9000.f;
+float markWidth1 = 20.f;
+float markWidth2 = 200.f;
+float markHealthWidthCoeffA = 1.9750702e-005f;
+float markHealthWidthCoeffB = 1.755618e-002f;
+char const* mainCurrUserRegFolder = "SOFTWARE\\Codemasters\\Perimeter\\Intf";
+char const* regLanName = "LanName";
+#ifndef __XScript_struct_sCorpseDynamic__
+#define __XScript_struct_sCorpseDynamic__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sCorpseDynamic {
+	float dark_duration;
+	float min_dark;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sCorpseDynamic__
+sCorpseDynamic dataCorpseDynamic = { 1000.f 
+ , 0.4f };
+float UNITS_WEIGHT = 1.f;
+float BUILDINGS_WEIGHT = 1.f;
+float SCOURGE_WEIGHT = 1.f;
+float ENERGY_WEIGHT = 10000.f;
+float music_change_time = 30.f;
+#ifndef __XScript_struct_ModelProperty__
+#define __XScript_struct_ModelProperty__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ModelProperty {
+	char const* name;
+	float size;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ModelProperty__
+char const* terModelUnitSelection = "RESOURCE\\MODELS\\FX\\Select.m3d";
+char const* terModelLightRay = "RESOURCE\\MODELS\\FX\\Lightray.m3d";
+char const* terModelDefaultTree = "RESOURCE\\MODELS\\ENVIRONMENT\\Tree_Troam2.m3d";
+ModelProperty terModelBuildingNoConnection = { "RESOURCE\\MODELS\\Main\\energy.m3d" 
+ , 8.3f };
+ModelProperty terModelBuildingLowEnergy = { "RESOURCE\\MODELS\\Main\\energy1.m3d" 
+ , 10.f };
+ModelProperty terOmegaMinedIcon = { "RESOURCE\\MODELS\\Main\\mine_indicator.m3d" 
+ , 8.3f };
+float terModelBuildingSpeed = 2000.f;
+char const* terModelWayFlag = "RESOURCE\\MODELS\\MAIN\\obelisk.m3d";
+float terModelWayFlagRadius = 16.f;
+float terModelWayFlagSpeed = 2000.f;
+char const* terTextureField01 = "RESOURCE\\EFFECT\\envmap01.tga";
+char const* terTextureField02 = "RESOURCE\\EFFECT\\tesla01.tga";
+char const* terTextureHologram = "RESOURCE\\EFFECT\\lightmap.tga";
+char const* terTextureUnitSelection = "RESOURCE\\EFFECT\\select.tga";
+char const* terTextureCongregationUnit = "RESOURCE\\SPRITES\\Molel.tga";
+char const* terTextureCongregationProtection = "RESOURCE\\SPRITES\\Protect.tga";
+char const* terTextureCongregationAnnihilation = "RESOURCE\\SPRITES\\Annihilation.tga";
+char const* terTextureATCFireTrail = "RESOURCE\\EFFECT\\sh_btr.tga";
+char const* terTextureBlockFireTrail = "RESOURCE\\EFFECT\\sh_btr.tga";
+char const* terTextureFighterFlyTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+char const* terTextureFighterFireTrail = "RESOURCE\\EFFECT\\corona.tga";
+char const* terTextureSoldierFireTrail = "RESOURCE\\EFFECT\\sh_pulemet.tga";
+char const* terTextureBomberFlyTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+char const* terTextureOfficerFireTrail = "RESOURCE\\EFFECT\\freeze.tga";
+char const* terTextureTechnicFireTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+char const* terTexturePortFireTrail = "RESOURCE\\EFFECT\\corona.tga";
+char const* terTextureLaserFireTrail = "RESOURCE\\EFFECT\\corona.tga";
+char const* terTextureDebrisFlyTrail = "RESOURCE\\EFFECT\\sh_gaub.tga";
+char const* terTextureLaserTrail = "RESOURCE\\EFFECT\\laser.tga";
+char const* terTextureEnergyLinkTrail = "RESOURCE\\EFFECT\\corona.tga";
+char const* terTextureFreezeTrail = "RESOURCE\\EFFECT\\corona.tga";
+int terTextureLaserSize = 3;
+char const* terTextureLaser[] = { "RESOURCE\\EFFECT\\laser.tga" 
+ , "RESOURCE\\EFFECT\\freeze.tga", "RESOURCE\\EFFECT\\laser_tech.tga" };
+int terTextureLaserSizeZ = 3;
+char const* terTextureLaserZ[] = { "RESOURCE\\EFFECT\\laserZ.tga" 
+ , "RESOURCE\\EFFECT\\freezeZ.tga", "RESOURCE\\EFFECT\\laser_techZ.tga" };
+int terShootMapTest = 0;
+int terShootUnitTest = 0;
+int terOfficerFreezeTime = 10000;
+int terTechnicHealTime = 1000;
+float terScumStormTurnAngle = 0.52359878f;
+float terScumStormTurnAngleDelta = 0.17453293f;
+int terScumStormTurnDelay = 400;
+int terInvisibilityTime = 4000;
+int terInvisibilityTimeMax = 8000;
+float terInvisibilityCoeff = 0.5f;
+int FrameRepairElementsPerQuant = 10;
+float small_camera_x = 0.40625f;
+float small_camera_y = 0.81901042f;
+float small_camera_rect_dx = 0.13183594f;
+float small_camera_rect_dy = 0.14973958f;
+float small_model_rate = 200.f;
+
+#ifdef _PRM_EDIT_
+struct GameConfig_ParameterSection : ParameterSection
+{
+	GameConfig_ParameterSection() : ParameterSection("GameConfig")
+{
+	add_dependency(".\\Scripts\\Config.prm");
+	sourceCRC = 2713090480;
+	description = 2344415301;
+	reserve(156);
+	add(&MainModelPath, "MainModelPath");
+	add(&MainIconPath, "MainIconPath");
+	add(&MainFontPath, "MainFontPath");
+	add(&MainCursorPath, "MainCursorPath");
+	add(&MainSpritePath, "MainSpritePath");
+	add(&MainEffectPath, "MainEffectPath");
+	add(&MainVideoPath, "MainVideoPath");
+	add(&MainWorldPath, "MainWorldPath");
+	add(&MainToolPath, "MainToolPath");
+	add(&terLogicTimePeriod, "terLogicTimePeriod");
+	add(&terLogicTimePeriodInv, "terLogicTimePeriodInv");
+	add(&terGlobalTimePeriodSeconds, "terGlobalTimePeriodSeconds");
+	add(&PerimeterCameraControlFPS, "PerimeterCameraControlFPS");
+	add(&HardwareCameraFocus, "HardwareCameraFocus");
+	add(&shellMainFont, "shellMainFont");
+	add(&CAMERA_SCROLL_SPEED_DELTA, "CAMERA_SCROLL_SPEED_DELTA");
+	add(&CAMERA_BORDER_SCROLL_SPEED_DELTA, "CAMERA_BORDER_SCROLL_SPEED_DELTA");
+	add(&CAMERA_SHIFT_SPEED_DELTA, "CAMERA_SHIFT_SPEED_DELTA");
+	add(&CAMERA_SCROLL_SPEED_DAMP, "CAMERA_SCROLL_SPEED_DAMP");
+	add(&CAMERA_SCROLL_SPEED_MASS, "CAMERA_SCROLL_SPEED_MASS");
+	add(&CAMERA_BORDER_SCROLL_AREA_UP, "CAMERA_BORDER_SCROLL_AREA_UP");
+	add(&CAMERA_BORDER_SCROLL_AREA_DN, "CAMERA_BORDER_SCROLL_AREA_DN");
+	add(&CAMERA_BORDER_SCROLL_AREA_HORZ, "CAMERA_BORDER_SCROLL_AREA_HORZ");
+	add(&HISTORY_CAMERA_ANGLE_SPEED_DELTA, "HISTORY_CAMERA_ANGLE_SPEED_DELTA");
+	add(&CAMERA_KBD_ANGLE_SPEED_DELTA, "CAMERA_KBD_ANGLE_SPEED_DELTA");
+	add(&CAMERA_MOUSE_ANGLE_SPEED_DELTA, "CAMERA_MOUSE_ANGLE_SPEED_DELTA");
+	add(&CAMERA_ANGLE_SPEED_DAMP, "CAMERA_ANGLE_SPEED_DAMP");
+	add(&CAMERA_ANGLE_SPEED_MASS, "CAMERA_ANGLE_SPEED_MASS");
+	add(&CAMERA_ZOOM_SPEED_DELTA, "CAMERA_ZOOM_SPEED_DELTA");
+	add(&CAMERA_ZOOM_MOUSE_MULT, "CAMERA_ZOOM_MOUSE_MULT");
+	add(&CAMERA_ZOOM_SPEED_DAMP, "CAMERA_ZOOM_SPEED_DAMP");
+	add(&CAMERA_ZOOM_SPEED_MASS, "CAMERA_ZOOM_SPEED_MASS");
+	add(&CAMERA_FOLLOW_AVERAGE_TAU, "CAMERA_FOLLOW_AVERAGE_TAU");
+	add(&CAMERA_MAX_HEIGHT, "CAMERA_MAX_HEIGHT");
+	add(&CAMERA_MIN_HEIGHT, "CAMERA_MIN_HEIGHT");
+	add(&CAMERA_DEFAULT_HEIGHT, "CAMERA_DEFAULT_HEIGHT");
+	add(&CAMERA_MOVE_ZOOM_SCALE, "CAMERA_MOVE_ZOOM_SCALE");
+	add(&CAMERA_ZOOM_MIN, "CAMERA_ZOOM_MIN");
+	add(&CAMERA_ZOOM_MAX, "CAMERA_ZOOM_MAX");
+	add(&CAMERA_THETA_MIN, "CAMERA_THETA_MIN");
+	add(&CAMERA_THETA_MAX, "CAMERA_THETA_MAX");
+	add(&CAMERA_ZOOM_TERRAIN_THRESOLD1, "CAMERA_ZOOM_TERRAIN_THRESOLD1");
+	add(&CAMERA_ZOOM_TERRAIN_THRESOLD2, "CAMERA_ZOOM_TERRAIN_THRESOLD2");
+	add(&CAMERA_WORLD_SCROLL_BORDER, "CAMERA_WORLD_SCROLL_BORDER");
+	add(&CAMERA_REPLAY_DURATION, "CAMERA_REPLAY_DURATION");
+	add(&fSoundWidthPower, "fSoundWidthPower");
+	add(&fSoundZMultiple, "fSoundZMultiple");
+	add(&dbgShowCursorPos, "dbgShowCursorPos");
+	add(&terEnableSoundLog, "terEnableSoundLog");
+	add(&bShowSplash, "bShowSplash");
+	add(&terSelectImageSizeX, "terSelectImageSizeX");
+	add(&terSelectImageSizeY, "terSelectImageSizeY");
+	add(&terSelectMainLeft, "terSelectMainLeft");
+	add(&terSelectMainRight, "terSelectMainRight");
+	add(&terSelectMainTop, "terSelectMainTop");
+	add(&terSelectMainBottom, "terSelectMainBottom");
+	add(&terSelectMarkLeft, "terSelectMarkLeft");
+	add(&terSelectMarkRight, "terSelectMarkRight");
+	add(&terSelectMarkTop, "terSelectMarkTop");
+	add(&terSelectMarkBottom, "terSelectMarkBottom");
+	add(&terSelectLifePositionLeft, "terSelectLifePositionLeft");
+	add(&terSelectLifePositionTop, "terSelectLifePositionTop");
+	add(&terSelectLifeLeft, "terSelectLifeLeft");
+	add(&terSelectLifeRight, "terSelectLifeRight");
+	add(&terSelectLifeTop, "terSelectLifeTop");
+	add(&terSelectLifeBottom, "terSelectLifeBottom");
+	add(&terScreenShotsPath, "terScreenShotsPath");
+	add(&terScreenShotName, "terScreenShotName");
+	add(&terScreenShotExt, "terScreenShotExt");
+	add(&terMoviePath, "terMoviePath");
+	add(&terMovieName, "terMovieName");
+	add(&terMovieFrameName, "terMovieFrameName");
+	add(&playerColorsSize, "playerColorsSize");
+	add(&playerColors, "playerColors");
+	add(&playerWorldColorIdx, "playerWorldColorIdx");
+	add(&playerAllowedColorSize, "playerAllowedColorSize");
+	add(&sRegionTextureCircle, "sRegionTextureCircle");
+	add(&sRegionTextureCircleDotted, "sRegionTextureCircleDotted");
+	add(&RegionUSpeedDotted, "RegionUSpeedDotted");
+	add(&targetCircleCount, "targetCircleCount");
+	add(&targetCircleMaxRadius, "targetCircleMaxRadius");
+	add(&targetCircleStep, "targetCircleStep");
+	add(&targetTrianglesRadius, "targetTrianglesRadius");
+	add(&maxAlphaCircleColorHeight, "maxAlphaCircleColorHeight");
+	add(&circleColors, "circleColors");
+	add(&RegionMain, "RegionMain");
+	add(&zeroplastBurn, "zeroplastBurn");
+	add(&pathColor, "pathColor");
+	add(&patrolColor, "patrolColor");
+	add(&IronDiggerVolume, "IronDiggerVolume");
+	add(&missionDifficultyPostfix, "missionDifficultyPostfix");
+	add(&markHealth1, "markHealth1");
+	add(&markHealth2, "markHealth2");
+	add(&markWidth1, "markWidth1");
+	add(&markWidth2, "markWidth2");
+	add(&markHealthWidthCoeffA, "markHealthWidthCoeffA");
+	add(&markHealthWidthCoeffB, "markHealthWidthCoeffB");
+	add(&mainCurrUserRegFolder, "mainCurrUserRegFolder");
+	add(&regLanName, "regLanName");
+	add(&dataCorpseDynamic, "dataCorpseDynamic");
+	add(&UNITS_WEIGHT, "UNITS_WEIGHT");
+	add(&BUILDINGS_WEIGHT, "BUILDINGS_WEIGHT");
+	add(&SCOURGE_WEIGHT, "SCOURGE_WEIGHT");
+	add(&ENERGY_WEIGHT, "ENERGY_WEIGHT");
+	add(&music_change_time, "music_change_time");
+	add(&terModelUnitSelection, "terModelUnitSelection");
+	add(&terModelLightRay, "terModelLightRay");
+	add(&terModelDefaultTree, "terModelDefaultTree");
+	add(&terModelBuildingNoConnection, "terModelBuildingNoConnection");
+	add(&terModelBuildingLowEnergy, "terModelBuildingLowEnergy");
+	add(&terOmegaMinedIcon, "terOmegaMinedIcon");
+	add(&terModelBuildingSpeed, "terModelBuildingSpeed");
+	add(&terModelWayFlag, "terModelWayFlag");
+	add(&terModelWayFlagRadius, "terModelWayFlagRadius");
+	add(&terModelWayFlagSpeed, "terModelWayFlagSpeed");
+	add(&terTextureField01, "terTextureField01");
+	add(&terTextureField02, "terTextureField02");
+	add(&terTextureHologram, "terTextureHologram");
+	add(&terTextureUnitSelection, "terTextureUnitSelection");
+	add(&terTextureCongregationUnit, "terTextureCongregationUnit");
+	add(&terTextureCongregationProtection, "terTextureCongregationProtection");
+	add(&terTextureCongregationAnnihilation, "terTextureCongregationAnnihilation");
+	add(&terTextureATCFireTrail, "terTextureATCFireTrail");
+	add(&terTextureBlockFireTrail, "terTextureBlockFireTrail");
+	add(&terTextureFighterFlyTrail, "terTextureFighterFlyTrail");
+	add(&terTextureFighterFireTrail, "terTextureFighterFireTrail");
+	add(&terTextureSoldierFireTrail, "terTextureSoldierFireTrail");
+	add(&terTextureBomberFlyTrail, "terTextureBomberFlyTrail");
+	add(&terTextureOfficerFireTrail, "terTextureOfficerFireTrail");
+	add(&terTextureTechnicFireTrail, "terTextureTechnicFireTrail");
+	add(&terTexturePortFireTrail, "terTexturePortFireTrail");
+	add(&terTextureLaserFireTrail, "terTextureLaserFireTrail");
+	add(&terTextureDebrisFlyTrail, "terTextureDebrisFlyTrail");
+	add(&terTextureLaserTrail, "terTextureLaserTrail");
+	add(&terTextureEnergyLinkTrail, "terTextureEnergyLinkTrail");
+	add(&terTextureFreezeTrail, "terTextureFreezeTrail");
+	add(&terTextureLaserSize, "terTextureLaserSize");
+	add(&terTextureLaser, "terTextureLaser");
+	add(&terTextureLaserSizeZ, "terTextureLaserSizeZ");
+	add(&terTextureLaserZ, "terTextureLaserZ");
+	add(&terShootMapTest, "terShootMapTest");
+	add(&terShootUnitTest, "terShootUnitTest");
+	add(&terOfficerFreezeTime, "terOfficerFreezeTime");
+	add(&terTechnicHealTime, "terTechnicHealTime");
+	add(&terScumStormTurnAngle, "terScumStormTurnAngle");
+	add(&terScumStormTurnAngleDelta, "terScumStormTurnAngleDelta");
+	add(&terScumStormTurnDelay, "terScumStormTurnDelay");
+	add(&terInvisibilityTime, "terInvisibilityTime");
+	add(&terInvisibilityTimeMax, "terInvisibilityTimeMax");
+	add(&terInvisibilityCoeff, "terInvisibilityCoeff");
+	add(&FrameRepairElementsPerQuant, "FrameRepairElementsPerQuant");
+	add(&small_camera_x, "small_camera_x");
+	add(&small_camera_y, "small_camera_y");
+	add(&small_camera_rect_dx, "small_camera_rect_dx");
+	add(&small_camera_rect_dy, "small_camera_rect_dy");
+	add(&small_model_rate, "small_model_rate");
+	add_parameter_section(this);
+}
+};
+static GameConfig_ParameterSection GameConfig_ParameterSectionObject;
+#endif  //  _PRM_EDIT_
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: GameConfig
+//////////////////////////////////////////////////////////////////////////////////////////////

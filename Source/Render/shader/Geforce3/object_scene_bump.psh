@@ -1,0 +1,47 @@
+#include "..\shade.inl"
+//c4 - ambient
+//c5 - diffuse
+//c6 - specular
+
+ps.1.1
+
+// ambient color
+def c0, MSHADE, MSHADE, MSHADE, SHADE
+def c3, -0.75,-0.75,-0.75,-0.75
+
+//tex t0   //texture
+//tex t1	 //bump map
+//tex t2   //shadow map
+
+//diffuse bump
+//dp3_sat r1, t1_bx2, v0_bx2
+//mad r1,r1,c5,c5
+//mul r0,r1,t0
+
+//specular bump
+//dp3_sat r1, t1_bx2, v1_bx2
+//mad_x4_sat r1, r1, r1, c3
+//mad r0,r1,c6,r0
+
+//mad r1.rgb, t2, c0, c0.a
+//mul r0.rgb, r0, r1
+
+tex t0   //shadow map
+tex t1   //texture
+tex t2	 //bump map
+texcoord t3 //point light
+
+//diffuse bump
+dp3_sat r1, t2, v0_bx2
+mad r1,r1,c5,c5
+mul r0,r1,t1
+
+//specular bump
+dp3_sat r1, t2, v1_bx2
+mad_x4_sat r1, r1, r1, c3
+mad r0,r1,c6,r0
+
+mad r1.rgb, t0, c0, c0.a
+
+//mul r0.rgb, r0, r1
+mad r0.rgb, r0, r1, t3

@@ -1,0 +1,2486 @@
+#include "SoundScript.inl"
+
+section SoundScriptPrm( declaration = "Sound\Scripts\SoundScript.hi", definition = "Sound\Scripts\SoundScript.cppi")
+{
+
+struct SoundDeltaPrm {
+	int random = 0;	// выбирать частоту звука случайно при его запуске
+			
+	float up = 1.5; // Во сколько раз частота звука может увеличиваться (0..2)
+	float down = 0.5; //Во сколько раз частота звука может увеличиться (0..20)
+};
+
+struct SoundSetupPrm
+{
+	string name = "";
+	float volume = 1.0; // Громкость звука 0..1 (По умолчанию: 1)
+	float volmin = 0.0; // Минимальная громкость звука 0..1 (По умолчанию: 0)
+	
+	int language_dependency = 0; // 1 если звук разный для разных языков
+	int belligerent_dependency = 0; // 1 если звук разный для разных воюющих сторон
+	
+	string* soundName = new string[int soundCount] {}; //Название звука (таких полей может быть несколько, тогда поле выбирается по rnd)
+	float radius = 100; //Величина объекта (только в 3D) с этого момента громкость звука начинает убывать (По умолчанию: 50)
+	float max_radius = -1; //Максимальное расстояние до объекта, после которого звук перестаёт быть слышимым (По умолчанию: oo)
+
+	//Максимальное количество одновременно звучащих звуков (По умолчанию: 5)
+	//В случае 2D при попытке загрузить больше, чем max_num_sound звуков - звук не запускается.
+	//В случае 3D:
+	//    если max_num_sound == 1, запускается только 1 звук, последующие не запускаются.
+	//    если max_num_sound>1, запускается все звуки, но слышны только ближайшие.
+	int max_num_sound = 25;
+
+	SoundDeltaPrm* delta = 0;
+};
+
+struct SoundScriptPrm
+{
+	int is3D = 0; // 1 если звуки трёхмерные
+	string name = "";
+	SoundSetupPrm* data = new SoundSetupPrm[int size] { };
+};
+
+
+// Префикс имени файла для звуков, которые разные для разных воюющих сторон.
+string soundBelligerentFileNamePrefix[int soundBelligerentCount] = { "exodus_", "harkback_", "empire_" };
+
+SoundScriptPrm interfaceSoundPrm = {
+	name = "interface";
+	data = new SoundSetupPrm[] {
+		{
+			name = "Struct_Event_Just_Stoped";
+			max_num_sound = 1;  
+			soundName = new string[] { "Structures\\Struct_Event_Just_Stoped" };
+		},
+		{
+			name = "building_set";
+			soundName = new string[] { "Structures\\Struct_Event_Hologram_Set" };
+			max_num_sound = 1;  
+		},
+		{
+			name = "button_press";
+			max_num_sound = 1;          
+			soundName = new string[] { "button_press" };
+		},
+		{
+			name = "unable_build";
+			max_num_sound = 1;
+			soundName = new string[] { "unable_build" };
+		}
+	};
+};
+
+SoundScriptPrm mainmenuSoundPrm = {
+	name = "mainmenu";
+	data = new SoundSetupPrm[] {
+		{
+			name = "mainmenu_button";
+			soundName = new string[] { "menu\\mainmenu_button" };
+			max_num_sound = 1;
+			volume = 0.8;
+		},
+		{
+			name = "menu_toggle";
+			soundName = new string[] { "menu\\menu_toggle" };
+			max_num_sound = 1;
+			volume = 0.4;
+		},
+		{
+			name = "menu_rectangle";
+			soundName = new string[] { "menu\\menu_rectangle" };
+			max_num_sound = 2;
+		},
+		{
+			name = "menu_button_switth_1";
+			soundName = new string[] { "menu\\menu_button_switch_1" };
+			max_num_sound = 2;
+			volume = 0.2;
+		},
+		{
+			name = "menu_button_switth_2";
+			soundName = new string[] { "menu\\menu_button_switch_2" };
+			volume = 0.4;
+			max_num_sound = 2;
+		},
+		{
+			name = "mainmenu_clock";
+			soundName = new string[] { "clock" };
+			max_num_sound = 8;
+			volume = 0.4;
+			delta = new SoundDeltaPrm { random = 1; up = 2.2; down = 0.4; };
+		}
+	};
+};
+
+SoundScriptPrm voicesSoundPrm = {
+	name = "voices";
+	data = new SoundSetupPrm[] {
+		{
+			name = "BallisticGun_Charged";
+			soundName = new string[] { "Voice\\Voice_BallisticGun_Charged" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{	
+			name = "BallisticGun_Destroyed";
+			soundName = new string[] { "Voice\\Voice_BallisticGun_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "BallisticGun_Ready";
+			soundName = new string[] { "Voice\\Voice_BallisticGun_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "BMaster_Back2Frame";
+			soundName = new string[] { "Voice\\Voice_BMaster_Back2Frame0", "Voice\\Voice_BMaster_Back2Frame1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "BMaster_Moves";
+			soundName = new string[] { "Voice\\Voice_BMaster_Moves0", "Voice\\Voice_BMaster_Moves1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "BMaster_Selected";
+			soundName = new string[] { "Voice\\Voice_BMaster_Selected0", "Voice\\Voice_BMaster_Selected1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Brigadier_Back2Frame";
+			soundName = new string[] { "Voice\\Voice_Brigadier_Back2Frame0", "Voice\\Voice_Brigadier_Back2Frame1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Brigadier_Moves";
+			soundName = new string[] { "Voice\\Voice_Brigadier_Moves0", "Voice\\Voice_Brigadier_Moves1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Brigadier_Selected";
+			soundName = new string[] { "Voice\\Voice_Brigadier_Selected" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Building_Destroyed";
+			soundName = new string[] { "Voice\\Voice_Building_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Building_Disassembled";
+			soundName = new string[] { "Voice\\Voice_Building_Disassembled" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Building_Ready";
+			soundName = new string[] { "Voice\\Voice_Building_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Building_Under_Attack";
+			soundName = new string[] { "Voice\\Voice_Building_Under_Attack" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ECore_Destroyed";
+			soundName = new string[] { "Voice\\Voice_ECore_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ECore_Ready";
+			soundName = new string[] { "Voice\\Voice_ECore_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ECore_Under_Attack";
+			soundName = new string[] { "Voice\\Voice_ECore_Under_Attack" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Energy_Collector_Empty";
+			soundName = new string[] { "Voice\\Voice_Energy_Collector_Empty" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Energy_Not_Enough";
+			soundName = new string[] { "Voice\\Voice_Energy_Not_Enough0", "Voice\\Voice_Energy_Not_Enough1", "Voice\\Voice_Energy_Not_Enough2" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Allarm";
+			soundName = new string[] { "Voice\\Voice_Frame_Allarm" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_BMaster_Ready";
+			soundName = new string[] { "Voice\\Voice_Frame_BMaster_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Brigadier_Ready";
+			soundName = new string[] { "Voice\\Voice_Frame_Brigadier_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Deinstalled";
+			soundName = new string[] { "Voice\\Voice_Frame_Deinstalled" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Installed";
+			soundName = new string[] { "Voice\\Voice_Frame_Installed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Move";
+			soundName = new string[] { "Voice\\Voice_Frame_Move0", "Voice\\Voice_Frame_Move1", "Voice\\Voice_Frame_Move2", "Voice\\Voice_Frame_Move3" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Prod_Started";
+			soundName = new string[] { "Voice\\Voice_Frame_Prod_Started" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Selected";
+			soundName = new string[] { "Voice\\Voice_Frame_Selected" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Teleportation";
+			soundName = new string[] { "Voice\\Voice_Frame_Teleportation" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Frame_Under_Attack";
+			soundName = new string[] { "Voice\\Voice_Frame_Under_Attack0", "Voice\\Voice_Frame_Under_Attack1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "HowitzerGun_Destroyed";
+			soundName = new string[] { "Voice\\Voice_HowitzerGun_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "HowitzerGun_Ready";
+			soundName = new string[] { "Voice\\Voice_HowitzerGun_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Labor_Destroyed";
+			soundName = new string[] { "Voice\\Voice_Labor_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Labor_Ready";
+			soundName = new string[] { "Voice\\Voice_Labor_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Labor_Under_Attack";
+			soundName = new string[] { "Voice\\Voice_Labor_Under_Attack" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Labor_Upgrade_Finished";
+			soundName = new string[] { "Voice\\Voice_Labor_Upgrade_Finished" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "LaserGun_Destroyed";
+			soundName = new string[] { "Voice\\Voice_LaserGun_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "LaserGun_Ready";
+			soundName = new string[] { "Voice\\Voice_LaserGun_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "MMP_Convert_Command";
+			soundName = new string[] { "Voice\\Voice_MMP_Convert_Command" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "PShield_Global_Active";
+			soundName = new string[] { "Voice\\Voice_PShield_Global_Active" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "PShield_Global_Off";
+			soundName = new string[] { "Voice\\Voice_PShield_Global_Off" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "PShield_Local_Active";
+			soundName = new string[] { "Voice\\Voice_PShield_Local_Active" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "PShield_Local_Off";
+			soundName = new string[] { "Voice\\Voice_PShield_Local_Off" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "RocketGun_Destroyed";
+			soundName = new string[] { "Voice\\Voice_RocketGun_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "RocketGun_Ready";
+			soundName = new string[] { "Voice\\Voice_RocketGun_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ScourgeNavigator_Charged";
+			soundName = new string[] { "Voice\\Voice_ScourgeNavigator_Charged" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ScourgeNavigator_Destroyed";
+			soundName = new string[] { "Voice\\Voice_ScourgeNavigator_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ScourgeNavigator_Ready";
+			soundName = new string[] { "Voice\\Voice_ScourgeNavigator_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Scourge_activity_detected";
+			soundName = new string[] { "Voice\\Voice_Scourge_activity_detected" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ScumDisruptor_Charged";
+			soundName = new string[] { "Voice\\Voice_ScumDisruptor_Charged" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ScumDisruptor_Destroyed";
+			soundName = new string[] { "Voice\\Voice_ScumDisruptor_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "ScumDisruptor_Ready";
+			soundName = new string[] { "Voice\\Voice_ScumDisruptor_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Squad_Attacks";
+			soundName = new string[] { "Voice\\Voice_Squad_Attacks0", "Voice\\Voice_Squad_Attacks1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Squad_Moves";
+			soundName = new string[] { "Voice\\Voice_Squad_Moves0", "Voice\\Voice_Squad_Moves1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Squad_Selected";
+			soundName = new string[] { "Voice\\Voice_Squad_Selected0", "Voice\\Voice_Squad_Selected1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Squad_Transform_Finished";
+			soundName = new string[] { "Voice\\Voice_Squad_Transform_Finished" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Squad_Transform_Start";
+			soundName = new string[] { "Voice\\Voice_Squad_Transform_Start" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Squad_Under_Attack";
+			soundName = new string[] { "Voice\\Voice_Squad_Under_Attack0", "Voice\\Voice_Squad_Under_Attack1" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "SubchaserGun_Destroyed";
+			soundName = new string[] { "Voice\\Voice_SubchaserGun_Destroyed" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "SubchaserGun_Ready";
+			soundName = new string[] { "Voice\\Voice_SubchaserGun_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Terraforming_Finished";
+			soundName = new string[] { "Voice\\Voice_Terraforming_Complete", "Voice\\Voice_Terraforming_Finished" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Terraforming_Started";
+			soundName = new string[] { "Voice\\Voice_Terraforming_initiated", "Voice\\Voice_Terraforming_Started" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		},
+		{
+			name = "Unit_Ready";
+			soundName = new string[] { "Voice\\Voice_Unit_Ready" };
+			max_num_sound = 1;
+			language_dependency = 1;
+			belligerent_dependency = 1;
+		}
+	};
+};
+
+SoundScriptPrm unitsSoundPrm = {
+	name = "units";
+	is3D = 1;
+	data = new SoundSetupPrm[] {
+		{
+			name = "field_start";
+			soundName = new string[] { "Process\\Proc_Field_Deactivate" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 400;
+			max_radius = 2000;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "field_stop";
+			soundName = new string[] { "Process\\Proc_Field_Activate" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 400;
+			max_radius = 2000;
+			max_num_sound = 1;
+		},
+
+
+		{
+			name = "frame_install";
+			soundName = new string[] { "Structures\\Struct_Proc_Frame_Installation" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 200;
+			max_radius = 2000;
+		},
+
+		{
+			name = "frame_uninstall";
+			soundName = new string[] { "Structures\\Struct_Proc_Frame_Uninstallation" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 200;
+			max_radius = 2000;
+		},
+
+		{
+			name = "core_install";
+			soundName = new string[] { "Structures\\Struct_Proc_Core_Installation" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+
+		},
+
+		{
+			name = "core_uninstall";
+			soundName = new string[] { "Structures\\Struct_Proc_Core_Uninstallation" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "core_connect";
+			soundName = new string[] { "Structures\\Struct_Proc_EnergyCore_Connecting" };
+			radius = 300;
+			max_radius = 2000;
+		},
+
+
+		// Brigadier
+
+
+		{
+			name = "digger_active";
+			soundName = new string[] { "Units\\Unit_Proc_Prod_TerrainMaster" };
+			volume = 0.3;
+			volmin = 0;
+			delta = new SoundDeltaPrm { random = 1; up = 1.2; down = 0.9; };
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		// BuildMaster
+
+		{
+			name = "block_put";
+			soundName = new string[] { "Units\\Unit_Proc_Prod_BuildMaster" };
+			volume = 0.5;
+			max_radius = 2000;
+			max_num_sound = 5;
+		},
+
+		// Environment
+
+		{
+			name = "tree_falling";
+			volume = 0.5;
+			soundName = new string[] { "tree_falling" };
+			delta = new SoundDeltaPrm { random = 1; up = 1.2; down = 0.8; };
+			radius = 100;
+			max_radius = 1500;
+		},
+
+
+		// Move
+
+		{
+			name = "move_brigadier";
+			soundName = new string[] { "Units\\Unit_Move_TerrainMaster" };
+			volume = 0.8;
+			volmin = 0.1;
+			delta = new SoundDeltaPrm { up = 2.5; down = 1; };
+			max_radius = 2000;
+		},
+
+		{
+			name = "move_build_master";
+			soundName = new string[] { "Units\\Unit_Move_BuildMaster" };
+			volume = 0.8;
+			volmin = 0.1;
+			delta = new SoundDeltaPrm { up = 2.5; down = 1; };
+			max_radius = 2000;
+		},
+
+		{
+			name = "move_frame";
+			soundName = new string[] { "Structures\\Struct_Proc_Move_Frame" };
+			volume = 0.6;
+			volmin = 0.1;
+			delta = new SoundDeltaPrm { up = 1.8; down = 0.8; };
+			max_radius = 2000;
+
+		},
+
+		{
+			name = "light_unit_move";
+			soundName = new string[] { "move_tank_mid" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 50;
+			max_radius = 250;
+			max_num_sound = 4;
+			delta = new SoundDeltaPrm { up = 1.2; down = 0.8; };
+		},
+
+		{
+			name = "subterra_missile_move";
+			soundName = new string[] { "Missiles\\Missile_Fly_Extirpator" };
+			volume = 0.4;
+			volmin = 0;
+			max_radius = 500;
+			delta = new SoundDeltaPrm { up = 1.2; down = 0.8; };
+		},
+
+		// Shots
+
+		{
+			name = "Unit_Shot_Ceptor";
+			soundName = new string[] { "Units\\Unit_Shot_Ceptor" };
+			volume = 0.7;
+			radius = 150;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+
+		{
+			name = "soldier_fire";
+			soundName = new string[] { "Units\\Unit_Shot_Soldier" };
+			volume = 0.5;
+			delta = new SoundDeltaPrm { up = 2; down = 0.5; };
+			radius = 200;
+			max_radius = 1000;
+			max_num_sound = 10;
+		},
+
+		{
+			name = "Unit_Shot_Officer";
+			soundName = new string[] { "Units\\Unit_Shot_Officer" };
+			volume = 0.5;
+			radius = 150;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Technician";
+			soundName = new string[] { "Units\\Unit_Shot_Technician" };
+			volume = 1;
+			radius = 200;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+
+		{
+			name = "Unit_Shot_Gyroid";
+			soundName = new string[] { "Units\\Unit_Shot_Gyroid" };
+			volume = 0.5;
+			radius = 200;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Disintegrator";
+			soundName = new string[] { "Units\\Unit_Shot_Disintegrator" };
+			volume = 0.6;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Splitter";
+			soundName = new string[] { "Units\\Unit_Shot_Splitter" };
+			volume = 0.6;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Twister";
+			soundName = new string[] { "Units\\Unit_Shot_Twister" };
+			volume = 0.6;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Leamo";
+			soundName = new string[] { "Units\\Unit_Shot_Leamo" };
+			volume = 0.8;
+			volmin = 0.1;
+			radius = 200;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Strafer";
+			soundName = new string[] { "Units\\Unit_Shot_Strafer" };
+			volume = 0.6;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Sniper";
+			soundName = new string[] { "Units\\Unit_Shot_Sniper" };
+			volume = 0.5;
+			radius = 200;
+			max_radius = 1000;
+			max_num_sound = 4;
+		},
+
+		{
+			name = "Unit_Shot_Rocker";
+			soundName = new string[] { "Units\\Unit_Shot_Rocker" };
+			volume = 1;
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 6;
+		},        
+
+		{
+			name = "Unit_Shot_RProjector";
+			soundName = new string[] { "Units\\Unit_Shot_RProjector" };
+			volume = 0.8;
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 6;
+		},        
+
+		{
+			name = "Unit_Shot_Extirpator";
+			soundName = new string[] { "Units\\Unit_Shot_Extirpator" };
+			volume = 0.6;
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 6;
+		},        
+
+		{
+			name = "Unit_Shot_Leech";
+			soundName = new string[] { "Units\\Unit_Shot_Leech" };
+			volume = 0.7;
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 6;
+		},        
+
+		{
+			name = "Unit_Shot_Thrower";
+			soundName = new string[] { "Units\\Unit_Shot_Thrower" };
+			volume = 0.7;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Mortar";
+			soundName = new string[] { "Units\\Unit_Shot_Mortar" };
+			volume = 0.8;
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Wargon";
+			soundName = new string[] { "Units\\Unit_Shot_Wargon" };
+			volume = 1;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+
+		{
+			name = "Unit_Shot_Bombie";
+			soundName = new string[] { "Units\\Unit_Shot_Bombie" };
+			volume = 1;
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 6;
+		},
+
+		    
+		// Explosions
+
+
+		{
+			name = "explosion_heavy";
+		soundName = new string[] { "Units\\Unit_Explosion_Heavy" };
+			radius = 350;
+			max_radius = 2000;
+			max_num_sound = 7;
+
+		},
+
+		{
+			name = "explosion_mid";
+		soundName = new string[] { "Units\\Unit_Explosion_Middle" };
+			radius = 350;
+			max_radius = 2000;
+			max_num_sound = 7;
+
+		},
+
+		{
+			name = "explosion_lite";
+		soundName = new string[] { "Units\\Unit_Explosion_Light" };
+			radius = 350;
+			max_radius = 2000;
+			max_num_sound = 7;
+
+		},
+
+		{
+			name = "explosion_start";
+			soundName = new string[] { "explosion_start" };
+			radius = 350;
+			max_radius = 2000;
+		},
+
+
+		// Transforming
+
+		{
+			name = "transforming_mid_move";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_mid_move" };
+		},
+
+		{
+			name = "transforming_small_move";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_small_move" };
+		},
+
+
+		{
+			name = "transforming_units_disappear";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_units_disappear" };
+		},
+
+		{
+			name = "transforming_base_appear";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_base_appear" };
+		},
+
+		{
+			name = "transforming_large_appear";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_large_appear" };
+		},
+
+		{
+			name = "transforming_divide";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_divide" };
+		},
+
+		{
+			name = "transforming_base_collapse";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_base_collapse" };
+		},
+
+		{
+			name = "transforming_units_appear";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_units_appear" };
+		},
+
+		{
+			name = "transforming_small_appear";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_small_appear" };
+		},
+
+		{
+			name = "transforming_units_collapse";
+			radius = 200;
+			max_radius = 2000;
+			soundName = new string[] { "transforming_units_collapse" };
+		},
+
+		// Filth
+
+		{
+			name = "ant_die";
+			soundName = new string[] { "Filth\\Filth_Die_Ant" };
+			delta = new SoundDeltaPrm { random = 1; up = 1.3; down = 0.7; };
+			volume = 0.7;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 7;
+
+		},
+
+		{
+			name = "wasp_die";
+			soundName = new string[] { "Filth\\Filth_Die_Wasp" };
+			delta = new SoundDeltaPrm { random = 1; up = 1; down = 0.7; };
+			volume = 0.7;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 7;
+
+		},
+
+		{
+			name = "Filth_Move_Wasp";
+			volume = 0.5;
+			soundName = new string[] { "Filth\\Filth_Move_Wasp" };
+			max_radius = 450;
+			delta = new SoundDeltaPrm { random = 1; up = 1.3; down = 0.7; };
+			max_num_sound = 4;
+
+		},
+
+		{
+			name = "Filth_Move_Ant";
+			volume = 0.4;
+			soundName = new string[] { "Filth\\Filth_Move_Ant" };
+			max_num_sound = 12;
+			max_radius = 2000;
+			delta = new SoundDeltaPrm { random = 1; up = 1; down = 0.6; };
+
+		},
+
+		{
+			name = "wasp_nexus";
+			soundName = new string[] { "wasp_nexus" };
+			radius = 350;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "ant_nexus";
+			soundName = new string[] { "ant_nexus" };
+			radius = 350;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Struct_Proc_Open_Alpha";
+			soundName = new string[] { "Structures\\Struct_Proc_Open_Alpha" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Proc_Open_Omega";
+			soundName = new string[] { "Structures\\Struct_Proc_Open_Omega" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Proc_Work_Omega";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_Omega" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Move_Frame";
+			soundName = new string[] { "Structures\\Struct_Proc_Move_Frame" };
+			volume = 1.0;
+			volmin = 0.9;
+			radius = 100;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Proc_Work_Frame_Closed";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_Frame_Closed" };
+			volume = 0.6;
+			volmin = 0.5;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_Frame_Opened";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_Frame_Opened" };
+			volume = 0.8;
+			volmin = 0.5;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_EnergyCore";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_EnergyCore" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_Transmitter";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_EnergyCore" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_EnergyCollector";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_EnergyCollector" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_SoldierPlant";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_SoldierPlant" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_OfficerPlant";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_OfficerPlant" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_TechnicPlant";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_TechnicPlant" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_LaserLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_LaserLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_RocketLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_RocketLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_BombLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_BombLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_FlyLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_FlyLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_SubLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_SubLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_ExodusLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_ExodusLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_EmpireLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_EmpireLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_HarkbackLab";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_HarkbackLab" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_CommandCenter";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_CommandCenter" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_LaserGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_LaserGun" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_RocketGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_RocketGun" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_HowitzerGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_HowitzerGun" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_SubterraGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_SubterraGun" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_Ballistic";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_Ballistic" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_Disruptor";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_Disruptor" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Work_Navigator";
+			soundName = new string[] { "Structures\\Struct_Proc_Work_Navigator" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2500;
+			max_num_sound = 1;
+		},
+
+		{
+			name = "Struct_Proc_Shot_LaserGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Shot_LaserGun" };
+			volume = 0.5;
+			volmin = 0.1;
+			radius = 250;
+			max_radius = 1000;
+			max_num_sound = 5;
+			delta = new SoundDeltaPrm { random = 1; up = 1.5; down = 0.5; };
+		},
+
+		{
+			name = "Struct_Proc_Shot_RocketGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Shot_RocketGun" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 250;
+			max_radius = 2000;
+			max_num_sound = 5;
+			delta = new SoundDeltaPrm { random = 1; up = 1.2; down = 0.7; };
+		},
+
+		{
+			name = "Struct_Proc_Shot_HowitzerGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Shot_HowitzerGun" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 5;
+			delta = new SoundDeltaPrm { random = 1; up = 1.2; down = 0.7; };
+		},
+
+		{
+			name = "Struct_Proc_Shot_SubterraGun";
+			soundName = new string[] { "Structures\\Struct_Proc_Shot_SubterraGun" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 5;
+		},
+
+		{
+			name = "Struct_Proc_Shot_Ballistic";
+			soundName = new string[] { "Structures\\Struct_Proc_Shot_Ballistic" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Proc_Shot_Disruptor";
+			soundName = new string[] { "Structures\\Struct_Proc_Shot_Disruptor" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Proc_Shot_Navigator";
+			soundName = new string[] { "Structures\\Struct_Proc_Shot_Navigator" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_Frame";
+			soundName = new string[] { "Structures\\Struct_Explosion_Frame" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 500;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_Core";
+			soundName = new string[] { "Structures\\Struct_Explosion_Core" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_Collector";
+			soundName = new string[] { "Structures\\Struct_Explosion_Collector" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_Transmitter";
+			soundName = new string[] { "Structures\\Struct_Explosion_Transmitter" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_LaserLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_LaserLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_RocketLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_RocketLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_BombLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_BombLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_FlyLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_FlyLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_SubLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_SubLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_ExodusLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_ExodusLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_EmpireLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_EmpireLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_HarkbackLab";
+			soundName = new string[] { "Structures\\Struct_Explosion_HarkbackLab" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_CommandCenter";
+			soundName = new string[] { "Structures\\Struct_Explosion_CommandCenter" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_LaserGun";
+			soundName = new string[] { "Structures\\Struct_Explosion_LaserGun" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_RocketGun";
+			soundName = new string[] { "Structures\\Struct_Explosion_RocketGun" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_HowitzerGun";
+			soundName = new string[] { "Structures\\Struct_Explosion_HowitzerGun" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_SubterraGun";
+			soundName = new string[] { "Structures\\Struct_Explosion_SubterraGun" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_Ballistic";
+			soundName = new string[] { "Structures\\Struct_Explosion_Ballistic" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_Disruptor";
+			soundName = new string[] { "Structures\\Struct_Explosion_Disruptor" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Struct_Explosion_Navigator";
+			soundName = new string[] { "Structures\\Struct_Explosion_Navigator" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 300;
+			max_radius = 2000;
+		},
+
+		{
+			name = "Unit_Shot_Piercer";
+			soundName = new string[] { "Units\\Unit_Shot_Piercer" };
+			volume = 0.9;
+			volmin = 0.5;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Shot_Heater";
+			soundName = new string[] { "Units\\Unit_Shot_Heater" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Unit_Move_Soldier";
+			soundName = new string[] { "Units\\Unit_Move_Soldier" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 50;
+			max_radius = 250;
+			max_num_sound = 4;
+			delta = new SoundDeltaPrm { up = 1.2; down = 0.8; };
+		},
+
+		{
+			name = "Unit_Move_Strafer";
+			soundName = new string[] { "Units\\Unit_Move_Strafer" };
+			volume = 0.8;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Sniper";
+			soundName = new string[] { "Units\\Unit_Move_Sniper" };
+			volume = 0.8;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Digger";
+			soundName = new string[] { "Units\\Unit_Move_Digger" };
+			volume = 0.9;
+			volmin = 0.4;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Scumer";
+			soundName = new string[] { "Units\\Unit_Move_Scumer" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Gyroid";
+			soundName = new string[] { "Units\\Unit_Move_Gyroid" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 5;
+		},
+
+		{
+			name = "Unit_Move_Leamo";
+			soundName = new string[] { "Units\\Unit_Move_Leamo" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Rocker";
+			soundName = new string[] { "Units\\Unit_Move_Rocker" };
+			volume = 0.8;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_RProjector";
+			soundName = new string[] { "Units\\Unit_Move_RProjector" };
+			volume = 0.8;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Ceptor";
+			soundName = new string[] { "Units\\Unit_Move_Ceptor" };
+			volume = 0.8;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Extirpator";
+			soundName = new string[] { "Units\\Unit_Move_Extirpator" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Mortar";
+			soundName = new string[] { "Units\\Unit_Move_Mortar" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Bombie";
+			soundName = new string[] { "Units\\Unit_Move_Bombie" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Wargon";
+			soundName = new string[] { "Units\\Unit_Move_Wargon" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Leech";
+			soundName = new string[] { "Units\\Unit_Move_Leech" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Unseen";
+			soundName = new string[] { "Units\\Unit_Move_Unseen" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Disintegrator";
+			soundName = new string[] { "Units\\Unit_Move_Disintegrator" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Piercer";
+			soundName = new string[] { "Units\\Unit_Move_Piercer" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Splitter";
+			soundName = new string[] { "Units\\Unit_Move_Splitter" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Twister";
+			soundName = new string[] { "Units\\Unit_Move_Twister" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Heater";
+			soundName = new string[] { "Units\\Unit_Move_Heater" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Thrower";
+			soundName = new string[] { "Units\\Unit_Move_Thrower" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Move_Harkback";
+			soundName = new string[] { "Units\\Unit_Move_Harkback" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Unit_Explosion_Base";
+			soundName = new string[] { "Units\\Unit_Explosion_Base" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Fly_Bomb_Mortar";
+			soundName = new string[] { "Missiles\\Missile_Fly_Bomb_Mortar" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Fly_Bomb_Wargon";
+			soundName = new string[] { "Missiles\\Missile_Fly_Bomb_Wargon" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Fly_Bomb_Bombie";
+			soundName = new string[] { "Missiles\\Missile_Fly_Bomb_Bombie" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Missile_Fly_Bomb_Howitzer";
+			soundName = new string[] { "Missiles\\Missile_Fly_Bomb_Howitzer" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Missile_Fly_Scum_Thrower";
+			soundName = new string[] { "Missiles\\Missile_Fly_Scum_Thrower" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Missile_Fly_Rocket_Rocker";
+			soundName = new string[] { "Missiles\\Missile_Fly_Rocket_Rocker" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Missile_Fly_Rocket_RProjector";
+			soundName = new string[] { "Missiles\\Missile_Fly_Rocket_RProjector" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Missile_Fly_Rocket_Ceptor";
+			soundName = new string[] { "Missiles\\Missile_Fly_Rocket_Ceptor" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Missile_Fly_Rocket_Ballistic";
+			soundName = new string[] { "Missiles\\Missile_Fly_Rocket_Ballistic" };
+			volume = 0.9;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 6;
+		},
+
+		{
+			name = "Missile_Explosion_Bomb_Extirpator";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Bomb_Extirpator" };
+			volume = 1.2;
+			volmin = 0.7;
+			radius = 150;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Bomb_SubterraGun";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Bomb_SubterraGun" };
+			volume = 0.8;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Bomb_Mortar";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Bomb_Mortar" };
+			volume = 0.8;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Bomb_Wargon";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Bomb_Wargon" };
+			volume = 1.2;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Bomb_Bombie";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Bomb_Bombie" };
+			volume = 1.2;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Bomb_Howitzer";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Bomb_Howitzer" };
+			volume = 1.4;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Scum_Thrower";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Scum_Thrower" };
+			volume = 1.2;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Rocket_Rocker";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Rocket_Rocker" };
+			volume = 1.0;
+			volmin = 0.4;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Rocket_RProjector";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Rocket_RProjector" };
+			volume = 1.0;
+			volmin = 0.7;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Rocket_Ceptor";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Rocket_Ceptor" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 250;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Rocket_Ballistic";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Rocket_Ballistic" };
+			volume = 1.0;
+			volmin = 0.5;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Ant";
+			soundName = new string[] { "Filth\\Filth_Create_Ant" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Rat";
+			soundName = new string[] { "Filth\\Filth_Create_Rat" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Worm";
+			soundName = new string[] { "Filth\\Filth_Create_Worm" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Wasp";
+			soundName = new string[] { "Filth\\Filth_Create_Wasp" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Ghost";
+			soundName = new string[] { "Filth\\Filth_Create_Ghost" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Eye";
+			soundName = new string[] { "Filth\\Filth_Create_Eye" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Crow";
+			soundName = new string[] { "Filth\\Filth_Create_Crow" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Daemon";
+			soundName = new string[] { "Filth\\Filth_Create_Daemon" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Dragon";
+			soundName = new string[] { "Filth\\Filth_Create_Dragon" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Create_Shark";
+			soundName = new string[] { "Filth\\Filth_Create_Shark" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Rat";
+			soundName = new string[] { "Filth\\Filth_Move_Rat" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Worm";
+			soundName = new string[] { "Filth\\Filth_Move_Worm" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Ghost";
+			soundName = new string[] { "Filth\\Filth_Move_Ghost" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Eye";
+			soundName = new string[] { "Filth\\Filth_Move_Eye" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Crow";
+			soundName = new string[] { "Filth\\Filth_Move_Crow" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Daemon";
+			soundName = new string[] { "Filth\\Filth_Move_Daemon" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Dragon";
+			soundName = new string[] { "Filth\\Filth_Move_Dragon" };
+			volume = 0.5;
+			radius = 100;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Shark1";
+			soundName = new string[] { "Filth\\Filth_Move_Shark1" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Move_Shark2";
+			soundName = new string[] { "Filth\\Filth_Move_Shark2" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Rat";
+			soundName = new string[] { "Filth\\Filth_Attack_Rat" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Worm";
+			soundName = new string[] { "Filth\\Filth_Attack_Worm" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			delta = new SoundDeltaPrm { random = 1; up = 1; down = 0.6; };
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Wasp";
+			soundName = new string[] { "Filth\\Filth_Attack_Wasp" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Ghost";
+			soundName = new string[] { "Filth\\Filth_Attack_Ghost" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Eye";
+			soundName = new string[] { "Filth\\Filth_Attack_Eye" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Crow";
+			soundName = new string[] { "Filth\\Filth_Attack_Crow" };
+			volume = 0.7;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Daemon";
+			soundName = new string[] { "Filth\\Filth_Attack_Daemon" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Dragon";
+			soundName = new string[] { "Filth\\Filth_Attack_Dragon" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Attack_Shark";
+			soundName = new string[] { "Filth\\Filth_Attack_Shark" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Ant";
+			soundName = new string[] { "Filth\\Filth_Die_Ant" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Rat";
+			soundName = new string[] { "Filth\\Filth_Die_Rat" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Worm";
+			soundName = new string[] { "Filth\\Filth_Die_Worm" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Wasp";
+			soundName = new string[] { "Filth\\Filth_Die_Wasp" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Ghost";
+			soundName = new string[] { "Filth\\Filth_Die_Ghost" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Eye";
+			soundName = new string[] { "Filth\\Filth_Die_Eye" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Crow";
+			soundName = new string[] { "Filth\\Filth_Die_Crow" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Daemon";
+			soundName = new string[] { "Filth\\Filth_Die_Daemon" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Dragon";
+			soundName = new string[] { "Filth\\Filth_Die_Dragon" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Filth_Die_Shark";
+			soundName = new string[] { "Filth\\Filth_Die_Shark" };
+			volume = 0.9;
+			volmin = 0.1;
+			radius = 100;
+			max_radius = 2000;
+			max_num_sound = 7;
+		},
+
+
+		{
+			name = "Proc_Geo_Face";
+			soundName = new string[] { "Process\\Proc_Geo_Face" };
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Proc_Geo_Vulcan";
+			soundName = new string[] { "Process\\Proc_Geo_Vulcan" };
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Proc_Geo_Rift";
+			soundName = new string[] { "Process\\Proc_Geo_Rift" };
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Proc_Geo_Mountain";
+			soundName = new string[] { "Process\\Proc_Geo_Mountain" };
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Proc_Geo_Crevice";
+			soundName = new string[] { "Process\\Proc_Geo_Crevice" };
+			volume = 0.4;
+			radius = 200;
+			max_radius = 1500;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Fly_Vulcan";
+			soundName = new string[] { "Missiles\\Missile_Fly_Vulcan" };
+			volume = 0.6;
+			volmin = 0.3;
+			radius = 100;
+			max_radius = 1000;
+			max_num_sound = 7;
+		},
+
+		{
+			name = "Missile_Explosion_Vulcan";
+			soundName = new string[] { "Missiles\\Missile_Explosion_Vulcan" };
+			volume = 1.0;
+			volmin = 0.3;
+			radius = 200;
+			max_radius = 2000;
+			max_num_sound = 7;
+		}
+	};
+};
+
+} // section SoundScriptPrm
+

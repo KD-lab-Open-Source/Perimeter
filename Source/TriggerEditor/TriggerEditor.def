@@ -1,0 +1,6 @@
+; TriggerEditor.def : Declares the module parameters for the DLL.
+
+LIBRARY      "TriggerEditor"
+DESCRIPTION  'TriggerEditor Windows Dynamic Link Library'
+
+EXPORTS

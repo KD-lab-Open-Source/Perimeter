@@ -1,0 +1,579 @@
+if ! $(gPYTHON_INCLUDED)
+{
+gPYTHON_INCLUDED = true ;
+
+import testing ;
+    
+# Do some OS-specific setup
+if $(NT)
+{
+    CATENATE = type ;
+}
+else if $(UNIX)
+{
+    CATENATE = cat ;
+}
+
+PYTHON_VERSION ?= 2.2 ;
+
+# Strip the dot from the Python version in order to be able to name
+# libraries
+PYTHON_VERSION_NODOT
+ = [ MATCH ([0-9]*)\.([0-9]*) : $(PYTHON_VERSION) ]
+      ;
+PYTHON_VERSION_NODOT = $(PYTHON_VERSION_NODOT:J=) ;
+
+local RUN_PATH = $(RUN_PATH) ;
+
+if $(NT) || ( $(UNIX) && $(OS) = CYGWIN )
+{
+    PYTHON_WINDOWS = true ;
+}
+
+if $(PYTHON_WINDOWS)
+{
+    # common properties required for compiling any Python module.
+    PYTHON_PROPERTIES ?=
+      select-nt-python-includes
+      <runtime-link>dynamic
+      <sysinclude>@boost
+      <$(gcc-compilers)><*><define>USE_DL_IMPORT
+      ;
+    
+    CYGWIN_PYTHON_ROOT ?= /usr ;
+    if ! $(NT)
+    {
+        PYTHON_ROOT ?= $(CYGWIN_PYTHON_ROOT) ;
+    }
+    
+    if $(CYGWIN_PYTHON_ROOT) = /usr
+    {
+        CYGWIN_PYTHON_DLL_PATH ?= /bin ;
+    }
+    else
+    {
+        CYGWIN_PYTHON_DLL_PATH ?= $(CYGWIN_PYTHON_ROOT)/bin ;
+    }
+    CYGWIN_PYTHON_VERSION ?= $(PYTHON_VERSION) ;
+    CYGWIN_PYTHON_LIB_PATH ?= $(CYGWIN_PYTHON_ROOT)/lib/python$(CYGWIN_PYTHON_VERSION)/config ;
+      
+    CYGWIN_PYTHON_DEBUG_VERSION ?= $(CYGWIN_PYTHON_VERSION) ;
+    CYGWIN_PYTHON_DEBUG_ROOT ?= /usr/local/pydebug ;
+    CYGWIN_PYTHON_DEBUG_DLL_PATH ?= $(CYGWIN_PYTHON_DEBUG_ROOT)/bin ;
+    CYGWIN_PYTHON_DEBUG_LIB_PATH ?= $(CYGWIN_PYTHON_DEBUG_ROOT)/lib/python$(CYGWIN_PYTHON_DEBUG_VERSION)/config ;
+}
+else if $(UNIX) && $(OS) = MACOSX
+{
+    PYTHON_EMBEDDED_LIBRARY = ;
+}
+else
+{
+    PYTHON_EMBEDDED_LIBRARY = python$(PYTHON_VERSION) dl util ;
+}
+
+
+if $(NT)
+{
+    PYTHON_ROOT ?= c:/tools/python ;
+    
+    # Reconstitute any paths split due to embedded spaces.
+    PYTHON_ROOT = $(PYTHON_ROOT:J=" ") ;
+    
+    PYTHON_LIB_PATH ?= $(PYTHON_ROOT)/libs [ GLOB $(PYTHON_ROOT) : PCbuild ] ;
+
+    PYTHON_INCLUDES ?= $(PYTHON_ROOT)/include ;
+    
+    PYTHON_DLL ?= [ GLOB $(PATH) $(Path) : python$(PYTHON_VERSION_NODOT).dll ] ;
+    PYTHON_DEBUG_DLL ?= [ GLOB $(PATH) $(Path) : python$(PYTHON_VERSION_NODOT)_d.dll ] ;
+    PYTHON_IMPORT_LIB ?= [ GLOB $(PYTHON_LIB_PATH) : libpython$(PYTHON_VERSION_NODOT).* ] ;
+    PYTHON_DEBUG_IMPORT_LIB ?= [ GLOB $(PYTHON_LIB_PATH) : libpython$(PYTHON_VERSION_NODOT).* ] ;
+}
+else if $(UNIX) && $(OS) = MACOSX
+{
+    if ! $(PYTHON_ROOT)
+    {
+        if [ GLOB /System/Library/Frameworks : Python.framework ]
+        {
+            PYTHON_ROOT ?= /System/Library/Frameworks/Python.framework/Versions/$(PYTHON_VERSION) ;
+        }
+        else
+        {
+            PYTHON_ROOT ?= /Library/Frameworks/Python.framework/Versions/$(PYTHON_VERSION) ;
+        }
+    }
+    PYTHON_ROOT = $(PYTHON_ROOT:J=" ") ;
+    PYTHON_INCLUDES ?= $(PYTHON_ROOT)/include/python$(PYTHON_VERSION) ;
+    PYTHON_FRAMEWORK ?= $(PYTHON_ROOT) ;
+    while $(PYTHON_FRAMEWORK:D=) != Python.framework
+    {
+        PYTHON_FRAMEWORK = $(PYTHON_FRAMEWORK:D) ;
+    }
+    PYTHON_FRAMEWORK = $(PYTHON_FRAMEWORK:D)/Python ;
+
+    PYTHON_PROPERTIES ?=
+      <sysinclude>$(PYTHON_INCLUDES)
+      ;
+}
+else if $(UNIX)
+{
+    PYTHON_ROOT ?= /usr/local ;
+    PYTHON_ROOT = $(PYTHON_ROOT:J=" ") ;
+    PYTHON_INCLUDES ?= $(PYTHON_ROOT)/include/python$(PYTHON_VERSION) ;
+    PYTHON_LIB_PATH ?= $(PYTHON_ROOT)/lib/python$(PYTHON_VERSION)/config ;
+
+    PYTHON_PROPERTIES ?=
+      <sysinclude>$(PYTHON_INCLUDES)
+        <library-path>$(PYTHON_LIB_PATH)
+          <default>python-intel-use-gcc-stdlib
+          python-static-multithread
+      ;
+    
+    if $(OS) = OSF
+    {
+        PYTHON_PROPERTIES += <*><*><linkflags>"-expect_unresolved 'Py*' -expect_unresolved '_Py*'" ;
+    }
+    else if $(OS) = AIX
+    {
+        PYTHON_PROPERTIES 
+          += <*><*><linkflags>"-Wl,-bI:$(PYTHON_LIB_PATH)/python.exp"
+            <*><*><find-library>pthreads ;
+    }
+}
+
+#
+# Locate the python executable(s)
+#
+CYGWIN_ROOT ?= c:/cygwin ;
+{
+    for local cyg in "" CYGWIN_
+    {
+        for local d in "" _D
+        {
+            local d_D = _DEBUG ;
+            local debug = $(d$(d)) ; # "" or _DEBUG
+
+            # select base name of variables
+            local var-base = $(cyg)PYTHON$(debug) ; 
+            
+            # Base defaults for the debug build on the non-debug
+            $(var-base)_VERSION ?= $($(cyg)PYTHON_VERSION) ;
+            $(var-base)_ROOT ?= $($(cyg)PYTHON_ROOT) ;
+            
+            # Version number element of executable name
+            local exe-version = $($(var-base)_VERSION) ;
+            if $(NT) && ! $(cyg) { exe-version = $(d:L) ; }
+            
+            # assign default target name
+            local executable = $(cyg)PYTHON$(d) ;
+            $(executable) ?= <$(cyg)EXE$(d)@>python$(exe-version)$(SUFEXE) ;
+
+            # choose the appropriate root directory/ies to search for the target
+            local r = $($(var-base)_ROOT) ;
+            if $(NT)
+            {
+                switch $(r)
+                {
+                    case [/\\]* : # in case of unix-style path
+                      r = $(CYGWIN_ROOT)$(r) $(r) ; # re-root for windows
+                }
+            }
+            
+            # set up search path
+            SEARCH on $($(executable))
+              = $(r)/bin           # Standard locations
+                $(r)               # Standard locations
+                $(r)/PCBuild       # In case building from a windows development Python
+                $(RUN_PATH)        # Just look in the path
+                ;
+        }
+    }
+}
+
+# Normally on Linux, Python is built with GCC.  A "poor QOI choice" in
+# the implementation of the intel tools prevents the use of
+# intel-linked shared libs by a GCC-built executable unless they have
+# been told to use the GCC runtime.  This rule adds the requisite
+# flags to the compile and link lines.
+rule python-intel-use-gcc-stdlib ( toolset variant : non-defaults * )
+{
+    if ( ! $(PYTHON_WINDOWS) )
+      && ( ! <define>BOOST_PYTHON_STATIC_LIB in $(non-defaults) )
+          && [ MATCH (intel) : $(toolset) ]
+    {
+        return <stdlib>gcc ;
+    }
+    else
+    {
+        return ;
+    }
+}
+
+# Force statically-linked embedding applications to be multithreaded
+# on UNIX.
+rule python-static-multithread ( toolset variant : properties * )
+{
+    if ! $(PYTHON_WINDOWS)
+    {
+        local x = <define>BOOST_PYTHON_STATIC_LIB <threading>single ;
+        if $(x) in $(properties)
+        {
+            properties = [ difference $(properties) : <threading>single ] <threading>multi ;
+        }
+    }
+    return $(properties) ;
+}
+
+# select-python-library
+#
+# Ungristed elements of a requirements list are treated as the rule
+# names to be called to transform the property set. This is used when
+# the requirements are too complicated to express otherwise.  This
+# rule selects the right python library when building on Windows.
+rule select-python-library ( toolset variant : properties * )
+{
+    if $(PYTHON_WINDOWS) 
+    {
+        if $(toolset) in $(gcc-compilers)
+        {
+            if <define>BOOST_DEBUG_PYTHON in $(properties)
+            {
+                properties += <library-path>$(CYGWIN_PYTHON_DEBUG_LIB_PATH) <find-library>python$(CYGWIN_PYTHON_DEBUG_VERSION).dll ;
+            }
+            else
+            {
+                properties += <library-path>$(CYGWIN_PYTHON_LIB_PATH) <find-library>python$(CYGWIN_PYTHON_VERSION).dll ;
+            }
+        }
+        else if [ MATCH .*(mingw).* : $(toolset) ]
+        {
+            local lib = $(PYTHON_IMPORT_LIB) ;
+            if <define>BOOST_DEBUG_PYTHON in $(properties)
+            {
+                lib = $(PYTHON_DEBUG_IMPORT_LIB) ;
+            }
+            lib ?= $(PYTHON_DLL) ;
+            if <define>BOOST_DEBUG_PYTHON in $(properties)
+            {
+                lib ?= $(PYTHON_DEBUG_DLL) ;
+            }
+            properties += <library-file>$(lib) ;
+        }
+        else 
+        {
+            properties += <library-path>$(PYTHON_LIB_PATH) ;
+            
+            if $(toolset) != msvc  # msvc compilers auto-find the python library
+            {
+                properties += <library-path>$(PYTHON_LIB_PATH) ;
+                
+                local lib = python$(PYTHON_VERSION_NODOT) ;
+                if <define>BOOST_DEBUG_PYTHON in $(properties)
+                {
+                    lib = python$(PYTHON_VERSION_NODOT)_d ;
+                }
+                properties += <find-library>$(lib) ;
+            } 
+        }
+    }
+    if $(OS) = MACOSX && $(toolset) = darwin
+    {
+        if <target-type>PYD in $(properties)
+        {
+            properties += <link-format>bundle ;
+        }
+        properties += <framework>$(PYTHON_FRAMEWORK) ;
+    }
+    return $(properties) ;
+}
+
+if $(NT)
+{
+    python-nt-sysinclude = [ GLOB $(PYTHON_ROOT) : PC ] ;
+}
+
+rule select-nt-python-includes ( toolset variant : properties * )
+{
+    if $(toolset) in $(gcc-compilers)
+    {
+        local d = "" ; 
+        if <define>BOOST_DEBUG_PYTHON in $(properties)
+        {
+            d = DEBUG_ ;
+        }
+        properties += <sysinclude>$(CYGWIN_PYTHON_$(d)ROOT)/include/python$(CYGWIN_PYTHON_$(d)VERSION) ;
+    }
+    else
+    {
+      properties +=
+          <sysinclude>$(PYTHON_INCLUDES)
+            <sysinclude>$(python-nt-sysinclude) # in case the user is using a source installation
+              ;
+        
+        if ( $(toolset) = cwpro8 ) && ( $(variant) = debug-python )
+        {
+            properties = [ difference $(properties) : <define>_DEBUG ] ;  #it warns about redefinition otherwise.
+        }
+        else
+        {
+            properties += <debug-python><define>_DEBUG ;
+        }
+    }
+    return $(properties) ;
+}
+
+PYTHON_PROPERTIES += 
+        <sysinclude>@boost
+          <stlport-iostream>on
+            select-python-library
+            ;
+
+BOOST_PYTHON_V2_PROPERTIES 
+  = $(PYTHON_PROPERTIES)
+    <metrowerks><*><cxxflags>"-inline deferred" 
+      <cwpro8><*><cxxflags>"-inline deferred"  # added for internal testing purposes
+        <cxx><*><sysinclude>@boost/boost/compatibility/cpp_c_headers
+         <define>BOOST_PYTHON_DYNAMIC_LIB
+      ;
+
+# Extends the RUN_PATH assignment for targets built under Cygwin so
+# that the Python DLL can be found.
+rule add-cygwin-python-run-path ( module )
+{
+    if <define>BOOST_DEBUG_PYTHON in $(gBUILD_PROPERTIES)
+    {
+        gRUN_LD_LIBRARY_PATH($(module)) += $(CYGWIN_PYTHON_DEBUG_DLL_PATH) ;
+    }
+    else
+    {
+        gRUN_LD_LIBRARY_PATH($(module)) += $(CYGWIN_PYTHON_DLL_PATH) ;
+    }
+}
+
+# This is the generator function for Python modules. It deals with the
+# need to change the name of modules compiled with debugging on. This
+# is just a wrapper around the generator for shared libraries,
+# dll-files.
+rule python-files ( module implib ? : sources * )
+{
+    dll-files $(module) $(implib) : $(sources) : PYD ;
+
+    if $(gCURRENT_TOOLSET) in $(gcc-compilers)
+    {
+        if $(PYTHON_WINDOWS)
+        {
+            add-cygwin-python-run-path $(<[-1]) ;
+        }
+        else
+        {
+            gRUN_PATH($(module)) += $(GCC_ROOT_DIRECTORY)/lib ;
+        }
+    }
+}
+
+if $(NT)
+{
+    # Adjust the name of Python modules so that they have the _d
+    # suffix when compiled with python debugging enabled.
+    gNAME_ADJUST(PYD) = name-adjust-PYD ;
+
+    rule name-adjust-PYD ( pyd implib ? : properties * : toolset variant )
+    {
+        # Cygwin python is only happy if compiled modules have a .dll
+        # extension
+        if $(toolset) in $(gcc-compilers)
+        {
+            pyd = $(pyd:S=.dll) ;
+        }
+        else if <define>BOOST_DEBUG_PYTHON in $(properties)
+        {
+            pyd = $(pyd:S=)_d$(pyd:S) ;
+        }
+        return $(pyd) $(implib) ;
+    }
+}
+
+rule Link-PYD
+{
+    if $(UNIX) 
+    {
+        LINK_LIBPATH on $(<) = [ join $(gRUN_LD_LIBRARY_PATH($(<))) : $(SPLITPATH) ] ;
+        
+        if $(OS) = AIX
+        {
+            # explicitly designate the exported init<module> function
+            LINKFLAGS on $(<) += "-e init$(<[1]:B)" ; 
+            Aix-Implib-Action $(<) : $(>) ;
+        }
+    }
+    gRUN_PYTHONPATH($(<)) += $(gLOCATE($(<[1]))) ;
+    .do-link $(<) : $(>) : PYD ;
+}
+
+declare-target-type PYD : <shared-linkable>true ;
+gGENERATOR_FUNCTION(PYD) = python-files ;
+if $(NT)
+{
+    SUFPYD = .pyd $(SUFDLL[2-]) ;
+}
+else if $(OS) = MACOSX
+{
+    SUFPYD = .so $(SUFDLL[2-]) ;
+}
+else
+{
+    SUFPYD = $(SUFDLL) ;
+}
+PYDMODE = $(DLLMODE) ;
+SHARED_TYPES += PYD ;
+
+gTARGET_TYPE_ID(pyd) = PYD ;
+gIS_DEPENDENCY(PYD) = TRUE ;
+
+# Declare a python extension.
+rule extension ( name : sources + : requirements * : default-BUILD * )
+{
+    requirements += $(BOOST_PYTHON_V2_PROPERTIES) ;
+    
+
+    declare-local-target $(name) : $(sources) : $(requirements) : $(default-BUILD) : PYD ;
+}
+
+gGENERATOR_FUNCTION(TEST_PYD) = run-test PYD  ;
+SUFTEST_PYD = .run ;
+
+declare-build-succeed-test RUN_PYD : TEST_PYD ;
+
+# boost-python-runtest target : python-script sources : requirements : local-build : args
+#
+# declare a python module test $(<).test which builds when out-of-date
+#
+# pass --python-test-all on the command-line to force rebuilding
+rule boost-python-runtest (
+  target : python-script sources + : requirements * : local-build * : args * )
+{
+    local gRUN_TEST_ARGS = $(args) ;
+    local gRUN_TEST_INPUT_FILES = [ FGristFiles $(python-script) ] ;
+
+    # tell Jam that the python script is relative to this directory
+    SEARCH on $(gRUN_TEST_INPUT_FILES) = $(SEARCH_SOURCE) ;
+
+    # The user can add additional arguments in PYTHON_TEST_ARGS.
+    local gPYTHON_TEST_ARGS = $(args) $(PYTHON_TEST_ARGS) ;
+    
+    #
+    # Stick the names of the python script and source files used in
+    # testing into $(source-files) on the main target.  This is kind
+    # of a hack, because boost-test will be returning the name of the
+    # main target, but unfortunatedly dump-tests runs during the
+    # evaluation of boost-test and not during the build phase :(
+    #
+    local main-target = [ FGristFiles [ expand-target-names $(target) : RUN_PYD ] ] ;
+    source-files on $(main-target) = $(gRUN_TEST_INPUT_FILES) ;
+    
+    local dependencies = [ FGristFiles [ expand-source-names $(sources) ] ] ;
+    source-files on $(main-target) += $(gTARGET_SOURCES($(dependencies))) ;
+      
+    local result = [ 
+      boost-test $(sources)
+        : RUN_PYD
+        : $(requirements)
+          <default>python-intel-use-gcc-stdlib # unless otherwise
+					       # specified, assume the GCC standard
+					       # library is needed for intel
+          : $(target)
+            : $(local-build)
+    ] ;
+}
+
+rule boost-python-test ( name : sources + : requirements * : default-BUILD * )
+{
+    extension $(name) : $(sources) : $(requirements) <suppress>true : $(4) ;
+}
+
+# Returns the executable to use for testing a Python module
+rule test-executable(PYD) ( target-to-test )
+{
+    # choose the right python executable
+    local python = $(PYTHON) ;
+    
+    if $(NT)
+    {
+        local d = "" ;
+        if <define>BOOST_DEBUG_PYTHON in $(gBUILD_PROPERTIES)
+        {
+            d = _D ;
+        }
+
+        if $(gCURRENT_TOOLSET) in $(gcc-compilers)
+        {
+            python = $(CYGWIN_PYTHON$(d)) ;
+        }
+        else
+        {
+            python = $(PYTHON$(d)) ;
+        }
+    }
+    
+    return $(python) ;
+}
+
+rule check-python-config ( )
+{
+    if ! $(gPYTHON_CONFIG_CHECKED)
+    {
+        local dir ;
+        
+        if $(NT) &&  $(TOOLS) in $(gcc-compilers)
+        {
+            dir =  $(CYGWIN_PYTHON_DEBUG_ROOT) $(CYGWIN_PYTHON_ROOT) ;
+            v = $(CYGWIN_PYTHON_DEBUG_VERSION) $(CYGWIN_PYTHON_VERSION) ;
+            dir = $(dir)/include/python$(v) ;
+            dir = /cygwin/$(dir) $(dir) ;
+        }
+        dir += $(PYTHON_INCLUDES) ;
+          
+        # This represents an improvement over the checking that was in
+        # Boost 1.28.0, but it is still an imperfect hack. For
+        # Boost.Build v2 we will clean up the rules.
+        if ! [ GLOB $(dir) : Python.h ]
+        {
+            gNO_PYTHON_INSTALL = true ;
+            ECHO "---------------------------------------------------------------------" ;
+            ECHO skipping Boost.Python library build due to missing or incorrect configuration ;
+            ECHO ;
+            ECHO "couldn't find Python.h in"  \"$(dir:J=" ")\" ;
+            ECHO ;
+            ECHO You can configure the location of your python installation by setting: ;
+            ECHO "PYTHON_ROOT    - currently" \"$(PYTHON_ROOT:J=" ")\" ;
+            ECHO "PYTHON_VERSION - The 2-part python Major.Minor version number (e.g." ;
+            ECHO "                 \"2.2\", NOT \"2.2.1\")  - currently" \"$(PYTHON_VERSION)\" ;
+            ECHO ;
+            ECHO "The following are automatically configured from PYTHON_ROOT if not" ;
+            ECHO "otherwise set:" ;
+            ECHO ;
+            ECHO "    PYTHON_LIB_PATH       - path to Python library object; currently" ;
+            ECHO "                          \""$(PYTHON_LIB_PATH:J=" ")\" ;
+            
+            if ! $(NT)
+            {
+                ECHO "    PYTHON_INCLUDES    - path to Python #include directories; currently" \"$(PYTHON_INCLUDES:J=" ")\" ;
+            }
+            else if [ intersection $(TOOLS) : $(gcc-compilers) ]
+            {
+                ECHO ;
+                ECHO "    For detailed configuration of Boost.Python for Cygwin GCC" ;
+                ECHO "    under Windows NT please see" ;
+                ECHO "    http://www.boost.org/libs/python/doc/building.html" ;
+            }
+            
+            ECHO "---------------------------------------------------------------------" ;
+        }
+        gPYTHON_CONFIG_CHECKED = true ;
+    }
+    if ! $(gNO_PYTHON_INSTALL)
+    {
+        return true ;
+    }
+}
+
+}

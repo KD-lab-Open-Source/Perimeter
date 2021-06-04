@@ -1,0 +1,1482 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: UnitAttributePrm
+//	Number of variables: 336
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef __XScript_struct_ModelProperty__
+#define __XScript_struct_ModelProperty__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ModelProperty {
+	char const* name;
+	float size;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ModelProperty__
+extern char const* terModelUnitSelection;
+extern char const* terModelLightRay;
+extern char const* terModelDefaultTree;
+extern ModelProperty terModelBuildingNoConnection;
+extern ModelProperty terModelBuildingLowEnergy;
+extern ModelProperty terOmegaMinedIcon;
+extern float terModelBuildingSpeed;
+extern char const* terModelWayFlag;
+extern float terModelWayFlagRadius;
+extern float terModelWayFlagSpeed;
+extern char const* terTextureField01;
+extern char const* terTextureField02;
+extern char const* terTextureHologram;
+extern char const* terTextureUnitSelection;
+extern char const* terTextureCongregationUnit;
+extern char const* terTextureCongregationProtection;
+extern char const* terTextureCongregationAnnihilation;
+extern char const* terTextureATCFireTrail;
+extern char const* terTextureBlockFireTrail;
+extern char const* terTextureFighterFlyTrail;
+extern char const* terTextureFighterFireTrail;
+extern char const* terTextureSoldierFireTrail;
+extern char const* terTextureBomberFlyTrail;
+extern char const* terTextureOfficerFireTrail;
+extern char const* terTextureTechnicFireTrail;
+extern char const* terTexturePortFireTrail;
+extern char const* terTextureLaserFireTrail;
+extern char const* terTextureDebrisFlyTrail;
+extern char const* terTextureLaserTrail;
+extern char const* terTextureEnergyLinkTrail;
+extern char const* terTextureFreezeTrail;
+extern int terTextureLaserSize;
+extern char const* terTextureLaser[];
+extern int terTextureLaserSizeZ;
+extern char const* terTextureLaserZ[];
+#ifndef __XScript_struct_SetModelData__
+#define __XScript_struct_SetModelData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SetModelData {
+	char const* modelName;
+	char const* logicName;
+	float scale;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SetModelData__
+#ifndef __XScript_struct_SetModelDataArray__
+#define __XScript_struct_SetModelDataArray__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SetModelDataArray {
+	int size;
+	SetModelData table[4];
+
+	const SetModelData& randomName() const;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SetModelDataArray__
+#ifndef __XScript_struct_SetModelDataArrayTable__
+#define __XScript_struct_SetModelDataArrayTable__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SetModelDataArrayTable {
+	SetModelDataArray bullet;
+	SetModelDataArray insect;
+	SetModelDataArray unit;
+	SetModelDataArray structure;
+	SetModelDataArray ants;
+	SetModelDataArray snake;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SetModelDataArrayTable__
+extern SetModelDataArrayTable setModelTable;
+#ifndef __XScript_struct_RigidBodyPrm__
+#define __XScript_struct_RigidBodyPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct RigidBodyPrm {
+#ifndef __XScript_struct_Oscillator__
+#define __XScript_struct_Oscillator__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct Oscillator {
+	float phase;
+	float amplitude;
+	float omega;
+	float amplitude_decrement;
+	float omega_increment;
+	float omega_disperse;
+
+		void set() { phase = terLogicRNDfrnd()*M_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
+		float operator() (float dt, float velocity){ return amplitude*sin(phase += omega*(1 + omega_increment*velocity)*dt)/(1 + amplitude_decrement*velocity); }
+	};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_Oscillator__
+#ifndef __XScript_struct_AverageParameter__
+#define __XScript_struct_AverageParameter__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct AverageParameter {
+	float x_avr;
+	float avr_tau;
+	float threshould;
+
+		void set(float x) { x_avr = x; }
+		void average(float x) { ::average(x_avr, x, avr_tau); }
+		operator float () const { return x_avr; }
+		int active() const { return fabsf(x_avr) > threshould; }
+	};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_AverageParameter__
+#ifndef __XScript_struct_Stiffness__
+#define __XScript_struct_Stiffness__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct Stiffness {
+	float stiffness_up;
+	float stiffness_down;
+	float dz_max_up;
+	float dz_max_down;
+
+		float force(float dz) 
+		{ 
+			if(dz > 0)
+			{
+				if(dz > dz_max_up)
+					dz = dz_max_up;
+				return dz*stiffness_up;
+			}
+			else
+			{
+				if(dz < -dz_max_down)
+					dz = -dz_max_down;
+				return dz*stiffness_down;
+			}
+		}
+	};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_Stiffness__
+enum RigidBodyType {
+UNIT,
+MISSILE,
+ROCKET,
+DEBRIS
+};
+	RigidBodyType unit_type;
+	char const* name;
+	float linear_damping[3];
+	float angular_damping;
+	float gravity;
+	int polyhedral_bound;
+	float density;
+	float TOI_factor;
+	float radius_min;
+	int unmovable;
+	int enable_sleeping;
+	int isotropic;
+	int controled_by_points;
+	int analyse_force_field_obstacle;
+	int analyse_body_obstacle;
+	int analyse_terraint_obstacle;
+	float obstacle_restitution;
+	float obstacle_relaxation;
+	AverageParameter obstacle_turn_avr;
+	float avoid_obstacle_rudder_speed;
+	float brake_damping;
+	float point_control_slow_distance;
+	float point_control_slow_factor;
+	float rudder_speed;
+	float suppress_steering_duration;
+	float steering_linear_velocity_min;
+	float steering_acceleration_max;
+	float is_point_reached_radius_max;
+	float forward_velocity_max;
+	float forward_acceleration;
+	float orientation_torque_factor;
+	float average_forward_velocity_tau;
+	float speed_map_factor;
+	float analyze_points_density;
+	int Dxy_minimal;
+	float dz_max_avr_tau;
+	float minimal_velocity_xy;
+	float zero_velocity_z;
+	float deep_penetration_dz;
+	float box_delta_y;
+	int gravicap_enabled;
+	float gravicap_pitch_roll_threshould;
+	int gravicap_dz_treshould;
+	Stiffness gravicap_stiffness;
+	Oscillator gravicap_oscillator_z;
+	Oscillator gravicap_oscillator_pitch;
+	Oscillator gravicap_oscillator_roll;
+	int kangaroo_property;
+	int kangaroo_allow_on_me;
+	float kangaroo_delta_z;
+	float digging_depth;
+	float digging_depth_velocity;
+	int flying_down_without_way_points;
+	int flying_height_relative;
+	float flying_height;
+	Stiffness flying_stiffness;
+	Oscillator flying_oscillator_z;
+	float flying_vertical_direction_x_factor;
+	float flying_vertical_direction_y_factor;
+	float minimize_theta;
+	float upper_theta;
+	float lower_theta;
+	float distance_correction_factor;
+	int keep_direction_time;
+	int ground_colliding_delay;
+	float rocket_vertical_control_distance;
+	float rocket_forward_analysis_distance;
+	float rocket_target_offset_z;
+	float debris_angular_velocity;
+	int enable_show;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_RigidBodyPrm__
+#ifndef __XScript_struct_RigidBodyTable__
+#define __XScript_struct_RigidBodyTable__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct RigidBodyTable {
+	RigidBodyPrm FramePrm;
+	RigidBodyPrm TruckPrm;
+	RigidBodyPrm BlockPrm;
+	RigidBodyPrm TerrainMasterPrm;
+	RigidBodyPrm BuildMasterPrm;
+	RigidBodyPrm SoldierPrm;
+	RigidBodyPrm TechnicPrm;
+	RigidBodyPrm OfficerPrm;
+	RigidBodyPrm PerforatorPrm;
+	RigidBodyPrm SniperPrm;
+	RigidBodyPrm LeamoPrm;
+	RigidBodyPrm ImpalerPrm;
+	RigidBodyPrm RockerPrm;
+	RigidBodyPrm MortarPrm;
+	RigidBodyPrm ScumerPrm;
+	RigidBodyPrm DiggerPrm;
+	RigidBodyPrm PiercerPrm;
+	RigidBodyPrm WargonPrm;
+	RigidBodyPrm ProjectorPrm;
+	RigidBodyPrm MinotaurPrm;
+	RigidBodyPrm UnseenPrm;
+	RigidBodyPrm LeechPrm;
+	RigidBodyPrm ScumThrowerPrm;
+	RigidBodyPrm ExtirpatorPrm;
+	RigidBodyPrm ScumSplitterPrm;
+	RigidBodyPrm ScumTwisterPrm;
+	RigidBodyPrm GunPrm;
+	RigidBodyPrm FilthSpot0Prm;
+	RigidBodyPrm FilthSpot1Prm;
+	RigidBodyPrm FilthSpot2Prm;
+	RigidBodyPrm FilthSpot3Prm;
+	RigidBodyPrm GenericBuildingPrm;
+	RigidBodyPrm EnvironmentPrm;
+	RigidBodyPrm CeptorPrm;
+	RigidBodyPrm GyroidPrm;
+	RigidBodyPrm EflairPrm;
+	RigidBodyPrm BomberPrm;
+	RigidBodyPrm StraferPrm;
+	RigidBodyPrm DisintegratorPrm;
+	RigidBodyPrm ScumHeaterPrm;
+	RigidBodyPrm ConductorPrm;
+	RigidBodyPrm AntPrm;
+	RigidBodyPrm RatPrm;
+	RigidBodyPrm WormPrm;
+	RigidBodyPrm WaspPrm;
+	RigidBodyPrm CrowPrm;
+	RigidBodyPrm GhostPrm;
+	RigidBodyPrm EyePrm;
+	RigidBodyPrm DragonPrm;
+	RigidBodyPrm CorridorAlphaPrm;
+	RigidBodyPrm HowitzerMissilePrm;
+	RigidBodyPrm BombMissilePrm;
+	RigidBodyPrm BallisticMissilePrm;
+	RigidBodyPrm WargonMissilePrm;
+	RigidBodyPrm ScumThrowerMissilePrm;
+	RigidBodyPrm MortarMissilePrm;
+	RigidBodyPrm SoldierMissilePrm;
+	RigidBodyPrm StraferMissilePrm;
+	RigidBodyPrm ScumStormPrm;
+	RigidBodyPrm CeptorRocketPrm;
+	RigidBodyPrm ProjectorRocketPrm;
+	RigidBodyPrm RockerRocketPrm;
+	RigidBodyPrm GunRocketPrm;
+	RigidBodyPrm ExtirpatorMissilePrm;
+	RigidBodyPrm SubchaserMissilePrm;
+	RigidBodyPrm PiercerMissilePrm;
+	RigidBodyPrm debris_prm;
+	RigidBodyPrm VolcanoPrm;
+	RigidBodyPrm CorpseDynamicPrm;
+ // –ассматриваем последовательность расположенных р€дом структур как массив
+	int size() const { xassert(sizeof(*this) % sizeof(RigidBodyPrm) == 0); return sizeof(*this)/sizeof(RigidBodyPrm); }
+	const RigidBodyPrm& operator[](int i) const { xassert(i >= 0 && i < size()); return ((RigidBodyPrm*)this)[i]; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_RigidBodyTable__
+extern RigidBodyTable rigidBodyTable;
+extern RigidBodyPrm HowitzerMissileSuggestPrm;
+extern RigidBodyPrm WargonMissileSuggestPrm;
+extern RigidBodyPrm MortarMissileSuggestPrm;
+extern RigidBodyPrm ScumThrowerMissileSuggestPrm;
+extern RigidBodyPrm BallisticMissileSuggestPrm;
+#ifndef __XScript_struct_LegionaryPrm__
+#define __XScript_struct_LegionaryPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct LegionaryPrm {
+	int is_base_unit;
+	float formationRadiusFactor;
+	int dynamicAttack;
+	float attackTurnRadius;
+	float attackAngleDeviation;
+	int ignoreUninstalledFrame;
+	int dontUseDamageMapPathFind;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_LegionaryPrm__
+#ifndef __XScript_struct_AttackablePrm__
+#define __XScript_struct_AttackablePrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct AttackablePrm {
+	float kill_priority;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_AttackablePrm__
+#ifndef __XScript_struct_ToolzerActionData__
+#define __XScript_struct_ToolzerActionData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ToolzerActionData {
+	ToolzerActionID actionID;
+	int rad;
+	float dz;
+	int smMode;
+	int hAppr;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ToolzerActionData__
+#ifndef __XScript_struct_ToolzerStepData__
+#define __XScript_struct_ToolzerStepData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ToolzerStepData {
+	ToolzerPhaseID phaseID;
+	int duration;
+	ToolzerPhaseID nextPhaseID;
+	float dr;
+	ToolzerBuildingDamageMode buildingDamageMode;
+	int buildingDamageRadius;
+	int size;
+	ToolzerActionData const* actions;
+
+
+	const ToolzerActionData& operator[](int idx) const { xassert(idx >= 0 && idx < size); return actions[idx]; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ToolzerStepData__
+#ifndef __XScript_struct_ToolzerSetup__
+#define __XScript_struct_ToolzerSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ToolzerSetup {
+	int size;
+	ToolzerStepData const* steps;
+	float scale;
+	int destroyOwnZeroLayer;
+	int workOnChaos;
+	float radius;
+
+
+	int stepIndex(ToolzerPhaseID phase) const
+	{
+		for(int i = 0; i < size; i++){
+			if(steps[i].phaseID == phase)
+				return i;
+		}
+
+		return -1;
+	}
+
+	const ToolzerStepData& step(int idx) const { xassert(idx >= 0 && idx < size); return steps[idx]; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ToolzerSetup__
+extern ToolzerSetup scumerToolzer;
+extern ToolzerSetup diggerToolzer;
+extern ToolzerSetup HeavyUnitTrackToolzer;
+extern ToolzerSetup MediumUnitTrackToolzer;
+extern ToolzerSetup piercerToolzer;
+extern ToolzerSetup scumMissileCraterToolzer;
+extern ToolzerSetup bombMissileCraterToolzer;
+extern ToolzerSetup bombBombieMissileCraterToolzer;
+extern ToolzerSetup rocketMissileCraterToolzer;
+extern ToolzerSetup volcanoCraterToolzer;
+extern ToolzerSetup extirpatorMissileToolzer;
+extern ToolzerSetup subchaserMissileToolzer;
+extern ToolzerSetup scumTwisterCraterToolzer;
+extern ToolzerSetup scumHeaterCraterToolzer;
+extern ToolzerSetup scumPiercerCraterToolzer;
+extern ToolzerSetup FrameKaputCraterToolzer;
+extern ToolzerSetup piercerMissileToolzer;
+extern ToolzerSetup scumDisruptorCraterToolzer;
+extern ToolzerStepData const* craterToolzerSteps;
+extern ToolzerSetup destructionCraterToolzer;
+extern ToolzerSetup destructionCraterToolzer_NOZP;
+extern ToolzerSetup destructionCraterToolzerNoDestructAllZeroplast;
+#ifndef __XScript_struct_UnitInterfaceActions__
+#define __XScript_struct_UnitInterfaceActions__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct UnitInterfaceActions {
+	int op_move;
+	int op_stop;
+	int op_stop2;
+	int op_attack;
+	int op_back;
+	int op_offdeff;
+	int op_patrol;
+	int op_power_onoff;
+	int op_sell;
+	int op_upgrade;
+	int op_field;
+	int op_install;
+	int op_teleportate;
+	int op_alarm;
+	int op_brig_back;
+	int op_brig_change;
+	int op_brig_build;
+	int op_charging;
+	int op_charge_control;
+
+
+	void set(){
+		op_move = op_stop = op_stop2 = op_attack = op_back = op_patrol = op_offdeff = 0;
+		op_power_onoff = op_sell = op_upgrade = 
+		op_field = op_install = op_teleportate = op_alarm = op_brig_back = op_brig_change = op_brig_build = op_charging = op_charge_control = 1;
+	}
+
+	void clear(){
+		op_move = op_stop = op_stop2 = op_attack = op_back = op_offdeff = 
+		op_patrol = op_power_onoff = op_sell = op_upgrade = 
+		op_field = op_install = op_teleportate = op_alarm = op_brig_back = op_brig_change = op_brig_build = op_charging = op_charge_control = 0;
+	}
+
+	UnitInterfaceActions& operator&=(const UnitInterfaceActions& act){
+		op_move |= act.op_move;
+		op_stop |= act.op_stop;
+		op_stop2 |= act.op_stop2;
+		op_attack |= act.op_attack;
+		op_back |= act.op_back;
+		op_offdeff |= act.op_offdeff;
+		op_patrol |= act.op_patrol;
+		op_power_onoff &= act.op_power_onoff;
+		op_sell &= act.op_sell;
+		op_upgrade &= act.op_upgrade;
+		op_field &= act.op_field;
+		op_install &= act.op_install;
+		op_teleportate &= act.op_teleportate;
+		op_alarm &= act.op_alarm;
+		op_brig_back &= act.op_brig_back;
+		op_brig_change &= act.op_brig_change;
+		op_brig_build &= act.op_brig_build;
+		op_charging &= act.op_charging;
+		op_charge_control &= act.op_charge_control;
+
+		return *this;
+	}
+
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_UnitInterfaceActions__
+#ifndef __XScript_struct_UnitInterfacePrm__
+#define __XScript_struct_UnitInterfacePrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct UnitInterfacePrm {
+	UnitInterfaceActions actions;
+	ShellControlID upgrade_button_id;
+	ShellControlID upgrading_button_id;
+	PopupFormatGroup format_group;
+	char const* popup;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_UnitInterfacePrm__
+extern UnitInterfacePrm interface_squad1_prm;
+extern UnitInterfacePrm interface_squad2_prm;
+extern UnitInterfacePrm interface_squad3_prm;
+extern UnitInterfacePrm interface_frame_uninstalled;
+#ifndef __XScript_struct_AnimationChain__
+#define __XScript_struct_AnimationChain__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct AnimationChain {
+	ChainID chainID;
+	char const* chainName;
+	float phase;
+	int period;
+	ChainNodeID begin;
+	ChainNodeID end;
+	int periodDeviation;
+	int enableReverse;
+	int counter;
+	SoundEventID soundID;
+
+	bool cycled() const { return begin == end; }
+	float phaseEnd() const { return period > 0 ? 1 : (period < 0 ? 0 : phase); }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_AnimationChain__
+#ifndef __XScript_struct_AnimationData__
+#define __XScript_struct_AnimationData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct AnimationData {
+	AnimationGroupID groupID;
+	char const* groupName;
+	int size;
+	AnimationChain const* chains;
+	int setPhaseRecursive;
+
+	const AnimationChain* initial() const { return size ? &chains[0] : 0; }	// перва€ цепочка включаетс€ при создании объекта
+	const AnimationChain* find(ChainID chainID) const  { for(int i = 0; i < size; i++) if(chains[i].chainID == chainID) return &chains[i]; return 0; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_AnimationData__
+#ifndef __XScript_struct_AnimationSetup__
+#define __XScript_struct_AnimationSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct AnimationSetup {
+	int size;
+	AnimationData const* data;
+
+	const AnimationData* root() const { return size ? &data[0] : 0; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_AnimationSetup__
+#ifndef __XScript_struct_DockingSlotData__
+#define __XScript_struct_DockingSlotData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct DockingSlotData {
+	char const* position;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_DockingSlotData__
+#ifndef __XScript_struct_DockingSlotsSetup__
+#define __XScript_struct_DockingSlotsSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct DockingSlotsSetup {
+	int size;
+	DockingSlotData const* data;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_DockingSlotsSetup__
+extern AnimationChain buildChain1;
+extern AnimationChain buildChain2;
+extern AnimationChain buildChain3;
+extern AnimationChain buildChain4;
+extern AnimationChain buildChain5;
+extern AnimationChain buildChain6;
+extern AnimationChain buildChain7;
+extern AnimationChain buildChain8;
+extern AnimationChain unbuildChain1;
+extern AnimationChain unbuildChain2;
+extern AnimationChain unbuildChain3;
+extern AnimationChain unbuildChain4;
+extern AnimationChain unbuildChain5;
+extern AnimationChain unbuildChain6;
+extern AnimationChain unbuildChain7;
+extern AnimationChain unbuildChain8;
+extern AnimationSetup coreAnimation;
+extern AnimationSetup transmitterAnimation;
+extern AnimationSetup commandCenterAnimation;
+extern AnimationSetup staticBombAnimation;
+extern AnimationSetup lab1Animation;
+extern AnimationSetup lab2Animation;
+extern AnimationSetup lab3Animation;
+extern AnimationSetup plantAnimation;
+extern AnimationSetup filthNavigatorAnimation;
+extern AnimationSetup ballisticLauncherAnimation;
+extern AnimationSetup scumDisruptorAnimation;
+extern AnimationSetup collectorAnimation;
+extern AnimationSetup corridorAlphaAnimation;
+extern AnimationSetup corridorOmegaAnimation;
+extern AnimationSetup frameAnimation;
+extern AnimationSetup laserGunAnimation;
+extern AnimationSetup electroGunAnimation;
+extern AnimationSetup howitzerGunAnimation;
+extern AnimationSetup subchaserGunAnimation;
+extern AnimationSetup rprojectorAnimation;
+extern AnimationSetup chaserAnimation;
+extern AnimationSetup sniperAnimation;
+extern AnimationSetup leamoAnimation;
+extern AnimationSetup impalerAnimation;
+extern AnimationSetup mortarAnimation;
+extern AnimationSetup buildMasterAnimation;
+extern AnimationSetup terrainMasterAnimation;
+extern AnimationSetup rocketAnimation;
+extern AnimationSetup ballisticRocketAnimation;
+extern AnimationSetup wargonAnimation;
+extern AnimationSetup subterraneanAnimation;
+extern AnimationSetup ceptorAnimation;
+extern AnimationSetup gyroidAnimation;
+extern AnimationSetup eflairAnimation;
+extern AnimationSetup straferAnimation;
+extern AnimationSetup officerAnimation;
+extern AnimationSetup soldierAnimation;
+extern AnimationSetup technicAnimation;
+extern AnimationSetup bombieAnimation;
+extern AnimationSetup unseenAnimation;
+extern AnimationSetup disintegratorAnimation;
+extern AnimationSetup leechAnimation;
+extern AnimationSetup extirpatorAnimation;
+extern AnimationSetup scumSplitterAnimation;
+extern AnimationSetup scumTwisterAnimation;
+extern AnimationSetup scumStormAnimation;
+extern AnimationSetup scumHeaterAnimation;
+extern AnimationSetup conductorAnimation;
+extern AnimationSetup scumThrowerAnimation;
+extern AnimationSetup crowAnimation;
+extern AnimationSetup waspAnimation;
+extern AnimationSetup waspEyeAnimation;
+extern AnimationSetup daemonAnimation;
+extern AnimationSetup dragonHeadAnimation;
+extern AnimationSetup ratAnimation;
+extern AnimationSetup snakeAnimation;
+extern AnimationSetup antAnimation;
+extern AnimationSetup ant2Animation;
+extern AnimationSetup wormAnimation;
+extern AnimationSetup blackHoleAnimation;
+extern DockingSlotsSetup dockingSlotsFrame;
+extern DockingSlotsSetup dockingSlotsPlantSoldier;
+extern DockingSlotsSetup dockingSlotsPlantOfficer;
+extern DockingSlotsSetup dockingSlotsPlantTechnician;
+extern DockingSlotsSetup dockingSlotsCeptor;
+extern DockingSlotsSetup dockingSlotsRProjector;
+extern DockingSlotsSetup dockingSlotsRocker;
+extern DockingSlotsSetup dockingSlotsGunRocket;
+extern DockingSlotsSetup dockingSlotsGunBallistic;
+extern DockingSlotsSetup dockingSlotsDragonHead;
+extern DockingSlotsSetup dockingSlotsDragonBody;
+extern DockingSlotsSetup dockingSlotsDragonTail;
+#ifndef __XScript_struct_DamageData__
+#define __XScript_struct_DamageData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct DamageData {
+	int width;
+	int power;
+	int attackFilter;
+	int damageFilter;
+
+	void clear() { width = power = 0; attackFilter = damageFilter = DAMAGE_FILTER_ALL; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_DamageData__
+#ifndef __XScript_struct_EnvironmentalDamageData__
+#define __XScript_struct_EnvironmentalDamageData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct EnvironmentalDamageData {
+	EnvironmentalDamageType damageType;
+	DamageData damageData[2];
+	int period;
+	int periodDelta;
+	float damageRatioMin;
+
+
+	const DamageData damage(float damage_ratio) const 
+	{
+		DamageData data = damageData[0];
+
+		if(data.width != -1)
+			data.width += round(float(damageData[1].width - damageData[0].width) * damage_ratio);
+
+		data.power += round(float(damageData[1].power - damageData[0].power) * damage_ratio);
+
+		return data;
+	}
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_EnvironmentalDamageData__
+#ifndef __XScript_struct_terUnitDamageData__
+#define __XScript_struct_terUnitDamageData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terUnitDamageData {
+	DamageData mainDamage;
+	int splashDamageRadius;
+	DamageData splashDamage;
+
+
+	// оценка количества элементов, вышибаемых с одного раза
+	int estimatedDamage() const { return ((mainDamage.power + splashDamage.power + 3)/8 + 1); }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terUnitDamageData__
+extern EnvironmentalDamageData chaosDamageDefault;
+extern EnvironmentalDamageData chaosDamageSubterranean;
+extern EnvironmentalDamageData basementDamageDefault;
+extern int SPECIAL_UNITS_EL_MUL;
+extern int SPECIAL_ELECTRO_UNITS_EL_MUL;
+extern int SHIELD_LASER_MUL;
+extern int SHIELD_ROCKET_MUL;
+extern int SHIELD_BOMB_MUL;
+extern int SHIELD_SPECIAL_MUL;
+extern int RADIUS_SHORT;
+extern int RADIUS_MIDDLE;
+extern int RADIUS_FAR;
+extern int RADIUS_SUPER_FAR;
+extern int RADIUS_ADD;
+extern int FrameRepairElementsPerQuant;
+#ifndef __XScript_struct_ConsumptionData__
+#define __XScript_struct_ConsumptionData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ConsumptionData {
+	float energy;
+	int time;
+	int priority;
+	char const* name;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ConsumptionData__
+#ifndef __XScript_struct_FieldPrm__
+#define __XScript_struct_FieldPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct FieldPrm {
+	int monksPerCore;
+	int monksPerCoreMin;
+	float monksVelocity;
+	float monksAccelerationFactor;
+	float monksPositionFactor;
+	int monksWetPlace;
+	float chargeLevelToStartMin;
+	ConsumptionData fieldConsumption;
+	float checkFieldRadiusMin;
+	DamageData fieldDamage;
+	int impulseDuration;
+	DamageData impulseFieldDamage;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_FieldPrm__
+extern FieldPrm fieldPrm;
+#ifndef __XScript_struct_DebugScales__
+#define __XScript_struct_DebugScales__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct DebugScales {
+	float frame;
+	float legion;
+	float buildins;
+	float spheres;
+	float other;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_DebugScales__
+extern DebugScales debuScales;
+#ifndef __XScript_struct_CorridorPrm__
+#define __XScript_struct_CorridorPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct CorridorPrm {
+	int disappearingTime;
+	int disappearingHeight;
+	float distanceThreshould;
+	int moveFrame;
+	float potentialToAcceleration;
+	float accelerationDenominator;
+	float pathVisualizationDelta;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_CorridorPrm__
+#ifndef __XScript_struct_FramePrm__
+#define __XScript_struct_FramePrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct FramePrm {
+	int heightMax;
+	float accumulatedEnergyInitial;
+	ConsumptionData antigravConsumption;
+	ConsumptionData movementConsumption;
+	ConsumptionData annihilationConsumption;
+	ConsumptionData repairConsumption;
+	float repairElementsPerQuant;
+	DamageData fallDamage;
+	float oneStepMovement;
+	float energyReserveToChargeSpiral;
+	float mmpHomePositionRadius;
+	float normalVelocity;
+	float teleportationVelocity;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_FramePrm__
+#ifndef __XScript_struct_SquadPrm__
+#define __XScript_struct_SquadPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SquadPrm {
+	int baseUnitsMax;
+	float homePositionOffsetFactor[2];
+	float formationRadiusBase;
+	float followDistanceFactor;
+	float supportRadius;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SquadPrm__
+extern SquadPrm squadPrm;
+extern ConsumptionData buildingBlockConsumption;
+extern float sellBuildingEfficiency;
+#ifndef __XScript_struct_DifficultyPrm__
+#define __XScript_struct_DifficultyPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct DifficultyPrm {
+	char const* name;
+	float filthDensity;
+	int aiDelay;
+	float triggerDelayFactor;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_DifficultyPrm__
+extern DifficultyPrm difficultyPrmArray[3];
+#ifndef __XScript_struct_TrucksIntrumentParameter__
+#define __XScript_struct_TrucksIntrumentParameter__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct TrucksIntrumentParameter {
+	float kRadius4DigZL;
+	float kHeigh4DigZL;
+	float kRadius4PutZL;
+	float kHeigh4PutZL;
+	float kRadius4DigGarbage;
+	float kHeigh4DigGarbage;
+	float kRadius4PutGarbage;
+	float kHeigh4PutGarbage;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_TrucksIntrumentParameter__
+extern TrucksIntrumentParameter trucksIntrumentParameter;
+#ifndef __XScript_struct_SoundEventsPrm__
+#define __XScript_struct_SoundEventsPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SoundEventsPrm {
+	float collectorEmptyThreshold;
+	float energyLosingThreshold;
+	float energyNotEnoughThreshold;
+	float energyNotEnoughDischargeThreshold;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SoundEventsPrm__
+extern SoundEventsPrm soundEventsPrm;
+#ifndef __XScript_struct_BelligerentProperty__
+#define __XScript_struct_BelligerentProperty__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct BelligerentProperty {
+	terBelligerent belligerent;
+	int colorIndex;
+#ifndef __XScript_struct_SoundTrackData__
+#define __XScript_struct_SoundTrackData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SoundTrackData {
+	char const* trackName;
+	char const* fileName;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SoundTrackData__
+	int soundTracksSize;
+	SoundTrackData soundTracks[3];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_BelligerentProperty__
+#ifndef __XScript_struct_BelligerentPropertyTable__
+#define __XScript_struct_BelligerentPropertyTable__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct BelligerentPropertyTable {
+	int size;
+	BelligerentProperty data[13];
+
+	const BelligerentProperty& find(terBelligerent belligerent)
+	{
+		for(int i = 0; i < size; i++)
+			if(data[i].belligerent == belligerent)
+				return data[i];
+		xassert(0);
+		return data[0];
+	}
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_BelligerentPropertyTable__
+extern BelligerentPropertyTable belligerentPropertyTable;
+#ifndef __XScript_struct_InterfaceTV__
+#define __XScript_struct_InterfaceTV__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct InterfaceTV {
+	float radius;
+	float pos_dx;
+	float pos_dy;
+	float angle_x;
+	float angle_y;
+	float angle_z;
+	char const* model;
+	char const* channel;
+	char const* channel_power_on;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_InterfaceTV__
+extern InterfaceTV interfaceTV_Frame;
+extern InterfaceTV interfaceTV_Core;
+extern InterfaceTV interfaceTV_Transmitter;
+extern InterfaceTV interfaceTV_CommandCenter;
+extern InterfaceTV interfaceTV_StaticBomb;
+extern InterfaceTV interfaceTV_PlantSoldier;
+extern InterfaceTV interfaceTV_PlantOfficer;
+extern InterfaceTV interfaceTV_PlantTechnician;
+extern InterfaceTV interfaceTV_Amplifier;
+extern InterfaceTV interfaceTV_GunLaser;
+extern InterfaceTV interfaceTV_GunRocket;
+extern InterfaceTV interfaceTV_GunHowitzer;
+extern InterfaceTV interfaceTV_GunSubchaser;
+extern InterfaceTV interfaceTV_GunBallistic;
+extern InterfaceTV interfaceTV_FilthNavigator;
+extern InterfaceTV interfaceTV_ScumDisruptor;
+extern InterfaceTV interfaceTV_Sniper;
+extern InterfaceTV interfaceTV_Leamo;
+extern InterfaceTV interfaceTV_Rocker;
+extern InterfaceTV interfaceTV_Mortar;
+extern InterfaceTV interfaceTV_Ceptor;
+extern InterfaceTV interfaceTV_Gyroid;
+extern InterfaceTV interfaceTV_Wargon;
+extern InterfaceTV interfaceTV_Bombie;
+extern InterfaceTV interfaceTV_RProjector;
+extern InterfaceTV interfaceTV_Minotaur;
+extern InterfaceTV interfaceTV_Unseen;
+extern InterfaceTV interfaceTV_ScumSplitter;
+extern InterfaceTV interfaceTV_ScumTwister;
+extern InterfaceTV interfaceTV_ScumHeater;
+extern InterfaceTV interfaceTV_ScumThrower;
+extern InterfaceTV interfaceTV_LabRocket1;
+extern InterfaceTV interfaceTV_LabRocket2;
+extern InterfaceTV interfaceTV_LabRocket3;
+extern InterfaceTV interfaceTV_LabLaser1;
+extern InterfaceTV interfaceTV_LabLaser2;
+extern InterfaceTV interfaceTV_LabLaser3;
+extern InterfaceTV interfaceTV_LabBomb1;
+extern InterfaceTV interfaceTV_LabBomb2;
+extern InterfaceTV interfaceTV_LabBomb3;
+extern InterfaceTV interfaceTV_LabAntigrav1;
+extern InterfaceTV interfaceTV_LabAntigrav2;
+extern InterfaceTV interfaceTV_LabSubterra1;
+extern InterfaceTV interfaceTV_LabSubterra2;
+extern InterfaceTV interfaceTV_Soldier;
+extern InterfaceTV interfaceTV_TerrainMaster;
+extern InterfaceTV interfaceTV_BuildMaster;
+extern InterfaceTV interfaceTV_Digger;
+extern InterfaceTV interfaceTV_Piercer;
+extern InterfaceTV interfaceTV_Strafer;
+extern InterfaceTV interfaceTV_Disintegrator;
+extern InterfaceTV interfaceTV_Extirpator;
+extern InterfaceTV interfaceTV_Leech;
+extern InterfaceTV interfaceTV_Scumer;
+extern InterfaceTV interfaceTV_FilthSpot0;
+extern InterfaceTV interfaceTV_FilthSpot1;
+extern InterfaceTV interfaceTV_FilthSpot2;
+extern InterfaceTV interfaceTV_FilthSpot3;
+extern InterfaceTV interfaceTV_station_exodus;
+extern InterfaceTV interfaceTV_station_empire;
+extern InterfaceTV interfaceTV_station_harkback;
+extern float small_camera_x;
+extern float small_camera_y;
+extern float small_camera_rect_dx;
+extern float small_camera_rect_dy;
+extern float small_model_rate;
+#ifndef __XScript_struct_SoundControllerSetup__
+#define __XScript_struct_SoundControllerSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SoundControllerSetup {
+	SoundID ID;
+	char const* name;
+	int cycled;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SoundControllerSetup__
+#ifndef __XScript_struct_SoundEventSetup__
+#define __XScript_struct_SoundEventSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SoundEventSetup {
+	SoundEventID ID;
+	char const* name;
+	int is3D;
+	int isVoice;
+	int activePlayer;
+	int pauseTime;
+	int startDelay;
+	int queueTime;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SoundEventSetup__
+#ifndef __XScript_struct_SoundSetup__
+#define __XScript_struct_SoundSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct SoundSetup {
+	int sounds_size;
+	SoundControllerSetup const* sounds;
+	int events_size;
+	SoundEventSetup const* events;
+
+
+	const SoundEventSetup* event(int idx) const {
+		xassert(idx >= 0 && idx < events_size);
+		return &events[idx];
+	}
+
+	int eventIndex(SoundEventID event_id) const {
+		for(int i = 0; i < events_size; i++){
+			if(events[i].ID == event_id)
+				return i;
+		}
+
+		return -1;
+	}
+
+	const SoundEventSetup* findEvent(SoundEventID event_id) const 
+	{
+		for(int i = 0; i < events_size; i++){
+			if(events[i].ID == event_id)
+				return &events[i];
+		}
+
+		return NULL;
+	}
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_SoundSetup__
+extern SoundSetup rprojectorSound;
+extern SoundSetup subchaserGunSound;
+extern SoundSetup ballisticLauncherSound;
+extern SoundSetup filthNavigatorSound;
+extern SoundSetup scumDisruptorSound;
+extern SoundSetup howitzerGunSound;
+extern SoundSetup rocketGunSound;
+extern SoundSetup laserGunSound;
+extern SoundSetup bombieSound;
+extern SoundSetup wargonSound;
+extern SoundSetup extirpatorSound;
+extern SoundSetup leechSound;
+extern SoundSetup scumThrowerSound;
+extern SoundSetup straferSound;
+extern SoundSetup gyroidSound;
+extern SoundSetup ceptorSound;
+extern SoundSetup mortarSound;
+extern SoundSetup rockerSound;
+extern SoundSetup leamoSound;
+extern SoundSetup sniperSound;
+extern SoundSetup officerSound;
+extern SoundSetup technicSound;
+extern SoundSetup soldierSound;
+extern SoundSetup terrainMasterSound;
+extern SoundSetup buildMasterSound;
+extern SoundSetup coreSound;
+extern SoundSetup transmitterSound;
+extern SoundSetup collectorSound;
+extern SoundSetup soldierPlantSound;
+extern SoundSetup technicianPlantSound;
+extern SoundSetup officerPlantSound;
+extern SoundSetup commandCenterSound;
+extern SoundSetup labRocketSound;
+extern SoundSetup labLaserSound;
+extern SoundSetup labBombSound;
+extern SoundSetup labAntigravSound;
+extern SoundSetup labSubterraSound;
+extern SoundSetup labExodusSound;
+extern SoundSetup labEmpireSound;
+extern SoundSetup labHarkbarkhoodSound;
+extern SoundSetup truckSound;
+extern SoundSetup buildingBlockSound;
+extern SoundSetup scumerSound;
+extern SoundSetup diggerSound;
+extern SoundSetup piercerSound;
+extern SoundSetup piercerMissileSound;
+extern SoundSetup disintegratorSound;
+extern SoundSetup scumSplitterSound;
+extern SoundSetup scumTwisterSound;
+extern SoundSetup scumHeaterSound;
+extern SoundSetup unseenSound;
+extern SoundSetup rockerRocketSound;
+extern SoundSetup rprojectorRocketSound;
+extern SoundSetup ceptorRocketSound;
+extern SoundSetup ballisticMissileSound;
+extern SoundSetup wargonMissileSound;
+extern SoundSetup subchaserMissileSound;
+extern SoundSetup extirpatorMissileSound;
+extern SoundSetup scumThrowerMissileSound;
+extern SoundSetup gunHowitzerMissileSound;
+extern SoundSetup bombieMissileSound;
+extern SoundSetup mortarMissileSound;
+extern SoundSetup frameSound;
+extern SoundSetup harkbackSound;
+extern SoundSetup corridorAlphaSound;
+extern SoundSetup corridorOmegaSound;
+extern SoundSetup filthAntSound;
+extern SoundSetup filthRatSound;
+extern SoundSetup filthWormSound;
+extern SoundSetup filthWaspSound;
+extern SoundSetup filthGhostSound;
+extern SoundSetup filthEyeSound;
+extern SoundSetup filthCrowSound;
+extern SoundSetup filthDaemonSound;
+extern SoundSetup filthDragonSound;
+extern SoundSetup filthSharkSound;
+extern SoundSetup playerSound;
+extern int DAMAGE_CHECK_COUNT;
+extern int MUTATION_CHECK_COUNT;
+extern int terShootMapTest;
+extern int terShootUnitTest;
+extern int terOfficerFreezeTime;
+extern int terTechnicHealTime;
+extern float terScumStormTurnAngle;
+extern float terScumStormTurnAngleDelta;
+extern int terScumStormTurnDelay;
+extern int terInvisibilityTime;
+extern int terInvisibilityTimeMax;
+extern float terInvisibilityCoeff;
+#ifndef __XScript_struct_terDebrisData__
+#define __XScript_struct_terDebrisData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terDebrisData {
+	terUnitAttributeID debrisID;
+	int count;
+	int countRnd;
+	float speed;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terDebrisData__
+#ifndef __XScript_struct_terUnitEffectData__
+#define __XScript_struct_terUnitEffectData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terUnitEffectData {
+	terEffectID effectID;
+	char const* effectName;
+	int needOrientation;
+	float startupDamage;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terUnitEffectData__
+#ifndef __XScript_struct_terUnitEffects__
+#define __XScript_struct_terUnitEffects__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terUnitEffects {
+	char const* libraryFileName;
+	int effectNum;
+	terUnitEffectData effects[7];
+	int debrisDataNum;
+	terDebrisData debrisData[2];
+	int corpseLifeTime;
+	terUnitAttributeID corpseID;
+	float craterRadius;
+	terUnitAttributeID craterID;
+	int craterDelay;
+	terUnitAttributeID movementCraterID;
+	float movementCraterDelta;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terUnitEffects__
+#ifndef __XScript_struct_terWeaponControllerSetup__
+#define __XScript_struct_terWeaponControllerSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terWeaponControllerSetup {
+	char const* objectName[2];
+	char const* logicObjectName[2];
+	char const* targetingObjectName;
+	float targetingPrecision[2];
+	float turnSpeed[2];
+	float psiLimit[2];
+	float thetaLimit[2];
+	float defaultAngles[2];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terWeaponControllerSetup__
+#ifndef __XScript_struct_terWeaponSetup__
+#define __XScript_struct_terWeaponSetup__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terWeaponSetup {
+	WeaponType weaponType;
+	int flags;
+	terUnitAttributeID missileID;
+	int missileLimit;
+	int aimResetDelay;
+	int fireDisableTime;
+	int fireDelay;
+	int missileLoadDelay;
+	RigidBodyPrm const* turnSuggestPrm;
+	terWeaponControllerSetup const* controllerSetup;
+	float dischargeSpeed;
+	float fireRadius[2];
+	float sightRadius;
+	float accuracyRadius;
+	int weaponIndex;
+	float laserWidth;
+	ConsumptionData reloadConsumption;
+	float thetaForced;
+	int squadMode;
+
+
+	bool checkFlag(int fl) const { if(flags & fl) return true; else return false; }
+
+	bool hasFireController() const { return checkFlag(WEAPON_HAS_FIRE_CONTROLLER); }
+	bool rootFireAnimation() const { return checkFlag(WEAPON_ROOT_FIRE_ANIMATION); }
+	bool cycleFireAnimation() const { return checkFlag(WEAPON_CYCLE_FIRE_ANIMATION); }
+	bool needCharge() const { return checkFlag(WEAPON_NEED_CHARGE); }
+	bool cleanTargetAfterFire() const { return checkFlag(WEAPON_CLEAN_TARGET_AFTER_FIRE); }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terWeaponSetup__
+#ifndef __XScript_struct_EnableDataPrm__
+#define __XScript_struct_EnableDataPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct EnableDataPrm {
+	int StructureNum;
+	terUnitAttributeID EnableStructure[3];
+	int DowngradesNum;
+	terUnitAttributeID Downgrades[2];
+	terUnitAttributeID Upgrade;
+	int Enabled;
+	int Requested;
+	int Constructed;
+	int Worked;
+
+	void clear() { Enabled = Worked = Constructed = Requested = 0; }
+	bool hasUpgrade() const { return Upgrade != UNIT_ATTRIBUTE_NONE; }
+	bool hasDowngrade() const { return Downgrades[0] != UNIT_ATTRIBUTE_NONE; }
+	bool hasUnpowered() const { return Constructed != Worked; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_EnableDataPrm__
+#ifndef __XScript_struct_terUnitAttributeData__
+#define __XScript_struct_terUnitAttributeData__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terUnitAttributeData {
+	terUnitAttributeID ID;
+	terUnitClassID ClassID;
+	terInterpolationID InterpolationType;
+	terBelligerent belligerent;
+	char const* InterfaceName;
+	int ModelNameNum;
+	char const* ModelNameArray[2];
+	char const* LogicName;
+	int ConnectionPointNameNum;
+	char const* ConnectionPointNames[4];
+	terUnitEffects effectsData;
+	terUnitDamageData const* damageData;
+	int damageMolecula[5];
+	EnvironmentalDamageData const* environmentalDamage;
+	terWeaponSetup const* weaponSetup;
+	ToolzerSetup const* toolzerSetup;
+	int SelectAble;
+	int saveAsCommonObject;
+	float BoundScale;
+	float BoundRadius;
+	float GroundPlaneSpeed;
+	float GroundAngleSpeed;
+	int MilitaryUnit;
+	int UnitClass;
+	int AttackClass;
+	int enemyWorld;
+	terLegionType LegionType;
+	terUnitAttributeID ProductionType;
+	char const* SoundName;
+	int SoundCycled;
+	int InstallBound;
+	int lockInitialPosition;
+	int isUpgrade;
+	int showPath;
+	int ExcludeCollision;
+	int CollisionGroup;
+	float MakeEnergy;
+	float energyCapacity;
+	float ConnectionRadius;
+	float ZeroLayerRadius;
+	float FieldRadius;
+	int LifeTime;
+	int destroyZeroLayer;
+	int constructionPriority;
+	int disconnectAnimation;
+	float constructionSpeedCoeff;
+	int FallDelay;
+	float FallSpeed;
+	float FallAcceleration;
+	float SelectionDistance;
+	float SelectionSize;
+	float iconDistanceFactor;
+	int MakingChainNum;
+	char const* UpgradeChainName;
+	char const* PrevChainName;
+	int IgnoreTargetTrace;
+	int changePlayerDelay;
+	int ShowCircles;
+	float FallTreeTime;
+	int enablePathFind;
+	int enableFieldPathFind;
+	int considerInFieldPathFind;
+	EnableDataPrm enableData;
+	RigidBodyPrm const* rigidBodyPrm;
+	LegionaryPrm legionaryPrm;
+	AttackablePrm attackablePrm;
+	UnitInterfacePrm interfacePrm;
+	InterfaceTV const* interfaceTV;
+	AnimationSetup const* animationSetup;
+	SoundSetup const* soundSetup;
+	DockingSlotsSetup const* dockingSlots;
+	CorridorPrm const* corridorPrm;
+	FramePrm const* framePrm;
+	SetModelDataArray const* setModelDataArray;
+	ConsumptionData const* productionConsumption;
+	ConsumptionData const* movementConsumption;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terUnitAttributeData__
+#ifndef __XScript_struct_terUnitAttributeDataTable__
+#define __XScript_struct_terUnitAttributeDataTable__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct terUnitAttributeDataTable {
+	terUnitAttributeData Frame;
+	terUnitAttributeData TerrainMaster;
+	terUnitAttributeData Truck;
+	terUnitAttributeData BuildMaster;
+	terUnitAttributeData BuildingBlock;
+	terUnitAttributeData Core;
+	terUnitAttributeData Transmitter;
+	terUnitAttributeData Collector;
+	terUnitAttributeData PlantSoldier;
+	terUnitAttributeData PlantOfficer;
+	terUnitAttributeData PlantTechnician;
+	terUnitAttributeData CommandCenter;
+	terUnitAttributeData StaticBomb;
+	terUnitAttributeData LabExodus1;
+	terUnitAttributeData LabExodus2;
+	terUnitAttributeData LabExodus3;
+	terUnitAttributeData LabEmpire1;
+	terUnitAttributeData LabEmpire2;
+	terUnitAttributeData LabEmpire3;
+	terUnitAttributeData LabHarkback1;
+	terUnitAttributeData LabHarkback2;
+	terUnitAttributeData LabHarkback3;
+	terUnitAttributeData LabRocket1;
+	terUnitAttributeData LabRocket2;
+	terUnitAttributeData LabRocket3;
+	terUnitAttributeData LabLaser1;
+	terUnitAttributeData LabLaser2;
+	terUnitAttributeData LabLaser3;
+	terUnitAttributeData LabBomb1;
+	terUnitAttributeData LabBomb2;
+	terUnitAttributeData LabBomb3;
+	terUnitAttributeData LabAntigrav1;
+	terUnitAttributeData LabAntigrav2;
+	terUnitAttributeData LabSubterra1;
+	terUnitAttributeData LabSubterra2;
+	terUnitAttributeData Soldier;
+	terUnitAttributeData Officer;
+	terUnitAttributeData Technic;
+	terUnitAttributeData Scumer;
+	terUnitAttributeData Digger;
+	terUnitAttributeData Piercer;
+	terUnitAttributeData Sniper;
+	terUnitAttributeData Leamo;
+	terUnitAttributeData Rocker;
+	terUnitAttributeData Mortar;
+	terUnitAttributeData Ceptor;
+	terUnitAttributeData Gyroid;
+	terUnitAttributeData Strafer;
+	terUnitAttributeData Disintegrator;
+	terUnitAttributeData ScumSplitter;
+	terUnitAttributeData ScumTwister;
+	terUnitAttributeData ScumHeater;
+	terUnitAttributeData ScumThrower;
+	terUnitAttributeData Extirpator;
+	terUnitAttributeData Wargon;
+	terUnitAttributeData Bombie;
+	terUnitAttributeData RProjector;
+	terUnitAttributeData Unseen;
+	terUnitAttributeData filthSpot0;
+	terUnitAttributeData filthSpot1;
+	terUnitAttributeData filthSpot2;
+	terUnitAttributeData filthSpot3;
+	terUnitAttributeData Leech;
+	terUnitAttributeData GunLaser;
+	terUnitAttributeData GunRocket;
+	terUnitAttributeData GunHowitzer;
+	terUnitAttributeData GunSubchaser;
+	terUnitAttributeData GunBallistic;
+	terUnitAttributeData GunFilthNavigator;
+	terUnitAttributeData GunScumDisruptor;
+	terUnitAttributeData ScumSpot;
+	terUnitAttributeData ScumSpot2;
+	terUnitAttributeData ScumSpot3;
+	terUnitAttributeData ScumSpot4;
+	terUnitAttributeData BlackHole;
+	terUnitAttributeData rockerMissile;
+	terUnitAttributeData R_ProjectorMissile;
+	terUnitAttributeData ceptorMissile;
+	terUnitAttributeData gunRocketMissile;
+	terUnitAttributeData gunBallisticMissile;
+	terUnitAttributeData wargonMissile;
+	terUnitAttributeData extirpatorMissile;
+	terUnitAttributeData subchaserMissile;
+	terUnitAttributeData piercerMissile;
+	terUnitAttributeData scumThrowerMissile;
+	terUnitAttributeData soldierMissile;
+	terUnitAttributeData straferMissile;
+	terUnitAttributeData mortarMissile;
+	terUnitAttributeData gunHowitzerMissile;
+	terUnitAttributeData bombieMissile;
+	terUnitAttributeData FILTH_SPOT;
+	terUnitAttributeData GeoInfluence;
+	terUnitAttributeData GeoBreak;
+	terUnitAttributeData GeoFault;
+	terUnitAttributeData GeoHead;
+	terUnitAttributeData AntsFilth;
+	terUnitAttributeData Ants2Filth;
+	terUnitAttributeData RatFilth;
+	terUnitAttributeData SnakeFilth;
+	terUnitAttributeData WormFilth;
+	terUnitAttributeData WaspFilth;
+	terUnitAttributeData WaspEyeFilth;
+	terUnitAttributeData GhostFilth;
+	terUnitAttributeData EyeFilth;
+	terUnitAttributeData CrowFilth;
+	terUnitAttributeData DaemonFilth;
+	terUnitAttributeData DragonHead;
+	terUnitAttributeData DragonBody;
+	terUnitAttributeData DragonTail;
+	terUnitAttributeData DragonHead2;
+	terUnitAttributeData DragonBody2;
+	terUnitAttributeData DragonTail2;
+	terUnitAttributeData SharkFilth;
+	terUnitAttributeData CorpseDynamic;
+	terUnitAttributeData VolcanoFilth;
+	terUnitAttributeData VolcanoFilthScumDisruptor;
+	terUnitAttributeData AAntsFilth;
+	terUnitAttributeData DebrisBullet;
+	terUnitAttributeData DebrisInsect;
+	terUnitAttributeData DebrisUnit;
+	terUnitAttributeData DebrisStructure;
+	terUnitAttributeData DestructionCrater;
+	terUnitAttributeData DestructionCrater_NOZP;
+	terUnitAttributeData DestructionCraterNoDestructAllZeroplast;
+	terUnitAttributeData ScumMissileCrater;
+	terUnitAttributeData BombMissileCrater;
+	terUnitAttributeData BombieMissileCrater;
+	terUnitAttributeData RocketMissileCrater;
+	terUnitAttributeData VolcanoCrater;
+	terUnitAttributeData ScumDisruptorCrater;
+	terUnitAttributeData DebrisCrater;
+	terUnitAttributeData ScumHeaterCrater;
+	terUnitAttributeData PiercerMovementCrater;
+	terUnitAttributeData FrameKaputCrater;
+	terUnitAttributeData ScumTwisterCrater;
+	terUnitAttributeData ScumStorm;
+	terUnitAttributeData StaticNature;
+	terUnitAttributeData NatureMountain;
+	terUnitAttributeData NatureRift;
+	terUnitAttributeData NatureCleft;
+	terUnitAttributeData NatureWorm;
+	terUnitAttributeData NatureFace;
+	terUnitAttributeData Squad;
+	terUnitAttributeData FallTree;
+	terUnitAttributeData CorridorAlpha;
+	terUnitAttributeData CorridorOmega;
+	terUnitAttributeData Monk;
+	terUnitAttributeData FallStructure;
+	terUnitAttributeData HologramStructure;
+	terUnitAttributeData UninstallingStructure;
+	terUnitAttributeData NatureTorpedo;
+	terUnitAttributeData NatureFault;
+	terUnitAttributeData AlphaPotential;
+	terUnitAttributeData FrameExodus0;
+	terUnitAttributeData FrameExodus1;
+	terUnitAttributeData FrameHarkBackHood0;
+	terUnitAttributeData FrameHarkBackHood1;
+	terUnitAttributeData FrameEmpire0;
+	terUnitAttributeData FrameEmpire1;
+	terUnitAttributeData FrameEmpireVice;
+ // –ассматриваем последовательность расположенных р€дом структур как массив
+	int size() const { xassert(sizeof(*this) % sizeof(terUnitAttributeData) == 0); return sizeof(*this)/sizeof(terUnitAttributeData); }
+	const terUnitAttributeData& operator[](int i) const { xassert(i >= 0 && i < size()); return ((terUnitAttributeData*)this)[i]; }
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_terUnitAttributeDataTable__
+extern terUnitAttributeDataTable unitAttributeDataTable;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: UnitAttributePrm
+//////////////////////////////////////////////////////////////////////////////////////////////

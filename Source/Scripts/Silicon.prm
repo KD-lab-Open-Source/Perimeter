@@ -1,0 +1,39 @@
+section SiliconPrm(declaration = "Render\Client\Scripts\Silicon.hi", definition = "Render\Client\Scripts\Silicon.cppi")
+{
+
+float silicon_time_step = 0.1f;
+
+float elastic_sphere_stiffness = .8;
+float elastic_sphere_damping = -0.04;
+float elastic_sphere_damping2 = 0.00025;
+float elastic_sphere_spawn_factor = 0.2;
+float elastic_sphere_spawn_factor_dz = 0.2; 
+float elastic_sphere_velocity_factor = 0.015;
+
+float elastic_sphere_CM_stiffness = 0.05;
+float elastic_sphere_CM_damping = -0.025;
+float elastic_sphere_CM_damping2 = .0001;
+
+float elastic_sphere_get_point_radius_factor = 0.85;
+
+float elastic_link_CM_stiffness = 0.03;
+float elastic_link_CM_damping = -0.05;
+float elastic_link_CM_damping2 = 0.0001;
+
+float elastic_link_stiffness = 0.1;
+float elastic_link_damping = -0.05;
+float elastic_link_damping2 = 0.001;
+
+float elastic_link_thickness_pow = 4;
+
+float oscillating_link_density = 0.1;
+
+float oscillating_link_stiffness = 2;//.8;
+float oscillating_link_damping = -0.04;
+float oscillating_link_damping2 = 0.000025;
+float oscillating_link_spawn_factor = 0.2;
+float oscillating_link_spawn_factor_dz = 0.2; 
+float oscillating_link_velocity_factor = 0.015;
+
+float oscillating_link_tail_length = 40;
+}

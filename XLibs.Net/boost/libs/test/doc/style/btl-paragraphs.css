@@ -1,0 +1,46 @@
+P.first-line-indented
+{
+    text-indent:    10px;
+}
+
+P.indented
+{
+    margin-left:    20px; 
+    margin-top:     0px;
+    margin-bottom:  0px;
+}
+
+P.epigraph
+{
+    text-align:     right; 
+    font-family:    Century Gothic; 
+    font-style:     italic
+}
+
+P.test-output
+{
+    font-family:    Arial; 
+    font-size:      12pt;
+    margin-left:    2em;
+    white-space:    nowrap
+}
+
+P.page-toc
+{
+    font-weight:    bold;
+    margin-top:     0px;
+    margin-bottom:  0px;
+}
+
+P.page-toc-indented
+{
+    font-weight:    bold;
+    margin-left:    20px; 
+    margin-top:     0px;
+    margin-bottom:  0px;
+}
+
+P.see-also-content
+{
+    padding-left:   40px;
+}

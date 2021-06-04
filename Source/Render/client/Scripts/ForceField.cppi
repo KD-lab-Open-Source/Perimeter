@@ -1,0 +1,50 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript definition
+//	Section: ForceFieldPrm
+//	Number of variables: 13
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+float fade_duration = 1000.f;
+int evolve_field_iterations = 3;
+float force_field_height = 300.f;
+int height_field_iterations = 10;
+float force_field_time_step = 0.2f;
+float force_field_stiffness = 3.f;
+float force_field_damping = 1.0005f;
+float force_field_damping2 = 1.e-004f;
+float force_field_damping_min = 0.1f;
+float force_field_spawn_factor = 0.25f;
+float force_field_penalty_stiffness = 0.f;
+float force_field_check_place_height = 50.f;
+int force_field_tangeta_length = 20;
+
+#ifdef _PRM_EDIT_
+struct ForceFieldPrm_ParameterSection : ParameterSection
+{
+	ForceFieldPrm_ParameterSection() : ParameterSection("ForceFieldPrm")
+{
+	add_dependency(".\\Scripts\\ForceField.prm");
+	sourceCRC = 2240840799;
+	description = 3732590718;
+	reserve(13);
+	add(&fade_duration, "fade_duration");
+	add(&evolve_field_iterations, "evolve_field_iterations");
+	add(&force_field_height, "force_field_height");
+	add(&height_field_iterations, "height_field_iterations");
+	add(&force_field_time_step, "force_field_time_step");
+	add(&force_field_stiffness, "force_field_stiffness");
+	add(&force_field_damping, "force_field_damping");
+	add(&force_field_damping2, "force_field_damping2");
+	add(&force_field_damping_min, "force_field_damping_min");
+	add(&force_field_spawn_factor, "force_field_spawn_factor");
+	add(&force_field_penalty_stiffness, "force_field_penalty_stiffness");
+	add(&force_field_check_place_height, "force_field_check_place_height");
+	add(&force_field_tangeta_length, "force_field_tangeta_length");
+	add_parameter_section(this);
+}
+};
+static ForceFieldPrm_ParameterSection ForceFieldPrm_ParameterSectionObject;
+#endif  //  _PRM_EDIT_
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: ForceFieldPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

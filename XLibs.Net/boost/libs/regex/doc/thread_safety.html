@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: Thread Safety</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">Thread Safety</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <P>The regex library is thread safe when Boost is: you can verify that Boost is in 
+         thread safe mode by checking to see if BOOST_HAS_THREADS is defined: this macro 
+         is set automatically by the config system when threading support is turned on 
+         in your compiler.
+      </P>
+      <P>Class <A href="basic_regex.html">basic_regex</A>&lt;&gt; and its typedefs regex 
+         and wregex are thread safe, in that compiled regular expressions can safely be 
+         shared between threads. The matching algorithms <A href="regex_match.html">regex_match</A>,
+         <A href="regex_search.html">regex_search</A>, <A href="regex_grep.html">regex_grep</A>,
+         <A href="regex_format.html">regex_format</A> and <A href="regex_merge.html">regex_merge</A>
+         are all re-entrant and thread safe. Class <A href="match_results.html">match_results</A>
+         is now thread safe, in that the results of a match can be safely copied from 
+         one thread to another (for example one thread may find matches and push 
+         match_results instances onto a queue, while another thread pops them off the 
+         other end), otherwise use a separate instance of <A href="match_results.html">match_results</A>
+         per thread.
+      </P>
+      <P>The <A href="posix_api.html">POSIX API functions</A> are all re-entrant and 
+         thread safe, regular expressions compiled with <I>regcomp</I> can also be 
+         shared between threads.
+      </P>
+      <P>The class<A href="regex.html"> RegEx</A> is only thread safe if each thread 
+         gets its own RegEx instance (apartment threading) - this is a consequence of 
+         RegEx handling both compiling and matching regular expressions.
+      </P>
+      <P>Finally note that changing the global locale invalidates all compiled regular 
+         expressions, therefore calling <I>set_locale</I> from one thread while another 
+         uses regular expressions <I>will</I> produce unpredictable results.
+      </P>
+      <P>
+         There is also a requirement that there is only one thread executing prior to 
+         the start of main().</P>
+      <HR>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         24 Oct 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 
+            2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+   </body>
+</html>

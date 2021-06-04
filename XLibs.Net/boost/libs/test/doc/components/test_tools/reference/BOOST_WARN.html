@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_WARN( predicate )</H3>
+  <P class="first-line-indented">This tool is used to perform a weak validation of the predicate. This 
+    check failure does not cause the test case to fail, but only warning message logged in test output 
+    stream. Use this tool to validate aspects less important then correctness: performance, portability, 
+    usability e.t.c.</P>
+  <P class="first-line-indented">If predicate evaluates to <I>true</I>, the tool produces a confirmation 
+    message (note: to manage what messages appear in the test output stream set the proper log level), 
+    in other case it produces a warning message in a form &quot;warning in &lt;test case name&gt;: condition 
+    &lt;predicate&gt; is not satisfied&quot;</P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    BOOST_WARN( <SPAN class="reserv-word">sizeof</SPAN>(<SPAN class="cpp-type">int</SPAN>) == <SPAN class="reserv-word">sizeof</SPAN>(<SPAN class="cpp-type">short</SPAN>) );
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(2) : warning in test_main: condition sizeof(int) 
+    == sizeof(short) is not satisfied  
+  </P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK.html" target="descr">BOOST_CHECK</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

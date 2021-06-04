@@ -1,0 +1,12 @@
+<texture type='Primitive'>
+	<persistence value='0.05'/>
+	<octaveCount value='4'/>
+	<shift value='0.000000,0.000000,0.000000'/>
+	<scale value='0.02000,0.020000,0.020000'/>
+	<colorizer type='WoodBackSin'>
+		<bgColor value='0.000000,0.000000,0.000000'/>
+		<fgColor value='0.670000,0.450000,0.290000'/>
+		<ringCount value='10.000000'/>
+	</colorizer>
+	<interpolator type='Cubic'/>
+</texture>

@@ -1,0 +1,398 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: SquadShellUIPrm
+//	Number of variables: 292
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef __XScript_struct__V2i__
+#define __XScript_struct__V2i__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct _V2i {
+	int x;
+	int y;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct__V2i__
+#ifndef __XScript_struct__V2f__
+#define __XScript_struct__V2f__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct _V2f {
+	float x;
+	float y;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct__V2f__
+#ifndef __XScript_struct_sqshCursor__
+#define __XScript_struct_sqshCursor__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct sqshCursor {
+	int system;
+	int hotspot_center;
+	char const* image;
+	int sx;
+	int sy;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_sqshCursor__
+extern int _sqsh_cursor_count;
+extern sqshCursor _sqsh_cursors[];
+#ifndef __XScript_struct_ShellGalogramType__
+#define __XScript_struct_ShellGalogramType__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ShellGalogramType {
+	char const* model;
+	float radius;
+	float pos_dx;
+	float pos_dy;
+	float angle_x;
+	float angle_y;
+	float angle_z;
+	float r1;
+	float g1;
+	float b1;
+	float r2;
+	float g2;
+	float b2;
+	int camera_x;
+	int camera_y;
+	int camera_sx;
+	int camera_sy;
+	float model_rate;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ShellGalogramType__
+extern int shell_galogram_table_size;
+extern ShellGalogramType shell_galogram_table[];
+extern char const* shell_galogram_texture;
+#ifndef __XScript_struct_EventSymbol__
+#define __XScript_struct_EventSymbol__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct EventSymbol {
+	char const* image;
+	float sx;
+	float sy;
+	float period;
+	float animTime;
+	char const* snd;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_EventSymbol__
+extern EventSymbol activeObjectSymbol;
+extern EventSymbol eventSymbols[2];
+extern float SQSH_COORD_WIDTH_SCALE;
+extern float SQSH_COORD_HEIGHT_SCALE;
+extern float sqshProrgessBarHeight;
+extern float sqshCursorWorkAreaDx;
+extern float sqshCursorWorkAreaDy;
+extern float sqshDisabledR;
+extern float sqshDisabledG;
+extern float sqshDisabledB;
+extern float sqshDisabledA;
+extern float nPopupTextPosX;
+extern float nPopupTextPosY;
+extern float nPopupSX;
+extern float nPopupSY;
+extern char const* sPopupTexture;
+extern float shellCursorAddRegionSize;
+extern float _buttonLabelX;
+extern float _buttonLabelY;
+extern float _squad_buttons_dx;
+extern int _button_atom1_x;
+extern int _button_atom1_y;
+extern int _button_atom2_x;
+extern int _button_atom2_y;
+extern int _button_atom3_x;
+extern int _button_atom3_y;
+extern int _button_atom4_x;
+extern int _button_atom4_y;
+extern float _button_atom5_x;
+extern float _button_atom5_y;
+extern float _button_atom6_x;
+extern float _button_atom6_y;
+extern int _button_pict_size;
+extern int nNrjOutputX;
+extern int nNrjOutputY;
+extern int nNrjUsedX;
+extern int nNrjUsedY;
+extern float _map_window_dx;
+extern float _map_window_dy;
+extern float _map_window_sx;
+extern float _map_window_sy;
+#ifndef __XScript_struct__ProgressBar__
+#define __XScript_struct__ProgressBar__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct _ProgressBar {
+	_V2i points[2];
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct__ProgressBar__
+extern float fButtonEffectSizeSpeed;
+extern float fButtonEffectAlphaSpeed;
+extern int tDeselectInterval;
+extern float fWorkAreaCenterX;
+extern float fWorkAreaCenterY;
+extern float empty_x1;
+extern float empty_x2;
+extern float empty_y1;
+extern float empty_y2;
+extern float brig_x1;
+extern float brig_x2;
+extern float brig_y1;
+extern float brig_y2;
+extern float build_x1;
+extern float build_x2;
+extern float build_y1;
+extern float build_y2;
+extern float hover_x1;
+extern float hover_x2;
+extern float hover_y1;
+extern float hover_y2;
+extern int hover_sx;
+extern int hover_sy;
+extern float half_sx_;
+extern float right_x_;
+extern float activeHalfBrig_u;
+extern float activeHalfBrig_v;
+extern float activeHalfTerr_u;
+extern float activeHalfTerr_v;
+extern float flashingHalfBrig_u;
+extern float flashingHalfBrig_v;
+extern float flashingHalfTerr_u;
+extern float flashingHalfTerr_v;
+extern float halfBrig_u;
+extern float halfBrig_v;
+extern float halfTerr_u;
+extern float halfTerr_v;
+extern float half_du;
+extern float half_dv;
+extern float brig_u;
+extern float brig_v;
+extern float terr_u;
+extern float terr_v;
+extern float pressedBrig_u;
+extern float pressedBrig_v;
+extern float pressedTerr_u;
+extern float pressedTerr_v;
+extern float activeBrig_u;
+extern float activeBrig_v;
+extern float activeTerr_u;
+extern float activeTerr_v;
+extern float whole_du;
+extern float whole_dv;
+extern _ProgressBar _bar_squad;
+extern int sound_shield_on_delay;
+extern char const* sMessagesPromptFile;
+extern int nPromptPosX;
+extern int nPromptPosY;
+extern int nShowNewClusterMsgDelay;
+extern int nPeriodMsg;
+extern int nDefaultMsgDelayTime;
+extern int nMsgRectX1;
+extern int nMsgRectY1;
+extern int nMsgRectX2;
+extern int nMsgRectY2;
+extern int tutTextWindowDx;
+extern int tutTextWindowDy;
+extern int tutMarkWindowPeriod;
+extern int nAtomPerSqadMax;
+extern _ProgressBar _bar_load;
+extern int progress_tex_sz;
+extern char const* progress_texture;
+extern int splash_delay_time;
+extern int alpha_delta;
+extern int _bDebugDisplayAllIcons;
+extern float nBaseUnitsDisplayX;
+extern float nBaseUnitsDisplayY;
+extern float countDownTimerX;
+extern float countDownTimerY;
+extern float totalTimerX;
+extern float totalTimerY;
+extern char const* sRegionTextureAbyss;
+extern char const* sRegionTextureEnergy;
+extern char const* sRegionTextureTriangle;
+extern float fBackgrTexturePeriod;
+extern int nBackgrTextureR;
+extern int nBackgrTextureG;
+extern int nBackgrTextureB;
+extern int nBackgrTextureA;
+extern int nBackgrMode;
+extern int lastAccessibleMissionNumber;
+extern int lastVisibleMissionNumber;
+extern int disableBriefing;
+extern float bgCameraPsi;
+extern float bgCameraTheta;
+extern float bgCameraDist;
+extern float bgCameraX;
+extern float bgCameraY;
+extern float bgCameraZ;
+extern float bgLightX;
+extern float bgLightY;
+extern float bgLightZ;
+extern float bgEffectTime;
+extern float mapTextureWeight;
+extern float scaleButtonWeight;
+extern float colorComboAlpha;
+extern float pushButtonAlpha;
+extern float pushButtonTextureWeight;
+extern float pushButtonPressedEnabled;
+extern float pushButtonNormalEnabled;
+extern float pushButtonDisabled;
+extern float pushButtonDisabledAlpha;
+extern float scaleButtonAlpha;
+extern float listBoxRowHeight;
+extern float comboBoxRowHeight;
+extern float collectedProgressRelaxationTime;
+extern int _fEffectButtonTime1;
+extern int _fEffectButtonTime2;
+extern int _fEffectButtonTime3;
+extern int _fEffectButtonTotalTime;
+extern int _fEffectIntfRoll1;
+extern int _fEffectIntfRoll2;
+extern int _fEffectIntfRoll3;
+extern float hintX;
+extern float hintY;
+extern float hintSX;
+extern float cutSceneHintX;
+extern float cutSceneHintY;
+extern float cutSceneHintSX;
+extern int spiralR;
+extern int spiralG;
+extern int spiralB;
+extern int spiralA;
+extern float MiniMapZeroLayerColorFactor;
+extern float MiniMapBuildingColorFactor;
+extern float filthMapColor[4];
+extern float buildingMiniMapRatio;
+extern float minimapAlphaPathColor[4];
+extern ShellControlID reloadID;
+extern char const* worldUnknownTexture1;
+extern char const* worldUnknownTexture2;
+extern char const* worldFullTexture1;
+extern char const* worldFullTexture2;
+extern char const* worldAExpeditionTexture1;
+extern char const* worldAExpeditionTexture2;
+extern char const* worldDeadEndTexture1;
+extern char const* worldDeadEndTexture2;
+extern char const* worldVisitedTexture1;
+extern char const* worldVisitedTexture2;
+extern char const* worldMissionedTexture1;
+extern char const* worldMissionedTexture2;
+extern int HISTORY_ADD_BLEND_ALPHA_MODE;
+extern float BUILDING_LINK_BLINKING_PERIOD;
+extern float JUMP_FLARE_PERIOD;
+extern float KNOWN_WORLD_ALPHA;
+extern float UNKNOWN_WORLD_ALPHA;
+extern float NOMAD_MARKER_SCALE;
+extern float HISTORY_FRAME_MODEL_SCALE;
+extern float NOMAD_MARKER_PERIOD;
+extern float scrollSpeed;
+extern float EVOLVE_TIME;
+extern float HISTORY_CAMERA_FLY_TIME;
+extern float HISTORY_SCENE_SCALE;
+extern float HISTORY_SCENE_WORLD_SIZE_FACTOR;
+extern float SPHERE_VISIBLE_DISTANCE;
+extern float HISTORY_SCENE_CAMERA_MIN_DISTANCE;
+extern float HISTORY_SCENE_CAMERA_MAX_DISTANCE;
+extern int HISTORY_SCENE_LOG_FONT_SIZE;
+extern float HISTORY_SCENE_CENTER_X;
+extern float HISTORY_SCENE_CENTER_Y;
+extern float HISTORY_SCENE_CENTER_Z;
+extern float HISTORY_SCENE_PSI;
+extern float HISTORY_SCENE_THETA;
+extern float HISTORY_SCENE_DISTANCE;
+extern float DISSOLVE_TIME;
+extern float TESTAMENT_EFFECT_PERIOD;
+extern float TESTAMENT_EFFECT_DELAY;
+extern int DEFAULT_NOMAD_COLOR_INDEX;
+extern int BRIEFING_LOG_FONT_SIZE;
+extern float BRIEFING_LOG_X;
+extern float BRIEFING_LOG_Y;
+extern float BRIEFING_LOG_ALPHA;
+extern int BRIEFING_LOG_ROW_COUNT;
+extern float ATTACK_FLASHING_TIME;
+extern int attackClassTipAutoFormatCount;
+#ifndef __XScript_struct_unitClassDesc__
+#define __XScript_struct_unitClassDesc__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct unitClassDesc {
+	int unitClass;
+	char const* textID;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_unitClassDesc__
+extern int unitClassKeyNumber;
+extern unitClassDesc unitClassDescriptionKeys[];
+extern char const* REPLAY_PATH;
+extern char const* MISSIONS_PATH;
+extern int RESOLUTION_COUNT;
+extern _V2i RESOLUTIONS[];
+extern int LOD_COUNT;
+extern int LODS[];
+#ifndef __XScript_struct_Reel__
+#define __XScript_struct_Reel__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct Reel {
+	char const* name;
+	int abortEnabled;
+	int localized;
+	int video;
+	int time;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_Reel__
+extern int REEL_COUNT;
+extern Reel reels[];
+extern int DEMO_REEL_COUNT;
+extern Reel demoReels[];
+extern Reel lastReel;
+extern Reel lastDemoReel;
+extern _V2i imageRacePos[3];
+extern _V2i imageRaceSize[3];
+extern float CUT_SCENE_TOP;
+extern float CUT_SCENE_BOTTOM;
+extern int CUT_SCENE_FADEOUT_TIME;
+extern int CUT_SCENE_FADEIN_TIME;
+extern int CUT_SCENE_PAUSE_TIME;
+extern float CREDITS_SCROLL_SPEED;
+extern int INTERVIDEO_ALPHA;
+extern float sqshFontCountDownTimeColor[4];
+extern char const* sqshShellMainFont;
+extern char const* sqshShellMainFont1;
+extern char const* sqshShellMainFont2;
+extern char const* sqshFontPopup;
+extern char const* sqshFontCountDownTime;
+extern char const* shell_main_menu_font;
+extern int shell_main_menu_font_size1;
+extern int shell_main_menu_font_size1_5;
+extern int shell_main_menu_font_size2;
+extern int shell_main_menu_font_size3;
+extern int shell_main_menu_font_size4;
+extern int defaultFontSize;
+extern int comboBoxFontSize;
+extern int editBoxFontSize;
+extern float sqshCursorWorkAreaSize;
+extern int sqshFontCountDownTimeSize;
+extern int infoWndFontSize;
+extern int HINT_FONT_SIZE;
+extern int inGameButtonFontSize;
+extern int inGameLegionDigit;
+extern int collectedEnergyBarFontSize;
+extern int statsTableFontSize;
+extern int statsHeadTableFontSize;
+extern float SPLASH_FADE_IN_TIME;
+extern float SPLASH_FADE_OUT_TIME;
+extern float SPLASH_REEL_ABORT_DISABLED_TIME;
+extern char const* aiNameIDs[14];
+extern char const* mainMenuMusic;
+extern char const* briefingMusic;
+extern int DeltaToolzerRadius;
+extern float CHATINFO_FADE_TIME;
+extern float CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT;
+extern float statsTableRowHeight;
+extern float totalColumnStatsWeights[6];
+extern float generalColumnStatsWeights[7];
+extern float unitsColumnStatsWeights[6];
+extern float buildingsColumnStatsWeights[6];
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: SquadShellUIPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

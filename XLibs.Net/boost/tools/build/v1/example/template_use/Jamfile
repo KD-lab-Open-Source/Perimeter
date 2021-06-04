@@ -1,0 +1,24 @@
+# (C) Copyright Rene Rivera, 2002.
+#
+# See accompanying license for terms and conditions of use.
+#
+
+# Example of how to define a template.
+# This is for Boost.Build-V1
+
+subproject tools/build/examples/template_use ;
+
+# Declare the template as a target. The sources, requirements, and
+# default builds sections are copied to the targets that depend (use)
+# this template.
+#
+template t-common
+    :
+        # SOURCES
+    :
+        # REQUIREMENTS
+        <include>$(SUBDIR)/include
+        <define>SOME_DEFINE
+    :
+        # DEFAULT BUILDS
+    ;

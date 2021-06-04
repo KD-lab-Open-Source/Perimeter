@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+<TITLE>Boost Test Library: unit_test_example3 example</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../index.html">Boost.Test</A> > <A href="index.html">Examples</A> > <SPAN class="current_article">unit_test_example3</SPAN> 
+</DIV>
+<DIV class="body"> <IMG src='../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The Unit Test Framework example 3</H1>
+  <TABLE class="test-example-summary">
+    <TR>
+      <TD class="title" valign="top">Rationale:</TD>
+      <TD>to demonstrate 
+        <UL>
+          <LI>an ability to construct multilevel hierarchy of test suites</LI>
+          <LI>an ability to construct test cases based on user class's member function</LI>
+          <LI>an ability to fail test suite initialization</LI>
+          <LI>usage of several different kinds of Test Tools</LI>
+          <LI>usage of floating point comparison algorithm</LI>
+        </UL>
+      </TD>
+    </TR>
+    <TR>
+      <TD class="title" valign="top">Input:</TD>
+      <TD>This example require initial balance as a command line argument. Also during run it query deposit 
+        value. You may use 10 and 5 to get an output below.</TD>
+    </TR>
+    <TR>
+      <TD class="title" valign="top">Output:</TD>
+      <TD>With the input described above the output looks like:<BR>
+        <SPAN class="test-output">Running 3 test case...<BR>
+        .../unit_test_example3.cpp(63): error in "account_test::test_init": test m_account.balance() == 
+        5.0 failed [10 != 5]<BR>
+        Enter deposit value:<BR>
+        5<BR>
+        .../unit_test_example3.cpp(87): fatal error in "account_test::test_deposit": test m_account.balance() 
+        >= 100.0 failed<BR>
+        <BR>
+        *** 2 failures detected (5 failures expected) in test suite "Unit test example 3" </SPAN> </TD>
+    </TR>
+    <TR>
+      <TD class="title" valign="top">Source:</TD>
+      <TD><A href="../../example/unit_test_example3.cpp">unit_test_example3.cpp</A></TD>
+    </TR>
+  </TABLE>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

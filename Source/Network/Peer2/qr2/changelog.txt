@@ -1,0 +1,53 @@
+Changelog for: GameSpy Query & Reporting 2 SDK
+--------------------------------------------------------
+
+DATE        VERSION  BY   TYPE     DESCRIPTION
+----------  -------  ---  -------  ---------------------------------------------------------
+07-24-2003  3.00.24  DES  RELEASE  Releasing to developer site.
+07-21-2003  3.00.24  BED  FIX      Moved VisualStudio workspace into appropriate directory.
+07-18-2003  3.00.23  BED  FEATURE  Added CodeWarrior (PS2) sample project file.
+                     BED  CLEANUP  General cleanup to remove CodeWarrior warnings.
+07-17-2003  3.00.22  DES  CLEANUP  Cleaned up the PS2 Makefile, it now uses Makefile.commmon.
+07-16-2003  3.00.21  DES  FIX      Changed a __mips64 check to a _PS2 check.
+                     BED  FEATURE  Added ProDG sample project files.
+06-11-2003  3.00.20  DES  RELEASE  Releasing to developer site.
+05-09-2003  3.00.20  DES  CLEANUP  Removed Dreamcast support.
+                          FIX      Metrowerks for Win32 is no longer falsely identified as MacOS.
+05-07-2003  3.00.19  DES  RELEASE  Releasing to developer site.
+05-06-2003  3.00.19  DES  FIX      Old style replies were not correctly handling callbacks that didn't add a value.
+04-07-2003  3.00.18  DES  FIX      Fixed the PID__KEY define (changed to 27 from 26).
+03-11-2003  3.00.17  DES  OTHER    Split socket creation into a seperate internal function, needed for Peer.
+02-28-2003  3.00.16  DES  RELEASE  Releasing to developer site.
+02-27-2003  3.00.16  DES  FIX      If not using NULL as the qr2_t parameter, qr2_shutdown() would access
+                                   the structure after it was freed.
+02-05-2003  3.00.15  DES  RELEASE  Releasing to developer site.
+02-05-2003  3.00.15  DES  CLEANUP  Switched to use CanReceiveOnSocket instead of select.
+02-04-2003  3.00.14  DES  RELEASE  Relasing to developer site.
+02-04-2003  3.00.14  DDW  FIX      Added an extra \ to the "final" key in the GOA-style reply to fix illegal format
+01-31-2003  3.00.13  DES  FEATURE  Added a check which adds an empty string to the buffer if nothing was added in
+                                   a call to the server_key_callback, player_key_callback, or team_key_callback.
+                                   Apps no longer need to handle the case of an unrecognized key.
+01-20-2003  3.00.12  DES  OTHER    Changed to use new <gamename>.master.gamespy.com master server naming convention.
+01-16-2003  3.00.11  JED  OTHER    renamed a static var in qr2.c that was causing linker name conflicts in GS Arcade
+01-06-2003  3.00.10  DES  OTHER    Moved a few things from qr2.c to qr2.h for CDKey SDK integration.
+12-19-2002  3.00.09  DES  RELEASE  Releasing to developer site.
+12-19-2002  3.00.09  DES  CLEANUP  Removed assert.h include.
+12-16-2002  3.00.08  DES  FEATURE  Added a check to prevent statechanges from being sent too frequently.
+                                   This is to help alleviate the problem of servers that flood our master server.
+12-13-2002  3.00.07  DES  FEATURE  Added PS2 eenet stack support.
+12-11-2002  3.00.06  DES  CLEANUP  Changed from using gethostname to getlocalhost for getting local IPs.
+12-06-2002  3.00.05  DES  RELEASE  Releasing to developer site.
+12-06-2002  3.00.05  DDW  FIX      Added new heartbeat type so that if restarting a crashed server
+                                   the nochallenge error will not be triggered.
+12-03-2002  3.00.04  DES  RELEASE  Releasing to developer site.
+12-03-2002  3.00.04  DES  FEATURE  Added a Linux Makefile.
+11-22-2002  3.00.03  DES  RELEASE  Releasing to developer site.
+11-20-2002  3.00.03  DES  FIX      Only call SocketShutDown if we called SocketStartup.
+11-20-2002  3.00.02  DES  FEATURE  Added support for compiling on the PS2.
+09-26-2002  3.00.01  DES  RELEASE  Limited release on developer site
+09-25-2002  3.00.01  DDW  OTHER    Changelog started
+09-23-2002  3.00.01  DDW  RELEASE  Release to EAPAC for Generals (Peer)
+09-18-2002  3.00.01  DDW  RELEASE  Release to EAPAC for Generals
+09-18-2002  3.00.01  DDW  FEATURE  Added 20-sec keep-alive packets
+09-06-2002  3.00.00  DDW  RELEASE  Release to EAPAC for Generals
+

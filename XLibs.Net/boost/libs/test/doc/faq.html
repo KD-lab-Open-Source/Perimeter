@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+<TITLE>Boost Test Library: FAQ</TITLE>
+<LINK rel="stylesheet" type="text/css" href="style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY> 
+<DIV class="header"> <A href="index.html">Boost.Test</A> > <SPAN class="current_article">FAQ</SPAN> </DIV> 
+<DIV class="body"> <IMG src='btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">Frequently Asked Questions</H1> 
+  <UL> 
+    <LI><A href="#Item_1">Where the latest version of the Boost Test Library
+        is located?</A></LI> 
+    <LI><A href="#Item_2">I found a bug. Where could I report it?</A></LI> 
+    <LI><A href="#Item_3">I have a request for a new feature. Where could I ask
+        for it? </A></LI> 
+    <LI><A href="#Item_4">How to create test case?</A></LI> 
+    <LI><A href="#Item_5">How to create test suite?</A></LI> 
+    <LI><A href="#Item_7">Why did I get a linker error when compiling my test
+        program?</A></LI> 
+    <LI><A href="#Item_7">How could I redirect testing output?</A></LI> 
+    <LI><A href="#Item_8">I want different default log trace level</A></LI> 
+    <LI><A href="#Item_9">Is there dll version of Boost Test components available
+        on Win32 platform?</A></LI> 
+  </UL> 
+  <H2><A name="Item_1">Where the latest version of the Boost Test Library is
+      located?</A></H2> 
+  <P class="first-line-indented">The latest version of Boost Test Library is
+    available online on <A href="http://www.boost.org">www.boost.org</A>.</P> 
+  <H2><A name="Item_2">I found a bug. Where could I report it?</A></H2> 
+  <P class="first-line-indented">Send a bug report to <A href='mailto:rogeeff@fusemail.com'>Gennadiy
+      Rozental</A>.</P> 
+  <H2><A name="Item_3">I have a request for a new feature. Where could I ask
+      for it?</A></H2> 
+  <P class="first-line-indented">You can send a request to <A href='mailto:rogeeff@fusemail.com'>Gennadiy
+      Rozental</A>.</P> 
+  <H2><A name="Item_4">How to create test case?</A></H2> 
+  <P class="first-line-indented">To create a test case use the macro BOOST_TEST_CASE(
+    test_function ). For more details see the <A href="components/unit_test_framework/components/test_case/index.html">Unit
+    Test Framework</A> documentation.</P> 
+  <H2><A name="Item_5">How to create test suite?</A></H2> 
+  <P class="first-line-indented">To create a test suite use the macro BOOST_TEST_SUITE(
+    suite_name ). For more details see the <A href="components/unit_test_framework/components/test_suite/index.html">Unit
+    Test Framework</A> documentation.</P> 
+  <H2><A name="Item_6">Why did I get a linker error when compiling my test program?</A></H2> 
+  <P class="first-line-indented">Boost Test Library is implemented off-line.
+    To create a test program you should link with the one of the precompiled
+    library components or use "included" version of the component located in
+    a boost/test/included directory. For example, to use Test Execution Monitor
+    you may either include the &lt;boost/test/test_tools.hpp&gt; and link with
+    libtest_exec_monitor.lib or you could include &lt;boost/test/included/test_exec_monitor.hpp&gt; in
+    which case you would not need to link with any precompiled component. Note
+    also that you should strictly follow specification on integration function
+    in other case some compilers may produce linker error like this:
+  <P>  
+  <P>Unresolved external init_unit_test_suite(int, char**).</P> 
+  <P>The reasons for this error is that in your implementation you should specify
+    second argument of init_unit_test_suite exactly as in a specification, i.e.:
+    char* [].</P> 
+  <H2><A name="Item_7">How could I redirect testing output?</A></H2> 
+  <P class="first-line-indented">Use unit_test_log::instance().set_log_output(
+    std::ostream&amp; ). For more details see the <A href="components/unit_test_framework/components/test_log/index.html">Unit
+    Test Framework </A>documentation.</P> 
+  <H2><A name="Item_8">I want different default log trace level</A></H2> 
+  <P class="first-line-indented">Use environment variable BOOST_TEST_LOG_LEVEL
+    to define desired log trace level. You still will be able to reset this value
+    from the command line. For the list of acceptable values see the <A href="components/unit_test_framework/parameters/log_level.html">Unit
+    Test Framework</A> documentation. </P> 
+  <H2><A name="Item_9">Is there DLL version of Boost Test components available
+      on Win32 platform?</A></H2> 
+  <P class="first-line-indented">No. At the moment Boost Test components could
+    not be compiled into dlls to be loaded at runtime.</P> 
+</DIV> 
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy
+        Rozental</A> 2001-2004. <BR> 
+      Use, modification, and distribution are subject to the Boost Software License,
+      Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or
+      copy at <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P> 
+    <P>Revised:
+      <!-- #BeginDate format:Sw1 -->18 January, 2004<!-- #EndDate --> 
+    </P> 
+  </DIV> 
+</DIV> 
+</BODY>
+</HTML>

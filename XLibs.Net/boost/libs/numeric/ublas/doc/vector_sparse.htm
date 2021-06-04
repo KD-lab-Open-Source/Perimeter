@@ -1,0 +1,945 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<meta http-equiv="Content-Type" content=
+"text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Sparse Vector</title>
+</head>
+<body bgcolor="#ffffff">
+<h1><img src="c++boost.gif" alt="c++boost.gif" align="Center">
+Sparse Vector</h1>
+
+<h2><a name="sparse_vector"></a> Sparse Vector</h2>
+
+<h4>Description</h4>
+
+<p>The templated class <code>sparse_vector&lt;T, A&gt;</code> is
+the base container adaptor for sparse vectors. For a
+<em>n</em>-dimensional sparse vector and <em>0 &lt;= i &lt; n</em>
+the non-zero elements <em>v</em><sub><em>i</em></sub> are mapped to
+consecutive elements of the associative container, i.e. for
+elements <em>k</em> =
+<em>v</em><sub><em>i</em></sub><sub><sub><em>1</em></sub></sub>and
+<em>k + 1 =
+v</em><sub><em>i</em></sub><sub><sub><em>2</em></sub></sub>of the
+container holds <em>i</em><sub><em>1</em></sub> <em>&lt;
+i</em><sub><em>2</em></sub>.</p>
+
+<h4>Example</h4>
+
+<pre>
+#include &lt;boost/numeric/ublas/vector_sparse.hpp&gt;<br>
+#include &lt;boost/numeric/ublas/io.hpp&gt;<br>
+<br>
+int main () {<br>
+    using namespace boost::numeric::ublas;<br>
+    sparse_vector&lt;double&gt; v (3, 3);<br>
+    for (unsigned i = 0; i &lt; v.size (); ++ i)<br>
+        v (i) = i;<br>
+    std::cout &lt;&lt; v &lt;&lt; std::endl;<br>
+}<br>
+</pre>
+
+<h4>Definition</h4>
+
+<p>Defined in the header vector_sparse.hpp.</p>
+
+<h4>Template parameters</h4>
+
+<table border="1">
+<tbody>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+
+<tr>
+<td><code>T</code> </td>
+<td>The type of object stored in the sparse vector.</td>
+<td>&nbsp;</td>
+</tr>
+
+<tr>
+<td><code>A</code></td>
+<td>The type of the adapted array. <a href=
+"#sparse_vector_1">[1]</a> </td>
+<td><code>map_array&lt;std::size_t, T&gt;</code></td>
+</tr>
+</tbody>
+</table>
+
+<h4>Model of</h4>
+
+<p><a href="container.htm#vector">Vector</a> .</p>
+
+<h4>Type requirements</h4>
+
+<p>None, except for those imposed by the requirements of <a href=
+"container.htm#vector">Vector</a> .</p>
+
+<h4>Public base classes</h4>
+
+<p><code>vector_expression&lt;sparse_vector&lt;T, A&gt;
+&gt;</code></p>
+
+<h4>Members</h4>
+
+<table border="1">
+<tbody>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><code>sparse_vector ()</code> </td>
+<td>Allocates a <code>sparse_vector</code> that holds zero
+elements.</td>
+</tr>
+
+<tr>
+<td><code>sparse_vector (size_type size, size_type
+non_zeros)</code></td>
+<td>Allocates a <code>sparse_vector</code> that holds at most
+<code>size</code> elements.</td>
+</tr>
+
+<tr>
+<td><code>sparse_vector (const sparse_vector &amp;v)</code></td>
+<td>The copy constructor.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ sparse_vector (size_type non_zeros, const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>The extended copy constructor.</td>
+</tr>
+
+<tr>
+<td><code>void resize (size_type size, size_type
+non_zeros)</code></td>
+<td>Reallocates a <code>sparse_vector</code> to hold at most
+<code>size</code> elements. The content of the
+<code>sparse_vector</code> is preserved.</td>
+</tr>
+
+<tr>
+<td><code>size_type size () const</code></td>
+<td>Returns the size of the <code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reference operator () (size_type i)
+const</code></td>
+<td>Returns the value of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>reference operator () (size_type i)</code></td>
+<td>Returns a reference of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>const_reference operator [] (size_type i)
+const</code></td>
+<td>Returns the value of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>reference operator [] (size_type i)</code></td>
+<td>Returns a reference of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>sparse_vector &amp;operator = (const sparse_vector
+&amp;v)</code></td>
+<td>The assignment operator.</td>
+</tr>
+
+<tr>
+<td><code>sparse_vector &amp;assign_temporary (sparse_vector
+&amp;v)</code></td>
+<td>Assigns a temporary. May change the sparse vector
+<code>v</code> .</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ sparse_vector &amp;operator = (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>The extended assignment operator.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ sparse_vector &amp;assign (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>Assigns a vector expression to the sparse vector. Left and
+right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ sparse_vector &amp;operator += (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>A computed assignment operator. Adds the vector expression to
+the sparse vector.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ sparse_vector &amp;plus_assign (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>Adds a vector expression to the sparse vector. Left and right
+hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ sparse_vector &amp;operator -= (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>A computed assignment operator. Subtracts the vector expression
+from the sparse vector.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ sparse_vector &amp;minus_assign (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>Subtracts a vector expression from the sparse vector. Left and
+right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AT&gt;<br>
+ sparse_vector &amp;operator *= (const AT &amp;at)</code></td>
+<td>A computed assignment operator. Multiplies the sparse vector
+with a scalar.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AT&gt;<br>
+ sparse_vector &amp;operator /= (const AT &amp;at)</code></td>
+<td>A computed assignment operator. Divides the sparse vector
+through a scalar.</td>
+</tr>
+
+<tr>
+<td><code>void swap (sparse_vector &amp;v)</code></td>
+<td>Swaps the contents of the sparse vectors.</td>
+</tr>
+
+<tr>
+<td><code>void insert (size_type i, const_reference t)</code></td>
+<td>Inserts the value <code>t</code> at the <code>i</code>-th
+element.</td>
+</tr>
+
+<tr>
+<td><code>void erase (size_type i)</code></td>
+<td>Erases the value at the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>void clear ()</code></td>
+<td>Clears the sparse vector.</td>
+</tr>
+
+<tr>
+<td><code>const_iterator begin () const</code></td>
+<td>Returns a <code>const_iterator</code> pointing to the beginning
+of the <code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_iterator end () const</code></td>
+<td>Returns a <code>const_iterator</code> pointing to the end of
+the <code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>iterator begin ()</code> </td>
+<td>Returns a <code>iterator</code> pointing to the beginning of
+the <code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>iterator end ()</code> </td>
+<td>Returns a <code>iterator</code> pointing to the end of the
+<code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reverse_iterator rbegin () const</code></td>
+<td>Returns a <code>const_reverse_iterator</code> pointing to the
+beginning of the reversed <code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reverse_iterator rend () const</code></td>
+<td>Returns a <code>const_reverse_iterator</code> pointing to the
+end of the reversed <code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>reverse_iterator rbegin ()</code> </td>
+<td>Returns a <code>reverse_iterator</code> pointing to the
+beginning of the reversed <code>sparse_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>reverse_iterator rend ()</code> </td>
+<td>Returns a <code>reverse_iterator</code> pointing to the end of
+the reversed <code>sparse_vector</code>.</td>
+</tr>
+</tbody>
+</table>
+
+<h4>Notes</h4>
+
+<p><a name="#sparse_vector_1">[1]</a> Supported parameters for the
+adapted array are <code>map_array&lt;std::size_t, T&gt;</code> and
+<code>std::map&lt;std::size_t, T&gt;</code>.</p>
+
+<h2><a name="compressed_vector"></a> Compressed Vector</h2>
+
+<h4>Description</h4>
+
+<p>The templated class <code>compressed_vector&lt;T, IB, IA,
+TA&gt;</code> is the base container adaptor for compressed vectors.
+For a <em>n</em>-dimensional compressed vector and <em>0 &lt;= i
+&lt; n</em> the non-zero elements <em>v</em><sub><em>i</em></sub>
+are mapped to consecutive elements of the index and value
+container, i.e. for elements <em>k</em> =
+<em>v</em><sub><em>i</em></sub><sub><sub><em>1</em></sub></sub>and
+<em>k + 1 =
+v</em><sub><em>i</em></sub><sub><sub><em>2</em></sub></sub>of these
+containers holds <em>i</em><sub><em>1</em></sub> <em>&lt;
+i</em><sub><em>2</em></sub>.</p>
+
+<h4>Example</h4>
+
+<pre>
+#include &lt;boost/numeric/ublas/vector_sparse.hpp&gt;<br>
+#include &lt;boost/numeric/ublas/io.hpp&gt;<br>
+<br>
+int main () {<br>
+    using namespace boost::numeric::ublas;<br>
+    compressed_vector&lt;double&gt; v (3, 3);<br>
+    for (unsigned i = 0; i &lt; v.size (); ++ i)<br>
+        v (i) = i;<br>
+    std::cout &lt;&lt; v &lt;&lt; std::endl;<br>
+}
+</pre>
+
+<h4>Definition</h4>
+
+<p>Defined in the header vector_sparse.hpp.</p>
+
+<h4>Template parameters</h4>
+
+<table border="1">
+<tbody>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+
+<tr>
+<td><code>T</code> </td>
+<td>The type of object stored in the compressed vector.</td>
+<td>&nbsp;</td>
+</tr>
+
+<tr>
+<td><code>IB</code></td>
+<td>The index base of the compressed vector. <a href=
+"#compressed_vector_1">[1]</a> </td>
+<td><code>0</code></td>
+</tr>
+
+<tr>
+<td><code>IA</code></td>
+<td>The type of the adapted array for indices. <a href=
+"#compressed_vector_2">[2]</a> </td>
+<td><code>unbounded_array&lt;std::size_t&gt;</code></td>
+</tr>
+
+<tr>
+<td><code>TA</code></td>
+<td>The type of the adapted array for values. <a href=
+"#compressed_vector_2">[2]</a> </td>
+<td><code>unbounded_array&lt;T&gt;</code></td>
+</tr>
+</tbody>
+</table>
+
+<h4>Model of</h4>
+
+<p><a href="container.htm#vector">Vector</a> .</p>
+
+<h4>Type requirements</h4>
+
+<p>None, except for those imposed by the requirements of <a href=
+"container.htm#vector">Vector</a> .</p>
+
+<h4>Public base classes</h4>
+
+<p><code>vector_expression&lt;compressed_vector&lt;T, IB, IA,
+TA&gt; &gt;</code></p>
+
+<h4>Members</h4>
+
+<table border="1">
+<tbody>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><code>compressed_vector ()</code> </td>
+<td>Allocates a <code>compressed_vector</code> that holds zero
+elements.</td>
+</tr>
+
+<tr>
+<td><code>compressed_vector (size_type size, size_type
+non_zeros)</code></td>
+<td>Allocates a <code>compressed_vector</code> that holds at most
+<code>size</code> elements.</td>
+</tr>
+
+<tr>
+<td><code>compressed_vector (const compressed_vector
+&amp;v)</code></td>
+<td>The copy constructor.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ compressed_vector (size_type non_zeros, const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>The extended copy constructor.</td>
+</tr>
+
+<tr>
+<td><code>void resize (size_type size, size_type
+non_zeros)</code></td>
+<td>Reallocates a <code>compressed_vector</code> to hold at most
+<code>size</code> elements. The content of the
+<code>compressed_vector</code> is preserved.</td>
+</tr>
+
+<tr>
+<td><code>size_type size () const</code></td>
+<td>Returns the size of the <code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reference operator () (size_type i)
+const</code></td>
+<td>Returns the value of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>reference operator () (size_type i)</code></td>
+<td>Returns a reference of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>const_reference operator [] (size_type i)
+const</code></td>
+<td>Returns the value of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>reference operator [] (size_type i)</code></td>
+<td>Returns a reference of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>compressed_vector &amp;operator = (const
+compressed_vector &amp;v)</code></td>
+<td>The assignment operator.</td>
+</tr>
+
+<tr>
+<td><code>compressed_vector &amp;assign_temporary
+(compressed_vector &amp;v)</code></td>
+<td>Assigns a temporary. May change the compressed vector
+<code>v</code>.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ compressed_vector &amp;operator = (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>The extended assignment operator.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ compressed_vector &amp;assign (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>Assigns a vector expression to the compressed vector. Left and
+right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ compressed_vector &amp;operator += (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>A computed assignment operator. Adds the vector expression to
+the compressed vector.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ compressed_vector &amp;plus_assign (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>Adds a vector expression to the compressed vector. Left and
+right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ compressed_vector &amp;operator -= (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>A computed assignment operator. Subtracts the vector expression
+from the compressed vector.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ compressed_vector &amp;minus_assign (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>Subtracts a vector expression from the compressed vector. Left
+and right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AT&gt;<br>
+ compressed_vector &amp;operator *= (const AT &amp;at)</code></td>
+<td>A computed assignment operator. Multiplies the compressed
+vector with a scalar.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AT&gt;<br>
+ compressed_vector &amp;operator /= (const AT &amp;at)</code></td>
+<td>A computed assignment operator. Divides the compressed vector
+through a scalar.</td>
+</tr>
+
+<tr>
+<td><code>void swap (compressed_vector &amp;v)</code></td>
+<td>Swaps the contents of the compressed vectors.</td>
+</tr>
+
+<tr>
+<td><code>void insert (size_type i, const_reference t)</code></td>
+<td>Inserts the value <code>t</code> at the <code>i</code>-th
+element.</td>
+</tr>
+
+<tr>
+<td><code>void erase (size_type i)</code></td>
+<td>Erases the value at the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>void clear ()</code></td>
+<td>Clears the compressed vector.</td>
+</tr>
+
+<tr>
+<td><code>const_iterator begin () const</code></td>
+<td>Returns a <code>const_iterator</code> pointing to the beginning
+of the <code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_iterator end () const</code></td>
+<td>Returns a <code>const_iterator</code> pointing to the end of
+the <code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>iterator begin ()</code> </td>
+<td>Returns a <code>iterator</code> pointing to the beginning of
+the <code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>iterator end ()</code> </td>
+<td>Returns a <code>iterator</code> pointing to the end of the
+<code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reverse_iterator rbegin () const</code></td>
+<td>Returns a <code>const_reverse_iterator</code> pointing to the
+beginning of the reversed <code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reverse_iterator rend () const</code></td>
+<td>Returns a <code>const_reverse_iterator</code> pointing to the
+end of the reversed <code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>reverse_iterator rbegin ()</code> </td>
+<td>Returns a <code>reverse_iterator</code> pointing to the
+beginning of the reversed <code>compressed_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>reverse_iterator rend ()</code> </td>
+<td>Returns a <code>reverse_iterator</code> pointing to the end of
+the reversed <code>compressed_vector</code>.</td>
+</tr>
+</tbody>
+</table>
+
+<h4>Notes</h4>
+
+<p><a name="#compressed_vector_1">[1]</a> Supported parameters for
+the index base are <code>0</code> and <code>1</code> at least.</p>
+
+<p><a name="#compressed_vector_2">[2]</a> Supported parameters for
+the adapted array are <code>unbounded_array&lt;&gt;</code> ,
+<code>bounded_array&lt;&gt;</code> and
+<code>std::vector&lt;&gt;</code> .</p>
+
+<h2><a name="coordinate_vector"></a> Coordinate Vector</h2>
+
+<h4>Description</h4>
+
+<p>The templated class <code>coordinate_vector&lt;T, IB, IA,
+TA&gt;</code> is the base container adaptor for compressed vectors.
+For a <em>n</em>-dimensional sorted coordinate vector and <em>0
+&lt;= i &lt; n</em> the non-zero elements
+<em>v</em><sub><em>i</em></sub> are mapped to consecutive elements
+of the index and value container, i.e. for elements <em>k</em> =
+<em>v</em><sub><em>i</em></sub><sub><sub><em>1</em></sub></sub>and
+<em>k + 1 =
+v</em><sub><em>i</em></sub><sub><sub><em>2</em></sub></sub>of these
+containers holds <em>i</em><sub><em>1</em></sub> <em>&lt;
+i</em><sub><em>2</em></sub>.</p>
+
+<h4>Example</h4>
+
+<pre>
+#include &lt;boost/numeric/ublas/vector_sparse.hpp&gt;<br>
+#include &lt;boost/numeric/ublas/io.hpp&gt;<br>
+<br>
+int main () {<br>
+    using namespace boost::numeric::ublas;<br>
+    coordinate_vector&lt;double&gt; v (3, 3);<br>
+    for (unsigned i = 0; i &lt; v.size (); ++ i)<br>
+        v (i) = i;<br>
+    std::cout &lt;&lt; v &lt;&lt; std::endl;<br>
+}<br>
+</pre>
+
+<h4>Definition</h4>
+
+<p>Defined in the header vector_sparse.hpp.</p>
+
+<h4>Template parameters</h4>
+
+<table border="1">
+<tbody>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+
+<tr>
+<td><code>T</code> </td>
+<td>The type of object stored in the coordinate vector.</td>
+<td>&nbsp;</td>
+</tr>
+
+<tr>
+<td><code>IB</code></td>
+<td>The index base of the coordinate vector. <a href=
+"#coordinate_vector_1">[1]</a> </td>
+<td><code>0</code></td>
+</tr>
+
+<tr>
+<td><code>IA</code></td>
+<td>The type of the adapted array for indices. <a href=
+"#coordinate_vector_2">[2]</a> </td>
+<td><code>unbounded_array&lt;std::size_t&gt;</code></td>
+</tr>
+
+<tr>
+<td><code>TA</code></td>
+<td>The type of the adapted array for values. <a href=
+"#coordinate_vector_2">[2]</a> </td>
+<td><code>unbounded_array&lt;T&gt;</code></td>
+</tr>
+</tbody>
+</table>
+
+<h4>Model of</h4>
+
+<p><a href="container.htm#vector">Vector</a> .</p>
+
+<h4>Type requirements</h4>
+
+<p>None, except for those imposed by the requirements of <a href=
+"container.htm#vector">Vector</a> .</p>
+
+<h4>Public base classes</h4>
+
+<p><code>vector_expression&lt;coordinate_vector&lt;T, IB, IA,
+TA&gt; &gt;</code></p>
+
+<h4>Members</h4>
+
+<table border="1">
+<tbody>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><code>coordinate_vector ()</code> </td>
+<td>Allocates a <code>coordinate_vector</code> that holds zero
+elements.</td>
+</tr>
+
+<tr>
+<td><code>coordinate_vector (size_type size, size_type
+non_zeros)</code></td>
+<td>Allocates a <code>coordinate_vector</code> that holds at most
+<code>size</code> elements.</td>
+</tr>
+
+<tr>
+<td><code>coordinate_vector (const coordinate_vector
+&amp;v)</code></td>
+<td>The copy constructor.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ coordinate_vector (size_type non_zeros, const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>The extended copy constructor.</td>
+</tr>
+
+<tr>
+<td><code>void resize (size_type size, size_type
+non_zeros)</code></td>
+<td>Reallocates a <code>coordinate_vector</code> to hold at most
+<code>size</code> elements. The content of the
+<code>coordinate_vector</code> is preserved.</td>
+</tr>
+
+<tr>
+<td><code>size_type size () const</code></td>
+<td>Returns the size of the <code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reference operator () (size_type i)
+const</code></td>
+<td>Returns the value of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>reference operator () (size_type i)</code></td>
+<td>Returns a reference of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>const_reference operator [] (size_type i)
+const</code></td>
+<td>Returns the value of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>reference operator [] (size_type i)</code></td>
+<td>Returns a reference of the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>coordinate_vector &amp;operator = (const
+coordinate_vector &amp;v)</code></td>
+<td>The assignment operator.</td>
+</tr>
+
+<tr>
+<td><code>coordinate_vector &amp;assign_temporary
+(coordinate_vector &amp;v)</code></td>
+<td>Assigns a temporary. May change the coordinate vector
+<code>v</code>.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ coordinate_vector &amp;operator = (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>The extended assignment operator.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ coordinate_vector &amp;assign (const vector_expression&lt;AE&gt;
+&amp;ae)</code></td>
+<td>Assigns a vector expression to the coordinate vector. Left and
+right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ coordinate_vector &amp;operator += (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>A computed assignment operator. Adds the vector expression to
+the coordinate vector.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ coordinate_vector &amp;plus_assign (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>Adds a vector expression to the coordinate vector. Left and
+right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ coordinate_vector &amp;operator -= (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>A computed assignment operator. Subtracts the vector expression
+from the coordinate vector.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AE&gt;<br>
+ coordinate_vector &amp;minus_assign (const
+vector_expression&lt;AE&gt; &amp;ae)</code></td>
+<td>Subtracts a vector expression from the coordinate vector. Left
+and right hand side of the assignment should be independent.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AT&gt;<br>
+ coordinate_vector &amp;operator *= (const AT &amp;at)</code></td>
+<td>A computed assignment operator. Multiplies the coordinate
+vector with a scalar.</td>
+</tr>
+
+<tr>
+<td><code>template&lt;class AT&gt;<br>
+ coordinate_vector &amp;operator /= (const AT &amp;at)</code></td>
+<td>A computed assignment operator. Divides the coordinate vector
+through a scalar.</td>
+</tr>
+
+<tr>
+<td><code>void swap (coordinate_vector &amp;v)</code></td>
+<td>Swaps the contents of the coordinate vectors.</td>
+</tr>
+
+<tr>
+<td><code>void insert (size_type i, const_reference t)</code></td>
+<td>Inserts the value <code>t</code> at the <code>i</code>-th
+element.</td>
+</tr>
+
+<tr>
+<td><code>void erase (size_type i)</code></td>
+<td>Erases the value at the <code>i</code>-th element.</td>
+</tr>
+
+<tr>
+<td><code>void clear ()</code></td>
+<td>Clears the coordinate vector.</td>
+</tr>
+
+<tr>
+<td><code>const_iterator begin () const</code></td>
+<td>Returns a <code>const_iterator</code> pointing to the beginning
+of the <code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_iterator end () const</code></td>
+<td>Returns a <code>const_iterator</code> pointing to the end of
+the <code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>iterator begin ()</code> </td>
+<td>Returns a <code>iterator</code> pointing to the beginning of
+the <code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>iterator end ()</code> </td>
+<td>Returns a <code>iterator</code> pointing to the end of the
+<code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reverse_iterator rbegin () const</code></td>
+<td>Returns a <code>const_reverse_iterator</code> pointing to the
+beginning of the reversed <code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>const_reverse_iterator rend () const</code></td>
+<td>Returns a <code>const_reverse_iterator</code> pointing to the
+end of the reversed <code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>reverse_iterator rbegin ()</code> </td>
+<td>Returns a <code>reverse_iterator</code> pointing to the
+beginning of the reversed <code>coordinate_vector</code>.</td>
+</tr>
+
+<tr>
+<td><code>reverse_iterator rend ()</code> </td>
+<td>Returns a <code>reverse_iterator</code> pointing to the end of
+the reversed <code>coordinate_vector</code>.</td>
+</tr>
+</tbody>
+</table>
+
+<h4>Notes</h4>
+
+<p><a name="#coordinate_vector_1">[1]</a> Supported parameters for
+the index base are <code>0</code> and <code>1</code> at least.</p>
+
+<p><a name="#coordinate_vector_2">[2]</a> Supported parameters for
+the adapted array are <code>unbounded_array&lt;&gt;</code> ,
+<code>bounded_array&lt;&gt;</code> and
+<code>std::vector&lt;&gt;</code> .</p>
+
+<hr>
+<p>Copyright (&copy;) 2000-2002 Joerg Walter, Mathias Koch<br>
+ Permission to copy, use, modify, sell and distribute this document
+is granted provided this copyright notice appears in all copies.
+This document is provided ``as is'' without express or implied
+warranty, and with no claim as to its suitability for any
+purpose.</p>
+
+<p>Last revised: 1/15/2003</p>
+</body>
+</html>
+

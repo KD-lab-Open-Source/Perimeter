@@ -1,0 +1,113 @@
+<tree>
+	<actions>
+		<action>
+			<title value='Empty'/>
+			<type value='Empty'/>
+		</action>
+		<action>
+			<title value='Paint'/>
+			<type value='Paint'/>
+		</action>
+		<action>
+			<title value='Mix'/>
+			<type value='Mix'/>
+		</action>
+	</actions>
+	<textures>
+		<simples>
+			<node>
+				<title value='Clear'/>
+				<image src='Clear.tga'/>
+				<texture src='Clear.xml'/>
+			</node>
+			<node>
+				<title value='Cloud'/>
+				<image src='Cloud.tga'/>
+				<texture src='Cloud.xml'/>
+			</node>
+			<node>
+				<title value='Cloud Abs'/>
+				<image src='CloudAbs.tga'/>
+				<texture src='CloudAbs.xml'/>
+			</node>
+			<node>
+				<title value='Cloud Emboss'/>
+				<image src='CloudEmboss.tga'/>
+				<texture src='CloudEmboss.xml'/>
+			</node>
+			<node>
+				<title value='Cloud Sin'/>
+				<image src='CloudSin.tga'/>
+				<texture src='CloudSin.xml'/>
+			</node>
+			<node>
+				<title value='Marble Aniso'/>
+				<image src='MarbleAniso.tga'/>
+				<texture src='MarbleAniso.xml'/>
+			</node>
+			<node>
+				<title value='Marble Chaos'/>
+				<image src='MarbleChaos.tga'/>
+				<texture src='MarbleChaos.xml'/>
+			</node>
+			<node>
+				<title value='Marble Rare'/>
+				<image src='MarbleRare.tga'/>
+				<texture src='MarbleRare.xml'/>
+			</node>
+			<node>
+				<title value='Marble Solid'/>
+				<image src='MarbleSolid.tga'/>
+				<texture src='MarbleSolid.xml'/>
+			</node>
+			<node>
+				<title value='Marble Leopard'/>
+				<image src='MarbleLeopard.tga'/>
+				<texture src='MarbleLeopard.xml'/>
+			</node>
+			<node>
+				<title value='Wood'/>
+				<image src='Wood.tga'/>
+				<texture src='Wood.xml'/>
+			</node>
+			<node>
+				<title value='Cells'/>
+				<image src='Cells.tga'/>
+				<texture src='Cells.xml'/>
+			</node>
+			<node>
+				<title value='Sand'/>
+				<image src='Sand.tga'/>
+				<texture src='Sand.xml'/>
+			</node>
+			<node>
+				<title value='Sand Smooth'/>
+				<image src='SandSmooth.tga'/>
+				<texture src='SandSmooth.xml'/>
+			</node>
+			<node>
+				<title value='Spots'/>
+				<image src='Spots.tga'/>
+				<texture src='Spots.xml'/>
+			</node>
+		</simples>
+	</textures>
+	<locations>
+		<node>
+			<title value='World'/>
+			<location src='WorldLocation.xml'/>
+		</node>
+		<node>
+			<title value='Sphere'/>
+			<location src='SphereLocation.xml'/>
+		</node>
+		<node>
+			<title value='Stratum'/>
+			<location src='StratumLocation.xml'/>
+		</node>
+		<node>
+			<title value='Laying'/>
+			<location src='LayingLocation.xml'/>
+		</node>
+	</locations>
+</tree>

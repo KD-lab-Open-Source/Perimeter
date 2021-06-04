@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+<TITLE>The 'log level' parameter</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../index.html">Boost.Test</A> > <A href="../../index.html">Components</A> 
+  > <A href="../index.html">The Unit Test Framework</A> > > <A href="index.html">Parameters</A> > <SPAN class="current_article">The 
+  log level</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The 'log level' parameter</H1>
+  <TABLE class="parameter-table" cellspacing="0">
+    <TR> 
+      <TD class="name"><B>Parameter Name:</B></TD>
+      <TD><I>The unit test framework log level</I></TD>
+    </TR>
+    <TR> 
+      <TD class="name"><B>Environment variable name:</B></TD>
+      <TD>BOOST_TEST_LOG_LEVEL</TD>
+    </TR>
+    <TR> 
+      <TD class="name"><B>Command line argument name:</B></TD>
+      <TD>log_level</TD>
+    </TR>
+    <TR> 
+      <TD class="name"><B>Acceptable Values:</B></TD>
+      <TD> 
+        <TABLE class="parameter-values-table" cellspacing="0">
+          <TR> 
+            <TD>all</TD>
+            <TD>- report all log messages including the passed test notification</TD>
+          </TR>
+          <TR> 
+            <TD>success</TD>
+            <TD>- the same as all</TD>
+          </TR>
+          <TR> 
+            <TD>test_suite</TD>
+            <TD>- show test suite messages</TD>
+          </TR>
+          <TR> 
+            <TD>messages</TD>
+            <TD>- show user messages</TD>
+          </TR>
+          <TR> 
+            <TD>warnings</TD>
+            <TD>- report warnings issued by user</TD>
+          </TR>
+          <TR> 
+            <TD><B>all_errors</B></TD>
+            <TD>- report all error conditions</TD>
+          </TR>
+          <TR> 
+            <TD>cpp_exception</TD>
+            <TD>- report uncaught c++ exception</TD>
+          </TR>
+          <TR> 
+            <TD>system_errors</TD>
+            <TD>- report system originated non-fatal errors (for example, timeout or floating point exception) 
+            </TD>
+          </TR>
+          <TR> 
+            <TD>fatal_errors</TD>
+            <TD>- report only user or system originated fatal errors (for example, memory access violation)</TD>
+          </TR>
+          <TR> 
+            <TD>progress</TD>
+            <TD>- report only progress information: number of run test cases vs. overall number of test 
+              cases</TD>
+          </TR>
+          <TR> 
+            <TD>nothing</TD>
+            <TD>- does not report any information</TD>
+          </TR>
+        </TABLE>
+      </TD>
+    </TR>
+    <TR> 
+      <TD class="name"> <B>Description:</B> </TD>
+      <TD> allows to set the unit test framework log level in a range of a complete log, when all successful 
+        tests are confirmed and all test suite messages are included, to an empty log when nothing is 
+        logged a test output stream. Note that log levels are accumulating, in other words each log level 
+        includes also all the information reported by less restrictive ones.</TD>
+    </TR>
+  </TABLE>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->7 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,162 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Execution Monitor</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> > <A href="../index.html">Components</A> 
+  > <SPAN class="current_article">The Test Execution Monitor</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1>Boost Test Library: The Test Execution Monitor</H1>
+  <P class="page-toc"> <A href="#Introduction">Introduction</A><BR>
+    <A href="#Usage">Usage</A><BR>
+    <A href="#Implementation">Implementation</A><BR>
+    <A href="compilation.html">Compilation</A><BR>
+    <A href="#Configuration">Configuration</A><BR>
+    <A href="#Examples">Examples and tests</A><BR>
+    <BR>See also: <A href="../unit_test_framework/index.html">Unit Test Framework</A></P>
+  <H2><A name="Introduction">Introduction</A></H2>
+  <P class="first-line-indented">How should a test program report errors? Displaying an error message 
+    is an obvious possibility:</P>
+  <PRE class="code"><SPAN class="reserv-word">if</SPAN>( something_bad_detected )
+  std::cout &lt;&lt; &quot;something bad has been detected&quot; &lt;&lt; std::endl;</PRE>
+  <P class="first-line-indented">But that requires inspection of the program's output after each run to 
+    determine if an error occurred. Since test programs are often run as part of a regression test suite, 
+    human inspection of output to detect error messages is too time consuming and unreliable. Test frameworks 
+    like GNU/expect can do the inspections automatically, but are overly complex for simple testing.</P>
+  <P class="first-line-indented">A better simple way to report errors is for the test program to return 
+    EXIT_SUCCESS (normally 0) if the test program completes satisfactorily, and EXIT_FAILURE if an error 
+    is detected. This allows a simple regression test script to automatically and unambiguous detect success 
+    or failure. Further appropriate actions such as creating an HTML table or emailing an alert can be 
+    taken by the script, and can be modified as desired without having to change the actual C++ test programs.</P>
+  <P class="first-line-indented">A testing protocol based on a policy of test programs returning EXIT_SUCCESS 
+    or EXIT_FAILURE does not require any supporting tools; the C++ language and standard library are sufficient. 
+    The programmer must remember, however, to catch all exceptions and convert them to program exits with 
+    non-zero return codes. The programmer must also remember to not use the standard library assert() 
+    macro for test code, because on some systems it results in undesirable side effects like a message 
+    requiring manual intervention.</P>
+  <P class="first-line-indented">The Boost Test Library's Test Execution Monitor combines the powers of 
+    the <A href="../test_tools/index.html">Test Tools</A> and the <A href="../execution_monitor/index.html">Execution 
+    Monitor</A> to automates those tasks. It provides a main() function which calls a user-supplied <SPAN class="new-term">test_main()</SPAN> 
+    function. The library supplied main() relieves users from messy error detection and reporting duties. 
+    Users could use the Test Tools to perform complex validation tasks.</P>
+  <P class="first-line-indented">The Test Execution Monitor is intended for fairly simple test programs 
+    or to dig a problem in an existent production code. The <A href="../prg_exec_monitor/index.html">Program 
+    Execution Monitor</A> may be more suitable to monitor production (non-test) programs, cause it does 
+    not affect your program performance. The <A href="../unit_test_framework/index.html">Unit Test Framework</A> 
+    may be, for several reasons, more suitable for complex test programs:<BR>
+  <UL>
+    <LI>you will be able to separate test on several test cases. The Unit test framework will produce 
+      the pass/fail statistic for each test case separately</LI>
+    <LI>if any of your test cases fails with exception if does not affect the rest of test</LI>
+    <LI>you will be able to run specific test case by it's name</LI>
+    <LI>separation onto test cases allows you clearly see which part of your test module is dedicated 
+      to which part of tested functionality</LI>
+    <LI>extra options for configuration</LI>
+  </UL>
+  <H2><A name="Usage">Usage</A></H2>
+  <P class="first-line-indented"> Let's take a look on the following simple test program:</P>
+  <PRE class="code">#<SPAN class="reserv-word">include</SPAN> &lt;my_class.hpp&gt;
+
+<SPAN class="cpp-type">int</SPAN> main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] )
+{
+    my_class test_object( &quot;qwerty&quot; );
+
+    <SPAN class="reserv-word">return</SPAN> test_object.is_valid() ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+</PRE>
+  <P class="first-line-indented">There are several issues with above test. 
+  <OL>
+    <LI>You need to convert is_valid result in proper result code.</LI>
+    <LI>Would exception happened in test_object construction of method is_valid invocation, the program 
+      will crash.</LI>
+    <LI>You wont see any output, would you run this test manually.</LI>
+  </OL>
+  <P class="first-line-indented">The Test Execution Monitor solve all these issues. To integrate with 
+    it above program needs to be changed to: </P>
+  <PRE class="code">#<SPAN class="reserv-word">include</SPAN> &lt;my_class.hpp&gt;
+#<SPAN class="reserv-word">include</SPAN> &lt;<A href="../../../../../boost/test/test_tools.hpp">boost/test/test_tools.hpp</A>&gt;
+
+<SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] )  <SPAN class="comment">// note the name!</SPAN>
+{
+    my_class test_object( &quot;qwerty&quot; );
+
+    BOOST_CHECK( test_object.is_valid() );
+
+    <SPAN class="reserv-word">return</SPAN> 0;
+}
+</PRE>
+  <P class="first-line-indented">Now, you not only receive uniform result code, even in case of exception, 
+    but also nicely formatted output from BOOST_CHECK tool, would you choose to see it. Is there any other 
+    ways to perform checks? The following example test program shows six different ways to detect and 
+    report an error in the add() function.</P>
+  <PRE class="code">#<SPAN class="reserv-word">include</SPAN> &lt;<A href="../../../../../boost/test/test_tools.hpp">boost/test/test_tools.hpp</A>&gt;
+
+<SPAN class="cpp-type">int</SPAN> add( <SPAN class="cpp-type">int</SPAN> i, <SPAN class="cpp-type">int</SPAN> j ) { <SPAN class="reserv-word">return</SPAN> i+j; }
+
+<SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char </SPAN>*[] )             <SPAN class="comment">// note the name!</SPAN>
+{
+    // six ways to detect and report the same error:
+    BOOST_CHECK( add( <SPAN class="literal">2</SPAN>,<SPAN class="literal">2</SPAN> ) == <SPAN class="literal">4</SPAN> );        <SPAN class="comment">// #1 continues on error</SPAN>
+    BOOST_REQUIRE( add( <SPAN class="literal">2</SPAN>,<SPAN class="literal">2</SPAN> ) == <SPAN class="literal">4</SPAN> );      <SPAN class="comment">// #2 throws on error</SPAN>
+    <SPAN class="reserv-word">if</SPAN>( add( <SPAN class="literal">2</SPAN>,<SPAN class="literal">2</SPAN> ) != <SPAN class="literal">4</SPAN> )
+      BOOST_ERROR( <SPAN class="literal">&quot;Ouch...&quot;</SPAN> );            <SPAN class="comment">// #3 continues on error</SPAN>
+    <SPAN class="reserv-word">if</SPAN>( add( <SPAN class="literal">2</SPAN>,<SPAN class="literal">2</SPAN> ) != <SPAN class="literal">4</SPAN> )
+      BOOST_FAIL( <SPAN class="literal">&quot;Ouch...&quot;</SPAN> );             <SPAN class="comment">// #4 throws on error</SPAN>
+    <SPAN class="reserv-word">if</SPAN>( add( <SPAN class="literal">2</SPAN>,<SPAN class="literal">2</SPAN> ) != <SPAN class="literal">4</SPAN> ) throw <SPAN class="literal">&quot;Oops...&quot;</SPAN>; <SPAN class="comment">// #5 throws on error</SPAN>
+
+    <SPAN class="reserv-word">return</SPAN> add( <SPAN class="literal">2</SPAN>, <SPAN class="literal">2</SPAN> ) == <SPAN class="literal">4</SPAN> ? <SPAN class="literal">0</SPAN> : <SPAN class="literal">1</SPAN>;       <SPAN class="comment">// #6 returns error code</SPAN>
+}</PRE>
+  <P><B>Approach #1</B> uses the BOOST_CHECK tool, which displays an error message on std::cout that includes 
+    the expression that failed, the source file name, and the source file line number. It also increments 
+    an error count. At program termination, the error count will be displayed automatically by the Test 
+    Execution Monitor.</P>
+  <P><B>Approach #2</B> using the BOOST_REQUIRE tool, is similar to #1, except that after displaying the 
+    error, an exception is thrown, to be caught by the Test Execution Monitor. This approach is suitable 
+    when writing a explicit test program, and the error would be so severe as to make further testing 
+    impractical. BOOST_REQUIRE differs from the C++ Standard Library's assert() macro in that it is always 
+    generated, and channels error detection into the uniform Test Execution Monitor reporting procedure.</P>
+  <P><B>Approaches #3 and #4</B> are similar to #1 and #2 respectively, except that the error detection 
+    is coded separately. This is most useful when the specific condition being tested is not indicative 
+    of the reason for failure.</P>
+  <P><B>Approach #5</B> throws an exception, which will be caught and reported by the Test Execution Monitor. 
+    This approach is suitable for both production and test code, in libraries or not. The error message 
+    displayed when the exception is caught will be most meaningful if the exception is derived from std::exception, 
+    or is a char* or std::string.</P>
+  <P><B>Approach #6</B> uses a return value to inform the caller of the error. This approach is particularly 
+    suitable for integrating existing test code with the test tools library. Although it works fine with 
+    the Program Execution Monitor or the Test Execution Monitor libraries, and is very useful for running 
+    existing code under them, most C++ experts prefer using exceptions for error reporting. </P>
+  <H2><A name="Implementation">Implementation</A></H2>
+  <P class="first-line-indented"> The Test Execution Monitor implements a special case of the framework 
+    usage. Accordingly it shares most of the implementation with the <A href="../unit_test_framework/index.html">Unit 
+    Test Framework</A>. The Test Execution Monitor supplies the separate function main() in <A href="../../../src/test_main.cpp">libs/test/src/test_main.cpp</A>. 
+  </P>
+	<P class="first-line-indented">Check <A href="compilation.html">compilation</A> instructions to see 
+    how to build standalone library for this component.</P>
+  <H2><A name="Configuration">Configuration</A></H2>
+  <P class="first-line-indented"> The Test Execution Monitor uses the same configuration mechanisms as 
+    the <A href="../unit_test_framework/index.html">Unit Test Framework</A> do. For the list of supported 
+    parameters and their description see the Unit Test Framework <A href="../unit_test_framework/parameters/index.html">parameters 
+    description</A>. 
+  <H2><A name="Examples">Examples and tests</A></H2>
+  <P class="indented"> <A href="../../examples/test_exec_monitor_example.html">test_exec_example</A><BR>
+    <A href="../../tests/test_exec_fail1.html">test_exec_fail1</A><BR>
+    <A href="../../tests/test_exec_fail2.html">test_exec_fail2</A><BR>
+    <A href="../../tests/test_exec_fail3.html">test_exec_fail3</A><BR>
+    <A href="../../tests/test_exec_fail4.html">test_exec_fail4</A> </P>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,42 @@
+Changelog for: GameSpy Chat SDK
+--------------------------------------------------------
+
+DATE        VERSION  BY   TYPE     DESCRIPTION
+----------  -------  ---  -------  ---------------------------------------------------------
+07-24-2003  1.10.24  DES  RELEASE  Releasing to developer site.
+07-24-2003  1.10.24  DES  FIX      Added GSI_UNUSED around an unused param.
+07-18-2003  1.10.23  BED  FEATURE  Added CodeWarrior (PS2) sample project file.
+			  CLEANUP  General cleanup to remove CodeWarrior (PS2) warnings.
+07-17-2003  1.10.22  DES  CLEANUP  Cleaned up the PS2 Makefile, it now uses Makefile.commmon.
+07-16-2003  1.10.21  BED  FIX      Added a newline at end of chatmain.c
+                     DES  FIX      Changed two __mips64 checks to _PS2 checks.
+                     BED  FEATURE  Added ProDG sample project files.
+07-14-2003  1.10.20  BED  FIX      Now using ciNickIsValid to validate nicknames on client side.
+07-14-2003  1.10.19  DES  FIX      Correctly handle being disconnected during the connection attempt.
+07-11-2003  1.10.18  BED  FIX      Updated sample to join nonrestricted channel.
+06-26-2003  1.10.17  DES  CLEANUP  Reduced the initial sizes of the channel and user hash tables.
+06-11-2003  1.10.16  DES  RELEASE  Releasing to developer site.
+05-09-2003  1.10.16  DES  CLEANUP  Removed Dreamcast support.
+                          FIX      Metrowerks for Win32 is no longer falsely identified as MacOS.
+05-07-2003  1.10.15  DES  RELEASE  Releasing to developer site.
+04-23-2003  1.10.15  BGW  FIX      Now handling the case of localtime() returning NULL.
+04-17-2003  1.10.14  DES  FIX      Fix for simultaneous WHO requests on a single user.
+04-16-2003  1.10.13  DDW  FEATURE  Added chatInChannel function exposing ciInChannel functionality
+03-19-2003  1.10.12  DES  FEATURE  IRC logging (IRC_LOG) now uses the nick as part of the filename.
+03-12-2003  1.10.11  DES  FIX      If requesting 0 keys for a channel, correctly request all keys.
+03-11-2003  1.10.10  DES  FIX      chatGetChannelKeys no longer asserts if keys is NULL.
+                                   If keys is NULL and num is 0, all keys are returned.
+03-03-2003  1.10.09  DES  CLEANUP  General cleanup to remove warnings.
+                          FEATURE  Added chatSetChannelLimit for directly setting a channel limit.
+01-09-2003  1.10.08  DES  CLEANUP  Removed an unneeded assert.
+12-19-2002  1.10.07  DES  RELEASE  Releasing to developer site.
+12-19-2002  1.10.07  DES  CLEANUP  Removed assert.h includes.
+12-13-2002  1.10.06  DES  FEATURE  Added PS2 eenet stack support.
+12-05-2002  1.10.05  DES  CLEANUP  Added some explicit type casting to eliminate warnings.
+11-22-2002  1.10.04  DES  RELEASE  Releasing to developer site.
+11-20-2002  1.10.04  DES  CLEANUP  Cleaned up to remove compiler warings on the PS2.
+11-15-2002  1.10.03  DES  OTHER    Changed chatc to use chatConnectSecure.
+11-07-2002  1.10.02  DES  FIX      Fixed negative hash due to high-ascii characters in hashed string.
+10-17-2002  1.10.01  DES  RELEASE  Limited release on developer site
+10-17-2002  1.10.01  DES  FIX      Fixed bug where incoming data was not processed when disconnected.
+09-25-2002  1.10.00  DDW  OTHER    Changelog started

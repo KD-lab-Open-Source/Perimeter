@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_CHECK_THROW( statement, exception )</H3>
+  <P class="first-line-indented">This tool is used to perform an exception detection check. The tool executes 
+    the supplied statement and checks that it throws the supplied exception or it's child. If the statement 
+    throw any other unrelated exception or doesn't throw at all, check fails.</P>
+  <P class="first-line-indented">If check is successful, the tool produces a confirmation message (note: 
+    to manage what messages appear in the test output stream set the proper log level), in other case 
+    it produces an error message in a form &quot;error in &lt;test case name&gt;: exception &lt;<I>exception</I>&gt; 
+    expected.</P>
+  <P class="first-line-indented">The tool's first parameter is the statement to execute while checking 
+    for exception. Use block statement if you want to execute more than one statement. The tool's second 
+    parameter is an expected exception.</P>
+  <H4>Example: test.cpp</H4>
+<PRE class="code"><SPAN class="reserv-word">class</SPAN> my_exception{};
+<SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    <SPAN class="cpp-type">int</SPAN> i = <SPAN class="literal"> 0</SPAN>;
+    BOOST_CHECK_THROW( i++, my_exception );
+  
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(4) : error in test_main: exception my_exception expected</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK_NO_THROW.html" target="descr">BOOST_CHECK_NO_THROW</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

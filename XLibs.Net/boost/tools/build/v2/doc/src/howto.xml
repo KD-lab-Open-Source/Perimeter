@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/boostbook.dtd">
+
+  <chapter id="bbv2.howto">
+    <title>How to use this document</title>
+
+    <para>
+      If you've just found out about Boost.Build V2 and want to know
+      if it will work for you, start with <xref linkend=
+      "bbv2.tutorial" />. You can continue with the <xref
+      linkend="bbv2.advanced" />. When you're ready to try Boost.Build
+      in practice, go to <xref linkend="bbv2.installation"/>.
+    </para>
+
+    <para>
+      If you are about to use Boost.Build on your project, or already
+      using it and have a problem, look at <xref linkend=
+      "bbv2.advanced"/>.
+    </para>
+
+    <para>
+      If you're trying to build a project which uses Boost.Build,
+      look at <xref linkend="bbv2.installation"/> and then read about
+      <xref linkend="bbv2.reference.commandline"/>.
+    </para>
+
+    <para>
+      Finally, if nothing applies to you, write to our mailing list,
+      telling what information you'd like to know.
+    </para>
+
+  </chapter>

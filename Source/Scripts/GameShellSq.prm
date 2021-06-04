@@ -1,0 +1,798 @@
+
+#include "SquadShellEnums.inl"
+#include "UnitAttribute.inl"
+
+section SquadShellUIPrm(declaration = "Game\Scripts\GameShellSq.hi", definition = "Game\Scripts\GameShellSq.cppi")
+{
+
+struct _V2i
+{
+	int x = 0;
+	int y = 0;
+};
+
+struct _V2f
+{
+	float x = 0;
+	float y = 0;
+};
+
+//курсоры
+struct sqshCursor
+{
+	int system = 0;
+	int hotspot_center = 0;
+	string image = "";
+	int sx = 32;
+	int sy = 32;
+};
+
+sqshCursor _sqsh_cursors[int _sqsh_cursor_count]={
+
+{
+	system = 1;
+	image = "resource\\cursors\\arrow.cur";
+},
+{
+	hotspot_center = 1;
+	sx = 64;
+	sy = 64;
+	image = "resource\\cursors\\ocrug_center_in.avi";
+},
+{
+	hotspot_center = 1;
+	sx = 64;
+	sy = 64;
+	image = "resource\\cursors\\ocrug_center_out.avi";
+},
+{
+	system = 1;	
+	image = "resource\\cursors\\instalation.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\uninstalation.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\no instal.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\dollar.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\no sale.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\select.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\attack.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\wait.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\up.cur";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\down.cur";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\left.cur";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\right.cur";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\up left.cur";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\up right.cur";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\down left.cur";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\down right.cur";
+},
+{
+	sx = 64;
+	sy = 64;
+	image = "resource\\cursors\\move.tga";
+},
+{
+	sx = 64;
+	sy = 64;
+	image = "resource\\cursors\\rotation.tga";
+},
+{
+	sx = 64;
+	sy = 64;
+	image = "resource\\cursors\\rotation.tga";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\in frame.ani";
+},
+{
+	hotspot_center = 1;
+	sx = 64;
+	sy = 64;
+	image = "resource\\cursors\\rov.avi";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\no atack.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\move3.ani";
+},
+{
+	system = 1;
+	image = "resource\\cursors\\arrow_enemy.cur";
+}
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//галограмы
+
+struct ShellGalogramType
+{
+	string model = "";
+	float  radius = 50;
+	float pos_dx = 0;
+	float pos_dy = 0;
+	float angle_x = 90;
+	float angle_y = 0;
+	float angle_z = 0;
+
+	float r1 = 1;
+	float g1 = 0;
+	float b1 = 0;
+
+	float r2 = 0;
+	float g2 = 1;
+	float b2 = 0;
+
+	int	camera_x = 145;
+	int camera_y = 590;
+	int camera_sx  = 141;
+	int camera_sy  = 147;
+	float model_rate = 200;
+};
+
+ShellGalogramType shell_galogram_table[int shell_galogram_table_size] = {
+	{
+		model = "RESOURCE\\Models\\Interface\\frm.m3d";
+		radius = 30;
+		angle_x = 70;
+		pos_dx = 2;
+		pos_dy = 6;
+		camera_x = 147;
+		camera_y = 595;
+		camera_sx  = 60;
+		camera_sy  = 30;
+	},
+	{
+		model = "RESOURCE\\Models\\Interface\\build.m3d";
+		radius = 25;
+		pos_dx = 3;
+		pos_dy = 13;
+		camera_x = 214;
+		camera_y = 590;
+		camera_sx  = 60;
+		camera_sy  = 32;
+	},
+	{
+		model = "RESOURCE\\Models\\Interface\\weapon.m3d";
+		radius = 30;
+		angle_x = 70;
+		pos_dx = 2;
+		pos_dy = 6;
+		camera_x = 281;
+		camera_y = 593;
+		camera_sx  = 60;
+		camera_sy  = 36;
+	},
+	{
+		model = "RESOURCE\\Models\\Interface\\squad.m3d";
+		radius = 30;
+		pos_dx = -1;
+		pos_dy = 3;
+		camera_x = 680;
+		camera_y = 582;
+		camera_sx  = 64;
+		camera_sy  = 50;
+	},
+	{
+		model = "RESOURCE\\Models\\Interface\\squad.m3d";
+		radius = 30;
+		pos_dx = -1;
+		pos_dy = 3;
+		camera_x = 745;
+		camera_y = 582;
+		camera_sx  = 64;
+		camera_sy  = 50;
+	},
+	{
+		model = "RESOURCE\\Models\\Interface\\squad.m3d";
+		radius = 30;
+		pos_dx = -1;
+		pos_dy = 3;
+		camera_x = 810;
+		camera_y = 582;
+		camera_sx  = 64;
+		camera_sy  = 50;
+	},
+	{
+		model = "RESOURCE\\Models\\Interface\\squad.m3d";
+		radius = 30;
+		pos_dx = -1;
+		pos_dy = 3;
+		camera_x = 875;
+		camera_y = 582;
+		camera_sx  = 64;
+		camera_sy  = 50;
+	},
+	{
+		model = "RESOURCE\\Models\\Interface\\squad.m3d";
+		radius = 30;
+		pos_dx = -1;
+		pos_dy = 3;
+		camera_x = 940;
+		camera_y = 582;
+		camera_sx  = 64;
+		camera_sy  = 50;
+	}
+};
+
+string shell_galogram_texture = "RESOURCE\\EFFECT\\lightmap.tga";
+
+//галограмы
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+struct EventSymbol {
+	string image = "";
+	float sx = 16/1024;
+	float sy = 16/768;
+	float period = 3000;
+	float animTime = 3000;
+	string snd = "";
+};
+
+EventSymbol activeObjectSymbol = {
+	image = "resource\\cursors\\cursor_instalation.avi";
+};
+
+EventSymbol eventSymbols[EVENT_MINI_MAP_MAX] = {
+	{
+		image = "resource\\cursors\\Krug_build.avi";
+		sx = 64/1024;
+		sy = 64/768;
+		period = 1700;
+		animTime = 1700;
+	},
+	{
+		image = "resource\\cursors\\Krug_enemy.avi";
+		sx = 128/1024;
+		sy = 128/768;
+		period = 6000;
+		animTime = 2400;
+		snd = "squad_attack";
+	}
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//common constants
+
+float SQSH_COORD_WIDTH_SCALE = 1024.0;
+float SQSH_COORD_HEIGHT_SCALE = 768.0;
+
+float sqshProrgessBarHeight = 0.01;
+
+float sqshCursorWorkAreaDx   = -0.03;
+float sqshCursorWorkAreaDy   = -0.01;
+
+float sqshDisabledR = 0.5;
+float sqshDisabledG = 0.5;
+float sqshDisabledB = 0.5;
+float sqshDisabledA = 1;
+
+//положение подсказок на экране
+float nPopupTextPosX = 750.0f / 1024.0f;
+float nPopupTextPosY = 448 / 768.0f;
+float nPopupSX = 300.0f / 1024.0f;
+float nPopupSY = 120.0f / 768.0f;
+string sPopupTexture = "RESOURCE\\Icons\\intf\\back_info.tga";
+
+float  shellCursorAddRegionSize = 64;
+
+float _buttonLabelX = 40.0f/1024.0f;
+float _buttonLabelY = 3.0f/768.0f;
+
+float _squad_buttons_dx = 40 + 10;
+
+int _button_atom1_x = 3;
+int _button_atom1_y = 0;
+int _button_atom2_x = 14;
+int _button_atom2_y = 0;
+int _button_atom3_x = 27;
+int _button_atom3_y = 0;
+
+int _button_atom4_x = 3;
+int _button_atom4_y = 17;
+
+float _button_atom5_x = 14.0f/52.0f;
+float _button_atom5_y = 9.0f/28.0f;
+
+float _button_atom6_x = 14.0f/75.0f;
+float _button_atom6_y = 9.0f/40.0f;
+
+int _button_pict_size = 64;
+
+int nNrjOutputX = 880;
+int nNrjOutputY = 308;
+int nNrjUsedX = 970;
+int nNrjUsedY = 308;
+
+//карта
+float _map_window_dx = 5;
+float _map_window_dy = 28;
+float _map_window_sx = 128;
+float _map_window_sy = 128;
+
+//прогресс бары
+struct _ProgressBar
+{
+	_V2i points[] = {{},{}};
+};
+
+float fButtonEffectSizeSpeed = 3;
+float fButtonEffectAlphaSpeed = 1.5;
+
+//string sComplexButtonEffectNoise = "resource\\icons\\intf\\t.avi";
+//string sComplexButtonEffectLightmap = "RESOURCE\\ICONS\\MAINMENU\\lightmap.tga";
+
+int tDeselectInterval = 300;
+
+float fWorkAreaCenterX = 0.5f;
+float fWorkAreaCenterY = 0.68f;
+
+float  empty_x1 = 0.311;
+float  empty_x2 = 0.453;
+float  empty_y1 = 0.681;
+float  empty_y2 = 0.703;
+float  brig_x1 = 0.311;
+float  brig_x2 = 0.453;
+float  brig_y1 = 0.655;
+float  brig_y2 = 0.676;
+float  build_x1 = 0.311;
+float  build_x2 = 0.453;
+float  build_y1 = 0.627;
+float  build_y2 = 0.649;
+
+float  hover_x1 = 0.457;
+float  hover_x2 = 0.531;
+float  hover_y1 = 0.596;
+float  hover_y2 = 0.622;
+int    hover_sx = 74;
+int    hover_sy = 26;
+
+	float half_sx_ = 90.0f / 1024.0f;
+	float right_x_ = 260.0f / 1024.0f;
+
+	float activeHalfBrig_u = 773.0f;
+	float activeHalfBrig_v = 48.0f;
+	float activeHalfTerr_u = 873.0f;
+	float activeHalfTerr_v = 48.0f;
+
+	float flashingHalfBrig_u = 773.0f;
+	float flashingHalfBrig_v = 221.0f;
+	float flashingHalfTerr_u = 873.0f;
+	float flashingHalfTerr_v = 221.0f;
+
+	float halfBrig_u = 773.0f;
+	float halfBrig_v = 24.0f;
+	float halfTerr_u = 873.0f;
+	float halfTerr_v = 24.0f;
+
+	float half_du = 90.0f;
+	float half_dv = 21.0f;
+
+	float brig_u = 773.0f;
+	float brig_v = 77.0f;
+	float terr_u = 773.0f;
+	float terr_v = 125.0f;
+
+	float pressedBrig_u = 773.0f;
+	float pressedBrig_v = 173.0f;
+	float pressedTerr_u = 773.0f;
+	float pressedTerr_v = 197.0f;
+
+	float activeBrig_u = 773.0f;
+	float activeBrig_v = 101.0f;
+	float activeTerr_u = 773.0f;
+	float activeTerr_v = 149.0f;
+
+	float whole_du = 190.0f;
+	float whole_dv = 21.0f;
+
+_ProgressBar _bar_squad =
+{
+	points ={{x = 2; y = -23;},{x = 62; y = -16;}};
+};
+
+//задержки для интерфейсных звуков
+int sound_shield_on_delay = 1000;
+
+
+//prompts
+string sMessagesPromptFile = "SCRIPTS\\messages_prompt.txt";
+int    nPromptPosX = 720;
+int    nPromptPosY = 450;
+int    nShowNewClusterMsgDelay = 5000;
+int    nPeriodMsg = 20000;
+
+int    nDefaultMsgDelayTime = 1000;
+
+int nMsgRectX1 = 700;
+int nMsgRectY1 = 450;
+int nMsgRectX2 = 1010;
+int nMsgRectY2 = 570;
+
+//tutorial
+int tutTextWindowDx = 10; //относительное начало текста в SQSH_TUT_TEXTWINDOW_ID
+int tutTextWindowDy = 40;
+
+int tutMarkWindowPeriod = 1000;
+
+int nAtomPerSqadMax = 150;
+
+//прогресс загрузки
+_ProgressBar _bar_load =
+{
+	points ={{x = 621; y = 471;},{x = 304; y = 5;}}; //x,y; sx,sy
+};
+
+int progress_tex_sz = 2;
+string progress_texture = "resource\\icons\\intf\\progress.tga";
+
+//заставка
+int splash_delay_time = 1000;
+int alpha_delta = 5;
+
+int _bDebugDisplayAllIcons = 0;
+
+float nBaseUnitsDisplayX = 890.0f / 1024.0f;
+float nBaseUnitsDisplayY = 3.0f / 768.0f;
+
+float countDownTimerX = 920.0f / 1024.0f;
+float countDownTimerY = 33.0f / 768.0f;
+
+float totalTimerX = 730.0f / 1024.0f;
+float totalTimerY = 1.0f / 768.0f;
+
+string sRegionTextureAbyss = "Resource\\Effect\\Region Down.tga";
+string sRegionTextureEnergy = "Resource\\Effect\\fx.tga";
+string sRegionTextureTriangle = "Resource\\Effect\\targetTriangle.tga";
+
+float fBackgrTexturePeriod = 32000;
+int   nBackgrTextureR = 255;
+int   nBackgrTextureG = 255;
+int   nBackgrTextureB = 255;
+int   nBackgrTextureA = 255;
+
+//0 - mod, 1 - add, 2 - mod2, 3 - mod4
+int   nBackgrMode = 3;
+
+int lastAccessibleMissionNumber = 1;
+int lastVisibleMissionNumber = 24;
+int	disableBriefing = 0;
+
+float bgCameraPsi = 1.57f;
+float bgCameraTheta = 0.0f;
+float bgCameraDist = 465.0f;
+float bgCameraX = 0.0f;
+float bgCameraY = 200.0f;
+float bgCameraZ = 0.0f;
+float bgLightX = 0.0f;
+float bgLightY = 2.5f;
+float bgLightZ = -2.5f;
+
+float bgEffectTime = 1400.0f;
+
+float mapTextureWeight = 0.5f;
+float scaleButtonWeight = 1.0f;
+
+float colorComboAlpha = 0.7f;
+
+float pushButtonAlpha = 0.7f;
+float pushButtonTextureWeight = 0.5f;
+float pushButtonPressedEnabled = 1.0f;
+float pushButtonNormalEnabled = 0.7f;
+float pushButtonDisabled = 0.63f;
+float pushButtonDisabledAlpha = 0.55f;
+float scaleButtonAlpha = 0.6f;
+
+float listBoxRowHeight = 34.9f;
+float comboBoxRowHeight = 32.0f;
+
+float collectedProgressRelaxationTime = 1000.0f;
+
+//время эффекта для кнопок меню
+int _fEffectButtonTime1 = 200;
+int _fEffectButtonTime2 = 200;
+int _fEffectButtonTime3 = 300;
+int _fEffectButtonTotalTime = _fEffectButtonTime1+_fEffectButtonTime2+_fEffectButtonTime3;
+
+//время эффекта для кнопок интерфейса
+int _fEffectIntfRoll1 = 400; //->x
+int _fEffectIntfRoll2 = 400; //->y
+int _fEffectIntfRoll3 = 400; //->alpha
+
+float hintX = 10/1024;
+float hintY = 555/768;
+float hintSX = 360/1024;
+
+float cutSceneHintX = 10/1024;
+float cutSceneHintY = 688/768;
+float cutSceneHintSX = 1000/1024;
+
+int   spiralR = 114;
+int   spiralG = 147;
+int   spiralB = 247;
+int   spiralA = 90;
+
+float MiniMapZeroLayerColorFactor = 0.5;
+float MiniMapBuildingColorFactor = 0.95;
+float filthMapColor[4] = { 1, 1, 0, 1 };
+float buildingMiniMapRatio = 1.0f/64.0f;
+float minimapAlphaPathColor[4] = { 1, 1, 1, 0.6f };
+
+ShellControlID reloadID = SQSH_MM_LOAD_SCR;
+
+string worldUnknownTexture1 = "RESOURCE\\MODELS\\MENU\\History\\envmap1_b&w.tga";
+string worldUnknownTexture2 = "RESOURCE\\MODELS\\MENU\\History\\envmap2_b&w.tga";
+string worldFullTexture1 = "RESOURCE\\MODELS\\MENU\\History\\envmap1.tga";
+string worldFullTexture2 = "RESOURCE\\MODELS\\MENU\\History\\envmap2.tga";
+string worldAExpeditionTexture1 = "RESOURCE\\MODELS\\MENU\\History\\envmap_A.tga";
+string worldAExpeditionTexture2 = "RESOURCE\\MODELS\\MENU\\History\\envmap_A2.tga";
+string worldDeadEndTexture1 = "RESOURCE\\MODELS\\MENU\\History\\envmap_D.tga";
+string worldDeadEndTexture2 = "RESOURCE\\MODELS\\MENU\\History\\envmap2.tga";
+string worldVisitedTexture1 = "RESOURCE\\MODELS\\MENU\\History\\envmap1_select.tga";
+string worldVisitedTexture2 = "RESOURCE\\MODELS\\MENU\\History\\envmap2_select.tga";
+string worldMissionedTexture1 = "RESOURCE\\MODELS\\MENU\\History\\envmap_M.tga";
+string worldMissionedTexture2 = "RESOURCE\\MODELS\\MENU\\History\\envmap2.tga";
+
+int HISTORY_ADD_BLEND_ALPHA_MODE = 1;
+float BUILDING_LINK_BLINKING_PERIOD = 500.0f;
+float JUMP_FLARE_PERIOD = 2000.0f;
+float KNOWN_WORLD_ALPHA = 1.0f;
+float UNKNOWN_WORLD_ALPHA = 1.0f;
+
+float NOMAD_MARKER_SCALE = 7.0f;
+float HISTORY_FRAME_MODEL_SCALE = 0.3f;
+
+float NOMAD_MARKER_PERIOD = 2000.0f;
+
+float scrollSpeed = 70.0f;
+float EVOLVE_TIME = 10.0f;
+float HISTORY_CAMERA_FLY_TIME = 2500.0f;
+float HISTORY_SCENE_SCALE = 6.0f;
+float HISTORY_SCENE_WORLD_SIZE_FACTOR = 1.0f;
+float SPHERE_VISIBLE_DISTANCE = 14000.0f;
+
+float HISTORY_SCENE_CAMERA_MIN_DISTANCE = 1000.0f;
+float HISTORY_SCENE_CAMERA_MAX_DISTANCE = 12000.0f;
+
+int HISTORY_SCENE_LOG_FONT_SIZE = 15;
+float HISTORY_SCENE_CENTER_X = 0;
+float HISTORY_SCENE_CENTER_Y = 0;
+float HISTORY_SCENE_CENTER_Z = 0;
+float HISTORY_SCENE_PSI = 6.209f;
+float HISTORY_SCENE_THETA = 1.516f;
+float HISTORY_SCENE_DISTANCE = 1700.0f;
+
+float DISSOLVE_TIME = 2000.0f;
+
+float TESTAMENT_EFFECT_PERIOD = 1000.0f;
+float TESTAMENT_EFFECT_DELAY = 500.0f;
+
+int DEFAULT_NOMAD_COLOR_INDEX = 0;
+
+int BRIEFING_LOG_FONT_SIZE = 7;
+float BRIEFING_LOG_X = 0;
+float BRIEFING_LOG_Y = 0;
+float BRIEFING_LOG_ALPHA = 0.2f;
+int BRIEFING_LOG_ROW_COUNT = 60;
+
+float ATTACK_FLASHING_TIME = 3500.0f;
+
+int attackClassTipAutoFormatCount = 3;
+struct unitClassDesc {
+	int unitClass = 0;
+	string textID = "";
+};
+unitClassDesc unitClassDescriptionKeys[int unitClassKeyNumber] = {
+	{unitClass = UNIT_CLASS_IGNORE; textID = "Interface.UnitClass.Ignore";},
+
+	{unitClass = UNIT_CLASS_BASE; textID = "Interface.UnitClass.Base";},
+	{unitClass = UNIT_CLASS_LIGHT; textID = "Interface.UnitClass.Light";},
+	{unitClass = UNIT_CLASS_MEDIUM; textID = "Interface.UnitClass.Medium";},
+	{unitClass = UNIT_CLASS_HEAVY; textID = "Interface.UnitClass.Heavy";},
+	{unitClass = UNIT_CLASS_AIR; textID = "Interface.UnitClass.Air";},
+	{unitClass = UNIT_CLASS_AIR_HEAVY; textID = "Interface.UnitClass.Air_Heavy";},
+	{unitClass = UNIT_CLASS_UNDERGROUND; textID = "Interface.UnitClass.Underground";},
+
+	{unitClass = UNIT_CLASS_STRUCTURE; textID = "Interface.UnitClass.Structure";},
+	{unitClass = UNIT_CLASS_STRUCTURE_GUN; textID = "Interface.UnitClass.Gun";},
+	{unitClass = UNIT_CLASS_STRUCTURE_SPECIAL; textID = "Interface.UnitClass.StructureSpecial";},
+	{unitClass = UNIT_CLASS_STRUCTURE_CORE; textID = "Interface.UnitClass.Core";},
+	{unitClass = UNIT_CLASS_STRUCTURE_ENVIRONMENT; textID = "Interface.UnitClass.Environment";},
+
+	{unitClass = UNIT_CLASS_FRAME; textID = "Interface.UnitClass.Frame";},
+	{unitClass = UNIT_CLASS_BUILDER; textID = "Interface.UnitClass.Builder";},
+	{unitClass = UNIT_CLASS_TRUCK; textID = "Interface.UnitClass.Truck";},
+	{unitClass = UNIT_CLASS_BLOCK; textID = "Interface.UnitClass.Block";},
+
+	{unitClass = UNIT_CLASS_MISSILE; textID = "Interface.UnitClass.Missile";},
+	{unitClass = UNIT_CLASS_NATURE; textID = "Interface.UnitClass.Nature";},
+	{unitClass = UNIT_CLASS_AIR_FILTH; textID = "Interface.UnitClass.Air_Filth";},
+	{unitClass = UNIT_CLASS_GROUND_FILTH; textID = "Interface.UnitClass.Ground_Filth";},
+
+	{unitClass = UNIT_CLASS_CORRIDOR; textID = "Interface.UnitClass.Corridor";},
+
+	{unitClass = UNIT_CLASS_GROUND; textID = "Interface.UnitClass.Ground";}
+};
+
+string REPLAY_PATH = "RESOURCE\\Replay";
+string MISSIONS_PATH = "RESOURCE\\Missions";
+
+_V2i RESOLUTIONS[int RESOLUTION_COUNT] = {
+	{x = 800; y = 600;},
+	{x = 1024; y = 768;},
+	{x = 1280; y = 960;},
+	{x = 1600; y = 1200;}
+};
+
+int LODS[int LOD_COUNT] = {50,100,10000};
+
+struct Reel {
+	string name = "";
+	int abortEnabled = 1;
+	int localized = 0;
+	int video = 1;
+	int time = 4000;
+};
+
+Reel reels[int REEL_COUNT] = {
+//	{name = "RESOURCE\\VIDEO\\cm.bik"; abortEnabled = 1;},
+//	{name = "RESOURCE\\VIDEO\\CMLegalScreen.tga"; abortEnabled = 0; video = 0;},
+	{name = "RESOURCE\\VIDEO\\1c.bik"; abortEnabled = 1;},
+	{name = "RESOURCE\\VIDEO\\kd.bik"; abortEnabled = 1;},
+//	{name = "RESOURCE\\VIDEO\\ati.bik"; abortEnabled = 1;},
+	{name = "RESOURCE\\VIDEO\\perimeter.bik"; abortEnabled = 1;},
+	{name = "RESOURCE\\VIDEO\\intro.bik"; abortEnabled = 1;}
+};
+
+Reel demoReels[int DEMO_REEL_COUNT] = {
+	{name = "start_splash.tga"; abortEnabled = 0; localized = 1; video = 0;},
+	{name = "RESOURCE\\VIDEO\\CMLegalScreen.tga"; abortEnabled = 0; video = 0;},
+	{name = "RESOURCE\\Icons\\logo.tga"; abortEnabled = 1; video = 0;}
+};
+
+Reel lastReel = {name = "RESOURCE\\VIDEO\\out.bik"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
+//Reel lastDemoReel = {name = "RESOURCE\\VIDEO\\out.bik"; abortEnabled = 1; localized = 0; video = 1;time = -1;};
+Reel lastDemoReel = {name = "splash_out.tga"; abortEnabled = 0; localized = 1; video = 0;time = -1;};
+
+_V2i imageRacePos[] = {
+	{x = 0; y = 0;},
+	{x = 0; y = 84;},
+	{x = 0; y = 168;}
+};
+_V2i imageRaceSize[] = {
+	{x = 83; y = 83;},
+	{x = 83; y = 83;},
+	{x = 83; y = 83;}
+};
+
+float CUT_SCENE_TOP = -0.390625f;
+float CUT_SCENE_BOTTOM = 0.390625f;
+
+int CUT_SCENE_FADEOUT_TIME = 700;
+int CUT_SCENE_FADEIN_TIME = 700;
+int CUT_SCENE_PAUSE_TIME = 700;
+
+float CREDITS_SCROLL_SPEED = 30;
+
+int INTERVIDEO_ALPHA = 255;
+
+float	sqshFontCountDownTimeColor[4] = { 1, 0, 0, 1 };
+
+string sqshShellMainFont = "Aero"; 
+string sqshShellMainFont1 = "Arial"; 
+string sqshShellMainFont2 = "Arial"; 
+string sqshFontPopup   = "Arial"; 
+string sqshFontCountDownTime = "Arial"; 
+string  shell_main_menu_font = "Aero"; 
+
+
+int     shell_main_menu_font_size1 = 45;
+int     shell_main_menu_font_size1_5 = 35;
+int     shell_main_menu_font_size2 = 25;
+int     shell_main_menu_font_size3 = 15;
+int     shell_main_menu_font_size4 = 11;
+
+int defaultFontSize = 20;
+int comboBoxFontSize = 20;
+int editBoxFontSize = 23;
+
+float sqshCursorWorkAreaSize = 10;
+
+int sqshFontCountDownTimeSize = 30;
+int infoWndFontSize = 15;
+int HINT_FONT_SIZE = 20;
+
+int inGameButtonFontSize = 10;
+int inGameLegionDigit = 10;
+int collectedEnergyBarFontSize = 13;
+
+int statsTableFontSize = 20;
+int statsHeadTableFontSize = 20;
+
+float SPLASH_FADE_IN_TIME = 800; 
+float SPLASH_FADE_OUT_TIME = 800;
+float SPLASH_REEL_ABORT_DISABLED_TIME = 5600;
+
+string aiNameIDs[] = {
+	"", //BELLIGERENT_NONE
+	"Mission Frames.Cluster", //BELLIGERENT_EXODUS0
+	"Mission Frames.Ark-9", //BELLIGERENT_EXODUS1
+	"Mission Frames.Freeborn", //BELLIGERENT_HARKBACKHOOD0
+	"Mission Frames.Zodiac", //BELLIGERENT_HARKBACKHOOD1
+	"Mission Frames.Router", //BELLIGERENT_EMPIRE0
+	"Mission Frames.Existor", //BELLIGERENT_EMPIRE1
+	"Mission Frames.Vice", //BELLIGERENT_EMPIRE_VICE
+	
+	// АДДОН
+	"Mission Frames.Cluster", //BELLIGERENT_EXODUS2
+	"Mission Frames.Cluster", //BELLIGERENT_EXODUS3
+	"Mission Frames.Cluster", //BELLIGERENT_EXODUS4
+	"Mission Frames.Vice", //BELLIGERENT_EMPIRE2
+	"Mission Frames.Vice", //BELLIGERENT_EMPIRE3
+	"Mission Frames.Vice" //BELLIGERENT_EMPIRE4
+};
+
+string mainMenuMusic = "Resource\\Music\\Perimeter_Main.ogg";
+string briefingMusic = "Resource\\Music\\Exodus_Psychosphere.ogg";
+
+int DeltaToolzerRadius = 5;
+
+float CHATINFO_FADE_TIME = 1000;
+float CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000;
+
+float statsTableRowHeight = 40 / 768;
+
+float totalColumnStatsWeights[]     = {0, 1/16, 1/4, 1/4 + 1/6, 1/4 + 2/6, 1/4 + 3/6};
+float generalColumnStatsWeights[]   = {0, 1/16, 1/4, 1/4 + 1/6, 1/4 + 2/6, 1/4 + 3/6, 1/4 + 4/6 - 1/32};
+float unitsColumnStatsWeights[]     = {0, 1/16, 1/4, 1/4 + 1/6, 1/4 + 2/6, 1/4 + 3/6};
+float buildingsColumnStatsWeights[] = {0, 1/16, 1/4, 1/4 + 1/6, 1/4 + 2/6, 1/4 + 3/6};
+}

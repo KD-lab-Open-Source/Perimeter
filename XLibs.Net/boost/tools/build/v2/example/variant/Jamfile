@@ -1,0 +1,9 @@
+
+# By default, build the project with two variants
+# we've defined in project-root.jam
+project
+    : default-build crazy super_release
+    ;
+
+exe a : a.cpp libs//l ;
+

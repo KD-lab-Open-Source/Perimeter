@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_REQUIRE_PREDICATE( predicate, arity, arguments_list ) </H3>
+  <P class="first-line-indented">This tool is used to validate the supplied predicate and abort the current 
+    test case processing if it fails. This test tool is generic. It allows to validate arbitrary one or 
+    two arity predicate. To validate zero or more then two arity predicate use <A href="BOOST_REQUIRE.html" target="descr">BOOST_REQUIRE</A> 
+    tool. The advantage of this tool is that shows arguments values in case of predicate failure.</P>
+  <P class="first-line-indented">If predicate evaluates to <I> true</I>, the tool produces a confirmation 
+    message (note: to manage what messages appear in the test output stream set the proper log level), 
+    in other case it produces an error message in a form &quot;error in &lt;test case name&gt;: test &lt;predicate&gt;( 
+    arguments_list ) fail for (arguments values)&quot; and abort the current test case processing.</P>
+  <H4>Example: test.cpp</H4>
+  <PRE class="code"><SPAN class="cpp-type">int</SPAN> test.cpp( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    <SPAN class="cpp-type">double</SPAN> fp1     = <SPAN class="literal">1.23456e-10</SPAN>;
+    <SPAN class="cpp-type">double</SPAN> fp2     = <SPAN class="literal">1.23457e-10</SPAN>;
+    <SPAN class="cpp-type">double</SPAN> epsilon = <SPAN class="literal">8.1e-6</SPAN>;
+
+    <SPAN class="comment">// check weak closeness </SPAN>
+    BOOST_REQUIRE_PREDICATE( close_at_tolerance&lt;double&gt;( epsilon, <SPAN class="reserv-word">false</SPAN> ),
+                             <SPAN class="literal">2</SPAN>, ( fp1, fp2 ) ); <SPAN class="comment">// should pass</SPAN>
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}
+</PRE>
+  <H4>Output:</H4>
+   
+  <P class="test-output">&nbsp;</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_REQUIRE.html" target="descr">BOOST_REQUIRE</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

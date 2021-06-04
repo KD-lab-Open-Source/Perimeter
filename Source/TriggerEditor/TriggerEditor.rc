@@ -1,0 +1,608 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\TriggerEditor.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_TREE_DLG DIALOG  0, 0, 198, 282
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Дерево проекта"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL         "",IDC_CUSTOM,"TreeListCtrl.TigerX_And_KB-I",WS_TABSTOP,
+                    0,0,198,281
+END
+
+IDD_DLG_NAME DIALOG  0, 0, 133, 12
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Укажите имя"
+FONT 11, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "ok",IDOK,100,0,33,12
+    EDITTEXT        IDC_EDIT_NAME,0,0,97,12,ES_AUTOHSCROLL
+END
+
+IDD_DLG_TRIG_DBG DIALOGEX 0, 0, 187, 95
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Отладка"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | 
+                    LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | 
+                    WS_BORDER | WS_TABSTOP,0,13,186,78,WS_EX_STATICEDGE
+    SCROLLBAR       IDC_SCROLLBAR,0,1,148,11,SBS_LEFTALIGN
+    PUSHBUTTON      "Легенда",IDC_BTN_SHOW_LEGEND,149,0,37,13,0,
+                    WS_EX_STATICEDGE
+END
+
+IDD_TRG_PROFILER_LEGEND DIALOGEX 0, 0, 107, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Легенда"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Связь",IDC_STATIC,7,7,93,41
+    GROUPBOX        "Элемент",IDC_STATIC,7,55,93,55
+    LTEXT           "Отработанный",IDC_STATIC_DONED_LINK,13,16,80,8
+    LTEXT           "Активный",IDC_STATIC_ACTIVE_LINK,13,26,80,8
+    LTEXT           "Неактивный",IDC_STATIC_INACTIVE_LINK,13,36,80,8
+    LTEXT           "Отработанный",IDC_STATIC_DONED_ELE,13,67,80,8
+    LTEXT           "Активный",IDC_STATIC_ACTIVE_ELE,13,76,80,8
+    LTEXT           "Неактивный",IDC_STATIC_INACTIVE_ELE,13,87,80,8
+    LTEXT           "Ждущий",IDC_STATIC_WAITING_ELE,13,97,80,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_TREE_DLG, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 281
+    END
+
+    IDD_DLG_NAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 126
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 5
+    END
+
+    IDD_DLG_TRIG_DBG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_TRG_PROFILER_LEGEND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 100
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_TOOLBAR_SCALE TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_TBTN_SCALE_PLUS
+    BUTTON      ID_TBTN_SCALE_MINUS
+    SEPARATOR
+    BUTTON      ID_PLACEHOLDER1
+    BUTTON      ID_PLACEHODER2
+    BUTTON      ID_PLACEHOLDER3
+END
+
+IDR_TE_MAIN_TOOLBAR TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_TE_ACTIVATE_PROFILER
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_TOOLBAR_SCALE       BITMAP                  "res\\toolbar1.bmp"
+IDR_TE_MAIN_TOOLBAR     BITMAP                  "res\\te_main_.bmp"
+IDB_TREELIST_TREE       BITMAP                  "res\\bm_def_tree.bmp"
+IDB_TREELIST_SORT       BITMAP                  "res\\bm_def_sort.bmp"
+IDB_TREELIST_LOCK       BITMAP                  "res\\bm_lockbox.bmp"
+IDB_TREELIST_HEADER     BITMAP                  "res\\bm_def_head.bmp"
+IDB_TREELIST_DISABLE    BITMAP                  "res\\bm_bkgnd2.bmp"
+IDB_TREELIST_CHECK      BITMAP                  "res\\bm_checkbox.bmp"
+IDB_TREELIST_BITMAP     BITMAP                  "res\\bm_bkgnd.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_TE_TRIGGER_ELE MENU 
+BEGIN
+    POPUP "XZ"
+    BEGIN
+        MENUITEM "Удалить",                     IDC_TE_TGR_ELE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Условия",                     IDC_TE_SHOW_CONDITION
+        MENUITEM "Свойства",                    IDC_TE_PROPETIES
+        MENUITEM "Переименовать",               IDC_TE_RENAME
+        MENUITEM "Активный",                    IDC_TE_MAKE_ACTIVE
+        MENUITEM SEPARATOR
+        MENUITEM "Выделить связи",              IDC_TE_HILITE_LINKS
+        MENUITEM SEPARATOR
+        MENUITEM "Цвет",                        ID_TE_COLOR
+    END
+END
+
+IDR_TE_LINK MENU 
+BEGIN
+    POPUP "XZ"
+    BEGIN
+        MENUITEM "Удалить",                     IDC_TE_LINK_DELETE
+        MENUITEM "Активна всегда",              IDC_AUTO_RESTART
+        MENUITEM SEPARATOR
+        MENUITEM "Тип &1",                      IDC_TE_LINK_TYPE0
+        MENUITEM "Тип &2",                      IDC_TE_LINK_TYPE1
+        MENUITEM "Тип &3",                      IDC_TE_LINK_TYPE2
+        MENUITEM "Тип &4",                      IDC_TE_LINK_TYPE3
+        MENUITEM "Тип &5",                      IDC_TE_LINK_TYPE4
+        MENUITEM "Тип &6",                      IDC_TE_LINK_TYPE5
+        MENUITEM "Тип &7",                      IDC_TE_LINK_TYPE6
+        MENUITEM "Тип &8",                      IDC_TE_LINK_TYPE7
+        MENUITEM "Тип  &9",                     IDC_TE_LINK_TYPE8
+        MENUITEM "Тип 1&0",                     IDC_TE_LINK_TYPE9
+    END
+END
+
+IDR_BETWEEN_PLOTS_MENU MENU 
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "Вставить строку",             IDC_INSERT_ROWS
+        MENUITEM "Вставить столбец",            IDC_INSERT_COLUMNS
+        MENUITEM SEPARATOR
+        MENUITEM "Удалить строку",              IDC_DELETE_ROW
+        MENUITEM "Удалить столбец",             IDC_DELETE_COLUMN
+    END
+END
+
+IDR_TE_TRIGGER_ELE1 MENU 
+BEGIN
+    POPUP "XZ"
+    BEGIN
+        MENUITEM "Условия",                     IDC_TE_SHOW_CONDITION
+        MENUITEM "Переименовать",               IDC_TE_RENAME
+    END
+END
+
+IDR_MENU_PROF_DLG MENU 
+BEGIN
+    POPUP "gg"
+    BEGIN
+        MENUITEM "Загрузить",                   IDC_LOAD_DBG
+        MENUITEM SEPARATOR
+        MENUITEM "Очистить",                    IDC_CLEAR_DBG_LIST
+    END
+END
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "&Файл"
+    BEGIN
+        MENUITEM "&Сохранить\tCtrl+S",          ID_FILE_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "Выход",                       ID_APP_EXIT
+    END
+    POPUP "&Редактировать"
+    BEGIN
+        MENUITEM "&Отменить \tCtrl+Z",          ID_EDIT_UNDO
+        MENUITEM "&Повторить\tCtrl+A",          ID_EDIT_REDO
+        MENUITEM SEPARATOR
+        MENUITEM "Вырезать\tCtrl+X",            ID_EDIT_CUT
+        MENUITEM "Копировать\t Ctrl+C",         ID_EDIT_COPY
+        MENUITEM "Вставить \tCtrl+V",           ID_EDIT_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "Выделить все",                ID_EDIT_SELECT_ALL
+    END
+    POPUP "&Показать"
+    BEGIN
+        MENUITEM "&Панель инструментов",        ID_VIEW_TOOLBAR
+        MENUITEM "&Строка состояния",           ID_VIEW_STATUS_BAR
+        MENUITEM "Лог отладчика",               ID_VIEW_PROFILER
+        MENUITEM "Список действий",             ID_VIEW_PROJECT_TREE
+    END
+    POPUP "&Помощь"
+    BEGIN
+        MENUITEM "&О редакторе...",             ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CUR_HAND            CURSOR                  "res\\hand.cur"
+IDC_CUR_DRAG_HAND       CURSOR                  "res\\draghand.cur"
+IDC_CURSOR_VERT         CURSOR                  "res\\cur_vert.cur"
+IDC_CURSOR_STOP         CURSOR                  "res\\cur_stop.cur"
+IDC_CURSOR_SPLIT        CURSOR                  "res\\cur_split.cur"
+IDC_CURSOR_SIZE         CURSOR                  "res\\cursor_s.cur"
+IDC_CURSOR_LOCK         CURSOR                  "res\\cur_lockbox.cur"
+IDC_CURSOR_HORZ         CURSOR                  "res\\cur_horz.cur"
+IDC_CURSOR_DROP         CURSOR                  "res\\cur_drop.cur"
+IDC_CURSOR_CROSS        CURSOR                  "res\\cur_cross.cur"
+IDC_CURSOR_CHECK        CURSOR                  "res\\cur_checkbox.cur"
+IDC_CURSOR_BUTTON       CURSOR                  "res\\cur_button.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "TriggerEditor\n\nTriggerEditor\nTriggerEditor Files (*.trg)\n.trg\nTriggerEditor.Document\nTriggerEditor.Document"
+    IDS_SCALE_INFO_FORMAT   "%d%%"
+    IDS_SCALE_COMBO_TOOLTIP_TEXT "Укажите свой масштаб"
+    IDS_INVALID_SCALE_INPUT "Укажите пожалуйста число от 10 до 500"
+    IDS_SAVE_PROJ_MSG       "Данные были изменены. Вы хотите сохранить изменения?"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "TriggerEditor"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+    IDS_TRIGGER_DEBUG_DISPLAY_TEXT_FORMAT "[%d] - %s"
+    IDS_CB_FORMAT_NAME      "TriggerEditorClipBoardFormat"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Закрывает приложение; запрашивает сохранение данных\nВыход"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Отменить последнее действие\nОтменить"
+    ID_EDIT_REDO            "Повторить последнюю отмененное действие\nПовторить"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Показывает или скрывает панель иструментов\nПереключить панель инструментов"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ACTION_COLUMN       "Действия"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_PROFILER        "Показывает список состояний триггеров"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ERROR_IN_CUSTOM_VALUE 
+                            "Произошла ошибка при вызове (или внутри) функции customValue"
+    IDS_REG_SEC_NAME_TOOLBARS "Toolbars"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TBTN_SCALE_PLUS      "Увеличить"
+    ID_TBTN_SCALE_MINUS     "Уменьшить"
+END
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "TriggerEditor DLL"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "TriggerEditor"
+            VALUE "LegalCopyright", "Copyright (C) 2003"
+            VALUE "OriginalFilename", "TriggerEditor.DLL"
+            VALUE "ProductName", "TriggerEditor Dynamic Link Library"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    "A",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_TE_ACTIVATE_PROFILER, VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_REDO,           VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\TriggerEditor.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\TriggerEditor.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

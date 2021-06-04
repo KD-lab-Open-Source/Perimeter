@@ -1,0 +1,5037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<text_group>
+	<text_group ID="Mission Tasks">
+		<comment>Описание миcсий в окне загрузки миссии.</comment>
+		<text_group ID="Mission 00">
+			<text ID="Task 1">
+				<data>Objective 1 – Link Frame to an Energy Core at specified co-ordinates.</data>
+				<comment>Задание 1 – Соединить Фрейм с Порталом создав энергосеть из ядер.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2 – Move the Frame through the energy Portal. It can only move when connected to a Core.</data>
+				<comment>Задание 2 – Переместить Фрейм к порталу. Он может двигаться только соединяясь с ядрами.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 01">
+			<text ID="Task 1">
+				<data>Objective 1. Build an Energy Core and install the Frame into the surface.</data>
+				<comment>Задание 1. Построить ядро и установить фрейм.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Build 4 more Energy Cores.</data>
+				<comment>Задание 2. Построить еще 4 ядра.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Ensure Omega portal has power and defend base from the Scourge.</data>
+				<comment>Objective 3. Убедитесь, что омега портал подключен и защитите базу от скверны.</comment>
+			</text>
+			<text ID="Task 4">
+				<data>Objective 4. Keep your Frame installed and allow the Spiral to charge.</data>
+				<comment>Задание 4. Сохраняй Фрейм инсталированным для зарядки Спирали.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 02">
+			<text ID="Task 1">
+				<data>Objective 1. Expand your base using energy transmitters.</data>
+				<comment>Задание 1. Расширьте свою базу используя трансмиттеры.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Use your energy network to capture two energy collectors.</data>
+				<comment>Задание 2. Используйте свою энергосеть для захвата двух коллекторов.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Defend the Collectors until they’re captured using remote soldiers</data>
+				<comment>Задание 3. Защитите Коллекторы до захвата при помощи удаленного сквада.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 03">
+			<text ID="Task 1">
+				<data>Objective 1. Build an Anti-gravity lab.</data>
+				<comment>Задание  1 – Построить летную лабораторию</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Destroy the 3 Scourge nests.</data>
+				<comment>Задание 2 – Уничтожить 3 гнезда скверны </comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 04">
+			<text ID="Task 1">
+				<data>Objective 1. Build stationary gun turrets to defend against the Scourge.</data>
+				<comment>Задача 1 – Построить стационарные пушки для защиты от скверны.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Charge SPIRAL and complete Portal construction.</data>
+				<comment>Задание 2 – Зарядить Спираль и завершить строительство портала.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Exit the world through the Omega Portal.</data>
+				<comment>Задание 3 – Уйти с мира через омега-портал.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 05">
+			<text ID="Task 1">
+				<data>Objective 1. Build and connect Cores at the designated coordinates.</data>
+				<comment>Задание 1. Построить и подключить Ядра в заданных местах.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Defend Cores from Scourge attack using rocket launchers.</data>
+				<comment>Задание 2. Защитить ядра от скверны используя ракетные пушки.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Build Alpha portal and charge Spiral.</data>
+				<comment>Задание 3. Построить Альфа-портал и зарядить спираль.</comment>
+			</text>
+			<text ID="Task 4">
+				<data>Objective 4. Leave the world through the portal.</data>
+				<comment>Задание 4. Покинуть мир через Альфа-портал.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 06">
+			<text ID="Task 1">
+				<data>Objective 1. Capture at least three of the weapons for study.</data>
+				<comment>Задание 1 – Захватите минимум три орудия для изучения.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Capture the laboratory.</data>
+				<comment>Задание 2  – Захватить лабораторию.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>.</data>
+				<comment>.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 07">
+			<text ID="Task 1">
+				<data>Objective 1. Prevent the Harkback from charging their Spiral.</data>
+				<comment>Задание 1 – Не дать Возвратникам зарядить спираль.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2 – Charge your Spiral and leave through the Alpha portal.</data>
+				<comment>Задание 2 – Зарядить спираль и уйти в Альфу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 08">
+			<text ID="Task 1">
+				<data>Objective 1. Capture the Omega Portal.</data>
+				<comment>Задание 1 – Захватить Омегу.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Evade the Capture of the Frame.</data>
+				<comment>Задание 2 – не дать захватить свой Фрейм.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Leave the world as soon as possible.</data>
+				<comment>Задание 3 – покинуть мир как можно скорее.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 09">
+			<text ID="Task 1">
+				<data>Objective 1. Charge SPIRAL and leave through the Alpha Portal.</data>
+				<comment>Задание 1 – Зарядить спираль и уйти а Альфу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 10">
+			<text ID="Task 1">
+				<data>Objective 1. Isolate the enemies Frame from it’s own network.</data>
+				<comment>Задание 1 – Отрезать Фрейм врага от его энергосети.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Capture the enemies Frame by connecting to it.</data>
+				<comment>Задание 2 – Захватить Фрейм врага, подключившись к нему.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 11">
+			<text ID="Task 1">
+				<data>Objective 1. Force the Exodus Frame to uninstall from the surface before its Spiral is charged.</data>
+				<comment>Задание 1. Заставить Фрейм Исхода подняться с поверхности до того как он зарядит спираль.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Capture the Exodus Frame.</data>
+				<comment>Задание 2. Захватить Фрейм Исхода.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Do not capture or destroy the enemy Frame.</data>
+				<comment>Задание 3 – Не захватывать и не уничтожать вражеский Фрейм.</comment>
+			</text>
+			<text ID="Task 4">
+				<data>Objective 4. Charge your Spiral and leave through the Omega portal.</data>
+				<comment>Задание 4 – Зарядить свою Спираль и покинуть мир через Омега-портал.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 12">
+			<text ID="Task 1">
+				<data>Objective 1. Build and connect Cores at the designated coordinates.</data>
+				<comment>Задание 1. Построить и подключить ядра в указанных координатах.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Defend Cores from Scourge attack.</data>
+				<comment>Задание 2. Защитить ядра от атак скверны.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Leave the world through the portal.</data>
+				<comment>Задание 3. Покинуть Мир через Портал.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 13">
+			<text ID="Task 1">
+				<data>Objective 1. Build an Omega Portal.</data>
+				<comment>Задание 1. Построить Омега-портал.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Jump to the next world.</data>
+				<comment>Задание 2. Прыгнуть на другой мир.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 14">
+			<text ID="Task 1">
+				<data>Objective 1. Leave through the Alpha portal.</data>
+				<comment>Задание 1. Уйти в Альфу.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Legate, do not waste time destroying or capturing the enemy Frame teleport immediately.</data>
+				<comment>Задание 2. Легат, не трать время на уничтожение или захват вражеского фрейма, телепортируйся немедленно.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 15">
+			<text ID="Task 1">
+				<data>Objective 1. Leave through the Omega Portal.</data>
+				<comment>Задание 1. Уйти через Омегу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 16">
+			<text ID="Task 1">
+				<data>Objective 1. Send units to destroy the nest.</data>
+				<comment>Objective 1. Send units to destroy the nest.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Build the Harkback lab and use Scourge units in your assault.</data>
+				<comment>Objective 2. Build the Harkback lab and use Scourge units in your assault.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 17">
+			<text ID="Task 1">
+				<data>Objective 1. Destroy the enemy!</data>
+				<comment>Задание 1 Уничтожить врага!</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 18">
+			<text ID="Task 1">
+				<data>Objective 1. Capture the Portal before the enemy.</data>
+				<comment>Задание 1. Захватить портал раньше врага.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Move through the portal.</data>
+				<comment>Задание 2. Уйти в портал.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 19">
+			<text ID="Task 1">
+				<data>Objective 1. Use all means necessary to capture or destroy the enemy Frame.</data>
+				<comment>Задание 1. Захватите или уничтожьте фрейм Врага любым способом.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 20">
+			<text ID="Task 1">
+				<data>Objective 1. Obliterate FREEBORN.</data>
+				<comment>Задание 1. Уничтожить Фрейм FREEBORN.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Find the Omega portal.</data>
+				<comment>Задание 2. Найти Омегу.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Travel through the Omega portal.</data>
+				<comment>Задание 3. Уйти в Omegу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 21">
+			<text ID="Task 1">
+				<data>Objective 1. Activate a Static Bomb in close proximity to the Omega Portal.</data>
+				<comment>Задание 1. Активировать Статическую бомбу в непосредственной близости к Порталу.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Travel through the Omega before the bomb detonates, your SPIRAL is already charged.</data>
+				<comment>Задание 2. Уйти в Омегу до того как бомба взорвется, ваша спираль уже заряжена.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Leave through the Alpha Portal before the detonation.</data>
+				<comment>Задание 2. Покинуть мир через альфу до взрыва.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 22">
+			<text ID="Task 1">
+				<data>Objective 1: Deactivate the mine on the Omega portal.</data>
+				<comment>Задание 1: Деактивировать мину на Омега портале.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2: Capture the Omega portal.</data>
+				<comment>Задание 2: Захватить Омегу.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3: Destroy the Vice Frame.</data>
+				<comment>Задание 3: Уничтожить Наместника.</comment>
+			</text>
+			<text ID="Task 4">
+				<data>Objective 4: Exit the world via the Omega portal.</data>
+				<comment>Задание 4: Уйти в Омегу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 23">
+			<text ID="Task 1">
+				<data>Objective 1: Spare Frame ZODIAC.</data>
+				<comment>Задание 1: Оберегать фрейм ZODIAC.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2: Capture the Omega portal before the enemy escapes the world.</data>
+				<comment>Задание 2: Захватить Омегу до тго как враг уйдет в нее.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3: Charge the Spiral.</data>
+				<comment>Задание 3: Зарядить Спираль.</comment>
+			</text>
+			<text ID="Task 4">
+				<data>Objective 4: Escape the world via the Omega portal.</data>
+				<comment>Задание 4: Уйти в омегу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 24">
+			<text ID="Task 1">
+				<data>Objective 1: Capture the enemy Frame.</data>
+				<comment>Задание 1: Захватить Фрейм  врага.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 25">
+			<text ID="Task 1">
+				<data>Objective 1: Stop the enemy from constructing an Omega Portal.</data>
+				<comment>Задание 1: Не дать врагу построить Омегу.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2: Build an Energy Core on the four highlighted positions.</data>
+				<comment>Задание 2: Построить ядра на 4-х указанных местах.</comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3: Build an Alpha Portal.</data>
+				<comment>Задание 3: Построить Альфу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 26">
+			<text ID="Task 1">
+				<data>Objective 1. Protect the Vortex from destruction by the Empire.</data>
+				<comment>Задание 1. Защитить дыру от уничтожения Империей.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Destroy the Empire&#039;s Frame.</data>
+				<comment>Задание 2. Уничтожить имперский Фрейм.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission Tutorial">
+			<text ID="Task 1">
+				<data>Objective 1. Learn how to terraform the surface.</data>
+				<comment>Задача 1 - испытать основные элементы терраформинга.</comment>
+			</text>
+			<text ID="Task 2">
+				<data>Objective 2. Learn how to build structures.</data>
+				<comment>Задача 2. Построить несколько строений. </comment>
+			</text>
+			<text ID="Task 3">
+				<data>Objective 3. Learn how to produce units.</data>
+				<comment>Задача 3. Испытать производство базовых юнитов.</comment>
+			</text>
+			<text ID="Task 4">
+				<data>Objective 4. Learn how to transform units.
+</data>
+				<comment>Задача 4. Испытать морфинг инитов в производный тип.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Battle">
+			<text ID="Task">
+				<data>Capture or destroy the enemy.</data>
+				<comment>Capture or destroy the enemy.</comment>
+			</text>
+		</text_group>
+	</text_group>
+	<text_group ID="Briefings">
+		<text_group ID="Mission00">
+			<text ID="Fore0">
+				<data>The text is presented by the Terminal – an all-time character of all briefings, who introduces himself to the player as Legate candidate, chief of one of the Frames - huge mobile cities traveling between the worlds. The Terminal then specifies the first s</data>
+			</text>
+			<text ID="Post0">
+				<data>Player Frame moves from one world to another, as the mission is successfully accomplished. Follows an explanation saying that moving between the worlds is possible only through the portals. </data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+The Cluster Frame Genetic Committee confirms that Prototype No. 39/12 is prepared for Legate testing. Legate! Hear the voice of the Spirit Council, the wise and sacred keepers of the Cluster Frame.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Our great city must continue its journey under your guidance.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>You alone command the Frame. Your very destiny is to abide by the will of the Spirits and lead our Frame to safety.  The Spirit Council&#039;s wishes are transmitted through me. Terminals have been created in each Frame to council and assist you, Legate.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>The world we currently reside in is unstable.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>Your first mission is simple.  Pilot the Frame safely through a dimensional Portal. To accomplish this you need to build Energy Cores on the terra-formed surface in order to channel power to the Frame’s anti-gravity units. This is the first and most important skill you must master. </data>
+			</text>
+			<text ID="Terminal6">
+				<data>Act quickly Legate.  Time is short!</data>
+			</text>
+			<text ID="Terminal8">
+				<data>Look at the Scheme of Worlds. The Exodus Frames are moving through the Universe from one world to another, building portals on each world to create a unified chain. Our Frame just moved to the next world in the chain through an Omega Portal.</data>
+			</text>
+			<text ID="Terminal7">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Not bad, Legate, although your actions may not have been optimum.</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission01">
+			<text ID="Fore0">
+				<data>The camera is rotating around the world, to which the Exodus-A Frame has moved. Short introductions on the political structure of a Frame, the Spirit Council and the explanation of their managing role. Follows the description of the Scourge and the object</data>
+			</text>
+			<text ID="Post0">
+				<data>The player is told that he has been accounted worthy of the rank of a Legate and that he now has to familiarize himself with the prehistory of the development of the Chain, so as to better understand the laws of Exodus progression and its purposes.</data>
+			</text>
+			<text ID="Post1">
+				<data>The picture shows only three Root Worlds on which all nine Frames were built. Then the years start running forward with increasing speed and the player watches the gradual development of the Chain up to the moment of the next mission, that is over several</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate of Cluster, the time has come for you to protect our Frame from the Scourge.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Some believe that the Scourge is created from our own thoughts and fears due to their nightmarish appearance. Their form encompasses many different creatures that rise from the ground itself. We believe the Scourge is some kind of protective mechanism and that our presence alone gives them sustenance. What we do know of the Scourge is that they await us on virtually every world and will stop at nothing to destroy us. We must escape this world at the earliest opportunity.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>Long ago, the Spirit Council gave us the Perimeter, a protective field, which can defend us from the Scourge. Now it is time you learned to use it.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>We need you to protect us while the Frame recharges its navigation Spiral. This device is essential for inter-dimensional travel between worlds. The Frame must be ‘installed’ onto the world’s surface and connected to Energy Cores for the Spiral to charge.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>Good luck Legate!</data>
+			</text>
+			<text ID="Terminal6">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Congratulations. The Spirit Council has confirmed your authority as Legate. You are the twelfth in the Cluster Legate dynasty.  Henceforth, you will continue the Exodus. As Legate, you must understand the History of our people.</data>
+			</text>
+			<text ID="Terminal7">
+				<data>The archive tells us that there were three worlds created by the Ancient Spirits. The Spirits also created man, in their image, to live upon these worlds. A prophecy in the archive states that humans will carve a path through Chaos and achieve salvation.</data>
+			</text>
+			<text ID="Terminal8">
+				<data>Long ago, humans and Spirits began building vast moving machine-cities called Frames on the three Root Worlds.  These Frames were given the mission of discovering new worlds that could sustain life. Each Frame was home to over a hundred thousand people and a hundred Spirits.</data>
+			</text>
+			<text ID="Terminal9">
+				<data>At first, three Frames were created: Zodiac, Pioneer, and  Freeborn. They were the first to venture into the unknown and discovered the first three worlds of the Chain.</data>
+			</text>
+			<text ID="Terminal10">
+				<data>Their example was followed by the three Frames of the second wave: Router, Wayfarer, and Existor. </data>
+			</text>
+			<text ID="Terminal11">
+				<data>The Last to leave the Root Worlds were Ark-9, Organ and your native Cluster. Once deserted, the Root worlds began sinking into Oblivion. There was no going back… the Exodus had begun.</data>
+			</text>
+			<text ID="Terminal12">
+				<data>By the time you were born, Legate, the Chain totalled over a hundred worlds, all interconnected with permanent and secure Corridors.</data>
+			</text>
+			<text ID="Terminal13">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission02">
+			<text ID="Fore0">
+				<data>The camera rotates around the world where the next mission will be taking place. The essence of what has happened is explained: the Frame that is coming ahead of us, has left a new invention in this world (namely the Collectors) and it is necessary to cap</data>
+			</text>
+			<text ID="Post0">
+				<data>History in development a few years ahead. With the main stress put on the fact that there has not been any news from one of the Frames for a really long time now. </data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate, we have arrived at a world previously documented by Pioneer.  In its last communication, Pioneer announced the invention of Energy Collectors, structures that can store additional energy outside of a Frame.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Our reconnaissance of the world has detected several instances of these collectors. The presence of our Frame has awoken the Scourge, Legate. The Collectors are in grave danger. Your mission is to capture them before they are lost.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>Make haste! This valuable technology must be saved and transferred to other Frames for the good of all. You are authorized to use remotely controlled combat robots to keep the Scourge under control.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>There has been no news from Pioneer over many cycles.  This could be our last chance to take advantage of their significant discovery.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+There is still no news of Frame Pioneer’s fate.
+The future is veiled, even from the Spirits.</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission03">
+			<text ID="Fore0">
+				<data>The Chain development history arrives at the next mission. At this time the Spirit Council declares the Exodus’ higher cause to the Legate-player – that is reaching the Big World. The Legate is now entrusted with a new powerful survival instrument – nano-</data>
+			</text>
+			<text ID="Post0">
+				<data>History in development a few years ahead. It now becomes clear that yet another Frame is missing. </data>
+			</text>
+			<text ID="PostVideo">
+				<data>Sending off a Herald (Crash of the Herald that is carrying a Testament to the other Frames into Chaos; his physical death). The voice behind the scenes explains the main principle of inter-Frame communication through sending Heralds to each other. Heralds</data>
+			</text>
+			<text ID="Spirit1">
+				<data>&amp;FFFF00Spirit Councillor:&amp;FFFFFF
+Legate, this Frame represents the Core of the Exodus. Your people enjoy peace and tranquility.</data>
+			</text>
+			<text ID="Spirit2">
+				<data>We bestow on you the burden of our knowledge. The mission of the Exodus, long forgotten by the people, is to reach the World at the end of the great chain. This World knows no Scourge, its fertile plains are lit by a bright sun.</data>
+			</text>
+			<text ID="Spirit3">
+				<data>The people will be rewarded for their suffering. Follow our instructions and we will reach this World and prosper.</data>
+			</text>
+			<text ID="Spirit4">
+				<data>The Scourge is manifesting in increasing numbers. The path ahead is beset with danger. From this time onward you are granted use of a sacred technology – combat robot transformations. Used wisely they are a mighty power for you to wield.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+…Legate, we have an emergency situation! We are under attack from the Scourge. You must take action!</data>
+			</text>
+			<text ID="Terminal6">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate, the people have faith in you, and the wise directives from the Spirits. This faith will suffice to defy any enemy. I will send a communication to the other Frames informing them of our progress. Continue your mission… </data>
+			</text>
+			<text ID="Terminal7">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission04">
+			<text ID="Fore0">
+				<data>The history of Chain development arrives at the next mission. The player is now tasked with establishing a new link. He is also warned about intense Scourge activity and its relation to the Frame population. A short description of the social structure of </data>
+			</text>
+			<text ID="Post0">
+				<data>A positive appraisal of the Legate’s skills. A hint to the fact that his actions are similar to those of other Legates (a pad for the future announcement of the concept of a Nomad moving through the Frames). History in development a few years ahead.  </data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate of Cluster, your mission is to complete construction of an Omega-portal in order to open a corridor to the next world in the Chain. The Spirit council has provided you with stationary laser weapons to aid you in your fight against the Scourge.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Execute the will of the Council.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Excellent work, Legate! Your skills have improved. However, The Spirit council is concerned about the people of Frame Zodiac’s state of mind. Recent communications have been distressing. Their anxiety must be controlled or they may condemn us all. An uprising could destroy the Exodus!</data>
+			</text>
+			<text ID="Terminal4">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal5">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission05">
+			<text ID="Fore0">
+				<data>Frame jumps onto an unknown world. Follows an explanation of the high importance of Alpha-expeditions and the special responsibility of a Legate, whose only mistake may lead to the eternal downfall of a Frame. If the Alpha-portal is not built no one will </data>
+			</text>
+			<text ID="PostVideo">
+				<data>Spirit Sarcophagus (the encapsulated body of a Spirit is floating through the capillaries of the Alpha-portal). The voice explains the exclusive role of the spirits in Sponge exploration.</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate of ARK-9! In our last jump we have moved ahead of the other Frames. This is a most dangerous time for our Frame. This world is not yet connected to the Chain. It is unexplored and unknown.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>To link the new world to the Chain and continue the Exodus, you must first build an Alpha-portal. The Alpha connects this world to the previous world and allows us to send communications to other Frames. The Alpha Portal must be constructed before you can build an Omega portal to move forward in the same direction as the other Frames. These are the physical laws of trans-dimensional travel.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>Unfortunately there is only ever one suitable place on a world to build an Alpha-portal. You must build Energy Cores at the co-ordinates designated by the Spirit Council to reveal the optimum construction site.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>We have made advancements in ballistics and technology. You may now upgrade your rocket lab. Soon we will also have upgrades for our anti-gravity lab. The rocket lab upgrade will provide you with a new flying unit and the rocket turret.  The Ceptor and the rocket turret are excellent defenses against airborne Scourge.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>We are absolutely alone, until the portal is complete. Everything depends on your actions.</data>
+			</text>
+			<text ID="Testament1">
+				<data>&amp;FFFF00Communication:&amp;FFFFFF
+Exodus, hear the Testament of the newly formed Harkback! After much debate we have justly executed the criminals responsible for hundreds of cycles of human suffering. The Spirits.</data>
+			</text>
+			<text ID="Testament2">
+				<data>We the Harkback have restored our sight and we intend to take Zodiac back to the Root Worlds.  We will discover the truth. On the Root Worlds we will uncover the secrets of our origin. We do not credit the Spirits’ deceit.</data>
+			</text>
+			<text ID="Testament3">
+				<data>We call upon the Frames of the Exodus to join us or stay out of our way. We will fight anyone who would oppose us. Nothing can stop our mission for truth.</data>
+			</text>
+			<text ID="Testament4">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission06">
+			<text ID="Fore0">
+				<data>History in development up to the very moment when one of the advance Frames sent out its notorious Testament informing the universe of their decision to execution their Spirits and return back to one of the Root Worlds to find out where the Exodus comes f</data>
+			</text>
+			<text ID="Post0">
+				<data>Contemplations of the strange bombing experiments held by the other Frame. History in development several years ahead.  </data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+A Legate’s greatest duty and destiny is to guard the people of the Frame. We offer you this chance to serve the people, and not the malevolent Spirits.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Our Frame Zodiac has jumped back to a world currently occupied by Frame Router. As of yet we have received no communication from them. Considering the circumstances it is impossible to predict Router’s reaction to our presence.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>Our reconnaissance of the world has also detected a number of unusual structures. Router appears to be investigating these structures and utilizing them to develop new technologies.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>Act as appropriate.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate, the Harkback is greatly impressed with your grasp of command as well as your devotion to the people.</data>
+			</text>
+			<text ID="Terminal6">
+				<data>We must thoroughly examine the captured weaponry and the new lab. By all appearances the weaponry is not designed for fighting Scourge…</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission07">
+			<text ID="Fore0">
+				<data>History in development up to the time of the current mission. Main stress on the third missing Frame. </data>
+			</text>
+			<text ID="Post0">
+				<data>The Spirit Council sends a Testament to the Abjurer Frame, imploring them to return to the ideas of Exodus. With that the Spirits promise to disclose the secret of how Exodus had started in the first place, admitting that they do know the history of the R</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+We have unfortunate news for you, Legate. Frame Wayfarer is missing. The Spirits of Cluster are resolute that no more will be heard from them. This is a great loss, but the Exodus must go on.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Legate, your mission is to stop Zodiac from moving through the Alpha-portal. You must foil this attempt by the Harkback to move back down the Chain.  The Spirits hope that your resolve will strike sense back into these renegades.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>Our intelligence division has managed to acquire new laser technology from the Harkback. We have also developed a sub-terrain lab using our experience with deep Core drilling. All labs are fully upgradeable to level 2.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>Remember, do not harm their Frame. They must be offered salvation.  
+Stop Zodiac from passing through the Alpha portal.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>Complete your mission Legate.</data>
+			</text>
+			<text ID="Testament1">
+				<data>&amp;FFFF00Communication of Exodus Terminal:&amp;FFFFFF
+Residents of Zodiac, hear the words of the Spirits.  The Exodus is your only salvation!</data>
+			</text>
+			<text ID="Testament2">
+				<data>This journey you have undertaken back to the Root worlds will lead to your destruction.  There is nothing left at the beginning of the Chain but chaos and death.</data>
+			</text>
+			<text ID="Testament3">
+				<data>Brothers! The Scourge has darkened your minds, but your salvation is still at hand. Confess your sins and return to the ideology of the Exodus.</data>
+			</text>
+			<text ID="Testament4">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission08">
+			<text ID="Fore0">
+				<data>Several years go by. The remaining Frame of the first wave announces that their citizens too do not believe the still silent Spirits any longer and that they have no intention of risking their lives any further. They join the Harkbackhood and start on the</data>
+			</text>
+			<text ID="Post0">
+				<data>The Harkbackhood succeed in overcoming the Exodus attempts to stop them on their way. Scanning the brains of the Spirits (who died in the process) gives a lot of food for thought.</data>
+			</text>
+			<text ID="PostVideo">
+				<data>Opening the first Corridor (demonstration of how a Spirit activates the first Ring Corridor from the Earth and sending the first expedition there). The voice behind the scenes comments on the situation from the Harkbackhood viewpoint, paying special atten</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate of Freeborn, our decision to join the Harkback was justified, however our return journey to the Root Worlds has forced us to cross paths with another Frame. I trust you are prepared for this trial. They will undoubtedly oppose our decision to move back down the Chain.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Your mission is to leave this world through the Omega-portal. Beware! The Legates of the Exodus are skilled and under the control of cunning Spirits.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>The Exodus are well entrenched on this world Legate. We fear they may attempt to capture our Frame and subjugate the people to the will of the Spirits. We should prevent them from capturing the Portal and leave this world as soon as our Spiral is charged. Do not attempt to engage their Frame, so we may begin our journey to the roots worlds in ernest.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>Take us home Legate.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Freeborn’s Science Committee has performed an aggressive scan of the Spirits from our former ruling Council. The scanning procedure proved fatal for the Spirits, but we learned much. We now know for certain that the Root worlds have not perished. This confirms the deceit of the Spirits.</data>
+			</text>
+			<text ID="Terminal6">
+				<data>A scan-matrix with a fragment of ancient memory will be displayed on your command console. The Spirit is initiating an unknown type of portal. The world is like none we have ever encountered.</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission09">
+			<text ID="Fore0">
+				<data>Several years of development within the Chain. The Frame, that has already been noticed in bombing experiments, no crosses the way of the Harkbackhood to the Root Worlds. </data>
+			</text>
+			<text ID="Post0">
+				<data>The opponent Frame proclaims itself an Emperor. It refuses both the Exodus and the Harkbackhood ideas. They trust no one and intend to put all Frames in order with force, forming the Empire of the Chain. They need no Big World whatsoever. </data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate, the Truth Committee of Freeborn rates the current situation as hazardous. Frame Router has emerged blocking our path. Our ideological brothers of Frame Zodiac dealt with this Frame recently. Their meeting was not peaceful.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>At that time Router appeared to be conducting research into new weaponry.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>The Committee deems Router an enemy. Your mission is to pass from this world via the Alpha-portal currently hovering above Router’s base. Use all of your skills to achieve this goal.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>A recent breakthrough by the Science Committee has enabled us to upgrade our bomb lab to level 3. This will give you the powerful Howitzer guns captured by Frame Zodiac.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>It may be wise to capture some of Routers Energy Cores. To do this you must destroy an Energy Core in their network, which will cause the other Cores in the chain to power down. Then connect your network to the Cores to capture them.</data>
+			</text>
+			<text ID="Terminal6">
+				<data>Once again Legate, do not waste time in engaging the enemy Frame.</data>
+			</text>
+			<text ID="Testament1">
+				<data>&amp;FFFF00Communication:&amp;FFFFFF
+Hear me children of the Chain!  Your new Emperor orders you to cease inter-dimensional travel and await the glorious arrival of Router!</data>
+			</text>
+			<text ID="Testament2">
+				<data>I order the factions Exodus and Harkback to lay down their weapons.  The faith of the Exodus is but a tool the Spirits use to control us.  The Root Worlds of the Harkback are a myth.  The worlds of the Chain are to be conquered and colonized.  The Scourge is merely an obstacle to overcome.  Swear allegiance to the Emperor and be freed. Refuse and be annihilated. </data>
+			</text>
+			<text ID="Testament3">
+				<data>The Emperor is Law.
+The Law proclaims: Servants of the Emperor are worthy of life.
+The Law proclaims: The Universe is for the Empire only.</data>
+			</text>
+			<text ID="Terminal7">
+				<data>Good Luck, Legate!</data>
+			</text>
+			<text ID="Testament4">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission10">
+			<text ID="Fore0">
+				<data>Several years of development within the Chain. The Imperial Frame finds itself in a world with another active Frame of the second wave. The Frame intends to capture it and thus expand the Empire. Description of capturing mechanism which will be applied fo</data>
+			</text>
+			<text ID="Post0">
+				<data>Message informing that the population of the captured Frame has been replaced, and that the experiments on building mechanical Spirits, who will replace the old ones, have begun.</data>
+			</text>
+			<text ID="Emperor1">
+				<data>&amp;FFFF00Emperor:&amp;FFFFFF
+Legate, you have been designed to be an ideal servant. Others in this Frame will need to be modified to reflect your abilities.</data>
+			</text>
+			<text ID="Emperor2">
+				<data>I bestow upon you the greatest accolade, to serve me. The time has come for the Law of the Empire to be enforced. Your mission is to capture Existor, its composition is nearly identical to Router’s, and this will allow rapid integration.</data>
+			</text>
+			<text ID="Emperor3">
+				<data>To capture the Frame you must isolate it from it’s own energy network. Then simply connect it to our own.  To accomplish this task I’ve entrusted you with what will surely be our instrument of victory, the Empire Lab.</data>
+			</text>
+			<text ID="Emperor4">
+				<data>This lab will provide you with new technology, the Leech.  This new unit will allow you to drain energy from the enemies stockpile.  Without energy the enemy will be unable to raise their Perimeter.</data>
+			</text>
+			<text ID="Emperor5">
+				<data>The Empire needs to conquer.  The Empire needs to expand. Assure our victory.</data>
+			</text>
+			<text ID="Emperor6">
+				<data>&amp;FFFF00Emperor:&amp;FFFFFF
+You have proven an effective executor of the Law, Legate. Existor is mine and its people shall now serve me. Those refusing to swear allegiance shall be cast out and become food for the Scourge.</data>
+			</text>
+			<text ID="Emperor7">
+				<data>To carry out the letter of the Law the Empire requires access to all of the worlds in the Chain.  Previously, the only way to locate Alpha portal construction sites was with the aid of the Spirits.  Our scientists have been working diligently on the Spirits; soon they will no longer be necessary!</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission11">
+			<text ID="Fore0">
+				<data>Several years of development within the Chain. The Empire is actively pursuing other Frames, splitting into two groups: one Frame goes after the Exodus who continue to expand the Chain, the other one tries to capture the Harkbackhood en route back to the </data>
+			</text>
+			<text ID="Post0">
+				<data>History in development several; years after the above happenings. </data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Empire Terminal:&amp;FFFFFF
+Legate, you have proven an able servant of the Emperor. Integration of your Frame Existor into the Empire is now complete.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Until now the Frames of the Exodus and the Harkback have been fortunate to escape judgment, but the time of the Law has come and Existor is its vessel. I hereby command you to capture Frame Cluster, they must swear allegiance to the Empire! </data>
+			</text>
+			<text ID="Terminal3">
+				<data>We can now create troops that will be virtually invisible to the enemy, and devastating underground weaponry that will crumble and destroy their structures. The new Piercer torpedo will easily disengage the enemy’s Frame, you will be able to trap and crush them. </data>
+			</text>
+			<text ID="Terminal4">
+				<data>&amp;FFFF00Empire Terminal:&amp;FFFFFF
+Under the threat of destruction, the insidious Spirits of Frame Cluster appear to have fabricated the communication we received during battle. It is unclear how they were able to create such a convincing forgery. The technicians responsible for allowing this breach in security will be disposed of and more diligent subjects will be found to replace them.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>The Emperor is outraged. The escape of Frame Cluster is a massive setback for the Empire.  It will be a long time before an opportunity of this magnitude will present itself again.</data>
+			</text>
+			<text ID="Terminal6">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal7">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission12">
+			<text ID="Fore0">
+				<data>The Exodus continue on their Alpha-expeditions to the unknown.</data>
+			</text>
+			<text ID="Post0">
+				<data>Description of the current layout of the Frames within the Chain.</data>
+			</text>
+			<text ID="ForeVideo">
+				<data>Jump onto a new world (view of the internals of the Frame with the Spiral – a mechanism facilitating inter-world traveling with the help of Spirits). The Voice behind the scenes explains what the Spiral is and how inter0world jumps are made. Follows an ex</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate, we have arrived on an extremely unstable world!</data>
+			</text>
+			<text ID="Terminal2">
+				<data>The Spirit Council is profoundly concerned. It appears the fabric of this Universe is reacting to the escalating conflict. The actions of the Empire and Harkback may well tear the Chain apart.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>You must lead Ark-9 on an Alpha-expedition as soon as possible. Intense Scourge activity is expected, I have detected a number of nests on the surface. I recommend using our new Splitter units against the nests.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>This world is tearing itself apart. You know what to do!</data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+The Spirits bless and Praise you Legate! Though the world we left behind is all but destroyed, the Exodus is one step closer to Salvation.</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission13">
+			<text ID="Fore0">
+				<data>Through the portal that was built in the previous mission the second Imperial Frame catches up with the Exodus and gets ready t capture them.</data>
+			</text>
+			<text ID="Post0">
+				<data>The runaway Exodus Frame manages to send out a Testament to the Harkbackhood just before the leap. </data>
+			</text>
+			<text ID="PostVideo">
+				<data>Soul-catcher gets the Herald’s soul (several catcher-girls are waiting for a Testament above the Chaos and catch it). The voice describe the procedure of catching the Testaments.</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate, Ark-9 is in a desperate situation. The Empire’s Existor overtook us after the Alpha-expedition. The Spirit Council is paralyzed by fear. This time there may be no escape.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>The Emperor is obsessed with the idea of “cybernetic enhancement.” He believes he can negate the Scourge by oppressing the thoughts of his people. The Spirits grieve for those who have been mutilated to serve the Emperor’s twisted schemes.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>Your mission is to build an Omega Portal as quickly as possible and use it as a means of escape. This is our only chance of saving the people of Ark-9 from the malevolent Empire.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>Do not attack the enemy Frame; we must leave as quickly as possible.  May the Spirits guide you Legate.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Ark-9 has escaped. You have saved us once again Legate. The Spirit Council does not wish to rush construction of an Alpha Portal on the next world, as the Emperor’s Existor will be unable to reach us for sometime. The Spirit Council grants you a period of well-deserved rest.</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission14">
+			<text ID="Fore0">
+				<data>History in development a few years ahead. In one of the worlds the Empire catches up with the Harkbackhood. Information telling that with each passing year the population of the Imperial Frames is being terrorized more and more, being turned into zombies </data>
+			</text>
+			<text ID="Post0">
+				<data>History in development a few years ahead. All of a sudden an Imperial Frame stops the chase but nobody knows what is it that it is busy with. At a certain point of time this Frame sends out a Testament telling about their experiments over the Spirits. It </data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+The Empire has intercepted us, Legate. The Truth Committee of Freeborn fears for our chances against the Empire’s Router. The danger represented by the Scourge cannot compare to the destructive abilities of the Empire.  We are so close to our goal, we have to evade them and leave this world as soon as possible.  Charge the Spiral and lead Freeborn through the Alpha-portal.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate, we have intercepted a communication sent from the Emperors Frame Router to Existor…</data>
+			</text>
+			<text ID="Testament1">
+				<data>&amp;FFFF00Communication of Emperor:&amp;FFFFFF
+Our experiments with the Spirits have borne fruit. The Harkback myth of the Root Worlds is true.  The Root Worlds lead to a new world in a new universe.  This world has a name, Earth.  It must be claimed for the Empire.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal4">
+				<data>rus</data>
+			</text>
+			<text ID="Testament2">
+				<data>rus</data>
+			</text>
+			<text ID="Testament3">
+				<data>rus</data>
+			</text>
+			<text ID="Testament4">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission15">
+			<text ID="Fore0">
+				<data>Years pass and the second Imperial Frame finally sees the Corridor to the world where the Exodus have escaped. It rushes there sure that this time the Exodus will not make it through.</data>
+			</text>
+			<text ID="Post0">
+				<data>Once again the Exodus slip through the claws of the Empire. The latter send out a new threatening Testament, that reaches the Frame of the Harkbackhood. Introduction of the notion of a Nomad that travels from Frame to Frame, carrying Testaments and exists</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Empire Terminal:&amp;FFFFFF
+The Emperor’s Arm, EXISTOR, is patient and cunning. The Omega-portal has just indicated that a new Corridor has appeared. It will take us to the world occupied by the fugitive ARK-9.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>There they will stand before the judgment of the Emperor. 
+Be warned Legate, I am detecting intense volcanic activity beneath the surface.
+Onward through the portal!</data>
+			</text>
+			<text ID="Terminal3">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal4">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad1">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad2">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad3">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission16">
+			<text ID="Fore0">
+				<data>The situation development within the Chain up until the moments when one of the Harkbackhood Frames reaches what judging by the Chain Map appears to be a Root World. Over that time the Harkbackhood have managed to remember more about their fatherland – th</data>
+			</text>
+			<text ID="Post0">
+				<data>In order to survive in this world the Harkbackhood had to change a lot, they will never be the same again. Their Alliance with the Scourge has initiated irreversible mutations. Amidst the debris of what once was a Frame-dock they find a video-record.</data>
+			</text>
+			<text ID="PostVideo">
+				<data>Start of the Exodus (A huge installation with a city inside, apparently a Frame, starts from a Sponge world into the Portal). The voice behind the scenes solemnly announces the beginning of the Exodus.</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+We have reached a Root World under your guidance, Legate! The mystery of our origin is about to be solved. The Science Committee is confident that this ‘Earth’ the Emperor speaks of will hold the answers that we are looking for.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>The other Frames scattered along the chain will not share in our triumph! We are leaving this place forever. Earth awaits us.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>The Alpha portal appears to be guarded by a Scourge nest. We need to destroy the nest before we can use the Portal.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>Lead us to Earth Legate!</data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+The way to Earth is still not open to us Legate. The Portal leading there is not active and without Spirits it cannot be restored. We must venture back into the Chain to capture Spirits.</data>
+			</text>
+			<text ID="Testament2">
+				<data>rus</data>
+			</text>
+			<text ID="Testament3">
+				<data>rus</data>
+			</text>
+			<text ID="Testament4">
+				<data>rus</data>
+			</text>
+			<text ID="Testament5">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal6">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal7">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal8">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal9">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad1">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission17">
+			<text ID="Fore0">
+				<data>Several years go by, and the Frame of the Harkbackhood again start moving forward down the Chain. It becomes clear that they still stick to their goal to go back to Earth, but to do that they need alive Spirits. They send out a Testament in which they tel</data>
+			</text>
+			<text ID="Post0">
+				<data>The Harkbackhood are somewhat frightened by their own ability to use the Scourge and the resulting effect. In the meantime another Harkbackhood Frame spends several years in the attempts to extract alive Spirits out of the Alpha-Portal, but to no avail. T</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate, the hunt for the Spirits has begun. The Empire and Exodus know nothing of what Zodiac found on the Root World. The portal to Earth must be hidden from them for as long as possible. Freeborn has already been given an assignment to capture Exodus’ Spirits alive.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>We have encountered an unidentified enemy on this world. It is smaller than a Frame and appears to be fully automated. The influence of the Empire appears to be spreading.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>This must not halt our mission. Eliminate the enemy’s base; destroy this sub-Frame. Use the Scourge if necessary.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+We must immediately transfer the Scourge control technology to our brothers of Frame Freeborn. Their mission to capture Spirits has failed. Their chances of capturing Spirits using the Scourge will be greatly increased.</data>
+			</text>
+			<text ID="Nomad1">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission18">
+			<text ID="Fore0">
+				<data>The Imperial Frame manages to decode part of the Testament sent by the main Harlbackhood Frame and it then rushes to the world mentioned, intending to outrun the second Harkbackhood Frame, which is going after the same world. They encounter each other in </data>
+			</text>
+			<text ID="Post0">
+				<data>The Imperial Frame outruns its opponent, but escapes death by the skin of its teeth in the next world, running into a Harkbackhood Frame and a Scourge Trap. It manages to retreat.</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Empire Terminal:&amp;FFFFFF
+We have intercepted an inter-Frame communication from the Harkback. Zodiac has left valuable equipment for Freeborn’s use.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>The Harkback have just destroyed one of our Vice Frames. They are proving more resourceful than we had previously thought.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>The Emperor wishes to know what those reprobates have discovered. We must claim it for the Empire!</data>
+			</text>
+			<text ID="Terminal4">
+				<data>The Emperor orders you to take the Omega-portal. Do not try to capture Freeborn, there is no time, it’s turn will come. It is of more importance to disrupt the Harkback’s plans. We must discover what it is they have found on the Root World. </data>
+			</text>
+			<text ID="Terminal5">
+				<data>&amp;FFFF00Empire Terminal:&amp;FFFFFF
+The Emperor is satisfied with your actions, Legate.</data>
+			</text>
+			<text ID="Terminal6">
+				<data>However, Router failed to discover any technologies left behind by the Harkbackhood. The Emperor is concerned.</data>
+			</text>
+			<text ID="Nomad1">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad2">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission19">
+			<text ID="Fore0">
+				<data>Several years pass and over the period the Nomad moves to the Exodus Frame, which is forced to be breaking through a world occupied by the second Imperial Frame.</data>
+			</text>
+			<text ID="PostVideo">
+				<data>Corridor passage (scene inside the Frame, demonstrating the operation of the Spiral in the process of transfer from the already known worlds without the Spirits). The voice behind the scenes emphasizes that transfer between those worlds that are already c</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+After much deliberation the Sprit Council has reached a conclusion.
+No longer shall the Exodus stand by while the Emperor twists and tortures his people. Existor must be freed from its torment. Split the enemy’s base apart and capture or destroy Existor and then we can resume the Exodus. </data>
+			</text>
+			<text ID="Terminal2">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+The loss of Existor will be a major blow to the Empire, congratulations Legate. We can now venture onward and continue the Exodus. The Emperor will no doubt seek vengeance, but the council has great faith in your ability to prevail.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad1">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad2">
+				<data>rus</data>
+			</text>
+			<text ID="Nomad3">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission20">
+			<text ID="Fore0">
+				<data>History in development several years ahead.  Description of the current political situation. The Exodus make a very important discovery. In one of the worlds they run into a strange new object that does not look like anything else they have seen before. T</data>
+			</text>
+			<text ID="Post0">
+				<data>In the next world after the Nomad leaves the Imperial Frame, the Harkbackhood manage to take over their Frame for some time and capture the mechanical Spirit – the result of Imperial experiments with Spirit bodies. In order to check its operation they mak</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Empire Terminal:&amp;FFFFFF
+The loss of Existor has infuriated the Emperor. He has sworn vengeance on all of the other Frames. He is also deeply concerned that we have not received any communications from the Vice Frames recently.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>The Exodus is growing stronger, and the intentions of the Harkback are unclear.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>The Harkback Frame Freeborn is on this world with us.  The Emperor demands its obliteration. Once this is done we must leave this world and intercept the Exodus’ Frame Ark-9.  Then Existor can be avenged.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>Geological activity has buried the Omega portal. The portal will need to be located and excavated.</data>
+			</text>
+			<text ID="Emperor5">
+				<data>&amp;FFFF00Emperor:&amp;FFFFFF
+Farewell Freeborn!</data>
+			</text>
+			<text ID="Emperor6">
+				<data>You have prevailed in the face of serious opposition Legate. Who could have predicted that these fools would make an ally of the Scourge? I commend your performance.</data>
+			</text>
+			<text ID="Emperor7">
+				<data>The Law shall prevail. The Empire will eradicate the Scourge from the Chain of Worlds and crush the remnants of the Exodus and Harkback.</data>
+			</text>
+			<text ID="Terminal5">
+				<data>Make an example of Freeborn Legate!</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission21">
+			<text ID="Fore0">
+				<data>In the meantime the Harkbackhood Frame, which is making an intensive use of its Scourge Navigator, is approaching the Exodus in order to capture the real Spirits, since it has no trust in the Imperial mechanical analogue. The Imperial Frames are located c</data>
+			</text>
+			<text ID="Post0">
+				<data>The Exodus Frame hardly manages to breakaway from the collapsing world, but misses the destination point and is now forced to waste time to go back. </data>
+			</text>
+			<text ID="Spirit1">
+				<data>Legate, hear the Cluster Spirit Council.</data>
+			</text>
+			<text ID="Spirit2">
+				<data>The Exodus is coming to an end. Those worthy are nearing Salvation.</data>
+			</text>
+			<text ID="Spirit3">
+				<data>The Exodus built the Chain of Worlds and has been purified by it. Now that we have reached the end, the Chain must be dismantled. There is nothing left behind us but abomination. The Spirit Council is hopeful that the destruction of the Omega Portal on Pilloid will break the Chain.</data>
+			</text>
+			<text ID="Spirit4">
+				<data>Legate, you must place the static bomb provided by the Spirits close to the Omega portal on this world and connect it to our energy network. Once this is done, you should have just enough time to leave this world through the mined portal. You must act decisively. </data>
+			</text>
+			<text ID="Spirit5">
+				<data>Expect heightened Scourge activity.  Use the Scum Heaters to subdue it.</data>
+			</text>
+			<text ID="Spirit6">
+				<data>Purge your heart of fear and doubt, and let the blessing of the Spirits go with you!</data>
+			</text>
+			<text ID="Spirit7">
+				<data>&amp;FFFF00Spirit Councillor:&amp;FFFFFF
+The malfunction of the portal was a significant setback for us Legate.  Nonetheless we are now sure to face further trials before we reach the promise world. Fortunately the Omega portal must have survived the blast, as the Chain is still intact.</data>
+			</text>
+			<text ID="Spirit8">
+				<data>We have plotted a new route for Cluster and have transmitted updated plans for the bomb to Ark-9.  Hopefully Ark-9 will be able to disconnect the Chain without this malfunction and prevent the Harkback and Empire from intercepting us.  We cannot discount the possibility that the transmission will be intercepted.  However the Spirits cannot foresee a way in which the bomb technology can be used against us.</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission22">
+			<text ID="Fore0">
+				<data>Several years pass. During that time the Exodus organize a temporary alliance with the Empire and share their secret of Omega-Portals demolition, resulting in the death of the worlds. The Empire equips several of its Vices with the said mechanism. The Nom</data>
+			</text>
+			<text ID="Post0">
+				<data>Thus, the Harkbackhood make their way through the trap worlds keeping the Integrity of the Chain intact. However it becomes evident that something must have happened to the second Harkbackhood Frame. Apparently is was killed during the transfer between th</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate, this world presents us with a serious situation. An automated Vice Frame has constructed an Omega Bomb using the blueprints transmitted by the Exodus. We need to continue pursuit of the Exodus Frames if we are to capture live Spirits. However the Vice Frame is broadcasting a message declaring that it will initiate the count down and destroy the Omega-portal under its control if we attack. We must get through that Portal Legate! </data>
+			</text>
+			<text ID="Terminal2">
+				<data>Remember Legate you have a very powerful ally in the Scourge. We have developed a new stationary weapon the Scourge Navigator which can generate waves of our minions from a place of your choosing.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate, you have done the impossible. We can capture a live Spirit from the Exodus as soon as we make contact. Nobody can stop the Sons of Earth, we will return home! </data>
+			</text>
+			<text ID="Terminal4">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission23">
+			<text ID="Fore0">
+				<data>Several years of Chain development. The current situation is that the Harkbackhood manage to cut off the way for the Exodus Frame en route to the Hole. The Nomad is on the Exodus side. </data>
+			</text>
+			<text ID="Post0">
+				<data>History in development several years ahead. The first Exodus Frame neatly makes it to the world of the Hole. The Frame’s Spirit Council addresses everyone asking them to stop the war, since the Hole, in their opinion, is the portal to that very Big World </data>
+			</text>
+			<text ID="Spirit1">
+				<data>Strife and purification has been our fate but now the most grievous trials have come. Our own people have been twisted and turned against us.</data>
+			</text>
+			<text ID="Spirit2">
+				<data>Frame ZODIAC now stands in our way. We must prevail. We are the sons of the Exodus, chosen by the divine. We see the light and it guides our way.</data>
+			</text>
+			<text ID="Terminal3">
+				<data>&amp;FFFF00Exodus Terminal:&amp;FFFFFF
+Legate, this is an order from Cluster’ Spirit Council. Recharge the Spiral and seize the Omega-portal from the Harkback. The enemy is well prepared but you must break through the fortifications of Frame Zodiac.</data>
+			</text>
+			<text ID="Terminal4">
+				<data>There will be no time to engage Zodiac so the enemy Frame must be spared. Teleport as soon as possible and let Ark-9’s efforts to destroy the Chain finish off the Harkback.  May the power of the Spirits guide you! </data>
+			</text>
+			<text ID="Testament1">
+				<data>&amp;FFFF00Communication from Spirit Councillor:&amp;FFFFFF
+Exodus has found salvation!</data>
+			</text>
+			<text ID="Testament2">
+				<data>The prophecy has come true! We have reached our goal. Despite suffering at the hands of our enemies and being besieged on every side by the Scourge, we have successfully guided the Exodus.  Salvation is here, we have found the portal which will deliver us to our new home.</data>
+			</text>
+			<text ID="Testament3">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission24">
+			<text ID="Fore0">
+				<data>The Harkbackhood in their turn claim that the Hole is an “alien” portal, that must be destroyed as soon as possible. In the meantime the second Exodus Frame completes an Alpha-expedition but does not find these Testaments. As soon as it successfully const</data>
+			</text>
+			<text ID="Post0">
+				<data>The Harkbackhood take away the Spirits from the downed Frame and those show them the scenes of what they claim to be the last days of the mythical Earth.</data>
+			</text>
+			<text ID="PostVideo">
+				<data>Struggle Against Scum-Invasion on the Earth (nano-transformations of the remote human operators in their struggle against the Psycho-Sphere reaction, which has started infiltrating onto the Earth in the area of the portals). The voice of the Spirits tells</data>
+			</text>
+			<text ID="Terminal1">
+				<data>&amp;FFFF00Harkback Terminal:&amp;FFFFFF
+Legate, luck has smiled upon us, we have encountered an Exodus Frame.  Now is our chance to seize the Spirits we need to restore a portal to Earth.  The retention of the Frame itself is irrelevant, our real goal is the Spirits contained within.</data>
+			</text>
+			<text ID="Terminal2">
+				<data>Destroy the Exodus base, capture the Frame, and then we can extract what information we need from the Spirits.  The task set before you is daunting.  Be wary of the Scum wielding machines the Exodus are likely to use to defend themselves.  Let nothing stand in our way, victory must be ours.</data>
+			</text>
+			<text ID="Testament1">
+				<data>&amp;FFFF00Ark-9 Citizen:&amp;FFFFFF
+This is the last communication of Frame Ark-9.</data>
+			</text>
+			<text ID="Testament2">
+				<data>The Harkback captured our Frame, executed the Legate and forcibly seized all of the Spirits on board. The Frame’s control terminal has been reprogrammed and despite our best efforts we cannot regain control. The Harkback have initiated a portal jump to an unexplored world. </data>
+			</text>
+			<text ID="Testament3">
+				<data>Farewell brothers… </data>
+			</text>
+			<text ID="Terminal3">
+				<data>rus</data>
+			</text>
+			<text ID="Testament4">
+				<data>rus</data>
+			</text>
+			<text ID="Testament5">
+				<data>rus</data>
+			</text>
+			<text ID="Testament6">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission25">
+			<text ID="Fore0">
+				<data>The Harkbackhood nonetheless doubt all of the materials provided by the Spirits. They come up with a version that the whole story has been made up, and that there is a way to the Earth (but it cannot be opened without the Spirits), and that the Hole leads</data>
+			</text>
+			<text ID="Post0">
+				<data>The true Exodus manage to build an Alpha-Portal, but right after it they get a Testament from one Imperial Frame to another saying that the Empire has decided to destroy the Hole. They rush to save the mysterious portal and leave the world, taking all of </data>
+			</text>
+			<text ID="Spirit1">
+				<data>&amp;FFFF00Spirit Councillor:&amp;FFFFFF
+Legate, by order of the Spirit Council we have initiated a series of jumps and arrived on the world occupied by Ark-9.</data>
+			</text>
+			<text ID="Spirit2">
+				<data>Unfortunately, the great risks we have undertaken to save Ark-9 have led us into a trap.  The Terminal of Ark-9 has been reprogrammed by Harkback and it&#039;s attempting to build an Omega-portal. If this happens before an Alpha portal is constructed, the chain reaction will cause both our Frames to be permanently stranded. </data>
+			</text>
+			<text ID="Spirit3">
+				<data>If you manage to build an Alpha-portal before the Omega-portal is complete we will have a chance to link this world into the Chain and avoid captivity. Act quickly Legate, you have our full support.</data>
+			</text>
+			<text ID="Spirit4">
+				<data>&amp;FFFF00Spirit Councillor:&amp;FFFFFF
+Legate, you are the saviour of the Exodus. The Spirits commend you. The Vortex to the promised world awaits us.</data>
+			</text>
+		</text_group>
+		<text_group ID="Mission26">
+			<text ID="Fore0">
+				<data>The Harkbackhood manage to make it to the Hole world a little ahead of the Empire. The Empire announces that it has prepared a super-weapon to destroy the Hole. The time of the final battle has come.</data>
+			</text>
+			<text ID="Post0">
+				<data>The Imperial Frame has been seized and sent through the Hole. Up until the very end it is not clear what lurks on the other side of this alien portal. The second Imperial Frame lies low in one of the remote Chain worlds and keeps silent. The Exodus go bac</data>
+			</text>
+			<text ID="Testament1">
+				<data>&amp;FFFF00Communication of Emperor:&amp;FFFFFF
+Hear me and tremble in fear! </data>
+			</text>
+			<text ID="Testament2">
+				<data>This is the day of my retribution! The weapon to end this war is mine. Once and for all I will destroy the web of lies woven by the Spirits! Law and Empire shall prevail!</data>
+			</text>
+			<text ID="Testament3">
+				<data>I will destroy the Vortex and repopulate the Chain of Worlds!</data>
+			</text>
+			<text ID="Spirit1">
+				<data>&amp;FFFF00Spirit Councillor:&amp;FFFFFF
+Legate, we have travelled far and suffered greatly.  Our purpose is sacred, only a fool such as the Emperor would stand in our way.</data>
+			</text>
+			<text ID="Spirit2">
+				<data>Crush Router and the Emperor, for they wish to destroy our only chance of reaching Eden.</data>
+			</text>
+			<text ID="Spirit3">
+				<data>This is our last battle. Lose it and our ancestors struggle was for nothing. Win and we will be rewarded with unending peace.</data>
+			</text>
+			<text ID="Spirit4">
+				<data>Our fate, the fate of the Exodus, is in your hands now Legate.</data>
+			</text>
+			<text ID="Spirit5">
+				<data>&amp;FFFF00Spirit Councillor:&amp;FFFFFF
+The Exodus is complete Legate, you are indeed our saviour…</data>
+			</text>
+			<text ID="Terminal1">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal2">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal3">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal4">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal5">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal6">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal7">
+				<data>rus</data>
+			</text>
+			<text ID="Terminal8">
+				<data>rus</data>
+			</text>
+		</text_group>
+		<text_group ID="Intro">
+			<text ID="Video2">
+				<data>Scourge Attacks and Power Dome Operation (a group of robo-soldiers is repulsing waves of Scourge attacks on one of the sponge-worlds; a power dome is protecting the people in the city from the second wave of flying creeps). The voice continues to tell abo</data>
+			</text>
+			<text ID="Video1">
+				<data>Short intro (text on black screen read by an emotional male voice), which is giving a rather abstract narration of people moving through the danger-ridden worlds. Who are they and where do they come from – is so far a mystery. No special terms are being i</data>
+			</text>
+		</text_group>
+		<text_group ID="The End">
+			<text ID="Video">
+				<data>Catcher-Herald Testament (A Herald encapsulated in the female body of the Catcher inside a Sponge-hologram transmits the Chain-world configuration as seen by the Frame that sent it). A semi-mechanic voice of the Emperor behind the scenes contemplates what</data>
+			</text>
+			<text ID="Text">
+				<data>One of the missing Frames reconnects back to the Chain. As it turns out all of this time it has been exploring a world with a very slow time motion, and that for it, it has seemed as if a couple of years. It does not know anything about either the Harkbac</data>
+			</text>
+		</text_group>
+		<text ID="Tutorial">
+			<data>Master the Basic Rules, Candidate!</data>
+		</text>
+		<text ID="PreviewSkippingPhrase">
+			<data>[...skipped period of time in this preview code...]</data>
+		</text>
+	</text_group>
+	<text_group ID="Mission Tips">
+		<text_group ID="Mission 00">
+			<text ID="Tip 1">
+				<data>&amp;FFFFFF Legate, place an Energy Core here to get power to the Frame. Once the Energy Core is complete start moving the Frame towards the portal.</data>
+				<sound>..\RESOURCE\LocData\English\Voice\Tips\Mission0_1.ogg</sound>
+				<comment>&amp;00FFFF Легат, поставь здесь ядро чтобы подключить фрейм и начать движение к порталу.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Continue building Energy Cores and moving the Frame towards the portal</data>
+				<sound>..\RESOURCE\LocData\English\Voice\Tips\Mission0_2.ogg</sound>
+				<comment>&amp;00FFFF Теперь продолжай ставить ядра, чтобы переместить фрейм к порталу.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 01">
+			<text ID="Tip 2">
+				<data>You can build more Cores to increase energy extraction.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission1_2.ogg</sound>
+				<comment>&amp;00FFFF Вы можете построить больше ядер чтобы увеличить добычу энергии.</comment>
+			</text>
+			<text ID="Tip 3">
+				<data>Legate, the Scourge is attacking! Quickly raise the shield!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission1_3.ogg</sound>
+				<comment>&amp;00FFFF Легат, Скверна атакует! Поднимай купол скорее!</comment>
+			</text>
+			<text ID="Tip 4">
+				<data>Legate, you can activate the entire perimeter using the Global Field button on the central console.  To activate an individual Energy Core’s perimeter, select a Core, and then use the Individual Field button on the display window. This will use less energy.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission1_4.ogg</sound>
+				<comment>&amp;00FFFF Легат, ты можешь активировать весь периметр используя главную кнопку в интерфейсе, или активировать поле над отдельным ядром по кнопке на дисплее. Это потребует меньше энергии.</comment>
+			</text>
+			<text ID="Tip 1">
+				<data>If you do not have enough room to install the Frame Legate, you may need to remove some Energy Cores. If the Frame has room to install, the area underneath it will appear green on your command console</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission1_1.ogg</sound>
+				<comment>&amp;00FFFF Если вам не хватает пространства для установки фрейма вы можете продать некоторые из своих ядер. Если фрейму достаточно места для установки, то область под ним станет зеленой.</comment>
+			</text>
+			<text ID="Tip 5">
+				<data>Legate! The portal is open!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission1_5.ogg</sound>
+				<comment>&amp;00FFFF Легат! Портал открыт! </comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 02">
+			<text ID="Tip 2">
+				<data>Legate, capture a collector by integrating it into your energy network</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission2_2.ogg</sound>
+				<comment>&amp;00FFFF Легат, Захвати коллектор соединив его со своей энергосистемой.</comment>
+			</text>
+			<text ID="Tip 3">
+				<data>You must defend the remaining energy collectors Legate!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission2_3.ogg</sound>
+				<comment>&amp;00FFFF Ты должен защитить оставшиеся коллекторы, Легат! </comment>
+			</text>
+			<text ID="Tip 4">
+				<data>Legate, create units to defend the collectors using a powered soldier factory.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission2_4.ogg</sound>
+				<comment>&amp;00FFFF Можете создать солдат на заводе солдат, подключенном к сети.</comment>
+			</text>
+			<text ID="Tip 1">
+				<data>Build an energy transmitter here, this will allow you to connect Cores to the Frame over long distances.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission2_1.ogg</sound>
+				<comment>&amp;00FFFF Попробуй построить Трансмиттер здесь [указывается метка], они позволяют подключать ядра на большие расстояния.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 03">
+			<text ID="Tip 1">
+				<data>Legate, our Perimeter does not have enough energy to sustain the assault. We must send units to destroy the three nests. You have been given an additional command centre. This will enable you to command two individual squads.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission3_1.ogg</sound>
+				<comment>&amp;00FFFF Легат, наш Периметр не имеет достаточно энергии чтобы выдержать такие атаки. Мы должны послать юнитов чтобы уничтожить гнезда. Тебе дали дополнительный командный центр. Это позволит тебе управлять двумя разными сквадами.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Our soldiers cannot cross the chaos, you must create units that can traverse it.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission3_2.ogg</sound>
+				<comment>&amp;00FFFF Наши солдаты не могут пересекать Хаос, ты должен построить юнитов которые перелетают его.</comment>
+			</text>
+			<text ID="Tip 3">
+				<data>We must morph our units into anti-gravity units to attack the far nest Legate</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission3_3.ogg</sound>
+				<comment>&amp;00FFFF Мы должны морфировать своих юнитов в летных юнитов, Легат.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 04">
+			<text ID="Tip 1">
+				<data>Our new laser technology will allow us to create powerful stationary gun turrets, we should use them to keep the Scourge at a distance.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission4_1.ogg</sound>
+				<comment>&amp;00FFFF Наша лазерная технология обеспечила нас мощными стационарными лазерными пушками, мы должны использовать их чтобы не подпускать скверну.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>It may be wise to build more laser turrets, Legate</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission4_2.ogg</sound>
+				<comment>&amp;00FFFF Было бы разумно построить больше пушек, Легат.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 05">
+			<text ID="Tip 1">
+				<data>Legate, we need to connect Energy Cores to our network in the four places indicated by the Spirits.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission5_1.ogg</sound>
+				<comment>&amp;00FFFF Легат, мы должны поставить ядра, связанные с энергосистемой, в этих четырех местах, которые указали Спириты.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Upgrade your Rocket lab to level 2 Legate.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission5_2.ogg</sound>
+				<comment>&amp;00FFFF Попробуй усовершенствовать Ракетную лабораторию до 2 уровня, Легат.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 06">
+			<text ID="Tip 1">
+				<data>I suggest we establish a base and wait for Router to return communication.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission6_1.ogg</sound>
+				<comment>&amp;00FFFF Я предлагаю построить базу и подождать связи с ROUTER’ом.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Legate, our scans are complete, the structures appear to be some kind of long-range weapon.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission6_2.ogg</sound>
+				<comment>&amp;00FFFF Легат, осмотр мира закончен, эти строения оказались орудиями дальнего действия.</comment>
+			</text>
+			<text ID="Tip 3">
+				<data>Legate, ROUTER appears to be activating the weapons. Hurry!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission6_3.ogg</sound>
+				<comment>&amp;00FFFF Легат, ROUTER пытается активировать эти орудия. Поспеши!</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 07">
+			<text ID="Tip 1">
+				<data>We need to force the Harkback’s Frame to uninstall from the surface. We should do this by sending underground units beneath it.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission7_1.ogg</sound>
+				<comment>&amp;00FFFF Нужно заставить Возвратников поднять фрейм с поверхности. Надо послать подземных юнитов.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Ensure our Spiral is charged Legate, if we leave through the Alpha portal we can disconnect it from the other side, forcing them to move forward through the Omega Portal.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission7_2.ogg</sound>
+				<comment>&amp;00FFFF Убедись, что спираль заряжена, Легат. Если мы уйдем через Альфа портал, мы сможем отключить его с другой стороны, заставив их уйти вперед в омега портал.</comment>
+			</text>
+			<text ID="Tip 3">
+				<data>Legate, do not attack the Frame!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission7_3.ogg</sound>
+				<comment>&amp;00FFFF Легат, не атакуй Фрейм!</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 08">
+			<text ID="Tip 1">
+				<data>Legate, we must capture the Omega portal and charge our Spiral.  Time is of the essence, leave this world as soon as possible.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission8_1.ogg</sound>
+				<comment>&amp;00FFFF Legate, we must capture the Omega portal and charge our Spiral. Time is of the essence, leave this world as soon as possible.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Legate, do not attack the Frame!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission8_2.ogg</sound>
+				<comment>&amp;00FFFF Legate, we must capture the Omega portal and charge our Spiral. Time is of the essence, leave this world as soon as possible.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 09">
+			<text ID="Tip 1">
+				<data>We need to get to the Alpha Portal, Legate.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission9_1.ogg</sound>
+				<comment>&amp;00FFFF Нам нужно уйти в альфу, Легат!</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Capturing part of the enemies network may give us a tactical advantage Legate.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission9_2.ogg</sound>
+				<comment>&amp;00FFFF Захватив часть энергосети игрока, мы получим тактическое преимущество, Легат.</comment>
+			</text>
+			<text ID="Tip 3">
+				<data>Legate, do not attack the Frame!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission9_3.ogg</sound>
+				<comment>&amp;00FFFF Legate, do not attack the Frame!</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 10">
+			<text ID="Tip 1">
+				<data>We must capture Existor Legate, it is the will of the Emperor.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission10_1.ogg</sound>
+				<comment>&amp;00FFFF We must capture Existor Legate, it is the will of the Emperor.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 11">
+			<text ID="Tip 1">
+				<data>We need to force the enemies Frame to uninstall from the surface now!  The Emperor has provided you with torpedoes called Piercers and invisible soldiers called Unseen to accomplish this task.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission11_1.ogg</sound>
+				<comment>&amp;00FFFF Нам нужно заставить Фрейм SPYRO подняться с поверхности немедленно! Император дал вам торпеды Пирсеры и солдат-невидимок для выполнения этой миссии.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Legate, the Exodus Frame’s Spiral is at 50% capacity</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission11_2.ogg</sound>
+				<comment>&amp;00FFFF Легат, Фрейм исхода зарядил спираль на 50%</comment>
+			</text>
+			<text ID="Tip 3">
+				<data>Legate, this is the voice of the Emperor, I command that you do not capture or destroy the enemy Frame.  You are to capture the Omega Portal and teleport immediately.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission11_3.ogg</sound>
+				<comment>&amp;00FFFF Приказ Императора!</comment>
+			</text>
+			<text ID="Tip 4">
+				<data>Legate, do not attack the Frame!</data>
+				<sound>..\RESOURCE\LocData\English\Voice\Tips\Mission11_4.ogg</sound>
+				<comment>&amp;00FFFF .</comment>
+			</text>
+			<text ID="Tip 5">
+				<data>&amp;00FFFF .</data>
+				<comment>&amp;00FFFF .</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 12">
+			<text ID="Tip 1">
+				<data>We are detecting intense geological activity Legate.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission12_1.ogg</sound>
+				<comment>&amp;00FFFF Мы зафиксировали интенсивную геологическую активность, Легат.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 13">
+			<text ID="Tip 1">
+				<data>Legate, we must build sufficient defences to hold off the Empire while we build an Omega Portal.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission13_1.ogg</sound>
+				<comment>&amp;00FFFF Legate, we must build sufficient defences to hold off the Empire while we build an Omega Portal. </comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 14">
+			<text ID="Tip 1">
+				<data>There is the Alpha Portal, Legate.  Beware of the enemies defences when moving the Frame.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission14_1.ogg</sound>
+				<comment>&amp;00FFFF </comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 15">
+			<text ID="Tip 1">
+				<data>This world has intense volcanic activity Legate, building an Energy Core over a Volcano and connecting it to your network may prevent them from breaking through the surface.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission15_1.ogg</sound>
+				<comment>&amp;00FFFF Тут много вулканов. Покрой их зерослоем. </comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 16">
+			<text ID="Tip 1">
+				<data>Legate, the heavy Scourge concentration around the nest may obstruct our attempts to reach the Alpha. Our scientists may have a solution. They have been working on a new Lab, which can create units genetically identical to the Scourge, but controlled by us. These beasts will be able to rip the nest apart and are unlikely to be attacked by the enemy.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission16_1.ogg</sound>
+				<comment>&amp;00FFFF Легат, мы придумали спец. лабораторию для борьбы со Скверной.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>The way to Earth is still not open to us Legate. The Portal leading there is not active and without Spirits it cannot be restored. We must venture back into the Chain to capture Spirits.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission16_2.ogg</sound>
+				<comment>Путь к Земле все еще недоступен.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 17">
+			<text ID="Tip 1">
+				<data>&amp;00FFFF .</data>
+				<comment>&amp;FF0000 .</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 18">
+			<text ID="Tip 1">
+				<data>You must hurry Legate.  We must capture the Portal before the Harkback!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission18_1.ogg</sound>
+				<comment>&amp;00FFFF You must hurry Legate. We must capture the Portal before the Harkback!</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 19">
+			<text ID="Tip 1">
+				<data>The enemies base is vast Legate, however we may be able to capture large portions of it by attacking key parts of the energy network.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission19_1.ogg</sound>
+				<comment>&amp;00FFFF База врага обширна, Легат. Однако мы можем захватить большие ее части, отключив их от энергосистемы.</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>Your orders are not to proceed thorough the portal until you have subdued the enemy, Legate.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission19_2.ogg</sound>
+				<comment>&amp;00FFFF Ваша задача не уходить в портал до тех пор пока не уничтожен или захвачен фрейм врага, Легат.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 20">
+			<text ID="Tip 1">
+				<data>&amp;FF0000 .</data>
+				<comment>&amp;FF0000 .</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 21">
+			<text ID="Tip 1">
+				<data>Legate, I am no longer detecting an active energy signature from the Omega portal! Somehow interference from the Static Bomb has caused the portal to shutdown. We must evacuate back through the Alpha portal before the detonation… Hurry!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission21_1.ogg</sound>
+				<comment>&amp;00FFFF Легат, я не могу более обнаружить активный энергетический сигнал из Омеги. Каким-то образом включение статической бомбы выключило все системы портала. Мы должны эвакуироваться назад в Альфу до взрыва. Поспеши!</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 22">
+			<text ID="Tip 1">
+				<data>The Omega portal has been mined by the Empire.  If we attack the Empire base they will surely activate the bomb!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission22_1.ogg</sound>
+				<comment>&amp;00FFFF Омега заминирована Импрерией. Если мы атакуем базу они наверняка активируют бомбу. </comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 23">
+			<text ID="Tip 1">
+				<data>There is the Omega portal Legate.  We must fight our way through the ZODIAC’s base to capture it.  Additionally, we must not let the ZODIAC escape before we teleport.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission23_1.ogg</sound>
+				<comment>&amp;00FFFF Это Омега, Легат.  Мы должны пробить сее путь через базу ЗОДИАКА, но помни, что его фрейм надо беречь, если хочешь не потерять поддержку своих людей. Дополнительно мы не должны дать ЗОДИАКУ уйти в телепорт.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 24">
+			<text ID="Tip 1">
+				<data>&amp;FF0000 .</data>
+				<comment>&amp;FF0000 .</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 26">
+			<text ID="Tip 1">
+				<data>Legate, we must stop the Emperor from destroying the Vortex. If he succeeds all is lost!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission26_1.ogg</sound>
+				<comment>&amp;00FFFF Легат, мы должны не дать Империи уничтожить дыру, если он это сделает – все пропало!</comment>
+			</text>
+			<text ID="Tip 2">
+				<data>&amp;FFFFFF The Exodus is complete Legate, you are indeed our saviour…</data>
+				<sound>..\RESOURCE\LocData\English\Voice\Tips\Mission26_2.ogg</sound>
+				<comment>&amp;00FFFF The Exodus is complete Legate, you are indeed our saviour…</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission Tutorial">
+			<text ID="Tutorial_1">
+				<data>&amp;FFFFFF Welcome Legate, today we will be conducting tests of the equipment which will allow the Exodus to navigate worlds.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_1.ogg</sound>
+				<comment>&amp;00FFFF Приветствую тебя, Легат. Сейчас мы испытаем оборудование, которое  позволяет Исходу путешествовать по мирам.</comment>
+			</text>
+			<text ID="Tutorial_2">
+				<data>&amp;FFFFFF We have developed a number of new technologies that will be most useful in your quest. They will sustain and protect you.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_2.ogg</sound>
+				<comment>&amp;00FFFF Мы открыли новые технологии, которые очень пригодятся тебе в твоей миссии. Они подержат и защитят тебя.</comment>
+			</text>
+			<text ID="Tutorial_3">
+				<data>&amp;FFFFFF Behold your Frame. This immense structure is home to thousands of colonists whom you must guide and protect.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_3.ogg</sound>
+				<comment>&amp;00FFFF Вот твой Фрейм. Это грандиозное сооружение – дом для тысяч колонистов. Ты  должен вести и защищать их.</comment>
+			</text>
+			<text ID="Tutorial_5">
+				<data>&amp;FFFFFF As you can see from the spinning red and yellow indicator, this factory currently has no power.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_5.ogg</sound>
+				<comment>&amp;00FFFF Вращающийся красно-желтый значок показывает, что этот Завод сейчас не снабжается энергией.</comment>
+			</text>
+			<text ID="Tutorial_6">
+				<data>&amp;FFFFFF We need to terraform more of the surface to get power to this facility. Look on the display Legate, you will see the Brigadier and Buildmaster buttons.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_6.ogg</sound>
+				<comment>&amp;00FFFF Нужно выровнять больше поверхности, чтобы добыть энергию для Завода. Посмотри на экран, Легат, и ты увидишь кнопки Бригадира и Прораба.</comment>
+			</text>
+			<text ID="Tutorial_7">
+				<data>&amp;FFFFFF Activate some Brigadiers by clicking on the buttons.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_7.ogg</sound>
+				<comment>&amp;00FFFF Активируй несколько Бригадиров, нажав на кнопки.</comment>
+			</text>
+			<text ID="Tutorial_8">
+				<data>&amp;FFFFFF Good. The Brigadiers will terraform the surface for us, but you must indicate where they are to work. Select the ‘Zero Layer’ tool.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_8.ogg</sound>
+				<comment>&amp;00FFFF Хорошо. Бригадиры выровняют поверхность, но ты должен указать им, где работать. Выбери инструмент «Зеро-слой».</comment>
+			</text>
+			<text ID="Tutorial_9">
+				<data>&amp;FFFFFF Please use the tool to mark out a zone for terraforming to zero level.  I have indicated a suitable area for you to do this Legate.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_9.ogg</sound>
+				<comment>&amp;00FFFF Этим инструментом отметь участок для выравнивания до Зеро-слоя. Я показала тебе подходящую область для этого, Легат.</comment>
+			</text>
+			<text ID="Tutorial_10">
+				<data>&amp;FFFFFF The number displayed on the tool indicates how far away from zero level the surface currently is. The further away from zero, the harder the brigadiers will have to work to terraform.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_10.ogg</sound>
+				<comment>&amp;00FFFF Число на инструменте показывает расстояние до Зеро-слоя в этой точке. Чем больше это число, тем дольше Бригадиры здесь будут ровнять поверхность.</comment>
+			</text>
+			<text ID="Tutorial_11">
+				<data>&amp;FFFFFF Excellent work Legate! Now watch as our brigadiers terraform the area for you.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_11.ogg</sound>
+				<comment>&amp;00FFFF Отличная работа, Легат! Смотри, как Бригадиры ровняют для тебя поверхность.</comment>
+			</text>
+			<text ID="Tutorial_12">
+				<data>&amp;FFFFFF Now that we have terraformed land we can extract its energy. To do this we must build an Energy Core. Brigadiers can be changed into Buildmasters and these Buildmasters can create new structures for us.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_12.ogg</sound>
+				<comment>&amp;00FFFF Теперь у нас есть выровненный участок, и мы можем добывать Энергию. Для этого надо построить Ядро. Бригадиров можно заменить на Прорабов, которые строят для нас здания.</comment>
+			</text>
+			<text ID="Tutorial_13">
+				<data>&amp;FFFFFF To change a Brigadier into a Buildmaster select the Brigadier by left clicking on it, and then press the transform button.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_13.ogg</sound>
+				<comment>&amp;00FFFF Для замены Бригадира на Прораба выдели Бригадира, кликнув по нему левой кнопкой, затем нажми кнопку Трансформации.</comment>
+			</text>
+			<text ID="Tutorial_14">
+				<data>&amp;FFFFFF To build an Energy Core we need to use the build menu, select the build menu on your display.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_14.ogg</sound>
+				<comment>&amp;00FFFF Для постройки Ядра надо воспользоваться Строительным меню. Выбери это меню на экране.</comment>
+			</text>
+			<text ID="Tutorial_15">
+				<data>&amp;FFFFFF Ok, now select the Energy Core from the menu.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_15.ogg</sound>
+				<comment>&amp;00FFFF Хорошо, теперь в меню выбери Ядро.</comment>
+			</text>
+			<text ID="Tutorial_16">
+				<data>&amp;FFFFFF Now I will show you a good location to build an Energy Core Legate. The Energy Core must be close enough to your Frame to connect to it, as it has no other Cores to connect to. You should issue the build command here.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_16.ogg</sound>
+				<comment>&amp;00FFFF Легат, теперь я покажу подходящее место для Ядра. Для подключения к Фрейму Ядро должно стоять достаточно близко к нему, если рядом нет других Ядер для связи. Отдай команду строить в  этом месте.</comment>
+			</text>
+			<text ID="Tutorial_17">
+				<data>&amp;FFFFFF The buildmaster will now use your energy reserves to create the Energy Core.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_17.ogg</sound>
+				<comment>&amp;00FFFF Прораб теперь использует наши запасы Энергии для строительства Ядра.</comment>
+			</text>
+			<text ID="Tutorial_18">
+				<data>&amp;FFFFFF Outstanding! The link up works exactly as predicted. Also you can now see that the unit production facility has power. Any structure placed within the energy radius of the Energy Core will have power as long as the Energy Core is connected to the Frame.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_18.ogg</sound>
+				<comment>&amp;00FFFF Прекрасно! Соединение работает согласно рассчетам. Как видишь, Завод теперь получает энергию. Любое строение в зоне энергетического покрытия Ядра, будет подключено к Энергосети, пока это Ядро связано с Фреймом.</comment>
+			</text>
+			<text ID="Tutorial_19">
+				<data>&amp;FFFFFF This is an excellent opportunity to test the Energy Core’s perimeter system. To activate the perimeter use the Global Field button on your display.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_19.ogg</sound>
+				<comment>&amp;00FFFF Это прекрасная возможность испытать защитный Периметр этого Ядра. Чтобы включить Периметр, используй кнопку Общее Поле на экране.</comment>
+			</text>
+			<text ID="Tutorial_20">
+				<data>&amp;FFFFFF Good, the perimeter is working within the defined operating parameters. See how it forms a defensive barrier around any structures or units close to the Energy Core.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_20.ogg</sound>
+				<comment>&amp;00FFFF Хорошо, Периметр работает в пределах заданных параметров. Посмотри, как он образует защитный барьер вокруг любого строения рядом с Ядром.</comment>
+			</text>
+			<text ID="Tutorial_21">
+				<data>&amp;FFFFFF Notice however that the energy bar in the centre of your display console has gone from green to red and is falling rapidly.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_21.ogg</sound>
+				<comment>&amp;00FFFF Обрати внимание, что индикатор Энергии в центре экрана стал из зеленого красным и его показание быстро уменьшается.</comment>
+			</text>
+			<text ID="Tutorial_22">
+				<data>&amp;FFFFFF Using your perimeter requires massive amounts of energy, and you should only activate it when absolutely necessary. The perimeter test is complete Legate, please deactivate it.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_22.ogg</sound>
+				<comment>&amp;00FFFF Работающий Периметр расходует огромное количество Энергии, поэтому включай его только при острой необходимости. Проверка Периметра завершена, Легат. Пожалуйста, выключи его.</comment>
+			</text>
+			<text ID="Tutorial_23">
+				<data>&amp;FFFFFF Now that the production facility has power let’s create some units.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_23.ogg</sound>
+				<comment>&amp;00FFFF Теперь, когда Завод подключен, давай построим несколько юнитов.</comment>
+			</text>
+			<text ID="Tutorial_24">
+				<data>&amp;FFFFFF Queue up 3 officers using the button in the Squad Control Panel.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_24.ogg</sound>
+				<comment>&amp;00FFFF Закажи трех Офицеров, нажав кнопку на Панели сквада.</comment>
+			</text>
+			<text ID="Tutorial_25">
+				<data>&amp;FFFFFF Excellent Legate, units are now in production.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_25.ogg</sound>
+				<comment>&amp;00FFFF Прекрасно Легат, юниты в производстве.</comment>
+			</text>
+			<text ID="Tutorial_26">
+				<data>&amp;FFFFFF Officers cannot inflict damage, but can suppress enemy fire using a special blue energy beam.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_26.ogg</sound>
+				<comment>&amp;00FFFF Офицеры не наносят урон, но могут сдерживать огонь противника своим особым энерголучом.</comment>
+			</text>
+			<text ID="Tutorial_27">
+				<data>&amp;FFFFFF In addition to the Officer unit there are two additional units you will utilise on your journey, the Soldier and the Technician.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_27.ogg</sound>
+				<comment>&amp;00FFFF Кроме Офицера, в твоей миссии тебе потребуются еще два юнита – Солдат и Техник.</comment>
+			</text>
+			<text ID="Tutorial_28">
+				<data>&amp;FFFFFF Soldiers are the base warrior unit; but they have limited offensive capabilities. Technicians are unarmed, but can repair damaged friendly units in their immediate proximity.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_28.ogg</sound>
+				<comment>&amp;00FFFF Солдаты – базовые боевые юниты, но их наступательные возможности ограничены. Техники безоружны, но могут ремонтировать союзные юниты в небольшом радиусе от себя.</comment>
+			</text>
+			<text ID="Tutorial_29">
+				<data>&amp;FFFFFF Basic units are underpowered Legate. What we need to do is invest in some Nanotechnology from a laboratory.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_29.ogg</sound>
+				<comment>&amp;00FFFF Базовые юниты маломощны, Легат. Нам нужно исследовать в лаборатории некоторые Нанотехнологии.</comment>
+			</text>
+			<text ID="Tutorial_30">
+				<data>&amp;FFFFFF Build another Energy Core and a Laser Laboratory using the build menu. These need to be within the existing Energy Core’s radius.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_30.ogg</sound>
+				<comment>&amp;00FFFF В зоне покрытия имеющегося Ядра построй другое Ядро и Лазерную лабораторию, используя Строительное меню.</comment>
+			</text>
+			<text ID="Tutorial_31">
+				<data>&amp;FFFFFF We now have the ability to morph our basic units into more complex offensive weapons.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_31.ogg</sound>
+				<comment>&amp;00FFFF Теперь мы способны превращать базовые юниты в более сложные наступательные юниты.</comment>
+			</text>
+			<text ID="Tutorial_32">
+				<data>&amp;FFFFFF The red bar on the squad panel indicates the morph energy currently stored by the squad. When this bar is full and turns green we will have enough energy to morph our units.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_32.ogg</sound>
+				<comment>&amp;00FFFF Красная полоса на Панели сквада это уровень Энергии Трансформации, накопленной Сквадом. Энергии достаточно, когда индикатор заполняется и становится зеленым.</comment>
+			</text>
+			<text ID="Tutorial_33">
+				<data>&amp;FFFFFF We can now morph our units. To create a single sniper unit we need 3 Officers. Different types of advanced units will require different numbers of base units.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_33.ogg</sound>
+				<comment>&amp;00FFFF Теперь возможна трансформация юнитов. Для создания одного Снайпера нужно 3 Офицера. Разные типы продвинутых юнитов создаются из разных наборов базовых юнитов.</comment>
+			</text>
+			<text ID="Tutorial_34">
+				<data>&amp;FFFFFF Use the sniper button to morph your units now.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_34.ogg</sound>
+				<comment>&amp;00FFFF Нажми кнопку Снайпер, чтобы провести трансформацию.</comment>
+			</text>
+			<text ID="Tutorial_35">
+				<data>&amp;FFFFFF Excellent, we now have a sniper unit. To move the sniper squad left click the squad to select it, then right click a location on the surface to move the squad to that position. You should try doing this now.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_35.ogg</sound>
+				<comment>&amp;00FFFF Отлично, теперь у нас есть Снайпер. Чтобы переместить Сквад Снайпера, выдели его левой кнопкой, а затем правой укажи точку на поверхности, куда нужно переместиться. Сделай это сейчас.</comment>
+			</text>
+			<text ID="Tutorial_36">
+				<data>&amp;FFFFFF Legate, we should take this opportunity to test the offensive capabilities of the sniper unit. There is a small Scourge infestation near this location.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_36.ogg</sound>
+				<comment>&amp;00FFFF Легат, у нас есть возможность проверить наступательный потенциал Снайпера. Недалеко есть область, зараженная Скверной.</comment>
+			</text>
+			<text ID="Tutorial_37">
+				<data>&amp;FFFFFF Move the sniper squad to intercept and eliminate the Scourge. You can build more units using the facility should you need them; remember to morph new units into snipers.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_37.ogg</sound>
+				<comment>&amp;00FFFF Отправь Снайпера на перехват и уничтожение Скверны. Ты можешь усилить Сквад, заказав новые базовые юниты на Заводе. Не забудь превратить их в Снайперов.</comment>
+			</text>
+			<text ID="Tutorial_38">
+				<data>&amp;FFFFFF Well done Legate, the Scourge have been destroyed.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_38.ogg</sound>
+				<comment>&amp;00FFFF Отличная работа, Легат! Скверна уничтожена.</comment>
+			</text>
+			<text ID="Tutorial_39">
+				<data>&amp;FFFFFF As you will discover different units have different offensive and defensive capabilities. Many other technologies will be available to you when you begin your journey.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_39.ogg</sound>
+				<comment>&amp;00FFFF Ты узнаешь, что разные юниты обладают разными атакующими и защитными возможностями. Когда начнется твоя служба, тебе откроется много новых технологий.</comment>
+			</text>
+			<text ID="Tutorial_40">
+				<data>&amp;FFFFFF Structures and units require energy to build and maintain. Use your energy wisely Legate; ensure that you always terraform enough surface and install enough Energy Cores to sustain yourself. Over expenditure on energy can leave you defenceless.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_40.ogg</sound>
+				<comment>&amp;00FFFF Строения и войска требуют Энергию для постройки и содержания. Расходуй ее разумно, Легат. Для обеспечения Энергией проводи терраформинг и строй Ядра в достаточном количестве. Перерасход Энергии сделает тебя беззащитным.</comment>
+			</text>
+			<text ID="Tutorial_41">
+				<data>&amp;FFFFFF This test is over, your journey has begun.</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Tutorial_41.ogg</sound>
+				<comment>&amp;00FFFF Испытание закончено, твоя миссия началась.</comment>
+			</text>
+			<text ID="Tutorial_4">
+				<data>&amp;FFFFFF The smaller structure you see on the surface is a unit factory. Factories produce basic units to fend off hostile aggressors you may encounter.</data>
+				<sound>..\RESOURCE\LocData\English\Voice\Tips\Tutorial_4.ogg</sound>
+				<comment>&amp;00FFFF Здание поменьше, стоящее на поверхности это Завод. Заводы строят базовые юниты для борьбы с врагами, которых ты можешь встретить.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 25">
+			<text ID="Tip 1">
+				<data>Hurry Legate the Omega Portal is almost complete!</data>
+				<sound>..\Resource\LocData\English\Voice\Tips\Mission25_1.ogg</sound>
+				<comment>&amp;00FFFF Hurry Legate the Omega Portal is almost complete!</comment>
+			</text>
+		</text_group>
+	</text_group>
+	<text_group ID="Interface">
+		<text_group ID="Tips">
+			<text ID="Energy_bar">
+				<data>Collected Energy = %.0f
+Energy Capacity = %.0f
+Produced Energy = %.1f
+Consumed Energy = %.1f
+Collecting Energy = %.1f
+Efficiency Factor = %.4f</data>
+			</text>
+			<text ID="Shield_bar">
+				<data>Energy Cores = %d
+Energy Supplied Area = %d
+Protected Area = %d</data>
+			</text>
+			<text ID="no_field_energy">
+				<data>Not enough energy. Demand = %.0f</data>
+			</text>
+			<text ID="no_field_generators">
+				<data>No field generators</data>
+			</text>
+			<text ID="need_field_energy">
+				<data>Energy demand = %.0f</data>
+			</text>
+			<text ID="Terra_bar1">
+				<data>Planned Zero-layer Area = %d
+Actual Zero-layer Area = %d</data>
+			</text>
+			<text ID="Terra_bar2">
+				<data>Planned Abyss Area = %d
+Actual Abyss Area = %d</data>
+			</text>
+			<text ID="Mutation_bar">
+				<data>Basic Units Number = %d
+Transformation Energy = %d</data>
+			</text>
+			<text ID="Frame_slot_empty">
+				<data>Slot is empty. 
+Click left mouse button 
+to produce the substance.</data>
+			</text>
+			<text ID="Brigadier">
+				<data>Brigadier
+Click left mouse button 
+to select the Brigadier
+on the field.</data>
+			</text>
+			<text ID="Prorab">
+				<data>Buildmaster
+Click left mouse button 
+to select the Buildmaster 
+on the field.</data>
+			</text>
+			<text ID="Yadro">
+				<data>Energy Core%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Energy = %.0f</data>
+			</text>
+			<text ID="Yadro_ex">
+				<data>Energy Collector%s
+- Energy = %s%.0f&amp;FFFFFF
+- Energy Capacity = %.0f</data>
+			</text>
+			<text ID="Transmitter">
+				<data>Transmitter%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Remote connection</data>
+			</text>
+			<text ID="CommandCenter">
+				<data>Command Center%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Additional Squad</data>
+			</text>
+			<text ID="Plant_soldier">
+				<data>Soldier Plant%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Basic Soldiers</data>
+			</text>
+			<text ID="Plant_officer">
+				<data>Officer Plant%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Basic Officers</data>
+			</text>
+			<text ID="Plant_technic">
+				<data>Technicians Plant%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Basic Technicians</data>
+			</text>
+			<text ID="station_rocket">
+				<data>Rocket Lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_rocket1_btn">
+				<data>Upgrade Rocket Lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_rocket1_unit">
+				<data>Rocket Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_rocket2_btn">
+				<data>Upgrade Rocket Lab 
+to the third level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_rocket2_unit">
+				<data>Rocket Lab third level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="station_laser">
+				<data>Laser Lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_laser1_btn">
+				<data>Upgrade Laser Lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_laser1_unit">
+				<data>Laser Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_laser2_btn">
+				<data>Upgrade Laser Lab 
+to the third level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_laser2_unit">
+				<data>Laser Lab third level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="station_bomb">
+				<data>Bomb Lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_bomb1_btn">
+				<data>Upgrade Bomb Lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_bomb1_unit">
+				<data>Bomb Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_bomb2_btn">
+				<data>Upgrade Bomb Lab 
+to the third level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_bomb2_unit">
+				<data>Bomb Lab third level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="station_exodus">
+				<data>Exodus Lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_exodus1_btn">
+				<data>Upgrade Exodus Lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_exodus1_unit">
+				<data>Exodus Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_exodus2_btn">
+				<data>Upgrade Exodus Lab 
+to the third level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_exodus2_unit">
+				<data>Exodus Lab third level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="station_empire">
+				<data>Empire Lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_empire1_btn">
+				<data>Upgrade Empire Lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_empire1_unit">
+				<data>Empire Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_empire2_btn">
+				<data>Upgrade Empire Lab 
+to the third level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_empire2_unit">
+				<data>Empire Lab third level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="station_harkback">
+				<data>Harkbackhood Lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_harkback1_btn">
+				<data>Upgrade Harkbackhood Lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_harkback1_unit">
+				<data>Harkbackhood Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_harkback1_unit">
+				<data>Harkbackhood Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_harkback2_btn">
+				<data>Upgrade Harkbackhood Lab 
+to the third level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_harkback2_unit">
+				<data>Harkbackhood Lab third level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="station_subterra">
+				<data>Subterra Forces Lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_subterra_btn">
+				<data>Upgrade Subterra Lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_subterra_unit">
+				<data>Subterra Forces Lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="station_fly">
+				<data>Antigravity lab%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_fly_btn">
+				<data>Upgrade Antigravity lab 
+to the second level
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_fly_unit">
+				<data>Antigravity lab second level%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="upgrade_core_btn">
+				<data>Upgrade Energy Core 
+to Generator
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="CorridorAlpha">
+				<data>Alpha Portal%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Alpha Teleportation</data>
+			</text>
+			<text ID="CorridorOmega">
+				<data>Omega Portal%s
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Omega Teleportation</data>
+			</text>
+			<text ID="gun_laser">
+				<data>Laser Gun%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="gun_rocket">
+				<data>Rocket Gun%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="gun_howitzer">
+				<data>Howitzer Gun%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="gun_scum_disruptor">
+				<data>Scum Disruptor%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="gun_filth">
+				<data>Scourge Navigator%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="gun_ballistic">
+				<data>Ballistic Missile Launcher%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="gun_subchaser">
+				<data>Subterra Chaser Gun%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="unit_base">
+				<data>Order the %s
+for active Squad reinforcement
+Requires:
+- %s&amp;FFFFFF
+- Energy = %.0f
+%s</data>
+			</text>
+			<text ID="unit_derived">
+				<data>Transform to %s
+Requires:
+- %s&amp;FFFFFF
+- %s%d Soldier(s), %s%d Officer(s), %s%d Technician(s)&amp;FFFFFF
+Output: %d %s
+%s</data>
+			</text>
+			<text ID="unit_derived_inaccess">
+				<data>%s
+Inaccessible in this version!</data>
+			</text>
+			<text ID="frame">
+				<data>Frame
+Output:
+- Energy System control
+- Energy = %.0f
+- 5 MMP slots for
+  Brigadiers/Buildmasters
+- Energy Capacity = %.0f
+- Spiral Level = %d%%</data>
+			</text>
+			<text ID="generator">
+				<data>Generator
+- Energy = %s%.0f&amp;FFFFFF
+Output:
+- Energy = %.0f
+- %sEnergy Shield&amp;FFFFFF</data>
+			</text>
+			<text ID="frame_cant_install">
+				<data>Can&#039;t install the Frame here</data>
+			</text>
+			<text ID="requires">
+				<data>Requires:
+- </data>
+			</text>
+			<text ID="keys_help">
+				<data>F4 - edit parameters
+Ctrl-F4 - mission editor on/off
+Ctrl-Enter - trigger editor
+
+Hold ALT - camera rotation and tilt
+M - camera restrictions on/off
+
+Q - Scourge menu
+R - Small Mountain Rising 
+T - Geo-Face
+Y - Land Crevice
+U - Geo-Torpedo (from-to)
+I - Underground Wormling
+O - The Rift (from-to)
+
+S - Save
+Ctrl-S - Save As
+Ctrl-O - Open Save or Mission
+
+Camera tracks:
+F9 - add point
+Shift-F9 - remove last point
+Ctrl-Shift-F9 - clear whole path
+Ctrl-F9 - start/stop replay path
+Ctrl-Alt-F9 - save path 
+
+F11 - take screenshot
+Ctrl-F11 - Start/Stop recording movie
+</data>
+			</text>
+			<text ID="mission_editor_help">
+				<data>Редактор миссий:
+
+Q - Игрок &quot;Я&quot;
+W - Игрок &quot;Мир&quot;
+E - Игрок &quot;Враг&quot;
+
+Работа с объектом:
+
+F, INS - Создать объект
+D, DEL - Удалить объект
+Shift-D - Удалить объект молча
+
+Ctrl-C - Запомнить объект
+Ctrl-V - Скопировать объект
+
+V + mouse_move - Подвинуть объект
+Shift-V + mouse_move - Подвинуть объект по Z
+C + mouse_move - Повернуть объект
+Shift-C + mouse_move - Наклонить объект
+Ctrl-Shift-C + mouse_move - Поставить объект прямо
+X + mouse_move - Увеличить/уменьшить объект
+
+F4 - Редактировать текстовые данные
+Ctrl-Enter - Редактор триггеров от Илюхи
+Ctrl-S - Записать миссию 
+Ctrl-O - Открыть файл миссии
+Ctrl-Shift-O - Переоткрыть текущую миссию
+Ctrl-M - Запомнить камеру текущего игрока
+
+Ctrl-H - Включить/выключить редактирование неразрушаемости
+         Редактировать LeftMouse _по_часовой_стрелке_,	 
+         Shift - разрушаемость
+Enter - Завершить текущий регион (правая кнопка занята вращением)
+Cancel - Отменить текущий регион 
+Ctrl-Alt-H - Стереть всю неразрушаемость
+
+Камера:
+F9 - добавить контрольную точку сплайна
+Shift-F9 - удалить последнюю точку сплайна
+Ctrl-F9 - старт/стоп проигрывания 
+Ctrl-Shift-F9 - очистить текущий сплайн
+Ctrl-Alt-F9 - записать текущий сплайн
+</data>
+			</text>
+			<text ID="hotkey_general">
+				<data>&amp;FFFFFFHotKey - &amp;00FFFF%s</data>
+			</text>
+			<text ID="Attack">
+				<data>%sClass: %s
+Attacks:
+- &amp;FFFF00%s</data>
+			</text>
+			<text ID="Squad">
+				<data>%s
+%s</data>
+			</text>
+			<text ID="upgrade_omega_btn">
+				<data>Upgrade Omega
+Requires:
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="gun_filth_navigator">
+				<data>Scourge Navigator%s
+- Energy = %s%.0f&amp;FFFFFF
+%s</data>
+			</text>
+			<text ID="StaticBomb">
+				<data>StaticBomb%s
+- Energy = %s%.0f&amp;FFFFFF</data>
+			</text>
+			<text ID="TV_Move">
+				<data>Move </data>
+			</text>
+			<text ID="TV_Stop">
+				<data>Stop </data>
+			</text>
+			<text ID="TV_Attack">
+				<data>Attack </data>
+			</text>
+			<text ID="TV_BackToBase">
+				<data>Back to base </data>
+			</text>
+			<text ID="TV_Defensive">
+				<data>Defensive mode </data>
+			</text>
+			<text ID="TV_Offensive">
+				<data>Offensive mode </data>
+			</text>
+			<text ID="TV_Patrol">
+				<data>Patrol </data>
+			</text>
+			<text ID="TV_PowerOn">
+				<data>Building power on </data>
+			</text>
+			<text ID="TV_PowerOff">
+				<data>Building power off </data>
+			</text>
+			<text ID="TV_Sell">
+				<data>Sell </data>
+			</text>
+			<text ID="TV_Upgrade">
+				<data>Upgrade </data>
+			</text>
+			<text ID="TV_FieldOn">
+				<data>Field on </data>
+			</text>
+			<text ID="TV_FieldOff">
+				<data>Field off </data>
+			</text>
+			<text ID="TV_ChargeEnable">
+				<data>Enable charging </data>
+			</text>
+			<text ID="TV_ChargeDisable">
+				<data>Disable charging </data>
+			</text>
+			<text ID="TV_InstallFrame">
+				<data>Install Frame </data>
+			</text>
+			<text ID="TV_UninstallFrame">
+				<data>Uninstall Frame </data>
+			</text>
+			<text ID="TV_Teleportate">
+				<data>Teleportate Frame </data>
+			</text>
+			<text ID="TV_Alarm">
+				<data>Alarm </data>
+			</text>
+			<text ID="TV_Exchange">
+				<data>Brigadier / BuildMaster
+Exchange </data>
+			</text>
+			<text ID="TV_MMP_Back">
+				<data>Back to Frame </data>
+			</text>
+			<text ID="TV_Repair">
+				<data>Repair </data>
+			</text>
+			<text ID="AbyssZone">
+				<data>Abyss</data>
+			</text>
+			<text ID="ZeroZone">
+				<data>Zero-layer</data>
+			</text>
+			<text ID="CleanZone">
+				<data>Clean Zone </data>
+			</text>
+			<text ID="TotalDefenceOn">
+				<data>Switch Total-Defense-Field
+mode on </data>
+			</text>
+			<text ID="TotalDefenceOff">
+				<data>Switch Total-Defense-Field
+mode off </data>
+			</text>
+			<text ID="Pause">
+				<data>Pause </data>
+			</text>
+			<text ID="Speed50">
+				<data>Speed 50%%  </data>
+			</text>
+			<text ID="Speed100">
+				<data>Speed 100%% </data>
+			</text>
+			<text ID="Speed200">
+				<data>Speed 200%% </data>
+			</text>
+			<text ID="Together">
+				<data>Put squads together</data>
+			</text>
+			<text ID="ToBasic">
+				<data>Transform to Basic Units </data>
+			</text>
+			<text ID="Completed">
+				<data>&amp;00FF00Completed: </data>
+			</text>
+			<text ID="Failed">
+				<data>&amp;FF0000Failed: </data>
+			</text>
+			<text ID="damage">
+				<data>Damage: %d / %d
+</data>
+			</text>
+			<text ID="armor">
+				<data> Armor: %d
+</data>
+			</text>
+			<text ID="hotkey_10_soldier">
+				<data>&amp;FFFFFFOrder 10 soldiers - &amp;00FFFF%s</data>
+			</text>
+			<text ID="hotkey_10_technic">
+				<data>&amp;FFFFFFOrder 10 technicians - &amp;00FFFF%s</data>
+			</text>
+			<text ID="hotkey_10_officer">
+				<data>&amp;FFFFFFOrder 10 officers - &amp;00FFFF%s</data>
+			</text>
+			<text ID="no_mutation_energy">
+				<data>No mutation energy</data>
+			</text>
+			<text ID="no_basic_units">
+				<data>No basic units</data>
+			</text>
+			<text ID="no_energy_for_build">
+				<data>Not enough energy
+for structure building</data>
+			</text>
+			<text ID="brigadier_unit">
+				<data>Brigadier</data>
+			</text>
+			<text ID="prorab_unit">
+				<data>Build-master</data>
+			</text>
+			<text_group ID="NAMES">
+				<text ID="FRAME">
+					<data>Frame</data>
+				</text>
+				<text ID="Core">
+					<data>Core</data>
+				</text>
+				<text ID="Energy Retransmitter">
+					<data>Energy Retransmitter</data>
+				</text>
+				<text ID="Energy Collector">
+					<data>Energy Collector</data>
+				</text>
+				<text ID="Soldier Plant">
+					<data>Soldier Plant</data>
+				</text>
+				<text ID="Officer Plant">
+					<data>Officer Plant</data>
+				</text>
+				<text ID="Technician Plant">
+					<data>Technician Plant</data>
+				</text>
+				<text ID="CommandCenter">
+					<data>Command Center</data>
+				</text>
+				<text ID="GeoSpot">
+					<data>Geo Spot</data>
+				</text>
+				<text ID="TerrainMaster">
+					<data>Brigadier</data>
+				</text>
+				<text ID="TrustTruck">
+					<data>Truck</data>
+				</text>
+				<text ID="BuildMaster">
+					<data>Build Master</data>
+				</text>
+				<text ID="BuildingBlock">
+					<data>Building Block</data>
+				</text>
+				<text ID="Bomb">
+					<data>Bomb</data>
+				</text>
+				<text ID="Exodus Laboratory Level 1">
+					<data>Exodus Laboratory Level 1</data>
+				</text>
+				<text ID="Exodus Laboratory Level 2">
+					<data>Exodus Laboratory Level 2</data>
+				</text>
+				<text ID="Exodus Laboratory Level 3">
+					<data>Exodus Laboratory Level 3</data>
+				</text>
+				<text ID="Empire Laboratory Level 1">
+					<data>Empire Laboratory Level 1</data>
+				</text>
+				<text ID="Empire Laboratory Level 2">
+					<data>Empire Laboratory Level 2</data>
+				</text>
+				<text ID="Empire Laboratory Level 3">
+					<data>Empire Laboratory Level 3</data>
+				</text>
+				<text ID="Harkback Laboratory Level 1">
+					<data>Harkback Laboratory Level 1</data>
+				</text>
+				<text ID="Harkback Laboratory Level 2">
+					<data>Harkback Laboratory Level 2</data>
+				</text>
+				<text ID="Harkback Laboratory Level 3">
+					<data>Harkback Laboratory Level 3</data>
+				</text>
+				<text ID="Rocket Laboratory Level 1">
+					<data>Rocket Laboratory Level 1</data>
+				</text>
+				<text ID="Rocket Laboratory Level 2">
+					<data>Rocket Laboratory Level 2</data>
+				</text>
+				<text ID="Rocket Station 3">
+					<data>Rocket Laboratory Level 3</data>
+				</text>
+				<text ID="Laser Laboratory Level 1">
+					<data>Laser Laboratory Level 1</data>
+				</text>
+				<text ID="Laser Laboratory Level 2">
+					<data>Laser Laboratory Level 2</data>
+				</text>
+				<text ID="Laser Laboratory Level 3">
+					<data>Laser Laboratory Level 3</data>
+				</text>
+				<text ID="Bomb Laboratory Level 1">
+					<data>Bomb Laboratory Level 1</data>
+				</text>
+				<text ID="Bomb Laboratory Level 2">
+					<data>Bomb Laboratory Level 2</data>
+				</text>
+				<text ID="Bomb Laboratory Level 3">
+					<data>Bomb Laboratory Level 3</data>
+				</text>
+				<text ID="Anrigrav Laboratory Level 1">
+					<data>Antigrav Laboratory Level 1</data>
+				</text>
+				<text ID="Anrigrav Laboratory Level 2">
+					<data>Antigrav Laboratory Level 2</data>
+				</text>
+				<text ID="Subterra Laboratory Level 1">
+					<data>Subterra Laboratory Level 1</data>
+				</text>
+				<text ID="Subterra Laboratory Level 2">
+					<data>Subterra Laboratory Level 2</data>
+				</text>
+				<text ID="Nano-Soldier">
+					<data>Nano-Soldier</data>
+				</text>
+				<text ID="Nano-Officer">
+					<data>Nano-Officer</data>
+				</text>
+				<text ID="Nano-Technician">
+					<data>Nano-Technician</data>
+				</text>
+				<text ID="Scumer">
+					<data>Scumer</data>
+				</text>
+				<text ID="Digger">
+					<data>Digger</data>
+				</text>
+				<text ID="Piercer">
+					<data>Piercer</data>
+				</text>
+				<text ID="Sniper">
+					<data>Sniper</data>
+				</text>
+				<text ID="Leamo">
+					<data>Leamo</data>
+				</text>
+				<text ID="Rocker">
+					<data>Rocker</data>
+				</text>
+				<text ID="Mortar">
+					<data>Mortar</data>
+				</text>
+				<text ID="Ceptor">
+					<data>Ceptor</data>
+				</text>
+				<text ID="Gyroid">
+					<data>Gyroid</data>
+				</text>
+				<text ID="Strafer">
+					<data>Strafer</data>
+				</text>
+				<text ID="Disintegrator">
+					<data>Disintegrator</data>
+				</text>
+				<text ID="Scum Splitter">
+					<data>Scum Splitter</data>
+				</text>
+				<text ID="Scum Twister">
+					<data>Scum Twister</data>
+				</text>
+				<text ID="Scum Heater">
+					<data>Scum Heater</data>
+				</text>
+				<text ID="Scum Thrower">
+					<data>Scum Thrower</data>
+				</text>
+				<text ID="Extirpator">
+					<data>Extirpator</data>
+				</text>
+				<text ID="Wargon Tank">
+					<data>Wargon Tank</data>
+				</text>
+				<text ID="Bombie">
+					<data>Bombie</data>
+				</text>
+				<text ID="R-Projector">
+					<data>R-Projector</data>
+				</text>
+				<text ID="Unseen">
+					<data>Unseen</data>
+				</text>
+				<text ID="Leech">
+					<data>Leech</data>
+				</text>
+				<text ID="Laser-Gun">
+					<data>Laser-Gun</data>
+				</text>
+				<text ID="Rocket-Gun">
+					<data>Rocket-Gun</data>
+				</text>
+				<text ID="Gun-Howitzer">
+					<data>Gun-Howitzer</data>
+				</text>
+				<text ID="Subchaser Gun">
+					<data>Subchaser Gun</data>
+				</text>
+				<text ID="GunBallistic">
+					<data>Ballistic Gun</data>
+				</text>
+				<text ID="Filth Navigator">
+					<data>Filth Navigator</data>
+				</text>
+				<text ID="Scum Disruptor">
+					<data>Scum Disruptor</data>
+				</text>
+				<text ID="Scum Spot">
+					<data>Scum Spot</data>
+				</text>
+				<text ID="Black Hole">
+					<data>Black Hole</data>
+				</text>
+				<text ID="FilthSpot">
+					<data>Filth Spot</data>
+				</text>
+				<text ID="Squad">
+					<data>Squad</data>
+				</text>
+				<text ID="Alpha Corridor">
+					<data>Alpha Corridor</data>
+				</text>
+				<text ID="Omega Corridor">
+					<data>Omega Corridor</data>
+				</text>
+				<text ID="Monk">
+					<data>Monk</data>
+				</text>
+				<text ID="Scourge Spider">
+					<data>Scourge Spider</data>
+				</text>
+				<text ID="Scourge Shark">
+					<data>Scourge Shark</data>
+				</text>
+				<text ID="Scourge Daemon">
+					<data>Scourge Daemon</data>
+				</text>
+				<text ID="Scourge Dragon">
+					<data>Scourge Dragon</data>
+				</text>
+			</text_group>
+			<text ID="Brigadier_slot">
+				<data>Click left mouse button 
+to produce Brigadiers.</data>
+			</text>
+			<text ID="Prorab_slot">
+				<data>Click left mouse button to
+produce Buildmasters.</data>
+			</text>
+			<text ID="MultiplayerInfoOneLine">
+				<data>%s(%d/%d):Ping %d:%s</data>
+			</text>
+			<text ID="MultiplayerInfoStarted">
+				<data>Started</data>
+			</text>
+			<text ID="MultiplayerInfo">
+				<data>Name: %s
+Players: %d
+Max players: %d
+Ping: %d
+IP: %s
+%s</data>
+			</text>
+			<text ID="ChainWorldEmpty">
+				<data>World: %s
+Size: %d
+TimeFactor: %.2f
+</data>
+			</text>
+			<text ID="ChainWorld">
+				<data>World: %s
+Frame(s): %s
+Size: %d
+TimeFactor: %.2f
+</data>
+			</text>
+			<text ID="MultiplayerInfoServerEmpty">
+				<data>&amp;FF0000Can&#039;t find server</data>
+			</text>
+			<text ID="ToClanPrefix">
+				<data>&amp;FF00FFTo clan&amp;FFFFFF: </data>
+			</text>
+			<text ID="ToAllPrefix">
+				<data>&amp;FF00FFTo all&amp;FFFFFF: </data>
+			</text>
+			<text ID="ToClanPostfix">
+				<data>(&amp;FF00FFto clan&amp;FFFFFF)</data>
+			</text>
+			<text ID="ToAllPostfix">
+				<data>(&amp;FF00FFto all&amp;FFFFFF)</data>
+			</text>
+		</text_group>
+		<text_group ID="UnitClass">
+			<text ID="Ignore">
+				<data>Can&#039;t Attack</data>
+			</text>
+			<text ID="Base">
+				<data>Base</data>
+			</text>
+			<text ID="Light">
+				<data>Light</data>
+			</text>
+			<text ID="Medium">
+				<data>Medium</data>
+			</text>
+			<text ID="Heavy">
+				<data>Heavy</data>
+			</text>
+			<text ID="Air">
+				<data>Air</data>
+			</text>
+			<text ID="Air_Heavy">
+				<data>Air Heavy</data>
+			</text>
+			<text ID="Underground">
+				<data>Underground</data>
+			</text>
+			<text ID="Structure">
+				<data>Structure</data>
+			</text>
+			<text ID="Gun">
+				<data>Gun Structure</data>
+			</text>
+			<text ID="Core">
+				<data>Energy Core</data>
+			</text>
+			<text ID="Environment">
+				<data>Scourge Nest</data>
+			</text>
+			<text ID="Frame">
+				<data>Frame</data>
+			</text>
+			<text ID="Builder">
+				<data>MMP</data>
+			</text>
+			<text ID="Block">
+				<data>Block</data>
+			</text>
+			<text ID="Missile">
+				<data>Missile</data>
+			</text>
+			<text ID="Nature">
+				<data>Nature</data>
+			</text>
+			<text ID="Air_Filth">
+				<data>Air Scourge</data>
+			</text>
+			<text ID="Ground_Filth">
+				<data>Ground Scourge</data>
+			</text>
+			<text ID="Underground_Filth">
+				<data>Underground Scourge</data>
+			</text>
+			<text ID="Corridor">
+				<data>Portal</data>
+			</text>
+			<text ID="Ground">
+				<data>Landscape</data>
+			</text>
+			<text ID="StructureSpecial">
+				<data>Special</data>
+			</text>
+			<text ID="Truck">
+				<data>Truck</data>
+			</text>
+			<text ID="All">
+				<data>All</data>
+			</text>
+		</text_group>
+		<text_group ID="Menu">
+			<text_group ID="Messages">
+				<text_group ID="Confirmations">
+					<text ID="OverwriteSave">
+						<data>Are you sure you want to overwrite &quot;%s&quot; save?</data>
+					</text>
+					<text ID="OverwriteReplay">
+						<data>Are you sure you want to overwrite &quot;%s&quot; replay?</data>
+					</text>
+					<text ID="DeleteProfile">
+						<data>Are you sure you want to delete &quot;%s&quot; profile?</data>
+					</text>
+					<text ID="Restart">
+						<data>Are you sure you want to restart the game?</data>
+					</text>
+					<text ID="DeleteSave">
+						<data>Are you sure you want to delete &quot;%s&quot; save?</data>
+					</text>
+					<text ID="Quit">
+						<data>Are you sure you want to quit the game?</data>
+					</text>
+					<text ID="DeleteReplay">
+						<data>Are you sure you want to delete &quot;%s&quot; replay?</data>
+					</text>
+					<text ID="KeepChanges">
+						<data>Press OK if you wish to keep this setting. The original configuration will be restored in 10 seconds.</data>
+					</text>
+				</text_group>
+				<text ID="Mission Failed">
+					<data>Mission Failed!</data>
+				</text>
+				<text ID="NameEmpty">
+					<data>Enter your name, please...</data>
+				</text>
+				<text_group ID="Multiplayer">
+					<text ID="ServerFull">
+						<data>Server is full</data>
+					</text>
+					<text ID="ConnectionFailed">
+						<data>Connection failed</data>
+					</text>
+					<text ID="ClientDropped">
+						<data>You are discarded</data>
+					</text>
+					<text ID="AlreadyRun">
+						<data>Game is already running</data>
+					</text>
+					<text ID="IncorrectVersion">
+						<data>Server has different version</data>
+					</text>
+					<text ID="CreateFailed">
+						<data>Create failed</data>
+					</text>
+					<text ID="GameSpyConnectionFailed">
+						<data>Connection to GameSpy failed</data>
+					</text>
+					<text ID="DirectPlayInitError">
+						<data>DirectPlay init error!</data>
+					</text>
+					<text ID="NickError">
+						<data>Your nickname is not unique!</data>
+					</text>
+					<text ID="WaitingForPlayers">
+						<data>Waiting for player(s):
+
+</data>
+					</text>
+					<text ID="GeneralDirectPlayError">
+						<data>General DirectPlay error</data>
+					</text>
+					<text ID="DirectPlayInitializationError">
+						<data>DirectPlay initialization error</data>
+					</text>
+					<text ID="RawDirectPlayError">
+						<data>Raw DirectPlay error</data>
+					</text>
+					<text ID="CantStartDirectPlayHost">
+						<data>Can&#039;t start DirectPlay host</data>
+					</text>
+					<text ID="WrongIPAdress">
+						<data>IP address is wrong</data>
+					</text>
+					<text ID="TimeIsOut">
+						<data>Server has timed out.</data>
+					</text>
+					<text ID="NameIsInvalid">
+						<data>Name Is Invalid</data>
+					</text>
+					<text ID="Nonsinchronization">
+						<data>Synchronization error detected</data>
+					</text>
+					<text ID="IncorrectPassword">
+						<data>Incorrect password</data>
+					</text>
+				</text_group>
+				<text ID="Victory">
+					<data>Victory!</data>
+				</text>
+				<text ID="Connecting">
+					<data>Connecting...</data>
+				</text>
+				<text ID="SurvivalRecord">
+					<data> Scourge survival record is </data>
+				</text>
+				<text ID="Survival">
+					<data>Set the record for surviving the Scourge assault</data>
+				</text>
+				<text ID="Battle">
+					<data>Capture or destroy the enemy</data>
+				</text>
+				<text ID="Creating">
+					<data>Creating...</data>
+				</text>
+				<text ID="PlayersDisconnected">
+					<data>Player %s disconnected.</data>
+				</text>
+				<text ID="PlayersExited">
+					<data>Player %s exited.</data>
+				</text>
+				<text ID="UnknownError">
+					<data>Unknown Error</data>
+				</text>
+				<text ID="Init3DError">
+					<data>The current graphics settings for Perimeter are not compatible with your 3D graphics card. Please select supported setttings and retry.</data>
+				</text>
+				<text ID="GameSpyCmdLineError">
+					<data>GameSpy Arcade is incorrectly configured. Please check your GameSpy settings.</data>
+				</text>
+				<text ID="IPEmpty">
+					<data>Enter server IP, please...</data>
+				</text>
+				<text ID="WrongReplayFile">
+					<data>Replay file is wrong</data>
+				</text>
+				<text ID="DiskFull">
+					<data>Disk full</data>
+				</text>
+				<text ID="RWError">
+					<data>Read/write error</data>
+				</text>
+				<text ID="CantFindMap">
+					<data>Can&#039;t find map</data>
+				</text>
+			</text_group>
+			<text_group ID="ButtonLabels">
+				<text ID="BACK">
+					<data>BACK</data>
+				</text>
+				<text ID="EXIT">
+					<data>EXIT</data>
+				</text>
+				<text ID="GO">
+					<data>GO</data>
+				</text>
+				<text ID="BATTLE">
+					<data>BATTLE</data>
+				</text>
+				<text ID="LOAD GAME">
+					<data>LOAD GAME</data>
+				</text>
+				<text ID="PROFILE">
+					<data>PROFILE</data>
+				</text>
+				<text ID="SCENARIO">
+					<data>CAMPAIGN</data>
+				</text>
+				<text ID="VIEW REPLAY">
+					<data>VIEW REPLAY</data>
+				</text>
+				<text ID="CREDITS">
+					<data>CREDITS</data>
+				</text>
+				<text ID="LAN">
+					<data>LAN</data>
+				</text>
+				<text ID="ONLINE">
+					<data>ONLINE</data>
+				</text>
+				<text ID="OPTIONS">
+					<data>OPTIONS</data>
+				</text>
+				<text ID="SINGLE PLAYER">
+					<data>SINGLE PLAYER</data>
+				</text>
+				<text ID="Name">
+					<data>Name:</data>
+				</text>
+				<text ID="NEW">
+					<data>NEW</data>
+				</text>
+				<text ID="DELETE">
+					<data>DELETE</data>
+				</text>
+				<text ID="SELECT">
+					<data>SELECT</data>
+				</text>
+				<text ID="DIFFICULTY">
+					<data>DIFFICULTY</data>
+				</text>
+				<text ID="SKIP">
+					<data>SKIP</data>
+				</text>
+				<text ID="CONTINUE">
+					<data>CONTINUE</data>
+				</text>
+				<text ID="START">
+					<data>START</data>
+				</text>
+				<text ID="QUIT">
+					<data>QUIT</data>
+				</text>
+				<text ID="PLAY">
+					<data>PLAY</data>
+				</text>
+				<text ID="SAVE">
+					<data>SAVE</data>
+				</text>
+				<text ID="RESUME">
+					<data>RESUME</data>
+				</text>
+				<text ID="RESTART">
+					<data>RESTART</data>
+				</text>
+				<text ID="SAVE REPLAY">
+					<data>SAVE REPLAY</data>
+				</text>
+				<text ID="LOAD">
+					<data>LOAD</data>
+				</text>
+				<text ID="CREATE">
+					<data>CREATE</data>
+				</text>
+				<text ID="JOIN">
+					<data>JOIN</data>
+				</text>
+				<text ID="GAME SPEED">
+					<data>GAME SPEED</data>
+				</text>
+				<text ID="GAME NAME">
+					<data>GAME NAME</data>
+				</text>
+				<text ID="READY">
+					<data>READY</data>
+				</text>
+				<text ID="GAME">
+					<data>GAME</data>
+				</text>
+				<text ID="GRAPHICS">
+					<data>GRAPHICS</data>
+				</text>
+				<text ID="SOUND">
+					<data>SOUND</data>
+				</text>
+				<text ID="SCROLL RATE">
+					<data>SCROLL RATE</data>
+				</text>
+				<text ID="MOUSE SPEED">
+					<data>MOUSE SPEED</data>
+				</text>
+				<text ID="TOOL TIPS">
+					<data>TOOL TIPS</data>
+				</text>
+				<text ID="GAMMA ADJUST">
+					<data>GAMMA ADJUST</data>
+				</text>
+				<text ID="DETAILS LEVEL">
+					<data>LANDSCAPE DETAILS</data>
+				</text>
+				<text ID="SHADOW QUALITY">
+					<data>SHADOW QUALITY</data>
+				</text>
+				<text ID="SHADOW TYPE">
+					<data>SHADOW TYPE</data>
+				</text>
+				<text ID="REFLECTIONS">
+					<data>REFLECTIONS</data>
+				</text>
+				<text ID="RESOLUTION">
+					<data>RESOLUTION</data>
+				</text>
+				<text ID="SOUND EFFECTS">
+					<data>SOUND EFFECTS</data>
+				</text>
+				<text ID="SOUND VOLUME">
+					<data>SOUND VOLUME</data>
+				</text>
+				<text ID="MUSIC">
+					<data>MUSIC</data>
+				</text>
+				<text ID="MUSIC VOLUME">
+					<data>MUSIC VOLUME</data>
+				</text>
+				<text ID="YES">
+					<data>YES</data>
+				</text>
+				<text ID="OK">
+					<data>OK</data>
+				</text>
+				<text ID="NO">
+					<data>NO</data>
+				</text>
+				<text ID="ABORT">
+				</text>
+				<text ID="CUSTOM">
+					<data>CUSTOM</data>
+				</text>
+				<text ID="APPLY">
+					<data>APPLY</data>
+				</text>
+				<text ID="COLOR DEPTH">
+					<data>COLOR DEPTH</data>
+				</text>
+				<text ID="SETTINGS">
+					<data>SETTINGS</data>
+				</text>
+				<text ID="LANDSCAPE DETAILS">
+					<data>LANDSCAPE DETAILS</data>
+				</text>
+				<text ID="OCCLUSION">
+					<data>OCCLUSION</data>
+				</text>
+				<text ID="POINT LIGHT">
+					<data>POINT LIGHT</data>
+				</text>
+				<text ID="SHADOW SAMPLES">
+					<data>SHADOW SAMPLES</data>
+				</text>
+				<text ID="BUMP MAPPING">
+					<data>BUMP MAPPING</data>
+				</text>
+				<text ID="BUMP CHAOS">
+					<data>BUMP CHAOS</data>
+				</text>
+				<text ID="PARTICLE RATE">
+					<data>PARTICLE RATE</data>
+				</text>
+				<text ID="COMPRESS TEXTURES">
+					<data>COMPRESS TEXTURES</data>
+				</text>
+				<text ID="MENU">
+					<data>MENU</data>
+				</text>
+				<text ID="TASK">
+					<data>MISSION</data>
+				</text>
+				<text ID="IP">
+					<data>Server IP: </data>
+				</text>
+				<text ID="TOTAL">
+					<data>TOTAL</data>
+				</text>
+				<text ID="GENERAL">
+					<data>GENERAL</data>
+				</text>
+				<text ID="UNITS">
+					<data>UNITS</data>
+				</text>
+				<text ID="BUILDINGS">
+					<data>BUILDINGS</data>
+				</text>
+				<text ID="MOUSE LOOK RATE">
+					<data>MOUSE LOOK RATE</data>
+				</text>
+			</text_group>
+			<text_group ID="ComboItems">
+				<text ID="Easy">
+					<data>Easy</data>
+				</text>
+				<text ID="Hard">
+					<data>Hard</data>
+				</text>
+				<text ID="Normal">
+					<data>Normal</data>
+				</text>
+				<text ID="Planar map">
+					<data>Planar map</data>
+				</text>
+				<text ID="Shadow map">
+					<data>Shadow map</data>
+				</text>
+				<text ID="Self shadow map">
+					<data>Self shadow map</data>
+				</text>
+				<text ID="Off">
+					<data>Off</data>
+				</text>
+				<text ID="On">
+					<data>On</data>
+				</text>
+				<text ID="Low">
+					<data>Low</data>
+				</text>
+				<text ID="Medium">
+					<data>Medium</data>
+				</text>
+				<text ID="High">
+					<data>High</data>
+				</text>
+				<text ID="Exodus">
+					<data>Exodus</data>
+				</text>
+				<text ID="Empire">
+					<data>Empire</data>
+				</text>
+				<text ID="Harkback">
+					<data>Harkback</data>
+				</text>
+				<text ID="Open">
+					<data>Open</data>
+				</text>
+				<text ID="Closed">
+					<data>Closed</data>
+				</text>
+				<text ID="Player">
+					<data>Player</data>
+				</text>
+				<text ID="AI">
+				</text>
+				<text ID="Clan">
+					<data>Clan </data>
+				</text>
+				<text ID="AI (Easy)">
+					<data>AI (Easy)</data>
+				</text>
+				<text ID="AI (Normal)">
+					<data>AI (Norm)</data>
+				</text>
+				<text ID="AI (Hard)">
+					<data>AI (Hard)</data>
+				</text>
+				<text ID="Year">
+					<data>Year </data>
+				</text>
+				<text ID="GameSpy">
+					<data>GameSpy</data>
+				</text>
+				<text ID="Peer2Peer">
+					<data>Peer to peer</data>
+				</text>
+				<text ID="Fast">
+					<data>Fast</data>
+				</text>
+				<text ID="Performance">
+					<data>Performance</data>
+				</text>
+				<text ID="Max">
+					<data>Max</data>
+				</text>
+				<text ID="Extreme">
+					<data>Extreme</data>
+				</text>
+				<text ID="Custom">
+					<data>Custom</data>
+				</text>
+			</text_group>
+			<text_group ID="Stats">
+				<text ID="Name">
+					<data>&amp;F6C43FNAME</data>
+				</text>
+				<text ID="CoverEff">
+					<data>&amp;F6C43FCOVER
+EFFICIENCY</data>
+				</text>
+				<text ID="Energy">
+					<data>&amp;F6C43FENERGY</data>
+				</text>
+				<text ID="LeveledArea">
+					<data>&amp;F6C43FLEVELED
+AREA</data>
+				</text>
+				<text ID="Scourge">
+					<data>&amp;F6C43FSCOURGE
+KILLED</data>
+				</text>
+				<text ID="Total">
+					<data>&amp;DB2B00TOTAL</data>
+				</text>
+				<text ID="TotalScore">
+					<data>&amp;DB2B00TOTAL
+SCORE</data>
+				</text>
+				<text ID="General">
+					<data>&amp;F6C43FGENERAL
+SCORE</data>
+				</text>
+				<text ID="Units">
+					<data>&amp;F6C43FUNITS
+SCORE</data>
+				</text>
+				<text ID="Buildings">
+					<data>&amp;F6C43FBUILDINGS
+SCORE</data>
+				</text>
+				<text ID="UnitsProduced">
+					<data>&amp;F6C43FPRODUCED</data>
+				</text>
+				<text ID="UnitsKilled">
+					<data>&amp;F6C43FKILLED</data>
+				</text>
+				<text ID="UnitsLost">
+					<data>&amp;F6C43FLOST</data>
+				</text>
+				<text ID="BuildingsBuilt">
+					<data>&amp;F6C43FBUILT</data>
+				</text>
+				<text ID="BuildingsRazed">
+					<data>&amp;F6C43FRAZED</data>
+				</text>
+				<text ID="BuildingsLost">
+					<data>&amp;F6C43FLOST</data>
+				</text>
+			</text_group>
+			<text_group ID="EmptyName">
+				<text ID="NewPlayer">
+					<data>NewPlayer</data>
+				</text>
+			</text_group>
+		</text_group>
+		<text_group ID="Labels">
+			<text ID="Hold">
+				<data>HOLD</data>
+			</text>
+			<text ID="Units">
+				<data>Units %d/%d</data>
+			</text>
+			<text ID="TotalTime">
+				<data>Total time: </data>
+			</text>
+		</text_group>
+		<text ID="Credits">
+			<data>&amp;66CCFFK-D LAB&amp;FFFFFF
+
+Andrey &quot;KranK&quot; Kouzmine
+&amp;CCCCFFProducer&amp;FFFFFF
+Game Concept, Game Universe,
+Scenarios
+
+Yulia &quot;Ylitka&quot; Shaposhnikova
+&amp;CCCCFFLead Game Designer&amp;FFFFFF
+Missions, AI Scripting
+
+Evgeny &quot;GEorGE&quot; Novikov
+&amp;CCCCFFProject Manager&amp;FFFFFF
+Game design, Tools, Balancing
+
+Alexander &quot;Sicher&quot; Kotliar
+&amp;CCCCFFLead Programmer&amp;FFFFFF
+Architecture, Logic, AI
+
+Vlad Spizky 
+&amp;CCCCFFLead Artist&amp;FFFFFF 
+Graphic Design, Art,
+Models, Special Effects
+
+Dmitry &quot;Balmer&quot; Poskryakov 
+&amp;CCCCFFProgrammer&amp;FFFFFF 
+Technology, Logic,
+Optimization, Special Effects
+
+Alexander &quot;Scmorr&quot; Porechnov
+&amp;CCCCFFProgrammer&amp;FFFFFF
+Interface, Tools, Technology
+
+Eugene &quot;Steeler&quot; Hudenko
+&amp;CCCCFFProgrammer&amp;FFFFFF
+Logic, Sound
+
+Alexey &quot;Ivn&quot; Ivanov
+&amp;CCCCFFProgrammer&amp;FFFFFF
+Technology, Landscape Editor,
+Network
+
+Gennady Teplenko
+&amp;CCCCFF3D Artist&amp;FFFFFF
+Models, Art, Textures
+
+Oleg &quot;White&quot; Belyaev 
+&amp;CCCCFF2D Artist, World Designer&amp;FFFFFF
+Art, Maps, Textures
+
+Anna &quot;Kemushi&quot; Namestnik
+&amp;CCCCFFWorld Designer&amp;FFFFFF
+Maps, Textures
+
+Ilya Shvetsov
+&amp;CCCCFFProgrammer&amp;FFFFFF
+Tools
+
+Marina &quot;catfish&quot; Guseva
+&amp;CCCCFFQA Manager&amp;FFFFFF
+
+Michail &quot;ChSnark&quot; Piskounov
+&amp;CCCCFFLiterary Content, Scenarios&amp;FFFFFF
+
+Vadim Chaly
+&amp;CCCCFFSound Designer&amp;FFFFFF
+
+&amp;9966FFMusic&amp;FFFFFF
+Victor &quot;Ruber&quot; Krasnokutsky
+Maxim Sergeev
+
+&amp;9966FFAdditional Programming&amp;FFFFFF
+Andrey Sukhanov
+Igor Vassilenko
+Michail Zhinko
+
+&amp;9966FFAdditional Optimization&amp;FFFFFF
+Andrey &quot;shodan&quot; Aksyonov
+
+&amp;9966FFAdditional Graphic Design&amp;FFFFFF
+Roman &quot;Guro&quot; Gunyavy
+
+&amp;66CCFF 1C Company&amp;FFFFFF 
+
+Yuri Miroshnikov
+&amp;CCCCFFProducer&amp;FFFFFF
+
+Sergey Gerasev
+&amp;CCCCFFExecutive Producer&amp;FFFFFF
+
+Nikolay Baryshnikov
+&amp;CCCCFFP.R., Marketing, Licensing&amp;FFFFFF
+
+&amp;9966FFArt&amp;FFFFFF
+Ilya Fofanov
+Yakovlev Sergey
+Krupinin Vladislav
+
+&amp;66CCFF CODEMASTERS&amp;FFFFFF
+
+&amp;9966FFProduct Development&amp;FFFFFF
+
+Sean Griffiths 
+&amp;CCCCFFDevelopment Manager&amp;FFFFFF
+
+Andrew Wafer 
+&amp;CCCCFFLead Game Designer&amp;FFFFFF
+
+Joe Falke
+&amp;CCCCFFAdditional Design and Balancing&amp;FFFFFF
+
+&amp;9966FFMarketing&amp;FFFFFF
+David Alcock
+Graphic Design
+
+Andy Hack 
+
+Chris Hines
+&amp;CCCCFFManual, Pack &amp; Copy&amp;FFFFFF
+
+Charlotte Brown
+&amp;CCCCFFProduct Management&amp;FFFFFF
+
+Michael Rowland
+&amp;CCCCFFCommunity Liaison&amp;FFFFFF 
+
+&amp;9966FFQA&amp;FFFFFF
+Anthony Cooper 
+&amp;CCCCFFQA Team Leader&amp;FFFFFF
+
+Alastair Bowers
+Chris Wassell
+Ian Brown
+Jason Wakelam
+Jeremy Bamber
+John Aitken
+John Ultsch
+Johnathan Treacy
+Julian Price
+Keith Tsang
+Marco Rulhoff
+Paul Howes
+Philip Henderson
+Roger Garner
+Simon Bunyard
+
+&amp;9966FFCompatibility&amp;FFFFFF
+Gary Cody
+Martin Hawkins
+Phillip Henderson
+
+&amp;9966FFP.R.&amp;FFFFFF
+Rich Eddy
+Max Everingham
+
+&amp;9966FFWeb Design&amp;FFFFFF
+Gareth Flavell
+Adam Lee
+Chris Rosser 
+
+&amp;9966FFLegal&amp;FFFFFF
+Nav Sunner
+
+
+&amp;9966FFVideo&amp;FFFFFF
+
+&amp;66CCFF TriDigitalStudio&amp;FFFFFF
+
+Shagin Mikhail
+3D Artist, 3D Animator
+Visual Effects
+
+Tomin Alexey
+3D Artist
+
+Kovyzin Andrey
+3D Artist
+
+Medvedev Andrey
+Storyboard Artist
+
+Shubin Vitaly
+3D Animator
+
+Penkov Valentin
+3D Artist
+
+Mazevich Natalia
+Painter
+
+Ochirov Viktor
+3D Artist
+
+Litke Andrey
+Animator
+
+Gridchine Anton
+Visual Effects
+
+Skachinsky Konstanin
+Storyboard Artist
+
+Korshunov Alexander
+3D Artist
+
+Kuhary Dmitry
+Visual Effects
+
+Saranchin Konstantin
+3D Artist
+
+Moshkin Vyacheslav
+3D Artist
+
+&amp;66CCFF Artisan3D&amp;FFFFFF
+
+Morozov Dmitry
+3D Artist, 3D Animator
+Visual Effects
+
+Moskalenko Alexey
+3D Artist, 3D Animator
+Visual Effects
+
+Arkhipova Anna
+Painter
+
+Popov Alexander
+Visual Effects
+
+
+
+Uses Bink Video. Copyright (C) 1997-2003 by RAD Game Tools, Inc.
+
+Ogg Vorbis is a trademark (tm) of Xiph.Org. Copyright (C) 1994-2003 Xiph.Org.
+
+</data>
+		</text>
+		<text ID="DemoCredits">
+			<data>PERIMETER DEMO 
+March 2004
+
+Developed by K-D LAB 
+Licensed by 1C Company
+Published by Codemasters
+
+www.codemasters.com/perimeter
+games.1c.ru/perimeter
+www.kdlab.com/perimeter
+</data>
+		</text>
+		<text ID="MultiplayerDemoCredits">
+			<data>PERIMETER MP DEMO 
+May 2004
+
+Developed by K-D LAB 
+Licensed by 1C Company
+Published by Codemasters
+
+www.codemasters.com/perimeter
+games.1c.ru/perimeter
+www.kdlab.com/perimeter
+</data>
+		</text>
+	</text_group>
+	<text_group ID="Mission Description">
+		<comment>Описание миcсий в окне загрузки миссии.</comment>
+		<text_group ID="Mission 00">
+			<text ID="Desc">
+				<data>&amp;FFFF00EASTER
+&amp;FFFFFFEvacuate by taking your Frame through the Omega portal before this world tears itself apart.</data>
+				<comment>Проведите Фрейм к Омега-Порталу используя Энерго-Ядра.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 01">
+			<text ID="Desc">
+				<data>&amp;FFFF00ELDRUID
+&amp;FFFFFFInstall your Frame onto the surface. Protect if from the Scourge advance using the Perimeter field defence system. Once the Spiral is charged exit the world through the portal.</data>
+				<comment>Выжить и совершить прыжок через Омега-Портал.
+Спираль Фрейма должна быть предварительно заряжена.
+Не позволить Фрейму получить повреждения от Скверны.</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 02">
+			<text ID="Desc">
+				<data>&amp;FFFF00PYRAMIDA
+&amp;FFFFFFExpand the energy system to capture two of the Collectors for research. Use soldier units created in factories to defend the collectors from the Scourge.</data>
+				<comment>- усилить энерго-систему
+- защитить Коллекторы с помощью базовых сквадов
+- захватить два удаленных Коллектора</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 03">
+			<text ID="Desc">
+				<data>&amp;FFFF00ISOLAND
+&amp;FFFFFFSave our Frame by destroying all Scourge emitting nests.</data>
+				<comment>- сделать летных юнитов
+- перелететь на остров и уничтожить Гнездо </comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 04">
+			<text ID="Desc">
+				<data>&amp;FFFF00CROMANYON
+&amp;FFFFFFBuild stationary gun turrets to defend against the Scourge. Complete the construction of the Omega portal and proceed forward through it.</data>
+				<comment>- построить Лазерную Пушку против Скверны
+- усовершенствовать Омега-Портал
+- зарядить Спираль
+- покинуть мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 05">
+			<text ID="Desc">
+				<data>&amp;FFFF00VULCAN
+&amp;FFFFFFBuild Energy Cores at the specified co-ordinates to reveal the Alpha portal construction site. Remember, building Core generators over Scourge emanation sites will prevent them from breaking through the surface.</data>
+				<comment>- построить Энерго-Ядра на специально обозначенных местах
+- построить Альфа-Портал
+- покинуть мир через  Альфа-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 06">
+			<text ID="Desc">
+				<data>&amp;FFFF00ABDULA
+&amp;FFFFFFInvestigate Frame Routers strange behaviour.</data>
+				<comment>- захватить Бомбовую Лабораторию
+- захватить две Гаубицы быстрее врага
+- не дать врагу захватить три Гаубицы</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 07">
+			<text ID="Desc">
+				<data>&amp;FFFF00BIODAMAGE
+&amp;FFFFFFPrevent Zodiac’s sacrilegious attempt to move back down the Chain of Worlds by forcing them to disengage from the surface without a fully charged Spiral. Then leave through the Alpha Portal.</data>
+				<comment>- не дать вражескому Фрейму зарядить Спираль и покинуть мир через Альфа-Портал
+- покинуть мир через Альфа-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 08">
+			<text ID="Desc">
+				<data>&amp;FFFF00KRUGH
+&amp;FFFFFFPrevent the enemy Frame from capturing our Frame or the Omega portal. Do not destroy the enemy. Charge the Spiral and flee!
+You can capture an enemy’s Energy Core by raising Perimeter around it.</data>
+				<comment>- не дать врагу захватить Омега-Портал
+- не дать врагу захватить ваш Фрейм
+- захватить Омега-Портал
+- усовершенствовать Омега-Портал
+- зарядить Спираль и покинуть мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 09">
+			<text ID="Desc">
+				<data>&amp;FFFF00RAGAR
+&amp;FFFFFFBreak through the enemies defences and leave through the Alpha Portal.</data>
+				<comment>- найти путь к Альфе через плотное окружение противника</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 10">
+			<text ID="Desc">
+				<data>&amp;FFFF00XMARS
+&amp;FFFFFFCapture Frame Existor in the name of the Empire.</data>
+				<comment>- захватить вражеский Фрейм</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 11">
+			<text ID="Desc">
+				<data>&amp;FFFF00HISTERRA
+&amp;FFFFFFPrevent the enemy from escaping through the Omega Portal by forcing their Frame to uninstall from the surface. This will stop their Spiral from charging. Then capture their Frame.</data>
+				<comment>- не позволить вражескому Фрейму покинуть мир через Омега-Портал
+- деинсталлировать вражеский Фрейм чтобы прервать зарядку Спирали
+- захватить Омега-Портал и покинуть мир</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 12">
+			<text ID="Desc">
+				<data>&amp;FFFF00ZABRICK
+&amp;FFFFFFLocate the Alpha portal construction site by building Cores in the areas designated by Spirits.  Legate, make the best possible use of our technology to battle against the Scourge and the strong geological forces of this world.</data>
+				<comment>- построить Ядра на специальных местах
+- построить Альфа-Портал до того как одно из Ядер на специальном месте уничтожено</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 13">
+			<data>Construct an Omega Portal and escape the world.</data>
+			<text ID="Desc">
+				<data>&amp;FFFF00CLOX
+&amp;FFFFFFbuild an Omega-portal; jump to a new world via Omega-Portal;</data>
+				<comment>- построить Омега-Портал
+- прыгнуть на новый мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 14">
+			<text ID="Desc">
+				<data>&amp;FFFF00MOULD
+&amp;FFFFFFLeave this world via the Alpha Portal located above the enemy base.</data>
+				<comment>- подойти к Альфа-Порталу и покинуть мир</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 15">
+			<text ID="Desc">
+				<data>&amp;FFFF00ALIENTRANCE
+&amp;FFFFFFLeave through the Omega Portal. Deactivate volcanoes by terraforming and then supplying energy to the surface.</data>
+				<comment>- захватить Омега-Портал
+- деактивировать мины на пути к Омега-Порталу
+- захватить Омега-Портал
+- покинуть мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 16">
+			<text ID="Desc">
+				<data>&amp;FFFF00ROOT
+&amp;FFFFFFFree the Alpha Portal and proceed to Earth!</data>
+				<comment>- приблизиться к Альфа-Порталу
+- вернуться на Землю через Альфа-Портал
+- построить специальную лабораторию для управления Скверной
+- защитить свой Фрейм и специальную лабораторию</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 17">
+			<text ID="Desc">
+				<data>&amp;FFFF00SOTA
+&amp;FFFFFFEliminate the Empire’s Vice-Frame using the Scourge if necessary.</data>
+				<comment>- построить Навигатор Скверны
+- уничтожить Имперского наместника</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 18">
+			<text ID="Desc">
+				<data>&amp;FFFF00SPINE
+&amp;FFFFFFCharge the Spiral, bypass Frame Freeborn and proceed directly through the Omega Portal to world Spine. We must salvage this technology for the Empire!</data>
+				<comment>- захватить Омега-Портал
+- покинуть мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 19">
+			<text ID="Desc">
+				<data>&amp;FFFF00MOUNTIME
+&amp;FFFFFFRemove the threat to our sacred mission by subduing the Empire’s Frame Existor.</data>
+				<comment>- захватить Омега-Портал
+- покинуть мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 20">
+			<text ID="Desc">
+				<data>&amp;FFFF00SPUNGE
+&amp;FFFFFFRecover the Omega portal and destroy Frame Freeborn. The Empire shows no mercy.</data>
+				<comment>- найти Омега-Портал
+- покинуть мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 21">
+			<text ID="Desc">
+				<data>&amp;FFFF00PILLOID
+&amp;FFFFFFPlant the static bomb in close proximity to the Omega Portal and leave the world through the Omega Portal before it detonates.</data>
+				<comment>- захватить Омега-Портал
+- минировать Омега-Портал
+- покинуть мир через Альфа-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 22">
+			<text ID="Desc">
+				<data>&amp;FFFF00ZEROS
+&amp;FFFFFFProceed with caution Legate. We must leave through the Omega Portal whilst ensuring the Vice Frame does not detonate the bomb.</data>
+				<comment>- захватить Омега-Портал
+- разминировать Омега-Портал
+- покинуть мир через Альфа-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 23">
+			<text ID="Desc">
+				<data>&amp;FFFF00NORD
+&amp;FFFFFFBreak through Zodiac’s defences and leave through the Omega Portal. Do not engage the Harkback.</data>
+				<comment>- захватить Омега-Портал до того, как противник покинет мир
+- зарядить Спираль
+- покинуть мир через Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 24">
+			<text ID="Desc">
+				<data>&amp;FFFF00RELIC
+&amp;FFFFFFCapture the Exodus Frame Ark-9.</data>
+				<comment>- изолировать и захватить вражеский Фрейм</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 25">
+			<text ID="Desc">
+				<data>&amp;FFFF00GOT
+&amp;FFFFFFComplete the construction of an Alpha Portal before Frame Ark-9 builds an Omega. Capture the Frame if necessary but do not destroy our brethren.</data>
+				<comment>- построить Альфа-Портал до того, как враг построит Омега-Портал</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission 26">
+			<text ID="Desc">
+				<data>&amp;FFFF00STONEHOOD
+&amp;FFFFFFRid the universe of the Emperor once and for all.</data>
+				<comment>- построить Скаморазрушитель
+- захватить вражеский Фрейм до постройки Баллистической ракетной установки</comment>
+			</text>
+		</text_group>
+		<text_group ID="Mission Tutorial">
+			<text ID="Desc">
+				<data>&amp;FFFF00TUTORIAL
+&amp;FFFFFFLearn how to Terraform land
+Learn how to build structures
+Learn how to manufacture units
+Learn how to nanomorph squads
+Learn how to engage the Scourge</data>
+				<comment>- испытать основные элементы терраформинга
+- построить несколько строений
+- испытать производство базовых юнитов и их морфинг в другой тип</comment>
+			</text>
+		</text_group>
+		<text_group ID="Battle Multi Mission">
+			<text ID="Desc">
+				<data>Capture or destroy the enemy.</data>
+				<comment>Capture or destroy the enemy.</comment>
+			</text>
+		</text_group>
+	</text_group>
+	<text_group ID="Voice Messages">
+		<text_group ID="Exodus">
+			<text ID="Exodus_Voice_Frame_Selected">
+				<data>Frame belongs to you, Legate.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Move_0">
+				<data>Firing thrusters.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Move_1">
+				<data>Moving to co-ordinates.
+</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Move_2">
+				<data>Standby Legate.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Move_3">
+				<data>Moving Frame.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Allarm">
+				<data>Base lock down initiated.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Installed">
+				<data>Frame Installed.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Deinstalled">
+				<data>Frame Disengaged.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Under_Attack_0">
+				<data>Frame under Attack.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Under_Attack_1">
+				<data>Critical danger.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Prod_Started">
+				<data>Development in Progress.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Brigadier_Ready">
+				<data>Brigadier Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_BMaster_Ready">
+				<data>Buildmaster Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_Building_Ready">
+				<data>Construction complete.</data>
+			</text>
+			<text ID="Exodus_Voice_Building_Under_Attack">
+				<data>Base under attack.</data>
+			</text>
+			<text ID="Exodus_Voice_Building_Destroyed">
+				<data>Building Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_Building_Disassembled">
+				<data>Building Disassembled.</data>
+			</text>
+			<text ID="Exodus_Voice_ECore_Ready">
+				<data>Energy Core Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_ECore_Under_Attack">
+				<data>Energy Core under attack.</data>
+			</text>
+			<text ID="Exodus_Voice_ECore_Destroyed">
+				<data>Energy Core Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_Labor_Ready">
+				<data>Laboratory ready.</data>
+			</text>
+			<text ID="Exodus_Voice_Labor_Under_Attack">
+				<data>Lab under attack.</data>
+			</text>
+			<text ID="Exodus_Voice_Labor_Upgrade_Finished">
+				<data>Lab Upgrade Complete.</data>
+			</text>
+			<text ID="Exodus_Voice_Labor_Destroyed">
+				<data>Laboratory Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_LaserGun_Ready">
+				<data>Laser turret ready.</data>
+			</text>
+			<text ID="Exodus_Voice_LaserGun_Destroyed">
+				<data>Laser turret destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_RocketGun_Ready">
+				<data>Rocket Turret ready.</data>
+			</text>
+			<text ID="Exodus_Voice_RocketGun_Destroyed">
+				<data>Rocket Turret Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_HowitzerGun_Ready">
+				<data>Howitzer Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_HowitzerGun_Destroyed">
+				<data>Howitzer Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_SubchaserGun_Ready">
+				<data>Sub-chaser Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_SubchaserGun_Destroyed">
+				<data>Sub-chaser Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_BallisticGun_Ready">
+				<data>Ballistic Missile launcher ready.</data>
+			</text>
+			<text ID="Exodus_Voice_BallisticGun_Charged">
+				<data>Ballistic Missile launcher charged.</data>
+			</text>
+			<text ID="Exodus_Voice_BallisticGun_Destroyed">
+				<data>Ballistic Missile launcher destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_ScourgeNavigator_Ready">
+				<data>ScourgeNaviagor Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_ScourgeNavigator_Charged">
+				<data>ScourgeNaviagor charged.</data>
+			</text>
+			<text ID="Exodus_Voice_ScourgeNavigator_Destroyed">
+				<data>ScourgeNaviagor Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_ScumDisruptor_Ready">
+				<data>ScumDisruptor Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_ScumDisruptor_Charged">
+				<data>ScumDisruptor charged.</data>
+			</text>
+			<text ID="Exodus_Voice_ScumDisruptor_Destroyed">
+				<data>ScumDisruptor Destroyed.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Selected_0">
+				<data>Squad Awaiting orders.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Selected_1">
+				<data>Squad Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Moves_0">
+				<data>Co-ordinates locked.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Moves_1">
+				<data>Moving Squad.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Attacks_1">
+				<data>Engaging hostiles.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Attacks_0">
+				<data>Attack command received.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Under_Attack_0">
+				<data>Squad under attack.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Under_Attack_1">
+				<data>Squad taking damage.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Transform_Start">
+				<data>Transformation initiated.</data>
+			</text>
+			<text ID="Exodus_Voice_Squad_Transform_Finished">
+				<data>Transformation complete.</data>
+			</text>
+			<text ID="Exodus_Voice_Brigadier_Selected">
+				<data>Brigadier online.</data>
+			</text>
+			<text ID="Exodus_Voice_Brigadier_Moves_0">
+				<data>Of course Legate.</data>
+			</text>
+			<text ID="Exodus_Voice_Brigadier_Moves_1">
+				<data>Brigadier moving.</data>
+			</text>
+			<text ID="Exodus_Voice_Brigadier_Back2Frame_0">
+				<data>Returning to Frame.</data>
+			</text>
+			<text ID="Exodus_Voice_Brigadier_Back2Frame_1">
+				<data>Back to Frame command received.</data>
+			</text>
+			<text ID="Exodus_Voice_BMaster_Selected_0">
+				<data>Buildmaster waiting.</data>
+			</text>
+			<text ID="Exodus_Voice_BMaster_Selected_1">
+				<data>Buildmaster online.</data>
+			</text>
+			<text ID="Exodus_Voice_BMaster_Moves_0">
+				<data>Co-ordinates received.</data>
+			</text>
+			<text ID="Exodus_Voice_BMaster_Moves_1">
+				<data>Moving to position.</data>
+			</text>
+			<text ID="Exodus_Voice_BMaster_Back2Frame_0">
+				<data>Returning to Frame.</data>
+			</text>
+			<text ID="Exodus_Voice_MMP_Convert_Command">
+				<data>Transmutation command received.</data>
+			</text>
+			<text ID="Exodus_Voice_Terraforming_Started">
+				<data>Terraforming initiated.</data>
+			</text>
+			<text ID="Exodus_Voice_Terraforming_Finished">
+				<data>Terraforming completed.</data>
+			</text>
+			<text ID="Exodus_Voice_Energy_Not_Enough_0">
+				<data>Insufficient energy.</data>
+			</text>
+			<text ID="Exodus_Voice_Energy_Not_Enough_1">
+				<data>Not enough energy.</data>
+			</text>
+			<text ID="Exodus_Voice_Energy_Not_Enough_2">
+				<data>Energy depleted.</data>
+			</text>
+			<text ID="Exodus_Voice_Energy_Collector_Empty">
+				<data>Collector depleted.</data>
+			</text>
+			<text ID="Exodus_Voice_Energy_Collector_Full">
+				<data>Energy collectors at maximum capacity.</data>
+			</text>
+			<text ID="Exodus_Voice_Energy_Losing">
+				<data>Warning – rapid energy drain detected.</data>
+			</text>
+			<text ID="Exodus_Voice_Energy_Resupply">
+				<data>Energy levels stabilising.</data>
+			</text>
+			<text ID="Exodus_Voice_PShield_Global_Active">
+				<data>Shield activated.</data>
+			</text>
+			<text ID="Exodus_Voice_PShield_Global_Off">
+				<data>Shield deactivated.</data>
+			</text>
+			<text_group ID="Exodus_Voice_PShield_Local_Active">
+				<data>Core Shield generator active.</data>
+			</text_group>
+			<text ID="Exodus_Voice_PShield_Local_Off">
+				<data>Core Shield generator de-active.</data>
+			</text>
+			<text ID="Exodus_Voice_Geological_activity_detected">
+				<data>Geological activity detected.</data>
+			</text>
+			<text_group ID="Exodus_Voice_Volcanic_activity_detected">
+				<data>Volcanic activity detected.</data>
+			</text_group>
+			<text ID="Exodus_Voice_Scourge_activity_detected">
+				<data>Scourge activity detected.</data>
+			</text>
+			<text ID="Exodus_Voice_Spiral_charging">
+				<data>SPIRAL charging.</data>
+			</text>
+			<text ID="Exodus_Voice_Spiral_Charged">
+				<data>SPIIRAL Charged.</data>
+			</text>
+			<text ID="Exodus_Voice_Spiral_not_fully_charged">
+				<data>SPIRAL not fully charged.</data>
+			</text>
+			<text ID="Exodus_Voice_Portal_out_of_range">
+				<data>Portal out of range.</data>
+			</text>
+			<text ID="Exodus_Voice_Objectives_updated">
+				<data>Objectives updated.</data>
+			</text>
+			<text ID="Exodus_Voice_Objective_Complete">
+				<data>Objective Complete.</data>
+			</text>
+			<text ID="Exodus_Voice_Unit_Ready">
+				<data>Unit Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_Units_Ready">
+				<data>Units Ready.</data>
+			</text>
+			<text ID="Exodus_Voice_Terraforming_initiated">
+				<data>Terraforming initiated.</data>
+			</text>
+			<text ID="Exodus_Voice_Terraforming_Completed">
+				<data>Terraforming Completed.</data>
+			</text>
+			<text ID="Exodus_Voice_BMaster_Back2Frame_1">
+				<data>Back to Frame command received.</data>
+			</text>
+			<text ID="Exodus_Voice_Frame_Teleportation">
+				<data>Teleportation initiated.</data>
+			</text>
+			<text ID="Exodus_Voice_Missile_Launch">
+				<data>Missile launch detected</data>
+			</text>
+		</text_group>
+		<text_group ID="Harkback">
+			<text ID="Harkback_Voice_Frame_Selected">
+				<data>Frame belongs to you, Legate.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Move_0">
+				<data>Firing thrusters.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Move_1">
+				<data>Moving to co-ordinates.
+</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Move_2">
+				<data>Standby Legate.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Move_3">
+				<data>Moving Frame.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Allarm">
+				<data>Base lock down initiated.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Installed">
+				<data>Frame Installed.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Deinstalled">
+				<data>Frame Disengaged.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Under_Attack_0">
+				<data>Frame under Attack.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Under_Attack_1">
+				<data>Critical danger.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Prod_Started">
+				<data>Development in Progress.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Brigadier_Ready">
+				<data>Brigadier Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_BMaster_Ready">
+				<data>Buildmaster Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_Building_Ready">
+				<data>Construction complete.</data>
+			</text>
+			<text ID="Harkback_Voice_Building_Under_Attack">
+				<data>Base under attack.</data>
+			</text>
+			<text ID="Harkback_Voice_Building_Destroyed">
+				<data>Building Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_Building_Disassembled">
+				<data>Building Disassembled.</data>
+			</text>
+			<text ID="Harkback_Voice_ECore_Ready">
+				<data>Energy Core Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_ECore_Under_Attack">
+				<data>Energy Core under attack.</data>
+			</text>
+			<text ID="Harkback_Voice_ECore_Destroyed">
+				<data>Energy Core Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_Labor_Ready">
+				<data>Laboratory ready.</data>
+			</text>
+			<text ID="Harkback_Voice_Labor_Under_Attack">
+				<data>Lab under attack.</data>
+			</text>
+			<text ID="Harkback_Voice_Labor_Upgrade_Finished">
+				<data>Lab Upgrade Complete.</data>
+			</text>
+			<text ID="Harkback_Voice_Labor_Destroyed">
+				<data>Laboratory Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_LaserGun_Ready">
+				<data>Laser turret ready.</data>
+			</text>
+			<text ID="Harkback_Voice_LaserGun_Destroyed">
+				<data>Laser turret destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_RocketGun_Ready">
+				<data>Rocket Turret ready.</data>
+			</text>
+			<text ID="Harkback_Voice_RocketGun_Destroyed">
+				<data>Rocket Turret Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_HowitzerGun_Ready">
+				<data>Howitzer Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_HowitzerGun_Destroyed">
+				<data>Howitzer Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_SubchaserGun_Ready">
+				<data>Sub-chaser Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_SubchaserGun_Destroyed">
+				<data>Sub-chaser Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_BallisticGun_Ready">
+				<data>Ballistic Missile launcher ready.</data>
+			</text>
+			<text ID="Harkback_Voice_BallisticGun_Charged">
+				<data>Ballistic Missile launcher charged.</data>
+			</text>
+			<text ID="Harkback_Voice_BallisticGun_Destroyed">
+				<data>Ballistic Missile launcher destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_ScourgeNavigator_Ready">
+				<data>ScourgeNaviagor Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_ScourgeNavigator_Charged">
+				<data>ScourgeNaviagor charged.</data>
+			</text>
+			<text ID="Harkback_Voice_ScourgeNavigator_Destroyed">
+				<data>ScourgeNaviagor Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_ScumDisruptor_Ready">
+				<data>ScumDisruptor Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_ScumDisruptor_Charged">
+				<data>ScumDisruptor charged.</data>
+			</text>
+			<text ID="Harkback_Voice_ScumDisruptor_Destroyed">
+				<data>ScumDisruptor Destroyed.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Selected_0">
+				<data>Squad Awaiting orders.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Selected_1">
+				<data>Squad Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Moves_0">
+				<data>Co-ordinates locked.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Moves_1">
+				<data>Moving Squad.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Attacks_1">
+				<data>Engaging hostiles.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Attacks_0">
+				<data>Attack command received.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Under_Attack_0">
+				<data>Squad under attack.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Under_Attack_1">
+				<data>Squad taking damage.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Transform_Start">
+				<data>Transformation initiated.</data>
+			</text>
+			<text ID="Harkback_Voice_Squad_Transform_Finished">
+				<data>Transformation complete.</data>
+			</text>
+			<text ID="Harkback_Voice_Brigadier_Selected">
+				<data>Brigadier online.</data>
+			</text>
+			<text ID="Harkback_Voice_Brigadier_Moves_0">
+				<data>Of course Legate.</data>
+			</text>
+			<text ID="Harkback_Voice_Brigadier_Moves_1">
+				<data>Brigadier moving.</data>
+			</text>
+			<text ID="Harkback_Voice_Brigadier_Back2Frame_0">
+				<data>Returning to Frame.</data>
+			</text>
+			<text ID="Harkback_Voice_Brigadier_Back2Frame_1">
+				<data>Back to Frame command received.</data>
+			</text>
+			<text ID="Harkback_Voice_BMaster_Selected_0">
+				<data>Buildmaster waiting.</data>
+			</text>
+			<text ID="Harkback_Voice_BMaster_Selected_1">
+				<data>Buildmaster online.</data>
+			</text>
+			<text ID="Harkback_Voice_BMaster_Moves_0">
+				<data>Co-ordinates received.</data>
+			</text>
+			<text ID="Harkback_Voice_BMaster_Moves_1">
+				<data>Moving to position.</data>
+			</text>
+			<text ID="Harkback_Voice_BMaster_Back2Frame_0">
+				<data>Returning to Frame.</data>
+			</text>
+			<text ID="Harkback_Voice_MMP_Convert_Command">
+				<data>Transmutation command received.</data>
+			</text>
+			<text ID="Harkback_Voice_Terraforming_Started">
+				<data>Terraforming initiated.</data>
+			</text>
+			<text ID="Harkback_Voice_Terraforming_Finished">
+				<data>Terraforming completed.</data>
+			</text>
+			<text ID="Harkback_Voice_Energy_Not_Enough_0">
+				<data>Insufficient energy.</data>
+			</text>
+			<text ID="Harkback_Voice_Energy_Not_Enough_1">
+				<data>Not enough energy.</data>
+			</text>
+			<text ID="Harkback_Voice_Energy_Not_Enough_2">
+				<data>Energy depleted.</data>
+			</text>
+			<text ID="Harkback_Voice_Energy_Collector_Empty">
+				<data>Collector depleted.</data>
+			</text>
+			<text ID="Harkback_Voice_Energy_Collector_Full">
+				<data>Energy collectors at maximum capacity.</data>
+			</text>
+			<text ID="Harkback_Voice_Energy_Losing">
+				<data>Warning – rapid energy drain detected.</data>
+			</text>
+			<text ID="Harkback_Voice_Energy_Resupply">
+				<data>Energy levels stabilising.</data>
+			</text>
+			<text ID="Harkback_Voice_PShield_Global_Active">
+				<data>Shield activated.</data>
+			</text>
+			<text ID="Harkback_Voice_PShield_Global_Off">
+				<data>Shield deactivated.</data>
+			</text>
+			<text_group ID="Harkback_Voice_PShield_Local_Active">
+				<data>Core Shield generator active.</data>
+			</text_group>
+			<text ID="Harkback_Voice_PShield_Local_Off">
+				<data>Core Shield generator de-active.</data>
+			</text>
+			<text ID="Harkback_Voice_Geological_activity_detected">
+				<data>Geological activity detected.</data>
+			</text>
+			<text_group ID="Harkback_Voice_Volcanic_activity_detected">
+				<data>Volcanic activity detected.</data>
+			</text_group>
+			<text ID="Harkback_Voice_Scourge_activity_detected">
+				<data>Scourge activity detected.</data>
+			</text>
+			<text ID="Harkback_Voice_Spiral_charging">
+				<data>SPIRAL charging.</data>
+			</text>
+			<text ID="Harkback_Voice_Spiral_Charged">
+				<data>SPIIRAL Charged.</data>
+			</text>
+			<text ID="Harkback_Voice_Spiral_not_fully_charged">
+				<data>SPIRAL not fully charged.</data>
+			</text>
+			<text ID="Harkback_Voice_Portal_out_of_range">
+				<data>Portal out of range.</data>
+			</text>
+			<text ID="Harkback_Voice_Objectives_updated">
+				<data>Objectives updated.</data>
+			</text>
+			<text ID="Harkback_Voice_Objective_Complete">
+				<data>Objective Complete.</data>
+			</text>
+			<text ID="Harkback_Voice_Unit_Ready">
+				<data>Unit Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_Units_Ready">
+				<data>Units Ready.</data>
+			</text>
+			<text ID="Harkback_Voice_Terraforming_initiated">
+				<data>Terraforming initiated.</data>
+			</text>
+			<text ID="Harkback_Voice_Terraforming_Completed">
+				<data>Terraforming Completed.</data>
+			</text>
+			<text ID="Harkback_Voice_BMaster_Back2Frame_1">
+				<data>Back to Frame command received.</data>
+			</text>
+			<text ID="Harkback_Voice_Frame_Teleportation">
+				<data>Teleportation initiated.</data>
+			</text>
+			<text ID="Harkback_Voice_Missile_Launch">
+				<data>Missile launch detected</data>
+			</text>
+		</text_group>
+		<text_group ID="Empire">
+			<text ID="Empire_Voice_Frame_Selected">
+				<data>Frame belongs to you, Legate.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Move_0">
+				<data>Firing thrusters.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Move_1">
+				<data>Moving to co-ordinates.
+</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Move_2">
+				<data>Standby Legate.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Move_3">
+				<data>Moving Frame.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Allarm">
+				<data>Base lock down initiated.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Installed">
+				<data>Frame Installed.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Deinstalled">
+				<data>Frame Disengaged.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Under_Attack_0">
+				<data>Frame under Attack.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Under_Attack_1">
+				<data>Critical danger.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Prod_Started">
+				<data>Development in Progress.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Brigadier_Ready">
+				<data>Brigadier Ready.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_BMaster_Ready">
+				<data>Buildmaster Ready.</data>
+			</text>
+			<text ID="Empire_Voice_Building_Ready">
+				<data>Construction complete.</data>
+			</text>
+			<text ID="Empire_Voice_Building_Under_Attack">
+				<data>Base under attack.</data>
+			</text>
+			<text ID="Empire_Voice_Building_Destroyed">
+				<data>Building Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_Building_Disassembled">
+				<data>Building Disassembled.</data>
+			</text>
+			<text ID="Empire_Voice_ECore_Ready">
+				<data>Energy Core Ready.</data>
+			</text>
+			<text ID="Empire_Voice_ECore_Under_Attack">
+				<data>Energy Core under attack.</data>
+			</text>
+			<text ID="Empire_Voice_ECore_Destroyed">
+				<data>Energy Core Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_Labor_Ready">
+				<data>Laboratory ready.</data>
+			</text>
+			<text ID="Empire_Voice_Labor_Under_Attack">
+				<data>Lab under attack.</data>
+			</text>
+			<text ID="Empire_Voice_Labor_Upgrade_Finished">
+				<data>Lab Upgrade Complete.</data>
+			</text>
+			<text ID="Empire_Voice_Labor_Destroyed">
+				<data>Laboratory Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_LaserGun_Ready">
+				<data>Laser turret ready.</data>
+			</text>
+			<text ID="Empire_Voice_LaserGun_Destroyed">
+				<data>Laser turret destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_RocketGun_Ready">
+				<data>Rocket Turret ready.</data>
+			</text>
+			<text ID="Empire_Voice_RocketGun_Destroyed">
+				<data>Rocket Turret Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_HowitzerGun_Ready">
+				<data>Howitzer Ready.</data>
+			</text>
+			<text ID="Empire_Voice_HowitzerGun_Destroyed">
+				<data>Howitzer Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_SubchaserGun_Ready">
+				<data>Sub-chaser Ready.</data>
+			</text>
+			<text ID="Empire_Voice_SubchaserGun_Destroyed">
+				<data>Sub-chaser Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_BallisticGun_Ready">
+				<data>Ballistic Missile launcher ready.</data>
+			</text>
+			<text ID="Empire_Voice_BallisticGun_Charged">
+				<data>Ballistic Missile launcher charged.</data>
+			</text>
+			<text ID="Empire_Voice_BallisticGun_Destroyed">
+				<data>Ballistic Missile launcher destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_ScourgeNavigator_Ready">
+				<data>ScourgeNaviagor Ready.</data>
+			</text>
+			<text ID="Empire_Voice_ScourgeNavigator_Charged">
+				<data>ScourgeNaviagor charged.</data>
+			</text>
+			<text ID="Empire_Voice_ScourgeNavigator_Destroyed">
+				<data>ScourgeNaviagor Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_ScumDisruptor_Ready">
+				<data>ScumDisruptor Ready.</data>
+			</text>
+			<text ID="Empire_Voice_ScumDisruptor_Charged">
+				<data>ScumDisruptor charged.</data>
+			</text>
+			<text ID="Empire_Voice_ScumDisruptor_Destroyed">
+				<data>ScumDisruptor Destroyed.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Selected_0">
+				<data>Squad Awaiting orders.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Selected_1">
+				<data>Squad Ready.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Moves_0">
+				<data>Co-ordinates locked.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Moves_1">
+				<data>Moving Squad.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Attacks_1">
+				<data>Engaging hostiles.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Attacks_0">
+				<data>Attack command received.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Under_Attack_0">
+				<data>Squad under attack.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Under_Attack_1">
+				<data>Squad taking damage.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Transform_Start">
+				<data>Transformation initiated.</data>
+			</text>
+			<text ID="Empire_Voice_Squad_Transform_Finished">
+				<data>Transformation complete.</data>
+			</text>
+			<text ID="Empire_Voice_Brigadier_Selected">
+				<data>Brigadier online.</data>
+			</text>
+			<text ID="Empire_Voice_Brigadier_Moves_0">
+				<data>Of course Legate.</data>
+			</text>
+			<text ID="Empire_Voice_Brigadier_Moves_1">
+				<data>Brigadier moving.</data>
+			</text>
+			<text ID="Empire_Voice_Brigadier_Back2Frame_0">
+				<data>Returning to Frame.</data>
+			</text>
+			<text ID="Empire_Voice_Brigadier_Back2Frame_1">
+				<data>Back to Frame command received.</data>
+			</text>
+			<text ID="Empire_Voice_BMaster_Selected_0">
+				<data>Buildmaster waiting.</data>
+			</text>
+			<text ID="Empire_Voice_BMaster_Selected_1">
+				<data>Buildmaster online.</data>
+			</text>
+			<text ID="Empire_Voice_BMaster_Moves_0">
+				<data>Co-ordinates received.</data>
+			</text>
+			<text ID="Empire_Voice_BMaster_Moves_1">
+				<data>Moving to position.</data>
+			</text>
+			<text ID="Empire_Voice_BMaster_Back2Frame_0">
+				<data>Returning to Frame.</data>
+			</text>
+			<text ID="Empire_Voice_MMP_Convert_Command">
+				<data>Transmutation command received.</data>
+			</text>
+			<text ID="Empire_Voice_Terraforming_Started">
+				<data>Terraforming initiated.</data>
+			</text>
+			<text ID="Empire_Voice_Terraforming_Finished">
+				<data>Terraforming completed.</data>
+			</text>
+			<text ID="Empire_Voice_Energy_Not_Enough_0">
+				<data>Insufficient energy.</data>
+			</text>
+			<text ID="Empire_Voice_Energy_Not_Enough_1">
+				<data>Not enough energy.</data>
+			</text>
+			<text ID="Empire_Voice_Energy_Not_Enough_2">
+				<data>Energy depleted.</data>
+			</text>
+			<text ID="Empire_Voice_Energy_Collector_Empty">
+				<data>Collector depleted.</data>
+			</text>
+			<text ID="Empire_Voice_Energy_Collector_Full">
+				<data>Energy collectors at maximum capacity.</data>
+			</text>
+			<text ID="Empire_Voice_Energy_Losing">
+				<data>Warning – rapid energy drain detected.</data>
+			</text>
+			<text ID="Empire_Voice_Energy_Resupply">
+				<data>Energy levels stabilising.</data>
+			</text>
+			<text ID="Empire_Voice_PShield_Global_Active">
+				<data>Shield activated.</data>
+			</text>
+			<text ID="Empire_Voice_PShield_Global_Off">
+				<data>Shield deactivated.</data>
+			</text>
+			<text_group ID="Empire_Voice_PShield_Local_Active">
+				<data>Core Shield generator active.</data>
+			</text_group>
+			<text ID="Empire_Voice_PShield_Local_Off">
+				<data>Core Shield generator de-active.</data>
+			</text>
+			<text ID="Empire_Voice_Geological_activity_detected">
+				<data>Geological activity detected.</data>
+			</text>
+			<text_group ID="Empire_Voice_Volcanic_activity_detected">
+				<data>Volcanic activity detected.</data>
+			</text_group>
+			<text ID="Empire_Voice_Scourge_activity_detected">
+				<data>Scourge activity detected.</data>
+			</text>
+			<text ID="Empire_Voice_Spiral_charging">
+				<data>SPIRAL charging.</data>
+			</text>
+			<text ID="Empire_Voice_Spiral_Charged">
+				<data>SPIIRAL Charged.</data>
+			</text>
+			<text ID="Empire_Voice_Spiral_not_fully_charged">
+				<data>SPIRAL not fully charged.</data>
+			</text>
+			<text ID="Empire_Voice_Portal_out_of_range">
+				<data>Portal out of range.</data>
+			</text>
+			<text ID="Empire_Voice_Objectives_updated">
+				<data>Objectives updated.</data>
+			</text>
+			<text ID="Empire_Voice_Objective_Complete">
+				<data>Objective Complete.</data>
+			</text>
+			<text ID="Empire_Voice_Unit_Ready">
+				<data>Unit Ready.</data>
+			</text>
+			<text ID="Empire_Voice_Units_Ready">
+				<data>Units Ready.</data>
+			</text>
+			<text ID="Empire_Voice_Terraforming_initiated">
+				<data>Terraforming initiated.</data>
+			</text>
+			<text ID="Empire_Voice_Terraforming_Completed">
+				<data>Terraforming Completed.</data>
+			</text>
+			<text ID="Empire_Voice_BMaster_Back2Frame_1">
+				<data>Back to Frame command received.</data>
+			</text>
+			<text ID="Empire_Voice_Frame_Teleportation">
+				<data>Teleportation initiated.</data>
+			</text>
+			<text ID="Empire_Voice_Missile_launch">
+				<data>Missile launch detected</data>
+			</text>
+		</text_group>
+	</text_group>
+	<text_group ID="Config">
+		<text_group ID="ComboItems">
+			<text ID="Custom">
+				<data>Custom</data>
+			</text>
+			<text ID="Fast">
+				<data>Fast</data>
+			</text>
+			<text ID="Max">
+				<data>Max</data>
+			</text>
+			<text ID="Performance">
+				<data>Performance</data>
+			</text>
+			<text ID="Extreme">
+				<data>Extreme</data>
+			</text>
+			<text ID="High">
+				<data>High</data>
+			</text>
+			<text ID="Low">
+				<data>Low</data>
+			</text>
+			<text ID="Medium">
+				<data>Medium</data>
+			</text>
+			<text ID="Off">
+				<data>Off</data>
+			</text>
+		</text_group>
+		<text_group ID="Controls">
+			<text ID="STATIC_LANGUAGE">
+				<data>Language</data>
+			</text>
+			<text ID="STATIC_HT">
+				<data>Multiprocessor(HT)</data>
+			</text>
+			<text ID="RADIO_MULTIPROC_NO">
+				<data>No</data>
+			</text>
+			<text ID="RADIO_MULTIPROC_AUTO">
+				<data>Autodetect</data>
+			</text>
+			<text ID="PROPPAGE_MISC">
+				<data>Misc</data>
+			</text>
+			<text ID="STATIC_RESOLUTION">
+				<data>Resolution</data>
+			</text>
+			<text ID="STATIC_PRESET">
+				<data>Preset</data>
+			</text>
+			<text ID="STATIC_COLOR_DEPTH">
+				<data>Color depth</data>
+			</text>
+			<text ID="PROPPAGE_GRAPH">
+				<data>Graphics</data>
+			</text>
+			<text ID="PROPPAGE_SOUND">
+				<data>Sound</data>
+			</text>
+			<text ID="CHECK_SOUND_EFFECTS">
+				<data>Sound effects</data>
+			</text>
+			<text ID="STATIC_SOUND_VOLUME">
+				<data>Sound volume</data>
+			</text>
+			<text ID="CHECK_MUSIC">
+				<data>Music</data>
+			</text>
+			<text ID="STATIC_MUSIC_VOLUME">
+				<data>Music volume</data>
+			</text>
+			<text ID="CHECK_TOOL_TIPS">
+				<data>Tool tips</data>
+			</text>
+			<text ID="STATIC_MOUSE_LOOK_RATE">
+				<data>Mouse look rate</data>
+			</text>
+			<text ID="STATIC_SCROLL_RATE">
+				<data>Scroll rate</data>
+			</text>
+			<text ID="PROPPAGE_GAME">
+				<data>Game</data>
+			</text>
+			<text ID="CHECK_REFLECTION">
+				<data>Reflection</data>
+			</text>
+			<text ID="CHECK_OCCLUSION">
+				<data>Occlusion</data>
+			</text>
+			<text ID="CHECK_POINT_LIGHT">
+				<data>Point light</data>
+			</text>
+			<text ID="CHECK_BUMP_MAPPING">
+				<data>Bump mapping</data>
+			</text>
+			<text ID="CHECK_BUMP_CHAOS">
+				<data>Bump chaos</data>
+			</text>
+			<text ID="STATIC_PARTICLE_RATE">
+				<data>Particle rate</data>
+			</text>
+			<text ID="CHECK_FAVORITE_LOAD_DDS">
+				<data>Compress textures</data>
+			</text>
+			<text ID="RADIO_SHADOW_TYPE1">
+				<data>Shadow map</data>
+			</text>
+			<text ID="RADIO_SHADOW_TYPE2">
+				<data>Self shadow types</data>
+			</text>
+			<text ID="COMBO_MAP_LEVEL_LOD">
+			</text>
+			<text ID="STATIC_SHADOW_SAMPLES">
+				<data>Shadow samples</data>
+			</text>
+			<text ID="STATIC_MAP_LEVEL_LOD">
+				<data>Landscape details</data>
+			</text>
+			<text ID="STATIC_SHADOW_TYPE">
+				<data>Shadow type</data>
+			</text>
+			<text ID="STATIC_SHADOW_QUALITY">
+				<data>Shadow quality</data>
+			</text>
+			<text ID="DLG_CUSTOM_GRAPH_CAPTION">
+				<data>Graphics custom settings</data>
+			</text>
+			<text ID="IDCANCEL">
+				<data>Cancel</data>
+			</text>
+			<text ID="PROPPAGE_ABOUT">
+				<data>About...</data>
+			</text>
+		</text_group>
+	</text_group>
+	<text_group ID="Mission Frames">
+		<data>Ark-9</data>
+		<text ID="Pioneer">
+			<data>Pioneer</data>
+		</text>
+		<text ID="Freeborn">
+			<data>Freeborn</data>
+		</text>
+		<text ID="Zodiac">
+			<data>Zodiac</data>
+		</text>
+		<text ID="Existor">
+			<data>Existor</data>
+		</text>
+		<text ID="WayfareR">
+			<data>WayfareR</data>
+		</text>
+		<text ID="Router">
+			<data>Router</data>
+		</text>
+		<text ID="Ark-9">
+			<data>Ark-9</data>
+		</text>
+		<text ID="Organ">
+			<data>Organ</data>
+		</text>
+		<text ID="Cluster">
+			<data>Cluster</data>
+		</text>
+		<text ID="Vice">
+			<data>Vice</data>
+		</text>
+	</text_group>
+	<text_group ID="MissionNames">
+		<text ID="Mission0">
+			<data>EASTER</data>
+		</text>
+		<text ID="Mission1">
+			<data>ELDRUID</data>
+		</text>
+		<text ID="Mission2">
+			<data>PYRAMIDA</data>
+		</text>
+		<text ID="Mission3">
+			<data>ISOLAND</data>
+		</text>
+		<text ID="Mission4">
+			<data>CROMANYON</data>
+		</text>
+		<text ID="Mission5">
+			<data>VULCAN</data>
+		</text>
+		<text ID="Mission6">
+			<data>ABDULA</data>
+		</text>
+		<text ID="Mission7">
+			<data>BIODAMAGE</data>
+		</text>
+		<text ID="Mission8">
+			<data>KRUGH</data>
+		</text>
+		<text ID="Mission9">
+			<data>RAGAR</data>
+		</text>
+		<text ID="Mission10">
+			<data>XMARS</data>
+		</text>
+		<text ID="Mission11">
+			<data>HISTERRA</data>
+		</text>
+		<text ID="Mission12">
+			<data>ZABRICK</data>
+		</text>
+		<text ID="Mission13">
+			<data>CLOX</data>
+		</text>
+		<text ID="Mission14">
+			<data>MOULD</data>
+		</text>
+		<text ID="Mission15">
+			<data>ALIENTRANCE</data>
+		</text>
+		<text ID="Mission16">
+			<data>ROOT</data>
+		</text>
+		<text ID="Mission17">
+			<data>SOTA</data>
+		</text>
+		<text ID="Mission18">
+			<data>SPINE</data>
+		</text>
+		<text ID="Mission19">
+			<data>MOUNTIME</data>
+		</text>
+		<text ID="Mission20">
+			<data>SPUNGE</data>
+		</text>
+		<text ID="Mission21">
+			<data>PILLOID</data>
+		</text>
+		<text ID="Mission22">
+			<data>ZEROS</data>
+		</text>
+		<text ID="Mission23">
+			<data>NORD</data>
+		</text>
+		<text ID="Mission24">
+			<data>RELIC</data>
+		</text>
+		<text ID="Mission25">
+			<data>GOT</data>
+		</text>
+		<text ID="Mission26">
+			<data>STONEHOOD</data>
+		</text>
+		<text ID="Tutorial">
+			<data>TUTORIAL</data>
+		</text>
+	</text_group>
+	<text_group ID="MapNames">
+		<text ID="ASH">
+			<data>ASH</data>
+		</text>
+		<text ID="BONEYARD">
+			<data>BONEYARD</data>
+		</text>
+		<text ID="FISH">
+			<data>FISH</data>
+		</text>
+		<text ID="FLAT">
+			<data>FLAT</data>
+		</text>
+		<text ID="JUNCTION">
+			<data>JUNCTION</data>
+		</text>
+		<text ID="OSSA">
+			<data>OSSA</data>
+		</text>
+		<text ID="PIZZA">
+			<data>PIZZA</data>
+		</text>
+		<text ID="QUATREFOIL">
+			<data>QUATREFOIL</data>
+		</text>
+		<text ID="TINI">
+			<data>TINI</data>
+		</text>
+		<text ID="ABDULA">
+			<data>ABDULA</data>
+		</text>
+		<text ID="ALIENTRANCE">
+			<data>ALIENTRANCE</data>
+		</text>
+		<text ID="BIODAMAGE">
+			<data>BIODAMAGE</data>
+		</text>
+		<text ID="CLOX">
+			<data>CLOX</data>
+		</text>
+		<text ID="CROMANYON">
+			<data>CROMANYON</data>
+		</text>
+		<text ID="EASTER">
+			<data>EASTER</data>
+		</text>
+		<text ID="ELDRUID">
+			<data>ELDRUID</data>
+		</text>
+		<text ID="GOT">
+			<data>GOT</data>
+		</text>
+		<text ID="HISTERRA">
+			<data>HISTERRA</data>
+		</text>
+		<text ID="ISOLAND">
+			<data>ISOLAND</data>
+		</text>
+		<text ID="KRUGH">
+			<data>KRUGH</data>
+		</text>
+		<text ID="MOULD">
+			<data>MOULD</data>
+		</text>
+		<text ID="MOUNTIME">
+			<data>MOUNTIME</data>
+		</text>
+		<text ID="NORD">
+			<data>NORD</data>
+		</text>
+		<text ID="PILLOID">
+			<data>PILLOID</data>
+		</text>
+		<text ID="PYRAMIDA">
+			<data>PYRAMIDA</data>
+		</text>
+		<text ID="RAGAR">
+			<data>RAGAR</data>
+		</text>
+		<text ID="RELIC">
+			<data>RELIC</data>
+		</text>
+		<text ID="ROOT">
+			<data>ROOT</data>
+		</text>
+		<text ID="SOTA">
+			<data>SOTA</data>
+		</text>
+		<text ID="SPINE">
+			<data>SPINE</data>
+		</text>
+		<text ID="SPUNGE">
+			<data>SPUNGE</data>
+		</text>
+		<text ID="STONEHOOD">
+			<data>STONEHOOD</data>
+		</text>
+		<text ID="VULCAN">
+			<data>VULCAN</data>
+		</text>
+		<text ID="XMARS">
+			<data>XMARS</data>
+		</text>
+		<text ID="ZABRICK">
+			<data>ZABRICK</data>
+		</text>
+		<text ID="ZEROS">
+			<data>ZEROS</data>
+		</text>
+	</text_group>
+</text_group>

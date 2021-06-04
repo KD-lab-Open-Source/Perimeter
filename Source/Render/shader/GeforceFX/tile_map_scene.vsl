@@ -1,0 +1,48 @@
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+    float2 t0 : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float4  t0 : TEXCOORD0;
+	float4  t1 : TEXCOORD1;
+	float4  t2 : TEXCOORD2;
+	float4  t3 : TEXCOORD3;
+	float2  t4 : TEXCOORD4;
+	float2  t5 : TEXCOORD5;
+	float fog: FOG;
+};
+
+float4x4 mWVP;
+float4x4 mShadow;
+float4x4 mView;
+
+float3 vFog;//fog_min,fog_max/(fog_max-fog_min),-1/(fog_max-fog_min)
+float2 fInvWorldSize;
+
+#define offset (1.0f/1024)
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+
+	o.pos=mul(v.pos,mWVP);
+	o.t4=v.t0;
+	o.t5=v.pos*fInvWorldSize;
+
+	o.t0=mul(v.pos,mShadow)+float4(-offset,   +offset*0.5, 0,0);
+	o.t1=mul(v.pos,mShadow)+float4(offset,    -offset*0.5, 0,0);
+	o.t2=mul(v.pos,mShadow)+float4(offset*0,  -offset*1,   0,0);
+	o.t3=mul(v.pos,mShadow)+float4(offset*0,   offset*1,   0,0);
+
+	//fog
+	float fogz=mul(v.pos,mView).z;
+	float fog=fogz*vFog.z+vFog.y;
+	o.fog=clamp(fog,0,1);
+
+    return o;
+}
+

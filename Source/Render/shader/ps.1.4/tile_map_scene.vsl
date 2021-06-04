@@ -1,0 +1,58 @@
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+	float3 n : NORMAL;
+    float2 t0 : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float2  t0 : TEXCOORD0;
+	float2  t1 : TEXCOORD1;
+	float2  t2 : TEXCOORD2;
+	float2  t3 : TEXCOORD3;
+	float3  t4 : TEXCOORD4;
+#ifdef OBJ
+	float4  diffuse: COLOR0;
+#else
+	float2  t5 : TEXCOORD5;
+#endif
+};
+
+float4x4 mWVP;
+float4x4 mWorldToLight;
+float4x4 mShadow0;
+float4x4 mShadow1;
+float4x4 mShadow2;
+float4x4 mShadow3;
+float4x4 mWorld;
+float4x4 mView;
+float	vZBias;
+
+float2 fInvWorldSize;
+float4 vDiffuse;
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+
+	o.pos=mul(v.pos,mWVP);
+	o.t0=v.t0;
+
+	o.t1=mul(v.pos,mShadow0);
+	o.t2=mul(v.pos,mShadow1);
+	o.t3=mul(v.pos,mShadow2);
+	o.t4.xy=mul(v.pos,mShadow3);
+
+	float4 sh=mul(v.pos,mWorldToLight);
+	o.t4.z=sh.z+vZBias;
+
+#ifdef OBJ
+	o.diffuse=vDiffuse;
+#else
+	o.t5=v.pos*fInvWorldSize;
+#endif
+    return o;
+}
+

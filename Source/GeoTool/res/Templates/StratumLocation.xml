@@ -1,0 +1,6 @@
+<location type='StratumZ'>
+	<nearBound value='0.0'/>
+	<farBound value='255.0'/>
+	<blanking value='0.0'/>
+	<fading value='1.0'/>
+</location>

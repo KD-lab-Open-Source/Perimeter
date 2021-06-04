@@ -1,0 +1,126 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript definition
+//	Section: RigidBodyPrm
+//	Number of variables: 35
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+int closestFeaturesHTsizeMax = 500;
+float dz_max_avr_tau = 0.1f;
+float deep_penetration_dz = 10.f;
+float average_forward_velocity_tau = 0.7f;
+float obstacle_turn_avr_tau = 5.e-002f;
+float general_velocity_factor_intermediate = 0.9f;
+float is_point_reached_radius_max_intermediate = 40.f;
+float collision_detection_epsilon = 2.f;
+float collision_resolve_velocity_tolerance = 0.1f;
+float collision_resolve_penetration_relaxation_factor = -0.3f;
+float collision_resolve_penetration_relaxation_min = -4.f;
+float collision_resolve_velocity_relaxation = 0.1f;
+float collision_resolve_restitution_plus_one = 1.2f;
+int collision_resolve_iterations_per_contact = 4;
+float kangaroo_mode_avr_tau = 0.3f;
+float kangaroo_mode_avr_threshould = 0.2f;
+float kangaroo_max_height_switch = 500.f;
+float kangaroo_min_mass_switch = 1.e-005f;
+float kangaroo_avoid_stoopor_acceleration = 0.f;
+float kangaroo_avoid_stoopor_epsilon = 1.f;
+float analyze_terrain_points_density = 0.5f;
+float analyze_terrain_Dxy_minimal = 6.f;
+int analyze_terrain_upper_dz_max = 20;
+int analyze_terrain_lower_dz_min = -50;
+float steering_control_negative_rudder_threshould = -0.95f;
+float steering_control_min_distance = 1.f;
+float test_missile_shot_distance2 = 2500.f;
+float average_movement_tau = 0.1f;
+float average_movement_threshould = 0.5f;
+int sleep_time = 2000;
+float fieldPathFindFactor = 0.7f;
+int fieldPathFindRadius = 100;
+float diggingModeDamping = 0.1f;
+int diggingModeDelay = 500;
+#ifndef __XScript_struct_HarmonicOscillator__
+#define __XScript_struct_HarmonicOscillator__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct HarmonicOscillator {
+	float decay;
+	float omega;
+	float amplitude;
+	int N;
+	float A[4];
+
+	float operator()(float t){ // in seconds
+		float phase = omega*t;
+		float f = 0;
+		for(int i = 0; i < N; i++)
+			f += A[i]*sin(phase*(i + 1));
+		return f*exp(-t*decay)*amplitude; 
+	}
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_HarmonicOscillator__
+#ifndef __XScript_struct_CameraExplodingPrm__
+#define __XScript_struct_CameraExplodingPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct CameraExplodingPrm {
+	HarmonicOscillator x;
+	HarmonicOscillator y;
+	HarmonicOscillator z;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_CameraExplodingPrm__
+CameraExplodingPrm cameraExplodingPrm = { { 0.f 
+ , 100.f, 20.f, 4, { 1.f, 0.5f, 0.3f, 0.1f } }, { 0.f, 10.f, 20.f, 4, { 1.f, 0.5f, 0.3f 
+ , 0.1f } }, { 0.f, 99.f, 20.f, 4, { 1.f, 0.5f, 0.3f, 0.1f } } };
+
+#ifdef _PRM_EDIT_
+struct RigidBodyPrm_ParameterSection : ParameterSection
+{
+	RigidBodyPrm_ParameterSection() : ParameterSection("RigidBodyPrm")
+{
+	add_dependency(".\\Scripts\\RigidBody.prm");
+	sourceCRC = 2058682170;
+	description = 1144279474;
+	reserve(35);
+	add(&closestFeaturesHTsizeMax, "closestFeaturesHTsizeMax");
+	add(&dz_max_avr_tau, "dz_max_avr_tau");
+	add(&deep_penetration_dz, "deep_penetration_dz");
+	add(&average_forward_velocity_tau, "average_forward_velocity_tau");
+	add(&obstacle_turn_avr_tau, "obstacle_turn_avr_tau");
+	add(&general_velocity_factor_intermediate, "general_velocity_factor_intermediate");
+	add(&is_point_reached_radius_max_intermediate, "is_point_reached_radius_max_intermediate");
+	add(&collision_detection_epsilon, "collision_detection_epsilon");
+	add(&collision_resolve_velocity_tolerance, "collision_resolve_velocity_tolerance");
+	add(&collision_resolve_penetration_relaxation_factor, "collision_resolve_penetration_relaxation_factor");
+	add(&collision_resolve_penetration_relaxation_min, "collision_resolve_penetration_relaxation_min");
+	add(&collision_resolve_velocity_relaxation, "collision_resolve_velocity_relaxation");
+	add(&collision_resolve_restitution_plus_one, "collision_resolve_restitution_plus_one");
+	add(&collision_resolve_iterations_per_contact, "collision_resolve_iterations_per_contact");
+	add(&kangaroo_mode_avr_tau, "kangaroo_mode_avr_tau");
+	add(&kangaroo_mode_avr_threshould, "kangaroo_mode_avr_threshould");
+	add(&kangaroo_max_height_switch, "kangaroo_max_height_switch");
+	add(&kangaroo_min_mass_switch, "kangaroo_min_mass_switch");
+	add(&kangaroo_avoid_stoopor_acceleration, "kangaroo_avoid_stoopor_acceleration");
+	add(&kangaroo_avoid_stoopor_epsilon, "kangaroo_avoid_stoopor_epsilon");
+	add(&analyze_terrain_points_density, "analyze_terrain_points_density");
+	add(&analyze_terrain_Dxy_minimal, "analyze_terrain_Dxy_minimal");
+	add(&analyze_terrain_upper_dz_max, "analyze_terrain_upper_dz_max");
+	add(&analyze_terrain_lower_dz_min, "analyze_terrain_lower_dz_min");
+	add(&steering_control_negative_rudder_threshould, "steering_control_negative_rudder_threshould");
+	add(&steering_control_min_distance, "steering_control_min_distance");
+	add(&test_missile_shot_distance2, "test_missile_shot_distance2");
+	add(&average_movement_tau, "average_movement_tau");
+	add(&average_movement_threshould, "average_movement_threshould");
+	add(&sleep_time, "sleep_time");
+	add(&fieldPathFindFactor, "fieldPathFindFactor");
+	add(&fieldPathFindRadius, "fieldPathFindRadius");
+	add(&diggingModeDamping, "diggingModeDamping");
+	add(&diggingModeDelay, "diggingModeDelay");
+	add(&cameraExplodingPrm, "cameraExplodingPrm");
+	add_parameter_section(this);
+}
+};
+static RigidBodyPrm_ParameterSection RigidBodyPrm_ParameterSectionObject;
+#endif  //  _PRM_EDIT_
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: RigidBodyPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

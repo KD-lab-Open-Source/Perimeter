@@ -1,0 +1,14 @@
+#include "..\shade.inl"
+ps.1.1
+
+// ambient color
+def c0, SHADE, SHADE, SHADE, 1.0
+def c1, MSHADE, MSHADE, MSHADE, 0.0
+
+tex t0   //shadow map
+tex t1   //texture
+
+mov r1, c1
+mad r1, t0, r1, c0
+mul r0, t1, r1
+

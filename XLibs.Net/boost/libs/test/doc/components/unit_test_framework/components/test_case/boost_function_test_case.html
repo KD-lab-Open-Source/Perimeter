@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<TITLE>The boost::function based test case</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../../index.html">Boost.Test</A> > <A href="../../../index.html">Components</A> 
+  > <A href="../../index.html">The Unit Test Framework</A> > <A href="../index.html">Components</A> > 
+  <A href="index.html">The Test Case</A> > <SPAN class="current_article">The boost::function based test 
+  case</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The boost::function based test case</H1>
+ <H5>Definition</H5>
+  <P class="first-line-indented"> defined in
+  <A href="../../../../../../../boost/test/unit_test_suite_ex.hpp">unit_test_suite_ex.hpp</A>
+  <H5>Synopsis</H5>
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> <SPAN class="new-term">boost_function_test_case</SPAN> : <SPAN class="reserv-word">public</SPAN> test_case
+{
+    ... <SPAN class="comment">// Implementation</SPAN>
+};</PRE>
+  <H5>Description</H5>
+  <P class="first-line-indented">In some cases it may be convenient to be able to use complex zero arity 
+    functor as a body of test case. It could be free function with bound argument, compound functor or 
+    member function with bound object. All these and similar cases does not covered by simple basic test 
+    case classes. This is the need addressed by class boost_function_test_case. It uses boost::function0&lt;void&gt; 
+    as a test function type. This facility is more generic and more powerful then more simple basic test 
+    case classes supplied in the header unit_test_suite.hpp . It comes for the price of extra dependency 
+    on <A href="../../../../../../function/index.html">boost::function</A> facility. Accordingly it does 
+    not gets included automatically by default, but instead supplied as an extension for the framework. 
+    You need to include header unit_test_suite_ex.hpp yourself to be able to use it. </P>
+  <P class="first-line-indented">This facility is flexible enough to accommodate most needs of parameterless 
+    testing, including free function test cases, class member function based test cases, functions with 
+    bound parameters and so on.</P>
+  <H5>Construction</H5>
+  <P class="first-line-indented">To create a test case based on any zero arity function or function object 
+    use the following macro:</P>
+  <P><SPAN class="new-term">BOOST_TEST_CASE</SPAN>( zero_arity_function ).</P>
+  <P class="first-line-indented">BOOST_TEST_CASE creates a new instance of the class boost_function_test_case 
+    and returns a pointer to the base class test_case. In most cases you will use it as an argument to 
+    the method <A href="../test_suite/index.html">test_suite</A>::add(...). The only parameter to above 
+    macro is the pointer or reference to zero arity function or function object - body of the test case.</P>
+  <H5>Example</H5>
+  <PRE class="code" id="ff_ex_1">#<SPAN class="reserv-word">include</SPAN> &lt;boost/test/unit_test_ex.hpp&gt;
+<SPAN class="reserv-word">using</SPAN> boost::unit_test_framework::test_suite;
+#<SPAN class="reserv-word">include</SPAN> &lt;boost/bind.hpp&gt;
+
+<SPAN class="cpp-type">void</SPAN> test_mask( <SPAN class="cpp-type">int</SPAN> arg, <SPAN class="cpp-type">int</SPAN> mask )
+{
+    BOOST_CHECK( (arg &amp; mask) != <SPAN class="literal">0</SPAN> );
+}
+
+test_suite*
+init_unit_test_suite( <SPAN class="cpp-type">int</SPAN> argc, <SPAN class="cpp-type">char</SPAN>* argv[] ) {
+    test_suite* test= BOOST_TEST_SUITE( <SPAN class="literal">&quot;Example&quot;</SPAN> );
+
+    test-&gt;add( BOOST_TEST_CASE( bind( &amp;test_mask, <SPAN class="literal">12345</SPAN>, <SPAN class="literal">0xcdf</SPAN> ) ) );
+
+    <SPAN class="reserv-word">return</SPAN> test;
+}</PRE>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->6 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

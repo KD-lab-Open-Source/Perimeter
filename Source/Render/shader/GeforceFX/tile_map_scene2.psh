@@ -1,0 +1,22 @@
+#include "..\shade.inl"
+ps.2.0
+
+// ambient color
+def c4, 0.25f, 0.25f, 0.25f, 0.25f
+def c0, SHADE, SHADE, SHADE, 1.0
+def c1, MSHADE, MSHADE, MSHADE, 0.0
+//c2 -diffuse color
+dcl t0.xyzw
+dcl t1.xyzw
+dcl t2.xyzw
+dcl t3.xyzw
+
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+
+texld  r0, t1, s1
+mov_pp oC0,r0
+
+

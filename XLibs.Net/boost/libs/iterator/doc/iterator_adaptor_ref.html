@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.2.8: http://docutils.sourceforge.net/" />
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+<!-- Version 1.4 of this ReStructuredText document corresponds to
+n1530_, the paper accepted by the LWG for TR1. -->
+<!-- Copyright David Abrahams, Jeremy Siek, and Thomas Witt 2003. All
+rights reserved. -->
+<pre class="literal-block">
+template &lt;
+    class Derived
+  , class Base
+  , class Value        = use_default
+  , class CategoryOrTraversal  = use_default
+  , class Reference  = use_default
+  , class Difference = use_default
+&gt;
+class iterator_adaptor 
+  : public iterator_facade&lt;Derived, <em>V</em>, <em>C</em>, <em>R</em>, <em>D</em>&gt; // see <a class="reference" href="#base-parameters">details</a>
+{
+    friend class iterator_core_access;
+ public:
+    iterator_adaptor();
+    explicit iterator_adaptor(Base iter);
+    Base base() const;
+ protected:
+    Base const&amp; base_reference() const;
+    Base&amp; base_reference();
+ private: // Core iterator interface for iterator_facade.  
+    typename iterator_adaptor::reference dereference() const;
+
+    template &lt;
+    class OtherDerived, class OtherIterator, class V, class C, class R, class D
+    &gt;   
+    bool equal(iterator_adaptor&lt;OtherDerived, OtherIterator, V, C, R, D&gt; const&amp; x) const;
+
+    void advance(typename iterator_adaptor::difference_type n);
+    void increment();
+    void decrement();
+
+    template &lt;
+        class OtherDerived, class OtherIterator, class V, class C, class R, class D
+    &gt;   
+    typename iterator_adaptor::difference_type distance_to(
+        iterator_adaptor&lt;OtherDerived, OtherIterator, V, C, R, D&gt; const&amp; y) const;
+
+ private:
+    Base m_iterator; // exposition only
+};
+</pre>
+<a class="target" id="base-parameters" name="base-parameters"></a><div class="section" id="iterator-adaptor-base-class-parameters">
+<h1><a name="iterator-adaptor-base-class-parameters"><tt class="literal"><span class="pre">iterator_adaptor</span></tt> base class parameters</a></h1>
+<p>The <em>V</em>, <em>C</em>, <em>R</em>, and <em>D</em> parameters of the <tt class="literal"><span class="pre">iterator_facade</span></tt>
+used as a base class in the summary of <tt class="literal"><span class="pre">iterator_adaptor</span></tt>
+above are defined as follows:</p>
+<pre class="literal-block">
+<em>V</em> = if (Value is use_default)
+          return iterator_traits&lt;Base&gt;::value_type
+      else
+          return Value
+
+<em>C</em> = if (CategoryOrTraversal is use_default)
+          return iterator_traversal&lt;Base&gt;::type
+      else
+          return CategoryOrTraversal
+
+<em>R</em> = if (Reference is use_default)
+          if (Value is use_default)
+              return iterator_traits&lt;Base&gt;::reference
+          else
+              return Value&amp;
+      else
+          return Reference
+
+<em>D</em> = if (Difference is use_default)
+          return iterator_traits&lt;Base&gt;::difference_type
+      else
+          return Difference
+</pre>
+</div>
+<div class="section" id="iterator-adaptor-usage">
+<h1><a name="iterator-adaptor-usage"><tt class="literal"><span class="pre">iterator_adaptor</span></tt> usage</a></h1>
+<p>The <tt class="literal"><span class="pre">Derived</span></tt> template parameter must be a publicly derived from
+<tt class="literal"><span class="pre">iterator_adaptor</span></tt>.  In order for <tt class="literal"><span class="pre">Derived</span></tt> to model the
+iterator concepts corresponding to
+<tt class="literal"><span class="pre">iterator_traits&lt;Derived&gt;::iterator_category</span></tt>, the expressions
+involving <tt class="literal"><span class="pre">m_iterator</span></tt> in the specifications of those private
+member functions of <tt class="literal"><span class="pre">iterator_adaptor</span></tt> that may be called by
+<tt class="literal"><span class="pre">iterator_facade&lt;Derived,</span> <span class="pre">V,</span> <span class="pre">C,</span> <span class="pre">R,</span> <span class="pre">D&gt;</span></tt>
+in evaluating any valid expression involving <tt class="literal"><span class="pre">Derived</span></tt>
+in those concepts' requirements.</p>
+</div>
+<div class="section" id="iterator-adaptor-public-operations">
+<h1><a name="iterator-adaptor-public-operations"><tt class="literal"><span class="pre">iterator_adaptor</span></tt> public operations</a></h1>
+<p><tt class="literal"><span class="pre">iterator_adaptor();</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Requires:</th><td class="field-body">The <tt class="literal"><span class="pre">Base</span></tt> type must be Default Constructible.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">An instance of <tt class="literal"><span class="pre">iterator_adaptor</span></tt> with 
+<tt class="literal"><span class="pre">m_iterator</span></tt> default constructed.</td>
+</tr>
+</tbody>
+</table>
+<p><tt class="literal"><span class="pre">explicit</span> <span class="pre">iterator_adaptor(Base</span> <span class="pre">iter);</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">An instance of <tt class="literal"><span class="pre">iterator_adaptor</span></tt> with
+<tt class="literal"><span class="pre">m_iterator</span></tt> copy constructed from <tt class="literal"><span class="pre">iter</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<p><tt class="literal"><span class="pre">Base</span> <span class="pre">base()</span> <span class="pre">const;</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><tt class="literal"><span class="pre">m_iterator</span></tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="iterator-adaptor-protected-member-functions">
+<h1><a name="iterator-adaptor-protected-member-functions"><tt class="literal"><span class="pre">iterator_adaptor</span></tt> protected member functions</a></h1>
+<p><tt class="literal"><span class="pre">Base</span> <span class="pre">const&amp;</span> <span class="pre">base_reference()</span> <span class="pre">const;</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A const reference to <tt class="literal"><span class="pre">m_iterator</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<p><tt class="literal"><span class="pre">Base&amp;</span> <span class="pre">base_reference();</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A non-const reference to <tt class="literal"><span class="pre">m_iterator</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="iterator-adaptor-private-member-functions">
+<h1><a name="iterator-adaptor-private-member-functions"><tt class="literal"><span class="pre">iterator_adaptor</span></tt> private member functions</a></h1>
+<p><tt class="literal"><span class="pre">typename</span> <span class="pre">iterator_adaptor::reference</span> <span class="pre">dereference()</span> <span class="pre">const;</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><tt class="literal"><span class="pre">*m_iterator</span></tt></td>
+</tr>
+</tbody>
+</table>
+<pre class="literal-block">
+template &lt;
+class OtherDerived, class OtherIterator, class V, class C, class R, class D
+&gt;   
+bool equal(iterator_adaptor&lt;OtherDerived, OtherIterator, V, C, R, D&gt; const&amp; x) const;
+</pre>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><tt class="literal"><span class="pre">m_iterator</span> <span class="pre">==</span> <span class="pre">x.base()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p><tt class="literal"><span class="pre">void</span> <span class="pre">advance(typename</span> <span class="pre">iterator_adaptor::difference_type</span> <span class="pre">n);</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Effects:</th><td class="field-body"><tt class="literal"><span class="pre">m_iterator</span> <span class="pre">+=</span> <span class="pre">n;</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p><tt class="literal"><span class="pre">void</span> <span class="pre">increment();</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Effects:</th><td class="field-body"><tt class="literal"><span class="pre">++m_iterator;</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p><tt class="literal"><span class="pre">void</span> <span class="pre">decrement();</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Effects:</th><td class="field-body"><tt class="literal"><span class="pre">--m_iterator;</span></tt></td>
+</tr>
+</tbody>
+</table>
+<pre class="literal-block">
+template &lt;
+    class OtherDerived, class OtherIterator, class V, class C, class R, class D
+&gt;   
+typename iterator_adaptor::difference_type distance_to(
+    iterator_adaptor&lt;OtherDerived, OtherIterator, V, C, R, D&gt; const&amp; y) const;
+</pre>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><tt class="literal"><span class="pre">y.base()</span> <span class="pre">-</span> <span class="pre">m_iterator</span></tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr class="footer"/>
+<div class="footer">
+<a class="reference" href="iterator_adaptor_ref.rst">View document source</a>.
+Generated on: 2004-01-12 15:25 UTC.
+Generated by <a class="reference" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+</div>
+</body>
+</html>

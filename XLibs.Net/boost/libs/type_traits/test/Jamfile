@@ -1,0 +1,72 @@
+# Copyright John Maddock 2004
+#
+# There are two ways to invoke this Jamfile:
+#
+# If we pass the argument --type-traits-unit-test
+# to bjam, then the tests are built as one big test
+# program: this may be slightly quicker in some cases,
+# but causes problems if any of the test sources don't compile.
+#
+# Alternatively, the default behaviour is to build each source
+# file as a separate test program, these no longer depend upon Boost.Test
+# (which causes cyclic dependencies).  We also get a separate status report
+# for each trait, which makes it easier to track down issues with non-conforming
+# compilers.
+#            
+
+subproject libs/type_traits/test ;
+
+# bring in the rules for testing
+import testing ;
+
+#
+# define the sources which need testing, mostly this is just
+# all the files *_test.cpp, but any badly named examples can 
+# be added to this list :-)
+#
+TEST_SOURCES = [ GLOB $(BOOST_ROOT)/libs/type_traits/test : *_test.cpp ]
+            udt_specialisations.cpp ;  
+            
+if --type-traits-unit-test in $(ARGV)
+{
+   test-suite type_traits :
+   [ run # sources:
+         $(TEST_SOURCES)
+         init.cpp
+         # dependencies
+         <lib>../../test/build/boost_unit_test_framework 
+      :  # additional args
+         --report_level=detailed --build_info=yes --log_level=messages
+      :  # test-files
+      :  # requirements
+         <sysinclude>$(BOOST_ROOT)
+         <define>USE_UNIT_TEST=1
+      :  # test name
+         type_traits_test
+   ] ;
+
+}
+else
+{
+   # this rule enumerates through all the sources and invokes
+   # the run rule for each source, the result is a list of all
+   # the run rules, which we can pass on to the test_suite rule:
+   rule test_all
+   {
+      #ECHO executing test_all rule ;
+      local all_rules = ;
+      for local file in $(TEST_SOURCES)
+      {
+         all_rules += [ run $(file) ] ;
+      }
+      #ECHO $(all_rules) ;
+      return $(all_rules) ;
+   }
+
+   test-suite type_traits :
+      [ test_all r ]
+   ; # type traits suite
+
+}
+
+

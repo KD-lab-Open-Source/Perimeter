@@ -1,0 +1,1363 @@
+TriggerChain = {
+	name = "";
+	triggers = {
+		20;
+		{
+			name = "START";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "старт";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 24;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 26;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 24;
+						y = 16;
+					};
+					childOffset = {
+						x = 26;
+						y = -16;
+					};
+				}
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 0;
+			left_ = 0;
+			top_ = 0;
+			right_ = 256;
+			bottom_ = 32;
+			cellIndex = {
+				x = 0;
+				y = 0;
+			};
+			boundingRect = {
+				left = 0;
+				top = 0;
+				right = 256;
+				bottom = 32;
+			};
+		},
+		{
+			name = "телепортация";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionTeleportationOut" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 0;
+			left_ = 288;
+			top_ = 0;
+			right_ = 544;
+			bottom_ = 32;
+			cellIndex = {
+				x = 1;
+				y = 0;
+			};
+			boundingRect = {
+				left = 288;
+				top = 0;
+				right = 544;
+				bottom = 32;
+			};
+		},
+		{
+			name = "старт";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				4;
+				{
+					triggerName = "легкий";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 94;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -125;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 94;
+						y = 16;
+					};
+					childOffset = {
+						x = -125;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "нормал";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 107;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -109;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 107;
+						y = 16;
+					};
+					childOffset = {
+						x = -109;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "сложный";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 124;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -73;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 124;
+						y = 16;
+					};
+					childOffset = {
+						x = -73;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "телепортация";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 122;
+					parentOffsetY_ = -16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -1;
+					parentOffset = {
+						x = 122;
+						y = -16;
+					};
+					childOffset = {
+						x = -128;
+						y = -1;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 1;
+			left_ = 0;
+			top_ = 64;
+			right_ = 256;
+			bottom_ = 96;
+			cellIndex = {
+				x = 0;
+				y = 1;
+			};
+			boundingRect = {
+				left = 0;
+				top = 64;
+				right = 256;
+				bottom = 96;
+			};
+		},
+		{
+			name = "скамера";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = true;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_SPIRAL_CHARGING;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_ENABLED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_SCUMER;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_FRAME
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 10;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 360;
+				remutateCounter = 0;
+				holdProduction = true;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = true;
+				returnToBase = false;
+				interruptable = true;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 3;
+			left_ = 576;
+			top_ = 192;
+			right_ = 832;
+			bottom_ = 224;
+			cellIndex = {
+				x = 2;
+				y = 3;
+			};
+			boundingRect = {
+				left = 576;
+				top = 192;
+				right = 832;
+				bottom = 224;
+			};
+		},
+		{
+			name = "С1 базовые";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				soldiers = 0;
+				officers = 140;
+				technics = 60;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 4;
+			left_ = 576;
+			top_ = 256;
+			right_ = 832;
+			bottom_ = 288;
+			cellIndex = {
+				x = 2;
+				y = 4;
+			};
+			boundingRect = {
+				left = 576;
+				top = 256;
+				right = 832;
+				bottom = 288;
+			};
+		},
+		{
+			name = "варгоны";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				attackByType = UNIT_ATTRIBUTE_WARGON;
+				unitsToAttack = {
+					5;
+					UNIT_ATTRIBUTE_GUN_SUBCHASER,
+					UNIT_ATTRIBUTE_GUN_HOWITZER,
+					UNIT_ATTRIBUTE_ROCKET_LAUNCHER,
+					UNIT_ATTRIBUTE_LASER_CANNON,
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 10;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 360;
+				remutateCounter = 1;
+				holdProduction = true;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 6;
+			left_ = 576;
+			top_ = 384;
+			right_ = 832;
+			bottom_ = 416;
+			cellIndex = {
+				x = 2;
+				y = 6;
+			};
+			boundingRect = {
+				left = 576;
+				top = 384;
+				right = 832;
+				bottom = 416;
+			};
+		},
+		{
+			name = "Camera";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 2;
+			left_ = 0;
+			top_ = 128;
+			right_ = 256;
+			bottom_ = 160;
+			cellIndex = {
+				x = 0;
+				y = 2;
+			};
+			boundingRect = {
+				left = 0;
+				top = 128;
+				right = 256;
+				bottom = 160;
+			};
+		},
+		{
+			name = "С2базовые0";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				soldiers = 20;
+				officers = 0;
+				technics = 80;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 5;
+			left_ = 576;
+			top_ = 320;
+			right_ = 832;
+			bottom_ = 352;
+			cellIndex = {
+				x = 2;
+				y = 5;
+			};
+			boundingRect = {
+				left = 576;
+				top = 320;
+				right = 832;
+				bottom = 352;
+			};
+		},
+		{
+			name = "сложный";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionDifficultyLevel" {
+							state_ = false;
+							internalColor_ = 0;
+							difficulty = DIFFICULTY_HARD;
+						};
+					}
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 5;
+				showTimer = false;
+				scaleByDifficulty = false;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				4;
+				{
+					triggerName = "скамера";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 4;
+					childOffsetX_ = -128;
+					childOffsetY_ = 4;
+					parentOffset = {
+						x = 128;
+						y = 4;
+					};
+					childOffset = {
+						x = -128;
+						y = 4;
+					};
+				},
+				{
+					triggerName = "С1 базовые";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 124;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -13;
+					parentOffset = {
+						x = 124;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -13;
+					};
+				},
+				{
+					triggerName = "варгоны";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 104;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -124;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 104;
+						y = 16;
+					};
+					childOffset = {
+						x = -124;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "С2базовые0";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 106;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -118;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 106;
+						y = 16;
+					};
+					childOffset = {
+						x = -118;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 3;
+			left_ = 288;
+			top_ = 192;
+			right_ = 544;
+			bottom_ = 224;
+			cellIndex = {
+				x = 1;
+				y = 3;
+			};
+			boundingRect = {
+				left = 288;
+				top = 192;
+				right = 544;
+				bottom = 224;
+			};
+		},
+		{
+			name = "UserCamera";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 3;
+			left_ = 0;
+			top_ = 192;
+			right_ = 256;
+			bottom_ = 224;
+			cellIndex = {
+				x = 0;
+				y = 3;
+			};
+			boundingRect = {
+				left = 0;
+				top = 192;
+				right = 256;
+				bottom = 224;
+			};
+		},
+		{
+			name = "нормал";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionDifficultyLevel" {
+							state_ = false;
+							internalColor_ = 0;
+							difficulty = DIFFICULTY_NORMAL;
+						};
+					}
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 20;
+				showTimer = false;
+				scaleByDifficulty = false;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				4;
+				{
+					triggerName = "скамера0";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = -6;
+					childOffsetX_ = -128;
+					childOffsetY_ = -4;
+					parentOffset = {
+						x = 128;
+						y = -6;
+					};
+					childOffset = {
+						x = -128;
+						y = -4;
+					};
+				},
+				{
+					triggerName = "С1базовые1";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 13;
+					childOffsetX_ = -128;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 128;
+						y = 13;
+					};
+					childOffset = {
+						x = -128;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "С2базовые";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 112;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -10;
+					parentOffset = {
+						x = 112;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -10;
+					};
+				},
+				{
+					triggerName = "варгоны0";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 97;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -13;
+					parentOffset = {
+						x = 97;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -13;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 7;
+			left_ = 288;
+			top_ = 448;
+			right_ = 544;
+			bottom_ = 480;
+			cellIndex = {
+				x = 1;
+				y = 7;
+			};
+			boundingRect = {
+				left = 288;
+				top = 448;
+				right = 544;
+				bottom = 480;
+			};
+		},
+		{
+			name = "скамера0";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_SPIRAL_CHARGING;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_ENABLED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_SCUMER;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_FRAME
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 7;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 360;
+				remutateCounter = 0;
+				holdProduction = true;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = true;
+				returnToBase = false;
+				interruptable = true;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 7;
+			left_ = 576;
+			top_ = 448;
+			right_ = 832;
+			bottom_ = 480;
+			cellIndex = {
+				x = 2;
+				y = 7;
+			};
+			boundingRect = {
+				left = 576;
+				top = 448;
+				right = 832;
+				bottom = 480;
+			};
+		},
+		{
+			name = "С1базовые1";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				soldiers = 0;
+				officers = 50;
+				technics = 25;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 8;
+			left_ = 576;
+			top_ = 512;
+			right_ = 832;
+			bottom_ = 544;
+			cellIndex = {
+				x = 2;
+				y = 8;
+			};
+			boundingRect = {
+				left = 576;
+				top = 512;
+				right = 832;
+				bottom = 544;
+			};
+		},
+		{
+			name = "С2базовые";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				soldiers = 15;
+				officers = 0;
+				technics = 50;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 9;
+			left_ = 576;
+			top_ = 576;
+			right_ = 832;
+			bottom_ = 608;
+			cellIndex = {
+				x = 2;
+				y = 9;
+			};
+			boundingRect = {
+				left = 576;
+				top = 576;
+				right = 832;
+				bottom = 608;
+			};
+		},
+		{
+			name = "варгоны0";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				attackByType = UNIT_ATTRIBUTE_WARGON;
+				unitsToAttack = {
+					5;
+					UNIT_ATTRIBUTE_GUN_SUBCHASER,
+					UNIT_ATTRIBUTE_GUN_HOWITZER,
+					UNIT_ATTRIBUTE_ROCKET_LAUNCHER,
+					UNIT_ATTRIBUTE_LASER_CANNON,
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 6;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 360;
+				remutateCounter = 1;
+				holdProduction = true;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 10;
+			left_ = 576;
+			top_ = 640;
+			right_ = 832;
+			bottom_ = 672;
+			cellIndex = {
+				x = 2;
+				y = 10;
+			};
+			boundingRect = {
+				left = 576;
+				top = 640;
+				right = 832;
+				bottom = 672;
+			};
+		},
+		{
+			name = "легкий";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionDifficultyLevel" {
+							state_ = true;
+							internalColor_ = 0;
+							difficulty = DIFFICULTY_EASY;
+						};
+					}
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 60;
+				showTimer = false;
+				scaleByDifficulty = false;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				4;
+				{
+					triggerName = "скамера1";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = -4;
+					childOffsetX_ = -128;
+					childOffsetY_ = -4;
+					parentOffset = {
+						x = 128;
+						y = -4;
+					};
+					childOffset = {
+						x = -128;
+						y = -4;
+					};
+				},
+				{
+					triggerName = "С1базовые2";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 125;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -15;
+					parentOffset = {
+						x = 125;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -15;
+					};
+				},
+				{
+					triggerName = "С2базовые01";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 114;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -122;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 114;
+						y = 16;
+					};
+					childOffset = {
+						x = -122;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "варгоны1";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 106;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 106;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 11;
+			left_ = 288;
+			top_ = 704;
+			right_ = 544;
+			bottom_ = 736;
+			cellIndex = {
+				x = 1;
+				y = 11;
+			};
+			boundingRect = {
+				left = 288;
+				top = 704;
+				right = 544;
+				bottom = 736;
+			};
+		},
+		{
+			name = "скамера1";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_SPIRAL_CHARGING;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_ENABLED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_SCUMER;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_FRAME
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 4;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 360;
+				remutateCounter = 0;
+				holdProduction = true;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = true;
+				returnToBase = false;
+				interruptable = true;
+				attackTimer = {
+					time = 276300;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 11;
+			left_ = 576;
+			top_ = 704;
+			right_ = 832;
+			bottom_ = 736;
+			cellIndex = {
+				x = 2;
+				y = 11;
+			};
+			boundingRect = {
+				left = 576;
+				top = 704;
+				right = 832;
+				bottom = 736;
+			};
+		},
+		{
+			name = "С1базовые2";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				soldiers = 0;
+				officers = 30;
+				technics = 15;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 12;
+			left_ = 576;
+			top_ = 768;
+			right_ = 832;
+			bottom_ = 800;
+			cellIndex = {
+				x = 2;
+				y = 12;
+			};
+			boundingRect = {
+				left = 576;
+				top = 768;
+				right = 832;
+				bottom = 800;
+			};
+		},
+		{
+			name = "С2базовые01";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = true;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_MORTAR;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				soldiers = 10;
+				officers = 0;
+				technics = 25;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 13;
+			left_ = 576;
+			top_ = 832;
+			right_ = 832;
+			bottom_ = 864;
+			cellIndex = {
+				x = 2;
+				y = 13;
+			};
+			boundingRect = {
+				left = 576;
+				top = 832;
+				right = 832;
+				bottom = 864;
+			};
+		},
+		{
+			name = "варгоны1";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				attackByType = UNIT_ATTRIBUTE_WARGON;
+				unitsToAttack = {
+					4;
+					UNIT_ATTRIBUTE_ROCKET_LAUNCHER,
+					UNIT_ATTRIBUTE_GUN_HOWITZER,
+					UNIT_ATTRIBUTE_LASER_CANNON,
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 3;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 360;
+				remutateCounter = 1;
+				holdProduction = true;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 137900;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16711808;
+			cellNumberX = 2;
+			cellNumberY = 14;
+			left_ = 576;
+			top_ = 896;
+			right_ = 832;
+			bottom_ = 928;
+			cellIndex = {
+				x = 2;
+				y = 14;
+			};
+			boundingRect = {
+				left = 576;
+				top = 896;
+				right = 832;
+				bottom = 928;
+			};
+		}
+	};
+	left_ = 378;
+	top_ = 253;
+	right_ = 1315;
+	bottom_ = 1082;
+	boundingRect = {
+		left = 378;
+		top = 253;
+		right = 1315;
+		bottom = 1082;
+	};
+	viewRect = {
+		left = 378;
+		top = 253;
+		right = 1315;
+		bottom = 1082;
+	};
+};

@@ -1,0 +1,7 @@
+
+exe a : a.cpp b c ;
+
+make-b-main-target ;
+
+# Expands to nothing, intentionally.
+alias c ;

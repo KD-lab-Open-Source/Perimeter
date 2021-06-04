@@ -1,0 +1,16 @@
+# copyright John Maddock 2003
+
+subproject libs/regex/test/captures ;
+
+EX_SOURCES = c_regex_traits c_regex_traits_common cpp_regex_traits
+       cregex fileiter posix_api regex regex_debug
+       regex_synch w32_regex_traits wide_posix_api instances winstances ;
+       
+lib boost_regex_extra : ../../src/$(EX_SOURCES).cpp <template>../../build/regex-options
+    : 
+        <define>BOOST_REGEX_MATCH_EXTRA=1
+    : 
+    ;
+
+
+

@@ -1,0 +1,24 @@
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+    float2 t0 : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float2  t0 : TEXCOORD0;
+	float  t1 : TEXCOORD1;
+};
+
+float4x4 mWVP;
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+	VS_OUTPUT o;
+	o.pos=mul(v.pos,mWVP);
+	o.t0=v.t0;
+	o.t1=o.pos.z;
+	return o;
+}
+

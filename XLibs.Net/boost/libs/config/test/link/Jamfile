@@ -1,0 +1,38 @@
+# copyright John Maddock 2003
+
+subproject libs/config/test/link ;
+
+dll link_test : link_test.cpp 
+    : 
+    <runtime-link>dynamic
+    <define>BOOST_DYN_LINK=1
+    <sysinclude>$(BOOST_ROOT)
+    # make sure the names of the libraries are correctly named:
+    common-variant-tag
+    : 
+        debug release
+    ;
+
+lib link_test : link_test.cpp 
+    : 
+    <sysinclude>$(BOOST_ROOT)
+    # make sure the names of the libraries are correctly named:
+    common-variant-tag
+    : 
+        debug release
+    ;
+
+stage stage/lib : <lib>link_test <dll>link_test
+    :
+        # copy to a path rooted at BOOST_ROOT:
+        <locate>$(BOOST_ROOT)
+        # make sure the names of the libraries are correctly named:
+        common-variant-tag
+        # add this target to the "stage" and "all" psuedo-targets:
+        <target>stage
+        <target>all
+    :
+        debug release
+    ;
+
+

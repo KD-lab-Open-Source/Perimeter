@@ -1,0 +1,68 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{EAF909A5-FA59-4C3D-9431-0FCC20D5BCF9}") = "EasyMap", "EasyMap.icproj", "{063017D4-4F8C-40E0-B827-80E75DEA0487}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8D254B90-E306-4081-A5B8-9F4E31436AE1} = {8D254B90-E306-4081-A5B8-9F4E31436AE1}
+		{C9C324DD-85D1-4135-9191-6CE8F6613E83} = {C9C324DD-85D1-4135-9191-6CE8F6613E83}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginMAX", "..\PluginMAX\PluginMAX.vcproj", "{C1D52BEA-ECC6-4307-9114-9D7A32D73E47}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tx3D Library", "..\tx3d\Tx3DLibrary.vcproj", "{A6DB4890-FE7F-49B5-A788-F0C212EE428B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Terra", "..\Terra\Terra.vcproj", "{C9C324DD-85D1-4135-9191-6CE8F6613E83}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A6DB4890-FE7F-49B5-A788-F0C212EE428B} = {A6DB4890-FE7F-49B5-A788-F0C212EE428B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render", "..\Render\Render.vcproj", "{8D254B90-E306-4081-A5B8-9F4E31436AE1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1D52BEA-ECC6-4307-9114-9D7A32D73E47} = {C1D52BEA-ECC6-4307-9114-9D7A32D73E47}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Final = Final
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{063017D4-4F8C-40E0-B827-80E75DEA0487}.Debug.ActiveCfg = Debug|Win32
+		{063017D4-4F8C-40E0-B827-80E75DEA0487}.Debug.Build.0 = Debug|Win32
+		{063017D4-4F8C-40E0-B827-80E75DEA0487}.Final.ActiveCfg = Release|Win32
+		{063017D4-4F8C-40E0-B827-80E75DEA0487}.Final.Build.0 = Release|Win32
+		{063017D4-4F8C-40E0-B827-80E75DEA0487}.Release.ActiveCfg = Release|Win32
+		{063017D4-4F8C-40E0-B827-80E75DEA0487}.Release.Build.0 = Release|Win32
+		{C1D52BEA-ECC6-4307-9114-9D7A32D73E47}.Debug.ActiveCfg = Debug|Win32
+		{C1D52BEA-ECC6-4307-9114-9D7A32D73E47}.Debug.Build.0 = Debug|Win32
+		{C1D52BEA-ECC6-4307-9114-9D7A32D73E47}.Final.ActiveCfg = Final|Win32
+		{C1D52BEA-ECC6-4307-9114-9D7A32D73E47}.Final.Build.0 = Final|Win32
+		{C1D52BEA-ECC6-4307-9114-9D7A32D73E47}.Release.ActiveCfg = Release|Win32
+		{C1D52BEA-ECC6-4307-9114-9D7A32D73E47}.Release.Build.0 = Release|Win32
+		{A6DB4890-FE7F-49B5-A788-F0C212EE428B}.Debug.ActiveCfg = Debug|Win32
+		{A6DB4890-FE7F-49B5-A788-F0C212EE428B}.Debug.Build.0 = Debug|Win32
+		{A6DB4890-FE7F-49B5-A788-F0C212EE428B}.Final.ActiveCfg = Final|Win32
+		{A6DB4890-FE7F-49B5-A788-F0C212EE428B}.Final.Build.0 = Final|Win32
+		{A6DB4890-FE7F-49B5-A788-F0C212EE428B}.Release.ActiveCfg = Release|Win32
+		{A6DB4890-FE7F-49B5-A788-F0C212EE428B}.Release.Build.0 = Release|Win32
+		{C9C324DD-85D1-4135-9191-6CE8F6613E83}.Debug.ActiveCfg = Debug|Win32
+		{C9C324DD-85D1-4135-9191-6CE8F6613E83}.Debug.Build.0 = Debug|Win32
+		{C9C324DD-85D1-4135-9191-6CE8F6613E83}.Final.ActiveCfg = Final|Win32
+		{C9C324DD-85D1-4135-9191-6CE8F6613E83}.Final.Build.0 = Final|Win32
+		{C9C324DD-85D1-4135-9191-6CE8F6613E83}.Release.ActiveCfg = Release|Win32
+		{C9C324DD-85D1-4135-9191-6CE8F6613E83}.Release.Build.0 = Release|Win32
+		{8D254B90-E306-4081-A5B8-9F4E31436AE1}.Debug.ActiveCfg = Debug|Win32
+		{8D254B90-E306-4081-A5B8-9F4E31436AE1}.Debug.Build.0 = Debug|Win32
+		{8D254B90-E306-4081-A5B8-9F4E31436AE1}.Final.ActiveCfg = Final|Win32
+		{8D254B90-E306-4081-A5B8-9F4E31436AE1}.Final.Build.0 = Final|Win32
+		{8D254B90-E306-4081-A5B8-9F4E31436AE1}.Release.ActiveCfg = Release|Win32
+		{8D254B90-E306-4081-A5B8-9F4E31436AE1}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,12 @@
+import project ;
+import targets ;
+import assert ;
+
+project.load project-test1 ;
+import project-roots ;
+
+project-roots.print ;
+
+NOTFILE all ;
+
+

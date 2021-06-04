@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.2.8: http://docutils.sourceforge.net/" />
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+<pre class="literal-block">
+template &lt;
+    class Iterator
+  , class Value = use_default
+  , class CategoryOrTraversal = use_default
+  , class Reference = use_default
+  , class Difference = use_default
+&gt;
+class indirect_iterator
+{
+ public:
+    typedef /* see below */ value_type;
+    typedef /* see below */ reference;
+    typedef /* see below */ pointer;
+    typedef /* see below */ difference_type;
+    typedef /* see below */ iterator_category;
+
+    indirect_iterator();
+    indirect_iterator(Iterator x);
+
+    template &lt;
+        class Iterator2, class Value2, class Category2
+      , class Reference2, class Difference2
+    &gt;
+    indirect_iterator(
+        indirect_iterator&lt;
+             Iterator2, Value2, Category2, Reference2, Difference2
+        &gt; const&amp; y
+      , typename enable_if_convertible&lt;Iterator2, Iterator&gt;::type* = 0 // exposition
+    );
+};
+</pre>
+<p>The member types of <tt class="literal"><span class="pre">indirect_iterator</span></tt> are defined according to the
+following pseudo-code.  We use the abbreviation
+<tt class="literal"><span class="pre">V=iterator_traits&lt;Iterator&gt;::value_type</span></tt> and <tt class="literal"><span class="pre">v</span></tt> is an object of
+type <tt class="literal"><span class="pre">V</span></tt>.:</p>
+<pre class="literal-block">
+if (Value is use_default) then
+    typedef iterator_traits&lt;V&gt;::value_type value_type;
+else
+    typedef remove_const&lt;Value&gt;::type value_type;
+
+if (Reference is use_default) then
+    typedef iterator_traits&lt;V&gt;::reference reference;
+else
+    typedef Reference reference;
+
+typedef Value* pointer;
+
+if (Difference is use_default)
+    typedef iterator_traits&lt;Iterator&gt;::difference_type difference_type;
+else
+    typedef Difference difference_type;
+</pre>
+<p>The member <tt class="literal"><span class="pre">indirect_iterator::iterator_category</span></tt> is a type that
+satisfies the requirements of the concepts modeled by the indirect
+iterator as specified in the models section.</p>
+<div class="section" id="indirect-iterator-requirements">
+<h1><a name="indirect-iterator-requirements"><tt class="literal"><span class="pre">indirect_iterator</span></tt> requirements</a></h1>
+<p>The <tt class="literal"><span class="pre">Iterator</span></tt> argument shall meet the requirements of Readable
+Iterator. The <tt class="literal"><span class="pre">CategoryOrTraversal</span></tt> argument shall be one of the
+standard iterator tags or <tt class="literal"><span class="pre">use_default</span></tt>. If <tt class="literal"><span class="pre">CategoryOrTraversal</span></tt>
+is an iterator tag, the template parameter <tt class="literal"><span class="pre">Iterator</span></tt> argument shall
+meet the traversal requirements corresponding to the iterator tag.</p>
+<p>The expression <tt class="literal"><span class="pre">*v</span></tt>, where <tt class="literal"><span class="pre">v</span></tt> is an object of type
+<tt class="literal"><span class="pre">iterator_traits&lt;Iterator&gt;::value_type</span></tt>, must be a valid expression
+and must be convertible to <tt class="literal"><span class="pre">indirect_iterator::reference</span></tt>.  Also,
+there are further requirements on the
+<tt class="literal"><span class="pre">iterator_traits&lt;Iterator&gt;::value_type</span></tt> if the <tt class="literal"><span class="pre">Value</span></tt> parameter
+is not <tt class="literal"><span class="pre">use_default</span></tt>, as implied by the algorithm for deducing the
+default for the <tt class="literal"><span class="pre">value_type</span></tt> member.</p>
+</div>
+<div class="section" id="indirect-iterator-models">
+<h1><a name="indirect-iterator-models"><tt class="literal"><span class="pre">indirect_iterator</span></tt> models</a></h1>
+<p>If <tt class="literal"><span class="pre">CategoryOrTraversal</span></tt> is a standard iterator tag,
+<tt class="literal"><span class="pre">indirect_iterator</span></tt> is a model of the iterator concept corresponding
+to the tag, otherwise <tt class="literal"><span class="pre">indirect_iterator</span></tt> satisfies the requirements
+of the most refined standard traversal concept that is satisfied by
+the <tt class="literal"><span class="pre">Iterator</span></tt> argument.</p>
+<p><tt class="literal"><span class="pre">indirect_iterator</span></tt> models Readable Iterator.  If
+<tt class="literal"><span class="pre">indirect_iterator::reference(*v)</span> <span class="pre">=</span> <span class="pre">t</span></tt> is a valid expression (where
+<tt class="literal"><span class="pre">t</span></tt> is an object of type <tt class="literal"><span class="pre">indirect_iterator::value_type</span></tt>) then
+<tt class="literal"><span class="pre">indirect_iterator</span></tt> models Writable Iterator. If
+<tt class="literal"><span class="pre">indirect_iterator::reference</span></tt> is a reference then
+<tt class="literal"><span class="pre">indirect_iterator</span></tt> models Lvalue Iterator.</p>
+</div>
+<div class="section" id="indirect-iterator-operations">
+<h1><a name="indirect-iterator-operations"><tt class="literal"><span class="pre">indirect_iterator</span></tt> operations</a></h1>
+<p><tt class="literal"><span class="pre">indirect_iterator();</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Requires:</th><td class="field-body"><tt class="literal"><span class="pre">Iterator</span></tt> must be Default Constructible.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">An instance of <tt class="literal"><span class="pre">indirect_iterator</span></tt> with 
+a default-constructed <tt class="literal"><span class="pre">iterator_adaptor</span></tt> subobject.</td>
+</tr>
+</tbody>
+</table>
+<p><tt class="literal"><span class="pre">indirect_iterator(Iterator</span> <span class="pre">x);</span></tt></p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">An instance of <tt class="literal"><span class="pre">indirect_iterator</span></tt> with
+the <tt class="literal"><span class="pre">iterator_adaptor</span></tt> subobject copy constructed from <tt class="literal"><span class="pre">x</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<pre class="literal-block">
+template &lt;
+    class Iterator2, class Value2, unsigned Access, class Traversal
+  , class Reference2, class Difference2
+&gt;
+indirect_iterator(
+    indirect_iterator&lt;
+         Iterator2, Value2, Access, Traversal, Reference2, Difference2
+    &gt; const&amp; y
+  , typename enable_if_convertible&lt;Iterator2, Iterator&gt;::type* = 0 // exposition
+);
+</pre>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Requires:</th><td class="field-body"><tt class="literal"><span class="pre">Iterator2</span></tt> is implicitly convertible to <tt class="literal"><span class="pre">Iterator</span></tt>.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">An instance of <tt class="literal"><span class="pre">indirect_iterator</span></tt> whose 
+<tt class="literal"><span class="pre">iterator_adaptor</span></tt> subobject is constructed from <tt class="literal"><span class="pre">y.base()</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

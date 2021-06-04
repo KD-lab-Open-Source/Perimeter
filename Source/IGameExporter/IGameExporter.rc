@@ -1,0 +1,315 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CONSOL DIALOGEX 0, 0, 296, 182
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Errors and warnings..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_EDIT,"RichEdit20A",ES_MULTILINE | ES_AUTOHSCROLL | 
+                    WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,7,7,286,
+                    173
+END
+
+IDD_PANEL DIALOGEX 0, 0, 310, 135
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "3dx Exporter "
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    PUSHBUTTON      "OK",IDOK,223,17,72,18
+    PUSHBUTTON      "Cancel",IDCANCEL,223,44,72,18
+    PUSHBUTTON      "Анимационные группы",IDC_ANIMATION_GROUP,15,15,97,15
+    PUSHBUTTON      "Анимационные цепочки",IDC_ANIMATION_CHAIN,15,39,97,15
+    PUSHBUTTON      "Debug",IDC_DEBUG,223,104,72,18
+END
+
+IDD_ANIMATION_GROUP DIALOGEX 0, 0, 370, 276
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU | WS_THICKFRAME
+CAPTION "Анимационные группы"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TREE_GROUP,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    TVS_NOTOOLTIPS | WS_BORDER | WS_TABSTOP,7,36,174,233
+    LTEXT           "Анимационные группы",IDC_STATIC,7,24,83,8
+    EDITTEXT        IDC_GROUP_NAME,7,7,107,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Добавить группу",IDC_ADD_GROUP,119,7,66,14
+    CONTROL         "",IDC_OBJECT_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    WS_BORDER | WS_TABSTOP,189,36,174,233
+    DEFPUSHBUTTON   "OK",IDOK,313,7,50,14
+    LTEXT           "Дерево объектов",IDC_STATIC,208,22,70,11
+    PUSHBUTTON      "<=",IDC_ADD_OBJECT_IN_GROUP,207,7,26,14
+    PUSHBUTTON      "<==",IDC_ADD_OBJECT_IN_GROUP_SUBTREE,239,7,26,14
+    PUSHBUTTON      "Удалить группу",IDC_DELETE_GROUP,119,22,66,14
+END
+
+IDD_ANIMATION_CHAIN DIALOGEX 0, 0, 411, 265
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU | WS_THICKFRAME
+CAPTION "Анимационные цепочки"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,354,7,50,14
+    CONTROL         "",IDC_LIST_CHAIN,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | 
+                    WS_BORDER | WS_TABSTOP,7,44,218,214
+    CONTROL         "",IDC_CHAIN_GROUP,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    TVS_NOSCROLL | WS_BORDER | WS_TABSTOP,242,44,162,214
+    LTEXT           "Анимационные цепочки",IDC_STATIC,7,7,85,10
+    LTEXT           "Группы видимости",IDC_STATIC,243,7,98,11
+    PUSHBUTTON      "Добавить",IDC_ADD_CHAIN,7,26,45,14
+    PUSHBUTTON      "Удалить",IDC_DELETE_CHAIN,55,26,43,14
+    PUSHBUTTON      "Добавить",IDC_ADD_CHAIN_GROUP,242,26,46,14
+    PUSHBUTTON      "Удалить",IDC_DELETE_CHAIN_GROUP,292,26,50,14
+    PUSHBUTTON      "Редактировать",IDC_EDIT_VISIBILITY,344,26,60,14
+END
+
+IDD_ADD_ANIMATION_CHAIN DIALOGEX 0, 0, 249, 114
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Параметры анимационной цепочки"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,192,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,192,24,50,14
+    LTEXT           "Имя",IDC_STATIC,7,15,14,8
+    LTEXT           "Начало цепочки",IDC_STATIC,7,33,56,8
+    LTEXT           "Конец цепочки",IDC_STATIC,7,51,52,8
+    LTEXT           "Время проигрывания (сек)",IDC_STATIC,7,69,90,8
+    EDITTEXT        IDC_PAC_NAME,113,7,71,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_PAC_BEGIN_TIME,"CustEdit",WS_TABSTOP,113,32,25,10
+    CONTROL         "",IDC_PAC_BEGIN_TIME_SPIN,"SpinnerControl",0x0,139,32,7,
+                    10
+    CONTROL         "",IDC_PAC_END_TIME,"CustEdit",WS_TABSTOP,113,49,25,10
+    CONTROL         "",IDC_PAC_END_TIME_SPIN,"SpinnerControl",0x0,139,49,7,
+                    10
+    CONTROL         "",IDC_PAC_DELTA_TIME,"CustEdit",WS_TABSTOP,113,68,25,10
+    CONTROL         "",IDC_PAC_DELTA_TIME_SPIN,"SpinnerControl",0x0,139,68,7,
+                    10
+    CONTROL         "Зацикленная цепочка анимации",IDC_CHAIN_CYCLED,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,7,89,121,10
+END
+
+IDD_ADD_CHAIN_GROUP DIALOGEX 0, 0, 192, 47
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Добавить группу анимаций"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_ACG_NAME,7,7,114,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,135,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,135,24,50,14
+END
+
+IDD_DEBUG_DIALOG DIALOGEX 0, 0, 260, 119
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Debug"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,203,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,203,24,50,14
+    CONTROL         "Log rotation",IDC_LOG_ROTATION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,7,118,13
+    CONTROL         "Log position",IDC_LOG_POSITION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,22,118,13
+    CONTROL         "Log scale",IDC_LOG_SCALE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,39,118,13
+    CONTROL         "Log info polygon",IDC_LOG_INFO_POLYGON,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,54,118,13
+END
+
+IDD_VISIBILITY DIALOGEX 0, 0, 259, 265
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU | 
+    WS_THICKFRAME
+CAPTION "Видимость отдельных объектов группах анимационных цепочек "
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,205,7,47,14
+    CONTROL         "",IDC_TREE_VISIBLE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    TVS_CHECKBOXES | WS_BORDER | WS_TABSTOP,7,26,245,232
+    EDITTEXT        IDC_VISIBLE_NAME,7,7,116,14,ES_AUTOHSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CONSOL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 293
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 180
+    END
+
+    IDD_PANEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+    END
+
+    IDD_ANIMATION_GROUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 363
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
+    END
+
+    IDD_ANIMATION_CHAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 404
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 258
+    END
+
+    IDD_ADD_ANIMATION_CHAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 107
+    END
+
+    IDD_ADD_CHAIN_GROUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 185
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 40
+    END
+
+    IDD_DEBUG_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_VISIBILITY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 252
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 258
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "#include ""veroverrides.h""\r\n"
+    "#include ""maxversion.r""\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+#include "veroverrides.h"
+#include "maxversion.r"
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

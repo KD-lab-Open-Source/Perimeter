@@ -1,0 +1,178 @@
+TriggerChain = {
+	name = "15biodamage2.scr";
+	triggers = {
+		3;
+		{
+			name = "START";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Camera";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -127;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 122;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = -127;
+						y = 16;
+					};
+					childOffset = {
+						x = 122;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "телепортация";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = 0;
+						y = 16;
+					};
+					childOffset = {
+						x = 0;
+						y = -16;
+					};
+				}
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellIndex = {
+				x = 1;
+				y = -5;
+			};
+			boundingRect = {
+				left = 288;
+				top = -320;
+				right = 544;
+				bottom = -288;
+			};
+		},
+		{
+			name = "Camera";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSetCamera" {
+				internalColor_ = 0;
+				cameraSplineName = "Camera1";
+				stepTime = -1.32704e-003;
+				cycles = -1163005939;
+				smoothTransition = true;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellIndex = {
+				x = 0;
+				y = -4;
+			};
+			boundingRect = {
+				left = 0;
+				top = -256;
+				right = 256;
+				bottom = -224;
+			};
+		},
+		{
+			name = "телепортация";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					3;
+					{
+						type = NORMAL;
+						condition = "struct ConditionKillObject" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORE;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionUnitClassUnderAttack" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+							damagePercent = 5;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORE;
+							counter = 23;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionTeleportationOut" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellIndex = {
+				x = 1;
+				y = -4;
+			};
+			boundingRect = {
+				left = 288;
+				top = -256;
+				right = 544;
+				bottom = -224;
+			};
+		}
+	};
+	boundingRect = {
+		left = 0;
+		top = -320;
+		right = 544;
+		bottom = -224;
+	};
+	viewRect = {
+		left = -305;
+		top = -839;
+		right = 1279;
+		bottom = 473;
+	};
+};

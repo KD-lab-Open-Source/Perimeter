@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> > <A href="../index.html">Components</A> 
+  > <A href="index.html">The Test Tools</A> > <A href="output_test_stream.html">Output operations testing</A>
+  > <SPAN class="current_article">boost::test_toolbox::ostream_test_stream</SPAN></DIV>
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">boost::test_toolbox::ostream_test_stream</H1>
+  <P class="first-line-indented">The class boost::test_toolbox::<SPAN class="new-term">ostream_test_stream</span> encapsulates procedures 
+    needed for effective and convenient operator&lt;&lt;( std::ostream&amp;, ... ) correctness check.</P>
+  <h2 class="first-line-indented"> Synopsis</h2>
+  <PRE class="code"><SPAN class="reserv-word">class</SPAN> <SPAN class="new-term">output_test_stream</SPAN> {
+<SPAN class="reserv-word">pubic</SPAN>:
+    <SPAN class="reserv-word">explicit</SPAN>  output_test_stream( <SPAN class="cpp-type">std::string</SPAN> <SPAN class="reserv-word">const</SPAN>&amp; pattern_file = <SPAN class="cpp-type">std::string</SPAN>(),
+                                  <SPAN class="cpp-type">bool</SPAN> match_or_save = <SPAN class="reserv-word">true</SPAN> );
+
+    <SPAN class="reserv-word">explicit</SPAN>  output_test_stream( <SPAN class="cpp-type">char</SPAN> <SPAN class="reserv-word">const</SPAN>* pattern_file = NULL,
+                                  <SPAN class="cpp-type">bool</SPAN> match_or_save = <SPAN class="reserv-word">true</SPAN> );
+
+              ~output_test_stream();
+
+    <SPAN class="cpp-type">bool</SPAN>      is_empty( <SPAN class="cpp-type">bool</SPAN> flush_stream = <SPAN class="reserv-word">true</SPAN> );
+    <SPAN class="cpp-type">bool</SPAN>      check_length( std::size_t length, <SPAN class="cpp-type">bool</SPAN> flush_stream = <SPAN class="reserv-word">true</SPAN> );
+    <SPAN class="cpp-type">bool</SPAN>      is_equal( <SPAN class="cpp-type">char</SPAN> <SPAN class="reserv-word">const</SPAN>* arg, <SPAN class="cpp-type">bool</SPAN> flush_stream = <SPAN class="reserv-word">true</SPAN> );
+    <SPAN class="cpp-type">bool</SPAN>      is_equal( <SPAN class="cpp-type">std::string</SPAN> <SPAN class="reserv-word">const</SPAN>& arg, <SPAN class="cpp-type">bool</SPAN> flush_stream = <SPAN class="reserv-word">true</SPAN> );
+    <SPAN class="cpp-type">bool</SPAN>      is_equal( <SPAN class="cpp-type">char</SPAN> <SPAN class="reserv-word">const</SPAN>* arg, <SPAN class="cpp-type">std::size_t</SPAN> n,
+                        <SPAN class="cpp-type">bool</SPAN> flush_stream = <SPAN class="reserv-word">true</SPAN> );
+
+    <SPAN class="cpp-type">bool</SPAN>      match_pattern( <SPAN class="cpp-type">bool</SPAN> flush_stream = <SPAN class="reserv-word">true</SPAN> );
+
+    <SPAN class="cpp-type">void</SPAN>      flush();
+};
+</PRE>
+  <H3>Description</H3>
+  <H3>explicit <SPAN class="new-term"><A name="constructor">output_test_stream</A></SPAN>( std::string const&amp; pattern_file, bool match_or_save )<BR>
+    explicit <SPAN class="new-term">output_test_stream</SPAN>( char const* pattern_file, bool match_or_save )</H3>
+  <P class="first-line-indented">The class output_test_stream constructors accept pattern file name and 
+    boolean switch match_or_save that are used by <A href="#match_pattern">match_pattern</A> facility. 
+    If they are not present you can still use other testing mechanisms.</P>
+  <H3>void <SPAN class="new-term">flush</SPAN>()</H3>
+  <P>Effects:</P>
+  <P class="first-line-indented">This method cleans the content of the output_test_stream instance.</P>
+  <H3>bool <SPAN class="new-term">is_empty</SPAN>( bool flush_stream )</H3>
+  <P>Effects:</P>
+  <P class="first-line-indented">This method checks that the content of the output_test_stream instance 
+    is empty. The flush_stream argument manage automatic call of the method output_test_stream::flush() 
+    after check is done.</P>
+  <P>Returns:
+  <P> 
+  <P class="first-line-indented"><I>true</I> if check successful, <I>false</I> otherwise.</P>
+  <H3> bool <SPAN class="new-term">check_length</SPAN>( std::size_t length, bool flush_stream )</H3>
+  <P>Effects:</P>
+  <P class="first-line-indented">This method checks that the length of the content of the output_test_stream 
+    instance is equal to supplied length value. The flush_stream argument manage automatic call of the 
+    method output_test_stream::flush() after check is done.</P>
+  <P>Returns:
+  <P> 
+  <P class="first-line-indented"><I>true</I> if check successful, <I>false</I> otherwise.</P>
+  <H3> bool <SPAN class="new-term">is_equal</SPAN>( char const* arg, bool flush_stream )<BR>
+    bool <SPAN class="new-term">is_equal</SPAN>( std::string const& arg, bool flush_stream )<BR>
+    bool <SPAN class="new-term">is_equal</SPAN>( char const* arg, std::size_t n, bool flush_stream )</H3>
+  <P>Effects:</P>
+  <P class="first-line-indented">The overloaded method output_test_stream::is_equal(...) checks that the 
+    content of the output_test_stream instance is equal to supplied character string. The first version 
+    compare with null-terminated string. The second compare with a reference to std::string object. And 
+    finally the third version compare with probably not null-terminated string defined by pointer to the 
+    string begin and the string length. The flush_stream argument manage automatic call of the method 
+    output_test_stream::flush() after check is done.</P>
+  <P>Returns:
+  <P> 
+  <P class="first-line-indented"><I>true</I> if check successful, <I>false</I> otherwise.</P>
+  <H3>bool <SPAN class="new-term"><A name="match_pattern">match_pattern</A></SPAN>( bool flush_stream 
+    )</H3>
+  <P>Effects:</P>
+  <P class="first-line-indented">This method matches the content of the output_test_stream instance versus 
+    the pattern file. The pattern file name is specified in the class output_test_stream <A href="#constructor">constructor</A>. 
+    If second argument of the class output_test_stream <A href="#constructor">constructor</A> is false, 
+    then every call of the method output_test_stream::match_pattern(...) will cause the output_test_stream 
+    instance content to be <U>stored</U> at the end of the pattern file. The flush_stream argument manage 
+    automatic call of the method output_test_stream::flush() after check is done.</P>
+  <P>Returns:
+  <P> 
+  <P class="first-line-indented"><I>true</I> if check successful, <I>false</I> otherwise.</P>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->18 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,25 @@
+extends-toolset msvc ;
+
+# singleton variables...
+set-as-singleton VC7_ROOT ;
+
+if ! $(MSVCDir)
+{
+    ProgramFiles ?= $(PROGRAMFILES) ;
+    VC7_ROOT ?= $(ProgramFiles:J=" ")"\\Microsoft Visual Studio .NET\\VC7" ;
+    VC_TOOL_PATH = "$(VC7_ROOT)"\\bin\\ ;
+    VC_SETUP = "CALL \"$(VC_TOOL_PATH)VCVARS32.BAT\" >nul" ;
+}
+VC_PDB_NAME = vc70 ;
+
+feature native-wchar_t : on off ;
+
+flags vc7 CFLAGS : /Op ;
+flags vc7 C++FLAGS : /Zc:forScope ;
+flags vc7 C++FLAGS <native-wchar_t>on : /Zc:wchar_t ;
+
+# The following #// line will be used by the regression test table generation
+# program as the column heading for HTML tables. Must not include version number.
+#//<a href="http://msdn.microsoft.com/vstudio/default.asp">Micro-<br>soft<br>VC++</a>
+
+

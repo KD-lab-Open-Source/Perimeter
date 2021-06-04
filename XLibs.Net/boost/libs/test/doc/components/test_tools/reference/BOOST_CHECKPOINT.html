@@ -1,0 +1,41 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_CHECKPOINT( message )</H3>
+  <P class="first-line-indented">This tool is used to mark a test flow with a check points. The checkpoint 
+    can help to locate a source of a runtime exception.</P>
+  <P class="first-line-indented">The tool's only parameter is the message that get printed in case of 
+    any exceptions occurred before the end of test case or another call to BOOST_CHECKPOINT. In case if 
+    an exception does occur and checkpoint was set, the Test Log generates the message in a following 
+    format: last checkpoint: &lt;checkpoint message&gt;</P>
+  <H4>Example</H4>
+<PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    BOOST_CHECKPOINT( <SPAN class="literal">&quot;Going to throw an exception&quot;</SPAN> );
+    <SPAN class="reserv-word">throw</SPAN> <SPAN class="literal">&quot;some error&quot;</SPAN>;
+
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output</H4>
+  <P class="test-output"> Exception in test_main : C string:some_error<BR>
+    test.cpp(2) : last checkpoint: Going to throw an exception</P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="../../unit_test_framework/components/test_log/index.html">Test 
+      Log</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

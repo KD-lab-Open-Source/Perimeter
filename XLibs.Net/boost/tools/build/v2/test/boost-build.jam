@@ -1,0 +1,10 @@
+
+# Assume BOOST_BUILD_PATH point to the 'test' directory.
+# We need to leave 'test' there, so that 'test-config.jam'
+# can be found, but also add parent directory, to find
+# all the other modules.
+
+BOOST_BUILD_PATH = $(BOOST_BUILD_PATH)/.. $(BOOST_BUILD_PATH) ;
+
+# Find the boost build system in the ../kernel directory.
+boost-build ../kernel ;

@@ -1,0 +1,50 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3>BOOST_CHECK_EQUAL_COLLECTIONS( left_begin, left_end, right_begin )</H3>
+  <P class="first-line-indented">This tool is used to perform by element comparison of two (left and right) 
+    collections. This tool shows all mismatched elements in a collections. Note though that right collection 
+    may have extra elements. This is does not get checked by this tool. You may need to check explicitly 
+    that collections have the same size.</P>
+  <P class="first-line-indented">If comparisons are successful, the tool produces a confirmation messages 
+    (note: to manage what messages appear in the test output stream set the proper log level) in other 
+    case it produces an error messages in a form &quot;error in &lt;test case name&gt;: test {&lt;<I>left_begin</I> 
+    argument name&gt;,&lt;<I>left_end</I> argument name&gt;} == {&lt;<I>right_begin</I> argument name&gt;,....} 
+    failed [ &lt;<I>left</I> mismatching value&gt; != &lt;<I>right</I> mismatching value&gt;]&quot;.</P>
+  <P class="first-line-indented"></P>
+  <P class="first-line-indented">The tool's first parameter designate begin of the left collection. The 
+    tool's second parameter designate end of the left collection. Last third parameter designate begin 
+    of the right collection. </P>
+  <H4>Example: test.cpp</H4>
+<PRE class="code"><SPAN class="cpp-type">int</SPAN> test_main( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    <SPAN class="cpp-type">int</SPAN> col1 [] = { <SPAN class="literal">1</SPAN>, <SPAN class="literal">2</SPAN>, <SPAN class="literal">3</SPAN>, <SPAN class="literal">4</SPAN>, <SPAN class="literal">5</SPAN>, <SPAN class="literal">6</SPAN>, <SPAN class="literal">7</SPAN> };
+    <SPAN class="cpp-type">int</SPAN> col2 [] = { <SPAN class="literal">1</SPAN>, <SPAN class="literal">2</SPAN>, <SPAN class="literal">4</SPAN>, <SPAN class="literal">4</SPAN>, <SPAN class="literal">5</SPAN>, <SPAN class="literal">7</SPAN>, <SPAN class="literal">7</SPAN> };
+
+    BOOST_CHECK_EQUAL_COLLECTIONS( col1, col1+<SPAN class="literal">7</SPAN>, col2);
+    
+    <SPAN class="reserv-word">return</SPAN> <SPAN class="literal">0</SPAN>;
+}</PRE>
+  <H4>Output:</H4>
+  <P class="test-output">test.cpp(4) : error in test_main: test {col1, col1+7} == {col2,...} failed [3 
+    != 4]<BR>
+    test.cpp(4) : error in test_main: test {col1, col1+7} == {col2,...} failed [6 != 7] </P>
+  <DIV class="see_also"> 
+    <H4>See Also</H4>
+    <P class="see-also-content"><A href="BOOST_CHECK_EQUAL.html" target="descr">BOOST_CHECK_EQUAL</A></P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

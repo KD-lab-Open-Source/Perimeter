@@ -1,0 +1,781 @@
+GlobalAttributes = {
+	debuScales = {
+		frame = 1.;
+		legion = 0.5;
+		buildins = 0.5;
+		spheres = 0.5;
+		other = 0.5;
+	};
+	belligerentPropertyTable = {
+		data = {
+			13;
+			{
+				belligerent = BELLIGERENT_EXODUS0;
+				colorIndex = 0;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EXODUS1;
+				colorIndex = 1;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_HARKBACKHOOD0;
+				colorIndex = 5;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Harkbackhood_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Harkbackhood_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Harkbackhood_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_HARKBACKHOOD1;
+				colorIndex = 4;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Harkbackhood_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Harkbackhood_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Harkbackhood_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EMPIRE0;
+				colorIndex = 2;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EMPIRE1;
+				colorIndex = 3;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EMPIRE_VICE;
+				colorIndex = 2;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EXODUS2;
+				colorIndex = 0;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EXODUS3;
+				colorIndex = 1;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EXODUS4;
+				colorIndex = 2;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Exodus_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Exodus_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EMPIRE2;
+				colorIndex = 3;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EMPIRE3;
+				colorIndex = 2;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			},
+			{
+				belligerent = BELLIGERENT_EMPIRE4;
+				colorIndex = 1;
+				soundTracks = {
+					3;
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Primary.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Primary.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Military.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Military.ogg"
+						};
+						randomChoice = false;
+					},
+					{
+						fileName = "RESOURCE\\MUSIC\\Empire_Covered.ogg";
+						fileNames = {
+							1;
+							"RESOURCE\\MUSIC\\Empire_Covered.ogg"
+						};
+						randomChoice = false;
+					}
+				};
+			}
+		};
+	};
+	buildingBlockConsumption = {
+		energy = 2.;
+		time = 100;
+		priority = 30;
+		name = "buildingBlockConsumption";
+	};
+	fieldPrm = {
+		monksPerCore = 20;
+		monksPerCoreMin = 3;
+		monksVelocity = 5.;
+		monksAccelerationFactor = 0.2;
+		monksPositionFactor = 0.1;
+		monksWetPlace = 8;
+		chargeLevelToStartMin = 0.1;
+		fieldConsumption = {
+			energy = 1.;
+			time = 100;
+			priority = 20;
+			name = "fieldConsumption";
+		};
+		checkFieldRadiusMin = 8.;
+		fieldDamage = {
+			width = 20;
+			power = 40;
+			attackFilter = DAMAGE_FILTER_ALL;
+			damageFilter = DAMAGE_FILTER_ALL;
+		};
+		impulseDuration = 2000;
+		impulseFieldDamage = {
+			width = 20;
+			power = 40;
+			attackFilter = DAMAGE_FILTER_ALL;
+			damageFilter = DAMAGE_FILTER_ALL;
+		};
+	};
+	difficultyPrmArray = {
+		3;
+		{
+			name = "AI Easy";
+			filthDensity = 0.3;
+			aiDelay = 20000;
+			triggerDelayFactor = 3.;
+		},
+		{
+			name = "AI Normal";
+			filthDensity = 0.6;
+			aiDelay = 10000;
+			triggerDelayFactor = 2.;
+		},
+		{
+			name = "AI Hard";
+			filthDensity = 1.;
+			aiDelay = 0;
+			triggerDelayFactor = 1.;
+		}
+	};
+	soundEventsPrm = {
+		collectorEmptyThreshold = 10.;
+		energyLosingThreshold = 2.;
+		energyNotEnoughThreshold = 10.;
+		energyNotEnoughDischargeThreshold = 1.01;
+	};
+	playerSound = {
+		sounds = {
+			0;
+		};
+		events = {
+			28;
+			{
+				ID = SOUND_VOICE_UNIT_READY;
+				name = "Unit_Ready";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 30000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_SQUAD_SELECTED;
+				name = "Squad_Selected";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 3000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_SQUAD_MOVES;
+				name = "Squad_Moves";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 3000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_SQUAD_ATTACKS;
+				name = "Squad_Attacks";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_SQUAD_UNDER_ATTACK;
+				name = "Squad_Under_Attack";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 10000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_SQUAD_TRANSFORM_STARTED;
+				name = "Squad_Transform_Start";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 10000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_SQUAD_TRANSFORM_FINISHED;
+				name = "Squad_Transform_Finished";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 10000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_MMP_CONVERT_COMMAND;
+				name = "MMP_Convert_Command";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 10000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_TERRAFORMING_STARTED;
+				name = "Terraforming_Started";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 10000;
+				startDelay = 10000;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_TERRAFORMING_FINISHED;
+				name = "Terraforming_Finished";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 10000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_ENERGY_COLLECTOR_EMPTY;
+				name = "Energy_Collector_Empty";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 30000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_ENERGY_NOT_ENOUGH;
+				name = "Energy_Not_Enough";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 30000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_PSHIELD_GLOBAL_ACTIVE;
+				name = "PShield_Global_Active";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_PSHIELD_GLOBAL_OFF;
+				name = "PShield_Global_Off";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_PSHIELD_LOCAL_ACTIVE;
+				name = "PShield_Local_Active";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_PSHIELD_LOCAL_OFF;
+				name = "PShield_Local_Off";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_FRAME_ALARM;
+				name = "Frame_Allarm";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 3000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_FRAME_INSTALLED;
+				name = "Frame_Installed";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_FRAME_DEINSTALLED;
+				name = "Frame_Deinstalled";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_FRAME_TELEPORTATION;
+				name = "Frame_Teleportation";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_BUILDING_DISASSEMBLED;
+				name = "Building_Disassembled";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 1000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_BUILDING_UPGRADE_FINISHED;
+				name = "Labor_Upgrade_Finished";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 3000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_BUILDING_DESTROYED;
+				name = "Building_Destroyed";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 5000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_BUILDING_READY;
+				name = "Building_Ready";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 5000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_BUILDING_UNDER_ATTACK;
+				name = "Building_Under_Attack";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 20000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_FILTH_DETECTED;
+				name = "Scourge_activity_detected";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 60000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_VOICE_GEOACTIVITY_DETECTED;
+				name = "Geological_activity_detected";
+				is3D = false;
+				isVoice = true;
+				activePlayer = false;
+				pauseTime = 60000;
+				startDelay = 0;
+				queueTime = 2000;
+			},
+			{
+				ID = SOUND_EVENT_BUILDING_HOLD_CONSTRUCTION;
+				name = "Struct_Event_Just_Stoped";
+				is3D = false;
+				isVoice = false;
+				activePlayer = true;
+				pauseTime = 0;
+				startDelay = 0;
+				queueTime = 2000;
+			}
+		};
+	};
+	baseUnitsMax = 250;
+	changePlayerDelay = 3000;
+	sellBuildingEfficiency = 0.5;
+	trucksIntrumentParameter = {
+		kRadius4DigZL = 1.2;
+		kHeigh4DigZL = 1.2;
+		kRadius4PutZL = 1.2;
+		kHeigh4PutZL = 1.2;
+		kRadius4DigGarbage = 1.2;
+		kHeigh4DigGarbage = 1.2;
+		kRadius4PutGarbage = 1.2;
+		kHeigh4PutGarbage = 1.2;
+	};
+	FallTreeTime = 3.;
+};

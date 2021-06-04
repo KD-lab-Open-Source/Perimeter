@@ -1,0 +1,30 @@
+H1
+{
+    font-size:      200%;
+    color:          #00008B;
+    text-align:     center;
+    clear:          left;
+}
+H2
+{
+    font-size:      150%;
+}
+H3
+{
+    font-size:      125%;
+}
+H4
+{
+    font-size:      115%;
+}
+H5
+{
+    font-size:      108%;
+}
+
+H1.subtitle
+{
+    font-size:      160%;
+    color:          #4466A9;
+    text-align:     left;
+}

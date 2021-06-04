@@ -1,0 +1,635 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_PIT_BRUSH           BITMAP  DISCARDABLE     "res\\pitBrush.bmp"
+IDB_PIT_BRUSH_BIG       BITMAP  DISCARDABLE     "res\\pitBrushBig.bmp"
+IDB_COLORPICKER         BITMAP  DISCARDABLE     "res\\colorPicker.bmp"
+IDB_DEFAULT             BITMAP  DISCARDABLE     "res\\default.bmp"
+IDB_SHIFT               BITMAP  DISCARDABLE     "res\\shift.bmp"
+IDB_SCALE               BITMAP  DISCARDABLE     "res\\scale.bmp"
+IDB_PLANE               BITMAP  DISCARDABLE     "res\\plane.bmp"
+IDB_ARROW               BITMAP  DISCARDABLE     "res\\arrow.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SLOT_PROPERTIES DIALOGEX 65386, 0, 154, 407
+STYLE DS_MODALFRAME | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Slot Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_STEP,121,367,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    WS_BORDER | WS_TABSTOP,3,4,147,231
+    GROUPBOX        "Texture",IDC_STATIC_TEXTURE,3,235,147,169,NOT 
+                    WS_VISIBLE
+    GROUPBOX        "Location",IDC_STATIC_LOCATION,3,235,147,169
+    LTEXT           "Foreground",IDC_STATIC_FG,56,253,38,8,NOT WS_VISIBLE
+    LTEXT           "Background",IDC_STATIC_BG,56,267,43,8,NOT WS_VISIBLE
+    PUSHBUTTON      "",IDC_BUTTON_FG,119,250,26,13,BS_BITMAP | NOT 
+                    WS_VISIBLE
+    PUSHBUTTON      "",IDC_BUTTON_BG,119,265,26,12,BS_BITMAP | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_SHIFT_X,69,290,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_SHIFT_Y,95,290,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_SHIFT_Z,121,290,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_SCALE_X,69,302,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_SCALE_Y,95,302,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_SCALE_Z,121,302,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "X",IDC_STATIC_SHIFT_X,78,281,10,8,NOT WS_VISIBLE
+    LTEXT           "Y",IDC_STATIC_SHIFT_Y,104,281,10,8,NOT WS_VISIBLE
+    LTEXT           "Z",IDC_STATIC_SHIFT_Z,129,281,10,8,NOT WS_VISIBLE
+    LTEXT           "Fr.",IDC_STATIC_FROM,57,254,10,8,NOT WS_VISIBLE
+    LTEXT           "To",IDC_STATIC_TO,56,268,23,8,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_FROM_X,69,252,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_FROM_Y,95,252,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_FROM_Z,121,252,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_TO_X,69,265,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_TO_Y,95,265,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_TO_Z,121,265,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "X",IDC_STATIC_FROM_X,78,243,10,8,NOT WS_VISIBLE
+    LTEXT           "Y",IDC_STATIC_FROM_Y,104,243,10,8,NOT WS_VISIBLE
+    LTEXT           "Z",IDC_STATIC_FROM_Z,129,243,10,8,NOT WS_VISIBLE
+    CONTROL         "Back Interpolator",IDC_CHECK_BACK,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFTTEXT | NOT WS_VISIBLE | 
+                    WS_TABSTOP,54,318,91,12
+    LTEXT           "Step",IDC_STATIC_STEP,55,370,53,9,NOT WS_VISIBLE
+    LTEXT           "Gradation",IDC_STATIC_GRADATION,55,385,53,9,NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_GRADATION,121,383,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "Ring Count",IDC_STATIC_RING_COUNT,55,370,54,9,NOT 
+                    WS_VISIBLE
+    CONTROL         "ZY",IDC_RADIO_PLANE_X,"Button",BS_AUTORADIOBUTTON | NOT 
+                    WS_VISIBLE,71,369,24,10
+    CONTROL         "ZX",IDC_RADIO_PLANE_Y,"Button",BS_AUTORADIOBUTTON | NOT 
+                    WS_VISIBLE,98,369,26,10
+    CONTROL         "XY",IDC_RADIO_PLANE_Z,"Button",BS_AUTORADIOBUTTON | NOT 
+                    WS_VISIBLE,124,369,24,10
+    CONTROL         "ZY",IDC_RADIO_PLANE_X2,"Button",BS_AUTORADIOBUTTON | 
+                    NOT WS_VISIBLE,71,253,26,10
+    CONTROL         "ZX",IDC_RADIO_PLANE_Y2,"Button",BS_AUTORADIOBUTTON | 
+                    NOT WS_VISIBLE,98,253,24,10
+    CONTROL         "XY",IDC_RADIO_PLANE_Z2,"Button",BS_AUTORADIOBUTTON | 
+                    NOT WS_VISIBLE,124,253,24,10
+    LTEXT           "Persistence",IDC_STATIC_PERSISTENCE,55,336,38,8,NOT 
+                    WS_VISIBLE
+    LTEXT           "Octave Count",IDC_STATIC_OCTAVE_COUNT,55,353,45,8,NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_PERSISTENCE,121,333,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_OCTAVE_COUNT,121,350,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "Brick",IDC_STATIC_BRICK,9,252,17,8,NOT WS_VISIBLE
+    LTEXT           "Gap",IDC_STATIC_GAP,9,265,23,8,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_BRICK_X,71,250,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_BRICK_Y,97,250,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_BRICK_Z,123,250,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_GAP_X,71,263,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_GAP_Y,97,263,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_GAP_Z,123,263,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "X",IDC_STATIC_BRICK_X,80,241,10,8,NOT WS_VISIBLE
+    LTEXT           "Y",IDC_STATIC_BRICK_Y,106,241,10,8,NOT WS_VISIBLE
+    LTEXT           "Z",IDC_STATIC_BRICK_Z,131,241,10,8,NOT WS_VISIBLE
+    LTEXT           "Center",IDC_STATIC_CENTER,11,252,22,8,NOT WS_VISIBLE
+    CONTROL         "Is Brick",IDC_CHECK_IS_BRICK,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | NOT WS_VISIBLE | WS_TABSTOP,8,295,68,11
+    LTEXT           "Near Bound",IDC_STATIC_NEAR_BOUND,9,268,39,8,NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_NEAR_BOUND,52,265,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "Far Bound",IDC_STATIC_FAR_BOUND,82,268,34,8,NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_EDIT_FAR_BOUND,123,265,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "Radius",IDC_STATIC_RADIUS,9,269,29,9,NOT WS_VISIBLE
+    CONTROL         "ZY",IDC_RADIO_PLANE_LOCATION_X,"Button",
+                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE,26,252,26,10
+    CONTROL         "ZX",IDC_RADIO_PLANE_LOCATION_Y,"Button",
+                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE,52,252,26,10
+    CONTROL         "XY",IDC_RADIO_PLANE_LOCATION_Z,"Button",
+                    BS_AUTORADIOBUTTON | NOT WS_VISIBLE,78,252,26,10
+    LTEXT           "Blanking",IDC_STATIC_FADE,9,284,31,9,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_FADE,52,281,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    LTEXT           "Fading",IDC_STATIC_FADING,81,284,25,9,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_FADING,123,281,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    CONTROL         144,IDC_PREVIEW_IMAGE,"Static",SS_BITMAP | NOT 
+                    WS_VISIBLE,6,243,44,159,WS_EX_STATICEDGE
+    CONTROL         152,IDC_STATIC_SHIFT_IMAGE,"Static",SS_BITMAP | NOT 
+                    WS_VISIBLE,55,290,11,10
+    CONTROL         153,IDC_STATIC_SCALE_IMAGE,"Static",SS_BITMAP | NOT 
+                    WS_VISIBLE,55,303,11,10
+    CONTROL         154,IDC_STATIC_PLANE_IMAGE,"Static",SS_BITMAP | NOT 
+                    WS_VISIBLE,55,252,11,10
+    CONTROL         154,IDC_STATIC_PLANE_IMAGE2,"Static",SS_BITMAP | NOT 
+                    WS_VISIBLE,55,368,11,10
+    EDITTEXT        IDC_EDIT_RADIUS,123,265,24,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    CONTROL         154,IDC_STATIC_PLANE_IMAGE3,"Static",SS_BITMAP | NOT 
+                    WS_VISIBLE,9,252,11,10
+END
+
+IDD_SLOTS DIALOGEX 0, 0, 158, 20
+STYLE DS_MODALFRAME | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Slots"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+END
+
+IDD_INSTRUMENTS DIALOGEX 0, 0, 17, 52
+STYLE DS_MODALFRAME | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Instruments"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_ARROW_BUTTON,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE,0,0,17,16
+    CONTROL         "",IDC_PIT_BRUSH,"Button",BS_AUTORADIOBUTTON | BS_BITMAP | 
+                    BS_PUSHLIKE,0,18,17,16
+    CONTROL         "",IDC_PIT_BRUSH_BIG,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE | NOT WS_VISIBLE,0,35,17,16
+END
+
+IDD_LOAD_MAP DIALOGEX 0, 0, 119, 151
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Load Map..."
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Load",IDOK,7,130,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,62,130,50,14
+    LISTBOX         IDC_LIST2,7,7,105,115,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_HSCROLL | WS_TABSTOP,WS_EX_CLIENTEDGE
+END
+
+IDD_INDEXER_DIALOG DIALOG DISCARDABLE  0, 0, 132, 111
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Indexing parameters"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Index",IDOK,19,89,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,74,89,50,14
+    EDITTEXT        IDC_EDIT_FROM_X,39,17,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_FROM_Y,69,17,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_FROM_Z,99,17,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_TO_X,39,32,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_TO_Y,69,32,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_TO_Z,99,32,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_STEP_X,39,47,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_STEP_Y,69,47,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_STEP_Z,99,47,25,12,ES_AUTOHSCROLL
+    LTEXT           "From",IDC_STATIC,9,17,20,10
+    LTEXT           "To",IDC_STATIC,9,32,20,10
+    LTEXT           "Step",IDC_STATIC,9,47,20,10
+    LTEXT           "X",IDC_STATIC,49,5,8,8
+    LTEXT           "Y",IDC_STATIC,79,5,8,8
+    LTEXT           "Z",IDC_STATIC,108,5,8,8
+    EDITTEXT        IDC_EDIT_TRESHOLD,66,65,25,12,ES_AUTOHSCROLL
+    LTEXT           "Treshold",IDC_STATIC,7,67,35,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_SLOT_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 150
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 403
+    END
+
+    IDD_SLOTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 151
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 13
+    END
+
+    IDD_LOAD_MAP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 112
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    IDD_INDEXER_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 125
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 104
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_ACTION_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "hh"
+    BEGIN
+        MENUITEM "Clear Slot",                  ID_CLEAR_SLOT
+        MENUITEM "Painter",                     ID_PAINTER_SLOT
+        MENUITEM "Mixer",                       ID_MIXER_SLOT
+    END
+END
+
+IDR_MODELMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "hh"
+    BEGIN
+        MENUITEM "Delete",                      ID_DELETE_MODEL_TX
+        MENUITEM "Insert...",                   ID_ADD_MODEL_TX
+    END
+END
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About GeoTool"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "GeoTool Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2003",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Load Map...",                 ID_LOAD_MAP
+        MENUITEM "Save Texture...",             ID_SAVE_TEXTURE
+        MENUITEM "Load Texture...",             ID_LOAD_TEXTURE
+        MENUITEM "Publish",                     ID_PUBLISH
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "Instruments",                 ID_SHOW_INSTRUMENTS
+        MENUITEM "Slot Properties",             ID_SHOW_SLOT_PROPERTIES
+        MENUITEM "Slots",                       ID_SHOW_SLOTS
+        MENUITEM SEPARATOR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About GeoTool...",           ID_APP_ABOUT
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\GeoTool.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\GeoTool.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_BUTTONZERO
+    BUTTON      ID_REMOVE_DAM
+    BUTTON      ID_PLANE_DAM
+    BUTTON      ID_REMOVE_DAM_LOCAL
+    BUTTON      ID_PLANE_DAM_LOCAL
+    BUTTON      ID_BUTTON_TOGGLE_INDEXED
+    BUTTON      ID_BTN_ZOOM
+    BUTTON      ID_BUTTON_ZSHIFT_PLUS
+    BUTTON      ID_BUTTON_ZSHIFT_MINUS
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F2,          ID_LOAD_MAP,            VIRTKEY, NOINVERT
+    VK_F5,          ID_REFRESH,             VIRTKEY, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "GeoTool MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "GeoTool\0"
+            VALUE "LegalCopyright", "Copyright (C) 2003\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "GeoTool.EXE\0"
+            VALUE "ProductName", "GeoTool Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "GeoTool"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "GeoTool"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\GeoTool.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

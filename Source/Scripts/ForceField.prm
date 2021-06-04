@@ -1,0 +1,22 @@
+section ForceFieldPrm(declaration = "Render\Client\Scripts\ForceField.hi", definition = "Render\Client\Scripts\ForceField.cppi")
+{
+float fade_duration = 1000;
+int evolve_field_iterations = 3;
+float force_field_height = 300;
+int height_field_iterations = 10;
+															   								   
+float force_field_time_step = 0.2;
+float force_field_stiffness = 3;
+float force_field_damping = 1.0005;
+float force_field_damping2 = 0.0001;
+float force_field_damping_min = 0.1;
+float force_field_spawn_factor = 0.25;
+
+float force_field_penalty_stiffness = 0.;
+
+float force_field_check_place_height = 50;
+
+int force_field_tangeta_length = 20;
+
+}
+

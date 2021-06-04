@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../index.html">Boost.Test</A> > <A href="../index.html">Components</A> 
+  > <SPAN class="current_article">The Test Tools</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1>Boost Test Library: The Test Tools</H1>
+  <P class="page-toc"> <A href="#Introduction">Introduction</A><BR>
+    <A href="reference/index.html">Reference</A><BR>
+    <A href="#Implementation">Implementation</A><BR>
+    <A href="#Examples">Examples and tests</A><BR>
+  </P>
+  <H2><A name="Introduction">Introduction</A></H2>
+  <P class="first-line-indented"> Boost Test Library's Test Tools supply a toolbox to ease a creation 
+    and a maintenance of test programs and provide a uniform error reporting mechanism. The toolbox supplied 
+    in a form of macro and function declarations. While the functions can be called directly, the usual 
+    way to use Test Tools is via convenience macros. All macros arguments are calculated once, so it's 
+    safe to pass complex expressions in their place. All macros provide an error location: a file name 
+    and a line number. Boost Test Library's Test Tools are intended for test code rather than library 
+    or production code, where throwing exceptions, using assert(), or BOOST_STATIC_ASSERT() may be more 
+    suitable ways to detect and report errors. To use the Test Tools you need to link with either the 
+    <A href="../test_exec_monitor/index.html">Test Execution Monitor</A> or the <A href="../unit_test_framework/index.html">Unit 
+    Test Framework</A>. For list of all supplied Test Tools and usage examples see the <A href="reference/index.html">reference</A>.</P>
+  <P class="first-line-indented">Among many tools in supplied toolbox, there is the BOOST_CHECK_CLOSE 
+    tool that perform floating point comparison of values. See <A href="floating_point_comparison.html">floating 
+    point comparison</A> page for detailed description of used algorithms.</P>
+  <P class="first-line-indented">In addition to toolbox, the Test Tools also contains separate ostream_test_stream 
+    tool. This is class designed to significantly simplify correctness testing of the ostream based output 
+    procedures. For detailed description of it's interface and usage see the <A href="output_test_stream.html">ostream_test_stream</A> 
+    page.</P>
+  <P class="first-line-indented">Most of test tools direct values of it's arguments to the output stream in some form of log statement. If arguments type does not support operator&lt;&lt;(...) interface you will get a compilation error. You could either implement above interface or prohibit Test tools from logging argument values for specified type. To do so use following statement on file level before first test case including statements failing to comply:</P>
+  <P class="first-line-indented"><SPAN class="new-term">BOOST_TEST_DONT_PRINT_LOG_VALUE</span>( ArgumentType ).</P>
+  <P class="first-line-indented">Even though supplied test tools cover wide range of possible checks and provide detailed report on cause of error in some cases you may want to implement and use custom predicate that perform complex check and produce intelligent report on failure. To satisfy this need test tools implements <a href="custom_predicate_support.html">custom predicate support</a>.</P>
+  <H2><A name="Implementation">Implementation</A></H2>
+  <P class="first-line-indented">The Test Tools are implemented in three modules: two header files and 
+    one source file. </P>
+  <H4><A href="../../../../../boost/test/test_tools.hpp">boost/test/test_tools.hpp</A>:</H4>
+  <P class="first-line-indented">contains definition for the convenience macros, some template based Test 
+    Tools implementation functions and class ostream_test_stream.</P>
+  <H4><A href="../../../../../boost/test/floating_point_comparison.hpp">Boost/test/floating_point_comparison.hpp</A>:</H4>
+  <P class="first-line-indented">contains implementation for the floating point comparison algorithms, 
+    used by BOOST_CHECK_CLOSE tool. They also could be used directly.</P>
+  <H4><A href="../../../src/test_tools.cpp">libs/test/test_tools.cpp</A>:</H4>
+  <P class="first-line-indented">contains definition for the most Test Tools implementation functions 
+    and class ostream_test_stream implementation.</P>
+  <P class="first-line-indented">Since this component is not intended to be used standalone, there are 
+    no special compilation instruction for it.</P>
+  <H2><A name="Examples">Examples and Tests</A></H2>
+  <P class="indented"><A href="../../examples/test_exec_monitor_example.html">test_exec_example</A><BR>
+    <A href="../../tests/test_exec_fail2.html">test_exec_fail2</A><BR>
+    <A href="../../tests/test_exec_fail3.html">test_exec_fail3</A><BR>
+    <A href="../../tests/test_tools_test.html">test_tools_test</A><BR>
+    <A href="../../tests/test_fp_comparisons.html">test_fp_comparisons</A> </P>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->18 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

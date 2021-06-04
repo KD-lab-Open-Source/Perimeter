@@ -1,0 +1,5 @@
+<texture type='FlatModelZ'>
+	<shift value='0.0,0.0,0.0'/>
+	<scale value='0.25,0.25,0.25'/>
+	<model src='GeoTool\res\Templates\models\flame.tga'/>
+</texture>

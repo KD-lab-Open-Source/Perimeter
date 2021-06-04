@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+<TITLE>The Test Tools</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+H4
+{
+    margin:     0px;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV class="body"> 
+  <H3><A name="Deprecated">Deprecate test tools</A></H3>
+  <P class="first-line-indented">Here is the list of deprecated test tools used in Boost Test version 
+    1 and their new analogs:</P>
+  <DIV class="centered">
+    <TABLE id="two-column-table" cellspacing="0" >
+    <THEAD> 
+    <TR> 
+    <TD align="center">Old tool</TD>
+    <TD align="center">New analog tool</TD>
+    </TR>
+    </THEAD> <TBODY> 
+    <TR> 
+    <TD><SPAN class="new-term">BOOST_TEST</SPAN>( predicate ) </TD>
+    <TD><SPAN class="new-term">BOOST_CHECK</SPAN>( predicate )</TD>
+    </TR>
+    <TR> 
+    <TD><SPAN class="new-term">BOOST_CRITICAL_TEST</SPAN>( predicate ) </TD>
+    <TD><SPAN class="new-term">BOOST_REQUIRE</SPAN>( predicate )</TD>
+    </TR>
+    <TR> 
+    <TD><SPAN class="new-term">BOOST_CRITICAL_ERROR</SPAN>( message ) </TD>
+    <TD><SPAN class="new-term">BOOST_FAIL</SPAN>( message )</TD>
+    </TR>
+    </TBODY> 
+    </TABLE>
+  </DIV>
+  <P>The main reasons for making these changes were conciseness and uniformity. Old 
+    deprecated names are still accepted but may be excluded in a future releases. Thanks 
+    for Ullrich Koethe, who originally proposed new names. 
+</DIV>
+</BODY>
+</HTML>

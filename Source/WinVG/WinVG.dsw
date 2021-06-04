@@ -1,0 +1,74 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "PluginMAX"=..\PluginMAX\PluginMAX.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Perimeter/WinVG", MJMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "Render"=..\Render\Render.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Perimeter/WinVG", MJMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "WinVG"=.\WinVG.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Perimeter/WinVG", MJMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name PluginMAX
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name Render
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VisGeneric
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

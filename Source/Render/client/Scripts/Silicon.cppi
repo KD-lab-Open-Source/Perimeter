@@ -1,0 +1,76 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript definition
+//	Section: SiliconPrm
+//	Number of variables: 26
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+float silicon_time_step = 0.1f;
+float elastic_sphere_stiffness = 0.8f;
+float elastic_sphere_damping = -4.e-002f;
+float elastic_sphere_damping2 = 2.5e-004f;
+float elastic_sphere_spawn_factor = 0.2f;
+float elastic_sphere_spawn_factor_dz = 0.2f;
+float elastic_sphere_velocity_factor = 1.5e-002f;
+float elastic_sphere_CM_stiffness = 5.e-002f;
+float elastic_sphere_CM_damping = -2.5e-002f;
+float elastic_sphere_CM_damping2 = 1.e-004f;
+float elastic_sphere_get_point_radius_factor = 0.85f;
+float elastic_link_CM_stiffness = 3.e-002f;
+float elastic_link_CM_damping = -5.e-002f;
+float elastic_link_CM_damping2 = 1.e-004f;
+float elastic_link_stiffness = 0.1f;
+float elastic_link_damping = -5.e-002f;
+float elastic_link_damping2 = 1.e-003f;
+float elastic_link_thickness_pow = 4.f;
+float oscillating_link_density = 0.1f;
+float oscillating_link_stiffness = 2.f;
+float oscillating_link_damping = -4.e-002f;
+float oscillating_link_damping2 = 2.5e-005f;
+float oscillating_link_spawn_factor = 0.2f;
+float oscillating_link_spawn_factor_dz = 0.2f;
+float oscillating_link_velocity_factor = 1.5e-002f;
+float oscillating_link_tail_length = 40.f;
+
+#ifdef _PRM_EDIT_
+struct SiliconPrm_ParameterSection : ParameterSection
+{
+	SiliconPrm_ParameterSection() : ParameterSection("SiliconPrm")
+{
+	add_dependency(".\\Scripts\\Silicon.prm");
+	sourceCRC = 2276773610;
+	description = 1551222005;
+	reserve(26);
+	add(&silicon_time_step, "silicon_time_step");
+	add(&elastic_sphere_stiffness, "elastic_sphere_stiffness");
+	add(&elastic_sphere_damping, "elastic_sphere_damping");
+	add(&elastic_sphere_damping2, "elastic_sphere_damping2");
+	add(&elastic_sphere_spawn_factor, "elastic_sphere_spawn_factor");
+	add(&elastic_sphere_spawn_factor_dz, "elastic_sphere_spawn_factor_dz");
+	add(&elastic_sphere_velocity_factor, "elastic_sphere_velocity_factor");
+	add(&elastic_sphere_CM_stiffness, "elastic_sphere_CM_stiffness");
+	add(&elastic_sphere_CM_damping, "elastic_sphere_CM_damping");
+	add(&elastic_sphere_CM_damping2, "elastic_sphere_CM_damping2");
+	add(&elastic_sphere_get_point_radius_factor, "elastic_sphere_get_point_radius_factor");
+	add(&elastic_link_CM_stiffness, "elastic_link_CM_stiffness");
+	add(&elastic_link_CM_damping, "elastic_link_CM_damping");
+	add(&elastic_link_CM_damping2, "elastic_link_CM_damping2");
+	add(&elastic_link_stiffness, "elastic_link_stiffness");
+	add(&elastic_link_damping, "elastic_link_damping");
+	add(&elastic_link_damping2, "elastic_link_damping2");
+	add(&elastic_link_thickness_pow, "elastic_link_thickness_pow");
+	add(&oscillating_link_density, "oscillating_link_density");
+	add(&oscillating_link_stiffness, "oscillating_link_stiffness");
+	add(&oscillating_link_damping, "oscillating_link_damping");
+	add(&oscillating_link_damping2, "oscillating_link_damping2");
+	add(&oscillating_link_spawn_factor, "oscillating_link_spawn_factor");
+	add(&oscillating_link_spawn_factor_dz, "oscillating_link_spawn_factor_dz");
+	add(&oscillating_link_velocity_factor, "oscillating_link_velocity_factor");
+	add(&oscillating_link_tail_length, "oscillating_link_tail_length");
+	add_parameter_section(this);
+}
+};
+static SiliconPrm_ParameterSection SiliconPrm_ParameterSectionObject;
+#endif  //  _PRM_EDIT_
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: SiliconPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

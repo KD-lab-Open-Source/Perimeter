@@ -1,0 +1,43 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: RegionPrm
+//	Number of variables: 34
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+extern int toolzer_radius_min;
+extern int toolzer_radius_max;
+extern int toolzer_clear_back_layers_radius_delta;
+extern int toolzer_radius_fixed;
+extern int toolzer_segment_autoclip_radius;
+extern int toolzer_lineto_saved_segments_number;
+extern float toolzer_lineto_radius_factor;
+extern float region_segment_length;
+extern int minimal_region_size;
+extern float region_perimeter_epsilon;
+extern float rasterize_dlen;
+extern int energy_region_vectorize_minimal_region_size;
+extern int enable_check;
+extern int enable_write_state;
+extern int cells_show_by_pixel;
+extern int cells_show_by_line;
+extern int region_show_cells;
+extern int region_show_cells_ccw;
+extern int region_show_cells_space;
+extern int region_show_spline;
+extern float region_show_spline_space;
+extern float region_show_spline_animate_dlen;
+extern int region_show_spline_cp;
+extern int region_show_spline_cp_number;
+extern int region_show_including_level;
+extern int region_show_spline_y_min_max;
+extern int region_show_spline_tangents;
+extern int region_show_spline_normals;
+extern float region_show_tangent_len;
+extern int show_locate;
+extern int show_scan;
+extern int show_scan_space;
+extern int show_edit_column;
+extern int show_rasterize_column;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: RegionPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

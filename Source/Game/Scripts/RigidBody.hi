@@ -1,0 +1,74 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: RigidBodyPrm
+//	Number of variables: 35
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+extern int closestFeaturesHTsizeMax;
+extern float dz_max_avr_tau;
+extern float deep_penetration_dz;
+extern float average_forward_velocity_tau;
+extern float obstacle_turn_avr_tau;
+extern float general_velocity_factor_intermediate;
+extern float is_point_reached_radius_max_intermediate;
+extern float collision_detection_epsilon;
+extern float collision_resolve_velocity_tolerance;
+extern float collision_resolve_penetration_relaxation_factor;
+extern float collision_resolve_penetration_relaxation_min;
+extern float collision_resolve_velocity_relaxation;
+extern float collision_resolve_restitution_plus_one;
+extern int collision_resolve_iterations_per_contact;
+extern float kangaroo_mode_avr_tau;
+extern float kangaroo_mode_avr_threshould;
+extern float kangaroo_max_height_switch;
+extern float kangaroo_min_mass_switch;
+extern float kangaroo_avoid_stoopor_acceleration;
+extern float kangaroo_avoid_stoopor_epsilon;
+extern float analyze_terrain_points_density;
+extern float analyze_terrain_Dxy_minimal;
+extern int analyze_terrain_upper_dz_max;
+extern int analyze_terrain_lower_dz_min;
+extern float steering_control_negative_rudder_threshould;
+extern float steering_control_min_distance;
+extern float test_missile_shot_distance2;
+extern float average_movement_tau;
+extern float average_movement_threshould;
+extern int sleep_time;
+extern float fieldPathFindFactor;
+extern int fieldPathFindRadius;
+extern float diggingModeDamping;
+extern int diggingModeDelay;
+#ifndef __XScript_struct_HarmonicOscillator__
+#define __XScript_struct_HarmonicOscillator__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct HarmonicOscillator {
+	float decay;
+	float omega;
+	float amplitude;
+	int N;
+	float A[4];
+
+	float operator()(float t){ // in seconds
+		float phase = omega*t;
+		float f = 0;
+		for(int i = 0; i < N; i++)
+			f += A[i]*sin(phase*(i + 1));
+		return f*exp(-t*decay)*amplitude; 
+	}
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_HarmonicOscillator__
+#ifndef __XScript_struct_CameraExplodingPrm__
+#define __XScript_struct_CameraExplodingPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct CameraExplodingPrm {
+	HarmonicOscillator x;
+	HarmonicOscillator y;
+	HarmonicOscillator z;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_CameraExplodingPrm__
+extern CameraExplodingPrm cameraExplodingPrm;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: RigidBodyPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

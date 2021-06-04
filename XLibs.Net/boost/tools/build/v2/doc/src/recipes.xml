@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appendix PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/boostbook.dtd">
+
+  <appendix id="bbv2.recipies">
+    <title>Boost Build System V2 recipes</title>
+
+    <section id="bbv2.recipies.site-config">
+      <title>Targets in site-config.jam</title>
+
+  <para>It is desirable to declare standard libraries available on a
+  given system. Putting target declaration in Jamfile is not really
+  good, since locations of the libraries can vary. The solution is
+  to put the following to site-config.jam.</para>
+
+<programlisting>
+import project ;
+project.initialize $(__name__) ;
+project site-config ;
+lib zlib : : &lt;name&gt;z ;
+</programlisting>
+
+  <para>The second line allows this module to act as project. The
+  third line gives id to this project &#x2014; it really has no location
+  and cannot be used otherwise. The fourth line just declares a
+  target. Now, one can write
+
+<programlisting>
+exe hello : hello.cpp /site-config//zlib ;
+</programlisting>
+
+  in any Jamfile.</para>
+
+    </section>
+  </appendix>

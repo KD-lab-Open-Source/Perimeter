@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>Date I/O Localization</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<a href="../../../index.htm">
+<img align="left" src="../../../c++boost.gif" alt="C++ Boost">
+</a>  
+<h1>Date I/O Localization</h1>
+<p>&nbsp;</p>
+<hr>
+<a href="index.html">Overall Index</a> --
+<a href="gregorian.html">Gregorian Index</a> --
+<a href="posix_time.html">Posix Time Index</a>
+<p>
+<a href="#intro">Introduction</a> --
+<a href="#classoverview">Class Overview</a>
+<p>
+<h2><a name="intro">Introduction</a></h2>
+<p>
+The library provides for localized stream-based I/O of dates and times.
+Note that this support is not supported for all compilers.  See the
+<a href="BuildInfo.html">build information</a> page for details.
+
+<p>
+To provide for date output (and eventually input) the library uses a specialized
+facet class that provides the month name strings (both short and long -- eg: Jan, January), 
+order of the date output (year-month-day, day-month-year, etc), and the delimeters 
+between various parts of the date.  To localize the date the process entails constructing
+the facet with the desired parameters, calling imbue on the stream, and then streaming
+the date.
+<p>
+By default, the date operator &lt;&lt; uses the following default strings:
+<div class="fragment"><pre>
+ us_short_month_names={"Jan","Feb","Mar","Apr","May","Jun","Jul",
+                       "Aug","Sep","Oct","Nov","Dec", "NAD"};
+ us_long_month_names={"January","February","March","April","May","June","July",
+                      "August","September","October","November","December","Not-A-Date"};
+ us_special_value_names={"Not-A-Date","-infinity", "+infinity"};
+ us_long_weekday_names={"Sunday", "Monday", "Tuesday","Wenesday", "Thursday", "Friday", "Saturday"};
+ us_short_weekday_names={"Sun", "Mon", "Tue","Wed", "Thu", "Fri", "Sat"};
+</pre></div>
+
+<p>
+The following example shows how to output dates using German names first with short month names 
+and then with long month names.
+
+<div class="fragment"><pre>
+
+  <font class="keyword">using namespace</font> boost::gregorian;
+
+  typedef boost::date_time::all_date_names_put&lt;greg_facet_config&gt; date_facet;
+
+  const char* const de_short_month_names[]={"Jan","Feb","Mar","Apr","Mai",
+                                            "Jun","Jul","Aug","Sep","Okt",
+                                             "Nov","Dez", "NAM"};
+
+  const char* const de_long_month_names[]={"Januar","Februar","Marz","April",
+                                           "Mai","Juni","Juli","August","September",
+                                            "Oktober","November","Dezember","NichtDerMonat"};
+
+  const char* const de_special_value_names[]={"NichtDatumzeit",
+	                                      "-unbegrenztheit", 
+                                              "+unbegrenztheit"};
+ 
+  const char* const de_long_weekday_names[]={"Sonntag", "Montag", "Dienstag",
+                                             "Mittwoch", "Donnerstag", "Freitag", 
+                                             "Samstag"};
+
+  const char* const de_short_weekday_names[]={"Son", "Mon", "Die","Mit", "Don", "Fre", "Sam"};
+
+  std::locale default_locale;
+  <font class="comment">//Create the date facet based on the default locale</font>
+  std::locale german_dates(default_locale, 
+                           new date_facet(de_short_month_names, 
+                                          de_long_month_names,
+                                          de_special_value_names,
+                                          de_short_weekday_names,
+                                          de_long_weekday_names,
+                                          '.', <font class="comment">//separate parts using a '.'</font>
+                                          boost::date_time::ymd_order_ymd,
+                                          boost::date_time::month_as_short_string));
+  
+  <font class="comment">// Imbue the stream with the locale</font>
+  std::cout.imbue(german_dates); 
+  date d1(2002, Oct, 1);
+  <font class="comment">// output the date in German using short month names</font>
+  std::cout &lt;&lt; d1 &lt;&lt; std::endl; <font class="comment">//01.Okt.2002</font>
+
+  std::locale german_dates2(default_locale, 
+                           new date_facet(de_short_month_names, 
+                                          de_long_month_names,
+                                          de_special_value_names,
+                                          de_short_weekday_names,
+                                          de_long_weekday_names,
+                                          '-', <font class="comment">//separate parts using a '-'</font>
+                                          boost::date_time::ymd_order_iso,
+                                          boost::date_time::month_as_long_string));
+
+  std::cout.imbue(german_dates2); <font class="comment">//use long month names</font>
+  std::cout &lt;&lt; d1 &lt;&lt; std::endl; <font class="comment">//2002-Oktober-01</font>
+
+</pre></div>
+
+<p>
+<a name="classoverview"><h2>Class Overview</h2></a>
+<p>
+<table border=1 cellspacing=3 cellpadding=3>
+<tr><td><b>Class</b></td>
+    <td><b>Construction Parameters</b></td>
+    <td><b>Description</b></td></tr>
+<tr><td>date_facet</td>
+    <td>const char* const month_short_names[]<br>
+        const char* const month_long_names[]<br>
+        const char* const special_value_names[]<br>
+        const char* const weekday_short_names[]<br>
+        const char* const weekday_long_names[]<br>
+        char separator_char = '-'<br>
+        ymd_order_spec order_spec = ymd_order_iso<br>
+        month_format_spec month_format = month_as_short_string <br>
+
+    </td>
+    <td>Constructor for date facet</td></tr>
+</table>
+
+
+<hr><address><small>
+<!-- hhmts start -->
+Last modified: Sun Feb  1 09:18:06 MST 2004
+<!-- hhmts end -->
+ by <a href="mailto:jeff&#64;crystalclearsoftware.com">Jeff Garland</a> &copy; 2000-2004
+</small></address>
+
+</body>
+</html>
+

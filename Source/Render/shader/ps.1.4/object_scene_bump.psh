@@ -1,0 +1,59 @@
+// Pixel shader for shadows maps
+// with 4 higher than 8-bit precision samples
+// and percentage closer filtering
+#include "..\shade.inl"
+//c5 - diffuse
+//c6 - specular
+
+ps.1.4
+// Intensity in shadow
+def c0, SHADE, SHADE, SHADE, 1
+// Intensity in the light
+def c1, 1, 1, 1, 1
+// Sample weights (1/3)
+def c3, 0.33, 0.33, 0.33, 0.0
+
+def c4, -0.75,-0.75,-0.75,-0.75
+
+// Fetch 3 shadow map samples
+texld r2, t2
+texld r3, t3
+texld r4, t4
+// Light space depth from vertex shader
+texcrd r5.rgb, t4
+
+// Unpack sample 0
+mov_d8 r2.r, r2.r
+add r2.r, r2.r, r2.g
+// Unpack sample 1
+mov_d8 r3.r, r3.r
+add r2.g, r3.r, r3.g
+// Unpack sample 2
+mov_d8 r4.r, r4.r
+add r2.b, r4.r, r4.g
+	
+// Compare shadow map samples to surface depth
+sub r2.rgb, r5.b, r2
+cmp r2.rgb, -r2, c1, c0
+
+phase
+texld r0, t0
+texld r1, t1
+texcrd r5.rgb, t5
+// Compute average
+dp3 r3, r2, c3
+//r3 - shadow coefficient
+
+//diffuse bump
+dp3_sat r2, r1, v0_bx2
+mad r2,r2,c5,c5
+mul r2,r2,r0
+
+//specular bump
+dp3_sat r1, r1, v1_bx2
+mad_x4_sat r1, r1, r1, c4
+mad r0,r1,c6,r2
+
+//mul r0.rgb,r0,r3 //mul shadow
+mad r0.rgb,r0,r3,r5
+

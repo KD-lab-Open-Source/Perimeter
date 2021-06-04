@@ -1,0 +1,15 @@
+- Make Pyste accept already-generated xml files
+
+- throw() declaration in virtual wrapper's member functions
+
+- Allow protected methods to be overriden in Python
+
+- Expose programmability to the Pyste files (listing members of a class, for
+  instance)
+
+- Virtual operators  
+
+- args() support
+
+- --file-list, allowing the user to pass the filename of a file with the pyste
+  files

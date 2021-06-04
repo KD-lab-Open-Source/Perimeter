@@ -1,0 +1,381 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: Algorithm regex_grep (deprecated)</title>
+      <meta name="generator" content="HTML Tidy, see www.w3.org">
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <p></p>
+      <table id="Table1" cellspacing="1" cellpadding="1" width="100%" border="0">
+         <tr>
+            <td valign="top" width="300">
+               <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+            </td>
+            <td width="353">
+               <h1 align="center">Boost.Regex</h1>
+               <h2 align="center">Algorithm regex_grep (deprecated)</h2>
+            </td>
+            <td width="50">
+               <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+            </td>
+         </tr>
+      </table>
+      <br>
+      <br>
+      <hr>
+      <p>The algorithm regex_grep is deprecated in favor of <a href="regex_iterator.html">regex_iterator</a>
+         which provides a more convenient and standard library friendly interface.</p>
+      <p>The following documentation is taken unchanged from the previous boost release, 
+         and will not be updated in future.</p>
+      <hr>
+      <pre>
+#include &lt;<a href="../../../boost/regex.hpp">boost/regex.hpp</a>&gt;
+</pre>
+      <p>regex_grep allows you to search through a bidirectional-iterator range and 
+         locate all the (non-overlapping) matches with a given regular expression. The 
+         function is declared as:</p>
+      <pre>
+<b>template</b> &lt;<b>class</b> Predicate, <b>class</b> iterator, <b>class</b> charT, <b>class</b> traits, <b>class</b> Allocator&gt;
+<b>unsigned</b> <b>int</b> regex_grep(Predicate foo,
+                         iterator first,
+                         iterator last,
+                         <b>const</b> basic_regex&lt;charT, traits, Allocator&gt;&amp; e,
+                         boost::match_flag_type flags = match_default)
+</pre>
+      <p>The library also defines the following convenience versions, which take either 
+         a const charT*, or a const std::basic_string&lt;&gt;&amp; in place of a pair of 
+         iterators [note - these versions may not be available, or may be available in a 
+         more limited form, depending upon your compilers capabilities]:</p>
+      <pre>
+<b>template</b> &lt;<b>class</b> Predicate, <b>class</b> charT, <b>class</b> Allocator, <b>class</b> traits&gt;
+<b>unsigned</b> <b>int</b> regex_grep(Predicate foo, 
+              <b>const</b> charT* str, 
+              <b>const</b> basic_regex&lt;charT, traits, Allocator&gt;&amp; e, 
+              boost::match_flag_type flags = match_default);
+
+<b>template</b> &lt;<b>class</b> Predicate, <b>class</b> ST, <b>class</b> SA, <b>class</b> Allocator, <b>class</b> charT, <b>class</b> traits&gt;
+<b>unsigned</b> <b>int</b> regex_grep(Predicate foo, 
+              <b>const</b> std::basic_string&lt;charT, ST, SA&gt;&amp; s, 
+              <b>const</b> basic_regex&lt;charT, traits, Allocator&gt;&amp; e, 
+              boost::match_flag_type flags = match_default);
+</pre>
+      <p>The parameters for the primary version of regex_grep have the following 
+         meanings:&nbsp;</p>
+      <p></p>
+      <table id="Table2" cellspacing="0" cellpadding="7" width="624" border="0">
+         <tr>
+            <td width="5%">&nbsp;</td>
+            <td valign="top" width="50%">foo</td>
+            <td valign="top" width="50%">A predicate function object or function pointer, see 
+               below for more information.</td>
+            <td width="5%">&nbsp;</td>
+         </tr>
+         <tr>
+            <td>&nbsp;</td>
+            <td valign="top" width="50%">first</td>
+            <td valign="top" width="50%">The start of the range to search.</td>
+            <td>&nbsp;</td>
+         </tr>
+         <tr>
+            <td>&nbsp;</td>
+            <td valign="top" width="50%">last</td>
+            <td valign="top" width="50%">The end of the range to search.</td>
+            <td>&nbsp;</td>
+         </tr>
+         <tr>
+            <td>&nbsp;</td>
+            <td valign="top" width="50%">e</td>
+            <td valign="top" width="50%">The regular expression to search for.</td>
+            <td>&nbsp;</td>
+         </tr>
+         <tr>
+            <td>&nbsp;</td>
+            <td valign="top" width="50%">flags</td>
+            <td valign="top" width="50%">The flags that determine how matching is carried out, 
+               one of the <a href="#match_type">match_flags</a> enumerators.</td>
+            <td>&nbsp;</td>
+         </tr>
+      </table>
+      <br>
+      <br>
+      <p>The algorithm finds all of the non-overlapping matches of the expression e, for 
+         each match it fills a <a href="#reg_match">match_results</a>&lt;iterator, 
+         Allocator&gt; structure, which contains information on what matched, and calls 
+         the predicate foo, passing the match_results&lt;iterator, Allocator&gt; as a 
+         single argument. If the predicate returns true, then the grep operation 
+         continues, otherwise it terminates without searching for further matches. The 
+         function returns the number of matches found.</p>
+      <p>The general form of the predicate is:</p>
+      <pre>
+<b>struct</b> grep_predicate
+{
+ <b>  bool</b> <b>operator</b>()(<b>const</b> match_results&lt;iterator_type, typename expression_type::alloc_type::template rebind&lt;sub_match&lt;BidirectionalIterator&gt; &gt;::other&gt;&amp; m);
+};
+</pre>
+      <p>Note that in almost every case the allocator parameter can be omitted, when 
+         specifying the <a href="match_results.html">match_results</a> type, 
+         alternatively one of the typedefs cmatch, wcmatch, smatch or wsmatch can be 
+         used.</p>
+      <p>For example the regular expression "a*b" would find one match in the string 
+         "aaaaab" and two in the string "aaabb".</p>
+      <p>Remember this algorithm can be used for a lot more than implementing a version 
+         of grep, the predicate can be and do anything that you want, grep utilities 
+         would output the results to the screen, another program could index a file 
+         based on a regular expression and store a set of bookmarks in a list, or a text 
+         file conversion utility would output to file. The results of one regex_grep can 
+         even be chained into another regex_grep to create recursive parsers.</p>
+      <P>The algorithm may throw&nbsp;<CODE>std::runtime_error</CODE> if the complexity 
+         of matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
+      <p><a href="../example/snippets/regex_grep_example_1.cpp"> Example</a>: convert 
+         the example from <i>regex_search</i> to use <i>regex_grep</i> instead:</p>
+      <pre>
+<font color="#008000">#include &lt;string&gt; 
+#include &lt;map&gt; 
+#include &lt;boost/regex.hpp&gt; 
+
+</font><font color="#000080"><i>// IndexClasses: 
+// takes the contents of a file in the form of a string 
+// and searches for all the C++ class definitions, storing 
+// their locations in a map of strings/int's 
+</i></font><b>typedef</b> std::map&lt;std::string, <b>int</b>, std::less&lt;std::string&gt; &gt; map_type; 
+
+const char* re = 
+   // possibly leading whitespace:   
+   "^[[:space:]]*" 
+   // possible template declaration:
+   "(template[[:space:]]*&lt;[^;:{]+&gt;[[:space:]]*)?"
+   // class or struct:
+   "(class|struct)[[:space:]]*" 
+   // leading declspec macros etc:
+   "("
+      "\\&lt;\\w+\\&gt;"
+      "("
+         "[[:blank:]]*\\([^)]*\\)"
+      ")?"
+      "[[:space:]]*"
+   ")*" 
+   // the class name
+   "(\\&lt;\\w*\\&gt;)[[:space:]]*" 
+   // template specialisation parameters
+   "(&lt;[^;:{]+&gt;)?[[:space:]]*"
+   // terminate in { or :
+   "(\\{|:[^;\\{()]*\\{)";
+
+boost::regex expression(re); 
+<b>class</b> IndexClassesPred 
+{ 
+   map_type&amp; m; 
+   std::string::const_iterator base; 
+<b>public</b>: 
+   IndexClassesPred(map_type&amp; a, std::string::const_iterator b) : m(a), base(b) {} 
+   <b>bool</b> <b>operator</b>()(<b>const</b>  smatch&amp; what) 
+   { 
+ <font color=
+#000080>     <i>// what[0] contains the whole string 
+</i>      <i>// what[5] contains the class name. 
+</i>      <i>// what[6] contains the template specialisation if any. 
+</i>      <i>// add class name and position to map: 
+</i></font>      m[std::string(what[5].first, what[5].second) + std::string(what[6].first, what[6].second)] = 
+                what[5].first - base; 
+      <b>return</b> <b>true</b>; 
+   } 
+}; 
+<b>void</b> IndexClasses(map_type&amp; m, <b>const</b> std::string&amp; file) 
+{ 
+   std::string::const_iterator start, end; 
+   start = file.begin(); 
+   end = file.end(); 
+   regex_grep(IndexClassesPred(m, start), start, end, expression); 
+}
+</pre>
+      <p><a href="../example/snippets/regex_grep_example_2.cpp"> Example</a>: Use 
+         regex_grep to call a global callback function:</p>
+      <pre>
+<font color="#008000">#include &lt;string&gt; 
+#include &lt;map&gt; 
+#include &lt;boost/regex.hpp&gt; 
+
+</font><font color="#000080"><i>// purpose: 
+// takes the contents of a file in the form of a string 
+// and searches for all the C++ class definitions, storing 
+// their locations in a map of strings/int's 
+</i></font><b>typedef</b> std::map&lt;std::string, <b>int</b>, std::less&lt;std::string&gt; &gt; map_type; 
+
+const char* re = 
+   // possibly leading whitespace:   
+   "^[[:space:]]*" 
+   // possible template declaration:
+   "(template[[:space:]]*&lt;[^;:{]+&gt;[[:space:]]*)?"
+   // class or struct:
+   "(class|struct)[[:space:]]*" 
+   // leading declspec macros etc:
+   "("
+      "\\&lt;\\w+\\&gt;"
+      "("
+         "[[:blank:]]*\\([^)]*\\)"
+      ")?"
+      "[[:space:]]*"
+   ")*" 
+   // the class name
+   "(\\&lt;\\w*\\&gt;)[[:space:]]*" 
+   // template specialisation parameters
+   "(&lt;[^;:{]+&gt;)?[[:space:]]*"
+   // terminate in { or :
+   "(\\{|:[^;\\{()]*\\{)";
+
+boost::regex expression(re);
+map_type class_index; 
+std::string::const_iterator base; 
+
+<b>bool</b> grep_callback(<b>const</b>  boost::smatch&amp; what) 
+{ 
+ <font color="#000080">  <i>// what[0] contains the whole string 
+</i>   <i>// what[5] contains the class name. 
+</i>   <i>// what[6] contains the template specialisation if any. 
+</i>   <i>// add class name and position to map: 
+</i></font>   class_index[std::string(what[5].first, what[5].second) + std::string(what[6].first, what[6].second)] = 
+                what[5].first - base; 
+   <b>return</b> <b>true</b>; 
+} 
+<b>void</b> IndexClasses(<b>const</b> std::string&amp; file) 
+{ 
+   std::string::const_iterator start, end; 
+   start = file.begin(); 
+   end = file.end(); 
+   base = start; 
+   regex_grep(grep_callback, start, end, expression, match_default); 
+}
+ 
+</pre>
+      <p><a href="../example/snippets/regex_grep_example_3.cpp"> Example</a>: use 
+         regex_grep to call a class member function, use the standard library adapters <i>std::mem_fun</i>
+         and <i>std::bind1st</i> to convert the member function into a predicate:</p>
+      <pre>
+<font color="#008000">#include &lt;string&gt; 
+#include &lt;map&gt; 
+#include &lt;boost/regex.hpp&gt; 
+#include &lt;functional&gt; 
+</font><font color="#000080"><i>// purpose: 
+// takes the contents of a file in the form of a string 
+// and searches for all the C++ class definitions, storing 
+// their locations in a map of strings/int's 
+
+</i></font><b>typedef</b> std::map&lt;std::string, <b>int</b>, std::less&lt;std::string&gt; &gt; map_type; 
+<b>class</b> class_index 
+{ 
+   boost::regex expression; 
+   map_type index; 
+   std::string::const_iterator base; 
+   <b>bool</b>  grep_callback(boost::smatch what); 
+<b>public</b>: 
+ <b>  void</b> IndexClasses(<b>const</b> std::string&amp; file); 
+   class_index() 
+      : index(), 
+        expression(<font color=
+#000080>"^(template[[:space:]]*&lt;[^;:{]+&gt;[[:space:]]*)?" 
+                   "(class|struct)[[:space:]]*(\\&lt;\\w+\\&gt;([[:blank:]]*\\([^)]*\\))?" 
+                   "[[:space:]]*)*(\\&lt;\\w*\\&gt;)[[:space:]]*(&lt;[^;:{]+&gt;[[:space:]]*)?" 
+                   "(\\{|:[^;\\{()]*\\{)" 
+</font>                   ){} 
+}; 
+<b>bool</b>  class_index::grep_callback(boost::smatch what) 
+{ 
+ <font color="#000080">  <i>// what[0] contains the whole string 
+</i>   <i>// what[5] contains the class name. 
+</i>   <i>// what[6] contains the template specialisation if any. 
+</i>   <i>// add class name and position to map: 
+</i></font>   index[std::string(what[5].first, what[5].second) + std::string(what[6].first, what[6].second)] = 
+               what[5].first - base; 
+   <b>return</b> <b>true</b>; 
+} 
+
+<b>void</b> class_index::IndexClasses(<b>const</b> std::string&amp; file) 
+{ 
+   std::string::const_iterator start, end; 
+   start = file.begin(); 
+   end = file.end(); 
+   base = start; 
+   regex_grep(std::bind1st(std::mem_fun(&amp;class_index::grep_callback), <b>this</b>), 
+              start, 
+              end, 
+              expression); 
+} 
+ 
+</pre>
+      <p><a href="../example/snippets/regex_grep_example_4.cpp"> Finally</a>, C++ 
+         Builder users can use C++ Builder's closure type as a callback argument:</p>
+      <pre>
+<font color="#008000">#include &lt;string&gt; 
+#include &lt;map&gt; 
+#include &lt;boost/regex.hpp&gt; 
+#include &lt;functional&gt; 
+</font><font color="#000080"><i>// purpose: 
+// takes the contents of a file in the form of a string 
+// and searches for all the C++ class definitions, storing 
+// their locations in a map of strings/int's 
+
+</i></font><b>typedef</b> std::map&lt;std::string, <b>int</b>, std::less&lt;std::string&gt; &gt; map_type; 
+<b>class</b> class_index 
+{ 
+   boost::regex expression; 
+   map_type index; 
+   std::string::const_iterator base; 
+   <b>typedef</b>  boost::smatch arg_type; 
+   <b>bool</b> grep_callback(<b>const</b> arg_type&amp; what); 
+<b>public</b>: 
+   <b>typedef</b> <b>bool</b> (<b>__closure</b>* grep_callback_type)(<b>const</b> arg_type&amp;); 
+   <b>void</b> IndexClasses(<b>const</b> std::string&amp; file); 
+   class_index() 
+      : index(), 
+        expression(<font color=
+#000080>"^(template[[:space:]]*&lt;[^;:{]+&gt;[[:space:]]*)?" 
+                   "(class|struct)[[:space:]]*(\\&lt;\\w+\\&gt;([[:blank:]]*\\([^)]*\\))?" 
+                   "[[:space:]]*)*(\\&lt;\\w*\\&gt;)[[:space:]]*(&lt;[^;:{]+&gt;[[:space:]]*)?" 
+                   "(\\{|:[^;\\{()]*\\{)" 
+</font>                   ){} 
+}; 
+
+<b>bool</b> class_index::grep_callback(<b>const</b> arg_type&amp; what) 
+{ 
+ <font color=
+#000080>  <i>// what[0] contains the whole string</i>    
+<i>// what[5] contains the class name.</i>    
+<i>// what[6] contains the template specialisation if any.</i>    
+<i>// add class name and position to map:</i></font>    
+index[std::string(what[5].first, what[5].second) + std::string(what[6].first, what[6].second)] = 
+               what[5].first - base; 
+   <b>return</b> <b>true</b>; 
+} 
+
+<b>void</b> class_index::IndexClasses(<b>const</b> std::string&amp; file) 
+{ 
+   std::string::const_iterator start, end; 
+   start = file.begin(); 
+   end = file.end(); 
+   base = start; 
+   class_index::grep_callback_type cl = &amp;(<b>this</b>-&gt;grep_callback); 
+   regex_grep(cl, 
+            start, 
+            end, 
+            expression); 
+}
+</pre>
+      <p></p>
+      <hr>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         04 Feb 2004 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+      <p><i>© Copyright John Maddock&nbsp;1998- 
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2004<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+      <P><I>Use, modification and distribution are subject to the Boost Software License, 
+            Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
+            or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
+   </body>
+</html>

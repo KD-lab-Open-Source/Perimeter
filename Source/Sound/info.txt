@@ -1,0 +1,40 @@
+
+Vect3f front,top,right,pos;//Местоположение слушателя
+Vect3f center;//Местоположение звука
+Vect3f to=center-pos;
+float dist=length(center-pos);
+
+
+// Get pan scale factor...
+flScale = -(right*normalize(to));
+
+lPan = ( LONG )( 100.0 * flScale );
+
+// Always play a little in the other side...
+lPan = CLAMP( lPan, ( LONG )-50, ( LONG )50 );
+
+
+//
+
+if(lPan>0)
+{
+	vol_left=-lPan;
+	vol_right=1;
+}else
+{
+	vol_left=1;
+	vol_right=lPan;
+}
+
+// Разделение по языкам
+language_dependency;
+
+// Разделение по расам
+belligerent_dependency;
+
+//Для объёмного звука надо просуммировать абсолютные значения
+
+absolute=pow(10,vol_left/1000)
+absolute=exp(vol_left/1000*log(10))
+
+sum_volume=log(sum(absolute))/log(10)*1000

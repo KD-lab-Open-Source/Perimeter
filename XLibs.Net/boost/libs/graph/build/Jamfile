@@ -1,0 +1,40 @@
+subproject libs/graph/build ;
+
+SOURCES = graphviz_graph_lex graphviz_digraph_lex
+    graphviz_graph_parser graphviz_digraph_parser ;
+
+GRAPHVIZ_DEFS(graphviz_graph_lex) =
+    GRAPHVIZ_DIRECTED=0
+    ;
+GRAPHVIZ_DEFS(graphviz_digraph_lex) =
+    GRAPHVIZ_DIRECTED=1
+    ;
+GRAPHVIZ_DEFS(graphviz_graph_parser) =
+    GRAPHVIZ_DIRECTED=0
+    ;
+GRAPHVIZ_DEFS(graphviz_digraph_parser) =
+    GRAPHVIZ_DIRECTED=1
+    ;
+
+{
+
+    rule bgl-lib-file
+    {
+        local objects source defs ;
+        defs = $(DEFINES) ;
+        for source in $(>)
+        {
+            DEFINES = $(defs) $(GRAPHVIZ_DEFS($(source:B))) ;
+            objects += [ Objects $(source) ] ;
+        }
+        LibraryFromObjects $(<) : $(objects) ;
+    }
+    local gGENERATOR_FUNCTION(LIB) = bgl-lib-file ;
+
+    lib bgl-viz
+        : ../src/$(SOURCES).cpp 
+        : <sysinclude>$(BOOST_ROOT)
+        : debug <inlining>on #inlining prevents linker name clashes due to truncation! 
+        ;
+
+}

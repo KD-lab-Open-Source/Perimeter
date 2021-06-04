@@ -1,0 +1,4 @@
+// Microsoft Developer Studio generated Help ID include file.
+// Used by EffectTool.rc
+//
+#define HIDC_STATIC_PARTICLE_COUNT      0x8065040e    // IDD_FORMVIEW

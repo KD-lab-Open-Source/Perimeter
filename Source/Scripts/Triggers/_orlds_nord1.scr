@@ -1,0 +1,7435 @@
+TriggerChain = {
+	name = "";
+	triggers = {
+		88;
+		{
+			name = "START";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					3;
+					{
+						type = NORMAL;
+						condition = "struct ConditionUnitClassUnderAttack" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+							damagePercent = 50;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_INSTALLED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORE;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionTeleportationOut" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. завода техников";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 11065087;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 11065087;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Install Frame";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionInstallFrame" {
+				internalColor_ = 12517305;
+				onlyIfAi = true;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 8454016;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Place Core";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					4;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORE;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							chargingPercent = 50.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionPlayerState" {
+							state_ = false;
+							internalColor_ = 0;
+							playerState = PLAYER_STATE_UNABLE_TO_PLACE_BUILDING;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionPlayerState" {
+							state_ = false;
+							internalColor_ = 0;
+							playerState = PLAYER_STATE_UNABLE_TO_PLACE_CORE;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_CORE;
+				placementStrategy = PLACEMENT_STRATEGY_CORE;
+				energyReserve = 0.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Soldier Plant";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. завода солдат ";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Officier Plant";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 0;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_OFFICER_PLANT;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. завода офицеров";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Technic Plant";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 50.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. завода техников";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Усилитель";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORE;
+							counter = 3;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							chargingPercent = 95.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_COLLECTOR;
+				placementStrategy = PLACEMENT_STRATEGY_CORE;
+				energyReserve = 0.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. усилителя";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Laser1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_STATION1;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Laser2";
+					color = STRATEGY_GREEN;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр. лазерной лаборатории 1";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Rocket1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_STATION1;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Rocket2";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр. ракетной лаб. 1";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "подземная лаборатория";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 10000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "подземная 2";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр. подземной 1";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "летная лаборатория";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_FLY_STATION1;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "летная 2";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр. летной 1";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Bomb1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_BOMB_STATION1;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Bomb2";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр. бомбовой 1";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Laser2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 13565951;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_STATION2;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Laser3";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр. лазерной 2";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Rocket2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_STATION2;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Rocket3";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр. ракетной 2 ";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Bomb2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_BOMB_STATION2;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Bomb3";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				},
+				{
+					triggerName = "остановить стр.бомбовой 2";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Laser3";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_STATION3;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. лазерной 3";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Rocket3";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_STATION3;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. ракетной 3";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Bomb3";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_BOMB_STATION3;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. бомбовой 3";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "подземная 2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelUpperReserve" {
+							state_ = true;
+							internalColor_ = 0;
+							energyReserve = 10000.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 10000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. подземной 2";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "летная 2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 13565951;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 13565951;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_FLY_STATION2;
+				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. летной 2";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "лазерная пушка";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
+							state_ = false;
+							internalColor_ = 12189692;
+							building = UNIT_ATTRIBUTE_LASER_CANNON;
+							factor = 2.;
+							compareOp = COMPARE_LESS;
+							building2 = UNIT_ATTRIBUTE_CORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_CANNON;
+				placementStrategy = PLACEMENT_STRATEGY_GUN;
+				energyReserve = 3000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. лазерной пушки";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "ракетница";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
+							state_ = false;
+							internalColor_ = 8454143;
+							building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+							factor = 2.;
+							compareOp = COMPARE_LESS;
+							building2 = UNIT_ATTRIBUTE_CORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+				placementStrategy = PLACEMENT_STRATEGY_GUN;
+				energyReserve = 3000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. ракетной пушки";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "подземная пушка";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 0;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							building = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+							factor = 2.;
+							compareOp = COMPARE_LESS;
+							building2 = UNIT_ATTRIBUTE_CORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+				placementStrategy = PLACEMENT_STRATEGY_GUN;
+				energyReserve = 50.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. подземной пушки";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "гаубица";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionBuildingNearBuilding" {
+							state_ = false;
+							internalColor_ = 12189692;
+							distance = 500.;
+							playerType1 = AI_PLAYER_TYPE_ME;
+							playerType2 = AI_PLAYER_TYPE_ENEMY;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_GUN_HOWITZER;
+				placementStrategy = PLACEMENT_STRATEGY_GUN_TO_ENEMY_BUILDING;
+				energyReserve = 5000.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. гаубицы";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "вкл. поле";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionUnitClassUnderAttack" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+							damagePercent = 1;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_IGNORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionSwitchFieldOn" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				duration = 20;
+				energyReserve = 0.;
+				allCores = false;
+				onlyIfCoreDamaged = true;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 255;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "победа";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionUnitClassUnderAttack" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+							damagePercent = 80;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+						};
+					}
+				};
+			};
+			action = "struct ActionVictory" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 8421504;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "поражение";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionUnitClassUnderAttack" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+							damagePercent = 90;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionDefeat" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 8421504;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "ядро к врагу";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 0;
+							chargingPercent = 99.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORE;
+							counter = 3;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_CORE;
+				placementStrategy = PLACEMENT_STRATEGY_CORE_OFFENSIVE;
+				energyReserve = 0.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744703;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "захват строений";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionBuildingNearBuilding" {
+							state_ = false;
+							internalColor_ = 0;
+							distance = 500.;
+							playerType1 = AI_PLAYER_TYPE_ME;
+							playerType2 = AI_PLAYER_TYPE_WORLD;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_CORE;
+				placementStrategy = PLACEMENT_STRATEGY_CORE_CATCHING;
+				energyReserve = 50.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744703;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. завода солдат ";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. завода офицеров";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_OFFICER_PLANT;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. лазерной лаборатории 1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_STATION1;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. ракетной лаб. 1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_STATION1;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. бомбовой 1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_BOMB_STATION1;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. усилителя";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_COLLECTOR;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. летной 1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_FLY_STATION1;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. подземной 1";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. лазерной пушки";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelLowerReserve" {
+							state_ = false;
+							internalColor_ = 9945343;
+							energyReserve = 1000.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_CANNON;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. ракетной пушки";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelLowerReserve" {
+							state_ = false;
+							internalColor_ = 9945343;
+							energyReserve = 1000.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ANY;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. гаубицы";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelLowerReserve" {
+							state_ = false;
+							internalColor_ = 0;
+							energyReserve = 1000.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ANY;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. подземной пушки";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ANY;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. лазерной 2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_STATION2;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. ракетной 2 ";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_STATION2;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр.бомбовой 2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_BOMB_STATION2;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. лазерной 3";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_LASER_STATION3;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. ракетной 3";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_STATION3;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. бомбовой 3";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_BOMB_STATION3;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. летной 2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_FLY_STATION2;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить стр. подземной 2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 9945343;
+							chargingPercent = 30.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "командный центр";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					10;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 12189692;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 4;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelUpperReserve" {
+							state_ = false;
+							internalColor_ = 12189692;
+							energyReserve = 10000.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								3;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16777088;
+										object = UNIT_ATTRIBUTE_LASER_STATION1;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 13218693;
+										object = UNIT_ATTRIBUTE_LASER_STATION2;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 16765817;
+										object = UNIT_ATTRIBUTE_LASER_STATION3;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								3;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16777088;
+										object = UNIT_ATTRIBUTE_ROCKET_STATION1;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 16765817;
+										object = UNIT_ATTRIBUTE_ROCKET_STATION2;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 13218693;
+										object = UNIT_ATTRIBUTE_ROCKET_STATION3;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								3;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16777088;
+										object = UNIT_ATTRIBUTE_BOMB_STATION1;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16765817;
+										object = UNIT_ATTRIBUTE_BOMB_STATION2;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 13218693;
+										object = UNIT_ATTRIBUTE_BOMB_STATION3;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16777088;
+										object = UNIT_ATTRIBUTE_FLY_STATION1;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 16765817;
+										object = UNIT_ATTRIBUTE_FLY_STATION2;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 16765817;
+										object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 13218693;
+										object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								}
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_COMMANDER;
+				placementStrategy = PLACEMENT_STRATEGY_CORE;
+				energyReserve = 50.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить строительство КЦ";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 1419950;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "остановить строительство КЦ";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = false;
+							internalColor_ = 11065087;
+							chargingPercent = 51.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 11065087;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_COMMANDER;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 28607;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "продавать любое строение";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSellBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ANY;
+				sellFactor = AI_SELL_IF_DAMAGE_GREATER;
+				damagePercent = 98.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 255;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "дополнительный завод солдат";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+							counter = 10;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelUpperReserve" {
+							state_ = true;
+							internalColor_ = 0;
+							energyReserve = 10000.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+				placementStrategy = PLACEMENT_STRATEGY_PLANT;
+				energyReserve = 50.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. завода солдат ";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 47541;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "дополнительный завод офицеров";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							counter = 10;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelUpperReserve" {
+							state_ = true;
+							internalColor_ = 0;
+							energyReserve = 10000.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_OFFICER_PLANT;
+				placementStrategy = PLACEMENT_STRATEGY_PLANT;
+				energyReserve = 50.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. завода офицеров";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 47541;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "дополнительный завод техников";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+							counter = 10;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionOutOfEnergyCapacity" {
+							state_ = true;
+							internalColor_ = 0;
+							chargingPercent = 51.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelUpperReserve" {
+							state_ = true;
+							internalColor_ = 0;
+							energyReserve = 10000.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_TECHNIC_PLANT;
+				placementStrategy = PLACEMENT_STRATEGY_PLANT;
+				energyReserve = 50.;
+				buildDurationMax = 300;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. завода техников";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -2147483648;
+					parentOffsetY_ = -2147483648;
+					childOffsetX_ = -2147483648;
+					childOffsetY_ = -2147483648;
+					parentOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+					childOffset = {
+						x = -2147483648;
+						y = -2147483648;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 47541;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "СКВАД 0- базовые юниты";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 16629619;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				soldiers = 50;
+				officers = 50;
+				technics = 50;
+				energyReserve = 3000.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "атака базовыми С-0";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					14;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_LASER_STATION1;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_ROCKET_STATION1;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_BOMB_STATION1;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_FLY_STATION1;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_LASER_STATION2;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_ROCKET_STATION2;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_BOMB_STATION2;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_FLY_STATION2;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_LASER_STATION3;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_ROCKET_STATION3;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_BOMB_STATION3;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16765817;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_NONE;
+				unitsToAttack = {
+					2;
+					UNIT_ATTRIBUTE_BUILD_MASTER,
+					UNIT_ATTRIBUTE_TERRAIN_MASTER
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 0;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0 - героид";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								6;
+								{
+									type = INVERTED;
+									condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+										state_ = false;
+										internalColor_ = 0;
+										victimUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+										agressorUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_IGNORE;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16629619;
+										object = UNIT_ATTRIBUTE_COMMANDER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 16765817;
+										unitType = UNIT_ATTRIBUTE_MORTAR;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = OR;
+										conditions = {
+											2;
+											{
+												type = NORMAL;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = NORMAL;
+												condition = "struct ConditionSwitcher" {
+													state_ = true;
+													internalColor_ = 0;
+													type = AND;
+													conditions = {
+														3;
+														{
+															type = INVERTED;
+															condition = "struct ConditionObjectExists" {
+																state_ = false;
+																internalColor_ = 0;
+																object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+																counter = 1;
+																playerType = AI_PLAYER_TYPE_ENEMY;
+																constructedAndConstructing = false;
+															};
+														},
+														{
+															type = INVERTED;
+															condition = "struct ConditionObjectExists" {
+																state_ = false;
+																internalColor_ = 0;
+																object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+																counter = 1;
+																playerType = AI_PLAYER_TYPE_ME;
+																constructedAndConstructing = false;
+															};
+														},
+														{
+															type = INVERTED;
+															condition = "struct ConditionObjectExists" {
+																state_ = false;
+																internalColor_ = 0;
+																object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+																counter = 1;
+																playerType = AI_PLAYER_TYPE_ME;
+																constructedAndConstructing = true;
+															};
+														}
+													};
+												};
+											}
+										};
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 16765817;
+										unitType = UNIT_ATTRIBUTE_BOMBER;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 16765817;
+										unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								5;
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16629619;
+										object = UNIT_ATTRIBUTE_COMMANDER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+										state_ = false;
+										internalColor_ = 0;
+										victimUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+										agressorUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_IGNORE;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = true;
+										internalColor_ = 0;
+										unitType = UNIT_ATTRIBUTE_CEPTOR;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = true;
+										internalColor_ = 0;
+										unitType = UNIT_ATTRIBUTE_ROCKER;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 0;
+										unitType = UNIT_ATTRIBUTE_R_PROJECTOR;
+									};
+								}
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 16629619;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_GYROID;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С-0 - цептор ";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					3;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								3;
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+							state_ = false;
+							internalColor_ = 16765817;
+							victimUnitClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 16629619;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_CEPTOR;
+				unitsToAttack = {
+					2;
+					UNIT_ATTRIBUTE_BOMBER,
+					UNIT_ATTRIBUTE_CEPTOR
+				};
+				unitClassToAttack = UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 1;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 180;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- бомбер";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											3;
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = true;
+												};
+											}
+										};
+									};
+								}
+							};
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+							state_ = false;
+							internalColor_ = 16765817;
+							victimUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 16629619;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_BOMBER;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-рокер";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					3;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = false;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											3;
+											{
+												type = INVERTED;
+												condition = "struct ConditionMutationEnabled" {
+													state_ = false;
+													internalColor_ = 16765817;
+													unitType = UNIT_ATTRIBUTE_CEPTOR;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionMutationEnabled" {
+													state_ = false;
+													internalColor_ = 16765817;
+													unitType = UNIT_ATTRIBUTE_R_PROJECTOR;
+												};
+											},
+											{
+												type = NORMAL;
+												condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+													state_ = false;
+													internalColor_ = 16765817;
+													victimUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+													agressorUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+												};
+											}
+										};
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											4;
+											{
+												type = INVERTED;
+												condition = "struct ConditionMutationEnabled" {
+													state_ = false;
+													internalColor_ = 16765817;
+													unitType = UNIT_ATTRIBUTE_SNIPER;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionMutationEnabled" {
+													state_ = false;
+													internalColor_ = 16765817;
+													unitType = UNIT_ATTRIBUTE_MORTAR;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionMutationEnabled" {
+													state_ = false;
+													internalColor_ = 16765817;
+													unitType = UNIT_ATTRIBUTE_STRAFER;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+													state_ = false;
+													internalColor_ = 16765817;
+													victimUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+													agressorUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+												};
+											}
+										};
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											3;
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = true;
+												};
+											}
+										};
+									};
+								}
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_ROCKER;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 6;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 100;
+				remutateCounter = 2;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-снайпер";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								9;
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_LASER_CANNON;
+										counter = 3;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = OR;
+										conditions = {
+											3;
+											{
+												type = NORMAL;
+												condition = "struct ConditionSquadSufficientUnits" {
+													state_ = false;
+													internalColor_ = 16777088;
+													playerType = AI_PLAYER_TYPE_ME;
+													chooseSquadID = CHOOSE_SQUAD_1;
+													unitType = UNIT_ATTRIBUTE_STRAFER;
+													compareOperator = COMPARE_LESS_EQ;
+													unitsNumber = 3;
+													soldiers = 0;
+													officers = 0;
+													technics = 0;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionMutationEnabled" {
+													state_ = false;
+													internalColor_ = 16765817;
+													unitType = UNIT_ATTRIBUTE_STRAFER;
+												};
+											},
+											{
+												type = NORMAL;
+												condition = "struct ConditionSquadSufficientUnits" {
+													state_ = false;
+													internalColor_ = 12615808;
+													playerType = AI_PLAYER_TYPE_ME;
+													chooseSquadID = CHOOSE_SQUAD_1;
+													unitType = UNIT_ATTRIBUTE_NONE;
+													compareOperator = COMPARE_GREATER;
+													unitsNumber = 0;
+													soldiers = 1;
+													officers = 1;
+													technics = 1;
+												};
+											}
+										};
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = OR;
+										conditions = {
+											2;
+											{
+												type = NORMAL;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = NORMAL;
+												condition = "struct ConditionSwitcher" {
+													state_ = true;
+													internalColor_ = 0;
+													type = AND;
+													conditions = {
+														3;
+														{
+															type = INVERTED;
+															condition = "struct ConditionObjectExists" {
+																state_ = false;
+																internalColor_ = 0;
+																object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+																counter = 1;
+																playerType = AI_PLAYER_TYPE_ENEMY;
+																constructedAndConstructing = false;
+															};
+														},
+														{
+															type = INVERTED;
+															condition = "struct ConditionObjectExists" {
+																state_ = false;
+																internalColor_ = 0;
+																object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+																counter = 1;
+																playerType = AI_PLAYER_TYPE_ME;
+																constructedAndConstructing = false;
+															};
+														},
+														{
+															type = INVERTED;
+															condition = "struct ConditionObjectExists" {
+																state_ = false;
+																internalColor_ = 0;
+																object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+																counter = 1;
+																playerType = AI_PLAYER_TYPE_ME;
+																constructedAndConstructing = true;
+															};
+														}
+													};
+												};
+											}
+										};
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 0;
+										unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+										state_ = false;
+										internalColor_ = 16765817;
+										victimUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+										agressorUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16777088;
+										object = UNIT_ATTRIBUTE_COMMANDER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 16777088;
+										unitType = UNIT_ATTRIBUTE_MORTAR;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 16777088;
+										unitType = UNIT_ATTRIBUTE_GYROID;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								4;
+								{
+									type = NORMAL;
+									condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+										state_ = false;
+										internalColor_ = 16765817;
+										victimUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+										agressorUnitClass = UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16777088;
+										object = UNIT_ATTRIBUTE_COMMANDER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 0;
+										unitType = UNIT_ATTRIBUTE_ROCKER;
+									};
+								},
+								{
+									type = INVERTED;
+									condition = "struct ConditionMutationEnabled" {
+										state_ = false;
+										internalColor_ = 0;
+										unitType = UNIT_ATTRIBUTE_GYROID;
+									};
+								}
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_SNIPER;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_BUILDER | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 6;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-мортар";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					6;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											3;
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = true;
+												};
+											}
+										};
+									};
+								}
+							};
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 16765817;
+							unitType = UNIT_ATTRIBUTE_WARGON;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 16765817;
+							unitType = UNIT_ATTRIBUTE_BOMBER;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 16765817;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_MORTAR;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 6;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- Р-проектор";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					5;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 16629619;
+							unitType = UNIT_ATTRIBUTE_CEPTOR;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											3;
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = true;
+												};
+											}
+										};
+									};
+								}
+							};
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 16765817;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_R_PROJECTOR;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_MISSILE | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 1;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 180;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- варгон";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					5;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16768648;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16768648;
+							object = UNIT_ATTRIBUTE_FLY_STATION2;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											3;
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 0;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = true;
+												};
+											}
+										};
+									};
+								}
+							};
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_WARGON;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- стрейфер";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					6;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16768648;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 16765817;
+							unitType = UNIT_ATTRIBUTE_GYROID;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = false;
+										internalColor_ = 16765817;
+										object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ENEMY;
+										constructedAndConstructing = false;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSwitcher" {
+										state_ = true;
+										internalColor_ = 0;
+										type = AND;
+										conditions = {
+											3;
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 16777088;
+													object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ENEMY;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 16777088;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = false;
+												};
+											},
+											{
+												type = INVERTED;
+												condition = "struct ConditionObjectExists" {
+													state_ = false;
+													internalColor_ = 16777088;
+													object = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
+													counter = 1;
+													playerType = AI_PLAYER_TYPE_ME;
+													constructedAndConstructing = true;
+												};
+											}
+										};
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = false;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								2;
+								{
+									type = NORMAL;
+									condition = "struct ConditionSquadSufficientUnits" {
+										state_ = false;
+										internalColor_ = 16777088;
+										playerType = AI_PLAYER_TYPE_ME;
+										chooseSquadID = CHOOSE_SQUAD_1;
+										unitType = UNIT_ATTRIBUTE_SNIPER;
+										compareOperator = COMPARE_LESS_EQ;
+										unitsNumber = 3;
+										soldiers = 0;
+										officers = 0;
+										technics = 0;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionSquadSufficientUnits" {
+										state_ = false;
+										internalColor_ = 16765817;
+										playerType = AI_PLAYER_TYPE_ME;
+										chooseSquadID = CHOOSE_SQUAD_1;
+										unitType = UNIT_ATTRIBUTE_NONE;
+										compareOperator = COMPARE_GREATER;
+										unitsNumber = 0;
+										soldiers = 1;
+										officers = 1;
+										technics = 1;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_STRAFER;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 2;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 60;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- дигер";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					4;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 16765817;
+							unitType = UNIT_ATTRIBUTE_SCUMER;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16765817;
+							object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSquadSufficientUnits" {
+							state_ = false;
+							internalColor_ = 0;
+							playerType = AI_PLAYER_TYPE_ME;
+							chooseSquadID = CHOOSE_SQUAD_1;
+							unitType = UNIT_ATTRIBUTE_NONE;
+							compareOperator = COMPARE_GREATER;
+							unitsNumber = 0;
+							soldiers = 1;
+							officers = 1;
+							technics = 1;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_DIGGER;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 3;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-стамер";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					3;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16629619;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16765817;
+							object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionSquadSufficientUnits" {
+							state_ = false;
+							internalColor_ = 0;
+							playerType = AI_PLAYER_TYPE_ME;
+							chooseSquadID = CHOOSE_SQUAD_1;
+							unitType = UNIT_ATTRIBUTE_NONE;
+							compareOperator = COMPARE_GREATER;
+							unitsNumber = 0;
+							soldiers = 1;
+							officers = 1;
+							technics = 1;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_SCUMER;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 3;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- экстерпатор";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 16765817;
+							object = UNIT_ATTRIBUTE_GUN_SUBCHASER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+							constructedAndConstructing = false;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionUnitClassIsGoingToBeAttacked" {
+							state_ = false;
+							internalColor_ = 0;
+							victimUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
+							agressorUnitClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_EXTIRPATOR;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 2;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 180;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16744448;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С1-заказать юнитов";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				soldiers = 40;
+				officers = 40;
+				technics = 10;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16777088;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-снайпер";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_GYROID;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_SNIPER;
+				unitsToAttack = {
+					2;
+					UNIT_ATTRIBUTE_BUILD_MASTER,
+					UNIT_ATTRIBUTE_TERRAIN_MASTER
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 10;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0 - героид";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_COMMANDER;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 16629619;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_1;
+				attackByType = UNIT_ATTRIBUTE_GYROID;
+				unitsToAttack = {
+					2;
+					UNIT_ATTRIBUTE_BUILD_MASTER,
+					UNIT_ATTRIBUTE_TERRAIN_MASTER
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 10;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С2-заказать юнитов";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				soldiers = 45;
+				officers = 25;
+				technics = 30;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16776960;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-рокер";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					3;
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_R_PROJECTOR;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_CEPTOR;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				attackByType = UNIT_ATTRIBUTE_ROCKER;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 11;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 100;
+				remutateCounter = 2;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- Р-проектор";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_CEPTOR;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				attackByType = UNIT_ATTRIBUTE_R_PROJECTOR;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 180;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- экстерпатор";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				attackByType = UNIT_ATTRIBUTE_EXTIRPATOR;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 180;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С-0 - цептор ";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_EXTIRPATOR;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 16629619;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_2;
+				attackByType = UNIT_ATTRIBUTE_CEPTOR;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 180;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С3-заказать юнитов";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_3;
+				soldiers = 25;
+				officers = 35;
+				technics = 45;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16776960;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- варгон";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_BOMBER;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_3;
+				attackByType = UNIT_ATTRIBUTE_WARGON;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-мортар";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_WARGON;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_BOMBER;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_3;
+				attackByType = UNIT_ATTRIBUTE_MORTAR;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 9;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- бомбер";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 16629619;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_3;
+				attackByType = UNIT_ATTRIBUTE_BOMBER;
+				unitsToAttack = {
+					1;
+					UNIT_ATTRIBUTE_CORE
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С4-заказать юнитов";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadOrderUnits" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_4;
+				soldiers = 40;
+				officers = 40;
+				technics = 20;
+				energyReserve = 100.;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 16776960;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0-скамер";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_4;
+				attackByType = UNIT_ATTRIBUTE_SCUMER;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 8;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "С 0- дигер";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionMutationEnabled" {
+							state_ = false;
+							internalColor_ = 0;
+							unitType = UNIT_ATTRIBUTE_SCUMER;
+						};
+					}
+				};
+			};
+			action = "struct ActionSquadAttack" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				chooseSquadID = CHOOSE_SQUAD_4;
+				attackByType = UNIT_ATTRIBUTE_DIGGER;
+				unitsToAttack = {
+					0;
+				};
+				unitClassToAttack = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
+				offensive = true;
+				unitsNumber = 5;
+				soldiers = 0;
+				officers = 0;
+				technics = 0;
+				attackTime = 30;
+				remutateCounter = 1;
+				holdProduction = false;
+				squadFollowDistance = 0.;
+				squadToFollowBy = CHOOSE_SQUAD_2;
+				ignoreLastTarget = false;
+				returnToBase = true;
+				interruptable = false;
+				attackTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 15721217;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "Camera";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		},
+		{
+			name = "UserCamera";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2147483648;
+			cellNumberY = -2147483648;
+			left_ = -2147483648;
+			top_ = -2147483648;
+			right_ = -2147483648;
+			bottom_ = -2147483648;
+			cellIndex = {
+				x = -2147483648;
+				y = -2147483648;
+			};
+			boundingRect = {
+				left = -2147483648;
+				top = -2147483648;
+				right = -2147483648;
+				bottom = -2147483648;
+			};
+		}
+	};
+	left_ = -2147483648;
+	top_ = -2147483648;
+	right_ = -2147483648;
+	bottom_ = -2147483648;
+	boundingRect = {
+		left = -2147483648;
+		top = -2147483648;
+		right = -2147483648;
+		bottom = -2147483648;
+	};
+	viewRect = {
+		left = -2147483648;
+		top = -2147483648;
+		right = -2147483648;
+		bottom = -2147483648;
+	};
+};

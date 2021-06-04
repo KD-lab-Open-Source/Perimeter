@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<TITLE>The free function template based test case</TITLE>
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl.css" media="screen">
+<LINK rel="stylesheet" type="text/css" href="../../../../style/btl-print.css" media="print">
+<META http-equiv="Content-Language" content="en-us">
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY>
+<DIV class="header"> <A href="../../../../index.html">Boost.Test</A> > <A href="../../../index.html">Components</A> 
+  > <A href="../../index.html">The Unit Test Framework</A> > <A href="../index.html">Components</A> > 
+  <A href="index.html">The Test Case</A> > <SPAN class="current_article">The
+  free function template based test  case</SPAN> </DIV>
+<DIV class="body"> <IMG src='../../../../btl1.gif' width='252' height='43' alt="Boost Test logo"> 
+  <H1 class="subtitle">The free function template based test case</H1>
+  <H5>Definition</H5>
+  <P class="first-line-indented"> defined in <A href="../../../../../../../boost/test/test_case_template.hpp">test_case_template.hpp</A>
+  <H5>Synopsis</H5>
+  <PRE class="code"><SPAN class="reserv-word">template</SPAN>&lt;<SPAN class="reserv-word">typename</SPAN> TestCaseTemplate,<SPAN class="reserv-word">typename</SPAN> TestTypesList&gt;
+class <SPAN class="new-term">test_case_template</SPAN> : <SPAN class="reserv-word">public</SPAN> test_case
+{
+    ... <SPAN class="comment">// Implementation</SPAN>
+};</PRE>
+  <H5>Description</H5>
+  <P class="first-line-indented">This form of test cases is most useful for testing
+    generic template based components/algorithms with different set of template
+    parameters 
+  <H5>Construction</H5>
+  <P class="first-line-indented">To create a test case based on your test function
+    use the following macro on file level:</P>
+  <P><SPAN class="new-term">BOOST_META_FUNC_TEST_CASE</SPAN>( free_test_function
+  );</P>
+  <P>and following macro at the point of test case instantiation </P>
+  <P><SPAN class="new-term">BOOST_FUNC_TEMPLATE_TEST_CASE</SPAN>( free_test_function,
+  typelist ).</P>
+  <P class="first-line-indented">BOOST_META_FUNC_TEST_CASE defines a special
+    meta test case class used internally by test case implementation machinery.
+    The only argument is the name of the free function template - body
+    of the test case BOOST_FUNC_TEMPLATE_TEST_CASE cerates
+    a new instance of the meta test case class that corresponds to argument test
+    case and returns a pointer to the base class test_case. In most cases you
+    will use it as an argument to the method <A href="../test_suite/index.html">test_suite</A>::add(...).
+    The first parameter to   macro is the name of the free function template
+    - body of the test case. The second - list of types it need to be instantiated
+    with.</P>
+  <H5>Examples</H5>
+  <PRE class="code"><SPAN class="reserv-word">template</SPAN>&lt;<SPAN class="reserv-word">typename</SPAN> Number&gt;
+<SPAN class="cpp-type">void</SPAN> free_test_function( Number* = <SPAN class="literal">0</SPAN> ) {
+    BOOST_CHECK_EQUAL( <SPAN class="literal">2</SPAN>, (<SPAN class="cpp-type">int</SPAN> <SPAN class="reserv-word">const</SPAN>)Number::value );
+}
+
+BOOST_META_FUNC_TEST_CASE( free_test_function );
+
+test_suite*
+init_unit_test_suite( <SPAN class="cpp-type">int</SPAN>, <SPAN class="cpp-type">char</SPAN>* [] ) {
+    test_suite* test= BOOST_TEST_SUITE(<SPAN class="literal"> "Test case template example"</SPAN> );
+
+    typedef boost::mpl::range_c&lt;<SPAN class="cpp-type">int</SPAN>,<SPAN class="literal">0</SPAN>,<SPAN class="literal">10</SPAN>&gt; numbers;
+    test-&gt;add( BOOST_FUNC_TEMPLATE_TEST_CASE( free_test_function, numbers ) );
+	
+    <SPAN class="reserv-word">return</SPAN> test;
+}</PRE>
+</DIV>
+<DIV class="footer"> 
+  <DIV class="footer-body"> 
+    <P> &copy <A name="Copyright">Copyright</A> <A href='mailto:rogeeff@fusemail.com'>Gennadiy Rozental</A> 2001-2004. <BR>
+      Use, modification, and distribution are subject to the Boost Software License, Version 1.0. 
+      (See accompanying file <A href="../../../../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A> or copy at 
+      <A href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/LICENSE_1_0.txt</A>)</P>
+        <P>Revised:        <!-- #BeginDate format:Sw1 -->26 January, 2004<!-- #EndDate -->     </P>
+  </DIV>
+</DIV>
+</BODY>
+</HTML>

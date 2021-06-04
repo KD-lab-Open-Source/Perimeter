@@ -1,0 +1,51 @@
+Changelog for: GameSpy Server Browsing SDK
+--------------------------------------------------------
+
+DATE        VERSION  BY   TYPE     DESCRIPTION
+----------  -------  ---  -------  ---------------------------------------------------------
+07-24-2003  2.00.25  DES  RELEASE  Releasing to developer site.
+07-18-2003  2.00.25  BED  FEATURE  Added CodeWarrior (PS2) sample project file.
+                     BED  CLEANUP  General cleanup to remove CodeWarrior warnings.
+07-17-2003  2.00.24  DES  CLEANUP  Cleaned up the PS2 Makefile, it now uses Makefile.commmon.
+07-16-2003  2.00.23  DES  FIX      Changed a couple of __mips64 checks to _PS2 checks.
+                     BED  FEATURE  Added ProDG sample project files.
+07-09-2003  2.00.22  BED  CLEANUP  Made MFC sample's server list not continually redraw while sorting.
+06-11-2003  2.00.21  DES  RELEASE  Releasing to developer site.
+05-11-2003  2.00.21  DDW  CLEANUP  Modularized SBServer type handling
+05-11-2003  2.00.20  DDW  CLEANUP  Modularized server parsing and addition
+05-09-2003  2.00.19  DES  CLEANUP  Removed Dreamcast support.
+05-09-2003  2.00.18  DDW  CLEANUP  Modularized refstrings and serverlist functions
+05-07-2003  2.00.17  DES  RELEASE  Releasing to developer site.
+04-07-2003  2.00.17  DES  FIX      Fixed semicolon after if() in SBServerListFindServer.
+03-24-2003  2.00.16  DDW  FEATURE  Added ServerBrowserLimitUpdate function to limit the number of results returned
+03-03-2003  2.00.15  DES  CLEANUP  General cleanup to remove warnings.
+02-28-2003  2.00.14  DES  RELEASE  Releasing to developer site with updated QR2.
+02-05-2003  2.00.14  DES  RELEASE  Releasing to developer site.
+02-05-2003  2.00.14  DES  FIX      Made sure servers in MFC sample show correct info after an sbc_serverupdated.
+                          CLEANUP  Switched select calls to CanReceiveOnSocket and CanSendOnSocket.
+02-04-2003  2.00.13  DES  RELEASE  Relasing to developer site.
+02-04-2003  2.00.13  DES  CLEANUP  Removed assert.h include from querytest.c
+                          FIX      Use GOA/QR2 checkbox in the MFC sample.
+                          OTHER    Show servers in the MFC sample as soon as they are added (sbc_serveradded).
+01-23-2003  2.00.12  DES  FIX      Replaced a call to free with gsifree.
+12-19-2002  2.00.11  DES  RELEASE  Releasing to developer site.
+12-19-2002  2.00.11  DES  CLEANUP  Removed assert.h includes.
+12-13-2002  2.00.10  DES  FEATURE  Added PS2 eenet stack support.
+12-06-2002  2.00.09  DES  RELEASE  Releasing to developer site with updated QR2.
+12-03-2002  2.00.09  DES  RELEASE  Releasing to developer site.
+12-03-2002  2.00.09  DES  FEATURE  Added a Linux Makefile.
+11-22-2002  2.00.08  DES  RELEASE  Releasing to developer site.
+11-20-2002  2.00.08  DES  FEATURE  Added support for compiling on the PS2.
+11-15-2002  2.00.07  DDW  FEATURE  Abstracted the server->next pointer into SBServer.c
+11-07-2002  2.00.06  DDW  FEATURE  Added "deadlist" support so that servers are not freed on the same pass they are removed
+11-07-2002  2.00.06  DDW  FIX      Fixed AV when disconnecting during mainlist with data pending
+10-22-2002  2.00.05  DDW  FIX      Correctly removes server from query engine when removed message arrives
+09-26-2002  2.00.04  DES  RELEASE  Limited release on developer site
+09-26-2002  2.00.04  DDW  FIX      MFC sample checks whether server has full-rules before requerying
+09-26-2002  2.00.03  DES  FEATURE  Added MFC sample (sbmfcsample)
+09-26-2002  2.00.02  DDW  OTHER    Changelog started
+09-26-2002  2.00.02  DES  FIX      Fixed memory leak when cleaning up server list object
+09-24-2002  2.00.01  DDW  FIX      Fixed protocol parsing error on packet boundary
+09-23-2002  2.00.00  DDW  RELEASE  Release to EAPAC for Generals (Peer)
+09-06-2002  2.00.00  DDW  RELEASE  Release to EAPAC for Generals
+

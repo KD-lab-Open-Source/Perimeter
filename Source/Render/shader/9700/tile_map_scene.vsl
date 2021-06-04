@@ -1,0 +1,34 @@
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+    float2 t0 : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+    float4  pos : POSITION;
+    float2  t0 : TEXCOORD0;
+	float2  t1 : TEXCOORD1;
+	float1  t2 : TEXCOORD2;
+	float2  t3 : TEXCOORD3;
+};
+
+float4x4 mWVP;
+float4x4 mWorldToLight;
+float4x4 mShadow;
+float2 fInvWorldSize;
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT o;
+
+	o.pos=mul(v.pos,mWVP);
+	o.t0=v.t0;
+	o.t1=mul(v.pos,mShadow);
+
+	float4 sh=mul(v.pos,mWorldToLight);
+	o.t2=sh.z;
+	o.t3=v.pos*fInvWorldSize;
+
+    return o;
+}

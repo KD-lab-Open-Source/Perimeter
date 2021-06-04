@@ -1,0 +1,319 @@
+
+<models>
+	<node>
+		<title value='Akpatok Island'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\AkpatokIsland.tga'/>
+	</node>
+	<node>
+		<title value='AkpatokIsland-a'/>
+		<texture src='Resource\GeoTx\AkpatokIsland-a.tga'/>
+	</node>
+	<node>
+		<title value='AkpatokIsland_b'/>
+		<texture src='Resource\GeoTx\AkpatokIsland_b.tga'/>
+	</node>
+	<node>
+		<title value='BONAGE'/>
+		<texture src='Resource\GeoTx\BONAGE.tga'/>
+	</node>
+	<node>
+		<title value='BONAGE_a'/>
+		<texture src='Resource\GeoTx\BONAGE_a.tga'/>
+	</node>
+	<node>
+		<title value='001'/>
+		<texture src='Resource\GeoTx\001.tga'/>
+	</node>
+	<node>
+		<title value='001_a'/>
+		<texture src='Resource\GeoTx\001_a.tga'/>
+	</node>
+	<node>
+		<title value='001_b'/>
+		<texture src='Resource\GeoTx\001_b.tga'/>
+	</node>
+	<node>
+		<title value='002'/>
+		<texture src='Resource\GeoTx\002.tga'/>
+	</node>
+	<node>
+		<title value='002a'/>
+		<texture src='Resource\GeoTx\002a.tga'/>
+	</node>
+	<node>
+		<title value='Snow'/>
+		<texture src='Resource\GeoTx\Snow.tga'/>
+	</node>
+	<node>
+		<title value='003'/>
+		<texture src='Resource\GeoTx\003.tga'/>
+	</node>
+	<node>
+		<title value='003a'/>
+		<texture src='Resource\GeoTx\003a.tga'/>
+	</node>
+	<node>
+		<title value='Stone_3'/>
+		<texture src='Resource\GeoTx\Stone_3.tga'/>
+	</node>
+	<node>
+		<title value='Stone_blue'/>
+		<texture src='Resource\GeoTx\Stone_blue.tga'/>
+	</node>
+	<node>
+		<title value='Stone_blue_a'/>
+		<texture src='Resource\GeoTx\Stone_blue_a.tga'/>
+	</node>
+	<node>
+		<title value='Stone_blue_b'/>
+		<texture src='Resource\GeoTx\Stone_blue_b.tga'/>
+	</node>
+	<node>
+		<title value='Wood_2'/>
+		<texture src='Resource\GeoTx\Wood_2.tga'/>
+	</node>
+	<node>
+		<title value='Wood_2a'/>
+		<texture src='Resource\GeoTx\Wood_2a.tga'/>
+	</node>
+	<node>
+		<title value='bear'/>
+		<texture src='Resource\GeoTx\models\bear.tga'/>
+	</node>
+	<node>
+		<title value='stone_1'/>
+		<texture src='Resource\GeoTx\stone_1.tga'/>
+	</node>
+	<node>
+		<title value='Some_5'/>
+		<texture src='Resource\GeoTx\Some_5.tga'/>
+	</node>
+	<node>
+		<title value='Some_7'/>
+		<texture src='Resource\GeoTx\Some_7.tga'/>
+	</node>
+	<node>
+		<title value='ALIENTRANSE'/>
+		<texture src='Resource\GeoTx\ALIENTRANSE.tga'/>
+	</node>
+	<node>
+		<title value='Stone_2'/>
+		<texture src='Resource\GeoTx\Stone_2.tga'/>
+	</node>
+	<node>
+		<title value='Stone_2a'/>
+		<texture src='Resource\GeoTx\Stone_2a.tga'/>
+	</node>
+	<node>
+		<title value='Stone_2b'/>
+		<texture src='Resource\GeoTx\Stone_2b.tga'/>
+	</node>
+	<node>
+		<title value='Water'/>
+		<texture src='Resource\GeoTx\Water.tga'/>
+	</node>
+	<node>
+		<title value='Bubbles'/>
+		<texture src='Resource\GeoTx\Bubbles.tga'/>
+	</node>
+	<node>
+		<title value='Aleutian Clouds'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\AleutianClouds.tga'/>
+	</node>
+	<node>
+		<title value='Wood_3'/>
+		<texture src='Resource\GeoTx\Wood_3.tga'/>
+	</node>
+	<node>
+		<title value='Wood_4'/>
+		<texture src='Resource\GeoTx\Wood_4.tga'/>
+	</node>
+	<node>
+		<title value='sand_01'/>
+		<texture src='Resource\GeoTx\sand_01.tga'/>
+	</node>
+	<node>
+		<title value='Atlas Mountains'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\AtlasMountains.tga'/>
+	</node>
+	<node>
+		<title value='Demini River'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\DeminiRiver.tga'/>
+	</node>
+	<node>
+		<title value='Ganges River Delta'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\GangesRiverDelta.tga'/>
+	</node>
+	<node>
+		<title value='xMark'/>
+		<texture src='Resource\GeoTx\xMark.tga'/>
+	</node>
+	<node>
+		<title value='xMark_a'/>
+		<texture src='Resource\GeoTx\xMark_a.tga'/>
+	</node>
+	<node>
+		<title value='Great Sandy Scars'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\GreatSandyScars.tga'/>
+	</node>
+	<node>
+		<title value='Icefall 1'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\Icefall0.tga'/>
+	</node>
+	<node>
+		<title value='XMars'/>
+		<texture src='Resource\GeoTx\XMars.tga'/>
+	</node>
+	<node>
+		<title value='Icefall 2'/>
+		<texture src='Resource\GeoTx\models\64x64\EarthAsArt\Icefall1.tga'/>
+	</node>
+	<node>
+		<title value='Mine 1'/>
+		<texture src='Resource\GeoTx\models\64x64\Mine0.tga'/>
+	</node>
+	<node>
+		<title value='Lines'/>
+		<texture src='Resource\GeoTx\Lines.tga'/>
+	</node>
+	<node>
+		<title value='004'/>
+		<texture src='Resource\GeoTx\004.tga'/>
+	</node>
+	<node>
+		<title value='005'/>
+		<texture src='Resource\GeoTx\005.tga'/>
+	</node>
+	<node>
+		<title value='005_a'/>
+		<texture src='Resource\GeoTx\005_a.tga'/>
+	</node>
+	<node>
+		<title value='005_b'/>
+		<texture src='Resource\GeoTx\005_b.tga'/>
+	</node>
+	<node>
+		<title value='006'/>
+		<texture src='Resource\GeoTx\006.tga'/>
+	</node>
+	<node>
+		<title value='006_a'/>
+		<texture src='Resource\GeoTx\006_a.tga'/>
+	</node>
+	<node>
+		<title value='007'/>
+		<texture src='Resource\GeoTx\007.tga'/>
+	</node>
+	<node>
+		<title value='008'/>
+		<texture src='Resource\GeoTx\008.tga'/>
+	</node>
+	<node>
+		<title value='009'/>
+		<texture src='Resource\GeoTx\009.tga'/>
+	</node>
+	<node>
+		<title value='010'/>
+		<texture src='Resource\GeoTx\010.tga'/>
+	</node>
+	<node>
+		<title value='011'/>
+		<texture src='Resource\GeoTx\011.tga'/>
+	</node>
+	<node>
+		<title value='012'/>
+		<texture src='Resource\GeoTx\012.tga'/>
+	</node>
+	<node>
+		<title value='013'/>
+		<texture src='Resource\GeoTx\013.tga'/>
+	</node>
+	<node>
+		<title value='013a'/>
+		<texture src='Resource\GeoTx\013a.tga'/>
+	</node>
+	<node>
+		<title value='014'/>
+		<texture src='Resource\GeoTx\014.tga'/>
+	</node>
+	<node>
+		<title value='015'/>
+		<texture src='Resource\GeoTx\015.tga'/>
+	</node>
+	<node>
+		<title value='016'/>
+		<texture src='Resource\GeoTx\016.tga'/>
+	</node>
+	<node>
+		<title value='016_a'/>
+		<texture src='Resource\GeoTx\016_a.tga'/>
+	</node>
+	<node>
+		<title value='017'/>
+		<texture src='Resource\GeoTx\017.tga'/>
+	</node>
+	<node>
+		<title value='018'/>
+		<texture src='Resource\GeoTx\018.tga'/>
+	</node>
+	<node>
+		<title value='018a'/>
+		<texture src='Resource\GeoTx\018a.tga'/>
+	</node>
+	<node>
+		<title value='019'/>
+		<texture src='Resource\GeoTx\019.tga'/>
+	</node>
+	<node>
+		<title value='019_a'/>
+		<texture src='Resource\GeoTx\019_a.tga'/>
+	</node>
+	<node>
+		<title value='Mine 2'/>
+		<texture src='Resource\GeoTx\models\64x64\Mine1.tga'/>
+	</node>
+	<node>
+		<title value='IceCream'/>
+		<texture src='Resource\GeoTx\models\16x16\IceCream.tga'/>
+	</node>
+	<node>
+		<title value='Stone_4'/>
+		<texture src='Resource\GeoTx\Stone_4.tga'/>
+	</node>
+	<node>
+		<title value='001'/>
+		<texture src='Resource\GeoTx\001.tga'/>
+	</node>
+	<node>
+		<title value='Wood 1'/>
+		<texture src='Resource\GeoTx\models\16x16\Mine.tga'/>
+	</node>
+	<node>
+		<title value='Wood 2'/>
+		<texture src='Resource\GeoTx\models\16x16\Mine.tga'/>
+	</node>
+	<node>
+		<title value='Eyes'/>
+		<texture src='Resource\GeoTx\models\16x16\Eyes.tga'/>
+	</node>
+	<node>
+		<title value='Clang'/>
+		<texture src='Resource\GeoTx\models\16x16\Clang.tga'/>
+	</node>
+	<node>
+		<title value='Some_3'/>
+		<texture src='Resource\GeoTx\Some_3.tga'/>
+	</node>
+	<node>
+		<title value='Brown'/>
+		<texture src='Resource\GeoTx\models\16x16\Brown.tga'/>
+	</node>
+	<node>
+		<title value='Flame'/>
+		<texture src='Resource\GeoTx\models\flame.tga'/>
+	</node>
+	<node>
+		<title value='grey'/>
+		<texture src='Resource\GeoTx\grey.tga'/>
+	</node>
+</models>

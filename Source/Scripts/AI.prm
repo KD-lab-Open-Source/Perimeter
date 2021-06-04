@@ -1,0 +1,242 @@
+#include "UnitAttribute.inl"
+
+section AIPrm ( declaration = "Game\Scripts\AI.hi", definition = "Game\Scripts\AI.cppi" )
+{
+
+int ai_frame_attach_time = 10000; // ms
+int ai_building_pause = 200; // ms
+
+float ai_brigadier_move_to_point_offset = 40; // не доезжают до точки копания
+float ai_brigadier_width = 40; // ширина бригадира в шеренге
+
+///////////////////////////////////////////
+//		Копание и размещение зданий
+///////////////////////////////////////////
+int ai_border_offset = 6; // in map's scale
+int ai_scan_step = 64;
+float ai_scan_size_of_step_factor = 2;
+int ai_scan_step_unable_to_find = 16; // При этом шаге прекращается сканирование, считая, что нужной позиции нет
+int ai_scan_step_min = 4;
+int ai_placement_iterations_per_quant = 200;
+int ai_extra_dig_size = 10;
+float ai_additional_toolzer_radius = 40;
+float ai_connection_radius_tolerance = 5;
+int cancelConstructionTime = 10*60*1000; // ms
+float moveBrigadiersToInstallFrameOffsetFactor[2] = { 0, .3 };
+float checkLevelingAreaFactor = 0.7; // отношение zero/tolzer, при котором будет перерассчитываться область копания
+int checkLevelingAreaInitial = 150000; // Минимальная площадь, при которой не будет сбрасываться область копания
+
+struct PlaceOpPrm
+{
+	PlacementStrategy placementStrategy = PLACEMENT_STRATEGY_CORE;
+	int buildingsMax = 0;
+
+	float scanRadius = 0; // берется размер модели
+	float boundExtraSize = 5;
+
+	float workFactor = -5;
+	float frameDistanceFactor = 0; // до фрейма
+	float enemyDistanceFactor = 0; // до ближайшего вражеского здания
+	float filthDistanceFactor = 0; // до ближайшего спота скверны
+	float worldBuildingDistanceFactor = 0; // до ближайшего нейтрального здания
+	float corridorDistanceFactor = 0; // до коридора
+
+	float sameTypeDistanceFactor = 0; // сумма обратных расстояний до своих зданий того же типа
+	float connectBuildingFactor = 0;
+	float escapeMakingZeroLayerFactor = 0;
+	float corePlacementCompactness = 1;
+
+	int minimizeDiggingRadius = 0;
+};
+
+
+struct AiPrm 
+{
+	PlaceOpPrm data[int size] = {
+		{
+			placementStrategy = PLACEMENT_STRATEGY_CORE;
+			scanRadius = 300;
+			frameDistanceFactor = -200;
+			escapeMakingZeroLayerFactor = -1000;
+			corePlacementCompactness = 0.7;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_CORE_OFFENSIVE;
+			scanRadius = 300;
+			enemyDistanceFactor = -200;
+			escapeMakingZeroLayerFactor = -1000;
+			corePlacementCompactness = 0.7;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_CORE_CATCHING;
+			scanRadius = 300;
+			worldBuildingDistanceFactor = -100000;
+			workFactor = 0;
+			escapeMakingZeroLayerFactor = -1000;
+			corePlacementCompactness = 0.7;
+			minimizeDiggingRadius = 1;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_CORE_CATCHING_CORRIDOR;
+			scanRadius = 300;
+			corridorDistanceFactor = -100000;
+			workFactor = 0;
+			escapeMakingZeroLayerFactor = -1000000;
+			corePlacementCompactness = 1;
+			minimizeDiggingRadius = 1;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_CORE_AWAY_FROM_ENEMY;
+			scanRadius = 300;
+			enemyDistanceFactor = 200;
+			escapeMakingZeroLayerFactor = -1000;
+			corePlacementCompactness = 0.7;
+		},
+
+		{
+			placementStrategy = PLACEMENT_STRATEGY_PLANT;
+			boundExtraSize = 5;
+			frameDistanceFactor = -1; // Расположиться максимально близко к фрейму
+		},
+
+		{
+			placementStrategy = PLACEMENT_STRATEGY_COMMANDER;
+			buildingsMax = 5;
+			boundExtraSize = 5;
+			frameDistanceFactor = -1; // Расположиться максимально близко к фрейму
+		},
+				
+		{
+			placementStrategy = PLACEMENT_STRATEGY_STATION;
+			buildingsMax = 1;
+			boundExtraSize = 5;
+			frameDistanceFactor = -1; // Расположиться максимально близко к фрейму
+		},
+
+		{
+			placementStrategy = PLACEMENT_STRATEGY_GUN;
+			scanRadius = 200;
+			enemyDistanceFactor = -200;
+			filthDistanceFactor = -200;
+			boundExtraSize = 2;
+			sameTypeDistanceFactor = -50000; // Удаляться от других пушек
+			workFactor = -1000;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_GUN_TO_ENEMY;
+			scanRadius = 200;
+			enemyDistanceFactor = -200;
+			boundExtraSize = 2;
+			sameTypeDistanceFactor = -50000; // Удаляться от других пушек
+			workFactor = -1000;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_GUN_TO_FILTH;
+			scanRadius = 200;
+			filthDistanceFactor = -200;
+			boundExtraSize = 2;
+			sameTypeDistanceFactor = -50000; // Удаляться от других пушек
+			workFactor = -1000;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_GUN_TO_ENEMY_BUILDING;
+			scanRadius = 200;
+			enemyDistanceFactor = -100000;
+			boundExtraSize = 2;
+			sameTypeDistanceFactor = -10000; // Удаляться от других пушек
+			workFactor = -1000;
+		},
+		{
+			placementStrategy = PLACEMENT_STRATEGY_SPECIAL_WEAPON;
+			buildingsMax = 1;
+			scanRadius = 200;
+			enemyDistanceFactor = -200;
+			boundExtraSize = 2;
+		}
+	};
+
+delegate:
+	const PlaceOpPrm& find(PlacementStrategy placementStrategy)
+	{
+		for(int i = 0; i < size; i++)
+			if(data[i].placementStrategy == placementStrategy)
+				return data[i];
+		xassert(0);
+		return data[0];
+	}
+};
+
+AiPrm aiPrm = {};
+
+
+//////////////////////////////////////
+//	Path Find
+//////////////////////////////////////
+struct ClusterFindPrm
+{
+	int clusterSize = 10;
+	int rebuildQuants = 12;
+	int enableSmoothing = 1;
+
+	int levelOfDetail = 8;
+	int maxColor = 64;
+	int minimizeMinLevel = 2;
+	int showMap = 0;
+
+	int gunExtraRadius = 0;
+	int fieldExtraRadius = 0;
+
+	int chaosSmoothSteps = 6;
+
+	int ignorePathFindMinDistance2 = 200*200;
+};
+
+ClusterFindPrm terrainPathFind = {};
+
+ClusterFindPrm defenceMapPathFind = 
+{
+	clusterSize = 10;
+	rebuildQuants = 40;
+	enableSmoothing = 1;
+	gunExtraRadius = 100;
+	fieldExtraRadius = 100;
+};
+
+//////////////////////////////////////
+//			Squad
+//////////////////////////////////////
+// Геометрия сквада
+float squad_described_radius_min = 16;
+float squad_described_radius_max = 100;
+
+float squad_speed_correction_relaxation_time_inv = 0.25;
+float squad_speed_factor_modulation = 0.5;
+
+float squad_position_generator_circle_tolerance = 1;
+
+float squad_find_best_target_scan_radius = 1500;
+
+float squad_contact_radius_factor = 1.2;
+float squad_contact_distance_tolerance = 1;
+float squad_reposition_to_attack_radius_tolerance = 0.05;
+
+int patrol_mode_attack_time = 60000;
+int patrol_mode_ignore_targets_time = 5000;
+
+int squad_targets_scan_period = 500;
+int squad_targets_clean_period = 2000;
+int squad_technician_targets_scan_period = 200;
+
+int static_gun_targets_scan_period = 1000;
+
+int squad_reposition_to_attack_delay = 3000;
+int squad_reposition_to_attack_delay_flying = 6000;
+float squad_reposition_to_attack_velocity_factor = 1./50.;
+
+float squad_velocity_avr_tau = 0.3;
+
+int targetEventTime = 1000;
+
+int speechDurationAddition = 1000;
+
+}

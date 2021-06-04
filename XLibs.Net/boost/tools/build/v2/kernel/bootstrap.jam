@@ -1,0 +1,121 @@
+# (C) Copyright David Abrahams, 2001.
+# (C) Copyright Rene Rivera, 2003.
+#
+# See accompanying license for terms and conditions of use.
+#
+
+# First of all, check the jam version
+
+if $(JAM_VERSION:J="") < 030109
+{
+    ECHO "error: Boost.Jam version 3.1.9 or later required" ;
+    EXIT ;
+} 
+
+# Bootstrap the module system. Then bring the import rule into the global module.
+#
+SEARCH on <module@>modules.jam = $(.bootstrap-file:D) ;
+module modules { include <module@>modules.jam ; }
+IMPORT modules : import : : import ;
+
+{
+    # Add module subdirectories to the BOOST_BUILD_PATH, which allows
+    # us to make an incremental refactoring step by moving modules to
+    # the appropriate subdirectories, thereby achieving some physical
+    # separation of different layers without changing all of our code
+    # to specify subdirectories in import statements or use an extra
+    # level of qualification on imported names.
+    
+    local subdirs = 
+      kernel        # only the most-intrinsic modules: modules, errors
+      util          # low-level substrate: string/number handling, etc.
+      build         # essential elements of the build system architecture
+      tools         # toolsets for handling specific build jobs and targets.
+      
+      new           # until we get everything sorted out, there is
+                    # still some code here
+      
+      .             # build-system.jam lives here
+      
+      ;
+    local whereami = [ NORMALIZE_PATH $(.bootstrap-file:DT) ] ;
+    BOOST_BUILD_PATH += $(whereami:D)/$(subdirs) ;
+}
+
+# Reload the modules, to clean up things. The modules module can tolerate
+# being included twice.
+#
+import modules ;
+
+# Check command-line args as soon as possible.  For each option try
+# to load module named after option. Is that succeeds, invoke 'process'
+# rule in the module. The rule may return "true" to indicate that the
+# regular built process should not be attempted.
+#
+# Options take the general form of: --<name>[=<value>] [<value>]
+#
+local dont-build ;
+local args = $(ARGV) ;
+while $(args)
+{
+    local arg = [ MATCH ^--(.*) : $(args[1]) ] ;
+    while $(args[2-]) && ! $(arg)
+    {
+        args = $(args[2-]) ;
+        arg = [ MATCH ^--(.*) : $(args[1]) ] ;
+    }
+    args = $(args[2-]) ;
+    
+    if $(arg)
+    {
+        local split = [ MATCH ^(([^-=]+)[^=]*)(=?)(.*)$ : $(arg) ] ;
+        local full-name = $(split[1]) ;
+        local prefix = $(split[2]) ;
+        local values ;
+        
+        if $(split[3])
+        {
+            values = $(split[4]) ;
+        }
+        if $(args) && ! [ MATCH ^(--).* : $(args[1]) ]
+        {
+            values += $(args[1]) ;
+            args = $(args[2-]) ;
+        }
+        
+        # look in options subdirectories of BOOST_BUILD_PATH for modules
+        # matching the full option name and then its prefix.
+        local plugin-dir = options ;
+        local option-files = [ 
+            GLOB $(plugin-dir:D=$(BOOST_BUILD_PATH)) : $(full-name).jam $(prefix).jam 
+            ] ;
+        
+        if $(option-files)
+        {
+            # load the file into a module named for the option
+            local f = $(option-files[1]) ;
+            local module-name = --$(f:D=:S=) ;
+            modules.load $(module-name) : $(f:D=) : $(f:D) ;
+            
+            # if there's a process rule, call it with the full option name
+            # and its value (if any).  If there was no "=" in the option,
+            # the value will be empty.
+            if process in [ RULENAMES $(module-name) ]
+            {
+                dont-build += 
+                  [ modules.call-in $(module-name) : process --$(full-name) : $(values) ] ;
+            }
+        }
+    }
+}
+
+if ! $(dont-build)
+{   
+    # Allow users to override the build system file from the
+    # command-line (mostly for testing)
+    local build-system = [ MATCH --build-system=(.*) : $(ARGV) ] ;
+    build-system ?= build-system ;
+
+    # Use last element in case of multiple command-line options
+    import $(build-system[-1]) ;
+}

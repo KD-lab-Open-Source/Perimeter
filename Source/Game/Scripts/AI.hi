@@ -1,0 +1,108 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: AIPrm
+//	Number of variables: 41
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+extern int ai_frame_attach_time;
+extern int ai_building_pause;
+extern float ai_brigadier_move_to_point_offset;
+extern float ai_brigadier_width;
+extern int ai_border_offset;
+extern int ai_scan_step;
+extern float ai_scan_size_of_step_factor;
+extern int ai_scan_step_unable_to_find;
+extern int ai_scan_step_min;
+extern int ai_placement_iterations_per_quant;
+extern int ai_extra_dig_size;
+extern float ai_additional_toolzer_radius;
+extern float ai_connection_radius_tolerance;
+extern int cancelConstructionTime;
+extern float moveBrigadiersToInstallFrameOffsetFactor[2];
+extern float checkLevelingAreaFactor;
+extern int checkLevelingAreaInitial;
+#ifndef __XScript_struct_PlaceOpPrm__
+#define __XScript_struct_PlaceOpPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct PlaceOpPrm {
+	PlacementStrategy placementStrategy;
+	int buildingsMax;
+	float scanRadius;
+	float boundExtraSize;
+	float workFactor;
+	float frameDistanceFactor;
+	float enemyDistanceFactor;
+	float filthDistanceFactor;
+	float worldBuildingDistanceFactor;
+	float corridorDistanceFactor;
+	float sameTypeDistanceFactor;
+	float connectBuildingFactor;
+	float escapeMakingZeroLayerFactor;
+	float corePlacementCompactness;
+	int minimizeDiggingRadius;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_PlaceOpPrm__
+#ifndef __XScript_struct_AiPrm__
+#define __XScript_struct_AiPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct AiPrm {
+	int size;
+	PlaceOpPrm data[13];
+
+	const PlaceOpPrm& find(PlacementStrategy placementStrategy)
+	{
+		for(int i = 0; i < size; i++)
+			if(data[i].placementStrategy == placementStrategy)
+				return data[i];
+		xassert(0);
+		return data[0];
+	}
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_AiPrm__
+extern AiPrm aiPrm;
+#ifndef __XScript_struct_ClusterFindPrm__
+#define __XScript_struct_ClusterFindPrm__
+#pragma pack( push, __XScript_struct_pack__, 4 )
+struct ClusterFindPrm {
+	int clusterSize;
+	int rebuildQuants;
+	int enableSmoothing;
+	int levelOfDetail;
+	int maxColor;
+	int minimizeMinLevel;
+	int showMap;
+	int gunExtraRadius;
+	int fieldExtraRadius;
+	int chaosSmoothSteps;
+	int ignorePathFindMinDistance2;
+};
+#pragma pack( pop, __XScript_struct_pack__)
+#endif  // __XScript_struct_ClusterFindPrm__
+extern ClusterFindPrm terrainPathFind;
+extern ClusterFindPrm defenceMapPathFind;
+extern float squad_described_radius_min;
+extern float squad_described_radius_max;
+extern float squad_speed_correction_relaxation_time_inv;
+extern float squad_speed_factor_modulation;
+extern float squad_position_generator_circle_tolerance;
+extern float squad_find_best_target_scan_radius;
+extern float squad_contact_radius_factor;
+extern float squad_contact_distance_tolerance;
+extern float squad_reposition_to_attack_radius_tolerance;
+extern int patrol_mode_attack_time;
+extern int patrol_mode_ignore_targets_time;
+extern int squad_targets_scan_period;
+extern int squad_targets_clean_period;
+extern int squad_technician_targets_scan_period;
+extern int static_gun_targets_scan_period;
+extern int squad_reposition_to_attack_delay;
+extern int squad_reposition_to_attack_delay_flying;
+extern float squad_reposition_to_attack_velocity_factor;
+extern float squad_velocity_avr_tau;
+extern int targetEventTime;
+extern int speechDurationAddition;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: AIPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,22 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript declaration
+//	Section: ForceFieldPrm
+//	Number of variables: 13
+//	This is computer generated code, don't try to change it
+//////////////////////////////////////////////////////////////////////////////////////////////
+extern float fade_duration;
+extern int evolve_field_iterations;
+extern float force_field_height;
+extern int height_field_iterations;
+extern float force_field_time_step;
+extern float force_field_stiffness;
+extern float force_field_damping;
+extern float force_field_damping2;
+extern float force_field_damping_min;
+extern float force_field_spawn_factor;
+extern float force_field_penalty_stiffness;
+extern float force_field_check_place_height;
+extern int force_field_tangeta_length;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//	XScript end: ForceFieldPrm
+//////////////////////////////////////////////////////////////////////////////////////////////

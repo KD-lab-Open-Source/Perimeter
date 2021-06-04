@@ -1,0 +1,5 @@
+static DWORD shader[]={
+	0xffff0200, 0x0200001f, 0x80000000, 0xb0010001, 0x02000001, 0x800f0000, 
+	0xb0000001, 0x02000001, 0x800f0800, 0x80e40000, 0x0000ffff, 
+};
+	Compile("object_shadow.psh",shader);

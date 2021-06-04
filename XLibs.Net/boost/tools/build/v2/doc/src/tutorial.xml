@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/boostbook.dtd">
+
+<chapter id="bbv2.tutorial">
+  <title>Tutorial</title>
+
+  <section id="bbv2.tutorial.hello">
+    <title>Hello, world</title>
+
+    <para>The simplest project that Boost.Build can construct is
+    stored in example/hello directory. The targets are declared in
+    a file called <filename>Jamfile</filename>, which contains the
+    following:
+
+<programlisting>
+exe hello : hello.cpp ;
+</programlisting>
+
+      Even with this simple setup, you can do some interesting
+      things. First of all, running "bjam" would build binary "hello"
+      from hello.cpp, in debug version. After that, you can run
+
+<screen>
+bjam release
+</screen>
+
+      which would create release version of the 'hello' binary.
+      Note that debug and release version would be created in different
+      directories, so if you want to switch from debug to release
+      version and back, no recompilation is needed. Let's extend the
+      example by adding another line to Jamfile:
+
+<programlisting>
+exe hello2 : hello.cpp ;
+</programlisting>
+
+      You can now rebuild both debug and release versions:
+
+<screen>
+bjam debug release
+</screen>
+
+      You'll see that two versions of "hello2" binary are linked.
+      Of course, hello.cpp won't be recompiled. Now you decide to remove
+      all build products. You do that with the following command
+
+<screen>
+bjam --clean debug release
+</screen>
+
+      It's also possible to create or clean only specific targets.
+      Both following commands are legal and create or clean only files
+      that belonging the the named binary:
+
+<screen>
+bjam hello2
+bjam --clean hello2
+</screen>
+      </para>
+
+    </section>
+    <section id="bbv2.tutorial.properties">
+      <title>Properties</title>
+
+  <para>Boost.Build attempts to allow building different variants of
+  projects, e.g. for debugging and release, or in single and
+  multithreaded mode. In order to stay portable, it uses the
+  concept of <emphasis>features</emphasis>, which is abstract aspect of
+  build configuration. <emphasis>Property</emphasis> is just a (feature,
+  value) pair. For example, there's a feature "debug-symbols", which can
+  have a value of "on" or "off". When users asks to build project is a
+  particual value, Boost.Build will automatically find the
+  appropriate flags to the used compiler.</para>
+
+  <para>The "release" and "debug" in bjam invocation that we've seen
+  are just are short form of specifying values of feature
+  "variant". There is a lot of builtin features, and it's possible
+  to write something like:</para>
+
+<screen>
+bjam release inlining=off debug-symbols=on
+</screen>
+
+      <para>
+      The first command line element specified the value of feature
+      "variant". The feature is very common and is therefore special
+      &#x2014; it's possible to specify only value. Another feature,
+      "inlining" is not special, and you should use
+
+<screen>
+feature-name=feature-value
+</screen>
+
+      syntax for it. Complete description of features can be found
+      <link linkend="bbv2.reference.features">here</link>. The set of
+      properties specified in the command line constitute
+      <emphasis>build request</emphasis> &#x2014; the desired properties
+      for requested targets, or for the project in the current
+      directory. The actual set of properties used for building is
+      often different. For example, when compiling a program you need
+      some include paths. It's not reasonable to ask the user to specify
+      those paths with each bjam invocation, so must be specified in
+      Jamfile and added to the build request. For another example,
+      certain application can only be linked in multithreaded mode. To
+      support such situations, every target is allowed to specify
+      <emphasis>requirements</emphasis> -- properties that are required
+      to its building. Consider this example:
+
+<programlisting>
+exe hello 
+    : hello.cpp
+    : &lt;include&gt;/home/ghost/Work/boost &lt;threading&gt;multi
+</programlisting>
+
+    In this case, when hello is build, the two specified properties will
+    always be present. This leads to a question: what if user explictly
+    requested single-threading. The answer is that requirement can
+    affect build properties only to a certain degree: the requested and
+    actual properties must be link-compatible. See <xref linkend=
+    "bbv2.reference.variants.compat"/> below. If they are not link
+    compatible, the bulding of the target is skipped. Previously, we've
+    added "hello2" target. Seems like we have to specify the same
+    requirements for it, which results in duplication. But there's a
+    better way. Each project (i.e. each Jamfile), can specify a set of
+    attributes, including requirements:
+
+<programlisting>
+project 
+    : requirements &lt;include&gt;/home/ghost/Work/boost &lt;threading&gt;multi 
+    ;
+
+exe hello : hello.cpp ;
+exe hello2 : hello.cpp ;
+</programlisting>
+
+      The effect would be as if we specified this requirement for
+      both "hello" and "hello2".
+      </para>
+    </section>
+
+    <section id="bbv2.tutorial.hierarchy">
+      <title>Project hierarchy</title>
+
+  <para>So far we only considered examples with one project (i.e. with
+  one Jamfile). Typically, you'd have a lot of projects organized
+  into a tree. At the top of the tree there's <emphasis>project
+  root</emphasis>. This is a directory which contains, besides Jamfile, a
+  file called "project-root.jam". Each other Jamfile has a single
+  parent, which is the Jamfile in the nearest parent directory. For
+  example, in the following directory layout:</para>
+
+<screen>
+[top] 
+  |
+  |-- Jamfile
+  |-- project-root.jam
+  |
+  |-- src
+  |    |
+  |    |-- Jamfile
+  |    \-- app.cpp
+  | 
+  \-- lib
+       |
+       |-- lib1
+       |    |
+       |    |-- Jamfile
+            |-- lib1.cpp
+</screen>
+
+      <para>
+project root is at top. Both src/Jamfile and lib/lib1/Jamfile
+have [top]/Jamfile as parent project. Projects inherit all
+attributes (such as requirements) from their parents. When the same
+attributes are specified in the project, they are combined with
+inherited ones. For example, if [top]/Jamfile has
+
+<programlisting>
+&lt;include&gt;/home/ghost/local
+</programlisting>
+
+in requirements, then all other projects will have that in
+their requirements too. Of course, any project can add additional
+includes. More details can be found in the section on <link linkend=
+"bbv2.advanced.projects">projects</link>. Projects are not automatically
+built when
+their parents are built. You should specify this explicitly. In our
+example, [top]/Jamfile might contain:
+
+<programlisting>
+build-project src ;
+</programlisting>
+
+      It will cause project in src to be built whenever project in
+[top] is built. However, targets in lib/lib1 will be built only if
+required. For example, there may be 10 targets, and two of them are
+used by targets in src/Jamfile. Then, only those two targets will
+be built.
+      </para>
+    </section>
+
+    <section id="bbv2.tutorial.libs">
+      <title>Using libraries</title>
+
+      <para>Let's continue the above example and see how src/Jamfile
+      can use libraries from
+  lib/lib1. (TODO: need to make this section consistent with
+  "examples-v2/libraries". Assume lib/lib1/Jamfile contains:
+
+<programlisting>
+lib lib1 : lib1.cpp ;
+</programlisting>
+
+      Then, to use this library in src/Jamfile, we can write:
+
+<programlisting>
+exe app : app.cpp ../lib/lib1//lib1 ;
+</programlisting>
+
+While "app.cpp" is a regular source file, "../lib/lib1//lib1"
+is a reference to another target, here, library "lib1" declared in
+Jamfile at "../lib/lib1". When linking the "app" binary, the needed
+version of the library will be built and linked in. But what is
+meant by "needed"? For example, we can request to build "app" with
+properties
+
+<programlisting>
+&lt;optimization&gt;full &lt;cxxflags&gt;-w-8080
+</programlisting>
+
+Which properties must be used for "lib1"? The answer is that
+some properties are <emphasis>propagated</emphasis> &#x2014; Boost.Build attemps
+to use dependencies with the same value of propagated features. The
+&lt;optimization&gt; feature is propagated, so both "app" and
+"lib1" will be compiled with full optimization. But
+&lt;cxxflags&gt; feature is not propagated: its value will be added
+as-is to compiler flags for "a.cpp", but won't affect "lib1". There
+is still a couple of problems. First, the library probably has some
+headers which must be used when compiling "app.cpp". We could use
+requirements on "app" to add those includes, but then this work
+will be repeated for all programs which use "lib1". A better
+solution is to modify lib/lib1/Jamfilie in this way:
+
+<programlisting>
+project 
+    : usage-requirements &lt;include&gt;.
+    ;
+
+lib lib1 : lib1.cpp ;
+</programlisting>
+
+Usage requirements are requirements which are applied to
+dependents. In this case, &lt;include&gt; will be applied to all
+targets which use "lib1" &#x2014; i.e. targets which have "lib1"
+either in sources or in dependency properties. You'd need to
+specify usage requirements only once, and programs which use "lib1"
+don't have to care about include paths any longer. Or course, the
+path will be interpreted relatively to "lib/lib1" and will be
+adjusted according to the <command>bjam</command>s invocation
+directory. For
+example, if building from project root, the final compiler's
+command line will contain <option>-Ilib/lib1</option>.
+      </para>
+
+  <para>The second problem is that we hardcode the path to library's
+  Jamfile. Imagine it's hardcoded in 20 different places and we
+  change the directory layout. The solution is to use project ids
+  &#x2014; symbolic names, not tied to directory layout. First, we
+  assign a project id to Jamfile in lib/lib1:</para>
+
+<programlisting>
+project lib1
+    : usage-requirements &lt;include&gt;.
+    ;
+</programlisting>
+
+      <para>
+Second, we use the project id to refer to the library in
+src/Jamfile:
+
+<programlisting>
+exe app : app.cpp /lib1//lib1 ;
+</programlisting>
+
+The "/lib1//lib1" syntax is used to refer to target "lib1" in
+project with global id "/lib1" (the slash is used to specify global
+id). This way, users of "lib1" do not depend on its location, only
+on id, which is supposedly stable. The only thing left, it to make
+sure that src/Jamfile knows the project id that it uses. We add to
+[top]/Jamfile the following line:
+
+<programlisting>
+use-project /lib1 : lib/lib1 ;
+</programlisting>
+
+Now, all projects can refer to "lib1" using the symbolic
+name. If the library is moved somewhere, only a single line in the
+top-level Jamfile should be changed.
+      </para>
+    </section>
+
+    <section id="bbv2.tutorial.depends">
+      <title>Library dependencies</title>
+
+  <para>The previous example was simple. Often, there are long chains
+  of dependencies between libraries. The main application is a thin
+  wrapper on top of library with core logic, which uses library of
+  utility functions, which uses boost filesystem library.
+  Expressing these dependencies is straightforward:</para>
+
+<programlisting>
+lib utils : utils.cpp /boost/filesystem//fs ;   
+lib core : core.cpp utils ;
+exe app : app.cpp core ;
+</programlisting>
+
+  <para>So, what's the reason to even mention this case? First,
+  because it's a bit more complex that it seems. When using shared
+  linking, libraries are build just as written, and everything will
+  work. However, what happens with static linking? It's not
+  possible to include another library in static library.
+  Boost.Build solves this problem by returning back library targets
+  which appear as sources for static libraries. In this case, if
+  everything is built statically, the "app" target will link not
+  only "core" library, but also "utils" and
+  "/boost/filesystem//fs".</para>
+
+  <para>So, the net result is that the above code will work for both
+  static linking and for shared linking.</para>
+
+  <para>Sometimes, you want all applications in some project to link
+  to a certain library. Putting the library in sources of all
+  targets is possible, but verbose. You can do better by using
+  &lt;library&gt; property. For example, if "/boost/filesystem//fs"
+  should be linked to all applications in your project, you can add
+  &lt;library&gt;/boost/filesystem//fs to requirements of the
+  project, like this:</para>
+
+<programlisting>
+project 
+   : requirements &lt;library&gt;/boost/filesystem//fs
+   ;   
+</programlisting>
+    </section>
+
+    <section id="bbv2.tutorial.linkage">
+      <title>Static and shared libaries</title>
+
+      <para>While the
+  previous section explained how to create and use libraries, it
+  omitted one important detail. Libraries can be either
+  <emphasis>static</emphasis>, which means they are included in executable
+  files which use them, or <emphasis>shared</emphasis> (a.k.a.
+  <emphasis>dynamic</emphasis>), which are only referred to from executables,
+  and must be available at run time. Boost.Build can work with both
+  types. By default, all libraries are shared. This is much more
+  efficient in build time and space. But the need to install all
+  libraries to some location is not always convenient, especially
+  for debug builds. Also, if the installed shared library changes,
+  all application which use it might start to behave differently.
+      </para>
+
+  <para>Static libraries do not suffer from these problems, but
+  considerably increase the size of application. Before describing
+  static libraries, it's reasonable to give another, quite simple
+  approach. If your project is built with
+  &lt;hardcode-dll-paths&gt;true property, then the application
+  will include the full paths for all shared libraries, eliminating
+  the above problems. Unfortunately, you no longer can move shared
+  library to a different location, which makes this option suitable
+  only for debug builds. Further, only gcc compiler supports this
+  option.</para>
+
+  <para>Building a library statically is easy. You'd need to change
+  the value of &lt;link&gt; feature from it's deafault value
+  <literal>shared</literal>, to <literal>static</literal>. So, to build everything as
+  static libraries, you'd say</para>
+
+<screen>
+bjam link=static
+</screen>
+
+      <para>
+on the command line. The linking mode can be fine-tuned on
+per-target basis.
+
+        <orderedlist>
+          <listitem>
+            <para>
+            Suppose your library can be only build statically. This is
+            easily achieved using requirements:
+
+<programlisting>
+lib l : l.cpp : &lt;link&gt;static ;
+</programlisting>
+ 
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+            What if library can be both static and shared, but when
+            using it in specific executable, you want it static?
+            <link linkend="bbv2.advanced.targets.references">Target
+            references</link> are here to help:
+
+<programlisting>
+exe important : main.cpp helpers/&lt;link&gt;static ;
+</programlisting>
+
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+    What if the library is defined in some other project, which
+    you cannot change. But still, you want static linking to that
+    library in all cases. You can use target references everywhere:
+
+<programlisting>
+exe e1 : e1.cpp /other_project//lib1/&lt;link&gt;static ;
+exe e10 : e10.cpp /other_project//lib1/&lt;link&gt;static ;
+</programlisting>
+
+but that's far from being convenient. Another way is to
+introduce a level of indirection: create a local target, which will
+refer to static version of <filename>lib1</filename>. Here's the
+solution:
+
+<programlisting>
+alias lib1 : /other_project//lib1/&lt;link&gt;static ;
+exe e1 : e1.cpp lib1 ;
+exe e10 : e10.cpp lib1 ;
+</programlisting>
+
+(Note, that the "alias" target type is not yet implemented,
+but it's quite simple to do. I bet it's waiting for you to do it
+;-))
+            </para>
+          </listitem>
+        </orderedlist>
+      </para>
+    </section>
+
+    <section id="bbv2.tutorial.prebuilt">
+      <title>Prebuilt targets</title>
+
+      <para>
+      We've just learned how to use libraries which are created by
+      Boost.Build. But some libraries are not. At the same time, those
+      libraries can have different versions (release and debug, for
+      example), that we
+  should select depending on build properties. Prebuilt targets
+  provide a mechanism for that. Jamfile in lib/lib2 can contain:
+
+<programlisting>
+lib lib2
+    : 
+    : &lt;file&gt;lib2_release.a &lt;variant&gt;release
+    ;
+
+lib lib2
+    : 
+    : &lt;file&gt;lib2_debug.a &lt;variant&gt;debug
+    ;
+</programlisting>
+
+This defines two alternatives for target "lib2", and for each
+one names a prebuilt file. Naturally, there are no sources.
+Instead, the &lt;file&gt; feature is used to specify the file name.
+Which alternative is selected depends on properties of dependents.
+If "app" binary should use "lib2", we can write:
+
+<programlisting>
+exe app : app.cpp /lib/lib1//lib2 ../lib/lib2//lib2 ;
+</programlisting>
+
+If we build release version of "app", then it will be linked
+with "lib2_release.a", and debug version will use "lib2_debug.a".
+Another important kind of prebuilt targets are system libraries
+&#x2014; more specifically, libraries which are automatically found
+by the compiler. E.g. gcc uses "-l" switch for that. Such libraries
+should be declared almost like regular ones:
+
+<programlisting>
+lib zlib : : &lt;name&gt;z ;
+</programlisting>
+
+We again don't specify any sources, but give a name which
+should be passed to the compiler. In this example, and for gcc
+compiler, the "-lz" option will be added. Paths where library
+should be searched can also be specified:
+
+<programlisting>
+lib zlib : : &lt;name&gt;z &lt;search&gt;/opt/lib ;
+</programlisting>
+
+And, of course, two variants can be used:
+
+<programlisting>
+lib zlib : : &lt;name&gt;z &lt;variant&gt;release ;
+lib zlib : : &lt;name&gt;z_d &lt;variant&gt;debug ;
+</programlisting>
+
+Of course, you'll probably never in your life need debug
+version of zlib, but for other libraries this is quite reasonable.
+      </para>
+
+  <para>More advanced use of prebuilt target is descibed in <ulink
+  url="doc/recipes.html#site_config_targets">recipes</ulink>.</para>
+
+    </section>
+
+</chapter>
+

@@ -1,0 +1,59 @@
+<!doctype html public "-//ietf//dtd html//en">
+<html><head><title>boost::mpl::is_sequence</title>
+<link rel="stylesheet" href="../mpl_wiki.css">
+</head><body bgcolor="white">
+<h1><a href="../Table_of_Contents.html"><img src="../mpl_logo.jpg" alt="[Home]" border=0 align="right"></a>is_sequence</h1><h3>Synopsis</h3>
+<p>
+<pre>
+template&lt;
+      typename T
+    &gt;
+struct is_sequence
+{
+    typedef <em>unspecified</em> type;
+};
+</pre>
+<p>
+<h3>Description</h3>
+<p>
+Returns an <a href="../Integral_Constant.html">Integral Constant</a> <code>c</code> such that <code>c::value == true</code> if and only if <code>T</code> is a model of <a href="../Sequence.html">Sequence</a>.
+<p>
+<h3>Definition</h3>
+<p>
+<pre>
+#include "<a href="../../../../../boost/mpl/is_sequence.hpp">boost/mpl/is_sequence.hpp</a>"
+</pre>
+<p>
+<h3>Parameters</h3>
+<table border="1">
+<tr><th>&nbsp;Parameter&nbsp;</th><th>&nbsp;Requirement&nbsp;</th><th>&nbsp;Description &nbsp;</th></tr>
+<tr><td><code>T</code></td><td>A type</td><td></td></tr>
+</table>
+<p>
+<h3>Expression semantics</h3>
+<p>
+<table border="1">
+<tr><th>&nbsp;Expression&nbsp;</th><th>&nbsp;Expression&nbsp;type&nbsp;</th><th>&nbsp;Precondition&nbsp;</th><th>&nbsp;Semantics&nbsp;</th><th>&nbsp;Postcondition&nbsp;</th></tr>
+<tr><td><code>typedef is_sequence&lt;T&gt;::type c;</code></td><td>A model of <code>bool</code> <a href="../Integral_Constant.html">Integral Constant</a></td><td></td><td>Equivalent to <code>typedef <a href="../Reference/not.html">not_</a>&lt; is_same&lt; <a href="../Reference/begin.html">begin</a>&lt;T&gt;::type,void_ &gt; &gt;::type c;</code></td><td></td></tr>
+</table>
+<p>
+<p>
+<h3>Complexity</h3>
+<p>
+Amortized constant time.
+<p>
+<h3>Example</h3>
+<p>
+<pre>
+struct UDT {};
+BOOST_STATIC_ASSERT( !is_sequence&lt;int&gt;::value );
+BOOST_STATIC_ASSERT( !is_sequence&lt;UDT&gt;::value );
+BOOST_STATIC_ASSERT( is_sequence&lt; <a href="../Reference/list.html">list</a>&lt;&gt; &gt;::value );
+BOOST_STATIC_ASSERT( is_sequence&lt; <a href="../Reference/vector.html">vector</a>&lt;&gt; &gt;::value );
+</pre>
+<p>
+<h3>See also</h3>
+<p>
+<a href="../Sequence.html">Sequence</a>, <code><a href="../Reference/begin.html">begin</a></code>, <code><a href="../Reference/end.html">end</a></code>, <code>as_sequence</code>
+<p><hr>
+<a href="../Table_of_Contents.html">Table of Contents</a><br>Last edited July 1, 2003 4:08 pm</body></html>

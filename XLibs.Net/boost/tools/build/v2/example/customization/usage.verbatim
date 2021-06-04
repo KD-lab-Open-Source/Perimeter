@@ -1,0 +1,6 @@
+usage
+Usage: codegen class_name
+
+This program takes a template of C++ code and replaces of
+occurences of %class_name% with the passed 'class_name'
+parameter.

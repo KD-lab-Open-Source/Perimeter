@@ -1,0 +1,8 @@
+
+import project ;
+
+# Convert ourself into a real project.
+project.initialize $(__name__) ;
+
+# Now we can identify ourselfs.
+project /teeest ;

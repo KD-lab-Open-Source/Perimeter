@@ -1,0 +1,144 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<title>Boost Random Number Library Variate Generator</title>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+<h1>Boost Random Number Library Variate Generator</h1>
+
+A random variate generator is used to join a random number generator
+together with a random number distribution.
+Boost.Random provides a vast choice of 
+<a href="random-generators.html">generators</a>
+as well as
+<a href="random-distributions.html">distributions</a>
+.
+
+
+<h2><a name="variate_generator">Class template <code>variate_generator</code></h2>
+
+<h3>Synopsis</h3>
+<pre>
+#include &lt;<a href="../../boost/random/variate_generator.hpp">boost/random/variate_generator.hpp</a>&gt;
+
+template&lt;class Engine, class Distribution&gt;
+class variate_generator
+{
+public:
+  typedef Engine engine_type;
+  typedef Distribution distribution_type;
+  typedef typename Distribution::result_type result_type;
+
+  variate_generator(Engine e, Distribution d);
+
+  result_type operator()();
+  template&lt;class T&gt;
+  result_type operator()(T value);
+  
+  engine_value_type&amp; engine();
+  const engine_value_type&amp; engine() const;
+
+  result_type min() const;
+  result_type max() const;
+};
+</pre>
+
+<h3>Description</h3>
+
+Instantations of class template <code>variate_generator</code> model a
+<a href="random-concepts.html#number_generator">number generator</a>. 
+<p>
+The argument for the template parameter <code>Engine</code> shall be
+of the form U, U&, or U*, where U models a uniform random number
+generator.  Then, the member <code>engine_value_type</code> names U
+(not the pointer or reference to U).
+<p>
+
+Specializations of <code>variate_generator</code> satisfy the
+requirements of CopyConstructible. They also satisfy the requirements
+of Assignable unless the template parameter Engine is of the form U&amp;. 
+<p>
+
+The complexity of all functions specified in this section is
+constant. No function described in this section except the constructor
+throws an exception. 
+
+<pre>    variate_generator(engine_type eng, distribution_type d)</pre>
+<strong>Effects:</strong> Constructs a <code>variate_generator</code>
+object with the associated uniform random number generator
+<code>eng</code> and the associated random distribution
+<code>d</code>.
+<br>
+<strong>Throws:</strong> If and what the copy constructor of Engine or
+Distribution throws.
+
+<pre>    result_type operator()()</pre>
+<strong>Returns:</strong> <code>distribution()(e)</code>
+<br>
+<strong>Notes:</strong> The sequence of numbers produced by the
+uniform random number generator <code>e</code>, s<sub>e</sub>, is
+obtained from the sequence of numbers produced by the associated
+uniform random number generator <code>eng</code>, s<sub>eng</sub>, as
+follows: Consider the values of
+<code>numeric_limits&lt;<em>T</em>&gt;::is_integer</code> for
+<code><em>T</em></code> both <code>Distribution::input_type</code> and
+<code>engine_value_type::result_type</code>.  If the values for both
+types are <code>true</code>, then s<sub>e</sub> is identical to
+s<sub>eng</sub>.  Otherwise, if the values for both types are
+<code>false</code>, then the numbers in s<sub>eng</sub> are divided by
+<code>engine().max()-engine().min()</code> to obtain the
+numbers in s<sub>e</sub>.  Otherwise, if the value for
+<code>engine_value_type::result_type</code> is <code>true</code> and
+the value for <code>Distribution::input_type</code> is
+<code>false</code>, then the numbers in s<sub>eng</sub> are divided by
+<code>engine().max()-engine().min()+1</code> to obtain the
+numbers in s<sub>e</sub>.  Otherwise, the mapping from s<sub>eng</sub>
+to s<sub>e</sub> is implementation-defined.  In all cases, an implicit
+conversion from <code>engine_value_type::result_type</code> to
+<code>Distribution::input_type</code> is performed.  If such a
+conversion does not exist, the program is ill-formed.
+
+<pre>    template&lt;class T> result_type operator()(T value)</pre>
+<strong>Returns:</strong> <code>distribution()(e, value)</code>.  For
+the semantics of <code>e</code>, see the description of
+<code>operator()()</code>.
+
+<pre>    engine_value_type& engine()</pre>
+<strong>Returns:</strong> A reference to the associated uniform random
+number generator.
+
+<pre>    const engine_value_type& engine() const</pre>
+<strong>Returns:</strong> A reference to the associated uniform random
+number generator.
+
+<pre>    distribution_type& distribution()</pre>
+<strong>Returns:</strong> A reference to the associated random
+distribution.
+
+<pre>    const distribution_type& distribution() const</pre>
+<strong>Returns:</strong> A reference to the associated random
+distribution.
+
+<pre>    result_type min() const</pre>
+<strong>Precondition:</strong> <code>distribution().min()</code> is
+well-formed
+<br>
+<strong>Returns:</strong> <code>distribution().min()</code>
+
+<pre>    result_type max() const</pre>
+<strong>Precondition:</strong> <code>distribution().max()</code> is
+well-formed
+<br>
+<strong>Returns:</strong> <code>distribution().max()</code>
+
+<p>
+<hr>
+<a href="../../people/jens_maurer.htm">Jens Maurer</a>,
+2003-10-25
+
+</body>
+</html>
