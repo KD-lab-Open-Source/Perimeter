@@ -958,134 +958,134 @@ unsigned short w32_regex_traits<regex_wchar_type>::wide_unicode_classes[] = {
    re_detail::w32_traits_base::char_class_punct,        // '~'  126
 
    re_detail::w32_traits_base::char_class_cntrl,        // ''  127
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ğ‚'  128
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ğƒ'  129
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€š'  130
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ñ“'  131
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€'  132
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€¦'  133
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€ '  134
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€¡'  135
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â‚¬'  136
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€°'  137
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ğ‰'  138
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€¹'  139
-   re_detail::w32_traits_base::char_class_cntrl,        // 'ĞŠ'  140
-   re_detail::w32_traits_base::char_class_cntrl,        // 'ĞŒ'  141
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ğ‹'  142
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ğ'  143
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ñ’'  144
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€˜'  145
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€™'  146
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€œ'  147
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€'  148
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€¢'  149
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€“'  150
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€”'  151
-   re_detail::w32_traits_base::char_class_cntrl,        // ' '  152
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â„¢'  153
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ñ™'  154
-   re_detail::w32_traits_base::char_class_cntrl,        // 'â€º'  155
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ñš'  156
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ñœ'  157
-   re_detail::w32_traits_base::char_class_cntrl,        // 'Ñ›'  158
-   re_detail::w32_traits_base::char_class_cntrl,        // 'ÑŸ'  159
-   re_detail::w32_traits_base::char_class_space | re_detail::w32_traits_base::char_class_blank,        // 'Â '  160
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğ'  161
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ'  162
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğˆ'  163
-   re_detail::w32_traits_base::char_class_punct,        // 'Â¤'  164
-   re_detail::w32_traits_base::char_class_punct,        // 'Ò'  165
-   re_detail::w32_traits_base::char_class_punct,        // 'Â¦'  166
-   re_detail::w32_traits_base::char_class_punct,        // 'Â§'  167
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğ'  168
-   re_detail::w32_traits_base::char_class_punct,        // 'Â©'  169
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğ„'  170
-   re_detail::w32_traits_base::char_class_punct,        // 'Â«'  171
-   re_detail::w32_traits_base::char_class_punct,        // 'Â¬'  172
-   re_detail::w32_traits_base::char_class_punct,        // 'Â­'  173
-   re_detail::w32_traits_base::char_class_punct,        // 'Â®'  174
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğ‡'  175
-   re_detail::w32_traits_base::char_class_punct,        // 'Â°'  176
-   re_detail::w32_traits_base::char_class_punct,        // 'Â±'  177
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğ†'  178
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ–'  179
-   re_detail::w32_traits_base::char_class_punct,        // 'Ò‘'  180
-   re_detail::w32_traits_base::char_class_punct,        // 'Âµ'  181
-   re_detail::w32_traits_base::char_class_punct,        // 'Â¶'  182
-   re_detail::w32_traits_base::char_class_punct,        // 'Â·'  183
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ‘'  184
-   re_detail::w32_traits_base::char_class_punct,        // 'â„–'  185
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ”'  186
-   re_detail::w32_traits_base::char_class_punct,        // 'Â»'  187
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ˜'  188
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğ…'  189
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ•'  190
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ—'  191
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ'  192
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ‘'  193
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ’'  194
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ“'  195
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ”'  196
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ•'  197
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ–'  198
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ—'  199
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ˜'  200
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ™'  201
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğš'  202
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ›'  203
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğœ'  204
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ'  205
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ'  206
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'ĞŸ'  207
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ '  208
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ¡'  209
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ¢'  210
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ£'  211
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ¤'  212
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ¥'  213
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ¦'  214
-   re_detail::w32_traits_base::char_class_punct,        // 'Ğ§'  215
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ¨'  216
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ©'  217
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğª'  218
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ«'  219
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ¬'  220
-   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ­'  221
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_upper,        // 'Ğ®'  222
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ¯'  223
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ°'  224
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ±'  225
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ²'  226
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ³'  227
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ´'  228
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğµ'  229
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ¶'  230
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ·'  231
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ¸'  232
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ¹'  233
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğº'  234
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ»'  235
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ¼'  236
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ½'  237
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ¾'  238
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ğ¿'  239
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ€'  240
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ'  241
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ‚'  242
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñƒ'  243
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ„'  244
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ…'  245
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ†'  246
-   re_detail::w32_traits_base::char_class_punct,        // 'Ñ‡'  247
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñˆ'  248
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ‰'  249
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ÑŠ'  250
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ‹'  251
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ÑŒ'  252
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ'  253
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ'  254
-   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'Ñ'  255
+   re_detail::w32_traits_base::char_class_cntrl,        // '€'  128
+   re_detail::w32_traits_base::char_class_cntrl,        // ''  129
+   re_detail::w32_traits_base::char_class_cntrl,        // '‚'  130
+   re_detail::w32_traits_base::char_class_cntrl,        // 'ƒ'  131
+   re_detail::w32_traits_base::char_class_cntrl,        // '„'  132
+   re_detail::w32_traits_base::char_class_cntrl,        // '…'  133
+   re_detail::w32_traits_base::char_class_cntrl,        // '†'  134
+   re_detail::w32_traits_base::char_class_cntrl,        // '‡'  135
+   re_detail::w32_traits_base::char_class_cntrl,        // 'ˆ'  136
+   re_detail::w32_traits_base::char_class_cntrl,        // '‰'  137
+   re_detail::w32_traits_base::char_class_cntrl,        // 'Š'  138
+   re_detail::w32_traits_base::char_class_cntrl,        // '‹'  139
+   re_detail::w32_traits_base::char_class_cntrl,        // 'Œ'  140
+   re_detail::w32_traits_base::char_class_cntrl,        // ''  141
+   re_detail::w32_traits_base::char_class_cntrl,        // ''  142
+   re_detail::w32_traits_base::char_class_cntrl,        // ''  143
+   re_detail::w32_traits_base::char_class_cntrl,        // ''  144
+   re_detail::w32_traits_base::char_class_cntrl,        // '‘'  145
+   re_detail::w32_traits_base::char_class_cntrl,        // '’'  146
+   re_detail::w32_traits_base::char_class_cntrl,        // '“'  147
+   re_detail::w32_traits_base::char_class_cntrl,        // '”'  148
+   re_detail::w32_traits_base::char_class_cntrl,        // '•'  149
+   re_detail::w32_traits_base::char_class_cntrl,        // '–'  150
+   re_detail::w32_traits_base::char_class_cntrl,        // '—'  151
+   re_detail::w32_traits_base::char_class_cntrl,        // '˜'  152
+   re_detail::w32_traits_base::char_class_cntrl,        // '™'  153
+   re_detail::w32_traits_base::char_class_cntrl,        // 'š'  154
+   re_detail::w32_traits_base::char_class_cntrl,        // '›'  155
+   re_detail::w32_traits_base::char_class_cntrl,        // 'œ'  156
+   re_detail::w32_traits_base::char_class_cntrl,        // ''  157
+   re_detail::w32_traits_base::char_class_cntrl,        // ''  158
+   re_detail::w32_traits_base::char_class_cntrl,        // 'Ÿ'  159
+   re_detail::w32_traits_base::char_class_space | re_detail::w32_traits_base::char_class_blank,        // ' '  160
+   re_detail::w32_traits_base::char_class_punct,        // '¡'  161
+   re_detail::w32_traits_base::char_class_punct,        // '¢'  162
+   re_detail::w32_traits_base::char_class_punct,        // '£'  163
+   re_detail::w32_traits_base::char_class_punct,        // '¤'  164
+   re_detail::w32_traits_base::char_class_punct,        // '¥'  165
+   re_detail::w32_traits_base::char_class_punct,        // '¦'  166
+   re_detail::w32_traits_base::char_class_punct,        // '§'  167
+   re_detail::w32_traits_base::char_class_punct,        // '¨'  168
+   re_detail::w32_traits_base::char_class_punct,        // '©'  169
+   re_detail::w32_traits_base::char_class_punct,        // 'ª'  170
+   re_detail::w32_traits_base::char_class_punct,        // '«'  171
+   re_detail::w32_traits_base::char_class_punct,        // '¬'  172
+   re_detail::w32_traits_base::char_class_punct,        // '­'  173
+   re_detail::w32_traits_base::char_class_punct,        // '®'  174
+   re_detail::w32_traits_base::char_class_punct,        // '¯'  175
+   re_detail::w32_traits_base::char_class_punct,        // '°'  176
+   re_detail::w32_traits_base::char_class_punct,        // '±'  177
+   re_detail::w32_traits_base::char_class_punct,        // '²'  178
+   re_detail::w32_traits_base::char_class_punct,        // '³'  179
+   re_detail::w32_traits_base::char_class_punct,        // '´'  180
+   re_detail::w32_traits_base::char_class_punct,        // 'µ'  181
+   re_detail::w32_traits_base::char_class_punct,        // '¶'  182
+   re_detail::w32_traits_base::char_class_punct,        // '·'  183
+   re_detail::w32_traits_base::char_class_punct,        // '¸'  184
+   re_detail::w32_traits_base::char_class_punct,        // '¹'  185
+   re_detail::w32_traits_base::char_class_punct,        // 'º'  186
+   re_detail::w32_traits_base::char_class_punct,        // '»'  187
+   re_detail::w32_traits_base::char_class_punct,        // '¼'  188
+   re_detail::w32_traits_base::char_class_punct,        // '½'  189
+   re_detail::w32_traits_base::char_class_punct,        // '¾'  190
+   re_detail::w32_traits_base::char_class_punct,        // '¿'  191
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'À'  192
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Á'  193
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Â'  194
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ã'  195
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ä'  196
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Å'  197
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Æ'  198
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ç'  199
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'È'  200
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'É'  201
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ê'  202
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ë'  203
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ì'  204
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Í'  205
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Î'  206
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ï'  207
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ğ'  208
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ñ'  209
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ò'  210
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ó'  211
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ô'  212
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Õ'  213
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ö'  214
+   re_detail::w32_traits_base::char_class_punct,        // '×'  215
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ø'  216
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ù'  217
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ú'  218
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Û'  219
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'Ü'  220
+   re_detail::w32_traits_base::char_class_alpha |   re_detail::w32_traits_base::char_class_upper,        // 'İ'  221
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_upper,        // 'Ş'  222
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ß'  223
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'à'  224
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'á'  225
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'â'  226
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ã'  227
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ä'  228
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'å'  229
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'æ'  230
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ç'  231
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'è'  232
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'é'  233
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ê'  234
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ë'  235
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ì'  236
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'í'  237
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'î'  238
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ï'  239
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ğ'  240
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ñ'  241
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ò'  242
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ó'  243
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ô'  244
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'õ'  245
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ö'  246
+   re_detail::w32_traits_base::char_class_punct,        // '÷'  247
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ø'  248
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ù'  249
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ú'  250
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'û'  251
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ü'  252
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ı'  253
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ş'  254
+   re_detail::w32_traits_base::char_class_alpha |  re_detail::w32_traits_base::char_class_lower,        // 'ÿ'  255
 };
 
 

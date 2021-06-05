@@ -20,7 +20,7 @@ public:
 	}
 	~EffectLibraryDispatcher(){ }
 
-	/// РґРѕР±Р°РІР»СЏРµС‚ Р±РёР±Р»РёРѕС‚РµРєСѓ СЌС„С„РµРєС‚РѕРІ Рё Р·Р°РіСЂСѓР¶Р°РµС‚ РµРµ
+	/// добавляет библиотеку эффектов и загружает ее
 	const EffectLibrary* register_library(const char* lib_name)
 	{
 		EffectLibraryContainer::iterator it = libraries_.find(lib_name);
@@ -43,14 +43,14 @@ public:
 		return lp;
 	}
 
-	/// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РїСѓС‚СЊ Рє С‚РµРєСЃС‚СѓСЂР°Рј
+	/// устанавливает путь к текстурам
 	void set_textures_path(const char* path){ textures_path_ = path; }
 
 private:
 	typedef map<string,EffectLibrary> EffectLibraryContainer;
 	EffectLibraryContainer libraries_;
 
-	/// РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Р№ РїСѓС‚СЊ Рє С‚РµРєСЃС‚СѓСЂР°Рј
+	/// относительный путь к текстурам
 	string textures_path_;
 };
 
@@ -64,7 +64,7 @@ float AttributeBase::energyPerElement_ = 0;
 
 SINGLETON_PRM(AttributeLibrary, "AttributeLibrary", "Scripts\\AttributeLibrary") attributeLibrary;
 
-REGISTER_CLASS(AttributeBase, AttributeBase, "Р‘Р°Р·РѕРІС‹Рµ СЃРІРѕР№СЃС‚РІР°")
+REGISTER_CLASS(AttributeBase, AttributeBase, "Базовые свойства")
 
 AttributeBase::AttributeBase() : 
 EffectLib(0)
@@ -85,7 +85,7 @@ EffectLib(0)
 	MilitaryUnit = 0;
 	UnitClass = UNIT_CLASS_IGNORE;
 	AttackClass = UNIT_CLASS_IGNORE;
-	enemyWorld = 0; // РћСЉРµРєС‚С‹, РїСЂРёРЅР°РґР»РµР¶Р°С‰РёРµ РјРёСЂСѓ, Р±СѓРґСѓС‚ Р°С‚Р°РєРѕРІР°С‚СЊСЃСЏ. РЎРєРІРµСЂРЅР°.
+	enemyWorld = 0; // Оъекты, принадлежащие миру, будут атаковаться. Скверна.
 
 	SoundCycled = 1;
 
@@ -97,7 +97,7 @@ EffectLib(0)
 	ExcludeCollision = 0;
 	CollisionGroup = 0;
 
-	MakeEnergy = 0; // РІ СЃРµРєСѓРЅРґСѓ
+	MakeEnergy = 0; // в секунду
 	energyCapacity = 0;
 
 	ConnectionRadius = 0;
@@ -756,7 +756,7 @@ void debugStartUp()
 /////////////////////////////////////////
 ConsumptionData buildingBlockConsumption;
 FieldPrm fieldPrm;
-DebugScales debuScales; // РћС‚Р»Р°РґРѕС‡РЅРѕРµ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+DebugScales debuScales; // Отладочное масштабирование
 DifficultyPrm difficultyPrmArray[DIFFICULTY_MAX];
 TrucksIntrumentParameter trucksIntrumentParameter;
 SoundEventsPrm soundEventsPrm;
@@ -772,7 +772,7 @@ REGISTER_ENUM_ENCLOSED(RigidBodyPrm, DEBRIS, "DEBRIS");
 END_ENUM_DESCRIPTOR_ENCLOSED(RigidBodyPrm, RigidBodyType)
 
 BEGIN_ENUM_DESCRIPTOR(ToolzerActionID, "ToolzerActionID")
-REGISTER_ENUM(TOOLZER_NONE, "РЅРёРєР°РєРѕРіРѕ РІРѕР·РґРµР№СЃС‚РІРёСЏ");
+REGISTER_ENUM(TOOLZER_NONE, "никакого воздействия");
 REGISTER_ENUM(TOOLZER_4ZP, "toolzerAligmentTerrain4ZP");
 REGISTER_ENUM(TOOLZER_VH, "toolzerAligmentTerrainVariableH");
 REGISTER_ENUM(TOOLZER_H, "toolzerChangeTerHeight");
@@ -789,10 +789,10 @@ END_ENUM_DESCRIPTOR(ToolzerBuildingDamageMode)
 
 BEGIN_ENUM_DESCRIPTOR(ToolzerPhaseID, "ToolzerPhaseID")
 REGISTER_ENUM(TOOLZER_PHASE_NONE, "TOOLZER_PHASE_NONE");
-REGISTER_ENUM(TOOLZER_PHASE_DEFAULT, "СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕРµ РёРјСЏ");
-REGISTER_ENUM(TOOLZER_PHASE_START_MOVE, "РІРєР»СЋС‡Р°РµС‚СЃСЏ РІ РјРѕРјРµРЅС‚ РЅР°С‡Р°Р»Р° РґРІРёР¶РµРЅРёСЏ");
-REGISTER_ENUM(TOOLZER_PHASE_MOVE, "РІРєР»СЋС‡Р°РµС‚СЃСЏ РІРѕ РІСЂРµРјСЏ РґРІРёР¶РµРЅРёСЏ");
-REGISTER_ENUM(TOOLZER_PHASE_END_MOVE, "РІРєР»СЋС‡Р°РµС‚СЃСЏ РІ РјРѕРјРµРЅС‚ РѕСЃС‚Р°РЅРѕРІРєРё");
+REGISTER_ENUM(TOOLZER_PHASE_DEFAULT, "универсальное имя");
+REGISTER_ENUM(TOOLZER_PHASE_START_MOVE, "включается в момент начала движения");
+REGISTER_ENUM(TOOLZER_PHASE_MOVE, "включается во время движения");
+REGISTER_ENUM(TOOLZER_PHASE_END_MOVE, "включается в момент остановки");
 END_ENUM_DESCRIPTOR(ToolzerPhaseID)
 
 BEGIN_ENUM_DESCRIPTOR(PopupFormatGroup, "PopupFormatGroup")

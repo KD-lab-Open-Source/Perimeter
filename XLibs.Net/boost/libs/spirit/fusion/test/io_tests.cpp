@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (C) 1999-2003 Jaakko JÐ´rvi
+    Copyright (C) 1999-2003 Jaakko Järvi
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at

@@ -4,7 +4,7 @@
 //                     Railway Construction and Operation, 
 //                     University of Hanover, Germany
 //
-//  Author: JÑŒrgen Hunold
+//  Author: Jürgen Hunold
 //
 //  Use, modification and distribution are subject to the 
 //  Boost Software License, Version 1.0. (See accompanying file 

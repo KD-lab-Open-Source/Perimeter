@@ -1,6 +1,6 @@
 //  operator_tests_simple.cpp  -- The Boost Lambda Library ---------------
 //
-// Copyright (C) 2000-2003 Jaakko JÐ´rvi (jaakko.jarvi@cs.utu.fi)
+// Copyright (C) 2000-2003 Jaakko Järvi (jaakko.jarvi@cs.utu.fi)
 // Copyright (C) 2000-2003 Gary Powell (powellg@amazon.com)
 //
 // Permission to copy, use, sell and distribute this software is granted

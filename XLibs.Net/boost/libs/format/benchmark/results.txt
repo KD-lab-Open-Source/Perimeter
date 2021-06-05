@@ -25,7 +25,7 @@ for comp in gcc  ; do
 done
 
 
-// stringstream recrÐ¹Ð¹ chaque fois.
+// stringstream recréé chaque fois.
 -- Variant  ** _normal ** :
 -rwx--x--x    1 sam      users       61952 Sep 17 03:13 /home/data/zStore/BBoost/bin/boost//libs/format/benchmark/bench_format_normal/gcc/release/bench_format_normal
 printf time         :2.16

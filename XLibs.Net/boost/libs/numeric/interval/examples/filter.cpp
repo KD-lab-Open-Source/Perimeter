@@ -2,7 +2,7 @@
  * two examples of filters for computing the sign of a determinant
  * the second filter is based on an idea presented in
  * "Interval arithmetic yields efficient dynamic filters for computational
- * geometry" by BrÑ†nnimann, Burnikel and Pion, 2001
+ * geometry" by Brönnimann, Burnikel and Pion, 2001
  *
  * Copyright Guillaume Melquiond 2003
  * Permission to use, copy, modify, sell, and distribute this software

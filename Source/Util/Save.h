@@ -233,7 +233,7 @@ struct SaveUnitData : ShareHandleBase
 		ar & WRAP_OBJECT(position);
 		ar & WRAP_OBJECT(orientaion);
 		ar & WRAP_OBJECT(radius);
-		ar & TRANSLATE_OBJECT(label, "РњРµС‚РєР°");
+		ar & TRANSLATE_OBJECT(label, "Метка");
 		ar & WRAP_OBJECT(damageMolecula);
 	}
 };
@@ -275,7 +275,7 @@ struct SaveUnitRealData : SaveUnitData
 	void serialize(Archive& ar) {
 		SaveUnitData::serialize(ar);
 		ar & WRAP_OBJECT(basementInstalled);
-		ar & TRANSLATE_OBJECT(accumulatedEnergy, "Р—Р°СЂСЏРґРєР° Р°РєРєСѓРјСѓР»СЏС‚РѕСЂР° (0..1)");
+		ar & TRANSLATE_OBJECT(accumulatedEnergy, "Зарядка аккумулятора (0..1)");
 		ar & WRAP_OBJECT(zeroLayerCounter);
 		ar & WRAP_OBJECT(weaponChargeLevel);
 		ar & WRAP_OBJECT(wayPoints);
@@ -467,7 +467,7 @@ struct SaveUnitFrameData : SaveUnitRealData
 		ar & WRAP_OBJECT(attached);
 		ar & WRAP_OBJECT(attaching);
 		ar & WRAP_OBJECT(powered);
-		ar & TRANSLATE_OBJECT(spiralLevel, "РЈСЂРѕРІРµРЅСЊ Р·Р°СЂСЏРґРєРё СЃРїРёСЂР°Р»Рё [0-1]");
+		ar & TRANSLATE_OBJECT(spiralLevel, "Уровень зарядки спирали [0-1]");
 		ar & WRAP_OBJECT(squad);
 		ar & WRAP_OBJECT(frameSlots);
 		ar & WRAP_OBJECT(slotsData);
@@ -511,7 +511,7 @@ struct SaveUnitBuildingData : SaveUnitRealData
 		SaveUnitRealData::serialize(ar);
 		ar & WRAP_OBJECT(buildingStatusBV);
 		ar & WRAP_OBJECT(fireCount);
-		ar & TRANSLATE_OBJECT(visible, "Р’РёРґРёРјС‹Р№");
+		ar & TRANSLATE_OBJECT(visible, "Видимый");
 	}	
 };
 
@@ -613,7 +613,7 @@ struct SaveUnitBuildingMilitaryData : SaveUnitBuildingData
 	}	
 };
 
-struct SaveUnitCorridorAlphaData : SaveUnitBuildingData // РўРµР»РµРїРѕСЂС‚ РђР»СЊС„Р°
+struct SaveUnitCorridorAlphaData : SaveUnitBuildingData // Телепорт Альфа
 {
 	bool free;
 	int passTime; 
@@ -628,13 +628,13 @@ struct SaveUnitCorridorAlphaData : SaveUnitBuildingData // РўРµР»РµРїРѕСЂС‚ РђР»
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		SaveUnitBuildingData::serialize(ar);
-		ar & TRANSLATE_OBJECT(free, "РЎРІРѕР±РѕРґРЅРѕ Р»РµС‚СЏС‰РёР№");
-		ar & TRANSLATE_OBJECT(passTime, "Р’СЂРµРјСЏ РѕР±Р»РµС‚Р°, СЃРµРєСѓРЅРґС‹");
+		ar & TRANSLATE_OBJECT(free, "Свободно летящий");
+		ar & TRANSLATE_OBJECT(passTime, "Время облета, секунды");
 		ar & WRAP_OBJECT(timeOffset);
 	}	
 };
 
-struct SaveUnitCorridorOmegaData : SaveUnitBuildingData // РўРµР»РµРїРѕСЂС‚ РћРјРµРіР°
+struct SaveUnitCorridorOmegaData : SaveUnitBuildingData // Телепорт Омега
 {
 	bool upgraded;
 
@@ -645,7 +645,7 @@ struct SaveUnitCorridorOmegaData : SaveUnitBuildingData // РўРµР»РµРїРѕСЂС‚ РћРј
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		SaveUnitBuildingData::serialize(ar);
-		ar & TRANSLATE_OBJECT(upgraded, "РџСЂРѕР°РїРіСЂРµР№Р¶РµРЅ");
+		ar & TRANSLATE_OBJECT(upgraded, "Проапгрейжен");
 	}
 };
 
@@ -669,12 +669,12 @@ struct SaveUnitNatureData : SaveUnitData
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		SaveUnitData::serialize(ar);
-		ar & TRANSLATE_OBJECT(modelName, "РРјСЏ РјРѕРґРµР»Рё");
-		ar & TRANSLATE_OBJECT(visible, "Р’РёРґРёРјС‹Р№");
-		ar & TRANSLATE_OBJECT(natureFlag, "РЎРІРѕР№СЃС‚РІР°");
-		ar & TRANSLATE_OBJECT(chainName, "РРјСЏ С†РµРїРѕС‡РєРё Р°РЅРёРјР°С†РёРё");
-		ar & TRANSLATE_OBJECT(chainPhase, "РќР°С‡Р°Р»СЊРЅР°СЏ С„Р°Р·Р° Р°РЅРёРјР°С†РёРё");
-		ar & TRANSLATE_OBJECT(chainPeriod, "РџРµСЂРёРѕРґ Р°РЅРёРјР°С†РёРё (РјРёР»РёСЃРµРєСѓРЅРґ)");
+		ar & TRANSLATE_OBJECT(modelName, "Имя модели");
+		ar & TRANSLATE_OBJECT(visible, "Видимый");
+		ar & TRANSLATE_OBJECT(natureFlag, "Свойства");
+		ar & TRANSLATE_OBJECT(chainName, "Имя цепочки анимации");
+		ar & TRANSLATE_OBJECT(chainPhase, "Начальная фаза анимации");
+		ar & TRANSLATE_OBJECT(chainPeriod, "Период анимации (милисекунд)");
 	}
 };
 
@@ -744,26 +744,26 @@ struct SaveUnitFilthData : SaveUnitData
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		SaveUnitData::serialize(ar);
-		ar & TRANSLATE_OBJECT(filthType, "РўРёРї СЃРєРІРµСЂРЅС‹");
+		ar & TRANSLATE_OBJECT(filthType, "Тип скверны");
 		
-		ar & TRANSLATE_OBJECT(attackWidth, "РЁРёСЂРёРЅР° РїРѕР»РѕСЃС‹, РґР»СЏ Р°С‚Р°РєРё (-1 РІРµСЃСЊ РјРёСЂ)");
-		ar & TRANSLATE_OBJECT(attackDirection, "РќР°РїСЂР°РІР»РµРЅРёРµ Р°С‚Р°РєРё 0..360 РіСЂР°Рґ");
+		ar & TRANSLATE_OBJECT(attackWidth, "Ширина полосы, для атаки (-1 весь мир)");
+		ar & TRANSLATE_OBJECT(attackDirection, "Направление атаки 0..360 град");
 		
-		ar & TRANSLATE_OBJECT(sleep, "РЎРїРёС‚");
+		ar & TRANSLATE_OBJECT(sleep, "Спит");
 		
-		ar & TRANSLATE_OBJECT(firstSleepTime, "Р—Р°РґРµСЂР¶РєР° РїРѕ РІСЂРµРјРµРЅРё РґРѕ РїРµСЂРІРѕРіРѕ РїРѕСЏРІР»РµРЅРёСЏ (СЃРµРє)");
-		ar & TRANSLATE_OBJECT(sleepPeriod, "Р’СЂРµРјСЏ СЃРїСЏС‡РєРё (СЃРµРє)");
-		ar & TRANSLATE_OBJECT(deltaSleepPeriod, "Р Р°Р·Р±СЂРѕСЃ РІСЂРµРјРµРЅРё СЃРїСЏС‡РєРё (СЃРµРє)");
+		ar & TRANSLATE_OBJECT(firstSleepTime, "Задержка по времени до первого появления (сек)");
+		ar & TRANSLATE_OBJECT(sleepPeriod, "Время спячки (сек)");
+		ar & TRANSLATE_OBJECT(deltaSleepPeriod, "Разброс времени спячки (сек)");
 		
-		ar & TRANSLATE_OBJECT(attackPeriond, "Р’СЂРµРјСЏ Р°РєС‚РёРІРЅРѕСЃС‚Рё СЃРєРІРµСЂРЅС‹ (СЃРµРє)");
-		ar & TRANSLATE_OBJECT(deltaAttackPeriond, "Р Р°Р·Р±СЂРѕСЃ РІСЂРµРјРµРЅРё Р°РєС‚РёРІРЅРѕСЃС‚Рё СЃРєРІРµСЂРЅС‹ (СЃРµРє)");
+		ar & TRANSLATE_OBJECT(attackPeriond, "Время активности скверны (сек)");
+		ar & TRANSLATE_OBJECT(deltaAttackPeriond, "Разброс времени активности скверны (сек)");
 		
-		ar & TRANSLATE_OBJECT(creatureNum, "РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРєРІРµСЂРЅС‹ РіРµРЅРµСЂРёСЂСѓРµРјРѕР№ РІ РѕРґРЅРѕР№ С‚РѕС‡РєРµ");
+		ar & TRANSLATE_OBJECT(creatureNum, "Количество скверны генерируемой в одной точке");
 		
-		ar & TRANSLATE_OBJECT(activatingUnit, "РђРєС‚РёРІРёСЂСѓСЋС‰РёР№ РѕР±СЉРµРєС‚");
-		ar & TRANSLATE_OBJECT(activatingDistance, "Р Р°РґРёСѓСЃ Р°РєС‚РёРІР°С†РёРё");
-		ar & TRANSLATE_OBJECT(attack_player, "РђС‚Р°РєРѕРІР°С‚СЊ: РІСЃРµС…, РёРіСЂРѕРєР°, AI");
-		ar & TRANSLATE_OBJECT(initial_geoprocess, "РќР°С‡Р°Р»СЊРЅС‹Р№ РіРµРѕРїСЂРѕС†РµСЃСЃ");
+		ar & TRANSLATE_OBJECT(activatingUnit, "Активирующий объект");
+		ar & TRANSLATE_OBJECT(activatingDistance, "Радиус активации");
+		ar & TRANSLATE_OBJECT(attack_player, "Атаковать: всех, игрока, AI");
+		ar & TRANSLATE_OBJECT(initial_geoprocess, "Начальный геопроцесс");
 		
 		ar & WRAP_OBJECT(killTimer);
 		
@@ -1589,17 +1589,17 @@ struct SaveGeoControl : SaveUnitData
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		SaveUnitData::serialize(ar);
-		ar & TRANSLATE_OBJECT(sleep, "РЎРїРёС‚");
+		ar & TRANSLATE_OBJECT(sleep, "Спит");
 
-		ar & TRANSLATE_OBJECT(firstSleepTime, "Р—Р°РґРµСЂР¶РєР° РїРѕ РІСЂРµРјРµРЅРё РґРѕ РїРµСЂРІРѕРіРѕ РїРѕСЏРІР»РµРЅРёСЏ (СЃРµРє)" );
-		ar & TRANSLATE_OBJECT(sleepPeriod, "Р’СЂРµРјСЏ СЃРїСЏС‡РєРё (СЃРµРє)");
-		ar & TRANSLATE_OBJECT(deltaSleepPeriod, "Р Р°Р·Р±СЂРѕСЃ РІСЂРµРјРµРЅРё СЃРїСЏС‡РєРё (СЃРµРє)");
+		ar & TRANSLATE_OBJECT(firstSleepTime, "Задержка по времени до первого появления (сек)" );
+		ar & TRANSLATE_OBJECT(sleepPeriod, "Время спячки (сек)");
+		ar & TRANSLATE_OBJECT(deltaSleepPeriod, "Разброс времени спячки (сек)");
 		
-		ar & TRANSLATE_OBJECT(attackPeriond, "Р’СЂРµРјСЏ Р°РєС‚РёРІРЅРѕСЃС‚Рё СЃРєРІРµСЂРЅС‹ (СЃРµРє)");
-		ar & TRANSLATE_OBJECT(deltaAttackPeriond, "Р Р°Р·Р±СЂРѕСЃ РІСЂРµРјРµРЅРё Р°РєС‚РёРІРЅРѕСЃС‚Рё СЃРєРІРµСЂРЅС‹ (СЃРµРє)");
+		ar & TRANSLATE_OBJECT(attackPeriond, "Время активности скверны (сек)");
+		ar & TRANSLATE_OBJECT(deltaAttackPeriond, "Разброс времени активности скверны (сек)");
 		
-		ar & TRANSLATE_OBJECT(activatingUnit, "РђРєС‚РёРІРёСЂСѓСЋС‰РёР№ РѕР±СЉРµРєС‚");
-		ar & TRANSLATE_OBJECT(activatingDistance, "Р Р°РґРёСѓСЃ Р°РєС‚РёРІР°С†РёРё");
+		ar & TRANSLATE_OBJECT(activatingUnit, "Активирующий объект");
+		ar & TRANSLATE_OBJECT(activatingDistance, "Радиус активации");
 	}
 };
 
@@ -1614,7 +1614,7 @@ struct SaveGeoInfluence : SaveGeoControl
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		SaveGeoControl::serialize(ar);
-		ar & TRANSLATE_OBJECT(geoRadius, "Р Р°РґРёСѓСЃ");
+		ar & TRANSLATE_OBJECT(geoRadius, "Радиус");
 	}	
 };
 
@@ -1646,8 +1646,8 @@ struct SaveGeoFault: SaveGeoControl
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		SaveGeoControl::serialize(ar);
-		ar & TRANSLATE_OBJECT(length, "Р”Р»РёРЅР°");
-		ar & TRANSLATE_OBJECT(angle, "РЈРіРѕР» (РіСЂР°Рґ)");
+		ar & TRANSLATE_OBJECT(length, "Длина");
+		ar & TRANSLATE_OBJECT(angle, "Угол (град)");
 	}	
 };
 
@@ -1675,7 +1675,7 @@ struct SaveCameraData
 	}
 };
 
-struct SaveCameraSplineData // РЎРїР»Р°Р№РЅ РєР°РјРµСЂС‹
+struct SaveCameraSplineData // Сплайн камеры
 {
 	PrmString name; 
 	vector<SaveCameraData> path; 
@@ -1711,8 +1711,8 @@ struct SaveCameraSplineData // РЎРїР»Р°Р№РЅ РєР°РјРµСЂС‹
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(name, "&РРјСЏ");
-		ar & TRANSLATE_OBJECT(path, "РЎРїР»Р°Р№РЅ");
+		ar & TRANSLATE_OBJECT(name, "&Имя");
+		ar & TRANSLATE_OBJECT(path, "Сплайн");
 		ar & WRAP_OBJECT(useAsSpline);
 		ar & WRAP_OBJECT(position);
 		ar & WRAP_OBJECT(angle);
@@ -1727,7 +1727,7 @@ struct SaveCameraSplineData // РЎРїР»Р°Р№РЅ РєР°РјРµСЂС‹
 #include "Conditions.h"						
 										
 //------------------------------------
-// Р”РµР№СЃС‚РІРёСЏ							  					
+// Действия							  					
 struct ActionForAI : Action // ---------------
 {
 	bool onlyIfAi; 
@@ -1741,11 +1741,11 @@ struct ActionForAI : Action // ---------------
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(onlyIfAi, "Р—Р°РїСѓСЃРєР°С‚СЊ С‚РѕР»СЊРєРѕ РґР»СЏ РђР");
+		ar & TRANSLATE_OBJECT(onlyIfAi, "Запускать только для АИ");
 	}
 };
 													
-struct ActionDelay : Action // Р—Р°РґРµСЂР¶РєР° РІСЂРµРјРµРЅРё
+struct ActionDelay : Action // Задержка времени
 {
 	int delay; 
 	bool showTimer; 
@@ -1764,14 +1764,14 @@ struct ActionDelay : Action // Р—Р°РґРµСЂР¶РєР° РІСЂРµРјРµРЅРё
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(delay, "Р’СЂРµРјСЏ, СЃРµРєСѓРЅРґС‹");
-		ar & TRANSLATE_OBJECT(showTimer, "РџРѕРєР°Р·С‹РІР°С‚СЊ С‚Р°Р№РјРµСЂ");
-		ar & TRANSLATE_OBJECT(scaleByDifficulty, "Р’Р»РёСЏРЅРёРµ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё");
+		ar & TRANSLATE_OBJECT(delay, "Время, секунды");
+		ar & TRANSLATE_OBJECT(showTimer, "Показывать таймер");
+		ar & TRANSLATE_OBJECT(scaleByDifficulty, "Влияние уровня сложности");
 		ar & WRAP_OBJECT(timer);
 	}	
 };
 
-struct ActionSetCamera : Action // РЈСЃС‚Р°РЅРѕРІРєР° РљР°РјРµСЂС‹
+struct ActionSetCamera : Action // Установка Камеры
 {
 	CustomString cameraSplineName;
 	float stepTime; 
@@ -1792,14 +1792,14 @@ struct ActionSetCamera : Action // РЈСЃС‚Р°РЅРѕРІРєР° РљР°РјРµСЂС‹
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(cameraSplineName, "РРјСЏ СЃРїР»Р°Р№РЅР° РєР°РјРµСЂС‹");
-		ar & TRANSLATE_OBJECT(stepTime, "Р’СЂРµРјСЏ РјРµР¶РґСѓ РєРѕРЅС‚СЂРѕР»СЊРЅС‹РјРё С‚РѕС‡РєР°РјРё СЃРїР»Р°Р№РЅР°, СЃРµРєСѓРЅРґС‹");
-		ar & TRANSLATE_OBJECT(cycles, "РљРѕР»РёС‡РµСЃС‚РІРѕ С†РёРєР»РѕРІ");
-		ar & TRANSLATE_OBJECT(smoothTransition, "РџР»Р°РІРЅС‹Р№ РїРµСЂРµС…РѕРґ");
+		ar & TRANSLATE_OBJECT(cameraSplineName, "Имя сплайна камеры");
+		ar & TRANSLATE_OBJECT(stepTime, "Время между контрольными точками сплайна, секунды");
+		ar & TRANSLATE_OBJECT(cycles, "Количество циклов");
+		ar & TRANSLATE_OBJECT(smoothTransition, "Плавный переход");
 	}	
 };
 
-struct ActionOscillateCamera : Action // РўСЂСЏСЃРєР° РљР°РјРµСЂС‹
+struct ActionOscillateCamera : Action // Тряска Камеры
 {
 	int duration; 
 	float factor; 
@@ -1814,31 +1814,31 @@ struct ActionOscillateCamera : Action // РўСЂСЏСЃРєР° РљР°РјРµСЂС‹
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(duration, "Р”Р»РёС‚РµР»СЊРЅРѕСЃС‚СЊ, СЃРµРєСѓРЅРґС‹");
-		ar & TRANSLATE_OBJECT(factor, "РђРјРїР»РёС‚СѓРґР°");
+		ar & TRANSLATE_OBJECT(duration, "Длительность, секунды");
+		ar & TRANSLATE_OBJECT(factor, "Амплитуда");
 	}
 };
 
 
 //-------------------------------------
-struct ActionVictory : Action // РџРѕР±РµРґР°
+struct ActionVictory : Action // Победа
 {
 	void activate(AIPlayer& aiPlayer);
 };
 
-struct ActionDefeat : Action // РџРѕСЂР°Р¶РµРЅРёРµ
+struct ActionDefeat : Action // Поражение
 {
 	void activate(AIPlayer& aiPlayer);
 };
 
 //-------------------------------------
-struct ActionTeleportationOut : Action // РўРµР»РµРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ Р¤СЂРµР№Рј СЃ РјРёСЂР°
+struct ActionTeleportationOut : Action // Телепортировать Фрейм с мира
 {
 	bool automaticCondition(AIPlayer& aiPlayer) const;
 	void activate(AIPlayer& aiPlayer);
 };	
 
-struct ActionKillObject : Action // РЈРЅРёС‡С‚РѕР¶РёС‚СЊ РѕР±СЉРµРєС‚
+struct ActionKillObject : Action // Уничтожить объект
 {
 	EnumWrapper<terUnitAttributeID> object; 
 
@@ -1853,18 +1853,18 @@ struct ActionKillObject : Action // РЈРЅРёС‡С‚РѕР¶РёС‚СЊ РѕР±СЉРµРєС‚
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(object, "РћР±СЉРµРєС‚");
+		ar & TRANSLATE_OBJECT(object, "Объект");
 	}
 };	
 
 //-------------------------------------
-struct ActionInstallFrame : ActionForAI // РРЅСЃС‚Р°Р»Р»РёСЂРѕРІР°С‚СЊ С„СЂРµР№Рј
+struct ActionInstallFrame : ActionForAI // Инсталлировать фрейм
 {
 	void activate(AIPlayer& aiPlayer);
 	bool workedOut(AIPlayer& aiPlayer); 
 };																													  
 
-struct ActionOrderBuilding : ActionForAI // Р—Р°РєР°Р·Р°С‚СЊ Р·РґР°РЅРёРµ
+struct ActionOrderBuilding : ActionForAI // Заказать здание
 {
 	EnumWrapper<terUnitAttributeID> building; 
 	EnumWrapper<PlacementStrategy> placementStrategy; 
@@ -1895,11 +1895,11 @@ struct ActionOrderBuilding : ActionForAI // Р—Р°РєР°Р·Р°С‚СЊ Р·РґР°РЅРёРµ
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(building, "РўРёРї Р·РґР°РЅРёСЏ");
-		ar & TRANSLATE_OBJECT(placementStrategy, "РЎС‚СЂР°С‚РµРіРёСЏ СѓСЃС‚Р°РЅРѕРІРєРё");
-		ar & TRANSLATE_OBJECT(energyReserve, "Р РµР·РµСЂРІ СЌРЅРµСЂРіРёРё");
-		ar & TRANSLATE_OBJECT(buildDurationMax, "РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёС‚РµР»СЊРЅРѕСЃС‚СЊ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР°");
-		ar & TRANSLATE_OBJECT(priority, "РџСЂРёРѕСЂРёС‚РµС‚ (0 - СЃР°РјС‹Р№ РІС‹СЃРѕРєРёР№)");
+		ar & TRANSLATE_OBJECT(building, "Тип здания");
+		ar & TRANSLATE_OBJECT(placementStrategy, "Стратегия установки");
+		ar & TRANSLATE_OBJECT(energyReserve, "Резерв энергии");
+		ar & TRANSLATE_OBJECT(buildDurationMax, "Максимальная длительность строительства");
+		ar & TRANSLATE_OBJECT(priority, "Приоритет (0 - самый высокий)");
 		initialize();
 	}
 
@@ -1909,7 +1909,7 @@ protected:
 	mutable int waitingCounter_;
 };																													  
 
-struct ActionHoldBuilding : ActionForAI // Р—Р°РјРѕСЂРѕР·РёС‚СЊ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІРѕ
+struct ActionHoldBuilding : ActionForAI // Заморозить строительство
 {
 	EnumWrapper<terUnitAttributeID> building; 
 
@@ -1922,18 +1922,18 @@ struct ActionHoldBuilding : ActionForAI // Р—Р°РјРѕСЂРѕР·РёС‚СЊ СЃС‚СЂРѕРёС‚РµР»
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(building, "РўРёРї Р·РґР°РЅРёСЏ");
+		ar & TRANSLATE_OBJECT(building, "Тип здания");
 	}
 };
 
-struct ActionSellBuilding : ActionForAI // РџСЂРѕРґР°С‚СЊ Р·РґР°РЅРёРµ
+struct ActionSellBuilding : ActionForAI // Продать здание
 {
 	enum AISellFactor
 	{
-		AI_SELL_CLOSEST_TO_FRAME, // Р‘Р»РёР¶Р°Р№С€РёР№ Рє С„СЂРµР№РјСѓ
-		AI_SELL_FAREST_FROM_FRAME, // РЈРґР°Р»РµРЅРЅС‹Р№ РѕС‚ С„СЂРµР№РјР°
-		AI_SELL_IF_DAMAGE_GREATER, // РџСЂРѕРґР°РІР°С‚СЊ, РµСЃР»Рё СѓСЂРѕРЅ Р±РѕР»СЊС€Рµ РїСЂРѕС†РµРЅС‚Р°
-		AI_SELL_IF_GUN_CANT_REACH_BUILDINGS // РџСЂРѕРґР°РІР°С‚СЊ, РµСЃР»Рё РїСѓС€РєР° РЅРµ РјРѕР¶РµС‚ РґРѕСЃС‚Р°С‚СЊ РґРѕ Р·РґР°РЅРёР№
+		AI_SELL_CLOSEST_TO_FRAME, // Ближайший к фрейму
+		AI_SELL_FAREST_FROM_FRAME, // Удаленный от фрейма
+		AI_SELL_IF_DAMAGE_GREATER, // Продавать, если урон больше процента
+		AI_SELL_IF_GUN_CANT_REACH_BUILDINGS // Продавать, если пушка не может достать до зданий
 	};
 
 	EnumWrapper<terUnitAttributeID> building; 
@@ -1954,9 +1954,9 @@ struct ActionSellBuilding : ActionForAI // РџСЂРѕРґР°С‚СЊ Р·РґР°РЅРёРµ
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(building, "РўРёРї Р·РґР°РЅРёСЏ");
-		ar & TRANSLATE_OBJECT(sellFactor, "РЈСЃР»РѕРІРёРµ РїСЂРѕРґР°Р¶Рё");
-		ar & TRANSLATE_OBJECT(damagePercent, "РїСЂРѕС†РµРЅС‚ СѓСЂРѕРЅР°");
+		ar & TRANSLATE_OBJECT(building, "Тип здания");
+		ar & TRANSLATE_OBJECT(sellFactor, "Условие продажи");
+		ar & TRANSLATE_OBJECT(damagePercent, "процент урона");
 		index_ = 0;
 	}
 
@@ -1964,11 +1964,11 @@ private:
 	mutable int index_;
 };																													  
 
-struct ActionSwitchGuns : ActionForAI // Р’РєР»СЋС‡РёС‚СЊ/РІС‹РєР»СЋС‡РёС‚СЊ РїСѓС€РєРё
+struct ActionSwitchGuns : ActionForAI // Включить/выключить пушки
 {
 	enum Mode {
-		ON, // Р’РєР»СЋС‡РёС‚СЊ
-		OFF // Р’С‹РєР»СЋС‡РёС‚СЊ
+		ON, // Включить
+		OFF // Выключить
 	};
 	EnumWrapper<Mode> mode; 
 	EnumWrapper<terUnitAttributeID> gunID; 
@@ -1984,26 +1984,26 @@ struct ActionSwitchGuns : ActionForAI // Р’РєР»СЋС‡РёС‚СЊ/РІС‹РєР»СЋС‡РёС‚СЊ РїС
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(mode, "Р”РµР№СЃС‚РІРёРµ");
-		ar & TRANSLATE_OBJECT(gunID, "РўРёРї РїСѓС€РєРё");
+		ar & TRANSLATE_OBJECT(mode, "Действие");
+		ar & TRANSLATE_OBJECT(gunID, "Тип пушки");
 	}
 };
 
-struct ActionUpgradeOmega : ActionForAI // РђРїСЂРіСЂРµР№Рґ РћРјРµРіРё
+struct ActionUpgradeOmega : ActionForAI // Апргрейд Омеги
 {
 	bool automaticCondition(AIPlayer& aiPlayer) const;
 	void activate(AIPlayer& aiPlayer);
 };																													  
 
 //-------------------------------------
-struct ActionChargeCores : ActionForAI // Р—Р°СЂСЏРґРёС‚СЊ СЏРґСЂР°
+struct ActionChargeCores : ActionForAI // Зарядить ядра
 {
-	enum ChargeCoresStrategy // РЎС‚СЂР°С‚РµРіРёСЏ Р·Р°СЂСЏРґРєРё СЏРґРµСЂ
+	enum ChargeCoresStrategy // Стратегия зарядки ядер
 	{
-		CHARGE_CORES_NONE, // РќРёРєР°РєРёРµ СЏРґСЂР°
-		CHARGE_CORES_INNER, // Р’РЅСѓС‚СЂРµРЅРЅРёРµ СЏРґСЂР°
-		CHARGE_CORES_OUTER, // Р’РЅРµС€РЅРёРµ СЏРґСЂР°
-		CHARGE_CORES_ALL // Р’СЃРµ СЏРґСЂР°
+		CHARGE_CORES_NONE, // Никакие ядра
+		CHARGE_CORES_INNER, // Внутренние ядра
+		CHARGE_CORES_OUTER, // Внешние ядра
+		CHARGE_CORES_ALL // Все ядра
 	};
 
 	EnumWrapper<ChargeCoresStrategy> chargeCoresStrategy; 
@@ -2018,11 +2018,11 @@ struct ActionChargeCores : ActionForAI // Р—Р°СЂСЏРґРёС‚СЊ СЏРґСЂР°
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(chargeCoresStrategy, "РЎС‚СЂР°С‚РµРіРёСЏ Р·Р°СЂСЏРґРєРё");
+		ar & TRANSLATE_OBJECT(chargeCoresStrategy, "Стратегия зарядки");
 	}	
 };
 
-struct ActionSwitchFieldOn : ActionForAI // Р’РєР»СЋС‡РёС‚СЊ РїРѕР»Рµ
+struct ActionSwitchFieldOn : ActionForAI // Включить поле
 {
 	int duration;
 	float energyReserve; 
@@ -2044,16 +2044,16 @@ struct ActionSwitchFieldOn : ActionForAI // Р’РєР»СЋС‡РёС‚СЊ РїРѕР»Рµ
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(duration, "Р’СЂРµРјСЏ СЂР°Р±РѕС‚С‹");
-		ar & TRANSLATE_OBJECT(energyReserve, "Р’СЃРµ СЏРґСЂР°");
-		ar & TRANSLATE_OBJECT(allCores, "РЎС‚СЂР°С‚РµРіРёСЏ Р·Р°СЂСЏРґРєРё");
-		ar & TRANSLATE_OBJECT(onlyIfCoreDamaged, "РўРѕР»СЊРєРѕ РєРѕРіРґР° Р°С‚Р°РєСѓСЋС‚ СЏРґСЂРѕ");
+		ar & TRANSLATE_OBJECT(duration, "Время работы");
+		ar & TRANSLATE_OBJECT(energyReserve, "Все ядра");
+		ar & TRANSLATE_OBJECT(allCores, "Стратегия зарядки");
+		ar & TRANSLATE_OBJECT(onlyIfCoreDamaged, "Только когда атакуют ядро");
 		ar & WRAP_OBJECT(timer);
 	}	
 };
 
 //-------------------------------------
-struct ActionSquadOrderUnits : ActionForAI // Р—Р°РєР°Р·Р°С‚СЊ СЋРЅРёС‚РѕРІ РІ СЃРєРІР°Рґ
+struct ActionSquadOrderUnits : ActionForAI // Заказать юнитов в сквад
 {
 	EnumWrapper<ChooseSquadID> chooseSquadID; 
 	int soldiers; 
@@ -2076,15 +2076,15 @@ struct ActionSquadOrderUnits : ActionForAI // Р—Р°РєР°Р·Р°С‚СЊ СЋРЅРёС‚РѕРІ РІ С
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(chooseSquadID, "РЎРєРІР°Рґ");
-		ar & TRANSLATE_OBJECT(soldiers, "РЎРѕР»РґР°С‚С‹");
-		ar & TRANSLATE_OBJECT(officers, "РћС„РёС†РµСЂС‹");
-		ar & TRANSLATE_OBJECT(technics, "РўРµС…РЅРёРєРё");
-		ar & TRANSLATE_OBJECT(energyReserve, "Р РµР·РµСЂРІ СЌРЅРµСЂРіРёРё");
+		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
+		ar & TRANSLATE_OBJECT(soldiers, "Солдаты");
+		ar & TRANSLATE_OBJECT(officers, "Офицеры");
+		ar & TRANSLATE_OBJECT(technics, "Техники");
+		ar & TRANSLATE_OBJECT(energyReserve, "Резерв энергии");
 	}	
 };
 
-struct ActionSquadAttack : ActionForAI // РђС‚Р°РєРѕРІР°С‚СЊ СЃРєРІР°РґРѕРј
+struct ActionSquadAttack : ActionForAI // Атаковать сквадом
 {
 	EnumWrapper<ChooseSquadID> chooseSquadID; 
 	EnumWrapper<terUnitAttributeID> attackByType;
@@ -2141,26 +2141,26 @@ struct ActionSquadAttack : ActionForAI // РђС‚Р°РєРѕРІР°С‚СЊ СЃРєРІР°РґРѕРј
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(chooseSquadID, "РЎРєРІР°Рґ");
-		ar & TRANSLATE_OBJECT(attackByType, "Р°С‚Р°РєРѕРІР°С‚СЊ С‚РёРїРѕРј ('РЅРёРєС‚Рѕ' - Р±Р°Р·РѕРІС‹Рµ)");
-		ar & TRANSLATE_OBJECT(unitsToAttack, "Р°С‚Р°РєСѓРµРјС‹Рµ СЋРЅРёС‚С‹");
-		ar & TRANSLATE_OBJECT(unitClassToAttack, "Р°С‚Р°РєСѓРµРјС‹Рµ РєР»Р°СЃСЃС‹ СЋРЅРёС‚РѕРІ");
-		ar & TRANSLATE_OBJECT(offensive, "РђРіСЂРµСЃСЃРёРІРЅС‹Р№ (РѕС„С„РµРЅСЃРёРІ)");
+		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
+		ar & TRANSLATE_OBJECT(attackByType, "атаковать типом ('никто' - базовые)");
+		ar & TRANSLATE_OBJECT(unitsToAttack, "атакуемые юниты");
+		ar & TRANSLATE_OBJECT(unitClassToAttack, "атакуемые классы юнитов");
+		ar & TRANSLATE_OBJECT(offensive, "Агрессивный (оффенсив)");
 		
-		ar & TRANSLATE_OBJECT(unitsNumber, "РљРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕРёР·РІРѕРґРЅС‹С…");
-		ar & TRANSLATE_OBJECT(soldiers, "РЎРѕР»РґР°С‚РѕРІ РїСЂРё Р±Р°Р·РѕРІРѕР№");
-		ar & TRANSLATE_OBJECT(officers, "РћС„РёС†РµСЂРѕРІ РїСЂРё Р±Р°Р·РѕРІРѕР№");
-		ar & TRANSLATE_OBJECT(technics, "РўРµС…РЅРёРєРѕРІ РїСЂРё Р±Р°Р·РѕРІРѕР№");
+		ar & TRANSLATE_OBJECT(unitsNumber, "Количество производных");
+		ar & TRANSLATE_OBJECT(soldiers, "Солдатов при базовой");
+		ar & TRANSLATE_OBJECT(officers, "Офицеров при базовой");
+		ar & TRANSLATE_OBJECT(technics, "Техников при базовой");
 		
-		ar & TRANSLATE_OBJECT(attackTime, "Р’СЂРµРјСЏ Р°С‚Р°РєРё");
-		ar & TRANSLATE_OBJECT(remutateCounter, "Р”РѕРјСѓС‚РёСЂРѕРІР°С‚СЊ РїСЂРё С‡РёСЃР»Рµ");
-		ar & TRANSLATE_OBJECT(holdProduction, "Р—Р°РјРѕСЂРѕР·РёС‚СЊ РїСЂРѕРёР·РІРѕРґСЃС‚РІРѕ РЅР° РІСЂРµРјСЏ Р°С‚Р°РєРё");
+		ar & TRANSLATE_OBJECT(attackTime, "Время атаки");
+		ar & TRANSLATE_OBJECT(remutateCounter, "Домутировать при числе");
+		ar & TRANSLATE_OBJECT(holdProduction, "Заморозить производство на время атаки");
 		
-		ar & TRANSLATE_OBJECT(squadFollowDistance, "РЎР»РµРґРѕРІР°С‚СЊ Р·Р° СЃРєРІР°РґРѕРј РЅР° СЂР°СЃСЃС‚РѕСЏРЅРёРё (0 - РІС‹РєР»СЋС‡РµРЅРѕ)");
-		ar & TRANSLATE_OBJECT(squadToFollowBy, "РЎРєРІР°Рґ, Р·Р° РєРѕС‚РѕСЂС‹Рј СЃР»РµРґРѕРІР°С‚СЊ");
-		ar & TRANSLATE_OBJECT(ignoreLastTarget, "РРіРЅРѕСЂРёСЂРѕРІР°С‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ С†РµР»СЊ");
-		ar & TRANSLATE_OBJECT(returnToBase, "Р’РѕР·РІСЂР°С‰Р°С‚СЊСЃСЏ РЅР° Р±Р°Р·Сѓ");
-		ar & TRANSLATE_OBJECT(interruptable, "РџСЂРµСЂС‹РІР°РµРјРѕРµ");
+		ar & TRANSLATE_OBJECT(squadFollowDistance, "Следовать за сквадом на расстоянии (0 - выключено)");
+		ar & TRANSLATE_OBJECT(squadToFollowBy, "Сквад, за которым следовать");
+		ar & TRANSLATE_OBJECT(ignoreLastTarget, "Игнорировать последнюю цель");
+		ar & TRANSLATE_OBJECT(returnToBase, "Возвращаться на базу");
+		ar & TRANSLATE_OBJECT(interruptable, "Прерываемое");
 		ar & WRAP_OBJECT(attackTimer);
 		initialize();
 	}	
@@ -2173,7 +2173,7 @@ private:
 	terUnitBase* findTarget(AIPlayer& aiPlayer, Vect2iVect& path) const;
 };
 
-struct ActionSquadMove : ActionForAI // РџРѕСЃР»Р°С‚СЊ СЃРєРІР°Рґ РІ С‚РѕС‡РєСѓ РѕР±СЉРµРєС‚Р° РїРѕ РјРµС‚РєРµ
+struct ActionSquadMove : ActionForAI // Послать сквад в точку объекта по метке
 {
 	EnumWrapper<ChooseSquadID> chooseSquadID; 
 	CustomString label; 
@@ -2189,12 +2189,12 @@ struct ActionSquadMove : ActionForAI // РџРѕСЃР»Р°С‚СЊ СЃРєРІР°Рґ РІ С‚РѕС‡РєСѓ 
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(chooseSquadID, "РЎРєРІР°Рґ");
-		ar & TRANSLATE_OBJECT(label, "РњРµС‚РєР° РѕР±СЉРµРєС‚Р°");
+		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
+		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
 
-struct ActionAttackBySpecialWeapon : ActionForAI // РђС‚Р°РєРѕРІР°С‚СЊ СЃРїРµС†РѕСЂСѓР¶РёРµРј
+struct ActionAttackBySpecialWeapon : ActionForAI // Атаковать спецоружием
 {
 	EnumWrapper<terUnitAttributeID> weapon; 
 	vector<EnumWrapper<terUnitAttributeID> > unitsToAttack; 
@@ -2211,13 +2211,13 @@ struct ActionAttackBySpecialWeapon : ActionForAI // РђС‚Р°РєРѕРІР°С‚СЊ СЃРїРµС†Р
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		ActionForAI::serialize(ar);
-		ar & TRANSLATE_OBJECT(weapon, "РЎРїРµС†РѕСЂСѓР¶РёРµ");
-		ar & TRANSLATE_OBJECT(unitsToAttack, "Р°С‚Р°РєСѓРµРјС‹Рµ СЋРЅРёС‚С‹");
-		ar & TRANSLATE_OBJECT(unitClassToAttack, "РђС‚Р°РєСѓРµРјС‹Рµ РєР»Р°СЃСЃС‹ СЋРЅРёС‚РѕРІ");
+		ar & TRANSLATE_OBJECT(weapon, "Спецоружие");
+		ar & TRANSLATE_OBJECT(unitsToAttack, "атакуемые юниты");
+		ar & TRANSLATE_OBJECT(unitClassToAttack, "Атакуемые классы юнитов");
 	}
 };
 
-struct ActionRepareObjectByLabel : Action // РћС‚СЂРµРјРѕРЅС‚РёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚Р° РїРѕ РјРµС‚РєРµ
+struct ActionRepareObjectByLabel : Action // Отремонтировать объекта по метке
 {
 	CustomString label; 
 
@@ -2230,12 +2230,12 @@ struct ActionRepareObjectByLabel : Action // РћС‚СЂРµРјРѕРЅС‚РёСЂРѕРІР°С‚СЊ РѕР±
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(label, "РњРµС‚РєР° РѕР±СЉРµРєС‚Р°");
+		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
 
 
-struct ActionActivateObjectByLabel : Action // РђРєС‚РёРІРёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ
+struct ActionActivateObjectByLabel : Action // Активировать объект по метке
 {
 	CustomString label; 
 
@@ -2248,11 +2248,11 @@ struct ActionActivateObjectByLabel : Action // РђРєС‚РёРІРёСЂРѕРІР°С‚СЊ РѕР±СЉРµ
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(label, "РњРµС‚РєР° РѕР±СЉРµРєС‚Р°");
+		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
 
-struct ActionDeactivateObjectByLabel : Action // Р”РµР°РєС‚РёРІРёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ
+struct ActionDeactivateObjectByLabel : Action // Деактивировать объект по метке
 {
 	CustomString label;
 
@@ -2265,21 +2265,21 @@ struct ActionDeactivateObjectByLabel : Action // Р”РµР°РєС‚РёРІРёСЂРѕРІР°С‚СЊ Рѕ
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(label, "РњРµС‚РєР° РѕР±СЉРµРєС‚Р°");
+		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
 
-struct ActionActivateAllSpots : Action // РђРєС‚РёРІРёСЂРѕРІР°С‚СЊ РІСЃРµ СЃРїРѕС‚С‹
+struct ActionActivateAllSpots : Action // Активировать все споты
 {
 	void activate(AIPlayer& aiPlayer);
 };
 
-struct ActionDeactivateAllSpots : Action // Р”РµР°РєС‚РёРІРёСЂРѕРІР°С‚СЊ РІСЃРµ СЃРїРѕС‚С‹
+struct ActionDeactivateAllSpots : Action // Деактивировать все споты
 {
 	void activate(AIPlayer& aiPlayer);
 };
 
-struct ActionSetControlEnabled : Action // Р—Р°РїСЂРµС‚РёС‚СЊ/СЂР°Р·СЂРµС€РёС‚СЊ СѓРїСЂР°РІР»РµРЅРёРµ РёРіСЂРѕРєР°
+struct ActionSetControlEnabled : Action // Запретить/разрешить управление игрока
 {
 	bool controlEnabled; 
 
@@ -2292,12 +2292,12 @@ struct ActionSetControlEnabled : Action // Р—Р°РїСЂРµС‚РёС‚СЊ/СЂР°Р·СЂРµС€РёС‚СЊ
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(controlEnabled, "Р Р°Р·СЂРµС€РёС‚СЊ");
+		ar & TRANSLATE_OBJECT(controlEnabled, "Разрешить");
 	}	
 };
 
 //-------------------------------------
-struct ActionMessage : Action // CРѕРѕР±С‰РµРЅРёРµ
+struct ActionMessage : Action // Cообщение
 {
 	CustomString messageID; 
 	CustomString message;
@@ -2324,23 +2324,23 @@ struct ActionMessage : Action // CРѕРѕР±С‰РµРЅРёРµ
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(messageID, "РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЃРѕРѕР±С‰РµРЅРёСЏ");
-		ar & TRANSLATE_OBJECT(message, "РЎРѕРѕР±С‰РµРЅРёРµ");
-		ar & TRANSLATE_OBJECT(delay, "Р—Р°РґРµСЂР¶РєР°, СЃРµРєСѓРЅРґС‹");
-		ar & TRANSLATE_OBJECT(duration, "Р”Р»РёС‚РµР»СЊРЅРѕСЃС‚СЊ, СЃРµРєСѓРЅРґС‹");
-		ar & TRANSLATE_OBJECT(syncroBySound, "РЎРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ СЃРѕ Р·РІСѓРєРѕРј");
+		ar & TRANSLATE_OBJECT(messageID, "Идентификатор сообщения");
+		ar & TRANSLATE_OBJECT(message, "Сообщение");
+		ar & TRANSLATE_OBJECT(delay, "Задержка, секунды");
+		ar & TRANSLATE_OBJECT(duration, "Длительность, секунды");
+		ar & TRANSLATE_OBJECT(syncroBySound, "Синхронизировать со звуком");
 		ar & WRAP_OBJECT(delayTimer);
 		ar & WRAP_OBJECT(durationTimer);
 	}		
 };
 
-struct ActionTask : Action // Р—Р°РґР°С‡Р°
+struct ActionTask : Action // Задача
 {
 	enum Type {
-		ASSIGNED, // РќР°Р·РЅР°С‡РµРЅР°
-		COMPLETED, // Р’С‹РїРѕР»РЅРµРЅР°
-		FAILED, // РџСЂРѕРІР°Р»РµРЅР°
-		TO_DELETE // РЈРґР°Р»РёС‚СЊ
+		ASSIGNED, // Назначена
+		COMPLETED, // Выполнена
+		FAILED, // Провалена
+		TO_DELETE // Удалить
 	};
 	EnumWrapper<Type> type; 
 	CustomString taskID; 
@@ -2364,16 +2364,16 @@ struct ActionTask : Action // Р—Р°РґР°С‡Р°
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(type, "Р”РµР№СЃС‚РІРёРµ");
-		ar & TRANSLATE_OBJECT(taskID, "РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р·Р°РґР°С‡Рё");
-		ar & TRANSLATE_OBJECT(duration, "Р”Р»РёС‚РµР»СЊРЅРѕСЃС‚СЊ, СЃРµРєСѓРЅРґС‹");
-		ar & TRANSLATE_OBJECT(syncroBySound, "РЎРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ СЃРѕ Р·РІСѓРєРѕРј");
-		ar & TRANSLATE_OBJECT(showTips, "Р’С‹РІРѕРґРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ");
+		ar & TRANSLATE_OBJECT(type, "Действие");
+		ar & TRANSLATE_OBJECT(taskID, "Идентификатор задачи");
+		ar & TRANSLATE_OBJECT(duration, "Длительность, секунды");
+		ar & TRANSLATE_OBJECT(syncroBySound, "Синхронизировать со звуком");
+		ar & TRANSLATE_OBJECT(showTips, "Выводить сообщение");
 		ar & WRAP_OBJECT(durationTimer);
 	}	
 };
 
-struct ActionSetCameraAtObject : Action // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РєР°РјРµСЂСѓ РЅР° РѕР±СЉРµРєС‚
+struct ActionSetCameraAtObject : Action // Установить камеру на объект
 {
 	EnumWrapper<terUnitAttributeID> object; 
 	EnumWrapper<AIPlayerType> playerType; 
@@ -2396,11 +2396,11 @@ struct ActionSetCameraAtObject : Action // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РєР°РјРµСЂСѓ РЅР
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(object, "РћР±СЉРµРєС‚");
-		ar & TRANSLATE_OBJECT(playerType, "Р’Р»Р°РґРµР»РµС† РѕР±СЉРµРєС‚Р°");
-		ar & TRANSLATE_OBJECT(transitionTime, "Р’СЂРµРјСЏ РїРµСЂРµС…РѕРґР°, СЃРµРєСѓРЅРґС‹");
-		ar & TRANSLATE_OBJECT(setFollow, "РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃР»РµР¶РµРЅРёРµ");
-		ar & TRANSLATE_OBJECT(turnTime, "Р’СЂРµРјСЏ РїРѕРІРѕСЂРѕС‚Р°");
+		ar & TRANSLATE_OBJECT(object, "Объект");
+		ar & TRANSLATE_OBJECT(playerType, "Владелец объекта");
+		ar & TRANSLATE_OBJECT(transitionTime, "Время перехода, секунды");
+		ar & TRANSLATE_OBJECT(setFollow, "Установить слежение");
+		ar & TRANSLATE_OBJECT(turnTime, "Время поворота");
 	}
 
 private:
@@ -2426,15 +2426,15 @@ struct SaveControlData
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(controlID, "&РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєРЅРѕРїРєРё");	
-		ar & TRANSLATE_OBJECT(enabled, "Р Р°Р·СЂРµС€РµРЅР°");	
-		ar & TRANSLATE_OBJECT(visible, "Р’РёРґРёРјР°");	
-		ar & TRANSLATE_OBJECT(flashing, "РњРёРіР°РµС‚");	
-		ar & TRANSLATE_OBJECT(tabNumber, "РќРѕРјРµСЂ Р·Р°РєР»Р°РґРєРё");	
+		ar & TRANSLATE_OBJECT(controlID, "&Идентификатор кнопки");	
+		ar & TRANSLATE_OBJECT(enabled, "Разрешена");	
+		ar & TRANSLATE_OBJECT(visible, "Видима");	
+		ar & TRANSLATE_OBJECT(flashing, "Мигает");	
+		ar & TRANSLATE_OBJECT(tabNumber, "Номер закладки");	
 	}
 };
 
-struct ActionSetControls : Action // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ РєРЅРѕРїРѕРє
+struct ActionSetControls : Action // Установить параметры кнопок
 {
 	vector<SaveControlData> controls; 
 
@@ -2443,11 +2443,11 @@ struct ActionSetControls : Action // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ РєР
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(controls, "РљРЅРѕРїРєРё");
+		ar & TRANSLATE_OBJECT(controls, "Кнопки");
 	}
 };
 
-struct ActionSelectUnit : Action // РЎРµР»РµРєС‚РёСЂРѕРІР°С‚СЊ СЋРЅРёС‚Р°
+struct ActionSelectUnit : Action // Селектировать юнита
 {
 	EnumWrapper<terUnitAttributeID> unitID; 
 
@@ -2460,11 +2460,11 @@ struct ActionSelectUnit : Action // РЎРµР»РµРєС‚РёСЂРѕРІР°С‚СЊ СЋРЅРёС‚Р°
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(unitID, "РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЋРЅРёС‚Р°");
+		ar & TRANSLATE_OBJECT(unitID, "Идентификатор юнита");
 	}	
 };
 
-struct ActionProduceBrigadierOrProrab : Action // РџСЂРѕРёР·РІРµСЃС‚Рё Р±СЂРёРіР°РґРёСЂР° РёР»Рё РїСЂРѕСЂР°Р±Р°
+struct ActionProduceBrigadierOrProrab : Action // Произвести бригадира или прораба
 {
 	bool produceBrigadier; 
 
@@ -2477,11 +2477,11 @@ struct ActionProduceBrigadierOrProrab : Action // РџСЂРѕРёР·РІРµСЃС‚Рё Р±СЂРёРіР
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(produceBrigadier, "РџСЂРѕРёР·РІРµСЃС‚Рё Р±СЂРёРіР°РґРёСЂР°");
+		ar & TRANSLATE_OBJECT(produceBrigadier, "Произвести бригадира");
 	}	
 };
 
-struct ActionFrameMove : Action // РџРѕСЃР»Р°С‚СЊ С„СЂРµР№Рј Рє РјРµС‚РєРµ
+struct ActionFrameMove : Action // Послать фрейм к метке
 {
 	CustomString label; 
 
@@ -2495,11 +2495,11 @@ struct ActionFrameMove : Action // РџРѕСЃР»Р°С‚СЊ С„СЂРµР№Рј Рє РјРµС‚РєРµ
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
 
-		ar & TRANSLATE_OBJECT(label, "РњРµС‚РєР° РѕР±СЉРµРєС‚Р°");
+		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
 
-struct ActionFrameDetach : Action // РџРѕРґРЅСЏС‚СЊ С„СЂРµР№Рј
+struct ActionFrameDetach : Action // Поднять фрейм
 {
 	ActionFrameDetach(){ }
 
@@ -2511,7 +2511,7 @@ struct ActionFrameDetach : Action // РџРѕРґРЅСЏС‚СЊ С„СЂРµР№Рј
 	}	
 };
 
-struct ActionSetInterface : Action // Р’РєР»СЋС‡РёС‚СЊ/РІС‹РєР»СЋС‡РёС‚СЊ РёРЅС‚РµСЂС„РµР№СЃ
+struct ActionSetInterface : Action // Включить/выключить интерфейс
 {
 	bool enableInterface; 
 
@@ -2524,7 +2524,7 @@ struct ActionSetInterface : Action // Р’РєР»СЋС‡РёС‚СЊ/РІС‹РєР»СЋС‡РёС‚СЊ РёРЅС‚
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Action::serialize(ar);
-		ar & TRANSLATE_OBJECT(enableInterface, "Р’РєР»СЋС‡РёС‚СЊ РёРЅС‚РµСЂС„РµР№СЃ");
+		ar & TRANSLATE_OBJECT(enableInterface, "Включить интерфейс");
 	}	
 };
 
@@ -2540,7 +2540,7 @@ struct SavePlayerManualData
 
 		template<class Archive>	
 		void serialize(Archive& ar) {
-			ar & TRANSLATE_NAME(static_cast<CustomString&>(*this), "name", "&РРјСЏ");
+			ar & TRANSLATE_NAME(static_cast<CustomString&>(*this), "name", "&Имя");
 		}	
 	};
 	typedef vector<TriggerChainName> TriggerChainNames;
@@ -2551,7 +2551,7 @@ struct SavePlayerManualData
 	void serialize(Archive& ar) {
 		if(ar.isInput())
 			ar & WRAP_NAME(triggerChainOld, "strategy");
-		ar & TRANSLATE_NAME(triggerChainNames, "TriggerChainNames", "РўСЂРёРіРіРµСЂР°");
+		ar & TRANSLATE_NAME(triggerChainNames, "TriggerChainNames", "Триггера");
 		ar & WRAP_NAME(triggerChainNamesOld, "triggerChainNames");
 		if(!ar.isOutput()){
 			PrmStringList::iterator i;
@@ -2649,7 +2649,7 @@ struct SaveObjectsData
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(objects, "РћР±СЉРµРєС‚С‹");
+		ar & TRANSLATE_OBJECT(objects, "Объекты");
 	}
 };
 
@@ -2663,7 +2663,7 @@ struct SaveWorldObjects
 	}
 };
 
-struct SaveBuildingInstallerInstruction // РџСЂРµРґРїРёСЃР°РЅРёРµ РёРЅСЃС‚Р°Р»Р»СЏС‚РѕСЂСѓ Р·РґР°РЅРёР№
+struct SaveBuildingInstallerInstruction // Предписание инсталлятору зданий
 {
 	EnumWrapper<terUnitAttributeID> building; 
 	CustomString label;
@@ -2680,10 +2680,10 @@ struct SaveBuildingInstallerInstruction // РџСЂРµРґРїРёСЃР°РЅРёРµ РёРЅСЃС‚Р°Р»Р»
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(building, "Р—РґР°РЅРёРµ");
-		ar & TRANSLATE_OBJECT(label, "РњРµС‚РєР° РѕР±СЉРµРєС‚Р°");
-		ar & TRANSLATE_OBJECT(distance, "РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ СЂР°СЃСЃС‚РѕСЏРЅРёРµ");
-		ar & TRANSLATE_OBJECT(labeledObjectActivity, "РћР±СЉРµРєС‚-РјРµС‚РєР° РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р°РєС‚РёРІРµРЅ");
+		ar & TRANSLATE_OBJECT(building, "Здание");
+		ar & TRANSLATE_OBJECT(label, "Метка объекта");
+		ar & TRANSLATE_OBJECT(distance, "Максимальное расстояние");
+		ar & TRANSLATE_OBJECT(labeledObjectActivity, "Объект-метка должен быть активен");
 	}
 };
 
@@ -2707,7 +2707,7 @@ struct SaveTask
 };
 
 //---------------------------------
-struct SaveManualData // Р”Р°РЅРЅС‹Рµ, СЂРµРґР°РєС‚РёСЂСѓРµРјС‹Рµ СЂСѓРєР°РјРё
+struct SaveManualData // Данные, редактируемые руками
 {
 	SoundTracks soundTracks;
 	vector<SavePlayerManualData> players; 
@@ -2721,9 +2721,9 @@ struct SaveManualData // Р”Р°РЅРЅС‹Рµ, СЂРµРґР°РєС‚РёСЂСѓРµРјС‹Рµ СЂСѓРєР°РјРё
 	vector<SaveBuildingInstallerInstruction> buildingInstallerInstructions; 
 
 	enum OmegaMissionType { 
-		OMEGA_UPGRADE, // РџСЂРѕР°РїРіСЂРµР№РґРёС‚СЊ
-		OMEGA_MINE, // Р—Р°РјРёРЅРёСЂРѕРІР°С‚СЊ
-		OMEGA_DEMINE // Р Р°Р·РјРёРЅРёСЂРѕРІР°С‚СЊ
+		OMEGA_UPGRADE, // Проапгрейдить
+		OMEGA_MINE, // Заминировать
+		OMEGA_DEMINE // Разминировать
 	};
 	EnumWrapper<OmegaMissionType> omegaMissionType; 
 	float alphaActivationDistance; 
@@ -2750,7 +2750,7 @@ struct SaveManualData // Р”Р°РЅРЅС‹Рµ, СЂРµРґР°РєС‚РёСЂСѓРµРјС‹Рµ СЂСѓРєР°РјРё
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		if(ar.type() & ARCHIVE_EDIT){
-			if(ar.openBlock("Sound tracks", "РњСѓР·С‹РєР°Р»СЊРЅС‹Рµ С‚СЂРµРєРё")){
+			if(ar.openBlock("Sound tracks", "Музыкальные треки")){
 				ar & TRANSLATE_OBJECT(soundTracks[0], "Construction");
 				ar & TRANSLATE_OBJECT(soundTracks[1], "Battle");
 				ar & TRANSLATE_OBJECT(soundTracks[2], "Regular");
@@ -2758,23 +2758,23 @@ struct SaveManualData // Р”Р°РЅРЅС‹Рµ, СЂРµРґР°РєС‚РёСЂСѓРµРјС‹Рµ СЂСѓРєР°РјРё
 			}
 		}
 		else
-			ar & TRANSLATE_OBJECT(soundTracks, "РњСѓР·С‹РєР°Р»СЊРЅС‹Рµ С‚СЂРµРєРё");
+			ar & TRANSLATE_OBJECT(soundTracks, "Музыкальные треки");
 
-		ar & TRANSLATE_OBJECT(players, "РРіСЂРѕРєРё");
-		ar & TRANSLATE_OBJECT(controls, "РљРЅРѕРїРєРё");
+		ar & TRANSLATE_OBJECT(players, "Игроки");
+		ar & TRANSLATE_OBJECT(controls, "Кнопки");
 		
-		ar & TRANSLATE_OBJECT(spiralChargingEnergy, "Р­РЅРµСЂРіРёСЏ Р·Р°СЂСЏРґРєРё СЃРїРёСЂР°Р»Рё");
-		ar & TRANSLATE_OBJECT(spiralChargingTime, "Р’СЂРµРјСЏ Р·Р°СЂСЏРґРєРё СЃРїРёСЂР°Р»Рё");
-		ar & TRANSLATE_OBJECT(spiralChargingPriority, "РџСЂРёРѕСЂРёС‚РµС‚ Р·Р°СЂСЏРґРєРё СЃРїРёСЂР°Р»Рё");
-		ar & TRANSLATE_OBJECT(zeroLayerHeight, "РЈСЂРѕРІРµРЅСЊ Р·РµСЂРѕРїР»Р°СЃС‚Р°");
-		ar & TRANSLATE_OBJECT(cameras, "РљР°РјРµСЂС‹");
-		ar & TRANSLATE_OBJECT(buildingInstallerInstructions, "РџСЂРµРґРїРёСЃР°РЅРёСЏ РёРЅСЃС‚Р°Р»Р»СЏС‚РѕСЂСѓ Р·РґР°РЅРёР№");
+		ar & TRANSLATE_OBJECT(spiralChargingEnergy, "Энергия зарядки спирали");
+		ar & TRANSLATE_OBJECT(spiralChargingTime, "Время зарядки спирали");
+		ar & TRANSLATE_OBJECT(spiralChargingPriority, "Приоритет зарядки спирали");
+		ar & TRANSLATE_OBJECT(zeroLayerHeight, "Уровень зеропласта");
+		ar & TRANSLATE_OBJECT(cameras, "Камеры");
+		ar & TRANSLATE_OBJECT(buildingInstallerInstructions, "Предписания инсталлятору зданий");
 		
-		ar & TRANSLATE_OBJECT(omegaMissionType, "Р—Р°РґР°С‡Р° РћРјРµРіР°-РјРёСЃСЃРёРё");
-		ar & TRANSLATE_OBJECT(alphaActivationDistance, "Р Р°СЃСЃС‚РѕСЏРЅРёРµ Р°РєС‚РёРІР°С†РёРё РђР»СЊС„Р°-РєРѕСЂРёРґРѕСЂР°");
-		ar & TRANSLATE_OBJECT(omegaActivationDistance, "Р Р°СЃСЃС‚РѕСЏРЅРёРµ Р°РєС‚РёРІР°С†РёРё РћРјРµРіР°-РєРѕСЂРёРґРѕСЂР°");
-		ar & TRANSLATE_OBJECT(interfaceEnabled, "РРЅС‚РµСЂС„РµР№СЃ РІРєР»СЋС‡РµРЅ");
-		ar & TRANSLATE_OBJECT(loadHardness, "Р“СЂСѓР·РёС‚СЊ РєР°СЂС‚Сѓ РЅРµРєРѕРїР°РµРјРѕСЃС‚Рё");
+		ar & TRANSLATE_OBJECT(omegaMissionType, "Задача Омега-миссии");
+		ar & TRANSLATE_OBJECT(alphaActivationDistance, "Расстояние активации Альфа-коридора");
+		ar & TRANSLATE_OBJECT(omegaActivationDistance, "Расстояние активации Омега-коридора");
+		ar & TRANSLATE_OBJECT(interfaceEnabled, "Интерфейс включен");
+		ar & TRANSLATE_OBJECT(loadHardness, "Грузить карту некопаемости");
 	}
 
 private:
@@ -2801,13 +2801,13 @@ struct SavePrm {
 	void serialize(Archive& ar) {
 		ar & WRAP_NAME(players, "players");
 
-		ar & TRANSLATE_NAME(environment, "environment", "РћР±СЉРµРєС‚С‹ РѕРєСЂСѓР¶РµРЅРёСЏ");
-		ar & TRANSLATE_NAME(filth, "filth", "РЎРєРІРµСЂРЅР°");
-		ar & TRANSLATE_NAME(nobodysBuildings, "nobodysBuildings", "РќРµР№С‚СЂР°Р»СЊРЅС‹Рµ Р·РґР°РЅРёСЏ");
+		ar & TRANSLATE_NAME(environment, "environment", "Объекты окружения");
+		ar & TRANSLATE_NAME(filth, "filth", "Скверна");
+		ar & TRANSLATE_NAME(nobodysBuildings, "nobodysBuildings", "Нейтральные здания");
 
 		ar & WRAP_NAME(worldObjects, "worldObjects");
 		ar & WRAP_NAME(activeTasks, "activeTasks");
-		ar & TRANSLATE_NAME(manualData, "manualData", "Р”Р°РЅРЅС‹Рµ, СЂРµРґР°РєС‚РёСЂСѓРµРјС‹Рµ РІСЂСѓС‡РЅСѓСЋ");
+		ar & TRANSLATE_NAME(manualData, "manualData", "Данные, редактируемые вручную");
 	}
 };
 

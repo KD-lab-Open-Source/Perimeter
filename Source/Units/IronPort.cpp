@@ -14,7 +14,7 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeCorridor, "РўРµР»РµРїРѕСЂС‚");
+REGISTER_CLASS(AttributeBase, AttributeCorridor, "Телепорт");
 
 AttributeCorridor::AttributeCorridor()
 {

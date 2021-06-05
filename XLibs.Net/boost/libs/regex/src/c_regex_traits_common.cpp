@@ -401,134 +401,134 @@ BOOST_REGEX_DECL unsigned short wide_unicode_classes[] = {
    c_traits_base::char_class_punct,        // '~'  126
 
    c_traits_base::char_class_cntrl,        // ''  127
-   c_traits_base::char_class_cntrl,        // 'Ğ‚'  128
-   c_traits_base::char_class_cntrl,        // 'Ğƒ'  129
-   c_traits_base::char_class_cntrl,        // 'â€š'  130
-   c_traits_base::char_class_cntrl,        // 'Ñ“'  131
-   c_traits_base::char_class_cntrl,        // 'â€'  132
-   c_traits_base::char_class_cntrl,        // 'â€¦'  133
-   c_traits_base::char_class_cntrl,        // 'â€ '  134
-   c_traits_base::char_class_cntrl,        // 'â€¡'  135
-   c_traits_base::char_class_cntrl,        // 'â‚¬'  136
-   c_traits_base::char_class_cntrl,        // 'â€°'  137
-   c_traits_base::char_class_cntrl,        // 'Ğ‰'  138
-   c_traits_base::char_class_cntrl,        // 'â€¹'  139
-   c_traits_base::char_class_cntrl,        // 'ĞŠ'  140
-   c_traits_base::char_class_cntrl,        // 'ĞŒ'  141
-   c_traits_base::char_class_cntrl,        // 'Ğ‹'  142
-   c_traits_base::char_class_cntrl,        // 'Ğ'  143
-   c_traits_base::char_class_cntrl,        // 'Ñ’'  144
-   c_traits_base::char_class_cntrl,        // 'â€˜'  145
-   c_traits_base::char_class_cntrl,        // 'â€™'  146
-   c_traits_base::char_class_cntrl,        // 'â€œ'  147
-   c_traits_base::char_class_cntrl,        // 'â€'  148
-   c_traits_base::char_class_cntrl,        // 'â€¢'  149
-   c_traits_base::char_class_cntrl,        // 'â€“'  150
-   c_traits_base::char_class_cntrl,        // 'â€”'  151
-   c_traits_base::char_class_cntrl,        // ' '  152
-   c_traits_base::char_class_cntrl,        // 'â„¢'  153
-   c_traits_base::char_class_cntrl,        // 'Ñ™'  154
-   c_traits_base::char_class_cntrl,        // 'â€º'  155
-   c_traits_base::char_class_cntrl,        // 'Ñš'  156
-   c_traits_base::char_class_cntrl,        // 'Ñœ'  157
-   c_traits_base::char_class_cntrl,        // 'Ñ›'  158
-   c_traits_base::char_class_cntrl,        // 'ÑŸ'  159
-   c_traits_base::char_class_space | c_traits_base::char_class_blank,        // 'Â '  160
-   c_traits_base::char_class_punct,        // 'Ğ'  161
-   c_traits_base::char_class_punct,        // 'Ñ'  162
-   c_traits_base::char_class_punct,        // 'Ğˆ'  163
-   c_traits_base::char_class_punct,        // 'Â¤'  164
-   c_traits_base::char_class_punct,        // 'Ò'  165
-   c_traits_base::char_class_punct,        // 'Â¦'  166
-   c_traits_base::char_class_punct,        // 'Â§'  167
-   c_traits_base::char_class_punct,        // 'Ğ'  168
-   c_traits_base::char_class_punct,        // 'Â©'  169
-   c_traits_base::char_class_punct,        // 'Ğ„'  170
-   c_traits_base::char_class_punct,        // 'Â«'  171
-   c_traits_base::char_class_punct,        // 'Â¬'  172
-   c_traits_base::char_class_punct,        // 'Â­'  173
-   c_traits_base::char_class_punct,        // 'Â®'  174
-   c_traits_base::char_class_punct,        // 'Ğ‡'  175
-   c_traits_base::char_class_punct,        // 'Â°'  176
-   c_traits_base::char_class_punct,        // 'Â±'  177
-   c_traits_base::char_class_punct,        // 'Ğ†'  178
-   c_traits_base::char_class_punct,        // 'Ñ–'  179
-   c_traits_base::char_class_punct,        // 'Ò‘'  180
-   c_traits_base::char_class_punct,        // 'Âµ'  181
-   c_traits_base::char_class_punct,        // 'Â¶'  182
-   c_traits_base::char_class_punct,        // 'Â·'  183
-   c_traits_base::char_class_punct,        // 'Ñ‘'  184
-   c_traits_base::char_class_punct,        // 'â„–'  185
-   c_traits_base::char_class_punct,        // 'Ñ”'  186
-   c_traits_base::char_class_punct,        // 'Â»'  187
-   c_traits_base::char_class_punct,        // 'Ñ˜'  188
-   c_traits_base::char_class_punct,        // 'Ğ…'  189
-   c_traits_base::char_class_punct,        // 'Ñ•'  190
-   c_traits_base::char_class_punct,        // 'Ñ—'  191
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ'  192
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ‘'  193
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ’'  194
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ“'  195
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ”'  196
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ•'  197
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ–'  198
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ—'  199
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ˜'  200
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ™'  201
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğš'  202
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ›'  203
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğœ'  204
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ'  205
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ'  206
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'ĞŸ'  207
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ '  208
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ¡'  209
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ¢'  210
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ£'  211
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ¤'  212
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ¥'  213
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ¦'  214
-   c_traits_base::char_class_punct,        // 'Ğ§'  215
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ¨'  216
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ©'  217
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğª'  218
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ«'  219
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ¬'  220
-   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ­'  221
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_upper,        // 'Ğ®'  222
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ¯'  223
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ°'  224
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ±'  225
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ²'  226
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ³'  227
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ´'  228
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğµ'  229
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ¶'  230
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ·'  231
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ¸'  232
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ¹'  233
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğº'  234
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ»'  235
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ¼'  236
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ½'  237
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ¾'  238
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ğ¿'  239
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ€'  240
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ'  241
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ‚'  242
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñƒ'  243
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ„'  244
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ…'  245
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ†'  246
-   c_traits_base::char_class_punct,        // 'Ñ‡'  247
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñˆ'  248
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ‰'  249
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ÑŠ'  250
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ‹'  251
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ÑŒ'  252
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ'  253
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ'  254
-   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'Ñ'  255
+   c_traits_base::char_class_cntrl,        // '€'  128
+   c_traits_base::char_class_cntrl,        // ''  129
+   c_traits_base::char_class_cntrl,        // '‚'  130
+   c_traits_base::char_class_cntrl,        // 'ƒ'  131
+   c_traits_base::char_class_cntrl,        // '„'  132
+   c_traits_base::char_class_cntrl,        // '…'  133
+   c_traits_base::char_class_cntrl,        // '†'  134
+   c_traits_base::char_class_cntrl,        // '‡'  135
+   c_traits_base::char_class_cntrl,        // 'ˆ'  136
+   c_traits_base::char_class_cntrl,        // '‰'  137
+   c_traits_base::char_class_cntrl,        // 'Š'  138
+   c_traits_base::char_class_cntrl,        // '‹'  139
+   c_traits_base::char_class_cntrl,        // 'Œ'  140
+   c_traits_base::char_class_cntrl,        // ''  141
+   c_traits_base::char_class_cntrl,        // ''  142
+   c_traits_base::char_class_cntrl,        // ''  143
+   c_traits_base::char_class_cntrl,        // ''  144
+   c_traits_base::char_class_cntrl,        // '‘'  145
+   c_traits_base::char_class_cntrl,        // '’'  146
+   c_traits_base::char_class_cntrl,        // '“'  147
+   c_traits_base::char_class_cntrl,        // '”'  148
+   c_traits_base::char_class_cntrl,        // '•'  149
+   c_traits_base::char_class_cntrl,        // '–'  150
+   c_traits_base::char_class_cntrl,        // '—'  151
+   c_traits_base::char_class_cntrl,        // '˜'  152
+   c_traits_base::char_class_cntrl,        // '™'  153
+   c_traits_base::char_class_cntrl,        // 'š'  154
+   c_traits_base::char_class_cntrl,        // '›'  155
+   c_traits_base::char_class_cntrl,        // 'œ'  156
+   c_traits_base::char_class_cntrl,        // ''  157
+   c_traits_base::char_class_cntrl,        // ''  158
+   c_traits_base::char_class_cntrl,        // 'Ÿ'  159
+   c_traits_base::char_class_space | c_traits_base::char_class_blank,        // ' '  160
+   c_traits_base::char_class_punct,        // '¡'  161
+   c_traits_base::char_class_punct,        // '¢'  162
+   c_traits_base::char_class_punct,        // '£'  163
+   c_traits_base::char_class_punct,        // '¤'  164
+   c_traits_base::char_class_punct,        // '¥'  165
+   c_traits_base::char_class_punct,        // '¦'  166
+   c_traits_base::char_class_punct,        // '§'  167
+   c_traits_base::char_class_punct,        // '¨'  168
+   c_traits_base::char_class_punct,        // '©'  169
+   c_traits_base::char_class_punct,        // 'ª'  170
+   c_traits_base::char_class_punct,        // '«'  171
+   c_traits_base::char_class_punct,        // '¬'  172
+   c_traits_base::char_class_punct,        // '­'  173
+   c_traits_base::char_class_punct,        // '®'  174
+   c_traits_base::char_class_punct,        // '¯'  175
+   c_traits_base::char_class_punct,        // '°'  176
+   c_traits_base::char_class_punct,        // '±'  177
+   c_traits_base::char_class_punct,        // '²'  178
+   c_traits_base::char_class_punct,        // '³'  179
+   c_traits_base::char_class_punct,        // '´'  180
+   c_traits_base::char_class_punct,        // 'µ'  181
+   c_traits_base::char_class_punct,        // '¶'  182
+   c_traits_base::char_class_punct,        // '·'  183
+   c_traits_base::char_class_punct,        // '¸'  184
+   c_traits_base::char_class_punct,        // '¹'  185
+   c_traits_base::char_class_punct,        // 'º'  186
+   c_traits_base::char_class_punct,        // '»'  187
+   c_traits_base::char_class_punct,        // '¼'  188
+   c_traits_base::char_class_punct,        // '½'  189
+   c_traits_base::char_class_punct,        // '¾'  190
+   c_traits_base::char_class_punct,        // '¿'  191
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'À'  192
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Á'  193
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Â'  194
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ã'  195
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ä'  196
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Å'  197
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Æ'  198
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ç'  199
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'È'  200
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'É'  201
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ê'  202
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ë'  203
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ì'  204
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Í'  205
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Î'  206
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ï'  207
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ğ'  208
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ñ'  209
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ò'  210
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ó'  211
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ô'  212
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Õ'  213
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ö'  214
+   c_traits_base::char_class_punct,        // '×'  215
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ø'  216
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ù'  217
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ú'  218
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Û'  219
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'Ü'  220
+   c_traits_base::char_class_alpha |   c_traits_base::char_class_upper,        // 'İ'  221
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_upper,        // 'Ş'  222
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ß'  223
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'à'  224
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'á'  225
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'â'  226
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ã'  227
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ä'  228
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'å'  229
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'æ'  230
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ç'  231
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'è'  232
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'é'  233
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ê'  234
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ë'  235
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ì'  236
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'í'  237
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'î'  238
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ï'  239
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ğ'  240
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ñ'  241
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ò'  242
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ó'  243
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ô'  244
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'õ'  245
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ö'  246
+   c_traits_base::char_class_punct,        // '÷'  247
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ø'  248
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ù'  249
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ú'  250
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'û'  251
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ü'  252
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ı'  253
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ş'  254
+   c_traits_base::char_class_alpha |  c_traits_base::char_class_lower,        // 'ÿ'  255
 };
 
 BOOST_REGEX_DECL regex_wchar_type wide_lower_case_map[] = {

@@ -478,7 +478,7 @@ INSTANT(boost::mt11213b)
 #endif
 
 #if !defined(BOOST_NO_INT64_T) && !defined(BOOST_NO_INTEGRAL_INT64_T)
-// testcase by Mario RÑŒtti
+// testcase by Mario Rütti
 class ruetti_gen
 {
 public:

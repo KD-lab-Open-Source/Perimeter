@@ -232,8 +232,8 @@ private:
 	template<class T1, class T2>
 	EditOArchive& operator&(const std::pair<T1, T2>& t)
 	{
-		(*this) & TRANSLATE_NAME(t.first, "first", "&РљР»СЋС‡");
-		(*this) & TRANSLATE_NAME(t.second, "second", "Р—РЅР°С‡РµРЅРёРµ");
+		(*this) & TRANSLATE_NAME(t.first, "first", "&Ключ");
+		(*this) & TRANSLATE_NAME(t.second, "second", "Значение");
 
 		string name = currentNode_->name();
 		TreeNode::const_iterator i;
@@ -311,8 +311,8 @@ private:
 
 	EditOArchive& operator&(const bool& value)
     {
-		currentNode_->setValue(value ? "Р”Р°" : "РќРµС‚");
-		currentNode_->setComboList(TreeNode::COMBO, "Р”Р°|РќРµС‚");
+		currentNode_->setValue(value ? "Да" : "Нет");
+		currentNode_->setComboList(TreeNode::COMBO, "Да|Нет");
 		return *this;
 	}
 };
@@ -520,8 +520,8 @@ private:
 	template<class T1, class T2>
 	EditIArchive& operator&(std::pair<T1, T2>& t)
 	{
-		(*this) & TRANSLATE_NAME(t.first, "first", "РљР»СЋС‡");
-		(*this) & TRANSLATE_NAME(t.second, "second", "Р—РЅР°С‡РµРЅРёРµ");
+		(*this) & TRANSLATE_NAME(t.first, "first", "Ключ");
+		(*this) & TRANSLATE_NAME(t.second, "second", "Значение");
 		return *this;
 	}
 
@@ -592,7 +592,7 @@ private:
 	}
 
 	EditIArchive& operator&(bool& value){
-		value = currentNode_->value() == "Р”Р°";
+		value = currentNode_->value() == "Да";
 		return *this;
 	}
 };
@@ -613,7 +613,7 @@ public:
 	template<class T>
 	bool edit(T& t, const char* name = 0) { 
     	static_cast<EditOArchive&>(*this) << WRAP_NAME(t, 0);
-		if(name) // РµСЃР»Рё СЂРµРґР°РєС‚РёСЂСѓРµС‚СЃСЏ СѓРєР°Р·Р°С‚РµР»СЊ, С‚Рѕ РёРјСЏ РєРѕРЅС„Р»РёРєС‚СѓРµС‚ СЃ РµРіРѕ С‚РёРїРѕРј
+		if(name) // если редактируется указатель, то имя конфликтует с его типом
 			const_cast<TreeNode*>(rootNode())->setValue(name);
 		if(edit()){
 			static_cast<EditIArchive&>(*this) >> WRAP_NAME(t, 0);

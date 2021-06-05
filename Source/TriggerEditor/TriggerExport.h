@@ -5,7 +5,7 @@
 #include "Serialization.h"
 
 //-----------------------------
-// Р”Р»СЏ РѕС‚РґРµР»РµРЅРёСЏ РєРѕРЅС‚РµРЅС‚Р°
+// Для отделения контента
 #ifndef _SURMAP_
 #define virtual_ virtual
 #else
@@ -60,7 +60,7 @@ public:
 };
 
 //-----------------------------
-struct Condition : ShareHandleBase // РќРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РЅРёРєРѕРіРґР° (РґР»СЏ РІС‹РєР»СЋС‡РµРЅРёСЏ С‚СЂРёРіРіРµСЂРѕРІ)
+struct Condition : ShareHandleBase // Не выполняется никогда (для выключения триггеров)
 {
 	Condition() {
 		state_ = false; 
@@ -89,7 +89,7 @@ struct Condition : ShareHandleBase // РќРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РЅРёРєРѕРіРґР°
     
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(state_, "_РўРµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ");
+		ar & TRANSLATE_OBJECT(state_, "_Текущее состояние");
 		ar & WRAP_OBJECT(internalColor_);
 	}
 
@@ -108,8 +108,8 @@ protected:
 struct ConditionNode //
 {
 	enum Type {
-		NORMAL, // РґР°
-		INVERTED // РќР•
+		NORMAL, // да
+		INVERTED // НЕ
 	};
 	EnumWrapper<Type> type; 
 	ShareHandle<Condition> condition; 
@@ -123,16 +123,16 @@ struct ConditionNode //
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(type, "&РўРёРї");
+		ar & TRANSLATE_OBJECT(type, "&Тип");
 		ar & TRANSLATE_OBJECT(condition, "&");
 	}
 };
 
-struct ConditionSwitcher : Condition // Р/РР›Р
+struct ConditionSwitcher : Condition // И/ИЛИ
 {
 	enum Type {
-		AND, // Р
-		OR // РР›Р
+		AND, // И
+		OR // ИЛИ
 	};
 	EnumWrapper<Type> type;
 	vector<ConditionNode, TriggerAllocator<ConditionNode> > conditions; 
@@ -149,13 +149,13 @@ struct ConditionSwitcher : Condition // Р/РР›Р
 	template<class Archive>	
 	void serialize(Archive& ar) {
 		Condition::serialize(ar);
-		ar & TRANSLATE_OBJECT(type, "&РўРёРї");
-		ar & TRANSLATE_OBJECT(conditions, "РЈСЃР»РѕРІРёСЏ");
+		ar & TRANSLATE_OBJECT(type, "&Тип");
+		ar & TRANSLATE_OBJECT(conditions, "Условия");
 	}
 };
 
 //-----------------------------
-struct Action : ShareHandleBase // РџСѓСЃС‚РѕРµ РґРµР№СЃС‚РІРёРµ, РІСЃС‚Р°РІР»СЏС‚СЊ РЅРµ РЅР°РґРѕ!
+struct Action : ShareHandleBase // Пустое действие, вставлять не надо!
 {		
 	int internalColor_;
 
@@ -217,10 +217,10 @@ struct CRectSerialized : CRect
 
 enum ColorType
 {
-	STRATEGY_RED, // РљСЂР°СЃРЅС‹Р№
-	STRATEGY_GREEN, // Р—РµР»РµРЅС‹Р№
-	STRATEGY_BLUE, // РЎРёРЅРёР№
-	STRATEGY_YELLOW, // Р–РµР»С‚С‹Р№
+	STRATEGY_RED, // Красный
+	STRATEGY_GREEN, // Зеленый
+	STRATEGY_BLUE, // Синий
+	STRATEGY_YELLOW, // Желтый
 	STRATEGY_COLOR_0,
 	STRATEGY_COLOR_1,
 	STRATEGY_COLOR_2,
@@ -231,11 +231,11 @@ enum ColorType
 	LINK_TYPES_COUNT = STRATEGY_COLOR_MAX
 };
 
-struct TriggerLink // РЎРІСЏР·СЊ
+struct TriggerLink // Связь
 {
 	enum Type {
-		THIN, // РўРѕРЅРєР°СЏ
-		THICK // РўРѕР»СЃС‚Р°СЏ
+		THIN, // Тонкая
+		THICK // Толстая
 	};
 
 	TriggerLink();
@@ -312,14 +312,14 @@ private:
 typedef vector<TriggerLink, TriggerAllocator<TriggerLink> > OutcomingLinksList;
 typedef vector<TriggerLink*, TriggerAllocator<TriggerLink*> > IncomingLinksList;
 
-class Trigger // РўСЂРёРіРіРµСЂ
+class Trigger // Триггер
 {
 public:
 	enum State {
-		SLEEPING, // РџСЂРѕРІРµСЂСЏРµС‚ РІС…РѕРґРЅС‹Рµ СЃРІСЏР·Рё
-		CHECKING, // РџСЂРѕРІРµСЂСЏРµС‚ СѓСЃР»РѕРІРёСЏ
-		WORKING, // Р’С‹РїРѕР»РЅСЏРµС‚СЃСЏ
-		DONE // Р’С‹РїРѕР»РЅРµРЅ
+		SLEEPING, // Проверяет входные связи
+		CHECKING, // Проверяет условия
+		WORKING, // Выполняется
+		DONE // Выполнен
 	};
 
 	Trigger();
@@ -396,12 +396,12 @@ public:
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_NAME(name_, "name", "&РРјСЏ");	
+		ar & TRANSLATE_NAME(name_, "name", "&Имя");	
 		ar & TRANSLATE_OBJECT(condition, "");
-		ar & TRANSLATE_OBJECT(action, "Р”РµР№СЃС‚РІРёРµ");
-		ar & TRANSLATE_NAME(outcomingLinks_, "outcomingLinks", "_РСЃС…РѕРґСЏС‰РёРµ СЃРІСЏР·Рё");
-		ar & TRANSLATE_OBJECT(state_, "_РўРµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ");
-		ar & TRANSLATE_OBJECT(executionCounter_, "_Р—Р°РїСѓСЃРєР°Р»СЃСЏ");
+		ar & TRANSLATE_OBJECT(action, "Действие");
+		ar & TRANSLATE_NAME(outcomingLinks_, "outcomingLinks", "_Исходящие связи");
+		ar & TRANSLATE_OBJECT(state_, "_Текущее состояние");
+		ar & TRANSLATE_OBJECT(executionCounter_, "_Запускался");
 		ar & WRAP_OBJECT(internalColor_);
 		
 		ar & WRAP_NAME(cellIndex_, "cellIndex");
@@ -451,13 +451,13 @@ struct TriggerEvent
 typedef vector<Trigger, TriggerAllocator<Trigger> > TriggerList;
 
 //-----------------------------
-class TriggerChain // РЎС‚СЂР°С‚РµРіРёСЏ РёРіСЂРѕРєР°
+class TriggerChain // Стратегия игрока
 {
 public:
 	typedef vector<TriggerEvent, TriggerAllocator<TriggerEvent> > TriggerEventList;
 
 	PrmString name;
-	TriggerList triggers; // 0-Р№ trigger - СЃС‚Р°СЂС‚РѕРІС‹Р№
+	TriggerList triggers; // 0-й trigger - стартовый
 
 	TriggerChain();
 	
@@ -512,8 +512,8 @@ public:
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
-		ar & TRANSLATE_OBJECT(name, "РРјСЏ");
-		ar & TRANSLATE_OBJECT(triggers, "РўСЂРёРіРіРµСЂР°");
+		ar & TRANSLATE_OBJECT(name, "Имя");
+		ar & TRANSLATE_OBJECT(triggers, "Триггера");
 
 		ar & WRAP_NAME(boundingRect_, "boundingRect");
 		ar & WRAP_NAME(viewRect_, "viewRect");
