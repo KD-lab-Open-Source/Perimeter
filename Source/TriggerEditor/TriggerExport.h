@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __TRIGGER_EXPORT_H__
 #define __TRIGGER_EXPORT_H__
 

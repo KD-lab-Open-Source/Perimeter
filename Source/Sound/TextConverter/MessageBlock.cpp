@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #include "stdafx.h"
 #include "parse\ParamParse.h"
 #include "MessageBlock.h"

@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __IRONFRAME_H__
 #define __IRONFRAME_H__
 

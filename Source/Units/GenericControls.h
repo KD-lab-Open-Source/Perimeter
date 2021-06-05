@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __PERIMETER_GENERIC_CONTROLS_
 #define __PERIMETER_GENERIC_CONTROLS_
 

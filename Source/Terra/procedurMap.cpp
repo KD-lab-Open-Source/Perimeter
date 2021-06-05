@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #include "stdafxTr.h"
 
 #include "procedurMap.h"

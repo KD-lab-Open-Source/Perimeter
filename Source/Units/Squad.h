@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __SQUAD_H__
 #define __SQUAD_H__
 

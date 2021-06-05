@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __PERIMETER_PLAYER_H__
 #define __PERIMETER_PLAYER_H__
 

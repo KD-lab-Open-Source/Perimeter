@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef OptTree_h
 #define OptTree_h
 #pragma once

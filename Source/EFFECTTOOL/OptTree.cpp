@@ -1,5 +1,8 @@
 // OptTree.cpp : implementation file
 //
+
+// TODO: change encoding to utf-8
+
 #include "stdafx.h"
 #include "EffectTool.h"
 #include "OptTree.h"

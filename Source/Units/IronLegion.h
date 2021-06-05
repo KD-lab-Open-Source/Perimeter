@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __IRONLEGION_H__
 #define __IRONLEGION_H__
 

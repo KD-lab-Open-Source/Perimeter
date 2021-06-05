@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __CONDITIONS_H__
 #define __CONDITIONS_H__
 

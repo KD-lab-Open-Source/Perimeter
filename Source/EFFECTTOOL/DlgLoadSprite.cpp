@@ -1,6 +1,8 @@
 // DlgLoadSprite.cpp : implementation file
 //
 
+// TODO: change encoding to utf-8
+
 #include <stdio.h>
 #include "stdafx.h"
 #include "effecttool.h"
