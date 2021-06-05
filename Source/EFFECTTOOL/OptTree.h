@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #ifndef OptTree_h
 #define OptTree_h
 #pragma once
@@ -180,7 +178,7 @@ class CDataItem
 	bool check;
 	float value;
 	std::vector<ComboStr> combo_stings;
-	//обработка
+	//РѕР±СЂР°Р±РѕС‚РєР°
 	bool is_int;
 	float min_val;
 	float max_val;
