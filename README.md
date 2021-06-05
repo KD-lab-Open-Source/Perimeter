@@ -19,7 +19,7 @@
 
 ## Что потребуется
 
-Проверено что игра собирается в окружении Windows XP + Visual Studio 2005. Кроме того потребуется
+Проверено что игра собирается в окружении Windows XP / Windows 7 + Visual Studio 2005. Кроме того потребуется
 установить Windows SDK 7.1 для воспроизведения видео, скачать можно по ссылке:
 
 https://developer.microsoft.com/ru-ru/windows/downloads/sdk-archive/
