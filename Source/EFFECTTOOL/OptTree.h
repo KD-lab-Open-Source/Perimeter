@@ -286,7 +286,7 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	bool SetItemText(DWORD id,CString s);
-	bool SetItem—heck(DWORD id,bool v);
+	bool SetItemCheck(DWORD id,bool v);
 	void SetFps(float fps);
 	void UpDateToolBar();
 	void PutButton(int ix);
