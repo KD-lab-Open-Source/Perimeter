@@ -26,7 +26,7 @@
 
 https://developer.microsoft.com/ru-ru/windows/downloads/sdk-archive/
 
-В самом низу есть версия для Windows XP, Windows 7 (на Windows 10 он тоже подойдет).
+В самом низу есть версия для Windows 7 и Windows XP (на Windows 10 он тоже подойдет).
 
 ## Сборка
 
