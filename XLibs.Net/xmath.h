@@ -89,6 +89,9 @@ const int INT_INF = 0x7fffffff;
 #ifndef __ROUND__
 #define __ROUND__
 
+// Visual Studio 2019 already has std::round
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+
 xm_inline int round(double x)
 {
 	int a;
@@ -108,6 +111,8 @@ xm_inline int round(float x)
 	}
 	return a;
 }
+
+#endif
 
 template <class T> 
 xm_inline T sqr(const T& x){ return x*x; }

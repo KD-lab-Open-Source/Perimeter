@@ -6,7 +6,10 @@
 #include "..\..\Game\Region.h"
 
 #include <set>
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+// non-standard header
 #include <slist>
+#endif
 #include "clip\ClippingMesh.h"
 
 #define BUMP_VTXTYPE   sVertexXYZT1

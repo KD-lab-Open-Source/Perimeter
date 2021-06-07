@@ -1308,23 +1308,23 @@ void vrtMap::convertPal2TableSurCol(unsigned char palBuf[SIZE_GEO_PALETTE],eSurf
 			cb=B*(Lum0+dLum*(double)j); if(cb<0)cb=0; if(cb>255)cb=255;
 			cg=G*(Lum0+dLum*(double)j); if(cg<0)cg=0; if(cg>255)cg=255;
 			cr=R*(Lum0+dLum*(double)j); if(cr<0)cr=0; if(cr>255)cr=255;
-			col =(round(cb)  >>3)&0x1F;
-			col+=(round(cg)  <<3)&0x7E0;
-			col+=(round(cr)  <<8)&0x0F800;
+			col =((int)round(cb)  >>3)&0x1F;
+			col+=((int)round(cg)  <<3)&0x7E0;
+			col+=((int)round(cr)  <<8)&0x0F800;
 			Sur2Col[i][j+SurBufOffset]=col;
-			col32=round(cb); col32+=round(cg)<<8; col32+=round(cr)<<16;
+			col32= (int)round(cb); col32+= (int)round(cg)<<8; col32+= (int)round(cr)<<16;
 			Sur2Col32[i][j+SurBufOffset]=col32;
 			//ВРЕМЕННО !!!! (для совместимости с отсутствием текстуры выровненной поверхности)
 			Tex2Col[j+SurBufOffset][i]=col;
 			Tex2Col32[j+SurBufOffset][i]=col32;
 
-			col =(round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
-			col+=(round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
-			col+=(round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
+			col =((int)round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
+			col+=((int)round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
+			col+=((int)round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
 			SurZP2Col[j+SurBufOffset][i]=col;
-			col32=round(cb*colZeroPlast.alpha/256.0 + bZP);
-			col32+=round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
-			col32+=round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
+			col32= (int)round(cb*colZeroPlast.alpha/256.0 + bZP);
+			col32+= (int)round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
+			col32+= (int)round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
 			SurZP2Col32[j+SurBufOffset][i]=col32;
 			//ВРЕМЕННО !!!! (для совместимости с отсутствием текстуры выровненной поверхности)
 			TexZP2Col[j+SurBufOffset][i]=col;
@@ -1411,20 +1411,20 @@ void vrtMap::convertPal2TableTexCol()
 			cb=B*(Lum0+dLum*(double)j); if(cb<0)cb=0; if(cb>255)cb=255;
 			cg=G*(Lum0+dLum*(double)j); if(cg<0)cg=0; if(cg>255)cg=255;
 			cr=R*(Lum0+dLum*(double)j); if(cr<0)cr=0; if(cr>255)cr=255;
-			col =(round(cb)  >>3)&0x1F;
-			col+=(round(cg)  <<3)&0x7E0;
-			col+=(round(cr)  <<8)&0x0F800;
+			col =((int)round(cb)  >>3)&0x1F;
+			col+=((int)round(cg)  <<3)&0x7E0;
+			col+=((int)round(cr)  <<8)&0x0F800;
 			Tex2Col[j][i]=Tex2Col[j+128][i]=col;
-			col32=round(cb); col32+=round(cg)<<8; col32+=round(cr)<<16;
+			col32= (int)round(cb); col32+= (int)round(cg)<<8; col32+= (int)round(cr)<<16;
 			Tex2Col32[j][i]=Tex2Col32[j+128][i]=col32;
 
-			col =(round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
-			col+=(round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
-			col+=(round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
+			col =((int)round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
+			col+=((int)round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
+			col+=((int)round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
 			TexZP2Col[j][i]=TexZP2Col[j+128][i]=col;
-			col32=round(cb*colZeroPlast.alpha/256.0 + bZP);
-			col32+=round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
-			col32+=round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
+			col32= (int)round(cb*colZeroPlast.alpha/256.0 + bZP);
+			col32+= (int)round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
+			col32+= (int)round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
 			TexZP2Col32[j][i]=TexZP2Col32[j+128][i]=col32;
 
 		}

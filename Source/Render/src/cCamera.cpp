@@ -1036,7 +1036,7 @@ eTestVisible cCamera::GridTest(Vect3f p[8])
 {
 	for(int i=0;i<8;i++)
 	{
-		int x=round(p[i].x)>>TestGridShl,y=round(p[i].y)>>TestGridShl;
+		int x=(int)round(p[i].x)>>TestGridShl,y= (int)round(p[i].y)>>TestGridShl;
 		if(x<0 || x>=TestGridSize.x || y<0 || y>=TestGridSize.y)
 			continue;
 		if(pTestGrid[x+y*TestGridSize.x])

@@ -11,7 +11,12 @@
 #include "CChaos.h"
 
 #include "..\client\Silicon.h"
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+// non-standard header : https://developercommunity.visualstudio.com/t/msvc-142328019-is-missing-include-typeinfoh/734566
 #include <typeinfo.h>
+#else
+#include <typeinfo>
+#endif
 #include "..\3dx\Lib3dx.h"
 //#include <map>
 //using namespace std;

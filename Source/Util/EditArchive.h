@@ -56,9 +56,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<save_primitive_impl<U> >,
-            Select<is_pointer<U>, 
+            Select<boost::is_pointer<U>, 
                 Identity<save_pointer_impl<U> >,
-                Select<is_array<U>, 
+                Select<boost::is_array<U>, 
                     Identity<save_array_impl<U> >,
                     Identity<save_non_primitive_impl<U> >
                 >
@@ -188,7 +188,7 @@ private:
 	void savePointer(const T* t)
     {
 		currentNode_->setComboList(TreeNode::POLYMORPHIC, EditClassDescriptor<T>::instance().comboListAlt().c_str());
-		typedef EditClassDescriptor<remove_const<T>::type> Descriptor;
+		typedef EditClassDescriptor<boost::remove_const<T>::type> Descriptor;
 		currentNode_->setTreeNodeFunc(Descriptor::instance().treeNodeFunc);
 		if(!t)
 			return;
@@ -366,9 +366,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<load_primitive_impl<U> >,
-            Select<is_pointer<U>, 
+            Select<boost::is_pointer<U>, 
                 Identity<load_pointer_impl<U> >,
-                Select<is_array<U>, 
+                Select<boost::is_array<U>, 
                     Identity<load_array_impl<U> >,
                     Identity<load_non_primitive_impl<U> >
                 >
@@ -464,7 +464,7 @@ private:
 			}
 			return;
 		}
-		typedef EditClassDescriptor<remove_const<T>::type> Descriptor;
+		typedef EditClassDescriptor<boost::remove_const<T>::type> Descriptor;
 		if(t){
 			if(typeName == Descriptor::instance().nameAlt(*t)){
 				Descriptor::instance().findAlt(typeName.c_str()).load(*this, t);

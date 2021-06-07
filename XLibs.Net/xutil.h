@@ -381,6 +381,9 @@ char* XFindFirst(char* mask);
 #ifndef __ROUND__
 #define __ROUND__
 
+// Visual Studio 2019 already has std::round
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+
 __forceinline int round(double x)
 {
 	int a;
@@ -400,6 +403,8 @@ __forceinline int round(float x)
 	}
 	return a;
 }
+
+#endif
 
 template <class T> 
 __forceinline T sqr(const T& x){ return x*x; }

@@ -5,6 +5,10 @@
 #include "Grid2D.h"
 #include "CommonCommands.h"
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+#include <functional> // mem_fn, not_fn
+#endif
+
 class terPlayer;
 class terInterpolationBase;
 struct SaveUnitData;
@@ -296,7 +300,11 @@ typedef TypeLibrary<string, terUnitBase> UnitLibrary;
 template<class UnitList>
 bool removeNotAlive(UnitList& unitList) 
 {
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 	UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), not1(mem_fun(&terUnitBase::alive)));
+#else
+	UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), std::not1(std::mem_fn(&terUnitBase::alive)));
+#endif
 	if(i != unitList.end()){
 		unitList.erase(i, unitList.end());
 		return true;

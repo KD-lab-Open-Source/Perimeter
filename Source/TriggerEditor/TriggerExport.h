@@ -24,7 +24,7 @@ enum CompareOperator;
 
 //-----------------------------
 template <class T>
-class TriggerAllocator {
+class TriggerAllocator : public std::allocator<T> {
 public:
 
   typedef T        value_type;
@@ -34,7 +34,7 @@ public:
   typedef const T& const_reference;
   typedef size_t     size_type;
   typedef ptrdiff_t  difference_type;
-
+  
   template <class _Tp1> struct rebind {
     typedef TriggerAllocator<_Tp1> other;
   };

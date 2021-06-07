@@ -55,13 +55,13 @@ struct sColor4f
 	inline sColor4f	operator * (const sColor4f &color) const	{ sColor4f tmp(r*color.r,g*color.g,b*color.b,a*color.a); return tmp; }
 	inline sColor4f	operator * (float f) const 		{ sColor4f tmp(r*f,g*f,b*f,a*f); return tmp; }
 	inline sColor4f	operator / (float f) const 		{ if(f!=0.f) f=1/f; else f=0.001f; sColor4f tmp(r*f,g*f,b*f,a*f); return tmp; }
-	inline int GetR() const 						{ return round(255*r); }
-	inline int GetG() const 						{ return round(255*g); }
-	inline int GetB() const 						{ return round(255*b); }
-	inline int GetA() const 						{ return round(255*a); }
-	inline DWORD RGBA() const 						{ return (round(255*r) << 16) | (round(255*g) << 8) | round(255*b) | (round(255*a) << 24); }
-	inline DWORD GetRGB() const 					{ return (round(255*r) << 16) | (round(255*g) << 8) | round(255*b); }
-	inline DWORD RGBGDI() const 					{ return round(255*r) | (round(255*g) << 8) | (round(255*b) << 16); }
+	inline int GetR() const 						{ return (int)round(255*r); }
+	inline int GetG() const 						{ return (int)round(255*g); }
+	inline int GetB() const 						{ return (int)round(255*b); }
+	inline int GetA() const 						{ return (int)round(255*a); }
+	inline DWORD RGBA() const 						{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b) | ((int)round(255*a) << 24); }
+	inline DWORD GetRGB() const 					{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b); }
+	inline DWORD RGBGDI() const 					{ return (int)round(255*r) | ((int)round(255*g) << 8) | ((int)round(255*b) << 16); }
 	inline void interpolate(const sColor4f &u,const sColor4f &v,float f) { r=u.r+(v.r-u.r)*f; g=u.g+(v.g-u.g)*f; b=u.b+(v.b-u.b)*f; a=u.a+(v.a-u.a)*f; }
 	inline void interpolate3(const sColor4f &u,const sColor4f &v,float f) { r=u.r+(v.r-u.r)*f; g=u.g+(v.g-u.g)*f; b=u.b+(v.b-u.b)*f; }
 	inline bool operator == (const sColor4f &color) const { return (r == color.r) && (g == color.g) && (b == color.b) && (a == color.a); }

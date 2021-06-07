@@ -1,7 +1,13 @@
 #ifndef __QD_TEXTDB_H__
 #define __QD_TEXTDB_H__
 
-#include <hash_map>
+// hash_map is an old and non-standard MS extension
+// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+#include <hash_map> 
+#else
+#include <unordered_map>
+#endif
 #include <string>
 #include <list>
 /// База данных с текстами.
@@ -51,7 +57,14 @@ private:
 #endif
 	};
 
-	typedef std::hash_map<std::string,qdText> qdTextMap;
+	// hash_map is an old and non-standard MS extension
+	// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+	typedef std::hash_map<std::string, qdText> qdTextMap;
+#else
+	typedef std::unordered_map<std::string, qdText> qdTextMap;
+#endif
+	
 	qdTextMap texts_;
 };
 

@@ -90,9 +90,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<save_primitive_impl<U> >,
-			Select<is_pointer<U>, 
+			Select<boost::is_pointer<U>, 
 				Identity<save_pointer_impl<U> >,
-				Select<is_array<U>, 
+				Select<boost::is_array<U>, 
 					Identity<save_array_impl<U> >,
 					Identity<save_non_primitive_impl<U> >
 				>
@@ -174,7 +174,7 @@ private:
 		}
 		const char* name = typeid(*t).name();
 		buffer_ < stringHash(name);
-		BinaryClassDescriptor<remove_const<T>::type>::instance().find(name).save(*this, t);
+		BinaryClassDescriptor<boost::remove_const<T>::type>::instance().find(name).save(*this, t);
 	}
 
 	template<class T, class A>
@@ -292,9 +292,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<load_primitive_impl<U> >,
-			Select<is_pointer<U>, 
+			Select<boost::is_pointer<U>, 
 				Identity<load_pointer_impl<U> >,
-				Select<is_array<U>, 
+				Select<boost::is_array<U>, 
 					Identity<load_array_impl<U> >,
 					Identity<load_non_primitive_impl<U> >
 				>
@@ -382,7 +382,7 @@ private:
 			}
 			return;
 		}
-		typedef BinaryClassDescriptor<remove_const<T>::type> Descriptor;
+		typedef BinaryClassDescriptor<boost::remove_const<T>::type> Descriptor;
 		if(t){
 			if(hash == stringHash(typeid(*t).name())){
 				Descriptor::instance().findByHash(hash).load(*this, t);

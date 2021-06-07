@@ -48,9 +48,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<save_primitive_impl<U> >,
-            Select<is_pointer<U>, 
+            Select<boost::is_pointer<U>, 
                 Identity<save_pointer_impl<U> >,
-                Select<is_array<U>, 
+                Select<boost::is_array<U>, 
                     Identity<save_array_impl<U> >,
                     Identity<save_non_primitive_impl<U> >
                 >
@@ -177,7 +177,7 @@ private:
 		const char* name = typeid(*t).name();
 		saveStringEnclosed(name);
 		buffer_ < " ";
-		ClassDescriptor<remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
+		ClassDescriptor<boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
 	}
 
 	template<class T, class A>
@@ -305,9 +305,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<load_primitive_impl<U> >,
-            Select<is_pointer<U>, 
+            Select<boost::is_pointer<U>, 
                 Identity<load_pointer_impl<U> >,
-                Select<is_array<U>, 
+                Select<boost::is_array<U>, 
                     Identity<load_array_impl<U> >,
                     Identity<load_non_primitive_impl<U> >
                 >
@@ -496,7 +496,7 @@ private:
 			}
 			return;
 		}
-		typedef ClassDescriptor<remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
+		typedef ClassDescriptor<boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
 		if(t){
 			if(typeName == typeid(*t).name()){
 				Descriptor::instance().find(typeName.c_str()).load(*this, t);
