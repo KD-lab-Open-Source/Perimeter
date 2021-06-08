@@ -269,7 +269,7 @@ public:
 		//void vrtMap::deltaZone(int x,int y,int rad,int smth,int dh,int smode,int eql)
 		int eql=0;
 
-		register int i,j;
+		int i,j;
 		int max;
 		int* xx,*yy;
 

@@ -183,7 +183,7 @@ const float a90=(float)3.1415/2;
 int dh=1<<VX_FRACTION;
 void geoInfluence(int x,int y)
 {
-	register int i,j;
+	int i,j;
 //	int max;
 //	int* xx,*yy;
 
