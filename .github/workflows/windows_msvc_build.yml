@@ -1,0 +1,32 @@
+name: Windows MSVC Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    # Run a job for each of the specified target architectures:
+    strategy:
+      matrix:
+        arch:
+          - x86
+          - amd64_x86
+          - amd64
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: perimeter -- configure and make
+        run: |
+          cmake -G "NMake Makefiles" .
+          nmake
+      - name: perimeter -- prepare release folder
+        run: |
+          mkdir -p perimeter/bin
+          cp build/src/perimeter.exe perimeter/bin/
+          strip perimeter/bin/perimeter.exe
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Perimeter-Windows-MSVC-32
+          path: perimeter
