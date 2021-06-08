@@ -113,7 +113,7 @@ void RestrictMinMax(int& v)
 void vrtMap::r_net_init(void)
 {
 //	if(Verbose) cout << "RoughNetInit..."<<endl;
-	register unsigned int x,y;
+	unsigned int x,y;
 
 	for(x = 0;x < GEONET_POWER; x++) r_preRNDVAL[x] = XRnd(0xFFFFFFFF);
 	for(y = 0;y < PART_MAX;y++)
@@ -150,7 +150,7 @@ void vrtMap::r_net_init(void)
 void vrtMap::m_net_init(void)
 {
 //	if(Verbose) cout << "MapNetInit..."<<endl;
-	register unsigned int x,y;
+	unsigned int x,y;
 
 	for(x = 0;x < GEONET_POWER; x++) m_preRNDVAL[x] = XRnd(0xFFFFFFFF);
 	for(y = 0;y < PART_MAX; y++)
@@ -168,7 +168,7 @@ void vrtMap::m_net_init(void)
 void vrtMap::rough_init(void)
 {
 //	if(Verbose) cout << "RoughInit..."<<endl;
-	register unsigned int x,y,i,j;
+	unsigned int x,y,i,j;
 
 	for(y = 0,j = Stage*(part_map_size_y/QUANT);y <= part_map_size_y + QUANT;y += QUANT,j++){
 		if(j == PART_MAX*(part_map_size_y/QUANT)) j = 0;
@@ -181,7 +181,7 @@ void vrtMap::generate_roughness_map(void)
 {
 	if(MINSQUARE > 1){
 		RNDVAL = r_cycleRNDVAL[Stage][0];
-		register unsigned int i;
+		unsigned int i;
 		unsigned short* pc = color_map;
 		unsigned short* pa = alt_map;
 		for(i = 0;i < part_map_size + H_SIZE;i++){
@@ -288,7 +288,7 @@ void vrtMap::generate_roughness_map(void)
 void vrtMap::map_init(void)
 {
 //	if(Verbose) cout << "MapInit..."<<endl;
-	register unsigned int i,j,x,y;
+	unsigned int i,j,x,y;
 
 	for(y = 0,j = Stage*(part_map_size_y/QUANT);y <= part_map_size_y + QUANT;y += QUANT,j++){
 		if(j == PART_MAX*(part_map_size_y/QUANT)) j = 0;
@@ -535,7 +535,7 @@ void vrtMap::worldRelease(void)
 void vrtMap::generate_noise(void)
 {
 	unsigned short* pa = alt_map;
-	register int i,j;
+	int i,j;
 	for(i = 0;i < (int)part_map_size_y;i++)
 		for(j = 0;j < H_SIZE;j++,pa++)
 			*pa += XRnd(NOISE_AMPL);
@@ -557,7 +557,7 @@ void vrtMap::head_vmpWrite(XStream& fmap)
 void vrtMap::partWrite(XStream& ff,int mode, int Stage)
 {
 	vrtMap::sVmpHeader VmpHeader;
-	register int i,j;
+	int i,j;
 	unsigned short* pa = alt_map;
 	unsigned short* pf = surf_map;
 	unsigned char * pw;
@@ -765,7 +765,7 @@ void vrtMap::GeoRecalc(int n, int level, int delta)
 	SetPP(n);
 
 
-	register int i,j;
+	int i,j;
 	int y1m = (y1 + 1) & clip_mask_y;
 	//Если дельта не равна 0 
 	if(r_delta!=0){
@@ -912,7 +912,7 @@ void CUTVMP(void)
 	vMap -> openMirror();
 	int y = vMap.YCYCL(Y0 - v_size/2);
 
-	register int i,j,x;
+	int i,j,x;
 	unsigned char* pa,*pf,*p;
 	unsigned char** lt = vMap -> lineT;
 	for(j = 0;j < v_size;j++,y = vMap.YCYCL(y + 1)){

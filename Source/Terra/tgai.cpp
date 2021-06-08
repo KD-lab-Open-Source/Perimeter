@@ -8,7 +8,7 @@ void TGAHEAD::save3layers(const char* fname,int sizeX,int sizeY,unsigned char* R
 	Height=(short)sizeY;
 	ff.write(this,sizeof(TGAHEAD));
 	unsigned char *line = new unsigned char[sizeX*3],*p;
-	register unsigned int i,j;
+	unsigned int i,j;
 	for(j = 0; j<sizeY; j++){
 		p = line;
 		for(i = 0; i<sizeX; i++){
@@ -32,7 +32,7 @@ void TGAHEAD::load3layers(const char* fname,int sizeX,int sizeY,unsigned char* R
 	ff.read(this,sizeof(TGAHEAD));
 	if( (Width!=sizeX) || (Height!=sizeY) ) return;
 	unsigned char *line = new unsigned char[sizeX*3],*p;
-	register unsigned int i,j;
+	unsigned int i,j;
 /*	for(j = 0; j<sizeY; j++){
 		p = line;
 		ff.read(line,sizeX*3);
@@ -83,7 +83,7 @@ bool TGAHEAD::load2buf(unsigned char* buf)
 	else return 0;
 
 	unsigned char *line = new unsigned char[Width*byteInPixel],*p;
-	register unsigned int i,j,k;
+	unsigned int i,j,k;
 	int ibeg,jbeg,iend,jend,ik,jk;
 	if(ImageDescriptor&0x20) { jbeg=0; jend=Height; jk=1;}
 	else { jbeg=Height-1; jend=-1; jk=-1;}
@@ -109,7 +109,7 @@ void TGAHEAD::load2RGBL(int sizeX,int sizeY, unsigned long* RGBLBuf)
 {
 	if( (Width!=sizeX) || (Height!=sizeY) ) return;
 	unsigned char *line = new unsigned char[sizeX*3],*p;
-	register unsigned int i,j;
+	unsigned int i,j;
 	int ibeg,jbeg,iend,jend,ik,jk;
 	if(ImageDescriptor&0x20) { jbeg=0; jend=sizeY; jk=1;}
 	else { jbeg=sizeY-1; jend=-1; jk=-1;}

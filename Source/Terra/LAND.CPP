@@ -71,7 +71,7 @@ void vrtMap::landPrepare(void)
 	int max = 0;
 
 	int calc = 1;
-	register int i,j,r,ind;
+	int i,j,r,ind;
 	short* p = rad;
 	if(calc){
 		for(j=-MAX_RADIUS_CIRCLEARR; j<=MAX_RADIUS_CIRCLEARR; j++)
@@ -130,7 +130,7 @@ void vrtMap::deltaZone(sToolzerPMO& var) //(int x,int y,int rad,int smth,int dh,
 
 	static int locp;
 
-	register int i,j;
+	int i,j;
 	int max;
 	int* xx,*yy;
 
@@ -325,7 +325,7 @@ void vrtMap::squareDeltaZone(sSquareToolzerPMO& var)//(int x,int y,int rad,int s
 
 	static int locp;
 
-	register int i,j;
+	int i,j;
 	int max;
 	int* xx,*yy;
 
@@ -638,7 +638,7 @@ void vrtMap::GeoSetZone(int x, int y, int rad, int level, int delta)
 		rad=MAX_RADIUS_CIRCLEARR;
 	}
 
-	register int i,j;
+	int i,j;
 	int max;
 	int* xx,*yy;
 
@@ -711,7 +711,7 @@ int vrtMap::renderBox(int LowX,int LowY,int HiX,int HiY, int changed)//int sizeX
 	}
 
 #else
-	register int j;
+	int j;
 	for(j = 0;j <= sizeY;j++){
 		const int y = YCYCL(j + LowY);
 		if(changed) changedT[y] = 1;
@@ -852,7 +852,7 @@ loc_endRnrCycl:
 	list<sRect>::iterator ra;
 	FOR_EACH(renderAreas,ra){
 		int minX=ra->x;
-		register int j;
+		int j;
 		//for(j = 0; j<= ra->dy; j++){
 		//	const int y = YCYCL(j + ra->y);
 		//	int resultx=RenderStr(ra->x, y, ra->dx);
@@ -899,7 +899,7 @@ void vrtMap::regRender(int LowX,int LowY,int HiX,int HiY,int changed)
 
 //	int BackScanLen = 0;
 /*	int minX=LowX;
-	register int j;
+	int j;
 	for(j = 0;j <= SizeY;j++){
 		const int y = YCYCL(j + LowY);
 		if(changed) changedT[y] = 1;

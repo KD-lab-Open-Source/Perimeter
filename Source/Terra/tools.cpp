@@ -51,7 +51,7 @@ void BitMap::place(char* name,int x,int y,int _force,int _mode,int _border,int _
 
 	//	vMap -> increase(y,y + sy - 1);
 
-		register int i,j;
+		int i,j;
 		int v,xx,yy,vv;
 		for(j = 0;j < sy;j++){
 			yy = vMap.YCYCL(y + j);
@@ -103,7 +103,7 @@ void BitMap::place(char* name,int x,int y,int _force,int _mode,int _border,int _
 		int xt,yt;
 		int xpp=0,ypp=0;
 
-		register int i,j;
+		int i,j;
 		int v,xx,yy,vv;
 		for(j = 0;j < sy;j++){
 			xt=xbeg; yt=ybeg;
@@ -292,7 +292,7 @@ void S3Danalyze(int S3Dmode, int S3Dlevel, int S3DnoiseLevel, int S3DnoiseAmp, i
 
 	vMap.UndoDispatcher_PutPreChangedArea(x,y,x + xysize,y + xysize);
 
-	register int i,j;
+	int i,j;
 	for(j = 0;j < xysize;j++){
 		p = surface + (j << shape_shift);
 		yy = vMap.YCYCL(y + j);

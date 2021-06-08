@@ -267,7 +267,7 @@ void ConvertProcedure(char* name)
 	unsigned char* buf = new unsigned char[xsize];
 
 //	cout <<endl;
-	register int i;
+	int i;
 	for(i = 0;i < ysize;i++){
 		fin.read(buf,xsize);
 		fout.write(buf,xsize);
@@ -442,7 +442,7 @@ void vrtMap::prepare(char* name)
 	prmFile.init(name);
 	maxWorld = atoi(prmFile.getAtom());
 	if(maxWorld < 1) ErrH.Abort("Empty world list");
-	register int i;
+	int i;
 	char* atom;
 	char tString[256];
 	wTable = new vrtWorld[maxWorld];
@@ -1599,7 +1599,7 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 
 //	request(MIN(y0,y1) - MAX_RADIUS/2,MAX(y0,y1) + MAX_RADIUS/2,MIN(x0,x1) - 4,MAX(x0,x1) + 4);
 
-	register int i,j,fx,fy;
+	int i,j,fx,fy;
 	unsigned char* lc = &(RnrBuf[0]);//
 	unsigned char* ls = &(SurBuf[0]);
 
@@ -1737,7 +1737,7 @@ void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 	int y1 = y0 + YSrcSize;
 
 
-	register int i,j,fx,fy;
+	int i,j,fx,fy;
 	unsigned char* lc = &(RnrBuf[0]);//
 	unsigned char* ls = &(SurBuf[0]);
 
@@ -2727,7 +2727,7 @@ void vrtMap::wrldShot(void)
 
 	unsigned char* line = new unsigned char[SX*3],*p;
 
-	register unsigned int i,j;
+	unsigned int i,j;
 	for(j = 0; j<V_SIZE; j++){
 		p = line;
 		for(i = 0; i<H_SIZE; i++){
@@ -2790,7 +2790,7 @@ void vrtMap::wrldShotOutLine(void)
 
 	unsigned char* line = new unsigned char[SX*3],*p;
 
-	register unsigned int i,j;
+	unsigned int i,j;
 	for(j = 0; j<V_SIZE; j++){
 		p = line;
 		for(i = 0; i<H_SIZE; i++){
@@ -2846,7 +2846,7 @@ void vrtMap::wrldShotMapHeight(void)
 
 	unsigned char* line = new unsigned char[SX],*p;
 
-	register unsigned int i,j;
+	unsigned int i,j;
 	for(j = 0; j<V_SIZE; j++){
 		p = line;
 		for(i = 0; i<H_SIZE; i++){
@@ -2888,7 +2888,7 @@ void vrtMap::superWrldShot(int k)
 
 	unsigned char* line = new unsigned char[SX*3],*p;
 
-	register unsigned int i,j;
+	unsigned int i,j;
 	for(j = 0; j<V_SIZE; j++){
 		p = line;
 		for(i = 0; i<H_SIZE; i++){
@@ -2931,7 +2931,7 @@ void vrtMap::superWrldShot(int k)
 
 void vrtMap::FlipWorldH(void)
 {
-	register unsigned int i,j;
+	unsigned int i,j;
 	int DY=V_SIZE;
 	int DX=H_SIZE>>1;
 	int MX=H_SIZE-1;
@@ -2950,7 +2950,7 @@ void vrtMap::FlipWorldH(void)
 
 void vrtMap::FlipWorldV(void)
 {
-	register unsigned int i,j;
+	unsigned int i,j;
 	int DY=V_SIZE>>1;
 	int DX=H_SIZE;
 	int MY=V_SIZE-1;
@@ -2969,7 +2969,7 @@ void vrtMap::FlipWorldV(void)
 
 void vrtMap::RotateWorldP90(void)
 {
-	register unsigned int i,j;
+	unsigned int i,j;
 	int DY=V_SIZE>>1;
 	int DX=H_SIZE-1;
 	int BEGI=0;
@@ -3001,7 +3001,7 @@ void vrtMap::RotateWorldP90(void)
 
 void vrtMap::RotateWorldM90(void)
 {
-	register unsigned int i,j;
+	unsigned int i,j;
 	int DY=V_SIZE>>1;
 	int DX=H_SIZE-1;
 	int BEGI=0;
@@ -3238,7 +3238,7 @@ void vrtMap::scalingHeighMap(int percent)
 {
 	float k=(float)percent/100.f;
 	static int cnt = 0;
-	register unsigned int i,j;
+	unsigned int i,j;
 	for(j = 0; j<V_SIZE; j++){
 		for(i = 0; i<H_SIZE; i++){
 			int offb=offsetBuf(i,j);
