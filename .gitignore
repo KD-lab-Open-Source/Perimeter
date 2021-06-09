@@ -1,3 +1,4 @@
 .svn
 cmake-build-debug
 build
+dockcross/dockcross-*-perimeter
