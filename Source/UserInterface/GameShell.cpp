@@ -14,9 +14,9 @@
 
 //#include "InterfaceScript.h"
 #include "PerimeterShellUI.h"
-#include "controls.h"
+#include "Controls.h"
 
-#include "silicon.h"
+#include "Silicon.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
 #include "../Game/MusicManager.h"

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "ScaleBar.h"
 #include "Utils/AdjustComboboxWidth.h"

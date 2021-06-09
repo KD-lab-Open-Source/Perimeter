@@ -36,7 +36,7 @@ using namespace std;
 #include "xmath.h"
 #include "Timers.h"
 
-#include "umath.h"
+#include "Umath.h"
 #include "IRenderDevice.h"
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"

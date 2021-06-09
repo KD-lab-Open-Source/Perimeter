@@ -2,7 +2,7 @@
 #define __TREE_INTERFACE_H__
 
 #include "Handle.h"
-#include "XUtil.h"
+#include "xutil.h"
 
 #ifdef _USRDLL
 #define DLL_API __declspec(dllexport)

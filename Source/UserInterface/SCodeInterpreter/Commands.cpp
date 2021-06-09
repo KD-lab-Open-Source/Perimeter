@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Commands.hpp"
 #include "../GameShellSq.h"
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Runtime3D.h"
 #include "../Terra/terra.h"
 #include "../UserInterface/chaos.h"

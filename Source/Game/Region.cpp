@@ -1,9 +1,9 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Region.h"
 #include "PrmEdit.h"
 #include "ForceField.h"
 #include "Config.h"
-#include "Terra.h"
+#include "terra.h"
 
 //////////////////////////////////////////////////////////////////////////////////
 //			Region

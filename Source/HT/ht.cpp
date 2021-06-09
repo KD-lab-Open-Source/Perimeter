@@ -5,7 +5,7 @@
 #include "StreamInterpolation.h"
 #include "GenericControls.h"
 #include "Config.h"
-#include "universe.h"
+#include "Universe.h"
 #include "LagStatistic.h"
 
 const DWORD bad_thread_id=0xFFFFFFFF;

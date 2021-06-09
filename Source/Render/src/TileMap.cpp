@@ -3,7 +3,7 @@
 #include "Scene.h"
 #include "ObjLibrary.h"
 #include "../../Game/Region.h"
-#include "font.h"
+#include "Font.h"
 
 cTileMap::cTileMap(cScene* pScene,TerraInterface* terra_) : cUnkObj(KIND_TILEMAP)
 {

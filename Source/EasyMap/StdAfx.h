@@ -13,7 +13,7 @@
 #include <hash_map>
 using namespace std;
 
-#include "umath.h"
+#include "Umath.h"
 
 #include "IRenderDevice.h"
 #include "IVisGeneric.h"

@@ -3,7 +3,7 @@
 #include "MainMenu.h"
 #include "Config.h"
 #include "Runtime.h"
-#include "Terra.h"
+#include "terra.h"
 #include "GenericControls.h"
 #include "Universe.h"
 #include "UniverseInterface.h"
@@ -13,7 +13,7 @@
 #include "../Sound/PerimeterSound.h"
 #include "GraphicsOptions.h"
 
-#include "silicon.h"
+#include "Silicon.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
 #include "MonoSelect.h"

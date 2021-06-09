@@ -1,7 +1,7 @@
 // ModelInfo.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "WinVG.h"
 #include "ModelInfo.h"
 #include "../Render/src/MeshBank.h"

@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include "umath.h"
+#include "Umath.h"
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
 #include "IRenderDevice.h"
@@ -10,7 +10,7 @@
 
 #include "CameraManager.h"
 
-#include "Terra.h"
+#include "terra.h"
 
 #include "GenericControls.h"
 #include "Universe.h"

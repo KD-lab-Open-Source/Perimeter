@@ -2,7 +2,7 @@
 #define __IRONCLUSTERUNIT_H__
 
 #include "EnergyConsumer.h"
-#include "interpolation.h"
+#include "Interpolation.h"
 
 enum terMonkMode
 {

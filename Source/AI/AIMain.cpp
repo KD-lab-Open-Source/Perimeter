@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include "umath.h"
+#include "Umath.h"
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
 #include "IRenderDevice.h"
@@ -16,13 +16,13 @@
 #include "RigidBody.h"
 #include "ForceField.h"
 
-#include "AiMain.h"
+#include "AIMain.h"
 
 #include "GenericUnit.h"
 #include "RealUnit.h"
 #include "IronFrame.h"
 #include "Squad.h"
-#include "AiPrm.h"
+#include "AIPrm.h"
 #include "Installer.h"
 #include "PlaceOperators.h"
 #include "GameShell.h"

@@ -4,7 +4,7 @@
 #include "InterfaceLogic.h"
 #include "Runtime.h"
 #include "UnitAttribute.h"
-#include "Terra.h"
+#include "terra.h"
 #include "Universe.h"
 #include "GenericControls.h"
 #include "Config.h"

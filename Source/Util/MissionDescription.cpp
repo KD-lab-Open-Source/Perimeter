@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "NetPlayer.h"
 #include "Save.h"
 #include "../Terra/crc.h"

@@ -1,5 +1,5 @@
 #include "StdAfxRD.h"
-#include "umath.h"
+#include "Umath.h"
 
 float HermitSpline(float t,float p0,float p1,float p2,float p3)
 {

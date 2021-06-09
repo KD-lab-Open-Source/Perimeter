@@ -1,5 +1,5 @@
 #include "StdAfxRD.h"
-#include "Particle.h"
+#include "particle.h"
 #include "Trail.h"
 
 cTrail::cTrail(float fTimeLife) : cAnimUnkObj(KIND_PARTICLE)

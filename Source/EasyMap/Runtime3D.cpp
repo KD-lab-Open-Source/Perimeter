@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Runtime3D.h"
 #include <queue>
 #include "fps.h"

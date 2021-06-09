@@ -1,8 +1,8 @@
 #ifndef TGA_H
 #define TGA_H
 
-#include <my_stl.h>
-#include "Vector3d.hpp"
+#include <my_STL.h>
+#include "Vector3D.hpp"
 
 namespace tx3d {
 	class TGA {

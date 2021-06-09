@@ -1,5 +1,5 @@
+#include <cstring>
 #include "SceneMesh.h"
-#include "string.h"
 #include "StreamBuffer.h"
 
 /*

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "HistorySceneCamera.h"
 #include "SafeMath.h"
 #include "Controls.h"

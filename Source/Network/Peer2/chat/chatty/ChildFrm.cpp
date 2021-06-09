@@ -1,7 +1,7 @@
 // ChildFrm.cpp : implementation of the CChildFrame class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "chatty.h"
 
 #include "ChildFrm.h"

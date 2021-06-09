@@ -1,5 +1,5 @@
 #include "StdAfxRD.h"
-#include "cChaos.h"
+#include "CChaos.h"
 
 cChaos::cChaos(Vect2f g_size,LPCSTR str_tex0,LPCSTR str_tex1,LPCSTR str_bump,int tile,bool enablebump_)
 :cIUnkObj(KIND_NULL)

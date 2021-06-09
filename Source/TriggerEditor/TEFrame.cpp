@@ -1,7 +1,7 @@
 // TEFrame.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "TEFrame.h"
 #include "resource.h"
 

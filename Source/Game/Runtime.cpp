@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include "umath.h"
+#include "Umath.h"
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
 #include "IRenderDevice.h"
@@ -8,7 +8,7 @@
 #include "PrmEdit.h"
 #include "Runtime.h"
 
-#include "Terra.h"
+#include "terra.h"
 
 #include "CameraManager.h"
 

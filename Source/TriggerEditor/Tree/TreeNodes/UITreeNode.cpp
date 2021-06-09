@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "Custom Controls/xTreeListCtrl.h"
 #include "UITreeNode.h"

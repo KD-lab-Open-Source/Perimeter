@@ -1,7 +1,7 @@
 // CoolDialogBar.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "afxpriv.h"    // for CDockContext
 #include "CoolDialogBar.h"
 #include <algorithm>

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "LogicUpdater.h"
 #include "Universe.h"
 #include "MusicManager.h"

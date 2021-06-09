@@ -5,7 +5,7 @@
 #include <vfw.h>		// AVI include
 #include <setjmp.h>		// JPG include
 #include <math.h>
-#include <XUtil.h>
+#include "xutil.h"
 #include "FileImage.h"
 
 #include <fcntl.h>

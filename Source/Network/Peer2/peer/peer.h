@@ -29,7 +29,7 @@ extern "C" {
 	#include "::serverbrowsing:sb_internal.h"
 #else
 	#include "../nonport.h"
-	#include "../Chat/chat.h"
+	#include "../chat/chat.h"
 	#include "../qr2/qr2.h"
 	#include "../serverbrowsing/sb_internal.h"
 #endif
