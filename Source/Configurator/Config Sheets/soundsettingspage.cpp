@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "..\configurator.h"
+#include "../Configurator.h"
 #include "soundsettingspage.h"
 
 #ifdef _DEBUG

@@ -2,7 +2,7 @@
 // 2xx percentage closer filter
 //-----------------------------------------------------------------------------
 
-#include "..\shade.inl"
+#include "../shade.inl"
 // jittered sample offset table for 1k shadow maps
 #define ccx 0.0005
 def c0, -ccx, -ccx, ccx, ccx

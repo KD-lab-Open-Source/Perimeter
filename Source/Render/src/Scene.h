@@ -3,7 +3,7 @@
 #include "czplane.h"
 #include "NParticle.h"
 #include "SpriteNode.h"
-#include "..\3dx\Node3dx.h"
+#include "../3dx/Node3dx.h"
 
 class cObjectNodeRoot;
 class terUnitBase;

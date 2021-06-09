@@ -19,7 +19,7 @@
 #include "silicon.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
-#include "..\Game\MusicManager.h"
+#include "../Game/MusicManager.h"
 
 #include "RigidBody.h"
 #include "chaos.h"
@@ -32,10 +32,10 @@
 
 #include "ExternalShow.h"
 #include "Triggers.h"
-#include "..\TriggerEditor\TriggerEditor.h"
+#include "../TriggerEditor/TriggerEditor.h"
 
 #include "qd_textdb.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 #include "PlayBink.h"
 
 #include "EditArchive.h"

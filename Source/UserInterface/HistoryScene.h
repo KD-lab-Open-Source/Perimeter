@@ -4,8 +4,8 @@
 #define _HISTORYSCENE_H
 
 #include "PlayOgg.h"
-#include "SCodeInterpreter\Interpreter.hpp"
-#include "SCodeInterpreter\Object3D.hpp"
+#include "SCodeInterpreter/Interpreter.hpp"
+#include "SCodeInterpreter/Object3D.hpp"
 #include "Silicon.h"
 #include "HistorySceneCamera.h"
 #include "History3D.h"

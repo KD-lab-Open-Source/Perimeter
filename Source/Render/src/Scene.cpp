@@ -10,9 +10,9 @@
 #include "cZPlane.h"
 #include "CChaos.h"
 
-#include "..\client\Silicon.h"
+#include "../client/Silicon.h"
 #include <typeinfo.h>
-#include "..\3dx\Lib3dx.h"
+#include "../3dx/Lib3dx.h"
 //#include <map>
 //using namespace std;
 

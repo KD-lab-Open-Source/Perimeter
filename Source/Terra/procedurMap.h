@@ -1,9 +1,9 @@
 #ifndef __PROCEDURMAP_H__
 #define __PROCEDURMAP_H__
 
-#include "..\util\Serialization.h"
-#include "..\util\SerializationImpl.h"
-#include "..\util\XPrmArchive.h"
+#include "../Util/Serialization.h"
+#include "../Util/SerializationImpl.h"
+#include "../Util/XPrmArchive.h"
 
 
 enum PMOperatinID {

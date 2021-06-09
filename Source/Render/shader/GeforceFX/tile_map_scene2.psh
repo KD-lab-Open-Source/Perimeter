@@ -1,4 +1,4 @@
-#include "..\shade.inl"
+#include "../shade.inl"
 ps.2.0
 
 // ambient color

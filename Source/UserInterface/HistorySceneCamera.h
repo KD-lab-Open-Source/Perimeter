@@ -3,7 +3,7 @@
 #ifndef _HISTORYSCENECAMERA_H
 #define _HISTORYSCENECAMERA_H
 
-#include "SCodeInterpreter\Controller.hpp"
+#include "SCodeInterpreter/Controller.hpp"
 
 class CameraPosition {
 	public:

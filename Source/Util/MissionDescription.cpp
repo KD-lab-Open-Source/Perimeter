@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "NetPlayer.h"
 #include "Save.h"
-#include "..\terra\crc.h"
-#include "Scripts\Config.hi"
+#include "../Terra/crc.h"
+#include "Scripts/Config.hi"
 
 const char* SAVE_VERSION = "V2.00";
 

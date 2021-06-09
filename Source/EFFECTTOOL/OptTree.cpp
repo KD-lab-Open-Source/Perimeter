@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "EffectTool.h"
 #include "OptTree.h"
-#include ".\opttree.h"
 #include "MainFrm.h"
 #include <ios>
 

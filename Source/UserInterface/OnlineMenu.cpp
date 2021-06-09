@@ -11,7 +11,7 @@
 #include "Controls.h"
 
 #include "BGScene.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 extern MpegSound gb_Music;
 

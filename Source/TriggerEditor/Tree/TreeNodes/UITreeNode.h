@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "TREE\TREENODES\ITreeNode.h"
+#include "Tree/TreeNodes/ITreeNode.h"
 #include <string>
 
 class UITreeNodeFabric;

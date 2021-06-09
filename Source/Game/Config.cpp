@@ -4,21 +4,21 @@
 #include "UnitAttribute.h"
 #include "InterfaceScript.h"
 
-#include "Scripts\GameShellSq.hi"
-#include "Scripts\GameShellSq.cppi"
+#include "Scripts/GameShellSq.hi"
+#include "Scripts/GameShellSq.cppi"
 
 namespace export {
-#include "Scripts\InterfaceScriptExport.hi"
-#include "Scripts\InterfaceScriptExport.cppi"
+#include "Scripts/InterfaceScriptExport.hi"
+#include "Scripts/InterfaceScriptExport.cppi"
 }
 
-#include "Scripts\AI.cppi"
-#include "Scripts\Mutation.cppi"
-#include "Scripts\RigidBody.cppi"
-#include "Scripts\Config.cppi"
-#include "Scripts\Region.cppi"
+#include "Scripts/AI.cppi"
+#include "Scripts/Mutation.cppi"
+#include "Scripts/RigidBody.cppi"
+#include "Scripts/Config.cppi"
+#include "Scripts/Region.cppi"
 
-#include "Scripts\filth.cppi"
+#include "Scripts/filth.cppi"
 
 #include "Universe.h"
 #include "Player.h"
@@ -29,8 +29,8 @@ namespace export {
 
 
 namespace export {
-#include "Scripts\UnitAttribute.hi"
-#include "Scripts\UnitAttribute.cppi"
+#include "Scripts/UnitAttribute.hi"
+#include "Scripts/UnitAttribute.cppi"
 }
 
 template<class D, class S>

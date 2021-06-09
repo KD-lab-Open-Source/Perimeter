@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SlotManager.h"
-#include "..\shader\shaders.h"
+#include "../shader/shaders.h"
 #include "DrawType.h"
 
 enum

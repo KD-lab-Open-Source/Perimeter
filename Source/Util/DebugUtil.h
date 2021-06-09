@@ -4,7 +4,7 @@
 
 #include <strstream>
 #include "statistics.h"
-#include "..\Render\Inc\umath.h"
+#include "../Render/inc/Umath.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 //		Statistic's Groups
@@ -239,6 +239,6 @@ inline float logicRNDfa(const char* file, int line)
 
 enum terUnitAttributeID;
 
-#include "..\Util\DebugPrm.h"
+#include "../Util/DebugPrm.h"
 
 #endif // __PHYSICS_UTIL_H__

@@ -112,7 +112,7 @@ struct sPtrIndexBuffer
 };
 
 #include "VertexFormat.h"
-#include "..\D3D\VertexBuffer.h"
+#include "../D3D/VertexBuffer.h"
 
 class cFont;
 class cTexture;

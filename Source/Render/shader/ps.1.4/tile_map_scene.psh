@@ -1,7 +1,7 @@
 // Pixel shader for shadows maps
 // with 4 higher than 8-bit precision samples
 // and percentage closer filtering
-#include "..\shade.inl"
+#include "../shade.inl"
 
 ps.1.4
 // Intensity in shadow

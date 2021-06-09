@@ -8,7 +8,6 @@
 #include "EffectTreeView.h"
 #include "ControlView.h"
 #include "OptTree.h"
-#include ".\mainfrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

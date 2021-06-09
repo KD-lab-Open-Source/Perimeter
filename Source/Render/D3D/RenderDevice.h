@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\inc\IRenderDevice.h"
+#include "../inc/IRenderDevice.h"
 #include "ddraw.h"
-#include "..\src\TexLibrary.h"
+#include "../src/TexLibrary.h"
 
 int RDWriteLog(HRESULT err,char *exp,char *file,int line);
 void RDWriteLog(DDSURFACEDESC2 &ddsd);

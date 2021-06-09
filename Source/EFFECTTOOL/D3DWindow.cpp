@@ -5,7 +5,6 @@
 #include "EffectTool.h"
 #include "D3DWindow.h"
 #include "ControlView.h"
-#include ".\d3dwindow.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

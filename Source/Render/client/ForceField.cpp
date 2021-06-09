@@ -1,11 +1,11 @@
 #include "StdAfxRD.h"
 #include "ForceField.h"
-//#include "..\Util\ProTool.h"
-#include "..\src\Scene.h"
+//#include "../Util/ProTool.h"
+#include "../src/Scene.h"
 
 //#include "PrmEdit.h"
-#include "Scripts\ForceField.hi"
-#include "Scripts\ForceField.cppi"
+#include "Scripts/ForceField.hi"
+#include "Scripts/ForceField.cppi"
 
 FieldDispatcher* field_dispatcher = NULL;
 

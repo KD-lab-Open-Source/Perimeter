@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "effecttool.h"
 #include "ControlView.h"
-#include ".\controlview.h"
 
 extern COptTree* tr;
 #ifdef _DEBUG

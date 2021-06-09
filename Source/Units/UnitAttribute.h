@@ -1,23 +1,23 @@
 #ifndef __UNIT_ATTRIBUTE_H__
 #define __UNIT_ATTRIBUTE_H__
 
-#include "..\Util\Serialization.h"
-#include "..\Util\TypeLibrary.h"
+#include "../Util/Serialization.h"
+#include "../Util/TypeLibrary.h"
 
 #ifndef _UNIT_ATTRIBUTE_INL_
 #define _UNIT_ATTRIBUTE_INL_
-#include "..\Scripts\UnitAttribute.inl"
-#include "..\Scripts\SquadShellEnums.inl"
+#include "../Scripts/UnitAttribute.inl"
+#include "../Scripts/SquadShellEnums.inl"
 #endif // _UNIT_ATTRIBUTE_INL_
 
 #ifndef __TOOLZER_ENUMS_INL__
 #define __TOOLZER_ENUMS_INL__
-#include "..\Scripts\ToolzerEnums.inl"
+#include "../Scripts/ToolzerEnums.inl"
 #endif // __TOOLZER_ENUMS_INL__
 
-#include "..\Physics\RigidBodyPrm.h"
-#include "..\Util\DebugUtil.h"
-#include "..\UserInterface\SoundTrack.h"
+#include "../Physics/RigidBodyPrm.h"
+#include "../Util/DebugUtil.h"
+#include "../UserInterface/SoundTrack.h"
 
 typedef vector<Vect2f> Vect2fVect;
 typedef vector<Vect2i> Vect2iVect;

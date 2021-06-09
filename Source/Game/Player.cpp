@@ -81,7 +81,7 @@
 #include "FilthWorm.h"
 #include "FilthShark.h"
 #include "FilthVolcano.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 //-------------------------------------
 terPlayer::terPlayer(const PlayerData& playerData) 

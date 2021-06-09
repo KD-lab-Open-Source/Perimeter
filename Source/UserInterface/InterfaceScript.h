@@ -1,8 +1,8 @@
 #ifndef __INTERFACE_SCRIPT_H__
 #define __INTERFACE_SCRIPT_H__
 
-#include "..\Util\Serialization.h"
-#include "..\Util\TypeLibrary.h"
+#include "../Util/Serialization.h"
+#include "../Util/TypeLibrary.h"
 
 #ifndef _UNIT_ATTRIBUTE_INL_
 #define _UNIT_ATTRIBUTE_INL_

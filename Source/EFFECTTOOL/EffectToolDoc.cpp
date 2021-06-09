@@ -1471,7 +1471,7 @@ int CEffectToolDoc::Release3DModel(void)
 	return 0;
 }
 
-#include "..\Terra\terra.h"
+#include "../Terra/terra.h"
 
 void CEffectToolDoc::MoveEffectCenter(float dx, float dy)
 {

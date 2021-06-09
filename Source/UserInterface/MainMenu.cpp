@@ -10,14 +10,14 @@
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 #include "Controls.h"
-#include "..\sound\PerimeterSound.h"
+#include "../Sound/PerimeterSound.h"
 #include "GraphicsOptions.h"
 
 #include "silicon.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
 #include "MonoSelect.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 #include "qd_textdb.h"
 
 #include "MessageBox.h"

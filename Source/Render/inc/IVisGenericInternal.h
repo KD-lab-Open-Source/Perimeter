@@ -76,7 +76,7 @@ public:
 	virtual void GetEmitterMaterial(struct cObjMaterial& material)=0;
 };
 
-#include "..\src\visgeneric.h"
+#include "../src/VisGeneric.h"
 
 /*
 	Нельзя создать два объекта cVisGeneric или cLogicGeneric.

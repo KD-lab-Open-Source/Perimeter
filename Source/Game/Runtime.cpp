@@ -26,38 +26,38 @@
 #include "UnitAttribute.h"
 #include "PerimeterShellUI.h"
 
-#include "..\PluginMax\ZIPStream.h"
+#include "../PluginMAX/ZIPStream.h"
 
 #include "Universe.h"
-#include "..\resource.h"
+#include "../resource.h"
 
 #include <commdlg.h>
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 #include "GraphicsOptions.h"
 
 const char* currentVersion = 
 "Ver "
-#include "..\version.h" 
+#include "../version.h"
 " (" __DATE__ " " __TIME__ ")";
 
 #ifdef _SINGLE_DEMO_
 const char* currentShortVersion = 
 "Комтек'04 демо, v"
-#include "..\version.h" 
+#include "../version.h"
 ;
 #endif
 
 #ifdef _MULTIPLAYER_DEMO_
 const char* currentShortVersion = 
 "Multiplayer Demo (for GameSpy internal testing only), v"
-#include "..\version.h" 
+#include "../version.h"
 ;
 #endif
 
 #ifndef _DEMO_
 const char* currentShortVersion = 
 "v"
-#include "..\version.h" 
+#include "../version.h"
 ;
 #endif
 
