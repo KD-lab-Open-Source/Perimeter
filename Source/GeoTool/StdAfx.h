@@ -43,7 +43,9 @@
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
 /*
 // Standart includes
 #include <string.h>

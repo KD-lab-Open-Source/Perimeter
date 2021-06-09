@@ -53,5 +53,24 @@
 #define __forceinline inline
 #endif //_MSC_VER
 
+#ifndef _WIN32
+//TODO is strcasecmp available in non linux platforms?
+#define stricmp strcasecmp
+//TODO this is some Windows window handler pointer, it should be abstracted with SDL2 like in Vangers
+typedef void *HWND;
+//TODO replace the usages in codebase
+#include <cstdint>
+typedef uint8_t BYTE;
+typedef uint16_t WORD;
+typedef uint32_t DWORD;
+typedef uint32_t UINT;
+typedef int64_t __int64;
+//TODO this comes from Win32
+#define MAX_PATH 260
+//TODO use SDL2 or something?
+void GetCurrentDirectory(unsigned short size, char* path) {
+}
+#endif
+
 
 #endif // __STL_ADDITION_H__
