@@ -76,7 +76,7 @@ public:
 	ComboListDescriptor(const char* type_name) : typeName_(type_name) { add(0,""); }
 
 	T objectByName(const char* name) const {
-		NameToObject::const_iterator it = nameToObject_.find(name);
+		typename NameToObject::const_iterator it = nameToObject_.find(name);
 		if(it != nameToObject_.end())
 			return it -> second;
 
@@ -85,7 +85,7 @@ public:
 	}
 
 	const char* name(const T& object) const {
-		ObjectToName::const_iterator it = objectToName_.find(object);
+		typename ObjectToName::const_iterator it = objectToName_.find(object);
 		if(it != objectToName_.end())
 			return it -> second.c_str();
 
@@ -130,7 +130,7 @@ public:
 	EnumDescriptor(const char* typeName) : typeName_(typeName) {}
 
 	const char* name(Enum key) const {
-		KeyToName::const_iterator i = keyToName.find(key);
+		typename KeyToName::const_iterator i = keyToName.find(key);
 		if(i != keyToName.end())
 			return i->second.c_str();
 		xassert(0 && "Unregistered enum key");
@@ -138,7 +138,7 @@ public:
 	}
 
 	const char* nameAlt(Enum key) const {
-		KeyToName::const_iterator i = keyToNameAlt.find(key);
+		typename KeyToName::const_iterator i = keyToNameAlt.find(key);
 		if(i != keyToNameAlt.end())
 			return i->second.c_str();
 		xassert(0 && "Unregistered enum key");
@@ -163,7 +163,7 @@ public:
 
 	string nameCombination(int bitVector) const {
 		string value;
-		for(KeyToName::const_iterator i = keyToName.begin(); i != keyToName.end(); ++i)
+		for(typename KeyToName::const_iterator i = keyToName.begin(); i != keyToName.end(); ++i)
 			if((bitVector & i->first) == i->first){
 				bitVector &= ~i->first;
 				if(!value.empty())
@@ -175,7 +175,7 @@ public:
 
 	string nameAltCombination(int bitVector) const {
 		string value;
-		for(KeyToName::const_iterator i = keyToNameAlt.begin(); i != keyToNameAlt.end(); ++i)
+		for(typename KeyToName::const_iterator i = keyToNameAlt.begin(); i != keyToNameAlt.end(); ++i)
 			if((bitVector & i->first) == i->first){
 				bitVector &= ~i->first;
 				if(!value.empty())
@@ -413,7 +413,7 @@ public:
 	}
 
 	SerializerBase& find(const char* name) {
-		Map::iterator i = map_.find(name);
+		typename Map::iterator i = map_.find(name);
 		if(i == map_.end()){
 			xassertStr(0 && "Unregistered class", name);
 			ErrH.Abort("Unregistered class", XERR_USER, 0, name);
@@ -458,9 +458,11 @@ public:
 		return saveParameters(instance());
 	}
 
+	/* TODO is this needed? is trying to use a partial class constructor
 	static bool edit() {
 		return edit(EditArchive());
 	}
+    */
 
 	static bool edit(EditArchive& ea) {
 		return editParameters(instance(), ea);

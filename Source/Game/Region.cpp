@@ -5,6 +5,10 @@
 #include "Config.h"
 #include "terra.h"
 
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+#include <functional> // bind
+#endif
+
 //////////////////////////////////////////////////////////////////////////////////
 //			Region
 //////////////////////////////////////////////////////////////////////////////////
@@ -1355,7 +1359,13 @@ void Region::rasterize(Column& rast_column)
 		
 		vector<vector<int> > column(y1 - y0 + 1);
 
-		#define PUT(x, y) { if(y >= y0 && y <= y1){ vector<int>& line = column[y - y0]; line.insert(find_if(line.begin(), line.end(), bind1st(less<int>(), x)), x); } }
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+#define LESS(x) bind1st(less<int>(), x)
+#else
+#define LESS(x) std::bind(less<int>(), x, std::placeholders::_1)
+#endif
+
+		#define PUT(x, y) { if(y >= y0 && y <= y1){ vector<int>& line = column[y - y0]; line.insert(find_if(line.begin(), line.end(), LESS(x)), x); } }
 	
 		spline().set_offset(t_up);
 		float dt = spline().suggest_dt(rasterize_dlen);

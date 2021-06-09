@@ -229,15 +229,3 @@ Vector3D Texture3DUtils::convertRGBtoHSB(const Vector3D& rgbColor) {
 */
 	return hsbColor;
 }
-
-#pragma warning( push )
-#pragma warning( disable : 4035 )
-float Texture3DUtils::reminder(float x, float y) {
-	__asm {
-		fld y
-		fld x
-		fprem
-		fstp st(1)
-	}
-}
-#pragma warning(pop)

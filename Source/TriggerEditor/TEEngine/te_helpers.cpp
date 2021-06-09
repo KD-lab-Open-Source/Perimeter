@@ -69,17 +69,17 @@ void getLinkTriangle(CPoint const& pt_from, CPoint const& pt_to, TRIANGLE &trg)
 	ort_f.normalize(10.f);//получаем  единичные вектор * параметр функции
 	Vect2f normal(ort_f.y, -ort_f.x);
 
-	const CPoint ort_x2(round(ort_f.x)<<1, round(ort_f.y)<<1);
+	const CPoint ort_x2((int)round(ort_f.x)<<1, (int)round(ort_f.y)<<1);
 	//точка, к которой будет сходиться стрела
 	trg[0] = pt_to;
 	trg[1] = CPoint(pt_to - ort_x2);
 	trg[2] = CPoint(pt_to - ort_x2);
 
-	trg[1].x += round(normal.x)>>1;
-	trg[1].y += round(normal.y)>>1;
+	trg[1].x += (int)round(normal.x)>>1;
+	trg[1].y += (int)round(normal.y)>>1;
 
-	trg[2].x += round(-normal.x)>>1;
-	trg[2].y += round(-normal.y)>>1;
+	trg[2].x += (int)round(-normal.x)>>1;
+	trg[2].y += (int)round(-normal.y)>>1;
 }
 
 CPoint const getLinkBegin(Trigger const& ownedTrigger, TriggerLink const& link)

@@ -833,7 +833,7 @@ int ResourceFileRead(const char *filename,char *&buf,int &size)
 	
 
 	size=_lseek(file,0,SEEK_END);
-	if(size<=0) { _close(file); return -1<<1; }
+	if(size<=0) { _close(file); return -2; }
 	_lseek(file,0,SEEK_SET);
 	buf=new char[size];
 	_read(file,buf,size);

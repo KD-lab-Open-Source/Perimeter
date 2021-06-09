@@ -74,10 +74,14 @@ const float FLT_COMPARE_TOLERANCE = 1.e-5f;
 
 const int INT_INF = 0x7fffffff;
 
+#ifdef _MSC_VER
 #if _MSC_VER == 1100 /* if MSVisual C++ 5.0 */
 #define xm_inline inline
 #else
 #define xm_inline __forceinline
+#endif //_MSC_VER
+#else
+#define xm_inline inline
 #endif //_MSC_VER
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -88,6 +92,9 @@ const int INT_INF = 0x7fffffff;
 
 #ifndef __ROUND__
 #define __ROUND__
+
+// Modern compilers already have std::round
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 
 xm_inline int round(double x)
 {
@@ -108,6 +115,8 @@ xm_inline int round(float x)
 	}
 	return a;
 }
+
+#endif
 
 template <class T> 
 xm_inline T sqr(const T& x){ return x*x; }
@@ -465,7 +474,10 @@ public:
 	static const Mat2f ID;
 };
 // forward transform
-xm_inline const Vect2f operator* (const Mat2f& m, const Vect2f& v) { return Vect2f(v) *= m; }
+xm_inline const Vect2f operator* (const Mat2f& m, const Vect2f& v) {
+    Vect2f t = Vect2f(v);
+    return t *= m;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -494,7 +506,10 @@ public:
 	static const MatX2f ID;
 };
 // forward transform
-xm_inline const Vect2f operator* (const MatX2f& m, const Vect2f& v) { return Vect2f(v) *= m; }
+xm_inline const Vect2f operator* (const MatX2f& m, const Vect2f& v) {
+    Vect2f t = Vect2f(v);
+    return t *= m;
+}
 
 
 
@@ -3008,6 +3023,8 @@ Mat3f& Mat3f::set(float angle, eAxis axis)
 			yx   = 0;	  yy	 =  1;	    yz	 = 0;
 			zx   = -salpha; zy	 =  0;	    zz	 = calpha;
 			break;
+        case W_AXIS:
+            break;
 		}
 	return *this;
 }
@@ -3501,7 +3518,9 @@ Mat3d& Mat3d::set(double angle, eAxis axis)
 			yx   = 0;	  yy	 =  1;	    yz	 = 0;
 			zx   = -salpha; zy	 =  0;	    zz	 = calpha;
 			break;
-		}
+        case W_AXIS:
+            break;
+    }
 	return *this;
 }
 

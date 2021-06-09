@@ -12,6 +12,8 @@
 
 #include "procedurMap.h"
 
+extern int NOISE_AMPL;
+
 //Структура определяющая границу кластера
 struct pointB {
 	short x,y;
@@ -387,7 +389,7 @@ struct vrtMap {
 	bool saveGameMap(const char* fname);
 
 	void getWorldList(vector<const char*>& world_list) { world_list.clear(); for(int i = 0; i < maxWorld; i++) world_list.push_back(wTable[i].name); }
-	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(_stricmp(wTable[i].name, world_name) == 0) return i; return -1; }
+	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(stricmp(wTable[i].name, world_name) == 0) return i; return -1; }
 	const char* getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name; }
 
 	enum eSurfaceMode{

@@ -5,6 +5,14 @@
 #ifndef __GRID_2D__
 #define __GRID_2D__
 
+
+
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+// non-standard header
+// FIXME : should be here? it's in stdafx.h already...
+#define slist list
+#endif
+
 // Прямоугольная область для сканироавния 
 // и 2D баундов
 struct GridRectangle 

@@ -31,7 +31,7 @@ public:
 	int open(void *buf,int size,int attribute);
 	int eof();					
 	int read(void *buf,int size);
-	int write(void *buf,int size);
+	int write(const void *buf,int size);
 	int length();
 	int tell();
 	void seek(int pos);

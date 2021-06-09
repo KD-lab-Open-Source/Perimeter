@@ -36,14 +36,15 @@ float CubicInterpolator3D ::interpolate(const Vector3D &v) {
 	zd = v.z - zi;
 */
 	// fast implementation of C code above
-	_asm {
+#ifdef _MSC_VER
+    _asm{
 		mov		esi, v
 		fld		[dword ptr HALF]
 
 		fld		[dword ptr esi]
 		fld		st(0)
 		fsub	st(0), st(2)
-	fistp	[dword ptr xi]	
+	fistp	[dword ptr xi]
 	fild	[dword ptr xi]
 		fsubp	st(1), st(0)
 		fstp	[dword ptr xd]
@@ -51,7 +52,7 @@ float CubicInterpolator3D ::interpolate(const Vector3D &v) {
 		fld		[dword ptr esi + 4]
 		fld		st(0)
 		fsub	st(0), st(2)
-	fistp	[dword ptr yi]	
+	fistp	[dword ptr yi]
 	fild	[dword ptr yi]
 		fsubp	st(1), st(0)
 		fstp	[dword ptr yd]
@@ -59,13 +60,23 @@ float CubicInterpolator3D ::interpolate(const Vector3D &v) {
 		fld		[dword ptr esi + 8]
 		fld		st(0)
 		fsub	st(0), st(2)
-	fistp	[dword ptr zi]	
+	fistp	[dword ptr zi]
 	fild	[dword ptr zi]
 		fsubp	st(1), st(0)
-		fstp	[dword ptr zd]	
-	
+		fstp	[dword ptr zd]
+
 		fstp	st(0)
-	};
+	}
+#else
+    //TODO no idea if this is correct
+    xi = v.x;
+    yi = v.y;
+    zi = v.z;
+
+    xd = v.x - xi;
+    yd = v.y - yi;
+    zd = v.z - zi;
+#endif
 
 	xi += yi * 400 + zi * 160000;
 

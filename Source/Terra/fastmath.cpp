@@ -49,7 +49,7 @@ void  build_sqrt_table()
 
 // At the assembly level the recommended workaround for the second FIST bug is the same for the first; 
 // inserting the FRNDINT instruction immediately preceding the FIST instruction. 
-
+/*
 __forceinline void FloatToInt(int *int_pointer, float f) 
 {
 	__asm  fld  f
@@ -58,7 +58,7 @@ __forceinline void FloatToInt(int *int_pointer, float f)
   __asm  fistp dword ptr [edx];
 
 }
-
+*/
 
 /*
 int main(int argc, char* argv[])

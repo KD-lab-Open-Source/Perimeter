@@ -22,7 +22,7 @@ const string SandSmooth::TYPE_NAME = "SandSmooth";
 
 void Sand::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 	noise *= grad;
-	if (Texture3DUtils::round(noise) & 1 != 0) {
+	if ((Texture3DUtils::round(noise) & 1) != 0) {
 		noise -=step;
 	}
 	noise /= grad;
@@ -40,7 +40,7 @@ void Sand::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 
 void SandSmooth::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 	noise *= 3.0;
-	if (Texture3DUtils::round(noise) & 1 != 0) {
+	if ((Texture3DUtils::round(noise) & 1) != 0) {
 		noise -=2.0;
 	}
 	noise /= 3.0;

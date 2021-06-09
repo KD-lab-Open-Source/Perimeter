@@ -1220,7 +1220,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			*(pa+i)&=~At_SHADOW;
 
 //расчет - full int
-			int A=((Vr<<2)-(V<<2)),B=((V<<2)-(Vh<<2)), C=-1<<8; //C=-1<<7//7дробных! //сдвиг на 8для большей плавности рельефа т.к. точность была потеряна при переходе на VX_FRACTION=5
+			int A=((Vr<<2)-(V<<2)),B=((V<<2)-(Vh<<2)), C=-(1<<8); //C=-1<<7//7дробных! //сдвиг на 8для большей плавности рельефа т.к. точность была потеряна при переходе на VX_FRACTION=5
 			//float A=(float)(Vr-V)/(float)(1<<VX_FRACTION);
 			//float B=(float)(V-Vh)/(float)(1<<VX_FRACTION);
 			//float C=-1;

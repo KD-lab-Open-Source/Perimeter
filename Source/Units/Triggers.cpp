@@ -362,7 +362,7 @@ bool ConditionOutOfEnergyCapacity::check(AIPlayer& aiPlayer)
 bool ConditionNumberOfBuildingByCoresCapacity::check(AIPlayer& aiPlayer)
 {
 	AIPlayer* player = getPlayer(aiPlayer, playerType);
-	return compare(round(player->countUnits(building)*factor), player->countUnits(building2), compareOp);
+	return compare((int)round(player->countUnits(building)*factor), player->countUnits(building2), compareOp);
 }
 
 void ConditionUnitClassUnderAttack::checkEvent(AIPlayer& aiPlayer, const Event& event)

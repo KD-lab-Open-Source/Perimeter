@@ -671,7 +671,7 @@ cFont* cVisGeneric::CreateFont(const char *TextureFileName,int h,bool silentErr)
 	FOR_EACH(fonts,it)
 	{
 		cFontInternal* f=*it;
-		if(_stricmp(f->font_name.c_str(),TextureFileName)==0 && 
+		if(stricmp(f->font_name.c_str(),TextureFileName)==0 &&
 			f->GetStatementHeight()==h)
 		{
 			return new cFont(f);

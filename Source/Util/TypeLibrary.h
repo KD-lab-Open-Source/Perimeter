@@ -88,16 +88,16 @@ public:
 	};
 
 	const Type* find(const Key& key) {
-		Map::const_iterator i = map_.find(key);
+		typename Map::const_iterator i = map_.find(key);
 		return i != map_.end() ? i->second() : 0;
 	}
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		typedef list<Map::value_type> List;																		
+		typedef list<typename Map::value_type> List;
 		List tmpStorage;
 		if(ar.isOutput()){
-			Map::iterator i;
+            typename Map::iterator i;
 			FOR_EACH(map_, i)
 				tmpStorage.push_back(*i);
 		}
@@ -108,7 +108,7 @@ public:
 		
 		if(ar.isInput()){
 			comboList_.clear();
-			List::iterator i;
+            typename List::iterator i;
 			FOR_EACH(tmpStorage, i){
 				map_.insert(*i);
 				if(!comboList_.empty())

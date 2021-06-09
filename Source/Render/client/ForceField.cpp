@@ -628,7 +628,7 @@ int FieldDispatcher::calcPenalty(const Vect3f& center, float radius, float feedb
 {
 	int xc = w2m(center.xi());
 	int yc = w2m(center.yi());
-	int D = (round(radius) >> scale) + 1;
+	int D = ((int)round(radius) >> scale) + 1;
 	float d_best = FLT_INF;
 	int x_best, y_best;
 	const Vect3f* n_best;

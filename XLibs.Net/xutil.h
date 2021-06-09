@@ -191,7 +191,7 @@ struct XStream
 	char*	getline(char* buf, unsigned len);
 	int	eof(){ return eofFlag || pos >= size(); }
 	long	size() const;
-	int	gethandler(){ return (int)handler; }
+	//int	gethandler(){ return (int)handler; } //TODO seems unused? also not allowed in modern C
 	void	gettime(unsigned& date,unsigned& time);
 	void	flush();
 	const char*	GetFileName() const { return fname; }
@@ -381,6 +381,9 @@ char* XFindFirst(char* mask);
 #ifndef __ROUND__
 #define __ROUND__
 
+// Modern compilers already have std::round
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+
 __forceinline int round(double x)
 {
 	int a;
@@ -401,14 +404,17 @@ __forceinline int round(float x)
 	return a;
 }
 
+#endif
+
 template <class T> 
 __forceinline T sqr(const T& x){ return x*x; }
 
 template <class T> 
 __forceinline int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
 
-#endif __ROUND__
+#endif //__ROUND__
 
+/*
 __forceinline int BitSR(int x)
 {
 	int return_var;
@@ -421,6 +427,18 @@ __forceinline int BitSR(int x)
 		mov [return_var],eax
 	}
 	return return_var;
+}
+*/
+
+// Copied C version from Vangers
+// TODO(amdmi3): very inefficient; rewrite
+inline int BitSR(int x) {
+    unsigned int a = abs(x);
+    for (int i = 31; i > 0; i--)
+        if (a & (1 << i))
+            return i;
+
+    return 0;
 }
 
 void initclock(void);
@@ -514,6 +532,8 @@ void ZIP_expand(char* trg,ulong trgsize,char* src,ulong srcsize);
 # define _VC_SUFFIX "VC7"
 #elif (_MSC_VER >= 1400)
 # define _VC_SUFFIX "VC8"
+#else
+#define _VC_SUFFIX ""
 #endif
 
 #ifndef __XTOOL_H

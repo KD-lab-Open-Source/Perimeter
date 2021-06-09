@@ -1,5 +1,7 @@
 #include <my_STL.h>
 #include <windows.h>
+#include <cmath>
+#include <cstring>
 #include <xutil.h>
 
 #include "ZIPStream.h"
@@ -7,7 +9,7 @@
 #ifndef _NOZIP
 #include "zip_resource.h"
 static XZIP_Resource* pzip=NULL;
-#endif _NOZIP
+#endif //_NOZIP
 
 bool ZIPIsOpen()
 {
@@ -15,7 +17,7 @@ bool ZIPIsOpen()
 	return pzip!=NULL;
 #else
 	return false;
-#endif _NOZIP
+#endif //_NOZIP
 }
 
 void ZIPOpen(const char* zip_filename)
@@ -23,7 +25,7 @@ void ZIPOpen(const char* zip_filename)
 #ifndef _NOZIP
 	ZIPClose();
 	pzip=new XZIP_Resource((char*)zip_filename,XZIP_ENABLE_ZIP_HEADERS);
-#endif _NOZIP
+#endif //_NOZIP
 }
 
 void ZIPClose()
@@ -31,7 +33,7 @@ void ZIPClose()
 #ifndef _NOZIP
 	delete pzip;
 	pzip=NULL;
-#endif _NOZIP
+#endif //_NOZIP
 }
 
 ZIPStream::ZIPStream(const char* fname)
@@ -48,7 +50,7 @@ ZIPStream::ZIPStream(const char* fname)
 		if(!b_open)
 			b_open=open(fname)!=0;
 	}else
-#endif _NOZIP
+#endif //_NOZIP
 	{
 		b_open=open(fname)!=0;
 	}

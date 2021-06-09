@@ -2685,7 +2685,7 @@ int sTVolcano::quant()
 
 //////////////////////////////////////////////////////////////////////////////
 const int analyze_terrain_upper_dz_max=16<<VX_FRACTION;
-const int analyze_terrain_lower_dz_min=-16<<VX_FRACTION;
+const int analyze_terrain_lower_dz_min=-(16<<VX_FRACTION);
 static void analyzeTerrain(Vect3f& position, float radius, Vect3f& outOrientation)
 {
 	int D = round(radius);// >> kmGrid;
@@ -3402,7 +3402,7 @@ void bubbleOld(int x, int y)
 	static unsigned char* flag_first_start=0;
 	const int MAX_EL_ARR=10000;
 	static int num_el_arr=0;
-	static sTBubble *(bubArr[MAX_EL_ARR]);
+	static sTBubble *bubArr[MAX_EL_ARR];
 	if(num_el_arr==0){for(int m=0; m<MAX_EL_ARR; m++) bubArr[m]=0;}
 
 	if(num_el_arr>=MAX_EL_ARR-1) return;
@@ -5208,7 +5208,7 @@ bool meshM2VM::load(const char* fname)//, int numMesh)
 
 	//calcNormals();
 */
-#endif _PERIMETER_
+#endif //_PERIMETER_
 
 	return 1;
 }

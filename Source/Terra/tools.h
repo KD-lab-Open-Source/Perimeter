@@ -215,6 +215,7 @@ public:
 					break;
 				case T2TE_ERASE_ZEROPLAST:
 					{
+                        int offB=offY+vMap.XCYCL(j+begx);
 						if(dV) vMap.AtrBuf[offB]&=~At_NOTPURESURFACE;
 					}
 					break;
@@ -349,7 +350,7 @@ public:
 						cy = vMap.YCYCL(y+yy[j]);
 						cx = vMap.XCYCL(x + xx[j]);
 						h = vMap.SGetAlt(cx,cy);
-						if(abs(h - mean) < eql)
+						if(abs(h - mean) < eql) {
 							if(h > mean){ //voxSet(cx,cy,-1);
 								//tVoxSet( vMap.offsetBuf(cx, cy), -DH_MEAN);
 								tVoxSetAll( vMap.offsetBuf(cx, cy), -DH_MEAN);
@@ -357,7 +358,8 @@ public:
 							else if(h < mean){ //voxSet(cx,cy,1);
 								//tVoxSet( vMap.offsetBuf(cx, cy), DH_MEAN);
 								tVoxSetAll( vMap.offsetBuf(cx, cy), DH_MEAN);
-							}
+                            }
+                        }
 					}
 				}
 				for(i = r + 1,dd = 1.0f - d;i <= rad;i++,dd -= d){
@@ -373,7 +375,7 @@ public:
 							cy = vMap.YCYCL(y+yy[j]);
 							cx = vMap.XCYCL(x + xx[j]);
 							h = vMap.SGetAlt(cx,cy);
-							if(abs(h - mean) < eql)
+							if(abs(h - mean) < eql) {
 								if(h > mean){ //voxSet(cx,cy,-1);
 									//tVoxSet( vMap.offsetBuf(cx, cy), -DH_MEAN);
 									tVoxSetAll( vMap.offsetBuf(cx, cy), -DH_MEAN);
@@ -383,7 +385,8 @@ public:
 									tVoxSetAll( vMap.offsetBuf(cx, cy), DH_MEAN);
 								}
 							s -= 1.0;
-							}
+                            }
+                        }
 				}
 			}
 			else {
@@ -1549,8 +1552,9 @@ struct sVBitMap {
 		release();
 	};
 
-
+#ifdef _SURMAP_
 	void put(int VBMmode, int VBMlevel, int VBMnoiseLevel, int VBMnoiseAmp, bool VBMinverse);
+#endif
 
 	inline int getColor(int x, int y){
 		int x1,y1;

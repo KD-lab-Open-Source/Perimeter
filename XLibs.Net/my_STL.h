@@ -29,7 +29,7 @@
 
 #ifndef FOR_EACH
 #define FOR_EACH(list, iterator) \
-  for(iterator = (list).begin(); iterator != (list).end(); ++iterator)
+  for((iterator) = (list).begin(); (iterator) != (list).end(); ++(iterator))
 #endif
 
 #if (_MSC_VER < 1300)
@@ -46,6 +46,12 @@
 //#endif
 
 #endif //(_MSC_VER < 1300)
+
+//TODO whatever non win/msvc tweaks required, this should be cleaned up further and also moved somewhere else?
+
+#ifndef _MSC_VER
+#define __forceinline inline
+#endif //_MSC_VER
 
 
 #endif // __STL_ADDITION_H__

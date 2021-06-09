@@ -64,6 +64,8 @@ extern void init_sqrtTable4IntegerCalculate(void);
 
 inline int fastsqrtI(int s)
 {
+    //TODO convert this to C
+#ifdef _MSC_VER
 	_asm{
 		xor eax,eax
 		xor esi,esi
@@ -84,5 +86,27 @@ loc_skip:
 		shr eax, cl
 		mov s, eax
 	}
+#else
+    asm(R"(
+		xor eax,eax
+		xor esi,esi
+		lea esi, sqrtTable4IntegerCalculate
+		mov ebx, s
+		mov edx, 11
+		bsr ecx, ebx
+		sub ecx, 9
+		jle loc_skip
+		shr ecx, 1
+		adc ecx, 0
+		sub edx, ecx
+		shl ecx, 1
+		shr ebx, cl
+loc_skip:
+		mov ax, [esi+ebx*2]
+		mov ecx, edx
+		shr eax, cl
+		mov s, eax
+    )");
+#endif
 	return s;
 }

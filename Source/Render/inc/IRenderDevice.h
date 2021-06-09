@@ -183,22 +183,22 @@ public:
 	virtual HWND GetWindowHandle()												{ return 0; }
 	virtual bool SetScreenShot(const char *fname)										{ return false; }
 	virtual int SetRenderState(eRenderStateOption option,int value)				{ return -1; }
-	virtual void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,sColor4c &Color=sColor4c(255,255,255,255))	{ }
+	virtual void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,sColor4c Color=sColor4c(255,255,255,255))	{ }
 	virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-		cTexture *Texture,sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE)	{ }
+		cTexture *Texture,sColor4c ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE)	{ }
 	virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-		cTexture *Tex1,cTexture *Tex2,sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0)	{ }
+		cTexture *Tex1,cTexture *Tex2,sColor4c ColorMul=sColor4c(255,255,255,255),float phase=0)	{ }
 	virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
-		cTexture *Tex1,cTexture *Tex2,sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE)	{ }
+		cTexture *Tex1,cTexture *Tex2,sColor4c ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE)	{ }
 	virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
 		cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE)	{ }
 	
 	virtual void DrawSpriteScale(int x,int y,int dx,int dy,float u,float v,
-		cTextureScale *Texture,sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) { }
+		cTextureScale *Texture,sColor4c ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) { }
 	virtual void DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,
-		cTextureScale *Tex1,cTextureScale *Tex2,sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0) { }
+		cTextureScale *Tex1,cTextureScale *Tex2,sColor4c ColorMul=sColor4c(255,255,255,255),float phase=0) { }
 	virtual void DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,float u1,float v1,
-		cTextureScale *Tex1,cTextureScale *Tex2,sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD) { }
+		cTextureScale *Tex1,cTextureScale *Tex2,sColor4c ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD) { }
 
 	virtual int GetDrawNumberPolygon()											{return 0;}
 

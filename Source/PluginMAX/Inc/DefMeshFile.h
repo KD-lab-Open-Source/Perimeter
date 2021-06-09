@@ -115,7 +115,7 @@
 struct sTypeField
 {
 	short type;
-	char *str;
+    const char *str;
 	char var;
 };
 struct sTypeVariable

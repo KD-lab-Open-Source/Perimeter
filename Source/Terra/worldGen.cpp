@@ -69,8 +69,8 @@ int DEFAULT_TERRAIN = 1;
 
 static unsigned int r_preRNDVAL[MAX_POWER];
 static unsigned int m_preRNDVAL[MAX_POWER];
-static unsigned int r_cycleRNDVAL[1 << MAX_POWER_Y - WPART_POWER_MAX][MAX_POWER];
-static unsigned int m_cycleRNDVAL[1 << MAX_POWER_Y - WPART_POWER_MAX][MAX_POWER];
+static unsigned int r_cycleRNDVAL[1 << (MAX_POWER_Y - WPART_POWER_MAX)][MAX_POWER];
+static unsigned int m_cycleRNDVAL[1 << (MAX_POWER_Y - WPART_POWER_MAX)][MAX_POWER];
 
 static unsigned short* alt_map;
 static unsigned short* color_map;
@@ -87,8 +87,8 @@ static unsigned short* m_net_map;
 static unsigned short* proto_m_net_map;
 static unsigned short* new_m_net_map;
 static unsigned int Stage;
-static PartParameters PartPrm[1 << MAX_POWER_Y - WPART_POWER_MAX];
-static int geoUsed[1 << MAX_POWER_Y - WPART_POWER_MAX],geoFirst;
+static PartParameters PartPrm[1 << (MAX_POWER_Y - WPART_POWER_MAX)];
+static int geoUsed[1 << (MAX_POWER_Y - WPART_POWER_MAX)],geoFirst;
 
 static int min_alt,max_alt;
 static int Cmin_alt = MIN_VX_HEIGHT;

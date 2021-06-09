@@ -467,7 +467,7 @@ struct srBmp{
 		float ssY=tanf(_alpha)*1.0f;
 		if(fabs(ssY)<=1.0){//step dx=1 or -1
 			if(cos(_alpha)>=0) { stpX=1<<16; stpY=round(ssY*(1<<16)); }
-			else { stpX=-1<<16; stpY=round(ssY*(-1<<16)); }
+			else { stpX=-(1<<16); stpY=round(ssY*(-(1<<16))); }
 			begShiftX=-stpX*round((_sy/2)*cos(_alpha)*sin(_alpha))+ (_sx/2)*stpX ;
 			begShiftY=(stpX*(_sy/2))-stpY*round((_sy/2)*cos(_alpha)*sin(_alpha))+ (_sx/2)*stpY ;
 			begShiftX=-begShiftX>>16; begShiftY=-begShiftY>>16;
@@ -475,7 +475,7 @@ struct srBmp{
 		}
 		else { //step dy=1 or -1
 			if(sin(_alpha)>=0){ stpY=1<<16; stpX=round((1<<16)*1.0/ssY); }
-			else { stpY=-1<<16; stpX=round((-1<<16)*1.0/ssY); }
+			else { stpY=-(1<<16); stpX=round((-(1<<16))*1.0/ssY); }
 			begShiftX=(-stpY*(_sy/2))+stpX*round((_sy/2)*sin(_alpha)*cos(_alpha)) + (_sx/2)*stpX;
 			begShiftY=stpY*round((_sy/2)*sin(_alpha)*cos(_alpha)) + (_sx/2)*stpY;
 			begShiftX=-begShiftX>>16; begShiftY=-begShiftY>>16;
@@ -483,7 +483,7 @@ struct srBmp{
 		}
 	};
 	inline void setStr(int y){
-		if(stpX==(1<<16)|| stpX==(-1<<16)){
+		if(stpX==(1<<16)|| stpX==(-(1<<16))){
 			bsx=-stpX*round(y*cos(alpha)*sin(alpha));
 			bsy=(stpX*y)-stpY*round(y*cos(alpha)*sin(alpha));
 		}
@@ -1185,7 +1185,7 @@ struct s_WaspBirthGeoAction {
 					int* yy = yRad[i];
 					for(j = 0;j < max;j++) {
 						int offB=vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j]));
-						vMap.AtrBuf[offB]=vMap.AtrBuf[offB]&(~At_SOOTMASK) | At_SOOT;
+						vMap.AtrBuf[offB]=(vMap.AtrBuf[offB]&(~At_SOOTMASK)) | At_SOOT;
 					}
 				}
 
@@ -1199,7 +1199,7 @@ struct s_WaspBirthGeoAction {
 						int* yy = yRad[i];
 						for(j = 0;j < max;j++) {
 							int offB=vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j]));
-							vMap.AtrBuf[offB]=vMap.AtrBuf[offB]&(~At_SOOTMASK) | At_SOOT;
+							vMap.AtrBuf[offB]=(vMap.AtrBuf[offB]&(~At_SOOTMASK)) | At_SOOT;
 						}
 					}
 				}
