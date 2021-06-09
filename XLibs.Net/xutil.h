@@ -541,8 +541,11 @@ void ZIP_expand(char* trg,ulong trgsize,char* src,ulong srcsize);
 #else
 #define _LIB_NAME "XTool" _VC_SUFFIX _DEBUG_SUFFIX _MT_SUFFIX ".lib"
 #endif
-#pragma message("Automatically linking with " _LIB_NAME) 
-#pragma comment(lib, _LIB_NAME) 
+
+#ifndef NDEBUG
+#pragma message("Automatically linking with " _LIB_NAME)
+#pragma comment(lib, _LIB_NAME)
+#endif
 
 #undef _VC_SUFFIX
 #undef _DEBUG_SUFFIX

@@ -145,9 +145,11 @@ xm_inline float frnd(float x){ return xm_random_generator.frnd(x); }
 xm_inline float fabsRnd(float x){ return xm_random_generator.fabsRnd(x); }
 
 
+#ifndef NOMINMAX
 #define NOMINMAX
 #undef min
 #undef max
+#endif
 
 xm_inline int min(int x,int y){ return x < y ? x : y; }
 xm_inline float min(float x,float y){ return x < y ? x : y; }
@@ -479,7 +481,10 @@ public:
 	static const Mat2f ID;
 };
 // forward transform
-xm_inline const Vect2f operator* (const Mat2f& m, const Vect2f& v) { return Vect2f(v) *= m; }
+xm_inline const Vect2f operator* (const Mat2f& m, const Vect2f& v) {
+    Vect2f vv(v);
+    return vv *= m;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -508,7 +513,10 @@ public:
 	static const MatX2f ID;
 };
 // forward transform
-xm_inline const Vect2f operator* (const MatX2f& m, const Vect2f& v) { return Vect2f(v) *= m; }
+xm_inline const Vect2f operator* (const MatX2f& m, const Vect2f& v) {
+    Vect2f vv(v);
+    return vv *= m;
+}
 
 
 

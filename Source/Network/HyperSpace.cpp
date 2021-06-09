@@ -49,7 +49,7 @@ public:
 	}
 };
 cMonowideFont* pMonowideFont;
-#endif _FINAL_VERSION_
+#endif //_FINAL_VERSION_
 
 terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission)
 {
@@ -107,7 +107,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 #ifndef _FINAL_VERSION_
 	pMonowideFont= new cMonowideFont();
-#endif _FINAL_VERSION_
+#endif //_FINAL_VERSION_
 
 	//Очистка списков команд
 	{
@@ -338,7 +338,7 @@ terHyperSpace::~terHyperSpace()
 
 #ifndef _FINAL_VERSION_
 	delete pMonowideFont;
-#endif _FINAL_VERSION_
+#endif //_FINAL_VERSION_
 	DeleteCriticalSection(&m_FullListGameCommandLock);
 
 }

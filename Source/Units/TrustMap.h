@@ -2,7 +2,7 @@
 #define _TRUST_MAP_
 
 #include "Handle.h"
-#include "Grid2d.h"
+#include "Grid2D.h"
 #include "Region.h"
 
 class terPlayer;

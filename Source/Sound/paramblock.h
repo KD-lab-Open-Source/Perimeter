@@ -208,4 +208,4 @@ inline void ParamBlock::Print(std::ostream& o,char* sp)
 
 #pragma warning(default:4200)
 #pragma pack()
-#endif  _PARAMBLOCK_H_
+#endif //_PARAMBLOCK_H_

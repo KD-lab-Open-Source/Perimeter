@@ -136,4 +136,4 @@ inline float cMeshBank::GetRealAlpha(int nChannel,float phase,const sColor4f& Di
 
 cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,const char* def_texture_path);
 
-#endif  _MESHBANK_H_
+#endif //_MESHBANK_H_

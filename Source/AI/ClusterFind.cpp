@@ -677,7 +677,7 @@ void ClusterFind::FindClusterFront(int x,int y,DWORD to,
 		for(int j=0;j<is_used_size;j++)
 			xassert(!is_used[y]);
 	}
-#endif _DEBUG
+#endif //_DEBUG
 
 	Front pnt;
 	pnt.x=x;pnt.y=y;

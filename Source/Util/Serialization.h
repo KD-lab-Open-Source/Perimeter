@@ -489,7 +489,8 @@ void loadParameters(Type& t) {											\
 	if(ia.open(fileName))												\
 		ia >> makeObjectWrapper(t, sectionName, 0);						\
 	if(check_command_line(sectionName)){								\
-		editParameters(t, EditArchive());								\
+		EditArchive ea = EditArchive();                              	\
+		editParameters(t, ea);											\
 		ErrH.Exit();													\
 	}																	\
 }																		\

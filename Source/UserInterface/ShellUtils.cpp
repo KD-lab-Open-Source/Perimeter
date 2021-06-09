@@ -2,7 +2,7 @@
 #include "StdAfx.h"
 
 #include "GameShell.h"
-#include "runtime.h"
+#include "Runtime.h"
 #include "CameraManager.h"
 #include "terra.h"
 #include "UnitAttribute.h"

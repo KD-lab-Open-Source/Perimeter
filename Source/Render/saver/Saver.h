@@ -139,7 +139,7 @@ CSaver& operator<<(CSaver& s,vector<T>& v)
 {
 	DWORD size=v.size();
 	s<<size;
-	vector<T>::iterator it;
+	typename vector<T>::iterator it;
 	FOR_EACH(v,it)
 	{
 		s<<*it;

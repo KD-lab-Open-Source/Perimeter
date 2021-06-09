@@ -71,7 +71,7 @@ void FFDData::SetIB(sPolygon* pIndex)
 #ifdef _DEBUG
 	int num=ib-(WORD*)pIndex;
 	VISASSERT(num==GetNumIndices());
-#endif _DEBUG
+#endif //_DEBUG
 }
 
 void cD3DRender::Draw(FieldDispatcher *ffd)

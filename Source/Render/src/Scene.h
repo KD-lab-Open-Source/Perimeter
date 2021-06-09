@@ -1,9 +1,9 @@
 #pragma once
 #include "UnkLight.h"
-#include "czplane.h"
+#include "cZPlane.h"
 #include "NParticle.h"
 #include "SpriteNode.h"
-#include "../3dx/Node3dx.h"
+#include "../3dx/Node3DX.h"
 
 class cObjectNodeRoot;
 class terUnitBase;
@@ -40,7 +40,7 @@ public:
 	// функции для работы со следами
 	virtual class cTrail* CreateTrail(const char* TextureName,float TimeLife=1000.f);
 	// функции для работы с системой частиц
-	virtual class cParticle* CreateParticle(const char* TextureName,float TimeLife=1000.f,Vect2f *vTexSize=&Vect2f(1,1));
+	//TODO not used? virtual class cParticle* CreateParticle(const char* TextureName,float TimeLife=1000.f,Vect2f *vTexSize=&Vect2f(1,1));
 	virtual cEffect* CreateEffect(EffectKey& el,cEmitter3dObject* models,float scale=1.0f,bool auto_delete_after_life=false);
 
 	//Берет размеры по модели
@@ -93,6 +93,7 @@ public:
 	void DisableTileMapVisibleTest();
 	void DeleteAutoObject();
 
+	/* TODO unused?
 	template<class Caller>
 	void ScanUnit(Caller& call)
 	{
@@ -109,6 +110,7 @@ public:
 			}
 		}
 	}
+	*/
 
 	CRITICAL_SECTION& GetLockDraw(){return lock_draw;}
 private:

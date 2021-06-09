@@ -1,7 +1,7 @@
 #ifndef __DEFENCE_MAP_H__
 #define __DEFENCE_MAP_H__
 
-#include "map2d.h"
+#include "Map2D.h"
 #include "GenericControls.h"
 
 class ClusterFind;

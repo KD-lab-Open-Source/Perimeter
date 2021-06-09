@@ -158,7 +158,7 @@ inline time_type DurationTimer::operator () () const
 // Таймер - гистерезис true-условия 
 inline int HysteresisConditionTimer::operator () (int condition, time_type on_delay, time_type off_delay)
 {
-	if(turned_on && condition || !turned_on && !condition){
+	if((turned_on && condition) || (!turned_on && !condition)){
 		start_time = 0;
 		return turned_on;
 		}

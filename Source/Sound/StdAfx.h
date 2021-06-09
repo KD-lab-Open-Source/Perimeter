@@ -20,7 +20,7 @@
 
 #ifndef ASSERT
 #define ASSERT(f) xassert(f)
-#endif ASSERT
+#endif //ASSERT
 
 #define SIZE(ar) (sizeof(ar)/sizeof(ar[0]))
 

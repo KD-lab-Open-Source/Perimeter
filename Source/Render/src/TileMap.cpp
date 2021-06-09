@@ -23,7 +23,8 @@ cTileMap::cTileMap(cScene* pScene,TerraInterface* terra_) : cUnkObj(KIND_TILEMAP
 	enable_debug_rect=false;
 	debug_fade_interval=500;
 
-	SetScene(pScene);
+	//Since we cant call SetScene in ctor
+	IParent = pScene;
 }
 cTileMap::~cTileMap()
 {
@@ -308,8 +309,10 @@ void cTileMap::CalcShadowMapCamera(cCamera *DrawNode)
 	LightMatrix.trans()=-PosLight;
 
 	Vect2f Focus(1/(box.max.x-box.min.x),1/(box.max.y-box.min.y));
-	ShadowDrawNode->SetFrustum(&Vect2f(0.5f,0.5f),&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),
-		&Focus, &Vect2f(0,box.max.z-box.min.z));
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
+    Vect2f zplane(0,box.max.z-box.min.z);
+    ShadowDrawNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	ShadowDrawNode->SetPosition(LightMatrix);
 
 //С одной стороны эта камера должна быть посчитана до того момента
@@ -339,8 +342,10 @@ void cTileMap::FixShadowMapCamera(cCamera *DrawNode)
 	LightMatrix.trans()=-PosLight;
 
 	Vect2f Focus(1/(box.max.x-box.min.x),1/(box.max.y-box.min.y));
-	ShadowDrawNode->SetFrustum(&Vect2f(0.5f,0.5f),&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),
-		&Focus, &Vect2f(0,box.max.z-box.min.z));
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
+    Vect2f zplane(0,box.max.z-box.min.z);
+    ShadowDrawNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	ShadowDrawNode->SetPosition(LightMatrix);
 /*
 	if(LightDrawNode->GetAttribute(ATTRCAMERA_NOCLEARTARGET))
@@ -437,10 +442,11 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	light_out.z/=light_out.w;
 	light_out.w/=light_out.w;
 
+    D3DXVECTOR3 a(light_out.x,light_out.y,light_out.z);
+    D3DXVECTOR3 b(0,0,0.5f);
+    D3DXVECTOR3 c(0,0,-1);
 	D3DXMatrixLookAtLH(&look_light,
-		&D3DXVECTOR3(light_out.x,light_out.y,light_out.z),
-		&D3DXVECTOR3(0,0,0.5f),
-		&D3DXVECTOR3(0,0,-1)
+		&a, &b, &c
 	);
 
 	sBox6f box=::CalcZMinMax(&look_light);
@@ -483,12 +489,15 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	//MP*MVL*P*MV
  
 	Vect2f Focus(1,1);
-	ShadowDrawNode->SetFrustum(&Vect2f(0.5f,0.5f),&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),
-		&Focus, &Vect2f(0,1000));
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
+    Vect2f zplane(0,1000);
+	ShadowDrawNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	ShadowDrawNode->SetPosition(DrawNode->GetMatrix());
 
 	D3DXVECTOR4 out;
-	D3DXVec3Transform(&out,&D3DXVECTOR3(1024,1024,0),ShadowDrawNode->matProj);
+    D3DXVECTOR3 v(1024,1024,0);
+	D3DXVec3Transform(&out,&v,ShadowDrawNode->matProj);
 
 	Vect3f p[8];
 	DrawNode->GetFrustumPoint(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]);
@@ -545,12 +554,12 @@ void cTileMap::AddPlanarCamera(cCamera *DrawNode,bool light)
 
 	Vect3f vShadow(0,0,-1);//Всё равно с других положений криво освещает
 
-	Vect3f PosLight(PosLightMap.x-5000*vShadow.x,PosLightMap.y-5000*vShadow.y,-5000*vShadow.z);
+	Vect3f PosLight = -Vect3f(PosLightMap.x-5000*vShadow.x,PosLightMap.y-5000*vShadow.y,-5000*vShadow.z);
 	MatXf LightMatrix;
 	LightMatrix.rot().xrow().cross(vShadow,Vect3f(0,1,0)); // источник света в направлении оси x
 	LightMatrix.rot().yrow()=Vect3f(0,-1,0);
 	LightMatrix.rot().zrow()=vShadow;
-	LightMatrix.trans()=LightMatrix.rot().xform( -PosLight );
+	LightMatrix.trans()=LightMatrix.rot().xform( PosLight );
 	LightMatrix.trans().x-=6;
 	LightMatrix.trans().y+=3;
 
@@ -562,8 +571,10 @@ void cTileMap::AddPlanarCamera(cCamera *DrawNode,bool light)
 	PlanarNode->ClearAttribute(ATTRCAMERA_PERSPECTIVE);
 	PlanarNode->ClearAttribute(ATTRCAMERA_SHOWCLIP);
 	PlanarNode->SetRenderTarget(light?GetLightMap():GetShadowMap(),NULL);
-	PlanarNode->SetFrustum(&Vect2f(0.5f,0.5f),&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),
-		&Focus, &Vect2f(10,1e6f));
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
+    Vect2f zplane(10,1e6f);
+    PlanarNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	
 	PlanarNode->SetPosition(LightMatrix);
 	PlanarNode->Attach(SCENENODE_OBJECT,this); // рисовать источники света							   
@@ -581,12 +592,12 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
 
 	Vect3f vShadow(0,0,-1);//Всё равно с других положений криво освещает
 
-	Vect3f PosLight(PosLightMap.x-5000*vShadow.x,PosLightMap.y-5000*vShadow.y,-5000*vShadow.z);
+	Vect3f PosLight = -Vect3f(PosLightMap.x-5000*vShadow.x,PosLightMap.y-5000*vShadow.y,-5000*vShadow.z);
 	MatXf LightMatrix;
 	LightMatrix.rot().xrow().cross(vShadow,Vect3f(0,1,0)); // источник света в направлении оси x
 	LightMatrix.rot().yrow()=Vect3f(0,-1,0);
 	LightMatrix.rot().zrow()=vShadow;
-	LightMatrix.trans()=LightMatrix.rot().xform( -PosLight );
+	LightMatrix.trans()=LightMatrix.rot().xform( PosLight );
 
 	DrawNode->SetCopy(PlanarNode);
 	DrawNode->AttachChild(PlanarNode);
@@ -597,8 +608,10 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
 	PlanarNode->ClearAttribute(ATTRCAMERA_SHOWCLIP);
 	PlanarNode->SetAttribute(ATTRCAMERA_NOCLEARTARGET);
 	PlanarNode->SetRenderTarget(GetShadowMap(),NULL);
-	PlanarNode->SetFrustum(&Vect2f(0.5f,0.5f),&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),
-		&Focus, &Vect2f(10,1e6f));
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
+    Vect2f zplane(10,1e6f);
+    PlanarNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	
 	PlanarNode->SetPosition(LightMatrix);
 	PlanarNode->Attach(SCENENODE_OBJECT,this); // рисовать источники света
@@ -717,7 +730,7 @@ Vect2f cTileMap::CalcZ(cCamera *DrawNode)
 
 
 static int cur_zeroplast_number=0;
-static 
+static
 void cTileMapBorderCall(void* data,Vect2f& p)
 {
 	cTileMap* tm=(cTileMap*)data;

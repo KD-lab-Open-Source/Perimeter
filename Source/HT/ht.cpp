@@ -327,5 +327,5 @@ void HTManager::Show()
 	if(universe() && universe()->multiPlayer())
 	if(debug_show_lag_stat)
 		lag_stat->Show();
-#endif  _FINAL
+#endif //_FINAL
 }

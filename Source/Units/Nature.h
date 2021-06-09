@@ -1,7 +1,7 @@
 #ifndef __NATURE_H__
 #define __NATURE_H__
 
-#include "Geo.h"
+#include "geo.h"
 
 class terNatureObject : public terUnitGeneric
 {

@@ -23,7 +23,7 @@ int ResourceFileRead(const char *fname,char *&buf,int &size);
 #ifdef USE_JPEG
 #include "jpeglib.h"	// JPG include
 #pragma comment (lib,"jpeg") // JPG library
-#endif USE_JPEG
+#endif //USE_JPEG
 
 #ifndef ABS
 #define ABS(a)										((a)>=0?(a):-(a))
@@ -168,7 +168,8 @@ void GetDimTexture(int& dx,int& dy,int& count)
 			tx = x;
 			ty = y;
 		}
-		if (cx=!cx) x>>=1;
+		cx = !cx;
+		if (cx) x>>=1;
 		else y>>=1;
 	}
 	if (tx*ty==0)
@@ -183,7 +184,9 @@ void GetDimTexture(int& dx,int& dy,int& count)
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cTGAImage
 //////////////////////////////////////////////////////////////////////////////////////////
+#ifdef _MSC_VER
 #pragma pack(push,1)
+#endif
 
 struct TGAHeader
 {
@@ -200,7 +203,9 @@ unsigned short height;
 unsigned char bitsPerPixel;
 unsigned char flags;
 };
+#ifdef _MSC_VER
 #pragma pack(pop)
+#endif
 
 bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel)
 {
@@ -427,7 +432,8 @@ public:
 		PAVISTREAM pcomp=0;
 		PAVIFILE fAVI=0;
 		remove(fname);
-		if(err=AVIFileOpen(&fAVI,fname,OF_CREATE|OF_WRITE,NULL))
+		err = AVIFileOpen(&fAVI,fname,OF_CREATE|OF_WRITE,NULL);
+		if(err)
 			return 1;
 		AVISTREAMINFO avi;
 		memset(&avi,0,sizeof(AVISTREAMINFO));
@@ -437,7 +443,8 @@ public:
 		avi.dwRate     = length*1000/time;
 		avi.dwQuality  = 0;
 		avi.dwLength   = length;
-		if(err=AVIFileCreateStream(fAVI,&pavi,&avi))
+		err = AVIFileCreateStream(fAVI,&pavi,&avi);
+		if(err)
 			return 2;
 		AVICOMPRESSOPTIONS compOptions;
 		memset(&compOptions, 0, sizeof(AVICOMPRESSOPTIONS));
@@ -446,16 +453,19 @@ public:
 		compOptions.fccHandler      = avi.fccHandler;
 		compOptions.dwQuality       = avi.dwQuality;
 		compOptions.dwKeyFrameEvery = 15;
-		if(err=AVIMakeCompressedStream(&pcomp, pavi, &compOptions, NULL))
+		err=AVIMakeCompressedStream(&pcomp, pavi, &compOptions, NULL);
+		if(err)
 			return 3;
-		if(err=AVIStreamSetFormat(pcomp,0,&bmh,bmh.biSize))
+		err=AVIStreamSetFormat(pcomp,0,&bmh,bmh.biSize);
+		if(err)
 			return 4;
 		unsigned char *buf=new unsigned char[bmh.biSizeImage];
 		for(int i=0;i<length;i++)
 		{
 			for(int j=0;j<y;j++)
 				memcpy(&buf[(y-j-1)*bmh.biSizeImage/y],&((LPBYTE)pointer)[i*bmh.biSizeImage+j*bmh.biSizeImage/y],bmh.biSizeImage/y);
-			if(err=AVIStreamWrite(pcomp,i,1,buf,bmh.biSizeImage,AVIIF_KEYFRAME,NULL,NULL))
+			err=AVIStreamWrite(pcomp,i,1,buf,bmh.biSizeImage,AVIIF_KEYFRAME,NULL,NULL);
+			if(err)
 				return 5;
 		}
 		delete buf;
@@ -667,7 +677,7 @@ public:
 	static void Done()													{}
 };
 
-#endif USE_JPEG
+#endif //USE_JPEG
 
 ///////////////////////////////////////////////
 ///AVIX
@@ -772,7 +782,7 @@ cFileImage* cFileImage::Create(const char *fname)
 #ifdef USE_JPEG
 	else if(strstr(fname,".jpg"))
 		return new cJPGImage;
-#endif USE_JPEG
+#endif //USE_JPEG
 	return 0;
 }
 void cFileImage::InitFileImage()

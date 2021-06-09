@@ -1,4 +1,4 @@
-#include "StdAfxRd.h"
+#include "StdAfxRD.h"
 #include "Lib3dx.h"
 
 cLib3dx* pLibrary3dx=NULL;

@@ -179,11 +179,12 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	D3DDISPLAYMODE d3ddm;
 	DWORD Adapter=0/*D3DADAPTER_DEFAULT*/;
 	RDERR(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
-	if(Mode&RENDERDEVICE_MODE_WINDOW)
+	if(Mode&RENDERDEVICE_MODE_WINDOW) {
 		if(d3ddm.Format==D3DFMT_X8R8G8B8||d3ddm.Format==D3DFMT_R8G8B8||d3ddm.Format==D3DFMT_A8R8G8B8)
 			RenderMode&=~RENDERDEVICE_MODE_RGB16,RenderMode|=RENDERDEVICE_MODE_RGB32;
 		else
 			RenderMode&=~RENDERDEVICE_MODE_RGB32,RenderMode|=RENDERDEVICE_MODE_RGB16;
+    }
 
 	if(!(RenderMode&RENDERDEVICE_MODE_RGB32))
 		RenderMode|=RENDERDEVICE_MODE_RGB16;
@@ -880,8 +881,10 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	GlobalLight.Type = D3DLIGHT_DIRECTIONAL;
 	if(vLight)
 		memcpy(&GlobalLight.Direction.x,&vLight->x,sizeof(GlobalLight.Direction));
-	else
-		memcpy(&GlobalLight.Direction.x,&Vect3f(0,0,1),sizeof(GlobalLight.Direction));
+	else {
+        Vect3f v = Vect3f(0,0,1);
+        memcpy(&GlobalLight.Direction.x, v, sizeof(GlobalLight.Direction));
+    }
 	
 	memcpy(&GlobalLight.Ambient.r,&Ambient->r,sizeof(GlobalLight.Ambient));
 	memcpy(&GlobalLight.Diffuse.r,&Diffuse->r,sizeof(GlobalLight.Diffuse));
@@ -1209,7 +1212,7 @@ void cD3DRender::FlushFilledRect()
 }
 
 void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float du,float dv,
-		cTexture *Texture,sColor4c &ColorMul,float phase,eBlendMode mode)
+		cTexture *Texture,const sColor4c &ColorMul,float phase,eBlendMode mode)
 {
     VISASSERT(bActiveScene);
 	int x2=x1+dx,y2=y1+dy;
@@ -1239,7 +1242,7 @@ void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float 
 }
 
 void cD3DRender::DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-		cTexture *Tex1,cTexture *Tex2,sColor4c &ColorMul,float phase)
+		cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase)
 {
 	DrawSprite2(x,y,dx,dy,u,v,du,dv,u,v,du,dv,
 		Tex1,Tex2,ColorMul,phase);
@@ -1248,7 +1251,7 @@ void cD3DRender::DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,
 void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 							 float u0,float v0,float du0,float dv0,
 							 float u1,float v1,float du1,float dv1,
-		cTexture *Tex1,cTexture *Tex2,sColor4c &ColorMul,float phase,
+		cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase,
 		eColorMode mode,eBlendMode blend_mode)
 {
     VISASSERT(bActiveScene);
@@ -2107,7 +2110,7 @@ void cD3DRender::SaveStates(const char* fname)
 
 
 void cD3DRender::DrawSpriteScale(int x,int y,int dx,int dy,float u,float v,
-	cTextureScale *Texture,sColor4c &ColorMul,float phase,eBlendMode mode)
+	cTextureScale *Texture,const sColor4c &ColorMul,float phase,eBlendMode mode)
 {
 	float du,dv;
 	Texture->ConvertUV(u,v);
@@ -2117,14 +2120,14 @@ void cD3DRender::DrawSpriteScale(int x,int y,int dx,int dy,float u,float v,
 }
 
 void cD3DRender::DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,
-		cTextureScale *Tex1,cTextureScale *Tex2,sColor4c &ColorMul,float phase)
+		cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c &ColorMul,float phase)
 {
 	DrawSpriteScale2(x,y,dx,dy,u,v,u,v,
 		Tex1,Tex2,ColorMul,phase);
 }
 
 void cD3DRender::DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,float u1,float v1,
-		cTextureScale *Tex1,cTextureScale *Tex2,sColor4c &ColorMul,float phase,eColorMode mode)
+		cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c &ColorMul,float phase,eColorMode mode)
 {
 	float du,dv,du1,dv1;
 	Tex1->ConvertUV(u,v);

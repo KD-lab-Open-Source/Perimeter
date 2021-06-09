@@ -21,12 +21,12 @@ OPTION(FINAL_VERSION "Generate Final version" On)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 
 # depends
-FIND_PACKAGE(Boost)
+FIND_PACKAGE(Boost REQUIRED)
 
 # globals
 INCLUDE_DIRECTORIES(SYSTEM
         ${Boost_INCLUDE_DIRS}
-        )
+)
 
 IF(MSVC)
     #MSVC compiler specifics
@@ -51,6 +51,8 @@ ELSE()
     add_compile_options(-Wno-unused-but-set-variable)
     add_compile_options(-Wno-unused-value)
     add_compile_options(-Wno-sign-compare)
+    add_compile_options(-Wno-narrowing)
+    add_compile_options(-Wno-write-strings)
 
     add_compile_options(-fms-extensions)
 

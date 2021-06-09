@@ -438,7 +438,7 @@ void ScriptParam::RecalculateClipDistance()
 		float d2=real_played[i+1].distance;
 		ASSERT(d1<=d2);
 	}
-#endif _DEBUG
+#endif //_DEBUG
 /*
 	float clip_dist=(real_played[max_num_sound-1].distance+
 					 real_played[max_num_sound].distance)*0.5f;

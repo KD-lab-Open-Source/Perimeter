@@ -8,16 +8,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <list>
 #include <stack>
 #include <map>
 
-using namespace std;
-
 #include <d3d9.h>
 #include <d3dx9.h>
+
+using namespace std;
 
 #include "../inc/Umath.h"
 #include "../../PluginMAX/Src/BaseClass.h"

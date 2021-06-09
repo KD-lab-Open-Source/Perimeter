@@ -63,10 +63,12 @@ void VS9700ObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
 	SetVector(vSpecular,(D3DXVECTOR4*)&Data->Specular);
 	SetFloat(fSpecularPower,Data->Power);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 }
 
 void VS9700ObjectSceneLight2::RestoreShader()
@@ -120,7 +122,8 @@ void VS9700ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_s
 
 	D3DXVec3TransformNormal(&out,(D3DXVECTOR3*)&l,&mat);
 	D3DXVec3Normalize(&out,&out);
-	SetVector(vLightDirectionInvWorld,&D3DXVECTOR4(out.x,out.y,out.z,0));
+    D3DXVECTOR4 lv(out.x,out.y,out.z,0);
+    SetVector(vLightDirectionInvWorld,&lv);
 
 	if(light)
 	{
@@ -137,10 +140,12 @@ void VS9700ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_s
 void VS9700ObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
 {
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+	SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 }
 
 
@@ -201,7 +206,8 @@ void VS9700TileMapScene::GetHandle()
 
 void VS9700TileMapScene::SetWorldSize(Vect2f sz)
 {
-	SetVector(fInvWorldSize,&D3DXVECTOR4(1/sz.x,1/sz.y,0,0));
+    D3DXVECTOR4 v(1/sz.x,1/sz.y,0,0);
+    SetVector(fInvWorldSize,&v);
 }
 
 void VS9700TileMapScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)

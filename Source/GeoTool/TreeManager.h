@@ -64,4 +64,4 @@ class TreeManager {
 		HTREEITEM locationsFolder;
 };
 
-#endif _TREE_MANAGER_H
+#endif //_TREE_MANAGER_H

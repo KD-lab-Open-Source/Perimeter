@@ -153,9 +153,11 @@ xm_inline float frnd(float x){ return xm_random_generator.frnd(x); }
 xm_inline float fabsRnd(float x){ return xm_random_generator.fabsRnd(x); }
 
 
+#ifndef NOMINMAX
 #define NOMINMAX
 #undef min
 #undef max
+#endif
 
 xm_inline int min(int x,int y){ return x < y ? x : y; }
 xm_inline float min(float x,float y){ return x < y ? x : y; }
@@ -475,8 +477,8 @@ public:
 };
 // forward transform
 xm_inline const Vect2f operator* (const Mat2f& m, const Vect2f& v) {
-    Vect2f t = Vect2f(v);
-    return t *= m;
+    Vect2f vv(v);
+    return vv *= m;
 }
 
 
@@ -507,8 +509,8 @@ public:
 };
 // forward transform
 xm_inline const Vect2f operator* (const MatX2f& m, const Vect2f& v) {
-    Vect2f t = Vect2f(v);
-    return t *= m;
+    Vect2f vv(v);
+    return vv *= m;
 }
 
 
@@ -546,7 +548,7 @@ public:
   // setters / accessors / translators /////////////////////////////////////////
 
   xm_inline Vect3f& set(float x_, float y_, float z_) { x = x_; y = y_; z = z_; return *this; }
-  //xm_inline Vect3f& set(const float3& v) {x = v[0]; y = v[1]; z = v[2]; return *this; }
+  xm_inline Vect3f& set(const float3& v) {x = v[0]; y = v[1]; z = v[2]; return *this; }
 
   xm_inline Vect3f& setSpherical(float psi,float theta,float radius);
 

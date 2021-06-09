@@ -257,11 +257,13 @@ inline void cCamera::Attach(int pos,cIUnkClass *UObject,const MatXf &m,const Vec
 	{
 		cCamera* c=*it;
 		if(c->GetAttribute(UObject->GetAttr(ATTRCAMERA_REFLECTION|ATTRCAMERA_SHADOW)))
-			if(c->TestVisible(m,min,max))
-				if( pos!=SCENENODE_OBJECTSORT )
-					c->DrawArray[pos].push_back(UObject);
-				else
+			if(c->TestVisible(m,min,max)) {
+				if( pos!=SCENENODE_OBJECTSORT ) {
+                    c->DrawArray[pos].push_back(UObject);
+                } else {
 					c->SortArray.push_back( ObjectSort(UObject->GetPosition().trans().distance(GetPos()),UObject) );
+                }
+            }
 	}
 }
 

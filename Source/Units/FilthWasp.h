@@ -78,4 +78,4 @@ protected:
 	SND3DSound sound;
 };
 
-#endif _FILTH_WASP_
+#endif //_FILTH_WASP_

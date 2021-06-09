@@ -33,4 +33,4 @@ public:
 	void not(){for(int i=0;i<256;i++)b[i]=!b[i];}
 };
 
-#endif  _BITSET_H_
+#endif //_BITSET_H_

@@ -572,10 +572,10 @@ void cLogicObject::Draw(cCamera *UCamera)
 
 	logic_radius=GetBoundRadius();
 	const float s=3;
-	if(GetAttribute(ATTRUNKOBJ_SHADOW))
-		DrawNode->GetRenderDevice()->DrawBound(GetGlobalMatrix(),Vect3f(-s,-s,-s),Vect3f(s,s,s),0,sColor4c(255,0,0,255));
-	else 
-		DrawNode->GetRenderDevice()->DrawBound(GetGlobalMatrix(),Vect3f(-s,-s,-s),Vect3f(s,s,s),0,sColor4c(0,255,0,255));
+    Vect3f min(-s,-s,-s);
+    Vect3f max(s,s,s);
+    sColor4c color = GetAttribute(ATTRUNKOBJ_SHADOW) ? sColor4c(255,0,0,255) : sColor4c(0,255,0,255);
+    DrawNode->GetRenderDevice()->DrawBound(GetGlobalMatrix(), min, max, 0, color);
 	vtiles::iterator it;
 	FOR_EACH(tiles,it)
 		(*it)->Draw(UCamera);

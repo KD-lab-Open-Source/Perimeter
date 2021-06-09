@@ -15,7 +15,7 @@
 
 #include "Vector3D.hpp"
 
-#include <math.h>
+#include <cmath>
 
 namespace tx3d {
 
@@ -26,7 +26,7 @@ namespace tx3d {
 			}
 
 			static long round(float f) {
-                return std::round(f);
+                return (long) std::round(f);
                 /*
 				long res;
 
@@ -40,7 +40,7 @@ namespace tx3d {
 			}
 
 			static void round(float f, long* res) {
-                *res = std::round(f);
+                *res = (long) std::round(f);
                 /*
 				_asm {
 					fld		f
@@ -50,7 +50,7 @@ namespace tx3d {
 			}
 
 			static long floor(float f) {
-                return std::floor(f);
+                return (long) std::floor(f);
                 /*
 				long res;
 				float h = 0.5f - 1.e-6f;

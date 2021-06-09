@@ -439,7 +439,7 @@ bool FieldDispatcher::checkPlace(const Vect2f& pos, const Vect2f& delta)
 	for(int y = p.y - d.y; y <= p.y + d.y; y++)
 		for(int x = p.x - d.x; x <= p.x + d.x; x++)
 			if(attribute(x, y) != attr || // другой атрибут
-				attr && map(x, y).height_initial < FieldCluster::ZeroGround + force_field_check_place_height) // слишком низко под полем
+				(attr && map(x, y).height_initial < FieldCluster::ZeroGround + force_field_check_place_height)) // слишком низко под полем
 					return false;
 	return true;
 }
@@ -578,7 +578,7 @@ int FieldDispatcher::castRay(const Vect3f& origin, const Vect3f& direction_or_po
 		int a = x2 - x1;
 		int b = y2 - y1;
 		int x = x1;
-		int y = (y1 << F_PREC) + (1 << F_PREC - 1);
+		int y = (y1 << F_PREC) + (1 << (F_PREC - 1));
 		int incr = 1;
 		int k = (b << F_PREC)/a;
 		if(x1 > x2){
@@ -600,7 +600,7 @@ int FieldDispatcher::castRay(const Vect3f& origin, const Vect3f& direction_or_po
 	else{
 		int a = x2 - x1;
 		int b = y2 - y1;
-		int x = (x1 << F_PREC) + (1 << F_PREC - 1);
+		int x = (x1 << F_PREC) + (1 << (F_PREC - 1));
 		int y = y1;
 		int incr = 1;
 		int k = (a << F_PREC)/b;

@@ -7,9 +7,9 @@
 #endif
 #include <vector>
 #include <string>
-#include <xmath.h>
+#include "xmath.h"
 
-#include <stdio.h>
+#include <cstdio>
 using namespace std;
 #include "Saver.h"
 

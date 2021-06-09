@@ -71,7 +71,8 @@ void cMeshTri::InvertTri()
 	int i;
 	for(i=0;i<NumVertex;i++)
 	{
-		Vect3f &v=-GetNormal(pVertex,i+OffsetVertex);
+	    Vect3f vv = -GetNormal(pVertex,i+OffsetVertex);
+		Vect3f &v=vv;
 		v=-v;
 	}
 	for(i=0;i<NumPolygon;i++)

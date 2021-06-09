@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Interpolator3DX.h"
+#include "Interpolator3dx.h"
 
 struct cStaticNodeChain
 {

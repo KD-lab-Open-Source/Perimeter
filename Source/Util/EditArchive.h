@@ -6,6 +6,22 @@
 #include "TreeInterface.h"
 #include "SerializationImpl.h"
 
+template<class Base>
+class EditClassDescriptor;
+
+inline string getEnumToken(XBuffer& buffer)
+{
+    while(buffer() == ' ' || buffer() == '|')
+        ++buffer;
+    const char* marker = &buffer();
+    while(buffer() != '|' && buffer() != 0)
+        ++buffer;
+    string str(marker, &buffer() - marker);
+    while(str.size() && str[str.size() - 1] == ' ')
+        str.pop_back();
+    return str;
+}
+
 class EditOArchive 
 {
 public:
@@ -188,12 +204,12 @@ private:
 	void savePointer(const T* t)
     {
 		currentNode_->setComboList(TreeNode::POLYMORPHIC, EditClassDescriptor<T>::instance().comboListAlt().c_str());
-		typedef EditClassDescriptor<boost::remove_const<T>::type> Descriptor;
+		typedef EditClassDescriptor<typename boost::remove_const<T>::type> Descriptor;
 		currentNode_->setTreeNodeFunc(Descriptor::instance().treeNodeFunc);
 		if(!t)
 			return;
 		const char* name = typeid(*t).name();
-		Descriptor::SerializerBase& serializer = Descriptor::instance().find(name);
+		typename Descriptor::SerializerBase& serializer = Descriptor::instance().find(name);
 		serializer.save(*this, t);		
 		currentNode_->setValue(serializer.nameAlt());
 		//node->setType((node->type() + "*").c_str());
@@ -205,7 +221,7 @@ private:
 		setType<T>();
 		setDefaultTreeNode<T>(TreeNode::STATIC);
 		int i = 0;
-		vector<T, A>::const_iterator it;
+		typename vector<T, A>::const_iterator it;
 		FOR_EACH(cont, it){
 			XBuffer buf;
 			buf < "[" <= i++ < "]";
@@ -220,7 +236,7 @@ private:
 		setType<T>();
 		setDefaultTreeNode<T>(TreeNode::STATIC);
 		int i = 0;
-		list<T, A>::const_iterator it;
+        typename list<T, A>::const_iterator it;
 		FOR_EACH(cont, it){
 			XBuffer buf;
 			buf < "[" <= i++ < "]";
@@ -360,7 +376,7 @@ public:
     {				   
 		openNode(t.name());
 
-        typedef WrapperTraits<T>::unwrapped_type U;
+        typedef typename WrapperTraits<T>::unwrapped_type U;
 		using namespace SerializationHelpers;
 		using SerializationHelpers::Identity;
 
@@ -464,7 +480,7 @@ private:
 			}
 			return;
 		}
-		typedef EditClassDescriptor<boost::remove_const<T>::type> Descriptor;
+		typedef EditClassDescriptor<typename boost::remove_const<T>::type> Descriptor;
 		if(t){
 			if(typeName == Descriptor::instance().nameAlt(*t)){
 				Descriptor::instance().findAlt(typeName.c_str()).load(*this, t);
@@ -491,7 +507,7 @@ private:
 			}
 		}
 		else{
-			vector<T, A>::iterator i;
+            typename vector<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & TRANSLATE_NAME(*i, "", "");
 		}
@@ -510,7 +526,7 @@ private:
 			}
 		} 
 		else{
-			list<T, A>::iterator i;
+            typename list<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & TRANSLATE_NAME(*i, "", "");
 		}
@@ -663,6 +679,9 @@ public:
 		const char* nameAlt_;
 	};
 
+    typedef typename ClassDescriptor<Base, EditOArchive, EditIArchive>::SerializerBase SerializerBase;
+    typedef map<string, SerializerBase*> Map;
+
 	void add(SerializerBase& serializer, const char* name, const char* nameAlt) {
 		ClassDescriptor<Base, EditOArchive, EditIArchive>::add(serializer, name, nameAlt);
 		mapAlt_[nameAlt] = &serializer;
@@ -673,11 +692,11 @@ public:
 	}
 
 	const EditClassDescriptor& operator=(const EditClassDescriptor& rhs) {
-		map_ = rhs.map_;
+		this->map_ = rhs.map_;
 		mapAlt_ = rhs.mapAlt_;
 		mapNameToNameAlt_ = rhs.mapNameToNameAlt_;
 		comboListAlt().clear();
-		Map::iterator i;
+		typename Map::iterator i;
 		FOR_EACH(mapAlt_, i){
 			if(!comboListAlt().empty())
 				comboListAlt() += "|";
@@ -686,8 +705,8 @@ public:
 		return *this;
 	}
 
-	SerializerBase& findAlt(const char* nameAlt) {
-		Map::iterator i = mapAlt_.find(nameAlt);
+    SerializerBase& findAlt(const char* nameAlt) {
+		typename Map::iterator i = mapAlt_.find(nameAlt);
 		if(i == mapAlt_.end()){
 			xassertStr(0 && "Unregistered class", nameAlt);
 			ErrH.Abort("Unregistered class", XERR_USER, 0, nameAlt);
@@ -733,18 +752,5 @@ private:
 	Map mapAlt_;
 	map<string, string> mapNameToNameAlt_;
 };
-
-inline string getEnumToken(XBuffer& buffer)
-{
-	while(buffer() == ' ' || buffer() == '|')
-		++buffer;
-	const char* marker = &buffer();
-	while(buffer() != '|' && buffer() != 0)
-		++buffer;
-	string str(marker, &buffer() - marker);
-	while(str.size() && str[str.size() - 1] == ' ')
-		str.pop_back();
-	return str;
-}
 
 #endif //__EDIT_ARCHIVE_H__

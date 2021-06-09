@@ -29,7 +29,7 @@ cCheckDelete::~cCheckDelete()
 	else
 		root.root=next;
 }
-#endif C_CHECK_DELETE
+#endif //C_CHECK_DELETE
 
 /////////////////////cIUnkClass//////////////
 void cIUnkClass::SetAnimKeys(struct sParticleKey *AnimKeys,int size)

@@ -66,4 +66,4 @@ private:
 	bool checkScriptInstructions();
 };
 
-#endif _INSTALLER_H_
+#endif //_INSTALLER_H_

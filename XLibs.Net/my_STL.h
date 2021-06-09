@@ -49,6 +49,12 @@
 
 //TODO whatever non win/msvc tweaks required, this should be cleaned up further and also moved somewhere else?
 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+#define THREAD_LOCAL __declspec( thread )
+#else
+#define THREAD_LOCAL thread_local
+#endif
+
 #ifndef _MSC_VER
 #define __forceinline inline
 #endif //_MSC_VER

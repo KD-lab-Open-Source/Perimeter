@@ -303,7 +303,7 @@ bool removeNotAlive(UnitList& unitList)
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 	UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), not1(mem_fun(&terUnitBase::alive)));
 #else
-	UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), std::not1(std::mem_fn(&terUnitBase::alive)));
+	typename UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), std::not1(std::mem_fn(&terUnitBase::alive)));
 #endif
 	if(i != unitList.end()){
 		unitList.erase(i, unitList.end());

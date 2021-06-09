@@ -861,7 +861,8 @@ struct netCommand4C_ClientIsNotResponce : netCommandGeneral
 		clientNotResponceList=_clientNotResponceList;
 	}
 	netCommand4C_ClientIsNotResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
-		in > StringInWrapper(clientNotResponceList);
+	    auto inw = StringInWrapper(clientNotResponceList);
+		in > inw;
 	}
 	void Write(XBuffer& out) const {
 		out < StringOutWrapper(clientNotResponceList);

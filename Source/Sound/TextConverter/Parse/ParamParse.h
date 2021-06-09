@@ -121,4 +121,4 @@ char* ParseText(const char* text,ParamBlock** paramblock,int* size,
 char* ParseRules(const char* text,ParamBlock** paramblock,
 				 int* size,ParamBlock* pRules);
 
-#endif  _PARAMPARSE_H_
+#endif //_PARAMPARSE_H_

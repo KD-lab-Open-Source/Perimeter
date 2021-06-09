@@ -187,7 +187,7 @@ cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
 		VISASSERT(v.u1()>=-100 && v.u1()<=100);
 		VISASSERT(v.v1()>=-100 && v.v1()<=100);
 	}
-#endif _DEBUG
+#endif //_DEBUG
 */
 	return pTri;
 }
@@ -499,7 +499,8 @@ cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,con
 	strcpy(path_buffer,fname);
 	strcat(path_buffer,ext);
 
-	return LoadTextureDef(path_buffer,annoter_path,def_texture_path,pTexture->GetAttribute(TEXTURE_BUMP)?"Bump":NULL);
+	char* attr = const_cast<char*>(pTexture->GetAttribute(TEXTURE_BUMP) ? "Bump" : NULL);
+	return LoadTextureDef(path_buffer,annoter_path,def_texture_path,attr);
 }
 
 
@@ -674,7 +675,7 @@ cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
 		VISASSERT(v.u1()>=-100 && v.u1()<=100);
 		VISASSERT(v.v1()>=-100 && v.v1()<=100);
 	}
-#endif _DEBUG
+#endif //_DEBUG
 */
 	return pTri;
 }

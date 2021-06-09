@@ -21,13 +21,13 @@ public:
 template<class Key>
 typename CKeyBase<Key>::value CKeyBase<Key>::Get(float t)
 {
-	if(empty())return Key::none;
-	if(size()==1)return (*this)[0].Val();
+	if(this->empty())return Key::none;
+	if(this->size()==1)return (*this)[0].Val();
 
 	if(t<(*this)[0].time)
 		return (*this)[0].Val();
 
-	for(int i=1;i<size();i++)
+	for(int i=1;i<this->size();i++)
 	if(t<(*this)[i].time)
 	{
 		Key& f0=(*this)[i-1];
@@ -42,7 +42,7 @@ typename CKeyBase<Key>::value CKeyBase<Key>::Get(float t)
 		return out;
 	}
 
-	return back().Val();
+	return this->back().Val();
 }
 
 template<class Key>
@@ -52,20 +52,20 @@ Key& CKeyBase<Key>::InsertKey(float t)
 	p.Val()=Get(t);
 	p.time=t;
 
-	if(t<front().time)
+	if(t<this->front().time)
 	{
-		insert(begin(),p);
-		return front();
+        this->insert(this->begin(),p);
+		return this->front();
 	}
 	
-	for(int i=1;i<size();i++)
+	for(int i=1;i<this->size();i++)
 	if(t<(*this)[i].time)
 	{
-		return *insert(begin()+i,p);		
+		return *this->insert(this->begin()+i,p);
 	}
 
-	push_back(p);
-	return back();
+	this->push_back(p);
+	return this->back();
 }
 
 template<class Key>
@@ -206,7 +206,7 @@ class BackVector:public vector<type>
 {
 	vector<int>	stopped;
 public:
-	bool is_empty(){return size()<=stopped.size();}
+	bool is_empty(){return this->size()<=stopped.size();}
 	type& GetFree();
 	int GetIndexFree();
 	void SetFree(int n);
@@ -220,8 +220,8 @@ template <class type> int BackVector<type>::GetIndexFree()
 	int FreeParticle=-1;
 	if(stopped.empty())
 	{
-		FreeParticle=size();
-		push_back(type());
+		FreeParticle=this->size();
+		this->push_back(type());
 	}else
 	{
 		FreeParticle=stopped.back();
@@ -236,8 +236,8 @@ template <class type> type& BackVector<type>::GetFree()
 	int FreeParticle=-1;
 	if(stopped.empty())
 	{
-		FreeParticle=size();
-		push_back(type());
+		FreeParticle=this->size();
+		this->push_back(type());
 	}else
 	{
 		FreeParticle=stopped.back();
@@ -258,13 +258,13 @@ void BackVector<type>::SetFree(int n)
 template <class type>
 void BackVector<type>::Compress()
 {
-	if(size()<6)
+	if(this->size()<6)
 		return;
-	if(stopped.size()*2<=size())
+	if(stopped.size()*2<=this->size())
 		return;
 	stopped.clear();
 	int curi=0;
-	for(int i=0;i<size();i++)
+	for(int i=0;i<this->size();i++)
 	{
 		if((*this)[i].key!=-1)
 		{
@@ -274,5 +274,5 @@ void BackVector<type>::Compress()
 		}
 	}
 
-	resize(curi);
+	this->resize(curi);
 }

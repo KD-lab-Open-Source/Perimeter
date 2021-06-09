@@ -25,7 +25,7 @@ protected:
 	Vect2f						TexSize;
 	char						bNotUpdate;
 public:
-	cParticle(float fTimeLife=1000.f,Vect2f &vTexSize=Vect2f(1,1));
+	cParticle(float fTimeLife=1000.f,const Vect2f &vTexSize=Vect2f(1,1));
 	virtual ~cParticle();
 	virtual void Animate(float dt);
 	virtual void PreDraw(cCamera *UCamera);

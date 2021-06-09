@@ -10,7 +10,7 @@
 #include "Serialization.h"
 #include "Handle.h"
 #include "SafeCast.h"
-#include "../TriggerEditor/TriggerExport.h"
+#include "AIMain.h"
 #include "Timers.h"
 #include "../UserInterface/SoundTrack.h"
 

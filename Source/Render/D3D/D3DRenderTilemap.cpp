@@ -282,7 +282,9 @@ void calcCMesh(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,CMesh& cmesh
 	AMesh mesh;
 	float dx=TileNumber.x*TileSize.x;
 	float dy=TileNumber.y*TileSize.y;
-	mesh.CreateABB(Vect3f(0,0,0),Vect3f(dx,dy,256.0f));
+    Vect3f vmin(0,0,0);
+    Vect3f vmax(dx,dy,256.0f);
+	mesh.CreateABB(vmin, vmax);
 
 	cmesh.Set(mesh);
 

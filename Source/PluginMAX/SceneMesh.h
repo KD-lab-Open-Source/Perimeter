@@ -14,7 +14,7 @@
 #undef Z_AXIS
 #endif
 
-#include <xmath.h>
+#include "xmath.h"
 #include "Inc/meshfile.h"
 
 enum eNodeObjectType

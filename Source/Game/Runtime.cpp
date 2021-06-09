@@ -773,7 +773,7 @@ void setLogicFp()
 #ifndef _FINAL_VERSION_
 	static int enable = IniManager("Perimeter.ini").getInt("Game","ControlFpEnable");
 	if(enable){
-		_controlfp( _controlfp(0,0) & ~(EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL |  EM_INVALID),  MCW_EM ); 
+		_controlfp( _controlfp(0,0) & ~(EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL |  EM_INVALID),  _MCW_EM ); 
 		_clearfp();
 	}
 #endif

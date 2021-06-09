@@ -202,7 +202,7 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 
 	if(!LoadTexture(Texture,pMode,Vect2f(1.0f,1.0f)))
 	{
-		return false;
+		return NULL;
 	}
 
 	textures.push_back(Texture); Texture->IncRef();
@@ -237,7 +237,7 @@ cTexture* cTexLibrary::GetElementColor(const char *TextureName,sColor4c color,ch
 
 	if(!LoadTexture(Texture,pMode,Vect2f(1.0f,1.0f)))
 	{
-		return false;
+		return NULL;
 	}
 
 	textures.push_back(Texture); Texture->IncRef();
@@ -271,7 +271,7 @@ cTextureScale* cTexLibrary::GetElementScale(const char *TextureName,Vect2f scale
 		gb_RenderDevice->DeleteTexture(Texture);
 
 	if(!LoadTexture(Texture,"NoMipMap NoBlur",scale))
-		return false;
+		return NULL;
 
 	textures.push_back(Texture); Texture->IncRef();
 	return Texture;

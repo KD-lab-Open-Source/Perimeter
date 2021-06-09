@@ -1,12 +1,13 @@
 #include "StdAfxRD.h"
 #include "NParticle.h"
-#include "scene.h"
+#include "Scene.h"
 #include <algorithm>
 #include "NParticleID.h"
 #include "TileMap.h"
 #include "ForceField.h"
 #include "MeshBank.h"
 #include "ObjMesh.h"
+#include "xmath.h"
 
 static RandomGenerator rnd;
 static vector<Vect2f> rotate_angle;
@@ -302,7 +303,7 @@ void cEmitterBase::SetEmitterKey(EmitterKeyBase& k,cEmitter3dObject* models)
 	rotation_direction=k.rotation_direction;
 	GlobalMatrix.trans()=LocalMatrix.trans()=position.Get(0);
 	GlobalMatrix.rot()=LocalMatrix.rot()=rotation.Get(0);
-	if ((k.particle_position.type == EMP_3DMODEL_INSIDE))
+	if (k.particle_position.type == EMP_3DMODEL_INSIDE)
 	{
 		normal_position = k.normal_position;
 		begin_position = k.begin_position;
@@ -454,10 +455,11 @@ bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm /*= NULL*/)
 			pos=parent->GetPos()[cur_one_pos];
 		}else
 			pos.set(0,0,0);
-		if (norm)
+		if (norm) {
 			if (parent->GetNorm().empty())
 				norm->set(0,0,0);
 			else norm->set(parent->GetNorm()[cur_one_pos]);
+        }
 		break;
 	case EMP_3DMODEL_INSIDE:
 		if(!begin_position.empty())
@@ -466,10 +468,11 @@ bool cEmitterBase::OnePos(int i,Vect3f& pos, Vect3f* norm /*= NULL*/)
 			pos=begin_position[cur_one_pos];
 		}else
 			pos.set(0,0,0);
-		if (norm)
+		if (norm) {
 			if (parent->GetNorm().empty())
 				norm->set(0,0,0);
 			else norm->set(normal_position[cur_one_pos]);
+        }
 		break;
 	}
 	return true;
@@ -2068,7 +2071,7 @@ void cEffect::Init(EffectKey& effect_key_,cEmitter3dObject* models,float scale)
 	{
 		int k=0;
 	}
-#endif _DEBUG
+#endif //_DEBUG
 
 	EffectKey scaled_effect;
 	if(fabsf(scale-1.0f)>FLT_EPS)

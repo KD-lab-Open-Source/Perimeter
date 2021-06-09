@@ -1,6 +1,7 @@
 #ifndef __REGION_H__
 #define __REGION_H__
 
+#include "DebugUtil.h"
 #include "../Util/ProTool.h"
 #include "Handle.h"
 
@@ -267,11 +268,12 @@ protected:
 			int xc = xc0;
 			vector<int>::iterator ci;
 			FOR_EACH(counters_line, ci){
-				if(*ci)
-					if(*ci == space2)
-						internal_op(xc, yc);
-					else
-						border_op(xc, yc);
+				if(*ci) {
+                    if (*ci == space2)
+                        internal_op(xc, yc);
+                    else
+                        border_op(xc, yc);
+                }
 				xc += space;
 				}
 			yc += space;
@@ -367,6 +369,8 @@ private:
 //	Контейнер слоев
 //////////////////////////////////////////////////////////
 
+class RegionMetaDispatcher;
+
 class MetaLockRegionDispatcher
 {
 	RegionMetaDispatcher* meta;
@@ -384,7 +388,7 @@ public:
 		region=region_;
 	}
 
-	inline RegionDispatcher* MetaLockRegionDispatcher::operator->();
+	inline RegionDispatcher* operator->();
 	inline RegionDispatcher* data();
 };
 

@@ -6,8 +6,8 @@ template <class cAnimChainBase> class cAnimChannelBase : protected vector<cAnimC
 public:
 	cAnimChannelBase()									{ }
 	~cAnimChannelBase()									{ }
-	void NewChannel(int number)							{ resize(number); }
-	inline int GetNumberChannel()						{ return size(); }
+	void NewChannel(int number)							{ this->resize(number); }
+	inline int GetNumberChannel()						{ return this->size(); }
 	inline cAnimChainBase* GetChannel(int number)		{ return &((*this)[number]); }
 };
 
