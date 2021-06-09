@@ -9,11 +9,11 @@
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 #include "Controls.h"
-#include "..\sound\PerimeterSound.h"
+#include "../Sound/PerimeterSound.h"
 
 #include "HistoryScene.h"
 #include "BGScene.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 #include "GraphicsOptions.h"
 
 #include "MainMenu.h"

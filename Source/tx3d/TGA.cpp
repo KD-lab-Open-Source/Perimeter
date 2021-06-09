@@ -16,7 +16,7 @@
 #include <FStream>
 
 #ifndef _SURMAP_
-#include "..\PluginMAX\ZIPStream.h"
+#include "../PluginMAX/ZIPStream.h"
 #endif
 
 using namespace tx3d;

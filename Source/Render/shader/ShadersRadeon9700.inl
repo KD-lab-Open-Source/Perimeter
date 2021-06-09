@@ -9,7 +9,7 @@ VS9700ObjectScene::~VS9700ObjectScene()
 
 void VS9700ObjectScene::RestoreShader()
 {
-#include "9700\o\object_scene.vl"
+#include "9700/o/object_scene.vl"
 }
 
 void VS9700ObjectScene::GetHandle()
@@ -26,9 +26,9 @@ void VS9700ObjectScene::GetHandle()
 
 void VS9700ObjectSceneLight::RestoreShader()
 {
-#include "9700\o\object_scene_light.vl"
-#include "9700\o\object_scene_light_p1.vl"
-#include "9700\o\object_scene_light_p2.vl"
+#include "9700/o/object_scene_light.vl"
+#include "9700/o/object_scene_light_p1.vl"
+#include "9700/o/object_scene_light_p2.vl"
 }
 
 void VS9700ObjectSceneLight::GetHandle()
@@ -71,7 +71,7 @@ void VS9700ObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
 
 void VS9700ObjectSceneLight2::RestoreShader()
 {
-#include "9700\o\object_scene_light2.vl"
+#include "9700/o/object_scene_light2.vl"
 }
 
 void VS9700ObjectSceneLight2::GetHandle()
@@ -93,7 +93,7 @@ void VS9700ObjectSceneLight2::SetTextureTransform(MatXf& m)
 
 void VS9700ObjectSceneLightT::RestoreShader()
 {
-#include "9700\o\object_scene_lightT.vl"
+#include "9700/o/object_scene_lightT.vl"
 }
 
 void VS9700ObjectSceneBump::GetHandle()
@@ -146,16 +146,16 @@ void VS9700ObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
 
 void VS9700ObjectSceneBump::RestoreShader()
 {
-	#include "9700\o\object_scene_bump.vl"
-	#include "9700\o\object_scene_bump_p1.vl"
-	#include "9700\o\object_scene_bump_p2.vl"
+	#include "9700/o/object_scene_bump.vl"
+	#include "9700/o/object_scene_bump_p1.vl"
+	#include "9700/o/object_scene_bump_p2.vl"
 }
 
 void VS9700ObjectSceneBumpNoShadow::RestoreShader()
 {
-	#include "9700\o\object_scene_bump_no_shadow.vl"
-	#include "9700\o\object_scene_bump_no_shadow_p1.vl"
-	#include "9700\o\object_scene_bump_no_shadow_p2.vl"
+	#include "9700/o/object_scene_bump_no_shadow.vl"
+	#include "9700/o/object_scene_bump_no_shadow_p1.vl"
+	#include "9700/o/object_scene_bump_no_shadow_p2.vl"
 }
 
 void VS9700TileMapShadow::Select(const MatXf& world)
@@ -169,7 +169,7 @@ void VS9700TileMapShadow::Select(const MatXf& world)
 
 void VS9700TileMapShadow::RestoreShader()
 {
-#include "9700\o\tile_map_shadow.vl"
+#include "9700/o/tile_map_shadow.vl"
 }
 void VS9700TileMapShadow::GetHandle()
 {
@@ -179,12 +179,12 @@ void VS9700TileMapShadow::GetHandle()
 
 void PS9700TileMapShadow::Restore()
 {
-#include "9700\o\tile_map_shadow.ph"
+#include "9700/o/tile_map_shadow.ph"
 }
 
 void VS9700TileMapScene::RestoreShader()
 {
-#include "9700\o\tile_map_scene.vl"
+#include "9700/o/tile_map_scene.vl"
 }
 
 void VS9700TileMapScene::GetHandle()
@@ -253,43 +253,43 @@ void VS9700TileMapScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_siz
 
 void PS9700TileMapScene::Restore()
 {
-#include "9700\o\tile_map_scene_debug.ph"
+#include "9700/o/tile_map_scene_debug.ph"
 }
 
 void PS9700TileMapScene4x4::Restore()
 {
 if(Option_ShadowMapSelf4x4)
 {
-	#include "9700\o\tile_map_scene4x4.ph"
+	#include "9700/o/tile_map_scene4x4.ph"
 }else
 {
-	#include "9700\o\tile_map_scene2x2.ph"
+	#include "9700/o/tile_map_scene2x2.ph"
 }
 }
 
 void VS9700ObjectShadow::RestoreShader()
 {
-#include "9700\o\object_shadow.vl"
+#include "9700/o/object_shadow.vl"
 }
 
 void PS9700AlphaTestShadow::Restore()
 {
-#include "9700\o\alphatest_shadow.ph"
+#include "9700/o/alphatest_shadow.ph"
 }
 
 void PS9700ObjectShadow::Restore()
 {
-#include "9700\o\object_shadow.ph"
+#include "9700/o/object_shadow.ph"
 }
 
 void PS9700ObjectSceneLight::Restore()
 {
 if(Option_ShadowMapSelf4x4)
 {
-	#include "9700\o\object_scene_light4x4.ph"
+	#include "9700/o/object_scene_light4x4.ph"
 }else
 {
-	#include "9700\o\object_scene_light2x2.ph"
+	#include "9700/o/object_scene_light2x2.ph"
 }
 
 }
@@ -298,10 +298,10 @@ void PS9700ObjectSceneLight2::Restore()
 {
 if(Option_ShadowMapSelf4x4)
 {
-	#include "9700\o\object_scene_light24x4.ph"
+	#include "9700/o/object_scene_light24x4.ph"
 }else
 {
-	#include "9700\o\object_scene_light22x2.ph"
+	#include "9700/o/object_scene_light22x2.ph"
 }
 }
 
@@ -309,14 +309,14 @@ void PS9700ObjectSceneBump::Restore()
 {
 if(Option_ShadowMapSelf4x4)
 {
-	#include "9700\o\object_scene_bump4x4.ph"
+	#include "9700/o/object_scene_bump4x4.ph"
 }else
 {
-	#include "9700\o\object_scene_bump2x2.ph"
+	#include "9700/o/object_scene_bump2x2.ph"
 }
 }
 
 void PS9700ObjectSceneBumpNoShadow::Restore()
 {
-#include "9700\o\object_scene_bump_no_shadow.ph"
+#include "9700/o/object_scene_bump_no_shadow.ph"
 }

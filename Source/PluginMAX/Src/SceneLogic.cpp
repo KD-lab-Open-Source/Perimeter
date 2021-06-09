@@ -1,6 +1,6 @@
 #include "SceneMesh.h"
 
-#include "..\inc\SceneLogic.h"
+#include "../Inc/scenelogic.h"
 
 int cLogicScene::Read(cMeshFile &f)
 {

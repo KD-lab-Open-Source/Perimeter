@@ -8,7 +8,7 @@
 
 #include "CameraManager.h"
 #include "ExternalShow.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 #define ZFIX 2.0f
 

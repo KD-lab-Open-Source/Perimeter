@@ -7,7 +7,7 @@
 #include "Save.h"
 #include "HotKey.h"
 #include "UserSingleProfile.h"
-#include "..\\Network\\P2P_interface.h"
+#include "../Network/P2P_interface.h"
 #include "LogicUpdater.h"
 #include "ReelManager.h"
 

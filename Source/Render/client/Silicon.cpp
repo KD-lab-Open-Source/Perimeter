@@ -3,8 +3,8 @@
 #include <xutil.h>
 
 //#include "PrmEdit.h"
-#include "Scripts\Silicon.hi"
-#include "Scripts\Silicon.cppi"
+#include "Scripts/Silicon.hi"
+#include "Scripts/Silicon.cppi"
 
 
 Vect3f ElasticSphere::unit_sphere[psi_size][theta_size];

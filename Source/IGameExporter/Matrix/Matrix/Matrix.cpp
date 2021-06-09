@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\..\invertmatrix.h"
+#include "../../InvertMatrix.h"
 
 int main(int argc, char* argv[])
 {

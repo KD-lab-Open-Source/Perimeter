@@ -8,7 +8,7 @@
 
 #include "Lmcons.h"
 
-#include "..\terra\terra.h"
+#include "../Terra/terra.h"
 
 #include <algorithm>
 

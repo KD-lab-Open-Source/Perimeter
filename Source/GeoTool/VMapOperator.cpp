@@ -3,8 +3,8 @@
 #include <Texture3DFactory.hpp>
 
 #include "VMapOperator.h"
-#include "..\Terra\terra.h"
-#include "..\Render\src\FileImage.h"
+#include "../Terra/terra.h"
+#include "../Render/src/FileImage.h"
 
 
 VMapOperator::VMapOperator(Updater* updater) : updater(updater) {

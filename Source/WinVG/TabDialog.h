@@ -1,8 +1,8 @@
 #pragma once
 
-#include "treelistctrl\treelistctrl.h"
-#include ".\treelistctrl\Null Listeners\NullChangeItemLabelNotifyListener.h"
-#include ".\treelistctrl\Null Listeners\NullItemDragdropNotifyListener.h"
+#include "TreeListCtrl/TreeListCtrl.h"
+#include "TreeListCtrl/Null Listeners/NullChangeItemLabelNotifyListener.h"
+#include "TreeListCtrl/Null Listeners/NullItemDragdropNotifyListener.h"
 #include "TreeListCtrl/Null Listeners/NullItemChangeNotifyListener.h"
 #include "TreeListCtrl/Null Listeners/NullItemOperationNotifyListener.h"
 #include "TreeListCtrl/Null Listeners/NullTreeListNotifyListener.h"

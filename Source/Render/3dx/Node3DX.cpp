@@ -1,9 +1,9 @@
 #include "StdAfxRD.h"
-#include "node3dx.h"
-#include "..\shader\shaders.h"
-#include "nparticle.h"
-#include "scene.h"
-#include "..\..\Util\SafeMath.h"
+#include "Node3DX.h"
+#include "../shader/shaders.h"
+#include "NParticle.h"
+#include "Scene.h"
+#include "../../Util/SafeMath.h"
 
 struct Shader3dx
 {

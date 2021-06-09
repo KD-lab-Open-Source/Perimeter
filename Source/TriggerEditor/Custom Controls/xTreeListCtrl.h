@@ -9,7 +9,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // xTreeListCtrl window
-#include <xTreeListCtrl\xTreeCtrlLib.h>
+#include <xTreeListCtrl/xTreeCtrlLib.h>
 
 class xTreeListCtrl : public CTreeListCtrl
 {

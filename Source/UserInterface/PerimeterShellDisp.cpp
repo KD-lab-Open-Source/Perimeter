@@ -9,7 +9,7 @@
 #include "GenericControls.h"
 #include "Universe.h"
 #include "UniverseInterface.h"
-#include "..\sound\PerimeterSound.h"
+#include "../Sound/PerimeterSound.h"
 #include "Squad.h"
 
 #include "GameShell.h"

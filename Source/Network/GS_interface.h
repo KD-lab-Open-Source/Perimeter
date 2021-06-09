@@ -2,7 +2,7 @@
 #define hash hash_
 #define slist slist_
 
-#include "Peer2\peer\peer.h"
+#include "Peer2/peer/peer.h"
 
 #undef hash
 #undef slist

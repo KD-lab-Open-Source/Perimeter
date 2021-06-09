@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "..\configurator.h"
+#include "../Configurator.h"
 #include "aboutpage.h"
 
 #ifdef _DEBUG

@@ -16,7 +16,7 @@
 #include "auxInlineFuction.h"
 
 #ifdef _PERIMETER_
-#include "..\\Render\\inc\\IRenderDevice.h"
+#include "../Render/inc/IRenderDevice.h"
 #endif //_PERIMETER_
 
 extern float noise3(float vec[]);

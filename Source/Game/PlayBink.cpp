@@ -7,7 +7,7 @@
 #include "PerimeterSound.h"
 #include "SystemUtil.h"
 #include "Runtime.h"
-#include "..\Render\D3D\RenderDevice.h"
+#include "../Render/D3D/RenderDevice.h"
 #include "PlayOgg.h"
 
 extern bool terEnableGDIPixel;

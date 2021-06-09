@@ -13,7 +13,7 @@
 #include <io.h>
 #include <math.h>
 #include <xutil.h>
-#include "..\Render\inc\RenderMT.h"
+#include "../Render/inc/RenderMT.h"
 
 
 #ifndef ASSERT

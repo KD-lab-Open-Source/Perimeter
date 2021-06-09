@@ -1,7 +1,7 @@
 #include "afxwin.h"
 #if !defined(AFX_DLGLOADSPRITE_H__247736EA_D68D_4A92_B31C_118C665C14E4__INCLUDED_)
 #define AFX_DLGLOADSPRITE_H__247736EA_D68D_4A92_B31C_118C665C14E4__INCLUDED_
-#include "..\\Render\\src\\FileImage.h"
+#include "../Render/src/FileImage.h"
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000

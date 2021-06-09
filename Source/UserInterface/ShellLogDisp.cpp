@@ -17,10 +17,10 @@
 
 #include "PerimeterShellUI.h"
 
-#include "..\sound\PerimeterSound.h"
+#include "../Sound/PerimeterSound.h"
 #include "ExternalShow.h"
 #include "fps.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 extern int mt_interface_quant;
 CShellLogicDispatcher* _pShellDispatcher = 0;

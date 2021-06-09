@@ -75,7 +75,7 @@ void VSGeforceFXTileMapScene::GetHandle()
 
 void VSGeforceFXTileMapScene::RestoreShader()
 {
-	#include "GeforceFX\o\tile_map_scene.vl"
+	#include "GeforceFX/o/tile_map_scene.vl"
 }
 
 void PSGeforceFXTileMapScene::Restore()
@@ -86,31 +86,31 @@ void PSGeforceFXTileMapScene::Restore()
 		{
 		if(Option_ShadowMapSelf4x4)
 		{
-			#include "GeforceFX\o\tile_map_scene4x4.ph"
+			#include "GeforceFX/o/tile_map_scene4x4.ph"
 		}else
 		{
-			#include "GeforceFX\o\tile_map_scene2x2.ph"
+			#include "GeforceFX/o/tile_map_scene2x2.ph"
 		}
 		break;
 		}
 	case 1:
 		{
-		#include "GeforceFX\o\tile_map_scene1.ph"
+		#include "GeforceFX/o/tile_map_scene1.ph"
 		break;
 		}
 	case 2:
 		{
-		#include "GeforceFX\o\tile_map_scene2.ph"
+		#include "GeforceFX/o/tile_map_scene2.ph"
 		break;
 		}
 	case 3:
 		{
-		#include "GeforceFX\o\tile_map_scene3.ph"
+		#include "GeforceFX/o/tile_map_scene3.ph"
 		break;
 		}
 	case 4:
 		{
-		#include "GeforceFX\o\tile_map_scene4.ph"
+		#include "GeforceFX/o/tile_map_scene4.ph"
 		break;
 		}
 	default:
@@ -122,9 +122,9 @@ void PSGeforceFXTileMapScene::Restore()
 
 void VSGeforceFXObjectSceneLight::RestoreShader()
 {
-	#include "GeforceFX\o\object_scene_light.vl"
-	#include "GeforceFX\o\object_scene_light_p1.vl"
-	#include "GeforceFX\o\object_scene_light_p2.vl"
+	#include "GeforceFX/o/object_scene_light.vl"
+	#include "GeforceFX/o/object_scene_light_p1.vl"
+	#include "GeforceFX/o/object_scene_light_p2.vl"
 }
 
 void VSGeforceFXScene::GetHandle()
@@ -192,32 +192,32 @@ void VSGeforceFXObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
 
 void PSGeforceFXObjectSceneLight::Restore()
 {
-	#include "GeforceFX\o\object_scene_light.ph"
+	#include "GeforceFX/o/object_scene_light.ph"
 }
 
 void PSGeforceFXObjectSceneLight2::Restore()
 {
-	#include "GeforceFX\o\object_scene_light2.ph"
+	#include "GeforceFX/o/object_scene_light2.ph"
 }
 
 void VSGeforceFXObjectScene::RestoreShader()
 {
-	#include "GeforceFX\o\object_scene.vl"
+	#include "GeforceFX/o/object_scene.vl"
 }
 
 void PSGeforceFXObjectScene::Restore()
 {
-	#include "GeforceFX\o\object_scene.ph"
+	#include "GeforceFX/o/object_scene.ph"
 }
 
 void VSGeforceFXObjectSceneLightT::RestoreShader()
 {
-	#include "GeforceFX\o\object_scene_lightT.vl"
+	#include "GeforceFX/o/object_scene_lightT.vl"
 }
 
 void VSGeforceFXObjectSceneLight2::RestoreShader()
 {
-	#include "GeforceFX\o\object_scene_light2.vl"
+	#include "GeforceFX/o/object_scene_light2.vl"
 }
 
 void VSGeforceFXObjectSceneLightT::SetTextureTransform(MatXf& m)
@@ -284,24 +284,24 @@ void VSGeforceFXObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
 
 void VSGeforceFXObjectSceneBump::RestoreShader()
 {
-#include "GeforceFX\o\object_scene_bump.vl"
-#include "GeforceFX\o\object_scene_bump_p1.vl"
-#include "GeforceFX\o\object_scene_bump_p2.vl"
+#include "GeforceFX/o/object_scene_bump.vl"
+#include "GeforceFX/o/object_scene_bump_p1.vl"
+#include "GeforceFX/o/object_scene_bump_p2.vl"
 }
 
 void PSGeforceFXObjectSceneBump::Restore()
 {
-#include "GeforceFX\o\object_scene_bump.ph"
+#include "GeforceFX/o/object_scene_bump.ph"
 }
 
 void VSGeforceFXObjectSceneBumpNoShadow::RestoreShader()
 {
-#include "GeforceFX\o\object_scene_bump_no_shadow.vl"
-#include "GeforceFX\o\object_scene_bump_no_shadow_p1.vl"
-#include "GeforceFX\o\object_scene_bump_no_shadow_p2.vl"
+#include "GeforceFX/o/object_scene_bump_no_shadow.vl"
+#include "GeforceFX/o/object_scene_bump_no_shadow_p1.vl"
+#include "GeforceFX/o/object_scene_bump_no_shadow_p2.vl"
 }
 
 void PSGeforceFXObjectSceneBumpNoShadow::Restore()
 {
-#include "GeforceFX\o\object_scene_bump_no_shadow.ph"
+#include "GeforceFX/o/object_scene_bump_no_shadow.ph"
 }

@@ -1,7 +1,7 @@
 #include "StdAfxRD.h"
 #include "Font.h"
 #include "FileImage.h"
-#include "..\..\PluginMAX\src\StreamBuffer.h"
+#include "../../PluginMAX/Src/StreamBuffer.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -15,8 +15,8 @@
 #define ASSERT(x) VISASSERT(x)
 #endif 
 
-#include "..\gemsiii\filter.h"
-//#include "..\..\Terra\tgai.h"
+#include "../gemsiii/filter.h"
+//#include "../../Terra/tgai.h"
 
 static char* cache_dir="cache_font";
 

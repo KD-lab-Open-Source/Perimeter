@@ -13,7 +13,7 @@
 #include "ScanPoly.h"
 #include "GameShell.h"
 #include "CameraManager.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
