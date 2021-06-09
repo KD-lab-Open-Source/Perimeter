@@ -9,7 +9,7 @@
 
 #include "IronExplosion.h"
 #include "FilthWasp.h"
-#include "Filth.hi"
+#include "filth.hi"
 
 terFilthSwarmWasp::terFilthSwarmWasp(terFilthSpot* spot, const Vect3f& pos,int attack_period_)
 : terFilthSwarm(spot,pos)

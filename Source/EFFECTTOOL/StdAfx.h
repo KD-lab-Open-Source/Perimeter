@@ -35,11 +35,11 @@
 #include <afxtempl.h>
 using namespace std;
 
-#include "..\Render\inc\umath.h"
-#include "..\Render\Inc\IRenderDevice.h"
-#include "..\Render\inc\IVisGeneric.h"
-#include "..\Render\src\NParticleID.h"
-#include "..\Render\inc\fps.h"
+#include "../Render/inc/Umath.h"
+#include "../Render/inc/IRenderDevice.h"
+#include "../Render/inc/IVisGeneric.h"
+#include "../Render/src/NParticleID.h"
+#include "../Render/inc/fps.h"
 
 #include <hash_map>
 

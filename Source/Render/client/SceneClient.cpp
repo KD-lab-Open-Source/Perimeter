@@ -1,8 +1,8 @@
 #include "StdAfxRD.h"
-#include "..\src\Scene.h"
+#include "../src/Scene.h"
 #include "ForceField.h"
 #include "ExternalObj.h"
-#include "..\src\ObjLibrary.h"
+#include "../src/ObjLibrary.h"
 
 FieldDispatcher* cScene::CreateForceFieldDispatcher(int xmax,int ymax, int zeroLayerHeight, const char* TextureName1, const char* TextureName2)
 { 

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#include "configurator.h"
+#include "StdAfx.h"
+#include "Configurator.h"
 #include "IniReader.h"
 
 #ifdef _DEBUG

@@ -2,7 +2,7 @@
 #include "StdAfx.h"
 #include "Config.h"
 #include "Runtime.h"
-#include "Terra.h"
+#include "terra.h"
 #include "GenericControls.h"
 #include "Universe.h"
 #include "UniverseInterface.h"
@@ -12,7 +12,7 @@
 #include "MainMenu.h"
 
 #include "BGScene.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 #include "MessageBox.h"
 

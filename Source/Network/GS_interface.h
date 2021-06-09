@@ -1,8 +1,10 @@
 
 #define hash hash_
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define slist slist_
+#endif
 
-#include "Peer2\peer\peer.h"
+#include "Peer2/peer/peer.h"
 
 #undef hash
 #undef slist

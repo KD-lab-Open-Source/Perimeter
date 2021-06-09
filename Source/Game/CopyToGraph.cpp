@@ -6,7 +6,7 @@
 #include "CameraManager.h"
 #include "GenericControls.h"
 #include "Universe.h"
-#include "config.h"
+#include "Config.h"
 
 #include "TerraInterface.inl"
 class PerimeterTerraInterface:public StandartTerraInterface

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "C3D.h"
 #include "SoundInternal.h"
 #include "SoundScript.h"

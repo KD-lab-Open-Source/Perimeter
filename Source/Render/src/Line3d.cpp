@@ -1,5 +1,5 @@
 #include "StdAfxRD.h"
-#include "line3d.h"
+#include "Line3d.h"
 
 cLine3d::cLine3d() : cAnimUnkObj(KIND_LINE3D)
 {

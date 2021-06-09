@@ -1,7 +1,7 @@
 #ifndef __IRONBUILDING_H__
 #define __IRONBUILDING_H__
 
-#include "Scripts\Config.hi"
+#include "Scripts/Config.hi"
 
 class terIconBuilding 
 {

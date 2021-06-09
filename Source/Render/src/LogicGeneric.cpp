@@ -1,6 +1,6 @@
 #include "StdAfxRD.h"
 #include "AnimChannelNode.h"
-#include "..\..\PluginMAX\SceneMesh.h"
+#include "../../PluginMAX/SceneMesh.h"
 
 #include "LogicGeneric.h"
 

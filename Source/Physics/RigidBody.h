@@ -2,7 +2,7 @@
 #define __RIGID_BODY_H__
 
 #include "RigidBodyPrm.h"
-#include "Scripts\RigidBody.hi"
+#include "Scripts/RigidBody.hi"
 
 class RigidBody;
 

@@ -1,7 +1,7 @@
 #ifndef __REGION_H__
 #define __REGION_H__
 
-#include "..\util\ProTool.h"
+#include "../Util/ProTool.h"
 #include "Handle.h"
 
 typedef Vect2f Point;

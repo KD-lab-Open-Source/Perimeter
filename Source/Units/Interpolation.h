@@ -2,7 +2,7 @@
 #define __INTERPOLATION_
 
 #include "SafeMath.h"
-#include "..\ht\StreamInterpolation.h"
+#include "../HT/StreamInterpolation.h"
 
 class terAnimationPhaseIteratorType
 {

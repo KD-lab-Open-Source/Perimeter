@@ -63,7 +63,7 @@
 #include "MissionEdit.h"
 #include "PerimeterShellUI.h"
 #include "ExternalShow.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 #include "qd_textdb.h"
 

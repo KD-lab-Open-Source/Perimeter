@@ -2,7 +2,7 @@
 #define ACHILLES_H_
 
 #include <algorithm>
-#include <boost\\type_traits.hpp>
+#include <boost/type_traits.hpp>
 #include <iterator>
 
 namespace Loki

@@ -109,7 +109,11 @@ void terProtector::MoveQuant()
 	switch(fieldState()){
 	case FIELD_STARTING: 
 		if(find_if(monks_.begin(), monks_.end(), 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 			compose1(bind2nd(not_equal_to<int>(), MONK_MODE_GUARD), mem_fun(&terUnitMonk::monkMode))) == monks().end())
+#else
+			[](terUnitMonk* monk) { return monk->monkMode() != MONK_MODE_GUARD; }) == monks().end())
+#endif
 				fieldState_ = FIELD_STARTED;
 		break;
 
@@ -120,7 +124,11 @@ void terProtector::MoveQuant()
 
 	case FIELD_STOPPING: 
 		if(find_if(monks_.begin(), monks_.end(), 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 			compose1(bind2nd(not_equal_to<int>(), MONK_MODE_SLEEP), mem_fun(&terUnitMonk::monkMode))) == monks().end())
+#else
+			[](terUnitMonk* monk) { return monk->monkMode() != MONK_MODE_SLEEP; }) == monks().end())
+#endif
 				fieldState_ = FIELD_STOPPED;
 		break;
 

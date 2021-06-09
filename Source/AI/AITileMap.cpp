@@ -4,7 +4,7 @@
 #include "ClusterFind.h"
 #include "ForceField.h"
 #include "AIPrm.h"
-#include "runtime.h"
+#include "Runtime.h"
 
 bool AITile::update(int x,int y)
 {

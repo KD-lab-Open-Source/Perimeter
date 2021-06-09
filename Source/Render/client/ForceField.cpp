@@ -1,11 +1,11 @@
 #include "StdAfxRD.h"
 #include "ForceField.h"
-//#include "..\Util\ProTool.h"
-#include "..\src\Scene.h"
+//#include "../Util/ProTool.h"
+#include "../src/Scene.h"
 
 //#include "PrmEdit.h"
-#include "Scripts\ForceField.hi"
-#include "Scripts\ForceField.cppi"
+#include "Scripts/ForceField.hi"
+#include "Scripts/ForceField.cppi"
 
 FieldDispatcher* field_dispatcher = NULL;
 
@@ -628,7 +628,7 @@ int FieldDispatcher::calcPenalty(const Vect3f& center, float radius, float feedb
 {
 	int xc = w2m(center.xi());
 	int yc = w2m(center.yi());
-	int D = (round(radius) >> scale) + 1;
+	int D = ((int)round(radius) >> scale) + 1;
 	float d_best = FLT_INF;
 	int x_best, y_best;
 	const Vect3f* n_best;

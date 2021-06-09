@@ -1,7 +1,7 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "PerimeterSound.h"
 #include "SoundInternal.h"
-#include "c3d.h"
+#include "C3D.h"
 #include "SoundScript.h"
 
 static LPDIRECTSOUND8 g_pDS = 0;

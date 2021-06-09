@@ -9,8 +9,8 @@
 #include "EffectToolDoc.h"
 #include "DrawGraph.h"
 
-#include "..\Terra\terra.h"
-#include "..\Render\inc\TerraInterface.inl"
+#include "../Terra/terra.h"
+#include "../Render/inc/TerraInterface.inl"
 
 #include "MainFrm.h"
 

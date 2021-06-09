@@ -26,6 +26,8 @@ namespace tx3d {
 			}
 
 			static long round(float f) {
+                return std::round(f);
+                /*
 				long res;
 
 				_asm {
@@ -34,16 +36,22 @@ namespace tx3d {
 				};
 
 				return res;
+                */
 			}
 
 			static void round(float f, long* res) {
+                *res = std::round(f);
+                /*
 				_asm {
 					fld		f
 					fistp	[res]	
 				};
+                */
 			}
 
 			static long floor(float f) {
+                return std::floor(f);
+                /*
 				long res;
 				float h = 0.5f - 1.e-6f;
 				_asm {
@@ -57,8 +65,10 @@ namespace tx3d {
 				};
 
 				return res;
+                */
 			}
 
+			/* TODO unused?
 			static float ffloor(float f, float h = 0.5f) {
 				long xi;
 				float res;
@@ -79,8 +89,26 @@ namespace tx3d {
 
 				return res;
 			}
+			*/
 
-			static float reminder(float x, float y);
+			static float reminder(float x, float y) {
+                //TODO convert this to C
+#ifdef _MSC_VER
+                __asm {
+                    fld y
+                    fld x
+                    fprem
+                    fstp st(1)
+                }
+#else
+                asm(R"(
+                    fld y
+                    fld x
+                    fprem
+                    fstp st(1)
+                )");
+#endif
+			}
 
 
 			static Vector3D convertHSBtoRGB(const Vector3D& hsbColor);

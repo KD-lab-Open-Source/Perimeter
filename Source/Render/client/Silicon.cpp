@@ -3,8 +3,8 @@
 #include <xutil.h>
 
 //#include "PrmEdit.h"
-#include "Scripts\Silicon.hi"
-#include "Scripts\Silicon.cppi"
+#include "Scripts/Silicon.hi"
+#include "Scripts/Silicon.cppi"
 
 
 Vect3f ElasticSphere::unit_sphere[psi_size][theta_size];
@@ -169,8 +169,8 @@ void ElasticSphere::getAngles(const Vect3f& point, int& psi, int& theta)
 {
 	Vect3f v;
 	GetGlobalMatrix().invXformPoint(point, v);
-	psi = round(v.psi()*psi_size/(M_PI*2)) & psi_mask;
-	theta = round(v.theta()*theta_size/M_PI) & theta_mask;
+	psi = (int)round(v.psi()*psi_size/(M_PI*2)) & psi_mask;
+	theta = (int)round(v.theta()*theta_size/M_PI) & theta_mask;
 }	
 
 void ElasticSphere::getPoint(int psi, int theta, Vect3f& point)

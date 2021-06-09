@@ -3,7 +3,7 @@
 
 
 const char SIMPLE_GAME_CURRENT_VERSION[]= 
-#include "..\version.h" 
+#include "../version.h"
 ;
 
 extern const unsigned int INTERNAL_BUILD_VERSION;
@@ -35,7 +35,7 @@ inline XBuffer& operator < (XBuffer& out, const StringOutWrapper& str) { out < s
 #include "CommonCommands.h"
 
 #include "NetPlayer.h"
-#include "..\Units\UnitAttribute.h"
+#include "../Units/UnitAttribute.h"
 
 
 

@@ -275,7 +275,7 @@ void DrawBWQuadrate(int r, unsigned char * bitmap, int xcenter, int ycenter, int
 
 
 #ifdef _SURMAP_
-#include "..\Surmap5\utl\3d_shape.h"
+#include "../Surmap5/utl/3d_shape.h"
 int S3Dinverse=0;
 void S3Danalyze(int S3Dmode, int S3Dlevel, int S3DnoiseLevel, int S3DnoiseAmp, int S3Dside)
 {

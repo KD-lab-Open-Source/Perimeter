@@ -4,7 +4,7 @@
 #include "InterfaceLogic.h"
 #include "Runtime.h"
 #include "UnitAttribute.h"
-#include "Terra.h"
+#include "terra.h"
 #include "Universe.h"
 #include "GenericControls.h"
 #include "Config.h"
@@ -17,10 +17,10 @@
 
 #include "PerimeterShellUI.h"
 
-#include "..\sound\PerimeterSound.h"
+#include "../Sound/PerimeterSound.h"
 #include "ExternalShow.h"
 #include "fps.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 extern int mt_interface_quant;
 CShellLogicDispatcher* _pShellDispatcher = 0;

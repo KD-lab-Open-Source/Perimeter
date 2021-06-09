@@ -17,7 +17,7 @@ int ResourceFileRead(const char *fname,char *&buf,int &size)
 {
 	buf=0; size=0;
 	ZIPStream f(fname);
-	if(!!f) { f.close(); return -1<<0; }
+	if(!!f) { f.close(); return -1; }
 	size=f.size();
 	buf=new char[size];
 	f.read(buf,size);

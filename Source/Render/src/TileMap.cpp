@@ -2,8 +2,8 @@
 #include "TileMap.h"
 #include "Scene.h"
 #include "ObjLibrary.h"
-#include "..\..\Game\Region.h"
-#include "font.h"
+#include "../../Game/Region.h"
+#include "Font.h"
 
 cTileMap::cTileMap(cScene* pScene,TerraInterface* terra_) : cUnkObj(KIND_TILEMAP)
 {
@@ -722,8 +722,8 @@ void cTileMapBorderCall(void* data,Vect2f& p)
 {
 	cTileMap* tm=(cTileMap*)data;
 
-	int x=round(p.x)>>TILEMAP_SHL;
-	int y=round(p.y)>>TILEMAP_SHL;
+	int x= (int)round(p.x)>>TILEMAP_SHL;
+	int y= (int)round(p.y)>>TILEMAP_SHL;
 	xassert(x>=0 && x<tm->TileNumber.x);
 	xassert(y>=0 && y<tm->TileNumber.y);
 	sTile& tile=tm->GetTile(x,y);

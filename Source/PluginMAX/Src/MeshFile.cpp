@@ -1,5 +1,5 @@
+#include <cstring>
 #include "SceneMesh.h"
-#include "string.h"
 #include "StreamBuffer.h"
 
 /*
@@ -54,7 +54,7 @@ void* cMeshFile::GetBuffer()
 }
 void cMeshFile::Close()
 {
-	if(f) delete f; f=0;
+	if(f) delete f;f=0;
 	type=0; 
 	error=0; 
 	ofs=0; 
@@ -75,7 +75,7 @@ int cMeshFile::ReadHeaderFile()
 	f->read(format,sizeof(MESHFILE_IDENTIFIER));
 	f->read(&type,sizeof(type));
 	f->read(&version,sizeof(version));
-	if(_stricmp(format,MESHFILE_IDENTIFIER)) return SetError(MESHFILE_UNKNOWN_FORMAT);
+	if(stricmp(format,MESHFILE_IDENTIFIER)) return SetError(MESHFILE_UNKNOWN_FORMAT);
 	if((type!=MESHFILE_TYPE_TEXT)&&(type!=MESHFILE_TYPE_BINARY)) SetError(MESHFILE_ERROR_TYPE);
 	if(version<2)
 		SizeID=sizeof(unsigned short),SizeType=sizeof(unsigned short);

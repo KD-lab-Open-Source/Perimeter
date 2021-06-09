@@ -1,33 +1,33 @@
 #pragma once
 
-#include "..\PluginMAX\src\BaseClass.h"
+#include "../PluginMAX/Src/BaseClass.h"
 #include "IVisGenericInternal.h"
-#include "..\src\scene.h"
+#include "../src/Scene.h"
 
-#include "..\src\trail.h"
+#include "../src/Trail.h"
 
-#include "..\src\ObjLibrary.h"
-#include "..\src\TexLibrary.h"
+#include "../src/ObjLibrary.h"
+#include "../src/TexLibrary.h"
 
-#include "..\src\Texture.h"
-#include "..\src\LogicGeneric.h"
+#include "../src/Texture.h"
+#include "../src/LogicGeneric.h"
 
-#include "..\src\font.h"
+#include "../src/Font.h"
 
-#include "..\src\cCamera.h"
+#include "../src/cCamera.h"
 
-#include "..\src\ObjNode.h"
+#include "../src/ObjNode.h"
 
-#include "..\src\cchaos.h"
+#include "../src/CChaos.h"
 
-#include "..\src\SpriteNode.h"
-#include "..\src\Line3d.h"
-#include "..\src\Lighting.h"
+#include "../src/SpriteNode.h"
+#include "../src/Line3d.h"
+#include "../src/lighting.h"
 
-#include "..\client\ExternalObj.h"
-#include "..\src\TileMap.h"
+#include "../client/ExternalObj.h"
+#include "../src/TileMap.h"
 
-#include "..\inc\IncTerra.h"
-#include "..\client\ExternalObj.h"
+#include "../inc/IncTerra.h"
+#include "../client/ExternalObj.h" //TODO duplicated
 
-#include "..\3dx\Node3dx.h"
+#include "../3dx/Node3DX.h"

@@ -4,7 +4,7 @@
 #include "ClusterFind.h"
 #include "ForceField.h"
 #include "AIPrm.h"
-#include "runtime.h"
+#include "Runtime.h"
 
 DefenceMap::DefenceMap(int hsize,int vsize) 
 : Map2D<BYTE, 4>(hsize, vsize, 0)

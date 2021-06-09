@@ -13,7 +13,7 @@
 #include "CameraManager.h"
 #include "GameShell.h"
 #include "IronClusterUnit.h"
-#include "Scripts\ForceField.hi"
+#include "Scripts/ForceField.hi"
 #include "EnergyConsumer.h"
 
 void terPlayer::EconomicQuant()

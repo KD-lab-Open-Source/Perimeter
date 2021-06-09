@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Runtime.h"
 #include "RigidBody.h"
 
@@ -164,7 +164,7 @@ int Contact::set(float penetration_, const Vect3f& cp1_, const Vect3f& cp2_, Rig
 					k1 = 0;
 			}
 		if(k1){
-			body1->kangaroo_height = max(body1->kangaroo_height, round(h2));
+			body1->kangaroo_height = max(body1->kangaroo_height, (int)round(h2));
 			body1->kangaroo_mode = 1;
 			if(!body1->controlled()){
 				Vect3f delta = body1->position() - body2->position();
@@ -175,7 +175,7 @@ int Contact::set(float penetration_, const Vect3f& cp1_, const Vect3f& cp2_, Rig
 				}
 			}
 		else{
-			body2->kangaroo_height = max(body2->kangaroo_height, round(h1));
+			body2->kangaroo_height = max(body2->kangaroo_height, (int)round(h1));
 			body2->kangaroo_mode = 1;
 			if(!body2->controlled()){
 				Vect3f delta = body2->position() - body1->position();

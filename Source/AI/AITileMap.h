@@ -2,7 +2,7 @@
 #define __AITILEMAP_H__
 
 #include "terra.h"
-#include "map2d.h"
+#include "Map2D.h"
 
 class ClusterFind;
 

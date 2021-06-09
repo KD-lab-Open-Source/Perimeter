@@ -9,8 +9,14 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define WINVER	0x0500
 #define _WIN32_WINNT 0x0500
+#else
+// Visual Studio 2019, afxv_w32.h: #error MFC does not support WINVER less than 0x0501.
+#define WINVER	0x0501
+#define _WIN32_WINNT 0x0501
+#endif
 
 #pragma warning(disable : 4786 4800)
 
@@ -44,7 +50,14 @@
 
 #include <vector> 
 #include <string>
+
+// hash_map is an old and non-standard MS extension
+// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 #include <hash_map> 
+#else
+#include <unordered_map>
+#endif
 
 using namespace std;
 

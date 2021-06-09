@@ -10,8 +10,8 @@ class cTextureScale;
 class cFont;
 class EffectLibrary;
 
-#include "..\..\PluginMAX\src\BaseClass.h"
-#include "..\inc\VisGenericDefine.h"
+#include "../../PluginMAX/Src/BaseClass.h"
+#include "../inc/VisGenericDefine.h"
 
 using namespace std;
 

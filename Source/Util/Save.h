@@ -3,16 +3,16 @@
 
 #ifndef _UNIT_ATTRIBUTE_INL_
 #define _UNIT_ATTRIBUTE_INL_
-#include "..\Scripts\UnitAttribute.inl"
-#include "..\Scripts\SquadShellEnums.inl"
+#include "../Scripts/UnitAttribute.inl"
+#include "../Scripts/SquadShellEnums.inl"
 #endif // _UNIT_ATTRIBUTE_INL_
 
 #include "Serialization.h"
 #include "Handle.h"
 #include "SafeCast.h"
-#include "..\TriggerEditor\TriggerExport.h"
+#include "../TriggerEditor/TriggerExport.h"
 #include "Timers.h"
-#include "..\UserInterface\SoundTrack.h"
+#include "../UserInterface/SoundTrack.h"
 
 typedef vector<Vect2i> Vect2iVect;
 typedef vector<PrmString> PrmStringList;

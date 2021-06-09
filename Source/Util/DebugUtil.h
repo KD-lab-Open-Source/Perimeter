@@ -4,7 +4,7 @@
 
 #include <strstream>
 #include "statistics.h"
-#include "..\Render\Inc\umath.h"
+#include "../Render/inc/Umath.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 //		Statistic's Groups
@@ -29,12 +29,23 @@ class ShowDispatcher
 		enum Type { Point, Text, Circle, Delta, Line, Triangle, Quadrangle, ConvexArray };
 		Type type;
 		sColor4c color;
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 		union {
 			struct { Vect3f point; float radius; };
 			struct { Vect3f pointX; const char* text; };
 			struct { Vect3f point1, point2; };
 			struct { int n_points; Vect3f* points; };
 			};
+#else
+		//TODO there is another way to reproduce above code in GCC?
+		Vect3f point;
+		float radius;
+		const char* text;
+        Vect3f point1;
+        Vect3f point2;
+		int n_points;
+		Vect3f* points;
+#endif
 		static bool isArray(Type type) { return type == Triangle || type == Quadrangle || type == ConvexArray; }
 	public:	
 		Shape(const Vect3f& v, sColor4c color_) { type = Point; point = v; color = color_; }
@@ -237,8 +248,6 @@ inline float logicRNDfa(const char* file, int line)
 
 //--------------------------------------
 
-enum terUnitAttributeID;
-
-#include "..\Util\DebugPrm.h"
+#include "../Util/DebugPrm.h"
 
 #endif // __PHYSICS_UTIL_H__

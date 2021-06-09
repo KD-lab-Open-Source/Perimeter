@@ -1,4 +1,4 @@
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "EnergyConsumer.h"
 #include "Player.h"
 

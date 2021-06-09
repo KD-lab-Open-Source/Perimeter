@@ -1,7 +1,7 @@
 // BrushDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "GeoTool.h"
 #include "BrushDialog.h"
 

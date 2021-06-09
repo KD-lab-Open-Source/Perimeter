@@ -1,7 +1,7 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Commands.hpp"
-#include "..\GameShellSq.h"
+#include "../GameShellSq.h"
 
 
 const string CreateZeroWorld::NAME = "ZEROWORLD";

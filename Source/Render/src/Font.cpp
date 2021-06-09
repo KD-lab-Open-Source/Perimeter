@@ -1,7 +1,7 @@
 #include "StdAfxRD.h"
 #include "Font.h"
 #include "FileImage.h"
-#include "..\..\PluginMAX\src\StreamBuffer.h"
+#include "../../PluginMAX/Src/StreamBuffer.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -15,8 +15,8 @@
 #define ASSERT(x) VISASSERT(x)
 #endif 
 
-#include "..\gemsiii\filter.h"
-//#include "..\..\Terra\tgai.h"
+#include "../gemsiii/filter.h"
+//#include "../../Terra/tgai.h"
 
 static char* cache_dir="cache_font";
 
@@ -147,7 +147,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	Vect2i size(0,0);
 
 	float mul=height/float(real_height);
-	int yborder=max(round(2*mul),2);
+	int yborder=max((int)round(2*mul),2);
 	int sz;
 	for(sz=0;sz<sizes_size;sz++)
 	{
@@ -157,7 +157,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 		for(i=char_min;i<char_max;i++)
 		{
 
-			int dx=round(chars[i].width*mul+2);
+			int dx=(int)round(chars[i].width*mul+2);
 			if(x+dx>size.x)
 			{
 				y+=(height+yborder);

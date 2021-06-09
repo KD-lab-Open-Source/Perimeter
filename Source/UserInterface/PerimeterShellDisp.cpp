@@ -5,11 +5,11 @@
 
 #include "Config.h"
 #include "Runtime.h"
-#include "Terra.h"
+#include "terra.h"
 #include "GenericControls.h"
 #include "Universe.h"
 #include "UniverseInterface.h"
-#include "..\sound\PerimeterSound.h"
+#include "../Sound/PerimeterSound.h"
 #include "Squad.h"
 
 #include "GameShell.h"

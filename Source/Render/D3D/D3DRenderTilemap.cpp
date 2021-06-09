@@ -3,11 +3,14 @@
 #include "TileMap.h"
 #include "Scene.h"
 
-#include "..\..\Game\Region.h"
+#include "../../Game/Region.h"
 
 #include <set>
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+// non-standard header
 #include <slist>
-#include "clip\ClippingMesh.h"
+#endif
+#include "clip/ClippingMesh.h"
 
 #define BUMP_VTXTYPE   sVertexXYZT1
 #define BUMP_VTXFORMAT (BUMP_VTXTYPE::fmt)

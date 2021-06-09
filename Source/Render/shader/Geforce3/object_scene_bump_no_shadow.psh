@@ -1,4 +1,4 @@
-#include "..\shade.inl"
+#include "../shade.inl"
 //c4 - ambient
 //c5 - diffuse
 //c6 - specular

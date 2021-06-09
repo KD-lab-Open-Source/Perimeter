@@ -243,12 +243,12 @@ void VS14ObjectSceneLight::Select(const D3DXMATRIX* pmatlight,float shadow_map_s
 
 void VS14TileMapShadow::RestoreShader()
 {
-#include "ps.1.4\o\tile_map_shadow.vl"
+#include "ps.1.4/o/tile_map_shadow.vl"
 }
 
 void PS14TileMapShadow::Restore()
 {
-#include "ps.1.4\o\tile_map_shadow.ph"
+#include "ps.1.4/o/tile_map_shadow.ph"
 }
 
 void VS14TileMapScene::GetHandle()
@@ -264,34 +264,34 @@ void VS14TileMapScene::SetWorldSize(Vect2f sz)
 
 void VS14TileMapScene::RestoreShader()
 {
-	#include "ps.1.4\o\tile_map_scene.vl"
+	#include "ps.1.4/o/tile_map_scene.vl"
 }
 
 void PS14TileMapScene::Restore()
 {
-	#include "ps.1.4\o\tile_map_scene.ph"
+	#include "ps.1.4/o/tile_map_scene.ph"
 }
 
 void VS14ObjectShadow::RestoreShader()
 {
-	#include "ps.1.4\o\object_shadow.vl"
+	#include "ps.1.4/o/object_shadow.vl"
 }
 
 void PS14ObjectShadow::Restore()
 {
-	#include "ps.1.4\o\object_shadow.ph"
+	#include "ps.1.4/o/object_shadow.ph"
 }
 
 void VS14ObjectSceneLight::RestoreShader()
 {
-	#include "ps.1.4\o\object_scene_light.vl"
-	#include "ps.1.4\o\object_scene_light_p1.vl"
-	#include "ps.1.4\o\object_scene_light_p2.vl"
+	#include "ps.1.4/o/object_scene_light.vl"
+	#include "ps.1.4/o/object_scene_light_p1.vl"
+	#include "ps.1.4/o/object_scene_light_p2.vl"
 }
 
 void PS14ObjectSceneLight::Restore()
 {
-	#include "ps.1.4\o\object_scene_light.ph"
+	#include "ps.1.4/o/object_scene_light.ph"
 }
 
 void VS14ObjectScene::SetMaterial(sDataRenderMaterial *Data)
@@ -307,12 +307,12 @@ void VS14ObjectScene::GetHandle()
 
 void VS14ObjectScene::RestoreShader()
 {
-	#include "ps.1.4\o\object_scene.vl"
+	#include "ps.1.4/o/object_scene.vl"
 }
 
 void PS14ObjectScene::Restore()
 {
-	#include "ps.1.4\o\object_scene.ph"
+	#include "ps.1.4/o/object_scene.ph"
 }
 
 void VS14ObjectSceneLight2::GetHandle()
@@ -332,12 +332,12 @@ void VS14ObjectSceneLight2::SetTextureTransform(MatXf& m)
 
 void VS14ObjectSceneLight2::RestoreShader()
 {
-	#include "ps.1.4\o\object_scene_light2.vl"
+	#include "ps.1.4/o/object_scene_light2.vl"
 }
 
 void PS14ObjectSceneLight2::Restore()
 {
-	#include "ps.1.4\o\object_scene_light2.ph"
+	#include "ps.1.4/o/object_scene_light2.ph"
 }
 
 void VS14ObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
@@ -391,24 +391,24 @@ void VS14ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_siz
 
 void VS14ObjectSceneBump::RestoreShader()
 {
-#include "ps.1.4\o\object_scene_bump.vl"
-#include "ps.1.4\o\object_scene_bump_p1.vl"
-#include "ps.1.4\o\object_scene_bump_p2.vl"
+#include "ps.1.4/o/object_scene_bump.vl"
+#include "ps.1.4/o/object_scene_bump_p1.vl"
+#include "ps.1.4/o/object_scene_bump_p2.vl"
 }
 
 void PS14ObjectSceneBump::Restore()
 {
-#include "ps.1.4\o\object_scene_bump.ph"
+#include "ps.1.4/o/object_scene_bump.ph"
 }
 
 void VS14ObjectSceneBumpNoShadow::RestoreShader()
 {
-	#include "ps.1.4\o\object_scene_bump_no_shadow.vl"
-	#include "ps.1.4\o\object_scene_bump_no_shadow_p1.vl"
-	#include "ps.1.4\o\object_scene_bump_no_shadow_p2.vl"
+	#include "ps.1.4/o/object_scene_bump_no_shadow.vl"
+	#include "ps.1.4/o/object_scene_bump_no_shadow_p1.vl"
+	#include "ps.1.4/o/object_scene_bump_no_shadow_p2.vl"
 }
 
 void PS14ObjectSceneBumpNoShadow::Restore()
 {
-#include "ps.1.4\o\object_scene_bump_no_shadow.ph"
+#include "ps.1.4/o/object_scene_bump_no_shadow.ph"
 }

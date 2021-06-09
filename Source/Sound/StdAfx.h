@@ -2,8 +2,8 @@
 #include <my_STL.h>
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <mmsystem.h>
 #include <dsound.h>
 
@@ -11,9 +11,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <io.h>
-#include <math.h>
+#include <cmath>
 #include <xutil.h>
-#include "..\Render\inc\RenderMT.h"
+#include "../Render/inc/RenderMT.h"
 
 
 #ifndef ASSERT

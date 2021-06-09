@@ -734,7 +734,7 @@ void cEmitterInt::Draw(cCamera *pCamera)
 
 		//Добавить в массив
 		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
+		Vect2f rot=rotate_angle[(int)round(angle*rotate_angle_size)&rotate_angle_mask];
 		rot*=psize*=p.begin_size;
 		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
 		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
@@ -1499,7 +1499,7 @@ void cEmitterSpl::Draw(cCamera *pCamera)
 
 		//Добавить в массив
 		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
+		Vect2f rot=rotate_angle[(int)round(angle*rotate_angle_size)&rotate_angle_mask];
 		rot*=psize*=p.begin_size;
 		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
 		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
@@ -3879,7 +3879,7 @@ void cEmitterZ::Draw(cCamera *pCamera)
 
 		//Добавить в массив
 		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[round(angle*rotate_angle_size)&rotate_angle_mask];
+		Vect2f rot=rotate_angle[(int)round(angle*rotate_angle_size)&rotate_angle_mask];
 		rot*=psize*=p.begin_size;
 		if(planar)
 		{

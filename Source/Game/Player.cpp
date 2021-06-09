@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include "umath.h"
+#include "Umath.h"
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
 #include "IRenderDevice.h"
@@ -81,7 +81,7 @@
 #include "FilthWorm.h"
 #include "FilthShark.h"
 #include "FilthVolcano.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 
 //-------------------------------------
 terPlayer::terPlayer(const PlayerData& playerData) 

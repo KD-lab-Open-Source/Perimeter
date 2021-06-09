@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include "umath.h"
+#include "Umath.h"
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
 #include "IRenderDevice.h"
@@ -14,10 +14,10 @@
 #include "GenericControls.h"
 #include "Universe.h"
 
-#include "AiMain.h"
+#include "AIMain.h"
 #include "Installer.h"
 #include "RigidBody.h"
-#include "AiPrm.h"
+#include "AIPrm.h"
 #include "PlaceOperators.h"
 #include "Triggers.h"
 

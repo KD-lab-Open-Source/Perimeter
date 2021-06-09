@@ -1,7 +1,7 @@
 // TerraCleft.cpp: implementation of the CTerraCleft class.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "terra.h"
 #include "TerraCleft.h"
 

@@ -1,9 +1,9 @@
 #ifndef __PROCEDURMAP_H__
 #define __PROCEDURMAP_H__
 
-#include "..\util\Serialization.h"
-#include "..\util\SerializationImpl.h"
-#include "..\util\XPrmArchive.h"
+#include "../Util/Serialization.h"
+#include "../Util/SerializationImpl.h"
+#include "../Util/XPrmArchive.h"
 
 
 enum PMOperatinID {
@@ -17,12 +17,12 @@ enum PMOperatinID {
 template<class base4Wrap>
 class WrapPMO : public base4Wrap {
 public:
-	WrapPMO() { set(); }
-	WrapPMO(int r) { set(r); }
-	WrapPMO(int x,int y,int rad,int smth,int dh,int smode,int eql, int _filterHeigh) { set(x,y,rad,smth,dh,smode,eql, _filterHeigh); }
-	WrapPMO(int _x, int _y, int _rad, float _intensity){ set(_x,_y,_rad,_intensity); }
+	WrapPMO() { this->set(); }
+	WrapPMO(int r) { this->set(r); }
+	WrapPMO(int x,int y,int rad,int smth,int dh,int smode,int eql, int _filterHeigh) { this->set(x,y,rad,smth,dh,smode,eql, _filterHeigh); }
+	WrapPMO(int _x, int _y, int _rad, float _intensity){ this->set(_x,_y,_rad,_intensity); }
 	WrapPMO(int _x, int _y, int _sx, int _sy, int _MAX_GG_ALT, int _kPowCellSize, int _kPowShiftCS4RG, int _GeonetMESH, int _NOISELEVEL_GG, int _BorderForm, bool _inverse){
-		set(_x, _y, _sx, _sy, _MAX_GG_ALT, _kPowCellSize, _kPowShiftCS4RG, _GeonetMESH, _NOISELEVEL_GG, _BorderForm, _inverse);
+        this->set(_x, _y, _sx, _sy, _MAX_GG_ALT, _kPowCellSize, _kPowShiftCS4RG, _GeonetMESH, _NOISELEVEL_GG, _BorderForm, _inverse);
 	}
 };
 

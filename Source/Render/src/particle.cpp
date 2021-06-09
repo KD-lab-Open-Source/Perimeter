@@ -1,5 +1,5 @@
 #include "StdAfxRD.h"
-#include "Particle.h"
+#include "particle.h"
 
 int cParticle::RandomVal=0x83838383;
 
@@ -130,16 +130,16 @@ void cParticle::Draw(cCamera *DrawNode)
 		if((i&0x00000007)>=nLOD) continue;
 		sVertexXYZDT1 *v=&Vertex[nVertex];
 		float phase=dt-Particle[i].time;
-		sParticleKey &key=Key[round(phase*(NumberKey-1))];
+		sParticleKey &key=Key[(int)round(phase*(NumberKey-1))];
 		VISASSERT(0<=phase&&phase<=1);
 		DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.x,-key.rotate.y,0),sx);
 		DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.y,+key.rotate.x,0),sy);
 
 		Vect3f v0,v1,v2,v3;
-		sColor4c color(round(GetDiffuse().r*key.diffuse.r),
-					   round(GetDiffuse().g*key.diffuse.g),
-					   round(GetDiffuse().b*key.diffuse.b),
-					   round(GetDiffuse().a*key.diffuse.a));
+		sColor4c color((int)round(GetDiffuse().r*key.diffuse.r),
+					   (int)round(GetDiffuse().g*key.diffuse.g),
+					   (int)round(GetDiffuse().b*key.diffuse.b),
+					   (int)round(GetDiffuse().a*key.diffuse.a));
 		
 		v0=Particle[i].pos-sx-sy;
 		v1=Particle[i].pos-sx+sy;

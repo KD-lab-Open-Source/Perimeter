@@ -557,13 +557,13 @@ int CheckShotLine(const Vect3f& from,const Vect3f& to)
 	int step,max_step;	
 	int x0,y0,x1,y1,z0,z1;
 	
-	x0 = round(from.x) >> kmGrid;
-	y0 = round(from.y) >> kmGrid;
-	z0 = round(from.z);
+	x0 = (int)round(from.x) >> kmGrid;
+	y0 = (int)round(from.y) >> kmGrid;
+	z0 = (int)round(from.z);
 	
-	x1 = round(to.x) >> kmGrid;
-	y1 = round(to.y) >> kmGrid;
-	z1 = round(to.z);
+	x1 = (int)round(to.x) >> kmGrid;
+	y1 = (int)round(to.y) >> kmGrid;
+	z1 = (int)round(to.z);
 	
 	dx = x1 - x0;
 	dy = y1 - y0;

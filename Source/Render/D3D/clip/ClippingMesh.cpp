@@ -1,4 +1,4 @@
-#include "stdafxrd.h"
+#include "StdAfxRD.h"
 
 #include <set>
 #include <vector>

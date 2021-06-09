@@ -13,7 +13,12 @@
 #include <time.h>
 #include <direct.h>
 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+// non-standard header : https://developercommunity.visualstudio.com/t/msvc-142328019-is-missing-include-typeinfoh/734566
 #include <typeinfo.h>
+#else
+#include <typeinfo>
+#endif
 #include <float.h>
 #include <mmsystem.h>
 #include <commctrl.h>
@@ -22,8 +27,21 @@
 // STL
 #include <vector> 
 #include <list>
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+// non-standard header
 #include <slist>
-#include <hash_map>
+#else
+#define slist list
+#endif
+
+// hash_map is an old and non-standard MS extension
+// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+#include <hash_map> 
+#else
+#include <unordered_map>
+#endif
+
 #include <map>
 #include <string>
 #include <deque>
@@ -36,7 +54,7 @@ using namespace std;
 #include "xmath.h"
 #include "Timers.h"
 
-#include "umath.h"
+#include "Umath.h"
 #include "IRenderDevice.h"
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
@@ -48,7 +66,8 @@ using namespace std;
 #include "EventBufferDP.h"
 #include "CommonEvents.h"
 
-#define _STARFORCE_
+//TODO maybe we should remove STARFORCE stuff?
+//#define _STARFORCE_
 
 #ifdef _STARFORCE_
 #define STARFORCE_API extern "C" __declspec(dllexport)

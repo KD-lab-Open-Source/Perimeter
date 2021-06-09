@@ -4,7 +4,7 @@
 #include "Runtime.h"
 #include "CameraManager.h"
 #include "terra.h"
-#include "..\ht\ht.h"
+#include "../HT/ht.h"
 #include "GameShell.h"
 
 LogStream fout("lst",XS_OUT);

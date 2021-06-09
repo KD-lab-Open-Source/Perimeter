@@ -2,7 +2,7 @@
 #include "CameraManager.h"
 #include "Config.h"
 #include "Controls.h"
-#include "Terra.h"
+#include "terra.h"
 #include "Runtime.h"
 #include "SafeMath.h"
 #include "Universe.h"

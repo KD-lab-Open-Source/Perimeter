@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "terra.h"
 
 const int DeltaAlt = 20;

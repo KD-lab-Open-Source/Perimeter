@@ -24,7 +24,7 @@ enum CompareOperator;
 
 //-----------------------------
 template <class T>
-class TriggerAllocator {
+class TriggerAllocator : public std::allocator<T> {
 public:
 
   typedef T        value_type;

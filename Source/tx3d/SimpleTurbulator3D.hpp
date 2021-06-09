@@ -14,6 +14,7 @@
 #define _TX3D_SIMPLETURBULATOR3D_H
 
 #include "Turbulator3D.hpp"
+#include <memory> // std::auto_ptr
 
 namespace tx3d {
 

@@ -20,10 +20,10 @@ void VSSkin::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 
 void VSSkin::RestoreShader()
 {
-	#include "Skin\o\object_scene_light_w1.vl"
-	#include "Skin\o\object_scene_light_w2.vl"
-	#include "Skin\o\object_scene_light_w3.vl"
-	#include "Skin\o\object_scene_light_w4.vl"
+	#include "Skin/o/object_scene_light_w1.vl"
+	#include "Skin/o/object_scene_light_w2.vl"
+	#include "Skin/o/object_scene_light_w3.vl"
+	#include "Skin/o/object_scene_light_w4.vl"
 }
 
 void VSSkin::GetHandle()
@@ -63,7 +63,7 @@ void VSSkin::SetMaterial(sDataRenderMaterial *Data)
 
 void PSSkin::Restore()
 {
-	#include "Skin\o\object_scene_light.ph"
+	#include "Skin/o/object_scene_light.ph"
 }
 
 
@@ -90,10 +90,10 @@ void VSSkinBump::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 
 void VSSkinBump::RestoreShader()
 {
-	#include "Skin\o\object_scene_bump_w1.vl"
-	#include "Skin\o\object_scene_bump_w2.vl"
-	#include "Skin\o\object_scene_bump_w3.vl"
-	#include "Skin\o\object_scene_bump_w4.vl"
+	#include "Skin/o/object_scene_bump_w1.vl"
+	#include "Skin/o/object_scene_bump_w2.vl"
+	#include "Skin/o/object_scene_bump_w3.vl"
+	#include "Skin/o/object_scene_bump_w4.vl"
 }
 
 void VSSkinBump::GetHandle()
@@ -133,7 +133,7 @@ void VSSkinBump::SetMaterial(sDataRenderMaterial *Data)
 
 void PSSkinBump::Restore()
 {
-	#include "Skin\o\object_scene_bump.ph"
+	#include "Skin/o/object_scene_bump.ph"
 }
 
 void PSSkinBump::SetMaterial(sDataRenderMaterial *Data)

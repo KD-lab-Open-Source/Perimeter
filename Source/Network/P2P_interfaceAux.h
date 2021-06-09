@@ -3,7 +3,7 @@
 
 #include "CommonEvents.h"//убрать перенеся SIMPLE_GAME_CURRENT_VERSION сюда!
 
-#include "..\terra\crc.h"
+#include "../Terra/crc.h"
 
 struct sDigitalGameVersion {
 	unsigned int gameVersion;

@@ -6,17 +6,16 @@
 #include <sys/stat.h>
 #include <io.h>
 #include <stdio.h>
-#include <string.h>
 */
+#include <cstring>
 #include "xutil.h"
 
-
-#include <Windows.H>
-#include <StdIo.H>
-#include <FStream>
+#include <windows.h>
+#include <stdio.h>
+#include <fstream>
 
 #ifndef _SURMAP_
-#include "..\PluginMAX\ZIPStream.h"
+#include "../PluginMAX/ZIPStream.h"
 #endif
 
 using namespace tx3d;
@@ -94,7 +93,7 @@ bool TGA::load(const char *fileName) {
 
 //	bool updown = (hdr.flags & 0x20) ? false : true;
 
-	if (hdr.flags & 0x20 == 0) {
+	if ((hdr.flags & 0x20) == 0) {
 		int size = width * bpp;
 		unsigned char* tmp = new unsigned char[size];
 

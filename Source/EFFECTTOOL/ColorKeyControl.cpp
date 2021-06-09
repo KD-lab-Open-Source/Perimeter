@@ -1,8 +1,8 @@
 // ColorKeyControl.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "effecttool.h"
+#include "StdAfx.h"
+#include "EffectTool.h"
 #include "ColorKeyControl.h"
 #include "AlphaEditDlg.h"
 

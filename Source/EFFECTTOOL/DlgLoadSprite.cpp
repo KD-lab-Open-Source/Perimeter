@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "effecttool.h"
 #include "DlgLoadSprite.h"
-#include ".\dlgloadsprite.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

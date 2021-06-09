@@ -1,6 +1,6 @@
 //Balmer,K-D Lab
 #include "StdAfx.h"
-#include "Terra.h"
+#include "terra.h"
 #include "ClusterFind.h"
 
 ////////////////////////////////////////////////////////////

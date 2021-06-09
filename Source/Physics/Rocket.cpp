@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "terra.h"
 #include "RigidBody.h"
 #include "ForceField.h"
@@ -13,11 +13,11 @@ void RigidBody::startRocket(RigidBody& owner)
 void RigidBody::rocket_analysis(float dt)
 {
 	set_debug_color(GREEN);
-	int D = round(radius()) >> kmGrid;
+	int D = (int)round(radius()) >> kmGrid;
 	if(!D)
 		D = 1;
-	int x0 = round(position().x) >> kmGrid;
-	int y0 = round(position().y) >> kmGrid;
+	int x0 = (int)round(position().x) >> kmGrid;
+	int y0 = (int)round(position().y) >> kmGrid;
 	int z_max = 0;
 	for(int y = -D; y <= D; y++)
 		for(int x = -D; x <= D; x++){
@@ -30,8 +30,8 @@ void RigidBody::rocket_analysis(float dt)
 
 	Vect2f delta = controlled() ? way_points.front() - position() : rotation().ycol();
 	delta *= prm().rocket_forward_analysis_distance/(delta.norm() + 0.01);
-	x0 = round(position().x + delta.x) >> kmGrid;
-	y0 = round(position().y + delta.y) >> kmGrid;
+	x0 = (int)round(position().x + delta.x) >> kmGrid;
+	y0 = (int)round(position().y + delta.y) >> kmGrid;
 	int z_max_forward = 0;
 	for(int y = -D; y <= D; y++)
 		for(int x = -D; x <= D; x++){

@@ -10,9 +10,17 @@
 // STL
 #include <vector> 
 #include <list>
+
+// hash_map is an old and non-standard MS extension
+// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 #include <hash_map>
+#else
+#include <unordered_map>
+#endif
 #include <map>
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
@@ -20,6 +28,7 @@ using namespace std;
 #include "xutil.h"
 #include "xmath.h"
 
+#include "../Util/Serialization.h"
 #include "terra.h"
 
 #endif //__STDAFXTR_H__

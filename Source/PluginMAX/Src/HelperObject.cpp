@@ -21,9 +21,9 @@ int sHelperObject::Read(cMeshFile &f)
 				{
 					string HelperName;
 					f.ReadField(HelperName);
-					if(_stricmp(HelperName.c_str(),HELPERNAME_DUMMY)==0)
+					if(stricmp(HelperName.c_str(),HELPERNAME_DUMMY)==0)
 						idObject=IDOBJECT_DUMMY;
-					else if(_stricmp(HelperName.c_str(),HELPERNAME_GROUP)==0)
+					else if(stricmp(HelperName.c_str(),HELPERNAME_GROUP)==0)
 						idObject=IDOBJECT_GROUP;
 				}
 				break;

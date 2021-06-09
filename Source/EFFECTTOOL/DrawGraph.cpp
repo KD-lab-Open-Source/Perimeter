@@ -1,8 +1,8 @@
 // DrawGraph.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "effecttool.h"
+#include "StdAfx.h"
+#include "EffectTool.h"
 #include "DrawGraph.h"
 
 #ifdef _DEBUG

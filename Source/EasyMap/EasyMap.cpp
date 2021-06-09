@@ -1,14 +1,14 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Runtime3D.h"
-#include "..\Terra\terra.h"
-#include "..\UserInterface\chaos.h"
-#include "..\PluginMax\ZIPStream.h"
+#include "../Terra/terra.h"
+#include "../UserInterface/chaos.h"
+#include "../PluginMAX/ZIPStream.h"
 #include "TerraInterface.inl"
 #include <crtdbg.h>
-#include "..\Water\Water.h"
-#include "..\Water\WaterGarbage.h"
-#include "..\Wind\wind.h"
-#include "..\Render\Client\WinVideo.h"
+#include "../Water/Water.h"
+#include "../Water/WaterGarbage.h"
+#include "../Wind/wind.h"
+#include "../Render/client/WinVideo.h"
 
 cTileMap		*terMapPoint;
 cFont* pFont;

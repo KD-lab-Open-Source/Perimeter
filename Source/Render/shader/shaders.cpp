@@ -279,7 +279,7 @@ void cVertexShader::SetTextureTransform(MatXf& m)
 
 void PSShowMap::Restore()
 {
-#include "o\showmap.ph"
+#include "o/showmap.ph"
 }
 
 void VSChaos::Select(float umin,float vmin,float umin2,float vmin2,
@@ -308,16 +308,16 @@ void VSChaos::RestoreShader()
 {
 	if(gb_RenderDevice3D->bSupportTableFog)
 	{
-		#include "chaos\o\chaos.vl"
+		#include "Chaos/o/chaos.vl"
 	}else
 	{
-		#include "chaos\o\chaos_fog.vl"
+		#include "Chaos/o/chaos_fog.vl"
 	}
 }
 
 void PSChaos::Restore()
 {
-#include "chaos\o\chaos.ph"
+#include "Chaos/o/chaos.ph"
 }
 
 void VSChaos::SetFog()

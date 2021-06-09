@@ -728,7 +728,7 @@ void terFilthSpot::GetDifficity(int& creature_num_,float& sleep_mul)
 		difficity=universe()->worldPlayer()->difficultyPrm().filthDensity;
 	xassert(creature_num>0);
 	xassert(difficity>0 && difficity<10);
-	creature_num_=max(round(creature_num*difficity),1);
+	creature_num_=max((int)round(creature_num*difficity),1);
 	sleep_mul=max(creature_num_/(creature_num*difficity),1.0f);
 }
 

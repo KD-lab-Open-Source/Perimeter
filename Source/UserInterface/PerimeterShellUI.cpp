@@ -4,7 +4,7 @@
 #include "Runtime.h"
 #include "CameraManager.h"
 #include "Config.h"
-#include "Terra.h"
+#include "terra.h"
 #include "UnitAttribute.h"
 #include "Universe.h"
 #include "GenericControls.h"
@@ -13,8 +13,8 @@
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
 
-#include "..\sound\PerimeterSound.h"
-#include "..\Game\MusicManager.h"
+#include "../Sound/PerimeterSound.h"
+#include "../Game/MusicManager.h"
 
 #define _RELEASE(p) if(p) {(p)->Release(); (p) = 0;}
 

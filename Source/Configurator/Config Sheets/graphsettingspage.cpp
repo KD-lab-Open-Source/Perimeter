@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "..\configurator.h"
+#include "../Configurator.h"
 #include "graphsettingspage.h"
 
 #include "Localisation/LocaleMngr.h"

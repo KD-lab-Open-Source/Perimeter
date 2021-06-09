@@ -7,13 +7,16 @@
 #include "Serialization.h"
 #include "SerializationImpl.h"
 
-class XPrmOArchive 
+//Forward declaration for XPrmOArchive
+class XPrmIArchive;
+
+class XPrmOArchive
 {
 public:
 	XPrmOArchive(const char* fname);
 	~XPrmOArchive();
 
-	void open(const char* fname); 
+	void open(const char* fname);
 	bool close();  // true if there were changes, so file was updated
 
 	int type() const {
@@ -41,16 +44,16 @@ public:
     XPrmOArchive& operator&(const ObjectWrapper<T> & t)
     {
 		openNode(t.name());
-		
-        typedef WrapperTraits<T>::unwrapped_type U;
+
+        typedef typename WrapperTraits<T>::unwrapped_type U;
         using namespace SerializationHelpers;
 		using SerializationHelpers::Identity;
 
         Select<IsPrimitive<U>,
             Identity<save_primitive_impl<U> >,
-            Select<is_pointer<U>, 
+            Select<boost::is_pointer<U>, 
                 Identity<save_pointer_impl<U> >,
-                Select<is_array<U>, 
+                Select<boost::is_array<U>,
                     Identity<save_array_impl<U> >,
                     Identity<save_non_primitive_impl<U> >
                 >
@@ -93,7 +96,7 @@ private:
 		if(name)
 			buffer_ < ";\r\n";
 	}
-	
+
 	void openBracket() {
 		buffer_ < "{\r\n";
 		offset_ += "\t";
@@ -102,7 +105,7 @@ private:
 		offset_.pop_back();
 		buffer_ < offset_.c_str() < "}";
 	}
-	
+
 	void openCollection(int counter){
 		openBracket();
 		buffer_ < offset_.c_str() <= counter < ";\r\n";
@@ -150,7 +153,7 @@ private:
     struct save_array_impl {
         static void invoke(XPrmOArchive& ar, const T & t){
 			int count = sizeof(t) / (
-				static_cast<const char *>(static_cast<const void *>(&t[1])) 
+				static_cast<const char *>(static_cast<const void *>(&t[1]))
 				- static_cast<const char *>(static_cast<const void *>(&t[0]))
 			);
 			ar.openCollection(count);
@@ -177,12 +180,12 @@ private:
 		const char* name = typeid(*t).name();
 		saveStringEnclosed(name);
 		buffer_ < " ";
-		ClassDescriptor<remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
+		ClassDescriptor<typename boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
 	}
 
 	template<class T, class A>
 	XPrmOArchive& operator&(const std::vector<T, A>& cont){
-		vector<T, A>::const_iterator i;
+		typename vector<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			saveElement(*i);
@@ -192,7 +195,7 @@ private:
 
 	template<class T, class A>
 	XPrmOArchive& operator&(const std::list<T, A>& cont){
-		list<T, A>::const_iterator i;
+		typename list<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			saveElement(*i);
@@ -250,8 +253,8 @@ private:
 		return *this;
 	}
 
-	XPrmOArchive& operator&(const string& str) { 
-		saveStringEnclosed(str.c_str()); 
+	XPrmOArchive& operator&(const string& str) {
+		saveStringEnclosed(str.c_str());
 		return *this;
 	}
 
@@ -260,7 +263,6 @@ private:
 		return *this;
 	}
 };
-
 
 class XPrmIArchive 
 {
@@ -299,15 +301,15 @@ public:
 		if(!openNode(t.name()))
 			return *this;
 
-        typedef WrapperTraits<T>::unwrapped_type U;
+        typedef typename WrapperTraits<T>::unwrapped_type U;
         using namespace SerializationHelpers;
 		using SerializationHelpers::Identity;
 
         Select<IsPrimitive<U>,
             Identity<load_primitive_impl<U> >,
-            Select<is_pointer<U>, 
+            Select<boost::is_pointer<U>, 
                 Identity<load_pointer_impl<U> >,
-                Select<is_array<U>, 
+                Select<boost::is_array<U>, 
                     Identity<load_array_impl<U> >,
                     Identity<load_non_primitive_impl<U> >
                 >
@@ -496,7 +498,7 @@ private:
 			}
 			return;
 		}
-		typedef ClassDescriptor<remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
+		typedef ClassDescriptor<typename boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
 		if(t){
 			if(typeName == typeid(*t).name()){
 				Descriptor::instance().find(typeName.c_str()).load(*this, t);
@@ -523,7 +525,7 @@ private:
 			}
 		}
 		else{
-			vector<T, A>::iterator i;
+			typename vector<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				loadElement(*i);
 		}
@@ -543,7 +545,7 @@ private:
 			}
 		}
 		else{
-			list<T, A>::iterator i;
+            typename list<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				loadElement(*i);
 		}

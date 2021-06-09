@@ -43,11 +43,13 @@ float SphericSimplexInterpolator3D::interpolate(const Vector3D &v) {
 	reminderY = v.y + skewLength - reminderY;
 	reminderZ = v.z + skewLength - reminderZ;
 */
+
+/*
 	float reminderX = v.x + skewLength;
 	float reminderY = v.y + skewLength;
 	float reminderZ = v.z + skewLength;
 
-	_asm {
+    _asm{
 		fld		[dword ptr reminderX]
 		fild	[dword ptr floorX]
 		fsubp	st(1), st(0)
@@ -62,11 +64,15 @@ float SphericSimplexInterpolator3D::interpolate(const Vector3D &v) {
 		fild	[dword ptr floorZ]
 		fsubp	st(1), st(0)
 		fstp	[dword ptr reminderZ]
-	};
+	}
+*/
+
+    //TODO Check if this is correct version of above commented block
+	float reminderX = v.x + skewLength - (float)floorX;
+	float reminderY = v.y + skewLength - (float)floorY;
+	float reminderZ = v.z + skewLength - (float)floorZ;
+
 /*
-	float reminderX = v.x + skewLength - floorX;
-	float reminderY = v.y + skewLength - floorY;
-	float reminderZ = v.z + skewLength - floorZ;
 	float reminderX = v.x + skewLength;
 	float reminderY = v.y + skewLength;
 	float reminderZ = v.z + skewLength;

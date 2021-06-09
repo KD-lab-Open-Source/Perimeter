@@ -267,7 +267,7 @@ void BuildDot3Map(int xs,int ys,void *pSrc,void *pDst)
 			Vect3f a(scale,0,hr-hl),b(0,scale,hu-hd);
 			Vect3f n; n.cross(a,b); n.normalize(); 
 			n=(n+Vect3f(1,1,1))*TexNormal;
-			dst[i+j*xs]=(round(n.x)<<16)|(round(n.y)<<8)|(round(n.z)<<0);
+			dst[i+j*xs]=((int)round(n.x)<<16)|((int)round(n.y)<<8)|((int)round(n.z)<<0);
 		}
 }
 

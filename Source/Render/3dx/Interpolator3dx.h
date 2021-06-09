@@ -1,7 +1,7 @@
 #pragma once
 
-#include "..\..\IGameExporter\3dx.h"
-#include "..\saver\saver.h"
+#include "../../IGameExporter/3dx.h"
+#include "../saver/Saver.h"
 
 template<int template_size>
 struct sInerpolate3dx
