@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "World.hpp"
 
 World::World(const string& sysName, const Vect3f& coords, int size, int filthLevel, float timeFactor)

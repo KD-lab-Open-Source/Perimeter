@@ -12,7 +12,7 @@
 
 void terBuildingEnergy::setRealModel(int modelIndex, float scale)
 {
-	__super::setRealModel(modelIndex, scale);
+    terBuilding::setRealModel(modelIndex, scale);
 	lighting_ = avatar()->animationGroup(ANIMATION_GROUP_LIGHTING);
 	realAvatar()->setChain(isBuildingEnable() ? CHAIN_SWITCHED_ON : (isConstructed() ? CHAIN_SWITCHED_OFF : CHAIN_BUILD1));
 }

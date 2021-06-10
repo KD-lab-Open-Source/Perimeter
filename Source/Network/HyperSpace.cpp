@@ -6,7 +6,7 @@
 #include "P2P_interface.h"
 #include "GameShell.h"
 
-#include "Lmcons.h"
+#include "lmcons.h"
 
 
 bool net_log_mode=0;
@@ -447,7 +447,8 @@ void terHyperSpace::logQuant()
 
 	signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
 	if((currentQuant & maskPeriodSendLogQuant)==0){ //Каждый 8 квант отсылается сигнатура
-		pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state));
+        netCommandGeneral event = netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state);
+		pNetCenter->SendEvent(&event);
 		signatureGame=startCRC32;
 	}
 	pushBackLogList(currentQuant, net_log_buffer);
@@ -467,7 +468,8 @@ void terHyperSpace::sendLog(unsigned int quant)
 			sgn=crc32((unsigned char*)pLogElemente->pLog->address(), pLogElemente->pLog->tell(), sgn);
 
 		}
-		pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state));
+        netCommandGeneral event = netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state);
+        pNetCenter->SendEvent(&event);
 	}
 }
 

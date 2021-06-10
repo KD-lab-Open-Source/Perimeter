@@ -26,7 +26,8 @@ public:
 	const string& operator()() const { return value_; }
 };
 
-inline XBuffer& operator > (XBuffer& in, StringInWrapper& str) { str() = in(in.tell()); in += str().size() + 1; return in; }
+//old inline XBuffer& operator > (XBuffer& in, StringInWrapper& str) { str() = in(in.tell()); in += str().size() + 1; return in; }
+inline XBuffer& operator > (XBuffer& in, StringInWrapper str) { str() = in(in.tell()); in += str().size() + 1; return in; }
 inline XBuffer& operator < (XBuffer& out, const StringOutWrapper& str) { out < str().c_str() < '\0'; return out; }
 
 
@@ -861,8 +862,7 @@ struct netCommand4C_ClientIsNotResponce : netCommandGeneral
 		clientNotResponceList=_clientNotResponceList;
 	}
 	netCommand4C_ClientIsNotResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
-	    auto inw = StringInWrapper(clientNotResponceList);
-		in > inw;
+		in > StringInWrapper(clientNotResponceList);
 	}
 	void Write(XBuffer& out) const {
 		out < StringOutWrapper(clientNotResponceList);

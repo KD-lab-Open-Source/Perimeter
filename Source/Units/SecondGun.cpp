@@ -137,7 +137,8 @@ public:
 		if(!logicTile_) return;
 
 		float val = AngleValueConvertOp()(value_);
-		logicTile_->SetRotate(&Mat3f(val,axis));
+        Mat3f m(val,axis);
+		logicTile_->SetRotate(&m);
 	}
 
 	bool logicObjectPosition(Vect3f& pos) const

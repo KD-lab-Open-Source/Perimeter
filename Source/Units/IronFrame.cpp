@@ -92,7 +92,7 @@ installer_(1)
 
 void terFrame::setRealModel(int modelIndex, float scale)
 {
-	__super::setRealModel(modelIndex, 1);
+    terUnitReal::setRealModel(modelIndex, 1);
 
 	pillar_ = avatar()->animationGroup(ANIMATION_GROUP_PILLAR);
 	animate_ = avatar()->animationGroup(ANIMATION_GROUP_ANIMATE);

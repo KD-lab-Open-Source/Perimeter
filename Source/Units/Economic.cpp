@@ -326,14 +326,15 @@ void terPlayer::UpdatePowering()
 void terPlayer::CalcStructureRegion()
 {
 	float area = 0;
-	if(frame())
+	if(frame()) {
 		if(frame()->attached()){
 			const AttributeBase& attr = frame()->attr();
 			area = sqr(attr.ZeroLayerRadius)*M_PI;
 			frame()->placeZeroLayer(false);
-		}
-		else
-			frame()->freeZeroLayer();
+		} else {
+            frame()->freeZeroLayer();
+        }
+    }
 
 	terBuildingList::iterator bi;
 	FOR_EACH(BuildingList[UNIT_ATTRIBUTE_CORE], bi){

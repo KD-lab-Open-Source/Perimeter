@@ -1676,7 +1676,8 @@ CShellWindow* CShellIconManager::HitTest(CShellWindow* pTop, float x, float y)
 	for(i = pTop->m_children.rbegin(); i != pTop->m_children.rend(); i++)
 		if((*i)->HitTest(x, y))
 		{
-			if(p = HitTest(*i, x, y))
+            p = HitTest(*i, x, y);
+            if(p)
 				return p;
 		}
 	return pTop;
@@ -1691,9 +1692,11 @@ CShellWindow* CShellIconManager::FindWnd(CShellWindow* pTop, int id)
 	else
 	{
 		list<CShellWindow*>::iterator i;
-		FOR_EACH(pTop->m_children, i)
-			if(p = FindWnd(*i, id))
-				break;
+		FOR_EACH(pTop->m_children, i) {
+            p = FindWnd(*i, id);
+            if(p)
+                break;
+        }
 	}
 	return p;
 }
@@ -2393,12 +2396,14 @@ void CShellIconManager::draw()
 					if(gameShell->missionEditor())
 						strcat(cbPopupBuffer, gameShell->missionEditor()->info());
 					terRenderDevice->SetFont(m_hFontPopup);
-					OutText(10, 30, cbPopupBuffer, &sColor4f(1, 1, 1, 1), -1);
+                    sColor4f c(1, 1, 1, 1);
+					OutText(10, 30, cbPopupBuffer, &c, -1);
 					terRenderDevice->SetFont(0);
 				}
 				else if(gameShell->missionEditor()){
 					terRenderDevice->SetFont(m_hFontPopup);
-					OutText(10, 30, gameShell->missionEditor()->info(), &sColor4f(1, 1, 1, 1), -1);
+                    sColor4f c(1, 1, 1, 1);
+					OutText(10, 30, gameShell->missionEditor()->info(), &c, -1);
 					terRenderDevice->SetFont(0);
 				}
 			}
@@ -2406,13 +2411,15 @@ void CShellIconManager::draw()
 		if (!_bMenuMode) {
 			if (gameShell->GameActive && !_bMenuMode && gameShell->getCountDownTime() != "") {
 				terRenderDevice->SetFont(m_hFontCountDownTime);
-				OutText(absoluteX(countDownTimerX), absoluteY(countDownTimerY), gameShell->getCountDownTime().c_str(), &sColor4f(sqshFontCountDownTimeColor), -1);
+                sColor4f c(sqshFontCountDownTimeColor);
+				OutText(absoluteX(countDownTimerX), absoluteY(countDownTimerY), gameShell->getCountDownTime().c_str(), &c, -1);
 				terRenderDevice->SetFont(0);
 			}
 
 			if (gameShell->GameActive && !_bMenuMode) {
 				terRenderDevice->SetFont(m_hFontPopup);
-				OutText(absoluteX(totalTimerX), absoluteY(totalTimerY), (totalTime + gameShell->getTotalTime()).c_str(), &sColor4f(1, 1, 1, 1), -1);
+                sColor4f c(1, 1, 1, 1);
+				OutText(absoluteX(totalTimerX), absoluteY(totalTimerY), (totalTime + gameShell->getTotalTime()).c_str(), &c, -1);
 				terRenderDevice->SetFont(0);
 			}
 
@@ -2425,7 +2432,8 @@ void CShellIconManager::draw()
 			OutTextRect(0, 0 , _cb, -1, v1, v2);
 			float baseUnitsX = absoluteX(nBaseUnitsDisplayX);
 			float baseUnitsY = absoluteY(nBaseUnitsDisplayY);
-			OutText(baseUnitsX, baseUnitsY, _cb, &sColor4f(1, 1, 1, 1), -1);
+            sColor4f c(1, 1, 1, 1);
+			OutText(baseUnitsX, baseUnitsY, _cb, &c, -1);
 			terRenderDevice->SetFont(0);
 
 			Vect2f va(baseUnitsX - 2, baseUnitsY - 2);

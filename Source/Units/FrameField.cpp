@@ -13,6 +13,17 @@
 #include "Config.h"
 #include "IronClusterUnit.h"
 
+template<class UnitList>
+bool removeNotAliveMonk(UnitList& unitList)
+{
+    typename UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), not1(mem_fun(&terUnitMonk::alive)));
+    if(i != unitList.end()){
+        unitList.erase(i, unitList.end());
+        return true;
+    }
+    return false;
+}
+
 terProtector::terProtector(const UnitTemplate& data) : terBuildingEnergy(data)
 {
 	fieldState_ = FIELD_STOPPED;
@@ -249,7 +260,7 @@ bool terProtector::isBuildingEnable() const
 {
 	if(reinitZeroCounter_ == 3)
 		return false;
-	return __super::isBuildingEnable();
+	return terBuildingEnergy::isBuildingEnable();
 }
 
 void terProtector::showDebugInfo()

@@ -7,7 +7,7 @@
 #include "GameShell.h"
 #include "Universe.h"
 
-#include "Lmcons.h"
+#include "lmcons.h"
 
 #include "../Terra/terra.h"
 
@@ -687,7 +687,8 @@ void PNetCenter::LLogicQuant()
 							else {
 								// Сравнение для netCommand4H_BackGameInformation2
 								if( (*firstList.begin()).signature_ != (*secondList.begin()).signature_ ){
-									SendEvent(netCommand4C_SaveLog(), DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
+								    netCommandGeneral ev = netCommand4C_SaveLog();
+									SendEvent(ev, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
 									XBuffer to(1024,1);
 									XStream f("outnet.log", XS_OUT);
 									f < currentVersion < "\r\n";

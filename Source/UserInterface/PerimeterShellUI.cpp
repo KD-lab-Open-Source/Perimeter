@@ -931,14 +931,15 @@ void CShellPushButton::OnRButtonUp(float _x, float _y)
 }
 void CShellPushButton::OnWindow(int enable)
 {
-	if( state & SQSH_ENABLED )
-		if ( enable ) {
-			flag |= active;
-			SND2DPlaySound( "menu_toggle");
-		} else {
-			flag &= ~active;
-			flag &= ~pressed;
-		}
+	if( state & SQSH_ENABLED ) {
+        if (enable) {
+            flag |= active;
+            SND2DPlaySound("menu_toggle");
+        } else {
+            flag &= ~active;
+            flag &= ~pressed;
+        }
+    }
 }
 
 //general wnd
@@ -1084,10 +1085,8 @@ void CDialogWindow::draw(int bFocus)
 			terRenderDevice->SetFont(hFontMainmenu1);
 		}
 
-		if( state & SQSH_ENABLED )
-			OutText(x+m_attr->txt_dx, y+m_attr->txt_dy, m_attr->text, &sColor4f(0.7f, 0.7f, 0.7f, 1.f), m_attr->txt_align);
-		else
-			OutText(x+m_attr->txt_dx, y+m_attr->txt_dy, m_attr->text, &sColor4f(0.3f, 0.3f, 0.3f, 1.f), m_attr->txt_align);
+        sColor4f color = state & SQSH_ENABLED ? sColor4f(0.7f, 0.7f, 0.7f, 1.f) : sColor4f(0.3f, 0.3f, 0.3f, 1.f);
+        OutText(x+m_attr->txt_dx, y+m_attr->txt_dy, m_attr->text, &color, m_attr->txt_align);
 
 		terRenderDevice->SetFont(0);
 	}
@@ -1330,8 +1329,8 @@ void CShellComplexPushButton::OnWindow(int enable)
 
 	if(ID == SQSH_WORKAREA3_ID || ID == SQSH_WORKAREA2_ID || ID == SQSH_WORKAREA4_ID)
 	{
-		CInfoWindow* pWnd;
-		if(pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+		CInfoWindow* pWnd = (CInfoWindow*) _shellIconManager.GetWnd(SQSH_INFOWND_ID);
+        if(pWnd)
 		{
 			pWnd->Show(enable);
 
@@ -1426,14 +1425,16 @@ void CShellComplexPushButton::draw(int bFocus)
 
 	if (m_bPaused) {
 		terRenderDevice->SetFont(m_hFont);
-		OutText(x + sx/2, y+sy/2 - m_hFont->GetHeight()/2, _shellIconManager.hold.c_str(), &sColor4f(1,1,0,1), 0);
+		sColor4f color(1,1,0,1);
+		OutText(x + sx/2, y+sy/2 - m_hFont->GetHeight()/2, _shellIconManager.hold.c_str(), &color, 0);
 		terRenderDevice->SetFont(0);
 	} else if (bDiagramm) {
 		terRenderDevice->SetFont(m_hFontLabel);
 		int ph = round(m_fphase * 100);
 		char buff[11];
 		sprintf(buff, "%d%%", ph);
-		OutText(x + sx / 2, y + sy / 2 - m_hFontLabel->GetHeight() / 2, buff, &sColor4f(1, 1, 0, 1), 0);
+		sColor4f color(1, 1, 0, 1);
+		OutText(x + sx / 2, y + sy / 2 - m_hFontLabel->GetHeight() / 2, buff, &color, 0);
 		terRenderDevice->SetFont(0);
 	}
 
@@ -1784,9 +1785,11 @@ void CShellAtomButton::draw(int bFocus)
 			if (m_bTextLeft) {
 				terRenderDevice->DrawRectangle(x + 1, y, terRenderDevice->GetFontLength(m_cb1), sy * _button_atom5_y + 1, sColor4c(0, 0, 0, 196));
 				terRenderDevice->FlushPrimitive2D();
-				OutText(x + 1, y, m_cb1, &sColor4f(0,1,1,1));
+				sColor4f color(0,1,1,1);
+				OutText(x + 1, y, m_cb1, &color);
 			} else {
-				OutText(x+button_atom_x, y+button_atom_y, m_cb1, &sColor4f(1,1,0,1));
+			    sColor4f color(1,1,0,1);
+				OutText(x+button_atom_x, y+button_atom_y, m_cb1, &color);
 			}
 			terRenderDevice->SetFont(0);
 		}
@@ -2098,7 +2101,8 @@ void CUITabSheet::SwitchPage(int nNewPage, bool bForceSelectUnit)
 		if(pOldPageAttr->ctrls[i] < 0)
 			break;
 
-		if(pWnd = _shellIconManager.GetWnd(pOldPageAttr->ctrls[i]))
+        pWnd = _shellIconManager.GetWnd(pOldPageAttr->ctrls[i]);
+        if(pWnd)
 			pWnd->Show(false);
 	}
 
@@ -2110,7 +2114,8 @@ void CUITabSheet::SwitchPage(int nNewPage, bool bForceSelectUnit)
 		if(pNewPageAttr->ctrls[i] < 0)
 			break;
 
-		if(pWnd = _shellIconManager.GetWnd(pNewPageAttr->ctrls[i]))
+        pWnd = _shellIconManager.GetWnd(pNewPageAttr->ctrls[i]);
+        if(pWnd)
 			pWnd->Show(true);
 	}
 
@@ -2128,7 +2133,8 @@ void CUITabSheet::setActivePageChildrenVisible(bool visible) {
 			break;
 		}
 
-		if ( pWnd = _shellIconManager.GetWnd(aPageAttr->ctrls[i]) ) {
+        pWnd = _shellIconManager.GetWnd(aPageAttr->ctrls[i]);
+		if (pWnd) {
 			pWnd->Show(visible);
 		}
 	}
@@ -2507,7 +2513,8 @@ void CUITabSheet::draw(int bFocus)
 			char* str = (char*)m_page_numbers[i].c_str();
 			terRenderDevice->DrawRectangle(tabXs[i] + dx + 1, tabYs[i] + dy, terRenderDevice->GetFontLength(str), tabSYs[i] * _button_atom6_y + 1, sColor4c(0, 0, 0, 196));
 			terRenderDevice->FlushPrimitive2D();
-			OutText(tabXs[i] + dx + 2, tabYs[i] + dy, str, &sColor4f(0, 1, 1, 1));
+            sColor4f color(0, 1, 1, 1);
+			OutText(tabXs[i] + dx + 2, tabYs[i] + dy, str, &color);
 
 			terRenderDevice->SetFont(0);
 		}
@@ -2541,8 +2548,8 @@ void CUITabSheet::OnWindow(int enable)
 		terUnitBase* frame = player->frame();
 		if(frame)
 		{
-			CInfoWindow* pWnd;
-			if(pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID)){
+			CInfoWindow* pWnd = (CInfoWindow*) _shellIconManager.GetWnd(SQSH_INFOWND_ID);
+            if(pWnd){
 				pWnd->Show(enable);
 
 				if(enable){
@@ -3442,21 +3449,22 @@ void CListBoxWindow::draw(int bFocus)
 
 			float yS = y_str + m_fStringHeight / 2 - m_hFont->GetHeight() / 2;
 
+            sColor4f color(1, 1, 1, Alpha);
 			if (m_hTextureBG) {
 				terRenderDevice->OutText(
 					x+sx*m_pItem[nItem].x + txtdx,
 //					x+m_fStringHeight/2+sx*m_pItem[nItem].x + txtdx,
-					yS, (char*)toStr.c_str(), sColor4f(1, 1, 1, Alpha), SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTextureBG, COLOR_MOD, uv, dudv, fmodf(m_ftime,1000)/1000, pushButtonTextureWeight);
+					yS, (char*)toStr.c_str(), color, SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTextureBG, COLOR_MOD, uv, dudv, fmodf(m_ftime,1000)/1000, pushButtonTextureWeight);
 			} else if (m_attr->alnum) {
 				OutText(
 					x+sx*m_pItem[nItem].x + txtdx, 
 //					x+m_fStringHeight/2+sx*m_pItem[nItem].x + txtdx, 
-					yS, (char*)toStr.c_str(), &sColor4f(1, 1, 1, Alpha));
+					yS, (char*)toStr.c_str(), &color);
 			} else {
 				OutText(
 					x + sx * m_pItem[nItem].x + txtdx + width / 2, 
 //					x + m_fStringHeight/2 + sx * m_pItem[nItem].x + txtdx + width / 2, 
-					yS, (char*)toStr.c_str(), &sColor4f(1, 1, 1, Alpha), SHELL_ALIGN_CENTER);
+					yS, (char*)toStr.c_str(), &color, SHELL_ALIGN_CENTER);
 			}
 			y_str += m_fStringHeight;
 		}
@@ -3639,11 +3647,12 @@ void CStatListBoxWindow::draw(int bFocus) {
 			} else {
 				string toStr = getValidatedText(m_pItem[nItem].m_data[i], width);
 
+                sColor4f color(1, 1, 1, Alpha);
 				OutText(
 					x + sx * m_pItem[nItem].x + txtdx + width / 2, 
 					y_str + txtdy,
 					toStr.c_str(),
-					&sColor4f(1, 1, 1, Alpha),
+					&color,
 					SHELL_ALIGN_CENTER
 				);
 				if (debug_show_intf_borders) {
@@ -3917,14 +3926,15 @@ void ChatWindow::draw(int bFocus)
 
 		float yS = y_str + m_fStringHeight / 2 - m_hFont->GetHeight() / 2;
 
+        sColor4f color(1, 1, 1, Alpha);
 		if (m_hTextureBG) {
 			terRenderDevice->OutText(
 				x + txtdx,
-				yS, (char*)toStr.c_str(), sColor4f(1, 1, 1, Alpha), SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTextureBG, COLOR_MOD, uv, dudv, fmodf(m_ftime,1000)/1000, pushButtonTextureWeight);
+				yS, (char*)toStr.c_str(), color, SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTextureBG, COLOR_MOD, uv, dudv, fmodf(m_ftime,1000)/1000, pushButtonTextureWeight);
 		} else if (m_attr->alnum) {
 			OutText(
 				x + txtdx, 
-				yS, (char*)toStr.c_str(), &sColor4f(1, 1, 1, Alpha));
+				yS, (char*)toStr.c_str(), &color);
 		}
 		y_str += m_fStringHeight;
 	}
@@ -5201,8 +5211,8 @@ void CProgressEnergy::OnWindow(int enable)
 	if(!terShowTips)
 		return;
 
-	CInfoWindow* pWnd;
-	if(pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+	CInfoWindow* pWnd = (CInfoWindow*) _shellIconManager.GetWnd(SQSH_INFOWND_ID);
+    if(pWnd)
 	{
 		pWnd->Show(enable);
 
@@ -5306,8 +5316,8 @@ void CProgressCollected::OnWindow(int enable)
 	if(!terShowTips)
 		return;
 
-	CInfoWindow* pWnd;
-	if(pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+	CInfoWindow* pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID);
+	if(pWnd)
 	{
 		pWnd->Show(enable);
 
@@ -5350,8 +5360,8 @@ void CProgressShield::OnWindow(int enable)
 	if(!terShowTips)
 		return;
 
-	CInfoWindow* pWnd;
-	if(pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID)){
+    CInfoWindow* pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID);
+    if(pWnd) {
 		pWnd->Show(enable);
 
 		if(enable){
@@ -5370,8 +5380,8 @@ void CProgressTerrain::OnWindow(int enable)
 	if(!terShowTips)
 		return;
 
-	CInfoWindow* pWnd;
-	if(pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+    CInfoWindow* pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID);
+    if(pWnd)
 	{
 		pWnd->Show(enable);
 
@@ -5417,8 +5427,8 @@ void CProgressMutation::OnWindow(int enable)
 	if(!terShowTips)
 		return;
 
-	CInfoWindow* pWnd;
-	if(pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+    CInfoWindow* pWnd = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID);
+    if(pWnd)
 	{
 		terUnitSquad* pSquad = GetSquadByNumber(ID - SQSH_BAR_SQUAD1_ID);
 		if(pSquad)
@@ -6029,7 +6039,8 @@ void CCreditsWindow::draw(int bFocus)
 				fmodf(m_ftime,1000)/1000,
 				pushButtonTextureWeight);
 		} else {
-			OutText(txtX, txtY, textData.c_str(), &sColor4f(1, 1, 1, Alpha), txtAlign );
+            sColor4f c(1, 1, 1, Alpha);
+			OutText(txtX, txtY, textData.c_str(), &c, txtAlign );
 		}
 		terRenderDevice->SetFont(0);
 
@@ -6105,7 +6116,7 @@ void CReplayPlayerPushButton::draw(int bFocus)
 
 
 //////////////////////////////////////////
-#include "silicon.h"
+#include "Silicon.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
 

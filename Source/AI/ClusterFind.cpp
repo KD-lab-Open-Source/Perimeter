@@ -594,9 +594,9 @@ ClusterFind::LINE_RET
 			yeq=iy;
 
 			bool debug_xor;
-			HeuristicLine(xfrom,yfrom,xeq,yeq,
-				dx,dy,walk_map,EmptyHeuristic(),
-					debug_xor);
+            EmptyHeuristic eh = EmptyHeuristic();
+			HeuristicLine(xfrom,yfrom,xeq,yeq, 
+                          dx,dy,walk_map,eh,debug_xor);
 
 			if(debug_xor)
 			{

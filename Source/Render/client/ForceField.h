@@ -83,8 +83,14 @@ private:
 	TRANSPATENT_TYPE ttype;
 
 	friend class FieldDispatcher;
-	friend void FieldDispatcherBorderCall(void* data,Vect2f& p);
+	
+    static void FieldDispatcherBorderCall(void* data,Vect2f& p)
+    {
+        FieldCluster* cluster = static_cast<FieldCluster*>(data);
+        cluster->border_.push_back(p);
+    }
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //  Верхняя полусфера нормалей с равномерным 

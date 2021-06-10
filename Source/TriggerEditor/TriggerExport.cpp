@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "TriggerExport.h"
+#include <cstring>
 
 //----------------------------------------------------------
 bool ConditionSwitcher::check(AIPlayer& aiPlayer) 
@@ -11,15 +12,13 @@ bool ConditionSwitcher::check(AIPlayer& aiPlayer)
 		return conditions.front().check(aiPlayer);
 
 	if(type == AND){
-		vector<ConditionNode>::iterator ci;
-		FOR_EACH(conditions, ci)
+        FOR_EACH_AUTO(conditions, ci)
 			if(!ci->check(aiPlayer)) 
 				return false;
 		return true;
 	}
 	else{
-		vector<ConditionNode>::iterator ci;
-		FOR_EACH(conditions, ci)
+		FOR_EACH_AUTO(conditions, ci)
 			if(ci->check(aiPlayer)) 
 				return true;
 		return false;
@@ -27,17 +26,15 @@ bool ConditionSwitcher::check(AIPlayer& aiPlayer)
 }
 
 void ConditionSwitcher::checkEvent(AIPlayer& aiPlayer, const Event& event) 
-{ 
-	vector<ConditionNode>::iterator ci;
-	FOR_EACH(conditions, ci)
+{
+    FOR_EACH_AUTO(conditions, ci)
 		if(ci->condition)
 			ci->condition->checkEvent(aiPlayer, event);
 }
 
 void ConditionSwitcher::clear() 
-{ 
-	vector<ConditionNode>::iterator ci;
-	FOR_EACH(conditions, ci)
+{
+    FOR_EACH_AUTO(conditions, ci)
 		if(ci->condition)
 			ci->condition->clear();
 }
@@ -52,8 +49,7 @@ void ConditionSwitcher::writeInfo(XBuffer& buffer, string offset) const
 	}
 	buffer < (type == AND ? "È" : "ÈËÈ") < " = " < (state_ ? "1" : "0") < "\r\n";
 	offset += "    ";
-	vector<ConditionNode>::const_iterator ci;
-	FOR_EACH(conditions, ci)
+    FOR_EACH_AUTO(conditions, ci)
 		ci->writeInfo(buffer, offset);
 }
 
@@ -111,8 +107,7 @@ void Trigger::initialize()
 
 void Trigger::setName(const char* name)
 {
-	IncomingLinksList::iterator i;
-	FOR_EACH(incomingLinks_, i)
+    FOR_EACH_AUTO(incomingLinks_, i)
 		(*i)->setTriggerName(name);
 	name_ = name;
 }
@@ -122,8 +117,7 @@ bool Trigger::active() const
 	if(state_ == CHECKING || state_ == WORKING)
 		return true;
 	
-	vector<TriggerLink*>::const_iterator li;
-	FOR_EACH(incomingLinks_, li)
+    FOR_EACH_AUTO(incomingLinks_, li)
 		if((*li)->active())
 			return true;
 
@@ -201,13 +195,11 @@ TriggerChain::TriggerChain()
 
 void TriggerChain::buildLinks()
 {
-	TriggerList::iterator ti;
-	FOR_EACH(triggers, ti)
+    FOR_EACH_AUTO(triggers, ti)
 		ti->incomingLinks_.clear();
 
-	FOR_EACH(triggers, ti){
-		vector<TriggerLink>::iterator li;
-		FOR_EACH(ti->outcomingLinks_, li){
+    FOR_EACH_AUTO(triggers, ti){
+        FOR_EACH_AUTO(ti->outcomingLinks_, li){
 			Trigger* trigger = find(li->triggerName());
 			if(trigger && trigger != &*ti){
 				trigger->incomingLinks_.push_back(&*li);
@@ -222,7 +214,7 @@ void TriggerChain::buildLinks()
 	}
 
 	activeTriggers_.clear();
-	FOR_EACH(triggers, ti)
+    FOR_EACH_AUTO(triggers, ti)
 		if(ti->active())
 			activeTriggers_.push_back(&(*ti));
 
@@ -279,8 +271,7 @@ bool TriggerChain::operator==(const TriggerChain& rhs) const
 
 Trigger* TriggerChain::find(const char* name)
 {
-	TriggerList::iterator ti;
-	FOR_EACH(triggers, ti)
+    FOR_EACH_AUTO(triggers, ti)
 		if(!strcmp(ti->name(), name))
 			return &*ti;
 	return 0;
@@ -323,7 +314,7 @@ Trigger* TriggerChain::addTrigger(Trigger const& trigger)
 }
 
 Trigger* TriggerChain::insertTrigger(int pos, Trigger const& trigger){
-	vector<Trigger>::iterator itr = triggers.insert(triggers.begin() + pos, trigger);
+	auto itr = triggers.insert(triggers.begin() + pos, trigger);
 	if (itr == triggers.end())
 		return NULL;
 	buildLinks();

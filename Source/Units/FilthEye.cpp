@@ -13,7 +13,7 @@
 
 #include "CameraManager.h"
 #include "FilthEye.h"
-#include "Filth.hi"
+#include "filth.hi"
 
 terFilthSwarmEye::terFilthSwarmEye(terFilthSpot* spot, const Vect3f& pos,int attack_period_)
 : terFilthSwarm(spot,pos)

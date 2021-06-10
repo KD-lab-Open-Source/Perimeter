@@ -14,7 +14,7 @@ class terHyperSpace
 public:
 
 	terHyperSpace(class PNetCenter* net_client, MissionDescription& mission);
-	~terHyperSpace();
+	virtual ~terHyperSpace();
 
 	//void Start(MissionDescription& mission, const char* fnamePlayReel=NULL);
 	bool SingleQuant();

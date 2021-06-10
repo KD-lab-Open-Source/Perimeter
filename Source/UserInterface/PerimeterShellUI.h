@@ -2119,7 +2119,7 @@ inline int absoluteY(float y) {
 }
 
 inline string getImageFileName(const sqshImage* image, const char* fileName = 0) {
-	string fullname = fileName ? fileName : image->texture;
+	string fullname = fileName ? fileName : static_cast<string>(image->texture);
 	if ( !fullname.empty() ) {
 		if (image->hasResolutionVersion) {
 			char intBuffer[11 + 1];
@@ -2218,19 +2218,19 @@ inline void drawPointRelative(const Vect2i& a, const sColor4f& c = sColor4f(0, 0
 */
 //absolute-----------------
 inline void DrawSprite(int x, int y, int dx, int dy, float u, float v, float du, float dv,
-		cTexture *Texture, sColor4c &ColorMul = sColor4c(255,255,255,255), float phase = 0, eBlendMode mode = ALPHA_NONE)
+		cTexture *Texture, const sColor4c &ColorMul = sColor4c(255,255,255,255), float phase = 0, eBlendMode mode = ALPHA_NONE)
 {
 	terRenderDevice->DrawSprite(x, y, dx, dy, u, v, du, dv, Texture, ColorMul, phase, mode);
 }
 
 inline void DrawSprite2(int x, int y, int dx, int dy, float u, float v, float du, float dv,
-		cTexture *Tex1, cTexture *Tex2, sColor4c &ColorMul = sColor4c(255,255,255,255), float phase = 0)
+		cTexture *Tex1, cTexture *Tex2, const sColor4c &ColorMul = sColor4c(255,255,255,255), float phase = 0)
 {
 	terRenderDevice->DrawSprite2(x, y, dx, dy, u, v, du, dv, Tex1, Tex2, ColorMul, phase);
 }
 
 inline void DrawSprite2(int x, int y, int dx, int dy, float u, float v, float du, float dv, float u1, float v1, float du1, float dv1,
-		cTexture *Tex1, cTexture *Tex2, sColor4c &ColorMul = sColor4c(255,255,255,255), float phase = 0, eColorMode mode = COLOR_MOD)
+		cTexture *Tex1, cTexture *Tex2, const sColor4c &ColorMul = sColor4c(255,255,255,255), float phase = 0, eColorMode mode = COLOR_MOD)
 {
 	terRenderDevice->DrawSprite2(x, y, dx, dy, u, v, du, dv, u1, v1, du1, dv1, Tex1, Tex2, ColorMul, phase, mode);
 //	terRenderDevice->DrawRectangle(relativeX(x), relativeY(y), relativeX(dx), relativeY(dy), sColor4c(255,255,0,255), true);

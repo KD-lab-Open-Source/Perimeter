@@ -88,11 +88,12 @@ float terBuildingPlant::requestProductionProgress(terUnitBase* squad)
 	if(production_)
 		return 0;
 
-	if(shipmentQueue_.front() != squad)
-		if(waitingCounter_++ < 6)
-			return 0;
-		else
-			shipmentQueue_.front() = squad;
+	if(shipmentQueue_.front() != squad) {
+        if (waitingCounter_++ < 6)
+            return 0;
+        else
+            shipmentQueue_.front() = squad;
+    }
 
 	waitingCounter_ = 0;
 	productionRequestTimer_.start(500);

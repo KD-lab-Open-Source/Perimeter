@@ -458,7 +458,7 @@ public:
 		return saveParameters(instance());
 	}
 
-	/* TODO is this needed? is trying to use a partial class constructor
+	/* troublesome, since EditArchive is declared on another .h which requires this header, we use normal edit(ea)
 	static bool edit() {
 		return edit(EditArchive());
 	}

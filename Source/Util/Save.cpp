@@ -58,7 +58,8 @@ public:
 };
 
 TriggerInterface& triggerInterface() {
-	return Singleton<TriggerInterfaceImpl>::instance();
+    TriggerInterface& ti = Singleton<TriggerInterfaceImpl>::instance();
+	return ti;
 }
 
 //---------------------------------------

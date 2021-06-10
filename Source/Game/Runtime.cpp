@@ -382,7 +382,9 @@ void HTManager::initGraphics()
 
 	terLight = terScene->CreateLight(ATTRLIGHT_DIRECTION);
 	terLight->SetPosition(MatXf(Mat3f::ID,Vect3f(0,0,0)));
-	terLight->SetColor(&sColor4f(0,0,0,1),&sColor4f(1,1,1,1));
+    sColor4f a(0,0,0,1);
+    sColor4f b(1,1,1,1);
+	terLight->SetColor(&a, &b);
 
 	pDefaultFont=terVisGeneric->CreateFont("Arial",12);
 	xassert(pDefaultFont);

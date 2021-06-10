@@ -1,8 +1,38 @@
 #ifndef __TRIGGER_EXPORT_H__
 #define __TRIGGER_EXPORT_H__
 
-#include <atltypes.h>
+#ifndef _FINAL_VERSION_
+#include <atltypes.h> //MFC stuff
+#else
+//Avoid including MFC stuff by just bridging these
+class CPoint : public POINT {
+};
+class CRect : public RECT {
+};
+
+#endif
+
 #include "Serialization.h"
+
+//-----------------------------
+//This was originally on Conditions.h, had to be moved since C++ now forbids forward declaring enums
+enum AIPlayerType
+{
+    AI_PLAYER_TYPE_ME, // Я
+    AI_PLAYER_TYPE_ENEMY, // Другой
+    AI_PLAYER_TYPE_WORLD, // Мир
+    AI_PLAYER_TYPE_ANY // Любой
+};
+
+enum CompareOperator
+{
+    COMPARE_LESS,	// Меньше
+    COMPARE_LESS_EQ, // Меньше либо равно
+    COMPARE_EQ, // Равно
+    COMPARE_NOT_EQ, // Не равно
+    COMPARE_GREATER, // Больше
+    COMPARE_GREATER_EQ // Больше либо равно		 
+};
 
 //-----------------------------
 // Для отделения контента
@@ -19,8 +49,32 @@ class TreeNode;
 class TriggerChain;
 class Trigger;
 
-enum AIPlayerType;
-enum CompareOperator;
+//-----------------------------
+class Action;
+class Condition;
+
+typedef ShareHandle<Action> ActionPtr;
+typedef ShareHandle<Condition> ConditionPtr;
+
+//-----------------------------
+class TriggerInterface
+{
+public:
+    virtual const char* actionComboList() = 0;  // |-separated
+    virtual const char* conditionComboList() = 0; // |-separated
+    virtual ActionPtr createAction(int typeIndex) = 0; // index in actionComboList
+    virtual ConditionPtr createCondition(int typeIndex) = 0; // index in conditionComboList
+
+    virtual const char* actionName(const Action& action) = 0;
+    virtual const char* conditionName(const Condition& condition) = 0;
+
+    virtual bool editCondition(Trigger& trigger, HWND hwnd) = 0;
+    virtual bool editTrigger(Trigger& trigger, HWND hwnd) = 0;
+
+    virtual void* malloc(size_t n) = 0;
+    virtual void free(void* p) = 0;
+};
+TriggerInterface& triggerInterface();
 
 //-----------------------------
 template <class T>
@@ -367,7 +421,8 @@ public:
 		return cellIndex_;
 	}
 	void setCellIndex(int x, int y) {
-		cellIndex_.SetPoint(x, y);
+		cellIndex_.x = x;
+        cellIndex_.y = y;
 	}
 	void setCellIndex(const CPoint& cellIndex) {
 		static_cast<CPoint&>(cellIndex_) = cellIndex;
@@ -532,31 +587,6 @@ private:
 	typedef vector<Trigger*, TriggerAllocator<Trigger*> > ActiveTriggers;
 	ActiveTriggers activeTriggers_;
 };
-
-//-----------------------------
-typedef ShareHandle<Action> ActionPtr;
-typedef ShareHandle<Condition> ConditionPtr;
-
-//-----------------------------
-class TriggerInterface
-{
-public:
-	virtual const char* actionComboList() = 0;  // |-separated
-	virtual const char* conditionComboList() = 0; // |-separated
-	virtual ActionPtr createAction(int typeIndex) = 0; // index in actionComboList
-	virtual ConditionPtr createCondition(int typeIndex) = 0; // index in conditionComboList
-	
-	virtual const char* actionName(const Action& action) = 0;  
-	virtual const char* conditionName(const Condition& condition) = 0;  
-
-	virtual bool editCondition(Trigger& trigger, HWND hwnd) = 0;
-	virtual bool editTrigger(Trigger& trigger, HWND hwnd) = 0;
-
-	virtual void* malloc(size_t n) = 0;
-	virtual void free(void* p) = 0;
-};
-
-TriggerInterface& triggerInterface();
 
 //-----------------------------
 

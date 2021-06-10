@@ -32,6 +32,11 @@
   for((iterator) = (list).begin(); (iterator) != (list).end(); ++(iterator))
 #endif
 
+#ifndef FOR_EACH_AUTO
+#define FOR_EACH_AUTO(list, iterator) \
+  for(auto iterator = (list).begin(); (iterator) != (list).end(); ++(iterator))
+#endif
+
 #if (_MSC_VER < 1300)
 
 #if !defined (_STLP_NO_NEW_IOSTREAMS)

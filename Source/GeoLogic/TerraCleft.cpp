@@ -164,7 +164,7 @@ CTerraCleftSystem::CTerraCleftSystem()
 
 #define ID(i, j) (((i)<<24)|(j))
 
-void CTerraCleftSystem::init_radial(Vect2i& pos1)
+void CTerraCleftSystem::init_radial(const Vect2i& pos1)
 {
 	m_nodes[0] = pos1;
 
@@ -199,7 +199,7 @@ void CTerraCleftSystem::init_radial(Vect2i& pos1)
 	grow_radial(m_clefts.back(), 1, 3);
 }
 
-void CTerraCleftSystem::init_direct(Vect2i& pos1, Vect2i& pos2)
+void CTerraCleftSystem::init_direct(const Vect2i& pos1, const Vect2i& pos2)
 {
 	Vect2f dir  = pos2 - pos1;
 	dir.normalize(1);
@@ -244,7 +244,7 @@ void CTerraCleftSystem::init_direct(Vect2i& pos1, Vect2i& pos2)
 	m_clefts.push_back(CTerraCleft(m_nodes[0], m_nodes[ID(1,2)], prcGo));
 	grow_direct(m_clefts.back(), 1, 2);
 }
-void CTerraCleftSystem::init_direct_thin(Vect2i& pos1, Vect2i& pos2)
+void CTerraCleftSystem::init_direct_thin(const Vect2i& pos1, const Vect2i& pos2)
 {
 	Vect2f dir  = pos2 - pos1;
 	dir.normalize(1);
@@ -268,7 +268,7 @@ void CTerraCleftSystem::init_direct_thin(Vect2i& pos1, Vect2i& pos2)
 	m_clefts.push_back(CTerraCleft(m_nodes[0], m_nodes[ID(1,0)], prcGo));
 	grow_direct_thin(m_clefts.back(), 1, 0);
 }
-void CTerraCleftSystem::init(int type, Vect2i& pos1, Vect2i& pos2)
+void CTerraCleftSystem::init(int type, const Vect2i& pos1, const Vect2i& pos2)
 {
 	if(type == csysRadial)
 		init_radial(pos1);
@@ -314,7 +314,7 @@ int CTerraCleftSystem::quant()
 	return nstops != m_clefts.size();
 }
 
-#define PUSH(id) {if(b = find_node(id)){m_clefts.push_back(CTerraCleft(*a, *b));}}
+#define PUSH(id) {if((b = find_node(id))){m_clefts.push_back(CTerraCleft(*a, *b));}}
 
 void CTerraCleftSystem::grow_radial(CTerraCleft& par, int i, int j)
 {

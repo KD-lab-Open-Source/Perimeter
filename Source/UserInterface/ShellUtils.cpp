@@ -177,7 +177,8 @@ bool LineClip2d(Vect2i& v1, Vect2i& v2,  const Vect2i& _w1, const Vect2i& _w2)
 				x = _w1.x;
 			}
 
-			if(outcodeOut = outcode0)
+            outcodeOut = outcode0;
+            if(outcodeOut)
 			{
 				v1.x = x; v1.y = y; outcode0 = ClipOutCode(x,y,_w1.x, _w2.x, _w1.y, _w2.y);
 			}

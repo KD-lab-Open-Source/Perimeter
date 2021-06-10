@@ -105,7 +105,7 @@ class HistoryScene : public Commander {
 		void drawSprites();
 
 
-		World* HistoryScene::traceWorld(const Vect2f& pos);
+		World* traceWorld(const Vect2f& pos);
 		void createSkySphere(bool bw);
 		void updateObjects(float dt);
 

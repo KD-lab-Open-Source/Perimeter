@@ -64,16 +64,16 @@ template<class T, int reserve_size = 0>
 class GridVector : public vector<T*>
 {
 public:
-	GridVector() { if(reserve_size) reserve(reserve_size); }
-	void insert(T* obj) { push_back(obj); obj->incrInsertion(); }
+	GridVector() { if(reserve_size) this->reserve(reserve_size); }
+	void insert(T* obj) { this->push_back(obj); obj->incrInsertion(); }
 	void remove(T* obj) 
 	{  // »щем дл€ удалени€ в обратную сторону,
 		// т.к. более подвижные объекты лежат в конце.
-		xassert(!empty()); // всегда не пустой
-		for(iterator i = end() - 1; i >= begin(); --i)
+		xassert(!this->empty()); // всегда не пустой
+		for(typename vector<T*>::iterator i = this->end() - 1; i >= this->begin(); --i)
 			if(*i == obj)
-			{ 
-				erase(i); 
+			{
+                this->erase(i); 
 				obj->decrInsertion();
 				return;
 			} 
@@ -85,7 +85,7 @@ template<class T>
 class GridSingleList : public slist<T*>
 {
 public:
-	void insert(T* obj) { push_front(obj); obj->incrInsertion(); }
+	void insert(T* obj) { this->push_front(obj); obj->incrInsertion(); }
 	void remove(T* obj) { obj->decrInsertion(); slist<T*>::remove(obj); }
 };
 
@@ -180,8 +180,8 @@ public:
 	int size() const // for Debug purpose mostly
 	{
 		int sz = 0;
-		for(int y = 0;y < sy;y++)
-			for(int x = 0;x < sx;x++)
+		for(int y = 0;y < size_y;y++)
+			for(int x = 0;x < size_x;x++)
 				sz += cell_table[y][x].size();
 		return sz;
 	}
@@ -204,7 +204,7 @@ public:
 		for(int y = rect.y0;y <= rect.y1;y++)
 			for(int x = rect.x0;x <= rect.x1;x++){
 				CellList& root = table(x, y);
-				CellList::iterator i;
+				typename CellList::iterator i;
 				FOR_EACH(root, i)
 					if(doPass(**i))
 						op(*i);
@@ -223,7 +223,7 @@ public:
 		for(int y = rect.y0;y <= rect.y1;y++)
 			for(int x = rect.x0;x <= rect.x1;x++){
 				CellList& root = table(x, y);
-				CellList::iterator i;
+				typename CellList::iterator i;
 				FOR_EACH(root, i)
 					if(doPass(**i))
 						if(!(op(*i)))
@@ -238,7 +238,7 @@ public:
 		if(insideMap(x, y))
 		{
 			CellList& root = table(x, y);
-			CellList::iterator i;
+			typename CellList::iterator i;
 			FOR_EACH(root, i)
 				if(doPass(**i))
 					op(*i);
@@ -251,7 +251,7 @@ public:
 		if(insideMap(x, y))
 		{
 			CellList& root = table(x, y);
-			CellList::iterator i;
+			typename CellList::iterator i;
 			FOR_EACH(root, i)
 				if(doPass(**i))
 					if(!(op(*i)))
@@ -442,7 +442,7 @@ public:
 		}		
 
 		int vals_up = 0;
-		for(i = 1; i < n; i++)
+		for(int i = 1; i < n; i++)
 			if(pY[vals_up] > pY[i])
 				vals_up = i;
 
@@ -557,7 +557,7 @@ public:
 		}
 
 		int vals_up = 0;
-		for(i = 1; i < n; i++)
+		for(int i = 1; i < n; i++)
 			if(pY[vals_up] > pY[i])
 				vals_up = i;
 

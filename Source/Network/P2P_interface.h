@@ -320,7 +320,7 @@ public:
 	list<netCommandGeneral*>   m_CommandList;
 	list<netCommand4G_ForcedDefeat*> m_DeletePlayerCommand;
 
-	void PNetCenter::ClearCommandList();
+	void ClearCommandList();
 	void ClearDeletePlayerGameCommand();
 
 

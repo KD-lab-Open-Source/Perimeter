@@ -43,7 +43,7 @@ SET(perimeter_SRCS
         Game/Player.cpp
         Game/Universe.cpp
         Game/PerimeterDataChannel.cpp
-        Game/ResourceDispatcher.cpp
+        #TODO unused? Game/ResourceDispatcher.cpp
         Game/Runtime.cpp
         Game/CopyToGraph.cpp
         Game/Region.cpp
@@ -116,8 +116,7 @@ SET(perimeter_SRCS
         UserInterface/PerimeterShellUI.cpp
         UserInterface/ReelManager.cpp
         UserInterface/SelectManager.cpp
-        UserInterface/ShellCmd.cpp
-        UserInterface/ShellLogDisp.cpp
+        UserInterface/ShellCmd.cpp UserInterface/ShellLogDisp.cpp
         UserInterface/ShellUtils.cpp
         UserInterface/UserSingleProfile.cpp
         UserInterface/SCodeInterpreter/Commands.cpp

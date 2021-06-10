@@ -320,7 +320,8 @@ void terNatureCleft::Start()
 	terNatureTerrain::Start();
 
 	CleftTool = new CTerraCleftSystem;
-	CleftTool->init(csysRadial, (Vect2i)position2D());
+    Vect2i p = static_cast<Vect2i>(position2D());
+	CleftTool->init(csysRadial, p);
 }
 
 void terNatureCleft::Quant()
@@ -610,7 +611,8 @@ void terNatureFallTree::Start()
 	AvatarQuant();
 	avatar()->Start();
 
-	SND3DPlaySound("tree_falling",&position());
+	Vect3f p = position();
+	SND3DPlaySound("tree_falling",&p);
 }
 
 void terNatureFallTree::Quant()

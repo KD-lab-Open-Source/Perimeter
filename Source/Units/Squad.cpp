@@ -373,7 +373,7 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_OBJECT:
 		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
 			clearOrders();
-		if(command.unit())
+		if(command.unit()) {
 			if(isEnemy(command.unit())){
 				addTarget(command.unit());									  
 				if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
@@ -386,7 +386,8 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 					addTarget(command.unit());
 				else
 					addWayPoint(command.unit()->position());
-			}
+            }
+        }
 		break;
 																			 
 	case COMMAND_ID_PATROL:
@@ -590,7 +591,8 @@ void terUnitSquad::universalLoad(const SaveUnitData* baseData)
 	mutationEnergy_ = data->mutationEnergy;
 
 	calcCenter();
-	setPosition(To3D(average_position));
+    Vect3f p = To3D(average_position);
+	setPosition(p);
 }
 
 //---------------------------
@@ -1149,12 +1151,12 @@ terUnitBase* terUnitSquad::AttackPoint::target(terUnitLegionary& assailant) cons
 		return 0;
 
 	if(squad_){
-		if(unit_)
-			if(unit_->isUnseen())
-				return 0;
-			else if(assailant.checkFireClass(unit_))
-				return unit_;
-	
+		if(unit_) {
+            if (unit_->isUnseen())
+                return 0;
+            else if (assailant.checkFireClass(unit_))
+                return unit_;
+        }
 		terUnitBase* u = squad_->getBestTarget(assailant);
 		return u && !u->isUnseen() ? u : 0;
 	}
@@ -1170,12 +1172,12 @@ bool terUnitSquad::AttackPoint::obsolete()
 	if(squad_ && !squad_->alive())
 		squad_ = 0;
 
-	if(unit_)
-		if(!unit_->alive())
-			unit_ = 0;
-		else
-			return false;
-
+	if(unit_) {
+        if (!unit_->alive())
+            unit_ = 0;
+        else
+            return false;
+    }
 	if(squad_)
 		return !squad_->alive() || squad_->Empty();
 
@@ -1210,7 +1212,7 @@ void terUnitSquad::calcCenter()
 	FOR_EACH(Units, ui){
 		terUnitLegionary& unit = **ui;
 		xassert(unit.inSquad() || unit.attr().is_base_unit);
-		if(!unit.inSquad() || n_complex_units && unit.attr().is_base_unit) // не учитывать не дошедших и базовых, когда есть производные
+		if(!unit.inSquad() || (n_complex_units && unit.attr().is_base_unit)) // не учитывать не дошедших и базовых, когда есть производные
 			continue;
 		average_position += unit.position2D();
 		counter++;
@@ -1986,8 +1988,10 @@ void terUnitSquad::attackQuant()
 					}
 				}
 
-				if((!attack_flag && offensiveMode() || currentAttribute()->dynamicAttack) && wayPoints_.empty() && !patrolMode() && op.targets().size())
-					repositionToAttack(AttackPoint(op.targets().front().unit_));
+				if(((!attack_flag && offensiveMode()) || currentAttribute()->dynamicAttack) && wayPoints_.empty() && !patrolMode() && op.targets().size()) {
+                    AttackPoint ap = AttackPoint(op.targets().front().unit_);
+                    repositionToAttack(ap);
+                }
 
 				targets_scan_timer.start(squad_targets_scan_period);
 			}

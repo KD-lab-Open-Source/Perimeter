@@ -283,10 +283,8 @@ void terBuildingInstaller::SetBuildPosition(const Vect2f& mousePos, terPlayer* p
 			ObjectPoint->ClearAttr(ATTRUNKOBJ_IGNORE);
 
 			ObjectPoint->SetPosition(Se3f(QuatF(Angle, Vect3f::K), Position));
-			if(valid())
-				ObjectPoint->SetColor(0,&sColor4f(0,1.0f,0,0.5f),&sColor4f(0,1.0f,0,0.5f));
-			else
-				ObjectPoint->SetColor(0,&sColor4f(1.0f,0,0,0.5f),&sColor4f(1.0f,0,0,0.5f));
+			sColor4f c = valid() ? sColor4f(0,1.0f,0,0.5f) : sColor4f(1.0f,0,0,0.5f);
+            ObjectPoint->SetColor(0,&c,&c);
 			return;
 		}
 		ObjectPoint->SetAttr(ATTRUNKOBJ_IGNORE);
@@ -397,7 +395,7 @@ bool terBuildingInstaller::checkScriptInstructions()
 				xassert_s(0 && "Объект по метке не найден: ", instruction.label);
 			}												
 			else{
-				if((unit->activity() && instruction.labeledObjectActivity || !unit->activity() && !instruction.labeledObjectActivity) &&
+				if(((unit->activity() && instruction.labeledObjectActivity) || (!unit->activity() && !instruction.labeledObjectActivity)) &&
 					unit->position2D().distance2(Position) < sqr(instruction.distance))
 					return true;
 			}

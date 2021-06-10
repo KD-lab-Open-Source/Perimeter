@@ -10,15 +10,7 @@ typedef vector<terUnitMonk*> MonkList;
 typedef vector<class terProtector*> ProtectorList;
 
 template<class UnitList>
-bool removeNotAliveMonk(UnitList& unitList) 
-{
-	UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), not1(mem_fun(&terUnitMonk::alive)));
-	if(i != unitList.end()){
-		unitList.erase(i, unitList.end());
-		return true;
-	}
-	return false;
-}
+bool removeNotAliveMonk(UnitList& unitList);
 
 //--------------------------
 class terProtector : public terBuildingEnergy

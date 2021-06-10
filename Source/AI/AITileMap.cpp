@@ -231,14 +231,13 @@ bool AITileMap::findPath(const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i
 		return false;
 
 	bool b;
-	switch(type)
-	{
-	case PATH_NORMAL:
-		b=path_finder->FindPath(from, to, out_path, ClusterHeuristicDitch());
-		break;
-	case PATH_HARD:
-		b=path_hard_map->FindPath(from, to, out_path, ClusterHeuristicHard());
-		break;
+	//Since both clusterheuristic types are not same type, is better to use if's than switch
+	if (type == PATH_NORMAL) {
+        ClusterHeuristic ch = ClusterHeuristicDitch();
+        b = path_finder->FindPath(from, to, out_path, ch);
+    } else if (type == PATH_HARD) {
+        ClusterHeuristicHard chh = ClusterHeuristicHard();
+		b = path_hard_map->FindPath(from, to, out_path, chh);
 	}
 
 	vector<Vect2i>::iterator it;

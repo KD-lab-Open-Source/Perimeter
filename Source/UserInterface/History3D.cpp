@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "History3D.h"
 #include "GameShellSq.h"
 
@@ -95,7 +95,8 @@ void Frame3D::updateColor(const Vect3f& cameraPos) {
 	} else {
 		frameObj->ClearAttr(ATTRUNKOBJ_IGNORE);
 		float f = 1.0f - distance / SPHERE_VISIBLE_DISTANCE;
-		frameObj->SetColor( 0, &sColor4f(1, 1, 1, f) );
+        sColor4f color(1, 1, 1, f);
+		frameObj->SetColor( 0, &color );
 	}
 }
 

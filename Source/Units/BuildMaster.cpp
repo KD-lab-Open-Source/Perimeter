@@ -34,7 +34,7 @@ void terUnitBuildMaster::Quant()
 {
 	terFrameChild::Quant();
 
-	if(targetUnit() && targetUnit()->repairRequest() || Player->buildingBlockRequest()){
+	if((targetUnit() && targetUnit()->repairRequest()) || Player->buildingBlockRequest()){
 		if(productionCompleted()){
 			terUnitBuildingBlock* p = safe_cast<terUnitBuildingBlock*>(Player->buildUnit(UNIT_ATTRIBUTE_BUILDING_BLOCK));
 			p->setPose(Se3f(QuatF::ID, position()), true);

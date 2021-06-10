@@ -185,37 +185,50 @@ void terCameraType::update()
 
 void terCameraType::SetFrustumGame()
 {
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.28125f);
+    Vect2f focus(focus_,focus_);
+    Vect2f zplane(30.0f,10000.0f);
 	Camera->SetFrustum(								// устанавливается пирамида видимости
-		&Vect2f(0.5f,0.5f),							// центр камеры
-		&sRectangle4f(-0.5f,-0.5f,0.5f,0.28125f),		// видимая область камеры
-		&Vect2f(focus_,focus_),						// фокус камеры
-		&Vect2f(30.0f,10000.0f)						// ближайший и дальний z-плоскости отсечения
+		&center,									// центр камеры
+		&clip,										// видимая область камеры
+		&focus,										// фокус камеры
+		&zplane										// ближайший и дальний z-плоскости отсечения
 		);
 }
 
 void terCameraType::SetFrustumMenu()
 {
-	Camera->SetFrustum(								// устанавливается пирамида видимости
-		&Vect2f(0.5f,0.5f),							// центр камеры
-		&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),		// видимая область камеры
-		&Vect2f(focus_,focus_),						// фокус камеры
-		&Vect2f(30.0f,10000.0f)						// ближайший и дальний z-плоскости отсечения
-		);
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
+    Vect2f focus(focus_,focus_);
+    Vect2f zplane(30.0f,10000.0f);
+    Camera->SetFrustum(								// устанавливается пирамида видимости
+            &center,								// центр камеры
+            &clip,									// видимая область камеры
+            &focus,									// фокус камеры
+            &zplane									// ближайший и дальний z-плоскости отсечения
+    );
 }
 
 void terCameraType::SetFrustumCutScene()
 {
-	Camera->SetFrustum(															// устанавливается пирамида видимости
-		&Vect2f(0.5f,0.5f),														// центр камеры
-		&sRectangle4f(-0.5f,CUT_SCENE_TOP,0.5f,CUT_SCENE_BOTTOM),				// видимая область камеры
-		&Vect2f(focus_,focus_),													// фокус камеры
-		&Vect2f(30.0f,10000.0f)													// ближайший и дальний z-плоскости отсечения
-		);
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,CUT_SCENE_TOP,0.5f,CUT_SCENE_BOTTOM);
+    Vect2f focus(focus_,focus_);
+    Vect2f zplane(30.0f,10000.0f);
+    Camera->SetFrustum(								// устанавливается пирамида видимости
+            &center,								// центр камеры
+            &clip,									// видимая область камеры
+            &focus,									// фокус камеры
+            &zplane									// ближайший и дальний z-плоскости отсечения
+    );
 }
 
 void terCameraType::calcRayIntersection(float x,float y,Vect3f& v0,Vect3f& v1)
 {
-	Camera->ConvertorCameraToWorld(&v1,&Vect2f(x,y));
+    Vect2f v(x,y);
+	Camera->ConvertorCameraToWorld(&v1,&v);
 	if(Camera->GetAttr(ATTRCAMERA_PERSPECTIVE)){
 		MatXf matrix;
 		Camera->GetPosition(&matrix);
@@ -478,7 +491,7 @@ void terCameraType::SetCameraFollow(terUnitBase* unit, int transitionTime)
 void terCameraType::destroyLink()
 {
 	if(unit_follow && (!unit_follow->alive() 
-	  || unit_follow->attr().ID == UNIT_ATTRIBUTE_SQUAD && safe_cast<terUnitSquad*>(unit_follow)->Empty())){
+	  || (unit_follow->attr().ID == UNIT_ATTRIBUTE_SQUAD && safe_cast<terUnitSquad*>(unit_follow)->Empty()))){
 		SetCameraFollow(0);
 	}
 }
