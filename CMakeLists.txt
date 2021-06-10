@@ -14,7 +14,7 @@ ENDIF()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS ON)
 
 # options
 OPTION(FINAL_VERSION "Generate Final version" On)
@@ -50,11 +50,14 @@ ELSE()
     add_compile_options(-Wno-unused-variable)
     add_compile_options(-Wno-unused-but-set-variable)
     add_compile_options(-Wno-unused-value)
+    add_compile_options(-Wno-deprecated)
+    
+    #TODO remove these once code is more reasonable
     add_compile_options(-Wno-sign-compare)
     add_compile_options(-Wno-narrowing)
     add_compile_options(-Wno-write-strings)
-
-    add_compile_options(-fms-extensions)
+    add_compile_options(-Wno-conversion-null)
+    add_compile_options(-Wno-return-type)
 
     add_compile_options(-Wno-unknown-pragmas) #TODO we should remove these pragmas?
     add_compile_options(-Werror=shift-negative-value)

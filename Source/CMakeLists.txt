@@ -169,14 +169,20 @@ SET(perimeter_SRCS
 
 ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
 
-TARGET_LINK_LIBRARIES(perimeter
+SET(perimeter_LINK_LIBS
         ${BOOST_LIBRARY}
         ${SDL2_LIBRARY}
         PluginMAX
         Terra
         tx3d
-        TriggerEditor
         Peer
         Render
         Sound
 )
+
+
+if(NOT FINAL_VERSION)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
+ENDIF()
+
+TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
