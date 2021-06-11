@@ -7,6 +7,8 @@ SET(XLibs_SRCS
         xmath.cpp
         xbuffer.cpp
         xstream.cpp
+        plaympp.cpp
+        playogg.cpp
 )
 
 ADD_LIBRARY(XLibs STATIC ${XLibs_SRCS})

@@ -182,6 +182,10 @@ void InternalErrorHandler()
 }
 
 void XErrorHandler::Abort(const char* message, int code, int addval, const char* subj) {
+    /* TODO
+    this originally displayed a Dialog with stacktrace to debug the issue that caused Abort
+    Vangers has SDL2 dialog impl for this, we should do the same
+    */ 
     printf("XErrH::Abort! %s %d\n", message, code);
     exit(1);
 }

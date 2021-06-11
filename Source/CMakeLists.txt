@@ -169,19 +169,26 @@ SET(perimeter_SRCS
 ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
 
 SET(perimeter_LINK_LIBS
+        #Dependencies libs
         ${BOOST_LIBRARY}
         ${SDL2_LIBRARY}
+        
+        #Our libs
+        XLibs
         PluginMAX
         Terra
         tx3d
         Peer
         Render
         Sound
-        XLibs
-        #Windows libs
+        #DirectX libs
         d3d9
         d3dx9
         dsound
+        dplayx
+        strmiids
+        
+        #Windows libs
         winmm
         wsock32
         advapi32
