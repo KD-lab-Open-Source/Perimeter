@@ -16,6 +16,7 @@ extern float terSoundVolume;
 extern MpegSound gb_Music;
 
 HistoryScene::HistoryScene(const string& programFileName) {
+	m_hPopupTexture = NULL;
 	scene = 0;
 	sceneSky = 0;
 	cameraSky = 0;

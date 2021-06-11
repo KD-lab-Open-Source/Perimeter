@@ -6113,8 +6113,8 @@ static float nLoadProgress = 0;
 static float nLoadProgressBlock = 0;
 static float nLoadProgressBlockSize = 1;
 
-extern HistoryScene historyScene;
-extern HistoryScene bwScene;
+//extern HistoryScene historyScene;
+//extern HistoryScene bwScene;
 extern BGScene bgScene;
 
 void LoadProgressStart()
@@ -6154,9 +6154,9 @@ void LoadProgressUpdateScene(float val, HistoryScene* scene) {
 }
 void LoadProgressUpdate(float val)
 {
-	if(historyScene.ready()) {
-		LoadProgressUpdateScene(val, &historyScene);
-	} else if (bwScene.ready()) {
-		LoadProgressUpdateScene(val, &bwScene);
+	if(get_history_scene().ready()) {
+		LoadProgressUpdateScene(val, &get_history_scene());
+	} else if (get_bw_scene().ready()) {
+		LoadProgressUpdateScene(val, &get_bw_scene());
 	}
 }

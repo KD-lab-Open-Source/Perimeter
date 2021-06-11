@@ -59,8 +59,6 @@ STARFORCE_API_NEW void ToolzerSizeChangeQuant();
 void EnterInMissionMenu();
 STARFORCE_API_NEW void CancelEditWorkarea();
 
-extern HistoryScene historyScene;
-extern HistoryScene bwScene;
 extern BGScene bgScene;
 extern string gameSpyRoomName;
 extern void PlayMusic(const char *str = 0);
@@ -361,8 +359,8 @@ GameShell::~GameShell()
 }
 
 void GameShell::done() {
-	historyScene.done();
-	bwScene.done();
+	get_history_scene().done();
+	get_bw_scene().done();
 	bgScene.done();
 	_shellIconManager.Done();
 	_shellCursorManager.Done();
@@ -788,11 +786,11 @@ void GameShell::Show()
 	}
 	else{
 		//quant
-		if(bwScene.ready()){
-			bwScene.quant(mousePosition(), frame_time.delta());
-		} else if (!historyScene.ready()) {
+		if(get_bw_scene().ready()){
+			get_bw_scene().quant(mousePosition(), frame_time.delta());
+		} else if (!get_history_scene().ready()) {
 		} else {
-			historyScene.quant(mousePosition(), frame_time.delta());
+			get_history_scene().quant(mousePosition(), frame_time.delta());
 		}
 
 		if (bgScene.ready()) {
@@ -803,23 +801,23 @@ void GameShell::Show()
 		terRenderDevice->Fill(0,0,0);
 		terRenderDevice->BeginScene();
 
-		if (bwScene.ready()) {
-//			bwScene.quant(mousePosition(), frame_time.delta());
-			if (bwScene.ready()) {
-				bwScene.preDraw();
-				bwScene.draw();
-				bwScene.postDraw();
+		if (get_bw_scene().ready()) {
+//			get_bw_scene().quant(mousePosition(), frame_time.delta());
+			if (get_bw_scene().ready()) {
+				get_bw_scene().preDraw();
+				get_bw_scene().draw();
+				get_bw_scene().postDraw();
 			}
-		} else if (!historyScene.ready()) {
+		} else if (!get_history_scene().ready()) {
 			terScene->dSetTime(frame_time.delta());
 			terScene->PreDraw(terCamera->GetCamera());
 			terScene->Draw(terCamera->GetCamera());
 		} else {
-//			historyScene.quant(mousePosition(), frame_time.delta());
-			if (historyScene.ready()) {
-				historyScene.preDraw();
-				historyScene.draw();
-				historyScene.postDraw();
+//			get_history_scene().quant(mousePosition(), frame_time.delta());
+			if (get_history_scene().ready()) {
+				get_history_scene().preDraw();
+				get_history_scene().draw();
+				get_history_scene().postDraw();
 			}
 		}
 
@@ -1503,7 +1501,7 @@ void GameShell::ControlPressed(int key)
 			break;
 		case CTRL_TOGGLE_SOUND:
 			InitSound(!terSoundEnable, terMusicEnable, false);
-			historyScene.setupAudio();
+			get_history_scene().setupAudio();
 			_shellIconManager.setupAudio();
 			break;
 		case CTRL_LOAD:
@@ -1776,8 +1774,8 @@ void GameShell::MouseWheel(int delta)
 {
 	if(!_bMenuMode && GameActive && !isScriptReelEnabled())
 		terCamera->mouseWheel(delta);
-	if (historyScene.ready()) {
-		historyScene.getCamera()->mouseWheel(delta);
+	if (get_history_scene().ready()) {
+		get_history_scene().getCamera()->mouseWheel(delta);
 	}
 
 	_shellIconManager.OnMouseWheel( delta/120 );
@@ -2336,8 +2334,8 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 
 	if(change_size)
 	{
-		historyScene.onResolutionChanged();
-		bwScene.onResolutionChanged();
+		get_history_scene().onResolutionChanged();
+		get_bw_scene().onResolutionChanged();
 		bgScene.onResolutionChanged();
 
 		_shellIconManager.onSizeChanged();

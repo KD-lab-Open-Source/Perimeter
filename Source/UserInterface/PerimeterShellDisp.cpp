@@ -997,11 +997,11 @@ void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
 	fillTaskWnd();
 }
 #include "HistoryScene.h"
-extern HistoryScene historyScene;
+//extern HistoryScene historyScene;
 void CShellIconManager::fillTaskWnd() {
 	string taskTxt;
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
-		taskTxt = qdTextDB::instance().getText(historyScene.getMission(historyScene.getMissionNumberToExecute()).name.c_str());
+		taskTxt = qdTextDB::instance().getText(get_history_scene().getMission(get_history_scene().getMissionNumberToExecute()).name.c_str());
 		taskTxt += "\n\n";
 	}
 	

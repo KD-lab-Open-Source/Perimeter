@@ -46,7 +46,7 @@ void MpegSound::SetVolume(int volume)
 
 bool MpegSound::OpenToPlay(const char* fname, bool cycled /*= true*/)
 {
-    return false;
+    return true;
 }
 int MpegSound::GetVolume()
 {

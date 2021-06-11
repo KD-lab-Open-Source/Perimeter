@@ -1,230 +1,473 @@
-#include "StdAfx.h"
+#include <cstring>
+#include <memory>
+#include <malloc.h>
+#include <cctype>
+#include <cstdlib>
 #include "xutil.h"
 
-XBuffer::XBuffer(unsigned int sz /*= XB_DEFSIZE*/, int automatic_realloc_ /*= 0*/)
-    : automatic_realloc(automatic_realloc_)
+char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
+
+static char* outboundMSG = "Out of XBuffer";
+
+void XBuffer::alloc(unsigned int sz)
 {
-    alloc(sz);
+	buf = (char*)malloc(size = sz);
+	offset = 0L;
+	radix = XB_DEFRADIX;
+	digits = XB_DEFDIGITS;
+	MakeFree = 1;
+	*buf = 0;
+}
+
+XBuffer::XBuffer(unsigned int sz, int automatic_realloc_) {
+	automatic_realloc = automatic_realloc_;
+	alloc(sz);
 }
 
 XBuffer::XBuffer(void* p, int sz)
 {
-    buf = reinterpret_cast<char*>(p);
-    size = sz;
-    MakeFree = 0;
+	buf = (char*)malloc(0);
+	offset = 0L;
+	radix = XB_DEFRADIX;
+	digits = XB_DEFDIGITS;
+	MakeFree = 0;
+	size = sz;
 }
 
-void XBuffer::alloc(unsigned int sz)
+void XBuffer::free(void)
 {
-    buf = new char[size = sz];
-    offset = 0;
-    MakeFree = 1;
-    *buf = 0;
+	if (MakeFree && buf) {
+		::free(buf);
+		buf = NULL;
+	}
 }
 
-void XBuffer::free()
+void XBuffer::fill(char fc)
 {
-    if (MakeFree)
-    {
-        delete[] buf;
-        buf = NULL;
-    }
+	memset(buf, fc, size);
 }
 
-void XBuffer::set(int off, int mode /*= XB_BEG*/)
+void XBuffer::set(int off, int mode)
 {
-    switch (mode)
-    {
-    case XB_BEG: offset = off; break;
-    case XB_CUR: offset += off; break;
-    case XB_END: offset = size - off; break;
-    }
+	switch (mode) {
+	case XB_BEG:
+		offset = off;
+		break;
+	case XB_CUR:
+		offset += off;
+		break;
+	case XB_END:
+		offset = size - off;
+		break;
+	}
 }
 
 unsigned int XBuffer::read(void* s, unsigned int len)
 {
-    // FIXME
-    return 0;
-}
-unsigned int XBuffer::write(const void* s, unsigned int len, int bin_flag /*= 1*/)
-{
-    //FIXME
-    return 0;
+	memcpy(s, buf + offset, len);
+	offset += len;
+	return len;
 }
 
 void XBuffer::handleOutOfSize()
 {
-    //FIXME
+	if (automatic_realloc)
+		buf = (char*)realloc(buf, size *= 2);
+	else {
+		xassert(0 && "Out of XBuffer");
+		ErrH.Abort("Out of XBuffer");
+	}
 }
 
-XBuffer& XBuffer::operator< (const char* v)
+unsigned int XBuffer::write(const void* s, unsigned int len, int bin_flag)
 {
-    write(v, strlen(v));
-    return *this;
+	while (offset + len >= size)
+		handleOutOfSize();
+
+	memcpy(buf + offset, s, len);
+	offset += len;
+
+	if (!bin_flag)
+		buf[offset] = '\0';
+
+	return len;
 }
 
-XBuffer& XBuffer::operator>= (char&var)
+int XBuffer::search(char* what, int mode, int cs)
 {
-    char* p = buf + offset;
-    var = std::strtol(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned char&var)
-{
-    char* p = buf + offset;
-    var = std::strtoul(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (short&var)
-{
-    char* p = buf + offset;
-    var = std::strtol(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned short&var)
-{
-    char* p = buf + offset;
-    var = std::strtoul(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (int&var)
-{
-    char* p = buf + offset;
-    var = std::strtol(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned int&var)
-{
-    char* p = buf + offset;
-    var = std::strtoul(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (long&var)
-{
-    char* p = buf + offset;
-    var = std::strtoll(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned long&var)
-{
-    char* p = buf + offset;
-    var = std::strtoull(p, &p, 0);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (float&var)
-{
-    char* p = buf + offset;
-    var = std::strtof(p, &p);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (double&var)
-{
-    char* p = buf + offset;
-    var = std::strtod(p, &p);
-    offset += p - (buf + offset);
-    return *this;
-}
-
-XBuffer& XBuffer::operator>= (long double&var)
-{
-    char* p = buf + offset;
-    var = std::strtold(p, &p);
-    offset += p - (buf + offset);
-    return *this;
+	int i, j;
+	unsigned int wlen = strlen(what) - 1;
+	if (mode == XB_GLOBAL) { i = 0; mode = XB_FORWARD; }
+	else i = offset;
+	if (mode == XB_FORWARD) {
+		if (cs == XB_CASEON) {
+			while (buf[i]) {
+				if (buf[i] == *what) {
+					j = wlen;
+					while (buf[i + j] == what[j] && j) j--;
+					if (j <= 0) { offset = i; return 1; };
+				}
+				i++;
+			}
+		}
+		else {
+			while (buf[i]) {
+				if (toupper(buf[i]) == toupper(*what)) {
+					j = wlen;
+					while (toupper(buf[i + j]) == toupper(what[j]) && j) j--;
+					if (j <= 0) { offset = i; return 1; };
+				}
+				i++;
+			}
+		}
+	}
+	else {
+		i -= wlen + 1;
+		if (cs == XB_CASEON) {
+			while (i >= 0) {
+				if (buf[i] == *what) {
+					j = wlen;
+					while (buf[i + j] == what[j] && j) j--;
+					if (j <= 0) { offset = i; return 1; };
+				}
+				i--;
+			}
+		}
+		else {
+			while (i >= 0) {
+				if (toupper(buf[i]) == toupper(*what)) {
+					j = wlen;
+					while (toupper(buf[i + j]) == toupper(what[j]) && j) j--;
+					if (j <= 0) { offset = i; return 1; };
+				}
+				i--;
+			}
+		}
+	}
+	return 0;
 }
 
 XBuffer& XBuffer::operator<= (char var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = itoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (unsigned char var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = itoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (short var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = itoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
-
 
 XBuffer& XBuffer::operator<= (unsigned short var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = ltoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (int var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = itoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
-XBuffer& XBuffer::operator<= (unsigned int var)
+XBuffer& XBuffer::operator<= (unsigned var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = ltoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (long var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = ltoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (unsigned long var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = ltoa(var, _ConvertBuffer, radix);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (float var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = gcvt(var, digits, _ConvertBuffer);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (double var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = gcvt(var, digits, _ConvertBuffer);
+	write(s, strlen(s), 0);
+	return *this;
 }
 
 XBuffer& XBuffer::operator<= (long double var)
 {
-    std::string s = std::to_string(var);
-    write(s.c_str(), s.size(), 0);
-    return *this;
+	char* s = gcvt(var, digits, _ConvertBuffer);
+	write(s, strlen(s), 0);
+	return *this;
 }
+
+XBuffer& XBuffer::operator>= (char& var)
+{
+	char* p = buf + offset;
+	var = (char)strtol(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (unsigned char& var)
+{
+	char* p = buf + offset;
+	var = (unsigned char)strtoul(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (short& var)
+{
+	char* p = buf + offset;
+	var = (short)strtol(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (unsigned short& var)
+{
+	char* p = buf + offset;
+	var = (unsigned short)strtoul(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (int& var)
+{
+	char* p = buf + offset;
+	var = strtol(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (unsigned& var)
+{
+	char* p = buf + offset;
+	var = strtoul(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (long& var)
+{
+	char* p = buf + offset;
+	var = strtol(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (unsigned long& var)
+{
+	char* p = buf + offset;
+	var = strtoul(p, &p, 0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (double& var)
+{
+	char* p = buf + offset;
+	var = strtod(p, &p);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (long double& var)
+{
+	char* p = buf + offset;
+	var = strtod(p, &p);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (float& var)
+{
+	char* p = buf + offset;
+	var = (float)strtod(p, &p);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (const char* v)
+{
+	if(v)
+		write(v, strlen(v), 0);
+	return *this;
+}
+
+/*
+XBuffer& XBuffer::operator> (char* v)
+{
+	if(v)
+		read(v, strlen(buf + offset) + 1);
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (char* v)
+{
+	if(v) read(v,(unsigned int)strlen(buf + offset) + 1);
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (char& v)
+{
+	read(&v,(unsigned int)sizeof(char));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (unsigned char& v)
+{
+	read(&v,(unsigned int)sizeof(unsigned char));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (short& v)
+{
+	read(&v,(unsigned int)sizeof(short));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (unsigned short& v)
+{
+	read(&v,(unsigned int)sizeof(unsigned short));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (int& v)
+{
+	read(&v,(unsigned int)sizeof(int));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (unsigned int& v)
+{
+	read(&v,(unsigned int)sizeof(unsigned int));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (long& v)
+{
+	read(&v,(unsigned int)sizeof(long));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (unsigned long& v)
+{
+	read(&v,(unsigned int)sizeof(unsigned long));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (float& v)
+{
+	read(&v,(unsigned int)sizeof(float));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (double& v)
+{
+	read(&v,(unsigned int)sizeof(double));
+	return *this;
+}
+
+XBuffer& XBuffer::operator> (long double& v)
+{
+	read(&v,(unsigned int)sizeof(long double));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (const char* v)
+{
+	if(v) write(v,(unsigned int)strlen(v),0);
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (char v)
+{
+	write(&v,(unsigned int)sizeof(char));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (unsigned char v)
+{
+	write(&v,(unsigned int)sizeof(unsigned char));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (short v)
+{
+	write(&v,(unsigned int)sizeof(short));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (unsigned short v)
+{
+	write(&v,(unsigned int)sizeof(unsigned short));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (int v)
+{
+	write(&v,(unsigned int)sizeof(int));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (unsigned int v)
+{
+	write(&v,(unsigned int)sizeof(unsigned int));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (long v)
+{
+	write(&v,(unsigned int)sizeof(long));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (unsigned long v)
+{
+	write(&v,(unsigned int)sizeof(unsigned long));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (float v)
+{
+	write(&v,(unsigned int)sizeof(float));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (double v)
+{
+	write(&v,(unsigned int)sizeof(double));
+	return *this;
+}
+
+XBuffer& XBuffer::operator< (long double v)
+{
+	write(&v,(unsigned int)sizeof(long double));
+	return *this;
+}
+*/

@@ -315,6 +315,7 @@ cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int Colo
 	IRenderDevice=CreateIRenderDevice();
 
 	int ModeRender=0;
+	FullScr = 0;
 	if(FullScr==0) 
 		ModeRender |= RENDERDEVICE_MODE_WINDOW;
 	if(ColorBit==32) 

@@ -20,8 +20,8 @@
 #include "MessageBox.h"
 
 extern BGScene bgScene;
-extern HistoryScene historyScene;
-extern HistoryScene bwScene;
+//extern HistoryScene historyScene;
+//extern HistoryScene bwScene;
 extern int terShowTips;
 
 extern string getItemTextFromBase(const char *keyStr);
@@ -413,7 +413,7 @@ void OnComboSoundEffects(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	}
 	else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED )	{
 		InitSound(pCombo->pos, terMusicEnable, false);
-		historyScene.setupAudio();
+		get_history_scene().setupAudio();
 		_shellIconManager.setupAudio();
 	}
 }
@@ -422,12 +422,12 @@ void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	CSliderWindow *pSlider = (CSliderWindow*) pWnd;
 	if( code == EVENT_SLIDERUPDATE ) {
 		SNDSetVolume( terSoundVolume = pSlider->pos );
-		historyScene.setupAudio();
+		get_history_scene().setupAudio();
 		_shellIconManager.setupAudio();
 	} else if ( code == EVENT_CREATEWND ) {
 		pSlider->sounded = true;
 		SNDSetVolume( pSlider->pos = terSoundVolume );
-		historyScene.setupAudio();
+		get_history_scene().setupAudio();
 		_shellIconManager.setupAudio();
 	}
 }

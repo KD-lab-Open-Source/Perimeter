@@ -10,6 +10,8 @@
 #include "HistorySceneCamera.h"
 #include "History3D.h"
 
+
+
 class HistoryScene : public Commander {
 	public:
 		HistoryScene(const string& programFileName);
@@ -160,5 +162,8 @@ class HistoryScene : public Commander {
 
 		string musicNamePath;
 };
+
+HistoryScene& get_history_scene();
+HistoryScene& get_bw_scene();
 
 #endif //_HISTORYSCENE_H

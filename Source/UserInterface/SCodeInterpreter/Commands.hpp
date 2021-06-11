@@ -52,7 +52,7 @@ class CreateZeroWorld : public Command {
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		string toString() const;
-		static const string NAME;
+		static const string NAME;// () { return "ZEROWORLD"; };
 	protected:
 		World* origin;
 };
