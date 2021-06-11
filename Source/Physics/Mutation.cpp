@@ -31,7 +31,7 @@ void MutationProcess::Sphere::create(float volume, const Vect3f& position_, bool
 	scale1 = Radius(volume)/radius0;
 	radius = radius0*scale1;
 	geometry->SetScale(Vect3f::ZERO);
-	pose.set(MatXf(Mat3f::ID, position = position_));
+	pose = MatXf(Mat3f::ID, position = position_);
 	if(placeOnTheGround)
 		pose.trans().z = position.z = calcZ();
 	displacement = Vect3f::ZERO;

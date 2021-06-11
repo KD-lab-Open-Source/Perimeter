@@ -33,6 +33,7 @@ IF(MSVC)
 ELSE()
     #Others
     INCLUDE(CheckCXXCompilerFlag)
+    SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Werror=delete-non-virtual-dtor -Wno-conversion-null")
     SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize -ffast-math")
     CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
@@ -56,14 +57,12 @@ ELSE()
     add_compile_options(-Wno-sign-compare)
     add_compile_options(-Wno-narrowing)
     add_compile_options(-Wno-write-strings)
-    add_compile_options(-Wno-conversion-null)
     add_compile_options(-Wno-return-type)
 
     add_compile_options(-Wno-unknown-pragmas) #TODO we should remove these pragmas?
     add_compile_options(-Werror=shift-negative-value)
     add_compile_options(-Werror=dangling-else)
     add_compile_options(-Werror=parentheses)
-    add_compile_options(-Werror=delete-non-virtual-dtor)
     #add_compile_options(-Werror=write-strings) #TODO enable this again
 
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -80,4 +79,5 @@ ELSE()
     MESSAGE("Not compiling Final version")
 ENDIF()
 
+ADD_SUBDIRECTORY("XLibs.Net")
 ADD_SUBDIRECTORY("Source")

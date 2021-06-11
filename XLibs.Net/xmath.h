@@ -9,7 +9,7 @@
 #ifndef __XMATH_H__
 #define __XMATH_H__
 
-#include <math.h>
+#include <cmath>
 
 #ifdef _XMATH_USE_IOSTREAM
 #include <iostream>
@@ -19,8 +19,6 @@ using std::ostream;
 //using std::endl;
 //#endif
 #endif
-
-class Archive;
 
 ///////////////////////////////////////////////////////////////////////////////
 //	Structures predefenition
@@ -255,6 +253,8 @@ public:
 	xm_inline Vect2f operator / (float f)	const		{ return Vect2f(*this) /= f; }
 
 	xm_inline bool eq(const Vect2f &v, float delta = FLT_COMPARE_TOLERANCE) const { return fabsf(v.x - x) < delta && fabsf(v.y - y) < delta; }
+    xm_inline int operator== (const Vect2f& v) const { return eq(v); };
+    xm_inline int operator!= (const Vect2f& v) const { return !eq(v); };
 
 	xm_inline float dot(const Vect2f& v) const { return x*v.x + y*v.y; }
 	xm_inline friend float dot(const Vect2f& u, const Vect2f& v) { return u.dot(v); }
@@ -286,6 +286,7 @@ public:
 	friend XBuffer& operator< (XBuffer& b,const Vect2f& v);
 	friend XBuffer& operator> (XBuffer& b,Vect2f& v);
 
+    template<class Archive>
     void serialize(Archive& ar);
 
 	static const Vect2f ZERO;
@@ -367,6 +368,7 @@ public:
 	friend XBuffer& operator< (XBuffer& b,const Vect2i& v);
 	friend XBuffer& operator> (XBuffer& b,Vect2i& v);
 
+    template<class Archive>
     void serialize(Archive& ar);
 
 	static const Vect2i ZERO;
@@ -433,6 +435,7 @@ public:
 	friend XBuffer& operator< (XBuffer& b,const Vect2s& v);
 	friend XBuffer& operator> (XBuffer& b,Vect2s& v);
 
+    template<class Archive>
 	void serialize(Archive& ar);
 };
 
@@ -572,6 +575,8 @@ public:
 
   //  Logical operations  ////////////////////////////////
   xm_inline bool eq(const Vect3f &v, float delta = FLT_COMPARE_TOLERANCE) const;
+  xm_inline int operator== (const Vect3f& v) const { return eq(v); };
+  xm_inline int operator!= (const Vect3f& v) const { return !eq(v); };
 
   //  Addition and substruction  ////////////////////
   xm_inline Vect3f& add(const Vect3f& u, const Vect3f& v);  
@@ -663,6 +668,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Vect3f& v);
   friend XBuffer& operator> (XBuffer& b,Vect3f& v);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   //  Swap  /////////////////////////
@@ -732,6 +738,8 @@ public:
 
   //  Logical operations  ////////////////////////////////
   xm_inline bool eq(const Vect3d &v, double delta = DBL_COMPARE_TOLERANCE) const;
+  xm_inline int operator== (const Vect3d& v) const { return eq(v); }
+  xm_inline int operator!= (const Vect3d& v) const { return !eq(v); }
 
   //  Addition and substruction  ////////////////////
   xm_inline Vect3d& add(const Vect3d& u, const Vect3d& v);  
@@ -822,6 +830,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Vect3d& v);
   friend XBuffer& operator> (XBuffer& b,Vect3d& v);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   //  Swap  /////////////////////////
@@ -1057,6 +1066,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Mat3f& M);
   friend XBuffer& operator> (XBuffer& b,Mat3f& M);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   // Mat3f constants ////////////////////////////////////////////////////////////
@@ -1277,6 +1287,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Mat3d& M);
   friend XBuffer& operator> (XBuffer& b,Mat3d& M);
 
+  template<class Archive>
   void serialize(Archive& ar);
  
   // Mat3d constants ////////////////////////////////////////////////////////////
@@ -1384,7 +1395,8 @@ public:
   friend ostream& operator<<(ostream& os, const MatXf& M);
   friend istream& operator>>(istream& is, MatXf& M);
 #endif
-
+  
+  template<class Archive>
   void serialize(Archive& ar);
 
   // MatXf constants ////////////////////////////////////////////////////////////
@@ -1491,6 +1503,7 @@ public:
   friend istream& operator>>(istream& is, MatXd& M);
 #endif
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   // MatXd constants ////////////////////////////////////////////////////////////
@@ -1562,6 +1575,8 @@ public:
 
   //  Logical operations  ///////////////
   xm_inline bool eq(const QuatF &v, float delta = FLT_COMPARE_TOLERANCE) const;
+  xm_inline int operator== (const QuatF& other) const { return eq(other); }
+  xm_inline int operator!= (const QuatF& other) const { return !eq(other); }
 
   //  Negate  ////////////////////////////////////
   xm_inline QuatF operator- () const { return QuatF(-s_, -x_, -y_, -z_); }
@@ -1632,6 +1647,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const QuatF& q);
   friend XBuffer& operator> (XBuffer& b,QuatF& q);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   // miscellaneous /////////////////////////////////////////////////////////////
@@ -1707,6 +1723,8 @@ public:
 
   //  Logical operations  ///////////////
   xm_inline bool eq(const QuatD& other, double delta = DBL_COMPARE_TOLERANCE) const;
+  xm_inline int operator== (const QuatD& other) const { return eq(other); }
+  xm_inline int operator!= (const QuatD& other) const { return !eq(other); }
 
     //  Negate  ////////////////////////////////////
   xm_inline QuatD operator- () const { return QuatD(-s_, -x_, -y_, -z_); }
@@ -1777,6 +1795,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const QuatD& q);
   friend XBuffer& operator> (XBuffer& b,QuatD& q);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   // miscellaneous /////////////////////////////////////////////////////////////
@@ -1872,6 +1891,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Se3f& v);
   friend XBuffer& operator> (XBuffer& b,Se3f& v);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   // Se3f constants /////////////////////////////////////////////////////////////
@@ -1963,6 +1983,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Se3d& v);
   friend XBuffer& operator> (XBuffer& b,Se3d& v);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   // Se3d constants /////////////////////////////////////////////////////////////
@@ -2008,6 +2029,8 @@ public:
 
   //  Logical operations  ////////////////////////////////
   xm_inline bool eq(const Vect4f& v, float delta = FLT_COMPARE_TOLERANCE) const;
+  xm_inline int operator== (const Vect4f& v) const { return eq(v); }
+  xm_inline int operator!= (const Vect4f& v) const { return !eq(v); }
 
   //  Addition and substruction  ////////////////////
   xm_inline Vect4f& add(const Vect4f& u, const Vect4f& v);  
@@ -2058,6 +2081,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Vect4f& v);
   friend XBuffer& operator> (XBuffer& b,Vect4f& v);
 
+  template<class Archive>
   void serialize(Archive& ar);
 
   //  Swap  /////////////////////////
@@ -2205,6 +2229,7 @@ public:
   friend XBuffer& operator< (XBuffer& b,const Mat4f& M);
   friend XBuffer& operator> (XBuffer& b,Mat4f& M);
 
+  template<class Archive>
   void serialize(Archive& ar);
   
   // Mat4f constants ////////////////////////////////////////////////////////////

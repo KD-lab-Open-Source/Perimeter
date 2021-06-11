@@ -181,6 +181,14 @@ void InternalErrorHandler()
 	if(universe()) universe()->allSavePlayReel();
 }
 
+void XErrorHandler::Abort(const char* message, int code, int addval, const char* subj) {
+    printf("XErrH::Abort! %s %d\n", message, code);
+    exit(1);
+}
+
+void XErrorHandler::Exit(void) {
+    exit(0);
+}
 
 void HTManager::init()
 {
@@ -197,12 +205,14 @@ void HTManager::init()
 #endif
 		< " OS: " <= GetVersion();
 
+#ifndef _FINAL_VERSION_
 	ErrH.SetPrefix(errorHeading);
 	ErrH.SetRestore(InternalErrorHandler);
+#endif
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
 	
-	xt_get_cpuid();
-	xt_getMMXstatus();
+	//xt_get_cpuid();
+	//xt_getMMXstatus();
 	initclock();
 
 	allocation_tracking("before");

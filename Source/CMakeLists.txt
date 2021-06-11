@@ -177,6 +177,7 @@ SET(perimeter_LINK_LIBS
         Peer
         Render
         Sound
+        XLibs
 )
 
 

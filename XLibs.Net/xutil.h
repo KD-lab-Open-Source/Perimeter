@@ -71,7 +71,7 @@ struct XBuffer
 	unsigned int write(const void* s, unsigned int len, int bin_flag = 1);
 	void handleOutOfSize();
 	
-	XBuffer& operator< (const char* v);
+	XBuffer& operator< (const char* v) { return write(v); }
 	XBuffer& operator< (char v) { return write(v); }
 	XBuffer& operator< (unsigned char v) { return write(v); }
 	XBuffer& operator< (short v) { return write(v); }
@@ -84,7 +84,7 @@ struct XBuffer
 	XBuffer& operator< (double v) { return write(v); }
 	XBuffer& operator< (long double v) { return write(v); }
 
-	XBuffer& operator> (char* v);
+	XBuffer& operator> (char* v) { return read(v); }
 	XBuffer& operator> (char& v) { return read(v); }
 	XBuffer& operator> (unsigned char& v) { return read(v); }
 	XBuffer& operator> (short& v) { return read(v); }
@@ -290,6 +290,7 @@ private:
 
 struct XErrorHandler
 {
+#ifndef _FINAL_VERSION_
 	unsigned flags;
 	unsigned state;
 
@@ -310,17 +311,20 @@ struct XErrorHandler
 	void	 SetPostfix(const char* s);
 	void	 SetRestore(void (*rf)(void));
 	void	 SetState(int s){state=s;}
-	void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
-	void	 Exit(void);
+	
 	void	 RTC(const char *file,unsigned int line, const char *expr);
 	void	 WriteLog(char* error, char* msg);
 	bool     IsErrorOrAssertHandling(){ return flag_errorOrAssertHandling; }
+#endif
+	void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
+	void	 Exit(void);
 };
 
-extern XErrorHandler ErrH;
+static XErrorHandler ErrH;
 
 // Use this macro for after any operation for errors diagnostic
-#define XAssert(expr) ErrH.RTC(__FILE__,__LINE__,expr)
+//#define XAssert(expr) ErrH.RTC(__FILE__,__LINE__,expr)
+#define XAssert(expr)
 
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
@@ -454,6 +458,7 @@ const char* check_command_line(const char* switch_str); // 0 или строка после кл
 //		__XCPUID_H
 ///////////////////////////////////
 
+/*
 #define CPU_INTEL		0x00000001
 
 // Intel features IDs
@@ -495,7 +500,6 @@ char* xt_getMMXstatus(void);
 
 extern int xt_mmxUse;
 
-
 ///////////////////////////////////
 //		__XZIP_H__
 ///////////////////////////////////
@@ -506,6 +510,7 @@ ulong ZIP_compress(char* trg,ulong trgsize,char* src,ulong srcsize);
 ulong ZIP_GetExpandedSize(char* p);
 void ZIP_expand(char* trg,ulong trgsize,char* src,ulong srcsize);
 
+*/
 
 ///////////////////////////////////
 //		Automatic linking
