@@ -402,5 +402,6 @@ struct RigidBodyPrm : ShareHandleBase
 typedef TypeLibrary<string, RigidBodyPrm> RigidBodyPrmLibrary;
 extern SingletonPrm<RigidBodyPrmLibrary> rigidBodyPrmLibrary;
 
+DEFINE_SINGLETON_PRM(RigidBodyPrmLibrary)
 
 #endif //__RIGID_BODY_PRM_H__

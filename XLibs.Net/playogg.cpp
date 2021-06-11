@@ -47,9 +47,9 @@ bool MpegSound::FadeVolume(float time,int new_volume) {
 }
 
 float MpegSound::GetLen() {
-    return 0;
+    return 0.0f;
 }
 
 float MpegSound::GetCurPos() {
-    return 0;
+    return 0.0f;
 }

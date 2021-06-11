@@ -745,6 +745,10 @@ struct InterfaceAttributes
 	}
 };
 
+DECLARE_ENUM_DESCRIPTOR(InterfaceAttributes)
+
 extern SingletonPrm<InterfaceAttributes> interfaceAttr;
+
+DEFINE_SINGLETON_PRM(InterfaceAttributes)
 
 #endif /* __INTERFACE_SCRIPT_H__ */

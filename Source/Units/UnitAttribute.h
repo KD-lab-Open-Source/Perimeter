@@ -19,6 +19,34 @@
 #include "../Util/DebugUtil.h"
 #include "../UserInterface/SoundTrack.h"
 
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+DECLARE_ENUM_DESCRIPTOR(terUnitAttributeID)
+DECLARE_ENUM_DESCRIPTOR(terUnitClassType)
+DECLARE_ENUM_DESCRIPTOR(terLegionType)
+DECLARE_ENUM_DESCRIPTOR(terInterpolationID)
+DECLARE_ENUM_DESCRIPTOR(DamageElementFilter)
+DECLARE_ENUM_DESCRIPTOR(PopupFormatGroup)
+DECLARE_ENUM_DESCRIPTOR(ToolzerPhaseID)
+DECLARE_ENUM_DESCRIPTOR(ToolzerActionID)
+DECLARE_ENUM_DESCRIPTOR(SoundEventID)
+DECLARE_ENUM_DESCRIPTOR(AnimationGroupID)
+DECLARE_ENUM_DESCRIPTOR(ToolzerBuildingDamageMode)
+DECLARE_ENUM_DESCRIPTOR(WeaponType)
+DECLARE_ENUM_DESCRIPTOR(EnvironmentalDamageType)
+DECLARE_ENUM_DESCRIPTOR(SoundID)
+DECLARE_ENUM_DESCRIPTOR(ChainNodeID)
+DECLARE_ENUM_DESCRIPTOR(ShellControlID)
+DECLARE_ENUM_DESCRIPTOR(Difficulty)
+DECLARE_ENUM_DESCRIPTOR(terBelligerent)
+DECLARE_ENUM_DESCRIPTOR(CollisionGroupID)
+DECLARE_ENUM_DESCRIPTOR(terUnitClassID)
+DECLARE_ENUM_DESCRIPTOR(WeaponFlags)
+DECLARE_ENUM_DESCRIPTOR(ChainID)
+DECLARE_ENUM_DESCRIPTOR(terEffectID)
+DECLARE_ENUM_DESCRIPTOR(PlacementStrategy)
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(RigidBodyPrm, RigidBodyType)
+#endif
+
 typedef vector<Vect2f> Vect2fVect;
 typedef vector<Vect2i> Vect2iVect;
 typedef vector<Vect3f> Vect3fVect;
@@ -1722,5 +1750,8 @@ extern SingletonPrm<AttributeLibrary> attributeLibrary;
 void initAttributes();
 
 class cObjectNodeRoot* createObject(const char* name, terBelligerent belligerent);
+
+DEFINE_SINGLETON_PRM(AttributeLibrary)
+DEFINE_SINGLETON_PRM(GlobalAttributes)
 
 #endif

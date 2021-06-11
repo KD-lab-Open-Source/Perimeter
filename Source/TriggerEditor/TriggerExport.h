@@ -285,6 +285,8 @@ enum ColorType
 	LINK_TYPES_COUNT = STRATEGY_COLOR_MAX
 };
 
+DECLARE_ENUM_DESCRIPTOR(ColorType)
+
 struct TriggerLink // Ñâÿçü
 {
 	enum Type {
@@ -362,6 +364,8 @@ private:
 
 	friend class TriggerChain;
 };
+
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(TriggerLink, Type)
 
 typedef vector<TriggerLink, TriggerAllocator<TriggerLink> > OutcomingLinksList;
 typedef vector<TriggerLink*, TriggerAllocator<TriggerLink*> > IncomingLinksList;
@@ -482,6 +486,8 @@ private:
 
 	friend TriggerChain;
 };
+
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(Trigger, State)
 
 //-----------------------------
 struct TriggerEvent

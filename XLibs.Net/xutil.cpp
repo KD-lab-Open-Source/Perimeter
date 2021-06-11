@@ -13,6 +13,7 @@ __int64 beg_tick=0;
 const unsigned int MS_PER_PERIOD=1000;
 
 __int64 getRDTSC() {
+    //TODO use std::chrono::high_resolution_clock::now()
     return __rdtsc();
 }
 
@@ -114,4 +115,8 @@ void XRndSet(unsigned int m)
 unsigned int XRndGet()
 {
     return XRndValue;
+}
+const char* check_command_line(const char* switch_str) {
+    //TODO seems like it should find switch_str as key in cmdline and return string with the passed value 
+    return "";
 }
