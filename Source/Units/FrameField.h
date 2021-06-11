@@ -9,8 +9,7 @@ class terUnitMonk;
 typedef vector<terUnitMonk*> MonkList;
 typedef vector<class terProtector*> ProtectorList;
 
-template<class UnitList>
-bool removeNotAliveMonk(UnitList& unitList);
+bool removeNotAliveMonk(MonkList& unitList);
 
 //--------------------------
 class terProtector : public terBuildingEnergy

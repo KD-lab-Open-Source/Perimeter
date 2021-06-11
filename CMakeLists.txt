@@ -87,9 +87,5 @@ ELSE()
     SET(PERIMETER_WINDOWS OFF)
 ENDIF()
 
-#TODO we should stop depending on these precompiled libs
-#LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/XLibs.Net/VC8)
-#LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/XLibs.Net/VC7.1)
-
 ADD_SUBDIRECTORY("XLibs.Net")
 ADD_SUBDIRECTORY("Source")

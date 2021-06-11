@@ -13,10 +13,9 @@
 #include "Config.h"
 #include "IronClusterUnit.h"
 
-template<class UnitList>
-bool removeNotAliveMonk(UnitList& unitList)
+bool removeNotAliveMonk(MonkList& unitList)
 {
-    typename UnitList::iterator i = remove_if(unitList.begin(), unitList.end(), not1(mem_fun(&terUnitMonk::alive)));
+    auto i = remove_if(unitList.begin(), unitList.end(), not1(mem_fun(&terUnitMonk::alive)));
     if(i != unitList.end()){
         unitList.erase(i, unitList.end());
         return true;

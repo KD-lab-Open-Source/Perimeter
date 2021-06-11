@@ -45,12 +45,6 @@ SET(perimeter_LINK_LIBS
         Peer
         Render
         Sound
-
-        #Precompiled libs
-        #PlayOggMT.lib
-        #xTreeListCtrlVC71_ST_MT
-        #XUtilVC7MT
-        #PrmEditVC7MT
 )
 
 #Add Windows and DirectX libs
@@ -83,7 +77,6 @@ IF(PERIMETER_WINDOWS)
             dinput8
             dplayx
             dsound
-            #dxguid
             dxgi
             dxtrans
             DxErr

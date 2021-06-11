@@ -22,6 +22,7 @@ SET(Terra_SRCS
         undoDispatcher.cpp
         worldGen.cpp
         VMAP.CPP
+        LAND.CPP
 )
 
 ADD_DEFINITIONS(-D_TX3D_LIBRARY_)
