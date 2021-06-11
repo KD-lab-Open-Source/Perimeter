@@ -56,8 +56,8 @@ bool DeleteRows::run(size_t rowsCount,
 		shift_predicate(te_h::test_can_shift_element(
 			CSize(0, rowsCount*-fullCellHeight), logic, chain));
 
-	if (std::find_if(first, last, shift_predicate) != last)
-		return false;
+	//if (std::find_if(first, last, shift_predicate) != last)
+	//	return false;
 
 	//чтобы рассматривать все элементы находящиеся справа от удаляемого столбца
 	predicate.setIdxMax(std::numeric_limits<int>::max());

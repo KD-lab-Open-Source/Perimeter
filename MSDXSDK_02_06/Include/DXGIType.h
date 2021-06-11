@@ -14,6 +14,10 @@
 */
 //@@MIDL_FILE_HEADING(  )
 
+
+#include "../shared/dxgi.h"
+#include "../shared/dxgitype.h"
+
 #pragma warning( disable: 4049 )  /* more than 64k source lines */
 
 
@@ -83,6 +87,8 @@ extern "C"{
 #define DXGI_USAGE_SHARED    ( 1L << (3 + 4) )
 #define DXGI_USAGE_PRIMARY    ( 1L << (4 + 4) )
 typedef UINT DXGI_USAGE;
+
+#ifndef DXGI_FORMAT_DEFINED
 
 typedef 
 enum DXGI_FORMAT
@@ -177,6 +183,8 @@ enum DXGI_FORMAT
 	DXGI_FORMAT_B8G8R8X8_UNORM	= 88,
 	DXGI_FORMAT_FORCE_UINT	= 0xffffffffUL
     } 	DXGI_FORMAT;
+
+#endif
 
 typedef struct DXGI_RGB
     {

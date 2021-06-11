@@ -8,6 +8,7 @@
 //#include "Game/GameInclude.h"
 
 #include "TriggerExport.h"
+#include <functional>
 
 DeleteColumns::DeleteColumns(size_t columnsCount, 
 							TriggerEditorLogic const& logic, 
@@ -55,9 +56,8 @@ bool DeleteColumns::run(size_t columnsCount,
 	std::unary_negate<te_h::test_can_shift_element> shift_predicate(
 		te_h::test_can_shift_element(CSize(columnsCount*-fullCellWidth, 0), 
 							logic, chain));
-
-	if (std::find_if(first, last, shift_predicate) != last)
-		return false;
+	//if (std::find_if(first, last, shift_predicate) != last)
+	//	return false;
 
 	//чтобы рассматривать все элементы находящиеся справа от удаляемого столбца
 	predicate.setIdxMax(std::numeric_limits<int>::max());

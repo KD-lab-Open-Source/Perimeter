@@ -1,0 +1,585 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0c49c7a4-8f8d-4e24-bcbc-87faa28dbb60}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{63a0f971-f212-4964-8b96-f40c3db585d1}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{4c2af36d-cb21-4ab8-b329-aa5c1ceedda3}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{ab8e42af-8580-4b95-8295-bd23e77d7447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tree">
+      <UniqueIdentifier>{28d209d4-477b-42c1-98a0-eca130cdbe68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tree\TreeNodes">
+      <UniqueIdentifier>{faecf8ca-e47f-4801-b9b9-bf8214043518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom Controls">
+      <UniqueIdentifier>{3e5aeb0c-b29f-4b8e-be83-e09871bfc9c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scale">
+      <UniqueIdentifier>{2ecddb17-fdce-46a4-bb2f-c91546dc2ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{ff7d6ca1-ab85-48cd-a0ab-e298cb915841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine">
+      <UniqueIdentifier>{035ddc6f-73d1-415f-a562-1e8fee1fb488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\Рабочие режимы">
+      <UniqueIdentifier>{1f6b1184-b6a1-4d49-ae31-d6ba02608fb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\Рабочие режимы\WMUtils">
+      <UniqueIdentifier>{daa53d93-af2e-4909-b2ca-072552723fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\Прорисовка">
+      <UniqueIdentifier>{bb37e000-4c2f-408b-bb6d-75e34ffc8b83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\Actions">
+      <UniqueIdentifier>{dfbbb8d7-0e41-415e-b8ad-6385f5a3535e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\UndoManager">
+      <UniqueIdentifier>{9ad5c3bd-c1a6-4990-919d-7bc126a3c92b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\TEUtils">
+      <UniqueIdentifier>{6c5f8efb-daa9-4b83-8240-cd04b383ef05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\Helpers">
+      <UniqueIdentifier>{9322ce3b-2a77-4556-919b-ab057cd5ab2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\Отладка">
+      <UniqueIdentifier>{4ca629b9-c0b2-4eba-8c2c-221ac1315658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\Отладка\TriggerChainProfiler">
+      <UniqueIdentifier>{3a62fc1e-8c35-4446-bdc2-240f2ca6b253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TEEngine\ClipBuffer">
+      <UniqueIdentifier>{5f89d018-7396-4547-8fe6-d79c64ccef57}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main\ChooseName.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TEFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerEditorApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerExport.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree\TETreeDlg.cpp">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree\TETreeLogic.cpp">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree\TETreeManager.cpp">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree\UITreeNodeFabric.cpp">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree\TreeNodes\UITreeNode.cpp">
+      <Filter>Tree\TreeNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom Controls\CoolDialogBar.cpp">
+      <Filter>Custom Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom Controls\ToolTip.cpp">
+      <Filter>Custom Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom Controls\xTreeListCtrl.cpp">
+      <Filter>Custom Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Scale\ScaleBar.cpp">
+      <Filter>Scale</Filter>
+    </ClCompile>
+    <ClCompile Include="Scale\ScaleMgr.cpp">
+      <Filter>Scale</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\AdjustComboboxWidth.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\EnsureTriggerNameOriginality.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\TETreeLoader.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\SelectIfIntersect.cpp">
+      <Filter>TEEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\SelectionManager.cpp">
+      <Filter>TEEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TEGrid.cpp">
+      <Filter>TEEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TriggerEditorLogic.cpp">
+      <Filter>TEEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TriggerEditorView.cpp">
+      <Filter>TEEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\WorkModes\TEBaseWorkMode.cpp">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\WorkModes\TEProfilerWorkMode.cpp">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\WorkModes\TESingleChainWorkMode.cpp">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\WorkModes\TEWorkModeBase.cpp">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\WorkModes\WMUtils\ClipBoardDataInserter.cpp">
+      <Filter>TEEngine\Рабочие режимы\WMUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\WorkModes\WMUtils\CopyToClipBoard.cpp">
+      <Filter>TEEngine\Рабочие режимы\WMUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Drawers\BaseTEDrawer.cpp">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Drawers\TEBaseWorkModeDrawer.cpp">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Drawers\TEBaseWorkModeDrawerBase.cpp">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Drawers\TEConditionColoredEleDrawer.cpp">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Drawers\TEDrawerBase.cpp">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Drawers\TESelfColoredEleDrawer.cpp">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Drawers\TEStatusColoredEleDrawer.cpp">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\AddElement.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\AddLink.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\ChangeAutoRestart.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\ChangeColor.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\ChangeLinkType.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\DeleteColumns.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\DeleteElement.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\DeleteLink.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\DeleteRows.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\InsertColumns.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\InsertRows.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\MakeLinkActive.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\MoveLinkEnd.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\MoveTEElementPos.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Actions\RenameElement.cpp">
+      <Filter>TEEngine\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\UndoManager\TEUndoManager.cpp">
+      <Filter>TEEngine\UndoManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TEUtils\BoundingRectCalculator.cpp">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TEUtils\FindLinkByPoint.cpp">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TEUtils\FindLinkInTriggerByChild.cpp">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TEUtils\FindLinkInTriggerByPoint.cpp">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TEUtils\FindTrigger.cpp">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\te_helpers.cpp">
+      <Filter>TEEngine\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Profiler\TrgProfLegend.cpp">
+      <Filter>TEEngine\Отладка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Profiler\TriggerDbgDlg.cpp">
+      <Filter>TEEngine\Отладка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Profiler\TriggerProfList.cpp">
+      <Filter>TEEngine\Отладка</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\Profiler\TriggerChainProfiler\TriggerChainProfiler.cpp">
+      <Filter>TEEngine\Отладка\TriggerChainProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="TEEngine\TriggerClipBuffer.cpp">
+      <Filter>TEEngine\ClipBuffer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TriggerEditor.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="res\cur_button.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_checkbox.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_cross.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_drop.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_horz.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_lockbox.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_split.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_stop.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cur_vert.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cursor_s.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\draghand.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\hand.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\TriggerEditor.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Main\ChooseName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gdi_resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\ITriggerEditorView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TEFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerEditorApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerExport.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree\TETreeDlg.h">
+      <Filter>Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree\TETreeLogic.h">
+      <Filter>Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree\TETreeManager.h">
+      <Filter>Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree\TETreeNotifyListener.h">
+      <Filter>Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree\UITreeNodeFabric.h">
+      <Filter>Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree\TreeNodes\ITreeNode.h">
+      <Filter>Tree\TreeNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree\TreeNodes\UITreeNode.h">
+      <Filter>Tree\TreeNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Custom Controls\CoolDialogBar.h">
+      <Filter>Custom Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Custom Controls\ToolTip.h">
+      <Filter>Custom Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Custom Controls\xTreeListCtrl.h">
+      <Filter>Custom Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Scale\ScaleBar.h">
+      <Filter>Scale</Filter>
+    </ClInclude>
+    <ClInclude Include="Scale\ScaleInterfaces.h">
+      <Filter>Scale</Filter>
+    </ClInclude>
+    <ClInclude Include="Scale\ScaleMgr.h">
+      <Filter>Scale</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\AdjustComboboxWidth.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\EnsureTriggerNameOriginality.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\TETreeLoader.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\SelectIfIntersect.h">
+      <Filter>TEEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\SelectionManager.h">
+      <Filter>TEEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\te_consts.h">
+      <Filter>TEEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TEGrid.h">
+      <Filter>TEEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TriggerEditorLogic.h">
+      <Filter>TEEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TriggerEditorView.h">
+      <Filter>TEEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\WorkModes\ITEWorkMode.h">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\WorkModes\TEBaseWorkMode.h">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\WorkModes\TEProfilerWorkMode.h">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\WorkModes\TESingleChainWorkMode.h">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\WorkModes\TEWorkModeBase.h">
+      <Filter>TEEngine\Рабочие режимы</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\WorkModes\WMUtils\ClipBoardDataInserter.h">
+      <Filter>TEEngine\Рабочие режимы\WMUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\WorkModes\WMUtils\CopyToClipboard.h">
+      <Filter>TEEngine\Рабочие режимы\WMUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\BaseTEDrawer.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\IDrawData.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\ITEDrawer.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\TEBaseWorkModeDrawer.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\TEBaseWorkModeDrawerBase.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\TEConditionColoredEleDrawer.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\TEDrawerBase.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\TESelfColoredEleDrawer.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Drawers\TEStatusColoredEleDrawer.h">
+      <Filter>TEEngine\Прорисовка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\AddElement.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\AddLink.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\ChangeAutoRestart.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\ChangeColor.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\ChangeLinkType.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\DeleteColumns.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\DeleteElement.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\DeleteLink.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\DeleteRows.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\InsertColumns.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\InsertRows.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\MakeLinkActive.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\MoveLinkEnd.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\MoveTEElementPos.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Actions\RenameElement.h">
+      <Filter>TEEngine\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\UndoManager\TEUndoManager.h">
+      <Filter>TEEngine\UndoManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TEUtils\BoundingRectCalculator.h">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\del_ins_col_row_helpers.h">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TEUtils\FindLinkByPoint.h">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TEUtils\FindLinkInTriggerByChild.h">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TEUtils\FindLinkInTriggerByPoint.h">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TEUtils\FindTrigger.h">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TestTriggerName.h">
+      <Filter>TEEngine\TEUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\geometry_helpers.h">
+      <Filter>TEEngine\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\te_helpers.h">
+      <Filter>TEEngine\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Profiler\ITriggerProfList.h">
+      <Filter>TEEngine\Отладка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Profiler\TrgProfLegend.h">
+      <Filter>TEEngine\Отладка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Profiler\TriggerDbgDlg.h">
+      <Filter>TEEngine\Отладка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Profiler\TriggerProfList.h">
+      <Filter>TEEngine\Отладка</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Profiler\TriggerChainProfiler\ITriggerChainProfiler.h">
+      <Filter>TEEngine\Отладка\TriggerChainProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\Profiler\TriggerChainProfiler\TriggerChainProfiler.h">
+      <Filter>TEEngine\Отладка\TriggerChainProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="TEEngine\TriggerClipBuffer.h">
+      <Filter>TEEngine\ClipBuffer</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TriggerEditor.rc">
+      <Filter>Header Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\bm_bkgnd.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bm_bkgnd2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bm_checkbox.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bm_def_head.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bm_def_sort.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bm_def_tree.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bm_lockbox.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\te_main_.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\toolbar1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\TriggerEditor.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

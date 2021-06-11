@@ -14,6 +14,9 @@ enum RealPlayerType {
 	REAL_PLAYER_TYPE_WORLD
 };
 
+
+DECLARE_ENUM_DESCRIPTOR(RealPlayerType)
+
 struct PlayerData {
 	enum  {
 		PLAYER_ID_NONE = -1

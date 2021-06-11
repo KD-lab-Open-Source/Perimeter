@@ -1,3 +1,4 @@
+#if 0
 #include "StdAfx.h"
 
 #include "Universe.h"
@@ -186,4 +187,4 @@ int terMinotaurLegionType::RightChain()
 	return 0;
 }
 
-
+#endif

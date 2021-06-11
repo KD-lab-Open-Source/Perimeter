@@ -4,11 +4,19 @@
 #include "Handle.h"
 #include "XUtil.h"
 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 #ifdef _USRDLL
 #define DLL_API __declspec(dllexport)
 #else //_USRDLL
 #define DLL_API __declspec(dllimport)
 #endif//_USRDLL
+#else
+#ifdef _USRDLL
+#define DLL_API
+#else //_USRDLL
+#define DLL_API
+#endif//_USRDLL
+#endif
 
 #ifndef FOR_EACH
 #define FOR_EACH(list, iterator) \
@@ -283,7 +291,9 @@ extern "C" DLL_API TreeNode const* treeControlEdit(const TreeNode* treeNode,
 extern "C" DLL_API void treeControlFree(TreeNode const* );
 
 #ifndef _USRDLL
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 #pragma comment(lib,"ScriptEditor.lib")
+#endif
 #endif//_USERDLL
 
 #else // _FINAL_VERSION_

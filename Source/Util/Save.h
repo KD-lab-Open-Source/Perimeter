@@ -2373,6 +2373,9 @@ struct ActionTask : Action // Задача
 	}	
 };
 
+
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ActionTask, Type)
+
 struct ActionSetCameraAtObject : Action // Установить камеру на объект
 {
 	EnumWrapper<terUnitAttributeID> object; 
@@ -2780,6 +2783,8 @@ struct SaveManualData // Данные, редактируемые руками
 private:
 	SaveCameraSplineData* findCameraSpline(const char* name);
 };
+
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(SaveManualData, OmegaMissionType)
 
 //---------------------------------
 struct SavePrm {

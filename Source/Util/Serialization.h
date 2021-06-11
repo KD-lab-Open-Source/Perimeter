@@ -481,6 +481,13 @@ public:
 	}
 };
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+#define DEFINE_SINGLETON_PRM(Type) \
+void loadParameters(Type& t); \
+void saveParameters(Type& t); \
+bool editParameters(Type& t, EditArchive& ea);
+#endif
+
 #define SINGLETON_PRM(Type, sectionName, fileName)						\
 void loadParameters(Type& t) {											\
 	XPrmIArchive ia;													\
@@ -556,6 +563,17 @@ const EnumDescriptor<Enum>& getEnumDescriptor(const Enum& key);
 		static Enum##nameSpace##enumType descriptor;	\
 		return descriptor;	\
 	}
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+#define DECLARE_ENUM_DESCRIPTOR(enumType)	\
+	const EnumDescriptor<enumType>& getEnumDescriptor(const enumType& key);
+#endif
+
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+#define DECLARE_ENUM_DESCRIPTOR_ENCLOSED(nameSpace, enumType)	\
+	const EnumDescriptor<nameSpace::enumType>& getEnumDescriptor(const nameSpace::enumType& key);
+#endif
 
 
 /////////////////////////////////////////////////

@@ -89,7 +89,11 @@ protected:
     afx_msg void OnWindowPosChanged(WINDOWPOS FAR* lpwndpos);
     afx_msg void OnNcPaint();
     afx_msg void OnNcLButtonDown(UINT nHitTest, CPoint point);
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
     afx_msg UINT OnNcHitTest(CPoint point);
+#else
+    afx_msg LRESULT OnNcHitTest(CPoint point);
+#endif
     afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp);
     afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
     afx_msg void OnCaptureChanged(CWnd *pWnd);

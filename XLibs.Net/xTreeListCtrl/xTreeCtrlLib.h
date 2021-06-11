@@ -45,9 +45,11 @@
 
 #endif //(_MSC_VER >= 1300)
 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define _LIB_NAME "xTreeListCtrl"_VC_SUFFIX _CRT_MFC_TYPE _MT_SUFFIX _DEBUG_SUFFIX".lib"
 #pragma message("Automatically linking with " _LIB_NAME ) 
 #pragma comment(lib,_LIB_NAME) 
+#endif
 
 #undef _VC_SUFFIX
 #undef _DEBUG_SUFFIX

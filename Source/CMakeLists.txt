@@ -1,0 +1,10 @@
+add_subdirectory(PluginMAX)
+add_subdirectory(Terra)
+add_subdirectory(tx3d)
+add_subdirectory(Port)
+add_subdirectory(TriggerEditor)
+add_subdirectory(Network)
+add_subdirectory(Render)
+add_subdirectory(Sound)
+add_subdirectory(Game)
+

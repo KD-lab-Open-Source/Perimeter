@@ -16,7 +16,7 @@
 #define DLL_INTERFACE __declspec(dllexport)
 #else
 #define DLL_INTERFACE __declspec(dllimport)
-#pragma comment(lib,"TriggerEditor.lib")
+//#pragma comment(lib,"TriggerEditor.lib")
 #endif
 
 class TEFrame;

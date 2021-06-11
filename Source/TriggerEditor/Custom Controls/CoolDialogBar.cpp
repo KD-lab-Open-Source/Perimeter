@@ -392,7 +392,11 @@ void CCoolDialogBar::OnNcLButtonDown(UINT nHitTest, CPoint point)
         CControlBar::OnNcLButtonDown(nHitTest, point);
 }
 
-UINT CCoolDialogBar::OnNcHitTest(CPoint point) 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+UINT CCoolDialogBar::OnNcHitTest(CPoint point)
+#else
+LRESULT CCoolDialogBar::OnNcHitTest(CPoint point)
+#endif
 {
     if (IsFloating())
         return CControlBar::OnNcHitTest(point);

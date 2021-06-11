@@ -1,5 +1,10 @@
 #ifdef _DEBUG
 #include "xutil.h" 
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+
+#endif
+
 #define _assert(err, file, line) \
     do                                                              \
     {  static int ignore = 0;                                   \
