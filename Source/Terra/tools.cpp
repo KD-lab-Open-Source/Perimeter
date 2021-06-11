@@ -12,9 +12,9 @@ sVBitMapMosaic VBitMapMosaic;
 sVBitMap VBitMap;
 
 
-extern int* xRad[MAX_RADIUS_CIRCLEARR + 1];
-extern int* yRad[MAX_RADIUS_CIRCLEARR + 1];
-extern int maxRad[MAX_RADIUS_CIRCLEARR + 1];
+int* xRad[MAX_RADIUS_CIRCLEARR + 1];
+int* yRad[MAX_RADIUS_CIRCLEARR + 1];
+int maxRad[MAX_RADIUS_CIRCLEARR + 1];
 
 
 

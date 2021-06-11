@@ -71,3 +71,5 @@ SET(Render_SRCS
 )
 
 ADD_LIBRARY(Render STATIC ${Render_SRCS})
+
+TARGET_LINK_LIBRARIES(Render PluginMAX)

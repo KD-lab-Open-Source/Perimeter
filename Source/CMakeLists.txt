@@ -178,6 +178,14 @@ SET(perimeter_LINK_LIBS
         Render
         Sound
         XLibs
+        #Windows libs
+        d3d9
+        d3dx9
+        dsound
+        winmm
+        wsock32
+        advapi32
+        vfw32
 )
 
 
