@@ -185,8 +185,14 @@ void XErrorHandler::Abort(const char* message, int code, int addval, const char*
     /* TODO
     this originally displayed a Dialog with stacktrace to debug the issue that caused Abort
     Vangers has SDL2 dialog impl for this, we should do the same
-    */ 
-    printf("XErrH::Abort! %s %d\n", message, code);
+    */
+    string text = "";
+    text += sprintf("XErrH::Abort!\nMessage %s\nCode %d Val %d\n", message, code, addval);
+    if (subj) {
+        text += sprintf("Subject %s\n", subj);
+    }
+    
+    fprintf(stderr, text.c_str());
     exit(1);
 }
 

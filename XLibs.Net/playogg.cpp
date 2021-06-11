@@ -12,7 +12,7 @@ MpegSound::~MpegSound() {
 }
 
 bool MpegSound::OpenToPlay(const char* fname,bool cycled) {
-    return false;
+    return true;
 }
 
 void MpegSound::Stop() {

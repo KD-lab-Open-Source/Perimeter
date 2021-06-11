@@ -118,5 +118,5 @@ unsigned int XRndGet()
 }
 const char* check_command_line(const char* switch_str) {
     //TODO seems like it should find switch_str as key in cmdline and return string with the passed value 
-    return "";
+    return NULL;
 }
