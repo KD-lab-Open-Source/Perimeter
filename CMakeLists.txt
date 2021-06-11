@@ -79,6 +79,14 @@ ELSE()
     MESSAGE("Not compiling Final version")
 ENDIF()
 
+IF( CMAKE_HOST_WIN32 OR MINGW )
+    MESSAGE("Windows or MinGW build")
+    SET(PERIMETER_WINDOWS ON)
+ELSE()
+    MESSAGE("Not Windows or MinGW build")
+    SET(PERIMETER_WINDOWS OFF)
+ENDIF()
+
 #TODO we should stop depending on these precompiled libs
 #LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/XLibs.Net/VC8)
 #LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/XLibs.Net/VC7.1)

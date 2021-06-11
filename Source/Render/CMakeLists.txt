@@ -70,6 +70,8 @@ SET(Render_SRCS
         src/VisGrid2d.cpp
 )
 
+SET(Render_LINK_LIBS PluginMAX)
+
 ADD_LIBRARY(Render STATIC ${Render_SRCS})
 
-TARGET_LINK_LIBRARIES(Render PluginMAX)
+TARGET_LINK_LIBRARIES(Render ${Render_LINK_LIBS})

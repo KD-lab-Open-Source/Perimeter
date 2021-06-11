@@ -53,10 +53,8 @@ SET(perimeter_LINK_LIBS
         #PrmEditVC7MT
 )
 
-#Add Windows and DirectX libs on windows hosts or mingw
-IF( CMAKE_HOST_WIN32 OR MINGW )
-    MESSAGE("Windows or MinGW detected")
-    
+#Add Windows and DirectX libs
+IF(PERIMETER_WINDOWS)
     #Include headers
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
     
@@ -69,7 +67,7 @@ IF( CMAKE_HOST_WIN32 OR MINGW )
         LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
     ENDIF()
 
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}            
             #DirectX libs
             d3d8
             d3d9
@@ -85,7 +83,7 @@ IF( CMAKE_HOST_WIN32 OR MINGW )
             dinput8
             dplayx
             dsound
-            dxguid
+            #dxguid
             dxgi
             dxtrans
             DxErr
@@ -97,16 +95,15 @@ IF( CMAKE_HOST_WIN32 OR MINGW )
             #Windows libs
             winmm
             wsock32
-            user32
+            comctl32
             advapi32
             vfw32
             strmiids
     )
-ELSE()
-    MESSAGE("Not Windows or MinGW")
 ENDIF()
 
 SET(perimeter_SRCS
+        Util/dplay8guid.c
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
@@ -116,7 +113,6 @@ SET(perimeter_SRCS
         Game/Player.cpp
         Game/Universe.cpp
         Game/PerimeterDataChannel.cpp
-        #TODO unused? Game/ResourceDispatcher.cpp
         Game/Runtime.cpp
         Game/CopyToGraph.cpp
         Game/Region.cpp

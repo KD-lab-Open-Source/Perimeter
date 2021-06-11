@@ -449,7 +449,7 @@ void initclock(void);
 int clocki(void);
 double clockf(void);
 
-void xtDeleteFile(char* fname);
+//void xtDeleteFile(char* fname);
 
 const char* check_command_line(const char* switch_str); // 0 или строка после ключа для анализа
 
