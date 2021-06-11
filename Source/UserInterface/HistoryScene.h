@@ -12,7 +12,7 @@
 
 class HistoryScene : public Commander {
 	public:
-		HistoryScene(const string& programFileName);
+		HistoryScene();
 		~HistoryScene();
 
 		void init(cVisGeneric* visGeneric, bool bw, bool addBlendAlpha = true);

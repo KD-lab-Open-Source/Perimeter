@@ -2461,6 +2461,8 @@ void GameShell::setLocalizedFontSizes() {
 }
 
 void GameShell::preLoad() {
+    historyScene.loadProgram("RESOURCE\\scenario.hst");
+    bwScene.loadProgram("RESOURCE\\menu.hst");
 	string path = getLocDataPath() + "Text\\Texts.btdb";
 	#ifdef _FINAL_VERSION_
 		qdTextDB::instance().load(path.c_str(), 0 );

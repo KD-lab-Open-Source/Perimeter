@@ -36,8 +36,8 @@ int _id_off;
 
 bool menuChangingDone;
 
-HistoryScene historyScene("RESOURCE\\scenario.hst");
-HistoryScene bwScene("RESOURCE\\menu.hst");
+HistoryScene historyScene;
+HistoryScene bwScene;
 BGScene bgScene;
 
 int currYear = -1;

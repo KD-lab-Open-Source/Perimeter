@@ -15,7 +15,7 @@ extern float terSoundVolume;
 
 extern MpegSound gb_Music;
 
-HistoryScene::HistoryScene(const string& programFileName) {
+HistoryScene::HistoryScene() {
 	scene = 0;
 	sceneSky = 0;
 	cameraSky = 0;
@@ -43,7 +43,6 @@ HistoryScene::HistoryScene(const string& programFileName) {
 
 	interpreter = new Interpreter(this);
 	historyCamera = new HistorySceneCamera(interpreter);
-	loadProgram(programFileName.c_str());
 
 	fnt = 0;
 	logFnt = 0;
