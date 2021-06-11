@@ -30,8 +30,81 @@ INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/tx3d"
         "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
         "${PROJECT_SOURCE_DIR}/XLibs.Net"
-        "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
 )
+
+SET(perimeter_LINK_LIBS
+        #Dependencies libs
+        ${BOOST_LIBRARY}
+        ${SDL2_LIBRARY}
+
+        #Our libs
+        XLibs
+        PluginMAX
+        Terra
+        tx3d
+        Peer
+        Render
+        Sound
+
+        #Precompiled libs
+        #PlayOggMT.lib
+        #xTreeListCtrlVC71_ST_MT
+        #XUtilVC7MT
+        #PrmEditVC7MT
+)
+
+#Add Windows and DirectX libs on windows hosts or mingw
+IF( CMAKE_HOST_WIN32 OR MINGW )
+    MESSAGE("Windows or MinGW detected")
+    
+    #Include headers
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
+    
+    #Select 64 or 32 compiled libs
+    IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+        MESSAGE("Linking against DirectX 64 bits")
+        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
+    ELSE()
+        MESSAGE("Linking against DirectX 32 bits")
+        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
+    ENDIF()
+
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+            #DirectX libs
+            d3d8
+            d3d9
+            d3dx9
+            d3dx9d
+            d3d10
+            d3dx10
+            d3dx10d
+            d3dxof
+            ddraw
+            dinput
+            dsetup
+            dinput8
+            dplayx
+            dsound
+            dxguid
+            dxgi
+            dxtrans
+            DxErr
+            DxErr8
+            DxErr9
+            X3DAudio
+            XInput
+    
+            #Windows libs
+            winmm
+            wsock32
+            user32
+            advapi32
+            vfw32
+            strmiids
+    )
+ELSE()
+    MESSAGE("Not Windows or MinGW")
+ENDIF()
 
 SET(perimeter_SRCS
         Game/CameraManager.cpp
@@ -167,34 +240,6 @@ SET(perimeter_SRCS
 )
 
 ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
-
-SET(perimeter_LINK_LIBS
-        #Dependencies libs
-        ${BOOST_LIBRARY}
-        ${SDL2_LIBRARY}
-        
-        #Our libs
-        XLibs
-        PluginMAX
-        Terra
-        tx3d
-        Peer
-        Render
-        Sound
-        #DirectX libs
-        d3d9
-        d3dx9
-        dsound
-        dplayx
-        strmiids
-        
-        #Windows libs
-        winmm
-        wsock32
-        advapi32
-        vfw32
-)
-
 
 if(NOT FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
