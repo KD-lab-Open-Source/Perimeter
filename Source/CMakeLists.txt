@@ -98,6 +98,11 @@ IF(PERIMETER_WINDOWS)
             vfw32
             strmiids
     )
+ELSE()
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+            # dl is required for dladdr in stacktrace,
+            dl
+    )
 ENDIF()
 
 SET(perimeter_SRCS

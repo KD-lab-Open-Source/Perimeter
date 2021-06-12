@@ -16,10 +16,11 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # options
 OPTION(FINAL_VERSION "Generate Final version" On)
 OPTION(OPTION_STATIC_BUILD "Generate static build" On)
+OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" Off)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 
 # depends
-FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
 FIND_PACKAGE(VORBIS)
 
 # globals
@@ -87,6 +88,9 @@ ENDIF()
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
     ADD_DEFINITIONS(-DPERIMETER_DEBUG)
     MESSAGE("Compiling Debug version")
+ENDIF()
+IF(OPTION_DISABLE_STACKTRACE)
+    ADD_DEFINITIONS(-DOPTION_DISABLE_STACKTRACE)
 ENDIF()
 
 IF( CMAKE_HOST_WIN32 OR MINGW )

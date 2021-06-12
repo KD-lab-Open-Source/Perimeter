@@ -1,3 +1,5 @@
+#include <string>
+#include <list>
 #include "xglobal.h"
 #include <float.h>
 //#include "BugslayerUtil.h"
@@ -8,6 +10,15 @@ void xtSysFinit(void);
 int xtDispatchMessage(MSG* msg);
 
 //#define _EXCEPTION_CATCH
+
+#ifndef OPTION_DISABLE_STACKTRACE
+#define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
+#include "boost/stacktrace.hpp"
+#endif
+
+#ifndef _WIN32
+#define APIENTRY
+#endif
 
 char *defprefix 	= "XHANDLER  INFORM";
 
@@ -58,7 +69,37 @@ char* uctoa(unsigned char a)
 	return _ConvertBuffer;
 }
 
-LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
+
+bool getStackTrace(std::list<std::string>& lines) {
+#ifndef OPTION_DISABLE_STACKTRACE
+    //Get current
+    auto st = boost::stacktrace::stacktrace();
+    //Check if failed to load
+    if (st.empty()) {
+        return false;
+    }
+    //Write lines
+    for (size_t i = 0; i < st.size(); ++i) {
+        //Just store the name instead of full name as we don't really care our own name
+        if (i == 0) {
+            lines.push_front(std::string() + __func__ + " <- last call");
+            continue;
+        }
+
+        //Pull the stacktrace info
+        std::string line = boost::stacktrace::detail::to_string(&st.as_vector()[i], 1);
+        std::string::size_type size = line.size();
+        if (10 <= size) {
+            //Remove the start number and end newline
+            line = line.substr(4, size - 5);
+            lines.push_front(line);
+        }
+    }
+#endif
+    return !lines.empty();
+}
+
+long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 {
 	_clearfp();
 	_controlfp( _controlfp(0,0) & ~(0), _MCW_EM ); 
@@ -147,16 +188,16 @@ LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 				strcat(msg, (i & 7) == 7 ? "\r\n" : " "); 
             }
 
-			/* TODO use Boost
-			strcat(msg,"\r\nCall stack:\r\n");
-			int dwOpts = GSTSO_PARAMS | GSTSO_MODULE | GSTSO_SYMBOL | GSTSO_SRCLINE;
-			const char * szBuff = GetFirstStackTraceString ( dwOpts, except_info) ;
-			while( szBuff ) {
-				strcat(msg, szBuff);
-				strcat(msg,"\r\n");
-				szBuff = GetNextStackTraceString ( dwOpts , except_info ) ;
+            std::list<std::string> linesStackTrace;
+            strcat(msg,"\r\nCall stack:\r\n");
+            if (getStackTrace(linesStackTrace)) {
+                for (std::string line : linesStackTrace) {
+                    strcat(msg, line.c_str());
+                    strcat(msg, "\r\n");
+                }
+            } else {
+                strcat(msg,"Not available\r\n");
             }
-			*/
         }
     }
 
