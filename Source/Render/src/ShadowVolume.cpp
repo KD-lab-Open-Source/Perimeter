@@ -2,9 +2,9 @@
 #include "ShadowVolume.h"
 #include "MeshTri.h"
 /*
-Что надо переделать другим.
-1) Выключить тени на ландшафте.
-2) Убрать открытые рёбра
+Р§С‚Рѕ РЅР°РґРѕ РїРµСЂРµРґРµР»Р°С‚СЊ РґСЂСѓРіРёРј.
+1) Р’С‹РєР»СЋС‡РёС‚СЊ С‚РµРЅРё РЅР° Р»Р°РЅРґС€Р°С„С‚Рµ.
+2) РЈР±СЂР°С‚СЊ РѕС‚РєСЂС‹С‚С‹Рµ СЂС‘Р±СЂР°
 */
 
 ShadowVolume::ShadowVolume()
@@ -75,7 +75,7 @@ void ShadowVolume::DeleteRepeatedVertex(int offset_vertex,int size_vertex,
 
 	int vertex_size_new=size_vertex;
 	vector<int> repeat(size_vertex);
-	//Найти повторяющие
+	//РќР°Р№С‚Рё РїРѕРІС‚РѕСЂСЏСЋС‰РёРµ
 	for(i=0;i<size_vertex;i++)
 		repeat[i]=i+offset_vertex;
 
@@ -95,7 +95,7 @@ void ShadowVolume::DeleteRepeatedVertex(int offset_vertex,int size_vertex,
 		}
 	}
 
-	//Компактифицировать индексы
+	//РљРѕРјРїР°РєС‚РёС„РёС†РёСЂРѕРІР°С‚СЊ РёРЅРґРµРєСЃС‹
 	int j=0;
 	for(i=0;i<size_vertex;i++)
 	{

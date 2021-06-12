@@ -30,7 +30,7 @@ public:
 	void reselect(int index);
 
 	void deselectAll();
-	//! очищает внутрений буффер
+	//! РѕС‡РёС‰Р°РµС‚ РІРЅСѓС‚СЂРµРЅРёР№ Р±СѓС„С„РµСЂ
 	void clear();
 
 	int getLast() const;

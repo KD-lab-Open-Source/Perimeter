@@ -29,9 +29,9 @@ public:
 protected:
 	void trackToolTip(TriggerEditorView* source, CPoint point);
 private:
-	//! Текущий прорисовщик, для режима работы
+	//! РўРµРєСѓС‰РёР№ РїСЂРѕСЂРёСЃРѕРІС‰РёРє, РґР»СЏ СЂРµР¶РёРјР° СЂР°Р±РѕС‚С‹
 	ITEDrawer *drawer_;
-	//! Данные для отрисовки
+	//! Р”Р°РЅРЅС‹Рµ РґР»СЏ РѕС‚СЂРёСЃРѕРІРєРё
 	std::auto_ptr<DataKeeper> drawDataKeeper_;
 	ITriggerProfList* ptrTriggerProfList_;
 };

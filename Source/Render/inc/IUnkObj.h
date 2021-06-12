@@ -1,7 +1,7 @@
 #pragma once 
 
 class cIUnkObj : public cIUnkClass
-{ // базовый класс объектов
+{ // Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РѕР±СЉРµРєС‚РѕРІ
 public:
 	cIUnkObj(int kind);
 	virtual ~cIUnkObj();
@@ -15,7 +15,7 @@ public:
 
 	virtual cIUnkObj* BuildCopy()													{return NULL; }
 	
-	// инлайновые функции доступа к переменным
+	// РёРЅР»Р°Р№РЅРѕРІС‹Рµ С„СѓРЅРєС†РёРё РґРѕСЃС‚СѓРїР° Рє РїРµСЂРµРјРµРЅРЅС‹Рј
 	inline const MatXf& GetLocalMatrix() const 										{ return LocalMatrix; }
 	inline const MatXf& GetGlobalMatrix() const										{ return GlobalMatrix; }
 	inline float& GetRadius()														{ return Radius; }
@@ -23,9 +23,9 @@ public:
 	virtual Vect3f GetCenterObject()												{return GetGlobalMatrix().trans();}
 
 protected:
-	MatXf			LocalMatrix;	// локальная матрица объекта относительно родителя
-	MatXf			GlobalMatrix;	// глобальная матрица объекта, относительно мировых координат
-	float			Radius;			// примерный размер объекта
+	MatXf			LocalMatrix;	// Р»РѕРєР°Р»СЊРЅР°СЏ РјР°С‚СЂРёС†Р° РѕР±СЉРµРєС‚Р° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЂРѕРґРёС‚РµР»СЏ
+	MatXf			GlobalMatrix;	// РіР»РѕР±Р°Р»СЊРЅР°СЏ РјР°С‚СЂРёС†Р° РѕР±СЉРµРєС‚Р°, РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РјРёСЂРѕРІС‹С… РєРѕРѕСЂРґРёРЅР°С‚
+	float			Radius;			// РїСЂРёРјРµСЂРЅС‹Р№ СЂР°Р·РјРµСЂ РѕР±СЉРµРєС‚Р°
 
 protected:
 	virtual void SetCopy(cIUnkObj* UObj);
@@ -40,7 +40,7 @@ public:
 	virtual const Vect3f& GetScale() const 			{ return Scale; }
 	virtual void SetScale(const Vect3f& scale);
 protected:
-	Vect3f			Scale;	// масштаб
+	Vect3f			Scale;	// РјР°СЃС€С‚Р°Р±
 protected:
 	virtual void SetCopy(cIUnkObj* UObj);
 };

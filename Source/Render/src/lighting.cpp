@@ -247,7 +247,7 @@ void cLighting::OneLight::GenerateInterpolate(vector<float>& pos,int size,float 
 
 }
 
-float cLighting::OneLight::get(vector<float>& p,float t)//линейная интерполяция
+float cLighting::OneLight::get(vector<float>& p,float t)//Р»РёРЅРµР№РЅР°СЏ РёРЅС‚РµСЂРїРѕР»СЏС†РёСЏ
 {
 
 	int size=p.size()+2;

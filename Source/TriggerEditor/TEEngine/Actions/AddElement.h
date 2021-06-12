@@ -5,9 +5,9 @@
 	file path:	d:\Projects\Quest\QuestEditor
 	file base:	AddElement
 	file ext:	h
-	powerd by:	Илюха
+	powerd by:	РР»СЋС…Р°
 	
-	purpose:	Добавляет элемент в триггер
+	purpose:	Р”РѕР±Р°РІР»СЏРµС‚ СЌР»РµРјРµРЅС‚ РІ С‚СЂРёРіРіРµСЂ
 *********************************************************************/
 #pragma once
 

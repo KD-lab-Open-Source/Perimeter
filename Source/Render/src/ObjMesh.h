@@ -5,25 +5,25 @@ class cMeshBank;
 
 class cObjMesh : public cObjectNode
 {
-	cMeshTri*		Tri;// геометрия объекта, хранится в cMeshBank
+	cMeshTri*		Tri;// РіРµРѕРјРµС‚СЂРёСЏ РѕР±СЉРµРєС‚Р°, С…СЂР°РЅРёС‚СЃСЏ РІ cMeshBank
 	cMeshBank*		pBank;
 	cMeshBank*		pOriginalBank;
 
 	friend class cMeshSortingPhase;
-	cObjMesh*		pSortingNext;//используется в cMeshSortingBank,cMeshSortingPhase
+	cObjMesh*		pSortingNext;//РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ cMeshSortingBank,cMeshSortingPhase
 public:
 	
 	cObjMesh();
 	virtual ~cObjMesh();
-	// общие интерфейсные функции унаследованы от cUnkObj
+	// РѕР±С‰РёРµ РёРЅС‚РµСЂС„РµР№СЃРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cUnkObj
 	void PreDraw(cCamera *UCamera);
 	virtual void Draw(cCamera *UCamera);
 	virtual cIUnkObj* BuildCopy();
 	virtual void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0);
 	virtual void CalcObj();
-	// общие интерфейсные функции унаследованы от cUnkTile
+	// РѕР±С‰РёРµ РёРЅС‚РµСЂС„РµР№СЃРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cUnkTile
 	virtual void GetBoundingBox(Vect3f &min,Vect3f &max);
-	// инлайновые функции доступа к переменным
+	// РёРЅР»Р°Р№РЅРѕРІС‹Рµ С„СѓРЅРєС†РёРё РґРѕСЃС‚СѓРїР° Рє РїРµСЂРµРјРµРЅРЅС‹Рј
 	inline void SetTri(cMeshTri	*MeshTri)							{ Tri=MeshTri; }
 	inline cMeshTri* GetTri()										{ return Tri; }
 	inline cMeshBank* GetBank()										{return pBank;};

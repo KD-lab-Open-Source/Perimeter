@@ -202,8 +202,8 @@ class  CTreeListCtrl : public CWnd
 	friend class CTLCDragWnd;
 	friend class CTLCDropWnd;
 
-	static UINT const DRAG_DELAY;//через какое время drag and drop начнется 
-					//даже без движения
+	static UINT const DRAG_DELAY;//С‡РµСЂРµР· РєР°РєРѕРµ РІСЂРµРјСЏ drag and drop РЅР°С‡РЅРµС‚СЃСЏ 
+					//РґР°Р¶Рµ Р±РµР· РґРІРёР¶РµРЅРёСЏ
 
 	typedef bool (IItemChangeNotifyListener::*ICN_BEFORE)(CTreeListCtrl& source, 
 													ITEM_CHANGE_INFO* pinfo);
@@ -317,9 +317,9 @@ protected:
 	CRect	m_rcFocus;		// rect of focus item
 
 public:
-// TODO: Перенести окна редактирования в закрытый раздел
-// TODO: Перевести доступ к окнам редактирования на get/set
-// TODO: Выделять ресурсы под окна редактирования при необходимости
+// TODO: РџРµСЂРµРЅРµСЃС‚Рё РѕРєРЅР° СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РІ Р·Р°РєСЂС‹С‚С‹Р№ СЂР°Р·РґРµР»
+// TODO: РџРµСЂРµРІРµСЃС‚Рё РґРѕСЃС‚СѓРї Рє РѕРєРЅР°Рј СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РЅР° get/set
+// TODO: Р’С‹РґРµР»СЏС‚СЊ СЂРµСЃСѓСЂСЃС‹ РїРѕРґ РѕРєРЅР° СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё
 	// build in controls
 	std::auto_ptr<CTreeListStaticCtrl>	m_wndStatic;			// Build in Static Control
 	std::auto_ptr<CTreeListEditCtrl>	m_wndEdit;				// Build in Edit Control
@@ -354,11 +354,11 @@ private:
 	mutable CPtrArray	m_arSelects;				// Selected Items
 	mutable int			m_iSelCol;					// Selected Column
 	mutable CTreeListItem*		m_pFocusItem;				// Focus item
-	mutable CTreeListItem*		m_pShiftSelectionBase;		//! узел-основа для выделения с шифтом
+	mutable CTreeListItem*		m_pShiftSelectionBase;		//! СѓР·РµР»-РѕСЃРЅРѕРІР° РґР»СЏ РІС‹РґРµР»РµРЅРёСЏ СЃ С€РёС„С‚РѕРј
 
 	int					m_iModifyCol;				// Modify col
 	CTreeListItem*		m_pModifyItem;				// Modify item
-	//! узел и стлобец, который будем редактировать на OnLButtonUp
+	//! СѓР·РµР» Рё СЃС‚Р»РѕР±РµС†, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµРј СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РЅР° OnLButtonUp
 	std::pair<CTreeListItem*, int>		readyToEditItem_;
 	DWORD				m_dwRequestedCtrlType;
 
@@ -390,7 +390,7 @@ private:
 public:
 	//***************************types***************************************
 	enum eSelectAction {SI_SELECT, SI_DESELECT};
-	//! Различные константы
+	//! Р Р°Р·Р»РёС‡РЅС‹Рµ РєРѕРЅСЃС‚Р°РЅС‚С‹
 	enum {
 		TLCC_NONOTIFY,
 		TLCC_NOTIFY
@@ -619,13 +619,13 @@ protected:
 
 	void			SetReadyToEditItem(CTreeListItem* item, int iSubItem);
 	std::pair<CTreeListItem*, int> const&  GetReadyToEditItem() const;
-	//!\brief Назначает узел, от которого будет идти выделение 
-	//! при выдеделении с шифтом
+	//!\brief РќР°Р·РЅР°С‡Р°РµС‚ СѓР·РµР», РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґРµС‚ РёРґС‚Рё РІС‹РґРµР»РµРЅРёРµ 
+	//! РїСЂРё РІС‹РґРµРґРµР»РµРЅРёРё СЃ С€РёС„С‚РѕРј
 	void			SetShiftSelectionBase(CTreeListItem* pitem);
-	//! Возвращает узел, от которого будет идти выделение 
-	//! при выдеделении с шифтом
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓР·РµР», РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґРµС‚ РёРґС‚Рё РІС‹РґРµР»РµРЅРёРµ 
+	//! РїСЂРё РІС‹РґРµРґРµР»РµРЅРёРё СЃ С€РёС„С‚РѕРј
 	CTreeListItem*  GetShiftSelectionBase() const;
-	//возвращает номер в списке выбранных
+	//РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРѕРјРµСЂ РІ СЃРїРёСЃРєРµ РІС‹Р±СЂР°РЅРЅС‹С…
 	INT_PTR			FindInSelected(CTreeListItem const* pItem) const;
 	bool			IsColumnVisible(int iCol) const;
 	INT_PTR			FindInShowedColumns(int iCol) const;
@@ -655,12 +655,12 @@ private:
 
 	bool	SelectItemAux(CTreeListItem* pItem, int iSubItem  = 0 , 
 		eSelectAction eAction  = SI_SELECT);
-	//! пытаемся снять выделение сразу со всех узлов, исключая указанный
+	//! РїС‹С‚Р°РµРјСЃСЏ СЃРЅСЏС‚СЊ РІС‹РґРµР»РµРЅРёРµ СЃСЂР°Р·Сѓ СЃРѕ РІСЃРµС… СѓР·Р»РѕРІ, РёСЃРєР»СЋС‡Р°СЏ СѓРєР°Р·Р°РЅРЅС‹Р№
 	void	DeselectAll(CTreeListItem const* pItem);
 
 	void	ShiftSelection(CTreeListItem* pItem, int iSubItembool,
 							bool bClearSelection = true);
-	//! Выбор элементов в ответ на нажатие клавши клавиатуры
+	//! Р’С‹Р±РѕСЂ СЌР»РµРјРµРЅС‚РѕРІ РІ РѕС‚РІРµС‚ РЅР° РЅР°Р¶Р°С‚РёРµ РєР»Р°РІС€Рё РєР»Р°РІРёР°С‚СѓСЂС‹
 	void	SelectItemOnKeyPressing(CTreeListItem* pItem, int iSubItem);
 
 	enum eItemLayout{EIL_ABOVE, EIL_BELOW};
@@ -748,10 +748,10 @@ public:
 	bool	SetCtrlFocus( CWnd* pWnd, bool bFocus = TRUE );
 	CWnd*	EditLabel(CTreeListItem* pItem, int iCol);
 	CWnd*	GetControl( CTreeListItem* pItem, int iCol );
-	//! Прекращаем с запросом на сохранение
+	//! РџСЂРµРєСЂР°С‰Р°РµРј СЃ Р·Р°РїСЂРѕСЃРѕРј РЅР° СЃРѕС…СЂР°РЅРµРЅРёРµ
 	bool	EndLabelEdit(bool save);
 protected:
-	//! Прекращаем без сохранения
+	//! РџСЂРµРєСЂР°С‰Р°РµРј Р±РµР· СЃРѕС…СЂР°РЅРµРЅРёСЏ
 	void	AbortLabelEdit();
 	void	FillNMHDR(NMHDR& hdr, DWORD dwMessage);
 	LRESULT	Notify( DWORD dwMessage, CTreeListItem* pItem, int iCol );

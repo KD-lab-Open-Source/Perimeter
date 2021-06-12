@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #include "StdAfx.h"
 #include "AnimationChain.h"
 #include "AddAnimationChain.h"

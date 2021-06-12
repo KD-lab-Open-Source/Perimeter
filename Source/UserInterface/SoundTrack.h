@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __SOUND_TRACK_H__
 #define __SOUND_TRACK_H__
 

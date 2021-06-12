@@ -208,7 +208,7 @@ enum e_PNCState{
 	PNC_STATE__NEWHOST_PHASE_A=PNC_State_GameRun|PNC_State_Host|15,
 	PNC_STATE__NEWHOST_PHASE_B=PNC_State_GameRun|PNC_State_Host|16,
 
-	// Состояние завершения
+	// РЎРѕСЃС‚РѕСЏРЅРёРµ Р·Р°РІРµСЂС€РµРЅРёСЏ
 	PNC_STATE__ENDING_GAME=17
 };
 
@@ -308,7 +308,7 @@ public:
 	//string m_missionName;
 	
 	ClientMapType  m_clients;
-	//DPNID          m_dpnidGroupGame; //Этот DPNID используется для отправки сообщений всей группе
+	//DPNID          m_dpnidGroupGame; //Р­С‚РѕС‚ DPNID РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РѕС‚РїСЂР°РІРєРё СЃРѕРѕР±С‰РµРЅРёР№ РІСЃРµР№ РіСЂСѓРїРїРµ
 
 	//int            m_nServerPause;
 	int            m_nQuantCommandCounter;
@@ -379,7 +379,7 @@ public:
 	//Game(first) Thread
 	InOutNetComBuffer  in_ClientBuf;
 	InOutNetComBuffer  out_ClientBuf;
-	bool flag_SkipProcessingGameCommand;//Нужно при миграции Host-а
+	bool flag_SkipProcessingGameCommand;//РќСѓР¶РЅРѕ РїСЂРё РјРёРіСЂР°С†РёРё Host-Р°
 
 	InOutNetComBuffer  in_HostBuf;
 	InOutNetComBuffer  out_HostBuf;
@@ -418,7 +418,7 @@ public:
 	void P2PIQuant();
 	void HandlerInputNetCommand();
 
-	//DPNID m_playerDPNID; //Информация на клиенте присланный его DPNID
+	//DPNID m_playerDPNID; //РРЅС„РѕСЂРјР°С†РёСЏ РЅР° РєР»РёРµРЅС‚Рµ РїСЂРёСЃР»Р°РЅРЅС‹Р№ РµРіРѕ DPNID
 
 
 	HANDLE hSecondThread;
@@ -438,7 +438,7 @@ public:
 	MissionDescription& getCurrentMissionDescription(void){
 		return curMD;
 	};
-	unsigned int m_numberGameQuant; //Кванты на хосте Кванты считаются с 1-цы!
+	unsigned int m_numberGameQuant; //РљРІР°РЅС‚С‹ РЅР° С…РѕСЃС‚Рµ РљРІР°РЅС‚С‹ СЃС‡РёС‚Р°СЋС‚СЃСЏ СЃ 1-С†С‹!
 	void HostReceiveQuant();
 	void ClientPredReceiveQuant();
 
@@ -543,13 +543,13 @@ public:
 	string fixedInternetAddress;
 
 
-	unsigned long internalIP; ///!!!! Временно!!!!
+	unsigned long internalIP; ///!!!! Р’СЂРµРјРµРЅРЅРѕ!!!!
 
 	//Host Date
 	unsigned long hostGeneralCommandCounter;
 	unsigned int quantConfirmation;
 
-	DPNID dpnidClientWhichWeWait; //dpnid игрока которому хост при миграции посылает команду прислать игровые комманды; нужен чтобы в случае выхода переслать комманду другому
+	DPNID dpnidClientWhichWeWait; //dpnid РёРіСЂРѕРєР° РєРѕС‚РѕСЂРѕРјСѓ С…РѕСЃС‚ РїСЂРё РјРёРіСЂР°С†РёРё РїРѕСЃС‹Р»Р°РµС‚ РєРѕРјР°РЅРґСѓ РїСЂРёСЃР»Р°С‚СЊ РёРіСЂРѕРІС‹Рµ РєРѕРјРјР°РЅРґС‹; РЅСѓР¶РµРЅ С‡С‚РѕР±С‹ РІ СЃР»СѓС‡Р°Рµ РІС‹С…РѕРґР° РїРµСЂРµСЃР»Р°С‚СЊ РєРѕРјРјР°РЅРґСѓ РґСЂСѓРіРѕРјСѓ
 
 
 	//Info for GameSpy

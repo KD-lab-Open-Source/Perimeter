@@ -41,7 +41,7 @@ class SoftSound3D:public VirtualSound3D
 	Vect3f position;
 	Vect3f velocity;
 	float min_distance,max_distance;
-	float clip_distance;//после неё звук перестаёт звучать
+	float clip_distance;//РїРѕСЃР»Рµ РЅРµС‘ Р·РІСѓРє РїРµСЂРµСЃС‚Р°С‘С‚ Р·РІСѓС‡Р°С‚СЊ
 
 	bool is_playing,is_cycled;
 	bool pause;

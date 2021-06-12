@@ -240,7 +240,7 @@ int sKeyGeoPal::loadKeyGeoPal(void)
 		tbuf.init();
 		tbuf < (GetINIstringV(GetTargetName(vrtMap::worldIniFile),strGeoPalparams,"Colors"));
 		tbuf.set(0,XB_BEG);
-		//Цветов на один больше чем keys
+		//Р¦РІРµС‚РѕРІ РЅР° РѕРґРёРЅ Р±РѕР»СЊС€Рµ С‡РµРј keys
 		for(i=0; i<(numbers+1); i++) { tbuf >= color[i].r; tbuf >= color[i].g; tbuf >= color[i].b; }
 
 		tbuf.init();
@@ -262,13 +262,13 @@ void sKeyGeoPal::saveKeyGeoPal(void)
 
 	int i;
 	tbuf.init();
-	//Цветов на один больше чем keys
-	//ВНИМАНИЕ ! Пробела в конце строки для записи данных в INI файл не должно быть !(иначе при каждой записи будут добавляться пробелы в конец строки(баг Windows))
+	//Р¦РІРµС‚РѕРІ РЅР° РѕРґРёРЅ Р±РѕР»СЊС€Рµ С‡РµРј keys
+	//Р’РќРРњРђРќРР• ! РџСЂРѕР±РµР»Р° РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё РґР»СЏ Р·Р°РїРёСЃРё РґР°РЅРЅС‹С… РІ INI С„Р°Р№Р» РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ !(РёРЅР°С‡Рµ РїСЂРё РєР°Р¶РґРѕР№ Р·Р°РїРёСЃРё Р±СѓРґСѓС‚ РґРѕР±Р°РІР»СЏС‚СЊСЃСЏ РїСЂРѕР±РµР»С‹ РІ РєРѕРЅРµС† СЃС‚СЂРѕРєРё(Р±Р°Рі Windows))
 	for(i=0; i<(numbers+1); i++) { tbuf< " " <= color[i].r < " " <= color[i].g < " " <= color[i].b; }
 	SaveINIstringV(GetTargetName(vrtMap::worldIniFile),strGeoPalparams,"Colors",tbuf) ;
 
 	tbuf.init();
-	//ВНИМАНИЕ ! Пробела в конце строки для записи данных в INI файл не должно быть !(иначе при каждой записи будут добавляться пробелы в конец строки(баг Windows))
+	//Р’РќРРњРђРќРР• ! РџСЂРѕР±РµР»Р° РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё РґР»СЏ Р·Р°РїРёСЃРё РґР°РЅРЅС‹С… РІ INI С„Р°Р№Р» РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ !(РёРЅР°С‡Рµ РїСЂРё РєР°Р¶РґРѕР№ Р·Р°РїРёСЃРё Р±СѓРґСѓС‚ РґРѕР±Р°РІР»СЏС‚СЊСЃСЏ РїСЂРѕР±РµР»С‹ РІ РєРѕРЅРµС† СЃС‚СЂРѕРєРё(Р±Р°Рі Windows))
 	for(i=0; i<numbers; i++) { tbuf < " " <= key[i] ; }
 	SaveINIstringV(GetTargetName(vrtMap::worldIniFile),strGeoPalparams,"Keys",tbuf) ;
 

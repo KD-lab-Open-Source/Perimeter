@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __REALUNIT_H__
 #define __REALUNIT_H__
 

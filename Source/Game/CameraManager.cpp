@@ -89,9 +89,9 @@ void CameraCoordinate::check(bool restricted)
 
 	if(restricted){
 		distance_ = clamp(distance(), CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
-		//максимально допустимый наклон на данной высоте
-		//  линейно от CAMERA_THETA_MIN на CAMERA_ZOOM_MIN
-		//          до CAMERA_THETA_MAX на CAMERA_ZOOM_MAX
+		//РјР°РєСЃРёРјР°Р»СЊРЅРѕ РґРѕРїСѓСЃС‚РёРјС‹Р№ РЅР°РєР»РѕРЅ РЅР° РґР°РЅРЅРѕР№ РІС‹СЃРѕС‚Рµ
+		//  Р»РёРЅРµР№РЅРѕ РѕС‚ CAMERA_THETA_MIN РЅР° CAMERA_ZOOM_MIN
+		//          РґРѕ CAMERA_THETA_MAX РЅР° CAMERA_ZOOM_MAX
 		float t = 1 - (distance() - CAMERA_ZOOM_MIN)/(CAMERA_ZOOM_MAX - CAMERA_ZOOM_MIN);
 		float theta_max = CAMERA_THETA_MIN + t*(CAMERA_THETA_MAX - CAMERA_THETA_MIN);
 
@@ -189,11 +189,11 @@ void terCameraType::SetFrustumGame()
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.28125f);
     Vect2f focus(focus_,focus_);
     Vect2f zplane(30.0f,10000.0f);
-	Camera->SetFrustum(								// устанавливается пирамида видимости
-		&center,									// центр камеры
-		&clip,										// видимая область камеры
-		&focus,										// фокус камеры
-		&zplane										// ближайший и дальний z-плоскости отсечения
+	Camera->SetFrustum(								// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РїРёСЂР°РјРёРґР° РІРёРґРёРјРѕСЃС‚Рё
+		&center,									// С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+		&clip,										// РІРёРґРёРјР°СЏ РѕР±Р»Р°СЃС‚СЊ РєР°РјРµСЂС‹
+		&focus,										// С„РѕРєСѓСЃ РєР°РјРµСЂС‹
+		&zplane										// Р±Р»РёР¶Р°Р№С€РёР№ Рё РґР°Р»СЊРЅРёР№ z-РїР»РѕСЃРєРѕСЃС‚Рё РѕС‚СЃРµС‡РµРЅРёСЏ
 		);
 }
 
@@ -203,11 +203,11 @@ void terCameraType::SetFrustumMenu()
     sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f focus(focus_,focus_);
     Vect2f zplane(30.0f,10000.0f);
-    Camera->SetFrustum(								// устанавливается пирамида видимости
-            &center,								// центр камеры
-            &clip,									// видимая область камеры
-            &focus,									// фокус камеры
-            &zplane									// ближайший и дальний z-плоскости отсечения
+    Camera->SetFrustum(								// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РїРёСЂР°РјРёРґР° РІРёРґРёРјРѕСЃС‚Рё
+            &center,								// С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+            &clip,									// РІРёРґРёРјР°СЏ РѕР±Р»Р°СЃС‚СЊ РєР°РјРµСЂС‹
+            &focus,									// С„РѕРєСѓСЃ РєР°РјРµСЂС‹
+            &zplane									// Р±Р»РёР¶Р°Р№С€РёР№ Рё РґР°Р»СЊРЅРёР№ z-РїР»РѕСЃРєРѕСЃС‚Рё РѕС‚СЃРµС‡РµРЅРёСЏ
     );
 }
 
@@ -217,11 +217,11 @@ void terCameraType::SetFrustumCutScene()
     sRectangle4f clip(-0.5f,CUT_SCENE_TOP,0.5f,CUT_SCENE_BOTTOM);
     Vect2f focus(focus_,focus_);
     Vect2f zplane(30.0f,10000.0f);
-    Camera->SetFrustum(								// устанавливается пирамида видимости
-            &center,								// центр камеры
-            &clip,									// видимая область камеры
-            &focus,									// фокус камеры
-            &zplane									// ближайший и дальний z-плоскости отсечения
+    Camera->SetFrustum(								// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РїРёСЂР°РјРёРґР° РІРёРґРёРјРѕСЃС‚Рё
+            &center,								// С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+            &clip,									// РІРёРґРёРјР°СЏ РѕР±Р»Р°СЃС‚СЊ РєР°РјРµСЂС‹
+            &focus,									// С„РѕРєСѓСЃ РєР°РјРµСЂС‹
+            &zplane									// Р±Р»РёР¶Р°Р№С€РёР№ Рё РґР°Р»СЊРЅРёР№ z-РїР»РѕСЃРєРѕСЃС‚Рё РѕС‚СЃРµС‡РµРЅРёСЏ
     );
 }
 
@@ -395,7 +395,7 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 		if(unit_follow)
 			QuantCameraFollow(delta_time);
 
-		//зум вслед за мышью
+		//Р·СѓРј РІСЃР»РµРґ Р·Р° РјС‹С€СЊСЋ
 		if(cameraMouseZoom)
 			cameraZoomForce += mouseDeltaY*CAMERA_ZOOM_MOUSE_MULT;
 		
@@ -405,7 +405,7 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 		
 		if(restricted()){
 			//if(!cameraMouseTrack){
-			//при зуме камера должна принимать макс. допустимый наклон
+			//РїСЂРё Р·СѓРјРµ РєР°РјРµСЂР° РґРѕР»Р¶РЅР° РїСЂРёРЅРёРјР°С‚СЊ РјР°РєСЃ. РґРѕРїСѓСЃС‚РёРјС‹Р№ РЅР°РєР»РѕРЅ
 //			if(fabs(cameraZoomVelocity) > 1.0f)
 			if(cameraZoomVelocity < -1.0f)
 				cameraThetaForce += CAMERA_KBD_ANGLE_SPEED_DELTA;
@@ -528,7 +528,7 @@ void terCameraType::setPath(int index)
 { 
 	xassert(!path_.empty());
 	index %= path_.size();
-	if(replayIndexMax_ > path_.size()){ // Зацикленное повторение последовательности
+	if(replayIndexMax_ > path_.size()){ // Р—Р°С†РёРєР»РµРЅРЅРѕРµ РїРѕРІС‚РѕСЂРµРЅРёРµ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё
 		interpolationPoints_[0] = path_[(index - 1 + path_.size()) % path_.size()];
 		interpolationPoints_[1] = path_[index];
 		interpolationPoints_[2] = path_[(index + 1) % path_.size()];

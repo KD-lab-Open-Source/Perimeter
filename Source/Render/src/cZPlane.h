@@ -16,7 +16,7 @@ class cZPlane:public cIUnkObjScale
 		float			count;
 		float			dcount;
 	};
-//Использует Scale и GlobalMatrix для определения положения
+//РСЃРїРѕР»СЊР·СѓРµС‚ Scale Рё GlobalMatrix РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РїРѕР»РѕР¶РµРЅРёСЏ
 	cFrame		Frame0,Frame1;
 	cFrame1		Frame0s,Frame1s;
 	cTexture    *pTex0,*pTex1;
@@ -50,7 +50,7 @@ class cPlane:public cUnkObj
 	float umin,vmin,umax,vmax;
 public:
 	cPlane();
-	/*  Что можно применять
+	/*  Р§С‚Рѕ РјРѕР¶РЅРѕ РїСЂРёРјРµРЅСЏС‚СЊ
 		SetTexture(0,...)
 		SetAttr ATTRUNKOBJ_IGNORE
 		SetScale

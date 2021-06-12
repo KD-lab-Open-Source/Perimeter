@@ -63,7 +63,7 @@ BOOL TEBaseWorkModeDrawer::setOtherLinksBrush(HPEN hbrush){
 void TEBaseWorkModeDrawer::draw(CDC* pdc, TriggerEditorView* view, 
 								IDrawData* pdd, CRect const& rcPaint) const
 {
-	//äëÿ ïðîðèñîâêè ñåòêè
+	//Ð´Ð»Ñ Ð¿Ñ€Ð¾Ñ€Ð¸ÑÐ¾Ð²ÐºÐ¸ ÑÐµÑ‚ÐºÐ¸
 	BaseTEDrawer::draw(pdc, view, pdd, rcPaint);
 
 	DrawingData drawData = pdd->getDrawedChains();

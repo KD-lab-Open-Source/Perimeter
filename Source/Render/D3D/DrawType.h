@@ -42,7 +42,7 @@ public:
 
 	virtual void SetTileColor(sColor4f color)=0;//r,g,b=[0..2], a=ignored etc
 
-	//Если Shadow map устанавливается как нулевая текстура (для Geforce 3)
+	//Р•СЃР»Рё Shadow map СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РєР°Рє РЅСѓР»РµРІР°СЏ С‚РµРєСЃС‚СѓСЂР° (РґР»СЏ Geforce 3)
 	virtual int GetOffsetTextureNumber(bool tilemap=false){return 0;}
 
 	virtual void SetFog(const sColor4f &color,const Vect2f &v){}
@@ -262,7 +262,7 @@ protected:
 };
 
 
-class DrawTypeMixed:public DrawType//Для bump без теней
+class DrawTypeMixed:public DrawType//Р”Р»СЏ bump Р±РµР· С‚РµРЅРµР№
 {
 public:
 	DrawTypeMixed();

@@ -9,14 +9,14 @@ struct cNode3dx
 	BYTE index_scale;
 	BYTE index_position;
 	BYTE index_rotation;
-	BYTE additional_transform;//255 - нет добавки
+	BYTE additional_transform;//255 - РЅРµС‚ РґРѕР±Р°РІРєРё
 	bool IsAdditionalTransform(){return additional_transform!=255;}
 
 	cNode3dx();
 };
 
 class cObject3dx:public cIUnkClass,public cEmitter3dObject
-{//root объект через который происходит всё взаимодействие
+{//root РѕР±СЉРµРєС‚ С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Р№ РїСЂРѕРёСЃС…РѕРґРёС‚ РІСЃС‘ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёРµ
 public:
 	cObject3dx(cStatic3dx* pStatic);
 	~cObject3dx();
@@ -53,21 +53,21 @@ public:
 	cAnimationChain* GetChain(int i);
 	bool SetChain(const char* chain);
 
-	//Intersect - Стала в текущей версии существенно медленнее за счёт скиннинга
-	//не абсолютно точная функция, если объект выйдет за пределы своего bound даст ошибку.
+	//Intersect - РЎС‚Р°Р»Р° РІ С‚РµРєСѓС‰РµР№ РІРµСЂСЃРёРё СЃСѓС‰РµСЃС‚РІРµРЅРЅРѕ РјРµРґР»РµРЅРЅРµРµ Р·Р° СЃС‡С‘С‚ СЃРєРёРЅРЅРёРЅРіР°
+	//РЅРµ Р°Р±СЃРѕР»СЋС‚РЅРѕ С‚РѕС‡РЅР°СЏ С„СѓРЅРєС†РёСЏ, РµСЃР»Рё РѕР±СЉРµРєС‚ РІС‹Р№РґРµС‚ Р·Р° РїСЂРµРґРµР»С‹ СЃРІРѕРµРіРѕ bound РґР°СЃС‚ РѕС€РёР±РєСѓ.
 	bool Intersect(const Vect3f& p0,const Vect3f& p1);
 	const char* GetFileName();
 
-	cStatic3dx* GetStatic(){return pStatic;}//только для чтения
+	cStatic3dx* GetStatic(){return pStatic;}//С‚РѕР»СЊРєРѕ РґР»СЏ С‡С‚РµРЅРёСЏ
 
-	//nodeindex - индекс из массива cStatic3dx::nodes
-	int FindNode(const char* node_name);//индекс в cStatic3dx::nodes
-	const MatXf& GetNodePosition(int nodeindex);//Валидные данные только после первого Update, возвращает положение относительно глобальной системы координат
-	void SetUserTransform(int nodeindex,const MatXf& pos);//Не оптимально написанна, если трансформация бодет для многих node
-	//RestoreNodeMatrix отменяет действие SetNodeUserPosition
+	//nodeindex - РёРЅРґРµРєСЃ РёР· РјР°СЃСЃРёРІР° cStatic3dx::nodes
+	int FindNode(const char* node_name);//РёРЅРґРµРєСЃ РІ cStatic3dx::nodes
+	const MatXf& GetNodePosition(int nodeindex);//Р’Р°Р»РёРґРЅС‹Рµ РґР°РЅРЅС‹Рµ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ РїРµСЂРІРѕРіРѕ Update, РІРѕР·РІСЂР°С‰Р°РµС‚ РїРѕР»РѕР¶РµРЅРёРµ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РіР»РѕР±Р°Р»СЊРЅРѕР№ СЃРёСЃС‚РµРјС‹ РєРѕРѕСЂРґРёРЅР°С‚
+	void SetUserTransform(int nodeindex,const MatXf& pos);//РќРµ РѕРїС‚РёРјР°Р»СЊРЅРѕ РЅР°РїРёСЃР°РЅРЅР°, РµСЃР»Рё С‚СЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ Р±РѕРґРµС‚ РґР»СЏ РјРЅРѕРіРёС… node
+	//RestoreNodeMatrix РѕС‚РјРµРЅСЏРµС‚ РґРµР№СЃС‚РІРёРµ SetNodeUserPosition
 	void RestoreUserTransform(int nodeindex);
 
-	void SetSkinColor(sColor4f skin_color);//Дорогая функция, грузит текстуры
+	void SetSkinColor(sColor4f skin_color);//Р”РѕСЂРѕРіР°СЏ С„СѓРЅРєС†РёСЏ, РіСЂСѓР·РёС‚ С‚РµРєСЃС‚СѓСЂС‹
 	sColor4c GetSkinColor(){return skin_color;};
 	void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0);
 	void GetColor(sColor4f *ambient,sColor4f *diffuse,sColor4f *specular=0) const;
@@ -94,12 +94,12 @@ protected:
 	MatXf position;
 	sBox6f box;
 	float radius;
-	//порядок хранения cNode3dx таков, что 
-	//child всегда находится после parent
+	//РїРѕСЂСЏРґРѕРє С…СЂР°РЅРµРЅРёСЏ cNode3dx С‚Р°РєРѕРІ, С‡С‚Рѕ 
+	//child РІСЃРµРіРґР° РЅР°С…РѕРґРёС‚СЃСЏ РїРѕСЃР»Рµ parent
 	vector<cNode3dx> nodes;
 
 	sColor4c skin_color;
-	vector<cTexture*> skin_texture;//Индекы такие-же как у материала.
+	vector<cTexture*> skin_texture;//РРЅРґРµРєС‹ С‚Р°РєРёРµ-Р¶Рµ РєР°Рє Сѓ РјР°С‚РµСЂРёР°Р»Р°.
 
 	sColor4f ambient,diffuse,specular;
 
@@ -114,7 +114,7 @@ protected:
 		cEffect* pEffect;
 		BYTE index_visibility;
 		float prev_phase;
-		EffectData():pEffect(0),index_visibility(255){}//255 - неинициализированн.
+		EffectData():pEffect(0),index_visibility(255){}//255 - РЅРµРёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅ.
 	};
 	vector<EffectData> effects;
 	Observer observer;

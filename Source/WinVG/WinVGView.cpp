@@ -22,10 +22,10 @@ static char THIS_FILE[] = __FILE__;
 
 bool WinVGIsOldModel();
 
-cInterfaceRenderDevice	*gb_IRenderDevice=0;// óñòðîéñòâî âûâîäà
-cLogicGeneric			*gb_ILogicGeneric=0;// áèáëèîòåêà ëîãè÷åñêîé èíôîðìàöèè
-cVisGeneric				*gb_IVisGeneric=0;	// âåðõíÿÿ áèáëèîòåêà âèçóàëèçàöèè
-cScene					*gb_Scene=0;		// ñöåíà, ìîæåò ñîäåðæàòü ìèð, îáúåêòû è ò.ä.
+cInterfaceRenderDevice	*gb_IRenderDevice=0;// ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð¾ Ð²Ñ‹Ð²Ð¾Ð´Ð°
+cLogicGeneric			*gb_ILogicGeneric=0;// Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ° Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¾Ð¹ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¸
+cVisGeneric				*gb_IVisGeneric=0;	// Ð²ÐµÑ€Ñ…Ð½ÑÑ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ° Ð²Ð¸Ð·ÑƒÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸
+cScene					*gb_Scene=0;		// ÑÑ†ÐµÐ½Ð°, Ð¼Ð¾Ð¶ÐµÑ‚ ÑÐ¾Ð´ÐµÑ€Ð¶Ð°Ñ‚ÑŒ Ð¼Ð¸Ñ€, Ð¾Ð±ÑŠÐµÐºÑ‚Ñ‹ Ð¸ Ñ‚.Ð´.
 cCamera					*gb_Camera=0;
 cUnkLight				*gb_ULight1=0;
 
@@ -424,22 +424,22 @@ int CWinVGView::InitRenderDevice(int xScr,int yScr)
 //	gb_IVisGeneric->SetStrencilShadow(true);
 	
 	gb_IVisGeneric->SetData(gb_IRenderDevice);
-	// ñîçäàíèå ñöåíû
+	// ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ðµ ÑÑ†ÐµÐ½Ñ‹
 	gb_Scene=gb_IVisGeneric->CreateScene(); 
 	gb_Scene->DisableTileMapVisibleTest();
-	// ñîçäàíèå êàìåðû
+	// ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ðµ ÐºÐ°Ð¼ÐµÑ€Ñ‹
 	gb_Camera=gb_Scene->CreateCamera();
-	gb_Camera->SetAttr(ATTRCAMERA_PERSPECTIVE); // ïåðñïåêòèâà
+	gb_Camera->SetAttr(ATTRCAMERA_PERSPECTIVE); // Ð¿ÐµÑ€ÑÐ¿ÐµÐºÑ‚Ð¸Ð²Ð°
 	ResetCameraPosition();
 
-	gb_Camera->SetFrustum(							// óñòàíàâëèâàåòñÿ ïèðàìèäà âèäèìîñòè
-		&Vect2f(0.5f,0.5f),							// öåíòð êàìåðû
-		&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),		// âèäèìàÿ îáëàñòü êàìåðû
-		&Vect2f(1.f,1.f),							// ôîêóñ êàìåðû
-		&Vect2f(10.0f,3000.0f)						// áëèæàéøèé è äàëüíèé z-ïëîñêîñòè îòñå÷åíèÿ
+	gb_Camera->SetFrustum(							// ÑƒÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ÑÑ Ð¿Ð¸Ñ€Ð°Ð¼Ð¸Ð´Ð° Ð²Ð¸Ð´Ð¸Ð¼Ð¾ÑÑ‚Ð¸
+		&Vect2f(0.5f,0.5f),							// Ñ†ÐµÐ½Ñ‚Ñ€ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+		&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),		// Ð²Ð¸Ð´Ð¸Ð¼Ð°Ñ Ð¾Ð±Ð»Ð°ÑÑ‚ÑŒ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+		&Vect2f(1.f,1.f),							// Ñ„Ð¾ÐºÑƒÑ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+		&Vect2f(10.0f,3000.0f)						// Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑˆÐ¸Ð¹ Ð¸ Ð´Ð°Ð»ÑŒÐ½Ð¸Ð¹ z-Ð¿Ð»Ð¾ÑÐºÐ¾ÑÑ‚Ð¸ Ð¾Ñ‚ÑÐµÑ‡ÐµÐ½Ð¸Ñ
 		);
 
-	// ñîçäàåòñÿ èñòî÷íèê ñâåòà, èíà÷å êðîìåøíàÿ òüìà è îáúåêòîâ íå âèäíî
+	// ÑÐ¾Ð·Ð´Ð°ÐµÑ‚ÑÑ Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸Ðº ÑÐ²ÐµÑ‚Ð°, Ð¸Ð½Ð°Ñ‡Ðµ ÐºÑ€Ð¾Ð¼ÐµÑˆÐ½Ð°Ñ Ñ‚ÑŒÐ¼Ð° Ð¸ Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð² Ð½Ðµ Ð²Ð¸Ð´Ð½Ð¾
 	gb_ULight1=gb_Scene->CreateLight(ATTRLIGHT_DIRECTION);
 	gb_ULight1->SetPosition(MatXf(Mat3f::ID,Vect3f(0,0,0)));
 //	gb_ULight1->SetPosition(&MatXf(Mat3f::ID,Vect3f(100,100,0)));
@@ -496,7 +496,7 @@ void CWinVGView::DoneRenderDevice()
 
 	RELEASE(gb_Camera);
 	RELEASE(gb_Scene);
-	// çàêðûòèå îêíà âûâîäà
+	// Ð·Ð°ÐºÑ€Ñ‹Ñ‚Ð¸Ðµ Ð¾ÐºÐ½Ð° Ð²Ñ‹Ð²Ð¾Ð´Ð°
 	if(gb_IVisGeneric) gb_IVisGeneric->ClearData();
 	RELEASE(gb_IVisGeneric);
 	RELEASE(gb_IRenderDevice);

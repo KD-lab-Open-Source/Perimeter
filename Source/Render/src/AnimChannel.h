@@ -34,11 +34,11 @@ struct sChannelHeader
 };
 
 class cAnimChainMaterial
-{ // одна цепочка анимации
+{ // РѕРґРЅР° С†РµРїРѕС‡РєР° Р°РЅРёРјР°С†РёРё
 public:
 	sChannelHeader* parent;
 
-	vector<sKeyColor>		KeyAmbient;			// анимация материала объекта
+	vector<sKeyColor>		KeyAmbient;			// Р°РЅРёРјР°С†РёСЏ РјР°С‚РµСЂРёР°Р»Р° РѕР±СЉРµРєС‚Р°
 	vector<sKeyColor>		KeyDiffuse;			
 	vector<sKeyColor>		KeySpecular;		
 	vector<sKeyColor>		KeyEmissive;
@@ -48,7 +48,7 @@ public:
 
 	cAnimChainMaterial();
 	~cAnimChainMaterial();
-	// анимационные действия
+	// Р°РЅРёРјР°С†РёРѕРЅРЅС‹Рµ РґРµР№СЃС‚РІРёСЏ
 	void GetDiffuse(float phase,sColor4f &Diffuse);
 	void GetMaterial(float phase,cObjMaterial &ObjMaterial);
 	void GetTexMatrix(float phase,MatXf &Matrix);
@@ -63,7 +63,7 @@ protected:
 };
 
 class cAnimChannelMaterial : public cUnknownClass, public cAnimChannelBase<cAnimChainMaterial>
-{ // список каналов анимации
+{ // СЃРїРёСЃРѕРє РєР°РЅР°Р»РѕРІ Р°РЅРёРјР°С†РёРё
 public:
 	~cAnimChannelMaterial();
 	void NewChannel(class cAllMeshBank* root);

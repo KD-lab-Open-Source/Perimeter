@@ -1,6 +1,8 @@
 // EffectToolDoc.cpp : implementation of the CEffectToolDoc class
 //
 
+// TODO: change encoding to utf-8
+
 #include "stdafx.h"
 #include "EffectTool.h"
 

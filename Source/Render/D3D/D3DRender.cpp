@@ -129,7 +129,7 @@ bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
 	DWORD Adapter=0;
 	if(!lpD3D)
 	{
-		lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Временно, когда появится специфичное для 9.0c переправить обратно
+		lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Р’СЂРµРјРµРЅРЅРѕ, РєРѕРіРґР° РїРѕСЏРІРёС‚СЃСЏ СЃРїРµС†РёС„РёС‡РЅРѕРµ РґР»СЏ 9.0c РїРµСЂРµРїСЂР°РІРёС‚СЊ РѕР±СЂР°С‚РЅРѕ
 		//lpD3D=Direct3DCreate9(D3D_SDK_VERSION);
 		if(!lpD3D)
 			return false;

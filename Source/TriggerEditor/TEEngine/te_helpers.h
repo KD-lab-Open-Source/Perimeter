@@ -5,9 +5,9 @@
 	file path:	D:\Projects\Quest\QuestEditor
 	file base:	te_helpers
 	file ext:	h
-	Powerd by:	Илюха
+	Powerd by:	РР»СЋС…Р°
 	
-	purpose:	вспомогательные функции для редактора триггеров
+	purpose:	РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё РґР»СЏ СЂРµРґР°РєС‚РѕСЂР° С‚СЂРёРіРіРµСЂРѕРІ
 *********************************************************************/
 #ifndef _TE_HELPERS_HEADER_
 #define _TE_HELPERS_HEADER_
@@ -16,8 +16,8 @@
 
 namespace te_h{
 
-//!\brief определяет какую сторону перескает луч в прямоугольнике
-//! луч исходит из точки ВНУТРИ!!! прямоугольника
+//!\brief РѕРїСЂРµРґРµР»СЏРµС‚ РєР°РєСѓСЋ СЃС‚РѕСЂРѕРЅСѓ РїРµСЂРµСЃРєР°РµС‚ Р»СѓС‡ РІ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРµ
+//! Р»СѓС‡ РёСЃС…РѕРґРёС‚ РёР· С‚РѕС‡РєРё Р’РќРЈРўР Р!!! РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°
 BYTE check_inters(const CPoint& a, const CPoint& b, const CPoint* pts,
 								float* pkx, float* pky);
 
@@ -46,15 +46,15 @@ void getLinkTriangle(CPoint const& pt_from, CPoint const& pt_to, TRIANGLE &trg);
 bool pointInTrg( CPoint const& test, TRIANGLE const& trg);
 
 
-//! Вычисляет точку, где связь начинается
+//! Р’С‹С‡РёСЃР»СЏРµС‚ С‚РѕС‡РєСѓ, РіРґРµ СЃРІСЏР·СЊ РЅР°С‡РёРЅР°РµС‚СЃСЏ
 CPoint const getLinkBegin(Trigger const& ownedTrigger, 
 						  TriggerLink const& link);
-//! Вычисляет точку, где связь кончается
+//! Р’С‹С‡РёСЃР»СЏРµС‚ С‚РѕС‡РєСѓ, РіРґРµ СЃРІСЏР·СЊ РєРѕРЅС‡Р°РµС‚СЃСЏ
 CPoint const getLinkEnd(TriggerLink const& link);
-//! Перерасчитывает номер ячейки
+//! РџРµСЂРµСЂР°СЃС‡РёС‚С‹РІР°РµС‚ РЅРѕРјРµСЂ СЏС‡РµР№РєРё
 //void recalcCellNumber(Trigger& trigger, CPoint const& p, int cell_w, int cell_h);
 
-//! вычисляем отступ от центра bound до точки присоединения линка
+//! РІС‹С‡РёСЃР»СЏРµРј РѕС‚СЃС‚СѓРї РѕС‚ С†РµРЅС‚СЂР° bound РґРѕ С‚РѕС‡РєРё РїСЂРёСЃРѕРµРґРёРЅРµРЅРёСЏ Р»РёРЅРєР°
 CSize getLinkOffset(const CPoint& ptFrom, const CPoint& ptTo, const RECT& bound);
 }//namespace te_h
 

@@ -40,7 +40,7 @@ cObjectNode::~cObjectNode()
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-// реализация интерфейса cUnkObj
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° cUnkObj
 //////////////////////////////////////////////////////////////////////////////////////////
 const char* cObjectNode::GetNameObj() const
 {
@@ -354,7 +354,7 @@ bool cObjectNode::Intersect(const Vect3f& p0,const Vect3f& p1)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// реализация cObjectNode
+// СЂРµР°Р»РёР·Р°С†РёСЏ cObjectNode
 //////////////////////////////////////////////////////////////////////////////////////////
 void cObjectNode::AttachChild(cObjectNode *child)
 {
@@ -727,9 +727,9 @@ void cObjectNodeRoot::DrawShadow(cCamera *DrawNode)
 		(*it)->DrawShadow(DrawNode);
 }
 
-//Для объектов, в которых есть спецэффеты не 
-//SetScale может давать неправильные результаты.
-//Правильно вызывать сразу после создания.
+//Р”Р»СЏ РѕР±СЉРµРєС‚РѕРІ, РІ РєРѕС‚РѕСЂС‹С… РµСЃС‚СЊ СЃРїРµС†СЌС„С„РµС‚С‹ РЅРµ 
+//SetScale РјРѕР¶РµС‚ РґР°РІР°С‚СЊ РЅРµРїСЂР°РІРёР»СЊРЅС‹Рµ СЂРµР·СѓР»СЊС‚Р°С‚С‹.
+//РџСЂР°РІРёР»СЊРЅРѕ РІС‹Р·С‹РІР°С‚СЊ СЃСЂР°Р·Сѓ РїРѕСЃР»Рµ СЃРѕР·РґР°РЅРёСЏ.
 void cObjectNodeRoot::SetScale(const Vect3f& scale)
 {
 	Vect3f s=scale;
@@ -740,7 +740,7 @@ void cObjectNodeRoot::SetScale(const Vect3f& scale)
 	if(RootLod)
 		RootLod->SetScale(scale);
 
-	//Фикс (кривой) для постоянно генерирующихся объектов
+	//Р¤РёРєСЃ (РєСЂРёРІРѕР№) РґР»СЏ РїРѕСЃС‚РѕСЏРЅРЅРѕ РіРµРЅРµСЂРёСЂСѓСЋС‰РёС…СЃСЏ РѕР±СЉРµРєС‚РѕРІ
 	vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 	{
@@ -1039,7 +1039,7 @@ void cObjectNodeRoot::GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& pol
 	SetPosition(MatXf::ID);
 	Update();
 
-	//Довольно криво, предполагается, что у одного cObjectNodeRoot один cMeshStatic 
+	//Р”РѕРІРѕР»СЊРЅРѕ РєСЂРёРІРѕ, РїСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ, С‡С‚Рѕ Сѓ РѕРґРЅРѕРіРѕ cObjectNodeRoot РѕРґРёРЅ cMeshStatic 
 	cMeshStatic* bank=root->GetMeshBank(0)->GetBank();
 	point.resize(bank->vb.ptr->NumberVertex);
 

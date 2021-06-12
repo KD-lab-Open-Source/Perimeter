@@ -40,15 +40,15 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 			if(!clientConnectInfo.checkOwnCorrect()) 
 				return E_FAIL;
 
-			static sDigitalGameVersion hostDGV(true);//создание версии игры
+			static sDigitalGameVersion hostDGV(true);//СЃРѕР·РґР°РЅРёРµ РІРµСЂСЃРёРё РёРіСЂС‹
 			static sReplyConnectInfo replyConnectInfo;
 			pMsg->pvReplyData=&replyConnectInfo;
 			pMsg->dwReplyDataSize=sizeof(replyConnectInfo);
-			if(hostDGV!=clientConnectInfo.dgv){ //Несоответствующая версия игры
+			if(hostDGV!=clientConnectInfo.dgv){ //РќРµСЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰Р°СЏ РІРµСЂСЃРёСЏ РёРіСЂС‹
 				replyConnectInfo.set(sReplyConnectInfo::CR_ERR_INCORRECT_VERSION, hostDGV);
 				return E_FAIL;
 			}
-			if(m_bStarted) { // Игра запущена
+			if(m_bStarted) { // РРіСЂР° Р·Р°РїСѓС‰РµРЅР°
 				replyConnectInfo.set(sReplyConnectInfo::CR_ERR_GAME_STARTED, hostDGV);
 				return E_FAIL;
 			}
@@ -57,12 +57,12 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 				return E_FAIL;
 			}
 			int resultIdx=AddClient(clientConnectInfo.perimeterPlayerData, 0, "");
-			if(resultIdx==-1) {// Игра полная
+			if(resultIdx==-1) {// РРіСЂР° РїРѕР»РЅР°СЏ
 				replyConnectInfo.set(sReplyConnectInfo::CR_ERR_GAME_FULL, hostDGV);
 				return E_FAIL;
 			}
 
-			pMsg->pvPlayerContext=(void*)resultIdx; //для корректного удаления в DPN_MSGID_INDICATED_CONNECT_ABORTED 
+			pMsg->pvPlayerContext=(void*)resultIdx; //РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ СѓРґР°Р»РµРЅРёСЏ РІ DPN_MSGID_INDICATED_CONNECT_ABORTED 
 			//pMsg->pvReplyData = (void*)lpszSignatureRPL;
 			//pMsg->dwReplyDataSize = strlen(lpszSignatureRPL);
 			replyConnectInfo.set(sReplyConnectInfo::CR_OK, hostDGV);
@@ -174,8 +174,8 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
                         m_localDPNID=dpnid;
 					if( pdpPlayerInfo->dwPlayerFlags & DPNPLAYER_HOST )
 						m_hostDPNID=dpnid;
-					//Дополнительно
-					if( (pdpPlayerInfo->dwPlayerFlags&DPNPLAYER_LOCAL)==0 && isHost()){//Кривоватое условие
+					//Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ
+					if( (pdpPlayerInfo->dwPlayerFlags&DPNPLAYER_LOCAL)==0 && isHost()){//РљСЂРёРІРѕРІР°С‚РѕРµ СѓСЃР»РѕРІРёРµ
 						setDPNIDInClientsDate((unsigned int)pCreatePlayerMsg->pvPlayerContext, pCreatePlayerMsg->dpnidPlayer);
 					}
 
@@ -257,7 +257,7 @@ LErrorReturn:
 				ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CONNECTION_FAILED);
 			}
 			else {
-				//Не распознанная ситуация
+				//РќРµ СЂР°СЃРїРѕР·РЅР°РЅРЅР°СЏ СЃРёС‚СѓР°С†РёСЏ
 				ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CONNECTION_FAILED);
 			}
 			//xassert(0 && "DP connect terminate!");
@@ -295,7 +295,7 @@ LErrorReturn:
 	case DPN_MSGID_HOST_MIGRATE:
         {
 			if((m_state!=PNC_STATE__CLIENT_LOADING_GAME) && (m_state!=PNC_STATE__CLIENT_GAME)){
-				//Нужно запустить abort
+				//РќСѓР¶РЅРѕ Р·Р°РїСѓСЃС‚РёС‚СЊ abort
 				ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);//PNC_INTERFACE_COMMAND_CONNECTION_FAILED);
 				break;
 			}
@@ -305,20 +305,20 @@ LErrorReturn:
 
 
 			m_hostDPNID=pHostMigrateMsg->dpnidNewHost;
-            if( m_hostDPNID == m_localDPNID ){//Host Я
+            if( m_hostDPNID == m_localDPNID ){//Host РЇ
 				{
 /*					if(universe() ){
-						universe()->stopGame_HostMigrate();//Очистка всех команд текущего кванта
+						universe()->stopGame_HostMigrate();//РћС‡РёСЃС‚РєР° РІСЃРµС… РєРѕРјР°РЅРґ С‚РµРєСѓС‰РµРіРѕ РєРІР°РЅС‚Р°
 					}
 					flag_SkipProcessingGameCommand=1;
 					m_DPPacketList.clear();
 */				}
 				ExecuteInternalCommand(PNC_COMMAND__STOP_GAME_AND_ASSIGN_HOST_2_MY, false);
 			}
-			else { // Host не Я
+			else { // Host РЅРµ РЇ
 				{
 /*					if(universe() ){
-						universe()->stopGame_HostMigrate();//Очистка всех команд текущего кванта
+						universe()->stopGame_HostMigrate();//РћС‡РёСЃС‚РєР° РІСЃРµС… РєРѕРјР°РЅРґ С‚РµРєСѓС‰РµРіРѕ РєРІР°РЅС‚Р°
 					}
 					flag_SkipProcessingGameCommand=1;
 					m_DPPacketList.clear();
@@ -434,7 +434,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 		hostMissionDescription.setChanged();
 
 		if(m_bStarted){
-			//idx == playerID (на всякий случай);
+			//idx == playerID (РЅР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№);
 			int idx=hostMissionDescription.findPlayer(dpnid);
 			xassert(idx!=-1);
 			if(idx!=-1){
@@ -463,14 +463,14 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 	}
 	else {
 		if(m_bStarted){
-			//idx == playerID (на всякий случай);
+			//idx == playerID (РЅР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№);
 			int idx=clientMissionDescription.findPlayer(dpnid);
 			xassert(idx!=-1);
 			if(idx!=-1){
 				int playerID=clientMissionDescription.playersData[idx].playerID;
 				netCommand4G_ForcedDefeat* pncfd=new netCommand4G_ForcedDefeat(playerID);
 				//PutGameCommand2Queue_andAutoDelete(pncfd);
-				//Нужно в случае миграции хоста
+				//РќСѓР¶РЅРѕ РІ СЃР»СѓС‡Р°Рµ РјРёРіСЂР°С†РёРё С…РѕСЃС‚Р°
 				m_DeletePlayerCommand.push_back(pncfd);
 			}
 		}
@@ -479,7 +479,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 		int idx=clientMissionDescription.findPlayer(dpnid);
 		xassert(idx!=-1);
 		if(idx!=-1){
-			//отсылка сообщения о том, что игрок вышел
+			//РѕС‚СЃС‹Р»РєР° СЃРѕРѕР±С‰РµРЅРёСЏ Рѕ С‚РѕРј, С‡С‚Рѕ РёРіСЂРѕРє РІС‹С€РµР»
 			if(dwReason & DPNDESTROYPLAYERREASON_NORMAL){
 				ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT, clientMissionDescription.playersData[idx].name());
 			}
@@ -487,7 +487,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 				ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED, clientMissionDescription.playersData[idx].name());
 			}
 		}
-		//Удаление игрока из clientMD
+		//РЈРґР°Р»РµРЅРёРµ РёРіСЂРѕРєР° РёР· clientMD
 		clientMissionDescription.disconnectPlayer2PlayerDataByDPNID(dpnid);
 	}
 

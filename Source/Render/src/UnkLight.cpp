@@ -36,7 +36,7 @@ void cUnkLight::PreDraw(cCamera *DrawNode)
 
 	if( GetAttribute(ATTRLIGHT_SPHERICAL_SPRITE) )
 		if( DrawNode->TestVisible(GetGlobalMatrix().trans(),GetRadius()) )
-			DrawNode->Attach(SCENENODE_OBJECTSORT,this); // спрайты всегда выводятся последними
+			DrawNode->Attach(SCENENODE_OBJECTSORT,this); // СЃРїСЂР°Р№С‚С‹ РІСЃРµРіРґР° РІС‹РІРѕРґСЏС‚СЃСЏ РїРѕСЃР»РµРґРЅРёРјРё
 }
 void cUnkLight::Draw(cCamera *DrawNode)
 {

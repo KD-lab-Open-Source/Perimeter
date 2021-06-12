@@ -42,7 +42,7 @@ public:
 	GameShell(bool mission_edit);
 	~GameShell();
 
-	//Не вызывать напрямую, рользоваться HTManager::GameStart и HTManager::GameClose
+	//РќРµ РІС‹Р·С‹РІР°С‚СЊ РЅР°РїСЂСЏРјСѓСЋ, СЂРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ HTManager::GameStart Рё HTManager::GameClose
 	void GameStart(const MissionDescription& mission);
 	void GameClose();
 	void done();

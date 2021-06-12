@@ -168,8 +168,8 @@ BOOL TEWorkModeBase::trackPopupMenu(UINT id, TriggerEditorView* source)
 	if((res = menu.GetSubMenu(0)->TrackPopupMenu(
 		TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,point.x, point.y, source)))
 	{
-		//åñëè óêàçàòü TPM_RETURNCMD, òî ýòà äóðà íå øëåò íîòèôèêàöèþ
-		//íî ÷å íàì êàáàíàì, ñàìè ïîøëåì:)
+		//ÐµÑÐ»Ð¸ ÑƒÐºÐ°Ð·Ð°Ñ‚ÑŒ TPM_RETURNCMD, Ñ‚Ð¾ ÑÑ‚Ð° Ð´ÑƒÑ€Ð° Ð½Ðµ ÑˆÐ»ÐµÑ‚ Ð½Ð¾Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ†Ð¸ÑŽ
+		//Ð½Ð¾ Ñ‡Ðµ Ð½Ð°Ð¼ ÐºÐ°Ð±Ð°Ð½Ð°Ð¼, ÑÐ°Ð¼Ð¸ Ð¿Ð¾ÑˆÐ»ÐµÐ¼:)
 		source->SendMessage(WM_COMMAND, (WPARAM)res, NULL);
 	}
 	return res;

@@ -4,26 +4,26 @@ class CTreeListCtrl;
 class CTreeListItem;
 
 typedef struct _GENERAL_NOTIFY_INFO {
-	CTreeListItem* item;///< óçåë, ïî-êîòîðîìó ïîïàëè
-	int iSubItem;///< íîìåð ñòîëáöà
-	UINT nFlags;///< Ôëàãè, ïîëó÷åííûå èç HitTest
+	CTreeListItem* item;///< ÑƒÐ·ÐµÐ», Ð¿Ð¾-ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð¼Ñƒ Ð¿Ð¾Ð¿Ð°Ð»Ð¸
+	int iSubItem;///< Ð½Ð¾Ð¼ÐµÑ€ ÑÑ‚Ð¾Ð»Ð±Ñ†Ð°
+	UINT nFlags;///< Ð¤Ð»Ð°Ð³Ð¸, Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð½Ñ‹Ðµ Ð¸Ð· HitTest
 }GENERAL_NOTIFY_INFO;
 class IGeneralNotifyListener
 {
 public:
 	virtual void onClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info) = 0;
 	/*!
-		Âîçðâàùàåìîå çíà÷åíèå èìååò ñìûñë òîëüêî äëÿ äåðåâà
-		\retval true - äëÿ òîãî, ÷òîáû ïîçâîëèòü îáðàáîòêó ïî óìîë÷àíèþ
-		\retval false - äëÿ òîãî, ÷òîáû çàïðåòèòü îáðàáîòêó ïî óìîë÷àíèþ
+		Ð’Ð¾Ð·Ñ€Ð²Ð°Ñ‰Ð°ÐµÐ¼Ð¾Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð¸Ð¼ÐµÐµÑ‚ ÑÐ¼Ñ‹ÑÐ» Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ Ð´ÐµÑ€ÐµÐ²Ð°
+		\retval true - Ð´Ð»Ñ Ñ‚Ð¾Ð³Ð¾, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¿Ð¾Ð·Ð²Ð¾Ð»Ð¸Ñ‚ÑŒ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚ÐºÑƒ Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ
+		\retval false - Ð´Ð»Ñ Ñ‚Ð¾Ð³Ð¾, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð·Ð°Ð¿Ñ€ÐµÑ‚Ð¸Ñ‚ÑŒ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚ÐºÑƒ Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ
 	*/
 	virtual bool onDBLClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info) = 0;
 
 	virtual void onRClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info) = 0;
-	//! Íå âûçûâàåòñÿ
+	//! ÐÐµ Ð²Ñ‹Ð·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ
 	virtual void onRDBLClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info) = 0;
 
-	//! Íå âûçûâàåòñÿ
+	//! ÐÐµ Ð²Ñ‹Ð·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ
 	virtual bool onHover(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info) = 0;
 
 	virtual void onKillFocus(CTreeListCtrl& tree) = 0;

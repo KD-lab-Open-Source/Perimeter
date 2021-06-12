@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __SAVE_PARSER_H__
 #define __SAVE_PARSER_H__
 

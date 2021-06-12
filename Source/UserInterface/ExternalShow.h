@@ -27,7 +27,7 @@ public:
 	void Unlock();
 	void Clear();
 
-	//Функция terCircleShow вызывается без интерполяции и в графическом потоке
+	//Р¤СѓРЅРєС†РёСЏ terCircleShow РІС‹Р·С‹РІР°РµС‚СЃСЏ Р±РµР· РёРЅС‚РµСЂРїРѕР»СЏС†РёРё Рё РІ РіСЂР°С„РёС‡РµСЃРєРѕРј РїРѕС‚РѕРєРµ
 	void SetNoInterpolationLock(){Lock();no_interpolation=true;};
 	void SetNoInterpolationUnlock(){no_interpolation=false;Unlock();};
 protected:
@@ -57,7 +57,7 @@ protected:
 	void CircleShow(const Vect3f& pos,float r, const CircleColor& circleColor);
 
 	bool no_interpolation;
-	bool in_lock;//для assert
+	bool in_lock;//РґР»СЏ assert
 	MTDECLARE(lock);
 };
 

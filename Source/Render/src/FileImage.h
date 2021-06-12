@@ -57,10 +57,10 @@ extern void cFileImage_GetFrame(void *pDst,int bppDst,int bplDst,int rcDst,int r
 extern void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst,
 								void *pSrc,int bppSrc,int bplSrc,int acSrc,int asSrc,int xSrc,int ySrc);
 
-extern void GetFileName(const char *FullName,char *fname);				// возвращает имя файла, обрезает каталог
-extern void GetFilePath(const char *FullName,char *path);				// возвращает каталог
-extern void GetFileVirginName(const char *FullName,char *name);			// возвращает имя файла, обрезает каталог, удаляет расширение и номер в имени
-extern int CmpFileVirginName(const char *fname1,const char *fname2);	// сравнивает имена файлов, без учета номеров
+extern void GetFileName(const char *FullName,char *fname);				// РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р°, РѕР±СЂРµР·Р°РµС‚ РєР°С‚Р°Р»РѕРі
+extern void GetFilePath(const char *FullName,char *path);				// РІРѕР·РІСЂР°С‰Р°РµС‚ РєР°С‚Р°Р»РѕРі
+extern void GetFileVirginName(const char *FullName,char *name);			// РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р°, РѕР±СЂРµР·Р°РµС‚ РєР°С‚Р°Р»РѕРі, СѓРґР°Р»СЏРµС‚ СЂР°СЃС€РёСЂРµРЅРёРµ Рё РЅРѕРјРµСЂ РІ РёРјРµРЅРё
+extern int CmpFileVirginName(const char *fname1,const char *fname2);	// СЃСЂР°РІРЅРёРІР°РµС‚ РёРјРµРЅР° С„Р°Р№Р»РѕРІ, Р±РµР· СѓС‡РµС‚Р° РЅРѕРјРµСЂРѕРІ
 
 void SetExtension(const char *fnameOld,const char *extension,char *fnameNew);
 

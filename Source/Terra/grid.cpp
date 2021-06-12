@@ -5,11 +5,11 @@
 
 /*
 	PointInPolygon
-	Находится ли точка внутри полигона.
-	Построчный алгоритм:
-	  Если линия перпендикулярная оси X пересекает до точки point
-	  полигон нечётное количество раз, то она находится внутри полигона.
-	  Паралельные отрезки не учитываем.
+	РќР°С…РѕРґРёС‚СЃСЏ Р»Рё С‚РѕС‡РєР° РІРЅСѓС‚СЂРё РїРѕР»РёРіРѕРЅР°.
+	РџРѕСЃС‚СЂРѕС‡РЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј:
+	  Р•СЃР»Рё Р»РёРЅРёСЏ РїРµСЂРїРµРЅРґРёРєСѓР»СЏСЂРЅР°СЏ РѕСЃРё X РїРµСЂРµСЃРµРєР°РµС‚ РґРѕ С‚РѕС‡РєРё point
+	  РїРѕР»РёРіРѕРЅ РЅРµС‡С‘С‚РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р·, С‚Рѕ РѕРЅР° РЅР°С…РѕРґРёС‚СЃСЏ РІРЅСѓС‚СЂРё РїРѕР»РёРіРѕРЅР°.
+	  РџР°СЂР°Р»РµР»СЊРЅС‹Рµ РѕС‚СЂРµР·РєРё РЅРµ СѓС‡РёС‚С‹РІР°РµРј.
 	  
 */
 /*template<class T>
@@ -42,8 +42,8 @@ void vrtMap::initGrid(void)
 	int i,j,kx,ky;
 	for(i=0; i<(V_SIZE>>kmGrid); i++){
 		for(j=0; j<(H_SIZE>>kmGrid); j++){
-			int of=offsetBuf(j<<kmGrid,i<<kmGrid); //Так как сетка кратна размеру -переход через границу карты исключен
-			//if( (j<<kmGrid)==596 && (i<<kmGrid)==464){ //Для брэкпоинта по координатам
+			int of=offsetBuf(j<<kmGrid,i<<kmGrid); //РўР°Рє РєР°Рє СЃРµС‚РєР° РєСЂР°С‚РЅР° СЂР°Р·РјРµСЂСѓ -РїРµСЂРµС…РѕРґ С‡РµСЂРµР· РіСЂР°РЅРёС†Сѓ РєР°СЂС‚С‹ РёСЃРєР»СЋС‡РµРЅ
+			//if( (j<<kmGrid)==596 && (i<<kmGrid)==464){ //Р”Р»СЏ Р±СЂСЌРєРїРѕРёРЅС‚Р° РїРѕ РєРѕРѕСЂРґРёРЅР°С‚Р°Рј
 			//	int test=0;
 			//}
 			int Sum=0;
@@ -61,7 +61,7 @@ void vrtMap::initGrid(void)
 //					else {
 //						v=VxGBuf[of+kx];
 //						Sum+=v;
-//						if((v==hZeroPlast) && ((AtrBuf[of+kx]&VX_FRACTION_MASK)==0)) prZ++; //Если высота подготовлена для зеропласта увеличиваем счетчик
+//						if((v==hZeroPlast) && ((AtrBuf[of+kx]&VX_FRACTION_MASK)==0)) prZ++; //Р•СЃР»Рё РІС‹СЃРѕС‚Р° РїРѕРґРіРѕС‚РѕРІР»РµРЅР° РґР»СЏ Р·РµСЂРѕРїР»Р°СЃС‚Р° СѓРІРµР»РёС‡РёРІР°РµРј СЃС‡РµС‚С‡РёРє
 //					}
 					if(!v)v=VxGBuf[of+kx];
 					Sum+=v;
@@ -71,29 +71,29 @@ void vrtMap::initGrid(void)
 					v=(v<<VX_FRACTION)+(AtrBuf[of+kx]&VX_FRACTION_MASK);
 					if(v > fullhZeroPlast) flag_taller_h_ZL=1;
 				}
-				of+=H_SIZE; //Переход на следующую строку
+				of+=H_SIZE; //РџРµСЂРµС…РѕРґ РЅР° СЃР»РµРґСѓСЋС‰СѓСЋ СЃС‚СЂРѕРєСѓ
 			}
 			int ofG=offsetGBuf(j,i);
-			GVBuf[ofG]=(Sum+1) >>(kmGrid+kmGrid); //Округление и деление на 16 (4x4)
-			//ОБнуляем атрибуты и выставляем признак подготовленности для зеропласта
+			GVBuf[ofG]=(Sum+1) >>(kmGrid+kmGrid); //РћРєСЂСѓРіР»РµРЅРёРµ Рё РґРµР»РµРЅРёРµ РЅР° 16 (4x4)
+			//РћР‘РЅСѓР»СЏРµРј Р°С‚СЂРёР±СѓС‚С‹ Рё РІС‹СЃС‚Р°РІР»СЏРµРј РїСЂРёР·РЅР°Рє РїРѕРґРіРѕС‚РѕРІР»РµРЅРЅРѕСЃС‚Рё РґР»СЏ Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			GABuf[ofG]=GRIDAT_MASK_HARDNESS; //0;
 
 			//if(prZ==(sizeCellGrid*sizeCellGrid)) GABuf[ofG]|=GRIDAT_LEVELED;
 			if(LVD==(sizeCellGrid*sizeCellGrid)) GABuf[ofG]|=GRIDAT_LEVELED;
 
 			if(flag_taller_h_ZL) GABuf[ofG]|=GRIDAT_TALLER_HZEROPLAST;
-			//Зеропласта всегда в начале нет 
+			//Р—РµСЂРѕРїР»Р°СЃС‚Р° РІСЃРµРіРґР° РІ РЅР°С‡Р°Р»Рµ РЅРµС‚ 
 			if(ZP==(sizeCellGrid*sizeCellGrid)) GABuf[ofG]|=GRIDAT_ZEROPLAST;
 			//if(ZPE==(sizeCellGrid*sizeCellGrid)) GABuf[ofG]|=GRIDAT_ZEROPLASTEMPTY;
 			if(/*(ZPE) ||*/ (ZP)) GABuf[ofG]|=GRIDAT_ZEROPLAST_IS_PRESENT;
-			//ДЛя ОТЛАДКИ
+			//Р”Р›СЏ РћРўР›РђР”РљР
 			//if(prZ==(sizeCellGrid*sizeCellGrid)) GABuf[ofG]|=GRIDAT_ZEROPLAST;
 
 		}
 	}
 
-/*	//Сетка проходимости
-	//очистка сетки проходимости
+/*	//РЎРµС‚РєР° РїСЂРѕС…РѕРґРёРјРѕСЃС‚Рё
+	//РѕС‡РёСЃС‚РєР° СЃРµС‚РєРё РїСЂРѕС…РѕРґРёРјРѕСЃС‚Рё
 	int cnt=0;
 	for(i=0; i<(V_SIZE>>kmGridK); i++){
 		for(j=0; j<(H_SIZE>>kmGridK); j++){
@@ -101,7 +101,7 @@ void vrtMap::initGrid(void)
 			cnt++;
 		}
 	}
-	//пересчет
+	//РїРµСЂРµСЃС‡РµС‚
 	int dPower=kmGridK-kmGrid;
 	for(i=0; i<(V_SIZE>>kmGrid); i++){
 		int h1=GVBuf[offsetGBuf(GH_SIZE-1,i)];
@@ -170,8 +170,8 @@ void vrtMap::recalcArea2Grid(int xl, int yt, int xr, int yb )
 //					else {
 //						v=VxGBuf[of+kx];
 //						Sum+=v;
-//						//if(v==hZeroPlast) prZ++; //Если высота подготовлена для зеропласта увеличиваем счетчик
-//						if((v==hZeroPlast) && ((AtrBuf[of+kx]&VX_FRACTION_MASK)==0)) prZ++; //Если высота подготовлена для зеропласта увеличиваем счетчик
+//						//if(v==hZeroPlast) prZ++; //Р•СЃР»Рё РІС‹СЃРѕС‚Р° РїРѕРґРіРѕС‚РѕРІР»РµРЅР° РґР»СЏ Р·РµСЂРѕРїР»Р°СЃС‚Р° СѓРІРµР»РёС‡РёРІР°РµРј СЃС‡РµС‚С‡РёРє
+//						if((v==hZeroPlast) && ((AtrBuf[of+kx]&VX_FRACTION_MASK)==0)) prZ++; //Р•СЃР»Рё РІС‹СЃРѕС‚Р° РїРѕРґРіРѕС‚РѕРІР»РµРЅР° РґР»СЏ Р·РµСЂРѕРїР»Р°СЃС‚Р° СѓРІРµР»РёС‡РёРІР°РµРј СЃС‡РµС‚С‡РёРє
 //					}
 					if(!v)v=VxGBuf[of+kx];
 					Sum+=v;
@@ -180,11 +180,11 @@ void vrtMap::recalcArea2Grid(int xl, int yt, int xr, int yb )
 					v=(v<<VX_FRACTION)+(AtrBuf[of+kx]&VX_FRACTION_MASK);
 					if(v > fullhZeroPlast) flag_taller_h_ZL=1;
 				}
-				of+=H_SIZE; //Переход на следующую строку //Зацикливание не нужно т.к. ячейка не переходит границы карты никогда
+				of+=H_SIZE; //РџРµСЂРµС…РѕРґ РЅР° СЃР»РµРґСѓСЋС‰СѓСЋ СЃС‚СЂРѕРєСѓ //Р—Р°С†РёРєР»РёРІР°РЅРёРµ РЅРµ РЅСѓР¶РЅРѕ С‚.Рє. СЏС‡РµР№РєР° РЅРµ РїРµСЂРµС…РѕРґРёС‚ РіСЂР°РЅРёС†С‹ РєР°СЂС‚С‹ РЅРёРєРѕРіРґР°
 			}
 			int ofG=offsetGBuf(XCYCLG(xlG+j),YCYCLG(ytG+i));
-			GVBuf[ofG]=(Sum+1) >>(kmGrid+kmGrid); //Округление и деление на 16 (4x4)
-			//ОБнуляем атрибуты и выставляем признак подготовленности для зеропласта
+			GVBuf[ofG]=(Sum+1) >>(kmGrid+kmGrid); //РћРєСЂСѓРіР»РµРЅРёРµ Рё РґРµР»РµРЅРёРµ РЅР° 16 (4x4)
+			//РћР‘РЅСѓР»СЏРµРј Р°С‚СЂРёР±СѓС‚С‹ Рё РІС‹СЃС‚Р°РІР»СЏРµРј РїСЂРёР·РЅР°Рє РїРѕРґРіРѕС‚РѕРІР»РµРЅРЅРѕСЃС‚Рё РґР»СЏ Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			unsigned short atg=GABuf[ofG];
 			atg&= (~GRIDAT_LEVELED) & (~GRIDAT_TALLER_HZEROPLAST) & (~GRIDAT_ZEROPLAST) /*& (~GRIDAT_ZEROPLASTEMPTY)*/ & (~GRIDAT_ZEROPLAST_IS_PRESENT);
 
@@ -200,7 +200,7 @@ void vrtMap::recalcArea2Grid(int xl, int yt, int xr, int yb )
 	}
 
 /*
-//	Пересчет сетки проходимости
+//	РџРµСЂРµСЃС‡РµС‚ СЃРµС‚РєРё РїСЂРѕС…РѕРґРёРјРѕСЃС‚Рё
 	int dPower=kmGridK-kmGrid;
 	for(i=0; i<dyG; i++){
 		int h1=GVBuf[offsetGBuf(XCYCLG(xlG-1),YCYCLG(i+ytG))];
@@ -213,7 +213,7 @@ void vrtMap::recalcArea2Grid(int xl, int yt, int xr, int yb )
 				GKABuf[offK]=1;
 				GKABuf[offOldK]=1;
 			}
-			//очистка сетки проходимости
+			//РѕС‡РёСЃС‚РєР° СЃРµС‚РєРё РїСЂРѕС…РѕРґРёРјРѕСЃС‚Рё
 			else GKABuf[offK]=0;
 			h1=h2;
 			offOldK=offK;

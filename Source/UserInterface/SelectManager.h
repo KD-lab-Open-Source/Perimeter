@@ -75,7 +75,7 @@ protected:
 	static int getUnitSelectionPriority(terUnitBase* p);
 
 	MTSection select_lock;
-	UnitList SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER + 1];	//При удалении из SelectList обязательно делать Deselect()
+	UnitList SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER + 1];	//РџСЂРё СѓРґР°Р»РµРЅРёРё РёР· SelectList РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРµР»Р°С‚СЊ Deselect()
 
 	UnitList::iterator erase(UnitList::iterator it, unsigned int group = CURRENT_SELECTION_GROUP_NUMBER)
 	{

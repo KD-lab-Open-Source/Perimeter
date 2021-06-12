@@ -31,7 +31,7 @@ void cTrail::Animate(float dt)
 {
 	CurrentTime+=dt;
 	GetFrame()->AddPhase(dt);
-	if(GetRef()>1) return; // запрещено удаление
+	if(GetRef()>1) return; // Р·Р°РїСЂРµС‰РµРЅРѕ СѓРґР°Р»РµРЅРёРµ
 	if(Particle.empty()||(CurrentTime-Particle[LastParticle].time*TimeLife)>TimeLife) 
 		Release();
 }

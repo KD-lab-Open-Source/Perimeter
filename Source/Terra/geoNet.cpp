@@ -4,7 +4,7 @@
 static const int MIN_GG_ALT=0;
 //static const int MAX_GG_ALT=148<<VX_FRACTION;
 //static const int NOISELEVEL_GG=100<<VX_FRACTION;
-static const int MINSQUARE_GG=8;//степень двойки
+static const int MINSQUARE_GG=8;//СЃС‚РµРїРµРЅСЊ РґРІРѕР№РєРё
 
 static int Cmin_alt = MIN_VX_HEIGHT;
 static int Cmax_alt = MAX_VX_HEIGHT;
@@ -16,7 +16,7 @@ static void gaussFilter(int * alt_buff, double filter_scaling, int x_size, int y
 #define MAP_T(x, y) (mapT[y*sizeX+x])
 #define ROUGH_GRID(x, y) (roughGrid[y*netRSizeX+x])
 #define WORK_GRID(x, y) (workGrid[y*netSizeX+x])
-//BorderForm 0- нет границы;1- на границе сетка падает до 0; 2- граница по exp 4 cтепени; 3- по exp 3 степени; 4- по exp 2 степени
+//BorderForm 0- РЅРµС‚ РіСЂР°РЅРёС†С‹;1- РЅР° РіСЂР°РЅРёС†Рµ СЃРµС‚РєР° РїР°РґР°РµС‚ РґРѕ 0; 2- РіСЂР°РЅРёС†Р° РїРѕ exp 4 cС‚РµРїРµРЅРё; 3- РїРѕ exp 3 СЃС‚РµРїРµРЅРё; 4- РїРѕ exp 2 СЃС‚РµРїРµРЅРё
 void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_ALT, int kPowCellSize, int kPowShiftCS4RG, int GeonetMESH, int NOISELEVEL_GG, int BorderForm, bool _inverse)
 {
 	if(vMap.flag_record_operation) {
@@ -39,13 +39,13 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 
 	vMap.FilterMinHeight=0; vMap.FilterMaxHeight=MAX_VX_HEIGHT;///!!!
 
-	if(kPowCellSize < 2) kPowCellSize=2;//минимальная ячейка 4x4
-	if(kPowShiftCS4RG >= kPowCellSize) kPowShiftCS4RG=kPowCellSize-1;//минимальная ячейка R сетки 2x2
+	if(kPowCellSize < 2) kPowCellSize=2;//РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЏС‡РµР№РєР° 4x4
+	if(kPowShiftCS4RG >= kPowCellSize) kPowShiftCS4RG=kPowCellSize-1;//РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЏС‡РµР№РєР° R СЃРµС‚РєРё 2x2
 
 	int cellSize=1<<kPowCellSize;
-	int net05SizeX=((sx/2)/cellSize+1); // +1 -запас по границе 
+	int net05SizeX=((sx/2)/cellSize+1); // +1 -Р·Р°РїР°СЃ РїРѕ РіСЂР°РЅРёС†Рµ 
 	int net05SizeY=((sy/2)/cellSize+1);
-	int netSizeX=net05SizeX*2+1+1;//+1 для центра //+1 добавка по правому краю для правильности
+	int netSizeX=net05SizeX*2+1+1;//+1 РґР»СЏ С†РµРЅС‚СЂР° //+1 РґРѕР±Р°РІРєР° РїРѕ РїСЂР°РІРѕРјСѓ РєСЂР°СЋ РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕСЃС‚Рё
 	int netSizeY=net05SizeY*2+1+1;
 	int sizeX=netSizeX*cellSize;
 	int sizeY=netSizeY*cellSize;
@@ -54,9 +54,9 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 
 	int DIVIDER=1<<kPowShiftCS4RG;
 	int cellSizeR=cellSize/DIVIDER;
-	int netR05SizeX=net05SizeX*DIVIDER; // +1 -запас по границе 
+	int netR05SizeX=net05SizeX*DIVIDER; // +1 -Р·Р°РїР°СЃ РїРѕ РіСЂР°РЅРёС†Рµ 
 	int netR05SizeY=net05SizeY*DIVIDER;
-	int netRSizeX=netR05SizeX*2+1+1;//+1 для центра //+1 добавка по правому краю для правильности
+	int netRSizeX=netR05SizeX*2+1+1;//+1 РґР»СЏ С†РµРЅС‚СЂР° //+1 РґРѕР±Р°РІРєР° РїРѕ РїСЂР°РІРѕРјСѓ РєСЂР°СЋ РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕСЃС‚Рё
 	int netRSizeY=netR05SizeY*2+1+1;
 
 	int sizeGrid=netSizeX*netSizeY;
@@ -135,7 +135,7 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 		map1[i]=XRnd(NOISELEVEL_GG);
 		map2[i]=XRnd(NOISELEVEL_GG);
 	}
-	//подготовка R карты
+	//РїРѕРґРіРѕС‚РѕРІРєР° R РєР°СЂС‚С‹
 	for(yNet=0, yMap=0; yNet<netRSizeY; yNet++, yMap+=cellSizeR){
 		for(xNet=0, xMap=0; xNet<netRSizeX; xNet++, xMap+=cellSizeR){
 			MAP_1(xMap, yMap)=ROUGH_GRID(xNet, yNet);
@@ -214,7 +214,7 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 	else memcpy(mapT, map2, sizeMap*sizeof(int)  );
 ///////////////////////////////////////////////////////////////////////////////////
 
-	//подготовка M карты
+	//РїРѕРґРіРѕС‚РѕРІРєР° M РєР°СЂС‚С‹
 	for(yNet=0, yMap=0; yNet<netSizeY; yNet++, yMap+=cellSize){
 		for(xNet=0, xMap=0; xNet<netSizeX; xNet++, xMap+=cellSize){
 			MAP_1(xMap, yMap)=WORK_GRID(xNet, yNet);
@@ -284,7 +284,7 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 
 	if(!which) memcpy(map2, map1, sizeMap*sizeof(int) );
 	////////////////////////////////////////////////////
-	//map2 выходная карта
+	//map2 РІС‹С…РѕРґРЅР°СЏ РєР°СЂС‚Р°
 	vMap.UndoDispatcher_PutPreChangedArea(xBeg, yBeg, xBeg+sx/*sizeX*/, yBeg+sy/*sizeY*/);
 
 	sy05=sy/2;///(sizeY-2*cellSize)/2.0f;

@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __RANGE_H_INCLUDED__
 #define __RANGE_H_INCLUDED__
 

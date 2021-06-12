@@ -82,7 +82,7 @@ bool PlayerStrategy::removeLink(int parentIndex, int childIndex)
 	Trigger& child = const_cast<Trigger&>(triggers[childIndex]);
 	if (parent.removeLinkByChild(&child))
 	{
-		//! ïåðåä óäàëåíèåì èñïðàâèòü removeLinkByChild(&child))
+		//! Ð¿ÐµÑ€ÐµÐ´ ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸ÐµÐ¼ Ð¸ÑÐ¿Ñ€Ð°Ð²Ð¸Ñ‚ÑŒ removeLinkByChild(&child))
 		buildLinks();
 		return true;
 	}
@@ -99,10 +99,10 @@ int PlayerStrategy::addTriggersBunch(TriggerList const& bunch)
 Trigger* PlayerStrategy::addTrigger(Trigger const& trigger)
 {
 	triggers.push_back(trigger);
-	// ïåðåñòðîéêó ñâÿçåé çàïðåùàåì, åñëè äîáàâëÿåì ýëåìåíò ñî ñâÿçÿìè.
-	// Ïð.: èç áóôôåðà îáìåíà
+	// Ð¿ÐµÑ€ÐµÑÑ‚Ñ€Ð¾Ð¹ÐºÑƒ ÑÐ²ÑÐ·ÐµÐ¹ Ð·Ð°Ð¿Ñ€ÐµÑ‰Ð°ÐµÐ¼, ÐµÑÐ»Ð¸ Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚ ÑÐ¾ ÑÐ²ÑÐ·ÑÐ¼Ð¸.
+	// ÐŸÑ€.: Ð¸Ð· Ð±ÑƒÑ„Ñ„ÐµÑ€Ð° Ð¾Ð±Ð¼ÐµÐ½Ð°
 	//if (buildLinks)
-		this->buildLinks();	//! â ñëó÷àå, åñëè ïðîèçîøëà ðåàëîêàöèÿ - ýòî íåîáõîäèìî
+		this->buildLinks();	//! Ð² ÑÐ»ÑƒÑ‡Ð°Ðµ, ÐµÑÐ»Ð¸ Ð¿Ñ€Ð¾Ð¸Ð·Ð¾ÑˆÐ»Ð° Ñ€ÐµÐ°Ð»Ð¾ÐºÐ°Ñ†Ð¸Ñ - ÑÑ‚Ð¾ Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ð¾
 
 	return &triggers.back();
 }
@@ -133,8 +133,8 @@ bool Trigger::removeLinkByChild(Trigger * child)
 		if (link.child == child)
 		{
 /*!
-	ðàñêîìåíòèðîâàòü, åñëè 
-	èç remove_link óäàëåí âûçîâ ìåòîäà initialize()
+	Ñ€Ð°ÑÐºÐ¾Ð¼ÐµÐ½Ñ‚Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ, ÐµÑÐ»Ð¸ 
+	Ð¸Ð· remove_link ÑƒÐ´Ð°Ð»ÐµÐ½ Ð²Ñ‹Ð·Ð¾Ð² Ð¼ÐµÑ‚Ð¾Ð´Ð° initialize()
 
 //			typedef IncomingLinksList::iterator Iterator;
 //			Iterator res = find(child->incomingLinks_.begin(), 

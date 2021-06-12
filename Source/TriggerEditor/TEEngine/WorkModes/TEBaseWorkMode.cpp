@@ -189,7 +189,7 @@ void TEBaseWorkMode::OnLButtonDown(TriggerEditorView* source, UINT nFlags, CPoin
 	setBasePoint(p);
 	if (getActiveLinkIndex() != -1) {
 		TriggerLink& link = getStrategyLink(getLinkOwnerIndex(), getActiveLinkIndex());
-		//проверяем не попали ли мы в его якоря
+		//РїСЂРѕРІРµСЂСЏРµРј РЅРµ РїРѕРїР°Р»Рё Р»Рё РјС‹ РІ РµРіРѕ СЏРєРѕСЂСЏ
 		linkAnchorTestResult_ = findLinkAnchor(link, p);
 
 		switch(linkAnchorTestResult_) {
@@ -220,7 +220,7 @@ void TEBaseWorkMode::OnLButtonDown(TriggerEditorView* source, UINT nFlags, CPoin
 
 	setBaseElement(-1);
 
-	//! first - индекс связи, second - индекс элемента
+	//! first - РёРЅРґРµРєСЃ СЃРІСЏР·Рё, second - РёРЅРґРµРєСЃ СЌР»РµРјРµРЅС‚Р°
 	std::pair<int, int> const res = 
 		getTriggerEditorLogic()->findLink(*getTriggerChain(), p);
 
@@ -389,7 +389,7 @@ void TEBaseWorkMode::OnRButtonDown(TriggerEditorView* source, UINT nFlags, CPoin
 		getTriggerEditorLogic()->findLink(*getTriggerChain(), p);
 	setMouseMoved(false);
 	if (res.first != -1) 
-	{// если попали в связь
+	{// РµСЃР»Рё РїРѕРїР°Р»Рё РІ СЃРІСЏР·СЊ
 		activateLink(res.first, res.second);
 		setBasePoint(p);
 		setCurrentPoint(p);
@@ -446,8 +446,8 @@ void TEBaseWorkMode::OnRButtonUp(TriggerEditorView* source, UINT nFlags, CPoint 
 		}
 		else if (TestForBetweenPlots(source, p))
 		{
-			//полагаемся потом на эту точку, потому что 
-			//курсор после выбора пункта меню находится непонятно где.
+			//РїРѕР»Р°РіР°РµРјСЃСЏ РїРѕС‚РѕРј РЅР° СЌС‚Сѓ С‚РѕС‡РєСѓ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ 
+			//РєСѓСЂСЃРѕСЂ РїРѕСЃР»Рµ РІС‹Р±РѕСЂР° РїСѓРЅРєС‚Р° РјРµРЅСЋ РЅР°С…РѕРґРёС‚СЃСЏ РЅРµРїРѕРЅСЏС‚РЅРѕ РіРґРµ.
 			setBasePoint(p);
 			trackPopupMenu(IDR_BETWEEN_PLOTS_MENU, source);
 			Base::OnRButtonUp(source, nFlags, point);
@@ -455,13 +455,13 @@ void TEBaseWorkMode::OnRButtonUp(TriggerEditorView* source, UINT nFlags, CPoint 
 		}
 	}
 	if (getBaseElement() != -1) 
-	{//т.е. мы кликнули в элемент
+	{//С‚.Рµ. РјС‹ РєР»РёРєРЅСѓР»Рё РІ СЌР»РµРјРµРЅС‚
 
 		ReleaseCapture();
 		drawer_->drawDragedLink(source, source->getDC(), 
 			getCurrentPoint(), getBasePoint(),getDrawedLinkType());
 
-		if (!getMouseMoved()) {//нажали и отпустили. Не тянули!
+		if (!getMouseMoved()) {//РЅР°Р¶Р°Р»Рё Рё РѕС‚РїСѓСЃС‚РёР»Рё. РќРµ С‚СЏРЅСѓР»Рё!
 			trackPopupMenu(IDR_TE_TRIGGER_ELE, source);
 		}
 		else
@@ -471,17 +471,17 @@ void TEBaseWorkMode::OnRButtonUp(TriggerEditorView* source, UINT nFlags, CPoint 
 			int triggerIndex = logic->findTrigger(chain, p);
 
 			int lastSelected = selectionManager_.getLast();
-			// lastSelected совпадает с baseElement
+			// lastSelected СЃРѕРІРїР°РґР°РµС‚ СЃ baseElement
 			assert(getBaseElement() == lastSelected);
 			if (triggerIndex != -1&&canPlugLink(triggerIndex, lastSelected, chain)) 
 			{
 				Trigger const& childTrigger = getStrategyTrigger(triggerIndex);
 				Trigger const& parentTrigger = getStrategyTrigger(lastSelected);
 				AddLink redo(chain, lastSelected, triggerIndex, 
-							//! отступ у дочернего элемента линка
+							//! РѕС‚СЃС‚СѓРї Сѓ РґРѕС‡РµСЂРЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° Р»РёРЅРєР°
 							getLinkOffset(p, getCurrentPoint(), 
 								childTrigger.boundingRect()),
-							//! отступ у элемента владеющего линком
+							//! РѕС‚СЃС‚СѓРї Сѓ СЌР»РµРјРµРЅС‚Р° РІР»Р°РґРµСЋС‰РµРіРѕ Р»РёРЅРєРѕРј
 							getLinkOffset(getCurrentPoint(), p, 
 								parentTrigger.boundingRect()),
 								0, false);
@@ -570,7 +570,7 @@ void TEBaseWorkMode::OnMouseMove(TriggerEditorView* source, UINT nFlags, CPoint 
 			TriggerEditorLogic const& logic = *getTriggerEditorLogic();
 			TEGrid const& grid = logic.getGrid();
 			CPoint p(grid.toCellLeft(point.x), grid.toCellTop(point.y));
-			if (p != getCurrentPoint())// прешел ли курсор на другую ячейку
+			if (p != getCurrentPoint())// РїСЂРµС€РµР» Р»Рё РєСѓСЂСЃРѕСЂ РЅР° РґСЂСѓРіСѓСЋ СЏС‡РµР№РєСѓ
 			{
 				if (moveDraggedTitles(p))
 				{
@@ -686,9 +686,9 @@ BOOL TEBaseWorkMode::OnDropData(TriggerEditorView* source, void* pData,
 bool TEBaseWorkMode::CanDrop(TriggerEditorView* source, void* pData, const CPoint& point)
 {
 //	void* res = getDraggedData(pData);
-	//owner - содержит владельца по дереву, т.е. объект, 
-	//под узлом которого
-	//находится данный объект(pobj)
+	//owner - СЃРѕРґРµСЂР¶РёС‚ РІР»Р°РґРµР»СЊС†Р° РїРѕ РґРµСЂРµРІСѓ, С‚.Рµ. РѕР±СЉРµРєС‚, 
+	//РїРѕРґ СѓР·Р»РѕРј РєРѕС‚РѕСЂРѕРіРѕ
+	//РЅР°С…РѕРґРёС‚СЃСЏ РґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚(pobj)
 	TriggerChain const& chain = *getTriggerChain();
 
 	CPoint _p(point);
@@ -1230,7 +1230,7 @@ bool TEBaseWorkMode::canPlugLink(int childTriggerIndex, int parentTriggerIndex,
 	return parentTrigger.isChild(childTrigger);
 }
 
-//! Попадает ли точка в ячейки между элементами
+//! РџРѕРїР°РґР°РµС‚ Р»Рё С‚РѕС‡РєР° РІ СЏС‡РµР№РєРё РјРµР¶РґСѓ СЌР»РµРјРµРЅС‚Р°РјРё
 bool TEBaseWorkMode::TestForBetweenPlots(TriggerEditorView* source, CPoint p)
 {
 	TriggerEditorLogic const& logic = *source->getTriggerEditorLogic();
@@ -1321,7 +1321,7 @@ bool TEBaseWorkMode::initTrigger(TriggerEditorView* source,
 void TEBaseWorkMode::add2StrategyRect(TriggerChain &chain, 
 									  RECT const& rect4Add)
 {
-	//прямоугольники охватывающий цепочку
+	//РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРё РѕС…РІР°С‚С‹РІР°СЋС‰РёР№ С†РµРїРѕС‡РєСѓ
 	CRect rcStrategy(chain.boundingRect());
 	rcStrategy.UnionRect(&rcStrategy, &rect4Add);
 	chain.setBoundingRect(rcStrategy);

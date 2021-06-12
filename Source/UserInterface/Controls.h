@@ -20,16 +20,16 @@ enum eGameKeysControl
 	CTRL_GAME_HELP				=14,	// h
 	CTRL_ESCAPE					=15,	// VK_ESCAPE
 
-	CTRL_CAMERA_SAVE1           =16,	//пока VK_F1
-	CTRL_CAMERA_SAVE2           =17,	//пока VK_F2
-	CTRL_CAMERA_SAVE3           =18,	//пока VK_F3
-	CTRL_CAMERA_SAVE4           =19,	//пока VK_F4
-	CTRL_CAMERA_SAVE5           =20,	//пока VK_F5
-	CTRL_CAMERA_RESTORE1        =21,	//пока shift-VK_F1
-	CTRL_CAMERA_RESTORE2        =22,	//пока shift-VK_F2
-	CTRL_CAMERA_RESTORE3        =23,	//пока shift-VK_F3
-	CTRL_CAMERA_RESTORE4        =24,	//пока shift-VK_F4
-	CTRL_CAMERA_RESTORE5        =25,	//пока shift-VK_F5
+	CTRL_CAMERA_SAVE1           =16,	//РїРѕРєР° VK_F1
+	CTRL_CAMERA_SAVE2           =17,	//РїРѕРєР° VK_F2
+	CTRL_CAMERA_SAVE3           =18,	//РїРѕРєР° VK_F3
+	CTRL_CAMERA_SAVE4           =19,	//РїРѕРєР° VK_F4
+	CTRL_CAMERA_SAVE5           =20,	//РїРѕРєР° VK_F5
+	CTRL_CAMERA_RESTORE1        =21,	//РїРѕРєР° shift-VK_F1
+	CTRL_CAMERA_RESTORE2        =22,	//РїРѕРєР° shift-VK_F2
+	CTRL_CAMERA_RESTORE3        =23,	//РїРѕРєР° shift-VK_F3
+	CTRL_CAMERA_RESTORE4        =24,	//РїРѕРєР° shift-VK_F4
+	CTRL_CAMERA_RESTORE5        =25,	//РїРѕРєР° shift-VK_F5
 
 	CTRL_CAMERA_TO_EVENT        =26,	// VK_CONTROL
 
@@ -47,10 +47,10 @@ enum eGameKeysControl
 
 class ControlsConverter 
 {
-	unsigned char KeyToCtrl[2048];		// таблица перехода от кнопок в команды
-	sKey CtrlToKey[CTRL_MAX];		// таблица перехода от команд к кнопкам
-	string KeyToName[2048];				// таблица перехода от кнопок в имена кнопок
-	string CtrlToDeclaration[CTRL_MAX];	// таблица перехода от команд в описание команд
+	unsigned char KeyToCtrl[2048];		// С‚Р°Р±Р»РёС†Р° РїРµСЂРµС…РѕРґР° РѕС‚ РєРЅРѕРїРѕРє РІ РєРѕРјР°РЅРґС‹
+	sKey CtrlToKey[CTRL_MAX];		// С‚Р°Р±Р»РёС†Р° РїРµСЂРµС…РѕРґР° РѕС‚ РєРѕРјР°РЅРґ Рє РєРЅРѕРїРєР°Рј
+	string KeyToName[2048];				// С‚Р°Р±Р»РёС†Р° РїРµСЂРµС…РѕРґР° РѕС‚ РєРЅРѕРїРѕРє РІ РёРјРµРЅР° РєРЅРѕРїРѕРє
+	string CtrlToDeclaration[CTRL_MAX];	// С‚Р°Р±Р»РёС†Р° РїРµСЂРµС…РѕРґР° РѕС‚ РєРѕРјР°РЅРґ РІ РѕРїРёСЃР°РЅРёРµ РєРѕРјР°РЅРґ
 
 public:
 	ControlsConverter(){ LoadKeyNameTable(); }

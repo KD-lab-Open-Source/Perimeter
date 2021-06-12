@@ -20,7 +20,7 @@ public:
 	virtual void setTarget(terUnitBase* p,Vect3f* target){}
 
 	virtual void explode();
-	/// идентификатор эффекта взрыва
+	/// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЌС„С„РµРєС‚Р° РІР·СЂС‹РІР°
 	virtual terEffectID explosionID() const { return EFFECT_ID_EXPLOSION; }
 
 	virtual	void UnitDamageCheck();
@@ -31,13 +31,13 @@ public:
 	void Load(XBuffer& in);
 
 protected:
-	/// создает "труп" юнита/здания, вызывается из explode()
+	/// СЃРѕР·РґР°РµС‚ "С‚СЂСѓРї" СЋРЅРёС‚Р°/Р·РґР°РЅРёСЏ, РІС‹Р·С‹РІР°РµС‚СЃСЏ РёР· explode()
 	virtual bool createCorpse();
 
 private:
 };
 
-/// труп юнита
+/// С‚СЂСѓРї СЋРЅРёС‚Р°
 class terUnitCorpse : public terUnitBase
 {
 public:
@@ -57,21 +57,21 @@ protected:
 
 private:
 
-	/// текущее время существования трупа
+	/// С‚РµРєСѓС‰РµРµ РІСЂРµРјСЏ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ С‚СЂСѓРїР°
 	int time_;
 
-	/// общее время существования трупа
+	/// РѕР±С‰РµРµ РІСЂРµРјСЏ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ С‚СЂСѓРїР°
 	int lifeTime_;
 
-	/// радиус кратера, ноль если кратера нету
+	/// СЂР°РґРёСѓСЃ РєСЂР°С‚РµСЂР°, РЅРѕР»СЊ РµСЃР»Рё РєСЂР°С‚РµСЂР° РЅРµС‚Сѓ
 	float craterRadius_;
-	/// задержка перед созданием кратера
+	/// Р·Р°РґРµСЂР¶РєР° РїРµСЂРµРґ СЃРѕР·РґР°РЅРёРµРј РєСЂР°С‚РµСЂР°
 	int craterDelay_;
-	/// тип кратера
+	/// С‚РёРї РєСЂР°С‚РµСЂР°
 	terUnitAttributeID craterID_;
 };
 
-/// кратер от юнита
+/// РєСЂР°С‚РµСЂ РѕС‚ СЋРЅРёС‚Р°
 class terCrater : public terUnitBase
 {
 public:
@@ -91,12 +91,12 @@ public:
 
 private:
 
-	/// эффект над кратером (дым, огонь, etc)
+	/// СЌС„С„РµРєС‚ РЅР°Рґ РєСЂР°С‚РµСЂРѕРј (РґС‹Рј, РѕРіРѕРЅСЊ, etc)
 	cEffect* effect_;
 
 	DurationTimer lifeTimer_;
 
-	/// тулзер кратера
+	/// С‚СѓР»Р·РµСЂ РєСЂР°С‚РµСЂР°
 	ToolzerController toolzer_;
 };
 

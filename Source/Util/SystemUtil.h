@@ -61,7 +61,7 @@ struct sKey
 			shift = isShiftPressed(); 
 			menu = isAltPressed(); 
 		} 
-		// добавляем расширенные коды для командных кодов
+		// РґРѕР±Р°РІР»СЏРµРј СЂР°СЃС€РёСЂРµРЅРЅС‹Рµ РєРѕРґС‹ РґР»СЏ РєРѕРјР°РЅРґРЅС‹С… РєРѕРґРѕРІ
 		if(key == VK_CONTROL) 
 			ctrl |= 1;
 		if(key == VK_SHIFT)

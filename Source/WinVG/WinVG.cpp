@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 // WinVG.cpp : Defines the class behaviors for the application.
 //
 

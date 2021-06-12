@@ -5,9 +5,9 @@
 	file path:	d:\Projects\Quest\QuestEditor
 	file base:	MakeLinkActive
 	file ext:	h
-	author:		Илюха
+	author:		РР»СЋС…Р°
 	
-	purpose:	делаем указанный линк активным
+	purpose:	РґРµР»Р°РµРј СѓРєР°Р·Р°РЅРЅС‹Р№ Р»РёРЅРє Р°РєС‚РёРІРЅС‹Рј
 *********************************************************************/
 #pragma once
 

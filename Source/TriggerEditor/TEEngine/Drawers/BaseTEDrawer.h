@@ -5,9 +5,9 @@
 	file path:	d:\Projects\Quest\QuestEditor
 	file base:	BaseTEDrawer
 	file ext:	h
-	Powerd by:	Илюха при идейном руководстве и моральной поддержке of Scmorr
+	Powerd by:	РР»СЋС…Р° РїСЂРё РёРґРµР№РЅРѕРј СЂСѓРєРѕРІРѕРґСЃС‚РІРµ Рё РјРѕСЂР°Р»СЊРЅРѕР№ РїРѕРґРґРµСЂР¶РєРµ of Scmorr
 	
-	purpose:	Реализация базовых потребностей. Отрисовка элементов, связей, сетки.
+	purpose:	Р РµР°Р»РёР·Р°С†РёСЏ Р±Р°Р·РѕРІС‹С… РїРѕС‚СЂРµР±РЅРѕСЃС‚РµР№. РћС‚СЂРёСЃРѕРІРєР° СЌР»РµРјРµРЅС‚РѕРІ, СЃРІСЏР·РµР№, СЃРµС‚РєРё.
 *********************************************************************/
 
 #pragma once
@@ -30,7 +30,7 @@ protected:
 	virtual HBRUSH	SelectLinkBrushColor(TriggerLink const& link) const;
 	virtual HPEN	SelectLinkPenColor(TriggerLink const& link) const;
 
-protected://геттеры и сеттеры
+protected://РіРµС‚С‚РµСЂС‹ Рё СЃРµС‚С‚РµСЂС‹
 //	void setStrategyOffset(CSize const& sz) const;
 //	CSize const& getStrategyOffset() const;
 
@@ -59,20 +59,20 @@ protected://геттеры и сеттеры
 	void setPaintRect(CRect const& rc) const;
 	CRect const& getPaintRect() const;
 protected:
-	//! Отрисовывает триггер
+	//! РћС‚СЂРёСЃРѕРІС‹РІР°РµС‚ С‚СЂРёРіРіРµСЂ
 	void DrawTrigger(TriggerEditorView* source, 
 					CDC* pdc, 
 					Trigger const& trigger) const;
-	//! Отрисовывает связь
+	//! РћС‚СЂРёСЃРѕРІС‹РІР°РµС‚ СЃРІСЏР·СЊ
 	void DrawLink(TriggerEditorView* source, HDC dc, CPoint pt_from, CPoint pt_to, 
 					TriggerLink const& link) const;
-	//! Отрисовывает все связи в цепочке
+	//! РћС‚СЂРёСЃРѕРІС‹РІР°РµС‚ РІСЃРµ СЃРІСЏР·Рё РІ С†РµРїРѕС‡РєРµ
 	void DrawLinks(TriggerEditorView* source, CDC* pdc, 
 					TriggerChain const& chain) const;
-	//! Отрисовывает все связи триггера
+	//! РћС‚СЂРёСЃРѕРІС‹РІР°РµС‚ РІСЃРµ СЃРІСЏР·Рё С‚СЂРёРіРіРµСЂР°
 	void DrawTriggerLinks(TriggerEditorView* source, CDC* pdc, 
 		const RECT& rcEle, Trigger const& trigger) const;
-	//! Отрисовывает все триггера в цепочке
+	//! РћС‚СЂРёСЃРѕРІС‹РІР°РµС‚ РІСЃРµ С‚СЂРёРіРіРµСЂР° РІ С†РµРїРѕС‡РєРµ
 	void DrawTriggers(TriggerEditorView* source, CDC* pdc, 
 		const CRect& rcPaint, TriggerChain const& chain) const;
 	void DrawChain(TriggerEditorView* source, CDC* pdc, const CRect& rcPaint, 
@@ -81,26 +81,26 @@ private:
 	static void DrawLink(HDC dc, const CPoint& pt_from, const CPoint& pt_to, 
 		CPoint* ptrg, HPEN pen, HGDIOBJ brush);
 private:
-	//Карандаш, которым рисуется сетка
+	//РљР°СЂР°РЅРґР°С€, РєРѕС‚РѕСЂС‹Рј СЂРёСЃСѓРµС‚СЃСЏ СЃРµС‚РєР°
 	CPen netPen_;
 	CPen autoRestartedLinkPen_;
-	//! цепочка отрисовываемая в текущий момент
+	//! С†РµРїРѕС‡РєР° РѕС‚СЂРёСЃРѕРІС‹РІР°РµРјР°СЏ РІ С‚РµРєСѓС‰РёР№ РјРѕРјРµРЅС‚
 	mutable TriggerChain const* drawedStrategy_;
-	//! Текст для рисуемого элемента. для оптимизации.
+	//! РўРµРєСЃС‚ РґР»СЏ СЂРёСЃСѓРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°. РґР»СЏ РѕРїС‚РёРјРёР·Р°С†РёРё.
 	mutable CString drawedTriggerTitle_;
 
-	//Смещение текущей цепочки от её обычноного положения.
-	//используется при отрисовке всех цепочек сразу.
+	//РЎРјРµС‰РµРЅРёРµ С‚РµРєСѓС‰РµР№ С†РµРїРѕС‡РєРё РѕС‚ РµС‘ РѕР±С‹С‡РЅРѕРЅРѕРіРѕ РїРѕР»РѕР¶РµРЅРёСЏ.
+	//РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё РѕС‚СЂРёСЃРѕРІРєРµ РІСЃРµС… С†РµРїРѕС‡РµРє СЃСЂР°Р·Сѓ.
 //	mutable CSize strategyOffset_;
 
-	//Кисть, которой рисуется рамка обычного элемента
+	//РљРёСЃС‚СЊ, РєРѕС‚РѕСЂРѕР№ СЂРёСЃСѓРµС‚СЃСЏ СЂР°РјРєР° РѕР±С‹С‡РЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 	CBrush defaultTriggerBrush_;
-	//Кисть, которой рисуется рамка выделеннго элемента
+	//РљРёСЃС‚СЊ, РєРѕС‚РѕСЂРѕР№ СЂРёСЃСѓРµС‚СЃСЏ СЂР°РјРєР° РІС‹РґРµР»РµРЅРЅРіРѕ СЌР»РµРјРµРЅС‚Р°
 	CBrush selectedTriggerBrush_;
 
-	//! Владелец рисуемой связи
+	//! Р’Р»Р°РґРµР»РµС† СЂРёСЃСѓРµРјРѕР№ СЃРІСЏР·Рё
 	mutable Trigger const* drawedLinkOwner_;
-	//! Прямоугольник текущей прорисовки
-	//! Устанавливается в начале прорисовки и недействителен после неё
+	//! РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє С‚РµРєСѓС‰РµР№ РїСЂРѕСЂРёСЃРѕРІРєРё
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РІ РЅР°С‡Р°Р»Рµ РїСЂРѕСЂРёСЃРѕРІРєРё Рё РЅРµРґРµР№СЃС‚РІРёС‚РµР»РµРЅ РїРѕСЃР»Рµ РЅРµС‘
 	mutable CRect paintRect_;
 };

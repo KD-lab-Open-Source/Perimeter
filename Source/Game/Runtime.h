@@ -1,9 +1,9 @@
 #ifndef __RUNTIME_H__
 #define __RUNTIME_H__
 
-extern SyncroTimer global_time;	// детерминированный таймер
-extern SyncroTimer frame_time; // недетерминированный таймер
-extern SyncroTimer scale_time; // недетерминированный ускоряемый таймер
+extern SyncroTimer global_time;	// РґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅС‹Р№ С‚Р°Р№РјРµСЂ
+extern SyncroTimer frame_time; // РЅРµРґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅС‹Р№ С‚Р°Р№РјРµСЂ
+extern SyncroTimer scale_time; // РЅРµРґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅС‹Р№ СѓСЃРєРѕСЂСЏРµРјС‹Р№ С‚Р°Р№РјРµСЂ
 
 //--------------------------------------
 

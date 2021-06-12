@@ -303,7 +303,7 @@ void terFilthRat::WayPointStart()
 	realAvatar()->setSight(0);
 }
 
-const int FILTH_RAT_SIGHT_DEATH=1000;//милисекунд (тфу)
+const int FILTH_RAT_SIGHT_DEATH=1000;//РјРёР»РёСЃРµРєСѓРЅРґ (С‚С„Сѓ)
 
 void terFilthRat::WayPointController()
 {

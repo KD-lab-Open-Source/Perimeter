@@ -89,8 +89,8 @@ ActionPtr TriggerEditorLogic::createAction(int index) const{
 }
 
 void TriggerEditorLogic::setTriggerChain(TriggerChain* chain){
-	//! Âàæíî, ÷òîáû ýòà ôóíêöèÿ áûëà âûçûâàíà, êîãäà îêíî óæå èìååò íåíóëåâûå
-	//! ðàçìåðû. Âàæíî äëÿ adjustTriggerChainLayout()
+	//! Ð’Ð°Ð¶Ð½Ð¾, Ñ‡Ñ‚Ð¾Ð±Ñ‹ ÑÑ‚Ð° Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ Ð±Ñ‹Ð»Ð° Ð²Ñ‹Ð·Ñ‹Ð²Ð°Ð½Ð°, ÐºÐ¾Ð³Ð´Ð° Ð¾ÐºÐ½Ð¾ ÑƒÐ¶Ðµ Ð¸Ð¼ÐµÐµÑ‚ Ð½ÐµÐ½ÑƒÐ»ÐµÐ²Ñ‹Ðµ
+	//! Ñ€Ð°Ð·Ð¼ÐµÑ€Ñ‹. Ð’Ð°Ð¶Ð½Ð¾ Ð´Ð»Ñ adjustTriggerChainLayout()
 	triggerChain_ = chain;
 	if (getCurrentWorkMode())
 	{
@@ -322,9 +322,9 @@ void TriggerEditorLogic::adjustTriggersLayout(
 						TriggerList& triggers) const
 {
 
-	// Ïðîâåðÿåì âñåëè òðèããåðà èìåþò íåîïðåäåëåííîå ïîëæåíèå
-	// Äà âñå, òîãäà ðàññêëàäûâàåì èõ ïî ïîðÿäêó îòíîñèòåëüíî âèäèìîé îáëàñòè
-	// Íåò òîãäà ðàñïîëîãàåì íîâûå ïîä âñåìè ñòîëáèêîì
+	// ÐŸÑ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ Ð²ÑÐµÐ»Ð¸ Ñ‚Ñ€Ð¸Ð³Ð³ÐµÑ€Ð° Ð¸Ð¼ÐµÑŽÑ‚ Ð½ÐµÐ¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð½Ð¾Ðµ Ð¿Ð¾Ð»Ð¶ÐµÐ½Ð¸Ðµ
+	// Ð”Ð° Ð²ÑÐµ, Ñ‚Ð¾Ð³Ð´Ð° Ñ€Ð°ÑÑÐºÐ»Ð°Ð´Ñ‹Ð²Ð°ÐµÐ¼ Ð¸Ñ… Ð¿Ð¾ Ð¿Ð¾Ñ€ÑÐ´ÐºÑƒ Ð¾Ñ‚Ð½Ð¾ÑÐ¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð²Ð¸Ð´Ð¸Ð¼Ð¾Ð¹ Ð¾Ð±Ð»Ð°ÑÑ‚Ð¸
+	// ÐÐµÑ‚ Ñ‚Ð¾Ð³Ð´Ð° Ñ€Ð°ÑÐ¿Ð¾Ð»Ð¾Ð³Ð°ÐµÐ¼ Ð½Ð¾Ð²Ñ‹Ðµ Ð¿Ð¾Ð´ Ð²ÑÐµÐ¼Ð¸ ÑÑ‚Ð¾Ð»Ð±Ð¸ÐºÐ¾Ð¼
 
 	switch(hasTriggersInvalidCellIndexes(triggers)) {
 	case TCIT_NONE:
@@ -364,7 +364,7 @@ TriggerEditorLogic::TriggerCellIndexesTest
 void TriggerEditorLogic::adjustTriggersCellsForNew(
 						TriggerList& triggers) const
 {
-	// íîõîäèì ëåâóþ íèæíþþ çàíÿòóþ ÿ÷åéêó
+	// Ð½Ð¾Ñ…Ð¾Ð´Ð¸Ð¼ Ð»ÐµÐ²ÑƒÑŽ Ð½Ð¸Ð¶Ð½ÑŽÑŽ Ð·Ð°Ð½ÑÑ‚ÑƒÑŽ ÑÑ‡ÐµÐ¹ÐºÑƒ
 
 	CPoint leftBottomCell(INT_MAX, INT_MIN);
 	TriggerList::iterator itr = triggers.begin(), end = triggers.end();
@@ -389,7 +389,7 @@ void TriggerEditorLogic::adjustTriggersCellsForNew(
 				leftBottomCell.y = trigger.cellIndex().y;
 		}
 	}
-	//! òåïåðü óêëàäûâàåì ñòîëáèêîì òå, ÷òî íåïðèêàÿííû
+	//! Ñ‚ÐµÐ¿ÐµÑ€ÑŒ ÑƒÐºÐ»Ð°Ð´Ñ‹Ð²Ð°ÐµÐ¼ ÑÑ‚Ð¾Ð»Ð±Ð¸ÐºÐ¾Ð¼ Ñ‚Ðµ, Ñ‡Ñ‚Ð¾ Ð½ÐµÐ¿Ñ€Ð¸ÐºÐ°ÑÐ½Ð½Ñ‹
 	itr = triggers.begin();
 	end = triggers.end();
 	for(;itr != end; ++itr)
@@ -447,7 +447,7 @@ void TriggerEditorLogic::adjustLinksLayout(
 	}
 }
 
-//! Âîçâðàùàåò íîìåðà ëåâîé âåðõíåé è ïðàâîé íèæíåé âèäèìûõ ÿ÷ååê
+//! Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð½Ð¾Ð¼ÐµÑ€Ð° Ð»ÐµÐ²Ð¾Ð¹ Ð²ÐµÑ€Ñ…Ð½ÐµÐ¹ Ð¸ Ð¿Ñ€Ð°Ð²Ð¾Ð¹ Ð½Ð¸Ð¶Ð½ÐµÐ¹ Ð²Ð¸Ð´Ð¸Ð¼Ñ‹Ñ… ÑÑ‡ÐµÐµÐº
 RECT const TriggerEditorLogic::getVisibleCells() const
 {
 	CRect rcClient;
@@ -459,8 +459,8 @@ RECT const TriggerEditorLogic::getVisibleCells() const
 	result.top		= grid.getVertCellIndex(rcClient.top);
 	result.right	= grid.getHorzCellIndex(rcClient.right);
 	result.bottom	= grid.getVertCellIndex(rcClient.bottom);
-	//! óáåæäàåìñÿ, ÷òî ëåâûé è âåðõíèé êðàé 
-	//! ÿ÷åéêè íå âûõîäÿò çà êðàÿ âèäèìîé îáëàñòè
+	//! ÑƒÐ±ÐµÐ¶Ð´Ð°ÐµÐ¼ÑÑ, Ñ‡Ñ‚Ð¾ Ð»ÐµÐ²Ñ‹Ð¹ Ð¸ Ð²ÐµÑ€Ñ…Ð½Ð¸Ð¹ ÐºÑ€Ð°Ð¹ 
+	//! ÑÑ‡ÐµÐ¹ÐºÐ¸ Ð½Ðµ Ð²Ñ‹Ñ…Ð¾Ð´ÑÑ‚ Ð·Ð° ÐºÑ€Ð°Ñ Ð²Ð¸Ð´Ð¸Ð¼Ð¾Ð¹ Ð¾Ð±Ð»Ð°ÑÑ‚Ð¸
 	if (rcClient.left > grid.getCellLeftByIndex(result.left))
 		result.left += 1;
 	if (rcClient.top > grid.getCellLeftByIndex(result.top))

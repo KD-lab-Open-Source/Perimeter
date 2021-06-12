@@ -12,10 +12,10 @@
 #include "StreamInterpolation.h"
 #include "ht.h"
 
-static float timer;//0..1 - интерполированное время
+static float timer;//0..1 - РёРЅС‚РµСЂРїРѕР»РёСЂРѕРІР°РЅРЅРѕРµ РІСЂРµРјСЏ
 float timer_;
 /*
-UpdateVertex - убрать из периметра
+UpdateVertex - СѓР±СЂР°С‚СЊ РёР· РїРµСЂРёРјРµС‚СЂР°
 */
 
 StreamInterpolator stream_interpolator;

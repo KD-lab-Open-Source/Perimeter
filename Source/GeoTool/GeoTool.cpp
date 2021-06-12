@@ -70,7 +70,7 @@ CGeoToolApp theApp;
 BOOL CGeoToolApp::InitInstance()
 {
 	AfxEnableControlContainer();
-	// дКЪ тоя
+	// п■п╩я▐ п╓п÷п║
 	initclock();
 
 	// Standard initialization

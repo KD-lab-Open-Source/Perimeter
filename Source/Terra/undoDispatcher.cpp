@@ -22,15 +22,15 @@ void vrtMap::UndoDispatcher_PutPreChangedArea(int xL, int yT, int xR, int yB)
 	int size=sx*sy;
 
 	//list<sPreChangedArea>::iterator pp;
-	if(curPreCA!=preCAs.end()) preCAs.erase(curPreCA, preCAs.end()); //Óäàëåíèå íå íóæíûõ ýëåìåíòîâ
-	//Ïðîâåðêà íà ïåðåïîëíåíèå áóôåðà è óäàëåíèå 1-õ ýëåìåíòîâ
+	if(curPreCA!=preCAs.end()) preCAs.erase(curPreCA, preCAs.end()); //Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð½Ðµ Ð½ÑƒÐ¶Ð½Ñ‹Ñ… ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
+	//ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð½Ð° Ð¿ÐµÑ€ÐµÐ¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ðµ Ð±ÑƒÑ„ÐµÑ€Ð° Ð¸ ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ 1-Ñ… ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
 	while((UNDO_REDO_BUFFER_SIZE+size) > MAX_SIZE_UNDO_REDO_BUFFER){
-		if(preCAs.begin()==preCAs.end())ErrH.Abort("Ñïèñîê ïóñòîé à UNDO_REDO_BUFFER_SIZE==", XERR_USER, UNDO_REDO_BUFFER_SIZE);
+		if(preCAs.begin()==preCAs.end())ErrH.Abort("Ð¡Ð¿Ð¸ÑÐ¾Ðº Ð¿ÑƒÑÑ‚Ð¾Ð¹ Ð° UNDO_REDO_BUFFER_SIZE==", XERR_USER, UNDO_REDO_BUFFER_SIZE);
 		preCAs.erase(preCAs.begin());
 	}
 	preCAs.push_back();
 	curPreCA=preCAs.end();
-	curPreCA--;//Òåïåðü óêàçûâåò íà ïîñëåäíèé ýëåìåíò
+	curPreCA--;//Ð¢ÐµÐ¿ÐµÑ€ÑŒ ÑƒÐºÐ°Ð·Ñ‹Ð²ÐµÑ‚ Ð½Ð° Ð¿Ð¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚
 	curPreCA->setSize(sx, sy);
 	int i, j, cnt=0;
 	for(i=0; i<sy; i++){
@@ -46,16 +46,16 @@ void vrtMap::UndoDispatcher_PutPreChangedArea(int xL, int yT, int xR, int yB)
 	}
 	curPreCA->x=xL;
 	curPreCA->y=yT;
-	curPreCA++;// òåïåðü óêàçûâàåò íà îêîí÷àíèå
+	curPreCA++;// Ñ‚ÐµÐ¿ÐµÑ€ÑŒ ÑƒÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÑ‚ Ð½Ð° Ð¾ÐºÐ¾Ð½Ñ‡Ð°Ð½Ð¸Ðµ
 #endif
 }
 
 void vrtMap::UndoDispatcher_Undo(void)
 {
-	if( preCAs.begin() ==preCAs.end()) return; //åñëè ïóñòîé ñïèñîê òî âîçâðàò
-	if(curPreCA==preCAs.begin()) return;//åñëè óæå íåò èçìåíåíèé
+	if( preCAs.begin() ==preCAs.end()) return; //ÐµÑÐ»Ð¸ Ð¿ÑƒÑÑ‚Ð¾Ð¹ ÑÐ¿Ð¸ÑÐ¾Ðº Ñ‚Ð¾ Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‚
+	if(curPreCA==preCAs.begin()) return;//ÐµÑÐ»Ð¸ ÑƒÐ¶Ðµ Ð½ÐµÑ‚ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ð¹
 
-	curPreCA--;//Òåïåðü óêàçûâåò íà ïîñëåäíèé ýëåìåíò
+	curPreCA--;//Ð¢ÐµÐ¿ÐµÑ€ÑŒ ÑƒÐºÐ°Ð·Ñ‹Ð²ÐµÑ‚ Ð½Ð° Ð¿Ð¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚
 	int xL=curPreCA->x;
 	int yT=curPreCA->y;
 	int sx=curPreCA->sx;
@@ -72,14 +72,14 @@ void vrtMap::UndoDispatcher_Undo(void)
 			cnt++;
 		}
 	}
-	//curPreCA++;// òåïåðü óêàçûâàåò íà îêîí÷àíèå
+	//curPreCA++;// Ñ‚ÐµÐ¿ÐµÑ€ÑŒ ÑƒÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÑ‚ Ð½Ð° Ð¾ÐºÐ¾Ð½Ñ‡Ð°Ð½Ð¸Ðµ
 	regRender(xL, yT, XCYCL(xL+sx), YCYCL(yT+sy) );
 }
 
 void vrtMap::UndoDispatcher_Redo(void)
 {
-	if( preCAs.begin() ==preCAs.end()) return; //åñëè ïóñòîé ñïèñîê òî âîçâðàò
-	if(curPreCA==preCAs.end()) return;//åñëè óæå íåò èçìåíåíèé
+	if( preCAs.begin() ==preCAs.end()) return; //ÐµÑÐ»Ð¸ Ð¿ÑƒÑÑ‚Ð¾Ð¹ ÑÐ¿Ð¸ÑÐ¾Ðº Ñ‚Ð¾ Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‚
+	if(curPreCA==preCAs.end()) return;//ÐµÑÐ»Ð¸ ÑƒÐ¶Ðµ Ð½ÐµÑ‚ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ð¹
 
 	int xL=curPreCA->x;
 	int yT=curPreCA->y;

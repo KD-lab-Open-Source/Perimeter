@@ -1,5 +1,8 @@
 // OptTree.cpp : implementation file
 //
+
+// TODO: change encoding to utf-8
+
 #include "stdafx.h"
 #include "EffectTool.h"
 #include "OptTree.h"
@@ -348,7 +351,7 @@ bool COptTree::SetItemText(DWORD id,CString s)
 	if (!item) return false;
 	return treeList.SetItemText(item,1,s);
 }
-bool COptTree::SetItemÑheck(DWORD id,bool v)
+bool COptTree::SetItemCheck(DWORD id,bool v)
 {
 	CTreeListItem* item = FindItem(id);
 	if (!item) return false;
@@ -366,7 +369,7 @@ void COptTree::UpdateData()
 		if(it->GetStyle()& (STI_EDIT | STI_COMBO))
 			SetItemText(it->GetIndex(),	it->GetStrValue());
 		if((it->GetStyle()& STI_CHECKBOX) || (it->GetStyle()& STI_CHECKGRAPH))
-			SetItemÑheck(it->GetIndex(),	  it->GetCheck());
+			SetItemCheck(it->GetIndex(),	  it->GetCheck());
 	}
 	Spiral();
 }

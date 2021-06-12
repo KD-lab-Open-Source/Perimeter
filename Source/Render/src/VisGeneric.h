@@ -38,46 +38,46 @@ enum eShowType
 class cVisGeneric : public cUnknownClass
 {
 public:
-	// инициализационная часть 
+	// РёРЅРёС†РёР°Р»РёР·Р°С†РёРѕРЅРЅР°СЏ С‡Р°СЃС‚СЊ 
 	cVisGeneric();
 	virtual ~cVisGeneric();
-	// общие функции
+	// РѕР±С‰РёРµ С„СѓРЅРєС†РёРё
 	virtual void SetData(cInterfaceRenderDevice *pData1);
 	virtual void ClearData();
 	cURenderDevice* GetRenderDevice();
-	// функции для работы со сценой
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃРѕ СЃС†РµРЅРѕР№
 	virtual cScene* CreateScene();
 
-	//Предполагаестя, что все фонты лежат в одной директории,
-	//а SetFontDirectory и ReloadAllFont переключает языки 
+	//РџСЂРµРґРїРѕР»Р°РіР°РµСЃС‚СЏ, С‡С‚Рѕ РІСЃРµ С„РѕРЅС‚С‹ Р»РµР¶Р°С‚ РІ РѕРґРЅРѕР№ РґРёСЂРµРєС‚РѕСЂРёРё,
+	//Р° SetFontDirectory Рё ReloadAllFont РїРµСЂРµРєР»СЋС‡Р°РµС‚ СЏР·С‹РєРё 
 	void SetFontRootDirectory(const char* dir);//"Resource\fonts\"
-	void SetFontDirectory(const char* language_dir);//russian,english и т.д.
+	void SetFontDirectory(const char* language_dir);//russian,english Рё С‚.Рґ.
 	void ReloadAllFont();
 
-	//Создаёт фонт. height - высота фонта в логических единицах.
-	//в 1024x768 логическая единица равна пикселю.
+	//РЎРѕР·РґР°С‘С‚ С„РѕРЅС‚. height - РІС‹СЃРѕС‚Р° С„РѕРЅС‚Р° РІ Р»РѕРіРёС‡РµСЃРєРёС… РµРґРёРЅРёС†Р°С….
+	//РІ 1024x768 Р»РѕРіРёС‡РµСЃРєР°СЏ РµРґРёРЅРёС†Р° СЂР°РІРЅР° РїРёРєСЃРµР»СЋ.
 	virtual cFont* CreateFont(const char *TextureFileName,int height=20, bool silentErr=0);
 	virtual cFont* CreateDebugFont();
 
-	// функции для работы со спрайтами
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃРѕ СЃРїСЂР°Р№С‚Р°РјРё
 	virtual cTexture* CreateTexture(const char *TextureName);
-	virtual cTexture* CreateTexture(int sizex,int sizey,bool alpha);//Всегда 32 битная текстура
+	virtual cTexture* CreateTexture(int sizex,int sizey,bool alpha);//Р’СЃРµРіРґР° 32 Р±РёС‚РЅР°СЏ С‚РµРєСЃС‚СѓСЂР°
 	virtual cTexture* CreateBumpTexture(int sizex,int sizey);
 	virtual cTexture* CreateRenderTexture(int width,int height,int attr=0,bool enable_assert=true);
 	virtual cTextureScale* CreateTextureScale(const char *TextureName,Vect2f scale);
 
-	virtual cTexture* CreateTextureDefaultPool(int sizex,int sizey,bool alpha);//Всегда 32 битная текстура
+	virtual cTexture* CreateTextureDefaultPool(int sizex,int sizey,bool alpha);//Р’СЃРµРіРґР° 32 Р±РёС‚РЅР°СЏ С‚РµРєСЃС‚СѓСЂР°
 
-	//Возвращает 32 битную текстуру, в которой хранится изображение экрана.
+	//Р’РѕР·РІСЂР°С‰Р°РµС‚ 32 Р±РёС‚РЅСѓСЋ С‚РµРєСЃС‚СѓСЂСѓ, РІ РєРѕС‚РѕСЂРѕР№ С…СЂР°РЅРёС‚СЃСЏ РёР·РѕР±СЂР°Р¶РµРЅРёРµ СЌРєСЂР°РЅР°.
 	virtual cTexture* CreateTextureScreen();
 
-	//Текстура в формате U16V16
+	//РўРµРєСЃС‚СѓСЂР° РІ С„РѕСЂРјР°С‚Рµ U16V16
 	virtual cTexture* CreateTextureU16V16(int sizex,int sizey,bool deafultpool);
 
 	void SetEffectLibraryPath(const char* effect_path,const char* texture_path);
 	EffectLibrary* GetEffectLibrary(const char* filename,bool quiet=false);
 
-	// вспомогательные функции
+	// РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё
 	void SetDrawMeshBound(bool);
 	void SetDrawMeshBoundWire(bool);
 	void SetMipMapLevel(int);
@@ -118,18 +118,18 @@ public:
 	bool PossibilityOcclusion();
 	void EnableOcclusion(bool b);
 	bool IsEnableOcclusion();
-	void SetOcclusionFadeTime(float f);//в секундах
+	void SetOcclusionFadeTime(float f);//РІ СЃРµРєСѓРЅРґР°С…
 	void EnablePointLight(bool enable);
 	bool IsEnablePointLight();
 
 	static void SetAssertEnabled(bool enabled) { assertEnabled_ = enabled; }
 	static bool IsAssertEnabled() { return assertEnabled_; }
 
-	//Только в логическом потоке
+	//РўРѕР»СЊРєРѕ РІ Р»РѕРіРёС‡РµСЃРєРѕРј РїРѕС‚РѕРєРµ
 	void SetLogicQuant(int quant){logic_quant=quant;}
 	int GetLogicQuant(){return logic_quant;};
 
-	//Только в графическом потоке
+	//РўРѕР»СЊРєРѕ РІ РіСЂР°С„РёС‡РµСЃРєРѕРј РїРѕС‚РѕРєРµ
 	void SetGraphLogicQuant(int quant){graph_logic_quant=quant;}
 	int GetGraphLogicQuant(){return graph_logic_quant;};
 

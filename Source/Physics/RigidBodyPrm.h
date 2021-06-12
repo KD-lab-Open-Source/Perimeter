@@ -115,13 +115,13 @@ struct RigidBodyPrm : ShareHandleBase
 	////////////////////////////////////////////////
 	//		General Controls
 	////////////////////////////////////////////////
-	// Не перемещается по x, y. Перемещается по z и ориентация.
+	// РќРµ РїРµСЂРµРјРµС‰Р°РµС‚СЃСЏ РїРѕ x, y. РџРµСЂРµРјРµС‰Р°РµС‚СЃСЏ РїРѕ z Рё РѕСЂРёРµРЅС‚Р°С†РёСЏ.
 	bool unmovable; 
-	// Разрешается засыпать, если нет точек управления	
+	// Р Р°Р·СЂРµС€Р°РµС‚СЃСЏ Р·Р°СЃС‹РїР°С‚СЊ, РµСЃР»Рё РЅРµС‚ С‚РѕС‡РµРє СѓРїСЂР°РІР»РµРЅРёСЏ	
 	bool enable_sleeping;
-	// Ненаправленный, двигается в любую сторону
+	// РќРµРЅР°РїСЂР°РІР»РµРЅРЅС‹Р№, РґРІРёРіР°РµС‚СЃСЏ РІ Р»СЋР±СѓСЋ СЃС‚РѕСЂРѕРЅСѓ
 	bool isotropic;
-	// Управляется точками, иначе свободный объект
+	// РЈРїСЂР°РІР»СЏРµС‚СЃСЏ С‚РѕС‡РєР°РјРё, РёРЅР°С‡Рµ СЃРІРѕР±РѕРґРЅС‹Р№ РѕР±СЉРµРєС‚
 	bool controled_by_points;
 	
 	// Obstacle On/Off
@@ -136,7 +136,7 @@ struct RigidBodyPrm : ShareHandleBase
 	// Obstacle torque
 	float avoid_obstacle_rudder_speed;
 
-	// Остановка 
+	// РћСЃС‚Р°РЅРѕРІРєР° 
 	float brake_damping;//3.5;
 	float point_control_slow_distance;
 	float point_control_slow_factor;
@@ -168,7 +168,7 @@ struct RigidBodyPrm : ShareHandleBase
 	float zero_velocity_z;
 	float box_delta_y;
 
-	// Гравицапа
+	// Р“СЂР°РІРёС†Р°РїР°
 	bool gravicap_enabled;
 	float gravicap_pitch_roll_threshould;
 	int gravicap_dz_treshould;
@@ -177,7 +177,7 @@ struct RigidBodyPrm : ShareHandleBase
 	Oscillator gravicap_oscillator_pitch;
 	Oscillator gravicap_oscillator_roll;
 
-	// Кенгуру
+	// РљРµРЅРіСѓСЂСѓ
 	bool kangaroo_property;
 	bool kangaroo_allow_on_me; 
 	float kangaroo_delta_z;
@@ -204,7 +204,7 @@ struct RigidBodyPrm : ShareHandleBase
 	bool minimize_theta;
 	float upper_theta; // degrees
 	float lower_theta; // degrees
-	float distance_correction_factor; // из-за ошибки интегрирования снаряды чуть-чуть перелетают.
+	float distance_correction_factor; // РёР·-Р·Р° РѕС€РёР±РєРё РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ СЃРЅР°СЂСЏРґС‹ С‡СѓС‚СЊ-С‡СѓС‚СЊ РїРµСЂРµР»РµС‚Р°СЋС‚.
 	int keep_direction_time;
 	int ground_colliding_delay;
 
@@ -295,7 +295,7 @@ struct RigidBodyPrm : ShareHandleBase
 		minimize_theta = 0;
 		upper_theta = 90; // degrees
 		lower_theta = -45; // degrees
-		distance_correction_factor = 0.96f; // из-за ошибки интегрирования снаряды чуть-чуть перелетают.
+		distance_correction_factor = 0.96f; // РёР·-Р·Р° РѕС€РёР±РєРё РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ СЃРЅР°СЂСЏРґС‹ С‡СѓС‚СЊ-С‡СѓС‚СЊ РїРµСЂРµР»РµС‚Р°СЋС‚.
 		keep_direction_time = 0;
 		ground_colliding_delay = 100;
 

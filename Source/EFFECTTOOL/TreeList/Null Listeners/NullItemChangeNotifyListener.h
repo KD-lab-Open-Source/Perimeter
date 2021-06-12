@@ -8,22 +8,22 @@ public:
 	NullItemChangeNotifyListener(void);
 	~NullItemChangeNotifyListener(void);
 
-	//! Перед тем, как развернуть
+	//! РџРµСЂРµРґ С‚РµРј, РєР°Рє СЂР°Р·РІРµСЂРЅСѓС‚СЊ
 	virtual bool onItemExpanding(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
-	//! После того, как развернули
+	//! РџРѕСЃР»Рµ С‚РѕРіРѕ, РєР°Рє СЂР°Р·РІРµСЂРЅСѓР»Рё
 	virtual void onItemExpanded(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
-	//! Перед изменением состояния
+	//! РџРµСЂРµРґ РёР·РјРµРЅРµРЅРёРµРј СЃРѕСЃС‚РѕСЏРЅРёСЏ
 	virtual bool onItemStateChanging(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
-	//! После изменения состояния
+	//! РџРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёСЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ
 	virtual void onItemStateChanged(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
-	//! Если есть стиль	TLC_CHECKBOX, то приходит перед измененим состояния
+	//! Р•СЃР»Рё РµСЃС‚СЊ СЃС‚РёР»СЊ	TLC_CHECKBOX, С‚Рѕ РїСЂРёС…РѕРґРёС‚ РїРµСЂРµРґ РёР·РјРµРЅРµРЅРёРј СЃРѕСЃС‚РѕСЏРЅРёСЏ
 	virtual bool onItemCheckChanging(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
-	//! Если есть стиль	TLC_CHECKBOX, то приходит после изменения состояния
+	//! Р•СЃР»Рё РµСЃС‚СЊ СЃС‚РёР»СЊ	TLC_CHECKBOX, С‚Рѕ РїСЂРёС…РѕРґРёС‚ РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёСЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ
 	virtual void onItemCheckChanged(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
 
-	//! Если есть стиль	TLC_LOCKBOX, то приходит перед измененим состояния
+	//! Р•СЃР»Рё РµСЃС‚СЊ СЃС‚РёР»СЊ	TLC_LOCKBOX, С‚Рѕ РїСЂРёС…РѕРґРёС‚ РїРµСЂРµРґ РёР·РјРµРЅРµРЅРёРј СЃРѕСЃС‚РѕСЏРЅРёСЏ
 	virtual bool onItemLockChanging(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
-	//! Если есть стиль	TLC_LOCKBOX, то приходит после изменения состояния
+	//! Р•СЃР»Рё РµСЃС‚СЊ СЃС‚РёР»СЊ	TLC_LOCKBOX, С‚Рѕ РїСЂРёС…РѕРґРёС‚ РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёСЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ
 	virtual void onItemLockChanged(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci);
 
 };

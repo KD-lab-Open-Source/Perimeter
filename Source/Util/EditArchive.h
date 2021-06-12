@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __EDIT_ARCHIVE_H__
 #define __EDIT_ARCHIVE_H__
 #pragma once

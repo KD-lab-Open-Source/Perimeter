@@ -15,7 +15,7 @@ MonkManager::~MonkManager()
 
 terUnitMonk* MonkManager::create(const UnitTemplate& data)
 {
-	//потом переделать, для более аккуратного использования памяти.
+	//РїРѕС‚РѕРј РїРµСЂРµРґРµР»Р°С‚СЊ, РґР»СЏ Р±РѕР»РµРµ Р°РєРєСѓСЂР°С‚РЅРѕРіРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РїР°РјСЏС‚Рё.
 	terUnitMonk* p=new terUnitMonk(data);
 	monks.push_back(p);
 	p->self_it=--monks.end();

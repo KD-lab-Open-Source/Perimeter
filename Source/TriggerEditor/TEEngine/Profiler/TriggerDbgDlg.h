@@ -54,7 +54,7 @@ protected:
 	void SetupScroller();
 	bool SelectItem(int iItem) const;
 private:
-	// ! Список строк
+	// ! РЎРїРёСЃРѕРє СЃС‚СЂРѕРє
 	mutable CListCtrl m_list;
 	mutable int lastCurrentRecord_;
 	ITriggerEditorView* ptrTriggerEditorView_;

@@ -49,7 +49,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP();
 	void loadPresetList(LocaleMngr const& mngr);
-	//! Сравнивает пресеты с текущим и возвращает константу для combobox'a
+	//! РЎСЂР°РІРЅРёРІР°РµС‚ РїСЂРµСЃРµС‚С‹ СЃ С‚РµРєСѓС‰РёРј Рё РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅСЃС‚Р°РЅС‚Сѓ РґР»СЏ combobox'a
 	int comparePresets() const;
 	void copyPreset(int presetNum);
 private:

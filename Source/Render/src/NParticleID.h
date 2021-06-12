@@ -1,5 +1,5 @@
 #pragma once
-//типы блоков в .effect файле
+//С‚РёРїС‹ Р±Р»РѕРєРѕРІ РІ .effect С„Р°Р№Р»Рµ
 const int IDS_EMITTERLIST			=1;
 const int IDS_EMITTERLIST_HEAD		=2;
 const int IDS_EMITTER				=10;

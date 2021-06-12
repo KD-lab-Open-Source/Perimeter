@@ -8,12 +8,12 @@ class TerraInterface:public cUnknownClass
 public:
 	virtual int SizeX()=0;
 	virtual int SizeY()=0;
-	virtual int GetZ(int x,int y)=0;//Высота в точке x,y
+	virtual int GetZ(int x,int y)=0;//Р’С‹СЃРѕС‚Р° РІ С‚РѕС‡РєРµ x,y
 	virtual float GetZf(int x,int y)=0;
 	virtual int GetHZeroPlast()=0;
 
-	virtual int GetReductionZ(int x,int y)=0;//Уменьшенная копия карты высоты
-	virtual int GetReductionShift()=0;//1<<GetReductionShift() - во столько раз уменьшенна уменьшенная копия
+	virtual int GetReductionZ(int x,int y)=0;//РЈРјРµРЅСЊС€РµРЅРЅР°СЏ РєРѕРїРёСЏ РєР°СЂС‚С‹ РІС‹СЃРѕС‚С‹
+	virtual int GetReductionShift()=0;//1<<GetReductionShift() - РІРѕ СЃС‚РѕР»СЊРєРѕ СЂР°Р· СѓРјРµРЅСЊС€РµРЅРЅР° СѓРјРµРЅСЊС€РµРЅРЅР°СЏ РєРѕРїРёСЏ
 	
 	virtual class Column* GetColumn(int player)=0;
 
@@ -22,8 +22,8 @@ public:
 
 	virtual void GetTileColor(char* tile,DWORD line_size,int xstart,int ystart,int xend,int yend,int step)=0;
 
-	//При многопоточности к функциям GetColumn,GetBorder можно обращаться, 
-	//только используя эти функции
+	//РџСЂРё РјРЅРѕРіРѕРїРѕС‚РѕС‡РЅРѕСЃС‚Рё Рє С„СѓРЅРєС†РёСЏРј GetColumn,GetBorder РјРѕР¶РЅРѕ РѕР±СЂР°С‰Р°С‚СЊСЃСЏ, 
+	//С‚РѕР»СЊРєРѕ РёСЃРїРѕР»СЊР·СѓСЏ СЌС‚Рё С„СѓРЅРєС†РёРё
 	virtual void LockColumn(){};
 	virtual void UnlockColumn(){};
 };
