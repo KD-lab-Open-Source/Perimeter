@@ -5,6 +5,29 @@
 #include <string>
 #include <typeinfo>
 #include "Handle.h"
+#include <boost/type_index.hpp>
+
+static bool endsWith(const std::string& str, const std::string& suffix)
+{
+    return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
+}
+
+//Previously typeid(CLASS_T).name() was used which is not portable, so we need to replicate MSVC names
+template<class CLASS_T>
+string get_type_id() {
+    string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
+#ifndef _MSC_VER
+    //Non MSC don't append type before name, so we manually add here
+    //TODO untestend under Clang, only GCC
+    if (endsWith(name, "Prm")) {
+        name = "struct " + name;
+    } else {
+        name = "class " + name;
+    }
+#endif
+    //printf("%s = %s -> %s\n", typeid(CLASS_T).name(), boost::typeindex::type_id<CLASS_T>().pretty_name().c_str(), name.c_str());
+    return name;
+}
 
 /////////////////////////////////////////////////
 enum ArchiveType 
@@ -393,7 +416,7 @@ public:
 		Serializer() {
 		}
 		Serializer(const char* nameAlt) {
-			instance().add(*this, typeid(Derived).name(), nameAlt);
+			instance().add(*this, get_type_id<Derived>().c_str(), nameAlt);
 		}
 		void save(OArchive& ar, const Base* t) {
 			ar << makeObjectWrapper(static_cast<const Derived&>(*t), 0, 0);

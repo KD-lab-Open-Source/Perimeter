@@ -208,7 +208,7 @@ private:
 		currentNode_->setTreeNodeFunc(Descriptor::instance().treeNodeFunc);
 		if(!t)
 			return;
-		const char* name = typeid(*t).name();
+		const char* name = get_type_id<T>().c_str();
 		typename Descriptor::SerializerBase& serializer = Descriptor::instance().find(name);
 		serializer.save(*this, t);		
 		currentNode_->setValue(serializer.nameAlt());
@@ -655,7 +655,7 @@ public:
 	{
 		EditSerializer(const char* nameAlt) {
 			nameAlt_ = nameAlt;
-			instance().add(*this, typeid(Derived).name(), nameAlt);
+			instance().add(*this, get_type_id<Derived>().c_str(), nameAlt);
 		}
 
 		const TreeNode* treeNode() {
@@ -716,7 +716,7 @@ public:
 
 	template<class T>
 	const char* nameAlt(const T& t) const {
-		const char* name = typeid(t).name();
+		const char* name = get_type_id<T>().c_str();
 		map<string, string>::const_iterator i = mapNameToNameAlt_.find(name);
 		if(i == mapNameToNameAlt_.end()){
 			xassertStr(0 && "Unregistered class", name);

@@ -177,7 +177,7 @@ private:
 			buffer_ < "0";
 			return;
 		}
-		const char* name = typeid(*t).name();
+		const char *name = get_type_id<T>().c_str();
 		saveStringEnclosed(name);
 		buffer_ < " ";
 		ClassDescriptor<typename boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
@@ -500,7 +500,7 @@ private:
 		}
 		typedef ClassDescriptor<typename boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
 		if(t){
-			if(typeName == typeid(*t).name()){
+			if(typeName == get_type_id<T>().c_str()){
 				Descriptor::instance().find(typeName.c_str()).load(*this, t);
 				return;
 			}
