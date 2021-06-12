@@ -711,7 +711,7 @@ public:
 		typename Map::iterator i = mapAlt_.find(nameAlt);
 		if(i == mapAlt_.end()){
 			xassertStr(0 && "Unregistered class", nameAlt);
-			ErrH.Abort("Unregistered class", XERR_USER, 0, nameAlt);
+			ErrH.Abort("EditClassDescriptor::findAlt Unregistered class", XERR_USER, 0, nameAlt);
 		}
 		return *i->second;
 	}
@@ -722,7 +722,7 @@ public:
 		map<string, string>::const_iterator i = mapNameToNameAlt_.find(name);
 		if(i == mapNameToNameAlt_.end()){
 			xassertStr(0 && "Unregistered class", name);
-			ErrH.Abort("Unregistered class", XERR_USER, 0, name);
+			ErrH.Abort("EditClassDescriptor::nameAlt Unregistered class", XERR_USER, 0, name);
 		}
 		return i->second.c_str();
 	}

@@ -7,23 +7,34 @@
 #include "Handle.h"
 #include <boost/type_index.hpp>
 
+static bool startsWith(const std::string& str, const std::string& prefix)
+{
+    return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);
+}
+
 static bool endsWith(const std::string& str, const std::string& suffix)
 {
     return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
 }
 
-//Previously typeid(CLASS_T).name() was used which is not portable, so we need to replicate MSVC names
-template<class CLASS_T>
-string get_type_id() {
-    string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
-#ifndef _MSC_VER
-    //Non MSC don't append type before name, so we manually add here
-    //TODO untestend under Clang, only GCC
-    if (endsWith(name, "Prm")) {
-        name = "struct " + name;
-    } else {
-        name = "class " + name;
+
+//Previously typeid(CLASS_T).name() was used which is not portable, so we attempt to ignore the extra struct/class
+
+static void extract_type_name(string& name) {
+    if (startsWith(name, "struct ")) {
+        name.erase(0, 7);
+    } else if (startsWith(name, "class ")) {
+        name.erase(0, 6);
     }
+}
+
+
+template<class CLASS_T>
+static string get_type_id() {
+    string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
+#ifdef _MSC_VER
+    //Remove type name since MSVC adds it 
+    extract_type_name(name);
 #endif
     //printf("%s = %s -> %s\n", typeid(CLASS_T).name(), boost::typeindex::type_id<CLASS_T>().pretty_name().c_str(), name.c_str());
     return name;
@@ -436,10 +447,12 @@ public:
 	}
 
 	SerializerBase& find(const char* name) {
-		typename Map::iterator i = map_.find(name);
+	    string input = name;
+        extract_type_name(input);
+		typename Map::iterator i = map_.find(input.c_str());
 		if(i == map_.end()){
 			xassertStr(0 && "Unregistered class", name);
-			ErrH.Abort("Unregistered class", XERR_USER, 0, name);
+			ErrH.Abort("ClassDescriptor::find Unregistered class", XERR_USER, 0, name);
 		}
 		return *i->second;
 	}

@@ -79,7 +79,7 @@ public:
         typename MapHash::iterator i = mapHash_.find(hash);
         if(i == mapHash_.end()){
             xassert(0 && "Unregistered class");
-            ErrH.Abort("BinaryClassDescriptor: Unregistered class");
+            ErrH.Abort("BinaryClassDescriptor::findByHash Unregistered class");
         }
         return *i->second;
     }
