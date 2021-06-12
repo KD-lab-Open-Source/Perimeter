@@ -6,7 +6,7 @@
 
 CChaos::CChaos(int hsize,int vsize,bool bump)
 {
-	int tile = 5;//Ïóñòü áóäåò íå÷¸òíàÿ
+	int tile = 5;//ÐŸÑƒÑÑ‚ÑŒ Ð±ÑƒÐ´ÐµÑ‚ Ð½ÐµÑ‡Ñ‘Ñ‚Ð½Ð°Ñ
 
 	ZPlane=NULL;
 	ZPlane = terScene->CreateChaos(Vect2f(hsize,vsize),

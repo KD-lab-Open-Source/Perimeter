@@ -35,7 +35,7 @@ public:
 	struct One
 	{
 		ITPL itpl;
-		int interval_begin;//потом во float будет переводиться.
+		int interval_begin;//РїРѕС‚РѕРј РІРѕ float Р±СѓРґРµС‚ РїРµСЂРµРІРѕРґРёС‚СЊСЃСЏ.
 		int interval_size;
 		T a0,a1,a2,a3;//y=a0+a1*t+a2*t*t+a3*t*t*t;
 
@@ -202,7 +202,7 @@ void InterpolatePosition<T>::AddConstant(float delta,int min_interval)
 				one.itpl=ITPL_CONSTANT;
 				one.interval_begin=ibegin;
 				one.interval_size=interval_size;
-				one.a0=begin;//Потом на среднее по интервалу заменить
+				one.a0=begin;//РџРѕС‚РѕРј РЅР° СЃСЂРµРґРЅРµРµ РїРѕ РёРЅС‚РµСЂРІР°Р»Сѓ Р·Р°РјРµРЅРёС‚СЊ
 				Add(one);
 				ibegin+=interval_size;
 				break;
@@ -226,7 +226,7 @@ void InterpolatePosition<T>::AddCubic(float delta)
 		if(one.itpl==ITPL_UNKNOWN)
 		if(one.interval_size<=1)
 		{//linear
-/*		Уже не нужно, так как в сплайнах на 1 точку больше стало.
+/*		РЈР¶Рµ РЅРµ РЅСѓР¶РЅРѕ, С‚Р°Рє РєР°Рє РІ СЃРїР»Р°Р№РЅР°С… РЅР° 1 С‚РѕС‡РєСѓ Р±РѕР»СЊС€Рµ СЃС‚Р°Р»Рѕ.
 			if(one.interval_size==2)
 			{
 				One out;
@@ -277,7 +277,7 @@ void InterpolatePosition<T>::AddCubic(float delta)
 						if(cycled)
 						{
 							cur=position.front();
-							//Для кватернионов
+							//Р”Р»СЏ РєРІР°С‚РµСЂРЅРёРѕРЅРѕРІ
 							T rot_prev=position.back();
 							T cur_inv;
 							for(isub=0;isub<nsub;isub++)

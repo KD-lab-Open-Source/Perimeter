@@ -5,9 +5,9 @@
 	file path:	d:\Projects\Quest\QuestEditor
 	file base:	TEDrawerBase
 	file ext:	h
-	Powerd by:	Илюха при идейном руководстве и моральной поддержке of Scmorr
+	Powerd by:	РР»СЋС…Р° РїСЂРё РёРґРµР№РЅРѕРј СЂСѓРєРѕРІРѕРґСЃС‚РІРµ Рё РјРѕСЂР°Р»СЊРЅРѕР№ РїРѕРґРґРµСЂР¶РєРµ of Scmorr
 	
-	purpose:	базовая реализация интерфейса ITEDrawer
+	purpose:	Р±Р°Р·РѕРІР°СЏ СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° ITEDrawer
 *********************************************************************/
 
 #pragma once

@@ -113,10 +113,10 @@ void HistoryScene::init(cVisGeneric* visGeneric, bool bw, bool addBlendAlphaMode
     Vect2f focus(1.0f, 1.0f);
     Vect2f zplane(10.0f,100000.0f);
     cameraSky->SetFrustum(
-            &center,									// öåíòð êàìåðû
-            &clip,										// âèäèìàÿ îáëàñòü êàìåðû
-            &focus,										// ôîêóñ êàìåðû
-            &zplane										// áëèæàéøèé è äàëüíèé z-ïëîñêîñòè îòñå÷åíèÿ
+            &center,									// Ñ†ÐµÐ½Ñ‚Ñ€ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+            &clip,										// Ð²Ð¸Ð´Ð¸Ð¼Ð°Ñ Ð¾Ð±Ð»Ð°ÑÑ‚ÑŒ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+            &focus,										// Ñ„Ð¾ÐºÑƒÑ ÐºÐ°Ð¼ÐµÑ€Ñ‹
+            &zplane										// Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑˆÐ¸Ð¹ Ð¸ Ð´Ð°Ð»ÑŒÐ½Ð¸Ð¹ z-Ð¿Ð»Ð¾ÑÐºÐ¾ÑÑ‚Ð¸ Ð¾Ñ‚ÑÐµÑ‡ÐµÐ½Ð¸Ñ
     );
 
 	lightSky = sceneSky->CreateLight(ATTRLIGHT_DIRECTION);

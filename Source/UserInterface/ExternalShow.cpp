@@ -196,7 +196,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			return;
 
 
-		//Кривовато, т.к. только для определённой сцены
+		//РљСЂРёРІРѕРІР°С‚Рѕ, С‚.Рє. С‚РѕР»СЊРєРѕ РґР»СЏ РѕРїСЂРµРґРµР»С‘РЅРЅРѕР№ СЃС†РµРЅС‹
 		if(width<0)
 		{
 			float dist = pos.distance(terCamera->GetCamera()->GetPos());
@@ -615,7 +615,7 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 
 /*
 void terExternalRegionShowColumn(Column* column,sColor4c color)
-{//Для дебага
+{//Р”Р»СЏ РґРµР±Р°РіР°
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
 	cQuadBuffer<sVertexXYZDT1>& quad=*terRenderDevice->GetQuadBufferXYZDT1();
 
@@ -725,7 +725,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 		{
 			int i=0;
 			Cell& c=*it;
-			//Эмулируем triangle fan
+			//Р­РјСѓР»РёСЂСѓРµРј triangle fan
 			sVertexXYZD p[3];
 			p[0].diffuse=p[1].diffuse=p[2].diffuse=color;
 
@@ -734,7 +734,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 
 			if(next_cell)
 			for(;it_next!=next_cell->end();it_next++)
-			{//Добавляем доп. точки из нижней линии.
+			{//Р”РѕР±Р°РІР»СЏРµРј РґРѕРї. С‚РѕС‡РєРё РёР· РЅРёР¶РЅРµР№ Р»РёРЅРёРё.
 				Cell& cn=*it_next;
 				if(cn.xr<=c.xl)
 					continue;
@@ -767,7 +767,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 			bool first=true;
 			if(prev_cell)
 			for(;it_prev!=prev_cell->end();it_prev++)
-			{//Добавляем доп. точки из верхней линии.
+			{//Р”РѕР±Р°РІР»СЏРµРј РґРѕРї. С‚РѕС‡РєРё РёР· РІРµСЂС…РЅРµР№ Р»РёРЅРёРё.
 				Cell& cn=*it_prev;
 				if(cn.xr<=c.xl)
 					continue;

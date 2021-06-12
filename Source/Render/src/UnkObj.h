@@ -12,7 +12,7 @@ const int NUMBER_OBJTEXTURE=3;
 class cTexture;
 
 class cUnkObj : public cIUnkObjScale
-{ // áàçîâûé êëàññ îáúåêòîâ ðàñòåðèçàöèè
+{ // Ð±Ð°Ð·Ð¾Ð²Ñ‹Ð¹ ÐºÐ»Ð°ÑÑ Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð² Ñ€Ð°ÑÑ‚ÐµÑ€Ð¸Ð·Ð°Ñ†Ð¸Ð¸
 public:
 	cUnkObj(int kind);
 	virtual ~cUnkObj();
@@ -26,7 +26,7 @@ public:
 	virtual float GetBoundRadius()	{return GetScale().norm();}
 	virtual void GetBoundBox(sBox6f& Box){Box.min=-GetScale();Box.max=GetScale();}
 
-	// èíëàéíîâûå ôóíêöèè äîñòóïà ê ïåðåìåííûì
+	// Ð¸Ð½Ð»Ð°Ð¹Ð½Ð¾Ð²Ñ‹Ðµ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð° Ðº Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ð¼
 	inline const sColor4f& GetDiffuse()	const 										{ return diffuse; }
 	inline cTexture* GetTexture(int n=0)											{ return Texture[n]; }
 	inline cTexture* GetTexture(int n=0) const										{ return Texture[n]; }
@@ -47,7 +47,7 @@ protected:
 };
 
 class cAnimUnkObj : public cUnkObj
-{ // áàçîâûé êëàññ îáúåêòîâ ðàñòåðèçàöèè
+{ // Ð±Ð°Ð·Ð¾Ð²Ñ‹Ð¹ ÐºÐ»Ð°ÑÑ Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð² Ñ€Ð°ÑÑ‚ÐµÑ€Ð¸Ð·Ð°Ñ†Ð¸Ð¸
 public:
 	cAnimUnkObj(int kind) : cUnkObj(kind)					{ }
 	virtual void Animate(float dt)							{ GetFrame()->AddPhase(dt);	}

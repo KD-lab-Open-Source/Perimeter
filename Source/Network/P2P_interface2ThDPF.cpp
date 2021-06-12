@@ -134,7 +134,7 @@ bool PNetCenter::Init(void)
 	XDP_CHECK_HR(hr, "CoCreateInstance");
 	if(hr!=S_OK) return 0;
 
-	//m_pDPClient=m_pDPServer;//Пока
+	//m_pDPClient=m_pDPServer;//РџРѕРєР°
 
     // Init IDirectPlay8Server
 	DWORD dwFlags=0;
@@ -260,7 +260,7 @@ int PNetCenter::ServerStart(const char* _name, int port)
 
     pDP8AddrLocal->Release();
 
-	//for internet получение адреса host-а
+	//for internet РїРѕР»СѓС‡РµРЅРёРµ Р°РґСЂРµСЃР° host-Р°
 /*	IDirectPlay8Address *pDP8AddressHost = NULL;
 	DWORD dwNumAddresses = 1;
 
@@ -662,7 +662,7 @@ int PNetCenter::Connect(unsigned int ip)//, int port
 	sprintf(ip_string, "%d.%d.%d.%d", IP1(ip), IP2(ip), IP3(ip), IP4(ip));
 
 	{
-		///clearFoundHostList();//Вызывается в StopFindHost
+		///clearFoundHostList();//Р’С‹Р·С‹РІР°РµС‚СЃСЏ РІ StopFindHost
 		StopFindHostDP();
 	}
 
@@ -707,7 +707,7 @@ void PNetCenter::StartConnect2IP(unsigned int ip)//, int port
 	sprintf(ip_string, "%d.%d.%d.%d", IP1(ip), IP2(ip), IP3(ip), IP4(ip));
 
 	{
-		///clearFoundHostList();//Вызывается в StopFindHost
+		///clearFoundHostList();//Р’С‹Р·С‹РІР°РµС‚СЃСЏ РІ StopFindHost
 		StopFindHostDP();
 	}
 
@@ -864,8 +864,8 @@ bool PNetCenter::FindHost(const char* lpszHost)
     ZeroMemory(&dpnAppDesc, sizeof(DPN_APPLICATION_DESC));
     dpnAppDesc.dwSize = sizeof(DPN_APPLICATION_DESC);
     dpnAppDesc.guidApplication = guidPerimeterGame;
-	//if(flag_HostMigrate) dpnAppDesc.dwFlags |= DPNSESSION_MIGRATE_HOST; //Похоже тут это делать нельзя (только при создании Ноsta)
-	//if(flag_NoUseDPNSVR) dpnAppDesc.dwFlags |= DPNSESSION_NODPNSVR; //Не знаю - можно или нет
+	//if(flag_HostMigrate) dpnAppDesc.dwFlags |= DPNSESSION_MIGRATE_HOST; //РџРѕС…РѕР¶Рµ С‚СѓС‚ СЌС‚Рѕ РґРµР»Р°С‚СЊ РЅРµР»СЊР·СЏ (С‚РѕР»СЊРєРѕ РїСЂРё СЃРѕР·РґР°РЅРёРё РќРѕsta)
+	//if(flag_NoUseDPNSVR) dpnAppDesc.dwFlags |= DPNSESSION_NODPNSVR; //РќРµ Р·РЅР°СЋ - РјРѕР¶РЅРѕ РёР»Рё РЅРµС‚
 
 
     // Enumerate all StressMazeApp hosts running on IP service providers
@@ -975,8 +975,8 @@ bool PNetCenter::StartFindHostDP(const char* lpszHost)
 		ZeroMemory(&dpnAppDesc, sizeof(DPN_APPLICATION_DESC));
 		dpnAppDesc.dwSize = sizeof(DPN_APPLICATION_DESC);
 		dpnAppDesc.guidApplication = guidPerimeterGame;
-		//if(flag_HostMigrate) dpnAppDesc.dwFlags |= DPNSESSION_MIGRATE_HOST; //Похоже тут это делать нельзя (только при создании Ноsta)
-		//if(flag_NoUseDPNSVR) dpnAppDesc.dwFlags |= DPNSESSION_NODPNSVR; //Не знаю - можно или нет
+		//if(flag_HostMigrate) dpnAppDesc.dwFlags |= DPNSESSION_MIGRATE_HOST; //РџРѕС…РѕР¶Рµ С‚СѓС‚ СЌС‚Рѕ РґРµР»Р°С‚СЊ РЅРµР»СЊР·СЏ (С‚РѕР»СЊРєРѕ РїСЂРё СЃРѕР·РґР°РЅРёРё РќРѕsta)
+		//if(flag_NoUseDPNSVR) dpnAppDesc.dwFlags |= DPNSESSION_NODPNSVR; //РќРµ Р·РЅР°СЋ - РјРѕР¶РЅРѕ РёР»Рё РЅРµС‚
 
 
 		DPNHANDLE m_hEnumAsyncOp;
@@ -1018,8 +1018,8 @@ bool PNetCenter::StartFindHostDP(const char* lpszHost)
 			ZeroMemory(&dpnAppDesc, sizeof(DPN_APPLICATION_DESC));
 			dpnAppDesc.dwSize = sizeof(DPN_APPLICATION_DESC);
 			dpnAppDesc.guidApplication = guidPerimeterGame;
-			//if(flag_HostMigrate) dpnAppDesc.dwFlags |= DPNSESSION_MIGRATE_HOST; //Похоже тут это делать нельзя (только при создании Ноsta)
-			//if(flag_NoUseDPNSVR) dpnAppDesc.dwFlags |= DPNSESSION_NODPNSVR; //Не знаю - можно или нет
+			//if(flag_HostMigrate) dpnAppDesc.dwFlags |= DPNSESSION_MIGRATE_HOST; //РџРѕС…РѕР¶Рµ С‚СѓС‚ СЌС‚Рѕ РґРµР»Р°С‚СЊ РЅРµР»СЊР·СЏ (С‚РѕР»СЊРєРѕ РїСЂРё СЃРѕР·РґР°РЅРёРё РќРѕsta)
+			//if(flag_NoUseDPNSVR) dpnAppDesc.dwFlags |= DPNSESSION_NODPNSVR; //РќРµ Р·РЅР°СЋ - РјРѕР¶РЅРѕ РёР»Рё РЅРµС‚
 
 
 			DPNHANDLE m_hEnumAsyncOp;
@@ -1052,19 +1052,19 @@ void PNetCenter::StopFindHostDP(void)
     HRESULT hr;
 //	vector<DPNHANDLE>::iterator p;
 //	for(p=m_hEnumAsyncOp_Arr.begin(); p!=m_hEnumAsyncOp_Arr.end(); p++){
-//		hr = m_pDPPeer->CancelAsyncOperation( *p, 0);//в случае когда есть хандлеры флаг не нужен ! DPNCANCEL_ENUM;
+//		hr = m_pDPPeer->CancelAsyncOperation( *p, 0);//РІ СЃР»СѓС‡Р°Рµ РєРѕРіРґР° РµСЃС‚СЊ С…Р°РЅРґР»РµСЂС‹ С„Р»Р°Рі РЅРµ РЅСѓР¶РµРЅ ! DPNCANCEL_ENUM;
 //		if( FAILED(hr) ){
 //			DXTRACE_ERR_MSGBOX( TEXT("PNetCenter::StopFindHostDP-error cancel operation"), hr );
 //		}
 //	}
-	hr = m_pDPPeer->CancelAsyncOperation( NULL, DPNCANCEL_ENUM);//в случае когда указывается флаг хандлеры не нужны(отменяются все) ! ;
+	hr = m_pDPPeer->CancelAsyncOperation( NULL, DPNCANCEL_ENUM);//РІ СЃР»СѓС‡Р°Рµ РєРѕРіРґР° СѓРєР°Р·С‹РІР°РµС‚СЃСЏ С„Р»Р°Рі С…Р°РЅРґР»РµСЂС‹ РЅРµ РЅСѓР¶РЅС‹(РѕС‚РјРµРЅСЏСЋС‚СЃСЏ РІСЃРµ) ! ;
 	if( FAILED(hr) ){
 		DXTRACE_ERR_MSGBOX( TEXT("PNetCenter::StopFindHostDP-error cancel operation"), hr );
 	}
 	m_hEnumAsyncOp_Arr.clear();
 
 
-	Sleep(20);//Для завершения back фукции DP(3-й поток)
+	Sleep(20);//Р”Р»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ back С„СѓРєС†РёРё DP(3-Р№ РїРѕС‚РѕРє)
 	clearInternalFoundHostList();
 	///clearGameHostList();
 }

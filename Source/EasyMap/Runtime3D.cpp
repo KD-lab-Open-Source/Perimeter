@@ -33,25 +33,25 @@ int InitRenderDevice(int xScr,int yScr)
 	if(terRenderDevice->Init(xScr,yScr,RENDERDEVICE_MODE_RGB32|RENDERDEVICE_MODE_WINDOW,g_hWnd))
 		return 1;
 	gb_IVisGeneric->SetData(terRenderDevice);
-	// создание сцены
+	// СЃРѕР·РґР°РЅРёРµ СЃС†РµРЅС‹
 	terScene=gb_IVisGeneric->CreateScene(); 
-	// создание камеры
+	// СЃРѕР·РґР°РЅРёРµ РєР°РјРµСЂС‹
 	gb_Camera=terScene->CreateCamera();
-	gb_Camera->SetAttr(ATTRCAMERA_PERSPECTIVE); // перспектива
+	gb_Camera->SetAttr(ATTRCAMERA_PERSPECTIVE); // РїРµСЂСЃРїРµРєС‚РёРІР°
 	MatXf CameraMatrix;
 	Identity(CameraMatrix);
 	Vect3f CameraPos(0,0,-512);
 	SetPosition(CameraMatrix,CameraPos,Vect3f(0,0,0));
 	SetCameraPosition(gb_Camera,CameraMatrix);
 
-	gb_Camera->SetFrustum(							// устанавливается пирамида видимости
-		&Vect2f(0.5f,0.5f),							// центр камеры
-		&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),		// видимая область камеры
-		&Vect2f(1.f,1.f),							// фокус камеры
+	gb_Camera->SetFrustum(							// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РїРёСЂР°РјРёРґР° РІРёРґРёРјРѕСЃС‚Рё
+		&Vect2f(0.5f,0.5f),							// С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+		&sRectangle4f(-0.5f,-0.5f,0.5f,0.5f),		// РІРёРґРёРјР°СЏ РѕР±Р»Р°СЃС‚СЊ РєР°РјРµСЂС‹
+		&Vect2f(1.f,1.f),							// С„РѕРєСѓСЃ РєР°РјРµСЂС‹
 		&Vect2f(10.0f,3000.0f)
 		);
 
-	// создается источник света, иначе кромешная тьма и объектов не видно
+	// СЃРѕР·РґР°РµС‚СЃСЏ РёСЃС‚РѕС‡РЅРёРє СЃРІРµС‚Р°, РёРЅР°С‡Рµ РєСЂРѕРјРµС€РЅР°СЏ С‚СЊРјР° Рё РѕР±СЉРµРєС‚РѕРІ РЅРµ РІРёРґРЅРѕ
 	gb_ULight1=terScene->CreateLight(ATTRLIGHT_DIRECTION);
 	gb_ULight1->SetPosition(MatXf(Mat3f::ID,Vect3f(0,0,0)));
 
@@ -67,18 +67,18 @@ void DoneRenderDevice()
 	RELEASE(gb_ULight1);
 	RELEASE(gb_Camera);
 	RELEASE(terScene);
-	// закрытие окна вывода
+	// Р·Р°РєСЂС‹С‚РёРµ РѕРєРЅР° РІС‹РІРѕРґР°
 	if(gb_IVisGeneric) gb_IVisGeneric->ClearData();
 	RELEASE(gb_IVisGeneric);
 	RELEASE(terRenderDevice);
 }
 
-//Функция обработки сообщений Windows
+//Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё СЃРѕРѕР±С‰РµРЅРёР№ Windows
 LRESULT WINAPI MsgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
     switch( msg )
     {
-        case WM_DESTROY://выйти из приложения, если нажали на крестик
+        case WM_DESTROY://РІС‹Р№С‚Рё РёР· РїСЂРёР»РѕР¶РµРЅРёСЏ, РµСЃР»Рё РЅР°Р¶Р°Р»Рё РЅР° РєСЂРµСЃС‚РёРє
             PostQuitMessage( 0 );
             return 0;
 		case WM_ACTIVATEAPP:

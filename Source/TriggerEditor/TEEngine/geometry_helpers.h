@@ -17,18 +17,18 @@ bool cross_segms(const __Vect& a, const __Vect &b,
 	float y2 = c.y;
 	float y3 = d.y;
 	
-	if(abs(x1 - x0) < 1e-8)//отрезок вертикальный
+	if(abs(x1 - x0) < 1e-8)//РѕС‚СЂРµР·РѕРє РІРµСЂС‚РёРєР°Р»СЊРЅС‹Р№
 	{
-		if(abs(x3 - x2) < 1e-8)//отрезки //
+		if(abs(x3 - x2) < 1e-8)//РѕС‚СЂРµР·РєРё //
 			return false;
 		
-		//ищем бэтта
+		//РёС‰РµРј Р±СЌС‚С‚Р°
 		float del = (x0 - x2)/(x3-x2);
 		if(del < 0.f || del > 1.f)
 			return false;
 		if (pky) 
 			*pky = del;
-		//ищем альфа
+		//РёС‰РµРј Р°Р»СЊС„Р°
 		del = (y2 - y0 + (y3 - y2)*del)/(y1 - y0);
 		if(del < 0.f || del > 1.f)
 			return false;
@@ -37,11 +37,11 @@ bool cross_segms(const __Vect& a, const __Vect &b,
 			*pkx = del;
 		return true;
 	}
-	if(abs(y3 - y2) < 1e-8)//отрезок горизонтальный
+	if(abs(y3 - y2) < 1e-8)//РѕС‚СЂРµР·РѕРє РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Р№
 	{
-		if(abs(y1 - y0) < 1e-8)//отрезоки //
+		if(abs(y1 - y0) < 1e-8)//РѕС‚СЂРµР·РѕРєРё //
 			return false;
-		//ищем альфа
+		//РёС‰РµРј Р°Р»СЊС„Р°
 		float del = (y2 - y0)/(y1 - y0);		
 		if(del < 0.f || del > 1.f)
 			return false;
@@ -49,7 +49,7 @@ bool cross_segms(const __Vect& a, const __Vect &b,
 		if (pkx) 
 			*pkx = del;
 
-		//ищем бэтта
+		//РёС‰РµРј Р±СЌС‚С‚Р°
 		del = (x0 - x2 + (x1 - x0)*del)/ (x3 - x2);
 		if(del < 0.f || del > 1.f)
 			return false;
@@ -57,12 +57,12 @@ bool cross_segms(const __Vect& a, const __Vect &b,
 			*pky = del;
 		return true;
 	}
-	//делитель
+	//РґРµР»РёС‚РµР»СЊ
 	float del = y3-y2 - (y1-y0)*(x3-x2)/(x1-x0);
-	if(abs(del) < 1e-8)//отрезки параллельны
+	if(abs(del) < 1e-8)//РѕС‚СЂРµР·РєРё РїР°СЂР°Р»Р»РµР»СЊРЅС‹
 		return false;
 	
-	//ищем бэтта
+	//РёС‰РµРј Р±СЌС‚С‚Р°
 	del = (y0 - y2 + (y1 - y0)* (x2 - x0)/(x1 - x0))/del;
 	if(del < 0.f || del > 1.f)
 		return false;
@@ -70,7 +70,7 @@ bool cross_segms(const __Vect& a, const __Vect &b,
 	if (pky) 
 		*pky = del;
 	
-	//ищем альфа
+	//РёС‰РµРј Р°Р»СЊС„Р°
 	del = (x2 - x0 + (x3 - x2)*del)/(x1 - x0);
 	if(del < 0.f || del > 1.f)
 		return false;

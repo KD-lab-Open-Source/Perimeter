@@ -6,9 +6,9 @@
 	file path:	D:\PROJECTS\ShurasScriptEditor
 	file base:	custom_algorithm
 	file ext:	h
-	author:		Илюха
+	author:		РР»СЋС…Р°
 	
-	purpose:	Реализация своих алгоритмов
+	purpose:	Р РµР°Р»РёР·Р°С†РёСЏ СЃРІРѕРёС… Р°Р»РіРѕСЂРёС‚РјРѕРІ
 *********************************************************************/
 #include <utility>
 

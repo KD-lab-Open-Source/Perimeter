@@ -39,7 +39,7 @@ public:
 */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                                         ЧЕРВЯК
+//                                         Р§Р•Р Р’РЇРљ
 ///////////////////////////////////////////////////////////////////////////////////////////////
 class CWormOut {
 	short x_,y_;
@@ -71,7 +71,7 @@ struct CWormFormLib {
 		if(tgahead.loadHeader(tb)){
 			if((tgahead.PixelDepth!=8) || (tgahead.ImageType!=3)) {
 				ErrH.Abort("CWormFormLib TGA - not correct!");
-				//AfxMessageBox("Не поддерживаемый тип TGA (необходим монохромный не компрессованный)");
+				//AfxMessageBox("РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Р№ С‚РёРї TGA (РЅРµРѕР±С…РѕРґРёРј РјРѕРЅРѕС…СЂРѕРјРЅС‹Р№ РЅРµ РєРѕРјРїСЂРµСЃСЃРѕРІР°РЅРЅС‹Р№)");
 				return;
 			}
 			VBitMap1.create(tgahead.Width, tgahead.Height);
@@ -125,7 +125,7 @@ class CGeoWorm {
 	Vect3f tPosition;
 	float cDirection;
 	float cSpeed;
-	int xOld, yOld;//данные для step-а
+	int xOld, yOld;//РґР°РЅРЅС‹Рµ РґР»СЏ step-Р°
 	int counter;
 public:
 	CGeoWorm(int xBeg, int yBeg, int xTrgt=0, int yTrgt=0);
@@ -139,7 +139,7 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                                     ТРЕЩИНЫ(РАЗЛОМЫ)
+//                                     РўР Р•Р©РРќР«(Р РђР—Р›РћРњР«)
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 enum eReturnQuantResult{
@@ -149,9 +149,9 @@ enum eReturnQuantResult{
 };
 
 const int WidthOfBreak=20;
-const int DENSITY_NOISE=6; //один излом на 4-е точки
-const int LENGHT_TAIL=50; //Длинна хвоста(в сегментах)
-const int DELTA_WIDTH=(1<<11)+(1<<10);//Прибавляемая ширина к трещине (сдвигается на 16)
+const int DENSITY_NOISE=6; //РѕРґРёРЅ РёР·Р»РѕРј РЅР° 4-Рµ С‚РѕС‡РєРё
+const int LENGHT_TAIL=50; //Р”Р»РёРЅРЅР° С…РІРѕСЃС‚Р°(РІ СЃРµРіРјРµРЅС‚Р°С…)
+const int DELTA_WIDTH=(1<<11)+(1<<10);//РџСЂРёР±Р°РІР»СЏРµРјР°СЏ С€РёСЂРёРЅР° Рє С‚СЂРµС‰РёРЅРµ (СЃРґРІРёРіР°РµС‚СЃСЏ РЅР° 16)
 const int DELTA_H_BREAK_GEOBREAK=50;
 const int DELTA_H_STEP_BREAK_GEOBREAK=5;
 
@@ -161,7 +161,7 @@ struct elementGeoBreak {
 	int dx_step, dy_step;
 	float alpha;
 
-	static int unengagedID; //инициализируется в cpp
+	static int unengagedID; //РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РІ cpp
 	int ownerID;
 	int ID;
 	//int bLong;
@@ -174,10 +174,10 @@ struct elementGeoBreak {
 	unsigned char beginHeight;
 	unsigned char oldHeight;
 	elementGeoBreak(int _xbeg, int _ybeg, float _alpha, float _lenght, int _ownerID=0){//
-		//_ownerID=0 означает что нет родителей
+		//_ownerID=0 РѕР·РЅР°С‡Р°РµС‚ С‡С‚Рѕ РЅРµС‚ СЂРѕРґРёС‚РµР»РµР№
 		ID=unengagedID++;
 		ownerID=_ownerID;
-		if(_lenght<DENSITY_NOISE)_lenght=DENSITY_NOISE; //Минимальная длинна
+		if(_lenght<DENSITY_NOISE)_lenght=DENSITY_NOISE; //РњРёРЅРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅРЅР°
 
 		alpha=_alpha;
 		xend=xbeg=_xbeg; yend=ybeg=_ybeg;
@@ -187,7 +187,7 @@ struct elementGeoBreak {
 		numSections=round(_lenght/(float)DENSITY_NOISE);//bLong/DENSITY_NOISE;
 		dx_step=round(_lenght*cosf(alpha))*(1<<16)/numSections;//sx*(1<<16)/numSections;
 		dy_step=round(_lenght*sinf(alpha))*(1<<16)/numSections;//sy*(1<<16)/numSections;
-		xp=new int [numSections+1];//1 это начальная точка
+		xp=new int [numSections+1];//1 СЌС‚Рѕ РЅР°С‡Р°Р»СЊРЅР°СЏ С‚РѕС‡РєР°
 		yp=new int [numSections+1];
 		xp[0]=xbeg;
 		yp[0]=ybeg;
@@ -263,7 +263,7 @@ struct elementGeoBreak {
 
 	eReturnQuantResult quant(void){
 		headSection+=1;
-		if(headSection <= numSections){//Идет рост трещины
+		if(headSection <= numSections){//РРґРµС‚ СЂРѕСЃС‚ С‚СЂРµС‰РёРЅС‹
 			int x_recomend=xbeg+(dx_step*headSection>>16);
 			int y_recomend=ybeg+(dy_step*headSection>>16);
 
@@ -299,7 +299,7 @@ struct elementGeoBreak {
 			yend=yp[headSection]=y_cur>>16;
 			
 		}
-		// расширение трещины
+		// СЂР°СЃС€РёСЂРµРЅРёРµ С‚СЂРµС‰РёРЅС‹
 		int width=1<<16;
 		//int fl=0;
 		int endSection=headSection-LENGHT_TAIL;
@@ -329,9 +329,9 @@ const int MAX_LENGHT_ELEMENTGEOBREAK=100;
 const int MAX_BRANCHINGS_BREAKS=5;
 const float CORNER_DISPERSION_BREAKS=(float)(pi+pi/2);
 
-struct geoBreak1{ //точечный разлом
+struct geoBreak1{ //С‚РѕС‡РµС‡РЅС‹Р№ СЂР°Р·Р»РѕРј
 	list<elementGeoBreak*> elGB;
-	geoBreak1(int x, int y, int rad=MAX_LENGHT_ELEMENTGEOBREAK, int beginNumBreaks=0); //0-случайное кол-во
+	geoBreak1(int x, int y, int rad=MAX_LENGHT_ELEMENTGEOBREAK, int beginNumBreaks=0); //0-СЃР»СѓС‡Р°Р№РЅРѕРµ РєРѕР»-РІРѕ
 	list<elementGeoBreak*>::iterator delEementGeoBreak(list<elementGeoBreak*>::iterator pp);
 	int quant(void);
 };
@@ -357,7 +357,7 @@ struct singleGeoBreak {
 		sx=_sx; sy=_sy;
 
 		lenght=round(sqrtf((float)(sx*sx+sy*sy)));
-		//if(lenght<DENSITY_NOISE)lenght=DENSITY_NOISE; //Минимальная длинна
+		//if(lenght<DENSITY_NOISE)lenght=DENSITY_NOISE; //РњРёРЅРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅРЅР°
 
 		//alpha=_alpha;
 		xend=xbeg=_xbeg; yend=ybeg=_ybeg;
@@ -365,7 +365,7 @@ struct singleGeoBreak {
 		numSections=round(lenght/(float)DENSITY_NOISE);
 		dx_step=_sx*(1<<16)/numSections;//sx*(1<<16)/numSections;
 		dy_step=_sy*(1<<16)/numSections;//sy*(1<<16)/numSections;
-		xp=new int [numSections+1];//1 это начальная точка
+		xp=new int [numSections+1];//1 СЌС‚Рѕ РЅР°С‡Р°Р»СЊРЅР°СЏ С‚РѕС‡РєР°
 		yp=new int [numSections+1];
 		xp[0]=xbeg;
 		yp[0]=ybeg;
@@ -455,7 +455,7 @@ struct singleGeoBreak {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                                     ОПОЛЗЕНЬ
+//                                     РћРџРћР›Р—Р•РќР¬
 ///////////////////////////////////////////////////////////////////////////////////////////////
 struct srBmp{
 	int stpX, stpY;
@@ -528,7 +528,7 @@ struct CLandslip {
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
-//                              Пузырь и торпеда
+//                              РџСѓР·С‹СЂСЊ Рё С‚РѕСЂРїРµРґР°
 ///////////////////////////////////////////////////////////////////////////////////////
 struct sToolzDate{ 
 	sToolzDate(short _x, short _y, short _r) {
@@ -625,7 +625,7 @@ struct sTorpedo {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-//                                Разломы
+//                                Р Р°Р·Р»РѕРјС‹
 ///////////////////////////////////////////////////////////////////////////////////////////
 struct point4UP{
 	short x;
@@ -672,7 +672,7 @@ struct AETRecord {
 
 const int SUPOLIGONN_MAX_BASE_POINT=3;
 const int SUPOLIGONN_MAX_ADDING_POINT=20;
-const int SUPOLIGONN_ALL_POINT_IN_POLIGON=SUPOLIGONN_MAX_ADDING_POINT+2;//(2-это 3 минус 1)
+const int SUPOLIGONN_ALL_POINT_IN_POLIGON=SUPOLIGONN_MAX_ADDING_POINT+2;//(2-СЌС‚Рѕ 3 РјРёРЅСѓСЃ 1)
 struct sUPoligonN {
 	point4UP basePntArr[SUPOLIGONN_MAX_BASE_POINT];
 	point4UP addPntArr[SUPOLIGONN_MAX_ADDING_POINT];
@@ -681,7 +681,7 @@ struct sUPoligonN {
 	int nElAllPntArr;
 	int critPntArr[SUPOLIGONN_ALL_POINT_IN_POLIGON];
 	int nElCritPntArr;
-	AETRecord AET[SUPOLIGONN_ALL_POINT_IN_POLIGON]; //после отладки поменять на list
+	AETRecord AET[SUPOLIGONN_ALL_POINT_IN_POLIGON]; //РїРѕСЃР»Рµ РѕС‚Р»Р°РґРєРё РїРѕРјРµРЅСЏС‚СЊ РЅР° list
 	int nElAET;
 
 	int leftBorder, rightBorder;
@@ -757,7 +757,7 @@ struct sGeoSwelling {
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                   Появление моделей из земли
+//                   РџРѕСЏРІР»РµРЅРёРµ РјРѕРґРµР»РµР№ РёР· Р·РµРјР»Рё
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 struct faceM2VM{
@@ -947,7 +947,7 @@ struct s_Mesh2VMapDispather {
 extern s_Mesh2VMapDispather mesh2VMapDispather;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                   Муравей
+//                   РњСѓСЂР°РІРµР№
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 const int ANT_MAX_MESH2VMAPDATE=36;
@@ -1029,8 +1029,8 @@ public:
 
 	static c3DSGeoAction* Build(short xc, short yc, float orientation,
 		s3DSGeoParameter* command
-		//Для разных адресов command образуется разный кеш 
-		//Предполагается что это будет лежать в prm
+		//Р”Р»СЏ СЂР°Р·РЅС‹С… Р°РґСЂРµСЃРѕРІ command РѕР±СЂР°Р·СѓРµС‚СЃСЏ СЂР°Р·РЅС‹Р№ РєРµС€ 
+		//РџСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ С‡С‚Рѕ СЌС‚Рѕ Р±СѓРґРµС‚ Р»РµР¶Р°С‚СЊ РІ prm
 		);
 
 	static c3DSGeoActionCreator* instance();
@@ -1133,7 +1133,7 @@ struct s_HeadGeoAction {
 
 extern s_HeadGeoAction headGeoAction;
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                   Оса
+//                   РћСЃР°
 ///////////////////////////////////////////////////////////////////////////////////////////////
 const int WASP_QUANT_FOR_GEOBREAK=25;
 const int WASP_SHIFT_QUANT_FOR_GEOBREAK=5;

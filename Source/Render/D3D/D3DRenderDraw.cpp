@@ -116,9 +116,9 @@ void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,(D3DXMATRIX*)&pDrawNode->matView));
 	RDCALL(lpD3DDevice->SetViewport((D3DVIEWPORT9*)&pDrawNode->vp));
 	if(pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION)==0)
-		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);	// прямое изображение
+		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);	// РїСЂСЏРјРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
 	else
-		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CCW);	// отраженное изображение
+		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CCW);	// РѕС‚СЂР°Р¶РµРЅРЅРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
 }
 
 void cD3DRender::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
@@ -136,7 +136,7 @@ void cD3DRender::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 	}
 
 	if(Data->mat&MAT_RENDER_SPHEREMAP)
-	{ // сферический мапинг
+	{ // СЃС„РµСЂРёС‡РµСЃРєРёР№ РјР°РїРёРЅРі
 		D3DXMATRIX mat;
 		memset(mat,0,sizeof(mat));
 		mat._11=mat._22=mat._41=mat._42=0.5f;
@@ -230,10 +230,10 @@ inline int FromHex(char a)
 }
 
 /*
-	Синтаксис строки 
+	РЎРёРЅС‚Р°РєСЃРёСЃ СЃС‚СЂРѕРєРё 
 	string &FEAB89 string && fdsfsdgs
-	&FEAB89 - меняет цвет символа
-	&& - преобразуется к &
+	&FEAB89 - РјРµРЅСЏРµС‚ С†РІРµС‚ СЃРёРјРІРѕР»Р°
+	&& - РїСЂРµРѕР±СЂР°Р·СѓРµС‚СЃСЏ Рє &
 */
 /*
 void cD3DRender::ChangeTextColor(const char* &str,sColor4c& diffuse)
@@ -632,7 +632,7 @@ void cD3DRender::Draw(class cScene *Scene)
 		for(int j=0;j<pl.light.size();j++)
 		{
 			cUnkLight* ULight=pl.light[j];
-			//sColor4c Diffuse(255,255,255,255);//Непонятно почему была такая строчка
+			//sColor4c Diffuse(255,255,255,255);//РќРµРїРѕРЅСЏС‚РЅРѕ РїРѕС‡РµРјСѓ Р±С‹Р»Р° С‚Р°РєР°СЏ СЃС‚СЂРѕС‡РєР°
 			sColor4c Diffuse(ULight->GetDiffuse()); 
 			sVertexXYZDT1 *v=quad->Get();
 			Vect3f& p=ULight->GetPos();

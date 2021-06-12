@@ -26,14 +26,14 @@ class TreeNode : public ShareHandleBase
 {
 public:
 	enum EditType {
-		STATIC,		// Просто текст. Редактировать нельзя
-		EDIT,		// Просто текст. Редактировать можно
-		COMBO,		// Одно из значений из comboList(), разделенных |
-		COMBO_MULTI, // Несколько значений из comboList(), также разделенных |, может быть пусто
-		VECTOR,		 // value не меняется, но можно удалять и 
-					//	добавлять в список, инициализируя значением defaultTreeNode()
-		POLYMORPHIC, // Инициализировать defaultTreeNode(value from comboList())
-		CUSTOM,		// Вместо обычного редактирования вызывается customValue() для получения значения
+		STATIC,		// РџСЂРѕСЃС‚Рѕ С‚РµРєСЃС‚. Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РЅРµР»СЊР·СЏ
+		EDIT,		// РџСЂРѕСЃС‚Рѕ С‚РµРєСЃС‚. Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РјРѕР¶РЅРѕ
+		COMBO,		// РћРґРЅРѕ РёР· Р·РЅР°С‡РµРЅРёР№ РёР· comboList(), СЂР°Р·РґРµР»РµРЅРЅС‹С… |
+		COMBO_MULTI, // РќРµСЃРєРѕР»СЊРєРѕ Р·РЅР°С‡РµРЅРёР№ РёР· comboList(), С‚Р°РєР¶Рµ СЂР°Р·РґРµР»РµРЅРЅС‹С… |, РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚Рѕ
+		VECTOR,		 // value РЅРµ РјРµРЅСЏРµС‚СЃСЏ, РЅРѕ РјРѕР¶РЅРѕ СѓРґР°Р»СЏС‚СЊ Рё 
+					//	РґРѕР±Р°РІР»СЏС‚СЊ РІ СЃРїРёСЃРѕРє, РёРЅРёС†РёР°Р»РёР·РёСЂСѓСЏ Р·РЅР°С‡РµРЅРёРµРј defaultTreeNode()
+		POLYMORPHIC, // РРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ defaultTreeNode(value from comboList())
+		CUSTOM,		// Р’РјРµСЃС‚Рѕ РѕР±С‹С‡РЅРѕРіРѕ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РІС‹Р·С‹РІР°РµС‚СЃСЏ customValue() РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ Р·РЅР°С‡РµРЅРёСЏ
 	};
 
 	typedef const TreeNode* (*TreeNodeFunc)(int typeIndex);
@@ -142,7 +142,7 @@ public:
 	const string& value() const { return value_; }
 	void setValue(const char* value) { value_ = value; }
 
-	const std::string& type() const { return type_; } // Для проверки при копировании
+	const std::string& type() const { return type_; } // Р”Р»СЏ РїСЂРѕРІРµСЂРєРё РїСЂРё РєРѕРїРёСЂРѕРІР°РЅРёРё
 	void setType(const char* type) { type_ = type; }
 
 	EditType editType() const { return editType_; }
@@ -276,10 +276,10 @@ private:
 
 #ifndef _FINAL_VERSION_
 
-// Копирует дерево, возвращает указатель на статические данные, либо 0.
+// РљРѕРїРёСЂСѓРµС‚ РґРµСЂРµРІРѕ, РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚Р°С‚РёС‡РµСЃРєРёРµ РґР°РЅРЅС‹Рµ, Р»РёР±Рѕ 0.
 extern "C" DLL_API TreeNode const* treeControlEdit(const TreeNode* treeNode, 
 										 HWND hwnd, TreeControlSetup& treeControlSetup);
-// Очищает статические данные
+// РћС‡РёС‰Р°РµС‚ СЃС‚Р°С‚РёС‡РµСЃРєРёРµ РґР°РЅРЅС‹Рµ
 extern "C" DLL_API void treeControlFree(TreeNode const* );
 
 #ifndef _USRDLL

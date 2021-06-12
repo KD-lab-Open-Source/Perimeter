@@ -7,10 +7,10 @@ filename: 	D:\Projects\Quest\QuestEditor\file_enumerator.h
 file path:	D:\Projects\Quest\QuestEditor
 file base:	dfn_iterator
 file ext:	h
-author:		Илюха
+author:		РР»СЋС…Р°
 
-  purpose:	Итератор, который позволяет продвигаться
-  по каталогу с целью получения информации о файлах
+  purpose:	РС‚РµСЂР°С‚РѕСЂ, РєРѕС‚РѕСЂС‹Р№ РїРѕР·РІРѕР»СЏРµС‚ РїСЂРѕРґРІРёРіР°С‚СЊСЃСЏ
+  РїРѕ РєР°С‚Р°Р»РѕРіСѓ СЃ С†РµР»СЊСЋ РїРѕР»СѓС‡РµРЅРёСЏ РёРЅС„РѕСЂРјР°С†РёРё Рѕ С„Р°Р№Р»Р°С…
 *********************************************************************/
 //#include <iterator>
 #include <io.h>

@@ -53,7 +53,7 @@ static float gain(float a, float b)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-// Служебные функции
+// РЎР»СѓР¶РµР±РЅС‹Рµ С„СѓРЅРєС†РёРё
 float FRnd(void)
 {
 	return (float)XRnd(0xFFF)/(float)(0xFFF);//(float)(RAND_MAX+1);
@@ -72,18 +72,18 @@ static inline int GetAlt4G(int off){
 }
 
 static inline void PutAlt4G(int h, int off, int oldV){
-	if(vMap.VxDBuf[off]==0) { //был гео слой
+	if(vMap.VxDBuf[off]==0) { //Р±С‹Р» РіРµРѕ СЃР»РѕР№
 		vMap.VxGBuf[off]=h>>VX_FRACTION;
 		vMap.AtrBuf[off]=(h&VX_FRACTION_MASK) | (vMap.AtrBuf[off]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 	}
-	else {//был дам слой
-		if( (oldV>h) && ((h>>VX_FRACTION) < vMap.VxGBuf[off] ) ){//выступил гео
-			//vMap.VxDBuf[off]=0;//Уменьшение гео сразу не предусмотрено
+	else {//Р±С‹Р» РґР°Рј СЃР»РѕР№
+		if( (oldV>h) && ((h>>VX_FRACTION) < vMap.VxGBuf[off] ) ){//РІС‹СЃС‚СѓРїРёР» РіРµРѕ
+			//vMap.VxDBuf[off]=0;//РЈРјРµРЅСЊС€РµРЅРёРµ РіРµРѕ СЃСЂР°Р·Сѓ РЅРµ РїСЂРµРґСѓСЃРјРѕС‚СЂРµРЅРѕ
 			//vMap.SetTer(off, f3d.calc(off& vMap.clip_mask_x, off>>vMap.H_SIZE_POWER, vMap.VxGBuf[off]));
 			vMap.VxGBuf[off]=vMap.VxDBuf[off]=h>>VX_FRACTION;
 			vMap.AtrBuf[off]=(h&VX_FRACTION_MASK) | (vMap.AtrBuf[off]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 		}
-		else { //Dam остался
+		else { //Dam РѕСЃС‚Р°Р»СЃСЏ
 			vMap.VxDBuf[off]=h>>VX_FRACTION;
 			vMap.AtrBuf[off]=(h&VX_FRACTION_MASK) | (vMap.AtrBuf[off]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 		}
@@ -91,11 +91,11 @@ static inline void PutAlt4G(int h, int off, int oldV){
 }
 
 static inline void SPutAlt4G(int off, int h){
-	if(vMap.VxDBuf[off]==0) { //был гео слой
+	if(vMap.VxDBuf[off]==0) { //Р±С‹Р» РіРµРѕ СЃР»РѕР№
 		vMap.VxGBuf[off]=h>>VX_FRACTION;
 		vMap.AtrBuf[off]=(h&VX_FRACTION_MASK) | (vMap.AtrBuf[off]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 	}
-	else {//был дам слой
+	else {//Р±С‹Р» РґР°Рј СЃР»РѕР№
 		vMap.VxDBuf[off]=h>>VX_FRACTION;
 		vMap.AtrBuf[off]=(h&VX_FRACTION_MASK) | (vMap.AtrBuf[off]& (~(VX_FRACTION_MASK|At_NOTPURESURFACE)));
 	}
@@ -174,7 +174,7 @@ extern float noise2(float vec[2]);
 
 const int rad =64;//64;//128;//256;//32;
 const unsigned int kmGG=0;
-const int XYGG_SIZE05=rad>>kmGG;// половина
+const int XYGG_SIZE05=rad>>kmGG;// РїРѕР»РѕРІРёРЅР°
 const int XYGG_SIZE=XYGG_SIZE05<<1; // 
 const unsigned int clip_mask_GG=XYGG_SIZE-1;
 int GeoGrid[XYGG_SIZE][XYGG_SIZE];
@@ -189,7 +189,7 @@ void geoInfluence(int x,int y)
 
 	static char flag_first=0;
 	flag_first=0;
-	if(flag_first==0){//инициализация
+	if(flag_first==0){//РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
 		flag_first=1;
 		for(i=0; i<XYGG_SIZE; i++){
 			float y=(float)(i-XYGG_SIZE05)/(float)XYGG_SIZE05;
@@ -248,7 +248,7 @@ extern double noise1(double arg);
 		}
 		count+=i;
 */
-		//Гаусс размывка
+		//Р“Р°СѓСЃСЃ СЂР°Р·РјС‹РІРєР°
 		//gaussFilter(&GeoGrid[0][0], 800.0, XYGG_SIZE);
 		
 	}
@@ -419,7 +419,7 @@ CGeoInfluence::CGeoInfluence(int _x, int _y, int _sx, int _sy)
 	if((vmax-vmin)>DELTA_NOT_DEEP) h_begin=vmin;
 	else h_begin=vmin-BEGIN_DEEP;
 
-	//Придание уникальности каждой горе - для полной поддержки надо ввести в класс noise3 и необходимые ему данные
+	//РџСЂРёРґР°РЅРёРµ СѓРЅРёРєР°Р»СЊРЅРѕСЃС‚Рё РєР°Р¶РґРѕР№ РіРѕСЂРµ - РґР»СЏ РїРѕР»РЅРѕР№ РїРѕРґРґРµСЂР¶РєРё РЅР°РґРѕ РІРІРµСЃС‚Рё РІ РєР»Р°СЃСЃ noise3 Рё РЅРµРѕР±С…РѕРґРёРјС‹Рµ РµРјСѓ РґР°РЅРЅС‹Рµ
 	///static rndVal=0;
 	///rndVal=rand();
 	///pnintInit(rndVal);
@@ -505,12 +505,12 @@ int CGeoInfluence::quant(int deltaTime)
 
 			V+=h_begin;
 
-/*			if(tmpltSur[cnt]&0x1){ //если порода прорезалась
+/*			if(tmpltSur[cnt]&0x1){ //РµСЃР»Рё РїРѕСЂРѕРґР° РїСЂРѕСЂРµР·Р°Р»Р°СЃСЊ
 				vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
 				vMap.SurBuf[offset]=vMap.GetGeoType(offset,V);
 			}
-			else { //если порода не прорезалась
+			else { //РµСЃР»Рё РїРѕСЂРѕРґР° РЅРµ РїСЂРѕСЂРµР·Р°Р»Р°СЃСЊ
 				int Vold =vMap.VxGBuf[offset]<<VX_FRACTION; ///
 				//Vold+=vMap.AtrBuf[offset]&VX_FRACTION_MASK; ///
 				if(V>Vold){//=
@@ -525,7 +525,7 @@ int CGeoInfluence::quant(int deltaTime)
 			if(fl==0){
 				fl=1;
 				for(int m=0; m<256; m++){
-					float x=(float)m/128;//Диапазон от 0 до 2
+					float x=(float)m/128;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 2
 					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
 				}
 
@@ -549,14 +549,14 @@ int CGeoInfluence::quant(int deltaTime)
 				}
 			}
 
-			//для нормальной границы при  разрушении зеропласта
+			//РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№ РіСЂР°РЅРёС†С‹ РїСЂРё  СЂР°Р·СЂСѓС€РµРЅРёРё Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
@@ -573,7 +573,7 @@ int CGeoInfluence::quant(int deltaTime)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                                         ЧЕРВЯК
+//                                         Р§Р•Р Р’РЇРљ
 ///////////////////////////////////////////////////////////////////////////////////////////////
 const unsigned int CWORMOUT_SX=30;
 const unsigned int CWORMOUT_SY=30;
@@ -589,7 +589,7 @@ CWormOut::CWormOut(int _x, int _y)
 	inVx=new unsigned short[sx_*sy_];
 	tmpltVx=new int[sx_*sy_];
 
-	//подготовка подложки
+	//РїРѕРґРіРѕС‚РѕРІРєР° РїРѕРґР»РѕР¶РєРё
 	int i,j,cnt=0;
 	float sy05=sy_/2.0f;
 	float sx05=sx_/2.0f;
@@ -691,7 +691,7 @@ bool CWormOut::quant()
 			if(fl==0){
 				fl=1;
 				for(int m=0; m<256; m++){
-					float x=(float)m/128;//Диапазон от 0 до 2
+					float x=(float)m/128;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 2
 					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
 				}
 
@@ -713,14 +713,14 @@ bool CWormOut::quant()
 				V=Vold;
 			}
 
-			//для нормальной границы при  разрушении зеропласта
+			//РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№ РіСЂР°РЅРёС†С‹ РїСЂРё  СЂР°Р·СЂСѓС€РµРЅРёРё Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
@@ -794,7 +794,7 @@ struct CWormForm {
 		if(tgahead.loadHeader(tb)){
 			if((tgahead.PixelDepth!=8) || (tgahead.ImageType!=3)) {
 				ErrH.Abort("FormWorms TGA - not correct!");
-				//AfxMessageBox("Не поддерживаемый тип TGA (необходим монохромный не компрессованный)");
+				//AfxMessageBox("РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Р№ С‚РёРї TGA (РЅРµРѕР±С…РѕРґРёРј РјРѕРЅРѕС…СЂРѕРјРЅС‹Р№ РЅРµ РєРѕРјРїСЂРµСЃСЃРѕРІР°РЅРЅС‹Р№)");
 				return;
 			}
 			VBitMap.create(tgahead.Width, tgahead.Height);
@@ -847,7 +847,7 @@ void worms(int x, int y)
 	static char flag_first=0;
 	int i,j;
 
-	//Определение координат перекрытия с предыдущим кадром
+	//РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ РїРµСЂРµРєСЂС‹С‚РёСЏ СЃ РїСЂРµРґС‹РґСѓС‰РёРј РєР°РґСЂРѕРј
 	int XL0=xold, XR0=xold+WSXSY, YT0=yold, YD0=yold+WSXSY;
 	int XL1=x,    XR1=x+WSXSY,    YT1=y,    YD1=y+WSXSY;
 
@@ -864,12 +864,12 @@ void worms(int x, int y)
 	if(fl==0){
 		fl=1;
 		for(int m=0; m<256; m++){
-			float x=(float)m/256;//Диапазон от 0 до 1
+			float x=(float)m/256;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 1
 			k_dh[m]=(0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16);//(1.2+0.05*sin(2*tan(x*50)))
 		}
 	}
 
-	if(flag_first==0){//инициализация
+	if(flag_first==0){//РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
 		flag_first=1;
 //		for(i=0; i<WSXSY; i++){
 //			float y=(float)(i-WSXSY05)/(float)WSXSY05;
@@ -906,7 +906,7 @@ void worms(int x, int y)
 				}
 				else {
 					//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-					//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+					//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 					//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 					PutAlt4G(V, offset, Vold);
 				}
@@ -939,34 +939,34 @@ void worms(int x, int y)
 			bForm0 == backupFormWorms0;
 			bForm1 == backupFormWorms1;
 		}*/
-		//ПРоверка на перекрывание области не нужна т.к. они всегда должны перекрываться
+		//РџР РѕРІРµСЂРєР° РЅР° РїРµСЂРµРєСЂС‹РІР°РЅРёРµ РѕР±Р»Р°СЃС‚Рё РЅРµ РЅСѓР¶РЅР° С‚.Рє. РѕРЅРё РІСЃРµРіРґР° РґРѕР»Р¶РЅС‹ РїРµСЂРµРєСЂС‹РІР°С‚СЊСЃСЏ
 
 		B0xL=XL0; B0xR=XR0;
 		B1xL=XL1; B1xR=XR1;
-		//определение Y координат базовых блоков
-		if(YT0 <= YT1){ // 0 блок выше
+		//РѕРїСЂРµРґРµР»РµРЅРёРµ Y РєРѕРѕСЂРґРёРЅР°С‚ Р±Р°Р·РѕРІС‹С… Р±Р»РѕРєРѕРІ
+		if(YT0 <= YT1){ // 0 Р±Р»РѕРє РІС‹С€Рµ
 			if(YD0 < YT1) goto loc_notOverlapped;
 			B0yT=YT0; B0yD=YT1;
 			B1yT=YD0; B1yD=YD1;
 			E1yT=E0yT=PAyT=YT1; E1yD=E0yD=PAyD=YD0;
 			ChangeAreaYT=YT1; ChangeAreaYD=YD0;
 		}
-		else { // YT1 < YT0 // 1 блок выше
+		else { // YT1 < YT0 // 1 Р±Р»РѕРє РІС‹С€Рµ
 			if(YD1 < YT0) goto loc_notOverlapped;
 			B1yT=YT1; B1yD=YT0;
 			B0yT=YD1; B0yD=YD0;
 			E1yT=E0yT=PAyT=YT0; E1yD=E0yD=PAyD=YD1;
 			ChangeAreaYT=YT0; ChangeAreaYD=YD1;
 		}
-		//Определение X координат экстендед блоков
-		if(XL0 <= XL1){ //0 блок левее
+		//РћРїСЂРµРґРµР»РµРЅРёРµ X РєРѕРѕСЂРґРёРЅР°С‚ СЌРєСЃС‚РµРЅРґРµРґ Р±Р»РѕРєРѕРІ
+		if(XL0 <= XL1){ //0 Р±Р»РѕРє Р»РµРІРµРµ
 			if(XR0 < XL1) goto loc_notOverlapped;
 			E0xL=XL0; E0xR=XL1;
 			PAxL=XL1; PAxR=XR0;
 			E1xL=XR0; E1xR=XR1;
 			ChangeAreaXL=XL0; ChangeAreaXR=XR1;
 		}
-		else{ // XL1 < XL0 // 1 блок левее
+		else{ // XL1 < XL0 // 1 Р±Р»РѕРє Р»РµРІРµРµ
 			if(XR1 < XL0) goto loc_notOverlapped;
 			E1xL=XL1; E1xR=XL0;
 			PAxL=XL0; PAxR=XR1;
@@ -988,7 +988,7 @@ void worms(int x, int y)
 
 
 	int dh;
-	//Для области PA идет падение и одновременно поднятие грунта
+	//Р”Р»СЏ РѕР±Р»Р°СЃС‚Рё PA РёРґРµС‚ РїР°РґРµРЅРёРµ Рё РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ РїРѕРґРЅСЏС‚РёРµ РіСЂСѓРЅС‚Р°
 	for(i = PAyT; i < PAyD; i++){
 		for(j = PAxL; j < PAxR; j++) {
 			int offset=vMap.offsetBuf((j) & vMap.clip_mask_x, (i) & vMap.clip_mask_y);
@@ -1012,7 +1012,7 @@ void worms(int x, int y)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1020,7 +1020,7 @@ void worms(int x, int y)
 		}
 	}
 
-	//Для областей B0 и Е0 идет падение(осыпание) грунта
+	//Р”Р»СЏ РѕР±Р»Р°СЃС‚РµР№ B0 Рё Р•0 РёРґРµС‚ РїР°РґРµРЅРёРµ(РѕСЃС‹РїР°РЅРёРµ) РіСЂСѓРЅС‚Р°
 	for(i = B0yT; i < B0yD; i++){
 		for(j = B0xL; j < B0xR; j++) {
 			int offset=vMap.offsetBuf((j) & vMap.clip_mask_x, (i) & vMap.clip_mask_y);
@@ -1041,7 +1041,7 @@ void worms(int x, int y)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1068,14 +1068,14 @@ void worms(int x, int y)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
 		}
 	}
 
-	//Для областей B1 и Е1 идет выпячивание грунта грунта
+	//Р”Р»СЏ РѕР±Р»Р°СЃС‚РµР№ B1 Рё Р•1 РёРґРµС‚ РІС‹РїСЏС‡РёРІР°РЅРёРµ РіСЂСѓРЅС‚Р° РіСЂСѓРЅС‚Р°
 	for(i = B1yT; i < B1yD; i++){
 		for(j = B1xL; j < B1xR; j++) {
 			int offset=vMap.offsetBuf((j) & vMap.clip_mask_x, (i) & vMap.clip_mask_y);
@@ -1096,7 +1096,7 @@ void worms(int x, int y)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1122,7 +1122,7 @@ void worms(int x, int y)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1193,7 +1193,7 @@ void CGeoWorm::step(int x, int y, float angle)
 {
 	int i,j;
 
-	//Определение координат перекрытия с предыдущим кадром
+	//РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ РїРµСЂРµРєСЂС‹С‚РёСЏ СЃ РїСЂРµРґС‹РґСѓС‰РёРј РєР°РґСЂРѕРј
 	int XL0=xOld, XR0=xOld+WSXSY, YT0=yOld, YD0=yOld+WSXSY;
 	int XL1=x,    XR1=x+WSXSY,    YT1=y,    YD1=y+WSXSY;
 
@@ -1212,12 +1212,12 @@ void CGeoWorm::step(int x, int y, float angle)
 	if(fl==0){
 		fl=1;
 		for(int m=0; m<256; m++){
-			float x=(float)m/256;//Диапазон от 0 до 1
+			float x=(float)m/256;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 1
 			k_dh[m]=round( (0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16) );//(1.2+0.05*sin(2*tan(x*50)))
 		}
 	}
 
-	if(counter==0){//инициализация
+	if(counter==0){//РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
 //		for(i=0; i<WSXSY; i++){
 //			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 //			for(j=0; j<WSXSY; j++){
@@ -1253,7 +1253,7 @@ void CGeoWorm::step(int x, int y, float angle)
 				}
 				else {
 					//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-					//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+					//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 					//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 					PutAlt4G(V, offset, Vold);
 				}
@@ -1286,34 +1286,34 @@ void CGeoWorm::step(int x, int y, float angle)
 			bForm0 == backupFormWorms0;
 			bForm1 == backupFormWorms1;
 		}*/
-		//ПРоверка на перекрывание области не нужна т.к. они всегда должны перекрываться
+		//РџР РѕРІРµСЂРєР° РЅР° РїРµСЂРµРєСЂС‹РІР°РЅРёРµ РѕР±Р»Р°СЃС‚Рё РЅРµ РЅСѓР¶РЅР° С‚.Рє. РѕРЅРё РІСЃРµРіРґР° РґРѕР»Р¶РЅС‹ РїРµСЂРµРєСЂС‹РІР°С‚СЊСЃСЏ
 
 		B0xL=XL0; B0xR=XR0;
 		B1xL=XL1; B1xR=XR1;
-		//определение Y координат базовых блоков
-		if(YT0 <= YT1){ // 0 блок выше
+		//РѕРїСЂРµРґРµР»РµРЅРёРµ Y РєРѕРѕСЂРґРёРЅР°С‚ Р±Р°Р·РѕРІС‹С… Р±Р»РѕРєРѕРІ
+		if(YT0 <= YT1){ // 0 Р±Р»РѕРє РІС‹С€Рµ
 			if(YD0 < YT1) goto loc_notOverlapped;
 			B0yT=YT0; B0yD=YT1;
 			B1yT=YD0; B1yD=YD1;
 			E1yT=E0yT=PAyT=YT1; E1yD=E0yD=PAyD=YD0;
 			ChangeAreaYT=YT1; ChangeAreaYD=YD0;
 		}
-		else { // YT1 < YT0 // 1 блок выше
+		else { // YT1 < YT0 // 1 Р±Р»РѕРє РІС‹С€Рµ
 			if(YD1 < YT0) goto loc_notOverlapped;
 			B1yT=YT1; B1yD=YT0;
 			B0yT=YD1; B0yD=YD0;
 			E1yT=E0yT=PAyT=YT0; E1yD=E0yD=PAyD=YD1;
 			ChangeAreaYT=YT0; ChangeAreaYD=YD1;
 		}
-		//Определение X координат экстендед блоков
-		if(XL0 <= XL1){ //0 блок левее
+		//РћРїСЂРµРґРµР»РµРЅРёРµ X РєРѕРѕСЂРґРёРЅР°С‚ СЌРєСЃС‚РµРЅРґРµРґ Р±Р»РѕРєРѕРІ
+		if(XL0 <= XL1){ //0 Р±Р»РѕРє Р»РµРІРµРµ
 			if(XR0 < XL1) goto loc_notOverlapped;
 			E0xL=XL0; E0xR=XL1;
 			PAxL=XL1; PAxR=XR0;
 			E1xL=XR0; E1xR=XR1;
 			ChangeAreaXL=XL0; ChangeAreaXR=XR1;
 		}
-		else{ // XL1 < XL0 // 1 блок левее
+		else{ // XL1 < XL0 // 1 Р±Р»РѕРє Р»РµРІРµРµ
 			if(XR1 < XL0) goto loc_notOverlapped;
 			E1xL=XL1; E1xR=XL0;
 			PAxL=XL0; PAxR=XR1;
@@ -1335,7 +1335,7 @@ void CGeoWorm::step(int x, int y, float angle)
 
 
 	int dh;
-	//Для области PA идет падение и одновременно поднятие грунта
+	//Р”Р»СЏ РѕР±Р»Р°СЃС‚Рё PA РёРґРµС‚ РїР°РґРµРЅРёРµ Рё РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ РїРѕРґРЅСЏС‚РёРµ РіСЂСѓРЅС‚Р°
 	for(i = PAyT; i < PAyD; i++){
 		for(j = PAxL; j < PAxR; j++) {
 			int offset=vMap.offsetBuf((j) & vMap.clip_mask_x, (i) & vMap.clip_mask_y);
@@ -1344,7 +1344,7 @@ void CGeoWorm::step(int x, int y, float angle)
 			int V, Vold;
 			Vold=V=GetAlt4G(offset);
 			dh=(*FormWormsOld)[i-yOld][j-xOld]-(*FormWormsNew)[i-y][j-x];
-			int idx=(V-minV)>>3; if(idx>255)idx=255; if(idx<0)idx=0;// <0-не обязательно
+			int idx=(V-minV)>>3; if(idx>255)idx=255; if(idx<0)idx=0;// <0-РЅРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ
 			if(dh>0) V-=(dh>>6)*k_dh[idx]>>16; //7
 			else V+=((-dh)>>7)*k_dh[idx]>>16; //8
 
@@ -1359,7 +1359,7 @@ void CGeoWorm::step(int x, int y, float angle)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1367,7 +1367,7 @@ void CGeoWorm::step(int x, int y, float angle)
 		}
 	}
 
-	//Для областей B0 и Е0 идет падение(осыпание) грунта
+	//Р”Р»СЏ РѕР±Р»Р°СЃС‚РµР№ B0 Рё Р•0 РёРґРµС‚ РїР°РґРµРЅРёРµ(РѕСЃС‹РїР°РЅРёРµ) РіСЂСѓРЅС‚Р°
 	for(i = B0yT; i < B0yD; i++){
 		for(j = B0xL; j < B0xR; j++) {
 			int offset=vMap.offsetBuf((j) & vMap.clip_mask_x, (i) & vMap.clip_mask_y);
@@ -1388,7 +1388,7 @@ void CGeoWorm::step(int x, int y, float angle)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1415,14 +1415,14 @@ void CGeoWorm::step(int x, int y, float angle)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
 		}
 	}
 
-	//Для областей B1 и Е1 идет выпячивание грунта грунта
+	//Р”Р»СЏ РѕР±Р»Р°СЃС‚РµР№ B1 Рё Р•1 РёРґРµС‚ РІС‹РїСЏС‡РёРІР°РЅРёРµ РіСЂСѓРЅС‚Р° РіСЂСѓРЅС‚Р°
 	for(i = B1yT; i < B1yD; i++){
 		for(j = B1xL; j < B1xR; j++) {
 			int offset=vMap.offsetBuf((j) & vMap.clip_mask_x, (i) & vMap.clip_mask_y);
@@ -1443,7 +1443,7 @@ void CGeoWorm::step(int x, int y, float angle)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1469,7 +1469,7 @@ void CGeoWorm::step(int x, int y, float angle)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -1490,13 +1490,13 @@ loc_notOverlapped: ;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                                     ТРЕЩИНЫ(РАЗЛОМЫ)
+//                                     РўР Р•Р©РРќР«(Р РђР—Р›РћРњР«)
 ///////////////////////////////////////////////////////////////////////////////////////////////
-int elementGeoBreak::unengagedID=0; //Инициализация уникального ида элемента трещины для поиска родителей при завершении
+int elementGeoBreak::unengagedID=0; //РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СѓРЅРёРєР°Р»СЊРЅРѕРіРѕ РёРґР° СЌР»РµРјРµРЅС‚Р° С‚СЂРµС‰РёРЅС‹ РґР»СЏ РїРѕРёСЃРєР° СЂРѕРґРёС‚РµР»РµР№ РїСЂРё Р·Р°РІРµСЂС€РµРЅРёРё
 
-geoBreak1::geoBreak1(int x, int y, int rad, int beginNumBreaks){ //0-случайное кол-во
-	elGB.erase(elGB.begin(), elGB.end());//очистка списка элементов трещин
-	if(beginNumBreaks==0) beginNumBreaks=2+XRnd(MAX_BEGIN_BREAKS-2);//Диапазон от 2 до MAX_BEGIN_BREAKS
+geoBreak1::geoBreak1(int x, int y, int rad, int beginNumBreaks){ //0-СЃР»СѓС‡Р°Р№РЅРѕРµ РєРѕР»-РІРѕ
+	elGB.erase(elGB.begin(), elGB.end());//РѕС‡РёСЃС‚РєР° СЃРїРёСЃРєР° СЌР»РµРјРµРЅС‚РѕРІ С‚СЂРµС‰РёРЅ
+	if(beginNumBreaks==0) beginNumBreaks=2+XRnd(MAX_BEGIN_BREAKS-2);//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 2 РґРѕ MAX_BEGIN_BREAKS
 
 	float range_corner=2*pi/((float)beginNumBreaks);
 	float begin_corner=0;
@@ -1536,7 +1536,7 @@ int geoBreak1::quant(void){
 		if(result==HEAD_IN_FINAL_POINT) {
 			//int branhings=1+XRnd(MAX_BRANCHINGS_BREAKS);
 			//for(int i=0; i<branhings; i++)
-			//выбор количества разломо(такой способ используется для того что-бы MAX_BRANCHINGS_BREAKS выбор был наименее вероятен)
+			//РІС‹Р±РѕСЂ РєРѕР»РёС‡РµСЃС‚РІР° СЂР°Р·Р»РѕРјРѕ(С‚Р°РєРѕР№ СЃРїРѕСЃРѕР± РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ С‚РѕРіРѕ С‡С‚Рѕ-Р±С‹ MAX_BRANCHINGS_BREAKS РІС‹Р±РѕСЂ Р±С‹Р» РЅР°РёРјРµРЅРµРµ РІРµСЂРѕСЏС‚РµРЅ)
 			int branchings;
 			for(branchings=0; branchings<MAX_BRANCHINGS_BREAKS; branchings++) if(XRnd(2)==0) break;
 			if(branchings==0){
@@ -1559,7 +1559,7 @@ int geoBreak1::quant(void){
 			//	pp=delEementGeoBreak(pp);
 			//}
 		}
-		else if(result==END_QUANT) { //Удаление элемента трещины
+		else if(result==END_QUANT) { //РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° С‚СЂРµС‰РёРЅС‹
 				//delete (*pp);
 				//pp=elGB.erase(pp);
 				pp=delEementGeoBreak(pp);
@@ -1735,7 +1735,7 @@ eReturnQuantResult singleGeoBreak::quant(void)
 {
 	headSection+=1;
 	static int beg_offfsety=0;
-	if(headSection <= numSections){//Идет рост трещины
+	if(headSection <= numSections){//РРґРµС‚ СЂРѕСЃС‚ С‚СЂРµС‰РёРЅС‹
 		const float dispersionAngle=40.f*M_PI/180.f;
 		const float dispersionAngle05=dispersionAngle/2.f;
 		const float dispersionAngle025=dispersionAngle/4.f;
@@ -1774,7 +1774,7 @@ eReturnQuantResult singleGeoBreak::quant(void)
 		
 	}
 
-	// расширение трещины
+	// СЂР°СЃС€РёСЂРµРЅРёРµ С‚СЂРµС‰РёРЅС‹
 	int width=1<<16;
 	//int fl=0;
 	int endSection=headSection-LENGHT_TAIL;
@@ -1948,15 +1948,15 @@ static void gaussFilter4LS(int begx, int begy,  int x_size, int y_size, short * 
 
 static const int DELTA_BREAKAWAY=9;
 static const int DELTA_BREAKAWAY2=9;
-static const int DEEP_SCAN_BREAKAWAY=10;// в единицах сетки 4x4
+static const int DEEP_SCAN_BREAKAWAY=10;// РІ РµРґРёРЅРёС†Р°С… СЃРµС‚РєРё 4x4
 static const int MIN_DELTAH_LANDSLIP=16;
 struct mP{
 	short x,y;
 };
 static const int COUNT_DIRECT_TSTBRK=8;
-static const mP SDir[COUNT_DIRECT_TSTBRK]={+1,0, +1,-1, 0,-1, -1,-1, -1,0, -1,+1, 0,+1, +1,+1}; //восемь направлений против часовой стрелки
-static const int KDir[COUNT_DIRECT_TSTBRK]={1<<16,0xB505,1<<16,0xB505,1<<16,0xB505,1<<16,0xB505};//B505 это коэф. 0.707
-//возвращает направление (0-7)или -1
+static const mP SDir[COUNT_DIRECT_TSTBRK]={+1,0, +1,-1, 0,-1, -1,-1, -1,0, -1,+1, 0,+1, +1,+1}; //РІРѕСЃРµРјСЊ РЅР°РїСЂР°РІР»РµРЅРёР№ РїСЂРѕС‚РёРІ С‡Р°СЃРѕРІРѕР№ СЃС‚СЂРµР»РєРё
+static const int KDir[COUNT_DIRECT_TSTBRK]={1<<16,0xB505,1<<16,0xB505,1<<16,0xB505,1<<16,0xB505};//B505 СЌС‚Рѕ РєРѕСЌС„. 0.707
+//РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°РїСЂР°РІР»РµРЅРёРµ (0-7)РёР»Рё -1
 CLandslip* testBreakaway(int xg, int yg, int radLS)
 {
 	int i;
@@ -1969,8 +1969,8 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 		if( cMaxDH > maxDH) { maxDH=cMaxDH; maxDir=i; }
 	}
 	if(maxDH < DELTA_BREAKAWAY) return NULL;
-	//сканирование по направлению с ограничением конусом на 90 градусов
-	unsigned char begDir=maxDir;//сохранение первоначального направления для обратного скана
+	//СЃРєР°РЅРёСЂРѕРІР°РЅРёРµ РїРѕ РЅР°РїСЂР°РІР»РµРЅРёСЋ СЃ РѕРіСЂР°РЅРёС‡РµРЅРёРµРј РєРѕРЅСѓСЃРѕРј РЅР° 90 РіСЂР°РґСѓСЃРѕРІ
+	unsigned char begDir=maxDir;//СЃРѕС…СЂР°РЅРµРЅРёРµ РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅРѕРіРѕ РЅР°РїСЂР°РІР»РµРЅРёСЏ РґР»СЏ РѕР±СЂР°С‚РЅРѕРіРѕ СЃРєР°РЅР°
 	short curH=startH;
 	short DH=curH-vMap.GVBuf[vMap.offsetGBufC(xg+SDir[maxDir].x, yg+SDir[maxDir].y)];
 	//char signDH;
@@ -1986,7 +1986,7 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 			unsigned char d=(direct+k)%COUNT_DIRECT_TSTBRK;
 			short dh=curH-vMap.GVBuf[vMap.offsetGBufC(curX+SDir[d].x, curY+SDir[d].y)];
 			dh=(int)dh*KDir[d]>>16;
-			if(DH>0){ if(dh>maxDH) { maxDH=dh; maxDir=d;} } //можно с оптимизить разложив на на 2 цикла
+			if(DH>0){ if(dh>maxDH) { maxDH=dh; maxDir=d;} } //РјРѕР¶РЅРѕ СЃ РѕРїС‚РёРјРёР·РёС‚СЊ СЂР°Р·Р»РѕР¶РёРІ РЅР° РЅР° 2 С†РёРєР»Р°
 			else { if(dh<maxDH) { maxDH=dh; maxDir=d;} }
 		}
 		if(abs(maxDH) < DELTA_BREAKAWAY2) break;
@@ -1996,8 +1996,8 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 	}
 	int begLSX=vMap.XCYCLG(curX);
 	int begLSY=vMap.YCYCLG(curY);
-	//сканирование в обратном направлении с ограничением по конусу на 90 градусов
-	maxDir=(begDir+COUNT_DIRECT_TSTBRK/2)%COUNT_DIRECT_TSTBRK;//поворот на 90
+	//СЃРєР°РЅРёСЂРѕРІР°РЅРёРµ РІ РѕР±СЂР°С‚РЅРѕРј РЅР°РїСЂР°РІР»РµРЅРёРё СЃ РѕРіСЂР°РЅРёС‡РµРЅРёРµРј РїРѕ РєРѕРЅСѓСЃСѓ РЅР° 90 РіСЂР°РґСѓСЃРѕРІ
+	maxDir=(begDir+COUNT_DIRECT_TSTBRK/2)%COUNT_DIRECT_TSTBRK;//РїРѕРІРѕСЂРѕС‚ РЅР° 90
 	curX=xg;
 	curY=yg;
 	direct=maxDir;
@@ -2009,7 +2009,7 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 			unsigned char d=(direct+k)%COUNT_DIRECT_TSTBRK;
 			short dh=curH-vMap.GVBuf[vMap.offsetGBufC(curX+SDir[d].x, curY+SDir[d].y)];
 			dh=(int)dh*KDir[d]>>16;
-			if(DH>0){ if(dh>maxDH) {maxDH=dh; maxDir=d;} } //можно с оптимизить разложив на на 2 цикла
+			if(DH>0){ if(dh>maxDH) {maxDH=dh; maxDir=d;} } //РјРѕР¶РЅРѕ СЃ РѕРїС‚РёРјРёР·РёС‚СЊ СЂР°Р·Р»РѕР¶РёРІ РЅР° РЅР° 2 С†РёРєР»Р°
 			else { if(dh<maxDH) {maxDH=dh; maxDir=d;} }
 		}
 		if(abs(maxDH) < DELTA_BREAKAWAY2) break;
@@ -2023,11 +2023,11 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 	short begH=vMap.GVBuf[vMap.offsetGBuf(begLSX, begLSY)];
 	if(abs(endH-begH)<MIN_DELTAH_LANDSLIP) return NULL;
 	CLandslip* lsp;
-	if(begH>endH){ //обвал идет с beg point
+	if(begH>endH){ //РѕР±РІР°Р» РёРґРµС‚ СЃ beg point
 		float al=atan2f( endLSY-begLSY, endLSX-begLSX);
 		lsp=new CLandslip((begLSX<<kmGrid)+2, (begLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, endH<<VX_FRACTION, begH<<VX_FRACTION, (float)M_PI+al );
 	}
-	else{ //обвал идет с end point
+	else{ //РѕР±РІР°Р» РёРґРµС‚ СЃ end point
 		float al=atan2f( begLSY-endLSY, begLSX-endLSX);
 		lsp=new CLandslip((endLSX<<kmGrid)+2, (endLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, begH<<VX_FRACTION, endH<<VX_FRACTION, (float)M_PI+al );
 	}
@@ -2063,7 +2063,7 @@ LSFound:
 	return lsp;
 }
 
-const float KH_LANDSLIP=0.5f; //0-нет осыпания
+const float KH_LANDSLIP=0.5f; //0-РЅРµС‚ РѕСЃС‹РїР°РЅРёСЏ
 const float BEGIN_SPEED_LANDSLIP=1.f;//0.f;//=1.f;//1.f;
 const float ACCELERATION_LANDSLIP=0;//0.3f;//0
 
@@ -2110,7 +2110,7 @@ CLandslip::CLandslip(int _x, int _y, int _sx, int _sy, int _hmin, int _hmax, flo
 			float f=(float)tmpltGeo[cnt]/(float)(1<<16);
 			//int curV=hmax-(deltaHLS*tmpltGeo[cnt]>>16);
 			int dh=round(deltaHLS*f);
-			surVx[cnt]=-1; //Обнуление
+			surVx[cnt]=-1; //РћР±РЅСѓР»РµРЅРёРµ
 			if(dh>0){
 				int curV=hmax-round(deltaHLS*f);
 				if(curV<0)curV=0;
@@ -2123,13 +2123,13 @@ CLandslip::CLandslip(int _x, int _y, int _sx, int _sy, int _hmin, int _hmax, flo
 				else *(deltaVx+cnt)=0;
 			}
 			else *(deltaVx+cnt)=0;
-//			deltaVx[cnt]=((20<<VX_FRACTION))*f;//+XRnd(1<<VX_FRACTION) //показ формы ковша
+//			deltaVx[cnt]=((20<<VX_FRACTION))*f;//+XRnd(1<<VX_FRACTION) //РїРѕРєР°Р· С„РѕСЂРјС‹ РєРѕРІС€Р°
 			if( v < vmin) vmin=v;
 			if( v > vmax) vmax=v;
 			cnt++;
 		}
 	}
-	//for(j=0; j<sx; j++)*(deltaVx+j)=-30<<VX_FRACTION; //показательная полоса
+	//for(j=0; j<sx; j++)*(deltaVx+j)=-30<<VX_FRACTION; //РїРѕРєР°Р·Р°С‚РµР»СЊРЅР°СЏ РїРѕР»РѕСЃР°
 	//if((vmax-vmin)>DELTA_NOT_DEEP) h_begin=vmin;
 	//else h_begin=vmin-BEGIN_DEEP;
 }
@@ -2166,7 +2166,7 @@ void CLandslip::prepTmplt(void)
 
 int CLandslip::geoQuant(void)
 {
-//Отладка вращающегося битмапа постоянной высоты
+//РћС‚Р»Р°РґРєР° РІСЂР°С‰Р°СЋС‰РµРіРѕСЃСЏ Р±РёС‚РјР°РїР° РїРѕСЃС‚РѕСЏРЅРЅРѕР№ РІС‹СЃРѕС‚С‹
 /*	static float al=0;//M_PI/4.0;//+M_PI/18.0;
 	srBmp rbmp(al, sx, sy);
 	al=al+M_PI/18.0;
@@ -2218,14 +2218,14 @@ int CLandslip::geoQuant(void)
 	vMap.regRender(vMap.XCYCL(x-200), vMap.YCYCL(y-200), vMap.XCYCL(x + sx+100), vMap.YCYCL(y + sy+100) );
 */
 
-	//Обработка имиджа в буфере
+	//РћР±СЂР°Р±РѕС‚РєР° РёРјРёРґР¶Р° РІ Р±СѓС„РµСЂРµ
 //	gaussFilter4LS(deltaVx, 1.4, sx, sy);
 //	gaussFilter4LS(deltaVx, 0.5, sx, sy);
 
 	int xoldPrec=xPrec, yoldPrec=yPrec;
 
 	srBmp rbmpT(direction , sx, sy);//+ (M_PI/180)*(2-XRnd(4))
-//расчет максимального битмапа
+//СЂР°СЃС‡РµС‚ РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ Р±РёС‚РјР°РїР°
 	rbmpT.setStr(0);
 	int x1=abs(rbmpT.getX(0));
 	int y1=abs(rbmpT.getY(0));
@@ -2233,8 +2233,8 @@ int CLandslip::geoQuant(void)
 	int y2=abs(rbmpT.getY(sy-1));
 	if(x1 < x2) x1=x2;
 	if(y1 < y2) y1=y2;
-	int bsx=((x1>>16)+8)*2;//8 - граница
-	int bsy=((y1>>16)+8)*2;//8 - граница
+	int bsx=((x1>>16)+8)*2;//8 - РіСЂР°РЅРёС†Р°
+	int bsy=((y1>>16)+8)*2;//8 - РіСЂР°РЅРёС†Р°
 	int bsx05=bsx>>1; int bsy05=bsy>>1;
 	int shiftBX=xPrec>>16;
 	int shiftBY=yPrec>>16;
@@ -2251,7 +2251,7 @@ int CLandslip::geoQuant(void)
 	unsigned char* sur=vMap.SurBuf;
 
 /*
-//Показ инструмента
+//РџРѕРєР°Р· РёРЅСЃС‚СЂСѓРјРµРЅС‚Р°
 	int i,j,cnt=0;
 	for(i=0; i<sy; i++){
 		rbmpT.setStr(i);
@@ -2308,7 +2308,7 @@ int CLandslip::geoQuant(void)
 	int bxPrec=bxoldPrec + -rbmpT.stpX;
 	int byPrec=byoldPrec + -rbmpT.stpY;
 
-	//Обработка имиджа в буфере
+	//РћР±СЂР°Р±РѕС‚РєР° РёРјРёРґР¶Р° РІ Р±СѓС„РµСЂРµ
 //	gaussFilter4LS(deltaVx, 1.4, sx, sy);
 //	gaussFilter4LS(deltaVx, 0.5, sx, sy);
 	
@@ -2344,7 +2344,7 @@ int CLandslip::geoQuant(void)
 			oldV|= atr[oldOff] &VX_FRACTION_MASK;
 
 //			if(newV >= fullVx[cnt]){ 
-//				//остановка по препятствию
+//				//РѕСЃС‚Р°РЅРѕРІРєР° РїРѕ РїСЂРµРїСЏС‚СЃС‚РІРёСЋ
 //				oldV+=deltaVx[cnt];
 //				buf[oldOffB]+=deltaVx[cnt];
 //				deltaVx[cnt]=0;
@@ -2419,7 +2419,7 @@ int CLandslip::geoQuant(void)
 
 /*	gaussFilter4LS(buf, outBuf, 2.0, bsx, bsy);//1.5
 
-	//сброс расхождений после смуса на карту
+	//СЃР±СЂРѕСЃ СЂР°СЃС…РѕР¶РґРµРЅРёР№ РїРѕСЃР»Рµ СЃРјСѓСЃР° РЅР° РєР°СЂС‚Сѓ
 	cnt=0;
 	for(i=0; i<bsy; i++){
 		for(j=0; j<bsx; j++){
@@ -2463,7 +2463,7 @@ int CLandslip::quant(void)
 	if(ny>0) { begy=oldY; }
 	else { begy=y; ny=-ny; }
 
-	//нахождение реальных размеров измененной области
+	//РЅР°С…РѕР¶РґРµРЅРёРµ СЂРµР°Р»СЊРЅС‹С… СЂР°Р·РјРµСЂРѕРІ РёР·РјРµРЅРµРЅРЅРѕР№ РѕР±Р»Р°СЃС‚Рё
 	rbmp.setStr(0);
 	int x1=abs(rbmp.getX(0));
 	int y1=abs(rbmp.getY(0));
@@ -2471,8 +2471,8 @@ int CLandslip::quant(void)
 	int y2=abs(rbmp.getY(sy-1));
 	if(x1 < x2) x1=x2;
 	if(y1 < y2) y1=y2;
-	int bsx=((x1>>16)+2)*2;//8 - граница
-	int bsy=((y1>>16)+2)*2;//8 - граница
+	int bsx=((x1>>16)+2)*2;//8 - РіСЂР°РЅРёС†Р°
+	int bsy=((y1>>16)+2)*2;//8 - РіСЂР°РЅРёС†Р°
 	int bsx05=bsx>>1; int bsy05=bsy>>1;
 
 	vMap.recalcArea2Grid( vMap.XCYCL(begx-bsx05), vMap.YCYCL(begy-bsy05), vMap.XCYCL(begx+bsx05+nx), vMap.YCYCL(begy+bsy05+ny) );
@@ -2612,7 +2612,7 @@ int sTVolcano::quant()
 			if(fl==0){
 				fl=1;
 				for(int m=0; m < 256; m++){
-					float x = (float)m/128;//Диапазон от 0 до 2
+					float x = (float)m/128;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 2
 					k_dh[m] = round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
 				}
 			}
@@ -2640,7 +2640,7 @@ int sTVolcano::quant()
 				}
 			}
 
-			//для нормальной границы при  разрушении зеропласта
+			//РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№ РіСЂР°РЅРёС†С‹ РїСЂРё  СЂР°Р·СЂСѓС€РµРЅРёРё Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			if((vMap.VxDBuf[offset] == 0 && vMap.VxGBuf[offset] == (V >> VX_FRACTION)) || (vMap.VxDBuf[offset] == (V >> VX_FRACTION))){ 
 				vMap.AtrBuf[offset] = (V & VX_FRACTION_MASK) | (vMap.AtrBuf[offset] &= ~VX_FRACTION_MASK);
 			}
@@ -2649,7 +2649,7 @@ int sTVolcano::quant()
 					vMap.VxGBuf[offset] = V >> VX_FRACTION;
 				else 
 					vMap.VxDBuf[offset] = V >> VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				vMap.AtrBuf[offset] = (V & VX_FRACTION_MASK) | (vMap.AtrBuf[offset] &= ~(VX_FRACTION_MASK|At_NOTPURESURFACE));
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
@@ -2912,7 +2912,7 @@ int sTBubble::quant(void)
 			if(fl==0){
 				fl=1;
 				for(int m=0; m<256; m++){
-					float x=(float)m/128;//Диапазон от 0 до 2
+					float x=(float)m/128;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 2
 					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
 				}
 
@@ -2947,14 +2947,14 @@ int sTBubble::quant(void)
 			//if(V<0)V=0;
 			//if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
-			//для нормальной границы при  разрушении зеропласта
+			//РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№ РіСЂР°РЅРёС†С‹ РїСЂРё  СЂР°Р·СЂСѓС€РµРЅРёРё Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
@@ -3008,7 +3008,7 @@ void bubble(int x, int y)
 			}
 		}
 		for(int m=0; m<256; m++){
-			float x=(float)m/256;//Диапазон от 0 до 1
+			float x=(float)m/256;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 1
 			k_dh[m]=(0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16);//(1.2+0.05*sin(2*tan(x*50)))
 		}
 	}
@@ -3037,7 +3037,7 @@ void bubble(int x, int y)
 	curY+=sin(begAngle)*SPEED;
 	int i,j;
 
-//Выпячивание
+//Р’С‹РїСЏС‡РёРІР°РЅРёРµ
 	//worms(curX-32, curY-32);
 	float kOffset=4.;//8
 	int curIX=round(curX - cos(begAngle)*SPEED*(float)kOffset);
@@ -3078,7 +3078,7 @@ void bubble(int x, int y)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -3221,7 +3221,7 @@ bool sTorpedo::quant(void)
 			}
 		}
 		for(int m=0; m<256; m++){
-			float x=(float)m/256;//Диапазон от 0 до 1
+			float x=(float)m/256;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 1
 			k_dh[m]=(0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16);//(1.2+0.05*sin(2*tan(x*50)))
 		}
 	}
@@ -3238,7 +3238,7 @@ bool sTorpedo::quant(void)
 	if(curY < BORDER || curY+BORDER>=vMap.V_SIZE) return 0;
 	int i,j;
 
-//Выпячивание
+//Р’С‹РїСЏС‡РёРІР°РЅРёРµ
 	float kOffset=4.;//8
 	int curIX=round(curX - /*cos(begAngle)*/direction.x*SPEED*(float)kOffset);
 	int curIY=round(curY - /*sin(begAngle)*/direction.y*SPEED*(float)kOffset);
@@ -3293,7 +3293,7 @@ bool sTorpedo::quant(void)
 			}
 			else {
 				//vMap.VxGBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				//vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_ZEROPLASTPRESENT));
 				PutAlt4G(V, offset, Vold);
 			}
@@ -3458,7 +3458,7 @@ sUPoligon::sUPoligon(point4UP* _pArr)
 	sy = downBorder-upBorder+1;
 	arrayVx=new short[sx*sy];
 	arrayA=new bool[sx*sy];
-	// отсортируем вершины по y
+	// РѕС‚СЃРѕСЂС‚РёСЂСѓРµРј РІРµСЂС€РёРЅС‹ РїРѕ y
 	Vect2s tmpv;
 	Vect2s a(pArr[0].x, pArr[0].y);
 	Vect2s b(pArr[1].x, pArr[1].y);
@@ -3471,7 +3471,7 @@ sUPoligon::sUPoligon(point4UP* _pArr)
 	vMax=0;
 
 	int DY=(c.y-a.y);
-	if(DY<=0) return; //Прерывание если нет полигона
+	if(DY<=0) return; //РџСЂРµСЂС‹РІР°РЅРёРµ РµСЃР»Рё РЅРµС‚ РїРѕР»РёРіРѕРЅР°
 	int d1,d2;
 	int dL,dR;
 	int xLp,xRp;
@@ -3501,7 +3501,7 @@ sUPoligon::sUPoligon(point4UP* _pArr)
 			xLp+=dL; xRp+=dR;
 		}
 	}
-	else { //Полигон не имеет первой части
+	else { //РџРѕР»РёРіРѕРЅ РЅРµ РёРјРµРµС‚ РїРµСЂРІРѕР№ С‡Р°СЃС‚Рё
 		if(a.x < b.x) {
 			xLp=(a.x<<16)+(1<<15);
 			dL=((c.x-a.x)<<16) / DY2;
@@ -3600,7 +3600,7 @@ void sUPoligon::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 	if(rightBorder<c.x)rightBorder=c.x;
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return; //Прерывание если нет полигона
+	if(round(DY)<1.f) return; //РџСЂРµСЂС‹РІР°РЅРёРµ РµСЃР»Рё РЅРµС‚ РїРѕР»РёРіРѕРЅР°
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -3640,7 +3640,7 @@ void sUPoligon::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 			xLp+=dxL; xRp+=dxR;
 		}
 	}
-	else { //Полигон не имеет первой части
+	else { //РџРѕР»РёРіРѕРЅ РЅРµ РёРјРµРµС‚ РїРµСЂРІРѕР№ С‡Р°СЃС‚Рё
 		if(a.x < b.x) {
 			xLp=a.x; dxL=(c.x-a.x) / DY2;
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -3690,7 +3690,7 @@ void sUPoligon::quant(float angle_grad)
 		yy=vMap.YCYCL(upBorder+i);
 		for(j=0; j<sx; j++){
 			xx=vMap.XCYCL(leftBorder+j);
-			// !Оптимизировать
+			// !РћРїС‚РёРјРёР·РёСЂРѕРІР°С‚СЊ
 			if(arrayA[i*sx+j]==1){
 				//vMap.SPutAltDam(xx,yy,0);
 				//vMap.SPutAltGeo(xx,yy,0);
@@ -3706,7 +3706,7 @@ void sUPoligon::quant(float angle_grad)
 	int o_y=pArr[0].y;
 	int o_z=pArr[0].z>>VX_FRACTION;//arrayVx[(o_y-upBorder)*sx+(o_x-leftBorder)]>>VX_FRACTION;
 	Vect3f qVect(pArr[2].x-o_x, pArr[2].y-o_y, (pArr[2].z>>VX_FRACTION)-o_z);//0);//
-	//Определение справа или слева точка от вектора кватерниона
+	//РћРїСЂРµРґРµР»РµРЅРёРµ СЃРїСЂР°РІР° РёР»Рё СЃР»РµРІР° С‚РѕС‡РєР° РѕС‚ РІРµРєС‚РѕСЂР° РєРІР°С‚РµСЂРЅРёРѕРЅР°
 	Vect3f v_o(pArr[2].x-pArr[0].x, pArr[2].y-pArr[0].y, 0.f);
 	Vect3f v_2(pArr[1].x-pArr[0].x, pArr[1].y-pArr[0].y, 0.f);
 	v_o.normalize(1.f);
@@ -3773,7 +3773,7 @@ void sUPoligon::quant(float angle_grad)
 	//c.z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 	c.z=out.z+o_z;
 
-	//Построение плоскости по 3-м точкам
+	//РџРѕСЃС‚СЂРѕРµРЅРёРµ РїР»РѕСЃРєРѕСЃС‚Рё РїРѕ 3-Рј С‚РѕС‡РєР°Рј
 	//float cA = a.y*(b.z-c.z) + b.y*(c.z-a.z) + c.y*(a.z-b.z);
 	//float cB = a.z*(b.x-c.x) + b.z*(c.x-a.x) + c.z*(a.x-b.x);
 	//float cC = a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y);
@@ -3798,7 +3798,7 @@ void sUPoligon::quant(float angle_grad)
 	if(b.y > c.y ) { tmp=b; b=c; c=tmp; tmpu=b_u; b_u=c_u; c_u=tmpu; tmpv=b_v; b_v=c_v; c_v=tmpv;}
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return; //Прерывание если нет полигона
+	if(round(DY)<1.f) return; //РџСЂРµСЂС‹РІР°РЅРёРµ РµСЃР»Рё РЅРµС‚ РїРѕР»РёРіРѕРЅР°
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -3879,7 +3879,7 @@ void sUPoligon::quant(float angle_grad)
 			vLp+=dvL; vRp+=dvR;
 		}
 	}
-	else { //Полигон не имеет первой части
+	else { //РџРѕР»РёРіРѕРЅ РЅРµ РёРјРµРµС‚ РїРµСЂРІРѕР№ С‡Р°СЃС‚Рё
 		if(a.x < b.x) {
 			xLp=a.x; dxL=(c.x-a.x) / DY2;
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -4051,7 +4051,7 @@ bool poiligonUP(int _x, int _y)
 	static int step=1;
 	if(pointArr.size()>=3){
 		//for(; i<pointArr.size()-1; step++) 
-		if(step<pointArr.size()-1) { //от второго до предпоследнего
+		if(step<pointArr.size()-1) { //РѕС‚ РІС‚РѕСЂРѕРіРѕ РґРѕ РїСЂРµРґРїРѕСЃР»РµРґРЅРµРіРѕ
 			point4UP arr[3];
 			float distance1=pointArr[step-1].distance(pointArr[step]);
 			Vect2f v1=pointArr[step-1] - pointArr[step];
@@ -4150,7 +4150,7 @@ bool sGeoFault::quant()
 		if( step!=round(fstep) ){
 			step=round(fstep);
 
-			if(step<pointArr.size()-1) { //от второго до предпоследнего
+			if(step<pointArr.size()-1) { //РѕС‚ РІС‚РѕСЂРѕРіРѕ РґРѕ РїСЂРµРґРїРѕСЃР»РµРґРЅРµРіРѕ
 				point4UP arr[3];
 				float distance1=pointArr[step-1].distance(pointArr[step]);
 				Vect2f v1=pointArr[step-1] - pointArr[step];
@@ -4249,7 +4249,7 @@ void poiligonUPOld(int x0, int y0)
 };
 
 ///////////////////////////////////////////////////////////////////
-//Круговое вспучивание
+//РљСЂСѓРіРѕРІРѕРµ РІСЃРїСѓС‡РёРІР°РЅРёРµ
 #define GRAD2RADF(a)  ((a)*M_PI/180.f)
 sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 {
@@ -4376,7 +4376,7 @@ sUPoligonN::sUPoligonN(point4UP* _basePntArr, int maxAddPnt, point4UP* _addPntAr
 	sy = downBorder-upBorder+1;
 	arrayVx=new short[sx*sy];
 	arrayA=new bool[sx*sy];
-	// отсортируем вершины по y
+	// РѕС‚СЃРѕСЂС‚РёСЂСѓРµРј РІРµСЂС€РёРЅС‹ РїРѕ y
 	Vect2s tmpv;
 	Vect2s a(basePntArr[0].x, basePntArr[0].y);
 	Vect2s b(basePntArr[1].x, basePntArr[1].y);
@@ -4389,7 +4389,7 @@ sUPoligonN::sUPoligonN(point4UP* _basePntArr, int maxAddPnt, point4UP* _addPntAr
 	vMax=0;
 
 	int DY=(c.y-a.y);
-	if(DY<=0) return; //Прерывание если нет полигона
+	if(DY<=0) return; //РџСЂРµСЂС‹РІР°РЅРёРµ РµСЃР»Рё РЅРµС‚ РїРѕР»РёРіРѕРЅР°
 	int d1,d2;
 	int dL,dR;
 	int xLp,xRp;
@@ -4419,7 +4419,7 @@ sUPoligonN::sUPoligonN(point4UP* _basePntArr, int maxAddPnt, point4UP* _addPntAr
 			xLp+=dL; xRp+=dR;
 		}
 	}
-	else { //Полигон не имеет первой части
+	else { //РџРѕР»РёРіРѕРЅ РЅРµ РёРјРµРµС‚ РїРµСЂРІРѕР№ С‡Р°СЃС‚Рё
 		if(a.x < b.x) {
 			xLp=(a.x<<16)+(1<<15);
 			dL=((c.x-a.x)<<16) / DY2;
@@ -4528,7 +4528,7 @@ void sUPoligonN::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 	if(rightBorder<c.x)rightBorder=c.x;
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return; //Прерывание если нет полигона
+	if(round(DY)<1.f) return; //РџСЂРµСЂС‹РІР°РЅРёРµ РµСЃР»Рё РЅРµС‚ РїРѕР»РёРіРѕРЅР°
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -4568,7 +4568,7 @@ void sUPoligonN::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 			xLp+=dxL; xRp+=dxR;
 		}
 	}
-	else { //Полигон не имеет первой части
+	else { //РџРѕР»РёРіРѕРЅ РЅРµ РёРјРµРµС‚ РїРµСЂРІРѕР№ С‡Р°СЃС‚Рё
 		if(a.x < b.x) {
 			xLp=a.x; dxL=(c.x-a.x) / DY2;
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -4650,7 +4650,7 @@ bool sUPoligonN::quant(float angle_grad)
 		yy=vMap.YCYCL(upBorder+i);
 		for(j=0; j<sx; j++){
 			xx=vMap.XCYCL(leftBorder+j);
-			// !Оптимизировать
+			// !РћРїС‚РёРјРёР·РёСЂРѕРІР°С‚СЊ
 			if(arrayA[i*sx+j]==1){
 				//vMap.SPutAltDam(xx,yy,0);
 				//vMap.SPutAltGeo(xx,yy,0);
@@ -4666,7 +4666,7 @@ bool sUPoligonN::quant(float angle_grad)
 	int o_y=basePntArr[0].y;
 	int o_z=basePntArr[0].z>>VX_FRACTION;//arrayVx[(o_y-upBorder)*sx+(o_x-leftBorder)]>>VX_FRACTION;
 	Vect3f qVect(basePntArr[2].x-o_x, basePntArr[2].y-o_y, 0);//(basePntArr[1].z>>VX_FRACTION)-o_z);
-	//Определение справа или слева точка от вектора кватерниона
+	//РћРїСЂРµРґРµР»РµРЅРёРµ СЃРїСЂР°РІР° РёР»Рё СЃР»РµРІР° С‚РѕС‡РєР° РѕС‚ РІРµРєС‚РѕСЂР° РєРІР°С‚РµСЂРЅРёРѕРЅР°
 	Vect3f v_o(basePntArr[2].x-basePntArr[0].x, basePntArr[2].y-basePntArr[0].y, 0.f);
 	Vect3f v_2(basePntArr[1].x-basePntArr[0].x, basePntArr[1].y-basePntArr[0].y, 0.f);
 	v_o.normalize(1.f);
@@ -4680,7 +4680,7 @@ bool sUPoligonN::quant(float angle_grad)
 	float planeAngle=angle_grad*M_PI/180.f;
 	QuatF wQuat(planeAngle, qVect);
 
-/*//Проверка правильности поворота полигона - кватернионом
+/*//РџСЂРѕРІРµСЂРєР° РїСЂР°РІРёР»СЊРЅРѕСЃС‚Рё РїРѕРІРѕСЂРѕС‚Р° РїРѕР»РёРіРѕРЅР° - РєРІР°С‚РµСЂРЅРёРѕРЅРѕРј
 	for(i=0; i<sy; i++){
 		yy=vMap.YCYCL(upBorder+i);
 		for(j=0; j<sx; j++){
@@ -4745,12 +4745,12 @@ bool sUPoligonN::quant(float angle_grad)
 		//allPntArr[i+1].z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 		allPntArr[i+1].z=out.z+o_z;
 	}
-	allPntArr[nElAddPntArr+1]=c; //последний элемент
+	allPntArr[nElAddPntArr+1]=c; //РїРѕСЃР»РµРґРЅРёР№ СЌР»РµРјРµРЅС‚
 	nElAllPntArr=nElAddPntArr+2;
 	buldCPArr();
 	clearAET();
 	
-	//Построение плоскости по 3-м точкам
+	//РџРѕСЃС‚СЂРѕРµРЅРёРµ РїР»РѕСЃРєРѕСЃС‚Рё РїРѕ 3-Рј С‚РѕС‡РєР°Рј
 	//float cA = a.y*(b.z-c.z) + b.y*(c.z-a.z) + c.y*(a.z-b.z);
 	//float cB = a.z*(b.x-c.x) + b.z*(c.x-a.x) + c.z*(a.x-b.x);
 	//float cC = a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y);
@@ -4774,7 +4774,7 @@ bool sUPoligonN::quant(float angle_grad)
 	if(b.y > c.y ) { tmp=b; b=c; c=tmp; tmpu=b_u; b_u=c_u; c_u=tmpu; tmpv=b_v; b_v=c_v; c_v=tmpv;}
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return 0; //Прерывание если нет полигона
+	if(round(DY)<1.f) return 0; //РџСЂРµСЂС‹РІР°РЅРёРµ РµСЃР»Рё РЅРµС‚ РїРѕР»РёРіРѕРЅР°
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -4885,17 +4885,17 @@ bool sUPoligonN::quant(float angle_grad)
 					char idx=AET[i].idxTo+AET[i].dir;
 					if(idx<0)idx=nElAllPntArr-1;
 					if(idx>=nElAllPntArr)idx=0;
-					if(round(allPntArr[idx].y)>yWrk) { //удаляем и добавляем ребро
+					if(round(allPntArr[idx].y)>yWrk) { //СѓРґР°Р»СЏРµРј Рё РґРѕР±Р°РІР»СЏРµРј СЂРµР±СЂРѕ
 						char idxFrom=AET[i].idxTo;
 						char dir=AET[i].dir;
-						//Соптимизировать
+						//РЎРѕРїС‚РёРјРёР·РёСЂРѕРІР°С‚СЊ
 						delAETRecord(i);
 						addAETRecord(idxFrom, idx, dir);
 
 					}
-					else{ //только удаляем ребро
+					else{ //С‚РѕР»СЊРєРѕ СѓРґР°Р»СЏРµРј СЂРµР±СЂРѕ
 						delAETRecord(i);
-						i--;//компенсация удаления
+						i--;//РєРѕРјРїРµРЅСЃР°С†РёСЏ СѓРґР°Р»РµРЅРёСЏ
 					}
 				}
 			}
@@ -4905,7 +4905,7 @@ bool sUPoligonN::quant(float angle_grad)
 			vLp+=dvL; vRp+=dvR;
 		}
 	}
-	else { //Полигон не имеет первой части
+	else { //РџРѕР»РёРіРѕРЅ РЅРµ РёРјРµРµС‚ РїРµСЂРІРѕР№ С‡Р°СЃС‚Рё
 		if(a.x < b.x) {
 			xLp=a.x; dxL=(c.x-a.x) / DY2;
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -5016,17 +5016,17 @@ loc_begDraw2Part:
 					char idx=AET[i].idxTo+AET[i].dir;
 					if(idx<0)idx=nElAllPntArr-1;
 					if(idx>=nElAllPntArr)idx=0;
-					if(round(allPntArr[idx].y)>yWrk) { //удаляем и добавляем ребро
+					if(round(allPntArr[idx].y)>yWrk) { //СѓРґР°Р»СЏРµРј Рё РґРѕР±Р°РІР»СЏРµРј СЂРµР±СЂРѕ
 						char idxFrom=AET[i].idxTo;
 						char dir=AET[i].dir;
-						//Соптимизировать
+						//РЎРѕРїС‚РёРјРёР·РёСЂРѕРІР°С‚СЊ
 						delAETRecord(i);
 						addAETRecord(idxFrom, idx, dir);
 
 					}
-					else{ //только удаляем ребро
+					else{ //С‚РѕР»СЊРєРѕ СѓРґР°Р»СЏРµРј СЂРµР±СЂРѕ
 						delAETRecord(i);
-						i--;//компенсация удаления
+						i--;//РєРѕРјРїРµРЅСЃР°С†РёСЏ СѓРґР°Р»РµРЅРёСЏ
 					}
 				}
 			}
@@ -5099,7 +5099,7 @@ loc_begDraw2Part:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//                   Появление моделей из земли
+//                   РџРѕСЏРІР»РµРЅРёРµ РјРѕРґРµР»РµР№ РёР· Р·РµРјР»Рё
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void meshM2VM::releaseBuf(void)
@@ -5178,7 +5178,7 @@ bool meshM2VM::load(const char* fname)//, int numMesh)
 	mesh3ds *inMesh=NULL;
 	unsigned int numMeshs=GetMeshCount3ds(inDB);
 	unsigned int meshID;
-	for(meshID=0; meshID<1; meshID++){//numMeshs//Пока читаем только 1-й меш
+	for(meshID=0; meshID<1; meshID++){//numMeshs//РџРѕРєР° С‡РёС‚Р°РµРј С‚РѕР»СЊРєРѕ 1-Р№ РјРµС€
 		GetMeshByIndex3ds(inDB, meshID, &inMesh);
 
 		strcpy(name, inMesh->name);
@@ -5263,7 +5263,7 @@ Vect2s meshM2VM::calcSizeXY(void)
 		Vect3f mm;
 		matrix.xform(vrtx[i].xyz, mm);
 
-		//орто проекция
+		//РѕСЂС‚Рѕ РїСЂРѕРµРєС†РёСЏ
 		//vrtx[i].sx=mm.x;
 		//vrtx[i].sy=mm.y;
 		//vrtx[i].z1=mm.z;
@@ -5300,8 +5300,8 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 	int minY=vMap.V_SIZE;
 	int maxX=0;
 	int maxY=0;
-	int minZ=0x7fFFffFF;// максимальное положительное число
-	int maxZ=0x80000001;// самое маленькое отрицательное число
+	int minZ=0x7fFFffFF;// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ
+	int maxZ=0x80000001;// СЃР°РјРѕРµ РјР°Р»РµРЅСЊРєРѕРµ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ
 	for (i = 0; i < numVrtx; i++) {
 		Vect3f mm;
 		matrix.xform(vrtx[i].xyz, mm);
@@ -5309,7 +5309,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		mm.x*=SCALING4PUT2EARCH;
 		mm.y*=SCALING4PUT2EARCH;
 
-		//орто проекция
+		//РѕСЂС‚Рѕ РїСЂРѕРµРєС†РёСЏ
 		vrtx[i].sx=mm.x;
 		vrtx[i].sy=mm.y;
 		vrtx[i].z1=mm.z;
@@ -5341,7 +5341,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		b=&vrtx[face[i].v2];
 		c=&vrtx[face[i].v3];
 
-		// отсортируем вершины грани по sy
+		// РѕС‚СЃРѕСЂС‚РёСЂСѓРµРј РІРµСЂС€РёРЅС‹ РіСЂР°РЅРё РїРѕ sy
 		if (a->y > b->y) swap(a,b);
 		if (a->y > c->y) swap(a,c);
 		if (b->y > c->y) swap(b,c);
@@ -5358,8 +5358,8 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		int length;
 
 
-		// посчитаем du/dsx, dv/dsx, d(1/z)/dsx
-		// считаем по самой длинной линии (т.е. проходящей через вершину B)
+		// РїРѕСЃС‡РёС‚Р°РµРј du/dsx, dv/dsx, d(1/z)/dsx
+		// СЃС‡РёС‚Р°РµРј РїРѕ СЃР°РјРѕР№ РґР»РёРЅРЅРѕР№ Р»РёРЅРёРё (С‚.Рµ. РїСЂРѕС…РѕРґСЏС‰РµР№ С‡РµСЂРµР· РІРµСЂС€РёРЅСѓ B)
 		int divisor;
 		divisor=(c->y - a->y);
 		if(roundFIntF0(divisor)) k = ((__int64)(b->y - a->y)<<8) / divisor;// F8
@@ -5411,12 +5411,12 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 			else{ dx_end=0; dz1_end=0; }
 		}
 #ifdef SUBPIXEL
-		x_end += (dx_end>>8) * (tmp>>8); //Норма
-		z1_end += (dz1_end>>8) * (tmp>>8); //Норма
+		x_end += (dx_end>>8) * (tmp>>8); //РќРѕСЂРјР°
+		z1_end += (dz1_end>>8) * (tmp>>8); //РќРѕСЂРјР°
 #endif
 
 ////////////////////////////////
-		// построчная отрисовка грани
+		// РїРѕСЃС‚СЂРѕС‡РЅР°СЏ РѕС‚СЂРёСЃРѕРІРєР° РіСЂР°РЅРё
 		for (current_sy = ceilFIntF0(a->y); current_sy <= ceilFIntF0(c->y); current_sy++) {
 			if((current_sy) >= sizeY ) break;
 			if (current_sy == ceilFIntF0(b->y)) {
@@ -5435,7 +5435,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 #endif
 			}
 
-			// x_start должен находиться левее x_end
+			// x_start РґРѕР»Р¶РµРЅ РЅР°С…РѕРґРёС‚СЊСЃСЏ Р»РµРІРµРµ x_end
 			if (x_start > x_end) {
 			  x = x_end;
 			  z1 = z1_end;
@@ -5446,7 +5446,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 			  length = ceilFIntF0(x_end) - ceilFIntF0(x_start);
 			}
 
-			// текстурируем строку
+			// С‚РµРєСЃС‚СѓСЂРёСЂСѓРµРј СЃС‚СЂРѕРєСѓ
 			current_sx = ceilFIntF0(x);
 	
 			if((current_sy) >= 0 ) if (length) {
@@ -5455,7 +5455,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 			  z1 += (dz1>>8)* (tmp>>8);
 		#endif
 				while (length--) {
-				// используем z-буфер для определения видимости текущей точки
+				// РёСЃРїРѕР»СЊР·СѓРµРј z-Р±СѓС„РµСЂ РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РІРёРґРёРјРѕСЃС‚Рё С‚РµРєСѓС‰РµР№ С‚РѕС‡РєРё
 					if( (current_sx<sizeX) && (current_sx >= 0)) {
 						if (zBuffer[current_sy*sizeX + current_sx] <= z1) {
 							zBuffer[current_sy*sizeX + current_sx] = z1;
@@ -5466,7 +5466,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 				}
 			}
 
-			// сдвигаем начальные и конечные значения x,(1/z)
+			// СЃРґРІРёРіР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ Рё РєРѕРЅРµС‡РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ x,(1/z)
 			x_start += dx_start;
 			z1_start += dz1_start;
 			x_end += dx_end;
@@ -5521,12 +5521,12 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		b=&vrtx[face[i].v2];
 		c=&vrtx[face[i].v3];
 
-		// отсортируем вершины грани по sy
+		// РѕС‚СЃРѕСЂС‚РёСЂСѓРµРј РІРµСЂС€РёРЅС‹ РіСЂР°РЅРё РїРѕ sy
 		if (a->sy > b->sy) { tmpv = a; a = b; b = tmpv; }
 		if (a->sy > c->sy) { tmpv = a; a = c; c = tmpv; }
 		if (b->sy > c->sy) { tmpv = b; b = c; c = tmpv; }
 
-		// грань нулевой высоты рисовать не будем
+		// РіСЂР°РЅСЊ РЅСѓР»РµРІРѕР№ РІС‹СЃРѕС‚С‹ СЂРёСЃРѕРІР°С‚СЊ РЅРµ Р±СѓРґРµРј
 		if (round(c->sy) <= round(a->sy)) continue;
 
 		int current_sx, current_sy;
@@ -5537,8 +5537,8 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		int length;
 		//unsigned short *dest;
 
-		// посчитаем du/dsx, dv/dsx, d(1/z)/dsx
-		// считаем по самой длинной линии (т.е. проходящей через вершину B)
+		// РїРѕСЃС‡РёС‚Р°РµРј du/dsx, dv/dsx, d(1/z)/dsx
+		// СЃС‡РёС‚Р°РµРј РїРѕ СЃР°РјРѕР№ РґР»РёРЅРЅРѕР№ Р»РёРЅРёРё (С‚.Рµ. РїСЂРѕС…РѕРґСЏС‰РµР№ С‡РµСЂРµР· РІРµСЂС€РёРЅСѓ B)
 		k = (b->sy - a->sy) / (c->sy - a->sy);
 		x_start = a->sx + (c->sx - a->sx) * k;
 		z1_start = a->z1 + (c->z1 - a->z1) * k;
@@ -5576,7 +5576,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 
 ////////////////////////////////
 
-		// построчная отрисовка грани
+		// РїРѕСЃС‚СЂРѕС‡РЅР°СЏ РѕС‚СЂРёСЃРѕРІРєР° РіСЂР°РЅРё
 		for (current_sy = ceil(a->sy); current_sy < ceil(c->sy); current_sy++) {
 			if((current_sy-minY) >= sizeY ) break;
 			//if((current_sy-minY) < 0 ) break;//continue;
@@ -5592,7 +5592,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 //#endif
 			}
 
-			// x_start должен находиться левее x_end
+			// x_start РґРѕР»Р¶РµРЅ РЅР°С…РѕРґРёС‚СЊСЃСЏ Р»РµРІРµРµ x_end
 			if (x_start > x_end) {
 			  x = x_end;
 			  z1 = z1_end;
@@ -5603,11 +5603,11 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 			  length = ceil(x_end) - ceil(x_start);
 			}
 
-			// считаем адрес начала строки в видеопамяти
+			// СЃС‡РёС‚Р°РµРј Р°РґСЂРµСЃ РЅР°С‡Р°Р»Р° СЃС‚СЂРѕРєРё РІ РІРёРґРµРѕРїР°РјСЏС‚Рё
 			//dest = GB;
 			//dest += current_sy * sizeX05*2 + (int)ceil(x);
 
-			// текстурируем строку
+			// С‚РµРєСЃС‚СѓСЂРёСЂСѓРµРј СЃС‚СЂРѕРєСѓ
 			current_sx = (int)ceil(x)-minX;
 	
 			if((current_sy-minY) >= 0 ) if (length) {
@@ -5616,7 +5616,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 			  z1 += dz1* tmp;
 		//#endif
 				while (length--) {
-				// используем z-буфер для определения видимости текущей точки
+				// РёСЃРїРѕР»СЊР·СѓРµРј z-Р±СѓС„РµСЂ РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РІРёРґРёРјРѕСЃС‚Рё С‚РµРєСѓС‰РµР№ С‚РѕС‡РєРё
 					if( (current_sx<sizeX) && (current_sx >= 0)) {
 						if (zBuffer[(current_sy-minY)*sizeX + current_sx] <= z1) {
 							zBuffer[(current_sy-minY)*sizeX + current_sx] = z1;
@@ -5628,7 +5628,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 				}
 			}
 
-			// сдвигаем начальные и конечные значения x/u/v/(1/z)
+			// СЃРґРІРёРіР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ Рё РєРѕРЅРµС‡РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ x/u/v/(1/z)
 			x_start += dx_start;
 			z1_start += dz1_start;
 			x_end += dx_end;
@@ -5682,7 +5682,7 @@ void s_Mesh2VMapDate::init(int _amountKF, short* _timeKFArr, int sx, int sy)
 	sizeY=sy;
 	amountKF=_amountKF;
 	KFAnimationArr=new short[(amountKF-1)*sizeX*sizeY];
-	timeKFArr=new short[amountKF]; //0 frame - тайминг
+	timeKFArr=new short[amountKF]; //0 frame - С‚Р°Р№РјРёРЅРі
 	int i;
 	for(i=0; i<(amountKF); i++) timeKFArr[i]=_timeKFArr[i];
 
@@ -5871,7 +5871,7 @@ void s_Mesh2VMapDispather::deleteEarthUnit(s_EarthUnit* eu, bool autoDeleteMVMDa
 	}
 
 	if(autoDeleteMVMDate){
-		//удаление s_Mesh2VMapDate !!!
+		//СѓРґР°Р»РµРЅРёРµ s_Mesh2VMapDate !!!
 		int cntPresent=0;
 		for(ei=EUArr.begin(); ei!=EUArr.end(); ei++){
 			if(pCurM2VMDate==(*ei)->meshDate) {
@@ -5920,7 +5920,7 @@ meshM2VM* s_Mesh2VMapDispather::getMeshFrom3DS(const char * name3DS)
 
 void s_EarthUnit::init(int xMap, int yMap)
 {
-	xassert(meshDate->commandList_immediately.size() >= 2); //Минимум должно быть 2 KF
+	xassert(meshDate->commandList_immediately.size() >= 2); //РњРёРЅРёРјСѓРј РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ 2 KF
 	nextKFIt=curKFIt=meshDate->commandList_immediately.begin();
 	nextKFIt++;
 	
@@ -6146,7 +6146,7 @@ bool s_EarthUnit::quant()
 			if(fl==0){
 				fl=1;
 				for(int m=0; m<256; m++){
-					float x=(float)m/128;//Диапазон от 0 до 2
+					float x=(float)m/128;//Р”РёР°РїР°Р·РѕРЅ РѕС‚ 0 РґРѕ 2
 					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
 				}
 
@@ -6173,14 +6173,14 @@ bool s_EarthUnit::quant()
 			if(V<0)V=0;
 			if(V>MAX_VX_HEIGHT)V=MAX_VX_HEIGHT;
 
-			//для нормальной границы при  разрушении зеропласта
+			//РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№ РіСЂР°РЅРёС†С‹ РїСЂРё  СЂР°Р·СЂСѓС€РµРЅРёРё Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			if( (vMap.VxDBuf[offset]==0 && vMap.VxGBuf[offset]==(V >>VX_FRACTION)) || (vMap.VxDBuf[offset]==(V >>VX_FRACTION)) ){ 
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~VX_FRACTION_MASK);
 			}
 			else {
 				if(vMap.VxDBuf[offset]==0) vMap.VxGBuf[offset]=V >>VX_FRACTION;
 				else vMap.VxDBuf[offset]=V >>VX_FRACTION;
-				//нужно сохранить только признак тени, признак At_ZEROPLASTPRESENT при любом изменении удаляется
+				//РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє С‚РµРЅРё, РїСЂРёР·РЅР°Рє At_ZEROPLASTPRESENT РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё СѓРґР°Р»СЏРµС‚СЃСЏ
 				vMap.AtrBuf[offset]=(V &VX_FRACTION_MASK) | (vMap.AtrBuf[offset]&=~(VX_FRACTION_MASK|At_NOTPURESURFACE));
 				//if(vMap.VxDBuf[offset]< V >>VX_FRACTION)vMap.VxDBuf[offset]=0;
 			}
@@ -6211,11 +6211,11 @@ bool s_EarthUnit::quant()
 		pPrevKF=pCurKF;
 		pCurKF+=sx*sy;
 		if(pCurKF >= meshDate->KFAnimationArr+sx*sy*(meshDate->amountKF-1)){
-			pCurKF=meshDate->KFAnimationArr; //Зацикливание на начало
+			pCurKF=meshDate->KFAnimationArr; //Р—Р°С†РёРєР»РёРІР°РЅРёРµ РЅР° РЅР°С‡Р°Р»Рѕ
 			return 0;
 		}
 		if(currentKF>=(meshDate->amountKF)) {
-			currentKF=1; //Зацикливание на начало
+			currentKF=1; //Р—Р°С†РёРєР»РёРІР°РЅРёРµ РЅР° РЅР°С‡Р°Р»Рѕ
 		}
 		*/
 
@@ -6234,7 +6234,7 @@ bool s_EarthUnit::quant()
 			}
 		}
 		if(nextKFIt==meshDate->commandList_immediately.end()) {
-			//В конце выполняется начальная инициализация на случай если квант будет вызываться дальше
+			//Р’ РєРѕРЅС†Рµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РЅР°С‡Р°Р»СЊРЅР°СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅР° СЃР»СѓС‡Р°Р№ РµСЃР»Рё РєРІР°РЅС‚ Р±СѓРґРµС‚ РІС‹Р·С‹РІР°С‚СЊСЃСЏ РґР°Р»СЊС€Рµ
 			nextKFIt=curKFIt=meshDate->commandList_immediately.begin();
 			nextKFIt++;
 			pCurKFRD=(*curKFIt)->RasterData;
@@ -6489,7 +6489,7 @@ sGeoWave::sGeoWave(short _x, short _y, short _maxRadius)
 	x=_x; y=_y; 
 	maxRadius=_maxRadius-SGEOWAVE_LONG_WAVE;
 	if(maxRadius < 0) maxRadius=0;
-	if(maxRadius >= SGEOWAVE_MAX_RADIUS) maxRadius=SGEOWAVE_MAX_RADIUS-1; //Не обязательно (есть проверка ниже)
+	if(maxRadius >= SGEOWAVE_MAX_RADIUS) maxRadius=SGEOWAVE_MAX_RADIUS-1; //РќРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ (РµСЃС‚СЊ РїСЂРѕРІРµСЂРєР° РЅРёР¶Рµ)
 	step=0;
 }
 

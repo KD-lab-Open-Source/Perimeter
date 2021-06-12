@@ -12,7 +12,7 @@ extern cInterfaceRenderDevice	*terRenderDevice;
 extern cScene	*terScene;
 cMapWind* mapw = NULL;
 //==================================================================
-//реализация cmGrid
+//СЂРµР°Р»РёР·Р°С†РёСЏ cmGrid
 
 void cmGrid::Clear()
 {
@@ -191,7 +191,7 @@ void cQuantumWindW::Draw()
 }
 
 //==================================================================
-//реализация cMapWind
+//СЂРµР°Р»РёР·Р°С†РёСЏ cMapWind
 cMapWind::cMapWind()
 {
 	show_grid = false;

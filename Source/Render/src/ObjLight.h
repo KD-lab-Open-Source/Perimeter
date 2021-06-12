@@ -15,15 +15,15 @@ class cObjLight : public cObjectNode
 public:
 	cObjLight();
 	virtual ~cObjLight();
-	// общие интерфейсные функции унаследованы от cUnkObj
+	// РѕР±С‰РёРµ РёРЅС‚РµСЂС„РµР№СЃРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cUnkObj
 	virtual void PreDraw(cCamera *UCamera);
 	virtual void Draw(cCamera *UCamera);
 	virtual cIUnkObj* BuildCopy();
 	virtual void SetColor(const sColor4f *ambient,const sColor4f *diffuse,const sColor4f *specular=0);
 	virtual void SetAttr(int attribute);
-	// общие интерфейсные функции унаследованы от cUnkTile
+	// РѕР±С‰РёРµ РёРЅС‚РµСЂС„РµР№СЃРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cUnkTile
 	virtual void GetBoundingBox(Vect3f &min,Vect3f &max);
-	// инлайновые функции доступа к переменным
+	// РёРЅР»Р°Р№РЅРѕРІС‹Рµ С„СѓРЅРєС†РёРё РґРѕСЃС‚СѓРїР° Рє РїРµСЂРµРјРµРЅРЅС‹Рј
 	__forceinline float& GetFarAttenuation()								{ return FarAttenuation; }
 	__forceinline float& GetIntensity()										{ return Intensity; }
 	

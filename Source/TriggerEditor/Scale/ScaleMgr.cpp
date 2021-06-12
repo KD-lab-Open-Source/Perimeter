@@ -17,7 +17,7 @@ void ScaleMgr::SetScalable(IScalable* pscalable)
 {
 	scaleBar_->SetScalable(pscalable);
 }
-//обновляем информацию о масштабе
+//РѕР±РЅРѕРІР»СЏРµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РјР°СЃС€С‚Р°Р±Рµ
 void ScaleMgr::UpdateScaleInfo()
 {
 	scaleBar_->UpdateScaleInfo();
@@ -53,7 +53,7 @@ void ScaleMgr::Hide() const
 	frameWnd_->ShowControlBar(scaleBar_.get(), FALSE, FALSE); 
 }
 
-//возвращает указатель на окно
+//РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РѕРєРЅРѕ
 CWnd* ScaleMgr::getWindow()
 {
 	return scaleBar_.get();

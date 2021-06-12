@@ -2,7 +2,7 @@
 #define _POSITION_GENERATOR_H_
 
 ////////////////////////////////////////////////////////////////////////////////
-//	Генератор позиций.
+//	Р“РµРЅРµСЂР°С‚РѕСЂ РїРѕР·РёС†РёР№.
 ////////////////////////////////////////////////////////////////////////////////
 class PositionGenerator
 {
@@ -17,7 +17,7 @@ public:
 		radius_ = radius;
 		++m_counter;
 		float diameter = 2*radius_;
-		float x_acceptable = mode != Rank ? max_side : FLT_INF; // В режиме шеренги - расширяться только в стороны
+		float x_acceptable = mode != Rank ? max_side : FLT_INF; // Р’ СЂРµР¶РёРјРµ С€РµСЂРµРЅРіРё - СЂР°СЃС€РёСЂСЏС‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РІ СЃС‚РѕСЂРѕРЅС‹
 		float sign_diameter = up ? -diameter : diameter;
 		float x, x_min = FLT_INF;
 		LineList::iterator i, i_min = lines.end();
@@ -37,7 +37,7 @@ public:
 		}	
 		else{
 			lines.push_back(Line(0));
-			max_side = max(max_side, (mode != Column ? lines.size() : 0)*diameter); // В режиме колонны не давать расширять в стороны
+			max_side = max(max_side, (mode != Column ? lines.size() : 0)*diameter); // Р’ СЂРµР¶РёРјРµ РєРѕР»РѕРЅРЅС‹ РЅРµ РґР°РІР°С‚СЊ СЂР°СЃС€РёСЂСЏС‚СЊ РІ СЃС‚РѕСЂРѕРЅС‹
 			pos.set(0, (lines.size() - 1)*sign_diameter);
 		}
 

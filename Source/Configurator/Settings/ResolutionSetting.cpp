@@ -32,7 +32,7 @@ ResolutionSetting::~ResolutionSetting()
 
 }
 
-//! Считать значение из его(значения) хранилища
+//! РЎС‡РёС‚Р°С‚СЊ Р·РЅР°С‡РµРЅРёРµ РёР· РµРіРѕ(Р·РЅР°С‡РµРЅРёСЏ) С…СЂР°РЅРёР»РёС‰Р°
 bool ResolutionSetting::readFromStorage()
 {
 	TCHAR buffer[32];
@@ -50,7 +50,7 @@ bool ResolutionSetting::readFromStorage()
 	return true;
 }
 
-//! Записать значение в хранилище
+//! Р—Р°РїРёСЃР°С‚СЊ Р·РЅР°С‡РµРЅРёРµ РІ С…СЂР°РЅРёР»РёС‰Рµ
 bool ResolutionSetting::saveToStorage() const{
 	CString resolution = value_;
 
@@ -70,7 +70,7 @@ bool ResolutionSetting::saveToStorage() const{
 	return (WritePrivateProfileString(section, key, sizeY, iniFileName)==TRUE);
 }
 
-//! Организуем обмент между контролом в диалоге и значением
+//! РћСЂРіР°РЅРёР·СѓРµРј РѕР±РјРµРЅС‚ РјРµР¶РґСѓ РєРѕРЅС‚СЂРѕР»РѕРј РІ РґРёР°Р»РѕРіРµ Рё Р·РЅР°С‡РµРЅРёРµРј
 void ResolutionSetting::DDX_Exchange(CDataExchange* pDX)
 {
 	if (getCtrlId() == (UINT)-1)
@@ -94,7 +94,7 @@ void ResolutionSetting::DDX_Exchange(CDataExchange* pDX)
 	}
 }
 
-//! Инициализация котрола относящегося к настройке(например заполнить комбобокс)
+//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РєРѕС‚СЂРѕР»Р° РѕС‚РЅРѕСЃСЏС‰РµРіРѕСЃСЏ Рє РЅР°СЃС‚СЂРѕР№РєРµ(РЅР°РїСЂРёРјРµСЂ Р·Р°РїРѕР»РЅРёС‚СЊ РєРѕРјР±РѕР±РѕРєСЃ)
 void ResolutionSetting::initControl(CWnd* parent, LocaleMngr const& locMngr) const
 {
 	CString strDefault;

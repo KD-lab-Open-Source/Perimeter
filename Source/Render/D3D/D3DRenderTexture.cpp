@@ -74,7 +74,7 @@ void ApplySkinColor(DWORD* buffer,int dx,int dy,sColor4c skin_color)
 }
 
 int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert)
-{ // только создает в памяти поверхности 
+{ // С‚РѕР»СЊРєРѕ СЃРѕР·РґР°РµС‚ РІ РїР°РјСЏС‚Рё РїРѕРІРµСЂС…РЅРѕСЃС‚Рё 
 	sTextureFormatData &tfd = TexFmtData[Texture->GetFmt()];
 	if(Texture->GetX()==0||tfd.TexFmtD3D==0) return 1;
 
@@ -127,7 +127,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		memset(lpBuf,0xFF,dxy*sizeof(lpBuf[0]));
 		FileImage->GetTexture(lpBuf,i*Texture->GetTimePerFrame(),4,4*dx,
 			8,8,8,8, 16,8,0,24, dx, dy );
-		if(Texture->IsAlpha() || Texture->IsAlphaTest())// загрузка только прозрачности
+		if(Texture->IsAlpha() || Texture->IsAlphaTest())// Р·Р°РіСЂСѓР·РєР° С‚РѕР»СЊРєРѕ РїСЂРѕР·СЂР°С‡РЅРѕСЃС‚Рё
 		{
 			FileImage->GetTextureAlpha(lpBuf,i*Texture->GetTimePerFrame(),4,4*dx,
 				8, 24, dx, dy );
@@ -163,7 +163,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 			(resample?D3DX_FILTER_TRIANGLE:D3DX_FILTER_POINT)|dither
 			, 0 ));
 
-		if(Texture->GetNumberMipMap()>1) // построение мип мапов
+		if(Texture->GetNumberMipMap()>1) // РїРѕСЃС‚СЂРѕРµРЅРёРµ РјРёРї РјР°РїРѕРІ
 			for(int nMipMap=1;nMipMap<Texture->GetNumberMipMap();nMipMap++)
 			{
 				LPDIRECT3DSURFACE9 lpSurfaceNext = NULL;
@@ -230,7 +230,7 @@ int cD3DRender::CreateTextureU16V16(class cTexture *Texture,bool defaultpool)
 
 
 int cD3DRender::DeleteTexture(cTexture *Texture)
-{ // только освобождает в памяти поверхности 
+{ // С‚РѕР»СЊРєРѕ РѕСЃРІРѕР±РѕР¶РґР°РµС‚ РІ РїР°РјСЏС‚Рё РїРѕРІРµСЂС…РЅРѕСЃС‚Рё 
 	for(int nFrame=0;nFrame<Texture->GetNumberFrame();nFrame++)
 		if(Texture->GetDDSurface(nFrame)) 
 		{

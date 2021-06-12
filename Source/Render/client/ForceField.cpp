@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #include "StdAfxRD.h"
 #include "ForceField.h"
 //#include "../Util/ProTool.h"

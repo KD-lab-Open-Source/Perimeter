@@ -1,5 +1,5 @@
 
-extern int UNDO_REDO_BUFFER_SIZE; //Текущий размер буфера в SurMap пикселах
+extern int UNDO_REDO_BUFFER_SIZE; //РўРµРєСѓС‰РёР№ СЂР°Р·РјРµСЂ Р±СѓС„РµСЂР° РІ SurMap РїРёРєСЃРµР»Р°С…
 
 struct sPreChangedArea {
 	short x, y;

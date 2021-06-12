@@ -243,14 +243,14 @@ void terInterpolationReal::SetModel(const char* name,float scale)
 		//	xassert_s(0 && "Animation group not found", animationSetup_->data[i].groupName);
 	}
 
-	//Àòîìàðíîå èçìåíåíèå ObjectPoint
+	//ÐÑ‚Ð¾Ð¼Ð°Ñ€Ð½Ð¾Ðµ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ðµ ObjectPoint
 	cObjectNodeRoot* OldObjectPoint=ObjectPoint;
 	ObjectPoint=NewObjectPoint;
 	if(OldObjectPoint){
 		if(gameShell->missionEditor())
 		{
-			//Êðèâîé ôèêñ äëÿ ðåäàêòîðà ìèññèé
-			//ëîãè÷åñêèå îáúåêòû äîëæíû óäàëÿòüñÿ â ëîãè÷åñêîì êâàíòå!!!
+			//ÐšÑ€Ð¸Ð²Ð¾Ð¹ Ñ„Ð¸ÐºÑ Ð´Ð»Ñ Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¾Ñ€Ð° Ð¼Ð¸ÑÑÐ¸Ð¹
+			//Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð¾Ð±ÑŠÐµÐºÑ‚Ñ‹ Ð´Ð¾Ð»Ð¶Ð½Ñ‹ ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒÑÑ Ð² Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¾Ð¼ ÐºÐ²Ð°Ð½Ñ‚Ðµ!!!
 			stream_interpolator.ClearData();
 		}
 
@@ -443,7 +443,7 @@ void terSoundController::stop()
 
 void terSoundController::update()
 {
-	// Balmer temp ïîêà ïóñêàé òàê, à ïîòîì äîëæíà áûòü èíòåðïîëÿöèÿ
+	// Balmer temp Ð¿Ð¾ÐºÐ° Ð¿ÑƒÑÐºÐ°Ð¹ Ñ‚Ð°Ðº, Ð° Ð¿Ð¾Ñ‚Ð¾Ð¼ Ð´Ð¾Ð»Ð¶Ð½Ð° Ð±Ñ‹Ñ‚ÑŒ Ð¸Ð½Ñ‚ÐµÑ€Ð¿Ð¾Ð»ÑÑ†Ð¸Ñ
 	if(volume_.fresh())
 		sound_->SetVolume(volume_.x1());
 

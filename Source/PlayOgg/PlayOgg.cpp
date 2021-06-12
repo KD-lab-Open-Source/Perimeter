@@ -2,7 +2,10 @@
 #include <windows.h>
 #include <dsound.h>
 #include "PlayOgg.h"
+
+#ifdef HAS_VORBIS
 #include <vorbis/vorbisfile.h>
+#endif
 
 #ifdef MPP_STAT
 #include <xutil.h>
@@ -51,7 +54,9 @@ const int MPP_BUF_SIZE=8192;
 class MppLoad
 {
 	char buffer[MPP_BUF_SIZE];
+#ifdef HAS_VORBIS
     OggVorbis_File vf;
+#endif
 	FILE* file;
 	int bitstream;
 	int channels;//0-mono,1-stereo
@@ -81,9 +86,11 @@ public:
 		Close();
 		if(!fname || fname[0]==0)
 			return false;
+#ifdef HAS_VORBIS
 		file=fopen(fname,"rb");
 		if(file==NULL)
 			return false;
+
 		if(ov_open(file, &vf, NULL, 0) < 0)
 		{
 			fclose(file);
@@ -94,6 +101,9 @@ public:
 		vorbis_info* info=ov_info(&vf,-1);
 		channels=info->channels;
 		time_len=(float)ov_time_total(&vf,bitstream);
+#else
+        return false;
+#endif
 		return true;
 	}
 
@@ -101,19 +111,24 @@ public:
 	{
 		if(file)
 		{
+#ifdef HAS_VORBIS
 			ov_clear(&vf);
+#endif
 			fclose(file);
 			file=NULL;
 			bitstream=0;
 		}
 	}
 
-	//len - величнна буффера buffer в short
+	//len - РІРµР»РёС‡РЅРЅР° Р±СѓС„С„РµСЂР° buffer РІ short
 	bool GetNextFrame(short*& buffer_,int& len)
 	{
-		int ret = ov_read(&vf, buffer, MPP_BUF_SIZE, 0, 2, 1, &bitstream);
+        int ret = 0;
+#ifdef HAS_VORBIS
+		ret = ov_read(&vf, buffer, MPP_BUF_SIZE, 0, 2, 1, &bitstream);
 		len=ret;
 		buffer_=(short*)buffer;
+#endif
 		return ret>0;
 	}
 
@@ -124,7 +139,11 @@ public:
 
 	float GetCurPos()
 	{
+#ifdef HAS_VORBIS
 		return (float)ov_time_tell(&vf);
+#else
+	    return 0.0f;
+#endif
 	}
 
 	int GetChannels()
@@ -283,9 +302,9 @@ MpegSound::MpegSound()
 	pFirstSound=this;
 	if(next)next->prev=this;
 	////
-	//Подходить к изменению sizeDSBuffer очень осторожно
-	//увеличение его может сказаться на интерактивности 
-	//уменьшение - на заикании звука 
+	//РџРѕРґС…РѕРґРёС‚СЊ Рє РёР·РјРµРЅРµРЅРёСЋ sizeDSBuffer РѕС‡РµРЅСЊ РѕСЃС‚РѕСЂРѕР¶РЅРѕ
+	//СѓРІРµР»РёС‡РµРЅРёРµ РµРіРѕ РјРѕР¶РµС‚ СЃРєР°Р·Р°С‚СЊСЃСЏ РЅР° РёРЅС‚РµСЂР°РєС‚РёРІРЅРѕСЃС‚Рё 
+	//СѓРјРµРЅСЊС€РµРЅРёРµ - РЅР° Р·Р°РёРєР°РЅРёРё Р·РІСѓРєР° 
 	sizeDSBuffer=128*1024;//256*1024;
 	volume=255;
 	b_cycled=false;
@@ -377,7 +396,7 @@ bool MpegSound::InitSoundBuffer()
 
 	HRESULT hr;
 	/*
-		Здесь создавать DirectSoundBuffer
+		Р—РґРµСЃСЊ СЃРѕР·РґР°РІР°С‚СЊ DirectSoundBuffer
 	*/
 	WAVEFORMATEX&  wfx=wave_format;
 
@@ -596,7 +615,7 @@ Retry:
 #endif //MPEG_PROFILE
 
 	if(clear_end_buffer && !b_cycled)
-	{//Очистить конец буфера
+	{//РћС‡РёСЃС‚РёС‚СЊ РєРѕРЅРµС† Р±СѓС„РµСЂР°
 		clear_end_buffer=false;
 
 		BYTE *AudioPtr1,*AudioPtr2;
@@ -745,6 +764,7 @@ MpegState MpegSound::IsPlay()
 
 double MpegGetLen(const char* fname)
 {
+#ifdef HAS_VORBIS
     OggVorbis_File vf;
 	FILE* in=fopen(fname,"rb");
 	if(in==NULL)
@@ -760,10 +780,13 @@ double MpegGetLen(const char* fname)
     fclose(in);
 
 	return time;
+#else
+	return 0.0;
+#endif
 }
 
 
-int window_hamming[BLK_SIZE];//Окно Хэмминга
+int window_hamming[BLK_SIZE];//РћРєРЅРѕ РҐСЌРјРјРёРЅРіР°
 const int h_shift=14;
 
 void MpegCreateWindowTable()

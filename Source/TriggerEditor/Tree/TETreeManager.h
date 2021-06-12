@@ -19,13 +19,13 @@ public:
 				DWORD dwStyle = WS_CHILD |CBRS_FLYBY | 
 				CBRS_RIGHT | CBRS_SIZE_DYNAMIC);
 	void dockBar(UINT dockBarID);
-	//! Показать/спрятать
+	//! РџРѕРєР°Р·Р°С‚СЊ/СЃРїСЂСЏС‚Р°С‚СЊ
 	bool show(eShowHide e);
-	//! видимо или нет
+	//! РІРёРґРёРјРѕ РёР»Рё РЅРµС‚
 	bool isVisible() const;
-	//! Реализация дерева
+	//! Р РµР°Р»РёР·Р°С†РёСЏ РґРµСЂРµРІР°
 	xTreeListCtrl& getTreeListCtrl() const;
-	//! Устанавливает обработчик событий
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёР№
 	void setTETreeNotifyListener(TETreeNotifyListener* ptl);
 private:
 	boost::scoped_ptr<TETreeDlg> treeDlg_;

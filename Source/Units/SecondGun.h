@@ -1,7 +1,7 @@
 #ifndef _PERIMETER_SECOND_GUN_
 #define _PERIMETER_SECOND_GUN_
 
-/// Оружие - базовый класс.
+/// РћСЂСѓР¶РёРµ - Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ.
 class terWeapon
 {
 public:
@@ -53,7 +53,7 @@ public:
 
 	void removeMissileReference();
 
-	/// оценка количества элементов, вышибаемых оружием с одного выстрела
+	/// РѕС†РµРЅРєР° РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ, РІС‹С€РёР±Р°РµРјС‹С… РѕСЂСѓР¶РёРµРј СЃ РѕРґРЅРѕРіРѕ РІС‹СЃС‚СЂРµР»Р°
 	virtual int estimatedDamage() const = 0;
 
 	static terWeapon* create(WeaponType type,terUnitReal* owner);
@@ -62,7 +62,7 @@ public:
 	float chargeLevel() const { return reloadConsumption_.progress(); }
 	void setChargeLevel(float level) { reloadConsumption_.setProgress(level); }
 
-	/// Возвращает ID желаемой цепочки анимации.
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ ID Р¶РµР»Р°РµРјРѕР№ С†РµРїРѕС‡РєРё Р°РЅРёРјР°С†РёРё.
 	ChainID chainRequest() const;
 
 	void changePlayer(terPlayer* player) { reloadConsumption_.changePlayer(player); }
@@ -120,21 +120,21 @@ protected:
 private:
 	NodeController* fireController_;
 
-	/// время перезарядки, в миллисекундах
+	/// РІСЂРµРјСЏ РїРµСЂРµР·Р°СЂСЏРґРєРё, РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С…
 	EnergyConsumer reloadConsumption_;
 	bool reloaded_;
 
-	/// расстояние до цели
+	/// СЂР°СЃСЃС‚РѕСЏРЅРёРµ РґРѕ С†РµР»Рё
 //	float fireDistance_;
-	/// координаты цели
+	/// РєРѕРѕСЂРґРёРЅР°С‚С‹ С†РµР»Рё
 	Vect3f firePosition_;
-	/// цель
+	/// С†РµР»СЊ
 	terUnitBase* fireTarget_;
 
-	/// количество выстреленных снарядов
+	/// РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹СЃС‚СЂРµР»РµРЅРЅС‹С… СЃРЅР°СЂСЏРґРѕРІ
 	int missileCount_;
 
-	/// true если оружие наводится на цель, false если надо развернуть по-умолчанию
+	/// true РµСЃР»Рё РѕСЂСѓР¶РёРµ РЅР°РІРѕРґРёС‚СЃСЏ РЅР° С†РµР»СЊ, false РµСЃР»Рё РЅР°РґРѕ СЂР°Р·РІРµСЂРЅСѓС‚СЊ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ
 	bool aimFlag_;
 	DurationTimer aimTimer_;
 
@@ -142,18 +142,18 @@ private:
 
 	DurationTimer fireDelayTimer_;
 
-	/// true если оружие стреляет
+	/// true РµСЃР»Рё РѕСЂСѓР¶РёРµ СЃС‚СЂРµР»СЏРµС‚
 	bool fireFlag_;
-	/// true если ожидается анимация выстрела
+	/// true РµСЃР»Рё РѕР¶РёРґР°РµС‚СЃСЏ Р°РЅРёРјР°С†РёСЏ РІС‹СЃС‚СЂРµР»Р°
 	bool fireWaitingMode_;
-	/// true если включена анимация выстрела
+	/// true РµСЃР»Рё РІРєР»СЋС‡РµРЅР° Р°РЅРёРјР°С†РёСЏ РІС‹СЃС‚СЂРµР»Р°
 	bool fireAnimationMode_;
 
 	bool isEnabled_;
 
 	bool isOn_;
 
-	// скорость разрядки - сколько отнимается от reloadConsumption_ в логический квант
+	// СЃРєРѕСЂРѕСЃС‚СЊ СЂР°Р·СЂСЏРґРєРё - СЃРєРѕР»СЊРєРѕ РѕС‚РЅРёРјР°РµС‚СЃСЏ РѕС‚ reloadConsumption_ РІ Р»РѕРіРёС‡РµСЃРєРёР№ РєРІР°РЅС‚
 	float dischargeSpeed_;
 
 	terUnitReal* owner_;

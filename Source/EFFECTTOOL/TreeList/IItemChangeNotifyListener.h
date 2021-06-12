@@ -10,8 +10,8 @@ class CTreeListItem;
 typedef struct _ITEM_CHANGE_INFO
 {
 	CTreeListItem* item;
-	int iOldSubItem;///< åñëè óñòàíîâëåí ñòèëü TLC_SHOWSELACTIVE, ïðåäûäóùèé àêòèâíûé ñòîëáåö
-	int iNewSubItem;///< åñëè óñòàíîâëåí ñòèëü TLC_SHOWSELACTIVE, íîâûé àêòèâíûé ñòîëáåö
+	int iOldSubItem;///< ÐµÑÐ»Ð¸ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½ ÑÑ‚Ð¸Ð»ÑŒ TLC_SHOWSELACTIVE, Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰Ð¸Ð¹ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹ ÑÑ‚Ð¾Ð»Ð±ÐµÑ†
+	int iNewSubItem;///< ÐµÑÐ»Ð¸ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½ ÑÑ‚Ð¸Ð»ÑŒ TLC_SHOWSELACTIVE, Ð½Ð¾Ð²Ñ‹Ð¹ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹ ÑÑ‚Ð¾Ð»Ð±ÐµÑ†
 	UINT uNewState;
 	UINT uOldState;
 }ITEM_CHANGE_INFO;
@@ -20,25 +20,25 @@ class IItemChangeNotifyListener
 {
 public:
 	/************************************************************************/
-	/* âîçâðàùåíèå false çàïðåùàåò èçìåíåíèå ñîñòîÿíèÿ
+	/* Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰ÐµÐ½Ð¸Ðµ false Ð·Ð°Ð¿Ñ€ÐµÑ‰Ð°ÐµÑ‚ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ðµ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
 	/************************************************************************/
-	//! Ïåðåä òåì, êàê ðàçâåðíóòü
+	//! ÐŸÐµÑ€ÐµÐ´ Ñ‚ÐµÐ¼, ÐºÐ°Ðº Ñ€Ð°Ð·Ð²ÐµÑ€Ð½ÑƒÑ‚ÑŒ
 	virtual bool onItemExpanding(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
-	//! Ïîñëå òîãî, êàê ðàçâåðíóëè
+	//! ÐŸÐ¾ÑÐ»Ðµ Ñ‚Ð¾Ð³Ð¾, ÐºÐ°Ðº Ñ€Ð°Ð·Ð²ÐµÑ€Ð½ÑƒÐ»Ð¸
 	virtual void onItemExpanded(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
-	//! Ïåðåä èçìåíåíèåì ñîñòîÿíèÿ
+	//! ÐŸÐµÑ€ÐµÐ´ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸ÐµÐ¼ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
 	virtual bool onItemStateChanging(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
-	//! Ïîñëå èçìåíåíèÿ ñîñòîÿíèÿ
+	//! ÐŸÐ¾ÑÐ»Ðµ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
 	virtual void onItemStateChanged(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
 
-	//! Åñëè åñòü ñòèëü	TLC_CHECKBOX, òî ïðèõîäèò ïåðåä èçìåíåíèì ñîñòîÿíèÿ
+	//! Ð•ÑÐ»Ð¸ ÐµÑÑ‚ÑŒ ÑÑ‚Ð¸Ð»ÑŒ	TLC_CHECKBOX, Ñ‚Ð¾ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´Ð¸Ñ‚ Ð¿ÐµÑ€ÐµÐ´ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ð¼ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
 	virtual bool onItemCheckChanging(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
-	//! Åñëè åñòü ñòèëü	TLC_CHECKBOX, òî ïðèõîäèò ïîñëå èçìåíåíèÿ ñîñòîÿíèÿ
+	//! Ð•ÑÐ»Ð¸ ÐµÑÑ‚ÑŒ ÑÑ‚Ð¸Ð»ÑŒ	TLC_CHECKBOX, Ñ‚Ð¾ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´Ð¸Ñ‚ Ð¿Ð¾ÑÐ»Ðµ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
 	virtual void onItemCheckChanged(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
 
-	//! Åñëè åñòü ñòèëü	TLC_LOCKBOX, òî ïðèõîäèò ïåðåä èçìåíåíèì ñîñòîÿíèÿ
+	//! Ð•ÑÐ»Ð¸ ÐµÑÑ‚ÑŒ ÑÑ‚Ð¸Ð»ÑŒ	TLC_LOCKBOX, Ñ‚Ð¾ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´Ð¸Ñ‚ Ð¿ÐµÑ€ÐµÐ´ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ð¼ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
 	virtual bool onItemLockChanging(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
-	//! Åñëè åñòü ñòèëü	TLC_LOCKBOX, òî ïðèõîäèò ïîñëå èçìåíåíèÿ ñîñòîÿíèÿ
+	//! Ð•ÑÐ»Ð¸ ÐµÑÑ‚ÑŒ ÑÑ‚Ð¸Ð»ÑŒ	TLC_LOCKBOX, Ñ‚Ð¾ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´Ð¸Ñ‚ Ð¿Ð¾ÑÐ»Ðµ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
 	virtual void onItemLockChanged(CTreeListCtrl& tree, ITEM_CHANGE_INFO* pci) = 0;
 };
 

@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #include "StdAfxRD.h"
 #include "Node3DX.h"
 #include "../shader/shaders.h"

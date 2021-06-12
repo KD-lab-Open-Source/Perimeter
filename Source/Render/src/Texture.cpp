@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #include "StdAfxRD.h"
 
 cTexture::cTexture(const char *TexName) : cUnknownClass(KIND_TEXTURE)

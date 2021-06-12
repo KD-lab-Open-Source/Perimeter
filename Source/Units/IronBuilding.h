@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __IRONBUILDING_H__
 #define __IRONBUILDING_H__
 

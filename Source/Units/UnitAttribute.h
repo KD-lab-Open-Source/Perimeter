@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __UNIT_ATTRIBUTE_H__
 #define __UNIT_ATTRIBUTE_H__
 

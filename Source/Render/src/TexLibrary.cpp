@@ -146,7 +146,7 @@ cTexture* cTexLibrary::CreateTexture(int sizex,int sizey,bool alpha)
 cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,char *pMode)
 {
 	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
+	if(TextureName==0||TextureName[0]==0) return 0; // РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РїСѓСЃС‚РѕРµ
 
 	for(int i=0;i<GetNumberTexture();i++)
 	{
@@ -184,7 +184,7 @@ cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,char *pMode)
 cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 {
 	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
+	if(TextureName==0||TextureName[0]==0) return 0; // РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РїСѓСЃС‚РѕРµ
 
 	for(int i=0;i<GetNumberTexture();i++)
 	{
@@ -212,10 +212,10 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 cTexture* cTexLibrary::GetElementColor(const char *TextureName,sColor4c color,char *pMode)
 {
 	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
+	if(TextureName==0||TextureName[0]==0) return 0; // РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РїСѓСЃС‚РѕРµ
 	xassert(color.a==0 || color.a==255);
 	if(color.a==0)
-	{//Без Skin color
+	{//Р‘РµР· Skin color
 		color.set(255,255,255,0);
 	}
 
@@ -247,7 +247,7 @@ cTexture* cTexLibrary::GetElementColor(const char *TextureName,sColor4c color,ch
 cTextureScale* cTexLibrary::GetElementScale(const char *TextureName,Vect2f scale)
 {
 	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
+	if(TextureName==0||TextureName[0]==0) return 0; // РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РїСѓСЃС‚РѕРµ
 	cTextureScale* Texture=NULL;
 
 	for(int i=0;i<GetNumberTexture();i++)
@@ -280,7 +280,7 @@ cTextureScale* cTexLibrary::GetElementScale(const char *TextureName,Vect2f scale
 bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
 {
 	bool bump=pMode&&strstr(pMode,"Bump");
-	// тест наличия текстуры
+	// С‚РµСЃС‚ РЅР°Р»РёС‡РёСЏ С‚РµРєСЃС‚СѓСЂС‹
 	if(pMode&&strstr((char*)pMode,"NoMipMap"))
 		Texture->SetNumberMipMap(1);
 	else 
@@ -324,7 +324,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 
 	if(bump && !pos_bump)
 	{
-		//Эта текстура никогда не должна использоваться, make small texture.
+		//Р­С‚Р° С‚РµРєСЃС‚СѓСЂР° РЅРёРєРѕРіРґР° РЅРµ РґРѕР»Р¶РЅР° РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ, make small texture.
 		cTexture* pMini=GetElement("RESOURCE\\Models\\Main\\TEXTURES\\028r.tga");
 		if(pMini)
 		{
@@ -349,7 +349,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		void* buf;
 		int size;
 		//0 - alpha_none, 1- alpha_test, 2 - alpha_blend
-		int ret=ResourceFileRead(path_buffer,buf,size);///Утечка памяти
+		int ret=ResourceFileRead(path_buffer,buf,size);///РЈС‚РµС‡РєР° РїР°РјСЏС‚Рё
 		if(!ret)
 		{
 			BYTE alpha_type=((BYTE*)buf)[size-1];
@@ -364,7 +364,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 				Texture->SetAttribute(TEXTURE_ALPHA_BLEND);
 				break;
 			default:
-				//Неправильный dds файл. В конце должен быть байт с alpha.
+				//РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ dds С„Р°Р№Р». Р’ РєРѕРЅС†Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р±Р°Р№С‚ СЃ alpha.
 				Error(Texture);
 				Texture->Release();
 				return false;
@@ -390,12 +390,12 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 */
 	cFileImage *FileImage=0;
 
-	// загрузить текстуру из файла
+	// Р·Р°РіСЂСѓР·РёС‚СЊ С‚РµРєСЃС‚СѓСЂСѓ РёР· С„Р°Р№Р»Р°
 	char fName[1024];
 	strcpy(fName,Texture->GetName());
 	FileImage=cFileImage::Create(fName);
 	if(!FileImage)
-	{ // если расширение файла не опознано открыть его при помощи DirectX
+	{ // РµСЃР»Рё СЂР°СЃС€РёСЂРµРЅРёРµ С„Р°Р№Р»Р° РЅРµ РѕРїРѕР·РЅР°РЅРѕ РѕС‚РєСЂС‹С‚СЊ РµРіРѕ РїСЂРё РїРѕРјРѕС‰Рё DirectX
 		return ReLoadDDS(Texture);
 	}
 	

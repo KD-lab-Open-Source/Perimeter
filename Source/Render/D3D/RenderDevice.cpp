@@ -252,7 +252,7 @@ void BuildBumpMap(int xs,int ys,void *pSrc,void *pDst,int fmtBumpMap)
         }
 }
 void BuildDot3Map(int xs,int ys,void *pSrc,void *pDst)
-{ // трансформация карты цветов в карту нормалей
+{ // С‚СЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ РєР°СЂС‚С‹ С†РІРµС‚РѕРІ РІ РєР°СЂС‚Сѓ РЅРѕСЂРјР°Р»РµР№
 	float scale=255*2*0.1f;
 	Vect3f TexNormal(0.5f*255,0.5f*255,0.5f*255);
 	unsigned int *dst=(unsigned int *)pDst,*src=(unsigned int *)pSrc;

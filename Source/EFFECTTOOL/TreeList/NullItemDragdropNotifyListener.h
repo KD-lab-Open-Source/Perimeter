@@ -6,16 +6,16 @@ class NullItemDragdropNotifyListener :public IItemDragdropNotifyListener
 public:
 	NullItemDragdropNotifyListener(void);
 	virtual ~NullItemDragdropNotifyListener(void);
-	//! Начинаем тянуть выделенные элементы левой кнопкой мыши
+	//! РќР°С‡РёРЅР°РµРј С‚СЏРЅСѓС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ Р»РµРІРѕР№ РєРЅРѕРїРєРѕР№ РјС‹С€Рё
 	virtual bool onBeginDrag(CTreeListCtrl& source, TREELISTDRAGDROP* ptldd);
-	//! Начинаем тянуть выделенные элементы левой кнопкой мыши
+	//! РќР°С‡РёРЅР°РµРј С‚СЏРЅСѓС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ Р»РµРІРѕР№ РєРЅРѕРїРєРѕР№ РјС‹С€Рё
 	virtual bool onBeginRDrag(CTreeListCtrl& source, TREELISTDRAGDROP* ptldd);
-	//! Уведомляет о том, что курсор вошел в область окна
+	//! РЈРІРµРґРѕРјР»СЏРµС‚ Рѕ С‚РѕРј, С‡С‚Рѕ РєСѓСЂСЃРѕСЂ РІРѕС€РµР» РІ РѕР±Р»Р°СЃС‚СЊ РѕРєРЅР°
 	virtual bool onDragEnter(CTreeListCtrl& source, TREELISTDRAGDROP* ptldd);
-	//! Уведомляет о том, что курсор покинул область окна
+	//! РЈРІРµРґРѕРјР»СЏРµС‚ Рѕ С‚РѕРј, С‡С‚Рѕ РєСѓСЂСЃРѕСЂ РїРѕРєРёРЅСѓР» РѕР±Р»Р°СЃС‚СЊ РѕРєРЅР°
 	virtual void onDragLeave(CTreeListCtrl& source, TREELISTDRAGDROP* ptldd);
-	//! Уведомляет о том, что тянем курсор над окном
+	//! РЈРІРµРґРѕРјР»СЏРµС‚ Рѕ С‚РѕРј, С‡С‚Рѕ С‚СЏРЅРµРј РєСѓСЂСЃРѕСЂ РЅР°Рґ РѕРєРЅРѕРј
 	virtual bool onDragOver(CTreeListCtrl& source, TREELISTDRAGDROP* ptldd);
-	//! Уведомляет о том, что отжали кнопку мыши
+	//! РЈРІРµРґРѕРјР»СЏРµС‚ Рѕ С‚РѕРј, С‡С‚Рѕ РѕС‚Р¶Р°Р»Рё РєРЅРѕРїРєСѓ РјС‹С€Рё
 	virtual bool onDrop(CTreeListCtrl& source, TREELISTDRAGDROP* ptldd);
 };

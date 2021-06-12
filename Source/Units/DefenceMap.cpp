@@ -77,7 +77,7 @@ public:
 		center_ /= ends.size();
 	}
 
-	//Ïðåäïîëàãàåìûå çàòðàòû íà ïðîäâèæåíèå èç pos1 ê îêîí÷àíèþ
+	//ÐŸÑ€ÐµÐ´Ð¿Ð¾Ð»Ð°Ð³Ð°ÐµÐ¼Ñ‹Ðµ Ð·Ð°Ñ‚Ñ€Ð°Ñ‚Ñ‹ Ð½Ð° Ð¿Ñ€Ð¾Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ðµ Ð¸Ð· pos1 Ðº Ð¾ÐºÐ¾Ð½Ñ‡Ð°Ð½Ð¸ÑŽ
 	float GetH(Node* pos)
 	{
 		return sqrtf(sqr(pos->xcenter - center_.xi())+
@@ -92,7 +92,7 @@ public:
 		return (walk_to&ClusterFind::DOWN_MASK)+gmul;
 	}
 
-	//Çàòðàòû íà ïðîäâèæåíèå èç pos1 â pos2
+	//Ð—Ð°Ñ‚Ñ€Ð°Ñ‚Ñ‹ Ð½Ð° Ð¿Ñ€Ð¾Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ðµ Ð¸Ð· pos1 Ð² pos2
 	float GetG(Node* pos1,Node* pos2)
 	{
 		float mul=(pos2->walk&ClusterFind::DOWN_MASK)+gmul;

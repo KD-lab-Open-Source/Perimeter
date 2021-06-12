@@ -50,7 +50,7 @@ Vect3f HermitSplineDerivation2(float t,const Vect3f& p0,const Vect3f& p1,const V
 }
 
 inline float TriangleArea(float x1,float y1,float x2,float y2,float x3,float y3)
-{ // формула Герона
+{ // С„РѕСЂРјСѓР»Р° Р“РµСЂРѕРЅР°
 	float a=(x2-x1)*(x2-x1)+(y2-y1)*(y2-y1);
 	if(a<0) return 0;
 	a=sqrtf(a);

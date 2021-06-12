@@ -22,13 +22,14 @@ OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 
 # depends
 FIND_PACKAGE(Boost REQUIRED)
-FIND_PACKAGE(VORBIS REQUIRED)
+FIND_PACKAGE(VORBIS)
 
 # globals
 INCLUDE_DIRECTORIES(SYSTEM
         ${Boost_INCLUDE_DIRS}
-        ${VORBIS_INCLUDE_DIRS}
 )
+
+# optional vorbis
 
 IF(MSVC)
     #MSVC compiler specifics

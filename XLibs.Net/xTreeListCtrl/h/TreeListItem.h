@@ -12,13 +12,13 @@
 const unsigned TLIS_SELECTED		=	0x00000001;		// selected
 const unsigned TLIS_EXPANDED		=	0x00000002;		// expanded
 const unsigned TLIS_EXPANDEDONCE	=	0x00000004;		// expanded once
-const unsigned TLIS_FOCUSED			=	0x00000008;		//!	обведен рамкой
+const unsigned TLIS_FOCUSED			=	0x00000008;		//!	РѕР±РІРµРґРµРЅ СЂР°РјРєРѕР№
 
 const unsigned TLIS_SHOWCHECKBOX	=	0x00000010;		// show check box
 const unsigned TLIS_SHOWLOCKBOX		=	0x00000020;		// show lock box
 const unsigned TLIS_SHOWTREEIMAGE	=	0x00000040;		// show image
 
-//щелкнули мышкой дважды по той же строке и по тому же столбцу
+//С‰РµР»РєРЅСѓР»Рё РјС‹С€РєРѕР№ РґРІР°Р¶РґС‹ РїРѕ С‚РѕР№ Р¶Рµ СЃС‚СЂРѕРєРµ Рё РїРѕ С‚РѕРјСѓ Р¶Рµ СЃС‚РѕР»Р±С†Сѓ
 const unsigned TLIS_READYTOEDIT		=	0x00000080;
 
 const unsigned TLIS_SHOWBKCOLOR		=	0x00000100;		// owner background color

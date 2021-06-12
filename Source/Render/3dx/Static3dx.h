@@ -49,10 +49,10 @@ struct cStaticIndex
 
 	enum
 	{
-		max_index=20,//Максимальное количество матриц
+		max_index=20,//РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РјР°С‚СЂРёС†
 	};
-	//node_index с какими матрицами связанны текущие полигоны,
-	//не более max_index
+	//node_index СЃ РєР°РєРёРјРё РјР°С‚СЂРёС†Р°РјРё СЃРІСЏР·Р°РЅРЅС‹ С‚РµРєСѓС‰РёРµ РїРѕР»РёРіРѕРЅС‹,
+	//РЅРµ Р±РѕР»РµРµ max_index
 	vector<int> node_index;
 };
 
@@ -141,11 +141,11 @@ struct cStaticVisibilityChainGroup
 	string name;
 
 	vector<cStaticMesh> meshes;
-	int					ib_polygon;//Количество полигонов в ib
-	int					vb_size;//Количество вертексов в vb
+	int					ib_polygon;//РљРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»РёРіРѕРЅРѕРІ РІ ib
+	int					vb_size;//РљРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС‚РµРєСЃРѕРІ РІ vb
 	sPtrIndexBuffer		ib;
 	sPtrVertexBuffer	vb;
-	int			blend_indices;//количество костей в vb
+	int			blend_indices;//РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕСЃС‚РµР№ РІ vb
 	vector<cStaticIndex> skin_group;
 
 	vector<string>		temp_invisible_object;
@@ -171,7 +171,7 @@ struct cStaticEffect
 	class EffectKey* effect_key;
 };
 
-//Класс, хранящий в себе неизменные данные для всех 3dx объектов.
+//РљР»Р°СЃСЃ, С…СЂР°РЅСЏС‰РёР№ РІ СЃРµР±Рµ РЅРµРёР·РјРµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РІСЃРµС… 3dx РѕР±СЉРµРєС‚РѕРІ.
 class cStatic3dx
 {
 public:

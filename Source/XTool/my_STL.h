@@ -10,7 +10,7 @@
 
 //#define _STLP_NO_IOSTREAMS 1
 
-//namespace stlp_std//Затычка для нашего STL, в котором нет stream
+//namespace stlp_std//Р—Р°С‚С‹С‡РєР° РґР»СЏ РЅР°С€РµРіРѕ STL, РІ РєРѕС‚РѕСЂРѕРј РЅРµС‚ stream
 //{
 //	class ostream
 //	{

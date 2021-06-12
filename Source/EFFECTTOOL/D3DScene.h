@@ -44,7 +44,7 @@ public:
 	void Zoom(float delta);
 	void Quant();
 
-	void GetBilboardMatrix(Mat3f& mat);//матрица для отображения всегда лицом к камере
+	void GetBilboardMatrix(Mat3f& mat);//РјР°С‚СЂРёС†Р° РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІСЃРµРіРґР° Р»РёС†РѕРј Рє РєР°РјРµСЂРµ
 
 	void DrawCameraRect(cInterfaceRenderDevice* pRenderDevice, bool bActive);
 

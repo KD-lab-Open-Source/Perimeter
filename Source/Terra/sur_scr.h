@@ -36,7 +36,7 @@ struct s_el {
 struct s_row { //: s_el 
 	vector<s_el> el;
 	int type;
-	int line_width;//Ширина текстовой строки
+	int line_width;//РЁРёСЂРёРЅР° С‚РµРєСЃС‚РѕРІРѕР№ СЃС‚СЂРѕРєРё
 	char name[40];
 	int d_int; //default
 	double d_double;
@@ -51,7 +51,7 @@ struct s_row { //: s_el
 		char* k=new char[line_width+1];
 		strcpy(k,v);
 		el.push_back(k);};
-	void add_el_d(){ //добавитсь элемент со значением = default
+	void add_el_d(){ //РґРѕР±Р°РІРёС‚СЃСЊ СЌР»РµРјРµРЅС‚ СЃРѕ Р·РЅР°С‡РµРЅРёРµРј = default
 		if(type==INT_VARIABLE) add_el(d_int);
 		if(type==DOUBLE_VARIABLE) add_el(d_double);
 		if(type==CHAR_VARIABLE) add_el(d_char);
@@ -64,7 +64,7 @@ struct s_row { //: s_el
 		strcpy(el[number].v_char, v);
 		if(flag_last_value) strcpy(d_char,v);};
 
-	void set_el_d(int number, int v){ el[number].v_int=v; d_int=v;}; //установить значение элемента и default-а
+	void set_el_d(int number, int v){ el[number].v_int=v; d_int=v;}; //СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р·РЅР°С‡РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° Рё default-Р°
 	void set_el_d(int number, double v){ el[number].v_double=v; d_double=v;};
 	void set_el_d(int number, char* v){ el[number].v_char=v; d_char=v;};
 
@@ -76,7 +76,7 @@ struct s_row { //: s_el
 		if(type==CHAR_VARIABLE) delete el[number].v_char; 
 		el.erase(el.begin()+number);};
 
-//Вставка в конкретную позицию
+//Р’СЃС‚Р°РІРєР° РІ РєРѕРЅРєСЂРµС‚РЅСѓСЋ РїРѕР·РёС†РёСЋ
 	void ins_el(int poz, int v){
 		el.insert(el.begin()+poz,1);
 		set_el(poz, v);
@@ -87,11 +87,11 @@ struct s_row { //: s_el
 	};
 	void ins_el(int poz, char* v){ 
 		el.insert(el.begin()+poz,1);
-		char* k=new char[line_width+1]; //Выделяем память под строку 
-		el[poz].v_char=k; //Помещаем указатель под выделенную память в массив. Эти сложности необходимы т.к. В массиве хранятся указатели а не строки
+		char* k=new char[line_width+1]; //Р’С‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ СЃС‚СЂРѕРєСѓ 
+		el[poz].v_char=k; //РџРѕРјРµС‰Р°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РїРѕРґ РІС‹РґРµР»РµРЅРЅСѓСЋ РїР°РјСЏС‚СЊ РІ РјР°СЃСЃРёРІ. Р­С‚Рё СЃР»РѕР¶РЅРѕСЃС‚Рё РЅРµРѕР±С…РѕРґРёРјС‹ С‚.Рє. Р’ РјР°СЃСЃРёРІРµ С…СЂР°РЅСЏС‚СЃСЏ СѓРєР°Р·Р°С‚РµР»Рё Р° РЅРµ СЃС‚СЂРѕРєРё
 		set_el(poz, v);
 	};
-	void ins_el_d(int poz){ //добавитсь элемент со значением = default
+	void ins_el_d(int poz){ //РґРѕР±Р°РІРёС‚СЃСЊ СЌР»РµРјРµРЅС‚ СЃРѕ Р·РЅР°С‡РµРЅРёРµРј = default
 		if(type==INT_VARIABLE) ins_el(poz, d_int);
 		if(type==DOUBLE_VARIABLE) ins_el(poz, d_double);
 		if(type==CHAR_VARIABLE) ins_el(poz, d_char);
@@ -108,12 +108,12 @@ struct s_sur_scr  { //: s_row
 	int version;
 	int type;
 	char name_scr[MAX_SCR_NAME];
-	int beg_num_rows; //Для конвертации скрипта необходимо запомнить кол-во старых строк
+	int beg_num_rows; //Р”Р»СЏ РєРѕРЅРІРµСЂС‚Р°С†РёРё СЃРєСЂРёРїС‚Р° РЅРµРѕР±С…РѕРґРёРјРѕ Р·Р°РїРѕРјРЅРёС‚СЊ РєРѕР»-РІРѕ СЃС‚Р°СЂС‹С… СЃС‚СЂРѕРє
 
 	s_sur_scr() {
 		numbers_rows=0;
 		numbers_cell=0;
-		current_cell=-1;//Начальное значение т.к. сразу пребавляется 1 для вставки в заданную позицию
+		current_cell=-1;//РќР°С‡Р°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ С‚.Рє. СЃСЂР°Р·Сѓ РїСЂРµР±Р°РІР»СЏРµС‚СЃСЏ 1 РґР»СЏ РІСЃС‚Р°РІРєРё РІ Р·Р°РґР°РЅРЅСѓСЋ РїРѕР·РёС†РёСЋ
 #ifdef _SURMAP2_
 		draw_seq=0;
 #endif
@@ -131,15 +131,15 @@ struct s_sur_scr  { //: s_row
 	void save_data_release();
 	void new_row() {};
 	void new_col() {};
-	void addIset_default(int x, int y){ //Добавление CELL и заполнение ее defaul-значениями
-		for(int i=0; i<numbers_rows; i++) row[i].add_el_d();//row X и Y заполняются передаваемыми X и Y
+	void addIset_default(int x, int y){ //Р”РѕР±Р°РІР»РµРЅРёРµ CELL Рё Р·Р°РїРѕР»РЅРµРЅРёРµ РµРµ defaul-Р·РЅР°С‡РµРЅРёСЏРјРё
+		for(int i=0; i<numbers_rows; i++) row[i].add_el_d();//row X Рё Y Р·Р°РїРѕР»РЅСЏСЋС‚СЃСЏ РїРµСЂРµРґР°РІР°РµРјС‹РјРё X Рё Y
 		row[0].set_el(numbers_cell, x);
 		row[1].set_el(numbers_cell, y);
 		current_cell=numbers_cell;
 		numbers_cell++;
 	};
-	void addIset_default(int x, int y, int alpha){ //Добавление CELL и заполнение ее defaul-значениями
-		for(int i=0; i<numbers_rows; i++) row[i].add_el_d();//row X и Y заполняются передаваемыми X и Y
+	void addIset_default(int x, int y, int alpha){ //Р”РѕР±Р°РІР»РµРЅРёРµ CELL Рё Р·Р°РїРѕР»РЅРµРЅРёРµ РµРµ defaul-Р·РЅР°С‡РµРЅРёСЏРјРё
+		for(int i=0; i<numbers_rows; i++) row[i].add_el_d();//row X Рё Y Р·Р°РїРѕР»РЅСЏСЋС‚СЃСЏ РїРµСЂРµРґР°РІР°РµРјС‹РјРё X Рё Y
 		row[0].set_el(numbers_cell, x);
 		row[1].set_el(numbers_cell, y);
 		row[2].set_el(numbers_cell, alpha);
@@ -147,17 +147,17 @@ struct s_sur_scr  { //: s_row
 		numbers_cell++;
 	};
 
-	void insIset_default(int num_ins, int x, int y){ //Добавление CELL и заполнение ее defaul-значениями
+	void insIset_default(int num_ins, int x, int y){ //Р”РѕР±Р°РІР»РµРЅРёРµ CELL Рё Р·Р°РїРѕР»РЅРµРЅРёРµ РµРµ defaul-Р·РЅР°С‡РµРЅРёСЏРјРё
 		if(num_ins > numbers_cell) ErrH.Abort("Error in SurScr(insert element)");
-		for(int i=0; i<numbers_rows; i++) row[i].ins_el_d(num_ins);//row X и Y заполняются передаваемыми X и Y
+		for(int i=0; i<numbers_rows; i++) row[i].ins_el_d(num_ins);//row X Рё Y Р·Р°РїРѕР»РЅСЏСЋС‚СЃСЏ РїРµСЂРµРґР°РІР°РµРјС‹РјРё X Рё Y
 		row[0].set_el(num_ins, x);
 		row[1].set_el(num_ins, y);
 		current_cell=num_ins;
 		numbers_cell++;
 	};
-	void insIset_default(int num_ins, int x, int y, int alpha){ //Добавление CELL и заполнение ее defaul-значениями
+	void insIset_default(int num_ins, int x, int y, int alpha){ //Р”РѕР±Р°РІР»РµРЅРёРµ CELL Рё Р·Р°РїРѕР»РЅРµРЅРёРµ РµРµ defaul-Р·РЅР°С‡РµРЅРёСЏРјРё
 		if(num_ins > numbers_cell) ErrH.Abort("Error in SurScr(insert element)");
-		for(int i=0; i<numbers_rows; i++) row[i].ins_el_d(num_ins);//row X и Y заполняются передаваемыми X и Y
+		for(int i=0; i<numbers_rows; i++) row[i].ins_el_d(num_ins);//row X Рё Y Р·Р°РїРѕР»РЅСЏСЋС‚СЃСЏ РїРµСЂРµРґР°РІР°РµРјС‹РјРё X Рё Y
 		row[0].set_el(num_ins, x);
 		row[1].set_el(num_ins, y);
 		row[2].set_el(num_ins, alpha);
@@ -177,7 +177,7 @@ struct s_sur_scr  { //: s_row
 		return -1;
 	};
 #ifdef _SURMAP2_
-	char draw_seq; //Показ последовательности поинтов
+	char draw_seq; //РџРѕРєР°Р· РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё РїРѕРёРЅС‚РѕРІ
 	void drawCell(){
 		int xc,yc,alpha,old_xc,old_yc;
 		for(int i=0; i<numbers_cell; i++){

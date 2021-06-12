@@ -33,7 +33,7 @@ static float get_float(char* s)
 	return f;
 }
 
-// глобальные переменные
+// РіР»РѕР±Р°Р»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 cVisGeneric	*gb_VisGeneric=0;
 
 DebugType<int>		Option_DrawMeshBound(0);
@@ -88,7 +88,7 @@ cVisGeneric::cVisGeneric() : cUnknownClass(KIND_UI_VISGENERIC)//: SceneArray(KIN
 	for(int i=0;i<SHOW_MAX;i++)
 		Option_ShowType[i]=true;
 	Option_ShowType[SHOW_INFO]=false;
-	// инициализация глобальных переменых
+	// РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РіР»РѕР±Р°Р»СЊРЅС‹С… РїРµСЂРµРјРµРЅС‹С…
 	shaders=NULL;
 	ObjLibrary=new cObjLibrary();
 	Lib3dx=new cLib3dx;
@@ -235,14 +235,14 @@ cScene* cVisGeneric::CreateScene()
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void cVisGeneric::SetData(cInterfaceRenderDevice *pData)
-{ // функция для работы с окном вывода
+{ // С„СѓРЅРєС†РёСЏ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РѕРєРЅРѕРј РІС‹РІРѕРґР°
 	cURenderDevice *IRenderDevice=(cURenderDevice*)pData;
 	VISASSERT(IRenderDevice&&IRenderDevice->GetKind(KIND_UI_RENDERDEVICE));
 	InitShaders();
 	Init3dxshader();
 }
 void cVisGeneric::ClearData()
-{ // функция для работы с окном вывода
+{ // С„СѓРЅРєС†РёСЏ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РѕРєРЅРѕРј РІС‹РІРѕРґР°
 	vector<cFontInternal*>::iterator it;
 	FOR_EACH(fonts,it)
 		(*it)->Release();

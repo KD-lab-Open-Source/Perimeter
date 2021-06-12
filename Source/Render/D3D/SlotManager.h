@@ -1,13 +1,13 @@
 #pragma once
 /*
-	Поддерживает кучу слотов.
-	Если слот уже не нужен, удаляет его.
+	РџРѕРґРґРµСЂР¶РёРІР°РµС‚ РєСѓС‡Сѓ СЃР»РѕС‚РѕРІ.
+	Р•СЃР»Рё СЃР»РѕС‚ СѓР¶Рµ РЅРµ РЅСѓР¶РµРЅ, СѓРґР°Р»СЏРµС‚ РµРіРѕ.
 */
 
 template<class Slot>
 class cSlotManager
 {
-public://Сделать так, что-бы operator[] мог работать в нескольких потоках при использовании NewSlot,DeleteSlot в другом потоке
+public://РЎРґРµР»Р°С‚СЊ С‚Р°Рє, С‡С‚Рѕ-Р±С‹ operator[] РјРѕРі СЂР°Р±РѕС‚Р°С‚СЊ РІ РЅРµСЃРєРѕР»СЊРєРёС… РїРѕС‚РѕРєР°С… РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё NewSlot,DeleteSlot РІ РґСЂСѓРіРѕРј РїРѕС‚РѕРєРµ
 	allocator<Slot> alloc;
 	typedef vector<Slot*> array;
 	typedef typename array::iterator iterator;
@@ -32,7 +32,7 @@ public:
 	inline Slot* operator[](int slot);
 };
 
-//Очищает/устанавливает переменную Slot::init в DeleteSlot/NewSlot
+//РћС‡РёС‰Р°РµС‚/СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РїРµСЂРµРјРµРЅРЅСѓСЋ Slot::init РІ DeleteSlot/NewSlot
 template<class Slot>
 class cSlotManagerInit:public cSlotManager<Slot>
 {

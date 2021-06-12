@@ -139,41 +139,41 @@ CTreeListItem* const TLI_SORT = (CTreeListItem*)(ULONG_PTR)0xFFFF0004;	// sort i
 
 // TreeListCtrl Message
 #define TLN_FIRST					(NM_LAST - 1U)
-// перед изменением выделения узла 
+// РїРµСЂРµРґ РёР·РјРµРЅРµРЅРёРµРј РІС‹РґРµР»РµРЅРёСЏ СѓР·Р»Р° 
 #define TLN_SELCHANGING				(TLN_FIRST - 0)			
-// после изменения выделения узла
+// РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёСЏ РІС‹РґРµР»РµРЅРёСЏ СѓР·Р»Р°
 #define TLN_SELCHANGED				(TLN_FIRST - 1)			
-//тоже самое, что и TVN_GETDISPINFO
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_GETDISPINFO
 #define TLN_GETDISPINFO				(TLN_FIRST - 2)
-//тоже самое, что и TVN_SETDISPINFO
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_SETDISPINFO
 #define TLN_SETDISPINFO				(TLN_FIRST - 3)
-//тоже самое, что и TVN_ITEMEXPANDING		expanding an item
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_ITEMEXPANDING		expanding an item
 #define TLN_ITEMEXPANDING			(TLN_FIRST - 4)
-//тоже самое, что и TVN_ITEMEXPANDED		an item was expanded
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_ITEMEXPANDED		an item was expanded
 #define TLN_ITEMEXPANDED			(TLN_FIRST - 5)
-//тоже самое, что и TVN_BEGINDRAG
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_BEGINDRAG
 #define TLN_BEGINDRAG				(TLN_FIRST - 6)
-//тоже самое, что и TVN_BEGINRDRAG
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_BEGINRDRAG
 #define TLN_BEGINRDRAG				(TLN_FIRST - 7)
-//тоже самое, что и TVN_DELETEITEM			// delete an item
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_DELETEITEM			// delete an item
 #define TLN_DELETEITEM				(TLN_FIRST - 8)
 // entry a build in control
-//если верунли 0, значит происходит автоматическая настройка контрола
-//если не 0 - значит настройку выполнил пользователь
+//РµСЃР»Рё РІРµСЂСѓРЅР»Рё 0, Р·РЅР°С‡РёС‚ РїСЂРѕРёСЃС…РѕРґРёС‚ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ РЅР°СЃС‚СЂРѕР№РєР° РєРѕРЅС‚СЂРѕР»Р°
+//РµСЃР»Рё РЅРµ 0 - Р·РЅР°С‡РёС‚ РЅР°СЃС‚СЂРѕР№РєСѓ РІС‹РїРѕР»РЅРёР» РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ
 #define TLN_BEGINCONTROL			(TLN_FIRST - 9)
 // leave a build in control
 #define TLN_ENDCONTROL				(TLN_FIRST - 10)
-//тоже самое, что и TVN_BEGINLABELEDIT
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_BEGINLABELEDIT
 #define TLN_BEGINLABELEDIT			(TLN_FIRST - 11)
-//тоже самое, что и TVN_ENDLABELEDIT
+//С‚РѕР¶Рµ СЃР°РјРѕРµ, С‡С‚Рѕ Рё TVN_ENDLABELEDIT
 #define TLN_ENDLABELEDIT			(TLN_FIRST - 12)
-//! Запрашивает тип контрола, которым будем редактировать элемент
+//! Р—Р°РїСЂР°С€РёРІР°РµС‚ С‚РёРї РєРѕРЅС‚СЂРѕР»Р°, РєРѕС‚РѕСЂС‹Рј Р±СѓРґРµРј СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ СЌР»РµРјРµРЅС‚
 #define TLN_REQUESTCTRLTYPE			(TLN_FIRST - 13)
 
-//! Удаляем все узлы. Приходит, если контрол работает как список
+//! РЈРґР°Р»СЏРµРј РІСЃРµ СѓР·Р»С‹. РџСЂРёС…РѕРґРёС‚, РµСЃР»Рё РєРѕРЅС‚СЂРѕР» СЂР°Р±РѕС‚Р°РµС‚ РєР°Рє СЃРїРёСЃРѕРє
 #define TLN_DELETEALLITEMS			(TLN_FIRST - 14)
 
-//Сообщаем, что нажали кнопку
+//РЎРѕРѕР±С‰Р°РµРј, С‡С‚Рѕ РЅР°Р¶Р°Р»Рё РєРЅРѕРїРєСѓ
 #define TLN_KEYDOWN					(TLN_FIRST - 15)
 
 #define	TLN_SUBITEMUPDATED			(TLN_FIRST-20)			// while a column of an item updating
@@ -252,7 +252,7 @@ typedef struct _NMTREELISTCTRL {
 	NMHDR hdr;
 	CTreeListItem	*pItem;
 	int				iCol;
-	CWnd			*pEditControl;//контрол, которым производится редактирование			
+	CWnd			*pEditControl;//РєРѕРЅС‚СЂРѕР», РєРѕС‚РѕСЂС‹Рј РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ			
 }NMTREELISTCTRL,*LPNMTREELISTCTRL;
 typedef BOOL (WINAPI *lpfnUpdateLayeredWindow)(	HWND hWnd, HDC hdcDst, POINT *pptDst, 
 												SIZE *psize,HDC hdcSrc, POINT *pptSrc, 
@@ -277,8 +277,8 @@ class AFX_EXT_CLASS CTreeListCtrl : public CWnd
 	friend class CTLCDragWnd;
 	friend class CTLCDropWnd;
 
-//	static UINT const DRAG_DELAY;//через какое время drag and drop начнется 
-					//даже без движения
+//	static UINT const DRAG_DELAY;//С‡РµСЂРµР· РєР°РєРѕРµ РІСЂРµРјСЏ drag and drop РЅР°С‡РЅРµС‚СЃСЏ 
+					//РґР°Р¶Рµ Р±РµР· РґРІРёР¶РµРЅРёСЏ
 
 // Construction
 public:
@@ -422,7 +422,7 @@ private:
 	int					m_nItemHeight;				// Height of 
 	CTreeListItem*		m_pRootItem;				// Root Item
 	CTreeListItem*		m_pFocusItem;				// Focus item
-	CTreeListItem*		m_pShiftSelectionBase;		//! узел-основа для выделения с шифтом
+	CTreeListItem*		m_pShiftSelectionBase;		//! СѓР·РµР»-РѕСЃРЅРѕРІР° РґР»СЏ РІС‹РґРµР»РµРЅРёСЏ СЃ С€РёС„С‚РѕРј
 
 	int					m_iModifyCol;				// Modify col
 	CTreeListItem*		m_pModifyItem;				// Modify item
@@ -451,7 +451,7 @@ private:
 public:
 	//***************************types***************************************
 	enum eSelectAction {SI_SELECT, SI_DESELECT};
-	//! Различные константы
+	//! Р Р°Р·Р»РёС‡РЅС‹Рµ РєРѕРЅСЃС‚Р°РЅС‚С‹
 	enum {
 		TLCC_NONOTIFY,
 		TLCC_NOTIFY
@@ -619,13 +619,13 @@ protected:
 	void			SetFocusedItem(CTreeListItem* pFocusItem);
 	void			SetModifiedItem(CTreeListItem* pItem);
 	CTreeListItem*	GetModifiedItem() const;
-	//!\brief Назначает узел, от которого будет идти выделение 
-	//! при выдеделении с шифтом
+	//!\brief РќР°Р·РЅР°С‡Р°РµС‚ СѓР·РµР», РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґРµС‚ РёРґС‚Рё РІС‹РґРµР»РµРЅРёРµ 
+	//! РїСЂРё РІС‹РґРµРґРµР»РµРЅРёРё СЃ С€РёС„С‚РѕРј
 	void			SetShiftSelectionBase(CTreeListItem* pitem);
-	//! Возвращает узел, от которого будет идти выделение 
-	//! при выдеделении с шифтом
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓР·РµР», РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґРµС‚ РёРґС‚Рё РІС‹РґРµР»РµРЅРёРµ 
+	//! РїСЂРё РІС‹РґРµРґРµР»РµРЅРёРё СЃ С€РёС„С‚РѕРј
 	CTreeListItem*  GetShiftSelectionBase() const;
-	//возвращает номер в списке выбранных
+	//РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРѕРјРµСЂ РІ СЃРїРёСЃРєРµ РІС‹Р±СЂР°РЅРЅС‹С…
 	INT_PTR			FindInSelected(CTreeListItem const* pItem) const;
 	bool			IsColumnVisible(int iCol) const;
 	INT_PTR			FindInShowedColumns(int iCol) const;
@@ -650,12 +650,12 @@ private:
 
 	bool	SelectItemAux(CTreeListItem* pItem, int iSubItem  = 0 , 
 		eSelectAction eAction  = SI_SELECT);
-	//! пытаемся снять выделение сразу со всех узлов, исключая указанный
+	//! РїС‹С‚Р°РµРјСЃСЏ СЃРЅСЏС‚СЊ РІС‹РґРµР»РµРЅРёРµ СЃСЂР°Р·Сѓ СЃРѕ РІСЃРµС… СѓР·Р»РѕРІ, РёСЃРєР»СЋС‡Р°СЏ СѓРєР°Р·Р°РЅРЅС‹Р№
 	void	DeselectAll(CTreeListItem const* pItem);
 
 	void	ShiftSelection(CTreeListItem* pItem, int iSubItembool,
 							bool bClearSelection = true);
-	//! Выбор элементов в ответ на нажатие клавши клавиатуры
+	//! Р’С‹Р±РѕСЂ СЌР»РµРјРµРЅС‚РѕРІ РІ РѕС‚РІРµС‚ РЅР° РЅР°Р¶Р°С‚РёРµ РєР»Р°РІС€Рё РєР»Р°РІРёР°С‚СѓСЂС‹
 	void	SelectItemOnKeyPressing(CTreeListItem* pItem, int iSubItem);
 
 	enum eItemLayout{EIL_ABOVE, EIL_BELOW};

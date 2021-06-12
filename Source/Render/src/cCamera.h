@@ -54,9 +54,9 @@ public:
 	virtual void ConvertorWorldToCamera(const Vect3f *pw,Vect3f *pe);
 	virtual void ConvertorCameraToWorld(Vect3f *pw,const Vect2f *pe);
 
-	//По точке на экране возвращает луч в глобальных координатах
+	//РџРѕ С‚РѕС‡РєРµ РЅР° СЌРєСЂР°РЅРµ РІРѕР·РІСЂР°С‰Р°РµС‚ Р»СѓС‡ РІ РіР»РѕР±Р°Р»СЊРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚Р°С…
 	virtual void GetWorldRay(const Vect2f& pe,Vect3f& pos,Vect3f& dir);
-	// функции позиционирования камеры и изменения ее матрицы
+	// С„СѓРЅРєС†РёРё РїРѕР·РёС†РёРѕРЅРёСЂРѕРІР°РЅРёСЏ РєР°РјРµСЂС‹ Рё РёР·РјРµРЅРµРЅРёСЏ РµРµ РјР°С‚СЂРёС†С‹
 	virtual void SetPosition(const MatXf& matrix);
 	virtual void GetPosition(MatXf *Matrix,Vect3f *Pos=0);
 
@@ -84,7 +84,7 @@ public:
 	void AttachChild(cCamera *child);
 	cCamera* FindCildCamera(int AttributeCamera);
 
-	// функции для работы с пирамидой видимости
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РїРёСЂР°РјРёРґРѕР№ РІРёРґРёРјРѕСЃС‚Рё
 	virtual void SetClip(const sRectangle4f &clip);
 	inline const sRectangle4f& GetClip()			{ return Clip; }
 	inline const Vect2f& GetZPlane()				{ return zPlane; }
@@ -97,7 +97,7 @@ public:
 
 	inline eSceneNode GetCameraPass()				{ return camerapass; }
 
-	// функции теста видимости
+	// С„СѓРЅРєС†РёРё С‚РµСЃС‚Р° РІРёРґРёРјРѕСЃС‚Рё
 	eTestVisible TestVisible(const Vect3f &min,const Vect3f &max);
 	eTestVisible TestVisibleComplete(const Vect3f &min,const Vect3f &max);
 	
@@ -112,7 +112,7 @@ public:
 
 	inline cURenderDevice* GetRenderDevice()					{ return RenderDevice; }
 	inline class cD3DRender* GetRenderDevice3D()				{ return (class cD3DRender*)RenderDevice; }
-	// инлайновые функции доступа к полям класса
+	// РёРЅР»Р°Р№РЅРѕРІС‹Рµ С„СѓРЅРєС†РёРё РґРѕСЃС‚СѓРїР° Рє РїРѕР»СЏРј РєР»Р°СЃСЃР°
 	inline cIUnkClass*& GetDraw(int pos,int number)				{ return DrawArray[pos][number]; }
 	inline int GetNumberDraw(int pos)							{ return DrawArray[pos].size(); }
 
@@ -121,7 +121,7 @@ public:
 
 	inline const Vect2f& GetFocusViewPort()						{ return FocusViewPort; }
 	inline const Vect2f& GetScaleViewPort()						{ return ScaleViewPort; }
-	// функции для работы с отрисовкой
+	// С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РѕС‚СЂРёСЃРѕРІРєРѕР№
 	inline const Vect2f& GetRenderSize()						{ return RenderSize; }
 	inline const Vect3f& GetWorldI()							{ return WorldI; }
 	inline const Vect3f& GetWorldJ()							{ return WorldJ; }
@@ -176,36 +176,36 @@ protected:
 		}
 	};
 
-	// первичные значения
-	Vect3f				Pos;						// местоположение камеры
+	// РїРµСЂРІРёС‡РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
+	Vect3f				Pos;						// РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёРµ РєР°РјРµСЂС‹
 	// viewport
 	Vect2f				Focus;			
 	Vect2f				Center;
-	sRectangle4f		Clip;						// Clip.left,Clip.right,Clip.top,Clip.bottom - 0..1 - размеры видимой области
+	sRectangle4f		Clip;						// Clip.left,Clip.right,Clip.top,Clip.bottom - 0..1 - СЂР°Р·РјРµСЂС‹ РІРёРґРёРјРѕР№ РѕР±Р»Р°СЃС‚Рё
 	Vect2f				zPlane;
 	Vect2f				OriginalzPlane;
 
 	//new
-	MatXf			GlobalMatrix;													// глобальная матрица объекта, относительно мировых координат
-	cScene			*IParent;														// интерфейс породивший данный класс
+	MatXf			GlobalMatrix;													// РіР»РѕР±Р°Р»СЊРЅР°СЏ РјР°С‚СЂРёС†Р° РѕР±СЉРµРєС‚Р°, РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РјРёСЂРѕРІС‹С… РєРѕРѕСЂРґРёРЅР°С‚
+	cScene			*IParent;														// РёРЅС‚РµСЂС„РµР№СЃ РїРѕСЂРѕРґРёРІС€РёР№ РґР°РЅРЅС‹Р№ РєР»Р°СЃСЃ
 
 	//cCamera
-	cURenderDevice				*RenderDevice;				// устройство растеризации
-	cTexture					*RenderTarget;				// поверхность на которую выводится
+	cURenderDevice				*RenderDevice;				// СѓСЃС‚СЂРѕР№СЃС‚РІРѕ СЂР°СЃС‚РµСЂРёР·Р°С†РёРё
+	cTexture					*RenderTarget;				// РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ РЅР° РєРѕС‚РѕСЂСѓСЋ РІС‹РІРѕРґРёС‚СЃСЏ
 	IDirect3DSurface9*			pZBuffer;
-	Vect2f						RenderSize;					// размеры устройства вывода
+	Vect2f						RenderSize;					// СЂР°Р·РјРµСЂС‹ СѓСЃС‚СЂРѕР№СЃС‚РІР° РІС‹РІРѕРґР°
 
 	enum
 	{
 		PlaneClip3d_size=6,
 	};
-	sPlane4f		PlaneClip3d[PlaneClip3d_size];				// плоскости отсечения
+	sPlane4f		PlaneClip3d[PlaneClip3d_size];				// РїР»РѕСЃРєРѕСЃС‚Рё РѕС‚СЃРµС‡РµРЅРёСЏ
 
 	vector<cIUnkClass*>			DrawArray[MAXSCENENODE];
 	vector<ObjectSort>			SortArray;
 	vector<cObjectNodeRoot*>	ShadowTestArray;
-	Vect2f						FocusViewPort;				// фокус графического окна
-	Vect2f						ScaleViewPort;				// коэффициенты неоднородности экрана по осям
+	Vect2f						FocusViewPort;				// С„РѕРєСѓСЃ РіСЂР°С„РёС‡РµСЃРєРѕРіРѕ РѕРєРЅР°
+	Vect2f						ScaleViewPort;				// РєРѕСЌС„С„РёС†РёРµРЅС‚С‹ РЅРµРѕРґРЅРѕСЂРѕРґРЅРѕСЃС‚Рё СЌРєСЂР°РЅР° РїРѕ РѕСЃСЏРј
 	Vect3f						WorldI,WorldJ,WorldK;
 protected:
 	vector<cMeshSortingPhase*> arSortMaterial;
@@ -238,7 +238,7 @@ protected:
 
 ////////////////////inline cCamera///////////////////////////////////
 inline eTestVisible cCamera::TestVisible(const Vect3f &center,float radius)
-{ // для BoundingSphere с центром center и радиусом radius (при radius=0 - тест видимости точки)
+{ // РґР»СЏ BoundingSphere СЃ С†РµРЅС‚СЂРѕРј center Рё СЂР°РґРёСѓСЃРѕРј radius (РїСЂРё radius=0 - С‚РµСЃС‚ РІРёРґРёРјРѕСЃС‚Рё С‚РѕС‡РєРё)
 	for(int i=0;i<GetNumberPlaneClip3d();i++)
 		if(GetPlaneClip3d(i).GetDistance(center)<-radius)
 			return VISIBLE_OUTSIDE;

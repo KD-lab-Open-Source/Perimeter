@@ -12,7 +12,7 @@
 const unsigned TLIS_SELECTED		=	0x00000001;		// selected
 const unsigned TLIS_EXPANDED		=	0x00000002;		// expanded
 const unsigned TLIS_EXPANDEDONCE	=	0x00000004;		// expanded once
-const unsigned TLIS_FOCUSED			=	0x00000008;		//!	обведен рамкой
+const unsigned TLIS_FOCUSED			=	0x00000008;		//!	РѕР±РІРµРґРµРЅ СЂР°РјРєРѕР№
 
 const unsigned TLIS_SHOWCHECKBOX	=	0x00001000;		// show check box
 const unsigned TLIS_SHOWLOCKBOX		=	0x00002000;		// show lock box

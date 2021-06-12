@@ -38,6 +38,9 @@ jobs:
           msys2do cp /mingw32/bin/libgcc_s_seh-1.dll perimeter/bin/
           msys2do cp /mingw32/bin/libstdc++-6.dll perimeter/bin/
           msys2do cp /mingw32/bin/libwinpthread-1.dll perimeter/bin/
+          msys2do cp /mingw32/bin/libogg-0.dll perimeter/bin/
+          msys2do cp /mingw32/bin/libvorbis-0.dll perimeter/bin/
+          msys2do cp /mingw32/bin/libvorbisfile-3.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
       - uses: actions/upload-artifact@v1
         with:
@@ -76,6 +79,9 @@ jobs:
           msys2do cp /mingw32/bin/libgcc_s_seh-1.dll perimeter/bin/
           msys2do cp /mingw32/bin/libstdc++-6.dll perimeter/bin/
           msys2do cp /mingw32/bin/libwinpthread-1.dll perimeter/bin/
+          msys2do cp /mingw32/bin/libogg-0.dll perimeter/bin/
+          msys2do cp /mingw32/bin/libvorbis-0.dll perimeter/bin/
+          msys2do cp /mingw32/bin/libvorbisfile-3.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
           msys2do strip perimeter/bin/perimeter.exe
       - uses: actions/upload-artifact@v1

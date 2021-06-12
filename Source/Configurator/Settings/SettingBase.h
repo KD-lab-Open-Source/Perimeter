@@ -17,7 +17,7 @@ public:
 	SettingBase(UINT ctrlId);
 	virtual ~SettingBase();
 
-	//! Инициализация котрола относящегося к настройке(например заполнить комбобокс)
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РєРѕС‚СЂРѕР»Р° РѕС‚РЅРѕСЃСЏС‰РµРіРѕСЃСЏ Рє РЅР°СЃС‚СЂРѕР№РєРµ(РЅР°РїСЂРёРјРµСЂ Р·Р°РїРѕР»РЅРёС‚СЊ РєРѕРјР±РѕР±РѕРєСЃ)
 	virtual void initControl(CWnd* parent, LocaleMngr const& locMngr) const;
 
 protected:

@@ -97,7 +97,7 @@ void cTileMap::CreateLightmap()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// реализация интерфейса cIUnkObj
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° cIUnkObj
 //////////////////////////////////////////////////////////////////////////////////////////
 
 void cTileMap::PreDraw(cCamera *DrawNode)
@@ -118,7 +118,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 	cD3DRender *Render=gb_RenderDevice3D;
 	if(DrawNode->GetAttribute(ATTRCAMERA_SHADOW))
 	{
-		Render->Draw(GetScene()); // рисовать источники света
+		Render->Draw(GetScene()); // СЂРёСЃРѕРІР°С‚СЊ РёСЃС‚РѕС‡РЅРёРєРё СЃРІРµС‚Р°
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_SHADOWMAP))
 	{
@@ -126,7 +126,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 			Render->Draw(this,ALPHA_TEST,TILEMAP_ALL,true);
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION))
-	{ // рисовать отражение
+	{ // СЂРёСЃРѕРІР°С‚СЊ РѕС‚СЂР°Р¶РµРЅРёРµ
 		Render->SetRenderState(RS_ALPHAREF,254/*GetRefSurface()*/);
 		Render->SetRenderState(RS_ALPHAFUNC,D3DCMP_GREATER);
 		Render->Draw(this,ALPHA_TEST,TILEMAP_NOZEROPLAST,false);
@@ -135,7 +135,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 	}else
 	{
 		if(GetAttribute(ATTRUNKOBJ_REFLECTION))
-		{ // рисовать прямое изображение
+		{ // СЂРёСЃРѕРІР°С‚СЊ РїСЂСЏРјРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
 			Render->SetRenderState(RS_ALPHAREF,1);
 			Render->Draw(this,ALPHA_BLEND,TILEMAP_ZEROPLAST,false);
 			Render->Draw(this,ALPHA_NONE,TILEMAP_NOZEROPLAST,false);
@@ -183,7 +183,7 @@ void cTileMap::Draw(cCamera *DrawNode)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// реализация cTileMap
+// СЂРµР°Р»РёР·Р°С†РёСЏ cTileMap
 //////////////////////////////////////////////////////////////////////////////////////////
 void cTileMap::UpdateMap(const Vect2i& pos1,const Vect2i& pos2)
 {
@@ -315,9 +315,9 @@ void cTileMap::CalcShadowMapCamera(cCamera *DrawNode)
     ShadowDrawNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	ShadowDrawNode->SetPosition(LightMatrix);
 
-//С одной стороны эта камера должна быть посчитана до того момента
-//когда начнёт определяться, какие объекты видимы. С другой стороны она должна быть
-//посчитанна позже, так как вызывается CalculateZMinMax
+//РЎ РѕРґРЅРѕР№ СЃС‚РѕСЂРѕРЅС‹ СЌС‚Р° РєР°РјРµСЂР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РїРѕСЃС‡РёС‚Р°РЅР° РґРѕ С‚РѕРіРѕ РјРѕРјРµРЅС‚Р°
+//РєРѕРіРґР° РЅР°С‡РЅС‘С‚ РѕРїСЂРµРґРµР»СЏС‚СЊСЃСЏ, РєР°РєРёРµ РѕР±СЉРµРєС‚С‹ РІРёРґРёРјС‹. РЎ РґСЂСѓРіРѕР№ СЃС‚РѕСЂРѕРЅС‹ РѕРЅР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ
+//РїРѕСЃС‡РёС‚Р°РЅРЅР° РїРѕР·Р¶Рµ, С‚Р°Рє РєР°Рє РІС‹Р·С‹РІР°РµС‚СЃСЏ CalculateZMinMax
 	fix_shadow.box=box;
 	fix_shadow.LightMatrix=LightMatrix;
 
@@ -349,12 +349,12 @@ void cTileMap::FixShadowMapCamera(cCamera *DrawNode)
 	ShadowDrawNode->SetPosition(LightMatrix);
 /*
 	if(LightDrawNode->GetAttribute(ATTRCAMERA_NOCLEARTARGET))
-	{//Освещение при проективной камере
+	{//РћСЃРІРµС‰РµРЅРёРµ РїСЂРё РїСЂРѕРµРєС‚РёРІРЅРѕР№ РєР°РјРµСЂРµ
 //		Vect2f PosLightMap;
 //		PosLightMap.x = (box.max.x+box.min.x)*0.5f;
 //		PosLightMap.y = (box.max.y+box.min.y)*0.5f;
 
-//		Vect3f vShadow(0,0,-1);//Всё равно с других положений криво освещает
+//		Vect3f vShadow(0,0,-1);//Р’СЃС‘ СЂР°РІРЅРѕ СЃ РґСЂСѓРіРёС… РїРѕР»РѕР¶РµРЅРёР№ РєСЂРёРІРѕ РѕСЃРІРµС‰Р°РµС‚
 
 //		Vect3f PosLight(PosLightMap.x,PosLightMap.y,-5000*vShadow.z);
 		Vect3f LightDirection(0,0,-1);
@@ -552,11 +552,11 @@ void cTileMap::AddPlanarCamera(cCamera *DrawNode,bool light)
 
 	PosLightMap.z = SizeLightMap;
 
-	Vect3f vShadow(0,0,-1);//Всё равно с других положений криво освещает
+	Vect3f vShadow(0,0,-1);//Р’СЃС‘ СЂР°РІРЅРѕ СЃ РґСЂСѓРіРёС… РїРѕР»РѕР¶РµРЅРёР№ РєСЂРёРІРѕ РѕСЃРІРµС‰Р°РµС‚
 
 	Vect3f PosLight = -Vect3f(PosLightMap.x-5000*vShadow.x,PosLightMap.y-5000*vShadow.y,-5000*vShadow.z);
 	MatXf LightMatrix;
-	LightMatrix.rot().xrow().cross(vShadow,Vect3f(0,1,0)); // источник света в направлении оси x
+	LightMatrix.rot().xrow().cross(vShadow,Vect3f(0,1,0)); // РёСЃС‚РѕС‡РЅРёРє СЃРІРµС‚Р° РІ РЅР°РїСЂР°РІР»РµРЅРёРё РѕСЃРё x
 	LightMatrix.rot().yrow()=Vect3f(0,-1,0);
 	LightMatrix.rot().zrow()=vShadow;
 	LightMatrix.trans()=LightMatrix.rot().xform( PosLight );
@@ -577,7 +577,7 @@ void cTileMap::AddPlanarCamera(cCamera *DrawNode,bool light)
     PlanarNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	
 	PlanarNode->SetPosition(LightMatrix);
-	PlanarNode->Attach(SCENENODE_OBJECT,this); // рисовать источники света							   
+	PlanarNode->Attach(SCENENODE_OBJECT,this); // СЂРёСЃРѕРІР°С‚СЊ РёСЃС‚РѕС‡РЅРёРєРё СЃРІРµС‚Р°							   
 }
 
 void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
@@ -590,11 +590,11 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
 
 	PosLightMap.z = SizeLightMap;
 
-	Vect3f vShadow(0,0,-1);//Всё равно с других положений криво освещает
+	Vect3f vShadow(0,0,-1);//Р’СЃС‘ СЂР°РІРЅРѕ СЃ РґСЂСѓРіРёС… РїРѕР»РѕР¶РµРЅРёР№ РєСЂРёРІРѕ РѕСЃРІРµС‰Р°РµС‚
 
 	Vect3f PosLight = -Vect3f(PosLightMap.x-5000*vShadow.x,PosLightMap.y-5000*vShadow.y,-5000*vShadow.z);
 	MatXf LightMatrix;
-	LightMatrix.rot().xrow().cross(vShadow,Vect3f(0,1,0)); // источник света в направлении оси x
+	LightMatrix.rot().xrow().cross(vShadow,Vect3f(0,1,0)); // РёСЃС‚РѕС‡РЅРёРє СЃРІРµС‚Р° РІ РЅР°РїСЂР°РІР»РµРЅРёРё РѕСЃРё x
 	LightMatrix.rot().yrow()=Vect3f(0,-1,0);
 	LightMatrix.rot().zrow()=vShadow;
 	LightMatrix.trans()=LightMatrix.rot().xform( PosLight );
@@ -614,7 +614,7 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
     PlanarNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	
 	PlanarNode->SetPosition(LightMatrix);
-	PlanarNode->Attach(SCENENODE_OBJECT,this); // рисовать источники света
+	PlanarNode->Attach(SCENENODE_OBJECT,this); // СЂРёСЃРѕРІР°С‚СЊ РёСЃС‚РѕС‡РЅРёРєРё СЃРІРµС‚Р°
 }
 
 void cTileMap::CalcZMinMax(int x_tile,int y_tile)

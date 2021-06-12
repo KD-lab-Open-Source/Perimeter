@@ -75,7 +75,7 @@ typedef cBaseFileMeshArray <Vect3f,MF_ID_BLOCK_FACENORMALMESH,MF_TYPE_VERTEXMESH
 typedef cBaseFileMeshArray <sFloat2,MF_ID_BLOCK_TEXVERTEXMESH,MF_TYPE_TEXVERTEXMESH> sTexVertexMesh;
 typedef cBaseFileMeshArray <sUShort3,MF_ID_BLOCK_TEXFACEMESH,MF_TYPE_TEXFACEMESH> sTexFaceMesh;
 
-// описатели старых версий
+// РѕРїРёСЃР°С‚РµР»Рё СЃС‚Р°СЂС‹С… РІРµСЂСЃРёР№
 typedef cBaseFileMeshArray <sInt4,MF_ID_BLOCK_FACEMESH,MF_TYPE_FACEMESH_VER1> sFaceMesh_Ver1;
 typedef cBaseFileMeshArray <sInt3,MF_ID_BLOCK_TEXFACEMESH,MF_TYPE_TEXFACEMESH_VER1> sTexFaceMesh_Ver1;
 typedef cBaseFileMeshArray <Vect3f,MF_ID_BLOCK_TEXVERTEXMESH,MF_TYPE_TEXVERTEXMESH_VER1> sTexVertexMesh_Ver1;
@@ -86,8 +86,8 @@ struct sChannelMapping
 {
 	unsigned int		ID;
 	unsigned int		ChannelNumber;			// 0-ColorVertex, 1-TexelVertex, 2..-Add TexelVertex
-	sTexVertexMesh		TexVertex;				// массив текстурных uvw-координат вершин
-	sTexFaceMesh		TexFace;				// массив текстурных вершин полигонов
+	sTexVertexMesh		TexVertex;				// РјР°СЃСЃРёРІ С‚РµРєСЃС‚СѓСЂРЅС‹С… uvw-РєРѕРѕСЂРґРёРЅР°С‚ РІРµСЂС€РёРЅ
+	sTexFaceMesh		TexFace;				// РјР°СЃСЃРёРІ С‚РµРєСЃС‚СѓСЂРЅС‹С… РІРµСЂС€РёРЅ РїРѕР»РёРіРѕРЅРѕРІ
 
 	sChannelMapping()						{ ID=0; }
 	~sChannelMapping()						{ Release(); }
@@ -106,13 +106,13 @@ typedef cBaseMeshPointerLibrary <sChannelMapping> sChannelMappingLibrary;
 struct sAnimationMesh
 {
 	unsigned int			ID;
-	int						time;			// время
-	sVertexMesh				Vertex;			// массив xyz-координат вершин
-	sFaceMesh				Face;			// массив вершин полигонов
-	sVertexNormalMesh		VertexNormal;	// нормали для каждой вершиины полигона
-	sFaceNormalMesh			FaceNormal;		// нормали для каждого полигона
+	int						time;			// РІСЂРµРјСЏ
+	sVertexMesh				Vertex;			// РјР°СЃСЃРёРІ xyz-РєРѕРѕСЂРґРёРЅР°С‚ РІРµСЂС€РёРЅ
+	sFaceMesh				Face;			// РјР°СЃСЃРёРІ РІРµСЂС€РёРЅ РїРѕР»РёРіРѕРЅРѕРІ
+	sVertexNormalMesh		VertexNormal;	// РЅРѕСЂРјР°Р»Рё РґР»СЏ РєР°Р¶РґРѕР№ РІРµСЂС€РёРёРЅС‹ РїРѕР»РёРіРѕРЅР°
+	sFaceNormalMesh			FaceNormal;		// РЅРѕСЂРјР°Р»Рё РґР»СЏ РєР°Р¶РґРѕРіРѕ РїРѕР»РёРіРѕРЅР°
 	sChannelMappingLibrary	ChannelMappingLibrary;
-	float					Box[6];		// характерный размер
+	float					Box[6];		// С…Р°СЂР°РєС‚РµСЂРЅС‹Р№ СЂР°Р·РјРµСЂ
 
 	sAnimationMesh()						{ ID=0; time=0; }
 	~sAnimationMesh()						{ Release(); }
@@ -180,8 +180,8 @@ struct sHelperObject : public sNodeObject
 struct sAnimationLight
 {
 	unsigned int			ID;
-	int						time;					// время
-	float					DiffuseColor[3];		// цвет источника
+	int						time;					// РІСЂРµРјСЏ
+	float					DiffuseColor[3];		// С†РІРµС‚ РёСЃС‚РѕС‡РЅРёРєР°
 	float					TDist;
 	float					FarBeginAttenuation;
 	float					FarFinishAttenuation;
@@ -204,7 +204,7 @@ struct sLightObject : public sNodeObject
 {
 	int						idObject;
 	int						UseGlobal;
-	string					TexProj;							// имя текстуры 
+	string					TexProj;							// РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ 
 	float					OfsMatrix[12];
 	cAnimationLightLibrary	AnimationLightLibrary;
 
@@ -218,7 +218,7 @@ struct sLightObject : public sNodeObject
 struct sCameraObject : public sNodeObject
 {
 	int						idObject;
-	string					TexProj;							// имя текстуры 
+	string					TexProj;							// РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ 
 
 	sCameraObject() : sNodeObject(NODEOBJECT_CAMERA){ idObject=0; }
 	~sCameraObject()								{ Release(); }
@@ -229,9 +229,9 @@ struct sCameraObject : public sNodeObject
 
 struct sSubTexmap
 {
-	unsigned int		ID;							// идентификатор текстуры 
-	string				name;						// имя текстуры 
-	int					ChannelNumber;				// номер канала текстурной генерации
+	unsigned int		ID;							// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ С‚РµРєСЃС‚СѓСЂС‹ 
+	string				name;						// РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ 
+	int					ChannelNumber;				// РЅРѕРјРµСЂ РєР°РЅР°Р»Р° С‚РµРєСЃС‚СѓСЂРЅРѕР№ РіРµРЅРµСЂР°С†РёРё
 	sAnimationMatrix	MatrixAnim;
 	sSubTexmap()									{ Release(); }
 	~sSubTexmap()									{ Release(); }
@@ -254,11 +254,11 @@ typedef cBaseFileMeshArray <sFloat2,MF_ID_BLOCK_ANIMATION_FLOAT_VAR3,MF_TYPE_FLO
 struct sMaterialObject
 {
 public:
-	unsigned int				ID;					// порядковый номер в библиотеке
-	string						name;				// имя материала
-	string						parent;				// родитель, тот который содержит этот материал (MultiSubObjectMaterial)
-	int							NumberSubObject;	// число материалов в данном, которые будут ссылаться через parent на данный
-	int							Shading;			// тип материала
+	unsigned int				ID;					// РїРѕСЂСЏРґРєРѕРІС‹Р№ РЅРѕРјРµСЂ РІ Р±РёР±Р»РёРѕС‚РµРєРµ
+	string						name;				// РёРјСЏ РјР°С‚РµСЂРёР°Р»Р°
+	string						parent;				// СЂРѕРґРёС‚РµР»СЊ, С‚РѕС‚ РєРѕС‚РѕСЂС‹Р№ СЃРѕРґРµСЂР¶РёС‚ СЌС‚РѕС‚ РјР°С‚РµСЂРёР°Р» (MultiSubObjectMaterial)
+	int							NumberSubObject;	// С‡РёСЃР»Рѕ РјР°С‚РµСЂРёР°Р»РѕРІ РІ РґР°РЅРЅРѕРј, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ СЃСЃС‹Р»Р°С‚СЊСЃСЏ С‡РµСЂРµР· parent РЅР° РґР°РЅРЅС‹Р№
+	int							Shading;			// С‚РёРї РјР°С‚РµСЂРёР°Р»Р°
 	int							SelfIllumColorOn;
 	int							Falloff;		// 1: out, 0: in
 
@@ -337,7 +337,7 @@ struct sChannelAnimation
 	int							LastFrame;
 	int							FrameSpeed;
 	int							TicksPerFrame;
-	int							NumberFrame;	// временная переменная только для *.m3d с чтением морфинга
+	int							NumberFrame;	// РІСЂРµРјРµРЅРЅР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ С‚РѕР»СЊРєРѕ РґР»СЏ *.m3d СЃ С‡С‚РµРЅРёРµРј РјРѕСЂС„РёРЅРіР°
 	cLodObjectLibrary			LodLibrary;
 
 	sChannelAnimation()						{ ID=1; TicksPerFrame=FrameSpeed=LastFrame=FirstFrame=NumberFrame=0; }

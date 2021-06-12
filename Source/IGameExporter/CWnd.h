@@ -9,9 +9,9 @@ public:
 	CWnd();
 	virtual ~CWnd();
 
-	//Для окон, которые хранят указатели на параметры
-	virtual void ClearLink(){};	//Очистить указатель
-	virtual void Apply(){};		//Обновить данные по указателю
+	//Р”Р»СЏ РѕРєРѕРЅ, РєРѕС‚РѕСЂС‹Рµ С…СЂР°РЅСЏС‚ СѓРєР°Р·Р°С‚РµР»Рё РЅР° РїР°СЂР°РјРµС‚СЂС‹
+	virtual void ClearLink(){};	//РћС‡РёСЃС‚РёС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ
+	virtual void Apply(){};		//РћР±РЅРѕРІРёС‚СЊ РґР°РЅРЅС‹Рµ РїРѕ СѓРєР°Р·Р°С‚РµР»СЋ
 
 	void Invalidate(){InvalidateRect(hwnd,NULL,FALSE);}
 protected:
@@ -20,8 +20,8 @@ protected:
 	bool Create(LPCSTR classname,DWORD dwStyle,RECT rc,HWND hWndParent);
 	void SubclassWindow(HWND h);
 
-	//Функции для изменения размеров child окна
-	//Link вызывается при инициализации, Move в OnSize
+	//Р¤СѓРЅРєС†РёРё РґР»СЏ РёР·РјРµРЅРµРЅРёСЏ СЂР°Р·РјРµСЂРѕРІ child РѕРєРЅР°
+	//Link РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё, Move РІ OnSize
 	void LinkRight(HWND hWnd,RECT& rc);
 	void MoveRight(HWND hWnd,RECT& rc,RECT& rc_main);
 	void LinkRightBottom(HWND hWnd,RECT& rc);

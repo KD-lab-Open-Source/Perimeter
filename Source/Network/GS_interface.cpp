@@ -674,9 +674,9 @@ GameSpyInterface::GameSpyInterface(PNetCenter* pPNetCenter)
 
 	serverListingComplete=false;
 
-	piOldMangleStagingRooms=PEERTrue;//Для идентификации сервера ТОЛЬКО по IP адресу
+	piOldMangleStagingRooms=PEERTrue;//Р”Р»СЏ РёРґРµРЅС‚РёС„РёРєР°С†РёРё СЃРµСЂРІРµСЂР° РўРћР›Р¬РљРћ РїРѕ IP Р°РґСЂРµСЃСѓ
 
-	uniqueID=1;//начальное значение
+	uniqueID=1;//РЅР°С‡Р°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ
 
 	PEERCallbacks callbacks;
 	memset(&callbacks, 0, sizeof(PEERCallbacks));
@@ -872,7 +872,7 @@ GameSpyInterface::e_JoinStagingRoomResult GameSpyInterface::JoinStagingRoom(unsi
 			peerJoinStagingRoom(m_peer, server, password, JoinRoomCallback, NULL, (PEERBool)m_blocking);
 			//if(result_joinStagingRoom==JSRR_Ok) return 1;
 			//else return 0;
-			return result_joinStagingRoom;// должно быть или JSRR_Ok или JSRR_PasswordError
+			return result_joinStagingRoom;// РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёР»Рё JSRR_Ok РёР»Рё JSRR_PasswordError
 		}
 	}
 	//return 0;

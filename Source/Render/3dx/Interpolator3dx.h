@@ -23,11 +23,11 @@ public:
 	int FindIndex(float globalt);
 	int FindIndexRelative(float globalt,int cur);
 	
-	//cur - значение, которое вернул FindIndex или Next.
-	// предполагается, что globalt постоянно растёт.
+	//cur - Р·РЅР°С‡РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ РІРµСЂРЅСѓР» FindIndex РёР»Рё Next.
+	// РїСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ, С‡С‚Рѕ globalt РїРѕСЃС‚РѕСЏРЅРЅРѕ СЂР°СЃС‚С‘С‚.
 	int Next(float globalt,int cur);
 
-	// предполагается, что globalt постоянно уменьшается.
+	// РїСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ, С‡С‚Рѕ globalt РїРѕСЃС‚РѕСЏРЅРЅРѕ СѓРјРµРЅСЊС€Р°РµС‚СЃСЏ.
 	int Prev(float globalt,int cur);
 
 	void Load(CLoadIterator ld);
@@ -155,7 +155,7 @@ void Interpolator3dx<tsize>::Interpolate(float globalt,float* out,int index)
 template<int tsize>
 int Interpolator3dx<tsize>::FindIndex(float globalt)
 {
-	//потом возможно заменить на binary find
+	//РїРѕС‚РѕРј РІРѕР·РјРѕР¶РЅРѕ Р·Р°РјРµРЅРёС‚СЊ РЅР° binary find
 	return Next(globalt,0);
 }
 
@@ -268,11 +268,11 @@ public:
 	inline int FindIndex(float globalt) {return Next(globalt,0);};
 	inline int FindIndexRelative(float globalt,int cur);
 	
-	//cur - значение, которое вернул FindIndex или Next.
-	// предполагается, что globalt постоянно растёт.
+	//cur - Р·РЅР°С‡РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ РІРµСЂРЅСѓР» FindIndex РёР»Рё Next.
+	// РїСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ, С‡С‚Рѕ globalt РїРѕСЃС‚РѕСЏРЅРЅРѕ СЂР°СЃС‚С‘С‚.
 	inline int Next(float globalt,int cur);
 
-	// предполагается, что globalt постоянно уменьшается.
+	// РїСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ, С‡С‚Рѕ globalt РїРѕСЃС‚РѕСЏРЅРЅРѕ СѓРјРµРЅСЊС€Р°РµС‚СЃСЏ.
 	inline int Prev(float globalt,int cur);
 
 	inline void Load(CLoadIterator ld);

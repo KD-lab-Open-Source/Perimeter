@@ -20,7 +20,7 @@ cVisError& cVisError::operator << (float a)
 cVisError& cVisError::operator << (const char *a)
 {
 	if(strcmp(a,VERR_END)==0)
-	{// конец потока
+	{// РєРѕРЅРµС† РїРѕС‚РѕРєР°
 		if(gb_RenderDevice && gb_RenderDevice->IsFullScreen())
 			ShowWindow(gb_RenderDevice->GetWindowHandle(),SW_MINIMIZE);
 		if(MessageBox(NULL,buf.c_str(),"cVisGeneric::ErrorMessage()",MB_OKCANCEL)==IDOK)

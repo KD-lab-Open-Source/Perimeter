@@ -5,9 +5,9 @@
 	file path:	F:\PERIMETER\TRIGGEREDITOR\MAIN
 	file base:	GameInclude
 	file ext:	h
-	powered by:		Илюха
+	powered by:		РР»СЋС…Р°
 	
-	purpose:	Собирает все подключения из периметра в одно место
+	purpose:	РЎРѕР±РёСЂР°РµС‚ РІСЃРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РёР· РїРµСЂРёРјРµС‚СЂР° РІ РѕРґРЅРѕ РјРµСЃС‚Рѕ
 *********************************************************************/
 #ifndef __GAME_INCLUDE__
 #define __GAME_INCLUDE__

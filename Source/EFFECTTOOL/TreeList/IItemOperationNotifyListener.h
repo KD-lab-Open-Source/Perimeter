@@ -11,11 +11,11 @@ class IItemOperationNotifyListener
 public:
 	virtual void onDeleteItem(CTreeListCtrl& tree, ITEM_OPERATION_INFO* info) = 0;
 	/*!
-	Возвращаемое значение имеет мысл только для режима LIST
-	\retval false - для того, чтобы разрешить последовательный вызов onDeleteItem
-	\retval true - для того, чтобы запретить последовательный вызов onDeleteItem
+	Р’РѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РёРјРµРµС‚ РјС‹СЃР» С‚РѕР»СЊРєРѕ РґР»СЏ СЂРµР¶РёРјР° LIST
+	\retval false - РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ СЂР°Р·СЂРµС€РёС‚СЊ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅС‹Р№ РІС‹Р·РѕРІ onDeleteItem
+	\retval true - РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ Р·Р°РїСЂРµС‚РёС‚СЊ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅС‹Р№ РІС‹Р·РѕРІ onDeleteItem
 	*/
 	virtual bool onDeleteAllItems(CTreeListCtrl& tree, ITEM_OPERATION_INFO* info) = 0;
-	//! Уведомляет о том, что item был вставлен
+	//! РЈРІРµРґРѕРјР»СЏРµС‚ Рѕ С‚РѕРј, С‡С‚Рѕ item Р±С‹Р» РІСЃС‚Р°РІР»РµРЅ
 	virtual void onInsertItem(CTreeListCtrl& tree, ITEM_OPERATION_INFO* info) = 0;
 };

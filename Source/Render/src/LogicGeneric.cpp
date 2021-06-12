@@ -103,7 +103,7 @@ int cLogicTileInt::SetChannel(const char *NameChainMask,float phase_)
 	//xassert_s(i < AnimChannel->GetNumberChannel() && "Animation chain not found", NameChainMask);
 	
 	if(i>=number) return -2;
-	//phase_=fmod(phase_+FRAME_PHASE_RANGE,FRAME_PHASE_RANGE); // анимироваться
+	//phase_=fmod(phase_+FRAME_PHASE_RANGE,FRAME_PHASE_RANGE); // Р°РЅРёРјРёСЂРѕРІР°С‚СЊСЃСЏ
 	xassert(phase_>=0 && phase_<=1.0001);
 	cAnimChainNode* anim=AnimChannel->GetChannel(i);
 	anim->GetMatrix(phase_,LocalMatrix);
@@ -266,7 +266,7 @@ public:
 
 	virtual void GetBoundBox(sBox6f& OutBox)
 	{ 
-		//Потом перемпавить без умножения на матрицу
+		//РџРѕС‚РѕРј РїРµСЂРµРјРїР°РІРёС‚СЊ Р±РµР· СѓРјРЅРѕР¶РµРЅРёСЏ РЅР° РјР°С‚СЂРёС†Сѓ
 		Vect3f min=GetGlobalMatrix().xformPoint(Box.min,min);
 		Vect3f max=GetGlobalMatrix().xformPoint(Box.max,max);
 		OutBox.min=::GetMin(min,max);
@@ -340,7 +340,7 @@ cLogicObject* cLogicGeneric::GetElement(const char *pFName)
 	for(int i=0;i<objects.size();i++)
 	if(objects[i] && (stricmp(objects[i]->GetName(),fname))==0 )
 	{
-/*Ссылка на один объект
+/*РЎСЃС‹Р»РєР° РЅР° РѕРґРёРЅ РѕР±СЉРµРєС‚
 		objects[i]->IncRef();
 		return objects[i];
 /*/
@@ -349,14 +349,14 @@ cLogicObject* cLogicGeneric::GetElement(const char *pFName)
 /**/
 	}
 
-	// загрузка логического объекта
+	// Р·Р°РіСЂСѓР·РєР° Р»РѕРіРёС‡РµСЃРєРѕРіРѕ РѕР±СЉРµРєС‚Р°
 	int size=0;
 	char *buf=0;
 	if(ResourceFileRead(fname,buf,size)){
 		ErrH.Abort("Logic model not found", XERR_USER, 0, fname);
 		return 0;
 	}
-	cMeshScene MeshScene; // загрузка MeshScene сцены из файла
+	cMeshScene MeshScene; // Р·Р°РіСЂСѓР·РєР° MeshScene СЃС†РµРЅС‹ РёР· С„Р°Р№Р»Р°
 	cMeshFile f;
 	if(f.OpenRead(buf,size)==MESHFILE_NOT_FOUND) return 0;
 	f.ReadHeaderFile();
@@ -368,7 +368,7 @@ cLogicObject* cLogicGeneric::GetElement(const char *pFName)
 		char* cur=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
 		_strlwr(cur);
 	}
-/*	// поиск и установка первым канала анимации с именем "main"
+/*	// РїРѕРёСЃРє Рё СѓСЃС‚Р°РЅРѕРІРєР° РїРµСЂРІС‹Рј РєР°РЅР°Р»Р° Р°РЅРёРјР°С†РёРё СЃ РёРјРµРЅРµРј "main"
 	int nChannelMain=-1;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
@@ -385,27 +385,27 @@ cLogicObject* cLogicGeneric::GetElement(const char *pFName)
 	}
 */
 	cLogicObject *LogicObj=new cLogicObject(fname);
-	// создание объекта по описаннию в сцене
+	// СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РїРѕ РѕРїРёСЃР°РЅРЅРёСЋ РІ СЃС†РµРЅРµ
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
-	{ // импорт канала анимации
+	{ // РёРјРїРѕСЂС‚ РєР°РЅР°Р»Р° Р°РЅРёРјР°С†РёРё
 		sChannelAnimation *Channel=MeshScene.ChannelLibrary[nChannel];
 		int FirstTime=Channel->FirstFrame*Channel->TicksPerFrame; Channel->ID=nChannel;
 		for(int LevelDetail=0;LevelDetail<Channel->LodLibrary.length();LevelDetail++)
-		{ // импорт уровня детализации
+		{ // РёРјРїРѕСЂС‚ СѓСЂРѕРІРЅСЏ РґРµС‚Р°Р»РёР·Р°С†РёРё
 			sLodObject *LodObject=Channel->LodLibrary[LevelDetail];
 			for(int nNodeObject=0;nNodeObject<LodObject->NodeObjectLibrary.length();nNodeObject++)
-			{ // импорт корневого объекта
+			{ // РёРјРїРѕСЂС‚ РєРѕСЂРЅРµРІРѕРіРѕ РѕР±СЉРµРєС‚Р°
 				sNodeObject *NodeObject=LodObject->NodeObjectLibrary[nNodeObject];
 				char NameMesh[256],NameParent[256];
 				strcpy(NameMesh,NodeObject->name.c_str()); 
 				if(!NodeObject->parent.empty()) strcpy(NameParent,NodeObject->parent.c_str()); else NameParent[0]=0;
 				if((!NodeObject->name.empty())&&(TestFirstName(NodeObject->name.c_str(),"Bip")))
-					continue; // пропустить "Bip" из CharacterStudio
+					continue; // РїСЂРѕРїСѓСЃС‚РёС‚СЊ "Bip" РёР· CharacterStudio
 				cObjectNode *CurrentNode=0;
 				switch(NodeObject->type)
 				{
 					case NODEOBJECT_MESH:
-						{ // импорт 3d-объекта
+						{ // РёРјРїРѕСЂС‚ 3d-РѕР±СЉРµРєС‚Р°
 							sObjectMesh *ObjectMesh=(sObjectMesh*)NodeObject;
 							char *LogicName=TestFirstName(NodeObject->name.c_str(),"logic ");
 							cLogicMesh *LogicTile=(cLogicMesh*)LogicObj->FindObject(LogicName);
@@ -432,7 +432,7 @@ cLogicObject* cLogicGeneric::GetElement(const char *pFName)
 						}
 						break;
 					case NODEOBJECT_HELPER:
-						{ // импорт вспомогательного-объекта
+						{ // РёРјРїРѕСЂС‚ РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅРѕРіРѕ-РѕР±СЉРµРєС‚Р°
 							sHelperObject *HelperObject=(sHelperObject*)NodeObject;
 							char *LogicName=TestFirstName(NodeObject->name.c_str(),"logic ");
 							VISASSERT(LogicName && "Uncorrect l3d model");
@@ -613,7 +613,7 @@ void cLogicMesh::FirstCalcBound(sAnimationMesh *AnimationMesh)
 	Box.max.set(-1e30f,-1e30f,-1e30f);
 	sVertexMesh	&Vertex=AnimationMesh->Vertex;
 	for(int k=0;k<Vertex.length();k++)
-	{ // импорт пространственных координат
+	{ // РёРјРїРѕСЂС‚ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµРЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚
 		Vect3f pos(Vertex[k][0],Vertex[k][1],Vertex[k][2]);
 		RightToLeft(pos);
 		Vect3f p=mat*pos;

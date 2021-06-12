@@ -6,7 +6,7 @@ class cSpriteNode : public cAnimUnkObj
 public:
 	cSpriteNode();
 	virtual ~cSpriteNode();
-	// общие интерфейсные функции унаследованы от cUnkObj
+	// РѕР±С‰РёРµ РёРЅС‚РµСЂС„РµР№СЃРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРЅР°СЃР»РµРґРѕРІР°РЅС‹ РѕС‚ cUnkObj
 	virtual void Animate(float dt);
 	virtual void PreDraw(cCamera *UCamera);
 	virtual void Draw(cCamera *UCamera);

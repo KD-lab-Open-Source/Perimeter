@@ -40,7 +40,7 @@ const COLORREF ANCHOR_COLOR = RGB(0,0,200);
 char const *const OBJ_NAME_DELIMETER = _T("::");
 const int COLOR_PART_WIDTH = 20;
 
-//отрисовка
+//РѕС‚СЂРёСЃРѕРІРєР°
 
 const COLORREF DONED_LINK_CLR = RGB(0, 150, 0);
 const COLORREF ACTIVE_LINK_CLR = RGB(250, 0, 0);

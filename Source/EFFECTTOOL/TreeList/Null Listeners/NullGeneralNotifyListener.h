@@ -9,16 +9,16 @@ public:
 	~NullGeneralNotifyListener(void);
 	virtual void onClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info);
 	/*!
-		Возрващаемое значение имеет смысл только для дерева
-		\retval true - для того, чтобы позволить обработку по умолчанию
-		\retval false - для того, чтобы запретить обработку по умолчанию
+		Р’РѕР·СЂРІР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РёРјРµРµС‚ СЃРјС‹СЃР» С‚РѕР»СЊРєРѕ РґР»СЏ РґРµСЂРµРІР°
+		\retval true - РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РїРѕР·РІРѕР»РёС‚СЊ РѕР±СЂР°Р±РѕС‚РєСѓ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+		\retval false - РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ Р·Р°РїСЂРµС‚РёС‚СЊ РѕР±СЂР°Р±РѕС‚РєСѓ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	*/
 	virtual bool onDBLClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info);
 
 	virtual void onRClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info);
 	virtual void onRDBLClick(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info);
 
-	//! Не вызывается
+	//! РќРµ РІС‹Р·С‹РІР°РµС‚СЃСЏ
 	virtual bool onHover(CTreeListCtrl& tree, GENERAL_NOTIFY_INFO* info);
 
 	virtual void onKillFocus(CTreeListCtrl& tree);
@@ -26,6 +26,6 @@ public:
 
 
 	virtual void onReturn(CTreeListCtrl& tree);
-	//! Не вызывается
+	//! РќРµ РІС‹Р·С‹РІР°РµС‚СЃСЏ
 	virtual void onReleasedCapture(CTreeListCtrl& tree);
 };

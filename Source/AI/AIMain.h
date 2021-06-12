@@ -99,10 +99,10 @@ protected:
 	OrderBuildingActionMap orderBuildingActions;
 	ShareHandle<ActionOrderBuilding> currentOrder;
 
-	int requiredBuilders_; // Количество строителей
-	int requiredSoldiers_; // Количество солдат
-	int requiredOfficers_; // Количество офицеров
-	int requiredTechnics_; // Количество техников
+	int requiredBuilders_; // РљРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂРѕРёС‚РµР»РµР№
+	int requiredSoldiers_; // РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕР»РґР°С‚
+	int requiredOfficers_; // РљРѕР»РёС‡РµСЃС‚РІРѕ РѕС„РёС†РµСЂРѕРІ
+	int requiredTechnics_; // РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РµС…РЅРёРєРѕРІ
 	
 	BuilderState builder_state;
 	CircleShape circle_shape;
@@ -141,7 +141,7 @@ protected:
 	const Vect2f& bestPosition() const { return best_position; }
 
 	int calcWork(const Vect2i& left_top, const Vect2i& size);
-	void changeTileState(int x,int y);//x,y в масштабе сетки
+	void changeTileState(int x,int y);//x,y РІ РјР°СЃС€С‚Р°Р±Рµ СЃРµС‚РєРё
 
 	//----------------------
 	int calcWork(Circle& c);
