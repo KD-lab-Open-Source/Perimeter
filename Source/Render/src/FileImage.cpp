@@ -2,6 +2,7 @@
 #include <windows.h>
 #endif
 #include <stdio.h>
+#include <cstdint>
 #include <assert.h>
 
 #include <vfw.h>		// AVI include
@@ -184,26 +185,26 @@ void GetDimTexture(int& dx,int& dy,int& count)
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cTGAImage
 //////////////////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__GNUC__)
 #pragma pack(push,1)
 #endif
 
 struct TGAHeader
 {
-unsigned char idFieldLength;
-unsigned char colorMapType;
-unsigned char imageType;
-unsigned short indexFirstColorMapEntry;
-unsigned short countColorMapEntries;
-unsigned char numberOfBitsPerColorMapEntry;
-unsigned short startX;
-unsigned short startY;
-unsigned short width;
-unsigned short height;
-unsigned char bitsPerPixel;
-unsigned char flags;
+uint8_t idFieldLength;
+uint8_t colorMapType;
+uint8_t imageType;
+uint16_t indexFirstColorMapEntry;
+uint16_t countColorMapEntries;
+uint8_t numberOfBitsPerColorMapEntry;
+uint16_t startX;
+uint16_t startY;
+uint16_t width;
+uint16_t height;
+uint8_t bitsPerPixel;
+uint8_t flags;
 };
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__GNUC__)
 #pragma pack(pop)
 #endif
 
