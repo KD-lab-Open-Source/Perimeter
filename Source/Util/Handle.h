@@ -62,6 +62,12 @@ public:
 			delete ptr; 
 	}
 
+	template<class U>
+	operator ShareHandle<U> ()
+	{
+		return ShareHandle<U> (ptr);
+	}
+
 	void set(T *p) 
 	{ 
 		ptr = p; 

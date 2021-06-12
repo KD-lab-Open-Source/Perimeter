@@ -1,4 +1,7 @@
-#include "xglobal.h"
+#include <windows.h>
+#include "xconsole.h"
+#include "xstream.h"
+#include "xerrhand.h"
 
 static char* openMSG	 = "CREATE/OPEN FAILURE";
 static char* closeMSG	 = "CLOSE FAILURE";
@@ -22,9 +25,10 @@ int XStream::open(const char* name, unsigned f)
 	if(f & XS_NOBUFFERING) ff |= FILE_FLAG_NO_BUFFERING;
 
 	handler = CreateFile(name,fa,fs,0,fc,ff,0);
-	if(handler == INVALID_HANDLE_VALUE)
-		if(ErrHUsed) ErrH.Abort(openMSG,XERR_USER,GetLastError(),name);
-		else return 0;
+	if(handler == INVALID_HANDLE_VALUE) {
+        if (ErrHUsed) ErrH.Abort(openMSG, XERR_USER, GetLastError(), name);
+        else return 0;
+    }
 
 	if(f & XS_APPEND)
 		if(!SetFilePointer(handler,0,0,FILE_END))

@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX/Inc"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX"
-        "${PROJECT_SOURCE_DIR}/XLibs.Net"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
 )
 

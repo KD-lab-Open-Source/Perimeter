@@ -1,4 +1,7 @@
-#include "xglobal.h"
+#include <cstring>
+#include <malloc.h>
+#include "xerrhand.h"
+#include "xbuffer.h"
 
 void XBuffer::alloc(unsigned int sz)
 {
@@ -8,6 +11,13 @@ void XBuffer::alloc(unsigned int sz)
 	digits = XB_DEFDIGITS;
 	MakeFree = 1;
 	if(size) *buf = 0;
+}
+
+XBuffer::XBuffer(unsigned int sz, int automatic_realloc_) {
+    alloc(sz);
+    radix = XB_DEFRADIX;
+    digits = XB_DEFDIGITS;
+    automatic_realloc = automatic_realloc_;
 }
 
 XBuffer::XBuffer(void* p,int sz)

@@ -3,6 +3,8 @@ IF(GEN_SCRIPTS)
     #TODO call XPrm and other stuff
 ENDIF()
 
+ADD_SUBDIRECTORY("XTool")
+ADD_SUBDIRECTORY("PlayOgg")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")
 ADD_SUBDIRECTORY("tx3d")
@@ -14,6 +16,9 @@ ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
 
 INCLUDE_DIRECTORIES(
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
+        "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Stadistics.h
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/Render/inc"
         "${PROJECT_SOURCE_DIR}/Source/Terra"
@@ -29,7 +34,6 @@ INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Scripts"
         "${PROJECT_SOURCE_DIR}/Source/tx3d"
         "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
-        "${PROJECT_SOURCE_DIR}/XLibs.Net"
 )
 
 SET(perimeter_LINK_LIBS
@@ -38,7 +42,8 @@ SET(perimeter_LINK_LIBS
         ${SDL2_LIBRARY}
 
         #Our libs
-        XLibs
+        XTool
+        PlayOgg
         PluginMAX
         Terra
         tx3d
@@ -178,7 +183,8 @@ SET(perimeter_SRCS
         UserInterface/PerimeterShellUI.cpp
         UserInterface/ReelManager.cpp
         UserInterface/SelectManager.cpp
-        UserInterface/ShellCmd.cpp UserInterface/ShellLogDisp.cpp
+        UserInterface/ShellCmd.cpp 
+        UserInterface/ShellLogDisp.cpp
         UserInterface/ShellUtils.cpp
         UserInterface/UserSingleProfile.cpp
         UserInterface/SCodeInterpreter/Commands.cpp

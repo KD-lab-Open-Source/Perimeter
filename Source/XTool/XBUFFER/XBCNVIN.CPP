@@ -1,4 +1,6 @@
-#include "xglobal.h"
+#include <cstring>
+#include <cstdlib>
+#include "xbuffer.h"
 
 char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
 
@@ -39,7 +41,7 @@ XBuffer& XBuffer::operator<= (int var)
 
 XBuffer& XBuffer::operator<= (unsigned var)
 {
-	char* s = ultoa(var,_ConvertBuffer,radix);
+	char* s = _ultoa(var,_ConvertBuffer,radix);
 	write(s,strlen(s),0);
 	return *this;
 }
@@ -53,7 +55,7 @@ XBuffer& XBuffer::operator<= (long var)
 
 XBuffer& XBuffer::operator<= (unsigned long var)
 {
-	char* s = ultoa(var,_ConvertBuffer,radix);
+	char* s = _ultoa(var,_ConvertBuffer,radix);
 	write(s,strlen(s),0);
 	return *this;
 }

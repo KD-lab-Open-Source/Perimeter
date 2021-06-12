@@ -1,4 +1,7 @@
-#include "xglobal.h"
+#include <cstring>
+#include <windows.h>
+#include "xconsole.h"
+#include "xstream.h"
 
 XStream::XStream(int err)
 {

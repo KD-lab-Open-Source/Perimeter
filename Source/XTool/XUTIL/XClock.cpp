@@ -1,8 +1,10 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "xglobal.h"
-#include "Mmsystem.h"
+#include <windows.h>
+#include <intrin.h>
+
+#include "xutl.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -14,23 +16,9 @@ const unsigned int MS_PER_PERIOD=1000;
 #if _MSC_VER >= 1310
 __declspec (noinline)
 #endif // _MSC_VER >= 1310
-__int64 getRDTSC()
-#define CPUID __asm _emit 0xf __asm _emit 0xa2
-#define RDTSC __asm _emit 0xf __asm _emit 0x31
-{
-	__int64 timeRDTS;
-	__asm {
-		push ebx
-		push ecx
-		push edx
-		RDTSC
-		mov dword ptr [timeRDTS],eax
-		mov dword ptr [timeRDTS+4],edx
-		pop edx
-		pop ecx
-		pop ebx
-	}
-	return timeRDTS;
+__int64 getRDTSC() {
+    //TODO use std::chrono::high_resolution_clock::now()
+    return __rdtsc();
 }
 
 inline __int64 getQPC(){

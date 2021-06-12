@@ -1,4 +1,6 @@
-#include "xglobal.h"
+#include <cstdlib>
+#include <cstring>
+#include "xbuffer.h"
 
 XBuffer& XBuffer::operator>= (char& var)
 {

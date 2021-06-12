@@ -1439,6 +1439,8 @@ void ActionActivateAllSpots::activate(AIPlayer& aiPlayer)
 		case UNIT_ATTRIBUTE_GEO_HEAD:
 			(*ui)->setActivity(true);
 			break;
+        default:
+            break;
 		}
 }
 
@@ -1456,6 +1458,8 @@ void ActionDeactivateAllSpots::activate(AIPlayer& aiPlayer)
 		case UNIT_ATTRIBUTE_GEO_HEAD:
 			(*ui)->setActivity(false);
 			break;
+	    default:
+	        break;
 		}
 }
 

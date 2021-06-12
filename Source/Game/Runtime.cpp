@@ -181,25 +181,6 @@ void InternalErrorHandler()
 	if(universe()) universe()->allSavePlayReel();
 }
 
-void XErrorHandler::Abort(const char* message, int code, int addval, const char* subj) {
-    /* TODO
-    this originally displayed a Dialog with stacktrace to debug the issue that caused Abort
-    Vangers has SDL2 dialog impl for this, we should do the same
-    */
-    string text = "";
-    text += sprintf("XErrH::Abort!\nMessage %s\nCode %d Val %d\n", message, code, addval);
-    if (subj) {
-        text += sprintf("Subject %s\n", subj);
-    }
-    
-    fprintf(stderr, text.c_str());
-    exit(1);
-}
-
-void XErrorHandler::Exit(void) {
-    exit(0);
-}
-
 void HTManager::init()
 {
 	interpolation_timer_ = 0;

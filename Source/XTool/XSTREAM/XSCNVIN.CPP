@@ -1,4 +1,8 @@
-#include "xglobal.h"
+#include "xconsole.h"
+#include "xstream.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 XStream& XStream::operator<= (char var)
 {
@@ -37,7 +41,7 @@ XStream& XStream::operator<= (int var)
 
 XStream& XStream::operator<= (unsigned var)
 {
-	char* s = ultoa(var,_ConvertBuffer,radix);
+	char* s = _ultoa(var,_ConvertBuffer,radix);
 	write(s,strlen(s));
 	return *this;
 }
@@ -51,7 +55,7 @@ XStream& XStream::operator<= (long var)
 
 XStream& XStream::operator<= (unsigned long var)
 {
-	char* s = ultoa(var,_ConvertBuffer,radix);
+	char* s = _ultoa(var,_ConvertBuffer,radix);
 	write(s,strlen(s));
 	return *this;
 }

@@ -2,7 +2,7 @@
 
 #include <process.h>
 #include <crtdbg.h>
-#include "statistics.h"
+#include "Statistics.h"
 
 ///////////////////////////////////////////////////////////////////////
 //	Statics

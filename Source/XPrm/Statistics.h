@@ -56,6 +56,7 @@ int total_memory_used(); // count by pages, works under release and finale
 
 #define start_timer(title, group) 
 #define stop_timer(title, group) 
+#define start_timer_auto(title, group) 
 #define create_timer(title, group) 
 #define start_created_timer(title, group) 
 #define start_autostop_timer(title, group) 
@@ -162,6 +163,7 @@ public:
 	
 #define start_timer(title, group) static TimerData timer_##title##group(#title, group); timer_##title##group.start(); 
 #define stop_timer(title, group) timer_##title##group.stop();
+#define start_timer_auto(title, group) static TimerData timer_##title##group(#title, group); timer_##title##group.start(); AutoStopTimer autostop_timer_##title##group(timer_##title##group); 
 #define create_timer(title, group) static TimerData timer_##title##group(#title, group); 
 #define start_created_timer(title, group) timer_##title##group.start(); 
 #define start_autostop_timer(title, group) static TimerData timer_##title##group(#title, group); timer_##title##group.start(); AutoStopTimer autostop_timer_##title##group(timer_##title##group); 

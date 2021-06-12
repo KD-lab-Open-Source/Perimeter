@@ -1,6 +1,6 @@
 
-#ifndef __XUTIL_H
-#define __XUTIL_H
+#ifndef __XUTL_H
+#define __XUTL_H
 
 void* xalloc(unsigned sz);
 void* xrealloc(void* p,unsigned sz);
@@ -24,6 +24,9 @@ char* XFindFirst(char* mask);
 #ifndef __ROUND__
 #define __ROUND__
 
+// Modern compilers already have std::round
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+
 __forceinline int round(double x)
 {
 	int a;
@@ -44,14 +47,17 @@ __forceinline int round(float x)
 	return a;
 }
 
+#endif
+
 template <class T> 
 __forceinline T sqr(const T& x){ return x*x; }
 
 template <class T> 
 __forceinline int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
 
-#endif __ROUND__
+#endif //__ROUND__
 
+/*
 __forceinline int BitSR(int x)
 {
 	int return_var;
@@ -65,11 +71,33 @@ __forceinline int BitSR(int x)
 	}
 	return return_var;
 }
+*/
 
-void initclock(void);
-int clocki(void);
-double clockf(void);
+// Copied C version from Vangers
+// TODO(amdmi3): very inefficient; rewrite
+inline int BitSR(int x) {
+    unsigned int a = abs(x);
+    for (int i = 31; i > 0; i--)
+        if (a & (1 << i))
+            return i;
+
+    return 0;
+}
+
+void initclock();
+int clocki();
+double clockf();
 
 void xtDeleteFile(char* fname);
+
+inline const char* check_command_line(const char* switch_str)
+{
+    for(int i = 1; i < __argc; i ++){
+        const char* s = strstr(__argv[i], switch_str);
+        if(s)
+            return s += strlen(switch_str);
+    }
+    return 0;
+}
 
 #endif

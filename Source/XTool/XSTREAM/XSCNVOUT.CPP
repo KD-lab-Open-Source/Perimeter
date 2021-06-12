@@ -1,4 +1,6 @@
-#include "xglobal.h"
+#include "xconsole.h"
+#include "xstream.h"
+#include <cstdlib>
 
 XStream& XStream::operator>= (char& var)
 {

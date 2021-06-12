@@ -6,7 +6,7 @@
 
 #ifdef MPP_STAT
 #include <xutil.h>
-#endif MPP_STAT
+#endif //MPP_STAT
 
 #include <stdio.h>
 #include <math.h>
@@ -17,7 +17,7 @@
 void MpegCreateWindowTable();
 
 static LPDIRECTSOUND g_pDS=NULL;
-const maximal_len=BLK_SIZE*2;
+const int maximal_len=BLK_SIZE*2;
 
 static HANDLE hWaitEvent=INVALID_HANDLE_VALUE;
 static HANDLE hThread=INVALID_HANDLE_VALUE;
@@ -38,7 +38,7 @@ void mprintf(char *format, ...)
   vsprintf(buffer,format,args);
   fprintf(mpeg_error,buffer);
 }
-#endif MPEG_PROFILE
+#endif //MPEG_PROFILE
 
 #ifdef MPP_STAT
 
@@ -47,7 +47,7 @@ static double all_time=0,mpeg_time=0;
 static int time_index=0;
 static double prev_time=0,sum_mpeg_time=0;
 
-const MPP_BUF_SIZE=8192;
+const int MPP_BUF_SIZE=8192;
 class MppLoad
 {
 	char buffer[MPP_BUF_SIZE];
@@ -139,7 +139,7 @@ double MpegCPUUsing()
 		return 0;
 	return mpeg_time/all_time;
 }
-#endif MPP_STAT
+#endif //MPP_STAT
 
 class EWait
 {
@@ -201,17 +201,17 @@ DWORD WINAPI MpegThreadProc(LPVOID lpParameter)
 			sum_mpeg_time=0;
 			prev_time=clockf();
 		}
-#endif MPP_STAT
+#endif //MPP_STAT
 		{
 			EWait w;
 #ifdef MPP_STAT
 			double tbeg=clockf();
-#endif MPP_STAT
+#endif //MPP_STAT
 
 #ifdef MPEG_PROFILE
 			static int cur_quant=0;
 			mprintf("%i: ",cur_quant++);
-#endif MPEG_PROFILE
+#endif //MPEG_PROFILE
 			for(MpegSound* cur=pFirstSound;cur;cur=cur->next)
 			{
 				cur->TimeCallbackTrue();
@@ -219,10 +219,10 @@ DWORD WINAPI MpegThreadProc(LPVOID lpParameter)
 
 #ifdef MPEG_PROFILE
 			mprintf("\n");
-#endif MPEG_PROFILE
+#endif //MPEG_PROFILE
 #ifdef MPP_STAT
 			sum_mpeg_time+=clockf()-tbeg;
-#endif MPP_STAT
+#endif //MPP_STAT
 		}
 
 		Sleep(10);
@@ -237,11 +237,11 @@ bool MpegInitLibrary(void* pDS)
 	MpegCreateWindowTable();
 #ifdef MPEG_PROFILE
 	mpeg_error=fopen("mpeg_info.txt","w");
-#endif MPEG_PROFILE
+#endif //MPEG_PROFILE
 	b_thread_must_stop=0;
 #ifdef MPP_STAT
 //	initclock();
-#endif MPP_STAT
+#endif //MPP_STAT
 	g_pDS=(LPDIRECTSOUND)pDS;
 	return true;
 }
@@ -446,7 +446,8 @@ bool MpegSound::InternalMpegOpenToPlay(const char* _fname,bool cycled)
 	last_signal_offset=0;
 
 	int n=sizeDSBuffer/2/(wave_format.nChannels*maximal_len);
-	for(int i=0;i<n;i++)
+    int i;
+	for(i=0;i<n;i++)
 	{
 		short* pData;
 		int len;
@@ -539,7 +540,7 @@ Retry:
 	{
 #ifdef MPEG_PROFILE
 		mprintf("%i ",num_get_sample);
-#endif MPEG_PROFILE
+#endif //MPEG_PROFILE
 //		OutputDebugString(temp_buf);
 		return;
 	}
@@ -592,7 +593,7 @@ Retry:
 
 #ifdef MPEG_PROFILE
 	mprintf("%i ",num_get_sample);
-#endif MPEG_PROFILE
+#endif //MPEG_PROFILE
 
 	if(clear_end_buffer && !b_cycled)
 	{//Очистить конец буфера
@@ -763,7 +764,7 @@ double MpegGetLen(const char* fname)
 
 
 int window_hamming[BLK_SIZE];//Окно Хэмминга
-const h_shift=14;
+const int h_shift=14;
 
 void MpegCreateWindowTable()
 {

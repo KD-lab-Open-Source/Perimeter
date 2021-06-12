@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <tchar.h>
-#include "PSAPI.h"
+#include "PSAPI.H"
 
 #include "WarningsOn.h"
 

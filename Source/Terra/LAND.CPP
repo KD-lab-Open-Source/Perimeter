@@ -737,7 +737,7 @@ int vrtMap::renderBox(int LowX,int LowY,int HiX,int HiY, int changed)//int sizeX
 }
 
 #ifdef _PERIMETER_
-//#include "statistics.h"
+//#include "Statistics.h"
 #endif
 
 static bool operator< (const sRect& lo, const sRect& ro){

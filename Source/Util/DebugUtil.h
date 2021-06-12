@@ -3,7 +3,7 @@
 #define __PHYSICS_UTIL_H__
 
 #include <strstream>
-#include "statistics.h"
+#include "../XPrm/Statistics.h"
 #include "../Render/inc/Umath.h"
 
 /////////////////////////////////////////////////////////////////////////////////
