@@ -45,7 +45,7 @@ const GUID guidPerimeterGame =
 //#define INITGUID
 #include "objbase.h"
 #include "initguid.h"
-#include "dp8sim.h"
+#include "../../MSDXSDK_02_06/dp8sim.h"
 
 
 //HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer)
