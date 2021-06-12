@@ -16,13 +16,13 @@ ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
 
 INCLUDE_DIRECTORIES(
+        "${PROJECT_SOURCE_DIR}/Source/Game"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
         "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Stadistics.h
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/Render/inc"
         "${PROJECT_SOURCE_DIR}/Source/Terra"
-        "${PROJECT_SOURCE_DIR}/Source/Game"
         "${PROJECT_SOURCE_DIR}/Source/UserInterface"
         "${PROJECT_SOURCE_DIR}/Source/GeoLogic"
         "${PROJECT_SOURCE_DIR}/Source/Network"
