@@ -1,1 +1,5 @@
 .svn
+/.vscode
+/perimeter
+/build
+/Source/cache_font
