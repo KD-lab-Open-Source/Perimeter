@@ -651,7 +651,7 @@ class EditClassDescriptor : public ClassDescriptor<Base, EditOArchive, EditIArch
 {
 public:
 	template<class Derived>
-	struct EditSerializer : ClassDescriptor<Base, EditOArchive, EditIArchive>::Serializer<Derived>
+	struct EditSerializer : ClassDescriptor<Base, EditOArchive, EditIArchive>::template Serializer<Derived>
 	{
 		EditSerializer(const char* nameAlt) {
 			nameAlt_ = nameAlt;

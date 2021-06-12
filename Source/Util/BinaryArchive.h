@@ -60,7 +60,7 @@ public:
     typedef typename ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::SerializerBase SerializerBase;
 
     template<class Derived>
-    struct BinarySerializer : ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::Serializer<Derived>
+    struct BinarySerializer : ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::template Serializer<Derived>
     {
         BinarySerializer() {
             instance().add(*this, get_type_id<Derived>().c_str());
