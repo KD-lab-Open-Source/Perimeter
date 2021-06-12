@@ -14,7 +14,7 @@
 #include "IronExplosion.h"
 #include "PerimeterSound.h"
 #include "FilthDragon.h"
-#include "Filth.hi"
+#include "filth.hi"
 
 //--------------------------------------------
 const float DragonDiePeriod=400;//ms

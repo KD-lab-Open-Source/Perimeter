@@ -11,7 +11,7 @@
 
 //global, shared unique value list
 #if defined(_WIN32) && !defined(_DLL) && !defined(_MANAGED)
-__declspec( thread ) 
+THREAD_LOCAL
 #endif
 HashTable g_SBRefStrList = NULL;
 

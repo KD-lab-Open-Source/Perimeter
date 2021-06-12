@@ -149,8 +149,10 @@ void terBuildingMilitary::MoveQuant()
 			fireRequest(0,attackTarget_,status);
 		}
 		else {
-			if(!wayPoints().empty())
-				fireRequest(&Vect3f(wayPoints().front()),0,status);
+			if(!wayPoints().empty()) {
+                Vect3f v(wayPoints().front());
+                fireRequest(&v, 0, status);
+            }
 		}
 		if(status & (LEGION_FIRE_STATUS_GROUND_OBSTACLE | LEGION_FIRE_STATUS_FRIENDLY_FIRE | LEGION_FIRE_STATUS_BORDER_ANGLE | LEGION_FIRE_STATUS_DISTANCE | LEGION_FIRE_STATUS_FIELD_OBSTACLE | LEGION_FIRE_STATUS_BAD_TARGET))
 			setAttackTarget(NULL);

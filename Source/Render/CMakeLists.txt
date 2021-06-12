@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX/Inc"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX"
-        "${PROJECT_SOURCE_DIR}/XLibs.Net"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
 )
 
@@ -70,4 +70,8 @@ SET(Render_SRCS
         src/VisGrid2d.cpp
 )
 
+SET(Render_LINK_LIBS PluginMAX)
+
 ADD_LIBRARY(Render STATIC ${Render_SRCS})
+
+TARGET_LINK_LIBRARIES(Render ${Render_LINK_LIBS})

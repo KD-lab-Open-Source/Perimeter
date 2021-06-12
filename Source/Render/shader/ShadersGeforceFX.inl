@@ -64,7 +64,8 @@ void VSGeforceFXScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 
 void VSGeforceFXTileMapScene::SetWorldSize(Vect2f sz)
 {
-	SetVector(fInvWorldSize,&D3DXVECTOR4(1/sz.x,1/sz.y,0,0));
+    D3DXVECTOR4 v(1/sz.x,1/sz.y,0,0);
+	SetVector(fInvWorldSize,&v);
 }
 
 void VSGeforceFXTileMapScene::GetHandle()
@@ -148,7 +149,8 @@ void VSGeforceFXScene::GetHandle()
 
 void VSGeforceFXScene::SetFog()
 {
-	SetVector(vFog,&gb_RenderDevice3D->dtAdvance->GetFogParam());
+    D3DXVECTOR4 v = gb_RenderDevice3D->dtAdvance->GetFogParam();
+    SetVector(vFog,&v);
 }
 
 void VSGeforceFXObjectSceneLight::GetHandle()
@@ -182,12 +184,15 @@ void VSGeforceFXObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
 	SetVector(vAmbient,(D3DXVECTOR4*)&Data->Ambient);
 	SetVector(vDiffuse,(D3DXVECTOR4*)&Data->Diffuse);
 	SetVector(vSpecular,(D3DXVECTOR4*)&Data->Specular);
-	SetVector(fSpecularPower,&D3DXVECTOR4(Data->Power,Data->Power,Data->Power,Data->Power));
+    D3DXVECTOR4 sp(Data->Power,Data->Power,Data->Power,Data->Power);
+	SetVector(fSpecularPower,&sp);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 }
 
 void PSGeforceFXObjectSceneLight::Restore()
@@ -250,7 +255,8 @@ void VSGeforceFXObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_
 
 	D3DXVec3TransformNormal(&out,(D3DXVECTOR3*)&l,&mat);
 	D3DXVec3Normalize(&out,&out);
-	SetVector(vLightDirectionInvWorld,&D3DXVECTOR4(out.x,out.y,out.z,0));
+    D3DXVECTOR4 lv(out.x,out.y,out.z,0);
+    SetVector(vLightDirectionInvWorld,&lv);
 
 	if(light)
 	{
@@ -276,10 +282,12 @@ void VSGeforceFXObjectSceneBump::GetHandle()
 void VSGeforceFXObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
 {
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 }
 
 void VSGeforceFXObjectSceneBump::RestoreShader()

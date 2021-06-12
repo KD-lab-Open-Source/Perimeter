@@ -106,14 +106,18 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	VISASSERT(char_min<char_max);
 	VISASSERT(char_min<=256);//VISASSERT(char_min>=0 && char_min<=256);
 	VISASSERT(char_max<=256);//VISASSERT(char_max>=0 && char_max<=256);
+#ifdef _MSC_VER
 #pragma pack(push,1)
+#endif
 	struct OneChar
 	{
 		int width;
 		int real_width;
 		BYTE* bits;
 	};
+#ifdef _MSC_VER
 #pragma pack(pop,1)
+#endif
 	OneChar chars[256];
 	int i;
 	for(i=0;i<256;i++)
@@ -181,7 +185,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	FontHeight=height/float(size.y);
 
 	//Создаём текстуру
-	Vect2i real_size(round(size.x/mul),round(size.y/mul));
+	Vect2i real_size((int)round(size.x/mul),(int)round(size.y/mul));
 	BYTE* gray_in=new BYTE[real_size.x*real_size.y];
 	memset(gray_in,0,real_size.x*real_size.y);
 
@@ -206,7 +210,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 			int curx=xx+realx;
 
 			int bit=xx+yy*chars[i].real_width*8;
-			int b=chars[i].bits[bit>>3]&(1<<(7-bit&7));
+			int b=chars[i].bits[bit>>3]&(1<<((7-bit)&7));
 
 			if(curx<real_size.x && cury<real_size.y)
 				gray_in[curx+cury*real_size.x]=b?255:0;
@@ -368,7 +372,7 @@ bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int 
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
 
-	int height=round((h*ScreenY)/768.0f);
+	int height=(int)round((float)(h*ScreenY)/768.0f);
 	statement_height=h;
 
 	char prefix[_MAX_PATH];

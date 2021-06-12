@@ -283,7 +283,7 @@ protected:
 template <class FilthListType>
 void DestroyLinkList(FilthListType& unitList)
 {
-	FilthListType::iterator i_unit;
+	typename FilthListType::iterator i_unit;
 	i_unit = unitList.begin();
 	while(i_unit != unitList.end()){
 		if((*i_unit)->alive())

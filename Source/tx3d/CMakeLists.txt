@@ -1,6 +1,6 @@
 INCLUDE_DIRECTORIES(
         BEFORE .
-        "${PROJECT_SOURCE_DIR}/XLibs.Net"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
 )
 
 SET(tx3d_SRCS

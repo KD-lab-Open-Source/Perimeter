@@ -594,9 +594,9 @@ ClusterFind::LINE_RET
 			yeq=iy;
 
 			bool debug_xor;
-			HeuristicLine(xfrom,yfrom,xeq,yeq,
-				dx,dy,walk_map,EmptyHeuristic(),
-					debug_xor);
+            EmptyHeuristic eh = EmptyHeuristic();
+			HeuristicLine(xfrom,yfrom,xeq,yeq, 
+                          dx,dy,walk_map,eh,debug_xor);
 
 			if(debug_xor)
 			{
@@ -677,7 +677,7 @@ void ClusterFind::FindClusterFront(int x,int y,DWORD to,
 		for(int j=0;j<is_used_size;j++)
 			xassert(!is_used[y]);
 	}
-#endif _DEBUG
+#endif //_DEBUG
 
 	Front pnt;
 	pnt.x=x;pnt.y=y;

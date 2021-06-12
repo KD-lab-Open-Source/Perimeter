@@ -9,7 +9,7 @@
 #if (_MSC_VER < 1300)
 #pragma comment(lib,"strmbase")
 #else
-#pragma comment(lib,"strmiids")
+//#pragma comment(lib,"strmiids")
 #endif
 
 void sWinVideo::Init()

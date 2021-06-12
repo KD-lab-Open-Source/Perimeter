@@ -1,23 +1,7 @@
 #ifndef __CONDITIONS_H__
 #define __CONDITIONS_H__
 
-enum AIPlayerType
-{
-	AI_PLAYER_TYPE_ME, // Я
-	AI_PLAYER_TYPE_ENEMY, // Другой
-	AI_PLAYER_TYPE_WORLD, // Мир
-	AI_PLAYER_TYPE_ANY // Любой
-};
-
-enum CompareOperator
-{
-	COMPARE_LESS,	// Меньше
-	COMPARE_LESS_EQ, // Меньше либо равно
-	COMPARE_EQ, // Равно
-	COMPARE_NOT_EQ, // Не равно
-	COMPARE_GREATER, // Больше
-	COMPARE_GREATER_EQ // Больше либо равно		 
-};
+#include "../TriggerEditor/TriggerExport.h"
 
 struct ConditionOneTime : Condition // --------------------
 {

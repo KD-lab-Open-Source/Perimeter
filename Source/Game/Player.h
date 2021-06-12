@@ -10,6 +10,7 @@
 #include "SelectManager.h"
 #include "PerimeterSound.h"
 
+class Event;
 class terFrame;
 class terBuilding;
 class terUnitSquad;
@@ -267,7 +268,12 @@ struct EnableData
 		clear();
 	}
 
-	void clear() { Enabled = Worked = Constructed = Requested = 0; }
+	void clear() {
+	    Enabled = 0;
+	    Worked = 0;
+	    Constructed = 0;
+	    Requested = 0;
+	}
 };
 
 

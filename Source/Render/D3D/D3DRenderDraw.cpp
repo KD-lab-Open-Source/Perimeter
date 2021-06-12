@@ -166,7 +166,7 @@ void cD3DRender::DrawNoMaterialShadowNoWorld(cObjMesh *Mesh)
 	NumDrawObject++;
 }
 
-void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe,sColor4c &Color)
+void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe,const sColor4c &Color)
 { 
 	VISASSERT(DrawNode);
 	int BytePerVertex=8*sizeof(sVertexXYZD);

@@ -14,7 +14,7 @@
 #define _TX3D_VECTORC3D_H
 
 #include <my_STL.h>
-#include <math.h>
+#include <cmath>
 
 namespace tx3d {
 

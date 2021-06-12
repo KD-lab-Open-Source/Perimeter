@@ -50,6 +50,50 @@ inline unsigned int stringHash(const char *str)
 	return h;
 }
 
+class BinaryOArchive;
+class BinaryIArchive;
+
+template<class Base>
+class BinaryClassDescriptor : public ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>
+{
+public:
+    typedef typename ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::SerializerBase SerializerBase;
+
+    template<class Derived>
+    struct BinarySerializer : ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::Serializer<Derived>
+    {
+        BinarySerializer() {
+            instance().add(*this, get_type_id<Derived>().c_str());
+        }
+    };
+
+    void add(SerializerBase& serializer, const char* name) {
+        ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::add(serializer, name, 0);
+        unsigned int hash = stringHash(name);
+        if(mapHash_.find(hash) != mapHash_.end())
+            ErrH.Abort("BinaryClassDescriptor: coincidence of hash code", XERR_USER, 0, name);
+        mapHash_[hash] = &serializer;
+    }
+
+    SerializerBase& findByHash(unsigned int hash) {
+        typename MapHash::iterator i = mapHash_.find(hash);
+        if(i == mapHash_.end()){
+            xassert(0 && "Unregistered class");
+            ErrH.Abort("BinaryClassDescriptor: Unregistered class");
+        }
+        return *i->second;
+    }
+
+    static BinaryClassDescriptor& instance() {
+        return Singleton<BinaryClassDescriptor>::instance();
+    }
+
+private:
+    typedef map<unsigned int, SerializerBase*> MapHash;
+    MapHash mapHash_;
+};
+
+
 class BinaryOArchive 
 {
 public:
@@ -83,7 +127,7 @@ public:
     template<class T>
     BinaryOArchive& operator&(const ObjectWrapper<T> & t)
     {
-        typedef WrapperTraits<T>::unwrapped_type U;
+        typedef typename WrapperTraits<T>::unwrapped_type U;
 
 		using namespace SerializationHelpers;
 		using SerializationHelpers::Identity;
@@ -172,14 +216,14 @@ private:
 			buffer_ < stringHash("");
 			return;
 		}
-		const char* name = typeid(*t).name();
+		const char* name = get_type_id<T>().c_str();
 		buffer_ < stringHash(name);
-		BinaryClassDescriptor<boost::remove_const<T>::type>::instance().find(name).save(*this, t);
+		BinaryClassDescriptor<typename boost::remove_const<T>::type>::instance().find(name).save(*this, t);
 	}
 
 	template<class T, class A>
 	BinaryOArchive& operator&(const std::vector<T, A>& cont){
-		vector<T, A>::const_iterator i;
+		typename vector<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			(*this) & WRAP_NAME(*i, 0);
@@ -188,7 +232,7 @@ private:
 
 	template<class T, class A>
 	BinaryOArchive& operator&(const std::list<T, A>& cont){
-		list<T, A>::const_iterator i;
+        typename list<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			(*this) & WRAP_NAME(*i, 0);
@@ -286,7 +330,7 @@ public:
 	template<class T>
     BinaryIArchive& operator&(const ObjectWrapper<T>& t)
     {
-        typedef WrapperTraits<T>::unwrapped_type U;
+        typedef typename WrapperTraits<T>::unwrapped_type U;
 		using namespace SerializationHelpers;
 		using SerializationHelpers::Identity;
 
@@ -382,9 +426,9 @@ private:
 			}
 			return;
 		}
-		typedef BinaryClassDescriptor<boost::remove_const<T>::type> Descriptor;
+		typedef BinaryClassDescriptor<typename boost::remove_const<T>::type> Descriptor;
 		if(t){
-			if(hash == stringHash(typeid(*t).name())){
+			if(hash == stringHash(get_type_id<T>().c_str())){
 				Descriptor::instance().findByHash(hash).load(*this, t);
 				return;
 			}
@@ -409,7 +453,7 @@ private:
 			}
 		}
 		else{
-			vector<T, A>::iterator i;
+			typename vector<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & WRAP_NAME(*i, 0);
 		}
@@ -428,7 +472,7 @@ private:
 			}
 		}
 		else{
-			list<T, A>::iterator i;
+            typename list<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & WRAP_NAME(*i, 0);
 		}
@@ -506,45 +550,6 @@ private:
 		buffer_.read(value);
 		return *this;
 	}
-};
-
-
-template<class Base>
-class BinaryClassDescriptor : public ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>
-{
-public:
-	template<class Derived>
-	struct BinarySerializer : ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::Serializer<Derived>
-	{
-		BinarySerializer() {
-			instance().add(*this, typeid(Derived).name());
-		}
-	};
-
-	void add(SerializerBase& serializer, const char* name) {
-		ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::add(serializer, name, 0);
-		unsigned int hash = stringHash(name);
-		if(mapHash_.find(hash) != mapHash_.end())
-			ErrH.Abort("BinaryClassDescriptor: coincidence of hash code", XERR_USER, 0, name); 
-        mapHash_[hash] = &serializer;
-	}
-
-	SerializerBase& findByHash(unsigned int hash) {
-		MapHash::iterator i = mapHash_.find(hash);
-		if(i == mapHash_.end()){
-			xassert(0 && "Unregistered class");
-			ErrH.Abort("BinaryClassDescriptor: Unregistered class");
-		}
-		return *i->second;
-	}
-
-	static BinaryClassDescriptor& instance() {
-		return Singleton<BinaryClassDescriptor>::instance();
-	}
-
-private:
-	typedef map<unsigned int, SerializerBase*> MapHash;
-	MapHash mapHash_;
 };
 
 

@@ -64,7 +64,7 @@ bool cVisGeneric::assertEnabled_ = false;
 
 bool Option_ShowType[SHOW_MAX];
 
-__declspec( thread ) DWORD tls_is_graph=MT_LOGIC_THREAD;
+THREAD_LOCAL DWORD tls_is_graph=MT_LOGIC_THREAD;
 
 float CONVERT_PROCENT(float x,float min,float max)
 {
@@ -411,7 +411,7 @@ void DebugMemInfo()
 	p+=sprintf(p,"summary size=%i.\n",summary_size);
 	p+=sprintf(p,"summary num=%i.\n",summary_num);
 	MessageBox(gb_RenderDevice->GetWindowHandle(),text,"Memory info",MB_OK);
-#endif _DEBUG
+#endif //_DEBUG
 }
 
 

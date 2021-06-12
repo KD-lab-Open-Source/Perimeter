@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "UserSingleProfile.h"
 #include "GameShellSq.h"
 #include "Config.h"

@@ -56,7 +56,7 @@ BOOL CWinVGApp::InitInstance()
 
 	if(true)
 	{
-		_controlfp( _controlfp(0,0) & ~(EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL |  EM_INVALID),  MCW_EM ); 
+		_controlfp( _controlfp(0,0) & ~(EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL |  EM_INVALID),  _MCW_EM ); 
 		_clearfp();
 	}
 

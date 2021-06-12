@@ -1,8 +1,7 @@
 #ifndef _PERIMETER_COMMON_COMMANDS_
 #define _PERIMETER_COMMON_COMMANDS_
 
-enum terUnitAttributeID;
-enum CommandID;
+#include "UnitAttribute.h"
 
 const int PERIMETER_REGION_DATA_SIZE = 64;
 

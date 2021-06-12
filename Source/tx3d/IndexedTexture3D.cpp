@@ -11,7 +11,7 @@
 #include "stdafxTX3D.h"
 #include "IndexedTexture3D.hpp"
 #include "XMLUtils.hpp"
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 
 using namespace tx3d;

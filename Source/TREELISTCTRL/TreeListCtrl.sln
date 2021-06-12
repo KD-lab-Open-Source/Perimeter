@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TreeListCtrl", "TreeListCtrl.vcproj", "{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		MT Debug = MT Debug
+		MT Debug Static MFC = MT Debug Static MFC
+		MT Release = MT Release
+		MT Release Static MFC = MT Release Static MFC
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Debug.ActiveCfg = MT Debug|Win32
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Debug.Build.0 = MT Debug|Win32
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Debug Static MFC.ActiveCfg = MT Debug Static MFC|Win32
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Debug Static MFC.Build.0 = MT Debug Static MFC|Win32
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Release.ActiveCfg = MT Release|Win32
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Release.Build.0 = MT Release|Win32
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Release Static MFC.ActiveCfg = MT Release Static MFC|Win32
+		{32F47DFC-DA16-4F61-9B0B-3B9D272CC72F}.MT Release Static MFC.Build.0 = MT Release Static MFC|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

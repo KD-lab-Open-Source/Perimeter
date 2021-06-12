@@ -22,6 +22,9 @@
 
 #include "my_STL.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#ifndef _FINAL_VERSION_
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 #include <afxwin.h>         // MFC core and standard components
@@ -47,6 +50,8 @@
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
+#endif //_WIN32
+#endif //_FINAL_VERSION_
 
 #include <vector> 
 #include <string>
@@ -59,9 +64,12 @@
 #include <unordered_map>
 #endif
 
+#include <algorithm>
+
 using namespace std;
 
 #include "xutil.h"
+#include "Serialization.h"
 #include "xmath.h"
 #include "Timers.h"
 

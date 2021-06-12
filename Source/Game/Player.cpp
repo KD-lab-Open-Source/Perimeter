@@ -852,10 +852,16 @@ void terPlayer::showDebugInfo()
 		ZeroRegionPoint->getRasterizeColumn().show(BLUE);
 	if(showDebugPlayer.zeroColumn == 3)
 		ZeroRegionPoint->getBorder(debugInfoBorderCall,NULL, true);
-	if(showDebugPlayer.zeroColumn == 4)
-		ZeroRegionPoint->scanRecursive(ShowOp(GREEN), ShowOp(RED), TERRAFORM_ELEMENT_SIZE);
-	if(showDebugPlayer.zeroColumn == 5)
-		ZeroRegionPoint->scanRecursive(ShowOp(GREEN), ShowOp(RED), 1);
+	if(showDebugPlayer.zeroColumn == 4) {
+        auto opg = ShowOp(GREEN);
+        auto opr = ShowOp(RED);
+        ZeroRegionPoint->scanRecursive(opg, opr, TERRAFORM_ELEMENT_SIZE);
+    }
+	if(showDebugPlayer.zeroColumn == 5) {
+        auto opg = ShowOp(GREEN);
+        auto opr = ShowOp(RED);
+        ZeroRegionPoint->scanRecursive(opg, opr, 1);
+    }
 
 	if(showDebugPlayer.trustMap)
 		TrustMap->Show();
@@ -1469,9 +1475,10 @@ bool terPlayer::soundEvent(const SoundEventSetup* ev)
 
 bool terPlayer::startSound(const SoundEventSetup* ev) const
 {
-	if(ev->is3D)
-		return SND3DPlaySound(ev->name,&Vect3f(0,0,0));
-	else
+	if(ev->is3D) {
+        Vect3f z(0,0,0);
+        return SND3DPlaySound(ev->name, &z);
+    } else
 		return SND2DPlaySound(ev->name);
 
 	return false;

@@ -25,6 +25,128 @@ template<class T1, class T2> struct pair;
 }
 #endif
 
+//Serialization code for xmath.h
+
+template<class Archive>
+void Vect2f::serialize(Archive& ar) {
+    if((ar.type() & (ARCHIVE_EDIT | ARCHIVE_BINARY)) || ar.isOutput()){
+        ar & makeObjectWrapper(x, "x", "&x");
+        ar & makeObjectWrapper(y, "y", "&y");
+    }
+    else
+        convertT(ar, *this);
+}
+
+template<class Archive>
+void Vect2i::serialize(Archive& ar) {
+    if((ar.type() & (ARCHIVE_EDIT | ARCHIVE_BINARY)) || ar.isOutput()){
+        ar & makeObjectWrapper(x, "x", "&x");
+        ar & makeObjectWrapper(y, "y", "&y");
+    }
+    else
+        convertT(ar, *this);
+}
+
+template<class Archive>
+void Vect2s::serialize(Archive& ar) {
+    ar & makeObjectWrapper(x, "x", "&x");
+    ar & makeObjectWrapper(y, "y", "&y");
+}
+
+template<class Archive>
+void Vect3f::serialize(Archive& ar) {
+    if((ar.type() & (ARCHIVE_EDIT | ARCHIVE_BINARY)) || ar.isOutput()){
+        ar & makeObjectWrapper(x, "x", "&x");
+        ar & makeObjectWrapper(y, "y", "&y");
+        ar & makeObjectWrapper(z, "z", "&z");
+    }
+    else
+        convertT(ar, *this);
+}
+
+template<class Archive>
+void Vect3d::serialize(Archive& ar) {
+    ar & makeObjectWrapper(x, "x", "&x");
+    ar & makeObjectWrapper(y, "y", "&y");
+    ar & makeObjectWrapper(z, "z", "&z");
+}
+
+template<class Archive>
+void Mat3f::serialize(Archive& ar) {
+    ar & makeObjectWrapper(xrow(), "xrow", "xrow");
+    ar & makeObjectWrapper(yrow(), "yrow", "yrow");
+    ar & makeObjectWrapper(zrow(), "zrow", "zrow");
+}
+
+template<class Archive>
+void Mat3d::serialize(Archive& ar) {
+    ar & makeObjectWrapper(xrow(), "xrow", "xrow");
+    ar & makeObjectWrapper(yrow(), "yrow", "yrow");
+    ar & makeObjectWrapper(zrow(), "zrow", "zrow");
+}
+
+template<class Archive>
+void MatXf::serialize(Archive& ar) {
+    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
+    ar & makeObjectWrapper(trans(), "position", "Позиция");
+}
+
+template<class Archive>
+void MatXd::serialize(Archive& ar) {
+    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
+    ar & makeObjectWrapper(trans(), "position", "Позиция");
+}
+
+template<class Archive>
+void QuatF::serialize(Archive& ar) {
+    if((ar.type() & (ARCHIVE_EDIT | ARCHIVE_BINARY)) || ar.isOutput()){
+        ar & makeObjectWrapper(s_, "s", "&s");
+        ar & makeObjectWrapper(x_, "x", "&x");
+        ar & makeObjectWrapper(y_, "y", "&y");
+        ar & makeObjectWrapper(z_, "z", "&z");
+    }
+    else
+        convertT(ar, *this);
+}
+
+template<class Archive>
+void QuatD::serialize(Archive& ar) {
+    ar & makeObjectWrapper(s_, "s", "&s");
+    ar & makeObjectWrapper(x_, "x", "&x");
+    ar & makeObjectWrapper(y_, "y", "&y");
+    ar & makeObjectWrapper(z_, "z", "&z");
+}
+
+template<class Archive>
+void Se3f::serialize(Archive& ar) {
+    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
+    ar & makeObjectWrapper(trans(), "position", "Позиция");
+}
+
+template<class Archive>
+void Se3d::serialize(Archive& ar) {
+    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
+    ar & makeObjectWrapper(trans(), "position", "Позиция");
+}
+
+template<class Archive>
+void Vect4f::serialize(Archive& ar) {
+    ar & makeObjectWrapper(x, "x", "&x");
+    ar & makeObjectWrapper(y, "y", "&y");
+    ar & makeObjectWrapper(z, "z", "&z");
+    ar & makeObjectWrapper(z, "w", "&w");
+}
+
+template<class Archive>
+void Mat4f::serialize(Archive& ar) {
+    ar & makeObjectWrapper(xrow(), "xrow", "xrow");
+    ar & makeObjectWrapper(yrow(), "yrow", "yrow");
+    ar & makeObjectWrapper(zrow(), "zrow", "zrow");
+    ar & makeObjectWrapper(wrow(), "wrow", "wrow");
+}
+
+////////
+
 template<class T>
 struct WrapperTraits {
     typedef T unwrapped_type;

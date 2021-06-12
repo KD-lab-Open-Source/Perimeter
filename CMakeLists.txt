@@ -14,25 +14,28 @@ ENDIF()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS ON)
 
 # options
 OPTION(FINAL_VERSION "Generate Final version" On)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 
 # depends
-FIND_PACKAGE(Boost)
+FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(VORBIS REQUIRED)
 
 # globals
 INCLUDE_DIRECTORIES(SYSTEM
         ${Boost_INCLUDE_DIRS}
-        )
+        ${VORBIS_INCLUDE_DIRS}
+)
 
 IF(MSVC)
     #MSVC compiler specifics
 ELSE()
     #Others
     INCLUDE(CheckCXXCompilerFlag)
+    SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Werror=delete-non-virtual-dtor -Wno-conversion-null")
     SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize -ffast-math")
     CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
@@ -50,15 +53,18 @@ ELSE()
     add_compile_options(-Wno-unused-variable)
     add_compile_options(-Wno-unused-but-set-variable)
     add_compile_options(-Wno-unused-value)
+    add_compile_options(-Wno-deprecated)
+    
+    #TODO remove these once code is more reasonable
     add_compile_options(-Wno-sign-compare)
-
-    add_compile_options(-fms-extensions)
+    add_compile_options(-Wno-narrowing)
+    add_compile_options(-Wno-write-strings)
+    add_compile_options(-Wno-return-type)
 
     add_compile_options(-Wno-unknown-pragmas) #TODO we should remove these pragmas?
     add_compile_options(-Werror=shift-negative-value)
     add_compile_options(-Werror=dangling-else)
     add_compile_options(-Werror=parentheses)
-    add_compile_options(-Werror=delete-non-virtual-dtor)
     #add_compile_options(-Werror=write-strings) #TODO enable this again
 
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -73,6 +79,14 @@ IF(FINAL_VERSION)
     ADD_DEFINITIONS(-D_FINAL_VERSION_)
 ELSE()
     MESSAGE("Not compiling Final version")
+ENDIF()
+
+IF( CMAKE_HOST_WIN32 OR MINGW )
+    MESSAGE("Windows or MinGW build")
+    SET(PERIMETER_WINDOWS ON)
+ELSE()
+    MESSAGE("Not Windows or MinGW build")
+    SET(PERIMETER_WINDOWS OFF)
 ENDIF()
 
 ADD_SUBDIRECTORY("Source")

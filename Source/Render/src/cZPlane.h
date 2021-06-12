@@ -63,4 +63,4 @@ public:
 	virtual Vect3f GetCenterObject();
 };
 
-#endif  _CZPLANE_H_
+#endif //_CZPLANE_H_

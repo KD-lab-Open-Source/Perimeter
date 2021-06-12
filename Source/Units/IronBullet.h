@@ -22,7 +22,7 @@ public:
 	terProjectileBase(const UnitTemplate& data);
 
 	const AttributeProjectile& attr() const {
-		return safe_cast_ref<const AttributeProjectile&>(__super::attr());
+		return safe_cast_ref<const AttributeProjectile&>(terUnitReal::attr());
 	}
 
 	void Collision(terUnitBase* p);

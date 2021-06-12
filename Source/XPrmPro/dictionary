@@ -1,0 +1,10 @@
+DictionaryPrm = {
+	dictionaryRecords = {
+		1;
+		{
+			parentName = "a";
+			oldName = "a";
+			newName = "e";
+		}
+	};
+};

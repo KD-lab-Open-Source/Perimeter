@@ -125,9 +125,8 @@ bool ConditionObjectExists::check(AIPlayer& aiPlayer)
 			return aiPlayer.countUnits(object) >= counter;
 
 		case AI_PLAYER_TYPE_ENEMY:{
-			PlayerVect::iterator pi;
-			FOR_EACH(universe()->Players, pi)
-				if(!(*pi)->isWorld() && *pi != &aiPlayer && (*pi)->countUnits(object) >= counter)
+			FOR_EACH_AUTO(universe()->Players, pil)
+				if(!(*pil)->isWorld() && (*pil) != &aiPlayer && (*pil)->countUnits(object) >= counter)
 					return true;
 			}
 			break;
@@ -137,9 +136,8 @@ bool ConditionObjectExists::check(AIPlayer& aiPlayer)
 		
 		case AI_PLAYER_TYPE_ANY:{
 			int total = 0;
-			PlayerVect::iterator pi;
-			FOR_EACH(universe()->Players, pi)
-				total += (*pi)->countUnits(object);
+            FOR_EACH_AUTO(universe()->Players, pil)
+				total += (*pil)->countUnits(object);
 
 			return total >= counter;
 		}
@@ -151,9 +149,8 @@ bool ConditionObjectExists::check(AIPlayer& aiPlayer)
 			return aiPlayer.countBuildingsConstructed(object) >= counter;
 
 		case AI_PLAYER_TYPE_ENEMY:{
-			PlayerVect::iterator pi;
-			FOR_EACH(universe()->Players, pi)
-				if(!(*pi)->isWorld() && *pi != &aiPlayer && (*pi)->countBuildingsConstructed(object) >= counter)
+            FOR_EACH_AUTO(universe()->Players, pil)
+				if(!(*pil)->isWorld() && (*pil) != &aiPlayer && (*pil)->countBuildingsConstructed(object) >= counter)
 					return true;
 			}
 			break;
@@ -163,9 +160,8 @@ bool ConditionObjectExists::check(AIPlayer& aiPlayer)
 		
 		case AI_PLAYER_TYPE_ANY:{
 			int total = 0;
-			PlayerVect::iterator pi;
-			FOR_EACH(universe()->Players, pi)
-				total += (*pi)->countBuildingsConstructed(object);
+            FOR_EACH_AUTO(universe()->Players, pil)
+				total += (*pil)->countBuildingsConstructed(object);
 
 			return total >= counter;
 		}
@@ -328,8 +324,8 @@ void ConditionTeleportation::checkEvent(AIPlayer& aiPlayer, const Event& event)
 	if(event.type() == Event::TELEPORTATION){
 		const EventUnitPlayer& eventUnit = safe_cast_ref<const EventUnitPlayer&>(event);
 		if(checkPlayer(&aiPlayer, eventUnit.player(), playerType) &&
-			(teleportationType == TELEPORTATION_TYPE_ALPHA && eventUnit.unit()->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA ||
-			teleportationType == TELEPORTATION_TYPE_OMEGA && eventUnit.unit()->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)){
+			((teleportationType == TELEPORTATION_TYPE_ALPHA && eventUnit.unit()->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA) ||
+			(teleportationType == TELEPORTATION_TYPE_OMEGA && eventUnit.unit()->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA))){
 				setSatisfied();
 		}
 	}
@@ -432,9 +428,8 @@ bool ConditionFrameState::check(AIPlayer& aiPlayer)
 bool ConditionCorridorOmegaUpgraded::check(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = 0;
-	PlayerVect::const_iterator pi;
-	FOR_EACH(universe()->Players, pi)
-		if((unit = (*pi)->findUnit(UNIT_ATTRIBUTE_CORRIDOR_OMEGA)) != 0)
+    FOR_EACH_AUTO(universe()->Players, pil)
+		if((unit = (*pil)->findUnit(UNIT_ATTRIBUTE_CORRIDOR_OMEGA)) != 0)
 			return safe_cast<terCorridorOmega*>(unit)->upgraded();
 
 	return false;
@@ -510,9 +505,8 @@ bool ConditionIsFieldOn::check(AIPlayer& aiPlayer)
 
 bool ConditionOnlyMyClan::check(AIPlayer& aiPlayer)
 {
-	PlayerVect::iterator pi;
-	FOR_EACH(universe()->Players, pi)
-		if((*pi)->frame() && (*pi)->clan() != aiPlayer.clan()){
+    FOR_EACH_AUTO(universe()->Players, pil)
+		if((*pil)->frame() && (*pil)->clan() != aiPlayer.clan()){
 			return false;
 		}
 	return true;
@@ -911,7 +905,7 @@ bool ActionSquadOrderUnits::workedOut(AIPlayer& aiPlayer)
 bool ActionSquadAttack::automaticCondition(AIPlayer& aiPlayer) const
 {
 	terUnitSquad* squad = aiPlayer.chooseSquad(chooseSquadID);
-	if(!squad || squad->Empty() || squad->attackAction() && !squad->attackAction()->interruptable)
+	if(!squad || squad->Empty() || (squad->attackAction() && !squad->attackAction()->interruptable))
 		return false;
 
 	if(attackByType != UNIT_ATTRIBUTE_NONE &&
@@ -1117,24 +1111,23 @@ void ActionAttackBySpecialWeapon::activate(AIPlayer& aiPlayer)
 
 terUnitBase* ActionAttackBySpecialWeapon::findTarget(AIPlayer& aiPlayer, const Vect2f& position, float radiusMin) const
 {
-	PlayerVect::iterator pi;
-	FOR_EACH(universe()->Players, pi){
-		if(aiPlayer.clan() == (*pi)->clan())
+	FOR_EACH_AUTO(universe()->Players, pil){
+		if(aiPlayer.clan() == (*pil)->clan())
 			continue;
 		UnitAttributeIDList::const_iterator ti;
 		FOR_EACH(unitsToAttack, ti){
-			terUnitBase* target = (*pi)->findUnit(*ti, position, radiusMin);
+			terUnitBase* target = (*pil)->findUnit(*ti, position, radiusMin);
 			if(target)
 				return target;
 		} 
 	}
 
-	FOR_EACH(universe()->Players, pi){
-		if(aiPlayer.clan() == (*pi)->clan())
+	FOR_EACH_AUTO(universe()->Players, pil){
+		if(aiPlayer.clan() == (*pil)->clan())
 			continue;
 		UnitAttributeIDList::const_iterator ti;
 		FOR_EACH(unitsToAttack, ti){
-			terUnitBase* target = (*pi)->findUnitByUnitClass(unitClassToAttack, position, radiusMin);
+			terUnitBase* target = (*pil)->findUnitByUnitClass(unitClassToAttack, position, radiusMin);
 			if(target)
 				return target;
 		} 
@@ -1150,7 +1143,7 @@ void ActionSetCamera::activate(AIPlayer& aiPlayer)
 	if(aiPlayer.active()){
 		gameShell->setSkipCutScene(false);
 		terCamera->SetCameraFollow(0);
-		string camera = cameraSplineName;
+		string camera = cameraSplineName.value();
 		if(camera == "Camera0" || camera == "Camera1" || camera == "Camera2" || camera == "Camera3"){
 			XBuffer buffer;
 			buffer < "Camera" <= aiPlayer.playerStrategyIndex();
@@ -1218,9 +1211,8 @@ void ActionTeleportationOut::activate(AIPlayer& aiPlayer)
 terUnitBase* ActionKillObject::findObject() const
 {
 	terUnitBase* unit = 0;
-	PlayerVect::const_iterator pi;
-	FOR_EACH(universe()->Players, pi)
-		if((unit = (*pi)->findUnit(object)) != 0)
+    FOR_EACH_AUTO(universe()->Players, pil)
+		if((unit = (*pil)->findUnit(object)) != 0)
 			return unit;
 	return 0;
 }
@@ -1447,6 +1439,8 @@ void ActionActivateAllSpots::activate(AIPlayer& aiPlayer)
 		case UNIT_ATTRIBUTE_GEO_HEAD:
 			(*ui)->setActivity(true);
 			break;
+        default:
+            break;
 		}
 }
 
@@ -1464,6 +1458,8 @@ void ActionDeactivateAllSpots::activate(AIPlayer& aiPlayer)
 		case UNIT_ATTRIBUTE_GEO_HEAD:
 			(*ui)->setActivity(false);
 			break;
+	    default:
+	        break;
 		}
 }
 
@@ -1483,12 +1479,10 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	case DONE:{
 		// Входящие стрелки одного цвета - И, разных - ИЛИ
 		vector<int> conditions(STRATEGY_COLOR_MAX, 0);
-		vector<TriggerLink*>::iterator li;
-		FOR_EACH(incomingLinks_, li)
+		FOR_EACH_AUTO(incomingLinks_, li)
 			conditions[(*li)->getType()] |= (*li)->active() ? 1 : 2;
 
-		vector<int>::iterator bi;
-		FOR_EACH(conditions, bi)
+		FOR_EACH_AUTO(conditions, bi)
 			if(*bi == 1){
 				state_ = CHECKING;
 				triggerChain.addLogRecord(*this, (string("П: ") + name()).c_str());
@@ -1509,8 +1503,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 
 	case WORKING:
 		if(!action || action->workedOut(aiPlayer)){
-			vector<TriggerLink>::iterator li;
-			FOR_EACH(outcomingLinks_, li)
+			FOR_EACH_AUTO(outcomingLinks_, li)
 				li->activate(triggerChain);
 			state_ = DONE;
 			if(!active())
@@ -1532,12 +1525,10 @@ void Trigger::activate(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	if(condition)
 		condition->clear();
 
-	vector<TriggerLink*>::iterator li;
-	FOR_EACH(incomingLinks_, li){
+	FOR_EACH_AUTO(incomingLinks_, li){
 		if((*li)->active()){ // Деактивировать связи из родительского триггера других цветов
 			Trigger* trigger = (*li)->parent;
-			vector<TriggerLink>::iterator lj;
-			FOR_EACH(trigger->outcomingLinks_, lj)
+            FOR_EACH_AUTO(trigger->outcomingLinks_, lj)
 				if(lj->getType() != (*li)->getType() && !lj->autoRestarted()){
 					if(lj->child && lj->child->state_ == CHECKING) // Выключить другие триггера
 						lj->child->state_ = lj->child->executionCounter_ ? DONE : SLEEPING;
@@ -1586,12 +1577,10 @@ void TriggerChain::save() const
 
 void TriggerChain::initializeTriggersAndLinks()
 {
-	TriggerList::iterator ti;
-	FOR_EACH(triggers, ti){
+    FOR_EACH_AUTO(triggers, ti){
 		ti->state_ = Trigger::SLEEPING;
 		ti->executionCounter_ = 0;
-		vector<TriggerLink>::iterator li;
-		FOR_EACH(ti->outcomingLinks_, li)
+        FOR_EACH_AUTO(ti->outcomingLinks_, li)
 			li->active_ = false;
 	}
 	find("START")->state_ = Trigger::CHECKING;
@@ -1780,9 +1769,8 @@ const char* editLabelDialog(HWND hwnd, const char* initialString)
 	name = initialString;
 
 	vector<const char*> items;
-	PlayerVect::iterator pi;
-	FOR_EACH(universe()->Players, pi){
-		const UnitList& unit_list=(*pi)->units();
+    FOR_EACH_AUTO(universe()->Players, pil){
+		const UnitList& unit_list=(*pil)->units();
 		UnitList::const_iterator ui;
 		FOR_EACH(unit_list, ui)
 			if(strlen((*ui)->label()))

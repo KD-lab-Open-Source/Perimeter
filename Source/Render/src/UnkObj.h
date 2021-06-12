@@ -6,8 +6,8 @@
 
 const int NUMBER_OBJTEXTURE=3;
 
-#include "material.h"
-#include "frame.h"
+#include "Material.h"
+#include "Frame.h"
 
 class cTexture;
 

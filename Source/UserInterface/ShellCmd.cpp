@@ -1036,7 +1036,7 @@ void OnButtonStructure(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		{
 
 			CInfoWindow* pWndInfo;
-			if(pWndInfo = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+			if((pWndInfo = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID)))
 			{
 				pWndInfo->Show(true);
 				pWndInfo->SetText(qdTextDB::instance().getText("Interface.Tips.no_energy_for_build")); 
@@ -1180,8 +1180,8 @@ void OnButtonSquadMutate(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		CShellLegionButton* pBtn = (CShellLegionButton*)pWnd;
 		if(pBtn->GetStatusNoEnergy())
 		{
-			CInfoWindow* pWndInfo;
-			if(pWndInfo = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+			CInfoWindow* pWndInfo = (CInfoWindow*) _shellIconManager.GetWnd(SQSH_INFOWND_ID);
+            if(pWndInfo)
 			{
 				pWndInfo->Show(true);
 				pWndInfo->SetText(qdTextDB::instance().getText("Interface.Tips.no_mutation_energy")); 
@@ -1193,8 +1193,8 @@ void OnButtonSquadMutate(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		}
 		else if(!(pBtn->m_bS && pBtn->m_bO && pBtn->m_bT))
 		{
-			CInfoWindow* pWndInfo;
-			if(pWndInfo = (CInfoWindow*)_shellIconManager.GetWnd(SQSH_INFOWND_ID))
+			CInfoWindow* pWndInfo = (CInfoWindow*) _shellIconManager.GetWnd(SQSH_INFOWND_ID);
+            if(pWndInfo)
 			{
 				pWndInfo->Show(true);
 				pWndInfo->SetText(qdTextDB::instance().getText("Interface.Tips.no_basic_units")); 

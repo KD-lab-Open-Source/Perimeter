@@ -5,7 +5,7 @@
 #include <string>
 using namespace std;
 
-#include "../../Util/xmath.h"
+#include "xmath.h"
 #include "../Src/BaseClass.h"
 
 #include "DefMeshFile.h"

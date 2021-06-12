@@ -150,7 +150,8 @@ bool DefenceMap::findPathToPoint(const Vect2i& from_w, const Vect2i& to_w, vecto
 	if(tos.empty())
 		return false;
 
-	if(!path_finder->FindPathMulti(from, tos, out_path, ClusterHeuristicMulti()))
+    ClusterHeuristicMulti heuristic = ClusterHeuristicMulti();
+	if(!path_finder->FindPathMulti(from, tos, out_path, heuristic))
 		return false;
 
 	vector<Vect2i>::iterator it;
@@ -192,7 +193,8 @@ terUnitBase* DefenceMap::findPathToTarget(const Vect2i& from_w, const UnitList& 
 	if(tos.empty())
 		return 0;
 
-	if(!path_finder->FindPathMulti(from, tos, out_path, ClusterHeuristicMulti()))
+    ClusterHeuristicMulti heuristic = ClusterHeuristicMulti();
+    if(!path_finder->FindPathMulti(from, tos, out_path, heuristic))
 		return 0;
 
 	vector<Vect2i>::iterator it;

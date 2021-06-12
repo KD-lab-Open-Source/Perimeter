@@ -388,14 +388,17 @@ void terFilthSpot::DestroyLink()
 void terFilthSpot::SoundActivate()
 {
 	float z = (float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))) >> VX_FRACTION);
+    Vect3f v;
 	switch(FilthParamID){
 		case FILTH_SPOT_ID_ANTS:
 		case FILTH_SPOT_ID_A_ANTS:
-			SND3DPlaySound("ant_nexus",&Vect3f(position().x,position().y,z));
+            v = Vect3f(position().x,position().y,z);
+			SND3DPlaySound("ant_nexus",&v);
 			break;
 		case FILTH_SPOT_ID_WASP:
 		case FILTH_SPOT_ID_A_WASP:
-			SND3DPlaySound("wasp_nexus",&Vect3f(position().x,position().y,z));
+            v = Vect3f(position().x,position().y,z);
+			SND3DPlaySound("wasp_nexus",&v);
 			break;
 	}
 	SoundImpulse = 1;
@@ -582,7 +585,8 @@ void terFilthSpot::GenerationProcess()
 				v.z = 0;
 				creature_generation_period=attack_period*10.0f;
 				if(terCheckFilthPoint(round(v.x),round(v.y))){
-					SND3DPlaySound("Proc_Geo_Vulcan",&To3D(v));
+				    Vect3f v3 = To3D(v);
+					SND3DPlaySound("Proc_Geo_Vulcan",&v3);
 					terFilthSwarmVolcano* p = new terFilthSwarmVolcano(this,v,create_first);
 					if(FilthParamID==FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR)
 						p->SetPrm(&terFilthVolcanoScumDisruptorPrm);

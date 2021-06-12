@@ -6,7 +6,7 @@
 #include "P2P_interface.h"
 #include "GameShell.h"
 
-#include "Lmcons.h"
+#include "lmcons.h"
 
 
 bool net_log_mode=0;
@@ -49,7 +49,7 @@ public:
 	}
 };
 cMonowideFont* pMonowideFont;
-#endif _FINAL_VERSION_
+#endif //_FINAL_VERSION_
 
 terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission)
 {
@@ -107,7 +107,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 #ifndef _FINAL_VERSION_
 	pMonowideFont= new cMonowideFont();
-#endif _FINAL_VERSION_
+#endif //_FINAL_VERSION_
 
 	//Очистка списков команд
 	{
@@ -338,7 +338,7 @@ terHyperSpace::~terHyperSpace()
 
 #ifndef _FINAL_VERSION_
 	delete pMonowideFont;
-#endif _FINAL_VERSION_
+#endif //_FINAL_VERSION_
 	DeleteCriticalSection(&m_FullListGameCommandLock);
 
 }
@@ -447,7 +447,8 @@ void terHyperSpace::logQuant()
 
 	signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
 	if((currentQuant & maskPeriodSendLogQuant)==0){ //Каждый 8 квант отсылается сигнатура
-		pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state));
+        netCommandGeneral event = netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state);
+		pNetCenter->SendEvent(&event);
 		signatureGame=startCRC32;
 	}
 	pushBackLogList(currentQuant, net_log_buffer);
@@ -467,7 +468,8 @@ void terHyperSpace::sendLog(unsigned int quant)
 			sgn=crc32((unsigned char*)pLogElemente->pLog->address(), pLogElemente->pLog->tell(), sgn);
 
 		}
-		pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state));
+        netCommandGeneral event = netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state);
+        pNetCenter->SendEvent(&event);
 	}
 }
 

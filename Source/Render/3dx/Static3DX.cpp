@@ -1,6 +1,6 @@
-#include "StdAfxRd.h"
+#include "StdAfxRD.h"
 #include "Static3dx.h"
-#include "Node3dx.h"
+#include "Node3DX.h"
 #include "NParticle.h"
 #include "VisError.h"
 #include <algorithm>

@@ -1,7 +1,9 @@
 #pragma once
 #include <my_STL.h>
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
+#endif
 #include <cstdlib>
 #include <cstdio>
 #include <mmsystem.h>
@@ -18,7 +20,7 @@
 
 #ifndef ASSERT
 #define ASSERT(f) xassert(f)
-#endif ASSERT
+#endif //ASSERT
 
 #define SIZE(ar) (sizeof(ar)/sizeof(ar[0]))
 

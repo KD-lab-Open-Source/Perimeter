@@ -27,11 +27,13 @@ struct sBound
 	vector<sPolygon>	Poly;
 };
 
+class cObjectNode;
+
 class cObjectGroup : public cBaseNode<class cObjectGroup>
 {
 protected:
 	/*
-		Введён для ускорения работы. 
+		Введён для ускорения работы.
 		Так как груп значительно меньше, чем объектов.
 	*/
 	friend class cObjectNode;
@@ -41,7 +43,7 @@ protected:
 	cObjectNode* lod;
 public:
 	cObjectGroup();
-	
+
 protected:
 	void SetPhase(float phase,bool recursive);
 	void SetCurrentChannel(int nChannel);

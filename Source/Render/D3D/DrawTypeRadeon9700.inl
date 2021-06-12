@@ -239,7 +239,8 @@ void DrawTypeRadeon9700::SetMaterial(float Phase,cTexture *Texture0,cTexture *Te
 		gb_RenderDevice3D->SetPixelShaderConstant(20,(D3DXVECTOR4*)&Data->Ambient);
 		gb_RenderDevice3D->SetPixelShaderConstant(21,(D3DXVECTOR4*)&Data->Diffuse);
 		gb_RenderDevice3D->SetPixelShaderConstant(22,(D3DXVECTOR4*)&Data->Specular);
-		gb_RenderDevice3D->SetPixelShaderConstant(23,&D3DXVECTOR4(0,0,0,Data->Power));
+        D3DXVECTOR4 power = D3DXVECTOR4(0,0,0,Data->Power);
+		gb_RenderDevice3D->SetPixelShaderConstant(23,&power);
 	}
 
 	bool is_bump=IsBump(Data);

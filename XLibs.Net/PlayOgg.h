@@ -8,7 +8,7 @@
 #define MPP_STAT
 #ifdef MPP_STAT
 double MpegCPUUsing();//Возвращает используемое на проигрывание Mpeg время (1 - всё время загрузки)
-#endif MPP_STAT
+#endif //MPP_STAT
 
 //
 bool MpegInitLibrary(void* LPDIRECTSOUND_pDS);

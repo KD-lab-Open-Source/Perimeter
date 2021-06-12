@@ -306,7 +306,7 @@ windowClientSize_(1024, 768)
 			name = "XXX";
 		name = setExtention((path + name).c_str(), "spg");
 
-		if(!XStream(0).open(name.c_str()))
+		if(!XStream(0).open(name.c_str())) {
 			if(openFileDialog(name, "Resourse\\Missions", "spg", "Mission Name")){
 				size_t pos = name.rfind("RESOURCE\\");
 				if(pos != string::npos)
@@ -314,7 +314,8 @@ windowClientSize_(1024, 768)
 			}
 			else
 				ErrH.Exit();
-
+        }
+		
 		if(check_command_line(KEY_REPLAY_REEL)){
 			const char* fname=check_command_line(KEY_REPLAY_REEL);
 			HTManager::instance()->GameStart(MissionDescription(fname, GT_playRellGame));
@@ -867,7 +868,7 @@ Vect2i GameShell::convertToScreenAbsolute(const Vect2f& pos)
 {
 	POINT pt = { round((pos.x + 0.5f)*windowClientSize().x), round((pos.y + 0.5f)*windowClientSize().y) };
 	ClientToScreen(hWndVisGeneric, &pt);
-	return Vect2i(pt.x, pt.y);
+	return Vect2i((int)pt.x, (int)pt.y);
 }
 
 bool GameShell::checkReel(UINT uMsg,WPARAM wParam,LPARAM lParam) {
@@ -896,6 +897,7 @@ void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 		return;
 	}
 
+    sKey s;
     switch(uMsg){
 	case WM_MOUSELEAVE:
 		MouseLeave();
@@ -934,12 +936,14 @@ void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
 		if (canProcessKeyEvent(lParam)) {
-			KeyPressed(sKey(wParam, true));
+            s = sKey(wParam, true);
+			KeyPressed(s);
 		}
 		break;
 	case WM_KEYUP:
-	case WM_SYSKEYUP: 
-		KeyUnpressed(sKey(wParam, true));
+	case WM_SYSKEYUP:
+        s = sKey(wParam, true);
+        KeyUnpressed(s);
 		break;
 	case WM_CHAR:
 		if (canProcessKeyEvent(lParam) || ((_bMenuMode || wParam == VK_BACK) && _shellIconManager.isInEditMode())) {
@@ -1911,7 +1915,8 @@ void GameShell::makeMovieShot()
 	int time = frame_time() - movieStartTime_;
 	int ms = time % 1000;
 	msg < "REC: " < fname < " \nTime: " <= time/60000 < ":" <= (time % 60000)/1000 < "." <= ms/100 % 10 <= ms/10 % 10 <= ms % 10;
-	OutText(20, 20, msg, &sColor4f(1, 1, 1, 1));
+    sColor4f c(1, 1, 1, 1);
+	OutText(20, 20, msg, &c);
 	terRenderDevice->SetFont(0);
 	terRenderDevice->EndScene();
 }
@@ -2022,7 +2027,9 @@ void CShellLogicDispatcher::init()
 
 	m_hLight = m_hScene->CreateLight(ATTRLIGHT_DIRECTION);
 	m_hLight->SetPosition(MatXf(Mat3f::ID,Vect3f(0,0,0)));
-	m_hLight->SetColor(&sColor4f(0,0,0,1),&sColor4f(1,1,1,1));
+    sColor4f a(0,0,0,1);
+    sColor4f b(1,1,1,1);
+	m_hLight->SetColor(&a,&b);
 	m_hLight->SetDirection(Vect3f(0,0,-1));
 
 	m_hCamera = m_hScene->CreateCamera();
@@ -2045,15 +2052,18 @@ void CShellLogicDispatcher::init()
 	float _small_camera_rect_dx  = small_camera_rect_dx/2.f;
 	float _small_camera_rect_dy  = small_camera_rect_dy/2.f;
 
-	m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
-		&Vect2f(_small_camera_x + _small_camera_rect_dx, 
-				_small_camera_y + _small_camera_rect_dy), // центр камеры
-
-		&sRectangle4f(-_small_camera_rect_dx, -_small_camera_rect_dy, 
-						_small_camera_rect_dx, _small_camera_rect_dy),// видимая область камеры
-		&Vect2f(1.0f, 1.0f),                        // фокус камеры
-		&Vect2f(30.0f, 10000.0f)                    // ближайший и дальний z-плоскости отсечения
-		);
+    Vect2f center(_small_camera_x + _small_camera_rect_dx,
+                  _small_camera_y + _small_camera_rect_dy);
+    sRectangle4f clip(-_small_camera_rect_dx, -_small_camera_rect_dy,
+                      _small_camera_rect_dx, _small_camera_rect_dy);
+    Vect2f focus(1.0f, 1.0f);
+    Vect2f zplane(30.0f, 10000.0f);
+    m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
+            &center,								// центр камеры
+            &clip,									// видимая область камеры
+            &focus,									// фокус камеры
+            &zplane									// ближайший и дальний z-плоскости отсечения
+    );
 
 	m_hCamera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
 }
@@ -2451,6 +2461,8 @@ void GameShell::setLocalizedFontSizes() {
 }
 
 void GameShell::preLoad() {
+    historyScene.loadProgram("RESOURCE\\scenario.hst");
+    bwScene.loadProgram("RESOURCE\\menu.hst");
 	string path = getLocDataPath() + "Text\\Texts.btdb";
 	#ifdef _FINAL_VERSION_
 		qdTextDB::instance().load(path.c_str(), 0 );
@@ -2540,19 +2552,24 @@ void GameShell::editParameters()
 		debugPrm_.edit();
 	}
 	else if(item == attribute){
-		attributeLibrary.edit();
+        EditArchive ea = EditArchive();
+		attributeLibrary.edit(ea);
 	}
 	else if(item == global){
-		globalAttr.edit();
+        EditArchive ea = EditArchive();
+		globalAttr.edit(ea);
 	}
 	else if(item == sounds){
-		soundScriptTable.edit();
+        EditArchive ea = EditArchive();
+		soundScriptTable.edit(ea);
 	}
 	else if(item == interface_){
-		interfaceAttr.edit();
+        EditArchive ea = EditArchive();
+		interfaceAttr.edit(ea);
 	}
 	else if(item == physics){
-		rigidBodyPrmLibrary.edit();
+        EditArchive ea = EditArchive();
+		rigidBodyPrmLibrary.edit(ea);
 	}
 
 	if(manualData().zeroLayerHeight != vMap.hZeroPlast)

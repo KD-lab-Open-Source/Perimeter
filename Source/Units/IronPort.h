@@ -17,7 +17,7 @@ public:
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		__super::serialize(ar);
+        AttributeBuilding::serialize(ar);
 		if(ar.openBlock("attributeCorridor", "Коридор")){
 			ar & TRANSLATE_OBJECT(disappearingTime, "disappearingTime");
 			ar & TRANSLATE_OBJECT(disappearingHeight, "disappearingHeight");

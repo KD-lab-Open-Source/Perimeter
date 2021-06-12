@@ -84,7 +84,7 @@ int PanByX(float x)
 	return ToPan(xx);
 }
 
-void logs(char *format, ...)
+void logs(const char *format, ...)
 {
 	if(snd_error)
 	{
@@ -387,7 +387,7 @@ bool RestoreBuffer(LPDIRECTSOUNDBUFFER pDSB)
             if( hr == DSERR_BUFFERLOST )
                 Sleep( 10 );
         }
-        while( hr = pDSB->Restore() );
+        while( (hr = pDSB->Restore()) );
     }
 
 	return true;
@@ -484,7 +484,11 @@ LPDIRECTSOUNDBUFFER SNDLoadSound(LPCSTR fxname,DWORD dwCreationFlags)
 LFail:
     // Cleanup
     SAFE_DELETE( pWaveFile );
-    SAFE_DELETE( pDSBuffer );
+    //SAFE_DELETE( pDSBuffer ); //pDSBuffer is abstract, calling delelte is UB
+    if (pDSBuffer) {
+        pDSBuffer->Release();
+        (pDSBuffer) = NULL;
+    }
     return NULL;
 }
 

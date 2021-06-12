@@ -137,7 +137,7 @@ MissionDescription::MissionDescription()
 }
 
 void MissionDescription::read(XBuffer& in) 
-{ 
+{
 	in > worldID_ > StringInWrapper(missionName_) > StringInWrapper(missionDescriptionStr_) > StringInWrapper(saveName_) > StringInWrapper(saveNameBinary_); 
 	in.read(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)

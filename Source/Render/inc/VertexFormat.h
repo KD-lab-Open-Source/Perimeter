@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef _MSC_VER
 #pragma pack(push,1)
+#endif
 
 struct sVertexXYZ
 {
@@ -214,4 +216,6 @@ public:
 protected:
 };
 
+#ifdef _MSC_VER
 #pragma pack(pop)
+#endif

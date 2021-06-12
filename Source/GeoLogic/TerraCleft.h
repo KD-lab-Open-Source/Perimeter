@@ -73,9 +73,9 @@ class CTerraCleftSystem
 
 
 	Vect2i* find_node(int id);
-	void init_radial(Vect2i& pos1);
-	void init_direct(Vect2i& pos1, Vect2i& pos2);
-	void init_direct_thin(Vect2i& pos1, Vect2i& pos2);
+	void init_radial(const Vect2i& pos1);
+	void init_direct(const Vect2i& pos1, const Vect2i& pos2);
+	void init_direct_thin(const Vect2i& pos1, const Vect2i& pos2);
 	void grow_radial(CTerraCleft& par, int i, int j);
 	void grow_direct(CTerraCleft& par, int i, int j);
 	void grow_direct_thin(CTerraCleft& par, int i, int j);
@@ -85,7 +85,7 @@ public:
 
 	CTerraCleftSystem();
 
-	void init(int type, Vect2i& pos1, Vect2i& pos2 = Vect2i(0,0));
+	void init(int type, const Vect2i& pos1, const Vect2i& pos2 = Vect2i(0,0));
 	int quant();
 };
 

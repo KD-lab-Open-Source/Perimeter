@@ -70,7 +70,7 @@ class ContinuousCommand : public tx3d::SharedPointer {
 class Interpreter : public Controller {
 	public:
 		Interpreter(Commander* commander);
-		~Interpreter();
+		virtual ~Interpreter();
 		void clearObjects3D();
 		bool loadProgram(const string& fileName);
 		int findMission(const string& fileName);

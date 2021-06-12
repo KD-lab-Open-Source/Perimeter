@@ -12,7 +12,7 @@
 
 class HistoryScene : public Commander {
 	public:
-		HistoryScene(const string& programFileName);
+		HistoryScene();
 		~HistoryScene();
 
 		void init(cVisGeneric* visGeneric, bool bw, bool addBlendAlpha = true);
@@ -105,7 +105,7 @@ class HistoryScene : public Commander {
 		void drawSprites();
 
 
-		World* HistoryScene::traceWorld(const Vect2f& pos);
+		World* traceWorld(const Vect2f& pos);
 		void createSkySphere(bool bw);
 		void updateObjects(float dt);
 

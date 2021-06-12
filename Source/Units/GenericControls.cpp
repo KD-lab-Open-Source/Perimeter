@@ -247,7 +247,7 @@ void terUnitBase::commandOutcoming(const UnitCommand& commandIn)
 
 void terUnitBase::commandOutcomingLogic(const UnitCommand& commandIn)
 {
-	if(Player->controlEnabled())
+	if(Player->controlEnabled()) {
 		if(!universe()->multiPlayer()){
 			//executeCommand(commandIn);
 			UnitCommand command = commandIn;
@@ -260,6 +260,7 @@ void terUnitBase::commandOutcomingLogic(const UnitCommand& commandIn)
 			commandList().push_back(command);
 			universe()->sendCommand(netCommand4G_UnitCommand(*this, command));
 		}
+	}
 }
 
 void terUnitBase::executeCommand(const UnitCommand& command)

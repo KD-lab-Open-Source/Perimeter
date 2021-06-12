@@ -1,0 +1,1 @@
+del /s *.obj *.sbr *.pdb *.idb *.bsc *.htm *.pch *.res

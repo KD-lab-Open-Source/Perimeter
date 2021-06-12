@@ -3,7 +3,7 @@
 #include "../saver/Saver.h"
 #include "NParticleKey.h"
 #include "observer.h"
-#include "texture.h"
+#include "Texture.h"
 #define EXPORT_TO_GAME 1
 #ifndef _FINAL_VERSION_
 	#define NEED_TREANGLE_COUNT 
@@ -561,7 +561,7 @@ protected:
 	virtual void EmitProlonged(float dt)=0;
 	int CalcProlongedNum(float dt);
 
-	void cEmitterBase::OneOrderedPos(int i,Vect3f& pos);
+	void OneOrderedPos(int i,Vect3f& pos);
 	bool OnePos(int i, Vect3f& pos, Vect3f* norm = NULL);
 	virtual bool GetRndPos(Vect3f& pos, Vect3f* norm)=0;
 	Vect3f* GetNormal(const int& ix);
@@ -917,7 +917,7 @@ protected:
 
 #ifdef _DEBUG
 	EffectKey* debug_effect_key;
-#endif _DEBUG
+#endif //_DEBUG
 	FunctorGetZ* func_getz;
 };
 

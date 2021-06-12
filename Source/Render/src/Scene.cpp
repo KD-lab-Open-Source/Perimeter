@@ -1,9 +1,9 @@
 #include "StdAfxRD.h"
-#include "scene.h"
+#include "Scene.h"
 #include "TileMap.h"
 #include "ObjNode.h"
 #include "SpriteNode.h"
-#include "Particle.h"
+#include "particle.h"
 #include "Trail.h"
 #include "Line3d.h"
 #include "ObjLibrary.h"
@@ -336,18 +336,22 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace)
 	int x_size=terra->SizeX();
 	int y_size=terra->SizeY();
 
-	if(xb<0)
+	if(xb<0) {
 		if(dxAbs) xb=(0-xb)/dxAbs,yb+=xb*dy,zb+=xb*dz,xb=0;
 		else return false;
-	if(yb<0)
+    }
+	if(yb<0) {
 		if(dyAbs) yb=(0-yb)/dyAbs,xb+=yb*dx,zb+=yb*dz,yb=0;
 		else return false;
-	if(xb>=x_size)
+    }
+	if(xb>=x_size) {
 		if(dxAbs) xb=(xb-(x_size-1))/dxAbs,yb+=xb*dy,zb+=xb*dz,xb=x_size-1;
 		else return false;
-	if(yb>=y_size)
+    }
+	if(yb>=y_size) {
 		if(dyAbs) yb=(yb-(y_size-1))/dyAbs,xb+=yb*dx,zb+=yb*dz,yb=y_size-1;
 		else return false;
+    }
 
 	int xb_=round(xb*(1<<PREC_TRACE_RAY)),yb_=round(yb*(1<<PREC_TRACE_RAY)),zb_=round(zb*(1<<PREC_TRACE_RAY));
 	for(;(xb_>>PREC_TRACE_RAY)>=0 && (xb_>>PREC_TRACE_RAY)<x_size && 
@@ -515,6 +519,7 @@ cTrail* cScene::CreateTrail(const char* TextureName,float TimeLife)
 	AttachObj(UObj);
 	return UObj;
 }
+/*
 cParticle* cScene::CreateParticle(const char* TextureName,float TimeLife,Vect2f *vTexSize)
 { 
 	cParticle *UObj=new cParticle(TimeLife,*vTexSize);
@@ -522,6 +527,7 @@ cParticle* cScene::CreateParticle(const char* TextureName,float TimeLife,Vect2f 
 	AttachObj(UObj);
 	return UObj;
 }
+*/
 
 cEffect* cScene::CreateEffect(EffectKey& el,cEmitter3dObject* models,float scale,bool auto_delete_after_life)
 {

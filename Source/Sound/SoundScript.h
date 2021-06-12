@@ -118,4 +118,6 @@ struct SoundScriptTable
 
 extern SingletonPrm<SoundScriptTable> soundScriptTable;
 
+DEFINE_SINGLETON_PRM(SoundScriptTable)
+
 #endif //__SOUND_SCRIPT_H__

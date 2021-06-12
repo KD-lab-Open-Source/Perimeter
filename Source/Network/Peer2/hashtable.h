@@ -1,5 +1,5 @@
- #ifndef _HASHTABLE_H
-#define _HASHTABLE_H
+#ifndef _HASHTABLE_H_PRM
+#define _HASHTABLE_H_PRM
 
 /* File: hashtable.h
  * ------------------
@@ -222,4 +222,4 @@ void TableClear(HashTable table);
 }
 #endif
 
-#endif //_HASHTABLE_H
+#endif //_HASHTABLE_H_PRM

@@ -1,7 +1,7 @@
 #include "stdafxTr.h"
 
 #include <fstream>
-#include "stdio.h"
+#include <cstdio>
 
 #include "../Util/SystemUtil.h"
 

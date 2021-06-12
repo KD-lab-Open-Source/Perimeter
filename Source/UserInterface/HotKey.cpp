@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "Runtime.h"
-#include "controls.h"
+#include "Controls.h"
 #include "HotKey.h"
 
 HotKey::HotKey() {

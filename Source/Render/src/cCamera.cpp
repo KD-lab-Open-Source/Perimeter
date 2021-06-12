@@ -5,7 +5,7 @@
 #include "ObjMesh.h"
 #include <algorithm>
 #include "TileMap.h"
-#include "font.h"
+#include "Font.h"
 
 class CameraShader
 {
@@ -382,7 +382,8 @@ void cCamera::Update()
 	WorldJ=GetAttribute(ATTRCAMERA_REFLECTION)?-GetMatrix().rot().yrow():GetMatrix().rot().yrow();
 	WorldK=GetMatrix().rot().zrow();
 	// определение местоположения камеры в мировом пространстве
-	GetPos() = GetMatrix().invXformPoint(Vect3f(0,0,0));
+    Vect3f z(0,0,0);
+	GetPos() = GetMatrix().invXformPoint(z);
 
 	CalcClipPlane();
 }
@@ -500,7 +501,8 @@ void cCamera::GetPlaneClip(sPlane4f PlaneClip[5],const sRectangle4f *Rect)
 		float yi=-(Rect->ymin()-cy),ya=-(Rect->ymax()-cy);
 
 		Vect2f focus(zPlane.x/(GetScaleViewPort().x*GetFocusX()),zPlane.x/(GetScaleViewPort().y*GetFocusY()));
-		Vect3f Center=GetMatrix().invXformPoint(Vect3f(0,0,0));
+        Vect3f point(0,0,0);
+		Vect3f Center=GetMatrix().invXformPoint(point);
 		Vect3f p00=GetMatrix().invXformPoint(Vect3f(xi*focus.x,yi*focus.y,zPlane.x),p00);
 		Vect3f p01=GetMatrix().invXformPoint(Vect3f(xa*focus.x,yi*focus.y,zPlane.x),p01);
 		Vect3f p11=GetMatrix().invXformPoint(Vect3f(xa*focus.x,ya*focus.y,zPlane.x),p11);

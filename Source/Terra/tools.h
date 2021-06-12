@@ -687,6 +687,7 @@ public:
 	baseToolzer(){
 		phase=0;
 	};
+	virtual ~baseToolzer() = default;
 	void start(){ phase=0; }
 	void start(int _x, int _y){
 		x=vMap.XCYCL(_x); y=vMap.YCYCL(_y);

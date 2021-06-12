@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "MonoSelect.h"
 
 MonoSelect::MonoSelect(int slotCount, int selectSize) : selectSize(selectSize) {

@@ -32,7 +32,7 @@ public:
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		__super::serialize(ar);
+        AttributeBase::serialize(ar);
 		if(ar.openBlock("attributeSquad", "бътрф")){
 			ar & TRANSLATE_OBJECT(homePositionOffsetFactor, "homePositionOffsetFactor");
 			ar & TRANSLATE_OBJECT(formationRadiusBase, "formationRadiusBase");
@@ -53,7 +53,7 @@ public:
 	~terUnitSquad();
 
 	const AttributeSquad& attr() const {
-		return safe_cast_ref<const AttributeSquad&>(__super::attr());
+		return safe_cast_ref<const AttributeSquad&>(terUnitBase::attr());
 	}
 
 	void Start();

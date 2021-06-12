@@ -568,11 +568,12 @@ void Column::operateByCycledHermite(CycledHermite& hermite, int add)
 				continue;
 			
 			int y = i->y;
-			if(y >= 0 && y < size())
-				if(add)
-					(*this)[y].add(Interval(i->x, k_best->x));
-				else
-					(*this)[y].sub(Interval(i->x, k_best->x));
+			if(y >= 0 && y < size()) {
+                if (add)
+                    (*this)[y].add(Interval(i->x, k_best->x));
+                else
+                    (*this)[y].sub(Interval(i->x, k_best->x));
+            }
 		}
 	}
 }
@@ -758,14 +759,14 @@ void Region::getBorder(borderCall call,void* data, bool recursive) const
 
 			call(data,p0);
 
-			if(p0.y < p1.y && p0.x < p1.x || p0.y > p1.y && p0.x > p1.x)
-				p0.y = p1.y;
-			else if(p0.y == p1.y && cell != cell_prev)
-				if(p0.x < p1.x)
-					++p0.y;
-				else
-					--p0.y;
-			
+			if((p0.y < p1.y && p0.x < p1.x) || (p0.y > p1.y && p0.x > p1.x)) {
+                p0.y = p1.y;
+            } else if(p0.y == p1.y && cell != cell_prev) {
+                if (p0.x < p1.x)
+                    ++p0.y;
+                else
+                    --p0.y;
+            }
 			if(p0.x < p1.x){
 				while(++p0.x != p1.x)
 					call(data,p0);
@@ -1020,16 +1021,20 @@ void RegionDispatcher::vectorize(int minimalRegionSize, bool initSpline)
 	Region::clear();
 
 	int analyze_cnt = 0;
-	if(edit_column.front().changed())
-		CellLine::analyze(CellLine(), edit_column.front(), seeds);
+	if(edit_column.front().changed()) {
+	    CellLine line = CellLine();
+        CellLine::analyze(line, edit_column.front(), seeds);
+    }
 	Column::iterator i, i_next;
 	for(i = i_next = edit_column.begin(), ++i_next; i_next != edit_column.end(); i = i_next, ++i_next)
 		if(i->changed() || i_next->changed()){
 			CellLine::analyze(*i,*i_next, seeds);
 			analyze_cnt++;
 		}
-	if(edit_column.back().changed())
-		CellLine::analyze(edit_column.back(), CellLine(), seeds);
+    if(edit_column.back().changed()) {
+        CellLine line = CellLine();
+        CellLine::analyze(edit_column.back(), line, seeds);
+    }
 
 	statistics_add(analyze_cnt, STATISTICS_GROUP_NUMERIC, analyze_cnt);
 
@@ -1273,17 +1278,10 @@ void FieldDispatcher::setBorder(FieldCluster* cluster, CycledHermite& hermite)
 	setBorder(cluster, cluster->border_);
 }
 
-static
-void FieldDispatcherBorderCall(void* data,Vect2f& p)
-{
-	FieldCluster* cluster=(FieldCluster*)data;
-	cluster->border_.push_back(p);
-}
-
 void FieldDispatcher::setBorder(FieldCluster* cluster, const Region& region)
 {
 	cluster->border_.clear();
-	region.getBorder(FieldDispatcherBorderCall,cluster);
+	region.getBorder(FieldCluster::FieldDispatcherBorderCall,cluster);
 	setBorder(cluster, cluster->border_);
 }
 
@@ -1443,15 +1441,16 @@ void Region::rasterize(Column& rast_column)
 			vector<int>::iterator li;
 			//xassert(!(ci->size() & 1));
 			FOR_EACH(*ci, li){
-				int xl = *li;
-				if(++li == ci->end())
-					break;
-				int xr = *li;
-				if(xl != xr)
-					if(positive())
-						rast_column[y + y0].add(Interval(xl, xr), this);
-					else 
-						rast_column[y + y0].sub(Interval(xl, xr), this);
+                    int xl = *li;
+                    if(++li == ci->end())
+                        break;
+                    int xr = *li;
+                    if(xl != xr) {
+                        if (positive())
+                            rast_column[y + y0].add(Interval(xl, xr), this);
+                        else
+                            rast_column[y + y0].sub(Interval(xl, xr), this);
+                    }
 				}
 			y++;
 			}

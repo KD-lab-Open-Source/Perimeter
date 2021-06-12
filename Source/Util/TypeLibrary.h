@@ -119,7 +119,7 @@ public:
 	}
 
 	void add(const Key& key, ShareHandle<Type> type) {
-		map_.insert(Map::value_type(key, type));
+		map_.insert(typename Map::value_type(key, type));
 	}
 
 	Map& map() {

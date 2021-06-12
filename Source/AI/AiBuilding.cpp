@@ -99,7 +99,7 @@ void AIPlayer::BuildingQuant()
 		break;
 
 	case Digging: {
-		Vect2f& position = place_scan_op->bestPosition();
+		Vect2f position = place_scan_op->bestPosition();
 		building_installer->SetBuildPosition(To3D(position), 0, 0);
 		if(building_installer->valid())
 			builder_state = DiggingCompleted;
@@ -180,7 +180,7 @@ void AIPlayer::findWhereToDigQuant()
 				if(place_scan_op->found()) {
 					if(scanStep_ > ai_scan_step_min) {
 						Vect2i pos = place_scan_op->bestPosition(); 
-						Vect2i off(round(ai_scan_size_of_step_factor*scanStep_), round(ai_scan_size_of_step_factor*scanStep_));
+						Vect2i off((int)round(ai_scan_size_of_step_factor*scanStep_), (int)round(ai_scan_size_of_step_factor*scanStep_));
 						startPlace(place_scan_op, pos - off, pos + off, scanStep_/2);
 					}
 					else{
@@ -221,7 +221,7 @@ void AIPlayer::finishPlacement()
 	xassert(place_scan_op->attributeID() < UNIT_ATTRIBUTE_STRUCTURE_MAX);
 
 	if(place_scan_op->lastCheck()){
-		Vect2f& position = place_scan_op->bestPosition();
+		Vect2f position = place_scan_op->bestPosition();
 		//building_installer->SetBuildPosition(To3D(position), 0, 0);
 		//xassert(building_installer->Valid);
 		terBuilding* building = BuildStructure(place_scan_op->attributeID(), Vect3f(place_scan_op->bestPosition().x,place_scan_op->bestPosition().y,0));

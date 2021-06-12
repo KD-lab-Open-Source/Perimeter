@@ -143,9 +143,9 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr,vector<POINT>& 
 
 #if FAST_ERASE
 	p->pt = from;
-	p->self_it = open_map.insert(type_point_map::value_type(p->f(),p));
+	p->self_it = open_map.insert(typename type_point_map::value_type(p->f(),p));
 #else
-	open_map.insert(type_point_map::value_type(p->f(),from));
+	open_map.insert(typename type_point_map::value_type(p->f(),from));
 #endif
 
 	const int size_child=8;
@@ -155,7 +155,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr,vector<POINT>& 
 
 	while(!open_map.empty())
 	{
-		type_point_map::iterator low=open_map.begin();
+		typename type_point_map::iterator low=open_map.begin();
 #if FAST_ERASE
 		OnePoint* parent=low->second;
 		POINT pt = parent->pt;
@@ -215,7 +215,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr,vector<POINT>& 
 #else
 				//Удаляем элемент из open_map
 				TypeH f=p->f();
-				type_point_map::iterator cur=open_map.find(p->f());
+				typename type_point_map::iterator cur=open_map.find(p->f());
 				bool erase=false;
 				while(cur!=open_map.end())
 				{
@@ -249,9 +249,9 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr,vector<POINT>& 
 
 #if FAST_ERASE
 			p->pt = child;
-			p->self_it = open_map.insert(type_point_map::value_type(p->f(),p));
+			p->self_it = open_map.insert(typename type_point_map::value_type(p->f(),p));
 #else
-			open_map.insert(type_point_map::value_type(p->f(),child));
+			open_map.insert(typename type_point_map::value_type(p->f(),child));
 #endif
 			p->is_open=true;
 			p->used=is_used_num;
@@ -367,7 +367,7 @@ template<class Heuristic,class Node,class TypeH>
 void AIAStarGraph<Heuristic,Node,TypeH>::clear()
 {
 	is_used_num=0;
-	vector<OnePoint>::iterator it;
+	typename vector<OnePoint>::iterator it;
 	FOR_EACH(chart,it)
 		it->used=0;
 }
@@ -393,11 +393,11 @@ bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr,vecto
 	p->is_open=true;
 	p->parent=NULL;
 
-	p->self_it = open_map.insert(type_point_map::value_type(p->f(),p));
+	p->self_it = open_map.insert(typename type_point_map::value_type(p->f(),p));
 
 	while(!open_map.empty())
 	{
-		type_point_map::iterator low=open_map.begin();
+		typename type_point_map::iterator low=open_map.begin();
 
 		OnePoint* parent=low->second;
 		Node* node = parent->node;
@@ -423,7 +423,7 @@ bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr,vecto
 		}
 
 		//для каждого наследника child узла parent
-		Node::iterator it;
+        typename Node::iterator it;
 		FOR_EACH(*node,it)
 		{
 			Node* cur_node=*it;
@@ -446,7 +446,7 @@ bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr,vecto
 			p->g=newg;
 			p->h=heuristic->GetH(cur_node);
 
-			p->self_it = open_map.insert(type_point_map::value_type(p->f(),p));
+			p->self_it = open_map.insert(typename type_point_map::value_type(p->f(),p));
 
 			p->is_open=true;
 			p->used=is_used_num;
@@ -485,7 +485,7 @@ POINT AIFindMinium(int x,int y,
 				  Maps& maps,
 				  int dx,int dy)
 {
-	Maps::TypeH optium=maps.Get(x,y);
+	typename Maps::TypeH optium=maps.Get(x,y);
 	int optiumx=x,optiumy=y;
 	
 	int maxi=max(max(x,dx-x),max(y,dy-y));
@@ -499,7 +499,7 @@ POINT AIFindMinium(int x,int y,
 		if(cury>=0)
 		for(curx=xmin;curx<=xmax;curx++)
 		{
-			Maps::TypeH o=maps.Get(curx,cury);
+            typename Maps::TypeH o=maps.Get(curx,cury);
 			if(o<optium)
 			{
 				optium=o;
@@ -513,7 +513,7 @@ POINT AIFindMinium(int x,int y,
 		if(cury<dy)
 		for(curx=xmin;curx<=xmax;curx++)
 		{
-			Maps::TypeH o=maps.Get(curx,cury);
+            typename Maps::TypeH o=maps.Get(curx,cury);
 			if(o<optium)
 			{
 				optium=o;
@@ -527,7 +527,7 @@ POINT AIFindMinium(int x,int y,
 		if(curx>=0)
 		for(cury=ymin;cury<=ymax;cury++)
 		{
-			Maps::TypeH o=maps.Get(curx,cury);
+            typename Maps::TypeH o=maps.Get(curx,cury);
 			if(o<optium)
 			{
 				optium=o;
@@ -541,7 +541,7 @@ POINT AIFindMinium(int x,int y,
 		if(curx<dx)
 		for(cury=ymin;cury<=ymax;cury++)
 		{
-			Maps::TypeH o=maps.Get(curx,cury);
+            typename Maps::TypeH o=maps.Get(curx,cury);
 			if(o<optium)
 			{
 				optium=o;

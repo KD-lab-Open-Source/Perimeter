@@ -10,7 +10,7 @@
 
 #include "stdafxTX3D.h"
 #include "Test3D.hpp"
-#include <math.h>
+#include <cmath>
 
 using namespace tx3d;
 

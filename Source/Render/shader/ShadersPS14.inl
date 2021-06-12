@@ -221,10 +221,12 @@ void VS14ObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
 	SetVector(vSpecular,(D3DXVECTOR4*)&Data->Specular);
 	SetFloat(fSpecularPower,Data->Power);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 }
 
 void VS14ObjectSceneLight::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
@@ -259,7 +261,8 @@ void VS14TileMapScene::GetHandle()
 
 void VS14TileMapScene::SetWorldSize(Vect2f sz)
 {
-	SetVector(fInvWorldSize,&D3DXVECTOR4(1/sz.x,1/sz.y,0,0));
+    D3DXVECTOR4 v(1/sz.x,1/sz.y,0,0);
+	SetVector(fInvWorldSize,&v);
 }
 
 void VS14TileMapScene::RestoreShader()
@@ -343,12 +346,15 @@ void PS14ObjectSceneLight2::Restore()
 void VS14ObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
 {
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 
-	SetVector(c05,&D3DXVECTOR4(0.5,0.5,0.5,0));
+    D3DXVECTOR4 c(0.5,0.5,0.5,0);
+	SetVector(c05,&c);
 }
 
 void VS14ObjectSceneBump::GetHandle()
@@ -375,7 +381,8 @@ void VS14ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_siz
 
 	D3DXVec3TransformNormal(&out,(D3DXVECTOR3*)&l,&mat);
 	D3DXVec3Normalize(&out,&out);
-	SetVector(vLightDirectionInvWorld,&D3DXVECTOR4(out.x,out.y,out.z,0));
+    D3DXVECTOR4 lv(out.x,out.y,out.z,0);
+    SetVector(vLightDirectionInvWorld,&lv);
 
 	if(light)
 	{

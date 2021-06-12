@@ -26,7 +26,8 @@ public:
 	const string& operator()() const { return value_; }
 };
 
-inline XBuffer& operator > (XBuffer& in, StringInWrapper& str) { str() = in(in.tell()); in += str().size() + 1; return in; }
+//old inline XBuffer& operator > (XBuffer& in, StringInWrapper& str) { str() = in(in.tell()); in += str().size() + 1; return in; }
+inline XBuffer& operator > (XBuffer& in, StringInWrapper str) { str() = in(in.tell()); in += str().size() + 1; return in; }
 inline XBuffer& operator < (XBuffer& out, const StringOutWrapper& str) { out < str().c_str() < '\0'; return out; }
 
 

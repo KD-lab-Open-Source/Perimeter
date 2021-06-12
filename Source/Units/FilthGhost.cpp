@@ -11,7 +11,7 @@
 
 #include "IronExplosion.h"
 #include "FilthGhost.h"
-#include "Filth.hi"
+#include "filth.hi"
 
 terFilthSwarmGhost::terFilthSwarmGhost(terFilthSpot* spot, const Vect3f& pos,int attack_period_)
 : terFilthSwarm(spot,pos)
@@ -327,7 +327,7 @@ void terFilthGhost::Collision(terUnitBase* p)
 {
 	if(destruction)
 		return;
-	if(isEnemy(p) && p->attr().isBuilding() || p->attr().isLegionary()){
+	if((isEnemy(p) && p->attr().isBuilding()) || p->attr().isLegionary()){
 		p->setDamage(attr().unitDamage.splashDamage,this);
 	}
 }

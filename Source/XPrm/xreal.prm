@@ -1,0 +1,41 @@
+
+//typedef float real;
+
+//#include "params.inc"
+
+//string path = "e:\\";
+
+section XRealPrm ( declaration = "params.h", definition = "params.cpp", source = "sss\aaa\nnn.prm" ) 
+{
+
+struct D {
+	int a = 0;
+};
+
+struct U {
+	D* a = 0;
+};
+
+struct UU {
+	U u[2] = { { a = new U {}; }, {} };
+};
+
+/*
+struct P {
+	U* u = new U[int nu] { {}, {}, {} };
+};
+
+struct PP : P {
+	u = new U {};
+};
+
+P p = {};
+PP pp = {};
+*/
+int aa = 1;
+
+UU u = { u[1].a = new D { a = 1; }; };
+//UU u = { };
+
+
+}

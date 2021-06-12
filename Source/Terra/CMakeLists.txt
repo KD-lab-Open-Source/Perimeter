@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(
         BEFORE .
         "${PROJECT_SOURCE_DIR}/Source/tx3d"
-        "${PROJECT_SOURCE_DIR}/XLibs.Net"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
 )
 
 SET(Terra_SRCS
@@ -21,6 +21,8 @@ SET(Terra_SRCS
         tools.cpp
         undoDispatcher.cpp
         worldGen.cpp
+        VMAP.CPP
+        LAND.CPP
 )
 
 ADD_DEFINITIONS(-D_TX3D_LIBRARY_)

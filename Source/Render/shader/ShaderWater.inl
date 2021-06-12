@@ -31,7 +31,8 @@ void VSWater::Select()
 {
 	SetMatrix(mVP,gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+	SetVector(vCameraPos,&cam);
 	cVertexShader::Select();
 }
 

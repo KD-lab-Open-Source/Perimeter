@@ -62,4 +62,4 @@ protected:
 	SND3DSound sound;
 };
 
-#endif  _FILTH_CROW_
+#endif //_FILTH_CROW_

@@ -125,7 +125,7 @@ public:
 	void DrawLightmapShadow(cCamera *DrawNode);
 	cTexture* GetShadowMap();
 	cTexture* GetLightMap();
-	struct IDirect3DSurface9* GetZBuffer();
+	LPDIRECT3DSURFACE9 GetZBuffer();
 	void FixShadowMapCamera(cCamera *DrawNode);
 
 	void RegisterUpdateMap(UpdateMapFunction f,void* data);
@@ -156,7 +156,7 @@ protected:
 	int CheckLightMapType();
 
 	void BuildRegionPoint();
-	friend void cTileMapBorderCall(void* data,Vect2f& p);
+	//friend void cTileMapBorderCall(void* data,Vect2f& p);
 
 	Vect3f To3D(const Vect2f& pos);
 	void DrawLines();

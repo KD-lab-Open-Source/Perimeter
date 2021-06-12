@@ -6,102 +6,6 @@
 
 #define CF_UP_BIT //Верхний бит в walk_map несёт разделительную функцию
 
-//Ещё большее сглаживание пути
-template<class ClusterHeuristic>
-float HeuristicLine(int xfrom,int yfrom,int xto,int yto,
-		  int dx,int dy,BYTE* walk_map,ClusterHeuristic& heuristic,
-		  bool& debug_xor )
-{
-	float x,y;
-	float lx,ly;
-	if(xfrom==xto && yfrom==yto)return 0;
-	xassert(xfrom>=0 && xfrom<dx && yfrom>=0 && yfrom<dy);
-	xassert(xto>=0 && xto<dx && yto>=0 && yto<dy);
-
-	x=xfrom;
-	y=yfrom;
-
-	lx=xto-xfrom;
-	ly=yto-yfrom;
-	int t,maxt;
-	if(fabsf(lx)>fabsf(ly))
-	{
-		maxt=fabsf(lx);
-		ly=ly/fabsf(lx);
-		lx=(lx>0)?+1:-1;
-	}else
-	{
-		maxt=fabsf(ly);
-		lx=lx/fabsf(ly);
-		ly=(ly>0)?+1:-1;
-	}
-
-	float sq_mul=sqrtf(sqr(lx)+sqr(ly));
-	float len=0;
-	BYTE walk_from,walk_to;
-	walk_from=walk_map[yfrom*dx+xfrom];
-
-	debug_xor=false;
-
-	for(t=0;t<maxt;t++)
-	{
-		x+=lx;y+=ly;
-
-		int ix=round(x),iy=round(y);
-		xassert(ix>=0 && ix<dx && iy>=0 && iy<dy);
-
-		walk_to=walk_map[iy*dx+ix];
-		float l=heuristic(walk_from,walk_to)*sq_mul;
-		debug_xor|=((walk_from^walk_to)&ClusterFind::UP_MASK)?true:false;
-
-		walk_from=walk_to;
-		len+=l;
-	}
-
-	return len;
-}
-
-
-template<class ClusterHeuristic>
-void SoftPath2(vector<Vect2i>& out_path,
-			int dx,int dy,BYTE* walk_map,
-			ClusterHeuristic& heuristic)
-{
-	//for(int iteration=0;iteration<2;iteration++)
-	for(int i=1;i<out_path.size()-1;i++)
-	{
-		//Убрать эту точку
-		Vect2i p0,p1,p2;
-		p0=out_path[i-1];
-		p1=out_path[i];
-		p2=out_path[i+1];
-
-		float l0,l1,lskip;
-		bool b0,b1,bskip;
-
-		lskip=HeuristicLine(p0.x,p0.y,p2.x,p2.y,
-				dx,dy,walk_map,heuristic,bskip);
-
-		l0=HeuristicLine(p0.x,p0.y,p1.x,p1.y,
-				dx,dy,walk_map,heuristic,b0);
-
-		l1=HeuristicLine(p1.x,p1.y,p2.x,p2.y,
-				dx,dy,walk_map,heuristic,b1);
-
-
-		if(lskip<l0+l1)
-		{
-			if(bskip || b0 || b1)
-			{
-				int k=0;
-			}
-
-			out_path.erase(out_path.begin()+i);
-			i--;
-		}
-	}
-}
-
 class ClusterFind
 {
 public:
@@ -278,5 +182,100 @@ protected:
 
 	void CheckAllLink();
 };
+
+template<class ClusterHeuristic>
+void SoftPath2(vector<Vect2i>& out_path,
+               int dx,int dy,BYTE* walk_map,
+               ClusterHeuristic& heuristic)
+{
+    //for(int iteration=0;iteration<2;iteration++)
+    for(int i=1;i<out_path.size()-1;i++)
+    {
+        //Убрать эту точку
+        Vect2i p0,p1,p2;
+        p0=out_path[i-1];
+        p1=out_path[i];
+        p2=out_path[i+1];
+
+        float l0,l1,lskip;
+        bool b0,b1,bskip;
+
+        lskip=HeuristicLine(p0.x,p0.y,p2.x,p2.y,
+                            dx,dy,walk_map,heuristic,bskip);
+
+        l0=HeuristicLine(p0.x,p0.y,p1.x,p1.y,
+                         dx,dy,walk_map,heuristic,b0);
+
+        l1=HeuristicLine(p1.x,p1.y,p2.x,p2.y,
+                         dx,dy,walk_map,heuristic,b1);
+
+
+        if(lskip<l0+l1)
+        {
+            if(bskip || b0 || b1)
+            {
+                int k=0;
+            }
+
+            out_path.erase(out_path.begin()+i);
+            i--;
+        }
+    }
+}
+
+//Ещё большее сглаживание пути
+template<class ClusterHeuristic>
+float HeuristicLine(int xfrom,int yfrom,int xto,int yto,
+                    int dx,int dy,BYTE* walk_map,ClusterHeuristic& heuristic,
+                    bool& debug_xor )
+{
+    float x,y;
+    float lx,ly;
+    if(xfrom==xto && yfrom==yto)return 0;
+    xassert(xfrom>=0 && xfrom<dx && yfrom>=0 && yfrom<dy);
+    xassert(xto>=0 && xto<dx && yto>=0 && yto<dy);
+
+    x=xfrom;
+    y=yfrom;
+
+    lx=xto-xfrom;
+    ly=yto-yfrom;
+    int t,maxt;
+    if(fabsf(lx)>fabsf(ly))
+    {
+        maxt=fabsf(lx);
+        ly=ly/fabsf(lx);
+        lx=(lx>0)?+1:-1;
+    }else
+    {
+        maxt=fabsf(ly);
+        lx=lx/fabsf(ly);
+        ly=(ly>0)?+1:-1;
+    }
+
+    float sq_mul=sqrtf(sqr(lx)+sqr(ly));
+    float len=0;
+    BYTE walk_from,walk_to;
+    walk_from=walk_map[yfrom*dx+xfrom];
+
+    debug_xor=false;
+
+    for(t=0;t<maxt;t++)
+    {
+        x+=lx;y+=ly;
+
+        int ix=round(x),iy=round(y);
+        xassert(ix>=0 && ix<dx && iy>=0 && iy<dy);
+
+        walk_to=walk_map[iy*dx+ix];
+        float l=heuristic(walk_from,walk_to)*sq_mul;
+        debug_xor|=((walk_from^walk_to)&ClusterFind::UP_MASK)?true:false;
+
+        walk_from=walk_to;
+        len+=l;
+    }
+
+    return len;
+}
 
 #endif //__CLUSTERFIND_H__

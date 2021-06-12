@@ -5,7 +5,7 @@
 #include "SecondGun.h"
 #include "IronBullet.h"
 #include "GridTools.h"
-#include "runtime.h"
+#include "Runtime.h"
 
 #include "GenericFilth.h"
 #include "filth.hi"
@@ -137,7 +137,8 @@ public:
 		if(!logicTile_) return;
 
 		float val = AngleValueConvertOp()(value_);
-		logicTile_->SetRotate(&Mat3f(val,axis));
+        Mat3f m(val,axis);
+		logicTile_->SetRotate(&m);
 	}
 
 	bool logicObjectPosition(Vect3f& pos) const

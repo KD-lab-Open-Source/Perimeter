@@ -70,14 +70,14 @@ public:
 	inline cCheckDelete* GetDebugNext(){return next;}
 };
 
-#endif C_CHECK_DELETE
+#endif //C_CHECK_DELETE
 
 // базовый класс для всех
 // любой класс наследованный как TYPE_CLASS_POINTER, должен уметь удаляться по обращению к Release()
 class cUnknownClass
 #ifdef C_CHECK_DELETE
 : public cCheckDelete
-#endif C_CHECK_DELETE
+#endif //C_CHECK_DELETE
 {	
 	int					m_cRef;
 	eKindUnknownClass	Kind;

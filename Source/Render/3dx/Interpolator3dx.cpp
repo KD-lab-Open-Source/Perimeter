@@ -1,4 +1,4 @@
-#include "StdAfxRd.h"
+#include "StdAfxRD.h"
 #include "Interpolator3dx.h"
 
 //out=a0+a1*t5+a2*t5^2+a3*t5^3

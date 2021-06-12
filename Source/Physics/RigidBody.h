@@ -147,6 +147,10 @@ public:
 	void setUnderMutation(bool underMutation) { underMutation_ = underMutation; }
 	bool underMutation() const { return underMutation_; }
 
+    // Model
+    cObjectNodeRoot* get_geometry() const { return geometry; };
+    sColor4f get_diffuse_color() const { return diffuse_color; };
+
 	// Utils
 	void setScale(const Vect3f& s); 
 	void setBound(const Vect3f box_min_,const Vect3f box_max_);
@@ -166,7 +170,7 @@ public:
 
 	// Control
 	Vect3fList way_points;
-		
+
 private:
 	int ID;
 	const RigidBodyPrm* prm_;

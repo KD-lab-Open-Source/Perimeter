@@ -494,7 +494,8 @@ void cSelectManager::MakeSelectionList(float x0, float y0, float x1, float y1, U
 		swap(y0, y1);
 	}
 	sPlane4f PlaneClip[5];
-	terCamera->GetCamera()->GetPlaneClip(PlaneClip,&sRectangle4f(x0,y0,x1,y1));
+    sRectangle4f r(x0,y0,x1,y1);
+	terCamera->GetCamera()->GetPlaneClip(PlaneClip,&r);
 
 	CUNITS_LOCK(player);
 	const UnitList& unit_list=player->units();

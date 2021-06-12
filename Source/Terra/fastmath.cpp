@@ -1,7 +1,9 @@
 #include "stdafxTr.h"
 
 #include <math.h>
+#ifdef _WIN32
 #include <wtypes.h>
+#endif
 #include "fastmath.h"
 
 

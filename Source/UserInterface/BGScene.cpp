@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "BGScene.h"
 #include "GameShellSq.h"
 
@@ -26,14 +26,16 @@ void BGScene::init(cVisGeneric* visGeneric) {
 	camera->SetAttr(ATTRCAMERA_PERSPECTIVE);
 	camera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
 
-	camera->SetFrustum
-		(                     
-			&Vect2f(0.5f, 0.5f),						// центр камеры
-			&sRectangle4f(-0.5f, -0.5f, 0.5f, 0.5f),	// видимая область камеры
-			&Vect2f(1.0f, 1.0f),						// фокус камеры
-			&Vect2f(10.0f, 10000.0f)					// ближайший и дальний z-плоскости отсечения
-		);
-
+    Vect2f center(0.5f,0.5f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
+    Vect2f focus(1.0f, 1.0f);
+    Vect2f zplane(10.0f, 10000.0f);
+    camera->SetFrustum(
+            &center,								// центр камеры
+            &clip,									// видимая область камеры
+            &focus,									// фокус камеры
+            &zplane									// ближайший и дальний z-плоскости отсечения
+    );
 
 	Vect3f pos;
 	pos.setSpherical(bgCameraPsi, bgCameraTheta, bgCameraDist);
@@ -55,7 +57,9 @@ void BGScene::init(cVisGeneric* visGeneric) {
 	
 	light = scene->CreateLight(ATTRLIGHT_DIRECTION);
 	light->SetPosition( MatXf(Mat3f::ID, Vect3f(0, 0, 0)) );
-	light->SetColor( &sColor4f(1, 1, 1, 1), &sColor4f(1, 1, 1, 1) );
+    sColor4f a(1, 1, 1, 1);
+    sColor4f b(1, 1, 1, 1);
+	light->SetColor( &a, &b );
 	light->SetDirection( Vect3f(bgLightX, bgLightY, bgLightZ) );
 
 	bgObj = scene->CreateObject("RESOURCE\\Models\\Menu\\interface.M3D", NULL);

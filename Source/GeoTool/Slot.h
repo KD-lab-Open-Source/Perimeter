@@ -39,5 +39,5 @@ class Slot : public SharedPointer {
 
 };
 
-#endif _SLOT_H
+#endif //_SLOT_H
 

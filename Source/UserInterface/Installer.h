@@ -26,7 +26,7 @@ public:
 	//For AI
 	void SetBuildPosition(const Vect3f& position, float angle, terPlayer* player);
 
-	terUnitAttributeID attributeID() const { return Attribute ? Attribute->ID : UNIT_ATTRIBUTE_NONE; }
+	terUnitAttributeID attributeID() const { return Attribute ? static_cast<terUnitAttributeID>(Attribute->ID) : UNIT_ATTRIBUTE_NONE; }
 
 	bool inited() const { return ObjectPoint != 0; }
 	bool valid() const { return valid_; }
@@ -66,4 +66,4 @@ private:
 	bool checkScriptInstructions();
 };
 
-#endif _INSTALLER_H_
+#endif //_INSTALLER_H_

@@ -31,7 +31,7 @@ public:
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		__super::serialize(ar);
+        AttributeReal::serialize(ar);
 		
 		if(ar.openBlock("attributeBuilding", "Здание")){
 			ar & TRANSLATE_OBJECT(EnableStructure, "Требуемые для работы строения");
@@ -55,7 +55,7 @@ public:
 		return additionalModelsData.empty() ? modelData.modelName : additionalModelsData.front().modelName;
 	}	
 	terUnitAttributeID downgrade() const {
-		return !Downgrades.empty() ? Downgrades.front() : UNIT_ATTRIBUTE_NONE; 
+		return !Downgrades.empty() ? static_cast<terUnitAttributeID>(Downgrades.front()) : UNIT_ATTRIBUTE_NONE; 
 	}
 };
 

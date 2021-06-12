@@ -83,7 +83,7 @@ void terAnimationPhaseIteratorType::setEndPhase(float endPhase, bool cycled)
 int terAnimationPhaseIteratorType::Quant()
 {
 	phase_ += deltaPhase_;
-	if(deltaPhase_ > 0 && phase_ > endPhase_ || deltaPhase_ < 0 && phase_ < endPhase_){
+	if((deltaPhase_ > 0 && phase_ > endPhase_) || (deltaPhase_ < 0 && phase_ < endPhase_)){
 		if(cycled_){
 			phase_ -= SIGN(deltaPhase_);
 		}

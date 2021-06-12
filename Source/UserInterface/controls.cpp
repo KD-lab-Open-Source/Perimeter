@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "controls.h"
+#include "Controls.h"
 
 ControlsConverter g_controls_converter;
 

@@ -3,6 +3,8 @@ IF(GEN_SCRIPTS)
     #TODO call XPrm and other stuff
 ENDIF()
 
+ADD_SUBDIRECTORY("XTool")
+ADD_SUBDIRECTORY("PlayOgg")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")
 ADD_SUBDIRECTORY("tx3d")
@@ -14,6 +16,9 @@ ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
 
 INCLUDE_DIRECTORIES(
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
+        "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Stadistics.h
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/Render/inc"
         "${PROJECT_SOURCE_DIR}/Source/Terra"
@@ -29,11 +34,74 @@ INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Scripts"
         "${PROJECT_SOURCE_DIR}/Source/tx3d"
         "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
-        "${PROJECT_SOURCE_DIR}/XLibs.Net"
-        "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
 )
 
+SET(perimeter_LINK_LIBS
+        #Dependencies libs
+        ${BOOST_LIBRARY}
+        ${SDL2_LIBRARY}
+
+        #Our libs
+        XTool
+        PlayOgg
+        PluginMAX
+        Terra
+        tx3d
+        Peer
+        Render
+        Sound
+)
+
+#Add Windows and DirectX libs
+IF(PERIMETER_WINDOWS)
+    #Include headers
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
+    
+    #Select 64 or 32 compiled libs
+    IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+        MESSAGE("Linking against DirectX 64 bits")
+        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
+    ELSE()
+        MESSAGE("Linking against DirectX 32 bits")
+        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
+    ENDIF()
+
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}            
+            #DirectX libs
+            d3d8
+            d3d9
+            d3dx9
+            d3dx9d
+            d3d10
+            d3dx10
+            d3dx10d
+            d3dxof
+            ddraw
+            dinput
+            dsetup
+            dinput8
+            dplayx
+            dsound
+            dxgi
+            dxtrans
+            DxErr
+            DxErr8
+            DxErr9
+            X3DAudio
+            XInput
+    
+            #Windows libs
+            winmm
+            wsock32
+            comctl32
+            advapi32
+            vfw32
+            strmiids
+    )
+ENDIF()
+
 SET(perimeter_SRCS
+        Util/dplay8guid.c
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
@@ -43,7 +111,6 @@ SET(perimeter_SRCS
         Game/Player.cpp
         Game/Universe.cpp
         Game/PerimeterDataChannel.cpp
-        Game/ResourceDispatcher.cpp
         Game/Runtime.cpp
         Game/CopyToGraph.cpp
         Game/Region.cpp
@@ -116,7 +183,7 @@ SET(perimeter_SRCS
         UserInterface/PerimeterShellUI.cpp
         UserInterface/ReelManager.cpp
         UserInterface/SelectManager.cpp
-        UserInterface/ShellCmd.cpp
+        UserInterface/ShellCmd.cpp 
         UserInterface/ShellLogDisp.cpp
         UserInterface/ShellUtils.cpp
         UserInterface/UserSingleProfile.cpp
@@ -169,14 +236,8 @@ SET(perimeter_SRCS
 
 ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
 
-TARGET_LINK_LIBRARIES(perimeter
-        ${BOOST_LIBRARY}
-        ${SDL2_LIBRARY}
-        PluginMAX
-        Terra
-        tx3d
-        TriggerEditor
-        Peer
-        Render
-        Sound
-)
+if(NOT FINAL_VERSION)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
+ENDIF()
+
+TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})

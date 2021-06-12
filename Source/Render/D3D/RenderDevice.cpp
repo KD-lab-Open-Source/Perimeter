@@ -3,10 +3,10 @@
 
 #include "Font.h"
 
-#pragma comment(lib,"dxguid.lib")
+//#pragma comment(lib,"dxguid.lib")
 //#pragma comment(lib,"ddraw.lib")
-#pragma comment(lib,"d3dx9.lib")
-#pragma comment(lib,"d3d9.lib")
+//#pragma comment(lib,"d3dx9.lib")
+//#pragma comment(lib,"d3d9.lib")
 
 FILE* fRD=NULL;
 

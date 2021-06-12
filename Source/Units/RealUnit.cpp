@@ -252,7 +252,8 @@ void terUnitReal::installBasement()
 			v = mx2*attr().BasementPoints[i];
 			v >>= kmGrid;
 		}
-		scanPolyByLineOp(&points[0], points.size(), terScanInstallLineOp());
+        terScanInstallLineOp op = terScanInstallLineOp();
+		scanPolyByLineOp(&points[0], points.size(), op);
 	}
 }
 
@@ -279,7 +280,8 @@ void terUnitReal::uninstallBasement()
 			v = mx2*attr().BasementPoints[i];
 			v >>= kmGrid;
 		}
-		scanPolyByLineOp(&points[0], points.size(), terScanUninstallLineOp());
+        terScanUninstallLineOp op = terScanUninstallLineOp();
+		scanPolyByLineOp(&points[0], points.size(), op);
 	}
 }
 
@@ -308,7 +310,9 @@ void terUnitReal::Start()
 		case EFFECT_ID_LASER_HIT:
 			if(EffectKey* key = attr().getEffect(attr().effectsData.effects[i].effectID))
 				effectControllers_.push_back(terEffectController(&attr().effectsData.effects[i],NULL));
-			break;
+            break;
+        default:
+            break;
 		}
 	}
 
@@ -415,6 +419,8 @@ void terUnitReal::Quant()
 		case ENV_DAMAGE_BASEMENT:
 			damage_ratio = 1.0f - basementDamage();
 			break;
+        default:
+            break;
 		}
 
 		if(damage_ratio >= attr().environmentalDamage.damageRatioMin){
@@ -719,6 +725,8 @@ void terUnitReal::executeCommand(const UnitCommand& command)
 		wayPoints_.clear();
 		targetUnit_ = 0;
 		break;
+    default:
+        break;
 	}
 }
 
@@ -729,7 +737,8 @@ void terUnitReal::moveToPoint(const Vect3f& v)
 		return;
 	}
 
-	Vect2i target = v;
+	//3f -> 2f -> 2i
+	Vect2i target = static_cast<Vect2i>(static_cast<Vect2f>(v));
 	if(pathFindTarget_ != target){
 		pathFindSucceeded_ = false;
 		pathFindTarget_ = target;
@@ -1085,7 +1094,8 @@ void terUnitReal::checkField()
 	terPlayer* player = universe()->findPlayer(playerID);
 	int counter = 0;
 	for(int i = 0; i < 4; i++){
-		Vect2i pos = points[i];
+        //3f -> 2f -> 2i
+        Vect2i pos = static_cast<Vect2i>(static_cast<Vect2f>(points[i]));
 		if(player->fieldColumn().filled(pos.x, pos.y))
 			counter++;
 	}
@@ -1194,7 +1204,8 @@ void terUnitReal::freeZeroLayer()
 		Player->structureColumn().operateByCircle(position2D(), attr().ZeroLayerRadius, 0);
 		terMapPoint->UpdateMap(position2D(), attr().ZeroLayerRadius);
 
-		universe()->UnitGrid.Scan(position().xi(), position().yi(), round(attr().ZeroLayerRadius*2.5), FreeZeroLayerOp(this));
+        FreeZeroLayerOp op = FreeZeroLayerOp(this);
+		universe()->UnitGrid.Scan(position().xi(), position().yi(), round(attr().ZeroLayerRadius*2.5), op);
 	}
 }
 
@@ -1279,6 +1290,8 @@ void terEffectController::quant(terUnitReal* owner)
 			effect_ = NULL;
 		}
 		break;
+    default:
+        break;
 	}
 
 	effectPose_=pos;

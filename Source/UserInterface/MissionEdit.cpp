@@ -558,7 +558,8 @@ void MissionEditor::applyHardness()
 		Vect2i posMax(0, 0);
 		Vect3fVect::iterator vi;
 		FOR_EACH(hardnessPolygon_, vi){
-			Vect2i v = *vi;
+            //3f -> 2f -> 2i
+			Vect2i v =  static_cast<Vect2i>(static_cast<Vect2f>(*vi));
 			if(posMin.x > v.x)
 				posMin.x = v.x;
 			if(posMin.y > v.y)
@@ -570,7 +571,8 @@ void MissionEditor::applyHardness()
 			points.push_back(vMap.w2m(Vect2f(v)));
 		}
 
-		scanPolyByLineOp(&points[0], points.size(), ApplyHardnessLineOp(!isShiftPressed()));
+        ApplyHardnessLineOp op = ApplyHardnessLineOp(!isShiftPressed());
+		scanPolyByLineOp(&points[0], points.size(), op);
 
 		terMapPoint->UpdateMap(posMin, posMax);
 

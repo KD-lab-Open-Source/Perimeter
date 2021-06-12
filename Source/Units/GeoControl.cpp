@@ -105,8 +105,10 @@ void terGeoControl::Quant()
 					sound.Play();
 				}else
 				{
-					if(attr().SoundName[0])
-						SND3DPlaySound(attr().SoundName,&To3D(position()));
+					if(attr().SoundName[0]) {
+                        Vect3f p = To3D(position());
+                        SND3DPlaySound(attr().SoundName, &p);
+                    }
 				}
 
 				Generate(attack_time);

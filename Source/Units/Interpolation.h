@@ -135,6 +135,10 @@ typedef Interpolator<float> InterpolatorFloat;
 typedef Interpolator<Vect3f, Vect3fInterpolationOp> InterpolatorVect3f;
 */
 
+template<class T>
+class DefaultInterpolationOp {
+};
+
 template<class T ,class InterpolationOp = DefaultInterpolationOp<T> >
 class Interpolator
 {
@@ -359,8 +363,8 @@ public:
 	void requestPhase(float phase); // Проиграть текущую цепочку до phase по кратчайшему, потом остановиться, выставив requestDone()
 	bool requestDone() const { return requestDone_; } // В конце запрошенной цепочки для зацикленных и незацикленных цепочек одинаково
 	bool isEnd() const {return phaseIterator_.isEnd();}// В конце незацикленной цепочки. Если выставил setChain и хочешь узнать, кончилась ли цепочка.
-	ChainID chainID() const { return currentChain() ? currentChain()->chainID : CHAIN_NONE; } // Текущая цепочка
-	ChainID requestedChainID() const { return !chainPath_.empty() ? chainPath_.front()->chainID : chainID(); } // Запрошенная цепочка
+	ChainID chainID() const { return currentChain() ? static_cast<ChainID>(currentChain()->chainID) : CHAIN_NONE; } // Текущая цепочка
+	ChainID requestedChainID() const { return !chainPath_.empty() ? static_cast<ChainID>(chainPath_.front()->chainID) : chainID(); } // Запрошенная цепочка
 	const AnimationChain* currentChain() const { return currentChain_; }
 
 	void setAnimationSpeed(float speed); // модуляция скорости анимации (..1..)
@@ -371,7 +375,7 @@ public:
 	}
 //	float phase() const { return phase_(); }
 
-	AnimationGroupID animationGroupID() const { return animationData_ ? animationData_->groupID : ANIMATION_GROUP_ROOT; }
+	AnimationGroupID animationGroupID() const { return animationData_ ? static_cast<AnimationGroupID>(animationData_->groupID) : ANIMATION_GROUP_ROOT; }
 
 	SoundEventID soundEventID() const { return soundEventID_; }
 	void setSoundEventID(SoundEventID id){ soundEventID_ = id; }

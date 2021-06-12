@@ -132,9 +132,11 @@ cIUnkObj* cObjLight::BuildCopy()
 // реализация интерфейса cUnkTile
 //////////////////////////////////////////////////////////////////////////////////////////
 void cObjLight::GetBoundingBox(Vect3f &Min,Vect3f &Max)
-{ 
-	Min=GetGlobalMatrix().xformPoint(-GetRadius()*Vect3f(1,1,1));
-	Max=GetGlobalMatrix().xformPoint(+GetRadius()*Vect3f(1,1,1));
+{
+    Vect3f min=-GetRadius()*Vect3f(1,1,1);
+    Vect3f max=+GetRadius()*Vect3f(1,1,1);
+	Min=GetGlobalMatrix().xformPoint(min);
+	Max=GetGlobalMatrix().xformPoint(max);
 }
 void cObjLight::CalcBorder(Vect3f& Min,Vect3f& Max)
 {

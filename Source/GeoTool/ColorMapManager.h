@@ -136,4 +136,4 @@ class ColorMapManager {
 
 };
 
-#endif _COLOR_MAP_MANAGER_H
+#endif //_COLOR_MAP_MANAGER_H

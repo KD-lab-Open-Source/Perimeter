@@ -19,6 +19,7 @@ class AbstractAction {
 	public:
 		virtual bool actionPerformed() = 0;
 		virtual const char* getName() = 0;
+		virtual ~AbstractAction() = default;
 };
 
 class CtrlAction : public AbstractAction {

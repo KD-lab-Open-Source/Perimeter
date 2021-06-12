@@ -53,12 +53,15 @@ void VSSkin::SetMaterial(sDataRenderMaterial *Data)
 	SetVector(vAmbient,(D3DXVECTOR4*)&Data->Ambient);
 	SetVector(vDiffuse,(D3DXVECTOR4*)&Data->Diffuse);
 	SetVector(vSpecular,(D3DXVECTOR4*)&Data->Specular);
-	SetVector(fSpecularPower,&D3DXVECTOR4(Data->Power,Data->Power,Data->Power,Data->Power));
+    D3DXVECTOR4 sp(Data->Power,Data->Power,Data->Power,Data->Power);
+	SetVector(fSpecularPower,&sp);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 }
 
 void PSSkin::Restore()
@@ -123,12 +126,15 @@ void VSSkinBump::SetMaterial(sDataRenderMaterial *Data)
 	SetVector(vAmbient,(D3DXVECTOR4*)&Data->Ambient);
 	SetVector(vDiffuse,(D3DXVECTOR4*)&Data->Diffuse);
 	SetVector(vSpecular,(D3DXVECTOR4*)&Data->Specular);
-	SetVector(fSpecularPower,&D3DXVECTOR4(Data->Power,Data->Power,Data->Power,Data->Power));
+    D3DXVECTOR4 sp(Data->Power,Data->Power,Data->Power,Data->Power);
+    SetVector(fSpecularPower,&sp);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-	SetVector(vCameraPos,&D3DXVECTOR4(p.x,p.y,p.z,0));
+    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-	SetVector(vLightDirection,&D3DXVECTOR4(l.x,l.y,l.z,0));
+    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    SetVector(vLightDirection,&light);
 }
 
 void PSSkinBump::Restore()

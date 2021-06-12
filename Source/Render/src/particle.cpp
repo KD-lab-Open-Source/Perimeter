@@ -9,7 +9,7 @@ int cParticle::RandomVal=0x83838383;
 //#define check_vector(v) if(v.x>=1e6 || v.x<-1e6 || v.y>=1e6 || v.y<-1e6 || v.z>=1e6 || v.z<-1e6 ) { __asm { int 3 }; }
 #define check_vector(v)
 
-cParticle::cParticle(float fTimeLife,Vect2f &vTexSize) : cAnimUnkObj(KIND_PARTICLE)
+cParticle::cParticle(float fTimeLife,const Vect2f &vTexSize) : cAnimUnkObj(KIND_PARTICLE)
 {
 	TimeLife=fTimeLife;
 	CurrentTime=0;
@@ -243,7 +243,7 @@ void CalcNumParticleClass(int& num_object,int& num_particle)
 			num_object++;
 		}
 	}
-#endif C_CHECK_DELETE
+#endif //C_CHECK_DELETE
 }
 
 void cParticle::Free()

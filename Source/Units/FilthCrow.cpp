@@ -151,7 +151,8 @@ void terFilthSwarmCrow::Generate()
 		p = safe_cast<terFilthCrow*>(player->buildUnit(GetUnitID()));
 		p->setPose(Se3f(QuatF::ID, pos), false);
 		p->SetFilthTarget(position);
-		p->SetDeltaTarget(pos-position);
+		Vect3f v = pos-position;
+		p->SetDeltaTarget(v);
 		p->SetAttackPeriod(attack_period);
 		p->Start();
 		p->setPose(Se3f(QuatF::ID, pos), false);

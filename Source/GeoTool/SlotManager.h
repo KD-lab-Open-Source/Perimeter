@@ -54,5 +54,5 @@ class SlotManager {
 
 };
 
-#endif _SLOT_MANAGER_H
+#endif //_SLOT_MANAGER_H
 

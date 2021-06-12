@@ -5,6 +5,29 @@
 #include <string>
 #include <typeinfo>
 #include "Handle.h"
+#include <boost/type_index.hpp>
+
+static bool endsWith(const std::string& str, const std::string& suffix)
+{
+    return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
+}
+
+//Previously typeid(CLASS_T).name() was used which is not portable, so we need to replicate MSVC names
+template<class CLASS_T>
+string get_type_id() {
+    string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
+#ifndef _MSC_VER
+    //Non MSC don't append type before name, so we manually add here
+    //TODO untestend under Clang, only GCC
+    if (endsWith(name, "Prm")) {
+        name = "struct " + name;
+    } else {
+        name = "class " + name;
+    }
+#endif
+    //printf("%s = %s -> %s\n", typeid(CLASS_T).name(), boost::typeindex::type_id<CLASS_T>().pretty_name().c_str(), name.c_str());
+    return name;
+}
 
 /////////////////////////////////////////////////
 enum ArchiveType 
@@ -393,7 +416,7 @@ public:
 		Serializer() {
 		}
 		Serializer(const char* nameAlt) {
-			instance().add(*this, typeid(Derived).name(), nameAlt);
+			instance().add(*this, get_type_id<Derived>().c_str(), nameAlt);
 		}
 		void save(OArchive& ar, const Base* t) {
 			ar << makeObjectWrapper(static_cast<const Derived&>(*t), 0, 0);
@@ -458,7 +481,7 @@ public:
 		return saveParameters(instance());
 	}
 
-	/* TODO is this needed? is trying to use a partial class constructor
+	/* troublesome, since EditArchive is declared on another .h which requires this header, we use normal edit(ea)
 	static bool edit() {
 		return edit(EditArchive());
 	}
@@ -483,13 +506,22 @@ public:
 	}
 };
 
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+#define DEFINE_SINGLETON_PRM(Type) \
+void loadParameters(Type& t); \
+void saveParameters(Type& t); \
+bool editParameters(Type& t, EditArchive& ea);
+#endif
+
+
 #define SINGLETON_PRM(Type, sectionName, fileName)						\
 void loadParameters(Type& t) {											\
 	XPrmIArchive ia;													\
 	if(ia.open(fileName))												\
 		ia >> makeObjectWrapper(t, sectionName, 0);						\
 	if(check_command_line(sectionName)){								\
-		editParameters(t, EditArchive());								\
+		EditArchive ea = EditArchive();                              	\
+		editParameters(t, ea);											\
 		ErrH.Exit();													\
 	}																	\
 }																		\
@@ -559,6 +591,16 @@ const EnumDescriptor<Enum>& getEnumDescriptor(const Enum& key);
 		return descriptor;	\
 	}
 
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+#define DECLARE_ENUM_DESCRIPTOR(enumType)	\
+	const EnumDescriptor<enumType>& getEnumDescriptor(const enumType& key);
+#endif
+
+
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+#define DECLARE_ENUM_DESCRIPTOR_ENCLOSED(nameSpace, enumType)	\
+	const EnumDescriptor<nameSpace::enumType>& getEnumDescriptor(const nameSpace::enumType& key);
+#endif
 
 /////////////////////////////////////////////////
 //	Вспомогательные функции для отображения
