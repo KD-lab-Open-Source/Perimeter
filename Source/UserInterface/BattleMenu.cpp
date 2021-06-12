@@ -267,9 +267,9 @@ void onMMBattleFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
 		pCombo->Array.push_back( getItemTextFromBase("Exodus").c_str() );
 		pCombo->Array.push_back( getItemTextFromBase("Empire").c_str() );
-//		#ifndef _DEMO_
-//			pCombo->Array.push_back( getItemTextFromBase("Harkback").c_str() );
-//		#endif
+#if !defined(_DEMO_) && !defined(_PERIMETER_ADDON_)
+        pCombo->Array.push_back( getItemTextFromBase("Harkback").c_str() );
+#endif
 		pCombo->size = pCombo->Array.size();
 		pCombo->pos = 0;
 	}
