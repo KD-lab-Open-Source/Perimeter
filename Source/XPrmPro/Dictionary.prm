@@ -1,0 +1,13 @@
+
+section DictionaryPrm ( declaration = "Dictionary.hxx", definition = "Dictionary.cxx") 
+{
+struct DictionaryRecord
+{
+	string parentName = "";
+	string oldName = "";
+	string newName = "";
+};
+
+vector<DictionaryRecord> dictionaryRecords;
+
+}

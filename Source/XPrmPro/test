@@ -1,0 +1,16 @@
+XRealPrm = {
+	a = 0;
+	data = {
+		records = {
+			0;
+		};
+		mode = {
+			0;
+		};
+	};
+	node = {
+		aaaa = A1;
+		xxx = 0.;
+		flags = MODE_2;
+	};
+};
