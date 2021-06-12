@@ -1,0 +1,154 @@
+XRealPrm = {
+	mmmm = {
+		2;
+		MODE_1,
+		MODE_2
+	};
+	condition = "struct Condition" {
+		internalColor_ = 8454143;
+		state_ = false;
+	};
+	strings = {
+		0;
+	};
+	belligerent = BELLIGERENT_HARKBACKHOOD0;
+	bitFlag = MODE_1;
+	node_ = 0;
+	node__ = 0;
+	nodesVect = {
+		0;
+	};
+	ConditionsVectPtr = {
+		1;
+		"struct ConditionSwitcher" {
+			internalColor_ = 8421631;
+			state_ = false;
+			type = AND;
+			conditions = {
+				0;
+			};
+		}
+	};
+	data = {
+		records = {
+			node = 0;
+			nodes = {
+				0;
+			};
+			valueBool = false;
+			valueInt = 1;
+			valueFloat = 1.;
+			valueDouble = 1.;
+			valueString = "";
+			arrayInt = {
+				0;
+			};
+			pos = {
+				0. 0. 0.
+			};
+			ori = {
+				1. 0. 0. 0.
+			};
+			rot = {
+				{
+					1. 0. 0.
+				}{
+					0. 1. 0.
+				}{
+					0. 0. 1.
+				}
+			};
+			rotX = {
+				{
+					{
+						1. 0. 0.
+					}{
+						0. 1. 0.
+					}{
+						0. 0. 1.
+					}
+				}{
+					0. 0. 0.
+				}
+			};
+		};
+		mode = {
+			0;
+		};
+		modelName = "jdif";
+	};
+	node = {
+		aaaa = BELLIGERENT_EXODUS;
+		xxx = 0.;
+		flags = BELLIGERENT_HARKBACKHOOD0 | BELLIGERENT_HARKBACKHOOD1 | BELLIGERENT_EMPIRE0 | BELLIGERENT_EMPIRE1 | BELLIGERENT_EMPIRE2 | BELLIGERENT_EMPIRE3 | BELLIGERENT_EMPIRE4 | BELLIGERENT_EMPIRE5 | BELLIGERENT_EMPIRE6 | BELLIGERENT_EMPIRE7 | BELLIGERENT_EMPIRE8 | BELLIGERENT_EMPIRE9 | BELLIGERENT_EMPIRE10 | BELLIGERENT_EMPIRE11 | BELLIGERENT_EMPIRE12 | BELLIGERENT_EMPIRE13 | BELLIGERENT_EMPIRE14 | BELLIGERENT_EMPIRE15 | BELLIGERENT_EMPIRE16 | BELLIGERENT_EMPIRE17 | BELLIGERENT_EMPIRE18 | BELLIGERENT_EMPIRE19 | BELLIGERENT_EMPIRE20;
+	};
+	colors = {
+		66;
+		0,
+		8453888,
+		8388863,
+		8388863,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		10545282,
+		65280,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0
+	};
+};
