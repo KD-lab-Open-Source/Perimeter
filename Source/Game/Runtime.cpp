@@ -188,11 +188,12 @@ void HTManager::init()
 
 	static XBuffer errorHeading;
 	errorHeading.SetRadix(16);
-	errorHeading < currentVersion <
+	errorHeading < currentVersion
 #ifdef _FINAL_VERSION_
-		" Final"
-#else
-		" Release"
+		< " Final"
+#endif
+#ifdef PERIMETER_DEBUG
+        < " DBG"
 #endif
 		< " OS: " <= GetVersion();
 
@@ -570,7 +571,7 @@ void checkSingleRunning()
 //------------------------------
 int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 {
-#ifdef _FINAL_VERSION_
+#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
 	checkSingleRunning();
 #endif
 

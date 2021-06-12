@@ -1058,9 +1058,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		terRenderDevice->Flush(hWndVisGeneric);
 		ShowCursor(1);
 		//setUseAlternativeNames(true);
-		static TriggerEditor triggetEditor(triggerInterface());
+		static TriggerEditor triggerEditor(triggerInterface());
 		TriggerChain* triggerChain = universe()->activePlayer()->getStrategyToEdit();
-		if(triggerChain && triggetEditor.run(*triggerChain, hWndVisGeneric)){
+		if(triggerChain && triggerEditor.run(*triggerChain, hWndVisGeneric)){
 			triggerChain->initializeTriggersAndLinks();
 			triggerChain->save();
 			triggerChain->buildLinks();
@@ -1074,7 +1074,8 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		terCamera->setFocus(HardwareCameraFocus);
 		ShowCursor(0);				
 		RestoreFocus();									
-		break; }
+		break;
+	}
 #endif
 
 	case VK_F4 | KBD_CTRL:
@@ -1295,7 +1296,7 @@ void GameShell::KeyPressed(sKey& Key)
 	if(missionEditor_ && missionEditor_->keyPressed(Key))
 		return;
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	if (Key.fullkey == (VK_F1|KBD_SHIFT|KBD_CTRL)) {
 		EnableDebugKeyHandlersInitial = EnableDebugKeyHandlers ^= 1;
 		return;
