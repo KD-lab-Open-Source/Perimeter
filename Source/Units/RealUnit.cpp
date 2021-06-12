@@ -310,7 +310,9 @@ void terUnitReal::Start()
 		case EFFECT_ID_LASER_HIT:
 			if(EffectKey* key = attr().getEffect(attr().effectsData.effects[i].effectID))
 				effectControllers_.push_back(terEffectController(&attr().effectsData.effects[i],NULL));
-			break;
+            break;
+        default:
+            break;
 		}
 	}
 
@@ -417,6 +419,8 @@ void terUnitReal::Quant()
 		case ENV_DAMAGE_BASEMENT:
 			damage_ratio = 1.0f - basementDamage();
 			break;
+        default:
+            break;
 		}
 
 		if(damage_ratio >= attr().environmentalDamage.damageRatioMin){
@@ -721,6 +725,8 @@ void terUnitReal::executeCommand(const UnitCommand& command)
 		wayPoints_.clear();
 		targetUnit_ = 0;
 		break;
+    default:
+        break;
 	}
 }
 
@@ -1284,6 +1290,8 @@ void terEffectController::quant(terUnitReal* owner)
 			effect_ = NULL;
 		}
 		break;
+    default:
+        break;
 	}
 
 	effectPose_=pos;

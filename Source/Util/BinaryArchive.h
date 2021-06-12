@@ -63,7 +63,7 @@ public:
     struct BinarySerializer : ClassDescriptor<Base, BinaryOArchive, BinaryIArchive>::Serializer<Derived>
     {
         BinarySerializer() {
-            instance().add(*this, typeid(Derived).name());
+            instance().add(*this, get_type_id<Derived>().c_str());
         }
     };
 
@@ -216,7 +216,7 @@ private:
 			buffer_ < stringHash("");
 			return;
 		}
-		const char* name = typeid(*t).name();
+		const char* name = get_type_id<T>().c_str();
 		buffer_ < stringHash(name);
 		BinaryClassDescriptor<typename boost::remove_const<T>::type>::instance().find(name).save(*this, t);
 	}
@@ -428,7 +428,7 @@ private:
 		}
 		typedef BinaryClassDescriptor<typename boost::remove_const<T>::type> Descriptor;
 		if(t){
-			if(hash == stringHash(typeid(*t).name())){
+			if(hash == stringHash(get_type_id<T>().c_str())){
 				Descriptor::instance().findByHash(hash).load(*this, t);
 				return;
 			}

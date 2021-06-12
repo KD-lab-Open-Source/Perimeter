@@ -251,7 +251,9 @@ void terProtector::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_FIELD_STOP:
 		stopField();
 		soundEvent(SOUND_VOICE_PSHIELD_LOCAL_OFF);
-		break;
+        break;
+    default:
+        break;
 	}
 }
 
