@@ -8,7 +8,7 @@ const int TILEMAP_SHL  = 6;
 const int TILEMAP_SIZE = 1<<TILEMAP_SHL;
 const int TILEMAP_LOD=5;
 
-//TILEMAP_LOD â ñîîòâåòñòâèè ñ íèì íóæíî èñïðàâèòü ATTRTILE_DRAWLODxxx
+//TILEMAP_LOD Ð² ÑÐ¾Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð²Ð¸Ð¸ Ñ Ð½Ð¸Ð¼ Ð½ÑƒÐ¶Ð½Ð¾ Ð¸ÑÐ¿Ñ€Ð°Ð²Ð¸Ñ‚ÑŒ ATTRTILE_DRAWLODxxx
 enum eAttributeTile
 {
 	ATTRTILE_DRAWLOD		=   1<<0,
@@ -47,8 +47,8 @@ class cTileMap : public cUnkObj
 	friend class cScene;
 
 	sTile*			Tile;
-	Vect2i			TileSize;		// ðàçìåð îäíîãî òàéëà
-	Vect2i			TileNumber;		// ÷èñëî òàéëîâ ïî îñÿì
+	Vect2i			TileSize;		// Ñ€Ð°Ð·Ð¼ÐµÑ€ Ð¾Ð´Ð½Ð¾Ð³Ð¾ Ñ‚Ð°Ð¹Ð»Ð°
+	Vect2i			TileNumber;		// Ñ‡Ð¸ÑÐ»Ð¾ Ñ‚Ð°Ð¹Ð»Ð¾Ð² Ð¿Ð¾ Ð¾ÑÑÐ¼
 
 	Vect3d			tilesize;
 
@@ -82,13 +82,13 @@ public:
 
 	cTileMap(cScene* pScene,TerraInterface* terra);
 	virtual ~cTileMap();
-	// îáùèå èíòåðôåéñíûå ôóíêöèè óíàñëåäîâàíû îò cUnkObj
+	// Ð¾Ð±Ñ‰Ð¸Ðµ Ð¸Ð½Ñ‚ÐµÑ€Ñ„ÐµÐ¹ÑÐ½Ñ‹Ðµ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ ÑƒÐ½Ð°ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ð½Ñ‹ Ð¾Ñ‚ cUnkObj
 	virtual void PreDraw(cCamera *UCamera);
 	virtual void Draw(cCamera *UCamera);
 	virtual void UpdateMap(const Vect2i& pos1, const Vect2i& pos2);
 	void UpdateMap(const Vect2i& pos, float radius) { UpdateMap(pos - Vect2i(radius, radius), pos + Vect2i(radius, radius)); }
 	void Animate(float dt);
-	// îáùèå èíòåðôåéñíûå ôóíêöèè cTileMap
+	// Ð¾Ð±Ñ‰Ð¸Ðµ Ð¸Ð½Ñ‚ÐµÑ€Ñ„ÐµÐ¹ÑÐ½Ñ‹Ðµ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ cTileMap
 	const Vect2i& GetTileSize()const					{ return TileSize; }
 	const Vect2i& GetTileNumber()const					{ return TileNumber; }
 	sTile& GetTile(int i,int j)							{ return Tile[i+j*GetTileNumber().x]; }
