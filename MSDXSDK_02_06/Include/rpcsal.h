@@ -136,7 +136,7 @@
 #pragma once
 
 // the file from old DirectX SDK conflists with new Windows SDK
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
+#if !defined(_MSC_VER) || defined(_MSC_VER) && (_MSC_VER < 1900)
 
 #include <specstrings.h>
 
