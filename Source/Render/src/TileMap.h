@@ -156,7 +156,7 @@ protected:
 	int CheckLightMapType();
 
 	void BuildRegionPoint();
-#ifdef _WIN32
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
 	friend void cTileMapBorderCall(void* data, Vect2f& p);
 #endif
 
