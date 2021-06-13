@@ -13,7 +13,7 @@
 
 using namespace tx3d;
 
-auto_ptr<SimpleTurbulator3D> SimpleTurbulator3D::sharedInstance;
+std::unique_ptr<SimpleTurbulator3D> SimpleTurbulator3D::sharedInstance;
 
 float SimpleTurbulator3D::turbulate3D(const Vector3D &v, float persistence, int octaveCount, Interpolator3D *interpolator) {
 	float sum = 0.0;

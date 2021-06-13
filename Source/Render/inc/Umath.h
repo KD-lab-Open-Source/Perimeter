@@ -452,7 +452,7 @@ inline float FastInvSqrt(float x)
     union {
         float f;
         uint32_t i;
-    } conv  = { .f = x };
+    } conv  = { x };
     conv.i  = 0x5f3759df - ( conv.i >> 1 );
     conv.f  *= threehalfs - ( x2 * conv.f * conv.f );
     return conv.f;

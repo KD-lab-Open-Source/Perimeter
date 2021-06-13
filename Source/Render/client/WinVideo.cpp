@@ -1,5 +1,7 @@
-#include "StdAfxRD.h"
+// do not define "namespace std" before <amstream.h> include, otherwise compile error: 'byte': ambiguous symbol
 #include <amstream.h>	// DirectShow multimedia stream interfaces
+
+#include "StdAfxRD.h"
 #include <control.h>
 #include <uuids.h>
 #include <assert.h>

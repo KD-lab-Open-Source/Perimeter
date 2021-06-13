@@ -52,8 +52,8 @@ class TriggerChain;
 class Trigger;
 
 //-----------------------------
-class Action;
-class Condition;
+struct Action;
+struct Condition;
 
 typedef ShareHandle<Action> ActionPtr;
 typedef ShareHandle<Condition> ConditionPtr;

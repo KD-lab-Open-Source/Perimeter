@@ -1526,9 +1526,9 @@ void terVoiceDispatcher::quant()
 			startVoice(it->voiceSetup(),true);
 	}
 
-	voiceQueue_.remove_if(mem_fun_ref(&VoiceTimer::end));
-	delayedVoices_.remove_if(mem_fun_ref(&VoiceTimer::end));
-	disabledVoices_.remove_if(mem_fun_ref(&VoiceTimer::end));
+	voiceQueue_.remove_if(std::mem_fn(&VoiceTimer::end));
+	delayedVoices_.remove_if(std::mem_fn(&VoiceTimer::end));
+	disabledVoices_.remove_if(std::mem_fn(&VoiceTimer::end));
 
 	while(!isVoicePlaying() && !voiceQueue_.empty()){
 		play(voiceQueue_.begin()->voiceSetup());
