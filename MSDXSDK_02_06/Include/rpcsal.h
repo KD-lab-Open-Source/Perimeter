@@ -135,6 +135,9 @@
 
 #pragma once
 
+// the file from old DirectX SDK conflists with new Windows SDK
+#if !defined(_MSC_VER) || defined(_MSC_VER) && (_MSC_VER < 1900)
+
 #include <specstrings.h>
 
 #ifndef __RPCSAL_H_VERSION__
@@ -384,3 +387,6 @@ extern "C" {
 }
 #endif
 
+#else
+    #include <../shared/rpcsal.h>
+#endif

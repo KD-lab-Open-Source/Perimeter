@@ -15,7 +15,7 @@
 
 bool removeNotAliveMonk(MonkList& unitList)
 {
-    auto i = remove_if(unitList.begin(), unitList.end(), not1(mem_fun(&terUnitMonk::alive)));
+    auto i = remove_if(unitList.begin(), unitList.end(), not_fn(&terUnitMonk::alive));
     if(i != unitList.end()){
         unitList.erase(i, unitList.end());
         return true;

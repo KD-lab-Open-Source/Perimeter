@@ -27,7 +27,8 @@
 #include <dplay8.h>
 
 // STL
-#include <vector> 
+#include <random>
+#include <vector>
 #include <list>
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 // non-standard header

@@ -574,6 +574,5 @@ void MissionDescription::setSinglePlayerDifficulty(Difficulty difficutyIn)
 
 void MissionDescription::shufflePlayers()
 {
-	srand(timeGetTime());
-	random_shuffle(&playersShufflingIndices[0], &playersShufflingIndices[0] + playerAmountScenarioMax);
+	shuffle(&playersShufflingIndices[0], &playersShufflingIndices[0] + playerAmountScenarioMax, std::default_random_engine(timeGetTime()));
 }

@@ -2,7 +2,6 @@
 #ifndef __ZIP_HEADERS_H__
 #define __ZIP_HEADERS_H__
 
-typedef unsigned char byte;
 typedef long longint;
 typedef unsigned short word;
 

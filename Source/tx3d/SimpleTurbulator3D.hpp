@@ -31,7 +31,7 @@ namespace tx3d {
 			}
 
 		protected:
-			static std::auto_ptr<SimpleTurbulator3D> sharedInstance;
+			static std::unique_ptr<SimpleTurbulator3D> sharedInstance;
 			Vector3D freqV;
 	};
 
