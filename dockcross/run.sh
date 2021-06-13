@@ -1,6 +1,7 @@
 #!/bin/sh
 set -e
 
+export SSH_DIR=/noexist
 if [ ! -z $CLEAN ]; then
   rm ./dockcross/dockcross-*-perimeter
 fi
