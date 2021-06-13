@@ -1,6 +1,3 @@
-// TODO: change encoding to utf-8
-
-
 #include "StdAfx.h"
 
 #include "InterfaceScript.h"

@@ -7,10 +7,7 @@ PROJECT(perimeter)
 # modules
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-#SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
-IF(MINGW)
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
-ENDIF()
+SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,10 +15,12 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 # options
 OPTION(FINAL_VERSION "Generate Final version" On)
+OPTION(OPTION_STATIC_BUILD "Generate static build" On)
+OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" Off)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 
 # depends
-FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
 FIND_PACKAGE(VORBIS)
 
 # globals
@@ -29,11 +28,16 @@ INCLUDE_DIRECTORIES(SYSTEM
         ${Boost_INCLUDE_DIRS}
 )
 
-# optional vorbis
 
 IF(MSVC)
     #MSVC compiler specifics
 ELSE()
+    IF(OPTION_STATIC_BUILD)
+        SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+        SET(BUILD_SHARED_LIBS OFF)
+        SET(CMAKE_EXE_LINKER_FLAGS "-static")
+    ENDIF()
+    
     #Others
     INCLUDE(CheckCXXCompilerFlag)
     SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Werror=delete-non-virtual-dtor -Wno-conversion-null")
@@ -80,6 +84,13 @@ IF(FINAL_VERSION)
     ADD_DEFINITIONS(-D_FINAL_VERSION_)
 ELSE()
     MESSAGE("Not compiling Final version")
+ENDIF()
+IF(CMAKE_BUILD_TYPE MATCHES Debug)
+    ADD_DEFINITIONS(-DPERIMETER_DEBUG)
+    MESSAGE("Compiling Debug version")
+ENDIF()
+IF(OPTION_DISABLE_STACKTRACE)
+    ADD_DEFINITIONS(-DOPTION_DISABLE_STACKTRACE)
 ENDIF()
 
 IF( CMAKE_HOST_WIN32 OR MINGW )

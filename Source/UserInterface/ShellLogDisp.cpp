@@ -258,13 +258,13 @@ void CShellLogicDispatcher::draw()
 		terRenderDevice->SetFont(0);
 	}
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	if (universe() && universe()->activePlayer() && universe()->activePlayer()->isAI()) {
 		terRenderDevice->SetFont( m_hFontUnitsLabel );
 		terRenderDevice->OutText(950,24,universe()->activePlayer()->difficultyPrm().name,sColor4f(1,1,1,1));
 		terRenderDevice->SetFont( NULL );
 	}
-#endif // _FINAL_VERSION_
+#endif // PERIMETER_DEBUG
 
 	if(_shellIconManager.IsInterface())
 	{

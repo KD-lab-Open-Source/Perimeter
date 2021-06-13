@@ -1,5 +1,6 @@
 INCLUDE_DIRECTORIES(
         BEFORE .
+        ${Boost_INCLUDE_DIRS}
 )
 
 SET(XTool_SRCS

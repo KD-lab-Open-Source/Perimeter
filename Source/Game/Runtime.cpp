@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Umath.h"
@@ -44,7 +42,7 @@ const char* currentVersion =
 
 #ifdef _SINGLE_DEMO_
 const char* currentShortVersion = 
-"Комтек'04 демо, v"
+"РљРѕРјС‚РµРє'04 РґРµРјРѕ, v"
 #include "../version.h"
 ;
 #endif
@@ -190,11 +188,12 @@ void HTManager::init()
 
 	static XBuffer errorHeading;
 	errorHeading.SetRadix(16);
-	errorHeading < currentVersion <
+	errorHeading < currentVersion
 #ifdef _FINAL_VERSION_
-		" Final"
-#else
-		" Release"
+		< " Final"
+#endif
+#ifdef PERIMETER_DEBUG
+        < " DBG"
 #endif
 		< " OS: " <= GetVersion();
 
@@ -572,7 +571,7 @@ void checkSingleRunning()
 //------------------------------
 int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 {
-#ifdef _FINAL_VERSION_
+#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
 	checkSingleRunning();
 #endif
 

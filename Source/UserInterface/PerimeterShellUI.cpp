@@ -5283,11 +5283,12 @@ void CProgressCollected::draw(int bFocus)
 
 		XBuffer buffer;
 		buffer.SetDigits(1);
-		if(accumulated < 1.0f)
-			buffer <= accumulated;
-		else
-			buffer <= round(accumulated);
-		buffer < " / " <= round(capacity);
+		if(accumulated < 1.0f) {
+            buffer <= accumulated;
+        } else {
+            buffer <= (int)round(accumulated);
+        }
+		buffer < " / " <= (int)round(capacity);
 
 /*
 		float accL = terRenderDevice->GetFontLength((char*)acc.c_str());

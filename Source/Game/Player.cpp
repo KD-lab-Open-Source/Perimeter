@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Umath.h"
@@ -640,7 +638,7 @@ terUnitBase* terPlayer::createUnit(const UnitTemplate& data)
 
 void terPlayer::incomingCommandRegion(const netCommand4G_Region& reg)
 {
-	//Region Buffer можно сделать глобальным
+	//Region Buffer РјРѕР¶РЅРѕ СЃРґРµР»Р°С‚СЊ РіР»РѕР±Р°Р»СЊРЅС‹Рј
 	XBuffer RegionBuffer(5000, 1);
 	RegionBuffer.init();
 	RegionBuffer.write(reg.pData_, reg.dataSize_);
@@ -1031,7 +1029,7 @@ void terPlayer::universalSave(SavePlayerData& data, bool userSave)
 				xassert(data.buildings.back());
 			}
 			else 
-				xassert_s(0 && "Игнорируется запись здания: ", (*bi)->attr().internalName());
+				xassert_s(0 && "РРіРЅРѕСЂРёСЂСѓРµС‚СЃСЏ Р·Р°РїРёСЃСЊ Р·РґР°РЅРёСЏ: ", (*bi)->attr().internalName());
 		}
 	}
 	
@@ -1336,7 +1334,7 @@ void terPlayer::rebuildDefenceMapQuant()
 terUnitBase* terPlayer::findPathToTarget(DefenceMap& defenceMap, terUnitAttributeID id, terUnitBase* ignoreUnit, const Vect2f& nearPosition, Vect2iVect& path)
 {
 	MTL();
-	xassert(id != UNIT_ATTRIBUTE_ANY && "Недопустим любой юнит для цели атаки");
+	xassert(id != UNIT_ATTRIBUTE_ANY && "РќРµРґРѕРїСѓСЃС‚РёРј Р»СЋР±РѕР№ СЋРЅРёС‚ РґР»СЏ С†РµР»Рё Р°С‚Р°РєРё");
 	UnitList targets;
 	UnitList::iterator ui;
 	FOR_EACH(Units, ui)
