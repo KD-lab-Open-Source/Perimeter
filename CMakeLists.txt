@@ -33,7 +33,7 @@ OPTION(OPTION_STATIC_BUILD "Generate static build" ON)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 
 IF(USE_VCPKG)
-    OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" USE_VCPKG)
+    OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" ON)
 ELSE()
     OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 ENDIF()
