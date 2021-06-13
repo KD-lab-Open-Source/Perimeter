@@ -37,10 +37,6 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(perimeter_LINK_LIBS
-        #Dependencies libs
-        ${BOOST_LIBRARY}
-        ${SDL2_LIBRARY}
-
         #Our libs
         XTool
         PlayOgg
@@ -51,6 +47,14 @@ SET(perimeter_LINK_LIBS
         Render
         Sound
 )
+
+# Boost dependencies
+IF(NOT CMAKE_HOST_WIN32)
+	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+		${BOOST_LIBRARY}
+		${SDL2_LIBRARY}
+	)
+ENDIF()
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
@@ -66,7 +70,7 @@ IF(PERIMETER_WINDOWS)
         LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
     ENDIF()
 
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}            
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
             #DirectX libs
             d3d8
             d3d9
@@ -98,10 +102,24 @@ IF(PERIMETER_WINDOWS)
             vfw32
             strmiids
     )
+
+	IF(CMAKE_HOST_WIN32)
+		SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+			legacy_stdio_definitions
+		)
+	ENDIF()
+
+	IF(USE_VCPKG)
+		SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+			Vorbis::vorbis
+			Vorbis::vorbisenc
+			Vorbis::vorbisfile
+		)
+    ENDIF()
 ELSE()
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-            # dl is required for dladdr in stacktrace,
-            dl
+		# dl is required for dladdr in stacktrace,
+		dl
     )
 ENDIF()
 
@@ -239,7 +257,11 @@ SET(perimeter_SRCS
         Units/Triggers.cpp
 )
 
-ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
+if(CMAKE_HOST_WIN32)
+    SET(WIN_MAIN_FLAG WIN32)
+ENDIF()
+
+ADD_EXECUTABLE(perimeter ${WIN_MAIN_FLAG} ${perimeter_SRCS})
 
 if(NOT FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)

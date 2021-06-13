@@ -33,4 +33,10 @@ SET(XTool_SRCS
         XUTIL/XClock.cpp
 )
 
+IF(CMAKE_HOST_WIN32)
+	SET(XTool_SRCS ${XTool_SRCS}
+		XERRHAND/DiagAssert.cpp
+	)
+ENDIF()
+
 ADD_LIBRARY(XTool STATIC ${XTool_SRCS})

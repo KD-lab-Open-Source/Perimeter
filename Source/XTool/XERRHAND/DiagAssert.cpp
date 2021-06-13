@@ -81,10 +81,12 @@ BOOL BUGSUTIL_DLLINTERFACE __stdcall
 
 static void (*assert_restore_graphics_function)() = 0;
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 void SetAssertRestoreGraphicsFunction(void(*func)())
 {
 	assert_restore_graphics_function = func;
 }
+#endif
 
 int DiagAssert (unsigned long dwOverrideOpts, const char* szMsg, const char* szFile, unsigned long dwLine )
 {

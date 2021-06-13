@@ -1,5 +1,19 @@
 SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
+
+# vcpkg shpuld be configured before PROJECT()
+IF(USE_VCPKG)
+    IF(CUSTOME_VCPKG_INSTALL_DIR)
+        SET(_VCPKG_INSTALLED_DIR ${CUSTOME_VCPKG_INSTALL_DIR})
+    ENDIF()
+
+    IF(CMAKE_GENERATOR_PLATFORM MATCHES "x64")
+        SET(VCPKG_TARGET_TRIPLET "x64-windows")
+    ELSE()
+        SET(VCPKG_TARGET_TRIPLET "x86-windows")
+    ENDIF()
+    MESSAGE(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
+ENDIF()
 
 # root
 PROJECT(perimeter)
@@ -9,15 +23,20 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_EXTENSIONS ON)
 
 # options
-OPTION(FINAL_VERSION "Generate Final version" On)
-OPTION(OPTION_STATIC_BUILD "Generate static build" On)
-OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" Off)
+OPTION(FINAL_VERSION "Generate Final version" ON)
+OPTION(OPTION_STATIC_BUILD "Generate static build" ON)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
+
+IF(USE_VCPKG)
+    OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" ON)
+ELSE()
+    OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
+ENDIF()
 
 # depends
 FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
@@ -27,7 +46,6 @@ FIND_PACKAGE(VORBIS)
 INCLUDE_DIRECTORIES(SYSTEM
         ${Boost_INCLUDE_DIRS}
 )
-
 
 IF(MSVC)
     #MSVC compiler specifics
