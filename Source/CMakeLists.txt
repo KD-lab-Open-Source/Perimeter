@@ -49,7 +49,7 @@ SET(perimeter_LINK_LIBS
 )
 
 # Boost dependencies
-IF(NOT CMAKE_HOST_WIN32)
+IF(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
 		${BOOST_LIBRARY}
 		${SDL2_LIBRARY}
@@ -103,19 +103,15 @@ IF(PERIMETER_WINDOWS)
             strmiids
     )
 
-	IF(CMAKE_HOST_WIN32)
+	IF(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 		SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
 			legacy_stdio_definitions
-		)
-	ENDIF()
 
-	IF(USE_VCPKG)
-		SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
 			Vorbis::vorbis
 			Vorbis::vorbisenc
 			Vorbis::vorbisfile
 		)
-    ENDIF()
+	ENDIF()
 ELSE()
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
 		# dl is required for dladdr in stacktrace,
@@ -257,7 +253,7 @@ SET(perimeter_SRCS
         Units/Triggers.cpp
 )
 
-if(CMAKE_HOST_WIN32)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     SET(CMAKE_WIN32_EXECUTABLE YES)
 ENDIF()
 

@@ -33,7 +33,7 @@ SET(XTool_SRCS
         XUTIL/XClock.cpp
 )
 
-IF(CMAKE_HOST_WIN32)
+IF(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	SET(XTool_SRCS ${XTool_SRCS}
 		XERRHAND/DiagAssert.cpp
 	)
