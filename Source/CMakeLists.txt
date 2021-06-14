@@ -49,7 +49,7 @@ SET(perimeter_LINK_LIBS
 )
 
 # Boost dependencies
-IF(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+IF(NOT MSVC)
 	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
 		${BOOST_LIBRARY}
 		${SDL2_LIBRARY}
@@ -103,7 +103,7 @@ IF(PERIMETER_WINDOWS)
             strmiids
     )
 
-	IF(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	IF(MSVC)
 		SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
 			legacy_stdio_definitions
 
@@ -253,7 +253,7 @@ SET(perimeter_SRCS
         Units/Triggers.cpp
 )
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(MSVC)
     SET(CMAKE_WIN32_EXECUTABLE YES)
 ENDIF()
 
