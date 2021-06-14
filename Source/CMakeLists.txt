@@ -258,10 +258,10 @@ SET(perimeter_SRCS
 )
 
 if(CMAKE_HOST_WIN32)
-    SET(WIN_MAIN_FLAG WIN32)
+    SET(CMAKE_WIN32_EXECUTABLE YES)
 ENDIF()
 
-ADD_EXECUTABLE(perimeter ${WIN_MAIN_FLAG} ${perimeter_SRCS})
+ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
 
 if(NOT FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)

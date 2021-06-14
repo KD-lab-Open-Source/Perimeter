@@ -31,20 +31,20 @@ SET(CMAKE_CXX_EXTENSIONS ON)
 OPTION(FINAL_VERSION "Generate Final version" ON)
 OPTION(OPTION_STATIC_BUILD "Generate static build" ON)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
-
-IF(USE_VCPKG)
-    OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" ON)
-ELSE()
-    OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
-ENDIF()
+OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 
 # depends
 FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
-FIND_PACKAGE(VORBIS)
+IF(USE_VCPKG)
+    FIND_PACKAGE(Vorbis CONFIG REQUIRED)
+    SET(VORBIS_FOUND TRUE)
+ELSE()
+    FIND_PACKAGE(VORBIS)
+ENDIF()
 
 # globals
 INCLUDE_DIRECTORIES(SYSTEM
-        ${Boost_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
 )
 
 IF(MSVC)

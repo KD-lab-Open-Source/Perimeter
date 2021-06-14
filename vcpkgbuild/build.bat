@@ -2,12 +2,9 @@
 
 SET CALLER_DIR=%CD%
 
-SET VCPKG_PARENT_DIR=%perimeter_VCPKG_PARENT_DIR%
-FOR %%i IN ("%~dp0") DO SET _PATH_VSD=%%~fi
-SET VCPKG_SCRIPT_DIR=%_PATH_VSD%
-
-FOR %%i IN ("%~dp0..") DO SET _PATH_P=%%~fi
-SET PROJECT_PATH=%_PATH_P%
+SET VCPKG_PARENT_DIR=%PERIMETER_VCPKG_DIR%
+FOR %%i IN ("%~dp0") DO SET VCPKG_SCRIPT_DIR=%%~fi
+FOR %%i IN ("%~dp0..") DO SET PROJECT_PATH=%%~fi
 
 SET BUILD_CONF_TOKENS=VCPKG_REV
 FOR %%A IN (%BUILD_CONF_TOKENS%) DO (
@@ -20,11 +17,10 @@ CD %PROJECT_PATH%
 
 IF NOT DEFINED VCPKG_PARENT_DIR (
 	ECHO VCPKG_PARENT_DIR variable not set, check parent project dir
-	FOR %%i IN ("%~dp2..") DO SET _PARENT_PR_PATH=%%~fi
-	SET VCPKG_PARENT_DIR=%_PARENT_PR_PATH%
+	FOR %%I IN (..) DO SET VCPKG_PARENT_DIR=%%~fI
 )
 
-SET VCPKGPATH=%_PARENT_PR_PATH%\vcpkg
+SET VCPKGPATH=%VCPKG_PARENT_DIR%\vcpkg
 
 ECHO VCPKG directory: %VCPKGPATH%
 ECHO VCPKG rev.: %VCPKG_REV%
@@ -36,7 +32,7 @@ IF EXIST %VCPKGPATH%\NUL (
 	ECHO Found VCPKG folder
 ) ELSE (
 	ECHO VCPKG Not found, checkout it
-	git clone --progress https://github.com/microsoft/vcpkg.git
+	git clone --progress https://github.com/microsoft/vcpkg.git %VCPKGPATH%
 )
 
 CD %VCPKGPATH%
@@ -50,7 +46,7 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 IF NOT EXIST vcpkg.exe (
-	CALL bootstrap-vcpkg.bat -disableMetrics
+	CALL %VCPKGPATH%\bootstrap-vcpkg.bat -disableMetrics
 )
 
 CD %PROJECT_PATH%
@@ -62,7 +58,6 @@ CD build
 SET TOOLCHAIN=CMAKE_TOOLCHAIN_FILE=%VCPKGPATH%\scripts\buildsystems\vcpkg.cmake
 SET VCPKGCUSTOMEDIR=CUSTOME_VCPKG_INSTALL_DIR=%VCPKG_PARENT_DIR%\vcpkg_installed
 
-cmake -G "Visual Studio 16 2019" -A Win32 -D%VCPKGCUSTOMEDIR% -DUSE_VCPKG=ON -D%TOOLCHAIN% ..
+cmake -G "Visual Studio 16 2019" -A Win32 -D%VCPKGCUSTOMEDIR% -DUSE_VCPKG=ON -DOPTION_DISABLE_STACKTRACE=ON -D%TOOLCHAIN% ..
 
 CD %CALLER_DIR%
-
