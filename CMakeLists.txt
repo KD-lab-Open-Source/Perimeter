@@ -1,19 +1,7 @@
 SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 
-# vcpkg should be configured before PROJECT()
-IF(USE_VCPKG)
-    IF(CUSTOME_VCPKG_INSTALL_DIR)
-        SET(_VCPKG_INSTALLED_DIR ${CUSTOME_VCPKG_INSTALL_DIR})
-    ENDIF()
-
-    IF(CMAKE_GENERATOR_PLATFORM MATCHES "x64")
-        SET(VCPKG_TARGET_TRIPLET "x64-windows")
-    ELSE()
-        SET(VCPKG_TARGET_TRIPLET "x86-windows")
-    ENDIF()
-    MESSAGE(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
-ENDIF()
+MESSAGE(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
 
 # root
 PROJECT(perimeter)
@@ -35,7 +23,7 @@ OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 
 # depends
 FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
-IF(USE_VCPKG)
+IF(MSVC)
     FIND_PACKAGE(Vorbis CONFIG REQUIRED)
     SET(VORBIS_FOUND TRUE)
 ELSE()

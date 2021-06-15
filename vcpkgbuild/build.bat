@@ -42,7 +42,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	git reset --hard
 	git clean -d -fx -f
 	git pull --progress -v --no-rebase "origin"
-	git checkout %VCPKG_REV%
+	git checkout %VCPKG_REV% --quiet
 )
 
 IF NOT EXIST vcpkg.exe (
@@ -56,8 +56,9 @@ MKDIR build
 CD build
 
 SET TOOLCHAIN=CMAKE_TOOLCHAIN_FILE=%VCPKGPATH%\scripts\buildsystems\vcpkg.cmake
-SET VCPKGCUSTOMEDIR=CUSTOME_VCPKG_INSTALL_DIR=%VCPKG_PARENT_DIR%\vcpkg_installed
+SET VCPKGCUSTOMEDIR=_VCPKG_INSTALLED_DIR=%VCPKG_PARENT_DIR%\vcpkg_installed
+SET VCPKGTRIPLET=VCPKG_TARGET_TRIPLET="x86-windows"
 
-cmake -G "Visual Studio 16 2019" -A Win32 -D%VCPKGCUSTOMEDIR% -DUSE_VCPKG=ON -DOPTION_DISABLE_STACKTRACE=ON -D%TOOLCHAIN% ..
+cmake -G "Visual Studio 16 2019" -A Win32 -D%VCPKGCUSTOMEDIR% -D%VCPKGTRIPLET% -DOPTION_DISABLE_STACKTRACE=ON -D%TOOLCHAIN% ..
 
 CD %CALLER_DIR%
