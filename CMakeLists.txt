@@ -1,8 +1,6 @@
 SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 
-MESSAGE(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
-
 # root
 PROJECT(perimeter)
 
