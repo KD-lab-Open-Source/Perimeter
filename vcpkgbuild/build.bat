@@ -1,9 +1,37 @@
 @echo off
 
+SET MSVC_ARCH=%1
+
+FOR %%A IN ("x86" "x64") DO (
+	IF "%MSVC_ARCH%" == %%A (
+		SET ARCH_PARAM=1
+	)
+)
+
+IF NOT DEFINED ARCH_PARAM (
+	SET MSVC_ARCH=x86
+)
+
+IF "%MSVC_ARCH%" == "x64" (
+	SET MSVC_CMD_ARCH=x86_amd64
+)
+
+FOR %%i IN ("%~dp0") DO SET VCPKG_SCRIPT_DIR=%%~fi
+
+FOR /f "usebackq delims=" %%i IN (`%VCPKG_SCRIPT_DIR%\vswhere.exe -version "[16.0,17.0)" -latest -property installationPath`) DO (
+	IF EXIST "%%i\Common7\Tools\vsdevcmd.bat" (
+		CALL "%%i\Common7\Tools\vsdevcmd.bat" %MSVC_CMD_ARCH%
+	)
+)
+
+IF "%VSCMD_ARG_HOST_ARCH%" NEQ "%MSVC_ARCH%" (
+	ECHO Wrong vs cmd arch. Expected: %MSVC_ARCH%, current: "%VSCMD_ARG_HOST_ARCH%"
+	EXIT /B
+)
+
 SET CALLER_DIR=%CD%
 
 SET VCPKG_PARENT_DIR=%PERIMETER_VCPKG_DIR%
-FOR %%i IN ("%~dp0") DO SET VCPKG_SCRIPT_DIR=%%~fi
 FOR %%i IN ("%~dp0..") DO SET PROJECT_PATH=%%~fi
 
 SET BUILD_CONF_TOKENS=VCPKG_REV
@@ -12,7 +40,6 @@ FOR %%A IN (%BUILD_CONF_TOKENS%) DO (
 )
 
 COPY %VCPKG_SCRIPT_DIR%\vcpkg.json %PROJECT_PATH%
-
 CD %PROJECT_PATH%
 
 IF NOT DEFINED VCPKG_PARENT_DIR (
@@ -57,7 +84,11 @@ CD build
 
 SET TOOLCHAIN=CMAKE_TOOLCHAIN_FILE=%VCPKGPATH%\scripts\buildsystems\vcpkg.cmake
 SET VCPKGCUSTOMEDIR=_VCPKG_INSTALLED_DIR=%VCPKG_PARENT_DIR%\vcpkg_installed
-SET VCPKGTRIPLET=VCPKG_TARGET_TRIPLET="x86-windows"
+IF "%MSVC_ARCH%" == "x86" (
+	SET VCPKGTRIPLET=VCPKG_TARGET_TRIPLET="x86-windows"
+) ELSE (
+	SET VCPKGTRIPLET=VCPKG_TARGET_TRIPLET="x64-windows"
+)
 
 cmake -G "Visual Studio 16 2019" -A Win32 -D%VCPKGCUSTOMEDIR% -D%VCPKGTRIPLET% -DOPTION_DISABLE_STACKTRACE=ON -D%TOOLCHAIN% ..
 
