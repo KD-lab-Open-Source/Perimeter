@@ -50,7 +50,7 @@ public:
 	bool hasAlt() const { return name_ != nameAlt_; }
 	void setNameAlt(const char* nameAlt) { nameAlt_ = nameAlt; }
 	Type type() const { return type_; }
-	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // основное действие данного токена
+	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	virtual void declaration(WriteStream& buf, bool declExtern = false) const {}
 	virtual void definition(WriteStream& buf, const char* parentPrefix) const {}
 	virtual void initialization(WriteStream& buf) const {}
@@ -136,7 +136,7 @@ public:
 	const char* get_token();	
 	void put_token();	
 	void skip_token(const char* token) { if(strcmp(get_token(), token)) throw expected_token(token); }
-	friend XBuffer& operator<= (XBuffer& os, const Parser& p) { char full[_MAX_PATH]; _fullpath( full, p.fname.c_str(), _MAX_PATH ); os < full < '(' <= p.line < ") : "; return os; }
+	friend XBuffer& operator<= (XBuffer& os, const Parser& p) { char full[MAX_PATH]; _fullpath( full, p.fname.c_str(), MAX_PATH ); os < full < '(' <= p.line < ") : "; return os; }
 	operator const char*() const { return current_token; }
 	
 private:
@@ -545,7 +545,7 @@ public:
 	PointerVariable(const char* name, const DataType& type) : Variable(type), variable(0), inited_by_array(0) {}
 	void init(Compiler& comp);
 	void write_value(WriteStream& buf) const { if(variable){ if(!inited_by_array) buf() < "&"; buf() < variable_refine_name.c_str(); } else buf() < "0"; }
-	void copy_value(void* val) const {} // изменение адреса приведет к изменению описания
+	void copy_value(void* val) const {} // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	void write_name(WriteStream& buf) const { buf() < refine_name_prefix.c_str() < type.type_name() < " const* " < name(); }
 //	const Variable& at(int index) const { return variable->at(index); } 
 };

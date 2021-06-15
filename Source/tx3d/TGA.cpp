@@ -111,7 +111,7 @@ bool TGA::load(const char *fileName) {
 			memcpy(p2, tmp, size);
 		}
 
-		delete tmp;
+		delete[] tmp;
 	}
 
 	if (bpp >= 3) {

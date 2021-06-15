@@ -57,8 +57,8 @@ unsigned char vrtMap::GetGeoType(int offset, int h)
 char* GetINIstringV(const char* iniFile,const char* section,const char* key)
 {
 	static char buffer[255+1];
-	static char fullPath[_MAX_PATH];
-	if(_fullpath(fullPath, iniFile, _MAX_PATH) == NULL) ErrH.Abort("Invalid path..." );
+	static char fullPath[MAX_PATH];
+	if(_fullpath(fullPath, iniFile, MAX_PATH) == NULL) ErrH.Abort("Invalid path..." );
 	if(!GetPrivateProfileString(section,key,"",buffer,255,fullPath)){//fullPath
 		buffer[0]=0;
 	}
@@ -67,8 +67,8 @@ char* GetINIstringV(const char* iniFile,const char* section,const char* key)
 void SaveINIstringV(const char* iniFile,const char* section,const char* key,const char* var)
 {
 	//WritePrivateProfileString(section,key,var,iniFile);
-	static char fullPath[_MAX_PATH];
-	if(_fullpath(fullPath, iniFile, _MAX_PATH) == NULL) ErrH.Abort("Invalid path..." );
+	static char fullPath[MAX_PATH];
+	if(_fullpath(fullPath, iniFile, MAX_PATH) == NULL) ErrH.Abort("Invalid path..." );
 	WritePrivateProfileString(section,key,var,fullPath);//fullPath
 }
 
@@ -278,7 +278,7 @@ void ConvertProcedure(char* name)
 		}
 //	cout <<endl;
 
-	delete buf;
+	delete[] buf;
 	fin.close();
 	fout.close();
 }
@@ -2461,7 +2461,7 @@ int vrtMap::loadLeveledTexture(void)
 		}
 	}
 	ff.close();
-	delete line;
+	delete[] line;
 
 
 	//Конвертирование палитры из BGR в RGB

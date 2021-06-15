@@ -279,7 +279,7 @@ void SNDScript::PlayByLevel(int pause_level)
 
 const char* SNDScript::filePath(const ScriptParam* prm,const char* file_name,int belligerent_index)
 {
-	static XBuffer fname(_MAX_PATH);
+	static XBuffer fname(MAX_PATH);
 
 	fname.init();
 

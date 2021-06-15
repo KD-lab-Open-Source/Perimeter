@@ -26,7 +26,7 @@ bool ExportMaterial::Export(IGameMaterial * mat)
 		   mat->GetSpecularLevelData()==NULL
 		)
 		{
-			Msg("Error: %s - Неподдерживаемый тип материала\n",mat_name);
+			Msg("Error: %s - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ\n",mat_name);
 			return false;
 		}
 
@@ -64,7 +64,7 @@ bool ExportMaterial::Export(IGameMaterial * mat)
 		DWORD slot=tex_map->GetStdMapSlot();
 		saver<<slot;
 		const char* tex_name=tex_map->GetBitmapFileName();
-		char filename_out[_MAX_PATH]="";
+		char filename_out[MAX_PATH]="";
 		if(tex_name)
 		{
 			char drive[_MAX_DRIVE];

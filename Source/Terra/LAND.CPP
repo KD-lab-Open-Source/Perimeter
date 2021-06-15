@@ -99,7 +99,7 @@ void vrtMap::landPrepare(void)
 		xheap += maxRad[ind];
 		yheap += maxRad[ind];
 		}
-	delete rad;
+	delete[] rad;
 }
 void vrtMap::landRelease(void)
 {
@@ -524,7 +524,7 @@ void vrtMap::gaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 			if(new_alt_buff[((yy)*Diameter) + (xx)])voxSet(XCYCL(xBeg+xx), YCYCL(yBeg+yy), new_alt_buff[((yy)*Diameter) + (xx)]);
 			}
 	}
-	delete new_alt_buff;
+	delete[] new_alt_buff;
 	regRender(xBeg, yBeg, XCYCL(xBeg + Diameter), YCYCL(yBeg + Diameter));
 }
 ////////////////////////////////
@@ -575,7 +575,7 @@ void vrtMap::squareGaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 			if(new_alt_buff[((yy)*Diameter) + (xx)])voxSet(XCYCL(xBeg+xx), YCYCL(yBeg+yy), new_alt_buff[((yy)*Diameter) + (xx)]);
 		}
 	}
-	delete new_alt_buff;
+	delete[] new_alt_buff;
 	regRender(xBeg, yBeg, XCYCL(xBeg + Diameter), YCYCL(yBeg + Diameter));
 }
 
@@ -622,7 +622,7 @@ void vrtMap::AllworldGaussFilter(double _filter_scaling)
 			voxSet(XCYCL(xx), YCYCL(yy), new_alt_buff[((yy)*H_SIZE) + (xx)]);
 			}
 	}
-	delete new_alt_buff;
+	delete[] new_alt_buff;
 	regRender(0, 0, H_SIZE-1, V_SIZE-1);
 }
 

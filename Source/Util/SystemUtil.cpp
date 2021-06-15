@@ -41,22 +41,22 @@ const char* win32_findfirst(const char* mask)
 const char* IniManager::get(const char* section, const char* key)
 {
 	static char buf[256];
-	static char path[_MAX_PATH];
+	static char path[MAX_PATH];
 
-	if(_fullpath(path,fname_,_MAX_PATH) == NULL) 
+	if(_fullpath(path,fname_,MAX_PATH) == NULL)
 		ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_);
 	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
 		*buf = 0;
-		xassert_s(!check_existence_, (string("Не определен ключ ") + fname_ + " " + section + " " + key).c_str());
+		xassert_s(!check_existence_, (string("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ ") + fname_ + " " + section + " " + key).c_str());
 	}
 
 	return buf;
 }
 void IniManager::put(const char* section, const char* key, const char* val)
 {
-	static char path[_MAX_PATH];
+	static char path[MAX_PATH];
 
-	if(_fullpath(path,fname_,_MAX_PATH) == NULL) {
+	if(_fullpath(path,fname_,MAX_PATH) == NULL) {
 		ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_);
 	}
 

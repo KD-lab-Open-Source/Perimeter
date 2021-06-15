@@ -15,8 +15,8 @@ public:
 	Token(const Token& token) : name_(token.name()) {}
 	virtual ~Token() {}
 	const char* name() const { return name_.c_str(); }
-	virtual Token* clone() const { return const_cast<Token*>(this); } // реально клонируются только изменяемые токены
-	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // основное действие данного токена
+	virtual Token* clone() const { return const_cast<Token*>(this); } // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 protected:
 	string name_;
 };
@@ -91,7 +91,7 @@ public:
 	const char* get_token();	
 	void put_token();	
 	void skip_token(const char* token) { if(strcmp(get_token(), token)) throw expected_token(token); }
-	friend XBuffer& operator<= (XBuffer& os, const Parser& p) { char full[_MAX_PATH]; _fullpath( full, p.fname.c_str(), _MAX_PATH ); os < full < '(' <= p.line < ") : "; return os; }
+	friend XBuffer& operator<= (XBuffer& os, const Parser& p) { char full[MAX_PATH]; _fullpath( full, p.fname.c_str(), MAX_PATH ); os < full < '(' <= p.line < ") : "; return os; }
 	operator const char*() const { return current_token; }
 };
 
@@ -175,7 +175,7 @@ public:
 };
 					    
 /////////////////////////////////////////////////////////////////////////////////////////////
-//	  WriteStream - надстройка для контроля длины строк.
+//	  WriteStream - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 /////////////////////////////////////////////////////////////////////////////////////////////
 class WriteStream : public XBuffer
 {
@@ -352,7 +352,7 @@ public:
 	PointerVariable(const char* name, const DataType& type) : Token(name), Variable(type), variable(0), inited_by_array(0) {}
 	void init(Compiler& comp);
 	void write_value(WriteStream& buf) const { if(variable){ if(!inited_by_array) buf < "&"; buf < variable_refine_name.c_str(); } else buf < "0"; }
-	void copy_value(void* val) const {} // изменение адреса приведет к изменению описания
+	void copy_value(void* val) const {} // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	void write_name(XBuffer& buf) const { buf < refine_name_prefix.c_str() < type.type_name() < " const* " < name(); }
 	void description(unsigned& crc) const { Variable::description(crc); if(variable) variable->description(crc); }
 	int sizeOf() const { return 4; }

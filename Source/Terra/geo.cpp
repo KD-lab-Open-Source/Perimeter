@@ -142,7 +142,7 @@ static void gaussFilter(int * alt_buff, double filter_scaling, int xy_size)
 	}
 	//cout <<endl<<endl;
 	memcpy(alt_buff,new_alt_buff,xy_size*xy_size*sizeof(int));
-	delete new_alt_buff;
+	delete[] new_alt_buff;
 }
 
 // end Gauss
@@ -1863,7 +1863,7 @@ static void gaussFilter4LS(unsigned short * alt_buff, double filter_scaling, int
 	}
 	//cout <<endl<<endl;
 	memcpy(alt_buff,new_alt_buff,x_size*y_size*sizeof(unsigned short));
-	delete new_alt_buff;
+	delete[] new_alt_buff;
 }
 /////////////////////////////////
 static void gaussFilter4LS(short * in_buff, short * out_buff, double filter_scaling, int x_size, int y_size)

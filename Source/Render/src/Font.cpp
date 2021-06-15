@@ -375,9 +375,9 @@ bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int 
 	int height=(int)round((float)(h*ScreenY)/768.0f);
 	statement_height=h;
 
-	char prefix[_MAX_PATH];
-	char texture_name[_MAX_PATH];
-	char fontname[_MAX_PATH];
+	char prefix[MAX_PATH];
+	char texture_name[MAX_PATH];
+	char fontname[MAX_PATH];
 	prefix[0]=0;
 	texture_name[0]=0;
 

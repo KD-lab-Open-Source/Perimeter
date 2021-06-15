@@ -92,12 +92,15 @@ void xtDeleteFile(char* fname);
 
 inline const char* check_command_line(const char* switch_str)
 {
+    //TODO implement this in cross platform way, maybe by saving argc/argv into some static struct?
+#ifdef _WIN32
     for(int i = 1; i < __argc; i ++){
         const char* s = strstr(__argv[i], switch_str);
         if(s)
             return s += strlen(switch_str);
     }
-    return 0;
+#endif
+    return nullptr;
 }
 
 #endif

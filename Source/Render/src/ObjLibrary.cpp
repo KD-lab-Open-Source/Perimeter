@@ -999,7 +999,7 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 
 cObjectNodeRoot* cObjLibrary::LoadLod(char *in_filename,char *TexturePath)
 {
-	char path_buffer[_MAX_PATH];
+	char path_buffer[MAX_PATH];
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];

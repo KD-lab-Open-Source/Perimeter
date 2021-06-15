@@ -8,8 +8,8 @@
 #include <conio.h>
 #include "MessageBlock.h"
 
-char inname[_MAX_PATH]="sound.cfg";
-char outname[_MAX_PATH];
+char inname[MAX_PATH]="sound.cfg";
+char outname[MAX_PATH];
 
 int main(int argc, char* argv[])
 {
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
                       _S_IREAD | _S_IWRITE );
 	if(f==-1)
 	{
-		message_printf("Не могу записать %s",outname);
+		message_printf("пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ %s",outname);
 		exit(1);
 		return 1;
 	}
@@ -90,8 +90,8 @@ int main(int argc, char* argv[])
 	_write(f,paramblock,sizeparam);
 	_close(f);
 
-	dosprintf("%s - откомпилирован успешно.\n",inname);
-//	dosprintf("Нажмите любую клавишу для окончания программы.\n");getch();
+	dosprintf("%s - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n",inname);
+//	dosprintf("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");getch();
 
 	exit(0);
 	return 0;
