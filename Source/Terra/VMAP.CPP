@@ -133,7 +133,7 @@ vrtMap::vrtMap(void)
 	VxGBuf=0; VxDBuf=0; SurBuf=0; AtrBuf=0; RnrBuf=0;
 	GVBuf=0; GABuf=0;
 	SupBuf=0;
-	hZeroPlast=30; //Начальная высота зеропласта
+	hZeroPlast=30; //РќР°С‡Р°Р»СЊРЅР°СЏ РІС‹СЃРѕС‚Р° Р·РµСЂРѕРїР»Р°СЃС‚Р°
 //	GKABuf=0;
 
 	LvdTex=0;
@@ -144,13 +144,13 @@ vrtMap::vrtMap(void)
 
 	veryLightDam=0;
 
-	//Поворот плоскости
+	//РџРѕРІРѕСЂРѕС‚ РїР»РѕСЃРєРѕСЃС‚Рё
 	turnAngleAroundZ=0;//-3.141592654f/2;
-	//Фокус
+	//Р¤РѕРєСѓСЃ
 	focusC=600;
-	//Расстояние от камеры
+	//Р Р°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ РєР°РјРµСЂС‹
 	cameraDZ=100;
-	//Угол наклона камеры
+	//РЈРіРѕР» РЅР°РєР»РѕРЅР° РєР°РјРµСЂС‹
 	cameraAngleLean=140;
 
 	flag_ShowHardness=0;
@@ -170,7 +170,7 @@ vrtMap::vrtMap(void)
 	clipXLeft=clipXRight=clipYTop=clipYBottom=-1;
 	//clipXLeft=1500; clipXRight=2047; clipYTop=100; clipYBottom=1000;
 #endif
-//Очистка списка для Undo  и установка итератора на начальный элемент
+//РћС‡РёСЃС‚РєР° СЃРїРёСЃРєР° РґР»СЏ Undo  Рё СѓСЃС‚Р°РЅРѕРІРєР° РёС‚РµСЂР°С‚РѕСЂР° РЅР° РЅР°С‡Р°Р»СЊРЅС‹Р№ СЌР»РµРјРµРЅС‚
 	//preCAs.erase(preCAs.begin(), preCAs.end());
 	//curPreCA=preCAs.begin();
 	UndoDispatcher_KillAllUndo();
@@ -190,7 +190,7 @@ vrtMap::~vrtMap(void)
 	if(gridChAreas) { delete [] gridChAreas; gridChAreas = NULL; }
 	if(gridChAreas2) { delete [] gridChAreas2; gridChAreas2 = NULL;}
 
-	delLeveledTexture();//Необходимо вызывать до удаления VxDBuf !
+	delLeveledTexture();//РќРµРѕР±С…РѕРґРёРјРѕ РІС‹Р·С‹РІР°С‚СЊ РґРѕ СѓРґР°Р»РµРЅРёСЏ VxDBuf !
 	if(VxGBuf!=0) releaseMem4Buf();
 	if(wTable!=0){
 		delete [] wTable;
@@ -210,7 +210,7 @@ void vrtMap::allocMem4Buf(void)
 	//ClTrBuf= new unsigned char [YS_Buf*XS_Buf];//(unsigned char(*)[YS_Buf][XS_Buf])(Buf+offsetClTr);
 
 	VxGBuf = new unsigned char [YS_Buf*XS_Buf];
-	WVxBuf = VxGBuf; //Текущие редактируемые воксели - гео-слой
+	WVxBuf = VxGBuf; //РўРµРєСѓС‰РёРµ СЂРµРґР°РєС‚РёСЂСѓРµРјС‹Рµ РІРѕРєСЃРµР»Рё - РіРµРѕ-СЃР»РѕР№
 	VxDBuf = new unsigned char [YS_Buf*XS_Buf];
 	SurBuf = new unsigned char [YS_Buf*XS_Buf];
 	AtrBuf = new unsigned char [YS_Buf*XS_Buf];
@@ -220,7 +220,7 @@ void vrtMap::allocMem4Buf(void)
 #ifdef _SURMAP_
 	SpecSurBuf = new unsigned char [YS_Buf*XS_Buf];
 #endif
-//	TgaBuf = new unsigned char [YS_Buf*XS_Buf]; //По идее только для SurMapa
+//	TgaBuf = new unsigned char [YS_Buf*XS_Buf]; //РџРѕ РёРґРµРµ С‚РѕР»СЊРєРѕ РґР»СЏ SurMapa
 
 	GVBuf  = new unsigned char [(YS_Buf>>kmGrid)*(XS_Buf>>kmGrid)];
 	GABuf  = new unsigned short [(YS_Buf>>kmGrid)*(XS_Buf>>kmGrid)];
@@ -343,7 +343,7 @@ void vrtMap::analyzeINI(const char* name)
 	DEFAULT_TERRAIN = atoi(GetINIstringV(name,secCreation,"Default Terrain Type"));// << TERRAIN_OFFSET;
 
 
-	//Подгрузка параметров зеропласта из другого файла
+	//РџРѕРґРіСЂСѓР·РєР° РїР°СЂР°РјРµС‚СЂРѕРІ Р·РµСЂРѕРїР»Р°СЃС‚Р° РёР· РґСЂСѓРіРѕРіРѕ С„Р°Р№Р»Р°
 //	XStream fTst(0);
 //	if(fTst.open(GetTargetName(worldParamZPIniFile), XS_IN)){
 //		XBuffer tbuf;
@@ -357,17 +357,17 @@ void vrtMap::analyzeINI(const char* name)
 }
 
 #ifdef _SURMAP_
-//Для SurMap3
+//Р”Р»СЏ SurMap3
 void vrtMap::prepare()
 {
-	//Подготовка круглых инструментов
+	//РџРѕРґРіРѕС‚РѕРІРєР° РєСЂСѓРіР»С‹С… РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ
 	landPrepare();
-	//Инициализация графического режима
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РіСЂР°С„РёС‡РµСЃРєРѕРіРѕ СЂРµР¶РёРјР°
 	hCamera=500;
 	fCamera=500;
 
-	//Копирование только имени каталога в dirWorldPrm 
-	dirWorldPrm = strdup("");//пустая строка
+	//РљРѕРїРёСЂРѕРІР°РЅРёРµ С‚РѕР»СЊРєРѕ РёРјРµРЅРё РєР°С‚Р°Р»РѕРіР° РІ dirWorldPrm 
+	dirWorldPrm = strdup("");//РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°
 
 	maxWorld = 1;
 	wTable = new vrtWorld[maxWorld];
@@ -375,10 +375,10 @@ void vrtMap::prepare()
 	wTable[0].dir = strdup("");
 
 }
-//Для SurMap3
+//Р”Р»СЏ SurMap3
 void vrtMap::selectUsedWorld(char* _patch2World)
 {
-	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
+	UndoDispatcher_KillAllUndo(); //РћС‡РёСЃС‚РєР° РІСЃРµРіРѕ Р±СѓС„РµСЂР° Undo-Redo
 
 	free(wTable[0].name);
 	free(wTable[0].dir);
@@ -417,17 +417,17 @@ void vrtMap::selectUsedWorld(char* _patch2World)
 	renderAreas.clear();
 }
 
-#else //если Периметр
-//Для Периметра
+#else //РµСЃР»Рё РџРµСЂРёРјРµС‚СЂ
+//Р”Р»СЏ РџРµСЂРёРјРµС‚СЂР°
 void vrtMap::prepare(char* name)
 {
-	//Подготовка круглых инструментов
+	//РџРѕРґРіРѕС‚РѕРІРєР° РєСЂСѓРіР»С‹С… РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ
 	landPrepare();
-	//Инициализация графического режима
+	//РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РіСЂР°С„РёС‡РµСЃРєРѕРіРѕ СЂРµР¶РёРјР°
 	hCamera=500;
 	fCamera=500;
 
-	//Копирование только имени каталога в dirWorldPrm 
+	//РљРѕРїРёСЂРѕРІР°РЅРёРµ С‚РѕР»СЊРєРѕ РёРјРµРЅРё РєР°С‚Р°Р»РѕРіР° РІ dirWorldPrm 
 	char* dir,*dirtemp;
 	char *dirend=dirtemp=dir=strdup(name);
 	while(*dirtemp) {
@@ -438,7 +438,7 @@ void vrtMap::prepare(char* name)
 	dirWorldPrm = strdup(dir);
 	free(dir);
 
-	// Заполнение таблицы миров
+	// Р—Р°РїРѕР»РЅРµРЅРёРµ С‚Р°Р±Р»РёС†С‹ РјРёСЂРѕРІ
 	prmFile.init(name);
 	maxWorld = atoi(prmFile.getAtom());
 	if(maxWorld < 1) ErrH.Abort("Empty world list");
@@ -453,20 +453,20 @@ void vrtMap::prepare(char* name)
 		atom = prmFile.getAtom();
 		if(!atom) ErrH.Abort("Null world path");
 
-		strcpy(tString,dirWorldPrm);//копирование в строку пути до каталога с worlds.prm
+		strcpy(tString,dirWorldPrm);//РєРѕРїРёСЂРѕРІР°РЅРёРµ РІ СЃС‚СЂРѕРєСѓ РїСѓС‚Рё РґРѕ РєР°С‚Р°Р»РѕРіР° СЃ worlds.prm
 		if(*dirWorldPrm) strcat(tString,"\\");		
-		strcat(tString,atom);		//добавление в строку пути до каталога с миром
+		strcat(tString,atom);		//РґРѕР±Р°РІР»РµРЅРёРµ РІ СЃС‚СЂРѕРєСѓ РїСѓС‚Рё РґРѕ РєР°С‚Р°Р»РѕРіР° СЃ РјРёСЂРѕРј
 		wTable[i].dir = strdup(tString);
 		}
 	prmFile.finit();
 }
 
-//Для Периметра
+//Р”Р»СЏ РџРµСЂРёРјРµС‚СЂР°
 void vrtMap::selectUsedWorld(int nWorld)
 {
 	XRndSet(1);
 
-	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
+	UndoDispatcher_KillAllUndo(); //РћС‡РёСЃС‚РєР° РІСЃРµРіРѕ Р±СѓС„РµСЂР° Undo-Redo
 
 // reload
 	if(nWorld >= maxWorld || nWorld < 0) ErrH.Abort("World Index out of range");
@@ -522,7 +522,7 @@ void vrtMap::setupGeneralVariable()
 	GV_SIZE = V_SIZE >> kmGrid;
 	clip_mask_y_g = GV_SIZE - 1;
 
-	XS_Buf=H_SIZE; //Пока размер буфера будет равен размеру карты
+	XS_Buf=H_SIZE; //РџРѕРєР° СЂР°Р·РјРµСЂ Р±СѓС„РµСЂР° Р±СѓРґРµС‚ СЂР°РІРµРЅ СЂР°Р·РјРµСЂСѓ РєР°СЂС‚С‹
 	YS_Buf=V_SIZE;
 
 	MINSQUARE = 1 << MINSQUARE_POWER;
@@ -573,7 +573,7 @@ void vrtMap::createWorld(int hSizePower, int vSizePower)
 
 void vrtMap::newLoad(const char* dirName)
 {
-	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
+	UndoDispatcher_KillAllUndo(); //РћС‡РёСЃС‚РєР° РІСЃРµРіРѕ Р±СѓС„РµСЂР° Undo-Redo
 
 	free(wTable[0].name);
 	free(wTable[0].dir);
@@ -631,8 +631,8 @@ void vrtMap::delAllZL()
 		for(x=0; x<H_SIZE; x++){
 			int offB=offsetBuf(x,y);
 			if((vMap.AtrBuf[offB]&At_ZPMASK)==At_ZEROPLAST) vMap.AtrBuf[offB]=(vMap.AtrBuf[offB]&(~At_NOTPURESURFACE))|At_LEVELED;
-			//AtrBuf[offsetBuf(x,y)]&=0xDF; //Очистка тени
-			//AtrBuf[offsetBuf(x,y)]&=~(At_NOTPURESURFACE); //Очистка зеропласта
+			//AtrBuf[offsetBuf(x,y)]&=0xDF; //РћС‡РёСЃС‚РєР° С‚РµРЅРё
+			//AtrBuf[offsetBuf(x,y)]&=~(At_NOTPURESURFACE); //РћС‡РёСЃС‚РєР° Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			ch[y] = 1;
 		}
 	}
@@ -646,7 +646,7 @@ void vrtMap::checkAndRecover()
 		for(x=0; x<H_SIZE; x++){
 #ifdef _PERIMETER_
 			int off=offsetBuf(x,y);
-			AtrBuf[off]&=0xDF; //Очистка тени
+			AtrBuf[off]&=0xDF; //РћС‡РёСЃС‚РєР° С‚РµРЅРё
 			//if( (VxGBuf[off]!=hZeroPlast) && (VxDBuf[off]!=hZeroPlast) ){
 			if(SGetAlt(off)!=hZeroPlast<<VX_FRACTION ){
 				AtrBuf[off]&=~(At_NOTPURESURFACE);
@@ -658,13 +658,13 @@ void vrtMap::checkAndRecover()
 			}
 
 #else //Surmap
-			AtrBuf[offsetBuf(x,y)]&=0xDF; //Очистка тени
-//			AtrBuf[offsetBuf(x,y)]&=~(At_NOTPURESURFACE); //Очистка зеропласта
+			AtrBuf[offsetBuf(x,y)]&=0xDF; //РћС‡РёСЃС‚РєР° С‚РµРЅРё
+//			AtrBuf[offsetBuf(x,y)]&=~(At_NOTPURESURFACE); //РћС‡РёСЃС‚РєР° Р·РµСЂРѕРїР»Р°СЃС‚Р°
 //			if( SGetAlt(offsetBuf(x,y))==85<<VX_FRACTION ){
 //				AtrBuf[offsetBuf(x,y)] = (AtrBuf[offsetBuf(x,y)]&(~At_NOTPURESURFACE)) | At_LEVELED;
 //				ch[y]=1;
 //			}
-			//Опускание мира на 30
+			//РћРїСѓСЃРєР°РЅРёРµ РјРёСЂР° РЅР° 30
 /*			int V;
 			const modifDelta=-((35<<VX_FRACTION)+20);
 			if( VxDBuf[offsetBuf(x,y)]!=0 ){
@@ -687,7 +687,7 @@ void vrtMap::checkAndRecover()
 
 /*	for(y=0; y<1024; y++){ //
 		for(x=0; x<1024; x++){
-			AtrBuf[offsetBuf(x,y)]=0x0; //Очистка тени
+			AtrBuf[offsetBuf(x,y)]=0x0; //РћС‡РёСЃС‚РєР° С‚РµРЅРё
 			VxGBuf[offsetBuf(x,y)]=100;//hZeroPlast;
 			VxDBuf[offsetBuf(x,y)]=0;
 		}
@@ -700,11 +700,11 @@ void vrtMap::loadHardness2Grid(void)
 	TGAHEAD tgahead;
 	if(!tgahead.loadHeader(GetTargetName("hardness.tga"))) return;
 	if((tgahead.PixelDepth!=8) || (tgahead.ImageType!=3)) {
-		ErrH.Abort("Wrong type HARDNESS.BIN for the world");//"Не поддерживаемый тип TGA (необходим монохромный не компрессованный) для HARDNESS");
+		ErrH.Abort("Wrong type HARDNESS.BIN for the world");//"РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Р№ С‚РёРї TGA (РЅРµРѕР±С…РѕРґРёРј РјРѕРЅРѕС…СЂРѕРјРЅС‹Р№ РЅРµ РєРѕРјРїСЂРµСЃСЃРѕРІР°РЅРЅС‹Р№) РґР»СЏ HARDNESS");
 		return;
 	}
 	if(tgahead.Width!=H_SIZE || tgahead.Height!=V_SIZE){
-		ErrH.Abort("Wrong size HARDNESS.BIN for the world");// "Не правильный размер TGA для HARDNESS");
+		ErrH.Abort("Wrong size HARDNESS.BIN for the world");// "РќРµ РїСЂР°РІРёР»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ TGA РґР»СЏ HARDNESS");
 		return;
 	}
 	unsigned char * HDNBuf;
@@ -714,19 +714,19 @@ void vrtMap::loadHardness2Grid(void)
 	int i,j,kx,ky;
 	for(i=0; i<(V_SIZE>>kmGrid); i++){
 		for(j=0; j<(H_SIZE>>kmGrid); j++){
-			int of=offsetBuf(j<<kmGrid,i<<kmGrid); //Так как сетка кратна размеру -переход через границу карты исключен
+			int of=offsetBuf(j<<kmGrid,i<<kmGrid); //РўР°Рє РєР°Рє СЃРµС‚РєР° РєСЂР°С‚РЅР° СЂР°Р·РјРµСЂСѓ -РїРµСЂРµС…РѕРґ С‡РµСЂРµР· РіСЂР°РЅРёС†Сѓ РєР°СЂС‚С‹ РёСЃРєР»СЋС‡РµРЅ
 			int Sum=0;
 			for(ky=0; ky<sizeCellGrid; ky++){
 				for(kx=0; kx<sizeCellGrid; kx++){
 					Sum+=HDNBuf[of+kx];
 				}
-				of+=H_SIZE; //Переход на следующую строку
+				of+=H_SIZE; //РџРµСЂРµС…РѕРґ РЅР° СЃР»РµРґСѓСЋС‰СѓСЋ СЃС‚СЂРѕРєСѓ
 			}
 			int ofG=offsetGBuf(j,i);
-			//ОБнуляем атрибуты и выставляем признак подготовленности для зеропласта
-			Sum=(Sum+1) >>(kmGrid+kmGrid); //Округление и деление на 16 (4x4)
+			//РћР‘РЅСѓР»СЏРµРј Р°С‚СЂРёР±СѓС‚С‹ Рё РІС‹СЃС‚Р°РІР»СЏРµРј РїСЂРёР·РЅР°Рє РїРѕРґРіРѕС‚РѕРІР»РµРЅРЅРѕСЃС‚Рё РґР»СЏ Р·РµСЂРѕРїР»Р°СЃС‚Р°
+			Sum=(Sum+1) >>(kmGrid+kmGrid); //РћРєСЂСѓРіР»РµРЅРёРµ Рё РґРµР»РµРЅРёРµ РЅР° 16 (4x4)
 			GABuf[ofG]=((Sum>>6)&GRIDAT_MASK_HARDNESS) | (GABuf[ofG]&(~GRIDAT_MASK_HARDNESS));
-			//Sum>>6 приведение от 0-255 к диапазону 0-3
+			//Sum>>6 РїСЂРёРІРµРґРµРЅРёРµ РѕС‚ 0-255 Рє РґРёР°РїР°Р·РѕРЅСѓ 0-3
 		}
 	}
 
@@ -808,7 +808,7 @@ void vrtMap::saveHardness(void)
 void vrtMap::clearGridChangedAreas(void)
 {
 	int sizeGCA=(V_SIZE>>kmGridChA)*(H_SIZE>>kmGridChA);
-	//for(int i=0; i<sizeGCA; i++) gridChAreas[i]=0; //обнуление
+	//for(int i=0; i<sizeGCA; i++) gridChAreas[i]=0; //РѕР±РЅСѓР»РµРЅРёРµ
 	memset(gridChAreas, 0, sizeGCA*sizeof(*gridChAreas));
 	memset(gridChAreas2, 0, sizeGCA*sizeof(*gridChAreas));
 }
@@ -834,7 +834,7 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 {
 	sVmpHeader VmpHeader;
 
-	delLeveledTexture();//Необходимо вызывать до удаления VxDBuf !
+	delLeveledTexture();//РќРµРѕР±С…РѕРґРёРјРѕ РІС‹Р·С‹РІР°С‚СЊ РґРѕ СѓРґР°Р»РµРЅРёСЏ VxDBuf !
 	if(VxGBuf!=0) releaseMem4Buf();
 	allocMem4Buf();
 
@@ -852,7 +852,7 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 		loadGeoDamPal();
 
 		checkAndRecover();
-		//Для эксперимента - убирать нужно после своих экскриментов
+		//Р”Р»СЏ СЌРєСЃРїРµСЂРёРјРµРЅС‚Р° - СѓР±РёСЂР°С‚СЊ РЅСѓР¶РЅРѕ РїРѕСЃР»Рµ СЃРІРѕРёС… СЌРєСЃРєСЂРёРјРµРЅС‚РѕРІ
 		//extern void pn(void);
 		//pn();
 		f3d.loadVariable();
@@ -874,13 +874,13 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 
 	fmap.close();
 
-	loadLeveledTexture(); //необходимо вызывать после загрузки VxDBuf и палитры
+	loadLeveledTexture(); //РЅРµРѕР±С…РѕРґРёРјРѕ РІС‹Р·С‹РІР°С‚СЊ РїРѕСЃР»Рµ Р·Р°РіСЂСѓР·РєРё VxDBuf Рё РїР°Р»РёС‚СЂС‹
 
 	TGAHEAD tgahead;
 	tgahead.loadHeader(GetTargetName(worldRGBCache));
 	if((tgahead.PixelDepth!=24) || (tgahead.ImageType!=2)) {
-		///AfxMessageBox("Не поддерживаемый тип TGA (необходим 24bit не компрессованный)");
-		xassert(0&&"Не поддерживаемый тип TGA (необходим 24bit не компрессованный)");
+		///AfxMessageBox("РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Р№ С‚РёРї TGA (РЅРµРѕР±С…РѕРґРёРј 24bit РЅРµ РєРѕРјРїСЂРµСЃСЃРѕРІР°РЅРЅС‹Р№)");
+		xassert(0&&"РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Р№ С‚РёРї TGA (РЅРµРѕР±С…РѕРґРёРј 24bit РЅРµ РєРѕРјРїСЂРµСЃСЃРѕРІР°РЅРЅС‹Р№)");
 		return;
 	}
 	tgahead.load2RGBL(XS_Buf, YS_Buf, SupBuf);
@@ -896,14 +896,14 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 bool vrtMap::loadGameMap(const char* fname, bool flag_FastLoad)
 {
 	XStream ff(fname, XS_IN);
-	//Чтение номера мира
+	//Р§С‚РµРЅРёРµ РЅРѕРјРµСЂР° РјРёСЂР°
 	int nW;
 	ff.read(&nW, sizeof(cWorld));
 //	if(cWorld!=nW) return 0;
-	//Чтение таблицы измененных областей
+	//Р§С‚РµРЅРёРµ С‚Р°Р±Р»РёС†С‹ РёР·РјРµРЅРµРЅРЅС‹С… РѕР±Р»Р°СЃС‚РµР№
 	int sizeGCA=(V_SIZE>>kmGridChA)*(H_SIZE>>kmGridChA);
 	ff.read(gridChAreas, sizeGCA*sizeof(unsigned char));
-	//Чтение записанных измененных тайлов
+	//Р§С‚РµРЅРёРµ Р·Р°РїРёСЃР°РЅРЅС‹С… РёР·РјРµРЅРµРЅРЅС‹С… С‚Р°Р№Р»РѕРІ
 	int vSizeGCA=(V_SIZE>>kmGridChA);
 	int hSizeGCA=(H_SIZE>>kmGridChA);
 	unsigned char buffer[sizeCellGridCA*sizeCellGridCA];
@@ -973,13 +973,13 @@ bool vrtMap::loadGameMap(const char* fname, bool flag_FastLoad)
 bool vrtMap::saveGameMap(const char* fname)
 {
 	XStream ff(fname, XS_OUT);
-	//Запись номера мира
+	//Р—Р°РїРёСЃСЊ РЅРѕРјРµСЂР° РјРёСЂР°
 	ff.write(&cWorld, sizeof(cWorld));
-	//Запись таблицы измененных областей
+	//Р—Р°РїРёСЃСЊ С‚Р°Р±Р»РёС†С‹ РёР·РјРµРЅРµРЅРЅС‹С… РѕР±Р»Р°СЃС‚РµР№
 	updateGridChangedAreas2();
 	int sizeGCA=(V_SIZE>>kmGridChA)*(H_SIZE>>kmGridChA);
 	ff.write(gridChAreas2, sizeGCA*sizeof(unsigned char));
-	//запись измененных тайлов
+	//Р·Р°РїРёСЃСЊ РёР·РјРµРЅРµРЅРЅС‹С… С‚Р°Р№Р»РѕРІ
 	int vSizeGCA=(V_SIZE>>kmGridChA);
 	int hSizeGCA=(H_SIZE>>kmGridChA);
 	unsigned char buffer[sizeCellGridCA*sizeCellGridCA];
@@ -1176,10 +1176,10 @@ void vrtMap::compareChAreasInformation(unsigned char* pFirstCAI, unsigned char* 
 
 		if(x!=-1) {
 			if(flag_crc_notequal){
-				textOut < "Не совпадает CRC в квадратах ";
+				textOut < "РќРµ СЃРѕРІРїР°РґР°РµС‚ CRC РІ РєРІР°РґСЂР°С‚Р°С… ";
 			}
 			else {
-				textOut < "Не совпадают квадраты ";
+				textOut < "РќРµ СЃРѕРІРїР°РґР°СЋС‚ РєРІР°РґСЂР°С‚С‹ ";
 			}
 			textOut < "X=" <= (x<<kmGridChA) <"+" <=(sizeCellGridCA)  < " Y=" <= (y<<kmGridChA) <"+" <=(sizeCellGridCA) < "\r\n";
 			binOut < x < y;
@@ -1194,7 +1194,7 @@ void vrtMap::displayChAreas(unsigned char* pd, unsigned int dsize)
 {
 	int size=dsize/sizeof(int);
 	if( (size&0x01) || (dsize%sizeof(int)) ){
-		xassert(0 && "Не корректный размер несовпадающей зоны");
+		xassert(0 && "РќРµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ СЂР°Р·РјРµСЂ РЅРµСЃРѕРІРїР°РґР°СЋС‰РµР№ Р·РѕРЅС‹");
 		return;
 	}
 	size/=2;
@@ -1314,7 +1314,7 @@ void vrtMap::convertPal2TableSurCol(unsigned char palBuf[SIZE_GEO_PALETTE],eSurf
 			Sur2Col[i][j+SurBufOffset]=col;
 			col32= (int)round(cb); col32+= (int)round(cg)<<8; col32+= (int)round(cr)<<16;
 			Sur2Col32[i][j+SurBufOffset]=col32;
-			//ВРЕМЕННО !!!! (для совместимости с отсутствием текстуры выровненной поверхности)
+			//Р’Р Р•РњР•РќРќРћ !!!! (РґР»СЏ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё СЃ РѕС‚СЃСѓС‚СЃС‚РІРёРµРј С‚РµРєСЃС‚СѓСЂС‹ РІС‹СЂРѕРІРЅРµРЅРЅРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё)
 			Tex2Col[j+SurBufOffset][i]=col;
 			Tex2Col32[j+SurBufOffset][i]=col32;
 
@@ -1326,7 +1326,7 @@ void vrtMap::convertPal2TableSurCol(unsigned char palBuf[SIZE_GEO_PALETTE],eSurf
 			col32+= (int)round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
 			col32+= (int)round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
 			SurZP2Col32[j+SurBufOffset][i]=col32;
-			//ВРЕМЕННО !!!! (для совместимости с отсутствием текстуры выровненной поверхности)
+			//Р’Р Р•РњР•РќРќРћ !!!! (РґР»СЏ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё СЃ РѕС‚СЃСѓС‚СЃС‚РІРёРµРј С‚РµРєСЃС‚СѓСЂС‹ РІС‹СЂРѕРІРЅРµРЅРЅРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё)
 			TexZP2Col[j+SurBufOffset][i]=col;
 			TexZP2Col32[j+SurBufOffset][i]=col32;
 
@@ -1379,7 +1379,7 @@ void vrtMap::loadGeoDamPal(void)
 	convertPal2TableSurCol(DamPal, Damming);
 }
 
-void vrtMap::saveGeoDamPal(void)//unsigned char palBuf[SIZE_GEO_PALETTE] //Bufer в формате BGR
+void vrtMap::saveGeoDamPal(void)//unsigned char palBuf[SIZE_GEO_PALETTE] //Bufer РІ С„РѕСЂРјР°С‚Рµ BGR
 {
 	XStream ff(GetTargetName(worldGeoPalFile), XS_OUT);
 	ff.write(GeoPal, SIZE_GEO_PALETTE);//palBuf
@@ -1468,7 +1468,7 @@ void vrtMap::save3Buf(void)
 //	fxWaveSave(GetTargetName("fx.dat"));
 
 	saveGeoDamPal();
-// Сохранение ключей палитры и функции гео слоя
+// РЎРѕС…СЂР°РЅРµРЅРёРµ РєР»СЋС‡РµР№ РїР°Р»РёС‚СЂС‹ Рё С„СѓРЅРєС†РёРё РіРµРѕ СЃР»РѕСЏ
 	f3d.saveVariable();
 #ifdef _SURMAP_
 	keyGeoPal.saveKeyGeoPal();
@@ -1501,7 +1501,7 @@ void vrtMap::restore3Buf(void)
 {
 	sVmpHeader VmpHeader;
 
-	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
+	UndoDispatcher_KillAllUndo(); //РћС‡РёСЃС‚РєР° РІСЃРµРіРѕ Р±СѓС„РµСЂР° Undo-Redo
 	loadGeoDamPal();
 
 	fmap.open(GetTargetName(worldDataFileLinear),XS_IN | XS_OUT);
@@ -1530,7 +1530,7 @@ void vrtMap::restore3Buf(void)
 		}
 		for(i=0;i<YS_Buf;i++){
 			if(changedT[i]){
-				if(i>0)changedT[i-1]=1; //Для правильного рендера т.к. при рендере используются 2 строки
+				if(i>0)changedT[i-1]=1; //Р”Р»СЏ РїСЂР°РІРёР»СЊРЅРѕРіРѕ СЂРµРЅРґРµСЂР° С‚.Рє. РїСЂРё СЂРµРЅРґРµСЂРµ РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ 2 СЃС‚СЂРѕРєРё
 				fmap.seek(sizeof(VmpHeader)+i*XS_Buf+ XS_Buf*YS_Buf*3,XS_BEG);
 				fmap.read(&SurBuf[i*XS_Buf],XS_Buf);
 			}
@@ -1557,7 +1557,7 @@ void vrtMap::restore3Buf(void)
 
 	loadGeoDamPal();
 
-// Восстановление ключей палитры и функции гео слоя
+// Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РєР»СЋС‡РµР№ РїР°Р»РёС‚СЂС‹ Рё С„СѓРЅРєС†РёРё РіРµРѕ СЃР»РѕСЏ
 	f3d.loadVariable();
 	//f3d.recalcWorld();
 #ifdef _SURMAP_
@@ -1576,7 +1576,7 @@ void vrtMap::restore3Buf(void)
 
 void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned short* GRAF_BUF, int GB_MAXX, int GB_MAXY)
 {
-	int XSrcSize=hCamera*(xside<<1)/fCamera; //(xside<<1)- это xsize
+	int XSrcSize=hCamera*(xside<<1)/fCamera; //(xside<<1)- СЌС‚Рѕ xsize
 	unsigned short* vp = GRAF_BUF + (yc - yside)*GB_MAXX + (xc - xside);
 	int xsize = 2*xside;
 	int ysize = 2*yside;
@@ -1670,9 +1670,9 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 					const unsigned short MASK_R=0xF800;
 					const unsigned short MASK_G=0x07E0;
 					const unsigned short MASK_B=0x001F;
-					const int ALPHA=10;//из 16
+					const int ALPHA=10;//РёР· 16
 					const int ALPHAI=15-ALPHA;
-					if(status_ShowHideGeo==1){ //показ скрытого гео + дам
+					if(status_ShowHideGeo==1){ //РїРѕРєР°Р· СЃРєСЂС‹С‚РѕРіРѕ РіРµРѕ + РґР°Рј
 						if(*(dataVxD + XCYCL(fx >> 16))!=0){
 							short rnr=SLightTable[SLT_05SIZE+*(dataVxG+XCYCL(fx >> 16)) - *(dataVxG+XCYCL(1+(fx >> 16)))]>>1;
 							unsigned int t=Sur2Col[*(dataSpecSur + XCYCL(fx >> 16))][rnr];
@@ -1681,7 +1681,7 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 							*vp=t;
 						}
 					}
-					else if(status_ShowHideGeo==2){ //показ только скрытого гео
+					else if(status_ShowHideGeo==2){ //РїРѕРєР°Р· С‚РѕР»СЊРєРѕ СЃРєСЂС‹С‚РѕРіРѕ РіРµРѕ
 						if(*(dataVxD + XCYCL(fx >> 16))!=0){
 							short rnr=SLightTable[SLT_05SIZE+*(dataVxG+XCYCL(fx >> 16)) - *(dataVxG+XCYCL(1+(fx >> 16)))]>>1;
 							*vp=Sur2Col[*(dataSpecSur + XCYCL(fx >> 16))][rnr];
@@ -1689,10 +1689,10 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 					}
 #endif
 					//}
-					//Z-буффер
+					//Z-Р±СѓС„С„РµСЂ
 					//*vz = hCamera-(*(dataVxG + XCYCL(fx >> 16)));
 					fx += k_xscr_x;
-					//Только для показа зеропласта 
+					//РўРѕР»СЊРєРѕ РґР»СЏ РїРѕРєР°Р·Р° Р·РµСЂРѕРїР»Р°СЃС‚Р° 
 					//if( GRIDAT_ZEROPLAST & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)] )*vp|=31;
 	//				if( (GRIDAT_MASK_CLUSTERID & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) !=0)*vp|=63<<5;//==0x0100
 					//if( (GRIDAT_MASK_CLUSTERID & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==0x0100)*vp|=31<<11;
@@ -1701,7 +1701,7 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 //					if( GRIDAT_LEVELED & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)] )*vp|=63<<5;
 					//if( GRIDAT_TALLER_HZEROPLAST  & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)] )*vp|=31;
 
-					//для показа HARDNESS сетки
+					//РґР»СЏ РїРѕРєР°Р·Р° HARDNESS СЃРµС‚РєРё
 					//if( (GRIDAT_MASK_HARDNESS & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==0)*vp|=15;
 					//if( (GRIDAT_MASK_HARDNESS & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==1)*vp|=31<<5;
 					//if( (GRIDAT_MASK_HARDNESS & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==2)*vp|=15<<11;
@@ -1715,7 +1715,7 @@ void vrtMap::scaling16(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 
 void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned char* GRAF_BUF, int GB_MAXX, int GB_MAXY)
 {
-	int XSrcSize=hCamera*(xside<<1)/fCamera; //(xside<<1)- это xsize
+	int XSrcSize=hCamera*(xside<<1)/fCamera; //(xside<<1)- СЌС‚Рѕ xsize
 	unsigned char* vp = GRAF_BUF + 4*((yc - yside)*GB_MAXX + (xc - xside));
 	int xsize = 2*xside;
 	int ysize = 2*yside;
@@ -1786,9 +1786,9 @@ void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 					const unsigned int MASK_R=0xFF0000;
 					const unsigned int MASK_G=0x00FF00;
 					const unsigned int MASK_B=0x0000FF;
-					const int ALPHA=10;//из 16
+					const int ALPHA=10;//РёР· 16
 					const int ALPHAI=15-ALPHA;
-					if(status_ShowHideGeo==1){ //показ скрытого гео + дам
+					if(status_ShowHideGeo==1){ //РїРѕРєР°Р· СЃРєСЂС‹С‚РѕРіРѕ РіРµРѕ + РґР°Рј
 						if(*(dataVxD + XCYCL(fx >> 16))!=0){
 							short rnr=SLightTable[SLT_05SIZE+*(dataVxG+XCYCL(fx >> 16)) - *(dataVxG+XCYCL(1+(fx >> 16)))]>>1;
 							unsigned int t=Sur2Col32[*(dataSpecSur + XCYCL(fx >> 16))][rnr];
@@ -1797,7 +1797,7 @@ void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 							(unsigned int&)(*vp)=t;
 						}
 					}
-					else if(status_ShowHideGeo==2){ //показ только скрытого гео
+					else if(status_ShowHideGeo==2){ //РїРѕРєР°Р· С‚РѕР»СЊРєРѕ СЃРєСЂС‹С‚РѕРіРѕ РіРµРѕ
 						if(*(dataVxD + XCYCL(fx >> 16))!=0){
 							short rnr=SLightTable[SLT_05SIZE+*(dataVxG+XCYCL(fx >> 16)) - *(dataVxG+XCYCL(1+(fx >> 16)))]>>1;
 							(unsigned int&)(*vp)=Sur2Col32[*(dataSpecSur + XCYCL(fx >> 16))][rnr];
@@ -1805,7 +1805,7 @@ void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 					}
 #endif
 					fx += k_xscr_x;
-					//Только для показа зеропласта 
+					//РўРѕР»СЊРєРѕ РґР»СЏ РїРѕРєР°Р·Р° Р·РµСЂРѕРїР»Р°СЃС‚Р° 
 					//if( GRIDAT_ZEROPLAST & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)] )*vp|=31;
 	//				if( (GRIDAT_MASK_CLUSTERID & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) !=0)*vp|=63<<5;//==0x0100
 					//if( (GRIDAT_MASK_CLUSTERID & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==0x0100)*vp|=63<<5;
@@ -1813,12 +1813,12 @@ void vrtMap::scaling32(int cx,int cy,int xc,int yc,int xside,int yside, unsigned
 					//if( GRIDAT_TALLER_HZEROPLAST  & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)] )*vp|=31;
 					//if( GRIDAT_LEVELED & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)] )*vp|=31;
 
-					//для показа HARDNESS сетки
+					//РґР»СЏ РїРѕРєР°Р·Р° HARDNESS СЃРµС‚РєРё
 					//if( (GRIDAT_MASK_HARDNESS & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==0)*vp|=15;
 					//if( (GRIDAT_MASK_HARDNESS & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==1)*vp|=31<<5;
 					//if( (GRIDAT_MASK_HARDNESS & GABuf[offsetGBuf( XCYCL(fx>>16)>>kmGrid, YCYCL(fy >> 16) >>kmGrid)]) ==2)*vp|=15<<11;
 
-					//Для показа сетки проходимости
+					//Р”Р»СЏ РїРѕРєР°Р·Р° СЃРµС‚РєРё РїСЂРѕС…РѕРґРёРјРѕСЃС‚Рё
 				}
 				tfy += k_yscr_y;
 				vp += XADD;
@@ -1856,7 +1856,7 @@ void vrtMap::viewV(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside)
 	int y0=YCYCL(cy)<<16;
 
 	// Compute the xy coordinates; a and b will be the position inside the
-	// single map cell (0..255). //a,b дробная часть
+	// single map cell (0..255). //a,b РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ
 	u0=(x0>>16)&clip_mask_x;			a=(x0>>8)&255;
 	v0=((y0>>16)&clip_mask_y);			b=(y0>>8)&255;
 	u1=(u0+1)&clip_mask_x;
@@ -1872,7 +1872,7 @@ void vrtMap::viewV(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside)
 	h0=(h0<<8)+a*(h1-h0);
 	h2=(h2<<8)+a*(h3-h2);
 	hCamera=((h0<<8)+b*(h2-h0))>>16>>VX_FRACTION;
-	hCamera+=30;//Высота камеры над поверхностью
+	hCamera+=30;//Р’С‹СЃРѕС‚Р° РєР°РјРµСЂС‹ РЅР°Рґ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊСЋ
 
 	// Draw the landscape from near to far without overdraw
 	for ( d=0; d<1000; d+=1 ){//d+=1+(d>>6)
@@ -1921,7 +1921,7 @@ void vrtMap::viewV(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside)
 			//h0=(h0<<8)+a*(h1-h0);
 			//h2=(h2<<8)+a*(h3-h2);
 			//c=((h0<<8)+b*(h2-h0));
-			c=h0<<16; //Суммирование цвета пока выключено
+			c=h0<<16; //РЎСѓРјРјРёСЂРѕРІР°РЅРёРµ С†РІРµС‚Р° РїРѕРєР° РІС‹РєР»СЋС‡РµРЅРѕ
 
 			// Compute screen height using the scaling factor
 			y=(((hCamera-h)*scaling)>>10)+240;//100
@@ -1931,9 +1931,9 @@ void vrtMap::viewV(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside)
 				short *b=vp+a*XGR_MAXX+i;
 				int sc,cc;
 				if ( lastc[i]==-1 ) lastc[i]=c;
-				//sc=(c-lastc[i])/(a-y); // Переход цвета будет сделан потом
+				//sc=(c-lastc[i])/(a-y); // РџРµСЂРµС…РѕРґ С†РІРµС‚Р° Р±СѓРґРµС‚ СЃРґРµР»Р°РЅ РїРѕС‚РѕРј
 				sc=0;
-				cc=c;//lastc[i];//Переход цвета будет сделан потом
+				cc=c;//lastc[i];//РџРµСЂРµС…РѕРґ С†РІРµС‚Р° Р±СѓРґРµС‚ СЃРґРµР»Р°РЅ РїРѕС‚РѕРј
 				if ( a>(XGR_MAXY-1) ) {
 					b-=(a-(XGR_MAXY-1))*XGR_MAXX; cc+=(a-(XGR_MAXY-1))*sc; a=(XGR_MAXY-1); 
 				}
@@ -1970,13 +1970,13 @@ void vrtMap::viewV(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside)
 }
 
 
-/*//Поворот плоскости
+/*//РџРѕРІРѕСЂРѕС‚ РїР»РѕСЃРєРѕСЃС‚Рё
 float turnAngleAroundZ=0;//-3.141592654f/2;
-//Фокус
+//Р¤РѕРєСѓСЃ
 int focusC=600;
-//Расстояние от камеры
+//Р Р°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ РєР°РјРµСЂС‹
 int cameraDZ=100;
-//Угол наклона камеры
+//РЈРіРѕР» РЅР°РєР»РѕРЅР° РєР°РјРµСЂС‹
 int AAA=140;*/
 //float turnAngleAroundZ=-3.141592654f/2;
 //void vrtMap::viewV2D(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside)
@@ -2008,7 +2008,7 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 	int x0=XCYCL(cx)<<16;
 	int y0=YCYCL(cy)<<16;
 
-	//hCamera=600;//Высота камеры над поверхностью
+	//hCamera=600;//Р’С‹СЃРѕС‚Р° РєР°РјРµСЂС‹ РЅР°Рґ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊСЋ
 
 //	unsigned char* lv = &(WVxBuf[0]); 
 	unsigned char* lvG = &(VxGBuf[0]); 
@@ -2068,7 +2068,7 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 			h=((h0<<8)+b*(h2-h0))>>16;//>>VX_FRACTION
 
 			// Fetch the color at the four corners of the square the point is in
-			//Показ цвета
+			//РџРѕРєР°Р· С†РІРµС‚Р°
 /*			unsigned short* lc = &(ClBuf[0][0][0]);//
 			h0=lc[u0+v0]; h2=lc[u0+v1];
 			h1=lc[u1+v0]; h3=lc[u1+v1];
@@ -2077,9 +2077,9 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 			//h0=(h0<<8)+a*(h1-h0);
 			//h2=(h2<<8)+a*(h3-h2);
 			//c=((h0<<8)+b*(h2-h0));
-			c=h0<<16; //Суммирование цвета пока выключено*/
+			c=h0<<16; //РЎСѓРјРјРёСЂРѕРІР°РЅРёРµ С†РІРµС‚Р° РїРѕРєР° РІС‹РєР»СЋС‡РµРЅРѕ*/
 
-			//Показ по старой палитре
+			//РџРѕРєР°Р· РїРѕ СЃС‚Р°СЂРѕР№ РїР°Р»РёС‚СЂРµ
 /*			unsigned char* lc1 = &(ClTrBuf[0]);//
 			unsigned char* lc2 = &(AtBuf[0]);//
 			//c=TrPal[lc2[u0+v0]& TrW_MASK][lc1[u0+v0]]<<16;
@@ -2092,7 +2092,7 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 			h2=(h2<<8)+a*(h3-h2);
 			c=((h0<<8)+b*(h2-h0));
 			c=TrPal[lc2[u0+v0]& TrW_MASK][c>>16]<<16;*/
-			//Показ по новой палитре
+			//РџРѕРєР°Р· РїРѕ РЅРѕРІРѕР№ РїР°Р»РёС‚СЂРµ
 			unsigned char* lc1 = &(RnrBuf[0]);//
 			unsigned char* lc2 = &(SurBuf[0]);//
 			//c=TrPal[lc2[u0+v0]& TrW_MASK][lc1[u0+v0]]<<16;
@@ -2117,9 +2117,9 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 				short *b=vp+a*GB_MAXX+i;
 				int sc,cc;
 				if ( lastc[i]==-1 ) lastc[i]=c;
-				//sc=(c-lastc[i])/(a-y); // Переход цвета будет сделан потом
+				//sc=(c-lastc[i])/(a-y); // РџРµСЂРµС…РѕРґ С†РІРµС‚Р° Р±СѓРґРµС‚ СЃРґРµР»Р°РЅ РїРѕС‚РѕРј
 				sc=0;
-				cc=c;//lastc[i];//Переход цвета будет сделан потом
+				cc=c;//lastc[i];//РџРµСЂРµС…РѕРґ С†РІРµС‚Р° Р±СѓРґРµС‚ СЃРґРµР»Р°РЅ РїРѕС‚РѕРј
 				if ( a>(GB_MAXY-1) ) {
 					b-=(a-(GB_MAXY-1))*GB_MAXX; cc+=(a-(GB_MAXY-1))*sc; a=(GB_MAXY-1); 
 				}
@@ -2165,7 +2165,7 @@ inline int vrtMap::tstMinMaxVox(int h)
 	return h;
 }
 /*
-void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в заголовочнике
+void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 РѕРїСЂРµРґРµР»РµРЅРѕ РІ Р·Р°РіРѕР»РѕРІРѕС‡РЅРёРєРµ
 {
 #ifdef _SURMAP_
 	if(clipXLeft!=-1){
@@ -2176,12 +2176,12 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 	y=YCYCL(y);
 	int offset=offsetBuf(x,y);
 	int h, h2, dg;
-#ifdef _SURMAP_ //Мозаика по высоте
+#ifdef _SURMAP_ //РњРѕР·Р°РёРєР° РїРѕ РІС‹СЃРѕС‚Рµ
 	if(VBitMapMosaic.Enable) delta = VBitMapMosaic.getDelta(x,y,delta);
 #endif
 	switch(VxBufWorkMode){
 		case GEOONLY:
-//			if(VxDBuf[offset]!=0) return; //если есть Dam слой
+//			if(VxDBuf[offset]!=0) return; //РµСЃР»Рё РµСЃС‚СЊ Dam СЃР»РѕР№
 #ifdef _SURMAP_
 			if(!FilterGeoTerrain[GetTer(offset)]) return;
 #endif
@@ -2204,12 +2204,12 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 			}
 			break;
 		case GEO:
-//			if(VxDBuf[offset]!=0) return; //если есть Dam слой
+//			if(VxDBuf[offset]!=0) return; //РµСЃР»Рё РµСЃС‚СЊ Dam СЃР»РѕР№
 #ifdef _SURMAP_
 			if(VxDBuf[offset]!=0) { if(!FilterDamTerrain[GetTer(offset)]) return; }
 			else { if(!FilterGeoTerrain[GetTer(offset)]) return; }
 #endif
-			if(VxDBuf[offset]!=0) h=GetAltDam(offset); //если есть Dam слой
+			if(VxDBuf[offset]!=0) h=GetAltDam(offset); //РµСЃР»Рё РµСЃС‚СЊ Dam СЃР»РѕР№
 			else h=GetAltGeo(offset);
 #ifdef _SURMAP_
 			if(h < FilterMinHeight || h > FilterMaxHeight) return;
@@ -2222,12 +2222,12 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 			SetTer(offset,f3d.calc(x, y, h));//>>VX_FRACTION
 			break;
 		case DAM:
-			if(VxDBuf[offset]==0){ //если нет DAM слоя
+			if(VxDBuf[offset]==0){ //РµСЃР»Рё РЅРµС‚ DAM СЃР»РѕСЏ
 #ifdef _SURMAP_
 				if(!FilterGeoTerrain[GetTer(offset)]) return;
 #endif
 				if(delta<=0) return;
-				else{ //Если Dam насыпается
+				else{ //Р•СЃР»Рё Dam РЅР°СЃС‹РїР°РµС‚СЃСЏ
 					h=GetAltGeo(offset);
 #ifdef _SURMAP_
 					if(h < FilterMinHeight || h > FilterMaxHeight) return;
@@ -2237,7 +2237,7 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 					AtrBuf[offset]=(h &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 				}
 			}
-			else{ //Если Dam есть
+			else{ //Р•СЃР»Рё Dam РµСЃС‚СЊ
 #ifdef _SURMAP_
 				if(!FilterDamTerrain[GetTer(offset)]) return;
 #endif
@@ -2246,27 +2246,27 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 				if(h < FilterMinHeight || h > FilterMaxHeight) return;
 #endif
 				h=tstMinMaxVox(h+delta);
-				//delta проверяется для быстроты
-				if((delta <= 0) && ((h>>VX_FRACTION) < VxGBuf[offset]) ){//Выступила Geo поверхность
+				//delta РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РґР»СЏ Р±С‹СЃС‚СЂРѕС‚С‹
+				if((delta <= 0) && ((h>>VX_FRACTION) < VxGBuf[offset]) ){//Р’С‹СЃС‚СѓРїРёР»Р° Geo РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ
 					VxDBuf[offset]=0;
 					AtrBuf[offset]=(0 &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 					SetTer(offset,f3d.calc(x, y, VxGBuf[offset]<<VX_FRACTION));
-					break; //т.к. Dam слоя уже нет то прерываем
+					break; //С‚.Рє. Dam СЃР»РѕСЏ СѓР¶Рµ РЅРµС‚ С‚Рѕ РїСЂРµСЂС‹РІР°РµРј
 				}
-				else{ //Если остается Dam слой
+				else{ //Р•СЃР»Рё РѕСЃС‚Р°РµС‚СЃСЏ Dam СЃР»РѕР№
 					VxDBuf[offset]=h >>VX_FRACTION;
 					AtrBuf[offset]=(h &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 				}
 			}
 #ifdef _SURMAP_
-			//простая дам поверхнсть
+			//РїСЂРѕСЃС‚Р°СЏ РґР°Рј РїРѕРІРµСЂС…РЅСЃС‚СЊ
 			if(currentDamTerrain < MAX_SIMPLE_DAM_SURFACE) { SetTer(x,y,currentDamTerrain); }
-			//мозаика
+			//РјРѕР·Р°РёРєР°
 			else { }
 #endif
 			break;
 		case GEOorDAM:
-			if(VxDBuf[offset]==0) { //если выступает Geo слой
+			if(VxDBuf[offset]==0) { //РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Geo СЃР»РѕР№
 #ifdef _SURMAP_
 			if(!FilterGeoTerrain[GetTer(offset)]) return;
 #endif
@@ -2279,7 +2279,7 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 				AtrBuf[offset]=(h &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 				SetTer(offset,f3d.calc(x, y, h));//>>VX_FRACTION
 			}
-			else{ //если выступает Dam слой
+			else{ //РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Dam СЃР»РѕР№
 #ifdef _SURMAP_
 				if(!FilterDamTerrain[GetTer(offset)]) return;
 #endif
@@ -2289,21 +2289,21 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 #endif
 				h=tstMinMaxVox(h+delta);
 				if(delta <= 0){ 
-					if((h>>VX_FRACTION) < VxGBuf[offset]){//Выступила Geo поверхность
+					if((h>>VX_FRACTION) < VxGBuf[offset]){//Р’С‹СЃС‚СѓРїРёР»Р° Geo РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ
 						VxDBuf[offset]=0;
 						AtrBuf[offset]=(0 &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 						SetTer(offset,f3d.calc(x, y, VxGBuf[offset])<<VX_FRACTION);
 					}
 					else goto continue_work_dam;
 				}
-				else{ //Если остается Dam слой
+				else{ //Р•СЃР»Рё РѕСЃС‚Р°РµС‚СЃСЏ Dam СЃР»РѕР№
 continue_work_dam:	VxDBuf[offset]=h >>VX_FRACTION;
 					AtrBuf[offset]=(h &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 				}
 			}
 			break;
 		case GEOiDAM:
-			if(VxDBuf[offset]==0) { //если выступает Geo слой
+			if(VxDBuf[offset]==0) { //РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Geo СЃР»РѕР№
 #ifdef _SURMAP_
 			if(!FilterGeoTerrain[GetTer(offset)]) return;
 #endif
@@ -2316,7 +2316,7 @@ continue_work_dam:	VxDBuf[offset]=h >>VX_FRACTION;
 				AtrBuf[offset]=(h &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 				SetTer(offset,f3d.calc(x, y, h));//>>VX_FRACTION
 			}
-			else{ //если выступает Dam слой
+			else{ //РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Dam СЃР»РѕР№
 #ifdef _SURMAP_
 				if(!FilterDamTerrain[GetTer(offset)]) return;
 #endif
@@ -2336,11 +2336,11 @@ continue_work_dam:	VxDBuf[offset]=h >>VX_FRACTION;
 
 	}
 
-	//Удаление зеропласта
+	//РЈРґР°Р»РµРЅРёРµ Р·РµСЂРѕРїР»Р°СЃС‚Р°
 	ClearAllZP(x,y);
 }
 */
-void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в заголовочнике
+void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 РѕРїСЂРµРґРµР»РµРЅРѕ РІ Р·Р°РіРѕР»РѕРІРѕС‡РЅРёРєРµ
 {
 	x=XCYCL(x);
 	y=YCYCL(y);
@@ -2348,7 +2348,7 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 	int h, h2, dg;
 
 
-	if(VxDBuf[offset]==0) { //если выступает Geo слой
+	if(VxDBuf[offset]==0) { //РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Geo СЃР»РѕР№
 		h=GetAltGeo(offset);
 
 		if(h < FilterMinHeight || h > FilterMaxHeight) return;
@@ -2358,7 +2358,7 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 		AtrBuf[offset]=(h &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 		SetTer(offset,f3d.calc(x, y, h));//>>VX_FRACTION
 	}
-	else{ //если выступает Dam слой
+	else{ //РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Dam СЃР»РѕР№
 		h=GetAltDam(offset);
 
 		if(h < FilterMinHeight || h > FilterMaxHeight) return;
@@ -2371,11 +2371,11 @@ void vrtMap::voxSet(int x,int y,int delta,int terrain) //terrain=-1 определено в
 		h+=dg; if(h<0)h=0; if(h>255)h=255;
 		VxGBuf[offset]=h;
 	}
-	//Удаление зеропласта
+	//РЈРґР°Р»РµРЅРёРµ Р·РµСЂРѕРїР»Р°СЃС‚Р°
 	ClearAllZP(x,y);
 }
 
-//Необходимо вызывать до удаления VxDBuf!!!
+//РќРµРѕР±С…РѕРґРёРјРѕ РІС‹Р·С‹РІР°С‚СЊ РґРѕ СѓРґР°Р»РµРЅРёСЏ VxDBuf!!!
 void vrtMap::delLeveledTexture(void)
 {
 	if(SurBuf!=LvdTex){
@@ -2384,10 +2384,10 @@ void vrtMap::delLeveledTexture(void)
 	LvdTex=0;
 }
 
-//необходимо вызывать после загрузки VxDBuf и палитры
+//РЅРµРѕР±С…РѕРґРёРјРѕ РІС‹Р·С‹РІР°С‚СЊ РїРѕСЃР»Рµ Р·Р°РіСЂСѓР·РєРё VxDBuf Рё РїР°Р»РёС‚СЂС‹
 int vrtMap::loadLeveledTexture(void)
 {
-	// По умолчанию для отображения DAM слоя
+	// РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ DAM СЃР»РѕСЏ
 	LvdTex=SurBuf;
 	LvdTex_X_SIZE_POWER=H_SIZE_POWER;
 	LvdTex_Y_SIZE_POWER=V_SIZE_POWER;
@@ -2417,7 +2417,7 @@ int vrtMap::loadLeveledTexture(void)
 
 	if( (thead.Width > H_SIZE) || (thead.Height > V_SIZE) ) {
 		xassert(0 && "loadLeveledTexture: size texture > size map");
-		return 0; //Ограничение на размер связано с лишней проверкой при выборке цвета по offset
+		return 0; //РћРіСЂР°РЅРёС‡РµРЅРёРµ РЅР° СЂР°Р·РјРµСЂ СЃРІСЏР·Р°РЅРѕ СЃ Р»РёС€РЅРµР№ РїСЂРѕРІРµСЂРєРѕР№ РїСЂРё РІС‹Р±РѕСЂРєРµ С†РІРµС‚Р° РїРѕ offset
 	}
 
 	int powerWidth=BitSR(thead.Width);
@@ -2464,7 +2464,7 @@ int vrtMap::loadLeveledTexture(void)
 	delete line;
 
 
-	//Конвертирование палитры из BGR в RGB
+	//РљРѕРЅРІРµСЂС‚РёСЂРѕРІР°РЅРёРµ РїР°Р»РёС‚СЂС‹ РёР· BGR РІ RGB
 	for(i=0; i< MAX_DAM_SURFACE_TYPE; i++){
 		TexPal[i*3+0]=SurPal[(i)*3+2];
 		TexPal[i*3+1]=SurPal[(i)*3+1];
@@ -2517,8 +2517,8 @@ void calcLineTable(int curr_lenght,int k_vu,int base_step,int up_step)
 void vrtMap::PrmFile::init(const char* name)
 {
 	XStream ff(name,XS_IN);
-	buf = new char[len = ff.size() + 1]; //+1 необходим для вставки в конец файла "0"(иначе при обработке строк будет мусор)
-	buf[len-1]='\0'; //Запись "0" в конц файла.
+	buf = new char[len = ff.size() + 1]; //+1 РЅРµРѕР±С…РѕРґРёРј РґР»СЏ РІСЃС‚Р°РІРєРё РІ РєРѕРЅРµС† С„Р°Р№Р»Р° "0"(РёРЅР°С‡Рµ РїСЂРё РѕР±СЂР°Р±РѕС‚РєРµ СЃС‚СЂРѕРє Р±СѓРґРµС‚ РјСѓСЃРѕСЂ)
+	buf[len-1]='\0'; //Р—Р°РїРёСЃСЊ "0" РІ РєРѕРЅС† С„Р°Р№Р»Р°.
 	ff.read(buf,len);
 	ff.close();
 
@@ -2571,7 +2571,7 @@ unsigned char* convert_vox2vid(int vox, char* buf)
 		sprintf(buf,"%4hi.%02hu\0",cel,fraction);
 	}
 	else {
-		fraction= (-vox) & VX_FRACTION_MASK; //Дробную часть надо показывать без знака
+		fraction= (-vox) & VX_FRACTION_MASK; //Р”СЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ РЅР°РґРѕ РїРѕРєР°Р·С‹РІР°С‚СЊ Р±РµР· Р·РЅР°РєР°
 		cel=(-vox)>>VX_FRACTION;				
 		sprintf(buf,"-%04hi.%02hu\0",cel,fraction);
 	}
@@ -2589,11 +2589,11 @@ int convert_vid2vox(char* buf)
 	cc[2]=0;
 	fraction=atoi(cc);
 	if(fraction>VX_FRACTION_MASK)fraction=VX_FRACTION_MASK;
-	int cel=(int)cels; //Необходимо т.к. 
+	int cel=(int)cels; //РќРµРѕР±С…РѕРґРёРјРѕ С‚.Рє. 
 	int vox;
 	if (Znak>=0) vox= (cel<<VX_FRACTION) | (fraction);
 	else {
-		vox= ((-cel)<<VX_FRACTION) | (fraction); //Дробная часть знака не имеет
+		vox= ((-cel)<<VX_FRACTION) | (fraction); //Р”СЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ Р·РЅР°РєР° РЅРµ РёРјРµРµС‚
 		vox=-vox;
 	}
 	return vox;
@@ -2623,7 +2623,7 @@ int vrtMap::putTgaComplete2AllMap(void)
 /*	TGAHEAD tgahead;
 	tgahead.loadHeader(GetTargetName("allDamMap.tga"));
 	if((tgahead.PixelDepth!=8) || (tgahead.ImageType!=1)) {
-		//ErrH.Message("Не поддерживаемый тип TGA (необходим 256цветный не компрессованный)");
+		//ErrH.Message("РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Р№ С‚РёРї TGA (РЅРµРѕР±С…РѕРґРёРј 256С†РІРµС‚РЅС‹Р№ РЅРµ РєРѕРјРїСЂРµСЃСЃРѕРІР°РЅРЅС‹Р№)");
 		return 0;
 	}
 	VBitMap.create(tgahead.Width, tgahead.Height);
@@ -2691,7 +2691,7 @@ int vrtMap::putTgaComplete2AllMap(void)
 	unsigned char* ch = changedT;
 	for(i=0; i<V_SIZE; i++)ch[i]=1;
 
-	//Конвертирование палитры из BGR в RGB
+	//РљРѕРЅРІРµСЂС‚РёСЂРѕРІР°РЅРёРµ РїР°Р»РёС‚СЂС‹ РёР· BGR РІ RGB
 	//for(i=MAX_SIMPLE_DAM_SURFACE; i< MAX_DAM_SURFACE_TYPE; i++)
 	for(i=0; i< MAX_DAM_SURFACE_TYPE; i++){
 //		DamPal[i*3+0]=SurPal[(i-MAX_SIMPLE_DAM_SURFACE)*3+2];
@@ -2904,7 +2904,7 @@ void vrtMap::superWrldShot(int k)
 				calcPoint.z = (float)(SGetAlt(offb)+k) * 0.03125f;//  /32.0f;
 				tx3d::Vector3D clr;
 				f3d.indexedTexture->getTexture()->getColor(&clr, calcPoint);
-				float Lum=1.5f;//!!!! константы взяты из кода выше !!!
+				float Lum=1.5f;//!!!! РєРѕРЅСЃС‚Р°РЅС‚С‹ РІР·СЏС‚С‹ РёР· РєРѕРґР° РІС‹С€Рµ !!!
 				float Lum0=0.05f;
 				float lght=Lum0+(Lum-Lum0)*((float)RnrBuf[offb]/127.f);
 				int r=round(clr.x*lght*255.f); r=clamp(r, 0, 255);
@@ -3032,7 +3032,7 @@ void vrtMap::RotateWorldM90(void)
 }
 
 
-void vrtMap::saveMapWithOtherSize(void)//Удвоенный размер
+void vrtMap::saveMapWithOtherSize(void)//РЈРґРІРѕРµРЅРЅС‹Р№ СЂР°Р·РјРµСЂ
 {
 	sVmpHeader VmpHeader;
 	//const char id[4]={'S','2','T','0'};
@@ -3051,8 +3051,8 @@ void vrtMap::saveMapWithOtherSize(void)//Удвоенный размер
 
 	int i;
 	unsigned char dBuf[4096];
-	//преобразование гео
-	for(i=0; i<4096; i++)dBuf[i]=0;//17 //Высота новог гео слоя
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РіРµРѕ
+	for(i=0; i<4096; i++)dBuf[i]=0;//17 //Р’С‹СЃРѕС‚Р° РЅРѕРІРѕРі РіРµРѕ СЃР»РѕСЏ
 	for(i=0; i<(1024); i++){
 		fo.write(&dBuf[0], 4096);
 	}
@@ -3064,8 +3064,8 @@ void vrtMap::saveMapWithOtherSize(void)//Удвоенный размер
 	for(i=0; i<(1024); i++){
 		fo.write(&dBuf[0], 4096);
 	}
-	//преобразование дам
-	for(i=0; i<4096; i++)dBuf[i]=0;//18 //Высота новог дам слоя
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РґР°Рј
+	for(i=0; i<4096; i++)dBuf[i]=0;//18 //Р’С‹СЃРѕС‚Р° РЅРѕРІРѕРі РґР°Рј СЃР»РѕСЏ
 	for(i=0; i<(1024); i++){
 		fo.write(&dBuf[0], 4096);
 	}
@@ -3077,8 +3077,8 @@ void vrtMap::saveMapWithOtherSize(void)//Удвоенный размер
 	for(i=0; i<(1024); i++){
 		fo.write(&dBuf[0], 4096);
 	}
-	//преобразование atr
-	for(i=0; i<4096; i++)dBuf[i]=0; //17;//Дробная часть высоты
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ atr
+	for(i=0; i<4096; i++)dBuf[i]=0; //17;//Р”СЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ РІС‹СЃРѕС‚С‹
 	for(i=0; i<(1024); i++){
 		fo.write(&dBuf[0], 4096);
 	}
@@ -3090,7 +3090,7 @@ void vrtMap::saveMapWithOtherSize(void)//Удвоенный размер
 	for(i=0; i<(1024); i++){
 		fo.write(&dBuf[0], 4096);
 	}
-	//преобразование sur
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ sur
 	for(i=0; i<4096; i++)dBuf[i]=0;
 	for(i=0; i<(1024); i++){
 		fo.write(&dBuf[0], 4096);
@@ -3153,7 +3153,7 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 	XStream ff1(tbuf, XS_OUT);
 	ff1.write(DamPal, SIZE_GEO_PALETTE);//palBuf
 	ff1.close();
-// Сохранение ключей палитры и функции гео слоя
+// РЎРѕС…СЂР°РЅРµРЅРёРµ РєР»СЋС‡РµР№ РїР°Р»РёС‚СЂС‹ Рё С„СѓРЅРєС†РёРё РіРµРѕ СЃР»РѕСЏ
 	//f3d.saveVariable();
 	const char * Section3DFParametrs="3DF Parameters";
 	tbuf.init();
@@ -3172,13 +3172,13 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 
 	int i;
 	tbuf.init();
-	//Цветов на один больше чем keys
-	//ВНИМАНИЕ ! Пробела в конце строки для записи данных в INI файл не должно быть !(иначе при каждой записи будут добавляться пробелы в конец строки(баг Windows))
+	//Р¦РІРµС‚РѕРІ РЅР° РѕРґРёРЅ Р±РѕР»СЊС€Рµ С‡РµРј keys
+	//Р’РќРРњРђРќРР• ! РџСЂРѕР±РµР»Р° РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё РґР»СЏ Р·Р°РїРёСЃРё РґР°РЅРЅС‹С… РІ INI С„Р°Р№Р» РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ !(РёРЅР°С‡Рµ РїСЂРё РєР°Р¶РґРѕР№ Р·Р°РїРёСЃРё Р±СѓРґСѓС‚ РґРѕР±Р°РІР»СЏС‚СЊСЃСЏ РїСЂРѕР±РµР»С‹ РІ РєРѕРЅРµС† СЃС‚СЂРѕРєРё(Р±Р°Рі Windows))
 	for(i=0; i<(keyGeoPal.numbers+1); i++) { tbuf< " " <= keyGeoPal.color[i].r < " " <= keyGeoPal.color[i].g < " " <= keyGeoPal.color[i].b; }
 	SaveINIstringV(strOut, strGeoPalparams, "Colors", tbuf) ;
 
 	tbuf.init();
-	//ВНИМАНИЕ ! Пробела в конце строки для записи данных в INI файл не должно быть !(иначе при каждой записи будут добавляться пробелы в конец строки(баг Windows))
+	//Р’РќРРњРђРќРР• ! РџСЂРѕР±РµР»Р° РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё РґР»СЏ Р·Р°РїРёСЃРё РґР°РЅРЅС‹С… РІ INI С„Р°Р№Р» РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ !(РёРЅР°С‡Рµ РїСЂРё РєР°Р¶РґРѕР№ Р·Р°РїРёСЃРё Р±СѓРґСѓС‚ РґРѕР±Р°РІР»СЏС‚СЊСЃСЏ РїСЂРѕР±РµР»С‹ РІ РєРѕРЅРµС† СЃС‚СЂРѕРєРё(Р±Р°Рі Windows))
 	for(i=0; i<keyGeoPal.numbers; i++) { tbuf < " " <= keyGeoPal.key[i] ; }
 	SaveINIstringV(strOut, strGeoPalparams, "Keys",tbuf) ;
 #endif
@@ -3200,7 +3200,7 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 
 	int j;
 	unsigned char dBuf[2048];
-	//преобразование гео
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РіРµРѕ
 	for(i=0; i<2048; i++){
 		for(j=0; j<2048; j++){
 			dBuf[j]=VxGBuf[i*2*H_SIZE + j*2];
@@ -3208,7 +3208,7 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 		fo.write(&dBuf[0], 2048);
 	}
 
-	//преобразование дам
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РґР°Рј
 	for(i=0; i<2048; i++){
 		for(j=0; j<2048; j++){
 			dBuf[j]=VxDBuf[i*H_SIZE*2 + j*2];
@@ -3216,7 +3216,7 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 		fo.write(&dBuf[0], 2048);
 	}
 
-	//преобразование atr
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ atr
 	for(i=0; i<2048; i++){
 		for(j=0; j<2048; j++){
 			dBuf[j]=AtrBuf[i*H_SIZE*2 + j*2];
@@ -3224,7 +3224,7 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 		fo.write(&dBuf[0], 2048);
 	}
 
-	//преобразование sur
+	//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ sur
 	for(i=0; i<2048; i++){
 		for(j=0; j<2048; j++){
 			dBuf[j]=SurBuf[i*H_SIZE*2 + j*2];

@@ -22,7 +22,7 @@ unsigned int sin_GM[2][512*3];
 
 //int h_l=160;
 int h_l=160;
-//const  h_l=120; //интенсивность 255 // 1/2 - 180
+//const  h_l=120; //РёРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ 255 // 1/2 - 180
 int d_x=4;
 int d_xw=8;
 int delta_s;
@@ -471,7 +471,7 @@ void vrtMap::gaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 		containerPMO.push_back( ElementPMO(pmo) );
 	}
 	UndoDispatcher_PutPreChangedArea(xBeg, yBeg, XCYCL(xBeg + Diameter), YCYCL(yBeg + Diameter));
-	//Блок обработки радиуса
+	//Р‘Р»РѕРє РѕР±СЂР°Р±РѕС‚РєРё СЂР°РґРёСѓСЃР°
 	static int store_radius=0;
 	static short *y2x=0;
 	if(store_radius!=_rad){
@@ -653,7 +653,7 @@ void vrtMap::GeoSetZone(int x, int y, int rad, int level, int delta)
 			GeoPoint((x + xx[j]) & vMap.clip_mask_x,(y + yy[j]) & vMap.clip_mask_y,level,delta,0);
 		}
 
-	GeoPoint(0,0,level,delta,2);//здесь дельта и левел нобходимы для правильного масштабирования по измененной поверхности
+	GeoPoint(0,0,level,delta,2);//Р·РґРµСЃСЊ РґРµР»СЊС‚Р° Рё Р»РµРІРµР» РЅРѕР±С…РѕРґРёРјС‹ РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕРіРѕ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ РїРѕ РёР·РјРµРЅРµРЅРЅРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё
 }
 
 
@@ -676,7 +676,7 @@ void vrtMap::RenderRegStr(int Yh,int Yd)
 	while (i!=j)
 	{
 		RenderStr(i);
-		i=YCYCL(++i); // РАЗНИЦА МЕЖДУ i++ ++i тут ОГРОМНАЯ (2048 не зацикливается)
+		i=YCYCL(++i); // Р РђР—РќРР¦Рђ РњР•Р–Р”РЈ i++ ++i С‚СѓС‚ РћР“Р РћРњРќРђРЇ (2048 РЅРµ Р·Р°С†РёРєР»РёРІР°РµС‚СЃСЏ)
 	}
 }
 
@@ -813,7 +813,7 @@ void vrtMap::renderQuant()
 			XSVec.clear();
 			optimizeRAS.clear();
 			for(j=begRectCS,k=0; j<=endRectCS; j++, k++) {
-				XSVec.push_back(xSort());//вставка пустого элемента
+				XSVec.push_back(xSort());//РІСЃС‚Р°РІРєР° РїСѓСЃС‚РѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 				XSVec[k].pRA=&RAVec[j];
 			}
 			sort(XSVec.begin(), XSVec.end());
@@ -825,7 +825,7 @@ void vrtMap::renderQuant()
 					j++; idxEndX++;
 					if(maxy<XSVec[idxEndX].pRA->x + XSVec[idxEndX].pRA->dx) maxy=XSVec[idxEndX].pRA->x + XSVec[idxEndX].pRA->dx;
 				}
-				optimizeRAS.push_back(optRA()); //вставка пустого элемента
+				optimizeRAS.push_back(optRA()); //РІСЃС‚Р°РІРєР° РїСѓСЃС‚РѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 				optimizeRAS[k].begx=XSVec[idxBeginX].pRA->x;
 				optimizeRAS[k].endx=maxy;
 				optimizeRAS[k].minx=optimizeRAS[k].begx;
@@ -908,7 +908,7 @@ void vrtMap::regRender(int LowX,int LowY,int HiX,int HiY,int changed)
 		if(minX>resultx)minX=resultx;
 	}*/
 /*	LowX=minX;*/
-	int mx; //СЕЙЧАС НЕ ИСПОЛЬЗУЕТСЯ !
+	int mx; //РЎР•Р™Р§РђРЎ РќР• РРЎРџРћР›Р¬Р—РЈР•РўРЎРЇ !
 	extern void UpdateRegionMap(int x1,int y1,int x2,int y2);
 	if(LowX > HiX){
 		if(LowY> HiY){
@@ -928,7 +928,7 @@ void vrtMap::regRender(int LowX,int LowY,int HiX,int HiY,int changed)
 			///UpdateRegionMap(0, LowY, HiX, HiY);
 		}
 	}
-	else { //С X все впорядке
+	else { //РЎ X РІСЃРµ РІРїРѕСЂСЏРґРєРµ
 		if(LowY> HiY){
 			mx=renderBox(LowX, LowY, HiX, V_SIZE-1, changed);
 			///UpdateRegionMap(mx, LowY, HiX, V_SIZE-1);
@@ -947,7 +947,7 @@ void vrtMap::regRender(int LowX,int LowY,int HiX,int HiY,int changed)
 
 
  //old version RenderPrepare1
-/*const int gamut=1<<11; // (1<<11)-1 Это середина (2*gamut-размер) таблицы разниц высот
+/*const int gamut=1<<11; // (1<<11)-1 Р­С‚Рѕ СЃРµСЂРµРґРёРЅР° (2*gamut-СЂР°Р·РјРµСЂ) С‚Р°Р±Р»РёС†С‹ СЂР°Р·РЅРёС† РІС‹СЃРѕС‚
 //const int fraction=1<<6; //(1<<6)-1
 // begin 16bit version
 void RenderPrepare1(void)
@@ -960,9 +960,9 @@ void RenderPrepare1(void)
 	//if (h_l>255) h_l1=511-h_l;
 	//else h_l1=h_l; 
 	h_l1=h_l; 
-	k=h_l1/(sqrt(257*257-h_l1*h_l1)); // k -это tg угла падения света
+	k=h_l1/(sqrt(257*257-h_l1*h_l1)); // k -СЌС‚Рѕ tg СѓРіР»Р° РїР°РґРµРЅРёСЏ СЃРІРµС‚Р°
 	delta_s=round(k*(1<<8)*(1<<VX_FRACTION)); 
-	//Расчет суши
+	//Р Р°СЃС‡РµС‚ СЃСѓС€Рё
 	for(i=0;i<TERRAIN_MAX;i++){
 		h_l1=h_l; 
 		d_x=terra.d_x[0][i];
@@ -1031,7 +1031,7 @@ void vrtMap::ShadowControl(bool shadow)
 {
 	shadow_control=shadow;
 	if(shadow){
-		double k=-C_light/(-A_light); // k -это tg угла падения света
+		double k=-C_light/(-A_light); // k -СЌС‚Рѕ tg СѓРіР»Р° РїР°РґРµРЅРёСЏ СЃРІРµС‚Р°
 		delta_s=round(k*(1<<16)*(1<<VX_FRACTION)); 
 	}
 	else{
@@ -1078,11 +1078,11 @@ void vrtMap::RenderPrepare1(void)
 		}
 	}
 
-	double k=-C_light/(-A_light); // k -это tg угла падения света
+	double k=-C_light/(-A_light); // k -СЌС‚Рѕ tg СѓРіР»Р° РїР°РґРµРЅРёСЏ СЃРІРµС‚Р°
 	///delta_s=round(k*(1<<16)*(1<<VX_FRACTION)); 
 	///delta_s=MAX_VX_HEIGHT*(1<<16);///
 	ShadowControl(shadow_control);
-	RENDER_BORDER_ZONE=abs(round(k*64.0)); //64 возможный перепад высот
+	RENDER_BORDER_ZONE=abs(round(k*64.0)); //64 РІРѕР·РјРѕР¶РЅС‹Р№ РїРµСЂРµРїР°Рґ РІС‹СЃРѕС‚
 
 	for(i=0; i<32; i++){
 		shL[i]=(float)(31-i)/31.f;
@@ -1096,7 +1096,7 @@ void vrtMap::RenderPrepare1(void)
 	float X_LIGHT=1;
 	float Y_LIGHT=1;
 	float lenght_LIGHT=sqrt(X_LIGHT*X_LIGHT+Y_LIGHT*Y_LIGHT);
-	X_LIGHT/=lenght_LIGHT; Y_LIGHT/=lenght_LIGHT; //нормализация
+	X_LIGHT/=lenght_LIGHT; Y_LIGHT/=lenght_LIGHT; //РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ
 	const unsigned char LUM_LIGHT=255;
 	for(i=0; i<SLT_SIZE; i++){
 		int dV=i-SLT_05SIZE;
@@ -1115,15 +1115,15 @@ void vrtMap::RenderPrepare1(void)
 //static int STATUS_DEBUG_RND=0;
 int vrtMap::RenderStr(int XL, int Y, int dx)
 {
-	if(XL>0) { XL--; dx++; }//для правильного расчета тени
+	if(XL>0) { XL--; dx++; }//РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕРіРѕ СЂР°СЃС‡РµС‚Р° С‚РµРЅРё
 	if((XL+dx) >= H_SIZE) {
 		//ErrH.Abort("Incorrect render parameters");
 		xassert(0&&"Incorrect render parameters");
 		dx=0;
 	}
 
-//	eVxBufWorkMode backupVxBufWorkMode=VxBufWorkMode;//сохранение режима доступа к поверхности
-//	VxBufWorkMode=GEOiDAM; //Установка режима доступа к самой верхней высоте
+//	eVxBufWorkMode backupVxBufWorkMode=VxBufWorkMode;//СЃРѕС…СЂР°РЅРµРЅРёРµ СЂРµР¶РёРјР° РґРѕСЃС‚СѓРїР° Рє РїРѕРІРµСЂС…РЅРѕСЃС‚Рё
+//	VxBufWorkMode=GEOiDAM; //РЈСЃС‚Р°РЅРѕРІРєР° СЂРµР¶РёРјР° РґРѕСЃС‚СѓРїР° Рє СЃР°РјРѕР№ РІРµСЂС…РЅРµР№ РІС‹СЃРѕС‚Рµ
 	Y=YCYCL(Y);
 
 	//float ty=(float)Y/(V_SIZE>>1)-1.0f;
@@ -1158,11 +1158,11 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			if(vv>h_s)h_s=vv;
 			SumHShadow+=delta_s;
 			//*(pa+XCYCL(j))|=At_ZEROPLAST; //For DEBUG
-		//Проверка на окончание тени и высота снижения тени не уменьшала высоту максимально возможного вокселя ниже текущей высоты тени
-		//Надо решить вопрос со смещением для GetAlt и AtrBuf-pa
-		}while( ((*(pa+XCYCL(j))&At_SHADOW) !=0) && (((MAX_VX_HEIGHT<<16)-h_s) > SumHShadow) && j<H_SIZE ); //j<H_SIZE прверка на границу карты
+		//РџСЂРѕРІРµСЂРєР° РЅР° РѕРєРѕРЅС‡Р°РЅРёРµ С‚РµРЅРё Рё РІС‹СЃРѕС‚Р° СЃРЅРёР¶РµРЅРёСЏ С‚РµРЅРё РЅРµ СѓРјРµРЅСЊС€Р°Р»Р° РІС‹СЃРѕС‚Сѓ РјР°РєСЃРёРјР°Р»СЊРЅРѕ РІРѕР·РјРѕР¶РЅРѕРіРѕ РІРѕРєСЃРµР»СЏ РЅРёР¶Рµ С‚РµРєСѓС‰РµР№ РІС‹СЃРѕС‚С‹ С‚РµРЅРё
+		//РќР°РґРѕ СЂРµС€РёС‚СЊ РІРѕРїСЂРѕСЃ СЃРѕ СЃРјРµС‰РµРЅРёРµРј РґР»СЏ GetAlt Рё AtrBuf-pa
+		}while( ((*(pa+XCYCL(j))&At_SHADOW) !=0) && (((MAX_VX_HEIGHT<<16)-h_s) > SumHShadow) && j<H_SIZE ); //j<H_SIZE РїСЂРІРµСЂРєР° РЅР° РіСЂР°РЅРёС†Сѓ РєР°СЂС‚С‹
 	}
-	//подразумевается что dx не выходит за границы мира и left point не выходит за ганицы мира
+	//РїРѕРґСЂР°Р·СѓРјРµРІР°РµС‚СЃСЏ С‡С‚Рѕ dx РЅРµ РІС‹С…РѕРґРёС‚ Р·Р° РіСЂР°РЅРёС†С‹ РјРёСЂР° Рё left point РЅРµ РІС‹С…РѕРґРёС‚ Р·Р° РіР°РЅРёС†С‹ РјРёСЂР°
 	j=dx; //+( 256*(1<<VX_FRACTION)*(1<<8)/delta_s )+1;
 	unsigned short Vr,V,Vh;
 	int i;
@@ -1177,20 +1177,20 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			if (h_s > delta_s) {h_s -=delta_s;}
 			else {h_s = 0;}
 
-			//затенение по краям
+			//Р·Р°С‚РµРЅРµРЅРёРµ РїРѕ РєСЂР°СЏРј
 			//float tx=(float)i/(H_SIZE>>1)-1.0f;
 			//tx=tx*tx; tx=tx*tx; tx=tx*tx; tx=tx*tx;
 			//float f;//exp(-(tx+ty)/(.7f*.7f));
 			//f=1-(tx+ty);
-			//затенение по краям
+			//Р·Р°С‚РµРЅРµРЅРёРµ РїРѕ РєСЂР°СЏРј
 			int ttx=(i*2-H_SIZE)<<firstShift4FractionX;
 			ttx=ttx*ttx>>shift4Fraction; ttx=ttx*ttx>>shift4Fraction; ttx=ttx*ttx>>shift4Fraction; //ttx=ttx*ttx>>shift4Fraction;
 			int f=(1<<shift4Fraction)-(ttx+tty);
 
-			//Обработка зеропласта
+			//РћР±СЂР°Р±РѕС‚РєР° Р·РµСЂРѕРїР»Р°СЃС‚Р°
 			//if( ( (*(pa+i)) &At_ZEROPLAST)!=0 ) SurBuf[offY+i]=0xFF;//127
 			//if( ( (*(pa+i)) &At_ZEROPLASTEMPTY)!=0 ) SurBuf[offY+i]=0xFE;
-			//Обнуление необходимо чтоб небыло переполнение адреса в SurZP2Col и SurZPE2Col т.к. они расчитаны только на гео слой
+			//РћР±РЅСѓР»РµРЅРёРµ РЅРµРѕР±С…РѕРґРёРјРѕ С‡С‚РѕР± РЅРµР±С‹Р»Рѕ РїРµСЂРµРїРѕР»РЅРµРЅРёРµ Р°РґСЂРµСЃР° РІ SurZP2Col Рё SurZPE2Col С‚.Рє. РѕРЅРё СЂР°СЃС‡РёС‚Р°РЅС‹ С‚РѕР»СЊРєРѕ РЅР° РіРµРѕ СЃР»РѕР№
 			//if( (*(pa+i) &At_ZEROPLAST)!=0  ||  (*(pa+i) &At_ZEROPLASTEMPTY)!=0 ) VxDBuf[offY+i]=0;
 
 			//h_s = 0;
@@ -1200,28 +1200,28 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			//Vh=GetAlt(offYh+i);
 			unsigned char material;
 			int whole=(VxDBuf[offY+i]);
-			if(whole) { //Dam слой
+			if(whole) { //Dam СЃР»РѕР№
 				V= ( (whole<<VX_FRACTION)|(AtrBuf[offY+i]&VX_FRACTION_MASK) );
 				material=damType2Mater[terrain];
 			}
-			else { //Geo слой
+			else { //Geo СЃР»РѕР№
 				V= ( (VxGBuf[offY+i]<<VX_FRACTION)|(AtrBuf[offY+i]&VX_FRACTION_MASK) );
 				material=geoType2Mater[terrain];
 			}
 			///////
 			whole=(VxDBuf[offYh+i]);
-			if(whole) { //Dam слой
+			if(whole) { //Dam СЃР»РѕР№
 				Vh= ( (whole<<VX_FRACTION)|(AtrBuf[offYh+i]&VX_FRACTION_MASK) );
 			}
-			else { //Geo слой
+			else { //Geo СЃР»РѕР№
 				Vh= ( (VxGBuf[offYh+i]<<VX_FRACTION)|(AtrBuf[offYh+i]&VX_FRACTION_MASK) );
 			}
 
 
 			*(pa+i)&=~At_SHADOW;
 
-//расчет - full int
-			int A=((Vr<<2)-(V<<2)),B=((V<<2)-(Vh<<2)), C=-(1<<8); //C=-1<<7//7дробных! //сдвиг на 8для большей плавности рельефа т.к. точность была потеряна при переходе на VX_FRACTION=5
+//СЂР°СЃС‡РµС‚ - full int
+			int A=((Vr<<2)-(V<<2)),B=((V<<2)-(Vh<<2)), C=-(1<<8); //C=-1<<7//7РґСЂРѕР±РЅС‹С…! //СЃРґРІРёРі РЅР° 8РґР»СЏ Р±РѕР»СЊС€РµР№ РїР»Р°РІРЅРѕСЃС‚Рё СЂРµР»СЊРµС„Р° С‚.Рє. С‚РѕС‡РЅРѕСЃС‚СЊ Р±С‹Р»Р° РїРѕС‚РµСЂСЏРЅР° РїСЂРё РїРµСЂРµС…РѕРґРµ РЅР° VX_FRACTION=5
 			//float A=(float)(Vr-V)/(float)(1<<VX_FRACTION);
 			//float B=(float)(V-Vh)/(float)(1<<VX_FRACTION);
 			//float C=-1;
@@ -1237,7 +1237,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 //			float cosA;
 //			cosA=(A*A_light + B*B_light + C*C_light)/256.;
 			int lght;
-			if((material&FLAG_SPECULAR_MATERIAL)==0){//только диффузный цвет
+			if((material&FLAG_SPECULAR_MATERIAL)==0){//С‚РѕР»СЊРєРѕ РґРёС„С„СѓР·РЅС‹Р№ С†РІРµС‚
 				material>>=SHIFT_4TYPE_MATERIALS;
 				if( h_s > ((int)V<<16)) {
 					//float cosAS=(A*A_lightS + B*B_lightS + C*C_lightS)/256.;
@@ -1265,15 +1265,15 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 					prevShadow=0;
 				}
 			}
-			else{ //диф+спекулар
+			else{ //РґРёС„+СЃРїРµРєСѓР»Р°СЂ
 			}
 
 //####################################
 /*
-//расчет full float
+//СЂР°СЃС‡РµС‚ full float
 			float A=(float)(Vr-V)/(float)(1<<(VX_FRACTION));
 			float B=(float)(V-Vh)/(float)(1<<(VX_FRACTION));
-			float C=-2; //C=-1 // 2 для большей плавности рельефа т.к. точность была потеряна при переходе на VX_FRACTION=5
+			float C=-2; //C=-1 // 2 РґР»СЏ Р±РѕР»СЊС€РµР№ РїР»Р°РІРЅРѕСЃС‚Рё СЂРµР»СЊРµС„Р° С‚.Рє. С‚РѕС‡РЅРѕСЃС‚СЊ Р±С‹Р»Р° РїРѕС‚РµСЂСЏРЅР° РїСЂРё РїРµСЂРµС…РѕРґРµ РЅР° VX_FRACTION=5
 			float L=sqrt(A*A+B*B+C*C);
 			//extern inline float fastsqrt(float n);
 			//float L=fastsqrt(A*A+B*B+C*C);
@@ -1286,7 +1286,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			float cosA;
 			cosA=(A*A_light + B*B_light + C*C_light);
 			int lght;
-			if((material&FLAG_SPECULAR_MATERIAL)==0){//только диффузный цвет
+			if((material&FLAG_SPECULAR_MATERIAL)==0){//С‚РѕР»СЊРєРѕ РґРёС„С„СѓР·РЅС‹Р№ С†РІРµС‚
 				material>>=SHIFT_4TYPE_MATERIALS;
 				if( h_s > ((int)V<<16)) {
 					float cosAS=(A*A_lightS + B*B_lightS + C*C_lightS);
@@ -1301,7 +1301,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 					prevShadow=0;
 				}
 			}
-			else{ //диф+спекулар
+			else{ //РґРёС„+СЃРїРµРєСѓР»Р°СЂ
 				material>>=SHIFT_4TYPE_MATERIALS;
 				if( h_s > ((int)V<<16)) {
 					float cosAS=(A*A_lightS + B*B_lightS + C*C_lightS);
@@ -1326,16 +1326,16 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 //####################################
 */
 
-//Buckup от перехода полностью на int
+//Buckup РѕС‚ РїРµСЂРµС…РѕРґР° РїРѕР»РЅРѕСЃС‚СЊСЋ РЅР° int
 /*
-//расчет корня - int остальное float
-			int A=((Vr<<2)-(V<<2)),B=((V<<2)-(Vh<<2)), C=-1<<8; //C=-1<<7//7дробных! //сдвиг на 8для большей плавности рельефа т.к. точность была потеряна при переходе на VX_FRACTION=5
+//СЂР°СЃС‡РµС‚ РєРѕСЂРЅСЏ - int РѕСЃС‚Р°Р»СЊРЅРѕРµ float
+			int A=((Vr<<2)-(V<<2)),B=((V<<2)-(Vh<<2)), C=-1<<8; //C=-1<<7//7РґСЂРѕР±РЅС‹С…! //СЃРґРІРёРі РЅР° 8РґР»СЏ Р±РѕР»СЊС€РµР№ РїР»Р°РІРЅРѕСЃС‚Рё СЂРµР»СЊРµС„Р° С‚.Рє. С‚РѕС‡РЅРѕСЃС‚СЊ Р±С‹Р»Р° РїРѕС‚РµСЂСЏРЅР° РїСЂРё РїРµСЂРµС…РѕРґРµ РЅР° VX_FRACTION=5
 			int L=fastsqrtI(A*A+B*B+C*C);
 			A=(A<<8)/L; B=(B<<8)/L; C=(C<<8)/L;
 			float cosA;
 			cosA=(A*A_light + B*B_light + C*C_light)/256.;
 			int lght;
-			if((material&FLAG_SPECULAR_MATERIAL)==0){//только диффузный цвет
+			if((material&FLAG_SPECULAR_MATERIAL)==0){//С‚РѕР»СЊРєРѕ РґРёС„С„СѓР·РЅС‹Р№ С†РІРµС‚
 				material>>=SHIFT_4TYPE_MATERIALS;
 				if( h_s > ((int)V<<16)) {
 					float cosAS=(A*A_lightS + B*B_lightS + C*C_lightS)/256.;
@@ -1350,7 +1350,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 					prevShadow=0;
 				}
 			}
-			else{ //диф+спекулар
+			else{ //РґРёС„+СЃРїРµРєСѓР»Р°СЂ
 				material>>=SHIFT_4TYPE_MATERIALS;
 				if( h_s > ((int)V<<16)) {
 					float cosAS=(A*A_lightS + B*B_lightS + C*C_lightS)/256.;
@@ -1402,9 +1402,9 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			//lght+=100;
 			//lght-=(255-(V>>VX_FRACTION))>>1;
 
-			//затенение по краям
+			//Р·Р°С‚РµРЅРµРЅРёРµ РїРѕ РєСЂР°СЏРј
 			//lght=round(f*lght);
-			//затенение по краям
+			//Р·Р°С‚РµРЅРµРЅРёРµ РїРѕ РєСЂР°СЏРј
 #ifdef _SURMAP_
 			if(ShadowingOnEdges)lght=f*lght>>shift4Fraction;
 #else
@@ -1453,19 +1453,19 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			}*/
 			Vr=V;
 			if( (*(pa+i)&At_SOOTMASK)==At_SOOT){
-				*(pc+i)=*(pc+i)>>2; //Если сажа
+				*(pc+i)=*(pc+i)>>2; //Р•СЃР»Рё СЃР°Р¶Р°
 			}
-			if(!VxDBuf[offY+i]) *(pc+i)=*(pc+i)>>1; //если выступает Geo
-			else *(pc+i)=(0x80|(*(pc+i)>>1));// если выступает Dam
+			if(!VxDBuf[offY+i]) *(pc+i)=*(pc+i)>>1; //РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Geo
+			else *(pc+i)=(0x80|(*(pc+i)>>1));// РµСЃР»Рё РІС‹СЃС‚СѓРїР°РµС‚ Dam
 //			if(STATUS_DEBUG_RND)*(pc+i)=0;
 
 			//*(pa+i)|=At_ZEROPLAST; //For DEBUG
-			j--;//вместо for-а
-		}while( (j>=0 || prevShadow!=0) && i>0 ); //i>0 проверка на конец карты
+			j--;//РІРјРµСЃС‚Рѕ for-Р°
+		}while( (j>=0 || prevShadow!=0) && i>0 ); //i>0 РїСЂРѕРІРµСЂРєР° РЅР° РєРѕРЅРµС† РєР°СЂС‚С‹
 		//*(pa+XCYCL(j+XL))|=At_ZEROPLAST; //For DEBUG
 	}while( (*(pa+XCYCL(j+XL))&At_SHADOW) && i>0);
 
-//	VxBufWorkMode=backupVxBufWorkMode;//восстановление режима доступа к поверхности
+//	VxBufWorkMode=backupVxBufWorkMode;//РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ СЂРµР¶РёРјР° РґРѕСЃС‚СѓРїР° Рє РїРѕРІРµСЂС…РЅРѕСЃС‚Рё
 	return i;//XCYCL(j+XL);
 }
 
