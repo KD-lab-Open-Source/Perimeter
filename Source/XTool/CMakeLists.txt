@@ -33,7 +33,7 @@ SET(XTool_SRCS
         XUTIL/XClock.cpp
 )
 
-IF(MSVC)
+IF(MSVC_CL_BUILD)
 	SET(XTool_SRCS ${XTool_SRCS}
 		XERRHAND/DiagAssert.cpp
 	)
