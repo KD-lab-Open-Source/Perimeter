@@ -1,33 +1,41 @@
 @echo off
 
-SET MSVC_ARCH=%1
-
-FOR %%A IN ("x86" "x64") DO (
-	IF "%MSVC_ARCH%" == %%A (
-		SET ARCH_PARAM=1
-	)
-)
-
-IF NOT DEFINED ARCH_PARAM (
-	SET MSVC_ARCH=x86
-)
-
-IF "%MSVC_ARCH%" == "x64" (
-	SET MSVC_CMD_ARCH=x86_amd64
-)
-
 FOR %%i IN ("%~dp0") DO SET VCPKG_SCRIPT_DIR=%%~fi
 
-FOR /f "usebackq delims=" %%i IN (`%VCPKG_SCRIPT_DIR%\vswhere.exe -version "[16.0,17.0)" -latest -property installationPath`) DO (
-	IF EXIST "%%i\Common7\Tools\vsdevcmd.bat" (
-		CALL "%%i\Common7\Tools\vsdevcmd.bat" %MSVC_CMD_ARCH%
-	)
-)
+REM ---------------------------------------------------------------------------------------
+REM If build.bat is run not from MSVC command prompt then check system and try to locate it.
 
-IF "%VSCMD_ARG_HOST_ARCH%" NEQ "%MSVC_ARCH%" (
-	ECHO Wrong vs cmd arch. Expected: %MSVC_ARCH%, current: "%VSCMD_ARG_HOST_ARCH%"
-	EXIT /B
+IF "%VSCMD_ARG_TGT_ARCH%" == "" (
+	SET MSVC_ARCH=%1
+
+	FOR %%A IN ("x86" "x64") DO (
+		IF "%MSVC_ARCH%" == %%A (
+			SET ARCH_PARAM=1
+		)
+	)
+
+	IF NOT DEFINED ARCH_PARAM (
+		SET MSVC_ARCH=x86
+	)
+
+	IF "%MSVC_ARCH%" == "x64" (
+		SET MSVC_CMD_ARCH=x86_amd64
+	)
+
+	FOR /f "usebackq delims=" %%i IN (`%VCPKG_SCRIPT_DIR%\vswhere.exe -version "[16.0,17.0)" -latest -property installationPath`) DO (
+		IF EXIST "%%i\Common7\Tools\vsdevcmd.bat" (
+			CALL "%%i\Common7\Tools\vsdevcmd.bat" %MSVC_CMD_ARCH%
+		)
+	)
+	
+	IF "%VSCMD_ARG_TGT_ARCH%" NEQ "%MSVC_ARCH%" (
+		ECHO Wrong vs cmd prompt arch. Expected: %MSVC_ARCH%, current: "%VSCMD_ARG_TGT_ARCH%"
+		EXIT /B
+	)
+) ELSE (
+	SET MSVC_ARCH=%VSCMD_ARG_TGT_ARCH%
 )
+REM ---------------------------------------------------------------------------------------
 
 SET CALLER_DIR=%CD%
 
@@ -82,14 +90,17 @@ RMDIR /S /Q build
 MKDIR build
 CD build
 
+SET CMAKE_GENERATOR="Visual Studio 16 2019"
 SET TOOLCHAIN=CMAKE_TOOLCHAIN_FILE=%VCPKGPATH%\scripts\buildsystems\vcpkg.cmake
 SET VCPKGCUSTOMEDIR=_VCPKG_INSTALLED_DIR=%VCPKG_PARENT_DIR%\vcpkg_installed
 IF "%MSVC_ARCH%" == "x86" (
+	SET CMAKE_ARCH=Win32
 	SET VCPKGTRIPLET=VCPKG_TARGET_TRIPLET="x86-windows"
 ) ELSE (
+	SET CMAKE_ARCH=x64
 	SET VCPKGTRIPLET=VCPKG_TARGET_TRIPLET="x64-windows"
 )
 
-cmake -G "Visual Studio 16 2019" -A Win32 -D%VCPKGCUSTOMEDIR% -D%VCPKGTRIPLET% -DOPTION_DISABLE_STACKTRACE=ON -D%TOOLCHAIN% ..
+cmake -G %CMAKE_GENERATOR% -A %CMAKE_ARCH% -D%VCPKGCUSTOMEDIR% -D%VCPKGTRIPLET% -DOPTION_DISABLE_STACKTRACE=ON -D%TOOLCHAIN% ..
 
 CD %CALLER_DIR%

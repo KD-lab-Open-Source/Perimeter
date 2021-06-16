@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+env:
+  buildDir: '${{ github.workspace }}/build/'
+
 jobs:
   build:
     runs-on: windows-latest
@@ -12,21 +15,40 @@ jobs:
       matrix:
         arch:
           - x86
-          - amd64_x86
-          - amd64
+          - x64
+        include:
+          - arch: x86
+            triplet: x86-windows
+          - arch: x64
+            triplet: x64-windows
     steps:
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
-      - name: perimeter -- configure and make
-        run: |
-          cmake -G "NMake Makefiles" .
-          nmake
-      - name: perimeter -- prepare release folder
-        run: |
-          mkdir -p perimeter/bin
-          cp build/src/perimeter.exe perimeter/bin/
-          strip perimeter/bin/perimeter.exe
-      - uses: actions/upload-artifact@v1
         with:
-          name: Perimeter-Windows-MSVC-32
-          path: perimeter
+          arch: ${{ matrix.arch }}
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v7
+        with:
+          setupOnly: true
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
+          vcpkgTriplet: ${{ matrix.triplet }}
+          # Ensure the vcpkg artifacts are cached, they are generated in the 'CMAKE_BINARY_DIR/vcpkg_installed' directory.
+          vcpkgGitCommitId: 92b42c4c680defe94f1665a847d04ded890f372e
+          additionalCachedPaths: ${{ env.buildDir }}/vcpkg_installed
+      - name: Run cmake to install the dependencies specified in the vcpkg.json manifest, generate project file and build the project
+        uses: lukka/run-cmake@v3
+        with:
+          cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+          cmakeAppendedArgs: -DOPTION_DISABLE_STACKTRACE=ON
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          cmakeBuildType: 'Release'
+          buildDirectory: ${{ env.buildDir }}
+          # This input tells run-cmake to consume the vcpkg.cmake toolchain file set by run-vcpkg.
+          useVcpkgToolchainFile: true
+          buildWithCMake: true
+      - uses: actions/upload-artifact@v2
+        with:
+          name: 'Perimeter-Windows-MSVC-${{ matrix.arch }}'
+          path: '${{ env.buildDir }}/Source/Release/'
