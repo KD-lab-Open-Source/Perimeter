@@ -1,7 +1,0 @@
-
-project
-    # built MT version, unless asked otherwise.
-    : default-build <threading>multi 
-    ;
-
-exe t7 : main.cpp lcdrange.cpp lcdrange.h : <library>/qt//qt ;

@@ -1,5 +1,0 @@
-
-import gcc ;
-import toolset : using ;
-
-using borland ;

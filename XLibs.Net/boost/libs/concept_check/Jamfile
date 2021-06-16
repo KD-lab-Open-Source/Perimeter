@@ -1,9 +1,0 @@
-subproject libs/concept_check ;
-
-import testing ;
-
-compile stl_concept_covering.cpp ;
-compile concept_check_test.cpp ;
-compile class_concept_check_test.cpp ;
-link-fail concept_check_fail_expected.cpp ;
-link-fail class_concept_fail_expected.cpp ;
