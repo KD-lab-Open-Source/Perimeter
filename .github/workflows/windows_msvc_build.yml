@@ -21,12 +21,11 @@ jobs:
           appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
           vcpkgTriplet: x86-windows
           vcpkgGitCommitId: 92b42c4c680defe94f1665a847d04ded890f372e
-          # additionalCachedPaths: ${{ env.buildDir }}/vcpkg_installed
-      - name: Configure developer command prompt for ${{ matrix.arch }}
+      - name: Configure developer command prompt for x86
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x86
-      - name: Run cmake to install the dependencies specified in the vcpkg.json manifest, generate project file and build the project
+      - name: Run cmake to install the dependencies specified in the vcpkg.json, generate project file and build the project
         run: |
           mkdir ${{ env.buildDir }}
           cd ${{ env.buildDir }}
@@ -34,5 +33,7 @@ jobs:
           nmake
       - uses: actions/upload-artifact@v2
         with:
-          name: 'Perimeter-Windows-MSVC-${{ matrix.arch }}'
-          path: '${{ env.buildDir }}/Source/Release/'
+          name: 'Perimeter-Windows-MSVC-x86'
+          path: |
+            ${{ env.buildDir }}Source/*.dll
+            ${{ env.buildDir }}Source/*.exe
