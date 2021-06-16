@@ -1,10 +1,8 @@
 #include <string>
 #include <list>
-#include "xglobal.h"
-#include <float.h>
-//#include "BugslayerUtil.h"
-
-//extern XBuffer assertsBuffer;
+#include <cfloat>
+#include "xerrhand.h"
+#include "xconsole.h"
 
 static void (*assert_restore_graphics_function)() = 0;
 
@@ -16,7 +14,6 @@ void SetAssertRestoreGraphicsFunction(void(*func)())
 #endif
 
 void xtSysFinit(void);
-int xtDispatchMessage(MSG* msg);
 
 //#define _EXCEPTION_CATCH
 
@@ -322,7 +319,6 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 	}
 
 	xtSysFinit();
-	xtClearMessageQueue();
 
 	strcpy(outmsg,message);
 	if(subj){

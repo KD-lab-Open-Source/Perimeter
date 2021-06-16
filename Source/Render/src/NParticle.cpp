@@ -504,11 +504,11 @@ cEmitterInt::~cEmitterInt()
 {
 }
 
-template<class nParticle> __forceinline int cEmitterBase::PutToBuf(nParticle& p, Vect3f& npos, float& dt,
-										cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-										const sColor4c& color, const Vect3f& PosCamera,
-										const float& size, const cTextureAviScale::RECT& rt,
-										const UCHAR mode, MatXf* iGM)
+template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, Vect3f& npos, float& dt,
+                                                                 cQuadBuffer<sVertexXYZDT1>*& pBuf,
+                                                                 const sColor4c& color, const Vect3f& PosCamera,
+                                                                 const float& size, const cTextureAviScale::RECT& rt,
+                                                                 const UCHAR mode, MatXf* iGM)
 
 {
 	xassert(!p.plume_pos.empty());

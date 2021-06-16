@@ -35,22 +35,22 @@ struct XDPacket
 	unsigned char* buffer;
 	DPNID dpnid;
 
-	__forceinline XDPacket(){
+	FORCEINLINE XDPacket(){
 		size = 0;
 		buffer = 0;
 		dpnid = 0;
 	}
-	__forceinline XDPacket(DPNID _dpnid, int _size, const void* cb){
+	FORCEINLINE XDPacket(DPNID _dpnid, int _size, const void* cb){
 		dpnid=_dpnid;
 		size= _size;
 		buffer = new unsigned char[size];
 		memcpy(buffer, cb, size);
 	}
-	__forceinline ~XDPacket(){
+	FORCEINLINE ~XDPacket(){
 		if(buffer)
 			delete buffer;
 	}
-	__forceinline void set(DPNID _dpnid, int _size, const void* cb){
+	FORCEINLINE void set(DPNID _dpnid, int _size, const void* cb){
 		dpnid=_dpnid;
 		size = _size;
 		if(buffer) delete buffer;

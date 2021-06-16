@@ -50,10 +50,10 @@ __forceinline int round(float x)
 #endif
 
 template <class T> 
-__forceinline T sqr(const T& x){ return x*x; }
+FORCEINLINE T sqr(const T& x){ return x * x; }
 
 template <class T> 
-__forceinline int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
+FORCEINLINE int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
 
 #endif //__ROUND__
 

@@ -78,7 +78,7 @@ public:
 	int temp_freeone;
 };
 
-template<class cBase> __forceinline int BinaryFind(int key,vector<cBase> &Array)
+template<class cBase> FORCEINLINE int BinaryFind(int key, vector<cBase> &Array)
 { // методом половинного деления поиск элемента
 	int start;
 	int finish;

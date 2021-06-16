@@ -24,8 +24,8 @@ public:
 	// общие интерфейсные функции унаследованы от cUnkTile
 	virtual void GetBoundingBox(Vect3f &min,Vect3f &max);
 	// инлайновые функции доступа к переменным
-	__forceinline float& GetFarAttenuation()								{ return FarAttenuation; }
-	__forceinline float& GetIntensity()										{ return Intensity; }
+	FORCEINLINE float& GetFarAttenuation()								{ return FarAttenuation; }
+	FORCEINLINE float& GetIntensity()										{ return Intensity; }
 	
 	cAnimChannelMaterial* GetAnimChannelMat()								{return AnimChannelMat;}
 	void SetAnimChannelMat(cAnimChannelMaterial* p)							{AnimChannelMat=p;}

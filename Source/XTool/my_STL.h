@@ -8,15 +8,6 @@
 #ifndef __STL_ADDITION_H__
 #define __STL_ADDITION_H__
 
-//#define _STLP_NO_IOSTREAMS 1
-
-//namespace stlp_std//Затычка для нашего STL, в котором нет stream
-//{
-//	class ostream
-//	{
-//	};
-//};
-
 // For disabling some warning 
 #pragma warning( disable : 4786 4284 4800)
 //#pragma warning( disable : 4018)
@@ -37,31 +28,20 @@
   for(auto iterator = (list).begin(); (iterator) != (list).end(); ++(iterator))
 #endif
 
-#if (_MSC_VER < 1300)
-
-#if !defined (_STLP_NO_NEW_IOSTREAMS)
-#define   _STLP_NO_NEW_IOSTREAMS	1
-#endif
-
-#define   _STLP_NO_OWN_IOSTREAMS	1
-
-
-//#if !defined (_STLP_NO_NAMESPACES)
-//#define   _STLP_NO_NAMESPACES 1
-//#endif
-
-#endif //(_MSC_VER < 1300)
-
-//TODO whatever non win/msvc tweaks required, this should be cleaned up further and also moved somewhere else?
-
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define THREAD_LOCAL __declspec( thread )
 #else
 #define THREAD_LOCAL thread_local
 #endif
 
-#ifndef _MSC_VER
-#define __forceinline inline
+#ifdef _MSC_VER
+    #if _MSC_VER == 1100 //MSVisual C++ 5.0
+    #define FORCEINLINE inline
+    #else
+    #define FORCEINLINE __forceinline
+    #endif
+#else
+#define FORCEINLINE inline //__attribute__((always_inline))
 #endif //_MSC_VER
 
 #ifndef _WIN32
