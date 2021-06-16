@@ -1,12 +1,5 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// Additional include for making STL more convenient
-//
-// Author: Alexandre Kotliar, K-D Lab
-//
-////////////////////////////////////////////////////////////////////////////////
-#ifndef __STL_ADDITION_H__
-#define __STL_ADDITION_H__
+#ifndef __TWEAKS_H__
+#define __TWEAKS_H__
 
 // For disabling some warning 
 #pragma warning( disable : 4786 4284 4800)
@@ -34,6 +27,7 @@
 #define THREAD_LOCAL thread_local
 #endif
 
+#ifndef FORCEINLINE
 #ifdef _MSC_VER
     #if _MSC_VER == 1100 //MSVisual C++ 5.0
     #define FORCEINLINE inline
@@ -43,6 +37,7 @@
 #else
 #define FORCEINLINE inline //__attribute__((always_inline))
 #endif //_MSC_VER
+#endif //FORCEINLINE
 
 #ifndef _WIN32
 //TODO is strcasecmp available in non linux platforms?
@@ -63,4 +58,4 @@ void GetCurrentDirectory(unsigned short size, char* path) {
 #endif
 
 
-#endif // __STL_ADDITION_H__
+#endif // __TWEAKS_H__

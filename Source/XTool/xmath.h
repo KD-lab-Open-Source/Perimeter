@@ -9,7 +9,7 @@
 #ifndef __XMATH_H__
 #define __XMATH_H__
 
-#include "my_STL.h"
+#include "tweaks.h"
 #include <cmath>
 
 #ifdef _XMATH_USE_IOSTREAM

@@ -2,8 +2,8 @@
 
 #include "StdAfx.h"
 
-#include <xutil.h>
-#include <my_STL.h>
+#include "xutil.h"
+#include "tweaks.h"
 #include "qd_textdb.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */

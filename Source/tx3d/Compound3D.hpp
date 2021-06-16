@@ -13,7 +13,7 @@
 #ifndef _TX3D_COMPOUND3D_H
 #define _TX3D_COMPOUND3D_H
 
-#include <my_STL.h>
+#include "tweaks.h"
 #include <vector>
 using std::vector;
 
