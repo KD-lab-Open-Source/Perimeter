@@ -4,6 +4,7 @@
 #include <iostream>
 #include "xstream.h"
 #include "xerrhand.h"
+#include "xglobal.h"
 
 static void (*assert_restore_graphics_function)() = 0;
 
