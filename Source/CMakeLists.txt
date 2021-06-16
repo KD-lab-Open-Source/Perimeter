@@ -60,42 +60,24 @@ ENDIF()
 IF(PERIMETER_WINDOWS)
     #Include headers
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
-    
+
     #Select 64 or 32 compiled libs
-    IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    IF(PERIMETER_ARCH_64)
         MESSAGE("Linking against DirectX 64 bits")
-        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
         SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
     ELSE()
         MESSAGE("Linking against DirectX 32 bits")
-        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
         SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
     ENDIF()
+    LINK_DIRECTORIES(BEFORE ${LIBS_MSDXSDK})
 
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
             #DirectX libs
-            d3d8
-            d3d9
-            d3dx9
-            d3dx9d
-            d3d10
-            d3dx10
-            ${LIBS_MSDXSDK}/d3dx10d.lib
-            d3dxof
-            ddraw
-            dinput
-            dsetup
-            dinput8
-            dplayx
-            dsound
-            dxgi
-            ${LIBS_MSDXSDK}/dxtrans.lib
+            ${LIBS_MSDXSDK}/d3d9.lib
+            ${LIBS_MSDXSDK}/d3dx9.lib
+            ${LIBS_MSDXSDK}/dsound.lib
             ${LIBS_MSDXSDK}/DxErr.lib
-            DxErr8
-            DxErr9
-            X3DAudio
-            XInput
-    
+
             #Windows libs
             winmm
             wsock32
