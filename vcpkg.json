@@ -1,0 +1,9 @@
+{
+	"name": "perimeter",
+	"version": "2.0.0",
+	"dependencies": [
+		"boost-iterator",
+		"boost-type-index",
+		"libvorbis"
+	]
+}

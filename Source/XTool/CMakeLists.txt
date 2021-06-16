@@ -33,4 +33,10 @@ SET(XTool_SRCS
         XUTIL/XClock.cpp
 )
 
+IF(MSVC_CL_BUILD)
+	SET(XTool_SRCS ${XTool_SRCS}
+		XERRHAND/DiagAssert.cpp
+	)
+ENDIF()
+
 ADD_LIBRARY(XTool STATIC ${XTool_SRCS})

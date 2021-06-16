@@ -4,29 +4,36 @@ on:
   push:
   pull_request:
 
+env:
+  buildDir: '${{ github.workspace }}/build/'
+
 jobs:
   build:
     runs-on: windows-latest
-    # Run a job for each of the specified target architectures:
-    strategy:
-      matrix:
-        arch:
-          - x86
-          - amd64_x86
-          - amd64
     steps:
       - uses: actions/checkout@v2
-      - uses: ilammy/msvc-dev-cmd@v1
-      - name: perimeter -- configure and make
-        run: |
-          cmake -G "NMake Makefiles" .
-          nmake
-      - name: perimeter -- prepare release folder
-        run: |
-          mkdir -p perimeter/bin
-          cp build/src/perimeter.exe perimeter/bin/
-          strip perimeter/bin/perimeter.exe
-      - uses: actions/upload-artifact@v1
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v7
         with:
-          name: Perimeter-Windows-MSVC-32
-          path: perimeter
+          setupOnly: true
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
+          vcpkgTriplet: x86-windows
+          vcpkgGitCommitId: 92b42c4c680defe94f1665a847d04ded890f372e
+      - name: Configure developer command prompt for x86
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+      - name: Run cmake to install the dependencies specified in the vcpkg.json, generate project file and build the project
+        run: |
+          mkdir ${{ env.buildDir }}
+          cd ${{ env.buildDir }}
+          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -DOPTION_DISABLE_STACKTRACE=ON ..
+          nmake
+      - uses: actions/upload-artifact@v2
+        with:
+          name: 'Perimeter-Windows-MSVC-x86'
+          path: |
+            ${{ env.buildDir }}Source/*.dll
+            ${{ env.buildDir }}Source/*.exe
