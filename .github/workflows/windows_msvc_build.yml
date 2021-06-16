@@ -10,11 +10,6 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    # Run a job for each of the specified target architectures:
-    strategy:
-      matrix:
-        arch:
-          -x86
     steps:
       - uses: actions/checkout@v2
       - uses: lukka/get-cmake@latest
@@ -30,7 +25,7 @@ jobs:
       - name: Configure developer command prompt for ${{ matrix.arch }}
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: ${{ matrix.arch }}
+          arch: -x86
       - name: Run cmake to install the dependencies specified in the vcpkg.json manifest, generate project file and build the project
         run: |
           mkdir ${{ env.buildDir }}
