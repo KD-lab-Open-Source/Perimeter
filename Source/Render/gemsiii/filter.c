@@ -15,8 +15,6 @@
 #define	EXIT_FAILURE	(1)
 #endif
 
-#define M_PI  3.14159265358979323846f
-
 typedef struct {
 	int	xsize;		/* horizontal size of the image in Pixels */
 	int	ysize;		/* vertical size of the image in Pixels */

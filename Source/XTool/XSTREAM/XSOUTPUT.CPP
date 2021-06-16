@@ -1,5 +1,4 @@
 #include <cstring>
-#include "xconsole.h"
 #include "xstream.h"
 
 XStream& XStream::operator> (char* v)

@@ -1,5 +1,5 @@
 #include <cstring>
-#include <malloc.h>
+#include <memory>
 #include "xerrhand.h"
 #include "xbuffer.h"
 

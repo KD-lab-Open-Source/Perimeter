@@ -6,7 +6,7 @@
 #define NULL	0L
 #endif
 
-#define _CONV_BUFFER_LEN	63
+#define XB_CONV_BUFFER_LEN	63
 
 #define XB_DEFSIZE	256
 
@@ -128,7 +128,7 @@ struct XBuffer
 	template<class T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
 
 private:
-	char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
+	char _ConvertBuffer[XB_CONV_BUFFER_LEN + 1];
 };
 
 

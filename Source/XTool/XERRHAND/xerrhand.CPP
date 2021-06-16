@@ -2,7 +2,6 @@
 #include <list>
 #include <cfloat>
 #include "xerrhand.h"
-#include "xconsole.h"
 
 static void (*assert_restore_graphics_function)() = 0;
 
@@ -15,7 +14,8 @@ void SetAssertRestoreGraphicsFunction(void(*func)())
 
 void xtSysFinit(void);
 
-//#define _EXCEPTION_CATCH
+#define _CONV_BUFFER_LEN	63
+char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
 
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
@@ -41,7 +41,13 @@ char *rterrorMSG	= "RUN-TIME ERROR";
 #pragma init_seg(lib)
 XErrorHandler ErrH;
 
-void win32_break(char* error,char* msg);
+void win32_break(char* error,char* msg) {
+    std::cerr << "--------------------------------\n";
+    std::cerr << error << "\n";
+    std::cerr << msg << "\n";
+    std::cerr  << "--------------------------------" << std::endl;
+    _ASSERT(FALSE) ;
+}
 
 #define HANDLE_EXEPT(string,mask)\
 	{ if (ErrH.flags & (mask))\
@@ -261,8 +267,6 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 	ErrH.WriteLog(exceptMSG, msg);
 
 #if defined(_DEBUG) || defined(_EXCEPTION_CATCH)
-	xtSysFinit();
-	xtClearMessageQueue();
 	win32_break(exceptMSG,msg);
 	return EXCEPTION_CONTINUE_EXECUTION;
 #else
@@ -318,8 +322,6 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 		restore_func = 0;
 	}
 
-	xtSysFinit();
-
 	strcpy(outmsg,message);
 	if(subj){
 		strcat(outmsg,"\r");
@@ -343,8 +345,6 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 
 void XErrorHandler::Exit(void)
 {
-	xtSysFinit();
-
 	if(restore_func){
 		restore_func();
 		restore_func = 0;

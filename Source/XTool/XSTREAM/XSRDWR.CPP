@@ -1,5 +1,4 @@
 #include <windows.h>
-#include "xconsole.h"
 #include "xstream.h"
 #include "xerrhand.h"
 

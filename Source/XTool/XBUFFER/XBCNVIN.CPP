@@ -2,8 +2,6 @@
 #include <cstdlib>
 #include "xbuffer.h"
 
-char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
-
 XBuffer& XBuffer::operator<= (char var)
 {
 	char* s = itoa(var,_ConvertBuffer,radix);

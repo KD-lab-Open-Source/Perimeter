@@ -1,6 +1,8 @@
 #ifndef __XSTREAM_H
 #define __XSTREAM_H
 
+#define XS_CONV_BUFFER_LEN	63
+
 #define XS_IN		0x0001
 #define XS_OUT		0x0002
 #define XS_NOREPLACE	0x0004
@@ -113,7 +115,7 @@ struct XStream
 	template<class T> XStream& read(T& v){ read(&v, sizeof(T)); return *this; }
 
 private:
-	char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
+	char _ConvertBuffer[XS_CONV_BUFFER_LEN + 1];
 };
 
 

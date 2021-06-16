@@ -4,8 +4,6 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(XTool_SRCS
-        #xtcore.cpp
-        xutilcore.cpp
         xmath.cpp
         XBUFFER/XBCNVIN.CPP
         XBUFFER/XBCNVOUT.CPP
@@ -14,7 +12,6 @@ SET(XTool_SRCS
         XSTREAM/XSCNVOUT.CPP
         XSTREAM/XSINPUT.CPP
         XSTREAM/XSSERV.CPP
-        #XSTREAM/XSTIME.CPP
         XSTREAM/XSRDWR.CPP
         XSTREAM/XSCNVIN.CPP
         XSTREAM/XSENLV.CPP

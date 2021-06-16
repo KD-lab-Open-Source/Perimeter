@@ -1,4 +1,3 @@
-#include "xconsole.h"
 #include "xstream.h"
 #include <cstdio>
 #include <cstdlib>

@@ -13,15 +13,8 @@
 #include <time.h>
 
 
-#include "xtcore.h"
-#include "xconsole.h"
 #include "xkey.h"
 #include "xutil.h"
-#include "xrec.h"
-#include "xcpuid.h"
-#include "xmsgbuf.h"
-#include "xzip.h"
-#include "xt_list.h"
 
 #endif
 

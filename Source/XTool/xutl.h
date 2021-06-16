@@ -2,24 +2,9 @@
 #ifndef __XUTL_H
 #define __XUTL_H
 
-void* xalloc(unsigned sz);
-void* xrealloc(void* p,unsigned sz);
-void  xfree(void* p);
-
-#define XALLOC(a)	xalloc(a)
-#define XREALLOC(a,b)	xrealloc(a,b)
-#define XFREE(a)	xfree(a)
-
 unsigned int XRnd(unsigned int m);
 void XRndSet(unsigned int m);
 unsigned int XRndGet();
-
-char* XFindNext(void);
-char* XFindFirst(char* mask);
-
-#ifndef M_PI
-#define M_PI	3.14159265358979323846
-#endif
 
 #ifndef __ROUND__
 #define __ROUND__
