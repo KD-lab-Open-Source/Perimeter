@@ -40,7 +40,7 @@ jobs:
         run: |
           mkdir ${{ env.buildDir }}
           cd ${{ env.buildDir }}
-          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -D_VCPKG_INSTALLED_DIR=${{ env.buildDir }}/vcpkg_installed -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -DOPTION_DISABLE_STACKTRACE=ON ..
+          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -DOPTION_DISABLE_STACKTRACE=ON ..
           nmake
       - uses: actions/upload-artifact@v2
         with:
