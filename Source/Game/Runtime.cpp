@@ -187,7 +187,6 @@ void HTManager::init()
 	interpolation_factor_ = 0;
 
 	static XBuffer errorHeading;
-	errorHeading.SetRadix(16);
 	errorHeading < currentVersion
 #ifdef _FINAL_VERSION_
 		< " Final"

@@ -215,7 +215,7 @@ cStream& cStream::operator << (unsigned char a)
 { 
 	assert(lpBuffer); 
 	char buf[256];
-	sprintf(buf,"%c",a);
+	sprintf(buf,"%uc",a);
 	write(buf,strlen(buf));
 	return *this; 
 }

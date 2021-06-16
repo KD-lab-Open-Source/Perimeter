@@ -12,7 +12,6 @@ void XBuffer::alloc(unsigned int sz)
 {
 	buf = (char*)malloc(size = sz);
 	offset = 0L;
-	radix = XB_DEFRADIX;
 	digits = XB_DEFDIGITS;
 	MakeFree = 1;
 	if(size) *buf = 0;
@@ -20,7 +19,6 @@ void XBuffer::alloc(unsigned int sz)
 
 XBuffer::XBuffer(unsigned int sz, int automatic_realloc_) {
     alloc(sz);
-    radix = XB_DEFRADIX;
     digits = XB_DEFDIGITS;
     automatic_realloc = automatic_realloc_;
 }
@@ -30,7 +28,6 @@ XBuffer::XBuffer(void* p,int sz)
 	buf = (char*)p;
 	size = sz;
 	offset = 0;
-	radix = XB_DEFRADIX;
 	digits = XB_DEFDIGITS;
 	MakeFree = 0;
 	automatic_realloc = 0;

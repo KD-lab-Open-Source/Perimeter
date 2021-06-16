@@ -1,6 +1,8 @@
 #include <string>
 #include <list>
 #include <cfloat>
+#include <iostream>
+#include "xstream.h"
 #include "xerrhand.h"
 
 static void (*assert_restore_graphics_function)() = 0;
@@ -14,8 +16,8 @@ void SetAssertRestoreGraphicsFunction(void(*func)())
 
 void xtSysFinit(void);
 
-#define _CONV_BUFFER_LEN	63
-char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
+#define CONV_BUFFER_LEN	63
+char convBuf[CONV_BUFFER_LEN + 1];
 
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
@@ -56,37 +58,41 @@ void win32_break(char* error,char* msg) {
 		return EXCEPTION_CONTINUE_SEARCH;\
 	  break; }
 
-char* qwtoa(unsigned int a)
+char* qwtoa(uint64_t a)
 {
-    int len = 16 - strlen(ulltoa(a,_ConvertBuffer,16));
-    for(int i = 0;i < len;i++)
-        _ConvertBuffer[i] = '0';
-    strlen(ulltoa(a,_ConvertBuffer + len,16));
-    return _ConvertBuffer;
+    sprintf(convBuf, "%llX", a);
+    size_t len = 16 - strlen(convBuf);
+    for(int i = 0; i < len;i++)
+        convBuf[i] = '0';
+    sprintf(convBuf + len, "%llX", a);
+    return convBuf;
 }
-char* dwtoa(unsigned int a)
+char* dwtoa(uint32_t a)
 {
-	int len = 8 - strlen(_ultoa(a,_ConvertBuffer,16));
-	for(int i = 0;i < len;i++)
-		_ConvertBuffer[i] = '0';
-	strlen(_ultoa(a,_ConvertBuffer + len,16));
-	return _ConvertBuffer;
+    sprintf(convBuf, "%X", a);
+	size_t len = 8 - strlen(convBuf);
+	for(int i = 0; i < len;i++)
+		convBuf[i] = '0';
+    sprintf(convBuf + len, "%X", a);
+	return convBuf;
 }
-char* wtoa(unsigned int a)
+char* wtoa(uint16_t a)
 {
-	int len = 4 - strlen(_ultoa(a,_ConvertBuffer,16));
-	for(int i = 0;i < len;i++)
-		_ConvertBuffer[i] = '0';
-	strlen(_ultoa(a,_ConvertBuffer + len,16));
-	return _ConvertBuffer;
+    sprintf(convBuf, "%X", a);
+    size_t len = 4 - strlen(convBuf);
+    for(int i = 0; i < len;i++)
+        convBuf[i] = '0';
+    sprintf(convBuf + len, "%X", a);
+	return convBuf;
 }
-char* uctoa(unsigned char a)
+char* uctoa(uint8_t a)
 {
-	int len = 2 - strlen(_ultoa(a,_ConvertBuffer,16));
-	if(len == 1)
-		_ConvertBuffer[0] = '0';
-	strlen(_ultoa(a,_ConvertBuffer + len,16));
-	return _ConvertBuffer;
+    sprintf(convBuf, "%X", a);
+    size_t len = 2 - strlen(convBuf);
+    if(len == 1)
+        convBuf[0] = '0';
+    sprintf(convBuf + len, "%X", a);
+	return convBuf;
 }
 
 
@@ -164,11 +170,12 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 	 default:
 		 HANDLE_EXEPT("UNKNOWN ERROR TYPE",XERR_UNKNOWN)
 	}
+
 	strcat(msg," AT LOCATION 0x");
 #ifdef PERIMETER_ARCH_64
-	strcat(msg,strupr(lltoa((long long)except_info->ExceptionRecord->ExceptionAddress,_ConvertBuffer,16)));
+	strcat(msg, qwtoa(except_info->ExceptionRecord->ExceptionAddress));
 #else
-    strcat(msg,strupr(itoa((int)except_info->ExceptionRecord->ExceptionAddress,_ConvertBuffer,16)));
+    strcat(msg, dwtoa(except_info->ExceptionRecord->ExceptionAddress));
 #endif
 
 	static int attempt_to_show_context = 0;
@@ -332,7 +339,8 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 		if(val != -1){
 			strcat(outmsg,"\r");
 			strcat(outmsg,"CODE: 0x");
-			strcat(outmsg,_ultoa(val,_ConvertBuffer,16));
+            sprintf(convBuf, "%X", val);
+			strcat(outmsg, convBuf);
 		}
 	}
 
@@ -377,9 +385,10 @@ void XErrorHandler::RTC(const char *file, unsigned int line, const char *expr)
 	char msg[256];
 	strcpy(msg, file);
 	strcat(msg,", LINE: ");
-	strcat(msg,itoa(line,_ConvertBuffer,10));
-	strcat(msg,"\r\n");
-	strcat(msg,expr);
+    sprintf(convBuf, "%d", line);
+    strcat(msg, convBuf);
+    strcat(msg,"\r\n");
+    strcat(msg,expr);
 	Abort(rterrorMSG,XERR_USER,-1,msg);
 }
 

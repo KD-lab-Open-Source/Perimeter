@@ -21,7 +21,6 @@
 #define XB_CASEON	0
 #define XB_CASEOFF	1
 
-#define XB_DEFRADIX	10
 #define XB_DEFDIGITS	8
 
 struct XBuffer
@@ -38,7 +37,6 @@ struct XBuffer
 	XBuffer(void* p,int sz);
 	~XBuffer(void){ free(); }
 
-	void SetRadix(int r) { radix = r; }
 	void SetDigits(int d) { digits = d; }
 
 	void alloc(unsigned int sz);
@@ -128,7 +126,7 @@ struct XBuffer
 	template<class T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
 
 private:
-	char _ConvertBuffer[XB_CONV_BUFFER_LEN + 1];
+	char convBuf[XB_CONV_BUFFER_LEN + 1];
 };
 
 

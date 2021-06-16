@@ -145,7 +145,6 @@ playerStrategyIndex_(0)
 	if(active()){
 		netLog.close();
 		XBuffer name;
-		name.SetRadix(16);
 		name < "Client" <= playerID();
 		netLog.open(name, XS_OUT);
 	}

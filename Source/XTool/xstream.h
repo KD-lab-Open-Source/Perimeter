@@ -10,14 +10,10 @@
 #define XS_NOBUFFERING	0x0010
 #define XS_NOSHARING	0x0020
 
-#define XS_SHAREREAD	0x0040
-#define XS_SHAREWRITE	0x0080
-
 #define XS_BEG		0
 #define XS_CUR		1
 #define XS_END		2
 
-#define XS_DEFRADIX	10
 #define XS_DEFDIGITS	8
 
 struct XStream
@@ -30,7 +26,6 @@ struct XStream
 	int	ErrHUsed;
 	bool ioError_;
 	const char* fname;
-	int	radix, digits;
 	long	extSize;
 	long	extPos;
 
@@ -52,8 +47,6 @@ struct XStream
 	//void	gettime(unsigned& date,unsigned& time);
 	void	flush();
 	const char*	GetFileName() const { return fname; }
-	void	SetRadix(int r){ radix=r; }
-	void	SetDigits(int d){ digits=d; }
 
 	XStream& operator< (const char*);
 	XStream& operator< (char);
@@ -115,7 +108,7 @@ struct XStream
 	template<class T> XStream& read(T& v){ read(&v, sizeof(T)); return *this; }
 
 private:
-	char _ConvertBuffer[XS_CONV_BUFFER_LEN + 1];
+	char convBuf[XS_CONV_BUFFER_LEN + 1];
 };
 
 
