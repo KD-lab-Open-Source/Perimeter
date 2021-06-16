@@ -1,0 +1,90 @@
+name: Windows MSYS 64bit Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  debug:
+    name: Debug
+    runs-on: windows-latest
+    steps:
+      - uses: stalkerg/setup-msys2@v2
+        with:
+          msystem: MINGW64
+      - name: install libs
+        run: msys2do pacman --noconfirm -S
+          mingw-w64-x86_64-ninja
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-make
+          mingw-w64-x86_64-SDL2
+          mingw-w64-x86_64-boost
+          mingw-w64-x86_64-libvorbis
+      - uses: actions/checkout@v2
+      - name: perimeter -- create build dir
+        run: msys2do mkdir build
+      - name: perimeter -- configure
+        run: msys2do cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Debug
+        working-directory: build
+      - name: perimeter -- make
+        run: msys2do ninja
+        working-directory: build
+      - name: perimeter -- prepare release folder
+        run: |
+          msys2do mkdir -p perimeter/bin
+          msys2do cp /mingw64/bin/SDL2.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libgcc_s_dw2-1.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libgcc_s_seh-1.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libstdc++-6.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libwinpthread-1.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libogg-0.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libvorbis-0.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libvorbisfile-3.dll perimeter/bin/
+          cp build/Source/perimeter.exe perimeter/bin/
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Perimeter-Windows-MSYS-64-Debug
+          path: perimeter
+  release:
+    name: Release
+    runs-on: windows-latest
+    steps:
+      - uses: stalkerg/setup-msys2@v2
+        with:
+          msystem: MINGW64
+      - name: install libs
+        run: msys2do pacman --noconfirm -S
+          mingw-w64-x86_64-ninja
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-make
+          mingw-w64-x86_64-SDL2
+          mingw-w64-x86_64-boost
+          mingw-w64-x86_64-libvorbis
+      - uses: actions/checkout@v2
+      - name: perimeter -- create build dir
+        run: msys2do mkdir build
+      - name: perimeter -- configure
+        run: msys2do cmake -G Ninja ..
+        working-directory: build
+      - name: perimeter -- make
+        run: msys2do ninja
+        working-directory: build
+      - name: perimeter -- prepare release folder
+        run: |
+          msys2do mkdir -p perimeter/bin
+          msys2do cp /mingw64/bin/SDL2.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libgcc_s_dw2-1.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libgcc_s_seh-1.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libstdc++-6.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libwinpthread-1.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libogg-0.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libvorbis-0.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libvorbisfile-3.dll perimeter/bin/
+          cp build/Source/perimeter.exe perimeter/bin/
+          msys2do strip perimeter/bin/perimeter.exe
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Perimeter-Windows-MSYS-64
+          path: perimeter
