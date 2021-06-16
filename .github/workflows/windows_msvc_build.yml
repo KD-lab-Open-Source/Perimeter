@@ -13,12 +13,8 @@ jobs:
     # Run a job for each of the specified target architectures:
     strategy:
       matrix:
-        arch: [x86, x64]
-        include:
-          - arch: x86
-            triplet: x86-windows
-          - arch: x64
-            triplet: x64-windows
+        arch:
+          -x86
     steps:
       - uses: actions/checkout@v2
       - uses: lukka/get-cmake@latest
@@ -28,7 +24,7 @@ jobs:
           setupOnly: true
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
-          vcpkgTriplet: ${{ matrix.triplet }}
+          vcpkgTriplet: x86-windows
           vcpkgGitCommitId: 92b42c4c680defe94f1665a847d04ded890f372e
           # additionalCachedPaths: ${{ env.buildDir }}/vcpkg_installed
       - name: Configure developer command prompt for ${{ matrix.arch }}
