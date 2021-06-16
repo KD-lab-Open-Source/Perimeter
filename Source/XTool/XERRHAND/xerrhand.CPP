@@ -53,6 +53,14 @@ void win32_break(char* error,char* msg);
 		return EXCEPTION_CONTINUE_SEARCH;\
 	  break; }
 
+char* qwtoa(unsigned int a)
+{
+    int len = 16 - strlen(ulltoa(a,_ConvertBuffer,16));
+    for(int i = 0;i < len;i++)
+        _ConvertBuffer[i] = '0';
+    strlen(ulltoa(a,_ConvertBuffer + len,16));
+    return _ConvertBuffer;
+}
 char* dwtoa(unsigned int a)
 {
 	int len = 8 - strlen(_ultoa(a,_ConvertBuffer,16));
@@ -111,7 +119,7 @@ bool getStackTrace(std::list<std::string>& lines) {
 long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 {
 	_clearfp();
-	_controlfp( _controlfp(0,0) & ~(0), _MCW_EM ); 
+	_controlfp( _controlfp(0,0) & ~(0), _MCW_EM );
 	SetUnhandledExceptionFilter(NULL);
 
 	static char msg[10000];
@@ -154,13 +162,54 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 		 HANDLE_EXEPT("UNKNOWN ERROR TYPE",XERR_UNKNOWN)
 	}
 	strcat(msg," AT LOCATION 0x");
-	strcat(msg,strupr(itoa((int)except_info->ExceptionRecord->ExceptionAddress,_ConvertBuffer,16)));
+#ifdef PERIMETER_ARCH_64
+	strcat(msg,strupr(lltoa((long long)except_info->ExceptionRecord->ExceptionAddress,_ConvertBuffer,16)));
+#else
+    strcat(msg,strupr(itoa((int)except_info->ExceptionRecord->ExceptionAddress,_ConvertBuffer,16)));
+#endif
 
 	static int attempt_to_show_context = 0;
 	if(!attempt_to_show_context){
 		PCONTEXT p = except_info -> ContextRecord;
 		if((p -> ContextFlags & CONTEXT_INTEGER) && (p -> ContextFlags & CONTEXT_CONTROL) &&
 			(p -> ContextFlags & CONTEXT_CONTROL)){
+#ifdef PERIMETER_ARCH_64
+            attempt_to_show_context = 1;
+            strcat(msg,"\r\n\r\nRegisters:\r\n");
+            strcat(msg,"RAX="); strcat(msg, qwtoa(p -> Rax));
+            strcat(msg,"  CS="); strcat(msg, wtoa(p -> SegCs));
+            strcat(msg,"  RIP="); strcat(msg, qwtoa(p -> Rip));
+            strcat(msg,"  EFLAGS="); strcat(msg, dwtoa(p -> EFlags));
+
+            strcat(msg,"\r\nRBX="); strcat(msg, qwtoa(p -> Rbx));
+            strcat(msg,"  SS="); strcat(msg, wtoa(p -> SegSs));
+            strcat(msg,"  RSP="); strcat(msg, qwtoa(p -> Rsp));
+            strcat(msg,"  RBP="); strcat(msg, qwtoa(p -> Rbp));
+
+            strcat(msg,"\r\nRCX="); strcat(msg, qwtoa(p -> Rcx));
+            strcat(msg,"  DS="); strcat(msg, wtoa(p -> SegDs));
+            strcat(msg,"  RSI="); strcat(msg, qwtoa(p -> Rsi));
+            strcat(msg,"  FS="); strcat(msg, wtoa(p -> SegFs));
+
+            strcat(msg,"\r\nRDX="); strcat(msg, qwtoa(p -> Rdx));
+            strcat(msg,"  ES="); strcat(msg, wtoa(p -> SegEs));
+            strcat(msg,"  RDI="); strcat(msg, qwtoa(p -> Rdi));
+            strcat(msg,"  GS="); strcat(msg, wtoa(p -> SegGs));
+
+            strcat(msg,"\r\n\r\nBytes at CS::RIP:\r\n");
+            unsigned char* code = (unsigned char*)(p -> Rip);
+            for(int i = 0;i < 16;i++){
+                strcat(msg, uctoa(code[i]));
+                strcat(msg," ");
+            }
+
+            strcat(msg,"\r\n\r\nStack dump:\r\n");
+            unsigned int* stack = (unsigned int*)(p -> Rsp);
+            for(int i = 0;i < 32;i++){
+                strcat(msg, qwtoa(stack[i]));
+                strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
+            }
+#else
 			attempt_to_show_context = 1;
 			strcat(msg,"\r\n\r\nRegisters:\r\n");
 			strcat(msg,"EAX="); strcat(msg, dwtoa(p -> Eax));
@@ -182,20 +231,21 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 			strcat(msg,"  ES="); strcat(msg, wtoa(p -> SegEs));
 			strcat(msg,"  EDI="); strcat(msg, dwtoa(p -> Edi));
 			strcat(msg,"  GS="); strcat(msg, wtoa(p -> SegGs));
-			
+
 			strcat(msg,"\r\n\r\nBytes at CS::EIP:\r\n");
 			unsigned char* code = (unsigned char*)(p -> Eip);
 			for(int i = 0;i < 16;i++){
 				strcat(msg, uctoa(code[i]));
-				strcat(msg," "); 
+				strcat(msg," ");
             }
 
 			strcat(msg,"\r\n\r\nStack dump:\r\n");
 			unsigned int* stack = (unsigned int*)(p -> Esp);
 			for(int i = 0;i < 32;i++){
 				strcat(msg, dwtoa(stack[i]));
-				strcat(msg, (i & 7) == 7 ? "\r\n" : " "); 
+				strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
             }
+#endif
 
             std::list<std::string> linesStackTrace;
             strcat(msg,"\r\nCall stack:\r\n");
@@ -255,14 +305,14 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
     /* TODO
     this originally displayed a Dialog with stacktrace to debug the issue that caused Abort
     Vangers has SDL2 dialog impl for this, we should do the same
-     
+
     string text = "";
     text += sprintf("XErrH::Abort!\nMessage %s\nCode %d Val %d\n", message, code, addval);
     if (subj) {
         text += sprintf("Subject %s\n", subj);
     }
     */
-    
+
 	static char outmsg[10000]="";
 	UINT attr=MB_OK;
 

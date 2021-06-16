@@ -66,9 +66,10 @@ struct XBuffer
 	XBuffer& operator< (unsigned int v) { return write(v); }
 	XBuffer& operator< (long v) { return write(v); }
 	XBuffer& operator< (unsigned long v) { return write(v); }
+    XBuffer& operator< (unsigned long long v) { return write(v); }
 	XBuffer& operator< (float v) { return write(v); }
 	XBuffer& operator< (double v) { return write(v); }
-	XBuffer& operator< (long double v) { return write(v); }
+    XBuffer& operator< (long double v) { return write(v); }
 
 	XBuffer& operator> (char* v);
 	XBuffer& operator> (char& v) { return read(v); }
@@ -79,9 +80,10 @@ struct XBuffer
 	XBuffer& operator> (unsigned int& v) { return read(v); }
 	XBuffer& operator> (long& v) { return read(v); }
 	XBuffer& operator> (unsigned long& v) { return read(v); }
+    XBuffer& operator> (unsigned long long& v) { return read(v); }
 	XBuffer& operator> (float& v) { return read(v); }
 	XBuffer& operator> (double& v) { return read(v); }
-	XBuffer& operator> (long double& v) { return read(v); }
+    XBuffer& operator> (long double& v) { return read(v); }
 
 	XBuffer& operator<= (char);
 	XBuffer& operator<= (unsigned char);
@@ -91,6 +93,7 @@ struct XBuffer
 	XBuffer& operator<= (unsigned int);
 	XBuffer& operator<= (long);
 	XBuffer& operator<= (unsigned long);
+    XBuffer& operator<= (unsigned long long);
 	XBuffer& operator<= (float);
 	XBuffer& operator<= (double);
 	XBuffer& operator<= (long double);
@@ -103,9 +106,10 @@ struct XBuffer
 	XBuffer& operator>= (unsigned int&);
 	XBuffer& operator>= (long&);
 	XBuffer& operator>= (unsigned long&);
+    XBuffer& operator>= (unsigned long long&);
 	XBuffer& operator>= (float&);
 	XBuffer& operator>= (double&);
-	XBuffer& operator>= (long double&);
+    XBuffer& operator>= (long double&);
 
 	operator const char* () const { return buf; }
 	const char* operator ()(int offs){ return buf + offs; }

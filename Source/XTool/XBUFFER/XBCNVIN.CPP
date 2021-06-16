@@ -60,6 +60,13 @@ XBuffer& XBuffer::operator<= (unsigned long var)
 	return *this;
 }
 
+XBuffer& XBuffer::operator<= (unsigned long long var)
+{
+    char* s = _ultoa(var,_ConvertBuffer,radix);
+    write(s,strlen(s),0);
+    return *this;
+}
+
 XBuffer& XBuffer::operator<= (float var)
 {
 	char* s = gcvt(var,digits,_ConvertBuffer);

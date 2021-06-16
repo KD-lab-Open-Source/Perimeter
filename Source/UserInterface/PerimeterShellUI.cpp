@@ -223,8 +223,14 @@ bool CShellWindow::OnKeyUp(int key)
 void CShellWindow::OnMouseMove(float _x,float _y)
 {
 	if(	!m_handler ) return;
+	/*
+	 TODO on 32 bits sending a pointer as int worked, but not on 64...
+	 the thing is that no place handling EVENT_SLIDERUPDATE uses the pointer/param at all so we can just send 0
+	 like in other places where this event is sent
 	float xy[2] = { _x, _y };
 	m_handler(this, EVENT_SLIDERUPDATE, (int)&xy[0] );
+    */
+    m_handler(this, EVENT_SLIDERUPDATE, 0 );
 }
 void CShellWindow::LoadMenuWnd(const sqshControlContainer* attr)
 {

@@ -882,7 +882,7 @@ int popupMenuIndex(vector<const char*> items) // returns -1 if cancel
 
 //-----------------------------------------
 static string editTextString;
-static BOOL CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)
 	{
