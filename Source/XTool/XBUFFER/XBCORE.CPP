@@ -1,5 +1,6 @@
 #include <cstring>
 #include <memory>
+#include <cstdlib>
 #include "xerrhand.h"
 #include "xbuffer.h"
 
