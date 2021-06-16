@@ -55,7 +55,6 @@ typedef uint8_t BYTE;
 typedef uint16_t WORD;
 typedef uint32_t DWORD;
 typedef uint32_t UINT;
-typedef int64_t __int64;
 //TODO this comes from Win32
 #define MAX_PATH 260
 //TODO use SDL2 or something?

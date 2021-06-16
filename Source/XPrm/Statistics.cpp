@@ -11,7 +11,7 @@ static double total_time;
 static double time_factor;
 static double start_ticks;
 
-inline int ticks2time(__int64 t) { return t ? round((t - start_ticks)*time_factor) : 0; }
+inline int ticks2time(int64_t t) { return t ? round((t - start_ticks)*time_factor) : 0; }
 
 TimerData::TimerData(char* title_, int group_, int dont_attach) 
 { 

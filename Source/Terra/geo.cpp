@@ -5362,14 +5362,14 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		// считаем по самой длинной линии (т.е. проходящей через вершину B)
 		int divisor;
 		divisor=(c->y - a->y);
-		if(roundFIntF0(divisor)) k = ((__int64)(b->y - a->y)<<8) / divisor;// F8
+		if(roundFIntF0(divisor)) k = ((int64_t)(b->y - a->y)<<8) / divisor;// F8
 		else k=0;
 		x_start = a->x + (cvrtFIntF8(c->x - a->x))*(k);
 		z1_start = a->z + (cvrtFIntF8(c->z - a->z))*(k);
 		x_end = b->x;
 		z1_end = b->z;
 		divisor= x_start - x_end;
-		if(roundFIntF0(divisor)) dz1 = (((__int64)(z1_start - z1_end)<<16)/divisor);
+		if(roundFIntF0(divisor)) dz1 = (((int64_t)(z1_start - z1_end)<<16)/divisor);
 		else dz1=0;
 		int tdivisor=divisor;
 		int tz1_start=z1_start;
@@ -5379,8 +5379,8 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		z1_start = a->z;
 		divisor=(c->y - a->y);
 		if(roundFIntF0(divisor)){
-			dx_start = ((__int64)(c->x - a->x)<<16) / divisor; 
-			dz1_start = ((__int64)(c->z - a->z)<<16) / divisor; 
+			dx_start = ((int64_t)(c->x - a->x)<<16) / divisor; 
+			dz1_start = ((int64_t)(c->z - a->z)<<16) / divisor; 
 		}
 		else { dx_start=0; dz1_start=0;}
 #ifdef SUBPIXEL
@@ -5395,8 +5395,8 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 			z1_end = a->z;
 			divisor=b->y - a->y;
 			if(roundFIntF0(divisor)){ 
-				dx_end = ((__int64)(b->x - a->x)<<16) / divisor;
-                dz1_end = ((__int64)(b->z - a->z)<<16) / divisor;
+				dx_end = ((int64_t)(b->x - a->x)<<16) / divisor;
+                dz1_end = ((int64_t)(b->z - a->z)<<16) / divisor;
 			}
 			else {dx_end =0; dz1_end =0; }
 		} else {
@@ -5405,8 +5405,8 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 			z1_end = b->z;
 			divisor=c->y - b->y;
 			if(roundFIntF0(divisor)){
-				dx_end = ((__int64)(c->x - b->x)<<16) / divisor;
-                dz1_end = ((__int64)(c->z - b->z)<<16) / divisor;
+				dx_end = ((int64_t)(c->x - b->x)<<16) / divisor;
+                dz1_end = ((int64_t)(c->z - b->z)<<16) / divisor;
 			}
 			else{ dx_end=0; dz1_end=0; }
 		}
@@ -5424,8 +5424,8 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 				z1_end = b->z;
 				divisor=(c->y - b->y);
 				if(roundFIntF0(divisor)){
-					dx_end=((__int64)(c->x - b->x)<<16)/divisor;
-					dz1_end=((__int64)(c->z - b->z)<<16)/divisor;
+					dx_end=((int64_t)(c->x - b->x)<<16)/divisor;
+					dz1_end=((int64_t)(c->z - b->z)<<16)/divisor;
 				}
 				else { dx_end=0; dz1_end=0; }
 #ifdef SUBPIXEL
