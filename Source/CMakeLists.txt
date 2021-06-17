@@ -9,22 +9,25 @@ IF(GEN_SCRIPTS)
 ENDIF()
 
 ADD_SUBDIRECTORY("XTool")
-ADD_SUBDIRECTORY("PlayOgg")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")
 ADD_SUBDIRECTORY("tx3d")
+ADD_SUBDIRECTORY("Render")
+
+IF(PERIMETER_WINDOWS)
+    ADD_SUBDIRECTORY("PlayOgg")
+    ADD_SUBDIRECTORY("Network")
+    ADD_SUBDIRECTORY("Sound")
+ENDIF()
 if(NOT FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
-ADD_SUBDIRECTORY("Network/Peer2")
-ADD_SUBDIRECTORY("Render")
-ADD_SUBDIRECTORY("Sound")
 
 INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Game"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
-        "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Stadistics.h
+        "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/Render/inc"
         "${PROJECT_SOURCE_DIR}/Source/Terra"
@@ -44,13 +47,10 @@ INCLUDE_DIRECTORIES(
 SET(perimeter_LINK_LIBS
         #Our libs
         XTool
-        PlayOgg
         PluginMAX
         Terra
         tx3d
-        Peer
         Render
-        Sound
 )
 
 #Add Windows and DirectX libs
@@ -69,6 +69,11 @@ IF(PERIMETER_WINDOWS)
     LINK_DIRECTORIES(BEFORE ${LIBS_MSDXSDK})
 
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+            #Our libs
+            PlayOgg
+            Network
+            Sound
+
             #DirectX libs
             ${LIBS_MSDXSDK}/d3d9.lib
             ${LIBS_MSDXSDK}/d3dx9.lib
@@ -208,17 +213,6 @@ SET(perimeter_SRCS
         UserInterface/MonoSelect.cpp
         UserInterface/OnlineMenu.cpp
         UserInterface/OptionsMenu.cpp
-        Network/CommonCommands.cpp
-        Network/CommonEvents.cpp
-        Network/ConnectionDP.cpp
-        Network/EventBufferDP.cpp
-        Network/GS_interface.cpp
-        Network/HyperSpace.cpp
-        Network/P2P_interface1Th.cpp
-        Network/P2P_interface2Th.cpp
-        Network/P2P_interface2ThDPF.cpp
-        Network/P2P_interface3Th.cpp
-        Network/P2P_interfaceAnyTh.cpp
         Physics/Missile.cpp
         Physics/MultiBodyDispatcher.cpp
         Physics/Mutation.cpp

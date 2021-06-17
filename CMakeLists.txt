@@ -30,6 +30,7 @@ IF( CMAKE_HOST_WIN32 OR MINGW )
 ELSE()
     MESSAGE("Not Windows or MinGW build - WARNING: EXPERIMENTAL!")
     SET(PERIMETER_WINDOWS OFF)
+    ADD_DEFINITIONS(-DPERIMETER_EXODUS)
 ENDIF()
 
 # options
@@ -38,14 +39,26 @@ OPTION(OPTION_STATIC_BUILD "Generate static build" ON)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 
+# paths to search libs
+SET(LIBRARY_SEARCH_PATHS
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /mingw
+    /usr/pkg
+    /usr/local
+    /usr
+    /sw # Fink
+    /opt/local # DarwinPorts
+    /opt/csw # Blastwave
+    /opt
+    /local
+    C:/MinGW
+)
+
 # depends
 FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
-IF(MSVC_CL_BUILD)
-    FIND_PACKAGE(Vorbis CONFIG REQUIRED)
-    SET(VORBIS_FOUND TRUE)
-ELSE()
-    FIND_PACKAGE(VORBIS)
-ENDIF()
+FIND_PACKAGE(Vorbis)
+FIND_PACKAGE(SDL2 REQUIRED)
 
 # globals
 INCLUDE_DIRECTORIES(SYSTEM

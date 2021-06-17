@@ -3,7 +3,7 @@
 # Try to find Ogg/Vorbis libraries and include paths.
 # Once done this will define
 #
-# VORBIS_FOUND
+# Vorbis_FOUND
 # VORBIS_INCLUDE_DIRS
 # VORBIS_LIBRARIES
 #
@@ -23,17 +23,7 @@ ENDIF()
 
 SET(VORBIS_SEARCH_PATHS
     ${VORBIS_SEARCH_PATHS}
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /mingw
-    /usr/pkg
-    /usr/local
-    /usr
-    /sw # Fink
-    /opt/local # DarwinPorts
-    /opt/csw # Blastwave
-    /opt
-    /local/
+    ${LIBRARY_SEARCH_PATHS}
 )
 
 FIND_PATH(OGG_INCLUDE_DIR
@@ -98,7 +88,7 @@ SET(VORBIS_LIBRARIES ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 
-find_package_handle_standard_args(VORBIS DEFAULT_MSG VORBIS_LIBRARIES VORBIS_INCLUDE_DIR OGG_INCLUDE_DIR)
+find_package_handle_standard_args(Vorbis DEFAULT_MSG VORBIS_LIBRARIES VORBIS_INCLUDE_DIR OGG_INCLUDE_DIR)
 
 set(VORBIS_INCLUDE_DIRS ${OGG_INCLUDE_DIR} ${VORBIS_INCLUDE_DIR})
 

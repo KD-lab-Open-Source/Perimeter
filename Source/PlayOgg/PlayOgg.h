@@ -3,6 +3,49 @@
 #pragma once
 //Balmer
 
+enum MpegState
+{
+    MPEG_STOP=0,
+    MPEG_PLAY=1,
+    MPEG_PAUSE=2,
+};
+
+#ifdef PERIMETER_EXODUS
+
+//Dummy implementation
+
+bool MpegInitLibrary(void*) {}
+void MpegDeinitLibrary() {}
+
+class MpegSound {
+public:
+    MpegSound() = default;
+    ~MpegSound() = default;
+
+    bool OpenToPlay(const char*, bool cycled=true) { return true; }
+    void Stop() {}
+    void Pause() {}
+    void Resume() {}
+
+    const char* GetFileName() { return nullptr; }
+
+    MpegState IsPlay() { return MPEG_STOP; }
+
+    void SetVolume(int) {}
+    int GetVolume() { return 0; }
+
+    //Время считается в секундах
+
+    //Постепенно изменить громкость с текущей до new_volume за время time
+    //очищается при смене файла или вызове SetVolume
+    //Криво работает с DeferredSeek
+    bool FadeVolume(float, int new_volume=0) { return false; }
+
+    float GetLen() { return 0.0f; }
+};
+
+#else //PERIMETER_EXODUS
+
 #include <dsound.h>
 
 #define MPP_STAT
@@ -86,5 +129,7 @@ protected:
 	void ClearFade();
 	void FadeQuant();
 };
+
+#endif //PERIMETER_EXODUS
 
 #endif // _PLAYMPP_H_
