@@ -220,7 +220,7 @@ string ModelTexture3D::paramString() const {
 		destClr->y = 0.0f;
 		destClr->z = 0.0f;
 	}
-/*	if (v.y == 63.0f) {
+	if (v.y == 63.0f) {
 		destClr->x = 1.0f;
 		destClr->y = 1.0f;
 		destClr->z = 1.0f;

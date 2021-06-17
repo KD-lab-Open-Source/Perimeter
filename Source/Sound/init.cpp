@@ -146,10 +146,6 @@ void SNDEnableVoices(bool enable)
 		script2d.StopAllVoices();
 }
 
-bool SNDIsSoundEnabled()
-{
-	return g_enable_sound;
-}
 bool SNDIsVoicesEnabled() {
 	return g_enable_voices;
 }
@@ -321,32 +317,6 @@ void SNDSetVolume(float volume)
 	if(global_volume<0)global_volume=0;
 
 	SNDUpdateAllSoundVolume();
-}
-
-float SNDGetVolume()
-{
-	return global_volume;
-}
-
-
-bool SND3DScriptDisable(LPCSTR name)
-{
-	return script3d.RemoveScript(name);
-}
-
-void SND3DScriptDisableAll()
-{
-	script3d.RemoveAll();
-}
-
-bool SND2DScriptDisable(LPCSTR name)
-{
-	return script2d.RemoveScript(name);
-}
-
-void SND2DScriptDisableAll()
-{
-	script2d.RemoveAll();
 }
 
 bool SNDScriptPrmEnable(const SoundScriptPrm& prm)
@@ -733,16 +703,6 @@ void SND3DSound::SetVolume(float vol)
 
 	float v=vol*(script->def_volume-script->min_volume)+script->min_volume;
 	SetRealVolume(v);
-}
-
-bool SND3DSound::SetRealFrequency(DWORD frequency)
-{
-	if(!g_enable_sound || script==NULL)return false;
-	MTAuto lock(script->GetLock());
-	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
-	HRESULT hr;
-	hr=s.p3DBuffer->SetFrequency(frequency);
-	return SUCCEEDED(hr);
 }
 
 bool SND3DSound::SetFrequency(float frequency)
@@ -1170,17 +1130,6 @@ bool SND2DSound::SetFrequency(float frequency)
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
 
 	return s.SetFrequency(frequency);
-}
-
-bool SND2DSound::SetRealFrequency(DWORD frequency)
-{
-	if(!g_enable_sound || script==NULL)return false;
-	MTAuto lock(script->GetLock());
-
-	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
-	HRESULT hr;
-	hr=s.buffer->SetFrequency(frequency);
-	return SUCCEEDED(hr);
 }
 
 void SND2DSound::SetVolume(float vol)

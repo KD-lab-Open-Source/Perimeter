@@ -20,12 +20,11 @@
 void MpegCreateWindowTable();
 
 static LPDIRECTSOUND g_pDS=NULL;
-const int maximal_len=BLK_SIZE*2;
-
 static HANDLE hWaitEvent=INVALID_HANDLE_VALUE;
 static HANDLE hThread=INVALID_HANDLE_VALUE;
+
+const int maximal_len=BLK_SIZE*2;
 static int b_thread_must_stop=0;
-static bool b_pause_if_null_volume=false;
 MpegSound* pFirstSound=NULL;
 
 //#define MPEG_PROFILE
@@ -137,27 +136,11 @@ public:
 		return time_len;
 	}
 
-	float GetCurPos()
-	{
-#ifdef HAS_VORBIS
-		return (float)ov_time_tell(&vf);
-#else
-	    return 0.0f;
-#endif
-	}
-
 	int GetChannels()
 	{
 		return channels;
 	}
 };
-
-double MpegCPUUsing()
-{
-	if(all_time<0.1)
-		return 0;
-	return mpeg_time/all_time;
-}
 #endif //MPP_STAT
 
 class EWait
@@ -196,11 +179,6 @@ static long ToDirectVolume(int vol)
 			 )*DB_SIZE
 		);
 	return v;
-}
-
-void MpegSetPauseIfNullVolume(bool set)
-{
-	b_pause_if_null_volume=set;
 }
 
 DWORD WINAPI MpegThreadProc(LPVOID lpParameter)
@@ -314,9 +292,8 @@ MpegSound::MpegSound()
 	mpeg_state=MPEG_STOP;
 
 	dwWriteOffset=0;
-	Wraps=OldWraps=0;
-	BeginBufferOffset=OldBeginBufferOffset=0;
-	OffsetBeginPlayFile=0;
+	Wraps=0;
+	OldWraps=0;
 	SeekSkipByte=0;
 
 	pMppLoad=new MppLoad;
@@ -324,8 +301,10 @@ MpegSound::MpegSound()
 	last_signal_is_full=false;
 	last_signal_offset=0;
 	enable_fade=false;
-	fade_begin_time=fade_time=0;
-	fade_begin_volume=fade_end_volume=0;
+	fade_begin_time=0;
+	fade_time=0;
+	fade_begin_volume=0;
+	fade_end_volume=0;
 	fname[0]=0;
 	memset(&wave_format,0,sizeof(wave_format));
 }
@@ -350,37 +329,7 @@ void MpegSound::InternalMpegSetVolume(int _volume)
 		HRESULT hr;
 		long ddvol=ToDirectVolume(_volume);
 		hr=pDSBuffer->SetVolume(ddvol);
-		
-		if(b_pause_if_null_volume && mpeg_state==MPEG_PLAY)
-		{
-			DWORD status;
-			if(pDSBuffer->GetStatus(&status)==DS_OK)
-			{
-				bool b_play=(status&DSBSTATUS_PLAYING)?true:false;
-
-				if(volume==0)
-				{
-					if(b_play)pDSBuffer->Stop();
-				}else
-				{
-					if(!b_play)pDSBuffer->Play(0,0,DSBPLAY_LOOPING);
-				}
-			}
-		}
 	}
-}
-
-bool MpegSound::DebugRealPlay()
-{
-	if(pDSBuffer==NULL)return false;
-	EWait w;
-	DWORD status;
-	if(pDSBuffer->GetStatus(&status)==DS_OK)
-	{
-		return (status&DSBSTATUS_PLAYING)?true:false;
-	}
-
-	return false;
 }
 
 bool MpegSound::InitSoundBuffer()
@@ -455,10 +404,9 @@ bool MpegSound::InternalMpegOpenToPlay(const char* _fname,bool cycled)
 	InternalMpegStop();
 	Sleep(20);
 
-	OldWraps=Wraps=0;
-	BeginBufferOffset=OldBeginBufferOffset=0;
+	OldWraps=0;
+	Wraps=0;
 	dwWriteOffset=0;
-	OffsetBeginPlayFile=0;
 	SeekSkipByte=0;
 
 	last_signal_is_full=false;
@@ -509,10 +457,7 @@ bool MpegSound::InternalMpegOpenToPlay(const char* _fname,bool cycled)
 		pDSBuffer->SetCurrentPosition(0);
 		InternalMpegSetVolume(volume);
 
-		if(b_pause_if_null_volume && volume==0)
-			pDSBuffer->Stop();
-		else
-			pDSBuffer->Play(0,0,DSBPLAY_LOOPING);
+        pDSBuffer->Play(0,0,DSBPLAY_LOOPING);
 	}
 
 	if(is_initialize)
@@ -654,10 +599,7 @@ Retry:
 		{
 			mpeg_state=MPEG_PLAY;
 			OldWraps=Wraps;
-			OldBeginBufferOffset=BeginBufferOffset;
-			BeginBufferOffset=dwWriteOffset;
 			Wraps=0;
-			OffsetBeginPlayFile=0;
 			SeekSkipByte=0;
 		}else
 			InternalMpegStop();
@@ -740,9 +682,6 @@ void MpegSound::Resume()
 	if(pDSBuffer==NULL)return;
 	if(mpeg_state==MPEG_STOP)return;
 
-	if(b_pause_if_null_volume && volume==0)
-		pDSBuffer->Stop();
-	else
 	if(SUCCEEDED(pDSBuffer->Play(0,0,DSBPLAY_LOOPING)))
 	{
 	}
@@ -761,30 +700,6 @@ MpegState MpegSound::IsPlay()
 */
 	return mpeg_state;//(status&DSBSTATUS_PLAYING)?true:false;
 }
-
-double MpegGetLen(const char* fname)
-{
-#ifdef HAS_VORBIS
-    OggVorbis_File vf;
-	FILE* in=fopen(fname,"rb");
-	if(in==NULL)
-		return -1;
-
-    if(ov_open(in, &vf, NULL, 0) < 0) {
-        fclose(in);
-        return -1;
-    }
-
-	double time=ov_time_total(&vf,-1);
-    ov_clear(&vf);
-    fclose(in);
-
-	return time;
-#else
-	return 0.0;
-#endif
-}
-
 
 int window_hamming[BLK_SIZE];//Окно Хэмминга
 const int h_shift=14;
@@ -894,8 +809,8 @@ void MpegSound::ClearFade()
 
 const char* MpegSound::GetFileName()
 {
-	if(fname[0]==NULL)
-		return NULL;
+	if(fname[0]==nullptr)
+		return nullptr;
 
 	return fname;
 }
@@ -905,7 +820,3 @@ float MpegSound::GetLen()
 	return pMppLoad->GetLen();
 }
 
-float MpegSound::GetCurPos()
-{
-	return pMppLoad->GetCurPos();
-}

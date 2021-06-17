@@ -1,6 +1,6 @@
-#include "xstream.h"
 #include <cstdio>
 #include <cstring>
+#include "xstream.h"
 
 XStream& XStream::operator<= (float var)
 {

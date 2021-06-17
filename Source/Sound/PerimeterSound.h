@@ -8,7 +8,6 @@ void* SNDGetDirectSound();//Возвращает указатель на LPDIREC
 void SNDEnableSound(bool enable);
 void SNDEnableVoices(bool enable);
 bool SNDIsVoicesEnabled();
-bool SNDIsSoundEnabled();
 
 void SNDSetSoundDirectory(LPCSTR dir);
 LPCSTR SNDGetSoundDirectory();
@@ -20,16 +19,10 @@ void SNDSetBelligerentIndex(int idx);
 bool SNDEnableErrorLog(LPCSTR file);
 
 void SNDSetVolume(float volume);//volume=0..1
-float SNDGetVolume();
 
 //Грузит соответстивующую группу звуков в память 
 //и позволяет к ним обращаться с помощью 
 bool SNDScriptPrmEnableAll();
-//Очищает память, отведённую под соответствующую группу звуков
-bool SND3DScriptDisable(LPCSTR name);
-void SND3DScriptDisableAll();
-bool SND2DScriptDisable(LPCSTR name);
-void SND2DScriptDisableAll();
 
 //Функции сделанные для вызова менюшек
 //Вполне естественно, что внутри нежелательно вызывать 
@@ -67,7 +60,6 @@ public:
 	bool SetFrequency(float frequency);//0..2 - 0 - минимальная, 1 - по умолчанию
 
 	//SetFrequency - frequency=1..44100 Гц, оригинальная - 0
-	bool SetRealFrequency(DWORD frequency);
 	void SetRealVolume(float vol);//0..1
 protected:
 	inline void AssertValid();
@@ -164,7 +156,6 @@ public:
 
 	////
 	void SetRealVolume(float vol);//0..1
-	bool SetRealFrequency(DWORD frequency);
 protected:
 	inline void AssertValid();
 	inline void Destroy();

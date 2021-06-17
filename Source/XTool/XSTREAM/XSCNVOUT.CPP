@@ -1,5 +1,5 @@
+#include <string>
 #include "xstream.h"
-#include <cstdlib>
 
 XStream& XStream::operator>= (char& var)
 {

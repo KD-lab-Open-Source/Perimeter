@@ -1,6 +1,7 @@
 #ifndef __XBUFFER_H
 #define __XBUFFER_H
 
+#include <string>
 
 #ifndef NULL
 #define NULL	0L

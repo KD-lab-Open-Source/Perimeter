@@ -1,6 +1,8 @@
 #ifndef __XSTREAM_H
 #define __XSTREAM_H
 
+#include <string>
+
 #define XS_CONV_BUFFER_LEN	63
 
 #define XS_IN		0x0001
