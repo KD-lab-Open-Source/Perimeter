@@ -1,9 +1,8 @@
 #include "StdAfx.h"
+#include "../Render/inc/RenderMT.h"
 #include "C3D.h"
 #include "SoundInternal.h"
 #include "SoundScript.h"
-
-#define _NOSTD_
 #include <algorithm>
 
 int SNDScript::belligerentIndex = 0;

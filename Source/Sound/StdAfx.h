@@ -16,8 +16,6 @@
 #include <sys/stat.h>
 #include <io.h>
 #include <cmath>
-#include <xutil.h>
-#include "../Render/inc/RenderMT.h"
 
 
 #ifndef ASSERT

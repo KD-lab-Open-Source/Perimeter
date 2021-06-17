@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "PerimeterSound.h"
 #include "SoundInternal.h"
+#include "../Render/inc/RenderMT.h"
 #include "C3D.h"
 #include "SoundScript.h"
 
