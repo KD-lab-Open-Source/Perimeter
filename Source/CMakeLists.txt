@@ -1,3 +1,8 @@
+IF(NOT PERIMETER_WINDOWS)
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
+    ADD_SUBDIRECTORY("Exodus")
+ENDIF()
+
 IF(GEN_SCRIPTS)
     MESSAGE("Generating Scripts")
     #TODO call XPrm and other stuff
@@ -48,14 +53,6 @@ SET(perimeter_LINK_LIBS
         Sound
 )
 
-# Boost dependencies
-IF(NOT MSVC_CL_BUILD)
-	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-		${BOOST_LIBRARY}
-		${SDL2_LIBRARY}
-	)
-ENDIF()
-
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
     #Include headers
@@ -96,10 +93,14 @@ IF(PERIMETER_WINDOWS)
 			Vorbis::vorbisfile
 		)
 	ENDIF()
-ELSE()
+ELSE() #Add non windows dependencies    
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-		# dl is required for dladdr in stacktrace,
-		dl
+        #${BOOST_LIBRARY}
+        ${SDL2_LIBRARY}
+        #Wrapper lib
+        Exodus
+        # dl is required for dladdr in stacktrace,
+        dl
     )
 ENDIF()
 
