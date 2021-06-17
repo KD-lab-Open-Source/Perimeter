@@ -20,7 +20,7 @@ jobs:
           mingw-w64-x86_64-make
           mingw-w64-x86_64-SDL2
           mingw-w64-x86_64-boost
-          mingw-w64-x86_64-libvorbis
+#          mingw-w64-x86_64-libvorbis
       - uses: actions/checkout@v2
       - name: perimeter -- create build dir
         run: msys2do mkdir build
