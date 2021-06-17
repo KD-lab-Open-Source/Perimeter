@@ -1,51 +1,52 @@
-#pragma once
+#ifndef PERIMETER_SOUND_H
+#define PERIMETER_SOUND_H
 
-#ifdef PERIMETER_EXODUS
+#ifdef PERIMETER_EXODUS_SOUND
 
 //Dummy implementation
 
 //Инициализация/деинициализация библиотеки
-bool SNDInitSound(HWND g_hWnd,bool bEnable3d,bool soft3d) { return true; }
-void SNDReleaseSound() {}
-void* SNDGetDirectSound() { return nullptr; } //Возвращает указатель на LPDIRECTSOUND8
+static bool SNDInitSound(HWND g_hWnd,bool bEnable3d,bool soft3d) { return true; }
+static void SNDReleaseSound() {}
+static void* SNDGetDirectSound() { return nullptr; } //Возвращает указатель на LPDIRECTSOUND8
 
-void SNDEnableSound(bool enable) {}
-void SNDEnableVoices(bool enable) {}
-bool SNDIsVoicesEnabled() { return true; }
+static void SNDEnableSound(bool enable) {}
+static void SNDEnableVoices(bool enable) {}
+static bool SNDIsVoicesEnabled() { return true; }
 
 static char sound_directory[260]="";
-void SNDSetSoundDirectory(LPCSTR dir)
+static void SNDSetSoundDirectory(LPCSTR dir)
 {
     strncpy(sound_directory,dir,sizeof(sound_directory));
     sound_directory[sizeof(sound_directory)-1]=0;
 }
-LPCSTR SNDGetSoundDirectory()
+static LPCSTR SNDGetSoundDirectory()
 {
     return sound_directory;
 }
 
-void SNDSetLocDataDirectory(LPCSTR dir) {}
-void SNDSetBelligerentIndex(int idx) {}
+static void SNDSetLocDataDirectory(LPCSTR dir) {}
+static void SNDSetBelligerentIndex(int idx) {}
 
 //Работа с ошибками
-bool SNDEnableErrorLog(LPCSTR file) { return true; }
+static bool SNDEnableErrorLog(LPCSTR file) { return true; }
 
-void SNDSetVolume(float volume) {} //volume=0..1
+static void SNDSetVolume(float volume) {} //volume=0..1
 
 //Грузит соответстивующую группу звуков в память
 //и позволяет к ним обращаться с помощью
-bool SNDScriptPrmEnableAll() { return true; }
+static bool SNDScriptPrmEnableAll() { return true; }
 
 //Функции сделанные для вызова менюшек
 //Вполне естественно, что внутри нежелательно вызывать
 //SNDScriptDisable, то есть можно, но только для тех скриптов, что не
 //исполдьзуются, иначе звуки не запустятся опыть
 
-void SNDPausePush() {} //Остановить все звуки, c возможностью продолжения проигрывания
-void SNDPausePop() {} //Продолжить играть все остановленные звуки
-int SNDGetPushLevel() { return true; } //Возвращает уровень вложенности
+static void SNDPausePush() {} //Остановить все звуки, c возможностью продолжения проигрывания
+static void SNDPausePop() {} //Продолжить играть все остановленные звуки
+static int SNDGetPushLevel() { return true; } //Возвращает уровень вложенности
 
-void SNDStopAll() {} //Остановить все звуки
+static void SNDStopAll() {} //Остановить все звуки
 
 ////////////////////////////3D/////////////////////////////////
 
@@ -73,7 +74,7 @@ public:
     void SetRealVolume(float vol) {} //0..1
 };
 
-bool SND3DPlaySound(LPCSTR name,
+static bool SND3DPlaySound(LPCSTR name,
                     const Vect3f* pos,
                     const Vect3f* velocity=NULL//По умолчанию объект считается неподвижным
 ) {
@@ -119,7 +120,7 @@ public:
     bool Update() { return true; }
 };
 
-extern SND3DListener snd_listener;
+static SND3DListener snd_listener;
 
 ////////////////////////////2D/////////////////////////////////
 
@@ -127,19 +128,19 @@ extern SND3DListener snd_listener;
 //pan : 0 - крайне левое положение, 0.5 - центр, +1 - крайне правое
 //Для звуков, которые должны проиграться один раз
 //и играться в одном месте
-bool SND2DPlaySound(LPCSTR name,float x=0.5f,DWORD frequency=0) { return true; }
+static bool SND2DPlaySound(LPCSTR name,float x=0.5f,DWORD frequency=0) { return true; }
 
 //Устанавливает параметры влияющие на SND2DPanByX
 //width - ширина экрана, power - влияет на то,
 //насколько крайне правая точка будет звучать в левом наушнике
 //power=1 - максимальное разнесение, power=0 - минимальное
-void SND2DPanByX(float width,float power) {}
+static void SND2DPanByX(float width,float power) {}
 
 class SND2DSound
 {
 public:
-    SND2DSound();
-    ~SND2DSound();
+    SND2DSound() = default;
+    ~SND2DSound() = default;
     bool Init(LPCSTR) { return true; }
 
     bool Play(bool cycled=true) { return true; }
@@ -318,3 +319,5 @@ protected:
 };
 
 #endif //PERIMETER_EXODUS
+
+#endif //PERIMETER_SOUND_H

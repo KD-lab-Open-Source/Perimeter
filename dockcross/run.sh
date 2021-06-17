@@ -16,7 +16,7 @@ if [ ! -f ./dockcross/dockcross-windows-static-x64-perimeter ]; then
   chmod a+x ./dockcross/dockcross-windows-static-x64-perimeter
 fi
 
-echo "Building under windows x86"
-./dockcross/dockcross-windows-static-x86-perimeter ./dockcross/cmake-mingw.sh $@
 echo "Building under windows x86_64"
 ./dockcross/dockcross-windows-static-x64-perimeter ./dockcross/cmake-mingw.sh $@
+echo "Building under windows x86"
+./dockcross/dockcross-windows-static-x86-perimeter ./dockcross/cmake-mingw.sh $@
