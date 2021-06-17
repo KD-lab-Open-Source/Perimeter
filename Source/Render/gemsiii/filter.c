@@ -9,7 +9,10 @@
 #include <malloc.h>
 #include <math.h>
 #include "filter.h"
-#include "xmath.h"
+
+#ifdef M_PI
+#define M_PI  3.14159265358979323846f
+#endif
 
 #ifndef EXIT_SUCCESS
 #define	EXIT_SUCCESS	(0)

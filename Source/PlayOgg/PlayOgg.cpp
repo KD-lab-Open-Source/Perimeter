@@ -809,7 +809,7 @@ void MpegSound::ClearFade()
 
 const char* MpegSound::GetFileName()
 {
-	if(fname[0]==nullptr)
+	if(fname[0]==0)
 		return nullptr;
 
 	return fname;

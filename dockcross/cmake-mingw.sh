@@ -12,6 +12,8 @@ ${CROSS_TRIPLE}-cmake \
 -DOGG_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libogg.a" \
 -DVORBIS_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbis.a" \
 -DVORBISFILE_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbisfile.a" \
+-DSDL2_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include" \
+-DSDL2_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libSDL2.a" \
 -DOPTION_DISABLE_STACKTRACE=On \
 $@
 

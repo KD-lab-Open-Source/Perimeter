@@ -204,14 +204,6 @@ int cStream::getline(char *buf,int size)
 	return count; 
 }
 
-template<typename T>
-cStream& cStream::operator<< (T var)
-{
-    assert(lpBuffer);
-    std::string str = std::to_string(var);
-    write(str.c_str(), str.length());
-    return *this;
-}
 cStream& cStream::operator << (float a)
 { 
 	assert(lpBuffer); 

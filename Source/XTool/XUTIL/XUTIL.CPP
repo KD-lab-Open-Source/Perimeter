@@ -1,6 +1,7 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#include <cstring>
 #include "tweaks.h"
 #include "xutil.h"
 

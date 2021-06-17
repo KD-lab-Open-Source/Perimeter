@@ -41,7 +41,13 @@ public:
 	int getline(char *buf,int size);
 
     template<typename T>
-	cStream& operator << (T a);
+    cStream& operator<< (T var)
+    {
+        assert(lpBuffer);
+        std::string str = std::to_string(var);
+        write(str.c_str(), str.length());
+        return *this;
+    }
 	cStream& operator << (float a);
 	cStream& operator << (double a);
 	cStream& operator << (long double a);

@@ -1,21 +1,33 @@
 INCLUDE_DIRECTORIES(
-        BEFORE .
-        "${PROJECT_SOURCE_DIR}/Source/Network/Peer2"
+        "${PROJECT_SOURCE_DIR}/Source/Game"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+        "${PROJECT_SOURCE_DIR}/Source/Terra"
+        "${PROJECT_SOURCE_DIR}/Source/UserInterface"
+        "${PROJECT_SOURCE_DIR}/Source/Network"
+        "${PROJECT_SOURCE_DIR}/Source/Units"
+        "${PROJECT_SOURCE_DIR}/Source/Render/client"
+        "${PROJECT_SOURCE_DIR}/Source/Physics"
+        "${PROJECT_SOURCE_DIR}/Source/AI"
+        "${PROJECT_SOURCE_DIR}/Source/Sound"
+        "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
+        .
+        "${PROJECT_SOURCE_DIR}/Source/Network/Peer2"
 )
 
 SET(Network_SRCS
-        Network/CommonCommands.cpp
-        Network/CommonEvents.cpp
-        Network/ConnectionDP.cpp
-        Network/EventBufferDP.cpp
-        Network/GS_interface.cpp
-        Network/HyperSpace.cpp
-        Network/P2P_interface1Th.cpp
-        Network/P2P_interface2Th.cpp
-        Network/P2P_interface2ThDPF.cpp
-        Network/P2P_interface3Th.cpp
-        Network/P2P_interfaceAnyTh.cpp
+        CommonCommands.cpp
+        CommonEvents.cpp
+        ConnectionDP.cpp
+        EventBufferDP.cpp
+        GS_interface.cpp
+        HyperSpace.cpp
+        P2P_interface1Th.cpp
+        P2P_interface2Th.cpp
+        P2P_interface2ThDPF.cpp
+        P2P_interface3Th.cpp
+        P2P_interfaceAnyTh.cpp
         Peer2/peer/peerAutoMatch.c
         Peer2/peer/peerCallbacks.c
         Peer2/peer/peerGlobalCallbacks.c
