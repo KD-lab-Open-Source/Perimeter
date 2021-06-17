@@ -1,6 +1,10 @@
 #ifndef PERIMETER_WINDOWS_H
 #define PERIMETER_WINDOWS_H
 
+struct _FILETIME {
+    unsigned short dwLowDateTime;
+    unsigned short dwHighDateTime;
+}
 
 //TODO this is some Windows window handler pointer, it should be abstracted with SDL2 like in Vangers
 //typedef void *HWND;

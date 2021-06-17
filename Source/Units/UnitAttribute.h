@@ -1405,19 +1405,9 @@ struct ModelData
 	}
 };
 
-#ifdef _WIN32
 class FileTime : _FILETIME
 {
 public:
-#else
-class FileTime
-{
-public:
-	///Fields copied from _FILETIME struct
-    unsigned short dwLowDateTime;
-    unsigned short dwHighDateTime;
-#endif
-
 	FileTime() {
 		dwLowDateTime = dwHighDateTime = 0;
 	}
