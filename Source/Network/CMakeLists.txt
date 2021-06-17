@@ -17,6 +17,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Network_SRCS
+        dplay8guid.c
         CommonCommands.cpp
         CommonEvents.cpp
         ConnectionDP.cpp
