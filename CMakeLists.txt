@@ -57,7 +57,12 @@ SET(LIBRARY_SEARCH_PATHS
 
 # depends
 FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
-FIND_PACKAGE(Vorbis)
+IF(MSVC_CL_BUILD)
+    FIND_PACKAGE(Vorbis CONFIG REQUIRED)
+    SET(VORBIS_FOUND TRUE)
+ELSE()
+    FIND_PACKAGE(Vorbis)
+ENDIF()
 FIND_PACKAGE(SDL2 REQUIRED)
 
 # globals
