@@ -6,6 +6,15 @@
 
 //extern XBuffer assertsBuffer;
 
+static void (*assert_restore_graphics_function)() = 0;
+
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+void SetAssertRestoreGraphicsFunction(void(*func)())
+{
+	assert_restore_graphics_function = func;
+}
+#endif
+
 void xtSysFinit(void);
 int xtDispatchMessage(MSG* msg);
 

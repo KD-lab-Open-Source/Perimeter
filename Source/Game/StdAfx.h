@@ -15,6 +15,10 @@
 #include <time.h>
 #include <direct.h>
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#include <iostream>
+#endif
+
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 // non-standard header : https://developercommunity.visualstudio.com/t/msvc-142328019-is-missing-include-typeinfoh/734566
 #include <typeinfo.h>

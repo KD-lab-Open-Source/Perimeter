@@ -9,6 +9,10 @@
 #include <mmsystem.h>
 #include <dsound.h>
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#include <iostream>
+#endif
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>

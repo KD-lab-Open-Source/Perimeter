@@ -59,20 +59,17 @@ extern XErrorHandler ErrH;
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 
 // Use d3dFlipToGdiSurface() for D3D Fullscreen modes
+
 void SetAssertRestoreGraphicsFunction(void(*func)());
 
-int DiagAssert(unsigned long dwOverrideOpts, const char* szMsg, const char* szFile, unsigned long dwLine ) ;
-
-#undef NDEBUG
 #define xxassert(exp, msg) \
-    do                                                              \
-    {  static int ignore = 0;                                   \
-        if ( !(exp) && !ignore)				\
-		switch(DiagAssert ( 0 ,  msg, __FILE__  , __LINE__)){  \
-			case 1: ignore = 1; break; \
-			case 2: __asm { int 3 }; break; \
-			}\
-    } while (0)
+	do { \
+		if (!(exp)) { \
+			std::cerr << "Assertion `" #exp "` failed in " << __FILE__ \
+				<< " line " << __LINE__ << ": " << msg << std::endl; \
+			std::terminate(); \
+		} \
+	} while (false)
 
 #define xassert(exp) xxassert(exp, #exp)
 

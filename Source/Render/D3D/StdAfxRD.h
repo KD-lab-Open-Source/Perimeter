@@ -15,6 +15,10 @@
 #include <stack>
 #include <map>
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#include <iostream>
+#endif
+
 #include <d3d9.h>
 #include <d3dx9.h>
 
