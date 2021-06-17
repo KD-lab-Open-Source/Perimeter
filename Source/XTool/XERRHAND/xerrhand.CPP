@@ -174,9 +174,9 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 
 	strcat(msg," AT LOCATION 0x");
 #ifdef PERIMETER_ARCH_64
-	strcat(msg, qwtoa(except_info->ExceptionRecord->ExceptionAddress));
+	strcat(msg, qwtoa((uint64_t) except_info->ExceptionRecord->ExceptionAddress));
 #else
-    strcat(msg, dwtoa(except_info->ExceptionRecord->ExceptionAddress));
+    strcat(msg, dwtoa((uint32_t) except_info->ExceptionRecord->ExceptionAddress));
 #endif
 
 	static int attempt_to_show_context = 0;
