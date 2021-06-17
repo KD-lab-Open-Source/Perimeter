@@ -80,8 +80,8 @@ bool IniManager::getInt(const char* section, const char* key, int& value)
 }
 void IniManager::putInt(const char* section, const char* key, int val) 
 {
-	char buf [256];
-	put(section, key, itoa(val, buf, 10));
+	std::string str = std::to_string(val);
+	put(section, key, str.c_str());
 }
 
 float IniManager::getFloat(const char* section, const char* key) 

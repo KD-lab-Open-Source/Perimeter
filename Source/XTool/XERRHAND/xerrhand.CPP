@@ -2,9 +2,11 @@
 #include <list>
 #include <cfloat>
 #include <iostream>
+#include <windows.h>
+#include <process.h>
+#include <crtdbg.h>
 #include "xstream.h"
 #include "xerrhand.h"
-#include "xglobal.h"
 
 static void (*assert_restore_graphics_function)() = 0;
 
@@ -30,14 +32,7 @@ char convBuf[CONV_BUFFER_LEN + 1];
 #endif
 
 char *defprefix 	= "XHANDLER  INFORM";
-
-char *ctrlMSG		= "CTRL-BREAK TERMINATION";
 char *exceptMSG 	= "EXCEPTION OCCURED";
-char *debugMSG		= "DEBUG PROHIBITION";
-char *winopenMSG	= "WINDOW NOT OPEN";
-char *winclassregMSG	= "WINDOW CLASS REGISTRATION ERROR";
-char *threadcreatMSG	= "THREAD CREATION ERROR";
-char *semaphcreatMSG	= "SEMAPHORE CREATION ERROR";
 char *rterrorMSG	= "RUN-TIME ERROR";
 
 #pragma warning (disable : 4073)
@@ -61,7 +56,7 @@ void win32_break(char* error,char* msg) {
 
 char* qwtoa(uint64_t a)
 {
-    sprintf(convBuf, "%llX", a);
+    sprintf(convBuf, "%lX", a);
     size_t len = 16 - strlen(convBuf);
     for(int i = 0; i < len;i++)
         convBuf[i] = '0';

@@ -742,12 +742,11 @@ void CShellCursorManager::draw()
 			Vect3f v;
 			if(terCamera->cursorTrace(Vect2f(_pShellDispatcher->m_fMouseCurrentX-0.5f, _pShellDispatcher->m_fMouseCurrentY-0.5f), v))
 			{
-				char cb[20];
-				_itoa(int(v.z - vMap.hZeroPlast), cb, 10);
+				std::string cb = std::to_string(int(v.z - vMap.hZeroPlast));
 
 				terRenderDevice->SetFont(m_hFontCursorWorkarea);
 				terRenderDevice->OutText(terScreenSizeX*(_pShellDispatcher->m_fMouseCurrentX + sqshCursorWorkAreaDx), 
-					terScreenSizeY*(_pShellDispatcher->m_fMouseCurrentY + sqshCursorWorkAreaDy), cb, sColor4f(1, 1, 1, 1));
+					terScreenSizeY*(_pShellDispatcher->m_fMouseCurrentY + sqshCursorWorkAreaDy), cb.c_str(), sColor4f(1, 1, 1, 1));
 				terRenderDevice->SetFont(0);
 			}
 		}

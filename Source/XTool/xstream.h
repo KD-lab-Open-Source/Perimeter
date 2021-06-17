@@ -74,14 +74,12 @@ struct XStream
 	XStream& operator> (double&);
 	XStream& operator> (long double&);
 
-	XStream& operator<= (char);
-	XStream& operator<= (unsigned char);
-	XStream& operator<= (short);
-	XStream& operator<= (unsigned short);
-	XStream& operator<= (int);
-	XStream& operator<= (unsigned int);
-	XStream& operator<= (long);
-	XStream& operator<= (unsigned long);
+    template<typename T>
+    XStream& operator<= (T var) {
+        std::string str = std::to_string(var);
+        write(str.c_str(), str.length());
+        return *this;
+    }
 	XStream& operator<= (float);
 	XStream& operator<= (double);
 	XStream& operator<= (long double);

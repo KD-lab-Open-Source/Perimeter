@@ -83,15 +83,12 @@ struct XBuffer
 	XBuffer& operator> (double& v) { return read(v); }
     XBuffer& operator> (long double& v) { return read(v); }
 
-	XBuffer& operator<= (char);
-	XBuffer& operator<= (unsigned char);
-	XBuffer& operator<= (short);
-	XBuffer& operator<= (unsigned short);
-	XBuffer& operator<= (int);
-	XBuffer& operator<= (unsigned int);
-	XBuffer& operator<= (long);
-	XBuffer& operator<= (unsigned long);
-    XBuffer& operator<= (unsigned long long);
+    template<typename T>
+    XBuffer& operator<= (T var) {
+        std::string str = std::to_string(var);
+        write(str.c_str(), str.length(), 0);
+        return *this;
+    }
 	XBuffer& operator<= (float);
 	XBuffer& operator<= (double);
 	XBuffer& operator<= (long double);

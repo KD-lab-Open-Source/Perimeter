@@ -165,7 +165,7 @@ void Profiler::print(XBuffer& buf)
 
 	buf < "Frames: " <= frames < "\r\n";
 	buf < "Time interval: " <= milliseconds < " mS\r\n";
-	buf < "Ticks: " < _i64toa(ticks, total_name, 10) < "\r\n";
+	buf < "Ticks: " < std::to_string(ticks) < "\r\n";
 	buf < "CPU: " <= (double)ticks/(milliseconds*1000.) < " MHz\r\n";
 	sprintf(total_name, "%7.3f", frames*1000./milliseconds);
 	buf < "FPS: " < total_name < "\r\n";
