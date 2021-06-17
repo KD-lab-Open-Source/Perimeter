@@ -24,6 +24,10 @@
 #include <algorithm>
 #include <cstring>
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#include <iostream>
+#endif
+
 using namespace std;
 
 // XTool

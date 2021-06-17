@@ -16,6 +16,10 @@
 #include <stdio.h>
 #include <fstream>
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#include <iostream>
+#endif
+
 #ifndef _SURMAP_
 #include "../PluginMAX/ZIPStream.h"
 #endif

@@ -3,6 +3,10 @@
 #include "xerrhand.h"
 #include "xbuffer.h"
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#include <iostream>
+#endif
+
 void XBuffer::alloc(unsigned int sz)
 {
 	buf = (char*)malloc(size = sz);

@@ -17,6 +17,10 @@
 #include <io.h>
 #include "xutil.h"
 
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#include <iostream>
+#endif
+
 #pragma comment (lib,"vfw32") // AVI library
 int ResourceFileRead(const char *fname,char *&buf,int &size);
 
