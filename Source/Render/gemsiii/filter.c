@@ -9,6 +9,7 @@
 #include <malloc.h>
 #include <math.h>
 #include "filter.h"
+#include "xmath.h"
 
 #ifndef EXIT_SUCCESS
 #define	EXIT_SUCCESS	(0)
