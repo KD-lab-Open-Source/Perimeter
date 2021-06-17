@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 #include "ExportMaterial.h"
 
@@ -26,7 +24,7 @@ bool ExportMaterial::Export(IGameMaterial * mat)
 		   mat->GetSpecularLevelData()==NULL
 		)
 		{
-			Msg("Error: %s - ���������������� ��� ���������\n",mat_name);
+			Msg("Error: %s - Неподдерживаемый тип материала\n",mat_name);
 			return false;
 		}
 

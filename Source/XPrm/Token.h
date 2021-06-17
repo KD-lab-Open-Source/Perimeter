@@ -15,8 +15,8 @@ public:
 	Token(const Token& token) : name_(token.name()) {}
 	virtual ~Token() {}
 	const char* name() const { return name_.c_str(); }
-	virtual Token* clone() const { return const_cast<Token*>(this); } // ������� ����������� ������ ���������� ������
-	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // �������� �������� ������� ������
+	virtual Token* clone() const { return const_cast<Token*>(this); } // реально клонируются только изменяемые токены
+	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // основное действие данного токена
 protected:
 	string name_;
 };
@@ -175,7 +175,7 @@ public:
 };
 					    
 /////////////////////////////////////////////////////////////////////////////////////////////
-//	  WriteStream - ���������� ��� �������� ����� �����.
+//	  WriteStream - надстройка для контроля длины строк.
 /////////////////////////////////////////////////////////////////////////////////////////////
 class WriteStream : public XBuffer
 {
@@ -352,7 +352,7 @@ public:
 	PointerVariable(const char* name, const DataType& type) : Token(name), Variable(type), variable(0), inited_by_array(0) {}
 	void init(Compiler& comp);
 	void write_value(WriteStream& buf) const { if(variable){ if(!inited_by_array) buf < "&"; buf < variable_refine_name.c_str(); } else buf < "0"; }
-	void copy_value(void* val) const {} // ��������� ������ �������� � ��������� ��������
+	void copy_value(void* val) const {} // изменение адреса приведет к изменению описания
 	void write_name(XBuffer& buf) const { buf < refine_name_prefix.c_str() < type.type_name() < " const* " < name(); }
 	void description(unsigned& crc) const { Variable::description(crc); if(variable) variable->description(crc); }
 	int sizeOf() const { return 4; }

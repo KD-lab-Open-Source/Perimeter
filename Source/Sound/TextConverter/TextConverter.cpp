@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "stdafx.h"
 
 #define _NOSTD_
@@ -82,7 +80,7 @@ int main(int argc, char* argv[])
                       _S_IREAD | _S_IWRITE );
 	if(f==-1)
 	{
-		message_printf("�� ���� �������� %s",outname);
+		message_printf("Не могу записать %s",outname);
 		exit(1);
 		return 1;
 	}
@@ -90,8 +88,8 @@ int main(int argc, char* argv[])
 	_write(f,paramblock,sizeparam);
 	_close(f);
 
-	dosprintf("%s - �������������� �������.\n",inname);
-//	dosprintf("������� ����� ������� ��� ��������� ���������.\n");getch();
+	dosprintf("%s - откомпилирован успешно.\n",inname);
+//	dosprintf("Нажмите любую клавишу для окончания программы.\n");getch();
 
 	exit(0);
 	return 0;

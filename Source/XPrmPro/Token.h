@@ -50,7 +50,7 @@ public:
 	bool hasAlt() const { return name_ != nameAlt_; }
 	void setNameAlt(const char* nameAlt) { nameAlt_ = nameAlt; }
 	Type type() const { return type_; }
-	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // �������� �������� ������� ������
+	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // основное действие данного токена
 	virtual void declaration(WriteStream& buf, bool declExtern = false) const {}
 	virtual void definition(WriteStream& buf, const char* parentPrefix) const {}
 	virtual void initialization(WriteStream& buf) const {}
@@ -545,7 +545,7 @@ public:
 	PointerVariable(const char* name, const DataType& type) : Variable(type), variable(0), inited_by_array(0) {}
 	void init(Compiler& comp);
 	void write_value(WriteStream& buf) const { if(variable){ if(!inited_by_array) buf() < "&"; buf() < variable_refine_name.c_str(); } else buf() < "0"; }
-	void copy_value(void* val) const {} // ��������� ������ �������� � ��������� ��������
+	void copy_value(void* val) const {} // изменение адреса приведет к изменению описания
 	void write_name(WriteStream& buf) const { buf() < refine_name_prefix.c_str() < type.type_name() < " const* " < name(); }
 //	const Variable& at(int index) const { return variable->at(index); } 
 };
