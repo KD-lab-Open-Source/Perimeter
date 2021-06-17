@@ -16,7 +16,7 @@ SET(XTool_SRCS
         XSTREAM/XSENLV.CPP
         XSTREAM/XSCORE.CPP
         XSTREAM/XSOUTPUT.CPP
-        XERRHAND/xerrhand.CPP
+        xerrhand.cpp
         XUTIL/XUTIL.CPP
         XUTIL/XClock.cpp
 )

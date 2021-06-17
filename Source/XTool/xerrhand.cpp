@@ -1,12 +1,15 @@
-#include <string>
 #include <list>
 #include <cfloat>
 #include <iostream>
+#include <sstream>
+#ifdef _WIN32
 #include <windows.h>
 #include <process.h>
 #include <crtdbg.h>
+#endif
 #include "xstream.h"
 #include "xerrhand.h"
+#include <SDL.h>
 
 static void (*assert_restore_graphics_function)() = 0;
 
@@ -39,6 +42,7 @@ char *rterrorMSG	= "RUN-TIME ERROR";
 #pragma init_seg(lib)
 XErrorHandler ErrH;
 
+#ifdef _WIN32
 void win32_break(char* error,char* msg) {
     std::cerr << "--------------------------------\n";
     std::cerr << error << "\n";
@@ -89,36 +93,6 @@ char* uctoa(uint8_t a)
         convBuf[0] = '0';
     sprintf(convBuf + len, "%X", a);
 	return convBuf;
-}
-
-
-bool getStackTrace(std::list<std::string>& lines) {
-#ifndef OPTION_DISABLE_STACKTRACE
-    //Get current
-    auto st = boost::stacktrace::stacktrace();
-    //Check if failed to load
-    if (st.empty()) {
-        return false;
-    }
-    //Write lines
-    for (size_t i = 0; i < st.size(); ++i) {
-        //Just store the name instead of full name as we don't really care our own name
-        if (i == 0) {
-            lines.push_front(std::string() + __func__ + " <- last call");
-            continue;
-        }
-
-        //Pull the stacktrace info
-        std::string line = boost::stacktrace::detail::to_string(&st.as_vector()[i], 1);
-        std::string::size_type size = line.size();
-        if (10 <= size) {
-            //Remove the start number and end newline
-            line = line.substr(4, size - 5);
-            lines.push_front(line);
-        }
-    }
-#endif
-    return !lines.empty();
 }
 
 long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
@@ -252,17 +226,6 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 				strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
             }
 #endif
-
-            std::list<std::string> linesStackTrace;
-            strcat(msg,"\r\nCall stack:\r\n");
-            if (getStackTrace(linesStackTrace)) {
-                for (std::string line : linesStackTrace) {
-                    strcat(msg, line.c_str());
-                    strcat(msg, "\r\n");
-                }
-            } else {
-                strcat(msg,"Not available\r\n");
-            }
         }
     }
 
@@ -277,98 +240,118 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 	return EXCEPTION_EXECUTE_HANDLER;
 #endif
 }
+#endif
 
+void getStackTrace(std::ostringstream& stream) {
+#ifndef OPTION_DISABLE_STACKTRACE
+    //Get current
+    auto st = boost::stacktrace::stacktrace();
+    //Check if failed to load
+    if (st.empty()) {
+        return false;
+    }
+    //Write lines
+    for (size_t i = 0; i < st.size(); ++i) {
+        //Just store the name instead of full name as we don't really care our own name
+        if (i == 0) {
+            stream << "getStackTrace <- last call" << std::endl;
+            continue;
+        }
+
+        //Pull the stacktrace info
+        std::string line = boost::stacktrace::detail::to_string(&st.as_vector()[i], 1);
+        std::string::size_type size = line.size();
+        if (10 <= size) {
+            //Remove the start number and end newline
+            line = line.substr(4, size - 5);
+            stream << line << std::endl;
+        }
+    }
+#endif
+}
 
 XErrorHandler::XErrorHandler() {
 	prefix		= defprefix;
-	postfix 	= NULL;
-	restore_func	= 0;
+	restore_func	= nullptr;
 	state		= 0;
-	flags		= XERR_ALL;
 
+#ifndef __HAIKU__
+    log_name = "logfile.txt";
+#else
+    log_name = SDL_GetPrefPath("KranX Productions", "Perimeter");
+	log_name += "/logfile.txt";
+#endif
+    log_file.open(log_name.c_str(),std::ios::out|std::ios::trunc);
+    log_file.close();
+
+#ifdef _WIN32
 	SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
+#endif
 }
 
 XErrorHandler::~XErrorHandler() {
-	if ((!state) && postfix)
-		MessageBox(0,postfix,prefix,MB_OK);
-}
-
-void XErrorHandler::SetFlags(unsigned f)
-{
-	flags |= f;
-}
-
-void XErrorHandler::ClearFlags(unsigned f)
-{
-	flags ^= f;
+    if(log_file.is_open()) {
+        log_file.close();
+    }
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)
 {
-    /* TODO
-    this originally displayed a Dialog with stacktrace to debug the issue that caused Abort
-    Vangers has SDL2 dialog impl for this, we should do the same
-
-    string text = "";
-    text += sprintf("XErrH::Abort!\nMessage %s\nCode %d Val %d\n", message, code, addval);
-    if (subj) {
-        text += sprintf("Subject %s\n", subj);
-    }
-    */
-
-	static char outmsg[10000]="";
-	UINT attr=MB_OK;
-
-	if(restore_func){
+	if (restore_func) {
 		restore_func();
-		restore_func = 0;
-	}
-
-	strcpy(outmsg,message);
-	if(subj){
-		strcat(outmsg,"\r");
-		strcat(outmsg,subj);
-	}
-	if(val){
-		attr|=MB_ICONSTOP;
-		if(val != -1){
-			strcat(outmsg,"\r");
-			strcat(outmsg,"CODE: 0x");
-            sprintf(convBuf, "%X", val);
-			strcat(outmsg, convBuf);
-		}
+		restore_func = nullptr;
 	}
 
 	state = 1;
 
-	MessageBox(NULL,outmsg,prefix,attr | MB_TOPMOST | MB_SYSTEMMODAL);
-    fprintf(stderr, outmsg);
+
+
+    //Assemble text
+    std::ostringstream stream;
+    stream << "Error: "<< message << " code:" << code << " val:" << val << std::endl;
+    if (subj)
+        stream << "Subj:" << subj << std::endl;
+
+    std::list<std::string> linesStackTrace;
+    stream << "Call stack:" << std::endl;
+    getStackTrace(stream);
+    stream << "Please send:" << std::endl <<
+            " - this message," << std::endl <<
+            " - logfile from " << SDL_GetBasePath() << log_name.c_str() << "," << std::endl <<
+            " - your savegame" << std::endl <<
+            "to https://t.me/PerimeterGame or https://github.com/KranX/Perimeter" << std::endl;
+    std::string str =  stream.str();
+
+    //Write to log
+    log_file.open(log_name.c_str(),std::ios::out|std::ios::app);
+
+    log_file<<str;
+
+    log_file.close();
+
+    fprintf(stderr, "%s", str.c_str());
+
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                             "Perimeter error",
+                             str.c_str(),
+                             NULL);
+
+    //MessageBox(NULL,outmsg,prefix,attr | MB_TOPMOST | MB_SYSTEMMODAL);
+
 	exit(code);
 }
 
-void XErrorHandler::Exit(void)
+void XErrorHandler::Exit()
 {
-	if(restore_func){
+	if(restore_func) {
 		restore_func();
-		restore_func = 0;
+		restore_func = nullptr;
 	}
 	exit(0);
 }
-
-unsigned XErrorHandler::InfoFlags(unsigned f)
-{
-	return flags & f;
-}
-
 void XErrorHandler::SetPrefix(const char* s)
 {
 	prefix = s;
-}
-
-void XErrorHandler::SetPostfix(const char* s)
-{
-	postfix = s;
 }
 
 void XErrorHandler::SetRestore(void (*rf)(void))

@@ -20,14 +20,13 @@
 
 struct XStream
 {
-	typedef void* XSHANDLE;
+	typedef std::fstream* XSHANDLE;
 
 	XSHANDLE handler;
 	long	pos;
 	int	eofFlag;
 	int	ErrHUsed;
-	bool ioError_;
-	const char* fname;
+	std::string fname;
 	long	extSize;
 	long	extPos;
 
@@ -48,7 +47,7 @@ struct XStream
 	//int	gethandler(){ return (int)handler; } //TODO seems unused? also not allowed in modern C
 	//void	gettime(unsigned& date,unsigned& time);
 	void	flush();
-	const char*	GetFileName() const { return fname; }
+	const char*	GetFileName() const { return fname.c_str(); }
 
 	XStream& operator< (const char*);
 	XStream& operator< (char);
@@ -98,8 +97,8 @@ struct XStream
 	XStream& operator>= (double&);
 	XStream& operator>= (long double&);
 
-	bool isOpen() const { return handler != XSHANDLE(-1); }
-	bool ioError() const { return ioError_; }
+	//Apparently never set but is checked
+	bool ioError() const { return false; }
 
 	int operator! (){ if(handler != XSHANDLE(-1)) return 1; else return 0; } // Obsolete
 	operator void* (){ if(handler != XSHANDLE(-1)) return 0; else return this; } // Obsolete

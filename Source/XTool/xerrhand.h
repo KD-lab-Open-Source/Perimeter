@@ -1,6 +1,9 @@
 #ifndef _ERRH_H
 #define _ERRH_H
 
+#include <string>
+#include <fstream>
+
 #ifndef NULL
 #define NULL	0L
 #endif
@@ -29,19 +32,16 @@ struct XErrorHandler
 	unsigned state;
 
 	const char* prefix;
-	const char* postfix;
+
+    std::string log_name;
+    std::fstream log_file;
 
 	void (*restore_func)();
 
      XErrorHandler();
     ~XErrorHandler();
 
-	void	 SetFlags(unsigned f);
-	void	 ClearFlags(unsigned f);
-	unsigned InfoFlags(unsigned f);
-
 	void	 SetPrefix(const char* s);
-	void	 SetPostfix(const char* s);
 	void	 SetRestore(void (*rf)());
 	void	 SetState(int s){state=s;}
 	void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);

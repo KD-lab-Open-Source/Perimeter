@@ -5,7 +5,7 @@
 XStream::XStream(int err)
 {
 	ErrHUsed = err;
-	handler  = INVALID_HANDLE_VALUE;
+	handler  = nullptr;
 	eofFlag  = 1;
 	extSize  = -1;
 	extPos	 = 0;
@@ -19,7 +19,7 @@ XStream::~XStream()
 XStream::XStream(const char* name, unsigned flags,int err)
 {
 	ErrHUsed = err;
-	handler  = INVALID_HANDLE_VALUE;
+	handler  = nullptr;
 	eofFlag  = 1;
 	extSize  = -1;
 	extPos	 = 0;

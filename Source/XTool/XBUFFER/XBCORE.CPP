@@ -1,4 +1,6 @@
 #include <cstring>
+#include <string>
+#include <fstream>
 #include <memory>
 #include <cstdlib>
 #include "xerrhand.h"
