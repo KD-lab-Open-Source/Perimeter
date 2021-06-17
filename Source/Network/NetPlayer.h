@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #ifndef __PERIMETER_PLAYER_H__
 #define __PERIMETER_PLAYER_H__
 
@@ -53,28 +51,7 @@ struct PlayerData {
 	void read(XBuffer& in);
 	void write(XBuffer& out) const;
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-		ar & WRAP_OBJECT(playerID);
-		ar & WRAP_OBJECT(realPlayerType);
-		ar & TRANSLATE_OBJECT(belligerent, "Сторона");
-		ar & TRANSLATE_OBJECT(colorIndex, "Цвет");
-		ar & TRANSLATE_OBJECT(clan, "Клан");
-		ar & TRANSLATE_OBJECT(difficulty, "Сложность");
-		ar & TRANSLATE_OBJECT(handicap, "Гандикап");
-
-		ar & WRAP_OBJECT(flag_playerStartReady);
-		ar & WRAP_OBJECT(flag_playerGameReady);
-		ar & WRAP_OBJECT(compAndUserID);
-		ar & WRAP_OBJECT(gameVersion);
-		string name = playerName;
-		ar & WRAP_OBJECT(name);
-		setName(name.c_str());
-		//ar & WRAP_OBJECT(playerName);
-
-		if(ar.isInput() && !handicap)
-			handicap = 100;
-	}
+#include "NetPlayer-1251-1.inl"
 };
 
 
@@ -168,25 +145,7 @@ public:
 
 	PlayerData& getActivePlayerData();
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-		ar & WRAP_OBJECT(version);
-		ar & TRANSLATE_OBJECT(worldName, "Имя мира");
-		ar & TRANSLATE_NAME(missionDescriptionID, "missionDescription", "Описание миссии");
-		ar & TRANSLATE_OBJECT(difficulty, "Уровень сложности");
-		ar & TRANSLATE_OBJECT(playersData, "Игроки");
-		ar & WRAP_OBJECT(missionNumber);
-		
-		ar & TRANSLATE_OBJECT(playerAmountScenarioMax, "Максимальное количество игроков");
-		ar & WRAP_OBJECT(playersShufflingIndices);
-		ar & WRAP_OBJECT(activePlayerID);
-		
-		ar & WRAP_OBJECT(globalTime);
-		ar & WRAP_OBJECT(gameSpeed);
-		ar & WRAP_OBJECT(gamePaused);
-
-		ar & WRAP_OBJECT(originalSaveName);
-	}
+#include "NetPlayer-1251-2.inl"
 
 	PrmString version;
 	PrmString worldName;

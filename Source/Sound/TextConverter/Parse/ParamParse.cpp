@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "stdafx.h"
 #include "ParamParse.h"
 #include <stdio.h>
@@ -97,7 +95,7 @@ void ParseParam::ReadName(char* buf)
 	*p=0;
 
 	if(*buf==0)
-		throw "Невозможно прочитать имя объекта";
+		throw "РќРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРѕС‡РёС‚Р°С‚СЊ РёРјСЏ РѕР±СЉРµРєС‚Р°";
 }
 
 bool ParseParam::IsInt()
@@ -170,10 +168,10 @@ int ParseParam::ReadConstant(LPCSTR name,ParamBlock* pGetType)
 	}
 
 	if(pGetIntByConst==NULL || pGetType==NULL)
-		throw "Нет блока констант";
+		throw "РќРµС‚ Р±Р»РѕРєР° РєРѕРЅСЃС‚Р°РЅС‚";
 
 	OneParam* pconst=NULL;
-	//Ищем, какой enum сопоставлен этому индентификатору
+	//РС‰РµРј, РєР°РєРѕР№ enum СЃРѕРїРѕСЃС‚Р°РІР»РµРЅ СЌС‚РѕРјСѓ РёРЅРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
 	for(int i=0;i<pGetType->GetSize();i++)
 	{
 		OneParam* op=(*pGetType)[i];
@@ -192,20 +190,20 @@ int ParseParam::ReadConstant(LPCSTR name,ParamBlock* pGetType)
 
 	if(pconst==NULL)
 	{
-		sprintf(error,"Для %s нет сопоставленных констант\n",name);
+		sprintf(error,"Р”Р»СЏ %s РЅРµС‚ СЃРѕРїРѕСЃС‚Р°РІР»РµРЅРЅС‹С… РєРѕРЅСЃС‚Р°РЅС‚\n",name);
 		throw error;
 	}
 
 	ParamBlock* pb=pconst->GetBlock();
 	if(pb==NULL)
-		throw "Внутренняя ошибка программы - неправильный блок констант";
+		throw "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° РїСЂРѕРіСЂР°РјРјС‹ - РЅРµРїСЂР°РІРёР»СЊРЅС‹Р№ Р±Р»РѕРє РєРѕРЅСЃС‚Р°РЅС‚";
 
 	OneParam* op=pb->Find(val);
 	if(op==NULL)
 	{
 
-		int n=sprintf(error,"Для %s=%s нет сопоставленных констант\n"
-			"Известные константы:\n",name,val);
+		int n=sprintf(error,"Р”Р»СЏ %s=%s РЅРµС‚ СЃРѕРїРѕСЃС‚Р°РІР»РµРЅРЅС‹С… РєРѕРЅСЃС‚Р°РЅС‚\n"
+			"РР·РІРµСЃС‚РЅС‹Рµ РєРѕРЅСЃС‚Р°РЅС‚С‹:\n",name,val);
 
 		for(int i=0;i<pb->GetSize();i++)
 		{
@@ -218,7 +216,7 @@ int ParseParam::ReadConstant(LPCSTR name,ParamBlock* pGetType)
 	}
 
 	if(op->type!=OneParam::P_INT)
-		throw "Внутренняя ошибка программы - неправильный блок констант";
+		throw "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° РїСЂРѕРіСЂР°РјРјС‹ - РЅРµРїСЂР°РІРёР»СЊРЅС‹Р№ Р±Р»РѕРє РєРѕРЅСЃС‚Р°РЅС‚";
 
 	return op->GetInt();
 }
@@ -266,7 +264,7 @@ float ParseParam::ReadFloat()
 void ParseParam::ReadString(char* buf)
 {
 	if(*cur!='"')
-		throw "Требуется \"";
+		throw "РўСЂРµР±СѓРµС‚СЃСЏ \"";
 	cur++;
 
 	for(;*cur && *cur!='"';cur++)
@@ -278,7 +276,7 @@ void ParseParam::ReadString(char* buf)
 		}
 
 	if(*cur!='"')
-		throw "Требуется \"";
+		throw "РўСЂРµР±СѓРµС‚СЃСЏ \"";
 	cur++;
 	*buf=0;
 }
@@ -322,10 +320,10 @@ P_FArray* ParseParam::ReadFArray()
 			return p;
 		}
 
-		throw "Требуется , или )";
+		throw "РўСЂРµР±СѓРµС‚СЃСЏ , РёР»Рё )";
 	}
 	
-	throw "Требуется float";
+	throw "РўСЂРµР±СѓРµС‚СЃСЏ float";
 	return NULL;
 }
 
@@ -405,7 +403,7 @@ void OneBlock::Read()
 			ivalue=pp.ReadConstant(name.c_str(),parent?parent->pGetType:pp.pGetType);
 			bconst_read=true;
 		}else
-			throw "Непонятное значение";
+			throw "РќРµРїРѕРЅСЏС‚РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ";
 	
 		pp.SkipSpace();
 
@@ -414,9 +412,9 @@ void OneBlock::Read()
 	{
 		type=OneParam::P_NULL;
 	}else
-		throw "Требуется = или {";
+		throw "РўСЂРµР±СѓРµС‚СЃСЏ = РёР»Рё {";
 
-	{//Проверка, правильный ли тип
+	{//РџСЂРѕРІРµСЂРєР°, РїСЂР°РІРёР»СЊРЅС‹Р№ Р»Рё С‚РёРї
 		ParamBlock* parent_type=parent?parent->pGetType:pp.pGetType;
 		if(parent_type && type!=OneParam::P_PARAMBLOCK)
 		{
@@ -440,7 +438,7 @@ void OneBlock::Read()
 
 			if(!ok)
 			{
-				LPSTR textend=error+sprintf(error,"Неверный тип, правильный тип:");
+				LPSTR textend=error+sprintf(error,"РќРµРІРµСЂРЅС‹Р№ С‚РёРї, РїСЂР°РІРёР»СЊРЅС‹Р№ С‚РёРї:");
 				LPSTR begin=textend;
 
 				for(int i=0;i<parent_type->GetSize();i++)
@@ -471,15 +469,15 @@ void OneBlock::Read()
 						{
 							int n=op->GetInt()-offset_enum;
 							if(n<0 || n>=pp.pGetIntByConst->GetSize())
-								throw "Некорректное значение константы";
+								throw "РќРµРєРѕСЂСЂРµРєС‚РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РєРѕРЅСЃС‚Р°РЅС‚С‹";
 							textend=textend+sprintf(textend,(*pp.pGetIntByConst)[n]->GetName());
 						}else
-							throw "Нет блока констант";
+							throw "РќРµС‚ Р±Р»РѕРєР° РєРѕРЅСЃС‚Р°РЅС‚";
 					}
 				}
 
 				if(begin==textend)
-					sprintf(error,"Переменная неопределённая в правилах");
+					sprintf(error,"РџРµСЂРµРјРµРЅРЅР°СЏ РЅРµРѕРїСЂРµРґРµР»С‘РЅРЅР°СЏ РІ РїСЂР°РІРёР»Р°С…");
 
 				throw error;
 			}
@@ -487,7 +485,7 @@ void OneBlock::Read()
 	}
 
 	if(*pp.cur!=';')
-		throw "Здесь необходима ;";
+		throw "Р—РґРµСЃСЊ РЅРµРѕР±С…РѕРґРёРјР° ;";
 	*pp.cur++;
 }
 
@@ -496,7 +494,7 @@ void OneBlock::ReadBlock()
 	type=OneParam::P_PARAMBLOCK;
 
 	if(parent)
-	{//Поиск pGetType
+	{//РџРѕРёСЃРє pGetType
 		if(parent->pGetType)
 		{
 			for(int i=0;i<parent->pGetType->GetSize();i++)
@@ -518,7 +516,7 @@ void OneBlock::ReadBlock()
 			}
 			if(pGetType==NULL)
 			{
-				sprintf(error,"Не могу найти типизацию для блока %s",name.c_str());
+				sprintf(error,"РќРµ РјРѕРіСѓ РЅР°Р№С‚Рё С‚РёРїРёР·Р°С†РёСЋ РґР»СЏ Р±Р»РѕРєР° %s",name.c_str());
 				throw error;
 			}
 		}
@@ -542,7 +540,7 @@ void OneBlock::ReadBlock()
 	}
 	
 	if(parent!=NULL)
-		throw "Здесь необходима }";
+		throw "Р—РґРµСЃСЊ РЅРµРѕР±С…РѕРґРёРјР° }";
 }
 
 #define WR(x) m.add(&x,sizeof(x));
@@ -579,7 +577,7 @@ void OneBlock::Save(MemBlock& m)
 		int offset=m.tell();
 		for(int i=0;i<n;i++)
 		{
-			WR(n);//Скипуем offset
+			WR(n);//РЎРєРёРїСѓРµРј offset
 		}
 
 		for(i=0;i<n;i++)
@@ -646,7 +644,7 @@ bool RulesNonStaticByConst(LPCSTR name,LPCSTR value,int& ret)
 		if(p_parent->child.size()>0)
 		{
 			if(!(p_parent->child[0]->name=="enum"))
-				throw "Первый блок в .rul файле должен быть enum";
+				throw "РџРµСЂРІС‹Р№ Р±Р»РѕРє РІ .rul С„Р°Р№Р»Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ enum";
 			p_enum=p_parent->child[0];
 		}else
 			return false;
@@ -684,14 +682,14 @@ bool RulesNonStaticByConst(LPCSTR name,LPCSTR value,int& ret)
 		if(block->name==value)
 		{
 			if(block->type!=OneParam::P_PARAMBLOCK)
-				throw "Внутренняя ошибка - должен быть блок";
+				throw "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° - РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р±Р»РѕРє";
 
 			ret=i+offset_enum;
 			return true;
 		}
 	}
 
-	throw "Не понятный тип или enum";
+	throw "РќРµ РїРѕРЅСЏС‚РЅС‹Р№ С‚РёРї РёР»Рё enum";
 	return false;
 }
 
