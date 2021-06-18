@@ -65,9 +65,11 @@ IF(PERIMETER_WINDOWS)
     IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
         MESSAGE("Linking against DirectX 64 bits")
         LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
+        SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
     ELSE()
         MESSAGE("Linking against DirectX 32 bits")
         LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
+        SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
     ENDIF()
 
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
@@ -78,7 +80,7 @@ IF(PERIMETER_WINDOWS)
             d3dx9d
             d3d10
             d3dx10
-            ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86/d3dx10d.lib
+            ${LIBS_MSDXSDK}/d3dx10d.lib
             d3dxof
             ddraw
             dinput
@@ -87,8 +89,8 @@ IF(PERIMETER_WINDOWS)
             dplayx
             dsound
             dxgi
-            ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86/dxtrans.lib
-            ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86/DxErr.lib
+            ${LIBS_MSDXSDK}/dxtrans.lib
+            ${LIBS_MSDXSDK}/DxErr.lib
             DxErr8
             DxErr9
             X3DAudio
