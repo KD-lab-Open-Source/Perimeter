@@ -17,17 +17,15 @@ int64_t beg_tick=0;
 const unsigned int MS_PER_PERIOD=1000;
 */
 
-long long tick_per_sec=1000;
+long long tick_per_sec=0;
 long long beg_tick=0;
-const unsigned int MS_PER_PERIOD=1;
 
 #if defined(_MSC_VER) and _MSC_VER >= 1310
 __declspec (noinline)
 #endif // _MSC_VER >= 1310
 
-long long getRDTSC() {
-    //TODO use std::chrono::high_resolution_clock::now()
-    return SDL_GetTicks(); //stalkerg: winnt function for get tick milliseconds.
+uint64_t getRDTSC() {
+    return SDL_GetPerformanceCounter();
 }
 
 void initclock()
@@ -50,22 +48,22 @@ void initclock()
 	}
     int64_t ticke=getRDTSC();
 	tick_per_sec = (ticke-tickb)/MS_PER_PERIOD;
+	beg_tick=getRDTSC();
 	*/
 
-	beg_tick=getRDTSC();
+	tick_per_sec = SDL_GetPerformanceFrequency();
+    beg_tick=getRDTSC();
 
 	//timeEndPeriod(1);
 }
 
 double clockf()
 {
-	//return (double)(getRDTSC()-beg_tick)/(double)tick_per_sec;
-    return (double)SDL_GetTicks()*MS_PER_PERIOD;
+	return (double)(getRDTSC()-beg_tick)/(double)tick_per_sec;
 } 
 
 int clocki()
 {
-	//return (int)((getRDTSC()-beg_tick)/tick_per_sec);
-    return (SDL_GetTicks()*MS_PER_PERIOD);
+	return (int)((getRDTSC()-beg_tick)/tick_per_sec);
 }
 
