@@ -48,7 +48,7 @@ ELSE()
     
     #Others
     INCLUDE(CheckCXXCompilerFlag)
-    SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Werror=delete-non-virtual-dtor -Wno-conversion-null")
+    SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Werror=delete-non-virtual-dtor -Wno-conversion-null -fuse-ld=lld")
     SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize -ffast-math")
     CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)

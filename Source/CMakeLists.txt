@@ -78,7 +78,7 @@ IF(PERIMETER_WINDOWS)
             d3dx9d
             d3d10
             d3dx10
-            d3dx10d
+            ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86/d3dx10d.lib
             d3dxof
             ddraw
             dinput
@@ -87,8 +87,8 @@ IF(PERIMETER_WINDOWS)
             dplayx
             dsound
             dxgi
-            dxtrans
-            DxErr
+            ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86/dxtrans.lib
+            ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86/DxErr.lib
             DxErr8
             DxErr9
             X3DAudio
