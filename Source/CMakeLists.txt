@@ -7,6 +7,18 @@ IF(GEN_SCRIPTS)
     #TODO call XPrm and other stuff
 ENDIF()
 
+#ADD_SUBDIRECTORY("XTool")
+#ADD_SUBDIRECTORY("PlayOgg")
+#ADD_SUBDIRECTORY("PluginMAX")
+#ADD_SUBDIRECTORY("Terra")
+#ADD_SUBDIRECTORY("tx3d")
+#if(NOT FINAL_VERSION)
+#    ADD_SUBDIRECTORY("TriggerEditor")
+#ENDIF()
+#ADD_SUBDIRECTORY("Network/Peer2")
+#ADD_SUBDIRECTORY("Render")
+#ADD_SUBDIRECTORY("Sound")
+
 ADD_SUBDIRECTORY("XTool")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")
@@ -37,6 +49,13 @@ ENDIF()
 if(NOT FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
+
+#Dependency libs
+SET(perimeter_LINK_LIBS
+        ${perimeter_LINK_LIBS}
+        #SD2
+        ${SDL2_LIBRARY}
+)
 
 INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Game"
@@ -101,8 +120,6 @@ IF(PERIMETER_WINDOWS)
 	ENDIF()
 ELSE() #Add non windows dependencies    
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-        #${BOOST_LIBRARY}
-        ${SDL2_LIBRARY}
         # dl is required for dladdr in stacktrace,
         dl
     )

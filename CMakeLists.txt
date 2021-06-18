@@ -46,13 +46,14 @@ ENDIF()
 
 # options
 OPTION(FINAL_VERSION "Generate Final version" ON)
-OPTION(OPTION_STATIC_BUILD "Generate static build" ON)
+OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
 OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 
 # paths to search libs
-SET(LIBRARY_SEARCH_PATHS
-    ~/Library/Frameworks
+SET(LIBRARY_SEARCH_PATHS "
+    ${LIBRARY_SEARCH_PATHS}
+    ~/Library/Frameworks 
     /Library/Frameworks
     /mingw
     /usr/pkg
@@ -64,7 +65,7 @@ SET(LIBRARY_SEARCH_PATHS
     /opt
     /local
     C:/MinGW
-)
+")
 
 # depends
 FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
