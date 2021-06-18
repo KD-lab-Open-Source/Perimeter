@@ -1,8 +1,7 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-//#include <windows.h>
-//#include <intrin.h>
+#include <cstring>
 #include <cstdint>
 #include <string>
 

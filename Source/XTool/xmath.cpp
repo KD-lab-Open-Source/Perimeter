@@ -7,6 +7,7 @@
 //	Author: Alexandre Kotliar
 //  
 ////////////////////////////////////////////////////////////////////////////////
+#include <cstring>
 #include "xmath.h"
 #include "xbuffer.h"
 #include "xstream.h"

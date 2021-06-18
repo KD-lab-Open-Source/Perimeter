@@ -248,7 +248,7 @@ void getStackTrace(std::ostringstream& stream) {
     auto st = boost::stacktrace::stacktrace();
     //Check if failed to load
     if (st.empty()) {
-        return false;
+        return;
     }
     //Write lines
     for (size_t i = 0; i < st.size(); ++i) {
