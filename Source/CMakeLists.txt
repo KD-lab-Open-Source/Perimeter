@@ -7,18 +7,6 @@ IF(OPTION_GEN_SCRIPTS)
     #TODO call XPrm and other stuff
 ENDIF()
 
-#ADD_SUBDIRECTORY("XTool")
-#ADD_SUBDIRECTORY("PlayOgg")
-#ADD_SUBDIRECTORY("PluginMAX")
-#ADD_SUBDIRECTORY("Terra")
-#ADD_SUBDIRECTORY("tx3d")
-#if(NOT FINAL_VERSION)
-#    ADD_SUBDIRECTORY("TriggerEditor")
-#ENDIF()
-#ADD_SUBDIRECTORY("Network/Peer2")
-#ADD_SUBDIRECTORY("Render")
-#ADD_SUBDIRECTORY("Sound")
-
 ADD_SUBDIRECTORY("XTool")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")
@@ -46,7 +34,7 @@ ELSE()
     ADD_SUBDIRECTORY("Network")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg Network)
 ENDIF()
-if(NOT FINAL_VERSION)
+if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
 
@@ -253,7 +241,7 @@ ENDIF()
 
 ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
 
-if(NOT FINAL_VERSION)
+if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
 ENDIF()
 
