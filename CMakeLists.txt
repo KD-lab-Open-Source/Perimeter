@@ -45,10 +45,11 @@ ELSE()
 ENDIF()
 
 # options
-OPTION(FINAL_VERSION "Generate Final version" ON)
+OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
 OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
-OPTION(GEN_SCRIPTS "Re-Generates game scripts" OFF)
+OPTION(OPTION_GEN_SCRIPTS "Re-Generates game scripts" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
+OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 
 # paths to search libs
 SET(LIBRARY_SEARCH_PATHS "
@@ -94,7 +95,10 @@ ELSE()
     
     #Others
     INCLUDE(CheckCXXCompilerFlag)
-    SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Werror=delete-non-virtual-dtor -Wno-conversion-null -fuse-ld=lld")
+    SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Werror=delete-non-virtual-dtor -Wno-conversion-null")
+    IF(OPTION_LINKER_LLD)
+        SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fuse-ld=lld")
+    ENDIF()
     SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize -ffast-math")
     CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
@@ -141,7 +145,7 @@ ENDIF()
 
 ADD_DEFINITIONS(-D_PERIMETER_)
 #ADD_DEFINITIONS(-D_PERIMETER_ADDON_)
-IF(FINAL_VERSION)
+IF(OPTION_FINAL_VERSION)
     ADD_DEFINITIONS(-DNDEBUG)
     ADD_DEFINITIONS(-D_FINAL_VERSION_)
 ELSE()

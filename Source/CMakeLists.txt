@@ -2,7 +2,7 @@ IF(NOT PERIMETER_WINDOWS)
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
 ENDIF()
 
-IF(GEN_SCRIPTS)
+IF(OPTION_GEN_SCRIPTS)
     MESSAGE("Generating Scripts")
     #TODO call XPrm and other stuff
 ENDIF()

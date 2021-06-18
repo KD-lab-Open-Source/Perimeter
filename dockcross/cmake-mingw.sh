@@ -22,7 +22,8 @@ ${CROSS_TRIPLE}-cmake \
 -DVORBIS_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbis${LIB_SUFFIX}" \
 -DVORBISFILE_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbisfile${LIB_SUFFIX}" \
 -DSDL2_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libSDL2main.a;/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libSDL2${LIB_SUFFIX}" \
--DOPTION_DISABLE_STACKTRACE=On \
+-DOPTION_DISABLE_STACKTRACE=ON \
+-DOPTION_LINKER_LLD=OFF \
 $@
 
 cd build/${CROSS_TRIPLE}
