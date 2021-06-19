@@ -64,15 +64,15 @@ int XStream::open(XStream* owner,long s,long ext_sz)
 
 void XStream::close()
 {
-    if(handler == NULL)
+    if(handler == nullptr)
         return;
 
     if (handler->is_open())
         handler->close();
 
     delete handler;
-    handler = NULL;
-    fname = nullptr;
+    handler = nullptr;
+    fname.clear();
     pos = 0L;
     eofFlag = 1;
     extSize = -1;
