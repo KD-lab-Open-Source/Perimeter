@@ -239,30 +239,68 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 }
 #endif //_WIN32
 
-void setSignalHandler(sighandler signalHandler, std::terminate_handler terminateHandler) {
+void setSignalHandler(sighandler signalHandler) {
     signal(SIGSEGV, signalHandler);
     signal(SIGABRT, signalHandler);
     signal(SIGFPE, signalHandler);
     signal(SIGILL, signalHandler);
-#ifdef SIGBUS
+    signal(SIGTERM, signalHandler);
+#ifdef SIGBUS //UNIX specific
     signal(SIGBUS, signalHandler);
 #endif
-    std::terminate_handler oldHandler = std::set_terminate(terminateHandler);
-    //Set the first one as original
-    if (!originalTerminateHandler) {
-        originalTerminateHandler = oldHandler;
-    }
+}
+
+void setTerminateHandler(std::terminate_handler terminateHandler) {
+    std::set_terminate(terminateHandler);
 }
 
 void restoreSignalHandler() {
-    setSignalHandler(SIG_DFL, originalTerminateHandler);
+    setSignalHandler(SIG_DFL);
 }
 
 void handleTerminate() {
     fprintf(stderr, "handleTerminate\n");
-    //Get exception
+
+    raise(SIGTERM);
+}
+
+void handleSignal(int sig) {
+    fprintf(stderr, "handleSignal\n");
+    //We don't want recursive signal handler calls
+    restoreSignalHandler();
+
+    //Get signal name
+    std::string sigName;
+    switch (sig) {
+        case SIGSEGV:
+            sigName = "Segmentation violation";
+            break;
+        case SIGABRT:
+            sigName = "Abort";
+            break;
+        case SIGFPE:
+            sigName = "Floating-point exception";
+            break;
+        case SIGILL:
+            sigName = "Illegal instruction";
+            break;
+        case SIGTERM:
+            sigName = "Termination";
+            break;
+#ifdef SIGBUS
+        case SIGBUS:
+            sigName = "Bus";
+            break;
+#endif
+        default:
+            sigName = "Unknown " + std::to_string(sig);
+            break;
+    }
+
+    //Get exception, for some reason rethrowing doesnt work in MinGW
+#if !defined(_WIN32) || defined(_MSC_VER)
     std::exception_ptr e = std::current_exception();
-    if (e) {
+    if (e != nullptr) {
         try {
             std::rethrow_exception(e);
         } catch (std::domain_error& e) { // Inherits logic_error
@@ -291,43 +329,7 @@ void handleTerminate() {
             lastException = "Unknown exception";
         }
     }
-
-    //Pass to original handler or abort
-    if (originalTerminateHandler) {
-        originalTerminateHandler();
-    }
-    abort();
-}
-
-void handleSignal(int sig) {
-    fprintf(stderr, "handleSignal\n");
-    //We don't want recursive signal handler calls
-    restoreSignalHandler();
-
-    //Get signal name
-    std::string sigName;
-    switch (sig) {
-        case SIGSEGV:
-            sigName = "Segmentation violation";
-            break;
-        case SIGABRT:
-            sigName = "Abort";
-            break;
-        case SIGFPE:
-            sigName = "Floating-point exception";
-            break;
-        case SIGILL:
-            sigName = "Illegal instruction";
-            break;
-#ifdef SIGBUS
-        case SIGBUS:
-            sigName = "Bus";
-            break;
 #endif
-        default:
-            sigName = "Unknown " + std::to_string(sig);
-            break;
-    }
 
     std::ostringstream errorMessage;
     errorMessage << "Catched Signal: " << sigName << std::endl;
@@ -385,11 +387,13 @@ XErrorHandler::XErrorHandler() {
     log_file.open(log_name.c_str(),std::ios::out|std::ios::trunc);
     log_file.close();
 
-    //Register signal and terminate handler
-    setSignalHandler(handleSignal, handleTerminate);
+    //Register handler
 #ifdef _WIN32
     SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
+#else
+    setTerminateHandler(handleTerminate);
 #endif
+    setSignalHandler(handleSignal);
 }
 
 XErrorHandler::~XErrorHandler() {
