@@ -235,7 +235,7 @@ SET(perimeter_SRCS
         Units/Triggers.cpp
 )
 
-if(MSVC_CL_BUILD)
+if(PERIMETER_WINDOWS)
     SET(CMAKE_WIN32_EXECUTABLE YES)
 ENDIF()
 
