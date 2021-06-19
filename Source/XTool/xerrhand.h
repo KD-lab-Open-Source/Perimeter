@@ -28,7 +28,6 @@
 
 struct XErrorHandler
 {
-	unsigned flags;
 	unsigned state;
 
 	const char* prefix;
@@ -47,7 +46,6 @@ struct XErrorHandler
 	void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
 	void	 Exit();
 	void	 RTC(const char *file,unsigned int line, const char *expr);
-	void	 WriteLog(char* error, char* msg);
 };
 
 extern XErrorHandler ErrH;

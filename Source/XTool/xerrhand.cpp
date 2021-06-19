@@ -10,6 +10,7 @@
 #include "xstream.h"
 #include "xerrhand.h"
 #include <SDL.h>
+#include <csignal>
 
 static void (*assert_restore_graphics_function)() = 0;
 
@@ -19,8 +20,6 @@ void SetAssertRestoreGraphicsFunction(void(*func)())
 	assert_restore_graphics_function = func;
 }
 #endif
-
-void xtSysFinit(void);
 
 #define CONV_BUFFER_LEN	63
 char convBuf[CONV_BUFFER_LEN + 1];
@@ -34,6 +33,10 @@ char convBuf[CONV_BUFFER_LEN + 1];
 #define APIENTRY
 #endif
 
+typedef void (*sighandler) (int);
+std::string lastException;
+std::terminate_handler originalTerminateHandler = nullptr;
+
 char *defprefix 	= "XHANDLER  INFORM";
 char *exceptMSG 	= "EXCEPTION OCCURED";
 char *rterrorMSG	= "RUN-TIME ERROR";
@@ -42,6 +45,7 @@ char *rterrorMSG	= "RUN-TIME ERROR";
 #pragma init_seg(lib)
 XErrorHandler ErrH;
 
+//All the Win32 specific error handling
 #ifdef _WIN32
 void win32_break(char* error,char* msg) {
     std::cerr << "--------------------------------\n";
@@ -51,16 +55,11 @@ void win32_break(char* error,char* msg) {
     _ASSERT(FALSE) ;
 }
 
-#define HANDLE_EXEPT(string,mask)\
-	{ if (ErrH.flags & (mask))\
-		strcat(msg,(string));\
-	    else\
-		return EXCEPTION_CONTINUE_SEARCH;\
-	  break; }
+#define HANDLE_EXEPT(string,mask) { strcat(msg,(string)); break; }
 
 char* qwtoa(uint64_t a)
 {
-    sprintf(convBuf, "%lX", a);
+    sprintf(convBuf, "%llX", a);
     size_t len = 16 - strlen(convBuf);
     for(int i = 0; i < len;i++)
         convBuf[i] = '0';
@@ -97,6 +96,7 @@ char* uctoa(uint8_t a)
 
 long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 {
+    fprintf(stderr, "exHandler\n");
 	_clearfp();
 	_controlfp( _controlfp(0,0) & ~(0), _MCW_EM );
 	SetUnhandledExceptionFilter(NULL);
@@ -229,9 +229,6 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
         }
     }
 
-
-	ErrH.WriteLog(exceptMSG, msg);
-
 #if defined(_DEBUG) || defined(_EXCEPTION_CATCH)
 	win32_break(exceptMSG,msg);
 	return EXCEPTION_CONTINUE_EXECUTION;
@@ -240,7 +237,109 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 	return EXCEPTION_EXECUTE_HANDLER;
 #endif
 }
+#endif //_WIN32
+
+void setSignalHandler(sighandler signalHandler, std::terminate_handler terminateHandler) {
+    signal(SIGSEGV, signalHandler);
+    signal(SIGABRT, signalHandler);
+    signal(SIGFPE, signalHandler);
+    signal(SIGILL, signalHandler);
+#ifdef SIGBUS
+    signal(SIGBUS, signalHandler);
 #endif
+    std::terminate_handler oldHandler = std::set_terminate(terminateHandler);
+    //Set the first one as original
+    if (!originalTerminateHandler) {
+        originalTerminateHandler = oldHandler;
+    }
+}
+
+void restoreSignalHandler() {
+    setSignalHandler(SIG_DFL, originalTerminateHandler);
+}
+
+void handleTerminate() {
+    fprintf(stderr, "handleTerminate\n");
+    //Get exception
+    std::exception_ptr e = std::current_exception();
+    if (e) {
+        try {
+            std::rethrow_exception(e);
+        } catch (std::domain_error& e) { // Inherits logic_error
+            lastException = "Domain error " + std::string(e.what());
+        } catch (std::invalid_argument& e) { // Inherits logic_error
+            lastException = "Invalid argument " + std::string(e.what());
+        } catch (std::length_error& e) { // Inherits logic_error
+            lastException = "Length error " + std::string(e.what());
+        } catch (std::out_of_range& e) { // Inherits logic_error
+            lastException = "Out of range " + std::string(e.what());
+        } catch (std::range_error& e) { // Inherits runtime_error
+            lastException = "Range error " + std::string(e.what());
+        } catch (std::overflow_error& e) { // Inherits runtime_error
+            lastException = "Overflow error " + std::string(e.what());
+        } catch (std::underflow_error& e) { // Inherits runtime_error
+            lastException = "Underflow error " + std::string(e.what());
+        } catch (std::logic_error& e) { // Inherits exception
+            lastException = "Logic error " + std::string(e.what());
+        } catch (std::runtime_error& e) { // Inherits exception
+            lastException = "Runtime error " + std::string(e.what());
+        } catch (std::bad_exception& e) { // Inherits exception
+            lastException = "Bad exception " + std::string(e.what());
+        } catch (std::exception& e) {
+            lastException = "Base exception " + std::string(e.what());
+        } catch (...) {
+            lastException = "Unknown exception";
+        }
+    }
+
+    //Pass to original handler or abort
+    if (originalTerminateHandler) {
+        originalTerminateHandler();
+    }
+    abort();
+}
+
+void handleSignal(int sig) {
+    fprintf(stderr, "handleSignal\n");
+    //We don't want recursive signal handler calls
+    restoreSignalHandler();
+
+    //Get signal name
+    std::string sigName;
+    switch (sig) {
+        case SIGSEGV:
+            sigName = "Segmentation violation";
+            break;
+        case SIGABRT:
+            sigName = "Abort";
+            break;
+        case SIGFPE:
+            sigName = "Floating-point exception";
+            break;
+        case SIGILL:
+            sigName = "Illegal instruction";
+            break;
+#ifdef SIGBUS
+        case SIGBUS:
+            sigName = "Bus";
+            break;
+#endif
+        default:
+            sigName = "Unknown " + std::to_string(sig);
+            break;
+    }
+
+    std::ostringstream errorMessage;
+    errorMessage << "Catched Signal: " << sigName << std::endl;
+    if (!lastException.empty()) {
+        errorMessage << "Last Exception:" << lastException << std::endl;
+    }
+    std::string errorMsgStr = errorMessage.str();
+    ErrH.Abort(errorMsgStr.c_str(), XERR_SIGNAL, sig);
+
+    //Agur
+    raise(sig);
+}
 
 void getStackTrace(std::ostringstream& stream) {
 #ifndef OPTION_DISABLE_STACKTRACE
@@ -267,6 +366,8 @@ void getStackTrace(std::ostringstream& stream) {
             stream << line << std::endl;
         }
     }
+#else
+    stream << "OPTION_DISABLE_STACKTRACE set, no stacktrace available" << std::endl;
 #endif
 }
 
@@ -284,8 +385,10 @@ XErrorHandler::XErrorHandler() {
     log_file.open(log_name.c_str(),std::ios::out|std::ios::trunc);
     log_file.close();
 
+    //Register signal and terminate handler
+    setSignalHandler(handleSignal, handleTerminate);
 #ifdef _WIN32
-	SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
+    SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
 #endif
 }
 
@@ -308,18 +411,23 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 
     //Assemble text
     std::ostringstream stream;
-    stream << "Error: "<< message << " code:" << code << " val:" << val << std::endl;
-    if (subj)
-        stream << "Subj:" << subj << std::endl;
+    if (prefix) {
+        stream << prefix << std::endl;
+    }
+    stream << "Error ocurred! Code: " << code << " Val: " << val << std::endl;
+    stream << message << std::endl;
+    if (subj) {
+        stream << "Subj: " << subj << std::endl;
+    }
 
     std::list<std::string> linesStackTrace;
-    stream << "Call stack:" << std::endl;
+    stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);
-    stream << "Please send:" << std::endl <<
-            " - this message," << std::endl <<
-            " - logfile from " << SDL_GetBasePath() << log_name.c_str() << "," << std::endl <<
-            " - your savegame" << std::endl <<
-            "to https://t.me/PerimeterGame or https://github.com/KranX/Perimeter" << std::endl;
+    stream << std::endl << "Please send:" << std::endl <<
+            " - This message" << std::endl <<
+            " - Log file from " << SDL_GetBasePath() << log_name.c_str() << std::endl <<
+            " - Your savegame" << std::endl <<
+            "To https://t.me/PerimeterGame or https://github.com/KranX/Perimeter" << std::endl;
     std::string str =  stream.str();
 
     //Write to log
@@ -334,7 +442,7 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                              "Perimeter error",
                              str.c_str(),
-                             NULL);
+                             nullptr);
 
     //MessageBox(NULL,outmsg,prefix,attr | MB_TOPMOST | MB_SYSTEMMODAL);
 
@@ -370,20 +478,3 @@ void XErrorHandler::RTC(const char *file, unsigned int line, const char *expr)
     strcat(msg,expr);
 	Abort(rterrorMSG,XERR_USER,-1,msg);
 }
-
-void XErrorHandler::WriteLog(char* error, char* msg)
-{
-	static XStream ErrHStream;
-	ErrHStream.open("XErrH.log",XS_OUT);
-	ErrHStream < "--------------------------------\r\n";
-	ErrHStream < prefix < "\r\n\r\n\r\n";
-
-	//if(assertsBuffer.tell())
-	//	ErrHStream < assertsBuffer < "\r\n";
-
-	ErrHStream < error < "\r\n";
-	ErrHStream < msg < "\r\n";
-	ErrHStream < "--------------------------------\r\n";
-	ErrHStream.close();
-}
-

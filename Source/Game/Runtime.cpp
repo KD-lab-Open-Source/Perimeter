@@ -187,17 +187,16 @@ void HTManager::init()
 	interpolation_factor_ = 0;
 
 	static XBuffer errorHeading;
-	errorHeading < currentVersion
+	errorHeading < currentVersion;
 #ifdef _FINAL_VERSION_
-		< " Final"
+    errorHeading < " Final";
 #endif
 #ifdef PERIMETER_DEBUG
-        < " DBG"
+    errorHeading < " DBG";
 #endif
-		< " OS: " <= GetVersion();
 
+    ErrH.SetPrefix(errorHeading);
 #ifndef _FINAL_VERSION_
-	ErrH.SetPrefix(errorHeading);
 	ErrH.SetRestore(InternalErrorHandler);
 #endif
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
