@@ -10,21 +10,15 @@
 #include "xutl.h"
 #include <SDL.h>
 
-/*
 int64_t tick_per_sec=0;
 int64_t beg_tick=0;
-const unsigned int MS_PER_PERIOD=1000;
-*/
-
-long long tick_per_sec=0;
-long long beg_tick=0;
 
 #if defined(_MSC_VER) and _MSC_VER >= 1310
 __declspec (noinline)
 #endif // _MSC_VER >= 1310
 
-uint64_t getRDTSC() {
-    return SDL_GetPerformanceCounter();
+int64_t getRDTSC() {
+    return static_cast<int64_t>(SDL_GetPerformanceCounter());
 }
 
 void initclock()
@@ -50,7 +44,7 @@ void initclock()
 	beg_tick=getRDTSC();
 	*/
 
-	tick_per_sec = SDL_GetPerformanceFrequency();
+	tick_per_sec = static_cast<int64_t>(SDL_GetPerformanceFrequency() / 1000);
     beg_tick=getRDTSC();
 
 	//timeEndPeriod(1);
@@ -58,11 +52,11 @@ void initclock()
 
 double clockf()
 {
-	return (double)(getRDTSC()-beg_tick)/(double)tick_per_sec;
+	return (double)(getRDTSC() - beg_tick) / (double)tick_per_sec;
 } 
 
 int clocki()
 {
-	return (int)((getRDTSC()-beg_tick)/tick_per_sec);
+	return (int)((getRDTSC() - beg_tick) / tick_per_sec);
 }
 

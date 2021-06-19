@@ -202,7 +202,7 @@ bool SNDInitSound(HWND hWnd,bool bEnable3d,bool _soft3d)
 					end-beg,end1-beg1,end2-beg2,dd);
 		OutputDebugString(s);
 
-		timeEndPeriod(1);
+		//timeEndPeriod(1);
 	}
 
 	HRESULT hr;
