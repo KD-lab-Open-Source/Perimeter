@@ -17,7 +17,7 @@
   
 */
 
-vector<cShader*> cShader::all_shader;
+std::vector<cShader*> cShader::all_shader;
 
 void cD3DRender::SetVertexShaderConstant(int start,const D3DXMATRIX *pMat)
 {
@@ -41,7 +41,7 @@ cShader::cShader()
 
 cShader::~cShader()
 {
-	vector<cShader*>::iterator it=
+	std::vector<cShader*>::iterator it=
 	find(all_shader.begin(),all_shader.end(),this);
 	if(it!=all_shader.end())
 		all_shader.erase(it);
@@ -90,7 +90,7 @@ void cVertexShader::GetHandle()
 
 void cVertexShader::Delete()
 {
-	vector<SHADER>::iterator it;
+	std::vector<SHADER>::iterator it;
 
 	FOR_EACH(pShader,it)
 	{

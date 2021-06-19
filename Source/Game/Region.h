@@ -6,9 +6,9 @@
 #include "Handle.h"
 
 typedef Vect2f Point;
-typedef vector<Vect2s> Vect2sVect;
+typedef std::vector<Vect2s> Vect2sVect;
 
-typedef vector<Column*> ColumnVect;
+typedef std::vector<Column*> ColumnVect;
 
 struct Interval
 {
@@ -18,7 +18,7 @@ struct Interval
 	int delta() const { return xr - xl + 1; }
 };
 
-class Shape : public vector<Interval>
+class Shape : public std::vector<Interval>
 {
 public:
 	int y0;
@@ -45,12 +45,12 @@ public:
 	friend XBuffer& operator> (XBuffer& buf, Cell& cell){ buf > cell.y > cell.xl > cell.xr; return buf; }
 };
 
-typedef vector<Cell*> SeedList;
+typedef std::vector<Cell*> SeedList;
 class Column;
 
-class CellLine : public list<Cell>
+class CellLine : public std::list<Cell>
 {
-	typedef list<Cell> List;
+	typedef std::list<Cell> List;
 
 public:
 	CellLine() { y = 0; column_ = 0; changeCounter_ = 0; }
@@ -91,7 +91,7 @@ private:
 	friend Column;
 };
 
-class Column : public vector<CellLine>
+class Column : public std::vector<CellLine>
 {
 public:
 	Column(int sy);
@@ -133,7 +133,7 @@ private:
 ////////////////////////////////////////////////
 //	Hermite Spline
 ////////////////////////////////////////////////
-class CycledHermite : public vector<Vect2f> 
+class CycledHermite : public std::vector<Vect2f>
 {
 	Vect2f P[4];
 	float t_max_, u, offset;
@@ -165,7 +165,7 @@ public:
 ////////////////////////////////////////////////
 //		Регион
 ////////////////////////////////////////////////
-class Region : public list<ShareHandle<Region> >, public ShareHandleBase
+class Region : public std::list<ShareHandle<Region> >, public ShareHandleBase
 {
 public:
 	Region();
@@ -236,7 +236,7 @@ protected:
 		int x_size = (x_end - x_off)/space;
 		int x_size_world = x_size*space;
 		int xc0 = x_off + space/2;
-		vector<int> counters_line(x_size + 1);
+		std::vector<int> counters_line(x_size + 1);
 
 		int y = Region::y0 - Region::y0 % space;
 		int y_end = Region::y1 + (Region::y1 % space ? space - Region::y1 % space : 0);
@@ -266,7 +266,7 @@ protected:
 			}
 
 			int xc = xc0;
-			vector<int>::iterator ci;
+			std::vector<int>::iterator ci;
 			FOR_EACH(counters_line, ci){
 				if(*ci) {
                     if (*ci == space2)
@@ -351,7 +351,7 @@ private:
 
 	bool rasterized_;
 	
-	typedef list<Segment> SegmentList;
+	typedef std::list<Segment> SegmentList;
 	SegmentList segments;
 	
 	void shapeToolzer();
@@ -401,9 +401,9 @@ class RegionMetaDispatcher
 	int temporal_segment_log;
 	bool need_to_analyze;
 
-	vector<ShareHandle<RegionDispatcher> > regions;
-	typedef vector<ShareHandle<RegionDispatcher> >::iterator iterator;
-	typedef vector<ShareHandle<RegionDispatcher> >::const_iterator const_iterator;
+	std::vector<ShareHandle<RegionDispatcher> > regions;
+	typedef std::vector<ShareHandle<RegionDispatcher> >::iterator iterator;
+	typedef std::vector<ShareHandle<RegionDispatcher> >::const_iterator const_iterator;
 	
 	bool multithreaded;
 	mutable int locked;//для assert

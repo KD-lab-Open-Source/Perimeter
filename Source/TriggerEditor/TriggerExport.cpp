@@ -41,7 +41,7 @@ void ConditionSwitcher::clear()
 			ci->condition->clear();
 }
 
-void ConditionSwitcher::writeInfo(XBuffer& buffer, string offset) const
+void ConditionSwitcher::writeInfo(XBuffer& buffer, std::string offset) const
 {
 	if(conditions.empty())
 		return;
@@ -55,7 +55,7 @@ void ConditionSwitcher::writeInfo(XBuffer& buffer, string offset) const
 		ci->writeInfo(buffer, offset);
 }
 
-void ConditionNode::writeInfo(XBuffer& buffer, string offset) const
+void ConditionNode::writeInfo(XBuffer& buffer, std::string offset) const
 {
 	if(!condition){
 		buffer < "Нулевое условие, нужно удалить!!!\r\n";

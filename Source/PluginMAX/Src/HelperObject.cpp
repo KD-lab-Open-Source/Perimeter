@@ -19,7 +19,7 @@ int sHelperObject::Read(cMeshFile &f)
 				break;
 			case MF_TYPE_HELPERNAME:
 				{
-					string HelperName;
+					std::string HelperName;
 					f.ReadField(HelperName);
 					if(stricmp(HelperName.c_str(),HELPERNAME_DUMMY)==0)
 						idObject=IDOBJECT_DUMMY;

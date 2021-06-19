@@ -283,7 +283,7 @@ terFilthSpotID SelectFilth()
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
-	vector<const char*> filth;
+	std::vector<const char*> filth;
 	for(int i=0;i<sz;i++)
 		filth.push_back(name[i].name);
 
@@ -314,7 +314,7 @@ terUnitAttributeID SelectGeo()
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
-	vector<const char*> filth;
+	std::vector<const char*> filth;
 	for(int i=0;i<sz;i++)
 		filth.push_back(name[i].name);
 
@@ -340,7 +340,7 @@ void MissionEditor::createUnit()
 	const char* itemFilth = "Скверна";
 	const char* itemSensors = "Сенсора";
 	const char* itemGeoprocess = "Геопроцессы";
-	vector<const char*> items;
+	std::vector<const char*> items;
 	items.push_back(itemBuildings);
 	items.push_back(itemNature);
 	items.push_back(itemFilth);
@@ -413,11 +413,11 @@ void MissionEditor::createUnit()
 		//_pShellDispatcher->m_nPickData = attribute->ID;
 
 		if(modelDirectory){
-			string modelName;			
+			std::string modelName;
 			if(openFileDialog(modelName, modelDirectory, "m3d", "3D Model")){
 				strlwr((char*)modelName.c_str());
 				size_t pos = modelName.rfind("resource\\");
-				if(pos != string::npos)
+				if(pos != std::string::npos)
 					modelName.erase(0, pos);
 				unit->setModelName(modelName.c_str());
 			}
@@ -437,9 +437,9 @@ const char* MissionEditor::info()
 {
 	info_.init();
 
-	string missionName = gameShell->CurrentMission.saveName();
+	std::string missionName = gameShell->CurrentMission.saveName();
 	size_t pos = missionName.rfind("RESOURCE\\");
-	if(pos != string::npos)
+	if(pos != std::string::npos)
 		missionName.erase(0, pos);
 	info_ < "Миссия: " < missionName.c_str() < "\n";
 
@@ -552,7 +552,7 @@ void MissionEditor::applyHardness()
 	hardnessChanged_ = true;
 
 	if(hardnessPolygon_.size() > 2){
-		vector<Vect2i> points;
+		std::vector<Vect2i> points;
 		Vect2i posMin(10000, 10000);
 		Vect2i posMax(0, 0);
 		Vect3fVect::iterator vi;

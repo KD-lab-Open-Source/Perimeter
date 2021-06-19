@@ -69,8 +69,8 @@ struct ScriptParam
 	void RecalculateClipDistance();
 
 	MTSection* GetLock(){return &mtlock;};
-	vector<LPDIRECTSOUNDBUFFER>& GetSounds(){ASSERT(mtlock.is_lock());return sounds;}
-	vector<SNDOneBuffer>& GetBuffer(){ASSERT(mtlock.is_lock());return soundbuffer;}
+	std::vector<LPDIRECTSOUNDBUFFER>& GetSounds(){ASSERT(mtlock.is_lock());return sounds;}
+	std::vector<SNDOneBuffer>& GetBuffer(){ASSERT(mtlock.is_lock());return soundbuffer;}
 
 	bool incBelligerentIndex(int idx){ xassert(idx >= 0 && idx < belligerentIndex_.size()); belligerentIndex_[idx]++; return true; }
 	bool setBelligerentCount(int count){ belligerentIndex_.resize(count,0); return true; }
@@ -80,10 +80,10 @@ struct ScriptParam
 protected:
 	MTSection mtlock;
 	//Звуки, которые выбираются при загрузке по RND
-	vector<LPDIRECTSOUNDBUFFER> sounds;
-	vector<SNDOneBuffer> soundbuffer;
+	std::vector<LPDIRECTSOUNDBUFFER> sounds;
+	std::vector<SNDOneBuffer> soundbuffer;
 	// количество звуков для разных воюющих сторон
-	vector<int> belligerentIndex_;
+	std::vector<int> belligerentIndex_;
 };
 
 struct SoundScriptPrm;
@@ -99,24 +99,24 @@ class SNDScript
 	};
 
 	static int belligerentIndex;
-	static string locDataPath;
+	static std::string locDataPath;
 
 public:
-	typedef map<LPCSTR, ScriptParam*, ltstr> MapScript;
+	typedef std::map<LPCSTR, ScriptParam*, ltstr> MapScript;
 
 	struct OneScript
 	{
 		LPSTR name;
 		//Один раз инициализировали, много раз использовали
 		//не добавлять и не удалять а процессе работы
-		vector<ScriptParam> sounds;
+		std::vector<ScriptParam> sounds;
 
 		OneScript():name(NULL){}
 		~OneScript(){if(name)free(name);}
 	};
 
 	MapScript map_script;
-	vector<OneScript*> map_map;
+	std::vector<OneScript*> map_map;
 
 	bool b2d;
 public:
@@ -143,10 +143,10 @@ protected:
 	void StopAll(bool only_voices);
 
 	void RebuildMapScript();
-	void RemoveScriptVector(vector<ScriptParam>& vc);
+	void RemoveScriptVector(std::vector<ScriptParam>& vc);
 
 	void ParseSoundScriptPrm(const struct SoundScriptPrm* prm,
-							vector<ScriptParam>& vc);
+		std::vector<ScriptParam>& vc);
 
 	bool RemoveScriptInternal(LPCSTR name);
 	

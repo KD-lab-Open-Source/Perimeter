@@ -23,7 +23,7 @@ terFilthSwarmWasp::terFilthSwarmWasp(terFilthSpot* spot, const Vect3f& pos,int a
 
 }
 
-void terFilthSwarmWasp::SetHole(vector<terFilthSpot::HoleStruct>& hole_position_)
+void terFilthSwarmWasp::SetHole(std::vector<terFilthSpot::HoleStruct>& hole_position_)
 {
 	for(int i=0;i<hole_position_.size();i++)
 	{

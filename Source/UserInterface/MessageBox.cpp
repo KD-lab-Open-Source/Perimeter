@@ -17,7 +17,7 @@ bool showNoBtn = true;
 
 bool showBtns = true;
 
-void setupYesNoMessageBox(DYNCALLBACK yesAction, float actionParam, const string& mess) {
+void setupYesNoMessageBox(DYNCALLBACK yesAction, float actionParam, const std::string& mess) {
 	submitAction = yesAction;
 	submitParam = actionParam;
 	showNoBtn = true;
@@ -25,13 +25,13 @@ void setupYesNoMessageBox(DYNCALLBACK yesAction, float actionParam, const string
 	((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_SUBMIT_TXT))->setText( mess );
 }
 
-void setupOkMessageBox(DYNCALLBACK action, float actionParam, const string& mess, OKTEXTID okBtnTextID, bool showButtons) {
+void setupOkMessageBox(DYNCALLBACK action, float actionParam, const std::string& mess, OKTEXTID okBtnTextID, bool showButtons) {
 	submitAction = action;
 	submitParam = actionParam;
 	showNoBtn = false;
 	showBtns = showButtons;
 	((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_SUBMIT_TXT))->setText( mess );
-	string okTextID;
+	std::string okTextID;
 	switch (okBtnTextID) {
 		case MBOX_OK:
 			okTextID = "Interface.Menu.ButtonLabels.OK";

@@ -273,7 +273,7 @@ void cObject3dx::Draw(cCamera* pCamera)
 	//!!! Не забыть сортировку по материалам.
 
 	int size=pGroup->skin_group.size();
-	vector<MatXf> world;
+	std::vector<MatXf> world;
 	for(int i=0;i<size;i++)
 	{
 		cStaticIndex& s=pGroup->skin_group[i];
@@ -329,7 +329,7 @@ void cObject3dx::Draw(cCamera* pCamera)
 
 int cObject3dx::GetAnimationGroup(const char* name)
 {
-	vector<AnimationGroup>& animation_group=pStatic->animation_group;
+	std::vector<AnimationGroup>& animation_group=pStatic->animation_group;
 	int size=animation_group.size();
 	for(int i=0;i<size;i++)
 	{
@@ -371,10 +371,10 @@ void cObject3dx::SetAnimationGroupPhase(int igroup,float phase)
 
 bool cObject3dx::SetVisibilityGroup(const char* name)
 {
-	vector<cStaticVisibilityChainGroup*>::iterator it;
+	std::vector<cStaticVisibilityChainGroup*>::iterator it;
 	FOR_EACH(pStatic->visibility_groups,it)
 	{
-		string& cname=(*it)->name;
+		std::string& cname=(*it)->name;
 		if(cname==name)
 		{
 			pGroup=*it;
@@ -419,7 +419,7 @@ bool cObject3dx::SetChain(const char* chain_name)
 		return false;
 	}
 
-	vector<cNode3dx>::iterator it;
+	std::vector<cNode3dx>::iterator it;
 	FOR_EACH(nodes,it)
 	{
 		cNode3dx& node=*it;
@@ -510,9 +510,9 @@ void cObject3dx::CalcBoundingBox()
 	box.min.set(1e30f,1e30f,1e30f);
 	box.max.set(-1e30f,-1e30f,-1e30f);
 
-	vector<Vect3f> points;
+	std::vector<Vect3f> points;
 	GetAllPoints(points);
-	vector<Vect3f>::iterator it;
+	std::vector<Vect3f>::iterator it;
 	FOR_EACH(points,it)
 	{
 		Vect3f& pos=*it;
@@ -522,12 +522,12 @@ void cObject3dx::CalcBoundingBox()
 	}
 }
 
-void cObject3dx::GetAllPoints(vector<Vect3f>& point)
+void cObject3dx::GetAllPoints(std::vector<Vect3f>& point)
 {
 	GetAllPointsParam(point,true);
 }
 
-void cObject3dx::GetAllPointsParam(vector<Vect3f>& point,bool zero_pos)
+void cObject3dx::GetAllPointsParam(std::vector<Vect3f>& point,bool zero_pos)
 {
 	MatXf old_mat;
 	float old_scale;
@@ -556,7 +556,7 @@ void cObject3dx::GetAllPointsParam(vector<Vect3f>& point,bool zero_pos)
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(pGroup->vb);
 	skin_vertex.SetVB(pVertex,pGroup->vb.size);
 
-	vector<MatXf> world;
+	std::vector<MatXf> world;
 	for(i=0;i<size;i++)
 	{
 		cStaticIndex& s=pGroup->skin_group[i];
@@ -609,7 +609,7 @@ void cObject3dx::GetAllPointsParam(vector<Vect3f>& point,bool zero_pos)
 	}
 }
 
-void cObject3dx::GetAllNormals(vector<Vect3f>& point)
+void cObject3dx::GetAllNormals(std::vector<Vect3f>& point)
 {
 	MatXf old_mat=GetPosition();
 	float old_scale=GetScale();
@@ -634,7 +634,7 @@ void cObject3dx::GetAllNormals(vector<Vect3f>& point)
 	skin_vertex.SetVB(pVertex,pGroup->vb.size);
 
 	float int2float=1/255.0f;
-	vector<MatXf> world;
+	std::vector<MatXf> world;
 	for(i=0;i<size;i++)
 	{
 		cStaticIndex& s=pGroup->skin_group[i];
@@ -1048,7 +1048,7 @@ bool cObject3dx::Intersect(const Vect3f& p0,const Vect3f& p1)
 
 bool cObject3dx::IntersectTriangle(const Vect3f& p0,const Vect3f& p1)
 {
-	vector<Vect3f> point;
+	std::vector<Vect3f> point;
 	GetAllPointsParam(point,false);
 
 	Vect3f pn=p1-p0;

@@ -93,7 +93,7 @@ void PoolManager::DeletePage(PoolPage& page)
 
 void PoolManager::Clear()
 {
-	vector<Pool*>::iterator it;
+	std::vector<Pool*>::iterator it;
 	FOR_EACH(pools,it)
 		delete *it;
 
@@ -110,7 +110,7 @@ void PoolManager::GetUsedMemory(int& total,int& free)
 {
 	total=free=0;
 
-	vector<Pool*>::iterator it;
+	std::vector<Pool*>::iterator it;
 	FOR_EACH(pools,it)
 	{
 		int cur_total,cur_free;

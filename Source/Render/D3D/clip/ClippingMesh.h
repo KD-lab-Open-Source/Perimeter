@@ -3,19 +3,19 @@
 struct AEdge
 {
 	int vertex[2];
-	set<int> face;
+	std::set<int> face;
 };
 
 struct AFace
 {
-	set<int> edge;
+	std::set<int> edge;
 };
 
 struct AMesh
 {
-	vector<Vect3f> V;
-	vector<AEdge> E;
-	vector<AFace> F;
+	std::vector<Vect3f> V;
+	std::vector<AEdge> E;
+	std::vector<AFace> F;
 
 	void CreateABB(Vect3f& vmin,Vect3f& vmax);
 };
@@ -54,15 +54,15 @@ struct Plane
 */
 struct APolygons
 {
-	vector<Vect3f> points;
-	vector<vector<int> > faces;
+	std::vector<Vect3f> points;
+	std::vector<std::vector<int> > faces;
 };
 
 struct CMesh
 {
-	vector<CVertex> V;
-	vector<CEdge> E;
-	vector<CFace> F;
+	std::vector<CVertex> V;
+	std::vector<CEdge> E;
+	std::vector<CFace> F;
 public:
 	CMesh(AMesh& mesh);	
 	CMesh();

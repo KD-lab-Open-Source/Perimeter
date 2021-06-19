@@ -71,8 +71,8 @@ protected:
 class cEmitter3dObject
 {
 public:
-	virtual void GetAllPoints(vector<Vect3f>& point)=0;
-	virtual void GetAllNormals(vector<Vect3f>& point)=0;
+	virtual void GetAllPoints(std::vector<Vect3f>& point)=0;
+	virtual void GetAllNormals(std::vector<Vect3f>& point)=0;
 	virtual void GetEmitterMaterial(struct cObjMaterial& material)=0;
 };
 

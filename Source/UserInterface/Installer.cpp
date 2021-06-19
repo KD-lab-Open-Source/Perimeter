@@ -170,7 +170,7 @@ void terBuildingInstaller::SetBuildPosition(const Vect3f& position,float angle, 
 		Angle = angle;
 
 		MatX2f mx2(Mat2f(Angle), Position);
-		vector<Vect2i> points(Attribute->BasementPoints.size());
+		std::vector<Vect2i> points(Attribute->BasementPoints.size());
 		int x0 = INT_INF, y0 = INT_INF; 
 		int x1 = -INT_INF, y1 = -INT_INF;
 		for(int i = 0; i < Attribute->BasementPoints.size(); i++){
@@ -385,7 +385,7 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 bool terBuildingInstaller::checkScriptInstructions()
 {
 	bool enable = true;
-	vector<SaveBuildingInstallerInstruction>::const_iterator ii;
+	std::vector<SaveBuildingInstallerInstruction>::const_iterator ii;
 	FOR_EACH(gameShell->manualData().buildingInstallerInstructions, ii)
 		if(ii->building == Attribute->ID){
 			enable = false;

@@ -19,12 +19,12 @@ class Knowledge : public tx3d::SharedPointer {
 		bool knowAboutWorld(World* world) const {
 			return knownWorlds.find(world) != knownWorlds.end();
 		}
-		const vector<World*>& getPath() const {
+		const std::vector<World*>& getPath() const {
 			return path;
 		}
 	protected:
-		set<World*> knownWorlds;
-		vector<World*> path;
+		std::set<World*> knownWorlds;
+		std::vector<World*> path;
 };
 
 

@@ -36,7 +36,7 @@ void ReelManager::showModal(const char* binkFileName, const char* soundFileName,
 	}
 	bink->SetVolume(max(terMusicVolume, terSoundVolume));
 
-	string soundPath = soundFileName ? soundFileName : "";
+	std::string soundPath = soundFileName ? soundFileName : "";
 
 	if (!soundPath.empty() && soundPath != "empty" && stopBGMusic) {
 		int ret = gb_Music.OpenToPlay(soundFileName);

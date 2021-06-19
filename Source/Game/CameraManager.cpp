@@ -577,7 +577,7 @@ void terCameraType::loadPath(const SaveCameraSplineData& data, bool addCurrentPo
 		coord.uncycle(coord0);
 		path_.push_back(coord);
 	}
-	vector<SaveCameraData>::const_iterator i;
+	std::vector<SaveCameraData>::const_iterator i;
 	FOR_EACH(data.path, i){
 		path_.push_back(CameraCoordinate());
 		path_.back().load(*i);

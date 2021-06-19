@@ -279,7 +279,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 	}
 
 
-	vector<netCommandGame*>::iterator p;
+	std::vector<netCommandGame*>::iterator p;
 	InOutNetComBuffer out_buffer(1024,1);
 	{
 		//Lock!
@@ -367,7 +367,7 @@ bool terHyperSpace::MultiQuant()
 
 		lastQuant_inFullListGameCommands=currentQuant;
 		//поиск первой команды в последнем кванте
-		vector<netCommandGame*>::iterator p;
+		std::vector<netCommandGame*>::iterator p;
 		p=fullListGameCommands.end();
 		while(p!=fullListGameCommands.begin()) {
 			p--;
@@ -519,7 +519,7 @@ bool terHyperSpace::SingleQuant()
 	if(!flag_stopSavePlayReel) lastQuant_inFullListGameCommands=currentQuant;
 
 	if(flag_rePlayReel){
-		vector<netCommandGame*>::iterator p;
+		std::vector<netCommandGame*>::iterator p;
 		
 		for(p=curRePlayPosition; p!=replayListGameCommands.end(); p++){
 			if((*p)->curCommandQuant_==currentQuant){
@@ -648,7 +648,7 @@ void terHyperSpace::ShowInfo()
 //По идее вызов корректный т.к. reJoin не пошлется пока игра не остановлена(stopGame_HostMigrate)
 void terHyperSpace::sendListGameCommand2Host(unsigned int begQuant, unsigned int endQuant)
 {
-	vector<netCommandGame*>::iterator p;
+	std::vector<netCommandGame*>::iterator p;
 	InOutNetComBuffer out_buffer(1024,1);
 	if(lastQuant_inFullListGameCommands < endQuant) endQuant=lastQuant_inFullListGameCommands; /// 
 	for(p=fullListGameCommands.begin(); p!=fullListGameCommands.end(); p++){
@@ -680,7 +680,7 @@ void terHyperSpace::stopGame_HostMigrate()
 
 	xassert(allowedRealizingQuant==lastRealizedQuant);
 	xassert(allowedRealizingQuant==lastQuant_inFullListGameCommands);
-	vector<netCommandGame*>::iterator p;
+	std::vector<netCommandGame*>::iterator p;
 	while(!fullListGameCommands.empty()){
 		p=fullListGameCommands.end();
 		p--;
@@ -732,7 +732,7 @@ void terHyperSpace::putInputGameCommand2fullListGameCommandAndCheckAllowedRun(ne
 	else {
 		xassert(0&&"host migrate ?");
 		//можно вставить поиск в списке и подтверждение
-		vector<netCommandGame*>::iterator p;
+		std::vector<netCommandGame*>::iterator p;
 		for(p=fullListGameCommands.begin(); p!=fullListGameCommands.end(); p++){
 			if((*p)->curCommandCounter_==pnc->curCommandCounter_) break;
 		}

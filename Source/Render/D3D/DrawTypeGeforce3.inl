@@ -171,7 +171,7 @@ void DrawTypeGeforce3::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 		return;
 	}
 
-	vector<cUnkLight*>* point=&Mesh->GetRootNode()->GetLight();
+	std::vector<cUnkLight*>* point=&Mesh->GetRootNode()->GetLight();
 	last_ps->Select();
 	if(pShadowMap && pShadow)
 		last_vs->Select(pShadow->matViewProj,pShadowMap->GetWidth(),&Mesh->GetGlobalMatrix(),point);

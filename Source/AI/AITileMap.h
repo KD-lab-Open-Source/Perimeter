@@ -49,13 +49,13 @@ public:
 	};
 
 	// Поиск пути
-	bool findPath(const Vect2i& from, const Vect2i& to, vector<Vect2i>& out_path, PathType type);
+	bool findPath(const Vect2i& from, const Vect2i& to, std::vector<Vect2i>& out_path, PathType type);
 	void recalcPathFind();
 
 	// Debug
 	void drawWalkMap();
 protected:
-	list<class AIPlayer*> call_back;
+	std::list<class AIPlayer*> call_back;
 	ClusterFind* path_finder;
 	ClusterFind* path_finder2;
 	ClusterFind* path_hard_map;

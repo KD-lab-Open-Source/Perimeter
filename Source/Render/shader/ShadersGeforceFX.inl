@@ -1,7 +1,7 @@
 ////////////////////////////GeforceFX///////////////////////////////////
 
 void VSGeforceFXScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
-							const MatXf* world,vector<cUnkLight*>* light)
+							const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	SetFog();
 
@@ -57,7 +57,7 @@ void VSGeforceFXScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 	
 	if(light)
 	{
-		cVertexShader::Select(min(light->size(),pShader.size()-1));
+		cVertexShader::Select((std::min)(light->size(),pShader.size()-1));
 	}else
 		cVertexShader::Select();
 }
@@ -166,7 +166,7 @@ void VSGeforceFXObjectSceneLight::GetHandle()
 }
 
 void VSGeforceFXObjectSceneLight::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
-										const MatXf* world,vector<cUnkLight*>* light)
+										const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	if(light)
 	{
@@ -241,7 +241,7 @@ void VSGeforceFXObjectSceneLightT::GetHandle()
 }
 
 
-void VSGeforceFXObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
+void VSGeforceFXObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	D3DXMATRIX mat;
 	cD3DRender_SetMatrix(mat,*world);

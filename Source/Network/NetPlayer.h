@@ -67,7 +67,7 @@ struct PlayerData {
 		ar & WRAP_OBJECT(flag_playerGameReady);
 		ar & WRAP_OBJECT(compAndUserID);
 		ar & WRAP_OBJECT(gameVersion);
-		string name = playerName;
+		std::string name = playerName;
 		ar & WRAP_OBJECT(name);
 		setName(name.c_str());
 		//ar & WRAP_OBJECT(playerName);
@@ -150,8 +150,8 @@ public:
 	bool changePlayerHandicap(int playerIdx, int handicap);
 	bool changePlayerHandicap(DPNID dpnid, int handicap);
 
-	void getAllOtherPlayerName(string& outStr);
-	void getPlayerName(int _playerID, string& outStr);
+	void getAllOtherPlayerName(std::string& outStr);
+	void getPlayerName(int _playerID, std::string& outStr);
 
 	int findPlayer(DPNID dpnid);
 
@@ -203,17 +203,17 @@ public:
 	PrmString originalSaveName;
 
 	unsigned int quantAmountInPlayReel;
-	string fileNamePlayReelGame;
-	string missionNamePlayReelGame;
+	std::string fileNamePlayReelGame;
+	std::string missionNamePlayReelGame;
 	GameType gameType_;
 	bool flag_missionDescriptionUpdate;
 
 private:
 	int worldID_;
-	string saveName_;
-	string saveNameBinary_;
-	string missionName_;
-	string missionDescriptionStr_;
+	std::string saveName_;
+	std::string saveNameBinary_;
+	std::string missionName_;
+	std::string missionDescriptionStr_;
 	unsigned int serverRnd_;
 };
 

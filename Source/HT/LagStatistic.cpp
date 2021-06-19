@@ -59,7 +59,7 @@ void LagStatistic::Show()
 
 void LagStatistic::CalcAverage(int interval,float& lag_quant,float& net_skip,float& net_wait)
 {
-	list<QuantData>::iterator it;
+	std::list<QuantData>::iterator it;
 	int size=0;
 	lag_quant=0;
 	net_skip=0;

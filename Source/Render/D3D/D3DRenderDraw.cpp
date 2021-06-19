@@ -584,12 +584,12 @@ LABEL_DRAW:
 struct LightByTexture
 {
 	cTexture* texture;
-	vector<cUnkLight*> light;
+	std::vector<cUnkLight*> light;
 };
 
 void cD3DRender::Draw(class cScene *Scene)
 { 
-	vector<LightByTexture> light;
+	std::vector<LightByTexture> light;
 	for(int i=0;i<Scene->GetNumberLight();i++)
 	{
 		cUnkLight* ULight=Scene->GetLight(i);

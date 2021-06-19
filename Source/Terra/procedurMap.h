@@ -166,7 +166,7 @@ public:
 };
 
 struct ContainerPMO {
-	vector<ElementPMO> container;
+	std::vector<ElementPMO> container;
 
 	ContainerPMO();
 	~ContainerPMO();

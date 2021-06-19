@@ -70,7 +70,7 @@ public:
 protected:
 	struct s_WaspBirthGeoAction* BirthProcessPoint;
 
-	typedef vector<terFilthRat*> FilthListType;
+	typedef std::vector<terFilthRat*> FilthListType;
 	FilthListType unitList;
 
 	terGenerate gen;

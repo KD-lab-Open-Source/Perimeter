@@ -330,9 +330,9 @@ const int MAX_BRANCHINGS_BREAKS=5;
 const float CORNER_DISPERSION_BREAKS=(float)(pi+pi/2);
 
 struct geoBreak1{ //точечный разлом
-	list<elementGeoBreak*> elGB;
+	std::list<elementGeoBreak*> elGB;
 	geoBreak1(int x, int y, int rad=MAX_LENGHT_ELEMENTGEOBREAK, int beginNumBreaks=0); //0-случайное кол-во
-	list<elementGeoBreak*>::iterator delEementGeoBreak(list<elementGeoBreak*>::iterator pp);
+	std::list<elementGeoBreak*>::iterator delEementGeoBreak(std::list<elementGeoBreak*>::iterator pp);
 	int quant(void);
 };
 
@@ -582,7 +582,7 @@ struct sTorpedo {
 	float curX, curY;
 	sTBubble * bubArr[CTORPEDO_MAX_EL_ARR];
 
-	list<sToolzDate> toolzDateLst;
+	std::list<sToolzDate> toolzDateLst;
 	individualToolzer<T2TE_CHANGING_TERRAIN_HEIGHT> toolzerChangeTerHeight ;
 
 	sTorpedo(int x, int y, Vect2f& _direction);
@@ -733,8 +733,8 @@ struct sUPoligonN {
 };
 
 struct sGeoFault {
-	vector<Vect2f> pointArr;
-	list<sUPoligonN*> poligonArr;
+	std::vector<Vect2f> pointArr;
+	std::list<sUPoligonN*> poligonArr;
 	int step;
 	float fstep;
 	sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght);
@@ -750,7 +750,7 @@ struct sUPoligonNSpec : public sUPoligonN {
 	};
 };
 struct sGeoSwelling {
-	list<sUPoligonNSpec*> poligonArr;
+	std::list<sUPoligonNSpec*> poligonArr;
 	int step;
 	sGeoSwelling(int x, int y);
 	bool quant(void);
@@ -818,7 +818,7 @@ struct meshM2VM{
 struct s_commandInformation{
 	int numKF;
 	int time;
-	string names3DS;
+	std::string names3DS;
 	bool flag_inverse;
 	short addH;
 	int KF2Loop;
@@ -837,8 +837,8 @@ struct s_Mesh2VMapDate {
 	unsigned short sizeY;
 	int amountKF;
 
-	list<s_commandInformation *> commandList_immediately;
-	list<s_commandInformation *>::iterator CLIt;
+	std::list<s_commandInformation *> commandList_immediately;
+	std::list<s_commandInformation *>::iterator CLIt;
 	void resetCommandList();
 	void command_setKeyFrame(const int numKF, const char* names3DS, const int time, const Vect3f& orientation, const Vect3f& scale, bool flag_inverse, short addH, int KF2Loop=0, int loopCount=0);
 	void compilingCommandList();
@@ -872,8 +872,8 @@ struct s_EarthUnit {
 	//short previsionKF;
 	//short currentKF;
 
-	list<s_commandInformation *>::iterator curKFIt;
-	list<s_commandInformation *>::iterator nextKFIt;
+	std::list<s_commandInformation *>::iterator curKFIt;
+	std::list<s_commandInformation *>::iterator nextKFIt;
 
 	short currentBetweenFrame;
 
@@ -928,15 +928,15 @@ struct s_EarthUnit {
 struct s_Mesh2VMapDispather {
 	s_Mesh2VMapDispather(void);
 	~s_Mesh2VMapDispather(void);
-	vector<s_Mesh2VMapDate*> M2VMDateArr;
-	vector<s_EarthUnit*> EUArr;
+	std::vector<s_Mesh2VMapDate*> M2VMDateArr;
+	std::vector<s_EarthUnit*> EUArr;
 
 	//s_EarthUnit* getEarthUnit(const int ID);
 	s_EarthUnit* getEarthUnit(s_Mesh2VMapDate * mmDate);
 
 	void deleteEarthUnit(s_EarthUnit* eu, bool autoDeleteMVMDate=1);
 
-	list<meshM2VM*> meshList;
+	std::list<meshM2VM*> meshList;
 	meshM2VM* getMeshFrom3DS(const char * name3DS);
 
 };
@@ -986,7 +986,7 @@ struct s3DSGeoParameter
 	struct CommandSet
 	{
 		int numKF;
-		string names3DS;
+		std::string names3DS;
 		int time;
 		bool flag_inverse;
 		short addH;
@@ -1018,7 +1018,7 @@ struct s3DSGeoParameter
 		}
 	};
 
-	vector<CommandSet> command;
+	std::vector<CommandSet> command;
 };
 
 class c3DSGeoActionCreator
@@ -1043,9 +1043,9 @@ protected:
 	struct Cache
 	{
 		s3DSGeoParameter* command;
-		vector<s_Mesh2VMapDate*> MMDateArr;
+		std::vector<s_Mesh2VMapDate*> MMDateArr;
 	};
-	vector<Cache> array_cache;
+	std::vector<Cache> array_cache;
 };
 
 

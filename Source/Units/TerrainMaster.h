@@ -17,7 +17,7 @@ public:
 	void ShowCircles();
 
 private:
-	typedef list<struct terUnitTruck*> TruckList;
+	typedef std::list<struct terUnitTruck*> TruckList;
 	TruckList Trucks;
 
 	int productedTrucksNumber_;

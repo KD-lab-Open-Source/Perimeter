@@ -31,9 +31,9 @@ class AIAStar
 public:
 #if FAST_ERASE
   struct OnePoint;
-  typedef multimap<TypeH, OnePoint*> type_point_map;
+  typedef std::multimap<TypeH, OnePoint*> type_point_map;
 #else
-  typedef multimap<TypeH,POINT> type_point_map;
+  typedef std::multimap<TypeH,POINT> type_point_map;
 #endif
 
 	struct OnePoint
@@ -66,7 +66,7 @@ public:
 	~AIAStar();
 
 	void Init(int dx,int dy);
-	bool FindPath(POINT from,Heuristic* h,vector<POINT>& path);
+	bool FindPath(POINT from,Heuristic* h, std::vector<POINT>& path);
 	void GetStatistic(int* num_point_examine,int* num_find_erase);
 
 	//Debug
@@ -121,7 +121,7 @@ AIAStar<Heuristic,TypeH>::~AIAStar()
 }
 
 template<class Heuristic,class TypeH>
-bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr,vector<POINT>& path)
+bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr, std::vector<POINT>& path)
 {
 	num_point_examine=0;
 	num_find_erase=0;
@@ -187,7 +187,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr,vector<POINT>& 
 				parent=parent->parent;
 			}
 			xassert(p.x==from.x && p.y==from.y);
-			reverse(path.begin(),path.end());
+			std::reverse(path.begin(),path.end());
 			return true;
 		}
 
@@ -297,7 +297,7 @@ class AIAStarGraph
 {
 public:
 	struct OnePoint;
-	typedef multimap<TypeH, OnePoint*> type_point_map;
+	typedef std::multimap<TypeH, OnePoint*> type_point_map;
 
 	struct OnePoint
 	{
@@ -313,7 +313,7 @@ public:
 		inline TypeH f(){return g+h;}
 	};
 protected:
-	vector<OnePoint> chart;
+	std::vector<OnePoint> chart;
 	type_point_map open_map;
 
 	DWORD is_used_num;//Если is_used_num==used, то ячейка используется
@@ -326,9 +326,9 @@ public:
 
 	//Общее количество узлов. Константа, которая не должна меняться,
 	//пока существует класс, указывающий на неё.
-	void Init(vector<Node>& all_node);
+	void Init(std::vector<Node>& all_node);
 
-	bool FindPath(Node* from,Heuristic* h,vector<Node*>& path);
+	bool FindPath(Node* from,Heuristic* h, std::vector<Node*>& path);
 	void GetStatistic(int* num_point_examine,int* num_find_erase);
 
 	//Debug
@@ -349,7 +349,7 @@ AIAStarGraph<Heuristic,Node,TypeH>::AIAStarGraph()
 }
 
 template<class Heuristic,class Node,class TypeH>
-void AIAStarGraph<Heuristic,Node,TypeH>::Init(vector<Node>& all_node)
+void AIAStarGraph<Heuristic,Node,TypeH>::Init(std::vector<Node>& all_node)
 {
 	int size=all_node.size();
 	chart.resize(size);
@@ -367,13 +367,13 @@ template<class Heuristic,class Node,class TypeH>
 void AIAStarGraph<Heuristic,Node,TypeH>::clear()
 {
 	is_used_num=0;
-	typename vector<OnePoint>::iterator it;
+	typename std::vector<OnePoint>::iterator it;
 	FOR_EACH(chart,it)
 		it->used=0;
 }
 
 template<class Heuristic,class Node,class TypeH>
-bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr,vector<Node*>& path)
+bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr, std::vector<Node*>& path)
 {
 	num_point_examine=0;
 	num_find_erase=0;

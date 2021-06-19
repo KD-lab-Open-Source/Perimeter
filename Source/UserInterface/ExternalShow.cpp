@@ -71,7 +71,7 @@ cCircleShow::cCircleShow()
 
 cCircleShow::~cCircleShow()
 {
-	vector<sCircleType>::iterator it;
+	std::vector<sCircleType>::iterator it;
 	FOR_EACH(types,it)
 	{
 		(*it).external_show->Release();
@@ -145,7 +145,7 @@ void cCircleShow::Show(int dotted)
 		float t=HTManager::instance()->interpolationFactor();
 		float t_=1-t;
 
-		vector<sCircle>::iterator it;
+		std::vector<sCircle>::iterator it;
 		FOR_EACH(tp.circles,it)
 		{
 			sCircle& c=*it;
@@ -154,7 +154,7 @@ void cCircleShow::Show(int dotted)
 	}
 
 	{
-		vector<sCircleGraph>::iterator it;
+		std::vector<sCircleGraph>::iterator it;
 		FOR_EACH(tp.circles_graph,it)
 		{
 			sCircleGraph& c=*it;
@@ -167,7 +167,7 @@ void cCircleShow::Show(int dotted)
 
 void cCircleShow::Clear()
 {
-	vector<sCircleType>::iterator it;
+	std::vector<sCircleType>::iterator it;
 	FOR_EACH(types,it)
 	{
 		it->circles.clear();
@@ -345,7 +345,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 			nums++;
 		}while((t += dt) < t_max);
 
-		vector<int> smoothz(nums);
+		std::vector<int> smoothz(nums);
 		int i=0;
 		t = 0;
 		do{
@@ -686,7 +686,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 	float z=vMap.hZeroPlast-ZFIX;
 	int primitive=0;
 
-	vector<CellLine>::iterator it_line;
+	std::vector<CellLine>::iterator it_line;
 	sVertexXYZD* v=buf.Lock();
 
 	int profile_num=0;
@@ -698,7 +698,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 		CellLine* prev_cell=NULL;
 
 		{
-			vector<CellLine>::iterator it_line_next=it_line;
+			std::vector<CellLine>::iterator it_line_next=it_line;
 			it_line_next++;
 			if(it_line_next!=column->end())
 			{
@@ -707,7 +707,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 		}
 
 		{
-			vector<CellLine>::iterator it_line_prev=it_line;
+			std::vector<CellLine>::iterator it_line_prev=it_line;
 			if(it_line_prev!=column->begin())
 			{
 				it_line_prev--;
@@ -715,7 +715,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 			}
 		}
 
-		list<Cell>::iterator it,it_next,it_prev;
+		std::list<Cell>::iterator it,it_next,it_prev;
 		if(next_cell)
 			it_next=next_cell->begin();
 		if(prev_cell)
@@ -835,7 +835,7 @@ terRegionColumnMain::~terRegionColumnMain()
 
 void terRegionColumnMain::clear()
 {
-	vector<cObjectNodeRoot*>::iterator it;
+	std::vector<cObjectNodeRoot*>::iterator it;
 	FOR_EACH(object,it)
 		(*it)->Release();
 	object.clear();
@@ -862,11 +862,11 @@ void terRegionColumnMain::quant()
 	{
 		MetaLockRegionDispatcher region=(*_pShellDispatcher->regionMetaDispatcher())[num_region];
 		Column& column=region->getRasterizeColumn();
-		vector<CellLine>::iterator it_line;
+		std::vector<CellLine>::iterator it_line;
 		FOR_EACH(column,it_line)
 		{
 			CellLine& cell=*it_line;
-			list<Cell>::iterator it;
+			std::list<Cell>::iterator it;
 			FOR_EACH(cell,it)
 			{
 				Cell& c=*it;

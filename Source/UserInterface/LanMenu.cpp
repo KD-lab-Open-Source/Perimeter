@@ -21,7 +21,7 @@ extern MpegSound gb_Music;
 
 extern bool menuChangingDone;
 
-extern vector<MissionDescription> multiplayerMaps;
+extern std::vector<MissionDescription> multiplayerMaps;
 extern MissionDescription missionToExec;
 extern BGScene bgScene;
 
@@ -31,17 +31,17 @@ CommandLineData cmdLineData;
 
 CreateNetCenterWayType way;
 
-string gameSpyRoomName = "";
+std::string gameSpyRoomName = "";
 
-string messageBoxText;
+std::string messageBoxText;
 bool connRestored;
 
 //unsigned int selectedLanGameID = 0;
 GUID selectedLanGameID;
-extern void checkMissionDescription(int index, vector<MissionDescription>& mVect);
-extern string getItemTextFromBase(const char *keyStr);
+extern void checkMissionDescription(int index, std::vector<MissionDescription>& mVect);
+extern std::string getItemTextFromBase(const char *keyStr);
 
-string formatGameInfo(sGameHostInfo* info, bool oneLine) {
+std::string formatGameInfo(sGameHostInfo* info, bool oneLine) {
 	if (info) {
 		if (info->gameName.empty()) {
 			if (oneLine) {
@@ -52,7 +52,7 @@ string formatGameInfo(sGameHostInfo* info, bool oneLine) {
 		} else {
 			static char cbTemp[1024];
 			if (oneLine) {
-				string name = info->gameName + "&FFFFFF";
+				std::string name = info->gameName + "&FFFFFF";
 				if (gameShell->getNetClient()->workMode == PNetCenter::PNCWM_ONLINE_P2P) {
 					name += ":" + info->hostName + ":";
 				}
@@ -99,13 +99,13 @@ STARFORCE_API_NEW void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code,
 //		typedef  LanGameInfo;
 		if (gameShell->getNetClient()->getGameHostList().size() > 0) {
 
-			vector<sGameHostInfo*>::iterator it;
+			std::vector<sGameHostInfo*>::iterator it;
 
 			sGameHostInfo* selectedGame = gameShell->getNetClient()->getGameHostList().front();
 			int selectIndex = 0;
 			int i = 0;
 			for (it = gameShell->getNetClient()->getGameHostList().begin(); it != gameShell->getNetClient()->getGameHostList().end(); it++, i++) {
-				string name = formatGameInfo(*it, true);
+				std::string name = formatGameInfo(*it, true);
 				listBox->AddString( name.c_str(), 0 );
 				if ((*it)->gameHostGUID == selectedLanGameID) {
 					selectedGame = *it;
@@ -128,7 +128,7 @@ STARFORCE_API_NEW void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code,
 		CListBoxWindow* listBox = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_GAME_LIST);
 		int pos = listBox->GetCurSel();
 		if (pos >= 0 && pos < gameShell->getNetClient()->getGameHostList().size()) {
-			vector<sGameHostInfo*>::iterator it = gameShell->getNetClient()->getGameHostList().begin();
+			std::vector<sGameHostInfo*>::iterator it = gameShell->getNetClient()->getGameHostList().begin();
 			advance(it, pos);
 			selectedLanGameID = (*it)->gameHostGUID;
 
@@ -153,13 +153,13 @@ int createQuant( float, float ) {
 			showMessageBoxButtons();
 		} else {
 			CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
-			string gameName;
+			std::string gameName;
 			if (gameSpyRoomName.empty()) {
 				gameName += input->GetText();
 			} else {
 				gameName += gameSpyRoomName;
 			}
-			string missionName = string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
+			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
 			gameShell->getNetClient()->CreateGame(gameName.c_str(), missionName.c_str(), input->GetText(), BELLIGERENT_EXODUS0, 0, 1, cmdLineData.password.c_str() );
 		}
 /*		
@@ -412,7 +412,7 @@ void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		CListBoxWindow* list = (CListBoxWindow*)pWnd;
 		if (param >= 0 && param < multiplayerMaps.size()) {
 			checkMissionDescription(param, multiplayerMaps);
-			string missionName = string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[param].missionName();
+			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[param].missionName();
 			gameShell->getNetClient()->changeMap(missionName.c_str());
 		}
 /*
@@ -656,7 +656,7 @@ void setupClan(CComboWindow* combo, int number, bool direction) {
 void setupClanButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
 	if( code == EVENT_CREATEWND ) {
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		string clan = getItemTextFromBase("Clan");
+		std::string clan = getItemTextFromBase("Clan");
 		char buff[30 + 1];
 		for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 			sprintf(buff, "%d", (i + 1));
@@ -810,7 +810,7 @@ void setName(CShellPushButton* btn, int number) {
 
 		btn->Show(true);
 		btn->Enable(false);
-		btn->setText(string(currMission.playersData[number].name()));
+		btn->setText(std::string(currMission.playersData[number].name()));
 	} else {
 		btn->Show(false);
 	}
@@ -834,7 +834,7 @@ void setLobbyMapListVisible(bool visible) {
 	_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST_RAMKA3)->Show(visible);
 	_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST_RAMKA4)->Show(visible);
 }
-int getMultiplayerMapNumber(const string& saveName) {
+int getMultiplayerMapNumber(const std::string& saveName) {
 	for (int i = 0, s = multiplayerMaps.size(); i < s; i++) {
 		if (saveName == multiplayerMaps[i].saveName()) {
 			return i;
@@ -995,7 +995,7 @@ int showMessageInGameQuant( float, float ) {
 	return 1;
 }
 
-void GameShell::showConnectFailedInGame(const string& playerList) {
+void GameShell::showConnectFailedInGame(const std::string& playerList) {
 	messageBoxText = qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.WaitingForPlayers") + playerList;
 	_shellIconManager.AddDynamicHandler(showMessageInGameQuant, CBCODE_QUANT);
 }
@@ -1140,13 +1140,13 @@ STARFORCE_API void switchToMultiplayer(CreateNetCenterWayType way) {
 					showMessageBoxButtons();
 				} else {
 					setMessageBoxTextID("Interface.Menu.Messages.Creating");
-					string gameName;
+					std::string gameName;
 					if (gameSpyRoomName.empty()) {
 						gameName = cmdLineData.name;
 					} else {
 						gameName = gameSpyRoomName;
 					}
-					string missionName = string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
+					std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
 					gameShell->getNetClient()->CreateGame(gameName.c_str(), missionName.c_str(), cmdLineData.name.c_str(), BELLIGERENT_EXODUS0, 0, 1, cmdLineData.password.c_str() );
 				}
 			}
@@ -1309,7 +1309,7 @@ GameShell::GeneralErrorType gtError;
 
 int showTerminationToLanQuant( float, float ) {
 	if (menuChangingDone) {
-		string textID;
+		std::string textID;
 		switch (gtError) {
 			case GameShell::GENERAL_CONNECTION_FAILED:
 				textID = "Interface.Menu.Messages.Multiplayer.ConnectionFailed";
@@ -1343,24 +1343,24 @@ void GameShell::generalErrorOccured(GeneralErrorType error) {
 }
 
 //----------------------------
-string colorComponentToString(unsigned char component) {
+std::string colorComponentToString(unsigned char component) {
 	char buff[5];
 	sprintf(buff, "%x", component);
 	if (strlen(buff) > 1) {
 		return buff;
 	} else {
-		return string("0") + buff;
+		return std::string("0") + buff;
 	}
 }
 
 void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
 		MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
-		string name = currMission.getActivePlayerData().name();
+		std::string name = currMission.getActivePlayerData().name();
 		int colorIndex = currMission.getActivePlayerData().colorIndex;
 		sColor4c activePlayerColor = sColor4c( sColor4f(playerColors[colorIndex].unitColor) );
 
-		string strToSay =
+		std::string strToSay =
 				"&"
 			+	colorComponentToString(activePlayerColor.r)
 			+	colorComponentToString(activePlayerColor.g)
@@ -1380,11 +1380,11 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
 		terPlayer* activePlayer = universe()->activePlayer();
 		if (activePlayer) {
 			CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
-			string name = activePlayer->name();
+			std::string name = activePlayer->name();
 			int colorIndex = activePlayer->colorIndex();
 			sColor4c activePlayerColor = sColor4c( sColor4f(playerColors[colorIndex].unitColor) );
 
-			string strToSay =
+			std::string strToSay =
 					"&"
 				+	colorComponentToString(activePlayerColor.r)
 				+	colorComponentToString(activePlayerColor.g)
@@ -1403,7 +1403,7 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
 }
 
 
-string toChatStr;
+std::string toChatStr;
 
 int addStringToChatWindowQuant( float, float ) {
 	ChatWindow* chatWnd = (ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT);

@@ -89,7 +89,7 @@ public:
     }
 
 private:
-    typedef map<unsigned int, SerializerBase*> MapHash;
+    typedef std::map<unsigned int, SerializerBase*> MapHash;
     MapHash mapHash_;
 };
 
@@ -134,9 +134,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<save_primitive_impl<U> >,
-			Select<boost::is_pointer<U>, 
+			Select<std::is_pointer<U>,
 				Identity<save_pointer_impl<U> >,
-				Select<boost::is_array<U>, 
+				Select<std::is_array<U>,
 					Identity<save_array_impl<U> >,
 					Identity<save_non_primitive_impl<U> >
 				>
@@ -155,7 +155,7 @@ public:
 
 private:
 	XBuffer buffer_;
-	string fileName_;
+	std::string fileName_;
 
 	///////////////////////////////////
 	void saveString(const char* value) {
@@ -218,12 +218,12 @@ private:
 		}
 		const char* name = get_type_id<T>().c_str();
 		buffer_ < stringHash(name);
-		BinaryClassDescriptor<typename boost::remove_const<T>::type>::instance().find(name).save(*this, t);
+		BinaryClassDescriptor<typename std::remove_const<T>::type>::instance().find(name).save(*this, t);
 	}
 
 	template<class T, class A>
 	BinaryOArchive& operator&(const std::vector<T, A>& cont){
-		typename vector<T, A>::const_iterator i;
+		typename std::vector<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			(*this) & WRAP_NAME(*i, 0);
@@ -232,7 +232,7 @@ private:
 
 	template<class T, class A>
 	BinaryOArchive& operator&(const std::list<T, A>& cont){
-        typename list<T, A>::const_iterator i;
+        typename std::list<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			(*this) & WRAP_NAME(*i, 0);
@@ -285,7 +285,7 @@ private:
 		return *this;
 	}
 
-	BinaryOArchive& operator&(const string& str) { 
+	BinaryOArchive& operator&(const std::string& str) {
 		saveString(str.c_str()); 
 		return *this;
 	}
@@ -336,9 +336,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<load_primitive_impl<U> >,
-			Select<boost::is_pointer<U>, 
+			Select<std::is_pointer<U>,
 				Identity<load_pointer_impl<U> >,
-				Select<boost::is_array<U>, 
+				Select<std::is_array<U>,
 					Identity<load_array_impl<U> >,
 					Identity<load_non_primitive_impl<U> >
 				>
@@ -357,12 +357,12 @@ public:
 	}
 
 private:
-	string fileName_;
+	std::string fileName_;
 	XBuffer buffer_;
 	int version_;
 
 	/////////////////////////////////////
-	bool loadString(string& value); // false if zero string should be loaded
+	bool loadString(std::string& value); // false if zero string should be loaded
 
 	int openCollection(){
 		int counter;
@@ -426,7 +426,7 @@ private:
 			}
 			return;
 		}
-		typedef BinaryClassDescriptor<typename boost::remove_const<T>::type> Descriptor;
+		typedef BinaryClassDescriptor<typename std::remove_const<T>::type> Descriptor;
 		if(t){
 			if(hash == stringHash(get_type_id<T>().c_str())){
 				Descriptor::instance().findByHash(hash).load(*this, t);
@@ -441,7 +441,7 @@ private:
 	}
 
 	template<class T, class A>
-	BinaryIArchive& operator&(vector<T, A>& cont)
+	BinaryIArchive& operator&(std::vector<T, A>& cont)
 	{
 		int count = openCollection();
 		if(count != cont.size()){
@@ -453,7 +453,7 @@ private:
 			}
 		}
 		else{
-			typename vector<T, A>::iterator i;
+			typename std::vector<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & WRAP_NAME(*i, 0);
 		}
@@ -461,7 +461,7 @@ private:
 	}
 
 	template<class T, class A>
-	BinaryIArchive& operator&(list<T, A>& cont)
+	BinaryIArchive& operator&(std::list<T, A>& cont)
 	{
 		int count = openCollection();
 		if(count != cont.size()){
@@ -472,7 +472,7 @@ private:
 			}
 		}
 		else{
-            typename list<T, A>::iterator i;
+            typename std::list<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & WRAP_NAME(*i, 0);
 		}
@@ -517,7 +517,7 @@ private:
 
 	BinaryIArchive& operator&(PrmString& t)
 	{
-		string str;
+		std::string str;
 		if(loadString(str))
 			t = str;
 		else
@@ -527,7 +527,7 @@ private:
 
 	BinaryIArchive& operator&(CustomString& t)
 	{
-		string str;
+		std::string str;
 		loadString(str);
 		t = str;
 		return *this;
@@ -535,13 +535,13 @@ private:
 
 	BinaryIArchive& operator&(ComboListString& t)
 	{
-		string str;
+		std::string str;
 		loadString(str);
 		t = str;
 		return *this;
 	}
 
-	BinaryIArchive& operator&(string& value){
+	BinaryIArchive& operator&(std::string& value){
 		loadString(value);
 		return *this;
 	}

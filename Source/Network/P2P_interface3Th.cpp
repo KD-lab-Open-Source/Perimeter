@@ -215,7 +215,7 @@ LErrorReturn:
 			DPNMSG_ENUM_HOSTS_RESPONSE* pMsg = (DPNMSG_ENUM_HOSTS_RESPONSE*)pMsgBuffer;
 
 			if(pMsg->pApplicationDescription->guidApplication==guidPerimeterGame){
-				vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
+				std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 				for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
 					if(pMsg->pApplicationDescription->guidInstance == (*p)->pAppDesc->guidInstance){
 						if(sizeof(sGameStatusInfo)==pMsg->dwResponseDataSize){

@@ -16,7 +16,7 @@ template<int tsize>
 class Interpolator3dx
 {
 public:
-	typedef vector<sInerpolate3dx<tsize> > darray;
+	typedef std::vector<sInerpolate3dx<tsize> > darray;
 	darray data;
 
 	void Interpolate(float globalt,float* out,int index);
@@ -261,7 +261,7 @@ struct sInerpolate3dxBool
 class Interpolator3dxBool
 {
 public:
-	typedef vector<sInerpolate3dxBool > darray;
+	typedef std::vector<sInerpolate3dxBool > darray;
 	darray data;
 
 	inline void Interpolate(float globalt,bool* out,int index);

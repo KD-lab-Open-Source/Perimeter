@@ -69,7 +69,7 @@ void Compound3D::getColor(Vector3D* destClr, const Vector3D &v) {
 	clr.z = 0.0;
 
 	float sumAll = 0.0;
-	float sumDegradated = numeric_limits<float>::denorm_min();
+	float sumDegradated = std::numeric_limits<float>::denorm_min();
 	int i;
 	for (i = 0; i < components.size(); i++) {
 		distances[i] = components[i]->getLocation()->distance(v);

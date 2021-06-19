@@ -5,7 +5,7 @@
 
 class CSaver
 {
-	vector<DWORD> p;
+	std::vector<DWORD> p;
 	DWORD m_Data;
 public:
 	FILE* f;
@@ -25,7 +25,7 @@ protected:
 	void push();
 public:
 	inline CSaver& operator<<(const char *x);
-	inline CSaver& operator<<(const string& x){*this<<x.c_str(); return *this;}
+	inline CSaver& operator<<(const std::string& x){*this<<x.c_str(); return *this;}
 	inline CSaver& operator<<(bool x){WR(x); return *this;};
 	inline CSaver& operator<<(char x){WR(x); return *this;};
 	inline CSaver& operator<<(unsigned char x){WR(x); return *this;};
@@ -116,14 +116,14 @@ public:
 		return s;
 	}
 
-	inline void operator>>(string& s){s=LoadString();}
+	inline void operator>>(std::string& s){s=LoadString();}
 	inline void operator>>(Vect3f& i){RD(i);}
 	inline void operator>>(Vect2f& i){RD(i);}
 	inline void operator>>(MatXf& i){RD(i);}
 };
 
 template<class T>
-void operator>>(CLoadIterator& it,vector<T>& v)
+void operator>>(CLoadIterator& it, std::vector<T>& v)
 {
 	DWORD size=0;
 	it>>size;
@@ -135,7 +135,7 @@ void operator>>(CLoadIterator& it,vector<T>& v)
 }
 
 template<class T>
-CSaver& operator<<(CSaver& s,vector<T>& v)
+CSaver& operator<<(CSaver& s, std::vector<T>& v)
 {
 	DWORD size=v.size();
 	s<<size;

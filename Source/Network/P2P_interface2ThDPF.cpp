@@ -574,7 +574,7 @@ int PNetCenter::Connect(GUID _hostID) //const char* lpszHost, int port)
 //		return 0;
 
 	INTERNAL_HOST_ENUM_INFO*  pHostFound=0;
-	vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
+	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 
 	{
 		CAutoLock _Lock(&m_GeneralLock); //! Lock
@@ -998,7 +998,7 @@ bool PNetCenter::StartFindHostDP(const char* lpszHost)
 
     }
 	else {
-		vector<string>::iterator p;
+		std::vector<std::string>::iterator p;
 		for(p=needHostList.begin(); p!=needHostList.end(); p++){
 			wszHostName = new WCHAR[strlen(p->c_str()) + 1];
 			MultiByteToWideChar(CP_ACP, 0, p->c_str(), -1, wszHostName, strlen(p->c_str()) + 1);

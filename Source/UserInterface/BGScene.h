@@ -64,10 +64,10 @@ class BGScene {
 			cObjectNode* liveGroupNode;
 			bool stopped;
 			bool forwardDirection;
-			string chainName;
+			std::string chainName;
 		};
 
-		vector<SubObject> subObjects;
+		std::vector<SubObject> subObjects;
 
 		sColor4f skinColor;
 };

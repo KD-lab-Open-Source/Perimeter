@@ -38,14 +38,14 @@ class HotKeyManager {
 		HotKeyManager();
 		~HotKeyManager();
 		void keyPressed(int key);
-		string getKeyNameForControlAction(const ControlAction& action);
+		std::string getKeyNameForControlAction(const ControlAction& action);
 	protected:
 		void fillActions();
 		void loadHotKeys();
 		bool checkHotKey(const HotKey& hotKey, int key, float currTime);
 
-		vector<AbstractAction*> actions;
-		vector<HotKey> hotKeys;
+		std::vector<AbstractAction*> actions;
+		std::vector<HotKey> hotKeys;
 		int lastKey;
 		float lastKeyTime;
 };

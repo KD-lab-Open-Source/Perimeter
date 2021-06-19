@@ -9,7 +9,7 @@
 
 class Frame : public tx3d::SharedPointer {
 	public:
-		Frame(const string& name, World* parentWorld, int race, int colorIndex);
+		Frame(const std::string& name, World* parentWorld, int race, int colorIndex);
 		virtual ~Frame();
 		void addKnowledge(const Knowledge& newKnowledge);
 		void goToWorld(World* destWorld);
@@ -23,7 +23,7 @@ class Frame : public tx3d::SharedPointer {
 		const Knowledge& getKnowledge() const {
 			return knowledge;
 		}
-		const string& getName() const {
+		const std::string& getName() const {
 			return name;
 		}
 		World* getCurrentWorld() const {
@@ -50,7 +50,7 @@ class Frame : public tx3d::SharedPointer {
 	protected:
 		bool alive;
 		Knowledge knowledge;
-		string name;
+		std::string name;
 		int race;
 		int colorIndex;
 

@@ -12,7 +12,7 @@ UserSingleProfile::UserSingleProfile() :
 }
 void UserSingleProfile::setDifficulty(Difficulty newDifficulty) {
 	profiles[currentProfileIndex].difficulty = newDifficulty;
-	string path = getProfileIniPath(currentProfileIndex);
+	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man( path.c_str(), true );
 	man.putInt("General", "difficulty", newDifficulty);
 }
@@ -22,7 +22,7 @@ void UserSingleProfile::setCurrentMissionNumber(int newMissionNumber) {
 }
 void UserSingleProfile::setLastMissionNumber(int newMissionNumber) {
 	profiles[currentProfileIndex].lastMissionNumber = newMissionNumber;
-	string path = getProfileIniPath(currentProfileIndex);
+	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man( path.c_str(), true );
 	man.putInt("General", "lastMissionNumber", newMissionNumber);
 }
@@ -56,7 +56,7 @@ void UserSingleProfile::scanProfiles() {
 			freeInds[profiles[i].dirIndex] = true;
 		}
 	}
-	vector<Profile>::iterator it = profiles.begin();
+	std::vector<Profile>::iterator it = profiles.begin();
 	while (it != profiles.end()) {
 		if ( (*it).name.empty() ) {
 			it = profiles.erase(it);
@@ -65,7 +65,7 @@ void UserSingleProfile::scanProfiles() {
 		}
 	}
 }
-void UserSingleProfile::addProfile(const string& name) {
+void UserSingleProfile::addProfile(const std::string& name) {
 	int i;
 	int s;
 	for (i = 0, s = freeInds.size(); i < s; i++) {
@@ -77,9 +77,9 @@ void UserSingleProfile::addProfile(const string& name) {
 	sprintf(ind, "Profile%d", i);
 	Profile newProfile(ind);
 	newProfile.name = name;
-	string root = "RESOURCE\\SAVES\\";
-	string path = root + newProfile.dirName;
-	string origin = "RESOURCE\\SAVES\\DefaultPlayerData";
+	std::string root = "RESOURCE\\SAVES\\";
+	std::string path = root + newProfile.dirName;
+	std::string origin = "RESOURCE\\SAVES\\DefaultPlayerData";
 	if( CreateDirectory(path.c_str(), NULL) ) {
 		path += "\\data";
 		if ( CopyFile(origin.c_str(), path.c_str(), FALSE) ) {
@@ -101,9 +101,9 @@ void UserSingleProfile::addProfile(const string& name) {
 	}
 }
 
-bool UserSingleProfile::removeDir(const string& dir) {
+bool UserSingleProfile::removeDir(const std::string& dir) {
 	WIN32_FIND_DATA findFileData;
-	string mask = dir + "*.*";
+	std::string mask = dir + "*.*";
 	HANDLE hf = FindFirstFile( mask.c_str(), &findFileData );
 	if (hf != INVALID_HANDLE_VALUE) {
 		do {
@@ -121,7 +121,7 @@ void UserSingleProfile::removeProfile(int index) {
 		freeInds[profiles[index].dirIndex] = false;
 	}	
 
-	vector<Profile>::iterator forErase = profiles.begin();
+	std::vector<Profile>::iterator forErase = profiles.begin();
 	advance(forErase, index);
 	profiles.erase(forErase);
 
@@ -138,31 +138,31 @@ void UserSingleProfile::setCurrentProfileIndex(int index) {
 	currentProfileIndex = index;
 }
 
-void UserSingleProfile::deleteSave(const string& name) {
-	string fullName = getSavesDirectory() + name;
+void UserSingleProfile::deleteSave(const std::string& name) {
+	std::string fullName = getSavesDirectory() + name;
 	DeleteFile( (fullName + ".spg").c_str() );
 	DeleteFile( (fullName + ".gmp").c_str() );
 	DeleteFile( (fullName + ".dat").c_str() );
 	DeleteFile( (fullName + ".sph").c_str() );
 }
 
-string UserSingleProfile::getSavesDirectory() const {
+std::string UserSingleProfile::getSavesDirectory() const {
 //	return "RESOURCE\\SAVES\\";
 	return "RESOURCE\\SAVES\\" + profiles[currentProfileIndex].dirName + "\\";
 }
 
 void UserSingleProfile::loadProfile(int index) {
-	string path = getProfileIniPath(index);
+	std::string path = getProfileIniPath(index);
 	IniManager man(path.c_str(), false);
 	profiles[index].name = man.get("General","name");
 	profiles[index].lastMissionNumber = man.getInt("General","lastMissionNumber");
 	profiles[index].difficulty = (Difficulty)man.getInt("General","difficulty");
 }
 
-string UserSingleProfile::getFileNameWithDifficulty(const string& fileName) {
-	string fileNameWithoutExt = fileName;
+std::string UserSingleProfile::getFileNameWithDifficulty(const std::string& fileName) {
+	std::string fileNameWithoutExt = fileName;
 	fileNameWithoutExt.erase(fileNameWithoutExt.size() - 4, fileNameWithoutExt.size());
-	string res = MISSIONS_PATH;
+	std::string res = MISSIONS_PATH;
 	res += "\\";
 	res += fileNameWithoutExt;
 	res += missionDifficultyPostfix[getDifficulty()]; 
@@ -179,7 +179,7 @@ string UserSingleProfile::getFileNameWithDifficulty(const string& fileName) {
 	return res;
 }
 
-void UserSingleProfile::setCurrentProfile(const string& name) {
+void UserSingleProfile::setCurrentProfile(const std::string& name) {
 	for (int i = 0, s = profiles.size(); i < s; i++) {
 		if (profiles[i].name == name) {
 			setCurrentProfileIndex(i);
@@ -191,14 +191,14 @@ void UserSingleProfile::setCurrentProfile(const string& name) {
 	}
 }
 
-void UserSingleProfile::setRecord(const string& name, int milis) {
-	string path = getProfileIniPath(currentProfileIndex);
+void UserSingleProfile::setRecord(const std::string& name, int milis) {
+	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man(path.c_str(), false);
 	man.putInt("Records", name.c_str(), milis);
 }
 
-int UserSingleProfile::getRecord(const string& name) {
-	string path = getProfileIniPath(currentProfileIndex);
+int UserSingleProfile::getRecord(const std::string& name) {
+	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man(path.c_str(), false);
 	return man.getInt("Records", name.c_str());
 }

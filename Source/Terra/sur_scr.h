@@ -34,7 +34,7 @@ struct s_el {
 };
 
 struct s_row { //: s_el 
-	vector<s_el> el;
+	std::vector<s_el> el;
 	int type;
 	int line_width;//Ширина текстовой строки
 	char name[40];

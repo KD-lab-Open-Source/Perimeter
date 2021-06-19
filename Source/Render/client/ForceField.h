@@ -6,7 +6,7 @@
 #include <list>
 #include "../../Util/Map2D.h"
 
-typedef vector<Vect2s> Vect2sVect;
+typedef std::vector<Vect2s> Vect2sVect;
 
 struct FieldInterval
 {
@@ -15,7 +15,7 @@ struct FieldInterval
 	FieldInterval(short xl_, short xr_, short y_) : xl(xl_), xr(xr_), y(y_) {}
 };
 
-class FieldCluster : public vector<FieldInterval>
+class FieldCluster : public std::vector<FieldInterval>
 {
 public:
 	static float ZeroGround;
@@ -156,7 +156,7 @@ public:
 class FieldDispatcher : public cIUnkObj
 {
 public:
-	typedef list<FieldCluster> ClusterList;
+	typedef std::list<FieldCluster> ClusterList;
 
 	enum { 
 		POTENTIAL = 1,

@@ -4,52 +4,52 @@
 #include "../GameShellSq.h"
 
 
-const string CreateZeroWorld::NAME = "ZEROWORLD";
-const string CreateZeroLink::NAME = "ZEROLINK";
-const string KillAlphaPortal::NAME = "KILLALPHA";
-const string KillOmegaPortal::NAME = "KILLOMEGA";
-const string KillWorld::NAME = "DISSOLVE";
-const string RenameWorld::NAME = "SELFNAME";
-const string JumpToWorld::NAME = "JUMP";
-const string BuildFrame::NAME = "BUILDFRAME";
-const string CreateAlphaPortal::NAME = "MOUNTALPHA";
-const string CreateOmegaPortal::NAME = "MOUNTOMEGA";
-const string CreateLink::NAME = "ESTABLISHLINK";
-const string TransferFrame::NAME = "TRANSFER";
-const string ReachWorld::NAME = "REACH";
-const string DestroyFrame::NAME = "DESTROY";
-const string SendTestament::NAME = "TESTAMENT";
-const string StopFrame::NAME = "STOP";
-const string ExecuteMission::NAME = "MISSION";
-const string ExecuteFakeMission::NAME = "FAKEMISSION";
-const string ShowText::NAME = "SHOWTEXT";
-const string HideText::NAME = "HIDETEXT";
-const string Pause::NAME = "PAUSE";
-const string SetSpeed::NAME = "SETDURATION";
-const string StartAudio::NAME = "STARTAUDIO";
-const string StartVideo::NAME = "STARTVIDEO";
-const string StartInterVideo::NAME = "STARTINTERVIDEO";
-const string SetMusic::NAME = "SETMUSIC";
-const string AddCameraPosition::NAME = "ADDCAMERAPOINT";
-const string ClearCameraPath::NAME = "CLEARCAMERA";
-const string CameraFollowNomad::NAME = "CAMERAFOLLOWNOMAD";
-const string WaitForCamera::NAME = "WAITCAMERABEGIN";
-const string WaitForCameraPoint::NAME = "WAITCAMERAPOINT";
-const string UntilEndOfAudio::NAME = "WAITAUDIO";
-const string UntilEndOfVideo::NAME = "WAITVIDEO";
-const string UntilEndOfCamera::NAME = "WAITCAMERAEND";
-const string SetDelay::NAME = "SETDELAY";
-const string RollBack::NAME = "ROLLBACK";
-const string BreakSkipping::NAME = "BREAKSKIPPING";
-const string ChangeFrameRace::NAME = "CHANGE";
-const string FinishHistory::NAME = "FINISHHISTORY";
+const std::string CreateZeroWorld::NAME = "ZEROWORLD";
+const std::string CreateZeroLink::NAME = "ZEROLINK";
+const std::string KillAlphaPortal::NAME = "KILLALPHA";
+const std::string KillOmegaPortal::NAME = "KILLOMEGA";
+const std::string KillWorld::NAME = "DISSOLVE";
+const std::string RenameWorld::NAME = "SELFNAME";
+const std::string JumpToWorld::NAME = "JUMP";
+const std::string BuildFrame::NAME = "BUILDFRAME";
+const std::string CreateAlphaPortal::NAME = "MOUNTALPHA";
+const std::string CreateOmegaPortal::NAME = "MOUNTOMEGA";
+const std::string CreateLink::NAME = "ESTABLISHLINK";
+const std::string TransferFrame::NAME = "TRANSFER";
+const std::string ReachWorld::NAME = "REACH";
+const std::string DestroyFrame::NAME = "DESTROY";
+const std::string SendTestament::NAME = "TESTAMENT";
+const std::string StopFrame::NAME = "STOP";
+const std::string ExecuteMission::NAME = "MISSION";
+const std::string ExecuteFakeMission::NAME = "FAKEMISSION";
+const std::string ShowText::NAME = "SHOWTEXT";
+const std::string HideText::NAME = "HIDETEXT";
+const std::string Pause::NAME = "PAUSE";
+const std::string SetSpeed::NAME = "SETDURATION";
+const std::string StartAudio::NAME = "STARTAUDIO";
+const std::string StartVideo::NAME = "STARTVIDEO";
+const std::string StartInterVideo::NAME = "STARTINTERVIDEO";
+const std::string SetMusic::NAME = "SETMUSIC";
+const std::string AddCameraPosition::NAME = "ADDCAMERAPOINT";
+const std::string ClearCameraPath::NAME = "CLEARCAMERA";
+const std::string CameraFollowNomad::NAME = "CAMERAFOLLOWNOMAD";
+const std::string WaitForCamera::NAME = "WAITCAMERABEGIN";
+const std::string WaitForCameraPoint::NAME = "WAITCAMERAPOINT";
+const std::string UntilEndOfAudio::NAME = "WAITAUDIO";
+const std::string UntilEndOfVideo::NAME = "WAITVIDEO";
+const std::string UntilEndOfCamera::NAME = "WAITCAMERAEND";
+const std::string SetDelay::NAME = "SETDELAY";
+const std::string RollBack::NAME = "ROLLBACK";
+const std::string BreakSkipping::NAME = "BREAKSKIPPING";
+const std::string ChangeFrameRace::NAME = "CHANGE";
+const std::string FinishHistory::NAME = "FINISHHISTORY";
 
 
 //---Zero-Commands---
 
 //--CreateZeroWorld--
 
-	CreateZeroWorld::CreateZeroWorld(const string& params, int duration) : Command(duration) {
+	CreateZeroWorld::CreateZeroWorld(const std::string& params, int duration) : Command(duration) {
 		float x;
 		float y;
 		float z;
@@ -91,7 +91,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string CreateZeroWorld::toString() const {
+	std::string CreateZeroWorld::toString() const {
 		return
 			"ZEROWORLD " + origin->getName() + " WORLD " + origin->getSystemName();
 	}
@@ -99,7 +99,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--CreateZeroLink--
 
-	CreateZeroLink::CreateZeroLink(const string& params, int duration) : Command(duration) {
+	CreateZeroLink::CreateZeroLink(const std::string& params, int duration) : Command(duration) {
 		char* w1 = new char[100];
 		char* w2 = new char[100];
 		sscanf(
@@ -123,7 +123,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string CreateZeroLink::toString() const {
+	std::string CreateZeroLink::toString() const {
 		return
 			"ZEROLINK WORLD1 " + world1 + " WORLD2 " + world2;
 	}
@@ -134,7 +134,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--KillAlphaPortal--
 
-	KillAlphaPortal::KillAlphaPortal(const string& params, int duration) : Command(duration) {
+	KillAlphaPortal::KillAlphaPortal(const std::string& params, int duration) : Command(duration) {
 		char* wName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -152,7 +152,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
 	}
 
-	string KillAlphaPortal::toString() const {
+	std::string KillAlphaPortal::toString() const {
 		return
 			"KILLALPHA WORLD " + worldName;
 	}
@@ -160,7 +160,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--KillOmegaPortal--
 
-	KillOmegaPortal::KillOmegaPortal(const string& params, int duration) : Command(duration) {
+	KillOmegaPortal::KillOmegaPortal(const std::string& params, int duration) : Command(duration) {
 		char* wName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -178,7 +178,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
 	}
 
-	string KillOmegaPortal::toString() const {
+	std::string KillOmegaPortal::toString() const {
 		return
 			"KILLOMEGA WORLD " + worldName;
 	}
@@ -186,7 +186,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--KillWorld--
 
-	KillWorld::KillWorld(const string& params, int duration) : Command(duration) {
+	KillWorld::KillWorld(const std::string& params, int duration) : Command(duration) {
 		char* wName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -207,7 +207,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
 	}
 
-	string KillWorld::toString() const {
+	std::string KillWorld::toString() const {
 		return
 			"DISSOLVE WORLD " + worldName;
 	}
@@ -215,7 +215,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--RenameWorld--
 
-	RenameWorld::RenameWorld(const string& params, int duration) : Command(duration) {
+	RenameWorld::RenameWorld(const std::string& params, int duration) : Command(duration) {
 		char* sysName = new char[100];
 		char* wName = new char[100];
 		sscanf(
@@ -237,7 +237,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string RenameWorld::toString() const {
+	std::string RenameWorld::toString() const {
 		return
 			"SELFNAME WORLD " + worldSysName + " NEWNAME " + worldName;
 	}
@@ -248,7 +248,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--JumpToWorld--
 
-	JumpToWorld::JumpToWorld(const string& params, int duration) : FrameCommand(duration) {
+	JumpToWorld::JumpToWorld(const std::string& params, int duration) : FrameCommand(duration) {
 		float x;
 		float y;
 		float z;
@@ -296,7 +296,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
-	string JumpToWorld::toString() const {
+	std::string JumpToWorld::toString() const {
 		return
 			"JUMP FRAME " + frameName + " WORLD " + origin->getSystemName();
 	}
@@ -304,7 +304,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--BuildFrame--
 
-	BuildFrame::BuildFrame(const string& params, int duration) : FrameCommand(duration) {
+	BuildFrame::BuildFrame(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		char* wName = new char[100];
 
@@ -336,14 +336,14 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(worlds->getWorldBySysName(worldSysName)->getTimeFactor() * float(duration));
 	}
 
-	string BuildFrame::toString() const {
+	std::string BuildFrame::toString() const {
 		return
 			"BUILDFRAME " + frameName + " WORLD " + worldSysName;
 	}
 
 //--ChangeFrameRace--
 
-	ChangeFrameRace::ChangeFrameRace(const string& params, int duration) : FrameCommand(duration) {
+	ChangeFrameRace::ChangeFrameRace(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -364,14 +364,14 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return float(duration);
 	}
 
-	string ChangeFrameRace::toString() const {
+	std::string ChangeFrameRace::toString() const {
 		return
 			"CHANGE FRAME" + frameName;
 	}
 
 //--CreateAlphaPortal--
 
-	CreateAlphaPortal::CreateAlphaPortal(const string& params, int duration) : FrameCommand(duration) {
+	CreateAlphaPortal::CreateAlphaPortal(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -398,7 +398,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		}
 	}
 
-	string CreateAlphaPortal::toString() const {
+	std::string CreateAlphaPortal::toString() const {
 		return
 			"MOUNTALPHA FRAME " + frameName;
 	}
@@ -410,7 +410,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--CreateOmegaPortal--
 
-	CreateOmegaPortal::CreateOmegaPortal(const string& params, int duration) : FrameCommand(duration) {
+	CreateOmegaPortal::CreateOmegaPortal(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -428,7 +428,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
-	string CreateOmegaPortal::toString() const {
+	std::string CreateOmegaPortal::toString() const {
 		return
 			"MOUNTOMEGA FRAME " + frameName;
 	}
@@ -436,7 +436,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--CreateLink--
 
-	CreateLink::CreateLink(const string& params, int duration) : FrameCommand(duration) {
+	CreateLink::CreateLink(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		char* wName = new char[100];
 		sscanf(
@@ -472,7 +472,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
-	string CreateLink::toString() const {
+	std::string CreateLink::toString() const {
 		return
 			"ESTABLISHLINK FRAME " + frameName + " WORLD " + worldSysName;
 	}
@@ -480,7 +480,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--TransferFrame--
 
-	TransferFrame::TransferFrame(const string& params, int duration) : FrameCommand(duration) {
+	TransferFrame::TransferFrame(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		char* wName = new char[100];
 		sscanf(
@@ -506,7 +506,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return worlds->getWorldBySysName(worldSysName);
 	}
 
-	string TransferFrame::toString() const {
+	std::string TransferFrame::toString() const {
 		return
 			"TRANSFER FRAME " + frameName + " WORLD " + worldSysName;
 	}
@@ -514,7 +514,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--ReachWorld--
 
-	ReachWorld::ReachWorld(const string& params, int duration) : FrameCommand(duration) {
+	ReachWorld::ReachWorld(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		char* wName = new char[100];
 		sscanf(
@@ -540,14 +540,14 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return worlds->getWorldBySysName(worldSysName);
 	}
 
-	string ReachWorld::toString() const {
+	std::string ReachWorld::toString() const {
 		return
 			"REACH FRAME " + frameName + " WORLD " + worldSysName;
 	}
 
 //--DestroyFrame--
 
-	DestroyFrame::DestroyFrame(const string& params, int duration) : FrameCommand(duration) {
+	DestroyFrame::DestroyFrame(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -565,14 +565,14 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
-	string DestroyFrame::toString() const {
+	std::string DestroyFrame::toString() const {
 		return
 			"DESTROY FRAME " + frameName;
 	}
 
 //--SendTestament--
 
-	SendTestament::SendTestament(const string& params, int duration) : FrameCommand(duration) {
+	SendTestament::SendTestament(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		if (strstr(params.c_str(), "NOMAD") == NULL) {
 			sscanf(
@@ -642,7 +642,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
-	string SendTestament::toString() const {
+	std::string SendTestament::toString() const {
 		return
 			"TESTAMENT " + frameName;
 	}
@@ -650,7 +650,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--StopFrame--
 
-	StopFrame::StopFrame(const string& params, int duration) : FrameCommand(duration) {
+	StopFrame::StopFrame(const std::string& params, int duration) : FrameCommand(duration) {
 		char* fName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -668,7 +668,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
-	string StopFrame::toString() const {
+	std::string StopFrame::toString() const {
 		return
 			"STOP FRAME " + frameName;
 	}
@@ -679,8 +679,8 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--ExecuteMission--
 
-	ExecuteMission::ExecuteMission(const string& params, int duration) : Command(duration) {
-		string onlyParams = params.substr(8, params.size() - 9);
+	ExecuteMission::ExecuteMission(const std::string& params, int duration) : Command(duration) {
+		std::string onlyParams = params.substr(8, params.size() - 9);
 		int loc = onlyParams.find("spg") + 3;
 		fileName = onlyParams.substr(0, loc);
 		missionName = onlyParams.substr(loc + 1);
@@ -696,7 +696,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string ExecuteMission::toString() const {
+	std::string ExecuteMission::toString() const {
 		return "";
 //		return
 //			"MISSION " + missionName;
@@ -704,7 +704,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--ExecuteFakeMission--
 
-	ExecuteFakeMission::ExecuteFakeMission(const string& params, int duration) : Command(duration) {
+	ExecuteFakeMission::ExecuteFakeMission(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void ExecuteFakeMission::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -715,7 +715,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string ExecuteFakeMission::toString() const {
+	std::string ExecuteFakeMission::toString() const {
 		return "";
 //		return
 //			"FAKEMISSION";
@@ -723,7 +723,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--ShowText--
 
-	ShowText::ShowText(const string& params, int duration) : Command(duration) {
+	ShowText::ShowText(const std::string& params, int duration) : Command(duration) {
 		if (strstr(params.c_str(), "ICON") == NULL) {
 			text = params.substr(10, params.length() - 12);
 			icon = "";
@@ -745,7 +745,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string ShowText::toString() const {
+	std::string ShowText::toString() const {
 		return "";
 //		return
 //			"SHOWTEXT";
@@ -753,7 +753,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--HideText--
 
-	HideText::HideText(const string& params, int duration) : Command(duration) {
+	HideText::HideText(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void HideText::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -764,7 +764,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string HideText::toString() const {
+	std::string HideText::toString() const {
 		return "";
 //		return
 //			"HIDETEXT";
@@ -772,7 +772,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--Pause--
 
-	Pause::Pause(const string& params, int duration) : Command(duration) {
+	Pause::Pause(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void Pause::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -785,7 +785,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string Pause::toString() const {
+	std::string Pause::toString() const {
 		return "";
 //		return
 //			"PAUSE";
@@ -793,7 +793,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--SetSpeed--
 
-	SetSpeed::SetSpeed(const string& params, int duration) : Command(duration) {
+	SetSpeed::SetSpeed(const std::string& params, int duration) : Command(duration) {
 		sscanf(
 			params.c_str(),
 			"SETDURATION %f",
@@ -808,7 +808,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string SetSpeed::toString() const {
+	std::string SetSpeed::toString() const {
 		return "";
 //		char str[31];
 //		sprintf(str, "SETDURATION %f", speed);
@@ -817,7 +817,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--SetDelay--
 
-	SetDelay::SetDelay(const string& params, int duration) : Command(duration) {
+	SetDelay::SetDelay(const std::string& params, int duration) : Command(duration) {
 		sscanf(
 			params.c_str(),
 			"SETDELAY %f",
@@ -832,7 +832,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string SetDelay::toString() const {
+	std::string SetDelay::toString() const {
 		return "";
 //		char str[31];
 //		sprintf(str, "SETDELAY %f", delay);
@@ -841,7 +841,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--StartAudio--
 
-	StartAudio::StartAudio(const string& params, int duration) : Command(duration) {
+	StartAudio::StartAudio(const std::string& params, int duration) : Command(duration) {
 		char* name = new char[100];
 		sscanf(
 			params.c_str(),
@@ -859,7 +859,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string StartAudio::toString() const {
+	std::string StartAudio::toString() const {
 		return "";
 //		return 
 //			"STARTAUDIO";
@@ -867,7 +867,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--StartVideo--
 
-	StartVideo::StartVideo(const string& params, int duration) : Command(duration) {
+	StartVideo::StartVideo(const std::string& params, int duration) : Command(duration) {
 		char* rName = new char[100];
 		char* sName = new char[100];
 		sscanf(
@@ -889,7 +889,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string StartVideo::toString() const {
+	std::string StartVideo::toString() const {
 		return "";
 //		return 
 //			"STARTVIDEO";
@@ -897,7 +897,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--StartInterVideo--
 
-	StartInterVideo::StartInterVideo(const string& params, int duration) : Command(duration) {
+	StartInterVideo::StartInterVideo(const std::string& params, int duration) : Command(duration) {
 		char* rName = new char[100];
 		sscanf(
 			params.c_str(),
@@ -915,7 +915,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string StartInterVideo::toString() const {
+	std::string StartInterVideo::toString() const {
 		return "";
 //		return 
 //			"STARTINTERVIDEO";
@@ -923,7 +923,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--SetMusic--
 
-	SetMusic::SetMusic(const string& params, int duration) : Command(duration) {
+	SetMusic::SetMusic(const std::string& params, int duration) : Command(duration) {
 		char* namePath = new char[256];
 		sscanf(
 			params.c_str(),
@@ -941,7 +941,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string SetMusic::toString() const {
+	std::string SetMusic::toString() const {
 		return "";
 //		return 
 //			"SETMUSIC";
@@ -949,7 +949,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--AddCameraPosition--
 
-	AddCameraPosition::AddCameraPosition(const string& params, int duration) : Command(duration) {
+	AddCameraPosition::AddCameraPosition(const std::string& params, int duration) : Command(duration) {
 		sscanf(
 			params.c_str(),
 			"ADDCAMERAPOINT %f %f %f %f %f %f",
@@ -974,7 +974,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string AddCameraPosition::toString() const {
+	std::string AddCameraPosition::toString() const {
 		return "";
 //		return 
 //			"ADDCAMERAPOINT";
@@ -982,7 +982,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--ClearCameraPath--
 
-	ClearCameraPath::ClearCameraPath(const string& params, int duration) : Command(duration) {
+	ClearCameraPath::ClearCameraPath(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void ClearCameraPath::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -994,7 +994,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string ClearCameraPath::toString() const {
+	std::string ClearCameraPath::toString() const {
 		return "";
 //		return 
 //			"CLEARCAMERA";
@@ -1002,7 +1002,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--CameraFollowNomad--
 
-	CameraFollowNomad::CameraFollowNomad(const string& params, int duration) : Command(duration) {
+	CameraFollowNomad::CameraFollowNomad(const std::string& params, int duration) : Command(duration) {
 		sscanf(
 			params.c_str(),
 			"CAMERAFOLLOWNOMAD %f %f %f",
@@ -1022,7 +1022,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string CameraFollowNomad::toString() const {
+	std::string CameraFollowNomad::toString() const {
 		return "";
 //		return 
 //			"CAMERAFOLLOWNOMAD";
@@ -1030,7 +1030,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--WaitForCamera--
 
-	WaitForCamera::WaitForCamera(const string& params, int duration) : Command(duration) {
+	WaitForCamera::WaitForCamera(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void WaitForCamera::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1042,7 +1042,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string WaitForCamera::toString() const {
+	std::string WaitForCamera::toString() const {
 		return "";
 //		return 
 //			"WAITFORCAMERA";
@@ -1050,7 +1050,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--WaitForCameraPoint--
 
-	WaitForCameraPoint::WaitForCameraPoint(const string& params, int duration) : Command(duration) {
+	WaitForCameraPoint::WaitForCameraPoint(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void WaitForCameraPoint::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1062,7 +1062,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string WaitForCameraPoint::toString() const {
+	std::string WaitForCameraPoint::toString() const {
 		return "";
 //		return 
 //			"WAITFORCAMERAPOINT";
@@ -1070,7 +1070,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--UntilEndOfAudio--
 
-	UntilEndOfAudio::UntilEndOfAudio(const string& params, int duration) : Command(duration) {
+	UntilEndOfAudio::UntilEndOfAudio(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void UntilEndOfAudio::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1082,7 +1082,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string UntilEndOfAudio::toString() const {
+	std::string UntilEndOfAudio::toString() const {
 		return "";
 //		return 
 //			"UNTILENDOFAUDIO";
@@ -1090,7 +1090,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--UntilEndOfVideo--
 
-	UntilEndOfVideo::UntilEndOfVideo(const string& params, int duration) : Command(duration) {
+	UntilEndOfVideo::UntilEndOfVideo(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void UntilEndOfVideo::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1102,7 +1102,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string UntilEndOfVideo::toString() const {
+	std::string UntilEndOfVideo::toString() const {
 		return "";
 //		return 
 //			"UNTILENDOFVIDEO";
@@ -1110,7 +1110,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--UntilEndOfCamera--
 
-	UntilEndOfCamera::UntilEndOfCamera(const string& params, int duration) : Command(duration) {
+	UntilEndOfCamera::UntilEndOfCamera(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void UntilEndOfCamera::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1122,7 +1122,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string UntilEndOfCamera::toString() const {
+	std::string UntilEndOfCamera::toString() const {
 		return "";
 //		return 
 //			"WAITFORCAMERAEND";
@@ -1130,7 +1130,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--RollBack--
 
-	RollBack::RollBack(const string& params, int duration) : Command(duration) {
+	RollBack::RollBack(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void RollBack::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1141,14 +1141,14 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string RollBack::toString() const {
+	std::string RollBack::toString() const {
 		return 
 			"ROLLBACK";
 	}
 
 //--BreakSkipping--
 
-	BreakSkipping::BreakSkipping(const string& params, int duration) : Command(duration) {
+	BreakSkipping::BreakSkipping(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void BreakSkipping::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1162,7 +1162,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string BreakSkipping::toString() const {
+	std::string BreakSkipping::toString() const {
 		return "";
 //		return 
 //			"BREAKSKIPPING";
@@ -1170,7 +1170,7 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 
 //--FinishHistory--
 
-	FinishHistory::FinishHistory(const string& params, int duration) : Command(duration) {
+	FinishHistory::FinishHistory(const std::string& params, int duration) : Command(duration) {
 	}
 
 	void FinishHistory::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
@@ -1182,14 +1182,14 @@ const string FinishHistory::NAME = "FINISHHISTORY";
 		return getDuration();
 	}
 
-	string FinishHistory::toString() const {
+	std::string FinishHistory::toString() const {
 		return 
 			"FINISHHISTORY";
 	}
 
 //---Factory---
 
-	Command* CommandFactory::createCommand(const string& command) {
+	Command* CommandFactory::createCommand(const std::string& command) {
 		if (commandHasName(command, CreateZeroWorld::NAME)) {
 			return new CreateZeroWorld(command, 0);
 		} else if (commandHasName(command, CreateZeroLink::NAME)) {

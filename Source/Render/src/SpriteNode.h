@@ -52,7 +52,7 @@ public:
 
 	cSprite* Create();
 protected:
-	list<cSprite> sprites;
+	std::list<cSprite> sprites;
 	MTDECLARE(sprite_lock);
 
 	void DeleteSprite(cSprite* sprite);

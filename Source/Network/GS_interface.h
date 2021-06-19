@@ -36,18 +36,18 @@ public:
 //	RoomType m_selectedRoom;
 
 	bool quant();
-	vector<sGameHostInfo*> gameHostList;
+	std::vector<sGameHostInfo*> gameHostList;
 	void clearGameHostList(void){
-		vector<sGameHostInfo*>::iterator p;
+		std::vector<sGameHostInfo*>::iterator p;
 		for(p=gameHostList.begin(); p!=gameHostList.end(); p++){
 			delete *p;
 		}
 		gameHostList.erase(gameHostList.begin(), gameHostList.end());
 	}
 
-	list<sGamePlayerInfo*> gamePlayerList;
+	std::list<sGamePlayerInfo*> gamePlayerList;
 	void clearGamePlayerList(void){
-		list<sGamePlayerInfo*>::iterator p;
+		std::list<sGamePlayerInfo*>::iterator p;
 		for(p=gamePlayerList.begin(); p!=gamePlayerList.end(); p++){
 			delete *p;
 		}

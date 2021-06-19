@@ -42,8 +42,8 @@ public:
 private:
 	bool visible_;
 	int NatureFlag;
-	string ModelName;
-	string ChainName;
+	std::string ModelName;
+	std::string ChainName;
 	terAnimationPhaseIteratorType ObjectAnimation;
 
 	class RigidBody* BodyPoint;

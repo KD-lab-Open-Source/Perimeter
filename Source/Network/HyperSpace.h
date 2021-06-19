@@ -92,16 +92,16 @@ private:
 private:
 public:
 	//Command History
-	vector<netCommandGame*> fullListGameCommands;
+	std::vector<netCommandGame*> fullListGameCommands;
 	unsigned int lastQuant_inFullListGameCommands; //Кванты считаются с 1-го!
 	unsigned int curGameComPosition;
 
-	vector<netCommandGame*> replayListGameCommands;
+	std::vector<netCommandGame*> replayListGameCommands;
 	unsigned int endQuant_inReplayListGameCommands;
-	vector<netCommandGame*>::iterator curRePlayPosition;
+	std::vector<netCommandGame*>::iterator curRePlayPosition;
 
-	static void clearListGameCommands(vector<netCommandGame*> & gcList){
-		vector<netCommandGame*>::iterator p;
+	static void clearListGameCommands(std::vector<netCommandGame*> & gcList){
+		std::vector<netCommandGame*>::iterator p;
 		for(p=gcList.begin(); p!=gcList.end(); p++){
 			delete *p;
 		}
@@ -149,9 +149,9 @@ public:
 		int quant;
 		XBuffer* pLog;
 	};
-	list<sLogElement> logList;
+	std::list<sLogElement> logList;
 	sLogElement* getLogElement(unsigned int quant){
-		list<sLogElement>::iterator p;
+		std::list<sLogElement>::iterator p;
 		for(p=logList.begin(); p!=logList.end(); p++){
 			if((*p).quant==quant) return &(*p);
 		}
@@ -163,21 +163,21 @@ public:
 		logList.push_back(sLogElement(quant, pb));
 	}
 	XBuffer* getLogInLogList(int quant){
-		list<sLogElement>::iterator p;
+		std::list<sLogElement>::iterator p;
 		for(p=logList.begin(); p!=logList.end(); p++){
 			if(p->quant==quant) return p->pLog;
 		}
 		return 0;
 	}
 	void clearLogList(){
-		list<sLogElement>::iterator p;
+		std::list<sLogElement>::iterator p;
 		for(p=logList.begin(); p!=logList.end(); p++){
 			if(p->pLog) delete p->pLog;
 		}
 		logList.clear();
 	}
 	void eraseLogListUntil(int quant){
-		list<sLogElement>::iterator p;
+		std::list<sLogElement>::iterator p;
 		for(p=logList.begin(); p!=logList.end(); ){
 			if(p->quant <= quant) {
 				if(p->pLog) delete p->pLog;
@@ -187,7 +187,7 @@ public:
 		}
 	}
 	void writeLogList2File(XStream& file){
-		list<sLogElement>::iterator p;
+		std::list<sLogElement>::iterator p;
 		for(p=logList.begin(); p!=logList.end(); p++){
 			file.write(p->pLog->address(), p->pLog->tell());
 		}

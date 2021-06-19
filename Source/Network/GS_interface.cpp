@@ -611,7 +611,7 @@ void ListingGamesCallback(PEER peer, PEERBool success, const char * name, SBServ
 		break;
 	case PEER_REMOVE:
 		{
-			vector<sGameHostInfo*>::iterator p;
+			std::vector<sGameHostInfo*>::iterator p;
 			for(p=pGSI->gameHostList.begin(); p!=pGSI->gameHostList.end(); ){
 				if( server==(*p)->pData) {
 					delete *p;
@@ -623,7 +623,7 @@ void ListingGamesCallback(PEER peer, PEERBool success, const char * name, SBServ
 		break;
 	case PEER_UPDATE:
 		{
-			vector<sGameHostInfo*>::iterator p;
+			std::vector<sGameHostInfo*>::iterator p;
 			for(p=pGSI->gameHostList.begin(); p!=pGSI->gameHostList.end(); p++){
 				if( server== (*p)->pData ) {
 					bool gameRun;
@@ -814,7 +814,7 @@ bool GameSpyInterface::CreateStagingRoom(const char* gameStagingRoomName, const 
 
 bool GameSpyInterface::JoinStagingRoom(GUID ID)
 {
-	vector<sGameHostInfo*>::iterator p;
+	std::vector<sGameHostInfo*>::iterator p;
 	for(p=gameHostList.begin(); p!=gameHostList.end(); p++){
 		if( ID== (*p)->gameHostGUID ) {
 			SBServer server=(SBServer)(*p)->pData;
@@ -885,7 +885,7 @@ GameSpyInterface::e_JoinStagingRoomResult GameSpyInterface::JoinStagingRoom(unsi
 
 unsigned int GameSpyInterface::getHostIP(GUID ID)
 {
-	vector<sGameHostInfo*>::iterator p;
+	std::vector<sGameHostInfo*>::iterator p;
 	for(p=gameHostList.begin(); p!=gameHostList.end(); p++){
 		if( ID== (*p)->gameHostGUID ) {
 			SBServer server=(SBServer)(*p)->pData;

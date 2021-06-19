@@ -78,10 +78,10 @@ protected:
 
 	struct DELETE_DATA
 	{
-		list<terUnitBase*> unit;
+		std::list<terUnitBase*> unit;
 		int quant;
 	};
-	list<DELETE_DATA> DeleteList;
+	std::list<DELETE_DATA> DeleteList;
 	FPS logic_fps;
 
 	MissionDescription missionToStart_;

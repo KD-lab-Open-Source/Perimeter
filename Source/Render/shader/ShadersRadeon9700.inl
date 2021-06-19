@@ -42,7 +42,7 @@ void VS9700ObjectSceneLight::GetHandle()
 	VAR_HANDLE(vLightDirection);
 }
 
-void VS9700ObjectSceneLight::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
+void VS9700ObjectSceneLight::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	if(light)
 	{
@@ -108,7 +108,7 @@ void VS9700ObjectSceneBump::GetHandle()
 
 }
 
-void VS9700ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
+void VS9700ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	D3DXMATRIX mat;
 	cD3DRender_SetMatrix(mat,*world);
@@ -210,7 +210,7 @@ void VS9700TileMapScene::SetWorldSize(Vect2f sz)
     SetVector(fInvWorldSize,&v);
 }
 
-void VS9700TileMapScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
+void VS9700TileMapScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	//c0-c3 - матрица преобразования в экранные координаты (view_proj_matrix)
 	D3DXMATRIX mat;
@@ -252,7 +252,7 @@ void VS9700TileMapScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_siz
 
 	if(light)
 	{
-		cVertexShader::Select(min(light->size(),pShader.size()-1));
+		cVertexShader::Select((std::min)(light->size(),pShader.size()-1));
 	}else
 		cVertexShader::Select();
 }

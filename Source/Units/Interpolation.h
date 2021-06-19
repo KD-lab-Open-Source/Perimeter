@@ -393,7 +393,7 @@ private:
 	
 	const AnimationData* animationData_;
 	const AnimationChain* currentChain_;
-	typedef vector<const AnimationChain*> ChainVect;
+	typedef std::vector<const AnimationChain*> ChainVect;
 	ChainVect chainPath_; // inverse order
 	float requestedPhase_;
 	bool requestDone_;

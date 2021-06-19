@@ -46,12 +46,12 @@ protected:
 
 	struct sCircleType
 	{
-		vector<sCircle> circles;
-		vector<sCircleGraph> circles_graph;
+		std::vector<sCircle> circles;
+		std::vector<sCircleGraph> circles_graph;
 		cIUnkClass* external_show;
 	};
 
-	vector<sCircleType> types;
+	std::vector<sCircleType> types;
 	float u_begin;
 
 	void CircleShow(const Vect3f& pos,float r, const CircleColor& circleColor);
@@ -65,7 +65,7 @@ extern cCircleShow* gbCircleShow;
 
 class terRegionColumnMain
 {
-	vector<cObjectNodeRoot*> object;
+	std::vector<cObjectNodeRoot*> object;
 public:
 	terRegionColumnMain();
 	virtual ~terRegionColumnMain();

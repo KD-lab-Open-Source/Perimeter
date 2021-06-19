@@ -19,8 +19,8 @@ namespace tx3d {
 
 	class Colorizer3DFactory {
 		public:
-			static Colorizer3D* createColorizer3D(const string& xml);
-			static Colorizer3D* createColorizer3DByType(const string& type);
+			static Colorizer3D* createColorizer3D(const std::string& xml);
+			static Colorizer3D* createColorizer3DByType(const std::string& type);
 
 		private:
 			Colorizer3DFactory();

@@ -11,10 +11,10 @@ class Worlds {
 		//reserve
 		~Worlds();
 		void addNewWorld(World* world);
-		World* getWorldBySysName(const string& sysName);
+		World* getWorldBySysName(const std::string& sysName);
 		void clear();
 //	protected:
-		map <string, World*> worlds;
+		std::map <std::string, World*> worlds;
 };
 
 class Frames {
@@ -22,11 +22,11 @@ class Frames {
 		//reserve
 		~Frames();
 		void addNewFrame(Frame* frame);
-		Frame* getFrameByName(const string& name);
+		Frame* getFrameByName(const std::string& name);
 		void clear();
 		int knowledgeArrivedToWorld(const Knowledge& knowledge, World* world);
 //	protected:
-		map <string, Frame*> frames;
+		std::map <std::string, Frame*> frames;
 };
 
 #endif //_CONTAINERS_HPP

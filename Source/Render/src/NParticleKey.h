@@ -7,10 +7,10 @@ struct KeyGeneral
 };
 
 template<class Key>
-class CKeyBase:public vector<Key>
+class CKeyBase:public std::vector<Key>
 {
 public:
-	typedef typename vector<Key>::iterator iterator;
+	typedef typename std::vector<Key>::iterator iterator;
 	typedef typename Key::value value;
 
 	value Get(float t);
@@ -106,7 +106,7 @@ struct KeyFloat:KeyGeneral
 	}
 };
 
-class CVectVect3f : public vector<Vect3f>
+class CVectVect3f : public std::vector<Vect3f>
 {
 public:
 	void Save(CSaver& s,int id);
@@ -202,9 +202,9 @@ public:
 
 /////////////////////////////
 template <class type>
-class BackVector:public vector<type>
+class BackVector:public std::vector<type>
 {
-	vector<int>	stopped;
+	std::vector<int>	stopped;
 public:
 	bool is_empty(){return this->size()<=stopped.size();}
 	type& GetFree();

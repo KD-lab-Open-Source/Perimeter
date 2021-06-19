@@ -2,7 +2,7 @@
 
 class cScene;
 
-typedef vector<Vect2s> Vect2sVect;
+typedef std::vector<Vect2s> Vect2sVect;
 
 const int TILEMAP_SHL  = 6;
 const int TILEMAP_SIZE = 1<<TILEMAP_SHL;
@@ -21,7 +21,7 @@ struct sTile : public sAttribute
 	int bumpTileID;
 	BYTE zmin,zmax;
 
-	vector<vector<Vect2s> > region_point;//region_point[player][point]
+	std::vector<std::vector<Vect2s> > region_point;//region_point[player][point]
 
 	sTile()								
 	{
@@ -37,7 +37,7 @@ struct sTile : public sAttribute
 	inline void ClearUpdate()		{ ClearAttribute(ATTRTILE_UPDATELOD); }
 };
 
-typedef vector<vector<Vect2s>* > CurrentRegion;
+typedef std::vector<std::vector<Vect2s>* > CurrentRegion;
 typedef void (*UpdateMapFunction)(const Vect2i& pos1, const Vect2i& pos2,void* data);
 
 class cTileMapRender;
@@ -57,16 +57,16 @@ class cTileMap : public cUnkObj
 	cCamera*		ShadowDrawNode;
 	cCamera*		LightDrawNode;
 	int				zeroplastnumber;
-	vector<sColor4f> zeroplast_color;
+	std::vector<sColor4f> zeroplast_color;
 
-	vector<Column*> columns;
+	std::vector<Column*> columns;
 	class TerraInterface* terra;
 
 	struct UpdateRect
 	{
 		Vect2i p1,p2;
 	};
-	vector<UpdateRect> update_rect;
+	std::vector<UpdateRect> update_rect;
 	MTDECLARE(lock_update_rect);
 
 	struct DebugRect
@@ -76,7 +76,7 @@ class cTileMap : public cUnkObj
 	};
 	bool enable_debug_rect;
 	float debug_fade_interval;
-	list<DebugRect> debug_rect;
+	std::list<DebugRect> debug_rect;
 public:
 	CMatrix			matLightMap;
 
@@ -95,7 +95,7 @@ public:
 	int GetZeroplastNumber()	const					{ return zeroplastnumber; }
 
 	Column** GetColumn() { VISASSERT(columns.size()==zeroplastnumber); return zeroplastnumber?&columns[0]:NULL; }
-	vector<Vect2s>* GetCurRegion(Vect2i tile_pos,int player)
+	std::vector<Vect2s>* GetCurRegion(Vect2i tile_pos,int player)
 	{
 		VISASSERT(tile_pos.x>=0 && tile_pos.x<TileNumber.x);
 		VISASSERT(tile_pos.y>=0 && tile_pos.y<TileNumber.y);
@@ -172,5 +172,5 @@ protected:
 			return f==d.f && data==d.data;
 		}
 	};
-	vector<UpdateMapData> func_update_map;
+	std::vector<UpdateMapData> func_update_map;
 };

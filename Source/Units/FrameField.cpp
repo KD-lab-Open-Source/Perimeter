@@ -15,7 +15,7 @@
 
 bool removeNotAliveMonk(MonkList& unitList)
 {
-    auto i = remove_if(unitList.begin(), unitList.end(), not_fn(&terUnitMonk::alive));
+    auto i = std::remove_if(unitList.begin(), unitList.end(), std::not_fn(&terUnitMonk::alive));
     if(i != unitList.end()){
         unitList.erase(i, unitList.end());
         return true;
@@ -269,7 +269,7 @@ void terProtector::showDebugInfo()
 	terBuilding::showDebugInfo();
 	
 	if(show_core_generator_status){
-		string str;
+		std::string str;
 		switch(fieldState()){
 		case FIELD_STOPPED:
 			str += "STOPPED";

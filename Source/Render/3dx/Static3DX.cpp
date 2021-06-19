@@ -37,7 +37,7 @@ cStatic3dx::cStatic3dx(bool is_logic_,const char* file_name_)
 
 cStatic3dx::~cStatic3dx()
 {
-	vector<cStaticVisibilityChainGroup*>::iterator it;
+	std::vector<cStaticVisibilityChainGroup*>::iterator it;
 	FOR_EACH(visibility_groups,it)
 	{
 		cStaticVisibilityChainGroup* p=*it;
@@ -77,14 +77,14 @@ void cStatic3dx::Load(CLoadDirectory& rd)
 
 	DummyVisibilityGroup();
 
-	vector<AnimationGroup>::iterator ita;
+	std::vector<AnimationGroup>::iterator ita;
 	FOR_EACH(animation_group,ita)
 	{
 		AnimationGroup& ag=*ita;
 		ag.nodes.clear();
 		for(int i=0;i<ag.temp_nodes_name.size();i++)
 		{
-			string& name=ag.temp_nodes_name[i];
+			std::string& name=ag.temp_nodes_name[i];
 			if(name=="_base_")
 			{
 				continue;
@@ -314,7 +314,7 @@ int cTempMesh3dx::CalcMaxBonesPerVertex()
 
 void cStatic3dx::LoadMeshes(CLoadDirectory rd)
 {
-	vector<cTempMesh3dx*> temp_mesh;
+	std::vector<cTempMesh3dx*> temp_mesh;
 
 	while(CLoadData* ld=rd.next())
 	switch(ld->id)
@@ -326,7 +326,7 @@ void cStatic3dx::LoadMeshes(CLoadDirectory rd)
 
 			if(mesh->bones.size()>cStaticIndex::max_index)
 			{
-				vector<cTempMesh3dx*> split_mesh;
+				std::vector<cTempMesh3dx*> split_mesh;
 				SplitMesh(mesh,split_mesh);
 				for(int i=0;i<split_mesh.size();i++)
 				{
@@ -341,7 +341,7 @@ void cStatic3dx::LoadMeshes(CLoadDirectory rd)
 		break;
 	}
 
-	sort(temp_mesh.begin(),temp_mesh.end(),SortMyMaterial(this));
+	std::sort(temp_mesh.begin(),temp_mesh.end(),SortMyMaterial(this));
 
 	///////////////////////
 	DummyVisibilityGroup();
@@ -349,15 +349,15 @@ void cStatic3dx::LoadMeshes(CLoadDirectory rd)
 	for(i=0;i<visibility_groups.size();i++)
 	{
 		cStaticVisibilityChainGroup* cur=visibility_groups[i];
-		vector<cTempMesh3dx*> cur_mesh;
-		vector<cTempMesh3dx*>::iterator itm;
+		std::vector<cTempMesh3dx*> cur_mesh;
+		std::vector<cTempMesh3dx*>::iterator itm;
 
 		FOR_EACH(temp_mesh,itm)
 		{
 			int inode=(*itm)->inode;
-			string& name=nodes[inode].name;
+			std::string& name=nodes[inode].name;
 
-			vector<string>::iterator itt;
+			std::vector<std::string>::iterator itt;
 			bool found=false;
 			FOR_EACH(cur->temp_invisible_object,itt)
 			{
@@ -429,7 +429,7 @@ void cTempMesh3dx::Load(CLoadDirectory rd)
 			CLoadIterator it(ld);
 			int size=0;
 			it>>size;
-			typedef map<int,int> BonesInode;
+			typedef std::map<int,int> BonesInode;
 			BonesInode bones_inode;
 			bones.resize(size);
 			for(int i=0;i<size;i++)
@@ -521,7 +521,7 @@ void cStatic3dx::BuildSkinGroup(vector<cTempMesh3dx*>& temp_mesh)
 	}
 }
 /*/
-void cStaticVisibilityChainGroup::BuildSkinGroup(vector<cTempMesh3dx*>& temp_mesh)
+void cStaticVisibilityChainGroup::BuildSkinGroup(std::vector<cTempMesh3dx*>& temp_mesh)
 {
 	cStaticIndex cur;
 	cur.offset_polygon=0;
@@ -535,7 +535,7 @@ void cStaticVisibilityChainGroup::BuildSkinGroup(vector<cTempMesh3dx*>& temp_mes
 		cStaticMesh& m=meshes[imesh];
 		cTempMesh3dx& tm=*temp_mesh[imesh];
 
-		vector<int>::iterator ifound=find(cur.node_index.begin(),cur.node_index.end(),m.inode);
+		std::vector<int>::iterator ifound=find(cur.node_index.begin(),cur.node_index.end(),m.inode);
 
 		bool is_next=cur.imaterial!=m.imaterial;
 		if(cur.node_index.size()+tm.inode_array.size()>cStaticIndex::max_index)
@@ -596,7 +596,7 @@ void cStatic3dx::LoadMaterials(CLoadDirectory rd,int num_materials)
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 	_splitpath(file_name.c_str(),drive,dir,fname,ext);
-	string path_name=drive;
+	std::string path_name=drive;
 	path_name+=dir;
 	path_name+="TEXTURES\\";
 
@@ -633,7 +633,7 @@ cStaticMaterial::~cStaticMaterial()
 
 void cStaticMaterial::Load(CLoadDirectory rd,const char* path_name)
 {
-	string tex_bump;
+	std::string tex_bump;
 
 	while(CLoadData* ld=rd.next())
 	switch(ld->id)
@@ -659,12 +659,12 @@ void cStaticMaterial::Load(CLoadDirectory rd,const char* path_name)
 		{
 			CLoadIterator it(ld);
 			DWORD slot=-1;
-			string name;
+			std::string name;
 			it>>slot;
 			it>>name;
 			if(!name.empty())
 			{
-				string full_name=path_name;
+				std::string full_name=path_name;
 				full_name+=name;
 				switch(slot)
 				{
@@ -701,14 +701,14 @@ void cStaticMaterial::Load(CLoadDirectory rd,const char* path_name)
 */
 }
 
-void cStatic3dx::SplitMesh(cTempMesh3dx* mesh,vector<cTempMesh3dx*>& split_mesh)
+void cStatic3dx::SplitMesh(cTempMesh3dx* mesh, std::vector<cTempMesh3dx*>& split_mesh)
 {
 	cTempMesh3dx* cur_mesh=new cTempMesh3dx;
-	vector<int> node_index;
-	vector<int> vertex_realloc(mesh->vertex_pos.size());
+	std::vector<int> node_index;
+	std::vector<int> vertex_realloc(mesh->vertex_pos.size());
 	for(int vi=0;vi<vertex_realloc.size();vi++)
 		vertex_realloc[vi]=-1;
-	typedef map<int,int> BonesInode;
+	typedef std::map<int,int> BonesInode;
 	BonesInode bones_inode;
 
 	for(int ipolygon=0;ipolygon<mesh->polygons.size();ipolygon++)
@@ -726,7 +726,7 @@ retry:
 			{
 				if(p.inode[ibone]<0)
 					continue;
-				vector<int>::iterator ifound=find(node_index.begin(),node_index.end(),p.inode[ibone]);
+				std::vector<int>::iterator ifound=find(node_index.begin(),node_index.end(),p.inode[ibone]);
 
 				if(ifound==node_index.end())
 				{
@@ -799,14 +799,14 @@ retry:
 	}
 }
 
-void cStatic3dx::BuildChainGroup(vector<cTempMesh3dx*>& temp_mesh,cStaticVisibilityChainGroup* chain_group)
+void cStatic3dx::BuildChainGroup(std::vector<cTempMesh3dx*>& temp_mesh,cStaticVisibilityChainGroup* chain_group)
 {
 	int vertex_size=0;
 	int polygon_size=0;
 	bool is_blend=false;
 
 	bool first_pass=true;
-	vector<cTempMesh3dx*>::iterator itm;
+	std::vector<cTempMesh3dx*>::iterator itm;
 	int max_bones_per_vertex=1;
 	FOR_EACH(temp_mesh,itm)
 	{
@@ -832,8 +832,8 @@ void cStatic3dx::BuildChainGroup(vector<cTempMesh3dx*>& temp_mesh,cStaticVisibil
 	xassert(polygon_size<65535);
 	chain_group->vb_size=vertex_size;
 
-	vector<sVertexXYZINT1> vertex(vertex_size);
-	vector<sPolygon> polygons(polygon_size);
+	std::vector<sVertexXYZINT1> vertex(vertex_size);
+	std::vector<sPolygon> polygons(polygon_size);
 
 	chain_group->ib_polygon=polygon_size;
 	gb_RenderDevice->CreateIndexBuffer(chain_group->ib,chain_group->ib_polygon);
@@ -917,7 +917,7 @@ void cStatic3dx::BuildChainGroup(vector<cTempMesh3dx*>& temp_mesh,cStaticVisibil
 			}
 		}
 
-		vector<int> node_hash(nodes.size());
+		std::vector<int> node_hash(nodes.size());
 		for(j=0;j<node_hash.size();j++)
 			node_hash[j]=-1;
 		for(j=0;j<cur_index->node_index.size();j++)
@@ -1155,7 +1155,7 @@ void cStatic3dx::ParseEffect()
 		while(is_name_char(*end))
 			end++;
 
-		string file_name(cur,end-cur);
+		std::string file_name(cur,end-cur);
 		EffectLibrary* lib=gb_VisGeneric->GetEffectLibrary(file_name.c_str(),true);
 
 		if(!lib)
@@ -1176,7 +1176,7 @@ void cStatic3dx::ParseEffect()
 
 		cStaticEffect effect;
 		effect.node=inode;
-		string effect_name(cur,end-cur);
+		std::string effect_name(cur,end-cur);
 		effect.effect_key=lib->Get(effect_name.c_str());
 		if(!effect.effect_key)
 		{

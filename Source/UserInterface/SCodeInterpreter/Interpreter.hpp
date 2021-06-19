@@ -17,13 +17,13 @@ struct Mission {
 		exactYear = origin.exactYear;
 		exactCommandNumber = origin.exactCommandNumber;
 	}
-	Mission(const string& name, const string& fileName, int year, int commandNumber)
+	Mission(const std::string& name, const std::string& fileName, int year, int commandNumber)
 		: name(name), fileName(fileName), year(year), commandNumber(commandNumber) {
 		exactYear = year;
 		exactCommandNumber = commandNumber;
 	}
-	string name;
-	string fileName;
+	std::string name;
+	std::string fileName;
 	int year;
 	int commandNumber;
 	int exactYear;
@@ -72,8 +72,8 @@ class Interpreter : public Controller {
 		Interpreter(Commander* commander);
 		virtual ~Interpreter();
 		void clearObjects3D();
-		bool loadProgram(const string& fileName);
-		int findMission(const string& fileName);
+		bool loadProgram(const std::string& fileName);
+		int findMission(const std::string& fileName);
 		bool isHistoryFinished();
 		void quant(float dt);
 
@@ -129,14 +129,14 @@ class Interpreter : public Controller {
 			return currentYear;
 		}
 
-		void addLineToLog(const string& line);
-		string log;
+		void addLineToLog(const std::string& line);
+		std::string log;
 
 	protected:
 		class Year : public tx3d::SharedPointer {
 			public:
 				~Year();
-				vector<Command*> commands;
+				std::vector<Command*> commands;
 		};
 		void clearYears();
 		bool processContinuousCommand();
@@ -165,14 +165,14 @@ class Interpreter : public Controller {
 		WaitEventType currentWaitEvent;
 		bool paused;
 
-		vector<Year*> years;
+		std::vector<Year*> years;
 	
 	public:
 		Frames* frames;
 		Worlds* worlds;
-		vector<Mission> missions;
-		vector<ContinuousCommand*> continuousCommands;
-		vector<World*> missionWorlds;
+		std::vector<Mission> missions;
+		std::vector<ContinuousCommand*> continuousCommands;
+		std::vector<World*> missionWorlds;
 
 };
 

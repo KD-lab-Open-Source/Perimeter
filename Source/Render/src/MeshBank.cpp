@@ -5,12 +5,12 @@
 
 struct Points
 {
-	vector<int> texel;//Текстурные координаты соответствующие этому пикселю
+	std::vector<int> texel;//Текстурные координаты соответствующие этому пикселю
 	Vect3f normal;
 	int new_base_index;
 };
 
-inline void AddUnicalInt(vector<int>& v,int num)
+inline void AddUnicalInt(std::vector<int>& v,int num)
 {
 	for(int i=0;i<v.size();i++)
 		if(v[i]==num)
@@ -43,7 +43,7 @@ cMeshStatic::~cMeshStatic()
 {
 	if(temp)delete temp;
 
-	vector<cMeshTri*>::iterator it;
+	std::vector<cMeshTri*>::iterator it;
 	FOR_EACH(meshes,it)
 		delete *it;
 }
@@ -54,7 +54,7 @@ void cMeshStatic::BeginBuildMesh()
 	temp=new TEMP; 
 }
 
-cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<sPolygon> &TexPoly,vector<Vect2f> &Texel)
+cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel)
 {
 	VISASSERT(temp);
 	VISASSERT(Polygon.size()==TexPoly.size() || TexPoly.size()==0);
@@ -63,7 +63,7 @@ cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
 	VISASSERT(Polygon.size()==TexPoly.size() || TexPoly.size()==0);
 
 	//Разбиваем вершины так, что-бы у каждой было по однму текселю
-	vector<Points> pnt(Vertex.size());
+	std::vector<Points> pnt(Vertex.size());
 	int n_polygon=Polygon.size();
 	int i;
 	for(i=0;i<Vertex.size();i++)
@@ -105,8 +105,8 @@ cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
 		n_vertex+=max(pnt[i].texel.size(),1);
 	}
 
-	vector<sVertexXYZNT1> new_vertex(n_vertex);
-	vector<sPolygon> new_polygon(n_polygon);
+	std::vector<sVertexXYZNT1> new_vertex(n_vertex);
+	std::vector<sPolygon> new_polygon(n_polygon);
 
 	{
 		int cur_vertex=0;
@@ -214,7 +214,7 @@ void cMeshStatic::EndBuildMesh(bool bump)
 		IndexPolygon[i]=temp->polygons[i];
 	gb_RenderDevice->UnlockIndexBuffer(ib);
 
-	vector<cMeshTri*>::iterator it;
+	std::vector<cMeshTri*>::iterator it;
 	FOR_EACH(meshes,it)
 	{
 		cMeshTri* p=*it;
@@ -265,8 +265,8 @@ void cMeshStatic::SortPolygon(sPolygon* polygon,int n_polygon)
 	}
 }
 
-void cMeshStatic::DeleteSingularPolygon(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
-								vector<sPolygon> &TexPoly,vector<Vect2f> &Texel)
+void cMeshStatic::DeleteSingularPolygon(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon,
+	std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel)
 {
 	for(int i=0;i<Polygon.size();i++)
 	{ // удаление вырожденных треугольников
@@ -318,12 +318,12 @@ void cMeshBank::BeginBuildMesh()
 	bank->BeginBuildMesh();
 }
 
-cMeshTri* cMeshBank::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<sPolygon> &TexPoly,vector<Vect2f> &Texel)
+cMeshTri* cMeshBank::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel)
 {
 	return bank->AddMesh(Vertex,Polygon,TexPoly,Texel);
 }
 
-cMeshTri* cMeshBank::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<Vect3f> &Normal,vector<Vect2f> &Texel)
+cMeshTri* cMeshBank::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<Vect3f> &Normal, std::vector<Vect2f> &Texel)
 {
 	return bank->AddMesh(Vertex,Polygon,Normal,Texel);
 }
@@ -533,7 +533,7 @@ cAllMeshBank::~cAllMeshBank()
 
 void cAllMeshBank::Free()
 {
-	vector<cMeshBank*>::iterator it;
+	std::vector<cMeshBank*>::iterator it;
 	FOR_EACH(meshes,it)
 		delete *it;
 
@@ -549,7 +549,7 @@ void cAllMeshBank::BeginLoad()
 
 void cAllMeshBank::EndLoad()
 {
-	vector<cMeshBank*>::iterator it;
+	std::vector<cMeshBank*>::iterator it;
 	FOR_EACH(meshes,it)
 		(*it)->EndBuildMesh();
 }
@@ -560,7 +560,7 @@ cMeshBank* cAllMeshBank::FindUnical(const char* materialname,sAttribute ObjectAt
 	const int obj_mask=ATTRUNKOBJ_COLLISIONTRACE;
 	const int mat_mask=MAT_LIGHT;
 
-	vector<cMeshBank*>::iterator it;
+	std::vector<cMeshBank*>::iterator it;
 	FOR_EACH(meshes,it)
 	{
 		cMeshBank* pBank=*it;
@@ -609,14 +609,14 @@ cAllMeshBank* cAllMeshBank::BuildCopyWithAnotherTexture(const char* texture_path
 	return bank;
 }
 
-cMeshTri* cMeshStatic::AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<Vect3f> &Normal,vector<Vect2f> &Texel)
+cMeshTri* cMeshStatic::AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<Vect3f> &Normal, std::vector<Vect2f> &Texel)
 {
 	VISASSERT(Vertex.size()==Normal.size());
 	VISASSERT(Texel.empty() || Vertex.size()==Texel.size());
 
 	int n_vertex=Vertex.size();
-	vector<sVertexXYZNT1> new_vertex(n_vertex);
-	vector<sPolygon>& new_polygon=Polygon;
+	std::vector<sVertexXYZNT1> new_vertex(n_vertex);
+	std::vector<sPolygon>& new_polygon=Polygon;
 	int n_polygon=new_polygon.size();
 
 	int i;

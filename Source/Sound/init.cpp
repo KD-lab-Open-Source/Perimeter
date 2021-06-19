@@ -359,7 +359,7 @@ bool SNDScriptPrmEnable(const SoundScriptPrm& prm)
 
 bool SNDScriptPrmEnableAll()
 {
-	vector<SoundScriptPrm>::const_iterator i;
+	std::vector<SoundScriptPrm>::const_iterator i;
 	FOR_EACH(soundScriptTable().table, i)
 		SNDScriptPrmEnable(*i);
 
@@ -499,7 +499,7 @@ void SNDUpdateAllSoundVolume()
 	{
 		ScriptParam* sp=(*it).second;
 		MTAuto lock(sp->GetLock());
-		vector<SNDOneBuffer>::iterator itb;
+		std::vector<SNDOneBuffer>::iterator itb;
 		FOR_EACH(sp->GetBuffer(),itb)
 		{
 			(*itb).RecalculateVolume();
@@ -510,7 +510,7 @@ void SNDUpdateAllSoundVolume()
 	{
 		ScriptParam* sp=(*it).second;
 		MTAuto lock(sp->GetLock());
-		vector<SNDOneBuffer>::iterator itb;
+		std::vector<SNDOneBuffer>::iterator itb;
 		FOR_EACH(sp->GetBuffer(),itb)
 		{
 			(*itb).RecalculateVolume();
@@ -656,7 +656,7 @@ bool SND3DListener::Update()
 		MTAuto lock(sp->GetLock());
 		sp->RecalculateClipDistance();
 
-		vector<SNDOneBuffer>::iterator itb;
+		std::vector<SNDOneBuffer>::iterator itb;
 		FOR_EACH(sp->GetBuffer(),itb)
 		{
 			(*itb).RecalculatePos();
@@ -828,7 +828,7 @@ bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
 	if(p->GetSounds().empty())
 		return false;
 
-	vector<SNDOneBuffer>& sb=p->GetBuffer();
+	std::vector<SNDOneBuffer>& sb=p->GetBuffer();
 
 	for(int i=0;i<sb.size();i++)
 	{

@@ -44,7 +44,7 @@ cFont* hFontMainmenu4 = 0;
 CShellComplexPushButton* workAreaBtnForInfo;
 
 MpegSound gb_Music;
-string strMusic;
+std::string strMusic;
 
 void PlayMusic(const char *str = 0)
 {
@@ -89,7 +89,7 @@ inline void draw_progress(cTexture* texture, int x, int y, int sx, int sy, sColo
 }
 
 
-int getValidatedTextLength(const string& text, float validWidth) {
+int getValidatedTextLength(const std::string& text, float validWidth) {
 	if (validWidth >= terRenderDevice->GetFontLength(text.c_str())) {
 		return text.length();
 	}
@@ -112,7 +112,7 @@ int getValidatedTextLength(const string& text, float validWidth) {
 	return text.length(); 
 }
 
-string getValidatedText(const string& text, float validWidth) {
+std::string getValidatedText(const std::string& text, float validWidth) {
 	int count = getValidatedTextLength(text, validWidth);
 	if (count == text.length()) {
 		return text;
@@ -440,7 +440,7 @@ void CShellWindow::Move(float _x, float _y, float _sx, float _sy)
 
 void CShellWindow::Show(int bShow)
 {
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(m_children, i)
 		(*i)->Show(bShow);
 
@@ -457,7 +457,7 @@ void CShellWindow::Show(int bShow)
 }
 void CShellWindow::Show(int bShow, int effect)
 {
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(m_children, i)
 		(*i)->Show(bShow, effect);
 
@@ -476,14 +476,14 @@ void CShellWindow::Show(int bShow, int effect)
 }
 void CShellWindow::ClearEffect()
 {
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(m_children, i)
 		(*i)->ClearEffect();
 	m_effect = 0;
 }
 void CShellWindow::Enable(int bEnable)
 {
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(m_children, i)
 		(*i)->Enable(bEnable);
 
@@ -573,7 +573,7 @@ void CComboWindow::draw(int bFocus)
 
 	terRenderDevice->SetFont(m_hFont);
 	int xx = (m_attr->txt_align == SHELL_ALIGN_CENTER) ? 0.5f*sx : 0;
-	string toScr = getValidatedText(Array[pos], sx);
+	std::string toScr = getValidatedText(Array[pos], sx);
 	if (m_hTexture) {
 		terRenderDevice->OutText(
 			x+xx, y+0.5f*sy-m_hFont->GetHeight()/2,
@@ -741,7 +741,7 @@ void CShellPushButton::Load(const sqshControl* attr)
 	CShellWindow::Load(attr);
 	target = attr->target;
 //	labelText = getTextFromBase(m_attr->text);
-	string key("Interface.Menu.ButtonLabels.");
+	std::string key("Interface.Menu.ButtonLabels.");
 	key += m_attr->text;
 	labelText = qdTextDB::instance().getText(key.c_str());
 
@@ -817,7 +817,7 @@ void CShellPushButton::draw(int bFocus)
 		terRenderDevice->SetFont(font);
 		float centerY = y + sy / 2 - font->GetHeight() / 2;
 
-		string toScr = getValidatedText(labelText, sx);
+		std::string toScr = getValidatedText(labelText, sx);
 
 		Alpha *= pushButtonAlpha;
 //		sColor4f clr(m_attr->flashR, m_attr->flashG, m_attr->flashB, 0);
@@ -1461,7 +1461,7 @@ STARFORCE_API_NEW void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffe
 	const AttributeBase* attrUnit = universe()->activePlayer()->unitAttribute(nAttrID);
 
 	//необходимые строения
-	string sRequired;
+	std::string sRequired;
 	const EnableData& mutationElement = player->GetMutationElement(nAttrID);
 	const AttributeLegionary& attrL = *safe_cast<const AttributeLegionary*>(player->unitAttribute(nAttrID));
 	int num = attrL.EnableStructure.size();
@@ -2053,7 +2053,7 @@ void CUITabSheet::postLoad() {
 
 CUITabSheet::~CUITabSheet()
 {
-	vector<cTexture*>::iterator it;
+	std::vector<cTexture*>::iterator it;
 
 	FOR_EACH(tabTextures, it)
 		_RELEASE(*it);
@@ -2180,7 +2180,7 @@ void CUITabSheet::reload() {
 
 void CUITabSheet::Load(const sqshTabSheet* attr)
 {
-	vector<cTexture*>::iterator it;
+	std::vector<cTexture*>::iterator it;
 
 	FOR_EACH(tabTextures, it)
 		_RELEASE(*it);
@@ -2725,7 +2725,7 @@ void CMapWindow::draw(int bFocus)
 
 			if(!logicData->alphaPath.empty())
 			{
-				list<Vect2f>::iterator ai;
+				std::list<Vect2f>::iterator ai;
 				Vect2f posPrev = Vect2f(x + map_xs * logicData->alphaPath.back().x, y + map_ys * logicData->alphaPath.back().y);
 				FOR_EACH(logicData->alphaPath, ai) {
 					Vect2f pos = Vect2f(x + map_xs * (*ai).x, y + map_ys * (*ai).y);
@@ -2739,11 +2739,11 @@ void CMapWindow::draw(int bFocus)
 			int x1, y1, x2, y2; 
 			terRenderDevice->GetClipRect(&x1, &y1, &x2, &y2);
 			terRenderDevice->SetClipRect(x, y, x + sx, y + sy);
-			list<Vect2f>::iterator pi;
+			std::list<Vect2f>::iterator pi;
 			FOR_EACH(logicData->miniMapLabels, pi) {
 				terRenderDevice->DrawSprite(x + map_xs * (*pi).x - activeObjectSx / 2, y + map_ys * (*pi).y - activeObjectSy / 2, activeObjectSx, activeObjectSy, 0, 0, 1, 1, activeObjectTx, sColor4c(255,255,255,255), fmodf(m_ftime,activeObjectSymbol.period)/activeObjectSymbol.period);
 			}
-			list<MiniMapEventIcon>::iterator ii;
+			std::list<MiniMapEventIcon>::iterator ii;
 			FOR_EACH(_shellIconManager.getMiniMapEventIcons(), ii) {
 				float timeElapsed = (*ii).period - (*ii).timeRemain;
 				if (timeElapsed <= (*ii).animTime) {
@@ -3081,7 +3081,7 @@ void CTextStringWindow::draw(int bFocus)
 	{
 		terRenderDevice->SetFont(m_hFont);
 
-		string toScr = getValidatedText(textData, sx);
+		std::string toScr = getValidatedText(textData, sx);
 
 		float txtX = x;
 		float txtY = y;
@@ -3444,7 +3444,7 @@ void CListBoxWindow::draw(int bFocus)
 			if(y_str+m_fStringHeight > y+sy)
 				break;
 
-			string toStr = getValidatedText(m_pItem[nItem].m_data[i], _sx_client - txtdx);
+			std::string toStr = getValidatedText(m_pItem[nItem].m_data[i], _sx_client - txtdx);
 //			string toStr = getValidatedText(m_pItem[nItem].m_data[i], _sx_client - txtdx - m_fStringHeight/2);
 
 			float yS = y_str + m_fStringHeight / 2 - m_hFont->GetHeight() / 2;
@@ -3645,7 +3645,7 @@ void CStatListBoxWindow::draw(int bFocus) {
 //					x + sx * m_pItem[nItem].x + txtdx, y_str + txtdy, sy, sy, m_vTexPosRace[0][races[i]].x, m_vTexPosRace[0][races[i]].y, m_vTexPosRace[1][races[i]].x, m_vTexPosRace[1][races[i]].y,
 //					m_hTexture, colors[i], fmodf(m_ftime,1000)/1000);
 			} else {
-				string toStr = getValidatedText(m_pItem[nItem].m_data[i], width);
+				std::string toStr = getValidatedText(m_pItem[nItem].m_data[i], width);
 
                 sColor4f color(1, 1, 1, Alpha);
 				OutText(
@@ -3717,8 +3717,8 @@ void ChatWindow::AddString(const char* cb)
 	int break_len = GetStringBreak(cb);
 
 	if(break_len != -1){
-		string text = cb;
-		string text1 = text.substr(break_len, text.size() - break_len);
+		std::string text = cb;
+		std::string text1 = text.substr(break_len, text.size() - break_len);
 
 		int break_len1 = GetStringBreak(text1.c_str());
 		if(break_len1 != -1){
@@ -3746,7 +3746,7 @@ int ChatWindow::GetStringBreak(const char* str, bool ignore_spaces) const
 	if(terRenderDevice->GetFontLength(str) > x){
 		sColor4c diffuse(0,0,0,0);
 
-		string text = str;
+		std::string text = str;
 		const char* textStart = text.c_str();
 
 		float width = 0;
@@ -3921,7 +3921,7 @@ void ChatWindow::draw(int bFocus)
 		if(y_str+m_fStringHeight > y+sy)
 			break;
 
-		string toStr = getValidatedText(m_data[i], _sx_client - txtdx);
+		std::string toStr = getValidatedText(m_data[i], _sx_client - txtdx);
 //		string toStr = getValidatedText(m_data[i], _sx_client - txtdx - m_fStringHeight/2);
 
 		float yS = y_str + m_fStringHeight / 2 - m_hFont->GetHeight() / 2;
@@ -4234,7 +4234,7 @@ void CShowMapWindow::setWorldID(int id) {
 	worldID = id;
 	RELEASE(m_hTexture);
 	if (worldID >= 0) {
-		string mapPath;
+		std::string mapPath;
 		if ( isWorldIDValid(worldID) ) {
 			mapPath = GetTargetName( worldID, "map.tga" );
 		} else {
@@ -4982,7 +4982,7 @@ void CChatInGameEditWindow::draw(int bFocus) {
 		//			{
 					terRenderDevice->SetFont(m_hFont);
 					m_data = getValidatedText(m_data, sx);
-					string toScr = getModePrefix() + m_data;
+					std::string toScr = getModePrefix() + m_data;
 					char *c = (char*)toScr.c_str();
 		//			terRenderDevice->SetFont(hFontMainmenu2);
 					if (m_hTexture) {
@@ -5004,7 +5004,7 @@ void CChatInGameEditWindow::OnChar(char key)
 {
 	if (isEnabled()) {
 		terRenderDevice->SetFont(m_hFont);
-		string toScr = getModePrefix() + m_data;
+		std::string toScr = getModePrefix() + m_data;
 		float width = terRenderDevice->GetFontLength((char*)toScr.c_str());
 		if (key == VK_BACK) {
 			m_data = m_data.substr(0, m_data.length()-1);
@@ -5629,7 +5629,7 @@ CChatInfoWindow::~CChatInfoWindow()
 	_RELEASE(m_hFont);
 }
 
-void CChatInfoWindow::addString(const string& newString) {
+void CChatInfoWindow::addString(const std::string& newString) {
 	textData += '\n';
 	textData += newString;
 }
@@ -5720,7 +5720,7 @@ int CShellIconManager::EffectControls(CShellWindow* pWnd, int effect)
 	if(pWnd->EffectSupported()&effect)
 		pWnd->OnEffectStart(effect),eff=1;
 
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(pWnd->m_children, i)
 		if( EffectControls(*i, effect) )
 			eff=1;
@@ -5732,7 +5732,7 @@ void CShellIconManager::UnEffectControls(CShellWindow* pWnd, int effect) {
 		pWnd->OnEffectStart(0);
 	}
 
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(pWnd->m_children, i) {
 		UnEffectControls(*i, effect);
 	}
@@ -6100,7 +6100,7 @@ void CReplayPlayerPushButton::draw(int bFocus)
 
 		float centerY = y + sy / 2 - font->GetHeight() / 2;
 
-		string toScr = getValidatedText(labelText, sx);
+		std::string toScr = getValidatedText(labelText, sx);
 
 		terRenderDevice->DrawSprite(x - txtdy, y, sx + txtdy * 2, sy, 0, 0, 1, 1, m_hPopupTexture, sColor4c(255,255,255,255));
 		if (m_attr->txt_align == SHELL_ALIGN_CENTER) {

@@ -24,7 +24,7 @@ extern HistoryScene historyScene;
 extern HistoryScene bwScene;
 extern int terShowTips;
 
-extern string getItemTextFromBase(const char *keyStr);
+extern std::string getItemTextFromBase(const char *keyStr);
 
 float rejectTimer = 0;
 

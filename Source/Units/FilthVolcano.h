@@ -46,7 +46,7 @@ protected:
 	int generation_period;
 	int creature_num;
 
-	typedef vector<terFilthVolcano*> FilthListType;
+	typedef std::vector<terFilthVolcano*> FilthListType;
 	FilthListType unitList;
 
 	//class CGeoInfluence* BirthProcessPoint;

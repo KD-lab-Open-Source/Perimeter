@@ -40,7 +40,7 @@ struct SoundSetupPrm
 	bool belligerent_dependency; // 1 если звук разный для разных воюющих сторон
 	
 	PrmString soundName; //Название звука 
-	vector<PrmString> additionalNames; //Название звука (таких полей может быть несколько, тогда поле выбирается по rnd)
+	std::vector<PrmString> additionalNames; //Название звука (таких полей может быть несколько, тогда поле выбирается по rnd)
 	float radius; //Величина объекта (только в 3D) с этого момента громкость звука начинает убывать (По умолчанию: 50)
 	float max_radius; //Максимальное расстояние до объекта, после которого звук перестаёт быть слышимым (По умолчанию: oo)
 
@@ -91,7 +91,7 @@ struct SoundScriptPrm
 {
 	bool is3D; // 1 если звуки трёхмерные
 	PrmString name;
-	vector<SoundSetupPrm> data;
+	std::vector<SoundSetupPrm> data;
 
 	SoundScriptPrm() {
 		is3D = false; 
@@ -108,8 +108,8 @@ struct SoundScriptPrm
 struct SoundScriptTable
 {
 	// Префикс имени файла для звуков, которые разные для разных воюющих сторон.
-	vector<PrmString> belligerentPrefix;
-	vector<SoundScriptPrm> table;
+	std::vector<PrmString> belligerentPrefix;
+	std::vector<SoundScriptPrm> table;
 
 	template<class Archive>
 	void serialize(Archive& ar) {

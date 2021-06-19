@@ -135,7 +135,7 @@ struct EffectSpeedParam
 
 struct EffectBeginSpeed:KeyGeneral
 {
-	string name;
+	std::string name;
 	EMITTER_TYPE_VELOCITY velocity;
 	float mul;
 	QuatF rotation;
@@ -252,8 +252,8 @@ struct EmitterKeyInterface
 #ifdef EFFECTTOOL
 	SpiralData sdat;
 #endif
-	string name;
-	string texture_name;
+	std::string name;
+	std::string texture_name;
 	bool cycled;//После emitter_life_time эмиттер начинает работать заново
 	float emitter_create_time,emitter_life_time;
 
@@ -305,7 +305,7 @@ struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 	CKey begin_size;
 	CKey begin_size_delta;
 	CKey num_particle;
-	string other;
+	std::string other;
 	bool relative;
 
 	bool  chFill;
@@ -334,9 +334,9 @@ struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 protected:
 	virtual void SaveInternal(CSaver& s);
 	virtual void LoadInternal(CLoadData* ld);
-	void add_sort(vector<float>& xsort,CKey& c);
-	void add_sort(vector<float>& xsort,CKeyColor& c);
-	void end_sort(vector<float>& xsort);
+	void add_sort(std::vector<float>& xsort,CKey& c);
+	void add_sort(std::vector<float>& xsort,CKeyColor& c);
+	void end_sort(std::vector<float>& xsort);
 };
 
 struct EmitterKeyInt:public EmitterKeyBase
@@ -358,14 +358,14 @@ public:
 
 	EMITTER_CLASS GetType(){return EMC_INTEGRAL;}
 	void BuildKey();
-	vector<KeyParticleInt>& GetKey(){return key;};
+	std::vector<KeyParticleInt>& GetKey(){return key;};
 
 public:
 	CKey velocity_delta;
 
-	vector<EffectBeginSpeed> begin_speed;
+	std::vector<EffectBeginSpeed> begin_speed;
 protected:
-	vector<KeyParticleInt> key;
+	std::vector<KeyParticleInt> key;
 	virtual void SaveInternal(CSaver& s);
 };
 
@@ -406,16 +406,16 @@ public:
 
 	EMITTER_CLASS GetType(){return EMC_SPLINE;}
 	void BuildKey();
-	vector<KeyParticleSpl>& GetKey(){return key;};
+	std::vector<KeyParticleSpl>& GetKey(){return key;};
 protected:
-	vector<KeyParticleSpl> key;
+	std::vector<KeyParticleSpl> key;
 };
 
 class EffectKey
 {
 public:
-	string name;
-	vector<EmitterKeyInterface*> key;
+	std::string name;
+	std::vector<EmitterKeyInterface*> key;
 
 	EffectKey();
 	~EffectKey();
@@ -515,9 +515,9 @@ protected:
 	EMITTER_TYPE_ROTATION_DIRECTION rotation_direction;
 	CKeyRotate rotation;
 
-	vector<Vect3f> begin_position; //Распределение по 3D модели for EMP_3DMODEL_INSIDE
+	std::vector<Vect3f> begin_position; //Распределение по 3D модели for EMP_3DMODEL_INSIDE
 	//if (cEmitterInt::use_light || cEmitterSpl::direction == ETDS_BURST1,ETDS_BURST2) 
-	vector<Vect3f> normal_position;//Распределение по 3D модели  for EMP_3DMODEL_INSIDE
+	std::vector<Vect3f> normal_position;//Распределение по 3D модели  for EMP_3DMODEL_INSIDE
 	//endif
 	EmitterType particle_position;
 public:
@@ -604,7 +604,7 @@ public:
 		sColor4c begin_color;
 
 		Vect3f normal;
-		vector<Vect3f> plume_pos;
+		std::vector<Vect3f> plume_pos;
 /*
 		void PutToBuf(const float& dtime_global, const KeyParticleInt& k0, 
 								const KeyParticleInt& k1, sBox6f& Bound, 
@@ -623,8 +623,8 @@ public:
 protected:
 	BackVector<nParticle>	Particle;
 
-	vector<KeyParticleInt>	keys;
-	vector<EffectBeginSpeedMatrix> begin_speed;
+	std::vector<KeyParticleInt>	keys;
+	std::vector<EffectBeginSpeedMatrix> begin_speed;
 
 	Vect3f g;	//ускорение
 
@@ -653,7 +653,7 @@ protected:
 						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
 						 Vect3f& pos, float& dtime );
 */
-	void SetKeys(vector<KeyParticleInt>& k);
+	void SetKeys(std::vector<KeyParticleInt>& k);
 
 	void EmitInstantly(float tmin,float tmax);
 	void EmitProlonged(float dt);
@@ -675,7 +675,7 @@ public:
 	{
 		xassert((UINT)ix<Particle.size());
 		nParticle& p = Particle[ix]; 
-		vector<Vect3f>::iterator i;
+		std::vector<Vect3f>::iterator i;
 		FOR_EACH(p.plume_pos,i)
 			*i = p.pos0;
 	};
@@ -745,7 +745,7 @@ class cEmitterSpl:public cEmitterBase
 		//То-же, но для сплайнов
 		int   hkey;
 		float htime;
-		vector<Vect3f> plume_pos;
+		std::vector<Vect3f> plume_pos;
 		MatXf pos;
 		float angle0,angle_dir;
 		//color0,size0 - константы
@@ -760,8 +760,8 @@ class cEmitterSpl:public cEmitterBase
 	};
 
 	BackVector<nParticle>	Particle;
-	vector<KeyParticleSpl>	keys;
-	vector<HeritKey>		hkeys;
+	std::vector<KeyParticleSpl>	keys;
+	std::vector<HeritKey>		hkeys;
 
 	EMITTER_TYPE_DIRECTION_SPL direction;
 public:
@@ -779,7 +779,7 @@ protected:
 						 const MatXf& mat, nParticle& p,
 						 cQuadBuffer<sVertexXYZDT1>*& pBuf,
 						 Vect3f& pos, float& dtime);*/
-	void SetKeys(vector<KeyParticleSpl>& k);
+	void SetKeys(std::vector<KeyParticleSpl>& k);
 
 	void EmitInstantly(float tmin,float tmax);
 	void EmitProlonged(float dt);
@@ -814,7 +814,7 @@ protected:
 class cEffect:public cIUnkObjScale
 {
 	friend class cEmitterBase;
-	vector<cEmitterInterface*> emitters;
+	std::vector<cEmitterInterface*> emitters;
 	float time;
 	bool auto_delete_after_life;
 	float particle_rate;
@@ -863,7 +863,7 @@ public:
 	void SetPosition(const MatXf& Matrix);
 	void AddZ(float z)
 	{
-		vector<cEmitterInterface*>::iterator it;
+		std::vector<cEmitterInterface*>::iterator it;
 		FOR_EACH(emitters,it)
 			(*it)->AddZ(z);
 	}
@@ -890,8 +890,8 @@ public:
 	void LinkToNode(class cObject3dx* object,int inode);
 	inline float GetParticleRateReal()const;
 
-	vector<Vect3f>& GetPos(){return begin_position;}
-	vector<Vect3f>& GetNorm(){return normal_position;}
+	std::vector<Vect3f>& GetPos(){return begin_position;}
+	std::vector<Vect3f>& GetNorm(){return normal_position;}
 	cEmitterBase* GetEmitN(int n){xassert((UINT)n<emitters.size()); return (cEmitterBase*)emitters[n];}
 	void SetFunctorGetZ(FunctorGetZ* func);//Делается вовремя addref,release
 protected:
@@ -911,8 +911,8 @@ protected:
 	void Add(cEmitterInterface*);//Предполагается, что эмиттер уже инициализированн
 
 	const MatXf& GetCenter3DModel();
-	vector<Vect3f> begin_position;//Распределение по 3D модели
-	vector<Vect3f> normal_position;//Распределение по 3D модели
+	std::vector<Vect3f> begin_position;//Распределение по 3D модели
+	std::vector<Vect3f> normal_position;//Распределение по 3D модели
 
 
 #ifdef _DEBUG
@@ -923,8 +923,8 @@ protected:
 
 class EffectLibrary
 {
-	vector<EffectKey*> lst;
-	string filename;
+	std::vector<EffectKey*> lst;
+	std::string filename;
 public:
 	EffectLibrary();
 	~EffectLibrary();
@@ -934,7 +934,7 @@ public:
 
 	const char* GetFileName()const{return filename.c_str();}
 	//Для редактора спецэффектов
-	typedef vector<EffectKey*>::iterator iterator;
+	typedef std::vector<EffectKey*>::iterator iterator;
 	inline iterator begin(){return lst.begin();}
 	inline iterator end(){return lst.end();}
 	void ClearNoDelete();

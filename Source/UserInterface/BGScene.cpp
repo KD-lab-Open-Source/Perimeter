@@ -96,7 +96,7 @@ void BGScene::quant(float dt) {
 			}
 		}
 		if (timer == 0) {
-			vector<SubObject>::iterator it = subObjects.begin();
+			std::vector<SubObject>::iterator it = subObjects.begin();
 			while (it != subObjects.end()) {
 				if ((*it).forwardDirection) {
 					(*it).stopped = true;

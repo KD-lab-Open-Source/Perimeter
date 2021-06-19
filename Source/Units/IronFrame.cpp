@@ -762,7 +762,7 @@ void terFrame::showDebugInfo()
 	terUnitReal::showDebugInfo();
 	
 	if(showDebugFrame.status){
-		string str;
+		std::string str;
 		if(isBuildingEnable())
 			str += "En ";
 

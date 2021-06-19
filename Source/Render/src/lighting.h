@@ -3,7 +3,7 @@
 struct LightingParameters
 {
 	float generate_time;
-	string texture_name;
+	std::string texture_name;
 	float strip_width_begin;
 	float strip_width_time;
 	float strip_length;
@@ -17,7 +17,7 @@ class cLighting:public cIUnkClass
 public:
 	cLighting();
 	~cLighting();
-	void Init(Vect3f pos_begin,vector<Vect3f>& pos_end);
+	void Init(Vect3f pos_begin, std::vector<Vect3f>& pos_end);
 	void SetParameters(LightingParameters& param_);
 
 	virtual void PreDraw(cCamera *UCamera);
@@ -33,7 +33,7 @@ protected:
 	float time;
 	MatXf global_pos;
 	Vect3f pos_begin;
-	vector<Vect3f> pos_end;
+	std::vector<Vect3f> pos_end;
 	LightingParameters param;
 
 	cTexture* pTexture;
@@ -47,8 +47,8 @@ protected:
 	struct OneLight
 	{
 		Vect3f pos_begin,pos_end;
-		vector<Vect3f> position;
-		vector<OneStrip> strip_list;
+		std::vector<Vect3f> position;
+		std::vector<OneStrip> strip_list;
 		float time;
 		OneLight();
 		~OneLight();
@@ -56,18 +56,18 @@ protected:
 		void Generate(Vect3f pos_begin,Vect3f pos_end,cCamera *pCamera,cLighting* parent);
 		void Draw(cCamera *pCamera,cLighting* parent);
 		void Animate(float dt);
-		void GenerateInterpolate(vector<float>& pos,int size,float amplitude);
-		float get(vector<float>& p,float t);
+		void GenerateInterpolate(std::vector<float>& pos,int size,float amplitude);
+		float get(std::vector<float>& p,float t);
 
 		void BuildStrip(cCamera *pCamera,cLighting* parent);
 	};
 	friend OneLight;
-	list<OneLight*> lights;
+	std::list<OneLight*> lights;
 
 	struct PreGenerate
 	{
 		Vect3f pos_begin;
 		Vect3f pos_end;
 	};
-	vector<PreGenerate> pre_generate;
+	std::vector<PreGenerate> pre_generate;
 };

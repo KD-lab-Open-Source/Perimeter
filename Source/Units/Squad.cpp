@@ -576,7 +576,7 @@ void terUnitSquad::universalLoad(const SaveUnitData* baseData)
 	patrolPoints_ = data->patrolPoints;
 	patrolIndex_ = data->patrolIndex;
 
-	vector<SaveAttackPoint>::const_iterator ai;
+	std::vector<SaveAttackPoint>::const_iterator ai;
 	FOR_EACH(data->attackPoints, ai){
 		attack_points.push_back(AttackPoint());
 		attack_points.back().load(*ai);
@@ -599,7 +599,7 @@ void terUnitSquad::universalLoad(const SaveUnitData* baseData)
 
 //---------------------------
 
-void terUnitSquad::showPath(const vector<Vect2f>& wayPoints, const vector<Vect2f>& patrolPoints, AttackPoint* attackPoint) {
+void terUnitSquad::showPath(const std::vector<Vect2f>& wayPoints, const std::vector<Vect2f>& patrolPoints, AttackPoint* attackPoint) {
 	flagModel_->SetAttr(ATTRUNKOBJ_IGNORE);
 
 	if (selected()) {
@@ -608,7 +608,7 @@ void terUnitSquad::showPath(const vector<Vect2f>& wayPoints, const vector<Vect2f
 		if(squadMutationMolecula().elementCount()){
 			if(!wayPoints.empty()){
 				Vect3f posPrev = position();
-				vector<Vect2f>::const_iterator i;
+				std::vector<Vect2f>::const_iterator i;
 				FOR_EACH(wayPoints, i){
 					Vect3f pos = To3D(*i);
 					terRenderDevice->DrawLine(posPrev, pos, pathColor);
@@ -625,7 +625,7 @@ void terUnitSquad::showPath(const vector<Vect2f>& wayPoints, const vector<Vect2f
 
 			if (patrolPoints.size() > 1) {
 				Vect3f posPrev = To3D(patrolPoints.back());
-				vector<Vect2f>::const_iterator pi;
+				std::vector<Vect2f>::const_iterator pi;
 				FOR_EACH(patrolPoints, pi){
 					Vect3f w, e;
 					Vect3f pos = To3D(*pi);
@@ -1705,7 +1705,7 @@ public:
 		float factor_;
 	};
 
-	typedef vector<TargetData> TargetDataList;
+	typedef std::vector<TargetData> TargetDataList;
 	typedef TargetDataList::iterator iterator;
 	typedef TargetDataList::const_iterator const_iterator;
 
@@ -1718,7 +1718,7 @@ public:
 		}
 	};
 	
-	void sortTargets(int idx = 0){ sort(targets_[idx].begin(),targets_[idx].end(),TargetOrderingOp()); }
+	void sortTargets(int idx = 0){ std::sort(targets_[idx].begin(),targets_[idx].end(),TargetOrderingOp()); }
 
 	void operator()(terUnitBase* unit2)
 	{
@@ -1740,7 +1740,7 @@ public:
 			else
 				f -= float(unit2->possibleDamage()) / float(unit2->damageMolecula().aliveElementCount());
 
-			TargetDataList::const_iterator it = find(targets_[0].begin(),targets_[0].end(),unit2);
+			TargetDataList::const_iterator it = std::find(targets_[0].begin(),targets_[0].end(),unit2);
 			if(it == targets_[0].end())
 				targets_[0].push_back(TargetData(unit2,f));
 		}
@@ -1750,7 +1750,7 @@ public:
 		if(myUnit_->isEnemy(unit2) && !unit2->isUnseen() && unit2->unitClass() & attackClass_[1]){
 			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + dist2) + 1.f/(1.f + unit2->freezeFactor());
 
-			TargetDataList::const_iterator it = find(targets_[1].begin(),targets_[1].end(),unit2);
+			TargetDataList::const_iterator it = std::find(targets_[1].begin(),targets_[1].end(),unit2);
 			if(it == targets_[1].end())
 				targets_[1].push_back(TargetData(unit2,f));
 		}
@@ -1758,7 +1758,7 @@ public:
 		if(!myUnit_->isEnemy(unit2) && unit2->unitClass() & attackClass_[2] && unit2->repairRequest()){
 			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + dist2) + 1.f/unit2->damageMolecula().phase();
 
-			TargetDataList::const_iterator it = find(targets_[2].begin(),targets_[2].end(),unit2);
+			TargetDataList::const_iterator it = std::find(targets_[2].begin(),targets_[2].end(),unit2);
 			if(it == targets_[2].end())
 				targets_[2].push_back(TargetData(unit2,f));
 		}
@@ -1819,7 +1819,7 @@ public:
 		float factor_;
 	};
 
-	typedef vector<TargetData> TargetDataList;
+	typedef std::vector<TargetData> TargetDataList;
 	typedef TargetDataList::iterator iterator;
 	typedef TargetDataList::const_iterator const_iterator;
 

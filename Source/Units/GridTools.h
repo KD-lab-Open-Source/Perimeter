@@ -277,7 +277,7 @@ public:
 		}
 	};
 
-	typedef list<Target> TargetContainer;
+	typedef std::list<Target> TargetContainer;
 	const TargetContainer& targets() const { return targets_; }
 	void sortTargets(){ targets_.sort(TargetOrderingOp()); }
 
@@ -390,7 +390,7 @@ public:
 		}
 	}
 
-	typedef vector<Vect3f> TargetList;
+	typedef std::vector<Vect3f> TargetList;
 	const TargetList& targets() const { return targets_; }
 
 private:

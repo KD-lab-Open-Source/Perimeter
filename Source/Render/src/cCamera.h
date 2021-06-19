@@ -153,7 +153,7 @@ protected:
 	void SetHReflection(int h) {h_reflection=h;}
 	void UpdateVieport();
 
-	vector<cCamera*>	child;
+	std::vector<cCamera*>	child;
 	cCamera*	Parent;
 	cCamera*	RootCamera;
 
@@ -201,21 +201,21 @@ protected:
 	};
 	sPlane4f		PlaneClip3d[PlaneClip3d_size];				// плоскости отсечения
 
-	vector<cIUnkClass*>			DrawArray[MAXSCENENODE];
-	vector<ObjectSort>			SortArray;
-	vector<cObjectNodeRoot*>	ShadowTestArray;
+	std::vector<cIUnkClass*>			DrawArray[MAXSCENENODE];
+	std::vector<ObjectSort>			SortArray;
+	std::vector<cObjectNodeRoot*>	ShadowTestArray;
 	Vect2f						FocusViewPort;				// фокус графического окна
 	Vect2f						ScaleViewPort;				// коэффициенты неоднородности экрана по осям
 	Vect3f						WorldI,WorldJ,WorldK;
 protected:
-	vector<cMeshSortingPhase*> arSortMaterial;
+	std::vector<cMeshSortingPhase*> arSortMaterial;
 	void DrawSortMaterial();
 	void DrawSortMaterialShadow();
 	void DrawSortMaterialShadowStrencil();
 	void DrawSortMaterialShadowStrencilOneSide();
 	void DrawShadowPlane();
 
-	vector<cIUnkClass*>	arZPlane;
+	std::vector<cIUnkClass*>	arZPlane;
 	void ClearZBuffer();
 	void ShowClip();
 
@@ -252,7 +252,7 @@ inline void cCamera::Attach(int pos,cIUnkClass *UObject,const MatXf &m,const Vec
 	else
 		SortArray.push_back( ObjectSort(UObject->GetPosition().trans().distance(GetPos()),UObject) );
 
-	vector<cCamera*>::iterator it;
+	std::vector<cCamera*>::iterator it;
 	FOR_EACH(child,it)
 	{
 		cCamera* c=*it;

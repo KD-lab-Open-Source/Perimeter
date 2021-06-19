@@ -73,7 +73,7 @@ protected:
 
 	float tickTime;
 
-	string hotKeyPopupString;
+	std::string hotKeyPopupString;
 
 //	float flashInterval;
 	float flashTimer;
@@ -91,7 +91,7 @@ public:
 	int    ID;
 	int    state;
 
-	list<CShellWindow*> m_children;
+	std::list<CShellWindow*> m_children;
 	CShellWindow*       m_pParent;
 
 	CShellWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
@@ -228,7 +228,7 @@ public:
 	int				flag;
 	int				target;
 	float			txtdy;
-	string			labelText;
+	std::string		labelText;
 	Vect2f			uv;
 	Vect2f			dudv;
 	enum
@@ -253,7 +253,7 @@ public:
 	virtual int  EffectSupported(){
 		return effectButtonsFadeIn|effectButtonsFadeOut;
 	}
-	void setText(const string& newLabelText) {
+	void setText(const std::string& newLabelText) {
 		labelText = newLabelText;
 	}
 };
@@ -268,7 +268,7 @@ public:
 
 	void Load(const sqshControl* attr);
 	void draw(int bFocus);
-	void setPlayer(const string& newName, const sColor4f& newColor) {
+	void setPlayer(const std::string& newName, const sColor4f& newColor) {
 		labelText = newName;
 		color = newColor;
 	}
@@ -461,35 +461,35 @@ class CUITabSheet : public CShellWindow
 {
 	const sqshTabSheet*           m_attr;
 
-	vector<const sqshTabElement*> tabAttrs;
-	vector<cTexture*>		tabTextures;
-	vector<cTexture*>		tabHighlightTextures;
-	vector<cTexture*>		tabCheckedTextures;
-	vector<cTexture*>		tabDisabledTextures;
-	vector<cTexture*>		tabFlashingTextures;
-	vector<Vect2f>			tabUVs;
-	vector<Vect2f>			tabDUDVs;
-	vector<Vect2f>			tabHighUVs;
-	vector<Vect2f>			tabHighDUDVs;
-	vector<Vect2f>			tabCheckedUVs;
-	vector<Vect2f>			tabCheckedDUDVs;
-	vector<Vect2f>			tabDisabledUVs;
-	vector<Vect2f>			tabDisabledDUDVs;
-	vector<Vect2f>			tabFlashingUVs;
-	vector<Vect2f>			tabFlashingDUDVs;
+	std::vector<const sqshTabElement*> tabAttrs;
+	std::vector<cTexture*>		tabTextures;
+	std::vector<cTexture*>		tabHighlightTextures;
+	std::vector<cTexture*>		tabCheckedTextures;
+	std::vector<cTexture*>		tabDisabledTextures;
+	std::vector<cTexture*>		tabFlashingTextures;
+	std::vector<Vect2f>			tabUVs;
+	std::vector<Vect2f>			tabDUDVs;
+	std::vector<Vect2f>			tabHighUVs;
+	std::vector<Vect2f>			tabHighDUDVs;
+	std::vector<Vect2f>			tabCheckedUVs;
+	std::vector<Vect2f>			tabCheckedDUDVs;
+	std::vector<Vect2f>			tabDisabledUVs;
+	std::vector<Vect2f>			tabDisabledDUDVs;
+	std::vector<Vect2f>			tabFlashingUVs;
+	std::vector<Vect2f>			tabFlashingDUDVs;
 
-	vector<int>				tabXs;
-	vector<int>				tabYs;
-	vector<int>				tabSXs;
-	vector<int>				tabSYs;
+	std::vector<int>			tabXs;
+	std::vector<int>			tabYs;
+	std::vector<int>			tabSXs;
+	std::vector<int>			tabSYs;
 
-	vector<cTexture*>		tabActiveTextures;
-	vector<Vect2f>			tabActiveUVs;
-	vector<Vect2f>			tabActiveDUDVs;
-	vector<int>				tabActiveXs;
-	vector<int>				tabActiveYs;
-	vector<int>				tabActiveSXs;
-	vector<int>				tabActiveSYs;
+	std::vector<cTexture*>		tabActiveTextures;
+	std::vector<Vect2f>			tabActiveUVs;
+	std::vector<Vect2f>			tabActiveDUDVs;
+	std::vector<int>			tabActiveXs;
+	std::vector<int>			tabActiveYs;
+	std::vector<int>			tabActiveSXs;
+	std::vector<int>			tabActiveSYs;
 
 	int x;
 	int y;
@@ -501,8 +501,8 @@ class CUITabSheet : public CShellWindow
 	int ddsx;
 	int ddsy;
 
-	vector<SQUAD_ICON*>     m_squad_icon_list;
-	vector<string>          m_page_numbers;
+	std::vector<SQUAD_ICON*>     m_squad_icon_list;
+	std::vector<std::string>     m_page_numbers;
 
 //	cFont*                  m_hFont;
 
@@ -513,7 +513,7 @@ class CUITabSheet : public CShellWindow
 	DWORD m_nVisiblePagesBits;
 	DWORD m_nEnabledPagesBits;
 	DWORD m_nSelectedPagesBits;
-	vector<float> flashTimers;
+	std::vector<float> flashTimers;
 	int   m_nActivePage;
 
 	int HitTestTabHeader(float _x, float _y);
@@ -781,10 +781,10 @@ public:
 	void SetText(const char* text) {
 		textData = text;
 	}
-	void setText(const string& text) {
+	void setText(const std::string& text) {
 		textData = text;
 	}
-	const string& getText() const {
+	const std::string& getText() const {
 		return textData;
 	}
 	virtual int EffectSupported() {
@@ -795,7 +795,7 @@ public:
 	int colorIndex;
 
 protected:
-	string textData;
+	std::string textData;
 	Vect2f			uv;
 	Vect2f			dudv;
 
@@ -814,7 +814,7 @@ public:
 //////////////////////////////////////////////////////////
 class CCreditsWindow : public CShellWindow
 {
-	string textData;
+	std::string textData;
 	Vect2f			uv;
 	Vect2f			dudv;
 	float	timer;
@@ -831,10 +831,10 @@ public:
 	void SetText(const char* text) {
 		textData = text;
 	}
-	void setText(const string& text) {
+	void setText(const std::string& text) {
 		textData = text;
 	}
-	const string& getText() const {
+	const std::string& getText() const {
 		return textData;
 	}
 	virtual int EffectSupported() {
@@ -847,7 +847,7 @@ public:
 struct sItem
 {
 	float x;
-	deque<string>	m_data;
+	std::deque<std::string> m_data;
 	int id;
 };
 
@@ -936,7 +936,7 @@ struct sItem
 
 class ChatWindow : public CShellWindow {
 
-	vector<string>	m_data;
+	std::vector<std::string>	m_data;
 	int				m_bScroller;
 	int				m_nTopItem;
 	float			m_fStringHeight;
@@ -1007,8 +1007,8 @@ class CStatListBoxWindow : public CShellWindow {
 
 	Vect2f			m_vTexPosRace[2][3];
 
-	deque<int> races;
-	deque<sColor4c> colors;
+	std::deque<int> races;
+	std::deque<sColor4c> colors;
 
 	cTexture*		m_hTextureBG;
 	Vect2f			m_vTexBGPos;
@@ -1098,11 +1098,11 @@ public:
 	const char* GetText(){
 		return m_data.c_str();
 	}
-	const string& getText() const {
+	const std::string& getText() const {
 		return m_data;
 	}
 protected:
-	string   m_data;
+	std::string   m_data;
 
 };
 
@@ -1120,11 +1120,11 @@ public:
 	void OnChar(char key);
 
 	bool alliesOnlyMode;
-	string getModePostfix() const {
+	std::string getModePostfix() const {
 		return alliesOnlyMode ? qdTextDB::instance().getText("Interface.Tips.ToClanPostfix") : qdTextDB::instance().getText("Interface.Tips.ToAllPostfix");
 	}
 protected:
-	string getModePrefix() const {
+	std::string getModePrefix() const {
 		return alliesOnlyMode ? qdTextDB::instance().getText("Interface.Tips.ToClanPrefix") : qdTextDB::instance().getText("Interface.Tips.ToAllPrefix");
 	}
 };
@@ -1136,7 +1136,7 @@ class CComboWindow : public CShellWindow
 public:
 //	cFont*      m_hFont;
 	int			pos,size;
-	vector<string> Array;
+	std::vector<std::string> Array;
 	float		m_fStringHeight;
 	int			target;
 	Vect2f			uv;
@@ -1372,7 +1372,7 @@ public:
 class CHintWindow : public CShellWindow
 {
 
-	string textData;
+	std::string textData;
 	int   m_nTimeToDisplay;
 
 	float cutSceneX;
@@ -1393,7 +1393,7 @@ public:
 class CChatInfoWindow : public CShellWindow
 {
 
-	string textData;
+	std::string textData;
 	int   m_nTimeToDisplay;
 
 public:
@@ -1414,7 +1414,7 @@ public:
 	virtual int  HitTest(float _x, float _y){
 		return 0;
 	}
-	void addString(const string& newString);
+	void addString(const std::string& newString);
 	void draw(int bFocus);
 };
 
@@ -1449,7 +1449,7 @@ class CShellCursorManager
 
 	float m_ftime;
 	float cur_x, cur_y;
-	deque<CURSOR> m_cursors;
+	std::deque<CURSOR> m_cursors;
 	CURSOR*       m_pActiveCursor;
 	HCURSOR       m_hCursorDefault;
 	int           m_nCursorShift;
@@ -1560,9 +1560,9 @@ struct MiniMapEventIcon : public MiniMapEvent {
 class CShellIconManager
 {
 	struct Task {
-		Task(string text, ActionTask::Type type) : text(text), type(type) {
+		Task(std::string text, ActionTask::Type type) : text(text), type(type) {
 		}
-		string text;
+		std::string text;
 		ActionTask::Type type;
 	};
 
@@ -1585,17 +1585,17 @@ class CShellIconManager
 
 	int             m_nTotalUnitsBaseCount;
 
-	list<MiniMapEventIcon> miniMapEventIcons;
+	std::list<MiniMapEventIcon> miniMapEventIcons;
 
-	typedef list<Task> TaskList;
+	typedef std::list<Task> TaskList;
 	TaskList tasks;
 
-	vector<SQUAD_ICON*> m_squad_icon_table;
+	std::vector<SQUAD_ICON*> m_squad_icon_table;
 	void BuildSquadIconTable();
 	void ClearSquadIconTable();
 
 	//dynamic handlers
-	list<DYN_QUEUE_ITEM> m_dyn_queue;
+	std::list<DYN_QUEUE_ITEM> m_dyn_queue;
 	int ProcessDynQueue(int code, float x=0, float y=0);
 	void QuantDynQueue(int dt);
 
@@ -1629,8 +1629,8 @@ class CShellIconManager
 	void updateControlsFromExternalStates();
 
 	SaveControlData externalControlStates[SQSH_GAME_MAX];
-	vector<SaveControlData> externalBuildTabStates;
-	vector<SaveControlData> externalSquadTabStates;
+	std::vector<SaveControlData> externalBuildTabStates;
+	std::vector<SaveControlData> externalSquadTabStates;
 
 	bool cutSceneModeOn;
 
@@ -1655,9 +1655,9 @@ class CShellIconManager
 	CutSceneCommand cutSceneCommand;
 
 public:
-	string hold;
-	string units;
-	string totalTime;
+	std::string hold;
+	std::string units;
+	std::string totalTime;
 
 	LogicData::sProgress& GetProgress(terUnitAttributeID n_struct);
 	float			m_fEffectTime;
@@ -1675,7 +1675,7 @@ public:
 
 	cTexture*		m_hTextureProgressBars;
 
-	list<CShellWindow*>  m_effect_list;
+	std::list<CShellWindow*>  m_effect_list;
 
 	CShellIconManager();
 	~CShellIconManager();
@@ -1691,7 +1691,7 @@ public:
 	void setCutSceneMode(bool on, bool animated = true);
 	void setCutSceneModeSafe(bool on, bool animated = true);
 
-	list<MiniMapEventIcon>& getMiniMapEventIcons() {
+	std::list<MiniMapEventIcon>& getMiniMapEventIcons() {
 		return miniMapEventIcons;
 	}
 
@@ -1718,8 +1718,8 @@ public:
 	int OnRButtonDown(float x, float y);
 	int OnRButtonUp(float x, float y);
 
-	void changeControlState(const vector<SaveControlData>& newControlStates);
-	void fillControlState(vector<SaveControlData>& controlStatesToSave);
+	void changeControlState(const std::vector<SaveControlData>& newControlStates);
+	void fillControlState(std::vector<SaveControlData>& controlStatesToSave);
 
 	int OnMouseMove(float x, float y);
 	int OnLButtonDblClk(float x, float y);
@@ -1747,9 +1747,9 @@ public:
 
 	void onSizeChanged();
 
-	void addChatString(const string& newChatString);
+	void addChatString(const std::string& newChatString);
 
-	void showHintDisconnect(const string& players, int showTime, bool disconnected);
+	void showHintDisconnect(const std::string& players, int showTime, bool disconnected);
 	void showHint(const char* text, int showTime, ActionTask::Type actionType = ActionTask::ASSIGNED);
 	void setTask(const char* text, ActionTask::Type actionType = ActionTask::ASSIGNED);
 
@@ -2118,13 +2118,13 @@ inline int absoluteY(float y) {
 	return round(y * terRenderDevice->GetSizeY());
 }
 
-inline string getImageFileName(const sqshImage* image, const char* fileName = 0) {
-	string fullname = fileName ? fileName : static_cast<string>(image->texture);
+inline std::string getImageFileName(const sqshImage* image, const char* fileName = 0) {
+	std::string fullname = fileName ? fileName : static_cast<std::string>(image->texture);
 	if ( !fullname.empty() ) {
 		if (image->hasResolutionVersion) {
 			char intBuffer[11 + 1];
 			sprintf(intBuffer, "%d", terRenderDevice->GetSizeX());
-			string resolution = string(intBuffer);
+			std::string resolution = std::string(intBuffer);
 			fullname.insert(fullname.rfind('\\'), "\\" + resolution);
 		}
 		if (image->hasBelligerentVersion && universe() && universe()->activePlayer()) {
@@ -2322,8 +2322,8 @@ inline void draw_circle(Vect2i& v, int r, sColor4c& c)
 	terRenderDevice->DrawLine(x, y, x1, y1, c);
 }
 
-inline string getTextFromBase(const char *keyStr) {
-	string key("Interface.ButtonLabels.");
+inline std::string getTextFromBase(const char *keyStr) {
+	std::string key("Interface.ButtonLabels.");
 	key += keyStr;
 	const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
 	return (*stringFromBase) ? stringFromBase : keyStr;

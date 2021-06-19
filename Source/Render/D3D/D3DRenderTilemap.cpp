@@ -60,7 +60,7 @@ struct sBumpTile
 {
 	//Only to read
 	VertexPoolPage vtx;
-	vector<sPlayerIB> index;
+	std::vector<sPlayerIB> index;
 	Vect2i tile_pos;
 
 	bool init;
@@ -131,10 +131,10 @@ class sTilemapTexturePool
 	int *freePagesList;
 
 	int texture_width,texture_height;
-	vector<Vect2i> Pages;//x-xmin, y-ymin
+	std::vector<Vect2i> Pages;//x-xmin, y-ymin
 	float ustep,vstep;
 public:
-	vector<sBumpTile*> tileRenderList;
+	std::vector<sBumpTile*> tileRenderList;
 
 	sTilemapTexturePool(cD3DRender *aRenderer, int w, int h);
 	~sTilemapTexturePool();
@@ -159,8 +159,8 @@ protected:
 class cTileMapRender
 {
 	cTileMap *TileMap;
-	vector<sBumpTile*> bumpTiles;
-	vector<int> bumpDyingTiles;
+	std::vector<sBumpTile*> bumpTiles;
+	std::vector<int> bumpDyingTiles;
 	LPDIRECT3DINDEXBUFFER9 tilemapIB;
 	int index_offset[TILEMAP_LOD];
 	int index_size[TILEMAP_LOD];
@@ -174,7 +174,7 @@ class cTileMapRender
 	void SaveUpdateStat();
 
 	VectDelta* delta_buffer;
-	vector<vector<sPolygon> > index_buffer;
+	std::vector<std::vector<sPolygon> > index_buffer;
 public:
 	void IncUpdate(sBumpTile* pbump);
 
@@ -208,16 +208,16 @@ public:
 	}
 	
 	VectDelta* GetDeltaBuffer(){return delta_buffer;};
-	vector<vector<sPolygon> >& GetIndexBuffer(){return index_buffer;};
+	std::vector<std::vector<sPolygon> >& GetIndexBuffer(){return index_buffer;};
 };
 
-static vector<sTilemapTexturePool*> bumpTexPools;
+static std::vector<sTilemapTexturePool*> bumpTexPools;
 
 
 //
 // **************** TILEMAP - SHARED ****************
 // 
-static void fillVisPoly(BYTE *buf,vector<Vect2f>& vert,int VISMAP_W,int VISMAP_H)
+static void fillVisPoly(BYTE *buf, std::vector<Vect2f>& vert,int VISMAP_W,int VISMAP_H)
 {
 	if(vert.empty())return;
 	const int VISMAP_W_MAX=128,VISMAP_H_MAX=128;
@@ -318,8 +318,8 @@ void calcVisMap(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber,Vect2i TileSi
 
 	for(int i=0;i<poly.faces.size();i++)
 	{
-		vector<int>& inp=poly.faces[i];
-		vector<Vect2f> points(inp.size());
+		std::vector<int>& inp=poly.faces[i];
+		std::vector<Vect2f> points(inp.size());
 		for(int j=0;j<inp.size();j++)
 		{
 			Vect3f& p=poly.points[inp[j]];
@@ -382,7 +382,7 @@ int cD3DRender::Create(class cTileMap *TileMap)
 
 void cD3DRender::GetTilemapTextureMemory(int& total,int& free)
 {
-	vector<sTilemapTexturePool*>::iterator it;
+	std::vector<sTilemapTexturePool*>::iterator it;
 	total=free=0;
 	FOR_EACH(bumpTexPools,it)
 	{
@@ -427,14 +427,14 @@ void cD3DRender::Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_dra
 
 void cD3DRender::ClearTilemapPool()
 {
-	vector<cTileMapRender*>::iterator it;
+	std::vector<cTileMapRender*>::iterator it;
 	FOR_EACH(tilemaps,it)
 		(*it)->ClearTilemapPool();
 }
 
 void cD3DRender::RestoreTilemapPool()
 {
-	vector<cTileMapRender*>::iterator it;
+	std::vector<cTileMapRender*>::iterator it;
 	FOR_EACH(tilemaps,it)
 		(*it)->RestoreTilemapPool();
 }
@@ -469,7 +469,7 @@ cTileMapRender::~cTileMapRender()
 	delete update_stat;
 	delete delta_buffer;
 
-	vector<sBumpTile*>::iterator it;
+	std::vector<sBumpTile*>::iterator it;
 	FOR_EACH(bumpTiles,it)
 		delete *it;
 	bumpTiles.clear();
@@ -757,7 +757,7 @@ sBumpTile::~sBumpTile()
 
 void sBumpTile::DeleteIndex()
 {
-	vector<sPlayerIB>::iterator it;
+	std::vector<sPlayerIB>::iterator it;
 	FOR_EACH(index,it)
 	if(it->index.page>=0)
 	{
@@ -1122,7 +1122,7 @@ int st_VBSw = 0, st_TexSw = 0, st_Poly = 0;
 		}
 
 
-		vector<sBumpTile*>::iterator it_tile;
+		std::vector<sBumpTile*>::iterator it_tile;
 		FOR_EACH(curpool->tileRenderList,it_tile)
 		{
 			sBumpTile *bumpTile = *it_tile;
@@ -1348,8 +1348,8 @@ void sBumpTile::CalcPoint(cTileMap *TileMap)
 			if(cur_tile_pos.x>=0 && cur_tile_pos.x<TileMap->GetTileNumber().x)
 			if(cur_tile_pos.y>=0 && cur_tile_pos.y<TileMap->GetTileNumber().y)
 			{
-				vector<Vect2s>* region=TileMap->GetCurRegion(cur_tile_pos,player);
-				vector<Vect2s>::iterator it;
+				std::vector<Vect2s>* region=TileMap->GetCurRegion(cur_tile_pos,player);
+				std::vector<Vect2s>::iterator it;
 				preceeded_point+=region->size();
 
 				bool fix_border_x=false;
@@ -1450,7 +1450,7 @@ void sBumpTile::CalcPoint(cTileMap *TileMap)
 		}
 	}
 
-	vector<vector<sPolygon> >& index=TileMap->GetTilemapRender()->GetIndexBuffer();
+	std::vector<std::vector<sPolygon> >& index=TileMap->GetTilemapRender()->GetIndexBuffer();
 
 	{
 		index.resize(tilenumber+1);

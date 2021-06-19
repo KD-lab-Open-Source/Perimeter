@@ -46,7 +46,7 @@ struct CShellLogicDispatcher
 {
 	typedef int  (*pfnFQH)();
 
-	typedef list<pfnFQH>                  ListQuantResType;
+	typedef std::list<pfnFQH>                  ListQuantResType;
 
 	ListQuantResType m_lstQRes;
 

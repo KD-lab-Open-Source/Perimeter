@@ -3,7 +3,6 @@
 
 #include "Src/BaseClass.h"
 #include <string>
-using namespace std;
 
 #include "xmath.h"
 #include "../Src/BaseClass.h"
@@ -53,7 +52,7 @@ public:
 	int		ReadFieldType();
 	void	ReadField(void *buf,int size=1);
 	
-	void	ReadField(string& buf);
+	void	ReadField(std::string& buf);
 	void	WriteField(void *buf,int TypeField,int size=1);
 	void	BeginWriteBlock(int BlockID);
 	void	EndWriteBlock(int BlockID);

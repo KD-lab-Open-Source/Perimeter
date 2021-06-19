@@ -67,7 +67,7 @@ public:
 	{
 		LineList::iterator i;
 		FOR_EACH(lines, i)
-			swap(i->left,i->right);
+			std::swap(i->left,i->right);
 	}
 
 	Vect2f curvate(const Vect2f& p) const
@@ -109,7 +109,7 @@ private:
 		float left, right;
 		Line(float border = 0) { left = right = border; }
 	};
-	typedef vector<Line> LineList;
+	typedef std::vector<Line> LineList;
 	LineList lines;
 	float max_side;
 	int m_counter;

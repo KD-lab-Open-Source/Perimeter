@@ -288,7 +288,7 @@ cObjectNode::AllAnotherMaterial::AllAnotherMaterial(cTexture *Tex1,cTexture *Tex
 
 cObjectNode::AllAnotherMaterial::~AllAnotherMaterial()
 {
-	vector<AnotherMaterial>::iterator it;
+	std::vector<AnotherMaterial>::iterator it;
 	FOR_EACH(materials,it)
 		delete it->pCurMaterial;
 	RELEASE(pTex1);
@@ -297,7 +297,7 @@ cObjectNode::AllAnotherMaterial::~AllAnotherMaterial()
 
 cMeshBank* cObjectNode::AllAnotherMaterial::Find(cMeshBank* pOriginalMaterial)
 {
-	vector<AnotherMaterial>::iterator it;
+	std::vector<AnotherMaterial>::iterator it;
 	FOR_EACH(materials,it)
 		if(it->pOriginalMaterial==pOriginalMaterial)
 			return it->pCurMaterial;
@@ -437,7 +437,7 @@ void cObjectNode::SetGroup(bool is_group)
 		NodeAttribute.ClearAttribute(ATTRNODE_ISGROUP);
 }
 
-void cObjectNode::AddChild(vector<cObjectNode*>& all_child)
+void cObjectNode::AddChild(std::vector<cObjectNode*>& all_child)
 {
 	for(cObjectNode *child=GetChild();child;child=child->GetSibling())
 	{
@@ -457,7 +457,7 @@ int cObjectNode::GetNumGroup()
 	return num;
 }
 
-void cObjectNode::SetGroup(int& cur_num,vector<cObjectGroup>& groups,cObjectGroup* cur_group)
+void cObjectNode::SetGroup(int& cur_num, std::vector<cObjectGroup>& groups,cObjectGroup* cur_group)
 {
 	if(IsGroup())
 	{
@@ -549,7 +549,7 @@ cObjectNodeRoot::cObjectNodeRoot()
 cObjectNodeRoot::~cObjectNodeRoot()
 {
 	ClearDrawSort();
-	vector<cObjectGroup>::iterator it_group;
+	std::vector<cObjectGroup>::iterator it_group;
 	FOR_EACH(groups,it_group)
 	{
 		it_group->Parent=NULL;
@@ -628,7 +628,7 @@ void cObjectNodeRoot::SetCopy(cIUnkObj* UObj)
 void cObjectNodeRoot::ChangeBank(cAllMeshBank* new_root)
 {
 	cObjectNode::ChangeBank(new_root);
-	vector<cObjectNode*>::iterator it;
+	std::vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 		(*it)->ChangeBank(new_root);
 }
@@ -636,7 +636,7 @@ void cObjectNodeRoot::ChangeBank(cAllMeshBank* new_root)
 
 void cObjectNodeRoot::BuildShadow()
 {
-	vector<cObjectNode*>::iterator it;
+	std::vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 		(*it)->BuildShadow();
 
@@ -722,7 +722,7 @@ void cObjectNodeRoot::DrawShadow(cCamera *DrawNode)
 {
 	Update();
 	cObjectNode::DrawShadow(DrawNode);
-	vector<cObjectNode*>::iterator it;
+	std::vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 		(*it)->DrawShadow(DrawNode);
 }
@@ -741,7 +741,7 @@ void cObjectNodeRoot::SetScale(const Vect3f& scale)
 		RootLod->SetScale(scale);
 
 	//Фикс (кривой) для постоянно генерирующихся объектов
-	vector<cObjectNode*>::iterator it;
+	std::vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 	{
 		cObjectNode* node=*it;
@@ -755,7 +755,7 @@ void cObjectNodeRoot::BuildChild()
 	mesh_child.clear();
 	light_child.clear();
 	AddChild(all_child);
-	vector<cObjectNode*>::iterator it;
+	std::vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 	{
 		if((*it)->GetKind()==KIND_OBJMESH)
@@ -827,11 +827,11 @@ inline void cMeshSortingPhase::Attach(cObjMesh* p)
 
 void cObjectNodeRoot::PreDrawSort(cCamera *DrawNode)
 {
-	vector<cMeshSortingBank*>::iterator it_sort;
+	std::vector<cMeshSortingBank*>::iterator it_sort;
 	FOR_EACH(DrawSort,it_sort)
 		(*it_sort)->phase.clear();
 	
-	vector<cObjMesh*>::iterator it_mesh;
+	std::vector<cObjMesh*>::iterator it_mesh;
 	FOR_EACH(mesh_child,it_mesh)
 	{
 		cMeshSortingBank* pSortBank=NULL;
@@ -871,7 +871,7 @@ void cObjectNodeRoot::PreDrawSort(cCamera *DrawNode)
 
 		int attribute=pMesh->GetAttribute(ATTRUNKOBJ_NOLIGHT);
 
-		vector<cMeshSortingPhase>::iterator it_phase;
+		std::vector<cMeshSortingPhase>::iterator it_phase;
 		FOR_EACH(pSortBank->phase,it_phase)
 		if(it_phase->phase==phase && it_phase->channel==channel && 
 			it_phase->attribute==attribute)
@@ -896,7 +896,7 @@ void cObjectNodeRoot::PreDrawSort(cCamera *DrawNode)
 	FOR_EACH(DrawSort,it_sort)
 	{
 		cMeshSortingBank* pSortBank=*it_sort;
-		vector<cMeshSortingPhase>::iterator it_phase;
+		std::vector<cMeshSortingPhase>::iterator it_phase;
 		FOR_EACH(pSortBank->phase,it_phase)
 		{
 			cMeshSortingPhase& s=*it_phase;
@@ -917,7 +917,7 @@ void cObjectNodeRoot::PreDrawSort(cCamera *DrawNode)
 
 void cObjectNodeRoot::ClearDrawSort()
 {
-	vector<cMeshSortingBank*>::iterator it;
+	std::vector<cMeshSortingBank*>::iterator it;
 	FOR_EACH(DrawSort,it)
 		delete *it;
 	DrawSort.clear();
@@ -991,7 +991,7 @@ void cObjectNodeRoot::Update()
 {
 	if(!NodeAttribute.GetAttribute(ATTRNODE_UPDATEMATRIX))
 		return;
-	vector<cObjectNode*>::iterator it;
+	std::vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 	{
 		(*it)->UpdateMatrix();
@@ -1000,12 +1000,12 @@ void cObjectNodeRoot::Update()
 	NodeAttribute.ClearAttribute(ATTRNODE_UPDATEMATRIX);
 }
 
-void cObjectNodeRoot::GetAllPoints(vector<Vect3f>& point)
+void cObjectNodeRoot::GetAllPoints(std::vector<Vect3f>& point)
 {
 	MatXf save=GetLocalMatrix();
 	SetPosition(MatXf::ID);
 	Update();
-	vector<cObjMesh*>::iterator it;
+	std::vector<cObjMesh*>::iterator it;
 	FOR_EACH(mesh_child,it)
 	{
 		(*it)->GetAllPoints(point);
@@ -1014,12 +1014,12 @@ void cObjectNodeRoot::GetAllPoints(vector<Vect3f>& point)
 	Update();
 }
 
-void cObjectNodeRoot::GetAllNormals(vector<Vect3f>& point)
+void cObjectNodeRoot::GetAllNormals(std::vector<Vect3f>& point)
 {
 	MatXf save=GetLocalMatrix();
 	SetPosition(MatXf::ID);
 	Update();
-	vector<cObjMesh*>::iterator it;
+	std::vector<cObjMesh*>::iterator it;
 	FOR_EACH(mesh_child,it)
 	{
 		(*it)->GetAllNormals(point);
@@ -1028,7 +1028,7 @@ void cObjectNodeRoot::GetAllNormals(vector<Vect3f>& point)
 	Update();
 }
 
-void cObjectNodeRoot::GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& polygon)
+void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
 {
 	point.clear();
 	polygon.clear();
@@ -1050,7 +1050,7 @@ void cObjectNodeRoot::GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& pol
 	gb_RenderDevice->UnlockIndexBuffer(bank->ib);
 
 	int filled_point=0;
-	vector<cObjMesh*>::iterator it;
+	std::vector<cObjMesh*>::iterator it;
 	FOR_EACH(mesh_child,it)
 	{
 		filled_point+=(*it)->GetAllTriangle(point,polygon);
@@ -1063,7 +1063,7 @@ void cObjectNodeRoot::GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& pol
 
 void cObjectNodeRoot::OcclusionTest()
 {
-	vector<cObjLight*>::iterator it;
+	std::vector<cObjLight*>::iterator it;
 	FOR_EACH(light_child,it)
 		(*it)->OcclusionTest();
 }
@@ -1102,7 +1102,7 @@ void cObjectNodeRoot::SynchronizeGroupLod()
 	VISASSERT(RootLod);
 
 	group->lod=RootLod;
-	vector<cObjectNode*>::iterator it;
+	std::vector<cObjectNode*>::iterator it;
 	FOR_EACH(all_child,it)
 	{
 		cObjectNode* cur=*it;
@@ -1124,7 +1124,7 @@ void cObjectNodeRoot::SynchronizeGroupLod()
 
 void cObjectNodeRoot::DrawBadUV(cCamera *DrawNode)
 {
-	vector<cObjMesh*>::iterator it;
+	std::vector<cObjMesh*>::iterator it;
 	FOR_EACH(mesh_child,it)
 	{
 		(*it)->DrawBadUV(DrawNode);
@@ -1138,8 +1138,8 @@ void cObjectNodeRoot::AddLight(cUnkLight* light)
 
 void cObjectNodeRoot::GetEmitterMaterial(cObjMaterial& material)
 {
-	vector<cObjMesh*>& child=GetMeshChild();
-	vector<cObjMesh*>::iterator it;
+	std::vector<cObjMesh*>& child=GetMeshChild();
+	std::vector<cObjMesh*>::iterator it;
 	FOR_EACH(child,it)
 	{
 		cMeshBank* mb=(*it)->GetBank();

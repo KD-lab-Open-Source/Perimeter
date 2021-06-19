@@ -28,8 +28,6 @@
 #include <iostream>
 #endif
 
-using namespace std;
-
 // XTool
 #include "xutil.h"
 #include "xmath.h"

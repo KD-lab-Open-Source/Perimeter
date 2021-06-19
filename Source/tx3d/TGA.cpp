@@ -73,7 +73,7 @@ bool TGA::load(const char *fileName) {
 	XStream file(fileName, XS_IN);
 #endif
 	if (!!file) {
-		string errMsg("Error reading GeoTx TGA: ");
+		std::string errMsg("Error reading GeoTx TGA: ");
 		errMsg += fileName;
 		if(enable_load_assert)
 			xxassert(0, errMsg.c_str());

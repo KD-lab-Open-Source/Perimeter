@@ -12,8 +12,8 @@ Knowledge::Knowledge(const Knowledge& origin) {
 }
 
 Knowledge::~Knowledge() {
-	set <World*>::iterator sit;
-	set <World*>::iterator end = knownWorlds.end();
+	std::set <World*>::iterator sit;
+	std::set <World*>::iterator end = knownWorlds.end();
 	for (sit = knownWorlds.begin(); sit != end; sit++) {
 		(*sit)->released();
 	}
@@ -32,10 +32,10 @@ void Knowledge::worldVisited(World* world) {
 }
 
 void Knowledge::addKnowledge(const Knowledge& anotherKnowledge) {
-	set <World*>::const_iterator it;
-	set <World*>::const_iterator anotherBegin = anotherKnowledge.knownWorlds.begin();
-	set <World*>::const_iterator anotherEnd = anotherKnowledge.knownWorlds.end();
-	set <World*>::const_iterator end = knownWorlds.end();
+	std::set <World*>::const_iterator it;
+	std::set <World*>::const_iterator anotherBegin = anotherKnowledge.knownWorlds.begin();
+	std::set <World*>::const_iterator anotherEnd = anotherKnowledge.knownWorlds.end();
+	std::set <World*>::const_iterator end = knownWorlds.end();
 	for (it = anotherBegin; it != anotherEnd; it++) {
 		if (knownWorlds.find(*it) == end) {
 			(*it)->referenced();

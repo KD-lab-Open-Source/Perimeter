@@ -515,7 +515,7 @@ CBox::CBox(Vect3f size,LPCSTR str_cube)
 	}
 	enable_face[4]=false;
 
-	string path;
+	std::string path;
 	for(i=0;i<box_face;i++)
 	if(enable_face[i])
 	{
@@ -529,7 +529,7 @@ CBox::CBox(Vect3f size,LPCSTR str_cube)
 
 CBox::~CBox()
 {
-	vector<cTexture*>::iterator it;
+	std::vector<cTexture*>::iterator it;
 	FOR_EACH(pBox,it)
 	{
 		cTexture* p=*it;
@@ -815,8 +815,8 @@ void CSkySpere::Draw(cCamera *DrawNode)
 	DrawNode->SetZPlaneTemp(Vect2f(zplane.x,zplane.y*10));
 	rd->SetDrawNode(DrawNode);
 
-	vector<cObjMesh*>& meshes=pSkySphere->GetMeshChild();
-	vector<cObjMesh*>::iterator it;
+	std::vector<cObjMesh*>& meshes=pSkySphere->GetMeshChild();
+	std::vector<cObjMesh*>::iterator it;
 
 	FOR_EACH(meshes,it)
 		(*it)->Draw(DrawNode);

@@ -22,7 +22,7 @@ struct sAngleInterpolate
 
 class StreamInterpolator
 {
-	vector<char> stream;
+	std::vector<char> stream;
 	MTDECLARE(lock);
 	bool in_avatar;
 public:

@@ -2,7 +2,7 @@
 #include "StdAfx.h"
 #include "World.hpp"
 
-World::World(const string& sysName, const Vect3f& coords, int size, int filthLevel, float timeFactor)
+World::World(const std::string& sysName, const Vect3f& coords, int size, int filthLevel, float timeFactor)
 	: sysName(sysName),
 	coords(coords),
 	size(size),
@@ -169,8 +169,8 @@ void World::Portal::addPortal(Portal* portal) {
 	links.push_back(0);
 }
 void World::Portal::removePortal(Portal* portal) {
-	vector <Portal*>::iterator it = connectedPortals.begin();
-	vector <Object3D*>::iterator itLink = links.begin();
+	std::vector <Portal*>::iterator it = connectedPortals.begin();
+	std::vector <Object3D*>::iterator itLink = links.begin();
 	for (; it != connectedPortals.end(); it++, itLink++) {
 		if ((*it) == portal) {
 			break;

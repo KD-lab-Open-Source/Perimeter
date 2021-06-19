@@ -71,13 +71,13 @@ void terFilthSwarmWorm::Quant()
 
 	if(first && false)
 	{
-		list<terUnitBase*> target_list;
+		std::list<terUnitBase*> target_list;
 		FindComplexTarget(target_list,5,NULL);
 		if(!target_list.empty())
 		{
 			int cur=terLogicRND(target_list.size());
 
-			list<terUnitBase*>::iterator it=target_list.begin();
+			std::list<terUnitBase*>::iterator it=target_list.begin();
 			for(int i=0;i<cur;i++,it++);
 
 			TargetPoint=*it;
@@ -103,7 +103,7 @@ void terFilthSwarmWorm::Quant()
 	if(!TargetPoint)
 	{
 		UnitSet exclude;
-		list<terUnitBase*>::iterator it;
+		std::list<terUnitBase*>::iterator it;
 		FOR_EACH(exclude_list,it)
 			exclude.insert(*it);
 

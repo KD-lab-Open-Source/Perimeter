@@ -114,7 +114,7 @@ void ClusterFind::Set(bool enable_smooting)
 
 void ClusterFind::Relink()
 {
-	vector<Cluster>::iterator it;
+	std::vector<Cluster>::iterator it;
 
 	FOR_EACH(all_cluster,it)
 	{
@@ -135,7 +135,7 @@ void ClusterFind::Relink()
 void ClusterFind::CheckAllLink()
 {
 	Cluster* first=&all_cluster[0];
-	vector<Cluster>::iterator it;
+	std::vector<Cluster>::iterator it;
 	FOR_EACH(all_cluster,it)
 	{
 		Cluster& c=*it;
@@ -146,13 +146,13 @@ void ClusterFind::CheckAllLink()
 		xassert(c.ycenter>=0 && c.ycenter<4096);
 		xassert(/*c.self_id>=0 &&*/	c.self_id<8192);
 
-		vector<DWORD>::iterator itd;
+		std::vector<DWORD>::iterator itd;
 		FOR_EACH(c.index_link,itd)
 		{
 			xassert(/* *itd>=0 && */*itd<all_cluster.size());
 		}
 
-		vector<Cluster*>::iterator itc;
+		std::vector<Cluster*>::iterator itc;
 		FOR_EACH(c.link,itc)
 		{
 			Cluster* lc=*itc;
@@ -233,15 +233,15 @@ void ClusterFind::ClusterOne(int x,int y,int id,Cluster& c)
 		}
 
 		//swap
-		swap(pone,ptwo);
-		swap(size_one,size_two);
+		std::swap(pone,ptwo);
+		std::swap(size_one,size_two);
 	}
 
 	c.xcenter/=num_point;
 	c.ycenter/=num_point;
 	c.temp_set=true;
 
-	vector<DWORD>::iterator it;
+	std::vector<DWORD>::iterator it;
 	FOR_EACH(vtemp_set,it)
 	{
 		DWORD d=*it;
@@ -254,9 +254,8 @@ void ClusterFind::ClusterOne(int x,int y,int id,Cluster& c)
 
 }
 
-void ClusterFind::SoftPath(vector<Cluster*>& in_path,
-				Vect2i from,Vect2i to,
-				vector<Vect2i>& out_path)
+void ClusterFind::SoftPath(std::vector<Cluster*>& in_path,
+	Vect2i from,Vect2i to, std::vector<Vect2i>& out_path)
 {
 	out_path.clear();
 	if(in_path.empty())return;
@@ -267,7 +266,7 @@ void ClusterFind::SoftPath(vector<Cluster*>& in_path,
 	Vect2i p0,p1,p2;
 	p0=from;
 
-	vector<Vect2i> path;
+	std::vector<Vect2i> path;
 	path.reserve(8);
 
 	for(int i=1;i<size;i++)
@@ -301,7 +300,7 @@ void ClusterFind::SoftPath(vector<Cluster*>& in_path,
 			   path))
 			   i++;
 
-		vector<Vect2i>::iterator it;
+		std::vector<Vect2i>::iterator it;
 		FOR_EACH(path,it)
 			out_path.push_back(*it);
 
@@ -314,11 +313,8 @@ void ClusterFind::SoftPath(vector<Cluster*>& in_path,
 
 }
 
-bool ClusterFind::IterativeFindPath(Vect2i from,
-						   Vect2i center,Vect2i to,
-						   Vect2i up,Vect2i up_to,
-						   vector<Vect2i>& path
-						   )
+bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
+	Vect2i to, Vect2i up,Vect2i up_to, std::vector<Vect2i>& path)
 {
 	path.clear();
 	xassert(from.x>=0 && from.x<dx && from.y>=0 && from.y<dy);
@@ -350,7 +346,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from,
 		return false;
 	}
 
-	vector<Front> front;
+	std::vector<Front> front;
 	FindClusterFront(from.x,from.y,qcenter,front);
 	if(front.empty())
 	{
@@ -380,7 +376,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from,
 	f.x=f.y=-1;
 	distance=1e4;
 
-	vector<Front>::iterator it;
+	std::vector<Front>::iterator it;
 	FOR_EACH(front,it)
 	{
 		Front c=*it;
@@ -411,7 +407,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from,
 	xassert(pmap[end_point.y*dx+end_point.x]==qcenter);
 
 	{
-		vector<Vect2i> p;
+		std::vector<Vect2i> p;
 		BYTE cur=is_used[f.y*dx+f.x];
 
 		Vect2i cf=f;
@@ -506,7 +502,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from,
 			}
 		}
 
-		vector<Vect2i>::reverse_iterator it;
+		std::vector<Vect2i>::reverse_iterator it;
 		for(it=p.rbegin();it!=p.rend();it++)
 		{
 			path.push_back(*it);
@@ -660,7 +656,7 @@ bool ClusterFind::LineWalk(int xfrom,int yfrom,int xto,int yto,
 
 
 void ClusterFind::FindClusterFront(int x,int y,DWORD to,
-		vector<Front>& front)
+	std::vector<Front>& front)
 {
 	{
 		if(is_used_xmin<=is_used_xmax)
@@ -742,8 +738,8 @@ void ClusterFind::FindClusterFront(int x,int y,DWORD to,
 		}
 
 		//swap
-		swap(pone,ptwo);
-		swap(size_one,size_two);
+		std::swap(pone,ptwo);
+		std::swap(size_one,size_two);
 	}
 }
 
@@ -811,9 +807,8 @@ struct ClusterFindNormal
 	int cur_len;
 };
 
-void ClusterFind::BuildSidePath(vector<Vect2i>& in_path,
-					vector<Vect2i>& out_path,
-					int max_distance,bool left)
+void ClusterFind::BuildSidePath(std::vector<Vect2i>& in_path,
+	std::vector<Vect2i>& out_path, int max_distance,bool left)
 {
 /*
 Сдвинуть in_path максимально вбок.
@@ -837,7 +832,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 	if(size<2)
 		return;
 
-	vector<ClusterFindNormal> normal;
+	std::vector<ClusterFindNormal> normal;
 	normal.resize(size);
 
 	for(int i=0;i<size;i++)

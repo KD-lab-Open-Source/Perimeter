@@ -36,5 +36,3 @@ extern HWND snd_hWnd;
 #include <map>
 #include <vector>
 #include <string>
-using namespace std;
-

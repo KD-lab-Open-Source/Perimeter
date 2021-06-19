@@ -83,7 +83,7 @@ void cSpriteManager::Draw(cCamera *camera)
 	gb_RenderDevice->SetNoMaterial(ALPHA_BLEND,GetFrame()->GetPhase(),GetTexture());
 
 	quad->BeginDraw();
-	list<cSprite>::iterator it;
+	std::list<cSprite>::iterator it;
 	FOR_EACH(sprites,it)
 	{
 		cSprite& s=*it;
@@ -122,7 +122,7 @@ void cSprite::Release()
 void cSpriteManager::DeleteSprite(cSprite* sprite)
 {
 	MTEnter lock(sprite_lock);
-	list<cSprite>::iterator it;
+	std::list<cSprite>::iterator it;
 	FOR_EACH(sprites,it)
 	{
 		cSprite* s=&*it;

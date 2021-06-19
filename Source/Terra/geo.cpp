@@ -1510,11 +1510,11 @@ geoBreak1::geoBreak1(int x, int y, int rad, int beginNumBreaks){ //0-случа�
 	}
 };
 
-list<elementGeoBreak*>::iterator geoBreak1::delEementGeoBreak(list<elementGeoBreak*>::iterator pp)
+std::list<elementGeoBreak*>::iterator geoBreak1::delEementGeoBreak(std::list<elementGeoBreak*>::iterator pp)
 {
 	int _ownID=(*pp)->ownerID;
 	if(_ownID!=0){
-		list<elementGeoBreak*>::iterator pp2;
+		std::list<elementGeoBreak*>::iterator pp2;
 		int counterChildren=0;
 		for(pp2 = elGB.begin(); pp2 != elGB.end(); pp2++) if((*pp2)->ownerID==_ownID)counterChildren++;
 		if(counterChildren==1){
@@ -1529,7 +1529,7 @@ list<elementGeoBreak*>::iterator geoBreak1::delEementGeoBreak(list<elementGeoBre
 };
 
 int geoBreak1::quant(void){
-	list<elementGeoBreak*>::iterator pp;
+	std::list<elementGeoBreak*>::iterator pp;
 	for(pp = elGB.begin(); pp != elGB.end(); ){
 		eReturnQuantResult result=(*pp)->quant();
 
@@ -3140,8 +3140,8 @@ void bubble(int x, int y)
 		curAddonR-=dAddonR;
 	}
 
-	static list<sToolzDate> toolzDateLst;
-	list<sToolzDate>::iterator p;
+	static std::list<sToolzDate> toolzDateLst;
+	std::list<sToolzDate>::iterator p;
 	individualToolzer<T2TE_CHANGING_TERRAIN_HEIGHT> toolzerChangeTerHeight ;
 	for(p = toolzDateLst.begin(); p != toolzDateLst.end(); p++){
 		if(XRnd(2)) toolzerChangeTerHeight.influenceDZ(p->x, p->y, p->r, 0, 0);
@@ -3354,7 +3354,7 @@ bool sTorpedo::quant(void)
 		curAddonR-=dAddonR;
 	}
 
-	list<sToolzDate>::iterator p;
+	std::list<sToolzDate>::iterator p;
 	for(p = toolzDateLst.begin(); p != toolzDateLst.end(); p++){
 		if(XRnd(2)) toolzerChangeTerHeight.influenceDZ(p->x, p->y, p->r, 0, 0);
 	};
@@ -4008,8 +4008,8 @@ bool poiligonUP(int _x, int _y)
 	const int MAX_CROSS_POINT=20;
 	const int MAX_EARTH_POLIGON=MAX_CROSS_POINT-2;
 	static bool flag_init=0;
-	static vector<Vect2f> pointArr;
-	static list<sUPoligon*> poligonArr;
+	static std::vector<Vect2f> pointArr;
+	static std::list<sUPoligon*> poligonArr;
 	//vector<Vect2f>::iterator p;
 	if(flag_init==0) {
 		pointArr.reserve(MAX_CROSS_POINT);
@@ -4085,7 +4085,7 @@ bool poiligonUP(int _x, int _y)
 		}
 	}
 	step++;
-	list<sUPoligon*>::iterator p;
+	std::list<sUPoligon*>::iterator p;
 	for(p=poligonArr.begin(); p!=poligonArr.end(); /*p++*/){
 		if( (*p)->quant()==0) {
 			delete (*p);
@@ -4208,7 +4208,7 @@ bool sGeoFault::quant()
 //	step++;
 	fstep+=0.33f + frnd(0.17f);
 
-	list<sUPoligonN*>::iterator p;
+	std::list<sUPoligonN*>::iterator p;
 	for(p=poligonArr.begin(); p!=poligonArr.end(); /*p++*/){
 		if( (*p)->quant()==0) {
 			delete (*p);
@@ -4327,7 +4327,7 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 
 bool sGeoSwelling::quant()
 {
-	list<sUPoligonNSpec*>::iterator p;
+	std::list<sUPoligonNSpec*>::iterator p;
 	for(p=poligonArr.begin(); p!=poligonArr.end(); /*p++*/){
 		if(fabsRnd(1.f)>0.4f){
 			(*p)->flagBegin |=true;
@@ -5135,8 +5135,8 @@ bool meshM2VM::load(const char* fname)//, int numMesh)
 	}
 */
 
-	vector<sPolygon> poligonArr;
-	vector<Vect3f> pointArr;
+	std::vector<sPolygon> poligonArr;
+	std::vector<Vect3f> pointArr;
 	GetAllTriangle(fname, pointArr, poligonArr);
 
 	fname3DS=strdup(fname);
@@ -5342,9 +5342,9 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		c=&vrtx[face[i].v3];
 
 		// отсортируем вершины грани по sy
-		if (a->y > b->y) swap(a,b);
-		if (a->y > c->y) swap(a,c);
-		if (b->y > c->y) swap(b,c);
+		if (a->y > b->y) std::swap(a,b);
+		if (a->y > c->y) std::swap(a,c);
+		if (b->y > c->y) std::swap(b,c);
 
 
 		int current_sx, current_sy;
@@ -5806,18 +5806,18 @@ s_Mesh2VMapDispather::s_Mesh2VMapDispather(void)
 
 s_Mesh2VMapDispather::~s_Mesh2VMapDispather(void)
 {
-	vector<s_EarthUnit*>::iterator ei;
+	std::vector<s_EarthUnit*>::iterator ei;
 	for(ei=EUArr.begin(); ei!=EUArr.end(); ei++){
 		delete *ei;
 	}
 	EUArr.clear();
-	vector<s_Mesh2VMapDate*>::iterator mdi;
+	std::vector<s_Mesh2VMapDate*>::iterator mdi;
 	for(mdi=M2VMDateArr.begin(); mdi!=M2VMDateArr.end(); mdi++){
 		delete *mdi;
 	}
 	M2VMDateArr.clear();
 
-	list<meshM2VM*>::iterator mi;
+	std::list<meshM2VM*>::iterator mi;
 	for(mi=meshList.begin(); mi!=meshList.end(); mi++){
 		delete *mi;
 	}
@@ -5860,7 +5860,7 @@ s_EarthUnit* s_Mesh2VMapDispather::getEarthUnit(s_Mesh2VMapDate * mmDate)
 void s_Mesh2VMapDispather::deleteEarthUnit(s_EarthUnit* eu, bool autoDeleteMVMDate)
 {
 	s_Mesh2VMapDate* pCurM2VMDate=0;
-	vector<s_EarthUnit*>::iterator ei;
+	std::vector<s_EarthUnit*>::iterator ei;
 	for(ei=EUArr.begin(); ei!=EUArr.end(); ei++){
 		if(eu==*ei) {
 			pCurM2VMDate=(*ei)->meshDate;
@@ -5880,7 +5880,7 @@ void s_Mesh2VMapDispather::deleteEarthUnit(s_EarthUnit* eu, bool autoDeleteMVMDa
 		}
 
 		if(cntPresent==0){
-			vector<s_Mesh2VMapDate*>::iterator mdi;
+			std::vector<s_Mesh2VMapDate*>::iterator mdi;
 			for(mdi=M2VMDateArr.begin(); mdi!=M2VMDateArr.end(); mdi++){
 				if(pCurM2VMDate==*mdi){
 					delete *mdi;
@@ -5899,7 +5899,7 @@ meshM2VM* s_Mesh2VMapDispather::getMeshFrom3DS(const char * name3DS)
 	strcpy(cb, Path2TTerraResource); //"\\RESOURCE\\Tools\\"
 	strcat(cb, name3DS);
 
-	list<meshM2VM*>::iterator mi;
+	std::list<meshM2VM*>::iterator mi;
 	for(mi=meshList.begin(); mi!=meshList.end(); mi++){
 		if(stricmp(cb, (*mi)->fname3DS)==0) break;
 	}
@@ -6225,7 +6225,7 @@ bool s_EarthUnit::quant()
 		nextKFIt++;
 		if( (flag_loop==1) && ((*curKFIt)->loopCount > 0) ){
 			(*curKFIt)->loopCount-=1;
-			list<s_commandInformation *>::iterator p;
+			std::list<s_commandInformation *>::iterator p;
 			for(p=meshDate->commandList_immediately.begin(); p!=meshDate->commandList_immediately.end(); p++){
 				if((*p)->numKF==(*curKFIt)->KF2Loop){
 					nextKFIt=p;

@@ -30,15 +30,15 @@ namespace tx3d {
 				diffColor *= degree;
 			}
 
-			string paramString() const;
+			std::string paramString() const;
 
-			const string& getType() const {
+			const std::string& getType() const {
 				return TYPE_NAME;
 			}
 
-			static const string TYPE_NAME;
-			static const string BGCOLOR;
-			static const string FGCOLOR;
+			static const std::string TYPE_NAME;
+			static const std::string BGCOLOR;
+			static const std::string FGCOLOR;
 			Vector3D bgColor;
 			Vector3D diffColor;
 	};

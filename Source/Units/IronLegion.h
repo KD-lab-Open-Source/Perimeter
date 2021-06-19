@@ -50,7 +50,7 @@ public:
 
 	bool destroyZeroLayer;
     
-	vector<EnumWrapper<terUnitAttributeID> > EnableStructure;
+	std::vector<EnumWrapper<terUnitAttributeID> > EnableStructure;
     	
 	AttributeLegionary();
 
@@ -200,7 +200,7 @@ private:
 
 	DurationTimer invisibilityTimer_;
 
-	vector<Vect2f> out_path; // Путь к цели, персонально для этого юнита
+	std::vector<Vect2f> out_path; // Путь к цели, персонально для этого юнита
 	mutable float deltaPath_;
 	
 	//-------------------

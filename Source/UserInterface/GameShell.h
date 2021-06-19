@@ -18,20 +18,20 @@ struct CommandLineData {
 
 	CommandLineData(
 		bool host = false,
-		string name = "",
+		std::string name = "",
 		bool p2p = false,
-		string ip = "",
+		std::string ip = "",
 		GUID gameID = GUID(),
-		string roomName = "",
-		string password = "" );
+		std::string roomName = "",
+		std::string password = "" );
 
 	bool host;
-	string name;
+	std::string name;
 	bool p2p;
-	string ip;
+	std::string ip;
 	GUID gameID;
-	string roomName;
-	string password;
+	std::string roomName;
+	std::string password;
 };
 
 //------------------------------------------
@@ -69,8 +69,8 @@ public:
 	bool showEnergy() const;
 
 	void setCountDownTime(int timeLeft);
-	const string& getCountDownTime();
-	string getTotalTime() const;
+	const std::string& getCountDownTime();
+	std::string getTotalTime() const;
 
 //------------------------
 	void EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam);
@@ -221,8 +221,8 @@ public:
 	void showReelModal(const char* binkFileName, const char* soundFileName, bool localized = false, bool stopBGMusic = true, int alpha = 255);
 	void showPictureModal(const char* pictureFileName, bool localized, int stableTime);
 
-	void changeControlState(const vector<SaveControlData>& newControlStates);
-	void fillControlState(vector<SaveControlData>& controlStatesToSave);
+	void changeControlState(const std::vector<SaveControlData>& newControlStates);
+	void fillControlState(std::vector<SaveControlData>& controlStatesToSave);
 
 	void setScriptReelEnabled(bool isScriptReelEnabled);
 	bool isScriptReelEnabled() {
@@ -233,7 +233,7 @@ public:
 		setScriptReelEnabled(!scriptReelEnabled);
 	}
 
-	static const string& getLocDataPath() {
+	static const std::string& getLocDataPath() {
 		if (locale.empty()) {
 			locale = getStringFromReg(mainCurrUserRegFolder, "Locale");
 			if (locale.empty()) {
@@ -273,10 +273,10 @@ public:
 	};
 	void callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode);
 	
-	void showConnectFailedInGame(const string& playerList);
+	void showConnectFailedInGame(const std::string& playerList);
 	void hideConnectFailedInGame(bool connectionRestored = true);
 
-	void playerDisconnected(string& playerName, bool disconnectOrExit);
+	void playerDisconnected(std::string& playerName, bool disconnectOrExit);
 
 	enum GeneralErrorType {
 		GENERAL_CONNECTION_FAILED,
@@ -348,7 +348,7 @@ private:
 		
 	MissionEditor* missionEditor_;
 
-	string defaultSaveName_;
+	std::string defaultSaveName_;
 
 	int synchroByClock_;
 	int framePeriod_;
@@ -357,7 +357,7 @@ private:
 	bool recordMovie_;
 	int movieShotNumber_;
 	int	movieStartTime_;
-	string movieName_;
+	std::string movieName_;
 
 	SavePrm savePrm_;
 
@@ -366,8 +366,8 @@ private:
 	int countDownTimeMillisLeft;
 	int countDownTimeMillisLeftVisible;
 
-	string countDownTimeLeft;
-	string totalTimeLeft;
+	std::string countDownTimeLeft;
+	std::string totalTimeLeft;
 
 	bool gamePausedByMenu;
 
@@ -399,7 +399,7 @@ private:
 
 	void setLocalizedFontSizes();
 
-	static string locale;
+	static std::string locale;
 
 	bool soundPushedByPause;
 	int soundPushedPushLevel;

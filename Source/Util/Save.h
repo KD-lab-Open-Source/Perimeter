@@ -16,8 +16,8 @@
 #include "Timers.h"
 #include "../UserInterface/SoundTrack.h"
 
-typedef vector<Vect2i> Vect2iVect;
-typedef vector<PrmString> PrmStringList;
+typedef std::vector<Vect2i> Vect2iVect;
+typedef std::vector<PrmString> PrmStringList;
 
 const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString);
 const char* editModelNameDialog(HWND hwnd, const char* initialString);
@@ -31,7 +31,7 @@ const char* editCameraSplineName(HWND hwnd, const char* initialString);
 struct SaveDamageMolecula
 {
 	bool isAlive;
-	vector<int> elementsDead;
+	std::vector<int> elementsDead;
 
 	SaveDamageMolecula() {
 		isAlive = true;
@@ -126,7 +126,7 @@ struct SaveNodeController
 struct SaveInterpolationReal
 {
 	SaveNodeController node;
-	vector<SaveNodeController> nodeControllers;
+	std::vector<SaveNodeController> nodeControllers;
 	
 	template<class Archive>	
 	void serialize(Archive& ar) {
@@ -263,7 +263,7 @@ struct SaveUnitRealData : SaveUnitData
 	float accumulatedEnergy; 
 	int zeroLayerCounter;
 	float weaponChargeLevel;
-	vector<Vect3f> wayPoints;
+	std::vector<Vect3f> wayPoints;
 	ShareHandle<SaveWeaponData> weapon;
 
 	SaveUnitRealData() {
@@ -371,14 +371,14 @@ struct SaveUnitSquadData : SaveUnitData
 	Vect2f stablePosition;
 	EnumWrapper<terUnitAttributeID> currentMutation;
 	float curvatureRadius;
-	vector<ShareHandle<SaveUnitData> > squadMembers;
+	std::vector<ShareHandle<SaveUnitData> > squadMembers;
 
-	vector<Vect2f> wayPoints;
+	std::vector<Vect2f> wayPoints;
 
-	vector<Vect2f> patrolPoints;
+	std::vector<Vect2f> patrolPoints;
 	int patrolIndex;
 
-	vector<SaveAttackPoint> attackPoints;
+	std::vector<SaveAttackPoint> attackPoints;
 	SaveUnitLink squadToFollow;
 
 	bool offensiveMode;
@@ -529,7 +529,7 @@ struct SaveUnitLegionaryData : SaveUnitRealData
 	bool inSquad;
 	Vect2f localPosition;
 	bool localPositionValid;
-	vector<Vect2f> wayPoints;
+	std::vector<Vect2f> wayPoints;
 
 	SaveUnitLegionaryData() {
 		transportedSoldiers = 0; 
@@ -707,11 +707,11 @@ struct SaveUnitFilthData : SaveUnitData
 
 	int sleep_timer;
 	bool create_first;
-	vector<Vect2f> hole_position;
-	vector<int> hole_position_inited;
+	std::vector<Vect2f> hole_position;
+	std::vector<int> hole_position_inited;
 	bool kill_of_end;
 
-	vector<ShareHandle<SaveUnitData> > swarmList;
+	std::vector<ShareHandle<SaveUnitData> > swarmList;
 
 	SaveUnitFilthData() {
 		filthType = FILTH_SPOT_ID_NONE; 
@@ -835,7 +835,7 @@ struct SaveFilthSwarmAnt : SaveFilthSwarm
 
 	int attack_period;
 
-	vector<ShareHandle<SaveUnitData> > unitList;
+	std::vector<ShareHandle<SaveUnitData> > unitList;
 
 	SaveFilthSwarmAnt() {
 		DeltaAngle = 0;
@@ -907,7 +907,7 @@ struct SaveFilthSpline : SaveUnitRealData
 	Vect3f user_front;
 	bool interpolation_linear;
 
-	vector<Vect3f> way_points;
+	std::vector<Vect3f> way_points;
 
 	SaveFilthSpline() {
 		delta_time = 0;
@@ -947,7 +947,7 @@ struct SaveFilthSwarmCrow : SaveFilthSwarm
 	Vect3f attack_pos;
 	int attack_period;
 	
-	vector<ShareHandle<SaveUnitData> > unitList;
+	std::vector<ShareHandle<SaveUnitData> > unitList;
 
 	SaveFilthSwarmCrow() {
 		generate_creature_num=0;
@@ -1002,7 +1002,7 @@ struct SaveFilthCrow : SaveFilthSpline
 struct SaveFilthSwarmDaemon : SaveFilthSwarm
 {
 	bool must_init_pos;
-	vector<Vect3f> init_pos;
+	std::vector<Vect3f> init_pos;
 	Vect3f attack_pos;
 
 	int attack_period;
@@ -1015,7 +1015,7 @@ struct SaveFilthSwarmDaemon : SaveFilthSwarm
 	float GenerationSpeed;
 
 	Vect3f pin;
-	vector<ShareHandle<SaveUnitData> > unit_list;
+	std::vector<ShareHandle<SaveUnitData> > unit_list;
 
 	SaveFilthSwarmDaemon() {
 		must_init_pos = false;
@@ -1196,7 +1196,7 @@ struct SaveFilthSwarmGhost : SaveFilthSwarm
 	int attack_period;
 	Vect3f TargetPosition;
 	int TargetCount;
-	vector<ShareHandle<SaveUnitData> > unitList;
+	std::vector<ShareHandle<SaveUnitData> > unitList;
 
 	SaveFilthSwarmGhost() {
 		angle_z = 0;
@@ -1286,7 +1286,7 @@ struct SaveFilthSwarmRat : SaveFilthSwarm
 	Vect3f TargetPosition;
 
 	int attack_period;
-	vector<ShareHandle<SaveUnitData> > unitList;
+	std::vector<ShareHandle<SaveUnitData> > unitList;
 
 	SaveFilthSwarmRat() {
 		DeltaAngle = 0;
@@ -1362,7 +1362,7 @@ struct SaveFilthSwarmShark : SaveFilthSwarm
 	int attack_period;
 	SaveTerGenerate generate;
 
-	vector<ShareHandle<SaveUnitData> > unitList;
+	std::vector<ShareHandle<SaveUnitData> > unitList;
 
 	SaveFilthSwarmShark() {
 		attack_period = 0;
@@ -1418,7 +1418,7 @@ struct SaveFilthSwarmVolcano : SaveFilthSwarm
 {
 	int generation_period;
 	int creature_num;
-	vector<ShareHandle<SaveUnitData> > unitList;
+	std::vector<ShareHandle<SaveUnitData> > unitList;
 
 	SaveFilthSwarmVolcano() {
 		generation_period = 0;
@@ -1460,7 +1460,7 @@ struct SaveFilthSwarmWasp : SaveFilthSwarm
 	Vect3f TargetPosition;
 	float attack_count;
 
-	vector<ShareHandle<SaveUnitData> > unitList;
+	std::vector<ShareHandle<SaveUnitData> > unitList;
 
 	SaveFilthSwarmWasp() {
 		unit_id = UNIT_ATTRIBUTE_FILTH_WASP;
@@ -1680,7 +1680,7 @@ struct SaveCameraData
 struct SaveCameraSplineData // Сплайн камеры
 {
 	PrmString name; 
-	vector<SaveCameraData> path; 
+	std::vector<SaveCameraData> path;
 	bool useAsSpline;
 	Vect2f position;
 	Vect2f angle;
@@ -2090,7 +2090,7 @@ struct ActionSquadAttack : ActionForAI // Атаковать сквадом
 {
 	EnumWrapper<ChooseSquadID> chooseSquadID; 
 	EnumWrapper<terUnitAttributeID> attackByType;
-	vector<EnumWrapper<terUnitAttributeID> > unitsToAttack; 
+	std::vector<EnumWrapper<terUnitAttributeID> > unitsToAttack;
 	BitVector<terUnitClassType> unitClassToAttack; 
 	bool offensive; 
 	
@@ -2199,7 +2199,7 @@ struct ActionSquadMove : ActionForAI // Послать сквад в точку объекта по метке
 struct ActionAttackBySpecialWeapon : ActionForAI // Атаковать спецоружием
 {
 	EnumWrapper<terUnitAttributeID> weapon; 
-	vector<EnumWrapper<terUnitAttributeID> > unitsToAttack; 
+	std::vector<EnumWrapper<terUnitAttributeID> > unitsToAttack;
 	BitVector<terUnitClassType> unitClassToAttack; 
 
 	ActionAttackBySpecialWeapon() {
@@ -2440,7 +2440,7 @@ struct SaveControlData
 
 struct ActionSetControls : Action // Установить параметры кнопок
 {
-	vector<SaveControlData> controls; 
+	std::vector<SaveControlData> controls;
 
 	void activate(AIPlayer& aiPlayer);
 
@@ -2547,7 +2547,7 @@ struct SavePlayerManualData
 			ar & TRANSLATE_NAME(static_cast<CustomString&>(*this), "name", "&Имя");
 		}	
 	};
-	typedef vector<TriggerChainName> TriggerChainNames;
+	typedef std::vector<TriggerChainName> TriggerChainNames;
 	TriggerChainNames triggerChainNames; 
 	TriggerChain triggerChainOld; 
 
@@ -2624,12 +2624,12 @@ struct SavePlayerStats
 struct SavePlayerData
 {
 	ShareHandle<SaveUnitData> frame;
-	vector<ShareHandle<SaveUnitData> > buildings;
-	vector<ShareHandle<SaveUnitData> > catchedFrames;
+	std::vector<ShareHandle<SaveUnitData> > buildings;
+	std::vector<ShareHandle<SaveUnitData> > catchedFrames;
 	int compAndUserID;
 	SavePlayerStats playerStats;
-	vector<ShareHandle<SaveUnitData> > commonObjects;
-	list<TriggerChain> currentTriggerChains;
+	std::vector<ShareHandle<SaveUnitData> > commonObjects;
+	std::list<TriggerChain> currentTriggerChains;
 
 	SavePlayerData() {
 		compAndUserID = 0;
@@ -2649,7 +2649,7 @@ struct SavePlayerData
 
 struct SaveObjectsData
 {
-	vector<ShareHandle<SaveUnitData> > objects; 
+	std::vector<ShareHandle<SaveUnitData> > objects;
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
@@ -2659,7 +2659,7 @@ struct SaveObjectsData
 
 struct SaveWorldObjects
 {
-	vector<ShareHandle<SaveUnitData> > alphaPotentials;
+	std::vector<ShareHandle<SaveUnitData> > alphaPotentials;
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
@@ -2714,15 +2714,15 @@ struct SaveTask
 struct SaveManualData // Данные, редактируемые руками
 {
 	SoundTracks soundTracks;
-	vector<SavePlayerManualData> players; 
-	vector<SaveControlData> controls; 
+	std::vector<SavePlayerManualData> players;
+	std::vector<SaveControlData> controls;
 	
 	float spiralChargingEnergy; 
 	int spiralChargingTime;
 	int spiralChargingPriority;
 	int zeroLayerHeight; 
-	vector<SaveCameraSplineData> cameras; 
-	vector<SaveBuildingInstallerInstruction> buildingInstallerInstructions; 
+	std::vector<SaveCameraSplineData> cameras;
+	std::vector<SaveBuildingInstallerInstruction> buildingInstallerInstructions;
 
 	enum OmegaMissionType { 
 		OMEGA_UPGRADE, // Проапгрейдить
@@ -2789,7 +2789,7 @@ DECLARE_ENUM_DESCRIPTOR_ENCLOSED(SaveManualData, OmegaMissionType)
 
 //---------------------------------
 struct SavePrm {
-	vector<SavePlayerData> players; 
+	std::vector<SavePlayerData> players;
 
 	SaveObjectsData environment; 
 	SaveObjectsData filth; 
@@ -2797,7 +2797,7 @@ struct SavePrm {
 
 	SaveWorldObjects worldObjects; 
 
-	vector<SaveTask> activeTasks;
+	std::vector<SaveTask> activeTasks;
 
 	SaveManualData manualData; 
 
@@ -2817,14 +2817,14 @@ struct SavePrm {
 	}
 };
 
-typedef vector<ShareHandle<Condition> > ConditionList;
-typedef vector<ShareHandle<SaveUnitData> > SaveUnitDataList;
-typedef vector<SavePlayerData> SavePlayerDataList;
-typedef vector<SavePlayerManualData> SavePlayerManualDataList;
-typedef vector<SaveControlData> SaveControlDataList;
+typedef std::vector<ShareHandle<Condition> > ConditionList;
+typedef std::vector<ShareHandle<SaveUnitData> > SaveUnitDataList;
+typedef std::vector<SavePlayerData> SavePlayerDataList;
+typedef std::vector<SavePlayerManualData> SavePlayerManualDataList;
+typedef std::vector<SaveControlData> SaveControlDataList;
 
-typedef vector<EnumWrapper<terUnitAttributeID> > UnitAttributeIDList;
-typedef vector<SaveTask> SaveTaskList;
+typedef std::vector<EnumWrapper<terUnitAttributeID> > UnitAttributeIDList;
+typedef std::vector<SaveTask> SaveTaskList;
 
 //--------------------------------------
 template<class D, class B>

@@ -11,14 +11,14 @@
 template<class Base>
 class EditClassDescriptor;
 
-inline string getEnumToken(XBuffer& buffer)
+inline std::string getEnumToken(XBuffer& buffer)
 {
     while(buffer() == ' ' || buffer() == '|')
         ++buffer;
     const char* marker = &buffer();
     while(buffer() != '|' && buffer() != 0)
         ++buffer;
-    string str(marker, &buffer() - marker);
+	std::string str(marker, &buffer() - marker);
     while(str.size() && str[str.size() - 1] == ' ')
         str.pop_back();
     return str;
@@ -74,9 +74,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<save_primitive_impl<U> >,
-            Select<boost::is_pointer<U>, 
+            Select<std::is_pointer<U>,
                 Identity<save_pointer_impl<U> >,
-                Select<boost::is_array<U>, 
+                Select<std::is_array<U>,
                     Identity<save_array_impl<U> >,
                     Identity<save_non_primitive_impl<U> >
                 >
@@ -206,7 +206,7 @@ private:
 	void savePointer(const T* t)
     {
 		currentNode_->setComboList(TreeNode::POLYMORPHIC, EditClassDescriptor<T>::instance().comboListAlt().c_str());
-		typedef EditClassDescriptor<typename boost::remove_const<T>::type> Descriptor;
+		typedef EditClassDescriptor<typename std::remove_const<T>::type> Descriptor;
 		currentNode_->setTreeNodeFunc(Descriptor::instance().treeNodeFunc);
 		if(!t)
 			return;
@@ -218,12 +218,12 @@ private:
 	}
 
 	template<class T, class A>
-	EditOArchive& operator&(const vector<T, A>& cont)
+	EditOArchive& operator&(const std::vector<T, A>& cont)
 	{
 		setType<T>();
 		setDefaultTreeNode<T>(TreeNode::STATIC);
 		int i = 0;
-		typename vector<T, A>::const_iterator it;
+		typename std::vector<T, A>::const_iterator it;
 		FOR_EACH(cont, it){
 			XBuffer buf;
 			buf < "[" <= i++ < "]";
@@ -233,12 +233,12 @@ private:
 	}
 
 	template<class T, class A>
-	EditOArchive& operator&(const list<T, A>& cont)
+	EditOArchive& operator&(const std::list<T, A>& cont)
 	{
 		setType<T>();
 		setDefaultTreeNode<T>(TreeNode::STATIC);
 		int i = 0;
-        typename list<T, A>::const_iterator it;
+        typename std::list<T, A>::const_iterator it;
 		FOR_EACH(cont, it){
 			XBuffer buf;
 			buf < "[" <= i++ < "]";
@@ -253,7 +253,7 @@ private:
 		(*this) & TRANSLATE_NAME(t.first, "first", "&Ключ");
 		(*this) & TRANSLATE_NAME(t.second, "second", "Значение");
 
-		string name = currentNode_->name();
+		std::string name = currentNode_->name();
 		TreeNode::const_iterator i;
 		FOR_EACH(currentNode_->front()->children(), i)
 			if(!(*i)->name().empty() && (*i)->name()[0] == '&'){
@@ -320,7 +320,7 @@ private:
 		return *this;
 	}
 
-	EditOArchive& operator&(const string& value)
+	EditOArchive& operator&(const std::string& value)
     {
         currentNode_->setValue(value.c_str());
 		currentNode_->setEditType(TreeNode::EDIT);
@@ -384,9 +384,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<load_primitive_impl<U> >,
-            Select<boost::is_pointer<U>, 
+            Select<std::is_pointer<U>,
                 Identity<load_pointer_impl<U> >,
-                Select<boost::is_array<U>, 
+                Select<std::is_array<U>,
                     Identity<load_array_impl<U> >,
                     Identity<load_non_primitive_impl<U> >
                 >
@@ -474,7 +474,7 @@ private:
 	template<class T>
 	void loadPointer(T*& t)
     {
-		const string& typeName = currentNode_->value();
+		const std::string& typeName = currentNode_->value();
 		if(typeName.empty()){
 			if(t){
 				delete t;
@@ -482,7 +482,7 @@ private:
 			}
 			return;
 		}
-		typedef EditClassDescriptor<typename boost::remove_const<T>::type> Descriptor;
+		typedef EditClassDescriptor<typename std::remove_const<T>::type> Descriptor;
 		if(t){
 			if(typeName == Descriptor::instance().nameAlt(*t)){
 				Descriptor::instance().findAlt(typeName.c_str()).load(*this, t);
@@ -497,7 +497,7 @@ private:
 	}
 
 	template<class T, class A>
-	EditIArchive& operator&(vector<T, A>& cont)
+	EditIArchive& operator&(std::vector<T, A>& cont)
     {
 		int count = currentNode_->size();
 		if(count != cont.size()){
@@ -509,7 +509,7 @@ private:
 			}
 		}
 		else{
-            typename vector<T, A>::iterator i;
+            typename std::vector<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & TRANSLATE_NAME(*i, "", "");
 		}
@@ -517,7 +517,7 @@ private:
     }
 
 	template<class T, class A>
-	EditIArchive& operator&(list<T, A>& cont)
+	EditIArchive& operator&(std::list<T, A>& cont)
     {
 		int count = currentNode_->size();
 		if(count != cont.size()){
@@ -528,7 +528,7 @@ private:
 			}
 		} 
 		else{
-            typename list<T, A>::iterator i;
+            typename std::list<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				(*this) & TRANSLATE_NAME(*i, "", "");
 		}
@@ -575,7 +575,7 @@ private:
 		
 		t.value() = (Value)0;
 		for(;;){
-			string name = getEnumToken(valueBuffer);
+			std::string name = getEnumToken(valueBuffer);
 			if(name == "")
 				break;
 			t.value() |= descriptor.keyByNameAlt(name.c_str());
@@ -604,7 +604,7 @@ private:
 		return *this;
 	}
 
-	EditIArchive& operator&(string& value){
+	EditIArchive& operator&(std::string& value){
 		value = currentNode_->value();
 		return *this;
 	}
@@ -682,7 +682,7 @@ public:
 	};
 
     typedef typename ClassDescriptor<Base, EditOArchive, EditIArchive>::SerializerBase SerializerBase;
-    typedef map<string, SerializerBase*> Map;
+    typedef std::map<std::string, SerializerBase*> Map;
 
 	void add(SerializerBase& serializer, const char* name, const char* nameAlt) {
 		ClassDescriptor<Base, EditOArchive, EditIArchive>::add(serializer, name, nameAlt);
@@ -719,7 +719,7 @@ public:
 	template<class T>
 	const char* nameAlt(const T& t) const {
 		const char* name = get_type_id<T>().c_str();
-		map<string, string>::const_iterator i = mapNameToNameAlt_.find(name);
+		std::map<std::string, std::string>::const_iterator i = mapNameToNameAlt_.find(name);
 		if(i == mapNameToNameAlt_.end()){
 			xassertStr(0 && "Unregistered class", name);
 			ErrH.Abort("EditClassDescriptor::nameAlt Unregistered class", XERR_USER, 0, name);
@@ -727,8 +727,8 @@ public:
 		return i->second.c_str();
 	}
 
-	static string& comboListAlt() {
-		static string comboListAlt_;
+	static std::string& comboListAlt() {
+		static std::string comboListAlt_;
 		return comboListAlt_;
 	}
 
@@ -742,7 +742,7 @@ public:
 		const char* end = start;
 		while(*++end != 0 && *end != '|');
 
-		string name(start, end);
+		std::string name(start, end);
 		return instance().findAlt(name.c_str()).treeNode();
 	}
 
@@ -752,7 +752,7 @@ public:
 
 private:
 	Map mapAlt_;
-	map<string, string> mapNameToNameAlt_;
+	std::map<std::string, std::string> mapNameToNameAlt_;
 };
 
 #endif //__EDIT_ARCHIVE_H__

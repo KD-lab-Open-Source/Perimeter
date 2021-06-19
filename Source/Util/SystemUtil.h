@@ -99,20 +99,20 @@ public:
 };
 
 // ---  Files ------------------------------
-inline string setExtention(const char* file_name, const char* extention)
+inline std::string setExtention(const char* file_name, const char* extention)
 {
-	string str = file_name;
+	std::string str = file_name;
 	unsigned int pos = str.rfind(".");
-	if(pos != string::npos)
+	if(pos != std::string::npos)
 		str.erase(pos, str.size());
 	return str + "." + extention;
 }
 
-inline string getExtention(const char* file_name)
+inline std::string getExtention(const char* file_name)
 {
-	string str = file_name;
+	std::string str = file_name;
 	unsigned int pos = str.rfind(".");
-	if(pos != string::npos){
+	if(pos != std::string::npos){
 		str.erase(0, pos + 1);
 		strlwr((char*)str.c_str());
 		while(isspace(str[str.size() - 1]))
@@ -124,11 +124,11 @@ inline string getExtention(const char* file_name)
 }
 
 // --- Registry ------
-string getStringFromReg(const string& folderName, const string& keyName);
-void putStringToReg(const string& folderName, const string& keyName, const string& value);
+std::string getStringFromReg(const std::string& folderName, const std::string& keyName);
+void putStringToReg(const std::string& folderName, const std::string& keyName, const std::string& value);
 
 // --- Formatting ------
-string formatTimeWithHour(int timeMilis);
-string formatTimeWithoutHour(int timeMilis);
+std::string formatTimeWithHour(int timeMilis);
+std::string formatTimeWithoutHour(int timeMilis);
 
 #endif //__SYSTEM_UTIL_H__

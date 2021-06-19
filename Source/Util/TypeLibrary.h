@@ -10,17 +10,17 @@
 #include "Serialization.h"
 
 // string adaptor
-inline const string key2String(const string& data) {
+inline const std::string key2String(const std::string& data) {
 	return data;
 }
 
-inline void setKey(string& data, const char* str) {
+inline void setKey(std::string& data, const char* str) {
 	data = str;
 }
 
 // EnumWrapper adaptor
 template<class Enum>
-inline const string key2String(const EnumWrapper<Enum>& data) {
+inline const std::string key2String(const EnumWrapper<Enum>& data) {
 	return getEnumDescriptor(Enum(0)).nameAlt(data.value());
 }
 
@@ -96,7 +96,7 @@ public:
 
 	template<class Archive>
 	void serialize(Archive& ar) {
-		typedef list<typename Map::value_type> List;
+		typedef std::list<typename Map::value_type> List;
 		List tmpStorage;
 		if(ar.isOutput()){
             typename Map::iterator i;
@@ -138,7 +138,7 @@ public:
 
 private:
 	Map map_;
-	string comboList_;
+	std::string comboList_;
 };
 
 //////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ template<const char editName[]>
 class StringTable
 {
 public:
-	typedef vector<string> Strings;
+	typedef std::vector<std::string> Strings;
 
 	class Reference 
 	{
@@ -236,7 +236,7 @@ public:
 
 private:
 	Strings strings_;
-	string comboList_;
+	std::string comboList_;
 };
 
 #endif //__TYPE_LIBRARY_H__

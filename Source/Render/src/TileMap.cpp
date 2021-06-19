@@ -158,9 +158,9 @@ void cTileMap::Draw(cCamera *DrawNode)
 
 			for(int ir=0;ir<tile.region_point.size();ir++)
 			{
-				vector<Vect2s>& point=tile.region_point[ir];
+				std::vector<Vect2s>& point=tile.region_point[ir];
 				npoint+=point.size();
-				vector<Vect2s>::iterator it;
+				std::vector<Vect2s>::iterator it;
 				FOR_EACH(point,it)
 				{
 					Render->DrawPoint(Vect3f(it->x,it->y,zeroh),sColor4c(0,255,255,100));
@@ -202,7 +202,7 @@ void cTileMap::UpdateMap(const Vect2i& pos1,const Vect2i& pos2)
 		debug_rect.push_back(rc);
 	}
 
-	vector<UpdateMapData>::iterator it;
+	std::vector<UpdateMapData>::iterator it;
 	FOR_EACH(func_update_map,it)
 	{
 		it->f(pos1,pos2,it->data);
@@ -751,7 +751,7 @@ void cTileMap::BuildRegionPoint()
 	{
 		MTEnter enter(lock_update_rect);
 
-		vector<UpdateRect>::iterator it;
+		std::vector<UpdateRect>::iterator it;
 		FOR_EACH(update_rect,it)
 		{
 			Vect2i& pos1=it->p1;
@@ -831,7 +831,7 @@ void cTileMap::Animate(float dt)
 {
 	if(enable_debug_rect)
 	{
-		for(list<DebugRect>::iterator it=debug_rect.begin();it!=debug_rect.end();)
+		for(std::list<DebugRect>::iterator it=debug_rect.begin();it!=debug_rect.end();)
 		{
 			DebugRect& r=*it;
 			r.time-=dt;
@@ -847,7 +847,7 @@ void cTileMap::DrawLines()
 {
 	if(enable_debug_rect)
 	{
-		list<DebugRect>::iterator it;
+		std::list<DebugRect>::iterator it;
 		FOR_EACH(debug_rect,it)
 		{
 			DebugRect& r=*it;
@@ -871,7 +871,7 @@ void cTileMap::RegisterUpdateMap(UpdateMapFunction f,void* data)
 	UpdateMapData d;
 	d.f=f;
 	d.data=data;
-	vector<UpdateMapData>::iterator it=find(func_update_map.begin(),func_update_map.end(),d);
+	std::vector<UpdateMapData>::iterator it=find(func_update_map.begin(),func_update_map.end(),d);
 	bool is=it!=func_update_map.end();
 	xassert(!is);
 	if(is)
@@ -884,7 +884,7 @@ void cTileMap::UnRegisterUpdateMap(UpdateMapFunction f,void* data)
 	UpdateMapData d;
 	d.f=f;
 	d.data=data;
-	vector<UpdateMapData>::iterator it=find(func_update_map.begin(),func_update_map.end(),d);
+	std::vector<UpdateMapData>::iterator it=find(func_update_map.begin(),func_update_map.end(),d);
 	bool is=it!=func_update_map.end();
 	xassert(is);
 	if(!is)

@@ -183,7 +183,7 @@ SaveUnitData* terFilthSpot::universalSave(SaveUnitData* baseData)
 		data->create_first=create_first;
 	}
 
-	vector<HoleStruct>::iterator ith;
+	std::vector<HoleStruct>::iterator ith;
 	FOR_EACH(hole_pos,ith)
 	{
 		data->hole_position.push_back(ith->pos);
@@ -235,7 +235,7 @@ void terFilthSpot::universalLoad(const SaveUnitData* baseData)
 		setActivity(false);
 
 	{
-		int size=min(data->hole_position.size(),data->hole_position_inited.size());
+		int size= (std::min)(data->hole_position.size(),data->hole_position_inited.size());
 		for(int i=0;i<size;i++)
 		{
 			HoleStruct s;
@@ -989,7 +989,7 @@ terUnitBase* terFilthSwarm::CalcDistance(terUnitBase* unit,float& dist,const Vec
 	return NULL;
 }
 
-void terFilthSwarm::FindComplexTarget(list<terUnitBase*>& target_list,int max_target,UnitSet* exclude)
+void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int max_target,UnitSet* exclude)
 {
 	if(!BaseParam)
 		return;
@@ -1073,7 +1073,7 @@ void terFilthSwarm::FindTargetPoint(UnitSet* exclude)
 		return;
 	}
 
-	list<terUnitBase*> target_list;
+	std::list<terUnitBase*> target_list;
 	FindComplexTarget(target_list,1,exclude);
 	if(!target_list.empty())
 		TargetPoint=target_list.front();
@@ -1295,7 +1295,7 @@ void terFilthSpline::universalLoad(const SaveUnitData* baseData)
 	interpolation_linear=data->interpolation_linear;
 
 	way_points.clear();
-	vector<Vect3f>::const_iterator it;
+	std::vector<Vect3f>::const_iterator it;
 	FOR_EACH(data->way_points,it)
 	{
 		way_points.push_back(*it);

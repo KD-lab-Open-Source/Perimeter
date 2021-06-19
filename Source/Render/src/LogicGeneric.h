@@ -11,9 +11,9 @@ class cLogicTileInt;
 class cLogicObject : public cIUnkObjScale 
 {
 protected:
-	typedef vector<cLogicTileInt*> vtiles;
+	typedef std::vector<cLogicTileInt*> vtiles;
 	vtiles				tiles;
-	string				fname;								// имя файла из которого он был загружен
+	std::string				fname;								// имя файла из которого он был загружен
 
 public:
 	cLogicObject(const char *fname);
@@ -47,5 +47,5 @@ public:
 	void Free();
 	cLogicObject* GetElement(const char *pFName);
 protected:
-	vector<cLogicObject*> objects;
+	std::vector<cLogicObject*> objects;
 };

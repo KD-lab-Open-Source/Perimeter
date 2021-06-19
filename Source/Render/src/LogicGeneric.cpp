@@ -17,7 +17,7 @@ class cLogicTileInt : public cLogicTile
 	friend class cLogicObject;
 protected:
 	int					visible;
-	string				name;
+	std::string			name;
 
 	bool				enable_rotate;
 	Mat3f				RotateMatrix;

@@ -131,7 +131,7 @@ bool Interpreter::goToJustAfterMissionPosition(int number) {
 		return res;
 	}
 }
-int Interpreter::findMission(const string& fileName) {
+int Interpreter::findMission(const std::string& fileName) {
 	for (int i = 0, s = missions.size(); i < s; i++) {
 		if (missions[i].fileName == fileName) {
 			return i;
@@ -181,7 +181,7 @@ void Interpreter::clearYears() {
 	missions.clear();
 }
 
-bool Interpreter::loadProgram(const string& fileName) {
+bool Interpreter::loadProgram(const std::string& fileName) {
 	bool res = false;
 	FILE* file = fopen(fileName.c_str(), "rt");
 	if(file) {
@@ -370,7 +370,7 @@ bool Interpreter::processYearCommand() {
 		currentYear++;
 		char str[30];
 		sprintf( str, "year=%d", currentYear - rollbackDelta);
-		addLineToLog(string(str));
+		addLineToLog(std::string(str));
 		yearTimeElapsed = 0;
 		currentCommandNumber = 0;
 		isCurrentCommandContinuous = (continuousCommands.size() > 0);
@@ -393,7 +393,7 @@ int Interpreter::extractYear(char* year) {
 
 //---Controller Implementation---
 void Interpreter::stopFrame(const Frame* frame) {
-	vector<ContinuousCommand*>::iterator it = continuousCommands.begin();
+	std::vector<ContinuousCommand*>::iterator it = continuousCommands.begin();
 	while (it != continuousCommands.end()) {
 		FrameCommand* fCommand = dynamic_cast<FrameCommand*>((*it)->command);
 		if ( fCommand && fCommand->isCommandForFrame(frame) ) {
@@ -430,7 +430,7 @@ void Interpreter::setDelay(float newDelay) {
 	commandTimeElapsed = 0;
 }
 
-void Interpreter::addLineToLog(const string& line) {
+void Interpreter::addLineToLog(const std::string& line) {
 	if (!line.empty()) {
 		if (log.empty()) {
 			for (int i = 0; i < 108; i++) {

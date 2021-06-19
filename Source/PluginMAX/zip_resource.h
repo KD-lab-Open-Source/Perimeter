@@ -4,7 +4,6 @@
 
 #include <string>
 #include <list>
-using namespace std;
 
 class XZIP_FileHeader 
 {
@@ -39,10 +38,10 @@ class XZIP_Resource
 {
 	int flags;
 
-	string fileName;
-	string idxName;
+	std::string fileName;
+	std::string idxName;
 
-	typedef list<XZIP_FileHeader> FileList;
+	typedef std::list<XZIP_FileHeader> FileList;
 	FileList fileList;
 
 	XStream file;

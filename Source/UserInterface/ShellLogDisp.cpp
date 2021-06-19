@@ -315,10 +315,10 @@ int CShellLogicDispatcher::OnMouseMove(float x, float y)
 		int y1 = (y-0.5f)*terScreenSizeY + terScreenSizeY/2;
 
 		if(x0 > x1)
-			swap(x0, x1);
+			std::swap(x0, x1);
 
 		if(y0 > y1)
-			swap(y0, y1);
+			std::swap(y0, y1);
 		m_rcTrack.left  = x0;
 		m_rcTrack.right = x1;
 		m_rcTrack.top   = y0;
@@ -738,7 +738,7 @@ void CShellLogicDispatcher::SetEditRegion(int rg)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // модели в окошке 
-string GetBelligerentTexturePath(terBelligerent belligerent);
+std::string GetBelligerentTexturePath(terBelligerent belligerent);
 void CShellLogicDispatcher::SetUnitView(const AttributeBase* pInfo, bool bPowerOn)
 {
 	if(m_pUnitInfo == pInfo)
@@ -768,7 +768,7 @@ void CShellLogicDispatcher::SetUnitView(const AttributeBase* pInfo, bool bPowerO
 		if(!modelName || !strlen(modelName))
 			return;
 
-		string texture_path=GetBelligerentTexturePath(universe()->activePlayer()->belligerent());
+		std::string texture_path=GetBelligerentTexturePath(universe()->activePlayer()->belligerent());
 		m_hModel = _pShellDispatcher->m_hScene->CreateObject(modelName, texture_path.c_str());
 
 		float fRadius=m_hModel->GetBoundRadius();

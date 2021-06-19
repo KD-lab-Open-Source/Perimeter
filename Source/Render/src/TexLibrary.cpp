@@ -52,7 +52,7 @@ void cTexLibrary::FreeOne(FILE* f)
 	if(f)fprintf(f,"Texture freeing\n");
 
 	int compacted=0;
-	vector<cTexture*>::iterator it;
+	std::vector<cTexture*>::iterator it;
 	FOR_EACH(textures,it)
 	{
 		cTexture*& p=*it;
@@ -311,7 +311,7 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
 bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 {
 	{
-		vector<IDirect3DTexture9*>::iterator it;
+		std::vector<IDirect3DTexture9*>::iterator it;
 		FOR_EACH(Texture->BitMap,it)
 		{
 			(*it)->Release();
@@ -468,7 +468,7 @@ void cTexLibrary::ReloadAllTexture()
 {
 	MTAuto mtenter(&lock);
 
-	vector<cTexture*>::iterator it;
+	std::vector<cTexture*>::iterator it;
 	FOR_EACH(textures,it)
 	{
 		cTexture* p=*it;

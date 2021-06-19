@@ -24,7 +24,7 @@ extern MpegSound gb_Music;
 extern MissionDescription missionToExec;
 extern BGScene bgScene;
 
-vector<MissionDescription> battleMaps;
+std::vector<MissionDescription> battleMaps;
 int defaultBattleMapCount = 0;
 MonoSelect battleColors(4, playerAllowedColorSize);
 
@@ -41,7 +41,7 @@ STARFORCE_API void loadBattleList() {
 					break;
 				}
 				MissionDescription mission;
-				string name = "RESOURCE\\BATTLE\\SCENARIO\\" + string(buff);
+				std::string name = "RESOURCE\\BATTLE\\SCENARIO\\" + std::string(buff);
 				mission.setSaveName(name.c_str());
 				battleMaps.push_back(mission);
 			}
@@ -50,8 +50,8 @@ STARFORCE_API void loadBattleList() {
 		}
 	}
 }
-string getSurvivalText(int pos) {
-	string name = "MapNames.";
+std::string getSurvivalText(int pos) {
+	std::string name = "MapNames.";
 	name += battleMaps[pos].missionName();
 	name = qdTextDB::instance().getText(name.c_str());
 	if (name.empty()) {
@@ -92,7 +92,7 @@ void setSlotVisible(int i, bool visible) {
 	_shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_CLR_BTN + i)->Show(visible && slotStateVisible);
 	_shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_CLR_BG + i)->Show(visible && slotStateVisible);
 }
-void setupBattleDescWnd(int index, vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID) {
+void setupBattleDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID) {
 	checkMissionDescription(index, mVect);
 	((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( mVect[index].worldID() );
 //	((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( mVect[index].missionDescription() );
@@ -113,7 +113,7 @@ STARFORCE_API void onBattleMenuOpening() {
 	#endif
 
 	for (int i = 0; i < s; i++) {
-		string name = "MapNames.";
+		std::string name = "MapNames.";
 		name += battleMaps[i].missionName();
 		name = qdTextDB::instance().getText(name.c_str());
 		if (name.empty()) {
@@ -136,12 +136,12 @@ STARFORCE_API void onBattleMenuOpening() {
 	setSlotClosed(2, true);
 	setSlotClosed(3, true);
 }
-string getSurvivalFileName(const string& fileName) {
-	string res = "RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg";
+std::string getSurvivalFileName(const std::string& fileName) {
+	std::string res = "RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg";
 
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hf = FindFirstFile( res.c_str(), &FindFileData );
-	return (hf == INVALID_HANDLE_VALUE) ? string("") : res;
+	return (hf == INVALID_HANDLE_VALUE) ? std::string("") : res;
 }
 
 STARFORCE_API void startBattle(int pos, CShellWindow* pWnd) {
@@ -156,7 +156,7 @@ STARFORCE_API void startBattle(int pos, CShellWindow* pWnd) {
 	bool survival = false;
 	if (i == missionToExec.playersAmountScenarioMax()) {
 		survival = true;
-		string surv = getSurvivalFileName(battleMaps[pos].missionName());
+		std::string surv = getSurvivalFileName(battleMaps[pos].missionName());
 		if (surv != "") {
 			missionToExec = MissionDescription(surv.c_str());
 		}
@@ -320,7 +320,7 @@ void onMMBattleSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMBattleClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_CREATEWND ) {
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		string clan = getItemTextFromBase("Clan");
+		std::string clan = getItemTextFromBase("Clan");
 		char buff[30 + 1];
 		for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 			sprintf(buff, "%d", (i + 1));

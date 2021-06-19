@@ -5,7 +5,7 @@ class cLogicScene
 {
 public:
 	unsigned int					ID;
-	string							name;
+	std::string						name;
 	cChannelAnimationLibrary		ChannelLibrary;
 	
 	cLogicScene()							{ ID=1; }

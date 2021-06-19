@@ -277,7 +277,7 @@ void HTManager::ClearDeleteUnit(bool delete_all)
 	}
 
 	MTAuto lock(GetLockDeleteUnit());
-	list<DELETE_DATA>::iterator itd=DeleteList.begin();
+	std::list<DELETE_DATA>::iterator itd=DeleteList.begin();
 	
 	while(itd!=DeleteList.end())
 	{
@@ -287,9 +287,9 @@ void HTManager::ClearDeleteUnit(bool delete_all)
 			continue;
 		}
 
-		list<terUnitBase*>& lst=itd->unit;
+		std::list<terUnitBase*>& lst=itd->unit;
 
-		list<terUnitBase*>::iterator it;
+		std::list<terUnitBase*>::iterator it;
 		FOR_EACH(lst,it)
 		{
 			terUnitBase* p=*it;

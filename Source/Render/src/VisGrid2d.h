@@ -3,19 +3,19 @@
 class MTGVector
 {
 protected:
-	vector<cIUnkClass*> slot;
-	vector<cIUnkClass*> add_list;
+	std::vector<cIUnkClass*> slot;
+	std::vector<cIUnkClass*> add_list;
 
 	struct sErase
 	{
 		int quant;
-		list<cIUnkClass*> erase_list;
+		std::list<cIUnkClass*> erase_list;
 	};
 
-	list<sErase> erase_list;
+	std::list<sErase> erase_list;
 	MTDECLARE(critical);
 public:
-	typedef vector<cIUnkClass*>::iterator iterator;
+	typedef std::vector<cIUnkClass*>::iterator iterator;
 	inline int size()	{ return slot.size(); }
 	cIUnkClass* operator[](int i){return slot[i];}
 	iterator begin(){return slot.begin();}
@@ -38,7 +38,7 @@ struct sGrid2d:public MTGVector
 {
 protected:
 	bool detach_now;
-	vector<cIUnkClass*> erase_list;
+	std::vector<cIUnkClass*> erase_list;
 public:
 	
 	sGrid2d():detach_now(true) { }
@@ -53,7 +53,7 @@ public:
 class QuatTree
 {
 public:
-	typedef vector<cIUnkClass*> vect;
+	typedef std::vector<cIUnkClass*> vect;
 	typedef void (*find_proc)(cIUnkClass* obj,void* param);
 protected:
 	struct QuatNode
@@ -87,7 +87,7 @@ protected:
 		cIUnkClass* obj;
 	};
 
-	typedef vector<OneObj*> pvect;
+	typedef std::vector<OneObj*> pvect;
 	void build(int xmin,int ymin,int xmax,int ymax,pvect& blist,QuatNode* cur);
 
 public:

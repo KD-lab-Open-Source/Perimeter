@@ -11,16 +11,16 @@ struct cMeshStatic:public cUnknownClass
 	sPtrIndexBuffer				ib;
 	sPtrVertexBuffer			vb;
 	int							ib_polygon;//Количество полигонов в ib
-	string						MaterialName;
-	vector<cMeshTri*>			meshes;
+	std::string					MaterialName;
+	std::vector<cMeshTri*>		meshes;
 	sAttribute				Material;
 	cAnimChannelMaterial    AnimChannelMat;
 	//ATTRUNKOBJ_COLLISIONTRACE ATTRUNKOBJ_NOLIGHT
 	sAttribute				ObjectAttribute;
 	struct TEMP
 	{
-		vector<sVertexXYZNT1> vertex;
-		vector<sPolygon> polygons;
+		std::vector<sVertexXYZNT1> vertex;
+		std::vector<sPolygon> polygons;
 	};
 
 	TEMP* temp;
@@ -30,15 +30,15 @@ struct cMeshStatic:public cUnknownClass
 	~cMeshStatic();
 
 	void BeginBuildMesh();
-	cMeshTri* AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<sPolygon> &TexPoly,vector<Vect2f> &Texel);
-	cMeshTri* AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<Vect3f> &Normal,vector<Vect2f> &Texel);
+	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);
+	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<Vect3f> &Normal, std::vector<Vect2f> &Texel);
 
 	void EndBuildMesh(bool bump);
 protected:
 	inline sVertexXYZNT1& GetVertex(void *pVertex,int n)	{ return ((sVertexXYZNT1*)((char*)pVertex+n*vb.size))[0]; }
 	void SortPolygon(sPolygon* polygon,int n_polygon);
-	void DeleteSingularPolygon(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,
-								vector<sPolygon> &TexPoly,vector<Vect2f> &Texel);
+	void DeleteSingularPolygon(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon,
+		std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);
 };
 
 
@@ -54,8 +54,8 @@ public:
 	virtual ~cMeshBank();
 
 	void BeginBuildMesh();
-	cMeshTri* AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<sPolygon> &TexPoly,vector<Vect2f> &Texel);
-	cMeshTri* AddMesh(vector<Vect3f> &Vertex,vector<sPolygon> &Polygon,vector<Vect3f> &Normal,vector<Vect2f> &Texel);
+	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);
+	cMeshTri* AddMesh(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon, std::vector<Vect3f> &Normal, std::vector<Vect2f> &Texel);
 	void EndBuildMesh();
 
 	inline const char* GetMaterialName(){return bank->MaterialName.c_str();}
@@ -90,12 +90,12 @@ public:
 */
 class cAllMeshBank : public cUnknownClass
 {
-	string filename;
-	string texture_path;
-	string def_texture_path;
+	std::string filename;
+	std::string texture_path;
+	std::string def_texture_path;
 
-	vector<cMeshBank*> meshes;
-	vector<sChannelHeader> Channel;
+	std::vector<cMeshBank*> meshes;
+	std::vector<sChannelHeader> Channel;
 public:
 	cObjectNodeRoot* root;
 

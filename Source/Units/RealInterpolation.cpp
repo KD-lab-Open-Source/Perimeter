@@ -221,7 +221,7 @@ void terInterpolationReal::SetModel(const char* name,float scale)
 		NewObjectPoint->SetScale(Vect3f(scale,scale,scale));
 	NewObjectPoint->Update();
 
-	const vector<AnimationData>& animationTable = Owner->attr().animationDataTable;
+	const std::vector<AnimationData>& animationTable = Owner->attr().animationDataTable;
 	if(!animationTable.empty()){
 		const AnimationData* data = &animationTable[0];
 		if(data->groupName)

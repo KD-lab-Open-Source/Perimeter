@@ -149,7 +149,7 @@ cVisGeneric::cVisGeneric() : cUnknownClass(KIND_UI_VISGENERIC)//: SceneArray(KIN
 
 cVisGeneric::~cVisGeneric()
 {
-	vector<EffectLibrary*>::iterator it;
+	std::vector<EffectLibrary*>::iterator it;
 	FOR_EACH(effect_library,it)
 		delete (*it);
 
@@ -243,7 +243,7 @@ void cVisGeneric::SetData(cInterfaceRenderDevice *pData)
 }
 void cVisGeneric::ClearData()
 { // функция для работы с окном вывода
-	vector<cFontInternal*>::iterator it;
+	std::vector<cFontInternal*>::iterator it;
 	FOR_EACH(fonts,it)
 		(*it)->Release();
 	fonts.clear();
@@ -478,10 +478,10 @@ void cVisGeneric::SetEffectLibraryPath(const char* effect_path_,const char* text
 EffectLibrary* cVisGeneric::GetEffectLibrary(const char* filename,bool quiet)
 {
 	MTEnter mtenter(lock_effect_library);
-	string fname=effect_path+filename+".effect";
+	std::string fname=effect_path+filename+".effect";
 
 	EffectLibrary* lib=NULL;
-	vector<EffectLibrary*>::iterator it;
+	std::vector<EffectLibrary*>::iterator it;
 	FOR_EACH(effect_library,it)
 	if(stricmp(fname.c_str(),(*it)->GetFileName())==0)
 	{
@@ -667,7 +667,7 @@ cFont* cVisGeneric::CreateFont(const char *TextureFileName,int h,bool silentErr)
 {
 	if(TextureFileName==0||TextureFileName[0]==0) return NULL;
 
-	vector<cFontInternal*>::iterator it;
+	std::vector<cFontInternal*>::iterator it;
 	FOR_EACH(fonts,it)
 	{
 		cFontInternal* f=*it;
@@ -728,7 +728,7 @@ int cVisGeneric::GetShadowHint()
 }
 
 
-bool GetAllTriangle(const char* filename,vector<Vect3f>& point,vector<sPolygon>& polygon)
+bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
 {
 	VISASSERT(gb_VisGeneric);
 	cObjectNodeRoot* root=gb_VisGeneric->GetObjLib()->GetElement(filename,NULL);

@@ -9,8 +9,8 @@ enum OKTEXTID {
 	MBOX_BACK
 };
 
-void setupYesNoMessageBox( DYNCALLBACK yesAction, float actionParam, const string& mess );
-void setupOkMessageBox(	DYNCALLBACK action, float actionParam, const string& mess, OKTEXTID okBtnTextID, bool showButtons = true );
+void setupYesNoMessageBox( DYNCALLBACK yesAction, float actionParam, const std::string& mess );
+void setupOkMessageBox(	DYNCALLBACK action, float actionParam, const std::string& mess, OKTEXTID okBtnTextID, bool showButtons = true );
 
 void setMessageBoxTextID(const char* textID);
 

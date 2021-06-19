@@ -307,7 +307,7 @@ void ElasticLink::Draw(cCamera *DrawNode)
 	DrawNode->ConvertorWorldToViewPort(&point2, 0, &p2);
 	Vect3f axis = p2 - p1;
 	axis.z = 0;
-	swap(axis.x, axis.y);
+	std::swap(axis.x, axis.y);
 	axis.x = -axis.x;
 	axis.Normalize();
 	MatXf X;

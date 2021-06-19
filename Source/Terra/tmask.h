@@ -4,8 +4,8 @@ struct sAPoint{
 };
 
 struct sArea{
-	list<sAPoint> points;
-	list<sAPoint>::iterator curPoint;
+	std::list<sAPoint> points;
+	std::list<sAPoint>::iterator curPoint;
 	unsigned char fl_editing;
 	sArea() {
 		fl_editing=0;
@@ -34,8 +34,8 @@ struct sArea{
 };
 
 struct sAreas{
-	list<sArea> areas;
-	list<sArea>::iterator curArea;
+	std::list<sArea> areas;
+	std::list<sArea>::iterator curArea;
 	sAreas() {
 	};
 	~sAreas() {

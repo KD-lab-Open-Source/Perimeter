@@ -400,7 +400,7 @@ bool MissionDescription::disconnectPlayer2PlayerDataByDPNID(DPNID dpnid)
 }
 
 
-void MissionDescription::getAllOtherPlayerName(string& outStr)
+void MissionDescription::getAllOtherPlayerName(std::string& outStr)
 {
 	for(int i=0; i<playerAmountScenarioMax; i++){
 		if( (playersData[i].playerID!=activePlayerID) && (playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER) ){
@@ -410,7 +410,7 @@ void MissionDescription::getAllOtherPlayerName(string& outStr)
 	}
 }
 
-void MissionDescription::getPlayerName(int _playerID, string& outStr)
+void MissionDescription::getPlayerName(int _playerID, std::string& outStr)
 {
 	for(int i=0; i<playerAmountScenarioMax; i++){
 		if( (playersData[i].playerID==_playerID) && (playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER) ){

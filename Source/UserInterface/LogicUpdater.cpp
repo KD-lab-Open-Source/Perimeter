@@ -29,7 +29,7 @@ void LogicUpdater::update() {
 
 void LogicUpdater::exchange() {
 	lock();
-	swap(oldLogicData, logicData);
+	std::swap(oldLogicData, logicData);
 	unlock();
 }
 

@@ -88,7 +88,7 @@ public:
 	void ShowInfo();
 	void showDebugInfo();
 
-	void putPath(list<Vect2f>& miniMapPath);
+	void putPath(std::list<Vect2f>& miniMapPath);
 
 private:
 	bool free_;

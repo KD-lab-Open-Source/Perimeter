@@ -58,7 +58,7 @@ protected:
 	CGeoWorm* pWorm;
 	terFilthWorm* pWormModel;
 
-	list<terUnitBase*> exclude_list;
+	std::list<terUnitBase*> exclude_list;
 
 	int change_angle;
 	float angle,speed;

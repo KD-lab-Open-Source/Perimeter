@@ -52,7 +52,7 @@ struct terFilthSwarmCrow : terFilthSwarm
 	void universalLoad(const SaveUnitData* baseData);
 protected:
 	void Generate();
-	typedef list<terFilthCrow*> FilthListType;
+	typedef std::list<terFilthCrow*> FilthListType;
 	FilthListType unit_list;
 
 	int generate_creature_num;

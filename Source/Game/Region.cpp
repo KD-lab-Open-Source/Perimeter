@@ -1038,9 +1038,9 @@ void RegionDispatcher::vectorize(int minimalRegionSize, bool initSpline)
 
 	statistics_add(analyze_cnt, STATISTICS_GROUP_NUMERIC, analyze_cnt);
 
-	typedef vector<Region*> RegionList;
+	typedef std::vector<Region*> RegionList;
 	RegionList regions;
-	list<ShareHandle<Region> > bad_regions;
+	std::list<ShareHandle<Region> > bad_regions;
 	
 	SeedList::iterator si;
 	FOR_EACH(seeds, si)
@@ -1355,15 +1355,15 @@ void Region::rasterize(Column& rast_column)
 		if(y1 >= rast_column.size())
 			y1 = rast_column.size() - 1;
 		
-		vector<vector<int> > column(y1 - y0 + 1);
+		std::vector<std::vector<int> > column(y1 - y0 + 1);
 
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define LESS(x) bind1st(less<int>(), x)
 #else
-#define LESS(x) std::bind(less<int>(), x, std::placeholders::_1)
+#define LESS(x) std::bind(std::less<int>(), x, std::placeholders::_1)
 #endif
 
-		#define PUT(x, y) { if(y >= y0 && y <= y1){ vector<int>& line = column[y - y0]; line.insert(find_if(line.begin(), line.end(), LESS(x)), x); } }
+		#define PUT(x, y) { if(y >= y0 && y <= y1){ std::vector<int>& line = column[y - y0]; line.insert(std::find_if(line.begin(), line.end(), LESS(x)), x); } }
 	
 		spline().set_offset(t_up);
 		float dt = spline().suggest_dt(rasterize_dlen);
@@ -1435,10 +1435,10 @@ void Region::rasterize(Column& rast_column)
 
 		#undef PUT
 		
-		vector<vector<int> >::iterator ci;
+		std::vector<std::vector<int> >::iterator ci;
 		int y = 0;
 		FOR_EACH(column, ci){
-			vector<int>::iterator li;
+			std::vector<int>::iterator li;
 			//xassert(!(ci->size() & 1));
 			FOR_EACH(*ci, li){
                     int xl = *li;

@@ -42,9 +42,9 @@ public:
 
 	virtual bool Intersect(const Vect3f& p0,const Vect3f& p1);
 
-	void GetAllPoints(vector<Vect3f>& point);
-	void GetAllNormals(vector<Vect3f>& point);
-	int GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& polygon);
+	void GetAllPoints(std::vector<Vect3f>& point);
+	void GetAllNormals(std::vector<Vect3f>& point);
+	int GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon);
 	virtual void ChangeBank(cAllMeshBank* new_root);
 	virtual void DrawBadUV(cCamera *DrawNode);
 protected:

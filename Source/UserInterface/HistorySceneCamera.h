@@ -104,9 +104,9 @@ class HistorySceneCamera {
 
 		void onResolutionChanged();
 
-		void addLineToLog(const string& line);
-		string log;
-		static string posToString(const CameraPosition& pos);
+		void addLineToLog(const std::string& line);
+		std::string log;
+		static std::string posToString(const CameraPosition& pos);
 
 		void calcRayIntersection(float x, float y, Vect3f& v0, Vect3f& v1);
 
@@ -144,8 +144,8 @@ class HistorySceneCamera {
 		bool isLoopedPlaying;
 		bool isFirstPointFromPath;
 		bool shouldClearAtEnd;
-		deque<CameraPosition> path;
-		deque<CameraPosition> waitingList;
+		std::deque<CameraPosition> path;
+		std::deque<CameraPosition> waitingList;
 
 		bool followNomadMode;
 		CameraPosition currentFollowPos;

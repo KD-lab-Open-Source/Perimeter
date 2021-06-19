@@ -48,7 +48,7 @@ public:
 
 class terUnitSquad : public terUnitBase
 {
-	typedef	list<terUnitLegionary*> SquadUnitList;
+	typedef std::list<terUnitLegionary*> SquadUnitList;
 
 public:
 	terUnitSquad(const UnitTemplate& data);
@@ -143,11 +143,11 @@ public:
 
 	void ShowInfo();
 
-	void showPath(const vector<Vect2f>& wayPoints, const vector<Vect2f>& patrolPoints, AttackPoint* attackPoint);
-	const vector<Vect2f>& getWayPoints() const {
+	void showPath(const std::vector<Vect2f>& wayPoints, const std::vector<Vect2f>& patrolPoints, AttackPoint* attackPoint);
+	const std::vector<Vect2f>& getWayPoints() const {
 		return wayPoints_;
 	}
-	const vector<Vect2f>& getPatrolPoints() const {
+	const std::vector<Vect2f>& getPatrolPoints() const {
 		return patrolPoints_;
 	}
 	AttackPoint* getAttackPoint() {
@@ -287,7 +287,7 @@ private:
 	Vect2fVect patrolPoints_;
 	int patrolIndex_;
 
-	typedef list<AttackPoint> AttackPointList;
+	typedef std::list<AttackPoint> AttackPointList;
 	AttackPointList attack_points;
 	
 	PositionGenerator position_generator;

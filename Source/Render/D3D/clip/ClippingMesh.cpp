@@ -29,7 +29,7 @@ void CMesh::Set(AMesh& mesh)
 		E[i].vertex[0]=mesh.E[i].vertex[0];
 		E[i].vertex[1]=mesh.E[i].vertex[1];
 
-		set<int>::iterator it;
+		std::set<int>::iterator it;
 		FOR_EACH(mesh.E[i].face,it)
 			E[i].face.insert(*it);
 	}
@@ -37,7 +37,7 @@ void CMesh::Set(AMesh& mesh)
 	F.resize(mesh.F.size());
 	for(i=0;i<F.size();i++)
 	{
-		set<int>::iterator it;
+		std::set<int>::iterator it;
 		FOR_EACH(mesh.F[i].edge,it)
 			F[i].edge.insert(*it);
 	}
@@ -87,7 +87,7 @@ int CMesh::Clip(sPlane4f clipplane)
 			float d0=V[e.vertex[0]].distance,d1=V[e.vertex[1]].distance;
 			if(d0<=0 && d1<=0)
 			{
-				set<int>::iterator it;
+				std::set<int>::iterator it;
 				FOR_EACH(e.face,it)
 				{
 					int j=*it;
@@ -132,7 +132,7 @@ int CMesh::Clip(sPlane4f clipplane)
 		CFace& f=F[i];
 		if(f.visible)
 		{
-			set<int>::iterator it;
+			std::set<int>::iterator it;
 			FOR_EACH(f.edge,it)
 			{
 				CEdge& e=E[*it];
@@ -168,7 +168,7 @@ int CMesh::Clip(sPlane4f clipplane)
 
 bool CMesh::GetOpenPolyline(const CFace& face,int& start,int& final)
 {
-	set<int>::const_iterator it;
+	std::set<int>::const_iterator it;
 	FOR_EACH(face.edge,it)
 	{
 		CEdge& e=E[*it];
@@ -223,10 +223,10 @@ void CMesh::BuildPolygon(APolygons& p)
 	if(F[i].visible)
 	{
 		CFace& face=F[i];
-		vector<int>& vertex=p.faces[facenum++];
+		std::vector<int>& vertex=p.faces[facenum++];
 
-		set<int>::iterator it;
-		set<int> edge=face.edge;
+		std::set<int>::iterator it;
+		std::set<int> edge=face.edge;
 
 		int begin,old;
 		{
@@ -248,7 +248,7 @@ void CMesh::BuildPolygon(APolygons& p)
 			}
 
 			bool berase=false;
-			set<int>::iterator it;
+			std::set<int>::iterator it;
 			FOR_EACH(edge,it)
 			{
 				AEdge& e=E[*it];
@@ -321,7 +321,7 @@ void AMesh::CreateABB(Vect3f& vmin,Vect3f& vmax)
 	F.resize(6);
 	for(i=0;i<E.size();i++)
 	{
-		set<int>::iterator it;
+		std::set<int>::iterator it;
 		FOR_EACH(E[i].face,it)
 			F[*it].edge.insert(i);
 	}

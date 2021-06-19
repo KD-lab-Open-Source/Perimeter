@@ -60,7 +60,7 @@ protected:
 		Interval(short xl_, short xr_) : xl(xl_), xr(xr_) {}
 	};
 	
-	struct CircleShape : vector<Interval>
+	struct CircleShape : std::vector<Interval>
 	{
 		int radius;
 		CircleShape() : radius(0) {}
@@ -95,7 +95,7 @@ protected:
 
 	UnitList BrigadierList;
 	
-	typedef map<int, ShareHandle<ActionOrderBuilding> > OrderBuildingActionMap;
+	typedef std::map<int, ShareHandle<ActionOrderBuilding> > OrderBuildingActionMap;
 	OrderBuildingActionMap orderBuildingActions;
 	ShareHandle<ActionOrderBuilding> currentOrder;
 

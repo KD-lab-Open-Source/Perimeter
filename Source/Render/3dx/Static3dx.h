@@ -12,17 +12,17 @@ struct cStaticNodeChain
 
 struct cStaticNode
 {
-	string name;
+	std::string name;
 	int inode;
 	int iparent;
-	vector<cStaticNodeChain> chains;
+	std::vector<cStaticNodeChain> chains;
 	void LoadNode(CLoadDirectory ld);
 	void LoadNodeChain(CLoadDirectory ld);
 };
 
 struct cAnimationChain
 {
-	string name;
+	std::string name;
 	float time;
 };
 
@@ -53,21 +53,21 @@ struct cStaticIndex
 	};
 	//node_index с какими матрицами связанны текущие полигоны,
 	//не более max_index
-	vector<int> node_index;
+	std::vector<int> node_index;
 };
 
 struct AnimationGroup
 {
-	string name;
-	vector<int> nodes;
-	vector<string> temp_nodes_name;
+	std::string name;
+	std::vector<int> nodes;
+	std::vector<std::string> temp_nodes_name;
 
 	void Load(CLoadDirectory rd);
 };
 
 struct cStaticMaterial
 {
-	string name;
+	std::string name;
 
 	sColor4f ambient;
 	sColor4f diffuse;
@@ -75,7 +75,7 @@ struct cStaticMaterial
 	float opacity;
 	float specular_power;
 
-	string tex_diffuse;
+	std::string tex_diffuse;
 	bool is_skinned;
 	cTexture* pBumpTexture;
 
@@ -97,16 +97,16 @@ struct cTempBone
 
 struct cTempMesh3dx
 {
-	vector<Vect3f> vertex_pos;
-	vector<Vect3f> vertex_norm;
-	vector<Vect2f> vertex_uv;
-	vector<sPolygon> polygons;
-	vector<cTempBone> bones;
+	std::vector<Vect3f> vertex_pos;
+	std::vector<Vect3f> vertex_norm;
+	std::vector<Vect2f> vertex_uv;
+	std::vector<sPolygon> polygons;
+	std::vector<cTempBone> bones;
 
 	int inode;
 	int imaterial;
 
-	vector<int> inode_array;
+	std::vector<int> inode_array;
 
 	void Load(CLoadDirectory rd);
 
@@ -115,8 +115,8 @@ struct cTempMesh3dx
 
 struct cStaticBasement
 {
-	vector<sPolygon> polygons;
-	vector<Vect3f> vertex;
+	std::vector<sPolygon> polygons;
+	std::vector<Vect3f> vertex;
 
 	void Load(CLoadDirectory rd);
 };
@@ -138,22 +138,22 @@ struct cStaticLogicBound
 
 struct cStaticVisibilityChainGroup
 {
-	string name;
+	std::string name;
 
-	vector<cStaticMesh> meshes;
+	std::vector<cStaticMesh> meshes;
 	int					ib_polygon;//Количество полигонов в ib
 	int					vb_size;//Количество вертексов в vb
 	sPtrIndexBuffer		ib;
 	sPtrVertexBuffer	vb;
 	int			blend_indices;//количество костей в vb
-	vector<cStaticIndex> skin_group;
+	std::vector<cStaticIndex> skin_group;
 
-	vector<string>		temp_invisible_object;
+	std::vector<std::string>		temp_invisible_object;
 	bool bump;
 
 	cStaticVisibilityChainGroup();
 
-	void BuildSkinGroup(vector<cTempMesh3dx*>& temp_mesh);
+	void BuildSkinGroup(std::vector<cTempMesh3dx*>& temp_mesh);
 	int GetBlendWeight()
 	{
 		if(blend_indices==1)
@@ -179,19 +179,19 @@ public:
 	~cStatic3dx();
 
 	void Load(CLoadDirectory& rd);
-	string file_name;
+	std::string file_name;
 
-	vector<cStaticNode> nodes;
-	vector<cAnimationChain> animation_chain;
-	vector<cStaticVisibilityChainGroup*> visibility_groups;
+	std::vector<cStaticNode> nodes;
+	std::vector<cAnimationChain> animation_chain;
+	std::vector<cStaticVisibilityChainGroup*> visibility_groups;
 
-	vector<cStaticMaterial> materials;
-	vector<AnimationGroup> animation_group;
+	std::vector<cStaticMaterial> materials;
+	std::vector<AnimationGroup> animation_group;
 
 	cStaticBasement basement;
 	cStaticLogicBound logic_bound;
 	bool is_logic;
-	vector<cStaticEffect> effects;
+	std::vector<cStaticEffect> effects;
 
 	class cVisError& errlog();
 protected:
@@ -210,9 +210,9 @@ protected:
 	void LoadMaterials(CLoadDirectory rd,int num_materials);
 	void LoadMaterial(CLoadDirectory rd);
 
-	void SplitMesh(cTempMesh3dx* mesh,vector<cTempMesh3dx*>& split_mesh);
+	void SplitMesh(cTempMesh3dx* mesh, std::vector<cTempMesh3dx*>& split_mesh);
 
-	void BuildChainGroup(vector<cTempMesh3dx*>& temp_mesh,cStaticVisibilityChainGroup* chain_group);
+	void BuildChainGroup(std::vector<cTempMesh3dx*>& temp_mesh,cStaticVisibilityChainGroup* chain_group);
 	void DummyVisibilityGroup();
 	void ParseEffect();
 };

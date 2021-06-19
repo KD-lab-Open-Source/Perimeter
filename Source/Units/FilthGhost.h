@@ -70,7 +70,7 @@ protected:
 
 	float angle_z;
 
-	typedef list<terFilthGhost*> FilthListType;
+	typedef std::list<terFilthGhost*> FilthListType;
 	FilthListType unitList;
 
 	terGenerate gen;

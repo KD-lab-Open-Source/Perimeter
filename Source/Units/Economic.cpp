@@ -367,8 +367,8 @@ void terPlayer::CalcEnergyRegion()
 
 //--------------------------------------
 
-typedef pair<Vect3f, Vect3f> EnergyLine;
-class EnergyLineList : public vector<EnergyLine> {};
+typedef std::pair<Vect3f, Vect3f> EnergyLine;
+class EnergyLineList : public std::vector<EnergyLine> {};
 
 class ConnectCoreOp
 {
@@ -377,7 +377,7 @@ class ConnectCoreOp
 	terUnitGridType& UnitGrid;
 	EnergyLineList& EnergyLines;
 
-	typedef vector<terUnitBase*> List;
+	typedef std::vector<terUnitBase*> List;
 	List CurrentList;
 	List NewList;
 
@@ -483,7 +483,7 @@ public:
 				UnitGrid.Scan(pos.x, pos.y, (*i)->attr().ConnectionRadius, *this); 
 			}
 
-			swap(NewList, CurrentList);
+			std::swap(NewList, CurrentList);
 			NewList.clear();
 		} while(!CurrentList.empty());
 	}

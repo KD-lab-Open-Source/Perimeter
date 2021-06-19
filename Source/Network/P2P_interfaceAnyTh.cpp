@@ -82,7 +82,7 @@ void PNetCenter::ClearClients()
 void PNetCenter::clearInternalFoundHostList(void) 
 {
 	CAutoLock _lock(&m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
-	vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
+	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
 		delete *p;
 	}
@@ -102,7 +102,7 @@ void PNetCenter::PutGameCommand2Queue_andAutoDelete(netCommandGame* pCommand)
 
 void PNetCenter::ClearDeletePlayerGameCommand()
 {
-	list<netCommand4G_ForcedDefeat*>::iterator p;
+	std::list<netCommand4G_ForcedDefeat*>::iterator p;
 	for(p=m_DeletePlayerCommand.begin(); p!=m_DeletePlayerCommand.end(); p++){
 		delete *p;
 	}

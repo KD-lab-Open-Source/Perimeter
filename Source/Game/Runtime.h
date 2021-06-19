@@ -53,10 +53,10 @@ extern const char* currentVersion;
 extern const char* currentShortVersion;
 
 //-------------------------------------------------
-bool openFileDialog(string& filename, const char* initialDir, const char* extention, const char* title);
-bool saveFileDialog(string& filename, const char* initialDir, const char* extention, const char* title);
-const char* popupMenu(vector<const char*> items); // returns zero if cancel
-int popupMenuIndex(vector<const char*> items); // returns -1 if cancel
+bool openFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title);
+bool saveFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title);
+const char* popupMenu(std::vector<const char*> items); // returns zero if cancel
+int popupMenuIndex(std::vector<const char*> items); // returns -1 if cancel
 const char* editText(const char* defaultValue);
 const char* editTextMultiLine(const char* defaultValue, HWND hwnd);
 

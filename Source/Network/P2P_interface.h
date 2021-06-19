@@ -48,9 +48,9 @@ struct sGameStatusInfo{
 
 struct sGameHostInfo {
 	GUID gameHostGUID;
-	string hostName;
-	string port;
-	string gameName;
+	std::string hostName;
+	std::string port;
+	std::string gameName;
 	//bool flag_gameRun;
 	sGameStatusInfo gameStatusInfo;
 	void* pData;
@@ -86,11 +86,11 @@ struct PClientData
 	bool clientPause;
 	unsigned int timeRequestPause;
 
-	list<netCommand4H_BackGameInformation*> backGameInfList;
+	std::list<netCommand4H_BackGameInformation*> backGameInfList;
 	unsigned int lagQuant;
 	unsigned int lastExecuteQuant;
 
-	vector<netCommand4H_BackGameInformation2> backGameInf2List;
+	std::vector<netCommand4H_BackGameInformation2> backGameInf2List;
 	unsigned int curLastQuant;
 
 	unsigned int lastTimeBackPacket;
@@ -137,7 +137,7 @@ enum e_PNCInterfaceCommands {
 };
 struct sPNCInterfaceCommand {
 	e_PNCInterfaceCommands icID;
-	string textInfo;
+	std::string textInfo;
 
 	sPNCInterfaceCommand(){
 		icID=PNC_INTERFACE_COMMAND_NONE;
@@ -255,13 +255,13 @@ public:
 		PNCWM_ONLINE_GAMESPY,
 		PNCWM_ONLINE_P2P,
 	};
-	list<e_PNCInternalCommand> internalCommandList;
+	std::list<e_PNCInternalCommand> internalCommandList;
 	HANDLE hSecondThreadInitComplete;
 	HANDLE hCommandExecuted;
-	list<sPNCInterfaceCommand> interfaceCommandList;
+	std::list<sPNCInterfaceCommand> interfaceCommandList;
 
 	//typedef hash_map<DPNID, PClientData*> ClientMapType;
-	typedef vector<PClientData*> ClientMapType;
+	typedef std::vector<PClientData*> ClientMapType;
 
 	e_PNCWorkMode workMode;
 
@@ -314,11 +314,11 @@ public:
 	int            m_nQuantCommandCounter;
 
 	//int            m_nWorldID;
-	string         m_GameName;
+	std::string    m_GameName;
 	bool           m_bStarted;
 
-	list<netCommandGeneral*>   m_CommandList;
-	list<netCommand4G_ForcedDefeat*> m_DeletePlayerCommand;
+	std::list<netCommandGeneral*>   m_CommandList;
+	std::list<netCommand4G_ForcedDefeat*> m_DeletePlayerCommand;
 
 	void ClearCommandList();
 	void ClearDeletePlayerGameCommand();
@@ -394,7 +394,7 @@ public:
 	void JoinGame(const char* strIP, const char* playerName, terBelligerent belligerent, unsigned int color, const char* password="");
 
 	void refreshLanGameHostList();
-	vector<sGameHostInfo*>& getGameHostList();
+	std::vector<sGameHostInfo*>& getGameHostList();
 
 	void SendEvent(const netCommandGeneral* event);
 	void SendEventSync(const netCommandGeneral* event);
@@ -470,7 +470,7 @@ public:
 
 	//ConnectionDP
     //DPNHANDLE m_hEnumAsyncOp;
-    vector<DPNHANDLE> m_hEnumAsyncOp_Arr;
+	std::vector<DPNHANDLE> m_hEnumAsyncOp_Arr;
 	IDirectPlay8Peer*	m_pDPPeer;
 
 	long m_nClientSgnCheckError;
@@ -517,14 +517,14 @@ public:
 		~INTERNAL_HOST_ENUM_INFO();
 	};
 
-	vector<INTERNAL_HOST_ENUM_INFO*> internalFoundHostList;
+	std::vector<INTERNAL_HOST_ENUM_INFO*> internalFoundHostList;
 	void clearInternalFoundHostList(void);
 
-	vector<string> needHostList;
+	std::vector<std::string> needHostList;
 
-	vector<sGameHostInfo*> gameHostList;
+	std::vector<sGameHostInfo*> gameHostList;
 	void clearGameHostList(void){
-		vector<sGameHostInfo*>::iterator p;
+		std::vector<sGameHostInfo*>::iterator p;
 		for(p=gameHostList.begin(); p!=gameHostList.end(); p++){
 			delete *p;
 		}
@@ -536,11 +536,11 @@ public:
 	void LockInputPacket(void);
 	void UnLockInputPacket(void);
 
-	list<XDPacket> m_DPPacketList;
+	std::list<XDPacket> m_DPPacketList;
 	bool PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf);
 	bool PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf, DPNID& returnDPNID);
 
-	string fixedInternetAddress;
+	std::string fixedInternetAddress;
 
 
 	unsigned long internalIP; ///!!!! Временно!!!!
@@ -574,7 +574,7 @@ public:
 			return PGS_CLOSED_PLAYING;
 		}
 	}
-	string gamePassword;
+	std::string gamePassword;
 	bool isPassword(void){
 		if(gamePassword.empty()) return false;
 		else return true;

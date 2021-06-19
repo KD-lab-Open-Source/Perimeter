@@ -488,10 +488,10 @@ void cSelectManager::MakeSelectionList(float x0, float y0, float x1, float y1, U
 {
 	xassert(select_lock.is_lock());
 	if (x0 > x1) {
-		swap(x0, x1);
+		std::swap(x0, x1);
 	}
 	if (y0 > y1) {
-		swap(y0, y1);
+		std::swap(y0, y1);
 	}
 	sPlane4f PlaneClip[5];
     sRectangle4f r(x0,y0,x1,y1);

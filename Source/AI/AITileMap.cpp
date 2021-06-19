@@ -96,7 +96,7 @@ void AITileMap::UpdateRect(int x1,int y1,int dx,int dy)
 	for(int x = x1; x <= x2; x++)
 		if((*this)(x,y).update(x,y))
 		{
-			list<AIPlayer*>::iterator it;
+			std::list<AIPlayer*>::iterator it;
 			FOR_EACH(call_back,it)
 				(*it)->changeTileState(x,y);
 		}
@@ -222,7 +222,7 @@ public:
 	inline bool IsEndPoint(Node* pos){return pos==end;}
 };
 
-bool AITileMap::findPath(const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i>& out_path,PathType type)
+bool AITileMap::findPath(const Vect2i& from_w, const Vect2i& to_w, std::vector<Vect2i>& out_path,PathType type)
 {
 	Vect2i from = w2m(from_w);
 	Vect2i to = w2m(to_w);
@@ -240,7 +240,7 @@ bool AITileMap::findPath(const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i
 		b = path_hard_map->FindPath(from, to, out_path, chh);
 	}
 
-	vector<Vect2i>::iterator it;
+	std::vector<Vect2i>::iterator it;
 	FOR_EACH(out_path,it)
 		*it = m2w(*it);
 
@@ -304,7 +304,7 @@ void AITileMap::rebuildWalkMap(BYTE* walk_map)
 		FOR_EACH(field_dispatcher->clusters,it_cluster)
 		{
 			FieldCluster& c=*it_cluster;
-			vector<FieldInterval>::iterator it_field;
+			std::vector<FieldInterval>::iterator it_field;
 
 			FOR_EACH(c,it_field)
 			{
@@ -360,7 +360,7 @@ void AITileMap::recalcPathFind()
 	start_timer_auto(calcPathMap,STATISTICS_GROUP_TOTAL);
 
 	if(path_finder2->SetLaterQuant()){
-		swap(path_finder2,path_finder);
+		std::swap(path_finder2,path_finder);
 
 		rebuildWalkMap(path_finder2->GetWalkMap());
 		path_finder2->SetLater(terrainPathFind.enableSmoothing,terrainPathFind.rebuildQuants);

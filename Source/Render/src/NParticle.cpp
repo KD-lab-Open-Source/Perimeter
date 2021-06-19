@@ -10,7 +10,7 @@
 #include "xmath.h"
 
 static RandomGenerator rnd;
-static vector<Vect2f> rotate_angle;
+static std::vector<Vect2f> rotate_angle;
 
 KeyFloat::value KeyFloat::none=0;
 KeyPos::value KeyPos::none=Vect3f::ZERO;
@@ -625,11 +625,11 @@ void cEmitterInt::Draw(cCamera *pCamera)
 	cURenderDevice* rd=pCamera->GetRenderDevice();
 	if(false)
 	{
-		vector<Vect3f>& begin_position=parent->GetPos();
-		vector<Vect3f>& normal_position=parent->GetNorm();
+		std::vector<Vect3f>& begin_position=parent->GetPos();
+		std::vector<Vect3f>& normal_position=parent->GetNorm();
 		if(normal_position.empty())
 		{
-			vector<Vect3f>::iterator it;
+			std::vector<Vect3f>::iterator it;
 			FOR_EACH(begin_position,it)
 			{
 				Vect3f p=*it;
@@ -1081,7 +1081,7 @@ void cEmitterInt::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 	if (chPlume)
 	{	
 		cur.plume_pos.resize(TraceCount);
-		vector<Vect3f>::iterator it;
+		std::vector<Vect3f>::iterator it;
 		Vect3f& bpos = /*GetGlobalMatrix()*/cur.pos0;
 		FOR_EACH(cur.plume_pos,it)
 			*it = bpos;
@@ -1143,7 +1143,7 @@ Vect3f cEmitterInt::CalcVelocity(const EffectBeginSpeedMatrix& s,const nParticle
 	return v;
 }
 
-void cEmitterInt::SetKeys(vector<KeyParticleInt>& ks)
+void cEmitterInt::SetKeys(std::vector<KeyParticleInt>& ks)
 {
 	keys.resize(ks.size());
 	for(int i=0;i<ks.size();i++)
@@ -1632,7 +1632,7 @@ void cEmitterSpl::SetEmitterKey(EmitterKeySpl& k,cEmitter3dObject* models)
 	if(!k.p_position_auto_time)
 		return;
 
-	vector<float> klen;
+	std::vector<float> klen;
 	float sum=0;
 	klen.resize(hkeys.size());
 	for(i=0;i<hkeys.size();i++)
@@ -1680,7 +1680,7 @@ void cEmitterSpl::SetEmitterKey(EmitterKeySpl& k,cEmitter3dObject* models)
 #endif
 }
 
-void cEmitterSpl::SetKeys(vector<KeyParticleSpl>& ks)
+void cEmitterSpl::SetKeys(std::vector<KeyParticleSpl>& ks)
 {
 	keys.resize(ks.size());
 	for(int i=0;i<ks.size();i++)
@@ -1848,7 +1848,7 @@ void cEmitterSpl::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 	if (chPlume)
 	{	
 		cur.plume_pos.resize(TraceCount);
-		vector<Vect3f>::iterator it;
+		std::vector<Vect3f>::iterator it;
 		Vect3f bpos = /*GetGlobalMatrix()*/cur.pos.trans();
 		FOR_EACH(cur.plume_pos,it)
 			*it = bpos;
@@ -1963,7 +1963,7 @@ void cEffect::SetFunctorGetZ(FunctorGetZ* func)
 	func_getz->IncRef();
 	func_getz->UpdateInterface(this);
 
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 		(*it)->SetFunctorGetZ(func_getz);
 
@@ -1977,7 +1977,7 @@ void cEffect::SetAutoDeleteAfterLife(bool auto_delete_after_life_)
 bool cEffect::IsLive()
 {
 	bool live=false;
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	{
 		live=live || (*it)->IsLive();
@@ -1995,7 +1995,7 @@ void cEffect::Add(cEmitterInterface* p)
 void cEffect::Clear()
 {
 	time=0;
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 		(*it)->Release();
 	emitters.clear();
@@ -2004,7 +2004,7 @@ void cEffect::Clear()
 void cEffect::PreDraw(cCamera *pCamera)
 {
 	bool visible=false;
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	if((*it)->IsVisible(pCamera))
 	{
@@ -2022,21 +2022,21 @@ void cEffect::Draw(cCamera *pCamera)
 	count_triangle = 0;
 	square_triangle = 0;
 #endif	
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 		(*it)->Draw(pCamera);
 }
 
 void cEffect::SetCycled(bool cycled)
 {
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 		(*it)->SetCycled(cycled);
 }
 
 bool cEffect::IsCycled()const
 {
-	vector<cEmitterInterface*>::const_iterator it;
+	std::vector<cEmitterInterface*>::const_iterator it;
 	FOR_EACH(emitters,it)
 	if((*it)->IsCycled())
 		return true;
@@ -2045,7 +2045,7 @@ bool cEffect::IsCycled()const
 
 void cEffect::Animate(float dt)
 {
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	{
 		cEmitterInterface* p=*it;
@@ -2083,7 +2083,7 @@ void cEffect::Init(EffectKey& effect_key_,cEmitter3dObject* models,float scale)
 
 	Clear();
 	
-	vector<EmitterKeyInterface*>::iterator it;
+	std::vector<EmitterKeyInterface*>::iterator it;
 	if(models)
 	{
 		bool need_pos=false;
@@ -2190,7 +2190,7 @@ void cEffect::Init(EffectKey& effect_key_,cEmitter3dObject* models,float scale)
 float cEffect::GetSummaryTime()
 {
 	float time=0;
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	{
 		float t=(*it)->GetStartTime()+(*it)->GetLiveTime();
@@ -2201,7 +2201,7 @@ float cEffect::GetSummaryTime()
 
 void cEffect::ShowEmitter(EmitterKeyBase* emitter_id,bool show)
 {
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	{
 		cEmitterInterface* p=*it;
@@ -2212,7 +2212,7 @@ void cEffect::ShowEmitter(EmitterKeyBase* emitter_id,bool show)
 
 void cEffect::ShowAllEmitter()
 {
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	{
 		(*it)->SetShowObjEditor(true);
@@ -2221,7 +2221,7 @@ void cEffect::ShowAllEmitter()
 
 void cEffect::HideAllEmitter()
 {
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	{
 		(*it)->SetShowObjEditor(false);
@@ -2254,7 +2254,7 @@ void cEffect::SetTime(float t)
 void cEffect::MoveToTime(float t)
 {
 	const float dt=0.05f;
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 		(*it)->SetDummyTime(dt);
 	while(time<t)
@@ -2332,7 +2332,7 @@ void cEffect::EffectObserverLink3dx::Update()
 void cEffect::StopAndReleaseAfterEnd()
 {
 	SetAutoDeleteAfterLife(true);
-	vector<cEmitterInterface*>::iterator it;
+	std::vector<cEmitterInterface*>::iterator it;
 	FOR_EACH(emitters,it)
 	{
 		cEmitterInterface* p=*it;
@@ -2771,21 +2771,21 @@ EmitterKeyBase::~EmitterKeyBase()
 }
 
 
-void EmitterKeyBase::add_sort(vector<float>& xsort,CKey& c)
+void EmitterKeyBase::add_sort(std::vector<float>& xsort,CKey& c)
 {
 	CKey::iterator it;
 	FOR_EACH(c,it)
 		xsort.push_back(it->time);
 }
 
-void EmitterKeyBase::add_sort(vector<float>& xsort,CKeyColor& c)
+void EmitterKeyBase::add_sort(std::vector<float>& xsort,CKeyColor& c)
 {
 	CKeyColor::iterator it;
 	FOR_EACH(c,it)
 		xsort.push_back(it->time);
 }
 
-void EmitterKeyBase::end_sort(vector<float>& xsort)
+void EmitterKeyBase::end_sort(std::vector<float>& xsort)
 {
 	sort(xsort.begin(),xsort.end());
 	for(int i=1;i<xsort.size();i++)
@@ -2900,7 +2900,7 @@ void EmitterKeyBase::SaveInternal(CSaver& s)
 		case EMC_INTEGRAL:
 			{
 				need_normals |=  ((EmitterKeyInt*)this)->use_light;
-				vector<EffectBeginSpeed>::iterator it;
+				std::vector<EffectBeginSpeed>::iterator it;
 				FOR_EACH(((EmitterKeyInt*)this)->begin_speed, it)
 					need_normals |= it->velocity == EMV_NORMAL_3D_MODEL;
 			}
@@ -3032,7 +3032,7 @@ EmitterKeyInt::~EmitterKeyInt()
 
 void EmitterKeyInt::BuildKey()
 {
-	vector<float> xtime;
+	std::vector<float> xtime;
 	xtime.push_back(0);
 	xtime.push_back(1);
 	add_sort(xtime,p_velocity);
@@ -3241,7 +3241,7 @@ void EmitterKeySpl::Load(CLoadDirectory rd)
 
 void EmitterKeySpl::BuildKey()
 {
-	vector<float> xtime;
+	std::vector<float> xtime;
 	xtime.push_back(0);
 	xtime.push_back(1);
 	add_sort(xtime,p_size);
@@ -3288,7 +3288,7 @@ EffectKey::~EffectKey()
 void EffectKey::Clear()
 {
 	//В effect maker этот список в деструкторе должен быть всегда пустым
-	vector<EmitterKeyInterface*>::iterator it;
+	std::vector<EmitterKeyInterface*>::iterator it;
 	FOR_EACH(key,it)
 		delete *it;
 	key.clear();
@@ -3299,7 +3299,7 @@ void EffectKey::operator= (const EffectKey& effect_key)
 {
 	name=effect_key.name;
 	Clear();
-	vector<EmitterKeyInterface*>::const_iterator it;
+	std::vector<EmitterKeyInterface*>::const_iterator it;
 
 	FOR_EACH(effect_key.key,it)
 	{
@@ -3315,7 +3315,7 @@ void EffectKey::Save(CSaver& s)
 		s<<name;
 		s.pop();
 
-		vector<EmitterKeyInterface*>::iterator it;
+		std::vector<EmitterKeyInterface*>::iterator it;
 		FOR_EACH(key,it)
 		{
 			EmitterKeyInterface* p=*it;
@@ -3368,7 +3368,7 @@ void EffectKey::Load(CLoadDirectory rd)
 
 void EffectKey::RelativeScale(float scale)
 {
-	vector<EmitterKeyInterface*>::iterator it;
+	std::vector<EmitterKeyInterface*>::iterator it;
 	FOR_EACH(key,it)
 		(*it)->RelativeScale(scale);
 }
@@ -3394,7 +3394,7 @@ void EffectLibrary::ClearNoDelete()
 
 EffectKey* EffectLibrary::Get(const char* name) const
 {
-	vector<EffectKey*>::const_iterator it;
+	std::vector<EffectKey*>::const_iterator it;
 	FOR_EACH(lst,it)
 	{
 		if(stricmp((*it)->name.c_str(),name)==0)
@@ -3411,7 +3411,7 @@ bool EffectLibrary::Load(const char* fname,const char* texture_path)
 		return false;
 	filename=fname;
 
-	string path;
+	std::string path;
 	if(texture_path && strlen(texture_path)>0)
 	{
 		char c=texture_path[strlen(texture_path)-1];
@@ -3437,10 +3437,10 @@ bool EffectLibrary::Load(const char* fname,const char* texture_path)
 			char fname[_MAX_FNAME];
 			char ext[_MAX_EXT];
 			
-			vector<EmitterKeyInterface*>::iterator it;
+			std::vector<EmitterKeyInterface*>::iterator it;
 			FOR_EACH(ek->key,it)
 			{
-				string& t=(*it)->texture_name;
+				std::string& t=(*it)->texture_name;
 				_splitpath(t.c_str(),drive,dir,fname,ext);
 				sprintf(path_buffer,"%s%s%s",path.c_str(),fname,ext);
 				t=path_buffer;
@@ -3512,7 +3512,7 @@ void EmitterKeySpl::RelativeScale(float scale)
 
 bool EffectKey::IsNeed3DModel()
 {
-	vector<EmitterKeyInterface*>::iterator it;
+	std::vector<EmitterKeyInterface*>::iterator it;
 	FOR_EACH(key,it)
 	{
 		EmitterKeyBase* p=dynamic_cast<EmitterKeyBase*>(*it);
@@ -3526,7 +3526,7 @@ bool EffectKey::IsNeed3DModel()
 
 bool EffectKey::IsCycled()
 {
-	vector<EmitterKeyInterface*>::iterator it;
+	std::vector<EmitterKeyInterface*>::iterator it;
 	FOR_EACH(key,it)
 	if((*it)->cycled)
 		return true;
@@ -3767,8 +3767,8 @@ void cEmitterZ::Draw(cCamera *pCamera)
 	cURenderDevice* rd=pCamera->GetRenderDevice();
 	if(false)
 	{
-		vector<Vect3f>::iterator it;
-		vector<Vect3f>& begin_position=parent->GetPos();
+		std::vector<Vect3f>::iterator it;
+		std::vector<Vect3f>& begin_position=parent->GetPos();
 		FOR_EACH(begin_position,it)
 		{
 			Vect3f p=*it;
@@ -4065,7 +4065,7 @@ void cEmitterZ::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 */
 		}else
 			z = CalcZ(cur.pos0.x,cur.pos0.y);
-		vector<Vect3f>::iterator it;
+		std::vector<Vect3f>::iterator it;
 		FOR_EACH(cur.plume_pos,it)
 			it->z = z;
 	}

@@ -16,7 +16,7 @@ class Command : public tx3d::SharedPointer {
 		virtual int calculateLength(Worlds* worlds, Frames* frames) const = 0;
 		virtual void setObject3D(Worlds* worlds, Frames* frames, Object3D* object3D) {
 		}
-		virtual string toString() const {
+		virtual std::string toString() const {
 			return "UNKNOWN";
 		}
 
@@ -41,362 +41,362 @@ class FrameCommand : public Command {
 			return (frame->getName() == frameName);
 		}
 	protected:
-		string frameName;
+		std::string frameName;
 };
 
 //---Zero-Commands---
 class CreateZeroWorld : public Command {
 	public:
-		CreateZeroWorld(const string& params, int duration);
+		CreateZeroWorld(const std::string& params, int duration);
 		~CreateZeroWorld();
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		World* origin;
 };
 class CreateZeroLink : public Command {
 	public:
-		CreateZeroLink(const string& params, int duration);
+		CreateZeroLink(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string world1;
-		string world2;
+		std::string world1;
+		std::string world2;
 };
 
 //---Usual-Commands---
 class KillAlphaPortal : public Command {
 	public:
-		KillAlphaPortal(const string& params, int duration);
+		KillAlphaPortal(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldName;
+		std::string worldName;
 };
 class KillOmegaPortal : public Command {
 	public:
-		KillOmegaPortal(const string& params, int duration);
+		KillOmegaPortal(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldName;
+		std::string worldName;
 };
 class KillWorld : public Command {
 	public:
-		KillWorld(const string& params, int duration);
+		KillWorld(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldName;
+		std::string worldName;
 };
 class RenameWorld : public Command {
 	public:
-		RenameWorld(const string& params, int duration);
+		RenameWorld(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldSysName;
-		string worldName;
+		std::string worldSysName;
+		std::string worldName;
 };
 
 //---Frame-Commands---
 class JumpToWorld : public FrameCommand {
 	public:
-		JumpToWorld(const string& params, int duration);
+		JumpToWorld(const std::string& params, int duration);
 		~JumpToWorld();
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		const Vect3f& getWorldCoords();
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		World* origin;
 };
 class BuildFrame : public FrameCommand {
 	public:
-		BuildFrame(const string& params, int duration);
+		BuildFrame(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldSysName;
+		std::string worldSysName;
 		int race;
 		int colorIndex;
 		bool shouldCreateNomad;
 };
 class ChangeFrameRace : public FrameCommand {
 	public:
-		ChangeFrameRace(const string& params, int duration);
+		ChangeFrameRace(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		int race;
 		int colorIndex;
 };
 class CreateAlphaPortal : public FrameCommand {
 	public:
-		CreateAlphaPortal(const string& params, int duration);
+		CreateAlphaPortal(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		void setObject3D(Worlds* worlds, Frames* frames, Object3D* object3D);
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 class CreateOmegaPortal : public FrameCommand {
 	public:
-		CreateOmegaPortal(const string& params, int duration);
+		CreateOmegaPortal(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 class CreateLink : public FrameCommand {
 	public:
-		CreateLink(const string& params, int duration);
+		CreateLink(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		void setObject3D(Worlds* worlds, Frames* frames, Object3D* object3D);
 		World* getWorld(Worlds* worlds);
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldSysName;
+		std::string worldSysName;
 };
 class TransferFrame : public FrameCommand {
 	public:
-		TransferFrame(const string& params, int duration);
+		TransferFrame(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		World* getWorldToTransfer(Worlds* worlds);
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldSysName;
+		std::string worldSysName;
 };
 class ReachWorld : public FrameCommand {
 	public:
-		ReachWorld(const string& params, int duration);
+		ReachWorld(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		World* getWorldToReach(Worlds* worlds);
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string worldSysName;
+		std::string worldSysName;
 };
 class DestroyFrame : public FrameCommand {
 	public:
-		DestroyFrame(const string& params, int duration);
+		DestroyFrame(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 class SendTestament : public FrameCommand {
 	public:
-		SendTestament(const string& params, int duration);
+		SendTestament(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		bool checked(World* world) {
 			return 
 //				find(pool.begin(), pool.begin() + checkedBound, world) != pool.begin() + checkedBound;
-				find(pool.begin(), pool.end(), world) != pool.end();
+				std::find(pool.begin(), pool.end(), world) != pool.end();
 		}
 		void connectedToForCheck(World* world);
 
-		vector <World*> pool;
+		std::vector <World*> pool;
 		int checkedBound;
 		int forCheckBound;
 		
-		string nomadFrameName;
+		std::string nomadFrameName;
 		bool shouldSendNomad;
 		int depth;
 };
 class StopFrame : public FrameCommand {
 	public:
-		StopFrame(const string& params, int duration);
+		StopFrame(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 //---Control-Commands---
 class ExecuteMission : public Command {
 	public:
-		ExecuteMission(const string& params, int duration);
+		ExecuteMission(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		const string& getMissionName() const {
+		const std::string& getMissionName() const {
 			return missionName;
 		}
-		const string& getFileName() const {
+		const std::string& getFileName() const {
 			return fileName;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string missionName;
-		string fileName;
+		std::string missionName;
+		std::string fileName;
 };
 class ExecuteFakeMission : public Command {
 	public:
-		ExecuteFakeMission(const string& params, int duration);
+		ExecuteFakeMission(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 class ShowText : public Command {
 	public:
-		ShowText(const string& params, int duration);
+		ShowText(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		const string& getText() const {
+		const std::string& getText() const {
 			return text;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string text;
-		string icon;
+		std::string text;
+		std::string icon;
 };
 class HideText : public Command {
 	public:
-		HideText (const string& params, int duration);
+		HideText (const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 class Pause : public Command {
 	public:
-		Pause(const string& params, int duration);
+		Pause(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 class SetSpeed : public Command {
 	public:
-		SetSpeed(const string& params, int duration);
+		SetSpeed(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		float speed;
 };
 class SetDelay : public Command {
 	public:
-		SetDelay(const string& params, int duration);
+		SetDelay(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		float delay;
 };
 class StartAudio : public Command {
 	public:
-		StartAudio(const string& params, int duration);
+		StartAudio(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string audioName;
+		std::string audioName;
 };
 class StartVideo : public Command {
 	public:
-		StartVideo(const string& params, int duration);
+		StartVideo(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string reelName;
-		string sndName;
+		std::string reelName;
+		std::string sndName;
 };
 class StartInterVideo : public Command {
 	public:
-		StartInterVideo(const string& params, int duration);
+		StartInterVideo(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string reelName;
+		std::string reelName;
 };
 class SetMusic : public Command {
 	public:
-		SetMusic(const string& params, int duration);
+		SetMusic(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
-		string path;
+		std::string path;
 };
 
 class AddCameraPosition : public Command {
 	public:
-		AddCameraPosition(const string& params, int duration);
+		AddCameraPosition(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		Vect3f pivotPosition;
 		float psi;
@@ -406,26 +406,26 @@ class AddCameraPosition : public Command {
 
 class ClearCameraPath : public Command {
 	public:
-		ClearCameraPath(const string& params, int duration);
+		ClearCameraPath(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class CameraFollowNomad : public Command {
 	public:
-		CameraFollowNomad(const string& params, int duration);
+		CameraFollowNomad(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return false;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 	protected:
 		float deltaPsi;
 		float radius;
@@ -434,89 +434,89 @@ class CameraFollowNomad : public Command {
 
 class WaitForCamera : public Command {
 	public:
-		WaitForCamera(const string& params, int duration);
+		WaitForCamera(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class WaitForCameraPoint : public Command {
 	public:
-		WaitForCameraPoint(const string& params, int duration);
+		WaitForCameraPoint(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class UntilEndOfAudio: public Command {
 	public:
-		UntilEndOfAudio(const string& params, int duration);
+		UntilEndOfAudio(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class UntilEndOfVideo: public Command {
 	public:
-		UntilEndOfVideo(const string& params, int duration);
+		UntilEndOfVideo(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class UntilEndOfCamera: public Command {
 	public:
-		UntilEndOfCamera(const string& params, int duration);
+		UntilEndOfCamera(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
 		bool isControlCommand() const {
 			return true;
 		}
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class RollBack : public Command {
 	public:
-		RollBack(const string& params, int duration);
+		RollBack(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class BreakSkipping : public Command {
 	public:
-		BreakSkipping(const string& params, int duration);
+		BreakSkipping(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 class FinishHistory : public Command {
 	public:
-		FinishHistory(const string& params, int duration);
+		FinishHistory(const std::string& params, int duration);
 		void execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander);
 		int calculateLength(Worlds* worlds, Frames* frames) const;
-		string toString() const;
-		static const string NAME;
+		std::string toString() const;
+		static const std::string NAME;
 };
 
 //---Factory---
@@ -524,8 +524,8 @@ class CommandFactory {
 	public:
 		CommandFactory() {
 		}
-		Command* createCommand(const string& command);
-		static bool commandHasName(const string& command, const string& name) {
+		Command* createCommand(const std::string& command);
+		static bool commandHasName(const std::string& command, const std::string& name) {
 			return (command.find(name.c_str()) == 0);
 		}
 };

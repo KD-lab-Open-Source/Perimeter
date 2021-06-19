@@ -15,7 +15,7 @@ enum terMonkMode
 class terUnitMonk : public GridElementType
 {
 	friend class MonkManager;
-	list<terUnitMonk*>::iterator self_it;
+	std::list<terUnitMonk*>::iterator self_it;
 	terPlayer* Player;
 	terInterpolationMonk avatar;
 	Vect3f position_;

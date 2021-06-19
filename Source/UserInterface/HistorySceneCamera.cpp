@@ -397,7 +397,7 @@ void HistorySceneCamera::onResolutionChanged() {
 	}
 }
 
-string HistorySceneCamera::posToString(const CameraPosition& pos) {
+std::string HistorySceneCamera::posToString(const CameraPosition& pos) {
 	char str[200];
 	sprintf(
 		str,
@@ -409,10 +409,10 @@ string HistorySceneCamera::posToString(const CameraPosition& pos) {
 		pos.pivotPosition.y*HISTORY_SCENE_SCALE,
 		pos.pivotPosition.z*HISTORY_SCENE_SCALE
 		);
-	return string(str);
+	return std::string(str);
 }
 
-void HistorySceneCamera::addLineToLog(const string& line) {
+void HistorySceneCamera::addLineToLog(const std::string& line) {
 /*
 	if (log.empty()) {
 		log += "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" + line + "\n";
