@@ -6,7 +6,8 @@
 class ZIPStream : public XStream
 {
 public:
-	ZIPStream(const char* name);
+	ZIPStream();
+    int	open(const char* name, unsigned f = XS_IN);
 };
 
 //Если не вызывать ZIPOpen, то файл будет открываться просто файл

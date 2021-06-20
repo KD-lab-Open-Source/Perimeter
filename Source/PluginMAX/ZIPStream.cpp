@@ -36,22 +36,23 @@ void ZIPClose()
 #endif //_NOZIP
 }
 
-ZIPStream::ZIPStream(const char* fname)
-:XStream(0)
-{
-	if(!fname)return;
-	bool b_open=false;
+ZIPStream::ZIPStream() : XStream(0) {
+}
+
+int	ZIPStream::open(const char* name, unsigned f) {
+	if (!name) return 0;
 #ifndef _NOZIP
 	if(pzip)	
 	{
-		b_open=open(fname)!=0;
+		bool b_open=XStream::open(name, f)!=0;
 		if(!b_open)
-			b_open=pzip->open((char*)fname,*this)!=0;
+			b_open=pzip->open((char*)name,*this)!=0;
 		if(!b_open)
-			b_open=open(fname)!=0;
+			b_open=XStream::open(name, f)!=0;
+        return b_open ? 1 : 0;
 	}else
 #endif //_NOZIP
 	{
-		b_open=open(fname)!=0;
+        return XStream::open(name, f);
 	}
 }

@@ -66,11 +66,11 @@ bool TGA::load(const char *fileName) {
 //---------
 */
 #ifndef _SURMAP_
-	ZIPStream file(fileName);
+	ZIPStream file;
 #else
 	XStream file(fileName, XS_IN);
 #endif
-	if (!!file) {
+	if (!file.open(fileName)) {
 		string errMsg("Error reading GeoTx TGA: ");
 		errMsg += fileName;
 		if(enable_load_assert)

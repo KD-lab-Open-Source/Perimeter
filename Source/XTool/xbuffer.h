@@ -2,6 +2,7 @@
 #define __XBUFFER_H
 
 #include <string>
+#include <cstring>
 
 #ifndef NULL
 #define NULL	0L

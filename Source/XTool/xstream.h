@@ -100,9 +100,6 @@ struct XStream
 	//Apparently never set but is checked
 	bool ioError() const { return false; }
 
-	int operator! (){ if(handler != XSHANDLE(-1)) return 1; else return 0; } // Obsolete
-	operator void* (){ if(handler != XSHANDLE(-1)) return 0; else return this; } // Obsolete
-
 	template<class T> XStream& write(const T& v){ write(&v, sizeof(T)); return *this; }
 	template<class T> XStream& read(T& v){ read(&v, sizeof(T)); return *this; }
 

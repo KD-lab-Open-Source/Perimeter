@@ -108,6 +108,9 @@ void XStream::close()
 	extSize = -1;
 	extPos = 0;
     */
+#ifdef XSTREAM_DEBUG
+    fprintf(stderr, "DBG: XStream::close %s\n", fname.c_str());
+#endif
     if(handler == nullptr)
         return;
 

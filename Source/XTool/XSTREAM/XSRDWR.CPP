@@ -13,6 +13,9 @@ unsigned long XStream::read(void* buf, unsigned long len)
 	pos += ret;
 	if(extSize != -1 && pos >= extSize) eofFlag = 1;
      */
+#ifdef XSTREAM_DEBUG
+    fprintf(stderr, "DBG: XStream::read %s %lu\n", fname.c_str(), len);
+#endif
 
     handler->read((char*) buf, len);
     ret = handler->gcount();
@@ -33,6 +36,9 @@ unsigned long XStream::write(const void* buf, unsigned long len)
         else return 0U;
     }
 	*/
+#ifdef XSTREAM_DEBUG
+    fprintf(stderr, "DBG: XStream::write %s %lu\n", fname.c_str(), len);
+#endif
 
     handler->write((char*) buf, len);
     ret = len;
