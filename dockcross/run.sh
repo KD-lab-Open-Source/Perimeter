@@ -28,8 +28,10 @@ fi
 
 echo "Building under windows shared x86"
 ./dockcross/dockcross-windows-shared-x86-perimeter ./dockcross/cmake-mingw.sh $@
-#echo "Building under windows shared x64"
-#./dockcross/dockcross-windows-shared-x64-perimeter ./dockcross/cmake-mingw.sh $@
+if [ ! -z $BUILD_64 ]; then
+  echo "Building under windows shared x64"
+  ./dockcross/dockcross-windows-shared-x64-perimeter ./dockcross/cmake-mingw.sh $@
+fi
 #echo "Building under windows static x86"
 #./dockcross/dockcross-windows-static-x86-perimeter ./dockcross/cmake-mingw.sh $@
 #echo "Building under windows static x86_64"

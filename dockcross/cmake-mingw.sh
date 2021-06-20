@@ -1,10 +1,15 @@
 #!/bin/bash
 
+set -e
+
 echo "Triplet: ${CROSS_TRIPLE}"
 if [[ $CROSS_TRIPLE == *shared ]]; then
   LIB_SUFFIX=.dll.a
 else
   LIB_SUFFIX=.a
+fi
+if [[ $CROSS_TRIPLE == x86_64* ]]; then
+  IS_64=1
 fi
 
 #rm -rf build/${CROSS_TRIPLE}
@@ -29,5 +34,16 @@ $@
 cd build/${CROSS_TRIPLE}
 
 ninja -j$(nproc --all)
+
+mkdir -p output
+
+cp Source/perimeter.exe output
+#cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/SDL2.dll output
+cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libogg*.dll output
+cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbis*.dll output
+cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbisfile*.dll output
+cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libstdc++*.dll output
+cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libgcc*.dll output
+cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libwinpthread-*.dll output
 
 exit 0
