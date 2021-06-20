@@ -176,6 +176,10 @@ SET(perimeter_SRCS
         Util/DebugUtil.cpp
         Util/EditArchive.cpp
         Util/MissionDescription.cpp
+        Util/SaveSQSH-1251.cpp
+        Util/SaveConditions-1251.cpp
+        Util/SaveActions-1251.cpp
+        Util/SaveOthers-1251.cpp
         Util/Save.cpp
         Game/StdAfx.cpp
         Util/SynchroTimer.cpp
