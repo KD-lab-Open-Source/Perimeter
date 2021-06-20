@@ -9,10 +9,37 @@ static char *sizeMSG	= "FILE SIZE CALCULATION ERROR";
 
 long XStream::seek(long offset, int dir)
 {
+    /*
+	long ret;
+
+	if(extSize != -1){
+		switch(dir){
+			case XS_BEG:
+				ret = SetFilePointer(handler,extPos + offset,0,dir) - extPos;
+				break;
+			case XS_END:
+				ret = SetFilePointer(handler,extPos + extSize - offset - 1,0,XS_BEG) - extPos;
+				break;
+			case XS_CUR:
+				ret = SetFilePointer(handler,extPos + pos + offset,0,XS_BEG) - extPos;
+				break;
+		}
+	}
+	else
+		ret = SetFilePointer(handler,offset,0,dir);
+
+	if (ret == -1L) {
+        if (ErrHUsed) ErrH.Abort(seekMSG, XERR_USER, GetLastError(), fname);
+        else return -1L;
+    }
+	if (ret >= size() - 1) eofFlag = 1;  else eofFlag = 0;
+	return pos = ret;
+     */
+    
     /* Full stream debug*/
     /*std::fstream debug("openfile.txt", std::ios::out|std::ios::app);
     if (debug.is_open())
-        debug<<"SEEK START "<<fname<<" tellg:"<<((std::fstream *)handler)->tellg()
+        debug<<"SEEK START "<<fname<<" tellg:"<<handler->tellg()
         <<" addr:"<<handler<<" curo:"<<offset<<std::endl;
     debug.close();*/
 
@@ -21,34 +48,34 @@ long XStream::seek(long offset, int dir)
         switch (dir) {
             case XS_BEG:
                 //ret = SetFilePointer(handler,extPos + offset,0,dir) - extPos;
-                if (((std::fstream *)handler)->flags() & std::ios::out) {
-                    ret = ((std::fstream *)handler)->tellp() - (std::streamoff)extPos;
-                    ((std::fstream *)handler)->seekp(extPos + offset, std::ios_base::beg);
+                if (handler->flags() & std::ios::out) {
+                    ret = handler->tellp() - (std::streamoff)extPos;
+                    handler->seekp(extPos + offset, std::ios_base::beg);
                 }
                 else {
-                    ret = ((std::fstream *)handler)->tellg() - (std::streamoff)extPos;
-                    ((std::fstream *)handler)->seekg(extPos + offset, std::ios_base::beg);
+                    ret = handler->tellg() - (std::streamoff)extPos;
+                    handler->seekg(extPos + offset, std::ios_base::beg);
                 }
                 break;
             case XS_END:
                 //ret = SetFilePointer(handler,extPos + extSize - offset - 1,0,XS_BEG) - extPos;
-                if (((std::fstream *)handler)->flags() & std::ios::out) {
-                    ret = ((std::fstream *)handler)->tellp() - (std::streamoff)extPos;
-                    ((std::fstream *)handler)->seekp(extPos + extSize - offset - 1, std::ios_base::beg);
+                if (handler->flags() & std::ios::out) {
+                    ret = handler->tellp() - (std::streamoff)extPos;
+                    handler->seekp(extPos + extSize - offset - 1, std::ios_base::beg);
                 } else {
-                    ret = ((std::fstream *)handler)->tellg() - (std::streamoff)extPos;
-                    ((std::fstream *)handler)->seekg(extPos + extSize - offset - 1, std::ios_base::beg);
+                    ret = handler->tellg() - (std::streamoff)extPos;
+                    handler->seekg(extPos + extSize - offset - 1, std::ios_base::beg);
                 }
                 break;
             case XS_CUR:
                 //ret = SetFilePointer(handler,extPos + pos + offset,0,XS_BEG) - extPos;
-                //((std::fstream *)handler)->clear();
-                if (((std::fstream *)handler)->flags() & std::ios::out) {
-                    ret = ((std::fstream *)handler)->tellp() - (std::streamoff)extPos;
-                    ((std::fstream *)handler)->seekp(extPos + pos + offset, std::ios_base::beg);
+                //handler->clear();
+                if (handler->flags() & std::ios::out) {
+                    ret = handler->tellp() - (std::streamoff)extPos;
+                    handler->seekp(extPos + pos + offset, std::ios_base::beg);
                 } else {
-                    ret = ((std::fstream *)handler)->tellg() - (std::streamoff)extPos;
-                    ((std::fstream *)handler)->seekg(extPos + pos + offset, std::ios_base::beg);
+                    ret = handler->tellg() - (std::streamoff)extPos;
+                    handler->seekg(extPos + pos + offset, std::ios_base::beg);
                 }
                 break;
             default:
@@ -61,30 +88,30 @@ long XStream::seek(long offset, int dir)
         //std::cout<<"SEEK:"<<fname<<std::endl;
         switch (dir) {
             case XS_BEG:
-                if (((std::fstream *)handler)->flags() & std::ios::out)
-                    ((std::fstream *)handler)->seekp(offset, std::ios_base::beg);
+                if (handler->flags() & std::ios::out)
+                    handler->seekp(offset, std::ios_base::beg);
                 else
-                    ((std::fstream *)handler)->seekg(offset, std::ios_base::beg);
+                    handler->seekg(offset, std::ios_base::beg);
                 break;
             case XS_END:
-                if (((std::fstream *)handler)->flags() & std::ios::out)
-                    ((std::fstream *)handler)->seekp(offset, std::ios_base::end);
+                if (handler->flags() & std::ios::out)
+                    handler->seekp(offset, std::ios_base::end);
                 else
-                    ((std::fstream *)handler)->seekg(offset, std::ios_base::end);
+                    handler->seekg(offset, std::ios_base::end);
                 break;
             case XS_CUR:
-                if (((std::fstream *)handler)->flags() & std::ios::out)
-                    ((std::fstream *)handler)->seekp(offset, std::ios_base::cur);
+                if (handler->flags() & std::ios::out)
+                    handler->seekp(offset, std::ios_base::cur);
                 else
-                    ((std::fstream *)handler)->seekg(offset, std::ios_base::cur);
+                    handler->seekg(offset, std::ios_base::cur);
                 break;
             default:
                 break;
         }
-        if (((std::fstream *)handler)->flags() & std::ios::out)
-            ret = ((std::fstream *)handler)->tellp();
+        if (handler->flags() & std::ios::out)
+            ret = handler->tellp();
         else
-            ret = ((std::fstream *)handler)->tellg();
+            ret = handler->tellg();
 
     }
     /* Full stream debug*/
@@ -94,8 +121,8 @@ long XStream::seek(long offset, int dir)
         <<" extSize:"<<extSize<<" pos:"<<pos<<" extPos:"<<extPos
         <<" ret:"<<ret<<std::endl;
     debug.close();*/
-    if (((std::fstream *)handler)->fail()) {
-        std::cout<<"Warning: Bad seek in file."<<std::endl;
+    if (handler->fail()) {
+        fprintf(stderr, "Warning: Bad seek in file.");
         if (ErrHUsed) ErrH.Abort(seekMSG, XERR_USER, ret, fname.c_str());
         else return -1L;
     }
@@ -113,26 +140,38 @@ void XStream::flush()
     */
     //if (!FlushFileBuffers(handler) && ErrHUsed)
     //	ErrH.Abort(flushMSG,XERR_USER,GetLastError(),fname);
-    ((std::fstream *)handler)->flush();
+    handler->flush();
 }
 
 long XStream::size() const
 {
+    /*
+	long tmp = extSize;
+	
+	if(tmp == -1){
+		tmp=GetFileSize(handler,0);
+		if (tmp == -1L) {
+            if (ErrHUsed) ErrH.Abort(sizeMSG, XERR_USER, GetLastError(), fname);
+            else return -1;
+        }
+	}
+     */
+    
     //std::cout<<"XStream::size()"<<std::endl;
     long tmp = extSize;
     long int tmp2;
     if(tmp == -1){
         //tmp=GetFileSize(handler,0);
-        if (((std::fstream *)handler)->flags() & std::ios::in) {
-            tmp2 = ((std::fstream *)handler)->tellg();
-            ((std::fstream *)handler)->seekp(0, std::ios_base::end);
-            tmp = ((std::fstream *)handler)->tellg();
-            ((std::fstream *)handler)->seekp(tmp2);
+        if (handler->flags() & std::ios::in) {
+            tmp2 = handler->tellg();
+            handler->seekp(0, std::ios_base::end);
+            tmp = handler->tellg();
+            handler->seekp(tmp2);
         } else {
-            tmp2 = ((std::fstream *)handler)->tellp();
-            ((std::fstream *)handler)->seekg(0, std::ios_base::end);
-            tmp = ((std::fstream *)handler)->tellp();
-            ((std::fstream *)handler)->seekg(tmp2);
+            tmp2 = handler->tellp();
+            handler->seekg(0, std::ios_base::end);
+            tmp = handler->tellp();
+            handler->seekg(tmp2);
         }
         if (tmp == -1L) {
             if (ErrHUsed)

@@ -1,9 +1,6 @@
 #include <fstream>
 #include "xstream.h"
 
-static char* readMSG	= "WRONG READING";
-static char* writeMSG	= "WRONG WRITING";
-
 unsigned long XStream::read(void* buf, unsigned long len)
 {
 	unsigned long ret;
@@ -17,10 +14,9 @@ unsigned long XStream::read(void* buf, unsigned long len)
 	if(extSize != -1 && pos >= extSize) eofFlag = 1;
      */
 
-    ((std::fstream *)handler)->read((char*) buf, len);
-    //len = ((std::fstream *)handler)->gcount();
+    handler->read((char*) buf, len);
+    ret = handler->gcount();
     //ret = len;
-    ret = ((std::fstream *)handler)->gcount();
     if(ret < len) eofFlag = 1;
     pos += ret;
     if(extSize != -1 && pos >= extSize) eofFlag = 1;
@@ -38,7 +34,7 @@ unsigned long XStream::write(const void* buf, unsigned long len)
     }
 	*/
 
-    ((std::fstream *)handler)->write((char*) buf, len);
+    handler->write((char*) buf, len);
     ret = len;
 	pos += ret;
 
