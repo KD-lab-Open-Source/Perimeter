@@ -2,7 +2,7 @@
 #include <cfloat>
 #include <iostream>
 #include <sstream>
-#ifdef _WIN32
+#ifdef _WIN32 //For Windows specific exHandler code
 #include <windows.h>
 #include <process.h>
 #include <crtdbg.h>

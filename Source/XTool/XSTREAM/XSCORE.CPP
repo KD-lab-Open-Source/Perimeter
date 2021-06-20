@@ -1,5 +1,4 @@
 #include <cstring>
-#include <windows.h>
 #include "xstream.h"
 
 XStream::XStream(int err)
