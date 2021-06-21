@@ -6,22 +6,6 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-BEGIN_ENUM_DESCRIPTOR(AIPlayerType, "AIPlayerType")
-REGISTER_ENUM(AI_PLAYER_TYPE_ME, "Я")
-REGISTER_ENUM(AI_PLAYER_TYPE_ENEMY, "Другой")
-REGISTER_ENUM(AI_PLAYER_TYPE_WORLD, "Мир")
-REGISTER_ENUM(AI_PLAYER_TYPE_ANY, "Любой")
-END_ENUM_DESCRIPTOR(AIPlayerType)
-
-BEGIN_ENUM_DESCRIPTOR(CompareOperator, "CompareOperator")
-REGISTER_ENUM(COMPARE_LESS, "Меньше")
-REGISTER_ENUM(COMPARE_LESS_EQ, "Меньше либо равно")
-REGISTER_ENUM(COMPARE_EQ, "Равно")
-REGISTER_ENUM(COMPARE_NOT_EQ, "Не равно")
-REGISTER_ENUM(COMPARE_GREATER, "Больше")
-REGISTER_ENUM(COMPARE_GREATER_EQ, "Больше либо равно")
-END_ENUM_DESCRIPTOR(CompareOperator)
-
 BEGIN_ENUM_DESCRIPTOR(TeleportationType, "TeleportationType")
 REGISTER_ENUM(TELEPORTATION_TYPE_ALPHA, "Телепортация с помощью Альфы")
 REGISTER_ENUM(TELEPORTATION_TYPE_OMEGA, "Телепортация с помощью Омегиравно")
@@ -31,18 +15,6 @@ BEGIN_ENUM_DESCRIPTOR(PlayerState, "PlayerState")
 REGISTER_ENUM(PLAYER_STATE_UNABLE_TO_PLACE_BUILDING, "Не могу установить здание")
 REGISTER_ENUM(PLAYER_STATE_UNABLE_TO_PLACE_CORE, "Не могу установить ядро")
 END_ENUM_DESCRIPTOR(PlayerState)
-
-BEGIN_ENUM_DESCRIPTOR(ChooseSquadID, "ChooseSquadID")
-REGISTER_ENUM(CHOOSE_SQUAD_1, "сквад 1")
-REGISTER_ENUM(CHOOSE_SQUAD_2,"сквад 2")
-REGISTER_ENUM(CHOOSE_SQUAD_3, "сквад 3")
-REGISTER_ENUM(CHOOSE_SQUAD_4, "сквад 4")
-REGISTER_ENUM(CHOOSE_SQUAD_5, "сквад 5")
-REGISTER_ENUM(CHOOSE_SQUAD_SMALLEST, "самый маленький сквад ")
-REGISTER_ENUM(CHOOSE_SQUAD_LARGEST, "самый большой сквад ")
-REGISTER_ENUM(CHOOSE_SQUAD_NEAREST_TO_FRAME, "ближайший к фрейму сквад")
-REGISTER_ENUM(CHOOSE_SQUAD_FARTHEST_FROM_FRAME, "самый дальний от фрейма сквад")
-END_ENUM_DESCRIPTOR(ChooseSquadID)
 
 /////////////////////////////////////////////////////
 //		Conditions
