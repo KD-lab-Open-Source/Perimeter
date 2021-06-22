@@ -12,7 +12,7 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
-#include <my_STL.h>
+#include "tweaks.h"
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
@@ -43,9 +43,7 @@
 #include "IVisGeneric.h"
 #include "VisGenericDefine.h"
 
-#ifdef _WIN32
 #include <windows.h>
-#endif
 /*
 // Standart includes
 #include <string.h>

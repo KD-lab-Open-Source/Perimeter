@@ -3,32 +3,55 @@
 #pragma once
 //Balmer
 
+enum MpegState
+{
+    MPEG_STOP=0,
+    MPEG_PLAY=1,
+    MPEG_PAUSE=2,
+};
+
+#ifdef PERIMETER_EXODUS
+
+//Dummy implementation
+
+static bool MpegInitLibrary(void*) {}
+static void MpegDeinitLibrary() {}
+
+class MpegSound {
+public:
+    MpegSound() = default;
+    ~MpegSound() = default;
+
+    bool OpenToPlay(const char*, bool cycled=true) { return true; }
+    void Stop() {}
+    void Pause() {}
+    void Resume() {}
+
+    const char* GetFileName() { return nullptr; }
+
+    MpegState IsPlay() { return MPEG_STOP; }
+
+    void SetVolume(int) {}
+    int GetVolume() { return 0; }
+
+    //Время считается в секундах
+
+    //Постепенно изменить громкость с текущей до new_volume за время time
+    //очищается при смене файла или вызове SetVolume
+    //Криво работает с DeferredSeek
+    bool FadeVolume(float, int new_volume=0) { return false; }
+
+    float GetLen() { return 0.0f; }
+};
+
+#else //PERIMETER_EXODUS
+
 #include <dsound.h>
 
 #define MPP_STAT
-#ifdef MPP_STAT
-double MpegCPUUsing();//Возвращает используемое на проигрывание Mpeg время (1 - всё время загрузки)
-#endif //MPP_STAT
 
-//
 bool MpegInitLibrary(void* LPDIRECTSOUND_pDS);
 void MpegDeinitLibrary();
-
-enum MpegState
-{
-	MPEG_STOP=0,
-	MPEG_PLAY=1,
-	MPEG_PAUSE=2,
-};
-
-//Возвращает длинну в секундах (но не очень точно, 
-//может ошибаться на 26 мс)
-//Хоть эта фонкция и существует, пользоваться ей не 
-//рекомендуется. В правильно написанном коде игры 
-//такая функция не нужна
-double MpegGetLen(const char* fname);
-
-typedef double MpegPos;
 
 class MpegSound
 {
@@ -43,9 +66,7 @@ class MpegSound
 	LPDIRECTSOUNDBUFFER pDSBuffer;
 	DWORD dwWriteOffset;
 	DWORD Wraps;//Сколько раз был записан звуковой буффер
-	DWORD BeginBufferOffset;
-	DWORD OldWraps,OldBeginBufferOffset;
-	DWORD OffsetBeginPlayFile;//С какого места начал играться файл
+	DWORD OldWraps;
 
 	bool bOldFrame;//Установлен, если играются старые данные, а пишутся новые
 
@@ -54,10 +75,7 @@ class MpegSound
 	bool clear_end_buffer;
 	MpegState mpeg_state;
 
-	DWORD deferred_prev_sample;
 	DWORD SeekSkipByte;//Сколько байт необходимо пропустить с начала фрэйма
-	MpegPos deferred_sample;
-	char deferred_fname[260];
 
 	enum {block_size=36*32};//block_size==BLK_SIZE
 	short last_signal[block_size*2];
@@ -79,22 +97,13 @@ public:
 	void Resume();
 
 	const char* GetFileName();
-	//Не играть музыку, если громкость музыки равна 0
-	//(по умолчанию музыка играется)
-	void SetPauseIfNullVolume(bool set=true);
 
 	MpegState IsPlay();
-
-	bool DebugRealPlay();//Действительно ли проигрывается музыка
 
 	void SetVolume(int volume);//0..255
 	int GetVolume();
 
-	inline int GetSamplePerSecond(){return 44100;}
 	//Время считается в секундах
-
-	//Возвращает величину буфера в сэмплах
-	inline int GetBufferLen(){return sizeDSBuffer/4;}
 
 	//Постепенно изменить громкость с текущей до new_volume за время time
 	//очищается при смене файла или вызове SetVolume
@@ -102,7 +111,6 @@ public:
 	bool FadeVolume(float time,int new_volume=0);
 
 	float GetLen();//в секундах
-	float GetCurPos();//в секундах (неточно)
 protected:
 	void InternalMpegSetVolume(int _volume);
 	bool InitSoundBuffer();
@@ -118,10 +126,10 @@ protected:
 	friend DWORD WINAPI MpegThreadProc(LPVOID lpParameter);
 	friend void MpegDeinitLibrary();
 
-	bool DefferredSeek(DWORD cur_pos,DWORD cur_write_byte);
-
 	void ClearFade();
 	void FadeQuant();
 };
+
+#endif //PERIMETER_EXODUS
 
 #endif // _PLAYMPP_H_

@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #ifndef __SOUND_TRACK_H__
 #define __SOUND_TRACK_H__
 
@@ -12,14 +10,7 @@ public:
 
 	const char* fileName() const;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ar & WRAP_NAME(fileName_, "fileName");
-		ar & TRANSLATE_OBJECT(fileNames, "Имена файлов");
-		ar & TRANSLATE_OBJECT(randomChoice, "Случайный выбор");
-		if(ar.isInput() && fileNames.empty() && !fileName_.empty())
-			fileNames.push_back(fileName_);
-	}
+#include "SoundTrack-1251.inl"
 
 private:
 	vector<string> fileNames; 

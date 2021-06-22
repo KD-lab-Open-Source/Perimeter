@@ -255,7 +255,7 @@ int	IGameExporter::DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOO
 	pRootExport->Export(name,false);
 
 	{
-		char logic_name[_MAX_PATH];
+		char logic_name[MAX_PATH];
 		char drive[_MAX_DRIVE];
 		char dir[_MAX_DIR];
 		char fname[_MAX_FNAME];

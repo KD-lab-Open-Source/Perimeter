@@ -84,7 +84,8 @@ void sWinVideo::WaitEnd()
 }
 int sWinVideo::IsComplete()
 {
-    long evCode,param1,param2;
+    long evCode;
+    LONG_PTR param1,param2;
 	while(pMediaEvent->GetEvent(&evCode,&param1,&param2,0)==S_OK)
 	{
 		pMediaEvent->FreeEventParams(evCode,param1,param2);

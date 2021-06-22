@@ -1,0 +1,13 @@
+FROM dockcross/windows-shared-x64:latest
+
+ENV DEFAULT_DOCKCROSS_IMAGE dockcross-windows-shared-x64-perimeter
+
+RUN  apt-get install software-properties-common lsb-release -y
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9
+RUN add-apt-repository "deb [arch=amd64] http://pkg.mxe.cc/repos/apt `lsb_release -sc` main"
+RUN apt-get update
+
+RUN apt-get install -y \
+ mxe-x86-64-w64-mingw32.shared-vorbis \
+ mxe-x86-64-w64-mingw32.shared-boost \
+ mxe-x86-64-w64-mingw32.shared-sdl2

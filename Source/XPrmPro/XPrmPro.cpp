@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "Token.h"
 
-__int64 getRDTSC(void);
+int64_t getRDTSC(void);
 
 void help(int mode)
 {

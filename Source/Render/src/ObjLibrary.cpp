@@ -16,8 +16,8 @@ bool WinVGIsOldModel()
 int ResourceFileRead(const char *fname,char *&buf,int &size)
 {
 	buf=0; size=0;
-	ZIPStream f(fname);
-	if(!!f) { f.close(); return -1; }
+	ZIPStream f;
+	if(!f.open(fname)) { f.close(); return -1; }
 	size=f.size();
 	buf=new char[size];
 	f.read(buf,size);
@@ -999,7 +999,7 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 
 cObjectNodeRoot* cObjLibrary::LoadLod(char *in_filename,char *TexturePath)
 {
-	char path_buffer[_MAX_PATH];
+	char path_buffer[MAX_PATH];
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];

@@ -187,18 +187,16 @@ void HTManager::init()
 	interpolation_factor_ = 0;
 
 	static XBuffer errorHeading;
-	errorHeading.SetRadix(16);
-	errorHeading < currentVersion
+	errorHeading < currentVersion;
 #ifdef _FINAL_VERSION_
-		< " Final"
+    errorHeading < " Final";
 #endif
 #ifdef PERIMETER_DEBUG
-        < " DBG"
+    errorHeading < " DBG";
 #endif
-		< " OS: " <= GetVersion();
 
+    ErrH.SetPrefix(errorHeading);
 #ifndef _FINAL_VERSION_
-	ErrH.SetPrefix(errorHeading);
 	ErrH.SetRestore(InternalErrorHandler);
 #endif
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
@@ -882,7 +880,7 @@ int popupMenuIndex(vector<const char*> items) // returns -1 if cancel
 
 //-----------------------------------------
 static string editTextString;
-static BOOL CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)
 	{

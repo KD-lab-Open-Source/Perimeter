@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "stdafx.h"
 
 #define _NOSTD_
@@ -8,8 +6,8 @@
 #include <conio.h>
 #include "MessageBlock.h"
 
-char inname[_MAX_PATH]="sound.cfg";
-char outname[_MAX_PATH];
+char inname[MAX_PATH]="sound.cfg";
+char outname[MAX_PATH];
 
 int main(int argc, char* argv[])
 {
@@ -82,7 +80,7 @@ int main(int argc, char* argv[])
                       _S_IREAD | _S_IWRITE );
 	if(f==-1)
 	{
-		message_printf("Не могу записать %s",outname);
+		message_printf("РќРµ РјРѕРіСѓ Р·Р°РїРёСЃР°С‚СЊ %s",outname);
 		exit(1);
 		return 1;
 	}
@@ -90,8 +88,8 @@ int main(int argc, char* argv[])
 	_write(f,paramblock,sizeparam);
 	_close(f);
 
-	dosprintf("%s - откомпилирован успешно.\n",inname);
-//	dosprintf("Нажмите любую клавишу для окончания программы.\n");getch();
+	dosprintf("%s - РѕС‚РєРѕРјРїРёР»РёСЂРѕРІР°РЅ СѓСЃРїРµС€РЅРѕ.\n",inname);
+//	dosprintf("РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ РѕРєРѕРЅС‡Р°РЅРёСЏ РїСЂРѕРіСЂР°РјРјС‹.\n");getch();
 
 	exit(0);
 	return 0;

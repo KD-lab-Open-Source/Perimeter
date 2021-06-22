@@ -74,7 +74,14 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 			DPNMSG_INDICATED_CONNECT_ABORTED* pMsg=(DPNMSG_INDICATED_CONNECT_ABORTED*)pMsgBuffer;
 
 			if(isHost()){
-				DeleteClientByMissionDescriptionIdx((unsigned int)pMsg->pvPlayerContext);
+                //TODO fix this once we remove DirectPlay
+                unsigned int mIdx;
+#ifdef PERIMETER_ARCH_64
+                mIdx = (unsigned int) ((long long) pMsg->pvPlayerContext);
+#else
+                mIdx = (unsigned int) pMsg->pvPlayerContext;
+#endif
+				DeleteClientByMissionDescriptionIdx(mIdx);
 			}
 		}
 
@@ -176,7 +183,14 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 						m_hostDPNID=dpnid;
 					//Дополнительно
 					if( (pdpPlayerInfo->dwPlayerFlags&DPNPLAYER_LOCAL)==0 && isHost()){//Кривоватое условие
-						setDPNIDInClientsDate((unsigned int)pCreatePlayerMsg->pvPlayerContext, pCreatePlayerMsg->dpnidPlayer);
+                        //TODO fix this once we remove DirectPlay
+                        unsigned int mIdx;
+#ifdef PERIMETER_ARCH_64
+                        mIdx = (unsigned int) ((long long) pCreatePlayerMsg->pvPlayerContext);
+#else
+                        mIdx = (unsigned int) pCreatePlayerMsg->pvPlayerContext;
+#endif
+						setDPNIDInClientsDate(mIdx, pCreatePlayerMsg->dpnidPlayer);
 					}
 
 				}

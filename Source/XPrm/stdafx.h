@@ -12,7 +12,7 @@
 //  or project specific include files that are used frequently, but
 //      are changed infrequently
 
-#include <My_STL.h> 
+#include "tweaks.h"
 
 #ifdef _AFXDLL
 
@@ -39,7 +39,7 @@
 #include <hash_map>
 #include <algorithm>
 
-#include "my_STL.h"
+#include "tweaks.h"
 #include "handle.h"
 #include "XUtil.h"
 #include "xmath.h"

@@ -9,6 +9,7 @@
 #ifndef __XMATH_H__
 #define __XMATH_H__
 
+#include "tweaks.h"
 #include <cmath>
 
 #ifdef _XMATH_USE_IOSTREAM
@@ -59,7 +60,9 @@ enum eAxis
 ///////////////////////////////////////////////////////////////////////////////
 //  		Constants
 ///////////////////////////////////////////////////////////////////////////////
+#ifdef M_PI
 #undef M_PI
+#endif
 #define M_PI  3.14159265358979323846f
 
 const double DBL_EPS = 1.e-15;
@@ -72,15 +75,7 @@ const float FLT_COMPARE_TOLERANCE = 1.e-5f;
 
 const int INT_INF = 0x7fffffff;
 
-#ifdef _MSC_VER
-#if _MSC_VER == 1100 /* if MSVisual C++ 5.0 */
-#define xm_inline inline
-#else
-#define xm_inline __forceinline
-#endif //_MSC_VER
-#else
-#define xm_inline inline
-#endif //_MSC_VER
+#define xm_inline FORCEINLINE
 
 ///////////////////////////////////////////////////////////////////////////////
 //

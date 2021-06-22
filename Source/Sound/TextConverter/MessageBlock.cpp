@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 #include "Parse/ParamParse.h"
 #include "MessageBlock.h"
@@ -11,7 +9,7 @@ ParamBlock* ReadRules(char* rul,int* psize,ParamBlock* pRulesX)
 	int f=_open( rul, _O_RDONLY |_O_BINARY);
 	if(f==-1)
 	{
-		message_printf("Не могу открыть %s",rul);
+		message_printf("РќРµ РјРѕРіСѓ РѕС‚РєСЂС‹С‚СЊ %s",rul);
 		exit(1);
 		return NULL;
 	}
@@ -45,7 +43,7 @@ ParamBlock* ReadRulesRes(char* rul,int* psize,ParamBlock* pRulesX)
 	HGLOBAL hglobal=hrsrc?LoadResource(NULL,hrsrc):NULL;
 	if(hrsrc==NULL || hglobal==NULL)
 	{
-		message_printf("Не могу найти ресурс %s.rul",rul);
+		message_printf("РќРµ РјРѕРіСѓ РЅР°Р№С‚Рё СЂРµСЃСѓСЂСЃ %s.rul",rul);
 		exit(1);
 		return NULL;
 	}
@@ -98,7 +96,7 @@ void InitStringID(bool beng,bool beginner)
                       _S_IREAD | _S_IWRITE );
 	if(f==-1)
 	{
-		message_printf("Не могу записать %s",outname);
+		message_printf("РќРµ РјРѕРіСѓ Р·Р°РїРёСЃР°С‚СЊ %s",outname);
 		exit(1);
 	}
 
@@ -126,6 +124,6 @@ bool StringIDByConst(LPCSTR name,LPCSTR value,int& ret)
 		}
 	}
 
-	throw "Не могу найти строковый индентификатор";
+	throw "РќРµ РјРѕРіСѓ РЅР°Р№С‚Рё СЃС‚СЂРѕРєРѕРІС‹Р№ РёРЅРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ";
 	return false;
 }

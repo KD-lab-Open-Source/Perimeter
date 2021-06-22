@@ -40,14 +40,14 @@ public:
 	char* str();
 	int getline(char *buf,int size);
 
-	cStream& operator << (char a);
-	cStream& operator << (unsigned char a);
-	cStream& operator << (short a);
-	cStream& operator << (unsigned short a);
-	cStream& operator << (int a);
-	cStream& operator << (unsigned int a);
-	cStream& operator << (long a);
-	cStream& operator << (unsigned long a);
+    template<typename T>
+    cStream& operator<< (T var)
+    {
+        assert(lpBuffer);
+        std::string str = std::to_string(var);
+        write(str.c_str(), str.length());
+        return *this;
+    }
 	cStream& operator << (float a);
 	cStream& operator << (double a);
 	cStream& operator << (long double a);

@@ -1,25 +1,55 @@
-IF(GEN_SCRIPTS)
+IF(NOT PERIMETER_WINDOWS)
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
+ENDIF()
+
+IF(OPTION_GEN_SCRIPTS)
     MESSAGE("Generating Scripts")
     #TODO call XPrm and other stuff
 ENDIF()
 
 ADD_SUBDIRECTORY("XTool")
-ADD_SUBDIRECTORY("PlayOgg")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")
 ADD_SUBDIRECTORY("tx3d")
-if(NOT FINAL_VERSION)
-    ADD_SUBDIRECTORY("TriggerEditor")
-ENDIF()
-ADD_SUBDIRECTORY("Network/Peer2")
 ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
+
+SET(perimeter_LINK_LIBS
+        #Our libs
+        XTool
+        PluginMAX
+        Terra
+        tx3d
+        Render
+        Sound
+)
+
+
+IF(PERIMETER_EXODUS)
+    MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
+    ADD_SUBDIRECTORY("Exodus")
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
+ELSE()
+    ADD_SUBDIRECTORY("PlayOgg")
+    ADD_SUBDIRECTORY("Network")
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg Network)
+ENDIF()
+if(NOT OPTION_FINAL_VERSION)
+    ADD_SUBDIRECTORY("TriggerEditor")
+ENDIF()
+
+#Dependency libs
+SET(perimeter_LINK_LIBS
+        ${perimeter_LINK_LIBS}
+        #SD2
+        ${SDL2_LIBRARY}
+)
 
 INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Game"
         "${PROJECT_SOURCE_DIR}/Source/XTool"
         "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
-        "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Stadistics.h
+        "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/Render/inc"
         "${PROJECT_SOURCE_DIR}/Source/Terra"
@@ -36,66 +66,28 @@ INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
 )
 
-SET(perimeter_LINK_LIBS
-        #Our libs
-        XTool
-        PlayOgg
-        PluginMAX
-        Terra
-        tx3d
-        Peer
-        Render
-        Sound
-)
-
-# Boost dependencies
-IF(NOT MSVC_CL_BUILD)
-	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-		${BOOST_LIBRARY}
-		${SDL2_LIBRARY}
-	)
-ENDIF()
-
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
     #Include headers
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
-    
+
     #Select 64 or 32 compiled libs
-    IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    IF(PERIMETER_ARCH_64)
         MESSAGE("Linking against DirectX 64 bits")
-        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
         SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
     ELSE()
         MESSAGE("Linking against DirectX 32 bits")
-        LINK_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
         SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x86)
     ENDIF()
+    LINK_DIRECTORIES(BEFORE ${LIBS_MSDXSDK})
 
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
             #DirectX libs
-            d3d8
-            d3d9
-            d3dx9
-            d3dx9d
-            d3d10
-            d3dx10
-            ${LIBS_MSDXSDK}/d3dx10d.lib
-            d3dxof
-            ddraw
-            dinput
-            dsetup
-            dinput8
-            dplayx
-            dsound
-            dxgi
-            ${LIBS_MSDXSDK}/dxtrans.lib
+            ${LIBS_MSDXSDK}/d3d9.lib
+            ${LIBS_MSDXSDK}/d3dx9.lib
+            ${LIBS_MSDXSDK}/dsound.lib
             ${LIBS_MSDXSDK}/DxErr.lib
-            DxErr8
-            DxErr9
-            X3DAudio
-            XInput
-    
+
             #Windows libs
             winmm
             wsock32
@@ -114,15 +106,14 @@ IF(PERIMETER_WINDOWS)
 			Vorbis::vorbisfile
 		)
 	ENDIF()
-ELSE()
+ELSE() #Add non windows dependencies    
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-		# dl is required for dladdr in stacktrace,
-		dl
+        # dl is required for dladdr in stacktrace,
+        dl
     )
 ENDIF()
 
 SET(perimeter_SRCS
-        Util/dplay8guid.c
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
@@ -185,6 +176,10 @@ SET(perimeter_SRCS
         Util/DebugUtil.cpp
         Util/EditArchive.cpp
         Util/MissionDescription.cpp
+        Util/SaveSQSH-1251.cpp
+        Util/SaveConditions-1251.cpp
+        Util/SaveActions-1251.cpp
+        Util/SaveOthers-1251.cpp
         Util/Save.cpp
         Game/StdAfx.cpp
         Util/SynchroTimer.cpp
@@ -225,17 +220,6 @@ SET(perimeter_SRCS
         UserInterface/MonoSelect.cpp
         UserInterface/OnlineMenu.cpp
         UserInterface/OptionsMenu.cpp
-        Network/CommonCommands.cpp
-        Network/CommonEvents.cpp
-        Network/ConnectionDP.cpp
-        Network/EventBufferDP.cpp
-        Network/GS_interface.cpp
-        Network/HyperSpace.cpp
-        Network/P2P_interface1Th.cpp
-        Network/P2P_interface2Th.cpp
-        Network/P2P_interface2ThDPF.cpp
-        Network/P2P_interface3Th.cpp
-        Network/P2P_interfaceAnyTh.cpp
         Physics/Missile.cpp
         Physics/MultiBodyDispatcher.cpp
         Physics/Mutation.cpp
@@ -255,13 +239,13 @@ SET(perimeter_SRCS
         Units/Triggers.cpp
 )
 
-if(MSVC_CL_BUILD)
+if(PERIMETER_WINDOWS)
     SET(CMAKE_WIN32_EXECUTABLE YES)
 ENDIF()
 
 ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
 
-if(NOT FINAL_VERSION)
+if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
 ENDIF()
 

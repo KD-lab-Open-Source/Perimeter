@@ -1102,7 +1102,7 @@ void CWinVGView::OnScreenShoot()
 
 	cObjectNodeRoot* UObj=pDoc->m_pHierarchyObj?dynamic_cast<cObjectNodeRoot*>(pDoc->m_pHierarchyObj->GetRoot()):NULL;
 
-	char path_buffer[_MAX_PATH];
+	char path_buffer[MAX_PATH];
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];

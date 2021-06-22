@@ -137,7 +137,7 @@ void cMeshFile::ReadField(void *buf,int size)
 			assert(0);
 			for(int i=0;i<size;i++)
 			{
-				char tmp[256],ch=0;
+				char tmp[257],ch=0;
 				while((!f->eof())&&(ch!='"'))
 					f->read(&ch,1);
 				if(ch!='"') return; else tmp[0]=0;
@@ -163,7 +163,7 @@ void cMeshFile::ReadField(string& buf)
 	{
 		if(GlobalFieldType[TypeField].var==MF_TYPE_STRING)
 		{
-			char tmp[256],ch=0;
+			char tmp[257],ch=0;
 			while((!f->eof())&&(ch!='"'))
 				f->read(&ch,1);
 			if(ch!='"') return; else tmp[0]=0;
@@ -179,7 +179,7 @@ void cMeshFile::ReadField(string& buf)
 	{
 		if(GlobalFieldType[TypeField].var==MF_TYPE_STRING)
 		{
-			char tmp[256],ch=0;
+			char tmp[257],ch=0;
 			while((!f->eof())&&(ch!='"'))
 				f->read(&ch,1);
 			if(ch=='"') return; else tmp[0]=0;

@@ -180,7 +180,8 @@ void XZIP_Resource::LoadHeaders(void)
 void XZIP_Resource::SaveIndex(void)
 {
 	XStream fh(idxName.c_str(),XS_OUT);
-	fh < fileList.size();
+	//TODO not sure if we should use 64 bits here
+	fh < (unsigned long) fileList.size();
 
 	FileList::iterator fi;
 	FOR_EACH(fileList, fi)

@@ -4,6 +4,7 @@
 	"dependencies": [
 		"boost-iterator",
 		"boost-type-index",
-		"libvorbis"
+		"libvorbis",
+		"sdl2"
 	]
 }

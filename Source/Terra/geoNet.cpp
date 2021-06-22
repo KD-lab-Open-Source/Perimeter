@@ -363,5 +363,5 @@ static void gaussFilter(int * alt_buff, double filter_scaling, int x_size, int y
 	}
 	//cout <<endl<<endl;
 	memcpy(alt_buff,new_alt_buff,x_size*y_size*sizeof(int));
-	delete new_alt_buff;
+	delete[] new_alt_buff;
 }

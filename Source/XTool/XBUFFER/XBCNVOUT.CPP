@@ -66,6 +66,14 @@ XBuffer& XBuffer::operator>= (unsigned long& var)
 	return *this;
 }
 
+XBuffer& XBuffer::operator>= (unsigned long long& var)
+{
+    char* p = buf + offset;
+    var = strtoull(p,&p,0);
+    offset += p - (buf + offset);
+    return *this;
+}
+
 XBuffer& XBuffer::operator>= (double& var)
 {
 	char* p = buf + offset;

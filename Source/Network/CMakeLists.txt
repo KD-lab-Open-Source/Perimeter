@@ -1,0 +1,65 @@
+INCLUDE_DIRECTORIES(
+        "${PROJECT_SOURCE_DIR}/Source/Game"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+        "${PROJECT_SOURCE_DIR}/Source/Terra"
+        "${PROJECT_SOURCE_DIR}/Source/UserInterface"
+        "${PROJECT_SOURCE_DIR}/Source/Network"
+        "${PROJECT_SOURCE_DIR}/Source/Units"
+        "${PROJECT_SOURCE_DIR}/Source/Render/client"
+        "${PROJECT_SOURCE_DIR}/Source/Physics"
+        "${PROJECT_SOURCE_DIR}/Source/AI"
+        "${PROJECT_SOURCE_DIR}/Source/Sound"
+        "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
+        .
+        "${PROJECT_SOURCE_DIR}/Source/Network/Peer2"
+)
+
+SET(Network_SRCS
+        dplay8guid.c
+        CommonCommands.cpp
+        CommonEvents.cpp
+        ConnectionDP.cpp
+        EventBufferDP.cpp
+        GS_interface.cpp
+        HyperSpace.cpp
+        P2P_interface1Th.cpp
+        P2P_interface2Th.cpp
+        P2P_interface2ThDPF.cpp
+        P2P_interface3Th.cpp
+        P2P_interfaceAnyTh.cpp
+        Peer2/peer/peerAutoMatch.c
+        Peer2/peer/peerCallbacks.c
+        Peer2/peer/peerGlobalCallbacks.c
+        Peer2/peer/peerHost.c
+        Peer2/peer/peerKeys.c
+        Peer2/peer/peerMain.c
+        Peer2/peer/peerMangle.c
+        Peer2/peer/peerOperations.c
+        Peer2/peer/peerPing.c
+        Peer2/peer/peerPlayers.c
+        Peer2/peer/peerQR.c
+        Peer2/peer/peerRooms.c
+        Peer2/peer/peerSB.c
+        Peer2/darray.c
+        Peer2/nonport.c
+        Peer2/chat/chatCallbacks.c
+        Peer2/chat/chatChannel.c
+        Peer2/chat/chatCrypt.c
+        Peer2/chat/chatHandlers.c
+        Peer2/chat/chatMain.c
+        Peer2/chat/chatSocket.c
+        Peer2/hashtable.c
+        Peer2/pinger/pingerMain.c
+        Peer2/md5c.c
+        Peer2/qr2/qr2.c
+        Peer2/qr2/qr2regkeys.c
+        Peer2/serverbrowsing/sb_crypt.c
+        Peer2/serverbrowsing/sb_queryengine.c
+        Peer2/serverbrowsing/sb_server.c
+        Peer2/serverbrowsing/sb_serverbrowsing.c
+        Peer2/serverbrowsing/sb_serverlist.c
+)
+
+ADD_LIBRARY(Network STATIC ${Network_SRCS})

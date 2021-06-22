@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 #include <crtdbg.h>
 
@@ -41,22 +39,22 @@ const char* win32_findfirst(const char* mask)
 const char* IniManager::get(const char* section, const char* key)
 {
 	static char buf[256];
-	static char path[_MAX_PATH];
+	static char path[MAX_PATH];
 
-	if(_fullpath(path,fname_,_MAX_PATH) == NULL) 
+	if(_fullpath(path,fname_,MAX_PATH) == NULL)
 		ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_);
 	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
 		*buf = 0;
-		xassert_s(!check_existence_, (string("Νε ξοπεδελεν κλώχ ") + fname_ + " " + section + " " + key).c_str());
+		xassert_s(!check_existence_, (string("ΠΠµ ΠΎΠΏΡ€ΠµΠ΄ΠµΠ»ΠµΠ½ ΠΊΠ»ΡΡ‡ ") + fname_ + " " + section + " " + key).c_str());
 	}
 
 	return buf;
 }
 void IniManager::put(const char* section, const char* key, const char* val)
 {
-	static char path[_MAX_PATH];
+	static char path[MAX_PATH];
 
-	if(_fullpath(path,fname_,_MAX_PATH) == NULL) {
+	if(_fullpath(path,fname_,MAX_PATH) == NULL) {
 		ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_);
 	}
 
@@ -80,8 +78,8 @@ bool IniManager::getInt(const char* section, const char* key, int& value)
 }
 void IniManager::putInt(const char* section, const char* key, int val) 
 {
-	char buf [256];
-	put(section, key, itoa(val, buf, 10));
+	std::string str = std::to_string(val);
+	put(section, key, str.c_str());
 }
 
 float IniManager::getFloat(const char* section, const char* key) 

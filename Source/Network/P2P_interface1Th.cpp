@@ -862,7 +862,6 @@ void PNetCenter::refreshLanGameHostList()
 	clearGameHostList();
 	char txtBufHostName[MAX_PATH];
 	char txtBufGameName[MAX_PATH];
-	char txtBufPort[20];
 	//char textBuffer[MAX_PATH];
 	int curTime=clocki();
 	vector<string>::iterator k;
@@ -926,7 +925,7 @@ void PNetCenter::refreshLanGameHostList()
 			DWORD port=*((DWORD*)pBuf);
 			delete pBuf;
 
-			itoa(port,txtBufPort, 10);
+			std::string txtBufPort = std::to_string(port);
 			
 			nResult = WideCharToMultiByte( CP_ACP, 0, (*p)->pAppDesc->pwszSessionName, -1, txtBufGameName, MAX_PATH, NULL, NULL );
 			txtBufGameName[MAX_PATH-1]=0;
@@ -943,10 +942,10 @@ void PNetCenter::refreshLanGameHostList()
 			}
 			if(m!=needHostList.size()){ //адрес нашелся - m индекс
 				delete gameHostList[m];
-				gameHostList[m]=new sGameHostInfo( (*p)->pAppDesc->guidInstance, txtBufHostName, txtBufPort, txtBufGameName, (*p)->gameStatusInfo);
+				gameHostList[m]=new sGameHostInfo( (*p)->pAppDesc->guidInstance, txtBufHostName, txtBufPort.c_str(), txtBufGameName, (*p)->gameStatusInfo);
 			}
 			else { //вставляем
-				gameHostList.push_back(new sGameHostInfo( (*p)->pAppDesc->guidInstance, txtBufHostName, txtBufPort, txtBufGameName, (*p)->gameStatusInfo));//sGameStatusInfo(4,1, false, 10, 1)
+				gameHostList.push_back(new sGameHostInfo( (*p)->pAppDesc->guidInstance, txtBufHostName, txtBufPort.c_str(), txtBufGameName, (*p)->gameStatusInfo));//sGameStatusInfo(4,1, false, 10, 1)
 			}
 
 			p++;

@@ -370,15 +370,15 @@ template <class cBase> class cBasePointer
 public:
 	cBasePointer(cBase *p=0)										{ Base=p; }
 	~cBasePointer()													{ if(Base) Base->Release(); }
-	__forceinline operator cBase* () const							{ return Base; }
-	__forceinline cBase& operator * ()								{ return *Base;}
-	__forceinline cBase* operator -> ()								{ return Base; }
-	__forceinline const cBase& operator * () const					{ return *Base;}
-	__forceinline const cBase* operator -> () const					{ return Base; }
-	__forceinline cBasePointer& operator = (cBase* p)				{ if(Base) Base->Release(); Base=p; if(Base) Base->IncRef(); return *this; }
-	__forceinline cBasePointer& operator = (cBasePointer &p)		{ if(Base) Base->Release(); Base=p.Base; if(Base) Base->IncRef(); return *this; }
-	__forceinline void Set(cBase* p)								{ if(Base) Base->Release(); Base=p; if(Base) Base->IncRef(); }
-	__forceinline cBase*& Get()										{ return Base; }
+	FORCEINLINE operator cBase* () const							{ return Base; }
+	FORCEINLINE cBase& operator * ()								{ return *Base;}
+	FORCEINLINE cBase* operator -> ()								{ return Base; }
+	FORCEINLINE const cBase& operator * () const					{ return *Base;}
+	FORCEINLINE const cBase* operator -> () const					{ return Base; }
+	FORCEINLINE cBasePointer& operator = (cBase* p)				{ if(Base) Base->Release(); Base=p; if(Base) Base->IncRef(); return *this; }
+	FORCEINLINE cBasePointer& operator = (cBasePointer &p)		{ if(Base) Base->Release(); Base=p.Base; if(Base) Base->IncRef(); return *this; }
+	FORCEINLINE void Set(cBase* p)								{ if(Base) Base->Release(); Base=p; if(Base) Base->IncRef(); }
+	FORCEINLINE cBase*& Get()										{ return Base; }
 };
 
 #endif //__BASECLASS_H__

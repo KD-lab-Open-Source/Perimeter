@@ -1,7 +1,7 @@
 #ifndef TGA_H
 #define TGA_H
 
-#include <my_STL.h>
+#include "tweaks.h"
 #include "Vector3D.hpp"
 
 namespace tx3d {

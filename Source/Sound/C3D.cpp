@@ -1,9 +1,8 @@
 #include "StdAfx.h"
+#include "../Render/inc/RenderMT.h"
 #include "C3D.h"
 #include "SoundInternal.h"
 #include "SoundScript.h"
-
-#define _NOSTD_
 #include <algorithm>
 
 int SNDScript::belligerentIndex = 0;
@@ -279,7 +278,7 @@ void SNDScript::PlayByLevel(int pause_level)
 
 const char* SNDScript::filePath(const ScriptParam* prm,const char* file_name,int belligerent_index)
 {
-	static XBuffer fname(_MAX_PATH);
+	static XBuffer fname(MAX_PATH);
 
 	fname.init();
 
