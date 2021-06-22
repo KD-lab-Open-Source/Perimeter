@@ -38,7 +38,19 @@
 const char* currentVersion = 
 "Ver "
 #include "../version.h"
-" (" __DATE__ " " __TIME__ ")";
+#ifdef _FINAL_VERSION_
+" Final"
+#else
+" Debug"
+#endif
+#ifdef PERIMETER_EXODUS
+" Exodus"
+#endif
+#ifdef PERIMETER_DEBUG
+" (DBG)"
+#endif
+" (" __DATE__ " " __TIME__ ")"
+;
 
 #ifdef _SINGLE_DEMO_
 const char* currentShortVersion = 
@@ -186,16 +198,7 @@ void HTManager::init()
 	interpolation_timer_ = 0;
 	interpolation_factor_ = 0;
 
-	static XBuffer errorHeading;
-	errorHeading < currentVersion;
-#ifdef _FINAL_VERSION_
-    errorHeading < " Final";
-#endif
-#ifdef PERIMETER_DEBUG
-    errorHeading < " DBG";
-#endif
-
-    ErrH.SetPrefix(errorHeading);
+    ErrH.SetPrefix(currentVersion);
 #ifndef _FINAL_VERSION_
 	ErrH.SetRestore(InternalErrorHandler);
 #endif
