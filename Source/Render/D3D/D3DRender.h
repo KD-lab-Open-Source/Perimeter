@@ -353,7 +353,7 @@ public:
 	{
 		float det=1;
 		D3DXMATRIX mat,matViewInv;	// matViewWorld=matWorld*matView=matView, because matWorld==ID
-		D3DXMatrixInverse(&matViewInv,&det,DrawNode->matView);
+		D3DXMatrixInverse(&matViewInv,&det,&DrawNode->matView);
 		D3DXMatrixMultiply(&mat,&matViewInv,matTexSpace);
 		RDCALL(lpD3DDevice->SetTransform( D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0+Stage), &mat ));
 	}

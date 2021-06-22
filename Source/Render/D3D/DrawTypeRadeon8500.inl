@@ -169,9 +169,9 @@ void DrawTypeRadeon8500::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data
 	std::vector<cUnkLight*>* point=&Mesh->GetRootNode()->GetLight();
 	last_ps->Select();
 	if(pShadowMap && pShadow)
-		last_vs->Select(pShadow->matViewProj,pShadowMap->GetWidth(),&Mesh->GetGlobalMatrix(),point);
+		last_vs->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),&Mesh->GetGlobalMatrix(),point);
 	else
-		last_vs->Select(gb_RenderDevice3D->GetDrawNode()->matViewProj,1,&Mesh->GetGlobalMatrix(),point);
+		last_vs->Select(&gb_RenderDevice3D->GetDrawNode()->matViewProj,1,&Mesh->GetGlobalMatrix(),point);
 		
 
 	DrawPrimitive(Mesh);
@@ -233,7 +233,7 @@ void DrawTypeRadeon8500::SetMaterialTilemap(cTileMap *TileMap)
 
 	D3DXVECTOR3 pos(100,100,0);
 	D3DXVECTOR4 out;
-	D3DXVec3Transform(&out,&pos,pShadow->matViewProj);
+	D3DXVec3Transform(&out,&pos,&pShadow->matViewProj);
 
 	gb_RenderDevice3D->SetTexture(pShadowMap,0,1);
 	gb_RenderDevice3D->SetTexture(pShadowMap,0,2);
@@ -241,7 +241,7 @@ void DrawTypeRadeon8500::SetMaterialTilemap(cTileMap *TileMap)
 	gb_RenderDevice3D->SetTexture(pShadowMap,0,4);
 	gb_RenderDevice3D->SetTexture(pLightMap,0,5);
 
-	pVSTileMapScene->Select(pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
+	pVSTileMapScene->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
 	pPSTileMapScene->Select();
 
     gb_RenderDevice3D->SetSamplerState( 1, D3DSAMP_MINFILTER, D3DTEXF_POINT );

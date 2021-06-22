@@ -94,35 +94,6 @@ void RDWriteLog(char *exp,int size)
 #endif
 }
 
-void RDWriteLog(DDSURFACEDESC2 &ddsd)
-{
-#ifndef _FINAL_VERSION_
-	if(fRD==0) RDOpenLog();
-	fprintf(fRD,"DDSURFACEDESC2\n{\n");
-	fprintf(fRD,"   dwSize            = %i\n",ddsd.dwSize);
-	fprintf(fRD,"   dwFlags           = 0x%X\n",ddsd.dwFlags);
-	fprintf(fRD,"   dwHeight          = %i\n",ddsd.dwHeight);;
-	fprintf(fRD,"   dwWidth           = %i\n",ddsd.dwWidth);
-	fprintf(fRD,"   lPitch            = %i\n",ddsd.lPitch);
-	fprintf(fRD,"   dwBackBufferCount = %i\n",ddsd.dwBackBufferCount);
-	fprintf(fRD,"   dwMipMapCount     = %i\n",ddsd.dwMipMapCount);
-	fprintf(fRD,"   dwAlphaBitDepth   = %i\n",ddsd.dwAlphaBitDepth);
-	fprintf(fRD,"   dwReserved        = %i\n",ddsd.dwReserved);
-	fprintf(fRD,"   lpSurface         = 0x%X\n",(int)ddsd.lpSurface);
-	fprintf(fRD,"   ddckCKDestOverlay = %i - %i\n",ddsd.ddckCKDestOverlay.dwColorSpaceLowValue,ddsd.ddckCKDestOverlay.dwColorSpaceHighValue);
-	fprintf(fRD,"   ddckCKDestBlt     = %i - %i\n",ddsd.ddckCKDestBlt.dwColorSpaceLowValue,ddsd.ddckCKDestBlt.dwColorSpaceHighValue);
-	fprintf(fRD,"   ddckCKSrcOverlay  = %i - %i\n",ddsd.ddckCKSrcOverlay.dwColorSpaceLowValue,ddsd.ddckCKSrcOverlay.dwColorSpaceHighValue);
-	fprintf(fRD,"   ddckCKSrcBlt      = %i - %i\n",ddsd.ddckCKSrcBlt.dwColorSpaceLowValue,ddsd.ddckCKSrcBlt.dwColorSpaceHighValue);
-/*
-	DDPIXELFORMAT ddpfPixelFormat;
-		DDSCAPS2      ddsCaps;
-*/
-	fprintf(fRD,"   dwTextureStage    = %i\n",ddsd.dwTextureStage);
-	fprintf(fRD,"}\n");
-	fflush(fRD);
-#endif
-}
-
 cURenderDevice::cURenderDevice()
 { 
 	NumberPolygon=0; 

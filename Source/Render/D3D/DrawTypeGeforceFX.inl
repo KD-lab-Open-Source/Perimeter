@@ -104,7 +104,7 @@ void DrawTypeGeforceFX::BeginDraw(bool use_shadow_)
 	if(pPSObjectScene && use_shadow)
 	{
 		pPSObjectScene->Select();
-		pVSObjectScene->Select(pShadow->matViewProj,pShadowMap->GetWidth(),&MatXf::ID,NULL);
+		pVSObjectScene->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),&MatXf::ID,NULL);
 	}
 }
 
@@ -181,9 +181,9 @@ void DrawTypeGeforceFX::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 	std::vector<cUnkLight*>* point=&Mesh->GetRootNode()->GetLight();
 	last_ps->Select();
 	if(pShadowMap && pShadow)
-		last_vs->Select(pShadow->matViewProj,pShadowMap->GetWidth(),&Mesh->GetGlobalMatrix(),point);
+		last_vs->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),&Mesh->GetGlobalMatrix(),point);
 	else
-		last_vs->Select(gb_RenderDevice3D->GetDrawNode()->matViewProj,1,&Mesh->GetGlobalMatrix(),point);
+		last_vs->Select(&gb_RenderDevice3D->GetDrawNode()->matViewProj,1,&Mesh->GetGlobalMatrix(),point);
 		
 
 	DrawPrimitive(Mesh);

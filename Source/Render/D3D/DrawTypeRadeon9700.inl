@@ -167,9 +167,9 @@ void DrawTypeRadeon9700::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data
 	std::vector<cUnkLight*>* point=&Mesh->GetRootNode()->GetLight();
 	last_ps->Select();
 	if(pShadowMap && pShadow)
-		last_vs->Select(pShadow->matViewProj,pShadowMap->GetWidth(),&Mesh->GetGlobalMatrix(),point);
+		last_vs->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),&Mesh->GetGlobalMatrix(),point);
 	else
-		last_vs->Select(gb_RenderDevice3D->GetDrawNode()->matViewProj,1,&Mesh->GetGlobalMatrix(),point);
+		last_vs->Select(&gb_RenderDevice3D->GetDrawNode()->matViewProj,1,&Mesh->GetGlobalMatrix(),point);
 		
 
 	DrawPrimitive(Mesh);
@@ -284,7 +284,7 @@ void DrawTypeRadeon9700::SetMaterial(float Phase,cTexture *Texture0,cTexture *Te
 void DrawTypeRadeon9700::SetMaterialTilemap(cTileMap *TileMap)
 {
 	cTexture* pShadowMap=pShadow->GetRenderTarget();
-	pVSTileMapScene->Select(pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
+	pVSTileMapScene->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
 
 	if(pShadow->GetAttribute(ATTRCAMERA_ZINVERT))
 		pPSTileMapSceneInv->Select();

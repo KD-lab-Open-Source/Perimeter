@@ -34,7 +34,7 @@ void DrawTypeFixedPipeline::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *D
 	{
 		D3DXMATRIX mat;
 		MatXf &m=Data->TexMatrix;
-		memset(mat,0,sizeof(mat));
+		memset(&mat,0,sizeof(mat));
 		mat._11 = m.rot()[0][0],	mat._12 = m.rot()[0][1];
 		mat._21 = m.rot()[1][0],	mat._22 = m.rot()[1][1];
 		mat._31 = m.trans().x,		mat._32 = m.trans().y;
@@ -42,9 +42,9 @@ void DrawTypeFixedPipeline::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *D
 	}
 
 	if(Data->mat&MAT_RENDER_SPHEREMAP)
-	{ // ñôåðè÷åñêèé ìàïèíã
+	{ // ÑÑ„ÐµÑ€Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ð¼Ð°Ð¿Ð¸Ð½Ð³
 		D3DXMATRIX mat;
-		memset(mat,0,sizeof(mat));
+		memset(&mat,0,sizeof(mat));
 		mat._11=mat._22=mat._41=mat._42=0.5f;
 		RDCALL(gb_RenderDevice3D->lpD3DDevice->SetTransform( D3DTS_TEXTURE1, &mat ));
 	}
