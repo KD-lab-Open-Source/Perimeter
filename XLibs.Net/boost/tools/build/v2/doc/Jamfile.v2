@@ -1,8 +1,0 @@
-project tools/build/v2/doc ;
-
-boostbook userman : src/userman.xml ;
-
-# Copy stylesheet and images from 'official' docs location
-stage html : ../../../../doc/html/boostbook.css ;
-stage html/images
-    : [ path.glob ../../../../doc/html/images : *.png ] ;

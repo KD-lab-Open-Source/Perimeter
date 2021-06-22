@@ -1,5 +1,0 @@
-project boost/doc ;
-import boostbook : boostbook ;
-
-boostbook boostbook : boostbook.xml ;
-
