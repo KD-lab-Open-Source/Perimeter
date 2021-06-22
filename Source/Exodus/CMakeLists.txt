@@ -3,8 +3,8 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Exodus_SRCS
-    windows.cpp
-    sound.cpp
+        exodus.cpp
+        sound.cpp
 )
 
 ADD_LIBRARY(Exodus STATIC ${Exodus_SRCS})

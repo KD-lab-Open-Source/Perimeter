@@ -11,7 +11,6 @@ INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Physics"
         "${PROJECT_SOURCE_DIR}/Source/AI"
         "${PROJECT_SOURCE_DIR}/Source/Sound"
-        "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
         .
         "${PROJECT_SOURCE_DIR}/Source/Network/Peer2"
 )

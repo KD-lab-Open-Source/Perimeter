@@ -44,5 +44,9 @@
 #include "../Exodus/msvc.h"
 #endif
 
+#ifdef PERIMETER_EXODUS
+//Apply exodus specific tweaks
+#include "../Exodus/exodus.h"
+#endif
 
 #endif // __TWEAKS_H__

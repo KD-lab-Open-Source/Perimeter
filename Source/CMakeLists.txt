@@ -1,6 +1,14 @@
 IF(NOT PERIMETER_WINDOWS)
+    #Exodus wrapper libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
+    #DXVK-native wrapper libs
+    INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
+ELSE()
+    #DirectX SDK libs
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
 ENDIF()
+
 
 IF(OPTION_GEN_SCRIPTS)
     MESSAGE("Generating Scripts")
@@ -64,9 +72,6 @@ INCLUDE_DIRECTORIES(
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
-    #Include headers
-    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
-
     #Select 64 or 32 compiled libs
     IF(PERIMETER_ARCH_64)
         MESSAGE("Linking against DirectX 64 bits")
