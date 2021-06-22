@@ -13,7 +13,7 @@
 int64_t tick_per_sec=0;
 int64_t beg_tick=0;
 
-#if defined(_MSC_VER) and _MSC_VER >= 1310
+#if defined(_MSC_VER) && _MSC_VER >= 1310
 __declspec (noinline)
 #endif // _MSC_VER >= 1310
 
