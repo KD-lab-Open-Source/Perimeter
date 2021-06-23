@@ -50,28 +50,26 @@ void CSaver::push()
 {
 	DWORD w=0;
 	WR(w);
-	fpos_t t;
-	fgetpos(f,&t);
+    __off_t t = ftello(f);
 
-	p.push_back((DWORD)t);
+	p.push_back(t);
 }
 
 void CSaver::pop()
 {
-	fpos_t t;
-	fgetpos(f,&t);
+    __off_t t = ftello(f);
 
 	int n=p.size()-1;
 	DWORD min=p[n];
-	fpos_t tt=min-4;
-	fsetpos(f,&tt);
+    __off_t tt=min-4;
+    fseeko(f,tt,SEEK_SET);
 	DWORD size=DWORD(t)-min;
 	WR(size);
 
 	p.pop_back();
 
 
-	fsetpos(f,&t);
+	fseeko(f,t,SEEK_SET);
 }
 
 /////////////////////////////////////////////////
