@@ -424,7 +424,7 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	light_in.w=0;
 
 	D3DXMATRIX look_light,look_proj;
-	D3DXVec4Transform(&light_out,&light_in,DrawNode->matViewProj);
+	D3DXVec4Transform(&light_out,&light_in,&DrawNode->matViewProj);
 
 	{
 		Vect2f zplane=DrawNode->GetZPlane();
@@ -473,7 +473,7 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	D3DXMATRIX proj;
 	D3DXMatrixMultiply(&proj, &look_light, &look_proj);
 	//proj=*(D3DXMATRIX*)DrawNode->matViewProj;
-	D3DXMatrixMultiply(ShadowDrawNode->matProj, DrawNode->matProj, &proj);
+	D3DXMatrixMultiply(&ShadowDrawNode->matProj, &DrawNode->matProj, &proj);
 //	ShadowDrawNode.matProj=DrawNode->matProj;
 
 	{
@@ -497,7 +497,7 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 
 	D3DXVECTOR4 out;
     D3DXVECTOR3 v(1024,1024,0);
-	D3DXVec3Transform(&out,&v,ShadowDrawNode->matProj);
+	D3DXVec3Transform(&out,&v,&ShadowDrawNode->matProj);
 
 	Vect3f p[8];
 	DrawNode->GetFrustumPoint(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]);
@@ -505,7 +505,7 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	for(i=0;i<8;i++)
 	{
 		D3DXVECTOR4 pOut,pN;
-		D3DXVec3Transform(&pOut,(D3DXVECTOR3*)(p+i),DrawNode->matViewProj);
+		D3DXVec3Transform(&pOut,(D3DXVECTOR3*)(p+i),&DrawNode->matViewProj);
 
 		pN.x=pOut.x/pOut.w;
 		pN.y=pOut.y/pOut.w;

@@ -29,7 +29,7 @@ void VSWater::SetWorldScale(Vect2f scale)
 
 void VSWater::Select()
 {
-	SetMatrix(mVP,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+	SetMatrix(mVP, &gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
     D3DXVECTOR4 cam(p.x,p.y,p.z,0);
 	SetVector(vCameraPos,&cam);

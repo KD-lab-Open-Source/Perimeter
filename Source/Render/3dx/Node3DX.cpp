@@ -303,13 +303,13 @@ void cObject3dx::Draw(cCamera* pCamera)
 		if(mat.pBumpTexture)
 		{
 			pShader3dx->vsSkinBump.SetMaterial(&material);
-			pShader3dx->vsSkinBump.Select(gb_RenderDevice3D->GetDrawNode()->matViewProj,1,world,NULL,pGroup->blend_indices);
+			pShader3dx->vsSkinBump.Select(&gb_RenderDevice3D->GetDrawNode()->matViewProj,1,world,NULL,pGroup->blend_indices);
 			pShader3dx->psSkinBump.SetMaterial(&material);
 			pShader3dx->psSkinBump.Select();
 		}else
 		{
 			pShader3dx->vsSkin.SetMaterial(&material);
-			pShader3dx->vsSkin.Select(gb_RenderDevice3D->GetDrawNode()->matViewProj,1,world,NULL,pGroup->blend_indices);
+			pShader3dx->vsSkin.Select(&gb_RenderDevice3D->GetDrawNode()->matViewProj,1,world,NULL,pGroup->blend_indices);
 			pShader3dx->psSkin.Select();
 		}
 

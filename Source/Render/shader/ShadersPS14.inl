@@ -37,7 +37,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 
 	if(gb_RenderDevice3D->GetTexture(1)==gb_RenderDevice3D->GetTexture(2))
 	{
-		//Четыре сэмпла выбираются
+		//Р§РµС‚С‹СЂРµ СЃСЌРјРїР»Р° РІС‹Р±РёСЂР°СЋС‚СЃСЏ
 		float fC1 = 0.1f / shadow_map_size;
 		float fC2 = 0.9f / shadow_map_size;
 
@@ -62,7 +62,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 		gb_RenderDevice3D->SetVertexShaderConstant(20,&mat);
 	}else
 	{
-		//Три сэмпла выбираются
+		//РўСЂРё СЃСЌРјРїР»Р° РІС‹Р±РёСЂР°СЋС‚СЃСЏ
 		//x=0.5+0.4*sin(2*PI/3*i),y=0.5+0.4*cos(2*PI/3*i)
 
 		matTexAdj._41 = 0.5f + 0.1f/shadow_map_size;
@@ -90,19 +90,19 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 
 void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
-	//c0-c3 - матрица преобразования в экранные координаты (view_proj_matrix)
+	//c0-c3 - РјР°С‚СЂРёС†Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РІ СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ (view_proj_matrix)
 	D3DXMATRIX mat;
 	if(world)
 	{
 		cD3DRender_SetMatrix(mat,*world);
 		SetMatrix(mWorld,&mat);//for light
-		SetMatrix(mView,gb_RenderDevice3D->GetDrawNode()->matView);
+		SetMatrix(mView,&gb_RenderDevice3D->GetDrawNode()->matView);
 
 		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&mat,&mat,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+		D3DXMatrixMultiply(&mat,&mat,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	}else
 	{
-		mat=*(D3DXMATRIX*)gb_RenderDevice3D->GetDrawNode()->matViewProj;
+		mat=*(D3DXMATRIX*)&gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	}
 
 	SetMatrix(mWVP,&mat);
@@ -127,7 +127,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 
 	if(gb_RenderDevice3D->GetTexture(1)==gb_RenderDevice3D->GetTexture(2))
 	{
-		//Четыре сэмпла выбираются
+		//Р§РµС‚С‹СЂРµ СЃСЌРјРїР»Р° РІС‹Р±РёСЂР°СЋС‚СЃСЏ
 		float fC1 = c1 / shadow_map_size;
 		float fC2 = c2 / shadow_map_size;
 
@@ -152,7 +152,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 		SetMatrix(mShadow3,&mat);
 	}else
 	{
-		//Три сэмпла выбираются
+		//РўСЂРё СЃСЌРјРїР»Р° РІС‹Р±РёСЂР°СЋС‚СЃСЏ
 		//x=0.5+0.4*sin(2*PI/3*i),y=0.5+0.4*cos(2*PI/3*i)
 
 		matTexAdj._41 = 0.5f + c1/shadow_map_size;

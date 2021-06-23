@@ -297,7 +297,7 @@ void DrawTypeGeforceFX::SetMaterial(float Phase,cTexture *Texture0,cTexture *Tex
 
 void DrawTypeGeforceFX::SetMaterialTilemap(cTileMap *TileMap)
 {
-	pVSTileMapScene->Select(pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
+	pVSTileMapScene->Select(&pShadow->matViewProj,pShadowMap->GetWidth(),NULL,NULL);
 	pPSTileMapScene->Select();
 //	gb_RenderDevice3D->SetTexture(0,ptZBuffer);
 //	gb_RenderDevice3D->SetTexture(pLightMap,0,2);
