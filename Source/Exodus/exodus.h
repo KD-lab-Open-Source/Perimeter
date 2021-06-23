@@ -18,9 +18,33 @@ struct _FILETIME {
 #define _MAX_DIR   _MAX_FNAME
 #define _MAX_EXT   _MAX_FNAME
 
-void ZeroMemory(void *p, std::size_t n);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Use POSIX for MS funcs
+
+#include <unistd.h>
+
+#define _O_BINARY 0
+#define _O_RDONLY O_RDONLY
+#define _O_WRONLY O_WRONLY
+#define _O_TRUNC O_TRUNC
+#define _O_CREAT O_CREAT
+#define _S_IREAD S_IREAD
+#define _S_IWRITE S_IWRITE
+#define _open open
+#define _write write
+#define _read read
+#define _lseek lseek
+#define _close close
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void _mkdir(const char* path);
+
+void ZeroMemory(void *p, std::size_t n);
+
+void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
+
+void _makepath(const char *path, char *drive, char *dir, char *fname, char *ext);
 
 void GetCurrentDirectory(unsigned short size, char* path);
 
@@ -31,6 +55,8 @@ char* _strupr(char* str);
 
 #define strlwr _strlwr
 #define strupr _strupr
+
+#define IsCharAlphaNumeric isalnum
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Basic wrapper for Win32 CRITICAL_SECTION stuff

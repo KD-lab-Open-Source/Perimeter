@@ -1,9 +1,12 @@
+#include "tweaks.h"
 #include <windows.h>
 #include <stdio.h>
 #include <cstdint>
 #include <assert.h>
 
+#ifndef PERIMETER_EXODUS
 #include <vfw.h>		// AVI include
+#endif
 #include <setjmp.h>		// JPG include
 #include <math.h>
 #include "xutil.h"
@@ -285,7 +288,7 @@ bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 			memcpy(p2,tmp,size);
 		}
 
-		delete tmp;
+		delete[] tmp;
 	}
 
 	return true;
@@ -387,6 +390,7 @@ public:
 	}
 };
 
+#ifndef PERIMETER_EXODUS
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cAVIImage
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -515,6 +519,7 @@ public:
 		AVIFileExit(); /*closes AVIFile library*/ 
 	}
 };
+#endif
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cJPGImage
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -780,8 +785,10 @@ cFileImage* cFileImage::Create(const char *fname)
 	_strlwr((char*)fname);
 	if(strstr(fname,".tga"))
 		return new cTGAImage;
+#ifndef PERIMETER_EXODUS
 	else if(strstr(fname,".avi"))
 		return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
+#endif
 #ifdef USE_JPEG
 	else if(strstr(fname,".jpg"))
 		return new cJPGImage;
@@ -790,11 +797,15 @@ cFileImage* cFileImage::Create(const char *fname)
 }
 void cFileImage::InitFileImage()
 {
+#ifndef PERIMETER_EXODUS
 	cAVIImage::Init();
+#endif
 }
 void cFileImage::DoneFileImage()
 {
+#ifndef PERIMETER_EXODUS
 	cAVIImage::Done();
+#endif
 }
 void GetFileName(const char *FullName,char *fname)
 {

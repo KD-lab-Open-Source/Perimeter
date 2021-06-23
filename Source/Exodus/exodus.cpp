@@ -2,13 +2,26 @@
 #include <cstring>
 #include <cctype>
 #include <thread>
+#include <sys/stat.h>
 
-void GetCurrentDirectory(unsigned short size, char* path) {
-//TODO use SDL2 method to get dir
+void _mkdir(const char* path) {
+    mkdir(path, 0);
 }
 
 void ZeroMemory(void *p, size_t n) {
     memset(p, 0, n);
+}
+
+void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
+    //TODO set dir fname and ext
+}
+
+void _makepath(const char *path, char *drive, char *dir, char *fname, char *ext) {
+    //TODO set path from dir fname and ext
+}
+
+void GetCurrentDirectory(unsigned short size, char* path) {
+    //TODO use SDL2 method to get dir
 }
 
 void Sleep(uint32_t millis) {

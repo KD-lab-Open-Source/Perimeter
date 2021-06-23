@@ -1,3 +1,4 @@
+#include <climits>
 #include "StdAfxRD.h"
 #include "VisGrid2d.h"
 

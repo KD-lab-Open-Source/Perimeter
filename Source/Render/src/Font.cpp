@@ -8,7 +8,9 @@
 #include <sys/stat.h>
 #include <io.h>
 #include <stdio.h>
+#ifndef PERIMETER_EXODUS
 #include <direct.h>
+#endif
 #include "FileImage.h"
 
 #ifndef ASSERT
@@ -308,7 +310,7 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 	ffont=cache_dir;ffont+='\\';
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
-	mkdir(cache_dir);
+    _mkdir(cache_dir);
 
 	if(!fnt.Save(ftga.c_str()))
 		return false;

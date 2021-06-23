@@ -117,9 +117,11 @@ SyncroTimer scale_time;
 void PerimeterDataChannelLoad();
 void PerimeterDataChannelSave();
 
+#ifndef PERIMETER_EXODUS
 void PerimeterAviInit();
 int PerimeterAviQuant();
 void PerimeterAviFinit();
+#endif
 
 HWND Win32_CreateWindow(char *WinName,int xPos,int yPos,int xScr,int yScr,WNDPROC lpfnWndProc=DefWindowProc,int dwStyle=WS_OVERLAPPEDWINDOW);
 LRESULT CALLBACK VisPerimetrClient_WndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
@@ -242,7 +244,9 @@ void HTManager::done()
 	if(!terMissionEdit)
 		PerimeterDataChannelSave();
 
+#ifndef PERIMETER_EXODUS
 	PerimeterAviFinit();
+#endif
 	
 	// Logic
 	delete gameShell;
@@ -512,6 +516,7 @@ void FinitSound()
 
 //--------------------------------
 
+#ifndef PERIMETER_EXODUS
 sWinVideo terWinVideo;
 int terWinVideoValid = 0;
 int terWinVideoEnable = 0;//getPerimeterIniInt("Game","PlayAVI");
@@ -551,6 +556,7 @@ void PerimeterAviFinit()
 		terWinVideoValid = 0;
 	}
 }
+#endif
 
 void checkSingleRunning()
 {
