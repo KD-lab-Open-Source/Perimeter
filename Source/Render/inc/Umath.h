@@ -502,16 +502,18 @@ inline float CrossLine(float x1,float y1,float m1,float n1,
 	return (m2*(y1-y2)-n2*(x1-x2))/f;
 }
 
-struct D3DXMATRIX;
-class CMatrix // : public D3DMATRIX
-{
+#ifdef PERIMETER_EXODUS
+// D3DXMATRIX = CMatrix -> D3DMATRIX
+#include <d3d9types.h>
+class CMatrix : public D3DMATRIX {
+#else
+// CMatrix -> D3DXMATRIX -> D3DMATRIX 
+#include <d3dx9math.h>
+class CMatrix : public D3DXMATRIX {
+#endif
 public:
-	float _11,_12,_13,_14;
-	float _21,_22,_23,_24; 
-	float _31,_32,_33,_34;
-	float _41,_42,_43,_44;
-
-	operator D3DXMATRIX*(){return (D3DXMATRIX*)this;}
+    operator void*() { return reinterpret_cast<void*>(this); }
+    //operator D3DXMATRIX*() { return reinterpret_cast<D3DXMATRIX*>(this); }
 
 	CMatrix()													{}
 	CMatrix(float m11,float m12,float m13,float m14,
