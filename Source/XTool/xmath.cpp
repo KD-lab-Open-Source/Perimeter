@@ -393,6 +393,10 @@ Mat3f& Mat3f::postmult(const Mat3f& M)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+Mat4f::Mat4f(const float* f) {
+    memcpy(&xx, f, sizeof(Mat4f));
+}
+
 Mat4f& Mat4f::mult(const Mat4f& M, const Mat4f& N)
 {
 

@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES(
 SET(Exodus_SRCS
         exodus.cpp
         d3dx9.cpp
+        d3dx9math.cpp
 )
 
 ADD_LIBRARY(Exodus STATIC ${Exodus_SRCS})

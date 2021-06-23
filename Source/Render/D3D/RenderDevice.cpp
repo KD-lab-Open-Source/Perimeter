@@ -248,11 +248,6 @@ Vect3f NormalByColor(DWORD d);
 void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst,
 				 int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int Attr)
 {
-	DDSCAPS2 ddsCaps;
-	ddsCaps.dwCaps  = DDSCAPS_TEXTURE | DDSCAPS_MIPMAP;
-	ddsCaps.dwCaps2 = 0;
-	ddsCaps.dwCaps3 = 0;
-	ddsCaps.dwCaps4 = 0;
 	char *Src=(char*)pSrc,*Dst=(char*)pDst;
 	int ofsDst=bplDst-x*bpp, ofsSrc=bplSrc-2*x*bpp;
 	int rm=(1<<rc)-1,gm=(1<<gc)-1,bm=(1<<bc)-1,am=(1<<ac)-1,xm=x-1,ym=y-1;

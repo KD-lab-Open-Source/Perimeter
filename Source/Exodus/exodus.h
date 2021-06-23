@@ -13,6 +13,10 @@ struct _FILETIME {
 
 //this comes from Win32
 #define MAX_PATH 260
+#define _MAX_DRIVE   3
+#define _MAX_FNAME   256
+#define _MAX_DIR   _MAX_FNAME
+#define _MAX_EXT   _MAX_FNAME
 
 void ZeroMemory(void *p, std::size_t n);
 
@@ -36,10 +40,10 @@ char* _strupr(char* str);
 
 typedef pthread_mutex_t CRITICAL_SECTION;
 
-static void EnterCriticalSection(CRITICAL_SECTION *m);
-static void LeaveCriticalSection(CRITICAL_SECTION *m);
-static void InitializeCriticalSection(CRITICAL_SECTION *m);
-static void DeleteCriticalSection(CRITICAL_SECTION *m);
+void EnterCriticalSection(CRITICAL_SECTION *m);
+void LeaveCriticalSection(CRITICAL_SECTION *m);
+void InitializeCriticalSection(CRITICAL_SECTION *m);
+void DeleteCriticalSection(CRITICAL_SECTION *m);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

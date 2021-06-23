@@ -1372,11 +1372,12 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *FontName,int size,int bold,int italic,int underline)
 {
+    if(hWnd==0) return;
+#ifndef PERIMETER_EXODUS
 	HDC hDC=0;
     HFONT hFont=CreateFont(size,0,0,0,bold?FW_BOLD:FW_NORMAL,italic,underline,0, ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,VARIABLE_PITCH,FontName);
 	if(hFont==0) return;
-	if(hWnd==0) return;
 
 	if((hDC=GetDC(hWnd))==0) return;
     HFONT hFontOld=(HFONT)SelectObject( hDC, hFont );
@@ -1387,12 +1388,13 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *
 	SelectObject(hDC,hFontOld);
 	DeleteObject(hFont);
 	ReleaseDC(hWnd,hDC);
-
+#endif
 }
 
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 {
 	if(hWnd==0) return;
+#ifndef PERIMETER_EXODUS
 	HDC hDC=GetDC(hWnd);
 	if(hDC==0) return;
 	SetTextColor(hDC,RGB(r,g,b));
@@ -1400,6 +1402,7 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 	RECT rect={xScrMin,yScrMin,xScrMax,yScrMax};
 	RDCALL(!ExtTextOut(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlen(string),0));
 	ReleaseDC(hWnd,hDC);
+#endif
 }
 
 int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)

@@ -1,3 +1,4 @@
+#include <SDL.h>
 #include "StdAfxRD.h"
 cVisError VisError;
 
@@ -21,10 +22,17 @@ cVisError& cVisError::operator << (const char *a)
 {
 	if(strcmp(a,VERR_END)==0)
 	{// конец потока
-		if(gb_RenderDevice && gb_RenderDevice->IsFullScreen())
+		if(gb_RenderDevice && gb_RenderDevice->IsFullScreen()) {
+#ifdef PERIMETER_EXODUS
+            SDL_MinimizeWindow(static_cast<SDL_Window*>(gb_RenderDevice->GetWindowHandle()));
+#else
 			ShowWindow(gb_RenderDevice->GetWindowHandle(),SW_MINIMIZE);
-		if(MessageBox(NULL,buf.c_str(),"cVisGeneric::ErrorMessage()",MB_OKCANCEL)==IDOK)
-			exit(1);
+#endif
+		}
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                                 "Perimeter cVisGeneric::ErrorMessage()",
+                                 buf.c_str(),
+                                 nullptr);
 		buf.clear();
 	}else
 		buf+=a;

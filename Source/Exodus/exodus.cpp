@@ -41,18 +41,18 @@ char* _strupr(char* str)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void EnterCriticalSection(CRITICAL_SECTION *m) {
+void EnterCriticalSection(CRITICAL_SECTION *m) {
     pthread_mutex_lock(m);
 }
 
-static void LeaveCriticalSection(CRITICAL_SECTION *m) {
+void LeaveCriticalSection(CRITICAL_SECTION *m) {
     pthread_mutex_unlock(m);
 }
 
-static void InitializeCriticalSection(CRITICAL_SECTION *m) {
+void InitializeCriticalSection(CRITICAL_SECTION *m) {
     pthread_mutex_init(m, nullptr);
 }
 
-static void DeleteCriticalSection(CRITICAL_SECTION *m) {
+void DeleteCriticalSection(CRITICAL_SECTION *m) {
     pthread_mutex_destroy(m);
 }
