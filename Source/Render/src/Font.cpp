@@ -8,9 +8,7 @@
 #include <sys/stat.h>
 #include <io.h>
 #include <stdio.h>
-#ifndef PERIMETER_EXODUS
 #include <direct.h>
-#endif
 #include "FileImage.h"
 
 #ifndef ASSERT

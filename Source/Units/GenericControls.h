@@ -244,7 +244,7 @@ public:
 //		ar & WRAP_OBJECT(position_);
 //		ar & WRAP_OBJECT(orientaion);
 //		ar & WRAP_OBJECT(radius);
-		ar & TRANSLATE_OBJECT(label, "Метка");
+		ar & TRANSLATE_OBJECT(label_, "Метка");
 	}
 
 protected:

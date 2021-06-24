@@ -24,7 +24,7 @@ cVisError& cVisError::operator << (const char *a)
 	{// конец потока
 		if(gb_RenderDevice && gb_RenderDevice->IsFullScreen()) {
 #ifdef PERIMETER_EXODUS
-            SDL_MinimizeWindow(static_cast<SDL_Window*>(gb_RenderDevice->GetWindowHandle()));
+            SDL_MinimizeWindow(fromHWND(gb_RenderDevice->GetWindowHandle()));
 #else
 			ShowWindow(gb_RenderDevice->GetWindowHandle(),SW_MINIMIZE);
 #endif

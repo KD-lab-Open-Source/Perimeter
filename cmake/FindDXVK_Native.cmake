@@ -52,7 +52,7 @@ include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(DXVK_Native DEFAULT_MSG DXVK_NATIVE_INCLUDE_DIR)
 
-set(DXVK_NATIVE_INCLUDE_DIRS "${DXVK_NATIVE_INCLUDE_DIR}/native/directx" "${DXVK_NATIVE_INCLUDE_DIR}/native/windows")
+set(DXVK_NATIVE_INCLUDE_DIRS "${DXVK_NATIVE_INCLUDE_DIR}/native/directx" "${DXVK_NATIVE_INCLUDE_DIR}/native/windows" "${DXVK_NATIVE_INCLUDE_DIR}/native/wsi")
 
 mark_as_advanced(DXVK_NATIVE_INCLUDE_DIR DXVK_NATIVE_D3D9_LIBRARY)
 

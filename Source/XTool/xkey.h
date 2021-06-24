@@ -1,13 +1,6 @@
 #ifndef __XKEY_H
 #define __XKEY_H
 
-// Flags for XKey::keyStates...
-#define XKEY_REPEAT		0x0002
-#define XKEY_PRESSED		0x0004
-#define XKEY_WASPRESSED 	0x0008
-
-#define XKEY_MAXCODE		256
-
 /*
  * Virtual Keys, Standard Set
  */
@@ -137,43 +130,6 @@
 #define VK_TILDE	0xC0
 #define VK_LBR		0x5B
 #define VK_RBR		0x5D
-
-
-struct XKeyStruct
-{
-	void* keyPressFnc[XKEY_MAXCODE];
-	void* keyUnpressFnc[XKEY_MAXCODE];
-
-	void* pressHandler;
-	void* unpressHandler;
-
-	int LastChar;
-	int LastScanCode;
-	char keyStates[XKEY_MAXCODE];
-
-	XKeyStruct();
-	~XKeyStruct();
-
-	void init(void* pH,void* upH);
-	void finit(void);
-	void setPress(int key,void (*keyFunction)(void),int repeat);
-	void setUnpress(int key,void (*keyFunction)(void));
-
-	void PressFnc(int vkey,int key);
-	void UnPressFnc(int vkey,int key);
-
-	void clear(void);
-
-	int Pressed(int key);
-	int wasPressed(int key);
-};
-
-extern XKeyStruct XKey;
-
-int xtGetKeyName(int vkey,int shift,int russian = 0);
-char* xtGetKeyNameText(int key);
-
-int xtGetKeyState(int vk);
 
 #endif /* __XKEY_H */
 

@@ -2,6 +2,18 @@
 #define PERIMETER_WINDOWS_H
 
 #include <cstdint>
+#include <windows.h>
+#include <unistd.h>
+
+inline SDL_Window* fromHWND(HWND hWindow) {
+    return reinterpret_cast<SDL_Window*>(hWindow);
+}
+
+inline HWND toHWND(SDL_Window* pWindow) {
+    return reinterpret_cast<HWND>(pWindow);
+}
+        
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //For some reason not present in dxvk-native headers
 typedef uint8_t UCHAR;
@@ -17,11 +29,10 @@ struct _FILETIME {
 #define _MAX_FNAME   256
 #define _MAX_DIR   _MAX_FNAME
 #define _MAX_EXT   _MAX_FNAME
+#define MAX_COMPUTERNAME_LENGTH 31
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Use POSIX for MS funcs
-
-#include <unistd.h>
 
 #define _O_BINARY 0
 #define _O_RDONLY O_RDONLY
@@ -38,15 +49,16 @@ struct _FILETIME {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void _mkdir(const char* path);
+DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
+                              const char* returnBuffer, DWORD bufferSize, const char* filePath);
 
-void ZeroMemory(void *p, std::size_t n);
+DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath);
 
-void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
+void ZeroMemory(void* p, std::size_t n);
 
-void _makepath(const char *path, char *drive, char *dir, char *fname, char *ext);
+short GetAsyncKeyState(int vKey);
 
-void GetCurrentDirectory(unsigned short size, char* path);
+void SetFocus(HWND hwnd);
 
 void Sleep(uint32_t millis);
 
@@ -57,6 +69,19 @@ char* _strupr(char* str);
 #define strupr _strupr
 
 #define IsCharAlphaNumeric isalnum
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Path/Dir stuff
+
+void _mkdir(const char* path);
+
+char *_fullpath(char* absolutePath, const char* relativePath, size_t maxLength);
+
+void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext);
+
+void _makepath(const char* path, char* drive, char* dir, char* fname, char* ext);
+
+void GetCurrentDirectory(unsigned short size, char* path);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Basic wrapper for Win32 CRITICAL_SECTION stuff

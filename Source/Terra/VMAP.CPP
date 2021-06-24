@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <cstdio>
+#include <climits>
 
 #include "../Util/SystemUtil.h"
 
