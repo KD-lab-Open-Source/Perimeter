@@ -205,12 +205,12 @@ double SBServerGetTeamFloatValue(SBServer server, int teamnum, char *key, double
 
 SBBool SBServerHasBasicKeys(SBServer server)
 {
-	return (server->state & STATE_BASICKEYS);
+	return SBBool(server->state & STATE_BASICKEYS);
 }
 
 SBBool SBServerHasFullKeys(SBServer server)
 {
-	return (server->state & STATE_FULLKEYS);
+	return SBBool(server->state & STATE_FULLKEYS);
 }
 
 
@@ -238,14 +238,14 @@ unsigned short SBServerGetPublicQueryPortNBO(SBServer server)
 
 SBBool SBServerHasPrivateAddress(SBServer server)
 {
-	return (server->flags & PRIVATE_IP_FLAG);
+	return SBBool(server->flags & PRIVATE_IP_FLAG);
 }
 
 
 
 SBBool SBServerDirectConnect(SBServer server)
 {
-	return (server->flags & UNSOLICITED_UDP_FLAG);
+	return SBBool(server->flags & UNSOLICITED_UDP_FLAG);
 }
 
 char *SBServerGetPrivateAddress(SBServer server)

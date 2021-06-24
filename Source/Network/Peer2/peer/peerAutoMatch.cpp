@@ -24,6 +24,8 @@ devsupport@gamespy.com
 #include "peerPlayers.h"
 #include "peerRooms.h"
 
+#include <iostream>
+
 /**************
 ** FUNCTIONS **
 **************/

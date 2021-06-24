@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PINGER_H_
 #define _PINGER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /************
 ** DEFINES **
 ************/
@@ -111,9 +107,5 @@ void pingerPing(unsigned int IP,
 				void * replyParam,
 				PINGERBool blocking,
 				unsigned long timeout);
-	
-#ifdef __cplusplus
-}
-#endif
 
 #endif

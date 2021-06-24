@@ -21,6 +21,8 @@ devsupport@gamespy.com
 #include "peerCallbacks.h"
 #include "peerKeys.h"
 
+#include <iostream>
+
 /************
 ** DEFINES **
 ************/
@@ -778,7 +780,7 @@ piPlayer * piFindPlayerByIndex
 	data.roomType = roomType;
 
 	// enum through the players
-	return TableMap2(connection->players, piFindPlayerByIndexMap, &data);
+	return static_cast<piPlayer*>(TableMap2(connection->players, piFindPlayerByIndexMap, &data));
 }
 
 typedef struct piCountRoomOpsMapData

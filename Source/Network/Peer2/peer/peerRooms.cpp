@@ -28,6 +28,8 @@ devsupport@gamespy.com
 #include "peerOperations.h"
 #include "peerSB.h"
 
+#include <iostream>
+
 /**************
 ** FUNCTIONS **
 **************/

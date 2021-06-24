@@ -27,10 +27,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Constants for MD5Transform routine.
  */
 #define S11 7
@@ -341,6 +337,3 @@ void MD5Digest (unsigned char *input, unsigned int len, char output[33])
 	MD5Print(digest, output);
 
 }
-#ifdef __cplusplus
-}
-#endif

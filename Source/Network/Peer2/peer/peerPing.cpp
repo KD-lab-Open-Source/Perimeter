@@ -23,6 +23,8 @@ devsupport@gamespy.com
 #include "peerCallbacks.h"
 #include "peerMangle.h"
 
+#include <iostream>
+
 /************
 ** DEFINES **
 ************/
@@ -183,7 +185,7 @@ static void piProcessPing
 	// Update the ping history.
 	///////////////////////////
 	if(player->pingHistoryNum > 0)
-		memmove(player->pingHistory + 1, player->pingHistory, min(player->pingHistoryNum, PI_PING_HISTORY_LEN - 1) * sizeof(int));
+		memmove(player->pingHistory + 1, player->pingHistory, (std::min)(player->pingHistoryNum, PI_PING_HISTORY_LEN - 1) * sizeof(int));
 	player->pingHistory[0] = ping;
 	if(player->pingHistoryNum < PI_PING_HISTORY_LEN)
 		player->pingHistoryNum++;
@@ -571,7 +573,7 @@ static piPlayer ** piPickPingPlayers
 	///////////////////////////////////
 	data.peer = peer;
 	data.players = players;
-	data.max = min(PI_MAX_PING_PLAYERS, *numPings);
+	data.max = (std::min)(PI_MAX_PING_PLAYERS, *numPings);
 	data.num = 0;
 	memset(players, 0, sizeof(piPlayer *) * data.max);
 	TableMap(connection->players, piPickPingPlayersMap, &data);

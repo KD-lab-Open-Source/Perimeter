@@ -30,6 +30,7 @@
 	#include "nonport.h" //for gsimalloc/realloc/free/assert
 #endif
 
+#include <iostream>
 
 struct HashImplementation 
 {

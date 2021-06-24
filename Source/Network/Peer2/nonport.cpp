@@ -11,10 +11,6 @@ Irvine, California 92614
 devsupport@gamespy.com
 ******/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "nonport.h"
 
 #if defined(_WIN32) && !defined(UNDER_CE) && !defined(_PS2)
@@ -960,14 +956,4 @@ const char * GOAGetUniqueID_Internal(void)
 
 #if !defined(_PS2) || defined(UNIQUEID)
 GetUniqueIDFunction GOAGetUniqueID = GOAGetUniqueID_Internal;
-#endif
-
-// Re-enable previously disabled compiler warnings
-///////////////////////////////////////////////////
-#if defined(_MSC_VER)
-#pragma warning ( default: 4127 )
-#endif // _MSC_VER
-
-#ifdef __cplusplus
-}
 #endif

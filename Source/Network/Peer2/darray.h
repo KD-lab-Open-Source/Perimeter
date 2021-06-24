@@ -14,10 +14,6 @@
  * the DArray can refer to elements via (void*) ptrs.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Type: DArray
  * ----------------
  * Defines the DArray type itself. The client can declare variables of type 
@@ -305,9 +301,5 @@ void *ArrayGetDataPtr(DArray array);
  * Set the pointer to the actual data storage, which must be allocated with malloc
  */
 void ArraySetDataPtr(DArray array, void *ptr, int count, int capacity);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif //_DARRAY_

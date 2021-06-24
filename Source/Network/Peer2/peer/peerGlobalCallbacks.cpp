@@ -30,6 +30,8 @@ devsupport@gamespy.com
 #include "peerKeys.h"
 #include "peerAutoMatch.h"
 
+#include <iostream>
+
 /************
 ** DEFINES **
 ************/
@@ -441,7 +443,7 @@ static void piChannelMessage
 
 			// Pass it along.
 			/////////////////
-			piAddRoomUTMCallback(peer, roomType, user, piUTMCommand, piUTMParameters, (PEERBool)type == CHAT_ATM);
+			piAddRoomUTMCallback(peer, roomType, user, piUTMCommand, piUTMParameters, (PEERBool)(type == CHAT_ATM));
 		}
 
 		return;

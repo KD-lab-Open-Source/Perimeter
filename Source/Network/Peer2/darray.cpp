@@ -9,7 +9,8 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include "darray.h" 
+#include "darray.h"
+#include <iostream>
 
 #ifdef _MFC_MEM_DEBUG
 #define _CRTDBG_MAP_ALLOC 1

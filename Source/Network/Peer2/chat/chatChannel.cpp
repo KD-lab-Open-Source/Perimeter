@@ -23,6 +23,7 @@ devsupport@gamespy.com
 #include "chatChannel.h"
 #include "chatCallbacks.h"
 
+#include <iostream>
 
 /************
 ** DEFINES **
@@ -861,7 +862,7 @@ static void ciUserChangeNickMap(void * elem, void * clientData)
 				params.channel = channel->name;
 				params.oldNick = (char *)data->oldNick;
 				params.newNick = (char *)data->newNick;
-				ciAddCallback(data->chat, CALLBACK_USER_CHANGED_NICK, channel->callbacks.userChangedNick, &params, channel->callbacks.param, 0, channel->name);
+				ciAddCallback_wrapper(data->chat, CALLBACK_USER_CHANGED_NICK, channel->callbacks.userChangedNick, &params, channel->callbacks.param, 0, channel->name);
 			}
 		}
 	}
@@ -925,7 +926,7 @@ void ciUserChangedMode(CHAT chat, const char * user, const char * channel, int m
 		params.channel = (char *)channel;
 		params.user = (char *)user;
 		params.mode = chatUser->mode;
-		ciAddCallback(chat, CALLBACK_USER_MODE_CHANGED, chatChannel->callbacks.userModeChanged, &params, chatChannel->callbacks.param, 0, channel);
+		ciAddCallback_wrapper(chat, CALLBACK_USER_MODE_CHANGED, chatChannel->callbacks.userModeChanged, &params, chatChannel->callbacks.param, 0, channel);
 	}
 }
 
@@ -1177,7 +1178,7 @@ static void ciClearAllUsersChannelMap(void * elem, void * clientData)
 	{
 		ciCallbackUserListUpdatedParams params;
 		params.channel = channel->name;
-		ciAddCallback(chat, CALLBACK_USER_LIST_UPDATED, channel->callbacks.userListUpdated, &params, channel->callbacks.param, 0, channel->name);
+		ciAddCallback_wrapper(chat, CALLBACK_USER_LIST_UPDATED, channel->callbacks.userListUpdated, &params, channel->callbacks.param, 0, channel->name);
 	}
 }
 

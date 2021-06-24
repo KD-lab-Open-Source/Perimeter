@@ -21,6 +21,8 @@ devsupport@gamespy.com
 #include "peerAutoMatch.h"
 #include "peerOperations.h"
 
+#include <iostream>
+
 /**************
 ** CALLBACKS **
 **************/
