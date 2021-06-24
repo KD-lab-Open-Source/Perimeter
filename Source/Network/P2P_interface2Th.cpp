@@ -18,7 +18,7 @@
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
 
 
-void LogMsg(LPCTSTR fmt, ...)
+void LogMsg(const char* fmt, ...)
 {
 #ifndef _FINAL_VERSION_
 	va_list val;

@@ -21,6 +21,7 @@ ADD_SUBDIRECTORY("Terra")
 ADD_SUBDIRECTORY("tx3d")
 ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
+ADD_SUBDIRECTORY("Network")
 
 SET(perimeter_LINK_LIBS
     #Our libs
@@ -30,6 +31,7 @@ SET(perimeter_LINK_LIBS
     tx3d
     Render
     Sound
+    Network
 )
 
 IF(PERIMETER_EXODUS)
@@ -38,8 +40,7 @@ IF(PERIMETER_EXODUS)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
 ELSE()
     ADD_SUBDIRECTORY("PlayOgg")
-    ADD_SUBDIRECTORY("Network")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg Network)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")

@@ -15,15 +15,12 @@ bool checkInetAddress(const char* ipStr);
 DWORD WINAPI InternalServerThread(LPVOID lpParameter);
 HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer);
 
-extern LPCTSTR lpszSignatureRQ;
-extern LPCTSTR lpszSignatureRPL;
+//extern LPCTSTR lpszSignatureRQ;
+//extern LPCTSTR lpszSignatureRPL;
 
 extern const GUID guidPerimeterGame;
 
-
-void LogMsg(LPCTSTR fmt, ...);
-
-const int MAX_SIZE_MISSION_NAME=20;
+void LogMsg(const char* fmt, ...);
 
 struct sGameStatusInfo{
 	sGameStatusInfo(){
