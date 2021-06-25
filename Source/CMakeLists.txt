@@ -1,12 +1,22 @@
 IF(NOT PERIMETER_WINDOWS)
     #Non Windows target specifics
     
+    INCLUDE(FetchContent)
     INCLUDE(ExternalProject)    
     
     #Exodus wrapper libs
     INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/Source/Exodus"
+        "${pevents_SOURCE_DIR}/src"
     )
+
+    #pevents retrieval
+    FetchContent_Declare(pevents
+            GIT_REPOSITORY    git@github.com:neosmart/pevents.git
+            GIT_TAG           origin/master
+            GIT_SHALLOW       ON
+    )
+    FetchContent_MakeAvailable(pevents)
 
     #DXVK-native wrapper lib retrieval and building
     ExternalProject_Add(dxvk-native
