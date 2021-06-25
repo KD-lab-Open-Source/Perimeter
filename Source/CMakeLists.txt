@@ -1,7 +1,29 @@
 IF(NOT PERIMETER_WINDOWS)
+    #Non Windows target specifics
+    
+    INCLUDE(ExternalProject)    
+    
     #Exodus wrapper libs
-    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
-    #DXVK-native wrapper libs
+    INCLUDE_DIRECTORIES(
+        "${PROJECT_SOURCE_DIR}/Source/Exodus"
+    )
+
+    #DXVK-native wrapper lib retrieval and building
+    ExternalProject_Add(dxvk-native
+            GIT_REPOSITORY    git@github.com:Joshua-Ashton/dxvk-native.git
+            GIT_TAG           origin/master
+            GIT_SHALLOW       ON
+            CONFIGURE_COMMAND meson ../dxvk-native
+            BUILD_COMMAND     meson compile
+            INSTALL_COMMAND   ""
+            )
+    ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
+    set(DXVK_NATIVE_INCLUDE_DIRS
+            "${SOURCE_DIR}/include/native/directx"
+            "${SOURCE_DIR}/include/native/windows"
+    )
+    set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+    
     INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
 ELSE()
@@ -47,6 +69,22 @@ ELSE()
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
+ENDIF()
+
+IF(NOT PERIMETER_WINDOWS)
+    #This is the only way I know to force download of external project from any targets
+
+    ADD_CUSTOM_TARGET(dependencies ALL DEPENDS dxvk-native)
+
+    ADD_DEPENDENCIES(Exodus dependencies)
+    ADD_DEPENDENCIES(XTool dependencies)
+    ADD_DEPENDENCIES(PluginMAX dependencies)
+    ADD_DEPENDENCIES(Terra dependencies)
+    ADD_DEPENDENCIES(tx3d dependencies)
+    ADD_DEPENDENCIES(Render dependencies)
+    ADD_DEPENDENCIES(Sound dependencies)
+    ADD_DEPENDENCIES(Network dependencies)
+    #ADD_DEPENDENCIES(PlayOgg dependencies)
 ENDIF()
 
 IF(NOT MSVC_CL_BUILD)

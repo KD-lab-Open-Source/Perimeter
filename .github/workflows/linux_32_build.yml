@@ -17,22 +17,11 @@ jobs:
       - name: install libs
         run: sudo apt-get install cmake meson libsdl2-dev libsdl2-net-dev libogg-dev libvorbis-dev libboost-dev libvulkan-dev glslang-tools
         
-        #DXVK-Native
-      - name: dxvk-native download lib
-        run: git clone --depth 1 https://github.com/Joshua-Ashton/dxvk-native.git dxvk-native
-        working-directory: /tmp
-      - name: dxvk-native configure
-        run: meson build
-        working-directory: /tmp/dxvk-native
-      - name: dxvk-native build
-        run: ninja
-        working-directory: /tmp/dxvk-native/build
-        
         #Main build
       - name: create build dir
         run: mkdir build
       - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DDXVK_NATIVE_INCLUDE_DIR=/tmp/dxvk-native/include -DDXVK_NATIVE_D3D9_LIB=/tmp/dxvk-native/build/src/d3d9/libdxvk_d3d9.so
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
         working-directory: build
       - name: build
         run: ninja
