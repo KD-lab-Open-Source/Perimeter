@@ -12,19 +12,20 @@ IF(NOT PERIMETER_WINDOWS)
 
     #pevents retrieval
     FetchContent_Declare(pevents
-            GIT_REPOSITORY    git@github.com:neosmart/pevents.git
-            GIT_TAG           origin/master
+            GIT_REPOSITORY    https://github.com/neosmart/pevents
+            GIT_TAG           16967b99954e9fc077e07ea188d7886383bd5459 #latest commit
             GIT_SHALLOW       ON
     )
     FetchContent_MakeAvailable(pevents)
 
     #DXVK-native wrapper lib retrieval and building
     ExternalProject_Add(dxvk-native
-            GIT_REPOSITORY    git@github.com:Joshua-Ashton/dxvk-native.git
-            GIT_TAG           origin/master
+            GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
+            GIT_TAG           d3e43ed3d52cfabe7dc5c95e165d43b68d65da9a #latest commit
             GIT_SHALLOW       ON
+            BUILD_ALWAYS      OFF
             CONFIGURE_COMMAND meson ../dxvk-native
-            BUILD_COMMAND     meson compile
+            BUILD_COMMAND     ninja
             INSTALL_COMMAND   ""
             )
     ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
