@@ -98,30 +98,7 @@ IF(NOT PERIMETER_WINDOWS)
     #ADD_DEPENDENCIES(PlayOgg dependencies)
 ENDIF()
 
-IF(NOT MSVC_CL_BUILD)
-	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
-ENDIF()
-
-INCLUDE_DIRECTORIES(
-    "${PROJECT_SOURCE_DIR}/Source/Game"
-    "${PROJECT_SOURCE_DIR}/Source/XTool"
-    "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
-    "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
-    "${PROJECT_SOURCE_DIR}/Source/Util"
-    "${PROJECT_SOURCE_DIR}/Source/Render/inc"
-    "${PROJECT_SOURCE_DIR}/Source/Terra"
-    "${PROJECT_SOURCE_DIR}/Source/UserInterface"
-    "${PROJECT_SOURCE_DIR}/Source/GeoLogic"
-    "${PROJECT_SOURCE_DIR}/Source/Network"
-    "${PROJECT_SOURCE_DIR}/Source/Units"
-    "${PROJECT_SOURCE_DIR}/Source/Render/client"
-    "${PROJECT_SOURCE_DIR}/Source/Physics"
-    "${PROJECT_SOURCE_DIR}/Source/AI"
-    "${PROJECT_SOURCE_DIR}/Source/Sound"
-    "${PROJECT_SOURCE_DIR}/Source/Scripts"
-    "${PROJECT_SOURCE_DIR}/Source/tx3d"
-    "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
-)
+SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
@@ -154,13 +131,6 @@ IF(PERIMETER_WINDOWS)
     IF(MSVC_CL_BUILD)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
             legacy_stdio_definitions
-
-            Vorbis::vorbis
-            Vorbis::vorbisenc
-            Vorbis::vorbisfile
-
-            SDL2::SDL2
-            SDL2::SDL2main
         )
     ENDIF()
 ELSE()
@@ -170,6 +140,27 @@ ELSE()
         dl
     )
 ENDIF()
+
+INCLUDE_DIRECTORIES(
+    "${PROJECT_SOURCE_DIR}/Source/Game"
+    "${PROJECT_SOURCE_DIR}/Source/XTool"
+    "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
+    "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
+    "${PROJECT_SOURCE_DIR}/Source/Util"
+    "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+    "${PROJECT_SOURCE_DIR}/Source/Terra"
+    "${PROJECT_SOURCE_DIR}/Source/UserInterface"
+    "${PROJECT_SOURCE_DIR}/Source/GeoLogic"
+    "${PROJECT_SOURCE_DIR}/Source/Network"
+    "${PROJECT_SOURCE_DIR}/Source/Units"
+    "${PROJECT_SOURCE_DIR}/Source/Render/client"
+    "${PROJECT_SOURCE_DIR}/Source/Physics"
+    "${PROJECT_SOURCE_DIR}/Source/AI"
+    "${PROJECT_SOURCE_DIR}/Source/Sound"
+    "${PROJECT_SOURCE_DIR}/Source/Scripts"
+    "${PROJECT_SOURCE_DIR}/Source/tx3d"
+    "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
+)
 
 SET(perimeter_SRCS
         Game/CameraManager.cpp

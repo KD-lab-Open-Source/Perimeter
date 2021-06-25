@@ -9,11 +9,6 @@ IF(MSVC OR ${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
     SET(MSVC_CL_BUILD ON)
 ENDIF()
 
-# modules
-IF(NOT MSVC_CL_BUILD)
-	SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-ENDIF()
-
 SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
 SET(CMAKE_CXX_STANDARD 17)
@@ -53,8 +48,17 @@ OPTION(OPTION_GEN_SCRIPTS "Re-Generates game scripts" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 
-# paths to search libs
-IF(NOT MSVC_CL_BUILD)
+
+# depends
+FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
+IF(MSVC_CL_BUILD)
+    FIND_PACKAGE(Vorbis CONFIG REQUIRED)
+    SET(Vorbis_FOUND TRUE)
+    SET(VORBIS_LIBRARIES Vorbis::vorbis Vorbis::vorbisenc Vorbis::vorbisfile)
+    FIND_PACKAGE(SDL2 CONFIG REQUIRED)
+    SET(SDL2_LIBRARY SDL2::SDL2 SDL2::SDL2main)
+ELSE()
+    # paths to search libs
     SET(LIBRARY_SEARCH_PATHS "
         ${LIBRARY_SEARCH_PATHS}
         ~/Library/Frameworks 
@@ -70,15 +74,9 @@ IF(NOT MSVC_CL_BUILD)
         /local
         C:/MinGW
     ")
-ENDIF()
-
-# depends
-FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
-IF(MSVC_CL_BUILD)
-    FIND_PACKAGE(Vorbis CONFIG REQUIRED)
-    SET(VORBIS_FOUND TRUE)
-    FIND_PACKAGE(SDL2 CONFIG REQUIRED)
-ELSE()
+    
+    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+    
     FIND_PACKAGE(Vorbis)
     FIND_PACKAGE(SDL2 REQUIRED)
 ENDIF()
