@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PEERSB_H_
 #define _PEERSB_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*************
 ** INCLUDES **
 *************/
@@ -39,10 +35,6 @@ void piSendNatNegotiateCookie(PEER peer, unsigned int ip, unsigned short port, i
 PEERBool piSBStartListingAutoMatches(PEER peer);
 void piSBStopListingAutoMatches(PEER peer);
 SBServer piSBCloneServer(SBServer server);
-void piSBFreeHostServer();
-
-#ifdef __cplusplus
-}
-#endif
+void piSBFreeHostServer(PEER peer);
 
 #endif

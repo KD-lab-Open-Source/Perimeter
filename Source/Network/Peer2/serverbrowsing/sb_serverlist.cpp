@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
 
 #define SERVER_GROWBY 100
 
@@ -333,7 +334,7 @@ SBError SBServerListGetLANList(SBServerList *slist, unsigned short startport, un
 	{
 		saddr.sin_port = htons(i);
 		if (queryversion == QVERSION_QR2) //send a QR2 echo request
-			sendto(slist->slsocket, qr2_echo_request,qr2requestlen,0,(struct sockaddr *)&saddr,sizeof(saddr));
+			sendto(slist->slsocket, reinterpret_cast<const char*>(qr2_echo_request),qr2requestlen,0,(struct sockaddr *)&saddr,sizeof(saddr));
 		else //send a GOA echo request
 			sendto(slist->slsocket, "\\echo\\test",10,0,(struct sockaddr *)&saddr,sizeof(saddr));
 	}
@@ -1129,7 +1130,7 @@ SBError SBSendNatNegotiateCookieToServer(SBServerList *slist, goa_uint32 ip, uns
 	negotiateBuffer[5] = NN_MAGIC_5;
 	cookie = (int)htonl(cookie);
 	memcpy(negotiateBuffer + NATNEG_MAGIC_LEN, &cookie, 4);
-	return SBSendMessageToServer(slist, ip, port, negotiateBuffer, NATNEG_MAGIC_LEN + 4);
+	return SBSendMessageToServer(slist, ip, port, reinterpret_cast<char*>(negotiateBuffer), NATNEG_MAGIC_LEN + 4);
 }
 
 static SBError ProcessLanData(SBServerList *slist)

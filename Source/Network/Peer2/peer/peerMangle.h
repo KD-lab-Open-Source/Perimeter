@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PEERMANGLE_H_
 #define _PEERMANGLE_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*************
 ** INCLUDES **
 *************/
@@ -41,9 +37,5 @@ void piMangleUser(char buffer[PI_USER_MAX_LEN], unsigned int IP, int profileID);
 PEERBool piDemangleUser(const char buffer[PI_USER_MAX_LEN], unsigned int * IP, int * profileID);
 void piMangleIP(char buffer[11], unsigned int IP);
 unsigned int piDemangleIP(const char buffer[11]);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

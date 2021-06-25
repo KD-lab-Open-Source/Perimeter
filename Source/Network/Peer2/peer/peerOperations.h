@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PEEROPERATIONS_H_
 #define _PEEROPERATIONS_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*************
 ** INCLUDES **
 *************/
@@ -200,9 +196,5 @@ PEERBool piNewAutoMatchOperation
 	void * param,
 	int opID
 );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

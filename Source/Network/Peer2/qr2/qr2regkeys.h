@@ -3,11 +3,6 @@
 #ifndef _QR2REGKEYS_H_
 #define _QR2REGKEYS_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-	
-
 #define MAX_REGISTERED_KEYS 254
 #define NUM_RESERVED_KEYS 50
 	
@@ -41,15 +36,7 @@ extern "C" {
 #define PID__KEY		27
 #define TEAM_T_KEY		28
 #define SCORE_T_KEY		29
-	
 
 extern const char *qr2_registered_key_list[];
-void qr2_register_key(int keyid, const char *key);
-
-
-#ifdef __cplusplus
-}
-#endif
-
 
 #endif

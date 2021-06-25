@@ -18,6 +18,8 @@ devsupport@gamespy.com
 #include "peerQR.h"
 #include "peerRooms.h"
 
+#include <iostream>
+
 /**************
 ** FUNCTIONS **
 **************/

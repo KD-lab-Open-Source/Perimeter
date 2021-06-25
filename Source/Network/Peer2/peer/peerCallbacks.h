@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PEERCALLBACKS_H_
 #define _PEERCALLBACKS_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*************
 ** INCLUDES **
 *************/
@@ -394,9 +390,5 @@ int piCallAutoMatchRateCallback
 	PEER peer,
 	SBServer server
 );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

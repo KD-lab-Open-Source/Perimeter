@@ -12,7 +12,7 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define WINVER	0x0500
 #define _WIN32_WINNT 0x0500
-#else
+#elif !defined(WINVER) || !defined(_WIN32_WINNT)
 // Visual Studio 2019, afxv_w32.h: #error MFC does not support WINVER less than 0x0501.
 #define WINVER	0x0501
 #define _WIN32_WINNT 0x0501

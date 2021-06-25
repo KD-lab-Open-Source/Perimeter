@@ -4,19 +4,21 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 # root
 PROJECT(perimeter)
 
+# Compiler / Host detections
+IF(MSVC OR ${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
+    SET(MSVC_CL_BUILD ON)
+ENDIF()
+
 # modules
-SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+IF(NOT MSVC_CL_BUILD)
+	SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ENDIF()
 
 SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS ON)
-
-# Compiler / Host detections
-IF(MSVC OR ${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
-    SET(MSVC_CL_BUILD ON)
-ENDIF()
 
 IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     SET(CLANG ON)
@@ -25,7 +27,7 @@ ELSE()
 ENDIF()
 
 SET(PERIMETER_EXODUS OFF)
-IF( CMAKE_HOST_WIN32 OR MINGW )
+IF(CMAKE_HOST_WIN32 OR MINGW)
     MESSAGE("Windows or MinGW build")
     SET(PERIMETER_WINDOWS ON)
 ELSE()
@@ -35,7 +37,7 @@ ELSE()
     SET(PERIMETER_EXODUS_SOUND ON)
 ENDIF()
 
-IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
     MESSAGE("Architecture: 64 bits - WARNING: EXPERIMENTAL!")
     SET(PERIMETER_ARCH_64 ON)
     ADD_DEFINITIONS(-DPERIMETER_ARCH_64)
@@ -52,31 +54,34 @@ OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 
 # paths to search libs
-SET(LIBRARY_SEARCH_PATHS "
-    ${LIBRARY_SEARCH_PATHS}
-    ~/Library/Frameworks 
-    /Library/Frameworks
-    /mingw
-    /usr/pkg
-    /usr/local
-    /usr
-    /sw # Fink
-    /opt/local # DarwinPorts
-    /opt/csw # Blastwave
-    /opt
-    /local
-    C:/MinGW
-")
+IF(NOT MSVC_CL_BUILD)
+    SET(LIBRARY_SEARCH_PATHS "
+        ${LIBRARY_SEARCH_PATHS}
+        ~/Library/Frameworks 
+        /Library/Frameworks
+        /mingw
+        /usr/pkg
+        /usr/local
+        /usr
+        /sw # Fink
+        /opt/local # DarwinPorts
+        /opt/csw # Blastwave
+        /opt
+        /local
+        C:/MinGW
+    ")
+ENDIF()
 
 # depends
 FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
 IF(MSVC_CL_BUILD)
     FIND_PACKAGE(Vorbis CONFIG REQUIRED)
     SET(VORBIS_FOUND TRUE)
+    FIND_PACKAGE(SDL2 CONFIG REQUIRED)
 ELSE()
     FIND_PACKAGE(Vorbis)
+    FIND_PACKAGE(SDL2 REQUIRED)
 ENDIF()
-FIND_PACKAGE(SDL2 REQUIRED)
 
 # globals
 INCLUDE_DIRECTORIES(SYSTEM
@@ -85,7 +90,7 @@ INCLUDE_DIRECTORIES(SYSTEM
 )
 
 IF(MSVC_CL_BUILD)
-    #MSVC compiler specifics
+    INCLUDE_DIRECTORIES("${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/SDL2")
 ELSE()
     IF(OPTION_STATIC_BUILD)
         SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")

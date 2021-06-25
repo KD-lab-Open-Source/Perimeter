@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Network_SRCS
-        dplay8guid.c
+        dplay8guid.cpp
         CommonCommands.cpp
         CommonEvents.cpp
         ConnectionDP.cpp
@@ -29,37 +29,37 @@ SET(Network_SRCS
         P2P_interface2ThDPF.cpp
         P2P_interface3Th.cpp
         P2P_interfaceAnyTh.cpp
-        Peer2/peer/peerAutoMatch.c
-        Peer2/peer/peerCallbacks.c
-        Peer2/peer/peerGlobalCallbacks.c
-        Peer2/peer/peerHost.c
-        Peer2/peer/peerKeys.c
-        Peer2/peer/peerMain.c
-        Peer2/peer/peerMangle.c
-        Peer2/peer/peerOperations.c
-        Peer2/peer/peerPing.c
-        Peer2/peer/peerPlayers.c
-        Peer2/peer/peerQR.c
-        Peer2/peer/peerRooms.c
-        Peer2/peer/peerSB.c
-        Peer2/darray.c
-        Peer2/nonport.c
-        Peer2/chat/chatCallbacks.c
-        Peer2/chat/chatChannel.c
-        Peer2/chat/chatCrypt.c
-        Peer2/chat/chatHandlers.c
-        Peer2/chat/chatMain.c
-        Peer2/chat/chatSocket.c
-        Peer2/hashtable.c
-        Peer2/pinger/pingerMain.c
-        Peer2/md5c.c
-        Peer2/qr2/qr2.c
-        Peer2/qr2/qr2regkeys.c
-        Peer2/serverbrowsing/sb_crypt.c
-        Peer2/serverbrowsing/sb_queryengine.c
-        Peer2/serverbrowsing/sb_server.c
-        Peer2/serverbrowsing/sb_serverbrowsing.c
-        Peer2/serverbrowsing/sb_serverlist.c
+        Peer2/peer/peerAutoMatch.cpp
+        Peer2/peer/peerCallbacks.cpp
+        Peer2/peer/peerGlobalCallbacks.cpp
+        Peer2/peer/peerHost.cpp
+        Peer2/peer/peerKeys.cpp
+        Peer2/peer/peerMain.cpp
+        Peer2/peer/peerMangle.cpp
+        Peer2/peer/peerOperations.cpp
+        Peer2/peer/peerPing.cpp
+        Peer2/peer/peerPlayers.cpp
+        Peer2/peer/peerQR.cpp
+        Peer2/peer/peerRooms.cpp
+        Peer2/peer/peerSB.cpp
+        Peer2/darray.cpp
+        Peer2/nonport.cpp
+        Peer2/chat/chatCallbacks.cpp
+        Peer2/chat/chatChannel.cpp
+        Peer2/chat/chatCrypt.cpp
+        Peer2/chat/chatHandlers.cpp
+        Peer2/chat/chatMain.cpp
+        Peer2/chat/chatSocket.cpp
+        Peer2/hashtable.cpp
+        Peer2/pinger/pingerMain.cpp
+        Peer2/md5c.cpp
+        Peer2/qr2/qr2.cpp
+        Peer2/qr2/qr2regkeys.cpp
+        Peer2/serverbrowsing/sb_crypt.cpp
+        Peer2/serverbrowsing/sb_queryengine.cpp
+        Peer2/serverbrowsing/sb_server.cpp
+        Peer2/serverbrowsing/sb_serverbrowsing.cpp
+        Peer2/serverbrowsing/sb_serverlist.cpp
 )
 
 ADD_LIBRARY(Network STATIC ${Network_SRCS})

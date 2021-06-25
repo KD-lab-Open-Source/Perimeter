@@ -15,15 +15,14 @@ ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
 
 SET(perimeter_LINK_LIBS
-        #Our libs
-        XTool
-        PluginMAX
-        Terra
-        tx3d
-        Render
-        Sound
+    #Our libs
+    XTool
+    PluginMAX
+    Terra
+    tx3d
+    Render
+    Sound
 )
-
 
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
@@ -38,32 +37,29 @@ if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
 
-#Dependency libs
-SET(perimeter_LINK_LIBS
-        ${perimeter_LINK_LIBS}
-        #SD2
-        ${SDL2_LIBRARY}
-)
+IF(NOT MSVC_CL_BUILD)
+	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
+ENDIF()
 
 INCLUDE_DIRECTORIES(
-        "${PROJECT_SOURCE_DIR}/Source/Game"
-        "${PROJECT_SOURCE_DIR}/Source/XTool"
-        "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
-        "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
-        "${PROJECT_SOURCE_DIR}/Source/Util"
-        "${PROJECT_SOURCE_DIR}/Source/Render/inc"
-        "${PROJECT_SOURCE_DIR}/Source/Terra"
-        "${PROJECT_SOURCE_DIR}/Source/UserInterface"
-        "${PROJECT_SOURCE_DIR}/Source/GeoLogic"
-        "${PROJECT_SOURCE_DIR}/Source/Network"
-        "${PROJECT_SOURCE_DIR}/Source/Units"
-        "${PROJECT_SOURCE_DIR}/Source/Render/client"
-        "${PROJECT_SOURCE_DIR}/Source/Physics"
-        "${PROJECT_SOURCE_DIR}/Source/AI"
-        "${PROJECT_SOURCE_DIR}/Source/Sound"
-        "${PROJECT_SOURCE_DIR}/Source/Scripts"
-        "${PROJECT_SOURCE_DIR}/Source/tx3d"
-        "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
+    "${PROJECT_SOURCE_DIR}/Source/Game"
+    "${PROJECT_SOURCE_DIR}/Source/XTool"
+    "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
+    "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
+    "${PROJECT_SOURCE_DIR}/Source/Util"
+    "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+    "${PROJECT_SOURCE_DIR}/Source/Terra"
+    "${PROJECT_SOURCE_DIR}/Source/UserInterface"
+    "${PROJECT_SOURCE_DIR}/Source/GeoLogic"
+    "${PROJECT_SOURCE_DIR}/Source/Network"
+    "${PROJECT_SOURCE_DIR}/Source/Units"
+    "${PROJECT_SOURCE_DIR}/Source/Render/client"
+    "${PROJECT_SOURCE_DIR}/Source/Physics"
+    "${PROJECT_SOURCE_DIR}/Source/AI"
+    "${PROJECT_SOURCE_DIR}/Source/Sound"
+    "${PROJECT_SOURCE_DIR}/Source/Scripts"
+    "${PROJECT_SOURCE_DIR}/Source/tx3d"
+    "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
 )
 
 #Add Windows and DirectX libs
@@ -82,31 +78,35 @@ IF(PERIMETER_WINDOWS)
     LINK_DIRECTORIES(BEFORE ${LIBS_MSDXSDK})
 
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-            #DirectX libs
-            ${LIBS_MSDXSDK}/d3d9.lib
-            ${LIBS_MSDXSDK}/d3dx9.lib
-            ${LIBS_MSDXSDK}/dsound.lib
-            ${LIBS_MSDXSDK}/DxErr.lib
+        #DirectX libs
+        ${LIBS_MSDXSDK}/d3d9.lib
+        ${LIBS_MSDXSDK}/d3dx9.lib
+        ${LIBS_MSDXSDK}/dsound.lib
+        ${LIBS_MSDXSDK}/DxErr.lib
 
-            #Windows libs
-            winmm
-            wsock32
-            comctl32
-            advapi32
-            vfw32
-            strmiids
+        #Windows libs
+        winmm
+        wsock32
+        comctl32
+        advapi32
+        vfw32
+        strmiids
     )
 
-	IF(MSVC_CL_BUILD)
-		SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-			legacy_stdio_definitions
+    IF(MSVC_CL_BUILD)
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+            legacy_stdio_definitions
 
-			Vorbis::vorbis
-			Vorbis::vorbisenc
-			Vorbis::vorbisfile
-		)
-	ENDIF()
-ELSE() #Add non windows dependencies    
+            Vorbis::vorbis
+            Vorbis::vorbisenc
+            Vorbis::vorbisfile
+
+            SDL2::SDL2
+            SDL2::SDL2main
+        )
+    ENDIF()
+ELSE()
+    #Add non windows dependencies    
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
         # dl is required for dladdr in stacktrace,
         dl

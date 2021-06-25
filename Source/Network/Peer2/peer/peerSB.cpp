@@ -27,6 +27,8 @@ devsupport@gamespy.com
 #include "peerAutoMatch.h"
 #include "peerQR.h"
 
+#include <iostream>
+
 /************
 ** GLOBALS **
 ************/

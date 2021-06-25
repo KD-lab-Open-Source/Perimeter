@@ -38,6 +38,8 @@ devsupport@gamespy.com
 #include "peerMain.h"
 #include "peerMangle.h"
 
+#include <iostream>
+
 /************
 ** DEFINES **
 ************/
@@ -62,7 +64,7 @@ static const char * EncodeIP(unsigned int ip, char * buffer, PEERBool newCrypt)
 {
 	const char * crypt = newCrypt?new_digits_crypt:digits_crypt;
 	int i;
-	char * str;
+	const char * str;
 	int digit_idx;
 
 	// XOR the IP address.
@@ -100,7 +102,7 @@ static unsigned int DecodeIP(const char * buffer, PEERBool newCrypt)
 {
 	const char * crypt = newCrypt?new_digits_crypt:digits_crypt;
 	unsigned int ip;
-	char * str;
+	const char * str;
 	int digit_idx;
 	int i;
 

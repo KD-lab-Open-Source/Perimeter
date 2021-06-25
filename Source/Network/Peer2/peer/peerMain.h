@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PEERMAIN_H_
 #define _PEERMAIN_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*************
 ** INCLUDES **
 *************/
@@ -196,9 +192,5 @@ void piSendChannelUTM(PEER peer, const char * channel, const char * command, con
 void piSendPlayerUTM(PEER peer, const char * nick, const char * command, const char * parameters, PEERBool authenticate);
 PEERBool piConnectTitle(PEER peer);
 void piDisconnectTitle(PEER peer);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

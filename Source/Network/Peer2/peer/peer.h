@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PEER_H_
 #define _PEER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*************
 ** INCLUDES **
 *************/
@@ -1628,9 +1624,5 @@ PEERBool peerIsAutoMatching(PEER peer);
 // If no attempt is in progress, PEERFailed will be returned.
 /////////////////////////////////////////////////////////////
 PEERAutoMatchStatus peerGetAutoMatchStatus(PEER peer);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

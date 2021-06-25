@@ -10,15 +10,8 @@ INCLUDES
 #include "qr2regkeys.h"
 #include <stdlib.h>
 #include <stdio.h>
-
-
 #include <string.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif	
-	
-	
 /********
 DEFINES
 ********/
@@ -95,7 +88,6 @@ static int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr,
 static void qr2_check_queries(qr2_t qrec);
 static void qr2_check_send_heartbeat(qr2_t qrec);
 static void enum_local_ips();
-qr2_error_t qr2_create_socket(/*[out]*/SOCKET *sock, const char *ip, /*[in/out]*/int * port);
 
 /****************************************************************************/
 /* PUBLIC FUNCTIONS */
@@ -949,7 +941,3 @@ static void send_heartbeat(qr2_t qrec, int statechanged)
 	qrec->lastka = qrec->lastheartbeat = current_time();
 
 }
-
-#ifdef __cplusplus
-}
-#endif

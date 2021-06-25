@@ -35,6 +35,8 @@ UPP = UDP Ping Protocol
 	#include "../darray.h"
 #endif
 
+#include <iostream>
+
 /************
 ** DEFINES **
 ************/

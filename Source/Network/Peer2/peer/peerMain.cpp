@@ -34,6 +34,8 @@ devsupport@gamespy.com
 #include "peerHost.h"
 #include "peerAutoMatch.h"
 
+#include <iostream>
+
 /************
 ** DEFINES **
 ************/

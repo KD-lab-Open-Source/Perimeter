@@ -22,6 +22,8 @@ devsupport@gamespy.com
 #include "peerGlobalCallbacks.h"
 #include "peerMangle.h"
 
+#include <iostream>
+
 /************
 ** DEFINES **
 ************/
@@ -789,7 +791,7 @@ static void piKeyCacheRefresh
 	// Get the IP if we're pinging this room.
 	/////////////////////////////////////////
 	if(!nick)
-		getIP = (connection->pingRoom[roomType] || connection->alwaysRequestPlayerInfo);
+		getIP = PEERBool(connection->pingRoom[roomType] || connection->alwaysRequestPlayerInfo);
 	else
 		getIP = PEERFalse;
 
