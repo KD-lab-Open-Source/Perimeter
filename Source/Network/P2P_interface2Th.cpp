@@ -18,23 +18,6 @@
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
 
 
-void LogMsg(const char* fmt, ...)
-{
-#ifndef _FINAL_VERSION_
-	va_list val;
-	va_start(val, fmt);
-
-	DWORD written;
-	TCHAR buf[255];
-	wvsprintf(buf, fmt, val);
-
-	static const COORD _80x50 = {80,500};
-	static BOOL startup = (AllocConsole(), SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), _80x50));
-	WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), buf, lstrlen(buf), &written, 0);
-#endif
-}
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 PClientData::PClientData(unsigned int mdIdx, DPNID dpnid, const char* descr)// : out_buffer(1000000), in_buffer(1000000)

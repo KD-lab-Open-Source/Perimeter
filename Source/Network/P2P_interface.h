@@ -5,6 +5,11 @@
 #include "EventBufferDP.h"
 #include "CommonEvents.h"
 
+#ifdef PERIMETER_DEBUG
+#define LogMsg(...) fprintf(stdout, __VA_ARGS__)
+#else
+#define LogMsg(...)
+#endif
 
 #define _DBG_COMMAND_LIST
 
@@ -23,8 +28,6 @@ HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, 
 //extern LPCTSTR lpszSignatureRPL;
 
 extern const GUID guidPerimeterGame;
-
-void LogMsg(const char* fmt, ...);
 
 struct sGameStatusInfo{
 	sGameStatusInfo(){
