@@ -68,8 +68,6 @@ void SetFocus(HWND hwnd);
 
 void Sleep(uint32_t millis);
 
-bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
-
 char* _strlwr(char* str);
 char* _strupr(char* str);
 

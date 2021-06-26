@@ -88,4 +88,6 @@ inline const char* check_command_line(const char* switch_str)
     return nullptr;
 }
 
+bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
+
 #endif
