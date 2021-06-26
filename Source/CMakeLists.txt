@@ -5,10 +5,7 @@ IF(NOT PERIMETER_WINDOWS)
     INCLUDE(ExternalProject)    
     
     #Exodus wrapper libs
-    INCLUDE_DIRECTORIES(
-        "${PROJECT_SOURCE_DIR}/Source/Exodus"
-        "${pevents_SOURCE_DIR}/src"
-    )
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
 
     #pevents retrieval
     FetchContent_Declare(pevents
@@ -17,6 +14,8 @@ IF(NOT PERIMETER_WINDOWS)
             GIT_SHALLOW       ON
     )
     FetchContent_MakeAvailable(pevents)
+    ADD_DEFINITIONS(-DWFMO)
+    INCLUDE_DIRECTORIES("${pevents_SOURCE_DIR}/src")
 
     #DXVK-native wrapper lib retrieval and building
     ExternalProject_Add(dxvk-native
@@ -27,7 +26,7 @@ IF(NOT PERIMETER_WINDOWS)
             CONFIGURE_COMMAND meson ../dxvk-native
             BUILD_COMMAND     ninja
             INSTALL_COMMAND   ""
-            )
+    )
     ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
     set(DXVK_NATIVE_INCLUDE_DIRS
             "${SOURCE_DIR}/include/native/directx"
