@@ -22,7 +22,7 @@ void TGAHEAD::save3layers(const char* fname,int sizeX,int sizeY,unsigned char* R
 		ff.write(line,sizeX*3);
 	}
 	ff.close();
-	delete line;
+	delete[] line;
 }
 
 void TGAHEAD::load3layers(const char* fname,int sizeX,int sizeY,unsigned char* Ra,unsigned char* Ga,unsigned char* Ba)
@@ -61,7 +61,7 @@ void TGAHEAD::load3layers(const char* fname,int sizeX,int sizeY,unsigned char* R
 	}
 
 	ff.close();
-	delete line;
+	delete[] line;
 }
 
 
@@ -71,7 +71,7 @@ bool TGAHEAD::loadHeader(const char* fname)
 	init();
 	if(!tgaFile.open(fname, XS_IN)) return 0;
 	tgaFile.read(this,sizeof(TGAHEAD));
-	return 1;
+	return true;
 }
 
 bool TGAHEAD::load2buf(unsigned char* buf)
@@ -101,8 +101,8 @@ bool TGAHEAD::load2buf(unsigned char* buf)
 	}
 
 	tgaFile.close();
-	delete line;
-	return 1;
+	delete[] line;
+	return true;
 }
 
 void TGAHEAD::load2RGBL(int sizeX,int sizeY, unsigned long* RGBLBuf)
@@ -127,7 +127,7 @@ void TGAHEAD::load2RGBL(int sizeX,int sizeY, unsigned long* RGBLBuf)
 	}
 
 	tgaFile.close();
-	delete line;
+	delete[] line;
 }
 
 /*void TGAHEAD::load216(char* fname,unsigned short *ClBuf)
@@ -163,5 +163,5 @@ void TGAHEAD::load2RGBL(int sizeX,int sizeY, unsigned long* RGBLBuf)
 		}
 	}
 	ff.close();
-	delete line;
+	delete[] line;
 }*/

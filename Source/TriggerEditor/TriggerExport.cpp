@@ -1,8 +1,9 @@
 // TODO: change encoding to utf-8
 
+#include <cstring>
+#include <windows.h>
 #include "StdAfx.h"
 #include "TriggerExport.h"
-#include <cstring>
 
 //----------------------------------------------------------
 bool ConditionSwitcher::check(AIPlayer& aiPlayer) 

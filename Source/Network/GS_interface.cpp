@@ -662,9 +662,9 @@ const char PERIMETER_GAME_TITLE[]="perimeter";
 #endif
 
 const char PERIMETER_GAME_PASSWORD[]="FRYbdA";
-extern "C"{
-	extern PEERBool piOldMangleStagingRooms;
-}
+
+extern PEERBool piOldMangleStagingRooms;
+
 GameSpyInterface::GameSpyInterface(PNetCenter* pPNetCenter)
 {
 	xassert(!instance_);
@@ -903,9 +903,8 @@ bool GameSpyInterface::quant(void)
 	else return 1;
 }
 
-extern "C"{
 extern void piStopReporting(PEER peer);
-}
+
 void GameSpyInterface::StartGame(void)
 {
 	//if(m_peer) peerStartGame(m_peer, "", PEER_STOP_REPORTING);

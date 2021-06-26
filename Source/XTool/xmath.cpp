@@ -7,8 +7,10 @@
 //	Author: Alexandre Kotliar
 //  
 ////////////////////////////////////////////////////////////////////////////////
-#include "xglobal.h"
+#include <cstring>
 #include "xmath.h"
+#include "xbuffer.h"
+#include "xstream.h"
 
 #pragma warning(disable : 4073 )
 #pragma init_seg(lib)

@@ -504,11 +504,11 @@ cEmitterInt::~cEmitterInt()
 {
 }
 
-template<class nParticle> __forceinline int cEmitterBase::PutToBuf(nParticle& p, Vect3f& npos, float& dt,
-										cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-										const sColor4c& color, const Vect3f& PosCamera,
-										const float& size, const cTextureAviScale::RECT& rt,
-										const UCHAR mode, MatXf* iGM)
+template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, Vect3f& npos, float& dt,
+                                                                 cQuadBuffer<sVertexXYZDT1>*& pBuf,
+                                                                 const sColor4c& color, const Vect3f& PosCamera,
+                                                                 const float& size, const cTextureAviScale::RECT& rt,
+                                                                 const UCHAR mode, MatXf* iGM)
 
 {
 	xassert(!p.plume_pos.empty());
@@ -3431,7 +3431,7 @@ bool EffectLibrary::Load(const char* fname,const char* texture_path)
 
 		if(texture_path)
 		{
-			char path_buffer[_MAX_PATH];
+			char path_buffer[MAX_PATH];
 			char drive[_MAX_DRIVE];
 			char dir[_MAX_DIR];
 			char fname[_MAX_FNAME];

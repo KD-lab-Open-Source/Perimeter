@@ -114,7 +114,7 @@ float noise3(int vec[3])
 //	vec[2]=(double)vv[2]*(1<<NOISE_FRACTION);
 	int bx0, bx1, by0, by1, bz0, bz1, b00, b10, b01, b11;
 	int *q;
-	__int64 rx0, rx1, ry0, ry1, rz0, rz1, sy, sz, a, b, c, d, t, u, v;
+    int64_t rx0, rx1, ry0, ry1, rz0, rz1, sy, sz, a, b, c, d, t, u, v;
 	int i, j;
 
 

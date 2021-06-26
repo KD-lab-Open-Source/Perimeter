@@ -1,6 +1,6 @@
-#include <my_STL.h>
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#include "tweaks.h"
 
+#include <windows.h>
+
+using namespace std;
 #undef max

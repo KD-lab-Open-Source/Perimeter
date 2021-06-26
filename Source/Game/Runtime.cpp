@@ -187,18 +187,16 @@ void HTManager::init()
 	interpolation_factor_ = 0;
 
 	static XBuffer errorHeading;
-	errorHeading.SetRadix(16);
-	errorHeading < currentVersion
+	errorHeading < currentVersion;
 #ifdef _FINAL_VERSION_
-		< " Final"
+    errorHeading < " Final";
 #endif
 #ifdef PERIMETER_DEBUG
-        < " DBG"
+    errorHeading < " DBG";
 #endif
-		< " OS: " <= GetVersion();
 
+    ErrH.SetPrefix(errorHeading);
 #ifndef _FINAL_VERSION_
-	ErrH.SetPrefix(errorHeading);
 	ErrH.SetRestore(InternalErrorHandler);
 #endif
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
@@ -343,7 +341,7 @@ cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int Colo
 void GameShell::SetFontDirectory()
 {
 	terVisGeneric->SetFontRootDirectory("resource\\LocData");
-	std::string dir=getLocDataPath();
+	string dir=getLocDataPath();
 	dir+="Fonts";
 	terVisGeneric->SetFontDirectory(dir.c_str());
 }
@@ -784,7 +782,7 @@ void setLogicFp()
 }
 
 //-------------------------------------------------
-bool openFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
+bool openFileDialog(string& filename, const char* initialDir, const char* extention, const char* title)
 {
 	XBuffer filter;
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
@@ -795,7 +793,7 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 	strcpy(fname,filename.c_str());
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWndVisGeneric;
-	std::string fullTitle = std::string("Open: ") + title;
+	string fullTitle = string("Open: ") + title;
 	ofn.lpstrTitle = fullTitle.c_str();
 	ofn.lpstrFilter = filter;
 	ofn.lpstrFile = fname;
@@ -809,7 +807,7 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 	return true;
 }
 
-bool saveFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
+bool saveFileDialog(string& filename, const char* initialDir, const char* extention, const char* title)
 {
 	XBuffer filter;
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
@@ -820,7 +818,7 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 	strcpy(fname,filename.c_str());
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWndVisGeneric;
-	std::string fullTitle = std::string("Save: ") + title;
+	string fullTitle = string("Save: ") + title;
 	ofn.lpstrTitle = fullTitle.c_str();
 	ofn.lpstrFilter = filter;
 	ofn.lpstrFile = fname;
@@ -834,14 +832,14 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 	return true;
 }
 
-const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
+const char* popupMenu(vector<const char*> items) // returns zero if cancel
 {
 	if(items.empty())
 		return 0;
 
 	HMENU hMenu = CreatePopupMenu();
 	
-	std::vector<const char*>::iterator i;
+	vector<const char*>::iterator i;
 	FOR_EACH(items, i)
 		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
 	
@@ -856,14 +854,14 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 		return 0;
 }
 
-int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
+int popupMenuIndex(vector<const char*> items) // returns -1 if cancel
 {
 	if(items.empty())
 		return -1;
 
 	HMENU hMenu = CreatePopupMenu();
 	
-	std::vector<const char*>::iterator i;
+	vector<const char*>::iterator i;
 	FOR_EACH(items, i)
 		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
 	
@@ -881,8 +879,8 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 
 
 //-----------------------------------------
-static std::string editTextString;
-static BOOL CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+static string editTextString;
+static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)
 	{

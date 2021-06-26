@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfxRD.h"
 
 cTexture::cTexture(const char *TexName) : cUnknownClass(KIND_TEXTURE)
@@ -14,7 +12,7 @@ cTexture::~cTexture()
 	if(gb_RenderDevice)
 		gb_RenderDevice->DeleteTexture(this);
 	else
-		VISASSERT(0 && "Текстура удалена слишком поздно");
+		VISASSERT(0 && "РўРµРєСЃС‚СѓСЂР° СѓРґР°Р»РµРЅР° СЃР»РёС€РєРѕРј РїРѕР·РґРЅРѕ");
 }
 
 int cTexture::GetNumberMipMap()

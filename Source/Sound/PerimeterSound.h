@@ -1,4 +1,161 @@
-#pragma once
+#ifndef PERIMETER_SOUND_H
+#define PERIMETER_SOUND_H
+
+#ifdef PERIMETER_EXODUS_SOUND
+
+//Dummy implementation
+
+//Инициализация/деинициализация библиотеки
+static bool SNDInitSound(HWND g_hWnd,bool bEnable3d,bool soft3d) { return true; }
+static void SNDReleaseSound() {}
+static void* SNDGetDirectSound() { return nullptr; } //Возвращает указатель на LPDIRECTSOUND8
+
+static void SNDEnableSound(bool enable) {}
+static void SNDEnableVoices(bool enable) {}
+static bool SNDIsVoicesEnabled() { return true; }
+
+static char sound_directory[260]="";
+static void SNDSetSoundDirectory(LPCSTR dir)
+{
+    strncpy(sound_directory,dir,sizeof(sound_directory));
+    sound_directory[sizeof(sound_directory)-1]=0;
+}
+static LPCSTR SNDGetSoundDirectory()
+{
+    return sound_directory;
+}
+
+static void SNDSetLocDataDirectory(LPCSTR dir) {}
+static void SNDSetBelligerentIndex(int idx) {}
+
+//Работа с ошибками
+static bool SNDEnableErrorLog(LPCSTR file) { return true; }
+
+static void SNDSetVolume(float volume) {} //volume=0..1
+
+//Грузит соответстивующую группу звуков в память
+//и позволяет к ним обращаться с помощью
+static bool SNDScriptPrmEnableAll() { return true; }
+
+//Функции сделанные для вызова менюшек
+//Вполне естественно, что внутри нежелательно вызывать
+//SNDScriptDisable, то есть можно, но только для тех скриптов, что не
+//исполдьзуются, иначе звуки не запустятся опыть
+
+static void SNDPausePush() {} //Остановить все звуки, c возможностью продолжения проигрывания
+static void SNDPausePop() {} //Продолжить играть все остановленные звуки
+static int SNDGetPushLevel() { return true; } //Возвращает уровень вложенности
+
+static void SNDStopAll() {} //Остановить все звуки
+
+////////////////////////////3D/////////////////////////////////
+
+
+class SND3DSound
+{
+public:
+    SND3DSound() = default;
+    ~SND3DSound() = default;
+    bool Init(LPCSTR name) { return true; }
+
+    bool Play(bool cycled=true) { return true; }
+    bool Stop() { return true; }
+    bool IsPlayed() { return true; }
+
+    void SetPos(const Vect3f& pos) {} //Обязательно вызвать до Play
+    void SetVelocity(const Vect3f& velocity) {}
+    void SetVolume(float vol) {} //0..1 учитывает volmin и volume
+
+
+    //ScriptFrequency - установить относительную
+    bool SetFrequency(float frequency) { return true; }//0..2 - 0 - минимальная, 1 - по умолчанию
+
+    //SetFrequency - frequency=1..44100 Гц, оригинальная - 0
+    void SetRealVolume(float vol) {} //0..1
+};
+
+static bool SND3DPlaySound(LPCSTR name,
+                    const Vect3f* pos,
+                    const Vect3f* velocity=NULL//По умолчанию объект считается неподвижным
+) {
+    return true;
+}
+
+class SND3DListener
+{
+protected:
+    friend struct SNDOneBuffer;
+    friend class SoftSound3D;
+    friend class SND3DSound;
+
+    Vect3f position;
+
+public:
+    SND3DListener() = default;
+    ~SND3DListener() = default;
+
+    //Параметры изменяемые редко (скорее всего их менять и устанавливать не придётся никогда)
+    //К тому-же они не работают (уж не знаю по какой причине)
+    bool SetDistanceFactor(float) { return true; }//1 - в метрах, 1000 - в километрах
+    bool SetDopplerFactor(float) { return true; }//0..10, по умолчанию 1
+    bool SetRolloffFactor(float) { return true; }
+
+    //SetPos надо изменять каждый кадр
+    bool SetPos(const MatXf& mat) { return true; }
+
+    Vect3f GetPos() {return position;};
+
+    //SetVelocity - желательно изменять каждый кадр
+    //иначе не будет смысла в SetDopplerFactor,SetRolloffFactor
+    bool SetVelocity(const Vect3f& velocity) { return true; }
+
+    //Функция специально для Рубера
+    //Что-бы расстояние по Z было меньше.
+    //в реальном времени криво работает\
+	//zmul=0..1
+    void SetZMultiple(float zmul) {}
+
+    //Update - Вызывать после установки параметров (SetPos,...)
+    //(один раз на кадр!)
+    bool Update() { return true; }
+};
+
+static SND3DListener snd_listener;
+
+////////////////////////////2D/////////////////////////////////
+
+//volume : 0 - миниум, 1 - максиум
+//pan : 0 - крайне левое положение, 0.5 - центр, +1 - крайне правое
+//Для звуков, которые должны проиграться один раз
+//и играться в одном месте
+static bool SND2DPlaySound(LPCSTR name,float x=0.5f,DWORD frequency=0) { return true; }
+
+//Устанавливает параметры влияющие на SND2DPanByX
+//width - ширина экрана, power - влияет на то,
+//насколько крайне правая точка будет звучать в левом наушнике
+//power=1 - максимальное разнесение, power=0 - минимальное
+static void SND2DPanByX(float width,float power) {}
+
+class SND2DSound
+{
+public:
+    SND2DSound() = default;
+    ~SND2DSound() = default;
+    bool Init(LPCSTR) { return true; }
+
+    bool Play(bool cycled=true) { return true; }
+    bool Stop() { return true; }
+    bool IsPlayed() const { return true; }
+
+    bool SetPos(float x) { return true; } //Обязательно вызвать до Play
+    bool SetFrequency(float frequency) { return true; } //0..2 - 0 - минимальная, 1 - по умолчанию
+    void SetVolume(float vol) {} //0..1
+
+    ////
+    void SetRealVolume(float vol) {} //0..1
+};
+
+#else //PERIMETER_EXODUS
 
 //Инициализация/деинициализация библиотеки
 bool SNDInitSound(HWND g_hWnd,bool bEnable3d,bool soft3d);
@@ -8,7 +165,6 @@ void* SNDGetDirectSound();//Возвращает указатель на LPDIREC
 void SNDEnableSound(bool enable);
 void SNDEnableVoices(bool enable);
 bool SNDIsVoicesEnabled();
-bool SNDIsSoundEnabled();
 
 void SNDSetSoundDirectory(LPCSTR dir);
 LPCSTR SNDGetSoundDirectory();
@@ -20,16 +176,10 @@ void SNDSetBelligerentIndex(int idx);
 bool SNDEnableErrorLog(LPCSTR file);
 
 void SNDSetVolume(float volume);//volume=0..1
-float SNDGetVolume();
 
 //Грузит соответстивующую группу звуков в память 
 //и позволяет к ним обращаться с помощью 
 bool SNDScriptPrmEnableAll();
-//Очищает память, отведённую под соответствующую группу звуков
-bool SND3DScriptDisable(LPCSTR name);
-void SND3DScriptDisableAll();
-bool SND2DScriptDisable(LPCSTR name);
-void SND2DScriptDisableAll();
 
 //Функции сделанные для вызова менюшек
 //Вполне естественно, что внутри нежелательно вызывать 
@@ -67,7 +217,6 @@ public:
 	bool SetFrequency(float frequency);//0..2 - 0 - минимальная, 1 - по умолчанию
 
 	//SetFrequency - frequency=1..44100 Гц, оригинальная - 0
-	bool SetRealFrequency(DWORD frequency);
 	void SetRealVolume(float vol);//0..1
 protected:
 	inline void AssertValid();
@@ -164,9 +313,11 @@ public:
 
 	////
 	void SetRealVolume(float vol);//0..1
-	bool SetRealFrequency(DWORD frequency);
 protected:
 	inline void AssertValid();
 	inline void Destroy();
 };
 
+#endif //PERIMETER_EXODUS
+
+#endif //PERIMETER_SOUND_H

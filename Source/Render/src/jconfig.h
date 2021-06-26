@@ -7,9 +7,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <tchar.h>
-#ifdef _WIN32
 #include <windows.h>
-#endif
 /*
  * jconfig.doc
  *

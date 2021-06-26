@@ -1,0 +1,65 @@
+INCLUDE_DIRECTORIES(
+        "${PROJECT_SOURCE_DIR}/Source/Game"
+        "${PROJECT_SOURCE_DIR}/Source/XTool"
+        "${PROJECT_SOURCE_DIR}/Source/Util"
+        "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+        "${PROJECT_SOURCE_DIR}/Source/Terra"
+        "${PROJECT_SOURCE_DIR}/Source/UserInterface"
+        "${PROJECT_SOURCE_DIR}/Source/Network"
+        "${PROJECT_SOURCE_DIR}/Source/Units"
+        "${PROJECT_SOURCE_DIR}/Source/Render/client"
+        "${PROJECT_SOURCE_DIR}/Source/Physics"
+        "${PROJECT_SOURCE_DIR}/Source/AI"
+        "${PROJECT_SOURCE_DIR}/Source/Sound"
+        "${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include"
+        .
+        "${PROJECT_SOURCE_DIR}/Source/Network/Peer2"
+)
+
+SET(Network_SRCS
+        dplay8guid.cpp
+        CommonCommands.cpp
+        CommonEvents.cpp
+        ConnectionDP.cpp
+        EventBufferDP.cpp
+        GS_interface.cpp
+        HyperSpace.cpp
+        P2P_interface1Th.cpp
+        P2P_interface2Th.cpp
+        P2P_interface2ThDPF.cpp
+        P2P_interface3Th.cpp
+        P2P_interfaceAnyTh.cpp
+        Peer2/peer/peerAutoMatch.cpp
+        Peer2/peer/peerCallbacks.cpp
+        Peer2/peer/peerGlobalCallbacks.cpp
+        Peer2/peer/peerHost.cpp
+        Peer2/peer/peerKeys.cpp
+        Peer2/peer/peerMain.cpp
+        Peer2/peer/peerMangle.cpp
+        Peer2/peer/peerOperations.cpp
+        Peer2/peer/peerPing.cpp
+        Peer2/peer/peerPlayers.cpp
+        Peer2/peer/peerQR.cpp
+        Peer2/peer/peerRooms.cpp
+        Peer2/peer/peerSB.cpp
+        Peer2/darray.cpp
+        Peer2/nonport.cpp
+        Peer2/chat/chatCallbacks.cpp
+        Peer2/chat/chatChannel.cpp
+        Peer2/chat/chatCrypt.cpp
+        Peer2/chat/chatHandlers.cpp
+        Peer2/chat/chatMain.cpp
+        Peer2/chat/chatSocket.cpp
+        Peer2/hashtable.cpp
+        Peer2/pinger/pingerMain.cpp
+        Peer2/md5c.cpp
+        Peer2/qr2/qr2.cpp
+        Peer2/qr2/qr2regkeys.cpp
+        Peer2/serverbrowsing/sb_crypt.cpp
+        Peer2/serverbrowsing/sb_queryengine.cpp
+        Peer2/serverbrowsing/sb_server.cpp
+        Peer2/serverbrowsing/sb_serverbrowsing.cpp
+        Peer2/serverbrowsing/sb_serverlist.cpp
+)
+
+ADD_LIBRARY(Network STATIC ${Network_SRCS})

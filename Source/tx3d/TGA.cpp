@@ -10,9 +10,7 @@
 #include <cstring>
 #include "xutil.h"
 
-#ifdef _WIN32
 #include <windows.h>
-#endif
 #include <stdio.h>
 #include <fstream>
 
@@ -68,12 +66,12 @@ bool TGA::load(const char *fileName) {
 //---------
 */
 #ifndef _SURMAP_
-	ZIPStream file(fileName);
+	ZIPStream file;
 #else
 	XStream file(fileName, XS_IN);
 #endif
-	if (!!file) {
-		std::string errMsg("Error reading GeoTx TGA: ");
+	if (!file.open(fileName)) {
+		string errMsg("Error reading GeoTx TGA: ");
 		errMsg += fileName;
 		if(enable_load_assert)
 			xxassert(0, errMsg.c_str());
@@ -111,7 +109,7 @@ bool TGA::load(const char *fileName) {
 			memcpy(p2, tmp, size);
 		}
 
-		delete tmp;
+		delete[] tmp;
 	}
 
 	if (bpp >= 3) {

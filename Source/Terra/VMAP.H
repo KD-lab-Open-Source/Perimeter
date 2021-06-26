@@ -14,7 +14,7 @@
 
 extern int NOISE_AMPL;
 
-//Структура определяющая границу кластера
+//РЎС‚СЂСѓРєС‚СѓСЂР° РѕРїСЂРµРґРµР»СЏСЋС‰Р°СЏ РіСЂР°РЅРёС†Сѓ РєР»Р°СЃС‚РµСЂР°
 struct pointB {
 	short x,y;
 };
@@ -75,7 +75,7 @@ struct sRect {
 	short y1() const { return y + dy; }
 };
 
-//для работы с цветом
+//РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ С†РІРµС‚РѕРј
 struct tColor {
 	unsigned char r,g,b;
 	unsigned char alpha;
@@ -86,22 +86,22 @@ struct tColor {
 //#define offsetVx (XS_Buf * YS_Buf*2)
 //#define offsetSpec (XS_Buf * YS_Buf*3)
 
-#define kmGrid (2) // Это 2^2 - сетка 4x4
+#define kmGrid (2) // Р­С‚Рѕ 2^2 - СЃРµС‚РєР° 4x4
 #define sizeCellGrid (1<<kmGrid)
-#define GRIDAT_TALLER_HZEROPLAST (0x4) //Выше высоты зеропласта
+#define GRIDAT_TALLER_HZEROPLAST (0x4) //Р’С‹С€Рµ РІС‹СЃРѕС‚С‹ Р·РµСЂРѕРїР»Р°СЃС‚Р°
 #define GRIDAT_LEVELED (0x8)
 
-//GRIDAT_ZEROPLAST - Во всех точках есть зеропласт
+//GRIDAT_ZEROPLAST - Р’Рѕ РІСЃРµС… С‚РѕС‡РєР°С… РµСЃС‚СЊ Р·РµСЂРѕРїР»Р°СЃС‚
 #define GRIDAT_ZEROPLAST (0x10)
 //#define GRIDAT_ZEROPLASTEMPTY 0x20
 #define GRIDAT_BUILDING (0x20)
 
-//GRIDAT_ZEROPLAST_IS_PRESENT - Хотя-бы в одной точке есть зеропласт
+//GRIDAT_ZEROPLAST_IS_PRESENT - РҐРѕС‚СЏ-Р±С‹ РІ РѕРґРЅРѕР№ С‚РѕС‡РєРµ РµСЃС‚СЊ Р·РµСЂРѕРїР»Р°СЃС‚
 #define GRIDAT_ZEROPLAST_IS_PRESENT (0x40)
 //#define GRIDAT_TEMP_BIT 0x80
 #define GRIDAT_BASE_OF_BUILDING_CORRUPT (0x80)
-#define GRIDAT_MASK_CLUSTERID (0xFF00) // 8-мь старших бит
-#define GRIDAT_STRIP_MASK_CLUSTERID (0x7F00) // 8-мь старших бит
+#define GRIDAT_MASK_CLUSTERID (0xFF00) // 8-РјСЊ СЃС‚Р°СЂС€РёС… Р±РёС‚
+#define GRIDAT_STRIP_MASK_CLUSTERID (0x7F00) // 8-РјСЊ СЃС‚Р°СЂС€РёС… Р±РёС‚
 #define GRIDAT_SHIFT_CLUSTERID (8)
 #define GRIDAT_MASK_HARDNESS (0x3)
 
@@ -112,23 +112,23 @@ struct tColor {
 #define GRIDTST_TALLER_HZEROPLAST(V) (V&GRIDAT_TALLER_HZEROPLAST)
 #define GRIDTST_CLUSTERID(V) ((V&GRIDAT_MASK_CLUSTERID)>>8)
 
-//Дополнительная сетка
-//#define kmGridK 3 // Это 2^3 - сетка 8x8
+//Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ СЃРµС‚РєР°
+//#define kmGridK 3 // Р­С‚Рѕ 2^3 - СЃРµС‚РєР° 8x8
 //#define sizeCellGridK (1<<kmGridK)
-//const int KronCritical_dh=3;//Разница высот для не проходимости
+//const int KronCritical_dh=3;//Р Р°Р·РЅРёС†Р° РІС‹СЃРѕС‚ РґР»СЏ РЅРµ РїСЂРѕС…РѕРґРёРјРѕСЃС‚Рё
 
-// Сетка отражения изменений на воксельной поверхности
-#define kmGridChA (6) // 2^6 -сетка 64x64
+// РЎРµС‚РєР° РѕС‚СЂР°Р¶РµРЅРёСЏ РёР·РјРµРЅРµРЅРёР№ РЅР° РІРѕРєСЃРµР»СЊРЅРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё
+#define kmGridChA (6) // 2^6 -СЃРµС‚РєР° 64x64
 #define sizeCellGridCA (1<<kmGridChA)
 
-//Воксельное окно
-const int MAX_XSIZE_VX_WINDOW=640; //Максимальный размер воксельного окна
-//Расстояние от камеры
+//Р’РѕРєСЃРµР»СЊРЅРѕРµ РѕРєРЅРѕ
+const int MAX_XSIZE_VX_WINDOW=640; //РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РІРѕРєСЃРµР»СЊРЅРѕРіРѕ РѕРєРЅР°
+//Р Р°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ РєР°РјРµСЂС‹
 const int MIN_CAMERADZ_VX_WINDOW=-500;
 const int MAX_CAMERADZ_VX_WINDOW=1500;
 
 
-//Основная структура карты
+//РћСЃРЅРѕРІРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР° РєР°СЂС‚С‹
 struct vrtMap {
 
 	enum { SVMPHEADER_ID_SIZE = 4 };
@@ -265,9 +265,9 @@ struct vrtMap {
 
 	unsigned char* Buf; 
 
-	unsigned char* VxGBuf; //гео VxBuf
-	unsigned char* VxDBuf; // насыпной(Dam) VxBuf
-	unsigned char* WVxBuf; // текущий VxBuf (или VxGBuf или VxDBuf)
+	unsigned char* VxGBuf; //РіРµРѕ VxBuf
+	unsigned char* VxDBuf; // РЅР°СЃС‹РїРЅРѕР№(Dam) VxBuf
+	unsigned char* WVxBuf; // С‚РµРєСѓС‰РёР№ VxBuf (РёР»Рё VxGBuf РёР»Рё VxDBuf)
 	unsigned char* AtrBuf;
 	unsigned char* SurBuf;
 	unsigned char* RnrBuf;
@@ -284,8 +284,8 @@ struct vrtMap {
 	unsigned char LvdTex_SPEC_SHIFT_X;
 	unsigned char LvdTex_SPEC_SHIFT_Y;
 
-	unsigned char* GVBuf; //Сетка вокселей
-	unsigned short* GABuf; //сетка атрибутов
+	unsigned char* GVBuf; //РЎРµС‚РєР° РІРѕРєСЃРµР»РµР№
+	unsigned short* GABuf; //СЃРµС‚РєР° Р°С‚СЂРёР±СѓС‚РѕРІ
 	unsigned int GH_SIZE;
 	unsigned int clip_mask_x_g;
 	unsigned int GV_SIZE;
@@ -311,13 +311,13 @@ struct vrtMap {
 	void updateGridChangedAreas2(void);
 
 
-	unsigned short Sur2Col[MAX_SURFACE_TYPE][MAX_SURFACE_LIGHTING*2]; //2 это два слоя Dam и ZP
+	unsigned short Sur2Col[MAX_SURFACE_TYPE][MAX_SURFACE_LIGHTING*2]; //2 СЌС‚Рѕ РґРІР° СЃР»РѕСЏ Dam Рё ZP
 	unsigned short SurZP2Col[MAX_SURFACE_LIGHTING*2][MAX_SURFACE_TYPE];
 //	unsigned short SurZPE2Col[MAX_SURFACE_LIGHTING*2][MAX_SURFACE_TYPE];
 	unsigned short Tex2Col[MAX_SURFACE_LIGHTING*2][MAX_SURFACE_TYPE];
 	unsigned short TexZP2Col[MAX_SURFACE_LIGHTING*2][MAX_SURFACE_TYPE];
 
-	unsigned int Sur2Col32[MAX_SURFACE_TYPE][MAX_SURFACE_LIGHTING*2]; //2 это два слоя Dam и ZP
+	unsigned int Sur2Col32[MAX_SURFACE_TYPE][MAX_SURFACE_LIGHTING*2]; //2 СЌС‚Рѕ РґРІР° СЃР»РѕСЏ Dam Рё ZP
 	unsigned int SurZP2Col32[MAX_SURFACE_LIGHTING*2][MAX_SURFACE_TYPE];
 	//unsigned int SurZPE2Col32[MAX_SURFACE_LIGHTING*2][MAX_SURFACE_TYPE];
 	unsigned int Tex2Col32[MAX_SURFACE_LIGHTING*2][MAX_SURFACE_TYPE];
@@ -342,11 +342,11 @@ struct vrtMap {
 	void FlipWorldV(void);
 	void RotateWorldP90(void);
 	void RotateWorldM90(void);
-	void saveMapWithOtherSize(void);//Удвоенный размер
-	//void saveMapWithOtherSize4To2(void);//Уменьшенный вдвое размер
+	void saveMapWithOtherSize(void);//РЈРґРІРѕРµРЅРЅС‹Р№ СЂР°Р·РјРµСЂ
+	//void saveMapWithOtherSize4To2(void);//РЈРјРµРЅСЊС€РµРЅРЅС‹Р№ РІРґРІРѕРµ СЂР°Р·РјРµСЂ
 	void saveMapWithOtherSize4To2(const char* _patch2New2x2World);
 
-	void scalingHeighMap(int percent); //Уменьшать увеличивать общий масштаб высоты карты
+	void scalingHeighMap(int percent); //РЈРјРµРЅСЊС€Р°С‚СЊ СѓРІРµР»РёС‡РёРІР°С‚СЊ РѕР±С‰РёР№ РјР°СЃС€С‚Р°Р± РІС‹СЃРѕС‚С‹ РєР°СЂС‚С‹
 
 	unsigned char status_ShowHideGeo;
 	unsigned char * SpecSurBuf;
@@ -368,7 +368,7 @@ struct vrtMap {
 	vrtMap(void);
 	~vrtMap(void);
 
-	//Функции загрузки 
+	//Р¤СѓРЅРєС†РёРё Р·Р°РіСЂСѓР·РєРё 
 	void allocMem4Buf(void);
 	void releaseMem4Buf(void);
 
@@ -407,13 +407,13 @@ struct vrtMap {
 //	void scaling16HC(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside);
 	void viewV(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside);
 
-	//Поворот плоскости
+	//РџРѕРІРѕСЂРѕС‚ РїР»РѕСЃРєРѕСЃС‚Рё
 	float turnAngleAroundZ;//=0;//-3.141592654f/2;
-	//Фокус
+	//Р¤РѕРєСѓСЃ
 	int focusC;//=600;
-	//Расстояние от камеры
+	//Р Р°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ РєР°РјРµСЂС‹
 	int cameraDZ;//=100;
-	//Угол наклона камеры
+	//РЈРіРѕР» РЅР°РєР»РѕРЅР° РєР°РјРµСЂС‹
 	int cameraAngleLean;//=140;
 	void viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned short* GRAF_BUF, int GB_MAXX, int GB_MAXY);
 	void scaling162D(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside);
@@ -479,7 +479,7 @@ struct vrtMap {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-//	PUBLIC fuction для использования 
+//	PUBLIC fuction РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ 
 	int getWorld_H_SIZE(int idxWorld);
 	int getWorld_V_SIZE(int idxWorld);
 
@@ -558,8 +558,8 @@ struct vrtMap {
 	Vect2i w2m(const Vect2i& v) { return Vect2i(w2m(v.x), w2m(v.y)); }
 	Vect2i m2w(const Vect2i& v) { return Vect2i(m2w(v.x), m2w(v.y)); }
 
-	//function для работы с буфером
-	//Базовая функция вычисления смещения в буфферах
+	//function РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Р±СѓС„РµСЂРѕРј
+	//Р‘Р°Р·РѕРІР°СЏ С„СѓРЅРєС†РёСЏ РІС‹С‡РёСЃР»РµРЅРёСЏ СЃРјРµС‰РµРЅРёСЏ РІ Р±СѓС„С„РµСЂР°С…
 	int offsetBuf(int x, int y) {
 		return y*XS_Buf+x;
 	}
@@ -600,7 +600,7 @@ struct vrtMap {
 		else return 0;
 	}
 
-	// Возвращает приблизительную высоту вычисляющуюся по сетке
+	// Р’РѕР·РІСЂР°С‰Р°РµС‚ РїСЂРёР±Р»РёР·РёС‚РµР»СЊРЅСѓСЋ РІС‹СЃРѕС‚Сѓ РІС‹С‡РёСЃР»СЏСЋС‰СѓСЋСЃСЏ РїРѕ СЃРµС‚РєРµ
 	int GetApproxAlt(int x, int y){
 		return GVBuf[offsetGBuf(x>>kmGrid, y>>kmGrid)];
 	}
@@ -638,7 +638,7 @@ struct vrtMap {
 	}
 
 	bool flag_ShowDbgInfo;
-	bool* pTempArray;//Массив для показа несовпадающих областе (при игре по сети)
+	bool* pTempArray;//РњР°СЃСЃРёРІ РґР»СЏ РїРѕРєР°Р·Р° РЅРµСЃРѕРІРїР°РґР°СЋС‰РёС… РѕР±Р»Р°СЃС‚Рµ (РїСЂРё РёРіСЂРµ РїРѕ СЃРµС‚Рё)
 	bool flag_ShowHardness;
 	void toShowHardness(bool flag){ flag_ShowHardness=flag; }
 	void toShowDbgInfo(bool flag){ flag_ShowDbgInfo=flag; }
@@ -766,8 +766,8 @@ struct vrtMap {
 	}
 
 	int tstMinMaxVox(int h);
-	// НизкоУровневые функции работы с поверхностью GetAltGeo GetAltDam
-	//Высота вокселя складывается из целой части(в Vx(G|D)Buf) и дробной (в AtrBuf)
+	// РќРёР·РєРѕРЈСЂРѕРІРЅРµРІС‹Рµ С„СѓРЅРєС†РёРё СЂР°Р±РѕС‚С‹ СЃ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊСЋ GetAltGeo GetAltDam
+	//Р’С‹СЃРѕС‚Р° РІРѕРєСЃРµР»СЏ СЃРєР»Р°РґС‹РІР°РµС‚СЃСЏ РёР· С†РµР»РѕР№ С‡Р°СЃС‚Рё(РІ Vx(G|D)Buf) Рё РґСЂРѕР±РЅРѕР№ (РІ AtrBuf)
 	/////////// FUNCTION GetAltGeo ///////////
 	unsigned short GetAltGeo(int offset) {
 		if(VxDBuf[offset]==0) return ( (VxGBuf[offset]<<VX_FRACTION)|(AtrBuf[offset]&VX_FRACTION_MASK) );
@@ -781,14 +781,14 @@ struct vrtMap {
 	unsigned short GetAltDam(int offset) {
 		int whole=(VxDBuf[offset]);
 		if(whole) return ( (whole<<VX_FRACTION)|(AtrBuf[offset]&VX_FRACTION_MASK) );
-		else return 0; //Если нет целой части Dam-а, то тогда возвращается 0
-		//else return GetAltGeo(offset); //Если нет целой части Dam-а, то тогда возвращается Geo слой
+		else return 0; //Р•СЃР»Рё РЅРµС‚ С†РµР»РѕР№ С‡Р°СЃС‚Рё Dam-Р°, С‚Рѕ С‚РѕРіРґР° РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ 0
+		//else return GetAltGeo(offset); //Р•СЃР»Рё РЅРµС‚ С†РµР»РѕР№ С‡Р°СЃС‚Рё Dam-Р°, С‚Рѕ С‚РѕРіРґР° РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ Geo СЃР»РѕР№
 	}
 	unsigned short GetAltDam(int x,int y) {
 		return GetAltDam(offsetBuf(x,y));
 	}
 	//.........................................
-	//Высокоуровневая функция работы с поверхностью GetAlt
+	//Р’С‹СЃРѕРєРѕСѓСЂРѕРІРЅРµРІР°СЏ С„СѓРЅРєС†РёСЏ СЂР°Р±РѕС‚С‹ СЃ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊСЋ GetAlt
 	/////////// FUNCTION GetAlt ///////////
 	unsigned short GetAlt(int offset) {
 		unsigned short V;
@@ -826,7 +826,7 @@ struct vrtMap {
 		unsigned short whole=(VxDBuf[offset]);
 		unsigned char fraction=(AtrBuf[offset]&VX_FRACTION_MASK);
 		if(whole) return ( (whole<<VX_FRACTION)|fraction);
-		else return ((unsigned short)(VxGBuf[offset]<<VX_FRACTION)|fraction);//Если нет целой части Dam-а, то тогда возвращается Geo слой
+		else return ((unsigned short)(VxGBuf[offset]<<VX_FRACTION)|fraction);//Р•СЃР»Рё РЅРµС‚ С†РµР»РѕР№ С‡Р°СЃС‚Рё Dam-Р°, С‚Рѕ С‚РѕРіРґР° РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ Geo СЃР»РѕР№
 	}
 	unsigned short SGetAlt(int x,int y) {
 		return SGetAlt(offsetBuf(x,y));
@@ -834,15 +834,15 @@ struct vrtMap {
 	//........................................
 
 
-	// НизкоУровневые функции работы с поверхностью PutAltGeo PutAltDam 
-	//Высота вокселя складывается из целой части(в Vx(G|D)Buf) и дробной (в AtrBuf)
+	// РќРёР·РєРѕРЈСЂРѕРІРЅРµРІС‹Рµ С„СѓРЅРєС†РёРё СЂР°Р±РѕС‚С‹ СЃ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊСЋ PutAltGeo PutAltDam 
+	//Р’С‹СЃРѕС‚Р° РІРѕРєСЃРµР»СЏ СЃРєР»Р°РґС‹РІР°РµС‚СЃСЏ РёР· С†РµР»РѕР№ С‡Р°СЃС‚Рё(РІ Vx(G|D)Buf) Рё РґСЂРѕР±РЅРѕР№ (РІ AtrBuf)
 	/////////// FUNCTION PutAltGeo ///////////
 	void PutAltGeo(int offset, int V) {
 		VxGBuf[offset]=V >>VX_FRACTION;
-		if(VxDBuf[offset] <= V >>VX_FRACTION){ //Если Гео слой достиг Dam слоя
+		if(VxDBuf[offset] <= V >>VX_FRACTION){ //Р•СЃР»Рё Р“РµРѕ СЃР»РѕР№ РґРѕСЃС‚РёРі Dam СЃР»РѕСЏ
 			AtrBuf[offset]=(V &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 			SetTer(offset,GetGeoType(offset,V));
-			VxDBuf[offset]=0; //Dam слой становится равный 0
+			VxDBuf[offset]=0; //Dam СЃР»РѕР№ СЃС‚Р°РЅРѕРІРёС‚СЃСЏ СЂР°РІРЅС‹Р№ 0
 		}
 	}
 	void PutAltGeo(int x,int y, int V) {
@@ -850,26 +850,26 @@ struct vrtMap {
 	}
 	//.........................................
 
-	// ВНИМАНИЕ PutAltDam устанавливает высоту Dam
+	// Р’РќРРњРђРќРР• PutAltDam СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РІС‹СЃРѕС‚Сѓ Dam
 	/////////// FUNCTION PutAltDam ///////////
 	int PutAltDam(int offset, int V) {
-		if(VxGBuf[offset] > V >>VX_FRACTION){ //Если Гео слой достиг Dam слоя //=
+		if(VxGBuf[offset] > V >>VX_FRACTION){ //Р•СЃР»Рё Р“РµРѕ СЃР»РѕР№ РґРѕСЃС‚РёРі Dam СЃР»РѕСЏ //=
 			SetTer(offset,GetGeoType(offset,V));
-			VxDBuf[offset]=0; //Dam слой становится равный 0
-			return 0; //Dam слой не установился
+			VxDBuf[offset]=0; //Dam СЃР»РѕР№ СЃС‚Р°РЅРѕРІРёС‚СЃСЏ СЂР°РІРЅС‹Р№ 0
+			return 0; //Dam СЃР»РѕР№ РЅРµ СѓСЃС‚Р°РЅРѕРІРёР»СЃСЏ
 		}
 		else {
 			VxDBuf[offset]=V >>VX_FRACTION;
 			AtrBuf[offset]=(V &VX_FRACTION_MASK) | (AtrBuf[offset]&=~VX_FRACTION_MASK);
 			//SetTer(offset, TgaBuf[offset]);
-			return 1; //Dam слой успешно установился
+			return 1; //Dam СЃР»РѕР№ СѓСЃРїРµС€РЅРѕ СѓСЃС‚Р°РЅРѕРІРёР»СЃСЏ
 		}
 	}
 	void PutAltDam(int x,int y, int V) {
 		PutAltDam(offsetBuf(x,y),V);
 	}
 	//.........................................
-	//Высокоуровневая функция работы с поверхностью PutAlt
+	//Р’С‹СЃРѕРєРѕСѓСЂРѕРІРЅРµРІР°СЏ С„СѓРЅРєС†РёСЏ СЂР°Р±РѕС‚С‹ СЃ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊСЋ PutAlt
 	/////////// FUNCTION PutAlt ///////////
 	void PutAlt(int offset,int V) {
 		switch(VxBufWorkMode){
@@ -877,8 +877,8 @@ struct vrtMap {
 				PutAltGeo(offset,V);
 				break;
 			case DAM:
-				//Возможно проверка не нужна т.к. уже должно быть известно на какую высоту насыпать
-				//возможна ошибка при 
+				//Р’РѕР·РјРѕР¶РЅРѕ РїСЂРѕРІРµСЂРєР° РЅРµ РЅСѓР¶РЅР° С‚.Рє. СѓР¶Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёР·РІРµСЃС‚РЅРѕ РЅР° РєР°РєСѓСЋ РІС‹СЃРѕС‚Сѓ РЅР°СЃС‹РїР°С‚СЊ
+				//РІРѕР·РјРѕР¶РЅР° РѕС€РёР±РєР° РїСЂРё 
 				//if((GetAltGeo(offset)>>VX_FRACTION) < (V>>VX_FRACTION)) 
 				PutAltDam(offset,V);
 				break;
@@ -886,7 +886,7 @@ struct vrtMap {
 			case GEOiDAM:
 				if((GetAltGeo(offset)>>VX_FRACTION) < (V>>VX_FRACTION)) PutAltDam(offset,V);
 				else {
-					PutAltDam(offset,0); //если высота ниже гео слоя то насыпь устанавливается в 0
+					PutAltDam(offset,0); //РµСЃР»Рё РІС‹СЃРѕС‚Р° РЅРёР¶Рµ РіРµРѕ СЃР»РѕСЏ С‚Рѕ РЅР°СЃС‹РїСЊ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РІ 0
 					PutAltGeo(offset,V); 
 				}
 				break;
@@ -992,7 +992,7 @@ extern vrtMap vMap;
 
 
 
-//Работа с INI Файлом
+//Р Р°Р±РѕС‚Р° СЃ INI Р¤Р°Р№Р»РѕРј
 extern char* GetINIstringV(const char* iniFile,const char* section,const char* key);
 extern void SaveINIstringV(const char* iniFile,const char* section,const char* key,const char* var);
 

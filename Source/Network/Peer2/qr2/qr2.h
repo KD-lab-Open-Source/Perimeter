@@ -336,6 +336,7 @@ requested in a callback function.
 void qr2_buffer_add(qr2_buffer_t outbuf, const char *value);
 void qr2_buffer_add_int(qr2_buffer_t outbuf, int value);
 
+qr2_error_t qr2_create_socket(/*[out]*/SOCKET* sock, const char* ip, /*[in/out]*/int* port);
 
 /* for CDKey SDK integration */
 #define REQUEST_KEY_LEN 4

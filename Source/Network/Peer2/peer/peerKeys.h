@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _PEERKEYS_H_
 #define _PEERKEYS_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*************
 ** INCLUDES **
 *************/
@@ -42,9 +38,5 @@ void piKeyCacheLeftRoom(PEER peer, RoomType roomType);
 void piKeyCacheRefreshPlayer(PEER peer, RoomType roomType, const char * nick);
 void piKeyCacheRefreshRoom(PEER peer, RoomType roomType);
 void piKeyCacheCleanse(PEER peer);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

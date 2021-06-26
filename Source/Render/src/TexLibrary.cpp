@@ -343,7 +343,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		char ext[_MAX_EXT];
 		_splitpath( Texture->GetName(), drive, dir, fname, ext );
 
-		char path_buffer[_MAX_PATH];
+		char path_buffer[MAX_PATH];
 		_makepath(path_buffer, drive, dir, fname, "dds" );
 
 		void* buf;

@@ -1,7 +1,0 @@
-*.pyc
-*.exp
-*.lib
-*.obj
-*.arg
-*.dll
-.sconsign

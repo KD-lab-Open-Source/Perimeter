@@ -1,38 +1,10 @@
-#include <windows.h>
-#include "xconsole.h"
+#include <fstream>
 #include "xstream.h"
-#include "xerrhand.h"
-
-static char* readMSG	= "WRONG READING";
-static char* writeMSG	= "WRONG WRITING";
-
-unsigned xsReadBytes = 0;
-unsigned xsReadBytesDelta = 0;
-unsigned xsWriteBytes = 0;
-unsigned xsWriteBytesDelta = 0;
-
-unsigned xsRdWrResolution = 500000U;
-
-void (*xsReadHandler)(unsigned) = NULL;
-void (*xsWriteHandler)(unsigned) = NULL;
-
-void xsSetReadHandler(void (*fp)(unsigned),unsigned res)
-{
-	xsReadHandler = fp;
-	xsRdWrResolution = res;
-	xsReadBytes = 0;
-}
-
-void xsSetWriteHandler(void (*fp)(unsigned),unsigned res)
-{
-	xsWriteHandler = fp;
-	xsRdWrResolution = res;
-	xsWriteBytes = 0;
-}
 
 unsigned long XStream::read(void* buf, unsigned long len)
 {
 	unsigned long ret;
+	/*
 	if(!ReadFile(handler,buf,len,&ret,0)) {
         if (ErrHUsed) ErrH.Abort(readMSG, XERR_USER, GetLastError(), fname);
         else return 0U;
@@ -40,35 +12,38 @@ unsigned long XStream::read(void* buf, unsigned long len)
 	if(ret < len) eofFlag = 1;
 	pos += ret;
 	if(extSize != -1 && pos >= extSize) eofFlag = 1;
+     */
+#ifdef XSTREAM_DEBUG
+    fprintf(stderr, "DBG: XStream::read %s %lu\n", fname.c_str(), len);
+#endif
 
-	if(xsReadHandler){
-		xsReadBytesDelta += ret;
-		if(xsReadBytesDelta >= xsRdWrResolution){
-			xsReadBytes += xsReadBytesDelta;
-			xsReadBytesDelta = 0;
-			(*xsReadHandler)(xsReadBytes);
-		}
-	}
+    handler->read((char*) buf, len);
+    ret = handler->gcount();
+    //ret = len;
+    if(ret < len) eofFlag = 1;
+    pos += ret;
+    if(extSize != -1 && pos >= extSize) eofFlag = 1;
+
 	return ret;
 }
 
 unsigned long XStream::write(const void* buf, unsigned long len)
 {
 	unsigned long ret;
+	/*
 	if(!WriteFile(handler,buf,len,&ret,0)) {
         if (ErrHUsed) ErrH.Abort(writeMSG, XERR_USER, GetLastError(), fname);
         else return 0U;
     }
+	*/
+#ifdef XSTREAM_DEBUG
+    fprintf(stderr, "DBG: XStream::write %s %lu\n", fname.c_str(), len);
+#endif
+
+    handler->write((char*) buf, len);
+    ret = len;
 	pos += ret;
 
-	if(xsWriteHandler){
-		xsWriteBytesDelta += ret;
-		if(xsWriteBytesDelta >= xsRdWrResolution){
-			xsWriteBytes += xsWriteBytesDelta;
-			xsWriteBytesDelta = 0;
-			(*xsWriteHandler)(xsWriteBytes);
-		}
-	}
 	return ret;
 }
 

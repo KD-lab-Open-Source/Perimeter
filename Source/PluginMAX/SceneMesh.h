@@ -1,7 +1,7 @@
 #ifndef __SCENEMESH_H__
 #define __SCENEMESH_H__
 
-#include <my_STL.h>
+#include "tweaks.h"
 #include <string>
 
 #ifdef X_AXIS

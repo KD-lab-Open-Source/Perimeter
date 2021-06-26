@@ -46,6 +46,7 @@ DECLARE_ENUM_DESCRIPTOR(WeaponFlags)
 DECLARE_ENUM_DESCRIPTOR(ChainID)
 DECLARE_ENUM_DESCRIPTOR(terEffectID)
 DECLARE_ENUM_DESCRIPTOR(PlacementStrategy)
+DECLARE_ENUM_DESCRIPTOR(ChooseSquadID)
 DECLARE_ENUM_DESCRIPTOR_ENCLOSED(RigidBodyPrm, RigidBodyType)
 #endif
 
@@ -1405,19 +1406,9 @@ struct ModelData
 	}
 };
 
-#ifdef _WIN32
 class FileTime : _FILETIME
 {
 public:
-#else
-class FileTime
-{
-public:
-	///Fields copied from _FILETIME struct
-    unsigned short dwLowDateTime;
-    unsigned short dwHighDateTime;
-#endif
-
 	FileTime() {
 		dwLowDateTime = dwHighDateTime = 0;
 	}

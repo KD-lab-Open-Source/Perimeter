@@ -223,8 +223,14 @@ bool CShellWindow::OnKeyUp(int key)
 void CShellWindow::OnMouseMove(float _x,float _y)
 {
 	if(	!m_handler ) return;
+	/*
+	 TODO on 32 bits sending a pointer as int worked, but not on 64...
+	 the thing is that no place handling EVENT_SLIDERUPDATE uses the pointer/param at all so we can just send 0
+	 like in other places where this event is sent
 	float xy[2] = { _x, _y };
 	m_handler(this, EVENT_SLIDERUPDATE, (int)&xy[0] );
+    */
+    m_handler(this, EVENT_SLIDERUPDATE, 0 );
 }
 void CShellWindow::LoadMenuWnd(const sqshControlContainer* attr)
 {
@@ -1657,7 +1663,7 @@ void CShellComplexPushButton::SetValue(int val, bool bCanBuildNow)
 {
 	if(val)
 	{
-		_itoa(val, m_cb, 10);
+		snprintf(m_cb, 5, "%d", val);
 
 		if(bCanBuildNow)
 			m_ColorLabel.set(0,1,0,1);
@@ -1800,7 +1806,7 @@ void CShellAtomButton::SetVal(int v, bool bTextLeft)
 	if(v == 0)
 		*m_cb1 = 0;
 	else
-		_itoa(v, m_cb1, 10);
+        snprintf(m_cb1, 12, "%d", v);
 	m_bTextLeft = bTextLeft;
 }
 
@@ -2148,13 +2154,11 @@ void CUITabSheet::SetSquadIcons(int n, SQUAD_ICON* pSqIcon)
 }
 void CUITabSheet::SetPageNumber(int nPage, int nNumber)
 {
-	if(nNumber > 0)
-	{
-		char _cb[10];
-		m_page_numbers[nPage] = _itoa(nNumber, _cb, 10);
-	}
-	else
-		m_page_numbers[nPage].erase();
+	if(nNumber > 0) {
+        m_page_numbers[nPage] = std::to_string(nNumber);
+	} else {
+        m_page_numbers[nPage].erase();
+    }
 }
 
 void CUITabSheet::createHotKeyString() {

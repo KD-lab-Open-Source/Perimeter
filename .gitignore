@@ -4,6 +4,6 @@
 /build
 /Source/cache_font
 .scc
-cmake-build-debug
+cmake-build-*
 build
 dockcross/dockcross-*-perimeter

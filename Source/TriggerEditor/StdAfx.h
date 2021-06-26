@@ -12,7 +12,7 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define WINVER	0x0500
 #define _WIN32_WINNT 0x0500
-#else
+#elif !defined(WINVER) || !defined(_WIN32_WINNT)
 // Visual Studio 2019, afxv_w32.h: #error MFC does not support WINVER less than 0x0501.
 #define WINVER	0x0501
 #define _WIN32_WINNT 0x0501
@@ -20,11 +20,10 @@
 
 #pragma warning(disable : 4786 4800)
 
-#include "my_STL.h"
+#include "tweaks.h"
 
-#ifdef _WIN32
-#include <windows.h>
 #ifndef _FINAL_VERSION_
+#include <windows.h>
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 #include <afxwin.h>         // MFC core and standard components
@@ -50,7 +49,6 @@
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
-#endif //_WIN32
 #endif //_FINAL_VERSION_
 
 #include <vector> 

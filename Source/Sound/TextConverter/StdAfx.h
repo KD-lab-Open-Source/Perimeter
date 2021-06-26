@@ -1,8 +1,7 @@
 #pragma once
-#include <my_STL.h>
-#ifdef _WIN32
+#include "tweaks.h"
+
 #include <windows.h>
-#endif
 
 #ifndef _DEBUG
 

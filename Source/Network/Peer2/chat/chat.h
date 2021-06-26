@@ -15,10 +15,6 @@ devsupport@gamespy.com
 #ifndef _CHAT_H_
 #define _CHAT_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /************
 ** DEFINES **
 ************/
@@ -49,6 +45,11 @@ extern "C" {
 /////////////////////////////////////////
 #define CHAT_IN_USE         0
 #define CHAT_INVALID        1
+
+#define ciAddCallback_wrapper(_data_ptr, _enum_cb, _callback, _params, _cb_param, _num, _channel_name) \
+	auto _callback_ptr = &(_callback); \
+	void* _void_callback = reinterpret_cast<void *&>(_callback_ptr); \
+	ciAddCallback(_data_ptr, _enum_cb, _void_callback, _params, _cb_param, _num, _channel_name);
 
 /**********
 ** TYPES **
@@ -771,8 +772,5 @@ void chatGetChannelKeys(CHAT chat,
 						void * param,
 						CHATBool blocking);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif

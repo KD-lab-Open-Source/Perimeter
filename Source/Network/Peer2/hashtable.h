@@ -82,10 +82,6 @@ typedef int (*TableMapFn2)(void *elem, void *clientData);
  */
 typedef void (*TableElementFreeFn)(void *elem);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* TableNew
  * --------
  * Creates a new HashTable with no entries and returns it. The elemSize 
@@ -217,9 +213,5 @@ void * TableMapSafe2(HashTable table, TableMapFn2 fn, void *clientData);
  * Clears all the elements in the table without freeing it
  */
 void TableClear(HashTable table);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif //_HASHTABLE_H_PRM

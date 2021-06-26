@@ -1,9 +1,7 @@
 #pragma once
-#include <my_STL.h>
-#ifdef _WIN32
+#include "tweaks.h"
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
-#endif
 #include <cstdlib>
 #include <cstdio>
 #include <mmsystem.h>
@@ -18,8 +16,6 @@
 #include <sys/stat.h>
 #include <io.h>
 #include <cmath>
-#include <xutil.h>
-#include "../Render/inc/RenderMT.h"
 
 
 #ifndef ASSERT

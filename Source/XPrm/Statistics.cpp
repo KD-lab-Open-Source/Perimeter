@@ -11,7 +11,7 @@ static double total_time;
 static double time_factor;
 static double start_ticks;
 
-inline int ticks2time(__int64 t) { return t ? round((t - start_ticks)*time_factor) : 0; }
+inline int ticks2time(int64_t t) { return t ? round((t - start_ticks)*time_factor) : 0; }
 
 TimerData::TimerData(char* title_, int group_, int dont_attach) 
 { 
@@ -165,7 +165,7 @@ void Profiler::print(XBuffer& buf)
 
 	buf < "Frames: " <= frames < "\r\n";
 	buf < "Time interval: " <= milliseconds < " mS\r\n";
-	buf < "Ticks: " < _i64toa(ticks, total_name, 10) < "\r\n";
+	buf < "Ticks: " < std::to_string(ticks) < "\r\n";
 	buf < "CPU: " <= (double)ticks/(milliseconds*1000.) < " MHz\r\n";
 	sprintf(total_name, "%7.3f", frames*1000./milliseconds);
 	buf < "FPS: " < total_name < "\r\n";

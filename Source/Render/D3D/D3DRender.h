@@ -30,7 +30,7 @@ struct sSlotIB
 	bool			init;
 };
 
-__forceinline void cD3DRender_SetMatrix(D3DXMATRIX &mat,const MatXf &m)
+FORCEINLINE void cD3DRender_SetMatrix(D3DXMATRIX & mat,const MatXf &m)
 {
 	mat._11=m.rot()[0][0],	mat._12=m.rot()[1][0],	mat._13=m.rot()[2][0],	mat._14=0;
 	mat._21=m.rot()[0][1],	mat._22=m.rot()[1][1],	mat._23=m.rot()[2][1],	mat._24=0;
@@ -159,7 +159,7 @@ public:
 		SetMatrix(D3DTS_WORLD,pos);
 	}
 
-	__forceinline void SetMatrix(int type,const MatXf &m)
+	FORCEINLINE void SetMatrix(int type, const MatXf &m)
 	{
 		D3DXMATRIX mat;
 		cD3DRender_SetMatrix(mat,m);
@@ -286,7 +286,7 @@ public:
 		SetFVF(vb.ptr->fmt);
 	}
 
-	__forceinline void SetRenderState(D3DRENDERSTATETYPE State,unsigned int Value)
+	FORCEINLINE void SetRenderState(D3DRENDERSTATETYPE State, unsigned int Value)
 	{
 		VISASSERT(0<=State&&State<RENDERSTATE_MAX);
 //		DWORD value;
@@ -303,7 +303,7 @@ public:
 		VISASSERT(0<=State && State<RENDERSTATE_MAX);
 		return ArrayRenderState[State];
 	}
-	__forceinline void SetTextureStageState(unsigned int Stage,D3DTEXTURESTAGESTATETYPE Type,unsigned int Value)
+	FORCEINLINE void SetTextureStageState(unsigned int Stage, D3DTEXTURESTAGESTATETYPE Type, unsigned int Value)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
 		VISASSERT(0<=Type && Type<TEXTURESTATE_MAX);
@@ -318,7 +318,7 @@ public:
 		}
 	}
 
-	__forceinline DWORD GetTextureStageState(unsigned int Stage,D3DTEXTURESTAGESTATETYPE Type)
+	FORCEINLINE DWORD GetTextureStageState(unsigned int Stage, D3DTEXTURESTAGESTATETYPE Type)
 	{
 		return ArrayTextureStageState[Stage][Type];
 	}
@@ -370,7 +370,7 @@ public:
 		RDCALL(lpD3DDevice->DrawPrimitiveUP(Type,Count,pVertex,Size));
 	}
 
-	__forceinline LPDIRECT3DVERTEXBUFFER9 GetVB(const sPtrVertexBuffer& vb)
+	FORCEINLINE LPDIRECT3DVERTEXBUFFER9 GetVB(const sPtrVertexBuffer& vb)
 	{
 		return vb.ptr->p;
 	}
@@ -514,7 +514,7 @@ protected:
 	friend class cOcclusionQuery;
 };
 
-__forceinline int VectorToRGBA(Vect3f &v,int a=255)
+FORCEINLINE int VectorToRGBA(Vect3f &v, int a=255)
 {
     int r=round(127.0f*v.x)+128,g=round(127.0f*v.y)+128,b=round(127.0f*v.z)+128;
     return (a<<24)+(r<<16)+(g<<8)+(b<<0);

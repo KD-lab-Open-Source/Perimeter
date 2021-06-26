@@ -70,15 +70,15 @@ inline void hide_debug_window() {}
 
 #else //_FINAL_VERSION_
 
-__int64 getRDTSC(void);
+int64_t getRDTSC(void);
 
 struct TimerData 
 {
-	__int64 t;
-	__int64 dt_sum;
+	int64_t t;
+	int64_t dt_sum;
 	int n;
-	__int64 dt_max, dt_min;
-	__int64 t_min, t_max;
+	int64_t dt_max, dt_min;
+	int64_t t_min, t_max;
 
 	char* title;
 	int group;
@@ -136,7 +136,7 @@ public:
 class Profiler
 {
 	class TimerDataList& timers;
-	__int64 ticks;
+	int64_t ticks;
 	int frames;
 	int milliseconds;
 	TimerData total_data;

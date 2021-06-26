@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 #include "ExportMaterial.h"
 
@@ -26,7 +24,7 @@ bool ExportMaterial::Export(IGameMaterial * mat)
 		   mat->GetSpecularLevelData()==NULL
 		)
 		{
-			Msg("Error: %s - Íåïîääåðæèâàåìûé òèï ìàòåðèàëà\n",mat_name);
+			Msg("Error: %s - ÐÐµÐ¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÐ¼Ñ‹Ð¹ Ñ‚Ð¸Ð¿ Ð¼Ð°Ñ‚ÐµÑ€Ð¸Ð°Ð»Ð°\n",mat_name);
 			return false;
 		}
 
@@ -64,7 +62,7 @@ bool ExportMaterial::Export(IGameMaterial * mat)
 		DWORD slot=tex_map->GetStdMapSlot();
 		saver<<slot;
 		const char* tex_name=tex_map->GetBitmapFileName();
-		char filename_out[_MAX_PATH]="";
+		char filename_out[MAX_PATH]="";
 		if(tex_name)
 		{
 			char drive[_MAX_DRIVE];

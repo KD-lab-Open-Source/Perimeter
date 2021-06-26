@@ -1,16 +1,12 @@
-// TODO: change encoding to utf-8
-
 #include "stdafxTr.h"
 
 #include "procedurMap.h"
 
-
 BEGIN_ENUM_DESCRIPTOR(PMOperatinID, "PMOperatinID")
-REGISTER_ENUM(PMO_ID_NONE, "ничего");
+#include "procedurMap-1251.inl"
 REGISTER_ENUM(PMO_ID_TOOLZER, "toolzer");
 REGISTER_ENUM(PMO_ID_GEO, "geo");
 END_ENUM_DESCRIPTOR(PMOperatinID)
-
 
 static const char* PM_CFG_FNAME="!pm.txt";
 static const char* PM_CFG_SECTION="PM";

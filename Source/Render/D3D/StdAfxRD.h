@@ -1,8 +1,7 @@
-#include <my_STL.h>
-#ifdef _WIN32
+#include "tweaks.h"
+
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
-#endif
 
 #include <string.h>
 #include <stdio.h>

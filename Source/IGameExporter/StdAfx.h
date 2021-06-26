@@ -15,14 +15,14 @@
 #undef Y_AXIS
 #undef Z_AXIS
 
-#include <my_stl.h>
+#include "tweaks.h"
 #include <vector>
 #include <string>
 #include <map>
 #include <algorithm>
 #include <list>
-#include <xutil.h>
-#include <xmath.h>
+#include "xutil.h"
+#include "xmath.h"
 using namespace std;
 
 #ifdef _DEBUG

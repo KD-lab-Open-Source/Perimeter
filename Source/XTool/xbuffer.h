@@ -1,12 +1,14 @@
 #ifndef __XBUFFER_H
 #define __XBUFFER_H
 
+#include <string>
+#include <cstring>
 
 #ifndef NULL
 #define NULL	0L
 #endif
 
-#define _CONV_BUFFER_LEN	63
+#define XB_CONV_BUFFER_LEN	63
 
 #define XB_DEFSIZE	256
 
@@ -21,7 +23,6 @@
 #define XB_CASEON	0
 #define XB_CASEOFF	1
 
-#define XB_DEFRADIX	10
 #define XB_DEFDIGITS	8
 
 struct XBuffer
@@ -38,7 +39,6 @@ struct XBuffer
 	XBuffer(void* p,int sz);
 	~XBuffer(void){ free(); }
 
-	void SetRadix(int r) { radix = r; }
 	void SetDigits(int d) { digits = d; }
 
 	void alloc(unsigned int sz);
@@ -66,9 +66,10 @@ struct XBuffer
 	XBuffer& operator< (unsigned int v) { return write(v); }
 	XBuffer& operator< (long v) { return write(v); }
 	XBuffer& operator< (unsigned long v) { return write(v); }
+    XBuffer& operator< (unsigned long long v) { return write(v); }
 	XBuffer& operator< (float v) { return write(v); }
 	XBuffer& operator< (double v) { return write(v); }
-	XBuffer& operator< (long double v) { return write(v); }
+    XBuffer& operator< (long double v) { return write(v); }
 
 	XBuffer& operator> (char* v);
 	XBuffer& operator> (char& v) { return read(v); }
@@ -79,18 +80,17 @@ struct XBuffer
 	XBuffer& operator> (unsigned int& v) { return read(v); }
 	XBuffer& operator> (long& v) { return read(v); }
 	XBuffer& operator> (unsigned long& v) { return read(v); }
+    XBuffer& operator> (unsigned long long& v) { return read(v); }
 	XBuffer& operator> (float& v) { return read(v); }
 	XBuffer& operator> (double& v) { return read(v); }
-	XBuffer& operator> (long double& v) { return read(v); }
+    XBuffer& operator> (long double& v) { return read(v); }
 
-	XBuffer& operator<= (char);
-	XBuffer& operator<= (unsigned char);
-	XBuffer& operator<= (short);
-	XBuffer& operator<= (unsigned short);
-	XBuffer& operator<= (int);
-	XBuffer& operator<= (unsigned int);
-	XBuffer& operator<= (long);
-	XBuffer& operator<= (unsigned long);
+    template<typename T>
+    XBuffer& operator<= (T var) {
+        std::string str = std::to_string(var);
+        write(str.c_str(), str.length(), 0);
+        return *this;
+    }
 	XBuffer& operator<= (float);
 	XBuffer& operator<= (double);
 	XBuffer& operator<= (long double);
@@ -103,9 +103,10 @@ struct XBuffer
 	XBuffer& operator>= (unsigned int&);
 	XBuffer& operator>= (long&);
 	XBuffer& operator>= (unsigned long&);
+    XBuffer& operator>= (unsigned long long&);
 	XBuffer& operator>= (float&);
 	XBuffer& operator>= (double&);
-	XBuffer& operator>= (long double&);
+    XBuffer& operator>= (long double&);
 
 	operator const char* () const { return buf; }
 	const char* operator ()(int offs){ return buf + offs; }
@@ -124,7 +125,7 @@ struct XBuffer
 	template<class T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
 
 private:
-	char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
+	char convBuf[XB_CONV_BUFFER_LEN + 1];
 };
 
 

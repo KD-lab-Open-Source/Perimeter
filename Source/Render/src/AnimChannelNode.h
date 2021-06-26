@@ -1,7 +1,7 @@
 #ifndef __ANIMCHANNELNODE_H__
 #define __ANIMCHANNELNODE_H__
 
-template <class cAnimChainBase> class cAnimChannelBase : protected std::vector<cAnimChainBase>
+template <class cAnimChainBase> class cAnimChannelBase : protected vector<cAnimChainBase>
 { // шаблонный базовый класс анимации
 public:
 	cAnimChannelBase()									{ }
@@ -36,10 +36,10 @@ class cAnimChainNode
 { // одна цепочка анимации
 protected:
 	friend class cAnimChannelNode;
-	std::vector<sKeyVisible>	KeyVisible;			// анимация видимости объекта
-	std::vector<sKeyMatrix>		KeyMatrix;			// анимация масштаба объекта
+	vector<sKeyVisible>			KeyVisible;			// анимация видимости объекта
+	vector<sKeyMatrix>			KeyMatrix;			// анимация масштаба объекта
 	float						Time;				// продолжительность цепочки анимации
-	std::string					name;				// имя анимационной цепочки
+	string						name;				// имя анимационной цепочки
 public:
 	cAnimChainNode();
 	~cAnimChainNode();
@@ -66,7 +66,7 @@ class cAnimChannelNode : public cUnknownClass,public cAnimChannelBase<cAnimChain
 	// следующего объекта из одной и той-же m3d
 	// список каналов анимации
 public:
-	std::string			ObjectName;
+	string			ObjectName;
 	class EffectKey*		effect_key;
 
 	cAnimChannelNode(){effect_key=NULL;}
@@ -78,7 +78,7 @@ public:
 	int temp_freeone;
 };
 
-template<class cBase> __forceinline int BinaryFind(int key, std::vector<cBase> &Array)
+template<class cBase> FORCEINLINE int BinaryFind(int key, vector<cBase> &Array)
 { // методом половинного деления поиск элемента
 	int start;
 	int finish;

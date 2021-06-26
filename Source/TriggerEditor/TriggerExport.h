@@ -26,6 +26,8 @@ enum AIPlayerType
     AI_PLAYER_TYPE_ANY // Любой
 };
 
+DECLARE_ENUM_DESCRIPTOR(AIPlayerType)
+
 enum CompareOperator
 {
     COMPARE_LESS,	// Меньше
@@ -35,6 +37,8 @@ enum CompareOperator
     COMPARE_GREATER, // Больше
     COMPARE_GREATER_EQ // Больше либо равно		 
 };
+
+DECLARE_ENUM_DESCRIPTOR(CompareOperator)
 
 //-----------------------------
 // Для отделения контента

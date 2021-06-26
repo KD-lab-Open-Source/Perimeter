@@ -1,13 +1,11 @@
 #ifndef __STDAFXTR_H__
 #define __STDAFXTR_H__
 
-#include <my_STL.h>
+#include "tweaks.h"
 
 //#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 //#define _WIN32_WINNT  0x0400
-#ifdef _WIN32
 #include <windows.h>
-#endif
 
 // STL
 #include <vector> 

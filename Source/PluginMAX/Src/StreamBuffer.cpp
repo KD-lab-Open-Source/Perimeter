@@ -1,5 +1,5 @@
 #include <float.h>
-
+#include <string>
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
@@ -203,70 +203,7 @@ int cStream::getline(char *buf,int size)
 	buf[count]=0;
 	return count; 
 }
-cStream& cStream::operator << (char a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%c",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
-cStream& cStream::operator << (unsigned char a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%c",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
-cStream& cStream::operator << (short a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%hd",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
-cStream& cStream::operator << (unsigned short a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%hu",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
-cStream& cStream::operator << (int a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%d",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
-cStream& cStream::operator << (unsigned int a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%u",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
-cStream& cStream::operator << (long a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%ld",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
-cStream& cStream::operator << (unsigned long a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%lud",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
+
 cStream& cStream::operator << (float a)
 { 
 	assert(lpBuffer); 

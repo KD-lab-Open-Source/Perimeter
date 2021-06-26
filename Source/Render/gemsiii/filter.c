@@ -10,12 +10,14 @@
 #include <math.h>
 #include "filter.h"
 
+#ifndef M_PI
+#define M_PI  3.14159265358979323846f
+#endif
+
 #ifndef EXIT_SUCCESS
 #define	EXIT_SUCCESS	(0)
 #define	EXIT_FAILURE	(1)
 #endif
-
-#define M_PI  3.14159265358979323846f
 
 typedef struct {
 	int	xsize;		/* horizontal size of the image in Pixels */

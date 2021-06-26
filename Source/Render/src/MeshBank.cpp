@@ -490,7 +490,7 @@ cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,con
 	if(!pTexture)
 		return NULL;
 
-	char path_buffer[_MAX_PATH];
+	char path_buffer[MAX_PATH];
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
