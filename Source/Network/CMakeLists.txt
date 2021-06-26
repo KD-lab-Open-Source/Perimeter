@@ -60,6 +60,10 @@ SET(Network_SRCS
 )
 
 IF(PERIMETER_EXODUS)
+    SET(Network_SRCS ${Network_SRCS}
+        P2P_interface2ThSDL.cpp
+        P2P_interface3ThSDL.cpp
+    )
 ELSE()
     SET(Network_SRCS ${Network_SRCS}
         P2P_interface2ThDPF.cpp

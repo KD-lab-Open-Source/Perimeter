@@ -18,6 +18,15 @@ inline HWND toHWND(SDL_Window* pWindow) {
 //For some reason not present in dxvk-native headers
 typedef uint8_t UCHAR;
 typedef LPVOID PVOID;
+#ifdef PERIMETER_ARCH_64
+typedef uint64_t UINT_PTR;
+typedef int64_t LONG_PTR;
+#else
+typedef unsigned int UINT_PTR;
+typedef long LONG_PTR;
+#endif
+typedef UINT_PTR WPARAM;
+typedef LONG_PTR LPARAM;
 
 struct _FILETIME {
     unsigned short dwLowDateTime;

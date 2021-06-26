@@ -154,15 +154,18 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 	workMode=_workMode;
 	//m_gameHostID=0;
 	internalIP=0;
+#ifndef PERIMETER_EXODUS
 	// DP Init
 	//m_hEnumAsyncOp=0;
 	m_hEnumAsyncOp_Arr.clear();
 	m_pDPPeer=0;
 	m_nClientSgnCheckError = 0;
-	m_hostDPNID=0;
-	m_localDPNID=0;
-	flag_connected=0;
-
+#endif
+	
+    m_hostDPNID=0;
+    m_localDPNID=0;
+	
+    flag_connected=false;
 	flag_NetworkSimulation=false;
 	if(IniManager("Network.ini").getInt("General", "NetworkSimulator")) flag_NetworkSimulation=true;
 	flag_HostMigrate=false;
@@ -632,11 +635,10 @@ void PNetCenter::HandlerInputNetCommand()
 			break;
 		default: 
 			{
-				// !!! передается HiperSpace
-				if(0) {
+				/* !!! передается HiperSpace
 					SetConnectionTimeout(30000);
 					int c=GetConnectionTimeout();
-				}
+				*/
 				if(flag_SkipProcessingGameCommand) in_ClientBuf.ignoreNetCommand(); //Нужно при миграции Host-а
 				else {
 					if(gameShell->GameActive){
@@ -876,6 +878,8 @@ void PNetCenter::refreshLanGameHostList()
 		curguid.Data1= std::distance(needHostList.begin(), k);
 		gameHostList.push_back(new sGameHostInfo( curguid, k->c_str(), "", "", sGameStatusInfo()));
 	}
+
+#ifndef PERIMETER_EXODUS
 	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end();){
 		if((curTime - (*p)->timeLastRespond) > MAX_TIME_INTERVAL_HOST_RESPOND ) {
@@ -883,7 +887,6 @@ void PNetCenter::refreshLanGameHostList()
 			p=internalFoundHostList.erase(p);
 		}
 		else {
-#ifndef PERIMETER_EXODUS
 			IDirectPlay8Address*  pa=(*p)->pHostAddr;
 			HRESULT hResult;
 
@@ -954,11 +957,11 @@ void PNetCenter::refreshLanGameHostList()
 			else { //вставляем
 				gameHostList.push_back(new sGameHostInfo( (*p)->pAppDesc->guidInstance, txtBufHostName, txtBufPort.c_str(), txtBufGameName, (*p)->gameStatusInfo));//sGameStatusInfo(4,1, false, 10, 1)
 			}
-#endif
 
 			p++;
 		}
 	}
+#endif
 }
 
 

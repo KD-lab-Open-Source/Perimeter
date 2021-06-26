@@ -12,9 +12,7 @@
 
 #include <algorithm>
 
-#ifndef PERIMETER_EXODUS
 #include "dxerr9.h"
-#endif
 
 #include "P2P_interfaceAux.h"
 
@@ -522,9 +520,6 @@ bool PNetCenter::GetConnectionInfo(DPN_CONNECTION_INFO& info)
 	return SUCCEEDED(m_pDPClient->GetConnectionInfo(&info, 0));
 */
 	return 0;
-}
-void PNetCenter::TerminateSession()
-{
 }
 
 void PNetCenter::Close(bool flag_immediatle)

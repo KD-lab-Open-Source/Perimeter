@@ -542,8 +542,3 @@ PNetCenter::INTERNAL_HOST_ENUM_INFO::~INTERNAL_HOST_ENUM_INFO()
 }
 
 
-bool PNetCenter::IsEmptyInternalCommandList(void)
-{
-	return internalCommandList.empty();
-}
-

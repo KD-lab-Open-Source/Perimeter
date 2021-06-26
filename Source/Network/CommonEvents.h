@@ -1055,11 +1055,13 @@ struct terEventControlServerTime : netCommandGeneral
 
 //-------------------------------
 
+#ifndef PERIMETER_EXODUS
 struct GameInfo
 {
 	DWORD id;
 	char  Name[PERIMETER_CONTROL_NAME_SIZE];
 };
+#endif
 
 //-------------------------------
 

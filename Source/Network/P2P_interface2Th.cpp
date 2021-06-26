@@ -200,13 +200,15 @@ bool PNetCenter::SecondThread(void)
 					}
 					LogMsg("started\n");
 
-
+#ifndef PERIMETER_EXODUS
+                    //TODO Unused?
 					GameInfo* pGameInfo = new GameInfo;
 					//pGameInfo->id = m_dpnidGroupGame;
 					strncpy(pGameInfo->Name, m_GameName.c_str(), PERIMETER_CONTROL_NAME_SIZE );
 
 					SetServerInfo(pGameInfo, sizeof(GameInfo));
 					delete pGameInfo;
+#endif
 
 				//	pNewGame->AddClient(nccg.createPlayerData_, 0/*dpnid*/, nccg.computerName_);
 				//	pNewGame->StartGame();
