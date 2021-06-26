@@ -21,11 +21,22 @@ SET(Network_SRCS
         CommonEvents.cpp
         ConnectionDP.cpp
         EventBufferDP.cpp
-        GS_interface.cpp
         HyperSpace.cpp
         P2P_interface1Th.cpp
         P2P_interface2Th.cpp
         P2P_interfaceAnyTh.cpp
+)
+
+IF(PERIMETER_EXODUS)
+    SET(Network_SRCS ${Network_SRCS}
+        P2P_interface2ThSDL.cpp
+        P2P_interface3ThSDL.cpp
+    )
+ELSE()
+    SET(Network_SRCS ${Network_SRCS}
+        P2P_interface2ThDPF.cpp
+        P2P_interface3ThDP.cpp
+        GS_interface.cpp
         Peer2/peer/peerAutoMatch.cpp
         Peer2/peer/peerCallbacks.cpp
         Peer2/peer/peerGlobalCallbacks.cpp
@@ -57,17 +68,6 @@ SET(Network_SRCS
         Peer2/serverbrowsing/sb_server.cpp
         Peer2/serverbrowsing/sb_serverbrowsing.cpp
         Peer2/serverbrowsing/sb_serverlist.cpp
-)
-
-IF(PERIMETER_EXODUS)
-    SET(Network_SRCS ${Network_SRCS}
-        P2P_interface2ThSDL.cpp
-        P2P_interface3ThSDL.cpp
-    )
-ELSE()
-    SET(Network_SRCS ${Network_SRCS}
-        P2P_interface2ThDPF.cpp
-        P2P_interface3ThDP.cpp
     )
 ENDIF()
 

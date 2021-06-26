@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "P2P_interface.h"
-#include "GS_interface.h"
 
 
 #include "GameShell.h"

@@ -4,7 +4,9 @@
 #define slist slist_
 #endif
 
+#ifndef PERIMETER_EXODUS
 #include "Peer2/peer/peer.h"
+#endif
 
 #undef hash
 #undef slist

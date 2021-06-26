@@ -19,7 +19,7 @@ struct CommandLineData {
 	CommandLineData(
 		bool host = false,
 		std::string name = "",
-		bool p2p = false,
+		bool p2p = true,
 		std::string ip = "",
 		GUID gameID = GUID(),
 		std::string roomName = "",

@@ -2,7 +2,9 @@
 
 #include "Runtime.h"
 #include "P2P_interface.h"
+#ifndef PERIMETER_EXODUS
 #include "GS_interface.h"
+#endif
 
 #include "GameShell.h"
 #include "Universe.h"
@@ -529,6 +531,7 @@ void PNetCenter::LLogicQuant()
 	switch(m_state) {
 
 	case PNC_STATE__CONNECTION:
+#ifndef PERIMETER_EXODUS
 		if(gameSpyInterface){ //Internet
 			unsigned int IP;
 			if(internalIP) IP=internalIP;
@@ -542,7 +545,9 @@ void PNetCenter::LLogicQuant()
 				ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
 			}
 		}
-		else {
+		else
+#endif
+		{
 			if(internalIP) {
 				if(!Connect(internalIP)) {
 					ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);

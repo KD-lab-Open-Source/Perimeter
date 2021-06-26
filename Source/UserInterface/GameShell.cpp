@@ -237,6 +237,7 @@ windowClientSize_(1024, 768)
 		ErrH.Abort("Pause!!!");
 	}
 	const char* playerName=check_command_line("playerName");
+#ifndef PERIMETER_EXODUS //Just in case...
 	if (check_command_line("gamespy")) {
 		const char* strPassword=check_command_line("password");
 		if(strPassword==0) strPassword="";
@@ -253,8 +254,9 @@ windowClientSize_(1024, 768)
 			checkGameSpyCmdLineArg(strIP);
 			startOnline(CommandLineData(false, playerName, false, strIP, GUID(), "", strPassword));
 		}
-	}
-	else if(check_command_line("p2p")){
+	} else 
+#endif
+    if(check_command_line("p2p")){
 		const char* strIP=check_command_line("ip");
 		checkGameSpyCmdLineArg(playerName);
 		if(check_command_line("host")){
