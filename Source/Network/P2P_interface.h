@@ -12,7 +12,11 @@
 
 bool checkInetAddress(const char* ipStr);
 
+#ifdef PERIMETER_EXODUS
+void* InternalServerThread(LPVOID lpParameter);
+#else
 DWORD WINAPI InternalServerThread(LPVOID lpParameter);
+#endif
 HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer);
 
 //extern LPCTSTR lpszSignatureRQ;

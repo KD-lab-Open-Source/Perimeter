@@ -12,7 +12,9 @@
 
 #include <algorithm>
 
+#ifndef PERIMETER_EXODUS
 #include "dxerr9.h"
+#endif
 
 const int NORMAL_QUANT_INTERVAL=100;
 
@@ -300,7 +302,11 @@ PNetCenter::~PNetCenter()
 	const unsigned int TIMEOUT=5000;// ms
 	if( WaitForSingleObject(hSecondThread, TIMEOUT) != WAIT_OBJECT_0) {
 		xassert(0&&"Net Thread terminated!!!");
+#ifdef PERIMETER_EXODUS
+        SetEvent(hSecondThread); //TODO not sure if this even necessary
+#else
 		TerminateThread(hSecondThread, 0);
+#endif
 	}
 
 	ClearDeletePlayerGameCommand();
@@ -316,8 +322,8 @@ PNetCenter::~PNetCenter()
 	///CloseHandle(hServerReady);
 	///CloseHandle(hStartServer);
 
-	CloseHandle(hSecondThreadInitComplete);
-	CloseHandle(hCommandExecuted);
+    DestroyEvent(hSecondThreadInitComplete);
+    DestroyEvent(hCommandExecuted);
 
 	if(gameSpyInterface) delete gameSpyInterface;
 }
@@ -877,6 +883,7 @@ void PNetCenter::refreshLanGameHostList()
 			p=internalFoundHostList.erase(p);
 		}
 		else {
+#ifndef PERIMETER_EXODUS
 			IDirectPlay8Address*  pa=(*p)->pHostAddr;
 			HRESULT hResult;
 
@@ -947,6 +954,7 @@ void PNetCenter::refreshLanGameHostList()
 			else { //вставляем
 				gameHostList.push_back(new sGameHostInfo( (*p)->pAppDesc->guidInstance, txtBufHostName, txtBufPort.c_str(), txtBufGameName, (*p)->gameStatusInfo));//sGameStatusInfo(4,1, false, 10, 1)
 			}
+#endif
 
 			p++;
 		}

@@ -31,8 +31,7 @@ MissionEditor::MissionEditor()
 MissionEditor::~MissionEditor()
 {
 	if(hardnessChanged_ && 
-		MessageBox(0, "Редактирование неразрушаемости незаписано. Записать?", "Mission editor", MB_YESNO | MB_ICONQUESTION) 
-			== IDYES)
+		MessageBoxQuestion("Mission Editor", "Редактирование неразрушаемости незаписано. Записать?"))
 				vMap.saveHardness();
 }
 
@@ -133,17 +132,17 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		
 	case VK_DELETE:
 		if(editingHardness_){
-			if(MessageBox(0, "Стереть всю неразрушаемость?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES)
+			if(MessageBoxQuestion("MissionEditor", "Стереть всю неразрушаемость?"))
 				clearHardness();
 		}
-		else if(universe()->selectedObject() && ::MessageBox(0, "Удалить выделенный объект?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
+		else if(universe()->selectedObject() && MessageBoxQuestion("MissionEditor", "Удалить выделенный объект?")){
 			universe()->DeleteSelectedObjects();
 			_pUnitHover = 0;
 		}
 		return true;
 
 	case 'D':
-		if(universe()->selectedObject() && ::MessageBox(0, "Удалить выделенный объект?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
+		if(universe()->selectedObject() && MessageBoxQuestion("MissionEditor", "Удалить выделенный объект?")){
 			universe()->DeleteSelectedObjects();
 			_pUnitHover = 0;
 		}

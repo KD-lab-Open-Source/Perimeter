@@ -80,7 +80,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	std::string root = "RESOURCE\\SAVES\\";
 	std::string path = root + newProfile.dirName;
 	std::string origin = "RESOURCE\\SAVES\\DefaultPlayerData";
-	if( CreateDirectory(path.c_str(), NULL) ) {
+	if( _mkdir(path.c_str()) == 0 ) {
 		path += "\\data";
 		if ( CopyFile(origin.c_str(), path.c_str(), FALSE) ) {
 			profiles.push_back( newProfile );

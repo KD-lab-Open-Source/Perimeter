@@ -47,6 +47,8 @@
 #ifdef PERIMETER_EXODUS
 //Apply exodus specific tweaks
 #include "../Exodus/exodus.h"
+#else
+#define DestroyEvent CloseHandle
 #endif
 
 #endif // __TWEAKS_H__

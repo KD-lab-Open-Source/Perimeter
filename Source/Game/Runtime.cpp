@@ -560,6 +560,9 @@ void PerimeterAviFinit()
 
 void checkSingleRunning()
 {
+#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG) && !defined(PERIMETER_EXODUS)
+    //NOTE: with PERIMETER_EXODUS this is disabled due to pevents not supporting named events
+    
 	static HANDLE hSingularEvent = 0;
 	static char psSingularEventName[] = "Perimeter";
 
@@ -573,14 +576,13 @@ void checkSingleRunning()
 			SetForegroundWindow(hwnd);
 		ErrH.Exit();
 	}
+#endif
 }
 
 //------------------------------
 int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 {
-#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
 	checkSingleRunning();
-#endif
 
 	gb_hInstance=hInst;
 	int ht=IniManager("Perimeter.ini").getInt("Game","HT");

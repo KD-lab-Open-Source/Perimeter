@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 
+#include <SDL.h>
 #include "Runtime.h"
 #include "UnitAttribute.h"
 #include "Universe.h"
@@ -139,18 +140,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-		//поиск автосэйв каталога и создание, если его нет
-		WIN32_FIND_DATA FindFileData;
-		HANDLE hFind;
-		hFind = FindFirstFile(autoSavePlayReelDir, &FindFileData);
-		if (hFind == INVALID_HANDLE_VALUE) {
-			bool createAutoSaveDirResult=CreateDirectory(autoSavePlayReelDir, NULL);
-			xassert(createAutoSaveDirResult);
-		} 
-		else {
-			xassert((FindFileData.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)!=0);
-			FindClose(hFind);
-		}
+        _mkdir(autoSavePlayReelDir);
 	}
 
 	currentQuant=0;
@@ -298,12 +288,9 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 void terHyperSpace::autoSavePlayReel()
 {
 	//autosave
-
-	SYSTEMTIME st;
-	::GetLocalTime (&st);
+    time_t result = time(nullptr);
 	char fnbuf[MAX_PATH];
-	sprintf(fnbuf, "%s\\autosaveFrom_%02d-%02d-%02d__%02d=%02d=%02d", autoSavePlayReelDir, (int)st.wMonth, (int)st.wDay, (int)st.wYear,
-		(int)st.wHour, (int)st.wMinute, (int)st.wSecond);
+	sprintf(fnbuf, "%s\\autosaveFrom_%ld", autoSavePlayReelDir, result);
 	savePlayReel(fnbuf);
 }
 
@@ -862,7 +849,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 				f < currentVersion < "\r\n";
 				writeLogList2File(f);
 				f.close();
-				::MessageBox(0, "Unique!!!; outnet.log saved", "Error network synchronization", MB_OK|MB_ICONERROR);
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", "Unique!!!; outnet.log saved", nullptr);
 				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED);
 			}
 			break;

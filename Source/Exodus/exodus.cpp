@@ -4,6 +4,8 @@
 #include <thread>
 #include <sys/stat.h>
 #include <SDL.h>
+#include <pwd.h>
+#include <string>
 
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
                               const char* returnBuffer, DWORD bufferSize, const char* filePath) {
@@ -12,6 +14,30 @@ DWORD GetPrivateProfileString(const char* section,const char* key,const char* de
 
 DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath) {
     //TODO
+}
+
+bool GetComputerName(char* out, DWORD* size) {
+    if (gethostname(out, *size) == 0) {
+        *size = SDL_strlen(out) + 1;
+        return true;
+    }
+    *out = 0;
+    *size = 0;
+    return false;
+}
+
+bool GetUserName(char* out, DWORD* size) {
+    struct passwd *pwd = getpwuid(getuid());
+    if (pwd) {
+        size_t maxsize = *size;
+        SDL_strlcpy(out, pwd->pw_name, maxsize);
+        *size = std::min(maxsize, SDL_strlen(out) + 1);
+        return true;
+    }
+    
+    *out = 0;
+    *size = 0;
+    return false;
 }
 
 void ZeroMemory(void *p, size_t n) {
@@ -29,6 +55,33 @@ void SetFocus(HWND hwnd) {
 
 void Sleep(uint32_t millis) {
     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+}
+
+
+bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) {
+    const SDL_MessageBoxButtonData buttons[] = {
+        /* .flags, .buttonid, .text */
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Yes" },
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "No"  },
+    };
+
+    if (flags == 0) {
+        flags = SDL_MESSAGEBOX_INFORMATION;
+    }
+    
+    const SDL_MessageBoxData data = {
+        flags, /* .flags */
+        nullptr, /* .window */
+        title, /* .title */
+        message, /* .message */
+        SDL_arraysize(buttons), /* .numbuttons */
+        buttons, /* .buttons */
+        nullptr /* .colorScheme */
+    };
+    
+    int choice = 0;
+    SDL_ShowMessageBox(&data, &choice);
+    return choice == 1;
 }
 
 char* _strlwr(char* str)
@@ -57,7 +110,7 @@ char* _strupr(char* str)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void _mkdir(const char* path) {
+int _mkdir(const char* path) {
     mkdir(path, 0);
 }
 
@@ -75,16 +128,29 @@ char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) 
 
 }
 
-void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext) {
-    //TODO set dir fname and ext
+void _splitpath(const char* path, char*, char* dir, char* fname, char* ext) {
+    const char* fullpath = realpath(path, nullptr);
+    std::string fullpath_str = std::string() + fullpath;
+    
+    //Get dir and file
+    std::size_t lastpath_limiter = fullpath_str.find_last_of('/');
+    std::string dir_str = fullpath_str.substr(0, lastpath_limiter);
+    SDL_strlcpy(dir, dir_str.c_str(), _MAX_DIR);
+    std::string file_str = fullpath_str.substr(lastpath_limiter, fullpath_str.length());
+    
+    //Get file name and ext
+    std::size_t lastext_limiter = file_str.find_last_of('.');
+    std::string filename_str = file_str.substr(0, lastext_limiter);
+    SDL_strlcpy(fname, filename_str.c_str(), _MAX_FNAME);
+    std::string ext_str = file_str.substr(lastext_limiter, file_str.length());
+    SDL_strlcpy(ext, ext_str.c_str(), _MAX_EXT);
+    
+    free((void*) fullpath);
 }
 
-void _makepath(const char* path, char* drive, char* dir, char* fname, char* ext) {
-    //TODO set path from dir fname and ext
-}
-
-void GetCurrentDirectory(unsigned short size, char* path) {
-    //TODO use SDL2 method to get dir
+void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext) {
+    std::string fullpath = std::string() + dir + fname + ext;
+    SDL_strlcpy(path, fullpath.c_str(), MAX_PATH);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

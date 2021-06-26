@@ -858,7 +858,7 @@ struct s_Mesh2VMapDate {
 	};
 
 	void init(int _amountKF, short* _timeKFArr, int sx, int sy);
-	void setKFDate(int numKF, const char* names3DS);
+	//void setKFDate(int numKF, const char* names3DS);
 
 };
 

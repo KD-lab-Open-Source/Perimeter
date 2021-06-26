@@ -1,4 +1,5 @@
 //Balmer
+#include "tweaks.h"
 #include <windows.h>
 #include <dsound.h>
 #include "PlayOgg.h"
@@ -264,7 +265,7 @@ void MpegDeinitLibrary()
 	}
 
 	if(hWaitEvent!=INVALID_HANDLE_VALUE)
-		CloseHandle(hWaitEvent);
+		DestroyEvent(hWaitEvent);
 	hWaitEvent=INVALID_HANDLE_VALUE;
 	hThread=INVALID_HANDLE_VALUE;
 

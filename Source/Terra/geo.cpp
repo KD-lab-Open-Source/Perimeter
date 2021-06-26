@@ -5688,6 +5688,7 @@ void s_Mesh2VMapDate::init(int _amountKF, short* _timeKFArr, int sx, int sy)
 
 }
 
+/*
 void s_Mesh2VMapDate::setKFDate(int numKF, const char* names3DS)
 {
 	meshM2VM mesh;
@@ -5703,6 +5704,7 @@ void s_Mesh2VMapDate::setKFDate(int numKF, const char* names3DS)
 	}
 	mesh.put2KF(2, KFAnimationArr+numKF*sizeX*sizeY, sizeX, sizeY);//, -10<<VX_FRACTION); //*sizeof(short)
 }
+*/
 
 void s_Mesh2VMapDate::resetCommandList()
 {

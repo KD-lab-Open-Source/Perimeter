@@ -98,8 +98,8 @@ void HTManager::GameClose()
 
 		DWORD ret=WaitForSingleObject(end_logic,INFINITE);
 		xassert(ret==WAIT_OBJECT_0);
-		
-		CloseHandle(end_logic);
+
+        DestroyEvent(end_logic);
 		end_logic=NULL;
 		logic_thread_id=bad_thread_id;
 	}

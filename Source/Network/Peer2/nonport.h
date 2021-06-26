@@ -153,8 +153,8 @@ void SocketShutDown();
 	#define strcasecmp _stricmp
 	#define strncasecmp _strnicmp
 #else	
-	char *_strlwr(char *string);
-	char *_strupr(char *string);
+	//char *_strlwr(char *string);
+	//char *_strupr(char *string);
 #endif
 
 #undef strdup

@@ -12,7 +12,9 @@
 
 #include <algorithm>
 
+#ifndef PERIMETER_EXODUS
 #include "dxerr9.h"
+#endif
 
 #include "P2P_interfaceAux.h"
 

@@ -12,7 +12,7 @@
 #include "../Terra/terra.h"
 
 #include <algorithm>
-
+#include <SDL.h>
 
 
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
@@ -107,7 +107,11 @@ DWORD WINAPI TestServerThread(LPVOID lpParameter)
 */
 
 //Second thread
+#ifdef PERIMETER_EXODUS
+void* InternalServerThread(LPVOID lpParameter)
+#else
 DWORD WINAPI InternalServerThread(LPVOID lpParameter)
+#endif
 {
 /*	// TEST thread!!!!
 	DWORD ThreadId;
@@ -116,6 +120,10 @@ DWORD WINAPI InternalServerThread(LPVOID lpParameter)
 
 	PNetCenter* pPNetCenter=(PNetCenter*)lpParameter;
 	pPNetCenter->SecondThread();
+#ifdef PERIMETER_EXODUS
+	//We are creating it with pthread, so we need to manually signal it
+    SetEvent(pPNetCenter->hSecondThread);
+#endif
 	return 0;
 }
 XBuffer BUFFER_LOG(10000,1);
@@ -680,7 +688,7 @@ void PNetCenter::LLogicQuant()
 
 								XBuffer to(1024,1);
 								to < "Unmatched number quants !" < "N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
-								::MessageBox(0, to, "Error network synchronization", MB_OK|MB_ICONERROR);
+                                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
 								ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
 								return;
 							}
@@ -696,7 +704,7 @@ void PNetCenter::LLogicQuant()
 									f.close();
 
 									to < "Unmatched game quants !" < "on Quant=" <= (*firstList.begin()).quant_;
-									::MessageBox(0, to, "Error network synchronization", MB_OK|MB_ICONERROR);
+                                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
 									ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
 									return;
 								}

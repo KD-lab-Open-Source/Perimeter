@@ -17,6 +17,7 @@ inline HWND toHWND(SDL_Window* pWindow) {
 
 //For some reason not present in dxvk-native headers
 typedef uint8_t UCHAR;
+typedef LPVOID PVOID;
 
 struct _FILETIME {
     unsigned short dwLowDateTime;
@@ -30,6 +31,7 @@ struct _FILETIME {
 #define _MAX_DIR   _MAX_FNAME
 #define _MAX_EXT   _MAX_FNAME
 #define MAX_COMPUTERNAME_LENGTH 31
+#define UNLEN 256 //Defined in lmcons.h
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Use POSIX for MS funcs
@@ -54,6 +56,10 @@ DWORD GetPrivateProfileString(const char* section,const char* key,const char* de
 
 DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath);
 
+bool GetComputerName(char* out, DWORD* size);
+
+bool GetUserName(char* out, DWORD* size);
+
 void ZeroMemory(void* p, std::size_t n);
 
 short GetAsyncKeyState(int vKey);
@@ -61,6 +67,8 @@ short GetAsyncKeyState(int vKey);
 void SetFocus(HWND hwnd);
 
 void Sleep(uint32_t millis);
+
+bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
 char* _strlwr(char* str);
 char* _strupr(char* str);
@@ -73,15 +81,13 @@ char* _strupr(char* str);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Path/Dir stuff
 
-void _mkdir(const char* path);
+int _mkdir(const char* path);
 
 char *_fullpath(char* absolutePath, const char* relativePath, size_t maxLength);
 
-void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext);
+void _splitpath(const char* path, char*, char* dir, char* fname, char* ext);
 
-void _makepath(const char* path, char* drive, char* dir, char* fname, char* ext);
-
-void GetCurrentDirectory(unsigned short size, char* path);
+void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Basic wrapper for Win32 CRITICAL_SECTION stuff
@@ -108,6 +114,45 @@ bool GetMessage(MSG*, void*, uint32_t, uint32_t) { return true; }
 void TranslateMessage(MSG*) {}
 void DispatchMessage(MSG*) {}
 void WaitMessage() {}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Event/Thread stuff
+
+#include <pevents.h>
+
+#define INFINITE neosmart::WAIT_INFINITE
+
+#define WAIT_OBJECT_0 0
+
+HANDLE CreateEvent(int, bool manualReset, bool initialState, int) {
+    return neosmart::CreateEvent(manualReset, initialState);
+}
+
+void DestroyEvent(HANDLE event) { 
+    neosmart::DestroyEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
+}
+
+void SetEvent(HANDLE event) {
+    neosmart::SetEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
+}
+
+void ResetEvent(HANDLE event) { 
+    neosmart::ResetEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
+}
+
+DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds) {
+    return neosmart::WaitForEvent(reinterpret_cast<neosmart::neosmart_event_t>(event), milliseconds);
+}
+
+DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds) {
+    return neosmart::WaitForMultipleEvents(reinterpret_cast<neosmart::neosmart_event_t*>(events), count, waitAll, milliseconds);
+}
+
+HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, DWORD*) {
+    pthread_t* tid;
+    pthread_create(tid, nullptr, start_address, arg);
+    return neosmart::CreateEvent(true, false);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

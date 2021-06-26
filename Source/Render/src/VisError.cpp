@@ -29,10 +29,9 @@ cVisError& cVisError::operator << (const char *a)
 			ShowWindow(gb_RenderDevice->GetWindowHandle(),SW_MINIMIZE);
 #endif
 		}
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                                 "Perimeter cVisGeneric::ErrorMessage()",
-                                 buf.c_str(),
-                                 nullptr);
+        if (MessageBoxQuestion("Perimeter cVisGeneric::ErrorMessage()", buf.c_str(), SDL_MESSAGEBOX_ERROR)) {
+            exit(1);
+        }
 		buf.clear();
 	}else
 		buf+=a;
