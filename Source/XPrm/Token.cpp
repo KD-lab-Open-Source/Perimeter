@@ -481,27 +481,40 @@ unsigned Section::description()
 	return description;
 }
 
-std::string Section::align_path(const std::string& str)
+std::string Section::align_path(const char* sources, const std::string& str)
 {
 	std::string path(script_file);
-	int n = path.rfind("\\");
+
+	//Check and remove the initial sources dir
+	char* sources_path = strndup(sources, MAX_PATH);
+    terminate_with_char(sources_path, PATH_SEP, MAX_PATH);
+    size_t n = path.find(sources_path);
+    if(n != std::string::npos && n == 0) {
+        path.erase(0, strlen(sources_path));
+        path = std::string(".") + PATH_SEP + path;
+    }
+    
+    //Remove filename from path
+	n = path.rfind(PATH_SEP);
 	if(n == std::string::npos)
 		n = 0;
 	else 
 		n++;
 	path.erase(n, path.size());
 
+	//Get filename
 	std::string name(str);
-	n = name.rfind("\\");
+	n = name.rfind(PATH_SEP);
 	if(n == std::string::npos)
 		n = 0;
 	else 
 		n++;
 	name.erase(0, n);
+	
 	return path + name;
 }
 
-bool Section::definition(bool rebuild, StringList& dependencies)
+bool Section::definition(const char* sources, bool rebuild, StringList& dependencies)
 {
 	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript definition\r\n"
@@ -516,22 +529,23 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 	
 	FILETIME definition_time = { 0, 0 };
 	std::string file;
+	std::string definition_file_path = std::string(sources) + PATH_SEP + definition_file;
 	XStream ff(0);
-	if(!rebuild && ff.open(definition_file.c_str(), XS_IN)){
+	if(!rebuild && ff.open(definition_file_path.c_str(), XS_IN)) {
 		int len = ff.size();
 		file.insert((size_type)0, (size_type)len, ' ');
 		ff.read(&file[0], len);
 		ff.close();
-		getFileTime(definition_file.c_str(), &definition_time);
+		getFileTime(definition_file_path.c_str(), &definition_time);
 	}
-	unsigned int head_pos = file.find(head);
-	unsigned int end_pos = std::string::npos;
+	size_t head_pos = file.find(head);
+	size_t end_pos = std::string::npos;
 	if(head_pos != std::string::npos){
 		end_pos = file.find("XScript end:", head_pos);
 		if(end_pos == std::string::npos)
 			throw std::logic_error(std::string("Section corrupted: ") + name());
 		//if(supress_definition_update){ 
-		unsigned int pos = file.find(description_str, head_pos);
+        size_t pos = file.find(description_str, head_pos);
 		if(pos < end_pos){
 			pos += strlen(description_str);
 			unsigned prev_description = strtoul(&file[pos], 0, 10);
@@ -571,7 +585,7 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 	StringList::iterator si;
 	FOR_EACH(dependencies, si){
 		std::string s_add = "\tadd_dependency(\"";
-		s_add += expand_spec_chars(align_path(*si)).c_str();
+		s_add += expand_spec_chars(align_path(sources, *si)).c_str();
 		s_add += "\"";
 		//if(definition_time < getFileTime(si->c_str()))
 		//	force_update = true;
@@ -617,7 +631,7 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 		}
 	else{
 		operation = "Updating";
-		int end_pos = file.find(tail, head_pos);
+        size_t end_pos = file.find(tail, head_pos);
 		if(end_pos == std::string::npos)
 			end_pos = tail.size();
 		head_pos += head.size();
@@ -625,15 +639,15 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 		file.insert(head_pos, buf);
 		}
 	if(file != file0){
-		std::cout << operation << " definition of section \"" << name() << "\" in " << definition_file << std::endl;
-		ff.open(definition_file.c_str(), XS_OUT);
+		std::cout << operation << " definition of section \"" << name() << "\" in " << definition_file_path << std::endl;
+		ff.open(definition_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
 		return 1;
 		}
 	return 0;
 }
 
-bool Section::declaration(bool rebuild)
+bool Section::declaration(const char* sources, bool rebuild)
 {
 	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript declaration\r\n"
@@ -672,9 +686,10 @@ bool Section::declaration(bool rebuild)
 
 	if(using_namespace) buf < "}\r\nusing namespace "< name() < "_namespace;\r\n";
 
+    std::string declaration_file_path = std::string(sources) + PATH_SEP + declaration_file;
     std::string file;
 	XStream ff(0);
-	if(!rebuild && ff.open(declaration_file.c_str(), XS_IN)){
+	if(!rebuild && ff.open(declaration_file_path.c_str(), XS_IN)){
 		int len = ff.size();
 		file.insert((size_type)0, (size_type)len, ' ');
 		ff.read(&file[0], len);
@@ -683,7 +698,7 @@ bool Section::declaration(bool rebuild)
     std::string file0 = file;
 
     std::string operation;
-	int head_pos = file.find(head);
+	size_t head_pos = file.find(head);
 	if(head_pos == std::string::npos){ // first time
 		operation = "Creating";
 		head += buf;
@@ -692,7 +707,7 @@ bool Section::declaration(bool rebuild)
 		}
 	else{
 		operation = "Updating";
-		int end_pos = file.find(tail, head_pos);
+		size_t end_pos = file.find(tail, head_pos);
 		if(end_pos == std::string::npos)
 			end_pos = tail.size();
 		head_pos += head.size();
@@ -700,8 +715,8 @@ bool Section::declaration(bool rebuild)
 		file.insert(head_pos, buf);
 		}
 	if(file != file0){
-        std::cout << operation << " declaration of section \"" << name() << "\" in " << declaration_file << std::endl;
-		ff.open(declaration_file.c_str(), XS_OUT);
+        std::cout << operation << " declaration of section \"" << name() << "\" in " << declaration_file_path << std::endl;
+		ff.open(declaration_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
 		return 1;
 		}
@@ -744,7 +759,7 @@ void DataType::affect(Compiler& comp) const  // Declaration & definition
 	bool is_pointer = comp.get_token_if("*");
 
 	std::string refine_name_prefix = comp.refined_name();
-	int pos = refine_name_prefix.rfind(name());
+    size_t pos = refine_name_prefix.rfind(name());
 	if(pos == std::string::npos)
 		refine_name_prefix = "";
 	else

@@ -10,8 +10,9 @@ void help(int mode)
 	if(mode)
 		std::cout << "Incorrect switch\n";
 	std::cout << "Switches:\n";
-	std::cout << "/Fo<file>  generate dummy output\n";
-	std::cout << "check_update  checks for previous updates to stop compillation\n";
+	std::cout << "-Fo<file>  generate dummy output\n";
+    std::cout << "-So<path>  generated output root dir\n";
+	std::cout << "-check_update  checks for previous updates to stop compilation\n";
 	exit(mode);
 }
 
@@ -23,7 +24,7 @@ int main(int argc, char* argv[])
 		//__int64 start_time = getRDTSC();
 
         std::string updateFile = std::string(get_exe_path()) + "xprm.tmp";
-		if(check_command_line("/check_update")){
+		if(check_command_line("/check_update") || check_command_line("-check_update")){
 			XStream ini(0);
 			if(ini.open(updateFile.c_str())){
 				int len = ini.size();
@@ -44,17 +45,29 @@ int main(int argc, char* argv[])
 			exit(0);
 		}
 
-		char* input = 0;
-		char* output = 0;
+		char* input = nullptr;
+		char* sources = nullptr;
+		char* output = nullptr;
 		for(int i = 1; i < argc; i++)
-			if(*argv[i] == '-' || *argv[i] == '/')
-				switch(argv[i][1]){
+#ifdef _WIN32
+            if(*argv[i] == '-' || *argv[i] == '/')
+#else
+			if(*argv[i] == '-')
+#endif
+                    switch(argv[i][1]){
 					case '?':
 					case 'h':
 						help(0);
 						break;
+                    case 'S':
+                        if(argv[i][2] == 'o')
+                            sources = argv[i] + 3;
+                        else
+                            help(1);
+                        break;
 					case 'o':
 						output = argv[i] + 2;
+                        break;
 					case 'F':
 						if(argv[i][2] == 'o')
 							output = argv[i] + 3;
@@ -74,7 +87,7 @@ int main(int argc, char* argv[])
 
 		bool rebuild = !(output && XStream(0).open(output));
 		int success;
-		if((success = comp.compile(input, rebuild)) != 0 && output){
+		if((success = comp.compile(input, sources, rebuild)) != 0 && output){
 			//cout << "Generating dummy output: " << output << endl;
 			XStream f(output, XS_OUT);
 			f < "This file was generated as dummy-output while compiling: " < input < "\n";
@@ -89,6 +102,11 @@ int main(int argc, char* argv[])
 
 		return !success;
 	}
+    catch(const std::exception& exc)
+    {
+        std::cout << "Internal error occured:" << exc.what() << "\r\n";
+        return 1;
+    }
 	catch(...)
 	{
         std::cout << "Internal error occured\r\n";
@@ -98,7 +116,7 @@ int main(int argc, char* argv[])
 	return 1;
 }
 
-bool Compiler::compile(const char* fname, bool rebuild)
+bool Compiler::compile(const char* fname, const char* sources, bool rebuild)
 {
 	int errors = 0;
 	sectionUpdated_ = false;
@@ -109,8 +127,8 @@ bool Compiler::compile(const char* fname, bool rebuild)
 		if(!errors){
 			SectionList::iterator i;
 			FOR_EACH(sections, i){
-				int updated = (*i)->declaration(rebuild); 
-				if((*i)->definition(updated || rebuild, dependencies) || updated)
+				int updated = (*i)->declaration(sources, rebuild); 
+				if((*i)->definition(sources, updated || rebuild, dependencies) || updated)
 					sectionUpdated_ = true;
 			}
 		}

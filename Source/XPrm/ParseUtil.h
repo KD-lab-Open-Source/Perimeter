@@ -48,7 +48,7 @@ inline bool operator == (const FILETIME& t1, const FILETIME& t2) { return t1.dwH
 
 inline void replace(std::string& s, const char* src, const char* dest)
 {
-	int pos = 0;
+    size_t pos = 0;
 	while(1){
 		pos = s.find(src, pos);
 		if(pos >= s.size())
@@ -61,6 +61,7 @@ inline void replace(std::string& s, const char* src, const char* dest)
 inline std::string expand_spec_chars(const std::string& str)
 {
 	std::string s(str);
+    replace(s, "/", "\\");
 	replace(s, "\\", "\\\\");
 	replace(s, "\n", "\\n");
 	replace(s, "\r", "\\r");
@@ -72,7 +73,7 @@ inline std::string expand_spec_chars(const std::string& str)
 
 inline std::string& collapse_spec_chars(std::string& s)
 {
-	int pos = 0;
+    size_t pos = 0;
 	while(1){
 		pos = s.find("\\", pos);
 		if(pos >= s.size() - 1)
@@ -118,7 +119,7 @@ inline int is_name(const char* str)
 inline std::string get_exe_path()
 {
     std::string exe_path = __argv[0];
-	int pos = exe_path.rfind("\\") + 1;
+    size_t pos = exe_path.rfind(PATH_SEP) + 1;
 	exe_path.erase(pos, exe_path.size() - pos);
 	return exe_path;
 }
@@ -154,13 +155,3 @@ inline std::string strip_string(const char* str)
 	parameter.pop_back();
 	return parameter;
 }
-
-inline std::string strip_file_name(const char* str)
-{
-    std::string name(str);
-	int pos = name.rfind("\\");
-	if(pos != std::string::npos)
-		name.erase(0, pos + 1);
-	return name;
-}
-
