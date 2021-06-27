@@ -2747,7 +2747,12 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 		preImage=new unsigned short[tb_arraySX*tb_arraySY*tb_keyPoints*numPreImage];
 
 		char cb[MAX_PATH];
+#ifdef PERIMETER_EXODUS
+        memset(cb, 0, MAX_PATH);
+#else
+		//TODO probably not needed
 		GetCurrentDirectory(MAX_PATH, cb);
+#endif
 		strcat(cb, "\\"); strcat(cb, Path2TTerraResource); strcat(cb, "bub.dat");//"\\RESOURCE\\Tools\\bub.dat"
 		XStream fi;
 		fi.open(cb, XS_IN);

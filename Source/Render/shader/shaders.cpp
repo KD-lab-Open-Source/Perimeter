@@ -102,16 +102,14 @@ void cVertexShader::Delete()
 
 void cVertexShader::Restore()
 {
-#ifndef PERIMETER_EXODUS
 	unsigned int fp=_controlfp(0,0);
 	_controlfp( _MCW_EM,  _MCW_EM );
-#endif
+
 	Delete();
 	RestoreShader();
-#ifndef PERIMETER_EXODUS
+
 	_clearfp();
 	_controlfp(fp,0xFFFFFFFFul);
-#endif
 }
 
 inline void cVertexShader::SetMatrix(const SHADER_HANDLE& h,const D3DXMATRIX* mat)

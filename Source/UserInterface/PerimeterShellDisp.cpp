@@ -23,6 +23,7 @@
 #include "GenericFilth.h"
 #include "IronPort.h"
 #include "qd_textdb.h"
+#include <stdarg.h>     // for va_start
 
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;

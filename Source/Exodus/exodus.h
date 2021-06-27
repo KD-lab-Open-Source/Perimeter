@@ -59,6 +59,16 @@ struct _FILETIME {
 #define _close close
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//TODO we should handle FPU config stuff on non Win32?
+
+#define _MCW_EM 0
+#define _MCW_PC 0
+#define _PC_24 0
+
+#define _clearfp()
+unsigned int _controlfp(unsigned int newval, unsigned int mask) { return 0; }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
                               const char* returnBuffer, DWORD bufferSize, const char* filePath);
@@ -156,7 +166,7 @@ DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t m
 }
 
 HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, DWORD*) {
-    pthread_t* tid;
+    pthread_t* tid = 0;
     pthread_create(tid, nullptr, start_address, arg);
     return neosmart::CreateEvent(true, false);
 }
