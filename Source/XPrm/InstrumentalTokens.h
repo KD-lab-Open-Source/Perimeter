@@ -8,7 +8,7 @@ struct IncludeToken : Token
 
 	void affect(Compiler& comp) const 
 	{
-		string path = comp.parser().file_name();
+        std::string path = comp.parser().file_name();
 		int pos = path.rfind("\\") + 1;
 		path.erase(pos, path.size() - pos);
 		path += strip_string(comp.get_token());
@@ -116,7 +116,7 @@ struct CreateSectionToken : TokenList
 ////////////////////////////////////////////////////////////////////////////////////////
 class EnumVariable : public Variable, public IntConstant
 {
-	string enum_value;
+    std::string enum_value;
 public:
 	EnumVariable(const char* name, const DataType& type) : Token(name), Variable(type), IntConstant(name, 0) {}
 	void init(Compiler& comp);
@@ -125,12 +125,13 @@ public:
 	Token* clone() const { return new EnumVariable(*this); } 
 };
 
+enum _any_enum_name_ {};
 
-struct EnumList : DataType, list<ShareHandle<IntConstant> >
+struct EnumList : DataType, std::list<ShareHandle<IntConstant> >
 {
-	string prefix;
+	std::string prefix;
 	int dont_declare;
-	EnumList(const char* name, const char* prefix_, bool dont_declare_) : Token(name), DataType(name, sizeof(enum _any_enum_name_)), prefix(prefix_), dont_declare(dont_declare_) {}
+	EnumList(const char* name, const char* prefix_, bool dont_declare_) : Token(name), DataType(name, sizeof(_any_enum_name_)), prefix(prefix_), dont_declare(dont_declare_) {}
 	void declaration(XBuffer& buf) const 
 	{
 		if(dont_declare)
@@ -159,7 +160,7 @@ public:
 	EnumToken() : Token("enum"), make_static(false) {}
 	void affect(Compiler& comp) const
 	{
-		string enum_name = comp.get_token();
+        std::string enum_name = comp.get_token();
 		if(enum_name == "{")
 			enum_name = "";
 		else{
@@ -171,10 +172,10 @@ public:
 		make_static = false;
 		comp.context().add(enum_list);
 		int value = 0;
-		string name = comp.get_token(); 
-		if(name != string("}"))
+        std::string name = comp.get_token(); 
+		if(name != std::string("}"))
 			for(;;){
-				string dir = comp.get_token();
+                std::string dir = comp.get_token();
 				if(dir == "=")
 					value = comp.eval_i();
 				IntConstant* var = new IntConstant(name.c_str(), value++);
@@ -207,7 +208,7 @@ struct DelegateToken : Token
 		int blocks = 0;
 		const char* begin = comp.parser() + 1;
 		while(1){
-			string token = comp.get_token();
+            std::string token = comp.get_token();
 			if(token == "{")
 				blocks++;
 			if(token == "}" && !blocks--){

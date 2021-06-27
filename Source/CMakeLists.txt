@@ -41,7 +41,7 @@ ELSE()
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
 ENDIF()
 
-
+ADD_SUBDIRECTORY("XPrm")
 IF(OPTION_GEN_SCRIPTS)
     MESSAGE("Generating Scripts")
     #TODO call XPrm and other stuff
@@ -81,21 +81,19 @@ if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
 
+#This is the only way I know to force download of external project from any targets
+ADD_CUSTOM_TARGET(dependencies ALL DEPENDS XPrm)
 IF(NOT PERIMETER_WINDOWS)
-    #This is the only way I know to force download of external project from any targets
-
-    ADD_CUSTOM_TARGET(dependencies ALL DEPENDS dxvk-native)
-
-    ADD_DEPENDENCIES(Exodus dependencies)
-    ADD_DEPENDENCIES(XTool dependencies)
-    ADD_DEPENDENCIES(PluginMAX dependencies)
-    ADD_DEPENDENCIES(Terra dependencies)
-    ADD_DEPENDENCIES(tx3d dependencies)
-    ADD_DEPENDENCIES(Render dependencies)
-    ADD_DEPENDENCIES(Sound dependencies)
-    ADD_DEPENDENCIES(Network dependencies)
-    #ADD_DEPENDENCIES(PlayOgg dependencies)
+    ADD_DEPENDENCIES(dependencies dxvk-native)
+ELSE()
+    ADD_DEPENDENCIES(PlayOgg dependencies)
 ENDIF()
+ADD_DEPENDENCIES(PluginMAX dependencies)
+ADD_DEPENDENCIES(Terra dependencies)
+ADD_DEPENDENCIES(tx3d dependencies)
+ADD_DEPENDENCIES(Render dependencies)
+ADD_DEPENDENCIES(Sound dependencies)
+ADD_DEPENDENCIES(Network dependencies)
 
 SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
 

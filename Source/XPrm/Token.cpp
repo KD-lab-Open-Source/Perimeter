@@ -22,7 +22,7 @@ void Parser::open(const char* fname_)
 {
 	XStream ff(0);
 	if(!ff.open((fname = fname_).c_str(), XS_IN))
-		throw logic_error(string("File not found: ") + fname);
+		throw std::logic_error(std::string("File not found: ") + fname);
 	int len = ff.size();
 	if(buffer)
 		delete buffer;
@@ -89,7 +89,7 @@ const char* Parser::get_token()
 	else
 		if(isdigit(*j) || (*j == '.' && isdigit(*(j + 1)))){ // Numerical Literal
 			j++;
-			while(__iscsym(*j) || *j == '.' || (*j == '+' || *j == '-') && (*(j - 1) == 'E' || *(j - 1) == 'e'))
+			while(__iscsym(*j) || *j == '.' || ((*j == '+' || *j == '-') && (*(j - 1) == 'E' || *(j - 1) == 'e')))
 				j++;
 			}
 		else
@@ -121,16 +121,16 @@ const char* Parser::get_token()
 							if(*j == '.' && *(j + 1) == '.' && *(j + 2) == '.') // ...
 								j += 3;
 							else
-								if(*j == '#' && *(j + 1) == '#' || // ##
-									*j == ':' && *(j + 1) == ':' || // ::
-									*j == '&' && *(j + 1) == '&' || // &&
-									*j == '|' && *(j + 1) == '|' || // ||
-									*j == '.' && *(j + 1) == '*' || // .*
-									*j == '+' && *(j + 1) == '+' || // ++
-									*j == '-' && *(j + 1) == '-' || // --
-									(*j == '+' || *j == '-' || *j == '*' || *j == '/' || *j == '%' || 
+								if((*j == '#' && *(j + 1) == '#') || // ##
+									(*j == ':' && *(j + 1) == ':') || // ::
+									(*j == '&' && *(j + 1) == '&') || // &&
+									(*j == '|' && *(j + 1) == '|') || // ||
+									(*j == '.' && *(j + 1) == '*') || // .*
+									(*j == '+' && *(j + 1) == '+') || // ++
+									(*j == '-' && *(j + 1) == '-') || // --
+									((*j == '+' || *j == '-' || *j == '*' || *j == '/' || *j == '%' || 
 									*j == '^' || *j == '|' || *j == '&' || 
-									*j == '!' || *j == '<' || *j == '>' || *j == '=') && *(j + 1) == '=') // x=
+									*j == '!' || *j == '<' || *j == '>' || *j == '=') && *(j + 1) == '=')) // x=
 										j += 2;
 								else
 									j++;
@@ -276,9 +276,9 @@ bool Compiler::refined_token_from_current_context()
 	return find(tokens.begin(), tokens.end(), ShareHandle<Token>(const_cast<Token*>(refine_name_first_token))) != tokens.end();
 }
 
-string Compiler::context_prefix() const 
+std::string Compiler::context_prefix() const 
 {
-	string prefix;
+	std::string prefix;
 	for(ContextList::const_reverse_iterator ci = contexts.rbegin(); ci != contexts.rend();++ci)
 	{
 		const TokenList* context = *ci;
@@ -293,12 +293,12 @@ string Compiler::context_prefix() const
 	return prefix;
 }
 
-string Compiler::generate_unique_name(const char* var_name)
+std::string Compiler::generate_unique_name(const char* var_name)
 {
 	XBuffer buffer(256, 1);
 	//buffer < section().name() < "_" < context_prefix().c_str() < var_name < "_" <= counter++;
 	buffer < context_prefix().c_str() < var_name < "_" <= uniqueNameCounter_++;
-	string name = buffer;
+	std::string name = std::string(buffer);
 	replace(name, ".", "_");
 	replace(name, "::", "_");
 	return name;
@@ -364,7 +364,7 @@ int Compiler::parse_file(const char* fname, XBuffer& sout)
 		sout <= parser() < exc.what() < "\r\n";
 		errors++;
 		}
-	catch(const exception& exc){
+	catch(const std::exception& exc){
 		sout <= parser() < exc.what() < "\r\n";
 		errors++;
 	}
@@ -481,19 +481,19 @@ unsigned Section::description()
 	return description;
 }
 
-string Section::align_path(const string& str)
+std::string Section::align_path(const std::string& str)
 {
-	string path(script_file);
+	std::string path(script_file);
 	int n = path.rfind("\\");
-	if(n == string::npos)
+	if(n == std::string::npos)
 		n = 0;
 	else 
 		n++;
 	path.erase(n, path.size());
 
-	string name(str);
+	std::string name(str);
 	n = name.rfind("\\");
-	if(n == string::npos)
+	if(n == std::string::npos)
 		n = 0;
 	else 
 		n++;
@@ -503,33 +503,33 @@ string Section::align_path(const string& str)
 
 bool Section::definition(bool rebuild, StringList& dependencies)
 {
-	string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
+	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript definition\r\n"
-			"//	Section: " + string(name()) + "\r\n";
+			"//	Section: " + std::string(name()) + "\r\n";
 
-	string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
-		"//	XScript end: " + string(name()) + "\r\n"
+	std::string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
+		"//	XScript end: " + std::string(name()) + "\r\n"
 		"//////////////////////////////////////////////////////////////////////////////////////////////\r\n";
 
 	char* description_str = "\tdescription = ";
 	FILETIME section_time = { 0, 0 };
 	
 	FILETIME definition_time = { 0, 0 };
-	string file;
+	std::string file;
 	XStream ff(0);
 	if(!rebuild && ff.open(definition_file.c_str(), XS_IN)){
 		int len = ff.size();
 		file.insert((size_type)0, (size_type)len, ' ');
 		ff.read(&file[0], len);
 		ff.close();
-		definition_time = getFileTime(definition_file.c_str());
+		getFileTime(definition_file.c_str(), &definition_time);
 	}
 	unsigned int head_pos = file.find(head);
-	unsigned int end_pos = string::npos;
-	if(head_pos != string::npos){
+	unsigned int end_pos = std::string::npos;
+	if(head_pos != std::string::npos){
 		end_pos = file.find("XScript end:", head_pos);
-		if(end_pos == string::npos)
-			throw logic_error(string("Section corrupted: ") + name());
+		if(end_pos == std::string::npos)
+			throw std::logic_error(std::string("Section corrupted: ") + name());
 		//if(supress_definition_update){ 
 		unsigned int pos = file.find(description_str, head_pos);
 		if(pos < end_pos){
@@ -570,7 +570,7 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 	unsigned int sourceCRC = 83838383;
 	StringList::iterator si;
 	FOR_EACH(dependencies, si){
-		string s_add = "\tadd_dependency(\"";
+		std::string s_add = "\tadd_dependency(\"";
 		s_add += expand_spec_chars(align_path(*si)).c_str();
 		s_add += "\"";
 		//if(definition_time < getFileTime(si->c_str()))
@@ -607,9 +607,9 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 	if(using_namespace) buf < "}\r\n";
 	buf < "#endif  //  _PRM_EDIT_\r\n";
 
-	string file0 = file;
-	string operation;
-	if(head_pos == string::npos){ // first time
+	std::string file0 = file;
+	std::string operation;
+	if(head_pos == std::string::npos){ // first time
 		operation = "Creating";
 		file += head;
 		file += buf;
@@ -618,14 +618,14 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 	else{
 		operation = "Updating";
 		int end_pos = file.find(tail, head_pos);
-		if(end_pos == string::npos)
+		if(end_pos == std::string::npos)
 			end_pos = tail.size();
 		head_pos += head.size();
 		file.erase(head_pos, end_pos - head_pos);
 		file.insert(head_pos, buf);
 		}
 	if(file != file0){
-		cout << operation << " definition of section \"" << name() << "\" in " << definition_file << endl;
+		std::cout << operation << " definition of section \"" << name() << "\" in " << definition_file << std::endl;
 		ff.open(definition_file.c_str(), XS_OUT);
 		ff < file.c_str();
 		return 1;
@@ -635,12 +635,12 @@ bool Section::definition(bool rebuild, StringList& dependencies)
 
 bool Section::declaration(bool rebuild)
 {
-	string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
+	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript declaration\r\n"
-			"//	Section: " + string(name()) + "\r\n";
+			"//	Section: " + std::string(name()) + "\r\n";
 
-	string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
-		"//	XScript end: " + string(name()) + "\r\n"
+	std::string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
+		"//	XScript end: " + std::string(name()) + "\r\n"
 		"//////////////////////////////////////////////////////////////////////////////////////////////\r\n";
 
 	XBuffer buf(100000, 1);
@@ -672,7 +672,7 @@ bool Section::declaration(bool rebuild)
 
 	if(using_namespace) buf < "}\r\nusing namespace "< name() < "_namespace;\r\n";
 
-	string file;
+    std::string file;
 	XStream ff(0);
 	if(!rebuild && ff.open(declaration_file.c_str(), XS_IN)){
 		int len = ff.size();
@@ -680,11 +680,11 @@ bool Section::declaration(bool rebuild)
 		ff.read(&file[0], len);
 		ff.close();
 	}
-	string file0 = file;
+    std::string file0 = file;
 
-	string operation;
+    std::string operation;
 	int head_pos = file.find(head);
-	if(head_pos == string::npos){ // first time
+	if(head_pos == std::string::npos){ // first time
 		operation = "Creating";
 		head += buf;
 		head += tail;
@@ -693,14 +693,14 @@ bool Section::declaration(bool rebuild)
 	else{
 		operation = "Updating";
 		int end_pos = file.find(tail, head_pos);
-		if(end_pos == string::npos)
+		if(end_pos == std::string::npos)
 			end_pos = tail.size();
 		head_pos += head.size();
 		file.erase(head_pos, end_pos - head_pos);
 		file.insert(head_pos, buf);
 		}
 	if(file != file0){
-		cout << operation << " declaration of section \"" << name() << "\" in " << declaration_file << endl;
+        std::cout << operation << " declaration of section \"" << name() << "\" in " << declaration_file << std::endl;
 		ff.open(declaration_file.c_str(), XS_OUT);
 		ff < file.c_str();
 		return 1;
@@ -725,7 +725,7 @@ bool Section::declaration(bool rebuild)
 void Variable::affect(Compiler& comp) const  // Assignment
 {
 	if(!comp.refined_token_from_current_context())
-		throw parsing_error((string("Attempt to assign variable of top context: ") + name()).c_str());
+		throw parsing_error((std::string("Attempt to assign variable of top context: ") + name()).c_str());
 
 	//const Token* token = comp.refine_name(this);
 	//const Variable* var = dynamic_cast<const Variable*>(token);
@@ -743,14 +743,14 @@ void DataType::affect(Compiler& comp) const  // Declaration & definition
 {
 	bool is_pointer = comp.get_token_if("*");
 
-	string refine_name_prefix = comp.refined_name();
+	std::string refine_name_prefix = comp.refined_name();
 	int pos = refine_name_prefix.rfind(name());
-	if(pos == string::npos)
+	if(pos == std::string::npos)
 		refine_name_prefix = "";
 	else
 		refine_name_prefix.erase(pos,refine_name_prefix.size());
 
-	string var_name = comp.get_token();
+	std::string var_name = comp.get_token();
 	if(is_pointer){
 		comp.skip_token("=");
 		PointerVariable* var = new PointerVariable(var_name.c_str(), *this);
@@ -759,7 +759,7 @@ void DataType::affect(Compiler& comp) const  // Declaration & definition
 		comp.context().add(var);
 	}
 	else if(comp.get_token_if("[")){
-		string size_name;
+        std::string size_name;
 		int declare_size = 1;
 		if(comp.get_token_if("int")){
 			size_name = comp.get_token();
@@ -770,7 +770,7 @@ void DataType::affect(Compiler& comp) const  // Declaration & definition
 			if(comp.get_token_if("="))
 				declare_size = comp.eval_i();
 			comp.skip_token("]");
-			if(!dynamic_cast<StructDataType*>(&comp.context())) // для открытых (не в структуре) массивов с декларированной переменной не декларировавть размер
+			if(!dynamic_cast<StructDataType*>(&comp.context())) // РґР»СЏ РѕС‚РєСЂС‹С‚С‹С… (РЅРµ РІ СЃС‚СЂСѓРєС‚СѓСЂРµ) РјР°СЃСЃРёРІРѕРІ СЃ РґРµРєР»Р°СЂРёСЂРѕРІР°РЅРЅРѕР№ РїРµСЂРµРјРµРЅРЅРѕР№ РЅРµ РґРµРєР»Р°СЂРёСЂРѕРІР°РІС‚СЊ СЂР°Р·РјРµСЂ
 				declare_size = 0;
 		}
 		else if(!comp.get_token_if("]")){
@@ -805,8 +805,8 @@ void ArrayVariable::init(Compiler& comp)
 	iterator it = begin();
 	current_size = 0;
 	comp.skip_token("{");
-	string token = comp.get_token();
-	if(token != string("}")){
+	std::string token = comp.get_token();
+	if(token != std::string("}")){
 		comp.parser().put_token();
 		while(1){
 			Variable* v;
@@ -823,10 +823,10 @@ void ArrayVariable::init(Compiler& comp)
 			v->refine_name_prefix = refine_name_prefix;
 			v->init(comp);
 			current_size++;
-			string token = comp.get_token();
+			std::string token = comp.get_token();
 			if(token == "}")
 				break;
-			if(token != string(","))
+			if(token != std::string(","))
 				throw unexpected_token(token.c_str());
 			}
 		}
@@ -834,7 +834,7 @@ void ArrayVariable::init(Compiler& comp)
 	if(!size_var_name.empty())
 		const_cast<IntVariable*>(dynamic_cast<const IntVariable*>(comp.context().find_local(size_var_name.c_str())))->set(current_size);
 
-	while(size() < declare_size){ // добавляем недостающие элементы
+	while(size() < declare_size){ // РґРѕР±Р°РІР»СЏРµРј РЅРµРґРѕСЃС‚Р°СЋС‰РёРµ СЌР»РµРјРµРЅС‚С‹
 		Variable* v = type.create("");
 		push_back(v);
 	}
@@ -952,12 +952,12 @@ TokenList(name()),
 DataType(name(), 0) 
 { 
 	dont_declare = 0;
-	string dir = comp.get_token();
+	std::string dir = comp.get_token();
 	if(dir == ":"){
 		const Token* token = comp.context().find(comp.get_token());
 		const StructDataType* base = dynamic_cast<const StructDataType*>(token);
 		if(base){
-			string new_name = name();
+			std::string new_name = name();
 			static_cast<DataType&>(*this) = static_cast<const DataType&>(*base);
 			delegate_code = base->delegate_code;
 			TokenList::const_iterator ti;
@@ -972,7 +972,7 @@ DataType(name(), 0)
 		parse(comp); 
 		}
 	else{		
-		if(dir != string("{"))
+		if(dir != std::string("{"))
 			throw expected_token("{");
 
 		add(new DelegateToken);
@@ -1071,7 +1071,7 @@ void StructVariable::init(Compiler& comp)
 					}
 				}
 			if(token_list){
-				if(token_list != this){ // Не присваивать самому себе
+				if(token_list != this){ // РќРµ РїСЂРёСЃРІР°РёРІР°С‚СЊ СЃР°РјРѕРјСѓ СЃРµР±Рµ
 					TokenList::clear();
 					lock_addition = 0;
 					TokenList::const_iterator ti;
@@ -1391,14 +1391,14 @@ double Compiler::prim_f()
 ///////////////////////////////////////////////////////////////////////////
 //		String Calculator
 ///////////////////////////////////////////////////////////////////////////
-string Compiler::eval_s()
+std::string Compiler::eval_s()
 {
 	return expr_s();
 }
 
-string Compiler::expr_s()
+std::string Compiler::expr_s()
 {
-	string  left = prim_s();
+    std::string  left = prim_s();
 
 	for(;;){
 		const char* token_name = get_token();
@@ -1412,7 +1412,7 @@ string Compiler::expr_s()
 		}
 }
 
-string Compiler::prim_s()
+std::string Compiler::prim_s()
 {
 	const char* name = get_token(); 
 	

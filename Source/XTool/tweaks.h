@@ -51,6 +51,7 @@
 #include "../Exodus/exodus.h"
 #else
 #define DestroyEvent CloseHandle
+#define strdup _strdup
 #endif
 
 #endif // __TWEAKS_H__

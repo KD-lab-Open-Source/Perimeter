@@ -1,16 +1,17 @@
-#include "StdAfx.h"
+#include "stdafx.h"
+#include "ParseUtil.h"
 #include "Token.h"
 
 int64_t getRDTSC(void);
 
 void help(int mode)
 {
-	cout << "Parameters compiler v" << _VERSION_ << "\n";
+	std::cout << "Parameters compiler v" << _VERSION_ << "\n";
 	if(mode)
-		cout << "Incorrect switch\n";
-	cout << "Switches:\n";
-	cout << "/Fo<file>  generate dummy output\n";
-	cout << "check_update  checks for previous updates to stop compillation\n";
+		std::cout << "Incorrect switch\n";
+	std::cout << "Switches:\n";
+	std::cout << "/Fo<file>  generate dummy output\n";
+	std::cout << "check_update  checks for previous updates to stop compillation\n";
 	exit(mode);
 }
 
@@ -18,9 +19,10 @@ int main(int argc, char* argv[])
 {
 	try 
 	{
+        setup_argcv(argc, argv);
 		//__int64 start_time = getRDTSC();
 
-		string updateFile = string(get_exe_path()) + "xprm.tmp";
+        std::string updateFile = std::string(get_exe_path()) + "xprm.tmp";
 		if(check_command_line("/check_update")){
 			XStream ini(0);
 			if(ini.open(updateFile.c_str())){
@@ -31,14 +33,14 @@ int main(int argc, char* argv[])
 				ini.close();
 				remove(updateFile.c_str());
 				if(buffer.search("Updated")){
-					cout << "XPrm: sources were changed, restart compilation, please.";
-					if(MessageBox(0,"XPrm: sources were changed.\nStop the compilation process?", "XPrm compiler", MB_YESNO | MB_ICONQUESTION) == IDYES)
+                    std::cout << "XPrm: sources were changed, restart compilation, please.";
+					if(MessageBoxQuestion("XPrm compiler", "XPrm: sources were changed.\nStop the compilation process?"))
 						exit(1);
 					else
 						exit(0);
 				}
 			}
-			cout << "XPrm: sources were not changed.";
+            std::cout << "XPrm: sources were not changed.";
 			exit(0);
 		}
 
@@ -89,7 +91,7 @@ int main(int argc, char* argv[])
 	}
 	catch(...)
 	{
-		cout << "Internal error occured\r\n";
+        std::cout << "Internal error occured\r\n";
 		return 1;
 	}
 
@@ -103,7 +105,7 @@ bool Compiler::compile(const char* fname, bool rebuild)
 	try {
 		XBuffer bout(1024, 1);
 		errors = parse_file(fname, bout);
-		cout << bout;
+		std::cout << bout;
 		if(!errors){
 			SectionList::iterator i;
 			FOR_EACH(sections, i){
@@ -113,10 +115,10 @@ bool Compiler::compile(const char* fname, bool rebuild)
 			}
 		}
 		else
-			cout << fname << ": " << errors << " error(s)" << endl;
+			std::cout << fname << ": " << errors << " error(s)" << std::endl;
 	}
-	catch(const exception& exc){
-		cout << exc.what() << "\r\n";
+	catch(const std::exception& exc){
+		std::cout << exc.what() << "\r\n";
 		errors++;
 	}
 	
