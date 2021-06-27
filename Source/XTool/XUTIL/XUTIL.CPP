@@ -73,6 +73,15 @@ std::string convert_path(const char* path) {
     return conv;
 }
 
+std::string convert_path_posix(const char* path) {
+    std::string conv;
+    size_t size = strlen(path);
+    for (int i = 0; i < size; ++i) {
+        conv.push_back(path[i] == '\\' ? '/' : path[i]);
+    }
+    return conv;
+}
+
 void terminate_with_char(char* buffer, const char chr, size_t max) {
     size_t size = strlen(buffer);
 

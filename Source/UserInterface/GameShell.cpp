@@ -41,6 +41,7 @@
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "SoundScript.h"
+#include <SDL.h>
 
 int terShowFPS = 0;
 
@@ -66,7 +67,9 @@ extern std::string gameSpyRoomName;
 extern void PlayMusic(const char *str = 0);
 
 bool terEnableGDIPixel=false;
+#ifndef PERIMETER_EXODUS_WINDOW
 STARFORCE_API void CalcRealWindowPos(int xPos,int yPos,int xScr,int yScr,bool fullscreen,Vect2i& pos,Vect2i& size);
+#endif
 
 //extern XStream quantTimeLog;
 
@@ -2195,15 +2198,24 @@ void GameShell::setSpeed(float d)
 
 void GameShell::setCursorPosition(const Vect2f& pos)
 {
+#ifdef PERIMETER_EXODUS_WINDOW
+    //TODO untested
+    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)pos.x, (int)pos.y);
+#else
 	Vect2i ps = convertToScreenAbsolute(pos);
 	SetCursorPos(ps.x, ps.y);
+#endif
 }
 
 void GameShell::setCursorPosition(const Vect3f& posW)
 {
 	Vect3f v, e;
 	terCamera->GetCamera()->ConvertorWorldToViewPort(&posW, &v, &e);
-	
+
+#ifdef PERIMETER_EXODUS_WINDOW
+	//TODO untested
+    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)e.x, (int)e.y);
+#else
 	if(!terFullScreen)
 	{
 		e.x *= float(windowClientSize().x)/terRenderDevice->GetSizeX();
@@ -2220,6 +2232,7 @@ void GameShell::setCursorPosition(const Vect3f& posW)
 	}
 	
 	SetCursorPos(e.x, e.y);
+#endif
 }
 
 void GameShell::setSideArrowsVisible(bool visible) {
@@ -2310,6 +2323,7 @@ void GameShell::updateMap() {
 }
 
 void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_size) {
+#ifndef PERIMETER_EXODUS_WINDOW
 	if( !terRenderDevice->IsFullScreen() ) {
 		Vect2i real_pos;
 		Vect2i real_size;
@@ -2334,6 +2348,7 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 			SWP_SHOWWINDOW
 		);
 	}
+#endif
 
 	terScreenSizeX = sx;
 	terScreenSizeY = sy;

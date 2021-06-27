@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include <SDL.h>
-#include <crtdbg.h>
 
 //#include <crtdbg.h>
 
@@ -15,6 +14,18 @@
 /////////////////////////////////////////////////////////////////////////////////
 //		File find
 /////////////////////////////////////////////////////////////////////////////////
+
+#ifdef PERIMETER_EXODUS
+//TODO maybe we should refactor this, storing search data as static doesnt sound nice
+const char* win32_findnext() {
+    //TODO
+    return nullptr;
+}
+const char* win32_findfirst(const char* mask) {
+    //TODO
+    return nullptr;
+}
+#else
 static WIN32_FIND_DATA FFdata;
 static HANDLE FFh;
 
@@ -37,6 +48,7 @@ const char* win32_findfirst(const char* mask)
 	//if(FFdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) return win32_findnext();
 	return FFdata.cFileName;
 }
+#endif
 
 // ---   Ini file   ---------------------
 const char* IniManager::get(const char* section, const char* key)
@@ -112,7 +124,9 @@ void IniManager::putFloatArray(const char* section, const char* key, int size, c
 }
 
 std::string getStringFromReg(const std::string& folderName, const std::string& keyName) {
+    //TODO we should read this in some file
 	std::string res;
+#ifndef PERIMETER_EXODUS
 	HKEY hKey;
 	char name[PERIMETER_CONTROL_NAME_SIZE];
 	DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
@@ -129,9 +143,12 @@ std::string getStringFromReg(const std::string& folderName, const std::string& k
 
 		RegCloseKey( hKey );
 	}
+#endif
 	return res;
 }
 void putStringToReg(const std::string& folderName, const std::string& keyName, const std::string& value) {
+	//TODO we should store this in some file
+#ifndef PERIMETER_EXODUS
 	HKEY hKey;
 	DWORD dwDisposition;
 	LONG lRet;
@@ -143,6 +160,7 @@ void putStringToReg(const std::string& folderName, const std::string& keyName, c
 
 		RegCloseKey( hKey );
 	}
+#endif
 }
 
 std::string formatTimeWithHour(int timeMilis) {

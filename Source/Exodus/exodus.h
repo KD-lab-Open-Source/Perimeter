@@ -149,6 +149,7 @@ void DeleteCriticalSection(CRITICAL_SECTION *m);
 
 struct MSG {};
 #define PM_NOREMOVE 0
+#define PM_REMOVE 1
 
 bool PeekMessage(MSG*, void*, uint32_t, uint32_t, uint32_t);
     
