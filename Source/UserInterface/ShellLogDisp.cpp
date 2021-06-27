@@ -409,6 +409,8 @@ void SoundOnSetUnitTarget(terUnitBase* p)
 		case UNIT_ATTRIBUTE_SQUAD:
 //			SND2DPlaySound("squad_moves");
 			break;
+        default:
+            break;
 		}
 	}
 }

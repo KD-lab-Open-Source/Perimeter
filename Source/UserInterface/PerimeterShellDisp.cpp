@@ -3286,6 +3286,8 @@ void CShellIconManager::UpdateSelectionIcons()
 				attr = 0;
 				actions.clear();
 				break;
+            default:
+				break;
 			}
 
 			if (unit_prm) {
@@ -4294,19 +4296,21 @@ void LogicUpdater::updateMiniMap() {
 							color = player->unitColor();
 							pos = (*ui)->position2D();
 							break;
-						case UNIT_CLASS_ID_FILTH_SPOT:
-							terFilthSpot* spot = safe_cast<terFilthSpot*>(*ui);
-							if (spot->GetFilthParamID() == FILTH_SPOT_ID_WORM 
-							  || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO 
-							  || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR
-							  ) {
-								if(spot->isSwarm())
-								{
-									pos = spot->getFirstSwarmPos();
-									color = filthMapColor;
-								}
-							}
-							break;
+						case UNIT_CLASS_ID_FILTH_SPOT: {
+                            terFilthSpot* spot = safe_cast<terFilthSpot*>(*ui);
+                            if (spot->GetFilthParamID() == FILTH_SPOT_ID_WORM
+                                || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO
+                                || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR
+                                    ) {
+                                if (spot->isSwarm()) {
+                                    pos = spot->getFirstSwarmPos();
+                                    color = filthMapColor;
+                                }
+                            }
+                            break;
+                        }
+                        default:
+                            break;
 					}
 				}
 
