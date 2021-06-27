@@ -36,7 +36,6 @@
 #include <list>
 #include <string>
 #include <stdexcept>
-#include <hash_map>
 #include <algorithm>
 
 #include "tweaks.h"

@@ -103,11 +103,8 @@ inline const char* check_command_line(const char* switch_str)
 }
 
 //https://docs.microsoft.com/en-gb/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
-static void EpochToFileTime( int64_t epoch, _FILETIME* pft ) {
-    int64_t ll = (epoch * 10000000LL) + 116444736000000000LL;
-    pft->dwLowDateTime = (unsigned short) ll;
-    pft->dwHighDateTime = (unsigned short) (ll >> 32);
-}
+struct _FILETIME;
+void EpochToFileTime(int64_t epoch, _FILETIME* pft);
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
@@ -115,7 +112,7 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags =
 std::string convert_path(const char* path);
 
 //Adds string if not present
-void terminate_with_char(char* buffer, char chr, size_t max, bool onlyEnd = true);
+void terminate_with_char(char* buffer, char chr, size_t max);
 
 //Replicate legacy behavior and add dot if not present
 void terminate_with_dot(char* buffer, size_t max);

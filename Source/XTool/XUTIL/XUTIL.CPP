@@ -3,6 +3,9 @@
 #include <cstring>
 #include <SDL.h>
 #include "tweaks.h"
+#ifdef _WIN32 
+#include <windows.h>
+#endif
 #include "xutil.h"
 
 static unsigned int XRndValue = 83838383;
@@ -23,6 +26,12 @@ void XRndSet(unsigned int m)
 unsigned int XRndGet()
 {
 	return XRndValue;
+}
+
+void EpochToFileTime(int64_t epoch, _FILETIME* pft) {
+    int64_t ll = (epoch * 10000000LL) + 116444736000000000LL;
+    pft->dwLowDateTime = (unsigned short) ll;
+    pft->dwHighDateTime = (unsigned short) (ll >> 32);
 }
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) {
@@ -55,25 +64,21 @@ std::string convert_path(const char* path) {
     std::string conv;
     size_t size = strlen(path);
     for (int i = 0; i < size; ++i) {
-        conv.push_back(path[i] == '\\' ? '/' : path[i]);
+#ifdef _WIN32
+        conv.push_back(path[i] == '/' ? PATH_SEP : path[i]);
+#else
+        conv.push_back(path[i] == '\\' ? PATH_SEP : path[i]);
+#endif
     }
     return conv;
 }
 
-void terminate_with_char(char* buffer, const char chr, size_t max, bool onlyEnd) {
+void terminate_with_char(char* buffer, const char chr, size_t max) {
     size_t size = strlen(buffer);
 
     //Check if already has
-    if (onlyEnd) {
-        if (0 < size && buffer[size - 1] == chr) {
-            return;
-        }
-    } else {
-        for (int i = 0; i < size; ++i) {
-            if (buffer[i] == chr) {
-                return;
-            }
-        }
+    if (0 < size && buffer[size - 1] == chr) {
+        return;
     }
 
     //Append to end and store
@@ -82,5 +87,15 @@ void terminate_with_char(char* buffer, const char chr, size_t max, bool onlyEnd)
 }
 
 void terminate_with_dot(char* buffer, size_t max) {
-    terminate_with_char(buffer, '.', max, false);
+    size_t size = strlen(buffer);
+
+    //Check if already has one or we cant add it
+    for (int i = 0; i < size; ++i) {
+        if (buffer[i] == '.' || buffer[i] == 'e') {
+            return;
+        }
+    }
+
+    //Append to end and store
+    strncat(buffer, ".", max);
 }

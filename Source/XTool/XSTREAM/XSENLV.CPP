@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include "tweaks.h"
 #include "xutl.h"
 #include "xstream.h"

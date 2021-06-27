@@ -58,7 +58,7 @@ IF(MSVC_CL_BUILD)
     SET(Vorbis_FOUND TRUE)
     SET(VORBIS_LIBRARIES Vorbis::vorbis Vorbis::vorbisenc Vorbis::vorbisfile)
     FIND_PACKAGE(SDL2 CONFIG REQUIRED)
-    SET(SDL2_LIBRARY SDL2::SDL2 SDL2::SDL2main)
+    SET(SDL2_LIBRARY SDL2::SDL2) #SDL2::SDL2main)
 ELSE()
     # paths to search libs
     SET(LIBRARY_SEARCH_PATHS "

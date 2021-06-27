@@ -1,5 +1,6 @@
 #pragma once
 #include "ParseUtil.h"
+#include <unordered_map>
 
 #define _VERSION_	"1.40"
 
