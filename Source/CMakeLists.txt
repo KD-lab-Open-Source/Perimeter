@@ -42,11 +42,7 @@ ELSE()
 ENDIF()
 
 ADD_SUBDIRECTORY("XPrm")
-IF(OPTION_GEN_SCRIPTS)
-    MESSAGE("Generating Scripts")
-    #TODO call XPrm and other stuff
-ENDIF()
-
+ADD_SUBDIRECTORY("Scripts")
 ADD_SUBDIRECTORY("XTool")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")

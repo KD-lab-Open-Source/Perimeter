@@ -46,7 +46,7 @@ ENDIF()
 # options
 OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
 OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
-OPTION(OPTION_GEN_SCRIPTS "Re-Generates game scripts" OFF)
+OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 
