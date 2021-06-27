@@ -15,16 +15,6 @@
 
 #include "RangedWrapper.h"
 
-using namespace boost;
-
-#ifdef _MSC_VER
-//namespace std {
-//template<class T, class A> class list;
-//template<class T, class A> class vector;
-//template<class T1, class T2> struct pair;
-//}
-#endif
-
 //Serialization code for xmath.h
 
 template<class Archive>
