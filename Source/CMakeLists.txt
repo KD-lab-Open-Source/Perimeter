@@ -77,22 +77,6 @@ if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
 
-#This is the only way I know to force download of external project from any targets
-ADD_CUSTOM_TARGET(dependencies ALL DEPENDS XPrm)
-IF(NOT PERIMETER_WINDOWS)
-    ADD_DEPENDENCIES(dependencies dxvk-native)
-    ADD_DEPENDENCIES(Exodus dxvk-native)
-    ADD_DEPENDENCIES(XTool dxvk-native)
-ELSE()
-    ADD_DEPENDENCIES(PlayOgg dependencies)
-ENDIF()
-ADD_DEPENDENCIES(PluginMAX dependencies)
-ADD_DEPENDENCIES(Terra dependencies)
-ADD_DEPENDENCIES(tx3d dependencies)
-ADD_DEPENDENCIES(Render dependencies)
-ADD_DEPENDENCIES(Sound dependencies)
-ADD_DEPENDENCIES(Network dependencies)
-
 SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
 
 #Add Windows and DirectX libs
@@ -277,10 +261,28 @@ SET(perimeter_SRCS
         Units/Triggers.cpp
 )
 
-ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
+ADD_EXECUTABLE(perimeter ${PERIMETER_EXE_FLAGS} ${perimeter_SRCS})
 
 if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
+TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
+
+#This is the only way I know to force download of external project from any targets
+ADD_DEPENDENCIES(Scripts XPrm)
+ADD_CUSTOM_TARGET(dependencies ALL DEPENDS Scripts)
+IF(NOT PERIMETER_WINDOWS)
+    ADD_DEPENDENCIES(dependencies dxvk-native)
+    ADD_DEPENDENCIES(Exodus dxvk-native)
+    ADD_DEPENDENCIES(XTool dxvk-native)
+ELSE()
+    ADD_DEPENDENCIES(PlayOgg dependencies)
+ENDIF()
+ADD_DEPENDENCIES(PluginMAX dependencies)
+ADD_DEPENDENCIES(Terra dependencies)
+ADD_DEPENDENCIES(tx3d dependencies)
+ADD_DEPENDENCIES(Render dependencies)
+ADD_DEPENDENCIES(Sound dependencies)
+ADD_DEPENDENCIES(Network dependencies)
+ADD_DEPENDENCIES(perimeter dependencies)
