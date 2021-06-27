@@ -16,7 +16,7 @@ cOcclusionQuery::~cOcclusionQuery()
 	if(gb_RenderDevice3D)
 	{
 		bool erased=false;
-		vector<cOcclusionQuery*>::iterator it;
+		std::vector<cOcclusionQuery*>::iterator it;
 		FOR_EACH(gb_RenderDevice3D->occlusion_query,it)
 		if(*it==this)
 		{

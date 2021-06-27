@@ -397,7 +397,7 @@ void CellLine::show(sColor4c color) const
 //		Column
 //////////////////////////////////////////////////////////////////////////////////
 Column::Column(int sy)
-: vector<CellLine>(sy)
+: std::vector<CellLine>(sy)
 {
 	int y = 0; 
 	iterator i; 

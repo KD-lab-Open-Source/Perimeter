@@ -35,14 +35,14 @@ float LayingLocation3D::distance(const Vector3D& v) {
 	shifted.y -= Texture3DUtils::floor(shifted.y);
 	shifted.y *= brick.y;
 	if (shifted.y <= gap.y) {
-		return isBrick ? std::numeric_limits<float>::max() : -1.0;
+		return isBrick ? (std::numeric_limits<float>::max)() : -1.0;
 	}
 	shifted.z = v.z / brick.z;
 	shifted.y = Texture3DUtils::floor(shifted.z);
 	shifted.z -= shifted.y;
 	shifted.z *= brick.z;
 	if (shifted.z <= gap.z) {
-		return isBrick ? std::numeric_limits<float>::max() : -1.0;
+		return isBrick ? (std::numeric_limits<float>::max)() : -1.0;
 	}
 	shifted.x = v.x;
 	shifted.y /= 2.0;
@@ -53,9 +53,9 @@ float LayingLocation3D::distance(const Vector3D& v) {
 	shifted.x -= Texture3DUtils::floor(shifted.x);
 	shifted.x *= brick.x;
 	if (shifted.x <= gap.x) {
-		return isBrick ? std::numeric_limits<float>::max() : -1.0;
+		return isBrick ? (std::numeric_limits<float>::max)() : -1.0;
 	} else {
-		return isBrick ? -1.0 : std::numeric_limits<float>::max();
+		return isBrick ? -1.0 : (std::numeric_limits<float>::max)();
 	}
 }
 

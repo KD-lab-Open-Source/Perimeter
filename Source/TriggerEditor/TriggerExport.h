@@ -99,7 +99,7 @@ public:
     typedef TriggerAllocator<_Tp1> other;
   };
   TriggerAllocator() {}
-  TriggerAllocator(const allocator<T>&) {}
+  TriggerAllocator(const std::allocator<T>&) {}
   ~TriggerAllocator() {}
   
   pointer address(reference x) const { return &x; }
