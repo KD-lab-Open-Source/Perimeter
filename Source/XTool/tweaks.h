@@ -46,6 +46,13 @@
 #include "../Exodus/msvc.h"
 #endif
 
+//Select per platform path separator
+#ifdef _WIN32
+#define PATH_SEP '\\'
+#else
+#define PATH_SEP '/'
+#endif
+
 #ifdef PERIMETER_EXODUS
 //Apply exodus specific tweaks
 #include "../Exodus/exodus.h"

@@ -111,4 +111,13 @@ static void EpochToFileTime( int64_t epoch, _FILETIME* pft ) {
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
+//Do a conversion for Windows -> POSIX paths
+std::string convert_path(const char* path);
+
+//Adds string if not present
+void terminate_with_char(char* buffer, char chr, size_t max, bool onlyEnd = true);
+
+//Replicate legacy behavior and add dot if not present
+void terminate_with_dot(char* buffer, size_t max);
+
 #endif

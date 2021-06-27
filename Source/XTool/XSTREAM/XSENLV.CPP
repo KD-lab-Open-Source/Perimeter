@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include "tweaks.h"
+#include "xutl.h"
 #include "xstream.h"
 #include "xerrhand.h"
 
@@ -59,10 +61,15 @@ int XStream::open(const char* name, unsigned f)
     fprintf(stderr, "DBG: XStream::open(\"%s\", 0x%x)\n", name, f);
 #endif
 
+
+    //Do a conversion for Windows -> POSIX paths
+    std::string conv = convert_path(name);
+    name = conv.c_str();
+
     std::fstream *file = open_file(name, f);
     handler = file;
     if (file->is_open()) {
-        fname = name;
+        fname = std::string(name);
         pos = file->tellg();
         eofFlag = 0;
     } else {

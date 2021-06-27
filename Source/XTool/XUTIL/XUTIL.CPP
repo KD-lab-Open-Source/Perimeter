@@ -51,4 +51,36 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
     return choice == 1;
 }
 
+std::string convert_path(const char* path) {
+    std::string conv;
+    size_t size = strlen(path);
+    for (int i = 0; i < size; ++i) {
+        conv.push_back(path[i] == '\\' ? '/' : path[i]);
+    }
+    return conv;
+}
 
+void terminate_with_char(char* buffer, const char chr, size_t max, bool onlyEnd) {
+    size_t size = strlen(buffer);
+
+    //Check if already has
+    if (onlyEnd) {
+        if (0 < size && buffer[size - 1] == chr) {
+            return;
+        }
+    } else {
+        for (int i = 0; i < size; ++i) {
+            if (buffer[i] == chr) {
+                return;
+            }
+        }
+    }
+
+    //Append to end and store
+    std::string str = std::string() + chr;
+    strncat(buffer, str.c_str(), max);
+}
+
+void terminate_with_dot(char* buffer, size_t max) {
+    terminate_with_char(buffer, '.', max, false);
+}
