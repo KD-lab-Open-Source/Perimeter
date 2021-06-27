@@ -132,12 +132,6 @@ IF(PERIMETER_WINDOWS)
             legacy_stdio_definitions
         )
     ENDIF()
-ELSE()
-    #Add non windows dependencies    
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-        # dl is required for dladdr in stacktrace,
-        dl
-    )
 ENDIF()
 
 INCLUDE_DIRECTORIES(
@@ -286,10 +280,6 @@ SET(perimeter_SRCS
         TriggerEditor/TriggerExport.cpp
         Units/Triggers.cpp
 )
-
-if(PERIMETER_WINDOWS)
-    SET(CMAKE_WIN32_EXECUTABLE YES)
-ENDIF()
 
 ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
 

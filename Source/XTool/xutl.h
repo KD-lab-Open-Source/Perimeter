@@ -75,12 +75,22 @@ double clockf();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef PERIMETER_EXODUS
+#ifndef _WIN32
 #include <vector>
-//Hacky way to "store" argc/argv so they can be accessed later like in windows
+
+//Hacky way to "store" argc/argv so they can be accessed later like in Windows
 static int __argc = 0;
-static std::vector<char*> __argv;
+static std::vector<const char*> __argv;
 #endif
+
+static void setup_argcv(int argc, char *argv[]) {
+#ifndef _WIN32
+    for(int i = 0; i < argc; i ++){
+        __argv.push_back(argv[i]);
+        __argc++;
+    }
+#endif
+}
 
 inline const char* check_command_line(const char* switch_str)
 {
@@ -90,6 +100,13 @@ inline const char* check_command_line(const char* switch_str)
             return s += strlen(switch_str);
     }
     return nullptr;
+}
+
+//https://docs.microsoft.com/en-gb/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
+static void EpochToFileTime( int64_t epoch, _FILETIME* pft ) {
+    int64_t ll = (epoch * 10000000LL) + 116444736000000000LL;
+    pft->dwLowDateTime = (unsigned short) ll;
+    pft->dwHighDateTime = (unsigned short) (ll >> 32);
 }
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);

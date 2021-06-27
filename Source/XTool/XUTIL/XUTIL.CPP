@@ -1,16 +1,9 @@
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include <fstream>
 #include <cstring>
+#include <SDL.h>
 #include "tweaks.h"
 #include "xutil.h"
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 static unsigned int XRndValue = 83838383;
 

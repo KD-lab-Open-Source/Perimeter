@@ -21,4 +21,13 @@ SET(XTool_SRCS
     XUTIL/XClock.cpp
 )
 
+SET(XTool_LINK_LIBS)
+IF(NOT PERIMETER_WINDOWS)
+    SET(XTool_LINK_LIBS ${XTool_LINK_LIBS}
+        # dl is required for dladdr in stacktrace,
+        dl
+    )
+ENDIF()
+
 ADD_LIBRARY(XTool STATIC ${XTool_SRCS})
+TARGET_LINK_LIBRARIES(XTool ${XTool_LINK_LIBS})

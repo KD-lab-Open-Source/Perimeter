@@ -1,3 +1,4 @@
+#pragma once
 #ifndef PERIMETER_WINDOWS_H
 #define PERIMETER_WINDOWS_H
 
@@ -70,7 +71,7 @@ typedef _FILETIME FILETIME;
 #define _PC_24 0
 
 #define _clearfp()
-unsigned int _controlfp(unsigned int newval, unsigned int mask) { return 0; }
+unsigned int _controlfp(unsigned int newval, unsigned int mask);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Window/UI related
@@ -111,6 +112,8 @@ void Sleep(uint32_t millis);
 char* _strlwr(char* str);
 char* _strupr(char* str);
 
+int __iscsym(int c);
+
 #define strlwr _strlwr
 #define strupr _strupr
 
@@ -147,11 +150,15 @@ void DeleteCriticalSection(CRITICAL_SECTION *m);
 struct MSG {};
 #define PM_NOREMOVE 0
 
-bool PeekMessage(MSG*, void*, uint32_t, uint32_t, uint32_t) { return false; }
-bool GetMessage(MSG*, void*, uint32_t, uint32_t) { return true; }
-void TranslateMessage(MSG*) {}
-void DispatchMessage(MSG*) {}
-void WaitMessage() {}
+bool PeekMessage(MSG*, void*, uint32_t, uint32_t, uint32_t);
+    
+bool GetMessage(MSG*, void*, uint32_t, uint32_t);
+
+void TranslateMessage(MSG*);
+
+void DispatchMessage(MSG*);
+
+void WaitMessage();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Event/Thread stuff
@@ -162,35 +169,19 @@ void WaitMessage() {}
 
 #define WAIT_OBJECT_0 0
 
-HANDLE CreateEvent(int, bool manualReset, bool initialState, int) {
-    return neosmart::CreateEvent(manualReset, initialState);
-}
+HANDLE CreateEvent(int, bool manualReset, bool initialState, int);
 
-void DestroyEvent(HANDLE event) { 
-    neosmart::DestroyEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
-}
+void DestroyEvent(HANDLE event);
 
-void SetEvent(HANDLE event) {
-    neosmart::SetEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
-}
+void SetEvent(HANDLE event);
 
-void ResetEvent(HANDLE event) { 
-    neosmart::ResetEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
-}
+void ResetEvent(HANDLE event);
 
-DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds) {
-    return neosmart::WaitForEvent(reinterpret_cast<neosmart::neosmart_event_t>(event), milliseconds);
-}
+DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds);
 
-DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds) {
-    return neosmart::WaitForMultipleEvents(reinterpret_cast<neosmart::neosmart_event_t*>(events), count, waitAll, milliseconds);
-}
+DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds);
 
-HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, DWORD*) {
-    pthread_t* tid = 0;
-    pthread_create(tid, nullptr, start_address, arg);
-    return neosmart::CreateEvent(true, false);
-}
+HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, DWORD*);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

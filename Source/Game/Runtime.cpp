@@ -617,10 +617,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 
 #ifdef PERIMETER_EXODUS_WINDOW
 	//We need to copy argc/argv so they can be accessed later via check_command_line etc
-    for(int i = 0; i < argc; i ++){
-        __argv.push_back(argv[i]);
-        __argc++;
-    }
+    setup_argcv(argc, argv);
     
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);

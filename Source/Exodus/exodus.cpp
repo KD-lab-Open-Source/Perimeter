@@ -8,6 +8,12 @@
 #include <pwd.h>
 #include <string>
 
+unsigned int _controlfp(unsigned int newval, unsigned int mask) {
+    return 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 short GetAsyncKeyState(int vKey) {
     //TODO use SDL2?
     return 0;
@@ -113,6 +119,12 @@ char* _strupr(char* str)
     return str;
 }
 
+//According to MSDN: Both __iscsym and __iswcsym return a nonzero value if c is a letter, underscore, or digit. 
+int __iscsym(int c) {
+    if (c == '_') return 1;
+    return isalnum(c);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int _mkdir(const char* path) {
@@ -174,4 +186,52 @@ void InitializeCriticalSection(CRITICAL_SECTION *m) {
 
 void DeleteCriticalSection(CRITICAL_SECTION *m) {
     pthread_mutex_destroy(m);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool PeekMessage(MSG*, void*, uint32_t, uint32_t, uint32_t) {
+    return false;
+}
+
+bool GetMessage(MSG*, void*, uint32_t, uint32_t) {
+    return true;
+}
+
+void TranslateMessage(MSG*) {}
+
+void DispatchMessage(MSG*) {}
+
+void WaitMessage() {}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HANDLE CreateEvent(int, bool manualReset, bool initialState, int) {
+    return neosmart::CreateEvent(manualReset, initialState);
+}
+
+void DestroyEvent(HANDLE event) {
+    neosmart::DestroyEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
+}
+
+void SetEvent(HANDLE event) {
+    neosmart::SetEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
+}
+
+void ResetEvent(HANDLE event) {
+    neosmart::ResetEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
+}
+
+DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds) {
+    return neosmart::WaitForEvent(reinterpret_cast<neosmart::neosmart_event_t>(event), milliseconds);
+}
+
+DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds) {
+    return neosmart::WaitForMultipleEvents(reinterpret_cast<neosmart::neosmart_event_t*>(events), count, waitAll, milliseconds);
+}
+
+HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, DWORD*) {
+    pthread_t* tid = nullptr;
+    pthread_create(tid, nullptr, start_address, arg);
+    return neosmart::CreateEvent(true, false);
 }

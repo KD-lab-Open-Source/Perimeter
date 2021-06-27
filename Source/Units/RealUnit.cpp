@@ -1179,20 +1179,20 @@ public:
 			&& unit_->position2D().distance2(p->position2D()) < sqr(unit_->attr().ZeroLayerRadius + p->attr().ZeroLayerRadius)){
 				terUnitReal* unit = safe_cast<terUnitReal*>(p);
 				if(unit->zeroLayerPlaced())
-					map.insert(Map::value_type(unit->zeroLayerPlaced(), unit));
+					umap.insert(Map::value_type(unit->zeroLayerPlaced(), unit));
 			}
 	}
 
 	~FreeZeroLayerOp() 
 	{
 		Map::iterator i;
-		FOR_EACH(map, i)
+		FOR_EACH(umap, i)
 			i->second->placeZeroLayer(true);
 	}
 
 private:
 	terUnitBase* unit_;
-	Map map;
+	Map umap;
 };
 
 void terUnitReal::freeZeroLayer()
