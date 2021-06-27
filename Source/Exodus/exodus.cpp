@@ -1,4 +1,5 @@
 #include "exodus.h"
+#include "tweaks.h"
 #include <cstring>
 #include <cctype>
 #include <thread>
@@ -6,6 +7,46 @@
 #include <SDL.h>
 #include <pwd.h>
 #include <string>
+
+short GetAsyncKeyState(int vKey) {
+    //TODO use SDL2?
+    return 0;
+}
+
+void SetFocus(HWND hwnd) {
+    SDL_RaiseWindow(fromHWND(hwnd));
+}
+
+void ShowCursor(bool show) {
+    SDL_ShowCursor(show);
+}
+
+void SetCursor(HCURSOR cursor) {
+    SDL_SetCursor(cursor);
+}
+
+HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT) {
+    SDL_Surface* surface = SDL_LoadBMP(name);
+    
+    if (!surface) {
+        SDL_PRINT_ERROR("LoadImage SDL_LoadBMP");
+    } else {
+        if (type == IMAGE_CURSOR) {
+            SDL_Cursor* cursor = SDL_CreateColorCursor(
+                    surface, 0, 0
+            );
+            if (cursor) {
+                return reinterpret_cast<HANDLE>(cursor);
+            } else {
+                SDL_PRINT_ERROR("LoadImage SDL_CreateColorCursor");
+            }
+        }
+    }
+    
+    return nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
                               const char* returnBuffer, DWORD bufferSize, const char* filePath) {
@@ -42,15 +83,6 @@ bool GetUserName(char* out, DWORD* size) {
 
 void ZeroMemory(void *p, size_t n) {
     memset(p, 0, n);
-}
-
-short GetAsyncKeyState(int vKey) {
-    //TODO use SDL2?
-    return 0;
-}
-
-void SetFocus(HWND hwnd) {
-    SDL_RaiseWindow(fromHWND(hwnd));
 }
 
 void Sleep(uint32_t millis) {

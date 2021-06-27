@@ -14,6 +14,7 @@ inline HWND toHWND(SDL_Window* pWindow) {
 }
         
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Win32 macros/types stuff
 
 //For some reason not present in dxvk-native headers
 typedef uint8_t UCHAR;
@@ -27,13 +28,15 @@ typedef long LONG_PTR;
 #endif
 typedef UINT_PTR WPARAM;
 typedef LONG_PTR LPARAM;
+typedef const char* LPCSTR;
+typedef LPCSTR LPCTSTR;
 
 struct _FILETIME {
     unsigned short dwLowDateTime;
     unsigned short dwHighDateTime;
 };
+typedef _FILETIME FILETIME;
 
-//this comes from Win32
 #define MAX_PATH 260
 #define _MAX_DRIVE   3
 #define _MAX_FNAME   256
@@ -59,6 +62,7 @@ struct _FILETIME {
 #define _close close
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//FPU control
 //TODO we should handle FPU config stuff on non Win32?
 
 #define _MCW_EM 0
@@ -67,6 +71,27 @@ struct _FILETIME {
 
 #define _clearfp()
 unsigned int _controlfp(unsigned int newval, unsigned int mask) { return 0; }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Window/UI related
+
+#define LR_LOADFROMFILE 1
+#define IMAGE_ICON 1
+#define IMAGE_CURSOR 2
+
+struct SDL_Cursor;
+
+typedef SDL_Cursor* HCURSOR;
+
+short GetAsyncKeyState(int vKey);
+
+void SetFocus(HWND hwnd);
+
+void ShowCursor(bool show);
+
+void SetCursor(HCURSOR cursor);
+
+HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,10 +105,6 @@ bool GetComputerName(char* out, DWORD* size);
 bool GetUserName(char* out, DWORD* size);
 
 void ZeroMemory(void* p, std::size_t n);
-
-short GetAsyncKeyState(int vKey);
-
-void SetFocus(HWND hwnd);
 
 void Sleep(uint32_t millis);
 

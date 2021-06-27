@@ -21,6 +21,8 @@
   for(auto iterator = (list).begin(); (iterator) != (list).end(); ++(iterator))
 #endif
 
+#define SDL_PRINT_ERROR(MSG) fprintf(stderr, "Error at %s - SDL %s\n", MSG, SDL_GetError())
+
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define THREAD_LOCAL __declspec( thread )
 #else

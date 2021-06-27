@@ -73,18 +73,22 @@ void initclock();
 int clocki();
 double clockf();
 
-void xtDeleteFile(char* fname);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef PERIMETER_EXODUS
+#include <vector>
+//Hacky way to "store" argc/argv so they can be accessed later like in windows
+static int __argc = 0;
+static std::vector<char*> __argv;
+#endif
 
 inline const char* check_command_line(const char* switch_str)
 {
-    //TODO implement this in cross platform way, maybe by saving argc/argv into some static struct?
-#ifdef _WIN32
     for(int i = 1; i < __argc; i ++){
         const char* s = strstr(__argv[i], switch_str);
         if(s)
             return s += strlen(switch_str);
     }
-#endif
     return nullptr;
 }
 

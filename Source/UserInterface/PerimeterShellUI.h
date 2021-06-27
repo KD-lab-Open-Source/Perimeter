@@ -3,6 +3,7 @@
 #ifndef _PERIMETERSHELLUI_H
 #define _PERIMETERSHELLUI_H
 
+#include "tweaks.h"
 #include "GameShellSq.h"
 #include "PlayOgg.h"
 #include "Universe.h"

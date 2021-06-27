@@ -868,14 +868,22 @@ Vect2f GameShell::convert(int x, int y) const
 
 Vect2i GameShell::convertToScreenAbsolute(const Vect2f& pos)
 {
+#ifdef PERIMETER_EXODUS_WINDOW
+    //TODO what we should do here?
+    return Vect2i(pos.x, pos.y);
+#else
 	POINT pt = { round((pos.x + 0.5f)*windowClientSize().x), round((pos.y + 0.5f)*windowClientSize().y) };
 	ClientToScreen(hWndVisGeneric, &pt);
 	return Vect2i((int)pt.x, (int)pt.y);
+#endif
 }
 
 bool GameShell::checkReel(UINT uMsg,WPARAM wParam,LPARAM lParam) {
 	if (reelManager.isVisible()) {
 		if (reelAbortEnabled) {
+#ifdef PERIMETER_EXODUS_WINDOW
+		    //TODO
+#else
 			switch (uMsg) {
 				case WM_KEYDOWN:
 					if (sKey(wParam, true).fullkey != VK_SPACE) {
@@ -888,6 +896,7 @@ bool GameShell::checkReel(UINT uMsg,WPARAM wParam,LPARAM lParam) {
 				default:
 					return true;
 			}
+#endif
 		}
 	}
 	return false;
@@ -899,6 +908,9 @@ void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 		return;
 	}
 
+#ifdef PERIMETER_EXODUS_WINDOW
+	//TODO pass events to game shell
+#else
     sKey s;
     switch(uMsg){
 	case WM_MOUSELEAVE:
@@ -960,6 +972,7 @@ void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 			OnWindowActivate();
 		break;
     }
+#endif
 }
 
 void GameShell::DebugCteateFilth(terFilthSpotID id)
