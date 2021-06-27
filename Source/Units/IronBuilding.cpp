@@ -341,7 +341,9 @@ void terBuilding::executeCommand(const UnitCommand& command)
 			break;
 		case COMMAND_ID_CONTINUE_CONSTRUCTION:
 			setBuildingStatus(buildingStatus() & ~BUILDING_STATUS_HOLD_CONSTRUCTION);
-			break;
+            break;
+	    default:
+            break;
 	}
 }
 
@@ -527,6 +529,8 @@ int terBuilding::isPluggedIn()
 		return 1;
 	case COMMAND_ID_POWER_OFF:
 		return 0;
+    default:
+        break;
 	}
 	return buildingStatus() & BUILDING_STATUS_PLUGGED_IN;
 }

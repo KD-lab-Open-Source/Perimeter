@@ -39,11 +39,11 @@ mkdir -p output
 
 cp Source/perimeter.exe output
 #cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/SDL2.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libogg*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbis*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbisfile*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libstdc++*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libgcc*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libwinpthread-*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libogg*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbis*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbisfile*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libstdc*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libgcc*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libwinpthread-*.dll output
 
 exit 0

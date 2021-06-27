@@ -530,6 +530,8 @@ void terFrame::executeCommand(const UnitCommand& command)
 				soundEvent(SOUND_VOICE_FRAME_TELEPORTATION);
 			}
 			break;
+        default:
+            break;
 	}
 }
 
@@ -715,6 +717,8 @@ void terFrame::GetInterfaceFrameProduction(int* phase,int* id,terUnitBase* unit[
 				id[i] = frameSlots_[i].UnitPoint->attr().ID;
 				unit[i] = frameSlots_[i].UnitPoint;
 				break;
+            default:
+                break;
 		}
 	}
 
@@ -731,6 +735,8 @@ void terFrame::GetInterfaceFrameProduction(int* phase,int* id,terUnitBase* unit[
 				id[command.commandData()] = command.commandID() - COMMAND_ID_BUILD_MASTER_INC;
 		}
 		break; }
+    default:
+        break;
 	}
 }
 

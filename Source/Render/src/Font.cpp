@@ -185,7 +185,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	FontHeight=height/float(size.y);
 
 	//Создаём текстуру
-	Vect2i real_size(round(size.x/mul),round(size.y/mul));
+	Vect2i real_size((int)round(size.x/mul),(int)round(size.y/mul));
 	BYTE* gray_in=new BYTE[real_size.x*real_size.y];
 	memset(gray_in,0,real_size.x*real_size.y);
 
@@ -194,7 +194,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	{
 
 		int w=chars[i].width;
-		int dx=round(w*mul+2);
+		int dx=(int)round(w*mul+2);
 		if(x+dx>size.x)
 		{
 			y+=(height+yborder);

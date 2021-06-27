@@ -701,7 +701,21 @@ void AttributeBase::initIntfBalanceData(const AttributeBase* missile)
 
 FileTime::FileTime(const char* fname)
 {
-    auto ftime = std::filesystem::last_write_time(fname);
+    if (!fname) {
+        dwLowDateTime = 0;
+        dwHighDateTime = 0;
+        return;
+    }
+    std::error_code error;
+    auto ftime = std::filesystem::last_write_time(fname, error);
+    if (error) {
+#if PERIMETER_DEBUG
+        fprintf(stderr, "Error reading %s: %d %s\n", fname, error.value(), error.message().c_str());
+#endif
+        dwLowDateTime = 0;
+        dwHighDateTime = 0;
+        return;
+    }
     auto duration = ftime.time_since_epoch();
     int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
     EpochToFileTime(nanos, this);
