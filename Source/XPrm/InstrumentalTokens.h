@@ -8,7 +8,7 @@ struct IncludeToken : Token
 
 	void affect(Compiler& comp) const 
 	{
-        std::string path = comp.parser().file_name();
+        std::string path = convert_path(comp.parser().file_name());
         size_t pos = path.rfind(PATH_SEP) + 1;
 		path.erase(pos, path.size() - pos);
 		path += strip_string(comp.get_token());

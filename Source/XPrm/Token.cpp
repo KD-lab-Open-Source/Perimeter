@@ -483,7 +483,7 @@ unsigned Section::description()
 
 std::string Section::align_path(const char* sources, const std::string& str)
 {
-	std::string path(script_file);
+	std::string path = convert_path(script_file.c_str());
 
 	//Check and remove the initial sources dir
 	char* sources_path = (char*) malloc(MAX_PATH);
