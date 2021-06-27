@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir ${{ env.buildDir }}
           cd ${{ env.buildDir }}
-          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -DOPTION_DISABLE_STACKTRACE=ON ..
+          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -DOPTION_DISABLE_STACKTRACE=ON -DOPTION_PROCESS_SCRIPTS=ON ..
       - name: Build the project
         run: |
           cd ${{ env.buildDir }}
