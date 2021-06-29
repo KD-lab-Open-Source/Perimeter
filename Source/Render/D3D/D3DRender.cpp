@@ -605,6 +605,7 @@ void cD3DRender::RestoreDeviceIfLost()
 	int hr;
 	while(FAILED(hr=lpD3DDevice->TestCooperativeLevel()))
     { // Test the cooperative level to see if it's okay to render
+#ifndef PERIMETER_EXODUS
         if( D3DERR_DEVICELOST == hr )
 		{
 			MSG msg;
@@ -618,6 +619,7 @@ void cD3DRender::RestoreDeviceIfLost()
 //			VISASSERT(0 && D3DERR_DEVICELOST);
 //          return;
 		}
+#endif
 
         if(hr==D3DERR_DEVICENOTRESET)
 		{

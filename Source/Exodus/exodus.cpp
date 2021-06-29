@@ -190,22 +190,6 @@ void DeleteCriticalSection(CRITICAL_SECTION *m) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool PeekMessage(MSG*, void*, uint32_t, uint32_t, uint32_t) {
-    return false;
-}
-
-bool GetMessage(MSG*, void*, uint32_t, uint32_t) {
-    return true;
-}
-
-void TranslateMessage(MSG*) {}
-
-void DispatchMessage(MSG*) {}
-
-void WaitMessage() {}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 HANDLE CreateEvent(int, bool manualReset, bool initialState, int) {
     return neosmart::CreateEvent(manualReset, initialState);
 }

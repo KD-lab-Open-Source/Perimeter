@@ -144,24 +144,6 @@ void InitializeCriticalSection(CRITICAL_SECTION *m);
 void DeleteCriticalSection(CRITICAL_SECTION *m);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//Messaging stuff im not interested in even #ifdef-ing
-
-struct MSG {};
-#define PM_NOREMOVE 0
-#define PM_REMOVE 1
-
-bool PeekMessage(MSG*, void*, uint32_t, uint32_t, uint32_t);
-    
-bool GetMessage(MSG*, void*, uint32_t, uint32_t);
-
-void TranslateMessage(MSG*);
-
-void DispatchMessage(MSG*);
-
-void WaitMessage();
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Event/Thread stuff
 
 #include <pevents.h>

@@ -635,34 +635,45 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 	xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
 	bool run = true;
-	MSG msg;
 	while(run){
+#ifdef PERIMETER_EXODUS_WINDOW
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            /* handle your event here */
+        }
+#endif
+#ifndef PERIMETER_EXODUS
+        MSG msg;
 		if(PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)){
 			if(!GetMessage(&msg, NULL, 0, 0))
 				break;
 			TranslateMessage( &msg );
 			DispatchMessage( &msg );
-		}else {
-			//NetworkPause handler
-			static bool runapp=true;
-			if(applicationIsGo()!=runapp){
-				if(gameShell && (!gameShell->alwaysRun()) ){
-					if(gameShell->getNetClient()){
-						if(gameShell->getNetClient()->setPause(!applicationHasFocus_))
-							runapp=applicationIsGo();
-					}
-				}
-			}
-//			if(gameShell && (!gameShell->alwaysRun()) ){
-//				if(gameShell->getNetClient())
-//					gameShell->getNetClient()->pauseQuant(applicationIsGo()));
-//			}
-
-			if(applicationIsGo())
-				run = runtime_object->Quant();
-			else
-				WaitMessage();
+			continue;
 		}
+#endif
+        //NetworkPause handler
+        static bool runapp=true;
+        if (applicationIsGo()!=runapp){
+            if(gameShell && (!gameShell->alwaysRun()) ){
+                if(gameShell->getNetClient()){
+                    if(gameShell->getNetClient()->setPause(!applicationHasFocus_))
+                        runapp=applicationIsGo();
+                }
+            }
+        }
+//		if(gameShell && (!gameShell->alwaysRun()) ){
+//			if(gameShell->getNetClient())
+//				gameShell->getNetClient()->pauseQuant(applicationIsGo()));
+//		}
+
+        if (applicationIsGo()) {
+            run = runtime_object->Quant();
+        } else {
+#ifndef PERIMETER_EXODUS
+            WaitMessage();
+#endif
+        }
 	}
 
 	delete runtime_object;
