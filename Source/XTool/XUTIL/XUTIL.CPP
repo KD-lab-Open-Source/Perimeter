@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <filesystem>
 #include <algorithm>
+#include <unordered_map>
 #include "tweaks.h"
 #ifdef _WIN32 
 #include <windows.h>
@@ -102,11 +103,11 @@ void scan_resource_paths() {
     resourcePaths.clear();
     for (const auto & entry : std::filesystem::recursive_directory_iterator(".")) {
         if (entry.is_regular_file()) {
-            std::string path = std::string(entry.path().c_str());
+            std::string path = std::string() + entry.path().string();
             path.erase(0, 2);
             strlwr(path.data());
             if (startsWith(path, "resource") || startsWith(path, "scripts") || endsWith(path, ".ini")) {
-                resourcePaths[path] = entry.path();
+                resourcePaths[path] = entry.path().string();
             }
         }
     }

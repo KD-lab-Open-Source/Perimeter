@@ -35,7 +35,7 @@ IF(NOT MSVC_CL_BUILD)
         #Use ADDR2LINE in POSIX
         ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_ADDR2LINE)
         # dl is required for dladdr in stacktrace
-        SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ${CMAKE_DL_LIBS})
+        SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} dl)
     ENDIF()
 ENDIF()
 
