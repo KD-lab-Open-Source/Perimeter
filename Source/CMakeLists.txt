@@ -1,3 +1,15 @@
+
+SET(perimeter_LINK_LIBS
+        #Our libs
+        XTool
+        PluginMAX
+        Terra
+        tx3d
+        Render
+        Sound
+        Network
+)
+
 IF(NOT PERIMETER_WINDOWS)
     #Non Windows target specifics
     
@@ -10,7 +22,7 @@ IF(NOT PERIMETER_WINDOWS)
     #pevents retrieval
     FetchContent_Declare(pevents
             GIT_REPOSITORY    https://github.com/neosmart/pevents
-            GIT_TAG           16967b99954e9fc077e07ea188d7886383bd5459 #latest commit
+            GIT_TAG           origin/master
             GIT_SHALLOW       ON
     )
     FetchContent_MakeAvailable(pevents)
@@ -20,7 +32,7 @@ IF(NOT PERIMETER_WINDOWS)
     #DXVK-native wrapper lib retrieval and building
     ExternalProject_Add(dxvk-native
             GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
-            GIT_TAG           d3e43ed3d52cfabe7dc5c95e165d43b68d65da9a #latest commit
+            GIT_TAG           origin/master
             GIT_SHALLOW       ON
             BUILD_ALWAYS      OFF
             CONFIGURE_COMMAND meson ../dxvk-native
@@ -50,17 +62,6 @@ ADD_SUBDIRECTORY("tx3d")
 ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
 ADD_SUBDIRECTORY("Network")
-
-SET(perimeter_LINK_LIBS
-    #Our libs
-    XTool
-    PluginMAX
-    Terra
-    tx3d
-    Render
-    Sound
-    Network
-)
 
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
@@ -270,8 +271,14 @@ ENDIF()
 TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
 
 #This is the only way I know to force download of external project from any targets
-ADD_DEPENDENCIES(Scripts XPrm)
-ADD_CUSTOM_TARGET(dependencies ALL DEPENDS Scripts)
+ADD_CUSTOM_TARGET(dependencies ALL)
+
+IF(OPTION_PROCESS_SCRIPTS)
+    ADD_DEPENDENCIES(dependencies Scripts)
+    ADD_DEPENDENCIES(Scripts XPrm)
+ELSE()
+    MESSAGE("Processing Scripts not enabled")
+ENDIF()
 IF(NOT PERIMETER_WINDOWS)
     ADD_DEPENDENCIES(dependencies dxvk-native)
     ADD_DEPENDENCIES(Exodus dxvk-native)
