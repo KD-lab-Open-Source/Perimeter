@@ -362,7 +362,7 @@ void MissionEditor::createUnit()
 	else if(item == itemNature){
 		setPlayer(-1);
 		attributeID = UNIT_ATTRIBUTE_STATIC_NATURE;
-		modelDirectory = "Resource\\Models\\Environment";
+		modelDirectory = "RESOURCE\\Models\\Environment";
 	}
 	else if(item == itemFilth){
 		setPlayer(-1);
@@ -414,8 +414,9 @@ void MissionEditor::createUnit()
 		if(modelDirectory){
 			std::string modelName;
 			if(openFileDialog(modelName, modelDirectory, "m3d", "3D Model")){
-				strlwr((char*)modelName.c_str());
-				size_t pos = modelName.rfind("resource\\");
+                std::string modelNameLwr = modelName;
+				strlwr((char*)modelNameLwr.c_str());
+				size_t pos = modelNameLwr.rfind("resource\\");
 				if(pos != std::string::npos)
 					modelName.erase(0, pos);
 				unit->setModelName(modelName.c_str());

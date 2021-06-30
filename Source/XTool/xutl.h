@@ -75,8 +75,9 @@ double clockf();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WIN32
 #include <vector>
+
+#ifndef _WIN32
 
 //Hacky way to "store" argc/argv so they can be accessed later like in Windows
 static int __argc = 0;
@@ -108,16 +109,39 @@ void EpochToFileTime(int64_t epoch, _FILETIME* pft);
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
-//Do a conversion for Windows -> POSIX paths
-std::string convert_path_posix(const char* path);
+//Replace string "search" with "result"
+void string_replace(std::string& input, const char* find, const char* paste);
 
 //Converts Windows/POSIX to native path
 std::string convert_path(const char* path);
+
+//Do a conversion for Windows -> POSIX paths
+std::string convert_path_posix(const char* path);
+
+//Obtains pairs of lowercase and original path from Resource paths cache which match the path start
+std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string path);
+
+//Do a conversion for RESOURCE paths
+std::string convert_path_resource(const char* path);
 
 //Adds string if not present
 void terminate_with_char(char* buffer, char chr, size_t max);
 
 //Replicate legacy behavior and add dot if not present
 void terminate_with_dot(char* buffer, size_t max);
+
+//Scans dir and creates resource paths cache
+void scan_resource_paths();
+
+static bool startsWith(const std::string& str, const std::string& prefix)
+{
+    return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);
+}
+
+static bool endsWith(const std::string& str, const std::string& suffix)
+{
+    return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
+}
+
 
 #endif

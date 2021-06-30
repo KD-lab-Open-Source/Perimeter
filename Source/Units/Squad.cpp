@@ -466,6 +466,9 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_FOLLOW_SQUAD:
 		setSquadToFollow(command.unit());
 		break;
+		
+    default:
+        break;
 	}
 }
 
@@ -495,6 +498,8 @@ int terUnitSquad::countUnits(terUnitAttributeID id, bool inSquad) const
 			case UNIT_ATTRIBUTE_TECHNIC:
 				counter += (*ui)->transportAtom()[MUTATION_ATOM_TECHNIC];
 				break;
+            default:
+                break;
 			}
 		}
 	}
@@ -827,6 +832,8 @@ int terUnitSquad::GetInterfaceLegionMode()
 	case COMMAND_ID_POINT:
 		move = 1;
 		break;
+    default:
+        break;
 	}
 
 	if(stop)
@@ -913,6 +920,8 @@ void terUnitSquad::GetAtomProduction(DamageMolecula& atom_request,DamageMolecula
 		case COMMAND_ID_PRODUCTION_DEC_10:
 			atom_request[findCommand(COMMAND_ID_PRODUCTION_DEC_10)->commandData()] -= 10;
 			break;
+	    default:
+            break;
 	}
 
 	if(commander() && commander()->isBuildingEnable())
@@ -931,6 +940,8 @@ void terUnitSquad::GetAtomPaused(DamageMolecula& paused)
 		case COMMAND_ID_PRODUCTION_PAUSE_OFF:
 			paused[findCommand(COMMAND_ID_PRODUCTION_PAUSE_OFF)->commandData()] = 0;
 			break;
+	    default:
+	        break;
 	}
 
 	for(int i = 0;i < MUTATION_ATOM_MAX;i++){

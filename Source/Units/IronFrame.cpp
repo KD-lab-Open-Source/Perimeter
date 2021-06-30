@@ -752,6 +752,8 @@ int terFrame::GetInterfaceLegionMode()
 	case COMMAND_ID_POINT:
 		move = 1;
 		break;
+    default:
+        break;
 	}
 
 	if(stop)

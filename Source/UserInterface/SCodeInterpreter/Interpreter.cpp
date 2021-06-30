@@ -183,7 +183,7 @@ void Interpreter::clearYears() {
 
 bool Interpreter::loadProgram(const std::string& fileName) {
 	bool res = false;
-	FILE* file = fopen(fileName.c_str(), "rt");
+	FILE* file = fopen(convert_path_resource(fileName.c_str()).c_str(), "rt");
 	if(file) {
 		clearYears();
 		res = true;

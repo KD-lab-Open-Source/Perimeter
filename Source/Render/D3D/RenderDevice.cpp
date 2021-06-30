@@ -70,7 +70,7 @@ return "Unknown error";
 
 void RDOpenLog(char *fname="RenderDevice.!!!")
 {
-	fRD=fopen(fname,"wt");
+	fRD=fopen(convert_path(fname).c_str(),"wt");
 	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
 }
 int RDWriteLog(HRESULT err,char *exp,char *file,int line)
@@ -207,9 +207,9 @@ void BuildBumpMap(int xs,int ys,void *pSrc,void *pDst,int fmtBumpMap)
                     break;
 
                 case D3DFMT_L6V5U5:
-                    *(WORD*)dst  = (WORD)( ( (iDu>>3) & 0x1f ) <<  0 ) 
-						| (WORD)( ( (iDv>>3) & 0x1f ) <<  5 )
-						| (WORD)( ( ( uL>>2) & 0x3f ) << 10 );
+                    *(int16_t*)dst  = (int16_t)( ( (iDu>>3) & 0x1f ) <<  0 ) 
+						| (int16_t)( ( (iDv>>3) & 0x1f ) <<  5 )
+						| (int16_t)( ( ( uL>>2) & 0x3f ) << 10 );
                     dst += 2;
                     break;
 

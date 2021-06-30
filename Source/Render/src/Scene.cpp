@@ -68,7 +68,7 @@ void SaveKindObjNotFree()
 #ifdef C_CHECK_DELETE
 	if(!cCheckDelete::GetDebugRoot())
 	{
-		DeleteFile("obj_notfree.txt");
+		std::remove("obj_notfree.txt");
 		return;
 	}
 

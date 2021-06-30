@@ -294,7 +294,7 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 
 	//hSecondThread=INVALID_HANDLE_VALUE;
 
-	DWORD ThreadId;
+	THREAD_ID ThreadId;
 	hSecondThread=CreateThread( NULL, 0, InternalServerThread, this, /*NULL,*/ 0, &ThreadId);
 
 	if(WaitForSingleObject(hSecondThreadInitComplete, INFINITE) != WAIT_OBJECT_0) {

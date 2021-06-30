@@ -32,6 +32,8 @@ void UserSingleProfile::scanProfiles() {
 
 	int maxIndex = -1;
 
+#ifndef PERIMETER_EXODUS
+	//TODO we should find a way to scan profiles in cross platform way
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hf = FindFirstFile( "RESOURCE\\SAVES\\Profile*", &FindFileData );
 	if(hf != INVALID_HANDLE_VALUE){
@@ -42,6 +44,7 @@ void UserSingleProfile::scanProfiles() {
 		} while(FindNextFile( hf, &FindFileData ));
 		FindClose( hf );
 	}
+#endif
 	for (int i = 0, s = profiles.size(); i < s; i++) {
 		loadProfile(i);
 		maxIndex = max(maxIndex, profiles[i].dirIndex);
@@ -82,6 +85,8 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	std::string origin = "RESOURCE\\SAVES\\DefaultPlayerData";
 	if( _mkdir(path.c_str()) == 0 ) {
 		path += "\\data";
+#ifndef PERIMETER_EXODUS
+		//TODO check how to copy file, maybe XStream? std?
 		if ( CopyFile(origin.c_str(), path.c_str(), FALSE) ) {
 			profiles.push_back( newProfile );
 			IniManager man( path.c_str(), true );
@@ -96,24 +101,30 @@ void UserSingleProfile::addProfile(const std::string& name) {
 		} else {
 			ErrH.Abort("Can't copy: ", XERR_USER, 0, origin.c_str());
 		}
+#endif
 	} else {
 		ErrH.Abort("Can't create directory: ", XERR_USER, 0, path.c_str());
 	}
 }
 
 bool UserSingleProfile::removeDir(const std::string& dir) {
+#ifdef PERIMETER_EXODUS
+    //TODO remove dir/files
+    return true;
+#else
 	WIN32_FIND_DATA findFileData;
 	std::string mask = dir + "*.*";
 	HANDLE hf = FindFirstFile( mask.c_str(), &findFileData );
 	if (hf != INVALID_HANDLE_VALUE) {
 		do {
 			if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
-				DeleteFile((dir + findFileData.cFileName).c_str());
+				std::remove((dir + findFileData.cFileName).c_str());
 			}
 		} while(FindNextFile( hf, &findFileData ));
 		FindClose( hf );
 	}
 	return RemoveDirectory(dir.c_str());
+#endif
 }
 
 void UserSingleProfile::removeProfile(int index) {
@@ -140,10 +151,10 @@ void UserSingleProfile::setCurrentProfileIndex(int index) {
 
 void UserSingleProfile::deleteSave(const std::string& name) {
 	std::string fullName = getSavesDirectory() + name;
-	DeleteFile( (fullName + ".spg").c_str() );
-	DeleteFile( (fullName + ".gmp").c_str() );
-	DeleteFile( (fullName + ".dat").c_str() );
-	DeleteFile( (fullName + ".sph").c_str() );
+	std::remove( (fullName + ".spg").c_str() );
+	std::remove( (fullName + ".gmp").c_str() );
+	std::remove( (fullName + ".dat").c_str() );
+	std::remove( (fullName + ".sph").c_str() );
 }
 
 std::string UserSingleProfile::getSavesDirectory() const {
@@ -160,12 +171,13 @@ void UserSingleProfile::loadProfile(int index) {
 }
 
 std::string UserSingleProfile::getFileNameWithDifficulty(const std::string& fileName) {
-	std::string fileNameWithoutExt = fileName;
-	fileNameWithoutExt.erase(fileNameWithoutExt.size() - 4, fileNameWithoutExt.size());
 	std::string res = MISSIONS_PATH;
+#if 0 //TODO apparently thisfunction is not used
+    std::string fileNameWithoutExt = fileName;
+	fileNameWithoutExt.erase(fileNameWithoutExt.size() - 4, fileNameWithoutExt.size());
 	res += "\\";
 	res += fileNameWithoutExt;
-	res += missionDifficultyPostfix[getDifficulty()]; 
+	res += missionDifficultyPostfix[getDifficulty()];
 
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hf = FindFirstFile( (res + ".spg").c_str(), &FindFileData );
@@ -176,6 +188,7 @@ std::string UserSingleProfile::getFileNameWithDifficulty(const std::string& file
 		hf = FindFirstFile( res.c_str(), &FindFileData );
 		xassert( hf != INVALID_HANDLE_VALUE );
 	}
+#endif
 	return res;
 }
 

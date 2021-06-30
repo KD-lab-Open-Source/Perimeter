@@ -7,17 +7,6 @@
 #include "Handle.h"
 #include <boost/type_index.hpp>
 
-static bool startsWith(const std::string& str, const std::string& prefix)
-{
-    return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);
-}
-
-static bool endsWith(const std::string& str, const std::string& suffix)
-{
-    return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
-}
-
-
 //Previously typeid(CLASS_T).name() was used which is not portable, so we attempt to ignore the extra struct/class
 
 static void extract_type_name(std::string& name) {

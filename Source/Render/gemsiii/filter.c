@@ -36,13 +36,14 @@ Image *
 new_image(xsize, ysize)	/* create a blank image */
 int xsize, ysize;
 {
-	Image *image;
-
-	if((image = (Image *)malloc(sizeof(Image)))
-	&& (image->data = (Pixel *)calloc(ysize, xsize))) {
-		image->xsize = xsize;
-		image->ysize = ysize;
-		image->span = xsize;
+	Image *image = (Image *)malloc(sizeof(Image));
+	if (image) {
+        image->data = (Pixel *)calloc(ysize, xsize);
+	    if (image->data) {
+            image->xsize = xsize;
+            image->ysize = ysize;
+            image->span = xsize;
+        }
 	}
 	return(image);
 }

@@ -111,7 +111,7 @@ static bool applicationHasFocus_ = true;
 
 HWND hWndVisGeneric=0;
 
-int terSetDebugWindow = IniManager("Perimeter.ini").getInt("Graphics","SetDebugWindow");
+int terSetDebugWindow = 0;
 
 SyncroTimer global_time;
 SyncroTimer frame_time;
@@ -374,7 +374,7 @@ cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int Colo
 
 void GameShell::SetFontDirectory()
 {
-	terVisGeneric->SetFontRootDirectory("resource\\LocData");
+	terVisGeneric->SetFontRootDirectory("RESOURCE\\LocData");
 	std::string dir=getLocDataPath();
 	dir+="Fonts";
 	terVisGeneric->SetFontDirectory(dir.c_str());
@@ -437,7 +437,7 @@ void HTManager::initGraphics()
 		terRenderDevice->Flush();
 	};*/
 
-	vMap.prepare("RESOURCE\\WORLDS\\worlds.prm");//,NULL,NULL,0,terRenderDevice->GetSizeX(),terRenderDevice->GetSizeY());
+	vMap.prepare("RESOURCE\\Worlds\\WORLDS.PRM");//,NULL,NULL,0,terRenderDevice->GetSizeX(),terRenderDevice->GetSizeY());
 	GraphOptionsManager::getInstance().load();
 	GraphOptionsManager::getInstance().apply();
 }
@@ -613,9 +613,15 @@ int main(int argc, char *argv[])
 int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 #endif
 {
+    //Scan resources first
+    scan_resource_paths();
+    
 	checkSingleRunning();
 
+    g_controls_converter.LoadKeyNameTable();
+
 #ifdef PERIMETER_EXODUS_WINDOW
+	
 	//We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
     
@@ -626,7 +632,8 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
     }
 #else
 	gb_hInstance=hInst;
-#endif
+#endif;
+    
 	int ht=IniManager("Perimeter.ini").getInt("Game","HT");
 	check_command_line_parameter("HT", ht);
 	HTManager* runtime_object = new HTManager(ht);

@@ -7,6 +7,7 @@
 #include <process.h>
 #include <crtdbg.h>
 #endif
+#include "tweaks.h"
 #include "xstream.h"
 #include "xerrhand.h"
 #include <SDL.h>
@@ -14,7 +15,7 @@
 
 static void (*assert_restore_graphics_function)() = 0;
 
-#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG)) && !defined(NASSERT)
 void SetAssertRestoreGraphicsFunction(void(*func)())
 {
 	assert_restore_graphics_function = func;
@@ -27,6 +28,8 @@ char convBuf[CONV_BUFFER_LEN + 1];
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
 #include "boost/stacktrace.hpp"
+#include "tweaks.h"
+
 #endif
 
 #ifndef _WIN32
@@ -374,9 +377,9 @@ void getStackTrace(std::ostringstream& stream) {
 }
 
 XErrorHandler::XErrorHandler() {
-	prefix		= defprefix;
-	restore_func	= nullptr;
-	state		= 0;
+    prefix = defprefix;
+    restore_func = nullptr;
+    state = 0;
 
 #ifndef __HAIKU__
     log_name = "logfile.txt";
@@ -394,6 +397,8 @@ XErrorHandler::XErrorHandler() {
     setTerminateHandler(handleTerminate);
 #endif
     setSignalHandler(handleSignal);
+    
+    initialized = true;
 }
 
 XErrorHandler::~XErrorHandler() {
@@ -434,19 +439,22 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
             "To https://t.me/PerimeterGame or https://github.com/KranX/Perimeter" << std::endl;
     std::string str =  stream.str();
 
-    //Write to log
-    log_file.open(log_name.c_str(),std::ios::out|std::ios::app);
+    //Write to log, only if constructor was called since static code can also cause issues before we are constructed
+    if (initialized) {
+        log_file.open(log_name.c_str(), std::ios::out | std::ios::app);
+        log_file << str;
+        log_file.close();
+    }
 
-    log_file<<str;
+    fprintf(stderr, "%s\n", str.c_str());
 
-    log_file.close();
-
-    fprintf(stderr, "%s", str.c_str());
-
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+    int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                              "Perimeter error",
                              str.c_str(),
                              nullptr);
+    if (err) {
+        SDL_PRINT_ERROR("Creating error window");
+    }
 
     //MessageBox(NULL,outmsg,prefix,attr | MB_TOPMOST | MB_SYSTEMMODAL);
 

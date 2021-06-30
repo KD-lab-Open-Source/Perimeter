@@ -4,7 +4,7 @@
 LightingParameters::LightingParameters()
 {
 	generate_time=0.1f;
-	texture_name="Resource\\Effect\\freeze.tga";
+	texture_name="RESOURCE\\Effect\\freeze.tga";
 	strip_width_begin=5;
 	strip_width_time=15;
 	strip_length=40;

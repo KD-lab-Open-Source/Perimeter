@@ -375,7 +375,7 @@ void CellLine::check()
 
 	iterator i;
 	FOR_EACH(*this, i)
-		xassert((i->l_cw && i->r_cw || !i->l_cw && !i->r_cw) && i->l_region && i->r_region);
+		xassert(((i->l_cw && i->r_cw) || (!i->l_cw && !i->r_cw)) && i->l_region && i->r_region);
 }
 
 void CellLine::checkAnalyzing()

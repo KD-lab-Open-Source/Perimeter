@@ -89,9 +89,9 @@ enum PRIMITIVETYPE
 
 struct sPolygon
 {
-	WORD p1,p2,p3;
-	WORD& operator[](int i){return *(i+&p1);}
-	inline void set(WORD i1,WORD i2,WORD i3){ p1=i1; p2=i2; p3=i3; }
+	int16_t p1,p2,p3;
+	int16_t& operator[](int i){return *(i+&p1);}
+	inline void set(int16_t i1,int16_t i2,int16_t i3){ p1=i1; p2=i2; p3=i3; }
 };
 
 struct sPtrVertexBuffer

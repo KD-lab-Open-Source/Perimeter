@@ -128,6 +128,8 @@ terUnitAttributeID terFilthSwarmCrow::GetUnitID()
 		return UNIT_ATTRIBUTE_FILTH_CROW;
 	case FILTH_SPOT_ID_A_CROW:
 		return UNIT_ATTRIBUTE_FILTH_A_CROW;
+    default:
+        break;
 	}
 	xassert(0);
 	return UNIT_ATTRIBUTE_FILTH_CROW;

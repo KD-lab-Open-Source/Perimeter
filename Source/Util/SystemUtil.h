@@ -84,10 +84,10 @@ inline void RestoreFocus() { SetFocus(hWndVisGeneric); }
 // ---   Ini file   ------------------------------
 class IniManager
 {
-	const char* fname_;
+	std::string fname_;
 	bool check_existence_;
 public:
-	IniManager(const char* fname, bool check_existence = true) { fname_ = fname; check_existence_ = check_existence; }
+	IniManager(const char* fname, bool check_existence = true);
 	const char* get(const char* section, const char* key);
 	void put(const char* section, const char* key, const char* val);
 	int getInt(const char* section, const char* key);

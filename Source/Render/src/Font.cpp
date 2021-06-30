@@ -91,7 +91,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	char signature[4];
 
 	int  real_height;
-	WORD char_min,char_max;
+    int16_t char_min,char_max;
 	rd.read(signature,4);
 	if(signature[0]!='f' || signature[1]!='o' || 
 		signature[2]!='n' || signature[3]!='t')
@@ -371,6 +371,7 @@ void str_add_slash(char* str)
 bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int h,bool silentErr)
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
+    xassert(0<ScreenY);
 
 	int height=(int)round((float)(h*ScreenY)/768.0f);
 	statement_height=h;

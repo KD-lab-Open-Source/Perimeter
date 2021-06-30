@@ -46,6 +46,8 @@ void terFrameChild::WayPointController()
 
 	if(DockPoint){
 		switch(dockMode()){
+            default:
+                break;
 			case DOCK_MODE_COMING:
 				DockPhase.Quant();
 				if(DockPhase.isEnd())
@@ -116,6 +118,9 @@ void terFrameChild::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_STOP:
 		clearAlarm();
 		break;
+		
+    default:
+        break;
 	}
 }
 

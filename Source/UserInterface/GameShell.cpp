@@ -289,11 +289,11 @@ windowClientSize_(1024, 768)
 		missionEditor_ = new MissionEditor;
 
 	if(!MainMenuEnable){
-		std::string name = "Resource\\";
+		std::string name = "RESOURCE\\";
 		std::string path;
 
 		if(check_command_line("save")){
-			path = "Resource\\Saves\\";
+			path = "RESOURCE\\Saves\\";
 			name = check_command_line("save");
 		}
 		if(check_command_line("mission")){
@@ -1151,7 +1151,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 			unsigned int pos = name.rfind("\\");
 			if(pos != std::string::npos)
 				name.erase(0, pos + 1);
-			name = std::string("Resource\\Saves\\") + name;
+			name = std::string("RESOURCE\\Saves\\") + name;
 			universalSave(name.c_str(), true);
 		}
 		break;

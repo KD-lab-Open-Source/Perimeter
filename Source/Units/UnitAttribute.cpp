@@ -707,7 +707,7 @@ FileTime::FileTime(const char* fname)
         return;
     }
     std::error_code error;
-    auto ftime = std::filesystem::last_write_time(fname, error);
+    auto ftime = std::filesystem::last_write_time(convert_path_resource(fname).c_str(), error);
     if (error) {
 #if PERIMETER_DEBUG
         fprintf(stderr, "Error reading %s: %d %s\n", fname, error.value(), error.message().c_str());

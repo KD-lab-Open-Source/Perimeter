@@ -56,7 +56,7 @@ typedef _FILETIME FILETIME;
 #define _O_CREAT O_CREAT
 #define _S_IREAD S_IREAD
 #define _S_IWRITE S_IWRITE
-#define _open open
+int _open(const char* path, int oflags, int sflags = 0);
 #define _write write
 #define _read read
 #define _lseek lseek
@@ -79,6 +79,10 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask);
 #define LR_LOADFROMFILE 1
 #define IMAGE_ICON 1
 #define IMAGE_CURSOR 2
+
+//These seem to be used as mask for storing state in game code
+#define MK_LBUTTON  0b1
+#define MK_RBUTTON 0b10
 
 struct SDL_Cursor;
 
@@ -152,6 +156,8 @@ void DeleteCriticalSection(CRITICAL_SECTION *m);
 
 #define WAIT_OBJECT_0 0
 
+typedef pthread_t THREAD_ID;
+
 HANDLE CreateEvent(int, bool manualReset, bool initialState, int);
 
 void DestroyEvent(HANDLE event);
@@ -164,7 +170,7 @@ DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds);
 
 DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds);
 
-HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, DWORD*);
+HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, THREAD_ID* tid);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

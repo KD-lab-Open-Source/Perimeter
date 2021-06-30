@@ -43,7 +43,7 @@ void cAnimChainNode::GetMatrix(float phase,MatXf &Matrix)
 		Matrix.trans().z=LinearInterpolate(a->mat.trans().z,b->mat.trans().z,f);
 */
 	}
-	VISASSERT(_finite(Matrix.rot()(1,1))&&_finite(Matrix.trans().x));
+	VISASSERT(finite(Matrix.rot()(1,1))&&finite(Matrix.trans().x));
 }
 
 void cAnimChainNode::GetVisible(float phase,int &visible)

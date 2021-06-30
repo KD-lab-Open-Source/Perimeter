@@ -182,7 +182,11 @@ static long ToDirectVolume(int vol)
 	return v;
 }
 
+#ifdef PERIMETER_EXODUS
+void* MpegThreadProc(void*)
+#else
 DWORD WINAPI MpegThreadProc(LPVOID lpParameter)
+#endif
 {
 	SetThreadPriority(hThread,THREAD_PRIORITY_TIME_CRITICAL);
 

@@ -168,7 +168,7 @@ HRESULT CWaveFile::ReadMMIO()
     else
     {
         // Read in length of extra bytes.
-        WORD cbExtraBytes = 0L;
+        int16_t cbExtraBytes = 0L;
         if( mmioRead( m_hmmio, (CHAR*)&cbExtraBytes, sizeof(WORD)) != sizeof(WORD) )
             return E_FAIL;
 

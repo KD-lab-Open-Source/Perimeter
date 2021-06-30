@@ -53,7 +53,7 @@ class ControlsConverter
 	std::string CtrlToDeclaration[CTRL_MAX];	// таблица перехода от команд в описание команд
 
 public:
-	ControlsConverter(){ LoadKeyNameTable(); }
+	ControlsConverter() = default;
 	void LoadKeyNameTable();
 	void LoadCtrlTable(const char *strMain);
 	void SaveControls(int ctrl, int key);

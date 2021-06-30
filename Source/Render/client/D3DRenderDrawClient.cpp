@@ -49,7 +49,7 @@ void FFDData::SetIB(sPolygon* pIndex)
 	int xs = 1 + xsize;
 	int ys = ysize;
 
-	WORD *ib=(WORD*)pIndex;
+    int16_t *ib=(int16_t*)pIndex;
 
 	for (int j = 0; j < ys; j++)
 	if (j & 1)

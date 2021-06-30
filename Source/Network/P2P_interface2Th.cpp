@@ -615,7 +615,7 @@ void PNetCenter::LLogicQuant()
 					if( (*m_clients.begin())->clientGameCRC != (*i)->clientGameCRC ) {
 						XBuffer buf;
 						buf < "Game of the player " <= (*i)->dpnidPlayer < "does not meet to game of the player " <= (*m_clients.begin())->dpnidPlayer;
-						xxassert(0 , buf);
+						xxassert(0 , buf.buf);
 					}
 			}
 			if(flag_ready){

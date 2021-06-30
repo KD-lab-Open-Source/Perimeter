@@ -7,6 +7,16 @@
 #include <SDL.h>
 #include <pwd.h>
 #include <string>
+#include <filesystem>
+#include <fcntl.h>
+#include "xutl.h"
+
+//Usual open but with path conversion
+int _open(const char* path, int oflags, int sflags) {
+    return open(convert_path(path).c_str(), oflags, sflags);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 unsigned int _controlfp(unsigned int newval, unsigned int mask) {
     return 0;
@@ -32,9 +42,10 @@ void SetCursor(HCURSOR cursor) {
 }
 
 HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT) {
-    SDL_Surface* surface = SDL_LoadBMP(name);
+    SDL_Surface* surface = SDL_LoadBMP(convert_path_resource(name).c_str());
     
     if (!surface) {
+        fprintf(stderr, "LoadImage %s\n", name);
         SDL_PRINT_ERROR("LoadImage SDL_LoadBMP");
     } else {
         if (type == IMAGE_CURSOR) {
@@ -57,10 +68,12 @@ HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
                               const char* returnBuffer, DWORD bufferSize, const char* filePath) {
     //TODO
+    return 0;
 }
 
 DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath) {
     //TODO
+    return 0;
 }
 
 bool GetComputerName(char* out, DWORD* size) {
@@ -128,32 +141,33 @@ int __iscsym(int c) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int _mkdir(const char* path) {
-    mkdir(path, 0);
+    std::filesystem::create_directories(path);
 }
 
 char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) {
-    bool malloced = absolutePath == nullptr;
-    if (malloced) {
-        absolutePath = static_cast<char*>(malloc(maxLength));
+    if (relativePath) {
+        bool malloced = absolutePath == nullptr;
+        if (malloced) {
+            absolutePath = static_cast<char*>(malloc(maxLength));
+        }
+        if (realpath(convert_path(relativePath).c_str(), absolutePath) != nullptr) {
+            return absolutePath;
+        }
+        if (malloced) {
+            free(absolutePath);
+        }
     }
-    if (realpath(relativePath, absolutePath) != nullptr) {
-        return absolutePath;
-    }
-    if (malloced) {
-        free(absolutePath);
-    }
-
+    return nullptr;
 }
 
 void _splitpath(const char* path, char*, char* dir, char* fname, char* ext) {
-    const char* fullpath = realpath(path, nullptr);
-    std::string fullpath_str = std::string() + fullpath;
+    std::string path_str = convert_path_posix(path);
     
     //Get dir and file
-    std::size_t lastpath_limiter = fullpath_str.find_last_of('/');
-    std::string dir_str = fullpath_str.substr(0, lastpath_limiter);
+    std::size_t lastpath_limiter = path_str.find_last_of('/');
+    std::string dir_str = path_str.substr(0, lastpath_limiter);
     SDL_strlcpy(dir, dir_str.c_str(), _MAX_DIR);
-    std::string file_str = fullpath_str.substr(lastpath_limiter, fullpath_str.length());
+    std::string file_str = path_str.substr(lastpath_limiter, path_str.length());
     
     //Get file name and ext
     std::size_t lastext_limiter = file_str.find_last_of('.');
@@ -161,8 +175,6 @@ void _splitpath(const char* path, char*, char* dir, char* fname, char* ext) {
     SDL_strlcpy(fname, filename_str.c_str(), _MAX_FNAME);
     std::string ext_str = file_str.substr(lastext_limiter, file_str.length());
     SDL_strlcpy(ext, ext_str.c_str(), _MAX_EXT);
-    
-    free((void*) fullpath);
 }
 
 void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext) {
@@ -214,8 +226,10 @@ DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t m
     return neosmart::WaitForMultipleEvents(reinterpret_cast<neosmart::neosmart_event_t*>(events), count, waitAll, milliseconds);
 }
 
-HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, DWORD*) {
-    pthread_t* tid = nullptr;
-    pthread_create(tid, nullptr, start_address, arg);
+HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, THREAD_ID* tid) {
+    if (pthread_create(tid, nullptr, start_address, arg) != 0) {
+        *tid = 0;
+        return nullptr;
+    }
     return neosmart::CreateEvent(true, false);
 }

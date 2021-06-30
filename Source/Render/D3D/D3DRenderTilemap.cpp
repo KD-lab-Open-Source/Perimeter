@@ -1660,7 +1660,7 @@ void sBumpTile::CalcPoint(cTileMap *TileMap)
 			gb_RenderDevice3D->GetIndexPool()->CreatePage(sBumpTile::index[cur].index,num2);
 
 			sPolygon* p=gb_RenderDevice3D->GetIndexPool()->LockPage(sBumpTile::index[cur].index);
-			memcpy(p,&(index[i][0]),num*sizeof(WORD));
+			memcpy(p,&(index[i][0]),num*sizeof(int16_t));
 			gb_RenderDevice3D->GetIndexPool()->UnlockPage(sBumpTile::index[cur].index);
 
 			sBumpTile::index[cur].nindex=num;

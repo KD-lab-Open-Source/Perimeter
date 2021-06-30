@@ -534,7 +534,7 @@ void CShellCursorManager::Load()
 		m_cursors.push_back(_c);
 	}
 
-	m_hCursorDefault = (HCURSOR)LoadImage(0, "resource\\cursors\\arrow.cur", IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);
+	m_hCursorDefault = (HCURSOR)LoadImage(0, "RESOURCE\\cursors\\arrow.cur", IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);
 
 	SetActiveCursor(arrow);	
 

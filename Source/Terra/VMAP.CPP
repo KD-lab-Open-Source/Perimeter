@@ -440,7 +440,7 @@ void vrtMap::prepare(char* name)
 	free(dir);
 
 	// Заполнение таблицы миров
-	prmFile.init(name);
+	prmFile.init(convert_path_resource(name).c_str());
 	maxWorld = atoi(prmFile.getAtom());
 	if(maxWorld < 1) ErrH.Abort("Empty world list");
 	int i;

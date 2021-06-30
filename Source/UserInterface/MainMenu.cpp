@@ -29,7 +29,7 @@ extern MpegSound gb_Music;
 extern LogStream fout;
 /////////////////////////////////////////////////////////////
 
-int terShowTips = IniManager("Perimeter.ini").getInt("Game","ShowTips");
+int terShowTips = 1;
 
 int _id_on;
 int _id_off;
@@ -241,6 +241,7 @@ STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, 
 STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	mapVector.clear();
+#ifndef PERIMETER_EXODUS
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hf = FindFirstFile( mask.c_str(), &FindFileData );
 	if(hf != INVALID_HANDLE_VALUE){
@@ -260,6 +261,7 @@ STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, con
 		} while(FindNextFile( hf, &FindFileData ));
 		FindClose( hf );
 	}
+#endif
 }
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect) {
 	if (mVect[index].worldID() == -1) {
@@ -2214,7 +2216,7 @@ void onMMDelSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 //load replay
 int delLoadReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_REPLAY_LIST);
-	DeleteFile( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
+	std::remove( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
 	loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
 	fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 	return 0;
@@ -2466,7 +2468,7 @@ void onMMDelSaveGameButton(CShellWindow* pWnd, InterfaceEventCode code, int para
 //save replay
 int delSaveReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_LIST);
-	DeleteFile( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
+    std::remove( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
 	loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
 	fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
 	return 0;
@@ -2555,14 +2557,7 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 			showMessageBox();
 		} else {
 			std::string path = REPLAY_PATH;
-			WIN32_FIND_DATA FindFileData;
-			HANDLE hf = FindFirstFile( path.c_str(), &FindFileData );
-			if (hf == INVALID_HANDLE_VALUE) {
-				CreateDirectory(path.c_str(), NULL);
-			} else {
-				xassert( (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 );
-				FindClose(hf);
-			}
+            _mkdir(path.c_str());
 			path += "\\";
 			path += input->getText();
 

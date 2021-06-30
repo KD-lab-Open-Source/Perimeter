@@ -59,6 +59,7 @@
 #else
 #define DestroyEvent CloseHandle
 #define strdup _strdup
+#define THREAD_ID DWORD
 #endif
 
 #endif // __TWEAKS_H__

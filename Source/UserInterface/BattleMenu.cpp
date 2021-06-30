@@ -33,7 +33,7 @@ STARFORCE_API void loadBattleList() {
 	if (battleMaps.empty()) {
 		loadMapVector(battleMaps, "RESOURCE\\BATTLE\\", "RESOURCE\\BATTLE\\*.spg");
 		defaultBattleMapCount = battleMaps.size();
-		FILE* file = fopen("RESOURCE\\BATTLE\\SCENARIO\\maplist.txt", "rt");
+		FILE* file = fopen(convert_path_resource("RESOURCE\\BATTLE\\SCENARIO\\maplist.txt").c_str(), "rt");
 		if (file) {
 			char* buff = new char[201];
 			while ( fgets(buff, 200, file) != NULL ) {
@@ -139,9 +139,13 @@ STARFORCE_API void onBattleMenuOpening() {
 std::string getSurvivalFileName(const std::string& fileName) {
 	std::string res = "RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg";
 
+#ifdef PERIMETER_EXODUS
+	return std::string(""); //TODO we should check if file exists and return res
+#else
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hf = FindFirstFile( res.c_str(), &FindFileData );
 	return (hf == INVALID_HANDLE_VALUE) ? std::string("") : res;
+#endif
 }
 
 STARFORCE_API void startBattle(int pos, CShellWindow* pWnd) {
