@@ -7,6 +7,7 @@ enum D3DXIMAGE_FILEFORMAT {
     D3DXIFF_BMP         = 0
 };
 
+#define D3DX_FILTER_NONE             1
 #define D3DX_FILTER_POINT            (2 << 0)
 #define D3DX_FILTER_TRIANGLE         (4 << 0)
 #define D3DX_FILTER_DITHER           (1 << 19)
@@ -21,6 +22,9 @@ HRESULT D3DXCreateTextureFromFileInMemory(IDirect3DDevice9 *device, const void *
 
 HRESULT D3DXCreateCubeTextureFromFile(IDirect3DDevice9 *device,
                                       const char *srcfile, struct IDirect3DCubeTexture9 **cube);
+
+HRESULT D3DXCreateCubeTextureFromFileInMemory(struct IDirect3DDevice9 *device,
+                                              const void *data, UINT datasize, struct IDirect3DCubeTexture9 **texture);
 
 HRESULT D3DXSaveSurfaceToFile(const char *destfile, D3DXIMAGE_FILEFORMAT destformat,
                                IDirect3DSurface9 *srcsurface, const PALETTEENTRY *srcpalette, const RECT *srcrect);

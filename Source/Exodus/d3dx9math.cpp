@@ -3,6 +3,8 @@
 #include <d3d9.h>
 #include "d3dx9math.h"
 
+//This file contains parts of WINE project source code for d3dx9math licensed under GPLv2
+
 //Implementation copied from WINE project d3dx9_36/math.c
 D3DXVECTOR3* D3DXVec3Normalize(D3DXVECTOR3* out, const D3DXVECTOR3* pv) {
     FLOAT norm = pv->norm();
