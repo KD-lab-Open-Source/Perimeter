@@ -101,7 +101,7 @@ HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
-                              const char* returnBuffer, DWORD bufferSize, const char* filePath);
+                              char* returnBuffer, DWORD bufferSize, const char* filePath);
 
 DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath);
 

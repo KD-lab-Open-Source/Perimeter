@@ -9,6 +9,8 @@
 #include <string>
 #include <filesystem>
 #include <fcntl.h>
+#include <SimpleIni.h>
+#include "xerrhand.h"
 #include "xutl.h"
 
 //Usual open but with path conversion
@@ -66,14 +68,31 @@ HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
-                              const char* returnBuffer, DWORD bufferSize, const char* filePath) {
-    //TODO
-    return 0;
+                              char* returnBuffer, DWORD bufferSize, const char* filePath) {
+    CSimpleIniA ini;
+    SI_Error rc = ini.LoadFile(filePath);
+    if (rc < 0) {
+        fprintf(stderr, "Error reading %s file: %d", filePath, rc);
+        return 0;
+    };
+    const char* val = ini.GetValue(section, key, defaultVal);
+    if (val) {
+        SDL_strlcpy(returnBuffer, val, bufferSize);
+    } else {
+        *returnBuffer = 0;
+    }
+    return 1;
 }
 
 DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath) {
-    //TODO
-    return 0;
+    CSimpleIniA ini;
+    SI_Error rc = ini.LoadFile(filePath);
+    if (rc < 0) {
+        fprintf(stderr, "Error writing %s file: %d", filePath, rc);
+        return 0;
+    };
+    ini.SetValue(section, key, value);
+    return 1;
 }
 
 bool GetComputerName(char* out, DWORD* size) {
