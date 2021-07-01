@@ -289,19 +289,20 @@ windowClientSize_(1024, 768)
 		missionEditor_ = new MissionEditor;
 
 	if(!MainMenuEnable){
-		std::string name = "RESOURCE\\";
+	    std::string resource_path = convert_path_resource("RESOURCE") + PATH_SEP;
+		std::string name = resource_path;
 		std::string path;
 
 		if(check_command_line("save")){
-			path = "RESOURCE\\Saves\\";
+			path = UserSingleProfile::getAllSavesDirectory();
 			name = check_command_line("save");
 		}
 		if(check_command_line("mission")){
-			path = std::string(MISSIONS_PATH) + "\\";
+			path = std::string(MISSIONS_PATH) + PATH_SEP;
 			name = check_command_line("mission");
 		}
 		if(mission_edit){
-			path = std::string(MISSIONS_PATH) + "\\";
+			path = std::string(MISSIONS_PATH) + PATH_SEP;
 			name = "";
 		}
 		if(check_command_line("open"))
@@ -312,8 +313,8 @@ windowClientSize_(1024, 768)
 		name = setExtention((path + name).c_str(), "spg");
 
 		if(!XStream(0).open(name.c_str())) {
-			if(openFileDialog(name, "Resourse\\Missions", "spg", "Mission Name")){
-				size_t pos = name.rfind("RESOURCE\\");
+			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){
+				size_t pos = name.rfind(resource_path);
 				if(pos != std::string::npos)
 					name.erase(0, pos);
 			}
@@ -1248,18 +1249,19 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'S':
 		if(!missionEditor()){
 			std::string name = CurrentMission.saveName();
-			unsigned int pos = name.rfind("\\");
+			unsigned int pos = name.rfind(PATH_SEP);
 			if(pos != std::string::npos)
 				name.erase(0, pos + 1);
-			name = std::string("RESOURCE\\Saves\\") + name;
+			name = UserSingleProfile::getAllSavesDirectory() + name;
 			universalSave(name.c_str(), true);
 		}
 		break;
 
 	case 'S' | KBD_CTRL: {
 		std::string saveName = CurrentMission.saveName();
-		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : "Resource\\Saves", "spg", "Mission Name")){
-			size_t pos = saveName.rfind("RESOURCE\\");
+		std::string savesDir = UserSingleProfile::getAllSavesDirectory();
+		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
+			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			universalSave(saveName.c_str(), false);
@@ -1270,8 +1272,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 	case 'O' | KBD_CTRL: {
 		std::string saveName = CurrentMission.saveName();
-		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : "Resource\\Saves", "spg", "Mission Name")){
-			size_t pos = saveName.rfind("RESOURCE\\");
+        std::string savesDir = UserSingleProfile::getAllSavesDirectory();
+		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
+			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			//Несколько кривой участок кода, не будет работать с HT

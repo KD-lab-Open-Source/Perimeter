@@ -137,15 +137,10 @@ STARFORCE_API void onBattleMenuOpening() {
 	setSlotClosed(3, true);
 }
 std::string getSurvivalFileName(const std::string& fileName) {
-	std::string res = "RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg";
-
-#ifdef PERIMETER_EXODUS
-	return std::string(""); //TODO we should check if file exists and return res
-#else
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hf = FindFirstFile( res.c_str(), &FindFileData );
-	return (hf == INVALID_HANDLE_VALUE) ? std::string("") : res;
-#endif
+    //Will return empty string if file wasn't indexed
+    std::string path = convert_path_resource(("RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg").c_str());
+    bool exists = !path.empty() && std::filesystem::exists(path);
+	return exists ? path : std::string();
 }
 
 STARFORCE_API void startBattle(int pos, CShellWindow* pWnd) {

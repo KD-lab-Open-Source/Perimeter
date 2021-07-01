@@ -75,6 +75,7 @@ class UserSingleProfile {
 		std::string getFileNameWithDifficulty(const std::string& fileName);
 
 		void deleteSave(const std::string& name);
+        static std::string getAllSavesDirectory();
 		std::string getSavesDirectory() const;
 
 		void setCurrentProfile(const std::string& name);
@@ -101,7 +102,7 @@ class UserSingleProfile {
 		std::vector<Profile> profiles;
 
 		std::string getProfileIniPath(int index) const {
-			return "RESOURCE\\SAVES\\" + profiles[index].dirName + "\\data";
+			return getAllSavesDirectory() + profiles[index].dirName + PATH_SEP + "data";
 		}
 
 		terUniverseInterfaceMessage result;

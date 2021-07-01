@@ -76,6 +76,7 @@ double clockf();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <vector>
+#include <filesystem>
 
 #ifndef _WIN32
 
@@ -129,6 +130,9 @@ void terminate_with_char(char* buffer, char chr, size_t max);
 
 //Replicate legacy behavior and add dot if not present
 void terminate_with_dot(char* buffer, size_t max);
+
+//Returns a cleaned directory_iterator path
+std::string get_dir_iterator_path(const std::filesystem::path& path);
 
 //Scans dir and creates resource paths cache
 void scan_resource_paths();

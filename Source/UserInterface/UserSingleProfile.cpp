@@ -3,6 +3,7 @@
 #include "UserSingleProfile.h"
 #include "GameShellSq.h"
 #include "Config.h"
+#include "xutil.h"
 
 UserSingleProfile::UserSingleProfile() :
 		currentMissionNumber(-1),
@@ -32,19 +33,20 @@ void UserSingleProfile::scanProfiles() {
 
 	int maxIndex = -1;
 
-#ifndef PERIMETER_EXODUS
-	//TODO we should find a way to scan profiles in cross platform way
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hf = FindFirstFile( "RESOURCE\\SAVES\\Profile*", &FindFileData );
-	if(hf != INVALID_HANDLE_VALUE){
-		do{
-			if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				profiles.push_back( Profile(FindFileData.cFileName) );
-			}
-		} while(FindNextFile( hf, &FindFileData ));
-		FindClose( hf );
-	}
-#endif
+	std::string saves_path_lwr = getAllSavesDirectory();
+    strlwr(saves_path_lwr.data());
+    for (const auto & entry : std::filesystem::directory_iterator(getAllSavesDirectory())) {
+        if (entry.is_directory()) {
+            std::string path = get_dir_iterator_path(entry.path());
+            std::string path_lwr = path;
+            strlwr(path_lwr.data());
+            size_t pos = path_lwr.rfind(saves_path_lwr);
+            if (pos == 0) {
+                path.erase(0, saves_path_lwr.length());
+            }
+            profiles.emplace_back(Profile(path));
+        }
+    }
 	for (int i = 0, s = profiles.size(); i < s; i++) {
 		loadProfile(i);
 		maxIndex = max(maxIndex, profiles[i].dirIndex);
@@ -80,55 +82,45 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	sprintf(ind, "Profile%d", i);
 	Profile newProfile(ind);
 	newProfile.name = name;
-	std::string root = "RESOURCE\\SAVES\\";
+	std::string root = getAllSavesDirectory();
 	std::string path = root + newProfile.dirName;
-	std::string origin = "RESOURCE\\SAVES\\DefaultPlayerData";
-	if( _mkdir(path.c_str()) == 0 ) {
-		path += "\\data";
-#ifndef PERIMETER_EXODUS
-		//TODO check how to copy file, maybe XStream? std?
-		if ( CopyFile(origin.c_str(), path.c_str(), FALSE) ) {
-			profiles.push_back( newProfile );
-			IniManager man( path.c_str(), true );
-			man.put("General", "name", name.c_str());
-			man.putInt("General", "lastMissionNumber", firstMissionNumber);
-			if (i == freeInds.size()) {
-				freeInds.push_back(true);
-			} else {
-				freeInds[i] = true;
-			}
-			loadProfile(profiles.size() - 1);
-		} else {
-			ErrH.Abort("Can't copy: ", XERR_USER, 0, origin.c_str());
-		}
-#endif
+	std::string origin = root + PATH_SEP + "DefaultPlayerData";
+    std::error_code error;
+    std::filesystem::create_directories(path, error);
+	if( error ) {
+        ErrH.Abort("Can't create profile directory: ", XERR_USER, error.value(), error.message().c_str());
 	} else {
-		ErrH.Abort("Can't create directory: ", XERR_USER, 0, path.c_str());
+        path = path + PATH_SEP + "data";
+        std::filesystem::copy_file(origin, path, error);
+        if (error) {
+            ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
+        } else {
+            profiles.push_back( newProfile );
+            IniManager man( path.c_str(), true );
+            man.put("General", "name", name.c_str());
+            man.putInt("General", "lastMissionNumber", firstMissionNumber);
+            if (i == freeInds.size()) {
+                freeInds.push_back(true);
+            } else {
+                freeInds[i] = true;
+            }
+            loadProfile(profiles.size() - 1);
+        }
 	}
 }
 
 bool UserSingleProfile::removeDir(const std::string& dir) {
-#ifdef PERIMETER_EXODUS
-    //TODO remove dir/files
-    return true;
-#else
-	WIN32_FIND_DATA findFileData;
-	std::string mask = dir + "*.*";
-	HANDLE hf = FindFirstFile( mask.c_str(), &findFileData );
-	if (hf != INVALID_HANDLE_VALUE) {
-		do {
-			if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
-				std::remove((dir + findFileData.cFileName).c_str());
-			}
-		} while(FindNextFile( hf, &findFileData ));
-		FindClose( hf );
-	}
-	return RemoveDirectory(dir.c_str());
-#endif
+    std::error_code error;
+    std::filesystem::path target_path = getAllSavesDirectory() + PATH_SEP + dir;
+    std::filesystem::remove_all(target_path, error);
+    if( error ) {
+        ErrH.Abort("Can't remove profile directory: ", XERR_USER, error.value(), error.message().c_str());
+    }
+    return !std::filesystem::exists(target_path);
 }
 
 void UserSingleProfile::removeProfile(int index) {
-	if (removeDir("RESOURCE\\SAVES\\" + profiles[index].dirName + "\\")) {
+	if (removeDir(profiles[index].dirName + PATH_SEP)) {
 		freeInds[profiles[index].dirIndex] = false;
 	}	
 
@@ -157,9 +149,12 @@ void UserSingleProfile::deleteSave(const std::string& name) {
 	std::remove( (fullName + ".sph").c_str() );
 }
 
+std::string UserSingleProfile::getAllSavesDirectory() {
+    return convert_path_resource("RESOURCE") + PATH_SEP + "Saves" + PATH_SEP;
+}
+
 std::string UserSingleProfile::getSavesDirectory() const {
-//	return "RESOURCE\\SAVES\\";
-	return "RESOURCE\\SAVES\\" + profiles[currentProfileIndex].dirName + "\\";
+	return getAllSavesDirectory() + profiles[currentProfileIndex].dirName + PATH_SEP;
 }
 
 void UserSingleProfile::loadProfile(int index) {

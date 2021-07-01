@@ -103,18 +103,27 @@ std::string convert_path_posix(const char* path) {
 
 std::unordered_map<std::string, std::string> resourcePaths;
 
+std::string get_dir_iterator_path(const std::filesystem::path& path) {
+    std::string path_str = path.string();
+    size_t pos = path_str.find("./");
+    if (pos != std::string::npos && pos == 0) {
+        path_str.erase(0, 2);
+    }
+    return path_str;
+}
+
 void scan_resource_paths() {
     resourcePaths.clear();
     for (const auto & entry : std::filesystem::recursive_directory_iterator(".")) {
-        if (entry.is_regular_file()) {
-            std::string path = std::string() + entry.path().string();
-            path.erase(0, 2);
-            strlwr(path.data());
-            if (startsWith(path, "resource")
-             || startsWith(path, "cache_font")
-             || startsWith(path, "scripts")
-             || endsWith(path, ".ini")) {
-                resourcePaths[path] = entry.path().string();
+        if (entry.is_regular_file() || entry.is_directory()) {
+            std::string path = get_dir_iterator_path(entry.path());
+            std::string path_lwr = path;
+            strlwr(path_lwr.data());
+            if (startsWith(path_lwr, "resource")
+             || startsWith(path_lwr, "cache_font")
+             || startsWith(path_lwr, "scripts")
+             || endsWith(path_lwr, ".ini")) {
+                resourcePaths[path_lwr] = path;
             }
         }
     }
@@ -135,7 +144,8 @@ std::string convert_path_resource(const char* path) {
     xxassert(!resourcePaths.empty(), "Resource paths cache is empty");
     std::string conv = convert_path_posix(path);
     strlwr(conv.data());
-    return resourcePaths[conv];
+    std::string result = resourcePaths[conv];
+    return result;
 #else
     return std::string(path);
 #endif
