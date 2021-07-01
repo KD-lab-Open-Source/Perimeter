@@ -12,7 +12,7 @@
 		ar & WRAP_OBJECT(flag_playerGameReady);
 		ar & WRAP_OBJECT(compAndUserID);
 		ar & WRAP_OBJECT(gameVersion);
-		string name = playerName;
+		std::string name = playerName;
 		ar & WRAP_OBJECT(name);
 		setName(name.c_str());
 		//ar & WRAP_OBJECT(playerName);

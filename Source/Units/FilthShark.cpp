@@ -52,7 +52,7 @@ void terFilthSwarmShark::Quant()
 
 void terFilthSwarmShark::SetFreeDestroy()
 {
-	vector<terFilthShark*>::iterator i_unit;
+	std::vector<terFilthShark*>::iterator i_unit;
 	FOR_EACH(units,i_unit)
 		(*i_unit)->MustDieFree();
 }

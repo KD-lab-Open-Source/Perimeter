@@ -206,7 +206,7 @@ void FieldDispatcher::setBorder(FieldCluster* cluster, const Vect2sVect& border)
 	clearCluster(cluster);
 	cluster->clear();
 
-	vector<FieldInterval> intervals;
+	std::vector<FieldInterval> intervals;
 	Vect2sVect::const_iterator i;
 	FOR_EACH(border, i)
 	{

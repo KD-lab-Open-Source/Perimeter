@@ -1539,7 +1539,7 @@ void terWeaponConductor::quant()
 		}
 		Vect3f v0;
 		aimController()->getGunPosition(v0);
-		vector<Vect3f> vect;
+		std::vector<Vect3f> vect;
 
 		if(fireEnabled()){
 			xassert(owner() && lighting_);
@@ -2135,7 +2135,7 @@ void terWeaponLighting::quant()
 			aimController()->getTargetingPosition(v0,v1);
 			v1 = target_->position();
 
-			vector<Vect3f> vect;
+			std::vector<Vect3f> vect;
 			vect.push_back(v1);
 			lighting_->Init(v0, vect);
 		}

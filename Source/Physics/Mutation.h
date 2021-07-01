@@ -13,7 +13,7 @@ class MutationProcess
 	int sound_started;
 	bool started; // logic time
 
-	typedef vector<RigidBody*> BodyList;
+	typedef std::vector<RigidBody*> BodyList;
 	BodyList source;
 	BodyList target;
 	MTSection lock_;
@@ -35,7 +35,7 @@ class MutationProcess
 		float calcZ();
 	};
 
-	typedef list<Sphere> SphereList;
+	typedef std::list<Sphere> SphereList;
 	SphereList spheres;
 
 	Sphere main_sphere;

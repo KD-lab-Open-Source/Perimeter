@@ -169,8 +169,8 @@ void HistoryScene::init(cVisGeneric* visGeneric, bool bw, bool addBlendAlphaMode
 void HistoryScene::done() {
 	stopAudio();
 
-	map <string, World*>::iterator it;
-	map <string, World*>::iterator end = interpreter->worlds->worlds.end();
+	std::map <std::string, World*>::iterator it;
+	std::map <std::string, World*>::iterator end = interpreter->worlds->worlds.end();
 	for (it = interpreter->worlds->worlds.begin(); it != end; it++) {
 		World* world = it->second;
 		if (world->getWorld3D()) {
@@ -186,8 +186,8 @@ void HistoryScene::done() {
 			}
 		}
 	}
-	map <string, Frame*>::iterator itFrames;
-	map <string, Frame*>::iterator endFrames = interpreter->frames->frames.end();
+	std::map <std::string, Frame*>::iterator itFrames;
+	std::map <std::string, Frame*>::iterator endFrames = interpreter->frames->frames.end();
 	for (itFrames = interpreter->frames->frames.begin(); itFrames != endFrames; itFrames++) {
 		Frame* frame = itFrames->second;
 		if (frame->getFrame3D()) {
@@ -253,8 +253,8 @@ void HistoryScene::updateObjects(float dt) {
 	Frame* nomadFrame = interpreter->getNomadFrame();
 
 	//worlds
-	map <string, World*>::iterator it;
-	map <string, World*>::iterator end = interpreter->worlds->worlds.end();
+	std::map <std::string, World*>::iterator it;
+	std::map <std::string, World*>::iterator end = interpreter->worlds->worlds.end();
 	for (it = interpreter->worlds->worlds.begin(); it != end; it++) {
 		World* world = it->second;
 		if (!world->getWorld3D()) {
@@ -296,7 +296,7 @@ void HistoryScene::updateObjects(float dt) {
 
 	//nomad path
 	if (interpreter->getNomadFrame()) {
-		const vector<World*>& path = interpreter->getNomadFrame()->getKnowledge().getPath();
+		const std::vector<World*>& path = interpreter->getNomadFrame()->getKnowledge().getPath();
 		for (int i = 0, s = path.size(); i < s; i++) {
 			path[i]->getWorld3D()->setState(WorldSphere::VISITED);
 			setupWorld3D( (WorldSphere*)path[i]->getWorld3D() );
@@ -312,8 +312,8 @@ void HistoryScene::updateObjects(float dt) {
 	}
 
 	//frames
-	map <string, Frame*>::iterator itFrames;
-	map <string, Frame*>::iterator endFrames = interpreter->frames->frames.end();
+	std::map <std::string, Frame*>::iterator itFrames;
+	std::map <std::string, Frame*>::iterator endFrames = interpreter->frames->frames.end();
 	for (itFrames = interpreter->frames->frames.begin(); itFrames != endFrames; itFrames++) {
 		Frame* frame = itFrames->second;
 		if (!frame->getFrame3D()) {
@@ -440,9 +440,9 @@ void HistoryScene::drawPopup() {
 	ClientToScreen(hWndVisGeneric, &pt);
 
 	if (w) {
-		string frameNames;
-		map <string, Frame*>::iterator it;
-		map <string, Frame*>::iterator end = interpreter->frames->frames.end();
+		std::string frameNames;
+		std::map <std::string, Frame*>::iterator it;
+		std::map <std::string, Frame*>::iterator end = interpreter->frames->frames.end();
 		for (it = interpreter->frames->frames.begin(); it != end; it++) {
 			Frame* frame = it->second;
 			if (frame->getCurrentWorld() == w) {
@@ -754,8 +754,8 @@ World* HistoryScene::traceWorld(const Vect2f& pos) {
 	float distMin = FLT_INF;
 	World* worldMin = 0;
 
-	map <string, World*>::iterator it;
-	map <string, World*>::iterator end = interpreter->worlds->worlds.end();
+	std::map <std::string, World*>::iterator it;
+	std::map <std::string, World*>::iterator end = interpreter->worlds->worlds.end();
 	for (it = interpreter->worlds->worlds.begin(); it != end; it++) {
 		World* world = it->second;
 		if (world->getWorld3D()) {

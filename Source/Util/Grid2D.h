@@ -61,7 +61,7 @@ public:
 // Шаблон для создания сетки из  векторов
 // Быстрее работает, но занимает больше памяти
 template<class T, int reserve_size = 0>
-class GridVector : public vector<T*>
+class GridVector : public std::vector<T*>
 {
 public:
 	GridVector() { if(reserve_size) this->reserve(reserve_size); }
@@ -70,7 +70,7 @@ public:
     {  // Ищем для удаления в обратную сторону,
         // т.к. более подвижные объекты лежат в конце.
         xassert(!this->empty()); // ������ �� ������
-		for(typename vector<T*>::iterator i = this->end() - 1; i >= this->begin(); --i)
+		for(typename std::vector<T*>::iterator i = this->end() - 1; i >= this->begin(); --i)
 			if(*i == obj)
 			{
                 this->erase(i); 
@@ -82,11 +82,11 @@ public:
 
 // Шаблон для создания сетки из списков
 template<class T>
-class GridSingleList : public slist<T*>
+class GridSingleList : public std::list<T*>
 {
 public:
 	void insert(T* obj) { this->push_front(obj); obj->incrInsertion(); }
-	void remove(T* obj) { obj->decrInsertion(); slist<T*>::remove(obj); }
+	void remove(T* obj) { obj->decrInsertion(); std::list<T*>::remove(obj); }
 };
 
 
@@ -480,7 +480,7 @@ public:
 				int x2 = xr >> 16;
 
 				if(x1 > x2)
-					swap(x1, x2);
+					std::swap(x1, x2);
 
 				while(x1 <= x2)
 					Cell(x1++, Y, op);
@@ -495,7 +495,7 @@ public:
 					int x2 = xr >> 16;
 
 					if(x1 > x2)
-						swap(x1, x2);
+						std::swap(x1, x2);
 
 					while(x1 <= x2)
 						Cell(x1++, Y, op);
@@ -518,7 +518,7 @@ public:
 					int x2 = xr >> 16;
 
 					if(x1 > x2)
-						swap(x1, x2);
+						std::swap(x1, x2);
 
 					while(x1 <= x2)
 						Cell(x1++, Y, op);
@@ -595,7 +595,7 @@ public:
 				int x2 = xr >> 16;
 
 				if(x1 > x2)
-					swap(x1, x2);
+					std::swap(x1, x2);
 
 				while(x1 <= x2)
 					if(!ConditionCell(x1++, Y, op))
@@ -611,7 +611,7 @@ public:
 					int x2 = xr >> 16;
 
 					if(x1 > x2)
-						swap(x1, x2);
+						std::swap(x1, x2);
 
 					while(x1 <= x2)
 						if(!ConditionCell(x1++, Y, op))
@@ -635,7 +635,7 @@ public:
 					int x2 = xr >> 16;
 
 					if(x1 > x2)
-						swap(x1, x2);
+						std::swap(x1, x2);
 
 					while(x1 <= x2)
 						if(!ConditionCell(x1++, Y, op))

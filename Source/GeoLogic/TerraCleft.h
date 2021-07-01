@@ -11,6 +11,7 @@
 
 #include "xmath.h"
 #include <map>
+#include <list>
 
 enum
 {
@@ -22,7 +23,7 @@ enum
 
 class CTerraCleft  
 {
-	typedef list<Vect2i> PointList;
+	typedef std::list<Vect2i> PointList;
 	PointList            m_points;
 
 	double  delta;
@@ -32,7 +33,7 @@ class CTerraCleft
 	int    width;
 public:
 
-	typedef list<CTerraCleft*> SiblingList;
+	typedef std::list<CTerraCleft*> SiblingList;
 	SiblingList m_siblings;
 	int processing;
 
@@ -62,11 +63,11 @@ enum
 
 class CTerraCleftSystem
 {
-	typedef list<CTerraCleft> CleftList;
-	typedef map<int, Vect2i>  NodeMap;
+	typedef std::list<CTerraCleft> CleftList;
+	typedef std::map<int, Vect2i>  NodeMap;
 
 	int           nSlips;
-	map<int, int> _xmp;
+	std::map<int, int> _xmp;
 
 	NodeMap       m_nodes;
 	CleftList     m_clefts;

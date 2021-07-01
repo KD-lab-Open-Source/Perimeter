@@ -62,11 +62,11 @@ protected:
 	NodeController node;
 
 	cLogicObject* logicObject_;
-	typedef list<NodeController> NodeControllerList;
+	typedef std::list<NodeController> NodeControllerList;
 	NodeControllerList nodeControllers_;
 
-	typedef list<terRealPhaseControllerType> PhaseListType;
-	typedef list<terSoundController> SoundControllerList;
+	typedef std::list<terRealPhaseControllerType> PhaseListType;
+	typedef std::list<terSoundController> SoundControllerList;
 
 	PhaseListType PhaseControlList;
 	SoundControllerList soundControllers_;
@@ -276,7 +276,7 @@ struct terInterpolationStructure : terInterpolationReal
 
 struct terInterpolationConnection : terInterpolationStructure
 {
-	typedef vector<cObjectNode*> connections_container_t;
+	typedef std::vector<cObjectNode*> connections_container_t;
 	connections_container_t ConnectionPoints;
 
 	terInterpolationConnection(terUnitBase* owner) : terInterpolationStructure(owner) {}

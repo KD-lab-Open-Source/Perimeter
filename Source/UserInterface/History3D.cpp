@@ -162,7 +162,7 @@ void Frame3D::createObj(cScene* scene) {
 		frameObj->Release();
 		frameObj = 0;
 	}
-	string pathName;
+	std::string pathName;
 	switch (race) {
 		case 0:
 			//empire

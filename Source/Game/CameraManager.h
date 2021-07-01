@@ -132,7 +132,7 @@ private:
 
 	CameraCoordinate*    cameraSavePoints[5];
 
-	typedef vector<CameraCoordinate> CoordList;
+	typedef std::vector<CameraCoordinate> CoordList;
 	CoordList path_;
 	int replayIndex_;
 	int replayIndexMax_;

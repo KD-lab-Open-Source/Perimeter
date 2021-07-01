@@ -49,8 +49,8 @@ class ControlsConverter
 {
 	unsigned char KeyToCtrl[2048];		// таблица перехода от кнопок в команды
 	sKey CtrlToKey[CTRL_MAX];		// таблица перехода от команд к кнопкам
-	string KeyToName[2048];				// таблица перехода от кнопок в имена кнопок
-	string CtrlToDeclaration[CTRL_MAX];	// таблица перехода от команд в описание команд
+	std::string KeyToName[2048];				// таблица перехода от кнопок в имена кнопок
+	std::string CtrlToDeclaration[CTRL_MAX];	// таблица перехода от команд в описание команд
 
 public:
 	ControlsConverter(){ LoadKeyNameTable(); }
@@ -58,8 +58,8 @@ public:
 	void LoadCtrlTable(const char *strMain);
 	void SaveControls(int ctrl, int key);
 
-	const string& declaration(int ctrl) const { return CtrlToDeclaration[ctrl]; }
-	const string& name(int key) const { return KeyToName[key]; }
+	const std::string& declaration(int ctrl) const { return CtrlToDeclaration[ctrl]; }
+	const std::string& name(int key) const { return KeyToName[key]; }
 	unsigned char control(int key) const { return KeyToCtrl[key]; }
 	const sKey& key(int ctrl) const { return CtrlToKey[ctrl]; }
 };

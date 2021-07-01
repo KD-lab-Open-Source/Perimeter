@@ -11,8 +11,8 @@ struct sVertexLine
 class cLine3d : public cAnimUnkObj
 {
 protected:
-	vector<sVertexLine>		Vertex;
-	sBox6f					Bound;
+	std::vector<sVertexLine>	Vertex;
+	sBox6f						Bound;
 	MTDECLARE(lock);
 public:
 

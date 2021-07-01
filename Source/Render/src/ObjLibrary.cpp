@@ -35,7 +35,7 @@ bool ResourceIsZIP()
 
 class CM3DError
 {
-	string fname;
+	std::string fname;
 public:
 	void SetName(const char* a_fname){fname=a_fname;}
 	cVisError& operator ()(){return VisError<<"Error LoadM3D() file: "<<fname.c_str()<<"\r\n";}
@@ -134,8 +134,8 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 			AnimationMesh=ObjectMesh->AnimationMeshLibrary[0];
 	sVertexMesh	&Vert=AnimationMesh->Vertex;
 	sFaceMesh &Face=AnimationMesh->Face;
-	vector<Vect2f> Texel;
-	vector<Vect3f> Vertex(Vert.length());
+	std::vector<Vect2f> Texel;
+	std::vector<Vect3f> Vertex(Vert.length());
 	// импорт пространственных координат
 	int k;
 	for(k=0;k<Vertex.size();k++) 
@@ -145,7 +145,7 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 	}
 
 	sVertexNormalMesh	&Norm=AnimationMesh->VertexNormal;
-	vector<Vect3f> Normal(Norm.length());
+	std::vector<Vect3f> Normal(Norm.length());
 	for(k=0;k<Normal.size();k++) 
 	{
 		Normal[k].set(Norm[k][0],Norm[k][1],Norm[k][2]);
@@ -156,7 +156,7 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 
 	if(Face.length()<=0||Vert.length()<3)
 		m3derror()<<" Object "<<ObjectMesh->name.c_str()<<" don't has polygons"<<VERR_END;
-	vector<sPolygon> Polygon(Face.length()),TexPoly;
+	std::vector<sPolygon> Polygon(Face.length()),TexPoly;
 	for(k=0;k<Face.length();k++)
 		Polygon[k].set(Face[k][0],Face[k][1],Face[k][2]);
 	if(AnimationMesh->ChannelMappingLibrary.length())
@@ -722,7 +722,7 @@ static void ParseNodeEffect(cObjectNode *CurrentNode)
 	while(is_name_char(*end))
 		end++;
 
-	string file_name(cur,end-cur);
+	std::string file_name(cur,end-cur);
 	EffectLibrary* lib=gb_VisGeneric->GetEffectLibrary(file_name.c_str(),true);
 
 	if(!lib)
@@ -741,7 +741,7 @@ static void ParseNodeEffect(cObjectNode *CurrentNode)
 	while(is_name_char(*end))
 		end++;
 
-	string effect_name(cur,end-cur);
+	std::string effect_name(cur,end-cur);
 	CurrentNode->GetAnimChannel()->effect_key=lib->Get(effect_name.c_str());
 	if(!CurrentNode->GetAnimChannel()->effect_key)
 	{

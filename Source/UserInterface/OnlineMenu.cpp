@@ -17,13 +17,13 @@ extern MpegSound gb_Music;
 
 extern bool menuChangingDone;
 
-extern vector<MissionDescription> multiplayerMaps;
+extern std::vector<MissionDescription> multiplayerMaps;
 extern MissionDescription missionToExec;
 extern BGScene bgScene;
 
 //unsigned int selectedLanGameID = 0;
 //GUID selectedLanGameID;
-void checkMissionDescription(int index, vector<MissionDescription>& mVect);
+void checkMissionDescription(int index, std::vector<MissionDescription>& mVect);
 
 //online menu
 void onMMOnlineGameList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
@@ -302,7 +302,7 @@ void setOnlineName(CShellPushButton* btn, int number) {
 
 		btn->Show(true);
 		btn->Enable(false);
-		btn->setText(string(currMission.playersData[number].name()));
+		btn->setText(std::string(currMission.playersData[number].name()));
 	} else {
 		btn->Show(false);
 	}

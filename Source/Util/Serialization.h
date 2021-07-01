@@ -20,7 +20,7 @@ static bool endsWith(const std::string& str, const std::string& suffix)
 
 //Previously typeid(CLASS_T).name() was used which is not portable, so we attempt to ignore the extra struct/class
 
-static void extract_type_name(string& name) {
+static void extract_type_name(std::string& name) {
     if (startsWith(name, "struct ")) {
         name.erase(0, 7);
     } else if (startsWith(name, "class ")) {
@@ -30,8 +30,8 @@ static void extract_type_name(string& name) {
 
 
 template<class CLASS_T>
-static string get_type_id() {
-    string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
+static std::string get_type_id() {
+	std::string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
 #ifdef _MSC_VER
     //Remove type name since MSVC adds it 
     extract_type_name(name);
@@ -144,14 +144,14 @@ protected:
 	}
 
 private:
-	typedef map<string, T> NameToObject;
-	typedef map<T, string> ObjectToName;
+	typedef std::map<std::string, T> NameToObject;
+	typedef std::map<T, std::string> ObjectToName;
 
 	NameToObject nameToObject_;
 	ObjectToName objectToName_;
 
-	string comboList_;
-	string typeName_;
+	std::string comboList_;
+	std::string typeName_;
 };
 
 /////////////////////////////////////////////////
@@ -195,8 +195,8 @@ public:
 		return (Enum)0;
 	}
 
-	string nameCombination(int bitVector) const {
-		string value;
+	std::string nameCombination(int bitVector) const {
+		std::string value;
 		for(typename KeyToName::const_iterator i = keyToName.begin(); i != keyToName.end(); ++i)
 			if((bitVector & i->first) == i->first){
 				bitVector &= ~i->first;
@@ -207,8 +207,8 @@ public:
 		return value;
 	}
 
-	string nameAltCombination(int bitVector) const {
-		string value;
+	std::string nameAltCombination(int bitVector) const {
+		std::string value;
 		for(typename KeyToName::const_iterator i = keyToNameAlt.begin(); i != keyToNameAlt.end(); ++i)
 			if((bitVector & i->first) == i->first){
 				bitVector &= ~i->first;
@@ -266,18 +266,18 @@ private:
 		unsigned int bitsNumber_;
 	};
 
-	typedef map<Key, string> KeyToName;
-	typedef map<string, int> NameToKey;
+	typedef std::map<Key, std::string> KeyToName;
+	typedef std::map<std::string, int> NameToKey;
 
 	KeyToName keyToName;
 	KeyToName keyToNameAlt;
 	NameToKey nameToKey;
 	NameToKey nameAltToKey;
 
-	string comboList_;
-	string comboListAlt_;
+	std::string comboList_;
+	std::string comboListAlt_;
 
-	string typeName_;
+	std::string typeName_;
 };
 
 /////////////////////////////////////////////////
@@ -330,18 +330,18 @@ public:
 	PrmString& operator=(const char* value) { 
 		if(value) { value_ = value; zeroPointer_ = false; } else { value_ = ""; zeroPointer_ = true; } return *this; 
 	}
-	PrmString& operator=(const string& value) { 
+	PrmString& operator=(const std::string& value) {
 		value_ = value; zeroPointer_ = false; return *this; 
 	}
 	operator const char*() const { 
 		return !zeroPointer_ ? value_.c_str() : 0; 
 	}
 
-	string& value() { return value_; }
-	const string& value() const { return value_; }
+	std::string& value() { return value_; }
+	const std::string& value() const { return value_; }
 
 private:
-	string value_;
+	std::string value_;
 	bool zeroPointer_;
 };
 
@@ -356,16 +356,16 @@ class CustomString
 public:
 	CustomString(CustomValueFunc customValueFunc, const char* value = "") : customValueFunc_(customValueFunc) { (*this) = value; }
 	CustomString& operator=(const char* value) { if(value) { value_ = value; zeroPointer_ = false; } else { value_ = ""; zeroPointer_ = true; } return *this; }
-	CustomString& operator=(const string& value) { value_ = value; zeroPointer_ = false; return *this; }
+	CustomString& operator=(const std::string& value) { value_ = value; zeroPointer_ = false; return *this; }
 	operator const char*() const { return !zeroPointer_ ? value_.c_str() : 0; }
 	
 	CustomValueFunc customValueFunc() const { return customValueFunc_; }
 
-	string& value() { return value_; }
-	const string& value() const { return value_; }
+	std::string& value() { return value_; }
+	const std::string& value() const { return value_; }
 
 private:
-	string value_;
+	std::string value_;
 	bool zeroPointer_;
 	CustomValueFunc customValueFunc_;
 };
@@ -378,17 +378,17 @@ class ComboListString
 public:
 	ComboListString(const char* comboList, const char* value = "") : comboList_(comboList), value_(value) {}
 	ComboListString& operator=(const char* value) { value_ = value; return *this; }
-	ComboListString& operator=(const string& value) { value_ = value; return *this; }
+	ComboListString& operator=(const std::string& value) { value_ = value; return *this; }
 
 	operator const char*() const { return value_.c_str(); }
 	const char* comboList() const { return comboList_; }
 	void comboList(const char* _comboList) { comboList_ = _comboList; }
 
-	string& value() { return value_; }
-	const string& value() const { return value_; }
+	std::string& value() { return value_; }
+	const std::string& value() const { return value_; }
 
 private:
-	string value_;
+	std::string value_;
 	const char* comboList_;
 };
 
@@ -447,7 +447,7 @@ public:
 	}
 
 	SerializerBase& find(const char* name) {
-	    string input = name;
+		std::string input = name;
         extract_type_name(input);
 		typename Map::iterator i = map_.find(input.c_str());
 		if(i == map_.end()){
@@ -457,7 +457,7 @@ public:
 		return *i->second;
 	}
 
-	typedef map<string, SerializerBase*> Map;
+	typedef std::map<std::string, SerializerBase*> Map;
 
     Map getMap() const
     {

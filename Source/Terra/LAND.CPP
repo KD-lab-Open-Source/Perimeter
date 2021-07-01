@@ -767,8 +767,8 @@ void vrtMap::renderQuant()
 
 	int listSize=renderAreas.size();
 	if(!listSize) return;
-	vector<sRect> RAVec(listSize);
-	list<sRect>::iterator q;
+	std::vector<sRect> RAVec(listSize);
+	std::list<sRect>::iterator q;
 	int i;
 	int j,k;
 	for(i=0, q=renderAreas.begin(); i<listSize; i++, q++){
@@ -781,13 +781,13 @@ void vrtMap::renderQuant()
 		int dy=(*q).dy;
 		RAVec[i].dy=dy;
 	}
-	sort(RAVec.begin(), RAVec.end());
+	std::sort(RAVec.begin(), RAVec.end());
 	//for(i=listSize-1; i>=0; i--){}
 
-	vector<xSort> XSVec;
+	std::vector<xSort> XSVec;
 	XSVec.reserve(100);
-	vector<optRA> optimizeRAS;
-	vector<optRA>::iterator op;
+	std::vector<optRA> optimizeRAS;
+	std::vector<optRA>::iterator op;
 	optimizeRAS.reserve(10);
 	int begRectCS=0, endRectCS=0;
 	int curY=RAVec[0].y;

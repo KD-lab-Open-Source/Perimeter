@@ -233,7 +233,7 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 			gameSpyInterface=new GameSpyInterface(this);
 			GameSpyInterface::e_connectResult gsResult;
 			if(playerName==0){
-				string s=IniManager("Network.ini").get("General", "PlayerName");
+				std::string s=IniManager("Network.ini").get("General", "PlayerName");
 				gsResult=gameSpyInterface->Connect(s.c_str());
 			}
 			else {
@@ -565,7 +565,7 @@ void PNetCenter::HandlerInputNetCommand()
 			{
 				netCommand4C_Pause ncp(in_ClientBuf);
 				if(ncp.pause){
-					string s;
+					std::string s;
 					for(int i=0; i<NETWORK_PLAYERS_MAX; i++){
 						if(ncp.playersIDArr[i]!=netCommand4C_Pause::NOT_PLAYER_ID) {
 							clientMissionDescription.getPlayerName(ncp.playersIDArr[i], s);
@@ -745,7 +745,7 @@ void PNetCenter::P2PIQuant()
 				}
 			}
 			else if(clocki() > lastTimeServerPacket+TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION){
-				string s;
+				std::string s;
 				clientMissionDescription.getAllOtherPlayerName(s);
 				gameShell->showConnectFailedInGame(s);
 				clientInPacketPause=true;
@@ -849,7 +849,7 @@ void PNetCenter::GameIsReady(void)
 }
 
 
-vector<sGameHostInfo*>& PNetCenter::getGameHostList()
+std::vector<sGameHostInfo*>& PNetCenter::getGameHostList()
 {
 	if(gameSpyInterface) return gameSpyInterface->gameHostList;
 	return gameHostList;
@@ -864,13 +864,13 @@ void PNetCenter::refreshLanGameHostList()
 	char txtBufGameName[MAX_PATH];
 	//char textBuffer[MAX_PATH];
 	int curTime=clocki();
-	vector<string>::iterator k;
+	std::vector<std::string>::iterator k;
 	for(k=needHostList.begin(); k!=needHostList.end(); k++){
 		GUID curguid=zeroGUID;
-		curguid.Data1=distance(needHostList.begin(), k);
+		curguid.Data1= std::distance(needHostList.begin(), k);
 		gameHostList.push_back(new sGameHostInfo( curguid, k->c_str(), "", "", sGameStatusInfo()));
 	}
-	vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
+	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end();){
 		if((curTime - (*p)->timeLastRespond) > MAX_TIME_INTERVAL_HOST_RESPOND ) {
 			delete *p;

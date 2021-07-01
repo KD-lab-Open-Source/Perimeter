@@ -21,7 +21,7 @@ cLib3dx::~cLib3dx()
 
 cStatic3dx* cLib3dx::GetElement(const char* fname_,const char* TexturePath,bool is_logic)
 {
-	string fname(fname_);
+	std::string fname(fname_);
 	strupr((char*)fname.c_str());
 	ObjectMap::iterator it=objects.find(fname);
 	if(it!=objects.end())

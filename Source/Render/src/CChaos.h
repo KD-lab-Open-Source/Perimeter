@@ -69,7 +69,7 @@ protected:
 class CBox:public cIUnkObj
 {
 	int			box_face;
-	vector<cTexture*> pBox;
+	std::vector<cTexture*> pBox;
 
 	int num_vertex;
 	int num_index;

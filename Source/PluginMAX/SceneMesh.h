@@ -136,8 +136,8 @@ struct sNodeObject
 {
 	unsigned int			ID;
 	unsigned int			type;
-	string					name;
-	string					parent;
+	std::string					name;
+	std::string					parent;
 	sAnimationVisibility	AnimationVisibility;
 	sAnimationPosition		AnimationPosition;
 	sAnimationRotation		AnimationRotation;
@@ -204,7 +204,7 @@ struct sLightObject : public sNodeObject
 {
 	int						idObject;
 	int						UseGlobal;
-	string					TexProj;							// имя текстуры 
+	std::string				TexProj;							// имя текстуры 
 	float					OfsMatrix[12];
 	cAnimationLightLibrary	AnimationLightLibrary;
 
@@ -218,7 +218,7 @@ struct sLightObject : public sNodeObject
 struct sCameraObject : public sNodeObject
 {
 	int						idObject;
-	string					TexProj;							// имя текстуры 
+	std::string				TexProj;							// имя текстуры 
 
 	sCameraObject() : sNodeObject(NODEOBJECT_CAMERA){ idObject=0; }
 	~sCameraObject()								{ Release(); }
@@ -230,7 +230,7 @@ struct sCameraObject : public sNodeObject
 struct sSubTexmap
 {
 	unsigned int		ID;							// идентификатор текстуры 
-	string				name;						// имя текстуры 
+	std::string			name;						// имя текстуры 
 	int					ChannelNumber;				// номер канала текстурной генерации
 	sAnimationMatrix	MatrixAnim;
 	sSubTexmap()									{ Release(); }
@@ -255,8 +255,8 @@ struct sMaterialObject
 {
 public:
 	unsigned int				ID;					// порядковый номер в библиотеке
-	string						name;				// имя материала
-	string						parent;				// родитель, тот который содержит этот материал (MultiSubObjectMaterial)
+	std::string					name;				// имя материала
+	std::string					parent;				// родитель, тот который содержит этот материал (MultiSubObjectMaterial)
 	int							NumberSubObject;	// число материалов в данном, которые будут ссылаться через parent на данный
 	int							Shading;			// тип материала
 	int							SelfIllumColorOn;
@@ -332,7 +332,7 @@ typedef cBaseMeshPointerLibrary <sLodObject> cLodObjectLibrary;
 struct sChannelAnimation
 {
 	unsigned int				ID;
-	string						name;
+	std::string					name;
 	int							FirstFrame;
 	int							LastFrame;
 	int							FrameSpeed;
@@ -354,7 +354,7 @@ class cMeshScene
 {
 public:
 	unsigned int				ID;
-	string						name;
+	std::string					name;
 	float						bump_scale;
 	cChannelAnimationLibrary	ChannelLibrary;
 	

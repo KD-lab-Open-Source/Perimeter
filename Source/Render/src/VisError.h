@@ -9,9 +9,9 @@ public:
 	cVisError& operator << (int a);
 	cVisError& operator << (float a);
 	cVisError& operator << (const char *a);
-	cVisError& operator << (string& a);
+	cVisError& operator << (std::string& a);
 private:
-	string buf;
+	std::string buf;
 };
 extern cVisError VisError;
 

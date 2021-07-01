@@ -399,7 +399,7 @@ void terBuilding::showDebugInfo()
 	terUnitReal::showDebugInfo();
 	
 	if(show_building_status){
-		string str;
+		std::string str;
 		if(buildingStatus() & BUILDING_STATUS_CONSTRUCTED)
 			str += "Cs ";
 		if(buildingStatus() & BUILDING_STATUS_PLUGGED_IN)
@@ -657,7 +657,7 @@ void terBuildingPowered::checkConnection()
 	xassert(attr().InstallBound);
 
 	MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-	vector<Vect2i> points(attr().BasementPoints.size());
+	std::vector<Vect2i> points(attr().BasementPoints.size());
 	for(int i = 0; i < points.size(); i++)
 		points[i] = mx2*attr().BasementPoints[i];
 

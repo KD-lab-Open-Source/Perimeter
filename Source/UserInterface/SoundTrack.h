@@ -13,8 +13,8 @@ public:
 #include "SoundTrack-1251.inl"
 
 private:
-	vector<string> fileNames; 
-	string fileName_; 
+	std::vector<std::string> fileNames;
+	std::string fileName_;
 	bool randomChoice;
 	mutable int index;
 };

@@ -5,7 +5,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 //			String Util
 ///////////////////////////////////////////////////////////////////////////////////////
-inline void replace(string& s, const char*src, const char* dest)
+inline void replace(std::string& s, const char*src, const char* dest)
 {
 	int pos = 0;
 	while(1){
@@ -17,7 +17,7 @@ inline void replace(string& s, const char*src, const char* dest)
 		}
 }
 
-inline string& expand_spec_chars(string& s)
+inline std::string& expand_spec_chars(std::string& s)
 {
 	replace(s, "\\", "\\\\");
 	replace(s, "\n", "\\n");
@@ -29,7 +29,7 @@ inline string& expand_spec_chars(string& s)
 	return s;
 }
 
-inline string& collapse_spec_chars(string& s)
+inline std::string& collapse_spec_chars(std::string& s)
 {
 	int pos = 0;
 	while(1){
@@ -115,7 +115,7 @@ bool XPrmOArchive::close()
 void XPrmOArchive::saveStringEnclosed(const char* prmString)
 {
 	if(prmString){
-		string s1 = prmString;
+		std::string s1 = prmString;
 		expand_spec_chars(s1);
 		buffer_ < "\"" < s1.c_str() < "\"";
 	}
@@ -272,7 +272,7 @@ void XPrmIArchive::passString(const char* token)
 {
 	const char* s = getToken();
 	xassert(s);
-	string name = s;
+	std::string name = s;
 	releaseToken();
 	if(name != token){
 		XBuffer msg;
@@ -283,7 +283,7 @@ void XPrmIArchive::passString(const char* token)
 	}
 }
 
-bool XPrmIArchive::loadString(string& str)
+bool XPrmIArchive::loadString(std::string& str)
 {
 	const char* s = getToken();
 	xassert(s);
@@ -311,7 +311,7 @@ void XPrmIArchive::skipValue()
 	for(;;){
 		const char* s = getToken();
 		xassert(s);
-		string str = s;
+		std::string str = s;
 		releaseToken();
 		if(str == "{")
 			++open_counter;
@@ -327,7 +327,7 @@ void XPrmIArchive::skipValue()
 bool XPrmIArchive::findSection(const char* sectionName)
 {
 	for(int i = 0; i < 2; i++){
-		string name;
+		std::string name;
 		loadString(name);
 		if(name == sectionName){
 			putToken();
@@ -353,7 +353,7 @@ bool XPrmIArchive::findSection(const char* sectionName)
 
 int XPrmIArchive::line() const 
 {
-	return 1 + count((const char*)buffer_, (const char*)buffer_ + buffer_.offset, '\n');
+	return 1 + std::count((const char*)buffer_, (const char*)buffer_ + buffer_.offset, '\n');
 }
 
 

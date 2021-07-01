@@ -1355,7 +1355,7 @@ terUnitBase* terPlayer::findPathToTarget(DefenceMap& defenceMap, int unitClass, 
 	return defenceMap.findPathToTarget(nearPosition, targets, path);
 }
 
-bool terPlayer::findPathToPoint(DefenceMap& defenceMap, const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i>& out_path)
+bool terPlayer::findPathToPoint(DefenceMap& defenceMap, const Vect2i& from_w, const Vect2i& to_w, std::vector<Vect2i>& out_path)
 {
 	return defenceMap.findPathToPoint(from_w, to_w, out_path);
 }
@@ -1501,7 +1501,7 @@ TriggerChain* terPlayer::getStrategyToEdit()
 	//if(triggerChains_.size() == 1)
 	//	return &triggerChains_.front();
 
-	vector<const char*> items;
+	std::vector<const char*> items;
 	TriggerChains::iterator it;
 	FOR_EACH(triggerChains_, it)
 		items.push_back(strlen(it->name) ? (const char*)it->name : "xxx");

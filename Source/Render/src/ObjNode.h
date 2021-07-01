@@ -23,8 +23,8 @@ enum eAttributeObjectNode
 
 struct sBound
 {
-	vector<Vect3f>		Vertex;
-	vector<sPolygon>	Poly;
+	std::vector<Vect3f>		Vertex;
+	std::vector<sPolygon>	Poly;
 };
 
 class cObjectNode;
@@ -155,7 +155,7 @@ protected:
 
 	class AllAnotherMaterial
 	{
-		vector<AnotherMaterial> materials;
+		std::vector<AnotherMaterial> materials;
 	public:
 		cTexture *pTex1,*pTex2;
 
@@ -169,10 +169,10 @@ protected:
 
 	virtual void SetCopy(cIUnkObj* UObj);
 
-	void AddChild(vector<cObjectNode*>& all_child);
+	void AddChild(std::vector<cObjectNode*>& all_child);
 
 	int GetNumGroup();
-	void SetGroup(int& cur_num,vector<cObjectGroup>& groups,cObjectGroup* cur_group);
+	void SetGroup(int& cur_num, std::vector<cObjectGroup>& groups,cObjectGroup* cur_group);
 	void UpdateMatrix();
 
 	virtual void AddShadow(MatXf mat,class cMeshTri* Tri);
@@ -205,7 +205,7 @@ public:
 struct cMeshSortingBank
 {
 	cMeshBank*	pBank;
-	vector<cMeshSortingPhase> phase;
+	std::vector<cMeshSortingPhase> phase;
 };
 
 class cObjectNodeRoot : public cObjectNode,public cEmitter3dObject
@@ -213,27 +213,27 @@ class cObjectNodeRoot : public cObjectNode,public cEmitter3dObject
 protected:
 	friend class cObjLibrary;
 	AllAnotherMaterial* AnnoterRoot;
-	string				fname;		// имя файла из которого загружен
+	std::string				fname;		// имя файла из которого загружен
 	sBound*				Base;
 	Vect3f				Scale;	// масштаб
-	vector<cObjectNode*> all_child;
-	vector<cObjMesh*>	 mesh_child;
-	vector<cObjLight*>	 light_child;
+	std::vector<cObjectNode*> all_child;
+	std::vector<cObjMesh*>	 mesh_child;
+	std::vector<cObjLight*>	 light_child;
 	double			MaterialAnimTime;
 
-	vector<cObjectGroup> groups;
+	std::vector<cObjectGroup> groups;
 
 	sColor4f			Diffuse;
 	sColor4f			Specular;
 	sColor4f			Ambient;
 	sColor4f			SkinColor;
 
-	vector<cMeshSortingBank*> DrawSort;
+	std::vector<cMeshSortingBank*> DrawSort;
 
 	cObjectNodeRoot* RootLod;
 
 	sColor4f LightIntensity;
-	vector<class cUnkLight*> point_light;
+	std::vector<class cUnkLight*> point_light;
 
 	Observer observer;
 public:
@@ -276,14 +276,14 @@ public:
 
 	virtual void Update();
 
-	inline vector<cObjMesh*>& GetMeshChild(){return mesh_child;}
+	inline std::vector<cObjMesh*>& GetMeshChild(){return mesh_child;}
 
 	void RootLodRelease(){RELEASE(RootLod);}
 
 	//Функции упрощённого доступа к геометрии объекта
-	void GetAllPoints(vector<Vect3f>& point);
-	void GetAllNormals(vector<Vect3f>& point);
-	void GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& polygon);
+	void GetAllPoints(std::vector<Vect3f>& point);
+	void GetAllNormals(std::vector<Vect3f>& point);
+	void GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon);
 
 	void GetEmitterMaterial(cObjMaterial& material);
 
@@ -294,7 +294,7 @@ public:
 	inline const sColor4f& GetLightIntensity(){return LightIntensity;}
 	void AddLightIntensity(const sColor4f& c){LightIntensity=c;if(RootLod)RootLod->AddLightIntensity(c);}
 	void AddLight(cUnkLight* light);
-	vector<class cUnkLight*>& GetLight(){return point_light;}
+	std::vector<class cUnkLight*>& GetLight(){return point_light;}
 
 	void AddLink(ObserverLink* link){observer.AddLink(link);}
 	void BreakLink(ObserverLink* link){observer.BreakLink(link);}

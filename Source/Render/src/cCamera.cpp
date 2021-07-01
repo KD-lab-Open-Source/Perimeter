@@ -40,7 +40,7 @@ void cVisGeneric::ReleaseShaders()
 	}
 }
 
-void GetStack(string& out);
+void GetStack(std::string& out);
 cCamera::cCamera(cScene *UClass) : cUnknownClass(KIND_DRAWNODE)
 {
 	Identity(GlobalMatrix);
@@ -95,7 +95,7 @@ void cCamera::DrawScene()
   		RenderDevice->SetRenderState(RS_BILINEAR,TRUE);
 	}
 
-	vector<cCamera*>::iterator it_c;
+	std::vector<cCamera*>::iterator it_c;
 	FOR_EACH(child,it_c)
 	if(!(*it_c)->GetAttribute(ATTRCAMERA_SHADOW_STRENCIL))
 		(*it_c)->DrawScene();
@@ -170,7 +170,7 @@ void cCamera::DrawScene()
 				if(!Parent)
 				{
 
-					vector<cIUnkClass*>::iterator it;
+					std::vector<cIUnkClass*>::iterator it;
 					FOR_EACH(arZPlane,it)
 					{
 						(*it)->Draw(this);
@@ -185,8 +185,8 @@ void cCamera::DrawScene()
 			{
 			}else
 			{
-				vector<cIUnkClass*>& obj=DrawArray[nType];
-				vector<cIUnkClass*>::iterator it;
+				std::vector<cIUnkClass*>& obj=DrawArray[nType];
+				std::vector<cIUnkClass*>::iterator it;
 		
 				FOR_EACH(obj,it)
 				{
@@ -199,10 +199,10 @@ void cCamera::DrawScene()
 				DrawSortObject();
 
 				camerapass=SCENENODE_OBJECTSORT_NOZ;
-				vector<cIUnkClass*>& obj=DrawArray[SCENENODE_OBJECTSORT_NOZ];
+				std::vector<cIUnkClass*>& obj=DrawArray[SCENENODE_OBJECTSORT_NOZ];
 				if(!obj.empty())
 				{
-					vector<cIUnkClass*>::iterator it;
+					std::vector<cIUnkClass*>::iterator it;
 
 					DWORD zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 					gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, D3DCMP_GREATER);
@@ -689,21 +689,21 @@ void cCamera::DrawSortObject()
 	DWORD fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
 	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 
-	vector<ObjectSort>::iterator it;
+	std::vector<ObjectSort>::iterator it;
 	FOR_EACH( SortArray, it )
 	{
 		it->obj->Draw(this);
 	}
 
-	if(false)
+	if(false) // ???
 	{
-				vector<cIUnkClass*>& obj=DrawArray[SCENENODE_OBJECTSORT_NOZ];
-				vector<cIUnkClass*>::iterator it;
-		
-				FOR_EACH(obj,it)
-				{
-					(*it)->Draw(this);
-				}
+		std::vector<cIUnkClass*>& obj=DrawArray[SCENENODE_OBJECTSORT_NOZ];
+		std::vector<cIUnkClass*>::iterator it;
+
+		FOR_EACH(obj,it)
+		{
+			(*it)->Draw(this);
+		}
 	}
 
 	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
@@ -719,7 +719,7 @@ void cCamera::AttachNoRecursive(int pos,cIUnkClass* UObject)
 
 void cCamera::Attach(int pos,cIUnkClass *UObject)
 { 
-	vector<cCamera*>::iterator it_c;
+	std::vector<cCamera*>::iterator it_c;
 	if( pos!=SCENENODE_OBJECTSORT )
 	{
 		if(!UObject->GetAttr(ATTRUNKOBJ_IGNORE_NORMALCAMERA))
@@ -782,11 +782,11 @@ struct SortMaterialByNodeBank
 
 void cCamera::DrawSortMaterial()
 {
-	vector<cMeshSortingPhase*>& ar=RootCamera->arSortMaterial;
+	std::vector<cMeshSortingPhase*>& ar=RootCamera->arSortMaterial;
 	if(ar.empty())
 		return;
 
-	sort(ar.begin(),ar.end(),SortMaterialByNodeBank());
+	std::sort(ar.begin(),ar.end(),SortMaterialByNodeBank());
 
 	sDataRenderMaterial Data;
 	int change_mat=1,draw_object=0;
@@ -805,7 +805,7 @@ void cCamera::DrawSortMaterial()
 
 	if(GetAttribute(ATTRCAMERA_REFLECTION))
 	{
-		vector<cMeshSortingPhase*>::iterator it;
+		std::vector<cMeshSortingPhase*>::iterator it;
 		FOR_EACH(ar,it)
 		{
 			cMeshSortingPhase* s=*it;
@@ -833,7 +833,7 @@ void cCamera::DrawSortMaterial()
 		}
 	}else
 	{
-		vector<cMeshSortingPhase*>::iterator it;
+		std::vector<cMeshSortingPhase*>::iterator it;
 		FOR_EACH(ar,it)
 		{
 			cMeshSortingPhase* s=*it;
@@ -875,8 +875,8 @@ struct SortMaterialByShadowTexture
 
 void cCamera::DrawSortMaterialShadow()
 {
-	vector<cMeshSortingPhase*>& ar=RootCamera->arSortMaterial;
-	sort(ar.begin(),ar.end(),SortMaterialByShadowTexture());
+	std::vector<cMeshSortingPhase*>& ar=RootCamera->arSortMaterial;
+	std::sort(ar.begin(),ar.end(),SortMaterialByShadowTexture());
 	cMeshBank *CurBank=NULL;
 
 	DrawType* draw=gb_RenderDevice3D->dtFixed;
@@ -886,7 +886,7 @@ void cCamera::DrawSortMaterialShadow()
 	int change_mat=0,draw_object=0;
 	draw->BeginDrawShadow();
 
-	vector<cMeshSortingPhase*>::iterator it;
+	std::vector<cMeshSortingPhase*>::iterator it;
 	FOR_EACH(ar,it)
 	{
 		cMeshSortingPhase& s=**it;
@@ -1170,7 +1170,7 @@ cCamera* cCamera::FindCildCamera(int AttributeCamera)
 		return this;
 
 	cCamera* p=NULL;
-	vector<cCamera*>::iterator it_c;
+	std::vector<cCamera*>::iterator it_c;
 	FOR_EACH(child,it_c)
 	{
 		p=(*it_c)->FindCildCamera(AttributeCamera);
@@ -1223,7 +1223,7 @@ void cCamera::CalcTestForGrid()
 	Vect2i TileSize(1<<TestGridShl,1<<TestGridShl);
 	calcVisMap(this,TestGridSize,TileSize,pTestGrid,true);
 
-	vector<cCamera*>::iterator it_c;
+	std::vector<cCamera*>::iterator it_c;
 	FOR_EACH(child,it_c)
 	{
 		if((*it_c)->GetAttribute(ATTRCAMERA_SHADOWMAP))
@@ -1325,7 +1325,7 @@ Vect2f cCamera::CalculateZMinMax(MatXf& view)
 	VISASSERT(!Parent);
 	Vect2f zx(1e20f,-1e20f);
 	cCamera* root=GetRoot();
-	vector<cObjectNodeRoot*>::iterator it;
+	std::vector<cObjectNodeRoot*>::iterator it;
 	FOR_EACH(root->ShadowTestArray,it)
 	{
 		float r=(*it)->GetRadius();

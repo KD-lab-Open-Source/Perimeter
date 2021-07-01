@@ -56,7 +56,7 @@ void terPlayer::quantZeroplast()
 	double cur_time=clockf();
 	double fade=zeroplastBurn.fade_time;
 
-	list<double>::iterator it;
+	std::list<double>::iterator it;
 	for(it=begin_time_burn_zeroplast.begin();it!=begin_time_burn_zeroplast.end();)
 	{
 		float dt=cur_time-*it;

@@ -30,7 +30,7 @@ public:
 private:
 	cTexture* CreateTexture(int sizex,int sizey,bool alpha,bool default_pool);
 	bool enable_error;
-	vector<cTexture*> textures;
+	std::vector<cTexture*> textures;
 	void FreeOne(FILE* f);
 
 	bool LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale);

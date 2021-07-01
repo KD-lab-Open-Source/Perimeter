@@ -200,15 +200,15 @@ struct vrtMap {
 
 	unsigned char* changedT;
 
-	list<sRect> changedAreas;
+	std::list<sRect> changedAreas;
 	unsigned char* gridChAreas;
 	unsigned char* gridChAreas2;
 
-	list<sRect> renderAreas;
+	std::list<sRect> renderAreas;
 
 ///////////////////////////////////////////////////////////////////
-	list<sPreChangedArea> preCAs;
-	list<sPreChangedArea>::iterator curPreCA;
+	std::list<sPreChangedArea> preCAs;
+	std::list<sPreChangedArea>::iterator curPreCA;
 	void UndoDispatcher_PutPreChangedArea(int xL, int yT, int xR, int yB);
 	void UndoDispatcher_Undo(void);
 	void UndoDispatcher_Redo(void);
@@ -218,7 +218,7 @@ struct vrtMap {
 ///////////////////////////////////////////////////////////////////
 	//Procedural map
 	bool flag_record_operation;
-	vector<ElementPMO> containerPMO;
+	std::vector<ElementPMO> containerPMO;
 
 	void playPMOperation(void);
 	template<class Archive>
@@ -388,7 +388,7 @@ struct vrtMap {
 	bool loadGameMap(const char* fname, bool flag_FastLoad=1);
 	bool saveGameMap(const char* fname);
 
-	void getWorldList(vector<const char*>& world_list) { world_list.clear(); for(int i = 0; i < maxWorld; i++) world_list.push_back(wTable[i].name); }
+	void getWorldList(std::vector<const char*>& world_list) { world_list.clear(); for(int i = 0; i < maxWorld; i++) world_list.push_back(wTable[i].name); }
 	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(stricmp(wTable[i].name, world_name) == 0) return i; return -1; }
 	const char* getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name; }
 

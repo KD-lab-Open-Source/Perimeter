@@ -54,7 +54,7 @@ struct terSplineController
 
 	//Для нормальной работы way_points должно быть не меньше 4.
 	//Удаление точек  нежелательно, так как приведёт к изменению скорости либо положения
-	typedef list<Vect3f> WayPoints;
+	typedef std::list<Vect3f> WayPoints;
 	WayPoints way_points;
 protected:
 	virtual const Se3f& GetPose()const=0;
@@ -124,12 +124,12 @@ protected:
 	DurationTimer soundTimer_;
 	struct terFilthSwarmParameter *BaseParam;
 
-	typedef set<terUnitBase*> UnitSet;
+	typedef std::set<terUnitBase*> UnitSet;
 	bool find_attack_target_point;
 
 	//Заполняет TargetPoint наиболее подходящим для атаки юнитом
 	virtual void FindTargetPoint(UnitSet* exclude=NULL);
-	virtual void FindComplexTarget(list<terUnitBase*>& target_list,int max_target,UnitSet* exclude);
+	virtual void FindComplexTarget(std::list<terUnitBase*>& target_list,int max_target,UnitSet* exclude);
 	virtual terUnitBase* CalcDistance(terUnitBase* unit,float& dist,const Vect2f& direction);
 
 	float attack_width;
@@ -205,7 +205,7 @@ struct terFilthSpot : terUnitBase
 	bool initialGeoprocess() const {return initial_geoprocess;}
 	void Kill();
 
-	vector<HoleStruct>& GetHolePos() {return hole_pos;};
+	std::vector<HoleStruct>& GetHolePos() {return hole_pos;};
 protected:
 	void SoundActivate();
 	void KillOfEnd();
@@ -216,7 +216,7 @@ protected:
 
 	terFilthSpotID FilthParamID;
 
-	typedef list<terFilthSwarm*> FilthSwarmListType;
+	typedef std::list<terFilthSwarm*> FilthSwarmListType;
 	FilthSwarmListType swarm_list;
 
 	int SoundImpulse;
@@ -232,7 +232,7 @@ protected:
 	float attack_period;
 	float delta_attack_period;
 
-	vector<HoleStruct> hole_pos;
+	std::vector<HoleStruct> hole_pos;
 
 	DurationTimer killTimer_;
 

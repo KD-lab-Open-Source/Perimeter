@@ -15,16 +15,6 @@
 
 #include "RangedWrapper.h"
 
-using namespace boost;
-
-#ifdef _MSC_VER
-namespace std {
-template<class T, class A> class list;
-template<class T, class A> class vector;
-template<class T1, class T2> struct pair;
-}
-#endif
-
 //Serialization code for xmath.h
 
 template<class Archive>
@@ -167,14 +157,14 @@ struct WrapperTraits< RangedWrapper<T> > {
 template<class T>
 struct IsPrimitive
 {
-	enum { value = ::boost::is_fundamental<T>::value };
+	enum { value = std::is_fundamental<T>::value };
 };
 
-template<class T, class A> struct IsPrimitive<vector<T, A> > {  
+template<class T, class A> struct IsPrimitive<std::vector<T, A> > {
 	enum { value = true };  
 };
 
-template<class T, class A> struct IsPrimitive<list<T, A> > {  
+template<class T, class A> struct IsPrimitive<std::list<T, A> > {
 	enum { value = true };  
 };
 

@@ -2782,8 +2782,7 @@ void piAddAutoMatchStatusCallback
 		return;
 
 	params.status = connection->autoMatchStatus;
-
-	piAddCallback_wrapper(peer, PEERTrue, operation->callback, operation->callbackParam, PI_AUTO_MATCH_STATUS_CALLBACK, &params, sizeof(piAutoMatchStatusParams), operation->ID);
+	piAddCallback(peer, PEERTrue, operation->callback, operation->callbackParam, PI_AUTO_MATCH_STATUS_CALLBACK, &params, sizeof(piAutoMatchStatusParams), operation->ID);
 }
 
 /* AutoMatch Rate.

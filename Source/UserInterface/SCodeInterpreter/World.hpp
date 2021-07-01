@@ -8,7 +8,7 @@
 
 class World : public tx3d::SharedPointer {
 	public:
-		World(const string& sysName, const Vect3f& coords, int size, int filthLevel, float timeFactor);
+		World(const std::string& sysName, const Vect3f& coords, int size, int filthLevel, float timeFactor);
 		virtual ~World();
 		void createAlphaPortal(World* worldWherefromPerforation);
 		void createOmegaPortal();
@@ -54,13 +54,13 @@ class World : public tx3d::SharedPointer {
 		float getTimeFactor() const {
 			return timeFactor;
 		}
-		void setNewName(const string& newname) {
+		void setNewName(const std::string& newname) {
 			name = newname;
 		}
-		const string& getName() const {
+		const std::string& getName() const {
 			return name;
 		}
-		const string& getSystemName() const {
+		const std::string& getSystemName() const {
 			return sysName;
 		}
 		int getTestamentLevel() const {
@@ -81,7 +81,7 @@ class World : public tx3d::SharedPointer {
 				static void unlinkPortals(Portal* portal1, Portal* portal2);
 
 				bool hasLinkWithPortal(Portal* portal) {
-					return find(connectedPortals.begin(), connectedPortals.end(), portal) != connectedPortals.end();
+					return std::find(connectedPortals.begin(), connectedPortals.end(), portal) != connectedPortals.end();
 				}
 				bool isOmegaPortal() {
 					return omegaPortal;
@@ -115,8 +115,8 @@ class World : public tx3d::SharedPointer {
 				void removePortal(Portal* portal);
 				bool omegaPortal;
 				World* ownerWorld;
-				vector<Portal*> connectedPortals;
-				vector<Object3D*> links;
+				std::vector<Portal*> connectedPortals;
+				std::vector<Object3D*> links;
 		};
 
 		Object3D* world3D;
@@ -128,8 +128,8 @@ class World : public tx3d::SharedPointer {
 		int size;
 		int filthLevel;
 		float timeFactor;
-		string name;
-		string sysName;
+		std::string name;
+		std::string sysName;
 		int testamentLevel;
 
 };

@@ -210,7 +210,7 @@ void DrawTypeFixedPipeline::SetTileColor(sColor4f color)
 
 }
 
-void DrawTypeFixedPipeline::SetPointLight(vector<cUnkLight*>& light)
+void DrawTypeFixedPipeline::SetPointLight(std::vector<cUnkLight*>& light)
 {
 	for(int i=0;i<2;i++)
 	{

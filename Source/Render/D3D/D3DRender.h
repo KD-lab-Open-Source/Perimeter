@@ -459,12 +459,12 @@ protected:
 		float x2,y2;
 		sColor4c diffuse;
 	};
-	vector<PointStruct> points;
-	vector<PointStruct> lines;
-	vector<RectStruct>	rectangles;
+	std::vector<PointStruct> points;
+	std::vector<PointStruct> lines;
+	std::vector<RectStruct>	rectangles;
 
-	vector<sVertexXYZD> lines3d;
-	vector<sVertexXYZD> points3d;
+	std::vector<sVertexXYZD> lines3d;
+	std::vector<sVertexXYZD> points3d;
 
 	cVertexBuffer<sVertexXYZDT1> BufferXYZDT1;
 	cVertexBuffer<sVertexXYZDT2> BufferXYZDT2;
@@ -481,7 +481,7 @@ protected:
 	sPtrIndexBuffer standart_ib;
 	float current_bump_scale;
 
-	vector<cOcclusionQuery*> occlusion_query;
+	std::vector<cOcclusionQuery*> occlusion_query;
 
 	void InitVertexBuffers();
 
@@ -495,7 +495,7 @@ protected:
 	void RestoreDynamicVertexBuffer();
 	void RestoreDeviceIfLost();
 
-	vector<class cTileMapRender*> tilemaps;
+	std::vector<class cTileMapRender*> tilemaps;
 	void ClearTilemapPool();
 	void RestoreTilemapPool();
 

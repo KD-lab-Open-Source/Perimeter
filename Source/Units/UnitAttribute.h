@@ -50,10 +50,10 @@ DECLARE_ENUM_DESCRIPTOR(ChooseSquadID)
 DECLARE_ENUM_DESCRIPTOR_ENCLOSED(RigidBodyPrm, RigidBodyType)
 #endif
 
-typedef vector<Vect2f> Vect2fVect;
-typedef vector<Vect2i> Vect2iVect;
-typedef vector<Vect3f> Vect3fVect;
-typedef vector<Vect3f> Vect3fList;
+typedef std::vector<Vect2f> Vect2fVect;
+typedef std::vector<Vect2i> Vect2iVect;
+typedef std::vector<Vect3f> Vect3fVect;
+typedef std::vector<Vect3f> Vect3fList;
 
 class AttributeBase;
 class EffectKey;
@@ -132,8 +132,8 @@ struct SoundEventSetup
 
 struct SoundSetup
 {
-	vector<SoundControllerSetup> sounds;
-	vector<SoundEventSetup> events;
+	std::vector<SoundControllerSetup> sounds;
+	std::vector<SoundEventSetup> events;
 
 	template<class Archive>
 	void serialize(Archive& ar) {
@@ -222,7 +222,7 @@ struct AnimationData
 {
 	EnumWrapper<AnimationGroupID> groupID;
 	PrmString groupName;
-	vector<AnimationChain> chains;
+	std::vector<AnimationChain> chains;
 	bool setPhaseRecursive;
 
 	AnimationData() {
@@ -471,7 +471,7 @@ struct ToolzerStepData
 	EnumWrapper<ToolzerBuildingDamageMode> buildingDamageMode;
 	int buildingDamageRadius;
 	
-	vector<ToolzerActionData> actions;
+	std::vector<ToolzerActionData> actions;
 
 	ToolzerStepData() {
 		phaseID = TOOLZER_PHASE_DEFAULT;
@@ -499,7 +499,7 @@ struct ToolzerStepData
 // параметры тулзера
 struct ToolzerSetup
 {
-	vector<ToolzerStepData> steps;
+	std::vector<ToolzerStepData> steps;
 
 	// коэфф. масштабирования тулзера
 	float scale;
@@ -918,7 +918,7 @@ struct BelligerentPropertyTable
 	}
 
 private:
-	vector<BelligerentProperty> data;
+	std::vector<BelligerentProperty> data;
 };
 
 extern BelligerentPropertyTable belligerentPropertyTable;
@@ -1020,10 +1020,10 @@ struct terUnitEffectData
 struct terUnitEffects
 {
 	PrmString libraryFileName;
-	vector<terUnitEffectData> effects;
+	std::vector<terUnitEffectData> effects;
 
 	// осколки
-	vector<terDebrisData> debrisData;
+	std::vector<terDebrisData> debrisData;
 
 	// время существования трупа от юнита
 	int corpseLifeTime;
@@ -1475,8 +1475,8 @@ public:
 	EnumWrapper<terBelligerent> belligerent; // выделяет специализации по воюющей стороне, массив _общий_
 
 	ModelData modelData;
-	vector<ModelData> additionalModelsData;
-	vector<PrmString> ConnectionPointNames;
+	std::vector<ModelData> additionalModelsData;
+	std::vector<PrmString> ConnectionPointNames;
  
 	DamageMolecula damageMolecula; 
 	UnitDamage unitDamage;
@@ -1546,7 +1546,7 @@ public:
 	RigidBodyPrmLibrary::Reference rigidBodyPrm; // Параметры физики
 	UnitInterfacePrm interfacePrm;
 	InterfaceTV interfaceTV;
-    vector<AnimationData> animationDataTable;
+	std::vector<AnimationData> animationDataTable;
 	SoundSetup soundSetup;
                                
 	//---------------------------------------
@@ -1686,7 +1686,7 @@ public:
 
 private:
 	PrmString InterfaceNameTag;
-	string InterfaceName;
+	std::string InterfaceName;
 
 	static float energyPerElement_;
 };
@@ -1722,16 +1722,16 @@ private:
 	EnumWrapper<terBelligerent> belligerent_;
 };
 
-inline const string key2String(const AttributeIDBelligerent& data) {
-	return string(getEnumNameAlt(data.attributeID())) + ", " + getEnumNameAlt(data.belligerent());
+inline const std::string key2String(const AttributeIDBelligerent& data) {
+	return std::string(getEnumNameAlt(data.attributeID())) + ", " + getEnumNameAlt(data.belligerent());
 }
 
 inline void setKey(AttributeIDBelligerent& data, const char* str) {
-	string aName = str;
+	std::string aName = str;
 	int pos = aName.find(",");
-	if(pos == string::npos)
+	if(pos == std::string::npos)
 		return;
-	string bName(&aName[pos], aName.size() - pos - 2);
+	std::string bName(&aName[pos], aName.size() - pos - 2);
 	aName.erase(pos, aName.size());
 	data = AttributeIDBelligerent(
 		getEnumDescriptor(UNIT_ATTRIBUTE_NONE).keyByNameAlt(aName.c_str()),

@@ -399,7 +399,7 @@ struct RigidBodyPrm : ShareHandleBase
 	float calcTurnTheta(float x, float z, float velocity) const;
 };
 
-typedef TypeLibrary<string, RigidBodyPrm> RigidBodyPrmLibrary;
+typedef TypeLibrary<std::string, RigidBodyPrm> RigidBodyPrmLibrary;
 extern SingletonPrm<RigidBodyPrmLibrary> rigidBodyPrmLibrary;
 
 DEFINE_SINGLETON_PRM(RigidBodyPrmLibrary)

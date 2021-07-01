@@ -184,7 +184,7 @@ void s_f3d::loadVariable(void)
 			);
 	}
 
-	ifstream ifsTx(GetTargetName("geoTx.xml"));
+	std::ifstream ifsTx(GetTargetName("geoTx.xml"));
 	char szBuffer[1024 * 10];
 	ifsTx.get(szBuffer, 1024 * 10, '\0');
 
@@ -194,7 +194,7 @@ void s_f3d::loadVariable(void)
 	}
 	indexedTexture->setTexture(pTx);
 
-	ifstream ifsLattice(GetTargetName("geoLattice.bin"), ios::in | ios::binary);
+	std::ifstream ifsLattice(GetTargetName("geoLattice.bin"), std::ios::in | std::ios::binary);
 	if (ifsLattice) {
 		ifsLattice.read((char*)indexLattice, 65536);
 		//ifsLattice.read((ifstream::char_type*)indexLattice, 65536);

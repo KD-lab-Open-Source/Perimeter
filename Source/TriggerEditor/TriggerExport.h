@@ -99,7 +99,7 @@ public:
     typedef TriggerAllocator<_Tp1> other;
   };
   TriggerAllocator() {}
-  TriggerAllocator(const allocator<T>&) {}
+  TriggerAllocator(const std::allocator<T>&) {}
   ~TriggerAllocator() {}
   
   pointer address(reference x) const { return &x; }
@@ -134,7 +134,7 @@ struct Condition : ShareHandleBase // Не выполняется никогда (для выключения три
 	}
 	virtual_ void checkEvent(AIPlayer& aiPlayer, const class Event& event) {}
 	virtual_ void clear() {}
-	virtual_ void writeInfo(XBuffer& buffer, string offset) const {}
+	virtual_ void writeInfo(XBuffer& buffer, std::string offset) const {}
 
 	bool state() const {
 		return state_;
@@ -178,7 +178,7 @@ struct ConditionNode //
 		type = NORMAL; 
 	}
 
-	void writeInfo(XBuffer& buffer, string offset) const;
+	void writeInfo(XBuffer& buffer, std::string offset) const;
 	bool check(AIPlayer& aiPlayer) { return condition ? (type == NORMAL ? condition->checkDebug(aiPlayer) : !condition->checkDebug(aiPlayer)) : false; }
 
 	template<class Archive>	
@@ -195,7 +195,7 @@ struct ConditionSwitcher : Condition // И/ИЛИ
 		OR // ИЛИ
 	};
 	EnumWrapper<Type> type;
-	vector<ConditionNode, TriggerAllocator<ConditionNode> > conditions; 
+	std::vector<ConditionNode, TriggerAllocator<ConditionNode> > conditions;
 
 	ConditionSwitcher() {
 		type = AND; 
@@ -204,7 +204,7 @@ struct ConditionSwitcher : Condition // И/ИЛИ
 	bool check(AIPlayer& aiPlayer);
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 	void clear();
-	void writeInfo(XBuffer& buffer, string offset) const;
+	void writeInfo(XBuffer& buffer, std::string offset) const;
 
 	template<class Archive>	
 	void serialize(Archive& ar) {
@@ -373,8 +373,8 @@ private:
 
 DECLARE_ENUM_DESCRIPTOR_ENCLOSED(TriggerLink, Type)
 
-typedef vector<TriggerLink, TriggerAllocator<TriggerLink> > OutcomingLinksList;
-typedef vector<TriggerLink*, TriggerAllocator<TriggerLink*> > IncomingLinksList;
+typedef std::vector<TriggerLink, TriggerAllocator<TriggerLink> > OutcomingLinksList;
+typedef std::vector<TriggerLink*, TriggerAllocator<TriggerLink*> > IncomingLinksList;
 
 class Trigger // Триггер
 {
@@ -515,13 +515,13 @@ struct TriggerEvent
 	}	
 };
 
-typedef vector<Trigger, TriggerAllocator<Trigger> > TriggerList;
+typedef std::vector<Trigger, TriggerAllocator<Trigger> > TriggerList;
 
 //-----------------------------
 class TriggerChain // Стратегия игрока
 {
 public:
-	typedef vector<TriggerEvent, TriggerAllocator<TriggerEvent> > TriggerEventList;
+	typedef std::vector<TriggerEvent, TriggerAllocator<TriggerEvent> > TriggerEventList;
 
 	PrmString name;
 	TriggerList triggers; // 0-й trigger - стартовый
@@ -596,7 +596,7 @@ private:
 
 	void initTriggersState();
 
-	typedef vector<Trigger*, TriggerAllocator<Trigger*> > ActiveTriggers;
+	typedef std::vector<Trigger*, TriggerAllocator<Trigger*> > ActiveTriggers;
 	ActiveTriggers activeTriggers_;
 };
 

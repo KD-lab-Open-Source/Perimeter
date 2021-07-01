@@ -17,9 +17,9 @@ class terUnitSquad;
 class terTerraformDispatcher;
 class EnergyConsumer;
 
-typedef vector<terBuilding*> terBuildingList;
-typedef vector<terUnitSquad*> SquadList;
-typedef vector<terPlayer*> PlayerVect;
+typedef std::vector<terBuilding*> terBuildingList;
+typedef std::vector<terUnitSquad*> SquadList;
+typedef std::vector<terPlayer*> PlayerVect;
 
 class terEnergyDataType
 {
@@ -241,7 +241,7 @@ private:
 		const SoundEventSetup& voiceSetup_;
 	};
 
-	typedef list<VoiceTimer> VoiceTimerList;
+	typedef std::list<VoiceTimer> VoiceTimerList;
 
 	VoiceTimerList voiceQueue_;
 	VoiceTimerList delayedVoices_;
@@ -441,7 +441,7 @@ public:
 	terUnitBase* findUnitByLabel(const char* label);
 	terUnitBase* findUnitByUnitClass(int unitClass, const Vect2f& nearPosition, float distanceMin = 0);
 
-	bool findPathToPoint(DefenceMap& defenceMap, const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i>& out_path);
+	bool findPathToPoint(DefenceMap& defenceMap, const Vect2i& from_w, const Vect2i& to_w, std::vector<Vect2i>& out_path);
 	terUnitBase* findPathToTarget(DefenceMap& defenceMap, terUnitAttributeID id, terUnitBase* ignoreUnit, const Vect2f& nearPosition, Vect2iVect& path);
 	terUnitBase* findPathToTarget(DefenceMap& defenceMap, int unitClass, terUnitBase* ignoreUnit, const Vect2f& nearPosition, Vect2iVect& path);
 	DefenceMap& defenceMap() { return defenceMap_; } // Ищем цель у врага, подставляя свою карту защищенности
@@ -542,7 +542,7 @@ protected:
 	UnitList Units;
 	SquadList squads;
 
-	list<double> begin_time_burn_zeroplast;
+	std::list<double> begin_time_burn_zeroplast;
 	MTDECLARE(lock_burn_zeroplast);
 	void quantZeroplast();
 
@@ -550,7 +550,7 @@ protected:
 
 	PlayerStats stats;
 
-	typedef list<TriggerChain> TriggerChains;
+	typedef std::list<TriggerChain> TriggerChains;
 	TriggerChains triggerChains_;
 
 private:
@@ -560,7 +560,7 @@ private:
 	int clan_;
 	Difficulty difficulty_;
 	float handicap_;
-	string name_;
+	std::string name_;
 	bool isWorld_;
 	terBelligerent belligerent_;
 	int colorIndex_;
@@ -587,11 +587,11 @@ private:
 	RegionDispatcher field_region_;
 	void EnergyRegionLockAssert();
 
-	typedef list<Cluster> ClusterList; 
+	typedef std::list<Cluster> ClusterList;
 	ClusterList clusters_;
 	bool totalDefenceMode_;
 	
-	typedef list<cLine3d*> LightList;
+	typedef std::list<cLine3d*> LightList;
 	LightList Lights;
 	
 	terEnergyDataType EnergyData;
@@ -603,7 +603,7 @@ private:
 	
 	bool marked_;
 
-	typedef multimap<int, EnergyConsumer*> EnergyConsumerMap;
+	typedef std::multimap<int, EnergyConsumer*> EnergyConsumerMap;
 	EnergyConsumerMap energyConsumers;
 
 	DefenceMap defenceMap_;

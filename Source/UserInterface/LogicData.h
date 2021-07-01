@@ -31,7 +31,7 @@ struct TerrainButtonData : public ComplexButtonData {
 	bool isInChanging;
 	class terUnitReal* unit;
 	int requestedAttr;
-	vector<Vect3f> wayPoints;
+	std::vector<Vect3f> wayPoints;
 };
 
 struct AtomButtonData : public ComplexButtonData {
@@ -73,8 +73,8 @@ struct SquadPageData {
 	float mutationEnergy;
 	bool empty;
 	class terUnitSquad* squad;
-	vector<Vect2f> wayPoints;
-	vector<Vect2f> patrolPoints;
+	std::vector<Vect2f> wayPoints;
+	std::vector<Vect2f> patrolPoints;
 	terUnitSquad::AttackPoint attackPoint;
 	bool hasAttackPoint;
 };
@@ -146,7 +146,7 @@ struct LogicData {
 		}
 	}
 
-	string activePlayerName;
+	std::string activePlayerName;
 	sColor4f activePlayerColor;
 
 	SquadPageData squads[5];
@@ -194,16 +194,16 @@ struct LogicData {
 
 	sProgress progress[UNIT_ATTRIBUTE_STRUCTURE_MAX];
 
-	vector<SquadMiniMapData> miniMapSquads;
+	std::vector<SquadMiniMapData> miniMapSquads;
 	int miniMapSquadCount;
 
-	list<Vect2f> miniMapLabels;
-	list<MiniMapEvent> miniMapEvents;
+	std::list<Vect2f> miniMapLabels;
+	std::list<MiniMapEvent> miniMapEvents;
 
-	list<Vect2f> alphaPath;
+	std::list<Vect2f> alphaPath;
 
 	class terFrame* frame;
-	vector<Vect3f> frameWayPoints;
+	std::vector<Vect3f> frameWayPoints;
 
 	int num_core;
 

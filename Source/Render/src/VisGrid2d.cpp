@@ -104,8 +104,8 @@ void QuatTree::build(int xmin,int ymin,int xmax,int ymax,vect& blist)
 	int sz=blist.size();
 	if(!sz)
 		return;
-	vector<OneObj> tlist(sz);
-	vector<OneObj*> plist(sz);
+	std::vector<OneObj> tlist(sz);
+	std::vector<OneObj*> plist(sz);
 	for(int i=0;i<sz;i++)
 	{
 		OneObj& o=tlist[i];
@@ -166,8 +166,8 @@ void QuatTree::build(int xmin,int ymin,int xmax,int ymax,pvect& blist,QuatNode* 
 			vert_cur.push_back(o);
 	}
 
-	int xt=horz_cur.size()+max(horz_left.size(),horz_right.size());
-	int yt=vert_cur.size()+max(vert_top.size(),vert_bottom.size());
+	int xt=horz_cur.size()+ (std::max)(horz_left.size(),horz_right.size());
+	int yt=vert_cur.size()+ (std::max)(vert_top.size(),vert_bottom.size());
 	if(xt<yt)
 	{
 		int sz=horz_cur.size();
@@ -273,8 +273,8 @@ void MTGVector::Detach(cIUnkClass *UnkObj)
 {
 	if(IsNowDelete(UnkObj))
 	{
-		vector<cIUnkClass*>::iterator it;
-		it=find(slot.begin(),slot.end(),UnkObj);
+		std::vector<cIUnkClass*>::iterator it;
+		it= std::find(slot.begin(),slot.end(),UnkObj);
 		if(it!=slot.end())
 			slot.erase(it);
 		else
@@ -309,7 +309,7 @@ void MTGVector::mtUpdate(int cur_quant)
 {
 	MTEnter mtenter(critical);
 
-	list<sErase>::iterator it_erase;
+	std::list<sErase>::iterator it_erase;
 
 	FOR_EACH(erase_list,it_erase)
 	{
@@ -317,10 +317,10 @@ void MTGVector::mtUpdate(int cur_quant)
 
 		if(e.quant<=cur_quant)
 		{
-			list<cIUnkClass*>::iterator itl;
+			std::list<cIUnkClass*>::iterator itl;
 			for(itl=e.erase_list.begin();itl!=e.erase_list.end();)
 			{
-				vector<cIUnkClass*>::iterator it_delete;
+				std::vector<cIUnkClass*>::iterator it_delete;
 				it_delete=find(add_list.begin(),add_list.end(),*itl);
 				if(it_delete!=add_list.end())
 				{
@@ -336,7 +336,7 @@ void MTGVector::mtUpdate(int cur_quant)
 	}
 
 	{
-		vector<cIUnkClass*>::iterator itl;
+		std::vector<cIUnkClass*>::iterator itl;
 		FOR_EACH(add_list,itl)
 			slot.push_back(*itl);
 	}
@@ -346,10 +346,10 @@ void MTGVector::mtUpdate(int cur_quant)
 		sErase& e=*it_erase;
 		if(e.quant<=cur_quant)
 		{
-			list<cIUnkClass*>::iterator itl;
+			std::list<cIUnkClass*>::iterator itl;
 			FOR_EACH(e.erase_list,itl)
 			{
-				vector<cIUnkClass*>::iterator it_delete;
+				std::vector<cIUnkClass*>::iterator it_delete;
 				cIUnkClass* obj=*itl;
 				it_delete=find(slot.begin(),slot.end(),obj);
 				if(it_delete!=slot.end())
@@ -392,14 +392,14 @@ void sGrid2d::Detach(cIUnkClass *UnkObj)
 		if(detach_now)
 		{
 			MTG();
-			vector<cIUnkClass*>::iterator it;
+			std::vector<cIUnkClass*>::iterator it;
 			it=find(slot.begin(),slot.end(),UnkObj);
 			if(it!=slot.end())
 				slot.erase(it);
 			else
 			{
 				MTEnter mtenter(critical);
-				vector<cIUnkClass*>::iterator it_delete;
+				std::vector<cIUnkClass*>::iterator it_delete;
 				it_delete=find(add_list.begin(),add_list.end(),UnkObj);
 				if(it_delete!=add_list.end())
 				{
@@ -423,10 +423,10 @@ void sGrid2d::DetachAndIterate(sGrid2d::iterator& it)
 {
 	int i=it-slot.begin();
 
-	vector<cIUnkClass*>::iterator itl;
+	std::vector<cIUnkClass*>::iterator itl;
 	FOR_EACH(erase_list,itl)
 	{
-		vector<cIUnkClass*>::iterator it_delete;
+		std::vector<cIUnkClass*>::iterator it_delete;
 		it_delete=find(slot.begin(),slot.end(),*itl);
 		if(it_delete!=slot.end())
 		{

@@ -49,13 +49,13 @@ HotKeyManager::~HotKeyManager() {
 //	lastKeyTime = currTime;
 //}
 
-string HotKeyManager::getKeyNameForControlAction(const ControlAction& action) {
+std::string HotKeyManager::getKeyNameForControlAction(const ControlAction& action) {
 	for (int i = 0, s = actions.size(); i < s; i++) {
 		CtrlAction* ctrlAction = dynamic_cast<CtrlAction*>(actions[i]);
 		if (ctrlAction && !strcmp(ctrlAction->getName(), action.name)) {
 			for (int j = 0, sj = hotKeys.size(); j < sj; j++) {
 				if (hotKeys[j].actionNumber == i) {
-					string res = g_controls_converter.name(hotKeys[j].key1);
+					std::string res = g_controls_converter.name(hotKeys[j].key1);
 					if (hotKeys[j].key2) {
 						res += " + " + g_controls_converter.name(hotKeys[j].key2);
 					}
@@ -104,7 +104,7 @@ void HotKeyManager::fillActions() {
 
 void HotKeyManager::loadHotKeys() {
 	IniManager controls("RESOURCE\\controls.ini", false);
-	vector<HotKey> simpleHotKeys;
+	std::vector<HotKey> simpleHotKeys;
 	for (int i = 0, s = actions.size(); i < s; i++) {
 		float threshold = controls.getFloat(actions[i]->getName(), "threshold");
 		if (threshold == 0.0f) {

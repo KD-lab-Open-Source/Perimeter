@@ -7,7 +7,7 @@
 
 class terPlayer;
 struct terTerraformGeneral;
-typedef list<ShareHandle<terTerraformGeneral> > TerraformList;
+typedef std::list<ShareHandle<terTerraformGeneral> > TerraformList;
 
 class SharedObject: public ShareHandleBase
 {

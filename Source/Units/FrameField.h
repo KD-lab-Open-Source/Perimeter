@@ -6,8 +6,8 @@
 #include "FrameCore.h"
 
 class terUnitMonk;
-typedef vector<terUnitMonk*> MonkList;
-typedef vector<class terProtector*> ProtectorList;
+typedef std::vector<terUnitMonk*> MonkList;
+typedef std::vector<class terProtector*> ProtectorList;
 
 bool removeNotAliveMonk(MonkList& unitList);
 

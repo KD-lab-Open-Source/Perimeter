@@ -6,7 +6,7 @@
 #include <algorithm>
 
 int SNDScript::belligerentIndex = 0;
-string SNDScript::locDataPath;
+std::string SNDScript::locDataPath;
 
 using namespace SND;
 
@@ -64,7 +64,7 @@ bool SNDScript::RemoveScript(LPCSTR name)
 
 bool SNDScript::RemoveScriptInternal(LPCSTR name)
 {
-	vector<OneScript*>::iterator it;
+	std::vector<OneScript*>::iterator it;
 	FOR_EACH(map_map,it)
 	{
 		if(strcmp((*it)->name,name)==0)
@@ -87,7 +87,7 @@ void SNDScript::RemoveAll()
 {
 	map_script.clear();
 
-	vector<OneScript*>::iterator it;
+	std::vector<OneScript*>::iterator it;
 	FOR_EACH(map_map,it)
 	{
 		RemoveScriptVector((*it)->sounds);
@@ -102,11 +102,11 @@ void SNDScript::RebuildMapScript()
 {
 	map_script.clear();
 
-	vector<OneScript*>::iterator it_map;
+	std::vector<OneScript*>::iterator it_map;
 	FOR_EACH(map_map,it_map)
 	{
-		vector<ScriptParam>& vc=(*it_map)->sounds;
-		vector<ScriptParam>::iterator it;
+		std::vector<ScriptParam>& vc=(*it_map)->sounds;
+		std::vector<ScriptParam>::iterator it;
 
 		FOR_EACH(vc,it)
 		{
@@ -116,9 +116,9 @@ void SNDScript::RebuildMapScript()
 	}
 }
 
-void SNDScript::RemoveScriptVector(vector<ScriptParam>& vc)
+void SNDScript::RemoveScriptVector(std::vector<ScriptParam>& vc)
 {
-	vector<ScriptParam>::iterator it;
+	std::vector<ScriptParam>::iterator it;
 	FOR_EACH(vc,it)
 	{
 		ScriptParam& sp=*it;
@@ -127,7 +127,7 @@ void SNDScript::RemoveScriptVector(vector<ScriptParam>& vc)
 }
 
 
-void SNDScript::ParseSoundScriptPrm(const SoundScriptPrm* prm,vector<ScriptParam>& vc)
+void SNDScript::ParseSoundScriptPrm(const SoundScriptPrm* prm, std::vector<ScriptParam>& vc)
 {
 	for(int i = 0; i < prm->data.size(); i++){
 		const SoundSetupPrm& snd = prm->data[i];
@@ -203,7 +203,7 @@ void SNDScript::StopAll(bool only_voices)
 		if(only_voices && !sp->language_dependency)
 			continue;
 		
-		vector<SNDOneBuffer>::iterator itb;
+		std::vector<SNDOneBuffer>::iterator itb;
 		FOR_EACH(sp->GetBuffer(),itb)
 		{
 			SNDOneBuffer& sb=*itb;
@@ -228,7 +228,7 @@ void SNDScript::PauseAllPlayed(int pause_level)
 	{
 		ScriptParam* sp=(*it).second;
 		MTAuto lock(sp->GetLock());
-		vector<SNDOneBuffer>::iterator itb;
+		std::vector<SNDOneBuffer>::iterator itb;
 		FOR_EACH(sp->GetBuffer(),itb)
 		{
 			SNDOneBuffer& sb=*itb;
@@ -259,7 +259,7 @@ void SNDScript::PlayByLevel(int pause_level)
 	{
 		ScriptParam* sp=(*it).second;
 		MTAuto lock(sp->GetLock());
-		vector<SNDOneBuffer>::iterator itb;
+		std::vector<SNDOneBuffer>::iterator itb;
 		FOR_EACH(sp->GetBuffer(),itb)
 		{
 			SNDOneBuffer& sb=*itb;
@@ -365,7 +365,7 @@ void ScriptParam::Release()
 	if(sound_name)free(sound_name);
 	sound_name=NULL;
 
-	vector<SNDOneBuffer>::iterator its;
+	std::vector<SNDOneBuffer>::iterator its;
 	FOR_EACH(soundbuffer,its)
 	{
 		SNDOneBuffer& sb=*its;
@@ -375,7 +375,7 @@ void ScriptParam::Release()
 	}
 	soundbuffer.clear();
 
-	vector<LPDIRECTSOUNDBUFFER>::iterator itb;
+	std::vector<LPDIRECTSOUNDBUFFER>::iterator itb;
 	FOR_EACH(sounds,itb)
 	{
 		LPDIRECTSOUNDBUFFER p=*itb;
@@ -401,8 +401,8 @@ struct SNDOneBufferDistance
 
 void ScriptParam::RecalculateClipDistance()
 {
-	vector<SNDOneBufferDistance> real_played;
-	vector<SNDOneBuffer>::iterator its;
+	std::vector<SNDOneBufferDistance> real_played;
+	std::vector<SNDOneBuffer>::iterator its;
 	if(max_num_sound<1)
 		return;
 
@@ -427,7 +427,7 @@ void ScriptParam::RecalculateClipDistance()
 	if(sz<=max_num_sound)
 		return;
 
-	sort(real_played.begin(),real_played.end(),s);
+	std::sort(real_played.begin(),real_played.end(),s);
 
 	int i;
 #ifdef _DEBUG

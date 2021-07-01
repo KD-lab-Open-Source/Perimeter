@@ -142,7 +142,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	SaveManualData& manualData = data.manualData;
 
 	//---------------------
-	string mapName = setExtention(mission.saveNameBinary(), "gmp");
+	std::string mapName = setExtention(mission.saveNameBinary(), "gmp");
 	XStream ffMap(0);
 	if(ffMap.open(mapName.c_str(), XS_IN)){
 		ffMap.close();
@@ -162,7 +162,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	
 	// Загрузка игроков
 	xassert(manualData.players.size() <= NETWORK_PLAYERS_MAX);
-	vector<int> playerLoadIndices;
+	std::vector<int> playerLoadIndices;
 	for(int i = 0; i < manualData.players.size(); i++){
 		if(mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI){
 			int playerIndex = mission.playersShufflingIndices[i];
@@ -197,7 +197,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 			for(int i = 0; i < changedCounter; i++){
 				unsigned int playerID;
 				binaryData > playerID;
-				vector<int>::iterator ii = find(playerLoadIndices.begin(), playerLoadIndices.end(), playerID);
+				std::vector<int>::iterator ii = find(playerLoadIndices.begin(), playerLoadIndices.end(), playerID);
 				if(ii != playerLoadIndices.end()){
 					terPlayer* player = Players[ii - playerLoadIndices.begin()];
 					MetaRegionLock lock(player->RegionPoint);
@@ -395,7 +395,7 @@ void terUniverse::Quant()
 		}
 	changeOwnerList.clear();
 
-	list<sRect>::iterator i_area;
+	std::list<sRect>::iterator i_area;
 	FOR_EACH(vMap.changedAreas,i_area){
 		terMapUnitUpdateOperator unit_op((int)(i_area->x),(int)(i_area->y),(int)(i_area->x + i_area->dx),(int)(i_area->y + i_area->dy));
 		UnitGrid.Scan(unit_op.x0, unit_op.y0, unit_op.x1, unit_op.y1, unit_op);
@@ -418,7 +418,7 @@ void terUniverse::Quant()
 	clearLinkAndDelete();
 
 	cluster_column_.setUnchanged();
-	list<sRect>::iterator rc;
+	std::list<sRect>::iterator rc;
 	FOR_EACH(vMap.changedAreas,rc){
 		ai_tile_map->UpdateRect(rc->x,rc->y,rc->dx,rc->dy);
 		updateClusterColumn(*rc);
@@ -707,7 +707,7 @@ MissionDescription::MissionDescription(const char* fname, GameType gameType)
 		setSaveName(fname);
 
 		if(getExtention(saveName()) == "spg"){
-			string headerName = setExtention(saveName(), "sph");
+			std::string headerName = setExtention(saveName(), "sph");
 			XPrmIArchive ia;
 			if(ia.open(headerName.c_str()))
 				ia >> WRAP_NAME(*this, "MissionDescriptionPrm");
@@ -791,7 +791,7 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 			data.playersData[i].colorIndex = i;
 			data.playersShufflingIndices[i] = i;
 		}
-		string name = saveName();
+		std::string name = saveName();
 		strlwr((char*)name.c_str());
 		data.originalSaveName = strstr(name.c_str(), "resource");
 	}
@@ -824,13 +824,13 @@ void MissionDescription::setSaveName(const char* fname)
 		if(!strlen(str))
 			continue;
 		size_t pos = saveNameBinary_.rfind(str);
-		if(pos != string::npos)
+		if(pos != std::string::npos)
 			saveNameBinary_.erase(pos, saveNameBinary_.size() - pos);
 	}
 
 	missionName_ = saveNameBinary_;
 	size_t pos = missionName_.rfind("\\");
-	if(pos != string::npos)
+	if(pos != std::string::npos)
 		missionName_.erase(0, pos + 1);
 	//_strupr((char*)missionName_.c_str());
 }
@@ -841,7 +841,7 @@ void MissionDescription::setReelName(const char* name)
 
 	missionNamePlayReelGame = fileNamePlayReelGame;
 	size_t pos = missionNamePlayReelGame.rfind("\\");
-	if(pos != string::npos)
+	if(pos != std::string::npos)
 		missionNamePlayReelGame.erase(0, pos + 1);
 }
 
@@ -885,7 +885,7 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 
 	//---------------------
 	// Map changes
-	string mapName = setExtention(mission.saveNameBinary(), "gmp");
+	std::string mapName = setExtention(mission.saveNameBinary(), "gmp");
 	if(vMap.IsChanged() || (loadedGmpName_ != "" && (!XStream(0).open(mapName.c_str(), XS_IN) || mapName != loadedGmpName_)) || check_command_line("force_save_gmp")){
 		if(!vMap.saveGameMap(mapName.c_str()))
 			return false;
@@ -1250,7 +1250,7 @@ void terUniverse::clearLinkAndDelete()
 
 void terUniverse::loadZeroLayer()
 {
-	typedef map<int, terUnitReal*> Map;
+	typedef std::map<int, terUnitReal*> Map;
 	Map map;
 
 	PlayerVect::iterator pi;

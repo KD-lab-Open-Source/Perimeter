@@ -19,13 +19,13 @@ void ControlsConverter::LoadKeyNameTable()
 		sprintf( str, "%d", i );
 		KeyToName[i] = IniManager("RESOURCE\\controls.ini", false).get("key", str);
 	}
-	string strCtrl = KeyToName[VK_CONTROL] + " + ";
-	string strShift = KeyToName[VK_SHIFT] + " + ";
-	string strAlt = KeyToName[VK_MENU] + " + ";
+	std::string strCtrl = KeyToName[VK_CONTROL] + " + ";
+	std::string strShift = KeyToName[VK_SHIFT] + " + ";
+	std::string strAlt = KeyToName[VK_MENU] + " + ";
 	for(int i=256; i<2048; i++ )
 		if(!KeyToName[i & 255].empty())
 		{
-			string& str = KeyToName[i];
+			std::string& str = KeyToName[i];
 			str = "";
 			if( i & KBD_SHIFT && (i & 255) != VK_SHIFT) 
 				str += strShift;

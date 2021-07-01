@@ -43,7 +43,7 @@ extern cFont* hFontMainmenu2;
 extern cFont* hFontMainmenu3;
 extern cFont* hFontMainmenu4;
 
-list<int> MissionDisabledButtonsList;
+std::list<int> MissionDisabledButtonsList;
 
 char _bCursorVisible = 1;
 char _bMenuMode = 0;
@@ -56,7 +56,7 @@ STARFORCE_API_NEW  terUnitAttributeID Button2StructureID(int nBtnID);
 int LegionID2Button(int nAttrID);
 terUnitSquad* GetSquadByNumber(int n);
 
-extern string getItemTextFromBase(const char *keyStr);
+extern std::string getItemTextFromBase(const char *keyStr);
 
 struct {
 	int id;
@@ -502,7 +502,7 @@ CShellCursorManager::~CShellCursorManager()
 }
 void CShellCursorManager::Done()
 {
-	deque<CURSOR>::iterator i;
+	std::deque<CURSOR>::iterator i;
 	FOR_EACH(m_cursors, i)
 		if(!i->bCursorSystem)
 			_RELEASE(i->hCursorProgram);
@@ -897,7 +897,7 @@ CShellIconManager::~CShellIconManager()
 	}
 }
 
-void CShellIconManager::addChatString(const string& newChatString) {
+void CShellIconManager::addChatString(const std::string& newChatString) {
 	CChatInfoWindow* wnd;
 	if (cutSceneModeOn) {
 		wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
@@ -912,7 +912,7 @@ void CShellIconManager::addChatString(const string& newChatString) {
 	}
 }
 
-void CShellIconManager::showHintDisconnect(const string& players, int showTime, bool disconnected) {
+void CShellIconManager::showHintDisconnect(const std::string& players, int showTime, bool disconnected) {
 	CChatInfoWindow* wnd;
 	if (cutSceneModeOn) {
 		wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
@@ -920,7 +920,7 @@ void CShellIconManager::showHintDisconnect(const string& players, int showTime, 
 		wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
 	}
 	if (wnd) {
-		string res = qdTextDB::instance().getText(disconnected ? "Interface.Menu.Messages.PlayersDisconnected" : "Interface.Menu.Messages.PlayersExited");
+		std::string res = qdTextDB::instance().getText(disconnected ? "Interface.Menu.Messages.PlayersDisconnected" : "Interface.Menu.Messages.PlayersExited");
 
 		const int bufferSize = 200;
 		static char tempBuffer[bufferSize];
@@ -945,8 +945,8 @@ void CShellIconManager::showHint(const char* text, int showTime, ActionTask::Typ
 	}
 	xassert(wnd);
 	if (wnd) {
-		string taskTxt(text);
-		list<Task>::iterator i;
+		std::string taskTxt(text);
+		std::list<Task>::iterator i;
 		FOR_EACH(tasks, i) {
 			if (taskTxt == (*i).text) {
 				break;
@@ -957,7 +957,7 @@ void CShellIconManager::showHint(const char* text, int showTime, ActionTask::Typ
 			return;
 		}
 
-		string res = qdTextDB::instance().getText(text);
+		std::string res = qdTextDB::instance().getText(text);
 		switch (actionType) {
 			case ActionTask::COMPLETED:
 				res = qdTextDB::instance().getText("Interface.Tips.Completed") + res;
@@ -975,8 +975,8 @@ void CShellIconManager::showHint(const char* text, int showTime, ActionTask::Typ
 }
 
 void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
-	string taskTxt(id);
-	list<Task>::iterator i;
+	std::string taskTxt(id);
+	std::list<Task>::iterator i;
 	FOR_EACH(tasks, i) {
 		if (taskTxt == (*i).text) {
 			break;
@@ -998,13 +998,13 @@ void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
 #include "HistoryScene.h"
 extern HistoryScene historyScene;
 void CShellIconManager::fillTaskWnd() {
-	string taskTxt;
+	std::string taskTxt;
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
 		taskTxt = qdTextDB::instance().getText(historyScene.getMission(historyScene.getMissionNumberToExecute()).name.c_str());
 		taskTxt += "\n\n";
 	}
 	
-	list<Task>::iterator i;
+	std::list<Task>::iterator i;
 	FOR_EACH(tasks, i) {
 		switch ((*i).type) {
 			case ActionTask::COMPLETED:
@@ -1016,7 +1016,7 @@ void CShellIconManager::fillTaskWnd() {
 			default:
 				taskTxt += "&FFFFFF";
 		}
-		taskTxt += string(qdTextDB::instance().getText((*i).text.c_str())) + "\n";
+		taskTxt += std::string(qdTextDB::instance().getText((*i).text.c_str())) + "\n";
 	}
 
 	CTextWindow* wnd;
@@ -1063,7 +1063,7 @@ void CShellIconManager::onSizeChanged() {
 void CShellIconManager::reload(CShellWindow* pTop) {
 	if (pTop) {
 		pTop->reload();
-		list<CShellWindow*>::iterator i;
+		std::list<CShellWindow*>::iterator i;
 		FOR_EACH(pTop->m_children, i)
 			if (*i) reload(*i);
 	}
@@ -1204,7 +1204,7 @@ void CShellIconManager::PostLoadTabSheets()
 	if(pBkg)
 	{
 		CShellWindow* pTab;
-		list<CShellWindow*>::iterator i_tab;
+		std::list<CShellWindow*>::iterator i_tab;
 				
 		//buildings tab
 		FOR_EACH(m_pDesktop->m_children, i_tab)
@@ -1242,10 +1242,10 @@ char* CShellIconManager::FormatMessageText(const char* cbTag, char* cb, ...)
 	const int bufferSize = 2000;
 	static char cbTempBuffer[bufferSize];
 
-	string text;
+	std::string text;
 	//ищем тэг
 	if (*cbTag == '<') {
-		string tag = cbTag;
+		std::string tag = cbTag;
 		tag = tag.substr(1, tag.length() - 2);
 		tag = "Interface.Tips." + tag;
 		text = qdTextDB::instance().getText(tag.c_str());
@@ -1360,12 +1360,12 @@ void CShellIconManager::speedChanged(float speed) {
 }
 
 float CShellIconManager::playSpeech(const char* id) {
-	string sound = qdTextDB::instance().getSound(id);
+	std::string sound = qdTextDB::instance().getSound(id);
 	if (terSoundEnable && speechSound && !sound.empty()) {
 		int pos = sound.find("Voice");
-		if(pos != string::npos)
+		if(pos != std::string::npos)
 			sound.erase(0, pos);
-		string soundName = gameShell->getLocDataPath() + sound;
+		std::string soundName = gameShell->getLocDataPath() + sound;
 		SNDEnableVoices(false);
 		speechSound->SetVolume(round(255*terSoundVolume));
 		int ret = speechSound->OpenToPlay(soundName.c_str(), false);
@@ -1401,7 +1401,7 @@ void CShellIconManager::Destroy(CShellWindow* pTop)
 //		gameShell->resumeGame();
 //	}
 
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(pTop->m_children, i)
 		Destroy(*i);
 
@@ -1617,7 +1617,7 @@ void CShellIconManager::AddDynamicHandler(DYNCALLBACK _p, int code, int delay)
 
 //	fout < "AddDynamicHandler\n";
 
-	list<DYN_QUEUE_ITEM>::iterator i;
+	std::list<DYN_QUEUE_ITEM>::iterator i;
 	FOR_EACH(m_dyn_queue, i)
 		if((i->cbproc == _p) && (i->code == code))
 		{
@@ -1634,7 +1634,7 @@ void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, int code)
 
 //	fout < "DelDynamicHandler\n";
 
-	list<DYN_QUEUE_ITEM>::iterator i;
+	std::list<DYN_QUEUE_ITEM>::iterator i;
 	FOR_EACH(m_dyn_queue, i)
 		if(( (i->cbproc == _p) || (_p == 0) ) && ( (i->code == code) || (code == 0) ))
 		{
@@ -1646,7 +1646,7 @@ void CShellIconManager::DelDynamicHandler(DYNCALLBACK _p, int code)
 bool CShellIconManager::HasDynamicHandler(DYNCALLBACK _p, int code) {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
 
-	list<DYN_QUEUE_ITEM>::iterator i;
+	std::list<DYN_QUEUE_ITEM>::iterator i;
 	FOR_EACH (m_dyn_queue, i) {
 		if (( (i->cbproc == _p) || (_p == 0) ) && ( (i->code == code) || (code == 0) )) {
 			return true;
@@ -1671,7 +1671,7 @@ CShellWindow* CShellIconManager::HitTest(CShellWindow* pTop, float x, float y)
 {
 	CShellWindow* p = 0;
 
-	list<CShellWindow*>::reverse_iterator i;
+	std::list<CShellWindow*>::reverse_iterator i;
 	for(i = pTop->m_children.rbegin(); i != pTop->m_children.rend(); i++)
 		if((*i)->HitTest(x, y))
 		{
@@ -1690,7 +1690,7 @@ CShellWindow* CShellIconManager::FindWnd(CShellWindow* pTop, int id)
 		p = pTop;
 	else
 	{
-		list<CShellWindow*>::iterator i;
+		std::list<CShellWindow*>::iterator i;
 		FOR_EACH(pTop->m_children, i) {
             p = FindWnd(*i, id);
             if(p)
@@ -1945,7 +1945,7 @@ void CShellIconManager::DrawControls(CShellWindow* pTop)
 	if(pTop->ID != SQSH_BACKGRND_ID)
 		pTop->draw(m_pLastClicked == pTop);
 
-	list<CShellWindow*>::iterator i;
+	std::list<CShellWindow*>::iterator i;
 	FOR_EACH(pTop->m_children, i)
 		DrawControls(*i);
 
@@ -1961,7 +1961,7 @@ int CShellIconManager::ProcessDynQueue(int code, float x, float y)
 
 	int r = 0;
 
-	list<DYN_QUEUE_ITEM>::iterator i = m_dyn_queue.begin();
+	std::list<DYN_QUEUE_ITEM>::iterator i = m_dyn_queue.begin();
 	while (i != m_dyn_queue.end()) {
 //		fout < "	 DYN_QUEUE_ITEM=" < ((DWORD)i->cbproc) < "\n";
 		if (i->bDelete) {
@@ -1986,7 +1986,7 @@ void CShellIconManager::QuantDynQueue(int dt)
 {
 	MTAuto dynQueue_autolock(&dynQueue_lock);
 
-	list<DYN_QUEUE_ITEM>::iterator i;
+	std::list<DYN_QUEUE_ITEM>::iterator i;
 	FOR_EACH(m_dyn_queue, i)
 		i->time_delay -= dt;
 }
@@ -2066,8 +2066,8 @@ inline int rect_height(RECT& rc)
 }
 
 void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
-	string attacks;
-	string unitClass;
+	std::string attacks;
+	std::string unitClass;
 	int count = 0;
 	for (int i = 1; i < unitClassKeyNumber; i++) {
 		if (attr->UnitClass & unitClassDescriptionKeys[i].unitClass) {
@@ -2093,7 +2093,7 @@ void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
 		attacks = qdTextDB::instance().getText(unitClassDescriptionKeys[0].textID);
 	}
 
-	string balance;
+	std::string balance;
 	static char cbTemp[200];
 	if (attr->intfBalanceData.power) {
 		_shellIconManager.FormatMessageText("<damage>", cbTemp, attr->intfBalanceData.power, attr->intfBalanceData.width );
@@ -2122,7 +2122,7 @@ void PopupFormatBuilding(const AttributeBase* attr, char* cbBuffer, bool onContr
 {
 	const UnitInterfacePrm& prm = attr->interfacePrm;
 
-	string sRequired;
+	std::string sRequired;
 
 //	terPlayer* player = universe()->activePlayer();
 	terPlayer* player = unit ? universe()->findPlayer(unit->playerID()) : universe()->activePlayer();
@@ -2280,11 +2280,11 @@ void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffe
 
 	if (strlen(cbBuffer) && unit && !unit->Player->isWorld()) {
 //		string finalPopup(qdTextDB::instance().getText("Player"));
-		string finalPopup("[");
+		std::string finalPopup("[");
 		finalPopup += unit->Player->name();
 
 		if(gameShell->CurrentMission.isMultiPlayer() || gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::BATTLE){
-			string clan_str = getItemTextFromBase("Clan");
+			std::string clan_str = getItemTextFromBase("Clan");
 
 			char buff[30 + 1];
 			sprintf(buff, "%d", (unit->Player->clan() + 1));
@@ -2554,7 +2554,7 @@ float GetUnitUpgradeProgress(terBuilding* p) {
 }
 
 
-void CShellIconManager::changeControlState(const vector<SaveControlData>& newControlStates) {
+void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates) {
 	for (int i = 0, s = newControlStates.size(); i < s; i++) {
 		if (newControlStates[i].controlID == SQSH_TAB_BUILD_ID) {
 			if (newControlStates[i].tabNumber == -1) {
@@ -2574,7 +2574,7 @@ void CShellIconManager::changeControlState(const vector<SaveControlData>& newCon
 	}
 }
 
-void CShellIconManager::fillControlState(vector<SaveControlData>& controlStatesToSave) {
+void CShellIconManager::fillControlState(std::vector<SaveControlData>& controlStatesToSave) {
 	controlStatesToSave.clear();
 	for (int i = 0; i < SQSH_GAME_MAX; i++) {
 		externalControlStates[i].controlID = (ShellControlID)i;
@@ -2728,7 +2728,7 @@ void CShellIconManager::UpdateIcons()
 
 void CShellIconManager::UpdateMiniMapEvents() {
 	LogicData* logicData = gameShell->getLogicUpdater().getLogicData();
-	list<MiniMapEventIcon>::iterator ii = miniMapEventIcons.begin();
+	std::list<MiniMapEventIcon>::iterator ii = miniMapEventIcons.begin();
 	float dt = frame_time.delta();
 	bool hasAttack = false;
 	while (ii != miniMapEventIcons.end()) {
@@ -2742,7 +2742,7 @@ void CShellIconManager::UpdateMiniMapEvents() {
 			ii++;
 		}
 	}
-	list<MiniMapEvent>::iterator ei;
+	std::list<MiniMapEvent>::iterator ei;
 	FOR_EACH(logicData->miniMapEvents, ei) {
 		bool attack = (*ei).code == EVENT_UNIT_UNDER_ATTACK;
 		if (!attack || !hasAttack) {

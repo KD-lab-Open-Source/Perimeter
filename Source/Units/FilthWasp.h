@@ -47,7 +47,7 @@ struct terFilthSwarmWasp : terFilthSwarm
 
 	terFilthSwarmWasp(terFilthSpot* spot, const Vect3f& pos,int attack_period);
 	~terFilthSwarmWasp();
-	void SetHole(vector<terFilthSpot::HoleStruct>& hole_position_);
+	void SetHole(std::vector<terFilthSpot::HoleStruct>& hole_position_);
 
 	void Quant();
 	void DestroyLink();
@@ -61,10 +61,10 @@ struct terFilthSwarmWasp : terFilthSwarm
 	void universalLoad(const SaveUnitData* baseData);
 protected:
 	terUnitAttributeID unit_id;
-	vector<struct s_WaspBirthGeoAction*> wasp_hole_point;
-	vector<Vect2f> hole_position;
+	std::vector<struct s_WaspBirthGeoAction*> wasp_hole_point;
+	std::vector<Vect2f> hole_position;
 
-	typedef list<terFilthWasp*> FilthListType;
+	typedef std::list<terFilthWasp*> FilthListType;
 	FilthListType unit_list;
 
 	terGenerate gen;

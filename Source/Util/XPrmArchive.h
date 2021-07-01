@@ -51,9 +51,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<save_primitive_impl<U> >,
-            Select<boost::is_pointer<U>, 
+            Select<std::is_pointer<U>, 
                 Identity<save_pointer_impl<U> >,
-                Select<boost::is_array<U>,
+                Select<std::is_array<U>,
                     Identity<save_array_impl<U> >,
                     Identity<save_non_primitive_impl<U> >
                 >
@@ -78,8 +78,8 @@ public:
 
 private:
 	XBuffer buffer_;
-	string offset_;
-	string fileName_;
+	std::string offset_;
+	std::string fileName_;
 
 	///////////////////////////////////
 	void saveString(const char* value) {
@@ -180,12 +180,12 @@ private:
 		const char *name = get_type_id<T>().c_str();
 		saveStringEnclosed(name);
 		buffer_ < " ";
-		ClassDescriptor<typename boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
+		ClassDescriptor<typename std::remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
 	}
 
 	template<class T, class A>
 	XPrmOArchive& operator&(const std::vector<T, A>& cont){
-		typename vector<T, A>::const_iterator i;
+		typename std::vector<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			saveElement(*i);
@@ -195,7 +195,7 @@ private:
 
 	template<class T, class A>
 	XPrmOArchive& operator&(const std::list<T, A>& cont){
-		typename list<T, A>::const_iterator i;
+		typename std::list<T, A>::const_iterator i;
 		openCollection(cont.size());
 		FOR_EACH(cont, i)
 			saveElement(*i);
@@ -253,7 +253,7 @@ private:
 		return *this;
 	}
 
-	XPrmOArchive& operator&(const string& str) {
+	XPrmOArchive& operator&(const std::string& str) {
 		saveStringEnclosed(str.c_str());
 		return *this;
 	}
@@ -307,9 +307,9 @@ public:
 
         Select<IsPrimitive<U>,
             Identity<load_primitive_impl<U> >,
-            Select<boost::is_pointer<U>, 
+            Select<std::is_pointer<U>,
                 Identity<load_pointer_impl<U> >,
-                Select<boost::is_array<U>, 
+                Select<std::is_array<U>,
                     Identity<load_array_impl<U> >,
                     Identity<load_non_primitive_impl<U> >
                 >
@@ -340,11 +340,11 @@ public:
 	}
 
 private:
-	string fileName_;
+	std::string fileName_;
 	XBuffer buffer_;
 	char replaced_symbol;
 	int putTokenOffset_;
-	vector<int> readingStarts_;
+	std::vector<int> readingStarts_;
 
 	/////////////////////////////////////
 	const char* getToken();
@@ -353,7 +353,7 @@ private:
 	void skipValue();
 
 	void passString(const char* value);
-	bool loadString(string& value); // false if zero string should be loaded
+	bool loadString(std::string& value); // false if zero string should be loaded
 	int line() const;
 
 	bool openNode(const char* name) 
@@ -362,7 +362,7 @@ private:
 			int pass = 0;
 			for(;;){
 				const char* str = getToken();
-				string token = str ? str : "}"; // to simulate end of block when end of file
+				std::string token = str ? str : "}"; // to simulate end of block when end of file
 				if(!str)
 					token = "}";
 				releaseToken();
@@ -408,7 +408,7 @@ private:
 	void closeStructure() {
 		readingStarts_.pop_back();
 		for(;;){
-			string token;
+			std::string token;
 			loadString(token);
 			if(token == "}"){
 				break;
@@ -431,7 +431,7 @@ private:
 	template<class T>
 	void loadElement(T& t) {
 		(*this) & WRAP_NAME(t, 0);
-		string name;
+		std::string name;
 		loadString(name);
 		if(name != ",")
 			putToken();
@@ -489,7 +489,7 @@ private:
 	template<class T>
 	void loadPointer(T*& t)
     {
-		string typeName;
+		std::string typeName;
 		loadString(typeName);
 		if(typeName == "0"){
 			if(t){
@@ -498,7 +498,7 @@ private:
 			}
 			return;
 		}
-		typedef ClassDescriptor<typename boost::remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
+		typedef ClassDescriptor<typename std::remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
 		if(t){
 			if(typeName == get_type_id<T>().c_str()){
 				Descriptor::instance().find(typeName.c_str()).load(*this, t);
@@ -513,7 +513,7 @@ private:
 	}
 
 	template<class T, class A>
-	XPrmIArchive& operator&(vector<T, A>& cont)
+	XPrmIArchive& operator&(std::vector<T, A>& cont)
 	{
 		int count = openCollection();
 		if(count != cont.size()){
@@ -525,7 +525,7 @@ private:
 			}
 		}
 		else{
-			typename vector<T, A>::iterator i;
+			typename std::vector<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				loadElement(*i);
 		}
@@ -534,7 +534,7 @@ private:
 	}
 
 	template<class T, class A>
-	XPrmIArchive& operator&(list<T, A>& cont)
+	XPrmIArchive& operator&(std::list<T, A>& cont)
 	{
 		int count = openCollection();
 		if(count != cont.size()){
@@ -545,7 +545,7 @@ private:
 			}
 		}
 		else{
-            typename list<T, A>::iterator i;
+            typename std::list<T, A>::iterator i;
 			FOR_EACH(cont, i)
 				loadElement(*i);
 		}
@@ -581,7 +581,7 @@ private:
 	XPrmIArchive& operator&(EnumWrapper<Enum>& t)
 	{
 		const EnumDescriptor<Enum>& descriptor = getEnumDescriptor(Enum(0));
-		string str;
+		std::string str;
 		loadString(str);
 		t.value() = descriptor.keyByName(str.c_str());
 		return *this;
@@ -593,7 +593,7 @@ private:
 		const EnumDescriptor<Enum>& descriptor = getEnumDescriptor(Enum(0));
 		t.value() = (Value)0;
 		for(;;){
-			string name;
+			std::string name;
 			loadString(name);
 			if(name == ";"){
 				putToken();
@@ -608,7 +608,7 @@ private:
 
 	XPrmIArchive& operator&(PrmString& t)
 	{
-		string str;
+		std::string str;
 		if(loadString(str))
 			t = str;
 		else
@@ -618,7 +618,7 @@ private:
 
 	XPrmIArchive& operator&(CustomString& t)
 	{
-		string str;
+		std::string str;
 		loadString(str);
 		t = str;
 		return *this;
@@ -626,19 +626,19 @@ private:
 
 	XPrmIArchive& operator&(ComboListString& t)
 	{
-		string str;
+		std::string str;
 		loadString(str);
 		t = str;
 		return *this;
 	}
 
-	XPrmIArchive& operator&(string& value){
+	XPrmIArchive& operator&(std::string& value){
 		loadString(value);
 		return *this;
 	}
 
 	XPrmIArchive& operator&(bool& value){
-		string str;
+		std::string str;
 		loadString(str);
 		if(str == "true")
 			value = true;

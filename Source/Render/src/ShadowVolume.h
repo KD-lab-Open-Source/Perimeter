@@ -14,9 +14,9 @@ class ShadowVolume:public cUnknownClass
 		int w[2];  // triangle index: for "open" models, w[1] == -1 on open edges
 	};
 
-	vector<Vect3f> vertex;
-	vector<sv_triangle> triangle;
-	vector<sv_edge> edge;
+	std::vector<Vect3f> vertex;
+	std::vector<sv_triangle> triangle;
+	std::vector<sv_edge> edge;
 public:
 	ShadowVolume();
 	~ShadowVolume();

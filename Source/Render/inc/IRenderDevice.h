@@ -250,4 +250,4 @@ enum eSurfaceFormat
 	SURFMT_NUMBER
 };
 
-bool GetAllTriangle(const char* filename,vector<Vect3f>& point,vector<sPolygon>& polygon);
+bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vector<sPolygon>& polygon);

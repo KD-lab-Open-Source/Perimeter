@@ -22,7 +22,7 @@ struct sKeyFloat
 
 struct sChannelHeader
 {
-	string			name;
+	std::string		name;
 	float			Time;
 
 	sChannelHeader()										{ Time=0; }
@@ -38,13 +38,13 @@ class cAnimChainMaterial
 public:
 	sChannelHeader* parent;
 
-	vector<sKeyColor>		KeyAmbient;			// анимация материала объекта
-	vector<sKeyColor>		KeyDiffuse;			
-	vector<sKeyColor>		KeySpecular;		
-	vector<sKeyColor>		KeyEmissive;
-	vector<sKeyFloat>		KeyPower;
-	vector<sKeyFloat>		KeyTransparency;
-	vector<sKeyTexMatrix>	KeyTexMatrix;
+	std::vector<sKeyColor>		KeyAmbient;			// анимация материала объекта
+	std::vector<sKeyColor>		KeyDiffuse;			
+	std::vector<sKeyColor>		KeySpecular;		
+	std::vector<sKeyColor>		KeyEmissive;
+	std::vector<sKeyFloat>		KeyPower;
+	std::vector<sKeyFloat>		KeyTransparency;
+	std::vector<sKeyTexMatrix>	KeyTexMatrix;
 
 	cAnimChainMaterial();
 	~cAnimChainMaterial();

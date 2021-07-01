@@ -46,7 +46,7 @@ void scanPolyByLineOp(const Vect2i points[], int n, LineOp& line_op)
 			int x2 = xr >> 16;
 
 			if(x1 > x2)
-				swap(x1, x2);
+				std::swap(x1, x2);
 
 			line_op(x1,x2,Y);
 
@@ -61,7 +61,7 @@ void scanPolyByLineOp(const Vect2i points[], int n, LineOp& line_op)
 				int x2 = xr >> 16;
 
 				if(x1 > x2)
-					swap(x1, x2);
+					std::swap(x1, x2);
 
 				line_op(x1,x2,Y);
 				return;
@@ -83,7 +83,7 @@ void scanPolyByLineOp(const Vect2i points[], int n, LineOp& line_op)
 				int x2 = xr >> 16;
 
 				if(x1 > x2)
-					swap(x1, x2);
+					std::swap(x1, x2);
 
 				line_op(x1,x2,Y);
 				return;

@@ -14,10 +14,10 @@ public:
 	virtual float GetHeight()			{return FontHeight*GetTexture()->GetHeight();}
 	bool Reload(LPCSTR root_dir,LPCSTR language_dir);
 
-	vector<Vect3f>		Font; // x,y - position, z - font width
+	std::vector<Vect3f>		Font; // x,y - position, z - font width
 	float				FontHeight;
 
-	string font_name;
+	std::string font_name;
 	int GetStatementHeight(){return statement_height;};
 protected:
 	int statement_height;

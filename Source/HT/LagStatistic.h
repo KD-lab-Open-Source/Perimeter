@@ -28,7 +28,7 @@ protected:
 	float big_speed_up;
 	float speed_up;
 	QuantData cur_data;
-	list<QuantData> list_data;
+	std::list<QuantData> list_data;
 
 	void ShowAverage(Vect2i pos,int interval);
 	void CalcAverage(int interval,float& lag_quant,float& net_skip,float& net_wait);

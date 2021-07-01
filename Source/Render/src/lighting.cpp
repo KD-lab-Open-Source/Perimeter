@@ -21,7 +21,7 @@ cLighting::cLighting()
 
 cLighting::~cLighting()
 {
-	list<OneLight*>::iterator it;
+	std::list<OneLight*>::iterator it;
 	FOR_EACH(lights,it)
 		delete *it;
 	lights.clear();
@@ -41,7 +41,7 @@ void cLighting::PreDraw(cCamera *pCamera)
 {
 	pCamera->Attach(SCENENODE_OBJECTSORT,this);
 
-	vector<PreGenerate>::iterator it;
+	std::vector<PreGenerate>::iterator it;
 	FOR_EACH(pre_generate,it)
 	{
 		Generate(it->pos_begin,it->pos_end,pCamera);
@@ -51,7 +51,7 @@ void cLighting::PreDraw(cCamera *pCamera)
 
 void cLighting::Draw(cCamera *pCamera)
 {
-	list<OneLight*>::iterator it;
+	std::list<OneLight*>::iterator it;
 	FOR_EACH(lights,it)
 		(*it)->Draw(pCamera,this);
 }
@@ -146,7 +146,7 @@ void cLighting::Animate(float dt)
 	}
 
 	float fade_dt=dt/param.fade_time;
-	list<OneLight*>::iterator it;
+	std::list<OneLight*>::iterator it;
 	FOR_EACH(lights,it)
 	{
 		OneLight* p=*it;
@@ -159,7 +159,7 @@ void cLighting::Animate(float dt)
 	}
 }
 
-void cLighting::Init(Vect3f pos_begin_,vector<Vect3f>& pos_end_)
+void cLighting::Init(Vect3f pos_begin_, std::vector<Vect3f>& pos_end_)
 {
 	global_pos.set(Mat3f::ID,pos_begin);
 	pos_begin=pos_begin_;
@@ -198,7 +198,7 @@ void cLighting::OneLight::Generate(Vect3f pos_begin_,Vect3f pos_end_,cCamera *pC
 	int size=32;
 	position.resize(size+2);
 
-	vector<float> pos(size+2);
+	std::vector<float> pos(size+2);
 	pos[0]=pos[pos.size()-1]=0;
 
 	float amplitude=parent->param.lighting_amplitude;
@@ -229,11 +229,11 @@ void cLighting::OneLight::Generate(Vect3f pos_begin_,Vect3f pos_end_,cCamera *pC
 	BuildStrip(pCamera,parent);
 }
 
-void cLighting::OneLight::GenerateInterpolate(vector<float>& pos,int size,float amplitude)
+void cLighting::OneLight::GenerateInterpolate(std::vector<float>& pos,int size,float amplitude)
 {
 
 	RandomGenerator& r=xm_random_generator;
-	vector<float> p(size);\
+	std::vector<float> p(size);\
 	int i;
 	for(i=0;i<size;i++)
 		p[i]=r.frnd(amplitude);
@@ -247,7 +247,7 @@ void cLighting::OneLight::GenerateInterpolate(vector<float>& pos,int size,float 
 
 }
 
-float cLighting::OneLight::get(vector<float>& p,float t)//линейная интерполяция
+float cLighting::OneLight::get(std::vector<float>& p,float t)//линейная интерполяция
 {
 
 	int size=p.size()+2;

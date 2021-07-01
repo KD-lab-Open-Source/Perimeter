@@ -8,12 +8,12 @@ template<class Slot>
 class cSlotManager
 {
 public://Сделать так, что-бы operator[] мог работать в нескольких потоках при использовании NewSlot,DeleteSlot в другом потоке
-	allocator<Slot> alloc;
-	typedef vector<Slot*> array;
+	std::allocator<Slot> alloc;
+	typedef std::vector<Slot*> array;
 	typedef typename array::iterator iterator;
 protected:
 	array all_slot;
-	stack<Slot*> free_slot;
+	std::stack<Slot*> free_slot;
 public:
 	cSlotManager()
 	{

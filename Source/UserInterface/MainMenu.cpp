@@ -42,30 +42,30 @@ BGScene bgScene;
 
 int currYear = -1;
 
-vector<MissionDescription> multiplayerMaps;
-vector<MissionDescription> savedGames;
-vector<MissionDescription> replays;
+std::vector<MissionDescription> multiplayerMaps;
+std::vector<MissionDescription> savedGames;
+std::vector<MissionDescription> replays;
 MissionDescription missionToExec;
 
-string defaultSaveName;
+std::string defaultSaveName;
 
 
 bool intfCanHandleInput() {
 	return !bgScene.isPlaying() && _shellIconManager.isDynQueueEmpty();
 }
 
-string getOriginalMissionName(const string& originalSaveName) {
-	string res = originalSaveName;
+std::string getOriginalMissionName(const std::string& originalSaveName) {
+	std::string res = originalSaveName;
 	res.erase(res.size() - 4, res.size()); 
 	size_t pos = res.rfind("\\");
-	if (pos != string::npos) {
+	if (pos != std::string::npos) {
 		res.erase(0, pos + 1);
 	}
 	return res;
 }
 
-string getItemTextFromBase(const char *keyStr) {
-	string key("Interface.Menu.ComboItems.");
+std::string getItemTextFromBase(const char *keyStr) {
+	std::string key("Interface.Menu.ComboItems.");
 	key += keyStr;
 	const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
 	return (*stringFromBase) ? stringFromBase : "";
@@ -131,7 +131,7 @@ STARFORCE_API void processInterfaceMessage(terUniverseInterfaceMessage id, int w
 					if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SURVIVAL) {
 						const char* origName = gameShell->CurrentMission.originalSaveName;
 						xassert(origName);
-						string keyName;
+						std::string keyName;
 						if (!origName) {
 							keyName = gameShell->CurrentMission.missionName();
 						} else {
@@ -183,7 +183,7 @@ STARFORCE_API void processInterfaceMessage(terUniverseInterfaceMessage id, int w
 					if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SURVIVAL) {
 						const char* origName = gameShell->CurrentMission.originalSaveName;
 						xassert(origName);
-						string keyName;
+						std::string keyName;
 						if (!origName) {
 							keyName = gameShell->CurrentMission.missionName();
 						} else {
@@ -238,7 +238,7 @@ STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, 
 	}
 }
 
-STARFORCE_API void loadMapVector(vector<MissionDescription>& mapVector, const string& path, const string& mask, bool replay) {
+STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	mapVector.clear();
 	WIN32_FIND_DATA FindFileData;
@@ -247,7 +247,7 @@ STARFORCE_API void loadMapVector(vector<MissionDescription>& mapVector, const st
 		do{
 			if(FindFileData.nFileSizeLow){
 				MissionDescription mission;
-				string name = path + FindFileData.cFileName;
+				std::string name = path + FindFileData.cFileName;
 				mission.setSaveName(name.c_str());
 				mission.setReelName(name.c_str());
 //				mission.gameType_ = replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame;
@@ -261,17 +261,17 @@ STARFORCE_API void loadMapVector(vector<MissionDescription>& mapVector, const st
 		FindClose( hf );
 	}
 }
-void checkMissionDescription(int index, vector<MissionDescription>& mVect) {
+void checkMissionDescription(int index, std::vector<MissionDescription>& mVect) {
 	if (mVect[index].worldID() == -1) {
 		mVect[index] = MissionDescription(mVect[index].saveName());
 	}
 }
-void checkReplayMissionDescription(int index, vector<MissionDescription>& mVect) {
+void checkReplayMissionDescription(int index, std::vector<MissionDescription>& mVect) {
 	if (mVect[index].worldID() == -1) {
 		mVect[index] = MissionDescription(mVect[index].fileNamePlayReelGame.c_str(), GT_playRellGame);
 	}
 }
-void setupMapDescWnd(int index, vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
+void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
 	checkMissionDescription(index, mVect);
 	if (mapWndID != -1) {
 		((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( mVect[index].worldID() );
@@ -284,7 +284,7 @@ void setupMapDescWnd(int index, vector<MissionDescription>& mVect, int mapWndID,
 		input->SetText(mVect[index].missionName());
 	}
 }
-void setupReplayDescWnd(int index, vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
+void setupReplayDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
 	checkReplayMissionDescription(index, mVect);
 	((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( mVect[index].worldID() );
 	((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( mVect[index].missionDescription() );
@@ -305,7 +305,7 @@ void clearMapDescWnd(int mapWndID, int mapDescrWndID, int inputWndID) {
 		input->SetText("");
 	}
 }
-STARFORCE_API void fillList(int listID, vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
+STARFORCE_API void fillList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->NewItem(1);
 	list->Clear();
@@ -330,7 +330,7 @@ STARFORCE_API void fillMultiPlayerList(int listID = SQSH_MM_LAN_MAP_LIST, int ma
 		int i;
 		int s;
 		for (i = 0, s = multiplayerMaps.size(); i < s; i++) {
-			string name = "MapNames.";
+			std::string name = "MapNames.";
 			name += multiplayerMaps[i].missionName();
 			name = qdTextDB::instance().getText(name.c_str());
 			if (name.empty()) {
@@ -356,7 +356,7 @@ STARFORCE_API void fillMultiPlayerList(int listID = SQSH_MM_LAN_MAP_LIST, int ma
 		clearMapDescWnd(mapWndID, mapDescrWndID, -1);
 	}
 }
-STARFORCE_API void fillReplayList(int listID, vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
+STARFORCE_API void fillReplayList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->NewItem(1);
 	list->Clear();
@@ -399,7 +399,7 @@ void prepareStatsListWindow(int listID, int columnCount, float* weights) {
 		list->GetItem(i).x = weights[i];
 	}
 }
-void prepareHeadList(int listID, const vector<string>& mVect, float* weights) {
+void prepareHeadList(int listID, const std::vector<std::string>& mVect, float* weights) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->NewItem(mVect.size());
 	list->Clear();
@@ -409,13 +409,13 @@ void prepareHeadList(int listID, const vector<string>& mVect, float* weights) {
 	}
 	list->SetCurSel(0);
 }
-void fillColumnStatsList(int listID, int columnNumber, const vector<string>& mVect) {
+void fillColumnStatsList(int listID, int columnNumber, const std::vector<std::string>& mVect) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
 	for (int i = 0, s = mVect.size(); i < s; i++) {
 		list->AddString( mVect[i].c_str(), columnNumber );
 	}
 }
-void fillRowStatsListWindow(int listID, int rowNumber, const vector<string>& mVect, int race, const sColor4c& clr) {
+void fillRowStatsListWindow(int listID, int rowNumber, const std::vector<std::string>& mVect, int race, const sColor4c& clr) {
 	CStatListBoxWindow* list = (CStatListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->AddRace( race, clr );
 	for (int i = 0, s = mVect.size(); i < s; i++) {
@@ -426,7 +426,7 @@ void fillRowStatsListWindow(int listID, int rowNumber, const vector<string>& mVe
 STARFORCE_API void fillStatsLists() {
 	char buffer[30 + 1];
 
-	vector<string> temp;
+	std::vector<std::string> temp;
 
 	temp.push_back("");
 	temp.push_back(qdTextDB::instance().getText("Interface.Menu.Stats.Name"));
@@ -469,7 +469,7 @@ STARFORCE_API void fillStatsLists() {
 	prepareStatsListWindow(SQSH_MM_STATS_UNITS_LIST, 6, unitsColumnStatsWeights);
 	prepareStatsListWindow(SQSH_MM_STATS_BUILDINGS_LIST, 6, buildingsColumnStatsWeights);
 
-	vector<terPlayer*>& players = universe()->Players;
+	std::vector<terPlayer*>& players = universe()->Players;
 	terPlayer* player;
 	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 		int playerID = gameShell->CurrentMission.playersData[i].playerID;
@@ -605,7 +605,7 @@ STARFORCE_API void fillProfileList() {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
 	list->NewItem(1);
 	list->Clear();
-	const vector<Profile>& profiles = gameShell->currentSingleProfile.getProfilesVector();
+	const std::vector<Profile>& profiles = gameShell->currentSingleProfile.getProfilesVector();
 	for (int i = 0, s = profiles.size(); i < s; i++) {
 		list->AddString( profiles[i].name.c_str(), 0 );
 	}
@@ -908,7 +908,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_LAN_SCR:
 					{
 						gameShell->getNetClient()->StartFindHost();
-						string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+						std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
 							input->SetText(name.c_str());
@@ -994,7 +994,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_LOAD_SCR:
 					{
 //						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-						const string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 						loadMapVector(savedGames, savesDir, savesDir + "*.spg");
 						StartSpace();
 						fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
@@ -1002,14 +1002,14 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOAD_REPLAY_SCR:
 					{
-						loadMapVector(replays, (string(REPLAY_PATH) + "\\").c_str(), (string(REPLAY_PATH) + "\\*.*").c_str(), true);
+						loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
 						StartSpace();
 						fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 					}
 					break;
 				case SQSH_MM_SAVE_REPLAY_SCR:
 					{
-						loadMapVector(replays, (string(REPLAY_PATH) + "\\").c_str(), (string(REPLAY_PATH) + "\\*.*").c_str(), true);
+						loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
 //						StartSpace();
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_REPLAY_NAME_INPUT);
 //						if (input->getText().empty()) {
@@ -1021,7 +1021,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_LOAD_IN_GAME_SCR:
 					{
 //						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-						const string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 						loadMapVector(savedGames, savesDir, savesDir + "*.spg");
 //						StartSpace();
 						fillList(SQSH_MM_LOAD_IN_GAME_MAP_LIST, savedGames, SQSH_MM_LOAD_IN_GAME_MAP, SQSH_MM_LOAD_IN_GAME_MAP_DESCR_TXT);
@@ -1030,7 +1030,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_SAVE_GAME_SCR:
 					{
 //						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-						const string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 						loadMapVector(savedGames, savesDir, savesDir + "*.spg");
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
 //						if (input->getText().empty()) {
@@ -1114,7 +1114,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_NAME_INPUT_SCR:
 					{
-						string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+					std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
 							input->SetText(name.c_str());
@@ -1716,7 +1716,7 @@ void onMMNewProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_NAME_INPUT);
 		bool enable = false;
 		if ( *(input->GetText()) ) {
-			const vector<Profile>& profiles = gameShell->currentSingleProfile.getProfilesVector();
+			const std::vector<Profile>& profiles = gameShell->currentSingleProfile.getProfilesVector();
 			enable = true;
 			for (int i = 0, s = profiles.size(); i < s; i++) {
 				if (strcmp(input->GetText(), profiles[i].name.c_str()) == 0) {
@@ -1739,8 +1739,8 @@ void onMMDelProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 		//delete selected profile
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
 
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteProfile");
-		string profileName = gameShell->currentSingleProfile.getProfilesVector()[list->GetCurSel()].name;
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteProfile");
+		std::string profileName = gameShell->currentSingleProfile.getProfilesVector()[list->GetCurSel()].name;
 		char* mess = new char[text.length() + profileName.length()];
 		sprintf(mess, text.c_str(), profileName.c_str());
 		setupYesNoMessageBox(delProfileAction, 0, mess);
@@ -1783,7 +1783,7 @@ void onMMYearBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			SND2DPlaySound("mainmenu_clock");
 		}
 		sprintf(buffer, "%d", currYear >= 0 ? currYear : 0);
-		string res(getItemTextFromBase("Year").c_str());
+		std::string res(getItemTextFromBase("Year").c_str());
 		res += buffer;
 		txtWnd->setText(res);
 	}
@@ -1958,7 +1958,7 @@ int restartAction(float, float) {
 void onMMRestartButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
 
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Restart");
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Restart");
 		setupYesNoMessageBox(restartAction, 0, text);
 
 		showMessageBox();
@@ -2081,7 +2081,7 @@ void onMMInMissOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 }
 void onMMInMissRestartButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Restart");
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Restart");
 		setupYesNoMessageBox(restartAction, 0, text);
 
 		showMessageBox();
@@ -2131,7 +2131,7 @@ int quitAction(float, float) {
 }
 void onMMInMissQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Quit");
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.Quit");
 		setupYesNoMessageBox(quitAction, 0, text);
 
 		showMessageBox();
@@ -2146,7 +2146,7 @@ int delLoadSaveAction(float, float) {
 //	DeleteFile( savedGames[list->GetCurSel()].saveName() );
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
-	const string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, savesDir + "*.spg");
 	fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
 	return 0;
@@ -2197,8 +2197,8 @@ void onMMDelSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() && param == VK_LBUTTON) {
 
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_MAP_LIST);
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteSave");
-		string saveName = savedGames[list->GetCurSel()].missionName();
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteSave");
+		std::string saveName = savedGames[list->GetCurSel()].missionName();
 		char* mess = new char[text.length() + saveName.length()];
 		sprintf(mess, text.c_str(), saveName.c_str());
 		setupYesNoMessageBox(delLoadSaveAction, 0, mess);
@@ -2215,7 +2215,7 @@ void onMMDelSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 int delLoadReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_REPLAY_LIST);
 	DeleteFile( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
-	loadMapVector(replays, (string(REPLAY_PATH) + "\\").c_str(), (string(REPLAY_PATH) + "\\*.*").c_str(), true);
+	loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
 	fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 	return 0;
 }
@@ -2255,8 +2255,8 @@ void onMMReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 void onMMDelReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() && param == VK_LBUTTON) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_REPLAY_LIST);
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteReplay");
-		string replayName = replays[list->GetCurSel()].missionNamePlayReelGame;
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteReplay");
+		std::string replayName = replays[list->GetCurSel()].missionNamePlayReelGame;
 		char* mess = new char[text.length() + replayName.length()];
 		sprintf(mess, text.c_str(), replayName.c_str());
 		setupYesNoMessageBox(delLoadReplayAction, 0, mess);
@@ -2274,7 +2274,7 @@ int delLoadInGameSaveAction(float, float) {
 //	DeleteFile( savedGames[list->GetCurSel()].saveName() );
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-	const string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, savesDir + "*.spg");
 	fillList(SQSH_MM_LOAD_IN_GAME_MAP_LIST, savedGames, SQSH_MM_LOAD_IN_GAME_MAP, SQSH_MM_LOAD_IN_GAME_MAP_DESCR_TXT);
 	return 0;
@@ -2325,8 +2325,8 @@ void onMMLoadInGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 void onMMDelLoadInGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() && param == VK_LBUTTON) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_IN_GAME_MAP_LIST);
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteSave");
-		string saveName = savedGames[list->GetCurSel()].missionName();
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteSave");
+		std::string saveName = savedGames[list->GetCurSel()].missionName();
 		char* mess = new char[text.length() + saveName.length()];
 		sprintf(mess, text.c_str(), saveName.c_str());
 		setupYesNoMessageBox(delLoadInGameSaveAction, 0, mess);
@@ -2344,7 +2344,7 @@ int delSaveGameSaveAction(float, float) {
 //	DeleteFile( savedGames[list->GetCurSel()].saveName() );
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-	const string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, savesDir + "*.spg");
 	fillList(SQSH_MM_SAVE_GAME_MAP_LIST, savedGames, SQSH_MM_SAVE_GAME_MAP, SQSH_MM_SAVE_GAME_MAP_DESCR_TXT);
 	return 0;
@@ -2360,7 +2360,7 @@ int toSaveQuant( float, float ) {
 
 STARFORCE_API int saveGame_(float i, float) {
 	gameShell->currentSingleProfile.deleteSave(savedGames[i].missionName());
-	string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[i].missionName();
+	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[i].missionName();
 	if ( gameShell->universalSave(saveName.c_str(), true) ) {
 		hideMessageBox();
 		_shellIconManager.AddDynamicHandler( toSaveQuant, CBCODE_QUANT );
@@ -2397,8 +2397,8 @@ void onMMSaveGameMapList(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		CListBoxWindow* list = (CListBoxWindow*) pWnd;
 		int pos = list->GetCurSel();
 		if (pos != -1) {
-			string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteSave");
-			string saveName = savedGames[pos].missionName();
+			std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteSave");
+			std::string saveName = savedGames[pos].missionName();
 			char* mess = new char[text.length() + saveName.length()];
 			sprintf(mess, text.c_str(), saveName.c_str());
 			setupYesNoMessageBox(saveGame, pos, mess);
@@ -2423,15 +2423,15 @@ void onMMSaveGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 			}
 		}
 		if (i != s) {
-			string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteSave");
-			string saveName = savedGames[i].missionName();
+			std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteSave");
+			std::string saveName = savedGames[i].missionName();
 			char* mess = new char[text.length() + saveName.length()];
 			sprintf(mess, text.c_str(), saveName.c_str());
 			setupYesNoMessageBox(saveGame, i, mess);
 			delete [] mess;
 			showMessageBox();
 		} else {
-			string path = gameShell->currentSingleProfile.getSavesDirectory() + input->getText();
+			std::string path = gameShell->currentSingleProfile.getSavesDirectory() + input->getText();
 			if ( gameShell->universalSave(path.c_str(), true) ) {
 				_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_INMISSION_SCR );
 			} else {
@@ -2450,8 +2450,8 @@ void onMMSaveGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMDelSaveGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() && param == VK_LBUTTON) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_MAP_LIST);
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteSave");
-		string saveName = savedGames[list->GetCurSel()].missionName();
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteSave");
+		std::string saveName = savedGames[list->GetCurSel()].missionName();
 		char* mess = new char[text.length() + saveName.length()];
 		sprintf(mess, text.c_str(), saveName.c_str());
 		setupYesNoMessageBox(delSaveGameSaveAction, 0, mess);
@@ -2467,7 +2467,7 @@ void onMMDelSaveGameButton(CShellWindow* pWnd, InterfaceEventCode code, int para
 int delSaveReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_LIST);
 	DeleteFile( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
-	loadMapVector(replays, (string(REPLAY_PATH) + "\\").c_str(), (string(REPLAY_PATH) + "\\*.*").c_str(), true);
+	loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
 	fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
 	return 0;
 }
@@ -2520,8 +2520,8 @@ void onMMSaveReplayList(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 		CListBoxWindow* list = (CListBoxWindow*) pWnd;
 		int pos = list->GetCurSel();
 		if (pos != -1) {
-			string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteReplay");
-			string replayName = replays[pos].missionNamePlayReelGame;
+			std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteReplay");
+			std::string replayName = replays[pos].missionNamePlayReelGame;
 			char* mess = new char[text.length() + replayName.length()];
 			sprintf(mess, text.c_str(), replayName.c_str());
 			setupYesNoMessageBox(saveReplay, pos, mess);
@@ -2546,15 +2546,15 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 			}
 		}
 		if (i != s) {
-			string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteReplay");
-			string replayName = replays[i].missionNamePlayReelGame;
+			std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.OverwriteReplay");
+			std::string replayName = replays[i].missionNamePlayReelGame;
 			char* mess = new char[text.length() + replayName.length()];
 			sprintf(mess, text.c_str(), replayName.c_str());
 			setupYesNoMessageBox(saveReplay, i, mess);
 			delete [] mess;
 			showMessageBox();
 		} else {
-			string path = REPLAY_PATH;
+			std::string path = REPLAY_PATH;
 			WIN32_FIND_DATA FindFileData;
 			HANDLE hf = FindFirstFile( path.c_str(), &FindFileData );
 			if (hf == INVALID_HANDLE_VALUE) {
@@ -2595,8 +2595,8 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 void onMMDelSaveReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() && param == VK_LBUTTON) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_LIST);
-		string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteReplay");
-		string replayName = replays[list->GetCurSel()].missionNamePlayReelGame;
+		std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteReplay");
+		std::string replayName = replays[list->GetCurSel()].missionNamePlayReelGame;
 		char* mess = new char[text.length() + replayName.length()];
 		sprintf(mess, text.c_str(), replayName.c_str());
 		setupYesNoMessageBox(delSaveReplayAction, 0, mess);
@@ -2626,7 +2626,7 @@ void onMMTaskButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	}
 }
 
-void HistoryScene::executeMission(const string& fileName) {
+void HistoryScene::executeMission(const std::string& fileName) {
 	setMissionNumberToExecute(interpreter->findMission(fileName));
 	CShellWindow* wnd = _shellIconManager.GetWnd(SQSH_MM_SKIP_BRIEFING_BTN);
 	if (!wnd->isVisible()) {
@@ -2658,7 +2658,7 @@ void HistoryScene::showPaused() {
 		_shellIconManager.SwitchMenuScreens( SHOW_SKIP_CONTINUE, SHOW_SKIP_CONTINUE );
 	}
 }
-void HistoryScene::showText(const string& text, const string& icon) {
+void HistoryScene::showText(const std::string& text, const std::string& icon) {
 	CTextWindow* wnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_BRIEFING_TXT);
 	if (wnd) {
 		wnd->setText( qdTextDB::instance().getText(text.c_str()) );

@@ -144,16 +144,16 @@ private:
 		
 		ChangeOwnerData(terUnitBase* unit, terPlayer* player) : unit_(unit), player_(player) {}
 	};
-	typedef list<ChangeOwnerData> ChangeOwnerList;
+	typedef std::list<ChangeOwnerData> ChangeOwnerList;
 	ChangeOwnerList changeOwnerList;
 
 	RegionMetaDispatcher* activeRegionDispatcher_;
 
-	string loadedGmpName_;
+	std::string loadedGmpName_;
 
 	MultiBodyDispatcher multibody_dispatcher;
 
-	typedef vector<const SaveUnitLink*> SaveUnitLinkList;
+	typedef std::vector<const SaveUnitLink*> SaveUnitLinkList;
 	SaveUnitLinkList saveUnitLinks_;
 
 	static terUniverse* universe_;

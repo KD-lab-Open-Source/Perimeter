@@ -32,10 +32,10 @@ inline int _xnoise1()
 
 inline void union_rect(RECT& rDst, RECT& r1, RECT& r2)
 {
-	rDst.left  = min(r1.left, r2.left);
-	rDst.right = max(r1.right, r2.right);
-	rDst.top  = min(r1.top, r2.top);
-	rDst.bottom = max(r1.bottom, r2.bottom);
+	rDst.left  = (std::min)(r1.left, r2.left);
+	rDst.right = (std::max)(r1.right, r2.right);
+	rDst.top  = (std::min)(r1.top, r2.top);
+	rDst.bottom = (std::max)(r1.bottom, r2.bottom);
 }
 inline void update_map(int left, int right, int top, int bottom)
 {

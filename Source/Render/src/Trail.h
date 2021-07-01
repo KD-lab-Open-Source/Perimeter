@@ -4,7 +4,7 @@
 
 class cTrail : public cAnimUnkObj
 {
-	vector<sParticle>			Particle;
+	std::vector<sParticle>		Particle;
 	sParticleKey				*Key;
 	short						NumberKey;
 	short						LastParticle;

@@ -22,8 +22,8 @@ private:
 class AttributeBuilding : public AttributeReal
 {
 public:
-	vector<EnumWrapper<terUnitAttributeID> > EnableStructure;
-	vector<EnumWrapper<terUnitAttributeID> > Downgrades; // дл€ сканировани€, в _обратном_ пор€дке
+	std::vector<EnumWrapper<terUnitAttributeID> > EnableStructure;
+	std::vector<EnumWrapper<terUnitAttributeID> > Downgrades; // дл€ сканировани€, в _обратном_ пор€дке
 	EnumWrapper<terUnitAttributeID> Upgrade; // “олько ближайший апгрейд
 
     int constructionPriority; // приоритет строительства

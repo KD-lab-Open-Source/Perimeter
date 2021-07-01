@@ -48,7 +48,7 @@ public:
 	void universalLoad(const SaveUnitData* baseData);
 protected:
 	int attack_period;
-	typedef vector<terFilthShark*> FilthListType;
+	typedef std::vector<terFilthShark*> FilthListType;
 	FilthListType units;
 	terGenerate gen;
 };

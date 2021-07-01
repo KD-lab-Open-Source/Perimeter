@@ -174,7 +174,7 @@ struct sqshControl
 	int diaA;
 	
 	//actions
-	vector<ControlAction> actions;
+	std::vector<ControlAction> actions;
 
 	int passive;
 	int flashWithImage;
@@ -321,8 +321,8 @@ struct sqshControlContainer
 	sqshImage   image;
 	sqshImage   image2;
 
-	vector<sqshControl> controls;;
-	vector<BGObj> bgObjects;
+	std::vector<sqshControl> controls;;
+	std::vector<BGObj> bgObjects;
 
 	EnumWrapper<ShellControlID> defaultEnterBtnID;
 	EnumWrapper<ShellControlID> defaultEnterBtnIDAux;
@@ -426,7 +426,7 @@ struct sqshTabElement
 	float activeSY;
 	sqshImage activeTabImage;
 
-	vector<int> ctrls;
+	std::vector<int> ctrls;
 
 	sqshTabElement()
 	{
@@ -474,9 +474,9 @@ struct sqshTabSheet
 	float dsx;
 	float dsy;
 
-	vector<sqshTabElement> pages;
+	std::vector<sqshTabElement> pages;
 
-	vector<ControlAction> actions;
+	std::vector<ControlAction> actions;
 
 	int flashR;
 	int flashG;
@@ -731,9 +731,9 @@ struct Reel
 
 struct InterfaceAttributes
 {
-	vector<TabIcon> tabIcons;
-	vector<sqshTabSheet> tabSheets;
-	vector<sqshControlContainer> controls;
+	std::vector<TabIcon> tabIcons;
+	std::vector<sqshTabSheet> tabSheets;
+	std::vector<sqshControlContainer> controls;
 
 	InterfaceAttributes(){ };
 

@@ -23,7 +23,7 @@ class cUnkLight;
 class cShader
 {
 public:
-	static vector<cShader*> all_shader;
+	static std::vector<cShader*> all_shader;
 
 	cShader();
 	virtual ~cShader();
@@ -56,7 +56,7 @@ protected:
 		LPDIRECT3DVERTEXSHADER9 pShader;
 	};
 
-	vector<SHADER> pShader;
+	std::vector<SHADER> pShader;
 	void Select(int num=0);
 	virtual void RestoreShader()=0;
 	HRESULT Compile(const char* name,const DWORD* shader);
@@ -94,7 +94,7 @@ public:
 class VSScene:public cVertexShader
 {
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)=0;
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)=0;
 	virtual void SetMaterial(sDataRenderMaterial *Data){};
 	void SetLight(SHADER_HANDLE& pos,SHADER_HANDLE& color,SHADER_HANDLE& param,cUnkLight* l);
 	virtual void SetWorldSize(Vect2f sz){};//для tilemap
@@ -128,7 +128,7 @@ protected:
 
 	SHADER_HANDLE fInvWorldSize;
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void RestoreShader();
 	virtual void GetHandle();
 	virtual void SetWorldSize(Vect2f sz);
@@ -229,7 +229,7 @@ protected:
 	SHADER_HANDLE vCameraPos;
 	SHADER_HANDLE vLightDirection;
 public:
-	void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	void RestoreShader();
 	void GetHandle();
 	void SetMaterial(sDataRenderMaterial *Data);
@@ -261,7 +261,7 @@ protected:
 	SHADER_HANDLE vLightDirectionInvWorld;
 public:
 	void SetMaterial(sDataRenderMaterial *Data);
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void RestoreShader();
 	void GetHandle();
 };
@@ -288,7 +288,7 @@ public:
 	SHADER_HANDLE mWorld;
 	SHADER_HANDLE mView;
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void GetHandle();
 };
 
@@ -355,7 +355,7 @@ protected:
 	SHADER_HANDLE vPointColor1;
 	SHADER_HANDLE vPointParam1;
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void RestoreShader();
 	virtual void GetHandle();
 	virtual void SetMaterial(sDataRenderMaterial *Data);
@@ -410,7 +410,7 @@ protected:
 	SHADER_HANDLE c05;
 public:
 	void SetMaterial(sDataRenderMaterial *Data);
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void GetHandle();
 	virtual void RestoreShader();
 };
@@ -446,7 +446,7 @@ protected:
 	SHADER_HANDLE vPointColor1;
 	SHADER_HANDLE vPointParam1;
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 protected:
 	void SetFog();
 	virtual void GetHandle();
@@ -478,7 +478,7 @@ protected:
 	SHADER_HANDLE	vCameraPos;
 	SHADER_HANDLE	vLightDirection;
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void RestoreShader();
 	virtual void GetHandle();
 	void SetMaterial(sDataRenderMaterial *Data);
@@ -536,7 +536,7 @@ protected:
 	SHADER_HANDLE vLightDirectionInvWorld;
 	void GetHandle();
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void RestoreShader();
 	virtual void SetMaterial(sDataRenderMaterial *Data);
 };
@@ -579,7 +579,7 @@ protected:
 	SHADER_HANDLE vPointColor1;
 	SHADER_HANDLE vPointParam1;
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 protected:
 	void SetFog();
 	virtual void GetHandle();
@@ -611,7 +611,7 @@ protected:
 	SHADER_HANDLE	vCameraPos;
 	SHADER_HANDLE	vLightDirection;
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void RestoreShader();
 	virtual void GetHandle();
 	void SetMaterial(sDataRenderMaterial *Data);
@@ -669,7 +669,7 @@ protected:
 	SHADER_HANDLE vLightDirectionInvWorld;
 	void GetHandle();
 public:
-	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light);
+	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light);
 	virtual void RestoreShader();
 	virtual void SetMaterial(sDataRenderMaterial *Data);
 };
@@ -721,7 +721,7 @@ class VSSkinBase:public cVertexShader
 {
 public:
 	virtual void Select(const D3DXMATRIX* matlight,float shadow_map_size,
-		vector<MatXf>& world,vector<cUnkLight*>* light,int blend_num)=0;
+		std::vector<MatXf>& world, std::vector<cUnkLight*>* light,int blend_num)=0;
 	virtual void SetMaterial(sDataRenderMaterial *Data)=0;
 };
 
@@ -747,7 +747,7 @@ protected:
 	SHADER_HANDLE	vLightDirection;
 public:
 	void Select(const D3DXMATRIX* matlight,float shadow_map_size,
-		vector<MatXf>& world,vector<cUnkLight*>* light,int blend_num);
+		std::vector<MatXf>& world, std::vector<cUnkLight*>* light,int blend_num);
 	void SetMaterial(sDataRenderMaterial *Data);
 protected:
 	void SetFog();
@@ -783,7 +783,7 @@ protected:
 	SHADER_HANDLE	vLightDirection;
 public:
 	void Select(const D3DXMATRIX* matlight,float shadow_map_size,
-		vector<MatXf>& world,vector<cUnkLight*>* light,int blend_num);
+		std::vector<MatXf>& world, std::vector<cUnkLight*>* light,int blend_num);
 	void SetMaterial(sDataRenderMaterial *Data);
 protected:
 	void SetFog();

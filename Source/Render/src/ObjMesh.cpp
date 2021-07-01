@@ -152,7 +152,7 @@ bool cObjMesh::Intersect(const Vect3f& p0,const Vect3f& p1)
 	return cObjectNode::Intersect(p0,p1);
 }
 
-void cObjMesh::GetAllPoints(vector<Vect3f>& point)
+void cObjMesh::GetAllPoints(std::vector<Vect3f>& point)
 {
 	if(!Tri)return;
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(*Tri->vb);
@@ -164,7 +164,7 @@ void cObjMesh::GetAllPoints(vector<Vect3f>& point)
 	gb_RenderDevice->UnlockVertexBuffer(*Tri->vb);
 }
 
-void cObjMesh::GetAllNormals(vector<Vect3f>& point)
+void cObjMesh::GetAllNormals(std::vector<Vect3f>& point)
 {
 	if(!Tri)return;
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(*Tri->vb);
@@ -176,7 +176,7 @@ void cObjMesh::GetAllNormals(vector<Vect3f>& point)
 	gb_RenderDevice->UnlockVertexBuffer(*Tri->vb);
 }
 
-int cObjMesh::GetAllTriangle(vector<Vect3f>& point,vector<sPolygon>& polygon)
+int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
 {
 	if(!Tri)return 0;
 	if(point.size()!=Tri->vb->ptr->NumberVertex)

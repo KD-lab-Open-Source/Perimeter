@@ -11,8 +11,8 @@ struct sParticle
 class cParticle : public cAnimUnkObj
 {
 protected:
-	vector<sParticle>			Particle;
-	vector<int>					StoppedParticle;
+	std::vector<sParticle>		Particle;
+	std::vector<int>			StoppedParticle;
 
 	float						CurrentTime,TimeLife,dTime;
 	Vect3f						Dumping;

@@ -75,7 +75,7 @@ void BinaryIArchive::close()
 	buffer_.alloc(10);
 }
 
-bool BinaryIArchive::loadString(string& str)
+bool BinaryIArchive::loadString(std::string& str)
 {
 	char c;
 	buffer_ > c;

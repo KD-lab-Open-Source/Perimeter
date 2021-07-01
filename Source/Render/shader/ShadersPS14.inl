@@ -88,7 +88,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 }
 */
 
-void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
+void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	//c0-c3 - матрица преобразования в экранные координаты (view_proj_matrix)
 	D3DXMATRIX mat;
@@ -176,7 +176,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 
 	if(light)
 	{
-		cVertexShader::Select(min(light->size(),pShader.size()-1));
+		cVertexShader::Select((std::min)(light->size(),pShader.size()-1));
 	}else
 		cVertexShader::Select();
 }
@@ -229,7 +229,7 @@ void VS14ObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
     SetVector(vLightDirection,&light);
 }
 
-void VS14ObjectSceneLight::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
+void VS14ObjectSceneLight::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	if(light)
 	{
@@ -367,7 +367,7 @@ void VS14ObjectSceneBump::GetHandle()
 	VAR_HANDLE(c05);
 }
 
-void VS14ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world,vector<cUnkLight*>* light)
+void VS14ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	D3DXMATRIX mat;
 	cD3DRender_SetMatrix(mat,*world);

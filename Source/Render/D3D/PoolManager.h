@@ -59,7 +59,7 @@ public:
 
 	void GetUsedMemory(int& total,int& free);
 protected:
-	vector<Pool*> pools;
+	std::vector<Pool*> pools;
 	virtual Pool* NewPool()=0;
 
 	inline void CheckGood(const PoolPage& page)

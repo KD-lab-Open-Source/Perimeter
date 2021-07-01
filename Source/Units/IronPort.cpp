@@ -274,7 +274,7 @@ void terCorridorAlpha::ShowInfo()
 	}
 }
 
-void terCorridorAlpha::putPath(list<Vect2f>& miniMapPath) {
+void terCorridorAlpha::putPath(std::list<Vect2f>& miniMapPath) {
 //	refreshPotentials();
 
 //	miniMapPath.push_back(potentialPosition(-attr().pathVisualizationDelta));

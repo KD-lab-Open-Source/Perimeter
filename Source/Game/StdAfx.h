@@ -35,8 +35,6 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 // non-standard header
 #include <slist>
-#else
-#define slist list
 #endif
 
 // hash_map is an old and non-standard MS extension
@@ -53,8 +51,6 @@
 #include <algorithm>
 #include <d3d9.h>
 #include <d3dx9.h>
-
-using namespace std;
 
 // XTool
 #include "xutil.h"

@@ -1145,7 +1145,7 @@ void ActionSetCamera::activate(AIPlayer& aiPlayer)
 	if(aiPlayer.active()){
 		gameShell->setSkipCutScene(false);
 		terCamera->SetCameraFollow(0);
-		string camera = cameraSplineName.value();
+		std::string camera = cameraSplineName.value();
 		if(camera == "Camera0" || camera == "Camera1" || camera == "Camera2" || camera == "Camera3"){
 			XBuffer buffer;
 			buffer < "Camera" <= aiPlayer.playerStrategyIndex();
@@ -1480,14 +1480,14 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	case SLEEPING:
 	case DONE:{
 		// Входящие стрелки одного цвета - И, разных - ИЛИ
-		vector<int> conditions(STRATEGY_COLOR_MAX, 0);
+		std::vector<int> conditions(STRATEGY_COLOR_MAX, 0);
 		FOR_EACH_AUTO(incomingLinks_, li)
 			conditions[(*li)->getType()] |= (*li)->active() ? 1 : 2;
 
 		FOR_EACH_AUTO(conditions, bi)
 			if(*bi == 1){
 				state_ = CHECKING;
-				triggerChain.addLogRecord(*this, (string("П: ") + name()).c_str());
+				triggerChain.addLogRecord(*this, (std::string("П: ") + name()).c_str());
 				break;
 			}
 		
@@ -1498,7 +1498,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	case CHECKING:
 		if((!condition || condition->checkDebug(aiPlayer)) && (!action || action->automaticCondition(aiPlayer))){
 			activate(aiPlayer, triggerChain);
-			triggerChain.addLogRecord(*this, (string("С: ") + name()).c_str());
+			triggerChain.addLogRecord(*this, (std::string("С: ") + name()).c_str());
 		}
 		else
 			break;
@@ -1510,7 +1510,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 			state_ = DONE;
 			if(!active())
 				triggerChain.deactivateTrigger(this);
-			triggerChain.addLogRecord(*this, (string("Ф: ") + name()).c_str());
+			triggerChain.addLogRecord(*this, (std::string("Ф: ") + name()).c_str());
 		}
 		break;
 	}
@@ -1564,7 +1564,7 @@ void TriggerLink::deactivate(TriggerChain& triggerChain)
 void TriggerChain::load(const char* fileName) 
 {
 	XPrmIArchive ia;
-	if(ia.open((string("Scripts\\Triggers\\") + fileName).c_str()))
+	if(ia.open((std::string("Scripts\\Triggers\\") + fileName).c_str()))
 		ia >> WRAP_NAME(*this, "TriggerChain");
 	name = fileName;
 	initialize();
@@ -1628,8 +1628,8 @@ void TriggerChain::deactivateTrigger(Trigger* trigger)
 
 const char* SaveManualData::popupCameraSplineName() const
 {
-	vector<const char*> items;
-	vector<SaveCameraSplineData>::const_iterator ci;
+	std::vector<const char*> items;
+	std::vector<SaveCameraSplineData>::const_iterator ci;
 	FOR_EACH(cameras, ci)
 		items.push_back(ci->name);
 
@@ -1638,7 +1638,7 @@ const char* SaveManualData::popupCameraSplineName() const
 
 SaveCameraSplineData* SaveManualData::findCameraSpline(const char* name)
 {
-	vector<SaveCameraSplineData>::iterator ci;
+	std::vector<SaveCameraSplineData>::iterator ci;
 	FOR_EACH(cameras, ci)
 		if(!strcmp(name, ci->name))
 			return &*ci;
@@ -1647,7 +1647,7 @@ SaveCameraSplineData* SaveManualData::findCameraSpline(const char* name)
 
 const SaveCameraSplineData* SaveManualData::findCameraSpline(const char* name) const
 {
-	vector<SaveCameraSplineData>::const_iterator ci;
+	std::vector<SaveCameraSplineData>::const_iterator ci;
 	FOR_EACH(cameras, ci)
 		if(!strcmp(name, ci->name))
 			return &*ci;
@@ -1672,19 +1672,19 @@ void SaveManualData::saveCamera(int playerID, const char* triggerName)
 //------------------------------------------------------
 const char* editTextMultiLine(HWND hwnd, const char* initialString)
 {
-	static string name;
+	static std::string name;
 	name = editTextMultiLine(initialString, hwnd);
 	return name.c_str();
 }
 
 const char* editTextDbID(HWND hwnd, const char* initialString, const char* topMask)
 {
-	static string name;
+	static std::string name;
 	name = initialString;
 
-	string mask = topMask;
+	std::string mask = topMask;
 	qdTextDB::IdList idList;
-	vector<const char*> items;
+	std::vector<const char*> items;
 
 	qdTextDB::instance().getIdList(mask.c_str(), idList);
 	qdTextDB::IdList::iterator i;
@@ -1700,7 +1700,7 @@ const char* editTextDbID(HWND hwnd, const char* initialString, const char* topMa
 		items.clear();
 		qdTextDB::IdList::iterator i;
 		FOR_EACH(idList, i){
-			string name = mask + "." + *i;
+			std::string name = mask + "." + *i;
 			const char* comment = qdTextDB::instance().getComment(name.c_str());
 			if(strlen(comment)){
 				*i += " // ";
@@ -1713,7 +1713,7 @@ const char* editTextDbID(HWND hwnd, const char* initialString, const char* topMa
 		if(item){
 			name = item;
 			size_t pos = name.find(" // ");
-			if(pos != string::npos)
+			if(pos != std::string::npos)
 				name.erase(pos, name.size() - pos);
 			name = mask + "." + name;
 		}
@@ -1739,12 +1739,12 @@ const char* editMissionDescriptionID(HWND hwnd, const char* initialString)
 
 const char* editModelNameDialog(HWND hwnd, const char* initialString)
 {
-	static string name;
+	static std::string name;
 	name = initialString;
 	if(openFileDialog(name, "Resourse\\Missions", "m3d", "Mission Name")){
 		strlwr((char*)name.c_str());
 		int pos = name.find("resource");
-		if(pos != string::npos)
+		if(pos != std::string::npos)
 			name.erase(0, pos);
 		return name.c_str();
 	}
@@ -1753,12 +1753,12 @@ const char* editModelNameDialog(HWND hwnd, const char* initialString)
 
 const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
 {
-	static string name;
+	static std::string name;
 	name = initialString;
 	if(openFileDialog(name, "Scripts\\Triggers", "scr", "Trigger Chain Name")){
 		strlwr((char*)name.c_str());
 		int pos = name.rfind("\\");
-		if(pos != string::npos)
+		if(pos != std::string::npos)
 			name.erase(0, pos + 1);
 		return name.c_str();
 	}
@@ -1767,10 +1767,10 @@ const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
 
 const char* editLabelDialog(HWND hwnd, const char* initialString)
 {
-	static string name;
+	static std::string name;
 	name = initialString;
 
-	vector<const char*> items;
+	std::vector<const char*> items;
     FOR_EACH_AUTO(universe()->Players, pil){
 		const UnitList& unit_list=(*pil)->units();
 		UnitList::const_iterator ui;

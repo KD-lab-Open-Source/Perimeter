@@ -1351,7 +1351,7 @@ void vrtMap::loadGeoDamPal(void)
 */
 #ifdef _TX3D_LIBRARY_
 	tx3d::Vector3D pal[256];
-	ifstream ifsLUT(GetTargetName("geoPal.xml"), ios::in); // | ios::nocreate);
+	std::ifstream ifsLUT(GetTargetName("geoPal.xml"), std::ios::in); // | ios::nocreate);
 	if (ifsLUT) {
 		char szBuffer[258 * 60];
 		ifsLUT.get(szBuffer, 258 * 60, '\0');

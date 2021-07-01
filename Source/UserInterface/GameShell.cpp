@@ -62,7 +62,7 @@ STARFORCE_API_NEW void CancelEditWorkarea();
 extern HistoryScene historyScene;
 extern HistoryScene bwScene;
 extern BGScene bgScene;
-extern string gameSpyRoomName;
+extern std::string gameSpyRoomName;
 extern void PlayMusic(const char *str = 0);
 
 bool terEnableGDIPixel=false;
@@ -101,7 +101,7 @@ int showReels( float, float ) {
 	return 0;
 }
 
-void abortWithMessage(const string& messageID) {
+void abortWithMessage(const std::string& messageID) {
 	MpegDeinitLibrary();
 	SNDReleaseSound();
 	ErrH.Abort( qdTextDB::instance().getText(messageID.c_str()) );
@@ -117,11 +117,11 @@ void checkGameSpyCmdLineArg(const char* argument) {
 	}
 }
 
-CommandLineData::CommandLineData(bool host, string name, bool p2p, string ip, GUID gameID, string roomName, string password)
+CommandLineData::CommandLineData(bool host, std::string name, bool p2p, std::string ip, GUID gameID, std::string roomName, std::string password)
 					 : host(host), name(name), p2p(p2p), ip(ip), gameID(gameID), roomName(roomName), password(password) {
 }
 
-string GameShell::locale;
+std::string GameShell::locale;
 
 //------------------------
 GameShell::GameShell(bool mission_edit) :
@@ -284,19 +284,19 @@ windowClientSize_(1024, 768)
 		missionEditor_ = new MissionEditor;
 
 	if(!MainMenuEnable){
-		string name = "Resource\\";
-		string path;
+		std::string name = "Resource\\";
+		std::string path;
 
 		if(check_command_line("save")){
 			path = "Resource\\Saves\\";
 			name = check_command_line("save");
 		}
 		if(check_command_line("mission")){
-			path = string(MISSIONS_PATH) + "\\";
+			path = std::string(MISSIONS_PATH) + "\\";
 			name = check_command_line("mission");
 		}
 		if(mission_edit){
-			path = string(MISSIONS_PATH) + "\\";
+			path = std::string(MISSIONS_PATH) + "\\";
 			name = "";
 		}
 		if(check_command_line("open"))
@@ -309,7 +309,7 @@ windowClientSize_(1024, 768)
 		if(!XStream(0).open(name.c_str())) {
 			if(openFileDialog(name, "Resourse\\Missions", "spg", "Mission Name")){
 				size_t pos = name.rfind("RESOURCE\\");
-				if(pos != string::npos)
+				if(pos != std::string::npos)
 					name.erase(0, pos);
 			}
 			else
@@ -1129,20 +1129,20 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 	case 'S':
 		if(!missionEditor()){
-			string name = CurrentMission.saveName();
+			std::string name = CurrentMission.saveName();
 			unsigned int pos = name.rfind("\\");
-			if(pos != string::npos)
+			if(pos != std::string::npos)
 				name.erase(0, pos + 1);
-			name = string("Resource\\Saves\\") + name;
+			name = std::string("Resource\\Saves\\") + name;
 			universalSave(name.c_str(), true);
 		}
 		break;
 
 	case 'S' | KBD_CTRL: {
-		string saveName = CurrentMission.saveName();
+		std::string saveName = CurrentMission.saveName();
 		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : "Resource\\Saves", "spg", "Mission Name")){
 			size_t pos = saveName.rfind("RESOURCE\\");
-			if(pos != string::npos)
+			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			universalSave(saveName.c_str(), false);
 			defaultSaveName_ = saveName;
@@ -1151,10 +1151,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		}
 
 	case 'O' | KBD_CTRL: {
-		string saveName = CurrentMission.saveName();
+		std::string saveName = CurrentMission.saveName();
 		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : "Resource\\Saves", "spg", "Mission Name")){
 			size_t pos = saveName.rfind("RESOURCE\\");
-			if(pos != string::npos)
+			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			//Несколько кривой участок кода, не будет работать с HT
 			HTManager::instance()->GameClose();
@@ -1833,7 +1833,7 @@ void GameShell::ShotsScan()
 
 	_mkdir(terScreenShotsPath);
 
-	const char* name = win32_findfirst((string(terScreenShotsPath) + "\\*" + terScreenShotExt).c_str());
+	const char* name = win32_findfirst((std::string(terScreenShotsPath) + "\\*" + terScreenShotExt).c_str());
 	if(name){
 		do{
 			const char* p = strstr(name, terScreenShotName);
@@ -1875,7 +1875,7 @@ void GameShell::startStopRecordMovie()
 		_mkdir(terMoviePath);
 		
 		int movieNumber = 0;
-		const char* name = win32_findfirst((string(terMoviePath) + "\\" + terMovieName + "*").c_str());
+		const char* name = win32_findfirst((std::string(terMoviePath) + "\\" + terMovieName + "*").c_str());
 		if(name){
 			do{
 				const char* p = strstr(name, terMovieName);
@@ -2227,7 +2227,7 @@ void GameShell::setCountDownTime(int timeLeft) {
 	countDownTimeMillisLeft = timeLeft;
 }
 
-const string& GameShell::getCountDownTime() {
+const std::string& GameShell::getCountDownTime() {
 	if (countDownTimeMillisLeft != countDownTimeMillisLeftVisible) {
 		countDownTimeMillisLeftVisible = countDownTimeMillisLeft;
 		countDownTimeLeft = formatTimeWithoutHour(countDownTimeMillisLeftVisible);
@@ -2235,7 +2235,7 @@ const string& GameShell::getCountDownTime() {
 	return countDownTimeLeft;
 }
 
-string GameShell::getTotalTime() const {
+std::string GameShell::getTotalTime() const {
 	return formatTimeWithHour(gameTimer());
 }
 
@@ -2264,11 +2264,11 @@ void GameShell::setActivePlayerAIOff() {
 	}
 }
 
-void GameShell::changeControlState(const vector<SaveControlData>& newControlStates) {
+void GameShell::changeControlState(const std::vector<SaveControlData>& newControlStates) {
 	_shellIconManager.changeControlState(newControlStates);
 }
 
-void GameShell::fillControlState(vector<SaveControlData>& controlStatesToSave) {
+void GameShell::fillControlState(std::vector<SaveControlData>& controlStatesToSave) {
 	_shellIconManager.fillControlState(controlStatesToSave);
 }
 
@@ -2361,14 +2361,14 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 	}
 }
 
-void GameShell::playerDisconnected(string& playerName, bool disconnectOrExit) {
+void GameShell::playerDisconnected(std::string& playerName, bool disconnectOrExit) {
 	_shellIconManager.showHintDisconnect(playerName, 3000, disconnectOrExit);
 }
 
 void GameShell::showReelModal(const char* binkFileName, const char* soundFileName, bool localized, bool stopBGMusic, int alpha) {
-	string path;
+	std::string path;
 	if (localized) {
-		path = getLocDataPath() + string("Video\\") + binkFileName;
+		path = getLocDataPath() + std::string("Video\\") + binkFileName;
 	} else {
 		path = binkFileName;
 	}
@@ -2379,9 +2379,9 @@ void GameShell::showReelModal(const char* binkFileName, const char* soundFileNam
 }
 
 void GameShell::showPictureModal(const char* pictureFileName, bool localized, int stableTime) {
-	string path;
+	std::string path;
 	if (localized) {
-		path = getLocDataPath() + string("Video\\") + pictureFileName;
+		path = getLocDataPath() + std::string("Video\\") + pictureFileName;
 	} else {
 		path = pictureFileName;
 	}
@@ -2433,7 +2433,7 @@ void GameShell::switchActivePlayer(bool next) {
 }
 
 void GameShell::setLocalizedFontSizes() {
-	string path = getLocDataPath() + "Fonts\\Font.ini";
+	std::string path = getLocDataPath() + "Fonts\\Font.ini";
 	IniManager ini = IniManager(path.c_str());
 
 	shell_main_menu_font_size1 = ini.getInt("Sizes","Menu1");
@@ -2464,7 +2464,7 @@ void GameShell::setLocalizedFontSizes() {
 void GameShell::preLoad() {
     historyScene.loadProgram("RESOURCE\\scenario.hst");
     bwScene.loadProgram("RESOURCE\\menu.hst");
-	string path = getLocDataPath() + "Text\\Texts.btdb";
+	std::string path = getLocDataPath() + "Text\\Texts.btdb";
 	#ifdef _FINAL_VERSION_
 		qdTextDB::instance().load(path.c_str(), 0 );
 	#else
@@ -2512,7 +2512,7 @@ void GameShell::editParameters()
 	const char* physics = "Физические параметры";
 	const char* separator = "--------------";
 
-	vector<const char*> items;
+	std::vector<const char*> items;
 	items.push_back(header);
 	items.push_back(mission);
 	items.push_back(separator);

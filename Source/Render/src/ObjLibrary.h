@@ -17,7 +17,7 @@ public:
 
 	MTSection* GetLock(){return &lock;}
 private:
-	typedef vector<cAllMeshBank*> OBJECTS;
+	typedef std::vector<cAllMeshBank*> OBJECTS;
 	OBJECTS objects;
 	cAllMeshBank* LoadM3D(char *fname,char *TexturePath,char *DefTexturePath,bool enable_error_not_found);
 	inline int GetNumberObj()									{ return objects.size(); }

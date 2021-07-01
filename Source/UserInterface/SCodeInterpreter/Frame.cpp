@@ -2,7 +2,7 @@
 #include "StdAfx.h"
 #include "Frame.hpp"
 
-Frame::Frame(const string& name, World* parentWorld, int race, int colorIndex) : name(name), race(race), colorIndex(colorIndex) {
+Frame::Frame(const std::string& name, World* parentWorld, int race, int colorIndex) : name(name), race(race), colorIndex(colorIndex) {
 	alive = true;
 	frame3D = 0;
 	goToWorld(parentWorld);

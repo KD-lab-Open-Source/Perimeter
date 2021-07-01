@@ -23,7 +23,7 @@ class HistoryScene : public Commander {
 		void draw();
 		void postDraw();
 
-		void loadProgram(const string& programFileName);
+		void loadProgram(const std::string& programFileName);
 		void start();
 		void stop();
 
@@ -31,10 +31,10 @@ class HistoryScene : public Commander {
 		void goToJustAfterMissionPosition(int missionNumber);
 
 		//Commander implementation
-		void startAudio(const string& name);
-		void startVideo(const string& reelName, const string& sndName);
-		void startInterVideo(const string& reelName);
-		void setMusic(const string& path);
+		void startAudio(const std::string& name);
+		void startVideo(const std::string& reelName, const std::string& sndName);
+		void startInterVideo(const std::string& reelName);
+		void setMusic(const std::string& path);
 		void addCameraPosition(
 				const Vect3f& pivotPosition,
 				float psi,
@@ -42,8 +42,8 @@ class HistoryScene : public Commander {
 				float distanceToPivot);
 		void clearCameraPath();
 		void cameraFollowNomad(float deltaPsi, float radius, float theta);
-		void executeMission(const string& fileName);
-		void showText(const string& text, const string& icon);
+		void executeMission(const std::string& fileName);
+		void showText(const std::string& text, const std::string& icon);
 		void hideText();
 		void showPaused();
 		void resetCamera();
@@ -99,7 +99,7 @@ class HistoryScene : public Commander {
 		}
 		void playMusic();
 
-		static string getFrameNameFromBase(const string& keyStr);
+		static std::string getFrameNameFromBase(const std::string& keyStr);
 	protected:
 		void drawPopup();
 		void drawSprites();
@@ -158,7 +158,7 @@ class HistoryScene : public Commander {
 		MpegSound voice;
 		bool playingVoice;
 
-		string musicNamePath;
+		std::string musicNamePath;
 };
 
 #endif //_HISTORYSCENE_H

@@ -82,11 +82,11 @@ public:
 	void AddLink(ObserverLink* link){observer.AddLink(link);}
 	void BreakLink(ObserverLink* link){observer.BreakLink(link);}
 
-	void GetAllPoints(vector<Vect3f>& point);
-	void GetAllNormals(vector<Vect3f>& point);
+	void GetAllPoints(std::vector<Vect3f>& point);
+	void GetAllNormals(std::vector<Vect3f>& point);
 	void GetEmitterMaterial(struct cObjMaterial& material);
 
-	void GetAllPointsParam(vector<Vect3f>& point,bool zero_pos);
+	void GetAllPointsParam(std::vector<Vect3f>& point,bool zero_pos);
 protected:
 	cStatic3dx* pStatic;
 	cStaticVisibilityChainGroup* pGroup;
@@ -96,10 +96,10 @@ protected:
 	float radius;
 	//порядок хранения cNode3dx таков, что 
 	//child всегда находится после parent
-	vector<cNode3dx> nodes;
+	std::vector<cNode3dx> nodes;
 
 	sColor4c skin_color;
-	vector<cTexture*> skin_texture;//Индекы такие-же как у материала.
+	std::vector<cTexture*> skin_texture;//Индекы такие-же как у материала.
 
 	sColor4f ambient,diffuse,specular;
 
@@ -108,7 +108,7 @@ protected:
 		int nodeindex;
 		MatXf mat;
 	};
-	vector<AdditionalTransformation> additional_transformations;
+	std::vector<AdditionalTransformation> additional_transformations;
 	struct EffectData
 	{
 		cEffect* pEffect;
@@ -116,7 +116,7 @@ protected:
 		float prev_phase;
 		EffectData():pEffect(0),index_visibility(255){}//255 - неинициализированн.
 	};
-	vector<EffectData> effects;
+	std::vector<EffectData> effects;
 	Observer observer;
 
 	void UpdateMatrix();

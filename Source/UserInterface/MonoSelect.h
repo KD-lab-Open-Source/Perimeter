@@ -28,7 +28,7 @@ class MonoSelect {
 		}
 
 		int selectSize;
-		vector<int> slotPositions;
+		std::vector<int> slotPositions;
 
 };
 

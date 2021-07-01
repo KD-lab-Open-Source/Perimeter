@@ -31,7 +31,7 @@ protected:
 class Observer
 {
 	friend class ObserverLink;
-	vector<ObserverLink*> links;
+	std::vector<ObserverLink*> links;
 public:
 	Observer()
 	{
@@ -39,7 +39,7 @@ public:
 
 	~Observer()
 	{
-		vector<ObserverLink*>::iterator it;
+		std::vector<ObserverLink*>::iterator it;
 		FOR_EACH(links,it)
 		{
 			(*it)->ClearLink(this);
@@ -49,7 +49,7 @@ public:
 	void AddLink(ObserverLink* link)
 	{
 #ifndef _FINAL
-		vector<ObserverLink*>::iterator it = find(links.begin(),links.end(),link);
+		std::vector<ObserverLink*>::iterator it = std::find(links.begin(),links.end(),link);
 		if(it!=links.end())
 			VISASSERT(0);
 		else
@@ -62,7 +62,7 @@ public:
 
 	void BreakLink(ObserverLink* link)
 	{
-		vector<ObserverLink*>::iterator it = find(links.begin(),links.end(),link);
+		std::vector<ObserverLink*>::iterator it = std::find(links.begin(),links.end(),link);
 		if(it!=links.end())
 		{
 			links.erase(it);
@@ -72,7 +72,7 @@ public:
 
 	void UpdateLink()
 	{
-		vector<ObserverLink*>::iterator it;
+		std::vector<ObserverLink*>::iterator it;
 		FOR_EACH(links,it)
 		{
 			(*it)->Update();

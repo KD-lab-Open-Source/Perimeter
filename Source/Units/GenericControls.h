@@ -58,7 +58,7 @@ public:
 
 	//-----------------------------------------------------
 	// Команды
-	typedef list<UnitCommand> CommandList;
+	typedef std::list<UnitCommand> CommandList;
 	CommandList& commandList(){ return commandList_; }
 	CommandID lastCommand() const { return commandList_.empty() ? COMMAND_ID_NONE : commandList_.back().commandID(); }
 	const UnitCommand* findCommand(CommandID commandID) const;
@@ -260,7 +260,7 @@ private:
 
 	int unitClass_;
 
-	string label_;
+	std::string label_;
 
 	Se3f pose_;
 
@@ -297,7 +297,7 @@ private:
 	int includingCluster_;
 };
 
-typedef TypeLibrary<string, terUnitBase> UnitLibrary;
+typedef TypeLibrary<std::string, terUnitBase> UnitLibrary;
 
 template<class UnitList>
 bool removeNotAlive(UnitList& unitList) 
@@ -314,6 +314,6 @@ bool removeNotAlive(UnitList& unitList)
 	return false;
 }
 
-typedef list<terUnitBase*> UnitList; // используется свойство сохранения итераторов
+typedef std::list<terUnitBase*> UnitList; // используется свойство сохранения итераторов
 
 #endif

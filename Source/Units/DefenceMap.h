@@ -18,8 +18,8 @@ public:
 
 	int calcDefenceFactor(const Vect2f& position, float radius); 
 
-	bool findPathToPoint(const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i>& out_path);
-	terUnitBase* findPathToTarget(const Vect2i& from_w, const UnitList& targets, vector<Vect2i>& out_path);
+	bool findPathToPoint(const Vect2i& from_w, const Vect2i& to_w, std::vector<Vect2i>& out_path);
+	terUnitBase* findPathToTarget(const Vect2i& from_w, const UnitList& targets, std::vector<Vect2i>& out_path);
 
 	void startRecalcMap();
 	bool recalcMapQuant(); // return recalcStarted_

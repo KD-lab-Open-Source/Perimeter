@@ -3,7 +3,7 @@
 #include "IronClusterUnit.h"
 
 typedef Grid2D<terUnitMonk, 5, GridVector<terUnitMonk, 8> > terMonkGridType;
-typedef list<terUnitMonk*> terMonkList;
+typedef std::list<terUnitMonk*> terMonkList;
 
 class MonkManager
 {

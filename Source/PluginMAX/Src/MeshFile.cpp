@@ -146,7 +146,7 @@ void cMeshFile::ReadField(void *buf,int size)
 					f->read(&tmp[count],1);
 				tmp[count]=0;
 				if(count>1)	
-					((string*)buf)[i]=&tmp[1];
+					((std::string*)buf)[i]=&tmp[1];
 			}
 		}
 	}else if(type==MESHFILE_TYPE_TEXT) 
@@ -155,7 +155,7 @@ void cMeshFile::ReadField(void *buf,int size)
 	}
 }
 
-void cMeshFile::ReadField(string& buf)
+void cMeshFile::ReadField(std::string& buf)
 {
 	buf.clear();
 	int TypeField=GlobalCurrentFieldType;
@@ -232,10 +232,10 @@ void cMeshFile::WriteField(void *buf,int TypeField,int size)
 						GlobalTypeVariable[GlobalFieldType[TypeField].var].size);
 		else 
 			for(int i=0;i<size;i++)
-				if(!((string*)buf)[i].empty())
+				if(!((std::string*)buf)[i].empty())
 				{
 					f->write("\"",1);
-					string& s=((string*)buf)[i];
+					std::string& s=((std::string*)buf)[i];
 					f->write((void*)s.c_str(),s.size());
 					f->write("\"",1);
 				}
@@ -319,7 +319,7 @@ void cMeshFile::WriteField(void *buf,int TypeField,int size)
 			case MF_TYPE_STRING:
 				for(i=0;i<size;i++)
 				{
-					string& s=((string*)buf)[i];
+					std::string& s=((std::string*)buf)[i];
 					if(!s.empty()) (*f)<<" \""<<s.c_str()<<"\"\n";
 					else (*f)<<" \""<<"none"<<"\"\n";
 				}

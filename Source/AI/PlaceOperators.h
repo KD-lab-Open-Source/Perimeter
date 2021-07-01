@@ -24,7 +24,7 @@ public:
 
 		if(!attribute_->ConnectionRadius){
 			zeroLayerConnection_ = true;
-			vector<Vect2i> points(attribute_->BasementPoints.size());
+			std::vector<Vect2i> points(attribute_->BasementPoints.size());
 			for(int i = 0; i < points.size(); i++)
 				points[i] = attribute_->BasementPoints[i];
 			scanPolyByLineOp(&points[0], points.size(), shapeOp_);

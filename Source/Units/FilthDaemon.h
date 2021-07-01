@@ -40,14 +40,14 @@ public:
 		cObjectNodeRoot* model;
 	};
 
-	list<OneShadow> shadows;
+	std::list<OneShadow> shadows;
 
 	struct ShadowInterpolate
 	{
 		Se3f pos;
 		float phase;
 	};
-	list<ShadowInterpolate> object_pos;
+	std::list<ShadowInterpolate> object_pos;
 
 	void addShadow(float sight_speed);
 	SND3DSound sound;
@@ -69,9 +69,9 @@ protected:
 	void Generate();
 
 	bool must_init_pos;
-	vector<Vect3f> init_pos;
+	std::vector<Vect3f> init_pos;
 
-	typedef list<terFilthDaemon*> FilthListType;
+	typedef std::list<terFilthDaemon*> FilthListType;
 	FilthListType unit_list;
 	Vect3f attack_pos;
 

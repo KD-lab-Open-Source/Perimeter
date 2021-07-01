@@ -13,8 +13,6 @@ class EffectLibrary;
 #include "../../PluginMAX/Src/BaseClass.h"
 #include "../inc/VisGenericDefine.h"
 
-using namespace std;
-
 enum eShadowType
 {
 	SHADOW_NONE=0,
@@ -149,9 +147,9 @@ private:
 	int			logic_quant,graph_logic_quant;
 	cObjLibrary				*ObjLibrary;
 	class cLib3dx			*Lib3dx;
-	string font_root_directory;
-	string font_directory;
-	vector<class cFontInternal*>	fonts;
+	std::string font_root_directory;
+	std::string font_directory;
+	std::vector<class cFontInternal*>	fonts;
 	friend class cD3DRender;
 
 	class CameraShader* shaders;
@@ -162,8 +160,8 @@ private:
 	void CalcIsShadowMap();
 
 	MTDECLARE(lock_effect_library);
-	vector<EffectLibrary*> effect_library;
-	string effect_path,effect_texture_path;
+	std::vector<EffectLibrary*> effect_library;
+	std::string effect_path,effect_texture_path;
 	float interpolation_factor;
 	float logic_time_period_inv;
 

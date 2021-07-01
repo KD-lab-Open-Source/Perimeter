@@ -64,8 +64,6 @@
 
 #include <algorithm>
 
-using namespace std;
-
 #include "xutil.h"
 #include "Serialization.h"
 #include "xmath.h"

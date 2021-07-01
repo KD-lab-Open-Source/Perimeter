@@ -6,13 +6,13 @@
 #include "UniverseInterface.h"
 
 struct Profile {
-	Profile(const string& dirName) : dirName(dirName), lastMissionNumber(-1), name(""), difficulty(DIFFICULTY_HARD) {
+	Profile(const std::string& dirName) : dirName(dirName), lastMissionNumber(-1), name(""), difficulty(DIFFICULTY_HARD) {
 		dirIndex = atof( (dirName.substr(7)).c_str() );
 	}
 	int dirIndex;
-	string name;
+	std::string name;
 	int lastMissionNumber;
-	string dirName;
+	std::string dirName;
 	Difficulty difficulty;
 };
 
@@ -61,10 +61,10 @@ class UserSingleProfile {
 		const Profile& getCurrentProfile() const {
 			return profiles[currentProfileIndex];
 		}
-		const vector<Profile>& getProfilesVector() const {
+		const std::vector<Profile>& getProfilesVector() const {
 			return profiles;
 		}
-		void addProfile(const string& name);
+		void addProfile(const std::string& name);
 		void removeProfile(int index);
 
 		int getCurrentProfileIndex() const {
@@ -72,23 +72,23 @@ class UserSingleProfile {
 		}
 		void setCurrentProfileIndex(int index);
 
-		string getFileNameWithDifficulty(const string& fileName);
+		std::string getFileNameWithDifficulty(const std::string& fileName);
 
-		void deleteSave(const string& name);
-		string getSavesDirectory() const;
+		void deleteSave(const std::string& name);
+		std::string getSavesDirectory() const;
 
-		void setCurrentProfile(const string& name);
+		void setCurrentProfile(const std::string& name);
 		void setGameResult(terUniverseInterfaceMessage gameResult) {
 			result = gameResult;
 		}
 		terUniverseInterfaceMessage getGameResult() const {
 			return result;
 		}
-		void setRecord(const string& name, int milis);
-		int getRecord(const string& name);
+		void setRecord(const std::string& name, int milis);
+		int getRecord(const std::string& name);
 
 	protected:
-		bool removeDir(const string& dir);
+		bool removeDir(const std::string& dir);
 		void loadProfile(int index);
 
 		int currentProfileIndex;
@@ -97,10 +97,10 @@ class UserSingleProfile {
 		bool lastWin;
 		GameType lastType;
 
-		vector<bool> freeInds;
-		vector<Profile> profiles;
+		std::vector<bool> freeInds;
+		std::vector<Profile> profiles;
 
-		string getProfileIniPath(int index) const {
+		std::string getProfileIniPath(int index) const {
 			return "RESOURCE\\SAVES\\" + profiles[index].dirName + "\\data";
 		}
 

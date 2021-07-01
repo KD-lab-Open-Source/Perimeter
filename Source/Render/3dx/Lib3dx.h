@@ -9,7 +9,7 @@ public:
 
 	cStatic3dx* GetElement(const char* fname,const char* TexturePath,bool is_logic);
 protected:
-	typedef map<string,cStatic3dx*> ObjectMap;
+	typedef std::map<std::string, cStatic3dx*> ObjectMap;
 	ObjectMap objects;
 };
 

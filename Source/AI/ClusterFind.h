@@ -17,13 +17,13 @@ public:
 		bool temp_set;//Можно ли писать в link
 		DWORD self_id;
 
-		vector<Cluster*> link;//С кем связанны.
-		vector<DWORD> index_link;//индекс в массиве all_cluster
+		std::vector<Cluster*> link;//С кем связанны.
+		std::vector<DWORD> index_link;//индекс в массиве all_cluster
 
 		inline Cluster(){temp_set=true;}
 
 		//Для AIAStarGraph
-		typedef vector<Cluster*>::iterator iterator;
+		typedef std::vector<Cluster*>::iterator iterator;
 		inline iterator begin(){return link.begin();}
 		inline iterator end(){return link.end();}
 		void* AIAStarPointer;
@@ -55,11 +55,11 @@ public:
 	bool ready() const { return cur_quant_build >= quant_of_build; }
 
 	template<class ClusterHeuristic>
-	bool FindPath(const Vect2i& from, const Vect2i& to, vector<Vect2i>& out_path, ClusterHeuristic& heuristic)
+	bool FindPath(const Vect2i& from, const Vect2i& to, std::vector<Vect2i>& out_path, ClusterHeuristic& heuristic)
 	{
 		heuristic.end = getCluster(to);
 
-		vector<Cluster*> path;
+		std::vector<Cluster*> path;
 		AIAStarGraph<ClusterHeuristic,Cluster> astar;
 		astar.Init(all_cluster);
 		if(!astar.FindPath(getCluster(from), &heuristic, path))
@@ -78,13 +78,13 @@ public:
 	}
 
 	template<class ClusterHeuristic>
-	bool FindPathMulti(const Vect2i& from, const vector<Vect2i>& to, vector<Vect2i>& out_path, ClusterHeuristic& heuristic)
+	bool FindPathMulti(const Vect2i& from, const std::vector<Vect2i>& to, std::vector<Vect2i>& out_path, ClusterHeuristic& heuristic)
 	{
-		vector<Vect2i>::const_iterator vi;
+		std::vector<Vect2i>::const_iterator vi;
 		FOR_EACH(to, vi)
 			heuristic.addEnd(*vi, getCluster(*vi));
 
-		vector<Cluster*> path;
+		std::vector<Cluster*> path;
 		AIAStarGraph<ClusterHeuristic,Cluster> astar;
 		astar.Init(all_cluster);
 		if(!astar.FindPath(getCluster(from), &heuristic, path))
@@ -131,7 +131,7 @@ protected:
 	Front *pone,*ptwo;
 	int size_one,size_two;
 
-	vector<Cluster> all_cluster;
+	std::vector<Cluster> all_cluster;
 
 	BYTE* is_used;//Для SoftPath
 	DWORD is_used_size;
@@ -148,14 +148,12 @@ protected:
 	void Relink();
 	void Smooting();
 	//Добавлять, если temp_set==true
-	vector<DWORD> vtemp_set;//Для ClusterOne
+	std::vector<DWORD> vtemp_set;//Для ClusterOne
 	void ClusterOne(int x,int y,int id,Cluster& c);
 
 	//Возвращает true, если нашёл путь на два шага вперёд
-	bool IterativeFindPath(Vect2i from,
-						   Vect2i center,Vect2i to,
-						   Vect2i up,Vect2i up_to,
-						   vector<Vect2i>& path);
+	bool IterativeFindPath(Vect2i from, Vect2i center,Vect2i to,
+		Vect2i up,Vect2i up_to, std::vector<Vect2i>& path);
 	enum LINE_RET
 	{
 		L_BAD=0,
@@ -171,20 +169,20 @@ protected:
 
 	//То-же поиск волной. Ищет ячейки соприкасающиеся с to.
 	void FindClusterFront(int x,int y,DWORD to,
-		vector<Front>& front);
+		std::vector<Front>& front);
 
-	void SoftPath(vector<Cluster*>& in_path,Vect2i from,Vect2i to,
-				vector<Vect2i>& out_path);
+	void SoftPath(std::vector<Cluster*>& in_path,Vect2i from,Vect2i to,
+		std::vector<Vect2i>& out_path);
 
-	void BuildSidePath(vector<Vect2i>& in_path,
-					vector<Vect2i>& out_path,
+	void BuildSidePath(std::vector<Vect2i>& in_path,
+		std::vector<Vect2i>& out_path,
 					int max_distance,bool left);
 
 	void CheckAllLink();
 };
 
 template<class ClusterHeuristic>
-void SoftPath2(vector<Vect2i>& out_path,
+void SoftPath2(std::vector<Vect2i>& out_path,
                int dx,int dy,BYTE* walk_map,
                ClusterHeuristic& heuristic)
 {

@@ -80,7 +80,7 @@ public:
 	virtual void SetMaterialTilemapShadow();
 	virtual void SetTileColor(sColor4f color);
 protected:
-	void SetPointLight(vector<class cUnkLight*>& light);
+	void SetPointLight(std::vector<class cUnkLight*>& light);
 	void SetMaterial(float Phase,cTexture *Texture0,cTexture *Texture1,sDataRenderMaterial *Data);
 };
 

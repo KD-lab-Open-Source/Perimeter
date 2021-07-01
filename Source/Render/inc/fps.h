@@ -1,7 +1,7 @@
 #pragma once
 class FPS
 {
-	list<double> tiks;
+	std::list<double> tiks;
 	int max_miliseconds;
 public:
 	FPS(int _max_miliseconds=2000)
@@ -64,7 +64,7 @@ public:
 
 		double prevt=tiks.front();
 		bool first=true;
-		list<double>::iterator it;
+		std::list<double>::iterator it;
 		it=tiks.begin();
 		++it;
 		while(it!=tiks.end())

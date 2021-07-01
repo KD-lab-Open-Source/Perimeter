@@ -303,7 +303,7 @@ bool cFontImage::Load(const char* fname)
 
 bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 {
-	string ftga,ffont;
+	std::string ftga,ffont;
 	ftga=cache_dir;ftga+='\\';
 	ffont=cache_dir;ffont+='\\';
 	ftga+=fname; ftga+=".tga";
@@ -326,7 +326,7 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 
 bool cFontInternal::Load(const char* fname,cFontImage& fnt)
 {
-	string ftga,ffont;
+	std::string ftga,ffont;
 	ftga=cache_dir;ftga+='\\';
 	ffont=cache_dir;ffont+='\\';
 	ftga+=fname; ftga+=".tga";
@@ -432,6 +432,6 @@ bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int 
 
 bool cFontInternal::Reload(LPCSTR root_dir,LPCSTR language_dir)
 {
-	string f=font_name;
+	std::string f=font_name;
 	return Create(root_dir,language_dir,f.c_str(),GetStatementHeight());
 }

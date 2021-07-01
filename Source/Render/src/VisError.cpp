@@ -31,7 +31,7 @@ cVisError& cVisError::operator << (const char *a)
 	return *this;
 }
 
-cVisError& cVisError::operator << (string& a)
+cVisError& cVisError::operator << (std::string& a)
 {
 	return (*this)<<a.c_str();
 }

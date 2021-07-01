@@ -49,11 +49,11 @@ public:
 	void set_textures_path(const char* path){ textures_path_ = path; }
 
 private:
-	typedef map<string,EffectLibrary> EffectLibraryContainer;
+	typedef std::map<std::string,EffectLibrary> EffectLibraryContainer;
 	EffectLibraryContainer libraries_;
 
 	/// относительный путь к текстурам
-	string textures_path_;
+	std::string textures_path_;
 };
 
 Singleton<EffectLibraryDispatcher> effectLibraryDispatcher;
@@ -140,7 +140,7 @@ EffectLib(0)
 void AttributeBase::init()
 {
 	if(strlen(interfaceNameTag())) {
-		string path = string("Interface.Tips.NAMES.") + interfaceNameTag();
+		std::string path = std::string("Interface.Tips.NAMES.") + interfaceNameTag();
 		InterfaceName = qdTextDB::instance().getText(path.c_str());
 		if(InterfaceName.empty())
 			InterfaceName = interfaceNameTag();
@@ -271,7 +271,7 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 			Vect2f& p2 = points[2];
 
 			if((p1 - p0) % (p2 - p0) > 0)
-				swap(p1, p2);
+				std::swap(p1, p2);
 
 			BasementPoints.clear();
 			BasementPoints.push_back(p0);
@@ -334,9 +334,9 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	}
 }
 
-string GetBelligerentTexturePath(terBelligerent belligerent)
+std::string GetBelligerentTexturePath(terBelligerent belligerent)
 {
-	string path = "Resource\\Models\\Main\\";
+	std::string path = "Resource\\Models\\Main\\";
 	switch(belligerent){
 	case BELLIGERENT_NONE:
 	case BELLIGERENT_EXODUS0:
@@ -364,7 +364,7 @@ string GetBelligerentTexturePath(terBelligerent belligerent)
 
 cObjectNodeRoot* createObject(const char* name, terBelligerent belligerent)
 {
-	string path=GetBelligerentTexturePath(belligerent);
+	std::string path=GetBelligerentTexturePath(belligerent);
 	cObjectNodeRoot* model = terScene->CreateObject(name, path.c_str());
 	xassert(model);
 	return model;
@@ -704,7 +704,7 @@ FileTime::FileTime(const char* fname)
 	HANDLE file = CreateFile( fname, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0 );
 	if(file==INVALID_HANDLE_VALUE)
 	{
-		string s="File cannot open to read: ";
+		std::string s="File cannot open to read: ";
 		s+=fname;
 		xxassert(0,s.c_str());
 		dwLowDateTime = dwHighDateTime = 0;
@@ -712,7 +712,7 @@ FileTime::FileTime(const char* fname)
 
 	if(!GetFileTime( file, &creation, &last_access, this))
 	{
-		string s="File cannot read time: ";
+		std::string s="File cannot read time: ";
 		s+=fname;
 		xxassert(0,s.c_str());
 	}

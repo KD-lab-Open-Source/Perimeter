@@ -341,7 +341,7 @@ cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int Colo
 void GameShell::SetFontDirectory()
 {
 	terVisGeneric->SetFontRootDirectory("resource\\LocData");
-	string dir=getLocDataPath();
+	std::string dir=getLocDataPath();
 	dir+="Fonts";
 	terVisGeneric->SetFontDirectory(dir.c_str());
 }
@@ -782,7 +782,7 @@ void setLogicFp()
 }
 
 //-------------------------------------------------
-bool openFileDialog(string& filename, const char* initialDir, const char* extention, const char* title)
+bool openFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
 {
 	XBuffer filter;
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
@@ -793,7 +793,7 @@ bool openFileDialog(string& filename, const char* initialDir, const char* extent
 	strcpy(fname,filename.c_str());
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWndVisGeneric;
-	string fullTitle = string("Open: ") + title;
+	std::string fullTitle = std::string("Open: ") + title;
 	ofn.lpstrTitle = fullTitle.c_str();
 	ofn.lpstrFilter = filter;
 	ofn.lpstrFile = fname;
@@ -807,7 +807,7 @@ bool openFileDialog(string& filename, const char* initialDir, const char* extent
 	return true;
 }
 
-bool saveFileDialog(string& filename, const char* initialDir, const char* extention, const char* title)
+bool saveFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
 {
 	XBuffer filter;
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
@@ -818,7 +818,7 @@ bool saveFileDialog(string& filename, const char* initialDir, const char* extent
 	strcpy(fname,filename.c_str());
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWndVisGeneric;
-	string fullTitle = string("Save: ") + title;
+	std::string fullTitle = std::string("Save: ") + title;
 	ofn.lpstrTitle = fullTitle.c_str();
 	ofn.lpstrFilter = filter;
 	ofn.lpstrFile = fname;
@@ -832,14 +832,14 @@ bool saveFileDialog(string& filename, const char* initialDir, const char* extent
 	return true;
 }
 
-const char* popupMenu(vector<const char*> items) // returns zero if cancel
+const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 {
 	if(items.empty())
 		return 0;
 
 	HMENU hMenu = CreatePopupMenu();
 	
-	vector<const char*>::iterator i;
+	std::vector<const char*>::iterator i;
 	FOR_EACH(items, i)
 		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
 	
@@ -854,14 +854,14 @@ const char* popupMenu(vector<const char*> items) // returns zero if cancel
 		return 0;
 }
 
-int popupMenuIndex(vector<const char*> items) // returns -1 if cancel
+int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 {
 	if(items.empty())
 		return -1;
 
 	HMENU hMenu = CreatePopupMenu();
 	
-	vector<const char*>::iterator i;
+	std::vector<const char*>::iterator i;
 	FOR_EACH(items, i)
 		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
 	
@@ -879,7 +879,7 @@ int popupMenuIndex(vector<const char*> items) // returns -1 if cancel
 
 
 //-----------------------------------------
-static string editTextString;
+static std::string editTextString;
 static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)

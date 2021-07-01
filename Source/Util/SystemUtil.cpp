@@ -108,8 +108,8 @@ void IniManager::putFloatArray(const char* section, const char* key, int size, c
 	put(section, key, buf);
 }
 
-string getStringFromReg(const string& folderName, const string& keyName) {
-	string res;
+std::string getStringFromReg(const std::string& folderName, const std::string& keyName) {
+	std::string res;
 	HKEY hKey;
 	char name[PERIMETER_CONTROL_NAME_SIZE];
 	DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
@@ -128,7 +128,7 @@ string getStringFromReg(const string& folderName, const string& keyName) {
 	}
 	return res;
 }
-void putStringToReg(const string& folderName, const string& keyName, const string& value) {
+void putStringToReg(const std::string& folderName, const std::string& keyName, const std::string& value) {
 	HKEY hKey;
 	DWORD dwDisposition;
 	LONG lRet;
@@ -142,8 +142,8 @@ void putStringToReg(const string& folderName, const string& keyName, const strin
 	}
 }
 
-string formatTimeWithHour(int timeMilis) {
-	string res;
+std::string formatTimeWithHour(int timeMilis) {
+	std::string res;
 	if (timeMilis >= 0) {
 		int sec = timeMilis / 1000.0f;
 		int min = sec / 60.0f;
@@ -153,19 +153,19 @@ string formatTimeWithHour(int timeMilis) {
 		char str[11];
 		sprintf(str, "%d", hour);
 		res = (hour < 10) ? "0" : "";
-		res += string(str) + ":";
+		res += std::string(str) + ":";
 		sprintf(str, "%d", min);
 		res += (min < 10) ? "0" : "";
-		res += string(str) + ":";
+		res += std::string(str) + ":";
 		sprintf(str, "%d", sec);
 		res += (sec < 10) ? "0" : "";
-		res += string(str);
+		res += std::string(str);
 	}
 	return res;
 }
 
-string formatTimeWithoutHour(int timeMilis) {
-	string res;
+std::string formatTimeWithoutHour(int timeMilis) {
+	std::string res;
 	if (timeMilis >= 0) {
 		int sec = timeMilis / 1000.0f;
 		int min = sec / 60.0f;
@@ -173,10 +173,10 @@ string formatTimeWithoutHour(int timeMilis) {
 		char str[11];
 		sprintf(str, "%d", min);
 		res = (min < 10) ? "0" : "";
-		res += string(str) + ":";
+		res += std::string(str) + ":";
 		sprintf(str, "%d", sec);
 		res += (sec < 10) ? "0" : "";
-		res += string(str);
+		res += std::string(str);
 	}
 	return res;
 }

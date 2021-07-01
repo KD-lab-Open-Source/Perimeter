@@ -74,7 +74,7 @@ void ShadowVolume::DeleteRepeatedVertex(int offset_vertex,int size_vertex,
 	float delta2=delta*delta;
 
 	int vertex_size_new=size_vertex;
-	vector<int> repeat(size_vertex);
+	std::vector<int> repeat(size_vertex);
 	//Найти повторяющие
 	for(i=0;i<size_vertex;i++)
 		repeat[i]=i+offset_vertex;

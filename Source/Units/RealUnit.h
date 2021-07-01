@@ -75,7 +75,7 @@ private:
 class AttributeReal : public AttributeBase
 {
 public:
-	vector<PrmString> dockingSlots;
+	std::vector<PrmString> dockingSlots;
 	ConsumptionData productionConsumption;
 	ConsumptionData movementConsumption;
 
@@ -166,8 +166,8 @@ public:
 
 	void showDebugInfo();
 
-	void showPath(const vector<Vect3f>& wayPoints);
-	const vector<Vect3f>& getWayPoints() {
+	void showPath(const std::vector<Vect3f>& wayPoints);
+	const std::vector<Vect3f>& getWayPoints() {
 		return wayPoints_;
 	}
 
@@ -256,7 +256,7 @@ protected:
 	terDockMode dockMode_;
 	terUnitReal* DockPoint;
 	terDockingSlot* DockSlot;
-	typedef vector<terDockingSlot> DockingSlotList;
+	typedef std::vector<terDockingSlot> DockingSlotList;
 	DockingSlotList DockList;
 	terAnimationPhaseIteratorType DockPhase;
 	terAnimationPhaseIteratorType DockAnglePhase;
@@ -282,7 +282,7 @@ private:
 	DurationTimer recalcPathTimer_;
 	bool pathFindSucceeded_;
 	Vect2i pathFindTarget_;
-	vector<Vect2i> pathFindList_;
+	std::vector<Vect2i> pathFindList_;
 
 	/// таймер для расчета повреждений от хаоса и нарушенного зерослоя
 	DelayTimer envDamageTimer_;
@@ -301,7 +301,7 @@ private:
 
 	void handleLaserHit();
 protected:
-	typedef list<terEffectController> terEffectControllerList;
+	typedef std::list<terEffectController> terEffectControllerList;
 	terEffectControllerList effectControllers_;
 };
 

@@ -163,7 +163,7 @@ void IndexedTexture3D::fillColorTable(
 			}
 		}
 	}
-	sort(&pool[0], &pool[clrCount]);
+	std::sort(&pool[0], &pool[clrCount]);
 	for (i = 0; i < 256; i++) {
 		colorTable[i] = rgb ? pool[i].clr : Texture3DUtils::convertHSBtoRGB(pool[i].clr);
 //		colorTable[i] = Texture3DUtils::convertHSBtoRGB(Texture3DUtils::convertRGBtoHSB(pool[i].clr));

@@ -28,7 +28,7 @@ DefenceMap::~DefenceMap()
 void DefenceMap::startRecalcMap()
 {
 	xassert(path_finder2->ready());
-	swap(path_finder2,path_finder);
+	std::swap(path_finder2,path_finder);
 
 	rebuildWalkMap(path_finder2->GetWalkMap());
 	path_finder2->SetLater(defenceMapPathFind.enableSmoothing,defenceMapPathFind.rebuildQuants);
@@ -131,12 +131,12 @@ private:
 		Node* node;
 		End(const Vect2i& p, Node* n) : position(p), node(n) {}
 	};
-	typedef vector<End> EndList;
+	typedef std::vector<End> EndList;
 	EndList ends;
 	Vect2f center_;
 };
 
-bool DefenceMap::findPathToPoint(const Vect2i& from_w, const Vect2i& to_w, vector<Vect2i>& out_path)
+bool DefenceMap::findPathToPoint(const Vect2i& from_w, const Vect2i& to_w, std::vector<Vect2i>& out_path)
 {
 	Vect2i from = w2m(from_w);
 	if(!inside(from))
@@ -154,7 +154,7 @@ bool DefenceMap::findPathToPoint(const Vect2i& from_w, const Vect2i& to_w, vecto
 	if(!path_finder->FindPathMulti(from, tos, out_path, heuristic))
 		return false;
 
-	vector<Vect2i>::iterator it;
+	std::vector<Vect2i>::iterator it;
 	FOR_EACH(out_path,it)
 		*it = m2w(*it);
 
@@ -166,7 +166,7 @@ bool DefenceMap::findPathToPoint(const Vect2i& from_w, const Vect2i& to_w, vecto
 		return false;
 }
 
-terUnitBase* DefenceMap::findPathToTarget(const Vect2i& from_w, const UnitList& targets, vector<Vect2i>& out_path)
+terUnitBase* DefenceMap::findPathToTarget(const Vect2i& from_w, const UnitList& targets, std::vector<Vect2i>& out_path)
 {
 	Vect2i from = w2m(from_w);
 	if(!inside(from))
@@ -197,7 +197,7 @@ terUnitBase* DefenceMap::findPathToTarget(const Vect2i& from_w, const UnitList& 
     if(!path_finder->FindPathMulti(from, tos, out_path, heuristic))
 		return 0;
 
-	vector<Vect2i>::iterator it;
+	std::vector<Vect2i>::iterator it;
 	FOR_EACH(out_path,it)
 		*it = m2w(*it);
 
@@ -264,7 +264,7 @@ void DefenceMap::analizeField(int playerID)
 			int yc = cluster.front().y - 1;
 			int xl, xr;
 			bool beginUp = true;
-			vector<FieldInterval>::iterator ii;
+			std::vector<FieldInterval>::iterator ii;
 			FOR_EACH(cluster, ii){
 				FieldInterval& in = *ii;
 				

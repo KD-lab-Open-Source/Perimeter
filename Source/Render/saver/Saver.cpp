@@ -8,7 +8,6 @@
 #include "xmath.h"
 
 #include <cstdio>
-using namespace std;
 #include "Saver.h"
 
 #include <fcntl.h>

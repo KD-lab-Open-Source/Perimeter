@@ -210,7 +210,7 @@ terFilthDaemon::terFilthDaemon(const UnitTemplate& data)
 
 terFilthDaemon::~terFilthDaemon()
 {
-	list<OneShadow>::iterator it;
+	std::list<OneShadow>::iterator it;
 	FOR_EACH(shadows,it)
 	{
 		it->model->Release();
@@ -435,9 +435,9 @@ void terFilthDaemon::AvatarInterpolation()
 	{
 		float alpha=0.0;
 		float delta=1/(float)(DAEMON_BLUR_LEN+1);
-		list<ShadowInterpolate>::iterator itp=object_pos.begin();
+		std::list<ShadowInterpolate>::iterator itp=object_pos.begin();
 
-		list<OneShadow>::iterator it;
+		std::list<OneShadow>::iterator it;
 		FOR_EACH(shadows,it)
 		{
 			xassert(itp!=object_pos.end());
@@ -482,7 +482,7 @@ SaveUnitData* terFilthSwarmDaemon::universalSave(SaveUnitData* baseData)
 
 	data->pin=pin;
 
-	vector<SaveUnitData*> unitList;
+	std::vector<SaveUnitData*> unitList;
 	FilthListType::iterator it;
 	FOR_EACH(unit_list,it)
 	if(*it)

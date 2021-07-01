@@ -12,18 +12,18 @@ extern const unsigned int INTERNAL_BUILD_VERSION;
 // Адаптация строк для передачи по сети
 class StringInWrapper
 {
-	string& value_;
+	std::string& value_;
 public:
-	explicit StringInWrapper(string& value) : value_(value) {}
-	string& operator()() { return value_; }
+	explicit StringInWrapper(std::string& value) : value_(value) {}
+	std::string& operator()() { return value_; }
 };
 
 class StringOutWrapper
 {
-	const string& value_;
+	const std::string& value_;
 public:
-	explicit StringOutWrapper(const string& value) : value_(value) {}
-	const string& operator()() const { return value_; }
+	explicit StringOutWrapper(const std::string& value) : value_(value) {}
+	const std::string& operator()() const { return value_; }
 };
 
 //old inline XBuffer& operator > (XBuffer& in, StringInWrapper& str) { str() = in(in.tell()); in += str().size() + 1; return in; }
@@ -858,7 +858,7 @@ struct netCommand4H_AlifePacket : netCommandGeneral
 
 struct netCommand4C_ClientIsNotResponce : netCommandGeneral
 {
-	netCommand4C_ClientIsNotResponce(string& _clientNotResponceList) : netCommandGeneral(NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
+	netCommand4C_ClientIsNotResponce(std::string& _clientNotResponceList) : netCommandGeneral(NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
 		clientNotResponceList=_clientNotResponceList;
 	}
 	netCommand4C_ClientIsNotResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
@@ -867,7 +867,7 @@ struct netCommand4C_ClientIsNotResponce : netCommandGeneral
 	void Write(XBuffer& out) const {
 		out < StringOutWrapper(clientNotResponceList);
 	}
-	string clientNotResponceList;
+	std::string clientNotResponceList;
 };
 
 

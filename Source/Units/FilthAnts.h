@@ -57,7 +57,7 @@ public:
 	virtual SaveUnitData* universalSave(SaveUnitData* baseData);
 	virtual void universalLoad(const SaveUnitData* baseData);
 protected:
-	typedef list<terFilthAnt*> FilthListType;
+	typedef std::list<terFilthAnt*> FilthListType;
 	FilthListType unitList;
 
 	terGenerate gen;

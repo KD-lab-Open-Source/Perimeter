@@ -18,8 +18,6 @@
 #include <typeinfo>
 #endif
 #include "../3dx/Lib3dx.h"
-//#include <map>
-//using namespace std;
 
 FILE *gb_fSceneLog=NULL;
 
@@ -637,7 +635,7 @@ void cScene::BuildTree()
 
 		if(is_spherical)
 		{
-			vector<cIUnkClass*> nodes;
+			std::vector<cIUnkClass*> nodes;
 			sGrid2d::iterator it;
 			FOR_EACH(grid,it)
 			{

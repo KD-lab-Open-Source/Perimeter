@@ -688,7 +688,7 @@ int cD3DRender::Flush(HWND wnd)
 		OutText(10,40,str);
 
 		dbg_MemTexture=0;
-		vector<cFontInternal*>::iterator it;
+		std::vector<cFontInternal*>::iterator it;
 		FOR_EACH(gb_VisGeneric->fonts,it)
 		{
 			cTexture* pTexture=(*it)->GetTexture();
@@ -1006,7 +1006,7 @@ void cD3DRender::FlushLine3D()
 	VISASSERT((lines3d.size()&1)==0);
 	int npoint=0;
 	sVertexXYZD* v=BufferXYZD.Lock();
-	vector<sVertexXYZD>::iterator it;
+	std::vector<sVertexXYZD>::iterator it;
 	FOR_EACH(lines3d,it)
 	{
 		v[npoint]=*it;
@@ -1043,7 +1043,7 @@ void cD3DRender::FlushPoint3D()
 
 	int npoint=0;
 	sVertexXYZD* v=BufferXYZD.Lock();
-	vector<sVertexXYZD>::iterator it;
+	std::vector<sVertexXYZD>::iterator it;
 	FOR_EACH(points3d,it)
 	{
 		v[npoint]=*it;
@@ -1109,7 +1109,7 @@ void cD3DRender::FlushPixel()
 
 	int npoint=0;
 	sVertexXYZWD* v=BufferXYZWD.Lock();
-	vector<PointStruct>::iterator it;
+	std::vector<PointStruct>::iterator it;
 	FOR_EACH(points,it)
 	{
 		PointStruct& p=*it;
@@ -1145,7 +1145,7 @@ void cD3DRender::FlushLine()
 	VISASSERT((lines.size()&1)==0);
 	int npoint=0;
 	sVertexXYZWD* v=BufferXYZWD.Lock();
-	vector<PointStruct>::iterator it;
+	std::vector<PointStruct>::iterator it;
 	FOR_EACH(lines,it)
 	{
 		PointStruct& p=*it;
@@ -1180,7 +1180,7 @@ void cD3DRender::FlushFilledRect()
 
 	int npoint=0;
 	sVertexXYZWD* v=BufferXYZWD.Lock();
-	vector<RectStruct>::iterator it;
+	std::vector<RectStruct>::iterator it;
 	FOR_EACH(rectangles,it)
 	{
 		RectStruct& p=*it;
@@ -1543,7 +1543,7 @@ int cD3DRender::KillFocus()
 	if(lpD3DDevice==0) return 1;
 
 	{
-		vector<cOcclusionQuery*>::iterator it;
+		std::vector<cOcclusionQuery*>::iterator it;
 		FOR_EACH(occlusion_query,it)
 			(*it)->Done();
 	}
@@ -1621,14 +1621,14 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 
 void cD3DRender::DeleteShader()
 {
-	vector<cShader*>::iterator it;
+	std::vector<cShader*>::iterator it;
 	FOR_EACH(cShader::all_shader,it)
 		(*it)->Delete();
 }
 
 void cD3DRender::RestoreShader()
 {
-	vector<cShader*>::iterator it;
+	std::vector<cShader*>::iterator it;
 	FOR_EACH(cShader::all_shader,it)
 		(*it)->Restore();
 }
@@ -2163,7 +2163,7 @@ bool cD3DRender::GetAnisotropic()
 bool cD3DRender::ReinitOcclusion()
 {
 	bool ok=true;
-	vector<cOcclusionQuery*>::iterator it;
+	std::vector<cOcclusionQuery*>::iterator it;
 	FOR_EACH(occlusion_query,it)
 	{
 		bool b=(*it)->Init();

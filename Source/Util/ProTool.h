@@ -32,14 +32,14 @@ void read_container(S& stream, C& container, ReadContainerMode mode = READ_CONTA
 }
 
 template<class T, class S> 
-void read_vector(S& stream, vector<T>& container, ReadContainerMode mode = READ_CONTAINER_CLEAR) 
+void read_vector(S& stream, std::vector<T>& container, ReadContainerMode mode = READ_CONTAINER_CLEAR)
 { 
 	int size; 
 	stream > size; 
 	if(mode == READ_CONTAINER_CLEAR)
 		container.clear(); 
 	if(mode == READ_CONTAINER_REWRITE)
-		for(typename vector<T>::iterator i = container.begin(); i != container.end() && size-- > 0; ++i)
+		for(typename std::vector<T>::iterator i = container.begin(); i != container.end() && size-- > 0; ++i)
 			stream > *i;
 	if(size > 0){
 		container.reserve(container.size() + size);

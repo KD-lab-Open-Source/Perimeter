@@ -176,14 +176,14 @@ void ShowDispatcher::draw()
 //			Watch System
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-ostrstream& watch_buffer()
+std::ostrstream& watch_buffer()
 {
 	const int buffer_size = 10000;
-	static ostrstream buffer(new char[buffer_size], buffer_size);
+	static std::ostrstream buffer(new char[buffer_size], buffer_size);
 	return buffer;
 }
 
-typedef map<string, string> WatchMap;
+typedef std::map<std::string, std::string> WatchMap;
 static WatchMap watch_map;
 void add_watch(const char* var, const char* value)
 {
@@ -192,10 +192,10 @@ void add_watch(const char* var, const char* value)
 
 void show_watch()
 {
-	ostrstream text;
+	std::ostrstream text;
 	WatchMap::iterator i;
 	FOR_EACH(watch_map, i)
-		text << i -> first.c_str() << ": " << i -> second.c_str() << endl;
+		text << i -> first.c_str() << ": " << i -> second.c_str() << std::endl;
 	text << '\0';
 	ShowCursor(1);
 //	show_debug_window(text.str(), debug_window_sx, debug_window_sy);

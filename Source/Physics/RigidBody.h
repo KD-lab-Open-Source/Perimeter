@@ -37,8 +37,8 @@ private:
 	friend class RigidBody;
 	friend class MultiBodyDispatcher;
 };
-typedef list<Contact> ContactList;
-typedef vector<Contact*> ContactPtrList;
+typedef std::list<Contact> ContactList;
+typedef std::vector<Contact*> ContactPtrList;
 
 
 //------------------------------------

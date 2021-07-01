@@ -195,7 +195,7 @@ bool terUnitReal::basementReady()
 {
 	if(attr().InstallBound){
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr().BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
 			v = mx2*attr().BasementPoints[i];
@@ -214,7 +214,7 @@ float terUnitReal::basementDamage()
 {
 	if(basementInstalled()){
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr().BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
 			v = mx2*attr().BasementPoints[i];
@@ -246,7 +246,7 @@ void terUnitReal::installBasement()
 	if(!basementInstalled_ && attr().InstallBound){
 		basementInstalled_ = true;
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr().BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
 			v = mx2*attr().BasementPoints[i];
@@ -274,7 +274,7 @@ void terUnitReal::uninstallBasement()
 	if(basementInstalled_ && attr().InstallBound){
 		basementInstalled_ = false;
 		MatX2f mx2(Mat2f(BodyPoint->angleZ()), BodyPoint->position());
-		vector<Vect2i> points(attr().BasementPoints.size());
+		std::vector<Vect2i> points(attr().BasementPoints.size());
 		for(int i = 0; i < points.size(); i++){
 			Vect2i& v = points[i];
 			v = mx2*attr().BasementPoints[i];
@@ -751,7 +751,7 @@ void terUnitReal::moveToPoint(const Vect3f& v)
 	
 	if(pathFindSucceeded_){
 		if(!pathFindList_.empty()){
-			vector<Vect2i>::iterator pi;
+			std::vector<Vect2i>::iterator pi;
 			for(pi=pathFindList_.begin();pi!=pathFindList_.end();){
 				if(!BodyPoint->is_point_reached(*pi))
 				{
@@ -812,14 +812,14 @@ const Vect3f& terUnitReal::interpolatedPosition()
 	return Vect3f::ID;
 }
 
-void terUnitReal::showPath(const vector<Vect3f>& wayPoints) {
+void terUnitReal::showPath(const std::vector<Vect3f>& wayPoints) {
 	if(!(avatar())) 
 		return;
 
 	if (selected()) {
 		if(attr().showPath && !wayPoints.empty()){
 			Vect3f posPrev = interpolatedPosition();
-			vector<Vect3f>::const_iterator i;
+			std::vector<Vect3f>::const_iterator i;
 			FOR_EACH(wayPoints, i){
 				terRenderDevice->DrawLine(posPrev, *i, pathColor);
 				posPrev = *i;
@@ -1169,7 +1169,7 @@ void terUnitReal::placeZeroLayer(bool restore)
 
 class FreeZeroLayerOp
 {
-	typedef map<int, terUnitReal*> Map;
+	typedef std::map<int, terUnitReal*> Map;
 
 public:
 	FreeZeroLayerOp(terUnitBase* unit) : unit_(unit) {}

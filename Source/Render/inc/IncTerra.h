@@ -1,7 +1,7 @@
 #ifndef __INCTERRA_H__
 #define __INCTERRA_H__
 
-typedef vector<Vect2s> Vect2sVect;
+typedef std::vector<Vect2s> Vect2sVect;
 
 class TerraInterface:public cUnknownClass
 {

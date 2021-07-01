@@ -82,7 +82,7 @@ protected:
 
 	Vect3f center_pos;
 
-	typedef list<terFilthEye*> FilthListType;
+	typedef std::list<terFilthEye*> FilthListType;
 	FilthListType unitList;
 
 	terGenerate gen;

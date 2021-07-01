@@ -20,7 +20,7 @@
 
 
 extern MpegSound gb_Music;
-extern string strMusic;
+extern std::string strMusic;
 extern SyncroTimer global_time;
 
 class MusicClass

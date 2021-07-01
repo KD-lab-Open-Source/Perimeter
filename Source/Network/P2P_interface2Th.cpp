@@ -518,7 +518,7 @@ void PNetCenter::SendEvent(netCommandGeneral& event, DPNID dpnid, bool flag_guar
 
 void PNetCenter::ClearCommandList()
 {
-	list<netCommandGeneral*>::iterator m;
+	std::list<netCommandGeneral*>::iterator m;
 	for(m=m_CommandList.begin(); m!=m_CommandList.end(); m++)
 		delete *m;
 	m_CommandList.clear();
@@ -653,13 +653,13 @@ void PNetCenter::LLogicQuant()
 			CAutoLock _Lock(&m_GeneralLock); //! Lock
 
 			///list<netCommand4H_BackGameInformation*>::iterator m;
-			vector<netCommand4H_BackGameInformation2> & firstList=(*m_clients.begin())->backGameInf2List;
+			std::vector<netCommand4H_BackGameInformation2> & firstList=(*m_clients.begin())->backGameInf2List;
 			while(!firstList.empty()) { //проверка что первый список не пустой
 				ClientMapType::iterator k=m_clients.begin();
 				k++;
 				unsigned int countCompare=0;
 				for(; k!=m_clients.end(); k++){
-					vector<netCommand4H_BackGameInformation2> &  secondList=(*k)->backGameInf2List;
+					std::vector<netCommand4H_BackGameInformation2> &  secondList=(*k)->backGameInf2List;
 					if(!secondList.empty()){
 						if( *firstList.begin() == *secondList.begin() ) countCompare++;//if( (**firstList.begin()).equalVData(**secondList.begin()) )
 						else {
@@ -669,7 +669,7 @@ void PNetCenter::LLogicQuant()
 								f.write(BUFFER_LOG.address(), BUFFER_LOG.tell());
 								f < currentVersion < "\r\n";
 								f < "Unmatched number quants !" < "\n";
-								vector<netCommand4H_BackGameInformation2>::iterator q;
+								std::vector<netCommand4H_BackGameInformation2>::iterator q;
 								for(q=firstList.begin(); q!=firstList.end(); q++){
 									f < "HostQuant=" <= (*q).quant_ < " " <= (*q).replay_ < " " <= (*q).state_< "\n";
 								}
@@ -710,7 +710,7 @@ void PNetCenter::LLogicQuant()
 						quantConfirmation=(*(*m_clients.begin())->backGameInf2List.begin()).quant_;
 					//erase begin elements
 					for(k=m_clients.begin(); k!=m_clients.end(); k++){
-						vector<netCommand4H_BackGameInformation2> &  secondList=(*k)->backGameInf2List;
+						std::vector<netCommand4H_BackGameInformation2> &  secondList=(*k)->backGameInf2List;
 						BUFFER_LOG <= (*secondList.begin()).quant_ < " " <= (*secondList.begin()).replay_ < " " <= (*secondList.begin()).state_< "\n";
 						///delete *secondList.begin();
 						secondList.erase(secondList.begin());
@@ -720,7 +720,7 @@ void PNetCenter::LLogicQuant()
 
 end_while_01:;
 
-			string notResponceClientList;
+			std::string notResponceClientList;
 			ClientMapType::iterator k;
 			unsigned int maxInternalLagQuant=0;
 			unsigned short minClientExecutionQuat=m_numberGameQuant;
@@ -789,7 +789,7 @@ end_while_01:;
 				break;
 
 			//перенесение всех команд удаления в список комманд на выполнение
-			list<netCommand4G_ForcedDefeat*>::iterator p;
+			std::list<netCommand4G_ForcedDefeat*>::iterator p;
 			for(p=m_DeletePlayerCommand.begin(); p!=m_DeletePlayerCommand.end(); p++){
 				PutGameCommand2Queue_andAutoDelete(*p);
 			}
@@ -798,7 +798,7 @@ end_while_01:;
 
 			//Установка последней команде, признака, последняя
 			if(!m_CommandList.empty()){
-				list<netCommandGeneral*>::iterator p=m_CommandList.end();
+				std::list<netCommandGeneral*>::iterator p=m_CommandList.end();
 				p--; //последняя команда
 				if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND || (*p)->EventID==NETCOM_4G_ID_REGION || (*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
 					(static_cast<netCommandGame*>(*p))->setFlagLastCommandInQuant();
@@ -844,7 +844,7 @@ end_while_01:;
 
 	//		if(!DbgPause())
 	//		{
-				list<netCommandGeneral*>::iterator i;
+				std::list<netCommandGeneral*>::iterator i;
 				FOR_EACH(m_CommandList, i)
 				{
 					if((**i).EventID==NETCOM_ID_NEXT_QUANT || (**i).EventID==NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
@@ -1078,7 +1078,7 @@ void PNetCenter::ClientPredReceiveQuant()
 	///PutInputPacket2NetBuffer(in_ClientBuf);
 	if(flag_LockIputPacket) return; //return 0;
 	int cnt=0;
-	list<XDPacket>::iterator p=m_DPPacketList.begin();
+	std::list<XDPacket>::iterator p=m_DPPacketList.begin();
 	while(p!=m_DPPacketList.end()){
 		if(p->dpnid==m_hostDPNID){
 
@@ -1347,7 +1347,7 @@ void PNetCenter::HostReceiveQuant()
 							netCommand4H_ResponceLastQuantsCommands nci(in_HostBuf);
 							if(m_state!=PNC_STATE__NEWHOST_PHASE_B) break;
 
-							vector<netCommandGame*> tmpListGameCommands;
+							std::vector<netCommandGame*> tmpListGameCommands;
 
 							InOutNetComBuffer in_buffer(nci.sizeCommandBuf, 1); //проверить необходимость автоувелечения!
 							in_buffer.putBufferPacket(nci.pData, nci.sizeCommandBuf);
@@ -1384,7 +1384,7 @@ void PNetCenter::HostReceiveQuant()
 							//Выполнение команд, которые не у всех были выполнены
 							for(m_numberGameQuant=nci.beginQuantCommandTransmit; m_numberGameQuant<=nci.endQuantCommandTransmit; m_numberGameQuant++){
 								m_nQuantCommandCounter=0;
-								vector<netCommandGame*>::iterator p;
+								std::vector<netCommandGame*>::iterator p;
 								for(p=tmpListGameCommands.begin(); p!=tmpListGameCommands.end(); p++){
 									if((*p)->curCommandQuant_==m_numberGameQuant) {
 										SendEvent(**p, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
@@ -1503,7 +1503,7 @@ bool PNetCenter::PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf, DPNID& retu
 	if(flag_LockIputPacket) return 0;
 
 	int cnt=0;
-	list<XDPacket>::iterator p=m_DPPacketList.begin();
+	std::list<XDPacket>::iterator p=m_DPPacketList.begin();
 	if(p!=m_DPPacketList.end()){
 		returnDPNID=p->dpnid;
 		while(p!=m_DPPacketList.end()){

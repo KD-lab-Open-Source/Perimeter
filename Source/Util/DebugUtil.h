@@ -74,7 +74,7 @@ class ShowDispatcher
 		void show();
 		void showConvex();
 		};
-	typedef vector<Shape> List;
+	typedef std::vector<Shape> List;
 	List shapes;
 	bool need_font;
 
@@ -118,7 +118,7 @@ sColor4c XCOL(sColor4c color, int intensity = 255, int alpha = 255);
 /////////////////////////////////////////////////////////////////////////////////
 void add_watch(const char* var, const char* value);
 
-ostrstream& watch_buffer();
+std::ostrstream& watch_buffer();
 #define watch(var) { watch_buffer().seekp(0); watch_buffer() << var; watch_buffer() << '\0'; add_watch(#var, watch_buffer().str()); }
 #define watch_i(var, index) { watch_buffer().seekp(0); watch_buffer() << #var << "[" << index << "]"; watch_buffer() << '\0'; string name(watch_buffer().str()); watch_buffer().seekp(0); watch_buffer() << var; watch_buffer() << '\0'; add_watch(name.c_str(), watch_buffer().str()); }
 #define watch_gi(var, index, group) { watch_buffer()().seekp(0); watch_buffer()() << #group << "." << #var << "[" << index << "]"; watch_buffer()() << '\0'; string name(watch_buffer()().str()); watch_buffer()().seekp(0); watch_buffer()() << var; watch_buffer()() << '\0'; add_watch(name.c_str(), watch_buffer()().str()); }

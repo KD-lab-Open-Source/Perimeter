@@ -4,13 +4,13 @@ struct IDirect3DTexture9;
 
 class cTexture : public cUnknownClass, public sAttribute
 {	// класс с анимацией, является динамическим указателем, то есть может удалzться через Release()
-	string		name;				// имя файла из которого загружена текстура
+	std::string		name;				// имя файла из которого загружена текстура
 	short		_x,_y;				// битовый размер текстуры
 	int			TimePerFrame;		// фремя проигрывания
 	int			number_mipmap;
 public:
 	sColor4c	skin_color;
-	vector<IDirect3DTexture9*>	BitMap;
+	std::vector<IDirect3DTexture9*>	BitMap;
 
 	cTexture(const char *TexName=0);
 	~cTexture();
