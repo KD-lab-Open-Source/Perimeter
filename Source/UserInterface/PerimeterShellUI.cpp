@@ -284,6 +284,7 @@ void CShellWindow::Load(const sqshControl* attr)
 	if(strlen(attr->image.texture))
 	{
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image)).c_str() );
+		if (!m_hTexture) return;
 		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture);
 		if (attr->sx > 2.0f || attr->sy > 2.0f) {
 			m_vTexPos[1] = Vect2f(
@@ -3275,11 +3276,14 @@ void CListBoxWindow::Load(const sqshControl* attr)
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
-		thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
-		thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+		if (thumbTexture) {
+            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
+            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+        }
 	}
 	if (strlen(m_attr->image_check.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_check)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG);
 
@@ -3584,8 +3588,10 @@ void CStatListBoxWindow::Load(const sqshControl* attr) {
 	}
 
 	m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
-	m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-	m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+	if (m_hTextureBG) {
+        m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
+        m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+    }
 
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, statsTableFontSize);
@@ -3815,11 +3821,14 @@ void ChatWindow::Load(const sqshControl* attr)
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
-		thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
-		thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+		if (thumbTexture) {
+            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
+            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+        }
 	}
 	if (strlen(m_attr->image_check.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_check)).c_str());
+		if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG);
 
@@ -4128,6 +4137,7 @@ void CSliderWindow::Load(const sqshControl* attr)
 	thumbDUDV = relativeUV(m_attr->image_disabled.ix, m_attr->image_disabled.iy, m_hTexture);
 	if (strlen(m_attr->image2.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image2)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image2._ix, m_attr->image2._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image2.ix, m_attr->image2.iy, m_hTextureBG);
 	}
@@ -4230,6 +4240,7 @@ void CShowMapWindow::Load(const sqshControl* attr) {
 	_RELEASE(m_hTextureBG);
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
 	}
@@ -4429,14 +4440,17 @@ void CPortraitWindow::Load(const sqshControl* attr) {
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
-		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+		if (m_hTextureBG) {
+            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
+            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+        }
 	}
 }
 void CPortraitWindow::setTexture(const char* name) {
 	RELEASE(m_hTexture);
 	if (strlen(name)) {
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(m_attr->image), name).c_str() );
+        if (!m_hTexture) return;
 		m_vTexPos[0] = relativeUV(m_attr->image._ix, m_attr->image._iy, m_hTexture);
 		m_vTexPos[1] = relativeUV(m_attr->image.ix, m_attr->image.iy, m_hTexture);
 	}
@@ -4511,6 +4525,7 @@ void CLogoWindow::Load(const sqshControl* attr) {
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
 	}
@@ -4592,8 +4607,10 @@ void CScaleButton::Load(const sqshControl* attr)
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
-		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+		if (m_hTextureBG) {
+            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
+            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+        }
 	}
 	soundEnabled = attr->alnum;
 }

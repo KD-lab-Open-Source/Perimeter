@@ -2100,6 +2100,7 @@ inline float relativeY(float y) {
 }
 
 inline Vect2f relativeUV(float x, float y, cTexture *texture) {
+    xassert(texture != nullptr);
 	return Vect2f(
 			relativeX(x) / (float)texture->GetWidth(),
 			relativeY(y) / (float)texture->GetHeight() );
