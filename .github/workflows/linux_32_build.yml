@@ -15,7 +15,7 @@ jobs:
       - name: update repos
         run: sudo apt-get update
       - name: install libs
-        run: sudo apt-get install cmake meson libsdl2-dev libsdl2-net-dev libogg-dev libvorbis-dev libboost-dev libvulkan-dev glslang-tools
+        run: sudo apt-get install cmake meson libsdl2-dev libsdl2-net-dev libogg-dev libvorbis-dev libboost-dev libvulkan-dev glslang-tools lld
         
         #Main build
       - name: create build dir
