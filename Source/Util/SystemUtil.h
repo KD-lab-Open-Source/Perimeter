@@ -23,6 +23,9 @@ const char* win32_findnext();
 //		Key Press
 /////////////////////////////////////////////////////////////////////////////////
 #include "xkey.h"
+#ifdef PERIMETER_EXODUS_WINDOW
+#include <SDL_events.h>
+#endif
 //#define VK_TILDE	0xC0
 
 #ifndef WM_MOUSEWHEEL
@@ -32,7 +35,14 @@ const char* win32_findnext();
 bool applicationHasFocus();
 bool applicationIsGo();
 
-inline bool isPressed(int key) { return applicationHasFocus() && (GetAsyncKeyState(key) & 0x8000); } 
+#ifdef PERIMETER_EXODUS_WINDOW
+bool isPressed(uint32_t key);
+#else
+inline bool isPressed(int key) {
+    return GetAsyncKeyState(key) & 0x8000;
+} 
+#endif
+
 inline bool isShiftPressed() { return isPressed(VK_SHIFT); }
 inline bool isControlPressed() { return isPressed(VK_CONTROL); }
 inline bool isAltPressed() { return isPressed(VK_MENU); }
@@ -41,19 +51,52 @@ const unsigned int KBD_CTRL = 1 << 8;
 const unsigned int KBD_SHIFT = 1 << 9;
 const unsigned int KBD_MENU = 1 << 10;
 
-struct sKey
-{
-	union
-	{
-		struct
-		{	
-			unsigned char key;
-			unsigned char ctrl : 1;
-			unsigned char shift : 1;
-			unsigned char menu	: 1;
-		};
-		int fullkey;
-	};
+struct sKey {
+    union
+    {
+        struct
+        {
+            unsigned char key;
+            unsigned char ctrl : 1;
+            unsigned char shift : 1;
+            unsigned char menu	: 1;
+        };
+        int fullkey;
+    };
+
+#ifdef PERIMETER_EXODUS_WINDOW
+    explicit sKey(SDL_Keysym keysym, bool set_by_async_funcs = false) {
+        fullkey = keysym.sym;
+        if(set_by_async_funcs){
+            ctrl = isControlPressed();
+            shift = isShiftPressed();
+            menu = isAltPressed();
+        }
+        
+        // добавляем расширенные коды для командных кодов
+        if(key == VK_CONTROL)
+            ctrl |= 1;
+        if(key == VK_SHIFT)
+            shift |= 1;
+        if(key == VK_MENU)
+            menu |= 1;
+
+        //TODO no idea if this even correct
+        auto mod = keysym.mod;
+        if ((mod & KMOD_SHIFT) != 0) {
+            fullkey |= VK_SHIFT;
+            ctrl |= 1;
+        }
+        if ((mod & KMOD_CTRL) != 0) {
+            fullkey |= VK_CONTROL;
+            shift |= 1;
+        }
+        if ((mod & KMOD_GUI) != 0) {
+            fullkey |= VK_MENU;
+            menu |= 1;
+        }
+    }
+#endif
 
 	sKey(int fullkey_ = 0, bool set_by_async_funcs = false) { 
 		fullkey = fullkey_;
@@ -70,6 +113,7 @@ struct sKey
 		if(key == VK_MENU)
 			menu |= 1;
 	}
+	
 	bool pressed() const {
 		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(menu ^ isAltPressed());
 	}

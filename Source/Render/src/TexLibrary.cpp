@@ -1,9 +1,7 @@
 #include "StdAfxRD.h"
 #include "FileImage.h"
 
-#ifndef PERIMETER_EXODUS
 #include "ddraw.h"
-#endif
 
 #ifdef TEXTURE_NOTFREE
 struct BeginNF
@@ -485,8 +483,6 @@ void cTexLibrary::ReloadAllTexture()
 
 bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 {
-    //TODO
-#ifndef PERIMETER_EXODUS
 	char* buf=NULL;
 	int size;
 	//0 - alpha_none, 1- alpha_test, 2 - alpha_blend
@@ -536,6 +532,4 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		Texture->BitMap.push_back(pTexture);
 		return true;
 	}
-#endif
-	return false;
 }

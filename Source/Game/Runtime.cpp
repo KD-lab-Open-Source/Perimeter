@@ -126,7 +126,9 @@ int PerimeterAviQuant();
 void PerimeterAviFinit();
 #endif
 
-#ifndef PERIMETER_EXODUS_WINDOW
+#ifdef PERIMETER_EXODUS_WINDOW
+void SDL_event_poll();
+#else
 HINSTANCE gb_hInstance=NULL;
 HWND Win32_CreateWindow(char *WinName,int xPos,int yPos,int xScr,int yScr,WNDPROC lpfnWndProc=DefWindowProc,int dwStyle=WS_OVERLAPPEDWINDOW);
 LRESULT CALLBACK VisPerimetrClient_WndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
@@ -632,7 +634,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
     }
 #else
 	gb_hInstance=hInst;
-#endif;
+#endif
     
 	int ht=IniManager("Perimeter.ini").getInt("Game","HT");
 	check_command_line_parameter("HT", ht);
@@ -644,10 +646,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 	bool run = true;
 	while(run){
 #ifdef PERIMETER_EXODUS_WINDOW
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            /* handle your event here */
-        }
+        SDL_event_poll();
 #endif
 #ifndef PERIMETER_EXODUS
         MSG msg;
@@ -691,7 +690,90 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 //--------------------------------
 #ifdef PERIMETER_EXODUS_WINDOW
 
-//TODO
+void SDL_event_poll() {
+    SDL_Window* window = fromHWND(hWndVisGeneric);
+    uint32_t windowID = SDL_GetWindowID(window);
+    SDL_Event event;
+    bool closing = false;
+    while (SDL_PollEvent(&event) == 1) {
+        if (event.window.windowID && (!window || event.window.windowID != windowID)) {
+            //Event is for a window that is not current or window is not available
+            continue;
+        }
+
+        if(gameShell)
+            gameShell->EventHandler(event);
+
+        /* TODO how this should be impl?
+            case WM_SETCURSOR:
+                if(applicationHasFocus()){
+                    int nHittest = LOWORD(lParam);  // hit-test code 
+                    if(nHittest==HTCLIENT)
+                    {
+                        _shellCursorManager.OnWMSetCursor();
+                        return TRUE;
+                    }
+                }
+                break;
+        */
+
+        //Handle event by type and subtype
+        switch (event.type) {
+            case SDL_WINDOWEVENT: {
+                switch (event.window.event) {
+                    case SDL_WINDOWEVENT_SHOWN: {
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_RESIZED:
+                    case SDL_WINDOWEVENT_SIZE_CHANGED: {
+                        if(terFullScreen){
+                            windowClientSize.x = terScreenSizeX;
+                            windowClientSize.y = terScreenSizeY;
+                        } else {
+                            SDL_GetWindowSize(window, &windowClientSize.x, &windowClientSize.y);
+                        }
+                        if(gameShell)
+                            gameShell->setWindowClientSize(windowClientSize);
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_FOCUS_LOST: {
+                        applicationHasFocus_ = false;
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_FOCUS_GAINED: {
+                        applicationHasFocus_= true;
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_CLOSE: {
+                        //NOTE: Seems that MacOS uses this event instead of SDL_QUIT when window is requested to close
+                        closing = true;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                break;
+            }
+            case SDL_QUIT: {
+                closing = true;
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+        
+        if (closing) {
+            if(gameShell) {
+                gameShell->terminate();
+            } else {
+                //TODO is this correct?
+                SDL_DestroyWindow(window);
+            }
+            break;
+        }
+    }
+}
 
 #else //PERIMETER_EXODUS_WINDOW
 STARFORCE_API void CalcRealWindowPos(int xPos,int yPos,int xScr,int yScr,bool fullscreen,Vect2i& pos,Vect2i& size)

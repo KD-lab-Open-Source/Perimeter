@@ -88,8 +88,6 @@ struct SDL_Cursor;
 
 typedef SDL_Cursor* HCURSOR;
 
-short GetAsyncKeyState(int vKey);
-
 void SetFocus(HWND hwnd);
 
 void ShowCursor(bool show);

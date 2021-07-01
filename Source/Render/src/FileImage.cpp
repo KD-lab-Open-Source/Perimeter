@@ -390,10 +390,77 @@ public:
 	}
 };
 
-#ifndef PERIMETER_EXODUS
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cAVIImage
 //////////////////////////////////////////////////////////////////////////////////////////
+#ifdef PERIMETER_EXODUS
+class cAVIImage : public cFileImage
+{
+public:
+    cAVIImage() {
+    }
+    
+    virtual ~cAVIImage() {
+        close();
+    }
+    
+    virtual int close()
+    {
+        return 0;
+    }
+    
+    virtual int load(const char *fname)
+    {
+        //TODO
+        return 0;
+    }
+    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
+    {
+        //TODO
+        return 0;
+    }
+    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
+    {
+        //TODO
+        /*
+        if(GetBitPerPixel()==24)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     ((unsigned char*)bmiColors),3,GetX()*3,8,0,GetX(),-y);
+        else if(GetBitPerPixel()==32)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     ((unsigned char*)bmiColors),4,GetX()*4,8,24,GetX(),-y);
+        else if(GetBitPerPixel()==16)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     ((unsigned char*)bmiColors),2,GetX()*2,31,0,GetX(),-y);
+        */
+        return 0;
+    }
+    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+    {
+        //TODO
+        /*
+        if(GetBitPerPixel()==24)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                ((unsigned char*)bmiColors),3,GetX()*3,8,16,8,8,8,0,GetX(),-y);
+        else if(GetBitPerPixel()==32)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                ((unsigned char*)bmiColors),4,GetX()*4,8,16,8,8,8,0,GetX(),-y);
+        else if(GetBitPerPixel()==16)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                ((unsigned char*)bmiColors),2,GetX()*2,5,10,5,5,5,0,GetX(),-y);
+        */
+        return 0;
+    }
+    static void Init()
+    {
+        //TODO
+    }
+    static void Done()
+    {
+        //TODO
+    }
+};
+#else
 class cAVIImage : public cFileImage
 {
 	IGetFrame	*Frame;
@@ -785,10 +852,8 @@ cFileImage* cFileImage::Create(const char *fname)
 	_strlwr((char*)fname);
 	if(strstr(fname,".tga"))
 		return new cTGAImage;
-#ifndef PERIMETER_EXODUS
 	else if(strstr(fname,".avi"))
 		return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
-#endif
 #ifdef USE_JPEG
 	else if(strstr(fname,".jpg"))
 		return new cJPGImage;
@@ -797,15 +862,11 @@ cFileImage* cFileImage::Create(const char *fname)
 }
 void cFileImage::InitFileImage()
 {
-#ifndef PERIMETER_EXODUS
 	cAVIImage::Init();
-#endif
 }
 void cFileImage::DoneFileImage()
 {
-#ifndef PERIMETER_EXODUS
 	cAVIImage::Done();
-#endif
 }
 void GetFileName(const char *FullName,char *fname)
 {

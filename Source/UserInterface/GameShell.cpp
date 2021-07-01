@@ -881,39 +881,139 @@ Vect2i GameShell::convertToScreenAbsolute(const Vect2f& pos)
 #endif
 }
 
-bool GameShell::checkReel(UINT uMsg,WPARAM wParam,LPARAM lParam) {
-	if (reelManager.isVisible()) {
-		if (reelAbortEnabled) {
 #ifdef PERIMETER_EXODUS_WINDOW
-		    //TODO
-#else
-			switch (uMsg) {
-				case WM_KEYDOWN:
-					if (sKey(wParam, true).fullkey != VK_SPACE) {
-						return true;
-					}
-				case WM_LBUTTONDOWN:
-				case WM_MBUTTONDOWN:
-					reelManager.hide();
-					break;
-				default:
-					return true;
-			}
-#endif
-		}
-	}
-	return false;
-}
+void GameShell::EventHandler(SDL_Event& event) {
+    if (reelManager.isVisible()) {
+        if (reelAbortEnabled) {
+            switch (event.type) {
+                case SDL_KEYDOWN:
+                    if (sKey(event.key.keysym, true).fullkey != VK_SPACE) {
+                        return;
+                    }
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button & (SDL_BUTTON_LMASK | SDL_BUTTON_MMASK)) {
+                        reelManager.hide();
+                    }
+                    break;
+                default:
+                    return;
+            }
+        }
+    }
 
+/*
+
+    switch(uMsg){
+        case WM_MOUSELEAVE:
+            MouseLeave();
+            break;
+    }
+*/
+
+    sKey s;
+    switch (event.type) {
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP: {
+            bool pressed = event.button.state == SDL_PRESSED;
+            Vect2f where = convert(event.button.x, event.button.y);            
+            switch (event.button.button) {
+                case SDL_BUTTON_LEFT:
+                    if (pressed) {
+                        MouseLeftPressed(where);
+                    } else {
+                        MouseLeftUnpressed(where);
+                    }
+                    if (event.button.clicks == 2) {
+                        MouseLeftDoubleClick(where);
+                    }
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    if (pressed) {
+                        MouseMidPressed(where);
+                    } else {
+                        MouseMidUnpressed(where);
+                    }
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    if (pressed) {
+                        MouseRightPressed(where);
+                    } else {
+                        MouseRightUnpressed(where);
+                    }
+                    if (event.button.clicks == 2) {
+                        MouseRightDoubleClick(where);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+        case SDL_MOUSEWHEEL: {
+            bool normal = event.wheel.direction == SDL_MOUSEWHEEL_NORMAL;
+            int delta = event.wheel.x * (normal ? 1 : -1);
+            MouseWheel(delta);
+            break;
+        }
+        case SDL_MOUSEMOTION: {
+            MouseMove(convert(event.motion.x, event.motion.y));
+            break;
+        }
+        case SDL_KEYDOWN: {
+        case SDL_KEYUP:
+            s = sKey(event.key.keysym, true);
+            if (event.key.state == SDL_PRESSED) {
+                KeyPressed(s);
+            } else {
+                KeyUnpressed(s);
+                
+                //Simulate WM_CHAR?
+                SDL_Keycode sym = event.key.keysym.sym;
+                if ((_bMenuMode || sym == SDLK_BACKSPACE) && _shellIconManager.isInEditMode()) {
+                    //TODO Hacky, check if there is better way
+                    if (sym <= 0xFF) {
+                        _shellIconManager.OnChar(sym & 0xFF);
+                    }
+                }
+            }
+            break;
+        }
+        case SDL_WINDOWEVENT: {
+            switch (event.window.event) {
+                case SDL_WINDOWEVENT_FOCUS_GAINED: {
+                    OnWindowActivate();
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+#else
 void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
-	if (checkReel(uMsg, wParam, lParam)) {
-		return;
-	}
+    if (reelManager.isVisible()) {
+        if (reelAbortEnabled) {
+            switch (uMsg) {
+                case WM_KEYDOWN:
+                    if (sKey(wParam, true).fullkey != VK_SPACE) {
+                        return;
+                    }
+                case WM_LBUTTONDOWN:
+                case WM_MBUTTONDOWN:
+                    reelManager.hide();
+                    break;
+                default:
+                    return;
+            }
+        }
+    }
 
-#ifdef PERIMETER_EXODUS_WINDOW
-	//TODO pass events to game shell
-#else
     sKey s;
     switch(uMsg){
 	case WM_MOUSELEAVE:
@@ -975,8 +1075,8 @@ void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 			OnWindowActivate();
 		break;
     }
-#endif
 }
+#endif
 
 void GameShell::DebugCteateFilth(terFilthSpotID id)
 {

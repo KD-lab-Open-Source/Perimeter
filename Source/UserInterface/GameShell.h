@@ -10,7 +10,9 @@
 #include "../Network/P2P_interface.h"
 #include "LogicUpdater.h"
 #include "ReelManager.h"
-
+#ifdef PERIMETER_EXODUS_WINDOW
+#include <SDL_events.h>
+#endif
 
 class MissionEditor;
 
@@ -73,7 +75,11 @@ public:
 	std::string getTotalTime() const;
 
 //------------------------
+#ifdef PERIMETER_EXODUS_WINDOW
+    void EventHandler(SDL_Event& event);
+#else
 	void EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam);
+#endif
 	void KeyPressed(sKey &key);
 	void KeyUnpressed(sKey &key);
 	bool DebugKeyPressed(sKey& Key);
@@ -308,10 +314,12 @@ public:
 	}
 
 private:
+#ifndef PERIMETER_EXODUS_WINDOW
 	static bool canProcessKeyEvent(LPARAM lParam) {
 //		return true;
 		return !(lParam & 0x40000000);
 	}
+#endif
 
 	class CChaos* chaos;
 	
@@ -390,8 +398,6 @@ private:
 	int autoSwitchAITimer;
 	void setActivePlayerAIOff();
 	void checkAutoswitchAI();
-
-	bool checkReel(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
 	LogicUpdater logicUpdater;
 

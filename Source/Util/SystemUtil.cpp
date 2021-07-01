@@ -12,6 +12,68 @@
 //}
 
 /////////////////////////////////////////////////////////////////////////////////
+//		Keys
+/////////////////////////////////////////////////////////////////////////////////
+
+#ifdef PERIMETER_EXODUS_WINDOW
+bool isPressed(uint32_t key) {
+    if (!applicationHasFocus()) return false;
+
+    //According to key type, use diff SDL2 methods
+    switch (key) {
+        case VK_LBUTTON:
+        case VK_MBUTTON:
+        case VK_RBUTTON:
+            return SDL_GetMouseState(nullptr, nullptr) & key;
+        case VK_SHIFT:
+        case VK_CONTROL:
+        case VK_MENU:
+            return SDL_GetModState() & key;
+        default:
+            SDL_Keycode keycode;
+            switch (key) {
+                case VK_BACK:    keycode = SDLK_BACKSPACE; break;
+                case VK_RETURN:  keycode = SDLK_RETURN; break;
+                case VK_SHIFT:   keycode = SDLK_LSHIFT; break;
+                case VK_CONTROL: keycode = SDLK_LCTRL; break;
+                case VK_MENU:    keycode = SDLK_MENU; break;
+                case VK_PAUSE:   keycode = SDLK_PAUSE; break;
+                case VK_ESCAPE:  keycode = SDLK_ESCAPE; break;
+                case VK_SPACE:   keycode = SDLK_SPACE; break;
+                case VK_INSERT:  keycode = SDLK_INSERT; break;
+                case VK_DELETE:  keycode = SDLK_DELETE; break;
+                case VK_F1:      keycode = SDLK_F1; break;
+                case VK_F2:      keycode = SDLK_F2; break;
+                case VK_F3:      keycode = SDLK_F3; break;
+                case VK_F4:      keycode = SDLK_F4; break;
+                case VK_F5:      keycode = SDLK_F5; break;
+                case VK_F6:      keycode = SDLK_F6; break;
+                case VK_F7:      keycode = SDLK_F7; break;
+                case VK_F8:      keycode = SDLK_F8; break;
+                case VK_F9:      keycode = SDLK_F9; break;
+                case VK_F11:     keycode = SDLK_F10; break;
+                case VK_F12:     keycode = SDLK_F11; break;
+                case VK_TILDE:   keycode = SDLK_BACKSLASH; break;
+                default:
+#ifdef PERIMETER_DEBUG
+                    ErrH.Abort("Unknown key requested", XERR_USER, key);
+#endif
+                    return false;
+            }
+
+            //Get state of keys
+            int numkeys;
+            const Uint8 *state = SDL_GetKeyboardState(&numkeys);
+
+            //Convert VK to scancode and return state
+            SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
+            if (scancode >= numkeys) return false;
+            return state[scancode];
+    }
+}
+#endif
+
+/////////////////////////////////////////////////////////////////////////////////
 //		File find
 /////////////////////////////////////////////////////////////////////////////////
 

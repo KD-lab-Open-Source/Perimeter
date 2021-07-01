@@ -83,7 +83,7 @@ cFontInternal::~cFontInternal()
 bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class cFontImage* FontImage)
 {
 	ZIPStream rd;
-	if(!rd.open(filename))
+	if(!rd.open(convert_path_resource(filename).c_str()))
 	{
 		return false;
 	}

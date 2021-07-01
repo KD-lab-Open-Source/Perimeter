@@ -15,7 +15,7 @@
 
 //Usual open but with path conversion
 int _open(const char* path, int oflags, int sflags) {
-    return open(convert_path(path).c_str(), oflags, sflags);
+    return open(convert_path_resource(path).c_str(), oflags, sflags);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,11 +25,6 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-short GetAsyncKeyState(int vKey) {
-    //TODO use SDL2?
-    return 0;
-}
 
 void SetFocus(HWND hwnd) {
     SDL_RaiseWindow(fromHWND(hwnd));
@@ -212,7 +207,12 @@ void LeaveCriticalSection(CRITICAL_SECTION *m) {
 }
 
 void InitializeCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutex_init(m, nullptr);
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    //Seems like Windows EnterCriticalSection can have multiple calls on same thread, replicate same by
+    //setting recursive mutex attr
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(m, &attr);
 }
 
 void DeleteCriticalSection(CRITICAL_SECTION *m) {

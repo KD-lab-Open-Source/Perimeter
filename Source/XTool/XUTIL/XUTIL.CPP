@@ -59,7 +59,11 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
     };
 
     int choice = 0;
-    SDL_ShowMessageBox(&data, &choice);
+    int err = SDL_ShowMessageBox(&data, &choice);
+    if (err) {
+        fprintf(stdout, "MessageBoxQuestion: %s - %s\n", title, message);
+        SDL_PRINT_ERROR("Creating MessageBoxQuestion window");
+    }
     return choice == 1;
 }
 
@@ -106,7 +110,10 @@ void scan_resource_paths() {
             std::string path = std::string() + entry.path().string();
             path.erase(0, 2);
             strlwr(path.data());
-            if (startsWith(path, "resource") || startsWith(path, "scripts") || endsWith(path, ".ini")) {
+            if (startsWith(path, "resource")
+             || startsWith(path, "cache_font")
+             || startsWith(path, "scripts")
+             || endsWith(path, ".ini")) {
                 resourcePaths[path] = entry.path().string();
             }
         }
