@@ -15,7 +15,7 @@
 
 static void (*assert_restore_graphics_function)() = 0;
 
-#if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG)) && !defined(NASSERT)
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG_ASSERT)) && !defined(NASSERT)
 void SetAssertRestoreGraphicsFunction(void(*func)())
 {
 	assert_restore_graphics_function = func;

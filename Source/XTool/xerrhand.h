@@ -55,7 +55,7 @@ extern XErrorHandler ErrH;
 #define XAssert(expr) ErrH.RTC(__FILE__,__LINE__,expr)
 
 
-#if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG)) && !defined(NASSERT)
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG_ASSERT)) && !defined(NASSERT)
 
 // Use d3dFlipToGdiSurface() for D3D Fullscreen modes
 

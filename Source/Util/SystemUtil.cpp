@@ -55,7 +55,7 @@ bool isPressed(uint32_t key) {
                 case VK_F12:     keycode = SDLK_F11; break;
                 case VK_TILDE:   keycode = SDLK_BACKSLASH; break;
                 default:
-#ifdef PERIMETER_DEBUG
+#ifdef PERIMETER_DEBUG_ASSERT
                     ErrH.Abort("Unknown key requested", XERR_USER, key);
 #endif
                     return false;

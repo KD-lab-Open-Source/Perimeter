@@ -50,6 +50,7 @@ OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
 OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
+OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 
 
 # depends
@@ -169,6 +170,10 @@ ENDIF()
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
     ADD_DEFINITIONS(-DPERIMETER_DEBUG)
     MESSAGE("Compiling Debug version")
+    IF(OPTION_DEBUG_ASSERT)
+        ADD_DEFINITIONS(-DPERIMETER_DEBUG_ASSERT)
+        MESSAGE("Debug assertions enabled")
+    ENDIF()
 ENDIF()
 IF(OPTION_DISABLE_STACKTRACE)
     ADD_DEFINITIONS(-DOPTION_DISABLE_STACKTRACE)
