@@ -31,17 +31,21 @@ MonoSelect battleColors(4, playerAllowedColorSize);
 //battle menu
 STARFORCE_API void loadBattleList() {
 	if (battleMaps.empty()) {
-		loadMapVector(battleMaps, "RESOURCE\\BATTLE\\", "RESOURCE\\BATTLE\\*.spg");
+		loadMapVector(battleMaps, "RESOURCE/BATTLE", ".spg");
 		defaultBattleMapCount = battleMaps.size();
-		FILE* file = fopen(convert_path_resource("RESOURCE\\BATTLE\\SCENARIO\\maplist.txt").c_str(), "rt");
+		std::string scenario_path = convert_path_resource("RESOURCE/BATTLE/SCENARIO") + PATH_SEP;
+		FILE* file = fopen((scenario_path + "maplist.txt").c_str(), "rt");
 		if (file) {
 			char* buff = new char[201];
 			while ( fgets(buff, 200, file) != NULL ) {
 				if ( ferror(file) ) {
 					break;
 				}
+                std::string filename(buff);
+                string_replace(filename, "\n", "");
+                string_replace(filename, "\r", "");
 				MissionDescription mission;
-				std::string name = "RESOURCE\\BATTLE\\SCENARIO\\" + std::string(buff);
+				std::string name = scenario_path + filename;
 				mission.setSaveName(name.c_str());
 				battleMaps.push_back(mission);
 			}

@@ -33,17 +33,9 @@ void UserSingleProfile::scanProfiles() {
 
 	int maxIndex = -1;
 
-	std::string saves_path_lwr = getAllSavesDirectory();
-    strlwr(saves_path_lwr.data());
     for (const auto & entry : std::filesystem::directory_iterator(getAllSavesDirectory())) {
         if (entry.is_directory()) {
-            std::string path = get_dir_iterator_path(entry.path());
-            std::string path_lwr = path;
-            strlwr(path_lwr.data());
-            size_t pos = path_lwr.rfind(saves_path_lwr);
-            if (pos == 0) {
-                path.erase(0, saves_path_lwr.length());
-            }
+            std::string path = entry.path().filename().string();
             profiles.emplace_back(Profile(path));
         }
     }

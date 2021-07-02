@@ -146,7 +146,7 @@ int exitCreating( float, float ) {
 int createQuant( float, float ) {
 	if (menuChangingDone) {
 		if (multiplayerMaps.empty()) {
-			loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", "RESOURCE\\MULTIPLAYER\\*.spg");
+			loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
 		}
 		if (multiplayerMaps.empty()) {
 			setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
@@ -1133,7 +1133,7 @@ STARFORCE_API void switchToMultiplayer(CreateNetCenterWayType way) {
 //				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_CREATE_GAME_SCR);
 //				_shellIconManager.SetModalWnd(0);
 				if(multiplayerMaps.empty()){
-					loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", "RESOURCE\\MULTIPLAYER\\*.spg");
+					loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
 				}
 				if (multiplayerMaps.empty()) {
 					setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
