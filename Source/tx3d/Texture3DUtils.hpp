@@ -91,26 +91,6 @@ namespace tx3d {
 			}
 			*/
 
-			static float reminder(float x, float y) {
-                //TODO convert this to C
-#ifdef _MSC_VER
-                __asm {
-                    fld y
-                    fld x
-                    fprem
-                    fstp st(1)
-                }
-#else
-                asm(R"(
-                    fld y
-                    fld x
-                    fprem
-                    fstp st(1)
-                )");
-#endif
-			}
-
-
 			static Vector3D convertHSBtoRGB(const Vector3D& hsbColor);
 
 			static Vector3D convertRGBtoHSB(const Vector3D& rgbColor);

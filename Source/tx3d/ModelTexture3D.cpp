@@ -112,8 +112,7 @@ void ModelTexture3D::getColor(Vector3D* destClr, const Vector3D &v) {
 	yd = yd - yi;
 	zd = zd - zi;
 */
-	// fast implementation of C code above
-#ifdef _MSC_VER
+	/* fast implementation of C code above
     _asm{
 		fld		[dword ptr HALF]
 
@@ -143,8 +142,8 @@ void ModelTexture3D::getColor(Vector3D* destClr, const Vector3D &v) {
 
 		fstp	st(0)
 	}
-#else
-    //TODO no idea if this is correct
+    */
+    //TODO check if this C version of above asm code is correct
     xi = xd;
     yi = yd;
     zi = zd;
@@ -152,7 +151,6 @@ void ModelTexture3D::getColor(Vector3D* destClr, const Vector3D &v) {
     xd = xd - xi;
     yd = yd - yi;
     zd = zd - zi;
-#endif
 
 	index = xi + yi * 17 + zi * 17 * 17;
 
