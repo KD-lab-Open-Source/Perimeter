@@ -952,7 +952,7 @@ void GameShell::EventHandler(SDL_Event& event) {
         }
         case SDL_MOUSEWHEEL: {
             bool normal = event.wheel.direction == SDL_MOUSEWHEEL_NORMAL;
-            int delta = event.wheel.x * (normal ? 1 : -1);
+            int delta = event.wheel.y * (normal ? 1 : -1);
             MouseWheel(delta);
             break;
         }
@@ -1906,7 +1906,7 @@ void GameShell::MouseWheel(int delta)
 		historyScene.getCamera()->mouseWheel(delta);
 	}
 
-	_shellIconManager.OnMouseWheel( delta/120 );
+	_shellIconManager.OnMouseWheel( delta );
 
 	m_ShellDispatcher.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
