@@ -438,7 +438,7 @@ void Interpreter::addLineToLog(const std::string& line) {
 			}
 			log += line + "\n";
 		} else {
-			int returnCh = log.find("\n");
+            size_t returnCh = log.find("\n");
 			log.erase(0, returnCh + 1);
 			log += line + "\n";
 		}

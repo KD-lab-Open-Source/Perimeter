@@ -1728,7 +1728,7 @@ inline const std::string key2String(const AttributeIDBelligerent& data) {
 
 inline void setKey(AttributeIDBelligerent& data, const char* str) {
 	std::string aName = str;
-	int pos = aName.find(",");
+	size_t pos = aName.find(",");
 	if(pos == std::string::npos)
 		return;
 	std::string bName(&aName[pos], aName.size() - pos - 2);

@@ -1249,7 +1249,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'S':
 		if(!missionEditor()){
 			std::string name = CurrentMission.saveName();
-			unsigned int pos = name.rfind(PATH_SEP);
+			size_t pos = name.rfind(PATH_SEP);
 			if(pos != std::string::npos)
 				name.erase(0, pos + 1);
 			name = UserSingleProfile::getAllSavesDirectory() + name;
@@ -2599,7 +2599,7 @@ void GameShell::preLoad() {
     bwScene.loadProgram("RESOURCE\\menu.hst");
 	std::string path = getLocDataPath() + "Text\\Texts.btdb";
 	#ifdef _FINAL_VERSION_
-		qdTextDB::instance().load(path.c_str(), 0 );
+		qdTextDB::instance().load(path.c_str(), nullptr );
 	#else
 		qdTextDB::instance().load(path.c_str(), "RESOURCE\\Texts_comments.btdb");
 	#endif

@@ -681,7 +681,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 
 	ExecuteMission::ExecuteMission(const std::string& params, int duration) : Command(duration) {
 		std::string onlyParams = params.substr(8, params.size() - 9);
-		int loc = onlyParams.find("spg") + 3;
+		size_t loc = onlyParams.find("spg") + 3;
 		fileName = onlyParams.substr(0, loc);
 		missionName = onlyParams.substr(loc + 1);
 	}
@@ -728,7 +728,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 			text = params.substr(10, params.length() - 12);
 			icon = "";
 		} else {
-			int index = params.find("ICON") + 5;
+			size_t index = params.find("ICON") + 5;
 			icon = "RESOURCE\\ICONS\\Portraits\\" + params.substr(index, params.length() - index - 1) + ".tga";
 			index = params.find("\"");
 			int backIndex = params.rfind("\"");

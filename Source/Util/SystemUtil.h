@@ -147,7 +147,7 @@ public:
 inline std::string setExtention(const char* file_name, const char* extention)
 {
 	std::string str = file_name;
-	unsigned int pos = str.rfind(".");
+	size_t pos = str.rfind(".");
 	if(pos != std::string::npos)
 		str.erase(pos, str.size());
 	return str + "." + extention;
@@ -156,7 +156,7 @@ inline std::string setExtention(const char* file_name, const char* extention)
 inline std::string getExtention(const char* file_name)
 {
 	std::string str = file_name;
-	unsigned int pos = str.rfind(".");
+	size_t pos = str.rfind(".");
 	if(pos != std::string::npos){
 		str.erase(0, pos + 1);
 		strlwr((char*)str.c_str());

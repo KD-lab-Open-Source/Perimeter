@@ -100,8 +100,8 @@ struct XStream
 	//Apparently never set but is checked
 	bool ioError() const { return false; }
 
-	template<class T> XStream& write(const T& v){ write(&v, sizeof(T)); return *this; }
-	template<class T> XStream& read(T& v){ read(&v, sizeof(T)); return *this; }
+	template<typename T> XStream& write(const T& v){ write(&v, sizeof(T)); return *this; }
+	template<typename T> XStream& read(T& v){ read(&v, sizeof(T)); return *this; }
 
 private:
 	char convBuf[XS_CONV_BUFFER_LEN + 1];

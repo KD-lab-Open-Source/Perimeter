@@ -140,7 +140,7 @@ void qdTextDB::getIdList(const char* mask, IdList& idList)
 		if(!i->first.find(mask)){
 			std::string str = i->first;
 			str.erase(0, strlen(mask) + 1);
-			int pos = str.find(".");
+			size_t pos = str.find(".");
 			if(pos != std::string::npos)
 				str.erase(pos, str.size());
 			if(std::find(idList.begin(), idList.end(), str) == idList.end())

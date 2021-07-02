@@ -1367,7 +1367,7 @@ void CShellIconManager::speedChanged(float speed) {
 float CShellIconManager::playSpeech(const char* id) {
 	std::string sound = qdTextDB::instance().getSound(id);
 	if (terSoundEnable && speechSound && !sound.empty()) {
-		int pos = sound.find("Voice");
+		size_t pos = sound.find("Voice");
 		if(pos != std::string::npos)
 			sound.erase(0, pos);
 		std::string soundName = gameShell->getLocDataPath() + sound;

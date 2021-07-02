@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 inline void replace(std::string& s, const char*src, const char* dest)
 {
-	int pos = 0;
+    size_t pos = 0;
 	while(1){
 		pos = s.find(src, pos);
 		if(pos >= s.size())
@@ -31,7 +31,7 @@ inline std::string& expand_spec_chars(std::string& s)
 
 inline std::string& collapse_spec_chars(std::string& s)
 {
-	int pos = 0;
+	size_t pos = 0;
 	while(1){
 		pos = s.find("\\", pos);
 		if(pos >= s.size() - 1)

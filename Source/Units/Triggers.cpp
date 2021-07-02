@@ -1743,7 +1743,7 @@ const char* editModelNameDialog(HWND hwnd, const char* initialString)
 	name = initialString;
 	if(openFileDialog(name, "Resourse\\Missions", "m3d", "Mission Name")){
 		strlwr((char*)name.c_str());
-		int pos = name.find("resource");
+        size_t pos = name.find("resource");
 		if(pos != std::string::npos)
 			name.erase(0, pos);
 		return name.c_str();
