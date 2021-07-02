@@ -162,7 +162,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 void getMissionDescriptionInThePlayReelFile(const char* fname, MissionDescription& md)
 {
-	XStream fi(fname, XS_IN);
+	XStream fi(convert_path_resource(fname).c_str(), XS_IN);
 
 	GUID fguid;
 	fi.read(&fguid, sizeof(fguid));

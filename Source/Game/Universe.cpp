@@ -814,7 +814,7 @@ void MissionDescription::restart()
 
 void MissionDescription::setSaveName(const char* fname) 
 { 
-	saveName_ = fname;
+	saveName_ = convert_path_resource(fname);
 	if(getExtention(saveName_.c_str()) != "spb")
 		saveName_ = setExtention(saveName_.c_str(), "spg");
 	saveNameBinary_ = saveName_;
@@ -829,7 +829,7 @@ void MissionDescription::setSaveName(const char* fname)
 	}
 
 	missionName_ = saveNameBinary_;
-	size_t pos = missionName_.rfind("\\");
+	size_t pos = missionName_.rfind(PATH_SEP);
 	if(pos != std::string::npos)
 		missionName_.erase(0, pos + 1);
 	//_strupr((char*)missionName_.c_str());
@@ -837,10 +837,10 @@ void MissionDescription::setSaveName(const char* fname)
 
 void MissionDescription::setReelName(const char* name) 
 {
-	fileNamePlayReelGame = name;
+	fileNamePlayReelGame = convert_path_resource(name);
 
 	missionNamePlayReelGame = fileNamePlayReelGame;
-	size_t pos = missionNamePlayReelGame.rfind("\\");
+	size_t pos = missionNamePlayReelGame.rfind(PATH_SEP);
 	if(pos != std::string::npos)
 		missionNamePlayReelGame.erase(0, pos + 1);
 }

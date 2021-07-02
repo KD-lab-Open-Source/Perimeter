@@ -57,9 +57,9 @@ inline BYTE ByteInterpolate(BYTE a,BYTE b,BYTE factor)
 	return a+(int(b-a))*int(factor)/255;
 }
 
-void ApplySkinColor(DWORD* buffer,int dx,int dy,sColor4c skin_color)
+void ApplySkinColor(uint32_t* buffer,int dx,int dy,sColor4c skin_color)
 {
-	DWORD* cur=buffer;
+	uint32_t* cur=buffer;
 	for(int y=0;y<dy;y++)
 	{
 		for(int x=0;x<dx;x++,cur++)
@@ -123,7 +123,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 			return 2;
 		if(FileImage==0) continue;
 
-		unsigned int *lpBuf = new unsigned int [dxy];
+		uint32_t* lpBuf = new uint32_t[dxy];
 		memset(lpBuf,0xFF,dxy*sizeof(lpBuf[0]));
 		FileImage->GetTexture(lpBuf,i*Texture->GetTimePerFrame(),4,4*dx,
 			8,8,8,8, 16,8,0,24, dx, dy );
@@ -143,7 +143,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 		if(is_skin)
 		{
-			ApplySkinColor((DWORD*)lpBuf,dx,dy,Texture->skin_color);
+			ApplySkinColor(lpBuf,dx,dy,Texture->skin_color);
 		}
 
 		if(Texture->GetAttribute(TEXTURE_BUMP))
@@ -301,12 +301,12 @@ Vect3f NormalByColor(DWORD d)
 	return v;
 }
 
-void cD3DRender::ConvertDot3(unsigned int* ibuf,int dx,int dy,float h_mul)
+void cD3DRender::ConvertDot3(uint32_t* ibuf,int dx,int dy,float h_mul)
 {
 	const int byte_per_pixel=4;
 	BYTE* buf=(BYTE*)ibuf;
 #define GET(x,y) buf[(clamp(x,0,dx-1)+dx*clamp(y,0,dy-1))*byte_per_pixel]
-	unsigned int* out=new unsigned int[dx*dy];
+    uint32_t* out=new uint32_t[dx*dy];
 
 	for(int y=0;y<dy;y++)
 	for(int x=0;x<dx;x++)
