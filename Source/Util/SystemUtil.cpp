@@ -121,24 +121,38 @@ IniManager::IniManager(const char* fname, bool check_existence) {
 const char* IniManager::get(const char* section, const char* key)
 {
 	static char buf[256];
+    static char path[MAX_PATH];
+    
     std::string pathres = convert_path_resource(fname_.c_str());
-	if(pathres.empty())
-		ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
-	if(!GetPrivateProfileString(section,key,NULL,buf,256,pathres.c_str())){
+    if(pathres.empty())
+        ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+
+    //GetPrivateProfileString needs full path
+    if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
+        ErrH.Abort("Ini file not found: ", XERR_USER, 0, pathres.c_str());
+    
+	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
 		*buf = 0;
-		xassert_s(!check_existence_, (string("Не определен ключ ") + fname_.c_str() + " " + section + " " + key).c_str());
+		if (check_existence_) {
+            fprintf(stderr, "INI key not found %s %s %s\n", path, section, key);
+        }
 	}
 
 	return buf;
 }
 void IniManager::put(const char* section, const char* key, const char* val)
 {
-    std::string pathres = convert_path_resource(fname_.c_str());
-    if(pathres.empty()) {
-		ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
-	}
+    static char path[MAX_PATH];
 
-	WritePrivateProfileString(section,key,val,pathres.c_str());
+    std::string pathres = convert_path_resource(fname_.c_str());
+    if(pathres.empty())
+        ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+
+    //WritePrivateProfileString needs full path
+    if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
+        ErrH.Abort("Ini file not found: ", XERR_USER, 0, pathres.c_str());
+
+	WritePrivateProfileString(section,key,val,path);
 }
 
 int IniManager::getInt(const char* section, const char* key) 
