@@ -124,6 +124,10 @@ void scan_resource_paths() {
              || startsWith(path_lwr, "scripts")
              || endsWith(path_lwr, ".ini")) {
                 resourcePaths[path_lwr] = path;
+                if (entry.is_directory()) {
+                    terminate_with_char(path_lwr, PATH_SEP);
+                    resourcePaths[path_lwr] = path;
+                }
             }
         }
     }
