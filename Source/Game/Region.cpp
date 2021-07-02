@@ -842,13 +842,13 @@ void Region::save(XBuffer& buf) const
 {
 	int including = 0;
 	if(parent){
-		buf < ID_ < int(positive()) < including < y0 < y1 < spline_.size();
+		buf < ID_ < int(positive()) < including < y0 < y1 < static_cast<uint32_t>(spline_.size());
 		CycledHermite::const_iterator i;
 		FOR_EACH(spline_, i)
 			buf < i->x < i->y;
 		}
 
-	buf < size();
+	buf < static_cast<uint32_t>(size());
 	const_iterator i;
 	FOR_EACH(*this, i)
 		(*i)->save(buf);
@@ -879,8 +879,8 @@ void Region::load(XBuffer& buf)
 	
 void Region::write_state(XBuffer& out)
 {
-	out < "Regions: " <= size() < "\n";
-	out < "Control Points: " <= spline().size() < "\n";
+	out < "Regions: " <= static_cast<uint32_t>(size()) < "\n";
+	out < "Control Points: " <= static_cast<uint32_t>(spline().size()) < "\n";
 	iterator i;
 	FOR_EACH(*this, i)
 		(*i)->write_state(out);

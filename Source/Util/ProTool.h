@@ -4,7 +4,7 @@
 template<class C, class S> 
 void write_container(S& stream, const C& container) 
 { 
-	stream < container.size(); 
+	stream < static_cast<uint32_t>(container.size()); 
 	for(typename C::const_iterator i = container.begin(); i != container.end(); ++i)
 		stream < *i; 
 }

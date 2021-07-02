@@ -1126,7 +1126,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		savePrm().manualData.cameras.push_back(SaveCameraSplineData());
 		terCamera->savePath(savePrm().manualData.cameras.back());
 		XBuffer name;
-		name < "Camera" <= manualData().cameras.size();
+		name < "Camera" <= static_cast<uint32_t>(manualData().cameras.size());
 		savePrm().manualData.cameras.back().name = editText(name);
 		SavePrm data;
 		CurrentMission.loadMission(data);
