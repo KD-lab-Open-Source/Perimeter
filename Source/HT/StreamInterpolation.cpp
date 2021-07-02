@@ -166,14 +166,14 @@ void StreamInterpolator::ProcessData()
 		char* front=&stream[0];
 		char* cur=front;
 		char* end=front+size;
-		int sz=0;
+		int sz;
 		while(cur<end)
 		{
 			InterpolateFunction func=*(InterpolateFunction*)cur;
-			cur+=4;
+			cur+=sizeof(void*);
 			cIUnkObj* cur_object=*(cIUnkObj**)cur;
-			cur+=4;
-			int sz=func(cur_object,cur);
+			cur+=sizeof(void*);
+			sz=func(cur_object,cur);
 			cur+=sz;
 			
 		}
