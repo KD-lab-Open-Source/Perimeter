@@ -36,12 +36,13 @@ jobs:
         run: |
           msys2do mkdir -p perimeter/bin
           msys2do cp /mingw64/bin/SDL2.dll perimeter/bin/
-          msys2do cp /mingw32/bin/libgcc_*.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libgcc_*.dll perimeter/bin/
           msys2do cp /mingw64/bin/libstdc++-6.dll perimeter/bin/
           msys2do cp /mingw64/bin/libwinpthread-1.dll perimeter/bin/
           msys2do cp /mingw64/bin/libogg-0.dll perimeter/bin/
           msys2do cp /mingw64/bin/libvorbis-0.dll perimeter/bin/
           msys2do cp /mingw64/bin/libvorbisfile-3.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libbacktrace-0.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
       - uses: actions/upload-artifact@v1
         with:
@@ -78,12 +79,13 @@ jobs:
         run: |
           msys2do mkdir -p perimeter/bin
           msys2do cp /mingw64/bin/SDL2.dll perimeter/bin/
-          msys2do cp /mingw32/bin/libgcc_*.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libgcc_*.dll perimeter/bin/
           msys2do cp /mingw64/bin/libstdc++-6.dll perimeter/bin/
           msys2do cp /mingw64/bin/libwinpthread-1.dll perimeter/bin/
           msys2do cp /mingw64/bin/libogg-0.dll perimeter/bin/
           msys2do cp /mingw64/bin/libvorbis-0.dll perimeter/bin/
           msys2do cp /mingw64/bin/libvorbisfile-3.dll perimeter/bin/
+          msys2do cp /mingw64/bin/libbacktrace-0.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
           msys2do strip perimeter/bin/perimeter.exe
       - uses: actions/upload-artifact@v1
