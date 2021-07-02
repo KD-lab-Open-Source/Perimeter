@@ -1783,6 +1783,6 @@ void cTileMapRender::SaveUpdateStat()
 	char fname[100];
 	sprintf(fname,"tga\\%05i.tga",tga_num);
 	SaveTga(fname,dx,dy,buf,4);
-	delete buf;
+	delete[] buf;
 
 }

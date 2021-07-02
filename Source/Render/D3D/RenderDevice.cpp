@@ -374,7 +374,7 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 					int color=(r<<rs)|(g<<gs)|(b<<bs)|(a<<as);
 					memcpy(Dst,&color,bpp);
 				}
-		delete rgba;
+		delete[] rgba;
 	}
 }
 

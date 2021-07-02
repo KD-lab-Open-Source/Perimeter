@@ -180,11 +180,11 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 						(resample?D3DX_FILTER_TRIANGLE:D3DX_FILTER_POINT)|dither
 						, 0 ));
 				}
-				delete lpBuf; lpSurface->Release();
+				delete[] lpBuf; lpSurface->Release();
 				lpBuf = lpBufNext; lpSurface = lpSurfaceNext;
 			}
 		lpSurface->Release();
-		delete lpBuf;
+		delete[] lpBuf;
 	}
 
 	if(is_skin)
@@ -338,6 +338,6 @@ void cD3DRender::ConvertDot3(unsigned int* ibuf,int dx,int dy,float h_mul)
 	}
 
 	memcpy(buf,out,dx*dy*byte_per_pixel);
-	delete out;
+	delete[] out;
 #undef GET
 }

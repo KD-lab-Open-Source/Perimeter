@@ -22,7 +22,6 @@
 #include <iostream>
 #endif
 
-#pragma comment (lib,"vfw32") // AVI library
 int ResourceFileRead(const char *fname,char *&buf,int &size);
 
 
