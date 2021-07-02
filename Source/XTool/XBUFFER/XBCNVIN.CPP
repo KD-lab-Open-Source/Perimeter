@@ -8,7 +8,7 @@
 XBuffer& XBuffer::operator<= (float var)
 {
     snprintf(convBuf, XB_CONV_BUFFER_LEN, "%.*g", digits, var);
-    terminate_with_dot(convBuf, XB_CONV_BUFFER_LEN);
+    terminate_float_with_dot(convBuf, XB_CONV_BUFFER_LEN);
 	write(convBuf, strlen(convBuf), 0);
 	return *this;
 }
@@ -16,7 +16,7 @@ XBuffer& XBuffer::operator<= (float var)
 XBuffer& XBuffer::operator<= (double var)
 {
     snprintf(convBuf, XB_CONV_BUFFER_LEN, "%.*g", digits, var);
-    terminate_with_dot(convBuf, XB_CONV_BUFFER_LEN);
+    terminate_float_with_dot(convBuf, XB_CONV_BUFFER_LEN);
 	write(convBuf, strlen(convBuf), 0);
 	return *this;
 }
@@ -24,7 +24,7 @@ XBuffer& XBuffer::operator<= (double var)
 XBuffer& XBuffer::operator<= (long double var)
 {
     snprintf(convBuf, XB_CONV_BUFFER_LEN, "%.*Lg", digits, var);
-    terminate_with_dot(convBuf, XB_CONV_BUFFER_LEN);
+    terminate_float_with_dot(convBuf, XB_CONV_BUFFER_LEN);
 	write(convBuf, strlen(convBuf), 0);
 	return *this;
 }

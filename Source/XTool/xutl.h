@@ -125,11 +125,11 @@ std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string 
 //Do a conversion for RESOURCE paths
 std::string convert_path_resource(const char* path);
 
-//Adds string if not present
-void terminate_with_char(char* buffer, char chr, size_t max);
+//Adds char to string in end if not present
+void terminate_with_char(std::string& buffer, const char chr);
 
 //Replicate legacy behavior and add dot if not present
-void terminate_with_dot(char* buffer, size_t max);
+void terminate_float_with_dot(char* buffer, size_t max);
 
 //Returns a cleaned directory_iterator path
 std::string get_dir_iterator_path(const std::filesystem::path& path);

@@ -486,15 +486,13 @@ std::string Section::align_path(const char* sources, const std::string& str)
 	std::string path = convert_path(script_file.c_str());
 
 	//Check and remove the initial sources dir
-	char* sources_path = (char*) malloc(MAX_PATH);
-    strncpy(sources_path, sources, MAX_PATH);
-    terminate_with_char(sources_path, PATH_SEP, MAX_PATH);
+    std::string sources_path = sources;
+    terminate_with_char(sources_path, PATH_SEP);
     size_t n = path.find(sources_path);
     if(n != std::string::npos && n == 0) {
-        path.erase(0, strlen(sources_path));
+        path.erase(0, sources_path.length());
         path = std::string(".") + PATH_SEP + path;
     }
-    free(sources_path);
     
     //Remove filename from path
 	n = path.rfind(PATH_SEP);

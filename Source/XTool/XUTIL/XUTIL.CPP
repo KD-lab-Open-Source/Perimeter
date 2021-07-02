@@ -105,7 +105,7 @@ std::unordered_map<std::string, std::string> resourcePaths;
 
 std::string get_dir_iterator_path(const std::filesystem::path& path) {
     std::string path_str = path.string();
-    size_t pos = path_str.find("./");
+    size_t pos = path_str.find(std::string(".") + PATH_SEP);
     if (pos != std::string::npos && pos == 0) {
         path_str.erase(0, 2);
     }
@@ -117,7 +117,7 @@ void scan_resource_paths() {
     for (const auto & entry : std::filesystem::recursive_directory_iterator(".")) {
         if (entry.is_regular_file() || entry.is_directory()) {
             std::string path = get_dir_iterator_path(entry.path());
-            std::string path_lwr = path;
+            std::string path_lwr = convert_path(path.c_str());
             strlwr(path_lwr.data());
             if (startsWith(path_lwr, "resource")
              || startsWith(path_lwr, "cache_font")
@@ -140,31 +140,22 @@ std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string 
 }
 
 std::string convert_path_resource(const char* path) {
-#ifdef PERIMETER_EXODUS
     xxassert(!resourcePaths.empty(), "Resource paths cache is empty");
-    std::string conv = convert_path_posix(path);
+    std::string conv = convert_path(path);
     strlwr(conv.data());
     std::string result = resourcePaths[conv];
     return result;
-#else
-    return std::string(path);
-#endif
 }
 
-void terminate_with_char(char* buffer, const char chr, size_t max) {
-    size_t size = strlen(buffer);
-
+void terminate_with_char(std::string& buffer, const char chr) {
     //Check if already has
-    if (0 < size && buffer[size - 1] == chr) {
-        return;
+    if (!buffer.empty() && buffer[buffer.length() - 1] != chr) {
+        //Append to end and store
+        buffer += chr;
     }
-
-    //Append to end and store
-    std::string str = std::string() + chr;
-    strncat(buffer, str.c_str(), max);
 }
 
-void terminate_with_dot(char* buffer, size_t max) {
+void terminate_float_with_dot(char* buffer, size_t max) {
     size_t size = strlen(buffer);
 
     //Check if already has one or we cant add it
