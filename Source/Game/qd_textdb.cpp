@@ -61,7 +61,7 @@ const char* qdTextDB::getComment(const char* text_id) const
 bool qdTextDB::load(const char* file_name,const char* comments_file_name,bool clear_old_texts)
 {
 	XStream fh(0);
-	if(!fh.open(file_name,XS_IN))
+	if(!fh.open(convert_path_resource(file_name),XS_IN))
 		return false;
 
 	if(clear_old_texts) clear();
@@ -98,7 +98,7 @@ bool qdTextDB::load(const char* file_name,const char* comments_file_name,bool cl
 
 #ifndef _FINAL_VERSION_
 	if(comments_file_name){
-		if(!fh.open(comments_file_name,XS_IN))
+		if(!fh.open(convert_path_resource(comments_file_name),XS_IN))
 			return true;
 
 		fh > text_cnt;

@@ -205,7 +205,9 @@ bool Interpreter::loadProgram(const std::string& fileName) {
 					break;
 				}
 			} else {
-				Command* currentCommand = commandFactory->createCommand(buff);
+                std::string line(buff);
+                string_replace(line, "\r", "");
+				Command* currentCommand = commandFactory->createCommand(line.c_str());
 				if (currentCommand) {
 					currentCommand->referenced();
 /*
