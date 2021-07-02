@@ -366,21 +366,23 @@ void cD3DRender::UpdateRenderMode()
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT5)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT5);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT3)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT3)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT3);
+		
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT4)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT4);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT2)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT2)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT2);
     }
 	else if(RenderMode&RENDERDEVICE_MODE_RGB32)
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_X8R8G8B8);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
 			TexFmtData[SURFMT_COLOR].Set(3,8,8,8,0,16,8,0,0,D3DFMT_R8G8B8);
+        
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
 	}
@@ -388,12 +390,13 @@ void cD3DRender::UpdateRenderMode()
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X4R4G4B4)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X4R4G4B4)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,4,4,4,4,8,4,0,12,D3DFMT_X4R4G4B4);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,5,5,5,1,10,5,0,15,D3DFMT_X1R5G5B5);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R5G6B5)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R5G6B5)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,5,6,5,0,11,5,0,0,D3DFMT_R5G6B5);
+		
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
 	}
@@ -401,9 +404,10 @@ void cD3DRender::UpdateRenderMode()
 	//32
 	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 		TexFmtData[SURFMT_COLOR32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
 		TexFmtData[SURFMT_COLOR32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_X8R8G8B8);
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
+    
+    if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 		TexFmtData[SURFMT_COLORALPHA32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
 
 	// bump map format
@@ -413,20 +417,16 @@ void cD3DRender::UpdateRenderMode()
 	// render map format
 	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
 		TexFmtData[SURFMT_RENDERMAP32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_X8R8G8B8);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 		TexFmtData[SURFMT_RENDERMAP32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
 		TexFmtData[SURFMT_RENDERMAP32].Set(3,8,8,8,0,16,8,0,0,D3DFMT_R8G8B8);
 
 	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_R5G6B5)==0)
 		TexFmtData[SURFMT_RENDERMAP16].Set(2,5,6,5,0,11,5,0,0,D3DFMT_R5G6B5);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
 		TexFmtData[SURFMT_RENDERMAP16].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
 		TexFmtData[SURFMT_RENDERMAP16].Set(2,5,5,5,1,10,5,0,15,D3DFMT_X1R5G5B5);
 
 	TexFmtData[SURFMT_RENDERMAP_FLOAT].Set(0,0,0,0,0,0,0,0,0,0);
@@ -434,19 +434,16 @@ void cD3DRender::UpdateRenderMode()
 		TexFmtData[SURFMT_RENDERMAP_FLOAT].Set(0,0,0,0,0,0,0,0,0,D3DFMT_R32F);
 
 	{
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8)==0)
-		{
-			TexFmtData[SURFMT_GRAYALPHA].Set(1, 0,0,0,8, 0,0,0,0,D3DFMT_A8);
-		}else
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8L8)==0)
-		{
+		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8)==0) {
+            TexFmtData[SURFMT_GRAYALPHA].Set(1, 0, 0, 0, 8, 0, 0, 0, 0, D3DFMT_A8);
+        } else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8L8)==0) {
 			TexFmtData[SURFMT_GRAYALPHA].Set(2, 8,8,8,8, 0,0,0,8,D3DFMT_A8L8);
-		}else
-		{
-			if(RenderMode&RENDERDEVICE_MODE_RGB32)
-				TexFmtData[SURFMT_GRAYALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-			else
-				TexFmtData[SURFMT_GRAYALPHA].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
+		} else {
+			if(RenderMode&RENDERDEVICE_MODE_RGB32) {
+                TexFmtData[SURFMT_GRAYALPHA].Set(4, 8, 8, 8, 8, 16, 8, 0, 24, D3DFMT_A8R8G8B8);
+            } else {
+                TexFmtData[SURFMT_GRAYALPHA].Set(2, 4, 4, 4, 4, 8, 4, 0, 12, D3DFMT_A4R4G4B4);
+            }
 		}
 
 	}
