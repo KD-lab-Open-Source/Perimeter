@@ -128,7 +128,7 @@ int _mkdir(const char* path);
 
 char *_fullpath(char* absolutePath, const char* relativePath, size_t maxLength);
 
-void _splitpath(const char* path, char*, char* dir, char* fname, char* ext);
+void _splitpath(const char* path_out, char* drive, char* dir, char* fname, char* ext);
 
 void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext);
 

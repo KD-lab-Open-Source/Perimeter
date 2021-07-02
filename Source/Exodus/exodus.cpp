@@ -174,26 +174,36 @@ char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) 
     return nullptr;
 }
 
-void _splitpath(const char* path, char*, char* dir, char* fname, char* ext) {
-    std::string path_str = convert_path_posix(path);
+void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext) {
+    std::filesystem::path path_input = convert_path(path);
     
-    //Get dir and file
-    std::size_t lastpath_limiter = path_str.find_last_of('/');
-    std::string dir_str = path_str.substr(0, lastpath_limiter);
-    SDL_strlcpy(dir, dir_str.c_str(), _MAX_DIR);
-    std::string file_str = path_str.substr(lastpath_limiter, path_str.length());
+    //Not used, but just in case
+    if (drive) {
+        *drive = 0;
+    }
     
-    //Get file name and ext
-    std::size_t lastext_limiter = file_str.find_last_of('.');
-    std::string filename_str = file_str.substr(0, lastext_limiter);
-    SDL_strlcpy(fname, filename_str.c_str(), _MAX_FNAME);
-    std::string ext_str = file_str.substr(lastext_limiter, file_str.length());
-    SDL_strlcpy(ext, ext_str.c_str(), _MAX_EXT);
+    //Get dir, file and extension from path
+    std::string dir_str = path_input.parent_path().string();
+    if (dir) {
+        terminate_with_char(dir_str, PATH_SEP);
+        SDL_strlcpy(dir, dir_str.c_str(), _MAX_DIR);
+    }
+    std::string ext_str = path_input.extension().string();
+    if (ext) {
+        SDL_strlcpy(ext, ext_str.c_str(), _MAX_EXT);
+    }
+    //Remove extension from filename and store
+    if (fname) {
+        std::string filename_str = path_input.filename().string();
+        string_replace(filename_str, ext_str.c_str(), "");
+        SDL_strlcpy(fname, filename_str.c_str(), _MAX_FNAME);
+    }
 }
 
-void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext) {
-    std::string fullpath = std::string() + dir + fname + ext;
-    SDL_strlcpy(path, fullpath.c_str(), MAX_PATH);
+void _makepath(char* path, const char*, const char* dir, const char* fname, const char* ext) {
+    std::filesystem::path fullpath = std::string(dir);
+    fullpath.append(std::string(fname) + ext);
+    SDL_strlcpy(path, fullpath.string().c_str(), MAX_PATH);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
