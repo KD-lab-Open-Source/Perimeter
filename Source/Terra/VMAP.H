@@ -981,9 +981,9 @@ protected:
 };
 
 	
-const char* GetTargetName(const char* name);
-const char* GetTargetName(int numWorld, const char* name);
-const char* safeGetTargetName(int numWorld, const char* name);
+std::string GetTargetName(const char* name);
+std::string GetTargetName(int numWorld, const char* name);
+std::string safeGetTargetName(int numWorld, const char* name);
 bool isWorldIDValid(int worldID);
 extern void geoGeneration(sGeoPMO& var);
 
@@ -993,8 +993,8 @@ extern vrtMap vMap;
 
 
 //Работа с INI Файлом
-extern char* GetINIstringV(const char* iniFile,const char* section,const char* key);
-extern void SaveINIstringV(const char* iniFile,const char* section,const char* key,const char* var);
+extern char* GetINIstringV(const std::string& iniFile,const char* section,const char* key);
+extern void SaveINIstringV(const std::string& iniFile,const char* section,const char* key,const char* var);
 
 extern unsigned char* convert_vox2vid(int vox, char* buf);
 extern int convert_vid2vox(char* buf);

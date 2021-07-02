@@ -2659,7 +2659,7 @@ void CMapWindow::Load(const sqshControl* attr)
 	_RELEASE(m_pMapTexture);
 	_RELEASE(activeObjectTx);
 
-	m_pMapTexture = terVisGeneric->CreateTexture( GetTargetName("map.tga") );
+	m_pMapTexture = terVisGeneric->CreateTexture( GetTargetName("map.tga").c_str() );
 
 	if (m_pMapTexture->GetWidth() > m_pMapTexture->GetHeight()) {
 		y += sy / 2;
@@ -4282,9 +4282,9 @@ void CShowMapWindow::draw(int bFocus)
 //	draw_rect_empty(Vect2i(x,y), Vect2i(x+sx,y+sy), sColor4f(1, 1, 1, 1));
 	if (worldID >= 0) {
 		if( !m_hTexture ) {
-			const char* mapPath = safeGetTargetName( worldID, "map.tga" );
-			if (mapPath) {
-				m_hTexture = terVisGeneric->CreateTexture( mapPath );
+			std::string mapPath = safeGetTargetName( worldID, "map.tga" );
+			if (!mapPath.empty()) {
+				m_hTexture = terVisGeneric->CreateTexture( mapPath.c_str() );
 			} else {
 				return;
 			}

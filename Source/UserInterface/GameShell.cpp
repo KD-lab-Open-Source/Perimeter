@@ -455,7 +455,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 	CurrentMission.packPlayerIDs();
 	new terUniverse(NetClient, CurrentMission, savePrm(), LoadProgressUpdate);
 
-	IniManager world_ini(GetTargetName(vMap.worldIniFile));
+	IniManager world_ini(GetTargetName(vMap.worldIniFile).c_str());
 	FogStart = world_ini.getFloat("Visualization Parameters","FogStart");
 	FogEnd = world_ini.getFloat("Visualization Parameters","FogEnd");
 	world_ini.getFloatArray("Visualization Parameters","FogColor", 3, &FogColor.r);
@@ -2707,7 +2707,7 @@ void GameShell::editParameters()
 	}
 
 	if(manualData().zeroLayerHeight != vMap.hZeroPlast)
-		IniManager(GetTargetName(vMap.worldIniFile)).putInt("Global Parameters", "hZeroPlast", manualData().zeroLayerHeight);
+		IniManager(GetTargetName(vMap.worldIniFile).c_str()).putInt("Global Parameters", "hZeroPlast", manualData().zeroLayerHeight);
 
 	if(reloadParameters){
 		if(universe())

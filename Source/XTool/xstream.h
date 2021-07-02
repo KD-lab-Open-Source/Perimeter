@@ -31,10 +31,12 @@ struct XStream
 	long	extPos;
 
 	XStream(int err = 1);
-	XStream(const char* name, unsigned flags,int err = 1);
+    XStream(const char* name, unsigned flags,int err = 1);
+    XStream(const std::string& name, unsigned flags,int err = 1);
 	~XStream();
 
-	int	open(const char* name, unsigned f = XS_IN);
+    int	open(const char* name, unsigned f = XS_IN);
+    int	open(const std::string& name, unsigned f = XS_IN);
 	int	open(XStream* owner,long start,long ext_sz = -1);
 	void	close();
 	unsigned long read(void* buf, unsigned long len);
