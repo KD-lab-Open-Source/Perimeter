@@ -30,8 +30,8 @@ cVisError& cVisError::operator << (const char *a)
 #endif
 		}
 #ifndef PERIMETER_EXODUS //TODO remove when there isnt so much missing stuff
-        if (MessageBoxQuestion("Perimeter cVisGeneric::ErrorMessage()", buf.c_str(), SDL_MESSAGEBOX_ERROR)) {
-            exit(1);
+        if (MessageBoxQuestion("Perimeter cVisError, exit?", buf.c_str(), SDL_MESSAGEBOX_ERROR)) {
+            ErrH.Abort(buf.c_str());
         }
 #endif
 		buf.clear();

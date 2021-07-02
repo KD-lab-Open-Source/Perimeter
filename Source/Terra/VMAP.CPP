@@ -79,12 +79,7 @@ void SaveINIstringV(const std::string& iniFile,const char* section,const char* k
 
 std::string GetTargetName(const char* name)
 {
-	char buf[MAX_PATH];
-
-	strcpy(buf, vMap.wTable[vMap.cWorld].dir);
-	if(buf[0]) strcat(buf, "\\");
-	strcat(buf, name);
-	return convert_path_resource(buf);
+    return GetTargetName(vMap.cWorld, name);
 }
 
 bool isWorldIDValid(int worldID) {
@@ -94,25 +89,20 @@ bool isWorldIDValid(int worldID) {
 std::string GetTargetName(int numWorld, const char* name)
 {
 	if ( !isWorldIDValid(numWorld) ) ErrH.Abort("World Index out of range");
-
-	char* buf = new char[256];
-
-	strcpy(buf,vMap.wTable[numWorld].dir);
-	if(*buf) strcat(buf,"\\");
-	strcat(buf,name);
-	return convert_path_resource(buf);
+    char* buf = vMap.wTable[numWorld].dir;
+    std::string path;
+    if (buf[0]) {
+        path = convert_path_resource(buf);
+        path += PATH_SEP;
+    }
+    if (name) path += name;
+    return path;
 }
 
 std::string safeGetTargetName(int numWorld, const char* name)
 {
 	if ( !isWorldIDValid(numWorld) ) return std::string();
-
-	char* buf = new char[256];
-
-	strcpy(buf,vMap.wTable[numWorld].dir);
-	if(*buf) strcat(buf,"\\");
-	strcat(buf,name);
-	return convert_path_resource(buf);
+    return GetTargetName(numWorld, name);
 }
 
 vrtMap::vrtMap(void)
