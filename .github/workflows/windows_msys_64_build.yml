@@ -27,7 +27,7 @@ jobs:
       - name: perimeter -- create build dir
         run: msys2do mkdir build
       - name: perimeter -- configure
-        run: msys2do cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Debug
+        run: msys2do cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Debug -DOPTION_PROCESS_SCRIPTS=ON
         working-directory: build
       - name: perimeter -- make
         run: msys2do ninja
