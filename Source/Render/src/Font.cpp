@@ -232,12 +232,12 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 //	h.save3layers("file_in.tga",real_size.x,real_size.y,gray_in,gray_in,gray_in);
 
 	resample(gray_in,real_size.x,real_size.y,gray_out,size.x,size.y,'l');
-	delete gray_in;
+	delete[] gray_in;
 	
 	FontImage->Create(gray_out,size);
 
 //	h.save3layers("file.tga",size.x,size.y,gray_out,gray_out,gray_out);
-	delete gray_out;
+	delete[] gray_out;
 	
 	Save(fontname,*FontImage);
 	return true;
