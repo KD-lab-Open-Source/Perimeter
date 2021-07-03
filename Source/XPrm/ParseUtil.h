@@ -35,7 +35,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////////
 //		File Util
 //////////////////////////////////////////////////////////////////////////////////
-inline FILETIME getFileTime(const char* fname, FILETIME* last_write)
+inline void getFileTime(const char* fname, FILETIME* last_write)
 {
     auto ftime = std::filesystem::last_write_time(fname);
     auto duration = ftime.time_since_epoch();

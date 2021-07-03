@@ -69,7 +69,7 @@ void FFDData::SetIB(sPolygon* pIndex)
 	}
 	#undef RIDX
 #ifdef _DEBUG
-	int num=ib-(WORD*)pIndex;
+	int num=ib-(int16_t*)pIndex;
 	VISASSERT(num==GetNumIndices());
 #endif //_DEBUG
 }
