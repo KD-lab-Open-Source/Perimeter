@@ -26,7 +26,7 @@ inline double StringToFloat(char *buf)
 		f_int=(f_int*10)+(buf[i]-'0');
 	if(buf[i]==0) 
 	{
-		assert(std::finite(a));
+		assert(std::isfinite(a));
 		return a=f_sign*f_int;
 	}
 	// вычислене дробной части
@@ -38,7 +38,7 @@ inline double StringToFloat(char *buf)
 	}
 	if(buf[i]==0) 
 	{
-		assert(std::finite(a));
+		assert(std::isfinite(a));
 		return a=f_sign*(f_int+f_fract);
 	}
 	// вычисление степени числа
@@ -48,7 +48,7 @@ inline double StringToFloat(char *buf)
 		double f_sign_power;
 		if(buf[i]==0) 
 		{
-			assert(std::finite(a));
+			assert(std::isfinite(a));
 			return a=f_sign*(f_int+f_fract);
 		}
 		if(buf[i]=='-') { f_sign_power=-1; i++; } else { if(buf[i]=='+') i++; f_sign_power=1; }
@@ -56,7 +56,7 @@ inline double StringToFloat(char *buf)
 			f_power=(f_power*10)+(buf[i]-'0');
 		f_power=pow(10.,f_power*f_sign_power);
 	}
-	assert(std::finite(a));
+	assert(std::isfinite(a));
 	return a=f_sign*(f_int+f_fract)*f_power;
 }
 
