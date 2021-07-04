@@ -83,10 +83,19 @@ DWORD WritePrivateProfileString(const char* section,const char* key,const char* 
     CSimpleIniA ini;
     SI_Error rc = ini.LoadFile(filePath);
     if (rc < 0) {
+        fprintf(stderr, "Error loading %s file for writing: %d", filePath, rc);
+        return 0;
+    };
+    rc = ini.SetValue(section, key, value);
+    if (rc < 0) {
+        fprintf(stderr, "Error writing %s %s %s in file %s: %d", section, key, value, filePath, rc);
+        return 0;
+    };
+    ini.SaveFile(filePath);
+    if (rc < 0) {
         fprintf(stderr, "Error writing %s file: %d", filePath, rc);
         return 0;
     };
-    ini.SetValue(section, key, value);
     return 1;
 }
 
