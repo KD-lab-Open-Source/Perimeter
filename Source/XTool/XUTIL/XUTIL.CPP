@@ -101,8 +101,6 @@ std::string convert_path_posix(const char* path) {
     return conv;
 }
 
-std::unordered_map<std::string, std::string> resourcePaths;
-
 std::string get_dir_iterator_path(const std::filesystem::path& path) {
     std::string path_str = path.string();
     size_t pos = path_str.find(std::string(".") + PATH_SEP);
@@ -112,7 +110,16 @@ std::string get_dir_iterator_path(const std::filesystem::path& path) {
     return path_str;
 }
 
+
+//Since some code may call this statically, we use a flag to know if this is the first time
+bool resourcePathsFirstScan = true;
+std::unordered_map<std::string, std::string> resourcePaths;
+
 void scan_resource_paths() {
+    if (resourcePathsFirstScan) {
+        //Seems like if static code calls us we need to do this manually to avoid any bugs
+        resourcePaths = std::unordered_map<std::string, std::string>();
+    }
     resourcePaths.clear();
     for (const auto & entry : std::filesystem::recursive_directory_iterator(".")) {
         if (entry.is_regular_file() || entry.is_directory()) {
@@ -123,6 +130,7 @@ void scan_resource_paths() {
              || startsWith(path_lwr, "cache_font")
              || startsWith(path_lwr, "scripts")
              || endsWith(path_lwr, ".ini")) {
+                printf("%s %s %lu %lu\n", path_lwr.c_str(), path.c_str(), resourcePaths.size(), resourcePaths.bucket_count());
                 resourcePaths[path_lwr] = path;
                 if (entry.is_directory()) {
                     terminate_with_char(path_lwr, PATH_SEP);
@@ -131,6 +139,7 @@ void scan_resource_paths() {
             }
         }
     }
+    resourcePathsFirstScan = false;
 }
 
 std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string path) {
@@ -144,9 +153,14 @@ std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string 
 }
 
 std::string convert_path_resource(const char* path) {
-    xxassert(!resourcePaths.empty(), "Resource paths cache is empty");
+    if (resourcePathsFirstScan) {
+        scan_resource_paths();
+    }
     std::string conv = convert_path(path);
     strlwr(conv.data());
+    if (startsWith(conv, "./")) {
+        string_replace(conv, "./", "");
+    }
     std::string result = resourcePaths[conv];
     return result;
 }
