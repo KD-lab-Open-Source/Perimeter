@@ -44,6 +44,21 @@ struct pixel_format_desc {
     void (*to_rgba)(const struct vec4 *src, struct vec4 *dst, const PALETTEENTRY *palette);
 };
 
+void from_rgba_qwvu(const struct vec4* src, struct vec4* dst) {
+    float x = src->x;
+    
+    //We need signed float
+    int16_t h16 = static_cast<int16_t>((x - 0.5f) * 255);
+    uint8_t h8 = static_cast<uint8_t>(h16);
+    float sx = static_cast<float>(h8) / 255.0f;
+
+    dst->x = 0.0f; //Reflection?
+    dst->y = 0.5f; //Luminance?
+    dst->z = sx;
+    dst->w = sx;
+}
+
+
 /************************************************************
  * pixel format table providing info about number of bytes per pixel,
  * number of bits per channel and format type.
@@ -57,7 +72,7 @@ static const struct pixel_format_desc formats[] = {
     {D3DFMT_A8R8G8B8,      { 8,  8,  8,  8}, {24, 16,  8,  0},  4, 1, 1,  4, FORMAT_ARGB,    NULL,         NULL      },
     {D3DFMT_X8R8G8B8,      { 0,  8,  8,  8}, { 0, 16,  8,  0},  4, 1, 1,  4, FORMAT_ARGB,    NULL,         NULL      },
     {D3DFMT_A8B8G8R8,      { 8,  8,  8,  8}, {24,  0,  8, 16},  4, 1, 1,  4, FORMAT_ARGB,    NULL,         NULL      },
-    {D3DFMT_Q8W8V8U8,      { 8,  8,  8,  8}, {24,  0,  8, 16},  4, 1, 1,  4, FORMAT_ARGB,    NULL,         NULL      }, //TODO untested
+    {D3DFMT_Q8W8V8U8,      { 8,  8,  8,  8}, {24, 16,  8,  0},  4, 1, 1,  4, FORMAT_ARGB, from_rgba_qwvu,  NULL      },
     {D3DFMT_X8B8G8R8,      { 0,  8,  8,  8}, { 0,  0,  8, 16},  4, 1, 1,  4, FORMAT_ARGB,    NULL,         NULL      },
     {D3DFMT_R5G6B5,        { 0,  5,  6,  5}, { 0, 11,  5,  0},  2, 1, 1,  2, FORMAT_ARGB,    NULL,         NULL      },
     {D3DFMT_X1R5G5B5,      { 0,  5,  5,  5}, { 0, 10,  5,  0},  2, 1, 1,  2, FORMAT_ARGB,    NULL,         NULL      },
