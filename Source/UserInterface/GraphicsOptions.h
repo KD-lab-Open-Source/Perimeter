@@ -64,7 +64,8 @@ class GraphOptions : public Options {
 
 		CustomGraphOptions customOptions;
 
-		int resolution;
+		std::vector<Vect2i> resolutions;
+        Vect2i resolution;
 		int colorDepth;
 
 		bool operator == (const GraphOptions &cgo) const {

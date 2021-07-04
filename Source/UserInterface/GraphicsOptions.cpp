@@ -113,22 +113,50 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
 	customOptions.load(sectionName, iniFileName);
 	IniManager iniManager(iniFileName);
 
-	resolution = iniManager.getInt("Graphics", "ScreenSizeX");
-	for (int i = 0; i < RESOLUTION_COUNT; i++) {
-		if (resolution == RESOLUTIONS[i].x) {
-			resolution = i;
-			break;
-		}
-	}
+	Vect2i resini = Vect2i(iniManager.getInt("Graphics", "ScreenSizeX"), iniManager.getInt("Graphics", "ScreenSizeY"));
+	resolution = Vect2i(terScreenSizeX, terScreenSizeY);
+	resolutions.clear();
+
+    bool isIniCustom = true;
+    bool isCurrentCustom = true;
+    //Pick hardcoded resolutions from Config.prm
+    for (int i = 0; i < RESOLUTION_COUNT; ++i) {
+        auto res = RESOLUTIONS[i];
+        auto resvec = Vect2i(res.x, res.y);
+        resolutions.emplace_back(resvec);
+
+        //Check if they are custom or not
+        if (resvec == resini) {
+            isIniCustom = false;
+        }
+        if (resvec == resolution) {
+            isCurrentCustom = false;
+        }
+        resolutions.emplace_back(resvec);
+    }
+    
+    //Avoid adding duplicate ini res if current is already same
+    if (resolution == resini) {
+        isCurrentCustom = false;
+    }
+
+    //If is not in hardcoded ones, we add it manually
+    if (isIniCustom) {
+        resolutions.emplace_back(resini);
+    }
+    if (isCurrentCustom) {
+        resolutions.emplace_back(resolution);
+    }
+	
 	colorDepth = iniManager.getInt("Graphics", "BPP");
 }
 void GraphOptions::apply() {
 	bool change_depth=terBitPerPixel!=colorDepth;
-	bool change_size=terRenderDevice->GetSizeX() != RESOLUTIONS[resolution].x || terRenderDevice->GetSizeY() != RESOLUTIONS[resolution].y;
+	bool change_size=terRenderDevice->GetSizeX() != resolution.x || terRenderDevice->GetSizeY() != resolution.y;
 	if (change_size || change_depth)
 	{
 		terBitPerPixel = colorDepth;
-		gameShell->updateResolution(RESOLUTIONS[resolution].x, RESOLUTIONS[resolution].y,change_depth,change_size);
+		gameShell->updateResolution(resolution.x, resolution.y,change_depth,change_size);
 	}
 	customOptions.apply();
 }
@@ -136,8 +164,8 @@ void GraphOptions::apply() {
 void GraphOptions::save(const char* iniFileName) {
 	customOptions.save(iniFileName);
 	IniManager iniManager(iniFileName);
-	iniManager.putInt("Graphics", "ScreenSizeX", RESOLUTIONS[resolution].x);
-	iniManager.putInt("Graphics", "ScreenSizeY", RESOLUTIONS[resolution].y);
+	iniManager.putInt("Graphics", "ScreenSizeX", resolution.x);
+	iniManager.putInt("Graphics", "ScreenSizeY", resolution.y);
 	iniManager.putInt("Graphics", "BPP", colorDepth);
 }
 

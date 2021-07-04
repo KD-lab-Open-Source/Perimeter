@@ -81,20 +81,29 @@ void OnComboGraphicsSettings(CShellWindow* pWnd, InterfaceEventCode code, int pa
 void OnComboGraphicsResolution(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	CComboWindow *pCombo = (CComboWindow*) pWnd;
+	GraphOptions& graphOptions = GraphOptionsManager::getInstance().getGraphicsOptions();
 	if( code == EVENT_CREATEWND ) {
-		if (param != -1) {
-			pCombo->Array.push_back( "800x600" );
-			pCombo->Array.push_back( "1024x768" );
-			#ifndef _DEMO_
-				pCombo->Array.push_back( "1280x960" );
-				pCombo->Array.push_back( "1600x1200" );
-			#endif
+	    Vect2i current = graphOptions.resolution;
+
+        if (param != -1) {
+            pCombo->pos = 0;
+            int i = 0;
+            for (Vect2i res : graphOptions.resolutions) {
+                std::string text = std::to_string(res.x) + "x" + std::to_string(res.y);
+                if (i >= RESOLUTION_COUNT) {
+                    text += " (Custom)";
+                }
+                pCombo->Array.emplace_back(text);
+                if (res == current) {
+                    pCombo->pos = i;
+                }
+                i++;
+            }
 
 			pCombo->size = pCombo->Array.size();
 		}
-		pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().resolution;
 	} else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
-		GraphOptionsManager::getInstance().getGraphicsOptions().resolution = pCombo->pos;
+        graphOptions.resolution = graphOptions.resolutions[pCombo->pos];
 	}
 }
 
