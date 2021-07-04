@@ -243,19 +243,28 @@ STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, con
 	mapVector.clear();
 	std::string path_str = convert_path_resource(path.c_str());
 	if (path_str.empty()) return;
+	
+	//Collect files and order
+	std::vector<std::string> paths;
     for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
         std::string entry_path = entry.path().string();
         if (mask.empty() || endsWith(entry_path, mask)) {
-			MissionDescription mission;
-			mission.setSaveName(entry_path.c_str());
-			mission.setReelName(entry_path.c_str());
+            paths.emplace_back(entry_path);
+        }
+    }
+    sort(paths.begin(), paths.end());
+    
+    //Fill map list from paths
+    for (std::string& entry_path : paths) {
+        MissionDescription mission;
+        mission.setSaveName(entry_path.c_str());
+        mission.setReelName(entry_path.c_str());
 //			mission.gameType_ = replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame;
-			if( (!replay) || isCorrectPlayReelFile(mission.fileNamePlayReelGame.c_str()))
-				mapVector.push_back(mission);
+        if( (!replay) || isCorrectPlayReelFile(mission.fileNamePlayReelGame.c_str()))
+            mapVector.push_back(mission);
 //			MissionDescription mission((string(path) + FindFileData.cFileName).c_str(), replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame);
 //			if(mission.worldID() != -1)
 //				mapVector.push_back(mission);
-        }
     }
 }
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect) {
