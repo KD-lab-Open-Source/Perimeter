@@ -2043,8 +2043,8 @@ CUITabSheet::CUITabSheet(int id, CShellWindow* pParent, EVENTPROC p) : CShellWin
 }
 
 void CUITabSheet::postLoad() {
-	for (int i = 0; i < m_attr->pages.size(); i++) {
-		const sqshTabElement& page = m_attr->pages[i];
+	for (int i = 0; i < m_tabattr->pages.size(); i++) {
+		const sqshTabElement& page = m_tabattr->pages[i];
 		for(int j = 0; j < page.ctrls.size(); j++) {
 			if (page.ctrls[j] < 0) {
 				break;
@@ -2165,12 +2165,12 @@ void CUITabSheet::SetPageNumber(int nPage, int nNumber)
 void CUITabSheet::createHotKeyString() {
 	hotKeyPopupString = "";
 	char cbBuffer[200];
-	for (int i = 0; i < m_attr->actions.size(); i++) {
-		if (strlen(m_attr->actions[i].name) && strlen(m_attr->actions[i].hotKeyPopup)) {
+	for (int i = 0; i < m_tabattr->actions.size(); i++) {
+		if (strlen(m_tabattr->actions[i].name) && strlen(m_tabattr->actions[i].hotKeyPopup)) {
 			_shellIconManager.FormatMessageText(
-				m_attr->actions[i].hotKeyPopup,
+				m_tabattr->actions[i].hotKeyPopup,
 				cbBuffer,
-				gameShell->hotKeyManager->getKeyNameForControlAction(m_attr->actions[i]).c_str()
+				gameShell->hotKeyManager->getKeyNameForControlAction(m_tabattr->actions[i]).c_str()
 			);
 			hotKeyPopupString += cbBuffer;
 		}
@@ -2178,8 +2178,8 @@ void CUITabSheet::createHotKeyString() {
 }
 
 void CUITabSheet::reload() {
-	if (m_attr) {
-		Load(m_attr);
+	if (m_tabattr) {
+		Load(m_tabattr);
 	}
 }
 
@@ -2203,8 +2203,8 @@ void CUITabSheet::Load(const sqshTabSheet* attr)
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, inGameLegionDigit);
 
-	
-	m_attr = attr;
+
+    m_tabattr = attr;
 	createHotKeyString();
 	loadFlashingParams(attr);
 	markColor.set(flashR, flashG, flashB, flashA);
@@ -2380,7 +2380,7 @@ void CUITabSheet::scale(Vect2f& scaleV) {
 
 bool CUITabSheet::updateColor() {
 	m_ftime += frame_time.delta();
-	for (int i = 0, s = m_attr->pages.size(); i < s; i++) {
+	for (int i = 0, s = m_tabattr->pages.size(); i < s; i++) {
 		if (isPageFlashing(i)) {
 			if (flashTimers[i]) {
 				flashTimers[i] -= frame_time.delta();
@@ -2421,7 +2421,7 @@ void CUITabSheet::draw(int bFocus)
 	}
 */
 	bool markedPhase = updateColor();
-	for (int i = 0, s = m_attr->pages.size(); i < s; i++) {
+	for (int i = 0, s = m_tabattr->pages.size(); i < s; i++) {
 		bool marked = isPageFlashing(i);
 		bool bEnabled = m_nEnabledPagesBits & (1 << i);
 		const sqshTabElement* pa = tabAttrs[i];
@@ -2476,7 +2476,7 @@ void CUITabSheet::draw(int bFocus)
 				continue;
 			}
 			//squad empty
-			if ( IsPageSelected(i) || (m_attr->pages.size() == 3 && i == m_nActivePage)) {
+			if ( IsPageSelected(i) || (m_tabattr->pages.size() == 3 && i == m_nActivePage)) {
 				//checked
 				DrawSprite(tabXs[i], tabYs[i], 
 					tabSXs[i], tabSYs[i],

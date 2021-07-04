@@ -136,7 +136,7 @@ public:
 		return m_attr_cont;
 	}
 
-	bool isEditWindow() const { return (!isContainer() && (m_attr->type == SQSH_EDIT_BOX_TYPE || m_attr->type == SQSH_INGAME_CHAT_EDIT_BOX_TYPE)); }
+	bool isEditWindow() const { return (!isContainer() && m_attr && ( m_attr->type == SQSH_EDIT_BOX_TYPE || m_attr->type == SQSH_INGAME_CHAT_EDIT_BOX_TYPE)); }
 
 	bool checkDefaultEnterBtns();
 	bool checkDefaultEscBtn();
@@ -460,7 +460,7 @@ public:
 //tabsheets сквадов и строений
 class CUITabSheet : public CShellWindow
 {
-	const sqshTabSheet*           m_attr;
+	const sqshTabSheet*           m_tabattr;
 
 	std::vector<const sqshTabElement*> tabAttrs;
 	std::vector<cTexture*>		tabTextures;
