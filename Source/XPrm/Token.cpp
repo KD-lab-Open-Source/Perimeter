@@ -21,8 +21,9 @@ Parser::~Parser()
 void Parser::open(const char* fname_)
 {
 	XStream ff(0);
-	if(!ff.open((fname = fname_).c_str(), XS_IN))
-		throw std::logic_error(std::string("File not found: ") + fname);
+    fname = convert_path(fname_);
+	if(!ff.open(fname, XS_IN))
+		throw std::logic_error(std::string("File not found: ") + fname + " " + fname_);
 	int len = ff.size();
 	if(buffer)
 		delete buffer;
@@ -372,6 +373,33 @@ int Compiler::parse_file(const char* fname, XBuffer& sout)
 
 
 	return errors;
+}
+
+bool Compiler::compile(const char* fname, const char* sources, bool rebuild)
+{
+    int errors = 0;
+    sectionUpdated_ = false;
+    try {
+        XBuffer bout(1024, 1);
+        errors = parse_file(fname, bout);
+        std::cout << bout;
+        if(!errors){
+            SectionList::iterator i;
+            FOR_EACH(sections, i){
+                int updated = (*i)->declaration(sources, rebuild);
+                if((*i)->definition(sources, updated || rebuild, dependencies) || updated)
+                    sectionUpdated_ = true;
+            }
+        }
+        else
+            std::cout << fname << ": " << errors << " error(s)" << std::endl;
+    }
+    catch(const std::exception& exc){
+        std::cout << exc.what() << "\r\n";
+        errors++;
+    }
+
+    return !errors;
 }
 
 ///////////////////////////////////////////////////////////////////////////

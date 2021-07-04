@@ -665,7 +665,7 @@ void RigidBody::docking(const MatXf& pos, float t_pos, float t_dir)
 	setPose(dockPose);
 }
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 void RigidBody::reload_parameters()
 {
 	build(prm(), geometry, box_min, box_max);

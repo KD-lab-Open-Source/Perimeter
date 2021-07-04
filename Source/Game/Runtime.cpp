@@ -615,9 +615,16 @@ int main(int argc, char *argv[])
     
     //Create crash folder
     std::filesystem::create_directories(CRASH_DIR);
-    
+
     //Scan resources first
     scan_resource_paths();
+
+    //Load perimeter parameters
+    int xprmcompiler=IniManager("Perimeter.ini", false).getInt("Game","XPrmCompiler");
+    check_command_line_parameter("XPrmCompiler", xprmcompiler);
+    if (xprmcompiler) {
+        reload_parameters();
+    }
 
     g_controls_converter.LoadKeyNameTable();
 

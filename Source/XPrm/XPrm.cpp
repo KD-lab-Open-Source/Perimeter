@@ -2,8 +2,6 @@
 #include "ParseUtil.h"
 #include "Token.h"
 
-int64_t getRDTSC(void);
-
 void help(int mode)
 {
 	std::cout << "Parameters compiler v" << _VERSION_ << "\n";
@@ -23,7 +21,7 @@ int main(int argc, char* argv[])
         setup_argcv(argc, argv);
 		//__int64 start_time = getRDTSC();
 
-        std::string updateFile = std::string(get_exe_path()) + "xprm.tmp";
+        std::string updateFile = std::string() + "xprm.tmp";
 		if(check_command_line("/check_update") || check_command_line("-check_update")){
 			XStream ini(0);
 			if(ini.open(updateFile.c_str())){
@@ -114,31 +112,4 @@ int main(int argc, char* argv[])
 	}
 
 	return 1;
-}
-
-bool Compiler::compile(const char* fname, const char* sources, bool rebuild)
-{
-	int errors = 0;
-	sectionUpdated_ = false;
-	try {
-		XBuffer bout(1024, 1);
-		errors = parse_file(fname, bout);
-		std::cout << bout;
-		if(!errors){
-			SectionList::iterator i;
-			FOR_EACH(sections, i){
-				int updated = (*i)->declaration(sources, rebuild); 
-				if((*i)->definition(sources, updated || rebuild, dependencies) || updated)
-					sectionUpdated_ = true;
-			}
-		}
-		else
-			std::cout << fname << ": " << errors << " error(s)" << std::endl;
-	}
-	catch(const std::exception& exc){
-		std::cout << exc.what() << "\r\n";
-		errors++;
-	}
-	
-	return !errors;
-}				      
+}	      

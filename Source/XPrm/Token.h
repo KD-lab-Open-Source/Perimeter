@@ -135,9 +135,6 @@ class Compiler
 	std::string prim_s();
 
 	TokenList& top_context();
-	
-protected:
-    std::string exe_path;
 
 public:							
 	Compiler();

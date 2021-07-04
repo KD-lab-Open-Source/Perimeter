@@ -116,14 +116,6 @@ inline int is_name(const char* str)
 	return isalpha(str[0]) || str[0] == '_';
 }
 
-inline std::string get_exe_path()
-{
-    std::string exe_path = __argv[0];
-    size_t pos = exe_path.rfind(PATH_SEP) + 1;
-	exe_path.erase(pos, exe_path.size() - pos);
-	return exe_path;
-}
-
 inline unsigned CRC(const char* str, unsigned crc)
 {
 	if(!str)

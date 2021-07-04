@@ -1,4 +1,4 @@
-
+SET(perimeter_SRCS "")
 SET(perimeter_LINK_LIBS
         #Our libs
         XTool
@@ -143,7 +143,10 @@ INCLUDE_DIRECTORIES(
     "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
 )
 
-SET(perimeter_SRCS
+#This is the only way I know to force download of external project from any targets
+ADD_CUSTOM_TARGET(dependencies ALL)
+
+SET(perimeter_SRCS ${perimeter_SRCS}
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
@@ -273,19 +276,24 @@ SET(perimeter_SRCS
 
 ADD_EXECUTABLE(perimeter ${PERIMETER_EXE_FLAGS} ${perimeter_SRCS})
 
+#Add TriggerEditor
 if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
 ENDIF()
 
+#Add gperftools
 IF(OPTION_GPERFTOOLS)
     MESSAGE("WARNING: Linking gperftools")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
+#Add XPrmLib if Debug build
+IF(PERIMETER_DEBUG)
+    ADD_DEPENDENCIES(dependencies XPrmLib)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} XPrmLib)
+ENDIF()
 
-#This is the only way I know to force download of external project from any targets
-ADD_CUSTOM_TARGET(dependencies ALL)
+TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
 
 IF(OPTION_PROCESS_SCRIPTS)
     ADD_DEPENDENCIES(dependencies Scripts)

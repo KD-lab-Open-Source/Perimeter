@@ -1,12 +1,12 @@
 #ifndef __PRM_EDIT_H__
 #define __PRM_EDIT_H__
 
-#ifdef _FINAL_VERSION_
+#ifndef PERIMETER_DEBUG
 
 inline void edit_parameters(){}
 inline bool reload_parameters(){ return false; }
 
-#else // _FINAL_VERSION_
+#else // PERIMETER_DEBUG
 
 #define _PRM_EDIT_
 
@@ -59,5 +59,5 @@ protected:
 	static void add_parameter_section(ParameterSection* section); 
 };
 
-#endif // _FINAL_VERSION_
+#endif // PERIMETER_DEBUG
 #endif // __PRM_EDIT_H__

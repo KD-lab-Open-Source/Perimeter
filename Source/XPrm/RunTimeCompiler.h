@@ -2,7 +2,7 @@
 #include "Token.h"
 #include "PrmEdit.h"
 
-class RunTimeCompiler : list<ParameterSection*>, Compiler
+class RunTimeCompiler : std::list<ParameterSection*>, Compiler
 {
 	StringList files;
 public:
