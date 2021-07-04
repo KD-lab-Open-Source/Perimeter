@@ -16,62 +16,150 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 #ifdef PERIMETER_EXODUS_WINDOW
+
+//If you wonder why we are converting SDL2 keys into VK_*, mostly to keep compatibility with controls.init and
+//existing code
+
 bool isPressed(uint32_t key) {
     if (!applicationHasFocus()) return false;
 
     //According to key type, use diff SDL2 methods
+    SDL_Keycode keycode;
     switch (key) {
         case VK_LBUTTON:
         case VK_MBUTTON:
         case VK_RBUTTON:
             return SDL_GetMouseState(nullptr, nullptr) & key;
         case VK_SHIFT:
+            return SDL_GetModState() & KMOD_SHIFT;
         case VK_CONTROL:
+            return SDL_GetModState() & KMOD_CTRL;
         case VK_MENU:
-            return SDL_GetModState() & key;
+            return SDL_GetModState() & KMOD_ALT;
+        case VK_BACK:    keycode = SDLK_BACKSPACE; break;
+        case VK_RETURN:  keycode = SDLK_RETURN; break;
+        case VK_PAUSE:   keycode = SDLK_PAUSE; break;
+        case VK_ESCAPE:  keycode = SDLK_ESCAPE; break;
+        case VK_SPACE:   keycode = SDLK_SPACE; break;
+        case VK_INSERT:  keycode = SDLK_INSERT; break;
+        case VK_DELETE:  keycode = SDLK_DELETE; break;
+        case VK_F1:      keycode = SDLK_F1; break;
+        case VK_F2:      keycode = SDLK_F2; break;
+        case VK_F3:      keycode = SDLK_F3; break;
+        case VK_F4:      keycode = SDLK_F4; break;
+        case VK_F5:      keycode = SDLK_F5; break;
+        case VK_F6:      keycode = SDLK_F6; break;
+        case VK_F7:      keycode = SDLK_F7; break;
+        case VK_F8:      keycode = SDLK_F8; break;
+        case VK_F9:      keycode = SDLK_F9; break;
+        case VK_F11:     keycode = SDLK_F10; break;
+        case VK_F12:     keycode = SDLK_F11; break;
+        case VK_TILDE:   keycode = SDLK_BACKSLASH; break;
         default:
-            SDL_Keycode keycode;
-            switch (key) {
-                case VK_BACK:    keycode = SDLK_BACKSPACE; break;
-                case VK_RETURN:  keycode = SDLK_RETURN; break;
-                case VK_SHIFT:   keycode = SDLK_LSHIFT; break;
-                case VK_CONTROL: keycode = SDLK_LCTRL; break;
-                case VK_MENU:    keycode = SDLK_MENU; break;
-                case VK_PAUSE:   keycode = SDLK_PAUSE; break;
-                case VK_ESCAPE:  keycode = SDLK_ESCAPE; break;
-                case VK_SPACE:   keycode = SDLK_SPACE; break;
-                case VK_INSERT:  keycode = SDLK_INSERT; break;
-                case VK_DELETE:  keycode = SDLK_DELETE; break;
-                case VK_F1:      keycode = SDLK_F1; break;
-                case VK_F2:      keycode = SDLK_F2; break;
-                case VK_F3:      keycode = SDLK_F3; break;
-                case VK_F4:      keycode = SDLK_F4; break;
-                case VK_F5:      keycode = SDLK_F5; break;
-                case VK_F6:      keycode = SDLK_F6; break;
-                case VK_F7:      keycode = SDLK_F7; break;
-                case VK_F8:      keycode = SDLK_F8; break;
-                case VK_F9:      keycode = SDLK_F9; break;
-                case VK_F11:     keycode = SDLK_F10; break;
-                case VK_F12:     keycode = SDLK_F11; break;
-                case VK_TILDE:   keycode = SDLK_BACKSLASH; break;
-                default:
 #ifdef PERIMETER_DEBUG_ASSERT
-                    ErrH.Abort("Unknown key requested", XERR_USER, key);
+            ErrH.Abort("Unknown VK keycode requested", XERR_USER, key);
 #endif
-                    return false;
-            }
-
-            //Get state of keys
-            int numkeys;
-            const Uint8 *state = SDL_GetKeyboardState(&numkeys);
-
-            //Convert VK to scancode and return state
-            SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
-            if (scancode >= numkeys) return false;
-            return state[scancode];
+            return false;
     }
+
+    //Get state of keys
+    int numkeys;
+    const Uint8 *state = SDL_GetKeyboardState(&numkeys);
+
+    //Convert VK to scancode and return state
+    SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
+    if (scancode >= numkeys) return false;
+    return state[scancode];
+}
+
+sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
+    fullkey = 0;
+    switch (keysym.sym) {
+        case SDLK_BACKSPACE:    fullkey = VK_BACK; break;
+        case SDLK_RETURN:       fullkey = VK_RETURN; break;
+        case SDLK_LSHIFT:
+        case SDLK_RSHIFT:       fullkey = VK_SHIFT; break;
+        case SDLK_LCTRL:
+        case SDLK_RCTRL:        fullkey = VK_CONTROL; break;
+        case SDLK_LALT:
+        case SDLK_RALT:         fullkey = VK_MENU; break;
+        case SDLK_PAUSE:        fullkey = VK_PAUSE; break;
+        case SDLK_ESCAPE:       fullkey = VK_ESCAPE; break;
+        case SDLK_SPACE:        fullkey = VK_SPACE; break;
+        case SDLK_INSERT:       fullkey = VK_INSERT; break;
+        case SDLK_DELETE:       fullkey = VK_DELETE; break;
+        case SDLK_F1:           fullkey = VK_F1; break;
+        case SDLK_F2:           fullkey = VK_F2; break;
+        case SDLK_F3:           fullkey = VK_F3; break;
+        case SDLK_F4:           fullkey = VK_F4; break;
+        case SDLK_F5:           fullkey = VK_F5; break;
+        case SDLK_F6:           fullkey = VK_F6; break;
+        case SDLK_F7:           fullkey = VK_F7; break;
+        case SDLK_F8:           fullkey = VK_F8; break;
+        case SDLK_F9:           fullkey = VK_F9; break;
+        case SDLK_F10:          fullkey = VK_F11; break;
+        case SDLK_F11:          fullkey = VK_F12; break;
+        case SDLK_BACKSLASH:    fullkey = VK_TILDE; break;
+        default:
+            //Apparently game uses uppercase ASCII codes for keys
+            uint8_t byte = keysym.sym & 0xFF;
+            if (byte >= 'a' && byte <= 'z') {
+                fullkey = toupper(fullkey);
+            } else {
+#ifdef PERIMETER_DEBUG_ASSERT
+                ErrH.Abort("Unknown SDL key requested", XERR_USER, keysym.sym);
+#endif
+            }
+    }
+    
+    //Add modifiers
+    auto mod = keysym.mod;
+    if ((mod & KMOD_SHIFT) != 0) {
+        fullkey |= KBD_SHIFT;
+        ctrl |= 1;
+    }
+    if ((mod & KMOD_CTRL) != 0) {
+        fullkey |= KBD_CTRL;
+        shift |= 1;
+    }
+    if ((mod & KMOD_GUI) != 0) {
+        fullkey |= KBD_MENU;
+        menu |= 1;
+    }
+    
+    // Same as normal sKey constructor
+
+    if(set_by_async_funcs){
+        ctrl = isControlPressed();
+        shift = isShiftPressed();
+        menu = isAltPressed();
+    }
+
+    // добавляем расширенные коды для командных кодов
+    if(key == VK_CONTROL)
+        ctrl |= 1;
+    if(key == VK_SHIFT)
+        shift |= 1;
+    if(key == VK_MENU)
+        menu |= 1;
 }
 #endif
+
+sKey::sKey(int fullkey_, bool set_by_async_funcs) {
+    fullkey = fullkey_;
+    if(set_by_async_funcs){
+        ctrl = isControlPressed();
+        shift = isShiftPressed();
+        menu = isAltPressed();
+    }
+    // добавляем расширенные коды для командных кодов
+    if(key == VK_CONTROL)
+        ctrl |= 1;
+    if(key == VK_SHIFT)
+        shift |= 1;
+    if(key == VK_MENU)
+        menu |= 1;
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 //		File find

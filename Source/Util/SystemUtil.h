@@ -65,54 +65,10 @@ struct sKey {
     };
 
 #ifdef PERIMETER_EXODUS_WINDOW
-    explicit sKey(SDL_Keysym keysym, bool set_by_async_funcs = false) {
-        fullkey = keysym.sym;
-        if(set_by_async_funcs){
-            ctrl = isControlPressed();
-            shift = isShiftPressed();
-            menu = isAltPressed();
-        }
-        
-        // добавляем расширенные коды для командных кодов
-        if(key == VK_CONTROL)
-            ctrl |= 1;
-        if(key == VK_SHIFT)
-            shift |= 1;
-        if(key == VK_MENU)
-            menu |= 1;
-
-        //TODO no idea if this even correct
-        auto mod = keysym.mod;
-        if ((mod & KMOD_SHIFT) != 0) {
-            fullkey |= VK_SHIFT;
-            ctrl |= 1;
-        }
-        if ((mod & KMOD_CTRL) != 0) {
-            fullkey |= VK_CONTROL;
-            shift |= 1;
-        }
-        if ((mod & KMOD_GUI) != 0) {
-            fullkey |= VK_MENU;
-            menu |= 1;
-        }
-    }
+    explicit sKey(SDL_Keysym keysym, bool set_by_async_funcs = false);
 #endif
 
-	sKey(int fullkey_ = 0, bool set_by_async_funcs = false) { 
-		fullkey = fullkey_;
-		if(set_by_async_funcs){ 
-			ctrl = isControlPressed(); 
-			shift = isShiftPressed(); 
-			menu = isAltPressed(); 
-		} 
-		// добавляем расширенные коды для командных кодов
-		if(key == VK_CONTROL) 
-			ctrl |= 1;
-		if(key == VK_SHIFT)
-			shift |= 1;
-		if(key == VK_MENU)
-			menu |= 1;
-	}
+	sKey(int fullkey_ = 0, bool set_by_async_funcs = false);
 	
 	bool pressed() const {
 		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(menu ^ isAltPressed());
