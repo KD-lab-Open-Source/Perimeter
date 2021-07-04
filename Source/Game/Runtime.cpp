@@ -87,6 +87,7 @@ cTileMap* terMapPoint = NULL;
 int terBitPerPixel = 16;
 int tepRefreshRateInHz = 0;					  
 int terFullScreen = 0;
+int terResizableWindow = 1;
 int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
@@ -102,14 +103,16 @@ float terMapLevelLOD = 0.5f;
 
 GameShell* gameShell = 0;
 
-static Vect2i windowClientSize = Vect2i(1024, 768);
+Vect2i lastWindowSize;
+//Countdown for delaying the window resize propagation
+int lastWindowResize = 0;
 
 static bool applicationHasFocus_ = true;
 
 SDL_Window* sdlWindow = nullptr;
 HWND hWndVisGeneric = nullptr;
 
-int terSetDebugWindow = 0;
+extern char _bMenuMode;
 
 SyncroTimer global_time;
 SyncroTimer frame_time;
@@ -350,11 +353,11 @@ HWND PerimeterCreateWindow(int size_x, int size_y, bool full_screen) {
     if (full_screen) {
         window_flags |= SDL_WINDOW_FULLSCREEN;
     }
-    /* TODO
+
     if (terResizableWindow) {
         window_flags |= SDL_WINDOW_RESIZABLE;
     }
-    */
+
     sdlWindow = SDL_CreateWindow(
             "Perimeter",
             SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,
@@ -691,7 +694,17 @@ int main(int argc, char *argv[])
 //--------------------------------
 
 void SDL_event_poll() {
+    //Check if window resizing has been calm down and propagate event
+    if (0 < lastWindowResize) {
+        lastWindowResize--;
+        if (lastWindowResize <= 0) {
+            refresh_window_size(true);
+        }
+    }
+    
     uint32_t windowID = SDL_GetWindowID(sdlWindow);
+
+    //Iterate each SDL event that we may have queued since last poll
     SDL_Event event;
     bool closing = false;
     while (SDL_PollEvent(&event) == 1) {
@@ -700,8 +713,9 @@ void SDL_event_poll() {
             continue;
         }
 
-        if(gameShell)
+        if (gameShell) {
             gameShell->EventHandler(event);
+        }
 
         /* TODO how this should be impl?
             case WM_SETCURSOR:
@@ -725,7 +739,14 @@ void SDL_event_poll() {
                     }
                     case SDL_WINDOWEVENT_RESIZED:
                     case SDL_WINDOWEVENT_SIZE_CHANGED: {
-                        refresh_window_size(!terFullScreen);
+                        if (0 <= lastWindowResize) {
+                            if (_bMenuMode) {
+                                lastWindowResize = 15;
+                            } else {
+                                //Game can be unstable during frequent resizing
+                                lastWindowResize = 30;
+                            }
+                        }
                         break;
                     }
 #ifndef PERIMETER_DEBUG

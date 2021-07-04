@@ -14,7 +14,7 @@ extern int terDrawMeshShadow;
 extern int terShadowType;
 extern int terMipMapLevel;
 extern int terShowTips;
-extern int terSetDebugWindow;
+extern int terResizableWindow;
 
 extern float terNearDistanceLOD;
 extern float terFarDistanceLOD;
@@ -43,13 +43,14 @@ void PerimeterDataChannelLoad()
     int ScreenSizeY = ini.getInt("Graphics","ScreenSizeY");
 	if (0 < ScreenSizeX) terScreenSizeX = ScreenSizeX;
 	if (0 < ScreenSizeY) terScreenSizeY = ScreenSizeY;
+    ini.getInt("Graphics","ResizableWindow", terResizableWindow);
+    check_command_line_parameter("resizablewindow", terResizableWindow);
 	terBitPerPixel = ini.getInt("Graphics","BPP");
 	terMapLevelLOD = ini.getInt("Graphics","MapLevelLOD");
 
 	terDrawMeshShadow = ini.getInt("Graphics","DrawMeshShadow");
 	terShadowType = ini.getInt("Graphics","ShadowType");
 	terEnableBumpChaos = ini.getInt("Graphics","EnableBumpChaos");
-    terSetDebugWindow = ini.getInt("Graphics","SetDebugWindow");
 	gb_VisGeneric->SetFavoriteLoadDDS(ini.getInt("Graphics","FavoriteLoadDDS"));
 
 	terNearDistanceLOD = ini.getInt("Graphics","NearDistanceLOD");
