@@ -1213,6 +1213,7 @@ void cD3DRender::FlushFilledRect()
 void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float du,float dv,
 		cTexture *Texture,const sColor4c &ColorMul,float phase,eBlendMode mode)
 {
+    if (!Texture) return;
     VISASSERT(bActiveScene);
 	int x2=x1+dx,y2=y1+dy;
 	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
@@ -1253,6 +1254,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 		cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase,
 		eColorMode mode,eBlendMode blend_mode)
 {
+    if (!Tex1 || !Tex2) return;
     VISASSERT(bActiveScene);
 	int x2=x1+dx,y2=y1+dy;
 	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
@@ -1293,6 +1295,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 		cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha,float phase,
 		eColorMode mode,eBlendMode blend_mode)
 {
+    if (!Tex1 || !Tex2) return;
     VISASSERT(bActiveScene);
 	int x2=x1+dx,y2=y1+dy;
 	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
