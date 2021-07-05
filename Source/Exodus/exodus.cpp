@@ -155,8 +155,7 @@ int __iscsym(int c) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int _mkdir(const char* path) {
-    std::filesystem::create_directories(path);
-    return 0;
+    return std::filesystem::create_directories(path) ? 0 : -1;
 }
 
 char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) {
