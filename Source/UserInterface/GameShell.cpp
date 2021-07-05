@@ -962,18 +962,23 @@ void GameShell::EventHandler(SDL_Event& event) {
         }
         case SDL_KEYDOWN: {
         case SDL_KEYUP:
-            s = sKey(event.key.keysym, true);
-            if (event.key.state == SDL_PRESSED) {
+            SDL_KeyboardEvent key = event.key;
+            s = sKey(key.keysym, true);
+            if (key.state == SDL_PRESSED) {
                 KeyPressed(s);
             } else {
                 KeyUnpressed(s);
                 
-                //Simulate WM_CHAR?
-                SDL_Keycode sym = event.key.keysym.sym;
+                //Simulate WM_CHAR
+                SDL_Keycode sym = key.keysym.sym;
                 if ((_bMenuMode || sym == SDLK_BACKSPACE) && _shellIconManager.isInEditMode()) {
                     //TODO Hacky, check if there is better way
                     if (sym <= 0xFF) {
-                        _shellIconManager.OnChar(sym & 0xFF);
+                        char c = static_cast<char>(sym & 0xFF);
+                        if (s.shift) {
+                            c = toupper(c);
+                        }
+                        _shellIconManager.OnChar(c);
                     }
                 }
             }

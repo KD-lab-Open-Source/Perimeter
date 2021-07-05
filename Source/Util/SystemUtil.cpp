@@ -116,11 +116,11 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     auto mod = keysym.mod;
     if ((mod & KMOD_SHIFT) != 0) {
         fullkey |= KBD_SHIFT;
-        ctrl |= 1;
+        shift |= 1;
     }
     if ((mod & KMOD_CTRL) != 0) {
         fullkey |= KBD_CTRL;
-        shift |= 1;
+        ctrl |= 1;
     }
     if ((mod & KMOD_GUI) != 0) {
         fullkey |= KBD_MENU;
