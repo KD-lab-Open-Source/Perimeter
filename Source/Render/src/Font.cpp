@@ -147,6 +147,12 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 		Vect2i(512,512),
 		Vect2i(1024,512),
 		Vect2i(1024,1024),
+		Vect2i(2048,1024),
+		Vect2i(2048,2048),
+		Vect2i(4096,2048),
+		Vect2i(4096,4096),
+		Vect2i(8192,4096),
+		Vect2i(8192,8192),
 	};
 	const int sizes_size= sizeof(sizes)/sizeof(sizes[0]);
 	Vect2i size(0,0);
