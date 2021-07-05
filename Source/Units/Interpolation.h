@@ -25,7 +25,7 @@ public:
 	float phase() const { return phase_; }
 	float deltaPhase() const { return deltaPhase_; }
 	float period() const;
-	float cycled() const { cycled_; }
+	float cycled() const { return cycled_; }
 
 private:
 	bool cycled_;
