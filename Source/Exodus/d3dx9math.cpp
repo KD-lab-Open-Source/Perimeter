@@ -89,6 +89,7 @@ float D3DXMatrixDeterminant(const D3DXMATRIX *pm) {
 
 D3DXMATRIX* D3DXMatrixMultiply(D3DXMATRIX *out, const D3DXMATRIX *m1, const D3DXMATRIX *m2) {
     *out = *m1 * *m2;
+    return out;
 }
 
 //Implementation copied from WINE project d3dx9_36/math.c
@@ -170,6 +171,8 @@ D3DXMATRIX* D3DXMatrixTranspose(D3DXMATRIX* out, const D3DXMATRIX* pm) {
 
     for (i=0; i<4; i++)
         for (j=0; j<4; j++) out->m[i][j] = m.m[j][i];
+
+    return out;
 }
 
 //Implementation copied from WINE project d3dx9_36/math.c

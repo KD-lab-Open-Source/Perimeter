@@ -73,6 +73,9 @@ void __cdecl logic_thread_init( void * argument)
 #endif
 {
 	HTManager::instance()->logic_thread();
+#ifdef PERIMETER_EXODUS
+	return 0;
+#endif
 }
 
 void HTManager::setUseHT(bool use_ht_)

@@ -152,7 +152,9 @@ ELSE()
     add_compile_options(-Werror=shift-negative-value)
     add_compile_options(-Werror=dangling-else)
     add_compile_options(-Werror=parentheses)
-    #add_compile_options(-Werror=write-strings) #TODO enable this again
+    add_compile_options(-Werror=return-type)
+    # add_compile_options(-Werror=switch) #TODO enable for strict check of switch block
+    # add_compile_options(-Werror=write-strings) #TODO enable this again
 
     if (CLANG)
         add_compile_options(-Werror=mismatched-new-delete )
