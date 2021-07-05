@@ -134,6 +134,9 @@ void terminate_float_with_dot(char* buffer, size_t max);
 //Returns a cleaned directory_iterator path
 std::string get_dir_iterator_path(const std::filesystem::path& path);
 
+//Adds path to resource paths cache and returns the path key that was added
+std::string add_resource_path(const std::string& res_path);
+
 //Scans dir and creates resource paths cache
 void scan_resource_paths();
 

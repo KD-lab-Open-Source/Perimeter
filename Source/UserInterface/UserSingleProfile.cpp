@@ -87,6 +87,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
         if (error) {
             ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
         } else {
+            scan_resource_paths();
             profiles.push_back( newProfile );
             IniManager man( path.c_str(), true );
             man.put("General", "name", name.c_str());
@@ -108,13 +109,15 @@ bool UserSingleProfile::removeDir(const std::string& dir) {
     if( error ) {
         ErrH.Abort("Can't remove profile directory: ", XERR_USER, error.value(), error.message().c_str());
     }
-    return !std::filesystem::exists(target_path);
+    bool deleted = !std::filesystem::exists(target_path);
+    scan_resource_paths();
+    return deleted;
 }
 
 void UserSingleProfile::removeProfile(int index) {
 	if (removeDir(profiles[index].dirName + PATH_SEP)) {
 		freeInds[profiles[index].dirIndex] = false;
-	}	
+	}
 
 	std::vector<Profile>::iterator forErase = profiles.begin();
 	advance(forErase, index);

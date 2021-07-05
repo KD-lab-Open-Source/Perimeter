@@ -110,34 +110,41 @@ std::string get_dir_iterator_path(const std::filesystem::path& path) {
     return path_str;
 }
 
+std::string add_resource_path_internal(std::unordered_map<std::string, std::string>& paths, const std::string& res_path) {
+    std::filesystem::path res_path_path = res_path;
+    std::string path = get_dir_iterator_path(res_path_path);
+    std::string path_lwr = convert_path(path.c_str());
+    strlwr(path_lwr.data());
+    if (startsWith(path_lwr, "resource")
+        || startsWith(path_lwr, "cache_font")
+        || startsWith(path_lwr, "scripts")
+        || endsWith(path_lwr, ".ini")) {
+        paths[path_lwr] = path;
+        if (is_directory(res_path_path)) {
+            terminate_with_char(path_lwr, PATH_SEP);
+            paths[path_lwr] = path;
+        }
+    }
+    return path_lwr;
+}
 
 //Since some code may call this statically, we use a flag to know if this is the first time
 bool resourcePathsFirstScan = true;
 std::unordered_map<std::string, std::string> resourcePaths;
 
+std::string add_resource_path(const std::string& res_path) {
+    return add_resource_path_internal(resourcePaths, res_path);
+}
+
 void scan_resource_paths() {
-    if (resourcePathsFirstScan) {
-        //Seems like if static code calls us we need to do this manually to avoid any bugs
-        resourcePaths = std::unordered_map<std::string, std::string>();
-    }
-    resourcePaths.clear();
+    //Create a temporary copy until all is scanned
+    std::unordered_map<std::string, std::string> paths;
     for (const auto & entry : std::filesystem::recursive_directory_iterator(".")) {
         if (entry.is_regular_file() || entry.is_directory()) {
-            std::string path = get_dir_iterator_path(entry.path());
-            std::string path_lwr = convert_path(path.c_str());
-            strlwr(path_lwr.data());
-            if (startsWith(path_lwr, "resource")
-             || startsWith(path_lwr, "cache_font")
-             || startsWith(path_lwr, "scripts")
-             || endsWith(path_lwr, ".ini")) {
-                resourcePaths[path_lwr] = path;
-                if (entry.is_directory()) {
-                    terminate_with_char(path_lwr, PATH_SEP);
-                    resourcePaths[path_lwr] = path;
-                }
-            }
+            add_resource_path_internal(paths, entry.path().string());
         }
     }
+    resourcePaths = paths;
     resourcePathsFirstScan = false;
 }
 
