@@ -2060,43 +2060,47 @@ void CShellLogicDispatcher::init()
 
 	m_hCamera = m_hScene->CreateCamera();
 	m_hCamera->SetAttr(ATTRCAMERA_PERSPECTIVE); // перспектива
+    m_hCamera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
 
 	MatXf CameraMatrix;
 	Identity(CameraMatrix);
 	Vect3f CameraPos(0, 0, -1024);
 	SetPosition(CameraMatrix,CameraPos,Vect3f(0,0,0));
 	SetCameraPosition(m_hCamera, CameraMatrix);
-
-
-//	float _small_camera_x = small_camera_x*float(terScreenSizeX);
-//	float _small_camera_y = small_camera_y*float(terScreenSizeY);
-//	float _small_camera_rect_dx  = small_camera_rect_dx*float(terScreenSizeX)/2.f;
-//	float _small_camera_rect_dy  = small_camera_rect_dy*float(terScreenSizeY)/2.f;
-
-	float _small_camera_x = small_camera_x;
-	float _small_camera_y = small_camera_y;
-	float _small_camera_rect_dx  = small_camera_rect_dx/2.f;
-	float _small_camera_rect_dy  = small_camera_rect_dy/2.f;
-
-    Vect2f center(_small_camera_x + _small_camera_rect_dx,
-                  _small_camera_y + _small_camera_rect_dy);
-    sRectangle4f clip(-_small_camera_rect_dx, -_small_camera_rect_dy,
-                      _small_camera_rect_dx, _small_camera_rect_dy);
-    Vect2f focus(1.0f, 1.0f);
-    Vect2f zplane(30.0f, 10000.0f);
-    m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
-            &center,								// центр камеры
-            &clip,									// видимая область камеры
-            &focus,									// фокус камеры
-            &zplane									// ближайший и дальний z-плоскости отсечения
-    );
-
-	m_hCamera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
+    
+    updateSmallCamera();
 }
 
 void CShellLogicDispatcher::updateSmallCamera() {
-	if (m_hCamera) {
-		m_hCamera->Update();
+    if (m_hCamera) {
+        //float _small_camera_x = small_camera_x*float(terScreenSizeX);
+        //float _small_camera_y = small_camera_y*float(terScreenSizeY);
+        //float _small_camera_rect_dx  = small_camera_rect_dx*float(terScreenSizeX)/2.f;
+        //float _small_camera_rect_dy  = small_camera_rect_dy*float(terScreenSizeY)/2.f;
+
+        //m_hCamera handles the small 3D view of selected stuff
+        //clip takes screen relative position but hardcoded positions are relative to 4:3
+        //so we just convert X stuff to absolute and then make it relative to screen position
+        //this way they are properly positioned/sized in different resolutions
+
+        float renderX = static_cast<float>(terRenderDevice->GetSizeX());
+        float _small_camera_x = absoluteUIPosX(small_camera_x, SHELL_ANCHOR_DEFAULT) / renderX;
+        float _small_camera_y = small_camera_y;
+        float _small_camera_rect_dx  = (absoluteUISizeX(small_camera_rect_dx, SHELL_ANCHOR_DEFAULT) / renderX)/2.f;
+        float _small_camera_rect_dy  = small_camera_rect_dy/2.f;
+
+        Vect2f center(_small_camera_x + _small_camera_rect_dx,
+                      _small_camera_y + _small_camera_rect_dy);
+        sRectangle4f clip(-_small_camera_rect_dx, -_small_camera_rect_dy,
+                          _small_camera_rect_dx, _small_camera_rect_dy);
+        Vect2f focus(1.0f, 1.0f);
+        Vect2f zplane(30.0f, 10000.0f);
+        m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
+                &center,								// центр камеры
+                &clip,									// видимая область камеры
+                &focus,									// фокус камеры
+                &zplane									// ближайший и дальний z-плоскости отсечения
+        );
 	}
 }
 
@@ -2205,6 +2209,7 @@ void GameShell::setSpeed(float d)
 
 void GameShell::setWindowClientSize(const Vect2i& size) {
     windowClientSize_ = size;
+    setSourceUIResolution(size);
 }
 
 void GameShell::setCursorPosition(const Vect2f& pos)
@@ -2354,12 +2359,11 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 		gameShell->setWindowClientSize(Vect2i(terScreenSizeX, terScreenSizeY));
 	}
 
-	if(change_size)
-	{
+    if(change_size) {
+        setSourceUIResolution(Vect2i(sx, sy));
 		historyScene.onResolutionChanged();
 		bwScene.onResolutionChanged();
 		bgScene.onResolutionChanged();
-
 		_shellIconManager.onSizeChanged();
 		terVisGeneric->ReloadAllFont();
 	}

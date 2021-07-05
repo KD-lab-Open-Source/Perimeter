@@ -3,6 +3,7 @@
 #include "GameShellSq.h"
 #include "GameShell.h"
 #include "Universe.h"
+#include "SourceUIResolution.h"
 
 
 extern cInterfaceRenderDevice* terRenderDevice;
@@ -113,18 +114,15 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
 	customOptions.load(sectionName, iniFileName);
 	IniManager iniManager(iniFileName);
 
-	Vect2i resini = Vect2i(iniManager.getInt("Graphics", "ScreenSizeX"), iniManager.getInt("Graphics", "ScreenSizeY"));
+	Vect2i resini(iniManager.getInt("Graphics", "ScreenSizeX"), iniManager.getInt("Graphics", "ScreenSizeY"));
 	resolution = Vect2i(terScreenSizeX, terScreenSizeY);
 	resolutions.clear();
 
     bool isIniCustom = true;
     bool isCurrentCustom = true;
-    //Pick hardcoded resolutions from Config.prm
-    for (int i = 0; i < RESOLUTION_COUNT; ++i) {
-        auto res = RESOLUTIONS[i];
-        auto resvec = Vect2i(res.x, res.y);
-        resolutions.emplace_back(resvec);
-
+    //Pick available source resolutions first
+    for (const UIResolution& res : getSourceUIResolutions()) {
+        Vect2i resvec = Vect2i(res.x, res.y);
         //Check if they are custom or not
         if (resvec == resini) {
             isIniCustom = false;
@@ -147,7 +145,8 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
     if (isCurrentCustom) {
         resolutions.emplace_back(resolution);
     }
-	
+    std::sort(resolutions.begin(), resolutions.end(), SortResolutionVectors());
+    
 	colorDepth = iniManager.getInt("Graphics", "BPP");
 }
 void GraphOptions::apply() {

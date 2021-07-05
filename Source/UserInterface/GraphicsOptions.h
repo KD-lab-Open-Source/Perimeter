@@ -3,6 +3,8 @@
 #ifndef _GRAPHICSOPTIONS_H
 #define _GRAPHICSOPTIONS_H
 
+#include "SourceUIResolution.h"
+
 class Options {
 	public:
 		virtual void load(const char* sectionName, const char* iniFileName) = 0;

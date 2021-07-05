@@ -193,16 +193,20 @@ void InternalErrorHandler()
 }
 
 void refresh_window_size(bool update_resolution) {
-    if(terFullScreen){
-        windowClientSize.x = terScreenSizeX;
-        windowClientSize.y = terScreenSizeY;
+    Vect2i size;
+    if (terFullScreen) {
+        size.x = terScreenSizeX;
+        size.y = terScreenSizeY;
     } else {
-        SDL_GetWindowSize(sdlWindow, &windowClientSize.x, &windowClientSize.y);
+        SDL_GetWindowSize(sdlWindow, &size.x, &size.y);
     }
-    if(gameShell) {
-        gameShell->setWindowClientSize(windowClientSize);
-        if (update_resolution) {
-            gameShell->updateResolution(windowClientSize.x, windowClientSize.y, false, true);
+    if (!update_resolution || size != lastWindowSize) {
+        lastWindowSize = size;
+        if(gameShell) {
+            gameShell->setWindowClientSize(size);
+            if (update_resolution) {
+                gameShell->updateResolution(size.x, size.y, false, true);
+            }
         }
         _shellCursorManager.OnWMSetCursor();
     }
@@ -368,6 +372,12 @@ HWND PerimeterCreateWindow(int size_x, int size_y, bool full_screen) {
         ErrH.Abort("Error creating SDL window", XERR_CRITICAL, window_flags, SDL_GetError());
     }
 
+    //Set minimum resolution
+    if (terResizableWindow) {
+        const UIResolution& minRes = getMinimumUIResolution();
+        SDL_SetWindowMinimumSize(sdlWindow, minRes.x, minRes.y);
+    }
+
     //Setup window icon
     //TODO SDL_SetWindowIcon(sdlWindow, icon);
 
@@ -422,6 +432,7 @@ void GameShell::SetFontDirectory()
 
 void HTManager::initGraphics()
 {
+    initSourceUIResolution();
 	terLogicGeneric = CreateILogicGeneric();
 	terVisGeneric = CreateIVisGeneric();
 	terVisGeneric->SetMapLevel(terMapLevelLOD);
@@ -476,6 +487,8 @@ void HTManager::initGraphics()
 		terRenderDevice->Fill(0,0,0);
 		terRenderDevice->Flush();
 	};*/
+
+    setSourceUIResolution(Vect2i(terScreenSizeX, terScreenSizeY));
 
 	vMap.prepare("RESOURCE\\Worlds\\WORLDS.PRM");//,NULL,NULL,0,terRenderDevice->GetSizeX(),terRenderDevice->GetSizeY());
 	GraphOptionsManager::getInstance().load();

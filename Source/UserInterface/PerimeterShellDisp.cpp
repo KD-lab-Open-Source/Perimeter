@@ -688,6 +688,24 @@ void CShellCursorManager::draw()
         if (_shellIconManager.m_pCtrlHover && !_bMenuMode) {
             cursor = m_pCursorDefault;
         }
+
+#if 0 //Shows current hovering control 
+        if (_shellIconManager.m_pCtrlHover) {
+            std::string text;
+            EnumWrapper<ShellControlID> eid = static_cast<ShellControlID>(_shellIconManager.m_pCtrlHover->ID); 
+            text += std::string("C:") + getEnumName(eid);
+            if (_shellIconManager.m_pCtrlHover->m_attr) {
+                text += std::string(" MI:") + getEnumName(_shellIconManager.m_pCtrlHover->m_attr->id);
+                text += std::string(" MT:") + getEnumName(_shellIconManager.m_pCtrlHover->m_attr->type);
+            }
+            if (_shellIconManager.m_pCtrlHover->m_attr_cont) {
+                EnumWrapper<ShellControlID> cid = static_cast<ShellControlID>(_shellIconManager.m_pCtrlHover->m_attr_cont->id);
+                text += std::string(" CI:") + getEnumName(cid);
+                text += std::string(" CT:") + getEnumName(_shellIconManager.m_pCtrlHover->m_attr_cont->type);
+            }
+            printf("%s\n", text.c_str());
+        }
+#endif
         
 	    //Get cursor scale factor
 		float fScale = 1.0f;
@@ -3526,18 +3544,18 @@ void SQUAD_ICON::init() {
 		disabledTexture = 0;
 	}
 
-	uv = relativeUV(attr->image._ix, attr->image._iy, texture);
-	dudv = relativeUV(attr->image.ix, attr->image.iy, texture);
+	uv = relativeUV(attr->image._ix, attr->image._iy, texture, SHELL_ANCHOR_DEFAULT);
+	dudv = relativeUV(attr->image.ix, attr->image.iy, texture, SHELL_ANCHOR_DEFAULT);
 
-	highUV = relativeUV(attr->image_h._ix, attr->image_h._iy, highlightTexture);
-	highDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, highlightTexture);
+	highUV = relativeUV(attr->image_h._ix, attr->image_h._iy, highlightTexture, SHELL_ANCHOR_DEFAULT);
+	highDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, highlightTexture, SHELL_ANCHOR_DEFAULT);
 
-	checkedUV = relativeUV(attr->image_check._ix, attr->image_check._iy, checkedTexture);
-	checkedDUDV = relativeUV(attr->image_check.ix, attr->image_check.iy, checkedTexture);
+	checkedUV = relativeUV(attr->image_check._ix, attr->image_check._iy, checkedTexture, SHELL_ANCHOR_DEFAULT);
+	checkedDUDV = relativeUV(attr->image_check.ix, attr->image_check.iy, checkedTexture, SHELL_ANCHOR_DEFAULT);
 
 	if (disabledTexture) {
-		disabledUV = relativeUV(attr->image_disabled._ix, attr->image_disabled._iy, disabledTexture);
-		disabledDUDV = relativeUV(attr->image_disabled.ix, attr->image_disabled.iy, disabledTexture);
+		disabledUV = relativeUV(attr->image_disabled._ix, attr->image_disabled._iy, disabledTexture, SHELL_ANCHOR_DEFAULT);
+		disabledDUDV = relativeUV(attr->image_disabled.ix, attr->image_disabled.iy, disabledTexture, SHELL_ANCHOR_DEFAULT);
 	} else {
 		disabledUV = Vect2f(0, 0);
 		disabledDUDV = Vect2f(0, 0);

@@ -154,7 +154,7 @@ void CellLine::add(const Interval& in, Region* region)
 			ir->xr = xr;
 			ir->l_region = ir->r_region = region;
 			if(delta){
-				xassert(delta > 0);
+				//TODO what happens with neg delta? xassert(delta > 0);
 				setChanged(delta);
 			}
 		}

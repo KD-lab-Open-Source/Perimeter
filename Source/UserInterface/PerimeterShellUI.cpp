@@ -78,6 +78,60 @@ void MusicEnable(int enable)
 	}
 }
 
+
+std::string getImageFileName(const sqshImage* image, const char* fileName) {
+    std::string fullname = fileName ? fileName : static_cast<std::string>(image->texture);
+    fullname = convert_path(fullname.c_str());
+    if ( !fullname.empty() ) {
+        if (image->hasResolutionVersion) {
+            std::string respath;
+            size_t pos = fullname.rfind(PATH_SEP);
+            if (pos != std::string::npos) {
+                if (source_ui_resolution.legacy) {
+                    //Legacy 4:3 resolution, use width
+                    respath = std::to_string(source_ui_resolution.x);
+                } else {
+                    //If interface then add width too, otherwise use height only
+                    std::string path = fullname.substr(0, pos);
+                    strlwr(path.data());
+                    if (endsWith(path, "intf")) {
+                        respath = std::to_string(source_ui_resolution.x) + "x";
+                    } else {
+                        respath = "x";
+                    }
+                    respath += std::to_string(source_ui_resolution.y);
+                }
+                fullname.insert(pos, PATH_SEP + respath);
+            }
+        }
+        if (image->hasBelligerentVersion && universe() && universe()->activePlayer()) {
+            switch (universe()->activePlayer()->belligerent()) {
+                case BELLIGERENT_EXODUS0:
+                case BELLIGERENT_EXODUS1:
+                case BELLIGERENT_EXODUS2:
+                case BELLIGERENT_EXODUS3:
+                case BELLIGERENT_EXODUS4:
+                    fullname.insert(fullname.find('.'), "_xodus");
+                    break;
+                case BELLIGERENT_HARKBACKHOOD0:
+                case BELLIGERENT_HARKBACKHOOD1:
+                    fullname.insert(fullname.find('.'), "_hback");
+                    break;
+                case BELLIGERENT_EMPIRE0:
+                case BELLIGERENT_EMPIRE1:
+                case BELLIGERENT_EMPIRE2:
+                case BELLIGERENT_EMPIRE3:
+                case BELLIGERENT_EMPIRE4:
+                case BELLIGERENT_EMPIRE_VICE:
+
+                default:
+                    fullname.insert(fullname.find('.'), "_mperia");
+            }
+        }
+    }
+    return fullname;
+}
+
 void SetVolumeMusic(float f)
 {
 	gb_Music.SetVolume( round(255*terMusicVolume) );
@@ -130,6 +184,8 @@ CShellWindow::CShellWindow(int id, CShellWindow* pParent, EVENTPROC p)
 	m_ftime = 0;
 	m_attr = 0;
 	m_attr_cont = 0;
+    anchor = SHELL_ANCHOR_DEFAULT;
+    anchor_children = SHELL_ANCHOR_DEFAULT;
 
 	ID = id;
 	m_handler = p;
@@ -225,23 +281,84 @@ void CShellWindow::OnMouseMove(float _x,float _y)
 	if(	!m_handler ) return;
     m_handler(this, EVENT_SLIDERUPDATE, 0 );
 }
+
+void CShellWindow::loadAnchor() {
+    anchor = SHELL_ANCHOR_DEFAULT;
+    //If we have parent use the parent anchoring for its children
+    if (m_pParent) {
+        anchor = m_pParent->anchor_children;
+    }
+    anchor_children = anchor;
+    //If anchor is still default try to derive from attributes
+    if (m_attr) {
+        switch (m_attr->id) {
+            //Top-left buttons
+            case SQSH_RAMKA_ID:
+            case SQSH_MENU_BUTTON_ID:
+            case SQSH_TASK_BUTTON_ID:
+            case SQSH_SPEED_PAUSE:
+            case SQSH_SPEED_50:
+            case SQSH_SPEED_100:
+            case SQSH_SPEED_150:
+                anchor_children = anchor = SHELL_ANCHOR_LEFT;
+                break;
+            default:
+                break;
+        }
+    } else if (m_attr_cont) {
+        //Menus are always centered
+        if (m_attr_cont->load_group == SHELL_LOAD_GROUP_MENU) {
+            anchor_children = anchor = SHELL_ANCHOR_MENU;
+        } else {
+            switch (m_attr_cont->id) {
+                //Workaround for game screen passing the input events to UI elements outside 4:3 area
+                case SQSH_GAME_SCREEN_ID:
+                    anchor = SHELL_ANCHOR_SCALED;
+                    break;
+                //Specific in-game screens that need manual menu anchoring
+                case SQSH_MM_MISSION_TASK_SCR:
+                case SQSH_MM_SAVE_REPLAY_SCR:
+                case SQSH_MM_STATS_SCR:
+                case SQSH_MM_ENDMISSION_SCR:
+                case SQSH_MM_SUBMIT_DIALOG_SCR:
+                case SQSH_MM_INMISSION_SCR:
+                case SQSH_MM_INGAME_CUSTOM_SCR:
+                case SQSH_MM_LOAD_IN_GAME_SCR:
+                case SQSH_MM_SAVE_GAME_SCR:
+                case SQSH_MM_SCREEN_OPTIONS:
+                case SQSH_MM_SCREEN_GAME:
+                case SQSH_MM_SCREEN_GRAPHICS:
+                case SQSH_MM_SCREEN_SOUND:
+                    anchor_children = anchor = SHELL_ANCHOR_MENU;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
 void CShellWindow::LoadMenuWnd(const sqshControlContainer* attr)
 {
 	_RELEASE(m_hTexture);
 
 	m_attr_cont = attr;
+    
+    loadAnchor();
+    
 	if(strlen(attr->image.texture))
 	{
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image)).c_str() );
 //		SetTexPos(Vect2f(0,0), Vect2f(1, 1));
-		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture);
+		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture, anchor);
 		m_vTexPos[1] = Vect2f(
-			attr->sx * (float)terRenderDevice->GetSizeX() / (float)m_hTexture->GetWidth(),
-			attr->sy * (float)terRenderDevice->GetSizeY() / (float)m_hTexture->GetHeight() );
+                attr->sx * getUIX(anchor) / (float)m_hTexture->GetWidth(),
+                attr->sy * getUIY() / (float)m_hTexture->GetHeight() );
 	}
-	x = absoluteX(attr->x);
+        
+	x = absoluteUIPosX(attr->x, anchor);
 	y = absoluteY(attr->y);
-	sx = absoluteX(attr->sx);
+	sx = absoluteUISizeX(attr->sx, anchor);
 	sy = absoluteY(attr->sy);
 
 	_RELEASE(m_hFont);
@@ -270,23 +387,27 @@ void CShellWindow::Load(const sqshControl* attr)
 	loadFlashingParams(attr);
 	m_attr = attr;
 	createHotKeyString();
-	x = absoluteX(m_attr->x);
-	y = absoluteY(m_attr->y);
-	sx = absoluteX(m_attr->sx);
-	sy = absoluteY(m_attr->sy);
+    
+    loadAnchor();
+
+    x = absoluteUIPosX(m_attr->x, anchor);
+    y = absoluteY(m_attr->y);
+    sx = absoluteUISizeX(m_attr->sx, anchor);
+    sy = absoluteY(m_attr->sy);
+
 	if(strlen(attr->image.texture))
 	{
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image)).c_str() );
 		if (!m_hTexture) return;
-		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture);
+		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture, anchor);
 		if (attr->sx > 2.0f || attr->sy > 2.0f) {
 			m_vTexPos[1] = Vect2f(
-				attr->sx / 1024.0f * (float)terRenderDevice->GetSizeX() / (float)m_hTexture->GetWidth(),
-				attr->sy / 768.0f * (float)terRenderDevice->GetSizeY() / (float)m_hTexture->GetHeight() );
+                    attr->sx / SQSH_COORD_WIDTH_SCALE * getUIX(anchor) / (float)m_hTexture->GetWidth(),
+                    attr->sy / SQSH_COORD_HEIGHT_SCALE * getUIY() / (float)m_hTexture->GetHeight() );
 		} else {
 			m_vTexPos[1] = Vect2f(
-				attr->sx * (float)terRenderDevice->GetSizeX() / (float)m_hTexture->GetWidth(),
-				attr->sy * (float)terRenderDevice->GetSizeY() / (float)m_hTexture->GetHeight() );
+                    attr->sx * getUIX(anchor) / (float)m_hTexture->GetWidth(),
+                    attr->sy * getUIY() / (float)m_hTexture->GetHeight() );
 		}
 	}
 
@@ -615,9 +736,9 @@ void CComboWindow::Load(const sqshControl* attr)
 	m_fStringHeight = absoluteY(comboBoxRowHeight);
 	target = attr->target;
 	if (m_hTexture) {
-		float tx = absoluteX(m_attr->image.dx);
+		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
 		float ty = absoluteY(m_attr->image.dy);
-		float tsx = absoluteX(m_attr->image.dsx);
+		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
 		float tsy = absoluteY(m_attr->image.dsy);
 
 		uv.x = (x - tx) / tsx;
@@ -748,9 +869,9 @@ void CShellPushButton::Load(const sqshControl* attr)
 	txtdy = absoluteY(attr->txt_dy);
 
 	if (m_hTexture) {
-		float tx = absoluteX(m_attr->image.dx);
+		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
 		float ty = absoluteY(m_attr->image.dy);
-		float tsx = absoluteX(m_attr->image.dsx);
+		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
 		float tsy = absoluteY(m_attr->image.dsy);
 
 		uv.x = (x - tx) / tsx;
@@ -1157,59 +1278,59 @@ void CShellComplexPushButton::Load(const sqshControl* attr)
 	if (strlen(attr->image_h.texture)) {
 		m_hTextureHighlight = terVisGeneric->CreateTexture(getImageFileName(&(attr->image_h)).c_str());
 		m_pTextureHAttr = &attr->image_h;
-		m_vTexHighPos = relativeUV(attr->image_h._ix, attr->image_h._iy, m_hTextureHighlight);
+		m_vTexHighPos = relativeUV(attr->image_h._ix, attr->image_h._iy, m_hTextureHighlight, anchor);
 	} else {
 		m_hTextureHighlight = terVisGeneric->CreateTexture(getImageFileName(&(attr->image)).c_str());
 		m_pTextureHAttr = &attr->image;
-		m_vTexHighPos = relativeUV(attr->image._ix, attr->image._iy, m_hTextureHighlight);
+		m_vTexHighPos = relativeUV(attr->image._ix, attr->image._iy, m_hTextureHighlight, anchor);
 	}
 
 	if (strlen(attr->image_disabled.texture)) {
 		m_hTextureDisabled = terVisGeneric->CreateTexture(getImageFileName(&(attr->image_disabled)).c_str());
 		m_pDisabledAttr = &attr->image_disabled;
-		m_vTexDisabledPos = relativeUV(attr->image_disabled._ix, attr->image_disabled._iy, m_hTextureDisabled);
+		m_vTexDisabledPos = relativeUV(attr->image_disabled._ix, attr->image_disabled._iy, m_hTextureDisabled, anchor);
 	} else {
 		m_hTextureDisabled = terVisGeneric->CreateTexture(getImageFileName(&(attr->image)).c_str());
 		m_pDisabledAttr = &attr->image;
-		m_vTexDisabledPos = relativeUV(attr->image._ix, attr->image._iy, m_hTextureDisabled);
+		m_vTexDisabledPos = relativeUV(attr->image._ix, attr->image._iy, m_hTextureDisabled, anchor);
 	}
 
 	if (strlen(attr->image_check.texture)) {
 		m_hTexturePressed = terVisGeneric->CreateTexture(getImageFileName(&(attr->image_check)).c_str());
 		m_pCheckAttr = &attr->image_check;
-		m_vTexCheckPos = relativeUV(attr->image_check._ix, attr->image_check._iy, m_hTexturePressed);
+		m_vTexCheckPos = relativeUV(attr->image_check._ix, attr->image_check._iy, m_hTexturePressed, anchor);
 	} else {
 		m_hTexturePressed = terVisGeneric->CreateTexture(getImageFileName(&(attr->image)).c_str());
 		m_pCheckAttr = &attr->image;
-		m_vTexCheckPos = relativeUV(attr->image._ix, attr->image._iy, m_hTexturePressed);
+		m_vTexCheckPos = relativeUV(attr->image._ix, attr->image._iy, m_hTexturePressed, anchor);
 	}
 
 	if (state & SQSH_CHECK2 || m_attr->flashWithImage) {
 		m_hTexture2 = terVisGeneric->CreateTexture(getImageFileName(&(attr->image2)).c_str());
 		m_pTexture2Attr = &attr->image2;
-		m_vTex2Pos = relativeUV(attr->image2._ix, attr->image2._iy, m_hTexture2);
+		m_vTex2Pos = relativeUV(attr->image2._ix, attr->image2._iy, m_hTexture2, anchor);
 	}
 
 	if (state & SQSH_CHECK2) {
 		m_hTexture2Highlight = terVisGeneric->CreateTexture(getImageFileName(&(attr->image2_h)).c_str());
 		m_pTexture2HAttr = &attr->image2_h;
-		m_vTex2HighPos = relativeUV(attr->image2_h._ix, attr->image2_h._iy, m_hTexture2Highlight);
+		m_vTex2HighPos = relativeUV(attr->image2_h._ix, attr->image2_h._iy, m_hTexture2Highlight, anchor);
 
 		if (strlen(attr->image2_disabled.texture)) {
 			m_hTexture2Disabled = terVisGeneric->CreateTexture(getImageFileName(&(attr->image2_disabled)).c_str());
 			m_pDisabled2Attr = &attr->image2_disabled;
-			m_vTex2DisabledPos = relativeUV(attr->image2_disabled._ix, attr->image2_disabled._iy, m_hTexture2Disabled);
+			m_vTex2DisabledPos = relativeUV(attr->image2_disabled._ix, attr->image2_disabled._iy, m_hTexture2Disabled, anchor);
 		} else {
 			m_hTexture2Disabled = terVisGeneric->CreateTexture(getImageFileName(&(attr->image2)).c_str());
 			m_pDisabled2Attr = &attr->image2;
-			m_vTex2DisabledPos = relativeUV(attr->image2._ix, attr->image2._iy, m_hTexture2Disabled);
+			m_vTex2DisabledPos = relativeUV(attr->image2._ix, attr->image2._iy, m_hTexture2Disabled, anchor);
 		}
 
 		m_hTexture2Pressed = terVisGeneric->CreateTexture(getImageFileName(&(attr->image2_check)).c_str());
 		m_pCheck2Attr = &attr->image2_check;
-		m_vTex2CheckPos = relativeUV(attr->image2_check._ix, attr->image2_check._iy, m_hTexture2Pressed);
+		m_vTex2CheckPos = relativeUV(attr->image2_check._ix, attr->image2_check._iy, m_hTexture2Pressed, anchor);
 	}
-	m_label_x = absoluteX(_buttonLabelX);
+	m_label_x = absoluteUISizeX(_buttonLabelX, anchor);
 	m_label_y = absoluteY(_buttonLabelY);
 
 	_RELEASE(m_hFontLabel);
@@ -1769,7 +1890,7 @@ void CShellAtomButton::Load(const sqshControl* attr)
 {
 	CShellComplexPushButton::Load(attr);
 
-	button_atom_x = absoluteX(_button_atom4_x);
+	button_atom_x = absoluteUISizeX(_button_atom4_x, anchor);
 	button_atom_y = absoluteY(_button_atom4_y);
 }
 
@@ -1817,31 +1938,31 @@ CTerrainBuildButton::~CTerrainBuildButton()
 
 void CTerrainBuildButton::Load(const sqshControl* attr)
 {
-	CShellWindow::Load(attr);
-	half_sx = absoluteX(half_sx_);
-	right_x = absoluteX(right_x_);
+    CShellComplexPushButton::Load(attr);
+	half_sx = absoluteUISizeX(half_sx_, anchor);
+	right_x = absoluteUIPosX(right_x_, anchor);
 
-	activeHalfBrig_uv = relativeUV(activeHalfBrig_u, activeHalfBrig_v, m_hTexture);
-	activeHalfTerr_uv = relativeUV(activeHalfTerr_u, activeHalfTerr_v, m_hTexture);
+	activeHalfBrig_uv = relativeUV(activeHalfBrig_u, activeHalfBrig_v, m_hTexture, anchor);
+	activeHalfTerr_uv = relativeUV(activeHalfTerr_u, activeHalfTerr_v, m_hTexture, anchor);
 
-	flashingHalfBrig_uv = relativeUV(flashingHalfBrig_u, flashingHalfBrig_v, m_hTexture);
-	flashingHalfTerr_uv = relativeUV(flashingHalfTerr_u, flashingHalfTerr_v, m_hTexture);
+	flashingHalfBrig_uv = relativeUV(flashingHalfBrig_u, flashingHalfBrig_v, m_hTexture, anchor);
+	flashingHalfTerr_uv = relativeUV(flashingHalfTerr_u, flashingHalfTerr_v, m_hTexture, anchor);
 
-	halfBrig_uv = relativeUV(halfBrig_u, halfBrig_v, m_hTexture);
-	halfTerr_uv = relativeUV(halfTerr_u, halfTerr_v, m_hTexture);
+	halfBrig_uv = relativeUV(halfBrig_u, halfBrig_v, m_hTexture, anchor);
+	halfTerr_uv = relativeUV(halfTerr_u, halfTerr_v, m_hTexture, anchor);
 
-	half_dudv = relativeUV(half_du, half_dv, m_hTexture);
+	half_dudv = relativeUV(half_du, half_dv, m_hTexture, anchor);
 
-	brig_uv = relativeUV(brig_u, brig_v, m_hTexture);
-	terr_uv = relativeUV(terr_u, terr_v, m_hTexture);
+	brig_uv = relativeUV(brig_u, brig_v, m_hTexture, anchor);
+	terr_uv = relativeUV(terr_u, terr_v, m_hTexture, anchor);
 
-	pressedBrig_uv = relativeUV(pressedBrig_u, pressedBrig_v, m_hTexture);
-	pressedTerr_uv = relativeUV(pressedTerr_u, pressedTerr_v, m_hTexture);
+	pressedBrig_uv = relativeUV(pressedBrig_u, pressedBrig_v, m_hTexture, anchor);
+	pressedTerr_uv = relativeUV(pressedTerr_u, pressedTerr_v, m_hTexture, anchor);
 
-	activeBrig_uv = relativeUV(activeBrig_u, activeBrig_v, m_hTexture);
-	activeTerr_uv = relativeUV(activeTerr_u, activeTerr_v, m_hTexture);
+	activeBrig_uv = relativeUV(activeBrig_u, activeBrig_v, m_hTexture, anchor);
+	activeTerr_uv = relativeUV(activeTerr_u, activeTerr_v, m_hTexture, anchor);
 
-	whole_dudv = relativeUV(whole_du, whole_dv, m_hTexture);
+	whole_dudv = relativeUV(whole_du, whole_dv, m_hTexture, anchor);
 }
 
 void CTerrainBuildButton::draw(int bFocus)
@@ -2218,38 +2339,38 @@ void CUITabSheet::Load(const sqshTabSheet* attr)
 		} else {
 			tabFlashingTextures[i] = 0;
 		}
-		tabXs[i] = absoluteX(page.x);
+		tabXs[i] = absoluteUIPosX(page.x, anchor);
 		tabYs[i] = absoluteY(page.y);
-		tabSXs[i] = absoluteX(page.sx);
+		tabSXs[i] = absoluteUISizeX(page.sx, anchor);
 		tabSYs[i] = absoluteY(page.sy);
 		tabActiveTextures[i] = terVisGeneric->CreateTexture(getImageFileName(&(page.activeTabImage)).c_str());
-		tabActiveXs[i] = absoluteX(page.activeX);
+		tabActiveXs[i] = absoluteUIPosX(page.activeX, anchor);
 		tabActiveYs[i] = absoluteY(page.activeY);
-		tabActiveSXs[i] = absoluteX(page.activeSX);
+		tabActiveSXs[i] = absoluteUISizeX(page.activeSX, anchor);
 		tabActiveSYs[i] = absoluteY(page.activeSY);
 
-		tabActiveUVs[i] = relativeUV(page.activeTabImage._ix, page.activeTabImage._iy, tabActiveTextures[i]);
-		tabActiveDUDVs[i] = relativeUV(page.activeTabImage.ix, page.activeTabImage.iy, tabActiveTextures[i]);
+		tabActiveUVs[i] = relativeUV(page.activeTabImage._ix, page.activeTabImage._iy, tabActiveTextures[i], anchor);
+		tabActiveDUDVs[i] = relativeUV(page.activeTabImage.ix, page.activeTabImage.iy, tabActiveTextures[i], anchor);
 
-		tabUVs[i] = relativeUV(page.icon.image._ix, page.icon.image._iy, tabTextures[i]);
-		tabDUDVs[i] = relativeUV(page.icon.image.ix, page.icon.image.iy, tabTextures[i]);
+		tabUVs[i] = relativeUV(page.icon.image._ix, page.icon.image._iy, tabTextures[i], anchor);
+		tabDUDVs[i] = relativeUV(page.icon.image.ix, page.icon.image.iy, tabTextures[i], anchor);
 
-		tabHighUVs[i] = relativeUV(page.icon.image_h._ix, page.icon.image_h._iy,tabHighlightTextures[i]);
-		tabHighDUDVs[i] = relativeUV(page.icon.image_h.ix, page.icon.image_h.iy,tabHighlightTextures[i]);
+		tabHighUVs[i] = relativeUV(page.icon.image_h._ix, page.icon.image_h._iy,tabHighlightTextures[i], anchor);
+		tabHighDUDVs[i] = relativeUV(page.icon.image_h.ix, page.icon.image_h.iy,tabHighlightTextures[i], anchor);
 
-		tabCheckedUVs[i] = relativeUV(page.icon.image_check._ix, page.icon.image_check._iy, tabCheckedTextures[i]);
-		tabCheckedDUDVs[i] = relativeUV(page.icon.image_check.ix, page.icon.image_check.iy, tabCheckedTextures[i]);
+		tabCheckedUVs[i] = relativeUV(page.icon.image_check._ix, page.icon.image_check._iy, tabCheckedTextures[i], anchor);
+		tabCheckedDUDVs[i] = relativeUV(page.icon.image_check.ix, page.icon.image_check.iy, tabCheckedTextures[i], anchor);
 
 		if (tabDisabledTextures[i]) {
-			tabDisabledUVs[i] = relativeUV(page.icon.image_disabled._ix, page.icon.image_disabled._iy, tabDisabledTextures[i]);
-			tabDisabledDUDVs[i] = relativeUV(page.icon.image_disabled.ix, page.icon.image_disabled.iy, tabDisabledTextures[i]);
+			tabDisabledUVs[i] = relativeUV(page.icon.image_disabled._ix, page.icon.image_disabled._iy, tabDisabledTextures[i], anchor);
+			tabDisabledDUDVs[i] = relativeUV(page.icon.image_disabled.ix, page.icon.image_disabled.iy, tabDisabledTextures[i], anchor);
 		} else {
 			tabDisabledUVs[i] = Vect2f(0, 0);
 			tabDisabledDUDVs[i] = Vect2f(0, 0);
 		}
 		if (tabFlashingTextures[i]) {
-			tabFlashingUVs[i] = relativeUV(page.icon.image_flashing._ix, page.icon.image_flashing._iy, tabFlashingTextures[i]);
-			tabFlashingDUDVs[i] = relativeUV(page.icon.image_flashing.ix, page.icon.image_flashing.iy, tabFlashingTextures[i]);
+			tabFlashingUVs[i] = relativeUV(page.icon.image_flashing._ix, page.icon.image_flashing._iy, tabFlashingTextures[i], anchor);
+			tabFlashingDUDVs[i] = relativeUV(page.icon.image_flashing.ix, page.icon.image_flashing.iy, tabFlashingTextures[i], anchor);
 		} else {
 			tabFlashingUVs[i] = Vect2f(0, 0);
 			tabFlashingDUDVs[i] = Vect2f(0, 0);
@@ -2257,14 +2378,14 @@ void CUITabSheet::Load(const sqshTabSheet* attr)
 	
 	}
 
-	x = absoluteX(attr->x);
+	x = absoluteUIPosX(attr->x, anchor);
 	y = absoluteY(attr->y);
-	sx = absoluteX(attr->sx);
+	sx = absoluteUISizeX(attr->sx, anchor);
 	sy = absoluteY(attr->sy);
 
-	dx = absoluteX(attr->dx);
+	dx = absoluteUISizeX(attr->dx, anchor);
 	dy = absoluteY(attr->dy);
-	ddsx = absoluteX(attr->dsx);
+	ddsx = absoluteUISizeX(attr->dsx, anchor);
 	ddsy = absoluteY(attr->dsy);
 }
 
@@ -2665,13 +2786,13 @@ void CMapWindow::Load(const sqshControl* attr)
 	}
 
 	activeObjectTx = terVisGeneric->CreateTexture( activeObjectSymbol.image );
-	activeObjectSx = absoluteX( activeObjectSymbol.sx );
+	activeObjectSx = absoluteUISizeX(activeObjectSymbol.sx, anchor);
 	activeObjectSy = absoluteY( activeObjectSymbol.sy );
 
 	for (int i = 0; i < EVENT_MINI_MAP_MAX; i++) {
 		_RELEASE(eventTx[i]);
 		eventTx[i] = terVisGeneric->CreateTexture( eventSymbols[i].image );
-		eventSx[i] = absoluteX( eventSymbols[i].sx );
+		eventSx[i] = absoluteUISizeX(eventSymbols[i].sx, anchor);
 		eventSy[i] = absoluteY( eventSymbols[i].sy );
 	}
 
@@ -2819,9 +2940,9 @@ void CTextWindow::Load(const sqshControl* attr)
 	CShellWindow::Load(attr);
 
 	if (m_hTexture) {
-		float tx = absoluteX(m_attr->image.dx);
+		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
 		float ty = absoluteY(m_attr->image.dy);
-		float tsx = absoluteX(m_attr->image.dsx);
+		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
 		float tsy = absoluteY(m_attr->image.dsy);
 
 		uv.x = (x - tx) / tsx;
@@ -3259,30 +3380,30 @@ void CListBoxWindow::Load(const sqshControl* attr)
 //	m_vTexPos[0] = Vect2f(attr->image._ix, attr->image._iy);
 //	m_vTexPos[1] = Vect2f(attr->image.ix, attr->image.iy);
 	if (m_hTexture) {
-		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture);
+		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
 	}
-	txtdx = absoluteX(attr->txt_dx);
+	txtdx = absoluteUISizeX(attr->txt_dx, anchor);
 	txtdy = absoluteY(attr->txt_dy);
-	vScrollSX = absoluteX(attr->xstart);
+	vScrollSX = absoluteUISizeX(attr->xstart, anchor);
 	vScrollSY = absoluteY(attr->ystart);
-	vScrollThmbSX = relativeX(attr->image_h.ix);
+	vScrollThmbSX = absoluteUISizeX(attr->image_h.ix, anchor);
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
 		if (thumbTexture) {
-            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
-            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture, anchor);
+            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture, anchor);
         }
 	}
 	if (strlen(m_attr->image_check.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_check)).c_str());
         if (!m_hTextureBG) return;
-		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG);
+		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG, anchor);
+		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG, anchor);
 
-		float tx = absoluteX(m_attr->image_check.dx);
+		float tx = absoluteUISizeX(m_attr->image_check.dx, anchor);
 		float ty = absoluteY(m_attr->image_check.dy);
-		float tsx = absoluteX(m_attr->image_check.dsx);
+		float tsx = absoluteUISizeX(m_attr->image_check.dsx, anchor);
 		float tsy = absoluteY(m_attr->image_check.dsy);
 
 		uv.x = (x - tx + txtdx) / tsx;
@@ -3575,20 +3696,20 @@ void CStatListBoxWindow::Load(const sqshControl* attr) {
 
 	if (m_hTexture) {
 		for (int i = 0; i < 3; i++) {
-			m_vTexPosRace[0][i] = relativeUV(imageRacePos[i].x, imageRacePos[i].y, m_hTexture);
-			m_vTexPosRace[1][i] = relativeUV(imageRaceSize[i].x, imageRaceSize[i].y, m_hTexture);
+			m_vTexPosRace[0][i] = relativeUV(imageRacePos[i].x, imageRacePos[i].y, m_hTexture, anchor);
+			m_vTexPosRace[1][i] = relativeUV(imageRaceSize[i].x, imageRaceSize[i].y, m_hTexture, anchor);
 		}
 	}
 
 	m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
 	if (m_hTextureBG) {
-        m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-        m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+        m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG, anchor);
+        m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG, anchor);
     }
 
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, statsTableFontSize);
-	txtdx = absoluteX(attr->txt_dx);
+	txtdx = absoluteUISizeX(attr->txt_dx, anchor);
 	txtdy = absoluteY(attr->txt_dy);
 }
 
@@ -3804,30 +3925,30 @@ void ChatWindow::Load(const sqshControl* attr)
 	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, 16);
 
 	if (m_hTexture) {
-		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture);
+		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
 	}
-	txtdx = absoluteX(attr->txt_dx);
+	txtdx = absoluteUISizeX(attr->txt_dx, anchor);
 	txtdy = absoluteY(attr->txt_dy);
-	vScrollSX = absoluteX(attr->xstart);
+	vScrollSX = absoluteUISizeX(attr->xstart, anchor);
 	vScrollSY = absoluteY(attr->ystart);
-	vScrollThmbSX = relativeX(attr->image_h.ix);
+	vScrollThmbSX = relativeX(attr->image_h.ix, anchor);
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
 		if (thumbTexture) {
-            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
-            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture, anchor);
+            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture, anchor);
         }
 	}
 	if (strlen(m_attr->image_check.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_check)).c_str());
 		if (!m_hTextureBG) return;
-		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG);
+		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG, anchor);
+		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG, anchor);
 
-		float tx = absoluteX(m_attr->image_check.dx);
+		float tx = absoluteUISizeX(m_attr->image_check.dx, anchor);
 		float ty = absoluteY(m_attr->image_check.dy);
-		float tsx = absoluteX(m_attr->image_check.dsx);
+		float tsx = absoluteUISizeX(m_attr->image_check.dsx, anchor);
 		float tsy = absoluteY(m_attr->image_check.dsy);
 
 		uv.x = (x - tx + txtdx) / tsx;
@@ -4117,22 +4238,22 @@ void CSliderWindow::Load(const sqshControl* attr)
 	_RELEASE(m_hTextureBG);
 
 	target = attr->target;
-	arrowSize = absoluteX(m_attr->xstart);
-	thumbSize = absoluteX(m_attr->ystart);
+	arrowSize = absoluteY(m_attr->xstart);
+	thumbSize = absoluteY(m_attr->ystart);
 
 	if (m_attr->xstart) {
-		leftArrowUV = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTexture);
-		leftArrowDUDV = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTexture);
-		rightArrowUV = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTexture);
-		rightArrowDUDV = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTexture);
+		leftArrowUV = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTexture, anchor);
+		leftArrowDUDV = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTexture, anchor);
+		rightArrowUV = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTexture, anchor);
+		rightArrowDUDV = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTexture, anchor);
 	}
-	thumbUV = relativeUV(m_attr->image_disabled._ix, m_attr->image_disabled._iy, m_hTexture);
-	thumbDUDV = relativeUV(m_attr->image_disabled.ix, m_attr->image_disabled.iy, m_hTexture);
+	thumbUV = relativeUV(m_attr->image_disabled._ix, m_attr->image_disabled._iy, m_hTexture, anchor);
+	thumbDUDV = relativeUV(m_attr->image_disabled.ix, m_attr->image_disabled.iy, m_hTexture, anchor);
 	if (strlen(m_attr->image2.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image2)).c_str());
         if (!m_hTextureBG) return;
-		m_vTexBGPos = relativeUV(m_attr->image2._ix, m_attr->image2._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image2.ix, m_attr->image2.iy, m_hTextureBG);
+		m_vTexBGPos = relativeUV(m_attr->image2._ix, m_attr->image2._iy, m_hTextureBG, anchor);
+		m_vTexBGSize = relativeUV(m_attr->image2.ix, m_attr->image2.iy, m_hTextureBG, anchor);
 	}
 }
 void CSliderWindow::OnWindow(int enable)
@@ -4155,6 +4276,7 @@ CMultiTexWindow::~CMultiTexWindow() {
 void CMultiTexWindow::LoadMenuWnd(const sqshControlContainer* attr)
 {
 	m_attr_cont = attr;
+    
 	init();
 }
 void CMultiTexWindow::Load(const sqshControl* attr)
@@ -4171,9 +4293,12 @@ void CMultiTexWindow::Load(const sqshControl* attr)
 void CMultiTexWindow::init() {
 	_RELEASE(m_hTexture2);
 	_RELEASE(m_hTexture3);
-	x = absoluteX(m_attr_cont->x);
+    
+    loadAnchor();
+    //In theory these are only used as background textures that need to be full screen
+	x = absoluteUISizeX(m_attr_cont->x, SHELL_ANCHOR_SCALED);
 	y = absoluteY(m_attr_cont->y);
-	sx = absoluteX(m_attr_cont->sx);
+	sx = absoluteUISizeX(m_attr_cont->sx, SHELL_ANCHOR_SCALED);
 	sy = absoluteY(m_attr_cont->sy);
 	if(strlen(m_attr_cont->image.texture))
 	{
@@ -4234,9 +4359,13 @@ void CShowMapWindow::Load(const sqshControl* attr) {
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
         if (!m_hTextureBG) return;
-		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG, anchor);
+		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG, anchor);
 	}
+    mx = x;
+    my = y;
+    msx = sx;
+    msy = sy;
 }
 void CShowMapWindow::setWorldID(int id) {
 	worldID = id;
@@ -4249,18 +4378,18 @@ void CShowMapWindow::setWorldID(int id) {
 			mapPath = "RESOURCE\\Icons\\MainMenu\\UnknownWorld.tga";
 		}
 		m_hTexture = terVisGeneric->CreateTexture( mapPath.c_str() );
-		x = absoluteX(m_attr->x);
-		y = absoluteY(m_attr->y);
-		sx = absoluteX(m_attr->sx);
-		sy = absoluteY(m_attr->sy);
+        mx = x;
+        my = y;
+        msx = sx;
+        msy = sy;
 		if (m_hTexture->GetWidth() > m_hTexture->GetHeight()) {
-			y += sy / 2;
-			sy *= float(m_hTexture->GetHeight()) / float(m_hTexture->GetWidth());
-			y -= sy / 2;
+			my += msy / 2;
+			msy *= float(m_hTexture->GetHeight()) / float(m_hTexture->GetWidth());
+			my -= msy / 2;
 		} else if (m_hTexture->GetWidth() < m_hTexture->GetHeight()) {
-			x += sx / 2;
-			sx *= float(m_hTexture->GetWidth()) / float(m_hTexture->GetHeight());
-			x -= sx / 2;
+			mx += msx / 2;
+			msx *= float(m_hTexture->GetWidth()) / float(m_hTexture->GetHeight());
+			mx -= msx / 2;
 		}
 	}
 }
@@ -4310,13 +4439,13 @@ void CShowMapWindow::draw(int bFocus)
 
 			if (m_hTextureBG) {
 				terRenderDevice->DrawSprite2(
-					x, y, sx, sy, 0, 0, 1, 1,
+					mx, my, msx, msy, 0, 0, 1, 1,
 					m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
 					m_hTexture, m_hTextureBG,
 					mapTextureWeight, Alpha, fmodf(m_ftime,1000)/1000,
 					COLOR_MOD, ALPHA_ADDBLENDALPHA);
 			} else {
-				DrawSprite( x, y, sx, sy, 0, 0, 1, 1, m_hTexture, sColor4c(255, 255, 255, 255*Alpha) );
+				DrawSprite( mx, my, msx, msy, 0, 0, 1, 1, m_hTexture, sColor4c(255, 255, 255, 255*Alpha) );
 			}
 		}
 	}
@@ -4424,8 +4553,8 @@ void CPortraitWindow::Load(const sqshControl* attr) {
 	_RELEASE(m_hTextureBG);
 	if (m_hTexture) {
 		if (m_attr->image.hasResolutionVersion) {
-			m_vTexPos[0] = relativeUV(m_attr->image._ix, m_attr->image._iy, m_hTexture);
-			m_vTexPos[1] = relativeUV(m_attr->image.ix, m_attr->image.iy, m_hTexture);
+			m_vTexPos[0] = relativeUV(m_attr->image._ix, m_attr->image._iy, m_hTexture, anchor);
+			m_vTexPos[1] = relativeUV(m_attr->image.ix, m_attr->image.iy, m_hTexture, anchor);
 		} else {
 			m_vTexPos[0] = Vect2f(m_attr->image._ix / m_hTexture->GetWidth(), m_attr->image._iy / m_hTexture->GetHeight());
 			m_vTexPos[1] = Vect2f(m_attr->image.ix / m_hTexture->GetWidth(), m_attr->image.iy / m_hTexture->GetHeight());
@@ -4434,8 +4563,8 @@ void CPortraitWindow::Load(const sqshControl* attr) {
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
 		if (m_hTextureBG) {
-            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG, anchor);
+            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG, anchor);
         }
 	}
 }
@@ -4444,8 +4573,8 @@ void CPortraitWindow::setTexture(const char* name) {
 	if (strlen(name)) {
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(m_attr->image), name).c_str() );
         if (!m_hTexture) return;
-		m_vTexPos[0] = relativeUV(m_attr->image._ix, m_attr->image._iy, m_hTexture);
-		m_vTexPos[1] = relativeUV(m_attr->image.ix, m_attr->image.iy, m_hTexture);
+		m_vTexPos[0] = relativeUV(m_attr->image._ix, m_attr->image._iy, m_hTexture, anchor);
+		m_vTexPos[1] = relativeUV(m_attr->image.ix, m_attr->image.iy, m_hTexture, anchor);
 	}
 }
 
@@ -4512,15 +4641,15 @@ void CLogoWindow::Load(const sqshControl* attr) {
 	_RELEASE(m_hTextureBG);
 	if (m_hTexture) {
 		for (int i = 0; i < 3; i++) {
-			m_vTexPosRace[0][i] = relativeUV(imageRacePos[i].x, imageRacePos[i].y, m_hTexture);
-			m_vTexPosRace[1][i] = relativeUV(imageRaceSize[i].x, imageRaceSize[i].y, m_hTexture);
+			m_vTexPosRace[0][i] = relativeUV(imageRacePos[i].x, imageRacePos[i].y, m_hTexture, anchor);
+			m_vTexPosRace[1][i] = relativeUV(imageRaceSize[i].x, imageRaceSize[i].y, m_hTexture, anchor);
 		}
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
         if (!m_hTextureBG) return;
-		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG, anchor);
+		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG, anchor);
 	}
 }
 void CLogoWindow::draw(int bFocus)
@@ -4596,13 +4725,13 @@ void CScaleButton::Load(const sqshControl* attr)
 	_RELEASE(m_hTextureBG);
 //	m_vTexPos[1] = Vect2f(attr->image.ix, attr->image.iy);
 	if (m_hTexture) {
-		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture);
+		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
 		if (m_hTextureBG) {
-            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG, anchor);
+            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG, anchor);
         }
 	}
 	soundEnabled = attr->alnum;
@@ -4807,9 +4936,9 @@ void CEditWindow::Load(const sqshControl* attr)
 		txtdy = absoluteY(m_attr->txt_dy);
 	}
 	if (m_hTexture) {
-		float tx = absoluteX(m_attr->image.dx);
+		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
 		float ty = absoluteY(m_attr->image.dy);
-		float tsx = absoluteX(m_attr->image.dsx);
+		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
 		float tsy = absoluteY(m_attr->image.dsy);
 
 		uv.x = (x - tx) / tsx;
@@ -5054,18 +5183,21 @@ void CSplashWindow::LoadMenuWnd(const sqshControlContainer* attr) {
 	_RELEASE(m_hTexture);
 
 	m_attr_cont = attr;
-	x = absoluteX(m_attr_cont->x);
+
+    loadAnchor();
+    
+	x = absoluteUIPosX(m_attr_cont->x, anchor);
 	y = absoluteY(m_attr_cont->y);
-	sx = absoluteX(m_attr_cont->sx);
+	sx = absoluteUISizeX(m_attr_cont->sx, anchor);
 	sy = absoluteY(m_attr_cont->sy);
 	if(strlen(attr->image.texture))
 	{
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image)).c_str() );
-		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture);
+		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture, anchor);
 		if (attr->sx > 2.0f || attr->sy > 2.0f) {
 			m_vTexPos[1] = Vect2f(
-				attr->sx / 1024.0f * (float)terRenderDevice->GetSizeX() / (float)m_hTexture->GetWidth(),
-				attr->sy / 768.0f * (float)terRenderDevice->GetSizeY() / (float)m_hTexture->GetHeight() );
+                    attr->sx / SQSH_COORD_WIDTH_SCALE * getUIX(anchor) / (float)m_hTexture->GetWidth(),
+                    attr->sy / SQSH_COORD_HEIGHT_SCALE * getUIY() / (float)m_hTexture->GetHeight() );
 		} else {
 			m_vTexPos[1] = Vect2f(
 				attr->image.ix / (float)m_hTexture->GetWidth(),
@@ -5146,19 +5278,23 @@ CProgressEnergy::~CProgressEnergy() {
 
 void CProgressEnergy::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
+    
+    //For some reason the game data uses size as coordinates for the ending of bar instead of actual size
+    //So we need to use pos instead of size like the CShellWindow does
+    sx = absoluteUIPosX(m_attr->sx, anchor);
 
 	_RELEASE(m_hTexture_h);
 
-	xstart = absoluteX(m_attr->xstart);
-	arrowSx = absoluteX(m_attr->txt_dx);
+	xstart = absoluteUISizeX(m_attr->xstart, anchor);
+	arrowSx = absoluteUISizeX(m_attr->txt_dx, anchor);
 	arrowSy = absoluteY(m_attr->txt_dy);
 
-	m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture);
-	m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture);
+	m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture, anchor);
+	m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
 
 	m_hTexture_h = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
-	m_vTexPos_h[0] = relativeUV(attr->image_h._ix, attr->image_h._iy, m_hTexture_h);
-	m_vTexPos_h[1] = relativeUV(attr->image_h.ix, attr->image_h.iy, m_hTexture_h);
+	m_vTexPos_h[0] = relativeUV(attr->image_h._ix, attr->image_h._iy, m_hTexture_h, anchor);
+	m_vTexPos_h[1] = relativeUV(attr->image_h.ix, attr->image_h.iy, m_hTexture_h, anchor);
 
 }
 void CProgressEnergy::draw(int bFocus)
@@ -5556,11 +5692,11 @@ void CHintWindow::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
 	x = absoluteX(hintX);
 	y = absoluteY(hintY);
-	sx = absoluteX(hintSX);
+	sx = absoluteUISizeX(hintSX, anchor);
 //	sy = absoluteY(hintSY);
 	cutSceneX = absoluteX(cutSceneHintX);
 	cutSceneY = absoluteY(cutSceneHintY);
-	cutSceneSX = absoluteX(cutSceneHintSX);
+	cutSceneSX = absoluteUISizeX(cutSceneHintSX, anchor);
 }
 
 CHintWindow::~CHintWindow()
@@ -5797,10 +5933,10 @@ void CScaleResultButton::Load(const sqshControl* attr) {
 	_RELEASE(m_hTexture4);
 	if (strlen(attr->image2.texture))	{
 		m_hTexture4 = terVisGeneric->CreateTexture( getImageFileName(&(attr->image2)).c_str() );
-		m_vTex4Pos[0] = relativeUV(attr->image2._ix, attr->image2._iy, m_hTexture4);
+		m_vTex4Pos[0] = relativeUV(attr->image2._ix, attr->image2._iy, m_hTexture4, anchor);
 		m_vTex4Pos[1] = Vect2f(
-			attr->sx * (float)terRenderDevice->GetSizeX() / (float)m_hTexture->GetWidth(),
-			attr->sy * (float)terRenderDevice->GetSizeY() / (float)m_hTexture->GetHeight() );
+                attr->sx * getUIX(anchor) / (float)m_hTexture->GetWidth(),
+                attr->sy * getUIY() / (float)m_hTexture->GetHeight() );
 	}
 }
 void CScaleResultButton::draw(int bFocus) {
@@ -5943,9 +6079,9 @@ void CCreditsWindow::Load(const sqshControl* attr) {
 #endif
 
 	if (m_hTexture) {
-		float tx = absoluteX(m_attr->image.dx);
+		float tx = absoluteUISizeX(m_attr->image.dx, anchor);
 		float ty = absoluteY(m_attr->image.dy);
-		float tsx = absoluteX(m_attr->image.dsx);
+		float tsx = absoluteUISizeX(m_attr->image.dsx, anchor);
 		float tsy = absoluteY(m_attr->image.dsy);
 
 		uv.x = (x - tx) / tsx;
@@ -5968,7 +6104,7 @@ void CCreditsWindow::Show(int bShow) {
 		Vect2f v1, v2;
 		OutTextRect(0, 0, textData.c_str(), -1, v1, v2);
 		terRenderDevice->SetFont(0);
-		maxTime = (v2.y - v1.y + sy + 10) / absoluteX(CREDITS_SCROLL_SPEED) * 1000.0f;
+		maxTime = (v2.y - v1.y + sy + 10) / absoluteY(CREDITS_SCROLL_SPEED) * 1000.0f;
 	} else {
 		timer = -1;
 	}
@@ -6024,7 +6160,7 @@ void CCreditsWindow::draw(int bFocus)
 
 
 		float txtX = x;
-		float txtY = y + sy - float(absoluteX(CREDITS_SCROLL_SPEED)) * timer / 1000.0f;
+		float txtY = y + sy - float(absoluteY(CREDITS_SCROLL_SPEED)) * timer / 1000.0f;
 		int txtAlign = m_attr->txt_align;
 		if( m_attr->txt_align >= 0 ) {
 			txtX += sx/2;

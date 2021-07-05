@@ -90,9 +90,6 @@ void OnComboGraphicsResolution(CShellWindow* pWnd, InterfaceEventCode code, int 
             int i = 0;
             for (Vect2i res : graphOptions.resolutions) {
                 std::string text = std::to_string(res.x) + "x" + std::to_string(res.y);
-                if (i >= RESOLUTION_COUNT) {
-                    text += " (Custom)";
-                }
                 pCombo->Array.emplace_back(text);
                 if (res == current) {
                     pCombo->pos = i;

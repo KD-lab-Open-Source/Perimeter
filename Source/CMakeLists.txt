@@ -223,6 +223,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         UserInterface/chaos.cpp
         UserInterface/controls.cpp
         UserInterface/ExternalShow.cpp
+        UserInterface/SourceUIResolution.cpp
         UserInterface/GameShell.cpp
         UserInterface/HotKey.cpp
         UserInterface/Installer.cpp
