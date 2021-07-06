@@ -814,7 +814,7 @@ void MissionDescription::restart()
 
 void MissionDescription::setSaveName(const char* fname) 
 { 
-	saveName_ = convert_path_resource(fname);
+	saveName_ = convert_path(fname);
 	if(getExtention(saveName_.c_str()) != "spb")
 		saveName_ = setExtention(saveName_.c_str(), "spg");
 	saveNameBinary_ = saveName_;
@@ -837,7 +837,7 @@ void MissionDescription::setSaveName(const char* fname)
 
 void MissionDescription::setReelName(const char* name) 
 {
-	fileNamePlayReelGame = convert_path_resource(name);
+	fileNamePlayReelGame = convert_path(name);
 
 	missionNamePlayReelGame = fileNamePlayReelGame;
 	size_t pos = missionNamePlayReelGame.rfind(PATH_SEP);
@@ -927,6 +927,7 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 	else
 		remove(setExtention(mission.saveName(), "dat").c_str());
 
+    scan_resource_paths(mission.saveName());
 	return true;
 }
 

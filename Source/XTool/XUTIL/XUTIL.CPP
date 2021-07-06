@@ -101,28 +101,33 @@ std::string convert_path_posix(const char* path) {
     return conv;
 }
 
-std::string get_dir_iterator_path(const std::filesystem::path& path) {
-    std::string path_str = path.string();
-    size_t pos = path_str.find(std::string(".") + PATH_SEP);
-    if (pos != std::string::npos && pos == 0) {
-        path_str.erase(0, 2);
+const std::string curdir = std::string(".") + PATH_SEP;
+
+void prepare_path(std::string& res_path) {
+    if (res_path == "." || res_path == curdir) {
+        res_path.clear();
+        return;
     }
-    return path_str;
+    
+    res_path = convert_path(res_path.c_str());
+    size_t pos = res_path.find(curdir);
+    if (pos != std::string::npos && pos == 0) {
+        res_path.erase(0, curdir.size());
+    }
 }
 
-std::string add_resource_path_internal(std::unordered_map<std::string, std::string>& paths, const std::string& res_path) {
-    std::filesystem::path res_path_path = res_path;
-    std::string path = get_dir_iterator_path(res_path_path);
-    std::string path_lwr = convert_path(path.c_str());
+std::string add_resource_path_internal(std::unordered_map<std::string, std::string>& paths, std::string res_path) {
+    prepare_path(res_path);
+    std::string path_lwr = res_path;
     strlwr(path_lwr.data());
     if (startsWith(path_lwr, "resource")
         || startsWith(path_lwr, "cache_font")
         || startsWith(path_lwr, "scripts")
         || endsWith(path_lwr, ".ini")) {
-        paths[path_lwr] = path;
-        if (is_directory(res_path_path)) {
+        paths[path_lwr] = res_path;
+        if (is_directory(std::filesystem::path(res_path))) {
             terminate_with_char(path_lwr, PATH_SEP);
-            paths[path_lwr] = path;
+            paths[path_lwr] = res_path;
         }
     }
     return path_lwr;
@@ -132,23 +137,46 @@ std::string add_resource_path_internal(std::unordered_map<std::string, std::stri
 bool resourcePathsFirstScan = true;
 std::unordered_map<std::string, std::string> resourcePaths;
 
-std::string add_resource_path(const std::string& res_path) {
-    return add_resource_path_internal(resourcePaths, res_path);
-}
-
-void scan_resource_paths() {
+void scan_resource_paths(std::string scan_path) {
+    //Prepare scan path
+    prepare_path(scan_path);
+    
     //Create a temporary copy until all is scanned
     std::unordered_map<std::string, std::string> paths;
-    for (const auto & entry : std::filesystem::recursive_directory_iterator(".")) {
-        if (entry.is_regular_file() || entry.is_directory()) {
-            add_resource_path_internal(paths, entry.path().string());
+    if (!scan_path.empty()) {
+        //Check if path is valid
+        if (!std::filesystem::exists(scan_path)) {
+            return;
+        }
+        
+        //Copy all paths except those that match with path to scan
+        for (const auto& entry : resourcePaths) {
+            if (!startsWith(entry.first, scan_path)) {
+                paths[entry.first] = entry.second;
+            }
+        }
+        
+        //Also add path itself since is not root
+        add_resource_path_internal(paths, scan_path);
+    }
+    
+    //Do recursive search on scan path if its a dir
+    //Otherwise we are done already as the scan_path itself was added before
+    if (scan_path.empty()) scan_path = curdir;
+    if (is_directory(std::filesystem::path(scan_path))) {
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(scan_path)) {
+            if (entry.is_regular_file() || entry.is_directory()) {
+                add_resource_path_internal(paths, entry.path().string());
+            }
         }
     }
-    resourcePaths = paths;
+    
+    //Store collected paths
+    resourcePaths = std::move(paths);
     resourcePathsFirstScan = false;
 }
 
-std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string path) {
+std::vector<std::pair<std::string, std::string>> get_resource_paths(const std::string& path) {
     std::vector<std::pair<std::string, std::string>> paths;
     for (const auto& entry : resourcePaths) {
         if (startsWith(entry.first, path)) {
@@ -160,6 +188,7 @@ std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string 
 
 std::string convert_path_resource(const char* path) {
     if (resourcePathsFirstScan) {
+        resourcePaths = std::unordered_map<std::string, std::string>();
         scan_resource_paths();
     }
     std::string conv = convert_path(path);

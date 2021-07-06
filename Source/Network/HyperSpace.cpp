@@ -280,7 +280,12 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 		}
 	}
 	out_buffer.write2File(fo);
-	return fo.ioError() ? SAVE_REPLAY_RW_ERROR_OR_DISK_FULL : SAVE_REPLAY_OK;
+    if (fo.ioError()) {
+        return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
+    } else {
+        scan_resource_paths(REPLAY_PATH);
+        return SAVE_REPLAY_OK;
+    }
 }
 
 
@@ -289,9 +294,8 @@ void terHyperSpace::autoSavePlayReel()
 {
 	//autosave
     time_t result = time(nullptr);
-	char fnbuf[MAX_PATH];
-	sprintf(fnbuf, "%s\\autosaveFrom_%ld", autoSavePlayReelDir, result);
-	savePlayReel(fnbuf);
+    std::string path = std::string(autoSavePlayReelDir) + PATH_SEP + "autosaveFrom_" + std::to_string(result);
+	savePlayReel(path.c_str());
 }
 
 void terHyperSpace::allSavePlayReel()

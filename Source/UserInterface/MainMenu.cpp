@@ -999,9 +999,8 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOAD_SCR:
 					{
-//						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-						loadMapVector(savedGames, savesDir, savesDir + ".spg");
+						loadMapVector(savedGames, savesDir, ".spg");
 						StartSpace();
 						fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
 					}
@@ -2365,8 +2364,9 @@ int toSaveQuant( float, float ) {
 }
 
 STARFORCE_API int saveGame_(float i, float) {
-	gameShell->currentSingleProfile.deleteSave(savedGames[i].missionName());
-	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[i].missionName();
+    size_t ii = static_cast<size_t>(i);
+	gameShell->currentSingleProfile.deleteSave(savedGames[ii].missionName());
+	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[ii].missionName();
 	if ( gameShell->universalSave(saveName.c_str(), true) ) {
 		hideMessageBox();
 		_shellIconManager.AddDynamicHandler( toSaveQuant, CBCODE_QUANT );

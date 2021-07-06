@@ -579,7 +579,12 @@ bool GameShell::universalSave(const char* name, bool userSave)
 		mission.gameSpeed = game_speed ? game_speed : game_speed_to_resume;
 		mission.gamePaused = !gamePausedByMenu && !game_speed;
 	}
-	return universe()->universalSave(mission, userSave);
+
+	bool result = universe()->universalSave(mission, userSave);
+    if (result) {
+        scan_resource_paths(currentSingleProfile.getSavesDirectory());
+    }
+	return result;
 }
 
 void GameShell::NetQuant()

@@ -120,7 +120,7 @@ std::string convert_path(const char* path);
 std::string convert_path_posix(const char* path);
 
 //Obtains pairs of lowercase and original path from Resource paths cache which match the path start
-std::vector<std::pair<std::string, std::string>> get_resource_paths(std::string path);
+std::vector<std::pair<std::string, std::string>> get_resource_paths(const std::string& path);
 
 //Do a conversion for RESOURCE paths
 std::string convert_path_resource(const char* path);
@@ -131,14 +131,8 @@ void terminate_with_char(std::string& buffer, const char chr);
 //Replicate legacy behavior and add dot if not present
 void terminate_float_with_dot(char* buffer, size_t max);
 
-//Returns a cleaned directory_iterator path
-std::string get_dir_iterator_path(const std::filesystem::path& path);
-
-//Adds path to resource paths cache and returns the path key that was added
-std::string add_resource_path(const std::string& res_path);
-
-//Scans dir and creates resource paths cache
-void scan_resource_paths();
+//Scans dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
+void scan_resource_paths(std::string scan_path = "");
 
 static bool startsWith(const std::string& str, const std::string& prefix)
 {

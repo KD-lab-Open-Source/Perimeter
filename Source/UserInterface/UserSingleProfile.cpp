@@ -82,14 +82,14 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	if( error ) {
         ErrH.Abort("Can't create profile directory: ", XERR_USER, error.value(), error.message().c_str());
 	} else {
-        path = path + PATH_SEP + "data";
-        std::filesystem::copy_file(origin, path, error);
+        std::string path_data = path + PATH_SEP + "data";
+        std::filesystem::copy_file(origin, path_data, error);
         if (error) {
             ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
         } else {
-            scan_resource_paths();
+            scan_resource_paths(path);
             profiles.push_back( newProfile );
-            IniManager man( path.c_str(), true );
+            IniManager man( path_data.c_str(), true );
             man.put("General", "name", name.c_str());
             man.putInt("General", "lastMissionNumber", firstMissionNumber);
             if (i == freeInds.size()) {
@@ -104,13 +104,14 @@ void UserSingleProfile::addProfile(const std::string& name) {
 
 bool UserSingleProfile::removeDir(const std::string& dir) {
     std::error_code error;
-    std::filesystem::path target_path = getAllSavesDirectory() + PATH_SEP + dir;
+    std::string allSaves = getAllSavesDirectory();
+    std::filesystem::path target_path = allSaves + PATH_SEP + dir;
     std::filesystem::remove_all(target_path, error);
     if( error ) {
         ErrH.Abort("Can't remove profile directory: ", XERR_USER, error.value(), error.message().c_str());
     }
     bool deleted = !std::filesystem::exists(target_path);
-    scan_resource_paths();
+    scan_resource_paths(allSaves);
     return deleted;
 }
 
