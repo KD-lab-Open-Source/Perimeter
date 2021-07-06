@@ -264,7 +264,7 @@ void restoreSignalHandler() {
 void handleTerminate() {
     fprintf(stderr, "handleTerminate\n");
 
-    raise(SIGTERM);
+    abort();
 }
 
 void handleSignal(int sig) {

@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __SERIALIZATION_IMPL_H__
 #define __SERIALIZATION_IMPL_H__
 
