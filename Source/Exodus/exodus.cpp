@@ -35,7 +35,13 @@ void ShowCursor(bool show) {
 }
 
 void SetCursor(HCURSOR cursor) {
-    SDL_SetCursor(cursor);
+    if (cursor) {
+        SDL_ShowCursor(true);
+        SDL_SetCursor(cursor);
+    } else {
+        //TODO enable when we have actual cursors visible
+        //SDL_ShowCursor(false);
+    }
 }
 
 HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT) {

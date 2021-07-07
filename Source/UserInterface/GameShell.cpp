@@ -878,9 +878,9 @@ Vect2f GameShell::convert(int x, int y) const
 Vect2i GameShell::convertToScreenAbsolute(const Vect2f& pos)
 {
 #ifdef PERIMETER_EXODUS_WINDOW
-    //TODO what we should do here?
-    return Vect2i(pos.x, pos.y);
+    return Vect2i((pos.x + 0.5f)*(float)windowClientSize().x, (pos.y + 0.5f)*(float)windowClientSize().y);
 #else
+    //TODO is necessary to convert position to absolute like Win32?
 	POINT pt = { round((pos.x + 0.5f)*windowClientSize().x), round((pos.y + 0.5f)*windowClientSize().y) };
 	ClientToScreen(hWndVisGeneric, &pt);
 	return Vect2i((int)pt.x, (int)pt.y);
@@ -2311,11 +2311,11 @@ void GameShell::setSpeed(float d)
 
 void GameShell::setCursorPosition(const Vect2f& pos)
 {
+    Vect2i ps = convertToScreenAbsolute(pos);
 #ifdef PERIMETER_EXODUS_WINDOW
     //TODO untested
-    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)pos.x, (int)pos.y);
+    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)ps.x, (int)ps.y);
 #else
-	Vect2i ps = convertToScreenAbsolute(pos);
 	SetCursorPos(ps.x, ps.y);
 #endif
 }
@@ -2325,10 +2325,8 @@ void GameShell::setCursorPosition(const Vect3f& posW)
 	Vect3f v, e;
 	terCamera->GetCamera()->ConvertorWorldToViewPort(&posW, &v, &e);
 
-#ifdef PERIMETER_EXODUS_WINDOW
-	//TODO untested
-    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)e.x, (int)e.y);
-#else
+#ifndef PERIMETER_EXODUS_WINDOW
+	//TODO is necessary to convert position to absolute like Win32 does with ClientToScreen when windowed?
 	if(!terFullScreen)
 	{
 		e.x *= float(windowClientSize().x)/terRenderDevice->GetSizeX();
@@ -2338,12 +2336,19 @@ void GameShell::setCursorPosition(const Vect3f& posW)
 		::ClientToScreen(hWndVisGeneric, &pt);	
 		
 		e.x = pt.x; e.y = pt.y;
+		
 	}
-	else{
+	else
+#endif
+    {
 		e.x *= float(windowClientSize().x)/terRenderDevice->GetSizeX();
 		e.y *= float(windowClientSize().y)/terRenderDevice->GetSizeY();
 	}
-	
+
+#ifdef PERIMETER_EXODUS_WINDOW
+    //TODO untested
+    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)e.x, (int)e.y);
+#else
 	SetCursorPos(e.x, e.y);
 #endif
 }
