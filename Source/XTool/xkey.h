@@ -11,7 +11,7 @@
 #define VK_MBUTTON        0x04    /* NOT contiguous with L & RBUTTON */
 
 #define VK_BACK           0x08
-//#define VK_TAB            0x09
+#define VK_TAB            0x09
 
 //#define VK_CLEAR          0x0C
 #define VK_RETURN         0x0D
@@ -20,20 +20,20 @@
 #define VK_CONTROL        0x11
 #define VK_MENU           0x12
 #define VK_PAUSE          0x13
-//#define VK_CAPITAL        0x14
+#define VK_CAPITAL        0x14
 
 
 #define VK_ESCAPE         0x1B
 
 #define VK_SPACE          0x20
-//#define VK_PRIOR          0x21
-//#define VK_NEXT           0x22
-//#define VK_END            0x23
-//#define VK_HOME           0x24
-//#define VK_LEFT           0x25
-//#define VK_UP             0x26
-//#define VK_RIGHT          0x27
-//#define VK_DOWN           0x28
+#define VK_PRIOR          0x21
+#define VK_NEXT           0x22
+#define VK_END            0x23
+#define VK_HOME           0x24
+#define VK_LEFT           0x25
+#define VK_UP             0x26
+#define VK_RIGHT          0x27
+#define VK_DOWN           0x28
 //#define VK_SELECT         0x29
 //#define VK_PRINT          0x2A
 //#define VK_EXECUTE        0x2B
@@ -60,9 +60,9 @@
 //#define VK_NUMPAD8        0x68
 //#define VK_NUMPAD9        0x69
 //#define VK_MULTIPLY       0x6A
-//#define VK_ADD            0x6B
-//#define VK_SEPARATOR      0x6C
-//#define VK_SUBTRACT       0x6D
+#define VK_ADD            0x6B
+#define VK_SEPARATOR      0x6C
+#define VK_SUBTRACT       0x6D
 //#define VK_DECIMAL        0x6E
 //#define VK_DIVIDE         0x6F
 #define VK_F1             0x70
@@ -74,7 +74,7 @@
 #define VK_F7             0x76
 #define VK_F8             0x77
 #define VK_F9             0x78
-//#define VK_F10            0x79
+#define VK_F10            0x79
 #define VK_F11            0x7A
 #define VK_F12            0x7B
 //#define VK_F13            0x7C

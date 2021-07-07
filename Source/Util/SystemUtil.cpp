@@ -36,28 +36,42 @@ bool isPressed(uint32_t key) {
             return SDL_GetModState() & KMOD_CTRL;
         case VK_MENU:
             return SDL_GetModState() & KMOD_ALT;
-        case VK_BACK:    keycode = SDLK_BACKSPACE; break;
-        case VK_RETURN:  keycode = SDLK_RETURN; break;
-        case VK_PAUSE:   keycode = SDLK_PAUSE; break;
-        case VK_ESCAPE:  keycode = SDLK_ESCAPE; break;
-        case VK_SPACE:   keycode = SDLK_SPACE; break;
-        case VK_INSERT:  keycode = SDLK_INSERT; break;
-        case VK_DELETE:  keycode = SDLK_DELETE; break;
-        case VK_F1:      keycode = SDLK_F1; break;
-        case VK_F2:      keycode = SDLK_F2; break;
-        case VK_F3:      keycode = SDLK_F3; break;
-        case VK_F4:      keycode = SDLK_F4; break;
-        case VK_F5:      keycode = SDLK_F5; break;
-        case VK_F6:      keycode = SDLK_F6; break;
-        case VK_F7:      keycode = SDLK_F7; break;
-        case VK_F8:      keycode = SDLK_F8; break;
-        case VK_F9:      keycode = SDLK_F9; break;
-        case VK_F11:     keycode = SDLK_F10; break;
-        case VK_F12:     keycode = SDLK_F11; break;
-        case VK_TILDE:   keycode = SDLK_BACKSLASH; break;
+        case VK_BACK:           keycode = SDLK_BACKSPACE; break;
+        case VK_TAB:            keycode = SDLK_TAB; break;
+        case VK_RETURN:         keycode = SDLK_RETURN; break;
+        case VK_PAUSE:          keycode = SDLK_PAUSE; break;
+        case VK_CAPITAL:        keycode = SDLK_CAPSLOCK; break;
+        case VK_ESCAPE:         keycode = SDLK_ESCAPE; break;
+        case VK_SPACE:          keycode = SDLK_SPACE; break;
+        case VK_PRIOR:          keycode = SDLK_PAGEUP; break;
+        case VK_NEXT:           keycode = SDLK_PAGEDOWN; break;
+        case VK_END:            keycode = SDLK_END; break;
+        case VK_HOME:           keycode = SDLK_HOME; break;
+        case VK_LEFT:           keycode = SDLK_LEFT; break;
+        case VK_UP:             keycode = SDLK_UP; break;
+        case VK_RIGHT:          keycode = SDLK_RIGHT; break;
+        case VK_DOWN:           keycode = SDLK_DOWN; break;
+        case VK_INSERT:         keycode = SDLK_INSERT; break;
+        case VK_DELETE:         keycode = SDLK_DELETE; break;
+        case VK_F1:             keycode = SDLK_F1; break;
+        case VK_F2:             keycode = SDLK_F2; break;
+        case VK_F3:             keycode = SDLK_F3; break;
+        case VK_F4:             keycode = SDLK_F4; break;
+        case VK_F5:             keycode = SDLK_F5; break;
+        case VK_F6:             keycode = SDLK_F6; break;
+        case VK_F7:             keycode = SDLK_F7; break;
+        case VK_F8:             keycode = SDLK_F8; break;
+        case VK_F9:             keycode = SDLK_F9; break;
+        case VK_F10:            keycode = SDLK_F10; break;
+        case VK_F11:            keycode = SDLK_F11; break;
+        case VK_F12:            keycode = SDLK_F12; break;
+        case VK_TILDE:          keycode = SDLK_BACKSLASH; break;
+        case VK_ADD:            keycode = SDLK_PLUS; break;
+        case VK_SEPARATOR:      keycode = SDLK_SEPARATOR; break;
+        case VK_SUBTRACT:       keycode = SDLK_MINUS; break;
         default:
-#ifdef PERIMETER_DEBUG_ASSERT
-            ErrH.Abort("Unknown VK keycode requested", XERR_USER, key);
+#ifdef PERIMETER_DEBUG
+            printf("Unknown VK keycode requested\n", key);
 #endif
             return false;
     }
@@ -76,6 +90,7 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     fullkey = 0;
     switch (keysym.sym) {
         case SDLK_BACKSPACE:    fullkey = VK_BACK; break;
+        case SDLK_TAB:          fullkey = VK_TAB; break;
         case SDLK_RETURN:       fullkey = VK_RETURN; break;
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:       fullkey = VK_SHIFT; break;
@@ -84,8 +99,17 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_LALT:
         case SDLK_RALT:         fullkey = VK_MENU; break;
         case SDLK_PAUSE:        fullkey = VK_PAUSE; break;
+        case SDLK_CAPSLOCK:     fullkey = VK_CAPITAL; break;
         case SDLK_ESCAPE:       fullkey = VK_ESCAPE; break;
         case SDLK_SPACE:        fullkey = VK_SPACE; break;
+        case SDLK_PAGEUP:       fullkey = VK_PRIOR; break;
+        case SDLK_PAGEDOWN:     fullkey = VK_NEXT; break;
+        case SDLK_END:          fullkey = VK_END; break;
+        case SDLK_HOME:         fullkey = VK_HOME; break;
+        case SDLK_LEFT:         fullkey = VK_LEFT; break;
+        case SDLK_UP:           fullkey = VK_UP; break;
+        case SDLK_RIGHT:        fullkey = VK_RIGHT; break;
+        case SDLK_DOWN:         fullkey = VK_DOWN; break;
         case SDLK_INSERT:       fullkey = VK_INSERT; break;
         case SDLK_DELETE:       fullkey = VK_DELETE; break;
         case SDLK_F1:           fullkey = VK_F1; break;
@@ -97,17 +121,23 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_F7:           fullkey = VK_F7; break;
         case SDLK_F8:           fullkey = VK_F8; break;
         case SDLK_F9:           fullkey = VK_F9; break;
-        case SDLK_F10:          fullkey = VK_F11; break;
-        case SDLK_F11:          fullkey = VK_F12; break;
+        case SDLK_F10:          fullkey = VK_F10; break;
+        case SDLK_F11:          fullkey = VK_F11; break;
+        case SDLK_F12:          fullkey = VK_F12; break;
         case SDLK_BACKSLASH:    fullkey = VK_TILDE; break;
+        case SDLK_PLUS:         fullkey = VK_ADD; break;
+        case SDLK_SEPARATOR:    fullkey = VK_SEPARATOR; break;
+        case SDLK_MINUS:        fullkey = VK_SUBTRACT; break;
         default:
             //Apparently game uses uppercase ASCII codes for keys
             uint8_t byte = keysym.sym & 0xFF;
             if (byte >= 'a' && byte <= 'z') {
-                fullkey = toupper(fullkey);
+                fullkey = toupper(byte);
+            } else if (byte >= '0' && byte <= '9') {
+                fullkey = byte;
             } else {
-#ifdef PERIMETER_DEBUG_ASSERT
-                ErrH.Abort("Unknown SDL key requested", XERR_USER, keysym.sym);
+#ifdef PERIMETER_DEBUG
+                printf("Unknown SDL key requested scan %d sym %d\n", keysym.scancode, keysym.sym);
 #endif
             }
     }

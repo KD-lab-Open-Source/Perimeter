@@ -896,6 +896,7 @@ void GameShell::EventHandler(SDL_Event& event) {
                     if (sKey(event.key.keysym, true).fullkey != VK_SPACE) {
                         return;
                     }
+                    break;
                 case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button & (SDL_BUTTON_LMASK | SDL_BUTTON_MMASK)) {
                         reelManager.hide();
