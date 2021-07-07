@@ -57,12 +57,23 @@ class PlaceholderXPrmOArchive;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////
+// Serialization type name
+///////////////////////////////////////////////////////////////////////////
+
+#define SERIALIZATION_TYPE_NAME_VIRTUAL \
+    virtual SERIALIZATION_TYPE_NAME
+
+#define SERIALIZATION_TYPE_NAME_OVERRIDE \
+    std::string type_name() const override { return get_type_id(this); }
+
+///////////////////////////////////////////////////////////////////////////
 // Serialization types and macros
 // Only these should be public available
 ///////////////////////////////////////////////////////////////////////////
 
 #define VIRTUAL_SERIALIZE(VAR_AR) \
 public: \
+    SERIALIZATION_TYPE_NAME_OVERRIDE \
     VIRTUAL_SERIALIZE_FORWARDERS_EDIT(VAR_AR) \
     VIRTUAL_SERIALIZE_FORWARDERS_BINARY(VAR_AR) \
     VIRTUAL_SERIALIZE_FORWARDERS_XPRM(VAR_AR) \
@@ -73,6 +84,8 @@ protected: \
 // Types that declare virtuals
 
 struct SerializeVirtual {
+    SERIALIZATION_TYPE_NAME_VIRTUAL;
+
 #ifdef __EDIT_ARCHIVE_H__
     VIRTUAL_SERIALIZE_VIRTUAL(EditIArchive, EditOArchive, ar);
 #else
@@ -93,6 +106,8 @@ struct SerializeVirtual {
 };
 
 struct ShareHandleBaseSerializeVirtual: ShareHandleBase {
+    SERIALIZATION_TYPE_NAME_VIRTUAL;
+
 #ifdef __EDIT_ARCHIVE_H__
     VIRTUAL_SERIALIZE_VIRTUAL(EditIArchive, EditOArchive, ar);
 #else

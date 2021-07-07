@@ -177,8 +177,8 @@ private:
 			buffer_ < "0";
 			return;
 		}
-		const char *name = get_type_id<T>().c_str();
-		saveStringEnclosed(name);
+		std::string name = get_type_id_runtime<T>(t);
+		saveStringEnclosed(name.data());
 		buffer_ < " ";
 		ClassDescriptor<typename std::remove_const<T>::type, XPrmOArchive, XPrmIArchive>::instance().find(name).save(*this, t);
 	}
@@ -500,8 +500,8 @@ private:
 		}
 		typedef ClassDescriptor<typename std::remove_const<T>::type, XPrmOArchive, XPrmIArchive> Descriptor;
 		if(t){
-			if(typeName == get_type_id<T>().c_str()){
-				Descriptor::instance().find(typeName.c_str()).load(*this, t);
+			if(typeName == get_type_id_runtime<T>(t)){
+				Descriptor::instance().find(typeName).load(*this, t);
 				return;
 			}
 			else{
@@ -509,7 +509,7 @@ private:
 				t = 0;
 			}
 		}
-		Descriptor::instance().find(typeName.c_str()).create(*this, t);
+		Descriptor::instance().find(typeName).create(*this, t);
 	}
 
 	template<class T, class A>

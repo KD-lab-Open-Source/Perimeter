@@ -42,11 +42,12 @@ EnumWrapper и BitVector пишутся по значению,
 #include "Serialization.h"
 #include "SerializationImpl.h"
 
-inline unsigned int stringHash(const char *str)
+inline unsigned int stringHash(const std::string& str)
 {
 	unsigned int h = 0;
-	while(*str)
-		h = 5*h + *(str++);
+	const char* ptr = str.c_str(); 
+	while(*ptr)
+		h = 5*h + *(ptr++);
 	return h;
 }
 
@@ -216,7 +217,7 @@ private:
 			buffer_ < stringHash("");
 			return;
 		}
-		const char* name = get_type_id<T>().c_str();
+		std::string name = get_type_id_runtime<T>(t);
 		buffer_ < stringHash(name);
 		BinaryClassDescriptor<typename std::remove_const<T>::type>::instance().find(name).save(*this, t);
 	}
@@ -428,7 +429,7 @@ private:
 		}
 		typedef BinaryClassDescriptor<typename std::remove_const<T>::type> Descriptor;
 		if(t){
-			if(hash == stringHash(get_type_id<T>().c_str())){
+			if(hash == stringHash(get_type_id_runtime<T>(t))){
 				Descriptor::instance().findByHash(hash).load(*this, t);
 				return;
 			}

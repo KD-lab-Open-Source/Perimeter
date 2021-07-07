@@ -18,15 +18,28 @@ static void extract_type_name(std::string& name) {
     }
 }
 
-
+//We use ptr to specialize the type_id when only pointer is know at compile time (like "this")
 template<class CLASS_T>
-static std::string get_type_id() {
+static std::string get_type_id(const CLASS_T* ptr = nullptr) {
+    if (ptr) {}
 	std::string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
 #ifdef _MSC_VER
     //Remove type name since MSVC adds it 
     extract_type_name(name);
 #endif
-    //printf("%s = %s -> %s\n", typeid(CLASS_T).name(), boost::typeindex::type_id<CLASS_T>().pretty_name().c_str(), name.c_str());
+    //printf("get_type_id %s = %s\n", typeid(CLASS_T).name(), name.c_str());
+    return name;
+}
+
+//Uses SERIALIZE_TYPE_NAME methods for getting runtime type name for class/structs
+template<class CLASS_T>
+static std::string get_type_id_runtime(const CLASS_T* ptr) {
+    std::string name = ptr->type_name();
+#ifdef _MSC_VER
+    //Remove type name since MSVC adds it 
+    extract_type_name(name);
+#endif
+    //printf("get_type_id_runtime %s = %s\n", typeid(CLASS_T).name(), name.c_str());
     return name;
 }
 
@@ -436,13 +449,13 @@ public:
 		map_[name] = &serializer;
 	}
 
-	SerializerBase& find(const char* name) {
+	SerializerBase& find(const std::string& name) {
 		std::string input = name;
         extract_type_name(input);
 		typename Map::iterator i = map_.find(input.c_str());
 		if(i == map_.end()){
 			xassertStr(0 && "Unregistered class", name);
-			ErrH.Abort("ClassDescriptor::find Unregistered class", XERR_USER, 0, name);
+			ErrH.Abort("ClassDescriptor::find Unregistered class", XERR_USER, 0, name.c_str());
 		}
 		return *i->second;
 	}
