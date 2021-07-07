@@ -15,6 +15,7 @@
 #include "../HT/ht.h"
 
 #include "MessageBox.h"
+#include "BelligerentSelect.h"
 
 extern LogStream fout;
 extern MpegSound gb_Music;
@@ -465,50 +466,9 @@ void setFrm(CComboWindow* combo, int number) {
 		combo->Show(false);
 	}
 }
-void setupFrm(CComboWindow* combo, int number, bool direction) {
-	terBelligerent curBelligerent = BELLIGERENT_EXODUS0;
-	int newPos = combo->pos;
-	if (direction) {
-		newPos++;
-		if (newPos >= combo->size) {
-			newPos = 0;
-		}
-	} else {
-		newPos--;
-		if (newPos < 0) {
-			newPos = combo->size - 1;
-		}
-	}
-	switch (newPos) {
-		case 0:
-			curBelligerent = BELLIGERENT_EXODUS0;
-			break;
-		case 1:
-			curBelligerent = BELLIGERENT_EMPIRE0;
-			break;
-#ifndef _DEMO_
-		case 2:
-			curBelligerent = BELLIGERENT_HARKBACKHOOD0;
-			break;
-#endif
-	}
-	gameShell->getNetClient()->changePlayerBelligerent(number, curBelligerent);
-}
+
 void setupFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-	if( code == EVENT_CREATEWND ) {
-		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		pCombo->Array.push_back( getItemTextFromBase("Exodus").c_str() );
-		pCombo->Array.push_back( getItemTextFromBase("Empire").c_str() );
-		#ifndef _DEMO_
-			pCombo->Array.push_back( getItemTextFromBase("Harkback").c_str() );
-		#endif
-		pCombo->size = pCombo->Array.size();
-		pCombo->pos = 0;
-	} else if (code == EVENT_UNPRESSED) {
-		setupFrm((CComboWindow*) pWnd, number, true);
-	} else if (code == EVENT_RUNPRESSED) {
-		setupFrm((CComboWindow*) pWnd, number, false);
-	}
+    setupFrameButton(pWnd, code, true, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN);
 }
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	setupFrmButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN);

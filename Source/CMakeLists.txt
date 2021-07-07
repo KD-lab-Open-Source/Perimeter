@@ -243,6 +243,7 @@ SET(perimeter_SRCS
         UserInterface/History3D.cpp
         UserInterface/HistoryScene.cpp
         UserInterface/HistorySceneCamera.cpp
+        UserInterface/BelligerentSelect.cpp
         UserInterface/BattleMenu.cpp
         UserInterface/GraphicsOptions.cpp
         UserInterface/LanMenu.cpp

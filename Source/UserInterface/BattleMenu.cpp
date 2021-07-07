@@ -19,6 +19,7 @@
 #include "MonoSelect.h"
 #include "../HT/ht.h"
 #include "qd_textdb.h"
+#include "BelligerentSelect.h"
 
 extern MpegSound gb_Music;
 extern MissionDescription missionToExec;
@@ -172,21 +173,7 @@ STARFORCE_API void startBattle(int pos, CShellWindow* pWnd) {
 			missionToExec.playersData[i].colorIndex = battleColors.getPosition(i);
 			missionToExec.playersData[i].realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
 			CComboWindow* combo = (CComboWindow*) _shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_FRM_BTN + i);
-			switch (combo->pos) {
-				case 0:
-					missionToExec.playersData[i].belligerent = BELLIGERENT_EXODUS0;
-					break;
-				case 1:
-					missionToExec.playersData[i].belligerent = BELLIGERENT_EMPIRE0;
-					break;
-				#ifndef _DEMO_
-					case 2:
-						missionToExec.playersData[i].belligerent = BELLIGERENT_HARKBACKHOOD0;
-						break;
-				#endif
-				default:
-					missionToExec.playersData[i].belligerent = BELLIGERENT_EXODUS0;
-			}
+            missionToExec.playersData[i].belligerent = SelectableBelligerents[combo->pos];
 			combo = (CComboWindow*) _shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_SLOT_BTN + i);
 			int diff = combo->pos - 1;
 			if (diff < DIFFICULTY_EASY || diff >= DIFFICULTY_MAX) {
@@ -266,17 +253,9 @@ void onMMBattleGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 }
 
 void onMMBattleFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	if( code == EVENT_CREATEWND ) {
-		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		pCombo->Array.push_back( getItemTextFromBase("Exodus").c_str() );
-		pCombo->Array.push_back( getItemTextFromBase("Empire").c_str() );
-#if !defined(_DEMO_) && !defined(_PERIMETER_ADDON_)
-        pCombo->Array.push_back( getItemTextFromBase("Harkback").c_str() );
-#endif
-		pCombo->size = pCombo->Array.size();
-		pCombo->pos = 0;
-	}
+    setupFrameButton(pWnd, code, false, pWnd->ID - SQSH_MM_BATTLE_PLAYER1_FRM_BTN);
 }
+
 void onMMBattleClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	CColorComboWindow *pCombo = (CColorComboWindow*) pWnd;
 	if( code == EVENT_CREATEWND ) {

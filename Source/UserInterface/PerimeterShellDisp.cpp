@@ -956,6 +956,8 @@ void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
 	fillTaskWnd();
 }
 #include "HistoryScene.h"
+#include "BelligerentSelect.h"
+
 extern HistoryScene historyScene;
 void CShellIconManager::fillTaskWnd() {
 	std::string taskTxt;
@@ -3598,14 +3600,7 @@ void LogicUpdater::updateIconsData() {
 	}
 }
 
-enum RACE {
-	UNRACIAL = -1,
-	EXODUS,
-	EMPIRE,
-	HARKBACK
-};
-
-RACE getRace(int id) {
+BELLIGERENT_FACTION getRace(int id) {
 	switch (id) {
 		case UNIT_ATTRIBUTE_EXODUS_STATION1:
 		case UNIT_ATTRIBUTE_EXODUS_STATION2:
@@ -3635,33 +3630,15 @@ RACE getRace(int id) {
 		case UNIT_ATTRIBUTE_PIERCER:
 			return EMPIRE;
 		default:
-			return UNRACIAL;
+			return NONE;
 	}
 }
 
-RACE getPlayerRace() {
-	switch (universe()->activePlayer()->belligerent()) {
-		case BELLIGERENT_EXODUS0:
-		case BELLIGERENT_EXODUS1:
-		case BELLIGERENT_EXODUS2:
-		case BELLIGERENT_EXODUS3:
-		case BELLIGERENT_EXODUS4:
-			return EXODUS;
-		case BELLIGERENT_HARKBACKHOOD0:
-		case BELLIGERENT_HARKBACKHOOD1:
-			return HARKBACK;
-		case BELLIGERENT_EMPIRE0:
-		case BELLIGERENT_EMPIRE1:
-		case BELLIGERENT_EMPIRE2:
-		case BELLIGERENT_EMPIRE3:
-		case BELLIGERENT_EMPIRE4:
-			return EMPIRE;
-		default:
-			return UNRACIAL;
-	}
+BELLIGERENT_FACTION getPlayerRace() {
+    return getBelligerentFaction(universe()->activePlayer()->belligerent());
 }
 
-bool isRaceUnitsVisible(RACE race) {
+bool isRaceUnitsVisible(BELLIGERENT_FACTION race) {
 	if (race != getPlayerRace()) {
 		terPlayer* player = universe()->activePlayer();
 		switch (race) {
@@ -3742,7 +3719,7 @@ void LogicUpdater::updateBuildingsData() {
 
 	bool bHasBuilding = false;
 
-	RACE race = getPlayerRace();
+	BELLIGERENT_FACTION race = getPlayerRace();
 
     for (int i = UNIT_ATTRIBUTE_CORE; i <= UNIT_ATTRIBUTE_HARKBACK_STATION3; i++) {
 
@@ -3760,8 +3737,8 @@ void LogicUpdater::updateBuildingsData() {
 			button->visible = visible;
 		}
 
-		RACE buildingRace = getRace(id);
-		if (buildingRace != UNRACIAL && buildingRace != race) {
+		BELLIGERENT_FACTION buildingRace = getRace(id);
+		if (buildingRace != NONE && buildingRace != race) {
 			visible = false;
 			button->visible = visible;
 		}
