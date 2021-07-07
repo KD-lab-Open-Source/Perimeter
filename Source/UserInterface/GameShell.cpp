@@ -1541,21 +1541,19 @@ void GameShell::ControlPressed(int key)
 	}
 	if (_shellIconManager.IsInterface()) {
 
-		if (key >= 48 && key <= 57) {
+		if (key >= '0' && key <= '9') {
 			if (universe()) {
-				universe()->select.selectGroup(key - 48);
+				universe()->select.selectGroup(key - '0');
 			}
 			return;
-		}
-		if (key >= (48 + 256) && key <= (57 + 256)) {
+		} else if (key >= ('0' + KBD_CTRL) && key <= ('9' + KBD_CTRL)) {
 			if (universe()) {
-				universe()->select.putCurrentSelectionToGroup(key - (48 + 256));
+				universe()->select.putCurrentSelectionToGroup(key - ('0' + KBD_CTRL));
 			}
 			return;
-		}
-		if (key >= (48 + 512) && key <= (57 + 512)) {
+		} else if (key >= ('0' + KBD_SHIFT) && key <= ('9' + KBD_SHIFT)) {
 			if (universe()) {
-				universe()->select.addCurrentSelectionToGroup(key - (48 + 512));
+				universe()->select.addCurrentSelectionToGroup(key - ('0' + KBD_SHIFT));
 			}
 			return;
 		}
