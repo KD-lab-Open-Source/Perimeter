@@ -9,7 +9,6 @@
 #include "SerializationMacro.h"
 
 //Previously typeid(CLASS_T).name() was used which is not portable, so we attempt to ignore the extra struct/class
-
 static void extract_type_name(std::string& name) {
     if (startsWith(name, "struct ")) {
         name.erase(0, 7);
@@ -18,15 +17,23 @@ static void extract_type_name(std::string& name) {
     }
 }
 
+//Workaround for keeping MSVC outputted typeid format that is written into saves and who knows where else
+static void process_type_name(std::string& name) {
+    if (!startsWith(name, "struct ") && !startsWith(name, "class ")) {
+        if (startsWith(name, "Attribute")) {
+            name = "class " + name;
+        } else {
+            name = "struct " + name;
+        }
+    }
+}
+
 //We use ptr to specialize the type_id when only pointer is know at compile time (like "this")
 template<class CLASS_T>
 static std::string get_type_id(const CLASS_T* ptr = nullptr) {
     if (ptr) {}
 	std::string name = boost::typeindex::type_id<CLASS_T>().pretty_name();
-#ifdef _MSC_VER
-    //Remove type name since MSVC adds it 
-    extract_type_name(name);
-#endif
+    process_type_name(name);
     //printf("get_type_id %s = %s\n", typeid(CLASS_T).name(), name.c_str());
     return name;
 }
@@ -35,10 +42,7 @@ static std::string get_type_id(const CLASS_T* ptr = nullptr) {
 template<class CLASS_T>
 static std::string get_type_id_runtime(const CLASS_T* ptr) {
     std::string name = ptr->type_name();
-#ifdef _MSC_VER
-    //Remove type name since MSVC adds it 
-    extract_type_name(name);
-#endif
+    process_type_name(name);
     //printf("get_type_id_runtime %s = %s\n", typeid(CLASS_T).name(), name.c_str());
     return name;
 }
@@ -451,7 +455,7 @@ public:
 
 	SerializerBase& find(const std::string& name) {
 		std::string input = name;
-        extract_type_name(input);
+        process_type_name(input);
 		typename Map::iterator i = map_.find(input.c_str());
 		if(i == map_.end()){
 			xassertStr(0 && "Unregistered class", name);
