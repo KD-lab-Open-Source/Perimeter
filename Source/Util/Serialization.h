@@ -6,6 +6,7 @@
 #include <typeinfo>
 #include "Handle.h"
 #include <boost/type_index.hpp>
+#include "SerializationMacro.h"
 
 //Previously typeid(CLASS_T).name() was used which is not portable, so we attempt to ignore the extra struct/class
 

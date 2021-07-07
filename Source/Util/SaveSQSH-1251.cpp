@@ -1,7 +1,6 @@
 // TODO: change encoding to utf-8
 
 #include "StdAfx.h"
-#include "Save.h"
 
 BEGIN_ENUM_DESCRIPTOR(ShellControlID, "ShellControlID")
 REGISTER_ENUM(SQSH_STATIC_ID, "SQSH_STATIC_ID")

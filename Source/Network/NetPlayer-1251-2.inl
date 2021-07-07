@@ -1,5 +1,4 @@
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(version);
 		ar & TRANSLATE_OBJECT(worldName, "Имя мира");
 		ar & TRANSLATE_NAME(missionDescriptionID, "missionDescription", "Описание миссии");

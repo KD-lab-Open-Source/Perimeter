@@ -3,8 +3,14 @@
 #ifndef __UNIT_ATTRIBUTE_H__
 #define __UNIT_ATTRIBUTE_H__
 
+//We use relative path due to this file being included from modules without having Util in includes
 #include "../Util/Serialization.h"
 #include "../Util/TypeLibrary.h"
+#include "../Util/EditArchive.h"
+#include "../Util/BinaryArchive.h"
+#include "../Util/XPrmArchive.h"
+#define PERIMETER_SERIALIZATION_ARCHIVE_NEED
+#include "../Util/SerializationVirtual.h"
 
 #ifndef _UNIT_ATTRIBUTE_INL_
 #define _UNIT_ATTRIBUTE_INL_
@@ -26,6 +32,10 @@ DECLARE_ENUM_DESCRIPTOR(terUnitAttributeID)
 DECLARE_ENUM_DESCRIPTOR(terUnitClassType)
 DECLARE_ENUM_DESCRIPTOR(terLegionType)
 DECLARE_ENUM_DESCRIPTOR(terInterpolationID)
+DECLARE_ENUM_DESCRIPTOR(terMissionObjectType)
+DECLARE_ENUM_DESCRIPTOR(terFilthAttackType)
+DECLARE_ENUM_DESCRIPTOR(terFilthSpotID)
+DECLARE_ENUM_DESCRIPTOR(BuildingStatus)
 DECLARE_ENUM_DESCRIPTOR(DamageElementFilter)
 DECLARE_ENUM_DESCRIPTOR(PopupFormatGroup)
 DECLARE_ENUM_DESCRIPTOR(ToolzerPhaseID)
@@ -75,8 +85,7 @@ struct SoundControllerSetup
 		cycled = false;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(ID, "&ID");
 		ar & TRANSLATE_OBJECT(name, "&name");
 		ar & TRANSLATE_OBJECT(cycled, "cycled");
@@ -117,8 +126,7 @@ struct SoundEventSetup
 		queueTime = 2000;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(ID, "&ID");
 		ar & TRANSLATE_OBJECT(name, "&name");
 		ar & TRANSLATE_OBJECT(is3D, "is3D");
@@ -135,8 +143,7 @@ struct SoundSetup
 	std::vector<SoundControllerSetup> sounds;
 	std::vector<SoundEventSetup> events;
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(sounds, "sounds");
 		ar & TRANSLATE_OBJECT(events, "events");
 	}
@@ -199,8 +206,7 @@ struct AnimationChain
 		soundID = SOUND_EVENT_NONE;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(chainID, "&chainID");
 		ar & TRANSLATE_OBJECT(chainName, "&chainName");
 		ar & TRANSLATE_OBJECT(phase, "phase");
@@ -231,8 +237,7 @@ struct AnimationData
 		setPhaseRecursive = false;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(groupID, "&groupID");
 		ar & TRANSLATE_OBJECT(groupName, "&groupName");
 		ar & TRANSLATE_OBJECT(chains, "chains");
@@ -265,8 +270,7 @@ struct InterfaceTV
 		angle_z = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(radius, "radius");
 		ar & TRANSLATE_OBJECT(pos_dx, "pos_dx");
 		ar & TRANSLATE_OBJECT(pos_dy, "pos_dy");
@@ -324,8 +328,7 @@ struct UnitInterfaceActions
 		op_charge_control = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(op_move, "op_move");
 		ar & TRANSLATE_OBJECT(op_stop, "op_stop");
 		ar & TRANSLATE_OBJECT(op_stop2, "op_stop2");
@@ -401,8 +404,7 @@ struct UnitInterfacePrm
 		format_group = POPUP_FORMAT_NONE;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(actions, "actions");
 		ar & TRANSLATE_OBJECT(upgrade_button_id, "upgrade_button_id");
 		ar & TRANSLATE_OBJECT(upgrading_button_id, "upgrading_button_id");
@@ -438,8 +440,7 @@ struct ToolzerActionData
     	hAppr = -1;
  	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(actionID, "actionID");
 		ar & TRANSLATE_OBJECT(rad, "rad");
 		ar & TRANSLATE_OBJECT(dz, "dz");
@@ -482,8 +483,7 @@ struct ToolzerStepData
 		buildingDamageRadius = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(phaseID, "phaseID");
 		ar & TRANSLATE_OBJECT(duration, "duration");
 		ar & TRANSLATE_OBJECT(nextPhaseID, "nextPhaseID");
@@ -520,8 +520,7 @@ struct ToolzerSetup
 		radius = 48;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(steps, "steps");
 		ar & TRANSLATE_OBJECT(scale, "scale");
 		ar & TRANSLATE_OBJECT(destroyOwnZeroLayer, "destroyOwnZeroLayer");
@@ -573,8 +572,7 @@ struct DamageData
 		attackFilter = damageFilter = DAMAGE_FILTER_ALL; 
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(width, "ширина атаки");
 		ar & TRANSLATE_OBJECT(power, "мощность атаки");
 		ar & TRANSLATE_OBJECT(attackFilter, "фильтр на элементы, из которых берутся атомы для атаки");
@@ -613,8 +611,7 @@ struct EnvironmentalDamage
 		damageRatioMin = 0.01f;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(damageType, "тип повреждений");
 		ar & TRANSLATE_OBJECT(damageData, "параметры повреждений, [0] - минимум, [1] - максимум");
 		ar & TRANSLATE_OBJECT(period, "period");
@@ -655,8 +652,7 @@ struct UnitDamage
 		splashDamageRadius = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(mainDamage, "mainDamage");
 		ar & TRANSLATE_OBJECT(splashDamageRadius, "splashDamageRadius");
 		ar & TRANSLATE_OBJECT(splashDamage, "splashDamage");
@@ -683,8 +679,7 @@ struct ConsumptionData
 		name = "noname";
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(energy, "energy");
 		ar & TRANSLATE_OBJECT(time, "time (in milliseconds)");
 		ar & TRANSLATE_OBJECT(priority, "priority");
@@ -726,8 +721,7 @@ struct FieldPrm
 		impulseDuration = 2000; 
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(monksPerCore, "monksPerCore"); 
 		ar & TRANSLATE_OBJECT(monksPerCoreMin, "monksPerCoreMin"); 
 		ar & TRANSLATE_OBJECT(monksVelocity, "monksVelocity"); 
@@ -762,8 +756,7 @@ struct DebugScales
 		other = 0.5; // остальные
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(frame, "фрейм"); 
 		ar & TRANSLATE_OBJECT(legion, "легион"); 
 		ar & TRANSLATE_OBJECT(buildins, "здания"); 
@@ -795,8 +788,7 @@ struct DifficultyPrm
 		triggerDelayFactor = 1; 
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(name, "&name"); 
 		ar & TRANSLATE_OBJECT(filthDensity, "filthDensity"); 
 		ar & TRANSLATE_OBJECT(aiDelay, "Задержка АИ"); 
@@ -836,8 +828,7 @@ struct TrucksIntrumentParameter
 		kHeigh4PutGarbage = 1.2f;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(kRadius4DigZL, "kRadius4DigZL"); 
 		ar & TRANSLATE_OBJECT(kHeigh4DigZL, "kHeigh4DigZL"); 
 
@@ -869,8 +860,7 @@ struct SoundEventsPrm
 		energyNotEnoughDischargeThreshold = 1.01f;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(collectorEmptyThreshold, "collectorEmptyThreshold"); 
 		ar & TRANSLATE_OBJECT(energyLosingThreshold, "energyLosingThreshold"); 
 		ar & TRANSLATE_OBJECT(energyNotEnoughThreshold, "energyNotEnoughThreshold"); 
@@ -893,8 +883,7 @@ struct BelligerentProperty
 		colorIndex = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(belligerent, "&belligerent"); 
 		ar & TRANSLATE_OBJECT(colorIndex, "colorIndex"); 
 		ar & TRANSLATE_OBJECT(soundTracks, "soundTracks"); 
@@ -912,8 +901,7 @@ struct BelligerentPropertyTable
 		return data[0];
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(data, "data"); 
 	}
 
@@ -938,8 +926,7 @@ struct GlobalAttributes
 		FallTreeTime = 3;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(debuScales, "Отладочное масштабирование"); 
 		ar & TRANSLATE_OBJECT(belligerentPropertyTable, "Параметры рас"); 
 		ar & TRANSLATE_OBJECT(buildingBlockConsumption, "Затраты на строительные блоки"); 
@@ -977,8 +964,7 @@ struct terDebrisData
 		speed = 150.0f;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(debrisID, "debrisID"); 
 		ar & TRANSLATE_OBJECT(count, "count"); 
 		ar & TRANSLATE_OBJECT(countRnd, "countRnd"); 
@@ -1007,8 +993,7 @@ struct terUnitEffectData
 		startupDamage = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(effectID, "&effectID"); 
 		ar & TRANSLATE_OBJECT(effectName, "&effectName"); 
 		ar & TRANSLATE_OBJECT(needOrientation, "needOrientation"); 
@@ -1060,8 +1045,7 @@ struct terUnitEffects
 		movementCraterDelta = 1;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(libraryFileName, "&libraryFileName"); 
 		ar & TRANSLATE_OBJECT(effects, "effects"); 
 		ar & TRANSLATE_OBJECT(debrisData, "debrisData"); 
@@ -1121,8 +1105,7 @@ struct terWeaponControllerSetup
 		defaultAngles[0] = defaultAngles[1] = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(objectName, "objectName"); 
 		ar & TRANSLATE_OBJECT(logicObjectName, "logicObjectName"); 
 		ar & TRANSLATE_OBJECT(targetingObjectName, "targetingObjectName"); 
@@ -1234,8 +1217,7 @@ struct terWeaponSetup
 		squadMode = 1;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(weaponType, "weaponType"); 
 		ar & TRANSLATE_OBJECT(flags, "flags"); 
 		ar & TRANSLATE_OBJECT(missileID, "missileID"); 
@@ -1354,8 +1336,7 @@ public:
 	int elementsDead(DamageElementType type) const { return elementsDead_[type]; }
 	void addElementsDead(DamageElementType type,int count = 1){ elementsDead_[type] += count; if(elementsDead_[type] < 0) elementsDead_[type] = 0; }
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(elements_, "elements", "элементы"); 
 	}
 
@@ -1397,8 +1378,7 @@ struct ModelData
 		boundRadius = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(modelName, "&modelName");
 		ar & TRANSLATE_OBJECT(logicName, "logicName");
 		ar & TRANSLATE_OBJECT(boundScale, "Масштабирование");
@@ -1415,8 +1395,7 @@ public:
 
 	FileTime(const char* fname);
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(dwLowDateTime, "LowDateTime", "LowDateTime");
 		ar & TRANSLATE_NAME(dwHighDateTime, "HighDateTime", "HighDateTime");
 	}
@@ -1426,7 +1405,7 @@ public:
 	}
 };
 
-struct GeometryAttribute
+struct GeometryAttribute: SerializeVirtual
 {
 	Vect2f BasementMin;
 	Vect2f BasementMax;
@@ -1446,8 +1425,7 @@ struct GeometryAttribute
 
 	void initGeometryAttribute(const ModelData& modelData, const AttributeBase& attribute);
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	VIRTUAL_SERIALIZE(ar) {
 		ar & WRAP_OBJECT(BasementMin);
 		ar & WRAP_OBJECT(BasementMax);
 		ar & WRAP_OBJECT(BasementPoints);
@@ -1599,8 +1577,7 @@ public:
 	void initIntfBalanceData(const AttributeBase* missile);
 	IntfBalanceData intfBalanceData;
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	VIRTUAL_SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(ID, "ID");
 		ar & TRANSLATE_OBJECT(belligerent, "belligerent");
 		ar & TRANSLATE_OBJECT(ClassID, "ClassID");
@@ -1678,7 +1655,7 @@ public:
 			ar.closeBlock();
 		}
 
-		GeometryAttribute::serialize(ar);
+		GeometryAttribute::serialize_template(ar);
 
 		if(!ar.isOutput())
 			init();
@@ -1711,8 +1688,7 @@ public:
 			belligerent_ < rhs.belligerent_;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(attributeID_, "attributeID", "&attributeID");
 		ar & TRANSLATE_NAME(belligerent_, "belligerent", "&belligerent");
 	}
@@ -1726,7 +1702,7 @@ inline const std::string key2String(const AttributeIDBelligerent& data) {
 	return std::string(getEnumNameAlt(data.attributeID())) + ", " + getEnumNameAlt(data.belligerent());
 }
 
-inline void setKey(AttributeIDBelligerent& data, const char* str) {
+inline void setKeyC(AttributeIDBelligerent& data, const char* str) {
 	std::string aName = str;
 	size_t pos = aName.find(",");
 	if(pos == std::string::npos)

@@ -4,6 +4,7 @@
 #include <climits>
 #include <windows.h>
 #include "StdAfx.h"
+#include "XPrmArchive.h"
 #include "TriggerExport.h"
 
 //----------------------------------------------------------

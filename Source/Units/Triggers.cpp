@@ -22,6 +22,10 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ActionSellBuilding, AISellFactor)
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ActionSwitchGuns, Mode)
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ActionChargeCores, ChargeCoresStrategy)
+
 //---------------------------------------
 bool Condition::compare(int op1, int op2, CompareOperator op)
 {

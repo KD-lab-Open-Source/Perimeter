@@ -52,8 +52,7 @@ struct sToolzerPMO : public sBasePMOperation {
 		eql=_eql;
 		filterHeigh=_filterHeigh;
 	}
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_OBJECT(x);
 		ar & WRAP_OBJECT(y);
 		ar & WRAP_OBJECT(rad);
@@ -90,8 +89,7 @@ struct sGeoPMO : public sBasePMOperation {
 		borderForm=_BorderForm;
 		inverse=_inverse;
 	}
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_OBJECT(x);
 		ar & WRAP_OBJECT(y);
 		ar & WRAP_OBJECT(sx);
@@ -113,8 +111,7 @@ struct sBlurPMO : public sBasePMOperation {
 	void set(int _x, int _y, int _rad, float _intensity){
 		pmoID=PMO_ID_BLUR;
 	}
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_OBJECT(x);
 		ar & WRAP_OBJECT(y);
 		ar & WRAP_OBJECT(rad);
@@ -140,8 +137,7 @@ public:
 	ElementPMO(sBlurPMO& d){ blurPMO=d; }
 
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		int tID;
 		tID=basePMO.pmoID;
 		ar & WRAP_OBJECT(tID);
@@ -171,8 +167,7 @@ struct ContainerPMO {
 	ContainerPMO();
 	~ContainerPMO();
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_OBJECT(container);
 	}
 };

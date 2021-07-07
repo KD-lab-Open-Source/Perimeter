@@ -2,6 +2,8 @@
 #ifndef __HANDLE_H__
 #define __HANDLE_H__
 
+#include "SerializationMacro.h"
+
 ////////////////////////////////////////////////////////////////////
 // Автоматически удаляемый указатель
 ////////////////////////////////////////////////////////////////////
@@ -110,8 +112,7 @@ public:
     }
 #endif
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & makeObjectWrapper(ptr, 0, 0);
 	}
 
@@ -124,7 +125,7 @@ class ShareHandleBase
 public:
 	ShareHandleBase() { handleCount = 0; }
 	ShareHandleBase(const ShareHandleBase&) { handleCount = 0; }
-	~ShareHandleBase(){}
+	virtual ~ShareHandleBase() = default;
 	void addRef() const { ++handleCount; }
 	int decrRef() const { return --handleCount; }
 	int numRef() const { return handleCount; }

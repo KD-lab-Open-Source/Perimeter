@@ -61,9 +61,8 @@ public:
 
 	AttributeFrame();
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-        AttributeReal::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        AttributeReal::serialize_template(ar);
 		if(ar.openBlock("attributeFrame", "װנויל")){
 			ar & TRANSLATE_OBJECT(heightMax, "heightMax");
 			ar & TRANSLATE_OBJECT(accumulatedEnergyInitial, "accumulatedEnergyInitial");

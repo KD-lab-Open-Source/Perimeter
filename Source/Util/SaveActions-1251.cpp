@@ -1,10 +1,10 @@
 // TODO: change encoding to utf-8
 
 #include "StdAfx.h"
-#include "Save.h"
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
+#include "Save.h"
 
 ////////////////////////////////////////////////////
 //		Actions

@@ -6,13 +6,14 @@
 
 #include <map>
 #include "Serialization.h"
+#include "SerializationMacro.h"
 
 // string adaptor
 inline const std::string key2String(const std::string& data) {
 	return data;
 }
 
-inline void setKey(std::string& data, const char* str) {
+inline void setKeyC(std::string& data, const char* str) {
 	data = str;
 }
 
@@ -23,7 +24,7 @@ inline const std::string key2String(const EnumWrapper<Enum>& data) {
 }
 
 template<class Enum>
-inline void setKey(EnumWrapper<Enum>& data, const char* str) {
+inline void setKeyC(EnumWrapper<Enum>& data, const char* str) {
 	data.value() = getEnumDescriptor(Enum(0)).keyByNameAlt(str);
 }
 
@@ -66,13 +67,12 @@ public:
 		const Type& operator*() const { return *get(); }
 		operator const Type* () const { return get(); }
 
-		template<class Archive>
-		void serialize(Archive& ar) {
+        SERIALIZE(ar) {
 			if(ar.type() & ARCHIVE_EDIT){
 				ComboListString comboStr(instance().comboList(), key2String(key_).c_str());
 				ar & TRANSLATE_NAME(comboStr, 0, 0);
 				if(ar.isInput())
-					::setKey(key_, comboStr);
+					setKeyC(key_, comboStr);
 			}
 			else
 				ar & WRAP_NAME(key_, !SuppressBracket<Reference>::value ? "key" : 0);
@@ -92,8 +92,7 @@ public:
 		return i != map_.end() ? i->second() : 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		typedef std::list<typename Map::value_type> List;
 		List tmpStorage;
 		if(ar.isOutput()){
@@ -177,8 +176,7 @@ public:
 			return key_ < rhs.key_;
 		}
 
-		template<class Archive>
-		void serialize(Archive& ar) {
+        SERIALIZE(ar) {
 			ComboListString comboStr(instance().comboList_.c_str(), (const char*)(*this));
 			ar & TRANSLATE_NAME(comboStr, 0, 0);
 			if(ar.isInput())
@@ -210,8 +208,7 @@ public:
 		return Reference(strings_.size() - 1);
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(strings_, "strings", editName);
 		if(ar.isInput()){
 			comboList_ = "";

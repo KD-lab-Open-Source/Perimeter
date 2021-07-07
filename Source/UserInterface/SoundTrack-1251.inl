@@ -1,5 +1,4 @@
-    template<class Archive>
-    void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_NAME(fileName_, "fileName");
 		ar & TRANSLATE_OBJECT(fileNames, "Имена файлов");
 		ar & TRANSLATE_OBJECT(randomChoice, "Случайный выбор");

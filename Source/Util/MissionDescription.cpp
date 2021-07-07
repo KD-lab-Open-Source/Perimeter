@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "NetPlayer.h"
-#include "Save.h"
+#include "EditFunctions.h"
 #include "../Terra/crc.h"
 #include "Scripts/Config.hi"
 

@@ -10,23 +10,39 @@
 #endif // _UNIT_ATTRIBUTE_INL_
 
 #include "Serialization.h"
+#define PERIMETER_SERIALIZATION_ARCHIVE_NEED
+#include "SerializationVirtual.h"
 #include "Handle.h"
 #include "SafeCast.h"
 #include "../TriggerEditor/TriggerExport.h"
 #include "Timers.h"
 #include "../UserInterface/SoundTrack.h"
+#include "EditFunctions.h"
 
 typedef std::vector<Vect2i> Vect2iVect;
 typedef std::vector<PrmString> PrmStringList;
 
-const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString);
-const char* editModelNameDialog(HWND hwnd, const char* initialString);
-const char* editTextMultiLine(HWND hwnd, const char* initialString);
-const char* editMessageID(HWND hwnd, const char* initialString);
-const char* editTaskID(HWND hwnd, const char* initialString);
-const char* editMissionDescriptionID(HWND hwnd, const char* initialString);
-const char* editLabelDialog(HWND hwnd, const char* initialString);
-const char* editCameraSplineName(HWND hwnd, const char* initialString);
+/* for debug
+#ifdef __BINARY_ARCHIVE_H__
+    void serialize(BinaryIArchive& ar) override {
+	    this->serialize_template(ar);
+	}
+    void serialize(BinaryOArchive& ar) override {
+	    this->serialize_template(ar);
+	}
+#endif
+#ifdef __XPRM_ARCHIVE_H__
+    void serialize(XPrmIArchive& ar) override {
+	    this->serialize_template(ar);
+	}
+    void serialize(XPrmOArchive& ar) override {
+	    this->serialize_template(ar);
+	}
+#endif
+
+    template<class Archive>
+    void serialize_template(Archive& ar) {
+*/
 
 struct SaveDamageMolecula
 {
@@ -39,8 +55,7 @@ struct SaveDamageMolecula
 
 	const SaveDamageMolecula& operator=(const class DamageMolecula& data);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_OBJECT(isAlive);
 		ar & WRAP_OBJECT(elementsDead);
 	}
@@ -65,8 +80,7 @@ struct SaveDurationTimer
 	int operator()() { return time = timer_(); }
 	int operator!() { time = timer_(); return !timer_; } 
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(time);
 		void initialize();
 	}
@@ -89,8 +103,7 @@ struct SaveUnitLink
 	void setLink(terUnitBase*& unit) const;
 	void resolveLink() const;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(unitID);
 		ar & WRAP_OBJECT(playerID);
 	}
@@ -114,8 +127,7 @@ struct SaveNodeController
 		requestedPhase = -1;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(currentChain);
 		ar & WRAP_OBJECT(phase);
 		ar & WRAP_OBJECT(requestedChain);
@@ -128,8 +140,7 @@ struct SaveInterpolationReal
 	SaveNodeController node;
 	std::vector<SaveNodeController> nodeControllers;
 	
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(node);
 		ar & WRAP_OBJECT(nodeControllers);
 	}
@@ -137,7 +148,7 @@ struct SaveInterpolationReal
 
 //---------------------------------
 
-struct SaveWeaponData : ShareHandleBase 
+struct SaveWeaponData : ShareHandleBaseSerializeVirtual
 {
 	bool isSwitchedOn;
 	Vect3f targetPosition;
@@ -152,8 +163,7 @@ struct SaveWeaponData : ShareHandleBase
 	}
 	virtual ~SaveWeaponData() {}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	VIRTUAL_SERIALIZE(ar) {
 		ar & WRAP_OBJECT(isSwitchedOn);
 		ar & WRAP_OBJECT(targetPosition);
 		ar & WRAP_OBJECT(target);
@@ -170,8 +180,7 @@ struct SaveWeaponFilthNavigatorData : SaveWeaponData
 		prmIndex = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	VIRTUAL_SERIALIZE(ar) {
 		ar & WRAP_OBJECT(prmIndex);
 	}
 };
@@ -197,8 +206,7 @@ struct SaveToolzerControllerData
 		position = Vect2i(0,0);
 	}
 	
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(scale);
 		ar & WRAP_OBJECT(currentStep);
 		ar & WRAP_OBJECT(requestedPhase);
@@ -209,7 +217,7 @@ struct SaveToolzerControllerData
 };
 
 //---------------------------------
-struct SaveUnitData : ShareHandleBase 
+struct SaveUnitData : ShareHandleBaseSerializeVirtual
 {
 	int unitID;
 	EnumWrapper<terUnitAttributeID> attributeID;
@@ -228,8 +236,7 @@ struct SaveUnitData : ShareHandleBase
 	}
     virtual ~SaveUnitData() {}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	VIRTUAL_SERIALIZE(ar) {
 		ar & WRAP_OBJECT(unitID);
 		ar & WRAP_OBJECT(attributeID);
 		ar & WRAP_OBJECT(position);
@@ -249,9 +256,8 @@ struct SaveCraterData : SaveUnitData
 		lifeTimer = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitData::serialize_template(ar);
 		ar & WRAP_OBJECT(lifeTimer);
 		ar & WRAP_OBJECT(toolzer);
 	}
@@ -273,9 +279,8 @@ struct SaveUnitRealData : SaveUnitData
 		weaponChargeLevel = 1;
 	}
 	
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitData::serialize_template(ar);
 		ar & WRAP_OBJECT(basementInstalled);
 		ar & TRANSLATE_OBJECT(accumulatedEnergy, "Зарядка аккумулятора (0..1)");
 		ar & WRAP_OBJECT(zeroLayerCounter);
@@ -301,9 +306,8 @@ struct SaveUnitProjectileData : SaveUnitRealData
 		killTimer = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(target);
 		ar & WRAP_OBJECT(owner);
 		ar & WRAP_OBJECT(sourcePosition);
@@ -322,9 +326,8 @@ struct SaveUnitScumStormData : SaveUnitProjectileData
 		freeMovement = false;
 	}
 	
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitProjectileData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitProjectileData::serialize_template(ar);
 		ar & WRAP_OBJECT(freeMovementTimer);
 		ar & WRAP_OBJECT(freeMovement);
 	}	
@@ -338,9 +341,8 @@ struct SaveUnitProjectileUndergroundData : SaveUnitProjectileData
 		lastCraterPosition = Vect2f(0,0);
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitProjectileData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitProjectileData::serialize_template(ar);
 		ar & WRAP_OBJECT(lastCraterPosition);
 	}	
 };
@@ -357,8 +359,7 @@ struct SaveAttackPoint
 		positionTarget = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(unit);
 		ar & WRAP_OBJECT(squad);
 		ar & WRAP_OBJECT(position);
@@ -396,9 +397,8 @@ struct SaveUnitSquadData : SaveUnitData
 		offensiveMode = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitData::serialize_template(ar);
 		ar & WRAP_OBJECT(stablePosition);
 		ar & WRAP_OBJECT(currentMutation);
 		ar & WRAP_OBJECT(curvatureRadius);
@@ -433,8 +433,7 @@ struct SaveFrameSlotData
 		progress = 1;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(productionID);
 		ar & WRAP_OBJECT(status);
 		ar & WRAP_OBJECT(progress);
@@ -463,9 +462,8 @@ struct SaveUnitFrameData : SaveUnitRealData
 		catched = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(attached);
 		ar & WRAP_OBJECT(attaching);
 		ar & WRAP_OBJECT(powered);
@@ -489,9 +487,8 @@ struct SaveUnitFrameChildData : SaveUnitRealData
 		alarmStatus = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(dockReadyStatus);
 		ar & WRAP_OBJECT(alarmStatus);
 	}	
@@ -508,9 +505,8 @@ struct SaveUnitBuildingData : SaveUnitRealData
 		visible = true; 
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(buildingStatusBV);
 		ar & WRAP_OBJECT(fireCount);
 		ar & TRANSLATE_OBJECT(visible, "Видимый");
@@ -544,9 +540,8 @@ struct SaveUnitLegionaryData : SaveUnitRealData
 		localPositionValid = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(transportedSoldiers);
 		ar & WRAP_OBJECT(transportedOfficers);
 		ar & WRAP_OBJECT(transportedTechnics);
@@ -565,9 +560,8 @@ struct SaveUnitCommandCenterData : SaveUnitBuildingData
 {
 	ShareHandle<SaveUnitData> squad;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitBuildingData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitBuildingData::serialize_template(ar);
 		ar & WRAP_OBJECT(squad);
 	}
 };
@@ -586,9 +580,8 @@ struct SaveUnitProtectorData : SaveUnitBuildingData
 		startWhenCharged = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitBuildingData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitBuildingData::serialize_template(ar);
 		ar & WRAP_OBJECT(monksNumber);
 		ar & WRAP_OBJECT(fieldState);
 		ar & WRAP_OBJECT(enableCharge);
@@ -606,9 +599,8 @@ struct SaveUnitBuildingMilitaryData : SaveUnitBuildingData
 		manualAttackTarget = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitBuildingData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitBuildingData::serialize_template(ar);
 		ar & WRAP_OBJECT(attackTarget);
 		ar & WRAP_OBJECT(lastAttackTarget);
 		ar & WRAP_OBJECT(manualAttackTarget);
@@ -627,9 +619,8 @@ struct SaveUnitCorridorAlphaData : SaveUnitBuildingData // Телепорт Альфа
 		timeOffset = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitBuildingData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitBuildingData::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(free, "Свободно летящий");
 		ar & TRANSLATE_OBJECT(passTime, "Время облета, секунды");
 		ar & WRAP_OBJECT(timeOffset);
@@ -644,9 +635,8 @@ struct SaveUnitCorridorOmegaData : SaveUnitBuildingData // Телепорт Омега
 		upgraded = false; 
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitBuildingData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitBuildingData::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(upgraded, "Проапгрейжен");
 	}
 };
@@ -668,9 +658,8 @@ struct SaveUnitNatureData : SaveUnitData
 		chainPeriod = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitData::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(modelName, "Имя модели");
 		ar & TRANSLATE_OBJECT(visible, "Видимый");
 		ar & TRANSLATE_OBJECT(natureFlag, "Свойства");
@@ -743,9 +732,8 @@ struct SaveUnitFilthData : SaveUnitData
 		kill_of_end = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitData::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(filthType, "Тип скверны");
 		
 		ar & TRANSLATE_OBJECT(attackWidth, "Ширина полосы, для атаки (-1 весь мир)");
@@ -791,8 +779,7 @@ struct SaveTerGenerate
 		GenerationSpeed = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(GenerationCount);
 		ar & WRAP_OBJECT(GenerationFactor);
 		ar & WRAP_OBJECT(GenerationSpeed);
@@ -814,9 +801,8 @@ struct SaveFilthSwarm : SaveUnitData
 		attack_player = FILTH_ATTACK_ALL;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitData::serialize_template(ar);
 		ar & WRAP_OBJECT(position);
 		ar & WRAP_OBJECT(attack_width);
 		ar & WRAP_OBJECT(attack_direction);
@@ -845,9 +831,8 @@ struct SaveFilthSwarmAnt : SaveFilthSwarm
 		attack_period = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(generate);
 		ar & WRAP_OBJECT(DeltaAngle);
 		ar & WRAP_OBJECT(ChangeAngleCount);
@@ -880,9 +865,8 @@ struct SaveFilthAnt : SaveUnitRealData
 		initial_geoprocess = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(TargetPosition);
 		ar & WRAP_OBJECT(SpeedScale);
 		ar & WRAP_OBJECT(SpeedFactor);
@@ -922,9 +906,8 @@ struct SaveFilthSpline : SaveUnitRealData
 		interpolation_linear =false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(delta_time);
 		ar & WRAP_OBJECT(cur_way_point);
 		ar & WRAP_OBJECT(acceleration);
@@ -955,9 +938,8 @@ struct SaveFilthSwarmCrow : SaveFilthSwarm
 		attack_period = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(generate_creature_num);
 		ar & WRAP_OBJECT(attack_pos);
 		ar & WRAP_OBJECT(attack_period);
@@ -986,9 +968,8 @@ struct SaveFilthCrow : SaveFilthSpline
 		death_request = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSpline::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSpline::serialize_template(ar);
 		ar & WRAP_OBJECT(free_destroy);
 		ar & WRAP_OBJECT(target_position);
 		ar & WRAP_OBJECT(delta_target);
@@ -1029,9 +1010,8 @@ struct SaveFilthSwarmDaemon : SaveFilthSwarm
 		pin = Vect3f::ZERO;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(must_init_pos);
 		ar & WRAP_OBJECT(init_pos);
 		ar & WRAP_OBJECT(attack_pos);
@@ -1070,9 +1050,8 @@ struct SaveFilthDaemon: SaveUnitRealData
 		direction = Vect3f :: ZERO;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(free_destroy);
 		ar & WRAP_OBJECT(on_zeroplast);
 		ar & WRAP_OBJECT(berserk_mode);
@@ -1101,9 +1080,8 @@ struct SaveFilthSwarmDragon: SaveFilthSwarm
 		HeadPoint = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(use_geo);
 		ar & WRAP_OBJECT(AttackCount);
 		ar & WRAP_OBJECT(TargetPosition);
@@ -1138,9 +1116,8 @@ struct SaveFilthDragonHead : SaveFilthSpline
 		NextPoint = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSpline::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSpline::serialize_template(ar);
 		ar & WRAP_OBJECT(ObjectAnimationPhase);
 		ar & WRAP_OBJECT(timerDieFreePhase);
 		ar & WRAP_OBJECT(attack);
@@ -1175,9 +1152,8 @@ struct SaveFilthDragon : SaveUnitRealData
 		NextPoint = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(ObjectAnimationPhase);
 		ar & WRAP_OBJECT(timerDieFreePhase);
 		ar & WRAP_OBJECT(scale);
@@ -1205,9 +1181,8 @@ struct SaveFilthSwarmGhost : SaveFilthSwarm
 		TargetCount = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(angle_z);
 		ar & WRAP_OBJECT(generate);
 		ar & WRAP_OBJECT(attack_period);
@@ -1252,9 +1227,8 @@ struct SaveFilthGhost : SaveUnitRealData
 		last_deltaz = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(target_position);
 		ar & WRAP_OBJECT(attack_position);
 		
@@ -1296,9 +1270,8 @@ struct SaveFilthSwarmRat : SaveFilthSwarm
 		attack_period = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(generate);
 
 		ar & WRAP_OBJECT(DeltaAngle);
@@ -1339,9 +1312,8 @@ struct SaveFilthRat : SaveUnitRealData
 		intrerpolate_x_angle = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(FilthStatus);
 
 		ar & WRAP_OBJECT(TargetPosition);
@@ -1368,9 +1340,8 @@ struct SaveFilthSwarmShark : SaveFilthSwarm
 		attack_period = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(attack_period);
 		ar & WRAP_OBJECT(generate);
 
@@ -1400,9 +1371,8 @@ struct SaveFilthShark : SaveFilthSpline
 		timer_die_free = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSpline::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSpline::serialize_template(ar);
 		ar & WRAP_OBJECT(target);
 		ar & WRAP_OBJECT(pin);
 		ar & WRAP_OBJECT(is_hmax);
@@ -1425,9 +1395,8 @@ struct SaveFilthSwarmVolcano : SaveFilthSwarm
 		creature_num = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(generation_period);
 		ar & WRAP_OBJECT(creature_num);
 		ar & WRAP_OBJECT(unitList);
@@ -1444,9 +1413,8 @@ struct SaveFilthVolcano : SaveUnitRealData
 		time_from_last_damage = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitRealData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitRealData::serialize_template(ar);
 		ar & WRAP_OBJECT(begin_wait_destroy);
 		ar & WRAP_OBJECT(time_from_last_damage);
 	}		
@@ -1469,9 +1437,8 @@ struct SaveFilthSwarmWasp : SaveFilthSwarm
 		attack_count = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(unit_id);
 		ar & WRAP_OBJECT(generate);
 		ar & WRAP_OBJECT(attack_period);
@@ -1508,9 +1475,8 @@ struct SaveFilthWasp : SaveFilthSpline
 		no_add_point = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSpline::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSpline::serialize_template(ar);
 		ar & WRAP_OBJECT(free_destroy);
 		ar & WRAP_OBJECT(target_position);
 		ar & WRAP_OBJECT(center_position);
@@ -1544,9 +1510,8 @@ struct SaveFilthSwarmWorm : SaveFilthSwarm
 		first_create = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveFilthSwarm::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveFilthSwarm::serialize_template(ar);
 		ar & WRAP_OBJECT(attack_period);
 		ar & WRAP_OBJECT(change_angle);
 		ar & WRAP_OBJECT(angle);
@@ -1588,9 +1553,8 @@ struct SaveGeoControl : SaveUnitData
 		activatingDistance = 100;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveUnitData::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveUnitData::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(sleep, "Спит");
 
 		ar & TRANSLATE_OBJECT(firstSleepTime, "Задержка по времени до первого появления (сек)" );
@@ -1613,9 +1577,8 @@ struct SaveGeoInfluence : SaveGeoControl
 		geoRadius = 8;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveGeoControl::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveGeoControl::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(geoRadius, "Радиус");
 	}	
 };
@@ -1628,9 +1591,8 @@ struct SaveGeoBreak : SaveGeoInfluence
 		num_break = 0; 
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveGeoInfluence::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveGeoInfluence::serialize_template(ar);
 		ar & WRAP_OBJECT(num_break);
 	}	
 };
@@ -1645,9 +1607,8 @@ struct SaveGeoFault: SaveGeoControl
 		angle = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		SaveGeoControl::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		SaveGeoControl::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(length, "Длина");
 		ar & TRANSLATE_OBJECT(angle, "Угол (град)");
 	}	
@@ -1668,8 +1629,7 @@ struct SaveCameraData
 		distance = 1;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(position);
 		ar & WRAP_OBJECT(psi);
 		ar & WRAP_OBJECT(theta);
@@ -1711,8 +1671,7 @@ struct SaveCameraSplineData // Сплайн камеры
 		useAsSpline = false;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(name, "&Имя");
 		ar & TRANSLATE_OBJECT(path, "Сплайн");
 		ar & WRAP_OBJECT(useAsSpline);
@@ -1740,9 +1699,8 @@ struct ActionForAI : Action // ---------------
 
 	bool onlyIfAI() const { return onlyIfAi; }
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(onlyIfAi, "Запускать только для АИ");
 	}
 };
@@ -1763,9 +1721,8 @@ struct ActionDelay : Action // Задержка времени
 	void activate(AIPlayer& aiPlayer);
 	bool workedOut(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(delay, "Время, секунды");
 		ar & TRANSLATE_OBJECT(showTimer, "Показывать таймер");
 		ar & TRANSLATE_OBJECT(scaleByDifficulty, "Влияние уровня сложности");
@@ -1791,9 +1748,8 @@ struct ActionSetCamera : Action // Установка Камеры
 	void activate(AIPlayer& aiPlayer);
 	bool workedOut(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(cameraSplineName, "Имя сплайна камеры");
 		ar & TRANSLATE_OBJECT(stepTime, "Время между контрольными точками сплайна, секунды");
 		ar & TRANSLATE_OBJECT(cycles, "Количество циклов");
@@ -1813,9 +1769,8 @@ struct ActionOscillateCamera : Action // Тряска Камеры
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(duration, "Длительность, секунды");
 		ar & TRANSLATE_OBJECT(factor, "Амплитуда");
 	}
@@ -1826,11 +1781,17 @@ struct ActionOscillateCamera : Action // Тряска Камеры
 struct ActionVictory : Action // Победа
 {
 	void activate(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+    }
 };
 
 struct ActionDefeat : Action // Поражение
 {
 	void activate(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+    }
 };
 
 //-------------------------------------
@@ -1838,6 +1799,9 @@ struct ActionTeleportationOut : Action // Телепортировать Фрейм с мира
 {
 	bool automaticCondition(AIPlayer& aiPlayer) const;
 	void activate(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+    }
 };	
 
 struct ActionKillObject : Action // Уничтожить объект
@@ -1852,9 +1816,8 @@ struct ActionKillObject : Action // Уничтожить объект
 	bool workedOut(AIPlayer& aiPlayer);
 	terUnitBase* findObject() const;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(object, "Объект");
 	}
 };	
@@ -1863,7 +1826,10 @@ struct ActionKillObject : Action // Уничтожить объект
 struct ActionInstallFrame : ActionForAI // Инсталлировать фрейм
 {
 	void activate(AIPlayer& aiPlayer);
-	bool workedOut(AIPlayer& aiPlayer); 
+	bool workedOut(AIPlayer& aiPlayer);
+
+    VIRTUAL_SERIALIZE(ar) {
+    }
 };																													  
 
 struct ActionOrderBuilding : ActionForAI // Заказать здание
@@ -1894,9 +1860,8 @@ struct ActionOrderBuilding : ActionForAI // Заказать здание
 	void setAccepted() { workedOut_ = false; accepted_ = true; }
 	void setWorkedOut() { workedOut_ = true; }
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(building, "Тип здания");
 		ar & TRANSLATE_OBJECT(placementStrategy, "Стратегия установки");
 		ar & TRANSLATE_OBJECT(energyReserve, "Резерв энергии");
@@ -1921,9 +1886,8 @@ struct ActionHoldBuilding : ActionForAI // Заморозить строительство
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(building, "Тип здания");
 	}
 };
@@ -1953,9 +1917,8 @@ struct ActionSellBuilding : ActionForAI // Продать здание
 	void activate(AIPlayer& aiPlayer);
 	class terUnitBase* findBuilding(AIPlayer& aiPlayer) const;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(building, "Тип здания");
 		ar & TRANSLATE_OBJECT(sellFactor, "Условие продажи");
 		ar & TRANSLATE_OBJECT(damagePercent, "процент урона");
@@ -1983,9 +1946,8 @@ struct ActionSwitchGuns : ActionForAI // Включить/выключить пушки
 	bool automaticCondition(AIPlayer& aiPlayer) const;
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(mode, "Действие");
 		ar & TRANSLATE_OBJECT(gunID, "Тип пушки");
 	}
@@ -2017,9 +1979,8 @@ struct ActionChargeCores : ActionForAI // Зарядить ядра
 	bool automaticCondition(AIPlayer& aiPlayer) const;
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(chargeCoresStrategy, "Стратегия зарядки");
 	}	
 };
@@ -2043,9 +2004,8 @@ struct ActionSwitchFieldOn : ActionForAI // Включить поле
 	void activate(AIPlayer& aiPlayer);
 	bool workedOut(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(duration, "Время работы");
 		ar & TRANSLATE_OBJECT(energyReserve, "Все ядра");
 		ar & TRANSLATE_OBJECT(allCores, "Стратегия зарядки");
@@ -2075,9 +2035,8 @@ struct ActionSquadOrderUnits : ActionForAI // Заказать юнитов в сквад
 	void activate(AIPlayer& aiPlayer);
 	bool workedOut(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
 		ar & TRANSLATE_OBJECT(soldiers, "Солдаты");
 		ar & TRANSLATE_OBJECT(officers, "Офицеры");
@@ -2140,9 +2099,8 @@ struct ActionSquadAttack : ActionForAI // Атаковать сквадом
 	bool workedOut(AIPlayer& aiPlayer);
 	void interrupt(class terUnitSquad* squad);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
 		ar & TRANSLATE_OBJECT(attackByType, "атаковать типом ('никто' - базовые)");
 		ar & TRANSLATE_OBJECT(unitsToAttack, "атакуемые юниты");
@@ -2188,9 +2146,8 @@ struct ActionSquadMove : ActionForAI // Послать сквад в точку объекта по метке
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
@@ -2210,9 +2167,8 @@ struct ActionAttackBySpecialWeapon : ActionForAI // Атаковать спецоружием
 	void activate(AIPlayer& aiPlayer);
 	terUnitBase* findTarget(AIPlayer& aiPlayer, const Vect2f& position, float radiusMin) const;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ActionForAI::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ActionForAI::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(weapon, "Спецоружие");
 		ar & TRANSLATE_OBJECT(unitsToAttack, "атакуемые юниты");
 		ar & TRANSLATE_OBJECT(unitClassToAttack, "Атакуемые классы юнитов");
@@ -2229,9 +2185,8 @@ struct ActionRepareObjectByLabel : Action // Отремонтировать объекта по метке
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
@@ -2247,9 +2202,8 @@ struct ActionActivateObjectByLabel : Action // Активировать объект по метке
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
@@ -2264,9 +2218,8 @@ struct ActionDeactivateObjectByLabel : Action // Деактивировать объект по метке
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
 };
@@ -2291,9 +2244,8 @@ struct ActionSetControlEnabled : Action // Запретить/разрешить управление игрока
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(controlEnabled, "Разрешить");
 	}	
 };
@@ -2323,9 +2275,8 @@ struct ActionMessage : Action // Cообщение
 	void activate(AIPlayer& aiPlayer) { delayTimer.start(delay*1000); started_ = false; }
 	bool workedOut(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(messageID, "Идентификатор сообщения");
 		ar & TRANSLATE_OBJECT(message, "Сообщение");
 		ar & TRANSLATE_OBJECT(delay, "Задержка, секунды");
@@ -2363,9 +2314,8 @@ struct ActionTask : Action // Задача
 	void activate(AIPlayer& aiPlayer);
 	bool workedOut(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(type, "Действие");
 		ar & TRANSLATE_OBJECT(taskID, "Идентификатор задачи");
 		ar & TRANSLATE_OBJECT(duration, "Длительность, секунды");
@@ -2397,9 +2347,8 @@ struct ActionSetCameraAtObject : Action // Установить камеру на объект
 	bool workedOut(AIPlayer& aiPlayer);
 	terUnitBase* findUnit(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(object, "Объект");
 		ar & TRANSLATE_OBJECT(playerType, "Владелец объекта");
 		ar & TRANSLATE_OBJECT(transitionTime, "Время перехода, секунды");
@@ -2428,8 +2377,7 @@ struct SaveControlData
 		tabNumber = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(controlID, "&Идентификатор кнопки");	
 		ar & TRANSLATE_OBJECT(enabled, "Разрешена");	
 		ar & TRANSLATE_OBJECT(visible, "Видима");	
@@ -2444,9 +2392,8 @@ struct ActionSetControls : Action // Установить параметры кнопок
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(controls, "Кнопки");
 	}
 };
@@ -2461,9 +2408,8 @@ struct ActionSelectUnit : Action // Селектировать юнита
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(unitID, "Идентификатор юнита");
 	}	
 };
@@ -2478,9 +2424,8 @@ struct ActionProduceBrigadierOrProrab : Action // Произвести бригадира или прора
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(produceBrigadier, "Произвести бригадира");
 	}	
 };
@@ -2495,9 +2440,8 @@ struct ActionFrameMove : Action // Послать фрейм к метке
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}	
@@ -2509,9 +2453,8 @@ struct ActionFrameDetach : Action // Поднять фрейм
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 	}	
 };
 
@@ -2525,9 +2468,8 @@ struct ActionSetInterface : Action // Включить/выключить интерфейс
 
 	void activate(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Action::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Action::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(enableInterface, "Включить интерфейс");
 	}	
 };
@@ -2542,8 +2484,7 @@ struct SavePlayerManualData
 		TriggerChainName() : CustomString(editTriggerChainNameDialog) {}
 		TriggerChainName(const char* nameIn) : CustomString(editTriggerChainNameDialog, nameIn) {}
 
-		template<class Archive>	
-		void serialize(Archive& ar) {
+        SERIALIZE(ar) {
 			ar & TRANSLATE_NAME(static_cast<CustomString&>(*this), "name", "&Имя");
 		}	
 	};
@@ -2551,8 +2492,7 @@ struct SavePlayerManualData
 	TriggerChainNames triggerChainNames; 
 	TriggerChain triggerChainOld; 
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		if(ar.isInput())
 			ar & WRAP_NAME(triggerChainOld, "strategy");
 		ar & TRANSLATE_NAME(triggerChainNames, "TriggerChainNames", "Триггера");
@@ -2601,8 +2541,7 @@ struct SavePlayerStats
 		buildingLost = 0;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(maxLeveledArea);
 		ar & WRAP_OBJECT(maxZeroedArea);
 		ar & WRAP_OBJECT(scourgeKilled);
@@ -2635,8 +2574,7 @@ struct SavePlayerData
 		compAndUserID = 0;
 	}
 	
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(frame);
 		ar & WRAP_OBJECT(buildings);
 		ar & WRAP_OBJECT(catchedFrames);
@@ -2651,8 +2589,7 @@ struct SaveObjectsData
 {
 	std::vector<ShareHandle<SaveUnitData> > objects;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(objects, "Объекты");
 	}
 };
@@ -2661,8 +2598,7 @@ struct SaveWorldObjects
 {
 	std::vector<ShareHandle<SaveUnitData> > alphaPotentials;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(alphaPotentials);
 	}
 };
@@ -2682,8 +2618,7 @@ struct SaveBuildingInstallerInstruction // Предписание инсталлятору зданий
 		labeledObjectActivity = true;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(building, "Здание");
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 		ar & TRANSLATE_OBJECT(distance, "Максимальное расстояние");
@@ -2703,8 +2638,7 @@ struct SaveTask
 
 	SaveTask(const char* idIn, ActionTask::Type typeIn) : id(idIn), type(typeIn) {}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(id);
 		ar & WRAP_OBJECT(type);
 	}
@@ -2751,8 +2685,7 @@ struct SaveManualData // Данные, редактируемые руками
 	const SaveCameraSplineData* findCameraSpline(const char* name) const;
 	void saveCamera(int playerID, const char* triggerName);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		if(ar.type() & ARCHIVE_EDIT){
 			if(ar.openBlock("Sound tracks", "Музыкальные треки")){
 				ar & TRANSLATE_OBJECT(soundTracks[0], "Construction");
@@ -2803,8 +2736,7 @@ struct SavePrm {
 
 	SavePrm() {}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_NAME(players, "players");
 
 		ar & TRANSLATE_NAME(environment, "environment", "Объекты окружения");

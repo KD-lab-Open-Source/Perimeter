@@ -1,6 +1,7 @@
 #ifndef __RIGID_BODY_PRM_H__
 #define __RIGID_BODY_PRM_H__
 
+#include "../Util/SerializationMacro.h"
 
 ////////////////////////////////////////
 struct RigidBodyPrm : ShareHandleBase
@@ -28,8 +29,7 @@ struct RigidBodyPrm : ShareHandleBase
 			set();
 		}
 
-		template<class Archive>
-		void serialize(Archive& ar) {
+		SERIALIZE(ar) {
 			ar & TRANSLATE_OBJECT(phase, "phase");
 			ar & TRANSLATE_OBJECT(amplitude, "amplitude");
 			ar & TRANSLATE_OBJECT(omega, "omega");
@@ -58,8 +58,7 @@ struct RigidBodyPrm : ShareHandleBase
 			dz_max_down = 15;
 		}
 
-		template<class Archive>
-		void serialize(Archive& ar) {
+        SERIALIZE(ar) {
 			ar & TRANSLATE_OBJECT(stiffness_up, "stiffness_up");
 			ar & TRANSLATE_OBJECT(stiffness_down, "stiffness_down");
 			ar & TRANSLATE_OBJECT(dz_max_up, "dz_max_up");
@@ -309,8 +308,7 @@ struct RigidBodyPrm : ShareHandleBase
 	}
 	virtual ~RigidBodyPrm() {}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(unit_type, "unit_type");
 		ar & TRANSLATE_OBJECT(name, "name");
 		

@@ -221,8 +221,7 @@ struct vrtMap {
 	std::vector<ElementPMO> containerPMO;
 
 	void playPMOperation(void);
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_OBJECT(containerPMO);
 		ar & WRAP_OBJECT(H_SIZE_POWER);
 		ar & WRAP_OBJECT(V_SIZE_POWER);
