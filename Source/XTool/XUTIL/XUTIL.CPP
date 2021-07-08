@@ -11,6 +11,11 @@
 #endif
 #include "xutil.h"
 
+#ifndef _WIN32
+int __argc = 0;
+std::vector<const char*> __argv;
+#endif
+
 static unsigned int XRndValue = 83838383;
 
 unsigned int XRnd(unsigned int m)

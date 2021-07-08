@@ -615,6 +615,11 @@ int main(int argc, char *argv[])
 int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 #endif
 {
+#ifndef _WIN32
+    //We need to copy argc/argv so they can be accessed later via check_command_line etc
+    setup_argcv(argc, argv);
+#endif
+    
     //Scan resources first
     scan_resource_paths();
     
@@ -622,11 +627,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 
     g_controls_converter.LoadKeyNameTable();
 
-#ifdef PERIMETER_EXODUS_WINDOW
-	
-	//We need to copy argc/argv so they can be accessed later via check_command_line etc
-    setup_argcv(argc, argv);
-    
+#ifdef PERIMETER_EXODUS_WINDOW    
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     if (sdlresult < 0) {

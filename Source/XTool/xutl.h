@@ -79,10 +79,9 @@ double clockf();
 #include <filesystem>
 
 #ifndef _WIN32
-
 //Hacky way to "store" argc/argv so they can be accessed later like in Windows
-static int __argc = 0;
-static std::vector<const char*> __argv;
+extern int __argc;
+extern std::vector<const char*> __argv;
 #endif
 
 static void setup_argcv(int argc, char *argv[]) {
