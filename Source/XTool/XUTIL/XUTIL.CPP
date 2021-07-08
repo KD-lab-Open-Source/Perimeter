@@ -191,17 +191,29 @@ std::vector<std::pair<std::string, std::string>> get_resource_paths(const std::s
     return paths;
 }
 
-std::string convert_path_resource(const char* path) {
+std::string convert_path_resource(const char* path, bool parent_only) {
     if (resourcePathsFirstScan) {
         resourcePaths = std::unordered_map<std::string, std::string>();
         scan_resource_paths();
     }
     std::string conv = convert_path(path);
-    strlwr(conv.data());
     if (startsWith(conv, "./")) {
         string_replace(conv, "./", "");
     }
-    std::string result = resourcePaths[conv];
+    std::string result;
+    if (parent_only) {
+        //Search the parent and append filename
+        std::filesystem::path path_fs(conv);
+        conv = path_fs.parent_path().string();
+        strlwr(conv.data());
+        result = resourcePaths[conv];
+        if (!result.empty()) {
+            result += PATH_SEP + path_fs.filename().string();
+        }
+    } else {
+        strlwr(conv.data());
+        result = resourcePaths[conv];
+    }
     return result;
 }
 

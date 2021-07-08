@@ -15,16 +15,9 @@
 
 //Usual open but with path conversion
 int _open(const char* path, int oflags, int sflags) {
-    std::string path_open;
-    if (oflags & _O_CREAT) {
-        //File may not exist, so we cant use convert_path_resource on it
-        std::filesystem::path path_fs(convert_path(path));
-        //Pass the parent to convert_path_resource and append filename
-        path_open = convert_path_resource(path_fs.parent_path().string().c_str()) + PATH_SEP;
-        path_open += path_fs.filename();
-    } else {
-        path_open = convert_path_resource(path);
-    }
+    //File may not exist, so we need to convert only parent path
+    bool parent_only = oflags & _O_CREAT;
+    std::string path_open = convert_path_resource(path, parent_only);
     return open(path_open.c_str(), oflags, sflags);
 }
 

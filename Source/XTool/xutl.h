@@ -122,7 +122,7 @@ std::string convert_path_posix(const char* path);
 std::vector<std::pair<std::string, std::string>> get_resource_paths(const std::string& path);
 
 //Do a conversion for RESOURCE paths
-std::string convert_path_resource(const char* path);
+std::string convert_path_resource(const char* path, bool parent_only = false);
 
 //Adds char to string in end if not present
 void terminate_with_char(std::string& buffer, const char chr);
