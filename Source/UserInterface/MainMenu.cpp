@@ -976,8 +976,8 @@ int SwitchMenuScreenQuant1( float, float ) {
 							int lastWinnedMissionNumber = 1;
 						#else
 							int lastWinnedMissionNumber = gameShell->currentSingleProfile.getLastMissionNumber();
-							if (lastWinnedMissionNumber == historyScene.missionCount()) {
-								lastWinnedMissionNumber--;
+							if (lastWinnedMissionNumber >= historyScene.missionCount()) {
+								lastWinnedMissionNumber = historyScene.missionCount() - 1;
 							}
 						#endif
 
