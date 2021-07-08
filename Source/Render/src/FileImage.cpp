@@ -240,6 +240,7 @@ bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int by
 	_write(file,&Hdr,18);
 	_write(file,buf,Numbytes);
 	_close(file);
+    scan_resource_paths(filename);
 
 	return true;
 }

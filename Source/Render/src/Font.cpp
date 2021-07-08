@@ -318,6 +318,7 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 	_write(file,&size,sizeof(size));
 	_write(file,&Font[0],size*sizeof(Vect3f));
 	_close(file);
+    scan_resource_paths(fname);
 	return true;
 }
 
