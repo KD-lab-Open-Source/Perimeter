@@ -654,7 +654,7 @@ int main(int argc, char *argv[])
         if (applicationIsGo()!=runapp){
             if(gameShell && (!gameShell->alwaysRun()) ){
                 if(gameShell->getNetClient()){
-                    if(gameShell->getNetClient()->setPause(!applicationHasFocus_))
+                    if(gameShell->getNetClient()->setPause(!applicationHasFocus()))
                         runapp=applicationIsGo();
                 }
             }
@@ -721,6 +721,7 @@ void SDL_event_poll() {
                         refresh_window_size(!terFullScreen);
                         break;
                     }
+#ifndef PERIMETER_DEBUG
                     case SDL_WINDOWEVENT_FOCUS_LOST: {
                         applicationHasFocus_ = false;
                         break;
@@ -729,6 +730,7 @@ void SDL_event_poll() {
                         applicationHasFocus_= true;
                         break;
                     }
+#endif
                     case SDL_WINDOWEVENT_CLOSE: {
                         //NOTE: Seems that MacOS uses this event instead of SDL_QUIT when window is requested to close
                         closing = true;
