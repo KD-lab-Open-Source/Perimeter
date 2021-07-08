@@ -54,7 +54,7 @@ public:
 		bpp=8;
 
 		if(ImageData)delete ImageData;
-		int sz2=size.x*size.y;
+		size_t sz2=size.x*size.y;
 		ImageData=new BYTE[sz2];
 		for(int i=0;i<sz2;i++)
 			ImageData[i]=gray_in[i];
@@ -179,6 +179,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	{
 		for(i=0;i<256;i++)
 			delete chars[i].bits;
+		ErrH.Abort("Couldn't find big enough image for this font", XERR_USER, sz, fontname);
 		return false;
 	}
 
@@ -245,11 +246,6 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 
 bool cFontInternal::CreateTexture(LPCSTR fontname,LPCSTR filename,int height)
 {
-	if(height>100)
-	{
-		return false;
-	}
-
 	if(pTexture)
 		delete pTexture;
 	pTexture=NULL;
@@ -427,7 +423,7 @@ bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int 
 	}
 
 	font_name=fname;
-	_strlwr((char*)font_name.c_str());
+	_strlwr(font_name.data());
 	return true;
 }
 
