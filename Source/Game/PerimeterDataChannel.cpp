@@ -41,6 +41,8 @@ void PerimeterDataChannelLoad()
 	terFullScreen = ini.getInt("Graphics","FullScreen");
     int ScreenSizeX = ini.getInt("Graphics","ScreenSizeX");
     int ScreenSizeY = ini.getInt("Graphics","ScreenSizeY");
+    check_command_line_parameter("resx", ScreenSizeX);
+    check_command_line_parameter("resy", ScreenSizeY);
 	if (0 < ScreenSizeX) terScreenSizeX = ScreenSizeX;
 	if (0 < ScreenSizeY) terScreenSizeY = ScreenSizeY;
     ini.getInt("Graphics","ResizableWindow", terResizableWindow);

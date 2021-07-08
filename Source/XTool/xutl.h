@@ -64,8 +64,11 @@ inline const char* check_command_line(const char* switch_str)
 {
     for(int i = 1; i < __argc; i ++){
         const char* s = strstr(__argv[i], switch_str);
-        if(s)
-            return s += strlen(switch_str);
+        if(s) {
+            s += strlen(switch_str);
+            if (*s == '=') s += 1;
+            return s;
+        }
     }
     return nullptr;
 }
