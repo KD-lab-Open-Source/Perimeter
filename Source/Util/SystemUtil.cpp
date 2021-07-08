@@ -71,7 +71,7 @@ bool isPressed(uint32_t key) {
         case VK_SUBTRACT:       keycode = SDLK_MINUS; break;
         default:
 #ifdef PERIMETER_DEBUG
-            printf("Unknown VK keycode requested\n", key);
+            printf("Unknown VK keycode requested %u\n", key);
 #endif
             return false;
     }
