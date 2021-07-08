@@ -1961,23 +1961,26 @@ void GameShell::ShotsScan()
 {
 	shotNumber_ = 0;
 
-	_mkdir(terScreenShotsPath);
+    create_directories(terScreenShotsPath);
 
-	const char* name = win32_findfirst((std::string(terScreenShotsPath) + "\\*" + terScreenShotExt).c_str());
-	if(name){
-		do{
-			const char* p = strstr(name, terScreenShotName);
-			if(p){
-				p += strlen(terScreenShotName);
-				if(isdigit(*p)){
-					int t = atoi(p) + 1;
-					if(shotNumber_ < t)
-						shotNumber_ = t;
-				}
-			}
-			name = win32_findnext();
-		} while(name);
-	}
+    std::string path_str = convert_path_resource(terScreenShotsPath);
+    if (path_str.empty()) return;
+
+    std::vector<std::string> paths;
+    for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
+        std::string entry_path = entry.path().string();
+        if (endsWith(entry_path, terScreenShotExt)) {
+            const char* p = strstr(entry_path.c_str(), terScreenShotName);
+            if(p){
+                p += strlen(terScreenShotName);
+                if(isdigit(*p)){
+                    int t = atoi(p) + 1;
+                    if(shotNumber_ < t)
+                        shotNumber_ = t;
+                }
+            }
+        }
+    }
 }
 
 void GameShell::MakeShot()
@@ -2001,14 +2004,18 @@ void GameShell::startStopRecordMovie()
 
 		movieShotNumber_ = 0;
 		movieStartTime_ = frame_time();
-		
-		_mkdir(terMoviePath);
-		
-		int movieNumber = 0;
-		const char* name = win32_findfirst((std::string(terMoviePath) + "\\" + terMovieName + "*").c_str());
-		if(name){
-			do{
-				const char* p = strstr(name, terMovieName);
+
+        create_directories(terMoviePath);
+
+        std::string path_str = convert_path_resource(terMoviePath);
+        if (path_str.empty()) return;
+
+        int movieNumber = 0;
+        std::vector<std::string> paths;
+        for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
+            std::string entry_path = entry.path().string();
+            if (startsWith(entry_path, terMovieName)) {
+				const char* p = strstr(entry_path.c_str(), terMovieName);
 				if(p){
 					p += strlen(terMovieName);
 					if(isdigit(*p)){
@@ -2017,13 +2024,13 @@ void GameShell::startStopRecordMovie()
 							movieNumber = t;
 					}
 				}
-				name = win32_findnext();
-			} while(name);
+			}
 		}
+    
 		XBuffer buffer;
 		buffer < terMoviePath < "\\" < terMovieName <= movieNumber/10 % 10 <= movieNumber % 10;
 		movieName_ = buffer;
-		_mkdir(movieName_.c_str());
+        create_directories(movieName_.c_str());
 	} 
 	else{
 		HTManager::instance()->setSyncroTimer(synchroByClock_, framePeriod_, terMaxTimeInterval);

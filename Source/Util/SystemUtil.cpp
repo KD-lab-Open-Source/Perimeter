@@ -192,43 +192,21 @@ sKey::sKey(int fullkey_, bool set_by_async_funcs) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-//		File find
+//		File/Paths
 /////////////////////////////////////////////////////////////////////////////////
 
-#ifdef PERIMETER_EXODUS
-//TODO maybe we should refactor this, storing search data as static doesnt sound nice
-const char* win32_findnext() {
-    //TODO
-    return nullptr;
+bool create_directories(const char* path, std::error_code* error) {
+    bool result;
+    if (error) {
+        result = std::filesystem::create_directories(path, *error);
+    } else {
+        result = std::filesystem::create_directories(path);
+    }
+    if (result) {
+        scan_resource_paths(path);
+    }
+    return result;
 }
-const char* win32_findfirst(const char* mask) {
-    //TODO
-    return nullptr;
-}
-#else
-static WIN32_FIND_DATA FFdata;
-static HANDLE FFh;
-
-const char* win32_findnext()
-{
-	if(FindNextFile(FFh,&FFdata) == TRUE){
-		//if(FFdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) return win32_findnext();
-		return FFdata.cFileName;
-		}
-	else {
-		FindClose(FFh);
-		return NULL;
-		}
-}
-
-const char* win32_findfirst(const char* mask)
-{
-	FFh = FindFirstFile(mask,&FFdata);
-	if(FFh == INVALID_HANDLE_VALUE) return NULL;
-	//if(FFdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) return win32_findnext();
-	return FFdata.cFileName;
-}
-#endif
 
 // ---   Ini file   ---------------------
 IniManager::IniManager(const char* fname, bool check_existence) {

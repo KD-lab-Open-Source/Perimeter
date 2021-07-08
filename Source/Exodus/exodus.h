@@ -124,8 +124,6 @@ int __iscsym(int c);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Path/Dir stuff
 
-int _mkdir(const char* path);
-
 char *_fullpath(char* absolutePath, const char* relativePath, size_t maxLength);
 
 void _splitpath(const char* path_out, char* drive, char* dir, char* fname, char* ext);

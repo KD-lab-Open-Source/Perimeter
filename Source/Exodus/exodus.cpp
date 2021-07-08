@@ -169,10 +169,6 @@ int __iscsym(int c) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int _mkdir(const char* path) {
-    return std::filesystem::create_directories(path) ? 0 : -1;
-}
-
 char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) {
     if (relativePath) {
         bool malloced = absolutePath == nullptr;

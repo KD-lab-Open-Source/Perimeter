@@ -2561,7 +2561,7 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 			showMessageBox();
 		} else {
 			std::string path = REPLAY_PATH;
-            _mkdir(path.c_str());
+            create_directories(path.c_str());
 			path += "\\";
 			path += input->getText();
 

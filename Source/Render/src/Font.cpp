@@ -9,6 +9,7 @@
 #include <io.h>
 #include <stdio.h>
 #include <direct.h>
+#include "SystemUtil.h"
 #include "FileImage.h"
 
 #ifndef ASSERT
@@ -304,7 +305,7 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 	ffont=cache_dir;ffont+='\\';
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
-    _mkdir(cache_dir);
+    create_directories(cache_dir);
 
 	if(!fnt.Save(ftga.c_str()))
 		return false;

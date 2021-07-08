@@ -140,7 +140,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-        _mkdir(autoSavePlayReelDir);
+        create_directories(autoSavePlayReelDir);
 	}
 
 	currentQuant=0;
