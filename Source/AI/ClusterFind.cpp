@@ -388,8 +388,8 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 			distance=d;
 		}
 	}
-        int i;
-	for(i=0;i<size_child8;i++)
+	
+	for(int i=0;i<size_child8;i++)
 	{
 		DWORD xx=f.x+sx8[i],yy=f.y+sy8[i];
 		if(xx<dx && yy<dy)
@@ -432,10 +432,10 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 
 		if(p.size()>3)
 		{
-			int center=p.size()/2;
+            int pcenter=static_cast<int>(p.size()/2);
 			Vect2i p0,p1,p2;
 			p0=p.back();
-			p1=p[center];
+			p1=p[pcenter];
 			p2=p.front();
 
 			//Пробуем добавить первую линию
@@ -444,7 +444,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 				qfrom,qfrom,out.x,out.y);
 			if(ret==L_COMPLETE)
 			{
-				p.erase(p.begin()+center,p.end());
+				p.erase(p.begin()+pcenter,p.end());
 				path.push_back(p1);
 				first_line_added=true;
 			}
@@ -457,7 +457,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 				if(first_line_added)
 					p.clear();
 				else
-					p.erase(p.begin(),p.begin()+center);
+					p.erase(p.begin(),p.begin()+pcenter);
 			}
 
 		}
@@ -469,19 +469,19 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 		*/
 		if(p.size()>2)
 		{
-			int size=p.size();
-			int dx,dy;
-			dx=p[1].x-p[0].x;
-			dy=p[1].y-p[0].y;
+			int size=static_cast<int>(p.size());
+			int pdx=p[1].x-p[0].x;
+			int pdy=p[1].y-p[0].y;
 
-			int imin=0;
-			for(int i=0;i<size-1;i++)
+            int imin=0;
+            int i;
+			for(i=0;i<size-1;i++)
 			{
 				int px,py;
 				px=p[i+1].x-p[i].x;
 				py=p[i+1].y-p[i].y;
 
-				if(px!=dx || py!=dy)
+				if(px!=pdx || py!=pdy)
 				{
 					if(imin<i-1)
 					{
@@ -491,8 +491,8 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 					}
 
 					imin=i;
-					dx=px;
-					dy=py;
+					pdx=px;
+					pdy=py;
 				}
 			}
 
