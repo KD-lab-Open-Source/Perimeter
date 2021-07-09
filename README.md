@@ -1,96 +1,88 @@
-# Периметр 
+# Периметр | Perimeter
 
-Чат для обсуждения: https://t.me/PerimeterGame
+![Perimeter](https://cdn.akamai.steamstatic.com/steam/apps/289440/header.jpg)
 
-(с) ООО "КД ВИЖЕН" (Калининград)
+[![Linux Build](https://github.com/KranX/Perimeter/actions/workflows/linux_build.yml/badge.svg)](https://github.com/KranX/Perimeter/actions/workflows/linux_build.yml)
+[![Windows MSVC amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_x86_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_x86_build.yml)
+[![Windows MSVC amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_amd64_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_amd64_build.yml)
+[![Windows MSYS amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_32_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_32_build.yml)
+[![Windows MSYS amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_64_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_64_build.yml)
 
-[English](README.eng.md)
+[![Join the chat at https://t.me/PerimeterGame](https://patrolavia.github.io/telegram-badge/chat.svg)](https://t.me/PerimeterGame)
 
-Весь код, за исключением сторонних библиотек, публикуется под лицензией GPLv3. Код сторонних библиотек (где указана иная лицензия) публикуется под лицензией этих библиотек.
+## About
 
-## Состав репозитория
+Perimeter is a real-time strategy video game with unique gameplay elements such as terraforming deformable terrain,
+morphing units, energy network, protective shield and surreal worlds.
 
-* Source/ - проверенная ветка, которая работает с ресурсами из Steam.
-* XLibs.Net/ - header-only библиотеки используемые игрой, реально используется:
-  * boost/
-  * stl/ - самописная обертка над стандартной библиотекой
-  * VC7.1 - SDK от микрософта (нужны только либы)
-  * VC8 - SDK от микрософта (нужны только либы)
-  * XPrm.exe - утилита генерации, нужна если вы хотите собирать Scripts
-* MSDXSDK_02_06 - DirectX SDK используемый игрой
+Game needs assets/resources (3D models, textures, sounds, texts, configs, etc.) to run which can be obtained from
+purchased games in physical copies or digital stores.
 
-## Что потребуется
+Some parts may still need fixing or be experimental, expect some unexpected behavior, artifacts, bugs or crashes.
 
-Проверено что игра собирается в окружении Windows XP / Windows 7 / Windows 10 + Visual Studio 2005. Кроме того потребуется
-установить Windows SDK 7.1 для воспроизведения видео, скачать можно по ссылке:
+Issues for feature requests, suggestions, propositions, bugs, pull requests and other contributions are welcomed.
 
-https://developer.microsoft.com/ru-ru/windows/downloads/sdk-archive/
+## Лицензией | License
 
-В самом низу есть версия для Windows 7 и Windows XP (на Windows 10 он тоже подойдет).
+© ООО "КД ВИЖЕН" (Калининград) | © LLC "KD VISION" (Kaliningrad)
 
-## Сборка
+Весь код, за исключением сторонних библиотек, публикуется под лицензией GPLv3.
+Код сторонних библиотек (где указана иная лицензия) публикуется под лицензией этих библиотек.
 
-**Все нижеследующее уже сделано для папки Source (возможно, потребуется скорректировать пути и установить нужные SDK). В Visual Studio 2005 достаточно просто выбрать проект Game и Rebuild.**
+The whole code, except 3rd-party libraries, is published under the GPLv3 license.
+Code of 3rd-party libraries (where another license is specified) is published under the license of these libraries.)
 
-Игра собирается без особых проблем, главное правильно настроить **Additinal Include Direcotires** и **Additional Link Directories**,
-об этом ниже. Основная проблема была с кусочками кода написанными в стиле:
+## Compiling and installing
 
-```C++
-for (int i = ...) {
-  //...
-}
+There is instructions available in:
 
-//дальше идет использование i
-```
+[English](INSTALL.eng.md)
 
-Но современные компиляторы так делать не разрешают. Исправить это легко, - достаточно вынести определение переменной за цикл.
+## Enhancements from original game
 
-## Пошаговая инструкция по сборке
+TODO
 
-Открываем в `VS2005` solution `Source/PerimetrAddon.sln`.
+## Repository contents
 
-**ВАЖНО** Если вы сделали clean, to вам нужно восстановить файлы triggereditor.* из репозитория, потому что он не собирается!
+* Source/ - Contains source code for the game and tools, most folders purpose can be guessed but some noteworthy:
+  * Configurator - _Unknown_ - GUI utility distributed with game that allows players to change language and other settings.
+  * EasyMap - _Unknown_ - Some kind of map demo.
+  * EFFECTTOOL - _Unknown_ - Seems to be a tool for editing effects
+  * Exodus - _Working_ - Contains helper code and libraries for porting game outside Windows/DirectX
+    (unrelated to game Exodus faction)
+  * Game/ - _Working_ - Contains entry point for game in Runtime.cpp and other game related code.
+    * Scripts - _Working_ - Destination folder for generated hi/cppi files from .prm script files, these are
+      compiled using XPrm
+  * HT - _Working_ - From "HyperTreading", contains some threading related stuff
+  * Network - _Windows_ - Contains high abstraction networking code which is used from other parts of game and 
+    also low level networking code used by higher abstraction networking code.
+  * PlayOgg - _Windows_ - Handles .ogg files loading and playing using a dedicated thread.
+  * PluginMAX - _Working_ - Handles game 3D models loading from M3D/L3D files. Name comes from "3ds Max" which was used
+    originally for creating and exporting these models.
+  * Render - _Working_ - Provides graphics/rendering abstraction API, uses DirectX APIs under the hood which is provided
+    by dxvk-native and Exodus outside Windows platform.
+  * Scripts/ - _Working_ - Contains .prm files that are compiled using XPrm tool, *Library files that are loaded by game at runtime
+    which contain some game configs/data and Texts.tdb containing ingame texts. Some game copies may contain a copy of this folder.
+    * Triggers - Trigger chains containing maps and AI triggers/behaviors.
+  * Sound - _Windows_ - Provides sound effects abstraction API, uses DirectSound under the hood.
+  * Terra - _Working_ - Seems to contain deformable terrain related code.
+  * TriggerEditor - _Unknown_ - A GUI providing library which could be called from debug builds of game to edit Trigger chains.
+  * tx3d - _Working_ - "Procedural 3D Texture Library", used by Terra and SCodeInterpreter
+  * UserInterface/ - _Working_ - Handles game UI such as main menu and submenus, ingame HUD and inputs. 
+    * SCodeInterpreter - _Working_ - Interpreter for chain history files seen during main menu and campaign.
+  * Util - _Working_ - Utilities for game and other modules.
+  * XPrm - _Working_ - Tool for compiling .prm into declaration/implementation files such as hi/cppi.
+  * XUtil - _Working_ - Previously a separate library containing various X* named helpers for different projects,
+    currently only the essential stuff for the game remain. Some removed stuff may be need to ported from original
+    XUtil sources for the rest of tools.
+  
+* XLibs.Net/ - Contains some library headers and binaries
+* MSDXSDK_02_06/ - DirectX SDK used by the game
 
-Последовательность в которой нужно собриать подпроекты:
-* Scripts
-* PluginMax
-* Terra
-* Tx3D Library
-* ~~TriggerEditor~~ - **есть ошибки, можно не собирать**
-* Peer
-* Render
-* PerimeterSound
-* Game
+**Unknown** - Not tested, not compilable with modern compilers nor available in more platforms than Windows.`
 
-Выбираем подпроект в меню студии и выполняем `Project Only -> Build Only <Имя проекта>`, просто `Build` не будет работать так как есть ошибки в `TriggerEditor`,
-сама игра это проект `Game` его выход это `Game.exe`.
+**Windows** - Compilable with modern compilers but not available in more platforms than Windows.
 
-![изображение](https://user-images.githubusercontent.com/1727152/114376550-e9dba480-9baf-11eb-822e-49e47d9853fe.png)
+**Working** - Compilable with modern compilers and available in other platforms such as Windows and Linux.
 
-**Для Source зависимости прописаны и собираются в Win7. Возможно потребуется внести корректировки.**
-
-Для **каждого проекта** нужно добавить следующие пути поиска `*.h` файлов (Project Properties | C++ | General | Additional Include Directories):
-* **XLibs.Net\boost**
-* **XLibs.Net\stl**
-* **XLibs.Net**
-
-**ВАЖНО** Помещать их в самый конец списка.
-![изображение](https://user-images.githubusercontent.com/1727152/114377393-d0872800-9bb0-11eb-8991-1668535b9ded.png)
-
-После этого выбранный проект должен собраться.
-
-Для проекта **Render** помимо `XLibs.Net` нужно добавить:
-* **Microsoft SDKs\Windows\v7.1\Include**
-* **MSDXSDK_02_06\Include - Должен идти после v7.1**
-
-Для проектов **PerimeterSound, **Game** помимо `XLibs.Net` нужно добавить:
-* **Microsoft SDKs\Windows\v7.1\Include**
-
-Все проекты собраны, кроме **Game** - он не линкуется, но компилируется. Что бы это исправить нужно добавить следующие пути поиска `*.lib` файлов (Project Properties | C++ | Linker | Additional Library Directories):
-* **Microsoft SDKs\Windows\v7.1\Include**
-* **MSDXSDK_02_06\Lib\x86**
-* **XLibs.Net\VC7.1**
-* **XLibs.Net\VC8**
-
-## Запуск игры
-Скопируйте файлы GameDBG.exe, PrmEdit.dll, ScriptEditor.dll, TriggerEditor.dll и Scripts\GameShellSq.prm в папку с игрой из Steam.
+Meta issue for tracking code modernization/porting progress: https://github.com/KranX/Perimeter/issues/58
