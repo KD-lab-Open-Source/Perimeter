@@ -44,14 +44,25 @@ struct pixel_format_desc {
     void (*to_rgba)(const struct vec4 *src, struct vec4 *dst, const PALETTEENTRY *palette);
 };
 
-Vect3f NormalByColor(DWORD d);
+Vect3f normalizeColor(DWORD d)
+{
+    Vect3f v;
+    uint8_t x = (d>> 16) & 0xFF;
+    uint8_t y = (d>> 8) & 0xFF;
+    uint8_t z = (d) & 0xFF;
+    v.x = static_cast<float>(x) * (1/127.5f);
+    v.y = static_cast<float>(y) * (1/127.5f);
+    v.z = static_cast<float>(z) * (1/127.5f);
+    v-=Vect3f(1,1,1);
+    return v;
+}
 
 uint8_t conv(float val) {
     return static_cast<uint8_t>(val * 0x7F) & 0xFF;
 }
 
 uint32_t from_rgba_qwvu(uint32_t val) {
-    Vect3f n = NormalByColor(val);
+    Vect3f n = normalizeColor(val);
     uint32_t u = conv(n.x);
     uint32_t v = conv(n.y);
     uint32_t w = conv(n.z);
