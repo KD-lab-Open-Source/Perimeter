@@ -29,6 +29,7 @@ enum eMaterialMode
 	MAT_ALPHA_ADDBLEND		=1<<7,	
 	MAT_ALPHA_SUBBLEND		=1<<29,
 	MAT_BUMP				=1<<9,
+    MAT_NORMAL				=1<<10,
 
 	MAT_ALPHA_TEST			=1<<8,
 

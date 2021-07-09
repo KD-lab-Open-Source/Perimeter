@@ -16,7 +16,8 @@ enum eAttributeTexture
 
 	TEXTURE_ALPHA_BLEND		=	MAT_ALPHA_BLEND,	//  текстура содержит альфу
 	TEXTURE_ALPHA_TEST		=	MAT_ALPHA_TEST,	// текстура содержит маску в альфе
-	TEXTURE_BUMP			=   MAT_BUMP,
+    TEXTURE_BUMP			=   MAT_BUMP,
+    TEXTURE_NORMAL			=   MAT_NORMAL,
 };
 
 inline bool cTexture::IsAlpha()
@@ -57,7 +58,7 @@ inline eSurfaceFormat cTexture::GetFmt()
 		return SURFMT_RENDERMAP32;
 	if(GetAttribute(TEXTURE_32))
 		return GetAttribute(TEXTURE_ALPHA_BLEND|TEXTURE_ALPHA_TEST) ? SURFMT_COLORALPHA32 : SURFMT_COLOR32;
-	if(GetAttribute(TEXTURE_BUMP))
+	if(GetAttribute(TEXTURE_BUMP|TEXTURE_NORMAL))
 		return SURFMT_BUMP;
 	if(GetAttribute(TEXTURE_UVBUMP))
 		return SURFMT_UV;

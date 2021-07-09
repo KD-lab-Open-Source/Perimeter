@@ -499,8 +499,14 @@ cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,con
 	strcpy(path_buffer,fname);
 	strcat(path_buffer,ext);
 
-	char* attr = const_cast<char*>(pTexture->GetAttribute(TEXTURE_BUMP) ? "Bump" : NULL);
-	return LoadTextureDef(path_buffer,annoter_path,def_texture_path,attr);
+	std::string attr;
+    if (pTexture->GetAttribute(TEXTURE_BUMP)) {
+        attr = "Bump";
+    }
+    if (pTexture->GetAttribute(TEXTURE_NORMAL)) {
+        attr += " Normal";
+    }
+	return LoadTextureDef(path_buffer,annoter_path,def_texture_path,attr.data());
 }
 
 

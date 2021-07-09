@@ -281,7 +281,6 @@ cTextureScale* cTexLibrary::GetElementScale(const char *TextureName,Vect2f scale
 
 bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
 {
-	bool bump=pMode&&strstr(pMode,"Bump");
 	// тест наличия текстуры
 	if(pMode&&strstr((char*)pMode,"NoMipMap"))
 		Texture->SetNumberMipMap(1);
@@ -304,8 +303,25 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
 		}
 	}
 
-	if(bump)
-		Texture->SetAttribute(MAT_BUMP);
+    if(pMode&&strstr(pMode,"Bump")) {
+        Texture->SetAttribute(MAT_BUMP);
+        
+        //If file with _normal name is found, set attribute for normal
+        std::filesystem::path texpath(convert_path_resource(Texture->GetName()));
+        std::string normal_path = texpath.parent_path().string();
+        std::string extension = texpath.filename().extension().string();
+        std::string filename = texpath.filename().string();
+        string_replace(filename, extension.c_str(), "");
+        string_replace(filename, "_bump", "");
+        normal_path += PATH_SEP + filename + "_normal" + extension;
+        if (std::filesystem::exists(normal_path)) {
+            Texture->SetName(normal_path.c_str());
+            Texture->SetAttribute(MAT_NORMAL);
+        }
+    }
+
+    if(pMode&&strstr(pMode,"Normal"))
+        Texture->SetAttribute(MAT_NORMAL);
 
 	return ReLoadTexture(Texture,kscale);
 }
