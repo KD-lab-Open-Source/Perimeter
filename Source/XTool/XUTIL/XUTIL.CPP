@@ -129,6 +129,12 @@ std::string add_resource_path_internal(std::unordered_map<std::string, std::stri
         || startsWith(path_lwr, "cache_font")
         || startsWith(path_lwr, "scripts")
         || endsWith(path_lwr, ".ini")) {
+#ifdef PERIMETER_DEBUG
+        std::string prev_path = paths[path_lwr];
+        if (!prev_path.empty() && prev_path != res_path) {
+            printf("Detected duplicate path %s when adding %s\n", prev_path.c_str(), res_path.c_str());
+        }
+#endif
         paths[path_lwr] = res_path;
         if (is_directory(std::filesystem::path(res_path))) {
             terminate_with_char(path_lwr, PATH_SEP);
