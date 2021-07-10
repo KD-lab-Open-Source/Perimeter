@@ -849,7 +849,7 @@ void MissionDescription::setSaveName(const char* fname)
 
 void MissionDescription::setReelName(const char* name) 
 {
-	fileNamePlayReelGame = resolve_mission_path(saveName_);
+	fileNamePlayReelGame = resolve_mission_path(name);
 
 	missionNamePlayReelGame = fileNamePlayReelGame;
 	size_t pos = missionNamePlayReelGame.rfind(PATH_SEP);
