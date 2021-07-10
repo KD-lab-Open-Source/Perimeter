@@ -812,11 +812,23 @@ void MissionDescription::restart()
 		setSaveName(originalSaveName);
 }
 
+std::string resolve_mission_path(const std::string& path) {
+    //First try full path as resource (existing file)
+    std::string conv = convert_path_resource(path.c_str());
+    //Otherwise try only parent path (new file)
+    if (conv.empty()) conv = convert_path_resource(path.c_str(), true);
+    //Otherwise just use provided path
+    if (conv.empty()) conv = convert_path(path.c_str());
+    return conv;
+}
+
 void MissionDescription::setSaveName(const char* fname) 
 { 
-	saveName_ = convert_path(fname);
-	if(getExtention(saveName_.c_str()) != "spb")
-		saveName_ = setExtention(saveName_.c_str(), "spg");
+	saveName_ = fname;
+	if(getExtention(saveName_.c_str()) != "spb") {
+        saveName_ = setExtention(saveName_.c_str(), "spg");
+    }
+	saveName_ = resolve_mission_path(saveName_);
 	saveNameBinary_ = saveName_;
 	saveNameBinary_.erase(saveNameBinary_.size() - 4, saveNameBinary_.size()); 
 	for(int i = 0; i < DIFFICULTY_MAX; i++){
@@ -837,7 +849,7 @@ void MissionDescription::setSaveName(const char* fname)
 
 void MissionDescription::setReelName(const char* name) 
 {
-	fileNamePlayReelGame = convert_path(name);
+	fileNamePlayReelGame = resolve_mission_path(saveName_);
 
 	missionNamePlayReelGame = fileNamePlayReelGame;
 	size_t pos = missionNamePlayReelGame.rfind(PATH_SEP);
