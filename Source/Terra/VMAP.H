@@ -667,7 +667,7 @@ struct vrtMap {
 		else{
 			col32=Sur2Col32[SurBuf[off]][RnrBuf[off]];
 		}
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 		if(flag_ShowDbgInfo){
 			if( (GABuf[offsetBuf2offsetGBuf(off)]&GRIDAT_BUILDING) != 0) col32|=0xFF;
 			if( (GABuf[offsetBuf2offsetGBuf(off)]&GRIDAT_BASE_OF_BUILDING_CORRUPT) != 0) col32|=0xFF0000;
