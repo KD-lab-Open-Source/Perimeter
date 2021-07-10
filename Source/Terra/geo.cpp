@@ -2746,14 +2746,8 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 		numPreImage=NUMBER_PRE_IMAGE;
 		preImage=new unsigned short[tb_arraySX*tb_arraySY*tb_keyPoints*numPreImage];
 
-		char cb[MAX_PATH];
-#ifdef PERIMETER_EXODUS
-        memset(cb, 0, MAX_PATH);
-#else
-		//TODO probably not needed
-		GetCurrentDirectory(MAX_PATH, cb);
-#endif
-		strcat(cb, "\\"); strcat(cb, Path2TTerraResource); strcat(cb, "bub.dat");//"\\RESOURCE\\Tools\\bub.dat"
+        XBuffer cb;
+        cb < Path2TTerraResource < "bub.dat";
 		XStream fi;
 		fi.open(cb, XS_IN);
 		fi.seek(0,XS_BEG);
@@ -5903,7 +5897,7 @@ void s_Mesh2VMapDispather::deleteEarthUnit(s_EarthUnit* eu, bool autoDeleteMVMDa
 meshM2VM* s_Mesh2VMapDispather::getMeshFrom3DS(const char * name3DS)
 {
 	char cb[MAX_PATH];
-	strcpy(cb, Path2TTerraResource); //"\\RESOURCE\\Tools\\"
+	strcpy(cb, Path2TTerraResource);
 	strcat(cb, name3DS);
 
 	std::list<meshM2VM*>::iterator mi;

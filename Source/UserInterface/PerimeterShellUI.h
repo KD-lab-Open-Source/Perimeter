@@ -2122,12 +2122,13 @@ inline int absoluteY(float y) {
 
 inline std::string getImageFileName(const sqshImage* image, const char* fileName = 0) {
 	std::string fullname = fileName ? fileName : static_cast<std::string>(image->texture);
+	fullname = convert_path(fullname.c_str());
 	if ( !fullname.empty() ) {
 		if (image->hasResolutionVersion) {
 			char intBuffer[11 + 1];
 			sprintf(intBuffer, "%d", terRenderDevice->GetSizeX());
 			std::string resolution = std::string(intBuffer);
-			fullname.insert(fullname.rfind('\\'), "\\" + resolution);
+			fullname.insert(fullname.rfind(PATH_SEP), PATH_SEP + resolution);
 		}
 		if (image->hasBelligerentVersion && universe() && universe()->activePlayer()) {
 			switch (universe()->activePlayer()->belligerent()) {

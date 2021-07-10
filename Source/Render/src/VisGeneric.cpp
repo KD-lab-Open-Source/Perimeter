@@ -480,7 +480,7 @@ void cVisGeneric::SetEffectLibraryPath(const char* effect_path_,const char* text
 		char c=effect_path[effect_path.size()-1];
 		if(c!='\\' && c!='/')
 		{
-			effect_path+='\\';
+			effect_path+=PATH_SEP;
 		}
 	}
 

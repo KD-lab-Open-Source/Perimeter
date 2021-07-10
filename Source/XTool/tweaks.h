@@ -49,8 +49,10 @@
 //Select per platform path separator
 #ifdef _WIN32
 #define PATH_SEP '\\'
+#define PATH_SEP_STR "\\"
 #else
 #define PATH_SEP '/'
+#define PATH_SEP_STR "/"
 #endif
 
 #ifdef PERIMETER_EXODUS

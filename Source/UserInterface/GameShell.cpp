@@ -1961,10 +1961,8 @@ void GameShell::ShotsScan()
 {
 	shotNumber_ = 0;
 
-    create_directories(terScreenShotsPath);
-
-    std::string path_str = convert_path_resource(terScreenShotsPath);
-    if (path_str.empty()) return;
+    std::string path_str = convert_path_resource(terScreenShotsPath, true);
+    create_directories(path_str.c_str());
 
     std::vector<std::string> paths;
     for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
@@ -1988,7 +1986,7 @@ void GameShell::MakeShot()
 	if(shotNumber_ == -1)
 		ShotsScan();
 	XBuffer fname(MAX_PATH);
-	fname < terScreenShotsPath < "\\" < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
+	fname < convert_path(terScreenShotsPath).c_str() < PATH_SEP < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
 	shotNumber_++;
 	terRenderDevice->SetScreenShot(fname);
 }
@@ -2004,10 +2002,10 @@ void GameShell::startStopRecordMovie()
 
 		movieShotNumber_ = 0;
 		movieStartTime_ = frame_time();
+		
+        std::string path_str = convert_path_resource(terMoviePath, true);
+        create_directories(path_str.c_str());
 
-        create_directories(terMoviePath);
-
-        std::string path_str = convert_path_resource(terMoviePath);
         if (path_str.empty()) return;
 
         int movieNumber = 0;
@@ -2028,7 +2026,7 @@ void GameShell::startStopRecordMovie()
 		}
     
 		XBuffer buffer;
-		buffer < terMoviePath < "\\" < terMovieName <= movieNumber/10 % 10 <= movieNumber % 10;
+		buffer < path_str.c_str() < PATH_SEP < terMovieName <= movieNumber/10 % 10 <= movieNumber % 10;
 		movieName_ = buffer;
         create_directories(movieName_.c_str());
 	} 
@@ -2042,7 +2040,7 @@ void GameShell::startStopRecordMovie()
 void GameShell::makeMovieShot()
 {
 	XBuffer fname(MAX_PATH);
-	fname < movieName_.c_str() < "\\" < terMovieFrameName <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
+	fname < movieName_.c_str() < PATH_SEP < terMovieFrameName <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
 	movieShotNumber_++;
 	terRenderDevice->SetScreenShot(fname);
 

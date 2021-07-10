@@ -43,7 +43,7 @@ void SetExtension(const char *fnameOld,const char *extension,char *fnameNew)
 {
 	strcpy(fnameNew,fnameOld);
 	int l;
-	for(l=strlen(fnameNew)-1;l>=0&&fnameNew[l]!='\\';l--)
+	for(l=strlen(fnameNew)-1;l>=0 && fnameNew[l]!='\\' && fnameNew[l]!='/';l--)
 		if(fnameNew[l]=='.')
 			break;
 	if(l>=0&&fnameNew[l]=='.') 
@@ -873,7 +873,7 @@ void GetFileName(const char *FullName,char *fname)
 	fname[0]=0;
 	if(FullName==0||FullName[0]==0) return;
 	int l=strlen(FullName)-1;
-	while(l>=0&&FullName[l]!='\\') 
+	while(l>=0 && FullName[l]!='\\' && FullName[l]!='/') 
 		l--;
 	strcpy(fname,&FullName[l+1]);
 }
@@ -882,7 +882,7 @@ void GetFilePath(const char *FullName,char *path)
 	path[0]=0;
 	if(FullName==0||FullName[0]==0) return;
 	int l=strlen(FullName)-1;
-	while(l>=0&&FullName[l]!='\\') 
+	while(l>=0 && FullName[l]!='\\' && FullName[l]!='/') 
 		l--;
 	memcpy(path,FullName,l);
 	path[l]=0;

@@ -3418,7 +3418,7 @@ bool EffectLibrary::Load(const char* fname,const char* texture_path)
 		path=texture_path;
 		if(c!='\\' && c!='/')
 		{
-			path+='\\';
+			path+=PATH_SEP;
 		}
 	}
 

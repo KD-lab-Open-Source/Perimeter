@@ -307,8 +307,8 @@ bool cFontImage::Load(const char* fname)
 bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+='\\';
-	ffont=cache_dir;ffont+='\\';
+	ftga=cache_dir;ftga+=PATH_SEP;
+	ffont=cache_dir;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
     create_directories(cache_dir);
@@ -331,8 +331,8 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 bool cFontInternal::Load(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+='\\';
-	ffont=cache_dir;ffont+='\\';
+	ftga=cache_dir;ftga+=PATH_SEP;
+	ffont=cache_dir;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
 
@@ -366,7 +366,7 @@ void str_add_slash(char* str)
 	{
 		if(str[len-1]!='/' && str[len-1]!='\\')
 		{
-			str[len]='\\';
+			str[len]=PATH_SEP;
 			str[len+1]=0;
 		}
 	}

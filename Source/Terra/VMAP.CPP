@@ -421,20 +421,14 @@ void vrtMap::prepare(char* name)
 	//Инициализация графического режима
 	hCamera=500;
 	fCamera=500;
+	std::string path = convert_path_resource(name);
 
-	//Копирование только имени каталога в dirWorldPrm 
-	char* dir,*dirtemp;
-	char *dirend=dirtemp=dir=strdup(name);
-	while(*dirtemp) {
-		if (*dirtemp=='\\') dirend = dirtemp;
-		dirtemp++;
-	}
-	*dirend = '\0';
-	dirWorldPrm = strdup(dir);
-	free(dir);
+	//Копирование только имени каталога в dirWorldPrm
+	std::string parent = std::filesystem::path(path).parent_path().string(); 
+	dirWorldPrm = strdup(parent.c_str());
 
 	// Заполнение таблицы миров
-	prmFile.init(convert_path_resource(name).c_str());
+	prmFile.init(path.c_str());
 	maxWorld = atoi(prmFile.getAtom());
 	if(maxWorld < 1) ErrH.Abort("Empty world list");
 	int i;
@@ -449,7 +443,7 @@ void vrtMap::prepare(char* name)
 		if(!atom) ErrH.Abort("Null world path");
 
 		strcpy(tString,dirWorldPrm);//копирование в строку пути до каталога с worlds.prm
-		if(*dirWorldPrm) strcat(tString,"\\");		
+		if(*dirWorldPrm) strcat(tString,PATH_SEP_STR);		
 		strcat(tString,atom);		//добавление в строку пути до каталога с миром
 		wTable[i].dir = strdup(tString);
 		}

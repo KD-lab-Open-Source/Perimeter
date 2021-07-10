@@ -1759,9 +1759,9 @@ const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
-	if(openFileDialog(name, "Scripts\\Triggers", "scr", "Trigger Chain Name")){
+	if(openFileDialog(name, "Scripts" PATH_SEP_STR "Triggers", "scr", "Trigger Chain Name")){
 		strlwr((char*)name.c_str());
-		int pos = name.rfind("\\");
+		size_t pos = name.rfind(PATH_SEP);
 		if(pos != std::string::npos)
 			name.erase(0, pos + 1);
 		return name.c_str();

@@ -55,9 +55,9 @@ bool intfCanHandleInput() {
 }
 
 std::string getOriginalMissionName(const std::string& originalSaveName) {
-	std::string res = originalSaveName;
+	std::string res = convert_path(originalSaveName.c_str());
 	res.erase(res.size() - 4, res.size()); 
-	size_t pos = res.rfind("\\");
+	size_t pos = res.rfind(PATH_SEP);
 	if (pos != std::string::npos) {
 		res.erase(0, pos + 1);
 	}
@@ -246,11 +246,15 @@ STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, con
 	
 	//Collect files and order
 	std::vector<std::string> paths;
-    for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
+	std::error_code error;
+    for (const auto & entry : std::filesystem::directory_iterator(path_str, error)) {
         std::string entry_path = entry.path().string();
         if (mask.empty() || endsWith(entry_path, mask)) {
             paths.emplace_back(entry_path);
         }
+    }
+    if (error) {
+        fprintf(stderr, "Error loading maps from %s: %d %s\n", path.c_str(), error.value(), error.message().c_str());
     }
     sort(paths.begin(), paths.end());
     
@@ -2560,10 +2564,9 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 			delete [] mess;
 			showMessageBox();
 		} else {
-			std::string path = REPLAY_PATH;
+			std::string path = convert_path_resource(REPLAY_PATH, true);
             create_directories(path.c_str());
-			path += "\\";
-			path += input->getText();
+			path += PATH_SEP + input->getText();
 
 			switch ( universe()->savePlayReel(path.c_str()) ) {
 				case terHyperSpace::SAVE_REPLAY_OK:

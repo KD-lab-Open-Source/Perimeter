@@ -140,7 +140,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-        create_directories(autoSavePlayReelDir);
+        create_directories(convert_path_resource(autoSavePlayReelDir, true).c_str());
 	}
 
 	currentQuant=0;
@@ -187,7 +187,7 @@ bool isCorrectPlayReelFile(const char* fname)
 
 bool terHyperSpace::loadPlayReel(const char* fname)
 {
-	XStream fi(fname, XS_IN);
+	XStream fi(convert_path_resource(fname), XS_IN);
 
 	GUID fguid;
 	fi.read(&fguid, sizeof(fguid));
@@ -245,7 +245,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 {
 
 	XStream fo(0);
-	if(!fo.open(fname, XS_OUT)){
+	if(!fo.open(convert_path_resource(fname, true), XS_OUT)){
 //		::MessageBox(0, "It is impossible to write down a game reel on a disk ", "Save play reel error:", MB_OK);
 		return SAVE_REPLAY_RW_ERROR;
 	}
