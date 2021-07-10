@@ -167,7 +167,7 @@ void scan_resource_paths(std::string scan_path) {
     
     //Do recursive search on scan path if its a dir
     //Otherwise we are done already as the scan_path itself was added before
-    if (scan_path.empty()) scan_path = curdir;
+    if (scan_path.empty()) scan_path = ".";
     if (is_directory(std::filesystem::path(scan_path))) {
         for (const auto& entry : std::filesystem::recursive_directory_iterator(scan_path)) {
             if (entry.is_regular_file() || entry.is_directory()) {
@@ -198,7 +198,7 @@ std::string convert_path_resource(const char* path, bool parent_only) {
     }
     std::string conv = convert_path(path);
     if (startsWith(conv, "./")) {
-        string_replace(conv, "./", "");
+        conv.erase(0, 2);
     }
     std::string result;
     if (parent_only) {

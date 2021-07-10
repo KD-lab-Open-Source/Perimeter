@@ -225,7 +225,7 @@ const char* IniManager::get(const char* section, const char* key)
 
     //GetPrivateProfileString needs full path
     if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-        ErrH.Abort("Ini file not found: ", XERR_USER, 0, pathres.c_str());
+        ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
     
 	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
 		*buf = 0;
@@ -246,7 +246,7 @@ void IniManager::put(const char* section, const char* key, const char* val)
 
     //WritePrivateProfileString needs full path
     if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-        ErrH.Abort("Ini file not found: ", XERR_USER, 0, pathres.c_str());
+        ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
 
 	WritePrivateProfileString(section,key,val,path);
 }
