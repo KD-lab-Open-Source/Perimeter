@@ -111,9 +111,13 @@ void FieldDispatcher::hmapRotate()
 void FieldDispatcher::logicQuant()
 {
 	MTL();
+	//We need to lock since in some cases the cell cluster is
+	//null'ed while graphics thread accesses it right before checking its not null
+    MTENTER(hmap_lock);
 	ClusterList::iterator ki;
 	FOR_EACH(clusters, ki)
 		ki->logicQuant();
+    MTLEAVE(hmap_lock);
 
 	evolveField();
 
