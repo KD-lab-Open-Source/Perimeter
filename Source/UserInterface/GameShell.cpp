@@ -67,9 +67,6 @@ extern std::string cmdlineRoomName;
 extern void PlayMusic(const char *str = 0);
 
 bool terEnableGDIPixel=false;
-#ifndef PERIMETER_EXODUS_WINDOW
-STARFORCE_API void CalcRealWindowPos(int xPos,int yPos,int xScr,int yScr,bool fullscreen,Vect2i& pos,Vect2i& size);
-#endif
 
 //extern XStream quantTimeLog;
 
@@ -860,17 +857,9 @@ Vect2f GameShell::convert(int x, int y) const
 
 Vect2i GameShell::convertToScreenAbsolute(const Vect2f& pos)
 {
-#ifdef PERIMETER_EXODUS_WINDOW
     return Vect2i((pos.x + 0.5f)*(float)windowClientSize().x, (pos.y + 0.5f)*(float)windowClientSize().y);
-#else
-    //TODO is necessary to convert position to absolute like Win32?
-	POINT pt = { round((pos.x + 0.5f)*windowClientSize().x), round((pos.y + 0.5f)*windowClientSize().y) };
-	ClientToScreen(hWndVisGeneric, &pt);
-	return Vect2i((int)pt.x, (int)pt.y);
-#endif
 }
 
-#ifdef PERIMETER_EXODUS_WINDOW
 void GameShell::EventHandler(SDL_Event& event) {
     if (reelManager.isVisible()) {
         if (reelAbortEnabled) {
@@ -989,89 +978,6 @@ void GameShell::EventHandler(SDL_Event& event) {
         }
     }
 }
-#else
-void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
-{
-    if (reelManager.isVisible()) {
-        if (reelAbortEnabled) {
-            switch (uMsg) {
-                case WM_KEYDOWN:
-                    if (sKey(wParam, true).fullkey != VK_SPACE) {
-                        return;
-                    }
-                case WM_LBUTTONDOWN:
-                case WM_MBUTTONDOWN:
-                    reelManager.hide();
-                    break;
-                default:
-                    return;
-            }
-        }
-    }
-
-    sKey s;
-    switch(uMsg){
-	case WM_MOUSELEAVE:
-		MouseLeave();
-		break;
-	case WM_MOUSEMOVE: 
-		MouseMove(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_LBUTTONDOWN:
-		MouseLeftPressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_LBUTTONUP:
-		MouseLeftUnpressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_MBUTTONDOWN:
-		MouseMidPressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_MBUTTONUP:
-		MouseMidUnpressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_LBUTTONDBLCLK:
-		MouseLeftPressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		MouseLeftUnpressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		MouseLeftDoubleClick(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_RBUTTONDOWN:
-		MouseRightPressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_RBUTTONUP:
-		MouseRightUnpressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_RBUTTONDBLCLK:
-		MouseRightPressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		MouseRightUnpressed(convert(LOWORD(lParam), HIWORD(lParam)));
-		MouseRightDoubleClick(convert(LOWORD(lParam), HIWORD(lParam)));
-		break;
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
-		if (canProcessKeyEvent(lParam)) {
-            s = sKey(wParam, true);
-			KeyPressed(s);
-		}
-		break;
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-        s = sKey(wParam, true);
-        KeyUnpressed(s);
-		break;
-	case WM_CHAR:
-		if (canProcessKeyEvent(lParam) || ((_bMenuMode || wParam == VK_BACK) && _shellIconManager.isInEditMode())) {
-			_shellIconManager.OnChar(wParam);
-		}
-		break;
-	case WM_MOUSEWHEEL:
-		MouseWheel(wParam);
-		break;
-    case WM_ACTIVATEAPP:
-		if(wParam)
-			OnWindowActivate();
-		break;
-    }
-}
-#endif
 
 void GameShell::DebugCteateFilth(terFilthSpotID id)
 {
@@ -1151,7 +1057,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 				debug_write_mode ^= DEBUG_SHOW_WATCH;
 		if(!debug_write_mode){
 //			hide_debug_window();
-			ShowCursor(0);
+            SDL_ShowCursor(SDL_FALSE);
 			}
 		break;
 	case VK_F3:
@@ -1169,7 +1075,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case VK_RETURN | KBD_CTRL: 
 	case VK_RETURN | KBD_CTRL | KBD_SHIFT: {
 		terRenderDevice->Flush(hWndVisGeneric);
-		ShowCursor(1);
+        SDL_ShowCursor(SDL_TRUE);
 		//setUseAlternativeNames(true);
 		static TriggerEditor triggerEditor(triggerInterface());
 		TriggerChain* triggerChain = universe()->activePlayer()->getStrategyToEdit();
@@ -1185,7 +1091,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		}
 
 		terCamera->setFocus(HardwareCameraFocus);
-		ShowCursor(0);				
+        SDL_ShowCursor(SDL_FALSE);
 		RestoreFocus();									
 		break;
 	}
@@ -1206,9 +1112,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 	case VK_F6:
 		terRenderDevice->Flush( hWndVisGeneric );
-		ShowCursor(1);
+        SDL_ShowCursor(SDL_TRUE);
 		profiler_start_stop();
-		ShowCursor(0);
+        SDL_ShowCursor(SDL_FALSE);
 		RestoreFocus();
 		break;
 
@@ -2296,15 +2202,14 @@ void GameShell::setSpeed(float d)
 	_shellIconManager.speedChanged(game_speed);
 }
 
+void GameShell::setWindowClientSize(const Vect2i& size) {
+    windowClientSize_ = size;
+}
+
 void GameShell::setCursorPosition(const Vect2f& pos)
 {
     Vect2i ps = convertToScreenAbsolute(pos);
-#ifdef PERIMETER_EXODUS_WINDOW
-    //TODO untested
-    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)ps.x, (int)ps.y);
-#else
-	SetCursorPos(ps.x, ps.y);
-#endif
+    SDL_WarpMouseInWindow(sdlWindow, (int)ps.x, (int)ps.y);
 }
 
 void GameShell::setCursorPosition(const Vect3f& posW)
@@ -2312,7 +2217,7 @@ void GameShell::setCursorPosition(const Vect3f& posW)
 	Vect3f v, e;
 	terCamera->GetCamera()->ConvertorWorldToViewPort(&posW, &v, &e);
 
-#ifndef PERIMETER_EXODUS_WINDOW
+#if 0
 	//TODO is necessary to convert position to absolute like Win32 does with ClientToScreen when windowed?
 	if(!terFullScreen)
 	{
@@ -2332,12 +2237,7 @@ void GameShell::setCursorPosition(const Vect3f& posW)
 		e.y *= float(windowClientSize().y)/terRenderDevice->GetSizeY();
 	}
 
-#ifdef PERIMETER_EXODUS_WINDOW
-    //TODO untested
-    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)e.x, (int)e.y);
-#else
-	SetCursorPos(e.x, e.y);
-#endif
+    SDL_WarpMouseInWindow(sdlWindow, (int)e.x, (int)e.y);
 }
 
 void GameShell::setSideArrowsVisible(bool visible) {
@@ -2428,33 +2328,6 @@ void GameShell::updateMap() {
 }
 
 void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_size) {
-#ifndef PERIMETER_EXODUS_WINDOW
-	if( !terRenderDevice->IsFullScreen() ) {
-		Vect2i real_pos;
-		Vect2i real_size;
-		
-		CalcRealWindowPos(
-			0,
-			0,
-			sx,
-			sy,
-			terRenderDevice->IsFullScreen(),
-			real_pos,
-			real_size
-		);
-
-		SetWindowPos(
-			terRenderDevice->GetWindowHandle(),
-			HWND_TOP,
-			real_pos.x,
-			real_pos.y,
-			real_size.x,
-			real_size.y,
-			SWP_SHOWWINDOW
-		);
-	}
-#endif
-
 	terScreenSizeX = sx;
 	terScreenSizeY = sy;
 
@@ -2631,7 +2504,7 @@ void GameShell::createChaos() {
 void GameShell::editParameters()
 {
 	terRenderDevice->Flush(hWndVisGeneric);
-	ShowCursor(1);
+    SDL_ShowCursor(SDL_TRUE);
 
 	bool reloadParameters = false;
 	savePrm().manualData.zeroLayerHeight = vMap.hZeroPlast;
@@ -2718,6 +2591,6 @@ void GameShell::editParameters()
 	}
 
 	terCamera->setFocus(HardwareCameraFocus);
-	ShowCursor(0);				
+    SDL_ShowCursor(SDL_FALSE);
 	RestoreFocus();
 }

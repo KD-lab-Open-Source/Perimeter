@@ -32,6 +32,10 @@
 #include "../resource.h"
 
 #include <SDL.h>
+#ifdef _WIN32
+//Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
+#include <SDL_syswm.h>
+#endif
 
 #ifndef PERIMETER_EXODUS
 #include <commdlg.h>
@@ -102,7 +106,8 @@ static Vect2i windowClientSize = Vect2i(1024, 768);
 
 static bool applicationHasFocus_ = true;
 
-HWND hWndVisGeneric=0;
+SDL_Window* sdlWindow = nullptr;
+HWND hWndVisGeneric = nullptr;
 
 int terSetDebugWindow = 0;
 
@@ -113,13 +118,7 @@ SyncroTimer scale_time;
 void PerimeterDataChannelLoad();
 void PerimeterDataChannelSave();
 
-#ifdef PERIMETER_EXODUS_WINDOW
 void SDL_event_poll();
-#else
-HINSTANCE gb_hInstance=NULL;
-HWND Win32_CreateWindow(char *WinName,int xPos,int yPos,int xScr,int yScr,WNDPROC lpfnWndProc=DefWindowProc,int dwStyle=WS_OVERLAPPEDWINDOW);
-LRESULT CALLBACK VisPerimetrClient_WndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
-#endif
 
 bool applicationHasFocus()
 {
@@ -179,11 +178,7 @@ void RestoreGDI()
 {
 	if(terRenderDevice && terFullScreen)
 	{
-#ifdef PERIMETER_EXODUS_WINDOW
-        SDL_ShowWindow(fromHWND(hWndVisGeneric));
-#else
-		ShowWindow(hWndVisGeneric,SW_MINIMIZE);
-#endif
+        SDL_ShowWindow(sdlWindow);
 	}
 
 }	
@@ -192,6 +187,22 @@ void InternalErrorHandler()
 {
 	RestoreGDI();
 	if(universe()) universe()->allSavePlayReel();
+}
+
+void refresh_window_size(bool update_resolution) {
+    if(terFullScreen){
+        windowClientSize.x = terScreenSizeX;
+        windowClientSize.y = terScreenSizeY;
+    } else {
+        SDL_GetWindowSize(sdlWindow, &windowClientSize.x, &windowClientSize.y);
+    }
+    if(gameShell) {
+        gameShell->setWindowClientSize(windowClientSize);
+        if (update_resolution) {
+            gameShell->updateResolution(windowClientSize.x, windowClientSize.y, false, true);
+        }
+        _shellCursorManager.OnWMSetCursor();
+    }
 }
 
 void HTManager::init()
@@ -231,8 +242,7 @@ void HTManager::init()
 	InitSound(IniManager("Perimeter.ini").getInt("Sound","SoundEnable"), IniManager("Perimeter.ini").getInt("Sound","MusicEnable"));
 
 	gameShell = new GameShell(terMissionEdit);
-	gameShell->setWindowClientSize(windowClientSize);
-    _shellCursorManager.OnWMSetCursor();
+    refresh_window_size(false);
 
 	allocation_tracking("PerimeterLogicInit");
 
@@ -312,7 +322,47 @@ void HTManager::GraphQuant()
 //--------------------------------
 void ErrorInitialize3D();
 
-cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int ColorBit,int RefreshRateInHz)
+HWND PerimeterCreateWindow(int size_x, int size_y, bool full_screen) {
+    Uint32 window_flags = SDL_WINDOW_SHOWN;
+#ifndef _WIN32
+    //On non Windows we use dxvk-native which uses Vulkan
+    window_flags |= SDL_WINDOW_VULKAN;
+#endif
+    if (full_screen) {
+        window_flags |= SDL_WINDOW_FULLSCREEN;
+    }
+    /* TODO
+    if (terResizableWindow) {
+        window_flags |= SDL_WINDOW_RESIZABLE;
+    }
+    */
+    sdlWindow = SDL_CreateWindow(
+            "Perimeter",
+            SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,
+            size_x, size_y,
+            window_flags
+    );
+    if (!sdlWindow) {
+        ErrH.Abort("Error creating SDL window", XERR_CRITICAL, window_flags, SDL_GetError());
+    }
+
+    //Setup window icon
+    //TODO SDL_SetWindowIcon(sdlWindow, icon);
+
+#ifdef _WIN32
+    //Get HWND from SDL window
+    SDL_SysWMinfo wm_info;
+	SDL_VERSION(&wm_info.version);
+	SDL_GetWindowWMInfo(sdlWindow, &wm_info);
+	
+    return wm_info.info.win.window;
+#else
+    //dxvk-native uses HWND as SDL2 window handle, so this is allowed
+    return reinterpret_cast<HWND>(sdlWindow);
+#endif
+}
+
+cInterfaceRenderDevice* SetGraph(int Mode, int xScr, int yScr, int FullScr, int ColorBit, int RefreshRateInHz)
 {
 	cInterfaceRenderDevice *IRenderDevice=0;
 	IRenderDevice=CreateIRenderDevice();
@@ -328,25 +378,7 @@ cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int Colo
 //	if(HTManager::instance()->IsUseHT())
 		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
 
-#ifdef PERIMETER_EXODUS_WINDOW
-    Uint32 window_flags = SDL_WINDOW_VULKAN | SDL_WINDOW_SHOWN;
-    if (FullScr) {
-        window_flags |= SDL_WINDOW_FULLSCREEN;
-    }
-    SDL_Window* sdlWindow = SDL_CreateWindow(
-        "Perimeter SDL2",
-        SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,
-        xScr,yScr,
-        window_flags
-    );
-    if (!sdlWindow) {
-        ErrH.Abort("Error creating SDL window", XERR_CRITICAL, window_flags, SDL_GetError());
-    }
-    hWndVisGeneric = toHWND(sdlWindow);
-#else
-	hWndVisGeneric = Win32_CreateWindow("Perimeter",0,0,xScr,yScr,VisPerimetrClient_WndProc,
-		(FullScr ? 0 : WS_OVERLAPPEDWINDOW)|WS_POPUP|WS_VISIBLE);
-#endif
+    hWndVisGeneric = PerimeterCreateWindow(xScr, yScr, FullScr != 0);
 
 	if(IRenderDevice->Init(xScr,yScr,ModeRender,hWndVisGeneric,RefreshRateInHz))
 	{
@@ -551,33 +583,27 @@ void checkSingleRunning()
 }
 
 //------------------------------
-#ifdef PERIMETER_EXODUS_WINDOW
 int main(int argc, char *argv[])
-#else
-int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
-#endif
 {
-#ifndef _WIN32
+    //Call SDL main init
+    SDL_SetMainReady();
+    
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
-#endif
+
+    //Check if only one instance is running
+    checkSingleRunning();
     
     //Scan resources first
     scan_resource_paths();
-    
-	checkSingleRunning();
 
     g_controls_converter.LoadKeyNameTable();
 
-#ifdef PERIMETER_EXODUS_WINDOW    
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     if (sdlresult < 0) {
         ErrH.Abort("Error initializing SDL", XERR_CRITICAL, sdlresult, SDL_GetError());
     }
-#else
-	gb_hInstance=hInst;
-#endif
     
 	int ht=IniManager("Perimeter.ini").getInt("Game","HT");
 	check_command_line_parameter("HT", ht);
@@ -588,10 +614,10 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 
 	bool run = true;
 	while(run){
-#ifdef PERIMETER_EXODUS_WINDOW
         SDL_event_poll();
-#endif
+
 #ifndef PERIMETER_EXODUS
+	    //TODO is this necessary under SDL2 in Win32?
         MSG msg;
 		if(PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)){
 			if(!GetMessage(&msg, NULL, 0, 0))
@@ -620,26 +646,27 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
             run = runtime_object->Quant();
         } else {
 #ifndef PERIMETER_EXODUS
+            //TODO is this necessary under SDL2 in Win32?
             WaitMessage();
 #endif
         }
 	}
 
 	delete runtime_object;
+	
+	SDL_Quit();
 
 	return 0;
 }
 
 //--------------------------------
-#ifdef PERIMETER_EXODUS_WINDOW
 
 void SDL_event_poll() {
-    SDL_Window* window = fromHWND(hWndVisGeneric);
-    uint32_t windowID = SDL_GetWindowID(window);
+    uint32_t windowID = SDL_GetWindowID(sdlWindow);
     SDL_Event event;
     bool closing = false;
     while (SDL_PollEvent(&event) == 1) {
-        if (event.window.windowID && (!window || event.window.windowID != windowID)) {
+        if (event.window.windowID && (!sdlWindow || event.window.windowID != windowID)) {
             //Event is for a window that is not current or window is not available
             continue;
         }
@@ -669,14 +696,7 @@ void SDL_event_poll() {
                     }
                     case SDL_WINDOWEVENT_RESIZED:
                     case SDL_WINDOWEVENT_SIZE_CHANGED: {
-                        if(terFullScreen){
-                            windowClientSize.x = terScreenSizeX;
-                            windowClientSize.y = terScreenSizeY;
-                        } else {
-                            SDL_GetWindowSize(window, &windowClientSize.x, &windowClientSize.y);
-                        }
-                        if(gameShell)
-                            gameShell->setWindowClientSize(windowClientSize);
+                        refresh_window_size(!terFullScreen);
                         break;
                     }
                     case SDL_WINDOWEVENT_FOCUS_LOST: {
@@ -710,165 +730,15 @@ void SDL_event_poll() {
             if(gameShell) {
                 gameShell->terminate();
             } else {
-                //TODO is this correct?
-                SDL_DestroyWindow(window);
+                SDL_ShowCursor(SDL_TRUE);
+                SDL_DestroyWindow(sdlWindow);
+                sdlWindow = nullptr;
+                hWndVisGeneric = nullptr;
             }
             break;
         }
     }
 }
-
-#else //PERIMETER_EXODUS_WINDOW
-STARFORCE_API void CalcRealWindowPos(int xPos,int yPos,int xScr,int yScr,bool fullscreen,Vect2i& pos,Vect2i& size)
-{
-	if(xScr<0) xScr=GetSystemMetrics(SM_CXSCREEN);
-	if(yScr<0) yScr=GetSystemMetrics(SM_CYSCREEN);
-	if(!fullscreen)
-	{
-		xScr += GetSystemMetrics(SM_CXSIZEFRAME)*2;
-		yScr += GetSystemMetrics(SM_CYSIZEFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
-	}
-	if(terMissionEdit) 
-		yScr += GetSystemMetrics(SM_CYMENU);
-	if(terSetDebugWindow)
-	{
-		xPos-=GetSystemMetrics(SM_CXSIZEFRAME);
-		yPos-=GetSystemMetrics(SM_CYSIZEFRAME)+GetSystemMetrics(SM_CYCAPTION);
-	}
-
-	pos.x=xPos;
-	pos.y=yPos;
-	size.x=xScr;
-	size.y=yScr;
-}
-
-HWND Win32_CreateWindow(char *WinName,int xPos,int yPos,int xScr,int yScr,WNDPROC lpfnWndProc,int dwStyle)
-{
-	HICON hIconSm=(HICON)LoadImage(gb_hInstance,"PERIMETER",IMAGE_ICON,GetSystemMetrics(SM_CXSMICON),GetSystemMetrics(SM_CYSMICON),LR_DEFAULTCOLOR);
-	HICON hIcon=(HICON)LoadImage(gb_hInstance,"PERIMETER",IMAGE_ICON,GetSystemMetrics(SM_CXICON),GetSystemMetrics(SM_CYICON),LR_DEFAULTCOLOR);
-	WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_DBLCLKS|CS_HREDRAW|CS_VREDRAW,lpfnWndProc,0,0,gb_hInstance,hIcon,0,(HBRUSH)GetStockObject(BLACK_BRUSH),0,WinName, hIconSm};
-    if(RegisterClassEx(&wc)==0) return 0;
-
-	Vect2i real_pos,real_size;
-	CalcRealWindowPos(xPos,yPos,xScr,yScr,!(dwStyle&WS_OVERLAPPEDWINDOW),real_pos,real_size);
-	xPos=real_pos.x;
-	yPos=real_pos.y;
-	xScr=real_size.x;
-	yScr=real_size.y;
-
-	HWND hWnd=CreateWindow(WinName,WinName,dwStyle,xPos,yPos,xScr,yScr,0,0,gb_hInstance,0);
-	if(hWnd == 0)	{ UnregisterClass(WinName,gb_hInstance); return 0; }
-	if(xScr >= GetSystemMetrics(SM_CXSCREEN) && yScr >= GetSystemMetrics(SM_CYSCREEN)
-		&& !terSetDebugWindow) 
-		ShowWindow(hWnd,SHOW_FULLSCREEN);
-	else
-		ShowWindow(hWnd,SW_SHOWNORMAL);
-//	ShowCursor(0);
-	return hWnd;
-}
-void Win32_ReleaseWindow(HWND hWnd)
-{
-	ShowCursor(1);
-	if(hWnd) DestroyWindow(hWnd); 
-}
-
-LRESULT CALLBACK VisPerimetrClient_WndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
-{
-	if(uMsg == WM_GETMINMAXINFO && terSetDebugWindow) {
-		if(terScreenSizeX == GetSystemMetrics(SM_CXSCREEN) &&
-		  terScreenSizeY == GetSystemMetrics(SM_CYSCREEN)) {
-			MINMAXINFO *pMinMax;
-			pMinMax = (MINMAXINFO *)lParam;
-			POINT& p=pMinMax->ptMaxTrackSize;
-			p.x=terScreenSizeX;
-			p.y=terScreenSizeY;
-			p.x += GetSystemMetrics(SM_CXSIZEFRAME)*2;
-			p.y += GetSystemMetrics(SM_CYSIZEFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
-			if(terMissionEdit) 
-				p.y += GetSystemMetrics(SM_CYMENU);
-			return 0;
-		}
-	}
-
-	if(gameShell)
-		gameShell->EventHandler(uMsg, wParam, lParam);
-
-    switch(uMsg) 
-	{
-	case WM_CREATE:
-		break;
-    case WM_PAINT:
-        break;
-    case WM_MOVE:
-        break;
-    case WM_SIZE: {
-			RECT rc;
-			if(terFullScreen){
-				//GetWindowRect(hWnd, &rc);
-				windowClientSize.x = terScreenSizeX;
-				windowClientSize.y = terScreenSizeY;
-			}
-			else
-			{
-				GetClientRect(hWnd, &rc);
-				windowClientSize.x = rc.right - rc.left;
-				windowClientSize.y = rc.bottom - rc.top;
-			}
-			if(gameShell)
-				gameShell->setWindowClientSize(windowClientSize);
-		}
-/*
-		if((SIZE_MAXHIDE==wParam)||(SIZE_MINIMIZED==wParam)) 
-			applicationHasFocus_ = false;
-		else 
-			applicationHasFocus_= true;
-*/
-		break;
-    case WM_SETCURSOR:
-		if(applicationHasFocus()){
-			int nHittest = LOWORD(lParam);  // hit-test code 
-			if(nHittest==HTCLIENT)
-			{
-				_shellCursorManager.OnWMSetCursor();
-				return TRUE;
-			}
-        }
-        break;
-    case WM_CLOSE:
-		#ifndef _DEMO_
-			if(gameShell)
-				gameShell->terminate();
-			else
-				Win32_ReleaseWindow(hWnd);
-		#endif
-        return 0;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0L;
-	case WM_MOUSELEAVE:
-		break;
-	case WM_MOUSEMOVE: {
-		TRACKMOUSEEVENT tme;
-		tme.cbSize  = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE;
-		tme.hwndTrack = hWnd;
-		_TrackMouseEvent(&tme);
-		break;
-		}
-    case WM_ACTIVATEAPP:
-		applicationHasFocus_ = (bool)wParam;
-        return 0;
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		if (wParam == VK_MENU) {
-			return 0;
-		} else {
-			break;
-		}
-    }
-    return DefWindowProc(hWnd,uMsg,wParam,lParam);
-}
-#endif
 
 void setLogicFp()
 {

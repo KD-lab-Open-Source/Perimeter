@@ -106,9 +106,6 @@ IF(PERIMETER_WINDOWS)
         #Windows libs
         winmm
         wsock32
-        comctl32
-        advapi32
-        strmiids
     )
     
     #Use these libs as AVI fallback

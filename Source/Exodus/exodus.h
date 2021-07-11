@@ -5,14 +5,6 @@
 #include <cstdint>
 #include <windows.h>
 #include <unistd.h>
-
-inline SDL_Window* fromHWND(HWND hWindow) {
-    return reinterpret_cast<SDL_Window*>(hWindow);
-}
-
-inline HWND toHWND(SDL_Window* pWindow) {
-    return reinterpret_cast<HWND>(pWindow);
-}
         
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Win32 macros/types stuff
@@ -79,10 +71,6 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask);
 //These seem to be used as mask for storing state in game code
 #define MK_LBUTTON  0b1
 #define MK_RBUTTON 0b10
-
-void SetFocus(HWND hwnd);
-
-void ShowCursor(bool show);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

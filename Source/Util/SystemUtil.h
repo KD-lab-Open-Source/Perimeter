@@ -22,9 +22,7 @@ bool create_directories(const char* path, std::error_code* error = nullptr);
 //		Key Press
 /////////////////////////////////////////////////////////////////////////////////
 #include "xkey.h"
-#ifdef PERIMETER_EXODUS_WINDOW
 #include <SDL_events.h>
-#endif
 //#define VK_TILDE	0xC0
 
 #ifndef WM_MOUSEWHEEL
@@ -34,14 +32,7 @@ bool create_directories(const char* path, std::error_code* error = nullptr);
 bool applicationHasFocus();
 bool applicationIsGo();
 
-#ifdef PERIMETER_EXODUS_WINDOW
 bool isPressed(uint32_t key);
-#else
-inline bool isPressed(int key) {
-    return GetAsyncKeyState(key) & 0x8000;
-} 
-#endif
-
 inline bool isShiftPressed() { return isPressed(VK_SHIFT); }
 inline bool isControlPressed() { return isPressed(VK_CONTROL); }
 inline bool isAltPressed() { return isPressed(VK_MENU); }
@@ -63,9 +54,7 @@ struct sKey {
         int fullkey;
     };
 
-#ifdef PERIMETER_EXODUS_WINDOW
     explicit sKey(SDL_Keysym keysym, bool set_by_async_funcs = false);
-#endif
 
 	sKey(int fullkey_ = 0, bool set_by_async_funcs = false);
 	
@@ -77,8 +66,9 @@ struct sKey {
 
 
 // ---   Focus   ------------------------------
+extern SDL_Window* sdlWindow;
 extern HWND hWndVisGeneric;
-inline void RestoreFocus() { SetFocus(hWndVisGeneric); }
+inline void RestoreFocus() { SDL_RaiseWindow(sdlWindow); }
 
 // ---   Ini file   ------------------------------
 class IniManager

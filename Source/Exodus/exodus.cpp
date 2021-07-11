@@ -29,16 +29,6 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SetFocus(HWND hwnd) {
-    SDL_RaiseWindow(fromHWND(hwnd));
-}
-
-void ShowCursor(bool show) {
-    SDL_ShowCursor(show);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
                               char* returnBuffer, DWORD bufferSize, const char* filePath) {
     CSimpleIniA ini;

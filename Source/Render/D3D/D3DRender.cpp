@@ -460,6 +460,9 @@ void cD3DRender::UpdateRenderMode()
 
 bool cD3DRender::ChangeSize(int xscr,int yscr,int mode)
 {
+    if (xScr==xscr && yScr==yscr) {
+        return true; //Nothing to do
+    }
 	MTTexObjAutoLock lock;
 	KillFocus();
 	int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW|
