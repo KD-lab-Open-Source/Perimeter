@@ -31,7 +31,7 @@ CommandLineData cmdLineData;
 
 CreateNetCenterWayType way;
 
-std::string gameSpyRoomName = "";
+std::string cmdlineRoomName = "";
 
 std::string messageBoxText;
 bool connRestored;
@@ -154,10 +154,10 @@ int createQuant( float, float ) {
 		} else {
 			CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 			std::string gameName;
-			if (gameSpyRoomName.empty()) {
-				gameName += input->GetText();
+			if (cmdlineRoomName.empty()) {
+				gameName = input->GetText();
 			} else {
-				gameName += gameSpyRoomName;
+				gameName = cmdlineRoomName;
 			}
 			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
 			gameShell->getNetClient()->CreateGame(gameName.c_str(), missionName.c_str(), input->GetText(), BELLIGERENT_EXODUS0, 0, 1, cmdLineData.password.c_str() );
@@ -166,10 +166,10 @@ int createQuant( float, float ) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_MAP_LIST);
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 		string gameName;
-		if (gameSpyRoomName.empty()) {
+		if (cmdlineRoomName.empty()) {
 			gameName+=input->GetText();
 		} else {
-			gameName+=gameSpyRoomName;
+			gameName+=cmdlineRoomName;
 		}
 		string missionName = string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[list->GetCurSel()].missionName();
 		gameShell->getNetClient()->CreateGame(gameName.c_str(), missionName.c_str(), input->GetText(), BELLIGERENT_EXODUS0, 0, 1, cmdLineData.password.c_str() );
@@ -264,11 +264,7 @@ void GameShell::callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode) {
 			setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectVersion");
 			showMessageBoxButtons();
 			break;
-		case JG_RC_GAMESPY_CONNECTION_ERR:
-			setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.GameSpyConnectionFailed");
-			showMessageBoxButtons();
-			break;
-		case JG_RC_GAMESPY_PASSWORD_ERR:
+		case JG_RC_PASSWORD_ERR:
 			setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectPassword");
 			showMessageBoxButtons();
 			break;
@@ -1032,10 +1028,10 @@ int exitCmdLine( float, float ) {
 
 int cmdLineCreateHost( float, float ) {
 	if (menuChangingDone) {
-		gameSpyRoomName = cmdLineData.roomName;
+        cmdlineRoomName = cmdLineData.roomName;
 		way = COMMAND_LINE_CREATE_GAME;
 		gameShell->createNetClient(
-			cmdLineData.p2p ? PNetCenter::PNCWM_ONLINE_P2P : PNetCenter::PNCWM_ONLINE_GAMESPY,
+			PNetCenter::PNCWM_ONLINE_P2P,
 			cmdLineData.name.c_str(),
 			cmdLineData.ip.c_str(),
 			cmdLineData.password.c_str() );
@@ -1049,7 +1045,7 @@ int cmdLineJoin( float, float ) {
 	if (menuChangingDone) {
 		way = COMMAND_LINE_LOBBY;
 		gameShell->createNetClient(
-			cmdLineData.p2p ? PNetCenter::PNCWM_ONLINE_P2P : PNetCenter::PNCWM_ONLINE_GAMESPY,
+            PNetCenter::PNCWM_ONLINE_P2P,
 			cmdLineData.name.c_str(),
 			cmdLineData.ip.c_str(),
 			cmdLineData.password.c_str() );
@@ -1106,11 +1102,7 @@ void GameShell::callBack_NetCenterConstructorReturnCode(e_NetCenterConstructorRe
 		case NCC_RC_OK:
 			_shellIconManager.AddDynamicHandler( hideBoxNetCenterQuant, CBCODE_QUANT );
 			break;
-		case NCC_RC_GAMESPY_CONNECT_ERR:
-			setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.GameSpyConnectionFailed");
-			showMessageBoxButtons();
-			break;
-		case NCC_RC_GAMESPY_NICK_ERR:
+		case NCC_RC_NICK_ERR:
 			setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.NickError");
 			stopNetClient();
 			showMessageBoxButtons();
@@ -1141,10 +1133,10 @@ STARFORCE_API void switchToMultiplayer(CreateNetCenterWayType way) {
 				} else {
 					setMessageBoxTextID("Interface.Menu.Messages.Creating");
 					std::string gameName;
-					if (gameSpyRoomName.empty()) {
+					if (cmdlineRoomName.empty()) {
 						gameName = cmdLineData.name;
 					} else {
-						gameName = gameSpyRoomName;
+						gameName = cmdlineRoomName;
 					}
 					std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
 					gameShell->getNetClient()->CreateGame(gameName.c_str(), missionName.c_str(), cmdLineData.name.c_str(), BELLIGERENT_EXODUS0, 0, 1, cmdLineData.password.c_str() );
@@ -1180,7 +1172,7 @@ int createOnlineNetCenter( float, float ) {
 			CComboWindow* pCombo = (CComboWindow*) _shellIconManager.GetWnd(SQSH_MM_CONNECTION_TYPE_COMBO);
 			way = MENU_ONLINE;
 			gameShell->createNetClient(
-				pCombo->pos ? PNetCenter::PNCWM_ONLINE_GAMESPY : PNetCenter::PNCWM_ONLINE_P2P,
+				PNetCenter::PNCWM_ONLINE_P2P,
 				input->getText().c_str(),
 				ipInput->getText().c_str() );
 			_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT)->Enable(false);
@@ -1215,7 +1207,7 @@ void onMMApplyNameBtn(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			_shellIconManager.AddDynamicHandler( createOnlineNetCenter, CBCODE_QUANT );
 //			switchToMultiplayer(MENU_ONLINE);
 //			gameShell->createNetClient(
-//				pCombo->pos ? PNetCenter::PNCWM_ONLINE_P2P : PNetCenter::PNCWM_ONLINE_GAMESPY,
+//				PNetCenter::PNCWM_ONLINE_P2P,
 //				input->getText().c_str(),
 //				ipInput->getText().c_str() );
 //			switchToMultiplayerMenu(pWnd, true);
@@ -1227,7 +1219,6 @@ void onMMConnectionTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int pa
 	if( code == EVENT_CREATEWND ) {
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
 		pCombo->Array.push_back( getItemTextFromBase("Peer2Peer").c_str() );
-		pCombo->Array.push_back( getItemTextFromBase("GameSpy").c_str() );
 		pCombo->size = 2;
 		pCombo->pos = 0;
 //	} else if ( (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) && intfCanHandleInput() )	{

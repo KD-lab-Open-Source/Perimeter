@@ -733,13 +733,8 @@ int SwitchMenuBGQuant2( float, float ) {
 							_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_BORDER)->Show(0);
 							_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_BTN)->Show(0);
 						}
-						#ifndef _MULTIPLAYER_DEMO_
-							bool showCont = 
-										gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO
-									&&	gameShell->currentSingleProfile.isLastWin();
-						#else
-							bool showCont = false;
-						#endif
+                        bool showCont = gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO
+                                     && gameShell->currentSingleProfile.isLastWin();
 
 						_shellIconManager.GetWnd(SQSH_MM_CONTINUE_FROM_STATS_BTN)->Show(showCont);
 						_shellIconManager.GetWnd(SQSH_MM_CONTINUE_FROM_STATS_BORDER)->Show(showCont);
@@ -766,16 +761,16 @@ int SwitchMenuBGQuant2( float, float ) {
 					}
 					break;
 				case SQSH_MM_LAN_SCR:
-					_shellIconManager.GetWnd(SQSH_MM_LAN_GAMESPY_LOGO)->Show(gameShell->getNetClient()->workMode == PNetCenter::PNCWM_ONLINE_GAMESPY);
+					_shellIconManager.GetWnd(SQSH_MM_LAN_GAMESPY_LOGO)->Show(false);
 					break;
 				case SQSH_MM_CREATE_GAME_SCR:
-					_shellIconManager.GetWnd(SQSH_MM_LAN_CREATE_GAMESPY_LOGO)->Show(gameShell->getNetClient()->workMode == PNetCenter::PNCWM_ONLINE_GAMESPY);
+					_shellIconManager.GetWnd(SQSH_MM_LAN_CREATE_GAMESPY_LOGO)->Show(false);
 					break;
 				case SQSH_MM_LOBBY_SCR:
-					_shellIconManager.GetWnd(SQSH_MM_LAN_LOBBY_GAMESPY_LOGO)->Show(gameShell->getNetClient()->workMode == PNetCenter::PNCWM_ONLINE_GAMESPY);
+					_shellIconManager.GetWnd(SQSH_MM_LAN_LOBBY_GAMESPY_LOGO)->Show(false);
 					break;
 				case SQSH_MM_NAME_INPUT_SCR:
-					_shellIconManager.GetWnd(SQSH_MM_CONNECTION_TYPE_COMBO)->Show(debug_allow_mainmenu_gamespy);
+					_shellIconManager.GetWnd(SQSH_MM_CONNECTION_TYPE_COMBO)->Show(false);
 					break;
 			}
 		} else {
@@ -886,9 +881,6 @@ int SwitchMenuScreenQuant1( float, float ) {
 						#ifdef _SINGLE_DEMO_
 							_shellIconManager.GetWnd(SQSH_MM_LAN_BTN)->Enable(false);
 							_shellIconManager.GetWnd(SQSH_MM_ONLINE_BTN)->Enable(false);
-						#endif
-						#ifdef _MULTIPLAYER_DEMO_
-							((CShellPushButton*)_shellIconManager.GetWnd(SQSH_MM_SINGLE_BTN))->labelText = "TUTORIAL";
 						#endif
 						CShellWindow* pWnd = _shellIconManager.GetWnd(SQSH_MM_SPLASH4);
 						if(pWnd && (pWnd->state & SQSH_VISIBLE)) {
@@ -1623,22 +1615,11 @@ void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 //start menu
 void onMMSingleButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		#ifdef _MULTIPLAYER_DEMO_
-			missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(0).fileName).c_str() );
-			missionToExec.getActivePlayerData().difficulty = DIFFICULTY_HARD;
-			strncpy(missionToExec.getActivePlayerData().name_, "Demo", PERIMETER_CONTROL_NAME_SIZE);
-
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
-
-			gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
-		#else
-			if (gameShell->currentSingleProfile.getCurrentProfileIndex() != -1) {
-				showSingleMenu(pWnd);
-			} else {
-				_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_PROFILE_SCR);
-			}
-		#endif
+        if (gameShell->currentSingleProfile.getCurrentProfileIndex() != -1) {
+            showSingleMenu(pWnd);
+        } else {
+            _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_PROFILE_SCR);
+        }
 	}
 }
 void onMMQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
@@ -1987,7 +1968,6 @@ void onMMQuitFromStatsButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 		HTManager::instance()->GameClose();
 //		bgScene.setEnabled(true);
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
-#ifndef _MULTIPLAYER_DEMO_
 		switch(gameShell->currentSingleProfile.getLastGameType()) {
 			case UserSingleProfile::SCENARIO:
 				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCENARIO_SCR);
@@ -2006,21 +1986,10 @@ void onMMQuitFromStatsButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 			default:
 				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_START_SCR);
 		}
-#else
-		switch(gameShell->currentSingleProfile.getLastGameType()) {
-			case UserSingleProfile::LAN:
-				gameShell->getNetClient()->FinishGame();
-				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_LAN_SCR);
-				break;
-			default:
-				_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_START_SCR);
-		}
-#endif
 	}
 }
 void onMMContinueFromStatsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-#ifndef _MULTIPLAYER_DEMO_
 		HTManager::instance()->GameClose();
 //		bgScene.setEnabled(true);
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
@@ -2031,7 +2000,6 @@ void onMMContinueFromStatsButton(CShellWindow* pWnd, InterfaceEventCode code, in
 //			Instant mission
 			_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCENARIO_SCR);
 		}
-#endif
 	}
 }
 void onMMStatsTotalButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {

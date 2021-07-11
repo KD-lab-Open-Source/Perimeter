@@ -5945,8 +5945,6 @@ void CCreditsWindow::Load(const sqshControl* attr) {
 
 #ifdef _SINGLE_DEMO_
 	textData = qdTextDB::instance().getText("Interface.DemoCredits");
-#elif _MULTIPLAYER_DEMO_
-	textData = qdTextDB::instance().getText("Interface.MultiplayerDemoCredits");
 #else
 	textData = qdTextDB::instance().getText(attr->text);
 #endif

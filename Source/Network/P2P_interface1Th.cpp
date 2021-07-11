@@ -2,17 +2,15 @@
 
 #include "P2P_interface.h"
 
-#ifdef PERIMETER_EXODUS
-    #ifdef _WIN32
-    #define WIN32_LEAN_AND_MEAN
-    #include <windows.h>
-    #include <winsock.h>
-    #else
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-    #endif
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <winsock.h>
 #else
-#include "GS_interface.h"
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
+#ifndef PERIMETER_EXODUS
 #include "dxerr9.h"
 #endif
 
@@ -34,8 +32,6 @@ const char* PNetCenter::getStrWorkMode()
 	switch(workMode){
 	case PNCWM_LAN:
 		return ("PNCWM_LAN");
-	case PNCWM_ONLINE_GAMESPY:
-		return ("PNCWM_ONLINE_GAMESPY");
 	case PNCWM_ONLINE_P2P:
 		return("PNCWM_ONLINE_P2P");
 	default:
@@ -52,8 +48,6 @@ const char* PNetCenter::getStrState()
 		return("PNC_STATE__CLIENT_FIND_HOST");
 	case		PNC_STATE__CONNECTION:
 		return("PNC_STATE__CONNECTION");
-	case		PNC_STATE__INFINITE_CONNECTION_2_IP:
-		return("PNC_STATE__INFINITE_CONNECTION_2_IP");
 	case		PNC_STATE__CLIENT_TUNING_GAME:
 		return("PNC_STATE__CLIENT_TUNING_GAME");
 	case		PNC_STATE__CLIENT_LOADING_GAME:
@@ -233,7 +227,6 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 
 	InitializeCriticalSection(&m_GeneralLock);
 
-	gameSpyInterface=0;
 	//fixedInternetAddress.clear();
 	needHostList.clear();
 
@@ -242,27 +235,6 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 	switch(_workMode){
 	case PNCWM_LAN:
 		break;
-#ifndef PERIMETER_EXODUS
-	case PNCWM_ONLINE_GAMESPY:
-		{
-			gameSpyInterface=new GameSpyInterface(this);
-			GameSpyInterface::e_connectResult gsResult;
-			if(playerName==0){
-				std::string s=IniManager("Network.ini").get("General", "PlayerName");
-				gsResult=gameSpyInterface->Connect(s.c_str());
-			}
-			else {
-				gsResult=gameSpyInterface->Connect(playerName);
-			}
-			if(gsResult!=GameSpyInterface::CR_Ok){
-				if(gsResult==GameSpyInterface::CR_ConnectErr) result=GameShell::NCC_RC_GAMESPY_CONNECT_ERR;
-				else if(gsResult==GameSpyInterface::CR_NickErr) result=GameShell::NCC_RC_GAMESPY_NICK_ERR;
-				else result=GameShell::NCC_RC_GAMESPY_CONNECT_ERR;
-			}
-			else result=GameShell::NCC_RC_OK;
-		}
-		break;
-#endif
 	case PNCWM_ONLINE_P2P:
 		if(InternetAddress!=0){
 			//fixedInternetAddress=InternetAddress;
@@ -338,8 +310,6 @@ PNetCenter::~PNetCenter()
 
     DestroyEvent(hSecondThreadInitComplete);
     DestroyEvent(hCommandExecuted);
-
-	if(gameSpyInterface) delete gameSpyInterface;
 }
 
 const char* PNetCenter::getMissionName()
@@ -404,11 +374,6 @@ void PNetCenter::CreateGame(const char* gameName, const char* missionName, const
 	if(isConnected()) gameShell->callBack_CreateGameReturnCode(GameShell::CG_RC_OK);
 	else gameShell->callBack_CreateGameReturnCode(GameShell::CG_RC_CREATE_HOST_ERR);
 
-#ifndef PERIMETER_EXODUS
-	//GameSpy тоже нужен hostMissionDescription и GameName
-	if(gameSpyInterface)gameSpyInterface->CreateStagingRoom(gameName, password);
-#endif
-
 	return;
 #else 
 	ErrH.Abort("Single DEMO !!!");
@@ -420,12 +385,6 @@ void PNetCenter::JoinGame(GUID _gameHostID, const char* playerName, terBelligere
 #ifndef _SINGLE_DEMO_
 	clientPause=false;
 	clientInPacketPause=false;
-
-#ifndef PERIMETER_EXODUS
-	//GameSpy
-	if(gameSpyInterface)gameSpyInterface->JoinStagingRoom(_gameHostID);
-#endif
-
 
 	const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
 	DWORD cns = BUF_CN_SIZE;
@@ -475,25 +434,6 @@ void PNetCenter::JoinGame(const char* strIP, const char* playerName, terBelliger
 		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
 		return;// JGRC_ERR_CONNECTION;
 	}
-
-#ifndef PERIMETER_EXODUS
-	//GameSpy
-	if(gameSpyInterface){
-		GameSpyInterface::e_JoinStagingRoomResult result=gameSpyInterface->JoinStagingRoom(ip, password);
-		switch (result){
-		case GameSpyInterface::JSRR_Ok:
-			break;
-		case GameSpyInterface::JSRR_PasswordError:
-			LogMsg("GameSpy password error\n");
-			gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_GAMESPY_PASSWORD_ERR);
-			return; break;
-		default: //GameSpyInterface::JSRR_Error:
-			LogMsg("GameSpy error\n");
-			gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_GAMESPY_CONNECTION_ERR);
-			return; break;
-		}
-	}
-#endif
 
 	const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
 	DWORD cns = BUF_CN_SIZE;
@@ -573,13 +513,6 @@ void PNetCenter::HandlerInputNetCommand()
 			break;
 		case NETCOM_4C_ID_START_LOAD_GAME:
 			{
-#ifndef PERIMETER_EXODUS
-				//GameSpy
-				if(gameSpyInterface){
-					if(isHost())
-						gameSpyInterface->StartGame();
-				}
-#endif
 				netCommand4C_StartLoadGame nc4c_sl(in_ClientBuf);
 				clientMissionDescription=nc4c_sl.missionDescription_;
 
@@ -695,10 +628,7 @@ void PNetCenter::P2PIQuant()
 			interfaceCommandList.pop_front();
 		}
 
-#ifndef PERIMETER_EXODUS
-		if(gameSpyInterface) gameSpyInterface->quant();
-#endif
-		else refreshLanGameHostList();
+		refreshLanGameHostList();
 
 		HandlerInputNetCommand();
 	}
@@ -743,7 +673,7 @@ void PNetCenter::P2PIQuant()
 		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_GAME_IS_FULL_ERR);
 		break;
 	case PNC_INTERFACE_COMMAND_CONNECT_ERR_PASSWORD:
-		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_GAMESPY_PASSWORD_ERR);
+		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_PASSWORD_ERR);
 		break;
 	case PNC_INTERFACE_COMMAND_CONNECT_ERR:
 		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
@@ -881,9 +811,6 @@ void PNetCenter::GameIsReady(void)
 
 std::vector<sGameHostInfo*>& PNetCenter::getGameHostList()
 {
-#ifndef PERIMETER_EXODUS
-	if(gameSpyInterface) return gameSpyInterface->gameHostList;
-#endif
 	return gameHostList;
 }
 

@@ -258,8 +258,7 @@ public:
 
 	enum e_NetCenterConstructorReturnCode {
 		NCC_RC_OK,
-		NCC_RC_GAMESPY_CONNECT_ERR,
-		NCC_RC_GAMESPY_NICK_ERR,
+		NCC_RC_NICK_ERR,
 		NCC_RC_DIRECTPLAY_INIT_ERR
 	};
 	void callBack_NetCenterConstructorReturnCode(e_NetCenterConstructorReturnCode retCode);
@@ -270,8 +269,7 @@ public:
 	void callBack_CreateGameReturnCode(e_CreateGameReturnCode retCode);
 	enum e_JoinGameReturnCode {
 		JG_RC_OK,
-		JG_RC_GAMESPY_CONNECTION_ERR,
-		JG_RC_GAMESPY_PASSWORD_ERR,
+		JG_RC_PASSWORD_ERR,
 		JG_RC_CONNECTION_ERR,
 		JG_RC_GAME_IS_RUN_ERR,
 		JG_RC_GAME_IS_FULL_ERR,

@@ -63,13 +63,6 @@ const char* currentShortVersion =
 ;
 #endif
 
-#ifdef _MULTIPLAYER_DEMO_
-const char* currentShortVersion = 
-"Multiplayer Demo (for GameSpy internal testing only), v"
-#include "../version.h"
-;
-#endif
-
 #ifndef _DEMO_
 const char* currentShortVersion = 
 "v"

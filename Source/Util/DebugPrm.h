@@ -124,7 +124,6 @@ extern int debug_show_briefing_log;
 extern int debug_show_mouse_position;
 extern int debug_show_energy_consumption;
 extern int debug_show_intf_borders;
-extern int debug_allow_mainmenu_gamespy;
 extern int debug_allow_replay;
 extern int debug_show_lag_stat;
 
