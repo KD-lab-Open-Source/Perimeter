@@ -65,6 +65,7 @@ IF(MSVC_CL_BUILD)
     SET(Vorbis_FOUND TRUE)
     SET(VORBIS_LIBRARIES Vorbis::vorbis Vorbis::vorbisenc Vorbis::vorbisfile)
     FIND_PACKAGE(SDL2 CONFIG REQUIRED)
+    SET(SDL2_INCLUDE_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/SDL2")
     SET(SDL2_LIBRARY SDL2::SDL2) 
     SET(SDL2MAIN_LIBRARY SDL2::SDL2main)
 ELSE()
@@ -102,9 +103,7 @@ INCLUDE_DIRECTORIES(SYSTEM
     ${SDL2_INCLUDE_DIR}
 )
 
-IF(MSVC_CL_BUILD)
-    INCLUDE_DIRECTORIES("${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/SDL2")
-ELSE()
+IF(NOT MSVC_CL_BUILD)
     IF(OPTION_STATIC_BUILD)
         SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
         SET(BUILD_SHARED_LIBS OFF)
@@ -124,9 +123,6 @@ ELSE()
     IF(HAVE_SIMDSSE)
         SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -msse2")
     ENDIF()
-
-    # For modern gcc
-    #add_definitions(-D_USE_MATH_DEFINES)
 
     #TODO remove these once code is more tidy
     add_compile_options(-Wno-misleading-indentation)

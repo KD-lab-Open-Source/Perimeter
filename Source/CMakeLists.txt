@@ -15,9 +15,6 @@ IF(NOT PERIMETER_WINDOWS)
     
     INCLUDE(FetchContent)
     INCLUDE(ExternalProject)    
-    
-    #Exodus wrapper libs
-    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
 
     #pevents retrieval
     FetchContent_Declare(pevents
@@ -27,7 +24,6 @@ IF(NOT PERIMETER_WINDOWS)
     )
     FetchContent_MakeAvailable(pevents)
     ADD_DEFINITIONS(-DWFMO)
-    INCLUDE_DIRECTORIES("${pevents_SOURCE_DIR}/src")
 
     #DXVK-native wrapper lib retrieval and building
     ExternalProject_Add(dxvk-native
@@ -45,9 +41,15 @@ IF(NOT PERIMETER_WINDOWS)
             "${SOURCE_DIR}/include/native/windows"
     )
     set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
-    
-    INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
+
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
+
+    #Includes
+    INCLUDE_DIRECTORIES(
+            "${PROJECT_SOURCE_DIR}/Source/Exodus"
+            "${pevents_SOURCE_DIR}/src"
+            "${DXVK_NATIVE_INCLUDE_DIRS}"
+    )
 ELSE()
     #DirectX SDK libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
