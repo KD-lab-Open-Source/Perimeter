@@ -36,7 +36,7 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 //Запускается из 2 3-го потока
 int PNetCenter::AddClient(PlayerData& pd, const DPNID dpnid, const char* descr)
 {
-	CAutoLock _lock(&m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
+	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
 
 	int idxPlayerData=-1;
 	if(hostMissionDescription.gameType_==GT_createMPGame){
@@ -82,7 +82,7 @@ void PNetCenter::ClearClients()
 void PNetCenter::clearInternalFoundHostList(void) 
 {
 #ifndef PERIMETER_EXODUS
-	CAutoLock _lock(&m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
+	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
 	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
 		delete *p;

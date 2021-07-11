@@ -72,10 +72,7 @@ ADD_SUBDIRECTORY("Network")
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-        Exodus
-        Threads::Threads
-    )
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
 ELSE()
     ADD_SUBDIRECTORY("PlayOgg")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)

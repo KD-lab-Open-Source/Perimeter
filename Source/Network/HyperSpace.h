@@ -207,7 +207,7 @@ public:
 
 	bool flag_HostMigrate;
 
-	CRITICAL_SECTION m_FullListGameCommandLock;
+    SDL_mutex* m_FullListGameCommandLock;
 
 };
 

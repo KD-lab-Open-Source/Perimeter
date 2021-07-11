@@ -13,15 +13,15 @@ class InOutNetComBuffer;
 
 class CAutoLock
 {
-	CRITICAL_SECTION* m_pCs;
+    SDL_mutex* m_pCs;
 
 public:
-	CAutoLock(CRITICAL_SECTION* pCs){
+	CAutoLock(SDL_mutex* pCs){
 		m_pCs = pCs;
-		EnterCriticalSection(m_pCs);
+		SDL_LockMutex(m_pCs);
 	}
 	~CAutoLock(){
-		LeaveCriticalSection(m_pCs);
+		SDL_UnlockMutex(m_pCs);
 	}
 };
 

@@ -131,19 +131,6 @@ void _splitpath(const char* path_out, char* drive, char* dir, char* fname, char*
 void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Basic wrapper for Win32 CRITICAL_SECTION stuff
-//TODO replace this with posix mutex calls directly on Windows builds?
-
-#include <pthread.h>
-
-typedef pthread_mutex_t CRITICAL_SECTION;
-
-void EnterCriticalSection(CRITICAL_SECTION *m);
-void LeaveCriticalSection(CRITICAL_SECTION *m);
-void InitializeCriticalSection(CRITICAL_SECTION *m);
-void DeleteCriticalSection(CRITICAL_SECTION *m);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Event/Thread stuff
 
 #include <pevents.h>
@@ -151,8 +138,6 @@ void DeleteCriticalSection(CRITICAL_SECTION *m);
 #define INFINITE neosmart::WAIT_INFINITE
 
 #define WAIT_OBJECT_0 0
-
-typedef pthread_t THREAD_ID;
 
 HANDLE CreateEvent(int, bool manualReset, bool initialState, int);
 
@@ -165,8 +150,6 @@ void ResetEvent(HANDLE event);
 DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds);
 
 DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds);
-
-HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, THREAD_ID* tid);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

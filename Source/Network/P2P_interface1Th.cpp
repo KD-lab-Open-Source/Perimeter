@@ -13,6 +13,7 @@
 #ifndef PERIMETER_EXODUS
 #include "dxerr9.h"
 #endif
+#include <SDL.h>
 
 #include "GameShell.h"
 #include "Universe.h"
@@ -224,8 +225,7 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 	///m_hPlayerListReady = CreateEvent(0, TRUE, FALSE, 0);
 	//m_flag_PlayerListReady=0;
 
-
-	InitializeCriticalSection(&m_GeneralLock);
+	m_GeneralLock = SDL_CreateMutex();
 
 	//fixedInternetAddress.clear();
 	needHostList.clear();
@@ -266,8 +266,12 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 
 	//hSecondThread=INVALID_HANDLE_VALUE;
 
-	THREAD_ID ThreadId;
-	hSecondThread=CreateThread( NULL, 0, InternalServerThread, this, /*NULL,*/ 0, &ThreadId);
+    SDL_Thread* thread = SDL_CreateThread(InternalServerThread, "perimeter_server_thread", this);
+    if (thread == nullptr) {
+        SDL_FATAL_ERROR("SDL_CreateThread perimeter_server_thread failed");
+    }
+    SDL_DetachThread(thread);
+    hSecondThread = CreateEvent(0, true, false, 0);
 
 	if(WaitForSingleObject(hSecondThreadInitComplete, INFINITE) != WAIT_OBJECT_0) {
 		xassert(0&&"NetCenter:Error second thread init");
@@ -288,11 +292,7 @@ PNetCenter::~PNetCenter()
 	const unsigned int TIMEOUT=5000;// ms
 	if( WaitForSingleObject(hSecondThread, TIMEOUT) != WAIT_OBJECT_0) {
 		xassert(0&&"Net Thread terminated!!!");
-#ifdef PERIMETER_EXODUS
         SetEvent(hSecondThread); //TODO not sure if this even necessary
-#else
-		TerminateThread(hSecondThread, 0);
-#endif
 	}
 
 	ClearDeletePlayerGameCommand();
@@ -304,7 +304,7 @@ PNetCenter::~PNetCenter()
 
 
 
-	DeleteCriticalSection(&m_GeneralLock);
+	SDL_DestroyMutex(m_GeneralLock);
 	///CloseHandle(hServerReady);
 	///CloseHandle(hStartServer);
 
@@ -474,7 +474,7 @@ void PNetCenter::SendEvent(const netCommandGeneral* event)
 }
 void PNetCenter::SendEventSync(const netCommandGeneral* event)
 {
-	CAutoLock lock(&m_GeneralLock);
+	CAutoLock lock(m_GeneralLock);
 
 	if(isHost()){
 		in_HostBuf.putNetCommand(event);
@@ -621,7 +621,7 @@ void PNetCenter::P2PIQuant()
 
 	sPNCInterfaceCommand curInterfaceCommand(PNC_INTERFACE_COMMAND_NONE);
 	{
-		CAutoLock p_Lock(&m_GeneralLock);
+		CAutoLock p_Lock(m_GeneralLock);
 		if(!interfaceCommandList.empty()){
 			////Сейчас сделано так, что нельзя поместить команду если другая выполняется
 			curInterfaceCommand=*interfaceCommandList.begin();
@@ -777,7 +777,7 @@ void PNetCenter::changeMap(const char* missionName)
 bool PNetCenter::setPause(bool pause)
 {
 	if(m_bStarted){
-		CAutoLock p_Lock(&m_GeneralLock);
+		CAutoLock p_Lock(m_GeneralLock);
 		if(pause){
 			netCommand4H_RequestPause nc_rp(clientMissionDescription.activePlayerID, true);
 			SendEvent(&nc_rp);
@@ -955,7 +955,7 @@ void PNetCenter::reEnumPlayers(int IP)
 #define IP4(x) ((x>>24) & 0xff)
 void PNetCenter::reStartFindPlayers(int ip)
 {
-	CAutoLock _Lock(&m_GeneralLock); //! Lock 
+	CAutoLock _lock(m_GeneralLock); //! Lock 
 
 	StopFindHostDP();
 	char ip_string[17];

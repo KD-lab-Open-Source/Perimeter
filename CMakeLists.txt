@@ -99,8 +99,6 @@ ELSE()
 ENDIF()
 
 IF(NOT PERIMETER_WINDOWS)
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-    FIND_PACKAGE(Threads REQUIRED)
 ENDIF()
 
 #FFMPEG used for AVI and video decoding if present

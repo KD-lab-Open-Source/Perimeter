@@ -222,29 +222,6 @@ void _makepath(char* path, const char*, const char* dir, const char* fname, cons
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void EnterCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutex_lock(m);
-}
-
-void LeaveCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutex_unlock(m);
-}
-
-void InitializeCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    //Seems like Windows EnterCriticalSection can have multiple calls on same thread, replicate same by
-    //setting recursive mutex attr
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(m, &attr);
-}
-
-void DeleteCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutex_destroy(m);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 HANDLE CreateEvent(int, bool manualReset, bool initialState, int) {
     return neosmart::CreateEvent(manualReset, initialState);
 }
@@ -267,12 +244,4 @@ DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds) {
 
 DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds) {
     return neosmart::WaitForMultipleEvents(reinterpret_cast<neosmart::neosmart_event_t*>(events), count, waitAll, milliseconds);
-}
-
-HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, THREAD_ID* tid) {
-    if (pthread_create(tid, nullptr, start_address, arg) != 0) {
-        *tid = 0;
-        return nullptr;
-    }
-    return neosmart::CreateEvent(true, false);
 }

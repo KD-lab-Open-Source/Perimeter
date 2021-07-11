@@ -54,7 +54,7 @@ cMonowideFont* pMonowideFont;
 
 terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission)
 {
-	InitializeCriticalSection(&m_FullListGameCommandLock);
+	m_FullListGameCommandLock = SDL_CreateMutex();
 
 	flag_HostMigrate=false;
 	flag_stopSavePlayReel=false;
@@ -113,7 +113,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	//Очистка списков команд
 	{
 		//Lock!
-		CAutoLock lock(&m_FullListGameCommandLock);
+		CAutoLock lock(m_FullListGameCommandLock);
 		clearListGameCommands(fullListGameCommands);
 	}
 	lastQuant_inFullListGameCommands=0;
@@ -273,7 +273,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 	InOutNetComBuffer out_buffer(1024,1);
 	{
 		//Lock!
-		CAutoLock lock(&m_FullListGameCommandLock);
+		CAutoLock lock(m_FullListGameCommandLock);
 		for(p=fullListGameCommands.begin(); p!=fullListGameCommands.end(); p++){
 			//xassert( ((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND) || ((*p)->EventID==NETCOM_4G_ID_REGION) || ((*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT) );
 			out_buffer.putNetCommand((*p));
@@ -319,7 +319,7 @@ terHyperSpace::~terHyperSpace()
 	//Очистка списков команд
 	{
 		//Lock!
-		CAutoLock lock(&m_FullListGameCommandLock);
+		CAutoLock lock(m_FullListGameCommandLock);
 		clearListGameCommands(fullListGameCommands);
 	}
 	lastQuant_inFullListGameCommands=0;
@@ -330,7 +330,7 @@ terHyperSpace::~terHyperSpace()
 #ifndef _FINAL_VERSION_
 	delete pMonowideFont;
 #endif //_FINAL_VERSION_
-	DeleteCriticalSection(&m_FullListGameCommandLock);
+	SDL_DestroyMutex(m_FullListGameCommandLock);
 
 }
 
@@ -470,7 +470,7 @@ void terHyperSpace::sendCommand(const netCommand4G_UnitCommand& command)
 { 
 	if(!pNetCenter){
 		//Lock!
-		CAutoLock lock(&m_FullListGameCommandLock);
+		CAutoLock lock(m_FullListGameCommandLock);
 
 		netCommand4G_UnitCommand* pnc=new netCommand4G_UnitCommand(command);
 		pnc->setCurCommandQuantAndCounter(currentQuant+1,0);
@@ -487,7 +487,7 @@ void terHyperSpace::sendCommand(const netCommand4G_Region& command)
 { 
 	if(!pNetCenter){
 		//Lock!
-		CAutoLock lock(&m_FullListGameCommandLock);
+		CAutoLock lock(m_FullListGameCommandLock);
 
 		netCommand4G_Region* pnc=new netCommand4G_Region(command);
 		pnc->setCurCommandQuantAndCounter(currentQuant+1,0);
@@ -544,7 +544,7 @@ bool terHyperSpace::SingleQuant()
 	}
 	else {
 		//Lock!
-		CAutoLock lock(&m_FullListGameCommandLock);
+		CAutoLock lock(m_FullListGameCommandLock);
 
 		for(curGameComPosition; curGameComPosition<fullListGameCommands.size(); curGameComPosition++){
 			if(fullListGameCommands[curGameComPosition]->curCommandQuant_==currentQuant){

@@ -4,6 +4,7 @@
 GameShell в графическом потоке.
 */
 #include "fps.h"
+#include <SDL_thread.h>
 
 
 class HTManager
@@ -61,18 +62,14 @@ protected:
 	time_type time;
 	time_type dtime;
 
-	THREAD_ID logic_thread_id;
+	SDL_threadID logic_thread_id;
 	struct LogicThreadArg
 	{
 		MissionDescription mission;
 	};
 	void logic_thread();
 
-#ifdef PERIMETER_EXODUS
-    friend void* logic_thread_init(void*);
-#else
-	friend void logic_thread_init( void * argument);
-#endif
+    friend int logic_thread_init(void*);
 
 	bool init_logic;
 
