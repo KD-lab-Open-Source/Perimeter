@@ -113,12 +113,6 @@ SyncroTimer scale_time;
 void PerimeterDataChannelLoad();
 void PerimeterDataChannelSave();
 
-#ifndef PERIMETER_EXODUS
-void PerimeterAviInit();
-int PerimeterAviQuant();
-void PerimeterAviFinit();
-#endif
-
 #ifdef PERIMETER_EXODUS_WINDOW
 void SDL_event_poll();
 #else
@@ -248,10 +242,6 @@ void HTManager::done()
 {
 	if(!terMissionEdit)
 		PerimeterDataChannelSave();
-
-#ifndef PERIMETER_EXODUS
-	PerimeterAviFinit();
-#endif
 	
 	// Logic
 	delete gameShell;
@@ -537,48 +527,6 @@ void FinitSound()
 }
 
 //--------------------------------
-
-#ifndef PERIMETER_EXODUS
-sWinVideo terWinVideo;
-int terWinVideoValid = 0;
-int terWinVideoEnable = 0;//getPerimeterIniInt("Game","PlayAVI");
-
-void PerimeterAviInit()
-{
-	int sx,sy;
-//ForAvi
-	if(terWinVideoEnable){
-		sx = 0;
-		sy = 0;
-		terWinVideo.Open("RESOURCE\\VIDEO\\intro.avi");
-		terWinVideo.GetSize(&sx,&sy);
-		int x = (terScreenSizeX - sx)/2, y = (terScreenSizeY - sy)/2;
-		terWinVideo.SetWin(hWndVisGeneric,x,y,sx,sy);
-		terWinVideo.FullScreen(terFullScreen);
-		terWinVideo.HideCursor(0);
-		terWinVideo.Play();
-		terWinVideoValid = 1;
-	};
-};
-
-int PerimeterAviQuant()
-{
-	if(terWinVideoValid && terWinVideo.IsComplete()){
-		PerimeterAviFinit();
-		return 1;
-	};
-	return 0;
-};
-
-void PerimeterAviFinit()
-{
-	if(terWinVideoValid){
-		terWinVideo.Stop();
-		terWinVideo.Close();
-		terWinVideoValid = 0;
-	}
-}
-#endif
 
 void checkSingleRunning()
 {
