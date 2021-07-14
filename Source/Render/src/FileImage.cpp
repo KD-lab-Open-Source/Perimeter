@@ -4,19 +4,27 @@
 #include <cstdint>
 #include <assert.h>
 
-#ifndef PERIMETER_EXODUS
+#ifdef PERIMETER_FFMPEG
+#include "AVWrapper.h"
+#else
 #include <vfw.h>		// AVI include
-#endif
-#include <setjmp.h>		// JPG include
 #include <math.h>
+#include <sys/types.h>
+#include "xutil.h"
+#endif
+
+#ifdef _WIN32
+//For _open etc
+#include <io.h>
+#endif
+
+//#include <setjmp.h>		// JPG include
 #include "xutil.h"
 #include "FileImage.h"
 
 #include <fcntl.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <io.h>
-#include "xutil.h"
+
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 #include <iostream>
@@ -393,71 +401,135 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cAVIImage
 //////////////////////////////////////////////////////////////////////////////////////////
-#ifdef PERIMETER_EXODUS
+#ifdef PERIMETER_FFMPEG
+
+// compatability with newer libavcodec
+#if LIBAVCODEC_VERSION_MAJOR < 57
+#define AV_FRAME_ALLOC avcodec_alloc_frame
+#define AV_PACKET_UNREF av_free_packet
+#else
+#define AV_FRAME_ALLOC av_frame_alloc
+#define AV_PACKET_UNREF av_packet_unref
+#endif
+
+#define AV_CODEC_PAR (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 33, 100))
+
 class cAVIImage : public cFileImage
 {
-public:
-    cAVIImage() {
-    }
+    AVWrapper wrapper;
+    int tpf; //Cached time per frame
+    std::vector<uint8_t*> frames;
     
-    virtual ~cAVIImage() {
+public:
+    cAVIImage() = default;
+    
+    ~cAVIImage() override {
         close();
     }
     
-    virtual int close()
-    {
-        return 0;
+    virtual int close() {
+        for (uint8_t* frame : frames) {
+            delete[] frame;
+        }
+        frames.clear();
+        return wrapper.close();
     }
     
-    virtual int load(const char *fname)
-    {
-        //TODO
+    virtual int load(const char *fname) {
+        std::string aviname = convert_path_resource(fname);
+        if (aviname.empty()) {
+            //VisError <<"cAVIImage File not found:"<<aviname<<VERR_END;
+            return 1; // Couldn't open file
+        }
+
+        // Open video file
+        int ret = wrapper.open(aviname, AVWrapperType::Video);
+        if (ret) {
+            return ret;
+        }
+
+        x = wrapper.videoCodecCtx->width;
+        y = wrapper.videoCodecCtx->height;
+        
+        //Set time (milliseconds of total duration)
+        time = static_cast<int>(round(
+            static_cast<float>(wrapper.formatCtx->duration) / AV_TIME_BASE * 1000.0f
+        ));
+        
+        //Set bpp
+        bpp = wrapper.videoCodecCtx->bits_per_coded_sample;
+
+        //Set length (amount of frames), this seems to be the only way to get for now
+        bool reading = true;
+        while (reading) {
+            AVWrapperType type = wrapper.readPacket();
+            switch (type) {
+                case None:
+                    reading = false;
+                    break;
+                case Audio:
+                    break;
+                case Video:
+                case AudioVideo:
+                    uint8_t* buffer = nullptr;
+                    wrapper.getVideoFrameBuffer(&buffer);
+                    frames.emplace_back(buffer);
+                    break;
+            }
+        }
+        length = static_cast<int>(frames.size());
+        
+        tpf = (time-1)/(length-1);
+        
         return 0;
     }
-    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
-    {
-        //TODO
+
+    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) {
+        //TODO is this func even necessary?
         return 0;
     }
-    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
-    {
-        //TODO
-        /*
+
+    uint8_t* getFrameDataFromTime(int t) {
+        int i = t / tpf;
+        if (i >= frames.size()) {
+            ErrH.Abort("Attempted to read frame " + std::to_string(i) + " which is out of bounds " + std::to_string(frames.size()));
+        }
+        return frames[i];
+    }
+
+    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) {
+        uint8_t* data = getFrameDataFromTime(t);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     ((unsigned char*)bmiColors),3,GetX()*3,8,0,GetX(),-y);
+                                     data,3,GetX()*3,8,0,GetX(),GetY());
         else if(GetBitPerPixel()==32)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     ((unsigned char*)bmiColors),4,GetX()*4,8,24,GetX(),-y);
+                                     data,4,GetX()*4,8,24,GetX(),GetY());
         else if(GetBitPerPixel()==16)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-                                     ((unsigned char*)bmiColors),2,GetX()*2,31,0,GetX(),-y);
-        */
+                                     data,2,GetX()*2,31,0,GetX(),GetY());
         return 0;
     }
-    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
-    {
-        //TODO
-        /*
+
+    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst) {
+        uint8_t* data = getFrameDataFromTime(t);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                ((unsigned char*)bmiColors),3,GetX()*3,8,16,8,8,8,0,GetX(),-y);
+                                data,3,GetX()*3,8,16,8,8,8,0,GetX(),GetY());
         else if(GetBitPerPixel()==32)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                ((unsigned char*)bmiColors),4,GetX()*4,8,16,8,8,8,0,GetX(),-y);
+                                data,4,GetX()*4,8,16,8,8,8,0,GetX(),GetY());
         else if(GetBitPerPixel()==16)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-                                ((unsigned char*)bmiColors),2,GetX()*2,5,10,5,5,5,0,GetX(),-y);
-        */
+                                data,2,GetX()*2,5,10,5,5,5,0,GetX(),GetY());
         return 0;
     }
-    static void Init()
-    {
-        //TODO
+
+    static void Init() {
+        AVWrapper::init();
     }
-    static void Done()
-    {
-        //TODO
+
+    static void Done() {
     }
 };
 #else
