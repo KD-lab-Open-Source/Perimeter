@@ -76,25 +76,13 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Window/UI related
 
-#define LR_LOADFROMFILE 1
-#define IMAGE_ICON 1
-#define IMAGE_CURSOR 2
-
 //These seem to be used as mask for storing state in game code
 #define MK_LBUTTON  0b1
 #define MK_RBUTTON 0b10
 
-struct SDL_Cursor;
-
-typedef SDL_Cursor* HCURSOR;
-
 void SetFocus(HWND hwnd);
 
 void ShowCursor(bool show);
-
-void SetCursor(HCURSOR cursor);
-
-HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -37,38 +37,6 @@ void ShowCursor(bool show) {
     SDL_ShowCursor(show);
 }
 
-void SetCursor(HCURSOR cursor) {
-    if (cursor) {
-        SDL_ShowCursor(true);
-        SDL_SetCursor(cursor);
-    } else {
-        //TODO enable when we have actual cursors visible
-        //SDL_ShowCursor(false);
-    }
-}
-
-HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT) {
-    SDL_Surface* surface = SDL_LoadBMP(convert_path_resource(name).c_str());
-    
-    if (!surface) {
-        fprintf(stderr, "LoadImage %s\n", name);
-        SDL_PRINT_ERROR("LoadImage SDL_LoadBMP");
-    } else {
-        if (type == IMAGE_CURSOR) {
-            SDL_Cursor* cursor = SDL_CreateColorCursor(
-                    surface, 0, 0
-            );
-            if (cursor) {
-                return reinterpret_cast<HANDLE>(cursor);
-            } else {
-                SDL_PRINT_ERROR("LoadImage SDL_CreateColorCursor");
-            }
-        }
-    }
-    
-    return nullptr;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,

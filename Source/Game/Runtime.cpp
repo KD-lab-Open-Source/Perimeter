@@ -232,6 +232,7 @@ void HTManager::init()
 
 	gameShell = new GameShell(terMissionEdit);
 	gameShell->setWindowClientSize(windowClientSize);
+    _shellCursorManager.OnWMSetCursor();
 
 	allocation_tracking("PerimeterLogicInit");
 
