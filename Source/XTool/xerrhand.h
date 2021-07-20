@@ -29,6 +29,7 @@
 struct XErrorHandler
 {
 	unsigned state;
+	bool initialized = false;
 
 	const char* prefix;
 
@@ -54,7 +55,7 @@ extern XErrorHandler ErrH;
 #define XAssert(expr) ErrH.RTC(__FILE__,__LINE__,expr)
 
 
-#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
+#if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG_ASSERT)) && !defined(NASSERT)
 
 // Use d3dFlipToGdiSurface() for D3D Fullscreen modes
 
@@ -63,9 +64,8 @@ void SetAssertRestoreGraphicsFunction(void(*func)());
 #define xxassert(exp, msg) \
 	do { \
 		if (!(exp)) { \
-			std::cerr << "Assertion `" #exp "` failed in " << __FILE__ \
-				<< " line " << __LINE__ << ": " << msg << std::endl; \
-			std::terminate(); \
+            std::string text = std::string("Assertion `" #exp "` failed - ") + (msg); \
+		    XAssert(text.c_str()); \
 		} \
 	} while (false)
 

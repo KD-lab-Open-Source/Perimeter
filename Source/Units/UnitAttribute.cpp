@@ -1,5 +1,6 @@
 // TODO: change encoding to utf-8
 
+#include <filesystem>
 #include "StdAfx.h"
 
 #include "EditArchive.h"
@@ -700,24 +701,24 @@ void AttributeBase::initIntfBalanceData(const AttributeBase* missile)
 
 FileTime::FileTime(const char* fname)
 {
-	FILETIME creation, last_access;
-	HANDLE file = CreateFile( fname, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0 );
-	if(file==INVALID_HANDLE_VALUE)
-	{
-		std::string s="File cannot open to read: ";
-		s+=fname;
-		xxassert(0,s.c_str());
-		dwLowDateTime = dwHighDateTime = 0;
-	}
-
-	if(!GetFileTime( file, &creation, &last_access, this))
-	{
-		std::string s="File cannot read time: ";
-		s+=fname;
-		xxassert(0,s.c_str());
-	}
-
-	CloseHandle(file);
+    if (!fname) {
+        dwLowDateTime = 0;
+        dwHighDateTime = 0;
+        return;
+    }
+    std::error_code error;
+    auto ftime = std::filesystem::last_write_time(convert_path_resource(fname).c_str(), error);
+    if (error) {
+#if PERIMETER_DEBUG
+        fprintf(stderr, "Error reading %s: %d %s\n", fname, error.value(), error.message().c_str());
+#endif
+        dwLowDateTime = 0;
+        dwHighDateTime = 0;
+        return;
+    }
+    auto duration = ftime.time_since_epoch();
+    int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
+    EpochToFileTime(nanos, this);
 }
 
 

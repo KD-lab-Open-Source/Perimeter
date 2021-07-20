@@ -618,9 +618,8 @@ void vrtMap::LoadPP(void)
 		PartPrm[i].minsquare = MINSQUARE;
 		}
 
-	char* s = strdup(GetTargetName(vrtMap::worldBuildScenarioFile));
 	XStream ff(0);
-	if(ff.open(s,XS_IN)){
+	if(ff.open(GetTargetName(vrtMap::worldBuildScenarioFile),XS_IN)){
 		unsigned int a = 0,b,c,d,e;
 		while(!ff.eof()){
 			ff >= b >= c >= d >= e;
@@ -639,7 +638,6 @@ void vrtMap::LoadPP(void)
 		}
 		ff.close();
 	}
-	free(s);
 }
 
 void vrtMap::SetPP(int n)

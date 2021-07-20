@@ -24,8 +24,7 @@ struct iEvent
 		data = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar)
+	SERIALIZE(ar)
 	{
 		ar & TRANSLATE_OBJECT(ID, "код события");
 		ar & TRANSLATE_OBJECT(controlID, "controlID");
@@ -44,8 +43,7 @@ struct ControlAction {
 		param = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(name, "&name");
 		ar & TRANSLATE_OBJECT(code, "Код");
 		ar & TRANSLATE_OBJECT(param, "Параметр");
@@ -60,8 +58,7 @@ struct BGObj
 
 	BGObj() { }
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(name, "&name");
 		ar & TRANSLATE_OBJECT(chainName, "&chainName");
 	}
@@ -94,8 +91,7 @@ struct sqshImage
 		hasBelligerentVersion = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(texture, "&texture");
 		ar & TRANSLATE_OBJECT(_ix, "ix_");
 		ar & TRANSLATE_OBJECT(_iy, "iy_");
@@ -237,8 +233,7 @@ struct sqshControl
 		canHandleDisabledInput = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(type, "type");
 		ar & TRANSLATE_OBJECT(id, "id");
 		ar & TRANSLATE_OBJECT(state, "state");
@@ -343,8 +338,7 @@ struct sqshControlContainer
 		defaultEscBtnID = SQSH_STATIC_ID;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(type, "type");
 		ar & TRANSLATE_OBJECT(id, "id");
 		ar & TRANSLATE_OBJECT(state, "state");
@@ -371,8 +365,7 @@ struct _V2i
 
 	_V2i(){ x = 0; y = 0; }
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(x, "x");
 		ar & TRANSLATE_OBJECT(y, "y");
 	}
@@ -385,8 +378,7 @@ struct _V2f
 
 	_V2f(){ x = 0; y = 0; }
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(x, "x");
 		ar & TRANSLATE_OBJECT(y, "y");
 	}
@@ -401,8 +393,7 @@ struct TabIcon {
 
 	TabIcon() { }
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(image, "image");
 		ar & TRANSLATE_OBJECT(image_h, "image_h");
 		ar & TRANSLATE_OBJECT(image_check, "image_check");
@@ -443,8 +434,7 @@ struct sqshTabElement
 		ctrls.resize(21,-1);
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(x, "x");
 		ar & TRANSLATE_OBJECT(y, "y");
 		ar & TRANSLATE_OBJECT(sx, "sx");
@@ -516,8 +506,7 @@ struct sqshTabSheet
 		tickTime = 900;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(id, "id");
 		ar & TRANSLATE_OBJECT(x, "x");
 		ar & TRANSLATE_OBJECT(y, "y");
@@ -562,8 +551,7 @@ struct sqshCursor
 		sy = 32;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(system, "system");
 		ar & TRANSLATE_OBJECT(hotspot_center, "hotspot_center");
 		ar & TRANSLATE_OBJECT(image, "image");
@@ -621,8 +609,7 @@ struct ShellGalogramType
 		model_rate = 200;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(model, "model");
 		ar & TRANSLATE_OBJECT(radius, "radius");
 		ar & TRANSLATE_OBJECT(pos_dx, "pos_dx");
@@ -663,8 +650,7 @@ struct EventSymbol {
 		animTime = 3000;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(image, "image");
 		ar & TRANSLATE_OBJECT(sx, "sx");
 		ar & TRANSLATE_OBJECT(sy, "sy");
@@ -680,8 +666,7 @@ struct _ProgressBar
 
 	_ProgressBar(){ }
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(points, "points");
 	}
 };
@@ -695,8 +680,7 @@ struct unitClassDesc
 		unitClass = 0;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(unitClass, "unitClass");
 		ar & TRANSLATE_OBJECT(textID, "textID");
 	}
@@ -718,8 +702,7 @@ struct Reel
 		time = 4000;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(name, "name");
 		ar & TRANSLATE_OBJECT(abortEnabled, "abortEnabled");
 		ar & TRANSLATE_OBJECT(localized, "localized");
@@ -737,8 +720,7 @@ struct InterfaceAttributes
 
 	InterfaceAttributes(){ };
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(tabIcons, "tabIcons");
 		ar & TRANSLATE_OBJECT(tabSheets, "tabSheets");
 		ar & TRANSLATE_OBJECT(controls, "controls");

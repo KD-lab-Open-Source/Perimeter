@@ -31,17 +31,21 @@ MonoSelect battleColors(4, playerAllowedColorSize);
 //battle menu
 STARFORCE_API void loadBattleList() {
 	if (battleMaps.empty()) {
-		loadMapVector(battleMaps, "RESOURCE\\BATTLE\\", "RESOURCE\\BATTLE\\*.spg");
+		loadMapVector(battleMaps, "RESOURCE/BATTLE", ".spg");
 		defaultBattleMapCount = battleMaps.size();
-		FILE* file = fopen("RESOURCE\\BATTLE\\SCENARIO\\maplist.txt", "rt");
+		std::string scenario_path = convert_path_resource("RESOURCE/BATTLE/SCENARIO") + PATH_SEP;
+		FILE* file = fopen((scenario_path + "maplist.txt").c_str(), "rt");
 		if (file) {
 			char* buff = new char[201];
 			while ( fgets(buff, 200, file) != NULL ) {
 				if ( ferror(file) ) {
 					break;
 				}
+                std::string filename(buff);
+                string_replace(filename, "\n", "");
+                string_replace(filename, "\r", "");
 				MissionDescription mission;
-				std::string name = "RESOURCE\\BATTLE\\SCENARIO\\" + std::string(buff);
+				std::string name = scenario_path + filename;
 				mission.setSaveName(name.c_str());
 				battleMaps.push_back(mission);
 			}
@@ -137,11 +141,10 @@ STARFORCE_API void onBattleMenuOpening() {
 	setSlotClosed(3, true);
 }
 std::string getSurvivalFileName(const std::string& fileName) {
-	std::string res = "RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg";
-
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hf = FindFirstFile( res.c_str(), &FindFileData );
-	return (hf == INVALID_HANDLE_VALUE) ? std::string("") : res;
+    //Will return empty string if file wasn't indexed
+    std::string path = convert_path_resource(("RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg").c_str());
+    bool exists = !path.empty() && std::filesystem::exists(path);
+	return exists ? path : std::string();
 }
 
 STARFORCE_API void startBattle(int pos, CShellWindow* pWnd) {

@@ -23,6 +23,7 @@
 #include "GenericFilth.h"
 #include "IronPort.h"
 #include "qd_textdb.h"
+#include <stdarg.h>     // for va_start
 
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
@@ -533,7 +534,7 @@ void CShellCursorManager::Load()
 		m_cursors.push_back(_c);
 	}
 
-	m_hCursorDefault = (HCURSOR)LoadImage(0, "resource\\cursors\\arrow.cur", IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);
+	m_hCursorDefault = (HCURSOR)LoadImage(0, "RESOURCE\\cursors\\arrow.cur", IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);
 
 	SetActiveCursor(arrow);	
 
@@ -1156,7 +1157,11 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 //			if (gameShell->GameActive) {
 //				gameShell->pauseGame(true);
 //			}
-			((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentShortVersion);
+#ifdef PERIMETER_DEBUG
+			((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentVersion);
+#else
+            ((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentShortVersion);
+#endif
 		}
 		break;
 
@@ -1362,7 +1367,7 @@ void CShellIconManager::speedChanged(float speed) {
 float CShellIconManager::playSpeech(const char* id) {
 	std::string sound = qdTextDB::instance().getSound(id);
 	if (terSoundEnable && speechSound && !sound.empty()) {
-		int pos = sound.find("Voice");
+		size_t pos = sound.find("Voice");
 		if(pos != std::string::npos)
 			sound.erase(0, pos);
 		std::string soundName = gameShell->getLocDataPath() + sound;
@@ -3281,6 +3286,8 @@ void CShellIconManager::UpdateSelectionIcons()
 				attr = 0;
 				actions.clear();
 				break;
+            default:
+				break;
 			}
 
 			if (unit_prm) {
@@ -4289,19 +4296,21 @@ void LogicUpdater::updateMiniMap() {
 							color = player->unitColor();
 							pos = (*ui)->position2D();
 							break;
-						case UNIT_CLASS_ID_FILTH_SPOT:
-							terFilthSpot* spot = safe_cast<terFilthSpot*>(*ui);
-							if (spot->GetFilthParamID() == FILTH_SPOT_ID_WORM 
-							  || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO 
-							  || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR
-							  ) {
-								if(spot->isSwarm())
-								{
-									pos = spot->getFirstSwarmPos();
-									color = filthMapColor;
-								}
-							}
-							break;
+						case UNIT_CLASS_ID_FILTH_SPOT: {
+                            terFilthSpot* spot = safe_cast<terFilthSpot*>(*ui);
+                            if (spot->GetFilthParamID() == FILTH_SPOT_ID_WORM
+                                || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO
+                                || spot->GetFilthParamID() == FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR
+                                    ) {
+                                if (spot->isSwarm()) {
+                                    pos = spot->getFirstSwarmPos();
+                                    color = filthMapColor;
+                                }
+                            }
+                            break;
+                        }
+                        default:
+                            break;
 					}
 				}
 

@@ -155,6 +155,8 @@ void terUnitLegionary::finalizeConstruction()
 	case UNIT_ATTRIBUTE_SOLDIER:
 		soundEvent(SOUND_VOICE_UNIT_READY);
 	break;
+    default:
+        break;
 	}
 }
 

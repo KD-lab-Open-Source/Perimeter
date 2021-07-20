@@ -2,7 +2,9 @@
 
 #include "Runtime.h"
 #include "P2P_interface.h"
+#ifndef PERIMETER_EXODUS
 #include "GS_interface.h"
+#endif
 
 #include "GameShell.h"
 #include "Universe.h"
@@ -12,27 +14,10 @@
 #include "../Terra/terra.h"
 
 #include <algorithm>
-
+#include <SDL.h>
 
 
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
-
-
-void LogMsg(LPCTSTR fmt, ...)
-{
-#ifndef _FINAL_VERSION_
-	va_list val;
-	va_start(val, fmt);
-
-	DWORD written;
-	TCHAR buf[255];
-	wvsprintf(buf, fmt, val);
-
-	static const COORD _80x50 = {80,500};
-	static BOOL startup = (AllocConsole(), SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), _80x50));
-	WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), buf, lstrlen(buf), &written, 0);
-#endif
-}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +92,11 @@ DWORD WINAPI TestServerThread(LPVOID lpParameter)
 */
 
 //Second thread
+#ifdef PERIMETER_EXODUS
+void* InternalServerThread(LPVOID lpParameter)
+#else
 DWORD WINAPI InternalServerThread(LPVOID lpParameter)
+#endif
 {
 /*	// TEST thread!!!!
 	DWORD ThreadId;
@@ -116,6 +105,10 @@ DWORD WINAPI InternalServerThread(LPVOID lpParameter)
 
 	PNetCenter* pPNetCenter=(PNetCenter*)lpParameter;
 	pPNetCenter->SecondThread();
+#ifdef PERIMETER_EXODUS
+	//We are creating it with pthread, so we need to manually signal it
+    SetEvent(pPNetCenter->hSecondThread);
+#endif
 	return 0;
 }
 XBuffer BUFFER_LOG(10000,1);
@@ -209,13 +202,15 @@ bool PNetCenter::SecondThread(void)
 					}
 					LogMsg("started\n");
 
-
+#ifndef PERIMETER_EXODUS
+                    //TODO Unused?
 					GameInfo* pGameInfo = new GameInfo;
 					//pGameInfo->id = m_dpnidGroupGame;
 					strncpy(pGameInfo->Name, m_GameName.c_str(), PERIMETER_CONTROL_NAME_SIZE );
 
 					SetServerInfo(pGameInfo, sizeof(GameInfo));
 					delete pGameInfo;
+#endif
 
 				//	pNewGame->AddClient(nccg.createPlayerData_, 0/*dpnid*/, nccg.computerName_);
 				//	pNewGame->StartGame();
@@ -536,6 +531,7 @@ void PNetCenter::LLogicQuant()
 	switch(m_state) {
 
 	case PNC_STATE__CONNECTION:
+#ifndef PERIMETER_EXODUS
 		if(gameSpyInterface){ //Internet
 			unsigned int IP;
 			if(internalIP) IP=internalIP;
@@ -549,7 +545,9 @@ void PNetCenter::LLogicQuant()
 				ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
 			}
 		}
-		else {
+		else
+#endif
+		{
 			if(internalIP) {
 				if(!Connect(internalIP)) {
 					ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
@@ -617,7 +615,7 @@ void PNetCenter::LLogicQuant()
 					if( (*m_clients.begin())->clientGameCRC != (*i)->clientGameCRC ) {
 						XBuffer buf;
 						buf < "Game of the player " <= (*i)->dpnidPlayer < "does not meet to game of the player " <= (*m_clients.begin())->dpnidPlayer;
-						xxassert(0 , buf);
+						xxassert(0 , buf.buf);
 					}
 			}
 			if(flag_ready){
@@ -680,7 +678,7 @@ void PNetCenter::LLogicQuant()
 
 								XBuffer to(1024,1);
 								to < "Unmatched number quants !" < "N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
-								::MessageBox(0, to, "Error network synchronization", MB_OK|MB_ICONERROR);
+                                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
 								ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
 								return;
 							}
@@ -696,7 +694,7 @@ void PNetCenter::LLogicQuant()
 									f.close();
 
 									to < "Unmatched game quants !" < "on Quant=" <= (*firstList.begin()).quant_;
-									::MessageBox(0, to, "Error network synchronization", MB_OK|MB_ICONERROR);
+                                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
 									ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
 									return;
 								}

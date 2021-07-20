@@ -310,6 +310,9 @@ void FieldDispatcher::calcHeight(FieldCluster* cluster)
 
 void FieldDispatcher::clearCluster(FieldCluster* cluster)
 {
+    //We need to lock since in some cases the cell cluster is
+    //null'ed while graphics thread accesses it right before checking its not null
+    MTEnter lock(hmap_lock);
 	FieldCluster::iterator i;
 	FOR_EACH(*cluster, i){
 		int y = i->y;

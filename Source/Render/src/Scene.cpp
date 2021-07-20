@@ -10,6 +10,7 @@
 #include "cZPlane.h"
 #include "CChaos.h"
 
+#include <climits>
 #include "../client/Silicon.h"
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 // non-standard header : https://developercommunity.visualstudio.com/t/msvc-142328019-is-missing-include-typeinfoh/734566
@@ -67,7 +68,7 @@ void SaveKindObjNotFree()
 #ifdef C_CHECK_DELETE
 	if(!cCheckDelete::GetDebugRoot())
 	{
-		DeleteFile("obj_notfree.txt");
+		std::remove("obj_notfree.txt");
 		return;
 	}
 

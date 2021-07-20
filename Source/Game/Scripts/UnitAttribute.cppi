@@ -28,9 +28,9 @@ static InterfaceTV terUnitAttributeDataTable_FrameExodus1_interfaceTV_495 = { 44
 static InterfaceTV terUnitAttributeDataTable_FrameExodus0_interfaceTV_494 = { 445.f 
  , 0.f, -8.f, 30.f, 0.f, 0.f, "", "fly", "" };
 static CorridorPrm terUnitAttributeDataTable_CorridorOmega_corridorPrm_493 = { 5000 
- , 200, 30.f, 1, 300.f, 400.f, 5.e-002f };
+ , 200, 30.f, 1, 300.f, 400.f, 0.05f };
 static CorridorPrm terUnitAttributeDataTable_CorridorAlpha_corridorPrm_492 = { 2000 
- , -200, 30.f, 0, 300.f, 400.f, 5.e-002f };
+ , -200, 30.f, 0, 300.f, 400.f, 0.05f };
 static ConsumptionData terUnitAttributeDataTable_Squad_productionConsumption_491 = { 0.1f 
  , 1000, 90, "productionConsumption Mutation Energy" };
 static terUnitDamageData terUnitAttributeDataTable_AAntsFilth_damageData_490 = { { 20 
@@ -131,7 +131,7 @@ static terWeaponSetup terUnitAttributeDataTable_GunSubchaser_weaponSetup_448 = {
  , 0.3f, { 10.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.29f, 500, 12, "reloadConsumption Gun Subchaser" 
   }, -360.f, 0 };
 static terWeaponControllerSetup terUnitAttributeDataTable_GunHowitzer_terUnitAttributeDataTable_GunHowitzer_weaponSetup_446_controllerSetup_447 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 1.e-003f, 1.e-003f }, { 0.2f 
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.001f, 0.001f }, { 0.2f 
  , 0.2f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.25f } };
 static terWeaponSetup terUnitAttributeDataTable_GunHowitzer_weaponSetup_446 = { WEAPON_ARTILLERY 
  , 1, UNIT_ATTRIBUTE_GUN_HOWITZER_BULLET, 0, 3000, 0, 1000, 300, &HowitzerMissileSuggestPrm 
@@ -139,15 +139,15 @@ static terWeaponSetup terUnitAttributeDataTable_GunHowitzer_weaponSetup_446 = { 
  , 1.f, { 100.f, 400.f }, 500.f, 70.f, 0, 2.f, { 0.96f, 1500, 12, "reloadConsumption GunHowitzer" 
   }, -360.f, 0 };
 static terWeaponControllerSetup terUnitAttributeDataTable_GunRocket_terUnitAttributeDataTable_GunRocket_weaponSetup_444_controllerSetup_445 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, 0, { 5.e-002f, 5.e-002f }, { 0.2f, 0.2f } 
- , { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, 0, { 0.05f, 0.05f }, { 0.2f, 0.2f }, { 0.f 
+ , 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_GunRocket_weaponSetup_444 = { WEAPON_LAUNCHER 
  , 0, UNIT_ATTRIBUTE_GUN_ROCKET_MISSILE, 0, 3000, 0, 1000, 300, 0, &terUnitAttributeDataTable_GunRocket_terUnitAttributeDataTable_GunRocket_weaponSetup_444_controllerSetup_445 
  , 0.3f, { 50.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.29f, 500, 11, "reloadConsumption GunRocket" 
   }, 70.f, 0 };
 static terWeaponControllerSetup terUnitAttributeDataTable_GunLaser_terUnitAttributeDataTable_GunLaser_weaponSetup_442_controllerSetup_443 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 9.e-002f, 9.e-002f }, { 0.3f 
- , 0.3f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.09f, 0.09f }, { 0.3f, 0.3f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_GunLaser_weaponSetup_442 = { WEAPON_LASER 
  , 1, UNIT_ATTRIBUTE_NONE, 0, 1500, 300, 1000, 300, 0, &terUnitAttributeDataTable_GunLaser_terUnitAttributeDataTable_GunLaser_weaponSetup_442_controllerSetup_443 
  , 0.2f, { 10.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.16f, 500, 10, "reloadConsumption GunLaser" 
@@ -189,8 +189,8 @@ static terWeaponSetup terUnitAttributeDataTable_Bombie_weaponSetup_430 = { WEAPO
  , 0.3f, { 5.f, 200.f }, 300.f, 100.f, 0, 2.f, { 0.25f, 600, 12, "reloadConsumption Bombie" 
   }, -360.f, 1 };
 static terWeaponControllerSetup terUnitAttributeDataTable_Wargon_terUnitAttributeDataTable_Wargon_weaponSetup_428_controllerSetup_429 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.2f 
- , 0.2f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.25f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.2f, 0.2f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.25f } };
 static terWeaponSetup terUnitAttributeDataTable_Wargon_weaponSetup_428 = { WEAPON_ARTILLERY 
  , 1, UNIT_ATTRIBUTE_WARGON_BULLET, 0, 1500, 0, 1000, 300, &WargonMissileSuggestPrm 
  , &terUnitAttributeDataTable_Wargon_terUnitAttributeDataTable_Wargon_weaponSetup_428_controllerSetup_429 
@@ -204,8 +204,8 @@ static terWeaponSetup terUnitAttributeDataTable_Extirpator_weaponSetup_426 = { W
  , 1.f, { 50.f, 200.f }, 300.f, 0.f, 0, 2.f, { 1.15f, 4000, 12, "reloadConsumption Extirpator" 
   }, -360.f, 1 };
 static terWeaponControllerSetup terUnitAttributeDataTable_ScumThrower_terUnitAttributeDataTable_ScumThrower_weaponSetup_424_controllerSetup_425 = { { "group bashnia" 
- , 0 }, { "bashnia", 0 }, "targeting a", { 5.e-002f, 0.2f }, { 0.1f, 0.1f }, { 0.f 
- , 2.f }, { 0.2f, 0.3f }, { 0.f, 0.25f } };
+ , 0 }, { "bashnia", 0 }, "targeting a", { 0.05f, 0.2f }, { 0.1f, 0.1f }, { 0.f, 2.f 
+  }, { 0.2f, 0.3f }, { 0.f, 0.25f } };
 static terWeaponSetup terUnitAttributeDataTable_ScumThrower_weaponSetup_424 = { WEAPON_ARTILLERY 
  , 1, UNIT_ATTRIBUTE_SCUM_THROWER_BULLET, 0, 1500, 0, 1000, 300, &ScumThrowerMissileSuggestPrm 
  , &terUnitAttributeDataTable_ScumThrower_terUnitAttributeDataTable_ScumThrower_weaponSetup_424_controllerSetup_425 
@@ -218,7 +218,7 @@ static terWeaponSetup terUnitAttributeDataTable_ScumHeater_weaponSetup_422 = { W
   }, 300.f, 100.f, 0, 2.f, { 0.32f, 3000, 12, "reloadConsumption Scum Heater" }, -360.f 
  , 1 };
 static terWeaponSetup terUnitAttributeDataTable_ScumTwister_weaponSetup_421 = { WEAPON_SCUM_TWISTER 
- , 278, UNIT_ATTRIBUTE_SCUM_TWISTER_CRATER, 0, 1500, 0, 300, 300, 0, 0, 5.e-002f, { 5.f 
+ , 278, UNIT_ATTRIBUTE_SCUM_TWISTER_CRATER, 0, 1500, 0, 300, 300, 0, 0, 0.05f, { 5.f 
  , 300.f }, 400.f, 50.f, 0, 2.f, { 0.21f, 10000, 12, "reloadConsumption Scum Twister" 
   }, -360.f, 1 };
 static terUnitDamageData terUnitAttributeDataTable_ScumTwister_damageData_420 = { { 40 
@@ -232,18 +232,18 @@ static terWeaponSetup terUnitAttributeDataTable_Disintegrator_weaponSetup_418 = 
  , 150.f, 0, 2.f, { 0.58f, 5000, 12, "reloadConsumption Disintegrator" }, -360.f, 1 
   };
 static terWeaponControllerSetup terUnitAttributeDataTable_Strafer_terUnitAttributeDataTable_Strafer_weaponSetup_416_controllerSetup_417 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.3f 
- , 0.3f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, -0.25f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.3f, 0.3f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, -0.25f } };
 static terWeaponSetup terUnitAttributeDataTable_Strafer_weaponSetup_416 = { WEAPON_ARTILLERY 
  , 1, UNIT_ATTRIBUTE_STRAFER_BULLET, 0, 1500, 0, 1000, 300, 0, &terUnitAttributeDataTable_Strafer_terUnitAttributeDataTable_Strafer_weaponSetup_416_controllerSetup_417 
- , 0.3f, { 50.f, 300.f }, 400.f, 0.f, 0, 2.f, { 6.e-002f, 150, 10, "reloadConsumption Strafer" 
+ , 0.3f, { 50.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.06f, 150, 10, "reloadConsumption Strafer" 
   }, -360.f, 1 };
 static terWeaponControllerSetup terUnitAttributeDataTable_Gyroid_terUnitAttributeDataTable_Gyroid_weaponSetup_414_controllerSetup_415 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.1f 
- , 0.1f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.1f, 0.1f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_Gyroid_weaponSetup_414 = { WEAPON_LASER 
  , 1, UNIT_ATTRIBUTE_NONE, 0, 1500, 300, 1000, 300, 0, &terUnitAttributeDataTable_Gyroid_terUnitAttributeDataTable_Gyroid_weaponSetup_414_controllerSetup_415 
- , 0.3f, { 50.f, 300.f }, 400.f, 0.f, 0, 2.f, { 9.e-002f, 1000, 10, "reloadConsumption Gyroid" 
+ , 0.3f, { 50.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.09f, 1000, 10, "reloadConsumption Gyroid" 
   }, -360.f, 1 };
 static terUnitDamageData terUnitAttributeDataTable_Gyroid_damageData_413 = { { 6 
  , 10, -1, -1 }, 0, { 0, 0, -1, -1 } };
@@ -255,8 +255,8 @@ static terWeaponSetup terUnitAttributeDataTable_Ceptor_weaponSetup_411 = { WEAPO
  , 0.3f, { 100.f, 200.f }, 300.f, 0.f, 0, 2.f, { 0.29f, 1000, 11, "reloadConsumption Ceptor" 
   }, -360.f, 1 };
 static terWeaponControllerSetup terUnitAttributeDataTable_Mortar_terUnitAttributeDataTable_Mortar_weaponSetup_409_controllerSetup_410 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.2f 
- , 0.2f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.25f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.2f, 0.2f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.25f } };
 static terWeaponSetup terUnitAttributeDataTable_Mortar_weaponSetup_409 = { WEAPON_ARTILLERY 
  , 1, UNIT_ATTRIBUTE_MORTAR_BULLET, 0, 1500, 0, 1000, 300, &MortarMissileSuggestPrm 
  , &terUnitAttributeDataTable_Mortar_terUnitAttributeDataTable_Mortar_weaponSetup_409_controllerSetup_410 
@@ -270,8 +270,8 @@ static terWeaponSetup terUnitAttributeDataTable_Rocker_weaponSetup_407 = { WEAPO
  , 0.15f, { 50.f, 200.f }, 300.f, 0.f, 0, 2.f, { 0.13f, 2000, 11, "reloadConsumption Rocker" 
   }, 70.f, 1 };
 static terWeaponControllerSetup terUnitAttributeDataTable_Leamo_terUnitAttributeDataTable_Leamo_weaponSetup_405_controllerSetup_406 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.2f 
- , 0.2f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.2f, 0.2f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_Leamo_weaponSetup_405 = { WEAPON_LASER 
  , 1, UNIT_ATTRIBUTE_NONE, 0, 1500, 300, 1000, 300, 0, &terUnitAttributeDataTable_Leamo_terUnitAttributeDataTable_Leamo_weaponSetup_405_controllerSetup_406 
  , 1.f, { 50.f, 300.f }, 400.f, 0.f, 0, 4.f, { 0.65f, 1000, 10, "reloadConsumption Leamo" 
@@ -279,8 +279,8 @@ static terWeaponSetup terUnitAttributeDataTable_Leamo_weaponSetup_405 = { WEAPON
 static terUnitDamageData terUnitAttributeDataTable_Leamo_damageData_404 = { { 50 
  , 50, -1, -1 }, 0, { 0, 0, -1, -1 } };
 static terWeaponControllerSetup terUnitAttributeDataTable_Sniper_terUnitAttributeDataTable_Sniper_weaponSetup_402_controllerSetup_403 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 9.e-002f, 9.e-002f }, { 0.5f 
- , 0.5f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.09f, 0.09f }, { 0.5f, 0.5f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_Sniper_weaponSetup_402 = { WEAPON_LASER 
  , 1, UNIT_ATTRIBUTE_NONE, 0, 1500, 300, 1000, 300, 0, &terUnitAttributeDataTable_Sniper_terUnitAttributeDataTable_Sniper_weaponSetup_402_controllerSetup_403 
  , 1.f, { 5.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.12f, 1000, 10, "reloadConsumption Sniper" 
@@ -291,30 +291,30 @@ static terWeaponSetup terUnitAttributeDataTable_Piercer_weaponSetup_400 = { WEAP
  , 288, UNIT_ATTRIBUTE_PIERCER_BULLET, 0, 1500, 0, 1000, 300, 0, 0, 0.3f, { 5.f, 200.f 
   }, 300.f, 500.f, 0, 2.f, { 1.16f, 3000, 12, "reloadConsumption Piercer" }, -360.f 
  , 1 };
-static ConsumptionData terUnitAttributeDataTable_Digger_movementConsumption_399 = { 6.e-002f 
+static ConsumptionData terUnitAttributeDataTable_Digger_movementConsumption_399 = { 0.06f 
  , 100, 90, "movementConsumption" };
 static ConsumptionData terUnitAttributeDataTable_Scumer_movementConsumption_398 = { 0.2f 
  , 100, 90, "Scumer movementConsumption" };
 static terWeaponControllerSetup terUnitAttributeDataTable_Technic_terUnitAttributeDataTable_Technic_weaponSetup_396_controllerSetup_397 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.2f 
- , 0.2f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.2f, 0.2f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_Technic_weaponSetup_396 = { WEAPON_HEAL_LASER 
  , 2, UNIT_ATTRIBUTE_NONE, 0, 1500, 0, 1000, 300, 0, &terUnitAttributeDataTable_Technic_terUnitAttributeDataTable_Technic_weaponSetup_396_controllerSetup_397 
  , 0.3f, { 0.f, 200.f }, 300.f, 0.f, 2, 2.f, { 0.1f, 6000, 10, "reloadConsumption Technician" 
   }, -360.f, 1 };
 static terWeaponControllerSetup terUnitAttributeDataTable_Officer_terUnitAttributeDataTable_Officer_weaponSetup_394_controllerSetup_395 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.2f 
- , 0.2f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.2f, 0.2f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_Officer_weaponSetup_394 = { WEAPON_FREEZE_LASER 
  , 0, UNIT_ATTRIBUTE_NONE, 0, 1500, 0, 1000, 300, 0, &terUnitAttributeDataTable_Officer_terUnitAttributeDataTable_Officer_weaponSetup_394_controllerSetup_395 
- , 0.3f, { 5.f, 200.f }, 300.f, 0.f, 1, 1.f, { 5.e-002f, 6000, 10, "reloadConsumption Officer" 
+ , 0.3f, { 5.f, 200.f }, 300.f, 0.f, 1, 1.f, { 0.05f, 6000, 10, "reloadConsumption Officer" 
   }, -360.f, 1 };
 static terWeaponControllerSetup terUnitAttributeDataTable_Soldier_terUnitAttributeDataTable_Soldier_weaponSetup_392_controllerSetup_393 = { { "group bashnia" 
- , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 5.e-002f, 5.e-002f }, { 0.2f 
- , 0.2f }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
+ , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.05f, 0.05f }, { 0.2f, 0.2f 
+  }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_Soldier_weaponSetup_392 = { WEAPON_ARTILLERY 
  , 1, UNIT_ATTRIBUTE_SOLDIER_BULLET, 0, 1500, 0, 1000, 300, 0, &terUnitAttributeDataTable_Soldier_terUnitAttributeDataTable_Soldier_weaponSetup_392_controllerSetup_393 
- , 0.3f, { 5.f, 200.f }, 300.f, 0.f, 0, 2.f, { 4.e-002f, 6000, 10, "reloadConsumption Soldier" 
+ , 0.3f, { 5.f, 200.f }, 300.f, 0.f, 0, 2.f, { 0.04f, 6000, 10, "reloadConsumption Soldier" 
   }, -360.f, 1 };
 static terUnitDamageData terUnitAttributeDataTable_Soldier_damageData_391 = { { 4 
  , 1, -1, -1 }, 0, { 0, 0, -1, -1 } };
@@ -331,7 +331,7 @@ static ConsumptionData terUnitAttributeDataTable_TerrainMaster_productionConsump
 static ConsumptionData terUnitAttributeDataTable_Frame_productionConsumption_385 = { 2.f 
  , 30000, 60, "productionConsumption Frame" };
 static FramePrm terUnitAttributeDataTable_Frame_framePrm_384 = { 30 
- , 1.f, { 7.e-002f, 100, 0, "antigravConsumption" }, { 2.f, 100, 111, "movementConsumption" 
+ , 1.f, { 0.07f, 100, 0, "antigravConsumption" }, { 2.f, 100, 111, "movementConsumption" 
   }, { 50.f, 100, 150, "annihilationConsumption" }, { 1.f, 100, 111, "repairConsumption" 
   }, 10.f, { 100, 100, -1, -1 }, 5.f, 1000.f, 200.f, 10.f, 30.f };
 static SoundEventSetup playerSound_events_383[] = { { SOUND_VOICE_UNIT_READY 
@@ -2059,580 +2059,549 @@ struct RigidBodyTable {
 #endif  // __XScript_struct_RigidBodyTable__
 RigidBodyTable rigidBodyTable = { { RigidBodyPrm::UNIT 
  , "Unit Frame", { 1.f, 1.f, 4.f }, 10.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 1, 1, 0, 0, 1 
- , 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 10.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 0, 1, -3.f, 150.f, 10.f, 0, 1, 40.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 0.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.f, 0.f, 0.f, 90.f, -45.f 
- , 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Truck" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 0, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f 
- , 45.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40 
- , { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f 
- , 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 0, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 10.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 1 
+ , -3.f, 150.f, 10.f, 0, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 0.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Truck", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 0, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 0, 0, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f, 45.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 0, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
  , 120.f, 80.f, 0.f, 3.14f, 0 }, { RigidBodyPrm::UNIT, "Unit Block", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 0, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
+  }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 0, 0.0125f, 0.25f, { 0.f, 0.05f 
  , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f, 120.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 0 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying" 
- , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f 
- , 8.f, 20.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f 
- , 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f 
- , 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f 
-  }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 160.f, 40.f, 9.f, 0.7f, 2.5e-002f 
- , 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f 
- , 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1 
- , 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f } 
- , 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 160.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying" 
- , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f 
- , 8.f, 160.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f 
- , 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f 
- , 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f 
-  }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f, 2.5e-002f 
- , 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f 
- , 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1 
- , 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f } 
- , 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 40.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 60.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 10.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 15.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 40.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 50.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 50.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 20.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 80.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 40.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 50.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Building", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 0.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 40.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Building" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 0.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 0, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Environment", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 1, 0, 1, 0, 0, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 0, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Flying Military", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0 
- , 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f 
- , 1000.f, 20.f, 15.f, 8.f, 200.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f 
- , 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 360.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f 
- , 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military" 
- , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f 
- , 8.f, 360.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f 
- , 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military", { 3.f, 0.4f 
- , 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f 
- , 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 360.f, 60.f 
- , 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f 
- , 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f 
- , 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f 
- , 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military", { 3.f, 0.4f, 4.f 
-  }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 70.f, 60.f, 3.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 0, 1, 360.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Flying Military", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0 
- , 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f 
- , 1000.f, 20.f, 15.f, 8.f, 360.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f 
- , 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 250.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f 
- , 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military" 
- , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f 
- , 8.f, 360.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f 
- , 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Scum Heater", { 3.f, 0.4f, 4.f 
-  }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 70.f, 60.f, 3.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 0, 1, 380.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f 
-  }, 0.f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Unit Flying Military", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0 
- , 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f 
- , 1000.f, 20.f, 15.f, 8.f, 70.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f 
- , 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 380.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.f, 0.f, 0.f, 90.f, -45.f 
- , 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f 
- , 20.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40 
- , { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f 
- , 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Ground", { 6.f, 0.2f 
- , 5.f }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f 
- , 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f 
- , 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f 
- , 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f 
- , 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f 
- , 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 0 
- , 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f 
- , 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f, 2.5e-002f 
- , 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f 
- , 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1 
- , 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f } 
- , 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Filth Flying", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 2.f, 1000.f 
- , 20.f, 15.f, 8.f, 80.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 0, 1, -3.f, 150.f, 10.f, 1, 1, 250.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f 
- , 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Crow" 
- , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 8.f 
- , 80.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40 
- , { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f 
- , 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f 
- , 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Ghost", { 3.f, 0.4f, 4.f }, 3.f 
- , 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f 
-  }, 10.f, 6.f, 40.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 8.f, 100.f, 60.f, 3.f, 0.7f, 2.5e-002f 
- , 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f 
- , 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 1, -3.f, 150.f, 10.f, 1 
- , 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 0 }, { RigidBodyPrm::UNIT, "Unit Ground" 
+ , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 20.f 
+ , 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
  , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Filth Eye", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 0 
- , 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 2.f, 1000.f, 20.f 
- , 15.f, 8.f, 40.f, 60.f, 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f 
- , 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f 
- , 1.e-002f, 5.e-002f }, 0, 1, -3.f, 150.f, 10.f, 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f 
-  }, { 0.f, 50.f, 1.f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0 
- , 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Dragon", { 3.f, 0.4f 
- , 0.8f }, 4.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f 
- , 5.e-002f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 40.f, 100.f 
- , 3.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f 
- , 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, 0, 1, -3.f, 150.f, 10.f, 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f 
- , 0.5f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f 
- , 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Corridor Alpha", { 8.f, 8.f, 8.f } 
- , 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 0, 1, 0, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 100.f, 300.f, 9.f 
- , 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f 
- , 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f 
- , 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f 
- , 150.f, 10.f, 0, 0, 350.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f 
- , 0.f, 5.e-002f }, 0.f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
- , 1 }, { RigidBodyPrm::MISSILE, "Missile Howitzer", { 0.f, 0.f, 0.f }, 6.f, 150.f 
- , 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f 
-  }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 350.f, 40.f, 40.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE 
- , "Missile Bomb", { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1 
- , 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 0.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 1.f, 90.f 
- , -90.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE, "Missile GunBallistic" 
- , { 0.f, 0.f, 0.f }, 6.f, 15.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 180.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 1.f, 2000, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE, "Missile Wargon", { 0.f, 0.f 
- , 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f 
- , 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 350.f, 40.f 
- , 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f 
- , 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f 
- , 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f 
- , 3.14f, 1 }, { RigidBodyPrm::MISSILE, "Missile ScumThrower", { 0.f, 0.f, 0.f }, 6.f 
- , 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 350.f, 40.f, 40.f 
- , 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f 
- , 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f 
- , 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f 
- , 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f 
- , 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
- , 1 }, { RigidBodyPrm::MISSILE, "Missile Mortar", { 0.f, 0.f, 0.f }, 6.f, 140.f, 0 
- , 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f 
- , 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 300.f, 40.f, 40.f, 0.7f, 2.5e-002f 
- , 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f 
- , 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1 
- , 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f } 
- , 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE 
- , "Missile Soldier", { 0.f, 0.f, 0.f }, 6.f, 30.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1 
- , 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 150.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 1.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE, "Missile Strafer" 
- , { 0.f, 0.f, 0.f }, 6.f, 30.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 150.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 1.f, 90.f, -90.f, 1.f, 0, 100, 120.f 
- , 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Missile ScumStorm", { 6.f, 0.2f, 5.f 
-  }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 0, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 8.f, 120.f, 40.f, 9.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET 
- , "Rocket", { 3.f, 3.f, 3.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f 
- , 300.f, 500.f, 15.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET, "Rocket", { 3.f, 3.f, 3.f 
-  }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f, 300.f, 500.f, 15.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f 
- , 10.f, 1, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET 
- , "Rocket", { 3.f, 3.f, 3.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f 
- , 300.f, 500.f, 15.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET, "Rocket", { 3.f, 3.f, 3.f 
-  }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f, 300.f, 500.f, 15.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f 
- , 10.f, 1, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
- , "Missile Extirpator", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1 
- , 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f 
- , 1000.f, 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 60.f, 5.f 
- , 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
- , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 60.f, 40.f, 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Missile Piercer", { 6.f, 0.2f 
- , 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f 
- , 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 8.f, 60.f, 40.f 
- , 9.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f 
- , 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f 
- , 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f 
- , 3.14f, 1 }, { RigidBodyPrm::DEBRIS, "Debris", { 0.f, 0.f, 0.f }, 0.f, 100.f, 1, 1.f 
- , 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f 
- , 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f, 0.f, 0.7f, 2.5e-002f 
+ , "Unit Flying", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f 
+ , 15.f, 8.f, 20.f, 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 160.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
+  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 160.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying" 
+ , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 160.f 
+ , 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
+  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
+ , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f 
+ , 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
+  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 10.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
+ , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 15.f 
+ , 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 50.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
+  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 50.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
+ , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 20.f 
+ , 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 80.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
+  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
+ , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f 
+ , 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 50.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Building", { 6.f, 0.2f, 5.f 
+  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 0.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground" 
+ , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f 
+ , 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f 
+  }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 40.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Building" 
+ , { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 0.f 
+ , 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Environment", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 1, 0, 1, 0, 0 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 0 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military", { 3.f, 0.4f, 4.f }, 3.f, 0.f 
+ , 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f 
+ , 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 200.f, 60.f, 3.f, 0.7f, 0.025f, 0.4f 
+ , 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f 
+ , 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f 
+ , 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 360.f, { 10.f, 10.f, 15.f 
+ , 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f 
+ , 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military" 
+ , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 360.f 
+ , 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Flying Military", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0 
+ , 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f 
+ , 20.f, 15.f, 8.f, 360.f, 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f 
+ , 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f } 
+ , { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f 
+ , 1.f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f 
+ , 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military", { 3.f, 0.4f, 4.f 
+  }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 70.f, 60.f, 3.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 360.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military" 
+ , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 360.f 
+ , 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Flying Military", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0 
+ , 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f 
+ , 20.f, 15.f, 8.f, 360.f, 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f 
+ , 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f } 
+ , { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f 
+ , 1.f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f 
+ , 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Scum Heater", { 3.f, 0.4f, 4.f }, 3.f 
+ , 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f } 
+ , 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 70.f, 60.f, 3.f, 0.7f, 0.025f 
  , 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f 
- , 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f 
-  }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1 
- , 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f } 
- , 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::DEBRIS 
- , "Debris", { 0.f, 0.f, 0.f }, 0.f, 100.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f 
- , 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f 
- , 4.f, 20.f, 40.f, 0.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f 
- , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f } 
- , { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f 
- , 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
- , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::DEBRIS, "Debris", { 0.f, 0.f, 0.f 
-  }, 0.f, 100.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f 
- , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f, 0.f, 0.7f 
- , 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
-  }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.25f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 1, 1, -3.f, 150.f 
- , 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f 
-  }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 } };
+ , 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 0, 1, 380.f, { 10.f 
+ , 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.f, 0.f, 0.f, 90.f, -45.f 
+ , 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Flying Military" 
+ , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 70.f 
+ , 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 0, 1, 380.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Filth Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f 
+ , 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Filth Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 0, 1.f 
+ , 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f 
+ , 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Ground", { 6.f, 0.2f 
+ , 5.f }, 6.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 4.f, 20.f, 40.f, 9.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Flying" 
+ , { 3.f, 0.4f, 4.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 8.f, 80.f 
+ , 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Filth Crow", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1 
+ , 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 2.f, 1000.f, 20.f, 15.f 
+ , 8.f, 80.f, 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f 
+ , 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f 
+ , 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f 
+ , 150.f, 10.f, 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f 
+ , 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 
+  }, { RigidBodyPrm::UNIT, "Filth Ghost", { 3.f, 0.4f, 4.f }, 3.f, 0.f, 0, 1.f, 1.f 
+ , 3.f, 0, 1, 0, 1, 0, 0, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f 
+ , 0.1f, 2.f, 1000.f, 20.f, 15.f, 8.f, 100.f, 60.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f 
+ , 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, 0, 1, -3.f, 150.f, 10.f, 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f } 
+ , { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100 
+ , 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Eye", { 3.f, 0.4f, 4.f 
+  }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 0, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 40.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 8.f, 40.f, 60.f, 3.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 1, -3.f, 150.f, 10.f, 0, 1, 250.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 1.f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Filth Dragon" 
+ , { 3.f, 0.4f, 0.8f }, 4.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 40.f, 0.1f, 0.5f, 1000.f, 20.f, 15.f, 8.f, 40.f 
+ , 100.f, 3.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 250.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 50.f, 0.5f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Unit Corridor Alpha", { 8.f, 8.f, 8.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 1, 0, 1, 0 
+ , 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
+ , 20.f, 15.f, 4.f, 100.f, 300.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
+ , 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 1, 1, -3.f, 150.f, 10.f, 0, 0, 350.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f 
+ , 0.005f, 0.f, 0.f, 0.05f }, 0.f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f 
+ , 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE, "Missile Howitzer", { 0.f, 0.f, 0.f } 
+ , 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 350.f, 40.f, 40.f 
+ , 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f 
+ , 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE 
+ , "Missile Bomb", { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1 
+ , 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f 
+ , 15.f, 4.f, 0.f, 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0 
+ , 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0 
+ , -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f 
+ , 0.f, 0.05f }, 0.3f, 0.f, 1.f, 90.f, -90.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::MISSILE, "Missile GunBallistic", { 0.f, 0.f, 0.f }, 6.f, 15.f 
+ , 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f 
+ , 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 180.f, 40.f, 40.f, 0.7f, 0.025f 
+ , 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f 
+ , 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f 
+ , 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
+ , 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f 
+ , 1.f, 2000, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE, "Missile Wargon" 
+ , { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 350.f 
+ , 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE 
+ , "Missile ScumThrower", { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0 
+ , 1, 1, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
+ , 20.f, 15.f, 4.f, 350.f, 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
+ , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f 
+ , 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::MISSILE, "Missile Mortar", { 0.f, 0.f, 0.f }, 6.f, 140.f, 0 
+ , 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f 
+ , 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 300.f, 40.f, 40.f, 0.7f, 0.025f, 0.4f 
+ , 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f 
+ , 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f 
+ , 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f 
+ , 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f 
+ , 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE, "Missile Soldier" 
+ , { 0.f, 0.f, 0.f }, 6.f, 30.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 150.f 
+ , 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 1.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::MISSILE 
+ , "Missile Strafer", { 0.f, 0.f, 0.f }, 6.f, 30.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1 
+ , 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
+ , 20.f, 15.f, 4.f, 150.f, 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
+ , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f 
+ , 0.f, 0.f, 0.05f }, 0.3f, 0.f, 1.f, 90.f, -90.f, 1.f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 }, { RigidBodyPrm::UNIT, "Missile ScumStorm", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 0 
+ , 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 0, 0, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f 
+ , 20.f, 0.1f, 2.f, 1000.f, 20.f, 15.f, 8.f, 120.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6 
+ , 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f 
+ , 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f 
+ , 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f 
+  }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0 
+ , 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET, "Rocket", { 3.f, 3.f 
+ , 3.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f 
+ , 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f, 300.f, 500.f, 15.f, 0.7f 
+ , 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f 
+  }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 40.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET 
+ , "Rocket", { 3.f, 3.f, 3.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f 
+ , 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f, 300.f 
+ , 500.f, 15.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f 
+ , 1, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET 
+ , "Rocket", { 3.f, 3.f, 3.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f 
+ , 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f, 300.f 
+ , 500.f, 15.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f 
+ , 1, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::ROCKET 
+ , "Rocket", { 3.f, 3.f, 3.f }, 3.f, 0.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f 
+ , 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 0.f, 0.1f, 2.f, 500.f, 20.f, 15.f, 0.f, 300.f 
+ , 500.f, 15.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f 
+ , 1, 1, 40.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT 
+ , "Missile Extirpator", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1 
+ , 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
+ , 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 60.f, 5.f, 10.f, 4.f 
+ , 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f } 
+ , { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f 
+ , 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f 
+ , 3.14f, 1 }, { RigidBodyPrm::UNIT, "Unit Ground", { 6.f, 0.2f, 5.f }, 6.f, 0.f, 1 
+ , 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f 
+ , 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 60.f, 40.f, 9.f, 0.7f, 0.025f, 0.4f, 6 
+ , 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f 
+ , 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f 
+ , 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f 
+  }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 0.96f, 0 
+ , 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::UNIT, "Missile Piercer", { 6.f 
+ , 0.2f, 5.f }, 6.f, 0.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f 
+ , 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 8.f, 60.f, 40.f 
+ , 9.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f, 7.f, 1000.f 
+ , 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f, 1, 1, 50.f 
+ , { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f 
+ , 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::DEBRIS 
+ , "Debris", { 0.f, 0.f, 0.f }, 0.f, 100.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f 
+ , 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f 
+ , 20.f, 40.f, 0.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::DEBRIS 
+ , "Debris", { 0.f, 0.f, 0.f }, 0.f, 100.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f 
+ , 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f 
+ , 20.f, 40.f, 0.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 }, { RigidBodyPrm::DEBRIS 
+ , "Debris", { 0.f, 0.f, 0.f }, 0.f, 100.f, 1, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f 
+ , 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f 
+ , 20.f, 40.f, 0.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 1, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 1, 1, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, -45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 } };
 RigidBodyPrm HowitzerMissileSuggestPrm = { RigidBodyPrm::MISSILE 
  , "Missile Howitzer", { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1 
- , 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f 
- , 1000.f, 20.f, 15.f, 4.f, 350.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f 
- , 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f 
- , 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f 
- , 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f 
- , 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f 
- , 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 };
-RigidBodyPrm WargonMissileSuggestPrm = { RigidBodyPrm::MISSILE 
- , "Missile Wargon", { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1 
- , 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 350.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 };
+ , 1, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
+ , 20.f, 15.f, 4.f, 350.f, 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
+ , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f 
+ , 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 };
+RigidBodyPrm WargonMissileSuggestPrm = { RigidBodyPrm::MISSILE, "Missile Wargon" 
+ , { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 350.f 
+ , 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 };
 RigidBodyPrm MortarMissileSuggestPrm = { RigidBodyPrm::MISSILE 
  , "Missile Mortar", { 0.f, 0.f, 0.f }, 6.f, 140.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1 
- , 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
- , 20.f, 15.f, 4.f, 300.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
- , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f, 1.e-002f 
- , 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f, 6.f 
- , 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f 
- , 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f, 90.f 
- , 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 };
-RigidBodyPrm ScumThrowerMissileSuggestPrm = { RigidBodyPrm::MISSILE 
- , "Missile ScumThrower", { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0 
- , 1, 1, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f 
- , 1000.f, 20.f, 15.f, 4.f, 350.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f 
- , 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f 
- , 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f 
- , 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f 
- , 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f 
- , 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 };
+ , 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
+ , 20.f, 15.f, 4.f, 300.f, 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
+ , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f 
+ , 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f 
+ , 1 };
+RigidBodyPrm ScumThrowerMissileSuggestPrm = { RigidBodyPrm::MISSILE, "Missile ScumThrower" 
+ , { 0.f, 0.f, 0.f }, 6.f, 150.f, 0, 1.f, 1.f, 3.f, 0, 1, 0, 1, 1, 1, 1, 0.0125f, 0.25f 
+ , { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f, 20.f, 15.f, 4.f, 350.f 
+ , 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f 
+ , 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.5f, 6.f, 0.01f 
+ , 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f }, 0, 0, -3.f, 150.f, 10.f 
+ , 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f, 0.f, 0.f, 0.05f }, 0.3f 
+ , 0.f, 0.f, 90.f, 45.f, 0.96f, 0, 100, 120.f, 80.f, 0.f, 3.14f, 1 };
 RigidBodyPrm BallisticMissileSuggestPrm = { RigidBodyPrm::MISSILE 
  , "Missile GunBallistic", { 0.f, 0.f, 0.f }, 6.f, 15.f, 0, 1.f, 1.f, 3.f, 0, 1, 0 
- , 1, 0, 1, 1, 1.25e-002f, 0.25f, { 0.f, 5.e-002f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f 
- , 1000.f, 20.f, 15.f, 4.f, 180.f, 40.f, 40.f, 0.7f, 2.5e-002f, 0.4f, 6, 0.1f, 4.f 
- , 5.f, 10.f, 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 1.e-002f 
- , 1.e-002f, 5.e-002f }, { 0.f, 0.5f, 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, { 0.f, 0.25f 
- , 6.f, 1.e-002f, 1.e-002f, 5.e-002f }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f 
- , 10.f, 15.f, 15.f }, { 0.f, 20.f, 5.e-003f, 0.f, 0.f, 5.e-002f }, 0.3f, 0.f, 0.f 
- , 90.f, -45.f, 1.f, 2000, 100, 120.f, 80.f, 0.f, 3.14f, 1 };
+ , 1, 0, 1, 1, 0.0125f, 0.25f, { 0.f, 0.05f, 0.1f }, 10.f, 6.f, 20.f, 0.1f, 1.5f, 1000.f 
+ , 20.f, 15.f, 4.f, 180.f, 40.f, 40.f, 0.7f, 0.025f, 0.4f, 6, 0.1f, 4.f, 5.f, 10.f 
+ , 4.f, 0, 0.6f, 40, { 7.f, 7.f, 1000.f, 30.f }, { 0.f, 5.f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, { 0.f, 0.5f, 6.f, 0.01f, 0.01f, 0.05f }, { 0.f, 0.25f, 6.f, 0.01f, 0.01f, 0.05f 
+  }, 0, 0, -3.f, 150.f, 10.f, 1, 1, 50.f, { 10.f, 10.f, 15.f, 15.f }, { 0.f, 20.f, 0.005f 
+ , 0.f, 0.f, 0.05f }, 0.3f, 0.f, 0.f, 90.f, -45.f, 1.f, 2000, 100, 120.f, 80.f, 0.f 
+ , 3.14f, 1 };
 #ifndef __XScript_struct_LegionaryPrm__
 #define __XScript_struct_LegionaryPrm__
 #pragma pack( push, __XScript_struct_pack__, 4 )
@@ -3126,7 +3095,7 @@ EnvironmentalDamageData chaosDamageDefault = { ENV_DAMAGE_CHAOS
 EnvironmentalDamageData chaosDamageSubterranean = { ENV_DAMAGE_CHAOS 
  , { { 30, 2, -1, -1 }, { 30, 8, -1, -1 } }, 100, 100, 0.1f };
 EnvironmentalDamageData basementDamageDefault = { ENV_DAMAGE_BASEMENT 
- , { { 1, 1, -1, -1 }, { 100, 80, -1, -1 } }, 100, 1000, 1.e-002f };
+ , { { 1, 1, -1, -1 }, { 100, 80, -1, -1 } }, 100, 1000, 0.01f };
 int SPECIAL_UNITS_EL_MUL = 3;
 int SPECIAL_ELECTRO_UNITS_EL_MUL = 2;
 int SHIELD_LASER_MUL = 1;
@@ -5336,7 +5305,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , 90.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER, 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0 
  , 0, 0, 0, 500 }, 0, 0, 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 2048, 0, 1, LEGION_GROUND 
  , UNIT_ATTRIBUTE_NONE, "", 1, 1, 0, 0, 0, 0, 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 0, 1 
- , 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 1.e-003f, -1, "making", "main", 1, 3000, 1, 0.f 
+ , 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 0.001f, -1, "making", "main", 1, 3000, 1, 0.f 
  , 0, 0, 1, { 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE } 
  , 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }, UNIT_ATTRIBUTE_NONE, 0, 0, 0, 0 
   }, &rigidBodyTable.GenericBuildingPrm, { 0, 1.2f, 0, 150.f, 0.f, 0, 0 }, { 1.f } 
@@ -5352,7 +5321,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , 10, 10, 150.f } }, 70, UNIT_ATTRIBUTE_FALL_STRUCTURE, 90.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER 
  , 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0, 0, 0, 0, 200 }, 0, 0, 0, 1, 0, 1.f, 0.f 
  , 0.f, 0.f, 0, 2048, 0, 1, LEGION_GROUND, UNIT_ATTRIBUTE_NONE, "", 1, 1, 0, 0, 0, 0 
- , 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 0, 1, 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 1.e-003f 
+ , 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 0, 1, 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 0.001f 
  , -1, "making", "main", 1, 3000, 1, 0.f, 0, 0, 1, { 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE 
  , UNIT_ATTRIBUTE_NONE }, 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }, UNIT_ATTRIBUTE_NONE 
  , 0, 0, 0, 0 }, &rigidBodyTable.GenericBuildingPrm, { 0, 1.2f, 0, 150.f, 0.f, 0, 0 
@@ -5368,7 +5337,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , 10, 10, 150.f } }, 70, UNIT_ATTRIBUTE_FALL_STRUCTURE, 90.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER 
  , 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0, 0, 0, 0, 200 }, 0, 0, 0, 1, 0, 1.f, 0.f 
  , 0.f, 0.f, 0, 2048, 0, 1, LEGION_GROUND, UNIT_ATTRIBUTE_NONE, "", 1, 1, 0, 0, 0, 0 
- , 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 0, 1, 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 1.e-003f 
+ , 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 0, 1, 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 0.001f 
  , -1, "making", "main", 1, 3000, 1, 0.f, 0, 0, 1, { 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE 
  , UNIT_ATTRIBUTE_NONE }, 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }, UNIT_ATTRIBUTE_NONE 
  , 0, 0, 0, 0 }, &rigidBodyTable.GenericBuildingPrm, { 0, 1.2f, 0, 150.f, 0.f, 0, 0 
@@ -5385,7 +5354,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0, 0, 0, 0, 500 }, &basementDamageDefault, 0 
  , 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 2048, 0, 1, LEGION_GROUND, UNIT_ATTRIBUTE_NONE, "" 
  , 1, 1, 0, 0, 0, 0, 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 0, 1, 1.f, 20, -2.f, -0.1f, 0.4f 
- , 0.5f, 1.e-003f, -1, "making", "main", 1, 3000, 1, 0.f, 0, 0, 1, { 0, { UNIT_ATTRIBUTE_NONE 
+ , 0.5f, 0.001f, -1, "making", "main", 1, 3000, 1, 0.f, 0, 0, 1, { 0, { UNIT_ATTRIBUTE_NONE 
  , UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }, 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE 
   }, UNIT_ATTRIBUTE_NONE, 0, 0, 0, 0 }, &rigidBodyTable.GenericBuildingPrm, { 0, 1.2f 
  , 0, 150.f, 0.f, 0, 0 }, { 1.f }, { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
@@ -5401,7 +5370,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , 90.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER, 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0 
  , 0, 0, 0, 300 }, 0, 0, 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 2048, 0, 1, LEGION_GROUND 
  , UNIT_ATTRIBUTE_NONE, "", 1, 1, 0, 0, 0, 0, 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 0, 1 
- , 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 1.e-003f, -1, "making", "main", 1, 3000, 1, 0.f 
+ , 1.f, 20, -2.f, -0.1f, 0.4f, 0.5f, 0.001f, -1, "making", "main", 1, 3000, 1, 0.f 
  , 0, 0, 1, { 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE } 
  , 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }, UNIT_ATTRIBUTE_NONE, 0, 0, 0, 0 
   }, &rigidBodyTable.GenericBuildingPrm, { 0, 1.2f, 0, 150.f, 0.f, 0, 0 }, { 1.f } 
@@ -6796,7 +6765,7 @@ struct UnitAttributePrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\GameBalance.inl");
 	add_dependency(".\\Scripts\\interfaceTV.inl");
 	add_dependency(".\\Scripts\\Sound.inl");
-	sourceCRC = 3967250743;
+	sourceCRC = 2460717089;
 	description = 3788996118;
 	reserve(336);
 	add(&terUnitAttributeDataTable_FrameEmpireVice_interfaceTV_500, "terUnitAttributeDataTable_FrameEmpireVice_interfaceTV_500");

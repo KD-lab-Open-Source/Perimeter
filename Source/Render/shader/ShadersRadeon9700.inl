@@ -167,7 +167,7 @@ void VS9700TileMapShadow::Select(const MatXf& world)
 {
 	D3DXMATRIX mat;
 	cD3DRender_SetMatrix(mat,world);
-	D3DXMatrixMultiply(&mat,&mat,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+	D3DXMatrixMultiply(&mat,&mat,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	SetMatrix(mWVP,&mat);
 	cVertexShader::Select();
 }
@@ -212,19 +212,19 @@ void VS9700TileMapScene::SetWorldSize(Vect2f sz)
 
 void VS9700TileMapScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
-	//c0-c3 - ìàòðèöà ïðåîáðàçîâàíèÿ â ýêðàííûå êîîðäèíàòû (view_proj_matrix)
+	//c0-c3 - Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ð° Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ñ Ð² ÑÐºÑ€Ð°Ð½Ð½Ñ‹Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (view_proj_matrix)
 	D3DXMATRIX mat;
 	if(world)
 	{
 		cD3DRender_SetMatrix(mat,*world);
 		SetMatrix(mWorld,&mat);//for light
-		SetMatrix(mView,gb_RenderDevice3D->GetDrawNode()->matView);
+		SetMatrix(mView, &gb_RenderDevice3D->GetDrawNode()->matView);
 
 		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&mat,&mat,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+		D3DXMatrixMultiply(&mat,&mat, &gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	}else
 	{
-		mat=*(D3DXMATRIX*)gb_RenderDevice3D->GetDrawNode()->matViewProj;
+		mat=*(D3DXMATRIX*) &gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	}
 
 	SetMatrix(mWVP,&mat);

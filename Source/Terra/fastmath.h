@@ -64,8 +64,8 @@ extern void init_sqrtTable4IntegerCalculate(void);
 
 inline int fastsqrtI(int s)
 {
-    //TODO convert this to C
-#ifdef _MSC_VER
+    //TODO check if C version is correct
+    /*
 	_asm{
 		xor eax,eax
 		xor esi,esi
@@ -86,8 +86,7 @@ loc_skip:
 		shr eax, cl
 		mov s, eax
 	}
-#else
+    */
 	s = (int)fastsqrt((float)s);
-#endif
 	return s;
 }

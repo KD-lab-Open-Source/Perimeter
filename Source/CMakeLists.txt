@@ -1,72 +1,87 @@
+
+SET(perimeter_LINK_LIBS
+        #Our libs
+        XTool
+        PluginMAX
+        Terra
+        tx3d
+        Render
+        Sound
+        Network
+)
+
 IF(NOT PERIMETER_WINDOWS)
+    #Non Windows target specifics
+    
+    INCLUDE(FetchContent)
+    INCLUDE(ExternalProject)    
+    
+    #Exodus wrapper libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
+
+    #pevents retrieval
+    FetchContent_Declare(pevents
+            GIT_REPOSITORY    https://github.com/neosmart/pevents
+            GIT_TAG           origin/master
+            GIT_SHALLOW       ON
+    )
+    FetchContent_MakeAvailable(pevents)
+    ADD_DEFINITIONS(-DWFMO)
+    INCLUDE_DIRECTORIES("${pevents_SOURCE_DIR}/src")
+
+    #DXVK-native wrapper lib retrieval and building
+    ExternalProject_Add(dxvk-native
+            GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
+            GIT_TAG           origin/master
+            GIT_SHALLOW       ON
+            BUILD_ALWAYS      OFF
+            CONFIGURE_COMMAND meson ../dxvk-native
+            BUILD_COMMAND     ninja
+            INSTALL_COMMAND   ""
+    )
+    ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
+    set(DXVK_NATIVE_INCLUDE_DIRS
+            "${SOURCE_DIR}/include/native/directx"
+            "${SOURCE_DIR}/include/native/windows"
+    )
+    set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+    
+    INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
+ELSE()
+    #DirectX SDK libs
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
 ENDIF()
 
-IF(OPTION_GEN_SCRIPTS)
-    MESSAGE("Generating Scripts")
-    #TODO call XPrm and other stuff
-ENDIF()
-
+ADD_SUBDIRECTORY("XPrm")
+ADD_SUBDIRECTORY("Scripts")
 ADD_SUBDIRECTORY("XTool")
 ADD_SUBDIRECTORY("PluginMAX")
 ADD_SUBDIRECTORY("Terra")
 ADD_SUBDIRECTORY("tx3d")
 ADD_SUBDIRECTORY("Render")
 ADD_SUBDIRECTORY("Sound")
-
-SET(perimeter_LINK_LIBS
-    #Our libs
-    XTool
-    PluginMAX
-    Terra
-    tx3d
-    Render
-    Sound
-)
+ADD_SUBDIRECTORY("Network")
 
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+        Exodus
+        Threads::Threads
+    )
 ELSE()
     ADD_SUBDIRECTORY("PlayOgg")
-    ADD_SUBDIRECTORY("Network")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg Network)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
 
-IF(NOT MSVC_CL_BUILD)
-	SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
-ENDIF()
-
-INCLUDE_DIRECTORIES(
-    "${PROJECT_SOURCE_DIR}/Source/Game"
-    "${PROJECT_SOURCE_DIR}/Source/XTool"
-    "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
-    "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
-    "${PROJECT_SOURCE_DIR}/Source/Util"
-    "${PROJECT_SOURCE_DIR}/Source/Render/inc"
-    "${PROJECT_SOURCE_DIR}/Source/Terra"
-    "${PROJECT_SOURCE_DIR}/Source/UserInterface"
-    "${PROJECT_SOURCE_DIR}/Source/GeoLogic"
-    "${PROJECT_SOURCE_DIR}/Source/Network"
-    "${PROJECT_SOURCE_DIR}/Source/Units"
-    "${PROJECT_SOURCE_DIR}/Source/Render/client"
-    "${PROJECT_SOURCE_DIR}/Source/Physics"
-    "${PROJECT_SOURCE_DIR}/Source/AI"
-    "${PROJECT_SOURCE_DIR}/Source/Sound"
-    "${PROJECT_SOURCE_DIR}/Source/Scripts"
-    "${PROJECT_SOURCE_DIR}/Source/tx3d"
-    "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
-)
+SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
-    #Include headers
-    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
-
     #Select 64 or 32 compiled libs
     IF(PERIMETER_ARCH_64)
         MESSAGE("Linking against DirectX 64 bits")
@@ -96,22 +111,30 @@ IF(PERIMETER_WINDOWS)
     IF(MSVC_CL_BUILD)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
             legacy_stdio_definitions
-
-            Vorbis::vorbis
-            Vorbis::vorbisenc
-            Vorbis::vorbisfile
-
-            SDL2::SDL2
-            SDL2::SDL2main
         )
     ENDIF()
-ELSE()
-    #Add non windows dependencies    
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-        # dl is required for dladdr in stacktrace,
-        dl
-    )
 ENDIF()
+
+INCLUDE_DIRECTORIES(
+    "${PROJECT_SOURCE_DIR}/Source/Game"
+    "${PROJECT_SOURCE_DIR}/Source/XTool"
+    "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
+    "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
+    "${PROJECT_SOURCE_DIR}/Source/Util"
+    "${PROJECT_SOURCE_DIR}/Source/Render/inc"
+    "${PROJECT_SOURCE_DIR}/Source/Terra"
+    "${PROJECT_SOURCE_DIR}/Source/UserInterface"
+    "${PROJECT_SOURCE_DIR}/Source/GeoLogic"
+    "${PROJECT_SOURCE_DIR}/Source/Network"
+    "${PROJECT_SOURCE_DIR}/Source/Units"
+    "${PROJECT_SOURCE_DIR}/Source/Render/client"
+    "${PROJECT_SOURCE_DIR}/Source/Physics"
+    "${PROJECT_SOURCE_DIR}/Source/AI"
+    "${PROJECT_SOURCE_DIR}/Source/Sound"
+    "${PROJECT_SOURCE_DIR}/Source/Scripts"
+    "${PROJECT_SOURCE_DIR}/Source/tx3d"
+    "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
+)
 
 SET(perimeter_SRCS
         Game/CameraManager.cpp
@@ -239,14 +262,34 @@ SET(perimeter_SRCS
         Units/Triggers.cpp
 )
 
-if(PERIMETER_WINDOWS)
-    SET(CMAKE_WIN32_EXECUTABLE YES)
-ENDIF()
-
-ADD_EXECUTABLE(perimeter ${perimeter_SRCS})
+ADD_EXECUTABLE(perimeter ${PERIMETER_EXE_FLAGS} ${perimeter_SRCS})
 
 if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
+TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
+
+#This is the only way I know to force download of external project from any targets
+ADD_CUSTOM_TARGET(dependencies ALL)
+
+IF(OPTION_PROCESS_SCRIPTS)
+    ADD_DEPENDENCIES(dependencies Scripts)
+    ADD_DEPENDENCIES(Scripts XPrm)
+ELSE()
+    MESSAGE("Processing Scripts not enabled")
+ENDIF()
+IF(NOT PERIMETER_WINDOWS)
+    ADD_DEPENDENCIES(dependencies dxvk-native)
+    ADD_DEPENDENCIES(Exodus dxvk-native)
+    ADD_DEPENDENCIES(XTool dxvk-native)
+ELSE()
+    ADD_DEPENDENCIES(PlayOgg dependencies)
+ENDIF()
+ADD_DEPENDENCIES(PluginMAX dependencies)
+ADD_DEPENDENCIES(Terra dependencies)
+ADD_DEPENDENCIES(tx3d dependencies)
+ADD_DEPENDENCIES(Render dependencies)
+ADD_DEPENDENCIES(Sound dependencies)
+ADD_DEPENDENCIES(Network dependencies)
+ADD_DEPENDENCIES(perimeter dependencies)

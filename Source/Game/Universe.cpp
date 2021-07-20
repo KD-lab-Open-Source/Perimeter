@@ -812,11 +812,23 @@ void MissionDescription::restart()
 		setSaveName(originalSaveName);
 }
 
+std::string resolve_mission_path(const std::string& path) {
+    //First try full path as resource (existing file)
+    std::string conv = convert_path_resource(path.c_str());
+    //Otherwise try only parent path (new file)
+    if (conv.empty()) conv = convert_path_resource(path.c_str(), true);
+    //Otherwise just use provided path
+    if (conv.empty()) conv = convert_path(path.c_str());
+    return conv;
+}
+
 void MissionDescription::setSaveName(const char* fname) 
 { 
 	saveName_ = fname;
-	if(getExtention(saveName_.c_str()) != "spb")
-		saveName_ = setExtention(saveName_.c_str(), "spg");
+	if(getExtention(saveName_.c_str()) != "spb") {
+        saveName_ = setExtention(saveName_.c_str(), "spg");
+    }
+	saveName_ = resolve_mission_path(saveName_);
 	saveNameBinary_ = saveName_;
 	saveNameBinary_.erase(saveNameBinary_.size() - 4, saveNameBinary_.size()); 
 	for(int i = 0; i < DIFFICULTY_MAX; i++){
@@ -829,7 +841,7 @@ void MissionDescription::setSaveName(const char* fname)
 	}
 
 	missionName_ = saveNameBinary_;
-	size_t pos = missionName_.rfind("\\");
+	size_t pos = missionName_.rfind(PATH_SEP);
 	if(pos != std::string::npos)
 		missionName_.erase(0, pos + 1);
 	//_strupr((char*)missionName_.c_str());
@@ -837,10 +849,10 @@ void MissionDescription::setSaveName(const char* fname)
 
 void MissionDescription::setReelName(const char* name) 
 {
-	fileNamePlayReelGame = name;
+	fileNamePlayReelGame = resolve_mission_path(name);
 
 	missionNamePlayReelGame = fileNamePlayReelGame;
-	size_t pos = missionNamePlayReelGame.rfind("\\");
+	size_t pos = missionNamePlayReelGame.rfind(PATH_SEP);
 	if(pos != std::string::npos)
 		missionNamePlayReelGame.erase(0, pos + 1);
 }
@@ -927,6 +939,7 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 	else
 		remove(setExtention(mission.saveName(), "dat").c_str());
 
+    scan_resource_paths(mission.saveName());
 	return true;
 }
 

@@ -104,15 +104,15 @@ struct EventSymbol {
 #pragma pack( pop, __XScript_struct_pack__)
 #endif  // __XScript_struct_EventSymbol__
 EventSymbol activeObjectSymbol = { "resource\\cursors\\cursor_instalation.avi" 
- , 1.5625e-002f, 2.0833333e-002f, 3000.f, 3000.f, "" };
+ , 0.015625f, 0.020833333f, 3000.f, 3000.f, "" };
 EventSymbol eventSymbols[2] = { { "resource\\cursors\\Krug_build.avi" 
- , 6.25e-002f, 8.3333333e-002f, 1700.f, 1700.f, "" }, { "resource\\cursors\\Krug_enemy.avi" 
+ , 0.0625f, 0.083333333f, 1700.f, 1700.f, "" }, { "resource\\cursors\\Krug_enemy.avi" 
  , 0.125f, 0.16666667f, 6000.f, 2400.f, "squad_attack" } };
 float SQSH_COORD_WIDTH_SCALE = 1024.f;
 float SQSH_COORD_HEIGHT_SCALE = 768.f;
-float sqshProrgessBarHeight = 1.e-002f;
-float sqshCursorWorkAreaDx = -3.e-002f;
-float sqshCursorWorkAreaDy = -1.e-002f;
+float sqshProrgessBarHeight = 0.01f;
+float sqshCursorWorkAreaDx = -0.03f;
+float sqshCursorWorkAreaDy = -0.01f;
 float sqshDisabledR = 0.5f;
 float sqshDisabledG = 0.5f;
 float sqshDisabledB = 0.5f;
@@ -123,8 +123,8 @@ float nPopupSX = 0.29296875f;
 float nPopupSY = 0.15625f;
 char const* sPopupTexture = "RESOURCE\\Icons\\intf\\back_info.tga";
 float shellCursorAddRegionSize = 64.f;
-float _buttonLabelX = 3.90625e-002f;
-float _buttonLabelY = 3.90625e-003f;
+float _buttonLabelX = 0.0390625f;
+float _buttonLabelY = 0.00390625f;
 float _squad_buttons_dx = 50.f;
 int _button_atom1_x = 3;
 int _button_atom1_y = 0;
@@ -178,7 +178,7 @@ float hover_y1 = 0.596f;
 float hover_y2 = 0.622f;
 int hover_sx = 74;
 int hover_sy = 26;
-float half_sx_ = 8.7890625e-002f;
+float half_sx_ = 0.087890625f;
 float right_x_ = 0.25390625f;
 float activeHalfBrig_u = 773.f;
 float activeHalfBrig_v = 48.f;
@@ -232,12 +232,12 @@ char const* progress_texture = "resource\\icons\\intf\\progress.tga";
 int splash_delay_time = 1000;
 int alpha_delta = 5;
 int _bDebugDisplayAllIcons = 0;
-float nBaseUnitsDisplayX = 0.86914063f;
-float nBaseUnitsDisplayY = 3.90625e-003f;
+float nBaseUnitsDisplayX = 0.86914062f;
+float nBaseUnitsDisplayY = 0.00390625f;
 float countDownTimerX = 0.8984375f;
-float countDownTimerY = 4.296875e-002f;
-float totalTimerX = 0.71289063f;
-float totalTimerY = 1.3020833e-003f;
+float countDownTimerY = 0.04296875f;
+float totalTimerX = 0.71289062f;
+float totalTimerY = 0.0013020833f;
 char const* sRegionTextureAbyss = "Resource\\Effect\\Region Down.tga";
 char const* sRegionTextureEnergy = "Resource\\Effect\\fx.tga";
 char const* sRegionTextureTriangle = "Resource\\Effect\\targetTriangle.tga";
@@ -280,10 +280,10 @@ int _fEffectButtonTotalTime = 700;
 int _fEffectIntfRoll1 = 400;
 int _fEffectIntfRoll2 = 400;
 int _fEffectIntfRoll3 = 400;
-float hintX = 9.765625e-003f;
+float hintX = 0.009765625f;
 float hintY = 0.72265625f;
 float hintSX = 0.3515625f;
-float cutSceneHintX = 9.765625e-003f;
+float cutSceneHintX = 0.009765625f;
 float cutSceneHintY = 0.89583333f;
 float cutSceneHintSX = 0.9765625f;
 int spiralR = 114;
@@ -294,7 +294,7 @@ float MiniMapZeroLayerColorFactor = 0.5f;
 float MiniMapBuildingColorFactor = 0.95f;
 float filthMapColor[4] = { 1.f 
  , 1.f, 0.f, 1.f };
-float buildingMiniMapRatio = 1.5625e-002f;
+float buildingMiniMapRatio = 0.015625f;
 float minimapAlphaPathColor[4] = { 1.f 
  , 1.f, 1.f, 0.6f };
 ShellControlID reloadID = SQSH_MM_LOAD_SCR;
@@ -445,15 +445,15 @@ char const* briefingMusic = "Resource\\Music\\Exodus_Psychosphere.ogg";
 int DeltaToolzerRadius = 5;
 float CHATINFO_FADE_TIME = 1000.f;
 float CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000.f;
-float statsTableRowHeight = 5.2083333e-002f;
+float statsTableRowHeight = 0.052083333f;
 float totalColumnStatsWeights[6] = { 0.f 
- , 6.25e-002f, 0.25f, 0.41666667f, 0.58333333f, 0.75f };
+ , 0.0625f, 0.25f, 0.41666667f, 0.58333333f, 0.75f };
 float generalColumnStatsWeights[7] = { 0.f 
- , 6.25e-002f, 0.25f, 0.41666667f, 0.58333333f, 0.75f, 0.88541667f };
+ , 0.0625f, 0.25f, 0.41666667f, 0.58333333f, 0.75f, 0.88541667f };
 float unitsColumnStatsWeights[6] = { 0.f 
- , 6.25e-002f, 0.25f, 0.41666667f, 0.58333333f, 0.75f };
+ , 0.0625f, 0.25f, 0.41666667f, 0.58333333f, 0.75f };
 float buildingsColumnStatsWeights[6] = { 0.f 
- , 6.25e-002f, 0.25f, 0.41666667f, 0.58333333f, 0.75f };
+ , 0.0625f, 0.25f, 0.41666667f, 0.58333333f, 0.75f };
 
 #ifdef _PRM_EDIT_
 struct SquadShellUIPrm_ParameterSection : ParameterSection

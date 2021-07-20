@@ -1,7 +1,7 @@
 #ifndef _PERIMETER_TRIGGERS_
 #define _PERIMETER_TRIGGERS_
 
-#include "Save.h"
+#include "Conditions.h"
 
 class terUnitBase;
 class terCameraType;

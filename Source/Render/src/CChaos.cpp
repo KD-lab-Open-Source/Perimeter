@@ -572,7 +572,7 @@ void CBox::Draw(cCamera *DrawNode)
 		D3DXMATRIX matView = matViewSave;
 		D3DXMATRIX matProj = matViewSave;
 		matView._41 = matView._42 = matView._43 = 0.0f;
-		D3DXMatrixPerspectiveFovLH( &matProj, D3DX_PI/2, 1.0f, 0.5f, 10000.0f );
+		D3DXMatrixPerspectiveFovLH( &matProj, M_PI/2, 1.0f, 0.5f, 10000.0f );
 		rd->lpD3DDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 		rd->lpD3DDevice->SetTransform( D3DTS_VIEW,       &matView );
 

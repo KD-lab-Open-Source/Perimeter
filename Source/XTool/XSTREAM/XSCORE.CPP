@@ -17,12 +17,22 @@ XStream::~XStream()
 
 XStream::XStream(const char* name, unsigned flags,int err)
 {
-	ErrHUsed = err;
-	handler  = nullptr;
-	eofFlag  = 1;
-	extSize  = -1;
-	extPos	 = 0;
-	open(name,flags);
+    ErrHUsed = err;
+    handler  = nullptr;
+    eofFlag  = 1;
+    extSize  = -1;
+    extPos	 = 0;
+    open(name,flags);
+}
+
+XStream::XStream(const std::string& name, unsigned flags,int err)
+{
+    ErrHUsed = err;
+    handler  = nullptr;
+    eofFlag  = 1;
+    extSize  = -1;
+    extPos	 = 0;
+    open(name,flags);
 }
 
 

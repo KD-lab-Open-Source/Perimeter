@@ -3,6 +3,7 @@
 #include "UserSingleProfile.h"
 #include "GameShellSq.h"
 #include "Config.h"
+#include "xutil.h"
 
 UserSingleProfile::UserSingleProfile() :
 		currentMissionNumber(-1),
@@ -32,16 +33,12 @@ void UserSingleProfile::scanProfiles() {
 
 	int maxIndex = -1;
 
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hf = FindFirstFile( "RESOURCE\\SAVES\\Profile*", &FindFileData );
-	if(hf != INVALID_HANDLE_VALUE){
-		do{
-			if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				profiles.push_back( Profile(FindFileData.cFileName) );
-			}
-		} while(FindNextFile( hf, &FindFileData ));
-		FindClose( hf );
-	}
+    for (const auto & entry : std::filesystem::directory_iterator(getAllSavesDirectory())) {
+        if (entry.is_directory()) {
+            std::string path = entry.path().filename().string();
+            profiles.emplace_back(Profile(path));
+        }
+    }
 	for (int i = 0, s = profiles.size(); i < s; i++) {
 		loadProfile(i);
 		maxIndex = max(maxIndex, profiles[i].dirIndex);
@@ -77,49 +74,51 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	sprintf(ind, "Profile%d", i);
 	Profile newProfile(ind);
 	newProfile.name = name;
-	std::string root = "RESOURCE\\SAVES\\";
+	std::string root = getAllSavesDirectory();
 	std::string path = root + newProfile.dirName;
-	std::string origin = "RESOURCE\\SAVES\\DefaultPlayerData";
-	if( CreateDirectory(path.c_str(), NULL) ) {
-		path += "\\data";
-		if ( CopyFile(origin.c_str(), path.c_str(), FALSE) ) {
-			profiles.push_back( newProfile );
-			IniManager man( path.c_str(), true );
-			man.put("General", "name", name.c_str());
-			man.putInt("General", "lastMissionNumber", firstMissionNumber);
-			if (i == freeInds.size()) {
-				freeInds.push_back(true);
-			} else {
-				freeInds[i] = true;
-			}
-			loadProfile(profiles.size() - 1);
-		} else {
-			ErrH.Abort("Can't copy: ", XERR_USER, 0, origin.c_str());
-		}
+	std::string origin = root + PATH_SEP + "DefaultPlayerData";
+    std::error_code error;
+    std::filesystem::create_directories(path, error);
+	if( error ) {
+        ErrH.Abort("Can't create profile directory: ", XERR_USER, error.value(), error.message().c_str());
 	} else {
-		ErrH.Abort("Can't create directory: ", XERR_USER, 0, path.c_str());
+        std::string path_data = path + PATH_SEP + "data";
+        std::filesystem::copy_file(origin, path_data, error);
+        if (error) {
+            ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
+        } else {
+            scan_resource_paths(path);
+            profiles.push_back( newProfile );
+            IniManager man( path_data.c_str(), true );
+            man.put("General", "name", name.c_str());
+            man.putInt("General", "lastMissionNumber", firstMissionNumber);
+            if (i == freeInds.size()) {
+                freeInds.push_back(true);
+            } else {
+                freeInds[i] = true;
+            }
+            loadProfile(profiles.size() - 1);
+        }
 	}
 }
 
 bool UserSingleProfile::removeDir(const std::string& dir) {
-	WIN32_FIND_DATA findFileData;
-	std::string mask = dir + "*.*";
-	HANDLE hf = FindFirstFile( mask.c_str(), &findFileData );
-	if (hf != INVALID_HANDLE_VALUE) {
-		do {
-			if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
-				DeleteFile((dir + findFileData.cFileName).c_str());
-			}
-		} while(FindNextFile( hf, &findFileData ));
-		FindClose( hf );
-	}
-	return RemoveDirectory(dir.c_str());
+    std::error_code error;
+    std::string allSaves = getAllSavesDirectory();
+    std::filesystem::path target_path = allSaves + PATH_SEP + dir;
+    std::filesystem::remove_all(target_path, error);
+    if( error ) {
+        ErrH.Abort("Can't remove profile directory: ", XERR_USER, error.value(), error.message().c_str());
+    }
+    bool deleted = !std::filesystem::exists(target_path);
+    scan_resource_paths(allSaves);
+    return deleted;
 }
 
 void UserSingleProfile::removeProfile(int index) {
-	if (removeDir("RESOURCE\\SAVES\\" + profiles[index].dirName + "\\")) {
+	if (removeDir(profiles[index].dirName + PATH_SEP)) {
 		freeInds[profiles[index].dirIndex] = false;
-	}	
+	}
 
 	std::vector<Profile>::iterator forErase = profiles.begin();
 	advance(forErase, index);
@@ -140,15 +139,18 @@ void UserSingleProfile::setCurrentProfileIndex(int index) {
 
 void UserSingleProfile::deleteSave(const std::string& name) {
 	std::string fullName = getSavesDirectory() + name;
-	DeleteFile( (fullName + ".spg").c_str() );
-	DeleteFile( (fullName + ".gmp").c_str() );
-	DeleteFile( (fullName + ".dat").c_str() );
-	DeleteFile( (fullName + ".sph").c_str() );
+	std::remove( (fullName + ".spg").c_str() );
+	std::remove( (fullName + ".gmp").c_str() );
+	std::remove( (fullName + ".dat").c_str() );
+	std::remove( (fullName + ".sph").c_str() );
+}
+
+std::string UserSingleProfile::getAllSavesDirectory() {
+    return convert_path_resource("RESOURCE") + PATH_SEP + "Saves" + PATH_SEP;
 }
 
 std::string UserSingleProfile::getSavesDirectory() const {
-//	return "RESOURCE\\SAVES\\";
-	return "RESOURCE\\SAVES\\" + profiles[currentProfileIndex].dirName + "\\";
+	return getAllSavesDirectory() + profiles[currentProfileIndex].dirName + PATH_SEP;
 }
 
 void UserSingleProfile::loadProfile(int index) {
@@ -160,12 +162,13 @@ void UserSingleProfile::loadProfile(int index) {
 }
 
 std::string UserSingleProfile::getFileNameWithDifficulty(const std::string& fileName) {
-	std::string fileNameWithoutExt = fileName;
-	fileNameWithoutExt.erase(fileNameWithoutExt.size() - 4, fileNameWithoutExt.size());
 	std::string res = MISSIONS_PATH;
+#if 0 //TODO apparently thisfunction is not used
+    std::string fileNameWithoutExt = fileName;
+	fileNameWithoutExt.erase(fileNameWithoutExt.size() - 4, fileNameWithoutExt.size());
 	res += "\\";
 	res += fileNameWithoutExt;
-	res += missionDifficultyPostfix[getDifficulty()]; 
+	res += missionDifficultyPostfix[getDifficulty()];
 
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hf = FindFirstFile( (res + ".spg").c_str(), &FindFileData );
@@ -176,6 +179,7 @@ std::string UserSingleProfile::getFileNameWithDifficulty(const std::string& file
 		hf = FindFirstFile( res.c_str(), &FindFileData );
 		xassert( hf != INVALID_HANDLE_VALUE );
 	}
+#endif
 	return res;
 }
 

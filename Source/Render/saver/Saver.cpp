@@ -25,7 +25,7 @@ CSaver::CSaver(const  char* name)
 
 CSaver::CSaver()
 {
-	f=NULL;
+	f=nullptr;
 }
 
 CSaver::~CSaver()
@@ -37,7 +37,7 @@ bool CSaver::Init(const char* name)
 {
 	p.clear();
 	f=fopen(name,"w+b");
-	return f!=NULL;
+	return f!=nullptr;
 }
 
 void CSaver::push(const unsigned long id)
@@ -50,28 +50,26 @@ void CSaver::push()
 {
 	DWORD w=0;
 	WR(w);
-	fpos_t t;
-	fgetpos(f,&t);
+    long t = ftell(f);
 
-	p.push_back((DWORD)t);
+	p.push_back(t);
 }
 
 void CSaver::pop()
 {
-	fpos_t t;
-	fgetpos(f,&t);
+    long t = ftell(f);
 
 	int n=p.size()-1;
 	DWORD min=p[n];
-	fpos_t tt=min-4;
-	fsetpos(f,&tt);
+    long tt=min-4;
+    fseek(f,tt,SEEK_SET);
 	DWORD size=DWORD(t)-min;
 	WR(size);
 
 	p.pop_back();
 
 
-	fsetpos(f,&t);
+	fseek(f,t,SEEK_SET);
 }
 
 /////////////////////////////////////////////////

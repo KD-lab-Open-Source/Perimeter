@@ -54,9 +54,8 @@ public:
     	
 	AttributeLegionary();
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-        AttributeReal::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        AttributeReal::serialize_template(ar);
 		if(ar.openBlock("attributeLegionary", "Легионер")){
 			ar & TRANSLATE_OBJECT(is_base_unit, "is_base_unit");
 			ar & TRANSLATE_OBJECT(formationRadiusFactor, "formationRadiusFactor");

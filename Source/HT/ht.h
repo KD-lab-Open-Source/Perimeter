@@ -61,13 +61,18 @@ protected:
 	time_type time;
 	time_type dtime;
 
-	DWORD logic_thread_id;
+	THREAD_ID logic_thread_id;
 	struct LogicThreadArg
 	{
 		MissionDescription mission;
 	};
 	void logic_thread();
-	friend void logic_thread( void * argument);
+
+#ifdef PERIMETER_EXODUS
+    friend void* logic_thread_init(void*);
+#else
+	friend void logic_thread_init( void * argument);
+#endif
 
 	bool init_logic;
 

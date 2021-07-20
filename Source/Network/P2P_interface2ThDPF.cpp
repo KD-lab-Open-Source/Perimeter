@@ -19,8 +19,8 @@
 WCHAR wstrSession[] = L"Session1";
 WCHAR wstrPlayer[]  = L"Player1";
 
-LPCTSTR lpszSignatureRQ = "Perimeter MP client. Version 3";
-LPCTSTR lpszSignatureRPL = "Perimeter MP server. Version 3";
+//LPCTSTR lpszSignatureRQ = "Perimeter MP client. Version 3";
+//LPCTSTR lpszSignatureRPL = "Perimeter MP server. Version 3";
 
 
 #define XDP_CHECK_HR(hr, msg) {if(FAILED(hr)) ErrH.Abort(msg);}
@@ -520,9 +520,6 @@ bool PNetCenter::GetConnectionInfo(DPN_CONNECTION_INFO& info)
 	return SUCCEEDED(m_pDPClient->GetConnectionInfo(&info, 0));
 */
 	return 0;
-}
-void PNetCenter::TerminateSession()
-{
 }
 
 void PNetCenter::Close(bool flag_immediatle)

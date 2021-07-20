@@ -1,7 +1,20 @@
 #include "StdAfx.h"
 
 #include "P2P_interface.h"
+
+#ifdef PERIMETER_EXODUS
+    #ifdef _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+    #include <winsock.h>
+    #else
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #endif
+#else
 #include "GS_interface.h"
+#include "dxerr9.h"
+#endif
 
 #include "GameShell.h"
 #include "Universe.h"
@@ -11,8 +24,6 @@
 #include "../Terra/terra.h"
 
 #include <algorithm>
-
-#include "dxerr9.h"
 
 const int NORMAL_QUANT_INTERVAL=100;
 
@@ -152,15 +163,18 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 	workMode=_workMode;
 	//m_gameHostID=0;
 	internalIP=0;
+#ifndef PERIMETER_EXODUS
 	// DP Init
 	//m_hEnumAsyncOp=0;
 	m_hEnumAsyncOp_Arr.clear();
 	m_pDPPeer=0;
 	m_nClientSgnCheckError = 0;
-	m_hostDPNID=0;
-	m_localDPNID=0;
-	flag_connected=0;
-
+#endif
+	
+    m_hostDPNID=0;
+    m_localDPNID=0;
+	
+    flag_connected=false;
 	flag_NetworkSimulation=false;
 	if(IniManager("Network.ini").getInt("General", "NetworkSimulator")) flag_NetworkSimulation=true;
 	flag_HostMigrate=false;
@@ -228,6 +242,7 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 	switch(_workMode){
 	case PNCWM_LAN:
 		break;
+#ifndef PERIMETER_EXODUS
 	case PNCWM_ONLINE_GAMESPY:
 		{
 			gameSpyInterface=new GameSpyInterface(this);
@@ -247,6 +262,7 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 			else result=GameShell::NCC_RC_OK;
 		}
 		break;
+#endif
 	case PNCWM_ONLINE_P2P:
 		if(InternetAddress!=0){
 			//fixedInternetAddress=InternetAddress;
@@ -278,7 +294,7 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 
 	//hSecondThread=INVALID_HANDLE_VALUE;
 
-	DWORD ThreadId;
+	THREAD_ID ThreadId;
 	hSecondThread=CreateThread( NULL, 0, InternalServerThread, this, /*NULL,*/ 0, &ThreadId);
 
 	if(WaitForSingleObject(hSecondThreadInitComplete, INFINITE) != WAIT_OBJECT_0) {
@@ -300,7 +316,11 @@ PNetCenter::~PNetCenter()
 	const unsigned int TIMEOUT=5000;// ms
 	if( WaitForSingleObject(hSecondThread, TIMEOUT) != WAIT_OBJECT_0) {
 		xassert(0&&"Net Thread terminated!!!");
+#ifdef PERIMETER_EXODUS
+        SetEvent(hSecondThread); //TODO not sure if this even necessary
+#else
 		TerminateThread(hSecondThread, 0);
+#endif
 	}
 
 	ClearDeletePlayerGameCommand();
@@ -316,8 +336,8 @@ PNetCenter::~PNetCenter()
 	///CloseHandle(hServerReady);
 	///CloseHandle(hStartServer);
 
-	CloseHandle(hSecondThreadInitComplete);
-	CloseHandle(hCommandExecuted);
+    DestroyEvent(hSecondThreadInitComplete);
+    DestroyEvent(hCommandExecuted);
 
 	if(gameSpyInterface) delete gameSpyInterface;
 }
@@ -384,8 +404,10 @@ void PNetCenter::CreateGame(const char* gameName, const char* missionName, const
 	if(isConnected()) gameShell->callBack_CreateGameReturnCode(GameShell::CG_RC_OK);
 	else gameShell->callBack_CreateGameReturnCode(GameShell::CG_RC_CREATE_HOST_ERR);
 
+#ifndef PERIMETER_EXODUS
 	//GameSpy тоже нужен hostMissionDescription и GameName
 	if(gameSpyInterface)gameSpyInterface->CreateStagingRoom(gameName, password);
+#endif
 
 	return;
 #else 
@@ -399,8 +421,10 @@ void PNetCenter::JoinGame(GUID _gameHostID, const char* playerName, terBelligere
 	clientPause=false;
 	clientInPacketPause=false;
 
+#ifndef PERIMETER_EXODUS
 	//GameSpy
 	if(gameSpyInterface)gameSpyInterface->JoinStagingRoom(_gameHostID);
+#endif
 
 
 	const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
@@ -451,6 +475,8 @@ void PNetCenter::JoinGame(const char* strIP, const char* playerName, terBelliger
 		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
 		return;// JGRC_ERR_CONNECTION;
 	}
+
+#ifndef PERIMETER_EXODUS
 	//GameSpy
 	if(gameSpyInterface){
 		GameSpyInterface::e_JoinStagingRoomResult result=gameSpyInterface->JoinStagingRoom(ip, password);
@@ -467,6 +493,7 @@ void PNetCenter::JoinGame(const char* strIP, const char* playerName, terBelliger
 			return; break;
 		}
 	}
+#endif
 
 	const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
 	DWORD cns = BUF_CN_SIZE;
@@ -546,11 +573,13 @@ void PNetCenter::HandlerInputNetCommand()
 			break;
 		case NETCOM_4C_ID_START_LOAD_GAME:
 			{
+#ifndef PERIMETER_EXODUS
 				//GameSpy
 				if(gameSpyInterface){
 					if(isHost())
 						gameSpyInterface->StartGame();
 				}
+#endif
 				netCommand4C_StartLoadGame nc4c_sl(in_ClientBuf);
 				clientMissionDescription=nc4c_sl.missionDescription_;
 
@@ -626,11 +655,10 @@ void PNetCenter::HandlerInputNetCommand()
 			break;
 		default: 
 			{
-				// !!! передается HiperSpace
-				if(0) {
+				/* !!! передается HiperSpace
 					SetConnectionTimeout(30000);
 					int c=GetConnectionTimeout();
-				}
+				*/
 				if(flag_SkipProcessingGameCommand) in_ClientBuf.ignoreNetCommand(); //Нужно при миграции Host-а
 				else {
 					if(gameShell->GameActive){
@@ -667,7 +695,9 @@ void PNetCenter::P2PIQuant()
 			interfaceCommandList.pop_front();
 		}
 
+#ifndef PERIMETER_EXODUS
 		if(gameSpyInterface) gameSpyInterface->quant();
+#endif
 		else refreshLanGameHostList();
 
 		HandlerInputNetCommand();
@@ -851,7 +881,9 @@ void PNetCenter::GameIsReady(void)
 
 std::vector<sGameHostInfo*>& PNetCenter::getGameHostList()
 {
+#ifndef PERIMETER_EXODUS
 	if(gameSpyInterface) return gameSpyInterface->gameHostList;
+#endif
 	return gameHostList;
 }
 
@@ -870,6 +902,8 @@ void PNetCenter::refreshLanGameHostList()
 		curguid.Data1= std::distance(needHostList.begin(), k);
 		gameHostList.push_back(new sGameHostInfo( curguid, k->c_str(), "", "", sGameStatusInfo()));
 	}
+
+#ifndef PERIMETER_EXODUS
 	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end();){
 		if((curTime - (*p)->timeLastRespond) > MAX_TIME_INTERVAL_HOST_RESPOND ) {
@@ -951,6 +985,7 @@ void PNetCenter::refreshLanGameHostList()
 			p++;
 		}
 	}
+#endif
 }
 
 

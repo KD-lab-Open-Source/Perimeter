@@ -2,20 +2,20 @@
 
 enum eAttributeTexture
 {
-	TEXTURE_MIPMAP_POINT	=	1<<18,		// òåêñòóðíûå ìèïìàïû ïîëó÷åíû áëèæàéøèìè òî÷êàìè
-	TEXTURE_MIPMAPBLUR		=	1<<19,		// èñïîëüçûâàòü áëþð ïðè ìèïìàïèíãå
-	TEXTURE_BLURWHITE		=	1<<20,		// èñïîëüçîâàòü áëþð ñ íàñèëüíûì îêðóãëåíèåì â áîëüøóþ ñòîðîíó
-	TEXTURE_RENDER16		=	1<<21,		// â òåêñòóðó ïðîèñõîäèò ðåíäåð
+	TEXTURE_MIPMAP_POINT	=	1<<18,		// Ñ‚ÐµÐºÑÑ‚ÑƒÑ€Ð½Ñ‹Ðµ Ð¼Ð¸Ð¿Ð¼Ð°Ð¿Ñ‹ Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ñ‹ Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑˆÐ¸Ð¼Ð¸ Ñ‚Ð¾Ñ‡ÐºÐ°Ð¼Ð¸
+	TEXTURE_MIPMAPBLUR		=	1<<19,		// Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ñ‹Ð²Ð°Ñ‚ÑŒ Ð±Ð»ÑŽÑ€ Ð¿Ñ€Ð¸ Ð¼Ð¸Ð¿Ð¼Ð°Ð¿Ð¸Ð½Ð³Ðµ
+	TEXTURE_BLURWHITE		=	1<<20,		// Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ Ð±Ð»ÑŽÑ€ Ñ Ð½Ð°ÑÐ¸Ð»ÑŒÐ½Ñ‹Ð¼ Ð¾ÐºÑ€ÑƒÐ³Ð»ÐµÐ½Ð¸ÐµÐ¼ Ð² Ð±Ð¾Ð»ÑŒÑˆÑƒÑŽ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ñƒ
+	TEXTURE_RENDER16		=	1<<21,		// Ð² Ñ‚ÐµÐºÑÑ‚ÑƒÑ€Ñƒ Ð¿Ñ€Ð¾Ð¸ÑÑ…Ð¾Ð´Ð¸Ñ‚ Ñ€ÐµÐ½Ð´ÐµÑ€
 	TEXTURE_RENDER32		=	1<<22,
-	TEXTURE_32				=	1<<24,		//Òîëüêî 32 áèòíûé ôîðìàò
+	TEXTURE_32				=	1<<24,		//Ð¢Ð¾Ð»ÑŒÐºÐ¾ 32 Ð±Ð¸Ñ‚Ð½Ñ‹Ð¹ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚
 	TEXTURE_RENDER_SHADOW_9700 =1<<25,
 	TEXTURE_D3DPOOL_DEFAULT =	1<<26,
 	TEXTURE_GRAY			=   1<<27,
 	TEXTURE_UVBUMP			=	1<<28,
 	TEXTURE_U16V16			=	1<<29,
 
-	TEXTURE_ALPHA_BLEND		=	MAT_ALPHA_BLEND,	//  òåêñòóðà ñîäåðæèò àëüôó
-	TEXTURE_ALPHA_TEST		=	MAT_ALPHA_TEST,	// òåêñòóðà ñîäåðæèò ìàñêó â àëüôå
+	TEXTURE_ALPHA_BLEND		=	MAT_ALPHA_BLEND,	//  Ñ‚ÐµÐºÑÑ‚ÑƒÑ€Ð° ÑÐ¾Ð´ÐµÑ€Ð¶Ð¸Ñ‚ Ð°Ð»ÑŒÑ„Ñƒ
+	TEXTURE_ALPHA_TEST		=	MAT_ALPHA_TEST,	// Ñ‚ÐµÐºÑÑ‚ÑƒÑ€Ð° ÑÐ¾Ð´ÐµÑ€Ð¶Ð¸Ñ‚ Ð¼Ð°ÑÐºÑƒ Ð² Ð°Ð»ÑŒÑ„Ðµ
 	TEXTURE_BUMP			=   MAT_BUMP,
 };
 

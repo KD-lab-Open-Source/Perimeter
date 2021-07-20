@@ -5,6 +5,11 @@
 #include "EventBufferDP.h"
 #include "CommonEvents.h"
 
+#ifdef PERIMETER_DEBUG
+#define LogMsg(...) fprintf(stdout, __VA_ARGS__)
+#else
+#define LogMsg(...)
+#endif
 
 #define _DBG_COMMAND_LIST
 
@@ -12,18 +17,14 @@
 
 bool checkInetAddress(const char* ipStr);
 
+#ifdef PERIMETER_EXODUS
+void* InternalServerThread(LPVOID lpParameter);
+#else
 DWORD WINAPI InternalServerThread(LPVOID lpParameter);
 HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer);
-
-extern LPCTSTR lpszSignatureRQ;
-extern LPCTSTR lpszSignatureRPL;
+#endif
 
 extern const GUID guidPerimeterGame;
-
-
-void LogMsg(LPCTSTR fmt, ...);
-
-const int MAX_SIZE_MISSION_NAME=20;
 
 struct sGameStatusInfo{
 	sGameStatusInfo(){
@@ -363,7 +364,9 @@ public:
 	void DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason);
 
 
+#ifndef PERIMETER_EXODUS
 	HRESULT DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer);
+#endif
 
 //	bool DbgPause();
 
@@ -462,21 +465,22 @@ public:
 		else return 0;
 	}
 
-	bool IsEmptyInternalCommandList(void);
-
 	//Internet GameSpy
 	GameSpyInterface* gameSpyInterface;
 	void reEnumPlayers(int IP);
 
+#ifndef PERIMETER_EXODUS
 	//ConnectionDP
     //DPNHANDLE m_hEnumAsyncOp;
 	std::vector<DPNHANDLE> m_hEnumAsyncOp_Arr;
 	IDirectPlay8Peer*	m_pDPPeer;
 
 	long m_nClientSgnCheckError;
-	DPNID	m_hostDPNID;
-	DPNID	m_localDPNID;
-	bool flag_connected;
+#endif
+	
+    DPNID	m_hostDPNID;
+    DPNID	m_localDPNID;
+    bool flag_connected;
 
 	void FinishGame(void);
 	void StartFindHost(void);
@@ -484,15 +488,17 @@ public:
 	//DP interface
 	bool Init(void);
 	int ServerStart(const char* _name, int port);
-	GUID getHostGUIDInstance();
 	void SetConnectionTimeout(int ms);
-	int GetConnectionTimeout(void);
 	void RemovePlayer(DPNID dpnid);
-	void SetServerInfo(void* pb, int sz);
-	int GetServerInfo(void* pb);
+#ifndef PERIMETER_EXODUS
+    void SetServerInfo(void* pb, int sz); //TODO Apparently unused
+    int GetConnectionTimeout(void); //TODO Apparently unused
+    GUID getHostGUIDInstance(); //TODO Apparently unused
+    int GetServerInfo(void* pb);
 	bool GetConnectionInfo(DPN_CONNECTION_INFO& info);
+	bool FindHost(const char* lpszHost);
+#endif
 	void Close(bool flag_immediatle=1);
-	void TerminateSession();
 	int Connect(GUID _hostID); //const char* lpszHost, int port)
 	int Connect(unsigned int ip);//, int port
 	void StartConnect2IP(unsigned int ip);
@@ -500,12 +506,11 @@ public:
 
 	bool isConnected();
 	int Send(const char* buffer, int size, DPNID dpnid, bool flag_guaranted=1);
-	bool FindHost(const char* lpszHost);
 	bool StartFindHostDP(const char* lpszHost="");
 	void StopFindHostDP(void);
 	void reStartFindPlayers(int ip);
-
-
+	
+#ifndef PERIMETER_EXODUS
 	struct INTERNAL_HOST_ENUM_INFO {
 		DPN_APPLICATION_DESC* pAppDesc;
 		IDirectPlay8Address*  pHostAddr;
@@ -518,6 +523,7 @@ public:
 	};
 
 	std::vector<INTERNAL_HOST_ENUM_INFO*> internalFoundHostList;
+#endif
 	void clearInternalFoundHostList(void);
 
 	std::vector<std::string> needHostList;

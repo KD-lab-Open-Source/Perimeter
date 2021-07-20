@@ -30,7 +30,7 @@ private:
 	terPlayer* player_;
 };
 
-class terUnitBase : public terUnitID, public ShareHandleBase
+class terUnitBase : public terUnitID, public ShareHandleBaseSerializeVirtual
 {
 public:
 	terUnitBase(const UnitTemplate& data);
@@ -238,13 +238,12 @@ public:
 		return *attr_;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	VIRTUAL_SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(attr_, "attribute", "Свойство");
 //		ar & WRAP_OBJECT(position_);
 //		ar & WRAP_OBJECT(orientaion);
 //		ar & WRAP_OBJECT(radius);
-		ar & TRANSLATE_OBJECT(label, "Метка");
+		ar & TRANSLATE_OBJECT(label_, "Метка");
 	}
 
 protected:

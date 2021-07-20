@@ -131,9 +131,14 @@ void CShellLogicDispatcher::quant(bool game_active)
 			if(m_nEditRegion == editRegion1)
 				_shellCursorManager.SetActiveCursor(m_bCanFlip && _shellIconManager.getCurrentEnabledOperation() ? CShellCursorManager::workarea_in : CShellCursorManager::workarea_out, 1);
 
+#ifndef PERIMETER_EXODUS
+			//TODO idk what is this for, apparently for not calling OnMouseMove if mouse is moving
 			MSG msg;
 			if(!PeekMessage(&msg, hWndVisGeneric, WM_MOUSEMOVE, WM_MOUSEMOVE, PM_NOREMOVE))
-				_shellIconManager.OnMouseMove(m_fMouseCurrentX, m_fMouseCurrentY);
+#endif
+            {
+                _shellIconManager.OnMouseMove(m_fMouseCurrentX, m_fMouseCurrentY);
+            }
 		}
 
 		if (m_nState == STATE_TRACKING) {
@@ -409,6 +414,8 @@ void SoundOnSetUnitTarget(terUnitBase* p)
 		case UNIT_ATTRIBUTE_SQUAD:
 //			SND2DPlaySound("squad_moves");
 			break;
+        default:
+            break;
 		}
 	}
 }

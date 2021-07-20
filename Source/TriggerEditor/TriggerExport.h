@@ -15,6 +15,8 @@ class CRect : public RECT {
 #endif
 
 #include "Serialization.h"
+#define PERIMETER_SERIALIZATION_ARCHIVE_NEED
+#include "SerializationVirtual.h"
 
 //-----------------------------
 //This was originally on Conditions.h, had to be moved since C++ now forbids forward declaring enums
@@ -120,7 +122,7 @@ public:
 };
 
 //-----------------------------
-struct Condition : ShareHandleBase // Не выполняется никогда (для выключения триггеров)
+struct Condition : ShareHandleBaseSerializeVirtual // Не выполняется никогда (для выключения триггеров)
 {
 	Condition() {
 		state_ = false; 
@@ -146,17 +148,16 @@ struct Condition : ShareHandleBase // Не выполняется никогда (для выключения три
 	bool inversed() const {
 		return false;
 	}
-    
-	template<class Archive>	
-	void serialize(Archive& ar) {
+
+    static bool checkPlayer(const class terPlayer* palyer1, const terPlayer* player2, AIPlayerType playerType);
+    static AIPlayer* getPlayer(AIPlayer& aiPlayer, AIPlayerType playerType);
+    static bool compare(int op1, int op2, CompareOperator op);
+    static bool compare(float op1, float op2, CompareOperator op);
+
+    VIRTUAL_SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(state_, "_Текущее состояние");
 		ar & WRAP_OBJECT(internalColor_);
 	}
-
-	static bool checkPlayer(const class terPlayer* palyer1, const terPlayer* player2, AIPlayerType playerType);
-	static AIPlayer* getPlayer(AIPlayer& aiPlayer, AIPlayerType playerType);
-	static bool compare(int op1, int op2, CompareOperator op);
-	static bool compare(float op1, float op2, CompareOperator op);
 
 protected:
 	bool state_; 
@@ -181,12 +182,13 @@ struct ConditionNode //
 	void writeInfo(XBuffer& buffer, std::string offset) const;
 	bool check(AIPlayer& aiPlayer) { return condition ? (type == NORMAL ? condition->checkDebug(aiPlayer) : !condition->checkDebug(aiPlayer)) : false; }
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(type, "&Тип");
 		ar & TRANSLATE_OBJECT(condition, "&");
 	}
 };
+
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionNode, Type);
 
 struct ConditionSwitcher : Condition // И/ИЛИ
 {
@@ -206,23 +208,23 @@ struct ConditionSwitcher : Condition // И/ИЛИ
 	void clear();
 	void writeInfo(XBuffer& buffer, std::string offset) const;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(type, "&Тип");
 		ar & TRANSLATE_OBJECT(conditions, "Условия");
 	}
 };
 
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionSwitcher, Type);
+
 //-----------------------------
-struct Action : ShareHandleBase // Пустое действие, вставлять не надо!
+struct Action : ShareHandleBaseSerializeVirtual // Пустое действие, вставлять не надо!
 {		
 	int internalColor_;
 
 	Action() {
 		internalColor_ = 0;
 	}
-	virtual ~Action() {}
 
 	virtual_ bool automaticCondition(AIPlayer& aiPlayer) const { return true; }
 	virtual_ void activate(AIPlayer& aiPlayer) {}
@@ -231,8 +233,7 @@ struct Action : ShareHandleBase // Пустое действие, вставлять не надо!
 
 	const char* name() const;
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	VIRTUAL_SERIALIZE(ar) {
 		ar & WRAP_OBJECT(internalColor_);
 	}
 };
@@ -249,8 +250,7 @@ struct CPointSerialized : CPoint
  		return x != INT_MIN || y != INT_MIN;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(x, "x");
 		ar & TRANSLATE_OBJECT(y, "y");
 	}
@@ -266,8 +266,7 @@ struct CRectSerialized : CRect
 		return left != INT_MIN || right != INT_MIN || bottom != INT_MIN || top != INT_MIN;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(left, "left");
 		ar & TRANSLATE_OBJECT(top, "top");
 		ar & TRANSLATE_OBJECT(right, "right");
@@ -345,8 +344,7 @@ struct TriggerLink // Связь
 		static_cast<CPoint&>(childOffset_) = offset;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_NAME(triggerName_, "triggerName");
 		ar & WRAP_NAME(colorType_, "color");
 		ar & WRAP_NAME(autoRestarted_, "type");
@@ -459,8 +457,7 @@ public:
 		return incomingLinks_;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(name_, "name", "&Имя");	
 		ar & TRANSLATE_OBJECT(condition, "");
 		ar & TRANSLATE_OBJECT(action, "Действие");
@@ -507,8 +504,7 @@ struct TriggerEvent
 		state = Trigger::SLEEPING;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(event);
 		ar & WRAP_OBJECT(index);
 		ar & WRAP_OBJECT(state);
@@ -577,8 +573,7 @@ public:
 		static_cast<RECT&>(viewRect_) = viewRect;
 	}
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(name, "Имя");
 		ar & TRANSLATE_OBJECT(triggers, "Триггера");
 

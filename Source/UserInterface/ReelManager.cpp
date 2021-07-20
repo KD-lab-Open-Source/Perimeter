@@ -91,28 +91,30 @@ void ReelManager::showModal(const char* binkFileName, const char* soundFileName,
 	}
 
 	visible = true;
-	MSG msg;
 	while (isVisible() && !bink->IsEnd()) {
+#ifndef PERIMETER_EXODUS_WINDOW
+        MSG msg;
 		if ( PeekMessage(&msg, 0, 0, 0, PM_REMOVE) ) {
 			TranslateMessage( &msg );
 			DispatchMessage( &msg );
-		} else {
-			if ( bink->CalcNextFrame() ) {
-				terRenderDevice->Fill(0, 0, 0, 0);
-				terRenderDevice->BeginScene();
-				if (bgTexture) {
-					terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
-												screenWidth / (float)bgTexture->GetWidth(),
-												screenHeight / (float)bgTexture->GetHeight(),
-												bgTexture);
-				}
+			continue;
+		} 
+#endif
+        if ( bink->CalcNextFrame() ) {
+            terRenderDevice->Fill(0, 0, 0, 0);
+            terRenderDevice->BeginScene();
+            if (bgTexture) {
+                terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
+                                            screenWidth / (float)bgTexture->GetWidth(),
+                                            screenHeight / (float)bgTexture->GetHeight(),
+                                            bgTexture);
+            }
 
-				bink->Draw(showPos.x, showPos.y, showSize.x, showSize.y, alpha);
+            bink->Draw(showPos.x, showPos.y, showSize.x, showSize.y, alpha);
 
-				terRenderDevice->EndScene();
-				terRenderDevice->Flush();
-			}
-		}
+            terRenderDevice->EndScene();
+            terRenderDevice->Flush();
+        }
 	}
 
 	terRenderDevice->Fill(0, 0, 0, 0);
@@ -148,45 +150,47 @@ void ReelManager::showPictureModal(const char* pictureFileName, int stableTime) 
 
 	float maxTime = SPLASH_FADE_IN_TIME + stableTime + SPLASH_FADE_OUT_TIME;
 	visible = true;
-	MSG msg;
 	while (isVisible()) {
+#ifndef PERIMETER_EXODUS
+        MSG msg;
 		if ( PeekMessage(&msg, 0, 0, 0, PM_REMOVE) ) {
 			TranslateMessage( &msg );
 			DispatchMessage( &msg );
-		} else {
-			double timeElapsed = clockf() - startTime;
-			if (timeElapsed > SPLASH_REEL_ABORT_DISABLED_TIME) {
-				gameShell->reelAbortEnabled = true;
-			}
-			if ( stableTime < 0 || timeElapsed < maxTime ) {
-				terRenderDevice->Fill(0, 0, 0, 0);
-				terRenderDevice->BeginScene();
-/*
-				if (bgTexture) {
-					terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
-												screenWidth / (float)bgTexture->GetWidth(),
-												screenHeight / (float)bgTexture->GetHeight(),
-												bgTexture);
-				}
-*/
-				int alpha = 0;
-				if (timeElapsed <= SPLASH_FADE_IN_TIME) {
-					alpha = round(255.0f * timeElapsed / SPLASH_FADE_IN_TIME);
-				} else if (stableTime < 0 || timeElapsed <= (SPLASH_FADE_IN_TIME + stableTime)) {
-					alpha = 255;
-				} else {
-					alpha = round(255.0f * (maxTime - timeElapsed) / SPLASH_FADE_OUT_TIME);
-				}
-				float dy = screenHeight / (float)screenWidth;
-				terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
-											1, dy, pictureTexture, sColor4c(255, 255, 255, alpha));
-
-				terRenderDevice->EndScene();
-				terRenderDevice->Flush();
-			} else {
-				break;
-			}
+			continue;
 		}
+#endif
+        double timeElapsed = clockf() - startTime;
+        if (timeElapsed > SPLASH_REEL_ABORT_DISABLED_TIME) {
+            gameShell->reelAbortEnabled = true;
+        }
+        if ( stableTime < 0 || timeElapsed < maxTime ) {
+            terRenderDevice->Fill(0, 0, 0, 0);
+            terRenderDevice->BeginScene();
+/*
+            if (bgTexture) {
+                terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
+                                            screenWidth / (float)bgTexture->GetWidth(),
+                                            screenHeight / (float)bgTexture->GetHeight(),
+                                            bgTexture);
+            }
+*/
+            int alpha = 0;
+            if (timeElapsed <= SPLASH_FADE_IN_TIME) {
+                alpha = round(255.0f * timeElapsed / SPLASH_FADE_IN_TIME);
+            } else if (stableTime < 0 || timeElapsed <= (SPLASH_FADE_IN_TIME + stableTime)) {
+                alpha = 255;
+            } else {
+                alpha = round(255.0f * (maxTime - timeElapsed) / SPLASH_FADE_OUT_TIME);
+            }
+            float dy = screenHeight / (float)screenWidth;
+            terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
+                                        1, dy, pictureTexture, sColor4c(255, 255, 255, alpha));
+
+            terRenderDevice->EndScene();
+            terRenderDevice->Flush();
+        } else {
+            break;
+        }
 	}
 	terRenderDevice->Fill(0, 0, 0, 0);
 	terRenderDevice->BeginScene();

@@ -103,9 +103,11 @@ void cVertexShader::Delete()
 void cVertexShader::Restore()
 {
 	unsigned int fp=_controlfp(0,0);
-	_controlfp( _MCW_EM,  _MCW_EM ); 
+	_controlfp( _MCW_EM,  _MCW_EM );
+
 	Delete();
 	RestoreShader();
+
 	_clearfp();
 	_controlfp(fp,0xFFFFFFFFul);
 }
@@ -169,8 +171,6 @@ inline void cVertexShader::SetFloat(const SHADER_HANDLE& h,const float vect)
 
 void cVertexShader::CompileAndFound(const char* name,const DWORD* shader)
 {
-    LPD3DXBUFFER pErrorBuf = NULL;
-
 	LPDIRECT3DVERTEXSHADER9 ddshader=0;
 	RDCALL(gb_RenderDevice3D->lpD3DDevice->CreateVertexShader(shader, &ddshader));
 	GetHandle();
@@ -259,7 +259,7 @@ void VSShadow::Select(const MatXf& world)
 {
 	D3DXMATRIX mat;
 	cD3DRender_SetMatrix(mat,world);
-	D3DXMatrixMultiply(&mat,&mat,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+	D3DXMatrixMultiply(&mat,&mat,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	D3DXMatrixTranspose(&mat,&mat);
 
 	gb_RenderDevice3D->SetVertexShaderConstant(0, &mat);
@@ -287,12 +287,12 @@ void VSChaos::Select(float umin,float vmin,float umin2,float vmin2,
 					 float umin_b0,float vmin_b0,float umin_b1,float vmin_b1)
 {
 	SetFog();
-	SetMatrix(mWVP,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+	SetMatrix(mWVP, &gb_RenderDevice3D->GetDrawNode()->matViewProj);
     D3DXVECTOR4 uv(umin,vmin,umin2,vmin2);
     D3DXVECTOR4 uvb(umin_b0,vmin_b0,umin_b1,vmin_b1);
 	SetVector(mUV,&uv);
 	SetVector(mUVBump,&uvb);
-	SetMatrix(mWorldView,gb_RenderDevice3D->GetDrawNode()->matView);
+	SetMatrix(mWorldView, &gb_RenderDevice3D->GetDrawNode()->matView);
 
 	cVertexShader::Select();
 }

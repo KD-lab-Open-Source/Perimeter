@@ -14,7 +14,7 @@ CChaos::CChaos(int hsize,int vsize,bool bump)
 		"RESOURCE\\EFFECT\\Chaos\\oceanBump.tga",tile,bump);
 
 	pSkySphere=NULL;
-	pSkySphere = terScene->CreateSkySpere("RESOURCE\\Models\\FX\\skysphere.M3D",GetTargetName(""),vMap.H_SIZE);
+	pSkySphere = terScene->CreateSkySpere("RESOURCE\\Models\\FX\\skysphere.M3D",GetTargetName("").c_str(),vMap.H_SIZE);
 }
 
 CChaos::~CChaos()

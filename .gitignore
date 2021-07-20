@@ -6,4 +6,4 @@
 .scc
 cmake-build-*
 build
-dockcross/dockcross-*-perimeter
+docker/dockcross-*-perimeter

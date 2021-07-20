@@ -437,7 +437,11 @@ void HistoryScene::drawPopup() {
 	World* w = traceWorld(mousePos);
 
 	POINT pt = { round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()), round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
+
+#ifndef PERIMETER_EXODUS_WINDOW
+	//TODO is this needed to port?
 	ClientToScreen(hWndVisGeneric, &pt);
+#endif
 
 	if (w) {
 		std::string frameNames;

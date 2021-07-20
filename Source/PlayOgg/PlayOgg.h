@@ -14,7 +14,9 @@ enum MpegState
 
 //Dummy implementation
 
-static bool MpegInitLibrary(void*) {}
+static bool MpegInitLibrary(void*) {
+    return false;
+}
 static void MpegDeinitLibrary() {}
 
 class MpegSound {

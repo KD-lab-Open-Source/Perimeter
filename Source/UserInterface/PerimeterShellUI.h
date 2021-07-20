@@ -3,6 +3,7 @@
 #ifndef _PERIMETERSHELLUI_H
 #define _PERIMETERSHELLUI_H
 
+#include "tweaks.h"
 #include "GameShellSq.h"
 #include "PlayOgg.h"
 #include "Universe.h"
@@ -135,7 +136,7 @@ public:
 		return m_attr_cont;
 	}
 
-	bool isEditWindow() const { return (!isContainer() && (m_attr->type == SQSH_EDIT_BOX_TYPE || m_attr->type == SQSH_INGAME_CHAT_EDIT_BOX_TYPE)); }
+	bool isEditWindow() const { return (!isContainer() && m_attr && ( m_attr->type == SQSH_EDIT_BOX_TYPE || m_attr->type == SQSH_INGAME_CHAT_EDIT_BOX_TYPE)); }
 
 	bool checkDefaultEnterBtns();
 	bool checkDefaultEscBtn();
@@ -459,7 +460,7 @@ public:
 //tabsheets сквадов и строений
 class CUITabSheet : public CShellWindow
 {
-	const sqshTabSheet*           m_attr;
+	const sqshTabSheet*           m_tabattr;
 
 	std::vector<const sqshTabElement*> tabAttrs;
 	std::vector<cTexture*>		tabTextures;
@@ -2099,6 +2100,7 @@ inline float relativeY(float y) {
 }
 
 inline Vect2f relativeUV(float x, float y, cTexture *texture) {
+    xassert(texture != nullptr);
 	return Vect2f(
 			relativeX(x) / (float)texture->GetWidth(),
 			relativeY(y) / (float)texture->GetHeight() );
@@ -2120,12 +2122,13 @@ inline int absoluteY(float y) {
 
 inline std::string getImageFileName(const sqshImage* image, const char* fileName = 0) {
 	std::string fullname = fileName ? fileName : static_cast<std::string>(image->texture);
+	fullname = convert_path(fullname.c_str());
 	if ( !fullname.empty() ) {
 		if (image->hasResolutionVersion) {
 			char intBuffer[11 + 1];
 			sprintf(intBuffer, "%d", terRenderDevice->GetSizeX());
 			std::string resolution = std::string(intBuffer);
-			fullname.insert(fullname.rfind('\\'), "\\" + resolution);
+			fullname.insert(fullname.rfind(PATH_SEP), PATH_SEP + resolution);
 		}
 		if (image->hasBelligerentVersion && universe() && universe()->activePlayer()) {
 			switch (universe()->activePlayer()->belligerent()) {

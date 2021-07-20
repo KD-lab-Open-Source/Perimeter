@@ -284,6 +284,7 @@ void CShellWindow::Load(const sqshControl* attr)
 	if(strlen(attr->image.texture))
 	{
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image)).c_str() );
+		if (!m_hTexture) return;
 		m_vTexPos[0] = relativeUV(attr->image._ix, attr->image._iy, m_hTexture);
 		if (attr->sx > 2.0f || attr->sy > 2.0f) {
 			m_vTexPos[1] = Vect2f(
@@ -2042,8 +2043,8 @@ CUITabSheet::CUITabSheet(int id, CShellWindow* pParent, EVENTPROC p) : CShellWin
 }
 
 void CUITabSheet::postLoad() {
-	for (int i = 0; i < m_attr->pages.size(); i++) {
-		const sqshTabElement& page = m_attr->pages[i];
+	for (int i = 0; i < m_tabattr->pages.size(); i++) {
+		const sqshTabElement& page = m_tabattr->pages[i];
 		for(int j = 0; j < page.ctrls.size(); j++) {
 			if (page.ctrls[j] < 0) {
 				break;
@@ -2164,12 +2165,12 @@ void CUITabSheet::SetPageNumber(int nPage, int nNumber)
 void CUITabSheet::createHotKeyString() {
 	hotKeyPopupString = "";
 	char cbBuffer[200];
-	for (int i = 0; i < m_attr->actions.size(); i++) {
-		if (strlen(m_attr->actions[i].name) && strlen(m_attr->actions[i].hotKeyPopup)) {
+	for (int i = 0; i < m_tabattr->actions.size(); i++) {
+		if (strlen(m_tabattr->actions[i].name) && strlen(m_tabattr->actions[i].hotKeyPopup)) {
 			_shellIconManager.FormatMessageText(
-				m_attr->actions[i].hotKeyPopup,
+				m_tabattr->actions[i].hotKeyPopup,
 				cbBuffer,
-				gameShell->hotKeyManager->getKeyNameForControlAction(m_attr->actions[i]).c_str()
+				gameShell->hotKeyManager->getKeyNameForControlAction(m_tabattr->actions[i]).c_str()
 			);
 			hotKeyPopupString += cbBuffer;
 		}
@@ -2177,8 +2178,8 @@ void CUITabSheet::createHotKeyString() {
 }
 
 void CUITabSheet::reload() {
-	if (m_attr) {
-		Load(m_attr);
+	if (m_tabattr) {
+		Load(m_tabattr);
 	}
 }
 
@@ -2202,8 +2203,8 @@ void CUITabSheet::Load(const sqshTabSheet* attr)
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, inGameLegionDigit);
 
-	
-	m_attr = attr;
+
+    m_tabattr = attr;
 	createHotKeyString();
 	loadFlashingParams(attr);
 	markColor.set(flashR, flashG, flashB, flashA);
@@ -2379,7 +2380,7 @@ void CUITabSheet::scale(Vect2f& scaleV) {
 
 bool CUITabSheet::updateColor() {
 	m_ftime += frame_time.delta();
-	for (int i = 0, s = m_attr->pages.size(); i < s; i++) {
+	for (int i = 0, s = m_tabattr->pages.size(); i < s; i++) {
 		if (isPageFlashing(i)) {
 			if (flashTimers[i]) {
 				flashTimers[i] -= frame_time.delta();
@@ -2420,7 +2421,7 @@ void CUITabSheet::draw(int bFocus)
 	}
 */
 	bool markedPhase = updateColor();
-	for (int i = 0, s = m_attr->pages.size(); i < s; i++) {
+	for (int i = 0, s = m_tabattr->pages.size(); i < s; i++) {
 		bool marked = isPageFlashing(i);
 		bool bEnabled = m_nEnabledPagesBits & (1 << i);
 		const sqshTabElement* pa = tabAttrs[i];
@@ -2475,7 +2476,7 @@ void CUITabSheet::draw(int bFocus)
 				continue;
 			}
 			//squad empty
-			if ( IsPageSelected(i) || (m_attr->pages.size() == 3 && i == m_nActivePage)) {
+			if ( IsPageSelected(i) || (m_tabattr->pages.size() == 3 && i == m_nActivePage)) {
 				//checked
 				DrawSprite(tabXs[i], tabYs[i], 
 					tabSXs[i], tabSYs[i],
@@ -2658,7 +2659,7 @@ void CMapWindow::Load(const sqshControl* attr)
 	_RELEASE(m_pMapTexture);
 	_RELEASE(activeObjectTx);
 
-	m_pMapTexture = terVisGeneric->CreateTexture( GetTargetName("map.tga") );
+	m_pMapTexture = terVisGeneric->CreateTexture( GetTargetName("map.tga").c_str() );
 
 	if (m_pMapTexture->GetWidth() > m_pMapTexture->GetHeight()) {
 		y += sy / 2;
@@ -3275,11 +3276,14 @@ void CListBoxWindow::Load(const sqshControl* attr)
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
-		thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
-		thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+		if (thumbTexture) {
+            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
+            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+        }
 	}
 	if (strlen(m_attr->image_check.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_check)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG);
 
@@ -3584,8 +3588,10 @@ void CStatListBoxWindow::Load(const sqshControl* attr) {
 	}
 
 	m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
-	m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-	m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+	if (m_hTextureBG) {
+        m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
+        m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+    }
 
 	_RELEASE(m_hFont);
 	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, statsTableFontSize);
@@ -3815,11 +3821,14 @@ void ChatWindow::Load(const sqshControl* attr)
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
-		thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
-		thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+		if (thumbTexture) {
+            thumbUV = relativeUV(attr->image_h._ix, attr->image_h._iy, thumbTexture);
+            thumbDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, thumbTexture);
+        }
 	}
 	if (strlen(m_attr->image_check.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_check)).c_str());
+		if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_check._ix, m_attr->image_check._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_check.ix, m_attr->image_check.iy, m_hTextureBG);
 
@@ -4128,6 +4137,7 @@ void CSliderWindow::Load(const sqshControl* attr)
 	thumbDUDV = relativeUV(m_attr->image_disabled.ix, m_attr->image_disabled.iy, m_hTexture);
 	if (strlen(m_attr->image2.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image2)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image2._ix, m_attr->image2._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image2.ix, m_attr->image2.iy, m_hTextureBG);
 	}
@@ -4230,6 +4240,7 @@ void CShowMapWindow::Load(const sqshControl* attr) {
 	_RELEASE(m_hTextureBG);
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
 	}
@@ -4271,9 +4282,9 @@ void CShowMapWindow::draw(int bFocus)
 //	draw_rect_empty(Vect2i(x,y), Vect2i(x+sx,y+sy), sColor4f(1, 1, 1, 1));
 	if (worldID >= 0) {
 		if( !m_hTexture ) {
-			const char* mapPath = safeGetTargetName( worldID, "map.tga" );
-			if (mapPath) {
-				m_hTexture = terVisGeneric->CreateTexture( mapPath );
+			std::string mapPath = safeGetTargetName( worldID, "map.tga" );
+			if (!mapPath.empty()) {
+				m_hTexture = terVisGeneric->CreateTexture( mapPath.c_str() );
 			} else {
 				return;
 			}
@@ -4429,14 +4440,17 @@ void CPortraitWindow::Load(const sqshControl* attr) {
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
-		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+		if (m_hTextureBG) {
+            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
+            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+        }
 	}
 }
 void CPortraitWindow::setTexture(const char* name) {
 	RELEASE(m_hTexture);
 	if (strlen(name)) {
 		m_hTexture = terVisGeneric->CreateTexture( getImageFileName(&(m_attr->image), name).c_str() );
+        if (!m_hTexture) return;
 		m_vTexPos[0] = relativeUV(m_attr->image._ix, m_attr->image._iy, m_hTexture);
 		m_vTexPos[1] = relativeUV(m_attr->image.ix, m_attr->image.iy, m_hTexture);
 	}
@@ -4511,6 +4525,7 @@ void CLogoWindow::Load(const sqshControl* attr) {
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
+        if (!m_hTextureBG) return;
 		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
 		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
 	}
@@ -4592,8 +4607,10 @@ void CScaleButton::Load(const sqshControl* attr)
 	}
 	if (strlen(m_attr->image_h.texture)) {
 		m_hTextureBG = terVisGeneric->CreateTexture(getImageFileName(&(m_attr->image_h)).c_str());
-		m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
-		m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+		if (m_hTextureBG) {
+            m_vTexBGPos = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTextureBG);
+            m_vTexBGSize = relativeUV(m_attr->image_h.ix, m_attr->image_h.iy, m_hTextureBG);
+        }
 	}
 	soundEnabled = attr->alnum;
 }

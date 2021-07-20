@@ -17,9 +17,8 @@ public:
 
 	AttributeCorridor();
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-        AttributeBuilding::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+        AttributeBuilding::serialize_template(ar);
 		if(ar.openBlock("attributeCorridor", "Коридор")){
 			ar & TRANSLATE_OBJECT(disappearingTime, "disappearingTime");
 			ar & TRANSLATE_OBJECT(disappearingHeight, "disappearingHeight");

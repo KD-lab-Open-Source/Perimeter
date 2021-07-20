@@ -210,7 +210,7 @@ private:
 		currentNode_->setTreeNodeFunc(Descriptor::instance().treeNodeFunc);
 		if(!t)
 			return;
-		const char* name = get_type_id<T>().c_str();
+		std::string name = get_type_id_runtime<T>(t);
 		typename Descriptor::SerializerBase& serializer = Descriptor::instance().find(name);
 		serializer.save(*this, t);		
 		currentNode_->setValue(serializer.nameAlt());
@@ -718,11 +718,11 @@ public:
 
 	template<class T>
 	const char* nameAlt(const T& t) const {
-		const char* name = get_type_id<T>().c_str();
+		std::string name = get_type_id_runtime<T>(&t);
 		std::map<std::string, std::string>::const_iterator i = mapNameToNameAlt_.find(name);
 		if(i == mapNameToNameAlt_.end()){
 			xassertStr(0 && "Unregistered class", name);
-			ErrH.Abort("EditClassDescriptor::nameAlt Unregistered class", XERR_USER, 0, name);
+			ErrH.Abort("EditClassDescriptor::nameAlt Unregistered class", XERR_USER, 0, name.c_str());
 		}
 		return i->second.c_str();
 	}

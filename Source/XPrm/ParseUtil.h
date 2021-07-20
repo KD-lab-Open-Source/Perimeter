@@ -2,10 +2,12 @@
 #pragma once
 #pragma warning(disable:4305 4250)
 
+#include <filesystem>
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 //		Exceptions
 /////////////////////////////////////////////////////////////////////////////////////////////
-class parsing_error : public logic_error 
+class parsing_error : public std::logic_error 
 {
 public:
 	parsing_error(const char* __s) : logic_error(__s) {}
@@ -33,22 +35,20 @@ public:
 //////////////////////////////////////////////////////////////////////////////////
 //		File Util
 //////////////////////////////////////////////////////////////////////////////////
-inline FILETIME getFileTime(const char* fname)
+inline void getFileTime(const char* fname, FILETIME* last_write)
 {
-	HANDLE file = CreateFile( fname, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0 );
-	FILETIME creation, last_access, last_write;
-	if(!GetFileTime( file, &creation, &last_access, &last_write ))
-		throw logic_error(string("File not found: ") + fname);
-	CloseHandle(file);
-	return last_write;
+    auto ftime = std::filesystem::last_write_time(fname);
+    auto duration = ftime.time_since_epoch();
+    int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
+    EpochToFileTime(nanos, last_write);
 }
 inline bool operator < (const FILETIME& t1, const FILETIME& t2) { return t1.dwHighDateTime != t2.dwHighDateTime ? t1.dwHighDateTime < t2.dwHighDateTime : t1.dwLowDateTime < t2.dwLowDateTime; } 
 inline bool operator <= (const FILETIME& t1, const FILETIME& t2) { return t1.dwHighDateTime != t2.dwHighDateTime ? t1.dwHighDateTime <= t2.dwHighDateTime : t1.dwLowDateTime <= t2.dwLowDateTime; } 
 inline bool operator == (const FILETIME& t1, const FILETIME& t2) { return t1.dwHighDateTime == t2.dwHighDateTime && t1.dwLowDateTime == t2.dwLowDateTime; } 
 
-inline void replace(string& s, const char* src, const char* dest)
+inline void replace(std::string& s, const char* src, const char* dest)
 {
-	int pos = 0;
+    size_t pos = 0;
 	while(1){
 		pos = s.find(src, pos);
 		if(pos >= s.size())
@@ -58,9 +58,10 @@ inline void replace(string& s, const char* src, const char* dest)
 		}
 }
 
-inline string expand_spec_chars(const string& str)
+inline std::string expand_spec_chars(const std::string& str)
 {
-	string s(str);
+	std::string s(str);
+    replace(s, "/", "\\");
 	replace(s, "\\", "\\\\");
 	replace(s, "\n", "\\n");
 	replace(s, "\r", "\\r");
@@ -70,9 +71,9 @@ inline string expand_spec_chars(const string& str)
 	return s;
 }
 
-inline string& collapse_spec_chars(string& s)
+inline std::string& collapse_spec_chars(std::string& s)
 {
-	int pos = 0;
+    size_t pos = 0;
 	while(1){
 		pos = s.find("\\", pos);
 		if(pos >= s.size() - 1)
@@ -115,12 +116,10 @@ inline int is_name(const char* str)
 	return isalpha(str[0]) || str[0] == '_';
 }
 
-inline string get_exe_path()
+inline std::string get_exe_path()
 {
-	char app_name[1000];
-	GetModuleFileName(0, app_name, 1000);
-	string exe_path = app_name;
-	int pos = exe_path.rfind("\\") + 1;
+    std::string exe_path = __argv[0];
+    size_t pos = exe_path.rfind(PATH_SEP) + 1;
 	exe_path.erase(pos, exe_path.size() - pos);
 	return exe_path;
 }
@@ -149,20 +148,10 @@ inline unsigned CRC(unsigned x, unsigned crc)
 	return crc;
 }
 
-inline string strip_string(const char* str)
+inline std::string strip_string(const char* str)
 {
-	string parameter(str);
+    std::string parameter(str);
 	parameter.erase(0, 1);
 	parameter.pop_back();
 	return parameter;
 }
-
-inline string strip_file_name(const char* str)
-{
-	string name(str);
-	int pos = name.rfind("\\");
-	if(pos != string::npos)
-		name.erase(0, pos + 1);
-	return name;
-}
-

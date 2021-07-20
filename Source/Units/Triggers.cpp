@@ -22,6 +22,10 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ActionSellBuilding, AISellFactor)
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ActionSwitchGuns, Mode)
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ActionChargeCores, ChargeCoresStrategy)
+
 //---------------------------------------
 bool Condition::compare(int op1, int op2, CompareOperator op)
 {
@@ -1743,7 +1747,7 @@ const char* editModelNameDialog(HWND hwnd, const char* initialString)
 	name = initialString;
 	if(openFileDialog(name, "Resourse\\Missions", "m3d", "Mission Name")){
 		strlwr((char*)name.c_str());
-		int pos = name.find("resource");
+        size_t pos = name.find("resource");
 		if(pos != std::string::npos)
 			name.erase(0, pos);
 		return name.c_str();
@@ -1755,9 +1759,9 @@ const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
-	if(openFileDialog(name, "Scripts\\Triggers", "scr", "Trigger Chain Name")){
+	if(openFileDialog(name, "Scripts" PATH_SEP_STR "Triggers", "scr", "Trigger Chain Name")){
 		strlwr((char*)name.c_str());
-		int pos = name.rfind("\\");
+		size_t pos = name.rfind(PATH_SEP);
 		if(pos != std::string::npos)
 			name.erase(0, pos + 1);
 		return name.c_str();

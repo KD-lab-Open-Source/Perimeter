@@ -1,9 +1,12 @@
+#include "tweaks.h"
 #include <windows.h>
 #include <stdio.h>
 #include <cstdint>
 #include <assert.h>
 
+#ifndef PERIMETER_EXODUS
 #include <vfw.h>		// AVI include
+#endif
 #include <setjmp.h>		// JPG include
 #include <math.h>
 #include "xutil.h"
@@ -19,7 +22,6 @@
 #include <iostream>
 #endif
 
-#pragma comment (lib,"vfw32") // AVI library
 int ResourceFileRead(const char *fname,char *&buf,int &size);
 
 
@@ -41,7 +43,7 @@ void SetExtension(const char *fnameOld,const char *extension,char *fnameNew)
 {
 	strcpy(fnameNew,fnameOld);
 	int l;
-	for(l=strlen(fnameNew)-1;l>=0&&fnameNew[l]!='\\';l--)
+	for(l=strlen(fnameNew)-1;l>=0 && fnameNew[l]!='\\' && fnameNew[l]!='/';l--)
 		if(fnameNew[l]=='.')
 			break;
 	if(l>=0&&fnameNew[l]=='.') 
@@ -238,6 +240,7 @@ bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int by
 	_write(file,&Hdr,18);
 	_write(file,buf,Numbytes);
 	_close(file);
+    scan_resource_paths(filename);
 
 	return true;
 }
@@ -285,7 +288,7 @@ bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 			memcpy(p2,tmp,size);
 		}
 
-		delete tmp;
+		delete[] tmp;
 	}
 
 	return true;
@@ -390,6 +393,74 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cAVIImage
 //////////////////////////////////////////////////////////////////////////////////////////
+#ifdef PERIMETER_EXODUS
+class cAVIImage : public cFileImage
+{
+public:
+    cAVIImage() {
+    }
+    
+    virtual ~cAVIImage() {
+        close();
+    }
+    
+    virtual int close()
+    {
+        return 0;
+    }
+    
+    virtual int load(const char *fname)
+    {
+        //TODO
+        return 0;
+    }
+    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
+    {
+        //TODO
+        return 0;
+    }
+    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
+    {
+        //TODO
+        /*
+        if(GetBitPerPixel()==24)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     ((unsigned char*)bmiColors),3,GetX()*3,8,0,GetX(),-y);
+        else if(GetBitPerPixel()==32)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     ((unsigned char*)bmiColors),4,GetX()*4,8,24,GetX(),-y);
+        else if(GetBitPerPixel()==16)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     ((unsigned char*)bmiColors),2,GetX()*2,31,0,GetX(),-y);
+        */
+        return 0;
+    }
+    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+    {
+        //TODO
+        /*
+        if(GetBitPerPixel()==24)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                ((unsigned char*)bmiColors),3,GetX()*3,8,16,8,8,8,0,GetX(),-y);
+        else if(GetBitPerPixel()==32)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                ((unsigned char*)bmiColors),4,GetX()*4,8,16,8,8,8,0,GetX(),-y);
+        else if(GetBitPerPixel()==16)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                ((unsigned char*)bmiColors),2,GetX()*2,5,10,5,5,5,0,GetX(),-y);
+        */
+        return 0;
+    }
+    static void Init()
+    {
+        //TODO
+    }
+    static void Done()
+    {
+        //TODO
+    }
+};
+#else
 class cAVIImage : public cFileImage
 {
 	IGetFrame	*Frame;
@@ -515,6 +586,7 @@ public:
 		AVIFileExit(); /*closes AVIFile library*/ 
 	}
 };
+#endif
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cJPGImage
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -801,7 +873,7 @@ void GetFileName(const char *FullName,char *fname)
 	fname[0]=0;
 	if(FullName==0||FullName[0]==0) return;
 	int l=strlen(FullName)-1;
-	while(l>=0&&FullName[l]!='\\') 
+	while(l>=0 && FullName[l]!='\\' && FullName[l]!='/') 
 		l--;
 	strcpy(fname,&FullName[l+1]);
 }
@@ -810,7 +882,7 @@ void GetFilePath(const char *FullName,char *path)
 	path[0]=0;
 	if(FullName==0||FullName[0]==0) return;
 	int l=strlen(FullName)-1;
-	while(l>=0&&FullName[l]!='\\') 
+	while(l>=0 && FullName[l]!='\\' && FullName[l]!='/') 
 		l--;
 	memcpy(path,FullName,l);
 	path[l]=0;

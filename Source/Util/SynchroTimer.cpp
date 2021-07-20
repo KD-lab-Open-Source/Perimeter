@@ -1,13 +1,11 @@
+#include <SDL.h>
 #include "StdAfx.h"
 #include "SynchroTimer.h"
 
 SyncroTimer::SyncroTimer()
 {
 	use_perfomance=false;
-	LARGE_INTEGER lfrequency;
-	BOOL b=QueryPerformanceFrequency(&lfrequency);
-	frequency=lfrequency.QuadPart;
-	xassert(b);
+	frequency=SDL_GetPerformanceFrequency();
 
 	set(1, 15, 100);
 	time_prev = time = 1; 
@@ -69,10 +67,8 @@ unsigned int SyncroTimer::int_clock()
 {
 	if(use_perfomance)
 	{
-		LARGE_INTEGER count;
-		QueryPerformanceCounter(&count);
-		double time=((double)count.QuadPart)/frequency;
-		return (time_type)(time*1000);
+		double timediff=((double)SDL_GetPerformanceCounter())/frequency;
+		return (time_type)(timediff*1000);
 	}
 
 	return clocki();

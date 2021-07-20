@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <cstdio>
+#include <climits>
 
 #include "../Util/SystemUtil.h"
 
@@ -54,60 +55,54 @@ unsigned char vrtMap::GetGeoType(int offset, int h)
 }
 
 
-char* GetINIstringV(const char* iniFile,const char* section,const char* key)
+char* GetINIstringV(const std::string& iniFile,const char* section,const char* key)
 {
 	static char buffer[255+1];
 	static char fullPath[MAX_PATH];
-	if(_fullpath(fullPath, iniFile, MAX_PATH) == NULL) ErrH.Abort("Invalid path..." );
+	std::string path = convert_path_resource(iniFile.c_str());
+    if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
+	if(_fullpath(fullPath, path.c_str(), MAX_PATH) == NULL) ErrH.Abort("Ini file not found: ", XERR_USER, 0, path.c_str());
 	if(!GetPrivateProfileString(section,key,"",buffer,255,fullPath)){//fullPath
 		buffer[0]=0;
 	}
 	return buffer;
 }
-void SaveINIstringV(const char* iniFile,const char* section,const char* key,const char* var)
+void SaveINIstringV(const std::string& iniFile,const char* section,const char* key,const char* var)
 {
 	//WritePrivateProfileString(section,key,var,iniFile);
 	static char fullPath[MAX_PATH];
-	if(_fullpath(fullPath, iniFile, MAX_PATH) == NULL) ErrH.Abort("Invalid path..." );
+	std::string path = convert_path_resource(iniFile.c_str());
+    if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
+    if(_fullpath(fullPath, path.c_str(), MAX_PATH) == NULL) ErrH.Abort("Ini file not found: ", XERR_USER, 0, path.c_str());
 	WritePrivateProfileString(section,key,var,fullPath);//fullPath
 }
 
-const char* GetTargetName(const char* name)
+std::string GetTargetName(const char* name)
 {
-	static char buf[MAX_PATH];
-
-	strcpy(buf, vMap.wTable[vMap.cWorld].dir);
-	if(buf[0]) strcat(buf, "\\");
-	strcat(buf, name);
-	return &buf[0];
+    return GetTargetName(vMap.cWorld, name);
 }
 
 bool isWorldIDValid(int worldID) {
 	return (worldID < vMap.maxWorld && worldID >= 0);
 }
 
-const char* GetTargetName(int numWorld, const char* name)
+std::string GetTargetName(int numWorld, const char* name)
 {
 	if ( !isWorldIDValid(numWorld) ) ErrH.Abort("World Index out of range");
-
-	static char* buf = new char[256];
-
-	strcpy(buf,vMap.wTable[numWorld].dir);
-	if(*buf) strcat(buf,"\\");
-	strcat(buf,name);
-	return buf;
+    char* buf = vMap.wTable[numWorld].dir;
+    std::string path;
+    if (buf[0]) {
+        path = convert_path_resource(buf);
+        path += PATH_SEP;
+    }
+    if (name) path += name;
+    return path;
 }
 
-const char* safeGetTargetName(int numWorld, const char* name)
+std::string safeGetTargetName(int numWorld, const char* name)
 {
-	if ( !isWorldIDValid(numWorld) ) return 0;
-
-	static char* buf = new char[256];
-
-	strcpy(buf,vMap.wTable[numWorld].dir);
-	if(*buf) strcat(buf,"\\");
-	strcat(buf,name);
-	return buf;
+	if ( !isWorldIDValid(numWorld) ) return std::string();
+    return GetTargetName(numWorld, name);
 }
 
 vrtMap::vrtMap(void)
@@ -426,20 +421,14 @@ void vrtMap::prepare(char* name)
 	//Инициализация графического режима
 	hCamera=500;
 	fCamera=500;
+	std::string path = convert_path_resource(name);
 
-	//Копирование только имени каталога в dirWorldPrm 
-	char* dir,*dirtemp;
-	char *dirend=dirtemp=dir=strdup(name);
-	while(*dirtemp) {
-		if (*dirtemp=='\\') dirend = dirtemp;
-		dirtemp++;
-	}
-	*dirend = '\0';
-	dirWorldPrm = strdup(dir);
-	free(dir);
+	//Копирование только имени каталога в dirWorldPrm
+	std::string parent = std::filesystem::path(path).parent_path().string(); 
+	dirWorldPrm = strdup(parent.c_str());
 
 	// Заполнение таблицы миров
-	prmFile.init(name);
+	prmFile.init(path.c_str());
 	maxWorld = atoi(prmFile.getAtom());
 	if(maxWorld < 1) ErrH.Abort("Empty world list");
 	int i;
@@ -454,7 +443,7 @@ void vrtMap::prepare(char* name)
 		if(!atom) ErrH.Abort("Null world path");
 
 		strcpy(tString,dirWorldPrm);//копирование в строку пути до каталога с worlds.prm
-		if(*dirWorldPrm) strcat(tString,"\\");		
+		if(*dirWorldPrm) strcat(tString,PATH_SEP_STR);		
 		strcat(tString,atom);		//добавление в строку пути до каталога с миром
 		wTable[i].dir = strdup(tString);
 		}
@@ -477,7 +466,7 @@ void vrtMap::selectUsedWorld(int nWorld)
 	worldFree();
 
 
-	analyzeINI(GetTargetName(worldIniFile));
+	analyzeINI(GetTargetName(worldIniFile).c_str());
 	setupGeneralVariable();
 
 	worldPrepare();
@@ -496,7 +485,7 @@ void vrtMap::selectUsedWorld(int nWorld)
 		if(buildWorld()) exist=1;
 	}
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear));
+	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear).c_str());
 
 	LoadVPR();
 	RenderPrepare1();
@@ -587,7 +576,7 @@ void vrtMap::newLoad(const char* dirName)
 
 	////analyzeINI(GetTargetName(worldIniFile));
 	if(XStream(0).open(GetTargetName(worldDataFile), XS_IN)){
-		XPrmIArchive(GetTargetName(worldDataFile)) >> WRAP_NAME(*this, worldDataFileSection);
+		XPrmIArchive(GetTargetName(worldDataFile).c_str()) >> WRAP_NAME(*this, worldDataFileSection);
 	}
 
 	setupGeneralVariable();
@@ -607,7 +596,7 @@ void vrtMap::newLoad(const char* dirName)
 		if(buildWorld()) exist=1;
 	}
 
-	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear));
+	if(!exist) ErrH.Abort("Can't load world",XERR_USER,-1,GetTargetName(worldDataFileLinear).c_str());
 
 	LoadVPR();
 	RenderPrepare1();
@@ -618,7 +607,7 @@ void vrtMap::newLoad(const char* dirName)
 
 void vrtMap::newSave(const char* dirName)
 {
-	XPrmOArchive oa(GetTargetName(worldDataFile));
+	XPrmOArchive oa(GetTargetName(worldDataFile).c_str());
 	oa << WRAP_NAME(*this, worldDataFileSection);
 
 }
@@ -698,7 +687,7 @@ void vrtMap::checkAndRecover()
 void vrtMap::loadHardness2Grid(void)
 {
 	TGAHEAD tgahead;
-	if(!tgahead.loadHeader(GetTargetName("hardness.tga"))) return;
+	if(!tgahead.loadHeader(GetTargetName("hardness.tga").c_str())) return;
 	if((tgahead.PixelDepth!=8) || (tgahead.ImageType!=3)) {
 		ErrH.Abort("Wrong type HARDNESS.BIN for the world");//"Не поддерживаемый тип TGA (необходим монохромный не компрессованный) для HARDNESS");
 		return;
@@ -877,7 +866,7 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 	loadLeveledTexture(); //необходимо вызывать после загрузки VxDBuf и палитры
 
 	TGAHEAD tgahead;
-	tgahead.loadHeader(GetTargetName(worldRGBCache));
+	tgahead.loadHeader(GetTargetName(worldRGBCache).c_str());
 	if((tgahead.PixelDepth!=24) || (tgahead.ImageType!=2)) {
 		///AfxMessageBox("Не поддерживаемый тип TGA (необходим 24bit не компрессованный)");
 		xassert(0&&"Не поддерживаемый тип TGA (необходим 24bit не компрессованный)");

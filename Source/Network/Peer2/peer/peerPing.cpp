@@ -15,6 +15,7 @@ devsupport@gamespy.com
 /*************
 ** INCLUDES **
 *************/
+#include "tweaks.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "peerPlayers.h"

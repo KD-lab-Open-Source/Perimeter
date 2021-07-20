@@ -5,24 +5,24 @@ void VSGeforceFXScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 {
 	SetFog();
 
-	SetMatrix(mView,gb_RenderDevice3D->GetDrawNode()->matView);
-	//c0-c3 - ìàòðèöà ïðåîáðàçîâàíèÿ â ýêðàííûå êîîðäèíàòû (view_proj_matrix)
+	SetMatrix(mView, &gb_RenderDevice3D->GetDrawNode()->matView);
+	//c0-c3 - Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ð° Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ð½Ð¸Ñ Ð² ÑÐºÑ€Ð°Ð½Ð½Ñ‹Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ (view_proj_matrix)
 	D3DXMATRIX mat;
 	if(world)
 	{
 		cD3DRender_SetMatrix(mat,*world);
 		SetMatrix(mWorld,&mat);//for light
 		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&mat,&mat,gb_RenderDevice3D->GetDrawNode()->matView);
+		D3DXMatrixMultiply(&mat,&mat, &gb_RenderDevice3D->GetDrawNode()->matView);
 		SetMatrix(mWorldView,&mat);
 
 		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&mat,&mat,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+		D3DXMatrixMultiply(&mat,&mat, &gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	}else
 	{
-		SetMatrix(mView,gb_RenderDevice3D->GetDrawNode()->matView);
+		SetMatrix(mView, &gb_RenderDevice3D->GetDrawNode()->matView);
 
-		mat=*(D3DXMATRIX*)gb_RenderDevice3D->GetDrawNode()->matViewProj;
+		mat=*(D3DXMATRIX*) &gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	}
 
 	SetMatrix(mWVP,&mat);

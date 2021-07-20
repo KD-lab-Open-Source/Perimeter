@@ -32,9 +32,8 @@ public:
 		supportRadius = 200 * 200;
 	}
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-        AttributeBase::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        AttributeBase::serialize_template(ar);
 		if(ar.openBlock("attributeSquad", "бътрф")){
 			ar & TRANSLATE_OBJECT(homePositionOffsetFactor, "homePositionOffsetFactor");
 			ar & TRANSLATE_OBJECT(formationRadiusBase, "formationRadiusBase");

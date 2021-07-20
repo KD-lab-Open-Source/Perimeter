@@ -29,7 +29,7 @@ extern MpegSound gb_Music;
 extern LogStream fout;
 /////////////////////////////////////////////////////////////
 
-int terShowTips = IniManager("Perimeter.ini").getInt("Game","ShowTips");
+int terShowTips = 1;
 
 int _id_on;
 int _id_off;
@@ -55,9 +55,9 @@ bool intfCanHandleInput() {
 }
 
 std::string getOriginalMissionName(const std::string& originalSaveName) {
-	std::string res = originalSaveName;
+	std::string res = convert_path(originalSaveName.c_str());
 	res.erase(res.size() - 4, res.size()); 
-	size_t pos = res.rfind("\\");
+	size_t pos = res.rfind(PATH_SEP);
 	if (pos != std::string::npos) {
 		res.erase(0, pos + 1);
 	}
@@ -241,25 +241,35 @@ STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, 
 STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	mapVector.clear();
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hf = FindFirstFile( mask.c_str(), &FindFileData );
-	if(hf != INVALID_HANDLE_VALUE){
-		do{
-			if(FindFileData.nFileSizeLow){
-				MissionDescription mission;
-				std::string name = path + FindFileData.cFileName;
-				mission.setSaveName(name.c_str());
-				mission.setReelName(name.c_str());
-//				mission.gameType_ = replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame;
-				if( (!replay) || isCorrectPlayReelFile(mission.fileNamePlayReelGame.c_str()))
-					mapVector.push_back(mission);
-//				MissionDescription mission((string(path) + FindFileData.cFileName).c_str(), replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame);
-//				if(mission.worldID() != -1)
-//					mapVector.push_back(mission);
-			}
-		} while(FindNextFile( hf, &FindFileData ));
-		FindClose( hf );
-	}
+	std::string path_str = convert_path_resource(path.c_str());
+	if (path_str.empty()) return;
+	
+	//Collect files and order
+	std::vector<std::string> paths;
+	std::error_code error;
+    for (const auto & entry : std::filesystem::directory_iterator(path_str, error)) {
+        std::string entry_path = entry.path().string();
+        if (mask.empty() || endsWith(entry_path, mask)) {
+            paths.emplace_back(entry_path);
+        }
+    }
+    if (error) {
+        fprintf(stderr, "Error loading maps from %s: %d %s\n", path.c_str(), error.value(), error.message().c_str());
+    }
+    sort(paths.begin(), paths.end());
+    
+    //Fill map list from paths
+    for (std::string& entry_path : paths) {
+        MissionDescription mission;
+        mission.setSaveName(entry_path.c_str());
+        mission.setReelName(entry_path.c_str());
+//			mission.gameType_ = replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame;
+        if( (!replay) || isCorrectPlayReelFile(mission.fileNamePlayReelGame.c_str()))
+            mapVector.push_back(mission);
+//			MissionDescription mission((string(path) + FindFileData.cFileName).c_str(), replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame);
+//			if(mission.worldID() != -1)
+//				mapVector.push_back(mission);
+    }
 }
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect) {
 	if (mVect[index].worldID() == -1) {
@@ -887,7 +897,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 //						gameShell->currentSingleProfile.scanProfiles();
 						loadBattleList();
 						if(multiplayerMaps.empty()){
-							loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", "RESOURCE\\MULTIPLAYER\\*.spg");
+							loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
 						}
 						gameShell->stopNetClient();
 //						_shellCursorManager.SetActiveCursor(CShellCursorManager::arrow, 1);	
@@ -993,23 +1003,22 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOAD_SCR:
 					{
-//						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-						loadMapVector(savedGames, savesDir, savesDir + "*.spg");
+						loadMapVector(savedGames, savesDir, ".spg");
 						StartSpace();
 						fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
 					}
 					break;
 				case SQSH_MM_LOAD_REPLAY_SCR:
 					{
-						loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
+						loadMapVector(replays, REPLAY_PATH, "", true);
 						StartSpace();
 						fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 					}
 					break;
 				case SQSH_MM_SAVE_REPLAY_SCR:
 					{
-						loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
+						loadMapVector(replays, REPLAY_PATH, "", true);
 //						StartSpace();
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_REPLAY_NAME_INPUT);
 //						if (input->getText().empty()) {
@@ -1022,7 +1031,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 //						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-						loadMapVector(savedGames, savesDir, savesDir + "*.spg");
+						loadMapVector(savedGames, savesDir, ".spg");
 //						StartSpace();
 						fillList(SQSH_MM_LOAD_IN_GAME_MAP_LIST, savedGames, SQSH_MM_LOAD_IN_GAME_MAP, SQSH_MM_LOAD_IN_GAME_MAP_DESCR_TXT);
 					}
@@ -1031,7 +1040,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 //						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-						loadMapVector(savedGames, savesDir, savesDir + "*.spg");
+						loadMapVector(savedGames, savesDir, ".spg");
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
 //						if (input->getText().empty()) {
 							input->SetText(gameShell->CurrentMission.worldName);
@@ -1045,7 +1054,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 						StartSpace();
 						if(multiplayerMaps.empty()){
-							loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", "RESOURCE\\MULTIPLAYER\\*.spg");
+							loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
 						}
 						fillMultiPlayerList();
 						fillMultiPlayerList(SQSH_MM_LOBBY_MAP_LIST, -1, -1);
@@ -1057,7 +1066,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 						StartSpace();
 						if(multiplayerMaps.empty()){
-							loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", "RESOURCE\\MULTIPLAYER\\*.spg");
+							loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
 						}
 						fillMultiPlayerList();
 //						fillList(SQSH_MM_LAN_MAP_LIST, multiplayerMaps, SQSH_MM_CREATE_GAME_MAP, SQSH_MM_CREATE_GAME_MAP_DESCR_TXT);
@@ -2147,7 +2156,7 @@ int delLoadSaveAction(float, float) {
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
 	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-	loadMapVector(savedGames, savesDir, savesDir + "*.spg");
+	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
 	return 0;
 }
@@ -2214,8 +2223,8 @@ void onMMDelSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 //load replay
 int delLoadReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_REPLAY_LIST);
-	DeleteFile( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
-	loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
+	std::remove( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
+	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 	return 0;
 }
@@ -2275,7 +2284,7 @@ int delLoadInGameSaveAction(float, float) {
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-	loadMapVector(savedGames, savesDir, savesDir + "*.spg");
+	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_LOAD_IN_GAME_MAP_LIST, savedGames, SQSH_MM_LOAD_IN_GAME_MAP, SQSH_MM_LOAD_IN_GAME_MAP_DESCR_TXT);
 	return 0;
 }
@@ -2345,7 +2354,7 @@ int delSaveGameSaveAction(float, float) {
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-	loadMapVector(savedGames, savesDir, savesDir + "*.spg");
+	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_SAVE_GAME_MAP_LIST, savedGames, SQSH_MM_SAVE_GAME_MAP, SQSH_MM_SAVE_GAME_MAP_DESCR_TXT);
 	return 0;
 }
@@ -2359,8 +2368,9 @@ int toSaveQuant( float, float ) {
 }
 
 STARFORCE_API int saveGame_(float i, float) {
-	gameShell->currentSingleProfile.deleteSave(savedGames[i].missionName());
-	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[i].missionName();
+    size_t ii = static_cast<size_t>(i);
+	gameShell->currentSingleProfile.deleteSave(savedGames[ii].missionName());
+	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[ii].missionName();
 	if ( gameShell->universalSave(saveName.c_str(), true) ) {
 		hideMessageBox();
 		_shellIconManager.AddDynamicHandler( toSaveQuant, CBCODE_QUANT );
@@ -2466,8 +2476,8 @@ void onMMDelSaveGameButton(CShellWindow* pWnd, InterfaceEventCode code, int para
 //save replay
 int delSaveReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_LIST);
-	DeleteFile( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
-	loadMapVector(replays, (std::string(REPLAY_PATH) + "\\").c_str(), (std::string(REPLAY_PATH) + "\\*.*").c_str(), true);
+    std::remove( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
+	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
 	return 0;
 }
@@ -2554,17 +2564,9 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 			delete [] mess;
 			showMessageBox();
 		} else {
-			std::string path = REPLAY_PATH;
-			WIN32_FIND_DATA FindFileData;
-			HANDLE hf = FindFirstFile( path.c_str(), &FindFileData );
-			if (hf == INVALID_HANDLE_VALUE) {
-				CreateDirectory(path.c_str(), NULL);
-			} else {
-				xassert( (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 );
-				FindClose(hf);
-			}
-			path += "\\";
-			path += input->getText();
+			std::string path = convert_path_resource(REPLAY_PATH, true);
+            create_directories(path.c_str());
+			path += PATH_SEP + input->getText();
 
 			switch ( universe()->savePlayReel(path.c_str()) ) {
 				case terHyperSpace::SAVE_REPLAY_OK:

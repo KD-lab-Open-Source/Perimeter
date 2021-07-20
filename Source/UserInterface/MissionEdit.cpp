@@ -31,8 +31,7 @@ MissionEditor::MissionEditor()
 MissionEditor::~MissionEditor()
 {
 	if(hardnessChanged_ && 
-		MessageBox(0, "Редактирование неразрушаемости незаписано. Записать?", "Mission editor", MB_YESNO | MB_ICONQUESTION) 
-			== IDYES)
+		MessageBoxQuestion("Mission Editor", "Редактирование неразрушаемости незаписано. Записать?"))
 				vMap.saveHardness();
 }
 
@@ -133,17 +132,17 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		
 	case VK_DELETE:
 		if(editingHardness_){
-			if(MessageBox(0, "Стереть всю неразрушаемость?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES)
+			if(MessageBoxQuestion("MissionEditor", "Стереть всю неразрушаемость?"))
 				clearHardness();
 		}
-		else if(universe()->selectedObject() && ::MessageBox(0, "Удалить выделенный объект?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
+		else if(universe()->selectedObject() && MessageBoxQuestion("MissionEditor", "Удалить выделенный объект?")){
 			universe()->DeleteSelectedObjects();
 			_pUnitHover = 0;
 		}
 		return true;
 
 	case 'D':
-		if(universe()->selectedObject() && ::MessageBox(0, "Удалить выделенный объект?", "Mission editor", MB_YESNO | MB_ICONQUESTION) == IDYES){
+		if(universe()->selectedObject() && MessageBoxQuestion("MissionEditor", "Удалить выделенный объект?")){
 			universe()->DeleteSelectedObjects();
 			_pUnitHover = 0;
 		}
@@ -363,7 +362,7 @@ void MissionEditor::createUnit()
 	else if(item == itemNature){
 		setPlayer(-1);
 		attributeID = UNIT_ATTRIBUTE_STATIC_NATURE;
-		modelDirectory = "Resource\\Models\\Environment";
+		modelDirectory = "RESOURCE\\Models\\Environment";
 	}
 	else if(item == itemFilth){
 		setPlayer(-1);
@@ -415,8 +414,9 @@ void MissionEditor::createUnit()
 		if(modelDirectory){
 			std::string modelName;
 			if(openFileDialog(modelName, modelDirectory, "m3d", "3D Model")){
-				strlwr((char*)modelName.c_str());
-				size_t pos = modelName.rfind("resource\\");
+                std::string modelNameLwr = modelName;
+				strlwr((char*)modelNameLwr.c_str());
+				size_t pos = modelNameLwr.rfind("resource\\");
 				if(pos != std::string::npos)
 					modelName.erase(0, pos);
 				unit->setModelName(modelName.c_str());

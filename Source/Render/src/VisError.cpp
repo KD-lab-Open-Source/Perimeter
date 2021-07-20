@@ -1,3 +1,4 @@
+#include <SDL.h>
 #include "StdAfxRD.h"
 cVisError VisError;
 
@@ -21,10 +22,18 @@ cVisError& cVisError::operator << (const char *a)
 {
 	if(strcmp(a,VERR_END)==0)
 	{// конец потока
-		if(gb_RenderDevice && gb_RenderDevice->IsFullScreen())
+		if(gb_RenderDevice && gb_RenderDevice->IsFullScreen()) {
+#ifdef PERIMETER_EXODUS
+            SDL_MinimizeWindow(fromHWND(gb_RenderDevice->GetWindowHandle()));
+#else
 			ShowWindow(gb_RenderDevice->GetWindowHandle(),SW_MINIMIZE);
-		if(MessageBox(NULL,buf.c_str(),"cVisGeneric::ErrorMessage()",MB_OKCANCEL)==IDOK)
-			exit(1);
+#endif
+		}
+#ifndef PERIMETER_EXODUS //TODO remove when there isnt so much missing stuff
+        if (MessageBoxQuestion("Perimeter cVisError, exit?", buf.c_str(), SDL_MESSAGEBOX_ERROR)) {
+            ErrH.Abort(buf.c_str());
+        }
+#endif
 		buf.clear();
 	}else
 		buf+=a;

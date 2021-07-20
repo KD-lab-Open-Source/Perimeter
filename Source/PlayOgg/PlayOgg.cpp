@@ -1,4 +1,5 @@
 //Balmer
+#include "tweaks.h"
 #include <windows.h>
 #include <dsound.h>
 #include "PlayOgg.h"
@@ -181,7 +182,11 @@ static long ToDirectVolume(int vol)
 	return v;
 }
 
+#ifdef PERIMETER_EXODUS
+void* MpegThreadProc(void*)
+#else
 DWORD WINAPI MpegThreadProc(LPVOID lpParameter)
+#endif
 {
 	SetThreadPriority(hThread,THREAD_PRIORITY_TIME_CRITICAL);
 
@@ -264,7 +269,7 @@ void MpegDeinitLibrary()
 	}
 
 	if(hWaitEvent!=INVALID_HANDLE_VALUE)
-		CloseHandle(hWaitEvent);
+		DestroyEvent(hWaitEvent);
 	hWaitEvent=INVALID_HANDLE_VALUE;
 	hThread=INVALID_HANDLE_VALUE;
 

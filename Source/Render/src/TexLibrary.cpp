@@ -1,6 +1,8 @@
 #include "StdAfxRD.h"
 #include "FileImage.h"
 
+#include "ddraw.h"
+
 #ifdef TEXTURE_NOTFREE
 struct BeginNF
 {
@@ -530,6 +532,4 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		Texture->BitMap.push_back(pTexture);
 		return true;
 	}
-
-	return false;
 }

@@ -14,7 +14,7 @@
 #include <afxext.h>
 #include "resource.h"
 
-typedef list<string> StringList;
+typedef std::list<string> StringList;
 
 class CMultiPadApp : public CWinApp
 {

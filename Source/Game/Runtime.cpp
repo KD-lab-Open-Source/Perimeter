@@ -31,14 +31,30 @@
 #include "Universe.h"
 #include "../resource.h"
 
+#include <SDL.h>
+
+#ifndef PERIMETER_EXODUS
 #include <commdlg.h>
+#endif
 #include "../HT/ht.h"
 #include "GraphicsOptions.h"
 
 const char* currentVersion = 
 "Ver "
 #include "../version.h"
-" (" __DATE__ " " __TIME__ ")";
+#ifdef _FINAL_VERSION_
+" Final"
+#else
+" Debug"
+#endif
+#ifdef PERIMETER_EXODUS
+" Exodus"
+#endif
+#ifdef PERIMETER_DEBUG
+" (DBG)"
+#endif
+" (" __DATE__ " " __TIME__ ")"
+;
 
 #ifdef _SINGLE_DEMO_
 const char* currentShortVersion = 
@@ -94,9 +110,8 @@ static Vect2i windowClientSize = Vect2i(1024, 768);
 static bool applicationHasFocus_ = true;
 
 HWND hWndVisGeneric=0;
-HINSTANCE gb_hInstance=NULL;
 
-int terSetDebugWindow = IniManager("Perimeter.ini").getInt("Graphics","SetDebugWindow");
+int terSetDebugWindow = 0;
 
 SyncroTimer global_time;
 SyncroTimer frame_time;
@@ -105,12 +120,19 @@ SyncroTimer scale_time;
 void PerimeterDataChannelLoad();
 void PerimeterDataChannelSave();
 
+#ifndef PERIMETER_EXODUS
 void PerimeterAviInit();
 int PerimeterAviQuant();
 void PerimeterAviFinit();
+#endif
 
+#ifdef PERIMETER_EXODUS_WINDOW
+void SDL_event_poll();
+#else
+HINSTANCE gb_hInstance=NULL;
 HWND Win32_CreateWindow(char *WinName,int xPos,int yPos,int xScr,int yScr,WNDPROC lpfnWndProc=DefWindowProc,int dwStyle=WS_OVERLAPPEDWINDOW);
 LRESULT CALLBACK VisPerimetrClient_WndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
+#endif
 
 bool applicationHasFocus()
 {
@@ -170,7 +192,11 @@ void RestoreGDI()
 {
 	if(terRenderDevice && terFullScreen)
 	{
+#ifdef PERIMETER_EXODUS_WINDOW
+        SDL_ShowWindow(fromHWND(hWndVisGeneric));
+#else
 		ShowWindow(hWndVisGeneric,SW_MINIMIZE);
+#endif
 	}
 
 }	
@@ -186,16 +212,7 @@ void HTManager::init()
 	interpolation_timer_ = 0;
 	interpolation_factor_ = 0;
 
-	static XBuffer errorHeading;
-	errorHeading < currentVersion;
-#ifdef _FINAL_VERSION_
-    errorHeading < " Final";
-#endif
-#ifdef PERIMETER_DEBUG
-    errorHeading < " DBG";
-#endif
-
-    ErrH.SetPrefix(errorHeading);
+    ErrH.SetPrefix(currentVersion);
 #ifndef _FINAL_VERSION_
 	ErrH.SetRestore(InternalErrorHandler);
 #endif
@@ -239,7 +256,9 @@ void HTManager::done()
 	if(!terMissionEdit)
 		PerimeterDataChannelSave();
 
+#ifndef PERIMETER_EXODUS
 	PerimeterAviFinit();
+#endif
 	
 	// Logic
 	delete gameShell;
@@ -325,8 +344,25 @@ cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int Colo
 //	if(HTManager::instance()->IsUseHT())
 		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
 
+#ifdef PERIMETER_EXODUS_WINDOW
+    Uint32 window_flags = SDL_WINDOW_VULKAN | SDL_WINDOW_SHOWN;
+    if (FullScr) {
+        window_flags |= SDL_WINDOW_FULLSCREEN;
+    }
+    SDL_Window* sdlWindow = SDL_CreateWindow(
+        "Perimeter SDL2",
+        SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,
+        xScr,yScr,
+        window_flags
+    );
+    if (!sdlWindow) {
+        ErrH.Abort("Error creating SDL window", XERR_CRITICAL, window_flags, SDL_GetError());
+    }
+    hWndVisGeneric = toHWND(sdlWindow);
+#else
 	hWndVisGeneric = Win32_CreateWindow("Perimeter",0,0,xScr,yScr,VisPerimetrClient_WndProc,
 		(FullScr ? 0 : WS_OVERLAPPEDWINDOW)|WS_POPUP|WS_VISIBLE);
+#endif
 
 	if(IRenderDevice->Init(xScr,yScr,ModeRender,hWndVisGeneric,RefreshRateInHz))
 	{
@@ -340,7 +376,7 @@ cInterfaceRenderDevice* SetGraph(int Mode,int xScr,int yScr,int FullScr,int Colo
 
 void GameShell::SetFontDirectory()
 {
-	terVisGeneric->SetFontRootDirectory("resource\\LocData");
+	terVisGeneric->SetFontRootDirectory("RESOURCE\\LocData");
 	std::string dir=getLocDataPath();
 	dir+="Fonts";
 	terVisGeneric->SetFontDirectory(dir.c_str());
@@ -403,7 +439,7 @@ void HTManager::initGraphics()
 		terRenderDevice->Flush();
 	};*/
 
-	vMap.prepare("RESOURCE\\WORLDS\\worlds.prm");//,NULL,NULL,0,terRenderDevice->GetSizeX(),terRenderDevice->GetSizeY());
+	vMap.prepare("RESOURCE\\Worlds\\WORLDS.PRM");//,NULL,NULL,0,terRenderDevice->GetSizeX(),terRenderDevice->GetSizeY());
 	GraphOptionsManager::getInstance().load();
 	GraphOptionsManager::getInstance().apply();
 }
@@ -509,6 +545,7 @@ void FinitSound()
 
 //--------------------------------
 
+#ifndef PERIMETER_EXODUS
 sWinVideo terWinVideo;
 int terWinVideoValid = 0;
 int terWinVideoEnable = 0;//getPerimeterIniInt("Game","PlayAVI");
@@ -548,9 +585,13 @@ void PerimeterAviFinit()
 		terWinVideoValid = 0;
 	}
 }
+#endif
 
 void checkSingleRunning()
 {
+#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG) && !defined(PERIMETER_EXODUS)
+    //NOTE: with PERIMETER_EXODUS this is disabled due to pevents not supporting named events
+    
 	static HANDLE hSingularEvent = 0;
 	static char psSingularEventName[] = "Perimeter";
 
@@ -564,16 +605,38 @@ void checkSingleRunning()
 			SetForegroundWindow(hwnd);
 		ErrH.Exit();
 	}
+#endif
 }
 
 //------------------------------
+#ifdef PERIMETER_EXODUS_WINDOW
+int main(int argc, char *argv[])
+#else
 int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
-{
-#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
-	checkSingleRunning();
 #endif
+{
+#ifndef _WIN32
+    //We need to copy argc/argv so they can be accessed later via check_command_line etc
+    setup_argcv(argc, argv);
+#endif
+    
+    //Scan resources first
+    scan_resource_paths();
+    
+	checkSingleRunning();
 
+    g_controls_converter.LoadKeyNameTable();
+
+#ifdef PERIMETER_EXODUS_WINDOW    
+    //Start SDL stuff
+    int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+    if (sdlresult < 0) {
+        ErrH.Abort("Error initializing SDL", XERR_CRITICAL, sdlresult, SDL_GetError());
+    }
+#else
 	gb_hInstance=hInst;
+#endif
+    
 	int ht=IniManager("Perimeter.ini").getInt("Game","HT");
 	check_command_line_parameter("HT", ht);
 	HTManager* runtime_object = new HTManager(ht);
@@ -582,34 +645,42 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 	xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
 	bool run = true;
-	MSG msg;
 	while(run){
+#ifdef PERIMETER_EXODUS_WINDOW
+        SDL_event_poll();
+#endif
+#ifndef PERIMETER_EXODUS
+        MSG msg;
 		if(PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)){
 			if(!GetMessage(&msg, NULL, 0, 0))
 				break;
 			TranslateMessage( &msg );
 			DispatchMessage( &msg );
-		}else {
-			//NetworkPause handler
-			static bool runapp=true;
-			if(applicationIsGo()!=runapp){
-				if(gameShell && (!gameShell->alwaysRun()) ){
-					if(gameShell->getNetClient()){
-						if(gameShell->getNetClient()->setPause(!applicationHasFocus_))
-							runapp=applicationIsGo();
-					}
-				}
-			}
-//			if(gameShell && (!gameShell->alwaysRun()) ){
-//				if(gameShell->getNetClient())
-//					gameShell->getNetClient()->pauseQuant(applicationIsGo()));
-//			}
-
-			if(applicationIsGo())
-				run = runtime_object->Quant();
-			else
-				WaitMessage();
+			continue;
 		}
+#endif
+        //NetworkPause handler
+        static bool runapp=true;
+        if (applicationIsGo()!=runapp){
+            if(gameShell && (!gameShell->alwaysRun()) ){
+                if(gameShell->getNetClient()){
+                    if(gameShell->getNetClient()->setPause(!applicationHasFocus_))
+                        runapp=applicationIsGo();
+                }
+            }
+        }
+//		if(gameShell && (!gameShell->alwaysRun()) ){
+//			if(gameShell->getNetClient())
+//				gameShell->getNetClient()->pauseQuant(applicationIsGo()));
+//		}
+
+        if (applicationIsGo()) {
+            run = runtime_object->Quant();
+        } else {
+#ifndef PERIMETER_EXODUS
+            WaitMessage();
+#endif
+        }
 	}
 
 	delete runtime_object;
@@ -618,6 +689,94 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 }
 
 //--------------------------------
+#ifdef PERIMETER_EXODUS_WINDOW
+
+void SDL_event_poll() {
+    SDL_Window* window = fromHWND(hWndVisGeneric);
+    uint32_t windowID = SDL_GetWindowID(window);
+    SDL_Event event;
+    bool closing = false;
+    while (SDL_PollEvent(&event) == 1) {
+        if (event.window.windowID && (!window || event.window.windowID != windowID)) {
+            //Event is for a window that is not current or window is not available
+            continue;
+        }
+
+        if(gameShell)
+            gameShell->EventHandler(event);
+
+        /* TODO how this should be impl?
+            case WM_SETCURSOR:
+                if(applicationHasFocus()){
+                    int nHittest = LOWORD(lParam);  // hit-test code 
+                    if(nHittest==HTCLIENT)
+                    {
+                        _shellCursorManager.OnWMSetCursor();
+                        return TRUE;
+                    }
+                }
+                break;
+        */
+
+        //Handle event by type and subtype
+        switch (event.type) {
+            case SDL_WINDOWEVENT: {
+                switch (event.window.event) {
+                    case SDL_WINDOWEVENT_SHOWN: {
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_RESIZED:
+                    case SDL_WINDOWEVENT_SIZE_CHANGED: {
+                        if(terFullScreen){
+                            windowClientSize.x = terScreenSizeX;
+                            windowClientSize.y = terScreenSizeY;
+                        } else {
+                            SDL_GetWindowSize(window, &windowClientSize.x, &windowClientSize.y);
+                        }
+                        if(gameShell)
+                            gameShell->setWindowClientSize(windowClientSize);
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_FOCUS_LOST: {
+                        applicationHasFocus_ = false;
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_FOCUS_GAINED: {
+                        applicationHasFocus_= true;
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_CLOSE: {
+                        //NOTE: Seems that MacOS uses this event instead of SDL_QUIT when window is requested to close
+                        closing = true;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                break;
+            }
+            case SDL_QUIT: {
+                closing = true;
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+        
+        if (closing) {
+            if(gameShell) {
+                gameShell->terminate();
+            } else {
+                //TODO is this correct?
+                SDL_DestroyWindow(window);
+            }
+            break;
+        }
+    }
+}
+
+#else //PERIMETER_EXODUS_WINDOW
 STARFORCE_API void CalcRealWindowPos(int xPos,int yPos,int xScr,int yScr,bool fullscreen,Vect2i& pos,Vect2i& size)
 {
 	if(xScr<0) xScr=GetSystemMetrics(SM_CXSCREEN);
@@ -767,6 +926,7 @@ LRESULT CALLBACK VisPerimetrClient_WndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPA
     }
     return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
+#endif
 
 void setLogicFp()
 {
@@ -787,6 +947,7 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 	XBuffer filter;
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
 
+#ifndef PERIMETER_EXODUS
 	OPENFILENAME ofn;
 	memset(&ofn,0,sizeof(ofn));
 	char fname[2048];
@@ -805,6 +966,10 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 		return false;
 	filename = fname;
 	return true;
+#else
+	//TODO
+	return false;
+#endif
 }
 
 bool saveFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
@@ -812,6 +977,7 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 	XBuffer filter;
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
 
+#ifndef PERIMETER_EXODUS
 	OPENFILENAME ofn;
 	memset(&ofn,0,sizeof(ofn));
 	char fname[2048];
@@ -830,6 +996,10 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 		return false;
 	filename = fname;
 	return true;
+#else
+    //TODO
+    return false;
+#endif
 }
 
 const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
@@ -837,6 +1007,7 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 	if(items.empty())
 		return 0;
 
+#ifndef PERIMETER_EXODUS
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
@@ -852,6 +1023,10 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 		return items[index - 1];
 	else
 		return 0;
+#else
+    //TODO
+    return 0;
+#endif
 }
 
 int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
@@ -859,6 +1034,7 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 	if(items.empty())
 		return -1;
 
+#ifndef PERIMETER_EXODUS
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
@@ -874,12 +1050,17 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 		return index - 1;
 	else
 		return -1;
+#else
+    //TODO
+    return -1;
+#endif
 }
 
 
 
 //-----------------------------------------
 static std::string editTextString;
+#ifndef PERIMETER_EXODUS
 static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)
@@ -919,22 +1100,23 @@ static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPara
 	}
 	return FALSE;
 }
+#endif
 
 const char* editText(const char* defaultValue)
 {
 	editTextString = defaultValue;
-	int ret = DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT),hWndVisGeneric,DialogProc);
-//	if(ret!=IDOK)
-//		return 0;
+#ifndef PERIMETER_EXODUS
+	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT),hWndVisGeneric,DialogProc);
+#endif
 	return editTextString.c_str();
 }
 
 const char* editTextMultiLine(const char* defaultValue, HWND hwnd)
 {
 	editTextString = defaultValue;
-	int ret = DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE),hwnd,DialogProc);
-//	if(ret!=IDOK)
-//		return 0;
+#ifndef PERIMETER_EXODUS
+	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE),hwnd,DialogProc);
+#endif
 	return editTextString.c_str();
 }
 

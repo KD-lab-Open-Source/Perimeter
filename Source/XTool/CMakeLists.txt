@@ -21,4 +21,23 @@ SET(XTool_SRCS
     XUTIL/XClock.cpp
 )
 
+SET(XTool_LINK_LIBS)
+
+IF(NOT MSVC_CL_BUILD)
+    IF(PERIMETER_WINDOWS)
+        #Use Backtrace in MinGW/MSYS
+        FIND_PACKAGE(Backtrace)
+        IF(Backtrace_FOUND)
+            ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_BACKTRACE)
+            SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ${Backtrace_LIBRARIES})
+        ENDIF()
+    ELSE()
+        #Use ADDR2LINE in POSIX
+        ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_ADDR2LINE)
+        # dl is required for dladdr in stacktrace
+        SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} dl)
+    ENDIF()
+ENDIF()
+
 ADD_LIBRARY(XTool STATIC ${XTool_SRCS})
+TARGET_LINK_LIBRARIES(XTool ${XTool_LINK_LIBS})

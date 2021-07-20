@@ -366,21 +366,23 @@ void cD3DRender::UpdateRenderMode()
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT5)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT5);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT3)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT3)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT3);
+		
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT4)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT4);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT2)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_DXT2)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_DXT2);
     }
 	else if(RenderMode&RENDERDEVICE_MODE_RGB32)
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
 			TexFmtData[SURFMT_COLOR].Set(4,8,8,8,8,16,8,0,24,D3DFMT_X8R8G8B8);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
 			TexFmtData[SURFMT_COLOR].Set(3,8,8,8,0,16,8,0,0,D3DFMT_R8G8B8);
+        
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
 	}
@@ -388,12 +390,13 @@ void cD3DRender::UpdateRenderMode()
 	{
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X4R4G4B4)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X4R4G4B4)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,4,4,4,4,8,4,0,12,D3DFMT_X4R4G4B4);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,5,5,5,1,10,5,0,15,D3DFMT_X1R5G5B5);
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R5G6B5)==0)
+		else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R5G6B5)==0)
 			TexFmtData[SURFMT_COLOR].Set(2,5,6,5,0,11,5,0,0,D3DFMT_R5G6B5);
+		
 		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
 			TexFmtData[SURFMT_COLORALPHA].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
 	}
@@ -401,9 +404,10 @@ void cD3DRender::UpdateRenderMode()
 	//32
 	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 		TexFmtData[SURFMT_COLOR32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
 		TexFmtData[SURFMT_COLOR32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_X8R8G8B8);
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
+    
+    if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 		TexFmtData[SURFMT_COLORALPHA32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
 
 	// bump map format
@@ -413,20 +417,16 @@ void cD3DRender::UpdateRenderMode()
 	// render map format
 	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_X8R8G8B8)==0)
 		TexFmtData[SURFMT_RENDERMAP32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_X8R8G8B8);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A8R8G8B8)==0)
 		TexFmtData[SURFMT_RENDERMAP32].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_R8G8B8)==0)
 		TexFmtData[SURFMT_RENDERMAP32].Set(3,8,8,8,0,16,8,0,0,D3DFMT_R8G8B8);
 
 	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_R5G6B5)==0)
 		TexFmtData[SURFMT_RENDERMAP16].Set(2,5,6,5,0,11,5,0,0,D3DFMT_R5G6B5);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_A4R4G4B4)==0)
 		TexFmtData[SURFMT_RENDERMAP16].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
-	else
-	if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
+	else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,D3DUSAGE_RENDERTARGET,D3DRTYPE_TEXTURE,D3DFMT_X1R5G5B5)==0)
 		TexFmtData[SURFMT_RENDERMAP16].Set(2,5,5,5,1,10,5,0,15,D3DFMT_X1R5G5B5);
 
 	TexFmtData[SURFMT_RENDERMAP_FLOAT].Set(0,0,0,0,0,0,0,0,0,0);
@@ -434,19 +434,16 @@ void cD3DRender::UpdateRenderMode()
 		TexFmtData[SURFMT_RENDERMAP_FLOAT].Set(0,0,0,0,0,0,0,0,0,D3DFMT_R32F);
 
 	{
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8)==0)
-		{
-			TexFmtData[SURFMT_GRAYALPHA].Set(1, 0,0,0,8, 0,0,0,0,D3DFMT_A8);
-		}else
-		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8L8)==0)
-		{
+		if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8)==0) {
+            TexFmtData[SURFMT_GRAYALPHA].Set(1, 0, 0, 0, 8, 0, 0, 0, 0, D3DFMT_A8);
+        } else if(lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_A8L8)==0) {
 			TexFmtData[SURFMT_GRAYALPHA].Set(2, 8,8,8,8, 0,0,0,8,D3DFMT_A8L8);
-		}else
-		{
-			if(RenderMode&RENDERDEVICE_MODE_RGB32)
-				TexFmtData[SURFMT_GRAYALPHA].Set(4,8,8,8,8,16,8,0,24,D3DFMT_A8R8G8B8);
-			else
-				TexFmtData[SURFMT_GRAYALPHA].Set(2,4,4,4,4,8,4,0,12,D3DFMT_A4R4G4B4);
+		} else {
+			if(RenderMode&RENDERDEVICE_MODE_RGB32) {
+                TexFmtData[SURFMT_GRAYALPHA].Set(4, 8, 8, 8, 8, 16, 8, 0, 24, D3DFMT_A8R8G8B8);
+            } else {
+                TexFmtData[SURFMT_GRAYALPHA].Set(2, 4, 4, 4, 4, 8, 4, 0, 12, D3DFMT_A4R4G4B4);
+            }
 		}
 
 	}
@@ -605,6 +602,7 @@ void cD3DRender::RestoreDeviceIfLost()
 	int hr;
 	while(FAILED(hr=lpD3DDevice->TestCooperativeLevel()))
     { // Test the cooperative level to see if it's okay to render
+#ifndef PERIMETER_EXODUS
         if( D3DERR_DEVICELOST == hr )
 		{
 			MSG msg;
@@ -618,6 +616,7 @@ void cD3DRender::RestoreDeviceIfLost()
 //			VISASSERT(0 && D3DERR_DEVICELOST);
 //          return;
 		}
+#endif
 
         if(hr==D3DERR_DEVICENOTRESET)
 		{
@@ -1214,6 +1213,7 @@ void cD3DRender::FlushFilledRect()
 void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float du,float dv,
 		cTexture *Texture,const sColor4c &ColorMul,float phase,eBlendMode mode)
 {
+    if (!Texture) return;
     VISASSERT(bActiveScene);
 	int x2=x1+dx,y2=y1+dy;
 	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
@@ -1254,6 +1254,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 		cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase,
 		eColorMode mode,eBlendMode blend_mode)
 {
+    if (!Tex1 || !Tex2) return;
     VISASSERT(bActiveScene);
 	int x2=x1+dx,y2=y1+dy;
 	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
@@ -1294,6 +1295,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 		cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha,float phase,
 		eColorMode mode,eBlendMode blend_mode)
 {
+    if (!Tex1 || !Tex2) return;
     VISASSERT(bActiveScene);
 	int x2=x1+dx,y2=y1+dy;
 	if(dx>=0) { if(x2<xScrMin||x1>xScrMax) return; }
@@ -1372,11 +1374,12 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *FontName,int size,int bold,int italic,int underline)
 {
+    if(hWnd==0) return;
+#ifndef PERIMETER_EXODUS
 	HDC hDC=0;
     HFONT hFont=CreateFont(size,0,0,0,bold?FW_BOLD:FW_NORMAL,italic,underline,0, ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,VARIABLE_PITCH,FontName);
 	if(hFont==0) return;
-	if(hWnd==0) return;
 
 	if((hDC=GetDC(hWnd))==0) return;
     HFONT hFontOld=(HFONT)SelectObject( hDC, hFont );
@@ -1387,12 +1390,13 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *
 	SelectObject(hDC,hFontOld);
 	DeleteObject(hFont);
 	ReleaseDC(hWnd,hDC);
-
+#endif
 }
 
 void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 {
 	if(hWnd==0) return;
+#ifndef PERIMETER_EXODUS
 	HDC hDC=GetDC(hWnd);
 	if(hDC==0) return;
 	SetTextColor(hDC,RGB(r,g,b));
@@ -1400,6 +1404,7 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 	RECT rect={xScrMin,yScrMin,xScrMax,yScrMax};
 	RDCALL(!ExtTextOut(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlen(string),0));
 	ReleaseDC(hWnd,hDC);
+#endif
 }
 
 int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
@@ -1950,7 +1955,7 @@ void cD3DRender::InitStandartIB()
 
 void cD3DRender::SaveStates(const char* fname)
 {
-	FILE* f=fopen(fname,"wt");
+	FILE* f=fopen(convert_path_resource(fname).c_str(),"wt");
 	fprintf(f,"Render state\n");
 #define W(s) {DWORD d;RDCALL(lpD3DDevice->GetRenderState(s,&d));fprintf(f,"%s=%x\n",#s,d); }
 	W(D3DRS_ZENABLE);

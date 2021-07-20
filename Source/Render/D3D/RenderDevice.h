@@ -1,15 +1,13 @@
 #pragma once
 
 #include "../inc/IRenderDevice.h"
-#include "ddraw.h"
 #include "../src/TexLibrary.h"
 
 int RDWriteLog(HRESULT err,char *exp,char *file,int line);
-void RDWriteLog(DDSURFACEDESC2 &ddsd);
 void RDWriteLog(char *exp,int size=-1);
 
-#define RDCALL(exp)									{ HRESULT hr=exp; if(hr!=DD_OK) RDWriteLog(hr,#exp,__FILE__,__LINE__); VISASSERT(SUCCEEDED(hr)); }
-#define RDERR(exp)									{ HRESULT hr=exp; if(hr!=DD_OK) return RDWriteLog(hr,#exp,__FILE__,__LINE__); }
+#define RDCALL(exp)									{ HRESULT hr=exp; if(hr!=D3D_OK) RDWriteLog(hr,#exp,__FILE__,__LINE__); VISASSERT(SUCCEEDED(hr)); }
+#define RDERR(exp)									{ HRESULT hr=exp; if(hr!=D3D_OK) return RDWriteLog(hr,#exp,__FILE__,__LINE__); }
 
 //Возвращает минимальное число,являющееся степенью двойки и не меньше, чем n
 inline int Power2up(int n)

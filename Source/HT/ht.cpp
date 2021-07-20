@@ -1,16 +1,22 @@
 #include "StdAfx.h"
 #include "ht.h"
 #include "GameShell.h"
+#ifndef PERIMETER_EXODUS
 #include <process.h>
+#endif
 #include "StreamInterpolation.h"
 #include "GenericControls.h"
 #include "Config.h"
 #include "Universe.h"
 #include "LagStatistic.h"
+#include <malloc.h>
+#include <thread>
 
-const DWORD bad_thread_id=0xFFFFFFFF;
-const int max_logic_quant=5;
-const int max_lag_quant=1;
+#ifdef PERIMETER_EXODUS
+const THREAD_ID bad_thread_id=-1;
+#else
+const THREAD_ID bad_thread_id=0xFFFFFFFF;
+#endif
 
 HTManager* HTManager::self=NULL;
 HTManager::HTManager(bool ht)
@@ -60,9 +66,16 @@ void HTManager::setSpeedSyncroTimer(float speed)
 	gb_VisGeneric->SetLogicTimePeriodInv(speed*terLogicTimePeriodInv);
 }
 
-void __cdecl logic_thread( void * argument)
+#ifdef PERIMETER_EXODUS
+void* logic_thread_init(void*)
+#else
+void __cdecl logic_thread_init( void * argument)
+#endif
 {
 	HTManager::instance()->logic_thread();
+#ifdef PERIMETER_EXODUS
+	return 0;
+#endif
 }
 
 void HTManager::setUseHT(bool use_ht_)
@@ -84,7 +97,13 @@ void HTManager::GameStart(const MissionDescription& mission)
 	if(use_ht)
 	{
 		xassert(logic_thread_id==bad_thread_id);
-		logic_thread_id=_beginthread(::logic_thread, 1000000,NULL);
+#ifdef PERIMETER_EXODUS
+        if (CreateThread( nullptr, 0, logic_thread_init, nullptr, 0, &logic_thread_id) == nullptr) {
+            logic_thread_id=bad_thread_id;
+        }
+#else
+		logic_thread_id=_beginthread(::logic_thread_init, 1000000,NULL);
+#endif
 	}
 }
 
@@ -98,8 +117,8 @@ void HTManager::GameClose()
 
 		DWORD ret=WaitForSingleObject(end_logic,INFINITE);
 		xassert(ret==WAIT_OBJECT_0);
-		
-		CloseHandle(end_logic);
+
+        DestroyEvent(end_logic);
 		end_logic=NULL;
 		logic_thread_id=bad_thread_id;
 	}
@@ -108,15 +127,19 @@ void HTManager::GameClose()
 	tls_is_graph=MT_GRAPH_THREAD;
 }
 
-#include <malloc.h>
-
 void HTManager::logic_thread()
 {
+#ifndef PERIMETER_EXODUS
 	_alloca(4096+128);
-
 	CoInitialize(NULL);
+#endif
+	
 	init_logic=true;
-	SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
+#ifdef PERIMETER_EXODUS
+    //TODO pthread_setschedprio(pthread_self(), );
+#else
+    SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
+#endif
 //	gameShell->GameStart(logic_arg.mission);
 	init_logic=false;
 	if(!start_timer){
@@ -303,10 +326,9 @@ void HTManager::ClearDeleteUnit(bool delete_all)
 
 bool HTManager::PossibilityHT()
 {
-	SYSTEM_INFO sys_info;
-	GetSystemInfo(&sys_info);
-
-	return sys_info.dwNumberOfProcessors>=2;
+    const unsigned int processor_count = std::thread::hardware_concurrency();
+    //NOTE: processor_count may be 0 if couldn't be detected
+    return 1 < processor_count;
 }
 
 float HTManager::GetLogicFps()

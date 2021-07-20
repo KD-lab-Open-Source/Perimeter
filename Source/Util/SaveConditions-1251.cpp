@@ -1,10 +1,10 @@
 // TODO: change encoding to utf-8
 
 #include "StdAfx.h"
-#include "Save.h"
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
+#include "Save.h"
 
 BEGIN_ENUM_DESCRIPTOR(TeleportationType, "TeleportationType")
 REGISTER_ENUM(TELEPORTATION_TYPE_ALPHA, "Телепортация с помощью Альфы")

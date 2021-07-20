@@ -221,8 +221,7 @@ struct vrtMap {
 	std::vector<ElementPMO> containerPMO;
 
 	void playPMOperation(void);
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & WRAP_OBJECT(containerPMO);
 		ar & WRAP_OBJECT(H_SIZE_POWER);
 		ar & WRAP_OBJECT(V_SIZE_POWER);
@@ -668,7 +667,7 @@ struct vrtMap {
 		else{
 			col32=Sur2Col32[SurBuf[off]][RnrBuf[off]];
 		}
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 		if(flag_ShowDbgInfo){
 			if( (GABuf[offsetBuf2offsetGBuf(off)]&GRIDAT_BUILDING) != 0) col32|=0xFF;
 			if( (GABuf[offsetBuf2offsetGBuf(off)]&GRIDAT_BASE_OF_BUILDING_CORRUPT) != 0) col32|=0xFF0000;
@@ -981,9 +980,9 @@ protected:
 };
 
 	
-const char* GetTargetName(const char* name);
-const char* GetTargetName(int numWorld, const char* name);
-const char* safeGetTargetName(int numWorld, const char* name);
+std::string GetTargetName(const char* name);
+std::string GetTargetName(int numWorld, const char* name);
+std::string safeGetTargetName(int numWorld, const char* name);
 bool isWorldIDValid(int worldID);
 extern void geoGeneration(sGeoPMO& var);
 
@@ -993,8 +992,8 @@ extern vrtMap vMap;
 
 
 //Работа с INI Файлом
-extern char* GetINIstringV(const char* iniFile,const char* section,const char* key);
-extern void SaveINIstringV(const char* iniFile,const char* section,const char* key,const char* var);
+extern char* GetINIstringV(const std::string& iniFile,const char* section,const char* key);
+extern void SaveINIstringV(const std::string& iniFile,const char* section,const char* key,const char* var);
 
 extern unsigned char* convert_vox2vid(int vox, char* buf);
 extern int convert_vid2vox(char* buf);

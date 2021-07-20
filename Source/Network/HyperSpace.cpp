@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 
+#include <SDL.h>
 #include "Runtime.h"
 #include "UnitAttribute.h"
 #include "Universe.h"
@@ -139,18 +140,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-		//поиск автосэйв каталога и создание, если его нет
-		WIN32_FIND_DATA FindFileData;
-		HANDLE hFind;
-		hFind = FindFirstFile(autoSavePlayReelDir, &FindFileData);
-		if (hFind == INVALID_HANDLE_VALUE) {
-			bool createAutoSaveDirResult=CreateDirectory(autoSavePlayReelDir, NULL);
-			xassert(createAutoSaveDirResult);
-		} 
-		else {
-			xassert((FindFileData.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)!=0);
-			FindClose(hFind);
-		}
+        create_directories(convert_path_resource(autoSavePlayReelDir, true).c_str());
 	}
 
 	currentQuant=0;
@@ -172,7 +162,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 void getMissionDescriptionInThePlayReelFile(const char* fname, MissionDescription& md)
 {
-	XStream fi(fname, XS_IN);
+	XStream fi(convert_path_resource(fname).c_str(), XS_IN);
 
 	GUID fguid;
 	fi.read(&fguid, sizeof(fguid));
@@ -197,7 +187,7 @@ bool isCorrectPlayReelFile(const char* fname)
 
 bool terHyperSpace::loadPlayReel(const char* fname)
 {
-	XStream fi(fname, XS_IN);
+	XStream fi(convert_path_resource(fname), XS_IN);
 
 	GUID fguid;
 	fi.read(&fguid, sizeof(fguid));
@@ -255,7 +245,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 {
 
 	XStream fo(0);
-	if(!fo.open(fname, XS_OUT)){
+	if(!fo.open(convert_path_resource(fname, true), XS_OUT)){
 //		::MessageBox(0, "It is impossible to write down a game reel on a disk ", "Save play reel error:", MB_OK);
 		return SAVE_REPLAY_RW_ERROR;
 	}
@@ -290,7 +280,12 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 		}
 	}
 	out_buffer.write2File(fo);
-	return fo.ioError() ? SAVE_REPLAY_RW_ERROR_OR_DISK_FULL : SAVE_REPLAY_OK;
+    if (fo.ioError()) {
+        return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
+    } else {
+        scan_resource_paths(REPLAY_PATH);
+        return SAVE_REPLAY_OK;
+    }
 }
 
 
@@ -298,13 +293,9 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 void terHyperSpace::autoSavePlayReel()
 {
 	//autosave
-
-	SYSTEMTIME st;
-	::GetLocalTime (&st);
-	char fnbuf[MAX_PATH];
-	sprintf(fnbuf, "%s\\autosaveFrom_%02d-%02d-%02d__%02d=%02d=%02d", autoSavePlayReelDir, (int)st.wMonth, (int)st.wDay, (int)st.wYear,
-		(int)st.wHour, (int)st.wMinute, (int)st.wSecond);
-	savePlayReel(fnbuf);
+    time_t result = time(nullptr);
+    std::string path = std::string(autoSavePlayReelDir) + PATH_SEP + "autosaveFrom_" + std::to_string(result);
+	savePlayReel(path.c_str());
 }
 
 void terHyperSpace::allSavePlayReel()
@@ -862,7 +853,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 				f < currentVersion < "\r\n";
 				writeLogList2File(f);
 				f.close();
-				::MessageBox(0, "Unique!!!; outnet.log saved", "Error network synchronization", MB_OK|MB_ICONERROR);
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", "Unique!!!; outnet.log saved", nullptr);
 				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED);
 			}
 			break;

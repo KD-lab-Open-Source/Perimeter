@@ -70,7 +70,7 @@ return "Unknown error";
 
 void RDOpenLog(char *fname="RenderDevice.!!!")
 {
-	fRD=fopen(fname,"wt");
+	fRD=fopen(convert_path(fname).c_str(),"wt");
 	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
 }
 int RDWriteLog(HRESULT err,char *exp,char *file,int line)
@@ -90,35 +90,6 @@ void RDWriteLog(char *exp,int size)
 		size=strlen(exp);
 	fwrite(exp,size,1,fRD);
 	fprintf(fRD,"\n");
-	fflush(fRD);
-#endif
-}
-
-void RDWriteLog(DDSURFACEDESC2 &ddsd)
-{
-#ifndef _FINAL_VERSION_
-	if(fRD==0) RDOpenLog();
-	fprintf(fRD,"DDSURFACEDESC2\n{\n");
-	fprintf(fRD,"   dwSize            = %i\n",ddsd.dwSize);
-	fprintf(fRD,"   dwFlags           = 0x%X\n",ddsd.dwFlags);
-	fprintf(fRD,"   dwHeight          = %i\n",ddsd.dwHeight);;
-	fprintf(fRD,"   dwWidth           = %i\n",ddsd.dwWidth);
-	fprintf(fRD,"   lPitch            = %i\n",ddsd.lPitch);
-	fprintf(fRD,"   dwBackBufferCount = %i\n",ddsd.dwBackBufferCount);
-	fprintf(fRD,"   dwMipMapCount     = %i\n",ddsd.dwMipMapCount);
-	fprintf(fRD,"   dwAlphaBitDepth   = %i\n",ddsd.dwAlphaBitDepth);
-	fprintf(fRD,"   dwReserved        = %i\n",ddsd.dwReserved);
-	fprintf(fRD,"   lpSurface         = 0x%X\n",(int)ddsd.lpSurface);
-	fprintf(fRD,"   ddckCKDestOverlay = %i - %i\n",ddsd.ddckCKDestOverlay.dwColorSpaceLowValue,ddsd.ddckCKDestOverlay.dwColorSpaceHighValue);
-	fprintf(fRD,"   ddckCKDestBlt     = %i - %i\n",ddsd.ddckCKDestBlt.dwColorSpaceLowValue,ddsd.ddckCKDestBlt.dwColorSpaceHighValue);
-	fprintf(fRD,"   ddckCKSrcOverlay  = %i - %i\n",ddsd.ddckCKSrcOverlay.dwColorSpaceLowValue,ddsd.ddckCKSrcOverlay.dwColorSpaceHighValue);
-	fprintf(fRD,"   ddckCKSrcBlt      = %i - %i\n",ddsd.ddckCKSrcBlt.dwColorSpaceLowValue,ddsd.ddckCKSrcBlt.dwColorSpaceHighValue);
-/*
-	DDPIXELFORMAT ddpfPixelFormat;
-		DDSCAPS2      ddsCaps;
-*/
-	fprintf(fRD,"   dwTextureStage    = %i\n",ddsd.dwTextureStage);
-	fprintf(fRD,"}\n");
 	fflush(fRD);
 #endif
 }
@@ -236,9 +207,9 @@ void BuildBumpMap(int xs,int ys,void *pSrc,void *pDst,int fmtBumpMap)
                     break;
 
                 case D3DFMT_L6V5U5:
-                    *(WORD*)dst  = (WORD)( ( (iDu>>3) & 0x1f ) <<  0 ) 
-						| (WORD)( ( (iDv>>3) & 0x1f ) <<  5 )
-						| (WORD)( ( ( uL>>2) & 0x3f ) << 10 );
+                    *(int16_t*)dst  = (int16_t)( ( (iDu>>3) & 0x1f ) <<  0 ) 
+						| (int16_t)( ( (iDv>>3) & 0x1f ) <<  5 )
+						| (int16_t)( ( ( uL>>2) & 0x3f ) << 10 );
                     dst += 2;
                     break;
 
@@ -277,11 +248,6 @@ Vect3f NormalByColor(DWORD d);
 void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst,
 				 int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int Attr)
 {
-	DDSCAPS2 ddsCaps;
-	ddsCaps.dwCaps  = DDSCAPS_TEXTURE | DDSCAPS_MIPMAP;
-	ddsCaps.dwCaps2 = 0;
-	ddsCaps.dwCaps3 = 0;
-	ddsCaps.dwCaps4 = 0;
 	char *Src=(char*)pSrc,*Dst=(char*)pDst;
 	int ofsDst=bplDst-x*bpp, ofsSrc=bplSrc-2*x*bpp;
 	int rm=(1<<rc)-1,gm=(1<<gc)-1,bm=(1<<bc)-1,am=(1<<ac)-1,xm=x-1,ym=y-1;
@@ -408,7 +374,7 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 					int color=(r<<rs)|(g<<gs)|(b<<bs)|(a<<as);
 					memcpy(Dst,&color,bpp);
 				}
-		delete rgba;
+		delete[] rgba;
 	}
 }
 

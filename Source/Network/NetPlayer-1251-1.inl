@@ -1,5 +1,4 @@
-	template<class Archive>
-	void serialize(Archive& ar) {
+	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(playerID);
 		ar & WRAP_OBJECT(realPlayerType);
 		ar & TRANSLATE_OBJECT(belligerent, "Сторона");

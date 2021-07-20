@@ -176,7 +176,7 @@ bool SNDInitSound(HWND hWnd,bool bEnable3d,bool _soft3d)
 	snd_hWnd=hWnd;
 	initclock();
 
-	if(false)
+#if 0
 	{
 		InitTimer();
 		timeBeginPeriod(1);
@@ -204,6 +204,7 @@ bool SNDInitSound(HWND hWnd,bool bEnable3d,bool _soft3d)
 
 		//timeEndPeriod(1);
 	}
+#endif
 
 	HRESULT hr;
 

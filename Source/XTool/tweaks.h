@@ -21,6 +21,8 @@
   for(auto iterator = (list).begin(); (iterator) != (list).end(); ++(iterator))
 #endif
 
+#define SDL_PRINT_ERROR(MSG) fprintf(stderr, "Error at %s - SDL %s\n", MSG, SDL_GetError())
+
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define THREAD_LOCAL __declspec( thread )
 #else
@@ -44,5 +46,22 @@
 #include "../Exodus/msvc.h"
 #endif
 
+//Select per platform path separator
+#ifdef _WIN32
+#define PATH_SEP '\\'
+#define PATH_SEP_STR "\\"
+#else
+#define PATH_SEP '/'
+#define PATH_SEP_STR "/"
+#endif
+
+#ifdef PERIMETER_EXODUS
+//Apply exodus specific tweaks
+#include "../Exodus/exodus.h"
+#else
+#define DestroyEvent CloseHandle
+#define strdup _strdup
+#define THREAD_ID DWORD
+#endif
 
 #endif // __TWEAKS_H__

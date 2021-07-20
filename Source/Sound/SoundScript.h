@@ -3,6 +3,7 @@
 
 #include "Handle.h"
 #include "Serialization.h"
+#include "SerializationMacro.h"
 
 struct SoundDeltaPrm 
 {

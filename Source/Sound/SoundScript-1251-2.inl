@@ -1,5 +1,4 @@
-	template<class Archive>
-	void serialize(Archive& ar) {
+    SERIALIZE(ar) {
 		ar & TRANSLATE_OBJECT(name, "&name");
 		ar & TRANSLATE_OBJECT(volume, "Громкость звука 0..1 (По умолчанию: 1)");
 		ar & TRANSLATE_OBJECT(volmin, "Минимальная громкость звука 0..1 (По умолчанию: 0)");

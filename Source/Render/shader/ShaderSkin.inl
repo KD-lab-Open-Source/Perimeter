@@ -1,8 +1,8 @@
 void VSSkin::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 	std::vector<MatXf>& world, std::vector<cUnkLight*>* light,int blend_num)
 {
-	SetMatrix(mView,gb_RenderDevice3D->GetDrawNode()->matView);
-	//c0-c3 - матрица преобразования в экранные координаты (view_proj_matrix)
+	SetMatrix(mView,&gb_RenderDevice3D->GetDrawNode()->matView);
+	//c0-c3 - РјР°С‚СЂРёС†Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РІ СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ (view_proj_matrix)
 	D3DXMATRIX mat;
 
 	for(int i=0;i<world.size();i++)
@@ -12,7 +12,7 @@ void VSSkin::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 		SetMatrix4x3(mWorldM,i,&mat);//for light
 	}
 
-	SetMatrix(mVP,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+	SetMatrix(mVP,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	
 	xassert(blend_num>=1 && blend_num<=pShader.size());
 	cVertexShader::Select(blend_num-1);
@@ -74,8 +74,8 @@ void PSSkin::Restore()
 void VSSkinBump::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 	std::vector<MatXf>& world, std::vector<cUnkLight*>* light,int blend_num)
 {
-	SetMatrix(mView,gb_RenderDevice3D->GetDrawNode()->matView);
-	//c0-c3 - матрица преобразования в экранные координаты (view_proj_matrix)
+	SetMatrix(mView,&gb_RenderDevice3D->GetDrawNode()->matView);
+	//c0-c3 - РјР°С‚СЂРёС†Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РІ СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ (view_proj_matrix)
 	D3DXMATRIX mat;
 
 	for(int i=0;i<world.size();i++)
@@ -85,7 +85,7 @@ void VSSkinBump::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,
 		SetMatrix4x3(mWorldM,i,&mat);//for light
 	}
 
-	SetMatrix(mVP,gb_RenderDevice3D->GetDrawNode()->matViewProj);
+	SetMatrix(mVP,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
 	
 	xassert(blend_num>=1 && blend_num<=pShader.size());
 	cVertexShader::Select(blend_num-1);

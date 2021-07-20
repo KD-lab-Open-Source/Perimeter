@@ -5,7 +5,7 @@
 
 class CSaver
 {
-	std::vector<DWORD> p;
+	std::vector<long> p;
 	DWORD m_Data;
 public:
 	FILE* f;

@@ -18,7 +18,7 @@ ${CROSS_TRIPLE}-cmake \
 -B"build/${CROSS_TRIPLE}" \
 -H. \
 -G"Ninja" \
--DBoost_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include" \
+-DBoost_INCLUDE_DIR="/usr/local/include" \
 -DOGG_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include" \
 -DVORBIS_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include" \
 -DSDL2_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include/SDL2" \
@@ -27,7 +27,6 @@ ${CROSS_TRIPLE}-cmake \
 -DVORBIS_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbis${LIB_SUFFIX}" \
 -DVORBISFILE_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbisfile${LIB_SUFFIX}" \
 -DSDL2_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libSDL2main.a;/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libSDL2${LIB_SUFFIX}" \
--DOPTION_DISABLE_STACKTRACE=ON \
 -DOPTION_LINKER_LLD=OFF \
 $@
 
@@ -39,11 +38,11 @@ mkdir -p output
 
 cp Source/perimeter.exe output
 #cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/SDL2.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libogg*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbis*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbisfile*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libstdc++*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libgcc*.dll output
-cp /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libwinpthread-*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libogg*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbis*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libvorbisfile*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libstdc*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libgcc*.dll output
+cp -fv /usr/lib/mxe/usr/${CROSS_TRIPLE}/bin/libwinpthread-*.dll output
 
 exit 0

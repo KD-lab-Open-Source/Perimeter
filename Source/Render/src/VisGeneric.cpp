@@ -313,7 +313,9 @@ eShadowType cVisGeneric::GetShadowType()
 }
 
 ////////////////////DebugMemInfo
+#ifdef _DEBUG
 #include <crtdbg.h>
+#endif
 struct _CrtMemBlockHeader{
 // Pointer to the block allocated just before this one:
    struct _CrtMemBlockHeader *pBlockHeaderNext; 
@@ -328,7 +330,7 @@ struct _CrtMemBlockHeader{
 //   unsigned char gap[nNoMansLandSize];
 };
 
-
+#ifdef _DEBUG
 int __cdecl MyAllocHook(
    int      nAllocType,
    void   * pvData,
@@ -346,10 +348,13 @@ int __cdecl MyAllocHook(
 	
 	return true;
 }
+#endif
 
 void InitAllockHook()
 {
+#ifdef _DEBUG
 	_CrtSetAllocHook(MyAllocHook);
+#endif
 }
 
 void DebugMemInfo()
@@ -414,9 +419,11 @@ void DebugMemInfo()
 #endif //_DEBUG
 }
 
+#include <cstdio>
 
 void dprintf(char *format, ...)
 {
+#ifdef _DEBUG
   va_list args;
   char    buffer[512];
 
@@ -425,7 +432,12 @@ void dprintf(char *format, ...)
   //strcpy(buffer + vsprintf(buffer,format,args), "\r\n");
   vsprintf(buffer,format,args);
 
+#ifdef PERIMETER_EXODUS
+  printf("%s\n", buffer);
+#else
   OutputDebugString(buffer);
+#endif
+#endif
 }
 
 
@@ -468,7 +480,7 @@ void cVisGeneric::SetEffectLibraryPath(const char* effect_path_,const char* text
 		char c=effect_path[effect_path.size()-1];
 		if(c!='\\' && c!='/')
 		{
-			effect_path+='\\';
+			effect_path+=PATH_SEP;
 		}
 	}
 
@@ -563,11 +575,13 @@ cTexture* cVisGeneric::CreateTextureScreen()
 
 	int dx_plain_surface=dx;
 	int dy_plain_surface=dy;
+#ifndef PERIMETER_EXODUS
 	if(!gb_RenderDevice3D->IsFullScreen())
 	{
 		dx_plain_surface=GetSystemMetrics(SM_CXSCREEN);
 		dy_plain_surface=GetSystemMetrics(SM_CYSCREEN);
 	}
+#endif
 
 	IDirect3DSurface9* sys_surface=NULL;
 	hr=device->CreateOffscreenPlainSurface(

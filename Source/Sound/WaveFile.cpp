@@ -168,8 +168,8 @@ HRESULT CWaveFile::ReadMMIO()
     else
     {
         // Read in length of extra bytes.
-        WORD cbExtraBytes = 0L;
-        if( mmioRead( m_hmmio, (CHAR*)&cbExtraBytes, sizeof(WORD)) != sizeof(WORD) )
+        int16_t cbExtraBytes = 0L;
+        if( mmioRead( m_hmmio, (char*)&cbExtraBytes, sizeof(int16_t)) != sizeof(int16_t) )
             return E_FAIL;
 
         m_pwfx = (WAVEFORMATEX*)new CHAR[ sizeof(WAVEFORMATEX) + cbExtraBytes ];

@@ -2113,6 +2113,8 @@ public:
 
   xm_inline Mat4f() {}
   
+  xm_inline Mat4f(const float* f);
+  
   xm_inline Mat4f(float xx,float xy,float xz, float xw,
 		float yx,float yy,float yz, float yw,
 		float zx,float zy,float zz, float zw,

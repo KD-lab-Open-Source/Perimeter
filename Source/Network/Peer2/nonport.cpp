@@ -316,6 +316,7 @@ char * goastrdup(const char *src)
 	return res;
 }
 
+/*
 #if !defined(_WIN32) || defined(UNDER_CE)
 #include <ctype.h>
 
@@ -343,6 +344,7 @@ char *_strupr(char *string)
 	return hold;
 }
 #endif
+*/
 
 int SetSockBlocking(SOCKET sock, int isblocking)
 {

@@ -30,7 +30,6 @@ struct XBuffer
 	char* buf;
 	unsigned int size;
 	unsigned int offset;
-	int radix;
 	int digits;
 	int MakeFree;
 	int automatic_realloc;
@@ -121,8 +120,8 @@ struct XBuffer
 	char& operator[](int ind){ return buf[ind]; }
 	char& operator()(){ return buf[offset]; }
 
-	template<class T> XBuffer& write(const T& v){ while(offset + sizeof(T) >= size) handleOutOfSize(); memcpy(&buf[offset], &v, sizeof(T)); offset += sizeof(T); return *this; }
-	template<class T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
+	template<typename T> XBuffer& write(const T& v){ while(offset + sizeof(T) >= size) handleOutOfSize(); memcpy(&buf[offset], &v, sizeof(T)); offset += sizeof(T); return *this; }
+	template<typename T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
 
 private:
 	char convBuf[XB_CONV_BUFFER_LEN + 1];

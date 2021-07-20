@@ -3,6 +3,7 @@
 #ifndef __CONDITIONS_H__
 #define __CONDITIONS_H__
 
+#include "EditFunctions.h"
 #include "../TriggerEditor/TriggerExport.h"
 
 struct ConditionOneTime : Condition // --------------------
@@ -36,12 +37,13 @@ struct ConditionCheckBelligerent : Condition // Порверка воюющей стороны
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(belligerent, "Воюющая сторона");
 	}
 };
+
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionCheckBelligerent, Belligerent);
 
 //---------------------------------------
 struct ConditionCreateObject : Condition // Объект создан
@@ -60,9 +62,8 @@ struct ConditionCreateObject : Condition // Объект создан
 	bool check(AIPlayer& aiPlayer) { return created_ >= counter; }
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(object, "Объект");
 		ar & TRANSLATE_OBJECT(counter, "Количество");
 		ar & TRANSLATE_OBJECT(playerType, "Владелец объекта");
@@ -89,9 +90,8 @@ struct ConditionKillObject : Condition // Объект уничтожен
 	bool check(AIPlayer& aiPlayer) { return killed_ >= counter; }
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar){
-		Condition::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(object, "Объект");
 		ar & TRANSLATE_OBJECT(counter, "Количество");
 		ar & TRANSLATE_OBJECT(playerType, "Владелец объекта");
@@ -118,9 +118,8 @@ struct ConditionObjectExists : Condition // Объект существует
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(object, "Объект");
 		ar & TRANSLATE_OBJECT(counter, "Количество");
 		ar & TRANSLATE_OBJECT(playerType, "Владелец объекта");
@@ -140,9 +139,8 @@ struct ConditionCaptureBuilding : ConditionOneTime // Захват здания
 
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ConditionOneTime::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ConditionOneTime::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(object, "Здание");
 		ar & TRANSLATE_OBJECT(playerType, "Захвативший Игрок");
 	}
@@ -154,6 +152,9 @@ enum TeleportationType
 	TELEPORTATION_TYPE_ALPHA, // Телепортация с помощью Альфы
 	TELEPORTATION_TYPE_OMEGA // Телепортация с помощью Омеги
 };
+
+DECLARE_ENUM_DESCRIPTOR(TeleportationType);
+
 struct ConditionTeleportation : ConditionOneTime // Произошла телепортация
 {
 	EnumWrapper<TeleportationType> teleportationType; 
@@ -166,9 +167,8 @@ struct ConditionTeleportation : ConditionOneTime // Произошла телепортация
 
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ConditionOneTime::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        ConditionOneTime::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(teleportationType, "Тип телепорта");
 		ar & TRANSLATE_OBJECT(playerType, "Игрок");
 	}
@@ -185,9 +185,8 @@ struct ConditionEnegyLevelLowerReserve : Condition // Уровень энергии ниже преде
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(energyReserve, "Резерв энергии");
 	}
 };
@@ -202,9 +201,8 @@ struct ConditionEnegyLevelUpperReserve : Condition // Уровень энергии выше преде
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(energyReserve, "Резерв энергии");
 	}
 };
@@ -220,9 +218,8 @@ struct ConditionEnegyLevelBelowMaximum : Condition // Уровень энергии ниже макси
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(delta, "Погрешность: текущий < максимальный - погрешность");
 		accumulatedMax_ = 0;
 	}
@@ -241,9 +238,8 @@ struct ConditionOutOfEnergyCapacity : Condition // Уровень энергии больше процен
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(chargingPercent, "Процент зарядки");
 	}
 };
@@ -266,9 +262,8 @@ struct ConditionNumberOfBuildingByCoresCapacity : Condition // Зданий_1*коэффици
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(building, "Тип здания_1");
 		ar & TRANSLATE_OBJECT(factor, "Коэффициент");
 		ar & TRANSLATE_OBJECT(compareOp, "Операция сравнения");
@@ -293,9 +288,8 @@ struct ConditionUnitClassUnderAttack : ConditionOneTime // Объект атакуют
 
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ConditionOneTime::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ConditionOneTime::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(victimUnitClass, "атакуемый класс юнитов");
 		ar & TRANSLATE_OBJECT(damagePercent, "Процент урона");
 		ar & TRANSLATE_OBJECT(agressorUnitClass, "атакующий класс юнитов");
@@ -310,9 +304,8 @@ struct ConditionUnitClassIsGoingToBeAttacked : ConditionOneTime // Объект собира
 
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ConditionOneTime::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ConditionOneTime::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(victimUnitClass, "атакуемый класс юнитов");
 		ar & TRANSLATE_OBJECT(agressorUnitClass, "атакующий класс юнитов");
 	}
@@ -328,9 +321,8 @@ struct ConditionSquadGoingToAttack : Condition // Сквад собирается атаковать
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
 	}
 };
@@ -361,14 +353,15 @@ struct ConditionFrameState : Condition // Состояние фрейма
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(state, "Интересующее состояние");
 		ar & TRANSLATE_OBJECT(playerType, "Игрок");
 		ar & TRANSLATE_OBJECT(spiralChargingPercent, "Процент зарядки спирали");
 	}
 };
+
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionFrameState, State);
 
 struct ConditionCorridorOmegaUpgraded : Condition // Коридор Омега проапгрейжен
 {
@@ -400,9 +393,8 @@ struct ConditionSquadSufficientUnits : Condition // Cквад состоит из юнитов в ук
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(playerType, "Владелец");
 		ar & TRANSLATE_OBJECT(chooseSquadID, "Сквад");
 		ar & TRANSLATE_OBJECT(unitType, "Тип юнитов ('никто' - базовые)");
@@ -424,9 +416,8 @@ struct ConditionMutationEnabled : Condition // Мутация разрешена
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(unitType, "Тип юнитов");
 	}
 };
@@ -446,9 +437,8 @@ struct ConditionBuildingNearBuilding : Condition // Расстояние от ядра Игрока1 д
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(distance, "Расстояние");
 		ar & TRANSLATE_OBJECT(playerType1, "Игрок1");
 		ar & TRANSLATE_OBJECT(playerType2, "Игрок2");
@@ -465,6 +455,8 @@ enum PlayerState // Состояние игрока
 	PLAYER_STATE_UNABLE_TO_PLACE_CORE // Не могу установить ядро
 };
 
+DECLARE_ENUM_DESCRIPTOR(PlayerState)
+
 struct ConditionPlayerState : Condition // Проверка состояния игрока
 {
 	EnumWrapper<PlayerState> playerState; 
@@ -477,9 +469,8 @@ struct ConditionPlayerState : Condition // Проверка состояния игрока
 	bool check(AIPlayer& aiPlayer) { return active_; }
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(playerState, "Интересующее состояние");
 		active_ = false;
 	}
@@ -487,6 +478,8 @@ struct ConditionPlayerState : Condition // Проверка состояния игрока
 private:
 	bool active_;
 };
+
+DECLARE_ENUM_DESCRIPTOR(ConditionPlayerState)
 
 struct ConditionIsFieldOn : Condition // Поле включено
 {
@@ -504,9 +497,8 @@ struct ConditionObjectByLabelExists : Condition // Объект по метке существует
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}
 };	
@@ -521,9 +513,8 @@ struct ConditionKillObjectByLabel : ConditionOneTime // Объект по метке уничтоже
 
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) { 
-		ConditionOneTime::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) { 
+		ConditionOneTime::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 	}
 };
@@ -547,9 +538,8 @@ struct ConditionObjectNearObjectByLabel : Condition // Возле объекта по метке на
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 		ar & TRANSLATE_OBJECT(object, "Указанный объект");
 		ar & TRANSLATE_OBJECT(objectConstructed, "Только если объект достроен");
@@ -568,9 +558,8 @@ struct ConditionWeaponIsFiring : Condition // Спецоружие стреляет
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(gun, "Спецоружие");
 	}
 };
@@ -585,9 +574,8 @@ struct ConditionTimeMatched : ConditionOneTime // Осталось времени меньше, чем у
 
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ConditionOneTime::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ConditionOneTime::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(time, "Время, секунды");
 	}
 };
@@ -611,9 +599,8 @@ struct ConditionClickOnButton : Condition // Клик по кнопке
 	bool check(AIPlayer& aiPlayer) { return counter_ >= counter; }
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(controlID, "Идентификатор кнопки");
 		ar & TRANSLATE_OBJECT(counter, "Количество кликов");
 		counter_ = 0;
@@ -636,9 +623,8 @@ struct ConditionToolzerSelectedNearObjectByLabel : Condition // Поверхность возл
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 		ar & TRANSLATE_OBJECT(radius, "Радиус");
 	}
@@ -657,9 +643,8 @@ struct ConditionTerrainLeveledNearObjectByLabel : Condition // Поверхность возле
 	
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(label, "Метка объекта");
 		ar & TRANSLATE_OBJECT(radius, "Радиус");
 	}
@@ -684,13 +669,13 @@ struct ConditionActivateSpot : ConditionOneTime // Активировался спот
 
 	void checkEvent(AIPlayer& aiPlayer, const Event& event);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ConditionOneTime::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		ConditionOneTime::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(type, "тип спота");
 	}
 };
 
+DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionActivateSpot, Type);
 
 struct ConditionOnlyMyClan : ConditionOneTime // Остался только мой клан
 {
@@ -712,9 +697,8 @@ struct ConditionCutSceneWasSkipped : ConditionSkipCutScene // Кат-сцена была про
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		ConditionSkipCutScene::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+		ConditionSkipCutScene::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(timeMax, "Максимальное время");
 	}
 };
@@ -729,9 +713,8 @@ struct ConditionDifficultyLevel : Condition // Уровень сложности
 
 	bool check(AIPlayer& aiPlayer);
 
-	template<class Archive>	
-	void serialize(Archive& ar) {
-		Condition::serialize(ar);
+	VIRTUAL_SERIALIZE(ar) {
+		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(difficulty, "Уровень");
 	}
 };

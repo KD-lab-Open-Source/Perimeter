@@ -384,8 +384,8 @@ public:
 									//tVoxSet( vMap.offsetBuf(cx, cy), DH_MEAN);
 									tVoxSetAll( vMap.offsetBuf(cx, cy), DH_MEAN);
 								}
-							s -= 1.0;
                             }
+                            s -= 1.0;
                         }
 				}
 			}
@@ -705,7 +705,7 @@ public:
 //		log_var(toolzerPosition);
 #endif
 		int result=simpleQuant();
-		if(result) phase=phase++;
+		if(result) phase++;
 		else phase=0;
 #ifdef _PERIMETER_
 //		log_var(phase);

@@ -1,4 +1,4 @@
-SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
+SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version")
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 
 # root
@@ -7,11 +7,6 @@ PROJECT(perimeter)
 # Compiler / Host detections
 IF(MSVC OR ${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
     SET(MSVC_CL_BUILD ON)
-ENDIF()
-
-# modules
-IF(NOT MSVC_CL_BUILD)
-	SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 ENDIF()
 
 SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
@@ -26,14 +21,22 @@ ELSE()
     SET(CLANG OFF)
 ENDIF()
 
+SET(PERIMETER_DEBUG OFF)
+IF(CMAKE_BUILD_TYPE MATCHES Debug)
+    SET(PERIMETER_DEBUG ON)
+ENDIF()
+
 SET(PERIMETER_EXODUS OFF)
 IF(CMAKE_HOST_WIN32 OR MINGW)
     MESSAGE("Windows or MinGW build")
     SET(PERIMETER_WINDOWS ON)
+    SET(PERIMETER_EXE_FLAGS WIN32)
 ELSE()
     MESSAGE("Not Windows or MinGW build - WARNING: EXPERIMENTAL!")
+    SET(PERIMETER_EXE_FLAGS "")
     SET(PERIMETER_WINDOWS OFF)
     SET(PERIMETER_EXODUS ON)
+    SET(PERIMETER_EXODUS_WINDOW ON)
     SET(PERIMETER_EXODUS_SOUND ON)
 ENDIF()
 
@@ -49,12 +52,23 @@ ENDIF()
 # options
 OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
 OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
-OPTION(OPTION_GEN_SCRIPTS "Re-Generates game scripts" OFF)
+OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
+OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 
-# paths to search libs
-IF(NOT MSVC_CL_BUILD)
+
+# depends
+FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
+IF(MSVC_CL_BUILD)
+    FIND_PACKAGE(Vorbis CONFIG REQUIRED)
+    SET(Vorbis_FOUND TRUE)
+    SET(VORBIS_LIBRARIES Vorbis::vorbis Vorbis::vorbisenc Vorbis::vorbisfile)
+    FIND_PACKAGE(SDL2 CONFIG REQUIRED)
+    SET(SDL2_LIBRARY SDL2::SDL2) 
+    SET(SDL2MAIN_LIBRARY SDL2::SDL2main)
+ELSE()
+    # paths to search libs
     SET(LIBRARY_SEARCH_PATHS "
         ${LIBRARY_SEARCH_PATHS}
         ~/Library/Frameworks 
@@ -70,17 +84,16 @@ IF(NOT MSVC_CL_BUILD)
         /local
         C:/MinGW
     ")
-ENDIF()
-
-# depends
-FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
-IF(MSVC_CL_BUILD)
-    FIND_PACKAGE(Vorbis CONFIG REQUIRED)
-    SET(VORBIS_FOUND TRUE)
-    FIND_PACKAGE(SDL2 CONFIG REQUIRED)
-ELSE()
+    
+    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+    
     FIND_PACKAGE(Vorbis)
+    SET(SDL2_BUILDING_LIBRARY ON)
     FIND_PACKAGE(SDL2 REQUIRED)
+ENDIF()
+IF(NOT PERIMETER_WINDOWS)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    FIND_PACKAGE(Threads REQUIRED)
 ENDIF()
 
 # globals
@@ -105,7 +118,7 @@ ELSE()
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=lld")
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=lld")
     ENDIF()
-    SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
+    SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -no-pie -fno-pie")
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize -ffast-math")
     CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
     IF(HAVE_SIMDSSE)
@@ -120,6 +133,7 @@ ELSE()
     add_compile_options(-Wno-unused-parameter)
     add_compile_options(-Wno-unused-function)
     add_compile_options(-Wno-unused-variable)
+    add_compile_options(-Wno-comment)
     IF(CLANG)
         add_compile_options(-Wno-missing-braces)
         add_compile_options(-Wno-invalid-source-encoding)
@@ -134,6 +148,7 @@ ELSE()
     add_compile_options(-Wno-narrowing)
     add_compile_options(-Wno-write-strings)
     add_compile_options(-Wno-return-type)
+    add_compile_options(-Wno-reorder)
     IF(CLANG)
         add_compile_options(-Wno-reorder-ctor)
     ENDIF()
@@ -142,7 +157,9 @@ ELSE()
     add_compile_options(-Werror=shift-negative-value)
     add_compile_options(-Werror=dangling-else)
     add_compile_options(-Werror=parentheses)
-    #add_compile_options(-Werror=write-strings) #TODO enable this again
+    add_compile_options(-Werror=return-type)
+    # add_compile_options(-Werror=switch) #TODO enable for strict check of switch block
+    # add_compile_options(-Werror=write-strings) #TODO enable this again
 
     if (CLANG)
         add_compile_options(-Werror=mismatched-new-delete )
@@ -157,15 +174,22 @@ IF(OPTION_FINAL_VERSION)
 ELSE()
     MESSAGE("Not compiling Final version - WARNING: EXPERIMENTAL!")
 ENDIF()
-IF(CMAKE_BUILD_TYPE MATCHES Debug)
+IF(PERIMETER_DEBUG)
     ADD_DEFINITIONS(-DPERIMETER_DEBUG)
     MESSAGE("Compiling Debug version")
+    IF(OPTION_DEBUG_ASSERT)
+        ADD_DEFINITIONS(-DPERIMETER_DEBUG_ASSERT)
+        MESSAGE("Debug assertions enabled")
+    ENDIF()
 ENDIF()
 IF(OPTION_DISABLE_STACKTRACE)
     ADD_DEFINITIONS(-DOPTION_DISABLE_STACKTRACE)
 ENDIF()
 IF(PERIMETER_EXODUS)
     ADD_DEFINITIONS(-DPERIMETER_EXODUS)
+ENDIF()
+IF(PERIMETER_EXODUS_WINDOW)
+    ADD_DEFINITIONS(-DPERIMETER_EXODUS_WINDOW)
 ENDIF()
 IF(PERIMETER_EXODUS_SOUND)
     ADD_DEFINITIONS(-DPERIMETER_EXODUS_SOUND)

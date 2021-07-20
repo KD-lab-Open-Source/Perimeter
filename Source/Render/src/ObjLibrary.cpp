@@ -17,7 +17,10 @@ int ResourceFileRead(const char *fname,char *&buf,int &size)
 {
 	buf=0; size=0;
 	ZIPStream f;
-	if(!f.open(fname)) { f.close(); return -1; }
+	if(!f.open(convert_path_resource(fname).c_str())) {
+	    f.close();
+	    return -1; 
+	}
 	size=f.size();
 	buf=new char[size];
 	f.read(buf,size);
@@ -221,7 +224,7 @@ cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,
 
 static
 cMeshBank* ReadMeshMat(cAllMeshBank *pBanks,sObjectMesh *ObjectMesh,cMaterialObjectLibrary& MaterialLibrary,
-						char *TexturePath,char* DefTexturePath,cObjLibrary *ObjLibrary)
+						const char *TexturePath,const char* DefTexturePath,cObjLibrary *ObjLibrary)
 { // импорт материала объекта
 	if(ObjectMesh->AnimationMeshLibrary.length()==0)
 	{
@@ -623,64 +626,55 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
 		return NULL;
 	}
 
-	char fname[512]="",TexturePath[512]="";
-	char DefPath[512];
+	std::string fname = convert_path_resource(pFileName);
+    std::string TexturePath;
+	_strlwr(fname.data());
 
-	strcpy(fname,(char*)pFileName); 
-	_strlwr(fname);
-
-	char *DefTexturePath=NULL;
-	strcpy(DefPath,fname);
-	int i;
-	for(i=strlen(DefPath)-1; i>=0 && DefPath[i]; i-- )
-		if(DefPath[i]=='\\')
-			break;
-	DefPath[i+1]=0;
-	strcat(DefPath,"TEXTURES\\");
-	_strlwr(DefPath);
+    std::string DefTexturePath;
+    std::string DefPath = std::filesystem::path(fname).parent_path().string() + PATH_SEP + "textures" + PATH_SEP;
+	_strlwr(DefPath.data());
 
 
 	if(pTexturePath) 
 	{
-		strcpy(TexturePath,(char*)pTexturePath);
-		_strlwr(TexturePath);
-		if(stricmp(TexturePath,DefPath)!=0)
+        TexturePath = convert_path_resource(pTexturePath);
+		_strlwr(TexturePath.data());
+		if(stricmp(TexturePath.c_str(),DefPath.c_str())!=0)
 			DefTexturePath=DefPath;
 	}
 	else
 	{
-		strcpy(TexturePath,DefPath);
+		TexturePath=DefPath;
 	}
 
 	cAllMeshBank* nearest_bank=NULL;
-	for(i=0;i<GetNumberObj();i++)
-	if(stricmp(GetObj(i)->GetFileName(),fname)==0)
-	{
-		cAllMeshBank* bank=GetObj(i);
-		nearest_bank=bank;
+	for(int i=0;i<GetNumberObj();i++) {
+        if (stricmp(GetObj(i)->GetFileName(), fname.c_str()) == 0) {
+            cAllMeshBank* bank = GetObj(i);
+            nearest_bank = bank;
 
-		if(stricmp(bank->GetTexturePath(),TexturePath)==0)
-		{
-			cObjectNodeRoot* tmp=(cObjectNodeRoot*)bank->root->BuildCopy();
-			return tmp;
-		}
-	}
+            if (stricmp(bank->GetTexturePath(), TexturePath.c_str()) == 0) {
+                cObjectNodeRoot* tmp = (cObjectNodeRoot*) bank->root->BuildCopy();
+                return tmp;
+            }
+        }
+    }
 
 	cAllMeshBank *ObjNode=NULL;
 	cAllMeshBank *ObjNodeLod=NULL;
 	if(nearest_bank)
 	{
-		ObjNode=nearest_bank->BuildCopyWithAnotherTexture(TexturePath,DefTexturePath);
+		ObjNode=nearest_bank->BuildCopyWithAnotherTexture(TexturePath.c_str(),DefTexturePath.c_str());
 		if(ObjNode->root->RootLod)
 		{
-			ObjNodeLod=nearest_bank->root->RootLod->GetRoot()->BuildCopyWithAnotherTexture(TexturePath,DefTexturePath);
+			ObjNodeLod=nearest_bank->root->RootLod->GetRoot()->BuildCopyWithAnotherTexture(TexturePath.c_str(),DefTexturePath.c_str());
 			ObjNode->root->RootLod->Release();
 			ObjNode->root->RootLod=ObjNodeLod->root;
 			ObjNode->root->RootLod->IncRef();
 		}
 	}else
 	{
-		ObjNode=LoadM3D(fname,TexturePath,DefTexturePath,enable_error_not_found);
+		ObjNode=LoadM3D(fname.c_str(),TexturePath.c_str(),DefTexturePath.c_str(),enable_error_not_found);
 	}
 
 	cObjectNodeRoot *tmp=NULL;
@@ -752,7 +746,7 @@ static void ParseNodeEffect(cObjectNode *CurrentNode)
 
 }
 
-cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTexturePath,bool enable_error_not_found)
+cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,const char *DefTexturePath,bool enable_error_not_found)
 {
 	m3derror.SetName(fname);
 	int size=0;
@@ -997,7 +991,7 @@ cAllMeshBank* cObjLibrary::LoadM3D(char *fname,char *TexturePath,char *DefTextur
 	return pAllMeshBank;
 }
 
-cObjectNodeRoot* cObjLibrary::LoadLod(char *in_filename,char *TexturePath)
+cObjectNodeRoot* cObjLibrary::LoadLod(const char *in_filename,const char *TexturePath)
 {
 	char path_buffer[MAX_PATH];
 	char drive[_MAX_DRIVE];

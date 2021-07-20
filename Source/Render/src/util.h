@@ -15,9 +15,9 @@ inline const char* GetFileName(const char *str)
 {
 	if(str==0) return 0;
 	int l=strlen(str);
-	if((l==0)||(str[l-1]=='\\')) return str;
+	if((l==0)||(str[l-1]=='\\'||str[l-1]=='/')) return str;
 	for(int i=l-1;i>=0;i--)
-		if(str[i]=='\\')
+		if(str[i]=='\\' || str[i]=='/')
 			return &str[i+1];
 	return str;
 }

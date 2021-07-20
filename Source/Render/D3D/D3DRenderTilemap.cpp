@@ -6,6 +6,8 @@
 #include "../../Game/Region.h"
 
 #include <set>
+#include <climits>
+
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 // non-standard header
 #include <slist>
@@ -886,7 +888,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 						   0.5f+tOffs,0.5f +tOffs, 1.0f,        1.0f);
 
 		D3DXMATRIX mat;
-		D3DXMatrixMultiply(&mat,pShadowMapCamera->matViewProj,&matTexAdj);
+		D3DXMatrixMultiply(&mat,&pShadowMapCamera->matViewProj,&matTexAdj);
 		
 		// set texture coord 1
 		gb_RenderDevice3D->SetTextureTransform(1, &mat);
@@ -905,7 +907,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 		gb_RenderDevice3D->SetNoMaterial(MatMode,0,0,TileMap->GetShadowMap(),COLOR_MOD4);
 
 		// set texture coord 1
-		gb_RenderDevice3D->SetTextureTransform(1, TileMap->matLightMap);
+		gb_RenderDevice3D->SetTextureTransform(1, &TileMap->matLightMap);
 		
 		gb_RenderDevice3D->SetTextureStageState(1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 		gb_RenderDevice3D->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
@@ -1658,7 +1660,7 @@ void sBumpTile::CalcPoint(cTileMap *TileMap)
 			gb_RenderDevice3D->GetIndexPool()->CreatePage(sBumpTile::index[cur].index,num2);
 
 			sPolygon* p=gb_RenderDevice3D->GetIndexPool()->LockPage(sBumpTile::index[cur].index);
-			memcpy(p,&(index[i][0]),num*sizeof(WORD));
+			memcpy(p,&(index[i][0]),num*sizeof(int16_t));
 			gb_RenderDevice3D->GetIndexPool()->UnlockPage(sBumpTile::index[cur].index);
 
 			sBumpTile::index[cur].nindex=num;
@@ -1781,6 +1783,6 @@ void cTileMapRender::SaveUpdateStat()
 	char fname[100];
 	sprintf(fname,"tga\\%05i.tga",tga_num);
 	SaveTga(fname,dx,dy,buf,4);
-	delete buf;
+	delete[] buf;
 
 }

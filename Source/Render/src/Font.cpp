@@ -9,6 +9,7 @@
 #include <io.h>
 #include <stdio.h>
 #include <direct.h>
+#include "SystemUtil.h"
 #include "FileImage.h"
 
 #ifndef ASSERT
@@ -54,7 +55,7 @@ public:
 		bpp=8;
 
 		if(ImageData)delete ImageData;
-		int sz2=size.x*size.y;
+		size_t sz2=size.x*size.y;
 		ImageData=new BYTE[sz2];
 		for(int i=0;i<sz2;i++)
 			ImageData[i]=gray_in[i];
@@ -83,7 +84,7 @@ cFontInternal::~cFontInternal()
 bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class cFontImage* FontImage)
 {
 	ZIPStream rd;
-	if(!rd.open(filename))
+	if(!rd.open(convert_path_resource(filename).c_str()))
 	{
 		return false;
 	}
@@ -91,7 +92,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	char signature[4];
 
 	int  real_height;
-	WORD char_min,char_max;
+    int16_t char_min,char_max;
 	rd.read(signature,4);
 	if(signature[0]!='f' || signature[1]!='o' || 
 		signature[2]!='n' || signature[3]!='t')
@@ -146,6 +147,12 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 		Vect2i(512,512),
 		Vect2i(1024,512),
 		Vect2i(1024,1024),
+		Vect2i(2048,1024),
+		Vect2i(2048,2048),
+		Vect2i(4096,2048),
+		Vect2i(4096,4096),
+		Vect2i(8192,4096),
+		Vect2i(8192,8192),
 	};
 	const int sizes_size= sizeof(sizes)/sizeof(sizes[0]);
 	Vect2i size(0,0);
@@ -179,13 +186,14 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	{
 		for(i=0;i<256;i++)
 			delete chars[i].bits;
+		ErrH.Abort("Couldn't find big enough image for this font", XERR_USER, sz, fontname);
 		return false;
 	}
 
 	FontHeight=height/float(size.y);
 
 	//Создаём текстуру
-	Vect2i real_size(round(size.x/mul),round(size.y/mul));
+	Vect2i real_size((int)round(size.x/mul),(int)round(size.y/mul));
 	BYTE* gray_in=new BYTE[real_size.x*real_size.y];
 	memset(gray_in,0,real_size.x*real_size.y);
 
@@ -194,7 +202,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	{
 
 		int w=chars[i].width;
-		int dx=round(w*mul+2);
+		int dx=(int)round(w*mul+2);
 		if(x+dx>size.x)
 		{
 			y+=(height+yborder);
@@ -232,12 +240,12 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 //	h.save3layers("file_in.tga",real_size.x,real_size.y,gray_in,gray_in,gray_in);
 
 	resample(gray_in,real_size.x,real_size.y,gray_out,size.x,size.y,'l');
-	delete gray_in;
+	delete[] gray_in;
 	
 	FontImage->Create(gray_out,size);
 
 //	h.save3layers("file.tga",size.x,size.y,gray_out,gray_out,gray_out);
-	delete gray_out;
+	delete[] gray_out;
 	
 	Save(fontname,*FontImage);
 	return true;
@@ -245,11 +253,6 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 
 bool cFontInternal::CreateTexture(LPCSTR fontname,LPCSTR filename,int height)
 {
-	if(height>100)
-	{
-		return false;
-	}
-
 	if(pTexture)
 		delete pTexture;
 	pTexture=NULL;
@@ -304,11 +307,11 @@ bool cFontImage::Load(const char* fname)
 bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+='\\';
-	ffont=cache_dir;ffont+='\\';
+	ftga=cache_dir;ftga+=PATH_SEP;
+	ffont=cache_dir;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
-	mkdir(cache_dir);
+    create_directories(cache_dir);
 
 	if(!fnt.Save(ftga.c_str()))
 		return false;
@@ -321,14 +324,15 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 	_write(file,&size,sizeof(size));
 	_write(file,&Font[0],size*sizeof(Vect3f));
 	_close(file);
+    scan_resource_paths(fname);
 	return true;
 }
 
 bool cFontInternal::Load(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+='\\';
-	ffont=cache_dir;ffont+='\\';
+	ftga=cache_dir;ftga+=PATH_SEP;
+	ffont=cache_dir;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
 
@@ -362,7 +366,7 @@ void str_add_slash(char* str)
 	{
 		if(str[len-1]!='/' && str[len-1]!='\\')
 		{
-			str[len]='\\';
+			str[len]=PATH_SEP;
 			str[len+1]=0;
 		}
 	}
@@ -371,6 +375,7 @@ void str_add_slash(char* str)
 bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int h,bool silentErr)
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
+    xassert(0<ScreenY);
 
 	int height=(int)round((float)(h*ScreenY)/768.0f);
 	statement_height=h;
@@ -426,7 +431,7 @@ bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int 
 	}
 
 	font_name=fname;
-	_strlwr((char*)font_name.c_str());
+	_strlwr(font_name.data());
 	return true;
 }
 

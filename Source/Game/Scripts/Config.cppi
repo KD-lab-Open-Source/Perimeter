@@ -14,7 +14,7 @@ char const* MainVideoPath = "RESOURCE\\VIDEO\\";
 char const* MainWorldPath = "RESOURCE\\WORLDS\\";
 char const* MainToolPath = "RESOURCE\\TOOLS\\";
 int terLogicTimePeriod = 100;
-float terLogicTimePeriodInv = 1.e-002f;
+float terLogicTimePeriodInv = 0.01f;
 float terGlobalTimePeriodSeconds = 0.1f;
 float PerimeterCameraControlFPS = 20.f;
 float HardwareCameraFocus = 0.8f;
@@ -24,10 +24,10 @@ float CAMERA_BORDER_SCROLL_SPEED_DELTA = 10.f;
 float CAMERA_SHIFT_SPEED_DELTA = 400.f;
 float CAMERA_SCROLL_SPEED_DAMP = 0.7f;
 float CAMERA_SCROLL_SPEED_MASS = 1.f;
-float CAMERA_BORDER_SCROLL_AREA_UP = 8.e-003f;
-float CAMERA_BORDER_SCROLL_AREA_DN = 1.4e-002f;
-float CAMERA_BORDER_SCROLL_AREA_HORZ = 8.e-003f;
-float HISTORY_CAMERA_ANGLE_SPEED_DELTA = 7.8539816e-004f;
+float CAMERA_BORDER_SCROLL_AREA_UP = 0.008f;
+float CAMERA_BORDER_SCROLL_AREA_DN = 0.014f;
+float CAMERA_BORDER_SCROLL_AREA_HORZ = 0.008f;
+float HISTORY_CAMERA_ANGLE_SPEED_DELTA = 0.00078539816f;
 float CAMERA_KBD_ANGLE_SPEED_DELTA = 0.10471976f;
 float CAMERA_MOUSE_ANGLE_SPEED_DELTA = 3.1415927f;
 float CAMERA_ANGLE_SPEED_DAMP = 0.7f;
@@ -135,7 +135,7 @@ float maxAlphaCircleColorHeight = 500.f;
 CircleColors circleColors = { { { 137 
  , 205, 249, 140 }, 6.f, 30.f, 0 }, { { 119, 223, 242, 128 }, 3.f, 30.f, 0 }, { { 137 
  , 205, 249, 120 }, 3.f, 30.f, 0 }, { { 255, 255, 255, 160 }, 4.f, 30.f, 1 }, { { 255 
- , 216, 0, 128 }, 2.f, 30.f, 0 }, { { 0, 255, 0, 255 }, -2.5e-003f, 10.f, 0 }, { { 255 
+ , 216, 0, 128 }, 2.f, 30.f, 0 }, { { 0, 255, 0, 255 }, -0.0025f, 10.f, 0 }, { { 255 
  , 0, 0, 158 }, 2.f, 30.f, 0 }, { { 255, 0, 0, 158 }, 8.f, 30.f, 2 }, { { 255, 0, 0 
  , 158 }, 4.f, 30.f, 3 } };
 #ifndef __XScript_struct_sRegionMain__
@@ -180,8 +180,8 @@ float markHealth1 = 100.f;
 float markHealth2 = 9000.f;
 float markWidth1 = 20.f;
 float markWidth2 = 200.f;
-float markHealthWidthCoeffA = 1.9750702e-005f;
-float markHealthWidthCoeffB = 1.755618e-002f;
+float markHealthWidthCoeffA = 1.9750702e-05f;
+float markHealthWidthCoeffB = 0.01755618f;
 char const* mainCurrUserRegFolder = "SOFTWARE\\Codemasters\\Perimeter\\Intf";
 char const* regLanName = "LanName";
 #ifndef __XScript_struct_sCorpseDynamic__

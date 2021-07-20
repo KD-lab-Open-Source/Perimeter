@@ -337,9 +337,11 @@ SaveUnitData* terUnitBase::universalSave(SaveUnitData* data)
 
 void terUnitBase::universalLoad(const SaveUnitData* data)
 {
-	setPose(Se3f(data->orientaion, data->position), true);
-	setPose(Se3f(data->orientaion, data->position), false);
-	label_ = data->label;
+    Se3f pose(data->orientaion, data->position);
+	setPose(pose, true);
+	setPose(pose, false);
+    const char* labelChar = data->label;
+	label_ = labelChar;
 	damageMolecula_ = data->damageMolecula;
 	if(data->unitID)
 		(terUnitID&)*this = terUnitID(Player->registerUnitID(data->unitID), playerID());

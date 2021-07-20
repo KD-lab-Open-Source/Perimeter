@@ -6,6 +6,7 @@
 #include <windows.h>
 
 // Standart includes
+#include <climits>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

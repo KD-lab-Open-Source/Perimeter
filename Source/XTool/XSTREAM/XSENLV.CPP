@@ -1,5 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
+#include "tweaks.h"
+#include "xutl.h"
 #include "xstream.h"
 #include "xerrhand.h"
 
@@ -19,7 +22,11 @@ std::fstream *open_file(const char* name, unsigned f)
     return new std::fstream(name, mode);
 }
 
-int XStream::open(const char* name, unsigned f)
+int XStream::open(const char* name, unsigned f) {
+    return XStream::open(std::string(name), f);
+}
+
+int XStream::open(const std::string& name, unsigned f)
 {
     /*
 	DWORD fa = 0;
@@ -59,19 +66,23 @@ int XStream::open(const char* name, unsigned f)
     fprintf(stderr, "DBG: XStream::open(\"%s\", 0x%x)\n", name, f);
 #endif
 
-    std::fstream *file = open_file(name, f);
+
+    //Do a conversion for Windows -> POSIX paths
+    std::string path = convert_path(name.c_str());
+
+    std::fstream *file = open_file(path.c_str(), f);
     handler = file;
     if (file->is_open()) {
-        fname = name;
+        fname = path;
         pos = file->tellg();
         eofFlag = 0;
     } else {
 #ifdef XSTREAM_DEBUG
-        fprintf(stderr, "ERR: XStream::open(\"%s\", 0x%x)\n", name, f);
+        fprintf(stderr, "ERR: XStream::open(\"%s\", 0x%x)\n", path.c_str(), f);
 #endif
         if(ErrHUsed) {
             std::string smode = "File name:";
-            smode += name;
+            smode += path;
             ErrH.Abort(openMSG, XERR_USER, 0, smode.c_str());
         } else {
             return 0;

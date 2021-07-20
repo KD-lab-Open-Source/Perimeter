@@ -4,6 +4,7 @@
 #define __IRONBUILDING_H__
 
 #include "Scripts/Config.hi"
+#include "SerializationVirtual.h"
 
 class terIconBuilding 
 {
@@ -31,25 +32,6 @@ public:
    
 	AttributeBuilding();
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-        AttributeReal::serialize(ar);
-		
-		if(ar.openBlock("attributeBuilding", "Здание")){
-			ar & TRANSLATE_OBJECT(EnableStructure, "Требуемые для работы строения");
-			ar & TRANSLATE_OBJECT(Downgrades, "Даунгрейды для сканирования, в _обратном_ порядке");
-			ar & TRANSLATE_OBJECT(Upgrade, "Ближайший апгрейд");
-			ar & TRANSLATE_OBJECT(isUpgrade, "isUpgrade");
-
-			ar & TRANSLATE_OBJECT(constructionSpeedCoeff, "constructionSpeedCoeff");
-			ar & TRANSLATE_OBJECT(constructionPriority, "Приоритет строительства");
-			ar & TRANSLATE_OBJECT(disconnectAnimation, "есть анимация для отключенного состояния (иначе просто останавливается текущая анимация)");
-
-			ar & TRANSLATE_OBJECT(iconDistanceFactor, "iconDistanceFactor");
-			ar.closeBlock();
-		}
-	}
-
 	bool hasDowngrade() const { 
 		return downgrade() != UNIT_ATTRIBUTE_NONE; 
 	}
@@ -59,6 +41,24 @@ public:
 	terUnitAttributeID downgrade() const {
 		return !Downgrades.empty() ? static_cast<terUnitAttributeID>(Downgrades.front()) : UNIT_ATTRIBUTE_NONE; 
 	}
+
+    VIRTUAL_SERIALIZE(ar) {
+        AttributeReal::serialize_template(ar);
+
+        if(ar.openBlock("attributeBuilding", "Здание")){
+            ar & TRANSLATE_OBJECT(EnableStructure, "Требуемые для работы строения");
+            ar & TRANSLATE_OBJECT(Downgrades, "Даунгрейды для сканирования, в _обратном_ порядке");
+            ar & TRANSLATE_OBJECT(Upgrade, "Ближайший апгрейд");
+            ar & TRANSLATE_OBJECT(isUpgrade, "isUpgrade");
+
+            ar & TRANSLATE_OBJECT(constructionSpeedCoeff, "constructionSpeedCoeff");
+            ar & TRANSLATE_OBJECT(constructionPriority, "Приоритет строительства");
+            ar & TRANSLATE_OBJECT(disconnectAnimation, "есть анимация для отключенного состояния (иначе просто останавливается текущая анимация)");
+
+            ar & TRANSLATE_OBJECT(iconDistanceFactor, "iconDistanceFactor");
+            ar.closeBlock();
+        }
+    }
 };
 
 class terBuilding : public terUnitReal

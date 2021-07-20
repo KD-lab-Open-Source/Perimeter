@@ -183,7 +183,7 @@ void Interpreter::clearYears() {
 
 bool Interpreter::loadProgram(const std::string& fileName) {
 	bool res = false;
-	FILE* file = fopen(fileName.c_str(), "rt");
+	FILE* file = fopen(convert_path_resource(fileName.c_str()).c_str(), "rt");
 	if(file) {
 		clearYears();
 		res = true;
@@ -205,7 +205,9 @@ bool Interpreter::loadProgram(const std::string& fileName) {
 					break;
 				}
 			} else {
-				Command* currentCommand = commandFactory->createCommand(buff);
+                std::string line(buff);
+                string_replace(line, "\r", "");
+				Command* currentCommand = commandFactory->createCommand(line.c_str());
 				if (currentCommand) {
 					currentCommand->referenced();
 /*
@@ -438,7 +440,7 @@ void Interpreter::addLineToLog(const std::string& line) {
 			}
 			log += line + "\n";
 		} else {
-			int returnCh = log.find("\n");
+            size_t returnCh = log.find("\n");
 			log.erase(0, returnCh + 1);
 			log += line + "\n";
 		}

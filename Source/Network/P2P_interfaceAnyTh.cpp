@@ -81,12 +81,14 @@ void PNetCenter::ClearClients()
 //Запускается из 1 и 2-го потока
 void PNetCenter::clearInternalFoundHostList(void) 
 {
+#ifndef PERIMETER_EXODUS
 	CAutoLock _lock(&m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
 	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
 		delete *p;
 	}
 	internalFoundHostList.erase(internalFoundHostList.begin(), internalFoundHostList.end());
+#endif
 }
 
 

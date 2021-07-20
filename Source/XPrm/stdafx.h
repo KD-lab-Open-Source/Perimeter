@@ -36,12 +36,11 @@
 #include <list>
 #include <string>
 #include <stdexcept>
-#include <hash_map>
 #include <algorithm>
 
 #include "tweaks.h"
-#include "handle.h"
-#include "XUtil.h"
+#include "Handle.h"
+#include "xutil.h"
 #include "xmath.h"
 
 

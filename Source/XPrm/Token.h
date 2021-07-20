@@ -1,9 +1,10 @@
 #pragma once
 #include "ParseUtil.h"
+#include <unordered_map>
 
 #define _VERSION_	"1.40"
 
-typedef list<string> StringList;
+typedef std::list<std::string> StringList;
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //			Token 
@@ -18,18 +19,18 @@ public:
 	virtual Token* clone() const { return const_cast<Token*>(this); } // реально клонируются только изменяемые токены
 	virtual void affect(class Compiler& comp) const { throw unexpected_token(name()); } // основное действие данного токена
 protected:
-	string name_;
+	std::string name_;
 };
 		
 /////////////////////////////////////////////////////////////////////////////////////////////
 //			Token List
 /////////////////////////////////////////////////////////////////////////////////////////////
-class TokenList : public list<ShareHandle<Token> >, virtual public Token
+class TokenList : public std::list<ShareHandle<Token> >, virtual public Token
 {
 	friend class Compiler;
 //	struct eqstr { bool operator()(const char* s1, const char* s2) const { return !strcmp(s1, s2); } };
 //	typedef hash_map<const char*, Token*, hash<const char*>, eqstr> Map;
-	typedef hash_map<string, Token*> Map;
+	typedef std::unordered_map<std::string, Token*> Map;
 
 	Map map;
 	const TokenList* parent;
@@ -55,18 +56,18 @@ public:
 class Section : public TokenList
 {
 public:
-	string definition_file;
-	string declaration_file;
-	string script_file;
+	std::string definition_file;
+	std::string declaration_file;
+	std::string script_file;
 	int using_namespace;
 
 	Section(const char* name) : Token(name), TokenList(name) { using_namespace = 0; }
 	int variables() const;
-	bool definition(bool rebuild, StringList& dependencies);
-	bool declaration(bool rebuild);
+	bool definition(const char* sources, bool rebuild, StringList& dependencies);
+	bool declaration(const char* sources, bool rebuild);
 	unsigned description();
 	void copy(class ParameterSection& prm);
-	string align_path(const string& str);
+    std::string align_path(const char* sources, const std::string& str);
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////
 class Parser 
 {
-	string fname;
+	std::string fname;
 	int line;
 	char* buffer;
 	char* current_token;
@@ -100,19 +101,19 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////
 class Compiler 
 {
-	typedef list<ShareHandle<TokenList> > ContextList;
+	typedef std::list<ShareHandle<TokenList> > ContextList;
 	ContextList contexts;
 
-	typedef list<ShareHandle<Section> > SectionList;
+	typedef std::list<ShareHandle<Section> > SectionList;
 	SectionList sections;
 
-	typedef list<Parser> ParserList;
+	typedef std::list<Parser> ParserList;
 	ParserList parsers;
 
 	StringList dependencies;
 
 	const Token* refine_name_first_token;
-	string full_refined_name;
+    std::string full_refined_name;
 
 	int uniqueNameCounter_;
 
@@ -130,19 +131,19 @@ class Compiler
 	double term_f(); // *, /
 	double prim_f(); // -, (), const, name
 
-	string expr_s();
-	string prim_s();
+	std::string expr_s();
+	std::string prim_s();
 
 	TokenList& top_context();
 	
 protected:
-	string exe_path;
+    std::string exe_path;
 
 public:							
 	Compiler();
 	void clear();
 	int parse_file(const char* fname, XBuffer& sout); // returns the number of errors
-	bool compile(const char* fname, bool rebuild); // returns 1 if succeeds
+	bool compile(const char* fname, const char* sources, bool rebuild); // returns 1 if succeeds
 	bool sectionUpdated() const { return sectionUpdated_; }
 	Section* getSection(const char* name);
 
@@ -155,9 +156,9 @@ public:
 	TokenList& context() { return *contexts.back(); }
 	void push_context(TokenList* cont) { cont->parent = contexts.empty() ? 0 : &context(); contexts.push_back(cont); }
 	void pop_context() { contexts.pop_back(); }
-	string context_prefix() const;
+    std::string context_prefix() const;
 
-	string generate_unique_name(const char* name);
+    std::string generate_unique_name(const char* name);
 	void add_new_emulated(Token* token);
 	void remove_new_emulated(Token* token);
 
@@ -171,7 +172,7 @@ public:
 
 	int eval_i();
 	double eval_f();
-	string eval_s();
+	std::string eval_s();
 };
 					    
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +200,7 @@ public:
 class DataType : public DescriptedToken 
 {
 protected:
-	string type_name_;
+    std::string type_name_;
 	int size_;
 public:
 	DataType(const char* type_name, int size) : type_name_(type_name), size_(size) {}
@@ -217,7 +218,7 @@ protected:
 	int assigment_flag;
 	int static_flag;
 	int new_emulation_flag;
-	string refine_name_prefix;
+    std::string refine_name_prefix;
 	friend struct StaticToken;
 	friend DataType;
 	friend class ArrayVariable;
@@ -225,7 +226,7 @@ protected:
 public:
 	Variable(const DataType& type_) : type(type_) { assigment_flag = 0; static_flag = 0; new_emulation_flag = 0; }
 	Variable(const Variable& var) : type(var.type) { (DescriptedToken&)*this = var; assigment_flag = 0; static_flag = var.static_flag; new_emulation_flag = var.new_emulation_flag; }
-	virtual void init(Compiler& comp){ if(assigment_flag) throw parsing_error((string("Redefenition of variable: ") + name()).c_str()); assigment_flag = 1; }
+	virtual void init(Compiler& comp){ if(assigment_flag) throw parsing_error((std::string("Redefenition of variable: ") + name()).c_str()); assigment_flag = 1; }
 	virtual void write_name(XBuffer& buf) const { if(new_emulation_flag) buf < "static "; buf < refine_name_prefix.c_str() < type.type_name() < " " < name(); }
 	virtual void write_value(WriteStream& buf) const = 0;
 	virtual void copy_value(void* value) const = 0;
@@ -297,7 +298,7 @@ public:
 class StringVariable : public Variable
 {
 	bool zeroValue;
-	string value;
+    std::string value;
 public:
 	StringVariable(const char* name, const DataType& type) : Token(name), Variable(type), zeroValue(false) {}
 	void init(Compiler& comp) { Variable::init(comp); if(!comp.get_token_if("0")){ value = comp.eval_s(); zeroValue = false; } else zeroValue = true; }
@@ -306,28 +307,28 @@ public:
 	{ 
 		char*& str = *(char**)val;
 		if(!zeroValue){
-			string collapsed = value;
+            std::string collapsed = value;
 			collapse_spec_chars(collapsed);
-			if(!str || collapsed != string(str))
-				str = _strdup(collapsed.c_str());
+			if(!str || collapsed != std::string(str))
+				str = strdup(collapsed.c_str());
 		}
 		else
 			str = 0;
 	}
 	Token* clone() const { return new StringVariable(*this); } 
-	operator string() const { return value; }
+	operator std::string() const { return value; }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //		Array
 /////////////////////////////////////////////////////////////////////////////////////////////
-class ArrayVariable : public Variable, list<ShareHandle<Variable> >
+class ArrayVariable : public Variable, std::list<ShareHandle<Variable> >
 {
-	string size_var_name;
+	std::string size_var_name;
 	int current_size;
 	int declare_size;
 public:
-	ArrayVariable(const char* name, const DataType& type, const string& size_var_name_, int declare_size_) : Token(name), Variable(type), size_var_name(size_var_name_), declare_size(declare_size_) {}
+	ArrayVariable(const char* name, const DataType& type, const std::string& size_var_name_, int declare_size_) : Token(name), Variable(type), size_var_name(size_var_name_), declare_size(declare_size_) {}
 	void init(Compiler& comp);
 	void write_value(WriteStream& buf) const;
 	void copy_value(void* val) const;
@@ -345,8 +346,8 @@ public:
 class PointerVariable : public Variable
 {
 	const Variable* variable;
-	string size_var_name;
-	string variable_refine_name;
+	std::string size_var_name;
+	std::string variable_refine_name;
 	bool inited_by_array;
 public:
 	PointerVariable(const char* name, const DataType& type) : Token(name), Variable(type), variable(0), inited_by_array(0) {}
@@ -369,7 +370,7 @@ class StructDataType : public DataType, public TokenList
 	friend struct DelegateToken;
 	friend struct StaticToken;
 	int dont_declare;
-	string delegate_code;
+    std::string delegate_code;
 public:
 	StructDataType(Compiler& comp);
 	Variable* create(const char* name) const;
@@ -377,7 +378,7 @@ public:
 	void declaration(XBuffer& buf) const;
 };
 
-class StructVariable : public Variable, TokenList
+class StructVariable : public Variable, public TokenList
 {
 public:
 	StructVariable(const char* name, const StructDataType& type) : Token(name), TokenList(type, name), Variable(type){}

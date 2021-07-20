@@ -54,14 +54,16 @@ void cTexture::SetName(const char *Name)
 void cTexture::SetWidth(int xTex)
 {
 	_x=ReturnBit(xTex);
-	if(GetWidth()!=xTex)
-		VisError<<"Bad width in texture "<<name<<VERR_END;
+	if(GetWidth()!=xTex) {
+        VisError << "Bad width in texture " << name << VERR_END;
+    }
 }
 
 void cTexture::SetHeight(int yTex)
 {
 	_y=ReturnBit(yTex);
-	if(GetHeight()!=yTex)
-		VisError<<"Bad height in texture "<<name<<VERR_END;
+	if(GetHeight()!=yTex) {
+        VisError << "Bad height in texture " << name << VERR_END;
+    }
 }
 

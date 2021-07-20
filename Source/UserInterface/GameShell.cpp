@@ -41,6 +41,7 @@
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "SoundScript.h"
+#include <SDL.h>
 
 int terShowFPS = 0;
 
@@ -66,7 +67,9 @@ extern std::string gameSpyRoomName;
 extern void PlayMusic(const char *str = 0);
 
 bool terEnableGDIPixel=false;
+#ifndef PERIMETER_EXODUS_WINDOW
 STARFORCE_API void CalcRealWindowPos(int xPos,int yPos,int xScr,int yScr,bool fullscreen,Vect2i& pos,Vect2i& size);
+#endif
 
 //extern XStream quantTimeLog;
 
@@ -237,6 +240,7 @@ windowClientSize_(1024, 768)
 		ErrH.Abort("Pause!!!");
 	}
 	const char* playerName=check_command_line("playerName");
+#ifndef PERIMETER_EXODUS //Just in case...
 	if (check_command_line("gamespy")) {
 		const char* strPassword=check_command_line("password");
 		if(strPassword==0) strPassword="";
@@ -253,8 +257,9 @@ windowClientSize_(1024, 768)
 			checkGameSpyCmdLineArg(strIP);
 			startOnline(CommandLineData(false, playerName, false, strIP, GUID(), "", strPassword));
 		}
-	}
-	else if(check_command_line("p2p")){
+	} else 
+#endif
+    if(check_command_line("p2p")){
 		const char* strIP=check_command_line("ip");
 		checkGameSpyCmdLineArg(playerName);
 		if(check_command_line("host")){
@@ -284,19 +289,20 @@ windowClientSize_(1024, 768)
 		missionEditor_ = new MissionEditor;
 
 	if(!MainMenuEnable){
-		std::string name = "Resource\\";
+	    std::string resource_path = convert_path_resource("RESOURCE") + PATH_SEP;
+		std::string name = resource_path;
 		std::string path;
 
 		if(check_command_line("save")){
-			path = "Resource\\Saves\\";
+			path = UserSingleProfile::getAllSavesDirectory();
 			name = check_command_line("save");
 		}
 		if(check_command_line("mission")){
-			path = std::string(MISSIONS_PATH) + "\\";
+			path = std::string(MISSIONS_PATH) + PATH_SEP;
 			name = check_command_line("mission");
 		}
 		if(mission_edit){
-			path = std::string(MISSIONS_PATH) + "\\";
+			path = std::string(MISSIONS_PATH) + PATH_SEP;
 			name = "";
 		}
 		if(check_command_line("open"))
@@ -307,8 +313,8 @@ windowClientSize_(1024, 768)
 		name = setExtention((path + name).c_str(), "spg");
 
 		if(!XStream(0).open(name.c_str())) {
-			if(openFileDialog(name, "Resourse\\Missions", "spg", "Mission Name")){
-				size_t pos = name.rfind("RESOURCE\\");
+			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){
+				size_t pos = name.rfind(resource_path);
 				if(pos != std::string::npos)
 					name.erase(0, pos);
 			}
@@ -449,7 +455,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 	CurrentMission.packPlayerIDs();
 	new terUniverse(NetClient, CurrentMission, savePrm(), LoadProgressUpdate);
 
-	IniManager world_ini(GetTargetName(vMap.worldIniFile));
+	IniManager world_ini(GetTargetName(vMap.worldIniFile).c_str());
 	FogStart = world_ini.getFloat("Visualization Parameters","FogStart");
 	FogEnd = world_ini.getFloat("Visualization Parameters","FogEnd");
 	world_ini.getFloatArray("Visualization Parameters","FogColor", 3, &FogColor.r);
@@ -573,7 +579,12 @@ bool GameShell::universalSave(const char* name, bool userSave)
 		mission.gameSpeed = game_speed ? game_speed : game_speed_to_resume;
 		mission.gamePaused = !gamePausedByMenu && !game_speed;
 	}
-	return universe()->universalSave(mission, userSave);
+
+	bool result = universe()->universalSave(mission, userSave);
+    if (result) {
+        scan_resource_paths(currentSingleProfile.getSavesDirectory());
+    }
+	return result;
 }
 
 void GameShell::NetQuant()
@@ -866,36 +877,154 @@ Vect2f GameShell::convert(int x, int y) const
 
 Vect2i GameShell::convertToScreenAbsolute(const Vect2f& pos)
 {
+#ifdef PERIMETER_EXODUS_WINDOW
+    return Vect2i((pos.x + 0.5f)*(float)windowClientSize().x, (pos.y + 0.5f)*(float)windowClientSize().y);
+#else
+    //TODO is necessary to convert position to absolute like Win32?
 	POINT pt = { round((pos.x + 0.5f)*windowClientSize().x), round((pos.y + 0.5f)*windowClientSize().y) };
 	ClientToScreen(hWndVisGeneric, &pt);
 	return Vect2i((int)pt.x, (int)pt.y);
+#endif
 }
 
-bool GameShell::checkReel(UINT uMsg,WPARAM wParam,LPARAM lParam) {
-	if (reelManager.isVisible()) {
-		if (reelAbortEnabled) {
-			switch (uMsg) {
-				case WM_KEYDOWN:
-					if (sKey(wParam, true).fullkey != VK_SPACE) {
-						return true;
-					}
-				case WM_LBUTTONDOWN:
-				case WM_MBUTTONDOWN:
-					reelManager.hide();
-					break;
-				default:
-					return true;
-			}
-		}
-	}
-	return false;
-}
+#ifdef PERIMETER_EXODUS_WINDOW
+void GameShell::EventHandler(SDL_Event& event) {
+    if (reelManager.isVisible()) {
+        if (reelAbortEnabled) {
+            switch (event.type) {
+                case SDL_KEYDOWN:
+                    if (sKey(event.key.keysym, true).fullkey != VK_SPACE) {
+                        return;
+                    }
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button & (SDL_BUTTON_LMASK | SDL_BUTTON_MMASK)) {
+                        reelManager.hide();
+                    }
+                    break;
+                default:
+                    return;
+            }
+        }
+    }
 
+/*
+
+    switch(uMsg){
+        case WM_MOUSELEAVE:
+            MouseLeave();
+            break;
+    }
+*/
+
+    sKey s;
+    switch (event.type) {
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP: {
+            bool pressed = event.button.state == SDL_PRESSED;
+            Vect2f where = convert(event.button.x, event.button.y);            
+            switch (event.button.button) {
+                case SDL_BUTTON_LEFT:
+                    if (pressed) {
+                        MouseLeftPressed(where);
+                    } else {
+                        MouseLeftUnpressed(where);
+                    }
+                    if (event.button.clicks == 2) {
+                        MouseLeftDoubleClick(where);
+                    }
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    if (pressed) {
+                        MouseMidPressed(where);
+                    } else {
+                        MouseMidUnpressed(where);
+                    }
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    if (pressed) {
+                        MouseRightPressed(where);
+                    } else {
+                        MouseRightUnpressed(where);
+                    }
+                    if (event.button.clicks == 2) {
+                        MouseRightDoubleClick(where);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+        case SDL_MOUSEWHEEL: {
+            bool normal = event.wheel.direction == SDL_MOUSEWHEEL_NORMAL;
+            int delta = event.wheel.y * (normal ? 1 : -1);
+            MouseWheel(delta);
+            break;
+        }
+        case SDL_MOUSEMOTION: {
+            MouseMove(convert(event.motion.x, event.motion.y));
+            break;
+        }
+        case SDL_KEYDOWN: {
+        case SDL_KEYUP:
+            SDL_KeyboardEvent key = event.key;
+            s = sKey(key.keysym, true);
+            if (key.state == SDL_PRESSED) {
+                KeyPressed(s);
+            } else {
+                KeyUnpressed(s);
+                
+                //Simulate WM_CHAR
+                SDL_Keycode sym = key.keysym.sym;
+                if ((_bMenuMode || sym == SDLK_BACKSPACE) && _shellIconManager.isInEditMode()) {
+                    //TODO Hacky, check if there is better way
+                    if (sym <= 0xFF) {
+                        char c = static_cast<char>(sym & 0xFF);
+                        if (s.shift) {
+                            c = toupper(c);
+                        }
+                        _shellIconManager.OnChar(c);
+                    }
+                }
+            }
+            break;
+        }
+        case SDL_WINDOWEVENT: {
+            switch (event.window.event) {
+                case SDL_WINDOWEVENT_FOCUS_GAINED: {
+                    OnWindowActivate();
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+#else
 void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
-	if (checkReel(uMsg, wParam, lParam)) {
-		return;
-	}
+    if (reelManager.isVisible()) {
+        if (reelAbortEnabled) {
+            switch (uMsg) {
+                case WM_KEYDOWN:
+                    if (sKey(wParam, true).fullkey != VK_SPACE) {
+                        return;
+                    }
+                case WM_LBUTTONDOWN:
+                case WM_MBUTTONDOWN:
+                    reelManager.hide();
+                    break;
+                default:
+                    return;
+            }
+        }
+    }
 
     sKey s;
     switch(uMsg){
@@ -959,6 +1088,7 @@ void GameShell::EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam)
 		break;
     }
 }
+#endif
 
 void GameShell::DebugCteateFilth(terFilthSpotID id)
 {
@@ -1007,7 +1137,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		savePrm().manualData.cameras.push_back(SaveCameraSplineData());
 		terCamera->savePath(savePrm().manualData.cameras.back());
 		XBuffer name;
-		name < "Camera" <= manualData().cameras.size();
+		name < "Camera" <= static_cast<uint32_t>(manualData().cameras.size());
 		savePrm().manualData.cameras.back().name = editText(name);
 		SavePrm data;
 		CurrentMission.loadMission(data);
@@ -1130,18 +1260,19 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case 'S':
 		if(!missionEditor()){
 			std::string name = CurrentMission.saveName();
-			unsigned int pos = name.rfind("\\");
+			size_t pos = name.rfind(PATH_SEP);
 			if(pos != std::string::npos)
 				name.erase(0, pos + 1);
-			name = std::string("Resource\\Saves\\") + name;
+			name = UserSingleProfile::getAllSavesDirectory() + name;
 			universalSave(name.c_str(), true);
 		}
 		break;
 
 	case 'S' | KBD_CTRL: {
 		std::string saveName = CurrentMission.saveName();
-		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : "Resource\\Saves", "spg", "Mission Name")){
-			size_t pos = saveName.rfind("RESOURCE\\");
+		std::string savesDir = UserSingleProfile::getAllSavesDirectory();
+		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
+			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			universalSave(saveName.c_str(), false);
@@ -1152,8 +1283,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 	case 'O' | KBD_CTRL: {
 		std::string saveName = CurrentMission.saveName();
-		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : "Resource\\Saves", "spg", "Mission Name")){
-			size_t pos = saveName.rfind("RESOURCE\\");
+        std::string savesDir = UserSingleProfile::getAllSavesDirectory();
+		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
+			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			//Несколько кривой участок кода, не будет работать с HT
@@ -1410,21 +1542,19 @@ void GameShell::ControlPressed(int key)
 	}
 	if (_shellIconManager.IsInterface()) {
 
-		if (key >= 48 && key <= 57) {
+		if (key >= '0' && key <= '9') {
 			if (universe()) {
-				universe()->select.selectGroup(key - 48);
+				universe()->select.selectGroup(key - '0');
 			}
 			return;
-		}
-		if (key >= (48 + 256) && key <= (57 + 256)) {
+		} else if (key >= ('0' + KBD_CTRL) && key <= ('9' + KBD_CTRL)) {
 			if (universe()) {
-				universe()->select.putCurrentSelectionToGroup(key - (48 + 256));
+				universe()->select.putCurrentSelectionToGroup(key - ('0' + KBD_CTRL));
 			}
 			return;
-		}
-		if (key >= (48 + 512) && key <= (57 + 512)) {
+		} else if (key >= ('0' + KBD_SHIFT) && key <= ('9' + KBD_SHIFT)) {
 			if (universe()) {
-				universe()->select.addCurrentSelectionToGroup(key - (48 + 512));
+				universe()->select.addCurrentSelectionToGroup(key - ('0' + KBD_SHIFT));
 			}
 			return;
 		}
@@ -1785,7 +1915,7 @@ void GameShell::MouseWheel(int delta)
 		historyScene.getCamera()->mouseWheel(delta);
 	}
 
-	_shellIconManager.OnMouseWheel( delta/120 );
+	_shellIconManager.OnMouseWheel( delta );
 
 	m_ShellDispatcher.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
@@ -1831,23 +1961,24 @@ void GameShell::ShotsScan()
 {
 	shotNumber_ = 0;
 
-	_mkdir(terScreenShotsPath);
+    std::string path_str = convert_path_resource(terScreenShotsPath, true);
+    create_directories(path_str.c_str());
 
-	const char* name = win32_findfirst((std::string(terScreenShotsPath) + "\\*" + terScreenShotExt).c_str());
-	if(name){
-		do{
-			const char* p = strstr(name, terScreenShotName);
-			if(p){
-				p += strlen(terScreenShotName);
-				if(isdigit(*p)){
-					int t = atoi(p) + 1;
-					if(shotNumber_ < t)
-						shotNumber_ = t;
-				}
-			}
-			name = win32_findnext();
-		} while(name);
-	}
+    std::vector<std::string> paths;
+    for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
+        std::string entry_path = entry.path().string();
+        if (endsWith(entry_path, terScreenShotExt)) {
+            const char* p = strstr(entry_path.c_str(), terScreenShotName);
+            if(p){
+                p += strlen(terScreenShotName);
+                if(isdigit(*p)){
+                    int t = atoi(p) + 1;
+                    if(shotNumber_ < t)
+                        shotNumber_ = t;
+                }
+            }
+        }
+    }
 }
 
 void GameShell::MakeShot()
@@ -1855,7 +1986,7 @@ void GameShell::MakeShot()
 	if(shotNumber_ == -1)
 		ShotsScan();
 	XBuffer fname(MAX_PATH);
-	fname < terScreenShotsPath < "\\" < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
+	fname < convert_path(terScreenShotsPath).c_str() < PATH_SEP < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
 	shotNumber_++;
 	terRenderDevice->SetScreenShot(fname);
 }
@@ -1872,13 +2003,17 @@ void GameShell::startStopRecordMovie()
 		movieShotNumber_ = 0;
 		movieStartTime_ = frame_time();
 		
-		_mkdir(terMoviePath);
-		
-		int movieNumber = 0;
-		const char* name = win32_findfirst((std::string(terMoviePath) + "\\" + terMovieName + "*").c_str());
-		if(name){
-			do{
-				const char* p = strstr(name, terMovieName);
+        std::string path_str = convert_path_resource(terMoviePath, true);
+        create_directories(path_str.c_str());
+
+        if (path_str.empty()) return;
+
+        int movieNumber = 0;
+        std::vector<std::string> paths;
+        for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
+            std::string entry_path = entry.path().string();
+            if (startsWith(entry_path, terMovieName)) {
+				const char* p = strstr(entry_path.c_str(), terMovieName);
 				if(p){
 					p += strlen(terMovieName);
 					if(isdigit(*p)){
@@ -1887,13 +2022,13 @@ void GameShell::startStopRecordMovie()
 							movieNumber = t;
 					}
 				}
-				name = win32_findnext();
-			} while(name);
+			}
 		}
+    
 		XBuffer buffer;
-		buffer < terMoviePath < "\\" < terMovieName <= movieNumber/10 % 10 <= movieNumber % 10;
+		buffer < path_str.c_str() < PATH_SEP < terMovieName <= movieNumber/10 % 10 <= movieNumber % 10;
 		movieName_ = buffer;
-		_mkdir(movieName_.c_str());
+        create_directories(movieName_.c_str());
 	} 
 	else{
 		HTManager::instance()->setSyncroTimer(synchroByClock_, framePeriod_, terMaxTimeInterval);
@@ -1905,7 +2040,7 @@ void GameShell::startStopRecordMovie()
 void GameShell::makeMovieShot()
 {
 	XBuffer fname(MAX_PATH);
-	fname < movieName_.c_str() < "\\" < terMovieFrameName <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
+	fname < movieName_.c_str() < PATH_SEP < terMovieFrameName <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
 	movieShotNumber_++;
 	terRenderDevice->SetScreenShot(fname);
 
@@ -2180,15 +2315,22 @@ void GameShell::setSpeed(float d)
 
 void GameShell::setCursorPosition(const Vect2f& pos)
 {
-	Vect2i ps = convertToScreenAbsolute(pos);
+    Vect2i ps = convertToScreenAbsolute(pos);
+#ifdef PERIMETER_EXODUS_WINDOW
+    //TODO untested
+    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)ps.x, (int)ps.y);
+#else
 	SetCursorPos(ps.x, ps.y);
+#endif
 }
 
 void GameShell::setCursorPosition(const Vect3f& posW)
 {
 	Vect3f v, e;
 	terCamera->GetCamera()->ConvertorWorldToViewPort(&posW, &v, &e);
-	
+
+#ifndef PERIMETER_EXODUS_WINDOW
+	//TODO is necessary to convert position to absolute like Win32 does with ClientToScreen when windowed?
 	if(!terFullScreen)
 	{
 		e.x *= float(windowClientSize().x)/terRenderDevice->GetSizeX();
@@ -2198,13 +2340,21 @@ void GameShell::setCursorPosition(const Vect3f& posW)
 		::ClientToScreen(hWndVisGeneric, &pt);	
 		
 		e.x = pt.x; e.y = pt.y;
+		
 	}
-	else{
+	else
+#endif
+    {
 		e.x *= float(windowClientSize().x)/terRenderDevice->GetSizeX();
 		e.y *= float(windowClientSize().y)/terRenderDevice->GetSizeY();
 	}
-	
+
+#ifdef PERIMETER_EXODUS_WINDOW
+    //TODO untested
+    SDL_WarpMouseInWindow(fromHWND(hWndVisGeneric), (int)e.x, (int)e.y);
+#else
 	SetCursorPos(e.x, e.y);
+#endif
 }
 
 void GameShell::setSideArrowsVisible(bool visible) {
@@ -2295,6 +2445,7 @@ void GameShell::updateMap() {
 }
 
 void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_size) {
+#ifndef PERIMETER_EXODUS_WINDOW
 	if( !terRenderDevice->IsFullScreen() ) {
 		Vect2i real_pos;
 		Vect2i real_size;
@@ -2319,6 +2470,7 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 			SWP_SHOWWINDOW
 		);
 	}
+#endif
 
 	terScreenSizeX = sx;
 	terScreenSizeY = sy;
@@ -2466,7 +2618,7 @@ void GameShell::preLoad() {
     bwScene.loadProgram("RESOURCE\\menu.hst");
 	std::string path = getLocDataPath() + "Text\\Texts.btdb";
 	#ifdef _FINAL_VERSION_
-		qdTextDB::instance().load(path.c_str(), 0 );
+		qdTextDB::instance().load(path.c_str(), nullptr );
 	#else
 		qdTextDB::instance().load(path.c_str(), "RESOURCE\\Texts_comments.btdb");
 	#endif
@@ -2574,7 +2726,7 @@ void GameShell::editParameters()
 	}
 
 	if(manualData().zeroLayerHeight != vMap.hZeroPlast)
-		IniManager(GetTargetName(vMap.worldIniFile)).putInt("Global Parameters", "hZeroPlast", manualData().zeroLayerHeight);
+		IniManager(GetTargetName(vMap.worldIniFile).c_str()).putInt("Global Parameters", "hZeroPlast", manualData().zeroLayerHeight);
 
 	if(reloadParameters){
 		if(universe())

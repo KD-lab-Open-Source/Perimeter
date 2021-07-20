@@ -1,3 +1,5 @@
+// TODO: change encoding to utf-8
+
 #ifndef __SERIALIZATION_IMPL_H__
 #define __SERIALIZATION_IMPL_H__
 
@@ -9,9 +11,11 @@
 #include <boost/mpl/apply_if.hpp>
 #include <boost/mpl/identity.hpp>
 */
+#include "SerializationMacro.h"
 #include "SerializationHelpers.h"
 #include <boost/mpl/int.hpp>
 #include <boost/type_traits/remove_const.hpp>
+#include <list>
 
 #include "RangedWrapper.h"
 

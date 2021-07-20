@@ -3,6 +3,7 @@
 #ifndef __REALUNIT_H__
 #define __REALUNIT_H__
 
+#include <SerializationVirtual.h>
 #include "GenericUnit.h"
 #include "RigidBody.h"
 #include "ToolzerController.h"
@@ -85,9 +86,8 @@ public:
 
 	AttributeReal();
 
-	template<class Archive>
-	void serialize(Archive& ar) {
-        AttributeBase::serialize(ar);
+    VIRTUAL_SERIALIZE(ar) {
+        AttributeBase::serialize_template(ar);
 		if(ar.openBlock("attributeReal", "Real unit")){
 			ar & TRANSLATE_OBJECT(dockingSlots, "Слоты");
 			ar & TRANSLATE_OBJECT(productionConsumption, "Энергия на производство");

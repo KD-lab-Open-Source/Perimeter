@@ -18,7 +18,7 @@ inline void AddUnicalInt(std::vector<int>& v,int num)
 	v.push_back(num);
 }
 
-static WORD FindNewPoint(Points& p,WORD texel)
+static int16_t FindNewPoint(Points& p,int16_t texel)
 {
 	VISASSERT(p.texel.size());
 

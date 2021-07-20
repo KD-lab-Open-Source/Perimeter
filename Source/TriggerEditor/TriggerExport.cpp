@@ -1,8 +1,10 @@
 // TODO: change encoding to utf-8
 
 #include <cstring>
+#include <climits>
 #include <windows.h>
 #include "StdAfx.h"
+#include "XPrmArchive.h"
 #include "TriggerExport.h"
 
 //----------------------------------------------------------

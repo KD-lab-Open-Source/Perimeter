@@ -147,7 +147,7 @@ bool TGA::loadTest(const char *fileName) {
 	// Заголовок TGA фала
 	unsigned char Header[18];
 
-	FILE *File = fopen(fileName, "rb");
+	FILE *File = fopen(convert_path_resource(fileName).c_str(), "rb");
 	
     if (File == NULL) 
 	{
