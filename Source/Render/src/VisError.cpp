@@ -29,11 +29,9 @@ cVisError& cVisError::operator << (const char *a)
 			ShowWindow(gb_RenderDevice->GetWindowHandle(),SW_MINIMIZE);
 #endif
 		}
-#ifndef PERIMETER_EXODUS //TODO remove when there isnt so much missing stuff
         if (MessageBoxQuestion("Perimeter cVisError, exit?", buf.c_str(), SDL_MESSAGEBOX_ERROR)) {
             ErrH.Abort(buf.c_str());
         }
-#endif
 		buf.clear();
 	}else
 		buf+=a;

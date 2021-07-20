@@ -25,6 +25,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#include <SDL_image.h>
+
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 #include <iostream>
@@ -472,14 +474,17 @@ public:
             }
         }
         length = static_cast<int>(frames.size());
-        
-        tpf = (time-1)/(length-1);
+
+        if (length <= 1) {
+            tpf = 1;
+        } else {
+            tpf = (time - 1) / (length - 1);
+        }
         
         return 0;
     }
 
     virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) {
-        //TODO is this func even necessary?
         return 0;
     }
 
@@ -656,6 +661,7 @@ public:
 
 ///////////////////////////////////////////////
 ///AVIX
+///////////////////////////////////////////////
 class cAVIXImage : public cFileImage
 {
 	struct AVIX
@@ -745,24 +751,683 @@ public:
 	}
 };
 
+///////////////////////////////////////////////
+///FileImage wrapper that uses SDL_image for image loading 
+///////////////////////////////////////////////
+
+#if 2 <= SDL_IMAGE_MAJOR_VERSION && !(0 == SDL_IMAGE_MINOR_VERSION && 7 > SDL_IMAGE_PATCHLEVEL)
+//On version 2.0.7 and onwards should support 24 bits ICO/CUR images
+#define SDL_IMAGE_ICOCUR_24
+#endif
+
+class cSDLImage : public cFileImage
+{
+#ifndef SDL_IMAGE_ICOCUR_24
+public:
+    static Uint8 SDL_Read8(SDL_RWops * src) {
+        Uint8 value;
+
+        SDL_RWread(src, &value, 1, 1);
+        return (value);
+    }
+
+    //Method copied from SDL_image to support 24 bits CUR
+    static SDL_Surface* LoadICOCUR_RW_Custom(SDL_RWops * src, int type, int freesrc) {
+        SDL_bool was_error;
+        long fp_offset;
+        int bmpPitch;
+        int i, pad;
+        SDL_Surface *surface;
+        Uint8 *bits;
+        int ExpandBMP;
+        int maxCol = 0;
+        int icoOfs = 0;
+        Uint32 palette[256];
+        /* The Win32 ICO file header (14 bytes) */
+        Uint16 bfReserved;
+        Uint16 bfType;
+        Uint16 bfCount;
+
+        /* The Win32 BITMAPINFOHEADER struct (40 bytes) */
+        Uint32 biSize;
+        Sint32 biWidth;
+        Sint32 biHeight;
+        Uint16 biBitCount;
+        Uint32 biCompression;
+        Uint32 biClrUsed;
+
+        /* Make sure we are passed a valid data source */
+        surface = NULL;
+        was_error = SDL_FALSE;
+        if (src == NULL) {
+            was_error = SDL_TRUE;
+            goto done;
+        }
+
+        /* Read in the ICO file header */
+        fp_offset = SDL_RWtell(src);
+        SDL_ClearError();
+
+        bfReserved = SDL_ReadLE16(src);
+        bfType = SDL_ReadLE16(src);
+        bfCount = SDL_ReadLE16(src);
+        if ((bfReserved != 0) || (bfType != type) || (bfCount == 0)) {
+            IMG_SetError("File is not a Windows %s file", type == 1 ? "ICO" : "CUR");
+            was_error = SDL_TRUE;
+            goto done;
+        }
+
+        /* Read the Win32 Icon Directory */
+        for (i = 0; i < bfCount; i++) {
+            /* Icon Directory Entries */
+            int bWidth = SDL_Read8(src);    /* Uint8, but 0 = 256 ! */
+            int bHeight = SDL_Read8(src);   /* Uint8, but 0 = 256 ! */
+            int bColorCount = SDL_Read8(src);       /* Uint8, but 0 = 256 ! */
+            SDL_Read8(src);
+            SDL_ReadLE16(src);
+            SDL_ReadLE16(src);
+            SDL_ReadLE32(src);
+            Uint32 dwImageOffset = SDL_ReadLE32(src);
+
+            if (!bWidth)
+                bWidth = 256;
+            if (!bHeight)
+                bHeight = 256;
+            if (!bColorCount)
+                bColorCount = 256;
+
+            //printf("%dx%d@%d - %08x\n", bWidth, bHeight, bColorCount, dwImageOffset);
+            if (bColorCount > maxCol) {
+                maxCol = bColorCount;
+                icoOfs = dwImageOffset;
+                //printf("marked\n");
+            }
+        }
+
+        /* Advance to the DIB Data */
+        if (SDL_RWseek(src, icoOfs, RW_SEEK_SET) < 0) {
+            SDL_Error(SDL_EFSEEK);
+            was_error = SDL_TRUE;
+            goto done;
+        }
+
+        /* Read the Win32 BITMAPINFOHEADER */
+        biSize = SDL_ReadLE32(src);
+        if (biSize == 40) {
+            biWidth = SDL_ReadLE32(src);
+            biHeight = SDL_ReadLE32(src);
+            SDL_ReadLE16(src);
+            biBitCount = SDL_ReadLE16(src);
+            biCompression = SDL_ReadLE32(src);
+            SDL_ReadLE32(src);
+            SDL_ReadLE32(src);
+            SDL_ReadLE32(src);
+            biClrUsed = SDL_ReadLE32(src);
+            SDL_ReadLE32(src);
+        } else {
+            IMG_SetError("Unsupported ICO bitmap format");
+            was_error = SDL_TRUE;
+            goto done;
+        }
+
+        /* Check for read error */
+        if (SDL_strcmp(SDL_GetError(), "") != 0) {
+            was_error = SDL_TRUE;
+            goto done;
+        }
+
+        /* We don't support any BMP compression right now */
+        switch (biCompression) {
+            case 0:
+                /* Default values for the BMP format */
+                switch (biBitCount) {
+                    case 1:
+                    case 4:
+                        ExpandBMP = biBitCount;
+                        biBitCount = 8;
+                        break;
+                    case 8:
+                        ExpandBMP = 8;
+                        break;
+                    case 24:
+                        ExpandBMP = 24;
+                        break;
+                    case 32:
+                        ExpandBMP = 0;
+                        break;
+                    default:
+                        IMG_SetError("ICO file with unsupported bit count");
+                        was_error = SDL_TRUE;
+                        goto done;
+                }
+                break;
+            default:
+                IMG_SetError("Compressed ICO files not supported");
+                was_error = SDL_TRUE;
+                goto done;
+        }
+
+        /* Create a RGBA surface */
+        biHeight = biHeight >> 1;
+        //printf("%d x %d\n", biWidth, biHeight);
+        surface =
+                SDL_CreateRGBSurface(0, biWidth, biHeight, 32, 0x00FF0000,
+                                     0x0000FF00, 0x000000FF, 0xFF000000);
+        if (surface == NULL) {
+            was_error = SDL_TRUE;
+            goto done;
+        }
+
+        /* Load the palette, if any */
+        //printf("bc %d bused %d\n", biBitCount, biClrUsed);
+        if (biBitCount <= 8) {
+            if (biClrUsed == 0) {
+                biClrUsed = 1 << biBitCount;
+            }
+            for (i = 0; i < (int) biClrUsed; ++i) {
+                SDL_RWread(src, &palette[i], 4, 1);
+            }
+        }
+
+        /* Read the surface pixels.  Note that the bmp image is upside down */
+        bits = (Uint8 *) surface->pixels + (surface->h * surface->pitch);
+        switch (ExpandBMP) {
+            case 1:
+                bmpPitch = (biWidth + 7) >> 3;
+                pad = (((bmpPitch) % 4) ? (4 - ((bmpPitch) % 4)) : 0);
+                break;
+            case 4:
+                bmpPitch = (biWidth + 1) >> 1;
+                pad = (((bmpPitch) % 4) ? (4 - ((bmpPitch) % 4)) : 0);
+                break;
+            case 8:
+                bmpPitch = biWidth;
+                pad = (((bmpPitch) % 4) ? (4 - ((bmpPitch) % 4)) : 0);
+                break;
+            case 24:
+                bmpPitch = biWidth * 3;
+                pad = (((bmpPitch) % 4) ? (4 - ((bmpPitch) % 4)) : 0);
+                break;
+            default:
+                bmpPitch = biWidth * 4;
+                pad = 0;
+                break;
+        }
+        while (bits > (Uint8 *) surface->pixels) {
+            bits -= surface->pitch;
+            switch (ExpandBMP) {
+                case 1:
+                case 4:
+                case 8:
+                {
+                    Uint8 pixel = 0;
+                    int shift = (8 - ExpandBMP);
+                    for (i = 0; i < surface->w; ++i) {
+                        if (i % (8 / ExpandBMP) == 0) {
+                            if (!SDL_RWread(src, &pixel, 1, 1)) {
+                                IMG_SetError("Error reading from ICO");
+                                was_error = SDL_TRUE;
+                                goto done;
+                            }
+                        }
+                        *((Uint32 *) bits + i) = (palette[pixel >> shift]);
+                        pixel <<= ExpandBMP;
+                    }
+                }
+                    break;
+                case 24:
+                {
+                    Uint32 pixel;
+                    Uint8 channel;
+                    for (i = 0; i < surface->w; ++i) {
+                        pixel = 0;
+                        for (int j = 0; j < 3; ++j) {
+                            //Load each color channel into pixel
+                            if (!SDL_RWread(src, &channel, 1, 1)) {
+                                IMG_SetError("Error reading from ICO");
+                                was_error = SDL_TRUE;
+                                goto done;
+                            }
+                            pixel |= (channel << (j * 8));
+                            
+                        }
+                        *((Uint32 *) bits + i) = pixel;
+                    }
+                }
+                    break;
+
+                default:
+                    if (SDL_RWread(src, bits, 1, surface->pitch)
+                        != surface->pitch) {
+                        SDL_Error(SDL_EFREAD);
+                        was_error = SDL_TRUE;
+                        goto done;
+                    }
+                    break;
+            }
+            /* Skip padding bytes, ugh */
+            if (pad) {
+                Uint8 padbyte;
+                for (i = 0; i < pad; ++i) {
+                    SDL_RWread(src, &padbyte, 1, 1);
+                }
+            }
+        }
+        /* Read the mask pixels.  Note that the bmp image is upside down */
+        bits = (Uint8 *) surface->pixels + (surface->h * surface->pitch);
+        ExpandBMP = 1;
+        bmpPitch = (biWidth + 7) >> 3;
+        pad = (((bmpPitch) % 4) ? (4 - ((bmpPitch) % 4)) : 0);
+        while (bits > (Uint8 *) surface->pixels) {
+            Uint8 pixel = 0;
+            int shift = (8 - ExpandBMP);
+
+            bits -= surface->pitch;
+            for (i = 0; i < surface->w; ++i) {
+                if (i % (8 / ExpandBMP) == 0) {
+                    if (!SDL_RWread(src, &pixel, 1, 1)) {
+                        IMG_SetError("Error reading from ICO");
+                        was_error = SDL_TRUE;
+                        goto done;
+                    }
+                }
+                *((Uint32 *) bits + i) |= ((pixel >> shift) ? 0 : 0xFF000000);
+                pixel <<= ExpandBMP;
+            }
+            /* Skip padding bytes, ugh */
+            if (pad) {
+                Uint8 padbyte;
+                for (i = 0; i < pad; ++i) {
+                    SDL_RWread(src, &padbyte, 1, 1);
+                }
+            }
+        }
+        done:
+        if (was_error) {
+            if (src) {
+                SDL_RWseek(src, fp_offset, RW_SEEK_SET);
+            }
+            if (surface) {
+                SDL_FreeSurface(surface);
+            }
+            surface = NULL;
+        }
+        if (freesrc && src) {
+            SDL_RWclose(src);
+        }
+        return (surface);
+    }
+#endif
+    
+protected:
+    SDL_Surface* image;
+    
+public:
+    cSDLImage() {
+    }
+
+    virtual ~cSDLImage() {
+        close();
+    }
+
+    virtual int close() {
+        if (image) {
+            SDL_FreeSurface(image);
+            image = nullptr;
+        }
+        return 0;
+    }
+
+    ///Loads from file
+    virtual int load(const char *fname)
+    {
+        std::string file_path = convert_path_resource(fname);
+        if (file_path.empty()) {
+            return 1;
+        }
+        SDL_RWops* src = SDL_RWFromFile(file_path.c_str(), "rb");
+        int ret = loadRW(src);
+        if (ret) {
+            fprintf(stderr, "Error loading image file: %s\n", file_path.c_str());
+        }
+        return ret;
+    }
+    
+    ///Loads from provided RWops
+    int loadRW(SDL_RWops* src) {
+#ifdef SDL_IMAGE_ICOCUR_24
+        image = IMG_Load_RW(src, 1);
+#else
+        bool isICO = IMG_isICO(src);
+        if (isICO || IMG_isCUR(src)) {
+            image = LoadICOCUR_RW_Custom(src, isICO ? 1 : 2, 1);
+        } else {
+            image = IMG_Load_RW(src, 1);
+        }
+#endif
+        if(!image) {
+            fprintf(stderr, "IMG_Load_RW: %s\n", IMG_GetError());
+            return 1;
+        }
+
+        //All cursors are 32x32
+        x = image->h;
+        y = image->w;
+        time = 0;
+        length = 1;
+        bpp = image->format->BitsPerPixel;
+        
+        return 0;
+    }
+
+    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) {
+        return 0;
+    }
+
+    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) {
+        uint8_t* pbmi = static_cast<uint8_t*>(image->pixels);
+        if(GetBitPerPixel()==24)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     pbmi,3,GetX()*3,8,0,GetX(),y);
+        else if(GetBitPerPixel()==32)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     pbmi,4,GetX()*4,8,24,GetX(),y);
+        else if(GetBitPerPixel()==16)
+            cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
+                                     pbmi,2,GetX()*2,31,0,GetX(),y);
+        return 0;
+    }
+
+    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst) {
+        uint8_t* pbmi = static_cast<uint8_t*>(image->pixels);
+        if(GetBitPerPixel()==24)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                pbmi,3,GetX()*3,8,16,8,8,8,0,GetX(),y);
+        else if(GetBitPerPixel()==32)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                pbmi,4,GetX()*4,8,16,8,8,8,0,GetX(),y);
+        else if(GetBitPerPixel()==16)
+            cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
+                                pbmi,2,GetX()*2,5,10,5,5,5,0,GetX(),y);
+        return 0;
+    }
+
+    static void Init() {
+        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+    }
+
+    static void Done() {
+        IMG_Quit();
+    }
+};
+
+///////////////////////////////////////////////
+///ANI
+///////////////////////////////////////////////
+//Since we can't use animated system cursors outside win32, we load them as animated textures and render normally
+
+class cANIImage : public cFileImage
+{
+    struct RIFF_chunk
+    {
+        char id[4];
+        uint32_t size;
+    };
+    
+    struct ANIHeader
+    {
+        RIFF_chunk riff;
+        char header_acon[4];
+        RIFF_chunk chunk_anih;
+        uint32_t header_size;
+        uint32_t frames; //Unique frames count
+        uint32_t steps; //Amount of frames to display, including duplicates
+        uint32_t widt_unused; //These are usually 0
+        uint32_t height_unused; //These are usually 0
+        uint32_t bpp;
+        uint32_t planes;
+        uint32_t fps;
+        uint32_t flags;
+    } data;
+    
+    int tpf; //Cached time per frame
+    
+    //Frames used by this animation
+    std::vector<cSDLImage*> frames;
+    //Frame for each slice
+    std::vector<cSDLImage*> slices;
+public:
+    cANIImage() {
+    }
+    
+    virtual ~cANIImage() {
+        close();
+    }
+    
+    virtual int close() {
+        for (auto frame : frames) {
+            int ret = frame->close();
+            if (ret) {
+                return ret;
+            }
+            delete frame;
+        }
+        frames.clear();
+        slices.clear();
+        return 0;
+    }
+    
+    virtual int load(const char *fname)
+    {
+        std::string file_path = convert_path_resource(fname);
+        XStream s;
+        s.open(file_path);
+        s.read(&data, sizeof(ANIHeader));
+
+        //Basic checks
+        if (memcmp(data.riff.id, "RIFF", 4) != 0) {
+            ErrH.Abort("File doesn't contain RIFF header ID " + file_path);
+        }
+        if (memcmp(data.header_acon, "ACON", 4) != 0) {
+            ErrH.Abort("File doesn't contain ACON header ID " + file_path);
+        }
+        if (memcmp(data.chunk_anih.id, "anih", 4) != 0) {
+            ErrH.Abort("File doesn't contain anih chunk " + file_path);
+        }
+        if (data.chunk_anih.size != 36 || data.header_size != 36) {
+            ErrH.Abort("File anih chunk size invalid " + file_path);
+        }
+        if (!(data.flags & 0b1)) {   
+            ErrH.Abort("Animation is not icon/cursor " + file_path);
+        }
+        
+        //Setup default data unless they are specified in chunks
+        std::vector<uint32_t> frame_order;
+        frame_order.reserve(data.frames);
+        for (int i = 0; i < data.frames; ++i) {
+            frame_order.emplace_back(i);
+        }
+        std::vector<int> frame_delay;
+        frame_delay.reserve(data.steps);
+        for (int i = 0; i < data.steps; ++i) {
+            frame_delay.emplace_back(data.fps);
+        }
+
+        //Parse the chunks
+        char* chunk_name = new char[5];
+        uint32_t chunk_size = 0;
+        while (!s.eof()) {
+            s.read(chunk_name, 4);
+            chunk_name[4] = '\0';
+            s.read(chunk_size);
+            size_t chunk_end = s.tell() + chunk_size; 
+            std::string name = chunk_name;
+            if (name == "LIST") {
+                s.read(chunk_name, 4);
+                if (memcmp(chunk_name, "fram", 4) != 0) {
+                    ErrH.Abort("Unknown LIST type in " + file_path);
+                }
+                
+                //Parse each frame in list
+                for (int i = 0; i < data.frames; ++i) {
+                    RIFF_chunk icon_chunk {};
+                    s.read(icon_chunk);
+                    if (memcmp(icon_chunk.id, "icon", 4) != 0) {
+                        ErrH.Abort("Unknown frame type in " + file_path);
+                    }
+                    //Load this frame data into memory
+                    uint8_t* frame_data = new uint8_t[icon_chunk.size];
+                    s.read(frame_data, icon_chunk.size);
+                    
+                    //Create image from data in mem and add to frames
+                    SDL_RWops* ops = SDL_RWFromMem(frame_data, static_cast<int>(icon_chunk.size));
+                    cSDLImage* frame_image = new cSDLImage();
+                    int err = frame_image->loadRW(ops);
+                    frames.emplace_back(frame_image);
+                    
+                    delete[] frame_data;
+                    
+                    if (err) {
+                        close();
+                        return 1;
+                    }
+
+                    if (s.pos & 1) {
+                        s.pos += 1;
+                    }
+                }
+            } else if (name == "seq ") {
+                frame_order.clear();
+                uint32_t v = 0;
+                while (s.tell() < chunk_end) {
+                    s.read(v);
+                    frame_order.emplace_back(v);
+                }
+                if (frame_order.size() != data.steps) {
+                    ErrH.Abort("Seq chunk size mismatch in " + file_path);
+                }
+            } else if (name == "rate") {
+                frame_delay.clear();
+                uint32_t v = 0;
+                while (s.tell() < chunk_end) {
+                    s.read(v);
+                    frame_delay.emplace_back(static_cast<int>(v));
+                }
+                if (frame_delay.size() != data.steps) {
+                    ErrH.Abort("Rate chunk size mismatch in " + file_path);
+                }
+            } else {
+                ErrH.Abort("Unknown chunk type in " + file_path);
+            }
+            if (s.tell() != chunk_end) {
+                ErrH.Abort("Chunk end " + std::to_string(chunk_end)
+                + " but current pos is " + std::to_string(s.tell())
+                + " in " + file_path);
+            }
+        }
+        s.close(); 
+        
+        //Calculate some time stuff
+        time = 0;
+        int lowest_delay = 0;
+        for (int i = 0; i < data.steps; ++i) {
+            //Convert jiffies (1/60 sec) to ms
+            frame_delay[i] = static_cast<uint32_t>(round((static_cast<float>(frame_delay[i]) / 60.0) * 1000));
+            int v = frame_delay[i];
+            time += v;
+            if (lowest_delay == 0 || v < lowest_delay) {
+                lowest_delay = v;
+            }
+        }
+        //All cursors are 32x32
+        x = y = 32;
+        //Use the lowest delay to "slice" as smallest step
+        length = time / lowest_delay;
+
+        //ICO/CUR are always 32 bits per pixel surfaces
+        bpp = 32;
+
+        if (length <= 1) {
+            tpf = 1;
+        } else {
+            tpf = (time - 1) / (length - 1);
+        }
+        
+        //Create slices
+        for (int i = 0; i < data.steps; ++i) {
+            uint32_t index = frame_order[i];
+            int delay = frame_delay[i];
+            if (index >= frames.size()) {
+                ErrH.Abort("Attempted to read frame " + std::to_string(index) + " which is out of bounds " + std::to_string(frames.size()));
+            }
+            cSDLImage* ptr = frames[index];
+            //We may need to repeat some frames to match lowest delay slice
+            int repetitions = delay / lowest_delay;
+            while (repetitions--) {
+                slices.emplace_back(ptr);
+            }
+        }
+
+        return 0;
+    }
+    
+    virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0) {
+        return 0;
+    }
+
+    cSDLImage* getFrameFromTime(int t) {
+        int i = t / tpf;
+        if (i >= frames.size()) {
+            ErrH.Abort("Attempted to read frame " + std::to_string(i) + " which is out of bounds " + std::to_string(frames.size()));
+        }
+        return slices[i];
+    }
+
+    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) {
+        return getFrameFromTime(t)->GetTextureAlpha(pointer, t, bppDst, bplDst, acDst, asDst, xDst, yDst);
+    }
+
+    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst) {
+        return getFrameFromTime(t)->GetTexture(pointer, t, bppDst, bplDst, rc, gc, bc, ac, rs, gs, bs, as, xDst, yDst);
+    }
+};
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cFileImage
 cFileImage* cFileImage::Create(const char *fname)
 {
 	_strlwr((char*)fname);
-	if(strstr(fname,".tga"))
-		return new cTGAImage;
-	else if(strstr(fname,".avi"))
-		return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
-	return 0;
+	if(strstr(fname,".tga")) {
+        return new cTGAImage;
+    } else if(strstr(fname,".avi")) {
+        return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
+    } else if(strstr(fname,".cur") || strstr(fname,".ani")) {
+	    //Since we don't know which ".cur" files are actually CUR or ANI... we do runtime checking
+        std::string file_path = convert_path_resource(fname);
+        char type[4];
+        XStream s;
+        s.open(file_path);
+        s.read(&type, 4);
+        s.close();
+        if (memcmp(type, "RIFF", 4) == 0) {
+            return new cANIImage;
+        } else {
+            return new cSDLImage;
+        }
+    } else if(strstr(fname,".jpg") || strstr(fname,".jpe") || strstr(fname,".png")) {
+        return new cSDLImage;
+    }
+	return nullptr;
 }
 void cFileImage::InitFileImage()
 {
 	cAVIImage::Init();
+    cSDLImage::Init();
 }
 void cFileImage::DoneFileImage()
 {
 	cAVIImage::Done();
+    cSDLImage::Done();
 }
 void GetFileName(const char *FullName,char *fname)
 {
