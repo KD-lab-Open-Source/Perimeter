@@ -202,7 +202,7 @@ cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,
 	bool enable_error=GetTexLibrary()->EnableError(false);
 
 	cTexture *Texture=GetTexLibrary()->GetElement(full_name,attr);
-	if(Texture==0)
+	if(Texture==nullptr)
 	{
 		if(def_path)
 		{
@@ -210,7 +210,7 @@ cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,
 			strcat(full_name,name);
 			Texture=GetTexLibrary()->GetElement(full_name,attr);
 		}
-		if(Texture==0)
+		if(Texture==nullptr)
 		{
 			strcpy(full_name,path);
 			strcat(full_name,name);

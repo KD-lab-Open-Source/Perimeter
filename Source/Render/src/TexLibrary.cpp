@@ -392,16 +392,21 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 */
 	cFileImage *FileImage=0;
 
-	// загрузить текстуру из файла
-	char fName[1024];
-	strcpy(fName,Texture->GetName());
-	FileImage=cFileImage::Create(fName);
-	if(!FileImage)
-	{ // если расширение файла не опознано открыть его при помощи DirectX
+	//Get path for file and open it
+	std::string path = convert_path_resource(Texture->GetName());
+	if (path.empty()) {
+	    //File not found
+        Error(Texture);
+        return false;
+	}
+	
+	FileImage=cFileImage::Create(path.c_str());
+	if(!FileImage) {
+	    //If the file extension is not recognized, open it using DirectX 
 		return ReLoadDDS(Texture);
 	}
 	
-	if(!FileImage||FileImage->load(fName))
+	if(!FileImage||FileImage->load(path.c_str()))
 	{
 		delete FileImage;
 		Error(Texture);

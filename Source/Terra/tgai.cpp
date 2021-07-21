@@ -69,7 +69,7 @@ static XStream tgaFile(0);
 bool TGAHEAD::loadHeader(const char* fname)
 {
 	init();
-	if(!tgaFile.open(fname, XS_IN)) return 0;
+	if(!tgaFile.open(convert_path_resource(fname), XS_IN)) return 0;
 	tgaFile.read(this,sizeof(TGAHEAD));
 	return true;
 }
