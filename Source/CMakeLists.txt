@@ -8,6 +8,9 @@ SET(perimeter_LINK_LIBS
         Render
         Sound
         Network
+        #Libraries
+        ${SDL2_LIBRARY}
+        ${SDL2_IMAGE_LIBRARY}
 )
 
 IF(FFMPEG_FOUND)
@@ -80,8 +83,6 @@ ENDIF()
 if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
-
-SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
