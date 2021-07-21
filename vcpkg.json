@@ -5,6 +5,11 @@
 		"boost-iterator",
 		"boost-type-index",
 		"libvorbis",
-		"sdl2"
+		"sdl2",
+		{
+			"name": "ffmpeg",
+			"default-features": false,
+			"features": [ "avcodec", "avformat" ]
+		}
 	]
 }

@@ -23,6 +23,29 @@ jobs:
           mingw-w64-i686-libvorbis
           mingw-w64-i686-lld
           mingw-w64-i686-libbacktrace
+          mingw-w64-i686-nasm
+          mingw-w64-i686-yasm
+      - name: ffmpeg -- download
+        run: git clone --depth 1 --branch n4.2.2 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+      - name: ffmpeg -- configure
+        run: msys2do ./configure --enable-shared --prefix=/mingw32
+          --disable-everything
+          --enable-swscale
+          --enable-zlib
+          --enable-demuxer=avi,rawvideo
+          --enable-decoder=png,bink,rawvideo
+          --enable-parser=png
+          --enable-protocol=file
+          --disable-d3d11va
+          --disable-dxva2
+          --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg
+          --disable-static --disable-bzlib --disable-libopenjpeg --disable-iconv
+        working-directory: ffmpeg
+      - name: ffmpeg -- build and install
+        run: |
+          msys2do mingw32-make -j4
+          msys2do mingw32-make install
+        working-directory: ffmpeg
       - uses: actions/checkout@v2
       - name: perimeter -- create build dir
         run: msys2do mkdir build
@@ -43,6 +66,10 @@ jobs:
           msys2do cp /mingw32/bin/libvorbis-0.dll perimeter/bin/
           msys2do cp /mingw32/bin/libvorbisfile-3.dll perimeter/bin/
           msys2do cp /mingw32/bin/libbacktrace-0.dll perimeter/bin/
+          msys2do cp /mingw32/bin/avcodec-58.dll perimeter/bin/
+          msys2do cp /mingw32/bin/avformat-58.dll perimeter/bin/
+          msys2do cp /mingw32/bin/avutil-56.dll perimeter/bin/
+          msys2do cp /mingw32/bin/zlib1.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
       - uses: actions/upload-artifact@v1
         with:
@@ -66,6 +93,29 @@ jobs:
           mingw-w64-i686-libvorbis
           mingw-w64-i686-lld
           mingw-w64-i686-libbacktrace
+          mingw-w64-i686-nasm
+          mingw-w64-i686-yasm
+      - name: ffmpeg -- download
+        run: git clone --depth 1 --branch n4.2.2 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+      - name: ffmpeg -- configure
+        run: msys2do ./configure --enable-shared --prefix=/mingw32
+          --disable-everything
+          --enable-swscale
+          --enable-zlib
+          --enable-demuxer=avi,rawvideo
+          --enable-decoder=png,bink,rawvideo
+          --enable-parser=png
+          --enable-protocol=file
+          --disable-d3d11va
+          --disable-dxva2
+          --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg
+          --disable-static --disable-bzlib --disable-libopenjpeg --disable-iconv
+        working-directory: ffmpeg
+      - name: ffmpeg -- build and install
+        run: |
+          msys2do mingw32-make -j4
+          msys2do mingw32-make install
+        working-directory: ffmpeg
       - uses: actions/checkout@v2
       - name: perimeter -- create build dir
         run: msys2do mkdir build
@@ -86,6 +136,10 @@ jobs:
           msys2do cp /mingw32/bin/libvorbis-0.dll perimeter/bin/
           msys2do cp /mingw32/bin/libvorbisfile-3.dll perimeter/bin/
           msys2do cp /mingw32/bin/libbacktrace-0.dll perimeter/bin/
+          msys2do cp /mingw32/bin/avcodec-58.dll perimeter/bin/
+          msys2do cp /mingw32/bin/avformat-58.dll perimeter/bin/
+          msys2do cp /mingw32/bin/avutil-56.dll perimeter/bin/
+          msys2do cp /mingw32/bin/zlib1.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
           msys2do strip perimeter/bin/perimeter.exe
       - uses: actions/upload-artifact@v1

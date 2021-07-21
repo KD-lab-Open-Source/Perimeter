@@ -10,6 +10,10 @@ SET(perimeter_LINK_LIBS
         Network
 )
 
+IF(FFMPEG_FOUND)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBRARIES})
+ENDIF()
+
 IF(NOT PERIMETER_WINDOWS)
     #Non Windows target specifics
     

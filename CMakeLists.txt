@@ -59,7 +59,7 @@ OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 
 
 # depends
-FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
+FIND_PACKAGE(Boost REQUIRED)
 IF(MSVC_CL_BUILD)
     FIND_PACKAGE(Vorbis CONFIG REQUIRED)
     SET(Vorbis_FOUND TRUE)
@@ -84,17 +84,31 @@ ELSE()
         /opt
         /local
         C:/MinGW
+        /usr/include/x86_64-linux-gnu
+        /usr/include/aarch64-linux-gnu
+        /usr/lib/x86_64-linux-gnu
+        /usr/lib/aarch64-linux-gnu
     ")
     
     SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
     
     FIND_PACKAGE(Vorbis)
+    #This makes SDL2 not include SDL2main
     SET(SDL2_BUILDING_LIBRARY ON)
     FIND_PACKAGE(SDL2 REQUIRED)
 ENDIF()
+
 IF(NOT PERIMETER_WINDOWS)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     FIND_PACKAGE(Threads REQUIRED)
+ENDIF()
+
+#FFMPEG used for AVI and video decoding if present
+IF (PERIMETER_WINDOWS)
+    FIND_PACKAGE(FFMPEG)
+ELSE()
+    #Required since there is no alternative for loading AVI textures 
+    FIND_PACKAGE(FFMPEG REQUIRED)
 ENDIF()
 
 # globals
@@ -103,7 +117,21 @@ INCLUDE_DIRECTORIES(SYSTEM
     ${SDL2_INCLUDE_DIR}
 )
 
+IF(FFMPEG_FOUND)
+    #FFMPEG is found
+    ADD_DEFINITIONS(-DPERIMETER_FFMPEG)
+    INCLUDE_DIRECTORIES(${FFMPEG_INCLUDE_DIRS})
+ENDIF()
+
 IF(NOT MSVC_CL_BUILD)
+    # Configure lib suffixes for MinGW unless is static build
+    IF(MINGW AND NOT OPTION_STATIC_BUILD)
+        SET(CMAKE_FIND_LIBRARY_SUFFIXES
+            ".a"
+            ".dll.a"
+            ".a.lib"
+        )
+    ENDIF()
     IF(OPTION_STATIC_BUILD)
         SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
         SET(BUILD_SHARED_LIBS OFF)
