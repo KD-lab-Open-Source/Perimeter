@@ -16,7 +16,6 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Network_SRCS
-        dplay8guid.cpp
         CommonCommands.cpp
         CommonEvents.cpp
         ConnectionDP.cpp
@@ -34,6 +33,7 @@ IF(PERIMETER_EXODUS)
     )
 ELSE()
     SET(Network_SRCS ${Network_SRCS}
+        dplay8guid.cpp
         P2P_interface2ThDPF.cpp
         P2P_interface3ThDP.cpp
     )
