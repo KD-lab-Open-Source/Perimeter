@@ -32,12 +32,6 @@
 
 int ResourceFileRead(const char *fname,char *&buf,int &size);
 
-
-#ifdef USE_JPEG
-#include "jpeglib.h"	// JPG include
-#pragma comment (lib,"jpeg") // JPG library
-#endif //USE_JPEG
-
 #ifndef ABS
 #define ABS(a)										((a)>=0?(a):-(a))
 #endif // ABS
@@ -659,172 +653,6 @@ public:
 	}
 };
 #endif
-//////////////////////////////////////////////////////////////////////////////////////////
-// реализация интерфейса cJPGImage
-//////////////////////////////////////////////////////////////////////////////////////////
-#ifdef USE_JPEG
-struct my_error_mgr
-{
-	struct jpeg_error_mgr pub;	// "public" fields
-	jmp_buf setjmp_buffer;		// for return to caller
-};
-typedef struct my_error_mgr * my_error_ptr;
-
-METHODDEF(void) my_error_exit (j_common_ptr cinfo)
-{
-	// cinfo->err really points to a my_error_mgr struct, so coerce pointer
-	my_error_ptr myerr = (my_error_ptr) cinfo->err;
-	// Always display the message.
-	// We could postpone this until after returning, if we chose.
-	(*cinfo->err->output_message) (cinfo);
-	// Return control to the setjmp point
-	longjmp(myerr->setjmp_buffer, 1);
-}
-METHODDEF(void) JPG_init_source (j_decompress_ptr cinfo)
-{
-	jpeg_source_mgr *src = cinfo->src;
-	src->start_of_file = TRUE;
-}
-METHODDEF(boolean) JPG_fill_input_buffer (j_decompress_ptr cinfo)
-{
-	jpeg_source_mgr *src = (jpeg_source_mgr*) cinfo->src;
-	src->start_of_file = FALSE;
-	return TRUE;
-}
-METHODDEF(void) JPG_term_source (j_decompress_ptr cinfo)
-{
-}
-METHODDEF(void) JPG_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
-{
-	jpeg_source_mgr *src = cinfo->src;
-	if (num_bytes > 0) 
-	{
-		while (num_bytes > (long) src->bytes_in_buffer) 
-		{
-			num_bytes -= (long) src->bytes_in_buffer;
-			JPG_fill_input_buffer(cinfo);
-		}
-		src->next_input_byte += (size_t) num_bytes;
-		src->bytes_in_buffer -= (size_t) num_bytes;
-	}
-}
-void JPG_stdio_source (j_decompress_ptr cinfo,void *FileBuf,int FileSize)
-{
-	jpeg_source_mgr *src;
-
-	if (cinfo->src == NULL) // first time for this JPEG object?
-		cinfo->src = (struct jpeg_source_mgr*) (*cinfo->mem->alloc_small)
-			((j_common_ptr) cinfo, JPOOL_PERMANENT, sizeof(jpeg_source_mgr) );
-
-	src = cinfo->src;
-	src->init_source = JPG_init_source;
-	src->fill_input_buffer = JPG_fill_input_buffer;
-	src->skip_input_data = JPG_skip_input_data;
-	src->resync_to_restart = jpeg_resync_to_restart; /* use default method */
-	src->term_source = JPG_term_source;
-	src->buffer = (unsigned char*) FileBuf;
-	src->next_input_byte = src->buffer;
-	src->bytes_in_buffer = FileSize;
-	src->infile = (FILE*) 0xFFFFFFFF; // hint !!!
-}
-
-class cJPGImage : public cFileImage
-{
-	char *ImageData; 
-public:
-	cJPGImage()													{ length=1; ImageData=0; }
-	virtual ~cJPGImage()										{ close(); }
-	virtual int close()											
-	{ 
-		if(ImageData) delete ImageData; ImageData=0;
-		return 0; 
-	}
-	virtual int load(void *FileBuf,int FileSize)
-	{
-		close();
-		struct jpeg_decompress_struct cinfo;
-		struct my_error_mgr jerr;
-
-		// Step 1: allocate and initialize JPEG decompression object
-		cinfo.err = jpeg_std_error(&jerr.pub);
-		jerr.pub.error_exit = my_error_exit;
-		// Establish the setjmp return context for my_error_exit to use.
-		if (setjmp(jerr.setjmp_buffer)) 
-		{
-			jpeg_destroy_decompress(&cinfo);
-			delete FileBuf;
-			return 1;
-		}
-		// Now we can initialize the JPEG decompression object.
-		jpeg_create_decompress(&cinfo);
-		// Step 2: specify data source (eg, a file)
-		JPG_stdio_source( &cinfo, FileBuf, FileSize ); // jpeg_stdio_src(&cinfo, fp);
-		// Step 3: read file parameters with jpeg_read_header()
-		jpeg_read_header(&cinfo, TRUE);
-		// Step 4: set parameters for decompression
-		// Step 5: Start decompressor 
-		jpeg_start_decompress(&cinfo);
-
-		x = cinfo.output_width;
-		y = cinfo.output_height;
-		bpp = cinfo.num_components*8;
-		int bpl = cinfo.output_width * cinfo.output_components;
-		ImageData = new char[bpl*y];
-
-		// Make a one-row-high sample array that will go away when done with image
-		JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, bpl, 1);
-		// Step 6: while (scan lines remain to be read) jpeg_read_scanlines(...);
-		for(int j=0;cinfo.output_scanline < cinfo.output_height; j++) 
-		{
-			jpeg_read_scanlines( &cinfo, buffer, 1 );
-			memcpy( &ImageData[j*bpl], buffer[0], bpl);
-		}
-		/* Step 7: Finish decompression */
-		jpeg_finish_decompress(&cinfo);
-		/* Step 8: Release JPEG decompression object */
-		jpeg_destroy_decompress(&cinfo);
-		delete FileBuf;
-		return 0;
-	}
-	virtual int load(const char *fname)
-	{
-		int FileSize=0;
-		char *FileBuf=0;
-		if( ResourceFileRead( fname, FileBuf, FileSize ) ) return 1;
-		load( FileBuf, FileSize );
-		return 0;
-	}
-	virtual int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
-	{
-		if(GetBitPerPixel()==24)
-			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									ImageData,3,GetX()*3,8,0,GetX(),GetY());
-		else if(GetBitPerPixel()==32)
-			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									ImageData,4,GetX()*4,8,24,GetX(),GetY());
-		else if(GetBitPerPixel()==16)
-			cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
-									ImageData,2,GetX()*2,31,0,GetX(),GetY());
-		return 0;
-	}
-	virtual int GetTexture(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
-	{ 
-		if(GetBitPerPixel()==24)
-			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								ImageData,3,GetX()*3,8,0,8,8,8,16,GetX(),GetY());
-		else if(GetBitPerPixel()==32)
-			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								ImageData,4,GetX()*4,8,0,8,8,8,16,GetX(),GetY());
-		else if(GetBitPerPixel()==16)
-			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
-								ImageData,2,GetX()*2,5,10,5,5,5,0,GetX(),GetY());
-		return 0;
-	}
-	static void Init()													{}
-	static void Done()													{}
-};
-
-#endif //USE_JPEG
 
 ///////////////////////////////////////////////
 ///AVIX
@@ -926,10 +754,6 @@ cFileImage* cFileImage::Create(const char *fname)
 		return new cTGAImage;
 	else if(strstr(fname,".avi"))
 		return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
-#ifdef USE_JPEG
-	else if(strstr(fname,".jpg"))
-		return new cJPGImage;
-#endif //USE_JPEG
 	return 0;
 }
 void cFileImage::InitFileImage()
