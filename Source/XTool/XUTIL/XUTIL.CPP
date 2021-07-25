@@ -231,16 +231,50 @@ void terminate_with_char(std::string& buffer, const char chr) {
     }
 }
 
-void terminate_float_with_dot(char* buffer, size_t max) {
-    size_t size = strlen(buffer);
+void terminate_float_text(char* buffer, size_t size_max, int digits) {
+    int size = static_cast<int>(strlen(buffer));
+    digits = 0 < digits ? digits : 0;
 
     //Check if already has one or we cant add it
-    for (int i = 0; i < size; ++i) {
-        if (buffer[i] == '.' || buffer[i] == 'e') {
-            return;
+    int pos_dot = -1;
+    bool all_zeros = true;
+    int zeros_amount = 0;
+    if (0 < size) {
+        for (int i = size - 1; 0 <= i; --i) {
+            if (buffer[i] == 'e') {
+                return;
+            }
+            if (buffer[i] == '.') {
+                pos_dot = i;
+                break;
+            }
+            if (all_zeros) {
+                if (buffer[i] == '0') {
+                    zeros_amount++;
+                } else {
+                    all_zeros = false;
+                }
+            }
         }
     }
+    
+    //Remove zeros that are exceeded
+    int after_dot = size - 1 - pos_dot;
+    if (0 < zeros_amount && digits < after_dot) {
+        size = pos_dot + 1 + (std::max)(digits, after_dot - zeros_amount);
+        buffer[size] = '\0';
+    }
 
-    //Append to end and store
-    strncat(buffer, ".", max);
+    //Append to end if missing
+    if (pos_dot == -1) {
+        strncat(buffer, ".", size_max);
+        pos_dot = size;
+        size++;
+    }
+    
+    //Add zeros to fit digits if its positive
+    after_dot = size - 1 - pos_dot;
+    for (int i = 0; i < digits - after_dot; ++i) {
+        strncat(buffer, "0", size_max);
+    }
 }

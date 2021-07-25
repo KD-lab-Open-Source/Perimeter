@@ -183,7 +183,10 @@ class WriteStream : public XBuffer
 	enum { line_lenght = 80 };
 	int offset_;
 public:
-	WriteStream() : XBuffer(100000, 1), offset_(0) {}
+	WriteStream() : XBuffer(100000, 1), offset_(0) {
+	    //Don't add zeroes in round numbers
+        SetDigits(-XB_DEFDIGITS);
+	}
 	void check_line() { if(tell() - offset_ > line_lenght){ (*this) < " \r\n "; offset_ = tell(); } }
 };
 

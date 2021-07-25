@@ -2,6 +2,9 @@
 #ifndef __XUTL_H
 #define __XUTL_H
 
+#define PRINTF_FLOATING_FORMAT "%.*f"
+#define PRINTF_LONG_FLOATING_FORMAT "%.*Lf"
+
 unsigned int XRnd(unsigned int m);
 void XRndSet(unsigned int m);
 unsigned int XRndGet();
@@ -92,7 +95,7 @@ std::string convert_path_resource(const char* path, bool parent_only = false);
 void terminate_with_char(std::string& buffer, const char chr);
 
 //Replicate legacy behavior and add dot if not present
-void terminate_float_with_dot(char* buffer, size_t max);
+void terminate_float_text(char* buffer, size_t max, int digits);
 
 //Scans dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
 void scan_resource_paths(std::string scan_path = "");

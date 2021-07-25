@@ -7,24 +7,24 @@
 
 XBuffer& XBuffer::operator<= (float var)
 {
-    snprintf(convBuf, XB_CONV_BUFFER_LEN, "%.*g", digits, var);
-    terminate_float_with_dot(convBuf, XB_CONV_BUFFER_LEN);
+    snprintf(convBuf, XB_CONV_BUFFER_LEN, PRINTF_FLOATING_FORMAT, std::abs(digits), var);
+    terminate_float_text(convBuf, XB_CONV_BUFFER_LEN, digits);
 	write(convBuf, strlen(convBuf), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (double var)
 {
-    snprintf(convBuf, XB_CONV_BUFFER_LEN, "%.*g", digits, var);
-    terminate_float_with_dot(convBuf, XB_CONV_BUFFER_LEN);
+    snprintf(convBuf, XB_CONV_BUFFER_LEN, PRINTF_FLOATING_FORMAT, std::abs(digits), var);
+    terminate_float_text(convBuf, XB_CONV_BUFFER_LEN, digits);
 	write(convBuf, strlen(convBuf), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (long double var)
 {
-    snprintf(convBuf, XB_CONV_BUFFER_LEN, "%.*Lg", digits, var);
-    terminate_float_with_dot(convBuf, XB_CONV_BUFFER_LEN);
+    snprintf(convBuf, XB_CONV_BUFFER_LEN, PRINTF_LONG_FLOATING_FORMAT, std::abs(digits), var);
+    terminate_float_text(convBuf, XB_CONV_BUFFER_LEN, digits);
 	write(convBuf, strlen(convBuf), 0);
 	return *this;
 }
