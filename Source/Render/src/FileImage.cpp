@@ -755,7 +755,7 @@ public:
 ///FileImage wrapper that uses SDL_image for image loading 
 ///////////////////////////////////////////////
 
-#if 2 <= SDL_IMAGE_MAJOR_VERSION && !(0 == SDL_IMAGE_MINOR_VERSION && 7 > SDL_IMAGE_PATCHLEVEL)
+#if SDL_IMAGE_VERSION_ATLEAST(2, 0, 7)
 //On version 2.0.7 and onwards should support 24 bits ICO/CUR images
 #define SDL_IMAGE_ICOCUR_24
 #endif
