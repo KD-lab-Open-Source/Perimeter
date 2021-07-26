@@ -12,6 +12,7 @@
 
 void XBuffer::alloc(unsigned int sz)
 {
+    free();
 	buf = (char*)malloc(size = sz);
 	offset = 0L;
 	digits = XB_DEFDIGITS;
@@ -20,6 +21,8 @@ void XBuffer::alloc(unsigned int sz)
 }
 
 XBuffer::XBuffer(unsigned int sz, int automatic_realloc_) {
+    buf = nullptr;
+    MakeFree = 1;
     alloc(sz);
     digits = XB_DEFDIGITS;
     automatic_realloc = automatic_realloc_;
@@ -40,7 +43,7 @@ void XBuffer::free(void)
 	if(MakeFree && buf){
 		::free(buf);
 		buf = NULL;
-		}
+    }
 }
 
 void XBuffer::fill(char fc)
