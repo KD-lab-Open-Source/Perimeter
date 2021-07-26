@@ -277,6 +277,11 @@ if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
 ENDIF()
 
+IF(OPTION_GPERFTOOLS)
+    MESSAGE("WARNING: Linking gperftools")
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc)
+ENDIF()
+
 TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
 
 #This is the only way I know to force download of external project from any targets
