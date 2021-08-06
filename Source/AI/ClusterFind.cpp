@@ -401,8 +401,8 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 				break;
 			}
 		}
-	}
-	xassert(i<size_child8);
+        xassert(i<size_child8);
+    }
 
 	xassert(pmap[end_point.y*dx+end_point.x]==qcenter);
 
@@ -426,8 +426,8 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 						break;
 					}
 				}
-			}
-			xassert(i<size_child8);
+                xassert(i<size_child8);
+            }
 		}
 
 		if(p.size()>3)

@@ -20,7 +20,7 @@ jobs:
       - name: create build dir
         run: mkdir build
       - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DOPTION_PROCESS_SCRIPTS=ON
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DOPTION_PROCESS_SCRIPTS=ON -DOPTION_DEBUG_ASSERT=ON
         working-directory: build
       - name: build dependencies
         run: ninja dependencies
