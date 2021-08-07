@@ -2,45 +2,12 @@
 #ifndef __XUTL_H
 #define __XUTL_H
 
+#define PRINTF_FLOATING_FORMAT "%.*f"
+#define PRINTF_LONG_FLOATING_FORMAT "%.*Lf"
+
 unsigned int XRnd(unsigned int m);
 void XRndSet(unsigned int m);
 unsigned int XRndGet();
-
-#ifndef __ROUND__
-#define __ROUND__
-
-// Modern compilers already have std::round
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-
-__forceinline int round(double x)
-{
-	int a;
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-	return a;
-}
-
-__forceinline int round(float x)
-{
-	int a;
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-	return a;
-}
-
-#endif
-
-template <class T> 
-FORCEINLINE T sqr(const T& x){ return x * x; }
-
-template <class T> 
-FORCEINLINE int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
-
-#endif //__ROUND__
 
 /*
 __forceinline int BitSR(int x)
@@ -128,7 +95,7 @@ std::string convert_path_resource(const char* path, bool parent_only = false);
 void terminate_with_char(std::string& buffer, const char chr);
 
 //Replicate legacy behavior and add dot if not present
-void terminate_float_with_dot(char* buffer, size_t max);
+void terminate_float_text(char* buffer, size_t max, int digits);
 
 //Scans dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
 void scan_resource_paths(std::string scan_path = "");

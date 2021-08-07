@@ -2,6 +2,9 @@
 #include <cfloat>
 #include <iostream>
 #include <sstream>
+#include <filesystem>
+#include <csignal>
+#include <SDL.h>
 #ifdef _WIN32 //For Windows specific exHandler code
 #include <windows.h>
 #include <process.h>
@@ -10,8 +13,6 @@
 #include "tweaks.h"
 #include "xstream.h"
 #include "xerrhand.h"
-#include <SDL.h>
-#include <csignal>
 
 static void (*assert_restore_graphics_function)() = 0;
 
@@ -387,8 +388,10 @@ XErrorHandler::XErrorHandler() {
     log_name = SDL_GetPrefPath("KranX Productions", "Perimeter");
 	log_name += "/logfile.txt";
 #endif
-    log_file.open(log_name.c_str(),std::ios::out|std::ios::trunc);
-    log_file.close();
+	if (std::filesystem::exists(log_name)) {
+        log_file.open(log_name.c_str(), std::ios::out | std::ios::trunc);
+        log_file.close();
+    }
 
     //Register handler
 #ifdef _WIN32

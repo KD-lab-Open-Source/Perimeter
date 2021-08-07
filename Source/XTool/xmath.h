@@ -83,41 +83,11 @@ const int INT_INF = 0x7fffffff;
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ROUND__
-#define __ROUND__
-
-// Modern compilers already have std::round
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-
-xm_inline int round(double x)
-{
-	int a;
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-	return a;
-}
-
-xm_inline int round(float x)
-{
-	int a;
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-	return a;
-}
-
-#endif
-
 template <class T> 
 xm_inline T sqr(const T& x){ return x*x; }
 
 template <class T> 
 xm_inline int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
-
-#endif // __ROUND__
 
 xm_inline double SIGN(double a, double b) { return b >= 0.0 ? fabs(a) : -fabs(a); }
 xm_inline float SIGN(float a, float b) { return b >= 0.0f ? fabsf(a) : -fabsf(a); }

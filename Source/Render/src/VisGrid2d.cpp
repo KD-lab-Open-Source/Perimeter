@@ -54,9 +54,16 @@ void QuatTree::add(QuatNode& cur)
 	if((cur.xmin<add_xmax || cur.xmax>add_xmin)&&
 	   (cur.ymin<add_ymax || cur.ymax>add_ymin))
 	{
-		int sz=cur.obj.size();
-		for(int i=0;i<sz;i++)
-			add_proc(cur.obj[i],add_param);
+        int sz = cur.obj.size();
+        for (int i = 0; i < sz; i++) {
+            cIUnkClass* obj = cur.obj[i];
+            Vect3f pos = obj->GetCenterObject();
+            if ((add_xmin<=pos.x && pos.x <= add_xmax) &&
+                (add_ymin<=pos.y && pos.y <= add_ymax))
+            {
+                add_proc(obj, add_param);
+            }
+        }
 
 		if(cur.left)
 			add(*cur.left);

@@ -671,8 +671,12 @@ static void SceneLightProc(cIUnkClass* obj,void* param)
 		node->AddLightIntensity(c);
 	}
 /*/
-	node->AddLight(p.light);
-/**/
+
+    float r = (node->GetPosition().trans()-p.pos).norm();
+    if( r <= p.radius * 3.0f)
+    {
+        node->AddLight(p.light);
+    }
 }
 
 void cScene::CaclulateLightAmbient()
@@ -694,7 +698,7 @@ void cScene::CaclulateLightAmbient()
 			p.color=ULight->GetDiffuse();
 			p.color*=2;
 
-			tree.find(Vect2i(p.pos.x,p.pos.y),p.radius,SceneLightProc,&p);
+			tree.find(Vect2i(p.pos.x,p.pos.y),p.radius * 3.5f,SceneLightProc,&p);
 		}
 	}
 }

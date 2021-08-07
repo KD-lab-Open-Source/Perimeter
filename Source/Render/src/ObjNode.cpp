@@ -1133,7 +1133,10 @@ void cObjectNodeRoot::DrawBadUV(cCamera *DrawNode)
 
 void cObjectNodeRoot::AddLight(cUnkLight* light)
 {
-	point_light.push_back(light);
+    //Avoid excessive lights getting added
+    if (point_light.size() <= 20) {
+        point_light.push_back(light);
+    }
 }
 
 void cObjectNodeRoot::GetEmitterMaterial(cObjMaterial& material)

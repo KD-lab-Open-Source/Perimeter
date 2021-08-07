@@ -911,6 +911,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 						gameShell->getNetClient()->StartFindHost();
 						std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+						if (name.empty()) name = gameShell->currentSingleProfile.getCurrentProfile().name;
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
 							input->SetText(name.c_str());
@@ -968,8 +969,8 @@ int SwitchMenuScreenQuant1( float, float ) {
 							int lastWinnedMissionNumber = 1;
 						#else
 							int lastWinnedMissionNumber = gameShell->currentSingleProfile.getLastMissionNumber();
-							if (lastWinnedMissionNumber == historyScene.missionCount()) {
-								lastWinnedMissionNumber--;
+							if (lastWinnedMissionNumber >= historyScene.missionCount()) {
+								lastWinnedMissionNumber = historyScene.missionCount() - 1;
 							}
 						#endif
 
@@ -1115,12 +1116,13 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_NAME_INPUT_SCR:
 					{
-					std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+					    std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+                        if (name.empty()) name = gameShell->currentSingleProfile.getCurrentProfile().name;
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
 							input->SetText(name.c_str());
 						} else {
-							input->SetText("");
+                            input->SetText(qdTextDB::instance().getText("Interface.Menu.EmptyName.NewPlayer"));
 						}
 						input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_IP_INPUT);
 						if (input->getText().empty()) {
