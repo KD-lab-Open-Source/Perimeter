@@ -36,38 +36,6 @@ ELSE()
     SET(Network_SRCS ${Network_SRCS}
         P2P_interface2ThDPF.cpp
         P2P_interface3ThDP.cpp
-        GS_interface.cpp
-        Peer2/peer/peerAutoMatch.cpp
-        Peer2/peer/peerCallbacks.cpp
-        Peer2/peer/peerGlobalCallbacks.cpp
-        Peer2/peer/peerHost.cpp
-        Peer2/peer/peerKeys.cpp
-        Peer2/peer/peerMain.cpp
-        Peer2/peer/peerMangle.cpp
-        Peer2/peer/peerOperations.cpp
-        Peer2/peer/peerPing.cpp
-        Peer2/peer/peerPlayers.cpp
-        Peer2/peer/peerQR.cpp
-        Peer2/peer/peerRooms.cpp
-        Peer2/peer/peerSB.cpp
-        Peer2/darray.cpp
-        Peer2/nonport.cpp
-        Peer2/chat/chatCallbacks.cpp
-        Peer2/chat/chatChannel.cpp
-        Peer2/chat/chatCrypt.cpp
-        Peer2/chat/chatHandlers.cpp
-        Peer2/chat/chatMain.cpp
-        Peer2/chat/chatSocket.cpp
-        Peer2/hashtable.cpp
-        Peer2/pinger/pingerMain.cpp
-        Peer2/md5c.cpp
-        Peer2/qr2/qr2.cpp
-        Peer2/qr2/qr2regkeys.cpp
-        Peer2/serverbrowsing/sb_crypt.cpp
-        Peer2/serverbrowsing/sb_queryengine.cpp
-        Peer2/serverbrowsing/sb_server.cpp
-        Peer2/serverbrowsing/sb_serverbrowsing.cpp
-        Peer2/serverbrowsing/sb_serverlist.cpp
     )
 ENDIF()
 

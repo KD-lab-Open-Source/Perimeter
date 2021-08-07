@@ -187,7 +187,7 @@ enum e_PNCState{
 	PNC_STATE__CLIENT_FIND_HOST=1,
 
 	PNC_STATE__CONNECTION=2,
-	PNC_STATE__INFINITE_CONNECTION_2_IP=3,
+	//PNC_STATE__INFINITE_CONNECTION_2_IP=3,
 	PNC_STATE__CLIENT_TUNING_GAME=4,
 	PNC_STATE__CLIENT_LOADING_GAME=PNC_State_GameRun|5,
 	PNC_STATE__CLIENT_GAME=PNC_State_GameRun|6,
@@ -248,12 +248,10 @@ enum e_PNCStateHost{
 };
 
 
-class GameSpyInterface;
 class PNetCenter {
 public:
 	enum e_PNCWorkMode{
 		PNCWM_LAN,
-		PNCWM_ONLINE_GAMESPY,
 		PNCWM_ONLINE_P2P,
 	};
 	std::list<e_PNCInternalCommand> internalCommandList;
@@ -465,8 +463,6 @@ public:
 		else return 0;
 	}
 
-	//Internet GameSpy
-	GameSpyInterface* gameSpyInterface;
 	void reEnumPlayers(int IP);
 
 #ifndef PERIMETER_EXODUS
@@ -501,8 +497,6 @@ public:
 	void Close(bool flag_immediatle=1);
 	int Connect(GUID _hostID); //const char* lpszHost, int port)
 	int Connect(unsigned int ip);//, int port
-	void StartConnect2IP(unsigned int ip);
-	bool QuantConnect2IP();
 
 	bool isConnected();
 	int Send(const char* buffer, int size, DPNID dpnid, bool flag_guaranted=1);
@@ -557,8 +551,7 @@ public:
 
 	DPNID dpnidClientWhichWeWait; //dpnid игрока которому хост при миграции посылает команду прислать игровые комманды; нужен чтобы в случае выхода переслать комманду другому
 
-
-	//Info for GameSpy
+	//Host info //TODO originally for gamespy, we should use this for public listed hosts in future
 	const char* getMissionName();
 	const char* getGameName();
 	const char* getGameVer();

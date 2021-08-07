@@ -34,7 +34,6 @@ int debug_show_briefing_log;
 int debug_show_mouse_position;
 int debug_show_energy_consumption;
 int debug_show_intf_borders;
-int debug_allow_mainmenu_gamespy;
 int debug_allow_replay;
 int debug_show_lag_stat;
 
@@ -219,7 +218,6 @@ DebugPrm::DebugPrm()
 	debug_show_mouse_position = 0;
 	debug_show_energy_consumption = 0;
 	debug_show_intf_borders = 0;
-	debug_allow_mainmenu_gamespy = 0;
 	debug_allow_replay = 1;
 	debug_show_lag_stat = 0;
 
@@ -272,7 +270,6 @@ void DebugPrm::serialize(Archive& ar)
 	ar & WRAP_OBJECT(debug_show_mouse_position);
 	ar & WRAP_OBJECT(debug_show_energy_consumption);
 	ar & WRAP_OBJECT(debug_show_intf_borders);
-	ar & WRAP_OBJECT(debug_allow_mainmenu_gamespy);
 	ar & WRAP_OBJECT(debug_allow_replay);
 	ar & WRAP_OBJECT(debug_show_lag_stat);
 }

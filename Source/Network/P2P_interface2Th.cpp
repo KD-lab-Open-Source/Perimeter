@@ -2,9 +2,6 @@
 
 #include "Runtime.h"
 #include "P2P_interface.h"
-#ifndef PERIMETER_EXODUS
-#include "GS_interface.h"
-#endif
 
 #include "GameShell.h"
 #include "Universe.h"
@@ -161,12 +158,7 @@ bool PNetCenter::SecondThread(void)
 					clearInOutClientHostBuffers();
 					m_bStarted = false;
 					if(m_state==PNC_STATE__CLIENT_FIND_HOST){
-						if(gameSpyInterface && internalIP){
-							StartConnect2IP(internalIP);
-							m_state=PNC_STATE__INFINITE_CONNECTION_2_IP;
-						}
-						else 
-							m_state=PNC_STATE__CONNECTION;
+                        m_state=PNC_STATE__CONNECTION;
 					}
 					else xassert(0&&"Connecting: command order error(not find host state)");
 				}
@@ -531,47 +523,21 @@ void PNetCenter::LLogicQuant()
 	switch(m_state) {
 
 	case PNC_STATE__CONNECTION:
-#ifndef PERIMETER_EXODUS
-		if(gameSpyInterface){ //Internet
-			unsigned int IP;
-			if(internalIP) IP=internalIP;
-			else IP=gameSpyInterface->getHostIP(m_gameHostID);
-			if(IP==0) {
-				//ErrH.Abort("Unable to find multiplayer server(err2)");
-				ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
-			}
-			if(!Connect(IP)){
-				//ErrH.Abort("Unable to find multiplayer server");
-				ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
-			}
-		}
-		else
-#endif
-		{
-			if(internalIP) {
-				if(!Connect(internalIP)) {
-					ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
-					//ErrH.Abort("Unable to find multiplayer server");
-				}
-			}
-			else {
-				if(!Connect(m_gameHostID)) {
-					ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
-					//ErrH.Abort("Unable to find multiplayer server");
-				}
-			}
-		}
+        if(internalIP) {
+            if(!Connect(internalIP)) {
+                ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
+                //ErrH.Abort("Unable to find multiplayer server");
+            }
+        } else {
+            if(!Connect(m_gameHostID)) {
+                ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
+                //ErrH.Abort("Unable to find multiplayer server");
+            }
+        }
 		//SetConnectionTimeout(TIMEOUT_DISCONNECT);//30s//3600000
 		StopFindHostDP();
 		m_state=PNC_STATE__CLIENT_TUNING_GAME;
 		SetEvent(hCommandExecuted);
-		break;
-	case PNC_STATE__INFINITE_CONNECTION_2_IP:
-		if(QuantConnect2IP()){
-			StopFindHostDP();
-			m_state=PNC_STATE__CLIENT_TUNING_GAME;
-			SetEvent(hCommandExecuted);
-		}
 		break;
 	case PNC_STATE__HOST_TUNING_GAME:
 		{

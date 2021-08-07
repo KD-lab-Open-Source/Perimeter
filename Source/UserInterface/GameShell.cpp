@@ -63,7 +63,7 @@ STARFORCE_API_NEW void CancelEditWorkarea();
 extern HistoryScene historyScene;
 extern HistoryScene bwScene;
 extern BGScene bgScene;
-extern std::string gameSpyRoomName;
+extern std::string cmdlineRoomName;
 extern void PlayMusic(const char *str = 0);
 
 bool terEnableGDIPixel=false;
@@ -114,9 +114,11 @@ void ErrorInitialize3D() {
 	abortWithMessage("Interface.Menu.Messages.Init3DError");
 }
 
-void checkGameSpyCmdLineArg(const char* argument) {
+void checkCmdLineArg(const char* argument) {
 	if (!argument) {
-		abortWithMessage("Interface.Menu.Messages.GameSpyCmdLineError");
+        std::string msg("Missing cmdline argument ");
+        msg += argument;
+        ErrH.Abort(msg.c_str());
 	}
 }
 
@@ -240,33 +242,14 @@ windowClientSize_(1024, 768)
 		ErrH.Abort("Pause!!!");
 	}
 	const char* playerName=check_command_line("playerName");
-#ifndef PERIMETER_EXODUS //Just in case...
-	if (check_command_line("gamespy")) {
-		const char* strPassword=check_command_line("password");
-		if(strPassword==0) strPassword="";
-		checkGameSpyCmdLineArg(playerName);
-		////::MessageBox(0, playerName, "MSG CommandLine", MB_OK);
-		const char* strIP=check_command_line("ip");
-		if(check_command_line("host")){
-			const char* roomName=check_command_line("room");
-			checkGameSpyCmdLineArg(roomName);
-			////::MessageBox(0, roomName, "MSG CommandLine", MB_OK);
-			startOnline(CommandLineData(true, playerName, false, "", GUID(), roomName, strPassword));
-		}
-		else if(check_command_line("client")){
-			checkGameSpyCmdLineArg(strIP);
-			startOnline(CommandLineData(false, playerName, false, strIP, GUID(), "", strPassword));
-		}
-	} else 
-#endif
     if(check_command_line("p2p")){
 		const char* strIP=check_command_line("ip");
-		checkGameSpyCmdLineArg(playerName);
+        checkCmdLineArg(playerName);
 		if(check_command_line("host")){
 			startOnline(CommandLineData(true, playerName, true, "", GUID()));
 		}
 		else if(check_command_line("client")){
-			checkGameSpyCmdLineArg(strIP);
+            checkCmdLineArg(strIP);
 			startOnline(CommandLineData(false, playerName, true, strIP, GUID()));
 		}
 	}

@@ -91,18 +91,6 @@ int PNetCenter::Connect(unsigned int ip)//, int port
 	return Connect(hostID);
 }
 
-void PNetCenter::StartConnect2IP(unsigned int ip)//, int port
-{
-    //TODO
-}
-
-bool PNetCenter::QuantConnect2IP()
-{
-    //TODO
-	GUID hostID;
-	return Connect(hostID);
-}
-
 bool PNetCenter::isConnected()
 {
 	return flag_connected;

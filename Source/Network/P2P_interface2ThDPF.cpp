@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "P2P_interface.h"
-#include "GS_interface.h"
 
 
 #include "GameShell.h"
@@ -688,46 +687,6 @@ int PNetCenter::Connect(unsigned int ip)//, int port
 
 //	if(!m_pLastHostFound)
 //		return 0;
-	GUID hostID;
-	{
-		CAutoLock _Lock(&m_GeneralLock); //! Lock
-		if(internalFoundHostList.empty()) return 0;
-		else hostID=(*internalFoundHostList.begin())->pAppDesc->guidInstance;
-	}
-	return Connect(hostID);
-}
-
-void PNetCenter::StartConnect2IP(unsigned int ip)//, int port
-{
-	char ip_string[17];
-	memset(ip_string, 0, 17);
-	sprintf(ip_string, "%d.%d.%d.%d", IP1(ip), IP2(ip), IP3(ip), IP4(ip));
-
-	{
-		///clearFoundHostList();//Вызывается в StopFindHost
-		StopFindHostDP();
-	}
-
-	StartFindHostDP(ip_string);
-}
-
-bool PNetCenter::QuantConnect2IP()
-{
-/*	unsigned int CONST_MAX_TIME_SLEEP=10000;
-	unsigned int CONST_MIN_TIME_SLEEP=400;
-	unsigned int STEP_TESTING=200;
-	unsigned int time=0;
-	while(time<CONST_MAX_TIME_SLEEP){
-		time+=STEP_TESTING;
-		Sleep(STEP_TESTING);
-		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock
-			if(!internalFoundHostList.empty()) {
-				if(time > CONST_MIN_TIME_SLEEP) break;
-			}
-		}
-	}*/
-
 	GUID hostID;
 	{
 		CAutoLock _Lock(&m_GeneralLock); //! Lock
