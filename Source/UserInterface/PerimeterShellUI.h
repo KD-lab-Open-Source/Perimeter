@@ -1441,9 +1441,7 @@ class CShellCursorManager
 		union
 		{
 			cTexture* hCursorProgram;
-			HCURSOR   hCursorSystem;
 		};
-		char bCursorSystem;
 		char bHotspotCentred;
 		float sx, sy;
 	};
@@ -1452,7 +1450,7 @@ class CShellCursorManager
 	float cur_x, cur_y;
 	std::deque<CURSOR> m_cursors;
 	CURSOR*       m_pActiveCursor;
-	HCURSOR       m_hCursorDefault;
+    CURSOR*       m_pCursorDefault;
 	int           m_nCursorShift;
 
 	cFont*        m_hFontCursorWorkarea;
@@ -1825,7 +1823,9 @@ extern CShellIconManager   _shellIconManager;
 extern CShellCursorManager _shellCursorManager;
 extern MissionDescription *gb_SelectWorld;
 
-inline void _WaitCursor() { ::SetCursor((HCURSOR)LoadImage(0, "resource\\cursors\\wait.ani", IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE)); }
+inline void _WaitCursor() {
+    _shellCursorManager.SetActiveCursor(CShellCursorManager::wait);
+}
 
 ////
 //event handlers

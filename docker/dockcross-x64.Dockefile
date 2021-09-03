@@ -18,5 +18,7 @@ RUN rm -rf /work/boost_1_76_0
 WORKDIR /work
 
 RUN apt-get install -y \
+ mxe-x86-64-w64-mingw32.shared-ffmpeg \
  mxe-x86-64-w64-mingw32.shared-vorbis \
- mxe-x86-64-w64-mingw32.shared-sdl2
+ mxe-x86-64-w64-mingw32.shared-sdl2 \
+ mxe-x86-64-w64-mingw32.shared-sdl2-image

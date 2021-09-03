@@ -45,6 +45,7 @@ struct XErrorHandler
 	void	 SetRestore(void (*rf)());
 	void	 SetState(int s){state=s;}
 	void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
+    void	 Abort(const std::string& message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
 	void	 Exit();
 	void	 RTC(const char *file,unsigned int line, const char *expr);
 };

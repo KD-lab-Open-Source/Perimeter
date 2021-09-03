@@ -24,7 +24,7 @@ HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, 
 HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer)
 {
 
-	CAutoLock _lock(&m_GeneralLock);
+	CAutoLock _lock(m_GeneralLock);
 	switch(dwMessageId) {
 	case DPN_MSGID_INDICATE_CONNECT:
 		{

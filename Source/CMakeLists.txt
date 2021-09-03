@@ -8,16 +8,20 @@ SET(perimeter_LINK_LIBS
         Render
         Sound
         Network
+        #Libraries
+        ${SDL2_LIBRARY}
+        ${SDL2_IMAGE_LIBRARY}
 )
+
+IF(FFMPEG_FOUND)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBRARIES})
+ENDIF()
 
 IF(NOT PERIMETER_WINDOWS)
     #Non Windows target specifics
     
     INCLUDE(FetchContent)
     INCLUDE(ExternalProject)    
-    
-    #Exodus wrapper libs
-    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/Source/Exodus")
 
     #pevents retrieval
     FetchContent_Declare(pevents
@@ -27,7 +31,6 @@ IF(NOT PERIMETER_WINDOWS)
     )
     FetchContent_MakeAvailable(pevents)
     ADD_DEFINITIONS(-DWFMO)
-    INCLUDE_DIRECTORIES("${pevents_SOURCE_DIR}/src")
 
     #DXVK-native wrapper lib retrieval and building
     ExternalProject_Add(dxvk-native
@@ -45,9 +48,15 @@ IF(NOT PERIMETER_WINDOWS)
             "${SOURCE_DIR}/include/native/windows"
     )
     set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
-    
-    INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
+
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
+
+    #Includes
+    INCLUDE_DIRECTORIES(
+            "${PROJECT_SOURCE_DIR}/Source/Exodus"
+            "${pevents_SOURCE_DIR}/src"
+            "${DXVK_NATIVE_INCLUDE_DIRS}"
+    )
 ELSE()
     #DirectX SDK libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
@@ -66,10 +75,7 @@ ADD_SUBDIRECTORY("Network")
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-        Exodus
-        Threads::Threads
-    )
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
 ELSE()
     ADD_SUBDIRECTORY("PlayOgg")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)
@@ -77,8 +83,6 @@ ENDIF()
 if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
 ENDIF()
-
-SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${SDL2_LIBRARY})
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
@@ -102,11 +106,14 @@ IF(PERIMETER_WINDOWS)
         #Windows libs
         winmm
         wsock32
-        comctl32
-        advapi32
-        vfw32
-        strmiids
     )
+    
+    #Use these libs as AVI fallback
+    IF(NOT FFMPEG_FOUND)
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+            vfw32
+        )
+    ENDIF()
 
     IF(MSVC_CL_BUILD)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
@@ -204,6 +211,7 @@ SET(perimeter_SRCS
         Util/SaveActions-1251.cpp
         Util/SaveOthers-1251.cpp
         Util/Save.cpp
+        Util/AVWrapper.cpp
         Game/StdAfx.cpp
         Util/SynchroTimer.cpp
         Util/SystemUtil.cpp

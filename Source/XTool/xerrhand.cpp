@@ -464,6 +464,11 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 	exit(code);
 }
 
+
+void XErrorHandler::Abort(const std::string& message, int code, int val, const char* subj) {
+    Abort(message.c_str(), code, val, subj);
+}
+
 void XErrorHandler::Exit()
 {
 	if(restore_func) {

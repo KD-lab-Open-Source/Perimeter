@@ -15,8 +15,6 @@
 //		Keys
 /////////////////////////////////////////////////////////////////////////////////
 
-#ifdef PERIMETER_EXODUS_WINDOW
-
 //If you wonder why we are converting SDL2 keys into VK_*, mostly to keep compatibility with controls.init and
 //existing code
 
@@ -173,7 +171,6 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     if(key == VK_MENU)
         menu |= 1;
 }
-#endif
 
 sKey::sKey(int fullkey_, bool set_by_async_funcs) {
     fullkey = fullkey_;

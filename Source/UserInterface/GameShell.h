@@ -10,9 +10,7 @@
 #include "../Network/P2P_interface.h"
 #include "LogicUpdater.h"
 #include "ReelManager.h"
-#ifdef PERIMETER_EXODUS_WINDOW
 #include <SDL_events.h>
-#endif
 
 class MissionEditor;
 
@@ -75,11 +73,7 @@ public:
 	std::string getTotalTime() const;
 
 //------------------------
-#ifdef PERIMETER_EXODUS_WINDOW
     void EventHandler(SDL_Event& event);
-#else
-	void EventHandler(UINT uMsg,WPARAM wParam,LPARAM lParam);
-#endif
 	void KeyPressed(sKey &key);
 	void KeyUnpressed(sKey &key);
 	bool DebugKeyPressed(sKey& Key);
@@ -168,7 +162,7 @@ public:
 
 	const Vect3f& mapMoveStartPoint() const { return mapMoveStartPoint_; }
 
-	void setWindowClientSize(const Vect2i& size) { windowClientSize_ = size; }
+	void setWindowClientSize(const Vect2i& size);
 	const Vect2i& windowClientSize() const { return windowClientSize_; }
 
 	void setCursorPosition(const Vect2f& pos);
@@ -312,13 +306,6 @@ public:
 	}
 
 private:
-#ifndef PERIMETER_EXODUS_WINDOW
-	static bool canProcessKeyEvent(LPARAM lParam) {
-//		return true;
-		return !(lParam & 0x40000000);
-	}
-#endif
-
 	class CChaos* chaos;
 	
 	bool scriptReelEnabled;

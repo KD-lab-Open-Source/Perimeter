@@ -2,6 +2,8 @@
 
 set -e
 
+mkdir -p build
+
 echo "Triplet: ${CROSS_TRIPLE}"
 if [[ $CROSS_TRIPLE == *shared ]]; then
   LIB_SUFFIX=.dll.a
@@ -14,19 +16,31 @@ fi
 
 #rm -rf build/${CROSS_TRIPLE}
 
+BASE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}"
+
 ${CROSS_TRIPLE}-cmake \
 -B"build/${CROSS_TRIPLE}" \
 -H. \
 -G"Ninja" \
+-DLIBRARY_SEARCH_PATHS=$BASE_DIR \
 -DBoost_INCLUDE_DIR="/usr/local/include" \
--DOGG_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include" \
--DVORBIS_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include" \
--DSDL2_INCLUDE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include/SDL2" \
--DLIBRARY_SEARCH_PATHS="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include" \
--DOGG_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libogg${LIB_SUFFIX}" \
--DVORBIS_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbis${LIB_SUFFIX}" \
--DVORBISFILE_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libvorbisfile${LIB_SUFFIX}" \
--DSDL2_LIBRARY="/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libSDL2main.a;/usr/lib/mxe/usr/${CROSS_TRIPLE}/lib/libSDL2${LIB_SUFFIX}" \
+-DOGG_INCLUDE_DIR="${BASE_DIR}/include" \
+-DVORBIS_INCLUDE_DIR="${BASE_DIR}/include" \
+-DSDL2_INCLUDE_DIR="${BASE_DIR}/include/SDL2" \
+-DSDL2_IMAGE_INCLUDE_DIR="${BASE_DIR}/include/SDL2-image" \
+-DSDL2_NET_INCLUDE_DIR="${BASE_DIR}/include/SDL2-net" \
+-DOFF_AVUTIL_INCLUDE_DIR="${BASE_DIR}/include" \
+-DOFF_AVCODEC_INCLUDE_DIR="${BASE_DIR}/include" \
+-DOFF_AVFORMAT_INCLUDE_DIR="${BASE_DIR}/include" \
+-DOGG_LIBRARY="${BASE_DIR}/lib/libogg${LIB_SUFFIX}" \
+-DVORBIS_LIBRARY="${BASE_DIR}/lib/libvorbis${LIB_SUFFIX}" \
+-DVORBISFILE_LIBRARY="${BASE_DIR}/lib/libvorbisfile${LIB_SUFFIX}" \
+-DSDL2_LIBRARY="${BASE_DIR}/lib/libSDL2${LIB_SUFFIX}" \
+-DSDL2_IMAGE_LIBRARY="${BASE_DIR}/lib/libSDL2_image${LIB_SUFFIX}" \
+-DSDL2_NET_LIBRARY="${BASE_DIR}/lib/libSDL2_net${LIB_SUFFIX}" \
+-DOFF_AVUTIL_LIBRARY="${BASE_DIR}/lib/libavutil${LIB_SUFFIX}" \
+-DOFF_AVCODEC_LIBRARY="${BASE_DIR}/lib/libavcodec${LIB_SUFFIX}" \
+-DOFF_AVFORMAT_LIBRARY="${BASE_DIR}/lib/libavformat${LIB_SUFFIX}" \
 -DOPTION_LINKER_LLD=OFF \
 $@
 

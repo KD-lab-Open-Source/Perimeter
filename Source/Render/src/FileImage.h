@@ -3,6 +3,12 @@
 
 class cFileImage
 {
+protected:
+    int	x,y; //Size
+    int bpp; //Bits per pixel
+    int length; //Amount of frames if is animated or 1
+    int time; //Total time in ms if animated or 0
+    int fmt;
 public:
 	cFileImage()																{ x=y=length=bpp=time=fmt=0; }
 	virtual ~cFileImage()														{}
@@ -25,8 +31,6 @@ public:
 	static void InitFileImage();
 	static void DoneFileImage();
 	static cFileImage* Create(const char *fname);
-protected:
-	int	x,y,bpp,length,time,fmt;
 };
 class cAviScaleFileImage : public cFileImage
 {

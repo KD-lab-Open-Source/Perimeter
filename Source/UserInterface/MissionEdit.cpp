@@ -172,7 +172,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 			terUnitBase* unit = universe()->selectedObject();
 			if(unit){
 				terRenderDevice->Flush(hWndVisGeneric);
-				ShowCursor(1);
+                SDL_ShowCursor(SDL_TRUE);
 				ShareHandle<SaveUnitData> data = unit->universalSave(0);
 				EditArchive editArchive(hWndVisGeneric, TreeControlSetup(0, 0, 500, 400, "editObjectPropsSetup"));
 				if(editArchive.edit(data)){
@@ -193,7 +193,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 					}
 				}
 				terCamera->setFocus(HardwareCameraFocus);
-				ShowCursor(0);				
+                SDL_ShowCursor(SDL_FALSE);
 				RestoreFocus();
 				return true; 
 			}

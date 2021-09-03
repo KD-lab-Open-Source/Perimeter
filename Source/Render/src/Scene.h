@@ -113,7 +113,7 @@ public:
 	}
 	*/
 
-	CRITICAL_SECTION& GetLockDraw(){return lock_draw;}
+    SDL_mutex* GetLockDraw(){return lock_draw;}
 private:
 	void Animate();
 	cObjLibrary			*ObjLibrary;				// библиотека 3d-объектов

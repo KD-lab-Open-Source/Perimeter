@@ -1,22 +1,15 @@
 #include "StdAfx.h"
 #include "ht.h"
 #include "GameShell.h"
-#ifndef PERIMETER_EXODUS
-#include <process.h>
-#endif
-#include "StreamInterpolation.h"
 #include "GenericControls.h"
 #include "Config.h"
 #include "Universe.h"
 #include "LagStatistic.h"
 #include <malloc.h>
 #include <thread>
+#include <SDL_thread.h>
 
-#ifdef PERIMETER_EXODUS
-const THREAD_ID bad_thread_id=-1;
-#else
-const THREAD_ID bad_thread_id=0xFFFFFFFF;
-#endif
+const SDL_threadID bad_thread_id=-1;
 
 HTManager* HTManager::self=NULL;
 HTManager::HTManager(bool ht)
@@ -66,16 +59,10 @@ void HTManager::setSpeedSyncroTimer(float speed)
 	gb_VisGeneric->SetLogicTimePeriodInv(speed*terLogicTimePeriodInv);
 }
 
-#ifdef PERIMETER_EXODUS
-void* logic_thread_init(void*)
-#else
-void __cdecl logic_thread_init( void * argument)
-#endif
+int logic_thread_init(void*)
 {
 	HTManager::instance()->logic_thread();
-#ifdef PERIMETER_EXODUS
 	return 0;
-#endif
 }
 
 void HTManager::setUseHT(bool use_ht_)
@@ -97,13 +84,14 @@ void HTManager::GameStart(const MissionDescription& mission)
 	if(use_ht)
 	{
 		xassert(logic_thread_id==bad_thread_id);
-#ifdef PERIMETER_EXODUS
-        if (CreateThread( nullptr, 0, logic_thread_init, nullptr, 0, &logic_thread_id) == nullptr) {
-            logic_thread_id=bad_thread_id;
+        SDL_Thread* thread = SDL_CreateThread(logic_thread_init, "perimeter_logic_thread", nullptr);
+        if (thread == nullptr) {
+            SDL_PRINT_ERROR("SDL_CreateThread perimeter_logic_thread failed");
+            logic_thread_id = bad_thread_id;
+        }  else {
+            logic_thread_id = SDL_GetThreadID(thread);
+            SDL_DetachThread(thread);
         }
-#else
-		logic_thread_id=_beginthread(::logic_thread_init, 1000000,NULL);
-#endif
 	}
 }
 
@@ -128,18 +116,9 @@ void HTManager::GameClose()
 }
 
 void HTManager::logic_thread()
-{
-#ifndef PERIMETER_EXODUS
-	_alloca(4096+128);
-	CoInitialize(NULL);
-#endif
-	
+{	
 	init_logic=true;
-#ifdef PERIMETER_EXODUS
-    //TODO pthread_setschedprio(pthread_self(), );
-#else
-    SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
-#endif
+    SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
 //	gameShell->GameStart(logic_arg.mission);
 	init_logic=false;
 	if(!start_timer){

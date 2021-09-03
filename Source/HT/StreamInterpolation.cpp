@@ -37,7 +37,7 @@ StreamInterpolator& StreamInterpolator::set(InterpolateFunction func,cIUnkClass*
 {
 	INERROR();
 	int sz=stream.size();
-	xassert(sizeof(func)==4);
+	xassert(sizeof(func)==sizeof(InterpolateFunction));
 	stream.resize(sz+sizeof(func)+sizeof(obj));
 	char* pos=&stream[sz];
 	(*(InterpolateFunction*)pos)=func;

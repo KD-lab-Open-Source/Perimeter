@@ -92,7 +92,8 @@ void ReelManager::showModal(const char* binkFileName, const char* soundFileName,
 
 	visible = true;
 	while (isVisible() && !bink->IsEnd()) {
-#ifndef PERIMETER_EXODUS_WINDOW
+#ifndef PERIMETER_EXODUS
+        //TODO is this necessary under SDL2 in Win32? maybe we should poll SDL2 events?
         MSG msg;
 		if ( PeekMessage(&msg, 0, 0, 0, PM_REMOVE) ) {
 			TranslateMessage( &msg );

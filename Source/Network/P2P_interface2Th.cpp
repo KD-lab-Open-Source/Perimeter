@@ -89,11 +89,7 @@ DWORD WINAPI TestServerThread(LPVOID lpParameter)
 */
 
 //Second thread
-#ifdef PERIMETER_EXODUS
-void* InternalServerThread(LPVOID lpParameter)
-#else
-DWORD WINAPI InternalServerThread(LPVOID lpParameter)
-#endif
+int InternalServerThread(LPVOID lpParameter)
 {
 /*	// TEST thread!!!!
 	DWORD ThreadId;
@@ -102,10 +98,10 @@ DWORD WINAPI InternalServerThread(LPVOID lpParameter)
 
 	PNetCenter* pPNetCenter=(PNetCenter*)lpParameter;
 	pPNetCenter->SecondThread();
-#ifdef PERIMETER_EXODUS
-	//We are creating it with pthread, so we need to manually signal it
+    
+	//We are creating it with SDL thread, so we need to manually signal it
     SetEvent(pPNetCenter->hSecondThread);
-#endif
+    
 	return 0;
 }
 XBuffer BUFFER_LOG(10000,1);
@@ -128,7 +124,7 @@ bool PNetCenter::SecondThread(void)
 	bool flag_end=0;
 
 	while(!flag_end){
-		CAutoLock* _pLock=new CAutoLock(&m_GeneralLock);
+		CAutoLock* _pLock=new CAutoLock(m_GeneralLock);
 		//decoding command 
 		if(internalCommandList.size() > 0){
 			e_PNCInternalCommand curInternalCommand;
@@ -541,7 +537,7 @@ void PNetCenter::LLogicQuant()
 		break;
 	case PNC_STATE__HOST_TUNING_GAME:
 		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock
+			CAutoLock _lock(m_GeneralLock); //! Lock
 
 			m_numberGameQuant= 1;//!
 
@@ -571,7 +567,7 @@ void PNetCenter::LLogicQuant()
 		break;
 	case PNC_STATE__HOST_LOADING_GAME: 
 		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock
+			CAutoLock _lock(m_GeneralLock); //! Lock
 
 			bool flag_ready=1;
 			ClientMapType::iterator i;
@@ -614,7 +610,7 @@ void PNetCenter::LLogicQuant()
 		break;
 	case PNC_STATE__HOST_GAME: 
 		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock
+			CAutoLock _lock(m_GeneralLock); //! Lock
 
 			///list<netCommand4H_BackGameInformation*>::iterator m;
 			std::vector<netCommand4H_BackGameInformation2> & firstList=(*m_clients.begin())->backGameInf2List;
@@ -844,7 +840,7 @@ end_while_01:;
 		{
 			//Ожидание обработки всех комманд игрой
 			{
-				CAutoLock _Lock(&m_GeneralLock); //! Lock
+				CAutoLock _lock(m_GeneralLock); //! Lock
 				if(universe()){
 					if(in_ClientBuf.currentNetCommandID()!=NETCOM_ID_NONE) break;
 					if(universe()->allowedRealizingQuant > universe()->lastRealizedQuant) break;
@@ -862,7 +858,7 @@ end_while_01:;
 			UnLockInputPacket();
 
 			//Уничтожение всех не выполнившихся команд ?
-			///////CAutoLock lock(&m_ClientInOutBuffLock);
+			///////CAutoLock lock(m_ClientInOutBuffLock);
 
 			ClearClientData();
 			//Т.к. миграция разрешается только после START_LOAD_GAME clientMissionDescription корректен
@@ -875,7 +871,7 @@ end_while_01:;
 
 			//очистка InHostBuffer в него пришли уже не те подтверждения!
 			{
-				CAutoLock _Lock(&m_GeneralLock); //! Lock
+				CAutoLock _lock(m_GeneralLock); //! Lock
 				clearInOutClientHostBuffers();
 			}
 			if(AddClientToMigratedHost(m_localDPNID, universe()->getCurrentGameQuant(), universe()->getConfirmQuant()) ){
@@ -890,7 +886,7 @@ end_while_01:;
 		break;
 	case PNC_STATE__NEWHOST_PHASE_A:
 		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock
+			CAutoLock _lock(m_GeneralLock); //! Lock
 
 			const unsigned int MAX_TIME_4_HOST_MIGRATE=10000;//10s
 
@@ -966,7 +962,7 @@ end_while_01:;
 		{
 			//Ожидание обработки всех комманд игрой
 			{
-				CAutoLock _Lock(&m_GeneralLock); //! Lock
+				CAutoLock _lock(m_GeneralLock); //! Lock
 				if(universe()){
 					if(in_ClientBuf.currentNetCommandID()!=NETCOM_ID_NONE) break;
 					if(universe()->allowedRealizingQuant > universe()->lastRealizedQuant) break;
@@ -983,7 +979,7 @@ end_while_01:;
 
 			//очистка out_ClientBuf в него пришли уже не те подтверждения!
 			{
-				CAutoLock _Lock(&m_GeneralLock); //! Lock
+				CAutoLock _lock(m_GeneralLock); //! Lock
 				clearInOutClientHostBuffers();
 			}
 			m_state=PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_AB;
@@ -993,7 +989,7 @@ end_while_01:;
 		break;
 	case PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_AB:
 		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock для senda
+			CAutoLock _lock(m_GeneralLock); //! Lock для senda
 
 			static unsigned char bandPassFilter=0;
 			if((bandPassFilter&0x7)==0){//каждый 8й квант
@@ -1020,7 +1016,7 @@ end_while_01:;
 			StopFindHostDP();
 			Close(false);
 			Init();//Close DirectPlay-я выполняет полную деинициализацию
-			CAutoLock _Lock(&m_GeneralLock); //! Lock
+			CAutoLock _lock(m_GeneralLock); //! Lock
 			ClearClients();
 			m_state=PNC_STATE__NONE;
 		}

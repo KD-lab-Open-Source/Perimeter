@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL_mutex.h>
+
 extern THREAD_LOCAL DWORD tls_is_graph;
 enum
 {
@@ -12,24 +14,24 @@ enum
 #define MT_IS_GRAPH()  (tls_is_graph&MT_GRAPH_THREAD)
 #define MT_IS_LOGIC()  (tls_is_graph&MT_LOGIC_THREAD)
 
-#define MTDECLARE(x) CRITICAL_SECTION x;
-#define MTINIT(x) InitializeCriticalSection(&x)
-#define MTDONE(x) DeleteCriticalSection(&x)
-#define MTENTER(x) EnterCriticalSection(&x)
-#define MTLEAVE(x) LeaveCriticalSection(&x)
+#define MTDECLARE(x) SDL_mutex* x;
+#define MTINIT(x) x = SDL_CreateMutex()
+#define MTDONE(x) SDL_DestroyMutex(x)
+#define MTENTER(x) SDL_LockMutex(x)
+#define MTLEAVE(x) SDL_UnlockMutex(x)
 
 struct MTEnter
 {
-	CRITICAL_SECTION* pcs;
-	MTEnter(CRITICAL_SECTION& pcs_)
+    SDL_mutex* pcs;
+	MTEnter(SDL_mutex* pcs_)
 	{
-		pcs=&pcs_;
-		MTENTER(*pcs);
+		pcs=pcs_;
+		MTENTER(pcs);
 	}
 
 	~MTEnter()
 	{
-		MTLEAVE(*pcs);
+		MTLEAVE(pcs);
 	}
 };
 

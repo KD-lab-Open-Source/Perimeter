@@ -30,13 +30,13 @@ SET(PERIMETER_EXODUS OFF)
 IF(CMAKE_HOST_WIN32 OR MINGW)
     MESSAGE("Windows or MinGW build")
     SET(PERIMETER_WINDOWS ON)
-    SET(PERIMETER_EXE_FLAGS WIN32)
+    #SET(PERIMETER_EXE_FLAGS WIN32)
+    add_definitions(-DSDL_MAIN_HANDLED)
 ELSE()
     MESSAGE("Not Windows or MinGW build - WARNING: EXPERIMENTAL!")
     SET(PERIMETER_EXE_FLAGS "")
     SET(PERIMETER_WINDOWS OFF)
     SET(PERIMETER_EXODUS ON)
-    SET(PERIMETER_EXODUS_WINDOW ON)
     SET(PERIMETER_EXODUS_SOUND ON)
 ENDIF()
 
@@ -59,14 +59,17 @@ OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 
 
 # depends
-FIND_PACKAGE(Boost REQUIRED) # Boost stacktrace was introduced in 1.65 but is bugged
+FIND_PACKAGE(Boost REQUIRED)
 IF(MSVC_CL_BUILD)
     FIND_PACKAGE(Vorbis CONFIG REQUIRED)
     SET(Vorbis_FOUND TRUE)
     SET(VORBIS_LIBRARIES Vorbis::vorbis Vorbis::vorbisenc Vorbis::vorbisfile)
     FIND_PACKAGE(SDL2 CONFIG REQUIRED)
+    SET(SDL2_INCLUDE_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/SDL2")
     SET(SDL2_LIBRARY SDL2::SDL2) 
     SET(SDL2MAIN_LIBRARY SDL2::SDL2main)
+    FIND_PACKAGE(SDL2-image CONFIG REQUIRED)
+    SET(SDL2_IMAGE_LIBRARY SDL2::SDL2_image)
 ELSE()
     # paths to search libs
     SET(LIBRARY_SEARCH_PATHS "
@@ -83,28 +86,54 @@ ELSE()
         /opt
         /local
         C:/MinGW
+        /usr/include/x86_64-linux-gnu
+        /usr/include/aarch64-linux-gnu
+        /usr/lib/x86_64-linux-gnu
+        /usr/lib/aarch64-linux-gnu
     ")
     
     SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
     
     FIND_PACKAGE(Vorbis)
+    #This makes SDL2 not include SDL2main
     SET(SDL2_BUILDING_LIBRARY ON)
     FIND_PACKAGE(SDL2 REQUIRED)
+    FIND_PACKAGE(SDL2-image REQUIRED)
 ENDIF()
+
 IF(NOT PERIMETER_WINDOWS)
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-    FIND_PACKAGE(Threads REQUIRED)
+ENDIF()
+
+#FFMPEG used for AVI and video decoding if present
+IF (PERIMETER_WINDOWS)
+    FIND_PACKAGE(FFMPEG)
+ELSE()
+    #Required since there is no alternative for loading AVI textures 
+    FIND_PACKAGE(FFMPEG REQUIRED)
 ENDIF()
 
 # globals
 INCLUDE_DIRECTORIES(SYSTEM
     ${Boost_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIR}
+    ${SDL2_IMAGE_INCLUDE_DIR}
 )
 
-IF(MSVC_CL_BUILD)
-    INCLUDE_DIRECTORIES("${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/SDL2")
-ELSE()
+IF(FFMPEG_FOUND)
+    #FFMPEG is found
+    ADD_DEFINITIONS(-DPERIMETER_FFMPEG)
+    INCLUDE_DIRECTORIES(${FFMPEG_INCLUDE_DIRS})
+ENDIF()
+
+IF(NOT MSVC_CL_BUILD)
+    # Configure lib suffixes for MinGW unless is static build
+    IF(MINGW AND NOT OPTION_STATIC_BUILD)
+        SET(CMAKE_FIND_LIBRARY_SUFFIXES
+            ".a"
+            ".dll.a"
+            ".a.lib"
+        )
+    ENDIF()
     IF(OPTION_STATIC_BUILD)
         SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
         SET(BUILD_SHARED_LIBS OFF)
@@ -124,9 +153,6 @@ ELSE()
     IF(HAVE_SIMDSSE)
         SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -msse2")
     ENDIF()
-
-    # For modern gcc
-    #add_definitions(-D_USE_MATH_DEFINES)
 
     #TODO remove these once code is more tidy
     add_compile_options(-Wno-misleading-indentation)
@@ -187,9 +213,6 @@ IF(OPTION_DISABLE_STACKTRACE)
 ENDIF()
 IF(PERIMETER_EXODUS)
     ADD_DEFINITIONS(-DPERIMETER_EXODUS)
-ENDIF()
-IF(PERIMETER_EXODUS_WINDOW)
-    ADD_DEFINITIONS(-DPERIMETER_EXODUS_WINDOW)
 ENDIF()
 IF(PERIMETER_EXODUS_SOUND)
     ADD_DEFINITIONS(-DPERIMETER_EXODUS_SOUND)

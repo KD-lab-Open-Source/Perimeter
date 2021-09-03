@@ -61,13 +61,13 @@ CRITICAL_SECTION  _csMemLock;
 
 void* XDPmalloc(int size)
 {
-	CAutoLock _lock(&_csMemLock);
+	CAutoLock _lock(_csMemLock);
 
 	return new char[size];
 }
 void XDPfree(void* p)
 {
-	CAutoLock _lock(&_csMemLock);
+	CAutoLock _lock(_csMemLock);
 
 	delete p;
 }
@@ -573,7 +573,7 @@ int PNetCenter::Connect(GUID _hostID) //const char* lpszHost, int port)
 	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 
 	{
-		CAutoLock _Lock(&m_GeneralLock); //! Lock
+		CAutoLock _lock(m_GeneralLock); //! Lock
 		for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
 			if((*p)->pAppDesc->guidInstance==_hostID) {
 				pHostFound=*p;
@@ -583,7 +583,7 @@ int PNetCenter::Connect(GUID _hostID) //const char* lpszHost, int port)
 	}
 	if(p==internalFoundHostList.end()) {
 //		FindHost("");
-//		CAutoLock _Lock(&m_GeneralLock); //! Lock
+//		CAutoLock _lock(m_GeneralLock); //! Lock
 //		for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
 //			if((*p)->pAppDesc->guidInstance==_hostID) {
 //				pHostFound=*p;
@@ -674,7 +674,7 @@ int PNetCenter::Connect(unsigned int ip)//, int port
 		time+=STEP_TESTING;
 		Sleep(STEP_TESTING);
 		{
-			CAutoLock _Lock(&m_GeneralLock); //! Lock
+			CAutoLock _lock(m_GeneralLock); //! Lock
 			if(!internalFoundHostList.empty()) {
 				if(time > CONST_MIN_TIME_SLEEP) break;
 			}
@@ -689,7 +689,7 @@ int PNetCenter::Connect(unsigned int ip)//, int port
 //		return 0;
 	GUID hostID;
 	{
-		CAutoLock _Lock(&m_GeneralLock); //! Lock
+		CAutoLock _lock(m_GeneralLock); //! Lock
 		if(internalFoundHostList.empty()) return 0;
 		else hostID=(*internalFoundHostList.begin())->pAppDesc->guidInstance;
 	}

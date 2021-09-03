@@ -611,6 +611,18 @@ void showStartMissionButton() {
 	_shellIconManager.Effect(effectButtonsFadeIn, _shellIconManager.GetWnd(SQSH_MM_START_BRIEFING_BORDER)); //запустить разлет
 }
 
+
+int setupMenuCursorQuant( float, float ) {
+    if (menuChangingDone) {
+        //int id = _shellIconManager.getVisibleMenuScr();
+        if (_bMenuMode) {
+            _shellCursorManager.SetActiveCursor(CShellCursorManager::arrow, 1);
+        }
+        return 0;
+    }
+    return 1;
+}
+
 STARFORCE_API void fillProfileList() {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
 	list->NewItem(1);
@@ -1146,8 +1158,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 		} else {
 			switch (_id_on) {
 				case SHOW_LAST_SPLASH:
-					_bCursorVisible = 0;
-					SetCursor(0);
+					_shellCursorManager.HideCursor();
 					bgScene.done();
 					bwScene.done();
 					historyScene.done();
@@ -1386,6 +1397,7 @@ void CShellIconManager::SwitchMenuScreens(int id_off, int id_on) {
 		}
 	}
 	AddDynamicHandler(SwitchMenuBGQuant1, CBCODE_QUANT); //ждать пока не разлетится
+    AddDynamicHandler(setupMenuCursorQuant, CBCODE_QUANT);
 }
 
 /////////////////////////////////////////////////////////////

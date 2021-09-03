@@ -17,10 +17,8 @@
 
 bool checkInetAddress(const char* ipStr);
 
-#ifdef PERIMETER_EXODUS
-void* InternalServerThread(LPVOID lpParameter);
-#else
-DWORD WINAPI InternalServerThread(LPVOID lpParameter);
+int InternalServerThread(LPVOID lpParameter);
+#ifndef PERIMETER_EXODUS
 HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer);
 #endif
 
@@ -374,7 +372,7 @@ public:
 	GUID m_gameHostID;
 
 
-	CRITICAL_SECTION m_GeneralLock;
+    SDL_mutex* m_GeneralLock;
 
 
 	//Game(first) Thread

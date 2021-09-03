@@ -29,48 +29,6 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SetFocus(HWND hwnd) {
-    SDL_RaiseWindow(fromHWND(hwnd));
-}
-
-void ShowCursor(bool show) {
-    SDL_ShowCursor(show);
-}
-
-void SetCursor(HCURSOR cursor) {
-    if (cursor) {
-        SDL_ShowCursor(true);
-        SDL_SetCursor(cursor);
-    } else {
-        //TODO enable when we have actual cursors visible
-        //SDL_ShowCursor(false);
-    }
-}
-
-HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT) {
-    SDL_Surface* surface = SDL_LoadBMP(convert_path_resource(name).c_str());
-    
-    if (!surface) {
-        fprintf(stderr, "LoadImage %s\n", name);
-        SDL_PRINT_ERROR("LoadImage SDL_LoadBMP");
-    } else {
-        if (type == IMAGE_CURSOR) {
-            SDL_Cursor* cursor = SDL_CreateColorCursor(
-                    surface, 0, 0
-            );
-            if (cursor) {
-                return reinterpret_cast<HANDLE>(cursor);
-            } else {
-                SDL_PRINT_ERROR("LoadImage SDL_CreateColorCursor");
-            }
-        }
-    }
-    
-    return nullptr;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
                               char* returnBuffer, DWORD bufferSize, const char* filePath) {
     CSimpleIniA ini;
@@ -222,29 +180,6 @@ void _makepath(char* path, const char*, const char* dir, const char* fname, cons
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void EnterCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutex_lock(m);
-}
-
-void LeaveCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutex_unlock(m);
-}
-
-void InitializeCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    //Seems like Windows EnterCriticalSection can have multiple calls on same thread, replicate same by
-    //setting recursive mutex attr
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(m, &attr);
-}
-
-void DeleteCriticalSection(CRITICAL_SECTION *m) {
-    pthread_mutex_destroy(m);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 HANDLE CreateEvent(int, bool manualReset, bool initialState, int) {
     return neosmart::CreateEvent(manualReset, initialState);
 }
@@ -267,12 +202,4 @@ DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds) {
 
 DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds) {
     return neosmart::WaitForMultipleEvents(reinterpret_cast<neosmart::neosmart_event_t*>(events), count, waitAll, milliseconds);
-}
-
-HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, THREAD_ID* tid) {
-    if (pthread_create(tid, nullptr, start_address, arg) != 0) {
-        *tid = 0;
-        return nullptr;
-    }
-    return neosmart::CreateEvent(true, false);
 }

@@ -505,8 +505,7 @@ void CShellCursorManager::Done()
 {
 	std::deque<CURSOR>::iterator i;
 	FOR_EACH(m_cursors, i)
-		if(!i->bCursorSystem)
-			_RELEASE(i->hCursorProgram);
+        _RELEASE(i->hCursorProgram);
 
 	_RELEASE(m_hFontCursorWorkarea);
 	_RELEASE(hFontMainmenu1);
@@ -522,19 +521,16 @@ void CShellCursorManager::Load()
 	{
 		sqshCursor& cc = _sqsh_cursors[i];
 
-		_c.bCursorSystem = cc.system;
 		_c.sx = cc.sx; 
 		_c.sy = cc.sy;
 		_c.bHotspotCentred = cc.hotspot_center;
-		if(cc.system)
-			_c.hCursorSystem = (HCURSOR)LoadImage(0, cc.image, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);
-		else
-			_c.hCursorProgram = terVisGeneric->CreateTexture(cc.image);
+        _c.hCursorProgram = terVisGeneric->CreateTexture(cc.image);
 
 		m_cursors.push_back(_c);
 	}
 
-	m_hCursorDefault = (HCURSOR)LoadImage(0, "RESOURCE\\cursors\\arrow.cur", IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE);
+	//The default one is the first one (RESOURCE\\cursors\\arrow.cur)
+	m_pCursorDefault = &m_cursors[0];
 
 	SetActiveCursor(arrow);	
 
@@ -544,15 +540,7 @@ void CShellCursorManager::SetActiveCursor(int cursor, char bPermanent)
 {
 	if(m_pActiveCursor != &m_cursors[cursor])
 	{
-		bool bWasCentred = m_pActiveCursor ? m_pActiveCursor->bHotspotCentred : false;
-
 		m_pActiveCursor = &m_cursors[cursor];
-
-		if(m_pActiveCursor->bHotspotCentred && !bWasCentred)
-		{
-			cur_x -= m_pActiveCursor->sx/terScreenSizeX*fWorkAreaCenterX;
-			cur_y -= m_pActiveCursor->sy/terScreenSizeY*fWorkAreaCenterY;
-		}
 	}
 
 	m_bCursorPermanent = bPermanent;
@@ -561,56 +549,26 @@ void CShellCursorManager::SetActiveCursor(int cursor, char bPermanent)
 
 void CShellCursorManager::OnWMSetCursor()
 {
+    SDL_ShowCursor(SDL_FALSE);
+    
 	if(!m_pActiveCursor)
 		return;
 
-	int bSysCursor = m_pActiveCursor->bCursorSystem;
-
-	if(_bCursorVisible)
-	{
-		if(m_nCursorShift)
-		{
-			//сдвиг карты
-			if(m_cursors[m_nCursorShift].bCursorSystem)
-				SetCursor(m_cursors[m_nCursorShift].hCursorSystem);
-			else
-				::SetCursor(0);
-
-			return;
-		}
-
-		if(_shellIconManager.m_pCtrlHover)
-		{
-			//курсор на элементе интерфейса
-			SetCursor(m_hCursorDefault);
-			return;
-		}
-
-		if(bSysCursor)
-			::SetCursor(m_pActiveCursor->hCursorSystem);
-		else
-			::SetCursor(0);
+	if(_bCursorVisible
+	&& _shellIconManager.m_pCtrlHover 
+	&& !m_nCursorShift
+	&& !m_bCursorPermanent
+	&& m_pActiveCursor != m_pCursorDefault) {
+        SetActiveCursor(arrow);
 	}
-	else
-		::SetCursor(0);
 }
+
 void CShellCursorManager::OnMouseMove(float x, float y)
 {
 	if(_pShellDispatcher->m_bToolzerSizeChangeMode)
 		return;
 
 	cur_x = x; cur_y = y;
-
-	if(m_pActiveCursor && !m_pActiveCursor->bCursorSystem)
-	{
-		//float _x = x, _y = y;
-		if(m_pActiveCursor->bHotspotCentred)
-		{
-			float fScale = fCursorWorkareaDefaultHeight/terCamera->coordinate().distance();
-			cur_x -= fScale*m_pActiveCursor->sx/terScreenSizeX*fWorkAreaCenterX;
-			cur_y -= fScale*m_pActiveCursor->sy/terScreenSizeY*fWorkAreaCenterY;
-		}
-	}
 
 	//проверка на курсор сдвига карты
 	m_nCursorShift = 0;
@@ -643,12 +601,11 @@ void CShellCursorManager::OnMouseMove(float x, float y)
 	}
 }
 
-extern int _tmpLastCameraTilt;
-
 void CShellCursorManager::draw()
 {
 	m_ftime += frame_time.delta();
 
+	//Draw camera icons
 	if(_shellIconManager.IsInterface())
 	{
 		if(gameShell->cameraMouseShift)
@@ -685,7 +642,8 @@ void CShellCursorManager::draw()
 		}
 	}
 
-	if(m_nCursorShift && !m_cursors[m_nCursorShift].bCursorSystem)
+	//Draw displacement arrows
+	if(m_nCursorShift)
 	{
 		int dx = 0, dy = 0;
 		switch(m_nCursorShift)
@@ -721,24 +679,39 @@ void CShellCursorManager::draw()
 		return;
 	}
 
-	if(_shellIconManager.m_pCtrlHover || m_nCursorShift)
-		return;
-
-	if(_bCursorVisible && !m_nCursorShift && m_pActiveCursor && 
-		!m_pActiveCursor->bCursorSystem && !_shellIconManager.m_pCtrlHover)
+	//Draw normal cursor
+	CURSOR* cursor = m_pActiveCursor;	
+	if(_bCursorVisible && !m_nCursorShift && cursor)
 	{
+        //If game is running then set default cursor if user is hovering on a control
+        //On main menu the _shellIconManager.m_pCtrlHover is always set, so we don't want to set default cursor all the time
+        if (_shellIconManager.m_pCtrlHover && !_bMenuMode) {
+            cursor = m_pCursorDefault;
+        }
+        
+	    //Get cursor scale factor
 		float fScale = 1.0f;
-		if((m_pActiveCursor == &m_cursors[workarea_in]) || (m_pActiveCursor == &m_cursors[workarea_out]))
-			fScale = fCursorWorkareaDefaultHeight/terCamera->coordinate().distance();
+		if((cursor == &m_cursors[workarea_in]) || (cursor == &m_cursors[workarea_out])) {
+            fScale = fCursorWorkareaDefaultHeight / terCamera->coordinate().distance();
+        }
 
-		terRenderDevice->DrawSprite(round(terScreenSizeX*cur_x),round(terScreenSizeY*cur_y),
-			fScale*m_pActiveCursor->sx, fScale*m_pActiveCursor->sy,
-			0, 0, 1, 1, m_pActiveCursor->hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
-	}
+		//Apply offset for cursor position
+        float draw_cur_x = cur_x;
+        float draw_cur_y = cur_y;
+        if(cursor->bHotspotCentred)
+        {
+            draw_cur_x -= fScale*cursor->sx/terScreenSizeX*fWorkAreaCenterX;
+            draw_cur_y -= fScale*cursor->sy/terScreenSizeY*fWorkAreaCenterY;
+        }
 
-	//высота до зерослоя
-	if(!_pShellDispatcher->m_bToolzerSizeChangeMode)
-		if((m_pActiveCursor == &m_cursors[workarea_in]) || (m_pActiveCursor == &m_cursors[workarea_out]))
+        //Draw it
+		terRenderDevice->DrawSprite(round(terScreenSizeX*draw_cur_x),round(terScreenSizeY*draw_cur_y),
+			fScale*cursor->sx, fScale*cursor->sy,
+			0, 0, 1, 1, cursor->hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
+
+	    //высота до зерослоя / Text for toolzer
+	    if(!_pShellDispatcher->m_bToolzerSizeChangeMode
+	    && (cursor == &m_cursors[workarea_in] || cursor == &m_cursors[workarea_out]))
 		{
 			Vect3f v;
 			if(terCamera->cursorTrace(Vect2f(_pShellDispatcher->m_fMouseCurrentX-0.5f, _pShellDispatcher->m_fMouseCurrentY-0.5f), v))
@@ -751,6 +724,7 @@ void CShellCursorManager::draw()
 				terRenderDevice->SetFont(0);
 			}
 		}
+    }
 }
 
 float CShellCursorManager::GetSize()
@@ -762,33 +736,18 @@ float CShellCursorManager::GetSize()
 }
 void  CShellCursorManager::SetSize(float sx)
 {
-	if(m_pActiveCursor && !m_pActiveCursor->bCursorSystem)
+	if (m_pActiveCursor
+	&& (m_pActiveCursor == &m_cursors[workarea_in] || m_pActiveCursor == &m_cursors[workarea_out]))
 	{
-		m_pActiveCursor->sx = sx;
-		m_pActiveCursor->sy = sx;//*(float)(terScreenSizeX)/(float)(terScreenSizeY);
-
-		if(m_pActiveCursor == &m_cursors[workarea_in])
-		{
-			m_cursors[workarea_out].sx = m_pActiveCursor->sx;
-			m_cursors[workarea_out].sy = m_pActiveCursor->sy;
-		}
-
-		if(m_pActiveCursor == &m_cursors[workarea_out])
-		{
-			m_cursors[workarea_in].sx = m_pActiveCursor->sx;
-			m_cursors[workarea_in].sy = m_pActiveCursor->sy;
-		}
-
-		cur_x = gameShell->mousePressControl().x - m_pActiveCursor->sx*fWorkAreaCenterX/terScreenSizeX;
-		cur_y = gameShell->mousePressControl().y - m_pActiveCursor->sy*fWorkAreaCenterY/terScreenSizeY;
+        m_cursors[workarea_in].sx = sx;
+        m_cursors[workarea_in].sy = sx;
+        m_cursors[workarea_out].sx = sx;
+        m_cursors[workarea_out].sy = sx;
 	}
 }
 void CShellCursorManager::HideCursor()
 {
 	_bCursorVisible = 0;
-
-	if(m_pActiveCursor && m_pActiveCursor->bCursorSystem)
-		SetCursor(0);
 }
 void CShellCursorManager::ShowCursor()
 {

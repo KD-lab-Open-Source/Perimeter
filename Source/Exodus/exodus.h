@@ -5,14 +5,6 @@
 #include <cstdint>
 #include <windows.h>
 #include <unistd.h>
-
-inline SDL_Window* fromHWND(HWND hWindow) {
-    return reinterpret_cast<SDL_Window*>(hWindow);
-}
-
-inline HWND toHWND(SDL_Window* pWindow) {
-    return reinterpret_cast<HWND>(pWindow);
-}
         
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Win32 macros/types stuff
@@ -76,25 +68,9 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Window/UI related
 
-#define LR_LOADFROMFILE 1
-#define IMAGE_ICON 1
-#define IMAGE_CURSOR 2
-
 //These seem to be used as mask for storing state in game code
 #define MK_LBUTTON  0b1
 #define MK_RBUTTON 0b10
-
-struct SDL_Cursor;
-
-typedef SDL_Cursor* HCURSOR;
-
-void SetFocus(HWND hwnd);
-
-void ShowCursor(bool show);
-
-void SetCursor(HCURSOR cursor);
-
-HANDLE LoadImage(void*, const char* name, UINT type, int width, int height, UINT);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -131,19 +107,6 @@ void _splitpath(const char* path_out, char* drive, char* dir, char* fname, char*
 void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Basic wrapper for Win32 CRITICAL_SECTION stuff
-//TODO replace this with posix mutex calls directly on Windows builds?
-
-#include <pthread.h>
-
-typedef pthread_mutex_t CRITICAL_SECTION;
-
-void EnterCriticalSection(CRITICAL_SECTION *m);
-void LeaveCriticalSection(CRITICAL_SECTION *m);
-void InitializeCriticalSection(CRITICAL_SECTION *m);
-void DeleteCriticalSection(CRITICAL_SECTION *m);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Event/Thread stuff
 
 #include <pevents.h>
@@ -151,8 +114,6 @@ void DeleteCriticalSection(CRITICAL_SECTION *m);
 #define INFINITE neosmart::WAIT_INFINITE
 
 #define WAIT_OBJECT_0 0
-
-typedef pthread_t THREAD_ID;
 
 HANDLE CreateEvent(int, bool manualReset, bool initialState, int);
 
@@ -165,8 +126,6 @@ void ResetEvent(HANDLE event);
 DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds);
 
 DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds);
-
-HANDLE CreateThread(void*, size_t,  void *(*start_address) (void *), void* arg, DWORD, THREAD_ID* tid);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
