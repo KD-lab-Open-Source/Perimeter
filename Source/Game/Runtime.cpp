@@ -205,6 +205,24 @@ void refresh_window_size(bool update_resolution) {
     }
 }
 
+void CrashHandler()
+{
+    if (gameShell && universe()) {
+        std::string crash = std::string(CRASH_DIR) + PATH_SEP + std::to_string(time(nullptr)) + "_";
+        
+        //First attempt to save reel
+        terHyperSpace::SAVE_REPLAY_RESULT statereel = universe()->savePlayReel((crash + "reel").c_str());
+        fprintf(stderr, "Crash reel result: %d\n", statereel);
+
+        //Attempt to save state
+        MissionDescription mission(gameShell->CurrentMission);
+        mission.setSaveName((crash + "save").c_str());
+        mission.missionNumber = gameShell->currentSingleProfile.getCurrentMissionNumber();
+        bool statesave = universe()->universalSave(mission, true);
+        fprintf(stderr, "Crash save result: %d\n", statesave);
+    }
+}
+
 void HTManager::init()
 {
 	interpolation_timer_ = 0;
@@ -214,6 +232,7 @@ void HTManager::init()
 #ifndef _FINAL_VERSION_
 	ErrH.SetRestore(InternalErrorHandler);
 #endif
+    ErrH.SetCrash(CrashHandler);
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
 	
 	//xt_get_cpuid();
@@ -593,6 +612,9 @@ int main(int argc, char *argv[])
 
     //Check if only one instance is running
     checkSingleRunning();
+    
+    //Create crash folder
+    std::filesystem::create_directories(CRASH_DIR);
     
     //Scan resources first
     scan_resource_paths();

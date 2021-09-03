@@ -379,6 +379,7 @@ void getStackTrace(std::ostringstream& stream) {
 
 XErrorHandler::XErrorHandler() {
     prefix = defprefix;
+    crash_func = nullptr;
     restore_func = nullptr;
     state = 0;
 
@@ -419,8 +420,6 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 
 	state = 1;
 
-
-
     //Assemble text
     std::ostringstream stream;
     if (prefix) {
@@ -432,13 +431,14 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
         stream << "Subj: " << subj << std::endl;
     }
 
+    std::string basePath = SDL_GetBasePath();
     std::list<std::string> linesStackTrace;
     stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);
     stream << std::endl << "Please send:" << std::endl <<
             " - This message" << std::endl <<
-            " - Log file from " << SDL_GetBasePath() << log_name.c_str() << std::endl <<
-            " - Your savegame" << std::endl <<
+            " - Log file from " << basePath << log_name.c_str() << std::endl <<
+            " - Crash files from " << basePath << CRASH_DIR << std::endl <<
             "To https://t.me/PerimeterGame or https://github.com/KranX/Perimeter" << std::endl;
     std::string str =  stream.str();
 
@@ -459,7 +459,12 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
         SDL_PRINT_ERROR("Creating error window");
     }
 
-    //MessageBox(NULL,outmsg,prefix,attr | MB_TOPMOST | MB_SYSTEMMODAL);
+    if (crash_func) {
+        //Store pointer before calling to avoid cyclic calls in case handler fails
+        auto func = crash_func;
+        crash_func = nullptr;
+        func();
+    }
 
 	exit(code);
 }
@@ -484,7 +489,12 @@ void XErrorHandler::SetPrefix(const char* s)
 
 void XErrorHandler::SetRestore(void (*rf)(void))
 {
-	restore_func = rf;
+    restore_func = rf;
+}
+
+void XErrorHandler::SetCrash(void (*cf)(void))
+{
+    crash_func = cf;
 }
 
 void XErrorHandler::RTC(const char *file, unsigned int line, const char *expr)

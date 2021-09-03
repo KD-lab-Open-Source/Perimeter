@@ -8,6 +8,8 @@
 #define NULL	0L
 #endif
 
+#define CRASH_DIR "perimeter_crash"
+
 #define X_WINNT 		0x0001
 #define X_WIN32S		0x0002
 #define X_WIN95 		0x0003
@@ -37,12 +39,14 @@ struct XErrorHandler
     std::fstream log_file;
 
 	void (*restore_func)();
+    void (*crash_func)();
 
      XErrorHandler();
     ~XErrorHandler();
 
 	void	 SetPrefix(const char* s);
 	void	 SetRestore(void (*rf)());
+    void	 SetCrash(void (*cf)());
 	void	 SetState(int s){state=s;}
 	void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
     void	 Abort(const std::string& message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
