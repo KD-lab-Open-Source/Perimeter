@@ -1136,7 +1136,8 @@ class CComboWindow : public CShellWindow
 {
 public:
 //	cFont*      m_hFont;
-	int			pos,size;
+	int 		pos;
+    size_t      size;
 	std::vector<std::string> Array;
 	float		m_fStringHeight;
 	int			target;

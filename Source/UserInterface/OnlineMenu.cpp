@@ -12,6 +12,7 @@
 
 #include "BGScene.h"
 #include "../HT/ht.h"
+#include "BelligerentSelect.h"
 
 extern MpegSound gb_Music;
 
@@ -122,6 +123,7 @@ void onMMOnlineCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 
 //online lobby
 
+//TODO unused
 void setOnlineFrm(CComboWindow* combo, int number) {
 	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
 	if (
@@ -154,51 +156,8 @@ void setOnlineFrm(CComboWindow* combo, int number) {
 	}
 }
 
-void setupOnlineFrm(CComboWindow* combo, int number, bool direction) {
-	terBelligerent curBelligerent;
-	int newPos = combo->pos;
-	if (direction) {
-		newPos++;
-		if (newPos >= combo->size) {
-			newPos = 0;
-		}
-	} else {
-		newPos--;
-		if (newPos < 0) {
-			newPos = combo->size - 1;
-		}
-	}
-	switch (newPos) {
-		case 0:
-			curBelligerent = BELLIGERENT_EXODUS0;
-			break;
-		case 1:
-			curBelligerent = BELLIGERENT_EMPIRE0;
-			break;
-		case 2:
-			curBelligerent = BELLIGERENT_HARKBACKHOOD0;
-			break;
-	}
-//	gameShell->getNetClient()->changePlayerBelligerent(number, curBelligerent);
-}
-
-void setupOnlineFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-	if( code == EVENT_CREATEWND ) {
-		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		pCombo->Array.push_back( "Exodus" );
-		pCombo->Array.push_back( "Empire" );
-		pCombo->Array.push_back( "Harkback" );
-		pCombo->size = 3;
-		pCombo->pos = 0;
-	} else if (code == EVENT_UNPRESSED) {
-		setupOnlineFrm((CComboWindow*) pWnd, number, true);
-	} else if (code == EVENT_RUNPRESSED) {
-		setupOnlineFrm((CComboWindow*) pWnd, number, false);
-	}
-}
-
 void onMMOnlineLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	setupOnlineFrmButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN);
+	setupFrameButton(pWnd, code, false, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN);
 }
 
 void setOnlineSlot(CComboWindow* combo, int number) {

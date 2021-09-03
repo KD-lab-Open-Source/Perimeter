@@ -56,6 +56,7 @@ OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
+OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
 
 
 # depends

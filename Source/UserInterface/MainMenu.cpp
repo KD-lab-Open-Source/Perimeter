@@ -21,6 +21,7 @@
 #include "qd_textdb.h"
 
 #include "MessageBox.h"
+#include "BelligerentSelect.h"
 
 extern char _bCursorVisible;
 extern char _bMenuMode;
@@ -1106,17 +1107,15 @@ int SwitchMenuScreenQuant1( float, float ) {
 							txtWnd->colorIndex = frame->getColorIndex();
 							logoWnd->setRace(frame->getRace());
 						} else {
-							switch (missionToExec.getActivePlayerData().belligerent) {
-								case BELLIGERENT_EXODUS0:
-								case BELLIGERENT_EXODUS1:
+						    BELLIGERENT_FACTION faction = getBelligerentFaction(missionToExec.getActivePlayerData().belligerent);
+							switch (faction) {
+								case EXODUS:
 									logoWnd->setRace(1);
 									break;
-								case BELLIGERENT_HARKBACKHOOD0:
-								case BELLIGERENT_HARKBACKHOOD1:
+								case HARKBACK:
 									logoWnd->setRace(2);
 									break;
-								case BELLIGERENT_EMPIRE0:
-								case BELLIGERENT_EMPIRE1:
+								case EMPIRE:
 								default:
 									logoWnd->setRace(0);
 							}

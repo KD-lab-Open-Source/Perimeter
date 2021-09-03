@@ -41,6 +41,7 @@
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "SoundScript.h"
+#include "BelligerentSelect.h"
 #include <SDL.h>
 
 int terShowFPS = 0;
@@ -402,7 +403,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
 			data->setName(currentSingleProfile.getCurrentProfile().name.c_str());
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
-			data->setName(qdTextDB::instance().getText(aiNameIDs[data->belligerent]));
+			data->setName(getBelligerentName(data->belligerent));
 		}
 	}
 

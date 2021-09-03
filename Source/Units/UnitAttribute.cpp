@@ -657,9 +657,8 @@ bool AttributeBase::enabledByBelligerent(terBelligerent belligerentIn) const
 	case BELLIGERENT_EXODUS2:
 	case BELLIGERENT_EXODUS3:
 	case BELLIGERENT_EXODUS4:
-	case BELLIGERENT_EMPIRE_VICE:
-		return belligerentIn == BELLIGERENT_EXODUS0 || belligerentIn == BELLIGERENT_EXODUS1 || belligerentIn == BELLIGERENT_EMPIRE_VICE ||
-			belligerentIn == BELLIGERENT_EXODUS2 || belligerentIn == BELLIGERENT_EXODUS3 || belligerentIn == BELLIGERENT_EXODUS4;
+		return belligerentIn == BELLIGERENT_EXODUS0 || belligerentIn == BELLIGERENT_EXODUS1 || belligerentIn == BELLIGERENT_EXODUS2 ||
+               belligerentIn == BELLIGERENT_EXODUS3 || belligerentIn == BELLIGERENT_EXODUS4;
 	case BELLIGERENT_HARKBACKHOOD0:
 	case BELLIGERENT_HARKBACKHOOD1:
 		return belligerentIn == BELLIGERENT_HARKBACKHOOD0 || belligerentIn == BELLIGERENT_HARKBACKHOOD1;
@@ -668,8 +667,9 @@ bool AttributeBase::enabledByBelligerent(terBelligerent belligerentIn) const
 	case BELLIGERENT_EMPIRE2:
 	case BELLIGERENT_EMPIRE3:
 	case BELLIGERENT_EMPIRE4:
+    case BELLIGERENT_EMPIRE_VICE: //This was in Exodus for some reason
 		return belligerentIn == BELLIGERENT_EMPIRE0 || belligerentIn == BELLIGERENT_EMPIRE1 || belligerentIn == BELLIGERENT_EMPIRE2 ||
-			belligerentIn == BELLIGERENT_EMPIRE3 || belligerentIn == BELLIGERENT_EMPIRE4;
+               belligerentIn == BELLIGERENT_EMPIRE3 || belligerentIn == BELLIGERENT_EMPIRE4 || belligerentIn == BELLIGERENT_EMPIRE_VICE;
 	default:
 		xassert(0);
 		return false;

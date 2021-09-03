@@ -14,6 +14,7 @@ public:
 
 	cTexture(const char *TexName=0);
 	~cTexture();
+    void SetName(const char *Name);
 	inline const char* GetName()const{return name.c_str();};
 	int GetNumberMipMap();
 	void SetNumberMipMap(int number);
@@ -41,8 +42,6 @@ public:
 	void UnlockTexture();
 	virtual bool IsScaleTexture(){return false;}
 	virtual bool IsAviScaleTexture(){return false;}
-protected:
-	void SetName(const char *Name);
 };
 
 class cTextureAviScale : public cTexture

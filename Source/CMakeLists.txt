@@ -243,6 +243,7 @@ SET(perimeter_SRCS
         UserInterface/History3D.cpp
         UserInterface/HistoryScene.cpp
         UserInterface/HistorySceneCamera.cpp
+        UserInterface/BelligerentSelect.cpp
         UserInterface/BattleMenu.cpp
         UserInterface/GraphicsOptions.cpp
         UserInterface/LanMenu.cpp
@@ -274,6 +275,11 @@ ADD_EXECUTABLE(perimeter ${PERIMETER_EXE_FLAGS} ${perimeter_SRCS})
 
 if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
+ENDIF()
+
+IF(OPTION_GPERFTOOLS)
+    MESSAGE("WARNING: Linking gperftools")
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc)
 ENDIF()
 
 TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})

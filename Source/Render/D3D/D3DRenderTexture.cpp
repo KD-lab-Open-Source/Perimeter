@@ -146,7 +146,8 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 			ApplySkinColor(lpBuf,dx,dy,Texture->skin_color);
 		}
 
-		if(Texture->GetAttribute(TEXTURE_BUMP))
+        //Convert grayscale bump map into normal map
+		if(Texture->GetAttribute(TEXTURE_BUMP) && !Texture->GetAttribute(TEXTURE_NORMAL))
 		{
 			ConvertDot3(lpBuf,dx,dy,1.0e-2f*current_bump_scale);
 		}

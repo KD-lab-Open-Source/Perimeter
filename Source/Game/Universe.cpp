@@ -1016,6 +1016,7 @@ void terUniverse::SetActivePlayer(int id)
 	case BELLIGERENT_EMPIRE2:
 	case BELLIGERENT_EMPIRE3:
 	case BELLIGERENT_EMPIRE4:
+    case BELLIGERENT_EMPIRE_VICE:
 #ifndef _DEMO_
 		SNDSetBelligerentIndex(2);
 #else

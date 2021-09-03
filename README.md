@@ -40,7 +40,8 @@ There is instructions available in:
 
 ## Enhancements from original game
 
-TODO
+- 64 bits support
+- Frame selection in battle/multiplayer menu
 
 ## Repository contents
 
