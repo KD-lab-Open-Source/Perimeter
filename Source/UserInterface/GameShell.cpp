@@ -1503,6 +1503,9 @@ void GameShell::ControlPressed(int key)
 				if(!cameraMouseTrack)
 				{
 					cameraMouseTrack = true;
+                    if (terGrabInput) {
+                        SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+                    }
 					mousePressControl_ = mousePosition();
 					_shellCursorManager.HideCursor();
 				}
@@ -1605,6 +1608,9 @@ void GameShell::cancelMouseLook() {
 	if(cameraMouseTrack && IsMapArea(mousePosition()))
 	{
 		cameraMouseTrack = false;
+        if (terGrabInput) {
+            SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
+        }
 		setCursorPosition(mousePressControl_);
 
 		if(_shellIconManager.IsInterface())

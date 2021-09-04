@@ -15,6 +15,7 @@ extern int terShadowType;
 extern int terMipMapLevel;
 extern int terShowTips;
 extern int terResizableWindow;
+extern int applicationRunBackground;
 
 extern float terNearDistanceLOD;
 extern float terFarDistanceLOD;
@@ -65,6 +66,10 @@ void PerimeterDataChannelLoad()
 //	terObjectReflection = ini.getInt("Graphics","ObjectReflection");
 	terGraphicsGamma = ini.getFloat("Graphics","Gamma");
 	terShowTips = ini.getInt("Game","ShowTips");
+    ini_no_check.getInt("Game","GrabInput", terGrabInput);
+    check_command_line_parameter("GrabInput", terGrabInput);
+    ini_no_check.getInt("Game","RunBackground", applicationRunBackground);
+    check_command_line_parameter("RunBackground", applicationRunBackground);
 
 	//Network
 	const char* s = ini_no_check.get("Network","ServerName");

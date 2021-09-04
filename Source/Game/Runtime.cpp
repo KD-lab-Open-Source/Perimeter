@@ -91,6 +91,8 @@ int terResizableWindow = 1;
 int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
+int terGrabInput = 1;
+int applicationRunBackground = 0;
 
 int terDrawMeshShadow = 2;
 int terShadowType	= 0;
@@ -188,8 +190,13 @@ void RestoreGDI()
 
 void InternalErrorHandler()
 {
-	RestoreGDI();
+    if (sdlWindow && terGrabInput) {
+        SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
+    }
+#ifndef _FINAL_VERSION_
+    RestoreGDI();
 	if(universe()) universe()->allSavePlayReel();
+#endif
 }
 
 void refresh_window_size(bool update_resolution) {
@@ -236,9 +243,7 @@ void HTManager::init()
 	interpolation_factor_ = 0;
 
     ErrH.SetPrefix(currentVersion);
-#ifndef _FINAL_VERSION_
-	ErrH.SetRestore(InternalErrorHandler);
-#endif
+    ErrH.SetRestore(InternalErrorHandler);
     ErrH.SetCrash(CrashHandler);
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
 	
@@ -380,6 +385,11 @@ HWND PerimeterCreateWindow(int size_x, int size_y, bool full_screen) {
 
     //Setup window icon
     //TODO SDL_SetWindowIcon(sdlWindow, icon);
+    
+    //Grab input
+    if (terGrabInput) {
+        SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+    }
 
 #ifdef _WIN32
     //Get HWND from SDL window
@@ -745,6 +755,13 @@ void SDL_event_poll() {
 
         //Handle event by type and subtype
         switch (event.type) {
+            case SDL_MOUSEBUTTONDOWN: {
+                //Grab window at click if window is resizable and is not already grabbed
+                if (terGrabInput && applicationHasFocus_ && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
+                    SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+                }
+                break;
+            }
             case SDL_WINDOWEVENT: {
                 switch (event.window.event) {
                     case SDL_WINDOWEVENT_SHOWN: {
@@ -762,16 +779,19 @@ void SDL_event_poll() {
                         }
                         break;
                     }
-#ifndef PERIMETER_DEBUG
                     case SDL_WINDOWEVENT_FOCUS_LOST: {
-                        applicationHasFocus_ = false;
+                        if (terGrabInput) {
+                            SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
+                        }
+                        if (!applicationRunBackground) {
+                            applicationHasFocus_ = false;
+                        }
                         break;
                     }
                     case SDL_WINDOWEVENT_FOCUS_GAINED: {
-                        applicationHasFocus_= true;
+                        applicationHasFocus_ = true;
                         break;
                     }
-#endif
                     case SDL_WINDOWEVENT_CLOSE: {
                         //NOTE: Seems that MacOS uses this event instead of SDL_QUIT when window is requested to close
                         closing = true;
