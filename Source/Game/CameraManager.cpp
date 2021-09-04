@@ -186,7 +186,7 @@ void terCameraType::update()
 void terCameraType::SetFrustumGame()
 {
     Vect2f center(0.5f,0.5f);
-    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.28125f);
+    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
     Vect2f focus(focus_,focus_);
     Vect2f zplane(30.0f,10000.0f);
 	Camera->SetFrustum(								// устанавливается пирамида видимости
