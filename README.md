@@ -42,6 +42,14 @@ There is instructions available in:
 
 - 64 bits support
 - Frame selection in battle/multiplayer menu
+- Experimental widescreen and custom resolutions support:
+  - Game scans Resource/Icons/intf for XxY named folders such as 1920x1080 and adds as selectable option
+  - Custom resolutions uses the height to load Resource/Icons/MainMenu/ and Resource/Icons/Portraits/ 
+    with folder name xY such as x1080 with above example. This allows reusing same height menu elements
+    that still use 4:3 aspect ratio
+  - Both .ini and resx= resy= command arguments accept custom resolutions, these will use
+    the closest UI resolutions upscaled/centered to maintain visual consistency.
+- Experimental resizable windows (Enabled by default unless Graphics ResizableWindow in Perimeter.ini or resizablewindow= is 0)
 
 ## Repository contents
 
