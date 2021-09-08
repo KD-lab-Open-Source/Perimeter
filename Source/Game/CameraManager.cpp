@@ -10,6 +10,13 @@
 
 terCameraType* terCamera = NULL;
 
+//Area to consider around the center in pixels
+const float CAMERA_MOUSE_DELTA_AREA = 3.0f * 3.0f;
+//Threshold for dead area, in pixels
+const float CAMERA_MOUSE_DEAD_THRESHOLD = 0.5f;
+//Multiplier of delta speed from center to edge of area
+const float CAMERA_MOUSE_DELTA_FACTOR = 1.5f;
+
 void SetCameraPosition(cCamera *UCamera,const MatXf& Matrix)
 {
 	MatXf ml=MatXf::ID;
@@ -260,35 +267,35 @@ void terCameraType::controlQuant()
 	
 	if(!unit_follow){
 		if(g_controls_converter.key(CTRL_CAMERA_MOVE_DOWN).pressed())
-			cameraPositionForce.y += CAMERA_SCROLL_SPEED_DELTA;
+			cameraPositionForce.y = CAMERA_SCROLL_SPEED_DELTA;
 		
 		if(g_controls_converter.key(CTRL_CAMERA_MOVE_UP).pressed())
-			cameraPositionForce.y -= CAMERA_SCROLL_SPEED_DELTA;
+			cameraPositionForce.y = -CAMERA_SCROLL_SPEED_DELTA;
 		
 		if(g_controls_converter.key(CTRL_CAMERA_MOVE_RIGHT).pressed())
-			cameraPositionForce.x += CAMERA_SCROLL_SPEED_DELTA;
+			cameraPositionForce.x = CAMERA_SCROLL_SPEED_DELTA;
 		
 		if(g_controls_converter.key(CTRL_CAMERA_MOVE_LEFT).pressed())
-			cameraPositionForce.x -= CAMERA_SCROLL_SPEED_DELTA;
+			cameraPositionForce.x = -CAMERA_SCROLL_SPEED_DELTA;
 	}
 	
 	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_UP).pressed())
-		cameraThetaForce -= CAMERA_KBD_ANGLE_SPEED_DELTA;
+		cameraThetaForce = -CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
 	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_DOWN).pressed())
-		cameraThetaForce += CAMERA_KBD_ANGLE_SPEED_DELTA;
+		cameraThetaForce = CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
 	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_LEFT).pressed())
-		cameraPsiForce += CAMERA_KBD_ANGLE_SPEED_DELTA;
+		cameraPsiForce = CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
 	if(g_controls_converter.key(CTRL_CAMERA_ROTATE_RIGHT).pressed())
-		cameraPsiForce -= CAMERA_KBD_ANGLE_SPEED_DELTA;
+		cameraPsiForce = -CAMERA_KBD_ANGLE_SPEED_DELTA;
 	
 	if(g_controls_converter.key(CTRL_CAMERA_ZOOM_INC).pressed())
-		cameraZoomForce	 -= CAMERA_ZOOM_SPEED_DELTA;
+		cameraZoomForce = -CAMERA_ZOOM_SPEED_DELTA;
 	
 	if(g_controls_converter.key(CTRL_CAMERA_ZOOM_DEC).pressed())
-		cameraZoomForce	 += CAMERA_ZOOM_SPEED_DELTA;
+        cameraZoomForce = CAMERA_ZOOM_SPEED_DELTA;
 }
 
 void terCameraType::mouseQuant(const Vect2f& mousePos)
@@ -301,36 +308,51 @@ void terCameraType::mouseQuant(const Vect2f& mousePos)
 
 	if(fabs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ){
 		if(coordinate().position().x > 0)
-			cameraPositionForce.x -= CAMERA_BORDER_SCROLL_SPEED_DELTA;
+			cameraPositionForce.x = -CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
 	else if(fabs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ){
 		if(coordinate().position().x < vMap.H_SIZE) 
-			cameraPositionForce.x += CAMERA_BORDER_SCROLL_SPEED_DELTA;
+			cameraPositionForce.x = CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
 	
 	if(fabs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP){
 		if(coordinate().position().y > 0)
-			cameraPositionForce.y -= CAMERA_BORDER_SCROLL_SPEED_DELTA;
+			cameraPositionForce.y = -CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
 	else if(fabs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN){
 		if(coordinate().position().y < vMap.V_SIZE) 
-			cameraPositionForce.y += CAMERA_BORDER_SCROLL_SPEED_DELTA;
+			cameraPositionForce.y = CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
 }
 
-void terCameraType::tilt(const Vect2f& mouseDelta)
+void terCameraType::tilt(Vect2f mouseDelta)
 {
 	if (gameShell->isCutSceneMode()) {
 		return;
 	}
-	if(fabs(mouseDelta.x) > fabs(mouseDelta.y)){
-		cameraPsiForce += mouseDelta.x*CAMERA_MOUSE_ANGLE_SPEED_DELTA;
-		tilting_ = 0;
-	}
-	else{
-		cameraThetaForce -= mouseDelta.y*CAMERA_MOUSE_ANGLE_SPEED_DELTA;
-		tilting_ = 1;
-	}
+
+    //Keep it within bounds, in pixels
+    if (mouseDelta.distance2(Vect2f::ZERO) > CAMERA_MOUSE_DELTA_AREA * CAMERA_MOUSE_DELTA_AREA) {
+        mouseDelta.normalize(CAMERA_MOUSE_DELTA_AREA);
+    }
+    //printf("F %f V %f X %f\n", cameraPsiForce, cameraPsiVelocity, mouseDelta.x);
+    
+    //Check if is tilting
+    tilting_ = CAMERA_MOUSE_DEAD_THRESHOLD < fabs(mouseDelta.y);//fabs(mouseDelta.x) < fabs(mouseDelta.y);
+    bool rotating = CAMERA_MOUSE_DEAD_THRESHOLD < fabs(mouseDelta.x);
+ 
+    //Apply delta speed according to tilt limit range
+    mouseDelta *= (CAMERA_KBD_ANGLE_SPEED_DELTA * CAMERA_MOUSE_DELTA_FACTOR) / CAMERA_MOUSE_DELTA_AREA;
+    
+    //Apply to force
+    if (tilting_) {
+        cameraThetaForce = -mouseDelta.y;
+        //if (!rotating) cameraPsiForce = 0;
+    }
+    if (rotating) {
+        cameraPsiForce = mouseDelta.x;
+        //if (!tilting_) cameraThetaForce = 0;
+    }
 }
 
 bool terCameraType::cursorTrace(const Vect2f& pos2, Vect3f& v)
@@ -369,7 +391,23 @@ void terCameraType::mouseWheel(int delta)
 		cameraZoomForce += CAMERA_ZOOM_SPEED_DELTA;
 }
 
-void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time)
+void limitValue(float& value, float limit) {
+    if (0 < value) {
+        value = std::max(0.0f, std::min(limit, value));
+    } else if (value < 0) {
+        value = std::min(0.0f, std::max(-limit, value));
+    }
+}
+
+void cooldownForce(float& force, float value) {
+    if (0 < force) {
+        force = std::max(0.0f, force - value);
+    } else if (force < 0) {
+        force = std::min(0.0f, force + value);
+    }
+}
+
+void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time, bool tilting)
 {
 	if(interpolationTimer_){
 		float t = (frame_time() - interpolationTimer_)/(float)interpolationDuration_;
@@ -397,10 +435,26 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 
 		//зум вслед за мышью
 		if(cameraMouseZoom)
-			cameraZoomForce += mouseDeltaY*CAMERA_ZOOM_MOUSE_MULT;
+			cameraZoomForce = mouseDeltaY*CAMERA_ZOOM_MOUSE_MULT;
+
+        //Multiplier for max value of force
+        const float zoom_force_limit = 2.0f;
+        const float rotate_force_limit = 2.0f;
+        //Factor for force -> velocity effect
+        const float zoom_factor = 40.0f;
+        const float move_factor = 40.0f;
+        const float rotation_factor = 30.0f;
+        //Limit for rotation velocity, this avoids too high rotation causing erratic behavior
+        const float rotation_velocity_limit = M_PI * 1.9f;
+        //Velocity damping factor
+        float damp_factor = delta_time * 0.8f;
+        //Force cooldown factor
+        float force_cooldown = delta_time * 10.0f;
+        float rotation_force_cooldown = delta_time * 6.0f;
 		
 		//zoom
-		cameraZoomVelocity += cameraZoomForce*CAMERA_ZOOM_SPEED_MASS;
+        limitValue(cameraZoomForce, CAMERA_ZOOM_SPEED_DELTA * zoom_force_limit);
+		cameraZoomVelocity += cameraZoomForce*CAMERA_ZOOM_SPEED_MASS * zoom_factor;
 		coordinate().distance() += cameraZoomVelocity*delta_time;
 		
 		if(restricted()){
@@ -413,35 +467,36 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 		}
 		
 		//move
-		cameraPositionVelocity += cameraPositionForce*CAMERA_SCROLL_SPEED_MASS;
+		cameraPositionVelocity += cameraPositionForce*CAMERA_SCROLL_SPEED_MASS*move_factor;
 		
 		float d = coordinate().distance()/CAMERA_MOVE_ZOOM_SCALE*delta_time;
 		coordinate().position() += Mat3f(-M_PI/2 + coordinate().psi(), Z_AXIS)*cameraPositionVelocity*d;
 		
 		//rotate
-		cameraPsiVelocity   += cameraPsiForce*CAMERA_ANGLE_SPEED_MASS;
-		cameraThetaVelocity += cameraThetaForce*CAMERA_ANGLE_SPEED_MASS;
+        limitValue(cameraPsiForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotate_force_limit);
+        limitValue(cameraThetaForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotate_force_limit);
+        cameraPsiVelocity   += cameraPsiForce*CAMERA_ANGLE_SPEED_MASS*rotation_factor;
+        cameraThetaVelocity += cameraThetaForce*CAMERA_ANGLE_SPEED_MASS*rotation_factor;
+        limitValue(cameraPsiVelocity, rotation_velocity_limit);
+        limitValue(cameraThetaVelocity, rotation_velocity_limit);
+
+        //printf("D %f F %f V %f T %d\n", 1.0f/delta_time, cameraPsiForce, cameraPsiVelocity, tilting);
 		
 		coordinate().psi()   += cameraPsiVelocity*delta_time;
 		coordinate().theta() += cameraThetaVelocity*delta_time;
 		
-		if(delta_time > 1.0f){
-			cameraPsiVelocity   *= CAMERA_ANGLE_SPEED_DAMP/delta_time;
-			cameraThetaVelocity *= CAMERA_ANGLE_SPEED_DAMP/delta_time;
-			cameraZoomVelocity  *= CAMERA_ZOOM_SPEED_DAMP/delta_time;
-			
-			cameraPositionVelocity *= CAMERA_SCROLL_SPEED_DAMP/delta_time;
-		}
-		else{
-			cameraPsiVelocity   *= CAMERA_ANGLE_SPEED_DAMP;
-			cameraThetaVelocity *= CAMERA_ANGLE_SPEED_DAMP;
-			cameraZoomVelocity  *= CAMERA_ZOOM_SPEED_DAMP;
-			
-			cameraPositionVelocity *= CAMERA_SCROLL_SPEED_DAMP;
-		}
-		
-		cameraZoomForce = cameraThetaForce = cameraPsiForce = 0;
-		cameraPositionForce = Vect3f::ZERO;
+        cameraPsiVelocity   *= CAMERA_ANGLE_SPEED_DAMP * damp_factor;
+        cameraThetaVelocity *= CAMERA_ANGLE_SPEED_DAMP * damp_factor;
+        cameraZoomVelocity  *= CAMERA_ZOOM_SPEED_DAMP * damp_factor;
+        cameraPositionVelocity *= CAMERA_SCROLL_SPEED_DAMP * damp_factor;
+
+        cooldownForce(cameraZoomForce, CAMERA_ZOOM_SPEED_DELTA * force_cooldown);
+        if (!tilting) {
+            cooldownForce(cameraPsiForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
+            cooldownForce(cameraThetaForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
+        }
+        cooldownForce(cameraPositionForce.x, CAMERA_BORDER_SCROLL_SPEED_DELTA * force_cooldown);
+        cooldownForce(cameraPositionForce.y, CAMERA_BORDER_SCROLL_SPEED_DELTA * force_cooldown);
 		
 		coordinate().check(restricted());
 	}

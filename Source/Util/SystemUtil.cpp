@@ -67,7 +67,23 @@ bool isPressed(uint32_t key) {
         case VK_F10:            keycode = SDLK_F10; break;
         case VK_F11:            keycode = SDLK_F11; break;
         case VK_F12:            keycode = SDLK_F12; break;
-        case VK_TILDE:          keycode = SDLK_BACKSLASH; break;
+        case VK_TILDE:          keycode = SDLK_BACKQUOTE; break;
+        case VK_SLASH:          keycode = SDLK_SLASH; break;
+        case VK_BKSLASH:        keycode = SDLK_BACKSLASH; break;
+        case VK_NUMPAD0:        keycode = SDLK_KP_0; break;
+        case VK_NUMPAD1:        keycode = SDLK_KP_1; break;
+        case VK_NUMPAD2:        keycode = SDLK_KP_2; break;
+        case VK_NUMPAD3:        keycode = SDLK_KP_3; break;
+        case VK_NUMPAD4:        keycode = SDLK_KP_4; break;
+        case VK_NUMPAD5:        keycode = SDLK_KP_5; break;
+        case VK_NUMPAD6:        keycode = SDLK_KP_6; break;
+        case VK_NUMPAD7:        keycode = SDLK_KP_7; break;
+        case VK_NUMPAD8:        keycode = SDLK_KP_8; break;
+        case VK_NUMPAD9:        keycode = SDLK_KP_9; break;
+        case VK_MULTIPLY:       keycode = SDLK_KP_MULTIPLY; break;
+        case VK_DIVIDE:         keycode = SDLK_KP_DIVIDE; break;
+        case VK_NUMLOCK:        keycode = SDLK_NUMLOCKCLEAR; break;
+        case VK_SCROLL:         keycode = SDLK_SCROLLLOCK; break;
         case VK_ADD:
             keycodes.emplace_back(SDLK_PLUS);
             keycodes.emplace_back(SDLK_KP_PLUS);
@@ -108,7 +124,7 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     switch (keysym.sym) {
         case SDLK_LGUI:
         case SDLK_RGUI:
-        case SDL_SCANCODE_NUMLOCKCLEAR:
+        case SDLK_PRINTSCREEN:
             //Ignore these
             break;
         case SDLK_BACKSPACE:    fullkey = VK_BACK; break;
@@ -147,7 +163,23 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_F10:          fullkey = VK_F10; break;
         case SDLK_F11:          fullkey = VK_F11; break;
         case SDLK_F12:          fullkey = VK_F12; break;
-        case SDLK_BACKSLASH:    fullkey = VK_TILDE; break;
+        case SDLK_BACKQUOTE:    fullkey = VK_TILDE; break;
+        case SDLK_SLASH:        fullkey = VK_SLASH; break;
+        case SDLK_BACKSLASH:    fullkey = VK_BKSLASH; break;
+        case SDLK_KP_0:         fullkey = VK_NUMPAD0; break;
+        case SDLK_KP_1:         fullkey = VK_NUMPAD1; break;
+        case SDLK_KP_2:         fullkey = VK_NUMPAD2; break;
+        case SDLK_KP_3:         fullkey = VK_NUMPAD3; break;
+        case SDLK_KP_4:         fullkey = VK_NUMPAD4; break;
+        case SDLK_KP_5:         fullkey = VK_NUMPAD5; break;
+        case SDLK_KP_6:         fullkey = VK_NUMPAD6; break;
+        case SDLK_KP_7:         fullkey = VK_NUMPAD7; break;
+        case SDLK_KP_8:         fullkey = VK_NUMPAD8; break;
+        case SDLK_KP_9:         fullkey = VK_NUMPAD9; break;
+        case SDLK_KP_MULTIPLY:  fullkey = VK_MULTIPLY; break;
+        case SDLK_KP_DIVIDE:    fullkey = VK_DIVIDE; break;
+        case SDLK_NUMLOCKCLEAR: fullkey = VK_NUMLOCK; break;
+        case SDLK_SCROLLLOCK:   fullkey = VK_SCROLL; break;
         case SDLK_KP_PLUS:
         case SDLK_PLUS:         fullkey = VK_ADD; break;
         case SDLK_SEPARATOR:    fullkey = VK_SEPARATOR; break;

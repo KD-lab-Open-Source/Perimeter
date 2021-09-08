@@ -187,7 +187,7 @@ void CShellLogicDispatcher::quant(bool game_active)
 		{
 			//конец изменения размера
 			gameShell->setCursorPosition(Vect2f(gameShell->mousePressControl().x - 0.5f, gameShell->mousePressControl().y - 0.5f));
-			gameShell->MouseMove(Vect2f(gameShell->mousePressControl().x - 0.5f, gameShell->mousePressControl().y - 0.5f));
+			gameShell->MouseMove(Vect2f(gameShell->mousePressControl().x - 0.5f, gameShell->mousePressControl().y - 0.5f), Vect2f::ZERO);
 			m_bToolzerSizeChangeMode = false;
 		}
 	}

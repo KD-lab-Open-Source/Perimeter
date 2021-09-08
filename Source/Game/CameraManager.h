@@ -73,11 +73,11 @@ public:
 	terUnitBase* unitFollow() const { return unit_follow; }
 
 	void mouseQuant(const Vect2f& mousePos);
-	void tilt(const Vect2f& mouseDelta);
+	void tilt(Vect2f mouseDelta);
 	void shift(const Vect2f& mouseDelta);
 	void controlQuant();
 	void mouseWheel(int delta);
-	void quant(float mouseDeltaX, float mouseDeltaY, float delta_time);
+	void quant(float mouseDeltaX, float mouseDeltaY, float delta_time, bool tilting);
 
 	void SetCameraFollow(terUnitBase* unit, int transitionTime = 0);
 	void QuantCameraFollow(float delta_time);

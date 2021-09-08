@@ -88,7 +88,7 @@ public:
 	void MouseMidPressed(const Vect2f& pos);
 	void MouseMidUnpressed(const Vect2f& pos);
 
-	void MouseMove(const Vect2f& pos);
+	void MouseMove(const Vect2f& pos, const Vect2f& rel);
 	void MouseLeftDoubleClick(const Vect2f& pos);
 	void MouseRightDoubleClick(const Vect2f& pos);
 	void MouseWheel(int delta);
@@ -320,9 +320,10 @@ private:
 
 	bool mouseLeftPressed_;
 	bool mouseRightPressed_;
-	Vect2f mousePosition_;
+    Vect2f mousePosition_;
 	Vect2f mousePositionDelta_;
-	Vect2f mousePressControl_;
+    Vect2f mousePositionRelative_;
+    Vect2f mousePressControl_;
 
 	bool alwaysRun_;
 	bool interfaceShowFlag_;

@@ -573,7 +573,7 @@ void CShellCursorManager::OnMouseMove(float x, float y)
 	//проверка на курсор сдвига карты
 	m_nCursorShift = 0;
 
-	if(m_bShowSideArrows/* && !gameShell->CursorOverInterface*/)
+	if(_bCursorVisible && m_bShowSideArrows/* && !gameShell->CursorOverInterface*/)
 	{
 		if(x < CAMERA_BORDER_SCROLL_AREA_HORZ)
 			m_nCursorShift = arrow_left;

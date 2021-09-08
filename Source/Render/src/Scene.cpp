@@ -327,7 +327,7 @@ bool cScene::Trace(const Vect3f& pStart,const Vect3f& pFinish,Vect3f *pTrace)
 		dx_=round(dx*(1<<PREC_TRACE_RAY)/dyAbs),dz_=round(dz*(1<<PREC_TRACE_RAY)/dyAbs),dy_=((dy>=0)?1:-1)<<PREC_TRACE_RAY;
 	else
 	{
-		VISASSERT(0);
+		//VISASSERT(0);
 		if(pTrace) pTrace->set(xb,yb,terra->GetZ(round(xb),round(yb)));
 		return true;
 	}

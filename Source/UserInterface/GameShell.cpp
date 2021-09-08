@@ -222,6 +222,7 @@ windowClientSize_(1024, 768)
 	mouseRightPressed_ = false;
 	mousePosition_ = Vect2f::ZERO;
 	mousePositionDelta_ = Vect2f::ZERO;
+    mousePositionRelative_ = Vect2f::ZERO;
 	
 	CursorOverInterface = false;
 
@@ -611,6 +612,7 @@ void GameShell::GraphQuant()
 	Show();
 	
 	mousePositionDelta_ = Vect2f::ZERO;
+    mousePositionRelative_ = Vect2f::ZERO;
 }
 
 bool GameShell::showEnergy() const 
@@ -895,7 +897,8 @@ void GameShell::EventHandler(SDL_Event& event) {
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
             bool pressed = event.button.state == SDL_PRESSED;
-            Vect2f where = convert(event.button.x, event.button.y);            
+            Vect2f where = convert(event.button.x, event.button.y);
+            //printf("M %fx%f B %dn", where.x, where.y, event.button.button, pressed);
             switch (event.button.button) {
                 case SDL_BUTTON_LEFT:
                     if (pressed) {
@@ -936,7 +939,12 @@ void GameShell::EventHandler(SDL_Event& event) {
             break;
         }
         case SDL_MOUSEMOTION: {
-            MouseMove(convert(event.motion.x, event.motion.y));
+            Vect2f where = convert(event.motion.x, event.motion.y);
+            //printf("M %fx%f\n", where.x, where.y * 100);
+            MouseMove(where, Vect2f(
+                static_cast<float>(event.motion.xrel),
+                static_cast<float>(event.motion.yrel)
+            ));
             break;
         }
         case SDL_KEYDOWN: {
@@ -1503,11 +1511,9 @@ void GameShell::ControlPressed(int key)
 				if(!cameraMouseTrack)
 				{
 					cameraMouseTrack = true;
-                    if (terGrabInput) {
-                        SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
-                    }
 					mousePressControl_ = mousePosition();
 					_shellCursorManager.HideCursor();
+                    SDL_SetRelativeMouseMode(SDL_TRUE);
 				}
 			break;
 
@@ -1605,12 +1611,10 @@ void GameShell::ControlUnpressed(int key)
 }
 
 void GameShell::cancelMouseLook() {
-	if(cameraMouseTrack && IsMapArea(mousePosition()))
+	if(cameraMouseTrack)
 	{
 		cameraMouseTrack = false;
-        if (terGrabInput) {
-            SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
-        }
+        SDL_SetRelativeMouseMode(SDL_FALSE);
 		setCursorPosition(mousePressControl_);
 
 		if(_shellIconManager.IsInterface())
@@ -1624,7 +1628,7 @@ void GameShell::updatePosition()
 	BuildingInstaller.SetBuildPosition(Vect2f(mousePosition().x, mousePosition().y), universe()->activePlayer());
 }
 
-void GameShell::MouseMove(const Vect2f& pos)
+void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 {
 	if(missionEditor_ && missionEditor_->mouseMove(pos))
 		return;
@@ -1634,10 +1638,12 @@ void GameShell::MouseMove(const Vect2f& pos)
 	if(MousePositionLock){
 		mousePosition_ = pos;
 		mousePositionDelta_ = Vect2f::ZERO;
+        mousePositionRelative_ = Vect2f::ZERO;
 	}
 	else{
-		mousePositionDelta_ = pos - mousePosition();
 		mousePosition_ = pos;
+        mousePositionDelta_ = pos - mousePosition();
+        mousePositionRelative_ = rel;
 		MouseMoveFlag = 1;
 	}
 
@@ -1969,7 +1975,7 @@ void GameShell::CameraQuant()
 	
 	//поворот вслед за мышью
 	if(cameraMouseTrack && MouseMoveFlag){
-		terCamera->tilt(mousePositionDelta());
+		terCamera->tilt(mousePositionRelative_);
 		
 		MousePositionLock = 1;
 		setCursorPosition(Vect2f::ZERO);
@@ -1981,8 +1987,9 @@ void GameShell::CameraQuant()
 		setCursorPosition(mapMoveStartPoint());
 		MousePositionLock = 1;
 	}
-	
-	terCamera->quant(mousePositionDelta().x, mousePositionDelta().y, frame_time.delta()*PerimeterCameraControlFPS/1000.0f);
+
+    float delta = frame_time.delta() / 1000.0f;// * PerimeterCameraControlFPS / 1000.0f;
+	terCamera->quant(mousePositionDelta().x, mousePositionDelta().y, delta, cameraMouseTrack && MouseMoveFlag);
 	
 //	mousePositionDelta_ = Vect2f::ZERO;
 	MouseMoveFlag = 0;
