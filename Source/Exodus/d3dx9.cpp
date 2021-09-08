@@ -809,7 +809,7 @@ HRESULT D3DXLoadSurfaceFromMemory(IDirect3DSurface9 *dst_surface,
 
         if (srcformatdesc->type == FORMAT_DXT || destformatdesc->type == FORMAT_DXT)
         {
-            WARN("Src/Dst FORMAT_DXT unsupported");
+            WARN("Src/Dst FORMAT_DXT unsupported\n");
             return E_NOTIMPL;
         }
         else
