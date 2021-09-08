@@ -22,7 +22,8 @@ bool isPressed(uint32_t key) {
     if (!applicationHasFocus()) return false;
 
     //According to key type, use diff SDL2 methods
-    SDL_Keycode keycode;
+    SDL_Keycode keycode = 0;
+    std::vector<SDL_Keycode> keycodes;
     switch (key) {
         case VK_LBUTTON:
         case VK_MBUTTON:
@@ -36,7 +37,10 @@ bool isPressed(uint32_t key) {
             return SDL_GetModState() & KMOD_ALT;
         case VK_BACK:           keycode = SDLK_BACKSPACE; break;
         case VK_TAB:            keycode = SDLK_TAB; break;
-        case VK_RETURN:         keycode = SDLK_RETURN; break;
+        case VK_RETURN:
+            keycodes.emplace_back(SDLK_RETURN);
+            keycodes.emplace_back(SDLK_KP_ENTER);
+            break;
         case VK_PAUSE:          keycode = SDLK_PAUSE; break;
         case VK_CAPITAL:        keycode = SDLK_CAPSLOCK; break;
         case VK_ESCAPE:         keycode = SDLK_ESCAPE; break;
@@ -64,9 +68,15 @@ bool isPressed(uint32_t key) {
         case VK_F11:            keycode = SDLK_F11; break;
         case VK_F12:            keycode = SDLK_F12; break;
         case VK_TILDE:          keycode = SDLK_BACKSLASH; break;
-        case VK_ADD:            keycode = SDLK_PLUS; break;
+        case VK_ADD:
+            keycodes.emplace_back(SDLK_PLUS);
+            keycodes.emplace_back(SDLK_KP_PLUS);
+            break;
         case VK_SEPARATOR:      keycode = SDLK_SEPARATOR; break;
-        case VK_SUBTRACT:       keycode = SDLK_MINUS; break;
+        case VK_SUBTRACT:
+            keycodes.emplace_back(SDLK_MINUS);
+            keycodes.emplace_back(SDLK_KP_MINUS);
+            break;
         default:
 #ifdef PERIMETER_DEBUG
             printf("Unknown VK keycode requested %u\n", key);
@@ -78,17 +88,32 @@ bool isPressed(uint32_t key) {
     int numkeys;
     const Uint8 *state = SDL_GetKeyboardState(&numkeys);
 
-    //Convert VK to scancode and return state
-    SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
-    if (scancode >= numkeys) return false;
-    return state[scancode];
+    do {
+        //If we have more keycodes put them
+        if (!keycodes.empty()) {
+            keycode = keycodes.back();
+            keycodes.pop_back();
+        }
+        
+        //Convert VK to scancode and return state
+        SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
+        if (scancode >= numkeys) continue;
+        if (state[scancode]) return true;
+    } while (!keycodes.empty());
+    return false;
 }
 
 sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     fullkey = 0;
     switch (keysym.sym) {
+        case SDLK_LGUI:
+        case SDLK_RGUI:
+        case SDL_SCANCODE_NUMLOCKCLEAR:
+            //Ignore these
+            break;
         case SDLK_BACKSPACE:    fullkey = VK_BACK; break;
         case SDLK_TAB:          fullkey = VK_TAB; break;
+        case SDLK_KP_ENTER:
         case SDLK_RETURN:       fullkey = VK_RETURN; break;
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:       fullkey = VK_SHIFT; break;
@@ -123,8 +148,10 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_F11:          fullkey = VK_F11; break;
         case SDLK_F12:          fullkey = VK_F12; break;
         case SDLK_BACKSLASH:    fullkey = VK_TILDE; break;
+        case SDLK_KP_PLUS:
         case SDLK_PLUS:         fullkey = VK_ADD; break;
         case SDLK_SEPARATOR:    fullkey = VK_SEPARATOR; break;
+        case SDLK_KP_MINUS:
         case SDLK_MINUS:        fullkey = VK_SUBTRACT; break;
         default:
             //Apparently game uses uppercase ASCII codes for keys
@@ -150,7 +177,7 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         fullkey |= KBD_CTRL;
         ctrl |= 1;
     }
-    if ((mod & KMOD_GUI) != 0) {
+    if ((mod & KMOD_ALT) != 0) {
         fullkey |= KBD_MENU;
         menu |= 1;
     }
