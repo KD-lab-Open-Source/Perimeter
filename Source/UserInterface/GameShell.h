@@ -105,7 +105,7 @@ public:
 	Vect2i convertToScreenAbsolute(const Vect2f& pos); // Absolute screen for cursor positioning
 
 	void updateMap();
-	void updateResolution(int sx, int sy,bool change_depth,bool change_size);
+	void updateResolution(bool change_depth, bool change_size, bool change_display_mode);
 
 	void recreateChaos();
 	void createChaos();

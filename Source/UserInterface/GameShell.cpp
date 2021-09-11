@@ -109,6 +109,7 @@ void abortWithMessage(const std::string& messageID) {
 }
 
 void ErrorInitialize3D() {
+    fprintf(stderr, "%dx%d %dhz Display: %d\n", terScreenSizeX, terScreenSizeY, terScreenRefresh, terScreenIndex);
 	abortWithMessage("Interface.Menu.Messages.Init3DError");
 }
 
@@ -2346,12 +2347,16 @@ void GameShell::updateMap() {
 	}
 }
 
-void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_size) {
-	terScreenSizeX = sx;
-	terScreenSizeY = sy;
+extern bool isTrueFullscreen();
+extern void PerimeterSetupDisplayMode();
 
+void GameShell::updateResolution(bool change_depth, bool change_size, bool change_display_mode) {
+    if (change_display_mode) {
+        PerimeterSetupDisplayMode();
+    }
+    
 	int mode=RENDERDEVICE_MODE_RETURNERROR;
-	if(!terFullScreen)
+	if(!isTrueFullscreen())
 		mode|=RENDERDEVICE_MODE_WINDOW;
 	if(terBitPerPixel==16)
 		mode|=RENDERDEVICE_MODE_RGB16;
@@ -2359,8 +2364,8 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 		mode|=RENDERDEVICE_MODE_RGB32;
 
 	if(!terRenderDevice->ChangeSize(
-		sx,
-		sy,
+		terScreenSizeX,
+		terScreenSizeY,
 		mode
 	))
 	{
@@ -2373,7 +2378,7 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 	}
 
     if(change_size) {
-        setSourceUIResolution(Vect2i(sx, sy));
+        setSourceUIResolution(Vect2i(terScreenSizeX, terScreenSizeY));
 		historyScene.onResolutionChanged();
 		bwScene.onResolutionChanged();
 		bgScene.onResolutionChanged();

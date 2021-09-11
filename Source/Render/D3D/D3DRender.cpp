@@ -458,16 +458,18 @@ void cD3DRender::UpdateRenderMode()
 	}
 }
 
-bool cD3DRender::ChangeSize(int xscr,int yscr,int mode)
+bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
 {
 	MTTexObjAutoLock lock;
-	if (xScr==xscr && yScr==yscr) {
+    
+    int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW
+                 |RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
+    
+	if (xScr==xscr && yScr==yscr && (RenderMode&mode_mask) == mode) {
         return true; //Nothing to do
 	}
 	
 	KillFocus();
-	int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW|
-				  RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
 
 	RenderMode&=~mode_mask;
 	RenderMode|=mode;

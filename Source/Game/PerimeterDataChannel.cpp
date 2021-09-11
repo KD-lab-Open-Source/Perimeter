@@ -40,13 +40,18 @@ void PerimeterDataChannelLoad()
 
 	//GraphicsSection
 	terFullScreen = ini.getInt("Graphics","FullScreen");
+    terScreenIndex = -1;
+    ini_no_check.getInt("Graphics", "ScreenIndex", terScreenIndex);
+    terScreenRefresh = ini_no_check.getInt("Graphics", "ScreenRefresh");
     int ScreenSizeX = ini.getInt("Graphics","ScreenSizeX");
     int ScreenSizeY = ini.getInt("Graphics","ScreenSizeY");
-    check_command_line_parameter("resx", ScreenSizeX);
-    check_command_line_parameter("resy", ScreenSizeY);
+    if (!terFullScreen) {
+        check_command_line_parameter("resx", ScreenSizeX);
+        check_command_line_parameter("resy", ScreenSizeY);
+    }
 	if (0 < ScreenSizeX) terScreenSizeX = ScreenSizeX;
 	if (0 < ScreenSizeY) terScreenSizeY = ScreenSizeY;
-    ini.getInt("Graphics","ResizableWindow", terResizableWindow);
+    ini_no_check.getInt("Graphics","ResizableWindow", terResizableWindow);
     check_command_line_parameter("resizablewindow", terResizableWindow);
 	terBitPerPixel = ini.getInt("Graphics","BPP");
 	terMapLevelLOD = ini.getInt("Graphics","MapLevelLOD");
@@ -99,9 +104,20 @@ void PerimeterDataChannelSave()
 //	ini.putFloat("Game", "GameSpeed", gameShell->getSpeed());
 	
 	//GraphicsSection
-	ini.putInt("Graphics","FullScreen", terFullScreen);
-//	ini.putInt("Graphics","ScreenSizeX", terScreenSizeX);
-//	ini.putInt("Graphics","ScreenSizeY", terScreenSizeY);
+//	ini.putInt("Graphics","FullScreen", terFullScreen);
+    if (!terFullScreen) {
+        //We want window size to be stored in case of windowed mode
+        if (sdlWindow) {
+            int windowScreenIndex = SDL_GetWindowDisplayIndex(sdlWindow);
+            if (0 <= windowScreenIndex) {
+                terScreenIndex = windowScreenIndex;
+            }
+        }
+        ini.putInt("Graphics","ScreenIndex", terScreenIndex);
+        ini.putInt("Graphics","ScreenSizeX", terScreenSizeX);
+        ini.putInt("Graphics","ScreenSizeY", terScreenSizeY);
+    }
+//	ini.putInt("Graphics","ScreenRefresh", terScreenRefresh);
 //	ini.putInt("Graphics","BPP", terBitPerPixel);
 
 

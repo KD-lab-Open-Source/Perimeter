@@ -4238,8 +4238,8 @@ void CSliderWindow::Load(const sqshControl* attr)
 	_RELEASE(m_hTextureBG);
 
 	target = attr->target;
-	arrowSize = absoluteY(m_attr->xstart);
-	thumbSize = absoluteY(m_attr->ystart);
+	arrowSize = absoluteUISizeX(m_attr->xstart, anchor);
+	thumbSize = absoluteUISizeX(m_attr->ystart, anchor);
 
 	if (m_attr->xstart) {
 		leftArrowUV = relativeUV(m_attr->image_h._ix, m_attr->image_h._iy, m_hTexture, anchor);

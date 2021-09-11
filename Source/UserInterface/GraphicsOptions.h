@@ -5,6 +5,55 @@
 
 #include "SourceUIResolution.h"
 
+class DisplayMode {
+public:
+    bool fullscreen;
+    int display;
+    int x, y;
+    int refresh;
+
+    FORCEINLINE DisplayMode() {
+        this->set(false, -1, 0, 0, 0);
+    }
+
+    FORCEINLINE DisplayMode(bool windowed_, int display_, int x_, int y_, int refresh_) {
+        this->set(windowed_, display_, x_, y_, refresh_);
+    }
+
+    FORCEINLINE void set(bool fullscreen_, int display_, int x_, int y_, int refresh_) {
+        this->fullscreen = fullscreen_;
+        this->display = display_;
+        this->x = x_;
+        this->y = y_;
+        this->refresh = refresh_;
+    }
+    
+    FORCEINLINE int operator == (const DisplayMode& v) const {
+        return x == v.x && y == v.y && display == v.display
+            && refresh == v.refresh && fullscreen == v.fullscreen;
+    }
+    
+    FORCEINLINE int operator != (const DisplayMode& v) const {
+        return !(*this == v);
+    }
+
+    FORCEINLINE bool operator <(const DisplayMode& v) const {
+        if (y < v.y || x < v.x) return true;
+        if (!fullscreen) return v.fullscreen;
+        return refresh < v.refresh || display < v.display;
+    }
+    
+    FORCEINLINE std::string text() const {
+        std::string text = std::to_string(x) + "x" + std::to_string(y);
+        if (fullscreen) {
+            text += " " + std::to_string(refresh) + "hz Display: " + std::to_string(display);
+        } else {
+            text += " window";
+        }
+        return text;
+    }
+};
+
 class Options {
 	public:
 		virtual void load(const char* sectionName, const char* iniFileName) = 0;
@@ -66,8 +115,8 @@ class GraphOptions : public Options {
 
 		CustomGraphOptions customOptions;
 
-		std::vector<Vect2i> resolutions;
-        Vect2i resolution;
+		std::vector<DisplayMode> resolutions;
+        DisplayMode resolution;
 		int colorDepth;
 
 		bool operator == (const GraphOptions &cgo) const {

@@ -83,13 +83,26 @@ void OnComboGraphicsResolution(CShellWindow* pWnd, InterfaceEventCode code, int 
 	CComboWindow *pCombo = (CComboWindow*) pWnd;
 	GraphOptions& graphOptions = GraphOptionsManager::getInstance().getGraphicsOptions();
 	if( code == EVENT_CREATEWND ) {
-	    Vect2i current = graphOptions.resolution;
+	    DisplayMode current = graphOptions.resolution;
 
         if (param != -1) {
             pCombo->pos = 0;
             int i = 0;
-            for (Vect2i res : graphOptions.resolutions) {
+            for (DisplayMode& res : graphOptions.resolutions) {
                 std::string text = std::to_string(res.x) + "x" + std::to_string(res.y);
+                if (0 < res.refresh) {
+                    text += " (" + std::to_string(res.refresh) + " hz)"; 
+                }
+                if (0 <= res.display) {
+                    const char* name = SDL_GetDisplayName(res.display);
+                    if (name) {
+                        text += "\nScreen ";
+                        text += std::string(name).substr(0, 10);
+                    }
+                }
+                if (!res.fullscreen) {
+                    text += "\nWindowed";
+                }
                 pCombo->Array.emplace_back(text);
                 if (res == current) {
                     pCombo->pos = i;
@@ -100,6 +113,7 @@ void OnComboGraphicsResolution(CShellWindow* pWnd, InterfaceEventCode code, int 
 			pCombo->size = pCombo->Array.size();
 		}
 	} else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
+        if (graphOptions.resolutions.empty()) return;
         graphOptions.resolution = graphOptions.resolutions[pCombo->pos];
 	}
 }

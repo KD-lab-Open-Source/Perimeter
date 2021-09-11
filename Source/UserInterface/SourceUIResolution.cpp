@@ -141,11 +141,13 @@ bool setSourceUIResolution(const Vect2i& res) {
         }
     }
     
+    //If none was found use the smallest one, this shouldn't happen now that we have minimum window size
     if (source_ui_resolution.x == 0 || source_ui_resolution.y == 0) {
         fprintf(stderr, "Couldn't set UI resolution! using lowest\n");
         source_ui_resolution.set(resolutions[0]);
     }
     
+    //Calculate scaling factor between internal UI resolution and real resolution
     source_ui_factor.set(
         static_cast<float>(res.x) / static_cast<float>(source_ui_resolution.x),
         static_cast<float>(res.y) / static_cast<float>(source_ui_resolution.y)
