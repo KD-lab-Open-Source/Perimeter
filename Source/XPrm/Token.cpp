@@ -21,7 +21,7 @@ Parser::~Parser()
 void Parser::open(const char* fname_)
 {
 	XStream ff(0);
-    fname = convert_path(fname_);
+    fname = convert_path_xprm(fname_);
 	if(!ff.open(fname, XS_IN))
 		throw std::logic_error(std::string("File not found: ") + fname + " " + fname_);
 	int len = ff.size();
@@ -511,7 +511,7 @@ unsigned Section::description()
 
 std::string Section::align_path(const char* sources, const std::string& str)
 {
-	std::string path = convert_path(script_file.c_str());
+	std::string path = convert_path_xprm(script_file.c_str());
 
 	//Check and remove the initial sources dir
     std::string sources_path = sources;

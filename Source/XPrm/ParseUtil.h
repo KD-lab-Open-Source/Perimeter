@@ -147,3 +147,16 @@ inline std::string strip_string(const char* str)
 	parameter.pop_back();
 	return parameter;
 }
+
+static std::string convert_path_xprm(const char* path) {
+    std::string result = convert_path(path);
+    //Certain dependencies need to use convert_path_resource during game runtime compiler
+    bool check_exists = endsWith(result, ".prm") || endsWith(result, ".inl");
+    if (check_exists && !std::filesystem::exists(result)) {
+        std::string resource = convert_path_resource(path);
+        if (!resource.empty()) {
+            result = resource;
+        }
+    }
+    return result;
+}

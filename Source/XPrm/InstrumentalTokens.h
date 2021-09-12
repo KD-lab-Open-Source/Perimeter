@@ -8,7 +8,7 @@ struct IncludeToken : Token
 
 	void affect(Compiler& comp) const 
 	{
-        std::string path = convert_path(comp.parser().file_name());
+        std::string path = convert_path_xprm(comp.parser().file_name());
         size_t pos = path.rfind(PATH_SEP) + 1;
 		path.erase(pos, path.size() - pos);
 		path += strip_string(comp.get_token());
@@ -38,7 +38,7 @@ struct ParseSectionDeclarationToken : Token
 	void affect(Compiler& comp) const
 	{
 		comp.skip_token("=");
-		comp.section().declaration_file = convert_path(strip_string(comp.get_token()).c_str());
+		comp.section().declaration_file = convert_path_xprm(strip_string(comp.get_token()).c_str());
 	}
 };
 
@@ -48,7 +48,7 @@ struct ParseSectionDefinitionToken : Token
 	void affect(Compiler& comp) const
 	{
 		comp.skip_token("=");
-		comp.section().definition_file = convert_path(strip_string(comp.get_token()).c_str());
+		comp.section().definition_file = convert_path_xprm(strip_string(comp.get_token()).c_str());
 	}
 };
 
@@ -58,7 +58,7 @@ struct ParseSectionScriptPathToken : Token
 	void affect(Compiler& comp) const
 	{
 		comp.skip_token("=");
-		comp.section().script_file = convert_path(strip_string(comp.get_token()).c_str());
+		comp.section().script_file = convert_path_xprm(strip_string(comp.get_token()).c_str());
 	}
 };
 
