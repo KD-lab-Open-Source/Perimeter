@@ -16,6 +16,7 @@
 
 #include "MessageBox.h"
 #include "BelligerentSelect.h"
+#include "GameContent.h"
 
 extern LogStream fout;
 extern MpegSound gb_Music;
@@ -447,12 +448,12 @@ void setFrm(CComboWindow* combo, int number) {
 				break;
 			case BELLIGERENT_HARKBACKHOOD0:
 			case BELLIGERENT_HARKBACKHOOD1:
-				#if defined(_DEMO_) || defined(_PERIMETER_ADDON_)
-					combo->pos = 2;
-				#else
-					combo->pos = 0;
-					gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
-				#endif
+                if (terGameContent == GAME_CONTENT::PERIMETER_ET) {
+                    combo->pos = 0;
+                    gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
+                } else {
+                    combo->pos = 2;
+                }
 				break;
 			case BELLIGERENT_EMPIRE0:
 			case BELLIGERENT_EMPIRE1:

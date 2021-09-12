@@ -93,6 +93,13 @@ InterfaceTV interfaceTV_GunLaser =
 	radius = 90;
 	pos_dy = 15;
 };
+InterfaceTV interfaceTV_GunElectro = 
+{
+	//electro gun
+	angle_x =50;
+	radius = 90;
+	pos_dy = 15;
+};
 InterfaceTV interfaceTV_GunRocket =  
 {
 	//rocket gun
@@ -149,6 +156,12 @@ InterfaceTV interfaceTV_Leamo =
 	radius = 80;
 	pos_dy = 7;
 };
+InterfaceTV interfaceTV_Impaler = 
+{
+	angle_x =50;
+	radius = 80;
+	pos_dy = 7;
+};
 InterfaceTV interfaceTV_Rocker = 
 {
 	angle_x =50;
@@ -172,6 +185,12 @@ InterfaceTV interfaceTV_Ceptor =
 	channel = "main";
 };
 InterfaceTV interfaceTV_Gyroid = 
+{
+	angle_x =50;
+	radius = 100;
+	pos_dy = -9;
+};
+InterfaceTV interfaceTV_Eflair = 
 {
 	angle_x =50;
 	radius = 100;
@@ -227,6 +246,12 @@ InterfaceTV interfaceTV_ScumHeater =
 	radius = 400;
 	pos_dy = 0;
 };
+InterfaceTV interfaceTV_Conductor = 
+{
+	angle_x =50;
+	radius = 400;
+	pos_dy = 0;
+};
 InterfaceTV interfaceTV_ScumThrower = 
 {
 	angle_x =50;
@@ -269,6 +294,27 @@ InterfaceTV interfaceTV_LabLaser2 =
 	channel = "main1";
 };
 InterfaceTV interfaceTV_LabLaser3 = 
+{
+	angle_x =50;
+	radius = 120;
+	pos_dy = -8;
+	channel = "main2";
+};
+InterfaceTV interfaceTV_LabElectro1 = 
+{
+	angle_x =50;
+	radius = 150;
+	pos_dy = 0;
+	channel = "main";
+};
+InterfaceTV interfaceTV_LabElectro2 = 
+{
+	angle_x =50;
+	radius = 120;
+	pos_dy = -8;
+	channel = "main1";
+};
+InterfaceTV interfaceTV_LabElectro3 = 
 {
 	angle_x =50;
 	radius = 120;

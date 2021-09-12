@@ -1725,6 +1725,9 @@ void CShellComplexPushButton::OnFormatPopupMessage(char* cbBuffer)
 	case SQSH_SQUAD_UNIT23:
 	case SQSH_SQUAD_UNIT24:
 	case SQSH_SQUAD_UNIT25:
+    case SQSH_SQUAD_UNIT26:
+    case SQSH_SQUAD_UNIT27:
+    case SQSH_SQUAD_UNIT28:
 		{
 			CUITabSheet* pSquadSheet = (CUITabSheet*)_shellIconManager.GetWnd(SQSH_TAB_SQUAD_ID);
 			//terUnitSquad* pSquad = GetSquadByNumber(pSquadSheet->GetActivePage());

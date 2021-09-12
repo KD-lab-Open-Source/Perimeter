@@ -246,11 +246,13 @@ static struct AttackableData
 		_Gyroid,
 		_Strafer,
 		_Ceptor,
+		_Eflair,
 
 		_Scumer,
 		_Digger,
 
 		_Leamo,
+		_Impaler,
 		_Extirpator,
 		
 		//  Скверна
@@ -260,6 +262,7 @@ static struct AttackableData
 		
 		//  Стационарные орудия
 		_LaserGun, 
+		_ElectroGun, 
 		_RocketGun,
 		_Howitzer,
 		_Subchaser,
@@ -278,6 +281,7 @@ static struct AttackableData
 		_Disintegrator,
 		_ScumTwister,
 		_ScumHeater,
+		_Conductor,
 		_Scourge1,
 		_Scourge2,
 
@@ -336,13 +340,16 @@ static struct AttackableData
 	AttackablePrm Gyroid = { kill_priority = _Gyroid; };
 	AttackablePrm Strafer = { kill_priority = _Strafer; };
 	AttackablePrm Ceptor = { kill_priority = _Ceptor; };
+	AttackablePrm Eflair = { kill_priority = _Eflair; };
 
 	AttackablePrm Leamo = { kill_priority = _Leamo; };
+	AttackablePrm Impaler = { kill_priority = _Impaler; };
 	AttackablePrm Unseen = { kill_priority = _Unseen; };
 
 	AttackablePrm ScumSplitter = { kill_priority = _ScumSplitter; };
 	AttackablePrm ScumTwister = { kill_priority = _ScumTwister; };
 	AttackablePrm ScumHeater = { kill_priority = _ScumHeater; };
+	AttackablePrm Conductor = { kill_priority = _Conductor; };
 	AttackablePrm ScumThrower = { kill_priority = _ScumThrower; };
 	AttackablePrm Extirpator = { kill_priority = _Extirpator; };
 
@@ -363,6 +370,7 @@ static struct AttackableData
 	//		Стационарные орудия
 	//////////////////////////////////////////////////
 	AttackablePrm LaserGun = { kill_priority = _LaserGun; };
+	AttackablePrm ElectroGun = { kill_priority = _ElectroGun; };
 	AttackablePrm GunRocket = { kill_priority = _RocketGun; };
 	AttackablePrm GunHowitzer = { kill_priority = _Howitzer; };
 	AttackablePrm GunSubchaser = { kill_priority = _Subchaser; };

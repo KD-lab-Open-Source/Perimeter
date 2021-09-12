@@ -45,6 +45,7 @@
 #endif
 #include "../HT/ht.h"
 #include "GraphicsOptions.h"
+#include "GameContent.h"
 
 const char* currentVersion = 
 "Ver "
@@ -243,6 +244,8 @@ void CrashHandler()
     }
 }
 
+void initAttributes();
+
 void HTManager::init()
 {
 	interpolation_timer_ = 0;
@@ -271,8 +274,7 @@ void HTManager::init()
 
 	initGraphics();
 
-	void debugStartUp();
-	debugStartUp();
+	initAttributes();
 
 	allocation_tracking("PerimeterGraphicsInit");
 	
@@ -765,8 +767,8 @@ int main(int argc, char *argv[])
     //Create crash folder
     std::filesystem::create_directories(CRASH_DIR);
 
-    //Scan resources first
-    scan_resource_paths();
+    //Do game content detection
+    detectGameContent();
 
     //Load perimeter parameters
     int xprmcompiler=IniManager("Perimeter.ini", false).getInt("Game","XPrmCompiler");

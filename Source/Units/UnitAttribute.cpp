@@ -727,17 +727,23 @@ void copyInterfaceAttributes();
 void copyRigidBodyTable();
 void copyInterfaceAttributesIndispensable();
 
-void debugStartUp()
+void initAttributes()
 {
 	globalAttr();
 	interfaceAttr();
-
 //	soundScriptTable();
-//	copyRigidBodyTable();
+
+    
+    int use_attrs=IniManager("Perimeter.ini", false).getInt("Game","UseAttributes");
+    check_command_line_parameter("use_attributes", use_attrs);
+    if (!use_attrs) {
+        copyRigidBodyTable();
+        copyAttributes();
+        copyInterfaceAttributes();
+    }
+
 //	rigidBodyPrmLibrary.edit();
-//	copyAttributes();
 //	attributeLibrary.edit();
-//	copyInterfaceAttributes();
 //	interfaceAttr.edit();
 //	ErrH.Exit();
 

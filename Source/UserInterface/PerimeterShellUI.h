@@ -1634,7 +1634,7 @@ class CShellIconManager
 
 	void updateControlsFromExternalStates();
 
-	SaveControlData externalControlStates[SQSH_GAME_MAX];
+    std::vector<SaveControlData> externalControlStates;
 	std::vector<SaveControlData> externalBuildTabStates;
 	std::vector<SaveControlData> externalSquadTabStates;
 

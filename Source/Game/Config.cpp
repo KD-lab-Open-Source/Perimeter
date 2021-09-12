@@ -633,7 +633,8 @@ void copy(sqshControl& d, const EXPORT_NS::sqshControl& s)
 	d.type = s.type;
 	d.id = s.id;
 
-	d.state = s.state;
+    d.state = s.state;
+    d.content = s.content;
 	d.x = s.x;
 	d.y = s.y;
 	d.sx = s.sx;

@@ -16,6 +16,7 @@
 #include "CameraManager.h"
 #include "PerimeterSound.h"
 #include "qd_textdb.h"
+#include "GameContent.h"
 
 extern char _bMenuMode;
 
@@ -532,6 +533,11 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 	case SQSH_STATION5_ID:
 		n_struct = UNIT_ATTRIBUTE_FLY_STATION1;
 		break;
+    case SQSH_STATION_ELECTRO_LAB_ID:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION1;
+        }
+        break;
 	case SQSH_STATION_EXODUS_LAB_ID:
 		n_struct = UNIT_ATTRIBUTE_EXODUS_STATION1;
 		break;
@@ -560,6 +566,11 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 	case SQSH_GUN_SUBCHASER_ID:
 		n_struct = UNIT_ATTRIBUTE_GUN_SUBCHASER;
 		break;
+    case SQSH_GUN_ELECTRO_ID:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            n_struct = UNIT_ATTRIBUTE_ELECTRO_CANNON;
+        }
+        break;
 	case SQSH_GUN_BALLISTIC_ID:
 		n_struct = UNIT_ATTRIBUTE_GUN_BALLISTIC;
 		break;
@@ -592,6 +603,17 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 		n_struct = UNIT_ATTRIBUTE_SUBTERRA_STATION2;
 		break;
 
+
+    case SQSH_SELPANEL_UPGRADE_ELECTRO1_ID:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION2;
+        }
+        break;
+    case SQSH_SELPANEL_UPGRADE_ELECTRO2_ID:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION3;
+        }
+        break;
 	case SQSH_SELPANEL_UPGRADE_EXODUS1_ID:
 		n_struct = UNIT_ATTRIBUTE_EXODUS_STATION2;
 		break;
@@ -669,6 +691,11 @@ int Structure2ButtonID(int i)
 	//case UNIT_ATTRIBUTE_BOMB_STATION3:
 		id = SQSH_STATION3_ID;
 		break;
+    case UNIT_ATTRIBUTE_ELECTRO_STATION1:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            id = SQSH_STATION_ELECTRO_LAB_ID;
+        }
+        break;
 
 	case UNIT_ATTRIBUTE_EXODUS_STATION1:
 //	case UNIT_ATTRIBUTE_EXODUS_STATION2:
@@ -683,7 +710,9 @@ int Structure2ButtonID(int i)
 	case UNIT_ATTRIBUTE_HARKBACK_STATION1:
 //	case UNIT_ATTRIBUTE_HARKBACK_STATION2:
 //	case UNIT_ATTRIBUTE_HARKBACK_STATION3:
-		id = SQSH_STATION_HARKBACK_LAB_ID;
+        if (terGameContent & GAME_CONTENT::PERIMETER) {
+            id = SQSH_STATION_HARKBACK_LAB_ID;
+        }
 		break;
 	case UNIT_ATTRIBUTE_FLY_STATION1:
 		id = SQSH_STATION5_ID;
@@ -696,6 +725,11 @@ int Structure2ButtonID(int i)
 	case UNIT_ATTRIBUTE_LASER_CANNON:
 		id = SQSH_GUN_LASER_ID;
 		break;
+    case UNIT_ATTRIBUTE_ELECTRO_CANNON:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            id = SQSH_GUN_ELECTRO_ID;
+        }
+        break;
 	case UNIT_ATTRIBUTE_ROCKET_LAUNCHER:
 		id = SQSH_GUN_ROCKET_ID;
 		break;
@@ -706,7 +740,9 @@ int Structure2ButtonID(int i)
 		id = SQSH_GUN_GIMLET_ID;
 		break;
 	case UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR:
-		id = SQSH_GUN_FILTH_ID;
+        if (terGameContent & GAME_CONTENT::PERIMETER) {
+            id = SQSH_GUN_FILTH_ID;
+        }
 		break;
 	case UNIT_ATTRIBUTE_GUN_SUBCHASER:
 		id = SQSH_GUN_SUBCHASER_ID;
@@ -727,6 +763,8 @@ int Structure2ButtonID(int i)
 
 	return id;
 }
+
+//TODO unused
 int Structure2ButtonID_(int i)// только для подсказок по строениям
 {
 	int id = -1;
@@ -909,19 +947,16 @@ STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id)
 		n = UNIT_ATTRIBUTE_SCUM_THROWER;
 		break;
 	case SQSH_SQUAD_UNIT20:
-		n = UNIT_ATTRIBUTE_FILTH_SPOT0;
+        n = UNIT_ATTRIBUTE_FILTH_SPOT0;
 		break;
 	case SQSH_SQUAD_UNIT21:
-		n = UNIT_ATTRIBUTE_FILTH_SPOT1;
-//		n = UNIT_ATTRIBUTE_IMPALER;
+        n = UNIT_ATTRIBUTE_FILTH_SPOT1;
 		break;
 	case SQSH_SQUAD_UNIT22:
-		n = UNIT_ATTRIBUTE_FILTH_SPOT2;
-//		n = UNIT_ATTRIBUTE_EFLAIR;
+        n = UNIT_ATTRIBUTE_FILTH_SPOT2;
 		break;
 	case SQSH_SQUAD_UNIT23:
-		n = UNIT_ATTRIBUTE_FILTH_SPOT3;
-//		n = UNIT_ATTRIBUTE_CONDUCTOR;
+        n = UNIT_ATTRIBUTE_FILTH_SPOT3;
 		break;
 	case SQSH_SQUAD_UNIT24:
 		n = UNIT_ATTRIBUTE_SCUM_TWISTER;
@@ -929,6 +964,23 @@ STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id)
 	case SQSH_SQUAD_UNIT25:
 		n = UNIT_ATTRIBUTE_SCUM_HEATER;
 		break;
+    case SQSH_SQUAD_UNIT26:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            n = UNIT_ATTRIBUTE_IMPALER;
+        }
+        break;
+    case SQSH_SQUAD_UNIT27:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            n = UNIT_ATTRIBUTE_EFLAIR;
+        }
+        break;
+    case SQSH_SQUAD_UNIT28:
+        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+            n = UNIT_ATTRIBUTE_CONDUCTOR;
+        }
+        break;
+    default:
+        break;
 	}  
 
 	return n;
@@ -999,15 +1051,12 @@ int LegionID2Button(int nAttrID)
 		nButtonID = SQSH_SQUAD_UNIT20;
 		break;
 	case UNIT_ATTRIBUTE_FILTH_SPOT1:
-//	case UNIT_ATTRIBUTE_IMPALER:
 		nButtonID = SQSH_SQUAD_UNIT21;
 		break;
 	case UNIT_ATTRIBUTE_FILTH_SPOT2:
-//	case UNIT_ATTRIBUTE_EFLAIR:
 		nButtonID = SQSH_SQUAD_UNIT22;
 		break;
 	case UNIT_ATTRIBUTE_FILTH_SPOT3:
-//	case UNIT_ATTRIBUTE_CONDUCTOR:
 		nButtonID = SQSH_SQUAD_UNIT23;
 		break;
 	case UNIT_ATTRIBUTE_SCUM_TWISTER:
@@ -1016,6 +1065,15 @@ int LegionID2Button(int nAttrID)
 	case UNIT_ATTRIBUTE_SCUM_HEATER:
 		nButtonID = SQSH_SQUAD_UNIT25;
 		break;
+    case UNIT_ATTRIBUTE_IMPALER:
+        nButtonID = SQSH_SQUAD_UNIT26;
+        break;
+    case UNIT_ATTRIBUTE_EFLAIR:
+        nButtonID = SQSH_SQUAD_UNIT27;
+        break;
+    case UNIT_ATTRIBUTE_CONDUCTOR:
+        nButtonID = SQSH_SQUAD_UNIT28;
+        break;
 	}
 
 	return nButtonID;

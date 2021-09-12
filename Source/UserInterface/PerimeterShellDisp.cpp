@@ -24,6 +24,7 @@
 #include "IronPort.h"
 #include "qd_textdb.h"
 #include <stdarg.h>     // for va_start
+#include "GameContent.h"
 
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
@@ -415,6 +416,9 @@ _handlertbl[] = {
 	{SQSH_SQUAD_UNIT23, OnButtonSquadMutate},
 	{SQSH_SQUAD_UNIT24, OnButtonSquadMutate},
 	{SQSH_SQUAD_UNIT25, OnButtonSquadMutate},
+    {SQSH_SQUAD_UNIT26, OnButtonSquadMutate},
+    {SQSH_SQUAD_UNIT27, OnButtonSquadMutate},
+    {SQSH_SQUAD_UNIT28, OnButtonSquadMutate},
 	{SQSH_MAP_WINDOW_ID, OnMapWindowClicked},
 
 	{SQSH_FRAME_TERRAIN_BUILD1_ID, OnButtonTerrainBuild},
@@ -809,6 +813,7 @@ CShellIconManager::CShellIconManager()
 
 	m_nControlGroupLoaded = -1;
 
+    externalControlStates.resize(SQSH_MAX);
 	externalBuildTabStates.resize(3);
 	externalSquadTabStates.resize(5);
 	int i;
@@ -1105,6 +1110,7 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 		for(int c=0; c<cont.controls.size(); c++)
 		{
 			const sqshControl& tc = cont.controls[c];
+			if (tc.content && !(tc.content & terGameContent)) continue;
 
 			CShellWindow* pCtrl = CreateWnd(tc.id, tc.type, pWndCntr, _GetEventHandler(tc.id));
 			xassert(tc.id <= SQSH_MAX);
@@ -2538,77 +2544,95 @@ float GetUnitUpgradeProgress(terBuilding* p) {
 	return res > 0 ? res : FLT_EPS;
 }
 
-
 void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates) {
-	for (int i = 0, s = newControlStates.size(); i < s; i++) {
-		if (newControlStates[i].controlID == SQSH_TAB_BUILD_ID) {
-			if (newControlStates[i].tabNumber == -1) {
-				externalControlStates[newControlStates[i].controlID] = newControlStates[i];
+	for (const SaveControlData& data : newControlStates) {
+        xassert(data.controlID < externalControlStates.size());
+		if (data.controlID == SQSH_TAB_BUILD_ID) {
+			if (data.tabNumber == -1) {
+				externalControlStates[data.controlID] = data;
 			} else {
-				externalBuildTabStates[newControlStates[i].tabNumber] = newControlStates[i];
+                xassert(data.tabNumber < externalBuildTabStates.size());
+				externalBuildTabStates[data.tabNumber] = data;
 			}
-		} else if (newControlStates[i].controlID == SQSH_TAB_SQUAD_ID) {
-			if (newControlStates[i].tabNumber == -1) {
-				externalControlStates[newControlStates[i].controlID] = newControlStates[i];
+		} else if (data.controlID == SQSH_TAB_SQUAD_ID) {
+			if (data.tabNumber == -1) {
+				externalControlStates[data.controlID] = data;
 			} else {
-				externalSquadTabStates[newControlStates[i].tabNumber] = newControlStates[i];
+                xassert(data.tabNumber < externalSquadTabStates.size());
+				externalSquadTabStates[data.tabNumber] = data;
 			}
 		} else {
-			externalControlStates[newControlStates[i].controlID] = newControlStates[i];
+			externalControlStates[data.controlID] = data;
 		}
 	}
 }
 
 void CShellIconManager::fillControlState(std::vector<SaveControlData>& controlStatesToSave) {
 	controlStatesToSave.clear();
-	for (int i = 0; i < SQSH_GAME_MAX; i++) {
-		externalControlStates[i].controlID = (ShellControlID)i;
-		controlStatesToSave.push_back(externalControlStates[i]);
-		if (i == SQSH_TAB_BUILD_ID) {
+    for (int i = 0; i < externalControlStates.size(); i++) {
+        SaveControlData& data = externalControlStates[i];
+        data.controlID = (ShellControlID) i;
+        //Skip legacy squad region
+        if (SQSH_SQUAD_LEGACY_1 <= i && i <= SQSH_SQUAD_LEGACY_26) continue;
+        //Skip menu region
+        if (SQSH_GAME_MAX <= i && i <= SQSH_MENU_MAX) continue;
+        //Skip certain elements
+        switch (data.controlID) {
+            case SQSH_STATIC_ID:
+            case SQSH_GAME_SCREEN_ID:
+            case SQSH_BACKGRND_ID:
+            case SQSH_SQUAD_MAX:
+            case SQSH_MAX:
+                continue;
+            default:
+                break;
+        }
+		controlStatesToSave.push_back(data);
+		if (data.controlID == SQSH_TAB_BUILD_ID) {
 			controlStatesToSave.back().tabNumber = -1;
 			for (int j = 0, s = externalBuildTabStates.size(); j < s; j++) {
-				externalBuildTabStates[j].controlID = SQSH_TAB_BUILD_ID;
-				externalBuildTabStates[j].tabNumber = j;
-				controlStatesToSave.push_back(externalBuildTabStates[j]);
+                SaveControlData& buildTab = externalBuildTabStates[j];
+				buildTab.controlID = SQSH_TAB_BUILD_ID;
+                buildTab.tabNumber = j;
+				controlStatesToSave.push_back(buildTab);
 			}
-		} else if (i == SQSH_TAB_SQUAD_ID) {
+		} else if (data.controlID == SQSH_TAB_SQUAD_ID) {
 			controlStatesToSave.back().tabNumber = -1;
 			for (int j = 0, s = externalSquadTabStates.size(); j < s; j++) {
-				externalSquadTabStates[j].controlID = SQSH_TAB_SQUAD_ID;
-				externalSquadTabStates[j].tabNumber = j;
-				controlStatesToSave.push_back(externalSquadTabStates[j]);
+                SaveControlData& squadTab = externalSquadTabStates[j];
+				squadTab.controlID = SQSH_TAB_SQUAD_ID;
+				squadTab.tabNumber = j;
+				controlStatesToSave.push_back(squadTab);
 			}
 		}
 	}
-
 }
 
 STARFORCE_API_NEW void CancelEditWorkarea();
 
 void CShellIconManager::updateControlsFromExternalStates() {
-	for (int i = 0; i < SQSH_GAME_MAX; i++) {
-		CShellWindow* wnd = GetWnd(externalControlStates[i].controlID);
+    for (int i = 0; i < externalControlStates.size(); i++) {
+        SaveControlData& data = externalControlStates[i];
+		CShellWindow* wnd = GetWnd(data.controlID);
 		if (wnd) {
-			if (externalControlStates[i].controlID == SQSH_TAB_BUILD_ID) {
-			} else if (externalControlStates[i].controlID == SQSH_TAB_SQUAD_ID) {
-			} else {
-				if (externalControlStates[i].controlID >= SQSH_FRAME_TERRAIN_BUILD1_ID && externalControlStates[i].controlID <= SQSH_FRAME_TERRAIN_BUILD5_ID) {
-					((CTerrainBuildButton*)wnd)->partDisable = externalControlStates[i].tabNumber;
+			if (data.controlID != SQSH_TAB_BUILD_ID && data.controlID != SQSH_TAB_SQUAD_ID) {
+				if (data.controlID >= SQSH_FRAME_TERRAIN_BUILD1_ID && data.controlID <= SQSH_FRAME_TERRAIN_BUILD5_ID) {
+					((CTerrainBuildButton*)wnd)->partDisable = data.tabNumber;
 				}
-				if (!externalControlStates[i].visible) {
+				if (!data.visible) {
 					wnd->Show(0);
 					wnd->Enable(false);
 				}
-				if (!externalControlStates[i].enabled) {
+				if (!data.enabled) {
 					if (
-							((_pShellDispatcher->m_nEditRegion == editRegion1) && (externalControlStates[i].controlID == SQSH_WORKAREA3_ID))
-						||	((_pShellDispatcher->m_nEditRegion == editRegion2) && (externalControlStates[i].controlID == SQSH_WORKAREA2_ID))	) {
+							((_pShellDispatcher->m_nEditRegion == editRegion1) && (data.controlID == SQSH_WORKAREA3_ID))
+						||	((_pShellDispatcher->m_nEditRegion == editRegion2) && (data.controlID == SQSH_WORKAREA2_ID))	) {
 
 						CancelEditWorkarea();
 					}
 					wnd->Enable(false);
 				}
-				if ( externalControlStates[i].flashing ) {
+				if ( data.flashing ) {
 					wnd->setFlashingInterval(0);
 				} else if ( wnd->getFlashingInterval() == 0 ) {
 					wnd->setFlashingInterval(-1);
@@ -2879,6 +2903,7 @@ void CShellIconManager::UpdateBuildingsIcons() {
 //			} else if (i >= UNIT_ATTRIBUTE_LASER_STATION1 && i <= UNIT_ATTRIBUTE_HARKBACK_STATION3 && pSheetBuild && (pSheetBuild->GetActivePage() == 1)) {
 //				pBtn->Show(button->visible);
 //			}
+            if (!pBtn) continue;
 			if (i >= UNIT_ATTRIBUTE_LASER_STATION1 && i <= UNIT_ATTRIBUTE_HARKBACK_STATION3 && pSheetBuild && (pSheetBuild->GetActivePage() == 1)) {
 				pBtn->Show(button->visible);
 			}
@@ -3344,8 +3369,8 @@ void CShellIconManager::UpdateSquadIcons()
 		SQSH_SQUAD_UNIT7, SQSH_SQUAD_UNIT8,	SQSH_SQUAD_UNIT9, SQSH_SQUAD_UNIT10, SQSH_SQUAD_UNIT11,
 		SQSH_SQUAD_UNIT12, SQSH_SQUAD_UNIT13, SQSH_SQUAD_UNIT14, SQSH_SQUAD_UNIT15, SQSH_SQUAD_UNIT16,
 		SQSH_SQUAD_UNIT17, SQSH_SQUAD_UNIT18, SQSH_SQUAD_UNIT19, SQSH_SQUAD_UNIT20, SQSH_SQUAD_UNIT21,
-		SQSH_SQUAD_UNIT22, SQSH_SQUAD_UNIT23, SQSH_SQUAD_UNIT24, SQSH_SQUAD_UNIT25,
-		SQSH_SOLDIER_ID,SQSH_OFFICER_ID,SQSH_TECHNIC_ID };
+		SQSH_SQUAD_UNIT22, SQSH_SQUAD_UNIT23, SQSH_SQUAD_UNIT24, SQSH_SQUAD_UNIT25, SQSH_SQUAD_UNIT26,
+		SQSH_SQUAD_UNIT27, SQSH_SQUAD_UNIT28, SQSH_SOLDIER_ID,SQSH_OFFICER_ID,SQSH_TECHNIC_ID };
 
 	CUITabSheet* pSquadSheet = (CUITabSheet*)GetWnd(SQSH_TAB_SQUAD_ID);
 /*
@@ -3359,7 +3384,7 @@ void CShellIconManager::UpdateSquadIcons()
 */
 	ShowControls(true, ids, sizeof(ids) / sizeof(ShellControlID));
 
-	for (int id = SQSH_SQUAD_DISINTEGRATE_ID; id <= SQSH_SQUAD_UNIT25; id++) {
+	for (int id = SQSH_SQUAD_DISINTEGRATE_ID; id < SQSH_SQUAD_MAX; id++) {
 		CShellLegionButton* pWnd = (CShellLegionButton*)_shellIconManager.GetWnd(id);
 		if (pWnd) {
 //			if (isControlAccessible(id)) {
@@ -4008,6 +4033,7 @@ void LogicUpdater::updateSquadsData() {
 
 			for (int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX; i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++) {
 				terUnitAttributeID id = (terUnitAttributeID)i;
+                if (unavailableContentUnitAttribute(id)) continue;
 				DamageMolecula damage_molecula(universe()->activePlayer()->unitAttribute(id)->damageMolecula);
 				int countPossible = pSquad->countPossibleUnits(id);
 				int count = pSquad->countUnits(id);
@@ -4105,6 +4131,7 @@ void LogicUpdater::updateSquadsData() {
 
 			for (int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX; i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++) {
 				terUnitAttributeID id = (terUnitAttributeID)i;
+                if (unavailableContentUnitAttribute(id)) continue;
 				DamageMolecula damage_molecula(universe()->activePlayer()->unitAttribute(id)->damageMolecula);
 				MutationButtonData* button = &(page->mutationButtons[i - UNIT_ATTRIBUTE_SOLDIER - MUTATION_ATOM_MAX]);
 				button->id = id;
@@ -4346,7 +4373,7 @@ void CShellIconManager::gameTypeChanged(UserSingleProfile::GameType newType) {
 }
 
 bool CShellIconManager::menuVisible() {
-	for (int i = (SQSH_GAME_MAX + 1); i < SQSH_MAX; i++) {
+	for (int i = (SQSH_GAME_MAX + 1); i < SQSH_MENU_MAX; i++) {
 		if ( controls[i] && controls[i]->isVisible() ) {
 			return true;
 		}

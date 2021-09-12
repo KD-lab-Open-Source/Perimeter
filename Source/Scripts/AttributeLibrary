@@ -1,6 +1,6 @@
 AttributeLibrary = {
 	types = {
-		185;
+		192;
 		{
 			first = {
 				attributeID = UNIT_ATTRIBUTE_CORE;
@@ -18599,6 +18599,1643 @@ AttributeLibrary = {
 		},
 		{
 			first = {
+				attributeID = UNIT_ATTRIBUTE_ELECTRO_STATION1;
+				belligerent = BELLIGERENT_NONE;
+			};
+			second = "class AttributeBuilding" {
+				ID = UNIT_ATTRIBUTE_ELECTRO_STATION1;
+				belligerent = BELLIGERENT_NONE;
+				ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+				InterpolationType = INTERPOLATION_ID_STRUCTURE;
+				InterfaceNameTag = "Electro Laboratory Level 1";
+				modelData = {
+					modelName = "RESOURCE\\MODELS\\MAIN\\electro_st.m3d";
+					logicName = "RESOURCE\\MODELS\\MAIN\\electro_st.l3d";
+					boundScale = 1.;
+					boundRadius = 0.;
+				};
+				additionalModelsData = {
+					1;
+					{
+						modelName = "RESOURCE\\MODELS\\MAIN\\build_electro_st.m3d";
+						logicName = "RESOURCE\\MODELS\\MAIN\\electro_st.l3d";
+						boundScale = 1.;
+						boundRadius = 0.;
+					}
+				};
+				animationDataTable = {
+					1;
+					{
+						groupID = ANIMATION_GROUP_ROOT;
+						groupName = 0;
+						chains = {
+							18;
+							{
+								chainID = CHAIN_SWITCHED_OFF;
+								chainName = "main";
+								phase = 0.;
+								period = 4000;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 1;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCHED_ON;
+								chainName = "main";
+								phase = 0.;
+								period = 4000;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD1;
+								chainName = "build1";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD0;
+								end = CHAIN_NODE_BUILD1;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD2;
+								chainName = "build2";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD1;
+								end = CHAIN_NODE_BUILD2;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD3;
+								chainName = "build3";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD2;
+								end = CHAIN_NODE_BUILD3;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD4;
+								chainName = "build4";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD3;
+								end = CHAIN_NODE_BUILD4;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD5;
+								chainName = "build5";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD4;
+								end = CHAIN_NODE_BUILD5;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD6;
+								chainName = "build6";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD5;
+								end = CHAIN_NODE_BUILD6;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD7;
+								chainName = "build7";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD6;
+								end = CHAIN_NODE_BUILD7;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD8;
+								chainName = "build8";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD7;
+								end = CHAIN_NODE_BUILD8;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD1;
+								chainName = "build1";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD1;
+								end = CHAIN_NODE_BUILD0;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD2;
+								chainName = "build2";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD2;
+								end = CHAIN_NODE_BUILD1;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD3;
+								chainName = "build3";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD3;
+								end = CHAIN_NODE_BUILD2;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD4;
+								chainName = "build4";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD4;
+								end = CHAIN_NODE_BUILD3;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD5;
+								chainName = "build5";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD5;
+								end = CHAIN_NODE_BUILD4;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD6;
+								chainName = "build6";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD6;
+								end = CHAIN_NODE_BUILD5;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD7;
+								chainName = "build7";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD7;
+								end = CHAIN_NODE_BUILD6;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD8;
+								chainName = "build8";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD8;
+								end = CHAIN_NODE_BUILD7;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					}
+				};
+				ConnectionPointNames = {
+					0;
+				};
+				UnitClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_IGNORE;
+				MilitaryUnit = false;
+				enemyWorld = false;
+				ExcludeCollision = 0;
+				CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+				kill_priority = 5.;
+				MakeEnergy = 0.;
+				energyCapacity = 0.;
+				ConnectionRadius = 0.;
+				ZeroLayerRadius = 0.;
+				FieldRadius = 0.;
+				damageMolecula = {
+					elements = {
+						5;
+						0,
+						0,
+						0,
+						0,
+						2000
+					};
+				};
+				unitDamage = {
+					mainDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+					splashDamageRadius = 0;
+					splashDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+				};
+				environmentalDamage = {
+					damageType = ENV_DAMAGE_BASEMENT;
+					damageData = {
+						2;
+						{
+							width = 1;
+							power = 1;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						},
+						{
+							width = 100;
+							power = 80;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						}
+					};
+					period = 100;
+					periodDelta = 1000;
+					damageRatioMin = 1.e-002;
+				};
+				weaponSetup = {
+					weaponType = WEAPON_NONE;
+					flags = ;
+					missileID = UNIT_ATTRIBUTE_NONE;
+					missileLimit = 0;
+					aimResetDelay = 1500;
+					fireDisableTime = 0;
+					fireDelay = 1000;
+					missileLoadDelay = 300;
+					turnSuggestPrm = {
+						key = "";
+					};
+					controllerSetup = {
+						objectName = {
+							2;
+							"",
+							""
+						};
+						logicObjectName = {
+							2;
+							"",
+							""
+						};
+						targetingObjectName = 0;
+						targetingPrecision = {
+							2;
+							1.e-003,
+							1.e-003
+						};
+						turnSpeed = {
+							2;
+							0.2,
+							0.2
+						};
+						psiLimit = {
+							2;
+							0.,
+							2.
+						};
+						thetaLimit = {
+							2;
+							-0.5,
+							0.5
+						};
+						defaultAngles = {
+							2;
+							0.,
+							0.
+						};
+					};
+					dischargeSpeed = 0.3;
+					fireRadius = {
+						2;
+						0.,
+						100.
+					};
+					sightRadius = 100.;
+					accuracyRadius = 0.;
+					weaponIndex = 0;
+					laserWidth = 2.;
+					reloadConsumption = {
+						energy = 0.;
+						time = 100;
+						priority = 0;
+						name = "reloadConsumption";
+					};
+					thetaForced = -360.;
+					squadMode = 1;
+					excludeHolograms = true;
+				};
+				effectsData = {
+					libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+					effects = {
+						6;
+						{
+							effectID = EFFECT_ID_EXPLOSION;
+							effectName = "EXPLOD_01";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_02";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_04";
+							needOrientation = true;
+							startupDamage = 0.3;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_05";
+							needOrientation = true;
+							startupDamage = 0.6;
+						},
+						{
+							effectID = EFFECT_ID_BUILDING_UNINSTALL;
+							effectName = "EXPLOD_07";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_LASER_HIT;
+							effectName = "laser";
+							needOrientation = true;
+							startupDamage = 0.;
+						}
+					};
+					debrisData = {
+						1;
+						{
+							debrisID = UNIT_ATTRIBUTE_DEBRIS_UNIT;
+							count = 5;
+							countRnd = -1;
+							speed = 150.;
+						}
+					};
+					corpseLifeTime = 70;
+					corpseID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+					craterRadius = 60.;
+					craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
+					craterDelay = 10;
+					movementCraterID = UNIT_ATTRIBUTE_NONE;
+					movementCraterDelta = 1.;
+				};
+				toolzerSetup = {
+					steps = {
+						0;
+					};
+					scale = 1.;
+					destroyOwnZeroLayer = false;
+					workOnChaos = true;
+					radius = 48.;
+				};
+				soundSetup = {
+					sounds = {
+						0;
+					};
+					events = {
+						5;
+						{
+							ID = SOUND_EVENT_EXPLOSION;
+							name = "Struct_Explosion_LaserLab";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_EVENT_SELECT;
+							name = "Struct_Proc_Work_ElectroLab";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_READY;
+							name = "Labor_Ready";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_UNDER_ATTACK;
+							name = "Labor_Under_Attack";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 20000;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_DESTROYED;
+							name = "Labor_Destroyed";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 5000;
+							startDelay = 0;
+							queueTime = 2000;
+						}
+					};
+				};
+				interfacePrm = {
+					actions = {
+						op_move = 0;
+						op_stop = 0;
+						op_stop2 = 0;
+						op_attack = 0;
+						op_back = 0;
+						op_offdeff = 0;
+						op_patrol = 0;
+						op_power_onoff = 0;
+						op_sell = 1;
+						op_upgrade = 1;
+						op_field = 0;
+						op_install = 0;
+						op_teleportate = 0;
+						op_alarm = 0;
+						op_brig_back = 0;
+						op_brig_change = 0;
+						op_brig_build = 0;
+						op_charging = 0;
+						op_charge_control = 0;
+					};
+					upgrade_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO1_ID;
+					upgrading_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					format_group = POPUP_FORMAT_BUILDING;
+					popup = "<station_electro>";
+				};
+				interfaceTV = {
+					radius = 150.;
+					pos_dx = 0.;
+					pos_dy = 0.;
+					angle_x = 50.;
+					angle_y = 0.;
+					angle_z = 0.;
+					model = "";
+					channel = "main";
+					channel_power_on = "";
+				};
+				rigidBodyPrm = {
+					key = "Building";
+				};
+				forwardVelocity = 0.;
+				flyingHeight = 50.;
+				LifeTime = 0;
+				SoundName = "";
+				SoundCycled = true;
+				lockInitialPosition = false;
+				enablePathFind = false;
+				enableFieldPathFind = false;
+				considerInFieldPathFind = true;
+				MakingChainNum = 6;
+				UpgradeChainName = "making";
+				PrevChainName = "main";
+				SelectionDistance = 0.4;
+				SelectionSize = 0.6;
+				showPath = false;
+				ShowCircles = true;
+				saveAsCommonObject = false;
+				GroundPlaneSpeed = 0.;
+				GroundAngleSpeed = 0.;
+				BasementMin = {
+					x = -35.2827;
+					y = -36.4189;
+				};
+				BasementMax = {
+					x = 36.6598;
+					y = 34.7975;
+				};
+				BasementPoints = {
+					4;
+					{
+						x = -34.2827;
+						y = 33.7975;
+					},
+					{
+						x = 35.6598;
+						y = 33.7975;
+					},
+					{
+						x = 35.6598;
+						y = -35.4189;
+					},
+					{
+						x = -34.2827;
+						y = -35.4189;
+					}
+				};
+				BasementInscribedRadius = 34.7975;
+				modelScale = 0.5;
+				logicObjectBoundMin = {
+					x = -28.1824;
+					y = -29.8802;
+					z = -5.80105;
+				};
+				logicObjectBoundMax = {
+					x = 29.629;
+					y = 27.9312;
+					z = 43.2355;
+				};
+				boundRadius = 47.6679;
+				logicObjectBoundOriginalMin = {
+					x = -56.3648;
+					y = -59.7604;
+					z = -11.6021;
+				};
+				logicObjectBoundOriginalMax = {
+					x = 59.258;
+					y = 55.8625;
+					z = 86.4709;
+				};
+				boundRadiusOriginal = 95.3357;
+				modelTime = {
+					LowDateTime = 2737097984;
+					HighDateTime = 29697196;
+				};
+				logicTime = {
+					LowDateTime = 2737097984;
+					HighDateTime = 29697196;
+				};
+				dockingSlots = {
+					0;
+				};
+				productionConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				movementConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				FallDelay = 20;
+				FallSpeed = -2.;
+				FallAcceleration = -0.1;
+				EnableStructure = {
+					0;
+				};
+				Downgrades = {
+					0;
+				};
+				Upgrade = UNIT_ATTRIBUTE_ELECTRO_STATION2;
+				isUpgrade = false;
+				constructionSpeedCoeff = 2.;
+				constructionPriority = 7;
+				disconnectAnimation = false;
+				iconDistanceFactor = 1.3;
+			};
+		},
+		{
+			first = {
+				attributeID = UNIT_ATTRIBUTE_ELECTRO_STATION2;
+				belligerent = BELLIGERENT_NONE;
+			};
+			second = "class AttributeBuilding" {
+				ID = UNIT_ATTRIBUTE_ELECTRO_STATION2;
+				belligerent = BELLIGERENT_NONE;
+				ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+				InterpolationType = INTERPOLATION_ID_STRUCTURE;
+				InterfaceNameTag = "Electro Laboratory Level 2";
+				modelData = {
+					modelName = "RESOURCE\\MODELS\\MAIN\\electro_st.m3d";
+					logicName = "RESOURCE\\MODELS\\MAIN\\electro_st.l3d";
+					boundScale = 1.;
+					boundRadius = 0.;
+				};
+				additionalModelsData = {
+					0;
+				};
+				animationDataTable = {
+					1;
+					{
+						groupID = ANIMATION_GROUP_ROOT;
+						groupName = 0;
+						chains = {
+							4;
+							{
+								chainID = CHAIN_UPGRADE_PREPARE;
+								chainName = "making1";
+								phase = 1.;
+								period = -1;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_UPGRADE_START;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UPGRADE;
+								chainName = "making1";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_UPGRADE_START;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCHED_OFF;
+								chainName = "main1";
+								phase = 0.;
+								period = 4000;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCHED_ON;
+								chainName = "main1";
+								phase = 0.;
+								period = 4000;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					}
+				};
+				ConnectionPointNames = {
+					0;
+				};
+				UnitClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_IGNORE;
+				MilitaryUnit = false;
+				enemyWorld = false;
+				ExcludeCollision = 0;
+				CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+				kill_priority = 6.;
+				MakeEnergy = 0.;
+				energyCapacity = 0.;
+				ConnectionRadius = 0.;
+				ZeroLayerRadius = 0.;
+				FieldRadius = 0.;
+				damageMolecula = {
+					elements = {
+						5;
+						0,
+						0,
+						0,
+						0,
+						3500
+					};
+				};
+				unitDamage = {
+					mainDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+					splashDamageRadius = 0;
+					splashDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+				};
+				environmentalDamage = {
+					damageType = ENV_DAMAGE_BASEMENT;
+					damageData = {
+						2;
+						{
+							width = 1;
+							power = 1;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						},
+						{
+							width = 100;
+							power = 80;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						}
+					};
+					period = 100;
+					periodDelta = 1000;
+					damageRatioMin = 1.e-002;
+				};
+				weaponSetup = {
+					weaponType = WEAPON_NONE;
+					flags = ;
+					missileID = UNIT_ATTRIBUTE_NONE;
+					missileLimit = 0;
+					aimResetDelay = 1500;
+					fireDisableTime = 0;
+					fireDelay = 1000;
+					missileLoadDelay = 300;
+					turnSuggestPrm = {
+						key = "";
+					};
+					controllerSetup = {
+						objectName = {
+							2;
+							"",
+							""
+						};
+						logicObjectName = {
+							2;
+							"",
+							""
+						};
+						targetingObjectName = 0;
+						targetingPrecision = {
+							2;
+							1.e-003,
+							1.e-003
+						};
+						turnSpeed = {
+							2;
+							0.2,
+							0.2
+						};
+						psiLimit = {
+							2;
+							0.,
+							2.
+						};
+						thetaLimit = {
+							2;
+							-0.5,
+							0.5
+						};
+						defaultAngles = {
+							2;
+							0.,
+							0.
+						};
+					};
+					dischargeSpeed = 0.3;
+					fireRadius = {
+						2;
+						0.,
+						100.
+					};
+					sightRadius = 100.;
+					accuracyRadius = 0.;
+					weaponIndex = 0;
+					laserWidth = 2.;
+					reloadConsumption = {
+						energy = 0.;
+						time = 100;
+						priority = 0;
+						name = "reloadConsumption";
+					};
+					thetaForced = -360.;
+					squadMode = 1;
+					excludeHolograms = true;
+				};
+				effectsData = {
+					libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+					effects = {
+						6;
+						{
+							effectID = EFFECT_ID_EXPLOSION;
+							effectName = "EXPLOD_01";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_02";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_04";
+							needOrientation = true;
+							startupDamage = 0.3;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_05";
+							needOrientation = true;
+							startupDamage = 0.6;
+						},
+						{
+							effectID = EFFECT_ID_BUILDING_UNINSTALL;
+							effectName = "EXPLOD_07";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_LASER_HIT;
+							effectName = "laser";
+							needOrientation = true;
+							startupDamage = 0.;
+						}
+					};
+					debrisData = {
+						1;
+						{
+							debrisID = UNIT_ATTRIBUTE_DEBRIS_UNIT;
+							count = 5;
+							countRnd = -1;
+							speed = 150.;
+						}
+					};
+					corpseLifeTime = 70;
+					corpseID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+					craterRadius = 60.;
+					craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
+					craterDelay = 10;
+					movementCraterID = UNIT_ATTRIBUTE_NONE;
+					movementCraterDelta = 1.;
+				};
+				toolzerSetup = {
+					steps = {
+						0;
+					};
+					scale = 1.;
+					destroyOwnZeroLayer = false;
+					workOnChaos = true;
+					radius = 48.;
+				};
+				soundSetup = {
+					sounds = {
+						0;
+					};
+					events = {
+						5;
+						{
+							ID = SOUND_EVENT_EXPLOSION;
+							name = "Struct_Explosion_LaserLab";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_EVENT_SELECT;
+							name = "Struct_Proc_Work_ElectroLab";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_READY;
+							name = "Labor_Ready";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_UNDER_ATTACK;
+							name = "Labor_Under_Attack";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 20000;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_DESTROYED;
+							name = "Labor_Destroyed";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 5000;
+							startDelay = 0;
+							queueTime = 2000;
+						}
+					};
+				};
+				interfacePrm = {
+					actions = {
+						op_move = 0;
+						op_stop = 0;
+						op_stop2 = 0;
+						op_attack = 0;
+						op_back = 0;
+						op_offdeff = 0;
+						op_patrol = 0;
+						op_power_onoff = 0;
+						op_sell = 1;
+						op_upgrade = 1;
+						op_field = 0;
+						op_install = 0;
+						op_teleportate = 0;
+						op_alarm = 0;
+						op_brig_back = 0;
+						op_brig_change = 0;
+						op_brig_build = 0;
+						op_charging = 0;
+						op_charge_control = 0;
+					};
+					upgrade_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO2_ID;
+					upgrading_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO1_ID;
+					format_group = POPUP_FORMAT_BUILDING;
+					popup = "<upgrade_electro1_unit>";
+				};
+				interfaceTV = {
+					radius = 120.;
+					pos_dx = 0.;
+					pos_dy = -8.;
+					angle_x = 50.;
+					angle_y = 0.;
+					angle_z = 0.;
+					model = "";
+					channel = "main1";
+					channel_power_on = "";
+				};
+				rigidBodyPrm = {
+					key = "Building";
+				};
+				forwardVelocity = 0.;
+				flyingHeight = 50.;
+				LifeTime = 0;
+				SoundName = "";
+				SoundCycled = true;
+				lockInitialPosition = false;
+				enablePathFind = false;
+				enableFieldPathFind = false;
+				considerInFieldPathFind = true;
+				MakingChainNum = -1;
+				UpgradeChainName = "making1";
+				PrevChainName = "main";
+				SelectionDistance = 0.4;
+				SelectionSize = 0.6;
+				showPath = false;
+				ShowCircles = true;
+				saveAsCommonObject = false;
+				GroundPlaneSpeed = 0.;
+				GroundAngleSpeed = 0.;
+				BasementMin = {
+					x = -35.2827;
+					y = -36.4189;
+				};
+				BasementMax = {
+					x = 36.6598;
+					y = 34.7975;
+				};
+				BasementPoints = {
+					4;
+					{
+						x = -34.2827;
+						y = 33.7975;
+					},
+					{
+						x = 35.6598;
+						y = 33.7975;
+					},
+					{
+						x = 35.6598;
+						y = -35.4189;
+					},
+					{
+						x = -34.2827;
+						y = -35.4189;
+					}
+				};
+				BasementInscribedRadius = 34.7975;
+				modelScale = 0.5;
+				logicObjectBoundMin = {
+					x = -28.1824;
+					y = -29.8802;
+					z = -5.80105;
+				};
+				logicObjectBoundMax = {
+					x = 29.629;
+					y = 27.9312;
+					z = 43.2355;
+				};
+				boundRadius = 47.6679;
+				logicObjectBoundOriginalMin = {
+					x = -56.3648;
+					y = -59.7604;
+					z = -11.6021;
+				};
+				logicObjectBoundOriginalMax = {
+					x = 59.258;
+					y = 55.8625;
+					z = 86.4709;
+				};
+				boundRadiusOriginal = 95.3357;
+				modelTime = {
+					LowDateTime = 2737097984;
+					HighDateTime = 29697196;
+				};
+				logicTime = {
+					LowDateTime = 2737097984;
+					HighDateTime = 29697196;
+				};
+				dockingSlots = {
+					0;
+				};
+				productionConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				movementConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				FallDelay = 20;
+				FallSpeed = -2.;
+				FallAcceleration = -0.1;
+				EnableStructure = {
+					1;
+					UNIT_ATTRIBUTE_ELECTRO_STATION1
+				};
+				Downgrades = {
+					1;
+					UNIT_ATTRIBUTE_ELECTRO_STATION1
+				};
+				Upgrade = UNIT_ATTRIBUTE_ELECTRO_STATION3;
+				isUpgrade = true;
+				constructionSpeedCoeff = 2.;
+				constructionPriority = 6;
+				disconnectAnimation = false;
+				iconDistanceFactor = 1.3;
+			};
+		},
+		{
+			first = {
+				attributeID = UNIT_ATTRIBUTE_ELECTRO_STATION3;
+				belligerent = BELLIGERENT_NONE;
+			};
+			second = "class AttributeBuilding" {
+				ID = UNIT_ATTRIBUTE_ELECTRO_STATION3;
+				belligerent = BELLIGERENT_NONE;
+				ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+				InterpolationType = INTERPOLATION_ID_STRUCTURE;
+				InterfaceNameTag = "Electro Laboratory Level 3";
+				modelData = {
+					modelName = "RESOURCE\\MODELS\\MAIN\\electro_st.m3d";
+					logicName = "RESOURCE\\MODELS\\MAIN\\electro_st.l3d";
+					boundScale = 1.;
+					boundRadius = 0.;
+				};
+				additionalModelsData = {
+					0;
+				};
+				animationDataTable = {
+					1;
+					{
+						groupID = ANIMATION_GROUP_ROOT;
+						groupName = 0;
+						chains = {
+							4;
+							{
+								chainID = CHAIN_UPGRADE_PREPARE;
+								chainName = "making2";
+								phase = 1.;
+								period = -1;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_UPGRADE_START;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UPGRADE;
+								chainName = "making2";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_UPGRADE_START;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCHED_OFF;
+								chainName = "main2";
+								phase = 0.;
+								period = 4000;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCHED_ON;
+								chainName = "main2";
+								phase = 0.;
+								period = 4000;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					}
+				};
+				ConnectionPointNames = {
+					0;
+				};
+				UnitClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_IGNORE;
+				MilitaryUnit = false;
+				enemyWorld = false;
+				ExcludeCollision = 0;
+				CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+				kill_priority = 8.;
+				MakeEnergy = 0.;
+				energyCapacity = 0.;
+				ConnectionRadius = 0.;
+				ZeroLayerRadius = 0.;
+				FieldRadius = 0.;
+				damageMolecula = {
+					elements = {
+						5;
+						0,
+						0,
+						0,
+						0,
+						5000
+					};
+				};
+				unitDamage = {
+					mainDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+					splashDamageRadius = 0;
+					splashDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+				};
+				environmentalDamage = {
+					damageType = ENV_DAMAGE_BASEMENT;
+					damageData = {
+						2;
+						{
+							width = 1;
+							power = 1;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						},
+						{
+							width = 100;
+							power = 80;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						}
+					};
+					period = 100;
+					periodDelta = 1000;
+					damageRatioMin = 1.e-002;
+				};
+				weaponSetup = {
+					weaponType = WEAPON_NONE;
+					flags = ;
+					missileID = UNIT_ATTRIBUTE_NONE;
+					missileLimit = 0;
+					aimResetDelay = 1500;
+					fireDisableTime = 0;
+					fireDelay = 1000;
+					missileLoadDelay = 300;
+					turnSuggestPrm = {
+						key = "";
+					};
+					controllerSetup = {
+						objectName = {
+							2;
+							"",
+							""
+						};
+						logicObjectName = {
+							2;
+							"",
+							""
+						};
+						targetingObjectName = 0;
+						targetingPrecision = {
+							2;
+							1.e-003,
+							1.e-003
+						};
+						turnSpeed = {
+							2;
+							0.2,
+							0.2
+						};
+						psiLimit = {
+							2;
+							0.,
+							2.
+						};
+						thetaLimit = {
+							2;
+							-0.5,
+							0.5
+						};
+						defaultAngles = {
+							2;
+							0.,
+							0.
+						};
+					};
+					dischargeSpeed = 0.3;
+					fireRadius = {
+						2;
+						0.,
+						100.
+					};
+					sightRadius = 100.;
+					accuracyRadius = 0.;
+					weaponIndex = 0;
+					laserWidth = 2.;
+					reloadConsumption = {
+						energy = 0.;
+						time = 100;
+						priority = 0;
+						name = "reloadConsumption";
+					};
+					thetaForced = -360.;
+					squadMode = 1;
+					excludeHolograms = true;
+				};
+				effectsData = {
+					libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+					effects = {
+						6;
+						{
+							effectID = EFFECT_ID_EXPLOSION;
+							effectName = "EXPLOD_01";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_02";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_04";
+							needOrientation = true;
+							startupDamage = 0.3;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_05";
+							needOrientation = true;
+							startupDamage = 0.6;
+						},
+						{
+							effectID = EFFECT_ID_BUILDING_UNINSTALL;
+							effectName = "EXPLOD_07";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_LASER_HIT;
+							effectName = "laser";
+							needOrientation = true;
+							startupDamage = 0.;
+						}
+					};
+					debrisData = {
+						1;
+						{
+							debrisID = UNIT_ATTRIBUTE_DEBRIS_UNIT;
+							count = 5;
+							countRnd = -1;
+							speed = 150.;
+						}
+					};
+					corpseLifeTime = 70;
+					corpseID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+					craterRadius = 60.;
+					craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
+					craterDelay = 10;
+					movementCraterID = UNIT_ATTRIBUTE_NONE;
+					movementCraterDelta = 1.;
+				};
+				toolzerSetup = {
+					steps = {
+						0;
+					};
+					scale = 1.;
+					destroyOwnZeroLayer = false;
+					workOnChaos = true;
+					radius = 48.;
+				};
+				soundSetup = {
+					sounds = {
+						0;
+					};
+					events = {
+						5;
+						{
+							ID = SOUND_EVENT_EXPLOSION;
+							name = "Struct_Explosion_LaserLab";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_EVENT_SELECT;
+							name = "Struct_Proc_Work_ElectroLab";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_READY;
+							name = "Labor_Ready";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_UNDER_ATTACK;
+							name = "Labor_Under_Attack";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 20000;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_DESTROYED;
+							name = "Labor_Destroyed";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 5000;
+							startDelay = 0;
+							queueTime = 2000;
+						}
+					};
+				};
+				interfacePrm = {
+					actions = {
+						op_move = 0;
+						op_stop = 0;
+						op_stop2 = 0;
+						op_attack = 0;
+						op_back = 0;
+						op_offdeff = 0;
+						op_patrol = 0;
+						op_power_onoff = 0;
+						op_sell = 1;
+						op_upgrade = 0;
+						op_field = 0;
+						op_install = 0;
+						op_teleportate = 0;
+						op_alarm = 0;
+						op_brig_back = 0;
+						op_brig_change = 0;
+						op_brig_build = 0;
+						op_charging = 0;
+						op_charge_control = 0;
+					};
+					upgrade_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					upgrading_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO2_ID;
+					format_group = POPUP_FORMAT_BUILDING;
+					popup = "<upgrade_electro2_unit>";
+				};
+				interfaceTV = {
+					radius = 120.;
+					pos_dx = 0.;
+					pos_dy = -8.;
+					angle_x = 50.;
+					angle_y = 0.;
+					angle_z = 0.;
+					model = "";
+					channel = "main2";
+					channel_power_on = "";
+				};
+				rigidBodyPrm = {
+					key = "Building";
+				};
+				forwardVelocity = 0.;
+				flyingHeight = 50.;
+				LifeTime = 0;
+				SoundName = "";
+				SoundCycled = true;
+				lockInitialPosition = false;
+				enablePathFind = false;
+				enableFieldPathFind = false;
+				considerInFieldPathFind = true;
+				MakingChainNum = -1;
+				UpgradeChainName = "making2";
+				PrevChainName = "main1";
+				SelectionDistance = 0.4;
+				SelectionSize = 0.6;
+				showPath = false;
+				ShowCircles = true;
+				saveAsCommonObject = false;
+				GroundPlaneSpeed = 0.;
+				GroundAngleSpeed = 0.;
+				BasementMin = {
+					x = -35.2827;
+					y = -36.4189;
+				};
+				BasementMax = {
+					x = 36.6598;
+					y = 34.7975;
+				};
+				BasementPoints = {
+					4;
+					{
+						x = -34.2827;
+						y = 33.7975;
+					},
+					{
+						x = 35.6598;
+						y = 33.7975;
+					},
+					{
+						x = 35.6598;
+						y = -35.4189;
+					},
+					{
+						x = -34.2827;
+						y = -35.4189;
+					}
+				};
+				BasementInscribedRadius = 34.7975;
+				modelScale = 0.5;
+				logicObjectBoundMin = {
+					x = -28.1824;
+					y = -29.8802;
+					z = -5.80105;
+				};
+				logicObjectBoundMax = {
+					x = 29.629;
+					y = 27.9312;
+					z = 43.2355;
+				};
+				boundRadius = 47.6679;
+				logicObjectBoundOriginalMin = {
+					x = -56.3648;
+					y = -59.7604;
+					z = -11.6021;
+				};
+				logicObjectBoundOriginalMax = {
+					x = 59.258;
+					y = 55.8625;
+					z = 86.4709;
+				};
+				boundRadiusOriginal = 95.3357;
+				modelTime = {
+					LowDateTime = 2737097984;
+					HighDateTime = 29697196;
+				};
+				logicTime = {
+					LowDateTime = 2737097984;
+					HighDateTime = 29697196;
+				};
+				dockingSlots = {
+					0;
+				};
+				productionConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				movementConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				FallDelay = 20;
+				FallSpeed = -2.;
+				FallAcceleration = -0.1;
+				EnableStructure = {
+					1;
+					UNIT_ATTRIBUTE_ELECTRO_STATION2
+				};
+				Downgrades = {
+					2;
+					UNIT_ATTRIBUTE_ELECTRO_STATION2,
+					UNIT_ATTRIBUTE_ELECTRO_STATION1
+				};
+				Upgrade = UNIT_ATTRIBUTE_NONE;
+				isUpgrade = true;
+				constructionSpeedCoeff = 2.;
+				constructionPriority = 6;
+				disconnectAnimation = false;
+				iconDistanceFactor = 1.3;
+			};
+		},
+		{
+			first = {
 				attributeID = UNIT_ATTRIBUTE_EXODUS_STATION3;
 				belligerent = BELLIGERENT_NONE;
 			};
@@ -23628,6 +25265,622 @@ AttributeLibrary = {
 				Upgrade = UNIT_ATTRIBUTE_NONE;
 				isUpgrade = false;
 				constructionSpeedCoeff = 1.;
+				constructionPriority = 8;
+				disconnectAnimation = true;
+				iconDistanceFactor = 2.5;
+			};
+		},
+		{
+			first = {
+				attributeID = UNIT_ATTRIBUTE_ELECTRO_CANNON;
+				belligerent = BELLIGERENT_NONE;
+			};
+			second = "class AttributeBuilding" {
+				ID = UNIT_ATTRIBUTE_ELECTRO_CANNON;
+				belligerent = BELLIGERENT_NONE;
+				ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+				InterpolationType = INTERPOLATION_ID_REAL;
+				InterfaceNameTag = "Electro-Gun";
+				modelData = {
+					modelName = "RESOURCE\\MODELS\\MAIN\\electro_gun.m3d";
+					logicName = "RESOURCE\\MODELS\\MAIN\\electro_gun.l3d";
+					boundScale = 1.;
+					boundRadius = 0.;
+				};
+				additionalModelsData = {
+					1;
+					{
+						modelName = "RESOURCE\\MODELS\\MAIN\\build_electro_gun.m3d";
+						logicName = "RESOURCE\\MODELS\\MAIN\\electro_gun.l3d";
+						boundScale = 1.;
+						boundRadius = 0.;
+					}
+				};
+				animationDataTable = {
+					2;
+					{
+						groupID = ANIMATION_GROUP_ROOT;
+						groupName = 0;
+						chains = {
+							10;
+							{
+								chainID = CHAIN_SWITCHED_ON;
+								chainName = "main";
+								phase = 0.;
+								period = 100;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCHED_OFF;
+								chainName = "off";
+								phase = 0.;
+								period = 100;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD1;
+								chainName = "build1";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD0;
+								end = CHAIN_NODE_BUILD1;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD2;
+								chainName = "build2";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD1;
+								end = CHAIN_NODE_BUILD2;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD3;
+								chainName = "build3";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD2;
+								end = CHAIN_NODE_BUILD3;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_BUILD4;
+								chainName = "build4";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_BUILD3;
+								end = CHAIN_NODE_BUILD4;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD1;
+								chainName = "build1";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD1;
+								end = CHAIN_NODE_BUILD0;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD2;
+								chainName = "build2";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD2;
+								end = CHAIN_NODE_BUILD1;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD3;
+								chainName = "build3";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD3;
+								end = CHAIN_NODE_BUILD2;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_UNBUILD4;
+								chainName = "build4";
+								phase = 1.;
+								period = -1000;
+								begin = CHAIN_NODE_BUILD4;
+								end = CHAIN_NODE_BUILD3;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					},
+					{
+						groupID = ANIMATION_GROUP_FIRE;
+						groupName = "group fire";
+						chains = {
+							4;
+							{
+								chainID = CHAIN_SWITCHED_OFF;
+								chainName = "main";
+								phase = 0.;
+								period = 1;
+								begin = CHAIN_NODE_SWITCHED_OFF;
+								end = CHAIN_NODE_SWITCHED_OFF;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCH_ON;
+								chainName = "main";
+								phase = 0.;
+								period = 1;
+								begin = CHAIN_NODE_SWITCHED_OFF;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_FIRE;
+								chainName = "fire";
+								phase = 0.;
+								period = 400;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 1;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCH_OFF;
+								chainName = "main";
+								phase = 1.;
+								period = -1;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_OFF;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 2;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					}
+				};
+				ConnectionPointNames = {
+					0;
+				};
+				UnitClass = UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_BUILDER | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				MilitaryUnit = true;
+				enemyWorld = false;
+				ExcludeCollision = 0;
+				CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+				kill_priority = 36.;
+				MakeEnergy = 0.;
+				energyCapacity = 0.;
+				ConnectionRadius = 0.;
+				ZeroLayerRadius = 0.;
+				FieldRadius = 0.;
+				damageMolecula = {
+					elements = {
+						5;
+						0,
+						0,
+						0,
+						0,
+						300
+					};
+				};
+				unitDamage = {
+					mainDamage = {
+						width = 15;
+						power = 15;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+					splashDamageRadius = 0;
+					splashDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+				};
+				environmentalDamage = {
+					damageType = ENV_DAMAGE_BASEMENT;
+					damageData = {
+						2;
+						{
+							width = 1;
+							power = 1;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						},
+						{
+							width = 100;
+							power = 80;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						}
+					};
+					period = 100;
+					periodDelta = 1000;
+					damageRatioMin = 1.e-002;
+				};
+				weaponSetup = {
+					weaponType = WEAPON_LIGHTING;
+					flags = WEAPON_HAS_FIRE_CONTROLLER | WEAPON_NEED_CHARGE;
+					missileID = UNIT_ATTRIBUTE_NONE;
+					missileLimit = 0;
+					aimResetDelay = 1500;
+					fireDisableTime = 300;
+					fireDelay = 1000;
+					missileLoadDelay = 300;
+					turnSuggestPrm = {
+						key = "";
+					};
+					controllerSetup = {
+						objectName = {
+							2;
+							"group bashnia",
+							"group dulo"
+						};
+						logicObjectName = {
+							2;
+							"bashnia",
+							"dulo"
+						};
+						targetingObjectName = "fire";
+						targetingPrecision = {
+							2;
+							9.e-002,
+							9.e-002
+						};
+						turnSpeed = {
+							2;
+							0.3,
+							0.3
+						};
+						psiLimit = {
+							2;
+							0.,
+							2.
+						};
+						thetaLimit = {
+							2;
+							-0.5,
+							0.5
+						};
+						defaultAngles = {
+							2;
+							0.,
+							0.
+						};
+					};
+					dischargeSpeed = 0.5;
+					fireRadius = {
+						2;
+						10.,
+						300.
+					};
+					sightRadius = 400.;
+					accuracyRadius = 0.;
+					weaponIndex = 0;
+					laserWidth = 2.;
+					reloadConsumption = {
+						energy = 0.1;
+						time = 1000;
+						priority = 10;
+						name = "reloadConsumption GunElectro";
+					};
+					thetaForced = -360.;
+					squadMode = 0;
+					excludeHolograms = false;
+				};
+				effectsData = {
+					libraryFileName = "RESOURCE\\FX\\GunLaser.effect";
+					effects = {
+						6;
+						{
+							effectID = EFFECT_ID_EXPLOSION;
+							effectName = "EXPLOD_01";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_02";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_04";
+							needOrientation = true;
+							startupDamage = 0.3;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_05";
+							needOrientation = true;
+							startupDamage = 0.6;
+						},
+						{
+							effectID = EFFECT_ID_BUILDING_UNINSTALL;
+							effectName = "EXPLOD_07";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_LASER_HIT;
+							effectName = "laser";
+							needOrientation = true;
+							startupDamage = 0.;
+						}
+					};
+					debrisData = {
+						1;
+						{
+							debrisID = UNIT_ATTRIBUTE_DEBRIS_UNIT;
+							count = 5;
+							countRnd = -1;
+							speed = 150.;
+						}
+					};
+					corpseLifeTime = 50;
+					corpseID = UNIT_ATTRIBUTE_FALL_STRUCTURE;
+					craterRadius = 20.;
+					craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
+					craterDelay = 10;
+					movementCraterID = UNIT_ATTRIBUTE_NONE;
+					movementCraterDelta = 1.;
+				};
+				toolzerSetup = {
+					steps = {
+						0;
+					};
+					scale = 1.;
+					destroyOwnZeroLayer = false;
+					workOnChaos = true;
+					radius = 48.;
+				};
+				soundSetup = {
+					sounds = {
+						1;
+						{
+							ID = SOUND_SHOT;
+							name = "Struct_Proc_Shot_ElectroGun";
+							cycled = false;
+						}
+					};
+					events = {
+						4;
+						{
+							ID = SOUND_EVENT_EXPLOSION;
+							name = "Struct_Explosion_LaserGun";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_EVENT_SELECT;
+							name = "Struct_Proc_Work_LaserGun";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_READY;
+							name = "ElectroGun_Ready";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						},
+						{
+							ID = SOUND_VOICE_BUILDING_DESTROYED;
+							name = "ElectroGun_Destroyed";
+							is3D = false;
+							isVoice = true;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						}
+					};
+				};
+				interfacePrm = {
+					actions = {
+						op_move = 0;
+						op_stop = 0;
+						op_stop2 = 0;
+						op_attack = 1;
+						op_back = 0;
+						op_offdeff = 0;
+						op_patrol = 0;
+						op_power_onoff = 1;
+						op_sell = 1;
+						op_upgrade = 0;
+						op_field = 0;
+						op_install = 0;
+						op_teleportate = 0;
+						op_alarm = 0;
+						op_brig_back = 0;
+						op_brig_change = 0;
+						op_brig_build = 0;
+						op_charging = 1;
+						op_charge_control = 0;
+					};
+					upgrade_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					upgrading_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					format_group = POPUP_FORMAT_GUN;
+					popup = "<gun_electro>";
+				};
+				interfaceTV = {
+					radius = 90.;
+					pos_dx = 0.;
+					pos_dy = 15.;
+					angle_x = 50.;
+					angle_y = 0.;
+					angle_z = 0.;
+					model = "";
+					channel = "";
+					channel_power_on = "";
+				};
+				rigidBodyPrm = {
+					key = "Building";
+				};
+				forwardVelocity = 0.;
+				flyingHeight = 50.;
+				LifeTime = 0;
+				SoundName = "";
+				SoundCycled = true;
+				lockInitialPosition = false;
+				enablePathFind = false;
+				enableFieldPathFind = false;
+				considerInFieldPathFind = true;
+				MakingChainNum = 4;
+				UpgradeChainName = "making";
+				PrevChainName = "main";
+				SelectionDistance = 0.3;
+				SelectionSize = 0.5;
+				showPath = false;
+				ShowCircles = true;
+				saveAsCommonObject = false;
+				GroundPlaneSpeed = 0.;
+				GroundAngleSpeed = 0.;
+				BasementMin = {
+					x = -24.8789;
+					y = -29.2447;
+				};
+				BasementMax = {
+					x = 25.1278;
+					y = 20.3363;
+				};
+				BasementPoints = {
+					4;
+					{
+						x = -23.8789;
+						y = 19.3363;
+					},
+					{
+						x = 24.1278;
+						y = 19.3363;
+					},
+					{
+						x = 24.1278;
+						y = -28.2447;
+					},
+					{
+						x = -23.8789;
+						y = -28.2447;
+					}
+				};
+				BasementInscribedRadius = 20.3363;
+				modelScale = 0.5;
+				logicObjectBoundMin = {
+					x = -16.4576;
+					y = -21.5914;
+					z = 1.03757;
+				};
+				logicObjectBoundMax = {
+					x = 16.7045;
+					y = 11.4823;
+					z = 27.5617;
+				};
+				boundRadius = 26.9125;
+				logicObjectBoundOriginalMin = {
+					x = -32.9153;
+					y = -43.1827;
+					z = 2.07514;
+				};
+				logicObjectBoundOriginalMax = {
+					x = 33.4091;
+					y = 22.9646;
+					z = 55.1234;
+				};
+				boundRadiusOriginal = 53.825;
+				modelTime = {
+					LowDateTime = 4031470592;
+					HighDateTime = 29699623;
+				};
+				logicTime = {
+					LowDateTime = 4031470592;
+					HighDateTime = 29699623;
+				};
+				dockingSlots = {
+					0;
+				};
+				productionConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				movementConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				FallDelay = 5;
+				FallSpeed = -3.;
+				FallAcceleration = -0.2;
+				EnableStructure = {
+					1;
+					UNIT_ATTRIBUTE_ELECTRO_STATION1
+				};
+				Downgrades = {
+					0;
+				};
+				Upgrade = UNIT_ATTRIBUTE_NONE;
+				isUpgrade = false;
+				constructionSpeedCoeff = 2.;
 				constructionPriority = 8;
 				disconnectAnimation = true;
 				iconDistanceFactor = 2.5;
@@ -52631,6 +54884,1348 @@ AttributeLibrary = {
 				EnableStructure = {
 					3;
 					UNIT_ATTRIBUTE_HARKBACK_STATION3,
+					UNIT_ATTRIBUTE_FLY_STATION2,
+					UNIT_ATTRIBUTE_LASER_STATION3
+				};
+			};
+		},
+		{
+			first = {
+				attributeID = UNIT_ATTRIBUTE_EFLAIR;
+				belligerent = BELLIGERENT_NONE;
+			};
+			second = "class AttributeLegionary" {
+				ID = UNIT_ATTRIBUTE_EFLAIR;
+				belligerent = BELLIGERENT_NONE;
+				ClassID = UNIT_CLASS_ID_LEGIONARY;
+				InterpolationType = INTERPOLATION_ID_REAL;
+				InterfaceNameTag = "Eflair";
+				modelData = {
+					modelName = "RESOURCE\\MODELS\\MAIN\\eflair.m3d";
+					logicName = "RESOURCE\\MODELS\\MAIN\\eflair.l3d";
+					boundScale = 1.;
+					boundRadius = 0.;
+				};
+				additionalModelsData = {
+					0;
+				};
+				animationDataTable = {
+					2;
+					{
+						groupID = ANIMATION_GROUP_ROOT;
+						groupName = 0;
+						chains = {
+							2;
+							{
+								chainID = CHAIN_MOVE;
+								chainName = "main";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_FLIGHT;
+								end = CHAIN_NODE_FLIGHT;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_STOP;
+								chainName = "main";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_FLIGHT;
+								end = CHAIN_NODE_FLIGHT;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					},
+					{
+						groupID = ANIMATION_GROUP_FIRE;
+						groupName = "group fire";
+						chains = {
+							4;
+							{
+								chainID = CHAIN_SWITCHED_OFF;
+								chainName = "main";
+								phase = 0.;
+								period = 1;
+								begin = CHAIN_NODE_SWITCHED_OFF;
+								end = CHAIN_NODE_SWITCHED_OFF;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCH_ON;
+								chainName = "main";
+								phase = 0.;
+								period = 1;
+								begin = CHAIN_NODE_SWITCHED_OFF;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_FIRE;
+								chainName = "fire";
+								phase = 0.;
+								period = 200;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCH_OFF;
+								chainName = "main";
+								phase = 1.;
+								period = -1;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_OFF;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					}
+				};
+				ConnectionPointNames = {
+					0;
+				};
+				UnitClass = UNIT_CLASS_AIR | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BUILDER | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				MilitaryUnit = true;
+				enemyWorld = false;
+				ExcludeCollision = 0;
+				CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+				kill_priority = 26.;
+				MakeEnergy = 0.;
+				energyCapacity = 0.;
+				ConnectionRadius = 0.;
+				ZeroLayerRadius = 0.;
+				FieldRadius = 0.;
+				damageMolecula = {
+					elements = {
+						5;
+						0,
+						8,
+						0,
+						0,
+						25
+					};
+				};
+				unitDamage = {
+					mainDamage = {
+						width = 6;
+						power = 3;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+					splashDamageRadius = 0;
+					splashDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+				};
+				environmentalDamage = {
+					damageType = ENV_DAMAGE_CHAOS;
+					damageData = {
+						2;
+						{
+							width = 30;
+							power = 2;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						},
+						{
+							width = 30;
+							power = 4;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						}
+					};
+					period = 100;
+					periodDelta = 100;
+					damageRatioMin = 0.1;
+				};
+				weaponSetup = {
+					weaponType = WEAPON_LIGHTING;
+					flags = WEAPON_HAS_FIRE_CONTROLLER | WEAPON_NEED_CHARGE;
+					missileID = UNIT_ATTRIBUTE_NONE;
+					missileLimit = 0;
+					aimResetDelay = 1500;
+					fireDisableTime = 300;
+					fireDelay = 1000;
+					missileLoadDelay = 300;
+					turnSuggestPrm = {
+						key = "";
+					};
+					controllerSetup = {
+						objectName = {
+							2;
+							"group bashnia",
+							"group dulo"
+						};
+						logicObjectName = {
+							2;
+							"bashnia",
+							"dulo"
+						};
+						targetingObjectName = "fire";
+						targetingPrecision = {
+							2;
+							5.e-002,
+							5.e-002
+						};
+						turnSpeed = {
+							2;
+							0.1,
+							0.1
+						};
+						psiLimit = {
+							2;
+							0.,
+							2.
+						};
+						thetaLimit = {
+							2;
+							-0.5,
+							0.5
+						};
+						defaultAngles = {
+							2;
+							0.,
+							0.
+						};
+					};
+					dischargeSpeed = 0.5;
+					fireRadius = {
+						2;
+						50.,
+						300.
+					};
+					sightRadius = 400.;
+					accuracyRadius = 0.;
+					weaponIndex = 0;
+					laserWidth = 2.;
+					reloadConsumption = {
+						energy = 0.1;
+						time = 1000;
+						priority = 10;
+						name = "reloadConsumption Eflair";
+					};
+					thetaForced = -360.;
+					squadMode = 1;
+					excludeHolograms = false;
+				};
+				effectsData = {
+					libraryFileName = "RESOURCE\\FX\\Gyroid.effect";
+					effects = {
+						5;
+						{
+							effectID = EFFECT_ID_EXPLOSION;
+							effectName = "EXPLOD_01";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_02";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_04";
+							needOrientation = true;
+							startupDamage = 0.3;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_05";
+							needOrientation = true;
+							startupDamage = 0.6;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_MOVE;
+							effectName = "smoke";
+							needOrientation = true;
+							startupDamage = 0.;
+						}
+					};
+					debrisData = {
+						0;
+					};
+					corpseLifeTime = 5;
+					corpseID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+					craterRadius = 10.;
+					craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NO_DESTRUCT_ALL_ZEROPLAST;
+					craterDelay = 0;
+					movementCraterID = UNIT_ATTRIBUTE_NONE;
+					movementCraterDelta = 1.;
+				};
+				toolzerSetup = {
+					steps = {
+						0;
+					};
+					scale = 1.;
+					destroyOwnZeroLayer = false;
+					workOnChaos = true;
+					radius = 48.;
+				};
+				soundSetup = {
+					sounds = {
+						2;
+						{
+							ID = SOUND_SHOT;
+							name = "Unit_Shot_Eflair";
+							cycled = false;
+						},
+						{
+							ID = SOUND_MOVE;
+							name = "Unit_Move_Gyroid";
+							cycled = true;
+						}
+					};
+					events = {
+						1;
+						{
+							ID = SOUND_EVENT_EXPLOSION;
+							name = "explosion_mid";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						}
+					};
+				};
+				interfacePrm = {
+					actions = {
+						op_move = 1;
+						op_stop = 1;
+						op_stop2 = 0;
+						op_attack = 1;
+						op_back = 1;
+						op_offdeff = 1;
+						op_patrol = 1;
+						op_power_onoff = 0;
+						op_sell = 0;
+						op_upgrade = 0;
+						op_field = 0;
+						op_install = 0;
+						op_teleportate = 0;
+						op_alarm = 0;
+						op_brig_back = 0;
+						op_brig_change = 0;
+						op_brig_build = 0;
+						op_charging = 1;
+						op_charge_control = 0;
+					};
+					upgrade_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					upgrading_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					format_group = POPUP_FORMAT_SQUAD;
+					popup = "<Squad>";
+				};
+				interfaceTV = {
+					radius = 100.;
+					pos_dx = 0.;
+					pos_dy = -9.;
+					angle_x = 50.;
+					angle_y = 0.;
+					angle_z = 0.;
+					model = "";
+					channel = "";
+					channel_power_on = "";
+				};
+				rigidBodyPrm = {
+					key = "Unit Flying Military";
+				};
+				forwardVelocity = 300.;
+				flyingHeight = 250.;
+				LifeTime = 0;
+				SoundName = "";
+				SoundCycled = true;
+				lockInitialPosition = false;
+				enablePathFind = false;
+				enableFieldPathFind = false;
+				considerInFieldPathFind = true;
+				MakingChainNum = -1;
+				UpgradeChainName = "making";
+				PrevChainName = "main";
+				SelectionDistance = 0.4;
+				SelectionSize = 0.3;
+				showPath = false;
+				ShowCircles = true;
+				saveAsCommonObject = false;
+				GroundPlaneSpeed = 0.;
+				GroundAngleSpeed = 0.;
+				BasementMin = {
+					x = 0.;
+					y = 0.;
+				};
+				BasementMax = {
+					x = 0.;
+					y = 0.;
+				};
+				BasementPoints = {
+					0;
+				};
+				BasementInscribedRadius = 0.;
+				modelScale = 0.5;
+				logicObjectBoundMin = {
+					x = -11.1461;
+					y = -18.4023;
+					z = -3.17871;
+				};
+				logicObjectBoundMax = {
+					x = 10.9291;
+					y = 11.8104;
+					z = 4.48123;
+				};
+				boundRadius = 19.0971;
+				logicObjectBoundOriginalMin = {
+					x = -22.2922;
+					y = -36.8047;
+					z = -6.35741;
+				};
+				logicObjectBoundOriginalMax = {
+					x = 21.8582;
+					y = 23.6207;
+					z = 8.96246;
+				};
+				boundRadiusOriginal = 38.1942;
+				modelTime = {
+					LowDateTime = 0;
+					HighDateTime = 0;
+				};
+				logicTime = {
+					LowDateTime = 1782196096;
+					HighDateTime = 29697199;
+				};
+				dockingSlots = {
+					0;
+				};
+				productionConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				movementConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				FallDelay = 20;
+				FallSpeed = -2.;
+				FallAcceleration = 0.;
+				is_base_unit = 0;
+				formationRadiusFactor = 1.;
+				dynamicAttack = 0;
+				attackTurnRadius = 150.;
+				attackAngleDeviation = 0.;
+				ignoreUninstalledFrame = 0;
+				dontUseDamageMapPathFind = 0;
+				LegionType = LEGION_FLYING;
+				destroyZeroLayer = true;
+				EnableStructure = {
+					2;
+					UNIT_ATTRIBUTE_FLY_STATION1,
+					UNIT_ATTRIBUTE_ELECTRO_STATION1
+				};
+			};
+		},
+		{
+			first = {
+				attributeID = UNIT_ATTRIBUTE_IMPALER;
+				belligerent = BELLIGERENT_NONE;
+			};
+			second = "class AttributeLegionary" {
+				ID = UNIT_ATTRIBUTE_IMPALER;
+				belligerent = BELLIGERENT_NONE;
+				ClassID = UNIT_CLASS_ID_LEGIONARY;
+				InterpolationType = INTERPOLATION_ID_REAL;
+				InterfaceNameTag = "Impaler";
+				modelData = {
+					modelName = "RESOURCE\\MODELS\\MAIN\\impaler.m3d";
+					logicName = "RESOURCE\\MODELS\\MAIN\\impaler.l3d";
+					boundScale = 1.;
+					boundRadius = 0.;
+				};
+				additionalModelsData = {
+					0;
+				};
+				animationDataTable = {
+					2;
+					{
+						groupID = ANIMATION_GROUP_ROOT;
+						groupName = 0;
+						chains = {
+							2;
+							{
+								chainID = CHAIN_STOP;
+								chainName = "main";
+								phase = 0.;
+								period = 500;
+								begin = CHAIN_NODE_DEFAULT;
+								end = CHAIN_NODE_DEFAULT;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_MOVE;
+								chainName = "main";
+								phase = 0.;
+								period = 1000;
+								begin = CHAIN_NODE_DEFAULT;
+								end = CHAIN_NODE_DEFAULT;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					},
+					{
+						groupID = ANIMATION_GROUP_FIRE;
+						groupName = "group fire";
+						chains = {
+							4;
+							{
+								chainID = CHAIN_SWITCHED_OFF;
+								chainName = "main";
+								phase = 0.;
+								period = 1;
+								begin = CHAIN_NODE_SWITCHED_OFF;
+								end = CHAIN_NODE_SWITCHED_OFF;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCH_ON;
+								chainName = "main";
+								phase = 0.;
+								period = 1;
+								begin = CHAIN_NODE_SWITCHED_OFF;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_FIRE;
+								chainName = "fire";
+								phase = 0.;
+								period = 500;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_ON;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_SWITCH_OFF;
+								chainName = "main";
+								phase = 1.;
+								period = -1;
+								begin = CHAIN_NODE_SWITCHED_ON;
+								end = CHAIN_NODE_SWITCHED_OFF;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					}
+				};
+				ConnectionPointNames = {
+					0;
+				};
+				UnitClass = UNIT_CLASS_HEAVY | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_FRAME | UNIT_CLASS_BUILDER | UNIT_CLASS_TRUCK | UNIT_CLASS_BLOCK | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
+				MilitaryUnit = true;
+				enemyWorld = false;
+				ExcludeCollision = 0;
+				CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+				kill_priority = 30.;
+				MakeEnergy = 0.;
+				energyCapacity = 0.;
+				ConnectionRadius = 0.;
+				ZeroLayerRadius = 0.;
+				FieldRadius = 0.;
+				damageMolecula = {
+					elements = {
+						5;
+						0,
+						8,
+						4,
+						0,
+						25
+					};
+				};
+				unitDamage = {
+					mainDamage = {
+						width = 10;
+						power = 10;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+					splashDamageRadius = 0;
+					splashDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+				};
+				environmentalDamage = {
+					damageType = ENV_DAMAGE_CHAOS;
+					damageData = {
+						2;
+						{
+							width = 30;
+							power = 2;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						},
+						{
+							width = 30;
+							power = 4;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						}
+					};
+					period = 100;
+					periodDelta = 100;
+					damageRatioMin = 0.1;
+				};
+				weaponSetup = {
+					weaponType = WEAPON_LIGHTING;
+					flags = WEAPON_HAS_FIRE_CONTROLLER | WEAPON_NEED_CHARGE;
+					missileID = UNIT_ATTRIBUTE_NONE;
+					missileLimit = 0;
+					aimResetDelay = 1500;
+					fireDisableTime = 300;
+					fireDelay = 1000;
+					missileLoadDelay = 300;
+					turnSuggestPrm = {
+						key = "";
+					};
+					controllerSetup = {
+						objectName = {
+							2;
+							"group bashnia",
+							"group dulo"
+						};
+						logicObjectName = {
+							2;
+							"bashnia",
+							"dulo"
+						};
+						targetingObjectName = "fire";
+						targetingPrecision = {
+							2;
+							5.e-002,
+							5.e-002
+						};
+						turnSpeed = {
+							2;
+							0.2,
+							0.2
+						};
+						psiLimit = {
+							2;
+							0.,
+							2.
+						};
+						thetaLimit = {
+							2;
+							-0.5,
+							0.5
+						};
+						defaultAngles = {
+							2;
+							0.,
+							0.
+						};
+					};
+					dischargeSpeed = 0.5;
+					fireRadius = {
+						2;
+						50.,
+						250.
+					};
+					sightRadius = 300.;
+					accuracyRadius = 0.;
+					weaponIndex = 0;
+					laserWidth = 4.;
+					reloadConsumption = {
+						energy = 0.2;
+						time = 1000;
+						priority = 10;
+						name = "reloadConsumption Impaler";
+					};
+					thetaForced = -360.;
+					squadMode = 1;
+					excludeHolograms = false;
+				};
+				effectsData = {
+					libraryFileName = "RESOURCE\\FX\\leamo.effect";
+					effects = {
+						5;
+						{
+							effectID = EFFECT_ID_EXPLOSION;
+							effectName = "EXPLOD_01";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_02";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_04";
+							needOrientation = true;
+							startupDamage = 0.3;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_05";
+							needOrientation = true;
+							startupDamage = 0.6;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_MOVE;
+							effectName = "smoke";
+							needOrientation = true;
+							startupDamage = 0.;
+						}
+					};
+					debrisData = {
+						0;
+					};
+					corpseLifeTime = 5;
+					corpseID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+					craterRadius = 20.;
+					craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NO_DESTRUCT_ALL_ZEROPLAST;
+					craterDelay = 0;
+					movementCraterID = UNIT_ATTRIBUTE_NONE;
+					movementCraterDelta = 1.;
+				};
+				toolzerSetup = {
+					steps = {
+						0;
+					};
+					scale = 1.;
+					destroyOwnZeroLayer = false;
+					workOnChaos = true;
+					radius = 48.;
+				};
+				soundSetup = {
+					sounds = {
+						2;
+						{
+							ID = SOUND_SHOT;
+							name = "Unit_Shot_Impaler";
+							cycled = false;
+						},
+						{
+							ID = SOUND_MOVE;
+							name = "Unit_Move_Leamo";
+							cycled = true;
+						}
+					};
+					events = {
+						1;
+						{
+							ID = SOUND_EVENT_EXPLOSION;
+							name = "explosion_heavy";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						}
+					};
+				};
+				interfacePrm = {
+					actions = {
+						op_move = 1;
+						op_stop = 1;
+						op_stop2 = 0;
+						op_attack = 1;
+						op_back = 1;
+						op_offdeff = 1;
+						op_patrol = 1;
+						op_power_onoff = 0;
+						op_sell = 0;
+						op_upgrade = 0;
+						op_field = 0;
+						op_install = 0;
+						op_teleportate = 0;
+						op_alarm = 0;
+						op_brig_back = 0;
+						op_brig_change = 0;
+						op_brig_build = 0;
+						op_charging = 1;
+						op_charge_control = 0;
+					};
+					upgrade_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					upgrading_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					format_group = POPUP_FORMAT_SQUAD;
+					popup = "<Squad>";
+				};
+				interfaceTV = {
+					radius = 80.;
+					pos_dx = 0.;
+					pos_dy = 7.;
+					angle_x = 50.;
+					angle_y = 0.;
+					angle_z = 0.;
+					model = "";
+					channel = "";
+					channel_power_on = "";
+				};
+				rigidBodyPrm = {
+					key = "Unit Ground";
+				};
+				forwardVelocity = 40.;
+				flyingHeight = 50.;
+				LifeTime = 0;
+				SoundName = "";
+				SoundCycled = true;
+				lockInitialPosition = false;
+				enablePathFind = false;
+				enableFieldPathFind = false;
+				considerInFieldPathFind = true;
+				MakingChainNum = -1;
+				UpgradeChainName = "making";
+				PrevChainName = "main";
+				SelectionDistance = 0.25;
+				SelectionSize = 0.3;
+				showPath = false;
+				ShowCircles = true;
+				saveAsCommonObject = false;
+				GroundPlaneSpeed = 0.;
+				GroundAngleSpeed = 0.;
+				BasementMin = {
+					x = 0.;
+					y = 0.;
+				};
+				BasementMax = {
+					x = 0.;
+					y = 0.;
+				};
+				BasementPoints = {
+					0;
+				};
+				BasementInscribedRadius = 0.;
+				modelScale = 0.5;
+				logicObjectBoundMin = {
+					x = -6.58925;
+					y = -8.74318;
+					z = -2.58542;
+				};
+				logicObjectBoundMax = {
+					x = 6.6101;
+					y = 12.2972;
+					z = 6.45144;
+				};
+				boundRadius = 13.2154;
+				logicObjectBoundOriginalMin = {
+					x = -13.1785;
+					y = -17.4864;
+					z = -5.17085;
+				};
+				logicObjectBoundOriginalMax = {
+					x = 13.2202;
+					y = 24.5943;
+					z = 12.9029;
+				};
+				boundRadiusOriginal = 26.4307;
+				modelTime = {
+					LowDateTime = 0;
+					HighDateTime = 0;
+				};
+				logicTime = {
+					LowDateTime = 96362112;
+					HighDateTime = 29672253;
+				};
+				dockingSlots = {
+					0;
+				};
+				productionConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				movementConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				FallDelay = 20;
+				FallSpeed = -2.;
+				FallAcceleration = 0.;
+				is_base_unit = 0;
+				formationRadiusFactor = 1.2;
+				dynamicAttack = 0;
+				attackTurnRadius = 150.;
+				attackAngleDeviation = 0.;
+				ignoreUninstalledFrame = 0;
+				dontUseDamageMapPathFind = 0;
+				LegionType = LEGION_GROUND;
+				destroyZeroLayer = true;
+				EnableStructure = {
+					1;
+					UNIT_ATTRIBUTE_ELECTRO_STATION2
+				};
+			};
+		},
+		{
+			first = {
+				attributeID = UNIT_ATTRIBUTE_CONDUCTOR;
+				belligerent = BELLIGERENT_NONE;
+			};
+			second = "class AttributeLegionary" {
+				ID = UNIT_ATTRIBUTE_CONDUCTOR;
+				belligerent = BELLIGERENT_NONE;
+				ClassID = UNIT_CLASS_ID_LEGIONARY;
+				InterpolationType = INTERPOLATION_ID_REAL;
+				InterfaceNameTag = "Conductor";
+				modelData = {
+					modelName = "RESOURCE\\MODELS\\MAIN\\conductor.m3d";
+					logicName = "RESOURCE\\MODELS\\MAIN\\conductor.l3d";
+					boundScale = 1.;
+					boundRadius = 0.;
+				};
+				additionalModelsData = {
+					0;
+				};
+				animationDataTable = {
+					1;
+					{
+						groupID = ANIMATION_GROUP_ROOT;
+						groupName = 0;
+						chains = {
+							3;
+							{
+								chainID = CHAIN_STOP;
+								chainName = "main";
+								phase = 0.;
+								period = 2000;
+								begin = CHAIN_NODE_GROUND;
+								end = CHAIN_NODE_GROUND;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_MOVE;
+								chainName = "main";
+								phase = 0.;
+								period = 2000;
+								begin = CHAIN_NODE_GROUND;
+								end = CHAIN_NODE_GROUND;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							},
+							{
+								chainID = CHAIN_FIRE;
+								chainName = "heater";
+								phase = 0.;
+								period = 2000;
+								begin = CHAIN_NODE_GROUND;
+								end = CHAIN_NODE_GROUND;
+								periodDeviation = 0;
+								enableReverse = 0;
+								counter = 0;
+								soundID = SOUND_EVENT_NONE;
+							}
+						};
+						setPhaseRecursive = false;
+					}
+				};
+				ConnectionPointNames = {
+					0;
+				};
+				UnitClass = UNIT_CLASS_AIR | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_STRUCTURE_CORE | UNIT_CLASS_STRUCTURE_ENVIRONMENT | UNIT_CLASS_FRAME | UNIT_CLASS_BUILDER | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_GROUND | UNIT_CLASS_IGNORE;
+				MilitaryUnit = true;
+				enemyWorld = false;
+				ExcludeCollision = 0;
+				CollisionGroup = COLLISION_GROUP_ENEMY | COLLISION_GROUP_REAL;
+				kill_priority = 50.;
+				MakeEnergy = 0.;
+				energyCapacity = 0.;
+				ConnectionRadius = 0.;
+				ZeroLayerRadius = 0.;
+				FieldRadius = 0.;
+				damageMolecula = {
+					elements = {
+						5;
+						8,
+						16,
+						4,
+						0,
+						50
+					};
+				};
+				unitDamage = {
+					mainDamage = {
+						width = 80;
+						power = 80;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+					splashDamageRadius = 0;
+					splashDamage = {
+						width = 0;
+						power = 0;
+						attackFilter = DAMAGE_FILTER_ALL;
+						damageFilter = DAMAGE_FILTER_ALL;
+					};
+				};
+				environmentalDamage = {
+					damageType = ENV_DAMAGE_CHAOS;
+					damageData = {
+						2;
+						{
+							width = 30;
+							power = 2;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						},
+						{
+							width = 30;
+							power = 4;
+							attackFilter = DAMAGE_FILTER_ALL;
+							damageFilter = DAMAGE_FILTER_ALL;
+						}
+					};
+					period = 100;
+					periodDelta = 100;
+					damageRatioMin = 0.1;
+				};
+				weaponSetup = {
+					weaponType = WEAPON_CONDUCTOR;
+					flags = WEAPON_ROOT_FIRE_ANIMATION | WEAPON_CYCLE_FIRE_ANIMATION | WEAPON_NEED_CHARGE;
+					missileID = UNIT_ATTRIBUTE_NONE;
+					missileLimit = 0;
+					aimResetDelay = 1500;
+					fireDisableTime = 0;
+					fireDelay = 500;
+					missileLoadDelay = 300;
+					turnSuggestPrm = {
+						key = "";
+					};
+					controllerSetup = {
+						objectName = {
+							2;
+							"",
+							""
+						};
+						logicObjectName = {
+							2;
+							"",
+							""
+						};
+						targetingObjectName = 0;
+						targetingPrecision = {
+							2;
+							1.e-003,
+							1.e-003
+						};
+						turnSpeed = {
+							2;
+							0.2,
+							0.2
+						};
+						psiLimit = {
+							2;
+							0.,
+							2.
+						};
+						thetaLimit = {
+							2;
+							-0.5,
+							0.5
+						};
+						defaultAngles = {
+							2;
+							0.,
+							0.
+						};
+					};
+					dischargeSpeed = 0.2;
+					fireRadius = {
+						2;
+						5.,
+						200.
+					};
+					sightRadius = 300.;
+					accuracyRadius = 200.;
+					weaponIndex = 0;
+					laserWidth = 2.;
+					reloadConsumption = {
+						energy = 0.6;
+						time = 3000;
+						priority = 12;
+						name = "reloadConsumption Conductor";
+					};
+					thetaForced = -360.;
+					squadMode = 1;
+					excludeHolograms = true;
+				};
+				effectsData = {
+					libraryFileName = "RESOURCE\\FX\\Scum_heater.effect";
+					effects = {
+						5;
+						{
+							effectID = EFFECT_ID_EXPLOSION;
+							effectName = "EXPLOD_01";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_02";
+							needOrientation = true;
+							startupDamage = 0.;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_04";
+							needOrientation = true;
+							startupDamage = 0.3;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_SMOKE;
+							effectName = "EXPLOD_05";
+							needOrientation = true;
+							startupDamage = 0.6;
+						},
+						{
+							effectID = EFFECT_ID_UNIT_MOVE;
+							effectName = "smoke";
+							needOrientation = true;
+							startupDamage = 0.;
+						}
+					};
+					debrisData = {
+						0;
+					};
+					corpseLifeTime = 5;
+					corpseID = UNIT_ATTRIBUTE_CORPSE_DYNAMIC;
+					craterRadius = 15.;
+					craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER_NO_DESTRUCT_ALL_ZEROPLAST;
+					craterDelay = 0;
+					movementCraterID = UNIT_ATTRIBUTE_NONE;
+					movementCraterDelta = 1.;
+				};
+				toolzerSetup = {
+					steps = {
+						0;
+					};
+					scale = 1.;
+					destroyOwnZeroLayer = false;
+					workOnChaos = true;
+					radius = 48.;
+				};
+				soundSetup = {
+					sounds = {
+						2;
+						{
+							ID = SOUND_SHOT;
+							name = "Unit_Shot_Conductor";
+							cycled = true;
+						},
+						{
+							ID = SOUND_MOVE;
+							name = "Unit_Move_Heater";
+							cycled = true;
+						}
+					};
+					events = {
+						1;
+						{
+							ID = SOUND_EVENT_EXPLOSION;
+							name = "explosion_mid";
+							is3D = true;
+							isVoice = false;
+							activePlayer = false;
+							pauseTime = 0;
+							startDelay = 0;
+							queueTime = 2000;
+						}
+					};
+				};
+				interfacePrm = {
+					actions = {
+						op_move = 1;
+						op_stop = 1;
+						op_stop2 = 0;
+						op_attack = 1;
+						op_back = 1;
+						op_offdeff = 1;
+						op_patrol = 1;
+						op_power_onoff = 0;
+						op_sell = 0;
+						op_upgrade = 0;
+						op_field = 0;
+						op_install = 0;
+						op_teleportate = 0;
+						op_alarm = 0;
+						op_brig_back = 0;
+						op_brig_change = 0;
+						op_brig_build = 0;
+						op_charging = 1;
+						op_charge_control = 0;
+					};
+					upgrade_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					upgrading_button_id = SQSH_SELPANEL_UPGRADE_ID;
+					format_group = POPUP_FORMAT_SQUAD;
+					popup = "<Squad>";
+				};
+				interfaceTV = {
+					radius = 400.;
+					pos_dx = 0.;
+					pos_dy = 0.;
+					angle_x = 50.;
+					angle_y = 0.;
+					angle_z = 0.;
+					model = "";
+					channel = "";
+					channel_power_on = "";
+				};
+				rigidBodyPrm = {
+					key = "Unit Flying Military";
+				};
+				forwardVelocity = 70.;
+				flyingHeight = 380.;
+				LifeTime = 0;
+				SoundName = "";
+				SoundCycled = true;
+				lockInitialPosition = false;
+				enablePathFind = false;
+				enableFieldPathFind = false;
+				considerInFieldPathFind = true;
+				MakingChainNum = -1;
+				UpgradeChainName = "making";
+				PrevChainName = "main";
+				SelectionDistance = 0.4;
+				SelectionSize = 0.3;
+				showPath = false;
+				ShowCircles = true;
+				saveAsCommonObject = false;
+				GroundPlaneSpeed = 0.;
+				GroundAngleSpeed = 0.;
+				BasementMin = {
+					x = 0.;
+					y = 0.;
+				};
+				BasementMax = {
+					x = 0.;
+					y = 0.;
+				};
+				BasementPoints = {
+					0;
+				};
+				BasementInscribedRadius = 0.;
+				modelScale = 0.5;
+				logicObjectBoundMin = {
+					x = -38.9228;
+					y = -36.7724;
+					z = -65.0535;
+				};
+				logicObjectBoundMax = {
+					x = 39.2111;
+					y = 37.172;
+					z = 16.6515;
+				};
+				boundRadius = 67.5433;
+				logicObjectBoundOriginalMin = {
+					x = -77.8455;
+					y = -73.5449;
+					z = -130.107;
+				};
+				logicObjectBoundOriginalMax = {
+					x = 78.4222;
+					y = 74.344;
+					z = 33.3031;
+				};
+				boundRadiusOriginal = 135.087;
+				modelTime = {
+					LowDateTime = 0;
+					HighDateTime = 0;
+				};
+				logicTime = {
+					LowDateTime = 3406492928;
+					HighDateTime = 29672257;
+				};
+				dockingSlots = {
+					0;
+				};
+				productionConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				movementConsumption = {
+					energy = 0.;
+					time = 100;
+					priority = 0;
+					name = "noname";
+				};
+				FallDelay = 20;
+				FallSpeed = -2.;
+				FallAcceleration = 0.;
+				is_base_unit = 0;
+				formationRadiusFactor = 1.2;
+				dynamicAttack = 1;
+				attackTurnRadius = 150.;
+				attackAngleDeviation = 0.;
+				ignoreUninstalledFrame = 0;
+				dontUseDamageMapPathFind = 0;
+				LegionType = LEGION_FLYING;
+				destroyZeroLayer = true;
+				EnableStructure = {
+					3;
+					UNIT_ATTRIBUTE_ELECTRO_STATION3,
 					UNIT_ATTRIBUTE_FLY_STATION2,
 					UNIT_ATTRIBUTE_LASER_STATION3
 				};

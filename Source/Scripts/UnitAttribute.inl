@@ -46,6 +46,7 @@ enum terUnitAttributeID
 	UNIT_ATTRIBUTE_BOMB_STATION1, // Лаборатория бомбового оружия Уровень 1
 	UNIT_ATTRIBUTE_FLY_STATION1, // Лаборатория летной технологии Уровень 1
 	UNIT_ATTRIBUTE_SUBTERRA_STATION1, // Лаборатория подземной технологии Уровень 1
+	UNIT_ATTRIBUTE_ELECTRO_STATION1, // АДДОН Лаборатория электрического оружия Уровень 1
 
 	UNIT_ATTRIBUTE_EXODUS_STATION1, // Лаборатория Исходников Уровень 1
 	UNIT_ATTRIBUTE_EMPIRE_STATION1, // Лаборатория Империи Уровень 1
@@ -56,6 +57,7 @@ enum terUnitAttributeID
 	UNIT_ATTRIBUTE_BOMB_STATION2, // Лаборатория бомбового оружия Уровень 2
 	UNIT_ATTRIBUTE_FLY_STATION2, // Лаборатория летной технологии Уровень 2
 	UNIT_ATTRIBUTE_SUBTERRA_STATION2, // Лаборатория подземной технологии Уровень 2
+	UNIT_ATTRIBUTE_ELECTRO_STATION2, // АДДОН Лаборатория электрического оружия Уровень 2
 
    	UNIT_ATTRIBUTE_EXODUS_STATION2, // Лаборатория Исходников Уровень 2
 	UNIT_ATTRIBUTE_EMPIRE_STATION2, // Лаборатория Империи Уровень 2
@@ -64,10 +66,12 @@ enum terUnitAttributeID
 	UNIT_ATTRIBUTE_LASER_STATION3, // Лаборатория лазерного оружия Уровень 3
 	UNIT_ATTRIBUTE_ROCKET_STATION3, // Лаборатория ракетного оружия Уровень 3
 	UNIT_ATTRIBUTE_BOMB_STATION3, // Лаборатория бомбового оружия Уровень 3
+	UNIT_ATTRIBUTE_ELECTRO_STATION3, // АДДОН Лаборатория электрического оружия Уровень 3
 	
 	UNIT_ATTRIBUTE_EXODUS_STATION3, // Лаборатория Исходников Уровень 3
 	UNIT_ATTRIBUTE_EMPIRE_STATION3, // Лаборатория Империи Уровень 3
 	UNIT_ATTRIBUTE_HARKBACK_STATION3, // Лаборатория Возвратникиков Уровень 3
+	// End of structures after this enum
 
 	UNIT_ATTRIBUTE_CORRIDOR_ALPHA, // Коридор Альфа
 	UNIT_ATTRIBUTE_CORRIDOR_OMEGA, // Коридор Омега
@@ -76,6 +80,7 @@ enum terUnitAttributeID
 
 	//  Static Gun 
 	UNIT_ATTRIBUTE_LASER_CANNON, // Стационарная лазерная пушка
+	UNIT_ATTRIBUTE_ELECTRO_CANNON, // Стационарная электрическая пушка
 	UNIT_ATTRIBUTE_ROCKET_LAUNCHER, // Стационарная ракетная пушка
 	UNIT_ATTRIBUTE_GUN_HOWITZER, // Стационарная гаубица
 	UNIT_ATTRIBUTE_GUN_SUBCHASER, // Стационарная установка против подземных юнитов
@@ -140,6 +145,10 @@ enum terUnitAttributeID
 	UNIT_ATTRIBUTE_FILTH_SPOT1, // Сквад-скверна Рыба
 	UNIT_ATTRIBUTE_FILTH_SPOT2, // Сквад-скверна Осы
 	UNIT_ATTRIBUTE_FILTH_SPOT3, // Сквад-скверна Червяк
+
+	UNIT_ATTRIBUTE_EFLAIR,		// АДДОН Eflair
+	UNIT_ATTRIBUTE_IMPALER,		// АДДОН Impaler
+	UNIT_ATTRIBUTE_CONDUCTOR,	// АДДОН Conductor
 
 	UNIT_ATTRIBUTE_LEGIONARY_MAX, // --------------------------
 	
@@ -978,4 +987,11 @@ enum {
 	PERIMETER_CLIENT_DESCR_SIZE = 64,
 	PERIMETER_CONTROL_NAME_SIZE = 64,
 	MAX_MULTIPALYER_GAME_NAME = 64
+};
+
+enum GAME_CONTENT {
+    CONTENT_NONE = 0,
+    PERIMETER    = 1 << 0,
+    PERIMETER_ET = 1 << 1,
+    PERIMETER_HD = 1 << 2
 };

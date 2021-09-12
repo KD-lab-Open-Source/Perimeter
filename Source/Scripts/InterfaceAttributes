@@ -14531,6 +14531,167 @@ InterfaceAttributes = {
 				},
 				{
 					type = SQSH_ATOM_BUTTON_TYPE;
+					id = SQSH_STATION_ELECTRO_LAB_ID;
+					state = SQSH_ENABLED | SQSH_NOEFFECT;
+					x = 0.231445;
+					y = 0.928385;
+					sx = 3.61328e-002;
+					sy = 4.42708e-002;
+					xstart = 0.;
+					ystart = 0.;
+					image = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 978.;
+						_iy = 807.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_h = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 978.;
+						_iy = 845.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_check = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 978.;
+						_iy = 845.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_disabled = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 978.;
+						_iy = 770.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2 = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					sound = "button_press";
+					popup = "<station_fly>";
+					popupChecked = "";
+					target = -1;
+					parent_id = 79;
+					diagram_delta_x = 0;
+					diagram_delta_sx = 0;
+					diagram_delta_y = 0;
+					diagram_delta_sy = 0;
+					bgObject = {
+						name = "";
+						chainName = "";
+					};
+					text = "";
+					txt_dx = 0.;
+					txt_dy = 0.;
+					txt_align = SHELL_ALIGN_CENTER;
+					txt_vert_align = SHELL_ALIGN_LEFT;
+					font_group = 1;
+					flashR = 255;
+					flashG = 0;
+					flashB = 0;
+					flashA = 255;
+					flashBG_R = 255;
+					flashBG_G = 0;
+					flashBG_B = 0;
+					flashBG_A = 255;
+					tickTime = 900.;
+					diaR = 0;
+					diaG = 255;
+					diaB = 0;
+					diaA = 64;
+					actions = {
+						1;
+						{
+							name = "buildElectroLab";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "<hotkey_general>";
+						}
+					};
+					passive = 0;
+					flashWithImage = 0;
+					alnum = 1;
+					hitTestMode = HITTEST_DEFAULT;
+					canHandleDisabledInput = 0;
+				},
+				{
+					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_STATION_EMPIRE_LAB_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
 					x = 0.231445;
@@ -15162,6 +15323,167 @@ InterfaceAttributes = {
 						1;
 						{
 							name = "buildLaserGun";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "<hotkey_general>";
+						}
+					};
+					passive = 0;
+					flashWithImage = 0;
+					alnum = 1;
+					hitTestMode = HITTEST_DEFAULT;
+					canHandleDisabledInput = 0;
+				},
+				{
+					type = SQSH_ATOM_BUTTON_TYPE;
+					id = SQSH_GUN_ELECTRO_ID;
+					state = SQSH_ENABLED | SQSH_NOEFFECT;
+					x = 0.301758;
+					y = 0.822917;
+					sx = 4.6875e-002;
+					sy = 5.07813e-002;
+					xstart = 0.;
+					ystart = 0.;
+					image = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 970.;
+						_iy = 177.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_h = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 970.;
+						_iy = 220.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_check = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 970.;
+						_iy = 220.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_disabled = {
+						texture = "resource\\icons\\intf\\intf.tga";
+						_ix = 970.;
+						_iy = 134.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2 = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					sound = "button_press";
+					popup = "<gun_electro>";
+					popupChecked = "";
+					target = -1;
+					parent_id = 79;
+					diagram_delta_x = 0;
+					diagram_delta_sx = 0;
+					diagram_delta_y = 0;
+					diagram_delta_sy = 0;
+					bgObject = {
+						name = "";
+						chainName = "";
+					};
+					text = "";
+					txt_dx = 0.;
+					txt_dy = 0.;
+					txt_align = SHELL_ALIGN_CENTER;
+					txt_vert_align = SHELL_ALIGN_LEFT;
+					font_group = 1;
+					flashR = 255;
+					flashG = 0;
+					flashB = 0;
+					flashA = 255;
+					flashBG_R = 255;
+					flashBG_G = 0;
+					flashBG_B = 0;
+					flashBG_A = 255;
+					tickTime = 900.;
+					diaR = 0;
+					diaG = 255;
+					diaB = 0;
+					diaA = 64;
+					actions = {
+						1;
+						{
+							name = "buildElectroGun";
 							code = EVENT_PRESSED;
 							param = 0;
 							hotKeyPopup = "<hotkey_general>";

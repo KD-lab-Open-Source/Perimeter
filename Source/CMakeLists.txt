@@ -159,6 +159,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Game/Runtime.cpp
         Game/CopyToGraph.cpp
         Game/Region.cpp
+        Game/GameContent.cpp
         Units/DefenceMap.cpp
         Units/GenericControls.cpp
         Units/GeoControl.cpp

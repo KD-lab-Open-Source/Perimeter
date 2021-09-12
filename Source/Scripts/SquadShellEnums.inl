@@ -97,32 +97,34 @@ enum ShellControlID
 	SQSH_FRAME_TERRAIN_BUILD4_ID, //Заказ в четвертый слот бригадира или прораба
 	SQSH_FRAME_TERRAIN_BUILD5_ID, //Заказ в пятый слот бригадира или прораба
 
-	SQSH_SQUAD_DISINTEGRATE_ID, //Разобрать на базовые юниты
-	SQSH_SQUAD_UNIT1, //rocker
-	SQSH_SQUAD_UNIT2, //sniper
-	SQSH_SQUAD_UNIT3, //mortar
-	SQSH_SQUAD_UNIT4, //digger
-	SQSH_SQUAD_UNIT5, //leech
-	SQSH_SQUAD_UNIT6, //r-proj
-	SQSH_SQUAD_UNIT7, //scumer
-	SQSH_SQUAD_UNIT8, //minotaur
-	SQSH_SQUAD_UNIT9, //scum splitter
-	SQSH_SQUAD_UNIT10, //piercer
-	SQSH_SQUAD_UNIT11, //ceptor
-	SQSH_SQUAD_UNIT12, //gyroid
-	SQSH_SQUAD_UNIT13, //bomber
-	SQSH_SQUAD_UNIT14, //strafer
-	SQSH_SQUAD_UNIT15, //unseen
-	SQSH_SQUAD_UNIT16, //extirpator
-	SQSH_SQUAD_UNIT17, //wargon
-	SQSH_SQUAD_UNIT18, //disintegrator
-	SQSH_SQUAD_UNIT19, //scum thrower
-	SQSH_SQUAD_UNIT20, //spider
-	SQSH_SQUAD_UNIT21, //fish
-	SQSH_SQUAD_UNIT22, //wasp
-	SQSH_SQUAD_UNIT23, //worm
-	SQSH_SQUAD_UNIT24, //scum twister
-	SQSH_SQUAD_UNIT25, //scum heater
+    //Keep these as placeholder due to hardcoded id's in InterfaceAttributes
+    //Used to be SQSH_SQUAD_*
+    SQSH_SQUAD_LEGACY_1,
+	SQSH_SQUAD_LEGACY_2,
+	SQSH_SQUAD_LEGACY_3,
+	SQSH_SQUAD_LEGACY_4,
+	SQSH_SQUAD_LEGACY_5,
+	SQSH_SQUAD_LEGACY_6,
+	SQSH_SQUAD_LEGACY_7,
+	SQSH_SQUAD_LEGACY_8,
+	SQSH_SQUAD_LEGACY_9,
+	SQSH_SQUAD_LEGACY_10,
+	SQSH_SQUAD_LEGACY_11,
+	SQSH_SQUAD_LEGACY_12,
+	SQSH_SQUAD_LEGACY_13,
+	SQSH_SQUAD_LEGACY_14,
+	SQSH_SQUAD_LEGACY_15,
+	SQSH_SQUAD_LEGACY_16,
+	SQSH_SQUAD_LEGACY_17,
+	SQSH_SQUAD_LEGACY_18,
+	SQSH_SQUAD_LEGACY_19,
+	SQSH_SQUAD_LEGACY_20,
+	SQSH_SQUAD_LEGACY_21,
+	SQSH_SQUAD_LEGACY_22,
+	SQSH_SQUAD_LEGACY_23,
+	SQSH_SQUAD_LEGACY_24,
+    SQSH_SQUAD_LEGACY_25,
+    SQSH_SQUAD_LEGACY_26,
 
 	SQSH_SPEED_PAUSE, //Пауза
 	SQSH_SPEED_50, //50% скорость игры
@@ -648,6 +650,41 @@ enum ShellControlID
 	SQSH_MM_SPLASH3,
 	SQSH_MM_SPLASH4,
 	SQSH_MM_SPLASH_LAST,
+    
+    SQSH_MENU_MAX,
+    
+    //unit buttons
+    SQSH_SQUAD_DISINTEGRATE_ID, //Разобрать на базовые юниты
+    SQSH_SQUAD_UNIT1, //rocker
+    SQSH_SQUAD_UNIT2, //sniper
+    SQSH_SQUAD_UNIT3, //mortar
+    SQSH_SQUAD_UNIT4, //digger
+    SQSH_SQUAD_UNIT5, //leech
+    SQSH_SQUAD_UNIT6, //r-proj
+    SQSH_SQUAD_UNIT7, //scumer
+    SQSH_SQUAD_UNIT8, //minotaur
+    SQSH_SQUAD_UNIT9, //scum splitter
+    SQSH_SQUAD_UNIT10, //piercer
+    SQSH_SQUAD_UNIT11, //ceptor
+    SQSH_SQUAD_UNIT12, //gyroid
+    SQSH_SQUAD_UNIT13, //bomber
+    SQSH_SQUAD_UNIT14, //strafer
+    SQSH_SQUAD_UNIT15, //unseen
+    SQSH_SQUAD_UNIT16, //extirpator
+    SQSH_SQUAD_UNIT17, //wargon
+    SQSH_SQUAD_UNIT18, //disintegrator
+    SQSH_SQUAD_UNIT19, //scum thrower
+    SQSH_SQUAD_UNIT20, //spider
+    SQSH_SQUAD_UNIT21, //fish / ADDON - impaler
+    SQSH_SQUAD_UNIT22, //wasp / ADDON - eflair
+    SQSH_SQUAD_UNIT23, //worm / ADDON - conductor
+    SQSH_SQUAD_UNIT24, //scum twister
+    SQSH_SQUAD_UNIT25, //scum heater
+    SQSH_SQUAD_UNIT26, //ADDON - impaler
+    SQSH_SQUAD_UNIT27, //ADDON - eflair
+    SQSH_SQUAD_UNIT28, //ADDON - conductor
+
+    SQSH_SQUAD_MAX,
 
 	SQSH_MAX
 //	SQSH_MAX = 0xFFFFFFFF

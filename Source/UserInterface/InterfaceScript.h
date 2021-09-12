@@ -111,7 +111,8 @@ struct sqshControl
 	EnumWrapper<ShellControlType>  type;
 	EnumWrapper<ShellControlID>    id;
 
-	BitVector<SHELL_CONTROL_STATE> state;
+    BitVector<SHELL_CONTROL_STATE> state;
+    BitVector<GAME_CONTENT> content;
 	float x;
 	float y;
 	float sx;

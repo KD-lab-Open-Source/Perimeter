@@ -1747,6 +1747,131 @@ struct terUnitAttributeDataTable
 		interfaceTV = &interfaceTV_LabLaser3;
 	};
 	
+	Structure LabElectro1 = 
+	{
+		ID = UNIT_ATTRIBUTE_ELECTRO_STATION1;
+		InterfaceName = "Electro Laboratory Level 1";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 7;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\electro_st.m3d", "RESOURCE\\MODELS\\MAIN\\build_electro_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\electro_st.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,1000 };
+		constructionSpeedCoeff = 2;
+
+		FallAcceleration = -0.1;
+		
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		MakingChainNum = 6;
+
+		enableData = {
+			Upgrade = UNIT_ATTRIBUTE_ELECTRO_STATION2;
+		};
+
+		animationSetup = &lab1Animation;
+		soundSetup = &labElectroSound;
+
+		attackablePrm = attackable_data.Laboratory_1;
+		interfacePrm = unit_interface_data.station_electro1;
+		interfaceTV = &interfaceTV_LabElectro1;
+	};
+
+	Structure LabElectro2 = 
+	{
+		ID = UNIT_ATTRIBUTE_ELECTRO_STATION2;
+		InterfaceName = "Electro Laboratory Level 2";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\electro_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\electro_st.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,2000 };
+		constructionSpeedCoeff = 2;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		animationSetup = &lab2Animation;
+		soundSetup = &labElectroSound;
+
+		UpgradeChainName = "making1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ELECTRO_STATION1 };
+			Downgrades = { UNIT_ATTRIBUTE_ELECTRO_STATION1 };
+			Upgrade = UNIT_ATTRIBUTE_ELECTRO_STATION3;
+		};
+
+		attackablePrm = attackable_data.Laboratory_2;
+		interfacePrm = unit_interface_data.station_electro2;
+		interfaceTV = &interfaceTV_LabElectro2;
+	};
+
+	Structure LabElectro3 = 
+	{
+		ID = UNIT_ATTRIBUTE_ELECTRO_STATION3;
+		InterfaceName = "Electro Laboratory Level 3";
+		ClassID = UNIT_CLASS_ID_BUILDING_POWERED;
+		InterpolationType = INTERPOLATION_ID_STRUCTURE;
+
+		constructionPriority = 6;
+		
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\electro_st.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\electro_st.l3d";
+
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\LabLaser.effect";
+			craterRadius = 60;
+		};
+
+		damageMolecula = { 0,0,0,0,3000 };
+		constructionSpeedCoeff = 2;
+
+		isUpgrade = 1;
+
+		FallAcceleration = -0.1;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.6f;		
+
+		UpgradeChainName = "making2";
+		PrevChainName = "main1";
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ELECTRO_STATION2 };
+			Downgrades = { UNIT_ATTRIBUTE_ELECTRO_STATION2, UNIT_ATTRIBUTE_ELECTRO_STATION1 };
+		};
+
+		animationSetup = &lab3Animation;
+		soundSetup = &labElectroSound;
+
+		attackablePrm = attackable_data.Laboratory_3;
+		interfacePrm = unit_interface_data.station_electro3;
+		interfaceTV = &interfaceTV_LabElectro3;
+	};
+
 	Structure LabBomb1 = 
 	{
 		ID = UNIT_ATTRIBUTE_BOMB_STATION1;
@@ -3248,6 +3373,223 @@ struct terUnitAttributeDataTable
 		interfaceTV = &interfaceTV_ScumThrower;
 	};
 
+// Electro Units 
+
+	Military Impaler = 
+	{
+		ID = UNIT_ATTRIBUTE_IMPALER;
+		InterfaceName = "Impaler";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\impaler.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\impaler.l3d";
+
+		UnitClass = UNIT_CLASS_HEAVY;
+		AttackClass = balance.Impaler.AttackClass;
+		
+		effectsData = {
+			libraryFileName = "RESOURCE\\FX\\leamo.effect";
+			craterRadius=20;
+		};
+
+		damageMolecula = {	balance.Impaler.elSoldiers,
+							balance.Impaler.elOfficers,
+							balance.Impaler.elTechnicians,
+							0,
+							balance.Impaler.elShield };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Impaler.maPower;
+				width = balance.Impaler.maWidth;
+			};
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LIGHTING;
+			flags = WEAPON_HAS_FIRE_CONTROLLER|WEAPON_NEED_CHARGE;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.2, 0.2 };
+				targetingPrecision = { 0.05, 0.05 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Impaler.ReloadEnergy;
+				time =		balance.Impaler.ReloadTime;
+				priority =	balance.Impaler.ReloadPriority;
+
+				name = "reloadConsumption Impaler";
+			};
+
+			dischargeSpeed = balance.Impaler.DischargeSpeed;
+			fireDisableTime = 300;
+
+			fireRadius = { 50,	balance.Impaler.RangeFire };
+			sightRadius =		balance.Impaler.RangeSight;
+			laserWidth = 4;
+		};
+
+		animationSetup = &impalerAnimation;
+		soundSetup = &impalerSound;
+
+		SelectionDistance = 0.25f;
+		SelectionSize = 0.3f;		
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ELECTRO_STATION2 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.ImpalerPrm;
+		legionaryPrm = impalerSquadPrm;
+		attackablePrm = attackable_data.Impaler;
+		interfaceTV = &interfaceTV_Impaler;
+	};
+
+	Military Eflair = 
+	{
+		ID = UNIT_ATTRIBUTE_EFLAIR;
+		InterfaceName = "Eflair";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\eflair.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\eflair.l3d";
+
+		UnitClass = UNIT_CLASS_AIR;
+		AttackClass = balance.Eflair.AttackClass;
+		
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\Gyroid.effect"; 
+			craterRadius=10;
+		};
+
+		damageMolecula = {	balance.Eflair.elSoldiers,
+							balance.Eflair.elOfficers,
+							balance.Eflair.elTechnicians,
+							0,
+							balance.Eflair.elShield };
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Eflair.maPower;
+				width = balance.Eflair.maWidth;
+			};
+		};
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LIGHTING;
+			flags = WEAPON_HAS_FIRE_CONTROLLER|WEAPON_NEED_CHARGE;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.1, 0.1 };
+				targetingPrecision = { 0.05, 0.05 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.Eflair.ReloadEnergy;
+				time =		balance.Eflair.ReloadTime;
+				priority =	balance.Eflair.ReloadPriority;
+
+				name = "reloadConsumption Eflair";
+			};
+
+			fireDisableTime = 300;
+			fireRadius = { 50,	balance.Eflair.RangeFire };
+			sightRadius =		balance.Eflair.RangeSight;
+		};
+
+		animationSetup = &eflairAnimation;
+		soundSetup = &eflairSound;
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_FLY_STATION1, UNIT_ATTRIBUTE_ELECTRO_STATION1 };
+		};
+
+		rigidBodyPrm = &rigidBodyTable.EflairPrm;
+		legionaryPrm = eflairSquadPrm;
+		attackablePrm = attackable_data.Eflair;
+		interfaceTV = &interfaceTV_Eflair;
+	};
+	
+	Military Conductor = 
+	{
+		ID = UNIT_ATTRIBUTE_CONDUCTOR;
+		InterfaceName = "Conductor";
+		ClassID = UNIT_CLASS_ID_LEGIONARY;
+		LegionType = LEGION_FLYING;
+		InterpolationType = INTERPOLATION_ID_REAL;
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\conductor.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\conductor.l3d";
+
+		UnitClass = UNIT_CLASS_AIR;
+		AttackClass = balance.Conductor.AttackClass;
+		
+		effectsData = 
+		{
+			libraryFileName = "RESOURCE\\FX\\Scum_heater.effect";
+			craterRadius=15;
+		};
+
+		damageMolecula = {	balance.Conductor.elSoldiers,
+							balance.Conductor.elOfficers,
+							balance.Conductor.elTechnicians,
+							0,
+							balance.Conductor.elShield };
+
+		SelectionDistance = 0.4f;
+		SelectionSize = 0.3f;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_SCUM_HEATER;
+
+			flags = WEAPON_ROOT_FIRE_ANIMATION|WEAPON_CYCLE_FIRE_ANIMATION|WEAPON_NEED_CHARGE;
+
+			reloadConsumption = {
+				energy =	balance.Conductor.ReloadEnergy;
+				time =		balance.Conductor.ReloadTime;
+				priority =	balance.Conductor.ReloadPriority;
+
+				name = "reloadConsumption Conductor";
+			};
+
+			dischargeSpeed = balance.Conductor.DischargeSpeed;
+
+			missileID = UNIT_ATTRIBUTE_SCUM_HEATER_CRATER;
+
+			accuracyRadius = balance.Conductor.AccuracyRadius;
+
+			fireRadius = { 5,	balance.Conductor.RangeFire };
+			sightRadius =		balance.Conductor.RangeSight;
+
+			fireDelay = 500;
+		};
+
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.Conductor.maPower;
+				width = balance.Conductor.maWidth;
+			};
+		};
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ELECTRO_STATION3, UNIT_ATTRIBUTE_LASER_STATION2, UNIT_ATTRIBUTE_FLY_STATION2 };
+		};
+
+		animationSetup = &conductorAnimation;
+		soundSetup = &conductorSound;
+
+		rigidBodyPrm = &rigidBodyTable.ConductorPrm;
+		legionaryPrm = conductorSquadPrm;
+		attackablePrm = attackable_data.Conductor;
+		interfaceTV = &interfaceTV_Conductor;
+	};
+
 ///////////////
 
 	Military Extirpator = 
@@ -3989,6 +4331,87 @@ struct terUnitAttributeDataTable
 		attackablePrm = attackable_data.LaserGun;
 		interfacePrm = unit_interface_data.gun_laser;
 		interfaceTV = &interfaceTV_GunLaser;
+	};
+
+	MilitaryStructure GunElectro = 
+	{
+		ID = UNIT_ATTRIBUTE_ELECTRO_CANNON;
+		InterfaceName = "Electro-Gun";
+		ClassID = UNIT_CLASS_ID_BUILDING_MILITARY;
+		InterpolationType = INTERPOLATION_ID_REAL;
+
+		iconDistanceFactor = 2.5f;
+
+		constructionPriority = 8;
+
+		AttackClass = balance.GunElectro.AttackClass;
+
+		ModelNameArray = { "RESOURCE\\MODELS\\MAIN\\electro_gun.m3d","RESOURCE\\MODELS\\MAIN\\build_electro_gun.m3d" };
+		LogicName = "RESOURCE\\MODELS\\MAIN\\electro_gun.l3d";
+
+		effectsData = { 
+			libraryFileName = "RESOURCE\\FX\\GunLaser.effect";
+			corpseLifeTime = 50;
+			craterRadius = 20;
+		};
+		damageData = new terUnitDamageData {
+			mainDamage = {
+				power = balance.GunElectro.maPower;
+				width = balance.GunElectro.maWidth;
+			};
+		};
+
+		damageMolecula = {0,0,0,balance.GunElectro.elSoft,balance.GunElectro.elHard };
+		constructionSpeedCoeff = 1;
+
+		disconnectAnimation = 1;
+
+		weaponSetup = new terWeaponSetup {
+			weaponType = WEAPON_LIGHTING;
+			flags = WEAPON_HAS_FIRE_CONTROLLER|WEAPON_NEED_CHARGE;
+
+			controllerSetup = new terWeaponControllerSetup {
+				targetingObjectName = "targeting a";
+				turnSpeed = { 0.3, 0.3 };
+				targetingPrecision = { 0.09, 0.09 };
+			};
+
+			reloadConsumption = {
+				energy =	balance.GunElectro.ReloadEnergy;
+				time =		balance.GunElectro.ReloadTime;
+				priority =	balance.GunElectro.ReloadPriority;
+
+				name = "reloadConsumption GunElectro";
+			};
+
+			dischargeSpeed = balance.GunElectro.DischargeSpeed;
+			fireDisableTime = 300;
+
+			fireRadius = { 10,	balance.GunElectro.RangeFire };
+			sightRadius =		balance.GunElectro.RangeSight;
+
+			squadMode = 0;
+		};
+		
+		FallDelay = 5;
+		FallSpeed = -3.0;
+		FallAcceleration = -0.2;
+
+		SelectionDistance = 0.3f;
+		SelectionSize = 0.5f;		
+
+		MakingChainNum = 4;
+
+		enableData = {
+			EnableStructure = { UNIT_ATTRIBUTE_ELECTRO_STATION1 };
+		};
+
+		animationSetup = &electroGunAnimation;
+		soundSetup = &electroGunSound;
+
+		attackablePrm = attackable_data.ElectroGun;
+		interfacePrm = unit_interface_data.gun_electro;
+		interfaceTV = &interfaceTV_GunElectro;
 	};
 
 	MilitaryStructure GunRocket = 
@@ -6436,7 +6859,7 @@ struct terUnitAttributeDataTable
 	};
 	
 	// АДДОН
-/*
+
 	terUnitAttributeData FrameExodus2 = Frame
 	{
 		belligerent = BELLIGERENT_EXODUS2;
@@ -6493,7 +6916,7 @@ struct terUnitAttributeDataTable
 			channel = "fly";
 		};
 	};
-*/	
+	
 	//-----------------------------------
 	//	HARKBACKHOOD
 	terUnitAttributeData FrameHarkBackHood0 = Frame
@@ -6603,7 +7026,7 @@ struct terUnitAttributeDataTable
 	};
 	
 	// АДДОН
-/*
+
 	terUnitAttributeData FrameEmpire2 = Frame
 	{
 		belligerent = BELLIGERENT_EMPIRE2;
@@ -6672,7 +7095,7 @@ struct terUnitAttributeDataTable
 			channel = "lighting_on";
 		};
 	};
-*/	
+	
 	//-----------------------------------
 
 delegate: // Рассматриваем последовательность расположенных рядом структур как массив

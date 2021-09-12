@@ -413,6 +413,7 @@ XErrorHandler::~XErrorHandler() {
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)
 {
+    fprintf(stderr, "XErrorHandler::Abort called!");
 	if (restore_func) {
 		restore_func();
 		restore_func = nullptr;

@@ -6,6 +6,7 @@
 #include "MainMenu.h"
 #include "Runtime.h"
 #include "PerimeterShellUI.h"
+#include "GameContent.h"
 
 extern std::string getItemTextFromBase(const char *keyStr);
 
@@ -99,11 +100,18 @@ std::string getBelligerentAndFactionName(terBelligerent belligerent, const std::
 }
 
 void setupFrameHandler(CComboWindow* combo, int number, bool sendNetCommand, bool direction) {
-#ifndef _PERIMETER_ADDON_
-    //Discard belligerents belonging to addon
+    //Discard certain belligerents
     while (true) {
         terBelligerent selected = SelectableBelligerents[combo->pos];
-        if (isAddonBelligerent(selected)) {
+        bool discard;
+        if (terGameContent == GAME_CONTENT::PERIMETER_ET) {
+            //Discard HarkBack in ET
+            discard = getBelligerentFaction(selected) == BELLIGERENT_FACTION::HARKBACK;
+        } else {
+            //Discard Addon frames
+            discard = isAddonBelligerent(selected);
+        }
+        if (discard) {
             if (direction) {
                 combo->pos++;
                 if (combo->pos >= combo->size) combo->pos = 0;
@@ -115,7 +123,6 @@ void setupFrameHandler(CComboWindow* combo, int number, bool sendNetCommand, boo
             break;
         }
     }
-#endif
     
     //Send to players
     if (sendNetCommand && gameShell->getNetClient()) {
