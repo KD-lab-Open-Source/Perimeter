@@ -54,6 +54,7 @@ extern std::vector<const char*> __argv;
 static void setup_argcv(int argc, char *argv[]) {
 #ifndef _WIN32
     for(int i = 0; i < argc; i ++){
+        //printf("%d %s\n", i, argv[i]);
         __argv.push_back(argv[i]);
         __argc++;
     }

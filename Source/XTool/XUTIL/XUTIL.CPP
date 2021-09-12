@@ -199,8 +199,9 @@ std::vector<std::pair<std::string, std::string>> get_resource_paths(const std::s
 
 std::string convert_path_resource(const char* path, bool parent_only) {
     if (resourcePathsFirstScan) {
-        resourcePaths = std::unordered_map<std::string, std::string>();
-        scan_resource_paths();
+        //Avoid potential crash if we are called during static init
+        fprintf(stderr, "Called convert_path_resource before scan_resource_paths! %s\n", path);
+        return "";
     }
     std::string conv = convert_path(path);
     if (startsWith(conv, "./")) {
