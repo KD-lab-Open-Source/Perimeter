@@ -1864,7 +1864,7 @@ void GameShell::ShotsScan()
 {
 	shotNumber_ = 0;
 
-    std::string path_str = convert_path_resource(terScreenShotsPath, true);
+    std::string path_str = convert_path(terScreenShotsPath);
     create_directories(path_str.c_str());
 
     std::vector<std::string> paths;
@@ -1906,7 +1906,7 @@ void GameShell::startStopRecordMovie()
 		movieShotNumber_ = 0;
 		movieStartTime_ = frame_time();
 		
-        std::string path_str = convert_path_resource(terMoviePath, true);
+        std::string path_str = convert_path(terMoviePath);
         create_directories(path_str.c_str());
 
         if (path_str.empty()) return;
