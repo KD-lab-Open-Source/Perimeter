@@ -3674,7 +3674,7 @@ BELLIGERENT_FACTION getRace(int id) {
 		case UNIT_ATTRIBUTE_PIERCER:
 			return EMPIRE;
 		default:
-			return NONE;
+			return FACTION_NONE;
 	}
 }
 
@@ -3782,7 +3782,7 @@ void LogicUpdater::updateBuildingsData() {
 		}
 
 		BELLIGERENT_FACTION buildingRace = getRace(id);
-		if (buildingRace != NONE && buildingRace != race) {
+		if (buildingRace != FACTION_NONE && buildingRace != race) {
 			visible = false;
 			button->visible = visible;
 		}

@@ -166,13 +166,34 @@ int getValidatedTextLength(const std::string& text, float validWidth) {
 	return text.length(); 
 }
 
+std::string getValidatedTextLine(const std::string& text, float validWidth) {
+    //Check if line is too long and cut it otherwise
+    int count = getValidatedTextLength(text, validWidth);
+    if (count == text.length()) {
+        return text;
+    } else {
+        return text.substr(0, count) + "...";
+    }
+}
+
 std::string getValidatedText(const std::string& text, float validWidth) {
-	int count = getValidatedTextLength(text, validWidth);
-	if (count == text.length()) {
-		return text;
-	} else {
-		return (text.substr(0, count) + "...");
-	}
+    std::string line;
+    std::string result;
+    const char* textStart = text.c_str();
+    for (const char* str = text.c_str(); *str; str++) {
+        if (*str == '\n') {
+            if (!result.empty()) result += "\n";
+            result += getValidatedTextLine(line, validWidth);
+            line.clear();
+        } else {
+            line += *str;
+        }
+    }
+    if (!line.empty()) {
+        if (!result.empty()) result += "\n";
+        result += getValidatedTextLine(line, validWidth);
+    }
+    return result;
 }
 
 ///////////////////////////////////////////////////////////////////

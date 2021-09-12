@@ -402,11 +402,15 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 		PlayerData* data = &CurrentMission.playersData[i];
+        std::string playerName = "";
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
-			data->setName(currentSingleProfile.getCurrentProfile().name.c_str());
+            playerName = currentSingleProfile.getCurrentProfile().name;
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
-			data->setName(getBelligerentName(data->belligerent));
+            playerName = getBelligerentName(data->belligerent);
 		}
+        if (!playerName.empty()) {
+            data->setName(playerName.c_str());
+        }
 	}
 
 	LoadProgressStart();

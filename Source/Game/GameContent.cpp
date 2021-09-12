@@ -51,3 +51,24 @@ bool unavailableContentUnitAttribute(terUnitAttributeID id) {
             return false;
     }
 }
+
+bool unavailableContentBelligerent(terBelligerent belligerent) {
+    switch (belligerent) {
+        //HarkBack has missing UI textures and crashes in ET
+        case BELLIGERENT_HARKBACKHOOD0:
+        case BELLIGERENT_HARKBACKHOOD1:
+            //Discard original Vice since it uses infected vice model (which is already selectable)
+        case BELLIGERENT_EMPIRE_VICE:
+            return terGameContent == GAME_CONTENT::PERIMETER_ET;
+            //Addon frames which requires ET content
+        case BELLIGERENT_EXODUS2:
+        case BELLIGERENT_EXODUS3:
+        case BELLIGERENT_EXODUS4:
+        case BELLIGERENT_EMPIRE2:
+        case BELLIGERENT_EMPIRE3:
+        case BELLIGERENT_EMPIRE4:
+            return !(terGameContent & GAME_CONTENT::PERIMETER_ET);
+        default:
+            return false;
+    }
+}

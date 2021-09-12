@@ -773,12 +773,12 @@ string aiNameIDs[] = {
 	"Mission Frames.Vice", //BELLIGERENT_EMPIRE_VICE
 	
 	// ÀÄÄÎÍ
-	"Mission Frames.Cluster", //BELLIGERENT_EXODUS2
-	"Mission Frames.Cluster", //BELLIGERENT_EXODUS3
-	"Mission Frames.Cluster", //BELLIGERENT_EXODUS4
-	"Mission Frames.Vice", //BELLIGERENT_EMPIRE2
+	"Mission Frames.LostFrame", //BELLIGERENT_EXODUS2
+	"Mission Frames.AncientFrame", //BELLIGERENT_EXODUS3
+	"Mission Frames.Enclave", //BELLIGERENT_EXODUS4
+	"Mission Frames.NVice", //BELLIGERENT_EMPIRE2
 	"Mission Frames.Vice", //BELLIGERENT_EMPIRE3
-	"Mission Frames.Vice" //BELLIGERENT_EMPIRE4
+	"Mission Frames.IVice" //BELLIGERENT_EMPIRE4
 };
 
 string mainMenuMusic = "Resource\\Music\\Perimeter_Main.ogg";
