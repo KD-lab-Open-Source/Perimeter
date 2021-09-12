@@ -4169,6 +4169,11 @@ void LogicUpdater::updateMiniMap() {
 
 		float w = logicData->getWidth() / vMap.H_SIZE;
 		float h = logicData->getHeight() / vMap.V_SIZE;
+        //Previously colH was 8, which caused stripped lines when h > 0.10
+        int colH = 8;
+        if (0 < h) {
+            colH = std::max(0, static_cast<int>(std::floor(8.0 * 0.10f / h)));
+        }
 
 		logicData->miniMapLabels.clear();
 		logicData->miniMapSquadCount = 0;
@@ -4181,7 +4186,7 @@ void LogicUpdater::updateMiniMap() {
 				int y0 = 0, y = 0;
 				FOR_EACH(player->energyColumn(), i_line) {
 					CellLine::const_iterator i_cell;
-					if((y - y0) > 8){
+					if(colH == 0 || (y - y0) > colH){
 						FOR_EACH(*i_line,i_cell) {
 							terMapClusterLine(y * h, i_cell->xl * w, i_cell->xr * w, player->unitColor());
 						}
