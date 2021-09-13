@@ -20,29 +20,7 @@ int main(int argc, char* argv[])
 	{
         setup_argcv(argc, argv);
 		//__int64 start_time = getRDTSC();
-
-        std::string updateFile = std::string() + "xprm.tmp";
-		if(check_command_line("/check_update") || check_command_line("-check_update")){
-			XStream ini(0);
-			if(ini.open(updateFile.c_str())){
-				int len = ini.size();
-				XBuffer buffer(len + 1);
-				ini.read(buffer.address(), len);
-				buffer[len] = 0;
-				ini.close();
-				remove(updateFile.c_str());
-				if(buffer.search("Updated")){
-                    std::cout << "XPrm: sources were changed, restart compilation, please.";
-					if(MessageBoxQuestion("XPrm compiler", "XPrm: sources were changed.\nStop the compilation process?"))
-						exit(1);
-					else
-						exit(0);
-				}
-			}
-            std::cout << "XPrm: sources were not changed.";
-			exit(0);
-		}
-
+        
 		char* input = nullptr;
 		char* sources = nullptr;
 		char* output = nullptr;
@@ -83,19 +61,14 @@ int main(int argc, char* argv[])
 			help(0);
 			//ErrH.Abort("Prm-file expected");
 
-		bool rebuild = !(output && XStream(0).open(output));
+		bool rebuild = false; //!(output && XStream(0).open(output));
 		int success;
 		if((success = comp.compile(input, sources, rebuild)) != 0 && output){
 			//cout << "Generating dummy output: " << output << endl;
 			XStream f(output, XS_OUT);
 			f < "This file was generated as dummy-output while compiling: " < input < "\n";
-			}
+        }
 
-		if(success && comp.sectionUpdated()){
-			XStream ff(updateFile.c_str(), XS_OUT);
-			ff < "Updated";
-		}
-		
 		//cout << "Compile time: " << double(getRDTSC() - start_time)/1e9 << endl;
 
 		return !success;

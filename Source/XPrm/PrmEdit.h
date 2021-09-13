@@ -24,11 +24,12 @@ class BaseParameter
 	friend class ParameterSection;
 	friend class Section;
 
+public:
 	const char* name;
 	void* value;
+    unsigned int crc;
 
-public:
-	BaseParameter(void* value_, const char* name_) : name(name_), value(value_) {}
+	BaseParameter(void* value_, const char* name_, unsigned int crc_) : name(name_), value(value_), crc(crc_) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +52,7 @@ protected:
 	ParameterSection(const char* name_);
 	~ParameterSection();
 	void reserve(int size);
-	void add(void* val, const char* name);
+	void add(void* val, const char* name, unsigned int crc = 0);
 	void add_dependency(const char* fname);
 	const char* fname() const;
 	bool needToReload() const;

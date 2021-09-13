@@ -387,15 +387,17 @@ bool Compiler::compile(const char* fname, const char* sources, bool rebuild)
             SectionList::iterator i;
             FOR_EACH(sections, i){
                 int updated = (*i)->declaration(sources, rebuild);
-                if((*i)->definition(sources, updated || rebuild, dependencies) || updated)
-                    sectionUpdated_ = true;
+                if ((*i)->definition(sources, updated || rebuild, dependencies)) {
+                    updated |= true;
+                }
+                sectionUpdated_ |= updated;
             }
         }
         else
             std::cout << fname << ": " << errors << " error(s)" << std::endl;
     }
     catch(const std::exception& exc){
-        std::cout << exc.what() << "\r\n";
+        std::cout << "Compilation error:" << exc.what() << "\r\n";
         errors++;
     }
 
@@ -511,15 +513,18 @@ unsigned Section::description()
 
 std::string Section::align_path(const char* sources, const std::string& str)
 {
+    size_t n;
 	std::string path = convert_path_xprm(script_file.c_str());
 
 	//Check and remove the initial sources dir
-    std::string sources_path = sources;
-    terminate_with_char(sources_path, PATH_SEP);
-    size_t n = path.find(sources_path);
-    if(n != std::string::npos && n == 0) {
-        path.erase(0, sources_path.length());
-        path = std::string(".") + PATH_SEP + path;
+    if (sources) {
+        std::string sources_path = sources;
+        terminate_with_char(sources_path, PATH_SEP);
+        n = path.find(sources_path);
+        if (n != std::string::npos && n == 0) {
+            path.erase(0, sources_path.length());
+            path = std::string(".") + PATH_SEP + path;
+        }
     }
     
     //Remove filename from path
@@ -555,18 +560,22 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 	char* description_str = "\tdescription = ";
 	FILETIME section_time = { 0, 0 };
 	
-	FILETIME definition_time = { 0, 0 };
+	//FILETIME definition_time = { 0, 0 };
 	std::string file;
-	std::string definition_file_path = std::string(sources) + PATH_SEP + definition_file;
+	std::string definition_file_path;
+    if (sources) definition_file_path = std::string(sources) + PATH_SEP;
+    definition_file_path += definition_file;
 	XStream ff(0);
 	if(!rebuild && ff.open(definition_file_path.c_str(), XS_IN)) {
 		int len = ff.size();
 		file.insert((size_type)0, (size_type)len, ' ');
 		ff.read(&file[0], len);
 		ff.close();
-		getFileTime(definition_file_path.c_str(), &definition_time);
+		//getFileTime(definition_file_path.c_str(), &definition_time);
 	}
-	size_t head_pos = file.find(head);
+
+    size_t head_pos = file.find(head);
+    /* Doesn't update unless you change the structure
 	size_t end_pos = std::string::npos;
 	if(head_pos != std::string::npos){
 		end_pos = file.find("XScript end:", head_pos);
@@ -582,6 +591,7 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 			}
 			//}
 		}
+    */
 
 	WriteStream buf;
 	buf < "//	Number of variables: " <= variables() < "\r\n";
@@ -638,11 +648,14 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 	buf < description_str <= description() < ";\r\n";
 
 	buf < "\treserve(" <= variables() < ");\r\n";
-	FOR_EACH(*this, i){
+	FOR_EACH(*this, i) {
 		const Variable* var = dynamic_cast<Variable*>(&**i);
-		if(var && var->definible())
-			buf < "\tadd(&" < var->name() < ", \"" < var->name() < "\");\r\n";
-		}
+		if(var && var->definible()) {
+            unsigned int crc = 83838383;
+            var->description(crc);
+            buf < "\tadd(&" < var->name() < ", \"" < var->name() < "\", " < std::to_string(crc).c_str() < ");\r\n";
+        }
+    }
 
 	buf < "\tadd_parameter_section(this);\r\n}\r\n};\r\n";
 	buf < "static " < name() < "_ParameterSection " < name() < "_ParameterSectionObject;\r\n";
@@ -653,19 +666,12 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 	std::string operation;
 	if(head_pos == std::string::npos){ // first time
 		operation = "Creating";
-		file += head;
-		file += buf;
-		file += tail;
-		}
-	else{
+    } else {
 		operation = "Updating";
-        size_t end_pos = file.find(tail, head_pos);
-		if(end_pos == std::string::npos)
-			end_pos = tail.size();
-		head_pos += head.size();
-		file.erase(head_pos, end_pos - head_pos);
-		file.insert(head_pos, buf);
-		}
+    }
+    file = head;
+    file += buf;
+    file += tail;
 	if(file != file0){
 		std::cout << operation << " definition of section \"" << name() << "\" in " << definition_file_path << std::endl;
 		ff.open(definition_file_path.c_str(), XS_OUT);
@@ -714,7 +720,9 @@ bool Section::declaration(const char* sources, bool rebuild)
 
 	if(using_namespace) buf < "}\r\nusing namespace "< name() < "_namespace;\r\n";
 
-    std::string declaration_file_path = std::string(sources) + PATH_SEP + declaration_file;
+    std::string declaration_file_path;
+    if (sources) declaration_file_path = std::string(sources) + PATH_SEP;
+    declaration_file_path += declaration_file;
     std::string file;
 	XStream ff(0);
 	if(!rebuild && ff.open(declaration_file_path.c_str(), XS_IN)){
@@ -727,27 +735,20 @@ bool Section::declaration(const char* sources, bool rebuild)
 
     std::string operation;
 	size_t head_pos = file.find(head);
-	if(head_pos == std::string::npos){ // first time
-		operation = "Creating";
-		head += buf;
-		head += tail;
-		file.insert(0, head);
-		}
-	else{
-		operation = "Updating";
-		size_t end_pos = file.find(tail, head_pos);
-		if(end_pos == std::string::npos)
-			end_pos = tail.size();
-		head_pos += head.size();
-		file.erase(head_pos, end_pos - head_pos);
-		file.insert(head_pos, buf);
-		}
+    if(head_pos == std::string::npos){ // first time
+        operation = "Creating";
+    } else {
+        operation = "Updating";
+    }
+    file = head;
+    file += buf;
+    file += tail;
 	if(file != file0){
         std::cout << operation << " declaration of section \"" << name() << "\" in " << declaration_file_path << std::endl;
 		ff.open(declaration_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
 		return 1;
-		}
+	}
 	return 0;
 }
 
@@ -901,8 +902,18 @@ void ArrayVariable::copy_value(void* val) const
 { 
 	int n = 0;
 	const_iterator i;
-	FOR_EACH(*this, i)
-		(*i)->copy_value((char*)val  +  n++ * type.sizeOf());
+	FOR_EACH(*this, i) {
+        (*i)->copy_value((char*) val + n++ * type.sizeOf());
+    }
+}
+
+void ArrayVariable::description(unsigned& crc) const {
+    Variable::description(crc);
+    crc = CRC(size(), crc);
+    const_iterator i;
+    FOR_EACH(*this, i){
+        (*i)->description(crc);
+    }
 }
 
 Token* ArrayVariable::clone() const 
@@ -1034,11 +1045,11 @@ DataType(name(), 0)
 void StructDataType::description(unsigned& crc) const 
 { 
 	DataType::description(crc); 
+    crc = CRC(this->size(), crc);
 	const_iterator i;
 	FOR_EACH(*this, i){
-		const Variable* var = dynamic_cast<const Variable*>(&**i);
-		if(var && var->definible())
-			var->description(crc);
+		const DescriptedToken* var = dynamic_cast<const DescriptedToken*>(&**i);
+		if (var) var->description(crc);
 	}
 }
 
@@ -1166,6 +1177,16 @@ void StructVariable::copy_value(void* val) const
 			offs += var->sizeOf();
 			}
 		}
+}
+
+void StructVariable::description(unsigned& crc) const
+{
+    Variable::description(crc);
+    const_iterator i;
+    FOR_EACH(*this, i) {
+        const DescriptedToken* var = dynamic_cast<const DescriptedToken*>(&**i);
+        if (var) var->description(crc);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -16,19 +16,19 @@ public:
 class duplicate_token : public parsing_error 
 {
 public:
-  duplicate_token(const char* __s) : parsing_error(__s) {}
+  duplicate_token(const char* __s) : parsing_error((std::string("Duplicate token: ") + __s).c_str()) {}
 };
 
 class unexpected_token : public parsing_error 
 {
 public:
-  unexpected_token(const char* __s) : parsing_error(__s) {}
+  unexpected_token(const char* __s) : parsing_error((std::string("Expected token: ") + __s).c_str()) {}
 };
 
 class expected_token : public parsing_error 
 {
 public:
-  expected_token(const char* __s) : parsing_error(__s) {}
+  expected_token(const char* __s) : parsing_error((std::string("Unexpected token: ") + __s).c_str()) {}
 };
 
 

@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <set>
 #include "stdafx.h"
 #include "RunTimeCompiler.h"
 
@@ -42,9 +43,11 @@ void RunTimeCompiler::loadSection(ParameterSection* prm)
 			}
 		sec->copy(*prm);
 	}
-	catch(std::logic_error exc) {
+	catch(std::logic_error& exc) {
 		XBuffer buf(512);
 		buf < "Scripts error:\n" < (char*)exc.what() < "\n";
+        
+        fprintf(stderr, "XPrm runtime error: %s\n", buf.address());
 		
         int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                                            "XPrm runtime error",
@@ -59,16 +62,63 @@ void RunTimeCompiler::loadSection(ParameterSection* prm)
 //////////////////////////////////////////////////////////////////////////////////
 //		Section
 //////////////////////////////////////////////////////////////////////////////////
+bool copy_section_var(BaseParameter* par, const Variable* var) {
+    if(var && var->definible()) {
+        if (par->crc) {
+            unsigned int newcrc = 83838383;
+            var->description(newcrc);
+            if (newcrc != par->crc) {
+                return false;
+            }
+        }
+        var->copy_value(par->value);
+    }
+    return true;
+}
+
 void Section::copy(ParameterSection& prm)
 {
-	if(description() != prm.description)
-		throw std::logic_error(std::string("Structure of section \"") + prm.name + "\" was changed: please exit and copy Scripts from Source to your game folder");
+	if(description() != prm.description) { 
+        std::string error = std::string("Structure of section \"") + prm.name + "\" was changed: please exit and copy Scripts from Source to your game folder";
+        fprintf(stderr, "%s\n", error.c_str());
+		//throw std::logic_error(error);
+    }
 	BaseParameterList::iterator i;
-	FOR_EACH(prm.parameters, i){
+    
+    //First load array/structs
+    std::set<std::string> skipvar;
+    FOR_EACH(prm.parameters, i) {
+        const ArrayVariable* arrvar = dynamic_cast<const ArrayVariable*>(find(i->name));
+        if (arrvar) {
+            skipvar.insert(i->name);
+            bool crc = copy_section_var(&*i, arrvar);
+            if (!crc) {
+                //We also skip the var that controls the array size
+                skipvar.insert(arrvar->get_size_var_name());
+                fprintf(stderr, "Section %s array variable %s has different CRC, skipping\n", prm.name, i->name);
+            }
+            continue;
+        }
+        const StructVariable* structvar = dynamic_cast<const StructVariable*>(find(i->name));
+        if (structvar) {
+            skipvar.insert(i->name);
+            bool crc = copy_section_var(&*i, structvar);
+            if (!crc) {;
+                fprintf(stderr, "Section %s struct variable %s has different CRC, skipping\n", prm.name, i->name);
+            }
+            continue;
+        }
+    }
+    
+	FOR_EACH(prm.parameters, i) {
+        if (skipvar.count(i->name)) continue;
 		const Variable* var = dynamic_cast<const Variable*>(find(i->name));
-		if(var && var->definible())
-			var->copy_value(i->value);
-		}
+        if (var && var->definible()) {
+            if (!copy_section_var(&*i, var)) {
+                fprintf(stderr, "Section %s variable %s has different CRC, skipping\n", prm.name, i->name);
+            }
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -111,9 +161,9 @@ void ParameterSection::reserve(int size)
 	parameters.reserve(size);
 }
 
-void ParameterSection::add(void* val, const char* name)
+void ParameterSection::add(void* val, const char* name, unsigned int crc)
 { 
-	parameters.push_back(BaseParameter(val, name)); 
+	parameters.push_back(BaseParameter(val, name, crc)); 
 }
 
 void ParameterSection::add_dependency(const char* fname)

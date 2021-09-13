@@ -333,11 +333,12 @@ public:
 	void write_value(WriteStream& buf) const;
 	void copy_value(void* val) const;
 	void write_name(XBuffer& buf) const { Variable::write_name(buf); buf < "["; if(declare_size) buf <= size(); buf < "]"; }
-	void description(unsigned& crc) const { Variable::description(crc); crc = CRC(size(), crc); }
+	void description(unsigned& crc) const;
 	int sizeOf() const { return type.sizeOf()*size(); }
 	Token* clone() const;
 	int size() const { return list<ShareHandle<Variable> >::size(); }
-	const Variable& at(int index) const { if(index < 0 || index >= current_size) throw parsing_error("Array index is out of bound"); const_iterator i = begin(); while(index--) i++; return **i; } 
+	const Variable& at(int index) const { if(index < 0 || index >= current_size) throw parsing_error("Array index is out of bound"); const_iterator i = begin(); while(index--) i++; return **i; }
+    const std::string& get_size_var_name() const { return size_var_name; };
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,6 +387,7 @@ public:
 	void init(Compiler& comp);
 	void write_value(WriteStream& buf) const;
 	void copy_value(void* val) const;
+    void description(unsigned& crc) const;
 	Token* clone() const { return new StructVariable(*this); } 
 };
 

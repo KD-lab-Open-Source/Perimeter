@@ -621,7 +621,7 @@ int main(int argc, char *argv[])
 
     //Load perimeter parameters
     int xprmcompiler=IniManager("Perimeter.ini", false).getInt("Game","XPrmCompiler");
-    check_command_line_parameter("XPrmCompiler", xprmcompiler);
+    check_command_line_parameter("xprm_compiler", xprmcompiler);
     if (xprmcompiler) {
         reload_parameters();
     }
