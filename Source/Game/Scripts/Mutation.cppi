@@ -25,19 +25,19 @@ struct MutationPrm_ParameterSection : ParameterSection
 {
 	add_dependency(".\\Scripts\\Mutation.prm");
 	sourceCRC = 1740156785;
-	description = 92074689;
+	description = 3584419999;
 	reserve(11);
-	add(&mutation_times, "mutation_times");
-	add(&mutation_sphere_delta_z, "mutation_sphere_delta_z");
-	add(&mutation_upper_stiffness, "mutation_upper_stiffness");
-	add(&mutation_lower_stiffness, "mutation_lower_stiffness");
-	add(&mutation_compact_step, "mutation_compact_step");
-	add(&mutation_compact_iterations, "mutation_compact_iterations");
-	add(&mutation_compact_penetration_factor, "mutation_compact_penetration_factor");
-	add(&mutation_compact_softer, "mutation_compact_softer");
-	add(&mutation_base_volumes, "mutation_base_volumes");
-	add(&mutation_specular_color, "mutation_specular_color");
-	add(&mutation_move_sound_start_phase, "mutation_move_sound_start_phase");
+	add(&mutation_times, "mutation_times", 176410699);
+	add(&mutation_sphere_delta_z, "mutation_sphere_delta_z", 1395901391);
+	add(&mutation_upper_stiffness, "mutation_upper_stiffness", 3534793686);
+	add(&mutation_lower_stiffness, "mutation_lower_stiffness", 2863608683);
+	add(&mutation_compact_step, "mutation_compact_step", 421395387);
+	add(&mutation_compact_iterations, "mutation_compact_iterations", 3466196970);
+	add(&mutation_compact_penetration_factor, "mutation_compact_penetration_factor", 885294191);
+	add(&mutation_compact_softer, "mutation_compact_softer", 4044090453);
+	add(&mutation_base_volumes, "mutation_base_volumes", 1428716675);
+	add(&mutation_specular_color, "mutation_specular_color", 4275278529);
+	add(&mutation_move_sound_start_phase, "mutation_move_sound_start_phase", 560204710);
 	add_parameter_section(this);
 }
 };

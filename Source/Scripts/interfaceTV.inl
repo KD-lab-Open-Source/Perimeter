@@ -169,6 +169,7 @@ InterfaceTV interfaceTV_Ceptor =
 	radius = 85;
 	pos_dy = 0;
 	model = "RESOURCE\\Models\\Interface\\intrf_ceptor.m3d";
+	channel = "main";
 };
 InterfaceTV interfaceTV_Gyroid = 
 {

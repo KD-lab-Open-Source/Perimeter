@@ -168,9 +168,9 @@ static struct Balance
 		RangeSight = RADIUS_MIDDLE +RADIUS_ADD;
 	};
 	MobileUnit Scumer = {
-		elSoldiers = 2;
+		elSoldiers = 0;
 		elOfficers = 7;
-		elTechnicians = 2;
+		elTechnicians = 3;
 
 		AttackClass = UNIT_CLASS_GROUND|UNIT_CLASS_FRAME|UNIT_CLASS_STRUCTURE|UNIT_CLASS_STRUCTURE_GUN|UNIT_CLASS_STRUCTURE_SPECIAL;
 
