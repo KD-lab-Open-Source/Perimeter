@@ -1,7 +1,7 @@
 TriggerChain = {
-	name = "09ragar1.scr";
+	name = "";
 	triggers = {
-		42;
+		39;
 		{
 			name = "START";
 			condition = "struct ConditionSwitcher" {
@@ -192,6 +192,12 @@ TriggerChain = {
 			state_ = CHECKING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 0;
+			left_ = 0;
+			top_ = 0;
+			right_ = 256;
+			bottom_ = 32;
 			cellIndex = {
 				x = 0;
 				y = 0;
@@ -222,7 +228,7 @@ TriggerChain = {
 					{
 						type = INVERTED;
 						condition = "struct ConditionObjectExists" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							object = UNIT_ATTRIBUTE_CORE;
 							counter = 50;
@@ -247,6 +253,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 0;
+			left_ = 288;
+			top_ = 0;
+			right_ = 544;
+			bottom_ = 32;
 			cellIndex = {
 				x = 1;
 				y = 0;
@@ -304,6 +316,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 255;
+			cellNumberX = 0;
+			cellNumberY = 2;
+			left_ = 0;
+			top_ = 128;
+			right_ = 256;
+			bottom_ = 160;
 			cellIndex = {
 				x = 0;
 				y = 2;
@@ -350,6 +368,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 16744703;
+			cellNumberX = 1;
+			cellNumberY = 1;
+			left_ = 288;
+			top_ = 64;
+			right_ = 544;
+			bottom_ = 96;
 			cellIndex = {
 				x = 1;
 				y = 1;
@@ -371,19 +395,19 @@ TriggerChain = {
 					0;
 				};
 			};
-			action = "struct ActionSetCamera" {
-				internalColor_ = 0;
-				cameraSplineName = "Camera1";
-				stepTime = 4.;
-				cycles = 1;
-				smoothTransition = false;
-			};
+			action = 0;
 			outcomingLinks = {
 				0;
 			};
-			state_ = SLEEPING;
+			state_ = CHECKING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = -1;
+			cellNumberY = 1;
+			left_ = -288;
+			top_ = 64;
+			right_ = -32;
+			bottom_ = 96;
 			cellIndex = {
 				x = -1;
 				y = 1;
@@ -420,6 +444,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 2;
+			left_ = 288;
+			top_ = 128;
+			right_ = 544;
+			bottom_ = 160;
 			cellIndex = {
 				x = 1;
 				y = 2;
@@ -539,6 +569,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 3;
+			left_ = 288;
+			top_ = 192;
+			right_ = 544;
+			bottom_ = 224;
 			cellIndex = {
 				x = 1;
 				y = 3;
@@ -658,6 +694,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 4;
+			left_ = 288;
+			top_ = 256;
+			right_ = 544;
+			bottom_ = 288;
 			cellIndex = {
 				x = 1;
 				y = 4;
@@ -670,7 +712,7 @@ TriggerChain = {
 			};
 		},
 		{
-			name = "стрейфер0";
+			name = "бомбер0";
 			condition = "struct ConditionSwitcher" {
 				state_ = true;
 				internalColor_ = 0;
@@ -815,7 +857,7 @@ TriggerChain = {
 				internalColor_ = 0;
 				onlyIfAi = true;
 				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_STRAFER;
+				attackByType = UNIT_ATTRIBUTE_BOMBER;
 				unitsToAttack = {
 					2;
 					UNIT_ATTRIBUTE_GUN_HOWITZER,
@@ -845,6 +887,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 5;
+			left_ = 288;
+			top_ = 320;
+			right_ = 544;
+			bottom_ = 352;
 			cellIndex = {
 				x = 1;
 				y = 5;
@@ -909,15 +957,21 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 12;
+			left_ = 0;
+			top_ = 768;
+			right_ = 256;
+			bottom_ = 800;
 			cellIndex = {
 				x = 0;
-				y = 16;
+				y = 12;
 			};
 			boundingRect = {
 				left = 0;
-				top = 1024;
+				top = 768;
 				right = 256;
-				bottom = 1056;
+				bottom = 800;
 			};
 		},
 		{
@@ -983,21 +1037,27 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 255;
+			cellNumberX = 0;
+			cellNumberY = 13;
+			left_ = 0;
+			top_ = 832;
+			right_ = 256;
+			bottom_ = 864;
 			cellIndex = {
 				x = 0;
-				y = 17;
+				y = 13;
 			};
 			boundingRect = {
 				left = 0;
-				top = 1088;
+				top = 832;
 				right = 256;
-				bottom = 1120;
+				bottom = 864;
 			};
 		},
 		{
 			name = "летная лаборатория";
 			condition = "struct ConditionSwitcher" {
-				state_ = true;
+				state_ = false;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -1035,7 +1095,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionObjectExists" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							object = UNIT_ATTRIBUTE_COMMANDER;
 							counter = 1;
@@ -1078,6 +1138,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 65535;
+			cellNumberX = 2;
+			cellNumberY = 10;
+			left_ = 576;
+			top_ = 640;
+			right_ = 832;
+			bottom_ = 672;
 			cellIndex = {
 				x = 2;
 				y = 10;
@@ -1118,6 +1184,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 33023;
+			cellNumberX = 2;
+			cellNumberY = 11;
+			left_ = 576;
+			top_ = 704;
+			right_ = 832;
+			bottom_ = 736;
 			cellIndex = {
 				x = 2;
 				y = 11;
@@ -1132,7 +1204,7 @@ TriggerChain = {
 		{
 			name = "летная 2";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -1173,7 +1245,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionSwitcher" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							type = OR;
 							conditions = {
@@ -1192,7 +1264,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionObjectExists" {
-										state_ = false;
+										state_ = true;
 										internalColor_ = 0;
 										object = UNIT_ATTRIBUTE_BOMB_STATION3;
 										counter = 1;
@@ -1301,6 +1373,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 65535;
+			cellNumberX = 2;
+			cellNumberY = 12;
+			left_ = 576;
+			top_ = 768;
+			right_ = 832;
+			bottom_ = 800;
 			cellIndex = {
 				x = 2;
 				y = 12;
@@ -1341,6 +1419,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 33023;
+			cellNumberX = 2;
+			cellNumberY = 13;
+			left_ = 576;
+			top_ = 832;
+			right_ = 832;
+			bottom_ = 864;
 			cellIndex = {
 				x = 2;
 				y = 13;
@@ -1353,7 +1437,7 @@ TriggerChain = {
 			};
 		},
 		{
-			name = "лазерная пушка0";
+			name = "ракетница1";
 			condition = "struct ConditionSwitcher" {
 				state_ = true;
 				internalColor_ = 0;
@@ -1364,6 +1448,132 @@ TriggerChain = {
 						type = NORMAL;
 						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
 							state_ = true;
+							internalColor_ = 8454143;
+							building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+							factor = 2.;
+							compareOp = COMPARE_LESS;
+							building2 = UNIT_ATTRIBUTE_CORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelUpperReserve" {
+							state_ = true;
+							internalColor_ = 0;
+							energyReserve = 600.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+				placementStrategy = PLACEMENT_STRATEGY_GUN;
+				energyReserve = 50.;
+				buildDurationMax = 500;
+				priority = 2;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. ракетной пушки";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 23;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 22;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 23;
+						y = 16;
+					};
+					childOffset = {
+						x = 22;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = 3;
+			cellNumberY = 15;
+			left_ = 864;
+			top_ = 960;
+			right_ = 1120;
+			bottom_ = 992;
+			cellIndex = {
+				x = 3;
+				y = 15;
+			};
+			boundingRect = {
+				left = 864;
+				top = 960;
+				right = 1120;
+				bottom = 992;
+			};
+		},
+		{
+			name = "остановить стр. ракетной пушки";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelLowerReserve" {
+							state_ = false;
+							internalColor_ = 9945343;
+							energyReserve = 300.;
+						};
+					}
+				};
+			};
+			action = "struct ActionHoldBuilding" {
+				internalColor_ = 0;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ANY;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 33023;
+			cellNumberX = 3;
+			cellNumberY = 16;
+			left_ = 864;
+			top_ = 1024;
+			right_ = 1120;
+			bottom_ = 1056;
+			cellIndex = {
+				x = 3;
+				y = 16;
+			};
+			boundingRect = {
+				left = 864;
+				top = 1024;
+				right = 1120;
+				bottom = 1056;
+			};
+		},
+		{
+			name = "лазерная пушка0";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
+							state_ = false;
 							internalColor_ = 12189692;
 							building = UNIT_ATTRIBUTE_LASER_CANNON;
 							factor = 2.;
@@ -1415,6 +1625,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 65535;
+			cellNumberX = 4;
+			cellNumberY = 15;
+			left_ = 1152;
+			top_ = 960;
+			right_ = 1408;
+			bottom_ = 992;
 			cellIndex = {
 				x = 4;
 				y = 15;
@@ -1424,6 +1640,86 @@ TriggerChain = {
 				top = 960;
 				right = 1408;
 				bottom = 992;
+			};
+		},
+		{
+			name = "ракетница0";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
+							state_ = true;
+							internalColor_ = 8454143;
+							building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+							factor = 1.;
+							compareOp = COMPARE_LESS;
+							building2 = UNIT_ATTRIBUTE_CORE;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionEnegyLevelUpperReserve" {
+							state_ = true;
+							internalColor_ = 0;
+							energyReserve = 600.;
+						};
+					}
+				};
+			};
+			action = "struct ActionOrderBuilding" {
+				internalColor_ = 12189692;
+				onlyIfAi = true;
+				building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
+				placementStrategy = PLACEMENT_STRATEGY_GUN;
+				energyReserve = 50.;
+				buildDurationMax = 500;
+				priority = 3;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "остановить стр. ракетной пушки";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -38;
+					parentOffsetY_ = -16;
+					childOffsetX_ = -36;
+					childOffsetY_ = 16;
+					parentOffset = {
+						x = -38;
+						y = -16;
+					};
+					childOffset = {
+						x = -36;
+						y = 16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 65535;
+			cellNumberX = 3;
+			cellNumberY = 17;
+			left_ = 864;
+			top_ = 1088;
+			right_ = 1120;
+			bottom_ = 1120;
+			cellIndex = {
+				x = 3;
+				y = 17;
+			};
+			boundingRect = {
+				left = 864;
+				top = 1088;
+				right = 1120;
+				bottom = 1120;
 			};
 		},
 		{
@@ -1489,6 +1785,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 65535;
+			cellNumberX = 4;
+			cellNumberY = 17;
+			left_ = 1152;
+			top_ = 1088;
+			right_ = 1408;
+			bottom_ = 1120;
 			cellIndex = {
 				x = 4;
 				y = 17;
@@ -1529,6 +1831,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 33023;
+			cellNumberX = 4;
+			cellNumberY = 16;
+			left_ = 1152;
+			top_ = 1024;
+			right_ = 1408;
+			bottom_ = 1056;
 			cellIndex = {
 				x = 4;
 				y = 16;
@@ -1543,7 +1851,7 @@ TriggerChain = {
 		{
 			name = "гаубица0";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -1551,7 +1859,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionBuildingNearBuilding" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							distance = 600.;
 							playerType1 = AI_PLAYER_TYPE_ME;
@@ -1601,6 +1909,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 65535;
+			cellNumberX = 5;
+			cellNumberY = 15;
+			left_ = 1440;
+			top_ = 960;
+			right_ = 1696;
+			bottom_ = 992;
 			cellIndex = {
 				x = 5;
 				y = 15;
@@ -1641,6 +1955,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 33023;
+			cellNumberX = 5;
+			cellNumberY = 16;
+			left_ = 1440;
+			top_ = 1024;
+			right_ = 1696;
+			bottom_ = 1056;
 			cellIndex = {
 				x = 5;
 				y = 16;
@@ -1700,6 +2020,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 6;
+			cellNumberY = 16;
+			left_ = 1728;
+			top_ = 1024;
+			right_ = 1984;
+			bottom_ = 1056;
 			cellIndex = {
 				x = 6;
 				y = 16;
@@ -1759,6 +2085,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 6;
+			cellNumberY = 17;
+			left_ = 1728;
+			top_ = 1088;
+			right_ = 1984;
+			bottom_ = 1120;
 			cellIndex = {
 				x = 6;
 				y = 17;
@@ -1858,6 +2190,42 @@ TriggerChain = {
 					};
 				},
 				{
+					triggerName = "ракетница1";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 11;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 2;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 11;
+						y = 16;
+					};
+					childOffset = {
+						x = 2;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "ракетница0";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = -20;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -74;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = -20;
+						y = 16;
+					};
+					childOffset = {
+						x = -74;
+						y = -16;
+					};
+				},
+				{
 					triggerName = "лазерная пушка1";
 					color = STRATEGY_RED;
 					type = THICK;
@@ -1892,47 +2260,17 @@ TriggerChain = {
 						x = -124;
 						y = -16;
 					};
-				},
-				{
-					triggerName = "ракетница00";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "электропушка";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
 				}
 			};
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 3;
+			cellNumberY = 8;
+			left_ = 864;
+			top_ = 512;
+			right_ = 1120;
+			bottom_ = 544;
 			cellIndex = {
 				x = 3;
 				y = 8;
@@ -1947,7 +2285,7 @@ TriggerChain = {
 		{
 			name = "сложный";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -1955,7 +2293,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionDifficultyLevel" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							difficulty = DIFFICULTY_HARD;
 						};
@@ -2010,6 +2348,24 @@ TriggerChain = {
 					};
 				},
 				{
+					triggerName = "бомбер0";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 108;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -5;
+					parentOffset = {
+						x = 108;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -5;
+					};
+				},
+				{
 					triggerName = "С1-базовые: героид, цептор, бомбер";
 					color = STRATEGY_RED;
 					type = THICK;
@@ -2026,29 +2382,17 @@ TriggerChain = {
 						x = -120;
 						y = 16;
 					};
-				},
-				{
-					triggerName = "стрейфер0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 36;
-						y = 16;
-					};
-					childOffset = {
-						x = -36;
-						y = -16;
-					};
 				}
 			};
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 3;
+			left_ = 0;
+			top_ = 192;
+			right_ = 256;
+			bottom_ = 224;
 			cellIndex = {
 				x = 0;
 				y = 3;
@@ -2077,6 +2421,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = -1;
+			cellNumberY = 2;
+			left_ = -288;
+			top_ = 128;
+			right_ = -32;
+			bottom_ = 160;
 			cellIndex = {
 				x = -1;
 				y = 2;
@@ -2134,6 +2484,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 255;
+			cellNumberX = 0;
+			cellNumberY = 5;
+			left_ = 0;
+			top_ = 320;
+			right_ = 256;
+			bottom_ = 352;
 			cellIndex = {
 				x = 0;
 				y = 5;
@@ -2211,6 +2567,24 @@ TriggerChain = {
 					};
 				},
 				{
+					triggerName = "бомбер00";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 119;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -125;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 119;
+						y = 16;
+					};
+					childOffset = {
+						x = -125;
+						y = -16;
+					};
+				},
+				{
 					triggerName = "С1-базовые: героид, цептор, бомбер0";
 					color = STRATEGY_RED;
 					type = THICK;
@@ -2227,44 +2601,32 @@ TriggerChain = {
 						x = 54;
 						y = -16;
 					};
-				},
-				{
-					triggerName = "стрейфер00";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 36;
-						y = 16;
-					};
-					childOffset = {
-						x = -36;
-						y = -16;
-					};
 				}
 			};
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 6;
+			left_ = 0;
+			top_ = 384;
+			right_ = 256;
+			bottom_ = 416;
 			cellIndex = {
 				x = 0;
-				y = 8;
+				y = 6;
 			};
 			boundingRect = {
 				left = 0;
-				top = 512;
+				top = 384;
 				right = 256;
-				bottom = 544;
+				bottom = 416;
 			};
 		},
 		{
 			name = "легкий";
 			condition = "struct ConditionSwitcher" {
-				state_ = true;
+				state_ = false;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -2272,7 +2634,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionDifficultyLevel" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							difficulty = DIFFICULTY_EASY;
 						};
@@ -2327,6 +2689,24 @@ TriggerChain = {
 					};
 				},
 				{
+					triggerName = "бомбер01";
+					color = STRATEGY_RED;
+					type = THICK;
+					active_ = false;
+					parentOffsetX_ = 112;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -11;
+					parentOffset = {
+						x = 112;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -11;
+					};
+				},
+				{
 					triggerName = "С1-базовые: героид, цептор, бомбер1";
 					color = STRATEGY_RED;
 					type = THICK;
@@ -2343,38 +2723,26 @@ TriggerChain = {
 						x = 70;
 						y = -16;
 					};
-				},
-				{
-					triggerName = "стрейфер01";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 24;
-						y = 16;
-					};
-					childOffset = {
-						x = -24;
-						y = -16;
-					};
 				}
 			};
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 8;
+			left_ = 0;
+			top_ = 512;
+			right_ = 256;
+			bottom_ = 544;
 			cellIndex = {
 				x = 0;
-				y = 12;
+				y = 8;
 			};
 			boundingRect = {
 				left = 0;
-				top = 768;
+				top = 512;
 				right = 256;
-				bottom = 800;
+				bottom = 544;
 			};
 		},
 		{
@@ -2485,15 +2853,21 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 6;
+			left_ = 288;
+			top_ = 384;
+			right_ = 544;
+			bottom_ = 416;
 			cellIndex = {
 				x = 1;
-				y = 8;
+				y = 6;
 			};
 			boundingRect = {
 				left = 288;
-				top = 512;
+				top = 384;
 				right = 544;
-				bottom = 544;
+				bottom = 416;
 			};
 		},
 		{
@@ -2604,19 +2978,25 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 7;
+			left_ = 288;
+			top_ = 448;
+			right_ = 544;
+			bottom_ = 480;
 			cellIndex = {
 				x = 1;
-				y = 9;
+				y = 7;
 			};
 			boundingRect = {
 				left = 288;
-				top = 576;
+				top = 448;
 				right = 544;
-				bottom = 608;
+				bottom = 480;
 			};
 		},
 		{
-			name = "стрейфер00";
+			name = "бомбер00";
 			condition = "struct ConditionSwitcher" {
 				state_ = true;
 				internalColor_ = 0;
@@ -2791,21 +3171,27 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 8;
+			left_ = 288;
+			top_ = 512;
+			right_ = 544;
+			bottom_ = 544;
 			cellIndex = {
 				x = 1;
-				y = 10;
+				y = 8;
 			};
 			boundingRect = {
 				left = 288;
-				top = 640;
+				top = 512;
 				right = 544;
-				bottom = 672;
+				bottom = 544;
 			};
 		},
 		{
 			name = "героид1";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = OR;
 				conditions = {
@@ -2910,15 +3296,21 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 9;
+			left_ = 288;
+			top_ = 576;
+			right_ = 544;
+			bottom_ = 608;
 			cellIndex = {
 				x = 1;
-				y = 13;
+				y = 9;
 			};
 			boundingRect = {
 				left = 288;
-				top = 832;
+				top = 576;
 				right = 544;
-				bottom = 864;
+				bottom = 608;
 			};
 		},
 		{
@@ -3029,23 +3421,29 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 10;
+			left_ = 288;
+			top_ = 640;
+			right_ = 544;
+			bottom_ = 672;
 			cellIndex = {
 				x = 1;
-				y = 14;
+				y = 10;
 			};
 			boundingRect = {
 				left = 288;
-				top = 896;
+				top = 640;
 				right = 544;
-				bottom = 928;
+				bottom = 672;
 			};
 		},
 		{
-			name = "стрейфер01";
+			name = "бомбер01";
 			condition = "struct ConditionSwitcher" {
 				state_ = true;
 				internalColor_ = 0;
-				type = OR;
+				type = AND;
 				conditions = {
 					12;
 					{
@@ -3186,7 +3584,7 @@ TriggerChain = {
 				internalColor_ = 0;
 				onlyIfAi = true;
 				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_STRAFER;
+				attackByType = UNIT_ATTRIBUTE_BOMBER;
 				unitsToAttack = {
 					2;
 					UNIT_ATTRIBUTE_GUN_HOWITZER,
@@ -3194,7 +3592,7 @@ TriggerChain = {
 				};
 				unitClassToAttack = UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
 				offensive = true;
-				unitsNumber = 2;
+				unitsNumber = 1;
 				soldiers = 0;
 				officers = 0;
 				technics = 0;
@@ -3207,7 +3605,7 @@ TriggerChain = {
 				returnToBase = true;
 				interruptable = false;
 				attackTimer = {
-					time = 14200;
+					time = 0;
 				};
 			};
 			outcomingLinks = {
@@ -3216,15 +3614,21 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 11;
+			left_ = 288;
+			top_ = 704;
+			right_ = 544;
+			bottom_ = 736;
 			cellIndex = {
 				x = 1;
-				y = 15;
+				y = 11;
 			};
 			boundingRect = {
 				left = 288;
-				top = 960;
+				top = 704;
 				right = 544;
-				bottom = 992;
+				bottom = 736;
 			};
 		},
 		{
@@ -3252,15 +3656,21 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 7;
+			left_ = 0;
+			top_ = 448;
+			right_ = 256;
+			bottom_ = 480;
 			cellIndex = {
 				x = 0;
-				y = 9;
+				y = 7;
 			};
 			boundingRect = {
 				left = 0;
-				top = 576;
+				top = 448;
 				right = 256;
-				bottom = 608;
+				bottom = 480;
 			};
 		},
 		{
@@ -3288,440 +3698,38 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 9;
+			left_ = 0;
+			top_ = 576;
+			right_ = 256;
+			bottom_ = 608;
 			cellIndex = {
 				x = 0;
-				y = 13;
+				y = 9;
 			};
 			boundingRect = {
 				left = 0;
-				top = 832;
+				top = 576;
 				right = 256;
-				bottom = 864;
-			};
-		},
-		{
-			name = "электропушка";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					2;
-					{
-						type = NORMAL;
-						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
-							state_ = true;
-							internalColor_ = 8454143;
-							building = UNIT_ATTRIBUTE_ELECTRO_CANNON;
-							factor = 2.;
-							compareOp = COMPARE_LESS;
-							building2 = UNIT_ATTRIBUTE_CORE;
-							playerType = AI_PLAYER_TYPE_ME;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelUpperReserve" {
-							state_ = true;
-							internalColor_ = 0;
-							energyReserve = 600.;
-						};
-					}
-				};
-			};
-			action = "struct ActionOrderBuilding" {
-				internalColor_ = 12189692;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_ELECTRO_CANNON;
-				placementStrategy = PLACEMENT_STRATEGY_GUN;
-				energyReserve = 50.;
-				buildDurationMax = 500;
-				priority = 2;
-			};
-			outcomingLinks = {
-				1;
-				{
-					triggerName = "остановить стр. ракетной пушки";
-					color = STRATEGY_RED;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 65535;
-			cellIndex = {
-				x = 3;
-				y = 14;
-			};
-			boundingRect = {
-				left = 864;
-				top = 896;
-				right = 1120;
-				bottom = 928;
-			};
-		},
-		{
-			name = "остановить стр. ракетной пушки";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelLowerReserve" {
-							state_ = false;
-							internalColor_ = 9945343;
-							energyReserve = 300.;
-						};
-					}
-				};
-			};
-			action = "struct ActionHoldBuilding" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_ANY;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 33023;
-			cellIndex = {
-				x = 3;
-				y = 15;
-			};
-			boundingRect = {
-				left = 864;
-				top = 960;
-				right = 1120;
-				bottom = 992;
-			};
-		},
-		{
-			name = "электропушка1";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					2;
-					{
-						type = NORMAL;
-						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
-							state_ = true;
-							internalColor_ = 8454143;
-							building = UNIT_ATTRIBUTE_ELECTRO_CANNON;
-							factor = 1.;
-							compareOp = COMPARE_LESS;
-							building2 = UNIT_ATTRIBUTE_CORE;
-							playerType = AI_PLAYER_TYPE_ME;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelUpperReserve" {
-							state_ = true;
-							internalColor_ = 0;
-							energyReserve = 600.;
-						};
-					}
-				};
-			};
-			action = "struct ActionOrderBuilding" {
-				internalColor_ = 12189692;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_ELECTRO_CANNON;
-				placementStrategy = PLACEMENT_STRATEGY_GUN;
-				energyReserve = 50.;
-				buildDurationMax = 500;
-				priority = 3;
-			};
-			outcomingLinks = {
-				2;
-				{
-					triggerName = "остановить стр. ракетной пушки";
-					color = STRATEGY_GREEN;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -38;
-					parentOffsetY_ = -16;
-					childOffsetX_ = -36;
-					childOffsetY_ = 16;
-					parentOffset = {
-						x = -38;
-						y = -16;
-					};
-					childOffset = {
-						x = -36;
-						y = 16;
-					};
-				},
-				{
-					triggerName = "остановить стр. ракетной пушки";
-					color = STRATEGY_GREEN;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = -16;
-					};
-					childOffset = {
-						x = 0;
-						y = 16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 65535;
-			cellIndex = {
-				x = 3;
-				y = 16;
-			};
-			boundingRect = {
-				left = 864;
-				top = 1024;
-				right = 1120;
-				bottom = 1056;
-			};
-		},
-		{
-			name = "ракетница10";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					2;
-					{
-						type = NORMAL;
-						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
-							state_ = true;
-							internalColor_ = 8454143;
-							building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
-							factor = 2.;
-							compareOp = COMPARE_LESS;
-							building2 = UNIT_ATTRIBUTE_CORE;
-							playerType = AI_PLAYER_TYPE_ME;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelUpperReserve" {
-							state_ = true;
-							internalColor_ = 0;
-							energyReserve = 600.;
-						};
-					}
-				};
-			};
-			action = "struct ActionOrderBuilding" {
-				internalColor_ = 12189692;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
-				placementStrategy = PLACEMENT_STRATEGY_GUN;
-				energyReserve = 50.;
-				buildDurationMax = 500;
-				priority = 2;
-			};
-			outcomingLinks = {
-				1;
-				{
-					triggerName = "остановить стр. ракетной пушки0";
-					color = STRATEGY_RED;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 65535;
-			cellIndex = {
-				x = 3;
-				y = 18;
-			};
-			boundingRect = {
-				left = 864;
-				top = 1152;
-				right = 1120;
-				bottom = 1184;
-			};
-		},
-		{
-			name = "остановить стр. ракетной пушки0";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelLowerReserve" {
-							state_ = false;
-							internalColor_ = 9945343;
-							energyReserve = 300.;
-						};
-					}
-				};
-			};
-			action = "struct ActionHoldBuilding" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_ANY;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 33023;
-			cellIndex = {
-				x = 3;
-				y = 19;
-			};
-			boundingRect = {
-				left = 864;
-				top = 1216;
-				right = 1120;
-				bottom = 1248;
-			};
-		},
-		{
-			name = "ракетница00";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					2;
-					{
-						type = NORMAL;
-						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
-							state_ = true;
-							internalColor_ = 8454143;
-							building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
-							factor = 1.;
-							compareOp = COMPARE_LESS;
-							building2 = UNIT_ATTRIBUTE_CORE;
-							playerType = AI_PLAYER_TYPE_ME;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelUpperReserve" {
-							state_ = true;
-							internalColor_ = 0;
-							energyReserve = 600.;
-						};
-					}
-				};
-			};
-			action = "struct ActionOrderBuilding" {
-				internalColor_ = 12189692;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
-				placementStrategy = PLACEMENT_STRATEGY_GUN;
-				energyReserve = 50.;
-				buildDurationMax = 500;
-				priority = 3;
-			};
-			outcomingLinks = {
-				2;
-				{
-					triggerName = "остановить стр. ракетной пушки0";
-					color = STRATEGY_GREEN;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -38;
-					parentOffsetY_ = -16;
-					childOffsetX_ = -36;
-					childOffsetY_ = 16;
-					parentOffset = {
-						x = -38;
-						y = -16;
-					};
-					childOffset = {
-						x = -36;
-						y = 16;
-					};
-				},
-				{
-					triggerName = "остановить стр. ракетной пушки0";
-					color = STRATEGY_GREEN;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = -16;
-					};
-					childOffset = {
-						x = 0;
-						y = 16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 65535;
-			cellIndex = {
-				x = 3;
-				y = 20;
-			};
-			boundingRect = {
-				left = 864;
-				top = 1280;
-				right = 1120;
-				bottom = 1312;
+				bottom = 608;
 			};
 		}
 	};
+	left_ = 33;
+	top_ = 123;
+	right_ = 804;
+	bottom_ = 805;
 	boundingRect = {
-		left = -288;
-		top = 0;
-		right = 1984;
-		bottom = 1312;
+		left = 33;
+		top = 123;
+		right = 804;
+		bottom = 805;
 	};
 	viewRect = {
-		left = -529;
-		top = 50;
-		right = 482;
-		bottom = 924;
+		left = 33;
+		top = 123;
+		right = 804;
+		bottom = 805;
 	};
 };
