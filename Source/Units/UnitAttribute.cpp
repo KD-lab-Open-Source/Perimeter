@@ -245,7 +245,7 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute.InstallBound && !(modelTime == FileTime(modelData.modelName) || modelScaleOld != modelScale)){
+	if(attribute.InstallBound && !(modelTime == FileTime(modelData.modelName))) { // || modelScaleOld != modelScale)){
 		modelTime = FileTime(modelData.modelName);
 
 		cObjectNodeRoot* model = createObject(modelData.modelName, attribute.belligerent);

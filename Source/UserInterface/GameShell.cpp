@@ -295,7 +295,7 @@ windowClientSize_(1024, 768)
 			name = "XXX";
 		name = setExtention((path + name).c_str(), "spg");
 
-		if(!XStream(0).open(name.c_str())) {
+		if(!XStream(0).open(convert_path_resource(name.c_str()))) {
 			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){
 				size_t pos = name.rfind(resource_path);
 				if(pos != std::string::npos)

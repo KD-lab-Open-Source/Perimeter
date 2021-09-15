@@ -89,20 +89,34 @@ std::string convert_path(const char* path);
 //Do a conversion for Windows -> POSIX paths
 std::string convert_path_posix(const char* path);
 
-//Obtains pairs of lowercase and original path from Resource paths cache which match the path start
-std::vector<std::pair<std::string, std::string>> get_resource_paths(const std::string& path);
-
 //Do a conversion for RESOURCE paths
 std::string convert_path_resource(const char* path, bool parent_only = false);
 
+//Obtain pairs of lowercase and original path from Resource paths cache which match the path start
+std::vector<std::pair<std::string, std::string>> get_resource_paths_recursive(std::string path);
+
+//Obtain pairs of lowercase and original path from Resource paths cache which match the path start,
+//only if
+std::vector<std::pair<std::string, std::string>> get_resource_paths_directory(std::string path);
+
+//Clears the current loaded resource paths
+void clear_resource_paths();
+
+//Sets the current resources root path
+void set_content_root_path(const std::string& path);
+ 
+//Returns the current resources root path
+const std::string& get_content_root_path();
+
+//Scans source dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
+//Removes the source path in each scanned path before saving to internal resource path list to destination path
+bool scan_resource_paths(std::string destination_path = "", std::string source_path = "");
+
 //Adds char to string in end if not present
-void terminate_with_char(std::string& buffer, const char chr);
+void terminate_with_char(std::string& buffer, char chr);
 
 //Replicate legacy behavior and add dot if not present
 void terminate_float_text(char* buffer, size_t max, int digits);
-
-//Scans dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
-void scan_resource_paths(std::string scan_path = "");
 
 //Replaces all "from" in "text" with "to"
 void string_replace_all(std::string& text, const std::string& from, const std::string& to);

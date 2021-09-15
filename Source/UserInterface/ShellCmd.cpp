@@ -710,9 +710,7 @@ int Structure2ButtonID(int i)
 	case UNIT_ATTRIBUTE_HARKBACK_STATION1:
 //	case UNIT_ATTRIBUTE_HARKBACK_STATION2:
 //	case UNIT_ATTRIBUTE_HARKBACK_STATION3:
-        if (terGameContent & GAME_CONTENT::PERIMETER) {
-            id = SQSH_STATION_HARKBACK_LAB_ID;
-        }
+        id = SQSH_STATION_HARKBACK_LAB_ID;
 		break;
 	case UNIT_ATTRIBUTE_FLY_STATION1:
 		id = SQSH_STATION5_ID;
@@ -740,9 +738,7 @@ int Structure2ButtonID(int i)
 		id = SQSH_GUN_GIMLET_ID;
 		break;
 	case UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR:
-        if (terGameContent & GAME_CONTENT::PERIMETER) {
-            id = SQSH_GUN_FILTH_ID;
-        }
+        id = SQSH_GUN_FILTH_ID;
 		break;
 	case UNIT_ATTRIBUTE_GUN_SUBCHASER:
 		id = SQSH_GUN_SUBCHASER_ID;

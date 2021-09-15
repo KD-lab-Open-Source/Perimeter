@@ -40,6 +40,16 @@ There is instructions available in:
 
 ## Enhancements from original game
 
+- Bugfixes
+- Automatic game assets searching in these paths order:
+  - Path from content= command argument
+  - Linux: $HOME/.local/share/KranX Productions/Perimeter
+  - Executable path
+  - Windows: %AppData%\\Roaming\\KranX Productions\\Perimeter
+- Addons system that overlay files in original resources without altering them:
+  - Example: file placed in Addons/AddonName/Resource/Icons/logo.tga will replace usage of
+    Resource/Icons/logo.tga file.
+  - Uses may include adding custom textures, models, resolutions, maps, scripts...
 - 64 bits support
 - Frame selection in battle/multiplayer menu
 - Experimental widescreen and custom resolutions support:
@@ -50,6 +60,7 @@ There is instructions available in:
   - Both .ini and resx= resy= command arguments accept custom resolutions, these will use
     the closest UI resolutions upscaled/centered to maintain visual consistency.
 - Experimental resizable windows (Enabled by default unless Graphics ResizableWindow in Perimeter.ini or resizablewindow= is 0)
+- Experimental support for Perimeter Emperor Testament
 
 ## Repository contents
 

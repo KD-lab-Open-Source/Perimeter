@@ -626,7 +626,7 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
 		return NULL;
 	}
 
-	std::string fname = convert_path_resource(pFileName);
+	std::string fname = convert_path(pFileName);
     std::string TexturePath;
 	_strlwr(fname.data());
 
@@ -637,7 +637,7 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
 
 	if(pTexturePath) 
 	{
-        TexturePath = convert_path_resource(pTexturePath);
+        TexturePath = convert_path(pTexturePath);
 		_strlwr(TexturePath.data());
 		if(stricmp(TexturePath.c_str(),DefPath.c_str())!=0)
 			DefTexturePath=DefPath;
