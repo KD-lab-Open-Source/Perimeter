@@ -78,7 +78,6 @@ struct RigidBodyPrm_ParameterSection : ParameterSection
 	RigidBodyPrm_ParameterSection() : ParameterSection("RigidBodyPrm")
 {
 	add_dependency(".\\Scripts\\RigidBody.prm");
-	sourceCRC = 2058682170;
 	description = 1512134152;
 	reserve(35);
 	add(&closestFeaturesHTsizeMax, "closestFeaturesHTsizeMax", 3759651819);

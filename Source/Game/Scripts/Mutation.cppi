@@ -24,7 +24,6 @@ struct MutationPrm_ParameterSection : ParameterSection
 	MutationPrm_ParameterSection() : ParameterSection("MutationPrm")
 {
 	add_dependency(".\\Scripts\\Mutation.prm");
-	sourceCRC = 1740156785;
 	description = 3584419999;
 	reserve(11);
 	add(&mutation_times, "mutation_times", 176410699);

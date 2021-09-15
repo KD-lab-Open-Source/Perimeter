@@ -45,7 +45,6 @@ struct RegionPrm_ParameterSection : ParameterSection
 	RegionPrm_ParameterSection() : ParameterSection("RegionPrm")
 {
 	add_dependency(".\\Scripts\\Region.prm");
-	sourceCRC = 656068011;
 	description = 3221165053;
 	reserve(34);
 	add(&toolzer_radius_min, "toolzer_radius_min", 409953196);

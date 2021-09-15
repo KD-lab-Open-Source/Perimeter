@@ -131,7 +131,6 @@ struct AIPrm_ParameterSection : ParameterSection
 {
 	add_dependency(".\\Scripts\\AI.prm");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	sourceCRC = 3049894556;
 	description = 693628167;
 	reserve(41);
 	add(&ai_frame_attach_time, "ai_frame_attach_time", 2526236219);

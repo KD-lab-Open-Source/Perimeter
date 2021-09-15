@@ -1,4 +1,4 @@
-section SiliconPrm(declaration = "Render\Client\Scripts\Silicon.hi", definition = "Render\Client\Scripts\Silicon.cppi")
+section SiliconPrm(declaration = "Render\client\Scripts\Silicon.hi", definition = "Render\client\Scripts\Silicon.cppi")
 {
 
 float silicon_time_step = 0.1f;

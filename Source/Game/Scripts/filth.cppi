@@ -247,7 +247,6 @@ struct FilthPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\Filth.prm");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
 	add_dependency(".\\Scripts\\GameBalance.inl");
-	sourceCRC = 2785625875;
 	description = 3475053684;
 	reserve(34);
 	add(&terFilthAntBaseParameter, "terFilthAntBaseParameter", 3432523697);

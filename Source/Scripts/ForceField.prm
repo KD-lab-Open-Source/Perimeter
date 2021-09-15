@@ -1,4 +1,4 @@
-section ForceFieldPrm(declaration = "Render\Client\Scripts\ForceField.hi", definition = "Render\Client\Scripts\ForceField.cppi")
+section ForceFieldPrm(declaration = "Render\client\Scripts\ForceField.hi", definition = "Render\client\Scripts\ForceField.cppi")
 {
 float fade_duration = 1000;
 int evolve_field_iterations = 3;

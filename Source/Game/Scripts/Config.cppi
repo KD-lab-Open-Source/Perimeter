@@ -272,7 +272,6 @@ struct GameConfig_ParameterSection : ParameterSection
 	GameConfig_ParameterSection() : ParameterSection("GameConfig")
 {
 	add_dependency(".\\Scripts\\Config.prm");
-	sourceCRC = 2713090480;
 	description = 1047225167;
 	reserve(156);
 	add(&MainModelPath, "MainModelPath", 3964076972);

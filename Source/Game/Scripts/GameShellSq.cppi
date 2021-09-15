@@ -463,7 +463,6 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\GameShellSq.prm");
 	add_dependency(".\\Scripts\\SquadShellEnums.inl");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	sourceCRC = 2276855179;
 	description = 3376856619;
 	reserve(292);
 	add(&_sqsh_cursor_count, "_sqsh_cursor_count", 1356362679);
