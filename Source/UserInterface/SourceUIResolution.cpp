@@ -71,40 +71,38 @@ void initSourceUIResolution() {
     }
     
     //Scan for extra resolutions
-    std::string intf = convert_path_resource("RESOURCE/Icons/intf/");
-    if (!intf.empty()) {
-        for (const auto& entry: std::filesystem::directory_iterator(intf)) {
-            if (entry.is_directory()) {
-                std::string name = entry.path().filename().string();
-                size_t pos = name.find('x');
-                if (pos == std::string::npos) {
-                    continue;
-                }
-                int x, y;
-                std::istringstream instream(name);
-                instream >> x;
-                instream.seekg(1, std::ios::cur);
-                instream >> y;
-                if (x != 0 && y != 0) {
-                    //Avoid duplicates
-                    bool exists = false;
-                    for (UIResolution& res : resolutions) {
-                        if (x == res.x && y == res.y) {
-                            exists = true;
-                            if (res.legacy) {
-                                has_custom_resolutions = true;
-                                //Legacy resolution exists as this new resolution, set off the flag
-                                //so the game uses the new folder
-                                res.legacy = false;
-                                break;
-                            }
+    for (const auto & entry : get_resource_paths_directory("resource/icons/intf")) {
+        std::filesystem::path entry_path(entry.second);
+        if (std::filesystem::is_directory(entry_path)) {
+            std::string name = entry_path.filename().string();
+            size_t pos = name.find('x');
+            if (pos == std::string::npos) {
+                continue;
+            }
+            int x, y;
+            std::istringstream instream(name);
+            instream >> x;
+            instream.seekg(1, std::ios::cur);
+            instream >> y;
+            if (x != 0 && y != 0) {
+                //Avoid duplicates
+                bool exists = false;
+                for (UIResolution& res : resolutions) {
+                    if (x == res.x && y == res.y) {
+                        exists = true;
+                        if (res.legacy) {
+                            has_custom_resolutions = true;
+                            //Legacy resolution exists as this new resolution, set off the flag
+                            //so the game uses the new folder
+                            res.legacy = false;
+                            break;
                         }
                     }
-                    //Add this resolution as there is no duplicate
-                    if (!exists) {
-                        has_custom_resolutions = true;
-                        resolutions.emplace_back(UIResolution(false, x, y));
-                    }
+                }
+                //Add this resolution as there is no duplicate
+                if (!exists) {
+                    has_custom_resolutions = true;
+                    resolutions.emplace_back(UIResolution(false, x, y));
                 }
             }
         }

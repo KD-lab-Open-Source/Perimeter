@@ -242,20 +242,17 @@ STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, 
 STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	mapVector.clear();
-	std::string path_str = convert_path_resource(path.c_str());
-	if (path_str.empty()) return;
+	std::string path_str = convert_path(path.c_str());
+    strlwr(path_str.data());
 	
 	//Collect files and order
 	std::vector<std::string> paths;
-	std::error_code error;
-    for (const auto & entry : std::filesystem::directory_iterator(path_str, error)) {
-        std::string entry_path = entry.path().string();
+    for (const auto & entry : get_resource_paths_directory(path_str)) {
+        std::string entry_path = entry.second;
+        strlwr(entry_path.data());
         if (mask.empty() || endsWith(entry_path, mask)) {
-            paths.emplace_back(entry_path);
+            paths.emplace_back(entry.second);
         }
-    }
-    if (error) {
-        fprintf(stderr, "Error loading maps from %s: %d %s\n", path.c_str(), error.value(), error.message().c_str());
     }
     sort(paths.begin(), paths.end());
     

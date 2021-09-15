@@ -618,7 +618,7 @@ void HTManager::initGraphics()
 
     setSourceUIResolution(Vect2i(terScreenSizeX, terScreenSizeY));
 
-	vMap.prepare("RESOURCE\\Worlds\\WORLDS.PRM");//,NULL,NULL,0,terRenderDevice->GetSizeX(),terRenderDevice->GetSizeY());
+	vMap.prepare("RESOURCE\\Worlds");
 	GraphOptionsManager::getInstance().load();
 	GraphOptionsManager::getInstance().apply();
 }

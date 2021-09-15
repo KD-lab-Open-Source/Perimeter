@@ -303,7 +303,7 @@ std::vector<std::pair<std::string, std::string>> get_resource_paths_directory(st
             prepare_path(entry_path, path);
             if (entry_path.empty()) continue;
             
-            size_t pos = entry_path.find('/');
+            size_t pos = entry_path.find(PATH_SEP);
             if (pos != std::string::npos) continue;
             
             paths.emplace_back(entry);

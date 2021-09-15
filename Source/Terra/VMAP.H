@@ -162,15 +162,15 @@ struct vrtMap {
 		
 	};
 
-	struct vrtWorld {
-		char* name;
-		char* dir;
+	class vrtWorld {
+    public:
+        std::string name;
+        std::string dir;
 		
-		vrtWorld(void){ name = dir = 0; }
-		~vrtWorld(void){
-			if(name) free(name);
-			if(dir) free(dir);
-		}
+		vrtWorld(const std::string& name_, const std::string& dir_) {
+            name = name_;
+            dir = dir_;
+        }
 	};
 
 	struct PrmFile {
@@ -354,13 +354,11 @@ struct vrtMap {
 	short clipXLeft, clipXRight, clipYTop, clipYBottom; 
 #endif
 
-	PrmFile prmFile;
 	int maxWorld,cWorld;
-	vrtWorld* wTable;
+	std::vector<vrtWorld> wTable;
 
 
 	XStream fmap,pmap;//,kmap
-	char* dirWorldPrm;
 
 
 
@@ -387,9 +385,9 @@ struct vrtMap {
 	bool loadGameMap(const char* fname, bool flag_FastLoad=1);
 	bool saveGameMap(const char* fname);
 
-	void getWorldList(std::vector<const char*>& world_list) { world_list.clear(); for(int i = 0; i < maxWorld; i++) world_list.push_back(wTable[i].name); }
-	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(stricmp(wTable[i].name, world_name) == 0) return i; return -1; }
-	const char* getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name; }
+	void getWorldList(std::vector<const char*>& world_list) { world_list.clear(); for(int i = 0; i < maxWorld; i++) world_list.push_back(wTable[i].name.c_str()); }
+	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(stricmp(wTable[i].name.c_str(), world_name) == 0) return i; return -1; }
+	const char* getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name.c_str(); }
 
 	enum eSurfaceMode{
 		Geologic,
