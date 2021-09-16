@@ -51,7 +51,7 @@ There is instructions available in:
     Resource/Icons/logo.tga file.
   - Uses may include adding custom textures, models, resolutions, maps, scripts...
 - 64 bits support
-- Frame selection in battle/multiplayer menu
+- Frame selection in battle/multiplayer menu and new colors
 - Experimental widescreen and custom resolutions support:
   - Game scans Resource/Icons/intf for XxY named folders such as 1920x1080 and adds as selectable option
   - Custom resolutions uses the height to load Resource/Icons/MainMenu/ and Resource/Icons/Portraits/ 
