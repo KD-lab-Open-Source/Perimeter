@@ -1861,12 +1861,16 @@ void SaveUnitLink::setLink(terUnitBase*& unit) const
 
 void SaveUnitLink::resolveLink() const
 {
-	if(unitID){
-		*unitLink_ = universe()->findUnit(terUnitID(unitID, playerID));
-		xassert(*unitLink_);
-	}
-	else
-		*unitLink_ = 0;
+    terUnitBase* unit = nullptr;
+    if (unitID) {
+        unit = universe()->findUnit(terUnitID(unitID, playerID));
+		//xassert(unit);
+    }
+    if (!unit) {
+        *unitLink_ = nullptr;
+    } else {
+        *unitLink_ = unit;
+    }
 }
 
 
