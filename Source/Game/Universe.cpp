@@ -939,8 +939,7 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 	else
 		remove(setExtention(mission.saveName(), "dat").c_str());
 
-    scan_resource_paths(mission.saveName());
-	return true;
+    return true;
 }
 
 void terUniverse::relaxLoading()
