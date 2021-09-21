@@ -37,7 +37,8 @@ class Controller {
 		//returns true if reinterperted from begin
 		virtual bool goToYear(int year) = 0;
 		virtual bool goToMission(int number) = 0;
-		virtual int getCurrentYear() const = 0;
+        virtual int getCurrentYear() const = 0;
+        virtual int getMissionYear(int number) const = 0;
 };
 
 #endif //_CONTROLLER_HPP

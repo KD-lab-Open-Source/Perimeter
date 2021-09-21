@@ -1886,49 +1886,51 @@ void onMMDifficultyCombo(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		gameShell->currentSingleProfile.setDifficulty((Difficulty)pCombo->pos);
 	}
 }
+
+void launchCurrentMission(CShellWindow* pWnd) {
+    CListBoxWindow* list = (CListBoxWindow*) _shellIconManager.GetWnd(SQSH_MM_MISSION_LIST);
+    int missionNumber = list->GetCurSel();
+    if ( gameShell->briefingEnabled && missionNumber >= firstMissionNumber) {
+        historyScene.setMissionNumberToExecute(missionNumber);
+        if (missionNumber == 0 || missionNumber == firstMissionNumber) {
+            //Weird workaround by trial and error for Perimeter (not ET) first mission but works for ET too
+            //this basically jumpstarts the history to the first mission while showing the intro vid
+            historyScene.goToMission(0);
+            int year = historyScene.getController()->getMissionYear(missionNumber);
+            year = std::max(0, year-2);
+            historyScene.getController()->goToYear(year);
+        } else {
+            //Start after finishing the prev mission, so we can see all the plot and also not have screwed up
+            //dialog or camera
+            historyScene.goToJustAfterMissionPosition(missionNumber - 1);
+        }
+        historyScene.hideText();
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_BRIEFING_SCR);
+    } else {
+        historyScene.goToMission(missionNumber);
+        missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(missionNumber).fileName).c_str() );
+
+        //NOTE: should be removed when difficulty will be implemented for each separate player
+        missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
+        missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
+        //NOTE: Setup all names
+
+        gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
+
+        gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
+    }
+}
+
 void onMMMissionList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
-		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MISSION_LIST);
-		if ( gameShell->briefingEnabled && list->GetCurSel() >= firstMissionNumber) {
-			historyScene.goToMission(list->GetCurSel() - firstMissionNumber); 
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_BRIEFING_SCR);
-		} else {
-			historyScene.goToMission(list->GetCurSel());
-			missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(list->GetCurSel()).fileName).c_str() );
-
-			//NOTE: should be removed when difficulty will be implemented for each separate player
-			missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
-			missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
-			//NOTE: Setup all names
-
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
-
-			gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
-		}
+        launchCurrentMission(pWnd);
 	}
 }
 
 void onMMGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_MISSION_LIST));
-		if ( gameShell->briefingEnabled && list->GetCurSel() >= firstMissionNumber) {
-			historyScene.goToMission(list->GetCurSel() - firstMissionNumber);
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_BRIEFING_SCR);
-		} else {
-			historyScene.goToMission(list->GetCurSel());
-			missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(list->GetCurSel()).fileName).c_str() );
-
-			//NOTE: should be removed when difficulty will be implemented for each separate player
-			missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
-			missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
-			//NOTE: Setup all names
-
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
-
-			gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
-		}
+        launchCurrentMission(pWnd);
 	}
 }
 
