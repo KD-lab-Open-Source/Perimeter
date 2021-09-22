@@ -116,8 +116,11 @@ void terPlayer::UpdateStructureAccessible()
 
 	for(int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX;i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++){
         terUnitAttributeID unitID = (terUnitAttributeID) i;
-        if (unavailableContentUnitAttribute(unitID)) continue;
-		EnableData& mutation = GetMutationElement(unitID);
+        EnableData& mutation = GetMutationElement(unitID);
+        if (unavailableContentUnitAttribute(unitID)) {
+            mutation.clear();
+            continue;
+        }
 		const AttributeLegionary& attr = *safe_cast<const AttributeLegionary*>(unitAttribute(unitID));
 		mutation.Enabled = 1;
 		for(int j = 0;j < attr.EnableStructure.size();j++)

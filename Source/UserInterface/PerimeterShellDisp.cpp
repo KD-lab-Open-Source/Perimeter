@@ -56,6 +56,7 @@ int Structure2ButtonID(int i);
 int Structure2ButtonID_(int i);
 STARFORCE_API_NEW  terUnitAttributeID Button2StructureID(int nBtnID);
 int LegionID2Button(int nAttrID);
+terUnitAttributeID Button2UnitAttributeID(int nBtnID);
 terUnitSquad* GetSquadByNumber(int n);
 
 extern std::string getItemTextFromBase(const char *keyStr);
@@ -2568,7 +2569,23 @@ float GetUnitUpgradeProgress(terBuilding* p) {
 	return res > 0 ? res : FLT_EPS;
 }
 
-void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates) {
+void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls) {
+    //Get the base content and if is a campaign
+    bool isCampaign = gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO;
+    GAME_CONTENT content = isCampaign ? terGameContentBase : terGameContent;
+    
+    //Reset all controls to their default, since new control states might not have them
+    if (reset_controls) {
+        for (int i = 0; i < externalControlStates.size(); i++) {
+            SaveControlData& data = externalControlStates[i];
+            data.controlID = static_cast<ShellControlID>(i);
+            data.visible = !isCampaign;
+            data.enabled = true;
+            data.flashing = false;
+        }
+    }
+    
+    //Load state from new controls
 	for (const SaveControlData& data : newControlStates) {
         xassert(data.controlID < externalControlStates.size());
 		if (data.controlID == SQSH_TAB_BUILD_ID) {
@@ -2589,6 +2606,49 @@ void CShellIconManager::changeControlState(const std::vector<SaveControlData>& n
 			externalControlStates[data.controlID] = data;
 		}
 	}
+    
+    //Manually edit certain controls based on logic
+    for (int i = 0; i < externalControlStates.size(); i++) {
+        SaveControlData& data = externalControlStates[i];
+        
+        if (!isCampaign) {
+            //Allow using disabled stuff
+#if PERIMETER_DEBUG
+            switch (data.controlID) {
+                case SQSH_CORRIDOR_OMEGA_ID:
+                case SQSH_CORRIDOR_ALPHA_ID:
+                case SQSH_STATIC_BOMB_ID:
+                case SQSH_SELPANEL_FRAME_TELEPORTATE_ID:
+                case SQSH_SELPANEL_UPGRADE_OMEGA_ID:
+                    data.visible = true;
+                    data.enabled = true;
+                    break;
+                default:
+                    break;
+            }
+#endif
+    
+            //Enable harkback stuff since some ET maps might disable them
+            if (terGameContent & GAME_CONTENT::PERIMETER) {
+                switch (data.controlID) {
+                    case SQSH_STATION_HARKBACK_LAB_ID:
+                    case SQSH_GUN_FILTH_ID:
+                        data.visible = true;
+                        data.enabled = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //Disable those that are unavailable
+        terUnitAttributeID id = Button2UnitAttributeID(data.controlID);
+        if (id != UNIT_ATTRIBUTE_NONE && unavailableContentUnitAttribute(id, content)) {
+            data.visible = false;
+            data.enabled = false;
+        }
+    }
 }
 
 void CShellIconManager::fillControlState(std::vector<SaveControlData>& controlStatesToSave) {
@@ -2639,29 +2699,44 @@ void CShellIconManager::updateControlsFromExternalStates() {
         SaveControlData& data = externalControlStates[i];
 		CShellWindow* wnd = GetWnd(data.controlID);
 		if (wnd) {
-			if (data.controlID != SQSH_TAB_BUILD_ID && data.controlID != SQSH_TAB_SQUAD_ID) {
-				if (data.controlID >= SQSH_FRAME_TERRAIN_BUILD1_ID && data.controlID <= SQSH_FRAME_TERRAIN_BUILD5_ID) {
-					((CTerrainBuildButton*)wnd)->partDisable = data.tabNumber;
-				}
-				if (!data.visible) {
-					wnd->Show(0);
-					wnd->Enable(false);
-				}
-				if (!data.enabled) {
-					if (
-							((_pShellDispatcher->m_nEditRegion == editRegion1) && (data.controlID == SQSH_WORKAREA3_ID))
-						||	((_pShellDispatcher->m_nEditRegion == editRegion2) && (data.controlID == SQSH_WORKAREA2_ID))	) {
+            //Skip legacy squad region
+            if (SQSH_SQUAD_LEGACY_1 <= i && i <= SQSH_SQUAD_LEGACY_26) continue;
+            //Skip menu region
+            if (SQSH_GAME_MAX <= i && i <= SQSH_MENU_MAX) continue;
+            //Skip certain elements
+            switch (data.controlID) {
+                case SQSH_STATIC_ID:
+                case SQSH_GAME_SCREEN_ID:
+                case SQSH_BACKGRND_ID:
+                case SQSH_SQUAD_MAX:
+                case SQSH_MAX:
+                case SQSH_TAB_BUILD_ID:
+                case SQSH_TAB_SQUAD_ID:
+                    continue;
+                default:
+                    break;
+            }
+            if (data.controlID >= SQSH_FRAME_TERRAIN_BUILD1_ID && data.controlID <= SQSH_FRAME_TERRAIN_BUILD5_ID) {
+                ((CTerrainBuildButton*)wnd)->partDisable = data.tabNumber;
+            }
+            if (!data.visible) {
+                wnd->Show(0);
+                wnd->Enable(false);
+            }
+            if (!data.enabled) {
+                if (
+                        ((_pShellDispatcher->m_nEditRegion == editRegion1) && (data.controlID == SQSH_WORKAREA3_ID))
+                    ||	((_pShellDispatcher->m_nEditRegion == editRegion2) && (data.controlID == SQSH_WORKAREA2_ID))	) {
 
-						CancelEditWorkarea();
-					}
-					wnd->Enable(false);
-				}
-				if ( data.flashing ) {
-					wnd->setFlashingInterval(0);
-				} else if ( wnd->getFlashingInterval() == 0 ) {
-					wnd->setFlashingInterval(-1);
-				}
-			}
+                    CancelEditWorkarea();
+                }
+                wnd->Enable(false);
+            }
+            if ( data.flashing ) {
+                wnd->setFlashingInterval(0);
+            } else if ( wnd->getFlashingInterval() == 0 ) {
+                wnd->setFlashingInterval(-1);
+            }
 		}
 	}
 	CUITabSheet* pSheet = (CUITabSheet*)GetWnd(SQSH_TAB_BUILD_ID);
@@ -2952,6 +3027,7 @@ void CShellIconManager::UpdateGunsIcons() {
 		if (iButton > 0) {
 			ComplexButtonData* button = &(logicData->guns[i - UNIT_ATTRIBUTE_CORRIDOR_ALPHA]);
 			CShellComplexPushButton* pBtn = (CShellComplexPushButton*)GetWnd(iButton);
+            if (!pBtn) continue;
 			if (((i >= UNIT_ATTRIBUTE_GUN_SCUM_DISRUPTOR && i <= UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR) || i == UNIT_ATTRIBUTE_STATIC_BOMB || i == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || i == UNIT_ATTRIBUTE_CORRIDOR_OMEGA) && pSheetBuild && (pSheetBuild->GetActivePage() == 2)) {
 				pBtn->Show(button->visible);
 			}
@@ -3802,25 +3878,23 @@ void LogicUpdater::updateBuildingsData() {
 		EnableData& evolution = player->GetEvolutionBuildingData(id);
 
 		bool visible = true;
-		if (id >= UNIT_ATTRIBUTE_LASER_STATION1 && id <= UNIT_ATTRIBUTE_HARKBACK_STATION3) {
+        bool enabled = evolution.Enabled;
+
+        //Faction buildings should only show for player faction
+        BELLIGERENT_FACTION buildingRace = getRace(id);
+        if (visible && buildingRace != FACTION_NONE && buildingRace != race) {
+            visible = false;
+        }
+        
+        //If laboratories are built they are not visible / кнопки снанций невидимы, если станция уже есть
+        if (visible && id >= UNIT_ATTRIBUTE_LASER_STATION1 && id <= UNIT_ATTRIBUTE_HARKBACK_STATION3) {
 			visible = !evolution.Constructed;
-
-			//кнопки снанций невидимы, если станция уже есть
-			button->visible = visible;
 		}
 
-		BELLIGERENT_FACTION buildingRace = getRace(id);
-		if (buildingRace != FACTION_NONE && buildingRace != race) {
-			visible = false;
-			button->visible = visible;
+		//Max 5 command centers / только 5 ком.центров
+		if (enabled && visible && id == UNIT_ATTRIBUTE_COMMANDER) {
+			enabled = player->countUnits(UNIT_ATTRIBUTE_COMMANDER) < 4;
 		}
-
-		//только 5 ком.центров
-		if (id == UNIT_ATTRIBUTE_COMMANDER) {
-			visible = visible && player->countUnits(UNIT_ATTRIBUTE_COMMANDER) < 4;
-		}
-
-		bool enabled = evolution.Enabled;
 
 		bool bBuildProgress = false;
 		terBuildingList& lst = universe()->activePlayer()->buildingList(i);
@@ -3836,9 +3910,8 @@ void LogicUpdater::updateBuildingsData() {
 			bHasBuilding = true;
 		}
 
-		visible = visible && !bBuildProgress;
-
-		button->enabled = enabled && visible;
+        button->visible = visible;
+		button->enabled = enabled && visible && !bBuildProgress;
 
 		#ifdef _DEMO_
 			if (isForbidden(i)) {

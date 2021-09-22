@@ -13,6 +13,7 @@
 #include "UnitAttribute.h"
 #include "SoundScript.h"
 #include "InterfaceScript.h"
+#include "GameContent.h"
 #include "BelligerentSelect.h"
 
 ///////////////////////////////////////////////////////////////
@@ -141,6 +142,31 @@ EffectLib(0)
 
 void AttributeBase::init()
 {
+    //Avoid loading stuff that user may not have
+    if (unavailableContentUnitAttribute(ID) || unavailableContentBelligerent(belligerent)) {
+        return;
+    }
+    
+    //Specific workarounds
+    switch (ID) {
+        case UNIT_ATTRIBUTE_FRAME:
+            switch (belligerent) {
+                case BELLIGERENT_EMPIRE4:
+                    if (terGameContent & GAME_CONTENT::PERIMETER && terGameContent & GAME_CONTENT::PERIMETER_ET) {
+                        //Okay this is Perimeter with ET extra content, use infected model we previously mapped from ET
+                        std::string& logicName = modelData.logicName.value();
+                        logicName.insert(logicName.find('.'), "_infected");
+                        std::string& modelName = modelData.modelName.value();
+                        modelName.insert(modelName.find('.'), "_infected");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        default:
+            break;
+    }
+    
 	if(strlen(interfaceNameTag())) {
 		std::string path = std::string("Interface.Tips.NAMES.") + interfaceNameTag();
 		InterfaceName = qdTextDB::instance().getText(path.c_str());

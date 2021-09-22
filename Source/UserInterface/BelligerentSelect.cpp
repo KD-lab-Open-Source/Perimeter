@@ -62,9 +62,11 @@ BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent) {
         case BELLIGERENT_EMPIRE1:
         case BELLIGERENT_EMPIRE2:
         case BELLIGERENT_EMPIRE3:
-        case BELLIGERENT_EMPIRE4:
         case BELLIGERENT_EMPIRE_VICE:
             return EMPIRE;
+        case BELLIGERENT_EMPIRE4:
+            //Infected vice acts as Empire in ET, harkback otherwise
+            return terGameContent == GAME_CONTENT::PERIMETER_ET ? EMPIRE : HARKBACK;
         case BELLIGERENT_NONE:
             break;
     }

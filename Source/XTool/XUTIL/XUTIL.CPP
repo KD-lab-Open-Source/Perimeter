@@ -249,11 +249,15 @@ bool scan_resource_paths(std::string destination_path, std::string source_path) 
     terminate_with_char(source_path, PATH_SEP);
     terminate_with_char(destination_path, PATH_SEP);
 
-    //Remove all paths that match with path to scan by not including them
     std::unordered_map<std::string, std::string> paths;
-    for (const auto& entry : resourcePaths) {
-        if (!startsWith(entry.second, source_path)) {
-            paths.insert(entry);
+    if (replace_files) {
+        paths = resourcePaths;
+    } else {
+        //Remove all paths that match with path to scan by not including them
+        for (const auto& entry: resourcePaths) {
+            if (!startsWith(entry.second, source_path)) {
+                paths.insert(entry);
+            }
         }
     }
 

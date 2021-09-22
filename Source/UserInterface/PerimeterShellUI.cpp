@@ -28,6 +28,7 @@ void CopyClusterBitmap(sColor4c* bitmap, int sx, int sy);
 
 STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id);
 STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID);
+terUnitAttributeID Button2UnitAttributeID(int nBtnID);
 
 terUnitSquad* GetSquadByNumber(int n);
 
@@ -1656,14 +1657,10 @@ void CShellComplexPushButton::OnFormatPopupMessage(char* cbBuffer)
 		}
 		return;
 	}
-	terUnitAttributeID sid = Button2StructureID(ID);
-	if(sid == UNIT_ATTRIBUTE_NONE)
-	{
-		sid = Button2LegionID(ID);
-		if(sid == UNIT_ATTRIBUTE_NONE) {
-			CShellWindow::OnFormatPopupMessage(cbBuffer);
-			return;
-		}
+	terUnitAttributeID sid = Button2UnitAttributeID(ID);
+	if(sid == UNIT_ATTRIBUTE_NONE) {
+        CShellWindow::OnFormatPopupMessage(cbBuffer);
+        return;
 	}
 
 	const AttributeBase* attr = universe()->activePlayer()->unitAttribute(sid);

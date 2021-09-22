@@ -1388,7 +1388,7 @@ bool ActionSetCameraAtObject::workedOut(AIPlayer& aiPlayer)
 
 void ActionSetControls::activate(AIPlayer& aiPlayer)
 { 
-	gameShell->changeControlState(controls);
+	gameShell->changeControlState(controls, false);
 } 
 
 void ActionSelectUnit::activate(AIPlayer& aiPlayer)

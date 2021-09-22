@@ -1724,7 +1724,7 @@ public:
 	int OnRButtonDown(float x, float y);
 	int OnRButtonUp(float x, float y);
 
-	void changeControlState(const std::vector<SaveControlData>& newControlStates);
+	void changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls);
 	void fillControlState(std::vector<SaveControlData>& controlStatesToSave);
 
 	int OnMouseMove(float x, float y);

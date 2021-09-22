@@ -221,7 +221,7 @@ public:
 	void showReelModal(const char* binkFileName, const char* soundFileName, bool localized = false, bool stopBGMusic = true, int alpha = 255);
 	void showPictureModal(const char* pictureFileName, bool localized, int stableTime);
 
-	void changeControlState(const std::vector<SaveControlData>& newControlStates);
+	void changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls);
 	void fillControlState(std::vector<SaveControlData>& controlStatesToSave);
 
 	void setScriptReelEnabled(bool isScriptReelEnabled);

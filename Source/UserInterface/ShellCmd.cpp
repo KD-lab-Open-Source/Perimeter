@@ -981,6 +981,7 @@ STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id)
 
 	return n;
 }
+
 int LegionID2Button(int nAttrID)
 {
 	int nButtonID = -1;
@@ -1074,6 +1075,15 @@ int LegionID2Button(int nAttrID)
 
 	return nButtonID;
 }
+
+terUnitAttributeID Button2UnitAttributeID(int nBtnID) {
+    terUnitAttributeID sid = Button2StructureID(nBtnID);
+    if (sid == UNIT_ATTRIBUTE_NONE) {
+        sid = Button2LegionID(nBtnID);
+    }
+    return sid;
+}
+
 
 void OnButtonStructure(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {

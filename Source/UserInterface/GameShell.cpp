@@ -2320,8 +2320,8 @@ void GameShell::setActivePlayerAIOff() {
 	}
 }
 
-void GameShell::changeControlState(const std::vector<SaveControlData>& newControlStates) {
-	_shellIconManager.changeControlState(newControlStates);
+void GameShell::changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls) {
+	_shellIconManager.changeControlState(newControlStates, reset_controls);
 }
 
 void GameShell::fillControlState(std::vector<SaveControlData>& controlStatesToSave) {

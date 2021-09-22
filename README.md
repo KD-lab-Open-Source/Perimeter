@@ -50,6 +50,7 @@ There is instructions available in:
   - Example: file placed in Addons/AddonName/Resource/Icons/logo.tga will replace usage of
     Resource/Icons/logo.tga file.
   - Uses may include adding custom textures, models, resolutions, maps, scripts...
+  - Perimeter ET Scripts and Resources can also be added as an addon to include extra units in main game
 - 64 bits support
 - Frame selection in battle/multiplayer menu and new colors
 - Experimental widescreen and custom resolutions support:

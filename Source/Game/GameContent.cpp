@@ -2,8 +2,17 @@
 #include "StdAfx.h"
 #include "GameContent.h"
 
+namespace scripts_export {
+#include "Scripts/UnitAttribute.hi"
+}
+
+#include "Runtime.h"
+
+#include <map>
+
 int firstMissionNumber = 0;
 
+GAME_CONTENT terGameContentBase = CONTENT_NONE;
 GAME_CONTENT terGameContent = CONTENT_NONE;
 
 void findGameContent() {
@@ -54,10 +63,149 @@ void findGameContent() {
 
 void addGameContent(GAME_CONTENT content) {
     terGameContent = static_cast<GAME_CONTENT>(terGameContent | content);
+    if (terGameContent & GAME_CONTENT::PERIMETER) {
+        terGameContentBase = GAME_CONTENT::PERIMETER;
+    } else if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        terGameContentBase = GAME_CONTENT::PERIMETER_ET;
+    } else {
+        terGameContentBase = GAME_CONTENT::CONTENT_NONE;
+    }
 }
 
 ///Common addon loading code
 void loadAddonCommon(const std::string& addonDir) {
+}
+
+///Load ET content selectively
+void loadAddonET(const std::string& addonDir) {
+    //This is ET content as addon, skip if main content is not Perimeter
+    if (!(terGameContent & GAME_CONTENT::PERIMETER)) {
+        return;
+    }
+    std::map<std::string, std::string> paths;
+    
+    //Scan the hardcoded unit attributes data
+    for(int i = 0; i < scripts_export::unitAttributeDataTable.size(); i++) {
+        const scripts_export::terUnitAttributeData& src = scripts_export::unitAttributeDataTable[i];
+        //We are only interested in ET models
+        switch (src.ID) {
+            case UNIT_ATTRIBUTE_FRAME:
+                switch (src.belligerent) {
+                    //ET frames
+                    case BELLIGERENT_EXODUS2:
+                    case BELLIGERENT_EXODUS3:
+                    case BELLIGERENT_EXODUS4:
+                    case BELLIGERENT_EMPIRE2:
+                    case BELLIGERENT_EMPIRE3:
+                        break;
+                    case BELLIGERENT_EMPIRE4:
+                        //We want this model but at different path, so we will add manually
+                        continue;
+                    default:
+                        continue;
+                }
+            //ET stations
+            case UNIT_ATTRIBUTE_ELECTRO_STATION1:
+            case UNIT_ATTRIBUTE_ELECTRO_STATION2:
+            case UNIT_ATTRIBUTE_ELECTRO_STATION3:
+            case UNIT_ATTRIBUTE_ELECTRO_CANNON:
+            //ET units
+            case UNIT_ATTRIBUTE_EFLAIR:
+            case UNIT_ATTRIBUTE_IMPALER:
+            case UNIT_ATTRIBUTE_CONDUCTOR:
+                break;
+            default:
+                continue;
+        }
+
+        //Copy model paths
+        paths[src.LogicName] = "";
+        for (int j = 0; j < src.ModelNameNum; ++j) {
+            paths[src.ModelNameArray[j]] = "";
+        }
+    }
+    
+    //Add maps
+    paths["resource/battle"] = "";
+    paths["resource/battle/scenario"] = "resource/battle"; //Make ET campaign maps available normally since we cant unlock em
+    paths["resource/multiplayer"] = "";
+    paths["resource/worlds"] = "";
+    paths["resource/geotx"] = "";
+    paths["Resource/Models/Environment"] = "";
+    
+    //Add textures, these don't overlap original harkback structures textures
+    paths["resource/models/main/exodus"] = "";
+    paths["resource/models/main/empire"] = "";
+    paths["resource/models/main/harkbackhood"] = "";
+    paths["resource/models/main/textures"] = "";
+    
+    //More stuff
+    paths["resource/fx"] = "";
+    paths["resource/effect"] = "";
+    paths["resource/sounds/eff"] = "";
+    
+    //Add AI scripts for battle so it uses electro units, also ETs map may require ET scripts
+    paths["scripts/triggers/battle.scr"] = "";
+    paths["scripts/triggers/battle1.scr"] = "";
+    paths["scripts/triggers/survival.scr"] = "";
+    paths["scripts/triggers/survival1.scr"] = "";
+    for (int i = 1; i <= 12; ++i) {
+        paths["scripts/triggers/mp-" + std::to_string(i) + ".scr"] = "";
+    }
+    
+    //Try to use ET interface so we can have icons at least
+    paths["Resource/Icons/intf"] = "";
+    
+    //Use exodus textures for generic units so harkback can have them and dont look like toys
+    std::string harktextures = "Resource/Models/Main/Harkbackhood/";
+    paths["Resource/Models/Main/Exodus/state_bump.tga"] = harktextures;
+    paths["Resource/Models/Main/Exodus/Gun.tga"] = harktextures;
+    paths["Resource/Models/Main/Exodus/Impaler.tga"] = harktextures;
+    paths["Resource/Models/Main/Exodus/efla.tga"] = harktextures;
+    paths["Resource/Models/Main/Exodus/Conductor.tga"] = harktextures;
+    
+    //Map mechanical spirit (inferno) and spirit trap (catcher), for future use?
+    paths["Resource/Models/Main/Harkbackers_st.l3d"] = "Resource/Models/Main/inferno.l3d";
+    paths["Resource/Models/Main/Harkbackers_st.m3d"] = "Resource/Models/Main/inferno.m3d";
+    paths["Resource/Models/Main/filth_navigator.l3d"] = "Resource/Models/Main/catcher.l3d";
+    paths["Resource/Models/Main/filth_navigator.m3d"] = "Resource/Models/Main/catcher.m3d";
+    
+    //Map infected vice
+    paths["Resource/Models/Main/Frame_Imperia_Vice.l3d"] = "Resource/Models/Main/Frame_Imperia_Vice_infected.l3d";
+    paths["Resource/Models/Main/Frame_Imperia_Vice.m3d"] = "Resource/Models/Main/Frame_Imperia_Vice_infected.m3d";
+
+    //Load texts, first try current lang, then english, then russian
+    std::string locpath = getLocDataPath();
+    std::vector<std::string> text_paths;
+    text_paths.emplace_back(locpath + "Text/Texts.btdb");
+    text_paths.emplace_back("Resource/LocData/English/Text/Texts.btdb");
+    text_paths.emplace_back("Resource/LocData/Russian/Text/Texts.btdb");
+    for (std::string& path : text_paths) {
+        if (!convert_path_resource((addonDir + path).c_str()).empty()) {
+            paths[path] = locpath + "Text/Texts_ET_noreplace.btdb";
+            //printf("Addon ET: Using texts %s\n", path.c_str());
+            break;
+        }
+    }
+
+    //Map the ET resource paths into game
+    for (const auto& entry : paths) {
+        std::string entry_source = addonDir + entry.first;
+        std::string source_path = convert_path_resource(entry_source.c_str());
+        if (source_path.empty()) {
+            printf("Addon ET: %s not present\n", entry_source.c_str());
+            continue;
+        }
+        std::string destination_path = entry.second.empty() ? entry.first : entry.second;
+        //printf("Addon ET: %s -> %s\n", source_path.c_str(), destination_path.c_str());
+        scan_resource_paths(
+            destination_path,
+            source_path
+        );
+    }
+
+    //Set flag that we have ET content
+    addGameContent(GAME_CONTENT::PERIMETER_ET);
 }
 
 ///Load addon contents into root of virtual resources
@@ -125,6 +273,7 @@ void detectGameContent() {
         std::string addonDir = std::string("Addons") + PATH_SEP + addonName + PATH_SEP;
         loadAddonCommon(addonDir);
         if (!convert_path_resource((addonDir + "Resource/Missions/01x4.spg").c_str()).empty()) {
+            loadAddonET(addonDir);
         } else {
             loadAddon(addonDir);
         }
@@ -138,7 +287,8 @@ void detectGameContent() {
     }
 }
 
-bool unavailableContentUnitAttribute(terUnitAttributeID id) {
+bool unavailableContentUnitAttribute(terUnitAttributeID id, GAME_CONTENT content) {
+    xassert(content != GAME_CONTENT::CONTENT_NONE);
     switch (id) {
         case UNIT_ATTRIBUTE_ELECTRO_STATION1:
         case UNIT_ATTRIBUTE_ELECTRO_STATION2:
@@ -147,20 +297,21 @@ bool unavailableContentUnitAttribute(terUnitAttributeID id) {
         case UNIT_ATTRIBUTE_EFLAIR:
         case UNIT_ATTRIBUTE_IMPALER:
         case UNIT_ATTRIBUTE_CONDUCTOR:
-            return !(terGameContent & GAME_CONTENT::PERIMETER_ET);
+            return !(content & GAME_CONTENT::PERIMETER_ET);
         default:
             return false;
     }
 }
 
-bool unavailableContentBelligerent(terBelligerent belligerent) {
+bool unavailableContentBelligerent(terBelligerent belligerent, GAME_CONTENT content) {
+    xassert(content != GAME_CONTENT::CONTENT_NONE);
     switch (belligerent) {
         //HarkBack has missing UI textures and crashes in ET
         case BELLIGERENT_HARKBACKHOOD0:
         case BELLIGERENT_HARKBACKHOOD1:
             //Discard original Vice since it uses infected vice model (which is already selectable)
         case BELLIGERENT_EMPIRE_VICE:
-            return terGameContent == GAME_CONTENT::PERIMETER_ET;
+            return content == GAME_CONTENT::PERIMETER_ET;
             //Addon frames which requires ET content
         case BELLIGERENT_EXODUS2:
         case BELLIGERENT_EXODUS3:
@@ -168,7 +319,7 @@ bool unavailableContentBelligerent(terBelligerent belligerent) {
         case BELLIGERENT_EMPIRE2:
         case BELLIGERENT_EMPIRE3:
         case BELLIGERENT_EMPIRE4:
-            return !(terGameContent & GAME_CONTENT::PERIMETER_ET);
+            return !(content & GAME_CONTENT::PERIMETER_ET);
         default:
             return false;
     }

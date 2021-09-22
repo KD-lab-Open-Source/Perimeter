@@ -160,7 +160,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	loadProgressUpdate(0.9f);
 	
 	//---------------------
-	gameShell->changeControlState(manualData.controls);
+	gameShell->changeControlState(manualData.controls, true);
 	
 	// Загрузка игроков
 	xassert(manualData.players.size() <= NETWORK_PLAYERS_MAX);
