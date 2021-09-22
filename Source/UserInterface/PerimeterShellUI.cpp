@@ -5571,7 +5571,9 @@ void FormatProgressText(char* cb, void* param)
 {
 	terUnitSquad* pSquad = safe_cast<terUnitSquad*>((terUnitBase*)param);
 	int elements = pSquad->squadMutationMolecula().elementCount(DAMAGE_FILTER_BASE);
-	_shellIconManager.FormatMessageText("<Mutation_bar>", cb, elements, pSquad->mutationEnergy()*100); 
+    int energy = static_cast<int>(std::round(pSquad->mutationEnergy()*100));
+    energy = std::max(0, energy);
+	_shellIconManager.FormatMessageText("<Mutation_bar>", cb, elements, energy); 
 }
 void CProgressMutation::OnWindow(int enable)
 {

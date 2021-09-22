@@ -2209,7 +2209,8 @@ void PopupFormatCore(const AttributeBase* attr, char* cbBuffer, terUnitBase* uni
 }
 void PopupFormatFrame(const AttributeBase* attr, char* cbBuffer, terUnitBase* unit)
 {
-	int spiralLevel = unit ? round(100 * safe_cast<terFrame*>(unit)->spiralLevel() - 0.5f) : 0;
+	int spiralLevel = unit ? static_cast<int>(std::round(100 * safe_cast<terFrame*>(unit)->spiralLevel() - 0.5f)) : 0;
+    spiralLevel = std::max(0, spiralLevel);
 	_shellIconManager.FormatMessageText(
 		attr->interfacePrm.popup,
 		cbBuffer,

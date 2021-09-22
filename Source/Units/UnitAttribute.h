@@ -1555,7 +1555,7 @@ public:
 	float sightRadius() const { return weaponSetup.sightRadius; }
 
 	static void setBuildCost(float energyPerElement) { energyPerElement_ = energyPerElement; }
-	float buildEnergy() const { return energyPerElement_*damageMolecula.elementCount()/constructionSpeedCoeff; }
+	float buildEnergy() const { return energyPerElement_*static_cast<float>(damageMolecula.elementCount())/constructionSpeedCoeff; }
 
 	bool isBuilding() const { return ::isBuilding(ID); }
 	bool isLegionary() const { return ::isLegionary(ID); }
