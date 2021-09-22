@@ -7,14 +7,7 @@
 #include "Scripts/GameShellSq.hi"
 #include "Scripts/GameShellSq.cppi"
 
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-#define EXPORT_NS export
-#else
-// export is a reserved word in modern C++
-//TODO maybe we should just replace all 'export' with this instead of macro
-#define EXPORT_NS export_new
-#endif
-namespace EXPORT_NS {
+namespace scripts_export {
 #include "Scripts/InterfaceScriptExport.hi"
 #include "Scripts/InterfaceScriptExport.cppi"
 }
@@ -34,7 +27,7 @@ namespace EXPORT_NS {
 #include "IronPort.h"
 #include "IronBullet.h"
 
-namespace EXPORT_NS {
+namespace scripts_export {
 #include "Scripts/UnitAttribute.hi"
 #include "Scripts/UnitAttribute.cppi"
 }
@@ -46,7 +39,7 @@ void copy_(D& d, const S& s)
 	memcpy(&d, &s, sizeof(D));
 }
 
-void copy(InterfaceTV& d, const EXPORT_NS::InterfaceTV& s)
+void copy(InterfaceTV& d, const scripts_export::InterfaceTV& s)
 {
 	d.radius = s.radius;
 	d.pos_dx = s.pos_dx;
@@ -60,7 +53,7 @@ void copy(InterfaceTV& d, const EXPORT_NS::InterfaceTV& s)
 }
 
 
-void copy(UnitInterfacePrm& d, const EXPORT_NS::UnitInterfacePrm& s)
+void copy(UnitInterfacePrm& d, const scripts_export::UnitInterfacePrm& s)
 {
 	copy_(d.actions, s.actions);
 
@@ -71,7 +64,7 @@ void copy(UnitInterfacePrm& d, const EXPORT_NS::UnitInterfacePrm& s)
 	d.popup = s.popup;
 }
 
-void copy(ConsumptionData& d, const EXPORT_NS::ConsumptionData& s)
+void copy(ConsumptionData& d, const scripts_export::ConsumptionData& s)
 {
 	d.energy = s.energy;
 	d.time = s.time;
@@ -79,7 +72,7 @@ void copy(ConsumptionData& d, const EXPORT_NS::ConsumptionData& s)
 	d.name = s.name;
 }
 
-void copy(AnimationChain& d, const EXPORT_NS::AnimationChain& s)
+void copy(AnimationChain& d, const scripts_export::AnimationChain& s)
 {
 	d.chainID = s.chainID;
 	d.chainName = s.chainName;
@@ -93,7 +86,7 @@ void copy(AnimationChain& d, const EXPORT_NS::AnimationChain& s)
 	d.soundID = s.soundID;
 }
 
-void copy(AnimationData& d, const EXPORT_NS::AnimationData& s)
+void copy(AnimationData& d, const scripts_export::AnimationData& s)
 {
 	d.groupID = s.groupID;
 	d.groupName = s.groupName;
@@ -104,14 +97,14 @@ void copy(AnimationData& d, const EXPORT_NS::AnimationData& s)
 	d.setPhaseRecursive = s.setPhaseRecursive;
 }
 
-void copy(SoundControllerSetup& d, const EXPORT_NS::SoundControllerSetup& s)
+void copy(SoundControllerSetup& d, const scripts_export::SoundControllerSetup& s)
 {
 	d.ID = s.ID;
 	d.name = s.name;
 	d.cycled = s.cycled;
 }
 
-void copy(SoundEventSetup& d, const EXPORT_NS::SoundEventSetup& s)
+void copy(SoundEventSetup& d, const scripts_export::SoundEventSetup& s)
 {
 	d.ID = s.ID;
 	d.name = s.name;
@@ -123,7 +116,7 @@ void copy(SoundEventSetup& d, const EXPORT_NS::SoundEventSetup& s)
 	d.queueTime = s.queueTime;
 }
 
-void copy(terUnitEffectData& d, const EXPORT_NS::terUnitEffectData& s)
+void copy(terUnitEffectData& d, const scripts_export::terUnitEffectData& s)
 {
 	d.effectID = s.effectID;
 	d.effectName = s.effectName;
@@ -131,7 +124,7 @@ void copy(terUnitEffectData& d, const EXPORT_NS::terUnitEffectData& s)
 	d.startupDamage = s.startupDamage;
 }
 
-void copy(terDebrisData& d, const EXPORT_NS::terDebrisData& s)
+void copy(terDebrisData& d, const scripts_export::terDebrisData& s)
 {
 	d.debrisID = s.debrisID;
 	d.count = s.count;
@@ -139,7 +132,7 @@ void copy(terDebrisData& d, const EXPORT_NS::terDebrisData& s)
 	d.speed = s.speed;
 }
 
-void copy(terUnitEffects& d, const EXPORT_NS::terUnitEffects& s)
+void copy(terUnitEffects& d, const scripts_export::terUnitEffects& s)
 {
 	d.libraryFileName = s.libraryFileName;
 	for(int i = 0; i < s.effectNum; i++){
@@ -159,7 +152,7 @@ void copy(terUnitEffects& d, const EXPORT_NS::terUnitEffects& s)
 	d.movementCraterDelta = s.movementCraterDelta;
 }
 
-void copy(terWeaponControllerSetup& d, const EXPORT_NS::terWeaponControllerSetup& s)
+void copy(terWeaponControllerSetup& d, const scripts_export::terWeaponControllerSetup& s)
 {
 	d.objectName[0] = s.objectName[0];
 	d.objectName[1] = s.objectName[1];
@@ -183,7 +176,7 @@ void copy(terWeaponControllerSetup& d, const EXPORT_NS::terWeaponControllerSetup
 	d.defaultAngles[1] = s.defaultAngles[1];
 }
 
-void copy(terWeaponSetup& d, const EXPORT_NS::terWeaponSetup& s)
+void copy(terWeaponSetup& d, const scripts_export::terWeaponSetup& s)
 {
 	d.weaponType = s.weaponType;
 	d.flags = s.flags;
@@ -209,7 +202,7 @@ void copy(terWeaponSetup& d, const EXPORT_NS::terWeaponSetup& s)
 	d.squadMode = s.squadMode;
 }
 
-void copy(ToolzerActionData& d, const EXPORT_NS::ToolzerActionData& s)
+void copy(ToolzerActionData& d, const scripts_export::ToolzerActionData& s)
 {
 	d.actionID = s.actionID;
 	d.rad = s.rad;
@@ -218,7 +211,7 @@ void copy(ToolzerActionData& d, const EXPORT_NS::ToolzerActionData& s)
 	d.hAppr = s.hAppr;
 }
 
-void copy(ToolzerStepData& d, const EXPORT_NS::ToolzerStepData& s)
+void copy(ToolzerStepData& d, const scripts_export::ToolzerStepData& s)
 {
 	d.phaseID = s.phaseID;
 	d.duration = s.duration;
@@ -232,7 +225,7 @@ void copy(ToolzerStepData& d, const EXPORT_NS::ToolzerStepData& s)
 	}
 }
 
-void copy(ToolzerSetup& d, const EXPORT_NS::ToolzerSetup& s)
+void copy(ToolzerSetup& d, const scripts_export::ToolzerSetup& s)
 {						
 	for(int i = 0; i < s.size; i++){
 		d.steps.push_back(ToolzerStepData());
@@ -245,14 +238,14 @@ void copy(ToolzerSetup& d, const EXPORT_NS::ToolzerSetup& s)
 	d.radius = s.radius;
 }
 
-void copy(ModelData& d, const EXPORT_NS::SetModelData& s)
+void copy(ModelData& d, const scripts_export::SetModelData& s)
 {
 	d.modelName = s.modelName;
 	d.logicName = s.logicName;
 	d.boundScale = s.scale;
 }
 
-void copy(AttributeBase& d, const EXPORT_NS::terUnitAttributeData& s)
+void copy(AttributeBase& d, const scripts_export::terUnitAttributeData& s)
 {
 	d.ID = s.ID;
 	d.ClassID = s.ClassID;
@@ -473,8 +466,8 @@ void copy(AttributeBase& d, const EXPORT_NS::terUnitAttributeData& s)
 
 void copyAttributes()
 {
-	for(int i = 0; i < EXPORT_NS::unitAttributeDataTable.size(); i++){
-		const EXPORT_NS::terUnitAttributeData& src = EXPORT_NS::unitAttributeDataTable[i];
+	for(int i = 0; i < scripts_export::unitAttributeDataTable.size(); i++){
+		const scripts_export::terUnitAttributeData& src = scripts_export::unitAttributeDataTable[i];
 		ShareHandle<AttributeBase> data = 0;
 		if(src.ID == UNIT_ATTRIBUTE_FRAME)
 			data = new AttributeFrame;
@@ -502,7 +495,7 @@ void copyAttributes()
 	}
 }
 
-void copy(RigidBodyPrm::Oscillator& d, const EXPORT_NS::RigidBodyPrm::Oscillator& s)
+void copy(RigidBodyPrm::Oscillator& d, const scripts_export::RigidBodyPrm::Oscillator& s)
 {
 	d.phase = s.phase;
 	d.amplitude = s.amplitude;
@@ -512,7 +505,7 @@ void copy(RigidBodyPrm::Oscillator& d, const EXPORT_NS::RigidBodyPrm::Oscillator
 	d.omega_disperse = s.omega_disperse;
 }
 
-void copy(RigidBodyPrm::Stiffness& d, const EXPORT_NS::RigidBodyPrm::Stiffness& s)
+void copy(RigidBodyPrm::Stiffness& d, const scripts_export::RigidBodyPrm::Stiffness& s)
 {
 	d.stiffness_up = s.stiffness_up;
 	d.stiffness_down = s.stiffness_down;
@@ -520,7 +513,7 @@ void copy(RigidBodyPrm::Stiffness& d, const EXPORT_NS::RigidBodyPrm::Stiffness& 
 	d.dz_max_down = s.dz_max_down;
 }
 
-void copy(RigidBodyPrm& d, const EXPORT_NS::RigidBodyPrm& s)
+void copy(RigidBodyPrm& d, const scripts_export::RigidBodyPrm& s)
 {
 	copy_(d.unit_type, s.unit_type);
 	d.name = s.name;
@@ -592,14 +585,14 @@ void copy(RigidBodyPrm& d, const EXPORT_NS::RigidBodyPrm& s)
 
 void copyRigidBodyTable()
 {
-	for(int i = 0; i < EXPORT_NS::rigidBodyTable.size(); i++){
+	for(int i = 0; i < scripts_export::rigidBodyTable.size(); i++){
 		ShareHandle<RigidBodyPrm> data = new RigidBodyPrm;
-		copy(*data, EXPORT_NS::rigidBodyTable[i]);
+		copy(*data, scripts_export::rigidBodyTable[i]);
 		rigidBodyPrmLibrary().add((const char*)data->name, data);
 	}
 }
 
-void copy(ControlAction& d, const EXPORT_NS::ControlAction& s)
+void copy(ControlAction& d, const scripts_export::ControlAction& s)
 {
 	d.name = s.name;
 	d.code = s.code;
@@ -607,13 +600,13 @@ void copy(ControlAction& d, const EXPORT_NS::ControlAction& s)
 	d.hotKeyPopup = s.hotKeyPopup;
 }
 
-void copy(BGObj& d, const EXPORT_NS::BGObj& s)
+void copy(BGObj& d, const scripts_export::BGObj& s)
 {
 	d.name = s.name;
 	d.chainName = s.chainName;
 }
 
-void copy(sqshImage& d, const EXPORT_NS::sqshImage& s)
+void copy(sqshImage& d, const scripts_export::sqshImage& s)
 {
 	d.texture = s.texture;
 	d._ix = s._ix;
@@ -628,7 +621,7 @@ void copy(sqshImage& d, const EXPORT_NS::sqshImage& s)
 	d.hasBelligerentVersion = s.hasBelligerentVersion;
 }
 
-void copy(sqshControl& d, const EXPORT_NS::sqshControl& s)
+void copy(sqshControl& d, const scripts_export::sqshControl& s)
 {
 	d.type = s.type;
 	d.id = s.id;
@@ -702,7 +695,7 @@ void copy(sqshControl& d, const EXPORT_NS::sqshControl& s)
 	d.canHandleDisabledInput = s.canHandleDisabledInput;
 }
 
-void copy(sqshControlContainer& d, const EXPORT_NS::sqshControlContainer& s)
+void copy(sqshControlContainer& d, const scripts_export::sqshControlContainer& s)
 {
 	d.type = s.type;
 	d.id = s.id;
@@ -728,7 +721,7 @@ void copy(sqshControlContainer& d, const EXPORT_NS::sqshControlContainer& s)
 	d.defaultEscBtnID = s.defaultEscBtnID;
 }
 
-void copy(TabIcon& d, const EXPORT_NS::TabIcon& s)
+void copy(TabIcon& d, const scripts_export::TabIcon& s)
 {
 	copy(d.image,s.image);
 	copy(d.image_h,s.image_h);
@@ -737,7 +730,7 @@ void copy(TabIcon& d, const EXPORT_NS::TabIcon& s)
 	copy(d.image_flashing,s.image_flashing);
 }
 
-void copy(sqshTabElement& d, const EXPORT_NS::sqshTabElement& s)
+void copy(sqshTabElement& d, const scripts_export::sqshTabElement& s)
 {
 	d.x = s.x;
 	d.y = s.y;
@@ -757,7 +750,7 @@ void copy(sqshTabElement& d, const EXPORT_NS::sqshTabElement& s)
 	for(int i = 0; i < s.ctrl_count; i++) d.ctrls[i] = s.ctrls[i];
 }
 
-void copy(sqshTabSheet& d, const EXPORT_NS::sqshTabSheet& s)
+void copy(sqshTabSheet& d, const scripts_export::sqshTabSheet& s)
 {
 	d.id = s.id;
 	d.x = s.x;
@@ -858,26 +851,26 @@ void copy(Reel& d, const EXPORT_NS::Reel& s)
 
 void copyInterfaceAttributes()
 {
-	if(EXPORT_NS::squad_icon_count){
-		interfaceAttr().tabIcons.resize(EXPORT_NS::squad_icon_count);
-		for(int i = 0; i < EXPORT_NS::squad_icon_count; i++)
-			copy(interfaceAttr().tabIcons[i],EXPORT_NS::_squad_icons_table[i]);
+	if(scripts_export::squad_icon_count){
+		interfaceAttr().tabIcons.resize(scripts_export::squad_icon_count);
+		for(int i = 0; i < scripts_export::squad_icon_count; i++)
+			copy(interfaceAttr().tabIcons[i], scripts_export::_squad_icons_table[i]);
 	}
 	else
 		interfaceAttr().tabIcons.clear();
 
-	if(EXPORT_NS::_sqsh_sheet_count){
-		interfaceAttr().tabSheets.resize(EXPORT_NS::_sqsh_sheet_count);
-		for(int i = 0; i < EXPORT_NS::_sqsh_sheet_count; i++)
-			copy(interfaceAttr().tabSheets[i],EXPORT_NS::_sqsh_sheets[i]);
+	if(scripts_export::_sqsh_sheet_count){
+		interfaceAttr().tabSheets.resize(scripts_export::_sqsh_sheet_count);
+		for(int i = 0; i < scripts_export::_sqsh_sheet_count; i++)
+			copy(interfaceAttr().tabSheets[i], scripts_export::_sqsh_sheets[i]);
 	}
 	else
 		interfaceAttr().tabSheets.clear();
 
-	if(EXPORT_NS::_sqsh_control_count){
-		interfaceAttr().controls.resize(EXPORT_NS::_sqsh_control_count);
-		for(int i = 0; i < EXPORT_NS::_sqsh_control_count; i++)
-			copy(interfaceAttr().controls[i],EXPORT_NS::_sqsh_controls[i]);
+	if(scripts_export::_sqsh_control_count){
+		interfaceAttr().controls.resize(scripts_export::_sqsh_control_count);
+		for(int i = 0; i < scripts_export::_sqsh_control_count; i++)
+			copy(interfaceAttr().controls[i], scripts_export::_sqsh_controls[i]);
 	}
 	else
 		interfaceAttr().controls.clear();
@@ -889,7 +882,7 @@ UnitInterfacePrm interface_frame_uninstalled;
 
 void copyInterfaceAttributesIndispensable()
 {
-	copy(interface_squad1_prm, EXPORT_NS::interface_squad1_prm);
-	copy(interface_squad3_prm, EXPORT_NS::interface_squad3_prm);
-	copy(interface_frame_uninstalled, EXPORT_NS::interface_frame_uninstalled);
+	copy(interface_squad1_prm, scripts_export::interface_squad1_prm);
+	copy(interface_squad3_prm, scripts_export::interface_squad3_prm);
+	copy(interface_frame_uninstalled, scripts_export::interface_frame_uninstalled);
 }
