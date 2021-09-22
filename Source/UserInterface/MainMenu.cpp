@@ -490,18 +490,16 @@ STARFORCE_API void fillStatsLists() {
 //			terPlayer* player = universe()->findPlayer(playerID);
 			const PlayerStats& stats = player->getStats();
 			sColor4c clr = sColor4c(player->unitColor());
+            BELLIGERENT_FACTION faction = getBelligerentFaction(player->belligerent());
 			int race;
-			switch (player->belligerent()) {
-				case BELLIGERENT_EXODUS0:
-				case BELLIGERENT_EXODUS1:
+			switch (faction) {
+                case EXODUS:
 					race = 1;
 					break;
-				case BELLIGERENT_HARKBACKHOOD0:
-				case BELLIGERENT_HARKBACKHOOD1:
+				case HARKBACK:
 					race = 2;
 					break;
-				case BELLIGERENT_EMPIRE0:
-				case BELLIGERENT_EMPIRE1:
+				case EMPIRE:
 				default:
 					race = 0;
 			}

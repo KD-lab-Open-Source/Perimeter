@@ -12,6 +12,7 @@
 #include "UniverseInterface.h"
 #include "GameShell.h"
 #include "PerimeterShellUI.h"
+#include "BelligerentSelect.h"
 
 #include "../Sound/PerimeterSound.h"
 #include "../Game/MusicManager.h"
@@ -105,25 +106,15 @@ std::string getImageFileName(const sqshImage* image, const char* fileName) {
             }
         }
         if (image->hasBelligerentVersion && universe() && universe()->activePlayer()) {
-            switch (universe()->activePlayer()->belligerent()) {
-                case BELLIGERENT_EXODUS0:
-                case BELLIGERENT_EXODUS1:
-                case BELLIGERENT_EXODUS2:
-                case BELLIGERENT_EXODUS3:
-                case BELLIGERENT_EXODUS4:
+            BELLIGERENT_FACTION faction = getBelligerentFaction(universe()->activePlayer()->belligerent());
+            switch (faction) {
+                case EXODUS:
                     fullname.insert(fullname.find('.'), "_xodus");
                     break;
-                case BELLIGERENT_HARKBACKHOOD0:
-                case BELLIGERENT_HARKBACKHOOD1:
+                case HARKBACK:
                     fullname.insert(fullname.find('.'), "_hback");
                     break;
-                case BELLIGERENT_EMPIRE0:
-                case BELLIGERENT_EMPIRE1:
-                case BELLIGERENT_EMPIRE2:
-                case BELLIGERENT_EMPIRE3:
-                case BELLIGERENT_EMPIRE4:
-                case BELLIGERENT_EMPIRE_VICE:
-
+                case EMPIRE:
                 default:
                     fullname.insert(fullname.find('.'), "_mperia");
             }

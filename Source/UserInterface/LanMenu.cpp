@@ -438,16 +438,13 @@ void setFrm(CComboWindow* combo, int number) {
 					currMission.activePlayerID == currMission.playersData[number].playerID
 				||	(currMission.activePlayerID == currMission.playersData[0].playerID && currMission.playersData[number].realPlayerType == REAL_PLAYER_TYPE_AI)
 			);
-		switch (currMission.playersData[number].belligerent) {
-			case BELLIGERENT_EXODUS0:
-			case BELLIGERENT_EXODUS1:
-			case BELLIGERENT_EXODUS2:
-			case BELLIGERENT_EXODUS3:
-			case BELLIGERENT_EXODUS4:
+        BELLIGERENT_FACTION faction = getBelligerentFaction(currMission.playersData[number].belligerent);
+		switch (faction) {
+			case EXODUS:
+            default:
 				combo->pos = 0;
 				break;
-			case BELLIGERENT_HARKBACKHOOD0:
-			case BELLIGERENT_HARKBACKHOOD1:
+			case HARKBACK:
                 if (terGameContent == GAME_CONTENT::PERIMETER_ET) {
                     combo->pos = 0;
                     gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
@@ -455,13 +452,9 @@ void setFrm(CComboWindow* combo, int number) {
                     combo->pos = 2;
                 }
 				break;
-			case BELLIGERENT_EMPIRE0:
-			case BELLIGERENT_EMPIRE1:
-			case BELLIGERENT_EMPIRE2:
-			case BELLIGERENT_EMPIRE3:
-			case BELLIGERENT_EMPIRE4:
-			default:
+			case EMPIRE:
 				combo->pos = 1;
+                break;
 		}
 	} else {
 		combo->Show(false);

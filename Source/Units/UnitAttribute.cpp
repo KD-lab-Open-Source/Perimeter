@@ -13,6 +13,7 @@
 #include "UnitAttribute.h"
 #include "SoundScript.h"
 #include "InterfaceScript.h"
+#include "BelligerentSelect.h"
 
 ///////////////////////////////////////////////////////////////
 class EffectLibraryDispatcher
@@ -337,26 +338,17 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 
 std::string GetBelligerentTexturePath(terBelligerent belligerent)
 {
+    BELLIGERENT_FACTION faction = getBelligerentFaction(belligerent);
 	std::string path = "Resource\\Models\\Main\\";
-	switch(belligerent){
-	case BELLIGERENT_NONE:
-	case BELLIGERENT_EXODUS0:
-	case BELLIGERENT_EXODUS1:
-	case BELLIGERENT_EXODUS2:
-	case BELLIGERENT_EXODUS3:
-	case BELLIGERENT_EXODUS4:
+	switch(faction){
+	case EXODUS:
+    default:
 		path += "EXODUS\\";
 		break;
-	case BELLIGERENT_HARKBACKHOOD0:
-	case BELLIGERENT_HARKBACKHOOD1:
+	case HARKBACK:
 		path += "HARKBACKHOOD\\";
 		break;
-	case BELLIGERENT_EMPIRE0:
-	case BELLIGERENT_EMPIRE1:
-	case BELLIGERENT_EMPIRE2:
-	case BELLIGERENT_EMPIRE3:
-	case BELLIGERENT_EMPIRE4:
-	case BELLIGERENT_EMPIRE_VICE:
+	case EMPIRE:
 		path += "EMPIRE\\";
 		break;
 	}
@@ -649,31 +641,8 @@ const char* AttributeBase::internalName() const
 
 bool AttributeBase::enabledByBelligerent(terBelligerent belligerentIn) const
 {
-	switch(belligerent){
-	case BELLIGERENT_NONE:
-		return true;
-	case BELLIGERENT_EXODUS0:
-	case BELLIGERENT_EXODUS1:
-	case BELLIGERENT_EXODUS2:
-	case BELLIGERENT_EXODUS3:
-	case BELLIGERENT_EXODUS4:
-		return belligerentIn == BELLIGERENT_EXODUS0 || belligerentIn == BELLIGERENT_EXODUS1 || belligerentIn == BELLIGERENT_EXODUS2 ||
-               belligerentIn == BELLIGERENT_EXODUS3 || belligerentIn == BELLIGERENT_EXODUS4;
-	case BELLIGERENT_HARKBACKHOOD0:
-	case BELLIGERENT_HARKBACKHOOD1:
-		return belligerentIn == BELLIGERENT_HARKBACKHOOD0 || belligerentIn == BELLIGERENT_HARKBACKHOOD1;
-	case BELLIGERENT_EMPIRE0:
-	case BELLIGERENT_EMPIRE1:
-	case BELLIGERENT_EMPIRE2:
-	case BELLIGERENT_EMPIRE3:
-	case BELLIGERENT_EMPIRE4:
-    case BELLIGERENT_EMPIRE_VICE: //This was in Exodus for some reason
-		return belligerentIn == BELLIGERENT_EMPIRE0 || belligerentIn == BELLIGERENT_EMPIRE1 || belligerentIn == BELLIGERENT_EMPIRE2 ||
-               belligerentIn == BELLIGERENT_EMPIRE3 || belligerentIn == BELLIGERENT_EMPIRE4 || belligerentIn == BELLIGERENT_EMPIRE_VICE;
-	default:
-		xassert(0);
-		return false;
-	}
+    BELLIGERENT_FACTION faction = getBelligerentFaction(belligerent);
+    return faction == FACTION_NONE || faction == getBelligerentFaction(belligerentIn);
 }
 
 void AttributeBase::initIntfBalanceData(const AttributeBase* missile) 

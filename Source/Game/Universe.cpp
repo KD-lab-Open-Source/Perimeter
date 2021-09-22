@@ -70,6 +70,8 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
+#include "BelligerentSelect.h"
+
 const int REGION_DATA_FILE_VERSION = 8383;
 
 RandomGenerator logicRND;
@@ -998,24 +1000,16 @@ void terUniverse::SetActivePlayer(int id)
 	activePlayer()->SetActivePlayer();
 	select.Quant();
 
-	switch(activePlayer()->belligerent()){
-	case BELLIGERENT_EXODUS0:
-	case BELLIGERENT_EXODUS1:
-	case BELLIGERENT_EXODUS2:
-	case BELLIGERENT_EXODUS3:
-	case BELLIGERENT_EXODUS4:
+    BELLIGERENT_FACTION faction = getBelligerentFaction(activePlayer()->belligerent());
+	switch(faction){
+    default:
+	case EXODUS:
 		SNDSetBelligerentIndex(0);
 		break;
-	case BELLIGERENT_HARKBACKHOOD0:
-	case BELLIGERENT_HARKBACKHOOD1:
+	case HARKBACK:
 		SNDSetBelligerentIndex(1);
 		break;
-	case BELLIGERENT_EMPIRE0:
-	case BELLIGERENT_EMPIRE1:
-	case BELLIGERENT_EMPIRE2:
-	case BELLIGERENT_EMPIRE3:
-	case BELLIGERENT_EMPIRE4:
-    case BELLIGERENT_EMPIRE_VICE:
+	case EMPIRE:
 #ifndef _DEMO_
 		SNDSetBelligerentIndex(2);
 #else
