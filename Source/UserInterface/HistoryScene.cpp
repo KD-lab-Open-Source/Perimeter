@@ -549,7 +549,7 @@ void HistoryScene::startAudio(const string& name) {
 		interpreter->eventOccured(Controller::END_OF_AUDIO_EVENT);
 		if (terSoundEnable) {
 			playingVoice = true;
-			int ret = voice.OpenToPlay((gameShell->getLocDataPath() + name).c_str(), 0);
+			int ret = voice.OpenToPlay((getLocDataPath() + name).c_str(), 0);
 			xassert(ret);
 			voice.SetVolume( round(255 * terSoundVolume) );
 		}

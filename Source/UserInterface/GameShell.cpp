@@ -125,7 +125,6 @@ CommandLineData::CommandLineData(bool host, std::string name, bool p2p, std::str
 					 : host(host), name(name), p2p(p2p), ip(ip), gameID(gameID), roomName(roomName), password(password) {
 }
 
-std::string GameShell::locale;
 
 //------------------------
 GameShell::GameShell(bool mission_edit) :
@@ -2505,6 +2504,15 @@ void GameShell::preLoad() {
 	#else
 		qdTextDB::instance().load(path.c_str(), "RESOURCE\\Texts_comments.btdb");
 	#endif
+
+    //Load texts, don't delete already loaded ones but replace existing ones
+    for (const auto& entry : get_resource_paths_directory(getLocDataPath() + "Text")) {
+        std::string name = std::filesystem::path(entry.first).filename().string();
+        strlwr(name.data());
+        if (name == "texts.btdb") continue;
+        bool noreplace = name.rfind("_noreplace.") != std::string::npos;
+        qdTextDB::instance().load(entry.second.c_str(), nullptr, false, noreplace);
+    }
 }
 
 void GameShell::setSkipCutScene(bool skip) 

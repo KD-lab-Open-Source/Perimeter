@@ -1373,7 +1373,7 @@ float CShellIconManager::playSpeech(const char* id) {
 		size_t pos = sound.find("Voice");
 		if(pos != std::string::npos)
 			sound.erase(0, pos);
-		std::string soundName = gameShell->getLocDataPath() + sound;
+		std::string soundName = getLocDataPath() + sound;
 		SNDEnableVoices(false);
 		speechSound->SetVolume(round(255*terSoundVolume));
 		int ret = speechSound->OpenToPlay(soundName.c_str(), false);
@@ -2286,6 +2286,12 @@ void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffe
 		PopupFormatMMP(attr, cbBuffer, unit);
 		break;
 	}
+
+    if (!strlen(cbBuffer)) {
+        std::string finalPopup = attr->interfaceName();
+        finalPopup += cbBuffer;
+        strcpy(cbBuffer, finalPopup.c_str());
+    }
 
 	if (strlen(cbBuffer) && unit && !unit->Player->isWorld()) {
 //		string finalPopup(qdTextDB::instance().getText("Player"));

@@ -675,7 +675,7 @@ STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
 	if(terSoundEnable  || terMusicEnable){
 		static int inited = 0;
 
-		SNDSetLocDataDirectory(GameShell::getLocDataPath().c_str());
+		SNDSetLocDataDirectory(getLocDataPath().c_str());
 
 		if(!inited){
 			inited = 1;
@@ -1142,3 +1142,31 @@ const char* editTextMultiLine(const char* defaultValue, HWND hwnd)
 	return editTextString.c_str();
 }
 
+std::string locale;
+
+const std::string getLocale() {
+    if (locale.empty()) {
+        locale = getStringFromReg(mainCurrUserRegFolder, "Locale");
+        if (locale.empty()) {
+            locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
+            if (locale.empty()) {
+                locale = "English";
+            }
+        }
+        if (locale.empty()
+            || (convert_path_resource(("RESOURCE\\LocData\\" + locale + "\\").c_str()).empty())) {
+            //Apparently on Steam the DefaultLanguage is Russian which gives issues when downloading game as non russian
+            //so we try switching it in case we don't found on gamedata, in case English fails use Russian by default
+            if (locale == "English") {
+                locale = "Russian";
+            } else {
+                locale = "English";
+            }
+        }
+    }
+    return locale;
+}
+
+const std::string getLocDataPath() {
+    return "Resource/LocData/" + getLocale() + "/";
+}

@@ -233,20 +233,6 @@ public:
 		setScriptReelEnabled(!scriptReelEnabled);
 	}
 
-	static const std::string& getLocDataPath() {
-		if (locale.empty()) {
-			locale = getStringFromReg(mainCurrUserRegFolder, "Locale");
-			if (locale.empty()) {
-				locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
-				if (locale.empty()) {
-					locale = "English";
-				}
-			}
-			locale = "RESOURCE\\LocData\\" + locale + "\\"; 
-		}
-		return locale;
-	}
-
 	//-----Network function-----
 	void NetQuant();
 
@@ -390,8 +376,6 @@ private:
 	ReelManager reelManager;
 
 	void setLocalizedFontSizes();
-
-	static std::string locale;
 
 	bool soundPushedByPause;
 	int soundPushedPushLevel;
