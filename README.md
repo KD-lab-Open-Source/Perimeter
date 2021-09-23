@@ -44,9 +44,10 @@ There is instructions available in:
 - Right click on morph units to request basic units required
 - Automatic game assets searching in these paths order:
   - Path from content= command argument
-  - Linux: $HOME/.local/share/KranX Productions/Perimeter
+  - Linux: $HOME/.local/share/KranX Productions/Perimeter/Content
   - Executable path
-  - Windows: %AppData%\\Roaming\\KranX Productions\\Perimeter
+  - Windows: %AppData%\\Roaming\\KranX Productions\\Perimeter\\Content
+  - Previous used content stored in settings
 - Addons system that overlay files in original resources without altering them:
   - Example: file placed in Addons/AddonName/Resource/Icons/logo.tga will replace usage of
     Resource/Icons/logo.tga file.

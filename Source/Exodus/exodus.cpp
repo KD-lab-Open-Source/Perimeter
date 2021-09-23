@@ -3,14 +3,12 @@
 #include <cstring>
 #include <cctype>
 #include <thread>
-#include <sys/stat.h>
 #include <SDL.h>
 #include <pwd.h>
 #include <string>
 #include <filesystem>
 #include <fcntl.h>
 #include <SimpleIni.h>
-#include "xerrhand.h"
 #include "xutl.h"
 
 //Usual open but with path conversion
@@ -34,7 +32,7 @@ DWORD GetPrivateProfileString(const char* section,const char* key,const char* de
     CSimpleIniA ini;
     SI_Error rc = ini.LoadFile(filePath);
     if (rc < 0) {
-        fprintf(stderr, "Error reading %s file: %d", filePath, rc);
+        fprintf(stderr, "Error reading %s file: %d\n", filePath, rc);
         return 0;
     };
     const char* val = ini.GetValue(section, key, defaultVal);
@@ -50,17 +48,17 @@ DWORD WritePrivateProfileString(const char* section,const char* key,const char* 
     CSimpleIniA ini;
     SI_Error rc = ini.LoadFile(filePath);
     if (rc < 0) {
-        fprintf(stderr, "Error loading %s file for writing: %d", filePath, rc);
+        fprintf(stderr, "Error loading %s file for writing: %d\n", filePath, rc);
         return 0;
     };
     rc = ini.SetValue(section, key, value);
     if (rc < 0) {
-        fprintf(stderr, "Error writing %s %s %s in file %s: %d", section, key, value, filePath, rc);
+        fprintf(stderr, "Error writing %s %s %s in file %s: %d\n", section, key, value, filePath, rc);
         return 0;
     };
     ini.SaveFile(filePath);
     if (rc < 0) {
-        fprintf(stderr, "Error writing %s file: %d", filePath, rc);
+        fprintf(stderr, "Error writing %s file: %d\n", filePath, rc);
         return 0;
     };
     return 1;

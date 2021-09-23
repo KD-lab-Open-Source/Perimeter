@@ -9,6 +9,7 @@ namespace scripts_export {
 #include "Runtime.h"
 
 #include <map>
+#include <set>
 
 int firstMissionNumber = 0;
 
@@ -22,22 +23,36 @@ void findGameContent() {
     //Check cmdline first
     const char* cmdlinePath = check_command_line("content");
     if (cmdlinePath) paths.emplace_back(cmdlinePath);
+    
+    //Add path stored in settings if any
+    IniManager* ini = getSettings();
+    const char* settingsPath = nullptr;
+    std::string lastContent = getStringSettings("LastContent");
+    if (!lastContent.empty()) settingsPath = ini->get(lastContent.c_str(), "GameContent");
 
-    //On Windows use app dir before prefs path, on other OS data is usually separated from executable
-    std::string prefPath = SDL_GetPrefPath("KranX Productions", "Perimeter");
-#ifndef _WIN32
-    paths.emplace_back(prefPath);
-#endif
-    paths.emplace_back(std::string(".") + PATH_SEP);
-    paths.emplace_back(SDL_GetBasePath());
+    //On Windows use app dir before remembered and prefs path, on other OS data is usually separated from executable
+    std::string prefPath = GET_PREF_PATH();
+    terminate_with_char(prefPath, PATH_SEP);
+    prefPath += "Content";
+
 #ifdef _WIN32
+    paths.emplace_back(std::filesystem::current_path().string());
+    paths.emplace_back(SDL_GetBasePath());
     paths.emplace_back(prefPath);
+#else
+    paths.emplace_back(prefPath);
+    paths.emplace_back(SDL_GetBasePath());
+    paths.emplace_back(std::filesystem::current_path().string());
 #endif
+    if (settingsPath) paths.emplace_back(settingsPath);
 
     //Check paths for Resource dir
-    for (std::string& rootPath : paths) {
-        if (std::filesystem::exists(rootPath)) {
-            printf("Checking game content from: %s\n", rootPath.c_str());
+    std::set<std::string> scannedPaths;
+    for (std::string rootPath : paths) {
+        terminate_with_char(rootPath, PATH_SEP);
+        scannedPaths.insert(rootPath);
+        printf("Checking game content from: %s\n", rootPath.c_str());
+        if (std::filesystem::exists(std::filesystem::path(rootPath))) {
             clear_resource_paths();
             set_content_root_path(rootPath);
             if (scan_resource_paths()) {
@@ -45,20 +60,22 @@ void findGameContent() {
                     break;
                 }
             }
+        } else {
+            printf("Path doesn't exist: %s\n", rootPath.c_str());
         }
     }
     
     //Detect if resource dir is present
     if (convert_path_resource("Resource").empty()) {
         std::string msg = "Resource directory not found, if resource.pak exists please unzip it. Scanned paths:\n";
-        for (const std::string& rootPath : paths) {
+        for (const std::string& rootPath : scannedPaths) {
             msg += rootPath + "\n";
         }
         ErrH.Abort(msg);
         return;
     }
-    printf("Using game content at: %s\n", get_content_root_path().c_str());
     
+    printf("Using game content at: %s\n", get_content_root_path().c_str());
 }
 
 void addGameContent(GAME_CONTENT content) {
@@ -246,6 +263,11 @@ void detectGameContent() {
         ErrH.Abort("Couldn't identify game content type in Resource, some data may be missing.", XERR_USER, terGameContent);
         return;
     }
+
+    //Store current game content type and the path in its settings
+    IniManager* ini = getSettings();
+    ini->put("Global", "LastContent", getEnumName(terGameContentBase));
+    putStringSettings("GameContent", get_content_root_path());
         
     //Detect if we have extra contents
     int loadAddons = 1;
@@ -285,6 +307,8 @@ void detectGameContent() {
     if (terGameContent & GAME_CONTENT::PERIMETER) {
         firstMissionNumber = 1;
     }
+
+    printf("Game content: %s (%x)\n", getEnumName(terGameContentBase), terGameContent);
 }
 
 bool unavailableContentUnitAttribute(terUnitAttributeID id, GAME_CONTENT content) {

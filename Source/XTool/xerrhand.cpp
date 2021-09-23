@@ -386,7 +386,7 @@ XErrorHandler::XErrorHandler() {
 #ifndef __HAIKU__
     log_name = "logfile.txt";
 #else
-    log_name = SDL_GetPrefPath("KranX Productions", "Perimeter");
+    log_name = GET_PREF_PATH();
 	log_name += "/logfile.txt";
 #endif
 	if (std::filesystem::exists(log_name)) {

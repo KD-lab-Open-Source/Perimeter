@@ -169,7 +169,7 @@ windowClientSize_(1024, 768)
 		MainMenuEnable = false;
 
 	currentSingleProfile.scanProfiles();
-	currentSingleProfile.setCurrentProfile(getStringFromReg(mainCurrUserRegFolder, "ProfileName"));
+	currentSingleProfile.setCurrentProfile(getStringSettings("ProfileName"));
 	if (!MainMenuEnable && currentSingleProfile.getCurrentProfileIndex() == -1) {
 		if (!currentSingleProfile.getProfilesVector().size()) {
 			currentSingleProfile.addProfile("Test");

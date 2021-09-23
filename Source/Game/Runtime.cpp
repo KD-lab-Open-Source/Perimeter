@@ -1146,7 +1146,7 @@ std::string locale;
 
 const std::string getLocale() {
     if (locale.empty()) {
-        locale = getStringFromReg(mainCurrUserRegFolder, "Locale");
+        locale = getStringSettings("Locale");
         if (locale.empty()) {
             locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
             if (locale.empty()) {

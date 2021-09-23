@@ -188,7 +188,7 @@ void onMMLanCreateGameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 			setupOkMessageBox(0, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
 			showMessageBox();
 		} else {
-			putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+            putStringSettings(regLanName, input->getText());
 			setupOkMessageBox(exitCreating, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Creating"), MBOX_EXIT, false);
 			showMessageBox();
 			_shellIconManager.AddDynamicHandler( createQuant, CBCODE_QUANT );
@@ -323,7 +323,7 @@ void onMMJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			setupOkMessageBox(0, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
 			showMessageBox();
 		} else {
-			putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+            putStringSettings(regLanName, input->getText());
 
 //			setupOkMessageBox(interruptConnecting, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT);
 			setupOkMessageBox(interruptConnecting, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT, false);
@@ -342,7 +342,7 @@ void onMMLanBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		if (gameShell->isStartedWithMainmenu()) {
 			CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 			if (!input->getText().empty()) {
-				putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+                putStringSettings(regLanName, input->getText());
 			}
 			_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_START_SCR );
 		} else {
@@ -1034,7 +1034,7 @@ void GameShell::startOnline(CommandLineData data) {
 	_bCursorVisible = 1;
 	_WaitCursor();
 	cmdLineData = data;
-	putStringToReg(mainCurrUserRegFolder, regLanName, data.name);
+    putStringSettings(regLanName, data.name);
 	_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 	CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 	input->SetText(data.name.c_str());
@@ -1151,7 +1151,7 @@ void onMMApplyNameBtn(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			showMessageBox();
 */
 		} else {
-			putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+            putStringSettings(regLanName, input->getText());
 			//TODO: put ipInput->getText() if pCombo->pos
 
 //			setupOkMessageBox(exitCreatingNetCenter, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_BACK);

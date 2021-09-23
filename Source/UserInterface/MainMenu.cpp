@@ -918,7 +918,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_LAN_SCR:
 					{
 						gameShell->getNetClient()->StartFindHost();
-						std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+						std::string name = getStringSettings(regLanName);
 						if (name.empty()) name = gameShell->currentSingleProfile.getCurrentProfile().name;
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
@@ -1122,7 +1122,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_NAME_INPUT_SCR:
 					{
-					    std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+					    std::string name = getStringSettings(regLanName);
                         if (name.empty()) name = gameShell->currentSingleProfile.getCurrentProfile().name;
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
@@ -1701,7 +1701,7 @@ void onMMProfileList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		int pos = list->GetCurSel();
 		if (pos != -1) {
 			gameShell->currentSingleProfile.setCurrentProfileIndex( pos );
-			putStringToReg(mainCurrUserRegFolder, "ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
+            putStringSettings("ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
 			showSingleMenu(pWnd);
 		}
 	}
@@ -1755,7 +1755,7 @@ void onMMSelectProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 	if ( code == EVENT_UNPRESSED && intfCanHandleInput() && pWnd->isEnabled() ) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
 		gameShell->currentSingleProfile.setCurrentProfileIndex( list->GetCurSel() );
-		putStringToReg(mainCurrUserRegFolder, "ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
+        putStringSettings("ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
 		showSingleMenu(pWnd);
 	} else if (code == EVENT_DRAWWND) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);

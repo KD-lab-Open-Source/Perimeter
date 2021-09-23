@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include <SDL.h>
+#include "Config.h"
+#include "GameContent.h"
 
 //#include <crtdbg.h>
 
@@ -265,9 +267,10 @@ bool create_directories(const char* path, std::error_code* error) {
 }
 
 // ---   Ini file   ---------------------
-IniManager::IniManager(const char* fname, bool check_existence) {
+IniManager::IniManager(const char* fname, bool check_existence, bool full_path) {
     fname_ = fname;
     check_existence_ = check_existence;
+    is_full_path = full_path;
 }
 
 const char* IniManager::get(const char* section, const char* key)
@@ -275,13 +278,17 @@ const char* IniManager::get(const char* section, const char* key)
 	static char buf[256];
     static char path[MAX_PATH];
     
-    std::string pathres = convert_path_resource(fname_.c_str());
-    if(pathres.empty())
-        ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+    if (!is_full_path) {
+        std::string pathres = convert_path_resource(fname_.c_str());
+        if (pathres.empty())
+            ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
 
-    //GetPrivateProfileString needs full path
-    if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-        ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+        //GetPrivateProfileString needs full path
+        if (_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
+            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+    } else {
+        strncpy(path, fname_.c_str(), MAX_PATH);
+    }
     
 	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
 		*buf = 0;
@@ -296,13 +303,17 @@ void IniManager::put(const char* section, const char* key, const char* val)
 {
     static char path[MAX_PATH];
 
-    std::string pathres = convert_path_resource(fname_.c_str());
-    if(pathres.empty())
-        ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
-
-    //WritePrivateProfileString needs full path
-    if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-        ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+    if (!is_full_path) {
+        std::string pathres = convert_path_resource(fname_.c_str());
+        if(pathres.empty())
+            ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+    
+        //WritePrivateProfileString needs full path
+        if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
+            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+    } else {
+        strncpy(path, fname_.c_str(), MAX_PATH);
+    }
 
 	WritePrivateProfileString(section,key,val,path);
 }
@@ -354,44 +365,64 @@ void IniManager::putFloatArray(const char* section, const char* key, int size, c
 	put(section, key, buf);
 }
 
-std::string getStringFromReg(const std::string& folderName, const std::string& keyName) {
-    //TODO we should read this in some file
-	std::string res;
-#ifndef PERIMETER_EXODUS
-	HKEY hKey;
-	char name[PERIMETER_CONTROL_NAME_SIZE];
-	DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
-	LONG lRet;
+static IniManager* settingsManager;
 
-	lRet = RegOpenKeyEx( HKEY_CURRENT_USER, folderName.c_str(), 0, KEY_QUERY_VALUE, &hKey );
-
-	if ( lRet == ERROR_SUCCESS ) {
-		lRet = RegQueryValueEx( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
-
-		if ( (lRet == ERROR_SUCCESS) && nameLen && (nameLen <= PERIMETER_CONTROL_NAME_SIZE) ) {
-			res = name;
-		}
-
-		RegCloseKey( hKey );
-	}
-#endif
-	return res;
+IniManager* getSettings() {
+    if (!settingsManager) {
+        std::string prefPath = GET_PREF_PATH();
+        terminate_with_char(prefPath, PATH_SEP);
+        prefPath = prefPath + "Settings.ini";
+        if (!std::filesystem::exists(prefPath)) {
+            //Create file if doesn't exist
+            XStream f(prefPath,XS_OUT);
+            f.close();
+        }
+        settingsManager = new IniManager(prefPath.c_str(), false, true);
+    }
+    return settingsManager;
 }
-void putStringToReg(const std::string& folderName, const std::string& keyName, const std::string& value) {
-	//TODO we should store this in some file
-#ifndef PERIMETER_EXODUS
-	HKEY hKey;
-	DWORD dwDisposition;
-	LONG lRet;
-	
-	lRet = RegCreateKeyEx( HKEY_CURRENT_USER, folderName.c_str(), 0, "", 0, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition );
 
-	if ( lRet == ERROR_SUCCESS ) {
-		lRet = RegSetValueEx( hKey, keyName.c_str(), 0, REG_SZ, (LPBYTE) (value.c_str()), value.length() );
+std::string getStringSettings(const std::string& keyName, const std::string& defaultValue) {
+    std::string res;
+    bool found = false;
 
-		RegCloseKey( hKey );
-	}
+    IniManager* ini = getSettings();
+    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getEnumName(terGameContentBase);
+    const char* result = ini->get(key.c_str(), keyName.c_str());
+    if (result) {
+        found = true;
+        res = result;
+    }
+    
+    //In case of Windows try checking registry if this fails
+#ifdef _WIN32
+    if (!found) {
+        HKEY hKey;
+        char name[PERIMETER_CONTROL_NAME_SIZE];
+        DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
+        LONG lRet;
+    
+        lRet = RegOpenKeyEx( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
+    
+        if ( lRet == ERROR_SUCCESS ) {
+            lRet = RegQueryValueEx( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
+    
+            if ( (lRet == ERROR_SUCCESS) && nameLen && (nameLen <= PERIMETER_CONTROL_NAME_SIZE) ) {
+                found = true;
+                res = name;
+            }
+    
+            RegCloseKey( hKey );
+        }
+    }
 #endif
+    return found ? res : defaultValue;
+}
+
+void putStringSettings(const std::string& keyName, const std::string& value) {
+    IniManager* ini = getSettings();
+    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getEnumName(terGameContentBase); 
+    ini->put(key.c_str(), keyName.c_str(), value.c_str());
 }
 
 std::string formatTimeWithHour(int timeMilis) {

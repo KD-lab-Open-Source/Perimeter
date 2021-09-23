@@ -333,7 +333,10 @@ const std::string& get_content_root_path() {
 std::string convert_path_resource(const char* path, bool parent_only) {
     if (resourcePathsFirstScan) {
         //Avoid potential crash if we are called during static init
-        fprintf(stderr, "Called convert_path_resource before scan_resource_paths! %s\n", path);
+        fprintf(stderr, "Called convert_path_resource before scan_resource_paths! '%s'\n", path);
+        if (check_command_line("convert_path_resource_debug")) {
+            ErrH.Abort("convert_path_resource_debug");
+        }
         return "";
     }
     std::string conv = convert_path(path);
