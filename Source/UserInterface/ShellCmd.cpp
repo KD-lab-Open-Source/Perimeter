@@ -643,6 +643,8 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 	case SQSH_CORRIDOR_OMEGA_ID:
 		n_struct = UNIT_ATTRIBUTE_CORRIDOR_OMEGA;
 		break;
+    default:
+        break;    
 	}
 
 	return n_struct;
@@ -755,6 +757,8 @@ int Structure2ButtonID(int i)
 	case UNIT_ATTRIBUTE_CORRIDOR_OMEGA:
 		id = SQSH_CORRIDOR_OMEGA_ID;
 		break;
+    default:
+        break;
 	}
 
 	return id;
@@ -1071,6 +1075,8 @@ int LegionID2Button(int nAttrID)
     case UNIT_ATTRIBUTE_CONDUCTOR:
         nButtonID = SQSH_SQUAD_UNIT28;
         break;
+    default:
+        break;
 	}
 
 	return nButtonID;
@@ -1279,6 +1285,35 @@ void OnButtonSquadMutate(CShellWindow* pWnd, InterfaceEventCode code, int param)
 				universe()->makeCommand(COMMAND_ID_UNIT_MORPHING, attribute->ID);
 		}
 	}
+    
+    if(code == EVENT_RPRESSED)
+    {
+        terUnitAttributeID attrID = Button2LegionID(pWnd->ID);
+        if (attrID >= 0) {
+            CheckSelectDefaultSquad();
+            const AttributeBase* attribute = universe()->activePlayer()->unitAttribute(attrID);
+            if (attribute->isLegionary()) {
+                const DamageMolecula& damage_molecula = attribute->damageMolecula;
+                int amountMax = globalAttr().baseUnitsMax;
+
+                //Request each amount of basic units this unit needs
+                for (int i = 0; i < MUTATION_ATOM_MAX; ++i) {
+                    int amount = damage_molecula[i];
+                    if (isShiftPressed()) amount *= 5;
+                    amount = std::min(amountMax, amount);
+                    while (0 < amount) {
+                        if (10 <= amount) {
+                            universe()->makeCommand(COMMAND_ID_PRODUCTION_INC_10, MUTATION_ATOM_SOLDIER + i);
+                            amount -= 10;
+                        } else {
+                            universe()->makeCommand(COMMAND_ID_PRODUCTION_INC, MUTATION_ATOM_SOLDIER + i);
+                            amount -= 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void OnButtonOffensiveDefensive(CShellWindow* pWnd, InterfaceEventCode code, int param)

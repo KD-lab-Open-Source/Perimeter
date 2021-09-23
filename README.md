@@ -41,6 +41,7 @@ There is instructions available in:
 ## Enhancements from original game
 
 - Bugfixes
+- Right click on morph units to request basic units required
 - Automatic game assets searching in these paths order:
   - Path from content= command argument
   - Linux: $HOME/.local/share/KranX Productions/Perimeter
