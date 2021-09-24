@@ -1189,6 +1189,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					gameShell->resumeGame(true);
 					_shellCursorManager.m_bShowSideArrows=1;
 					_shellCursorManager.ShowCursor();
+                    menuChangingDone = true;
 					_bMenuMode = 0;
 					break;
 				case CONTINUE_BRIEFING:

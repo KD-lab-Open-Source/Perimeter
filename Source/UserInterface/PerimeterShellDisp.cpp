@@ -983,11 +983,29 @@ void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
 
 extern HistoryScene historyScene;
 void CShellIconManager::fillTaskWnd() {
-	std::string taskTxt;
-	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
-		taskTxt = qdTextDB::instance().getText(historyScene.getMission(historyScene.getMissionNumberToExecute()).name.c_str());
-		taskTxt += "\n\n";
-	}
+	std::string taskTxt = gameShell->CurrentMission.missionDescription();
+
+    if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
+        std::string name = qdTextDB::instance().getText(historyScene.getMissionToExecute().name.c_str());
+        if (!name.empty()) {
+            if (taskTxt.empty()) {
+                taskTxt = name;
+            } else if (!startsWith(taskTxt, std::string("&FFFF00") + name)) {
+                taskTxt = name + " - " + taskTxt;
+            }
+        }
+    }
+    
+    if (taskTxt.empty()) {
+        taskTxt = gameShell->CurrentMission.worldName.value();
+    }
+    
+    if (!taskTxt.empty()) {
+        if (taskTxt[0] != '&') {
+            taskTxt = std::string("&FFFF00") + taskTxt;
+        }
+        taskTxt += "\n\n";
+    };
 	
 	std::list<Task>::iterator i;
 	FOR_EACH(tasks, i) {
@@ -3692,6 +3710,8 @@ bool isRaceUnitsVisible(BELLIGERENT_FACTION race) {
 				return player->GetEvolutionBuildingData(UNIT_ATTRIBUTE_HARKBACK_STATION1).Worked;
 			case EMPIRE:
 				return player->GetEvolutionBuildingData(UNIT_ATTRIBUTE_EMPIRE_STATION1).Worked;
+            default:
+                break;
 		}
 	}
 	return true;
@@ -3746,6 +3766,8 @@ void LogicUpdater::updateGunsData() {
 			case EMPIRE:
 				button->visible &= empireEnabled;
 				break;
+            default:
+                break;
 		}
 
 		#ifdef _DEMO_
@@ -4062,6 +4084,8 @@ void LogicUpdater::updateSquadsData() {
 					case EMPIRE:
 						button->visible &= empireEnabled;
 						break;
+                    default:
+                        break;
 				}
 				#ifdef _DEMO_
 					if (isForbidden(i)) {
