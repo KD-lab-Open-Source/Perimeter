@@ -278,3 +278,25 @@ void terminate_float_text(char* buffer, size_t size_max, int digits) {
         strncat(buffer, "0", size_max);
     }
 }
+
+void string_replace_all(std::string& text, const std::string& from, const std::string& to)
+{
+    //SRC: https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string
+    std::string newString;
+    newString.reserve(text.length());  // avoids a few memory allocations
+
+    std::string::size_type lastPos = 0;
+    std::string::size_type findPos;
+
+    while(std::string::npos != (findPos = text.find(from, lastPos)))
+    {
+        newString.append(text, lastPos, findPos - lastPos);
+        newString += to;
+        lastPos = findPos + from.length();
+    }
+
+    // Care for the rest after last occurrence
+    newString += text.substr(lastPos);
+
+    text.swap(newString);
+}

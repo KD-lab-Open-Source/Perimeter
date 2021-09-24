@@ -173,12 +173,15 @@ void ParameterSection::add_dependency(const char* fname)
 
 bool ParameterSection::needToReload() const
 {
+    return true;
+    /*
 	unsigned int crc = 83838383;
 	DependencyList::const_iterator i;
 	FOR_EACH(dependencies, i)
 		crc = Parser(*i).CRC(crc);
 
 	return crc != sourceCRC;
+    */
 }
 
 

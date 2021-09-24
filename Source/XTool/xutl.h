@@ -100,15 +100,19 @@ void terminate_float_text(char* buffer, size_t max, int digits);
 //Scans dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
 void scan_resource_paths(std::string scan_path = "");
 
+//Replaces all "from" in "text" with "to"
+void string_replace_all(std::string& text, const std::string& from, const std::string& to);
+
 static bool startsWith(const std::string& str, const std::string& prefix)
 {
+    //SRC: https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c
     return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);
 }
 
 static bool endsWith(const std::string& str, const std::string& suffix)
 {
+    //SRC: https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c
     return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
 }
-
 
 #endif

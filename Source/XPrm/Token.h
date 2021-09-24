@@ -63,8 +63,8 @@ public:
 
 	Section(const char* name) : Token(name), TokenList(name) { using_namespace = 0; }
 	int variables() const;
-	bool definition(const char* sources, bool rebuild, StringList& dependencies);
-	bool declaration(const char* sources, bool rebuild);
+	bool definition(const char* sources, bool rebuild, bool fail_outdated, StringList& dependencies);
+	bool declaration(const char* sources, bool rebuild, bool fail_outdated);
 	unsigned description();
 	void copy(class ParameterSection& prm);
     std::string align_path(const char* sources, const std::string& str);
@@ -140,7 +140,7 @@ public:
 	Compiler();
 	void clear();
 	int parse_file(const char* fname, XBuffer& sout); // returns the number of errors
-	bool compile(const char* fname, const char* sources, bool rebuild); // returns 1 if succeeds
+	bool compile(const char* fname, const char* sources, bool rebuild, bool fail_outdated); // returns 1 if succeeds
 	bool sectionUpdated() const { return sectionUpdated_; }
 	Section* getSection(const char* name);
 

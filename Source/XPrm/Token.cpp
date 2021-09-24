@@ -375,19 +375,20 @@ int Compiler::parse_file(const char* fname, XBuffer& sout)
 	return errors;
 }
 
-bool Compiler::compile(const char* fname, const char* sources, bool rebuild)
+bool Compiler::compile(const char* input, const char* sources, bool rebuild, bool fail_outdated)
 {
     int errors = 0;
+    std::string fname = convert_path_xprm(input);
     sectionUpdated_ = false;
     try {
         XBuffer bout(1024, 1);
-        errors = parse_file(fname, bout);
+        errors = parse_file(fname.c_str(), bout);
         std::cout << bout;
         if(!errors){
             SectionList::iterator i;
             FOR_EACH(sections, i){
-                int updated = (*i)->declaration(sources, rebuild);
-                if ((*i)->definition(sources, updated || rebuild, dependencies)) {
+                int updated = (*i)->declaration(sources, rebuild, fail_outdated);
+                if ((*i)->definition(sources, updated || rebuild, fail_outdated, dependencies)) {
                     updated |= true;
                 }
                 sectionUpdated_ |= updated;
@@ -397,7 +398,7 @@ bool Compiler::compile(const char* fname, const char* sources, bool rebuild)
             std::cout << fname << ": " << errors << " error(s)" << std::endl;
     }
     catch(const std::exception& exc){
-        std::cout << "Compilation error:" << exc.what() << "\r\n";
+        std::cout << "Compilation error: " << exc.what() << "\r\n";
         errors++;
     }
 
@@ -547,7 +548,18 @@ std::string Section::align_path(const char* sources, const std::string& str)
 	return path + name;
 }
 
-bool Section::definition(const char* sources, bool rebuild, StringList& dependencies)
+///Ensure that differences are because of content and not because differing newline styles, in future we should use \n only
+bool differentContent(std::string generated, std::string existing, bool fail_outdated) {
+    if (generated == existing) return false;
+
+    //If we are just compiling then don't do exhaustive checks
+    if (!fail_outdated) return true;
+    
+    string_replace_all(generated, "\r", "");
+    return generated != existing;
+}
+
+bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, StringList& dependencies)
 {
 	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript definition\r\n"
@@ -619,7 +631,6 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 	buf < "\r\n#ifdef _PRM_EDIT_\r\nstruct " < name() < "_ParameterSection : ParameterSection\r\n{\r\n\t"
 	< name() < "_ParameterSection() : ParameterSection(\"" < name() < "\")\r\n{\r\n";
 
-	unsigned int sourceCRC = 83838383;
 	StringList::iterator si;
 	FOR_EACH(dependencies, si){
 		std::string s_add = "\tadd_dependency(\"";
@@ -642,9 +653,7 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 		//	}
 		//buf <  s_add.c_str() <= time.dwLowDateTime < ", " <= time.dwHighDateTime < ");\r\n";
 		buf < s_add.c_str() < ");\r\n";
-		sourceCRC = Parser(si->c_str()).CRC(sourceCRC);
-		}
-	buf < "\tsourceCRC = " <= sourceCRC < ";\r\n";
+    }
 	buf < description_str <= description() < ";\r\n";
 
 	buf < "\treserve(" <= variables() < ");\r\n";
@@ -672,16 +681,21 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
     file = head;
     file += buf;
     file += tail;
-	if(file != file0){
+	if (differentContent(file, file0, fail_outdated)) {
 		std::cout << operation << " definition of section \"" << name() << "\" in " << definition_file_path << std::endl;
 		ff.open(definition_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
+        if (fail_outdated) {
+            string_replace_all(file, "\r", "");
+            std::cout << file << std::endl;
+            throw std::logic_error("Definition needs to be updated! recompile and save changes");
+        }
 		return 1;
-		}
+    }
 	return 0;
 }
 
-bool Section::declaration(const char* sources, bool rebuild)
+bool Section::declaration(const char* sources, bool rebuild, bool fail_outdated)
 {
 	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript declaration\r\n"
@@ -743,10 +757,15 @@ bool Section::declaration(const char* sources, bool rebuild)
     file = head;
     file += buf;
     file += tail;
-	if(file != file0){
+    if (differentContent(file, file0, fail_outdated)) {
         std::cout << operation << " declaration of section \"" << name() << "\" in " << declaration_file_path << std::endl;
 		ff.open(declaration_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
+        if (fail_outdated) {
+            string_replace_all(file, "\r", "");
+            std::cout << file << std::endl;
+            throw std::logic_error("Declaration needs to be updated! recompile and save changes");
+        }
 		return 1;
 	}
 	return 0;

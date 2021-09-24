@@ -47,7 +47,6 @@ protected:
 
 	const char* name;
 	unsigned long description;
-	unsigned int sourceCRC;
 
 	ParameterSection(const char* name_);
 	~ParameterSection();
