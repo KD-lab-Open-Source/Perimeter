@@ -81,9 +81,6 @@ void EpochToFileTime(int64_t epoch, _FILETIME* pft);
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
-//Replace string "search" with "result"
-void string_replace(std::string& input, const char* find, const char* paste);
-
 //Converts Windows/POSIX to native path
 std::string convert_path(const char* path);
 

@@ -165,7 +165,7 @@ void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext
     //Remove extension from filename and store
     if (fname) {
         std::string filename_str = path_input.filename().string();
-        string_replace(filename_str, ext_str.c_str(), "");
+        string_replace_all(filename_str, ext_str, "");
         SDL_strlcpy(fname, filename_str.c_str(), _MAX_FNAME);
     }
 }

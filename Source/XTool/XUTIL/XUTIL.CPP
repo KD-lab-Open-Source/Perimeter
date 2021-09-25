@@ -74,18 +74,6 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
     return choice == 1;
 }
 
-void string_replace(std::string& input, const char* find, const char* paste)
-{
-    size_t pos = 0;
-    while (true) {
-        pos = input.find(find, pos);
-        if(pos >= input.size())
-            break;
-        input.replace(pos, strlen(find), paste);
-        pos += strlen(paste);
-    }
-}
-
 std::string convert_path(const char* path) {
     std::string conv;
     size_t size = strlen(path);
@@ -419,6 +407,8 @@ void terminate_float_text(char* buffer, size_t size_max, int digits) {
 void string_replace_all(std::string& text, const std::string& from, const std::string& to)
 {
     //SRC: https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string
+    if (text.empty() || from.empty()) return;
+    
     std::string newString;
     newString.reserve(text.length());  // avoids a few memory allocations
 
