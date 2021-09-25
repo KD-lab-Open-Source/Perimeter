@@ -19,7 +19,11 @@ We have several CI in github which can serve as hint and examples.
 
 - CMake
 - SDL2
+- SDL2_image
+- SDL2_net
+- SDL2_mixer
 - libvorbis
+- ffmpeg / avcodec / avformat
 - boost
 
 ### Automatic dependencies

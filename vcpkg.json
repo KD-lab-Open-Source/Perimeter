@@ -9,6 +9,11 @@
 		"sdl2",
 		"sdl2-image",
 		{
+			"name": "sdl2-mixer",
+			"features": [ "dynamic-load", "libvorbis" ]
+		},
+		"sdl2-net",
+		{
 			"name": "ffmpeg",
 			"default-features": false,
 			"features": [ "avcodec", "avformat" ]

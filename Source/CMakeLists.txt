@@ -11,6 +11,8 @@ SET(perimeter_LINK_LIBS
         #Libraries
         ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
+        ${SDL2_MIXER_LIBRARY}
+        ${SDL2_NET_LIBRARY}
 )
 
 IF(FFMPEG_FOUND)
