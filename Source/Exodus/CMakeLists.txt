@@ -14,9 +14,14 @@ INCLUDE_DIRECTORIES(
 
 SET(Exodus_SRCS
         exodus.cpp
-        d3dx9.cpp
-        d3dx9math.cpp
         ${pevents_SOURCE_DIR}/src/pevents.cpp
 )
 
 ADD_LIBRARY(Exodus STATIC ${Exodus_SRCS})
+
+SET(ExodusD3D9_SRCS
+        d3dx9.cpp
+        d3dx9math.cpp
+)
+
+ADD_LIBRARY(ExodusD3D9 STATIC ${ExodusD3D9_SRCS})

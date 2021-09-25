@@ -32,31 +32,37 @@ IF(NOT PERIMETER_WINDOWS)
     FetchContent_MakeAvailable(pevents)
     ADD_DEFINITIONS(-DWFMO)
 
-    #DXVK-native wrapper lib retrieval and building
-    ExternalProject_Add(dxvk-native
-            GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
-            GIT_TAG           origin/master
-            GIT_SHALLOW       ON
-            BUILD_ALWAYS      OFF
-            CONFIGURE_COMMAND meson ../dxvk-native
-            BUILD_COMMAND     ninja
-            INSTALL_COMMAND   ""
-    )
-    ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
-    set(DXVK_NATIVE_INCLUDE_DIRS
-            "${SOURCE_DIR}/include/native/directx"
-            "${SOURCE_DIR}/include/native/windows"
-    )
-    set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
-
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
-
     #Includes
     INCLUDE_DIRECTORIES(
             "${PROJECT_SOURCE_DIR}/Source/Exodus"
             "${pevents_SOURCE_DIR}/src"
-            "${DXVK_NATIVE_INCLUDE_DIRS}"
     )
+
+    IF (OPTION_DXVK)
+        MESSAGE("Using DXVK-native for D3D9 API")
+        #DXVK-native wrapper lib retrieval and building
+        ExternalProject_Add(dxvk-native
+                GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
+                GIT_TAG           origin/master
+                GIT_SHALLOW       ON
+                BUILD_ALWAYS      OFF
+                CONFIGURE_HANDLED_BY_BUILD ON
+                CONFIGURE_COMMAND meson ../dxvk-native
+                BUILD_COMMAND     ninja
+                INSTALL_COMMAND   ""
+        )
+        ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
+        set(DXVK_NATIVE_INCLUDE_DIRS
+                "${SOURCE_DIR}/include/native/directx"
+                "${SOURCE_DIR}/include/native/windows"
+        )
+        set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+    
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
+        INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
+    ELSE()
+        MESSAGE("Not using D3D9 API providing library")
+    ENDIF()
 ELSE()
     #DirectX SDK libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
@@ -75,7 +81,7 @@ ADD_SUBDIRECTORY("Network")
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus ExodusD3D9)
 ELSE()
     ADD_SUBDIRECTORY("PlayOgg")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)
@@ -311,9 +317,12 @@ ELSE()
     MESSAGE("Not compiling or checking Scripts")
 ENDIF()
 IF(NOT PERIMETER_WINDOWS)
-    ADD_DEPENDENCIES(dependencies dxvk-native)
-    ADD_DEPENDENCIES(Exodus dxvk-native)
-    ADD_DEPENDENCIES(XTool dxvk-native)
+    #Make Exodus D3D9 depend on lib that provides D3D9 API
+    IF (OPTION_DXVK)
+        ADD_DEPENDENCIES(ExodusD3D9 dxvk-native)
+    ENDIF()
+    #Make other modules depend on Exodus D3D9
+    ADD_DEPENDENCIES(dependencies ExodusD3D9)
 ELSE()
     ADD_DEPENDENCIES(PlayOgg dependencies)
 ENDIF()

@@ -10,7 +10,7 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS ON)
 SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15")
 
-# options
+# Options and inputs
 OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
 OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
 OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
@@ -18,6 +18,7 @@ OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
+OPTION(OPTION_DXVK "Use dxvk-native for D3D9 API in Linux" ON)
 
 # Compiler detections
 SET(MSVC_CL_BUILD OFF)

@@ -27,8 +27,8 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
-                              char* returnBuffer, DWORD bufferSize, const char* filePath) {
+uint32_t GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
+                                 char* returnBuffer, uint32_t bufferSize, const char* filePath) {
     CSimpleIniA ini;
     SI_Error rc = ini.LoadFile(filePath);
     if (rc < 0) {
@@ -44,7 +44,7 @@ DWORD GetPrivateProfileString(const char* section,const char* key,const char* de
     return 1;
 }
 
-DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath) {
+uint32_t WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath) {
     CSimpleIniA ini;
     SI_Error rc = ini.LoadFile(filePath);
     if (rc < 0) {
@@ -64,7 +64,7 @@ DWORD WritePrivateProfileString(const char* section,const char* key,const char* 
     return 1;
 }
 
-bool GetComputerName(char* out, DWORD* size) {
+bool GetComputerName(char* out, uint32_t* size) {
     if (gethostname(out, *size) == 0) {
         *size = SDL_strlen(out) + 1;
         return true;
@@ -74,7 +74,7 @@ bool GetComputerName(char* out, DWORD* size) {
     return false;
 }
 
-bool GetUserName(char* out, DWORD* size) {
+bool GetUserName(char* out, uint32_t* size) {
     struct passwd *pwd = getpwuid(getuid());
     if (pwd) {
         size_t maxsize = *size;
@@ -194,10 +194,10 @@ void ResetEvent(HANDLE event) {
     neosmart::ResetEvent(reinterpret_cast<neosmart::neosmart_event_t>(event));
 }
 
-DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds) {
+uint32_t WaitForSingleObject(HANDLE event, uint64_t milliseconds) {
     return neosmart::WaitForEvent(reinterpret_cast<neosmart::neosmart_event_t>(event), milliseconds);
 }
 
-DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds) {
+uint32_t WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds) {
     return neosmart::WaitForMultipleEvents(reinterpret_cast<neosmart::neosmart_event_t*>(events), count, waitAll, milliseconds);
 }
