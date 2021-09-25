@@ -1,30 +1,50 @@
-SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version")
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 
 # root
 PROJECT(perimeter)
-
-# Compiler / Host detections
-IF(MSVC OR ${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
-    SET(MSVC_CL_BUILD ON)
-ENDIF()
 
 SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS ON)
+SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15")
 
+# options
+OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
+OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
+OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
+OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
+OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
+OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
+OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
+
+# Compiler detections
+SET(MSVC_CL_BUILD OFF)
+SET(CLANG OFF)
+IF(MSVC OR ${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
+    SET(MSVC_CL_BUILD ON)
+ENDIF()
 IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     SET(CLANG ON)
-ELSE()
-    SET(CLANG OFF)
 ENDIF()
 
-SET(PERIMETER_DEBUG OFF)
-IF(CMAKE_BUILD_TYPE MATCHES Debug)
-    SET(PERIMETER_DEBUG ON)
+#Detect 32 or 64 bits compiler
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    MESSAGE("Architecture: 64 bits - WARNING: EXPERIMENTAL!")
+    SET(PERIMETER_ARCH_64 ON)
+    ADD_DEFINITIONS(-DPERIMETER_ARCH_64)
+ELSE()
+    MESSAGE("Architecture: 32 bits")
+    SET(PERIMETER_ARCH_64 OFF)
 ENDIF()
+
+# Host detections and tweaks
+SET(MACOS OFF)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOS ON)
+    set(OPTION_LINKER_LLD OFF)
+endif()
 
 SET(PERIMETER_EXODUS OFF)
 IF(CMAKE_HOST_WIN32 OR MINGW)
@@ -40,28 +60,16 @@ ELSE()
     SET(PERIMETER_EXODUS_SOUND ON)
 ENDIF()
 
-IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    MESSAGE("Architecture: 64 bits - WARNING: EXPERIMENTAL!")
-    SET(PERIMETER_ARCH_64 ON)
-    ADD_DEFINITIONS(-DPERIMETER_ARCH_64)
-ELSE()
-    MESSAGE("Architecture: 32 bits")
-    SET(PERIMETER_ARCH_64 OFF)
+#Is a debug build?
+SET(PERIMETER_DEBUG OFF)
+IF(CMAKE_BUILD_TYPE MATCHES Debug)
+    SET(PERIMETER_DEBUG ON)
 ENDIF()
 
-# options
-OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
-OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
-OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
-OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
-OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
-OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
-OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
-
-
-# depends
+# Dependencies
 FIND_PACKAGE(Boost REQUIRED)
 IF(MSVC_CL_BUILD)
+    #Specifics to MSVC+VCPKG
     FIND_PACKAGE(Vorbis CONFIG REQUIRED)
     SET(Vorbis_FOUND TRUE)
     SET(VORBIS_LIBRARIES Vorbis::vorbis Vorbis::vorbisenc Vorbis::vorbisfile)
@@ -100,9 +108,6 @@ ELSE()
     SET(SDL2_BUILDING_LIBRARY ON)
     FIND_PACKAGE(SDL2 REQUIRED)
     FIND_PACKAGE(SDL2-image REQUIRED)
-ENDIF()
-
-IF(NOT PERIMETER_WINDOWS)
 ENDIF()
 
 #FFMPEG used for AVI and video decoding if present
@@ -148,7 +153,10 @@ IF(NOT MSVC_CL_BUILD)
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=lld")
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=lld")
     ENDIF()
-    SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -no-pie -fno-pie")
+    SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
+    IF(NOT MACOS)
+        SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -no-pie -fno-pie")
+    ENDIF()
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize -ffast-math")
     CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
     IF(HAVE_SIMDSSE)
