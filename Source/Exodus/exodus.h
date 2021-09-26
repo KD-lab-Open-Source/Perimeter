@@ -184,6 +184,4 @@ uint32_t WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define D3D9b_SDK_VERSION D3D_SDK_VERSION
-
 #endif //PERIMETER_EXODUS_H
