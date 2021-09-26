@@ -689,6 +689,15 @@ void GameShell::showWays() {
 	}
 }
 
+void renderEndScene() {
+    //We need to flush, otherwise the primitive vertex will be after the cursor in the buffer
+    terRenderDevice->FlushPrimitive2D();
+    terRenderDevice->FlushPrimitive3D();
+    //Draw cursor
+    _shellCursorManager.draw();
+    //End scene
+    terRenderDevice->EndScene();
+}
 
 void GameShell::Show()
 {
@@ -769,7 +778,7 @@ void GameShell::Show()
 //		terCamera->GetCamera()->DrawTestGrid();
 		HTManager::instance()->Show();
 
-		terRenderDevice->EndScene();
+        renderEndScene();
 
 		if(recordMovie_)
 			makeMovieShot();
@@ -832,7 +841,8 @@ void GameShell::Show()
 
 		//m_ShellDispatcher.draw();
 
-		terRenderDevice->EndScene();
+        renderEndScene();
+
 		terRenderDevice->Flush();
 		terScene->PostDraw(terCamera->GetCamera());
 	}
