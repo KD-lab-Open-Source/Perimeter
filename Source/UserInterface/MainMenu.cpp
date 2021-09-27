@@ -504,7 +504,7 @@ STARFORCE_API void fillStatsLists() {
 					race = 0;
 			}
 
-			int time = gameShell->gameTimer();
+            time_type time = std::max(10000U, gameShell->gameTimer());
 
 			temp.clear();
 			temp.push_back(gameShell->CurrentMission.playersData[i].name());

@@ -468,10 +468,10 @@ STARFORCE_API_NEW void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode cod
 	}
 	else if(code == EVENT_RPRESSED)
 	{
-		CheckSelectDefaultSquad(true);
+		CheckSelectDefaultSquad();
 
 		CShellAtomButton* pBtn = (CShellAtomButton*)pWnd;
-		if (!pBtn->GetPause()) {
+		if (!pBtn->GetPause() && pBtn->isEnabled()) {
 			if (pBtn->CanPause()) {
 				pBtn->Pause(true);
 				universe()->makeCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, nAtomID);

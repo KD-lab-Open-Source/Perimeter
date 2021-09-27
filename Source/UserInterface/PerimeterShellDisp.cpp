@@ -2110,7 +2110,8 @@ void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
 		balance += cbTemp;
 	}
 	if (!gun) {
-		_shellIconManager.FormatMessageText("<armor>", cbTemp, round(attr->intfBalanceData.armor) );
+        int armor = round(attr->intfBalanceData.armor);
+		_shellIconManager.FormatMessageText("<armor>", cbTemp, armor );
 		if (balance.empty()) {
 			balance += "\n";
 		}
@@ -2612,8 +2613,8 @@ void CShellIconManager::changeControlState(const std::vector<SaveControlData>& n
         SaveControlData& data = externalControlStates[i];
         
         if (!isCampaign) {
+#if 0
             //Allow using disabled stuff
-#if PERIMETER_DEBUG
             switch (data.controlID) {
                 case SQSH_CORRIDOR_OMEGA_ID:
                 case SQSH_CORRIDOR_ALPHA_ID:
