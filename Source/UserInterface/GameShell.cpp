@@ -1655,17 +1655,18 @@ void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
         mousePositionRelative_ = Vect2f::ZERO;
 	}
 	else{
+        mousePositionDelta_ = pos - mousePosition(); //Do this before setting the current position so we can get Delta
 		mousePosition_ = pos;
-        mousePositionDelta_ = pos - mousePosition();
         mousePositionRelative_ = rel;
 		MouseMoveFlag = 1;
 	}
 
 	if(BuildingInstaller.inited()){
-		if(isShiftPressed())
-			BuildingInstaller.ChangeBuildAngle(mousePositionDelta().y*50, universe()->activePlayer());
-		else
-			BuildingInstaller.SetBuildPosition(pos, universe()->activePlayer());
+		if(isShiftPressed()) {
+            BuildingInstaller.ChangeBuildAngle(mousePositionDelta().y * 50, universe()->activePlayer());
+        } else {
+            BuildingInstaller.SetBuildPosition(pos, universe()->activePlayer());
+        }
 	}
 
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
