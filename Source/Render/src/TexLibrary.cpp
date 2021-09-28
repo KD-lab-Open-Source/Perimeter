@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "FileImage.h"
+#include "files/files.h"
 
 #include "ddraw.h"
 
@@ -307,7 +308,7 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
         Texture->SetAttribute(MAT_BUMP);
         
         //If file with _normal name is found, set attribute for normal
-        std::filesystem::path texpath(convert_path_resource(Texture->GetName()));
+        std::filesystem::path texpath(convert_path_content(Texture->GetName()));
         std::string normal_path = texpath.parent_path().string();
         std::string extension = texpath.filename().extension().string();
         std::string filename = texpath.filename().string();
@@ -409,7 +410,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 	cFileImage *FileImage=0;
 
 	//Get path for file and open it
-	std::string path = convert_path_resource(Texture->GetName());
+	std::string path = convert_path_content(Texture->GetName());
 	if (path.empty()) {
 	    //File not found
         Error(Texture);

@@ -20,6 +20,7 @@
 #include "../HT/ht.h"
 #include "qd_textdb.h"
 #include "BelligerentSelect.h"
+#include "files/files.h"
 
 extern MpegSound gb_Music;
 extern MissionDescription missionToExec;
@@ -34,7 +35,7 @@ STARFORCE_API void loadBattleList() {
 	if (battleMaps.empty()) {
 		loadMapVector(battleMaps, "RESOURCE/BATTLE", ".spg");
 		defaultBattleMapCount = battleMaps.size();
-		std::string scenario_path = convert_path_resource("RESOURCE/BATTLE/SCENARIO") + PATH_SEP;
+		std::string scenario_path = convert_path_content("RESOURCE/BATTLE/SCENARIO/");
 		FILE* file = fopen((scenario_path + "maplist.txt").c_str(), "rt");
 		if (file) {
 			char* buff = new char[201];
@@ -143,7 +144,7 @@ STARFORCE_API void onBattleMenuOpening() {
 }
 std::string getSurvivalFileName(const std::string& fileName) {
     //Will return empty string if file wasn't indexed
-    std::string path = convert_path_resource(("RESOURCE\\BATTLE\\SURVIVAL\\" + fileName + ".spg").c_str());
+    std::string path = convert_path_content("Resource/BATTLE/SURVIVAL/" + fileName + ".spg");
     bool exists = !path.empty() && std::filesystem::exists(path);
 	return exists ? path : std::string();
 }

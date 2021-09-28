@@ -6,7 +6,7 @@ static vector<string> stringID;
 
 ParamBlock* ReadRules(char* rul,int* psize,ParamBlock* pRulesX)
 {
-	int f=_open( rul, _O_RDONLY |_O_BINARY);
+	int f= file_open(rul, _O_RDONLY | _O_BINARY);
 	if(f==-1)
 	{
 		message_printf("Не могу открыть %s",rul);
@@ -92,8 +92,8 @@ void InitStringID(bool beng,bool beginner)
 	LPCSTR outname=beng?
 		(beginner?"message_beginner_e.dat":"message_e.dat"):
 		(beginner?"message_beginner.dat":"message.dat");
-	int f=_open( outname, _O_RDWR | _O_CREAT | _O_TRUNC | _O_BINARY, 
-                      _S_IREAD | _S_IWRITE );
+	int f= file_open(outname, _O_RDWR | _O_CREAT | _O_TRUNC | _O_BINARY,
+                     _S_IREAD | _S_IWRITE);
 	if(f==-1)
 	{
 		message_printf("Не могу записать %s",outname);

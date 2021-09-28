@@ -16,6 +16,7 @@
 
 #include "../Sound/PerimeterSound.h"
 #include "../Game/MusicManager.h"
+#include "files/files.h"
 
 #define _RELEASE(p) if(p) {(p)->Release(); (p) = 0;}
 
@@ -83,7 +84,7 @@ void MusicEnable(int enable)
 
 std::string getImageFileName(const sqshImage* image, const char* fileName) {
     std::string fullname = fileName ? fileName : static_cast<std::string>(image->texture);
-    fullname = convert_path(fullname.c_str());
+    fullname = convert_path_native(fullname.c_str());
     if ( !fullname.empty() ) {
         if (image->hasResolutionVersion) {
             std::string respath;

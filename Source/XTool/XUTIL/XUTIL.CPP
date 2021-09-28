@@ -2,7 +2,6 @@
 #include <fstream>
 #include <cstring>
 #include <SDL.h>
-#include <filesystem>
 #include <algorithm>
 #include <unordered_map>
 #include "tweaks.h"
@@ -12,13 +11,12 @@
 #include "xutil.h"
 
 #ifndef _WIN32
+bool argcv_setup_done = false;
 int __argc = 0;
 std::vector<const char*> __argv;
 #endif
 
 static unsigned int XRndValue = 83838383;
-
-static const std::string curdir_path = std::string(".") + PATH_SEP;
 
 unsigned int XRnd(unsigned int m)
 { 
@@ -36,6 +34,38 @@ void XRndSet(unsigned int m)
 unsigned int XRndGet()
 {
 	return XRndValue;
+}
+
+void setup_argcv(int argc, char *argv[]) {
+#ifndef _WIN32
+    for(int i = 0; i < argc; i ++){
+        //printf("%d %s\n", i, argv[i]);
+        __argv.push_back(argv[i]);
+        __argc++;
+    }
+    argcv_setup_done = true;
+#endif
+}
+
+const char* check_command_line(const char* switch_str) {
+#ifndef _WIN32
+    if (!argcv_setup_done) {
+        fprintf(stderr, "Called check_command_line %s before setup_argcv\n", switch_str);
+    }
+#endif
+    std::string switch_key(switch_str);
+    switch_key += "=";
+    for(int i = 1; i < __argc; i ++){
+        const char* arg = __argv[i];
+        if (startsWith(arg, "tmp_")) {
+            arg += 4;
+        }
+        if (startsWith(arg, switch_key)) {
+            arg += switch_key.length();
+            return arg;
+        }
+    }
+    return nullptr;
 }
 
 void EpochToFileTime(int64_t epoch, _FILETIME* pft) {
@@ -72,280 +102,6 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
         SDL_PRINT_ERROR("Creating MessageBoxQuestion window");
     }
     return choice == 1;
-}
-
-std::string convert_path(const char* path) {
-    std::string conv;
-    size_t size = strlen(path);
-    for (int i = 0; i < size; ++i) {
-#ifdef _WIN32
-        conv.push_back(path[i] == '/' ? PATH_SEP : path[i]);
-#else
-        conv.push_back(path[i] == '\\' ? PATH_SEP : path[i]);
-#endif
-    }
-    return conv;
-}
-
-std::string convert_path_posix(const char* path) {
-    std::string conv;
-    size_t size = strlen(path);
-    for (int i = 0; i < size; ++i) {
-        conv.push_back(path[i] == '\\' ? '/' : path[i]);
-    }
-    return conv;
-}
-
-void prepare_path(std::string& res_path, const std::string& source_path) {
-    res_path = convert_path(res_path.c_str());
-    if (res_path == "." || res_path == source_path) {
-        res_path.clear();
-    }
-    if (res_path.empty()) {
-        return;
-    }
-    
-    if (!source_path.empty()) {
-        size_t root_pos = res_path.find(source_path);
-        if (root_pos != std::string::npos && root_pos == 0) {
-            res_path.erase(0, source_path.size());
-        }
-    }
-    
-    //Remove ./ since it screws with setExtention
-    size_t path_pos = res_path.find(curdir_path);
-    if (path_pos != std::string::npos && path_pos == 0) {
-        res_path.erase(0, curdir_path.size());
-    }
-}
-
-///Adds a new internal path relative to root path
-std::string add_resource_path_internal(std::unordered_map<std::string, std::string>& paths,
-                                       std::string res_path,
-                                       const std::string& destination_path, 
-                                       const std::string& source_path,
-                                       bool replace_files, bool replace_dirs) {
-    
-    //Use destination path directly if not empty
-    std::string path_lwr = destination_path;
-    if (path_lwr.empty() || endsWith(path_lwr, PATH_SEP_STR)) {
-        //Make relative path from res_path
-        path_lwr = res_path;
-        prepare_path(path_lwr, source_path);
-        path_lwr = destination_path + path_lwr;
-    }
-    
-    //Lowercase it for case-insensitive path matching
-    strlwr(path_lwr.data());
-    if (startsWith(path_lwr, "resource")
-        || startsWith(path_lwr, "cache_font")
-        || startsWith(path_lwr, "addons")
-        || startsWith(path_lwr, "scripts")
-        || endsWith(path_lwr, ".ini")) {
-        //Remove ./ from res path since it can mess with some code dealing with extensions
-        prepare_path(res_path, "");
-
-        bool path_is_directory = std::filesystem::is_directory(std::filesystem::path(res_path));
-
-        //Create absolute path too
-        std::string res_path_lwr = convert_path(res_path.c_str());
-        strlwr(res_path_lwr.data());
-        
-        //Check if an override occurs
-        std::string prev_path = paths[path_lwr];
-        std::string prev_path_abs;
-        if (!prev_path.empty() && prev_path != res_path) {
-            if ((path_is_directory && !replace_dirs) || (!path_is_directory && !replace_files)) {
-                //printf("Not replacing path %s with %s\n", prev_path.c_str(), res_path.c_str());
-                return "";
-            }
-            
-            //printf("Replacing path %s with %s\n", prev_path.c_str(), res_path.c_str());
-            
-            //TODO override old absolute paths with the new path until proper struct is implemented to group paths
-            std::filesystem::path prev_path_path(prev_path);
-            if (prev_path_path.is_absolute()) {
-                prev_path_abs = convert_path_resource(path_lwr.c_str());
-                strlwr(prev_path_abs.data());
-            }
-        }
-        
-        //Store path relative and absolute internal paths pointing the real FS path
-        paths[res_path_lwr] = paths[path_lwr] = res_path;
-        if (!prev_path_abs.empty()) {
-            paths[prev_path_abs] = res_path;
-        }
-        if (path_is_directory) {
-            //In case of path pointing a dir, store PATH_SEP terminated too
-            terminate_with_char(path_lwr, PATH_SEP);
-            terminate_with_char(res_path_lwr, PATH_SEP);
-            paths[res_path_lwr] = paths[path_lwr] = res_path + PATH_SEP;
-            if (!prev_path_abs.empty()) {
-                terminate_with_char(prev_path_abs, PATH_SEP);
-                paths[prev_path_abs] = res_path;
-            }
-        }
-    }
-    return path_lwr;
-}
-
-//Since some code may call this statically, we use a flag to know if this is the first time
-bool resourcePathsFirstScan = true;
-std::unordered_map<std::string, std::string> resourcePaths;
-std::string content_root_path;
-
-bool scan_resource_paths(std::string destination_path, std::string source_path) {
-    //Use destination as source path assuming its a call to refresh subdir resources in root
-    if (source_path.empty() && !destination_path.empty()) {
-        source_path = destination_path;
-    }
-    bool same_paths = source_path == destination_path;
-    bool replace_files = !same_paths;
-    
-    //Remove root or any other stuff from source before adding
-    prepare_path(source_path, content_root_path);
-    if (!content_root_path.empty() && content_root_path != curdir_path) {
-        source_path = content_root_path + source_path;
-    }
-    
-    //Prepare destination too
-    prepare_path(destination_path, content_root_path);
-    strlwr(destination_path.data());
-
-    //If is actually a file then just add it
-    if (std::filesystem::is_regular_file(std::filesystem::path(source_path))) {
-        std::string source_parent_path = std::filesystem::path(source_path).parent_path().string();
-        terminate_with_char(source_parent_path, PATH_SEP);
-        add_resource_path_internal(resourcePaths,
-                                   source_path,
-                                   destination_path,
-                                   source_parent_path,
-                                   true, false);
-        resourcePathsFirstScan = false;
-        return true;
-    }
-
-    //We need this to scan dirs in current dir
-    if (content_root_path == curdir_path) {
-        source_path = curdir_path + source_path;
-    }
-    
-    //Check if is actually a dir
-    if (!std::filesystem::is_directory(source_path)) {
-        return false;
-    }
-    terminate_with_char(source_path, PATH_SEP);
-    terminate_with_char(destination_path, PATH_SEP);
-
-    std::unordered_map<std::string, std::string> paths;
-    if (replace_files) {
-        paths = resourcePaths;
-    } else {
-        //Remove all paths that match with path to scan by not including them
-        for (const auto& entry: resourcePaths) {
-            if (!startsWith(entry.second, source_path)) {
-                paths.insert(entry);
-            }
-        }
-    }
-
-    //Add path as resource since iterator wont add it
-    if (!destination_path.empty() && same_paths) {
-        add_resource_path_internal(paths, source_path, destination_path, source_path, replace_files, false);
-    }
-    
-    //Do recursive search on source path
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::path(source_path))) {
-        if (entry.is_regular_file() || entry.is_directory()) {
-            add_resource_path_internal(paths, entry.path().string(), destination_path, source_path, replace_files, false);
-        }
-    }
-    
-    //Store collected paths
-    resourcePaths = paths;
-    resourcePathsFirstScan = false;
-    return true;
-}
-
-bool scan_resource_paths(const std::string& path) {
-    return scan_resource_paths(path, path);
-}
-
-std::vector<std::pair<std::string, std::string>> get_resource_paths_recursive(std::string path) {
-    prepare_path(path, content_root_path);
-    strlwr(path.data());
-    std::vector<std::pair<std::string, std::string>> paths;
-    for (const auto& entry : resourcePaths) {
-        if (startsWith(entry.first, path)) {
-            paths.emplace_back(entry);
-        }
-    }
-    return paths;
-}
-
-std::vector<std::pair<std::string, std::string>> get_resource_paths_directory(std::string path) {
-    prepare_path(path, content_root_path);
-    strlwr(path.data());
-    terminate_with_char(path, PATH_SEP);
-    std::vector<std::pair<std::string, std::string>> paths;
-    for (const auto& entry : resourcePaths) {
-        if (startsWith(entry.first, path)) {
-            //Only add paths that don't have any separator, we use posix sep because internals are always posix
-            std::string entry_path = entry.first;
-            prepare_path(entry_path, path);
-            if (entry_path.empty()) continue;
-            
-            size_t pos = entry_path.find(PATH_SEP);
-            if (pos != std::string::npos) continue;
-            
-            paths.emplace_back(entry);
-        }
-    }
-    return paths;
-}
-
-void clear_resource_paths() {
-    resourcePathsFirstScan = true;
-    resourcePaths.clear();
-}
-
-void set_content_root_path(const std::string& path) {
-    content_root_path = path;
-    terminate_with_char(content_root_path, PATH_SEP);
-}
-
-const std::string& get_content_root_path() {
-    return content_root_path;
-}
-
-std::string convert_path_resource(const char* path, bool parent_only) {
-    if (resourcePathsFirstScan) {
-        //Avoid potential crash if we are called during static init
-        fprintf(stderr, "Called convert_path_resource before scan_resource_paths! '%s'\n", path);
-        if (check_command_line("convert_path_resource_debug")) {
-            ErrH.Abort("convert_path_resource_debug");
-        }
-        return "";
-    }
-    std::string conv = convert_path(path);
-    if (startsWith(conv, curdir_path)) {
-        conv.erase(0, 2);
-    }
-    std::string result;
-    if (parent_only) {
-        //Search the parent and append filename
-        std::filesystem::path path_fs(conv);
-        conv = path_fs.parent_path().string();
-        strlwr(conv.data());
-        result = resourcePaths[conv];
-        if (!result.empty()) {
-            result += PATH_SEP + path_fs.filename().string();
-        }
-    } else {
-        strlwr(conv.data());
-        result = resourcePaths[conv];
-    }
-    return result;
 }
 
 void terminate_with_char(std::string& buffer, const char chr) {

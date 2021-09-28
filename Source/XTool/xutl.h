@@ -52,63 +52,17 @@ extern int __argc;
 extern std::vector<const char*> __argv;
 #endif
 
-static void setup_argcv(int argc, char *argv[]) {
-#ifndef _WIN32
-    for(int i = 0; i < argc; i ++){
-        //printf("%d %s\n", i, argv[i]);
-        __argv.push_back(argv[i]);
-        __argc++;
-    }
-#endif
-}
+///Stores argc/argv from main()
+void setup_argcv(int argc, char *argv[]);
 
-inline const char* check_command_line(const char* switch_str)
-{
-    for(int i = 1; i < __argc; i ++){
-        const char* s = strstr(__argv[i], switch_str);
-        if(s) {
-            s += strlen(switch_str);
-            if (*s == '=') s += 1;
-            return s;
-        }
-    }
-    return nullptr;
-}
+///Returns the value by the switch name from key=value at argv
+const char* check_command_line(const char* switch_str);
 
 //https://docs.microsoft.com/en-gb/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
 struct _FILETIME;
 void EpochToFileTime(int64_t epoch, _FILETIME* pft);
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
-
-//Converts Windows/POSIX to native path
-std::string convert_path(const char* path);
-
-//Do a conversion for Windows -> POSIX paths
-std::string convert_path_posix(const char* path);
-
-//Do a conversion for RESOURCE paths
-std::string convert_path_resource(const char* path, bool parent_only = false);
-
-//Obtain pairs of lowercase and original path from Resource paths cache which match the path start
-std::vector<std::pair<std::string, std::string>> get_resource_paths_recursive(std::string path);
-
-//Obtain pairs of lowercase and original path from Resource paths cache which match the path start,
-//only if
-std::vector<std::pair<std::string, std::string>> get_resource_paths_directory(std::string path);
-
-//Clears the current loaded resource paths
-void clear_resource_paths();
-
-//Sets the current resources root path
-void set_content_root_path(const std::string& path);
- 
-//Returns the current resources root path
-const std::string& get_content_root_path();
-
-//Scans source dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
-//Removes the source path in each scanned path before saving to internal resource path list to destination path
-bool scan_resource_paths(std::string destination_path = "", std::string source_path = "");
 
 //Adds char to string in end if not present
 void terminate_with_char(std::string& buffer, char chr);

@@ -18,6 +18,7 @@
 #ifdef _PERIMETER_
 #include "../Render/inc/IRenderDevice.h"
 #endif //_PERIMETER_
+#include "files/files.h"
 
 extern float noise3(float vec[]);
 static float turbulenceG(float *v, float freq)
@@ -2558,7 +2559,7 @@ sTVolcano::sTVolcano(int _x, int _y, int _sx, int _sy)
 	XBuffer tfb;
 	tfb < Path2TTerraResource < "volcano.dat";
 	XStream fo(0);
-	fo.open(convert_path_resource(tfb), XS_IN);
+	fo.open(convert_path_content(tfb.address()), XS_IN);
 	unsigned short buf[256*2];
 	cnt = 0;
 	for(i = 0; i < tv_arraySY*tv_keyPoints; i++){
@@ -2753,7 +2754,7 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
         XBuffer cb;
         cb < Path2TTerraResource < "bub.dat";
 		XStream fi;
-		fi.open(convert_path_resource(cb), XS_IN);
+		fi.open(convert_path_content(cb.address()), XS_IN);
 		fi.seek(0,XS_BEG);
 		//unsigned short buf[][256*2];
 		fi.read(preImage, tb_keyPoints * tb_arraySY*tb_arraySX*sizeof(unsigned short)*numPreImage);

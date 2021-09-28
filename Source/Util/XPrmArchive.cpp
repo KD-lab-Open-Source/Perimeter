@@ -1,6 +1,6 @@
 #include "StdAfx.h"
-
 #include "XPrmArchive.h"
+#include "files/files.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //			String Util
@@ -140,7 +140,7 @@ bool XPrmIArchive::open(const char* fname)
 {
 	fileName_ = fname;
 	XStream ff(0);
-	if(!ff.open(convert_path_resource(fname), XS_IN))
+	if(!ff.open(convert_path_content(fname), XS_IN))
 		return false;
 	buffer_.alloc(ff.size() + 1);
 	ff.read(buffer_.address(), ff.size());

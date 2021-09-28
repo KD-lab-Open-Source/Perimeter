@@ -19,6 +19,7 @@ SET(XTool_SRCS
     xerrhand.cpp
     XUTIL/XUTIL.CPP
     XUTIL/XClock.cpp
+    files/files.cpp
 )
 
 SET(XTool_LINK_LIBS)

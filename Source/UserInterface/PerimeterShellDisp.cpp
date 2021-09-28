@@ -1129,7 +1129,7 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 		for(int c=0; c<cont.controls.size(); c++)
 		{
 			const sqshControl& tc = cont.controls[c];
-			if (tc.content && !(tc.content & terGameContent)) continue;
+			if (tc.content && !(tc.content & terGameContentAvailable)) continue;
 
 			CShellWindow* pCtrl = CreateWnd(tc.id, tc.type, pWndCntr, _GetEventHandler(tc.id));
 			xassert(tc.id <= SQSH_MAX);
@@ -2572,8 +2572,9 @@ float GetUnitUpgradeProgress(terBuilding* p) {
 
 void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls) {
     //Get the base content and if is a campaign
-    bool isCampaign = gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO;
-    GAME_CONTENT content = isCampaign ? terGameContentBase : terGameContent;
+    bool isCampaign = 0 < gameShell->CurrentMission.missionNumber;
+    GAME_CONTENT content = static_cast<GAME_CONTENT>(gameShell->CurrentMission.gameContent.value());
+    if (!content) content = isCampaign ? getGameContentCampaign() : terGameContentSelect;
     
     //Reset all controls to their default, since new control states might not have them
     if (reset_controls) {
@@ -2612,7 +2613,24 @@ void CShellIconManager::changeControlState(const std::vector<SaveControlData>& n
     for (int i = 0; i < externalControlStates.size(); i++) {
         SaveControlData& data = externalControlStates[i];
         
-        if (!isCampaign) {
+        if (isCampaign) {
+            if (content == GAME_CONTENT::PERIMETER_ET) {
+                //Copy ET electro unit states into correct IDs
+                switch (data.controlID) {
+                    case SQSH_SQUAD_UNIT21:
+                        externalControlStates[SQSH_SQUAD_UNIT26] = data;
+                        break;
+                    case SQSH_SQUAD_UNIT22:
+                        externalControlStates[SQSH_SQUAD_UNIT27] = data;
+                        break;
+                    case SQSH_SQUAD_UNIT23:
+                        externalControlStates[SQSH_SQUAD_UNIT28] = data;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } else {
 #if 0
             //Allow using disabled stuff
             switch (data.controlID) {
@@ -2628,12 +2646,31 @@ void CShellIconManager::changeControlState(const std::vector<SaveControlData>& n
                     break;
             }
 #endif
-    
+
             //Enable harkback stuff since some ET maps might disable them
-            if (terGameContent & GAME_CONTENT::PERIMETER) {
+            if (terGameContentAvailable & GAME_CONTENT::PERIMETER) {
                 switch (data.controlID) {
                     case SQSH_STATION_HARKBACK_LAB_ID:
                     case SQSH_GUN_FILTH_ID:
+                    case SQSH_SQUAD_UNIT20:
+                        data.visible = true;
+                        data.enabled = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+            //Enable electro stuff from ET
+            if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
+                switch (data.controlID) {
+                    case SQSH_STATION_ELECTRO_LAB_ID:
+                    case SQSH_SELPANEL_UPGRADE_ELECTRO1_ID:
+                    case SQSH_SELPANEL_UPGRADE_ELECTRO2_ID:
+                    case SQSH_GUN_ELECTRO_ID:
+                    case SQSH_SQUAD_UNIT26:
+                    case SQSH_SQUAD_UNIT27:
+                    case SQSH_SQUAD_UNIT28:
                         data.visible = true;
                         data.enabled = true;
                         break;

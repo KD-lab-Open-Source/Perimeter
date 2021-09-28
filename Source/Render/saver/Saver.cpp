@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <io.h>
+#include "files/files.h"
 
 #undef WR
 #define WR(x) fwrite(&x,sizeof(x),1,f);
@@ -109,7 +110,7 @@ CLoadDirectoryFile::~CLoadDirectoryFile()
 
 bool CLoadDirectoryFile::Load(LPCSTR filename)
 {
-	int file=_open(filename,_O_RDONLY|_O_BINARY);
+	int file= file_open(filename, _O_RDONLY | _O_BINARY);
 	if(file==-1)return false;
 
 	size=_lseek(file,0,SEEK_END);

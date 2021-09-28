@@ -445,7 +445,7 @@ void setFrm(CComboWindow* combo, int number) {
 				combo->pos = 0;
 				break;
 			case HARKBACK:
-                if (terGameContent == GAME_CONTENT::PERIMETER_ET) {
+                if (terGameContentSelect == GAME_CONTENT::PERIMETER_ET) {
                     combo->pos = 0;
                     gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
                 } else {

@@ -27,6 +27,8 @@
 
 #include <SDL_image.h>
 
+#include "files/files.h"
+
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 #include <iostream>
@@ -219,7 +221,7 @@ uint8_t flags;
 bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel)
 {
 	bool bHasAlpha=false;
-	int file=_open(filename,_O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY,_S_IREAD|_S_IWRITE);
+	int file= file_open(filename, _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
 	if(file==-1)
 	{
 		return false;
@@ -252,7 +254,7 @@ bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int by
 bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 			 int& byte_per_pixel)
 {
-	int file=_open(filename,_O_RDONLY|_O_BINARY);
+	int file= file_open(filename, _O_RDONLY | _O_BINARY);
 	if(file==-1)
 	{
 		return false;
@@ -432,7 +434,7 @@ public:
     }
     
     virtual int load(const char *fname) {
-        std::string aviname = convert_path_resource(fname);
+        std::string aviname = convert_path_content(fname);
         if (aviname.empty()) {
             //VisError <<"cAVIImage File not found:"<<aviname<<VERR_END;
             return 1; // Couldn't open file
@@ -1081,7 +1083,7 @@ public:
     ///Loads from file
     virtual int load(const char *fname)
     {
-        std::string file_path = convert_path_resource(fname);
+        std::string file_path = convert_path_content(fname);
         if (file_path.empty()) {
             return 1;
         }
@@ -1219,7 +1221,7 @@ public:
     
     virtual int load(const char *fname)
     {
-        std::string file_path = convert_path_resource(fname);
+        std::string file_path = convert_path_content(fname);
         XStream s;
         s.open(file_path);
         s.read(&data, sizeof(ANIHeader));
@@ -1405,7 +1407,7 @@ cFileImage* cFileImage::Create(const char *fname)
         return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
     } else if(strstr(fname,".cur") || strstr(fname,".ani")) {
 	    //Since we don't know which ".cur" files are actually CUR or ANI... we do runtime checking
-        std::string file_path = convert_path_resource(fname);
+        std::string file_path = convert_path_content(fname);
         char type[4];
         XStream s;
         s.open(file_path);

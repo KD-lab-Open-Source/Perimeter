@@ -6,8 +6,6 @@
 #include "GameShell.h"
 #include "Universe.h"
 
-#include "lmcons.h"
-
 #include "../Terra/terra.h"
 
 #include <algorithm>

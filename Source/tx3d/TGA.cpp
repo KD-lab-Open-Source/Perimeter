@@ -1,14 +1,8 @@
 #include "stdafxTX3D.h"
 #include "TGA.hpp"
-/*
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <io.h>
-#include <stdio.h>
-*/
 #include <cstring>
 #include "xutil.h"
+#include "files/files.h"
 
 #include <windows.h>
 #include <stdio.h>
@@ -65,7 +59,7 @@ bool TGA::load(const char *fileName) {
 	memcpy(tmpPixels, pixels, width * height * bpp);
 //---------
 */
-    std::string filePath = convert_path_resource(fileName);
+    std::string filePath = convert_path_content(fileName);
 #ifndef _SURMAP_
 	ZIPStream file;
 #else
@@ -148,7 +142,7 @@ bool TGA::loadTest(const char *fileName) {
 	// Заголовок TGA фала
 	unsigned char Header[18];
 
-	FILE *File = fopen(convert_path_resource(fileName).c_str(), "rb");
+	FILE *File = fopen(convert_path_content(fileName).c_str(), "rb");
 	
     if (File == NULL) 
 	{

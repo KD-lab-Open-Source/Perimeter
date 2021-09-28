@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <vector>
+#include "files/files.h"
 #include "tweaks.h"
 #include "xutl.h"
 #include "xstream.h"
@@ -68,7 +70,7 @@ int XStream::open(const std::string& name, unsigned f)
 
 
     //Do a conversion for Windows -> POSIX paths
-    std::string path = convert_path(name.c_str());
+    std::string path = convert_path_native(name.c_str());
 
     std::fstream *file = open_file(path.c_str(), f);
     handler = file;

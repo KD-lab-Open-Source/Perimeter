@@ -72,6 +72,8 @@
 
 #include "BelligerentSelect.h"
 
+#include "files/files.h"
+
 const int REGION_DATA_FILE_VERSION = 8383;
 
 RandomGenerator logicRND;
@@ -823,11 +825,11 @@ void MissionDescription::restart()
 
 std::string resolve_mission_path(const std::string& path) {
     //First try full path as resource (existing file)
-    std::string conv = convert_path_resource(path.c_str());
+    std::string conv = convert_path_content(path);
     //Otherwise try only parent path (new file)
-    if (conv.empty()) conv = convert_path_resource(path.c_str(), true);
+    if (conv.empty()) conv = convert_path_content(path, true);
     //Otherwise just use provided path
-    if (conv.empty()) conv = convert_path(path.c_str());
+    if (conv.empty()) conv = convert_path_native(path.c_str());
     return conv;
 }
 

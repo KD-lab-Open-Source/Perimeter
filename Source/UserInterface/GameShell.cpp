@@ -42,6 +42,7 @@
 #include "XPrmArchive.h"
 #include "SoundScript.h"
 #include "BelligerentSelect.h"
+#include "files/files.h"
 #include <SDL.h>
 
 int terShowFPS = 0;
@@ -273,7 +274,7 @@ windowClientSize_(1024, 768)
 		missionEditor_ = new MissionEditor;
 
 	if(!MainMenuEnable){
-	    std::string resource_path = convert_path_resource("RESOURCE") + PATH_SEP;
+	    std::string resource_path = convert_path_content("RESOURCE") + PATH_SEP;
 		std::string name = resource_path;
 		std::string path;
 
@@ -296,7 +297,7 @@ windowClientSize_(1024, 768)
 			name = "XXX";
 		name = setExtention((path + name).c_str(), "spg");
 
-		if(!XStream(0).open(convert_path_resource(name.c_str()))) {
+		if(!XStream(0).open(convert_path_content(name))) {
 			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){
 				size_t pos = name.rfind(resource_path);
 				if(pos != std::string::npos)
@@ -1206,7 +1207,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		std::string saveName = CurrentMission.saveName();
 		std::string savesDir = UserSingleProfile::getAllSavesDirectory();
 		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
-			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
+			size_t pos = saveName.rfind(convert_path_content("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			universalSave(saveName.c_str(), false);
@@ -1219,7 +1220,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		std::string saveName = CurrentMission.saveName();
         std::string savesDir = UserSingleProfile::getAllSavesDirectory();
 		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
-			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
+			size_t pos = saveName.rfind(convert_path_content("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			//Несколько кривой участок кода, не будет работать с HT
@@ -1900,7 +1901,7 @@ void GameShell::ShotsScan()
 {
 	shotNumber_ = 0;
 
-    std::string path_str = convert_path(terScreenShotsPath);
+    std::string path_str = convert_path_native(terScreenShotsPath);
     create_directories(path_str.c_str());
 
     std::vector<std::string> paths;
@@ -1925,7 +1926,7 @@ void GameShell::MakeShot()
 	if(shotNumber_ == -1)
 		ShotsScan();
 	XBuffer fname(MAX_PATH);
-	fname < convert_path(terScreenShotsPath).c_str() < PATH_SEP < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
+	fname < convert_path_native(terScreenShotsPath).c_str() < PATH_SEP < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
 	shotNumber_++;
 	terRenderDevice->SetScreenShot(fname);
 }
@@ -1942,7 +1943,7 @@ void GameShell::startStopRecordMovie()
 		movieShotNumber_ = 0;
 		movieStartTime_ = frame_time();
 		
-        std::string path_str = convert_path(terMoviePath);
+        std::string path_str = convert_path_native(terMoviePath);
         create_directories(path_str.c_str());
 
         if (path_str.empty()) return;
@@ -2539,12 +2540,11 @@ void GameShell::preLoad() {
 	#endif
 
     //Load texts, don't delete already loaded ones but replace existing ones
-    for (const auto& entry : get_resource_paths_directory(getLocDataPath() + "Text")) {
-        std::string name = std::filesystem::path(entry.first).filename().string();
-        strlwr(name.data());
+    for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
+        std::string name = std::filesystem::path(entry->key).filename().string();
         if (name == "texts.btdb") continue;
         bool noreplace = name.rfind("_noreplace.") != std::string::npos;
-        qdTextDB::instance().load(entry.second.c_str(), nullptr, false, noreplace);
+        qdTextDB::instance().load(entry->path_content.c_str(), nullptr, false, noreplace);
     }
 }
 

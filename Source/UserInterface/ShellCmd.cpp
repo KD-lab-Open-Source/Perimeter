@@ -534,7 +534,7 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 		n_struct = UNIT_ATTRIBUTE_FLY_STATION1;
 		break;
     case SQSH_STATION_ELECTRO_LAB_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION1;
         }
         break;
@@ -567,7 +567,7 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 		n_struct = UNIT_ATTRIBUTE_GUN_SUBCHASER;
 		break;
     case SQSH_GUN_ELECTRO_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_CANNON;
         }
         break;
@@ -605,12 +605,12 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 
 
     case SQSH_SELPANEL_UPGRADE_ELECTRO1_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION2;
         }
         break;
     case SQSH_SELPANEL_UPGRADE_ELECTRO2_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION3;
         }
         break;
@@ -694,7 +694,7 @@ int Structure2ButtonID(int i)
 		id = SQSH_STATION3_ID;
 		break;
     case UNIT_ATTRIBUTE_ELECTRO_STATION1:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             id = SQSH_STATION_ELECTRO_LAB_ID;
         }
         break;
@@ -726,7 +726,7 @@ int Structure2ButtonID(int i)
 		id = SQSH_GUN_LASER_ID;
 		break;
     case UNIT_ATTRIBUTE_ELECTRO_CANNON:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             id = SQSH_GUN_ELECTRO_ID;
         }
         break;
@@ -965,17 +965,17 @@ STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id)
 		n = UNIT_ATTRIBUTE_SCUM_HEATER;
 		break;
     case SQSH_SQUAD_UNIT26:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n = UNIT_ATTRIBUTE_IMPALER;
         }
         break;
     case SQSH_SQUAD_UNIT27:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n = UNIT_ATTRIBUTE_EFLAIR;
         }
         break;
     case SQSH_SQUAD_UNIT28:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n = UNIT_ATTRIBUTE_CONDUCTOR;
         }
         break;

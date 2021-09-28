@@ -18,6 +18,7 @@
 
 #include "../gemsiii/filter.h"
 //#include "../../Terra/tgai.h"
+#include "files/files.h"
 
 static char* cache_dir="cache_font";
 
@@ -84,7 +85,7 @@ cFontInternal::~cFontInternal()
 bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class cFontImage* FontImage)
 {
 	ZIPStream rd;
-	if(!rd.open(convert_path_resource(filename).c_str()))
+	if(!rd.open(convert_path_content(filename).c_str()))
 	{
 		return false;
 	}
@@ -315,7 +316,7 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 
 	if(!fnt.Save(ftga.c_str()))
 		return false;
-	int file=_open(ffont.c_str(),_O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY,_S_IREAD|_S_IWRITE);
+	int file= file_open(ffont.c_str(), _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
 	if(file==-1)
 		return false;
 
@@ -339,7 +340,7 @@ bool cFontInternal::Load(const char* fname,cFontImage& fnt)
 	if(!fnt.Load(ftga.c_str()))
 		return false;
 
-	int file=_open(ffont.c_str(),_O_RDONLY|_O_BINARY);
+	int file= file_open(ffont.c_str(), _O_RDONLY | _O_BINARY);
 	if(file==-1)
 		return false;
 

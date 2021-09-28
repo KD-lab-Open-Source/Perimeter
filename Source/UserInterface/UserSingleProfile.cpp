@@ -4,6 +4,7 @@
 #include "GameShellSq.h"
 #include "Config.h"
 #include "xutil.h"
+#include "files/files.h"
 
 UserSingleProfile::UserSingleProfile() :
 		currentMissionNumber(-1),
@@ -33,9 +34,9 @@ void UserSingleProfile::scanProfiles() {
 
 	int maxIndex = -1;
 
-    for (const auto & entry : std::filesystem::directory_iterator(getAllSavesDirectory())) {
-        if (entry.is_directory()) {
-            std::string path = entry.path().filename().string();
+    for (const auto & entry : get_content_entries_directory(getAllSavesDirectory())) {
+        if (entry->is_directory) {
+            std::string path = std::filesystem::path(entry->path_content).filename().string();
             profiles.emplace_back(Profile(path));
         }
     }
@@ -148,7 +149,7 @@ void UserSingleProfile::deleteSave(const std::string& name) {
 }
 
 std::string UserSingleProfile::getAllSavesDirectory() {
-    return convert_path_resource("RESOURCE") + PATH_SEP + "Saves" + PATH_SEP;
+    return convert_path_content("Resource/Saves", true) + PATH_SEP;
 }
 
 std::string UserSingleProfile::getSavesDirectory() const {

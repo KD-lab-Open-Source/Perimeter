@@ -1,6 +1,7 @@
 
 #include "StdAfx.h"
 #include "Interpreter.hpp"
+#include "files/files.h"
 
 Interpreter::Year::~Year() {
 	for (int i = 0, s = commands.size(); i < s; i++) {
@@ -183,7 +184,7 @@ void Interpreter::clearYears() {
 
 bool Interpreter::loadProgram(const std::string& fileName) {
 	bool res = false;
-	FILE* file = fopen(convert_path_resource(fileName.c_str()).c_str(), "rt");
+	FILE* file = fopen(convert_path_content(fileName).c_str(), "rt");
 	if(file) {
 		clearYears();
 		res = true;

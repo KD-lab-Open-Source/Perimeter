@@ -12,6 +12,7 @@
 #include "Controls.h"
 #include "../Sound/PerimeterSound.h"
 #include "GraphicsOptions.h"
+#include "files/files.h"
 
 #include "Silicon.h"
 #include "HistoryScene.h"
@@ -56,7 +57,7 @@ bool intfCanHandleInput() {
 }
 
 std::string getOriginalMissionName(const std::string& originalSaveName) {
-	std::string res = convert_path(originalSaveName.c_str());
+	std::string res = convert_path_native(originalSaveName.c_str());
 	res.erase(res.size() - 4, res.size()); 
 	size_t pos = res.rfind(PATH_SEP);
 	if (pos != std::string::npos) {
@@ -242,16 +243,14 @@ STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, 
 STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	mapVector.clear();
-	std::string path_str = convert_path(path.c_str());
+	std::string path_str = convert_path_native(path.c_str());
     strlwr(path_str.data());
 	
 	//Collect files and order
 	std::vector<std::string> paths;
-    for (const auto & entry : get_resource_paths_directory(path_str)) {
-        std::string entry_path = entry.second;
-        strlwr(entry_path.data());
-        if (mask.empty() || endsWith(entry_path, mask)) {
-            paths.emplace_back(entry.second);
+    for (const auto & entry : get_content_entries_directory(path_str)) {
+        if (mask.empty() || endsWith(entry->key, mask)) {
+            paths.emplace_back(entry->path_content);
         }
     }
     sort(paths.begin(), paths.end());
@@ -2543,7 +2542,7 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 			delete [] mess;
 			showMessageBox();
 		} else {
-			std::string path = convert_path_resource(REPLAY_PATH, true);
+			std::string path = convert_path_content(REPLAY_PATH, true);
             create_directories(path.c_str());
 			path += PATH_SEP + input->getText();
 

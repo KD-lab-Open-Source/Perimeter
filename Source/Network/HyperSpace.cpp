@@ -6,8 +6,11 @@
 #include "Universe.h"
 #include "P2P_interface.h"
 #include "GameShell.h"
+#include "files/files.h"
 
+#ifdef _WIN32
 #include "lmcons.h"
+#endif
 
 
 bool net_log_mode=0;
@@ -140,7 +143,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-        create_directories(convert_path_resource(autoSavePlayReelDir, true).c_str());
+        create_directories(convert_path_content(autoSavePlayReelDir, true).c_str());
 	}
 
 	currentQuant=0;
@@ -162,7 +165,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 void getMissionDescriptionInThePlayReelFile(const char* fname, MissionDescription& md)
 {
-	XStream fi(convert_path_resource(fname).c_str(), XS_IN);
+	XStream fi(convert_path_content(fname).c_str(), XS_IN);
 
 	GUID fguid;
 	fi.read(&fguid, sizeof(fguid));
@@ -187,7 +190,7 @@ bool isCorrectPlayReelFile(const char* fname)
 
 bool terHyperSpace::loadPlayReel(const char* fname)
 {
-	XStream fi(convert_path_resource(fname), XS_IN);
+	XStream fi(convert_path_content(fname), XS_IN);
 
 	GUID fguid;
 	fi.read(&fguid, sizeof(fguid));
@@ -245,7 +248,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 {
 
 	XStream fo(0);
-	if(!fo.open(convert_path_resource(fname, true), XS_OUT)){
+	if(!fo.open(convert_path_content(fname, true), XS_OUT)){
 //		::MessageBox(0, "It is impossible to write down a game reel on a disk ", "Save play reel error:", MB_OK);
 		return SAVE_REPLAY_RW_ERROR;
 	}

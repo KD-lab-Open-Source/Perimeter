@@ -66,7 +66,7 @@ BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent) {
             return EMPIRE;
         case BELLIGERENT_EMPIRE4:
             //Infected vice acts as Empire in ET, harkback otherwise
-            return terGameContent == GAME_CONTENT::PERIMETER_ET ? EMPIRE : HARKBACK;
+            return terGameContentSelect == GAME_CONTENT::PERIMETER_ET ? EMPIRE : HARKBACK;
         case BELLIGERENT_NONE:
             break;
     }
@@ -120,7 +120,7 @@ void setupFrameHandler(CComboWindow* combo, int number, bool sendNetCommand, boo
     //Discard certain belligerents
     while (true) {
         terBelligerent selected = SelectableBelligerents[combo->pos];
-        if (unavailableContentBelligerent(selected)) {
+        if (unavailableContentBelligerent(selected, terGameContentSelect)) {
             if (direction) {
                 combo->pos++;
                 if (combo->pos >= combo->size) combo->pos = 0;

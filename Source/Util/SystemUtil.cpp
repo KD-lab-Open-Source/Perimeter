@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include "Config.h"
 #include "GameContent.h"
+#include "files/files.h"
 
 //#include <crtdbg.h>
 
@@ -279,7 +280,7 @@ const char* IniManager::get(const char* section, const char* key)
     static char path[MAX_PATH];
     
     if (!is_full_path) {
-        std::string pathres = convert_path_resource(fname_.c_str());
+        std::string pathres = convert_path_content(fname_);
         if (pathres.empty())
             ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
 
@@ -304,7 +305,7 @@ void IniManager::put(const char* section, const char* key, const char* val)
     static char path[MAX_PATH];
 
     if (!is_full_path) {
-        std::string pathres = convert_path_resource(fname_.c_str());
+        std::string pathres = convert_path_content(fname_);
         if(pathres.empty())
             ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
     
@@ -387,7 +388,7 @@ std::string getStringSettings(const std::string& keyName, const std::string& def
     bool found = false;
 
     IniManager* ini = getSettings();
-    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getEnumName(terGameContentBase);
+    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getGameContentEnumName(terGameContentBase);
     const char* result = ini->get(key.c_str(), keyName.c_str());
     if (result) {
         found = true;
@@ -421,7 +422,7 @@ std::string getStringSettings(const std::string& keyName, const std::string& def
 
 void putStringSettings(const std::string& keyName, const std::string& value) {
     IniManager* ini = getSettings();
-    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getEnumName(terGameContentBase); 
+    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getGameContentEnumName(terGameContentBase); 
     ini->put(key.c_str(), keyName.c_str(), value.c_str());
 }
 

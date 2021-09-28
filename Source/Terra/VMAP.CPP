@@ -5,6 +5,7 @@
 #include <climits>
 
 #include "../Util/SystemUtil.h"
+#include "files/files.h"
 
 #pragma warning( disable : 4554 )  
 
@@ -59,7 +60,7 @@ char* GetINIstringV(const std::string& iniFile,const char* section,const char* k
 {
 	static char buffer[255+1];
 	static char fullPath[MAX_PATH];
-	std::string path = convert_path_resource(iniFile.c_str());
+	std::string path = convert_path_content(iniFile);
     if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
 	if(_fullpath(fullPath, path.c_str(), MAX_PATH) == NULL) ErrH.Abort("Ini file not found: ", XERR_USER, 0, path.c_str());
 	if(!GetPrivateProfileString(section,key,"",buffer,255,fullPath)){//fullPath
@@ -71,7 +72,7 @@ void SaveINIstringV(const std::string& iniFile,const char* section,const char* k
 {
 	//WritePrivateProfileString(section,key,var,iniFile);
 	static char fullPath[MAX_PATH];
-	std::string path = convert_path_resource(iniFile.c_str());
+	std::string path = convert_path_content(iniFile);
     if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
     if(_fullpath(fullPath, path.c_str(), MAX_PATH) == NULL) ErrH.Abort("Ini file not found: ", XERR_USER, 0, path.c_str());
 	WritePrivateProfileString(section,key,var,fullPath);//fullPath
@@ -417,10 +418,8 @@ void vrtMap::prepare(char* name)
 
 	//Scan resources worlds and create table with name and path
 	wTable.clear();
-    for (const auto& entry : get_resource_paths_directory("resource/worlds")) {
-        std::string res_path = entry.second;
-        
-        std::filesystem::path path(entry.second);
+    for (const auto& entry : get_content_entries_directory("resource/worlds")) {
+        std::filesystem::path path(entry->path_content);
         if (std::filesystem::is_directory(path)) {            
             wTable.emplace_back(path.filename().string(), path.string());
         }

@@ -7,17 +7,10 @@
 #include <pwd.h>
 #include <string>
 #include <filesystem>
-#include <fcntl.h>
 #include <SimpleIni.h>
+#include "files/files.h"
 #include "xutl.h"
 
-//Usual open but with path conversion
-int _open(const char* path, int oflags, int sflags) {
-    //File may not exist, so we need to convert only parent path
-    bool parent_only = oflags & _O_CREAT;
-    std::string path_open = convert_path_resource(path, parent_only);
-    return open(path_open.c_str(), oflags, sflags);
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,7 +127,7 @@ char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) 
         if (malloced) {
             absolutePath = static_cast<char*>(malloc(maxLength));
         }
-        if (realpath(convert_path(relativePath).c_str(), absolutePath) != nullptr) {
+        if (realpath(convert_path_native(relativePath).c_str(), absolutePath) != nullptr) {
             return absolutePath;
         }
         if (malloced) {
@@ -145,7 +138,7 @@ char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) 
 }
 
 void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext) {
-    std::filesystem::path path_input = convert_path(path);
+    std::filesystem::path path_input = convert_path_native(path);
     
     //Not used, but just in case
     if (drive) {

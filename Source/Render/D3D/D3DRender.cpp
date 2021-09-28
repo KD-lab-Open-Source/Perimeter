@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "Font.h"
+#include "files/files.h"
 
 int sVertexXYZ::fmt		=	D3DFVF_XYZ;
 int sVertexXYZD::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE;
@@ -1961,7 +1962,7 @@ void cD3DRender::InitStandartIB()
 
 void cD3DRender::SaveStates(const char* fname)
 {
-	FILE* f=fopen(convert_path_resource(fname).c_str(),"wt");
+	FILE* f=fopen(convert_path_content(fname).c_str(),"wt");
 	fprintf(f,"Render state\n");
 #define W(s) {DWORD d;RDCALL(lpD3DDevice->GetRenderState(s,&d));fprintf(f,"%s=%x\n",#s,d); }
 	W(D3DRS_ZENABLE);

@@ -30,6 +30,7 @@
 
 #include "Universe.h"
 #include "../resource.h"
+#include "files/files.h"
 
 #include <SDL.h>
 #ifdef _WIN32
@@ -1154,7 +1155,7 @@ const std::string getLocale() {
             }
         }
         if (locale.empty()
-            || (convert_path_resource(("RESOURCE\\LocData\\" + locale + "\\").c_str()).empty())) {
+            || (convert_path_content("Resource/LocData/" + locale).empty())) {
             //Apparently on Steam the DefaultLanguage is Russian which gives issues when downloading game as non russian
             //so we try switching it in case we don't found on gamedata, in case English fails use Russian by default
             if (locale == "English") {

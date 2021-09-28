@@ -15,19 +15,22 @@
 #include "InterfaceScript.h"
 #include "GameContent.h"
 #include "BelligerentSelect.h"
+#include "files/files.h"
 
 ///////////////////////////////////////////////////////////////
 class EffectLibraryDispatcher
 {
 public:
 	EffectLibraryDispatcher(){ 
-		set_textures_path("RESOURCE\\FX\\TEXTURES");
+		set_textures_path(convert_path_content("RESOURCE\\FX\\TEXTURES").c_str());
 	}
 	~EffectLibraryDispatcher(){ }
 
 	/// добавляет библиотеку эффектов и загружает ее
 	const EffectLibrary* register_library(const char* lib_name)
 	{
+        if (lib_name == nullptr || *lib_name == '\0') return nullptr;
+        
 		EffectLibraryContainer::iterator it = libraries_.find(lib_name);
 		if(it != libraries_.end())
 			return &it -> second;
@@ -152,7 +155,7 @@ void AttributeBase::init()
         case UNIT_ATTRIBUTE_FRAME:
             switch (belligerent) {
                 case BELLIGERENT_EMPIRE4:
-                    if (terGameContent & GAME_CONTENT::PERIMETER && terGameContent & GAME_CONTENT::PERIMETER_ET) {
+                    if (terGameContentAvailable & GAME_CONTENT::PERIMETER && terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
                         //Okay this is Perimeter with ET extra content, use infected model we previously mapped from ET
                         std::string& logicName = modelData.logicName.value();
                         logicName.insert(logicName.find('.'), "_infected");
@@ -702,7 +705,7 @@ FileTime::FileTime(const char* fname)
         return;
     }
     std::error_code error;
-    auto ftime = std::filesystem::last_write_time(convert_path_resource(fname).c_str(), error);
+    auto ftime = std::filesystem::last_write_time(convert_path_content(fname).c_str(), error);
     if (error) {
 #if PERIMETER_DEBUG
         fprintf(stderr, "Error reading %s: %d %s\n", fname, error.value(), error.message().c_str());

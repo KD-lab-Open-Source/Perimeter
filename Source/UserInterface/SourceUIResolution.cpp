@@ -2,6 +2,7 @@
 #include "StdAfx.h"
 #include "SourceUIResolution.h"
 #include <sstream>
+#include "files/files.h"
 
 bool has_custom_resolutions = false;
 UIResolution source_ui_resolution(true, 0, 0);
@@ -71,8 +72,8 @@ void initSourceUIResolution() {
     }
     
     //Scan for extra resolutions
-    for (const auto & entry : get_resource_paths_directory("resource/icons/intf")) {
-        std::filesystem::path entry_path(entry.second);
+    for (const auto & entry : get_content_entries_directory("resource/icons/intf")) {
+        std::filesystem::path entry_path(entry->path_content);
         if (std::filesystem::is_directory(entry_path)) {
             std::string name = entry_path.filename().string();
             size_t pos = name.find('x');

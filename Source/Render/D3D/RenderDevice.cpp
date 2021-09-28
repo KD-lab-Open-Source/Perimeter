@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "xutil.h"
+#include "files/files.h"
 
 #include "Font.h"
 
@@ -70,7 +71,7 @@ return "Unknown error";
 
 void RDOpenLog(char *fname="RenderDevice.!!!")
 {
-	fRD=fopen(convert_path(fname).c_str(),"wt");
+	fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
 	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
 }
 int RDWriteLog(HRESULT err,char *exp,char *file,int line)

@@ -1,4 +1,5 @@
 #include "stdafxTr.h"
+#include "files/files.h"
 
 void TGAHEAD::save3layers(const char* fname,int sizeX,int sizeY,unsigned char* Ra,unsigned char* Ga,unsigned char* Ba)
 {//GetTargetName("outputnh.tga")
@@ -69,7 +70,7 @@ static XStream tgaFile(0);
 bool TGAHEAD::loadHeader(const char* fname)
 {
 	init();
-	if(!tgaFile.open(convert_path_resource(fname), XS_IN)) return 0;
+	if(!tgaFile.open(convert_path_content(fname), XS_IN)) return 0;
 	tgaFile.read(this,sizeof(TGAHEAD));
 	return true;
 }
