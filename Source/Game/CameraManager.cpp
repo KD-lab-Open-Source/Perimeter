@@ -9,9 +9,10 @@
 #include "GameShell.h"
 
 terCameraType* terCamera = NULL;
+int cameraTiltLock = 1;
 
 //Area to consider around the center in pixels
-const float CAMERA_MOUSE_DELTA_AREA = 3.0f * 3.0f;
+const float CAMERA_MOUSE_DELTA_AREA = 10.00f;
 //Threshold for dead area, in pixels
 const float CAMERA_MOUSE_DEAD_THRESHOLD = 0.5f;
 //Multiplier of delta speed from center to edge of area
@@ -149,6 +150,8 @@ terCameraType::terCameraType(cCamera* camera)
 
 	explodingDuration_ = 0;
 	explodingFactor_ = 0;
+    
+    IniManager("Perimeter.ini").getInt("Game","CameraTiltLock",cameraTiltLock);
 
 	update();
 }
@@ -325,6 +328,22 @@ void terCameraType::mouseQuant(const Vect2f& mousePos)
 	}
 }
 
+void limitValue(float& value, float limit) {
+    if (0 < value) {
+        value = std::max(0.0f, std::min(limit, value));
+    } else if (value < 0) {
+        value = std::min(0.0f, std::max(-limit, value));
+    }
+}
+
+void cooldownForce(float& force, float value) {
+    if (0 < force) {
+        force = std::max(0.0f, force - value);
+    } else if (force < 0) {
+        force = std::min(0.0f, force + value);
+    }
+}
+
 void terCameraType::tilt(Vect2f mouseDelta)
 {
 	if (gameShell->isCutSceneMode()) {
@@ -332,14 +351,23 @@ void terCameraType::tilt(Vect2f mouseDelta)
 	}
 
     //Keep it within bounds, in pixels
-    if (mouseDelta.distance2(Vect2f::ZERO) > CAMERA_MOUSE_DELTA_AREA * CAMERA_MOUSE_DELTA_AREA) {
-        mouseDelta.normalize(CAMERA_MOUSE_DELTA_AREA);
-    }
-    //printf("F %f V %f X %f\n", cameraPsiForce, cameraPsiVelocity, mouseDelta.x);
+    limitValue(mouseDelta.x, CAMERA_MOUSE_DELTA_AREA);
+    limitValue(mouseDelta.y, CAMERA_MOUSE_DELTA_AREA);
+    
+    //printf("X %f %f F %f V %f\n", mouseDelta.x, gameShell->mousePositionRelative().x, cameraPsiForce, cameraPsiVelocity);
     
     //Check if is tilting
-    tilting_ = CAMERA_MOUSE_DEAD_THRESHOLD < fabs(mouseDelta.y);//fabs(mouseDelta.x) < fabs(mouseDelta.y);
+    tilting_ = CAMERA_MOUSE_DEAD_THRESHOLD < fabs(mouseDelta.y);
     bool rotating = CAMERA_MOUSE_DEAD_THRESHOLD < fabs(mouseDelta.x);
+
+    //Do axis locking
+    if (cameraTiltLock) {
+        if (fabs(mouseDelta.y) <= fabs(mouseDelta.x)) {
+            tilting_ = false;
+        } else {
+            rotating = false;
+        }
+    }
  
     //Apply delta speed according to tilt limit range
     mouseDelta *= (CAMERA_KBD_ANGLE_SPEED_DELTA * CAMERA_MOUSE_DELTA_FACTOR) / CAMERA_MOUSE_DELTA_AREA;
@@ -391,22 +419,7 @@ void terCameraType::mouseWheel(int delta)
 		cameraZoomForce += CAMERA_ZOOM_SPEED_DELTA;
 }
 
-void limitValue(float& value, float limit) {
-    if (0 < value) {
-        value = std::max(0.0f, std::min(limit, value));
-    } else if (value < 0) {
-        value = std::min(0.0f, std::max(-limit, value));
-    }
-}
-
-void cooldownForce(float& force, float value) {
-    if (0 < force) {
-        force = std::max(0.0f, force - value);
-    } else if (force < 0) {
-        force = std::min(0.0f, force + value);
-    }
-}
-
+int tilting_count = 0;
 void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time, bool tilting)
 {
 	if(interpolationTimer_){
@@ -443,11 +456,11 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
         //Factor for force -> velocity effect
         const float zoom_factor = 40.0f;
         const float move_factor = 40.0f;
-        const float rotation_factor = 30.0f;
+        const float rotation_factor = 60.0f;
         //Limit for rotation velocity, this avoids too high rotation causing erratic behavior
-        const float rotation_velocity_limit = M_PI * 1.9f;
+        const float rotation_velocity_limit = M_PI * 2.0f;
         //Velocity damping factor
-        float damp_factor = delta_time * 0.8f;
+        float damp_factor = delta_time * 0.0005f;
         //Force cooldown factor
         float force_cooldown = delta_time * 10.0f;
         float rotation_force_cooldown = delta_time * 6.0f;
@@ -477,26 +490,41 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
         limitValue(cameraThetaForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotate_force_limit);
         cameraPsiVelocity   += cameraPsiForce*CAMERA_ANGLE_SPEED_MASS*rotation_factor;
         cameraThetaVelocity += cameraThetaForce*CAMERA_ANGLE_SPEED_MASS*rotation_factor;
+
+        //printf("D %f X %f F %f V %f T %d\n", 1.0f/delta_time, gameShell->mousePositionRelative().x, cameraPsiForce, cameraPsiVelocity, tilting);
         limitValue(cameraPsiVelocity, rotation_velocity_limit);
         limitValue(cameraThetaVelocity, rotation_velocity_limit);
-
-        //printf("D %f F %f V %f T %d\n", 1.0f/delta_time, cameraPsiForce, cameraPsiVelocity, tilting);
 		
 		coordinate().psi()   += cameraPsiVelocity*delta_time;
 		coordinate().theta() += cameraThetaVelocity*delta_time;
 		
-        cameraPsiVelocity   *= CAMERA_ANGLE_SPEED_DAMP * damp_factor;
-        cameraThetaVelocity *= CAMERA_ANGLE_SPEED_DAMP * damp_factor;
         cameraZoomVelocity  *= CAMERA_ZOOM_SPEED_DAMP * damp_factor;
         cameraPositionVelocity *= CAMERA_SCROLL_SPEED_DAMP * damp_factor;
+        cameraPsiVelocity   *= CAMERA_ANGLE_SPEED_DAMP * damp_factor;
+        cameraThetaVelocity *= CAMERA_ANGLE_SPEED_DAMP * damp_factor;
 
         cooldownForce(cameraZoomForce, CAMERA_ZOOM_SPEED_DELTA * force_cooldown);
-        if (!tilting) {
-            cooldownForce(cameraPsiForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
-            cooldownForce(cameraThetaForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
-        }
         cooldownForce(cameraPositionForce.x, CAMERA_BORDER_SCROLL_SPEED_DELTA * force_cooldown);
         cooldownForce(cameraPositionForce.y, CAMERA_BORDER_SCROLL_SPEED_DELTA * force_cooldown);
+
+        //Hnadle tilting mode cooldown
+        if (tilting) {
+            tilting_count = 2;
+            //Only cooldown the inactive axis
+            if (tilting_) {
+                cooldownForce(cameraPsiForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
+            } else  {
+                cooldownForce(cameraThetaForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
+            }
+        } else {
+            if (0 < tilting_count) {
+                //Might be a bogus update between mouse updates, don't apply cooldown yet
+                tilting_count -= 1;
+            } else {
+                cooldownForce(cameraPsiForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
+                cooldownForce(cameraThetaForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotation_force_cooldown);
+            }
+        }
 		
 		coordinate().check(restricted());
 	}
