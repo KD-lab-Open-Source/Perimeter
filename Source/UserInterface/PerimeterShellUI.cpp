@@ -2892,13 +2892,42 @@ void CMapWindow::draw(int bFocus)
 			//отрисовка кластеров
 			drawBitmap(m_bitmap);
 */
-			if(terCamera->restricted())
-			{
-				Vect2f vCamera[4];
+            sColor4f cameraColor(1,1,1,1);
+            if (terCamera->restricted()) {
+                Vect2f vCamera[4];
 				GetCameraViewPolygon(vCamera, vMap.hZeroPlast);
-
-				DrawPolygon(vCamera, 4, sColor4f(1,1,1,1));
-			}
+                DrawPolygon(vCamera, 4, cameraColor);
+            } else {
+                Vect2f vCamera[3];
+                const Vect3f pos = terCamera->GetCamera()->GetPos();
+                float t = std::sin(terCamera->coordinate().theta());
+                float d = terCamera->coordinate().distance();
+                //This gives a good enough approximate, ship it
+                float a = d * (static_cast<float>(terScreenSizeX) / static_cast<float>(terScreenSizeY) / 3.0f);
+                float r = -terCamera->coordinate().psi();
+                float at = std::abs(t);
+                if (t < 0) {
+                    r += M_PI / 2;
+                } else {
+                    r -= M_PI / 2;
+                }
+                //Where the camera is pointing at currently
+                Vect2f ground = Vect2f(
+                    pos.x + d * std::sin(r) * at,
+                    pos.y + d * std::cos(r) * at
+                );
+                //Assemble polygon
+                vCamera[0].x = pos.x;
+                vCamera[0].y = pos.y;
+                vCamera[1].x = ground.x + a * std::sin(r - M_PI_2);
+                vCamera[1].y = ground.y + a * std::cos(r - M_PI_2);
+                vCamera[2].x = ground.x + a * std::sin(r + M_PI_2);
+                vCamera[2].y = ground.y + a * std::cos(r + M_PI_2);
+                DrawPolygon(vCamera, 3, cameraColor);
+                //vCamera[1].x = ground.x;
+                //vCamera[1].y = ground.y;
+                //DrawPolygon(vCamera, 2, cameraColor);
+            }
 
 			terRenderDevice->FlushPrimitive2D();
 		}
