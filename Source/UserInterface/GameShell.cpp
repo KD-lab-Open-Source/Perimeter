@@ -443,9 +443,16 @@ void GameShell::GameStart(const MissionDescription& mission)
 	CurrentMission.packPlayerIDs();
 	new terUniverse(NetClient, CurrentMission, savePrm(), LoadProgressUpdate);
 
+    int fogEnable = 1;
+    IniManager("Perimeter.ini", false).getInt("Graphics", "FogEnable", fogEnable);
 	IniManager world_ini(GetTargetName(vMap.worldIniFile).c_str());
-	FogStart = world_ini.getFloat("Visualization Parameters","FogStart");
-	FogEnd = world_ini.getFloat("Visualization Parameters","FogEnd");
+    if (fogEnable) {
+        FogStart = world_ini.getFloat("Visualization Parameters", "FogStart");
+        FogEnd = world_ini.getFloat("Visualization Parameters", "FogEnd");
+    } else {
+        FogStart = 0;
+        FogEnd = 0;
+    }
 	world_ini.getFloatArray("Visualization Parameters","FogColor", 3, &FogColor.r);
 	FogColor /= 255;
 

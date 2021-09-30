@@ -151,7 +151,7 @@ terCameraType::terCameraType(cCamera* camera)
 	explodingDuration_ = 0;
 	explodingFactor_ = 0;
     
-    IniManager("Perimeter.ini").getInt("Game","CameraTiltLock",cameraTiltLock);
+    IniManager("Perimeter.ini", false).getInt("Game","CameraTiltLock",cameraTiltLock);
 
 	update();
 }
