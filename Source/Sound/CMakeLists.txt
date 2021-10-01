@@ -11,7 +11,7 @@ SET(Sound_SRCS
 IF(NOT PERIMETER_EXODUS_SOUND)
 SET(Sound_SRCS ${Sound_SRCS}
         C3D.cpp
-        init.cpp
+        PerimeterSound.cpp
         SoftwareBuffer.cpp
         SoundScript.cpp
         StdAfx.cpp
