@@ -160,6 +160,7 @@ void loadAddonET(const std::string& addonDir) {
     paths["resource/fx"] = "";
     paths["resource/effect"] = "";
     paths["resource/sounds/eff"] = "";
+    paths["resource/music"] = "";
     
     //Add AI scripts for battle so it uses electro units, also ETs map may require ET scripts
     paths["scripts/triggers/battle.scr"] = "";
