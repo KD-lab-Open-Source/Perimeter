@@ -84,9 +84,6 @@ IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus ExodusD3D9)
-ELSE()
-    ADD_SUBDIRECTORY("PlayOgg")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
@@ -133,7 +130,6 @@ ENDIF()
 INCLUDE_DIRECTORIES(
     "${PROJECT_SOURCE_DIR}/Source/Game"
     "${PROJECT_SOURCE_DIR}/Source/XTool"
-    "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
     "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
     "${PROJECT_SOURCE_DIR}/Source/Util"
     "${PROJECT_SOURCE_DIR}/Source/Render/inc"
@@ -325,8 +321,6 @@ IF(NOT PERIMETER_WINDOWS)
     ENDIF()
     #Make other modules depend on Exodus D3D9
     ADD_DEPENDENCIES(dependencies ExodusD3D9)
-ELSE()
-    ADD_DEPENDENCIES(PlayOgg dependencies)
 ENDIF()
 ADD_DEPENDENCIES(PluginMAX dependencies)
 ADD_DEPENDENCIES(Terra dependencies)
