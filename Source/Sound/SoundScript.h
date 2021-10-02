@@ -20,7 +20,12 @@ struct SoundDeltaPrm
 		down = 0.5; 
 	}
 
-#include "SoundScript-1251-1.inl"
+    SERIALIZE(ar) {
+        ar & TRANSLATE_OBJECT(enable, "&включить");
+        ar & TRANSLATE_OBJECT(random, "выбирать частоту звука случайно при его запуске");
+        ar & TRANSLATE_OBJECT(up, "Во сколько раз частота звука может увеличиваться (0..2)");
+        ar & TRANSLATE_OBJECT(down, "Во сколько раз частота звука может увеличиться (0..20)");
+    }
 };
 
 struct SoundSetupPrm
@@ -59,7 +64,24 @@ struct SoundSetupPrm
 		max_num_sound = 25;
 	}
 
-#include "SoundScript-1251-2.inl"
+    SERIALIZE(ar) {
+        ar & TRANSLATE_OBJECT(name, "&name");
+        ar & TRANSLATE_OBJECT(volume, "Громкость звука 0..1 (По умолчанию: 1)");
+        ar & TRANSLATE_OBJECT(volmin, "Минимальная громкость звука 0..1 (По умолчанию: 0)");
+
+        ar & TRANSLATE_OBJECT(language_dependency, "звук разный для разных языков");
+        ar & TRANSLATE_OBJECT(belligerent_dependency, "звук разный для разных воюющих сторон");
+
+        ar & TRANSLATE_OBJECT(soundName, "Название звука");
+        ar & TRANSLATE_OBJECT(additionalNames, "Дополнительные имена для RND");
+
+        ar & TRANSLATE_OBJECT(radius, "Величина объекта (только в 3D) с этого момента громкость звука начинает убывать (По умолчанию: 50)");
+        ar & TRANSLATE_OBJECT(max_radius, "Максимальное расстояние до объекта, после которого звук перестаёт быть слышимым (По умолчанию: oo)");
+
+        ar & TRANSLATE_OBJECT(max_num_sound, "Максимальное количество одновременно звучащих звуков (По умолчанию: 5)");
+
+        ar & TRANSLATE_OBJECT(delta, "Дельта");
+    }
 };
 
 struct SoundScriptPrm
@@ -72,7 +94,11 @@ struct SoundScriptPrm
 		is3D = false; 
 	}
 
-#include "SoundScript-1251-3.inl"
+    SERIALIZE(ar) {
+        ar & TRANSLATE_OBJECT(name, "&name");
+        ar & TRANSLATE_OBJECT(is3D, "звуки трёхмерные");
+        ar & TRANSLATE_OBJECT(data, "звуки");
+    }
 };
 
 struct SoundScriptTable
@@ -81,7 +107,10 @@ struct SoundScriptTable
 	std::vector<PrmString> belligerentPrefix;
 	std::vector<SoundScriptPrm> table;
 
-#include "SoundScript-1251-4.inl"
+    SERIALIZE(ar) {
+        ar & TRANSLATE_OBJECT(table, "table");
+        ar & TRANSLATE_OBJECT(belligerentPrefix, "Префикс имени файла для звуков, которые разные для разных воюющих сторон");
+    }
 };
 
 extern SingletonPrm<SoundScriptTable> soundScriptTable;
