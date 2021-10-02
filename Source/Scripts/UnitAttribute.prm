@@ -1764,7 +1764,7 @@ struct terUnitAttributeDataTable
 			craterRadius = 60;
 		};
 
-		damageMolecula = { 0,0,0,0,1000 };
+		damageMolecula = { 0,0,0,0,2000 };
 		constructionSpeedCoeff = 2;
 
 		FallAcceleration = -0.1;
@@ -1803,7 +1803,7 @@ struct terUnitAttributeDataTable
 			craterRadius = 60;
 		};
 
-		damageMolecula = { 0,0,0,0,2000 };
+		damageMolecula = { 0,0,0,0,3500 };
 		constructionSpeedCoeff = 2;
 
 		isUpgrade = 1;
@@ -1846,7 +1846,7 @@ struct terUnitAttributeDataTable
 			craterRadius = 60;
 		};
 
-		damageMolecula = { 0,0,0,0,3000 };
+		damageMolecula = { 0,0,0,0,5000 };
 		constructionSpeedCoeff = 2;
 
 		isUpgrade = 1;

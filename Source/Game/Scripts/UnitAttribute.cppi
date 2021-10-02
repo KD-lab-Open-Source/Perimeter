@@ -162,10 +162,10 @@ static terWeaponControllerSetup terUnitAttributeDataTable_GunElectro_terUnitAttr
   }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
 static terWeaponSetup terUnitAttributeDataTable_GunElectro_weaponSetup_462 = { WEAPON_LIGHTING 
  , 17, UNIT_ATTRIBUTE_NONE, 0, 1500, 300, 1000, 300, 0, &terUnitAttributeDataTable_GunElectro_terUnitAttributeDataTable_GunElectro_weaponSetup_462_controllerSetup_463 
- , 0.2f, { 10.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.1f, 500, 10, "reloadConsumption GunElectro" 
+ , 0.5f, { 10.f, 300.f }, 400.f, 0.f, 0, 2.f, { 0.1f, 1000, 10, "reloadConsumption GunElectro" 
   }, -360.f, 0 };
-static terUnitDamageData terUnitAttributeDataTable_GunElectro_damageData_461 = { { 25 
- , 25, -1, -1 }, 0, { 0, 0, -1, -1 } };
+static terUnitDamageData terUnitAttributeDataTable_GunElectro_damageData_461 = { { 15 
+ , 15, -1, -1 }, 0, { 0, 0, -1, -1 } };
 static terWeaponControllerSetup terUnitAttributeDataTable_GunLaser_terUnitAttributeDataTable_GunLaser_weaponSetup_459_controllerSetup_460 = { { "group bashnia" 
  , "group dulo" }, { "bashnia", "dulo" }, "targeting a", { 0.09f, 0.09f }, { 0.3f, 0.3f 
   }, { 0.f, 2.f }, { -0.5f, 0.5f }, { 0.f, 0.f } };
@@ -4668,7 +4668,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , "EXPLOD_07", 1, 0.f }, { EFFECT_ID_LASER_HIT, "laser", 1, 0.f }, { EFFECT_ID_EXPLOSION 
  , "", 1, 0.f } }, 1, { { UNIT_ATTRIBUTE_DEBRIS_UNIT, 5, -1, 150.f }, { UNIT_ATTRIBUTE_NONE 
  , 10, 10, 150.f } }, 70, UNIT_ATTRIBUTE_FALL_STRUCTURE, 60.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER 
- , 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0, 0, 0, 0, 1000 }, &basementDamageDefault 
+ , 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0, 0, 0, 0, 2000 }, &basementDamageDefault 
  , 0, 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 128, 0, 0, LEGION_GROUND, UNIT_ATTRIBUTE_NONE 
  , "", 1, 1, 0, 0, 0, 0, 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 7, 0, 2.f, 20, -2.f, -0.1f 
  , 0.4f, 0.6f, 1.1f, 6, "making", "main", 1, 3000, 1, 0.f, 0, 0, 1, { 0, { UNIT_ATTRIBUTE_NONE 
@@ -4686,7 +4686,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , "laser", 1, 0.f }, { EFFECT_ID_EXPLOSION, "", 1, 0.f } }, 1, { { UNIT_ATTRIBUTE_DEBRIS_UNIT 
  , 5, -1, 150.f }, { UNIT_ATTRIBUTE_NONE, 10, 10, 150.f } }, 70, UNIT_ATTRIBUTE_FALL_STRUCTURE 
  , 60.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER, 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0 
- , 0, 0, 0, 2000 }, &basementDamageDefault, 0, 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 128 
+ , 0, 0, 0, 3500 }, &basementDamageDefault, 0, 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 128 
  , 0, 0, LEGION_GROUND, UNIT_ATTRIBUTE_NONE, "", 1, 1, 0, 1, 0, 0, 3, 0.f, 0.f, 0.f 
  , 0.f, 0.f, 0, 1, 6, 0, 2.f, 20, -2.f, -0.1f, 0.4f, 0.6f, 1.1f, -1, "making1", "main" 
  , 1, 3000, 1, 0.f, 0, 0, 1, { 1, { UNIT_ATTRIBUTE_ELECTRO_STATION1, UNIT_ATTRIBUTE_NONE 
@@ -4704,7 +4704,7 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , "laser", 1, 0.f }, { EFFECT_ID_EXPLOSION, "", 1, 0.f } }, 1, { { UNIT_ATTRIBUTE_DEBRIS_UNIT 
  , 5, -1, 150.f }, { UNIT_ATTRIBUTE_NONE, 10, 10, 150.f } }, 70, UNIT_ATTRIBUTE_FALL_STRUCTURE 
  , 60.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER, 10, UNIT_ATTRIBUTE_NONE, 1.f }, 0, { 0 
- , 0, 0, 0, 3000 }, &basementDamageDefault, 0, 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 128 
+ , 0, 0, 0, 5000 }, &basementDamageDefault, 0, 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 0, 128 
  , 0, 0, LEGION_GROUND, UNIT_ATTRIBUTE_NONE, "", 1, 1, 0, 1, 0, 0, 3, 0.f, 0.f, 0.f 
  , 0.f, 0.f, 0, 1, 6, 0, 2.f, 20, -2.f, -0.1f, 0.4f, 0.6f, 1.1f, -1, "making2", "main1" 
  , 1, 3000, 1, 0.f, 0, 0, 1, { 1, { UNIT_ATTRIBUTE_ELECTRO_STATION2, UNIT_ATTRIBUTE_NONE 
@@ -5410,8 +5410,8 @@ terUnitAttributeDataTable unitAttributeDataTable = { { UNIT_ATTRIBUTE_FRAME
  , "", 1, 0.f } }, 1, { { UNIT_ATTRIBUTE_DEBRIS_UNIT, 5, -1, 150.f }, { UNIT_ATTRIBUTE_NONE 
  , 10, 10, 150.f } }, 50, UNIT_ATTRIBUTE_FALL_STRUCTURE, 20.f, UNIT_ATTRIBUTE_DESTRUCTION_CRATER 
  , 10, UNIT_ATTRIBUTE_NONE, 1.f }, &terUnitAttributeDataTable_GunElectro_damageData_461 
- , { 0, 0, 0, 0, 100 }, &basementDamageDefault, &terUnitAttributeDataTable_GunElectro_weaponSetup_462 
- , 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 1, 256, 827455, 0, LEGION_GROUND, UNIT_ATTRIBUTE_NONE 
+ , { 0, 0, 0, 0, 150 }, &basementDamageDefault, &terUnitAttributeDataTable_GunElectro_weaponSetup_462 
+ , 0, 1, 0, 1.f, 0.f, 0.f, 0.f, 1, 256, 795711, 0, LEGION_GROUND, UNIT_ATTRIBUTE_NONE 
  , "", 1, 1, 0, 0, 0, 0, 3, 0.f, 0.f, 0.f, 0.f, 0.f, 0, 1, 8, 1, 1.f, 5, -3.f, -0.2f 
  , 0.3f, 0.5f, 2.5f, 4, "making", "main", 1, 3000, 1, 0.f, 0, 0, 1, { 1, { UNIT_ATTRIBUTE_ELECTRO_STATION1 
  , UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }, 0, { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE 
