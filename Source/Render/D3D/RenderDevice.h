@@ -20,45 +20,6 @@ inline int Power2up(int n)
 
 const int POLYGONMAX=1024;
 
-enum eMaterialMode
-{
-	MAT_COLOR_ADD_SPECULAR	=1<<4,	
-
-	MAT_ALPHA_ADDBLENDALPHA	=1<<5,	
-	MAT_ALPHA_BLEND			=1<<6,	
-	MAT_ALPHA_ADDBLEND		=1<<7,	
-	MAT_ALPHA_SUBBLEND		=1<<29,
-	MAT_BUMP				=1<<9,
-    MAT_NORMAL				=1<<10,
-
-	MAT_ALPHA_TEST			=1<<8,
-
-	MAT_IS_BLEND			= MAT_ALPHA_ADDBLENDALPHA|MAT_ALPHA_BLEND|MAT_ALPHA_ADDBLEND|MAT_ALPHA_SUBBLEND,
-	// only d3d version
-	// render type
-	MAT_TEXMATRIX_STAGE1	=1<<16,
-	MAT_TEXNORMAL_STAGE2	=1<<18,
-	
-	MAT_RENDER_SPHEREMAP	=1<<22,
-	MAT_LIGHT				=1<<31
-};
-
-enum eRenderStateCullMode
-{
-    RENDERSTATE_CULL_NONE	=	1,
-    RENDERSTATE_CULL_CW		=	2,
-    RENDERSTATE_CULL_CCW	=	3,
-    RENDERSTATE_CULL_FORCE	=	0x7fffffff,
-};
-enum eRenderStateTextureAddress 
-{
-    TADDRESS_WRAP			= 1,
-    TADDRESS_MIRROR			= 2,
-    TADDRESS_CLAMP			= 3,
-    TADDRESS_BORDER			= 4,
-    TADDRESS_FORCE_DWORD	= 0x7fffffff, 
-};
-
 struct sTextureFormatData
 {
 	int rBitCount,gBitCount,bBitCount,aBitCount;
@@ -80,23 +41,6 @@ struct sTextureFormatData
 		rcount=rBitCount; gcount=gBitCount; bcount=bBitCount; acount=aBitCount;
 		rshift=rBitShift; gshift=gBitShift;	bshift=bBitShift; ashift=aBitShift;
 	}
-};
-
-struct sDataRenderMaterial
-{
-	sColor4f	Ambient;
-	sColor4f	Diffuse;
-	sColor4f	Specular;
-	sColor4f	Emissive;
-	float		Power;
-
-	float Phase;
-	int			mat;//eMaterialMode
-	cTexture	*Tex[2];
-	MatXf		TexMatrix;
-	float		MaterialAnimPhase;
-
-	sDataRenderMaterial()			{ Phase=0; MaterialAnimPhase=0; }
 };
 
 class cIUnkClass;

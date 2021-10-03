@@ -1,9 +1,14 @@
 #pragma once
 #include "tweaks.h"
 
+#ifndef PERIMETER_HEADLESS
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#define _WIN32_WINNT  0x0400
+//#define _WIN32_WINNT  0x0400
 #include <windows.h>
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <dplay8.h>
+#endif
 
 // Standart includes
 #include <climits>
@@ -27,31 +32,17 @@
 #include <float.h>
 #include <mmsystem.h>
 #include <commctrl.h>
-#include <dplay8.h>
 
 // STL
 #include <random>
 #include <vector>
 #include <list>
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-// non-standard header
-#include <slist>
-#endif
-
-// hash_map is an old and non-standard MS extension
-// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-#include <hash_map> 
-#else
 #include <unordered_map>
-#endif
 
 #include <map>
 #include <string>
 #include <deque>
 #include <algorithm>
-#include <d3d9.h>
-#include <d3dx9.h>
 
 // XTool
 #include "xutil.h"

@@ -18,6 +18,7 @@ OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
+OPTION(OPTION_HEADLESS "Enable headless mode (no window or rendering)" OFF)
 OPTION(OPTION_DXVK "Use dxvk-native for D3D9 API in Linux" ON)
 
 # Compiler detections
@@ -61,10 +62,20 @@ ELSE()
     SET(PERIMETER_EXODUS_SOUND ON)
 ENDIF()
 
+IF(OPTION_HEADLESS)
+    MESSAGE("Compiling headless build")
+    SET(OPTION_DXVK OFF)
+    add_definitions(-DPERIMETER_HEADLESS)
+ELSE()
+    ADD_DEFINITIONS(-DPERIMETER_D3D9)
+ENDIF()
+
 #Is a debug build?
 SET(PERIMETER_DEBUG OFF)
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
     SET(PERIMETER_DEBUG ON)
+    #On debug mode don't download every time unless its absent
+    SET(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 ENDIF()
 
 # Dependencies

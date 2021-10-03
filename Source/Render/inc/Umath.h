@@ -59,9 +59,9 @@ struct sColor4f
 	inline int GetG() const 						{ return (int)round(255*g); }
 	inline int GetB() const 						{ return (int)round(255*b); }
 	inline int GetA() const 						{ return (int)round(255*a); }
-	inline DWORD RGBA() const 						{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b) | ((int)round(255*a) << 24); }
-	inline DWORD GetRGB() const 					{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b); }
-	inline DWORD RGBGDI() const 					{ return (int)round(255*r) | ((int)round(255*g) << 8) | ((int)round(255*b) << 16); }
+	inline uint32_t RGBA() const 						{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b) | ((int)round(255*a) << 24); }
+	inline uint32_t GetRGB() const 					{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b); }
+	inline uint32_t RGBGDI() const 					{ return (int)round(255*r) | ((int)round(255*g) << 8) | ((int)round(255*b) << 16); }
 	inline void interpolate(const sColor4f &u,const sColor4f &v,float f) { r=u.r+(v.r-u.r)*f; g=u.g+(v.g-u.g)*f; b=u.b+(v.b-u.b)*f; a=u.a+(v.a-u.a)*f; }
 	inline void interpolate3(const sColor4f &u,const sColor4f &v,float f) { r=u.r+(v.r-u.r)*f; g=u.g+(v.g-u.g)*f; b=u.b+(v.b-u.b)*f; }
 	inline bool operator == (const sColor4f &color) const { return (r == color.r) && (g == color.g) && (b == color.b) && (a == color.a); }
@@ -88,8 +88,8 @@ struct sColor4c
 	inline sColor4c operator - (sColor4c &p)		{ return sColor4c(r-p.r,g-p.g,b-p.b,a-p.a); }
 	inline sColor4c operator * (int f) const 		{ return sColor4c(r*f,g*f,b*f,a*f); }
 	inline sColor4c operator / (int f) const 		{ if(f!=0) f=(1<<16)/f; else f=1<<16; return sColor4c((r*f)>>16,(g*f)>>16,(b*f)>>16,(a*f)>>16); }
-	inline DWORD  RGBA() const 						{ return ((const DWORD*)this)[0]; }
-	inline DWORD& RGBA()							{ return ((DWORD*)this)[0]; }
+	inline uint32_t  RGBA() const 						{ return ((const uint32_t*)this)[0]; }
+	inline uint32_t& RGBA()							{ return ((uint32_t*)this)[0]; }
 	unsigned char& operator[](int i)				{ return ((unsigned char*)this)[i];}
 
 	inline void interpolate(const sColor4c &u,const sColor4c &v,float f) { r=round(u.r+(v.r-u.r)*f); g=round(u.g+(v.g-u.g)*f); b=round(u.b+(v.b-u.b)*f); a=round(u.a+(v.a-u.a)*f); }
@@ -467,9 +467,9 @@ inline float FastInvSqrt(float x)
 
 		mov     y, eax                      // y
 		fld     _0_47                       // 0.47
-		fmul    DWORD PTR x                 // x*0.47
+		fmul    uint32_t PTR x                 // x*0.47
 
-		fld     DWORD PTR y
+		fld     uint32_t PTR y
 		fld     st(0)                       // y y x*0.47
 		fmul    st(0), st(1)                // y*y y x*0.47
 
@@ -502,15 +502,25 @@ inline float CrossLine(float x1,float y1,float m1,float n1,
 	return (m2*(y1-y2)-n2*(x1-x2))/f;
 }
 
+#ifndef PERIMETER_D3D9
+class CMatrix {
+    float _11, _12, _13, _14,
+          _21, _22, _23, _24,
+          _31, _32, _33, _34,
+          _41, _42, _43, _44;
+#else //PERIMETER_D3D9
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 #ifdef PERIMETER_EXODUS
 // D3DXMATRIX = CMatrix -> D3DMATRIX
 #include <d3d9types.h>
 class CMatrix : public D3DMATRIX {
-#else
+#else //PERIMETER_EXODUS
 // CMatrix -> D3DXMATRIX -> D3DMATRIX 
 #include <d3dx9math.h>
 class CMatrix : public D3DXMATRIX {
-#endif
+#endif //PERIMETER_EXODUS
+#endif //PERIMETER_D3D9
 public:
     operator void*() { return reinterpret_cast<void*>(this); }
     //operator D3DXMATRIX*() { return reinterpret_cast<D3DXMATRIX*>(this); }

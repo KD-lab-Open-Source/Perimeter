@@ -125,7 +125,10 @@ public:
 	void DrawLightmapShadow(cCamera *DrawNode);
 	cTexture* GetShadowMap();
 	cTexture* GetLightMap();
+
+#ifdef PERIMETER_D3D9
 	LPDIRECT3DSURFACE9 GetZBuffer();
+#endif
 	void FixShadowMapCamera(cCamera *DrawNode);
 
 	void RegisterUpdateMap(UpdateMapFunction f,void* data);

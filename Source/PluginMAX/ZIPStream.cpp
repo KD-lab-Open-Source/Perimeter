@@ -1,5 +1,7 @@
 #include "tweaks.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <cmath>
 #include <cstring>
 #include <xutil.h>

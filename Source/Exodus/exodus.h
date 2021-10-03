@@ -9,7 +9,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Win32 macros/types stuff
 
-/*
+typedef void* HANDLE;
+
+#ifdef PERIMETER_HEADLESS
 //Win32 types and their equivalent
  
 using INT     = int32_t;
@@ -60,9 +62,7 @@ struct SIZE {
     LONG cx;
     LONG cy;
 };
- */
-
-typedef void* HANDLE;
+#endif
 
 //For some reason not present in dxvk-native headers
 typedef uint8_t UCHAR;

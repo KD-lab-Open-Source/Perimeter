@@ -3,7 +3,6 @@ INCLUDE_DIRECTORIES(
         "inc"
         "src"
         "client"
-        "D3D"
         "${PROJECT_SOURCE_DIR}/Source/Util"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX/Inc"
         "${PROJECT_SOURCE_DIR}/Source/PluginMAX"
@@ -11,18 +10,6 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Render_SRCS
-        D3D/AdapterMode.cpp
-        D3D/D3DRender.cpp
-        D3D/D3DRenderDraw.cpp
-        D3D/D3DRenderTexture.cpp
-        D3D/D3DRenderTilemap.cpp
-        D3D/DrawType.cpp
-        D3D/OcclusionQuery.cpp
-        D3D/PoolManager.cpp
-        D3D/RenderDevice.cpp
-        D3D/clip/ClippingMesh.cpp
-        shader/shaders.cpp
-        D3D/StdAfxRD.cpp
         src/umath.cpp
         src/VisError.cpp
         src/Frame.cpp
@@ -54,7 +41,6 @@ SET(Render_SRCS
         src/TexLibrary.cpp
         src/Texture.cpp
         src/LogicGeneric.cpp
-        client/D3DRenderDrawClient.cpp
         client/ExternalObj.cpp
         client/ForceField.cpp
         client/SceneClient.cpp
@@ -68,6 +54,26 @@ SET(Render_SRCS
         src/VisGeneric.cpp
         src/VisGrid2d.cpp
 )
+
+IF (NOT OPTION_HEADLESS)
+    INCLUDE_DIRECTORIES(
+        "D3D"
+    )
+    SET(Render_SRCS ${Render_SRCS}
+        client/D3DRenderDrawClient.cpp
+        shader/shaders.cpp
+        D3D/AdapterMode.cpp
+        D3D/D3DRender.cpp
+        D3D/D3DRenderDraw.cpp
+        D3D/D3DRenderTexture.cpp
+        D3D/D3DRenderTilemap.cpp
+        D3D/DrawType.cpp
+        D3D/OcclusionQuery.cpp
+        D3D/PoolManager.cpp
+        D3D/RenderDevice.cpp
+        D3D/clip/ClippingMesh.cpp
+    )
+ENDIF()
 
 SET(Render_LINK_LIBS PluginMAX)
 

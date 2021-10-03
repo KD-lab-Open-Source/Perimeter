@@ -4,7 +4,6 @@
 #include "xutil.h"
 #include "files/files.h"
 
-#include <windows.h>
 #include <stdio.h>
 #include <fstream>
 
