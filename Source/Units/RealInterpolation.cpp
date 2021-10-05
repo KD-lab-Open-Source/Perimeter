@@ -451,10 +451,22 @@ void terSoundController::update()
 		sound_->SetFrequency(frequency_.x1());
 
 	if(terSoundEnable){
+        /*
+        if (needStart_) {
+            if(!isPlaying_)
+                isPlaying_ = sound_->Play(cycled_);
+            else
+                isPlaying_ = sound_->IsPlayed();
+
+            needStart_ = false;
+        } else if(isPlaying_) {
+            isPlaying_ = sound_->IsPlayed();
+        }
+        */
 		if(cycled_){
 			if(needStart_){
 				if(!isPlaying_)
-					isPlaying_ = sound_->Play(1);
+					isPlaying_ = sound_->Play(true);
 
 				needStart_ = false;
 			}
@@ -466,7 +478,7 @@ void terSoundController::update()
 		else {
 			if(needStart_){
 				if(!isPlaying_)
-					isPlaying_ = sound_->Play(0);
+					isPlaying_ = sound_->Play(false);
 				else
 					isPlaying_ = sound_->IsPlayed();
 

@@ -13,7 +13,7 @@ extern HWND hWndVisGeneric;
 extern int terSoundEnable;
 extern float terSoundVolume;
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 
 HistoryScene::HistoryScene() {
 	scene = 0;
@@ -540,7 +540,7 @@ void HistoryScene::setupAudio() {
 	if (!terSoundEnable) {
 		stopAudio();
 	}
-	voice.SetVolume( round(255 * terSoundVolume) );
+	voice.SetVolume(terSoundVolume);
 }
 
 void HistoryScene::startAudio(const string& name) {
@@ -551,7 +551,7 @@ void HistoryScene::startAudio(const string& name) {
 			playingVoice = true;
 			int ret = voice.OpenToPlay((getLocDataPath() + name).c_str(), 0);
 			xassert(ret);
-			voice.SetVolume( round(255 * terSoundVolume) );
+			voice.SetVolume(terSoundVolume);
 		}
 	}
 

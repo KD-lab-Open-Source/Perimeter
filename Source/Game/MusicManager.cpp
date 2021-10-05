@@ -15,11 +15,11 @@
 #include "Universe.h"
 #include "GameShell.h"
 
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "Config.hi"
 
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 extern std::string strMusic;
 extern SyncroTimer global_time;
 
@@ -37,7 +37,7 @@ class MusicClass
 
 	bool active;
 
-	MpegSound* mpeg;
+	MusicPlayer* mpeg;
 public:
 	MusicClass()
 	{

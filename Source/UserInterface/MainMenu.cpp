@@ -27,7 +27,7 @@
 extern char _bCursorVisible;
 extern char _bMenuMode;
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 extern LogStream fout;
 /////////////////////////////////////////////////////////////
 
@@ -125,7 +125,7 @@ STARFORCE_API void processInterfaceMessage(terUniverseInterfaceMessage id, int w
 
 					gameShell->prepareForInGameMenu();
 
-					_shellIconManager.playMusic("RESOURCE\\MUSIC\\victory.ogg");
+                    _shellIconManager.playGameOverSound("RESOURCE\\MUSIC\\victory.ogg");
 //					SND2DPlaySound("victory");
 
 					CTextWindow *Wnd = (CTextWindow*)_shellIconManager.GetWnd( SQSH_MM_RESULT_TXT );
@@ -177,7 +177,7 @@ STARFORCE_API void processInterfaceMessage(terUniverseInterfaceMessage id, int w
 
 					gameShell->prepareForInGameMenu();
 
-					_shellIconManager.playMusic("RESOURCE\\MUSIC\\defeat.ogg");
+                    _shellIconManager.playGameOverSound("RESOURCE\\MUSIC\\defeat.ogg");
 //					SND2DPlaySound("defeat");
 
 					CTextWindow *Wnd = (CTextWindow*)_shellIconManager.GetWnd( SQSH_MM_RESULT_TXT );
@@ -878,7 +878,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 		}
 		_shellIconManager.AddDynamicHandler(SwitchMenuBGQuant2, CBCODE_QUANT); //ждать пока не слетится BG
 		if (_id_on >= 0) {
-			if (!gb_Music.IsPlay()) {
+			if (!gb_Music.IsPlay() && !_shellIconManager.isInGameGroup()) {
 				PlayMusic( mainMenuMusic );
 			}
 			switch (_id_on) {
@@ -1169,7 +1169,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 						//show last splash
 						gameShell->reelAbortEnabled = lastReel.abortEnabled;
 						if (lastReel.video) {
-							gb_Music.SetVolume(0);
+							gb_Music.SetVolume(0.0f);
 							gb_Music.Stop();
 							gameShell->showReelModal(lastReel.name, 0, lastReel.localized);
 						} else {
@@ -1772,13 +1772,21 @@ void onMMBackFromProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int 
 }
 
 //briefing menu
+double lastClockSound = 0;
 void onMMYearBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if ( code == EVENT_DRAWWND ) {
 		CTextWindow* txtWnd = (CTextWindow*) pWnd;
 		char buffer[30 + 1];
-		if (currYear != historyScene.getController()->getCurrentYear()) {
+        int year = historyScene.getController()->getCurrentYear();
+		if (currYear != year) {
 			currYear = historyScene.getController()->getCurrentYear();
-			SND2DPlaySound("mainmenu_clock");
+            //Avoid too much clock noises at once
+            //We try to emulate the same random effect that DirectSound API gave in this situation
+            if (clockf() > lastClockSound) {
+                lastClockSound = clockf() + 50.0 + 50.0 * terEffectRND.frand();
+                SND2DPlaySound("mainmenu_clock");
+                //printf("clock! %d\n", currYear);
+            }
 		}
 		sprintf(buffer, "%d", currYear >= 0 ? currYear : 0);
 		std::string res(getItemTextFromBase("Year").c_str());

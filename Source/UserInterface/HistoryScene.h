@@ -3,7 +3,7 @@
 #ifndef _HISTORYSCENE_H
 #define _HISTORYSCENE_H
 
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "SCodeInterpreter/Interpreter.hpp"
 #include "SCodeInterpreter/Object3D.hpp"
 #include "Silicon.h"
@@ -155,7 +155,7 @@ class HistoryScene : public Commander {
 
 		bool bwMode;
 
-		MpegSound voice;
+		SpeechPlayer voice;
 		bool playingVoice;
 
 		std::string musicNamePath;

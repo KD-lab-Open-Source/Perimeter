@@ -2,17 +2,18 @@
 
 struct ScriptParam;
 #include "SoftwareBuffer.h"
+#include "SoundInternal.h"
 
 struct SNDOneBuffer
 {
 	ScriptParam* script;
 
 	Vect3f pos,velocity;
-	float volume;
+    float volume;
+    float frequency;
 
-	LPDIRECTSOUNDBUFFER buffer;
+    SND_Sample* buffer;
 	DWORD nSamplesPerSec;//Частота сэмпла см. WAVEFORMATEX
-	DWORD nAvgBytesPerSec;//Количество байтов в секунду
 
 	VirtualSound3D* p3DBuffer;
 
@@ -26,11 +27,11 @@ struct SNDOneBuffer
 	SNDOneBuffer();
 	~SNDOneBuffer();
 
-	inline HRESULT RecalculatePos();
+	inline bool RecalculatePos();
 	inline void RecalculateVolume();
 
 	//Автоматическое задание нестандартной частоты
-	HRESULT PlayPreprocessing();
+	void PlayPreprocessing();
 
 	bool SetFrequency(float frequency);
 };
@@ -69,7 +70,7 @@ struct ScriptParam
 	void RecalculateClipDistance();
 
 	MTSection* GetLock(){return &mtlock;};
-	std::vector<LPDIRECTSOUNDBUFFER>& GetSounds(){ASSERT(mtlock.is_lock());return sounds;}
+	std::vector<SND_Sample*>& GetSounds(){ASSERT(mtlock.is_lock());return sounds;}
 	std::vector<SNDOneBuffer>& GetBuffer(){ASSERT(mtlock.is_lock());return soundbuffer;}
 
 	bool incBelligerentIndex(int idx){ xassert(idx >= 0 && idx < belligerentIndex_.size()); belligerentIndex_[idx]++; return true; }
@@ -80,7 +81,7 @@ struct ScriptParam
 protected:
 	MTSection mtlock;
 	//Звуки, которые выбираются при загрузке по RND
-	std::vector<LPDIRECTSOUNDBUFFER> sounds;
+	std::vector<SND_Sample*> sounds;
 	std::vector<SNDOneBuffer> soundbuffer;
 	// количество звуков для разных воюющих сторон
 	std::vector<int> belligerentIndex_;

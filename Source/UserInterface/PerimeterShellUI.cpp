@@ -46,7 +46,7 @@ cFont* hFontMainmenu4 = 0;
 
 CShellComplexPushButton* workAreaBtnForInfo;
 
-MpegSound gb_Music;
+MusicPlayer gb_Music;
 std::string strMusic;
 
 void PlayMusic(const char *str = 0)
@@ -60,7 +60,7 @@ void PlayMusic(const char *str = 0)
 	gb_Music.Stop();
 	if( !terMusicEnable || strMusic.empty() ) return;
 	int ret = gb_Music.OpenToPlay(strMusic.c_str(),1);
-	gb_Music.SetVolume( round(255*terMusicVolume) );
+	gb_Music.SetVolume(terMusicVolume);
 }
 
 void MusicEnable(int enable)
@@ -127,7 +127,7 @@ std::string getImageFileName(const sqshImage* image, const char* fileName) {
 
 void SetVolumeMusic(float f)
 {
-	gb_Music.SetVolume( round(255*terMusicVolume) );
+	gb_Music.SetVolume(terMusicVolume);
 }
 
 inline void draw_progress(cTexture* texture, int x, int y, int sx, int sy, sColor4c& clr, float fPercent)
@@ -4134,7 +4134,6 @@ void ChatWindow::OnLButtonDblClk(float _x, float _y)
 //
 CSliderWindow::CSliderWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(id, pParent, p)
 {
-	sounded = false;
 	target=-1;
 	bPress=0; pos=0;
 	m_hTextureBG = 0;
@@ -4189,6 +4188,7 @@ void CSliderWindow::draw(int bFocus)
 				m_handler(this, EVENT_SLIDERUPDATE, 0);
 		} else {
 			bPress = 0;
+            m_handler(this, EVENT_UNPRESSED, 0);
 		}
 	}
 
@@ -4247,23 +4247,22 @@ void CSliderWindow::draw(int bFocus)
 }
 void CSliderWindow::OnLButtonDown(float _x, float _y)
 {
-	if( bPress ) return;
-	float mx = _x*terRenderDevice->GetSizeX();
-	if (mx <= (x + thumbSize / 2)) {
-		pos-=0.05f; 
-		if( pos < 0 ) pos=0;
-	} else if (mx >= (x + sx - thumbSize / 2)) {
-		pos+=0.05f; 
-		if( pos > 1 ) pos=1;
-	} else {
-		bPress = 1;
-		pos = (mx - x - thumbSize / 2) / (sx - thumbSize);
-	}
-	if (sounded) {
-		SND2DPlaySound("mainmenu_clock");
-	}
-	if(m_handler)
-		m_handler(this, EVENT_SLIDERUPDATE, 0);
+    if( bPress ) return;
+    float mx = _x*terRenderDevice->GetSizeX();
+    if (mx <= (x + thumbSize / 2)) {
+        pos-=0.05f;
+        if( pos < 0 ) pos=0;
+    } else if (mx >= (x + sx - thumbSize / 2)) {
+        pos+=0.05f;
+        if( pos > 1 ) pos=1;
+    } else {
+        bPress = 1;
+        pos = (mx - x - thumbSize / 2) / (sx - thumbSize);
+    }
+    if(m_handler) {
+        m_handler(this, EVENT_SLIDERUPDATE, 0);
+        m_handler(this, EVENT_PRESSED, 0);
+    }
 }
 int CSliderWindow::HitTest(float xT, float yT)
 {

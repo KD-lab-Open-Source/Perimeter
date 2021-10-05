@@ -1,11 +1,11 @@
 #include "StdAfx.h"
 #include "ReelManager.h"
 #include "Runtime.h"
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "GameShell.h"
 #include "GameShellSq.h"
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 //extern GameShell* gameShell;
 
 ReelManager::ReelManager() {
@@ -39,7 +39,7 @@ void ReelManager::showModal(const char* binkFileName, const char* soundFileName,
 	std::string soundPath = soundFileName ? soundFileName : "";
 
 	if (!soundPath.empty() && soundPath != "empty" && stopBGMusic) {
-		int ret = gb_Music.OpenToPlay(soundFileName);
+		int ret = gb_Music.OpenToPlay(soundFileName, true);
 		xassert(ret);
 	}
 

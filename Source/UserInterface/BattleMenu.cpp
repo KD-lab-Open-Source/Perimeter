@@ -22,7 +22,7 @@
 #include "BelligerentSelect.h"
 #include "files/files.h"
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 extern MissionDescription missionToExec;
 extern BGScene bgScene;
 

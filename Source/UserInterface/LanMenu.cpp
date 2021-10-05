@@ -19,7 +19,7 @@
 #include "GameContent.h"
 
 extern LogStream fout;
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 
 extern bool menuChangingDone;
 

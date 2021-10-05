@@ -441,11 +441,13 @@ void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	CSliderWindow *pSlider = (CSliderWindow*) pWnd;
 	if( code == EVENT_SLIDERUPDATE ) {
-		SNDSetVolume( terSoundVolume = pSlider->pos );
-		historyScene.setupAudio();
-		_shellIconManager.setupAudio();
+        terSoundVolume = pSlider->pos;
+    } else if ( code == EVENT_UNPRESSED ) {
+        SNDSetVolume( terSoundVolume = pSlider->pos );
+        historyScene.setupAudio();
+        _shellIconManager.setupAudio();
+        SND2DPlaySound("mainmenu_clock");
 	} else if ( code == EVENT_CREATEWND ) {
-		pSlider->sounded = true;
 		SNDSetVolume( pSlider->pos = terSoundVolume );
 		historyScene.setupAudio();
 		_shellIconManager.setupAudio();

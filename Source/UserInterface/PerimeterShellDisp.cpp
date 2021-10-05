@@ -34,7 +34,7 @@ extern int mt_interface_quant;
 
 const float fCursorWorkareaDefaultHeight = 700;
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 
 extern bool  bNoUnitAction;
 extern bool  bNoTracking;
@@ -1094,7 +1094,7 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 	m_pModalWnd = 0;
 
 	if (nGroup == SHELL_LOAD_GROUP_GAME) {
-		speechSound = new MpegSound();
+		speechSound = new SpeechPlayer();
 		resultMusicStarted = false;
 	}
 
@@ -1356,14 +1356,13 @@ void CShellIconManager::Toggle(bool game_active)
 void CShellIconManager::speedChanged(float speed) {
 	if (speechSound) {
 		if (speed) {
-			if (speechSound->IsPlay() == MPEG_PAUSE) {
+			if (speechSound->IsPause()) {
 				speechSound->Resume();
 			}
 		} else {
-			if (speechSound->IsPlay() == MPEG_PLAY) {
+			if (!speechSound->IsPause() && speechSound->IsPlay()) {
 				speechSound->Pause();
 			}
-
 		}
 	}
 }
@@ -1375,32 +1374,31 @@ float CShellIconManager::playSpeech(const char* id) {
 		if(pos != std::string::npos)
 			sound.erase(0, pos);
 		std::string soundName = getLocDataPath() + sound;
+        speechSound->requestPlay(true); //Avoid SNDEnableVoices being enabled again too soon
 		SNDEnableVoices(false);
-		speechSound->SetVolume(round(255*terSoundVolume));
+		speechSound->SetVolume(terSoundVolume);
 		int ret = speechSound->OpenToPlay(soundName.c_str(), false);
 		xassert(ret);
 		return speechSound->GetLen();
 	}
 	return 0;
 }
-void CShellIconManager::playMusic(const char* musicNamePath) {
+void CShellIconManager::playGameOverSound(const char* path) {
 	if (terSoundEnable && speechSound) {
-		gb_Music.FadeVolume(0.5f, 0 );
-		speechSound->FadeVolume(0.5f, round(255*terSoundVolume) );
+		gb_Music.FadeVolume(0.5f, 0.0f);
+        speechSound->Stop();
+		speechSound->SetVolume(terSoundVolume);
 		resultMusicStarted = true;
-		int ret = speechSound->OpenToPlay(musicNamePath, false);
-		xassert(ret);
+		int ret = speechSound->OpenToPlay(path, false);
+        xassert(ret);
 	}
-}
-bool CShellIconManager::isSpeechPlay() {
-	return speechSound ? speechSound->IsPlay() : false;
 }
 void CShellIconManager::setupAudio() {
 	if (speechSound) {
 		if (!terSoundEnable) {
 			speechSound->Stop();
 		}
-		speechSound->SetVolume( round(255 * terSoundVolume) );
+		speechSound->SetVolume(terSoundVolume);
 	}
 }
 
@@ -2030,13 +2028,10 @@ void CShellIconManager::quant(float dTime)
 		SNDEnableVoices(true);
 	}
 
-	if (
-			speechSound
-		&&	!speechSound->IsPlay()
-		&&	resultMusicStarted ) {
-
-		resultMusicStarted = false;
-		gb_Music.FadeVolume(2, round(255*terMusicVolume) );
+    //Start music again after victory/defeat sound
+    if (resultMusicStarted && speechSound && !speechSound->IsPlay()) {
+        resultMusicStarted = false;
+		gb_Music.FadeVolume(2.0f, terMusicVolume);
 	}
 
 	gameShell->getLogicUpdater().lock();

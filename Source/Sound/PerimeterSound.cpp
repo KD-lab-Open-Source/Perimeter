@@ -4,85 +4,45 @@
 #include "../Render/inc/RenderMT.h"
 #include "C3D.h"
 #include "SoundScript.h"
+#include "Sample.h"
+#include "files/files.h"
 
-static LPDIRECTSOUND8 g_pDS = 0;
+#define SND_CHUNK_SIZE 1024
+
+//Audio formats
+#define AUDIO_FORMAT_8 AUDIO_S8
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#define AUDIO_FORMAT_16 AUDIO_S16LSB
+#else
+#define AUDIO_FORMAT_16 AUDIO_S16MSB
+#endif
+
 static bool g_enable_sound = false;
 static bool g_enable_voices = true;
 
 SND3DListener snd_listener;
 
-static float global_volume=1;
 static char sound_directory[260]="";
 
 namespace SND {
+float global_volume = 1.0f;
+int deviceFrequency = 0;
+int deviceChannels = 0;
+Uint16 deviceFormat = 0;
+bool has_sound_init = false;
+    
 FILE* snd_error=NULL;
-
-const float DB_MIN=-10000.0f;
-const float DB_MAX=0;
-const float DB_SIZE=10000.0f;
-
-int FromDirectVolume(long vol)
-{
-	double v=exp((exp(((vol-DB_MIN)/(double)DB_SIZE)*log(10.))-1.0)*log(2.0)*8/9.0)-1;
-	
-	return round(v);
-}
-
-long ToDirectVolume(int vol)
-{
-	double t1=9.0*log(double(vol + 1))/(log(2.0)*8) + 1.0;
-	double t2=log10(t1)*DB_SIZE;
-
-	int v = DB_MIN + round(t2);
-	return v;
-}
-
-long ToDirectVolumef(float vol);
-
-long ToPan(double vol)
-{
-	double sgn=vol>0?1:-1;
-
-	vol=fabs(vol);
-	if(vol>1)vol=1;
-	vol=(1-vol)*255;
-
-	int v = DB_MIN + round(
-		log10(
-			  9.0*log(double(vol + 1))/(log(2.0)*8) + 1.0
-			 )*DB_SIZE
-		);
-	return round(-sgn*v);
-}
-/*
-long ToDirectVolumef(float volume)
-{
-	long vol=ToDirectVolume(volume*255.0f);
-	vol += round((1.0f - global_volume) * (float)(-DB_SIZE - vol));
-	return vol;
-}
-/*/
-long ToDirectVolumef(float volume)
-{
-	long vol=ToDirectVolume(volume*255.0f);
-	long vol1=ToDirectVolume(global_volume*255.0f);
-	vol+=vol1;
-	if(vol<DB_MIN)
-		vol=DB_MIN;
-	
-	return vol;
-}
-/**/
 
 static float width2d=1,power2d_width=1;
 
-int PanByX(float x)
+float PanByX(float x)
 {
-	if(x<0)x=0;
-	if(x>width2d)x=width2d;
-	double xx=(2.0f*x-width2d)*power2d_width;
+    if(x<0)x=0;
+    if(x>width2d)x=width2d;
+    float xx= (2.0f * x - width2d) * power2d_width;
+    xx = power2d_width + xx / 2.0f;
 
-	return ToPan(xx);
+    return xx;
 }
 
 void logs(const char *format, ...)
@@ -99,23 +59,14 @@ void logs(const char *format, ...)
 
 
 int pause_level=0;
-
-LARGE_INTEGER timer_frequency;
-void InitTimer()
-{
-	QueryPerformanceFrequency(&timer_frequency);
-}
-
-double GetTime()
-{
-	LARGE_INTEGER PerformanceCount;
-	QueryPerformanceCounter(&PerformanceCount);
-	return PerformanceCount.QuadPart/(double)timer_frequency.QuadPart;
-}
-
 };
 
 using namespace SND;
+
+void SND2DPanByX(float width,float power) {
+    width2d = width;
+    power2d_width = power/width;
+}
 
 void SNDSetLocDataDirectory(LPCSTR dir)
 {
@@ -127,36 +78,24 @@ void SNDSetBelligerentIndex(int idx)
 	SNDScript::setBelligerentIndex(idx);
 }
 
-void* SNDGetDirectSound()
-{
-	return g_pDS;
-}
-
 void SNDEnableSound(bool enable)
 {
-	g_enable_sound = enable && g_pDS;
-	if(!enable)
+	g_enable_sound = enable && has_sound_init;
+	if(!enable && has_sound_init)
 		SNDStopAll();
 }
 
 void SNDEnableVoices(bool enable)
 {
-	g_enable_voices = enable;
+	g_enable_voices = enable && has_sound_init;
 
-	if(!enable)
+	if(!enable && has_sound_init)
 		script2d.StopAllVoices();
 }
 
 bool SNDIsVoicesEnabled() {
 	return g_enable_voices;
 }
-
-void SND2DPanByX(float width,float power)
-{
-	width2d=width;
-	power2d_width=power/width;
-}
-
 
 void SNDSetSoundDirectory(LPCSTR dir)
 {
@@ -169,139 +108,130 @@ LPCSTR SNDGetSoundDirectory()
 	return sound_directory;
 }
 
-bool SNDInitSound(HWND hWnd,bool bEnable3d,bool _soft3d)
+void AllocateMixChannel(int channel, int group) {
+    //printf("AllocateMixChannel %d -> %d\n", channel, group);
+    int ret = Mix_GroupChannel(channel, group);
+    if (ret != 1) {
+        fprintf(stderr, "Error AllocateMixChannel %d -> %d ret = %d\n", channel, group, ret);
+    }
+}
+
+bool SNDInitSound(int mixChannels)
 {
 	SNDReleaseSound();
 
-	snd_hWnd=hWnd;
-	initclock();
+    int flags = MIX_INIT_OGG;
+    int initted = Mix_Init(flags);
+    if ((initted&flags) != flags) {
+        fprintf(stderr, "Mix_Init: Failed to init required ogg support %s\n", Mix_GetError());
+    }
 
-#if 0
-	{
-		InitTimer();
-		timeBeginPeriod(1);
-		double beg1=GetTime()*1000.0;
-		double beg=clockf();
-
-		DWORD beg2=timeGetTime();
-
-		const int maxi=1000000;
-		for(int i=0;i<maxi;i++)
-		{
-			double d=GetTime();
-		}
-
-		char s[256];
-
-		double end=clockf();
-		double end1=GetTime()*1000.0;
-		DWORD end2=timeGetTime();
-
-		double dd=((end1-beg1)-(end-beg))/(end-beg);
-		sprintf(s,"time0=%f ms,time1=%f,time2=%i,error01=%f \n",
-					end-beg,end1-beg1,end2-beg2,dd);
-		OutputDebugString(s);
-
-		//timeEndPeriod(1);
-	}
-#endif
-
-	HRESULT hr;
-
-    // Create IDirectSound using the primary sound device
-    if( FAILED( hr = DirectSoundCreate8( NULL, &g_pDS, NULL ) ) )
-	{
-		logs("Cannot create DirectSoundCreate8\n");
-        return false;
-	}
-
-    // Set DirectSound coop level 
-    if( FAILED( hr = g_pDS->SetCooperativeLevel( snd_hWnd, DSSCL_PRIORITY ) ) )
-	{
-		logs("Cannot SetCooperativeLevel\n");
-		SNDReleaseSound();
-        return false;
-	}
-    
-    // Get the primary buffer 
-	LPDIRECTSOUNDBUFFER pDSBPrimary = NULL;
-
-    DSBUFFERDESC        dsbd;
-    ZeroMemory( &dsbd, sizeof(DSBUFFERDESC) );
-    dsbd.dwSize        = sizeof(DSBUFFERDESC);
-    dsbd.dwFlags       = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRL3D;
-    dsbd.dwBufferBytes = 0;
-    dsbd.lpwfxFormat   = NULL;
-       
-    if(FAILED(hr=g_pDS->CreateSoundBuffer(&dsbd,&pDSBPrimary,NULL)))
-	{
-		logs("Cannot CreateSoundBuffer primary\n");
-		SNDReleaseSound();
-        return false;
-	}
-
+    //Choose audio device
 	struct FORMATS
 	{
-		int cannels;
-		int herz;
+		int channels;
+		int hertz;
 		int bits;
-	} formats[]=
-	{
-		{1,22050,8},
-		{2,22050,8},
-		{1,22050,16},
-		{2,22050,16},
-		{1,44100,16},
-		{2,44100,16},
+	}
+    formats[] = {
+		{1,22050,AUDIO_FORMAT_8},
+		{1,22050,AUDIO_FORMAT_16},
+        {1,44100,AUDIO_FORMAT_16},
+        {2,22050,AUDIO_FORMAT_8},
+		{2,22050,AUDIO_FORMAT_16},
+		{2,44100,AUDIO_FORMAT_16},
 	};
 
-	for(int i=SIZE(formats)-1;i>=0;i--)
-	{
-		WAVEFORMATEX wfx;
-		ZeroMemory( &wfx, sizeof(WAVEFORMATEX) ); 
-		wfx.wFormatTag      = WAVE_FORMAT_PCM; 
-		wfx.nChannels       = formats[i].cannels; 
-		wfx.nSamplesPerSec  = formats[i].herz; 
-		wfx.wBitsPerSample  = formats[i].bits; 
-		wfx.nBlockAlign     = wfx.wBitsPerSample / 8 * wfx.nChannels;
-		wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-
-		hr = pDSBPrimary->SetFormat(&wfx);
-		if(!FAILED(hr))
-			break;
+	for(int i=SIZE(formats)-1;i>=0;i--) {
+        if (Mix_OpenAudio(formats[i].hertz, formats[i].bits, formats[i].channels, SND_CHUNK_SIZE) == 0) {
+            has_sound_init = true;
+            break;
+        } else {
+            fprintf(stderr, "Mix_OpenAudio error with format %i: %s\n", i, Mix_GetError());
+        }
 	}
+    
+    if (!has_sound_init) {
+        logs("All Mix_OpenAudio failed!\n");
+        return false;
+    }
+    
+    //Query format info of device
+    int numtimesopened = Mix_QuerySpec(&deviceFrequency, &deviceFormat, &deviceChannels);
+    if(!numtimesopened) {
+        fprintf(stderr, "Mix_QuerySpec error: %s\n",Mix_GetError());
+        has_sound_init = false;
+        return false;
+    }
+#ifdef PERIMETER_DEBUG
+    else {
+        char *format_str="Unknown";
+        switch(deviceFormat) {
+            case AUDIO_U8: format_str="U8"; break;
+            case AUDIO_S8: format_str="S8"; break;
+            case AUDIO_U16LSB: format_str="U16LSB"; break;
+            case AUDIO_S16LSB: format_str="S16LSB"; break;
+            case AUDIO_U16MSB: format_str="U16MSB"; break;
+            case AUDIO_S16MSB: format_str="S16MSB"; break;
+        }
+        printf("Audio opened=%d times frequency=%dHz format=%s channels=%d\n", numtimesopened, deviceFrequency, format_str, deviceChannels);
+    }
+#endif
 
-	SAFE_RELEASE(pDSBPrimary);
-	if(FAILED(hr))
-	{
-		logs("Cannot set format primary sound buffer\n");
-		SNDReleaseSound();
-		return false;
-	}
+    initclock();
 
+    //Allocate and reserve all channels for groups
+    Mix_AllocateChannels(mixChannels);
+    Mix_ReserveChannels(mixChannels);
+    
+    //Reserve one for speech
+    int index = 0;
+    AllocateMixChannel(index++, SND_GROUP_SPEECH);
+    if (4 <= (mixChannels - index)) {
+        //Reserve effects per type
+        int looped = index + static_cast<int>(mixChannels * 0.30);
+        for (; index < looped; index++) {
+            AllocateMixChannel(index, SND_GROUP_EFFECTS_LOOPED);
+        }
+        int once = index + static_cast<int>(mixChannels * 0.30);
+        for (; index < once; index++) {
+            AllocateMixChannel(index, SND_GROUP_EFFECTS_ONCE);
+        }
+    }
+    //Assign the rest to common effects group
+    for (; index < mixChannels; index++) {
+        AllocateMixChannel(index, SND_GROUP_EFFECTS);
+    }
+    
+    SNDSetupChannelCallback(true);
 
 	pause_level = 0;
+
 	SNDEnableSound(true);
-	static DWORD n=4294948478;
-	float f=n;
+
 	return true;
 }
 
-void SNDReleaseSound()
+void SNDReleaseSound() 
 {
-	if(snd_hWnd==NULL)return;
+	if (!has_sound_init) return;
+
+    has_sound_init = false;
+
+    SNDSetupChannelCallback(false);
 
 	script3d.RemoveAll();
 	script2d.RemoveAll();
 
-	SAFE_RELEASE(g_pDS);
+    Mix_CloseAudio();
+
+    Mix_Quit();
+
 	if(snd_error)
 	{
 		fclose(snd_error);
 		snd_error=NULL;
 	}
-
-	snd_hWnd=NULL;
 }
 
 bool SNDEnableErrorLog(LPCSTR file)
@@ -314,9 +244,7 @@ bool SNDEnableErrorLog(LPCSTR file)
 
 void SNDSetVolume(float volume)
 {
-	global_volume=volume;
-	if(global_volume>1)global_volume=1;
-	if(global_volume<0)global_volume=0;
+	global_volume = std::max(0.0f, std::min(1.0f, volume));
 
 	SNDUpdateAllSoundVolume();
 }
@@ -338,130 +266,26 @@ bool SNDScriptPrmEnableAll()
 	return true;
 }
 
-bool RestoreBuffer(LPDIRECTSOUNDBUFFER pDSB)
+SND_Sample* SNDLoadSound(const char* fxname)
 {
-	//Вообще-то после Restore для hardvare buffer неплохо 
-	//бы его преречитать
-    HRESULT hr;
-    DWORD dwStatus;
-    if( FAILED( hr = pDSB->GetStatus( &dwStatus ) ) )
-        return false;
-
-    if( dwStatus & DSBSTATUS_BUFFERLOST )
-    {
-        // Since the app could have just been activated, then
-        // DirectSound may not be giving us control yet, so 
-        // the restoring the buffer may fail.  
-        // If it does, sleep until DirectSound gives us control.
-        do 
-        {
-            hr = pDSB->Restore();
-            if( hr == DSERR_BUFFERLOST )
-                Sleep( 10 );
-        }
-        while( (hr = pDSB->Restore()) );
+	if(!SND::has_sound_init || !g_enable_sound) {
+        return nullptr;
     }
 
-	return true;
-}
-
-
-LPDIRECTSOUNDBUFFER SNDLoadSound(LPCSTR fxname,DWORD dwCreationFlags)
-{
-	HRESULT hr;
-	if(!g_enable_sound)
-		return NULL;
-
-//	char fname[260];
-//	sprintf(fname,"%s%s.wav",sound_directory,fxname);
-
-    char* fname = const_cast<char*>(fxname);
-
-    LPDIRECTSOUNDBUFFER* apDSBuffer     = NULL;
-    DWORD                dwDSBufferSize = NULL;
-    CWaveFile*           pWaveFile      = NULL;
-
-	LPDIRECTSOUNDBUFFER pDSBuffer=NULL;
-
-    VOID*   pDSLockedBuffer      = NULL; // Pointer to locked buffer memory
-    DWORD   dwDSLockedBufferSize = 0;    // Size of the locked DirectSound buffer
-    DWORD   dwWavDataRead        = 0;    // Amount of data read from the wav file 
-
-    pWaveFile = new CWaveFile();
-    if( pWaveFile == NULL )
-    {
-        hr = E_OUTOFMEMORY;
-        goto LFail;
+    std::string path = convert_path_content(fxname);
+    if (path.empty()) {
+        return nullptr;
+    }
+    
+    Mix_Chunk* chunk = Mix_LoadWAV(path.c_str());
+    if(!chunk) {
+        fprintf(stderr, "Mix_LoadWAV error %s : %s\n", fxname, Mix_GetError());
+        return nullptr;
     }
 
-    pWaveFile->Open( fname, NULL, WAVEFILE_READ );
-
-    if( pWaveFile->GetSize() == 0 )
-    {
-        // Wave is blank, so don't create it.
-        hr = E_FAIL;
-        goto LFail;
-    }
-
-    // Make the DirectSound buffer the same size as the wav file
-    dwDSBufferSize = pWaveFile->GetSize();
-
-    // Create the direct sound buffer, and only request the flags needed
-    // since each requires some overhead and limits if the buffer can 
-    // be hardware accelerated
-    DSBUFFERDESC dsbd;
-    ZeroMemory( &dsbd, sizeof(DSBUFFERDESC) );
-    dsbd.dwSize          = sizeof(DSBUFFERDESC);
-    dsbd.dwFlags         = dwCreationFlags;
-    dsbd.dwBufferBytes   = dwDSBufferSize;
-    dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
-//	dsbd.guid3DAlgorithm = DS3DALG_HRTF_FULL;
-    dsbd.lpwfxFormat     = pWaveFile->m_pwfx;
-
-    // DirectSound is only guarenteed to play PCM data.  Other
-    // formats may or may not work depending the sound card driver.
-    hr = g_pDS->CreateSoundBuffer( &dsbd, &pDSBuffer, NULL );
-
-    if( FAILED(hr) )
-        goto LFail;
-
-    // Make sure we have focus, and we didn't just switch in from
-    // an app which had a DirectSound device
-    if( FAILED( hr = RestoreBuffer( pDSBuffer) ) ) 
-        goto LFail;
-
-    // Lock the buffer down
-    if( FAILED( hr = pDSBuffer->Lock( 0, dwDSBufferSize, 
-                                 &pDSLockedBuffer, &dwDSLockedBufferSize, 
-                                 NULL, NULL, 0L ) ) )
-        goto LFail;
-
-    // Reset the wave file to the beginning 
-    pWaveFile->ResetFile();
-
-    if( FAILED( hr = pWaveFile->Read( (BYTE*) pDSLockedBuffer,
-                                        dwDSLockedBufferSize, 
-                                        &dwWavDataRead ) ) )
-	{
-		pDSBuffer->Unlock( pDSLockedBuffer, dwDSLockedBufferSize, NULL, 0 );
-        goto LFail;
-	}
-
-	// Unlock the buffer, we don't need it anymore.
-    pDSBuffer->Unlock( pDSLockedBuffer, dwDSLockedBufferSize, NULL, 0 );
-
-    SAFE_DELETE( pWaveFile );
-    return pDSBuffer;
-
-LFail:
-    // Cleanup
-    SAFE_DELETE( pWaveFile );
-    //SAFE_DELETE( pDSBuffer ); //pDSBuffer is abstract, calling delelte is UB
-    if (pDSBuffer) {
-        pDSBuffer->Release();
-        (pDSBuffer) = NULL;
-    }
-    return NULL;
+    auto wrapper = std::make_shared<MixChunkWrapper>(chunk);
+    auto* sample = new SND_Sample(wrapper);
+    return sample;
 }
 
 void SNDUpdateAllSoundVolume()
@@ -560,20 +384,19 @@ bool SND3DListener::SetVelocity(const Vect3f& _velocity)
 	return true;
 }
 
-HRESULT SNDOneBuffer::RecalculatePos()
+bool SNDOneBuffer::RecalculatePos()
 {
-	if(!used)return S_OK;
+	if (!used) return true;
 	//Vect3f p=snd_listener.mat*pos;
 	Vect3f p=snd_listener.rotate*(pos-snd_listener.position);
-	p3DBuffer->SetPosition(pos);//p);
+	bool ok = p3DBuffer->SetPosition(pos);//p);
 
 //	Vect3f v=snd_listener.mat.rot()*velocity;
 	Vect3f v=snd_listener.rotate*velocity;
-	HRESULT hr;
-	FAIL(hr=p3DBuffer->SetVelocity(v));
+	ok &= p3DBuffer->SetVelocity(v);
 	p3DBuffer->RecalculatePos();
 
-	return hr;
+	return ok;
 
 }
 
@@ -587,35 +410,27 @@ void SNDOneBuffer::RecalculateVolume()
 		p3DBuffer->RecalculateVolume();
 	}else
 	{
-		HRESULT hr;
-		long vol=ToDirectVolumef(volume);
-		FAIL(hr=buffer->SetVolume(vol));
+		buffer->volume = volume;
+        buffer->updateEffects();
 	}
 }
 
-HRESULT SNDOneBuffer::PlayPreprocessing()
+void SNDOneBuffer::PlayPreprocessing()
 {
-	HRESULT hr=S_OK;
 	if(script->delta_enable)
 	{
 		if(script->delta_random)
 		{
-			int frequency=nSamplesPerSec;
 			float dw=script->delta_up-script->delta_down;
-			float mul=frand()*dw+script->delta_down;
-			frequency=round(frequency*mul);
-
-			if(frequency<0 || frequency>1)
-				logs("Invalid frequency=%f\n",frequency);
+            float rnd=static_cast<float>(rand())/static_cast<float>(RAND_MAX);
+			float freqmul=rnd*dw+script->delta_down;
 
 			if(p3DBuffer)
-				hr=p3DBuffer->SetFrequency(frequency)?S_OK:E_FAIL;
+				p3DBuffer->SetFrequency(freqmul);
 			else
-				hr=buffer->SetFrequency(frequency);
+				buffer->frequency = freqmul;
 		}
 	}
-
-	return hr;
 }
 
 
@@ -647,7 +462,7 @@ SND3DSound::SND3DSound()
 
 void SND3DSound::Destroy()
 {
-	if(g_pDS && script && cur_buffer>=0)
+	if(has_sound_init && script && cur_buffer>=0)
 	{
 		Stop();
 		MTAuto lock(script->GetLock());
@@ -750,7 +565,6 @@ bool SND3DSound::Play(bool cycled)
 	s.RecalculatePos();
 	s.RecalculateVolume();
 
-	LPDIRECTSOUNDBUFFER buffer=s.buffer;
 	s.played_cycled=cycled;
 
 	s.begin_play_time=clockf();
@@ -812,14 +626,9 @@ bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
 				}
 			}else
 			{
-				DWORD status;
-				if(p->buffer->GetStatus(&status)==DS_OK)
-				{
-					if((status&DSBSTATUS_PLAYING)==0)
-					{
-						nfree=i;
-						break;
-					}
+				if (!p->buffer->isPlaying()) {
+                    nfree=i;
+                    break;
 				}
 			}
 		}
@@ -838,14 +647,9 @@ bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
 						played++;
 				}
 
-				DWORD status;
-				if(p->buffer->GetStatus(&status)==DS_OK)
-				{
-					if(status&DSBSTATUS_PLAYING)
-					{
-						real_played++;
-					}
-				}
+                if (p->buffer->isPlaying()) {
+                    real_played++;
+                }
 			}
 		}
 		logs("name=%s size=%i, played=%i, real=%i\n",p->sound_name,sb.size(),played,real_played);
@@ -877,8 +681,6 @@ bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
 
 	if(s.buffer==NULL || p->GetSounds().size()>1)
 	{
-		HRESULT hr;
-		
 		int n = 0;
 
 		if(p->belligerent_dependency){
@@ -895,23 +697,13 @@ bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
 		if(n < 0) n = 0;
 		if(n >= p->GetSounds().size()) n = p->GetSounds().size() - 1;
 
-		SAFE_RELEASE(s.buffer);
+		SAFE_DELETE(s.buffer);
 
-		hr=g_pDS->DuplicateSoundBuffer(p->GetSounds()[n],&s.buffer);
-		if(FAILED(hr))
-			return false;
-
-		WAVEFORMATEX wfxFormat;
-		DWORD dwSizeWritten=0;
-		memset(&wfxFormat,0,sizeof(wfxFormat));
-		hr=s.buffer->GetFormat(&wfxFormat,sizeof(wfxFormat),&dwSizeWritten);
-		if(FAILED(hr))
-		{
-			SAFE_RELEASE(s.buffer);
-			return false;
-		}
-		s.nSamplesPerSec=wfxFormat.nSamplesPerSec;
-		s.nAvgBytesPerSec=wfxFormat.nAvgBytesPerSec;
+        SND_Sample* sample = p->GetSounds().at(n);
+        if(!sample)
+            return false;
+		s.buffer = new SND_Sample(*sample);
+		s.nSamplesPerSec=sample->getChunkSource()->alen;
 
 		if(!b2d)
 		{
@@ -944,62 +736,38 @@ bool SND3DPlaySound(LPCSTR name,
 
 	MTAuto lock(script->GetLock());
 
-	HRESULT hr;
-	bool ok;
 	SNDOneBuffer& s=script->GetBuffer()[nfree];
 	s.pos=*pos;
 
-	if(!s.p3DBuffer->SetMinDistance(script->radius))
-		goto Fail;
-	if(!s.p3DBuffer->SetMaxDistance(script->max_radius))
-		goto Fail;
+	if (s.p3DBuffer->SetMinDistance(script->radius) && s.p3DBuffer->SetMaxDistance(script->max_radius)) {
+        if(velocity) {
+            s.velocity = *velocity;
+        } else {
+            s.velocity.x = s.velocity.y = s.velocity.z = 0;
+        }
 
-	if(velocity)
-		s.velocity=*velocity;
-	else
-		s.velocity.x=s.velocity.y=s.velocity.z=0;
+        s.volume=script->def_volume;
 
-	s.volume=script->def_volume;;
+        s.PlayPreprocessing();
 
-	s.PlayPreprocessing();
+        if (s.RecalculatePos()) {
+            s.RecalculateVolume();
 
-	hr=s.RecalculatePos();
-	if(FAILED(hr))goto Fail;
-	s.RecalculateVolume();
+            if (s.p3DBuffer->Play(false)) {
+                s.begin_play_time = clockf();
+                s.played_cycled = false;
 
-	RestoreBuffer(s.buffer);
-
-	s.begin_play_time=clockf();
-	ok=s.p3DBuffer->Play(false);
-	s.played_cycled=false;
-	if(!ok)goto Fail;
-
-	return true;
-Fail:
-/*
-	if(hr==DSERR_BUFFERLOST)
-	{
-		int k=0;
-	}
-	if(hr==DSERR_INVALIDCALL)
-	{
-		int k=0;
-	}
-	if(hr==DSERR_INVALIDPARAM)
-	{
-		int k=0;
-	}
-	if(hr==DSERR_PRIOLEVELNEEDED)
-	{
-		int k=0;
-	}
-*/
+                return true;
+            }
+        }
+    }
+    
 	s.used=false;
 	return false;
 }
 
 /////////////////////////2D//////////////////////////
-bool SND2DPlaySound(LPCSTR name,float x,DWORD frequency)
+bool SND2DPlaySound(const char* name,float x)
 {
 	if(!g_enable_sound || !name)
 		return false;
@@ -1011,33 +779,25 @@ bool SND2DPlaySound(LPCSTR name,float x,DWORD frequency)
 
 	MTAuto lock(script->GetLock());
 
-	HRESULT hr;
 	SNDOneBuffer& s=script->GetBuffer()[nfree];
 	s.pos.x=x;
 	s.volume=script->def_volume;
-	RestoreBuffer(s.buffer);
 
 	s.RecalculateVolume();
-
-	hr=s.buffer->SetFrequency(frequency>=0?frequency:0);
-	if(FAILED(hr))goto Fail;
-
+    
 	s.PlayPreprocessing();
 
-	hr=s.buffer->SetPan(PanByX(x));
-	if(FAILED(hr))goto Fail;
-	hr=s.buffer->SetCurrentPosition(0);
-	if(FAILED(hr))goto Fail;
+	s.buffer->pan = PanByX(x);
 
 	s.begin_play_time=clockf();
-	hr=s.buffer->Play(0,0,0);
-	s.played_cycled=false;
-	if(FAILED(hr))goto Fail;
+    s.played_cycled = false;
+    int channel = s.buffer->play();
+	if (channel == SND_NO_CHANNEL) {
+        s.used=false;
+        return false;
+    }
 
 	return true;
-Fail:
-	s.used=false;
-	return false;
 }
 
 SND2DSound::SND2DSound()
@@ -1072,8 +832,7 @@ bool SND2DSound::Init(LPCSTR name)
 bool SND2DSound::Play(bool cycled)
 {
 	if(script==NULL || !g_enable_sound || (!g_enable_voices && script->language_dependency))return false;
-	HRESULT hr;
-
+    
 	MTAuto lock(script->GetLock());
 	AssertValid();
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
@@ -1081,12 +840,14 @@ bool SND2DSound::Play(bool cycled)
 
 	s.RecalculateVolume();
 
-	LPDIRECTSOUNDBUFFER buffer=s.buffer;
-	hr=buffer->SetCurrentPosition(0);
-  	hr=buffer->Play(0,0,cycled?DSBPLAY_LOOPING:0);
+    s.buffer->looped = cycled;
+    int channel = s.buffer->play();
+    if (channel == SND_NO_CHANNEL) {
+        return false;
+    }
 	s.begin_play_time=clockf();
-	s.played_cycled=cycled;
-	return !FAILED(hr);
+	s.played_cycled = cycled;
+	return true;
 }
 
 bool SND2DSound::Stop()
@@ -1094,7 +855,7 @@ bool SND2DSound::Stop()
 	if(script==NULL || !g_enable_sound)return true;
 	MTAuto lock(script->GetLock());
 	AssertValid();
-	return !FAILED(script->GetBuffer()[cur_buffer].buffer->Stop());
+	return script->GetBuffer()[cur_buffer].buffer->stop();
 }
 
 bool SND2DSound::IsPlayed() const
@@ -1102,15 +863,9 @@ bool SND2DSound::IsPlayed() const
 	if(script==NULL)return false;
 	MTAuto lock(script->GetLock());
 
-	LPDIRECTSOUNDBUFFER buffer=script->GetBuffer()[cur_buffer].buffer;
+	SND_Sample* buffer=script->GetBuffer()[cur_buffer].buffer;
 	if(buffer==NULL)return false;
-	DWORD status;
-	if(buffer->GetStatus(&status)==DS_OK)
-	{
-		if(status&DSBSTATUS_PLAYING)
-			return true;
-	}
-	return false;
+    return buffer->isPlaying();
 }
 
 bool SND2DSound::SetPos(float x)
@@ -1119,9 +874,8 @@ bool SND2DSound::SetPos(float x)
 	MTAuto lock(script->GetLock());
 
 	SNDOneBuffer& s=script->GetBuffer()[cur_buffer];
-	HRESULT hr;
-	hr=s.buffer->SetPan(PanByX(x));
-	return SUCCEEDED(hr);
+	s.buffer->pan = PanByX(x);
+	return true;
 }
 
 bool SND2DSound::SetFrequency(float frequency)
@@ -1162,7 +916,7 @@ void SND2DSound::AssertValid()
 
 void SND2DSound::Destroy()
 {
-	if(g_pDS && script && cur_buffer>=0)
+	if(has_sound_init && script && cur_buffer>=0)
 	{
 		Stop();
 		MTAuto lock(script->GetLock());
@@ -1192,10 +946,11 @@ void SNDPausePush()
 
 void SNDPausePop()
 {
-	if(pause_level==0)return;
+	if (pause_level==0) return;
 
 	script3d.PlayByLevel(pause_level);
 	script2d.PlayByLevel(pause_level);
+
 	pause_level--;
 }
 

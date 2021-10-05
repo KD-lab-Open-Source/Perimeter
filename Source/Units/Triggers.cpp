@@ -1276,7 +1276,7 @@ bool ActionMessage::workedOut(AIPlayer& aiPlayer)
 				return true;
 			started_ = true;
 			float soundDuration = _shellIconManager.playSpeech(messageID);
-			int time = (syncroBySound && soundDuration ? round(soundDuration*1000) + speechDurationAddition : duration*1000);
+			int time = syncroBySound && 0 < soundDuration ? static_cast<int>(round(soundDuration*1000.0f)) + speechDurationAddition : duration*1000;
 			_shellIconManager.showHint(messageID, time);
 			if(duration)
 				durationTimer.start(time);
@@ -1293,7 +1293,7 @@ void ActionTask::activate(AIPlayer& aiPlayer)
 		return;
 
 	float soundDuration = _shellIconManager.playSpeech(taskID);
-	int time = (syncroBySound && soundDuration ? round(soundDuration*1000) + speechDurationAddition : duration*1000);
+	int time = syncroBySound && 0 < soundDuration ? static_cast<int>(round(soundDuration*1000.0f)) + speechDurationAddition : duration*1000;
 	if(showTips)
 		_shellIconManager.showHint(taskID, time, type);
 	_shellIconManager.setTask(taskID, type);

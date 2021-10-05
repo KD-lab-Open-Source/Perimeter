@@ -756,6 +756,19 @@ void initAttributes()
 		if(attribute->ID != UNIT_ATTRIBUTE_NONE)
 			attribute->initIntfBalanceData((attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE) ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0);
 	}
+
+    //Patch some sounds
+    /*
+    for (auto& table : soundScriptTable().table) {
+        if (strcmp(table.name, "mainmenu") == 0) {
+            for (auto& sound : table.data) {
+                if (strcmp(sound.name, "mainmenu_clock") == 0) {
+                    sound.max_num_sound = 8;
+                }
+            }
+        }
+    }
+    */
 }
 
 /////////////////////////////////////////

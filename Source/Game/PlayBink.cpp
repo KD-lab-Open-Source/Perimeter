@@ -8,7 +8,7 @@
 #include "SystemUtil.h"
 #include "Runtime.h"
 #include "../Render/D3D/RenderDevice.h"
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 
 extern bool terEnableGDIPixel;
 #ifdef _DEMO_
@@ -266,7 +266,7 @@ bool PlayBinkSample::MustInterrupt()
 	return !terEnableGDIPixel;
 }
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 
 void PlayBinkSample::DoModal(const char* bink_name,const char* sound_name)
 {

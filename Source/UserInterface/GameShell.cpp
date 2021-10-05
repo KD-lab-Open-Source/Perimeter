@@ -104,7 +104,6 @@ int showReels( float, float ) {
 }
 
 void abortWithMessage(const std::string& messageID) {
-	MpegDeinitLibrary();
 	SNDReleaseSound();
 	ErrH.Abort( qdTextDB::instance().getText(messageID.c_str()) );
 }
@@ -320,7 +319,6 @@ windowClientSize_(1024, 768)
 
 		if(check_command_line("convert")){
 			universalSave(name.c_str(), false);
-			MpegDeinitLibrary();
 			SNDReleaseSound();
 			ErrH.Exit();
 		}

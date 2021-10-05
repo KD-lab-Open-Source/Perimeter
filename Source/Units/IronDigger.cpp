@@ -174,9 +174,9 @@ void terUnitTruck::AvatarQuant()
 
 		TruckPoint->setPhase((float)(TruckVolume) / (float)(IronDiggerVolume));
 		if(FireSoundPoint && FireFactor > 0.0001f){
-			FireSoundPoint->play();
 			FireSoundPoint->setVolume(FireFactor);
 			FireSoundPoint->setFrequency(FireFactor);
+            FireSoundPoint->play();
 		}
 	}
 }

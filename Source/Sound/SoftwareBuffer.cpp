@@ -2,12 +2,16 @@
 #include "PerimeterSound.h"
 #include "SoundInternal.h"
 #include "../Render/inc/RenderMT.h"
+#include "Sample.h"
 #include "C3D.h"
+#include "SoftwareBuffer.h"
+
 
 using namespace SND;
-bool VirtualSound3D::Init(LPDIRECTSOUNDBUFFER ptr)
+bool VirtualSound3D::Init(SND_Sample* ptr)
 {
 	pSound=ptr;
+    pSound->external_looped_restart = true;
 	return true;
 }
 /*
@@ -24,7 +28,6 @@ static void dprintf(char *format, ...)
 
 //////////////////////SoftSound3D//////////////////////////
 const float SOUND_CONSTANT = 343.0;
-const float FREQUENCY_SCALE = ( DSBFREQUENCY_MAX - DSBFREQUENCY_MIN );
 
 SoftSound3D::SoftSound3D()
 {
@@ -38,10 +41,7 @@ SoftSound3D::SoftSound3D()
 	clip_distance=max_distance=1e6;
 	is_playing=false;
 	volume=1.0f;
-	begin_play_sound=0;
-	last_start_stop=0;
 
-	BytePerSample=2;
 	set_volume=1.0f;
 }
 
@@ -49,32 +49,9 @@ SoftSound3D::~SoftSound3D()
 {
 }
 
-bool SoftSound3D::Init(LPDIRECTSOUNDBUFFER ptr)
+bool SoftSound3D::Init(SND_Sample* ptr)
 {
-	if(!VirtualSound3D::Init(ptr))
-		return false;
-
-	DSBCAPS caps;
-	caps.dwSize=sizeof(caps);
-	if(pSound->GetCaps(&caps)!=DS_OK)
-		return false;
-	dwBufferBytes=caps.dwBufferBytes;
-
-	WAVEFORMATEX wfxFormat;
-	DWORD dwSizeWritten=0;
-	memset(&wfxFormat,0,sizeof(wfxFormat));
-	if(pSound->GetFormat(&wfxFormat,sizeof(wfxFormat),&dwSizeWritten)!=DS_OK)
-	{
-		return false;
-	}
-
-	nSamplesPerSec=wfxFormat.nSamplesPerSec;
-	nAvgBytesPerSec=wfxFormat.nAvgBytesPerSec;
-
-	BytePerSample=wfxFormat.nAvgBytesPerSec/wfxFormat.nSamplesPerSec;
-	RealFrequency=nSamplesPerSec;
-
-	return true;
+    return VirtualSound3D::Init(ptr);
 }
 
 float SoftSound3D::GetMaxDistance()
@@ -123,27 +100,13 @@ bool SoftSound3D::SetVelocity(const Vect3f& _vel)
 
 bool SoftSound3D::IsPlaying()
 {
-	if(is_cycled)
-		return is_playing;
-	else
-	{
-		DWORD curpos=GetCurPos(clockf());
-		if(!(is_playing && curpos<dwBufferBytes))
-		{
-			int k=0;
-		}
-
-		return is_playing && curpos<dwBufferBytes;
-	}
+    return is_playing;
 }
 
 bool SoftSound3D::Play(bool cycled)
 {
-	is_playing=true;
-	is_cycled=cycled;
-
-	begin_play_sound=clockf();
-	last_start_stop=begin_play_sound-10;
+    is_cycled=pSound->looped = cycled;
+	is_playing=pSound->play() != SND_NO_CHANNEL;
 
 //	if(!is_cycled)dprintf("Play\n");
 
@@ -162,22 +125,13 @@ bool SoftSound3D::Play(bool cycled)
 
 bool SoftSound3D::Stop()
 {
-	HRESULT hr;
-	hr=pSound->Stop();
-	is_playing=false;
-//	if(!is_cycled)dprintf("Stop\n");
-	//SUCCEEDED(hr);
-	return true;
+    is_playing=false;
+    pause=false;
+    return pSound->stop();
 }
 
-bool SoftSound3D::SetFrequency(DWORD dwFrequency)
-{
-	if(dwFrequency==0)
-		RealFrequency=nSamplesPerSec;
-	else
-		RealFrequency=dwFrequency;
-	HRESULT hr;
-	hr=pSound->SetFrequency(dwFrequency);
+bool SoftSound3D::SetFrequency(float frequency) {
+	pSound->frequency = frequency == 0 ? 1.0f : frequency;
 	return true;
 }
 
@@ -199,7 +153,6 @@ Vect3f SoftSound3D::VectorToListener()
 
 void SoftSound3D::RecalculatePos()
 {
-	HRESULT hr;
 	//Volume
 	Vect3f pos=position-snd_listener.position;
 	pos.z*=snd_listener.zmultiple;
@@ -207,13 +160,9 @@ void SoftSound3D::RecalculatePos()
 
 	float flDistSqrd=pos.norm2();
 
-	float full_volume;
-	if(flDistSqrd>sqr(clip_distance) || pause)
-	{
-		full_volume = 0.0f;
-		pSound->SetVolume(DSBVOLUME_MIN);
-	}else
-	{
+	if (flDistSqrd>sqr(clip_distance) || pause) {
+		pSound->volume = 0.0f;
+	} else {
 		float volume_scale;
 		float flDist = sqrtf( flDistSqrd );
 		if( flDist <= min_distance )
@@ -244,18 +193,20 @@ void SoftSound3D::RecalculatePos()
 		else
 			flFrontScale = 1.0f - 0.25f * flFrontScale;
 
-		full_volume=volume_scale*volume*flFrontScale*set_volume;
-
-		long ds_volume=ToDirectVolumef(clamp(full_volume,0.f,1.0f));
-		pSound->SetVolume(ds_volume);
+		float full_volume=volume_scale*volume*flFrontScale*set_volume;
+		pSound->volume = clamp(full_volume,0.f,1.0f);
 
 		{
 			//Pan
 			float pan_scale= - snd_listener.right.dot(vRelPosNormalized);
-			const int mulpan=3900;
-			int lPan = round( 2*mulpan * pan_scale );
-			lPan = clamp( lPan, -mulpan,mulpan);
-			pSound->SetPan(lPan );
+            //TODO review if this is correct compared to original DS code
+            /*
+            const int mulpan=3900;
+            int lPan = round( 2*mulpan * pan_scale );
+            lPan = clamp( lPan, -mulpan,mulpan);
+            pSound->SetPan(lPan );
+            */
+			pSound->pan = clamp(pan_scale + 0.5f, 0.0f, 1.0f);
 		}
 	}
 
@@ -303,20 +254,10 @@ void SoftSound3D::RecalculatePos()
 	}
 /**/
 
-	double curtime=clockf();
+	if(is_playing) {//Start/stop section
+        bool is_playing_real=pSound->isPlaying();
 
-	if(is_playing)
-	if(last_start_stop+0.2f<curtime)
-	{//Start/stop section
-		DWORD status;
-		bool is_playing_real=false;
-		hr=pSound->GetStatus(&status);
-		if(hr==DS_OK)
-		{
-			if(status&DSBSTATUS_PLAYING)
-				is_playing_real=true;
-		}
-/*
+/*      TODO commented originally, remove?
 		if(is_playing_real)
 		{
 			DWORD dwCurrentPlayCursor;
@@ -326,60 +267,60 @@ void SoftSound3D::RecalculatePos()
 			}
 		}
 */
-		if(full_volume==0.0f && is_playing_real)
-		{//Stop
-			last_start_stop=curtime;
-			hr=pSound->Stop();
-		}
+        
+        /* TODO use this instead of pausing channel once seeking is impl in SDL_mixer
+        if (full_volume == 0.0f && is_playing_real) {
+            //Stop
+            last_start_stop=curtime;
+            pSound->stop();
+            is_playing_real = false;
+        } else {
+            //Start
+            is_playing_real = pSound->play() != SND_NO_CHANNEL;
+        }
+        */
 
-		DWORD curpos=GetCurPos(curtime);
+        //Stop cycled ones that have no volume to free channel
+        if (is_playing_real && is_cycled && pSound->volume <= SND::EFFECT_VOLUME_THRESHOLD) {
+            pSound->stop();
+            is_playing_real = false;
+        }
 
-		if(full_volume!=0.0f && !is_playing_real)
-		{//Start
-			last_start_stop=curtime;
+        //Update any change of effects we may have made
+        if (is_playing_real) {
+            pSound->updateEffects();
+        }
 
-			bool bplay=false;
-
-			if(is_cycled)
-			{
-				curpos=curpos%dwBufferBytes;
-				bplay=true;
-			}else
-			{
-				bplay=curpos<dwBufferBytes;
-			}
-
-			if(bplay)
-			{
-				hr=pSound->SetCurrentPosition(curpos);
-				hr=pSound->Play(0,0,is_cycled?DSBPLAY_LOOPING:0);
-			}
-		}
-
-		if(!is_cycled)
+        //if(!is_cycled && curpos>=1.0f) //TODO once seeking is done use something like this
+		if(!is_playing_real)
 		{
-			int k=0;
-		}
-
-		if(!is_cycled && curpos>=dwBufferBytes)
-		{
-//			dprintf("Stop of end\n");
-			hr=pSound->Stop();
-			is_playing=false;
+            if (is_cycled) {
+                //Sometimes cycled ones can be stopped when frequency changes or volume is zero
+                if (SND::EFFECT_VOLUME_THRESHOLD <= pSound->volume) {
+                    //Volume is back, play it
+                    pSound->play();
+                }
+            } else {
+                Stop();
+            }
 		}
 	}
-}
-
-DWORD SoftSound3D::GetCurPos(double curtime)
-{
-	DWORD curpos=(DWORD((curtime-begin_play_sound)*1e-3f*RealFrequency*BytePerSample));
-	return curpos;
 }
 
 void SoftSound3D::RecalculateVolume()
 {
 	RecalculatePos();
 }
+
+void SoftSound3D::Pause(bool p) {
+    pause = p;
+    if (pause) {
+        pSound->pause();
+    } else {
+        pSound->resume();
+    }
+}
+
 //////////////////////info//////////////////////
 /*
 	Предположения о том, как работает 3D Sound

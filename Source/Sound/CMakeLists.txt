@@ -6,17 +6,12 @@ INCLUDE_DIRECTORIES(
 
 SET(Sound_SRCS
         SoundScript.cpp
-)
-
-IF(NOT PERIMETER_EXODUS_SOUND)
-SET(Sound_SRCS ${Sound_SRCS}
         C3D.cpp
         PerimeterSound.cpp
         SoftwareBuffer.cpp
         SoundScript.cpp
-        StdAfx.cpp
-        WaveFile.cpp
+        Sample.cpp
+        AudioPlayer.cpp
 )
-ENDIF()
 
 ADD_LIBRARY(Sound STATIC ${Sound_SRCS})

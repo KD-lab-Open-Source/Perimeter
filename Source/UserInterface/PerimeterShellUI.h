@@ -5,7 +5,7 @@
 
 #include "tweaks.h"
 #include "GameShellSq.h"
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "Universe.h"
 #include "qd_textdb.h"
 #include "SourceUIResolution.h"
@@ -1045,9 +1045,6 @@ public:
 class CSliderWindow : public CShellWindow
 {
 public:
-
-	bool			sounded;
-
 	int				bPress;
 	float			pos;
 	int				target;
@@ -1070,7 +1067,7 @@ public:
 	~CSliderWindow();
 	virtual void draw(int bFocus);
 	virtual int  HitTest(float _x, float _y);
-	virtual void OnLButtonDown(float _x, float _y);
+    virtual void OnLButtonDown(float _x, float _y);
 	virtual void Load(const sqshControl* attr);
 	virtual void OnWindow(int enable);
 	virtual int EffectSupported() {
@@ -1644,7 +1641,7 @@ class CShellIconManager
 	int cutSceneAnimStep;
 	int cutSceneAnimTimer;
 
-	MpegSound* speechSound;
+	SpeechPlayer* speechSound;
 	bool resultMusicStarted;
 
 	void onCutSceneStart();
@@ -1773,8 +1770,7 @@ public:
 	void forceDraw();
 
 	float playSpeech(const char* id);
-	bool isSpeechPlay();
-	void playMusic(const char* musicNamePath);
+	void playGameOverSound(const char* path);
 	void setupAudio();
 	void speedChanged(float speed);
 

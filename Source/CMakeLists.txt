@@ -105,7 +105,6 @@ IF(PERIMETER_WINDOWS)
         #DirectX libs
         ${LIBS_MSDXSDK}/d3d9.lib
         ${LIBS_MSDXSDK}/d3dx9.lib
-        ${LIBS_MSDXSDK}/dsound.lib
         ${LIBS_MSDXSDK}/DxErr.lib
 
         #Windows libs

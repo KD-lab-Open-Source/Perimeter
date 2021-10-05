@@ -18,7 +18,7 @@
 #include "Config.h"
 
 #include "PerimeterSound.h"
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "Controls.h"
 
 #include "MusicManager.h"
@@ -666,11 +666,14 @@ STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
 {
 	terSoundEnable = sound;
 	terMusicEnable = music;
+    int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
 
 	if (firstTime) {
 		IniManager ini("Perimeter.ini");
 		terSoundVolume = ini.getFloat("Sound","SoundVolume");
 		terMusicVolume = ini.getFloat("Sound","MusicVolume");
+        IniManager ini_no("Perimeter.ini", false);
+        ini_no.getInt("Sound","MixChannels", mixChannels);
 	}
 
 	if(terSoundEnable  || terMusicEnable){
@@ -686,9 +689,8 @@ STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
 			if(terEnableSoundLog)
 				SNDEnableErrorLog("sound.txt");
 
-			if(SNDInitSound(hWndVisGeneric,true,true)){
+			if(SNDInitSound(mixChannels)){
 				SNDScriptPrmEnableAll();
-				MpegInitLibrary(SNDGetDirectSound());
 			}
 		}
 	
@@ -726,7 +728,6 @@ void FinitSound()
 	if(!terSoundEnable && !terMusicEnable)
 		return;
 
-	MpegDeinitLibrary();
 	SNDReleaseSound();
 }
 

@@ -14,7 +14,7 @@
 #include "../HT/ht.h"
 #include "BelligerentSelect.h"
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 
 extern bool menuChangingDone;
 

@@ -57,9 +57,9 @@ void terUnitBuildingBlock::AvatarQuant()
 	realAvatar()->setPhase(ChainAnimation.phase());
 
 	if(FireSoundPoint && fireFactor_ > 0.0001f){
-		FireSoundPoint->play();
 		FireSoundPoint->setVolume(fireFactor_);
 		FireSoundPoint->setFrequency(fireFactor_);
+        FireSoundPoint->play();
 	}
 }
 

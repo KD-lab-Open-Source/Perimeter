@@ -3,6 +3,8 @@
 #include "C3D.h"
 #include "SoundInternal.h"
 #include "SoundScript.h"
+#include "Sample.h"
+#include <cfloat>
 #include <algorithm>
 
 int SNDScript::belligerentIndex = 0;
@@ -44,7 +46,7 @@ bool SNDScript::AddScript(const struct SoundScriptPrm* prm)
 	RemoveScriptInternal(prm->name);
 
 	OneScript* os=new OneScript;
-	os->name=_strdup(prm->name);
+	os->name=strdup(prm->name);
 
 	ParseSoundScriptPrm(prm,os->sounds);
 
@@ -134,9 +136,9 @@ void SNDScript::ParseSoundScriptPrm(const SoundScriptPrm* prm, std::vector<Scrip
 		ScriptParam sp;
 		{
 			MTAuto lock(sp.GetLock());
-			sp.sound_name = _strdup(snd.name);
+			sp.sound_name = strdup(snd.name);
 			sp.radius = snd.radius;
-			sp.max_radius = (snd.max_radius >= 0) ? snd.max_radius : DS3D_DEFAULTMAXDISTANCE;
+			sp.max_radius = (snd.max_radius >= 0) ? snd.max_radius : std::numeric_limits<float>::infinity();
 
 			sp.max_num_sound = snd.max_num_sound;
 
@@ -207,69 +209,53 @@ void SNDScript::StopAll(bool only_voices)
 		FOR_EACH(sp->GetBuffer(),itb)
 		{
 			SNDOneBuffer& sb=*itb;
-			LPDIRECTSOUNDBUFFER buffer=sb.buffer;
-			DWORD status;
-			if(buffer->GetStatus(&status)==DS_OK)
-			{
-				if(status&DSBSTATUS_PLAYING)
-				{
-					buffer->Stop();
-					sb.pause_level=0;
-				}
+            if (sb.buffer->isPlaying()) {
+                sb.buffer->stop();
+                sb.pause_level=0;
 			}
 		}
 	}
 }
 
 void SNDScript::PauseAllPlayed(int pause_level)
-{
+{    
 	SNDScript::MapScript::iterator it;
-	FOR_EACH(map_script,it)
-	{
+	FOR_EACH(map_script,it) {
 		ScriptParam* sp=(*it).second;
 		MTAuto lock(sp->GetLock());
 		std::vector<SNDOneBuffer>::iterator itb;
-		FOR_EACH(sp->GetBuffer(),itb)
-		{
+		FOR_EACH(sp->GetBuffer(),itb) {
 			SNDOneBuffer& sb=*itb;
-			LPDIRECTSOUNDBUFFER buffer=sb.buffer;
-			DWORD status;
-			if(buffer->GetStatus(&status)==DS_OK)
-			{
-				if(status&DSBSTATUS_PLAYING)
-				{
-					buffer->Stop();
-					sb.pause_level=pause_level;
-				}
+            if (sb.buffer) {
+                if (sb.buffer->isPlaying()) {
+                    sb.buffer->pause();
+                    sb.pause_level = pause_level;
+                }
 
-				if(sb.p3DBuffer)
-				{
-					sb.p3DBuffer->Pause(true);
-					sb.pause_level=pause_level;
-				}
-			}
+                if (sb.p3DBuffer) {
+                    sb.p3DBuffer->Pause(true);
+                    sb.pause_level = pause_level;
+                }
+            }
 		}
 	}
 }
 
 void SNDScript::PlayByLevel(int pause_level)
-{
+{    
 	SNDScript::MapScript::iterator it;
-	FOR_EACH(map_script,it)
-	{
+	FOR_EACH(map_script,it) {
 		ScriptParam* sp=(*it).second;
 		MTAuto lock(sp->GetLock());
 		std::vector<SNDOneBuffer>::iterator itb;
-		FOR_EACH(sp->GetBuffer(),itb)
-		{
+		FOR_EACH(sp->GetBuffer(),itb) {
 			SNDOneBuffer& sb=*itb;
-			LPDIRECTSOUNDBUFFER buffer=sb.buffer;
-			if(sb.pause_level==pause_level)
-			{
-				if(sb.p3DBuffer)
-					sb.p3DBuffer->Pause(false);
-				else
-					buffer->Play(0,0,sb.played_cycled?DSBPLAY_LOOPING:0);
+			if(sb.pause_level == pause_level && sb.buffer) {
+				if(sb.p3DBuffer) {
+                    sb.p3DBuffer->Pause(false);
+                } else {
+                    sb.buffer->resume();
+                }
 				sb.pause_level=0;
 			}
 		}
@@ -310,7 +296,6 @@ SNDOneBuffer::SNDOneBuffer()
 	script=NULL;
 	buffer=NULL;
 	nSamplesPerSec=0;
-	nAvgBytesPerSec=0;
 	p3DBuffer=NULL;
 	pSound=NULL;
 	used=false;
@@ -320,6 +305,7 @@ SNDOneBuffer::SNDOneBuffer()
 	pos.set(0,0,0);
 	velocity.set(0,0,0);
 	volume=0;
+    frequency=0;
 }
 
 SNDOneBuffer::~SNDOneBuffer()
@@ -332,12 +318,11 @@ bool SNDOneBuffer::SetFrequency(float frequency)
 	{
 		float dw=script->delta_up-script->delta_down;
 		float mul=frequency*dw+script->delta_down;
-		frequency=round(nSamplesPerSec*mul);
 
 		if(p3DBuffer)
-			return p3DBuffer->SetFrequency(frequency);
+			return p3DBuffer->SetFrequency(mul);
 		else
-			return buffer->SetFrequency(frequency);
+			this->frequency = mul;
 	}
 
 	return false;
@@ -346,18 +331,14 @@ bool SNDOneBuffer::SetFrequency(float frequency)
 
 void ScriptParam::LoadSound(const char* name)
 {
-	LPDIRECTSOUNDBUFFER buf=SNDLoadSound(name,
-		DSBCAPS_STATIC|
-		DSBCAPS_GETCURRENTPOSITION2|
-		//DSBCAPS_LOCDEFER|
-		DSBCAPS_CTRLVOLUME|
-		DSBCAPS_CTRLFREQUENCY|DSBCAPS_CTRLPAN
-		);
+    SND_Sample* sample=SNDLoadSound(name);
 
-	if(buf == NULL)
-		logs("Sound not loaded: %s\n",name);
-	else
-		GetSounds().push_back(buf);
+	if (sample == nullptr) {
+        logs("Sound not loaded: %s\n", name);
+    } else {
+        sample->channel_group = SND_GROUP_EFFECTS;
+        GetSounds().push_back(sample);
+    }
 }
 
 void ScriptParam::Release()
@@ -369,22 +350,14 @@ void ScriptParam::Release()
 	FOR_EACH(soundbuffer,its)
 	{
 		SNDOneBuffer& sb=*its;
-		SAFE_RELEASE(sb.buffer);
-
+		SAFE_DELETE(sb.buffer);
 		SAFE_DELETE(sb.p3DBuffer);
 	}
 	soundbuffer.clear();
 
-	std::vector<LPDIRECTSOUNDBUFFER>::iterator itb;
-	FOR_EACH(sounds,itb)
-	{
-		LPDIRECTSOUNDBUFFER p=*itb;
-		if(p)
-		{
-			int num=p->Release();
-			ASSERT(num==0);
-		}
-	}
+    for (auto sound : sounds) {
+        SAFE_DELETE(sound)
+    }
 	sounds.clear();
 }
 
