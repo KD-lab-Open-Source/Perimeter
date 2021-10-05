@@ -57,10 +57,10 @@ extern bool bWasShiftUnpressed;
 extern GUID selectedLanGameID;
 
 void SetCameraPosition(cCamera *UCamera,const MatXf &Matrix);
-STARFORCE_API_NEW void ToolzerSizeChangeQuant();
+void ToolzerSizeChangeQuant();
 
 void EnterInMissionMenu();
-STARFORCE_API_NEW void CancelEditWorkarea();
+void CancelEditWorkarea();
 
 extern HistoryScene historyScene;
 extern HistoryScene bwScene;

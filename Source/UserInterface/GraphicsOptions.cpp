@@ -19,7 +19,7 @@ extern int terScreenSizeX;
 extern int terScreenSizeY;
 extern bool terEnableBumpChaos;
 
-STARFORCE_API void SetShadowType(int shadow_map,int shadow_size,bool update);
+void SetShadowType(int shadow_map,int shadow_size,bool update);
 
 GraphOptionsManager* GraphOptionsManager::instance = 0;
 

@@ -141,7 +141,7 @@ bool applicationIsGo()
 	return applicationHasFocus() || (gameShell && gameShell->alwaysRun());
 }
 
-STARFORCE_API void SetShadowType(int shadow_map,int shadow_size,bool update)
+void SetShadowType(int shadow_map,int shadow_size,bool update)
 {
 	static int old_shadow_control=-1;
 	// 0 - planar map
@@ -662,7 +662,7 @@ void HTManager::finitGraphics()
 
 //--------------------------------
 
-STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
+void InitSound(bool sound, bool music, bool firstTime)
 {
 	terSoundEnable = sound;
 	terMusicEnable = music;

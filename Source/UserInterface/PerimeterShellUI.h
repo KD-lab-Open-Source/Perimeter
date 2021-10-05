@@ -1836,12 +1836,12 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param);
 int OnLBUpWorkarea(float,float);
 int OnLBDownWorkarea(float,float);
 int OnRBDownWorkarea(float,float);
-STARFORCE_API_NEW int OnMouseMoveRegionEdit(float x, float y);
-STARFORCE_API_NEW int OnMouseMoveRegionEdit2(float x, float y);
-STARFORCE_API_NEW void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param);
+int OnMouseMoveRegionEdit(float x, float y);
+int OnMouseMoveRegionEdit2(float x, float y);
+void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnCluster1(CShellWindow* pWnd, InterfaceEventCode code, int param);
-STARFORCE_API_NEW void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonStructure(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnButtonTogether(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1958,7 +1958,7 @@ void onMMApplyNameBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMConnectionTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //lan
-STARFORCE_API_NEW void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLanCreateGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLanBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2069,7 +2069,7 @@ void OnSplashScreenKeyLast(CShellWindow* pWnd, InterfaceEventCode code, int para
 void OnButtonTerrainBuild(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonSpeed(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-STARFORCE_API void exitToInterfaceMessage(CShellWindow* pWnd);
+void exitToInterfaceMessage(CShellWindow* pWnd);
 
 void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnFrameTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param);

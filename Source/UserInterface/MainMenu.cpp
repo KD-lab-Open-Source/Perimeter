@@ -76,7 +76,7 @@ std::string getItemTextFromBase(const char *keyStr) {
 
 terUniverseInterfaceMessage resultID = UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED;
 
-STARFORCE_API void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
+void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
 	if (_shellIconManager.isCutSceneMode()) {
 		_shellIconManager.setCutSceneMode(false, false);
 	}
@@ -230,7 +230,7 @@ int goToResultQuant( float, float ) {
 	return 1;
 }
 
-STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
+void processInterfaceMessageLater(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::LAN) {
 		gameShell->getNetClient()->FinishGame();
 		resultID = id;
@@ -240,7 +240,7 @@ STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, 
 	}
 }
 
-STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
+void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	mapVector.clear();
 	std::string path_str = convert_path_native(path.c_str());
@@ -312,7 +312,7 @@ void clearMapDescWnd(int mapWndID, int mapDescrWndID, int inputWndID) {
 		input->SetText("");
 	}
 }
-STARFORCE_API void fillList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
+void fillList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->NewItem(1);
 	list->Clear();
@@ -329,7 +329,7 @@ STARFORCE_API void fillList(int listID, std::vector<MissionDescription>& mVect, 
 		clearMapDescWnd(mapWndID, mapDescrWndID, inputWndID);
 	}
 }
-STARFORCE_API void fillMultiPlayerList(int listID = SQSH_MM_LAN_MAP_LIST, int mapWndID = SQSH_MM_CREATE_GAME_MAP, int mapDescrWndID = SQSH_MM_CREATE_GAME_MAP_DESCR_TXT) {
+void fillMultiPlayerList(int listID = SQSH_MM_LAN_MAP_LIST, int mapWndID = SQSH_MM_CREATE_GAME_MAP, int mapDescrWndID = SQSH_MM_CREATE_GAME_MAP_DESCR_TXT) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->NewItem(1);
 	list->Clear();
@@ -363,7 +363,7 @@ STARFORCE_API void fillMultiPlayerList(int listID = SQSH_MM_LAN_MAP_LIST, int ma
 		clearMapDescWnd(mapWndID, mapDescrWndID, -1);
 	}
 }
-STARFORCE_API void fillReplayList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
+void fillReplayList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->NewItem(1);
 	list->Clear();
@@ -430,7 +430,7 @@ void fillRowStatsListWindow(int listID, int rowNumber, const std::vector<std::st
 	}
 }
 
-STARFORCE_API void fillStatsLists() {
+void fillStatsLists() {
 	char buffer[30 + 1];
 
 	std::vector<std::string> temp;
@@ -576,7 +576,7 @@ inline char* GetFileExtension(char *fname)
 	return 0;
 }
 
-STARFORCE_API void StartSpace() {
+void StartSpace() {
 	if (!bgScene.inited()) {
 		bgScene.init(terVisGeneric);
 	}
@@ -618,7 +618,7 @@ int setupMenuCursorQuant( float, float ) {
     return 1;
 }
 
-STARFORCE_API void fillProfileList() {
+void fillProfileList() {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
 	list->NewItem(1);
 	list->Clear();
@@ -2087,7 +2087,7 @@ void onMMInMissResumeButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 		_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, RESUME_GAME );
 	}		
 }
-STARFORCE_API void exitToInterfaceMessage(CShellWindow* pWnd) {
+void exitToInterfaceMessage(CShellWindow* pWnd) {
 	switch(gameShell->currentSingleProfile.getLastGameType()) {
 		case UserSingleProfile::REPLAY:
 			{
@@ -2146,7 +2146,7 @@ int delLoadSaveAction(float, float) {
 	fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
 	return 0;
 }
-STARFORCE_API void loadGame(CListBoxWindow* listBox) {
+void loadGame(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
 	if (pos != -1) {
 		checkMissionDescription(pos, savedGames);
@@ -2214,7 +2214,7 @@ int delLoadReplayAction(float, float) {
 	fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 	return 0;
 }
-STARFORCE_API void loadReplay(CListBoxWindow* listBox) {
+void loadReplay(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
 	if (pos != -1) {
 		checkReplayMissionDescription(pos, replays);
@@ -2274,7 +2274,7 @@ int delLoadInGameSaveAction(float, float) {
 	fillList(SQSH_MM_LOAD_IN_GAME_MAP_LIST, savedGames, SQSH_MM_LOAD_IN_GAME_MAP, SQSH_MM_LOAD_IN_GAME_MAP_DESCR_TXT);
 	return 0;
 }
-STARFORCE_API void loadFromGame(CListBoxWindow* listBox) {
+void loadFromGame(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
 	if (pos != -1) {
 		checkMissionDescription(pos, savedGames);
@@ -2353,7 +2353,7 @@ int toSaveQuant( float, float ) {
 	return 1;
 }
 
-STARFORCE_API int saveGame_(float i, float) {
+int saveGame_(float i, float) {
     size_t ii = static_cast<size_t>(i);
 	gameShell->currentSingleProfile.deleteSave(savedGames[ii].missionName());
 	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[ii].missionName();

@@ -85,7 +85,7 @@ std::string formatGameInfo(sGameHostInfo* info, bool oneLine) {
 }
 
 //lan menu
-STARFORCE_API_NEW void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if (code == EVENT_CREATEWND) {
 //		CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_GAME_LIST));
 		CListBoxWindow* list = (CListBoxWindow*)pWnd;
@@ -1072,7 +1072,7 @@ void GameShell::callBack_NetCenterConstructorReturnCode(e_NetCenterConstructorRe
 	}
 }
 
-STARFORCE_API void switchToMultiplayer(CreateNetCenterWayType way) {
+void switchToMultiplayer(CreateNetCenterWayType way) {
 	switch (way) {
 		case COMMAND_LINE_CREATE_GAME:
 			{

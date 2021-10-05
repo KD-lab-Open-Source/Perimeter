@@ -54,7 +54,7 @@ const float nButtonHoldDelay = 1000;
 void updateButtonLabel(int id, int val, float progress, bool pause, bool bCanBuild);
 int Structure2ButtonID(int i);
 int Structure2ButtonID_(int i);
-STARFORCE_API_NEW  terUnitAttributeID Button2StructureID(int nBtnID);
+ terUnitAttributeID Button2StructureID(int nBtnID);
 int LegionID2Button(int nAttrID);
 terUnitAttributeID Button2UnitAttributeID(int nBtnID);
 terUnitSquad* GetSquadByNumber(int n);
@@ -2725,7 +2725,7 @@ void CShellIconManager::fillControlState(std::vector<SaveControlData>& controlSt
 	}
 }
 
-STARFORCE_API_NEW void CancelEditWorkarea();
+void CancelEditWorkarea();
 
 void CShellIconManager::updateControlsFromExternalStates() {
     for (int i = 0; i < externalControlStates.size(); i++) {

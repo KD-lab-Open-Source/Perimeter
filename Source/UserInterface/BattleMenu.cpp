@@ -31,7 +31,7 @@ int defaultBattleMapCount = 0;
 MonoSelect battleColors(4, playerAllowedColorSize);
 
 //battle menu
-STARFORCE_API void loadBattleList() {
+void loadBattleList() {
 	if (battleMaps.empty()) {
 		loadMapVector(battleMaps, "RESOURCE/BATTLE", ".spg");
 		defaultBattleMapCount = battleMaps.size();
@@ -104,7 +104,7 @@ void setupBattleDescWnd(int index, std::vector<MissionDescription>& mVect, int m
 //	((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( mVect[index].missionDescription() );
 	((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_BATTLE_SURVIVAL_TXT))->setText( getSurvivalText(index) );
 }
-STARFORCE_API void onBattleMenuOpening() {
+void onBattleMenuOpening() {
 	StartSpace();
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MAP_LIST);
 	list->NewItem(1);
@@ -149,7 +149,7 @@ std::string getSurvivalFileName(const std::string& fileName) {
 	return exists ? path : std::string();
 }
 
-STARFORCE_API void startBattle(int pos, CShellWindow* pWnd) {
+void startBattle(int pos, CShellWindow* pWnd) {
 	checkMissionDescription(pos, battleMaps);
 	missionToExec = battleMaps[pos];
 	int i;

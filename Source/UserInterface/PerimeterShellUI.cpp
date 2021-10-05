@@ -27,8 +27,8 @@ void GetCameraViewPolygon(Vect2f* pv, int zero_level);
 bool LineClip2d(Vect2i& v1, Vect2i& v2,  const Vect2i& _w1, const Vect2i& _w2);
 void CopyClusterBitmap(sColor4c* bitmap, int sx, int sy);
 
-STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id);
-STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID);
+terUnitAttributeID Button2LegionID(int id);
+terUnitAttributeID Button2StructureID(int nBtnID);
 terUnitAttributeID Button2UnitAttributeID(int nBtnID);
 
 terUnitSquad* GetSquadByNumber(int n);
@@ -1588,7 +1588,7 @@ void CShellComplexPushButton::draw(int bFocus)
 extern void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun);
 
 //pSquad=0 -> base unit
-STARFORCE_API_NEW void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffer, int nBtnID, SquadPageData* pSquad)
+void FormatLegionPopup(const sqshControl* pAttr, char* cbBuffer, int nBtnID, SquadPageData* pSquad)
 {
 	terUnitAttributeID nAttrID = Button2LegionID(nBtnID);
 

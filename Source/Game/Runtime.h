@@ -12,7 +12,7 @@ void setLogicFp();
 void PlayMusic(const char *str);
 void SetVolumeMusic(float f);
 void MusicEnable(int enable);
-STARFORCE_API void InitSound(bool sound, bool music, bool firstTime = true);
+void InitSound(bool sound, bool music, bool firstTime = true);
 void SoundQuant();
 void FinitSound();
 
@@ -50,7 +50,7 @@ extern float terGraphicsGamma;	// 0.5..2.5
 extern int terShadowType;
 extern int terDrawMeshShadow;
 extern bool terEnableBumpChaos;
-STARFORCE_API void SetShadowType(int shadow_map,int shadow_size,bool update);
+void SetShadowType(int shadow_map,int shadow_size,bool update);
 
 extern const char* currentVersion;
 extern const char* currentShortVersion;

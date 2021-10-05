@@ -8,11 +8,11 @@ enum CreateNetCenterWayType {
 	MENU_ONLINE
 };
 
-STARFORCE_API void switchToMultiplayer(CreateNetCenterWayType way);
+void switchToMultiplayer(CreateNetCenterWayType way);
 
 std::string getItemTextFromBase(const char *keyStr);
 
-STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay = false);
+void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay = false);
 
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect);
 
@@ -20,13 +20,13 @@ void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapW
 
 void clearMapDescWnd(int mapWndID, int mapDescrWndID, int inputWndID = -1);
 
-STARFORCE_API void fillList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1);
+void fillList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1);
 
-STARFORCE_API void loadBattleList();
+void loadBattleList();
 
-STARFORCE_API void onBattleMenuOpening();
+void onBattleMenuOpening();
 
-STARFORCE_API void StartSpace();
+void StartSpace();
 
 bool intfCanHandleInput();
 

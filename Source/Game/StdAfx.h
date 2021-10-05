@@ -62,17 +62,7 @@
 #include "EventBufferDP.h"
 #include "CommonEvents.h"
 
-//TODO maybe we should remove STARFORCE stuff?
-//#define _STARFORCE_
-
-#ifdef _STARFORCE_
-#define STARFORCE_API extern "C" __declspec(dllexport)
-#define STARFORCE_API_NEW extern "C" __declspec(dllexport)
-#else
-#define STARFORCE_API 
-#define STARFORCE_API_NEW 
-#endif
-
+//TODO wtf?
 #ifdef small
 #undef small
 #endif

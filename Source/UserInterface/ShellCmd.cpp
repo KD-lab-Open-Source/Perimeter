@@ -77,8 +77,8 @@ const float RegionPathDeltaDistance = 90.0f;
 
 bool bWasShiftUnpressed = false;
 
-STARFORCE_API_NEW void OnToolzerSizeChange(float y);
-STARFORCE_API_NEW void CancelEditWorkarea();
+void OnToolzerSizeChange(float y);
+void CancelEditWorkarea();
 
 void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
@@ -198,7 +198,7 @@ int OnRBDownWorkarea(float,float)
 	return 0;
 }
 
-STARFORCE_API_NEW void CancelEditWorkarea()
+void CancelEditWorkarea()
 {
 	if (!universe()) {
 		return;
@@ -224,7 +224,7 @@ STARFORCE_API_NEW void CancelEditWorkarea()
 	((CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_WORKAREA4_ID))->SetCheck(0);
 }
 
-STARFORCE_API_NEW int OnMouseMoveRegionEdit(float x, float y)
+int OnMouseMoveRegionEdit(float x, float y)
 {
 	if (_pShellDispatcher->m_bCanFlip) {
 		if((_shellIconManager.m_nMouseButtonsState & MK_LBUTTON) && !bWasShiftUnpressed)
@@ -268,7 +268,7 @@ STARFORCE_API_NEW int OnMouseMoveRegionEdit(float x, float y)
 	return 1;
 }
 
-STARFORCE_API_NEW int OnMouseMoveRegionEdit2(float x, float y)
+int OnMouseMoveRegionEdit2(float x, float y)
 {
 	if(!_pShellDispatcher->m_bTolzerFirstClick)
 	{
@@ -288,7 +288,7 @@ STARFORCE_API_NEW int OnMouseMoveRegionEdit2(float x, float y)
 	return 1;
 }
 
-STARFORCE_API_NEW void OnToolzerSizeChange(float y)
+void OnToolzerSizeChange(float y)
 {
 	int s = SIGN(y);
 	RegionMetaDispatcher* disp=_pShellDispatcher->regionMetaDispatcher();
@@ -299,7 +299,7 @@ STARFORCE_API_NEW void OnToolzerSizeChange(float y)
 	_shellCursorManager.SetSize(r);
 }
 
-STARFORCE_API_NEW void ToolzerSizeChangeQuant()
+void ToolzerSizeChangeQuant()
 {
 //	if(_pShellDispatcher->m_nEditRegion == editRegion1 && isAltPressed())
 //	{
@@ -422,7 +422,7 @@ void CShellLogicDispatcher::OnMouseIdle()
 	}
 }
 
-STARFORCE_API_NEW void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param)
+void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	if(code == EVENT_PRESSED)
 	{
@@ -445,7 +445,7 @@ inline void ChancelUnits(int nAtomID)
 	universe()->makeCommand(isShiftPressed() ? COMMAND_ID_PRODUCTION_DEC_10 : COMMAND_ID_PRODUCTION_DEC, nAtomID);
 }
 
-STARFORCE_API_NEW void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param)
+void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	int nAtomID = pWnd->ID - SQSH_SOLDIER_ID + MUTATION_ATOM_SOLDIER;
 
@@ -490,7 +490,7 @@ STARFORCE_API_NEW void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode cod
 	}
 }
 
-STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
+terUnitAttributeID Button2StructureID(int nBtnID)
 {
 	terUnitAttributeID n_struct = UNIT_ATTRIBUTE_NONE;
 
@@ -874,7 +874,7 @@ int Structure2ButtonID_(int i)// только для подсказок по с�
 	return id;
 }
 
-STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id)
+terUnitAttributeID Button2LegionID(int id)
 {
 	terUnitAttributeID n = UNIT_ATTRIBUTE_NONE;
 	switch(id)
