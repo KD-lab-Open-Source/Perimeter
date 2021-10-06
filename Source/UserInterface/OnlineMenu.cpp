@@ -22,8 +22,6 @@ extern std::vector<MissionDescription> multiplayerMaps;
 extern MissionDescription missionToExec;
 extern BGScene bgScene;
 
-//unsigned int selectedLanGameID = 0;
-//GUID selectedLanGameID;
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect);
 
 //online menu

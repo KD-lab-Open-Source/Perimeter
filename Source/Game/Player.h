@@ -565,7 +565,6 @@ private:
 	terBelligerent belligerent_;
 	int colorIndex_;
 	bool isAI_;
-	unsigned int compAndUserID_;
 
 	sColor4f fieldColor_;
 	sColor4f unitColor_;

@@ -1,10 +1,9 @@
 
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
-#include "ConnectionDP.h"
 #include "EventBufferDP.h"
-
 #include "P2P_interface.h"
+
 
 #ifndef _FINAL_VERSION_
 #define xassertStr2(exp, str) { string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
@@ -34,7 +33,7 @@ void InputEventBuffer::reset()
 	offset = 0;
 }
 
-int InputEventBuffer::receive(XDPConnection& conn, DPNID dpnid)
+int InputEventBuffer::receive(XDPConnection& conn, NETID netid)
 {
 	if(next_event_pointer != tell())
 		ErrH.Abort("Incorrect events reading");
@@ -47,7 +46,7 @@ int InputEventBuffer::receive(XDPConnection& conn, DPNID dpnid)
 //	}
 	clearBufferOfTheProcessedCommands();
 
-	int add_size = conn.Receive((char*)address() + filled_size,length() - filled_size, dpnid);
+	int add_size = conn.Receive((char*)address() + filled_size,length() - filled_size, netid);
 	byte_receive+=add_size;
 	filled_size +=add_size;
 	next_event();
@@ -157,11 +156,11 @@ OutputEventBuffer::OutputEventBuffer(unsigned int size)
 	pointer_to_size_of_event = -1;
 	byte_sending=0;
 }
-int OutputEventBuffer::send(XDPConnection& conn, DPNID dpnid)
+int OutputEventBuffer::send(XDPConnection& conn, NETID netid)
 {
 	xassert(pointer_to_size_of_event == -1 && 
 		"There wasn't the end of the event");
-	unsigned int sent = conn.Send(buf,tell(), dpnid);
+	unsigned int sent = conn.Send(buf,tell(), netid);
 	if(sent == tell())
 		init();
 	else{
@@ -231,7 +230,7 @@ void InOutNetComBuffer::reset()
 
 
 //Out
-int InOutNetComBuffer::send(PNetCenter& conn, DPNID dpnid, bool flag_guaranted)
+int InOutNetComBuffer::send(PNetCenter& conn, NETID netid, bool flag_guaranted)
 {
 ///	Тест 
 ///	unsigned int size=filled_size;
@@ -246,7 +245,7 @@ int InOutNetComBuffer::send(PNetCenter& conn, DPNID dpnid, bool flag_guaranted)
 
 	unsigned int sent=0; 
 	while(sent < filled_size){ // подразумевается ==
-		sent+=conn.Send(buf+sent, filled_size-sent, dpnid, flag_guaranted);
+		sent+=conn.Send(buf+sent, filled_size-sent, netid, flag_guaranted);
 	};
 	xassert(filled_size==sent);
 	init();

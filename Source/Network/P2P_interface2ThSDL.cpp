@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 #include "P2P_interface.h"
 
 
@@ -6,8 +6,6 @@
 #include "Universe.h"
 
 #include <algorithm>
-
-#include "P2P_interfaceAux.h"
 
 #define XDP_CHECK_HR(hr, msg) {if(FAILED(hr)) ErrH.Abort(msg);}
 
@@ -19,9 +17,6 @@
 #define IP4(x) ((x>>24) & 0xff)
 
 const unsigned int PERIMETER_MAX_NETWORK_PLAYER=20;
-// {A0B71D62-8E88-4767-8439-184327615B42}
-const GUID guidPerimeterGame = 
-{ 0xa0b71d62, 0x8e88, 0x4767, { 0x84, 0x39, 0x18, 0x43, 0x27, 0x61, 0x5b, 0x42 } };
 
 void XDPInit()
 {
@@ -51,9 +46,9 @@ void PNetCenter::SetConnectionTimeout(int ms) {
     //TODO
 }
 
-void PNetCenter::RemovePlayer(DPNID dpnid)
+void PNetCenter::RemovePlayer(NETID netid)
 {
-    if(isHost() && dpnid==m_localDPNID && dpnid==m_hostDPNID){
+    if(isHost() && netid==m_localNETID && netid==m_hostNETID){
         ExecuteInternalCommand(PNC_COMMAND__END_GAME, false);
         ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
     }
@@ -68,27 +63,13 @@ void PNetCenter::Close(bool flag_immediatle)
 	flag_connected=false;
 }
 
-int PNetCenter::Connect(GUID _hostID) //const char* lpszHost, int port)
+int PNetCenter::Connect(const GameHostConnection& host)
 {
-    //TODO
-
-	return 1;
-}
-
-int PNetCenter::Connect(unsigned int ip)//, int port
-{
-	//if(!ip)
-	//	return Connect((const char*)0, port);
-
-	///ServerStart("qqq", PERIMETER_DEFAULT_PORT);
-	char ip_string[17];
-	memset(ip_string, 0, 17);
-	sprintf(ip_string, "%d.%d.%d.%d", IP1(ip), IP2(ip), IP3(ip), IP4(ip));
+    LogMsg("Connect %du:%du %lu\n", host.host_ip.host, host.host_ip.port, host.server_id);
 
 	//TODO
 
-	GUID hostID;
-	return Connect(hostID);
+	return 0;
 }
 
 bool PNetCenter::isConnected()
@@ -97,21 +78,10 @@ bool PNetCenter::isConnected()
 }
 
 
-int PNetCenter::Send(const char* buffer, int size, DPNID dpnid, bool flag_guaranted)
+int PNetCenter::Send(const char* buffer, int size, NETID netid, bool flag_guaranted)
 {
     //TODO
 
 	return size;
-}
-
-bool PNetCenter::StartFindHostDP(const char* lpszHost)
-{
-    //TODO
-	return false;
-}
-
-void PNetCenter::StopFindHostDP(void)
-{
-    //TODO
 }
 

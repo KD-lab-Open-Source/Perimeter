@@ -3,6 +3,9 @@
 
 #include "UnitAttribute.h"
 #include "Serialization.h"
+#include "NetID.h"
+
+const int PLAYER_MAX_NAME_LEN = 64;
 
 struct SavePrm;
 
@@ -17,6 +20,9 @@ enum RealPlayerType {
 DECLARE_ENUM_DESCRIPTOR(RealPlayerType)
 
 struct PlayerData {
+private:
+    char playerName[PLAYER_MAX_NAME_LEN];
+public:
 	enum  {
 		PLAYER_ID_NONE = -1
 	};
@@ -30,28 +36,37 @@ struct PlayerData {
 	int handicap;
 	bool flag_playerStartReady;
 	bool flag_playerGameReady;
-	int compAndUserID;
 	unsigned int gameVersion;
-	char playerName[64];
-	DPNID dpnid;
+	NETID netid;
 	
 	PlayerData();
-	PlayerData(int playerIDIn, const char* name, terBelligerent belligerentIn, int colorIndexIn, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
+	PlayerData(int playerIDIn, const std::string& name, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
 
-	void set(int playerIDIn, const char* name, terBelligerent belligerentIn, int colorIndexIn, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
-	
-	void setCompAndUserID(const char* computerName, const char* playerName){
-		compAndUserID = calcCompAndUserID(computerName, playerName);
-	}
-	unsigned int calcCompAndUserID(const char* computerName, const char* playerName);
+	void set(int playerIDIn, const std::string& name, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
 
-	const char* name() const { return playerName; } 
-	void setName(const char* name) { strcpy(playerName, name); }
+    const char* name() const { return playerName; }
+    void setName(const std::string& name);
 
 	void read(XBuffer& in);
 	void write(XBuffer& out) const;
 
-#include "NetPlayer-1251-1.inl"
+    SERIALIZE(ar) {
+        ar & WRAP_OBJECT(playerID);
+        ar & WRAP_OBJECT(realPlayerType);
+        ar & TRANSLATE_OBJECT(belligerent, "Сторона");
+        ar & TRANSLATE_OBJECT(colorIndex, "Цвет");
+        ar & TRANSLATE_OBJECT(clan, "Клан");
+        ar & TRANSLATE_OBJECT(difficulty, "Сложность");
+        ar & TRANSLATE_OBJECT(handicap, "Гандикап");
+
+        ar & WRAP_OBJECT(flag_playerStartReady);
+        ar & WRAP_OBJECT(flag_playerGameReady);
+        ar & WRAP_OBJECT(gameVersion);
+        ar & WRAP_OBJECT(playerName);
+
+        if(ar.isInput() && !handicap)
+            handicap = 100;
+    }
 };
 
 
@@ -101,39 +116,39 @@ public:
 
 	void clearAllPlayerStartReady(void);
 
-	bool setPlayerStartReady(DPNID dpnid);
+	bool setPlayerStartReady(NETID netid);
 	bool isAllRealPlayerStartReady(void);
 	void clearAllPlayerGameReady(void);
 
 	void disconnect2PlayerData(int idxPlayerData);
 	void connectAI2PlayersData(int idxPlayerData);
-	int connectNewPlayer2PlayersData(PlayerData& pd, DPNID dpnid);
-	int connectLoadPlayer2PlayersData(PlayerData& pd, DPNID dpnid);
+	int connectNewPlayer2PlayersData(PlayerData& pd, NETID netid);
+	int connectLoadPlayer2PlayersData(PlayerData& pd, NETID netid);
 	bool disconnectPlayer2PlayerDataByIndex(unsigned int idx);
-	bool disconnectPlayer2PlayerDataByDPNID(DPNID dpnid);
-	bool setPlayerDPNID(unsigned int idx, DPNID dpnid);
+	bool disconnectPlayer2PlayerDataByNETID(NETID netid);
+	bool setPlayerNETID(unsigned int idx, NETID netid);
 
 	int getUniquePlayerColor(int begColor=0, bool dirBack=0);
 	bool changePlayerColor(int playerIdx, int color, bool dirBack=0);
-	bool changePlayerColor(DPNID dpnid, int color, bool dirBack=0);
+	bool changePlayerColor(NETID netid, int color, bool dirBack=0);
 
 	bool changePlayerDifficulty(int playerIdx, Difficulty difficulty);
-	bool changePlayerDifficulty(DPNID dpnid, Difficulty difficulty);
+	bool changePlayerDifficulty(NETID netid, Difficulty difficulty);
 
 	int getUniquePlayerClan();
 	bool changePlayerClan(int playerIdx, int clan);
-	bool changePlayerClan(DPNID dpnid, int clan);
+	bool changePlayerClan(NETID netid, int clan);
 
 	bool changePlayerHandicap(int playerIdx, int handicap);
-	bool changePlayerHandicap(DPNID dpnid, int handicap);
+	bool changePlayerHandicap(NETID netid, int handicap);
 
 	void getAllOtherPlayerName(std::string& outStr);
 	void getPlayerName(int _playerID, std::string& outStr);
 
-	int findPlayer(DPNID dpnid);
+	int findPlayer(NETID netid);
 
 	bool changePlayerBelligerent(int playerIdx, terBelligerent newBelligerent);
-	bool changePlayerBelligerent(DPNID dpnid, terBelligerent newBelligerent);
+	bool changePlayerBelligerent(NETID netid, terBelligerent newBelligerent);
 
 	bool isChanged(void){return flag_missionDescriptionUpdate;}
 	void setChanged(void){flag_missionDescriptionUpdate=true;}
@@ -145,7 +160,24 @@ public:
 
 	PlayerData& getActivePlayerData();
 
-#include "NetPlayer-1251-2.inl"
+    SERIALIZE(ar) {
+        ar & WRAP_OBJECT(version);
+        ar & TRANSLATE_OBJECT(worldName, "Имя мира");
+        ar & TRANSLATE_NAME(missionDescriptionID, "missionDescription", "Описание миссии");
+        ar & TRANSLATE_OBJECT(difficulty, "Уровень сложности");
+        ar & TRANSLATE_OBJECT(playersData, "Игроки");
+        ar & WRAP_OBJECT(missionNumber);
+
+        ar & TRANSLATE_OBJECT(playerAmountScenarioMax, "Максимальное количество игроков");
+        ar & WRAP_OBJECT(playersShufflingIndices);
+        ar & WRAP_OBJECT(activePlayerID);
+
+        ar & WRAP_OBJECT(globalTime);
+        ar & WRAP_OBJECT(gameSpeed);
+        ar & WRAP_OBJECT(gamePaused);
+
+        ar & WRAP_OBJECT(originalSaveName);
+    }
 
 	PrmString version;
 	PrmString worldName;
@@ -161,7 +193,6 @@ public:
 	bool gamePaused;
 	PrmString originalSaveName;
 
-	unsigned int quantAmountInPlayReel;
 	std::string fileNamePlayReelGame;
 	std::string missionNamePlayReelGame;
 	GameType gameType_;

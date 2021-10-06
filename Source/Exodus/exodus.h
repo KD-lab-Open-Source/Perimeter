@@ -66,7 +66,6 @@ struct SIZE {
 
 //For some reason not present in dxvk-native headers
 typedef uint8_t UCHAR;
-typedef void* PVOID;
 #ifdef PERIMETER_ARCH_64
 typedef uint64_t UINT_PTR;
 typedef int64_t LONG_PTR;
@@ -117,10 +116,6 @@ uint32_t GetPrivateProfileString(const char* section,const char* key,const char*
                               char* returnBuffer, uint32_t bufferSize, const char* filePath);
 
 uint32_t WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath);
-
-bool GetComputerName(char* out, uint32_t* size);
-
-bool GetUserName(char* out, uint32_t* size);
 
 void ZeroMemory(void* p, std::size_t n);
 

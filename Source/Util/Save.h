@@ -2565,20 +2565,14 @@ struct SavePlayerData
 	ShareHandle<SaveUnitData> frame;
 	std::vector<ShareHandle<SaveUnitData> > buildings;
 	std::vector<ShareHandle<SaveUnitData> > catchedFrames;
-	int compAndUserID;
 	SavePlayerStats playerStats;
 	std::vector<ShareHandle<SaveUnitData> > commonObjects;
 	std::list<TriggerChain> currentTriggerChains;
-
-	SavePlayerData() {
-		compAndUserID = 0;
-	}
 	
 	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(frame);
 		ar & WRAP_OBJECT(buildings);
 		ar & WRAP_OBJECT(catchedFrames);
-		ar & WRAP_OBJECT(compAndUserID);
 		ar & WRAP_OBJECT(playerStats);
 		ar & WRAP_OBJECT(commonObjects);
 		ar & WRAP_OBJECT(currentTriggerChains);

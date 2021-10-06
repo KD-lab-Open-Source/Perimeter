@@ -1,9 +1,6 @@
 #ifndef __CONNECTIONDP_H__
 #define __CONNECTIONDP_H__
 
-
-#define PERIMETER_DEFAULT_PORT      0x6501
-
 const unsigned int MAX_TIME_INTERVAL_HOST_RESPOND=10000;
 const unsigned int ENUMERATION_HOST_RETRY_INTERVAL=400;
 
@@ -33,15 +30,15 @@ struct XDPacket
 {
 	int   size;
 	unsigned char* buffer;
-	DPNID dpnid;
+	NETID netid;
 
 	FORCEINLINE XDPacket(){
 		size = 0;
 		buffer = 0;
-		dpnid = 0;
+		netid = 0;
 	}
-	FORCEINLINE XDPacket(DPNID _dpnid, int _size, const void* cb){
-		dpnid=_dpnid;
+	FORCEINLINE XDPacket(NETID _netid, int _size, const void* cb){
+		netid=_netid;
 		size= _size;
 		buffer = new unsigned char[size];
 		memcpy(buffer, cb, size);
@@ -50,8 +47,8 @@ struct XDPacket
 		if(buffer)
 			delete buffer;
 	}
-	FORCEINLINE void set(DPNID _dpnid, int _size, const void* cb){
-		dpnid=_dpnid;
+	FORCEINLINE void set(NETID _netid, int _size, const void* cb){
+		netid=_netid;
 		size = _size;
 		if(buffer) delete buffer;
 		buffer = new unsigned char[size];
@@ -65,16 +62,16 @@ struct XDPacket
 void XDPInit();
 void XDPClose();
 
-//#define XDP_DPNID_PLAYER_GENERAL 0xffffffff
+//#define XDP_NETID_PLAYER_GENERAL 0xffffffff
 
-///typedef void (*PFNEVENTPROC)(DPNID, void* pData, XDP_Message msg);
+///typedef void (*PFNEVENTPROC)(NETID, void* pData, XDP_Message msg);
 
 /*
 class XDPConnection
 {
 	//directplay server stuff
 	//IDirectPlay8Server* m_pDPServer;
-	DPNID               m_dpnidGroupCreating;
+	NETID               m_netidGroupCreating;
 
 	//directplay client stuff
 	//IDirectPlay8Client*  m_pDPClient;
@@ -89,7 +86,7 @@ class XDPConnection
 
 
 	typedef list<XDPacket> PacketListType;
-	typedef hash_map<DPNID, PacketListType> DPQueueType;
+	typedef hash_map<NETID, PacketListType> DPQueueType;
 
 	DPQueueType m_internal_queue;
 
@@ -130,17 +127,17 @@ public:
 
 	bool isConnected();
 
-	int Send(const char* buffer, int size, DPNID dpnid);
-	int Receive(char* buffer, int size, DPNID dpnid);
+	int Send(const char* buffer, int size, NETID netid);
+	int Receive(char* buffer, int size, NETID netid);
 
-	void InitPlayerQueue(DPNID dpnid);
-	//void GetActivePlayers(list<DPNID>& players);
-	void RemovePlayer(DPNID dpnid);
+	void InitPlayerQueue(NETID netid);
+	//void GetActivePlayers(list<NETID>& players);
+	void RemovePlayer(NETID netid);
 
-	//DPNID CreateGroup();
-	//void DestroyGroup(DPNID dpnid);
-	//void AddPlayerToGroup(DPNID group, DPNID player);
-	//void DelPlayerFromGroup(DPNID group, DPNID player);
+	//NETID CreateGroup();
+	//void DestroyGroup(NETID netid);
+	//void AddPlayerToGroup(NETID group, NETID player);
+	//void DelPlayerFromGroup(NETID group, NETID player);
 
 	void SetServerInfo(void* pb, int sz);
 	int  GetServerInfo(void* pb);
@@ -156,7 +153,7 @@ public:
 
 
 	//void refreshGroupMember();
-	//list<DPNID> gameGroupMemberList;
+	//list<NETID> gameGroupMemberList;
 
 };
 */

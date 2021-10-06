@@ -261,11 +261,12 @@ void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string
         mission.setSaveName(entry_path.c_str());
         mission.setReelName(entry_path.c_str());
 //			mission.gameType_ = replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame;
-        if( (!replay) || isCorrectPlayReelFile(mission.fileNamePlayReelGame.c_str()))
+        if((!replay) || isCorrectPlayReelFile(mission.fileNamePlayReelGame.c_str())) {
             mapVector.push_back(mission);
 //			MissionDescription mission((string(path) + FindFileData.cFileName).c_str(), replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame);
 //			if(mission.worldID() != -1)
 //				mapVector.push_back(mission);
+        }
     }
 }
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect) {

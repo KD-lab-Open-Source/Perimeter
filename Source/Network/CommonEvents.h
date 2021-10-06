@@ -691,23 +691,23 @@ enum netCommandJoinRequestResult{
 
 struct netCommand4C_JoinResponse : netCommandGeneral
 {
-	DPNID playerDPNID_;
-	DPNID groupDPNID_;
+	NETID playerNETID_;
+	NETID groupNETID_;
 	netCommandJoinRequestResult result_;
-	netCommand4C_JoinResponse(DPNID playerDPNID, DPNID groupDPNID, netCommandJoinRequestResult result) : netCommandGeneral(NETCOM_4C_ID_JOIN_RESPONSE) { 
-		playerDPNID_=playerDPNID;
-		groupDPNID_=groupDPNID;
+	netCommand4C_JoinResponse(NETID playerNETID, NETID groupNETID, netCommandJoinRequestResult result) : netCommandGeneral(NETCOM_4C_ID_JOIN_RESPONSE) {
+		playerNETID_=playerNETID;
+		groupNETID_=groupNETID;
 		result_=result;
 	}
 	netCommand4C_JoinResponse(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_JOIN_RESPONSE) {
-		in.read(&playerDPNID_, sizeof(playerDPNID_));
-		in.read(&groupDPNID_, sizeof(groupDPNID_));
+		in.read(&playerNETID_, sizeof(playerNETID_));
+		in.read(&groupNETID_, sizeof(groupNETID_));
 		in.read(&result_, sizeof(result_));
 	}
 
 	void Write(XBuffer& out) const {
-		out.write(&playerDPNID_, sizeof(playerDPNID_));
-		out.write(&groupDPNID_, sizeof(groupDPNID_));
+		out.write(&playerNETID_, sizeof(playerNETID_));
+		out.write(&groupNETID_, sizeof(groupNETID_));
 		out.write(&result_, sizeof(result_));
 	}
 };
@@ -736,15 +736,15 @@ struct netCommand4H_ReJoinRequest : netCommandGeneral
 
 struct netCommand4C_ReJoineResponce : netCommandGeneral
 {
-	DPNID hostDPNID_;
-	netCommand4C_ReJoineResponce(DPNID hostDPNID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONCE) {
-		hostDPNID_=hostDPNID;
+	NETID hostNETID_;
+	netCommand4C_ReJoineResponce(NETID hostNETID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONCE) {
+		hostNETID_=hostNETID;
 	}
 	netCommand4C_ReJoineResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONCE){
-		in.read(&hostDPNID_, sizeof(hostDPNID_));
+		in.read(&hostNETID_, sizeof(hostNETID_));
 	}
 	void Write(XBuffer& out) const{
-		out.write(&hostDPNID_, sizeof(hostDPNID_));
+		out.write(&hostNETID_, sizeof(hostNETID_));
 	}
 };
 
@@ -801,20 +801,20 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 /*
 struct netCommand4C_ReJoinResponse : netCommandGeneral
 {
-	DPNID playerDPNID_;
-	DPNID groupDPNID_;
-	netCommand4C_JoinResponse(DPNID playerDPNID, DPNID groupDPNID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) { 
-		playerDPNID_=playerDPNID;
-		groupDPNID_=groupDPNID;
+	NETID playerNETID_;
+	NETID groupNETID_;
+	netCommand4C_JoinResponse(NETID playerNETID, NETID groupNETID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) {
+		playerNETID_=playerNETID;
+		groupNETID_=groupNETID;
 	}
 	netCommand4C_ReJoinResponse(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) {
-		in.read(&playerDPNID_, sizeof(playerDPNID_));
-		in.read(&groupDPNID_, sizeof(groupDPNID_));
+		in.read(&playerNETID_, sizeof(playerNETID_));
+		in.read(&groupNETID_, sizeof(groupNETID_));
 	}
 
 	void Write(XBuffer& out) const {
-		out.write(&playerDPNID_, sizeof(playerDPNID_));
-		out.write(&groupDPNID_, sizeof(groupDPNID_));
+		out.write(&playerNETID_, sizeof(playerNETID_));
+		out.write(&groupNETID_, sizeof(groupNETID_));
 	}
 };
 */

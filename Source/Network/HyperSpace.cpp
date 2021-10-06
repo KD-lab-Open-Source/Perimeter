@@ -1,6 +1,8 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include <SDL.h>
+
+#include "SystemUtil.h"
 #include "Runtime.h"
 #include "UnitAttribute.h"
 #include "Universe.h"
@@ -28,8 +30,10 @@ const char * KEY_REPLAY_REEL="replay";
 //static const GUID filePlayReelID = { 0x62177a85, 0xc27c, 0x4f6a, { 0x98, 0x37, 0x92, 0x2f, 0x63, 0x5c, 0x7b, 0x8 } };
 //RePlayReel date (с патча 1.2)
 // {BDFBD2AD-F686-4dd1-A5E1-9544C782AAB1}
-static const GUID filePlayReelID = { 0xbdfbd2ad, 0xf686, 0x4dd1, { 0xa5, 0xe1, 0x95, 0x44, 0xc7, 0x82, 0xaa, 0xb1 } };
+//static const GUID filePlayReelID = { 0xbdfbd2ad, 0xf686, 0x4dd1, { 0xa5, 0xe1, 0x95, 0x44, 0xc7, 0x82, 0xaa, 0xb1 } };
 
+#define FILE_REPLAY_MAGIC_LEN 20
+static const char filePlayReelID[FILE_REPLAY_MAGIC_LEN] = "PerimeterReplay001\0";
 
 const unsigned int INTERNAL_BUILD_VERSION=1003;
 
@@ -54,6 +58,12 @@ public:
 };
 cMonowideFont* pMonowideFont;
 #endif //_FINAL_VERSION_
+
+bool checkPlayReelMagic(XStream& fi) {
+    char magic[FILE_REPLAY_MAGIC_LEN];
+    fi.read(&magic, FILE_REPLAY_MAGIC_LEN);
+    return strncmp(filePlayReelID, magic, FILE_REPLAY_MAGIC_LEN) == 0;
+}
 
 terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission)
 {
@@ -167,9 +177,7 @@ void getMissionDescriptionInThePlayReelFile(const char* fname, MissionDescriptio
 {
 	XStream fi(convert_path_content(fname).c_str(), XS_IN);
 
-	GUID fguid;
-	fi.read(&fguid, sizeof(fguid));
-	if(filePlayReelID!=fguid) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
+	if(!checkPlayReelMagic(fi)) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
 
 	int sizeOtherData=fi.size()-fi.tell();
 	XBuffer mdBuf(sizeOtherData);
@@ -182,19 +190,17 @@ void getMissionDescriptionInThePlayReelFile(const char* fname, MissionDescriptio
 
 bool isCorrectPlayReelFile(const char* fname)
 {
-	XStream fi(fname, XS_IN);
-	GUID fguid;
-	fi.read(&fguid, sizeof(fguid));
-	return (filePlayReelID==fguid);
+    std::string path = convert_path_content(fname);
+    if (path.empty()) return false;
+	XStream fi(path, XS_IN);
+    return checkPlayReelMagic(fi);
 }
 
 bool terHyperSpace::loadPlayReel(const char* fname)
 {
 	XStream fi(convert_path_content(fname), XS_IN);
 
-	GUID fguid;
-	fi.read(&fguid, sizeof(fguid));
-	if(filePlayReelID!=fguid) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
+	if(!checkPlayReelMagic(fi)) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
 
 	int sizeOtherData=fi.size()-fi.tell();
 	XBuffer mdBuf(sizeOtherData);
@@ -838,18 +844,8 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				netCommand4C_SaveLog nc(in_buffer);
 
-				const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
-				DWORD cns = BUF_CN_SIZE;
-				char cname[BUF_CN_SIZE];
-				GetComputerName(cname, &cns);
-
-				const int BUF_UN_SIZE=UNLEN + 1;
-				DWORD uns = BUF_UN_SIZE;
-				char username[BUF_UN_SIZE];
-				GetUserName(username, &uns);
-
 				XBuffer tb;
-				tb < "outNet_" < cname < "_" < username <= pNetCenter->m_localDPNID < ".log";
+				tb < "outNet_" < pNetCenter->internalPlayerData.name() < " _" <= clocki() < "_" <= pNetCenter->m_localNETID < ".log";
 
 				XStream f(tb, XS_OUT);
 				//const char* currentVersion;

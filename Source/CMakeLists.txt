@@ -222,7 +222,6 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Util/SaveOthers-1251.cpp
         Util/Save.cpp
         Util/AVWrapper.cpp
-        Game/StdAfx.cpp
         Util/SynchroTimer.cpp
         Util/SystemUtil.cpp
         Util/XPrmArchive.cpp

@@ -1,24 +1,11 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include "P2P_interface.h"
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <winsock.h>
-#else
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
-#ifndef PERIMETER_EXODUS
-#include "dxerr9.h"
-#endif
 #include <SDL.h>
 
 #include "GameShell.h"
 #include "Universe.h"
-
-#include "lmcons.h"
 
 #include "../Terra/terra.h"
 
@@ -82,92 +69,37 @@ const char* PNetCenter::getStrState()
 		return("PNC_???");
 	}
 }
-/*
-struct arun{
-	int l;
-	arun(){
-		char buf[256];
-		checkInetAddress(buf);
-	}
-};
-arun a;
-*/
-bool checkInetAddress(const char* ipStr)
-{
-/*	CoInitializeEx(0, COINIT_MULTITHREADED);
 
-	IDirectPlay8Address *pdpAddress;
-	IDirectPlay8AddressIP *pdpAddressIP;
- 
-	HRESULT hResult;
-	hResult = CoCreateInstance (CLSID_DirectPlay8Address,
-							  NULL, 
-							  CLSCTX_INPROC_SERVER,
-							  IID_IDirectPlay8Address, 
-							  (LPVOID *) &pdpAddress);
-	hResult = pdpAddress->QueryInterface (IID_IDirectPlay8AddressIP,
-										(LPVOID *) &pdpAddressIP);
-
-    WCHAR* wszHostName = new WCHAR[strlen(ipStr) + 1];
-	MultiByteToWideChar(CP_ACP, 0, ipStr, -1, wszHostName, strlen(ipStr) + 1);
-
-	hResult = pdpAddressIP->BuildAddress (wszHostName,0);
-	bool result;
-	if(hResult==S_OK)result=true;
-	else false;
-	pdpAddressIP->Release();
-	pdpAddress->Release();
-
-	CoUninitialize();
-
-	return result;*/
-
-//	unsigned long ip=inet_addr(strIP);
-//	if(ip!=INADDR_NONE) return true; //internalIP=ip;
-//	return false;
-	int len=strlen(ipStr);
-	if(len>=MAX_PATH) return false;
-	char buf[MAX_PATH];
-	int counterOk=0;
-	int i=0;
-	for(;;){
-		int k=0;
-		while(i<len && !isspace(ipStr[i]) && (ipStr[i]!=';') && (ipStr[i]!=',') ){
-			buf[k++]=ipStr[i++];
-		}
-		buf[k++]=0;
-		if(strlen(buf)){
-			unsigned long ip=inet_addr(buf);
-			if(ip!=INADDR_NONE) counterOk++;
-		}
-		if(i>=len) break;
-		i++;
-	}
-	if(counterOk) return true;
-	else return false;
+bool PNetCenter::parseHostAddress(IPaddress* address, const std::string& host) {
+    std::string ip;
+    uint16_t port;
+    size_t pos = host.find(':');
+    if (pos == std::string::npos) {
+        ip = host;
+        port = m_dwPort;
+    } else {
+        ip = host.substr(0, pos);
+        std::string port_str = host.substr(pos).c_str();
+        char* end;
+        port = static_cast<uint16_t>(strtol(port_str.c_str(), &end, 10));
+    }
+    return SDLNet_ResolveHost(address, ip.c_str(), port) == 0;
 }
 
-
-PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerName, const char* InternetAddress, const char* _password)
+PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const std::vector<std::string>& addresses)
 	: in_ClientBuf(1000000, 1), out_ClientBuf(1000000, 1), in_HostBuf(1000000, 1), out_HostBuf(1000000, 1)
 {
 	LogMsg("Creating PNetCenter-");
 
-	if(_password) gamePassword=_password;
-	else gamePassword="";
 	workMode=_workMode;
-	//m_gameHostID=0;
-	internalIP=0;
-#ifndef PERIMETER_EXODUS
-	// DP Init
-	//m_hEnumAsyncOp=0;
-	m_hEnumAsyncOp_Arr.clear();
+    hostConnection;
+#if 0 //TODO DELETE
 	m_pDPPeer=0;
 	m_nClientSgnCheckError = 0;
 #endif
 	
-    m_hostDPNID=0;
-    m_localDPNID=0;
+    m_hostNETID=0;
+    m_localNETID=0;
 	
     flag_connected=false;
 	flag_NetworkSimulation=false;
@@ -176,8 +108,8 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 	if(IniManager("Network.ini").getInt("General", "HostMigrate")) flag_HostMigrate=true;
 	flag_NoUseDPNSVR=false;
 	if(IniManager("Network.ini").getInt("General", "NoUseDPNSVR")) flag_NoUseDPNSVR=true;
-	m_dwPort = 0;
-	m_dwPort=IniManager("Network.ini").getInt("General", "Port");
+	m_dwPort = 25857;
+    IniManager("Network.ini").getInt("General", "Port", m_dwPort);
 
 	m_DPSigningLevel=0;
 	m_DPSigningLevel=IniManager("Network.ini").getInt("General", "DPSigningLevel");
@@ -227,36 +159,16 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const char* playerNa
 
 	m_GeneralLock = SDL_CreateMutex();
 
-	//fixedInternetAddress.clear();
 	needHostList.clear();
 
 	GameShell::e_NetCenterConstructorReturnCode result=GameShell::NCC_RC_OK;
 
-	switch(_workMode){
-	case PNCWM_LAN:
-		break;
-	case PNCWM_ONLINE_P2P:
-		if(InternetAddress!=0){
-			//fixedInternetAddress=InternetAddress;
-			int len=strlen(InternetAddress);
-			if(len>=MAX_PATH) break;
-			char buf[MAX_PATH];
-			int i=0;
-			for(;;){
-				int k=0;
-				while(i<len && !isspace(InternetAddress[i]) && (InternetAddress[i]!=';') && (InternetAddress[i]!=',') ){
-					buf[k++]=InternetAddress[i++];
-				}
-				buf[k++]=0;
-				if(strlen(buf)){
-					needHostList.push_back(buf);
-				}
-				if(i>=len) break;
-				i++;
-			}
-		}
-		break;
-	}
+    for (const auto& address : addresses) {
+        GameHostConnection conn;
+        if (this->parseHostAddress(&conn.host_ip, address)) {
+            needHostList.emplace_back(conn);
+        }
+    }
 
 	///hServerReady=CreateEvent(0, true, false, 0);
 	///hStartServer=CreateEvent(0, true, false, 0);
@@ -312,142 +224,76 @@ PNetCenter::~PNetCenter()
     DestroyEvent(hCommandExecuted);
 }
 
-const char* PNetCenter::getMissionName()
-{
-	if(isHost()) return hostMissionDescription.missionName();
-	else return ("");
+//////////////////////////////////////////////
+/// Current game info getters
+
+const char* PNetCenter::getMissionName() {
+	if (!isHost()) return ""; 
+    return hostMissionDescription.missionName();
 }
-const char* PNetCenter::getGameName()
-{
-	if(isHost()) return m_GameName.c_str();
-	else return ("");
+
+const char* PNetCenter::getGameName() {
+	if (!isHost()) return ""; 
+    return m_GameName.c_str();
 }
-const char* PNetCenter::getGameVer()
-{
+
+const char* PNetCenter::getGameVer() {
 	return SIMPLE_GAME_CURRENT_VERSION;
 }
-int PNetCenter::getNumPlayers()
-{
-	if(isHost()) return hostMissionDescription.playersAmount();
-	else return 0;
-}
-int PNetCenter::getMaxPlayers()
-{
-	if(isHost()) return hostMissionDescription.playersMaxEasily();//playersAmountScenarioMax();
-	else return 0;
-}
-int PNetCenter::getHostPort()
-{
-	if(isHost()) return m_dwPort;
-	else return 0;
+
+int PNetCenter::getNumPlayers() {
+	if(!isHost()) return 0; 
+    return hostMissionDescription.playersAmount();
 }
 
+int PNetCenter::getMaxPlayers() {
+	if(!isHost()) return 0; 
+    return hostMissionDescription.playersMaxEasily();//playersAmountScenarioMax();
+}
 
+int PNetCenter::getHostPort() {
+	if(!isHost()) return 0; 
+    return m_dwPort;
+}
 
-void PNetCenter::CreateGame(const char* gameName, const char* missionName, const char* playerName, terBelligerent belligerent, unsigned int color, float gameSpeed, const char* password)
+//////////////////////////////////////////////
+/// New network game creation or joining
+
+void PNetCenter::CreateGame(const std::string& gameName, const std::string& missionName, const std::string& playerName, const std::string& password)
 {
-#ifndef _SINGLE_DEMO_
+    LogMsg("Create Game\n");
 	clientPause=false;
 	clientInPacketPause=false;
+    gamePassword=password;
 
 
-	m_quantInterval=round((float)NORMAL_QUANT_INTERVAL/gameSpeed);
+	m_quantInterval=NORMAL_QUANT_INTERVAL; //round((float)NORMAL_QUANT_INTERVAL/gameSpeed);
 
-	const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
-	DWORD cns = BUF_CN_SIZE;
-	char cname[BUF_CN_SIZE];
-	GetComputerName(cname, &cns);
-
-	const int BUF_UN_SIZE=UNLEN + 1;
-	DWORD uns = BUF_UN_SIZE;
-	char username[BUF_UN_SIZE];
-	GetUserName(username, &uns);
-
-	MissionDescription md(missionName, GT_createMPGame);
+	MissionDescription md(missionName.c_str(), GT_createMPGame);
 
 	hostMissionDescription=md; //Argument PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST
 	m_GameName = gameName;
-	internalPlayerData.set(PlayerData::PLAYER_ID_NONE, playerName, belligerent, color);
-	internalPlayerData.setCompAndUserID(cname, username);
+	internalPlayerData.set(PlayerData::PLAYER_ID_NONE, playerName);
 	ExecuteInternalCommand(PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST, true);
 
-	if(isConnected()) gameShell->callBack_CreateGameReturnCode(GameShell::CG_RC_OK);
-	else gameShell->callBack_CreateGameReturnCode(GameShell::CG_RC_CREATE_HOST_ERR);
-
-	return;
-#else 
-	ErrH.Abort("Single DEMO !!!");
-#endif
+    gameShell->callBack_CreateGameReturnCode(isConnected() ? GameShell::CG_RC_OK : GameShell::CG_RC_CREATE_HOST_ERR);
 }
 
-void PNetCenter::JoinGame(GUID _gameHostID, const char* playerName, terBelligerent belligerent, unsigned int color)
+void PNetCenter::JoinGame(GameHostConnection* connection, const std::string& playerName, const std::string& password)
 {
-#ifndef _SINGLE_DEMO_
-	clientPause=false;
+	LogMsg("Join Game\n");
+	clientPause = false;
 	clientInPacketPause=false;
-
-	const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
-	DWORD cns = BUF_CN_SIZE;
-	char cname[BUF_CN_SIZE];
-	GetComputerName(cname, &cns);
-	const int BUF_UN_SIZE=UNLEN + 1;
-	DWORD uns = BUF_UN_SIZE;
-	char username[BUF_UN_SIZE];
-	GetUserName(username, &uns);
-
-	//PlayerData jPlayerData(PlayerData::PLAYER_ID_NONE, playerName, belligerent, color);
-	//jPlayerData.setCompAndUserID(cname, username);
-	//netCommandC_JoinRequest ncjr(/*games[0].id,*/ jPlayerData, cname);
-	//SendEventSync(&ncjr);
+    if (!connection) {
+        LogMsg("invalid host to connect\n");
+        gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
+        return;// JGRC_ERR_CONNECTION;
+    }
+    hostConnection = *connection;
+    gamePassword=password;
 
 	//Argument  PNC_COMMAND__CONNECT_2_HOST_AND_STOP_FIND_HOST
-	internalPlayerData.set(PlayerData::PLAYER_ID_NONE, playerName, belligerent, color);
-	internalPlayerData.setCompAndUserID(cname, username);
-	internalIP=0; //Важно!
-	m_gameHostID=_gameHostID;
-	ExecuteInternalCommand(PNC_COMMAND__CONNECT_2_HOST_AND_STOP_FIND_HOST, false/*true*/);
-//	if(isConnected()) {
-//		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_OK);
-//		return;// JGRC_OK;
-//	}
-//	else {
-//		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
-//		return;// JGRC_ERR_CONNECTION;
-//	}
-
-#else 
-	ErrH.Abort("Single DEMA !!!");
-#endif
-}
-
-void PNetCenter::JoinGame(const char* strIP, const char* playerName, terBelligerent belligerent, unsigned int color, const char* password)
-{
-#ifndef _SINGLE_DEMO_
-	LogMsg("Join 2 server-");
-	clientPause=false;
-	clientInPacketPause=false;
-
-	unsigned long ip=inet_addr(strIP);
-	if(ip!=INADDR_NONE) internalIP=ip;
-	else {
-		LogMsg("invalid IP\n");
-		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
-		return;// JGRC_ERR_CONNECTION;
-	}
-
-	const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
-	DWORD cns = BUF_CN_SIZE;
-	char cname[BUF_CN_SIZE];
-	GetComputerName(cname, &cns);
-	const int BUF_UN_SIZE=UNLEN + 1;
-	DWORD uns = BUF_UN_SIZE;
-	char username[BUF_UN_SIZE];
-	GetUserName(username, &uns);
-
-
-	//Argument  PNC_COMMAND__CONNECT_2_HOST_AND_STOP_FIND_HOST
-	internalPlayerData.set(PlayerData::PLAYER_ID_NONE, playerName, belligerent, color);
-	internalPlayerData.setCompAndUserID(cname, username);
+	internalPlayerData.set(PlayerData::PLAYER_ID_NONE, playerName);
 	//internalIP установлен ранее
 	ExecuteInternalCommand(PNC_COMMAND__CONNECT_2_HOST_AND_STOP_FIND_HOST, false /*true*/);
 //	if(isConnected()) {
@@ -460,11 +306,9 @@ void PNetCenter::JoinGame(const char* strIP, const char* playerName, terBelliger
 //		gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
 //		return;// JGRC_ERR_CONNECTION;
 //	}
-#else 
-	ErrH.Abort("Single DEMA !!!");
-#endif
 }
 
+//////////////////////////////////////////////
 
 // first thread function !
 void PNetCenter::SendEvent(const netCommandGeneral* event)
@@ -508,7 +352,7 @@ void PNetCenter::HandlerInputNetCommand()
 		case NETCOM_4C_ID_JOIN_RESPONSE:
 			{
 				netCommand4C_JoinResponse ncjr(in_ClientBuf);
-				//m_playerDPNID=ncjr.playerDPNID_;
+				//m_playerNETID=ncjr.playerNETID_;
 			}
 			break;
 		case NETCOM_4C_ID_START_LOAD_GAME:
@@ -617,7 +461,7 @@ loc_end_quant:
 
 void PNetCenter::P2PIQuant()
 {
-	//in_buffer.receive(m_connection, XDP_DPNID_PLAYER_GENERAL);
+	//in_buffer.receive(m_connection, XDP_NETID_PLAYER_GENERAL);
 
 	sPNCInterfaceCommand curInterfaceCommand(PNC_INTERFACE_COMMAND_NONE);
 	{
@@ -814,8 +658,6 @@ std::vector<sGameHostInfo*>& PNetCenter::getGameHostList()
 	return gameHostList;
 }
 
-static const GUID zeroGUID= { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0 } };
-
 void PNetCenter::refreshLanGameHostList()
 {
 	clearGameHostList();
@@ -823,14 +665,12 @@ void PNetCenter::refreshLanGameHostList()
 	char txtBufGameName[MAX_PATH];
 	//char textBuffer[MAX_PATH];
 	int curTime=clocki();
-	std::vector<std::string>::iterator k;
+	std::vector<GameHostConnection>::iterator k;
 	for(k=needHostList.begin(); k!=needHostList.end(); k++){
-		GUID curguid=zeroGUID;
-		curguid.Data1= std::distance(needHostList.begin(), k);
-		gameHostList.push_back(new sGameHostInfo( curguid, k->c_str(), "", "", sGameStatusInfo()));
+		gameHostList.push_back(new sGameHostInfo( *k, "", "", sGameStatusInfo()));
 	}
 
-#ifndef PERIMETER_EXODUS
+    /*
 	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
 	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end();){
 		if((curTime - (*p)->timeLastRespond) > MAX_TIME_INTERVAL_HOST_RESPOND ) {
@@ -857,7 +697,7 @@ void PNetCenter::refreshLanGameHostList()
 				hResult=pa->GetComponentByIndex(i, txtBuf, &sizeTxtBuf, txtBuf2, &sizeTxtBuf2, &data);
 				arr=DXGetErrorString9(hResult);
 			}*/
-
+/*
 			char * pBuf;
 			DWORD bufSize;
 			DWORD dataType;
@@ -912,7 +752,7 @@ void PNetCenter::refreshLanGameHostList()
 			p++;
 		}
 	}
-#endif
+ */
 }
 
 
@@ -929,9 +769,6 @@ void PNetCenter::StartFindHost(void)
 	ExecuteInternalCommand(PNC_COMMAND__START_FIND_HOST, true);
 }
 
-
-
-
 void PNetCenter::DisconnectAndStartFindHost(void)
 {
 	ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, true);
@@ -941,30 +778,3 @@ void PNetCenter::StopServerAndStartFindHost(void)
 {
 	ExecuteInternalCommand(PNC_COMMAND__STOP_HOST_AND_ABORT_GAME_AND_START_FIND_HOST, true);
 }
-
-void PNetCenter::reEnumPlayers(int IP)
-{
-	reStartFindPlayers(IP);
-}
-
-
-// !!!!!!!!!!!!!!! Вызывает много вопросов !!!!!!!!!!!!!!!!!!!
-#define IP1(x) (x & 0xff)
-#define IP2(x) ((x>>8) & 0xff)
-#define IP3(x) ((x>>16) & 0xff)
-#define IP4(x) ((x>>24) & 0xff)
-void PNetCenter::reStartFindPlayers(int ip)
-{
-	CAutoLock _lock(m_GeneralLock); //! Lock 
-
-	StopFindHostDP();
-	char ip_string[17];
-	memset(ip_string, 0, sizeof(ip_string));
-	sprintf(ip_string, "%d.%d.%d.%d", IP1(ip), IP2(ip), IP3(ip), IP4(ip));
-
-	{
-		clearInternalFoundHostList();
-	}
-	StartFindHostDP(ip_string);
-}
-

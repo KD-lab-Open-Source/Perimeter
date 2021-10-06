@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include "P2P_interface.h"
 
@@ -23,7 +23,7 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 		HANDLE ha[ha_size];
 		ha[0]=hSecondThread;
 		ha[1]=hCommandExecuted;
-		DWORD result=WaitForMultipleObjects(ha_size, ha, FALSE, INFINITE);
+		DWORD result=WaitForMultipleObjects(ha_size, ha, false, INFINITE);
 		if(result<WAIT_OBJECT_0 || result>= (WAIT_OBJECT_0+ha_size)) {
 			xassert(0&&"Error execute command");
 		}
@@ -34,41 +34,38 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 
 
 //Запускается из 2 3-го потока
-int PNetCenter::AddClient(PlayerData& pd, const DPNID dpnid, const char* descr)
+int PNetCenter::AddClient(PlayerData& pd, const NETID netid, const char* descr)
 {
 	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
 
 	int idxPlayerData=-1;
-	if(hostMissionDescription.gameType_==GT_createMPGame){
-		idxPlayerData=hostMissionDescription.connectNewPlayer2PlayersData(pd, dpnid);
-	}
-	else if(hostMissionDescription.gameType_==GT_loadMPGame){
-		idxPlayerData=hostMissionDescription.connectLoadPlayer2PlayersData(pd, dpnid);
+	if (hostMissionDescription.gameType_==GT_createMPGame) {
+		idxPlayerData=hostMissionDescription.connectNewPlayer2PlayersData(pd, netid);
+	} else if(hostMissionDescription.gameType_==GT_loadMPGame) {
+		idxPlayerData=hostMissionDescription.connectLoadPlayer2PlayersData(pd, netid);
 	}
 	hostMissionDescription.setChanged();
 	if(idxPlayerData!=-1){
-		//missionDescription.playersData[idxPlayerData].dpnid=dpnid;
+		//missionDescription.playersData[idxPlayerData].netid=netid;
 		//missionDescription.playersData[idxPlayerData].flag_playerStartReady=1;
 
-		PClientData* pCD=new PClientData(idxPlayerData, dpnid, descr);
+		PClientData* pCD=new PClientData(idxPlayerData, netid, descr);
 		pCD->backGameInf2List.reserve(20000);//резерв под 20000 квантов
 		m_clients.push_back(pCD);
 
-		///m_pConnection->AddPlayerToGroup(m_dpnidGroupGame, dpnid);
+		///m_pConnection->AddPlayerToGroup(m_netidGroupGame, netid);
 
-		LogMsg("New client 0x%X(%s) for game %s\n", dpnid, descr, m_GameName.c_str());
+		LogMsg("New client 0x%lX(%s) for game %s\n", netid, descr, m_GameName.c_str());
 
-//		netCommand4C_JoinResponse ncjr(dpnid, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/, NCJRR_OK);
-//		SendEvent(ncjr, dpnid);
+//		netCommand4C_JoinResponse ncjr(netid, NETID_ALL_PLAYERS_GROUP/*m_netidGroupGame*/, NCJRR_OK);
+//		SendEvent(ncjr, netid);
 		return idxPlayerData;
-	}
-	else {
-		LogMsg("client 0x%X(%s) for game %s id denied\n", dpnid, descr, m_GameName.c_str());
+	} else {
+		LogMsg("client 0x%lX(%s) for game %s id denied\n", netid, descr, m_GameName.c_str());
 		return -1;
 	}
 
 }
-
 //Запускается из 1-го(деструктор) и 2-го потока
 void PNetCenter::ClearClients()
 {
@@ -77,20 +74,6 @@ void PNetCenter::ClearClients()
 		delete *i;
 	m_clients.clear();
 }
-
-//Запускается из 1 и 2-го потока
-void PNetCenter::clearInternalFoundHostList(void) 
-{
-#ifndef PERIMETER_EXODUS
-	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
-	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
-	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
-		delete *p;
-	}
-	internalFoundHostList.erase(internalFoundHostList.begin(), internalFoundHostList.end());
-#endif
-}
-
 
 //Запускается из 2 и 3-го потока
 /// !!! педается указатель !!! удаление происходит автоматом после осылки !!!

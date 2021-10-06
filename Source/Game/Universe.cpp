@@ -705,7 +705,6 @@ MissionDescription::MissionDescription(const char* fname, GameType gameType)
 	setChanged();
 	xassert(fname);
 
-	quantAmountInPlayReel = 0;
 	gameType_ = gameType;
 
 	if(gameType_ == GT_playRellGame){

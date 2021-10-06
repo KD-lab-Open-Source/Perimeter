@@ -98,7 +98,6 @@ playerStrategyIndex_(0)
 	setDifficulty(DIFFICULTY_HARD);
 	isWorld_ = playerData.realPlayerType == REAL_PLAYER_TYPE_WORLD;
 	name_ = playerData.name();
-	compAndUserID_ = playerData.compAndUserID;
 	handicap_ = playerData.handicap/100.;
 
 	controlEnabled_ = true;
@@ -1042,7 +1041,6 @@ void terPlayer::universalSave(SavePlayerData& data, bool userSave)
 		}
 	}
 
-	data.compAndUserID = compAndUserID_;
 	data.playerStats = stats;
 
 	if(userSave)

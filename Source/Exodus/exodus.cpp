@@ -4,7 +4,6 @@
 #include <cctype>
 #include <thread>
 #include <SDL.h>
-#include <pwd.h>
 #include <string>
 #include <filesystem>
 #include <SimpleIni.h>
@@ -55,30 +54,6 @@ uint32_t WritePrivateProfileString(const char* section,const char* key,const cha
         return 0;
     };
     return 1;
-}
-
-bool GetComputerName(char* out, uint32_t* size) {
-    if (gethostname(out, *size) == 0) {
-        *size = SDL_strlen(out) + 1;
-        return true;
-    }
-    *out = 0;
-    *size = 0;
-    return false;
-}
-
-bool GetUserName(char* out, uint32_t* size) {
-    struct passwd *pwd = getpwuid(getuid());
-    if (pwd) {
-        size_t maxsize = *size;
-        SDL_strlcpy(out, pwd->pw_name, maxsize);
-        *size = std::min(maxsize, SDL_strlen(out) + 1);
-        return true;
-    }
-    
-    *out = 0;
-    *size = 0;
-    return false;
 }
 
 void ZeroMemory(void *p, size_t n) {

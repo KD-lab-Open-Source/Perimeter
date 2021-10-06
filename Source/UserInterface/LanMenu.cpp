@@ -10,6 +10,7 @@
 #include "PerimeterShellUI.h"
 #include "Controls.h"
 #include "MainMenu.h"
+#include "ServerLobby.h"
 
 #include "BGScene.h"
 #include "../HT/ht.h"
@@ -38,8 +39,7 @@ std::string cmdlineRoomName = "";
 std::string messageBoxText;
 bool connRestored;
 
-//unsigned int selectedLanGameID = 0;
-GUID selectedLanGameID;
+GameHostConnection selectedHost;
 extern void checkMissionDescription(int index, std::vector<MissionDescription>& mVect);
 extern std::string getItemTextFromBase(const char *keyStr);
 
@@ -109,14 +109,14 @@ void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			for (it = gameShell->getNetClient()->getGameHostList().begin(); it != gameShell->getNetClient()->getGameHostList().end(); it++, i++) {
 				std::string name = formatGameInfo(*it, true);
 				listBox->AddString( name.c_str(), 0 );
-				if ((*it)->gameHostGUID == selectedLanGameID) {
+				if ((*it)->gameHost.server_id == selectedHost.server_id) {
 					selectedGame = *it;
 					selectIndex = i;
 				}
 			}
 			listBox->SetCurSel(selectIndex);
 			if (selectIndex == 0) {
-				selectedLanGameID = selectedGame->gameHostGUID;
+				selectedHost = selectedGame->gameHost;
 			}
 			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_GAME_MAP))->setWorldID( selectedGame->gameStatusInfo.worldID );
 			((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_GAME_MAP_DESCR_TXT))->setText( formatGameInfo(selectedGame, false) );
@@ -132,7 +132,7 @@ void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		if (pos >= 0 && pos < gameShell->getNetClient()->getGameHostList().size()) {
 			std::vector<sGameHostInfo*>::iterator it = gameShell->getNetClient()->getGameHostList().begin();
 			advance(it, pos);
-			selectedLanGameID = (*it)->gameHostGUID;
+			selectedHost = (*it)->gameHost;
 
 			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_GAME_MAP))->setWorldID( (*it)->gameStatusInfo.worldID );
 			((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_GAME_MAP_DESCR_TXT))->setText( formatGameInfo(*it, false) );
@@ -154,15 +154,21 @@ int createQuant( float, float ) {
 			setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
 			showMessageBoxButtons();
 		} else {
-			CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
+            std::string playerName;
+            if (cmdLineData.playerName.empty()) {
+                CEditWindow* input = (CEditWindow*) _shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
+                playerName = input->GetText();
+            } else {
+                playerName = cmdLineData.playerName;
+            }
 			std::string gameName;
-			if (cmdlineRoomName.empty()) {
-				gameName = input->GetText();
+			if (cmdLineData.roomName.empty()) {
+				gameName = playerName;
 			} else {
-				gameName = cmdlineRoomName;
+				gameName = cmdLineData.roomName;
 			}
 			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
-			gameShell->getNetClient()->CreateGame(gameName.c_str(), missionName.c_str(), input->GetText(), BELLIGERENT_EXODUS0, 0, 1, cmdLineData.password.c_str() );
+			gameShell->getNetClient()->CreateGame(gameName, missionName, playerName, cmdLineData.password );
 		}
 /*		
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_MAP_LIST);
@@ -310,7 +316,7 @@ int exitCreatingNetCenter( float, float ) {
 int joinQuant( float, float ) {
 	if (menuChangingDone) {
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
-		gameShell->getNetClient()->JoinGame(selectedLanGameID, input->GetText(), BELLIGERENT_EXODUS0, 0);
+		gameShell->getNetClient()->JoinGame(&selectedHost, input->GetText());
 		return 0;
 	}
 	return 1;
@@ -980,30 +986,17 @@ int exitCmdLine( float, float ) {
 	return 1;
 }
 
-int cmdLineCreateHost( float, float ) {
+int startCmdlineOnlineQuant(float, float ) {
 	if (menuChangingDone) {
-        cmdlineRoomName = cmdLineData.roomName;
-		way = COMMAND_LINE_CREATE_GAME;
-		gameShell->createNetClient(
-			PNetCenter::PNCWM_ONLINE_P2P,
-			cmdLineData.name.c_str(),
-			cmdLineData.ip.c_str(),
-			cmdLineData.password.c_str() );
-//		startWithScreen(SQSH_MM_CREATE_GAME_SCR);
-		return 0;
-	}
-	return 1;
-}
-
-int cmdLineJoin( float, float ) {
-	if (menuChangingDone) {
-		way = COMMAND_LINE_LOBBY;
-		gameShell->createNetClient(
+        if (cmdLineData.address.empty()) {
+            way = COMMAND_LINE_CREATE_GAME;
+        } else {
+            way = COMMAND_LINE_LOBBY;
+        }
+        gameShell->createNetClient(
             PNetCenter::PNCWM_ONLINE_P2P,
-			cmdLineData.name.c_str(),
-			cmdLineData.ip.c_str(),
-			cmdLineData.password.c_str() );
-		selectedLanGameID = cmdLineData.gameID;
+            cmdLineData.address.c_str()
+        );
 		return 0;
 	}
 	return 1;
@@ -1030,25 +1023,19 @@ int hideBoxNetCenterQuant( float, float ) {
 	return 1;
 }
 
-void GameShell::startOnline(CommandLineData data) {
+void GameShell::startCmdlineOnline(const CommandLineData& data) {
 	_bCursorVisible = 1;
 	_WaitCursor();
-	cmdLineData = data;
-    putStringSettings(regLanName, data.name);
+    putStringSettings(regLanName, cmdLineData.playerName);
 	_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 	CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
-	input->SetText(data.name.c_str());
+	input->SetText(cmdLineData.playerName.c_str());
 
-//	setupOkMessageBox(exitCmdLine, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT);
 	setupOkMessageBox(exitCmdLine, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT, false);
 	prepareForInGameMenu();
 	showMessageBox();
 
-	if (data.host) {
-		_shellIconManager.AddDynamicHandler( cmdLineCreateHost, CBCODE_QUANT );
-	} else {
-		_shellIconManager.AddDynamicHandler( cmdLineJoin, CBCODE_QUANT );
-	}
+    _shellIconManager.AddDynamicHandler(startCmdlineOnlineQuant, CBCODE_QUANT);
 }
 
 void GameShell::callBack_NetCenterConstructorReturnCode(e_NetCenterConstructorReturnCode retCode) {
@@ -1088,19 +1075,25 @@ void switchToMultiplayer(CreateNetCenterWayType way) {
 					setMessageBoxTextID("Interface.Menu.Messages.Creating");
 					std::string gameName;
 					if (cmdlineRoomName.empty()) {
-						gameName = cmdLineData.name;
+						gameName = cmdLineData.playerName;
 					} else {
 						gameName = cmdlineRoomName;
 					}
 					std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
-					gameShell->getNetClient()->CreateGame(gameName.c_str(), missionName.c_str(), cmdLineData.name.c_str(), BELLIGERENT_EXODUS0, 0, 1, cmdLineData.password.c_str() );
+					gameShell->getNetClient()->CreateGame(gameName, missionName, cmdLineData.playerName, cmdLineData.password);
 				}
 			}
 			break;
-		case COMMAND_LINE_LOBBY:
-			gameShell->getNetClient()->JoinGame(cmdLineData.ip.c_str(), cmdLineData.name.c_str(), BELLIGERENT_EXODUS0, 0, cmdLineData.password.c_str());
-			showMessageBoxButtons();
-			break;
+		case COMMAND_LINE_LOBBY: {
+            GameHostConnection hostConn;
+            if (!gameShell->getNetClient()->parseHostAddress(&hostConn.host_ip, cmdLineData.address)) {
+                setMessageBoxTextID("Interface.Menu.Messages.WrongIPAdress");
+            } else {
+                gameShell->getNetClient()->JoinGame(&hostConn, cmdLineData.playerName, cmdLineData.password);
+            }
+            showMessageBoxButtons();
+            break;
+        }
 		case MENU_LAN:
 			_shellIconManager.SwitchMenuScreens(SQSH_MM_START_SCR, SQSH_MM_LAN_SCR);
 			break;
@@ -1117,18 +1110,21 @@ void switchToMultiplayer(CreateNetCenterWayType way) {
 ////////create online net center//////////
 int createOnlineNetCenter( float, float ) {
 	if (menuChangingDone) {
+        CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PLAYER_NAME_INPUT);
 		CEditWindow* ipInput = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_IP_INPUT);
-		if ( !checkInetAddress(ipInput->getText().c_str()) ) {
-			setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.WrongIPAdress");
-			showMessageBoxButtons();
+        if ( ipInput->getText().empty() ) {
+            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.WrongIPAdress");
+            showMessageBoxButtons();
+        } else if ( input->getText().empty() ) {
+            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.NameIsInvalid");
+            showMessageBoxButtons();
 		} else {
-			CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PLAYER_NAME_INPUT);
 			CComboWindow* pCombo = (CComboWindow*) _shellIconManager.GetWnd(SQSH_MM_CONNECTION_TYPE_COMBO);
 			way = MENU_ONLINE;
 			gameShell->createNetClient(
 				PNetCenter::PNCWM_ONLINE_P2P,
-				input->getText().c_str(),
-				ipInput->getText().c_str() );
+				input->getText()
+            );
 			_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT)->Enable(false);
 		}
 		return 0;
@@ -1186,7 +1182,7 @@ void onMMConnectionTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int pa
 int createLanNetCenter( float, float ) {
 	if (menuChangingDone) {
 		way = MENU_LAN;
-		gameShell->createNetClient(PNetCenter::PNCWM_LAN);
+		gameShell->createNetClient(PNetCenter::PNCWM_LAN, "");
 		_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT)->Enable(true);
 		return 0;
 	}

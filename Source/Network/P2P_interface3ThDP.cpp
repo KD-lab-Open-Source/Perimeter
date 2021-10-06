@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include "P2P_interface.h"
 
@@ -90,9 +90,9 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 			PDPNMSG_DESTROY_PLAYER pDestroyPlayerMsg;
 			pDestroyPlayerMsg = (PDPNMSG_DESTROY_PLAYER)pMsgBuffer;
 
-			///NetHandlerProc(pDestroyPlayerMsg->dpnidPlayer, msg);
+			///NetHandlerProc(pDestroyPlayerMsg->netidPlayer, msg);
 			//if(isHost()){
-			DeleteClientByDPNID(pDestroyPlayerMsg->dpnidPlayer, pDestroyPlayerMsg->dwReason);
+			DeleteClientByNETID(pDestroyPlayerMsg->netidPlayer, pDestroyPlayerMsg->dwReason);
 			//}
 			break;
 		}
@@ -150,7 +150,7 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 			//else if(m_mode == DP_CLIENT) m_pDP=m_pDPClient;
 			m_pDP=m_pDPPeer;
 
-			DPNID dpnid=pCreatePlayerMsg->dpnidPlayer;
+			NETID netid=pCreatePlayerMsg->netidPlayer;
 
 			HRESULT hr;
 			DWORD dwSize = 0;
@@ -162,7 +162,7 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 			// GetPeerInfo might return DPNERR_CONNECTING when connecting, 
 			// so just keep calling it if it does
 			while( hr == DPNERR_CONNECTING ) 
-				hr = m_pDP->GetPeerInfo( dpnid, pdpPlayerInfo, &dwSize, 0 );                                
+				hr = m_pDP->GetPeerInfo( netid, pdpPlayerInfo, &dwSize, 0 );
 
 			if( hr == DPNERR_BUFFERTOOSMALL ) {
 				pdpPlayerInfo = (DPN_PLAYER_INFO*) new BYTE[ dwSize ];
@@ -174,12 +174,12 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 				ZeroMemory( pdpPlayerInfo, dwSize );
 				pdpPlayerInfo->dwSize = sizeof(DPN_PLAYER_INFO);
 
-				hr = m_pDP->GetPeerInfo( dpnid, pdpPlayerInfo, &dwSize, 0 );
+				hr = m_pDP->GetPeerInfo( netid, pdpPlayerInfo, &dwSize, 0 );
 				if( SUCCEEDED(hr) ) {
                     if( pdpPlayerInfo->dwPlayerFlags & DPNPLAYER_LOCAL )
-                        m_localDPNID=dpnid;
+                        m_localNETID=netid;
 					if( pdpPlayerInfo->dwPlayerFlags & DPNPLAYER_HOST )
-						m_hostDPNID=dpnid;
+						m_hostNETID=netid;
 					//Дополнительно
 					if( (pdpPlayerInfo->dwPlayerFlags&DPNPLAYER_LOCAL)==0 && isHost()){//Кривоватое условие
                         //TODO fix this once we remove DirectPlay
@@ -189,7 +189,7 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 #else
                         mIdx = (unsigned int) pCreatePlayerMsg->pvPlayerContext;
 #endif
-						setDPNIDInClientsDate(mIdx, pCreatePlayerMsg->dpnidPlayer);
+						setNETIDInClientsDate(mIdx, pCreatePlayerMsg->netidPlayer);
 					}
 
 				}
@@ -206,7 +206,7 @@ LErrorReturn:
 	case DPN_MSGID_CREATE_GROUP:
 		{
 			DPNMSG_CREATE_GROUP* pMsg = (DPNMSG_CREATE_GROUP*)pMsgBuffer;
-			///m_dpnidGroupCreating = pMsg->dpnidGroup;
+			///m_netidGroupCreating = pMsg->netidGroup;
 		}
 		break;
 	case DPN_MSGID_ENUM_HOSTS_QUERY:
@@ -283,7 +283,7 @@ LErrorReturn:
 
 			{
 				m_DPPacketList.push_back(XDPacket());
-				m_DPPacketList.back().set(pReceiveMsg->dpnidSender, pReceiveMsg->dwReceiveDataSize, pReceiveMsg->pReceiveData);
+				m_DPPacketList.back().set(pReceiveMsg->netidSender, pReceiveMsg->dwReceiveDataSize, pReceiveMsg->pReceiveData);
 
 				InOutNetComBuffer tmp(2048, true);
 				tmp.putBufferPacket(pReceiveMsg->pReceiveData, pReceiveMsg->dwReceiveDataSize);
@@ -295,7 +295,7 @@ LErrorReturn:
 			}
 
 			///XDP_Message msg=XDPMSG_DateReceive;
-			///NetHandlerProc(pReceiveMsg->dpnidSender, msg);
+			///NetHandlerProc(pReceiveMsg->netidSender, msg);
 
 			break;
 		}
@@ -317,8 +317,8 @@ LErrorReturn:
             PDPNMSG_HOST_MIGRATE pHostMigrateMsg = (PDPNMSG_HOST_MIGRATE)pMsgBuffer;
 
 
-			m_hostDPNID=pHostMigrateMsg->dpnidNewHost;
-            if( m_hostDPNID == m_localDPNID ){//Host Я
+			m_hostNETID=pHostMigrateMsg->netidNewHost;
+            if( m_hostNETID == m_localNETID ){//Host Я
 				{
 /*					if(universe() ){
 						universe()->stopGame_HostMigrate();//Очистка всех команд текущего кванта
@@ -338,7 +338,7 @@ LErrorReturn:
 */				}
 				ExecuteInternalCommand(PNC_COMMAND__STOP_GAME_AND_WAIT_ASSIGN_OTHER_HOST, false);
 			}
-			///NetHandlerProc(pHostMigrateMsg->dpnidNewHost, msg);
+			///NetHandlerProc(pHostMigrateMsg->netidNewHost, msg);
             break;
         }
 	default:
@@ -405,22 +405,22 @@ LErrorReturn:
 	return S_OK;
 }
 
-void PNetCenter::setDPNIDInClientsDate(const int missionDescriptionIdx, DPNID dpnid)
+void PNetCenter::setNETIDInClientsDate(const int missionDescriptionIdx, NETID netid)
 {
 	hostMissionDescription.setChanged();
 	ClientMapType::iterator p;
 	for(p=m_clients.begin(); p!= m_clients.end(); p++) {
 		if((*p)->missionDescriptionIdx==missionDescriptionIdx) {
-			(*p)->dpnidPlayer=dpnid;
+			(*p)->netidPlayer=netid;
 			break;
 		}
 	}
 	if(p==m_clients.end())
-		LogMsg("set DPNID client-err1\n");
-	if(hostMissionDescription.setPlayerDPNID(missionDescriptionIdx, dpnid))
-		LogMsg("set DPNID client-OK\n");
+		LogMsg("set NETID client-err1\n");
+	if(hostMissionDescription.setPlayerNETID(missionDescriptionIdx, netid))
+		LogMsg("set NETID client-OK\n");
 	else
-		LogMsg("set DPNID client-err2\n");
+		LogMsg("set NETID client-err2\n");
 }
 void PNetCenter::DeleteClientByMissionDescriptionIdx(const int missionDescriptionIdx)
 {
@@ -429,7 +429,7 @@ void PNetCenter::DeleteClientByMissionDescriptionIdx(const int missionDescriptio
 	ClientMapType::iterator p;
 	for(p=m_clients.begin(); p!= m_clients.end(); p++) {
 		if((*p)->missionDescriptionIdx==missionDescriptionIdx) {
-			LogMsg("Client 0x%X(%s) disconnecting-", (*p)->dpnidPlayer, (*p)->m_szDescription);
+			LogMsg("Client 0x%lX(%s) disconnecting-", (*p)->netidPlayer, (*p)->m_szDescription);
 			delete *p;
 			m_clients.erase(p);
 			break;
@@ -441,14 +441,14 @@ void PNetCenter::DeleteClientByMissionDescriptionIdx(const int missionDescriptio
 		LogMsg("error in missionDescription\n");
 }
 
-void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
+void PNetCenter::DeleteClientByNETID(const NETID netid, DWORD dwReason)
 {
 	if(isHost()){
 		hostMissionDescription.setChanged();
 
 		if(m_bStarted){
 			//idx == playerID (на всякий случай);
-			int idx=hostMissionDescription.findPlayer(dpnid);
+			int idx=hostMissionDescription.findPlayer(netid);
 			xassert(idx!=-1);
 			if(idx!=-1){
 				int playerID=hostMissionDescription.playersData[idx].playerID;
@@ -461,15 +461,15 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 
 		ClientMapType::iterator p;
 		for(p=m_clients.begin(); p!= m_clients.end(); p++) {
-			if((*p)->dpnidPlayer==dpnid) {
-				LogMsg("Client 0x%X(%s) disconnecting-", (*p)->dpnidPlayer, (*p)->m_szDescription);
+			if((*p)->netidPlayer==netid) {
+				LogMsg("Client 0x%lX(%s) disconnecting-", (*p)->netidPlayer, (*p)->m_szDescription);
 				delete *p;
 				m_clients.erase(p);
 				break;
 			}
 		}
 
-		if(hostMissionDescription.disconnectPlayer2PlayerDataByDPNID(dpnid))
+		if(hostMissionDescription.disconnectPlayer2PlayerDataByNETID(netid))
 			LogMsg("OK\n");
 		else
 			LogMsg("error in missionDescription\n");
@@ -477,7 +477,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 	else {
 		if(m_bStarted){
 			//idx == playerID (на всякий случай);
-			int idx=clientMissionDescription.findPlayer(dpnid);
+			int idx=clientMissionDescription.findPlayer(netid);
 			xassert(idx!=-1);
 			if(idx!=-1){
 				int playerID=clientMissionDescription.playersData[idx].playerID;
@@ -489,7 +489,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 		}
 	}
 	if(m_bStarted){
-		int idx=clientMissionDescription.findPlayer(dpnid);
+		int idx=clientMissionDescription.findPlayer(netid);
 		xassert(idx!=-1);
 		if(idx!=-1){
 			//отсылка сообщения о том, что игрок вышел
@@ -501,7 +501,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 			}
 		}
 		//Удаление игрока из clientMD
-		clientMissionDescription.disconnectPlayer2PlayerDataByDPNID(dpnid);
+		clientMissionDescription.disconnectPlayer2PlayerDataByNETID(netid);
 	}
 
 }

@@ -15,7 +15,7 @@ class OutputEventBuffer : public XBuffer
 public:
 	OutputEventBuffer(unsigned int size);
 
-	int send(XDPConnection& conn, DPNID dpnid);
+	int send(XDPConnection& conn, NETID netid);
 	void begin_event(terEventID event_ID);
 	void end_event();
 	void clear();
@@ -44,7 +44,7 @@ public:
 
 	void reset();
 
-	int receive(XDPConnection& conn, DPNID dpnid); 
+	int receive(XDPConnection& conn, NETID netid);
 	void clearBufferOfTheProcessedCommands(void);
 	bool putInputBufferInputPacket(unsigned char* buf, unsigned int size);
 
@@ -88,7 +88,7 @@ public:
 	InOutNetComBuffer(unsigned int size, bool autoRealloc);
 
 	void clearBufferOfTheProcessedCommands(void);//out
-	int send(PNetCenter& conn, DPNID dpnid, bool flag_guaranted=1);//out
+	int send(PNetCenter& conn, NETID netid, bool flag_guaranted=1);//out
 	unsigned long getByteSending(){//out
 		unsigned long result=byte_sending;
 		byte_sending=0;

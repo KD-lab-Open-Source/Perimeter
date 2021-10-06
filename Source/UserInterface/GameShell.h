@@ -15,23 +15,10 @@
 class MissionEditor;
 
 struct CommandLineData {
-
-	CommandLineData(
-		bool host = false,
-		std::string name = "",
-		bool p2p = true,
-		std::string ip = "",
-		GUID gameID = GUID(),
-		std::string roomName = "",
-		std::string password = "" );
-
-	bool host;
-	std::string name;
-	bool p2p;
-	std::string ip;
-	GUID gameID;
-	std::string roomName;
-	std::string password;
+    std::string address;
+    std::string playerName;
+    std::string roomName;
+    std::string password;
 };
 
 //------------------------------------------
@@ -48,7 +35,7 @@ public:
 	void done();
 	void terminate() { GameContinue = false; }
 
-	void startOnline(CommandLineData data);
+	void startCmdlineOnline(const CommandLineData& data);
 	void startWithScreen(int id);
 
 	void LANGameStart(const MissionDescription& mission);
@@ -177,7 +164,7 @@ public:
 	cFont* debugFont() const { return debugFont_; }
 	void setSideArrowsVisible(bool visible);
 
-	void createNetClient(PNetCenter::e_PNCWorkMode _workMode, const char* playerName = 0, const char* InternetAddress=0, const char* password = 0);
+	void createNetClient(PNetCenter::e_PNCWorkMode _workMode, const std::string& addreses);
 	PNetCenter* getNetClient();
 	void stopNetClient();
 

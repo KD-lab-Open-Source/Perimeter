@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include "P2P_interface.h"
 
@@ -7,24 +7,22 @@
 
 #include <algorithm>
 
-#include "P2P_interfaceAux.h"
-
-void PNetCenter::setDPNIDInClientsDate(const int missionDescriptionIdx, DPNID dpnid)
+void PNetCenter::setNETIDInClientsDate(const int missionDescriptionIdx, NETID netid)
 {
 	hostMissionDescription.setChanged();
 	ClientMapType::iterator p;
 	for(p=m_clients.begin(); p!= m_clients.end(); p++) {
 		if((*p)->missionDescriptionIdx==missionDescriptionIdx) {
-			(*p)->dpnidPlayer=dpnid;
+			(*p)->netidPlayer=netid;
 			break;
 		}
 	}
 	if(p==m_clients.end())
-		LogMsg("set DPNID client-err1\n");
-	if(hostMissionDescription.setPlayerDPNID(missionDescriptionIdx, dpnid))
-		LogMsg("set DPNID client-OK\n");
+		LogMsg("set NETID client-err1\n");
+	if(hostMissionDescription.setPlayerNETID(missionDescriptionIdx, netid))
+		LogMsg("set NETID client-OK\n");
 	else
-		LogMsg("set DPNID client-err2\n");
+		LogMsg("set NETID client-err2\n");
 }
 
 void PNetCenter::DeleteClientByMissionDescriptionIdx(const int missionDescriptionIdx)
@@ -34,7 +32,7 @@ void PNetCenter::DeleteClientByMissionDescriptionIdx(const int missionDescriptio
 	ClientMapType::iterator p;
 	for(p=m_clients.begin(); p!= m_clients.end(); p++) {
 		if((*p)->missionDescriptionIdx==missionDescriptionIdx) {
-			LogMsg("Client 0x%X(%s) disconnecting-", (*p)->dpnidPlayer, (*p)->m_szDescription);
+			LogMsg("Client 0x%lX(%s) disconnecting-", (*p)->netidPlayer, (*p)->m_szDescription);
 			delete *p;
 			m_clients.erase(p);
 			break;
@@ -46,14 +44,14 @@ void PNetCenter::DeleteClientByMissionDescriptionIdx(const int missionDescriptio
 		LogMsg("error in missionDescription\n");
 }
 
-void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
+void PNetCenter::DeleteClientByNETID(const NETID netid, DWORD dwReason)
 {
 	if(isHost()){
 		hostMissionDescription.setChanged();
 
 		if(m_bStarted){
 			//idx == playerID (на всякий случай);
-			int idx=hostMissionDescription.findPlayer(dpnid);
+			int idx=hostMissionDescription.findPlayer(netid);
 			xassert(idx!=-1);
 			if(idx!=-1){
 				int playerID=hostMissionDescription.playersData[idx].playerID;
@@ -66,15 +64,15 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 
 		ClientMapType::iterator p;
 		for(p=m_clients.begin(); p!= m_clients.end(); p++) {
-			if((*p)->dpnidPlayer==dpnid) {
-				LogMsg("Client 0x%X(%s) disconnecting-", (*p)->dpnidPlayer, (*p)->m_szDescription);
+			if((*p)->netidPlayer==netid) {
+				LogMsg("Client 0x%lX(%s) disconnecting-", (*p)->netidPlayer, (*p)->m_szDescription);
 				delete *p;
 				m_clients.erase(p);
 				break;
 			}
 		}
 
-		if(hostMissionDescription.disconnectPlayer2PlayerDataByDPNID(dpnid))
+		if(hostMissionDescription.disconnectPlayer2PlayerDataByNETID(netid))
 			LogMsg("OK\n");
 		else
 			LogMsg("error in missionDescription\n");
@@ -82,7 +80,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 	else {
 		if(m_bStarted){
 			//idx == playerID (на всякий случай);
-			int idx=clientMissionDescription.findPlayer(dpnid);
+			int idx=clientMissionDescription.findPlayer(netid);
 			xassert(idx!=-1);
 			if(idx!=-1){
 				int playerID=clientMissionDescription.playersData[idx].playerID;
@@ -94,7 +92,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
 		}
 	}
 	if(m_bStarted){
-		int idx=clientMissionDescription.findPlayer(dpnid);
+		int idx=clientMissionDescription.findPlayer(netid);
 		xassert(idx!=-1);
 		if(idx!=-1){
 			//отсылка сообщения о том, что игрок вышел
@@ -104,7 +102,7 @@ void PNetCenter::DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason)
             );
 		}
 		//Удаление игрока из clientMD
-		clientMissionDescription.disconnectPlayer2PlayerDataByDPNID(dpnid);
+		clientMissionDescription.disconnectPlayer2PlayerDataByNETID(netid);
 	}
 
 }

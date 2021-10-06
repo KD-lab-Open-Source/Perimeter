@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 #include "P2P_interface.h"
 
 
@@ -105,7 +105,7 @@ XDPConnection::XDPConnection(PFNDPNMESSAGEHANDLER pfn, void* pData)
 {
 
 
-	///m_internal_queue[XDP_DPNID_PLAYER_GENERAL] = PacketListType();
+	///m_internal_queue[XDP_NETID_PLAYER_GENERAL] = PacketListType();
 
 
 
@@ -360,13 +360,13 @@ int PNetCenter::GetConnectionTimeout(void)
 	return caps_ex.dwTimeoutUntilKeepAlive;
 }
 
-/*void XDPConnection::GetActivePlayers(list<DPNID>& players)
+/*void XDPConnection::GetActivePlayers(list<NETID>& players)
 {
 	if(m_mode == DP_SERVER)
 	{
 		HRESULT hr;
 		DWORD dwNumPlayers = 0;
-		DPNID* aPlayers = 0;
+		NETID* aPlayers = 0;
 
 	    // Enumerate all the connected players
 	    while(1)
@@ -383,7 +383,7 @@ int PNetCenter::GetConnectionTimeout(void)
 			if(aPlayers)
 				delete aPlayers;
 
-			aPlayers = new DPNID[dwNumPlayers];
+			aPlayers = new NETID[dwNumPlayers];
 		}
 
 		for(int i=0; i<dwNumPlayers; i++)
@@ -395,19 +395,19 @@ int PNetCenter::GetConnectionTimeout(void)
 	}
 }*/
 
-void PNetCenter::RemovePlayer(DPNID dpnid)
+void PNetCenter::RemovePlayer(NETID netid)
 {
 //	if(m_mode == DP_SERVER)
 	{
-		//HRESULT hr = m_pDPServer->DestroyClient(dpnid, 0, 0, 0);
-		//HRESULT hr = m_pDPServer->DestroyPeer(dpnid, 0, 0, 0);
-		if(isHost() && dpnid==m_localDPNID && dpnid==m_hostDPNID){
+		//HRESULT hr = m_pDPServer->DestroyClient(netid, 0, 0, 0);
+		//HRESULT hr = m_pDPServer->DestroyPeer(netid, 0, 0, 0);
+		if(isHost() && netid==m_localNETID && netid==m_hostNETID){
 			ExecuteInternalCommand(PNC_COMMAND__END_GAME, false);
 			ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
 		}
 		else {
 			char destroyInfo[]={'t', '1', 0};
-			HRESULT hr = m_pDPPeer->DestroyPeer(dpnid, destroyInfo, sizeof(destroyInfo), 0);
+			HRESULT hr = m_pDPPeer->DestroyPeer(netid, destroyInfo, sizeof(destroyInfo), 0);
 			if( FAILED( hr ) )
 				DXTRACE_ERR_MSGBOX( TEXT("DestroyPeer(RemovePlayer)"), hr );
 		}
@@ -427,7 +427,7 @@ void PNetCenter::RemovePlayer(DPNID dpnid)
 
 }
 /*
-DPNID XDPConnection::CreateGroup()
+NETID XDPConnection::CreateGroup()
 {
 	if(m_mode == DP_SERVER)
 	{
@@ -436,21 +436,21 @@ DPNID XDPConnection::CreateGroup()
 		dgi.dwSize = sizeof(DPN_GROUP_INFO);
 		dgi.dwGroupFlags = DPNGROUP_AUTODESTRUCT;
 
-		m_dpnidGroupCreating = -1;
-		//if(SUCCEEDED(m_pDPServer->CreateGroup(&dgi, 0, 0, 0, DPNCREATEGROUP_SYNC))) return m_dpnidGroupCreating;
-		if(SUCCEEDED(m_pDPPeer->CreateGroup(&dgi, 0, 0, 0, DPNCREATEGROUP_SYNC))) return m_dpnidGroupCreating;
+		m_netidGroupCreating = -1;
+		//if(SUCCEEDED(m_pDPServer->CreateGroup(&dgi, 0, 0, 0, DPNCREATEGROUP_SYNC))) return m_netidGroupCreating;
+		if(SUCCEEDED(m_pDPPeer->CreateGroup(&dgi, 0, 0, 0, DPNCREATEGROUP_SYNC))) return m_netidGroupCreating;
 		
 	}
 
 	return 0;
 }
-void XDPConnection::DestroyGroup(DPNID dpnid)
+void XDPConnection::DestroyGroup(NETID netid)
 {
-	//if(m_mode == DP_SERVER) m_pDPServer->DestroyGroup(dpnid, 0, 0, DPNDESTROYGROUP_SYNC);
-	if(m_mode == DP_SERVER) m_pDPPeer->DestroyGroup(dpnid, 0, 0, DPNDESTROYGROUP_SYNC);
+	//if(m_mode == DP_SERVER) m_pDPServer->DestroyGroup(netid, 0, 0, DPNDESTROYGROUP_SYNC);
+	if(m_mode == DP_SERVER) m_pDPPeer->DestroyGroup(netid, 0, 0, DPNDESTROYGROUP_SYNC);
 
 }
-void XDPConnection::AddPlayerToGroup(DPNID group, DPNID player)
+void XDPConnection::AddPlayerToGroup(NETID group, NETID player)
 {
 	if(m_mode == DP_SERVER) {
 		DPNHANDLE hAsync;
@@ -458,7 +458,7 @@ void XDPConnection::AddPlayerToGroup(DPNID group, DPNID player)
 		m_pDPPeer->AddPlayerToGroup(group, player, 0, &hAsync, 0);
 	}
 }
-void XDPConnection::DelPlayerFromGroup(DPNID group, DPNID player)
+void XDPConnection::DelPlayerFromGroup(NETID group, NETID player)
 {
 	if(m_mode == DP_SERVER) {
 		DPNHANDLE hAsync;
@@ -702,7 +702,7 @@ bool PNetCenter::isConnected()
 }
 
 
-int PNetCenter::Send(const char* buffer, int size, DPNID dpnid, bool flag_guaranted)
+int PNetCenter::Send(const char* buffer, int size, NETID netid, bool flag_guaranted)
 {
 
 	DPNHANDLE hAsync;
@@ -714,23 +714,23 @@ int PNetCenter::Send(const char* buffer, int size, DPNID dpnid, bool flag_guaran
 	{
 	case DP_CLIENT:
 		//m_pDPClient->Send(&bufferDesc, 1, 0, 0, &hAsync, DPNSEND_GUARANTEED);
-		//m_pDPClient->SendTo(m_hostDPNID, &bufferDesc, 1, 0, 0, &hAsync, DPNSEND_GUARANTEED);
-		m_pDPPeer->SendTo(m_hostDPNID, &bufferDesc, 1, 0, 0, &hAsync, DPNSEND_GUARANTEED);
+		//m_pDPClient->SendTo(m_hostNETID, &bufferDesc, 1, 0, 0, &hAsync, DPNSEND_GUARANTEED);
+		m_pDPPeer->SendTo(m_hostNETID, &bufferDesc, 1, 0, 0, &hAsync, DPNSEND_GUARANTEED);
 		break;
 
 	case DP_SERVER:
-		//m_pDPServer->SendTo(dpnid == 0xFFFFFFFF ? DPNID_ALL_PLAYERS_GROUP : dpnid, &bufferDesc, 1,
+		//m_pDPServer->SendTo(netid == 0xFFFFFFFF ? NETID_ALL_PLAYERS_GROUP : netid, &bufferDesc, 1,
 		//					0, 0, &hAsync, DPNSEND_NOLOOPBACK|DPNSEND_GUARANTEED);
-		m_pDPPeer->SendTo(dpnid == 0xFFFFFFFF ? DPNID_ALL_PLAYERS_GROUP : dpnid, &bufferDesc, 1,
+		m_pDPPeer->SendTo(netid == 0xFFFFFFFF ? NETID_ALL_PLAYERS_GROUP : netid, &bufferDesc, 1,
 							0, 0, &hAsync, DPNSEND_NOLOOPBACK|DPNSEND_GUARANTEED);
 		break;
 	}*/
 	if(flag_guaranted){
-		m_pDPPeer->SendTo(dpnid, &bufferDesc, 1,
+		m_pDPPeer->SendTo(netid, &bufferDesc, 1,
 								0, NULL, &hAsync, DPNSEND_NOLOOPBACK|DPNSEND_GUARANTEED);
 	}
 	else {
-		m_pDPPeer->SendTo(dpnid, &bufferDesc, 1,
+		m_pDPPeer->SendTo(netid, &bufferDesc, 1,
 								1000, NULL, &hAsync, DPNSEND_COALESCE|DPNSEND_NOLOOPBACK); //1000ms
 	}
 
@@ -1036,16 +1036,16 @@ void XDPConnection::refreshGroupMember()
 	gameGroupMemberList.clear();
 	HRESULT hr;
 	DWORD dwSize = 0;
-	DPNID * pArrDPNID;
+	NETID * pArrNETID;
 	hr = m_pDPPeer->EnumPlayersAndGroups(NULL, &dwSize, DPNENUM_PLAYERS);
 	if( FAILED(hr) && hr != DPNERR_BUFFERTOOSMALL ) xassert(0&&"DirectPlay-EnumPlayersAndGroups error 1");
-	pArrDPNID = new DPNID [dwSize];
-	ZeroMemory( pArrDPNID, sizeof(DPNID)*dwSize );
-	hr = m_pDPPeer->EnumPlayersAndGroups(pArrDPNID, &dwSize, DPNENUM_PLAYERS);
+	pArrNETID = new NETID [dwSize];
+	ZeroMemory( pArrNETID, sizeof(NETID)*dwSize );
+	hr = m_pDPPeer->EnumPlayersAndGroups(pArrNETID, &dwSize, DPNENUM_PLAYERS);
 	if( FAILED(hr) ) xassert(0&&"DirectPlay-EnumPlayersAndGroups error 2");
 	int i;
-	for(i=0; i<dwSize; i++) gameGroupMemberList.push_back(pArrDPNID[i]);
-	delete [] pArrDPNID;
+	for(i=0; i<dwSize; i++) gameGroupMemberList.push_back(pArrNETID[i]);
+	delete [] pArrNETID;
 
 }
 */

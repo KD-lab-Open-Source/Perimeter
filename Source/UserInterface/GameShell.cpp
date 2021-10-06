@@ -54,8 +54,6 @@ extern char _bMenuMode;
 extern char  _bCursorVisible;
 extern bool bWasShiftUnpressed;
 
-extern GUID selectedLanGameID;
-
 void SetCameraPosition(cCamera *UCamera,const MatXf &Matrix);
 void ToolzerSizeChangeQuant();
 
@@ -113,18 +111,12 @@ void ErrorInitialize3D() {
 	abortWithMessage("Interface.Menu.Messages.Init3DError");
 }
 
-void checkCmdLineArg(const char* argument) {
+void checkCmdLineArg(const char* argument, const char* argName) {
 	if (!argument) {
         std::string msg("Missing cmdline argument ");
-        msg += argument;
-        ErrH.Abort(msg.c_str());
+        ErrH.Abort(msg + argName);
 	}
 }
-
-CommandLineData::CommandLineData(bool host, std::string name, bool p2p, std::string ip, GUID gameID, std::string roomName, std::string password)
-					 : host(host), name(name), p2p(p2p), ip(ip), gameID(gameID), roomName(roomName), password(password) {
-}
-
 
 //------------------------
 GameShell::GameShell(bool mission_edit) :
@@ -242,19 +234,29 @@ windowClientSize_(1024, 768)
 	if (check_command_line("pause")) {
 		ErrH.Abort("Pause!!!");
 	}
-	const char* playerName=check_command_line("playerName");
-    if(check_command_line("p2p")){
-		const char* strIP=check_command_line("ip");
-        checkCmdLineArg(playerName);
-		if(check_command_line("host")){
-			startOnline(CommandLineData(true, playerName, true, "", GUID()));
-		}
-		else if(check_command_line("client")){
-            checkCmdLineArg(strIP);
-			startOnline(CommandLineData(false, playerName, true, strIP, GUID()));
-		}
-	}
-	else if (MainMenuEnable) {
+    
+    bool isServer = check_command_line("server") != nullptr; 
+    const char* address = check_command_line("connect");
+    if (isServer || address) {
+        CommandLineData data;
+        
+        const char* password = check_command_line("password");
+        if (password) data.password = password;
+        
+        const char* playerName = check_command_line("name");
+        checkCmdLineArg(playerName, "name");
+        data.playerName = playerName;
+		
+        if (isServer) {
+            const char* roomName = check_command_line("room");
+            if (roomName) data.roomName = roomName;
+		} else {
+            checkCmdLineArg(address, "connect");
+            data.address = address;
+        }
+        
+        startCmdlineOnline(data);
+	} else if (MainMenuEnable) {
 		startedWithMainmenu = true;
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 		//_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCREEN1);
@@ -372,12 +374,22 @@ void GameShell::startWithScreen(int id) {
 	_shellIconManager.SetModalWnd(0);
 }
 
-void GameShell::createNetClient(PNetCenter::e_PNCWorkMode _workMode, const char* playerName, const char* InternetAddress, const char* password)
-{
-	#ifndef _SINGLE_DEMO_
-		stopNetClient();
-		NetClient = new PNetCenter(_workMode, playerName, InternetAddress, password);
-	#endif
+void GameShell::createNetClient(PNetCenter::e_PNCWorkMode _workMode, const std::string& addresses) {
+    stopNetClient();
+    size_t len = addresses.length();
+    std::vector<std::string> addrVec;
+    std::string buf;
+    for (int i = 0; ; i++){
+        if (i < len && !isspace(addresses[i]) && (addresses[i] != ';')) {
+            buf += addresses[i];
+        } else {
+            if (!buf.empty()) {
+                addrVec.emplace_back(buf);
+            }
+            if (i>=len) break;
+        }
+    }
+    NetClient = new PNetCenter(_workMode, addrVec);
 }
 
 void GameShell::stopNetClient() {
@@ -409,7 +421,7 @@ void GameShell::GameStart(const MissionDescription& mission)
             playerName = getBelligerentName(data->belligerent);
 		}
         if (!playerName.empty()) {
-            data->setName(playerName.c_str());
+            data->setName(playerName);
         }
 	}
 

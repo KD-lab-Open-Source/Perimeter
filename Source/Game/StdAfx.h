@@ -7,7 +7,6 @@
 #include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
-#include <dplay8.h>
 #endif
 
 // Standart includes
@@ -48,8 +47,8 @@
 #include "xutil.h"
 #include "Serialization.h"
 #include "xmath.h"
-#include "Timers.h"
 
+#include "Timers.h"
 #include "Umath.h"
 #include "IRenderDevice.h"
 #include "IVisGeneric.h"
@@ -58,6 +57,7 @@
 #include "SystemUtil.h"
 #include "DebugUtil.h"
 
+#include "NetID.h"
 #include "ConnectionDP.h"
 #include "EventBufferDP.h"
 #include "CommonEvents.h"
