@@ -508,7 +508,7 @@ template<class nParticle> FORCEINLINE int cEmitterBase::PutToBuf(nParticle& p, V
                                                                  cQuadBuffer<sVertexXYZDT1>*& pBuf,
                                                                  const sColor4c& color, const Vect3f& PosCamera,
                                                                  const float& size, const cTextureAviScale::RECT& rt,
-                                                                 const UCHAR mode, MatXf* iGM)
+                                                                 const uint8_t mode, MatXf* iGM)
 
 {
 	xassert(!p.plume_pos.empty());
@@ -3815,11 +3815,11 @@ void cEmitterZ::Draw(cCamera *pCamera)
 	MatXf GM;
 	MatXf iGM;
 	Vect3f CameraPos;
-	UCHAR mode;
+	uint8_t mode;
 	if (chPlume)
 	{
 		CameraPos = relative ? iGM*pCamera->GetPos() : pCamera->GetPos();
-		mode = (UCHAR)planar + (smooth? 0:2);
+		mode = (uint8_t)planar + (smooth? 0:2);
 	}
 	rd->SetNoMaterial(sprite_blend, 0, GetTexture(0));
 	if (relative)

@@ -109,10 +109,6 @@ IF(PERIMETER_WINDOWS)
         ${LIBS_MSDXSDK}/d3d9.lib
         ${LIBS_MSDXSDK}/d3dx9.lib
         ${LIBS_MSDXSDK}/DxErr.lib
-
-        #Windows libs
-        winmm
-        wsock32
     )
     
     #Use these libs as AVI fallback

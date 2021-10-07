@@ -28,7 +28,6 @@ void ERRORM(BOOL b,char *format, ...);
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <io.h>
 #include <stdio.h>
 #include <vector>
 

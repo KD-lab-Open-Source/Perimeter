@@ -9,6 +9,10 @@
 #include <d3dx9.h>
 #endif
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
 // Standart includes
 #include <climits>
 #include <string.h>
@@ -16,7 +20,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <time.h>
-#include <direct.h>
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 #include <iostream>
@@ -29,8 +32,6 @@
 #include <typeinfo>
 #endif
 #include <float.h>
-#include <mmsystem.h>
-#include <commctrl.h>
 
 // STL
 #include <random>

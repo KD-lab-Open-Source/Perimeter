@@ -187,25 +187,26 @@ cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,char *pMode)
 cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 {
 	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
+	if(TextureName==nullptr||TextureName[0]==0) return nullptr; // имя текстуры пустое
+    std::string path = convert_path_native(TextureName);
 
 	for(int i=0;i<GetNumberTexture();i++)
 	{
 		cTexture* cur=GetTexture(i);
 		xassert(cur->GetX()>=0 && cur->GetX()<=15);
 		xassert(cur->GetY()>=0 && cur->GetY()<=15);
-		if( cur && stricmp(cur->GetName(),TextureName)==0)
+		if( cur && stricmp(cur->GetName(),path.c_str())==0)
 		{
 			cur->IncRef();
 			return cur;
 		}
 	}
 
-	cTexture *Texture=new cTexture(TextureName);
+	cTexture *Texture=new cTexture(path.c_str());
 
 	if(!LoadTexture(Texture,pMode,Vect2f(1.0f,1.0f)))
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	textures.push_back(Texture); Texture->IncRef();
@@ -407,7 +408,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		}
 	}
 */
-	cFileImage *FileImage=0;
+	cFileImage *FileImage=nullptr;
 
 	//Get path for file and open it
 	std::string path = convert_path_content(Texture->GetName());
@@ -423,7 +424,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		return ReLoadDDS(Texture);
 	}
 	
-	if(!FileImage||FileImage->load(path.c_str()))
+	if(FileImage->load(path.c_str()))
 	{
 		delete FileImage;
 		Error(Texture);
@@ -460,7 +461,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		err=gb_RenderDevice->CreateTexture(Texture,FileImage,-1,-1);
 	}
 
-	if(FileImage) delete FileImage;
+	delete FileImage;
 	if(err)
 	{
 		Error(Texture);

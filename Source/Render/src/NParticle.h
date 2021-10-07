@@ -540,7 +540,7 @@ protected:
 										cQuadBuffer<sVertexXYZDT1>*& pBuf, 
 										const sColor4c& color, const Vect3f& PosCamera,
 										const float& size, const cTextureAviScale::RECT& rt,
-										const UCHAR planar, MatXf* iGM = NULL);
+										const uint8_t planar, MatXf* iGM = NULL);
 
 
 	enum 

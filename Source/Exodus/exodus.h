@@ -65,7 +65,6 @@ struct SIZE {
 #endif
 
 //For some reason not present in dxvk-native headers
-typedef uint8_t UCHAR;
 #ifdef PERIMETER_ARCH_64
 typedef uint64_t UINT_PTR;
 typedef int64_t LONG_PTR;
@@ -90,7 +89,6 @@ typedef _FILETIME FILETIME;
 #define _MAX_DIR   _MAX_FNAME
 #define _MAX_EXT   _MAX_FNAME
 #define MAX_COMPUTERNAME_LENGTH 31
-#define UNLEN 256 //Defined in lmcons.h
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FPU control

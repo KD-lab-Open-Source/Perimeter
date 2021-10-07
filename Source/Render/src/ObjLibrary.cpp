@@ -194,28 +194,35 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 	}
 }
 
-cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,char* attr=NULL)
+cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,char* attr=nullptr)
 {
-	char full_name[512];
-	strcpy(full_name,path);
-	strcat(full_name,name);
+	std::string path_name(path);
+    path_name += name;
+    std::string defpath_name;
 
 	bool enable_error=GetTexLibrary()->EnableError(false);
 
-	cTexture *Texture=GetTexLibrary()->GetElement(full_name,attr);
+	cTexture *Texture=GetTexLibrary()->GetElement(path_name.c_str(),attr);
 	if(Texture==nullptr)
 	{
 		if(def_path)
 		{
-			strcpy(full_name,def_path);
-			strcat(full_name,name);
-			Texture=GetTexLibrary()->GetElement(full_name,attr);
+            defpath_name = def_path;
+            defpath_name += name;
+			Texture=GetTexLibrary()->GetElement(defpath_name.c_str(),attr);
 		}
+
 		if(Texture==nullptr)
 		{
-			strcpy(full_name,path);
-			strcat(full_name,name);
-			m3derror()<<"Texture not found - "<<full_name<<VERR_END;
+            auto err = m3derror();
+			err << "Texture not found - " << path_name;
+            if (!defpath_name.empty()) {
+                err << " - " << defpath_name;
+            }
+            if (attr) {
+                err << " - " << attr;
+            }
+            err << VERR_END;
 		}
 	}
 

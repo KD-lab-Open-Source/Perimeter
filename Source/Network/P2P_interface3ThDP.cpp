@@ -3,9 +3,7 @@
 #include "P2P_interface.h"
 
 #include "GameShell.h"
-#include "Universe.h"
-
-#include "lmcons.h"
+#include "Universe.h
 
 #include "../Terra/terra.h"
 

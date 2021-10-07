@@ -37,8 +37,8 @@
 #endif //FORCEINLINE
 
 #ifndef _WIN32
-//Apply non MSVC specific tweaks
-#include "../Exodus/msvc.h"
+//TODO strcasecmp is part of POSIX, which is good enough for now
+#define stricmp strcasecmp
 #endif
 
 //Select per platform path separator

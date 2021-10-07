@@ -32,6 +32,9 @@
 #define _read read
 #define _lseek lseek
 #define _close close
+#else
+//For _open and other POSIX funcs
+#include <io.h>
 #endif
 
 //Settings for scanning

@@ -1,12 +1,12 @@
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <io.h>
+#include "tweaks.h"
 
 #ifndef PERIMETER_EXODUS
 #define open _open
 #endif
 
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -15,7 +15,6 @@
 #include <cstring>
 
 #include "xerrhand.h"
-#include "tweaks.h"
 #include "xutl.h"
 #include "xstream.h"
 

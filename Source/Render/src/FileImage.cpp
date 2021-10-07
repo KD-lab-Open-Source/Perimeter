@@ -13,12 +13,6 @@
 #include "xutil.h"
 #endif
 
-#ifdef _WIN32
-//For _open etc
-#include <io.h>
-#endif
-
-//#include <setjmp.h>		// JPG include
 #include "xutil.h"
 #include "FileImage.h"
 
@@ -415,7 +409,7 @@ public:
 class cAVIImage : public cFileImage
 {
     AVWrapper wrapper;
-    int tpf; //Cached time per frame
+    int tpf = 1; //Cached time per frame
     std::vector<uint8_t*> frames;
     
 public:
@@ -536,8 +530,8 @@ public:
 #else
 class cAVIImage : public cFileImage
 {
-	IGetFrame	*Frame;
-	IAVIStream	*pavi;
+	IGetFrame	*Frame = nullptr;
+	IAVIStream	*pavi = nullptr;
 public:
 	cAVIImage()															{ Frame=0; pavi=0; }
 	virtual ~cAVIImage()												{ close(); }

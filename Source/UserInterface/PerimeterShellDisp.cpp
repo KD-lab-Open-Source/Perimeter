@@ -2003,12 +2003,6 @@ bool CShellIconManager::isDynQueueEmpty() {
 	return (m_dyn_queue.size() == 0);
 }
 
-
-static char cbPromptBuffer[500];
-static const char* pCurrentPrompt = 0;
-//static bool bPeriodicMessage = false;
-//static bool bInPeriod = false;
-
 void CShellIconManager::quant(float dTime)
 {
 	if (cutSceneCommand.active) {

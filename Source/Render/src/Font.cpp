@@ -3,12 +3,15 @@
 #include "FileImage.h"
 #include "../../PluginMAX/Src/StreamBuffer.h"
 
+#ifdef _WIN32
+//TODO is this still neccesary?
+#include <direct.h>
+#endif
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <io.h>
 #include <stdio.h>
-#include <direct.h>
 #include "SystemUtil.h"
 #include "FileImage.h"
 

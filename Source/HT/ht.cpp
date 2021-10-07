@@ -23,7 +23,6 @@ HTManager::HTManager(bool ht)
 	global_time.setUsePerfomance(false);
 	frame_time.setUsePerfomance(false);
 	scale_time.setUsePerfomance(false);
-	double interval=1000;
 	global_time.setAverageInterval(-1);
 	frame_time.setAverageInterval(-1);
 	scale_time.setAverageInterval(-1);

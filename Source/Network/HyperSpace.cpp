@@ -10,11 +10,6 @@
 #include "GameShell.h"
 #include "files/files.h"
 
-#ifdef _WIN32
-#include "lmcons.h"
-#endif
-
-
 bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
 

@@ -251,22 +251,22 @@ void cMeshFile::WriteField(void *buf,int TypeField,int size)
 		{
 			case MF_TYPE_CHAR:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((char*)buf)[i]<<"\n"; break;
+					(*f)<<"\t"<<((int8_t*)buf)[i]<<"\n"; break;
 			case MF_TYPE_UCHAR:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((unsigned char*)buf)[i]<<"\n"; break;
+					(*f)<<"\t"<<((uint8_t*)buf)[i]<<"\n"; break;
 			case MF_TYPE_SHORT:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((short*)buf)[i]<<"\n"; break;
+					(*f)<<"\t"<<((int16_t*)buf)[i]<<"\n"; break;
 			case MF_TYPE_USHORT:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((unsigned short*)buf)[i]<<"\n"; break;
+					(*f)<<"\t"<<((uint16_t*)buf)[i]<<"\n"; break;
 			case MF_TYPE_INT:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((int*)buf)[i]<<"\n"; break;
+					(*f)<<"\t"<<((int32_t*)buf)[i]<<"\n"; break;
 			case MF_TYPE_UINT:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((unsigned int*)buf)[i]<<"\n"; break;
+					(*f)<<"\t"<<((uint32_t*)buf)[i]<<"\n"; break;
 			case MF_TYPE_FLOAT:
 				for(i=0;i<size;i++)
 					(*f)<<"\t"<<((float*)buf)[i]<<"\n"; break;
@@ -306,16 +306,16 @@ void cMeshFile::WriteField(void *buf,int TypeField,int size)
 				break;
 			case MF_TYPE_INT3:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((int*)buf)[3*i+0]<<"\t"<<((int*)buf)[3*i+1]<<"\t"<<((int*)buf)[3*i+2]<<"\n"; break;
+					(*f)<<"\t"<<((int32_t*)buf)[3*i+0]<<"\t"<<((int32_t*)buf)[3*i+1]<<"\t"<<((int32_t*)buf)[3*i+2]<<"\n"; break;
 			case MF_TYPE_INT4:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((int*)buf)[4*i+0]<<"\t"<<((int*)buf)[4*i+1]<<"\t"<<((int*)buf)[4*i+2]<<"\t"<<((int*)buf)[4*i+3]<<"\n"; break;
+					(*f)<<"\t"<<((int32_t*)buf)[4*i+0]<<"\t"<<((int32_t*)buf)[4*i+1]<<"\t"<<((int32_t*)buf)[4*i+2]<<"\t"<<((int32_t*)buf)[4*i+3]<<"\n"; break;
 			case MF_TYPE_USHORT3:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((unsigned short*)buf)[3*i+0]<<"\t"<<((unsigned short*)buf)[3*i+1]<<"\t"<<((unsigned short*)buf)[3*i+2]<<"\n"; break;
+					(*f)<<"\t"<<((uint16_t*)buf)[3*i+0]<<"\t"<<((uint16_t*)buf)[3*i+1]<<"\t"<<((uint16_t*)buf)[3*i+2]<<"\n"; break;
 			case MF_TYPE_USHORT4:
 				for(i=0;i<size;i++)
-					(*f)<<"\t"<<((unsigned short*)buf)[4*i+0]<<"\t"<<((unsigned short*)buf)[4*i+1]<<"\t"<<((unsigned short*)buf)[4*i+2]<<"\t"<<((unsigned short*)buf)[4*i+3]<<"\n"; break;
+					(*f)<<"\t"<<((uint16_t*)buf)[4*i+0]<<"\t"<<((uint16_t*)buf)[4*i+1]<<"\t"<<((uint16_t*)buf)[4*i+2]<<"\t"<<((uint16_t*)buf)[4*i+3]<<"\n"; break;
 			case MF_TYPE_STRING:
 				for(i=0;i<size;i++)
 				{
