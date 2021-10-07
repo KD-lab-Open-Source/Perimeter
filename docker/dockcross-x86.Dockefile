@@ -8,12 +8,12 @@ RUN add-apt-repository "deb [arch=amd64] http://pkg.mxe.cc/repos/apt buster main
 RUN apt-get update
  
 # Download boost, untar, setup install with bootstrap and install
-RUN cd /work && wget http://downloads.sourceforge.net/project/boost/boost/1.76.0/boost_1_76_0.tar.gz
-RUN cd /work && tar xfvz /work/boost_1_76_0.tar.gz
-RUN rm /work/boost_1_76_0.tar.gz
-RUN cd /work/boost_1_76_0 && ./bootstrap.sh --prefix=/usr/local
-RUN cd /work/boost_1_76_0 && ./b2 install
-RUN rm -rf /work/boost_1_76_0
+#RUN cd /work && wget http://downloads.sourceforge.net/project/boost/boost/1.76.0/boost_1_76_0.tar.gz
+#RUN cd /work && tar xfvz /work/boost_1_76_0.tar.gz
+#RUN rm /work/boost_1_76_0.tar.gz
+#RUN cd /work/boost_1_76_0 && ./bootstrap.sh --prefix=/usr/local
+#RUN cd /work/boost_1_76_0 && ./b2 install
+#RUN rm -rf /work/boost_1_76_0
 
 WORKDIR /work
 

@@ -14,6 +14,9 @@ if [[ $CROSS_TRIPLE == x86_64* ]]; then
   IS_64=1
 fi
 
+#BOOST_DIR="/usr/local/include"
+BOOST_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include"
+
 #rm -rf build/${CROSS_TRIPLE}
 
 BASE_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}"
@@ -23,7 +26,7 @@ ${CROSS_TRIPLE}-cmake \
 -H. \
 -G"Ninja" \
 -DLIBRARY_SEARCH_PATHS=$BASE_DIR \
--DBoost_INCLUDE_DIR="/usr/local/include" \
+-DBoost_INCLUDE_DIR=$BOOST_DIR \
 -DSDL2_INCLUDE_DIR="${BASE_DIR}/include/SDL2" \
 -DSDL2_IMAGE_INCLUDE_DIR="${BASE_DIR}/include/SDL2-image" \
 -DSDL2_NET_INCLUDE_DIR="${BASE_DIR}/include/SDL2-net" \
@@ -38,6 +41,7 @@ ${CROSS_TRIPLE}-cmake \
 -DOFF_AVUTIL_LIBRARY="${BASE_DIR}/lib/libavutil${LIB_SUFFIX}" \
 -DOFF_AVCODEC_LIBRARY="${BASE_DIR}/lib/libavcodec${LIB_SUFFIX}" \
 -DOFF_AVFORMAT_LIBRARY="${BASE_DIR}/lib/libavformat${LIB_SUFFIX}" \
+-DOPTION_DISABLE_STACKTRACE=ON \
 -DOPTION_LINKER_LLD=OFF \
 $@
 
