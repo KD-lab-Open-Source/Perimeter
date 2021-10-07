@@ -61,6 +61,14 @@ void HTManager::setSpeedSyncroTimer(float speed)
 
 int logic_thread_init(void*)
 {
+#ifdef _WIN32
+    //_alloca(4096+128); //TODO is this need?
+    
+    //Required for VFW so game can load AVI files in logic thread (like when AI builds Officer plant)
+    //VFW is used when not having FFMPEG, but just in case call it always
+    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+#endif
+
 	HTManager::instance()->logic_thread();
 	return 0;
 }
