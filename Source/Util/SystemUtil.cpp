@@ -274,22 +274,27 @@ IniManager::IniManager(const char* fname, bool check_existence, bool full_path) 
     is_full_path = full_path;
 }
 
+void IniManager::getFilePath(char* path) {
+    if (!is_full_path) {
+        std::string pathres = convert_path_content(fname_);
+        if (pathres.empty()) {
+            ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+        }
+
+        //GetPrivateProfileString needs full path
+        if (_fullpath(path, pathres.c_str(), MAX_PATH) == NULL) {
+            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+        }
+    } else {
+        strncpy(path, fname_.c_str(), MAX_PATH);
+    }
+}
+
 const char* IniManager::get(const char* section, const char* key)
 {
 	static char buf[256];
     static char path[MAX_PATH];
-    
-    if (!is_full_path) {
-        std::string pathres = convert_path_content(fname_);
-        if (pathres.empty())
-            ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
-
-        //GetPrivateProfileString needs full path
-        if (_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
-    } else {
-        strncpy(path, fname_.c_str(), MAX_PATH);
-    }
+    getFilePath(path);
     
 	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
 		*buf = 0;
@@ -303,19 +308,8 @@ const char* IniManager::get(const char* section, const char* key)
 void IniManager::put(const char* section, const char* key, const char* val)
 {
     static char path[MAX_PATH];
-
-    if (!is_full_path) {
-        std::string pathres = convert_path_content(fname_);
-        if(pathres.empty())
-            ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+    getFilePath(path);
     
-        //WritePrivateProfileString needs full path
-        if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
-    } else {
-        strncpy(path, fname_.c_str(), MAX_PATH);
-    }
-
 	WritePrivateProfileString(section,key,val,path);
 }
 

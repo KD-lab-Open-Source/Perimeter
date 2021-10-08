@@ -1,15 +1,11 @@
 #ifndef __QD_TEXTDB_H__
 #define __QD_TEXTDB_H__
 
-// hash_map is an old and non-standard MS extension
-// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-#include <hash_map> 
-#else
+
 #include <unordered_map>
-#endif
 #include <string>
 #include <list>
+#include <utility>
 /// База данных с текстами.
 class qdTextDB
 {
@@ -18,7 +14,7 @@ public:
 	~qdTextDB();
 
 	/// Очистка базы.
-	void clear(){ texts_.clear(); }
+	void clear();
 
 	/// Возвращает текст с идентификатором text_id.
 	/**
@@ -37,7 +33,14 @@ public:
 	Если clear_old_texts == true, то загруженная в данный момент база очищается.
 	В финальной версии база комментариев игнорируется.
 	*/
-	bool load(const char* file_name, const char* comments_file_name = NULL, bool clear_old_texts = true, bool replace_old_texts = true);
+	bool load(const char* file_name, const char* comments_file_name, bool clear_old_texts, bool replace_old_texts, bool format_txt);
+
+    ///Loads texts from lines using a basic format as:
+    ///text_id=text content\nmore content etc
+    void load_lines(const std::vector<std::string>& lines, bool replace_old_texts);
+
+    ///Includes texts that are not usually in retail game translations, these only are added if DB don't have them already
+    void load_supplementary_texts(const std::string& lang);
 
 	typedef std::list<std::string> IdList;
 	void getIdList(const char* mask, IdList& idList);
@@ -46,9 +49,12 @@ public:
 
 private:
 
-	struct qdText
+	class qdText
 	{
-		qdText(const char* text,const char* snd) : text_(text), sound_(snd) { }
+    public:
+        qdText() = default;
+		qdText(std::string text, std::string snd) : text_(std::move(text)), sound_(std::move(snd)) { }
+        ~qdText() = default;
 
 		std::string text_;
 		std::string sound_;
@@ -57,14 +63,9 @@ private:
 #endif
 	};
 
-	// hash_map is an old and non-standard MS extension
-	// see https://docs.microsoft.com/en-us/cpp/standard-library/hash-map?view=msvc-160
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-	typedef std::hash_map<std::string, qdText> qdTextMap;
-#else
-	typedef std::unordered_map<std::string, qdText> qdTextMap;
-#endif
-	
+    void add_entry(const std::string& id_str, const qdText& text, bool replace_old_texts);
+
+    typedef std::unordered_map<std::string, qdText> qdTextMap;
 	qdTextMap texts_;
 };
 

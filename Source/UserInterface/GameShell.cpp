@@ -2543,19 +2543,25 @@ void GameShell::preLoad() {
     historyScene.loadProgram("RESOURCE\\scenario.hst");
     bwScene.loadProgram("RESOURCE\\menu.hst");
 	std::string path = getLocDataPath() + "Text\\Texts.btdb";
-	#ifdef _FINAL_VERSION_
-		qdTextDB::instance().load(path.c_str(), nullptr );
-	#else
-		qdTextDB::instance().load(path.c_str(), "RESOURCE\\Texts_comments.btdb");
-	#endif
+#ifdef _FINAL_VERSION_
+    const char* comments_path = nullptr;
+#else
+    const char* comments_path = "RESOURCE\\Texts_comments.btdb";
+#endif
+    qdTextDB::instance().load(path.c_str(), comments_path, true, true, false);
 
     //Load texts, don't delete already loaded ones but replace existing ones
     for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
-        std::string name = std::filesystem::path(entry->key).filename().string();
+        std::filesystem::path entry_path(entry->key);
+        std::string name = entry_path.filename().string();
         if (name == "texts.btdb") continue;
-        bool noreplace = name.rfind("_noreplace.") != std::string::npos;
-        qdTextDB::instance().load(entry->path_content.c_str(), nullptr, false, noreplace);
+        bool replace = name.rfind("_noreplace.") == std::string::npos;
+        bool txt = entry_path.extension().string() == "txt";
+        qdTextDB::instance().load(entry->path_content.c_str(), nullptr, false, replace, txt);
     }
+    
+    //Load the builtin texts that might not be provided by addons
+    qdTextDB::instance().load_supplementary_texts(getLocale());
 }
 
 void GameShell::setSkipCutScene(bool skip) 
