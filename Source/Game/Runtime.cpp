@@ -14,16 +14,13 @@
 
 #include "GameShell.h"
 
-#include "WinVideo.h"
 #include "Config.h"
 
 #include "PerimeterSound.h"
-#include "AudioPlayer.h"
 #include "Controls.h"
 
 #include "MusicManager.h"
 
-#include "UnitAttribute.h"
 #include "PerimeterShellUI.h"
 
 #include "../PluginMAX/ZIPStream.h"
@@ -34,6 +31,7 @@
 
 #include <SDL.h>
 #ifdef _WIN32
+#define execv _execv
 //Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
 #include <SDL_syswm.h>
 #endif
@@ -116,6 +114,8 @@ Vect2i lastWindowSize(0,0);
 int lastWindowResize = 0;
 
 static bool applicationHasFocus_ = true;
+bool applicationRestartFlag = false;
+std::vector<std::string> applicationRestartArgs;
 
 SDL_Window* sdlWindow = nullptr;
 HWND hWndVisGeneric = nullptr;
@@ -192,7 +192,16 @@ void RestoreGDI()
         SDL_ShowWindow(sdlWindow);
 	}
 
-}	
+}
+
+void request_application_restart(std::vector<std::string>* args) {
+    applicationRestartFlag = true;
+    if (args) {
+        applicationRestartArgs = *args;
+    } else {
+        applicationRestartArgs.clear();
+    }
+}
 
 void InternalErrorHandler()
 {
@@ -769,11 +778,17 @@ int main(int argc, char *argv[])
     //Create crash folder
     std::filesystem::create_directories(CRASH_DIR);
 
+    //Start SDL stuff
+    int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+    if (sdlresult < 0) {
+        ErrH.Abort("Error initializing SDL", XERR_CRITICAL, sdlresult, SDL_GetError());
+    }
+        
     //Do game content detection
     detectGameContent();
 
     //Load perimeter parameters
-    int xprmcompiler=IniManager("Perimeter.ini", false).getInt("Game","XPrmCompiler");
+    int xprmcompiler = IniManager("Perimeter.ini", false).getInt("Game", "XPrmCompiler");
     check_command_line_parameter("xprm_compiler", xprmcompiler);
     if (xprmcompiler) {
         reload_parameters();
@@ -781,41 +796,35 @@ int main(int argc, char *argv[])
 
     g_controls_converter.LoadKeyNameTable();
 
-    //Start SDL stuff
-    int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    if (sdlresult < 0) {
-        ErrH.Abort("Error initializing SDL", XERR_CRITICAL, sdlresult, SDL_GetError());
-    }
-    
-	int ht=IniManager("Perimeter.ini").getInt("Game","HT");
-	check_command_line_parameter("HT", ht);
-	HTManager* runtime_object = new HTManager(ht);
-	runtime_object->setUseHT(ht?true:false);
+    int ht = IniManager("Perimeter.ini").getInt("Game", "HT");
+    check_command_line_parameter("HT", ht);
+    HTManager* runtime_object = new HTManager(ht);
+    runtime_object->setUseHT(ht ? true : false);
 
-	xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
+    xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
-	bool run = true;
-	while(run){
+    bool run = true;
+    while (run) {
         SDL_event_poll();
 
 #ifndef PERIMETER_EXODUS
-	    //TODO is this necessary under SDL2 in Win32?
+        //TODO is this necessary under SDL2 in Win32?
         MSG msg;
-		if(PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)){
-			if(!GetMessage(&msg, NULL, 0, 0))
-				break;
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-			continue;
-		}
+        if(PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)){
+            if(!GetMessage(&msg, NULL, 0, 0))
+                break;
+            TranslateMessage( &msg );
+            DispatchMessage( &msg );
+            continue;
+        }
 #endif
         //NetworkPause handler
-        static bool runapp=true;
-        if (applicationIsGo()!=runapp){
-            if(gameShell && (!gameShell->alwaysRun()) ){
-                if(gameShell->getNetClient()){
-                    if(gameShell->getNetClient()->setPause(!applicationHasFocus()))
-                        runapp=applicationIsGo();
+        static bool runapp = true;
+        if (applicationIsGo() != runapp) {
+            if (gameShell && (!gameShell->alwaysRun())) {
+                if (gameShell->getNetClient()) {
+                    if (gameShell->getNetClient()->setPause(!applicationHasFocus()))
+                        runapp = applicationIsGo();
                 }
             }
         }
@@ -832,11 +841,53 @@ int main(int argc, char *argv[])
             WaitMessage();
 #endif
         }
-	}
+    }
 
-	delete runtime_object;
+    delete runtime_object;
 	
 	SDL_Quit();
+    
+    if (applicationRestartFlag) {
+        //NOTE: execv is used since is the only reasonable way to reset all state as launching again
+        //doesn't seem to work due to some parts of code not being properly cleanup during shutdown
+        applicationRestartFlag = false;
+        
+        //Copy the args that launched this game
+        std::vector<char*> exec_argv;
+        for (int i = 0; i < __argc; ++i) {
+            if (startsWith(__argv[i], "tmp_")) {
+                //These are passed internally and are not supposed to pass into next instance
+                continue;
+            }
+            
+            size_t len = strlen(__argv[i]) + 1;
+            char* str = static_cast<char*>(malloc(len));
+            strcpy(str, __argv[i]);
+            exec_argv.emplace_back(str);
+        }
+        
+        //Add extra args
+        for (auto const& arg : applicationRestartArgs) {
+            size_t len = arg.length() + 1;
+            char* str = static_cast<char*>(malloc(len));
+            strcpy(str, arg.c_str());
+            exec_argv.emplace_back(str);
+        }
+
+        //execv last arg must be null for termination
+        exec_argv.emplace_back(nullptr);
+        
+        //launch ourselves again, execution of this process stops here
+        printf("Restarting:");
+        for (auto const& str : exec_argv) {
+            if (str) printf(" %s", str);
+        }
+        printf("\n");
+        int ret = execv(exec_argv[0], exec_argv.data());
+        
+        //We shouldn't reach this
+        ErrH.Abort("Error restarting the application", XERR_USER, ret);
+    }
 
 	return 0;
 }

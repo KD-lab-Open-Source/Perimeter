@@ -70,9 +70,9 @@ _handlertbl[] = {
 
 	//start menu
 	{SQSH_MM_SINGLE_BTN, onMMSingleButton},
+    {SQSH_MM_MULTIPLAYER_BTN, onMMMultiplayerButton},
+    {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
 	{SQSH_MM_OPTIONS_BTN, onMMOptionsButton},
-	{SQSH_MM_LAN_BTN, onMMLanButton},
-	{SQSH_MM_ONLINE_BTN, onMMOnlineButton},
 	{SQSH_MM_CREDITS_BTN, onMMCreditsButton},
 	{SQSH_MM_QUIT_BTN, onMMQuitButton},
 
@@ -83,6 +83,18 @@ _handlertbl[] = {
 	{SQSH_MM_BATTLE_BTN, onMMBattleButton},
 	{SQSH_MM_LOAD_BTN, onMMLoadButton},
 	{SQSH_MM_REPLAY_BTN, onMMLoadReplayButton},
+    
+    //content chooser menu
+    {SQSH_MM_CONTENT_CHOOSER_BTN, onMMContentChooserButton},
+    {SQSH_MM_CONTENT_CHOOSER_LIST, onMMContentChooserList},
+    {SQSH_MM_CONTENT_CHOOSER_SELECT_BTN, onMMContentChooserSelectButton},
+    {SQSH_MM_BACK_FROM_CONTENT_CHOOSER_BTN, onMMBackButton},
+
+    //addons menu
+    {SQSH_MM_ADDONS_LIST, onMMAddonsList},
+    {SQSH_MM_ADDONS_APPLY_BTN, onMMAddonsApplyButton},
+    {SQSH_MM_ADDONS_ENABLE_COMBO, onMMAddonsEnableCombo},
+    {SQSH_MM_BACK_FROM_ADDONS_BTN, onMMAddonsBackButton},
 
 	//profile editor
 	{SQSH_MM_NEW_PROFILE_BTN, onMMNewProfileButton},
@@ -193,36 +205,37 @@ _handlertbl[] = {
 	{SQSH_MM_SAVE_REPLAY_DEL_BTN, onMMDelSaveReplayButton},
 
 	//task
-	{SQSH_MM_BACK_FROM_TASK_BTN, onMMBackButton},
+	{SQSH_MM_BACK_FROM_TASK_BTN,             onMMBackButton},
 
-	{SQSH_TASK_BUTTON_ID, onMMTaskButton},
+	{SQSH_TASK_BUTTON_ID,                    onMMTaskButton},
 
-	//name input
-	{SQSH_MM_APPLY_NAME_BTN, onMMApplyNameBtn},
-	{SQSH_MM_BACK_FROM_NAME_INPUT_BTN, onMMBackButton},
-	{SQSH_MM_CONNECTION_TYPE_COMBO, onMMConnectionTypeCombo},
+	//join game
+    {SQSH_MM_MULTIPLAYER_JOIN_NEXT_BTN,      onMMMultiplayerJoinNextBtn},
+    {SQSH_MM_BACK_FROM_MULTIPLAYER_JOIN_BTN, onMMBackButton},
 
-	//lan
-	{SQSH_MM_GAME_LIST, onMMGameList},
-	{SQSH_MM_LAN_CREATE_GAME_BTN, onMMLanCreateGameButton},
-	{SQSH_MM_JOIN_BTN, onMMJoinButton},
-	{SQSH_MM_BACK_FROM_LAN_BTN, onMMLanBackButton},
+    //multiplayer list
+	{SQSH_MM_MULTIPLAYER_LIST_GAME_LIST,     onMMMultiplayerListGameList},
+	{SQSH_MM_MULTIPLAYER_LIST_CREATE_BTN,    onMMMultiplayerListCreateButton},
+	{SQSH_MM_MULTIPLAYER_LIST_JOIN_BTN,      onMMMultiplayerListJoinButton},
+    {SQSH_MM_MULTIPLAYER_LIST_DIRECT_BTN,    onMMMultiplayerListDirectButton},
+	{SQSH_MM_BACK_FROM_MULTIPLAYER_LIST_BTN, onMMMultiplayerListBackButton},
 
-	//create game
-	{SQSH_MM_LAN_MAP_LIST, onMMLanMapList},
-	{SQSH_MM_CREATE_BTN, onMMCreateButton},
-//	{SQSH_MM_LAN_GAME_SPEED_SLIDER, onMMLanGameSpeedSlider},
-	{SQSH_MM_BACK_FROM_CREATE_GAME_BTN, onMMCreateLanBackButton},
+	//multiplayer host
+	{SQSH_MM_MULTIPLAYER_HOST_LIST,          onMMMultiplayerHostMapList},
+    {SQSH_MM_MULTIPLAYER_HOST_TYPE_COMBO,    onMMMultiplayerHostTypeCombo},
+	{SQSH_MM_MULTIPLAYER_HOST_NEXT_BTN,      onMMMultiplayerHostNextButton},
+	{SQSH_MM_BACK_FROM_MULTIPLAYER_HOST_BTN, onMMMultiplayerHostBackButton},
 
-	//lobby
-	{SQSH_MM_LOBBY_GAME_NAME_BTN, onMMLobby},
-	{SQSH_MM_LOBBY_PLAYER1_NAME_BTN, onMMLobbyNameButton},
-	{SQSH_MM_LOBBY_PLAYER2_NAME_BTN, onMMLobbyNameButton},
-	{SQSH_MM_LOBBY_PLAYER3_NAME_BTN, onMMLobbyNameButton},
-	{SQSH_MM_LOBBY_PLAYER4_NAME_BTN, onMMLobbyNameButton},
-	{SQSH_MM_LOBBY_PLAYER1_FRM_BTN, onMMLobbyFrmButton},
-	{SQSH_MM_LOBBY_PLAYER2_FRM_BTN, onMMLobbyFrmButton},
-	{SQSH_MM_LOBBY_PLAYER3_FRM_BTN, onMMLobbyFrmButton},
+	//multiplayer lobby
+    {SQSH_MM_MULTIPLAYER_GAME_SPEED_SLIDER,  onMMMultiplayerGameSpeedSlider},
+	{SQSH_MM_LOBBY_GAME_NAME_BTN,            onMMLobby},
+	{SQSH_MM_LOBBY_PLAYER1_NAME_BTN,         onMMLobbyNameButton},
+	{SQSH_MM_LOBBY_PLAYER2_NAME_BTN,         onMMLobbyNameButton},
+	{SQSH_MM_LOBBY_PLAYER3_NAME_BTN,         onMMLobbyNameButton},
+	{SQSH_MM_LOBBY_PLAYER4_NAME_BTN,         onMMLobbyNameButton},
+	{SQSH_MM_LOBBY_PLAYER1_FRM_BTN,          onMMLobbyFrmButton},
+	{SQSH_MM_LOBBY_PLAYER2_FRM_BTN,          onMMLobbyFrmButton},
+	{SQSH_MM_LOBBY_PLAYER3_FRM_BTN,          onMMLobbyFrmButton},
 	{SQSH_MM_LOBBY_PLAYER4_FRM_BTN, onMMLobbyFrmButton},
 	{SQSH_MM_LOBBY_PLAYER1_CLR_BTN, onMMLobbyClrButton},
 	{SQSH_MM_LOBBY_PLAYER2_CLR_BTN, onMMLobbyClrButton},
@@ -244,39 +257,6 @@ _handlertbl[] = {
 	{SQSH_MM_BACK_FROM_LOBBY_BTN, onMMLobbyBackButton},
 	{SQSH_MM_LOBBY_CHAT_INPUT, onMMLobbyChatInputButton},
 	{SQSH_MM_LOBBY_MAP_LIST, onMMLobbyMapList},
-
-	//online
-	{SQSH_MM_ONLINE_GAME_LIST, onMMOnlineGameList},
-	{SQSH_MM_ONLINE_CREATE_GAME_BTN, onMMOnlineCreateGameButton},
-	{SQSH_MM_ONLINE_JOIN_BTN, onMMOnlineJoinButton},
-	{SQSH_MM_BACK_FROM_ONLINE_BTN, onMMOnlineBackButton},
-
-	//create online game
-	{SQSH_MM_ONLINE_MAP_LIST, onMMOnlineMapList},
-	{SQSH_MM_ONLINE_CREATE_BTN, onMMOnlineCreateButton},
-	{SQSH_MM_ONLINE_GAME_SPEED_SLIDER, onMMOnlineGameSpeedSlider},
-	{SQSH_MM_BACK_FROM_CREATE_ONLINE_GAME_BTN, onMMBackButton},
-
-	//online lobby
-	{SQSH_MM_ONLINE_LOBBY_GAME_NAME_BTN, onMMOnlineLobby},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER1_NAME_BTN, onMMOnlineLobbyNameButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER2_NAME_BTN, onMMOnlineLobbyNameButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER3_NAME_BTN, onMMOnlineLobbyNameButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER4_NAME_BTN, onMMOnlineLobbyNameButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER1_FRM_BTN, onMMOnlineLobbyFrmButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER2_FRM_BTN, onMMOnlineLobbyFrmButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER3_FRM_BTN, onMMOnlineLobbyFrmButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER4_FRM_BTN, onMMOnlineLobbyFrmButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER1_CLR_BTN, onMMOnlineLobbyClrButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER2_CLR_BTN, onMMOnlineLobbyClrButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER3_CLR_BTN, onMMOnlineLobbyClrButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER4_CLR_BTN, onMMOnlineLobbyClrButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER1_SLOT_BTN, onMMOnlineLobbySlotButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER2_SLOT_BTN, onMMOnlineLobbySlotButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER3_SLOT_BTN, onMMOnlineLobbySlotButton},
-	{SQSH_MM_ONLINE_LOBBY_PLAYER4_SLOT_BTN, onMMOnlineLobbySlotButton},
-	{SQSH_MM_ONLINE_LOBBY_START_BTN, onMMOnlineLobbyStartButton},
-	{SQSH_MM_BACK_FROM_ONLINE_LOBBY_BTN, onMMOnlineLobbyBackButton},
 
 	//options
 	{SQSH_MM_OPTIONS_GAME_BTN, onMMGameButton},
@@ -797,6 +777,7 @@ CShellIconManager::CShellIconManager()
 	m_pModalWnd = 0;
 	m_bEnergyCanBuild = true;
 	cutSceneAnimTimer = 0;
+    initialMenu = SQSH_MM_START_SCR;
 
 	m_editMode = false;
 
@@ -917,7 +898,7 @@ void CShellIconManager::showHintDisconnect(const std::string& players, int showT
 	}
 }
 void CShellIconManager::showHint(const char* text, int showTime, ActionTask::Type actionType) {
-	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::LAN) {
+	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		return;
 	}
 
@@ -4494,12 +4475,12 @@ void LogicUpdater::terMapClusterRect(int left, int top, int right, int bottom, c
 
 void CShellIconManager::gameTypeChanged(UserSingleProfile::GameType newType) {
 	xassert(GetWnd(SQSH_TASK_BUTTON_ID));
-	bool lan = (newType == UserSingleProfile::LAN);
-	GetWnd(SQSH_TASK_BUTTON_ID)->Enable(!lan);
-	GetWnd(SQSH_SPEED_PAUSE)->Enable(!lan);
-	GetWnd(SQSH_SPEED_50)->Enable(!lan);
-	GetWnd(SQSH_SPEED_100)->Enable(!lan);
-	GetWnd(SQSH_SPEED_150)->Enable(!lan);
+	bool allow = newType != UserSingleProfile::MULTIPLAYER;
+	GetWnd(SQSH_TASK_BUTTON_ID)->Enable(allow);
+	GetWnd(SQSH_SPEED_PAUSE)->Enable(allow);
+	GetWnd(SQSH_SPEED_50)->Enable(allow);
+	GetWnd(SQSH_SPEED_100)->Enable(allow);
+	GetWnd(SQSH_SPEED_150)->Enable(allow);
 }
 
 bool CShellIconManager::menuVisible() {
@@ -4512,7 +4493,7 @@ bool CShellIconManager::menuVisible() {
 }
 
 int CShellIconManager::getVisibleMenuScr() {
-	for (int i = (SQSH_GAME_MAX + 1); i <= SQSH_MM_SCREEN_SOUND; i++) {
+	for (int i = (SQSH_GAME_MAX + 1); i < SQSH_MM_SCREENS_MAX; i++) {
 		if ( controls[i] && controls[i]->isVisible() ) {
 			return i;
 		}
@@ -4521,7 +4502,7 @@ int CShellIconManager::getVisibleMenuScr() {
 }
 
 void CShellIconManager::hideAllVisibleMenuScr() {
-	for (int i = (SQSH_GAME_MAX + 1); i <= SQSH_MM_SCREEN_SOUND; i++) {
+	for (int i = (SQSH_GAME_MAX + 1); i < SQSH_MM_SCREENS_MAX; i++) {
 		if ( controls[i] && controls[i]->isVisible() ) {
 			controls[i]->Show(0);
 		}

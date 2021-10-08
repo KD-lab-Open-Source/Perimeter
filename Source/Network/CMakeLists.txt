@@ -19,7 +19,7 @@ SET(Network_SRCS
         CommonEvents.cpp
         EventBufferDP.cpp
         HyperSpace.cpp
-        ServerLobby.cpp
+        ServerList.cpp
         P2P_interface1Th.cpp
         P2P_interface2Th.cpp
         P2P_interface2ThSDL.cpp

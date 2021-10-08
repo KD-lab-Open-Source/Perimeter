@@ -1,6 +1,6 @@
 #include "NetIncludes.h"
 
-#include "ServerLobby.h"
+#include "ServerList.h"
 
 GameHostConnection::GameHostConnection(uint64_t server_id)
 : server_id(server_id), host_ip() {
@@ -42,20 +42,20 @@ std::string GameHostConnection::getStringIP() const {
     return text;
 }
 
-ServerLobby::ServerLobby() {
+ServerList::ServerList() {
 }
 
 
-ServerLobby::~ServerLobby() {
+ServerList::~ServerList() {
 }
 
-void ServerLobby::startHostFind() {
+void ServerList::startHostFind() {
     if (findingHosts) return;
     findingHosts = true;
     //TODO
 }
 
-void ServerLobby::stopHostFind() {
+void ServerList::stopHostFind() {
     if (!findingHosts) return;
     findingHosts = false;
     //TODO

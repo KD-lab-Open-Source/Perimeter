@@ -1508,23 +1508,17 @@ void OnFrameTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void EnterInMissionMenu()
 {
 	gameShell->prepareForInGameMenu();
+    
+    bool notMulti = gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER;
 
 	_shellIconManager.GetWnd(SQSH_MM_INMISSION_SAVE_BTN)->Enable(
-			gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::LAN
-		&&	gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::REPLAY );
+            gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::REPLAY
+    );
 
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_LOAD_BTN)->Enable(
-			gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::LAN );
+	_shellIconManager.GetWnd(SQSH_MM_INMISSION_LOAD_BTN)->Enable(notMulti);
 
-
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_RESTART_BTN)->Enable(
-			gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::LAN );
-
-
-#ifdef _DEMO_
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_SAVE_BTN)->Enable(false);
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_LOAD_BTN)->Enable(false);
-#endif
+	_shellIconManager.GetWnd(SQSH_MM_INMISSION_RESTART_BTN)->Enable(notMulti);
+    
 
 	_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_INMISSION_SCR);
 }

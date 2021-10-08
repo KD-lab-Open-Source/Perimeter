@@ -631,7 +631,7 @@ void terHyperSpace::ShowInfo()
 		//terRenderDevice->OutText(20, 40, msg, sColor4f(1, 1, 1, 1));
 		terRenderDevice->OutText(360, 20, msg, sColor4f(1, 1, 1, 1));
 
-		msg2 < pNetCenter->getStrWorkMode() < " " < pNetCenter->getStrState();
+		msg2 < pNetCenter->getStrState();
 		msg2 < " byteReceive=" <= rb < " byteSending=" <=sb;
 		//terRenderDevice->OutText(20, 60, msg2, sColor4f(1, 1, 1, 1));
 		terRenderDevice->OutText(360, 35, msg2, sColor4f(1, 1, 1, 1));

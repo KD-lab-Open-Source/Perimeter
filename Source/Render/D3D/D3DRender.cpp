@@ -123,6 +123,7 @@ cD3DRender::cD3DRender()
 cD3DRender::~cD3DRender()
 {
 	Done();
+    gb_RenderDevice3D=nullptr;
 }
 
 bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)

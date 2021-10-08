@@ -5,7 +5,7 @@
 #include "ConnectionDP.h"
 #include "EventBufferDP.h"
 #include "CommonEvents.h"
-#include "ServerLobby.h"
+#include "ServerList.h"
 
 #ifdef PERIMETER_DEBUG
 #define LogMsg(...) fprintf(stdout, __VA_ARGS__)
@@ -61,6 +61,8 @@ struct sGameHostInfo {
 	}
 };
 
+#define PERIMETER_IP_PORT_DEFAULT 12987
+#define PERIMETER_IP_HOST_DEFAULT "127.0.0.1:12987"
 
 
 struct PClientData
@@ -241,13 +243,9 @@ enum e_PNCStateHost{
 
 class PNetCenter {
 private:
-    ServerLobby lobby;
+    ServerList serverList;
 
 public:
-	enum e_PNCWorkMode{
-		PNCWM_LAN,
-		PNCWM_ONLINE_P2P,
-	};
 	std::list<e_PNCInternalCommand> internalCommandList;
 	HANDLE hSecondThreadInitComplete;
 	HANDLE hCommandExecuted;
@@ -256,10 +254,7 @@ public:
 	//typedef hash_map<NETID, PClientData*> ClientMapType;
 	typedef std::vector<PClientData*> ClientMapType;
 
-	e_PNCWorkMode workMode;
-
 	e_PNCState m_state;
-	const char* getStrWorkMode();
 	const char* getStrState();
 
 
@@ -288,6 +283,9 @@ public:
 
 	//int m_quantPeriod;
 	unsigned long m_nextQuantTime;
+
+    //Use server listing to get servers or broadcast server to listing
+    bool publicServerHost;
 
 	//bool flag_missionDescriptionUpdate;
 	MissionDescription hostMissionDescription;
@@ -322,7 +320,7 @@ public:
 	//list<PPlayerData>  m_PlayerStartList;
 
 
-	PNetCenter(e_PNCWorkMode _workMode, const std::vector<std::string>& addresses);
+	PNetCenter();
 	~PNetCenter();
 
 	void DisconnectAndStartFindHost(void);
@@ -370,9 +368,9 @@ public:
 	bool ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution);
 	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, const char* str=0);
 
-	void CreateGame(const std::string& gameName, const std::string& missionName, const std::string& playerName, const std::string& password="");
+	void CreateGame(const GameHostConnection& connection, const std::string& gameName, const std::string& missionName, const std::string& playerName, const std::string& password="");
 
-	void JoinGame(GameHostConnection* connection, const std::string& playerName, const std::string& password="");
+	void JoinGame(const GameHostConnection& connection, const std::string& playerName, const std::string& password="");
 
 	void refreshLanGameHostList();
 	std::vector<sGameHostInfo*>& getGameHostList();
@@ -443,7 +441,7 @@ public:
 		else return 0;
 	}
 
-    bool parseHostAddress(IPaddress* address, const std::string& host);
+    static bool resolveHostAddress(GameHostConnection& address, const std::string& host);
 
     NETID	m_hostNETID;
     NETID	m_localNETID;
@@ -463,8 +461,6 @@ public:
 
 	bool isConnected();
 	int Send(const char* buffer, int size, NETID netid, bool flag_guaranted=1);
-	
-	std::vector<GameHostConnection> needHostList;
 
 	std::vector<sGameHostInfo*> gameHostList;
 	void clearGameHostList(void){
@@ -522,8 +518,6 @@ public:
 
 	//Network settings
 	bool flag_NetworkSimulation;
-
-	int m_dwPort;
 	bool flag_HostMigrate;
 	bool flag_NoUseDPNSVR;
 	int m_DPSigningLevel;//0-none 1-fast signed 2-full signed

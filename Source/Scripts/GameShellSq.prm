@@ -787,7 +787,7 @@ string briefingMusic = "Resource\\Music\\Exodus_Psychosphere.ogg";
 int DeltaToolzerRadius = 5;
 
 float CHATINFO_FADE_TIME = 1000;
-float CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000;
+int CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000;
 
 float statsTableRowHeight = 40 / 768;
 

@@ -5,6 +5,16 @@
 #include "Config.h"
 #include "xutil.h"
 #include "files/files.h"
+#include "GameContent.h"
+
+std::string getMissionNumberKey() {
+    std::string missionNumberKey = "lastMissionNumber";
+    GAME_CONTENT content = getGameContentCampaign();
+    if (content != terGameContentBase) {
+        missionNumberKey += "_" + getGameContentEnumName(terGameContentSelect);
+    }
+    return missionNumberKey;
+}
 
 UserSingleProfile::UserSingleProfile() :
 		currentMissionNumber(-1),
@@ -26,7 +36,7 @@ void UserSingleProfile::setLastMissionNumber(int newMissionNumber) {
 	profiles[currentProfileIndex].lastMissionNumber = newMissionNumber;
 	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man( path.c_str(), true );
-	man.putInt("General", "lastMissionNumber", newMissionNumber);
+	man.putInt("General", getMissionNumberKey().c_str(), newMissionNumber);
 }
 
 void UserSingleProfile::scanProfiles() {
@@ -92,7 +102,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
             profiles.push_back( newProfile );
             IniManager man( path_data.c_str(), true );
             man.put("General", "name", name.c_str());
-            man.putInt("General", "lastMissionNumber", firstMissionNumber);
+            man.putInt("General", getMissionNumberKey().c_str(), firstMissionNumber);
             if (i == freeInds.size()) {
                 freeInds.push_back(true);
             } else {
@@ -149,7 +159,7 @@ void UserSingleProfile::deleteSave(const std::string& name) {
 }
 
 std::string UserSingleProfile::getAllSavesDirectory() {
-    return convert_path_content("Resource/Saves", true) + PATH_SEP;
+    return convert_path_content("Resource/Saves") + PATH_SEP;
 }
 
 std::string UserSingleProfile::getSavesDirectory() const {
@@ -160,7 +170,9 @@ void UserSingleProfile::loadProfile(int index) {
 	std::string path = getProfileIniPath(index);
 	IniManager man(path.c_str(), false);
 	profiles[index].name = man.get("General","name");
-	profiles[index].lastMissionNumber = man.getInt("General","lastMissionNumber");
+    int missionNumber = firstMissionNumber;
+    man.getInt("General", getMissionNumberKey().c_str(), missionNumber);
+	profiles[index].lastMissionNumber = missionNumber;
 	profiles[index].difficulty = (Difficulty)man.getInt("General","difficulty");
 }
 

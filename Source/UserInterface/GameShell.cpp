@@ -15,6 +15,7 @@
 //#include "InterfaceScript.h"
 #include "PerimeterShellUI.h"
 #include "Controls.h"
+#include "GameContent.h"
 
 #include "Silicon.h"
 #include "HistoryScene.h"
@@ -63,7 +64,6 @@ void CancelEditWorkarea();
 extern HistoryScene historyScene;
 extern HistoryScene bwScene;
 extern BGScene bgScene;
-extern std::string cmdlineRoomName;
 extern void PlayMusic(const char *str = 0);
 
 bool terEnableGDIPixel=false;
@@ -94,10 +94,7 @@ int showReels( float, float ) {
 //	_shellIconManager.GetWnd(SQSH_MM_SPLASH4)->Show(1);
 //	_shellIconManager.SetModalWnd(SQSH_MM_SPLASH4);
 
-	_bCursorVisible = 1;
-	_WaitCursor();
-	_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_START_SCR);
-	_shellIconManager.SetModalWnd(0);
+	gameShell->switchToInitialMenu();
 	return 0;
 }
 
@@ -234,11 +231,12 @@ windowClientSize_(1024, 768)
 	if (check_command_line("pause")) {
 		ErrH.Abort("Pause!!!");
 	}
-    
-    bool isServer = check_command_line("server") != nullptr; 
-    const char* address = check_command_line("connect");
-    if (isServer || address) {
+
+    const char* server = check_command_line("server"); 
+    const char* connect = check_command_line("connect");
+    if (server || connect) {
         CommandLineData data;
+        data.server = server != nullptr;
         
         const char* password = check_command_line("password");
         if (password) data.password = password;
@@ -247,27 +245,30 @@ windowClientSize_(1024, 768)
         checkCmdLineArg(playerName, "name");
         data.playerName = playerName;
 		
-        if (isServer) {
+        if (server) {
+            checkCmdLineArg(server, "server");
             const char* roomName = check_command_line("room");
             if (roomName) data.roomName = roomName;
+            data.address = server;
 		} else {
-            checkCmdLineArg(address, "connect");
-            data.address = address;
+            checkCmdLineArg(connect, "connect");
+            data.address = connect;
         }
-        
-        startCmdlineOnline(data);
+        data.publicHost = check_command_line("public") != nullptr;
+
+        startCmdline(data);
 	} else if (MainMenuEnable) {
 		startedWithMainmenu = true;
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 		//_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCREEN1);
-		
-		if (IniManager("Perimeter.ini").getInt("Game","StartSplash")) {
+
+        if (IniManager("Perimeter.ini").getInt("Game","StartSplash")) {
 			_bCursorVisible = 0;
 //			_shellIconManager.GetWnd(SQSH_MM_SPLASH1)->Show(1);
 //			_shellIconManager.SetModalWnd(SQSH_MM_SPLASH1);
 			_shellIconManager.AddDynamicHandler(showReels, CBCODE_QUANT); //ждать пока не слетится
 		} else {
-			startWithScreen(SQSH_MM_START_SCR);
+            switchToInitialMenu();
 		}
 	}
 
@@ -367,35 +368,22 @@ PNetCenter* GameShell::getNetClient() {
 	return NetClient;
 }
 
-void GameShell::startWithScreen(int id) {
+void GameShell::switchToInitialMenu() {
 	_bCursorVisible = 1;
 	_WaitCursor();
-	_shellIconManager.SwitchMenuScreens(-1, id);
+	_shellIconManager.SwitchMenuScreens(-1, _shellIconManager.initialMenu);
 	_shellIconManager.SetModalWnd(0);
 }
 
-void GameShell::createNetClient(PNetCenter::e_PNCWorkMode _workMode, const std::string& addresses) {
-    stopNetClient();
-    size_t len = addresses.length();
-    std::vector<std::string> addrVec;
-    std::string buf;
-    for (int i = 0; ; i++){
-        if (i < len && !isspace(addresses[i]) && (addresses[i] != ';')) {
-            buf += addresses[i];
-        } else {
-            if (!buf.empty()) {
-                addrVec.emplace_back(buf);
-            }
-            if (i>=len) break;
-        }
-    }
-    NetClient = new PNetCenter(_workMode, addrVec);
+void GameShell::createNetClient() {
+    destroyNetClient();
+    NetClient = new PNetCenter();
 }
 
-void GameShell::stopNetClient() {
+void GameShell::destroyNetClient() {
 	if (NetClient) {
 		delete NetClient;
-		NetClient = 0;
+		NetClient = nullptr;
 	}
 }
 
@@ -1414,7 +1402,7 @@ void GameShell::KeyPressed(sKey& Key)
 		return;
 	}
 
-	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::LAN) {
+	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
 		if ( Key.fullkey == VK_INSERT ) {
@@ -1464,7 +1452,7 @@ void GameShell::KeyPressed(sKey& Key)
 	switch(Key.fullkey)
 	{
 		case VK_PAUSE:
-			if(!_shellIconManager.isCutSceneMode() && currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if(!_shellIconManager.isCutSceneMode() && currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				if(!isPaused())
 					pauseGame();
 				else
@@ -1524,17 +1512,17 @@ void GameShell::ControlPressed(int key)
 	switch(ctrl)
 	{
 		case CTRL_TIME_NORMAL:
-			if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				_shellIconManager.setNormalSpeed();
 			}
 			break;
 		case CTRL_TIME_DEC:
-			if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				_shellIconManager.decrSpeedStep();
 			}
 			break;
 		case CTRL_TIME_INC:
-			if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				_shellIconManager.incrSpeedStep();
 			}
 			break;
@@ -2494,7 +2482,7 @@ void GameShell::prepareForInGameMenu() {
 	_shellCursorManager.ShowCursor();
 	_bMenuMode = 1;
 
-	if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+	if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 		pauseGame(true);
 	}
 }
@@ -2563,6 +2551,18 @@ void GameShell::preLoad() {
     
     //Load the builtin texts that might not be provided by addons
     qdTextDB::instance().load_supplementary_texts(getLocale());
+    
+    //Setup initial menu
+    const char* initial_menu_str = check_command_line("initial_menu");
+    if (initial_menu_str) {
+        std::string initial_menu = std::string("SQSH_MM_") + initial_menu_str + "_SCR";
+        int id = getEnumDescriptor(SQSH_MM_START_SCR).keyByName(initial_menu.c_str());
+        if (id < SQSH_MM_START_SCR || id >= SQSH_MM_SCREENS_MAX) {
+            fprintf(stderr, "Initial menu %s not found\n", initial_menu.c_str());
+        } else {
+            _shellIconManager.initialMenu = static_cast<ShellControlID>(id);
+        }
+    }
 }
 
 void GameShell::setSkipCutScene(bool skip) 

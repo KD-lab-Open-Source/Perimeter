@@ -204,6 +204,7 @@ void dump_filesystem_entries(const std::string& path) {
 
 void clear_content_entries() {
     first_scan_flag = true;
+    content_root_path.clear();
     filesystem_entries.clear();
 }
 

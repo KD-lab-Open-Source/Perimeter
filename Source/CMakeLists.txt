@@ -252,11 +252,15 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         UserInterface/BelligerentSelect.cpp
         UserInterface/BattleMenu.cpp
         UserInterface/GraphicsOptions.cpp
-        UserInterface/LanMenu.cpp
         UserInterface/MainMenu.cpp
+        UserInterface/Menu/SingleMenu.cpp
+        UserInterface/Menu/AddonsMenu.cpp
+        UserInterface/Menu/MultiplayerList.cpp
+        UserInterface/Menu/MultiplayerHost.cpp
+        UserInterface/Menu/MultiplayerJoin.cpp
+        UserInterface/Menu/MultiplayerLobby.cpp
         UserInterface/MessageBox.cpp
         UserInterface/MonoSelect.cpp
-        UserInterface/OnlineMenu.cpp
         UserInterface/OptionsMenu.cpp
         Physics/Missile.cpp
         Physics/MultiBodyDispatcher.cpp
@@ -275,7 +279,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Units/EnergyConsumer.cpp
         TriggerEditor/TriggerExport.cpp
         Units/Triggers.cpp
-)
+        UserInterface/Menu/MultiplayerCommon.cpp)
 
 ADD_EXECUTABLE(perimeter ${PERIMETER_EXE_FLAGS} ${perimeter_SRCS})
 

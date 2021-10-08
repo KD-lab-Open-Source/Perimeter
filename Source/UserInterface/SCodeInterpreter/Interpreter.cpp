@@ -174,6 +174,7 @@ void Interpreter::clearYears() {
 			years[i]->released();
 		}
 	}
+    years.clear();
 
 	for (int i = 0, s = continuousCommands.size(); i < s; i++) {
 		continuousCommands[i]->released();

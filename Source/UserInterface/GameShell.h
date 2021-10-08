@@ -15,10 +15,12 @@
 class MissionEditor;
 
 struct CommandLineData {
+    bool server;
     std::string address;
     std::string playerName;
     std::string roomName;
     std::string password;
+    bool publicHost;
 };
 
 //------------------------------------------
@@ -35,10 +37,10 @@ public:
 	void done();
 	void terminate() { GameContinue = false; }
 
-	void startCmdlineOnline(const CommandLineData& data);
-	void startWithScreen(int id);
+	void startCmdline(const CommandLineData& data);
+	void switchToInitialMenu();
 
-	void LANGameStart(const MissionDescription& mission);
+	void MultiplayerGameStart(const MissionDescription& mission);
 
 	bool universalSave(const char* name, bool userSave);
 	SavePrm& savePrm() { return savePrm_; }
@@ -164,9 +166,9 @@ public:
 	cFont* debugFont() const { return debugFont_; }
 	void setSideArrowsVisible(bool visible);
 
-	void createNetClient(PNetCenter::e_PNCWorkMode _workMode, const std::string& addreses);
+	void createNetClient();
 	PNetCenter* getNetClient();
-	void stopNetClient();
+	void destroyNetClient();
 
 	bool triggersDisabled() const { return triggersDisabled_; }
 	void setTriggersDisabled() { triggersDisabled_ = true; }
@@ -223,13 +225,6 @@ public:
 
 	//-----Network function-----
 	void NetQuant();
-
-	enum e_NetCenterConstructorReturnCode {
-		NCC_RC_OK,
-		NCC_RC_NICK_ERR,
-		NCC_RC_DIRECTPLAY_INIT_ERR
-	};
-	void callBack_NetCenterConstructorReturnCode(e_NetCenterConstructorReturnCode retCode);
 	enum e_CreateGameReturnCode {
 		CG_RC_OK,
 		CG_RC_CREATE_HOST_ERR
@@ -241,7 +236,8 @@ public:
 		JG_RC_CONNECTION_ERR,
 		JG_RC_GAME_IS_RUN_ERR,
 		JG_RC_GAME_IS_FULL_ERR,
-		JG_RC_GAME_NOT_EQUAL_VERSION_ERR
+		JG_RC_GAME_NOT_EQUAL_VERSION_ERR,
+        JG_RC_GAME_NOT_EQUAL_CONTENT_ERR
 	};
 	void callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode);
 	

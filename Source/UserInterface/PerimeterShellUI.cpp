@@ -1027,7 +1027,10 @@ void CShellPushButton::OnLButtonDown(float _x, float _y)
 	if( target>0 )
 	{
 		CShellWindow *wnd=_shellIconManager.GetWnd(target);
-		wnd->OnLButtonDown(_x,_y);
+        if (wnd) {
+            wnd->OnLButtonDown(_x, _y);
+            _shellIconManager.SetFocus(target);
+        }
 	}
 }
 void CShellPushButton::OnLButtonUp(float _x, float _y)
@@ -1036,8 +1039,10 @@ void CShellPushButton::OnLButtonUp(float _x, float _y)
 	if( target>0 )
 	{
 		CShellWindow *wnd=_shellIconManager.GetWnd(target);
-		if(wnd)
-			wnd->OnLButtonUp(_x,_y);
+		if(wnd) {
+            wnd->OnLButtonUp(_x, _y);
+            _shellIconManager.SetFocus(target);
+        }
 	}
 	CShellWindow::OnLButtonUp(_x, _y);
 }
@@ -1049,8 +1054,10 @@ void CShellPushButton::OnRButtonDown(float _x, float _y)
 	if( target>0 )
 	{
 		CShellWindow *wnd=_shellIconManager.GetWnd(target);
-		if(wnd)
-			wnd->OnLButtonDown(_x,_y);
+		if(wnd) {
+            wnd->OnRButtonDown(_x, _y);
+            _shellIconManager.SetFocus(target);
+        }
 	}
 }
 void CShellPushButton::OnRButtonUp(float _x, float _y)
@@ -1060,8 +1067,10 @@ void CShellPushButton::OnRButtonUp(float _x, float _y)
 	if( target>0 )
 	{
 		CShellWindow *wnd=_shellIconManager.GetWnd(target);
-		if(wnd)
-			wnd->OnLButtonUp(_x,_y);
+		if(wnd) {
+            wnd->OnRButtonUp(_x, _y);
+            _shellIconManager.SetFocus(target);
+        }
 	}
 }
 void CShellPushButton::OnWindow(int enable)

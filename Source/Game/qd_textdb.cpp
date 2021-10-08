@@ -247,10 +247,21 @@ void qdTextDB::load_supplementary_texts(const std::string& lang) {
        "Interface.Menu.Messages.WorldMissing=This contains a map/world that is not present or enabled in your installation, make sure that is installed and enabled in your game:\n\n",
        //New main menu items
        "Interface.Menu.ButtonLabels.MULTI PLAYER=MULTI PLAYER",
-       "Interface.Menu.ButtonLabels.SERVER BROWSER=SERVER BROWSER",
-       "Interface.Menu.ButtonLabels.JOIN SERVER=JOIN SERVER",
-       "Interface.Menu.ButtonLabels.NEW GAME=NEW GAME",
        "Interface.Menu.ButtonLabels.ADDONS=ADDONS",
+       "Interface.Menu.ButtonLabels.ADDON ENABLE STATE=This addon is:",
+       "Interface.Menu.ButtonLabels.CONTENTS=CONTENTS",
+       "Interface.Menu.ButtonLabels.DIRECT=DIRECT",
+       "Interface.Menu.ButtonLabels.Password=Password:",
+       "Interface.Menu.ButtonLabels.Port=Port:",
+       "Interface.Menu.ButtonLabels.SERVER TYPE=Server Type:",
+       "Interface.Menu.ComboItems.Private Server=Private/Local Server",
+       "Interface.Menu.ComboItems.Public Server=Public/Online Server",
+       "Interface.Menu.Multiplayer.StartNewGame=Start a new game",
+       "Interface.Menu.Messages.WrongIPPort=IP port is wrong",
+       "Interface.Menu.Messages.Multiplayer.IncorrectContent=Server has different game content",
+       //Addon menu messages
+       "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
+       "Interface.Menu.Messages.Confirmations.ApplyAddonsChanges=Game restart is required to apply changes, are you sure?"
    }, false);
 }
 

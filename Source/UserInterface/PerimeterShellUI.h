@@ -1661,6 +1661,7 @@ public:
 	std::string hold;
 	std::string units;
 	std::string totalTime;
+    ShellControlID initialMenu;
 
 	LogicData::sProgress& GetProgress(terUnitAttributeID n_struct);
 	float			m_fEffectTime;
@@ -1859,11 +1860,17 @@ void OnButtonGotoBase(CShellWindow* pWnd, InterfaceEventCode code, int param);
 //start
 void showSingleMenu(CShellWindow* pWnd);
 void onMMSingleButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
+//addons
+void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsApplyButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsEnableCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //briefing
 void onMMNomadNameBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1882,7 +1889,14 @@ void onMMBattleButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLoadButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLoadReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
+//content chooser
+void fillContentChooserList();
+void onMMContentChooserButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMContentChooserList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMContentChooserSelectButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
 //profile
+void fillProfileList();
 void onMMNewProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMDelProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMSelectProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1953,23 +1967,26 @@ void onMMDelSaveReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 
 void onMMTaskButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//name input
-void onMMApplyNameBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMConnectionTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//join game
+void onMMMultiplayerJoinNextBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//lan
-void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanCreateGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//multiplayer list
+void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListDirectButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//create game
-void onMMLanMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMCreateLanBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//multiplayer host
+void fillMultiplayerHostList();
+void onMMMultiplayerHostMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerHostNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerHostTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerHostBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //lobby
+void fillMultiplayerLobbyList();
 void onMMLobby(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1981,28 +1998,6 @@ void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-
-//online
-void onMMOnlineGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineCreateGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-
-//create online game
-void onMMOnlineMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param);
-
-//online lobby
-void onMMOnlineLobby(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbySlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyHCButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //options
 void onMMGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);

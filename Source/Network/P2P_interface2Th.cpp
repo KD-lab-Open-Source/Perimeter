@@ -110,12 +110,7 @@ bool PNetCenter::SecondThread(void)
 
 	Init();
 
-	//TODO revisit this
-    if (workMode == PNCWM_ONLINE_P2P) {
-        lobby.startHostFind();
-    }
 	m_state=PNC_STATE__CLIENT_FIND_HOST;
-
 
 	//Инициализация завершена - XDPConnection создан
 	SetEvent(hSecondThreadInitComplete);
@@ -179,7 +174,7 @@ bool PNetCenter::SecondThread(void)
 
 					////if(WaitForSingleObject(hStartServer, INFINITE) != WAIT_OBJECT_0) xassert(0&&"Network server: run error.");
 					m_state=PNC_STATE__HOST_TUNING_GAME; //Необходимо для DPN_MSGID_ENUM_HOSTS_QUERY чтоб сразу выдавал правильную инфу
-					lobby.stopHostFind();
+					serverList.stopHostFind();
 
 					LogMsg("starting server...");
 					if(!isConnected()) {
@@ -252,7 +247,7 @@ bool PNetCenter::SecondThread(void)
 				break;
 			case PNC_COMMAND__START_FIND_HOST:
 				{
-					lobby.startHostFind();
+                    serverList.startHostFind();
 					m_state=PNC_STATE__CLIENT_FIND_HOST;
 				}
 				SetEvent(hCommandExecuted);
@@ -318,7 +313,7 @@ bool PNetCenter::SecondThread(void)
 
 
 
-	lobby.stopHostFind();
+	serverList.stopHostFind();
 
 	SetConnectionTimeout(1);//Для быстрого завершения
 	//if(m_pConnection->Connected()) m_pConnection->Close();
@@ -508,7 +503,7 @@ void PNetCenter::LLogicQuant()
             //ErrH.Abort("Unable to find multiplayer server");
         }
 		//SetConnectionTimeout(TIMEOUT_DISCONNECT);//30s//3600000
-		lobby.stopHostFind();
+		serverList.stopHostFind();
 		m_state=PNC_STATE__CLIENT_TUNING_GAME;
 		SetEvent(hCommandExecuted);
 		break;
@@ -990,7 +985,7 @@ end_while_01:;
 		break;
 	case PNC_STATE__ENDING_GAME:
 		{
-			lobby.stopHostFind();
+			serverList.stopHostFind();
 			Close(false);
 			Init();//Close DirectPlay-я выполняет полную деинициализацию
 			CAutoLock _lock(m_GeneralLock); //! Lock

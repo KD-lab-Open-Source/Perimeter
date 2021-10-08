@@ -15,18 +15,6 @@ const int NORMAL_QUANT_INTERVAL=100;
 
 char* terCurrentServerName; //Из ini файла
 
-const char* PNetCenter::getStrWorkMode()
-{
-	switch(workMode){
-	case PNCWM_LAN:
-		return ("PNCWM_LAN");
-	case PNCWM_ONLINE_P2P:
-		return("PNCWM_ONLINE_P2P");
-	default:
-		return("PNCWM_???");
-	}
-}
-
 const char* PNetCenter::getStrState()
 {
 	switch(m_state){
@@ -70,33 +58,32 @@ const char* PNetCenter::getStrState()
 	}
 }
 
-bool PNetCenter::parseHostAddress(IPaddress* address, const std::string& host) {
+bool PNetCenter::resolveHostAddress(GameHostConnection& address, const std::string& host) {
     std::string ip;
     uint16_t port;
     size_t pos = host.find(':');
     if (pos == std::string::npos) {
         ip = host;
-        port = m_dwPort;
+        port = PERIMETER_IP_PORT_DEFAULT;
     } else {
         ip = host.substr(0, pos);
-        std::string port_str = host.substr(pos).c_str();
+        std::string port_str = host.substr(pos + 1);
         char* end;
         port = static_cast<uint16_t>(strtol(port_str.c_str(), &end, 10));
     }
-    return SDLNet_ResolveHost(address, ip.c_str(), port) == 0;
+    int ret = SDLNet_ResolveHost(&address.host_ip, ip.c_str(), port) == 0;
+    if (ret < 0 || address.host_ip.host == INADDR_NONE) {
+        fprintf(stderr, "Error resolving host %s: %s\n", host.c_str(), SDLNet_GetError());
+        return false;
+    }
+    return true;
 }
 
-PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const std::vector<std::string>& addresses)
-	: in_ClientBuf(1000000, 1), out_ClientBuf(1000000, 1), in_HostBuf(1000000, 1), out_HostBuf(1000000, 1)
+PNetCenter::PNetCenter()
+	: in_ClientBuf(1000000, true), out_ClientBuf(1000000, true), in_HostBuf(1000000, true), out_HostBuf(1000000, true)
 {
-	LogMsg("Creating PNetCenter-");
-
-	workMode=_workMode;
-    hostConnection;
-#if 0 //TODO DELETE
-	m_pDPPeer=0;
-	m_nClientSgnCheckError = 0;
-#endif
+    publicServerHost=false;
+    hostConnection=GameHostConnection();
 	
     m_hostNETID=0;
     m_localNETID=0;
@@ -108,8 +95,6 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const std::vector<st
 	if(IniManager("Network.ini").getInt("General", "HostMigrate")) flag_HostMigrate=true;
 	flag_NoUseDPNSVR=false;
 	if(IniManager("Network.ini").getInt("General", "NoUseDPNSVR")) flag_NoUseDPNSVR=true;
-	m_dwPort = 25857;
-    IniManager("Network.ini").getInt("General", "Port", m_dwPort);
 
 	m_DPSigningLevel=0;
 	m_DPSigningLevel=IniManager("Network.ini").getInt("General", "DPSigningLevel");
@@ -159,17 +144,6 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const std::vector<st
 
 	m_GeneralLock = SDL_CreateMutex();
 
-	needHostList.clear();
-
-	GameShell::e_NetCenterConstructorReturnCode result=GameShell::NCC_RC_OK;
-
-    for (const auto& address : addresses) {
-        GameHostConnection conn;
-        if (this->parseHostAddress(&conn.host_ip, address)) {
-            needHostList.emplace_back(conn);
-        }
-    }
-
 	///hServerReady=CreateEvent(0, true, false, 0);
 	///hStartServer=CreateEvent(0, true, false, 0);
 
@@ -192,9 +166,7 @@ PNetCenter::PNetCenter(PNetCenter::e_PNCWorkMode _workMode, const std::vector<st
 
 	lastTimeServerPacket=clocki();
 
-	if(result==GameShell::NCC_RC_OK) LogMsg("-Ok\n");
-	else LogMsg("-Error\n");
-	gameShell->callBack_NetCenterConstructorReturnCode(result);
+    LogMsg("Created PNetCenter\n");
 }
 
 
@@ -253,19 +225,19 @@ int PNetCenter::getMaxPlayers() {
 
 int PNetCenter::getHostPort() {
 	if(!isHost()) return 0; 
-    return m_dwPort;
+    return hostConnection.host_ip.port;
 }
 
 //////////////////////////////////////////////
 /// New network game creation or joining
 
-void PNetCenter::CreateGame(const std::string& gameName, const std::string& missionName, const std::string& playerName, const std::string& password)
+void PNetCenter::CreateGame(const GameHostConnection& connection, const std::string& gameName, const std::string& missionName, const std::string& playerName, const std::string& password)
 {
     LogMsg("Create Game\n");
 	clientPause=false;
 	clientInPacketPause=false;
-    gamePassword=password;
-
+    hostConnection = connection;
+    gamePassword = password;
 
 	m_quantInterval=NORMAL_QUANT_INTERVAL; //round((float)NORMAL_QUANT_INTERVAL/gameSpeed);
 
@@ -279,18 +251,13 @@ void PNetCenter::CreateGame(const std::string& gameName, const std::string& miss
     gameShell->callBack_CreateGameReturnCode(isConnected() ? GameShell::CG_RC_OK : GameShell::CG_RC_CREATE_HOST_ERR);
 }
 
-void PNetCenter::JoinGame(GameHostConnection* connection, const std::string& playerName, const std::string& password)
+void PNetCenter::JoinGame(const GameHostConnection& connection, const std::string& playerName, const std::string& password)
 {
 	LogMsg("Join Game\n");
 	clientPause = false;
 	clientInPacketPause=false;
-    if (!connection) {
-        LogMsg("invalid host to connect\n");
-        gameShell->callBack_JoinGameReturnCode(GameShell::JG_RC_CONNECTION_ERR);
-        return;// JGRC_ERR_CONNECTION;
-    }
-    hostConnection = *connection;
-    gamePassword=password;
+    hostConnection = connection;
+    gamePassword = password;
 
 	//Argument  PNC_COMMAND__CONNECT_2_HOST_AND_STOP_FIND_HOST
 	internalPlayerData.set(PlayerData::PLAYER_ID_NONE, playerName);
@@ -364,7 +331,7 @@ void PNetCenter::HandlerInputNetCommand()
 
 				///if(!isHost()) ExecuteInternalCommand(PNC_COMMAND__CLIENT_STARTING_LOAD_GAME, false);
 				//game_shell.GameStart(ncbc.missionDescription_);
-				gameShell->LANGameStart(clientMissionDescription);
+                gameShell->MultiplayerGameStart(clientMissionDescription);
 			}
 			break;
 		case NETCOM_4C_ID_PAUSE:
@@ -665,10 +632,6 @@ void PNetCenter::refreshLanGameHostList()
 	char txtBufGameName[MAX_PATH];
 	//char textBuffer[MAX_PATH];
 	int curTime=clocki();
-	std::vector<GameHostConnection>::iterator k;
-	for(k=needHostList.begin(); k!=needHostList.end(); k++){
-		gameHostList.push_back(new sGameHostInfo( *k, "", "", sGameStatusInfo()));
-	}
 
     /*
 	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;

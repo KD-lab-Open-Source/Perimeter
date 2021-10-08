@@ -1,5 +1,5 @@
-#ifndef PERIMETER_SERVERLOBBY_H
-#define PERIMETER_SERVERLOBBY_H
+#ifndef PERIMETER_SERVERLIST_H
+#define PERIMETER_SERVERLIST_H
 
 //Contains host connection info provided by server list or for direct connections
 class GameHostConnection {
@@ -22,16 +22,16 @@ public:
     std::string getStringIP() const;  
 };
 
-class ServerLobby {
+class ServerList {
 private:
     bool findingHosts = false;
-    std::vector<GameHostConnection> foundLobbyHosts;
+    std::vector<GameHostConnection> foundHosts;
 
 public:
-    ServerLobby();
-    ~ServerLobby();
+    ServerList();
+    ~ServerList();
     void startHostFind();
     void stopHostFind();
 };
 
-#endif //PERIMETER_SERVERLOBBY_H
+#endif //PERIMETER_SERVERLIST_H

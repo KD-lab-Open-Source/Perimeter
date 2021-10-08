@@ -50,6 +50,7 @@ public:
 	void write(XBuffer& out) const;
 
     SERIALIZE(ar) {
+        int compAndUserID = 0; //Not used anymore but we need to load existing saves
         ar & WRAP_OBJECT(playerID);
         ar & WRAP_OBJECT(realPlayerType);
         ar & TRANSLATE_OBJECT(belligerent, "Сторона");
@@ -60,8 +61,11 @@ public:
 
         ar & WRAP_OBJECT(flag_playerStartReady);
         ar & WRAP_OBJECT(flag_playerGameReady);
+        ar & WRAP_OBJECT(compAndUserID);
         ar & WRAP_OBJECT(gameVersion);
-        ar & WRAP_OBJECT(playerName);
+        std::string name = playerName;
+        ar & WRAP_OBJECT(name);
+        setName(name);
 
         if(ar.isInput() && !handicap)
             handicap = 100;

@@ -15,7 +15,7 @@ void MusicEnable(int enable);
 void InitSound(bool sound, bool music, bool firstTime = true);
 void SoundQuant();
 void FinitSound();
-
+void request_application_restart(std::vector<std::string>* args = nullptr);
 
 //--------------------------------------
 extern class cVisGeneric* terVisGeneric;

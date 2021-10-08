@@ -444,7 +444,7 @@ char const* mainMenuMusic = "Resource\\Music\\Perimeter_Main.ogg";
 char const* briefingMusic = "Resource\\Music\\Exodus_Psychosphere.ogg";
 int DeltaToolzerRadius = 5;
 float CHATINFO_FADE_TIME = 1000.f;
-float CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000.f;
+int CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000;
 float statsTableRowHeight = 0.05208333f;
 float totalColumnStatsWeights[6] = { 0.f 
  , 0.0625f, 0.25f, 0.41666667f, 0.58333333f, 0.75f };
@@ -463,7 +463,7 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\GameShellSq.prm");
 	add_dependency(".\\Scripts\\SquadShellEnums.inl");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	description = 3376856619;
+	description = 87201575;
 	reserve(292);
 	add(&_sqsh_cursor_count, "_sqsh_cursor_count", 1356362679);
 	add(&_sqsh_cursors, "_sqsh_cursors", 2573016843);
@@ -751,7 +751,7 @@ struct SquadShellUIPrm_ParameterSection : ParameterSection
 	add(&briefingMusic, "briefingMusic", 1153532806);
 	add(&DeltaToolzerRadius, "DeltaToolzerRadius", 4026623510);
 	add(&CHATINFO_FADE_TIME, "CHATINFO_FADE_TIME", 2449647316);
-	add(&CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT, "CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT", 306651908);
+	add(&CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT, "CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT", 2058058660);
 	add(&statsTableRowHeight, "statsTableRowHeight", 3762824200);
 	add(&totalColumnStatsWeights, "totalColumnStatsWeights", 2458613230);
 	add(&generalColumnStatsWeights, "generalColumnStatsWeights", 2937016859);

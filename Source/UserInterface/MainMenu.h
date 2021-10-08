@@ -1,15 +1,6 @@
 #ifndef __MAINMENU_H__
 #define __MAINMENU_H__
 
-enum CreateNetCenterWayType {
-	COMMAND_LINE_CREATE_GAME,
-	COMMAND_LINE_LOBBY,
-	MENU_LAN,
-	MENU_ONLINE
-};
-
-void switchToMultiplayer(CreateNetCenterWayType way);
-
 std::string getItemTextFromBase(const char *keyStr);
 
 void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay = false);

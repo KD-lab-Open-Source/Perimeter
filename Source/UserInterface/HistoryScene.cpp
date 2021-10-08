@@ -793,5 +793,9 @@ void HistoryScene::setNormalSpeedMode(bool normal) {
 	getController()->setNormalSpeedMode(normal);
 }
 void HistoryScene::playMusic() {
-	PlayMusic(("RESOURCE\\MUSIC\\" + musicNamePath).c_str());
+    if (musicNamePath.empty()) {
+        gb_Music.Stop();
+    } else {
+        PlayMusic(("RESOURCE\\MUSIC\\" + musicNamePath).c_str());
+    }
 }

@@ -35,25 +35,7 @@ void loadBattleList() {
 	if (battleMaps.empty()) {
 		loadMapVector(battleMaps, "RESOURCE/BATTLE", ".spg");
 		defaultBattleMapCount = battleMaps.size();
-		std::string scenario_path = convert_path_content("RESOURCE/BATTLE/SCENARIO/");
-		FILE* file = fopen((scenario_path + "maplist.txt").c_str(), "rt");
-		if (file) {
-			char* buff = new char[201];
-			while ( fgets(buff, 200, file) != NULL ) {
-				if ( ferror(file) ) {
-					break;
-				}
-                std::string filename(buff);
-                string_replace_all(filename, "\n", "");
-                string_replace_all(filename, "\r", "");
-				MissionDescription mission;
-				std::string name = scenario_path + filename;
-				mission.setSaveName(name.c_str());
-				battleMaps.push_back(mission);
-			}
-			delete [] buff;
-			fclose(file);
-		}
+        loadMapVector(battleMaps, "RESOURCE/BATTLE/SCENARIO", ".spg");
 	}
 }
 std::string getSurvivalText(int pos) {
