@@ -1,4 +1,4 @@
-name: Windows MSVC x86 Build
+name: Windows MSVC Build
 
 on:
   push:
@@ -8,8 +8,15 @@ env:
   buildDir: '${{ github.workspace }}/build/'
 
 jobs:
-  release:
-    name: Release
+  build:
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        env: [
+          {bits: 64, arch: amd64},
+          {bits: 32, arch: x86}
+        ]
+    name: ${{matrix.build_type}} ${{matrix.env.bits}} bits
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,24 +27,24 @@ jobs:
           setupOnly: true
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
-          vcpkgTriplet: x86-windows
+          vcpkgTriplet: ${{matrix.env.arch}}-windows
           vcpkgGitCommitId: 92b42c4c680defe94f1665a847d04ded890f372e
-      - name: Configure developer command prompt for x86
+      - name: Configure developer command prompt
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: x86
+          arch: ${{matrix.env.arch}}
       - name: Run cmake to install the dependencies specified in the vcpkg.json, generate project file
         run: |
           mkdir ${{ env.buildDir }}
           cd ${{ env.buildDir }}
-          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake ..
       - name: Build the project
         run: |
           cd ${{ env.buildDir }}
           nmake
       - uses: actions/upload-artifact@v2
         with:
-          name: 'Perimeter-Windows-MSVC-x86'
+          name: Perimeter MSVC ${{matrix.build_type}} ${{matrix.env.bits}} bits
           path: |
             ${{ env.buildDir }}Source/*.dll
             ${{ env.buildDir }}Source/*.exe

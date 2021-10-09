@@ -5,45 +5,22 @@ on:
   pull_request:
 
 jobs:
-  debug:
-    name: Debug
+  build:
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    name: ${{matrix.build_type}} 64 bits
     runs-on: ubuntu-latest
     steps:
-      #Basic stuff
       - uses: actions/checkout@v2
       - name: update repos
         run: sudo apt-get update
       - name: install libs
         run: sudo apt-get install cmake meson libsdl2-dev libsdl2-image-dev libsdl2-net-dev libogg-dev libvorbis-dev libboost-dev libavcodec-dev libavformat-dev libvulkan-dev glslang-tools lld
-
-        #Main build
       - name: create build dir
         run: mkdir build
       - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DOPTION_PROCESS_SCRIPTS=ON -DOPTION_DEBUG_ASSERT=ON
-        working-directory: build
-      - name: build dependencies
-        run: ninja dependencies
-        working-directory: build
-      - name: build project
-        run: ninja
-        working-directory: build
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    steps:
-      #Basic stuff
-      - uses: actions/checkout@v2
-      - name: update repos
-        run: sudo apt-get update
-      - name: install libs
-        run: sudo apt-get install cmake meson libsdl2-dev libsdl2-image-dev libsdl2-net-dev libogg-dev libvorbis-dev libboost-dev libavcodec-dev libavformat-dev libvulkan-dev glslang-tools lld
-
-        #Main build
-      - name: create build dir
-        run: mkdir build
-      - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DOPTION_DEBUG_ASSERT=ON
         working-directory: build
       - name: build dependencies
         run: ninja dependencies
