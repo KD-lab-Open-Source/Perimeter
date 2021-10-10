@@ -4411,12 +4411,12 @@ void CShowMapWindow::Load(const sqshControl* attr) {
 void CShowMapWindow::setWorldID(int id) {
 	worldID = id;
 	RELEASE(m_hTexture);
-	if (worldID >= 0) {
+	if (id != -1) {
 		std::string mapPath;
 		if ( isWorldIDValid(worldID) ) {
 			mapPath = GetTargetName( worldID, "map.tga" );
 		} else {
-			mapPath = "RESOURCE\\Icons\\MainMenu\\UnknownWorld.tga";
+			mapPath = convert_path_content("RESOURCE\\Icons\\MainMenu\\UnknownWorld.tga");
 		}
 		m_hTexture = terVisGeneric->CreateTexture( mapPath.c_str() );
         mx = x;
@@ -4443,7 +4443,7 @@ void CShowMapWindow::draw(int bFocus)
 		return;
 	}
 //	draw_rect_empty(Vect2i(x,y), Vect2i(x+sx,y+sy), sColor4f(1, 1, 1, 1));
-	if (worldID >= 0) {
+	if (worldID != -1) {
 		if( !m_hTexture ) {
 			std::string mapPath = safeGetTargetName( worldID, "map.tga" );
 			if (!mapPath.empty()) {

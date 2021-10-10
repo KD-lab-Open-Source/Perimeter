@@ -23,6 +23,7 @@
 
 #include "MessageBox.h"
 #include "BelligerentSelect.h"
+#include "GameContent.h"
 
 extern char _bCursorVisible;
 extern char _bMenuMode;
@@ -279,13 +280,47 @@ void checkReplayMissionDescription(int index, std::vector<MissionDescription>& m
 		mVect[index] = MissionDescription(mVect[index].fileNamePlayReelGame.c_str(), GT_playRellGame);
 	}
 }
+std::string checkMissingContent(MissionDescription& mission) {
+    std::string msg;
+    std::vector<GAME_CONTENT> missingContent;
+    
+    if (mission.missionNumber < 0) {
+        missingContent = getMissingGameContent(terGameContentSelect, static_cast<GAME_CONTENT>(mission.gameContent.value()));
+    } else if (getGameContentCampaign() != mission.gameContent) {
+        missingContent = getGameContentEnums(mission.gameContent);
+    }
+
+    if (!missingContent.empty()) {
+        msg = qdTextDB::instance().getText("Interface.Menu.Messages.GameContentMissing");
+        for (auto& content: missingContent) {
+            msg += "\n" + getGameContentName(content);
+        }
+    } else if (mission.worldID() == -1) {
+        //Game content is OK but we still don't have this map
+        msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
+        msg += mission.worldName.value();
+    }
+    
+    return msg;
+}
 void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
 	checkMissionDescription(index, mVect);
+
+    MissionDescription& mission = mVect[index];
+    std::string missingContent = checkMissingContent(mission);
+
 	if (mapWndID != -1) {
-		((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( mVect[index].worldID() );
+        int id = missingContent.empty() ? mission.worldID() : -2;
+		((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( id );
 	}
 	if (mapDescrWndID != -1) {
-		((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( mVect[index].missionDescription() );
+        std::string text;
+        if (!missingContent.empty()) {
+            text = missingContent;
+        } else {
+            text = mission.missionDescription();
+        }
+        ((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( text );
 	}
 	if (inputWndID != -1) {
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(inputWndID);
@@ -294,11 +329,23 @@ void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapW
 }
 void setupReplayDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
 	checkReplayMissionDescription(index, mVect);
-	((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( mVect[index].worldID() );
-	((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( mVect[index].missionDescription() );
+
+    MissionDescription& mission = mVect[index];
+    std::string missingContent = checkMissingContent(mission);
+
+    int id = missingContent.empty() ? mission.worldID() : -2;
+	((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( id );
+
+    std::string text;
+    if (!missingContent.empty()) {
+        text = missingContent;
+    } else {
+        text = mission.missionDescription();
+    }
+	((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( text );
 	if (inputWndID != -1) {
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(inputWndID);
-		input->SetText(mVect[index].missionNamePlayReelGame.c_str());
+		input->SetText(mission.missionNamePlayReelGame.c_str());
 	}
 }
 void clearMapDescWnd(int mapWndID, int mapDescrWndID, int inputWndID) {
@@ -656,20 +703,22 @@ int SwitchMenuScreenQuant2( float, float ) {
 	//						gameShell->getNetClient()->StartLoadTheGame();
 	//					} else {
 	//						_shellIconManager.ClearQueue();
-							HTManager::instance()->GameStart(missionToExec);
 							switch (gameShell->currentSingleProfile.getLastGameType()) {
 								case UserSingleProfile::SCENARIO:
-									gameShell->currentSingleProfile.setCurrentMissionNumber(historyScene.getMissionNumberToExecute());
-									break;
-								case UserSingleProfile::BATTLE:
-									gameShell->currentSingleProfile.setCurrentMissionNumber(-1);
+                                    missionToExec.missionNumber = historyScene.getMissionNumberToExecute();
 									break;
 								case UserSingleProfile::SURVIVAL:
-									gameShell->currentSingleProfile.setCurrentMissionNumber(-2);
+									missionToExec.missionNumber = -2;
 									break;
+                                case UserSingleProfile::REPLAY:
+                                    //Already have mission number builtin
+                                    break;
 								default:
-									gameShell->currentSingleProfile.setCurrentMissionNumber(-1);
+									missionToExec.missionNumber = -1;
+                                    break;
 							}
+                            HTManager::instance()->GameStart(missionToExec);
+                            gameShell->currentSingleProfile.setCurrentMissionNumber(missionToExec.missionNumber);
 							gameShell->currentSingleProfile.setGameResult(UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED);
 	//					}
 						if (_id_off == SQSH_MM_BRIEFING_SCR) {
@@ -710,6 +759,8 @@ int SwitchMenuBGQuant2( float, float ) {
 			_shellIconManager.AddDynamicHandler(SwitchMenuScreenQuant2, CBCODE_QUANT); //ждать пока не слетится
 			switch (_id_on) {
 				case SQSH_MM_SINGLE_SCR:
+                    //Only enable if user didn't choose a specific content
+                    _shellIconManager.GetWnd(SQSH_MM_BATTLE_BTN)->Enable(terGameContentAvailable == terGameContentSelect);
 					if (!debug_allow_replay) {
 						_shellIconManager.GetWnd(SQSH_MM_REPLAY_LINE)->Show(0);
 						_shellIconManager.GetWnd(SQSH_MM_REPLAY_BORDER)->Show(0);
@@ -1774,6 +1825,7 @@ void onMMBackFromProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int 
 
 //briefing menu
 double lastClockSound = 0;
+
 void onMMYearBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if ( code == EVENT_DRAWWND ) {
 		CTextWindow* txtWnd = (CTextWindow*) pWnd;
@@ -2147,27 +2199,44 @@ int delLoadSaveAction(float, float) {
 	fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
 	return 0;
 }
+bool setupMissionToExec(int pos) {
+    if (pos < 0 || pos > savedGames.size()) {
+        return false;
+    }
+    checkMissionDescription(pos, savedGames);
+    missionToExec = savedGames[pos];
+
+    //Check if content is compatible
+    std::string missingContent = checkMissingContent(missionToExec);
+    if (!missingContent.empty()) {
+        setupOkMessageBox(nullptr, 0, missingContent, MBOX_BACK);
+        showMessageBox();
+        return false;
+    }
+
+    //Setup according to mission type
+    if (missionToExec.missionNumber == -1) {
+        gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::BATTLE);
+//		strncpy(missionToExec.getActivePlayerData().Name, gameShell->currentSingleProfile.getCurrentProfile().name.c_str(), PERIMETER_CONTROL_NAME_SIZE);
+    } else if (missionToExec.missionNumber == -2) {
+        gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SURVIVAL);
+    } else {
+        gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
+        historyScene.goToJustAfterMissionPosition(missionToExec.missionNumber);
+        historyScene.setMissionNumberToExecute(missionToExec.missionNumber);
+//		strncpy(missionToExec.getActivePlayerData().Name, gameShell->currentSingleProfile.getCurrentProfile().name.c_str(), PERIMETER_CONTROL_NAME_SIZE);
+    }
+
+    return true;
+}
 void loadGame(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
-	if (pos != -1) {
-		checkMissionDescription(pos, savedGames);
-		missionToExec = savedGames[pos];
-		if (savedGames[pos].missionNumber == -1) {
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::BATTLE);
-//			strncpy(missionToExec.getActivePlayerData().Name, gameShell->currentSingleProfile.getCurrentProfile().name.c_str(), PERIMETER_CONTROL_NAME_SIZE);
-		} else if (savedGames[pos].missionNumber == -2) {
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SURVIVAL);
-		} else {
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
-			historyScene.goToJustAfterMissionPosition(savedGames[pos].missionNumber);
-			historyScene.setMissionNumberToExecute(savedGames[pos].missionNumber);
-//			strncpy(missionToExec.getActivePlayerData().Name, gameShell->currentSingleProfile.getCurrentProfile().name.c_str(), PERIMETER_CONTROL_NAME_SIZE);
-		}
-		
-		gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
-		_shellIconManager.SwitchMenuScreens(listBox->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
-	}
+    if (setupMissionToExec(pos)) {
+        gb_Music.FadeVolume(_fEffectButtonTotalTime * 0.001f);
+        _shellIconManager.SwitchMenuScreens(listBox->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
+    }
 }
+
 void onMMLoadMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if ( code == EVENT_PRESSED && intfCanHandleInput() ) {
 		CListBoxWindow* list = (CListBoxWindow*)pWnd;
@@ -2220,7 +2289,16 @@ void loadReplay(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
 	if (pos != -1) {
 		checkReplayMissionDescription(pos, replays);
-		missionToExec = replays[pos];
+        missionToExec = replays[pos];
+
+        //Check if content is compatible
+        std::string missingContent = checkMissingContent(missionToExec);
+        if (!missingContent.empty()) {
+            setupOkMessageBox(nullptr, 0, missingContent, MBOX_BACK);
+            showMessageBox();
+            return;
+        }
+        
 		gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::REPLAY);
 		gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
 		_shellIconManager.SwitchMenuScreens(listBox->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
@@ -2278,19 +2356,7 @@ int delLoadInGameSaveAction(float, float) {
 }
 void loadFromGame(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
-	if (pos != -1) {
-		checkMissionDescription(pos, savedGames);
-		missionToExec = savedGames[pos];
-		if (savedGames[pos].missionNumber == -1) {
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::BATTLE);
-		} else if (savedGames[pos].missionNumber == -2) {
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SURVIVAL);
-		} else {
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
-			historyScene.goToJustAfterMissionPosition(savedGames[pos].missionNumber);
-			historyScene.setMissionNumberToExecute(savedGames[pos].missionNumber);
-		}
-		
+	if (setupMissionToExec(pos)) {
 		gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
 		HTManager::instance()->GameClose();
 		StartSpace();

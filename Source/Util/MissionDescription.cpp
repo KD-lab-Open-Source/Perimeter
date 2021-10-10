@@ -1,40 +1,14 @@
 #include "StdAfx.h"
 #include "NetPlayer.h"
 #include "EditFunctions.h"
-#include "../Terra/crc.h"
 #include "Scripts/Config.hi"
+#include "GameContent.h"
 
 const char* SAVE_VERSION = "V2.00";
 
 PlayerData::PlayerData()
 {
-	playerID = PLAYER_ID_NONE;
-	realPlayerType = REAL_PLAYER_TYPE_CLOSE;
-	belligerent = BELLIGERENT_EXODUS0;
-	colorIndex = 0;
-	clan = -1;
-	difficulty = DIFFICULTY_HARD;
-	handicap = 100;
-	flag_playerStartReady = false;
-	flag_playerGameReady = false;
-	gameVersion = 0;
-	netid = 0;
     strcpy(playerName, "");
-}
-
-PlayerData::PlayerData(int playerIDIn, const std::string& name, terBelligerent belligerentIn, int colorIndexIn, RealPlayerType realPlayerTypeIn)
-{
-	playerID = PLAYER_ID_NONE;
-	realPlayerType = REAL_PLAYER_TYPE_PLAYER;
-	belligerent = BELLIGERENT_EXODUS0;
-	colorIndex = 0;
-	clan = -1;
-	difficulty = DIFFICULTY_HARD;
-	handicap = 100;
-	flag_playerStartReady = false;
-	flag_playerGameReady = false;
-
-	set(playerIDIn, name, belligerentIn, colorIndexIn, realPlayerTypeIn);
 }
 
 void PlayerData::set(int playerIDIn, const std::string& name, terBelligerent belligerentIn, int colorIndexIn, RealPlayerType realPlayerTypeIn) 
@@ -68,7 +42,7 @@ void PlayerData::set(int playerIDIn, const std::string& name, terBelligerent bel
 }
 
 void PlayerData::setName(const std::string& name) {
-    strncmp(playerName, name.substr(0, PLAYER_MAX_NAME_LEN).c_str(), PLAYER_MAX_NAME_LEN);
+    strncpy(playerName, name.c_str(), PLAYER_MAX_NAME_LEN);
 }
 
 void PlayerData::read(XBuffer& in) 
@@ -119,17 +93,19 @@ void MissionDescription::init()
 	worldID_ = -1;
 	gameType_ = GT_SINGLE_PLAYER;
 	flag_missionDescriptionUpdate = true;
+    gameContent = 0;
 }
 
 MissionDescription::MissionDescription()
 : missionDescriptionID(editMissionDescriptionID)
 {
 	init();
+    load();
 }
 
 void MissionDescription::read(XBuffer& in) 
 {
-	in > worldID_ > StringInWrapper(missionName_) > StringInWrapper(missionDescriptionStr_) > StringInWrapper(saveName_) > StringInWrapper(saveNameBinary_); 
+	in > StringInWrapper(worldName.value()) > StringInWrapper(missionName_) > StringInWrapper(missionDescriptionStr_) > StringInWrapper(saveName_) > StringInWrapper(saveNameBinary_); 
 	in.read(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
 		playersData[i].read(in);
@@ -137,11 +113,14 @@ void MissionDescription::read(XBuffer& in)
 	in.read(&playerAmountScenarioMax, sizeof(playerAmountScenarioMax));
 	in.read(&gameType_,sizeof(gameType_));
 	in.read(&activePlayerID, sizeof(activePlayerID));
+    in.read(&missionNumber,sizeof(missionNumber));
+    in.read(&gameContent,sizeof(gameContent));
+    load();
 }
 
 void MissionDescription::write(XBuffer& out) const 
 { 
-	out < worldID_ < StringOutWrapper(missionName_) < StringOutWrapper(missionDescriptionStr_) < StringOutWrapper(saveName_) < StringOutWrapper(saveNameBinary_); 
+	out < StringOutWrapper(worldName.value()) < StringOutWrapper(missionName_) < StringOutWrapper(missionDescriptionStr_) < StringOutWrapper(saveName_) < StringOutWrapper(saveNameBinary_); 
 	out.write(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
 		playersData[i].write(out);
@@ -149,11 +128,13 @@ void MissionDescription::write(XBuffer& out) const
 	out.write(&playerAmountScenarioMax, sizeof(playerAmountScenarioMax));
 	out.write(&gameType_,sizeof(gameType_));
 	out.write(&activePlayerID, sizeof(activePlayerID));
+    out.write(&missionNumber,sizeof(missionNumber));
+    out.write(&gameContent,sizeof(gameContent));
 }
 
 void MissionDescription::simpleRead(XBuffer& in) 
 { 
-	in > worldID_ > StringInWrapper(missionName_) > StringInWrapper(saveName_) > StringInWrapper(saveNameBinary_);
+	in > StringInWrapper(worldName.value()) > StringInWrapper(missionName_) > StringInWrapper(saveName_) > StringInWrapper(saveNameBinary_);
 	unsigned char tmp;
 	int i;
     char playerName[PLAYER_MAX_NAME_LEN+1];
@@ -174,11 +155,14 @@ void MissionDescription::simpleRead(XBuffer& in)
 	in.read(&tmp, sizeof(tmp)); playerAmountScenarioMax=(int)tmp;
 	in.read(&tmp, sizeof(tmp)); gameType_=(GameType)tmp;
 	in.read(&tmp, sizeof(tmp)); activePlayerID=(int)tmp;
+    in.read(&tmp, sizeof(tmp)); missionNumber=(int)tmp;
+    in.read(&tmp, sizeof(tmp)); gameContent=(int)tmp;
+    load();
 }
 
 void MissionDescription::simpleWrite(XBuffer& out) const 
 { 
-	out < worldID_ < StringOutWrapper(missionName_) < StringOutWrapper(saveName_) < StringOutWrapper(saveNameBinary_);
+	out < StringOutWrapper(worldName.value()) < StringOutWrapper(missionName_) < StringOutWrapper(saveName_) < StringOutWrapper(saveNameBinary_);
 	unsigned char tmp;
 	int i;
 	for(i=0; i<NETWORK_PLAYERS_MAX; i++){
@@ -194,7 +178,9 @@ void MissionDescription::simpleWrite(XBuffer& out) const
 	}
 	tmp=(unsigned char)playerAmountScenarioMax;		out.write(&tmp, sizeof(tmp));
 	tmp=(unsigned char)gameType_;					out.write(&tmp, sizeof(tmp));
-	tmp=(unsigned char)activePlayerID;				out.write(&tmp, sizeof(tmp));
+    tmp=(unsigned char)activePlayerID;				out.write(&tmp, sizeof(tmp));
+    tmp=(unsigned char)missionNumber;				out.write(&tmp, sizeof(tmp));
+    tmp=(unsigned char)gameContent;					out.write(&tmp, sizeof(tmp));
 }
 
 

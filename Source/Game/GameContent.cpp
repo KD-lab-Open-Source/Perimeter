@@ -9,6 +9,7 @@ namespace scripts_export {
 
 #include "Runtime.h"
 #include "BelligerentSelect.h"
+#include "qd_textdb.h"
 
 #include <map>
 #include <set>
@@ -467,4 +468,43 @@ bool unavailableContentBelligerent(terBelligerent belligerent, GAME_CONTENT cont
         default:
             return false;
     }
+}
+
+std::vector<GAME_CONTENT> getGameContentEnums(const uint32_t& content) {
+    std::vector<GAME_CONTENT> contentList;
+    if (content) {
+        contentList = getEnumDescriptor(GAME_CONTENT()).keyCombination(content);
+    }
+    return contentList;
+}
+
+std::vector<GAME_CONTENT> getGameContentFromEnumName(const std::string& content) {
+    return getEnumDescriptor(GAME_CONTENT()).keysFromNameCombination(content);
+}
+
+std::vector<GAME_CONTENT> getMissingGameContent(const GAME_CONTENT& content, const GAME_CONTENT& required) {
+    uint32_t missingFlags = (content & required) ^ required;
+    return getGameContentEnums(missingFlags);
+}
+
+std::string getGameContentEnumName(const GAME_CONTENT& content) {
+    std::string name;
+    for (auto const& contentEnum : getGameContentEnums(content)) {
+        if (!name.empty()) name += "|";
+        name += getEnumName(contentEnum);
+    }
+    return name;
+}
+
+std::string getGameContentName(const GAME_CONTENT& content) {
+    std::string key("GAME_CONTENT.");
+    key += getGameContentEnumName(content);
+    return qdTextDB::instance().getText(key.c_str());
+}
+
+GAME_CONTENT getGameContentCampaign() {
+    if (terGameContentSelect == terGameContentAvailable) {
+        return terGameContentBase;
+    }
+    return terGameContentSelect;
 }

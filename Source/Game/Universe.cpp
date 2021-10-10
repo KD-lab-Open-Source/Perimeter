@@ -71,7 +71,7 @@
 #include "BinaryArchive.h"
 
 #include "BelligerentSelect.h"
-
+#include "GameContent.h"
 #include "files/files.h"
 
 const int REGION_DATA_FILE_VERSION = 8383;
@@ -184,7 +184,9 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 		}
 	}
 
-	terPlayer* world_player = addPlayer(PlayerData(Players.size(), "World", BELLIGERENT_EXODUS0, playerWorldColorIdx, REAL_PLAYER_TYPE_WORLD));
+    PlayerData playerData;
+    playerData.set(Players.size(), "World", BELLIGERENT_EXODUS0, playerWorldColorIdx, REAL_PLAYER_TYPE_WORLD);
+	terPlayer* world_player = addPlayer(playerData);
 	world_player->loadWorld(data);
 	world_player->setDifficulty(mission.difficulty);
 
@@ -732,9 +734,6 @@ MissionDescription::MissionDescription(const char* fname, GameType gameType)
 			bia >> WRAP_NAME(*this, "MissionDescriptionPrm");
 		}
 
-		worldID_ = vMap.getWorldID(worldName);
-		xassert_s(worldID() != -1 && "Не найден мир в worlds.prm: ", worldName);
-
 		missionDescriptionStr_ = qdTextDB::instance().getText(missionDescriptionID);
 		if(missionDescriptionStr_ == "")
 			missionDescriptionStr_ = missionDescriptionID;
@@ -761,6 +760,11 @@ MissionDescription::MissionDescription(const char* fname, GameType gameType)
 	}
 
 	version = currentShortVersion;
+    load();
+}
+
+void MissionDescription::load() {
+    worldID_ = vMap.getWorldID(worldName);
 }
 
 bool MissionDescription::loadMission(SavePrm& savePrm) const
@@ -790,6 +794,8 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 	MissionDescription data = *this;
 	
 	data.playerAmountScenarioMax = !userSave ? savePrm.manualData.players.size() : universe()->Players.size() - 1;
+    
+    data.gameContent = data.missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
 
 	if(!strlen(data.worldName))
 		data.worldName = vMap.getWorldName(worldID());

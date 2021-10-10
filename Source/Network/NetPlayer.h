@@ -21,26 +21,25 @@ DECLARE_ENUM_DESCRIPTOR(RealPlayerType)
 
 struct PlayerData {
 private:
-    char playerName[PLAYER_MAX_NAME_LEN];
+    char playerName[PLAYER_MAX_NAME_LEN] = "";
 public:
 	enum  {
 		PLAYER_ID_NONE = -1
 	};
 	
-	int playerID;
-	EnumWrapper<RealPlayerType> realPlayerType;
-	EnumWrapper<terBelligerent> belligerent;
-	int colorIndex;
-	int clan;
-	EnumWrapper<Difficulty> difficulty;
-	int handicap;
-	bool flag_playerStartReady;
-	bool flag_playerGameReady;
-	unsigned int gameVersion;
-	NETID netid;
+	int playerID = PLAYER_ID_NONE;
+	EnumWrapper<RealPlayerType> realPlayerType = REAL_PLAYER_TYPE_CLOSE;
+	EnumWrapper<terBelligerent> belligerent = BELLIGERENT_EXODUS0;
+	int colorIndex = 0;
+	int clan = -1;
+	EnumWrapper<Difficulty> difficulty = DIFFICULTY_HARD;
+	int handicap = 100;
+	bool flag_playerStartReady = false;
+	bool flag_playerGameReady = false;
+	unsigned int gameVersion = 0;
+	NETID netid = 0;
 	
 	PlayerData();
-	PlayerData(int playerIDIn, const std::string& name, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
 
 	void set(int playerIDIn, const std::string& name, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
 
@@ -83,8 +82,9 @@ class MissionDescription
 {
 public:
 	MissionDescription();
-	MissionDescription(const char* save_name, GameType gameType = GT_SINGLE_PLAYER);
-	void init();
+	explicit MissionDescription(const char* save_name, GameType gameType = GT_SINGLE_PLAYER);
+    void init();
+    void load();
 
 	bool loadMission(SavePrm& savePrm) const; 
 	bool saveMission(const SavePrm& savePrm, bool userSave) const; 
@@ -175,6 +175,7 @@ public:
         ar & WRAP_OBJECT(globalTime);
         ar & WRAP_OBJECT(gameSpeed);
         ar & WRAP_OBJECT(gamePaused);
+        ar & WRAP_OBJECT(gameContent);
 
         ar & WRAP_OBJECT(originalSaveName);
     }
@@ -191,6 +192,7 @@ public:
 	int globalTime;
 	float gameSpeed;
 	bool gamePaused;
+    BitVector<GAME_CONTENT> gameContent;
 	PrmString originalSaveName;
 
 	std::string fileNamePlayReelGame;

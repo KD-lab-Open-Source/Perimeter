@@ -414,7 +414,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 		PlayerData* data = &CurrentMission.playersData[i];
-        std::string playerName = "";
+        std::string playerName;
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
             playerName = currentSingleProfile.getCurrentProfile().name;
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
@@ -580,6 +580,7 @@ bool GameShell::universalSave(const char* name, bool userSave)
 	MissionDescription mission(CurrentMission);
 	mission.setSaveName(name);
 	mission.missionNumber = currentSingleProfile.getCurrentMissionNumber();
+    mission.gameContent = mission.missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
 	if(userSave){
 		mission.globalTime = global_time();
 		mission.gameSpeed = game_speed ? game_speed : game_speed_to_resume;

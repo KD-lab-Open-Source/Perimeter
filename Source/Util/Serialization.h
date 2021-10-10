@@ -203,7 +203,8 @@ public:
 		return (Enum)0;
 	}
 
-	std::string nameCombination(int bitVector) const {
+    template<typename BV>
+	std::string nameCombination(BV bitVector) const {
 		std::string value;
 		for(typename KeyToName::const_iterator i = keyToName.begin(); i != keyToName.end(); ++i)
 			if((bitVector & i->first) == i->first){
@@ -226,6 +227,39 @@ public:
 			}
 		return value;
 	}
+
+    template<typename BV>
+    std::vector<Enum> keyCombination(BV bitVector) const {
+        std::vector<Enum> keys;
+        for(typename KeyToName::const_iterator i = keyToName.begin(); i != keyToName.end(); ++i) {
+            if ((bitVector & i->first) == i->first) {
+                bitVector &= ~i->first;
+                keys.emplace_back(static_cast<Enum>(i->first.value()));
+            }
+        }
+        return keys;
+    }
+
+    std::vector<Enum> keysFromNameCombination(const std::string& str) const {
+        std::vector<Enum> vec;
+        std::string buf;
+        for (size_t i = 0; i < str.length(); ++i) {
+            const char c = str[i];
+            if (c == ' ') continue;
+            if (c == '|') {
+                Enum val = keyByName(buf.c_str());
+                vec.emplace_back(val);
+                buf.clear();
+                continue;
+            }
+            buf += c;
+        }
+        if (!buf.empty()) {
+            Enum val = keyByName(buf.c_str());
+            vec.emplace_back(val);
+        }
+        return vec;
+    }
 
 	const char* comboList() const { return comboList_.c_str(); }
 	const char* comboListAlt() const { return comboListAlt_.c_str(); }
@@ -264,6 +298,10 @@ private:
 		bool operator<(const Key& rhs) const {
 			return bitsNumber_ == rhs.bitsNumber_ ? value_ < rhs.value_ : bitsNumber_ > rhs.bitsNumber_;
 		}
+
+        int value() const {
+            return value_;
+        }
 
 		operator int () const {
 			return value_;

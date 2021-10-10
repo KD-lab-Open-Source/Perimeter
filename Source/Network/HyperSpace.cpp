@@ -9,6 +9,7 @@
 #include "P2P_interface.h"
 #include "GameShell.h"
 #include "files/files.h"
+#include "GameContent.h"
 
 bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
@@ -158,8 +159,9 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 	net_log_buffer.init();
 
-//	if(terGameMode == PERIMETER_GAME_MODE_SINGLEPLAYER)
-//		GameStart();
+    if (!mission.gameContent) {
+        mission.gameContent = mission.missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    }
 
 	//if(flag_rePlayReel) mission=curMission; //Порядок Важен!
 	if(flag_savePlayReel || flag_autoSavePlayReel) curMission=mission;
