@@ -356,6 +356,11 @@ private:
 	bool cutSceneSkipped_;
 	MeasurementTimer lastSkipTime_;
 
+    //Double clicking vars
+    int doubleClickTime = 300;
+    int lastClickButton = 0;
+    double lastClickTime = 0;
+
 	//---------------------------------
 	void ShotsScan();
 	void MakeShot();

@@ -162,6 +162,8 @@ windowClientSize_(1024, 768)
 
 	MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 
+    IniManager("Perimeter.ini", false).getInt("Game","DoubleClickTime", doubleClickTime);
+
 	debug_allow_replay = true; //IniManager("Perimeter.ini", false).getInt("Game","EnableReplay");
 
 	check_command_line_parameter("mainmenu", MainMenuEnable);
@@ -911,17 +913,27 @@ void GameShell::EventHandler(SDL_Event& event) {
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
             bool pressed = event.button.state == SDL_PRESSED;
+            bool doubleClick = false;
+            if (!pressed) {
+                doubleClick = (clockf() - lastClickTime) < doubleClickTime && lastClickButton == event.button.button;
+                lastClickTime = clockf();
+                if (doubleClick) lastClickTime -= doubleClickTime;
+                lastClickButton = event.button.button;
+            }
             Vect2f where = convert(event.button.x, event.button.y);
             //printf("M %fx%f B %dn", where.x, where.y, event.button.button, pressed);
             switch (event.button.button) {
                 case SDL_BUTTON_LEFT:
-                    if (pressed) {
+                    if (doubleClick) {
                         MouseLeftPressed(where);
-                    } else {
                         MouseLeftUnpressed(where);
-                    }
-                    if (event.button.clicks == 2) {
                         MouseLeftDoubleClick(where);
+                    } else {
+                        if (pressed) {
+                            MouseLeftPressed(where);
+                        } else {
+                            MouseLeftUnpressed(where);
+                        }
                     }
                     break;
                 case SDL_BUTTON_MIDDLE:
@@ -932,13 +944,16 @@ void GameShell::EventHandler(SDL_Event& event) {
                     }
                     break;
                 case SDL_BUTTON_RIGHT:
-                    if (pressed) {
+                    if (doubleClick) {
                         MouseRightPressed(where);
-                    } else {
                         MouseRightUnpressed(where);
-                    }
-                    if (event.button.clicks == 2) {
                         MouseRightDoubleClick(where);
+                    } else {
+                        if (pressed) {
+                            MouseRightPressed(where);
+                        } else {
+                            MouseRightUnpressed(where);
+                        }
                     }
                     break;
                 default:
