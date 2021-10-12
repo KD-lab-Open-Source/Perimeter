@@ -157,7 +157,7 @@ void CShellLogicDispatcher::quant(bool game_active)
 
         //If we had hovering unit and mouse isnt moving, check if is still hovering
         const float UNIT_HOVER_INTERVAL = 100.0;
-        if ((clockf() - lastMouseMoveHoverCheck) > UNIT_HOVER_INTERVAL) {
+        if (mouseMoveGame && (clockf() - lastMouseMoveHoverCheck) > UNIT_HOVER_INTERVAL) {
             lastMouseMoveHoverCheck = clockf();
 
             terPlayer* pPlayer = universe()->activePlayer();
@@ -352,7 +352,7 @@ int CShellLogicDispatcher::OnMouseMove(float x, float y)
 		return 0;
 	}
 
-    lastMouseMove = clockf();
+    mouseMoveGame = false;
 	m_fMouseCurrentX = x;
 	m_fMouseCurrentY = y;
 	bool editWorkArea = (m_nEditRegion != editRegionNone);
@@ -392,6 +392,8 @@ int CShellLogicDispatcher::OnMouseMove(float x, float y)
 	if(!universe())
 		return 0;
 
+    mouseMoveGame = true;
+    
 	return 0;
 }
 
