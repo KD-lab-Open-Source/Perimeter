@@ -114,7 +114,7 @@ void CShellLogicDispatcher::SetState(int ns)
 void CShellLogicDispatcher::quant(bool game_active)
 {
 	if(_pUnitHover() && !_pUnitHover->alive())
-		_pUnitHover = 0;
+		_pUnitHover = nullptr;
 	if(!mt_interface_quant)
 		return;
 
@@ -155,12 +155,70 @@ void CShellLogicDispatcher::quant(bool game_active)
 		if(pColumnMain)
 			pColumnMain->quant();
 
-		if(_pUnitHover())
-		{
-			if((m_nState == STATE_DEFAULT) && _bCursorVisible && 
-				!gameShell->BuildingInstaller.inited() && m_nEditRegion == editRegionNone)
-					_pUnitHover->Mark();
-		}
+        //If we had hovering unit and mouse isnt moving, check if is still hovering
+        const float UNIT_HOVER_INTERVAL = 100.0;
+        if ((clockf() - lastMouseMoveHoverCheck) > UNIT_HOVER_INTERVAL) {
+            lastMouseMoveHoverCheck = clockf();
+
+            terPlayer* pPlayer = universe()->activePlayer();
+            if(pPlayer && !gameShell->BuildingInstaller.inited()) //если не тащим здание
+            {
+                //Find unit we may be hovering in mouse, in case we already are hovering one pass it as prev unit
+                terUnitBase* hoveringUnit = universe()->TraceUnit(Vect2f(m_fMouseCurrentX - 0.5f, m_fMouseCurrentY - 0.5f));
+                if (hoveringUnit) {
+                    _pUnitHover = hoveringUnit;
+                    if (_pUnitHover->playerID() == pPlayer->playerID()) {
+                        //свой
+                        int bMultiSel = GetSelectedUnitsCount() > 1;
+                        if (GetSelectedUnit() == _pUnitHover() && !bMultiSel)
+                            OnOverUnit(_pUnitHover());
+                        else
+                            OnOverFriend(_pUnitHover());
+
+                        if (m_nPickAction == SHELL_PICK_UNIT_ATTACK) {
+                            _shellCursorManager.SetActiveCursor(CShellCursorManager::no_attack, 1);
+                        } else if (m_nPickAction == SHELL_PICK_UNIT_BUILD) {
+                            _shellCursorManager.SetActiveCursor(
+                                    unitNeedRepairOrBuild(_pUnitHover()) ? CShellCursorManager::sell
+                                                                         : CShellCursorManager::sell_no, 1);
+                        }
+                    } else //if(GetSelectedUnitsCount())
+                    {
+                        //чужой
+                        OnOverEnemy(_pUnitHover());
+                    }
+                } else {
+                    _pUnitHover = nullptr;
+                }
+
+                if (_pUnitHover() == nullptr) {
+                    OnMouseIdle();
+
+                    if (m_nPickAction == SHELL_PICK_UNIT_BUILD) {
+                        _shellCursorManager.SetActiveCursor(CShellCursorManager::sell, 1);
+                    } else if (m_nPickAction == SHELL_PICK_UNIT_ATTACK) {
+                        terUnitBase* pUnit = GetSelectedUnit();
+                        if (pUnit) {
+                            if (universe()->select.canSelectionAttackUnit(0))
+                                _shellCursorManager.SetActiveCursor(CShellCursorManager::attack, 1);
+                            else
+                                _shellCursorManager.SetActiveCursor(CShellCursorManager::no_attack, 1);
+                        }
+                    }
+                }
+            } else {
+                OnMouseIdle();
+                _pUnitHover = nullptr;
+            }
+            
+            //Mark it
+            if(_pUnitHover()) {
+                if((m_nState == STATE_DEFAULT) && _bCursorVisible &&
+                   !gameShell->BuildingInstaller.inited() && m_nEditRegion == editRegionNone)
+                    _pUnitHover->Mark();
+            }
+        }
+
 	}
 
 	ListQuantResType::iterator i = m_lstQRes.begin();
@@ -294,6 +352,7 @@ int CShellLogicDispatcher::OnMouseMove(float x, float y)
 		return 0;
 	}
 
+    lastMouseMove = clockf();
 	m_fMouseCurrentX = x;
 	m_fMouseCurrentY = y;
 	bool editWorkArea = (m_nEditRegion != editRegionNone);
@@ -332,63 +391,6 @@ int CShellLogicDispatcher::OnMouseMove(float x, float y)
 
 	if(!universe())
 		return 0;
-
-	if(!gameShell->BuildingInstaller.inited()) //если не тащим здание
-	{
-		terPlayer* pPlayer = universe()->activePlayer();
-		if(pPlayer){
-			int bMultiSel = GetSelectedUnitsCount() > 1;
-
-			UnitList units;
-			universe()->MakeGenericList(Vect2f(x - 0.5f, y - 0.5f), units);
-			if(!units.empty())
-			{
-				_pUnitHover = *units.begin();
-				if (!editWorkArea) {
-					if(_pUnitHover->playerID() == pPlayer->playerID())
-					{
-						//свой
-						if(GetSelectedUnit() == _pUnitHover() && !bMultiSel)
-							OnOverUnit(_pUnitHover());
-						else
-							OnOverFriend(_pUnitHover());
-
-						if (m_nPickAction == SHELL_PICK_UNIT_ATTACK) {
-							_shellCursorManager.SetActiveCursor(CShellCursorManager::no_attack, 1);
-						} else if (m_nPickAction == SHELL_PICK_UNIT_BUILD) {
-							_shellCursorManager.SetActiveCursor(unitNeedRepairOrBuild(_pUnitHover()) ? CShellCursorManager::sell : CShellCursorManager::sell_no, 1);
-						}
-					}
-					else //if(GetSelectedUnitsCount())
-					{
-						//чужой
-						OnOverEnemy(_pUnitHover());
-					}
-				}
-			}
-			else
-			{
-				OnMouseIdle();
-				_pUnitHover = 0;
-
-				if (m_nPickAction == SHELL_PICK_UNIT_BUILD) {
-					_shellCursorManager.SetActiveCursor(CShellCursorManager::sell, 1);
-				} else if (m_nPickAction == SHELL_PICK_UNIT_ATTACK)	{
-					terUnitBase* pUnit = GetSelectedUnit();
-					if(pUnit)
-					{
-						if(universe()->select.canSelectionAttackUnit(0))
-							_shellCursorManager.SetActiveCursor(CShellCursorManager::attack, 1);
-						else
-							_shellCursorManager.SetActiveCursor(CShellCursorManager::no_attack, 1);
-					}
-				}
-			}
-		}
-	} else {
-		OnMouseIdle();
-		_pUnitHover = 0;
-	}
 
 	return 0;
 }

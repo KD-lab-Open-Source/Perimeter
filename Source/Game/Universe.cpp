@@ -589,26 +589,34 @@ bool terUniverse::forcedDefeat(int playerID)
 }
 
 //---------------------------------------------------
-void terUniverse::MakeGenericList(const Vect2f& pos, UnitList& unit_list)
+terUnitBase* terUniverse::TraceUnit(const Vect2f& pos, terUnitID* unit_filter)
 {
 	Vect3f v0,v1;
 	terCamera->calcRayIntersection(pos.x, pos.y, v0, v1);
 	Vect3f v01 = v1 - v0;
 
 	float dist, distMin = FLT_INF;
-	terUnitBase* unitMin = 0;
+	terUnitBase* unitMin = nullptr;
 
 	PlayerVect::iterator pi;
 	FOR_EACH(Players, pi){
+        if (unit_filter && (*pi)->playerID() != unit_filter->playerID()) {
+            //Not our player
+            continue;
+        }
 		CUNITS_LOCK(*pi);
 		const UnitList& unit_list=(*pi)->units();
 		UnitList::const_iterator i_unit;
-		FOR_EACH(unit_list, i_unit){
+		FOR_EACH(unit_list, i_unit) {
 			terUnitBase* unit = *i_unit;
+            if (unit_filter && unit->unitID() != unit_filter->unitID()) {
+                //Not our unit
+                continue;
+            }
 			//if(unit->alive() && unit->selectAble() && (unit->collisionGroup() & (COLLISION_GROUP_ENEMY | COLLISION_GROUP_SELECTED)))
 			if(unit->alive() && unit->selectAble() && unit->attr().ID != UNIT_ATTRIBUTE_SQUAD){
 				if(unit->avatar() && unit->avatar()->GetModelPoint()){
-					safe_cast<cObjectNodeRoot*>(unit->avatar()->GetModelPoint())->Update();
+					//safe_cast<cObjectNodeRoot*>(unit->avatar()->GetModelPoint())->Update();
 					if(safe_cast<cObjectNode*>(unit->avatar()->GetModelPoint())->Intersect(v0,v1) &&
 						distMin > (dist = unit->position().distance2(v0))){
 							distMin = dist;
@@ -628,8 +636,7 @@ void terUniverse::MakeGenericList(const Vect2f& pos, UnitList& unit_list)
 		}
 	}
 
-	if(unitMin)
-		unit_list.push_back(unitMin);
+	return unitMin;
 }
 
 //---------------------------------------------------

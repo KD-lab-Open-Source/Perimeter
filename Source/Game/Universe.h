@@ -74,7 +74,7 @@ public:
 	void receiveCommand(const netCommand4G_Region& reg);
 	bool forcedDefeat(int playerID);
 
-	void MakeGenericList(const Vect2f& pos, UnitList& unit_list);
+    terUnitBase* TraceUnit(const Vect2f& pos, terUnitID* unit_filter = nullptr);
 	int SelectUnit(terUnitBase* p);
 	void DeselectAll();
 	int SelectSquad(terUnitBase* p);
