@@ -38,9 +38,7 @@ public:
     }
 
     FORCEINLINE bool operator <(const DisplayMode& v) const {
-        if (y < v.y || x < v.x) return true;
-        if (!fullscreen) return v.fullscreen;
-        return refresh < v.refresh || display < v.display;
+        return std::tie(y, x, fullscreen, refresh, display) < std::tie(v.y, v.x, v.fullscreen, v.refresh, v.display);
     }
     
     FORCEINLINE std::string text() const {
