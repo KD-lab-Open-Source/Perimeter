@@ -286,7 +286,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
     if (fo.ioError()) {
         return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
     } else {
-        scan_resource_paths(REPLAY_PATH);
+        scan_resource_paths(convert_path_content(REPLAY_PATH));
         return SAVE_REPLAY_OK;
     }
 }

@@ -2210,6 +2210,7 @@ void onMMDelSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 int delLoadReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_REPLAY_LIST);
 	std::remove( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
+    scan_resource_paths(convert_path_content(REPLAY_PATH));
 	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 	return 0;
