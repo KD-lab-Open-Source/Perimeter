@@ -39,7 +39,7 @@ HTManager::HTManager(bool ht)
 
 HTManager::~HTManager()
 {
-	tls_is_graph=MT_LOGIC_THREAD|MT_GRAPH_THREAD;
+    MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
 	done();
 	self=NULL;
 	delete lag_stat;
@@ -75,9 +75,9 @@ void HTManager::setUseHT(bool use_ht_)
 
 void HTManager::GameStart(const MissionDescription& mission)
 {
-	tls_is_graph=MT_LOGIC_THREAD|MT_GRAPH_THREAD;
+    MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
 	gameShell->GameStart(mission);
-	tls_is_graph=MT_GRAPH_THREAD;
+    MT_SET_TYPE(MT_GRAPH_THREAD);
 	syncro_timer.skip();
 	syncro_timer.next_frame();
 	time=syncro_timer();
@@ -98,7 +98,7 @@ void HTManager::GameStart(const MissionDescription& mission)
 void HTManager::GameClose()
 {
 	MTG();
-	tls_is_graph=MT_LOGIC_THREAD|MT_GRAPH_THREAD;
+    MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
 	if(use_ht && logic_thread_id!=bad_thread_id)
 	{
 		end_logic=CreateEvent(NULL,FALSE,FALSE,NULL);
@@ -112,7 +112,7 @@ void HTManager::GameClose()
 	}
 
 	gameShell->GameClose();
-	tls_is_graph=MT_GRAPH_THREAD;
+    MT_SET_TYPE(MT_GRAPH_THREAD);
 }
 
 void HTManager::logic_thread()
@@ -127,6 +127,13 @@ void HTManager::logic_thread()
 		syncro_timer.skip();
 		time = syncro_timer();
 	}
+    if (check_command_line("dump_mt_tls")) {
+        debug_dump_mt_tls();
+    }
+    MT_SET_TYPE(MT_LOGIC_THREAD);
+    if (check_command_line("dump_mt_tls")) {
+        debug_dump_mt_tls();
+    }
 
 	while(end_logic==NULL)
 	{
@@ -200,7 +207,7 @@ bool HTManager::Quant()
 			time = syncro_timer();
 		}
 
-		tls_is_graph=MT_LOGIC_THREAD;//Для MTG, MTL ассертов.
+        MT_SET_TYPE(MT_LOGIC_THREAD);//Для MTG, MTL ассертов.
 		syncro_timer.next_frame();
 		while((time < syncro_timer()))
 		{
@@ -220,7 +227,7 @@ bool HTManager::Quant()
 			lag_stat->NextLogicQuant();
 		}
 
-		tls_is_graph=MT_GRAPH_THREAD;
+        MT_SET_TYPE(MT_GRAPH_THREAD);
 
 		//если logic_fps<10, то не пытаться догонять за счёт графики
 		if(time < syncro_timer())

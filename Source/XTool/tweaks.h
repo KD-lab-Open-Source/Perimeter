@@ -24,12 +24,6 @@
 #define SDL_PRINT_ERROR(MSG) fprintf(stderr, "Error at %s - SDL %s\n", MSG, SDL_GetError())
 #define SDL_FATAL_ERROR(MSG) ErrH.Abort("Error at " MSG, XERR_USER, 0, SDL_GetError())
 
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-#define THREAD_LOCAL __declspec( thread )
-#else
-#define THREAD_LOCAL thread_local
-#endif
-
 #ifndef FORCEINLINE
 #ifdef _MSC_VER
     #if _MSC_VER == 1100 //MSVisual C++ 5.0
