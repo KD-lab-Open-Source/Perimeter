@@ -6,6 +6,7 @@ on:
 
 env:
   buildDir: '${{ github.workspace }}/build/'
+  outDir: '${{ github.workspace }}/artifact/'
 
 jobs:
   build:
@@ -13,8 +14,8 @@ jobs:
       matrix:
         build_type: [Debug, Release]
         env: [
-          {bits: 64, arch: amd64},
-          {bits: 32, arch: x86}
+          {bits: 64, arch: amd64, arch_installed: x64},
+          {bits: 32, arch: x86, arch_installed: x86}
         ]
     name: ${{matrix.build_type}} ${{matrix.env.bits}} bits
     runs-on: windows-latest
@@ -42,9 +43,15 @@ jobs:
         run: |
           cd ${{ env.buildDir }}
           nmake
+      - name: Prepare artifact folder
+        run: |
+          mkdir ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/ogg.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbis.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbisfile.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}Source/*.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
       - uses: actions/upload-artifact@v2
         with:
           name: Perimeter MSVC ${{matrix.build_type}} ${{matrix.env.bits}} bits
-          path: |
-            ${{ env.buildDir }}Source/*.dll
-            ${{ env.buildDir }}Source/*.exe
+          path: ${{ env.outDir }}
