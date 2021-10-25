@@ -77,34 +77,19 @@ void setFrm(CComboWindow* combo, int number) {
 					currMission.activePlayerID == currMission.playersData[number].playerID
 				||	(currMission.activePlayerID == currMission.playersData[0].playerID && currMission.playersData[number].realPlayerType == REAL_PLAYER_TYPE_AI)
 			);
-        BELLIGERENT_FACTION faction = getBelligerentFaction(currMission.playersData[number].belligerent);
-		switch (faction) {
-			case EXODUS:
-            default:
-				combo->pos = 0;
-				break;
-			case HARKBACK:
-                if (terGameContentSelect == GAME_CONTENT::PERIMETER_ET) {
-                    combo->pos = 0;
-                    gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
-                } else {
-                    combo->pos = 2;
-                }
-				break;
-			case EMPIRE:
-				combo->pos = 1;
-                break;
-		}
+        if (unavailableContentBelligerent(currMission.playersData[number].belligerent, terGameContentSelect)) {
+            combo->pos = 0;
+            gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
+        } else {
+            combo->pos = getSelectableBelligerentIndex(currMission.playersData[number].belligerent);
+        }
 	} else {
 		combo->Show(false);
 	}
 }
 
-void setupFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-    setupFrameButton(pWnd, code, true, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN);
-}
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	setupFrmButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN);
+    setupFrameButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN, true);
 }
 
 void setSlot(CComboWindow* combo, int number) {

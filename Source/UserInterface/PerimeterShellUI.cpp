@@ -709,9 +709,10 @@ void CComboWindow::draw(int bFocus)
 	terRenderDevice->SetFont(m_hFont);
 	int xx = (m_attr->txt_align == SHELL_ALIGN_CENTER) ? 0.5f*sx : 0;
 	std::string toScr = getValidatedText(Array[pos], sx);
+    int yy = (m_attr->txt_vert_align == SHELL_ALIGN_LEFT) ? static_cast<int>(0.5f*sy - m_hFont->GetHeight()/2) : 0;
 	if (m_hTexture) {
 		terRenderDevice->OutText(
-			x+xx, y+0.5f*sy-m_hFont->GetHeight()/2,
+			x+xx, y+yy,
 			(char*)toScr.c_str(), clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv, fmodf(m_ftime,1000)/1000, pushButtonTextureWeight);
 	} else {
 		OutText( x+xx, y+0.5f*sy-m_hFont->GetHeight()/2, 

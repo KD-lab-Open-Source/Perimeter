@@ -236,7 +236,7 @@ void onMMBattleGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 }
 
 void onMMBattleFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-    setupFrameButton(pWnd, code, false, pWnd->ID - SQSH_MM_BATTLE_PLAYER1_FRM_BTN);
+    setupFrameButton(pWnd, code, pWnd->ID - SQSH_MM_BATTLE_PLAYER1_FRM_BTN, false);
 }
 
 void onMMBattleClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
