@@ -7,3 +7,6 @@
 cmake-build-*
 build
 docker/dockcross-*-perimeter
+logfile.txt
+perimeter.dxvk-cache
+perimeter_crash
