@@ -82,7 +82,7 @@ bool TGA::load(const char *fileName) {
 	width = hdr.width;
 	height = hdr.height;
 
-	unsigned long numBytes = width * height * bpp;
+    size_t numBytes = width * height * bpp;
 
 	pixels = new unsigned char[numBytes];
 	file.read(pixels, numBytes);

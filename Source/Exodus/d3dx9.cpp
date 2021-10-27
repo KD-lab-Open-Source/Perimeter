@@ -143,7 +143,7 @@ const struct pixel_format_desc *get_format_info(D3DFORMAT format)
 }
 
 
-static inline BOOL is_conversion_from_supported(const struct pixel_format_desc *format)
+static inline bool is_conversion_from_supported(const struct pixel_format_desc *format)
 {
     if (format->type == FORMAT_ARGB || format->type == FORMAT_ARGBF16
         || format->type == FORMAT_ARGBF || format->type == FORMAT_DXT)
@@ -151,7 +151,7 @@ static inline BOOL is_conversion_from_supported(const struct pixel_format_desc *
     return !!format->to_rgba;
 }
 
-static inline BOOL is_conversion_to_supported(const struct pixel_format_desc *format)
+static inline bool is_conversion_to_supported(const struct pixel_format_desc *format)
 {
     if (format->type == FORMAT_ARGB || format->type == FORMAT_ARGBF16
         || format->type == FORMAT_ARGBF || format->type == FORMAT_DXT)
@@ -168,16 +168,16 @@ struct argb_conversion_info
 {
     const struct pixel_format_desc *srcformat;
     const struct pixel_format_desc *destformat;
-    DWORD srcshift[4], destshift[4];
-    DWORD srcmask[4], destmask[4];
-    BOOL process_channel[4];
-    DWORD channelmask;
+    uint32_t srcshift[4], destshift[4];
+    uint32_t srcmask[4], destmask[4];
+    bool process_channel[4];
+    uint32_t channelmask;
 };
 
 static void init_argb_conversion_info(const struct pixel_format_desc *srcformat, const struct pixel_format_desc *destformat, struct argb_conversion_info *info)
 {
     UINT i;
-    ZeroMemory(info->process_channel, 4 * sizeof(BOOL));
+    ZeroMemory(info->process_channel, 4 * sizeof(bool));
     info->channelmask = 0;
 
     info->srcformat  =  srcformat;
@@ -562,7 +562,7 @@ void point_filter_argb_pixels(const BYTE *src, UINT src_row_pitch, UINT src_slic
 }
 
 HRESULT lock_surface(IDirect3DSurface9 *surface, const RECT *surface_rect, D3DLOCKED_RECT *lock,
-                     IDirect3DSurface9 **temp_surface, BOOL write)
+                     IDirect3DSurface9 **temp_surface, bool write)
 {
     unsigned int width, height;
     IDirect3DDevice9 *device;
@@ -619,7 +619,7 @@ HRESULT lock_surface(IDirect3DSurface9 *surface, const RECT *surface_rect, D3DLO
 }
 
 HRESULT unlock_surface(IDirect3DSurface9 *surface, const RECT *surface_rect,
-                       IDirect3DSurface9 *temp_surface, BOOL update)
+                       IDirect3DSurface9 *temp_surface, bool update)
 {
     IDirect3DDevice9 *device;
     POINT surface_point;

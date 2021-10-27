@@ -106,7 +106,7 @@ bool TGAHEAD::load2buf(unsigned char* buf)
 	return true;
 }
 
-void TGAHEAD::load2RGBL(int sizeX,int sizeY, unsigned long* RGBLBuf)
+void TGAHEAD::load2RGBL(int sizeX,int sizeY, uint32_t* RGBLBuf)
 {
 	if( (Width!=sizeX) || (Height!=sizeY) ) return;
 	unsigned char *line = new unsigned char[sizeX*3],*p;
@@ -120,7 +120,7 @@ void TGAHEAD::load2RGBL(int sizeX,int sizeY, unsigned long* RGBLBuf)
 		p = line;
 		tgaFile.read(line,vMap.H_SIZE*3);
 		for(i = ibeg; i!=iend; i+=ik){
-			unsigned long c= (*p++&0xFF) <<16;
+            uint32_t c= (*p++&0xFF) <<16;
 			c|= (*p++&0xFF)<<8;
 			c|= (*p++&0xFF);
 			RGBLBuf[j*sizeX+i]=c;

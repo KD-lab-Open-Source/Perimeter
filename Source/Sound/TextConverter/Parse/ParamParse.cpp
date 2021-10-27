@@ -438,8 +438,8 @@ void OneBlock::Read()
 
 			if(!ok)
 			{
-				LPSTR textend=error+sprintf(error,"Неверный тип, правильный тип:");
-				LPSTR begin=textend;
+				char* textend=error+sprintf(error,"Неверный тип, правильный тип:");
+				char* begin=textend;
 
 				for(int i=0;i<parent_type->GetSize();i++)
 				{

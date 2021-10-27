@@ -4,74 +4,74 @@
 
 XBuffer& XBuffer::operator>= (char& var)
 {
-	char* p = buf + offset;
-	var = (char)strtol(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned char& var)
-{
-	char* p = buf + offset;
-	var = (unsigned char)strtoul(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (short& var)
-{
-	char* p = buf + offset;
-	var = (short)strtol(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned short& var)
-{
-	char* p = buf + offset;
-	var = (unsigned short)strtoul(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (int& var)
-{
-	char* p = buf + offset;
-	var = strtol(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned& var)
-{
-	char* p = buf + offset;
-	var = strtoul(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (long& var)
-{
-	char* p = buf + offset;
-	var = strtol(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned long& var)
-{
-	char* p = buf + offset;
-	var = strtoul(p,&p,0);
-	offset += p - (buf + offset);
-	return *this;
-}
-
-XBuffer& XBuffer::operator>= (unsigned long long& var)
-{
     char* p = buf + offset;
-    var = strtoull(p,&p,0);
+    var = (char)strtol(p,&p,0);
     offset += p - (buf + offset);
     return *this;
+}
+
+XBuffer& XBuffer::operator>= (int8_t& var)
+{
+    char* p = buf + offset;
+    var = (int8_t)strtol(p,&p,0);
+    offset += p - (buf + offset);
+    return *this;
+}
+
+XBuffer& XBuffer::operator>= (uint8_t& var)
+{
+	char* p = buf + offset;
+	var = (uint8_t)strtoul(p,&p,0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (int16_t& var)
+{
+	char* p = buf + offset;
+	var = (int16_t)strtol(p,&p,0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (uint16_t& var)
+{
+	char* p = buf + offset;
+	var = (uint16_t)strtoul(p,&p,0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (int32_t& var)
+{
+	char* p = buf + offset;
+	var = strtol(p,&p,0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (uint32_t& var)
+{
+	char* p = buf + offset;
+	var = strtoul(p,&p,0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (int64_t& var)
+{
+	char* p = buf + offset;
+	var = strtol(p,&p,0);
+	offset += p - (buf + offset);
+	return *this;
+}
+
+XBuffer& XBuffer::operator>= (uint64_t& var)
+{
+	char* p = buf + offset;
+	var = strtoul(p,&p,0);
+	offset += p - (buf + offset);
+	return *this;
 }
 
 XBuffer& XBuffer::operator>= (double& var)

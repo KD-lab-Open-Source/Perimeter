@@ -127,7 +127,7 @@ public:
 	cTexture* GetLightMap();
 
 #ifdef PERIMETER_D3D9
-	LPDIRECT3DSURFACE9 GetZBuffer();
+    IDirect3DSurface9* GetZBuffer();
 #endif
 	void FixShadowMapCamera(cCamera *DrawNode);
 

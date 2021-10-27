@@ -4,6 +4,13 @@
 #include "GameContent.h"
 #include "files/files.h"
 
+#ifdef _WIN32
+//For RegOpenKeyEx
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#include <winreg.h>
+#endif
+
 //#include <crtdbg.h>
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +225,6 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     }
     
     // Same as normal sKey constructor
-
     if(set_by_async_funcs){
         ctrl = isControlPressed();
         shift = isShiftPressed();
@@ -395,9 +401,7 @@ std::string getStringSettings(const std::string& keyName, const std::string& def
         HKEY hKey;
         char name[PERIMETER_CONTROL_NAME_SIZE];
         DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
-        LONG lRet;
-    
-        lRet = RegOpenKeyEx( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
+        int32_t lRet = RegOpenKeyEx( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
     
         if ( lRet == ERROR_SUCCESS ) {
             lRet = RegQueryValueEx( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );

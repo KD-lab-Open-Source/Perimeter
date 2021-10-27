@@ -34,7 +34,7 @@ public:
 };
 class cAviScaleFileImage : public cFileImage
 {
-	UINT* dat;
+	uint32_t* dat;
 	int dx;
 	int dy;
 	int n_count;

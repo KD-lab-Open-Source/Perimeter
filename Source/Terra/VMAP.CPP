@@ -204,7 +204,7 @@ void vrtMap::allocMem4Buf(void)
 	SurBuf = new unsigned char [YS_Buf*XS_Buf];
 	AtrBuf = new unsigned char [YS_Buf*XS_Buf];
 	RnrBuf = new unsigned char [YS_Buf*XS_Buf];
-	SupBuf = new unsigned long [YS_Buf*XS_Buf];
+	SupBuf = new uint32_t[YS_Buf*XS_Buf];
 
 #ifdef _SURMAP_
 	SpecSurBuf = new unsigned char [YS_Buf*XS_Buf];
@@ -3227,6 +3227,7 @@ void vrtMap::scalingHeighMap(int percent)
 
 #endif
 
+/*
 int counterDrawTile=0;
 double timeDrawTile=0;
 double minTimeDrawTile=10000;
@@ -3254,7 +3255,6 @@ void vrtMap::drawTile(char* Texture,unsigned long pitch,int xstart,int ystart,in
 	if(t<minTimeDrawTile) minTimeDrawTile=t;
 	if(t>maxTimeDrawTile) maxTimeDrawTile=t;
 }
-/*
 struct statistic{
 	~statistic(){
 		XStream fout("!stat.txt",XS_OUT);

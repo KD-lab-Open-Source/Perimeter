@@ -88,7 +88,7 @@ void cChaos::RenderAllTexture()
 	{
 		cD3DRender* rd=gb_RenderDevice3D;
 
-		BOOL fog=rd->GetRenderState(D3DRS_FOGENABLE);
+		bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 		rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 		DWORD zenable=rd->GetRenderState(D3DRS_ZENABLE);
 		DWORD zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE); 
@@ -108,7 +108,7 @@ void cChaos::PreDraw(cCamera *DrawNode)
 void cChaos::Draw(cCamera *DrawNode)
 {
 	cD3DRender* rd=DrawNode->GetRenderDevice3D();
-	BOOL fog=rd->GetRenderState(D3DRS_FOGENABLE);
+	bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 //	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 /*
 		rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
@@ -806,7 +806,7 @@ void CSkySpere::Draw(cCamera *DrawNode)
 	cD3DRender* rd=DrawNode->GetRenderDevice3D();
 	DWORD zfunc=rd->GetRenderState(D3DRS_ZFUNC);
 	DWORD zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE);
-	BOOL fog=rd->GetRenderState(D3DRS_FOGENABLE);
+    bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 	rd->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 	rd->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);

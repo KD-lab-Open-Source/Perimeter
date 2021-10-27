@@ -21,32 +21,32 @@ public:
 
 // Attributes
 public:
-    BOOL IsHorz() const;
+    bool IsHorz() const;
 
 // Operations
 public:
 
 // Overridables
-    virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler);
+    virtual void OnUpdateCmdUI(CFrameWnd* pTarget, bool bDisableIfNoHndler);
 
 // Overrides
 public:
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CCoolDialogBar)
 	public:
-    virtual BOOL Create(CWnd* pParentWnd, CDialog *pDialog, 
+    virtual bool Create(CWnd* pParentWnd, CDialog *pDialog, 
 		 DWORD dwStyle/* = WS_CHILD | WS_VISIBLE | CBRS_LEFT*/, UINT nID);
-    virtual CSize CalcFixedLayout( BOOL bStretch, BOOL bHorz );
+    virtual CSize CalcFixedLayout( bool bStretch, bool bHorz );
     virtual CSize CalcDynamicLayout( int nLength, DWORD dwMode );
-	virtual BOOL DestroyWindow();
-	BOOL OnEraseBkgnd(CDC* pDC);
+	virtual bool DestroyWindow();
+    bool OnEraseBkgnd(CDC* pDC);
 	//}}AFX_VIRTUAL
 
 // Implementation
 public:
     virtual ~CCoolDialogBar();
     void StartTracking();
-    void StopTracking(BOOL bAccept);
+    void StopTracking(bool bAccept);
     void OnInvertTracker(const CRect& rect);
     
     // implementation helpers
@@ -63,8 +63,8 @@ protected:
     CRect       m_rectTracker;
     UINT        m_nDockBarID;
     CPoint      m_ptOld;
-    BOOL        m_bTracking;
-    BOOL        m_bInRecalcNC;
+    bool        m_bTracking;
+    bool        m_bInRecalcNC;
     int         m_cxEdge;
 	CRect		m_rectUndock;
 	CRect		m_rectClose;

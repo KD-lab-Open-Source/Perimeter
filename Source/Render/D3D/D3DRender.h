@@ -12,8 +12,8 @@ enum
 	SAMPLERSTATE_MAX=14,
 };
 
-inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
-inline FLOAT DW2F( DWORD f ) { return *((FLOAT*)&f); }
+inline uint32_t F2DW( float f ) { return *((uint32_t*)&f); }
+inline float DW2F( uint32_t f ) { return *((float*)&f); }
 
 struct sSlotVB
 {

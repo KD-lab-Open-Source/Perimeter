@@ -31,6 +31,8 @@
 
 #include <SDL.h>
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 #define execv _execv
 //Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
 #include <SDL_syswm.h>
@@ -456,7 +458,7 @@ void PerimeterSetupDisplayMode() {
     SDL_GetWindowSize(sdlWindow, &terScreenSizeX, &terScreenSizeY);
 }
 
-HWND PerimeterCreateWindow() {
+void PerimeterCreateWindow() {
     Uint32 window_flags = SDL_WINDOW_HIDDEN;
 #ifndef _WIN32
     //On non Windows we use dxvk-native which uses Vulkan
@@ -512,10 +514,10 @@ HWND PerimeterCreateWindow() {
 	SDL_VERSION(&wm_info.version);
 	SDL_GetWindowWMInfo(sdlWindow, &wm_info);
 	
-    return wm_info.info.win.window;
+    hWndVisGeneric = wm_info.info.win.window;
 #else
     //dxvk-native uses HWND as SDL2 window handle, so this is allowed
-    return reinterpret_cast<HWND>(sdlWindow);
+    hWndVisGeneric = static_cast<HWND>(sdlWindow);
 #endif
 }
 
@@ -536,7 +538,7 @@ cInterfaceRenderDevice* SetGraph()
 //	if(HTManager::instance()->IsUseHT())
 		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
 
-    hWndVisGeneric = PerimeterCreateWindow();
+    PerimeterCreateWindow();
 
     int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,hWndVisGeneric,terScreenRefresh);
 	if(error)
@@ -1181,11 +1183,11 @@ const char* editText(const char* defaultValue)
 	return editTextString.c_str();
 }
 
-const char* editTextMultiLine(const char* defaultValue, HWND hwnd)
+const char* editTextMultiLine(const char* defaultValue, void* hwnd)
 {
 	editTextString = defaultValue;
 #ifndef PERIMETER_EXODUS
-	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE),hwnd,DialogProc);
+	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE), static_cast<HWND>(hwnd), DialogProc);
 #endif
 	return editTextString.c_str();
 }

@@ -320,7 +320,7 @@ public:
 	unsigned char m_amountPlayerInDP;  //info only
 
 	//int m_quantPeriod;
-	unsigned long m_nextQuantTime;
+	size_t m_nextQuantTime;
 
     //Use server listing to get servers or broadcast server to listing
     bool publicServerHost;
@@ -500,7 +500,7 @@ public:
     NetAddress hostConnection;
 
 	//Host Date
-	unsigned long hostGeneralCommandCounter;
+	size_t hostGeneralCommandCounter;
 	unsigned int quantConfirmation;
 
 	NETID netidClientWhichWeWait; //netid игрока которому хост при миграции посылает команду прислать игровые комманды; нужен чтобы в случае выхода переслать комманду другому

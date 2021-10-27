@@ -1,19 +1,12 @@
 #include "StdAfxRD.h"
 #include "Font.h"
 #include "FileImage.h"
-#include "../../PluginMAX/Src/StreamBuffer.h"
-
-#ifdef _WIN32
-//TODO is this still neccesary?
-#include <direct.h>
-#endif
 
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include "SystemUtil.h"
-#include "FileImage.h"
 
 #ifndef ASSERT
 #define ASSERT(x) VISASSERT(x)

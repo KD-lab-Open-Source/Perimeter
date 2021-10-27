@@ -1,20 +1,23 @@
 #include <list>
-#include <cfloat>
 #include <iostream>
-#include <sstream>
 #include <filesystem>
 #include <csignal>
+#include <sstream>
 #include <SDL.h>
+
 #ifdef _WIN32 //For Windows specific exHandler code
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #include <process.h>
 #include <crtdbg.h>
+#include <cfloat>
+#include <sstream>
 #endif
 #include "tweaks.h"
 #include "xstream.h"
 #include "xerrhand.h"
 
-static void (*assert_restore_graphics_function)() = 0;
+static void (*assert_restore_graphics_function)() = nullptr;
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG_ASSERT)) && !defined(NASSERT)
 void SetAssertRestoreGraphicsFunction(void(*func)())

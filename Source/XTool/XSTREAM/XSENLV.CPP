@@ -94,7 +94,7 @@ int XStream::open(const std::string& name, unsigned f)
     return 1;
 }
 
-int XStream::open(XStream* owner,long s,long ext_sz)
+int XStream::open(XStream* owner,size_t s,size_t ext_sz)
 {
 	fname = owner -> fname;
 	handler = owner -> handler;

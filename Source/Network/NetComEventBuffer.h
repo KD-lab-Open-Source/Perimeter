@@ -3,29 +3,31 @@
 
 #include "CommonEvents.h"
 
+typedef uint32_t event_size_t;
+
 class PNetCenter;
 class InOutNetComBuffer : public XBuffer 
 {
-	unsigned long byte_receive;//in
-	unsigned long byte_sending;//out
+	size_t byte_receive;//in
+	size_t byte_sending;//out
 public:
 	terEventID event_ID;//in
 
-	unsigned long size_of_event;//in
-	unsigned int next_event_pointer;//in
+	event_size_t size_of_event;//in
+	size_t next_event_pointer;//in
 public:
-	unsigned int filled_size;//in
+	size_t filled_size;//in
 	InOutNetComBuffer(unsigned int size, bool autoRealloc);
 
 	void clearBufferOfTheProcessedCommands(void);//out
 	int send(PNetCenter& conn, NETID netid);//out
-	unsigned long getByteSending(){//out
-		unsigned long result=byte_sending;
+	size_t getByteSending(){//out
+        size_t result=byte_sending;
 		byte_sending=0;
 		return result;
 	}
-	unsigned long getByteReceive(){
-		unsigned long result=byte_receive;
+	size_t getByteReceive(){
+		size_t result=byte_receive;
 		byte_receive=0;
 		return result;
 	}
@@ -37,7 +39,7 @@ public:
 	terEventID nextNetCommand();//in
 	void ignoreNetCommand();//in
 	void backNetCommand();//in
-	unsigned long getQuantAmount();//in
+    size_t getQuantAmount();//in
 	bool isEmpty(void){
 		return filled_size <= 0; // подразумевается ==
 	}

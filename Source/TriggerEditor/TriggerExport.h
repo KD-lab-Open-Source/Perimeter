@@ -76,8 +76,8 @@ public:
     virtual const char* actionName(const Action& action) = 0;
     virtual const char* conditionName(const Condition& condition) = 0;
 
-    virtual bool editCondition(Trigger& trigger, HWND hwnd) = 0;
-    virtual bool editTrigger(Trigger& trigger, HWND hwnd) = 0;
+    virtual bool editCondition(Trigger& trigger, void* hwnd) = 0;
+    virtual bool editTrigger(Trigger& trigger, void* hwnd) = 0;
 
     virtual void* malloc(size_t n) = 0;
     virtual void free(void* p) = 0;

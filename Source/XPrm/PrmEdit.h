@@ -46,7 +46,7 @@ class ParameterSection
 protected:
 
 	const char* name;
-	unsigned long description;
+	uint32_t description;
 
 	ParameterSection(const char* name_);
 	~ParameterSection();

@@ -1,17 +1,20 @@
 #include "tweaks.h"
-#include <windows.h>
 #include <stdio.h>
 #include <cstdint>
-#include <assert.h>
+#include <memory>
 
 #ifdef PERIMETER_FFMPEG
 #include "AVWrapper.h"
-#else
+#else // PERIMETER_FFMPEG
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 #include <vfw.h>		// AVI include
+#endif //_WIN32
 #include <math.h>
 #include <sys/types.h>
 #include "xutil.h"
-#endif
+#endif //PERIMETER_FFMPEG
 
 #include "xutil.h"
 #include "FileImage.h"
@@ -235,7 +238,7 @@ bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int by
 	Hdr.bitsPerPixel=(unsigned char)(byte_per_pixel*8);
 	Hdr.flags=(bHasAlpha?8:0)|0x20;
 
-	unsigned long Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
+	uint32_t Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
 
 	_write(file,&Hdr,18);
 	_write(file,buf,Numbytes);
@@ -264,7 +267,7 @@ bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 	dx=Hdr.width;
 	dy=Hdr.height;
 
-	unsigned long Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
+    uint32_t Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
 
 	buf=new unsigned char[Hdr.width*Hdr.height*byte_per_pixel];
 	_read(file,buf,Numbytes);
@@ -367,17 +370,17 @@ public:
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
 								ImageData,1,GetX()  ,8,0,8,0,8,0,GetX(),dy);
 /*		{
-//			SaveTga("save.tga",GetX(),GetY(),(BYTE*)ImageData,1);
+//			SaveTga("save.tga",GetX(),GetY(),(uint8_t*)ImageData,1);
 
 			for(int y=0;y<GetY();y++)
 			{
-				DWORD* out=(DWORD*)(bplDst*y+(BYTE*)pointer);
-				BYTE* in;
+				uint32_t* out=(uint32_t*)(bplDst*y+(uint8_t*)pointer);
+				uint8_t* in;
 
 				if(tga->flags&0x20)
-					in=y*GetX()+(BYTE*)ImageData;
+					in=y*GetX()+(uint8_t*)ImageData;
 				else
-					in=(GetY()-1-y)*GetX()+(BYTE*)ImageData;
+					in=(GetY()-1-y)*GetX()+(uint8_t*)ImageData;
 
 				for(int x=0;x<GetX();x++,out++,in++)
 				{
@@ -662,12 +665,12 @@ class cAVIXImage : public cFileImage
 {
 	struct AVIX
 	{
-		DWORD avix;
-		DWORD X;
-		DWORD Y;
-		DWORD bpp;
-		DWORD numframe;
-		DWORD time;
+		uint32_t avix;
+		uint32_t X;
+		uint32_t Y;
+		uint32_t bpp;
+		uint32_t numframe;
+		uint32_t time;
 		char p[1];
 	}* data;
 public:

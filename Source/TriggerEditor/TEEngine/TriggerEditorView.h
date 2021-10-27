@@ -67,7 +67,7 @@ public:
 	TEGrid const& getGrid() const;
 	TEGrid& getGrid();
 
-	HDC getDC() const;
+    void* getDC() const;
 
 	//! определяем находится ли точка у краев окна
 	DWORD pointInScrollArea(CPoint const& p);

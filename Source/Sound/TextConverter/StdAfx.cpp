@@ -25,17 +25,3 @@ int __cdecl AssertFail(char szErr[], char szFileName[], int nLine, char szMessag
 	return 0;
 } // AssertFail
 
-void ERRORM(BOOL b,char *format, ...)
-{
-	if(b)return;
-
-	va_list args;
-	char    buffer[512];
-	va_start(args,format);
-	strcpy(buffer + vsprintf(buffer,format,args), "\r\n");
-	OutputDebugString(buffer);
-
-	printf(buffer);
-//	MessageBox(DX::g_hWnd, buffer, "Game", MB_OK|MB_ICONSTOP|MB_APPLMODAL);
-	exit(1);
-}

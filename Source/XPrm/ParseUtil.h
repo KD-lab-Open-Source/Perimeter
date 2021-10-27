@@ -35,17 +35,6 @@ public:
 //////////////////////////////////////////////////////////////////////////////////
 //		File Util
 //////////////////////////////////////////////////////////////////////////////////
-inline void getFileTime(const char* fname, FILETIME* last_write)
-{
-    auto ftime = std::filesystem::last_write_time(fname);
-    auto duration = ftime.time_since_epoch();
-    int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
-    EpochToFileTime(nanos, last_write);
-}
-inline bool operator < (const FILETIME& t1, const FILETIME& t2) { return t1.dwHighDateTime != t2.dwHighDateTime ? t1.dwHighDateTime < t2.dwHighDateTime : t1.dwLowDateTime < t2.dwLowDateTime; } 
-inline bool operator <= (const FILETIME& t1, const FILETIME& t2) { return t1.dwHighDateTime != t2.dwHighDateTime ? t1.dwHighDateTime <= t2.dwHighDateTime : t1.dwLowDateTime <= t2.dwLowDateTime; } 
-inline bool operator == (const FILETIME& t1, const FILETIME& t2) { return t1.dwHighDateTime == t2.dwHighDateTime && t1.dwLowDateTime == t2.dwLowDateTime; } 
-
 inline void replace(std::string& s, const char* src, const char* dest)
 {
     size_t pos = 0;

@@ -136,22 +136,22 @@ bool Trigger::active() const { return true; }
 void SavePrm::initialize() {}
 
 
-char const * editTextMultiLine(HWND hwnd, const TreeNode* treeNode){
+char const * editTextMultiLine(void* hwnd, const TreeNode* treeNode){
 	return customFunctions.editTextMultiLine(hwnd, treeNode);
 }
-char const* editMessageID(HWND hwnd, const TreeNode* treeNode){
+char const* editMessageID(void* hwnd, const TreeNode* treeNode){
 	return customFunctions.editMessageID(hwnd, treeNode);
 }
 
-char const* editTaskID(HWND hwnd, const TreeNode* treeNode){
+char const* editTaskID(void* hwnd, const TreeNode* treeNode){
 	return customFunctions.editTaskID(hwnd, treeNode);
 }
 
-char const* editLabelDialog(HWND hwnd, const TreeNode* treeNode){
+char const* editLabelDialog(void* hwnd, const TreeNode* treeNode){
 	return customFunctions.editLabelDialog(hwnd, treeNode);
 }
 
-char const* editCameraSplineName(HWND hwnd, const TreeNode* treeNode){
+char const* editCameraSplineName(void* hwnd, const TreeNode* treeNode){
 	return customFunctions.editCameraSplineName(hwnd, treeNode);
 }
 

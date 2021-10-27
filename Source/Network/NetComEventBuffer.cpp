@@ -46,7 +46,7 @@ int InOutNetComBuffer::send(PNetCenter& conn, NETID destination)
 ///	unsigned int size=filled_size;
 ///	unsigned int msize=size;
 ///	while(msize>0){
-///		int sizeEvent=*((unsigned long*)(&buf[size-msize])) + sizeof(size_of_event);
+///		int sizeEvent=*((event_size_t*)(&buf[size-msize])) + sizeof(size_of_event);
 ///		xassert(sizeEvent<=msize);
 ///		msize-=sizeEvent;
 ///	}
@@ -116,7 +116,7 @@ bool InOutNetComBuffer::putBufferPacket(char* buf, unsigned int size)
 ///	unsigned int msize=size;
 ///	unsigned char* mbuf=buf;
 ///	while(msize>0){
-///		int sizeEvent=*((unsigned long*)(&buf[size-msize])) + sizeof(size_of_event);
+///		int sizeEvent=*((event_size_t*)(&buf[size-msize])) + sizeof(size_of_event);
 ///		xassert(sizeEvent<=msize);
 ///		msize-=sizeEvent;
 ///	}
@@ -202,19 +202,19 @@ void InOutNetComBuffer::backNetCommand()
 	}
 }
 
-unsigned long InOutNetComBuffer::getQuantAmount()
+size_t InOutNetComBuffer::getQuantAmount()
 {
-	unsigned long cntQuant=0;
-	unsigned long i=offset;
-	unsigned long sizeCurEvent;
+	size_t cntQuant=0;
+	event_size_t i=offset;
+	event_size_t sizeCurEvent;
 	terEventID curID;
 	if(event_ID != NETCOM_ID_NONE){
 		if(event_ID==NETCOM_ID_NEXT_QUANT) cntQuant++;
 		i=next_event_pointer;
 	}
 	while(i<filled_size){
-		sizeCurEvent=*(unsigned long*)(&buf[i]);
-		i+=sizeof(unsigned long);
+		sizeCurEvent=*(event_size_t*)(&buf[i]);
+		i+=sizeof(event_size_t);
 		curID=*(terEventID*)(&buf[i]);
 		if(curID==NETCOM_ID_NEXT_QUANT) cntQuant++;
 		i+=sizeCurEvent;

@@ -181,7 +181,7 @@ void XZIP_Resource::SaveIndex(void)
 {
 	XStream fh(idxName.c_str(),XS_OUT);
 	//TODO not sure if we should use 64 bits here
-	fh < (unsigned long) fileList.size();
+	fh < (uint32_t) fileList.size();
 
 	FileList::iterator fi;
 	FOR_EACH(fileList, fi)

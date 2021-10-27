@@ -72,8 +72,8 @@ public:
 	bool OnStart();
 	bool OnEnd();
 
-	BOOL OnDropData(TriggerEditorView* source, VOID* pData, const CPoint& point);
-	bool CanDrop(TriggerEditorView* source, VOID* pData, const CPoint& point);
+	BOOL OnDropData(TriggerEditorView* source, void* pData, const CPoint& point);
+	bool CanDrop(TriggerEditorView* source, void* pData, const CPoint& point);
 
 	virtual bool OnCommandUpdateUI(TriggerEditorView *source, CCmdUI* pCmdUI);
 

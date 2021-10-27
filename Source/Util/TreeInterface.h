@@ -37,7 +37,7 @@ public:
 	};
 
 	typedef const TreeNode* (*TreeNodeFunc)(int typeIndex);
-	typedef const char* (*CustomValueFunc)(HWND hWndParent, const char* initialString);
+	typedef const char* (*CustomValueFunc)(void* hWndParent, const char* initialString);
 
 	typedef std::list<TreeNodePtr> List;
 	typedef List::iterator iterator;
@@ -181,7 +181,7 @@ public:
 		return defaultTreeNodeFunc_(typeIndex); 
 	}
     
-	const char* customValue(HWND hWndParent) const { 
+	const char* customValue(void* hWndParent) const { 
 		return customValueFunc_ ? customValueFunc_(hWndParent, value().c_str()) : 0; 
 	}
 
@@ -249,15 +249,19 @@ private:
 
 struct TreeControlSetup
 {
+#ifdef _WIN32
 	RECT window;
+#endif
 	bool expandAllNodes_;
 
 	TreeControlSetup(int left, int top, int right, int bottom, const char* configName, bool expandAllNodes = false) {
-		expandAllNodes_ = expandAllNodes;
+#ifdef _WIN32
 		window.left = left; 
 		window.top = top; 
 		window.right = right; 
-		window.bottom = bottom; 
+		window.bottom = bottom;
+#endif
+        expandAllNodes_ = expandAllNodes;
 		configName_ = configName;
 		assert(configName_);
 	}
@@ -274,7 +278,7 @@ private:
 };
 
 
-#ifndef _FINAL_VERSION_
+#if !defined(_FINAL_VERSION_) && defined(_WIN32)
 
 // Копирует дерево, возвращает указатель на статические данные, либо 0.
 extern "C" DLL_API TreeNode const* treeControlEdit(const TreeNode* treeNode, 

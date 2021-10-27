@@ -1096,7 +1096,7 @@ public:
 	virtual int  EffectSupported(){
 		return effectButtonsFadeIn|effectButtonsFadeOut;
 	}
-	void SetText(LPCTSTR lpszText){
+	void SetText(const char* lpszText){
 		m_data = lpszText;
 	}
 	const char* GetText(){

@@ -395,7 +395,7 @@ private:
 //////////////////////////////////////////////////////////////
 //	Строка с вызовом пользовательской функции редактирования
 //////////////////////////////////////////////////////////////
-typedef const char* (*CustomValueFunc)(HWND hWndParent, const char* initialString);
+typedef const char* (*CustomValueFunc)(void* hWndParent, const char* initialString);
 
 class CustomString
 {

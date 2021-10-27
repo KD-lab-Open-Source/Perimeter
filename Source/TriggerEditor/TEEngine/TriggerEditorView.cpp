@@ -78,7 +78,7 @@ TEGrid const& TriggerEditorView::getGrid() const{
 	return getTriggerEditorLogic()->getGrid();
 }
 
-HDC TriggerEditorView::getDC() const{
+void* TriggerEditorView::getDC() const{
 	return deviceContext_;
 }
 

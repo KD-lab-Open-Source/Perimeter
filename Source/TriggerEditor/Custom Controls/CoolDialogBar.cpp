@@ -174,10 +174,10 @@ CSize CCoolDialogBar::CalcDynamicLayout(int nLength, DWORD dwMode)
 			m_sizeFloat.cy = (std::max)(static_cast<int>(window_rect.bottom - m_cCaptionSize - 
 				cursor_pt.y),m_cMinHeight) - 1;
 			m_pDockContext->m_rectFrameDragHorz.top = (std::min)(cursor_pt.y,
-				static_cast<LONG>(window_rect.bottom - m_cCaptionSize - m_cMinHeight)) - 
+				static_cast<int32_t>(window_rect.bottom - m_cCaptionSize - m_cMinHeight)) - 
 				m_cyBorder;
 			m_pDockContext->m_rectFrameDragHorz.left = (std::min)(cursor_pt.x,
-				static_cast<LONG>(window_rect.right - m_cMinWidth)) - 1;
+				static_cast<int32_t>(window_rect.right - m_cMinWidth)) - 1;
 			return m_sizeFloat;
 			
 		case HTTOPRIGHT:
@@ -186,7 +186,7 @@ CSize CCoolDialogBar::CalcDynamicLayout(int nLength, DWORD dwMode)
 			m_sizeFloat.cy = (std::max)(static_cast<int>(window_rect.bottom - m_cCaptionSize - 
 				cursor_pt.y),m_cMinHeight) - 1;
 			m_pDockContext->m_rectFrameDragHorz.top = (std::min)(cursor_pt.y,
-				static_cast<LONG>(window_rect.bottom - m_cCaptionSize - m_cMinHeight)) - 
+				static_cast<int32_t>(window_rect.bottom - m_cCaptionSize - m_cMinHeight)) - 
 				m_cyBorder;
 			return m_sizeFloat;
 			
@@ -196,7 +196,7 @@ CSize CCoolDialogBar::CalcDynamicLayout(int nLength, DWORD dwMode)
 			m_sizeFloat.cy = (std::max)(static_cast<int>(cursor_pt.y - window_rect.top - 
 				m_cCaptionSize),m_cMinHeight);
 			m_pDockContext->m_rectFrameDragHorz.left = (std::min)(cursor_pt.x,
-				static_cast<LONG>(window_rect.right - m_cMinWidth)) - 1;
+				static_cast<int32_t>(window_rect.right - m_cMinWidth)) - 1;
 			return m_sizeFloat;
 			
 		case HTBOTTOMRIGHT:

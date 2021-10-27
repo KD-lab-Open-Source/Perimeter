@@ -6482,8 +6482,8 @@ const short SGEOWAVE_LONG_WAVE=18;
 const float	SGEOWAVE_SPEED_WAVE=2.;
 const float	SGEOWAVE_MAX_WAVE_AMPLITUDE=6<<VX_FRACTION;
 
-const long SGEOWAVE_MAX_TOTAL_RADIUS=100;
-const long SGEOWAVE_MAX_RADIUS=SGEOWAVE_MAX_TOTAL_RADIUS-SGEOWAVE_LONG_WAVE;
+const int32_t SGEOWAVE_MAX_TOTAL_RADIUS=100;
+const int32_t SGEOWAVE_MAX_RADIUS=SGEOWAVE_MAX_TOTAL_RADIUS-SGEOWAVE_LONG_WAVE;
 
 sGeoWave::sGeoWave(short _x, short _y, short _maxRadius)
 {
@@ -6517,14 +6517,14 @@ bool sGeoWave::quant(void)
 		short curBegRadWave=1 + round(SGEOWAVE_SPEED_WAVE*(float)(step-1));
 		float curMaxAmpWave=calcMaxAmpWave(curBegRadWave);
 		for(i = 0; i < SGEOWAVE_LONG_WAVE; i++){
-			long curAmp=round(curMaxAmpWave * sin( (float)i*((2*M_PI)/SGEOWAVE_LONG_WAVE) ) );
+            int32_t curAmp=round(curMaxAmpWave * sin( (float)i*((2*M_PI)/SGEOWAVE_LONG_WAVE) ) );
 			int curRad=curBegRadWave+i;
 			int max = maxRad[curRad];
 			int* xx = xRad[curRad];
 			int* yy = yRad[curRad];
 			for(j = 0;j < max;j++) {
 				int offB=vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j]));
-				long V=vMap.SGetAlt(offB);
+                int32_t V=vMap.SGetAlt(offB);
 				V-=curAmp;
 				if(V<0)V=0;
 				vMap.SPutAlt(offB, V);
@@ -6543,14 +6543,14 @@ bool sGeoWave::quant(void)
 
 	float curMaxAmpWave=calcMaxAmpWave(curBegRadWave);
 	for(i = 0; i < SGEOWAVE_LONG_WAVE; i++){
-		long curAmp=round(curMaxAmpWave * sin( (float)i*((2*M_PI)/SGEOWAVE_LONG_WAVE) ) );
+        int32_t curAmp=round(curMaxAmpWave * sin( (float)i*((2*M_PI)/SGEOWAVE_LONG_WAVE) ) );
 		int curRad=curBegRadWave+i;
 		int max = maxRad[curRad];
 		int* xx = xRad[curRad];
 		int* yy = yRad[curRad];
 		for(j = 0;j < max;j++) {
 			int offB=vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j]));
-			long V=vMap.SGetAlt(offB);
+            int32_t V=vMap.SGetAlt(offB);
 			V+=curAmp+XRnd(1<<4);
 			//vMap.SPutAlt(offB, V);
 			if(V<0)V=0;

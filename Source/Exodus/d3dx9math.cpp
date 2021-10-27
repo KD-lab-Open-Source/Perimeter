@@ -1,13 +1,14 @@
-#include <cstdio>
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
-#include <d3d9.h>
+#include "tweaks.h"
 #include "d3dx9math.h"
+
 
 //This file contains parts of WINE project source code for d3dx9math licensed under GPLv2
 
 //Implementation copied from WINE project d3dx9_36/math.c
 D3DXVECTOR3* D3DXVec3Normalize(D3DXVECTOR3* out, const D3DXVECTOR3* pv) {
-    FLOAT norm = pv->norm();
+    float norm = pv->norm();
     if (!norm) {
         out->x = 0.0f;
         out->y = 0.0f;
@@ -69,7 +70,7 @@ void D3DXMatrixIdentity(D3DXMATRIX* mat) {
 
 //Implementation copied from WINE project d3dx9_36/math.c
 float D3DXMatrixDeterminant(const D3DXMATRIX *pm) {
-    FLOAT t[3], v[4];
+    float t[3], v[4];
 
     t[0] = pm->m[2][2] * pm->m[3][3] - pm->m[2][3] * pm->m[3][2];
     t[1] = pm->m[1][2] * pm->m[3][3] - pm->m[1][3] * pm->m[3][2];
@@ -93,9 +94,9 @@ D3DXMATRIX* D3DXMatrixMultiply(D3DXMATRIX *out, const D3DXMATRIX *m1, const D3DX
 }
 
 //Implementation copied from WINE project d3dx9_36/math.c
-D3DXMATRIX* D3DXMatrixInverse(D3DXMATRIX *out, FLOAT *pdeterminant, const D3DXMATRIX *pm) {
-    FLOAT det, t[3], v[16];
-    UINT i, j;
+D3DXMATRIX* D3DXMatrixInverse(D3DXMATRIX *out, float *pdeterminant, const D3DXMATRIX *pm) {
+    float det, t[3], v[16];
+    uint32_t i, j;
 
     t[0] = pm->m[2][2] * pm->m[3][3] - pm->m[2][3] * pm->m[3][2];
     t[1] = pm->m[1][2] * pm->m[3][3] - pm->m[1][3] * pm->m[3][2];

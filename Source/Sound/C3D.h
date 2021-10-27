@@ -107,7 +107,7 @@ public:
 
 	struct OneScript
 	{
-		LPSTR name;
+        char* name;
 		//Один раз инициализировали, много раз использовали
 		//не добавлять и не удалять а процессе работы
 		std::vector<ScriptParam> sounds;

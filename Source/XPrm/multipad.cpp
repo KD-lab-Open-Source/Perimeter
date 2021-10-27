@@ -23,7 +23,7 @@ BEGIN_MESSAGE_MAP(CMultiPadApp, CWinApp)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BOOL CMultiPadApp::InitInstance()
+bool CMultiPadApp::InitInstance()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
@@ -131,7 +131,7 @@ void CPadDoc::Serialize(CArchive& ar)
 	((CEditView*)m_viewList.GetHead())->SerializeRaw(ar);
 }
 
-void CPadDoc::SetModifiedFlag(BOOL bModified)
+void CPadDoc::SetModifiedFlag(bool bModified)
 {
 	string title = GetTitle();
 	if(title[title.size() - 1] == '*')
@@ -162,7 +162,7 @@ BEGIN_MESSAGE_MAP(ShowProfileDialog, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BOOL ShowProfileDialog::OnInitDialog()
+bool ShowProfileDialog::OnInitDialog()
 {
 	ShowWindow(SW_MAXIMIZE);
 	SetDlgItemText(IDC_SHOW_PROFILE_EDIT, text_buffer);

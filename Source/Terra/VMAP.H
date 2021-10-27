@@ -271,7 +271,7 @@ struct vrtMap {
 	unsigned char* SurBuf;
 	unsigned char* RnrBuf;
 
-	unsigned long* SupBuf;
+	uint32_t* SupBuf;
 
 
 	unsigned char* LvdTex;
@@ -685,7 +685,7 @@ struct vrtMap {
 #endif
 		return col32;
 	}
-	void drawTile(char* Texture, unsigned long pitch,int xstart,int ystart,int xend,int yend,int step);
+	//void drawTile(char* Texture, unsigned long pitch,int xstart,int ystart,int xend,int yend,int step);
 	bool TstZP(int off){
 		if( (AtrBuf[off]&At_ZPMASK)==At_ZEROPLAST ) return 1;
 		else return 0;

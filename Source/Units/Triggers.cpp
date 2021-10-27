@@ -1675,14 +1675,14 @@ void SaveManualData::saveCamera(int playerID, const char* triggerName)
 }
 
 //------------------------------------------------------
-const char* editTextMultiLine(HWND hwnd, const char* initialString)
+const char* editTextMultiLine(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = editTextMultiLine(initialString, hwnd);
 	return name.c_str();
 }
 
-const char* editTextDbID(HWND hwnd, const char* initialString, const char* topMask)
+const char* editTextDbID(void* hwnd, const char* initialString, const char* topMask)
 {
 	static std::string name;
 	name = initialString;
@@ -1727,22 +1727,22 @@ const char* editTextDbID(HWND hwnd, const char* initialString, const char* topMa
 	return name.c_str();
 }
 
-const char* editMessageID(HWND hwnd, const char* initialString)
+const char* editMessageID(void* hwnd, const char* initialString)
 {
 	return editTextDbID(hwnd, initialString, "Mission Tips");
 }
 
-const char* editTaskID(HWND hwnd, const char* initialString)
+const char* editTaskID(void* hwnd, const char* initialString)
 {
 	return editTextDbID(hwnd, initialString, "Mission Tasks");
 }
 
-const char* editMissionDescriptionID(HWND hwnd, const char* initialString)
+const char* editMissionDescriptionID(void* hwnd, const char* initialString)
 {
 	return editTextDbID(hwnd, initialString, "Mission Description");
 }
 
-const char* editModelNameDialog(HWND hwnd, const char* initialString)
+const char* editModelNameDialog(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
@@ -1756,7 +1756,7 @@ const char* editModelNameDialog(HWND hwnd, const char* initialString)
 	return 0;
 }
 
-const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
+const char* editTriggerChainNameDialog(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
@@ -1770,7 +1770,7 @@ const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
 	return 0;
 }
 
-const char* editLabelDialog(HWND hwnd, const char* initialString)
+const char* editLabelDialog(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
@@ -1791,7 +1791,7 @@ const char* editLabelDialog(HWND hwnd, const char* initialString)
 	return name.c_str();
 }
 
-const char* editCameraSplineName(HWND hwnd, const char* initialString)
+const char* editCameraSplineName(void* hwnd, const char* initialString)
 {
 	return gameShell->manualData().popupCameraSplineName();
 }

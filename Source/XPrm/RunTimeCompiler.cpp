@@ -200,6 +200,10 @@ void ParameterSection::add_parameter_section(ParameterSection* section)
 }
 
 #ifndef PERIMETER_EXODUS
+#ifdef _WIN32
+#include "windows.h"
+#endif
+
 FARPROC getPrmEditDLLFunction(const char* name)
 {
     static HINSTANCE lh;

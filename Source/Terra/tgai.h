@@ -35,7 +35,7 @@ struct TGAHEAD
 	//void load216(char* fname,unsigned short *ClBuf);
 	bool loadHeader(const char* fname);
 	bool load2buf(unsigned char* buf);
-	void load2RGBL(int sizeX,int sizeY, unsigned long* RGBLBuf);
+	void load2RGBL(int sizeX,int sizeY, uint32_t* RGBLBuf);
 };
 
 #pragma pack()

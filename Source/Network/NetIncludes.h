@@ -9,9 +9,7 @@
 #include <SDL_net.h>
 #include <map>
 
-#ifndef PERIMETER_HEADLESS
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
+#ifndef PERIMETER_D3D9
 #include <d3d9.h>
 #endif
 

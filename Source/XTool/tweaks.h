@@ -50,6 +50,8 @@
 #define PATH_SEP_STR "/"
 #endif
 
+#include "types.h"
+
 #ifdef PERIMETER_EXODUS
 //Apply exodus specific tweaks
 #include "../Exodus/exodus.h"

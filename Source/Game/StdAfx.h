@@ -1,16 +1,13 @@
 #pragma once
 #include "tweaks.h"
 
-#ifndef PERIMETER_HEADLESS
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-//#define _WIN32_WINNT  0x0400
-#include <windows.h>
-#include <d3d9.h>
-#include <d3dx9.h>
-#endif
-
 #ifdef _WIN32
 #include <direct.h>
+#endif
+
+#ifdef PERIMETER_D3D9
+#include <d3d9.h>
+#include <d3dx9.h>
 #endif
 
 // Standart includes

@@ -2,8 +2,8 @@
 #ifndef __ZIP_HEADERS_H__
 #define __ZIP_HEADERS_H__
 
-typedef long longint;
-typedef unsigned short word;
+typedef int32_t longint;
+typedef uint16_t word;
 
 typedef longint       signature_type;
 

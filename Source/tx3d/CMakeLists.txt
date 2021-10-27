@@ -4,7 +4,6 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(tx3d_SRCS
-        stdafxTX3D.cpp
         Clouds.cpp
         Colorizer3DFactory.cpp
         Empty.cpp

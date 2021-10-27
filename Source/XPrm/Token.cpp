@@ -570,9 +570,6 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 		"//////////////////////////////////////////////////////////////////////////////////////////////\r\n";
 
 	char* description_str = "\tdescription = ";
-	FILETIME section_time = { 0, 0 };
-	
-	//FILETIME definition_time = { 0, 0 };
 	std::string file;
 	std::string definition_file_path;
     if (sources) definition_file_path = std::string(sources) + PATH_SEP;
@@ -583,7 +580,6 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 		file.insert((size_type)0, (size_type)len, ' ');
 		ff.read(&file[0], len);
 		ff.close();
-		//getFileTime(definition_file_path.c_str(), &definition_time);
 	}
 
     size_t head_pos = file.find(head);
@@ -636,22 +632,6 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 		std::string s_add = "\tadd_dependency(\"";
 		s_add += expand_spec_chars(align_path(sources, *si)).c_str();
 		s_add += "\"";
-		//if(definition_time < getFileTime(si->c_str()))
-		//	force_update = true;
-		//FILETIME time = getFileTime(si->c_str());
-		//s_add += "\", ";
-		//unsigned int pos = file.find(s_add, head_pos);
-		//if(pos < end_pos){
-		//	pos += s_add.size();
-		//	FILETIME section_time;
-		//	section_time.dwLowDateTime = strtoul(&file[pos], 0, 10);
-		//	pos = file.find(", ", pos);
-		//	pos += 2;
-		//	section_time.dwHighDateTime = strtoul(&file[pos], 0, 10);
-		//	if(time < section_time)
-		//		time = section_time;
-		//	}
-		//buf <  s_add.c_str() <= time.dwLowDateTime < ", " <= time.dwHighDateTime < ");\r\n";
 		buf < s_add.c_str() < ");\r\n";
     }
 	buf < description_str <= description() < ";\r\n";

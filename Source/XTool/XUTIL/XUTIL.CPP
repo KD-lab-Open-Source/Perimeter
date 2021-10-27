@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "tweaks.h"
 #ifdef _WIN32 
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #endif
 #include "xutil.h"
@@ -66,12 +67,6 @@ const char* check_command_line(const char* switch_str) {
         }
     }
     return nullptr;
-}
-
-void EpochToFileTime(int64_t epoch, _FILETIME* pft) {
-    int64_t ll = (epoch * 10000000LL) + 116444736000000000LL;
-    pft->dwLowDateTime = (unsigned short) ll;
-    pft->dwHighDateTime = (unsigned short) (ll >> 32);
 }
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) {

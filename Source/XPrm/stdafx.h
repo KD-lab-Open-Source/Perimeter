@@ -16,15 +16,10 @@
 
 #ifdef _AFXDLL
 
+#include <windows.h>
+
 #define VC_EXTRALEAN
 #include <afxwin.h>      // MFC core and standard components
-
-#else
-
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-#endif
 
 #endif
 

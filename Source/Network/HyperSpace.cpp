@@ -346,7 +346,7 @@ bool terHyperSpace::PrimaryQuant()
 }
 
 
-long terHyperSpace::getInternalLagQuant(void)
+size_t terHyperSpace::getInternalLagQuant(void)
 {
 	return allowedRealizingQuant-currentQuant;
 }

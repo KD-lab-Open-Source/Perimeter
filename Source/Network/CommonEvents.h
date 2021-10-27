@@ -549,12 +549,12 @@ struct netCommandNextQuant : netCommandGeneral
 	unsigned int numberQuant_;
 	unsigned int amountCommandsPerQuant_;
 	unsigned int quantConfirmation_;
-	unsigned long globalCommandCounter_;
+	unsigned int globalCommandCounter_;
 	bool flag_pause_;
 	float kTime_;
 
 
-	netCommandNextQuant(unsigned int numberQuant, unsigned int amountCommandsPerQuant, unsigned long globalCommandCounter, unsigned int quantConfirmation=NOT_QUANT_CONFIRMATION, bool flag_pause=0, float kTime=1.f) : netCommandGeneral(NETCOM_ID_NEXT_QUANT){
+	netCommandNextQuant(unsigned int numberQuant, unsigned int amountCommandsPerQuant, unsigned int globalCommandCounter, unsigned int quantConfirmation=NOT_QUANT_CONFIRMATION, bool flag_pause=0, float kTime=1.f) : netCommandGeneral(NETCOM_ID_NEXT_QUANT){
 		numberQuant_=numberQuant;
 		amountCommandsPerQuant_=amountCommandsPerQuant;
 		quantConfirmation_=quantConfirmation;

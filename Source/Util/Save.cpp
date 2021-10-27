@@ -33,15 +33,15 @@ public:
 		return EditClassDescriptor<Condition>::instance().nameAlt(condition);
 	}
 
-	bool editCondition(Trigger& trigger, HWND hwnd) {
+	bool editCondition(Trigger& trigger, void* hwnd) {
 		if(!trigger.condition)
 			return false;
-		EditArchive editArchive(hwnd, TreeControlSetup(0,0,500,400,"editConditionSetup",true));
+		EditArchive editArchive(static_cast<HWND>(hwnd), TreeControlSetup(0,0,500,400,"editConditionSetup",true));
 		return editArchive.edit(trigger.condition);
 	}
 
-	bool editTrigger(Trigger& trigger, HWND hwnd) {
-		EditArchive editArchive(hwnd, TreeControlSetup(0,0,500,400,"editConditionSetup",true));
+	bool editTrigger(Trigger& trigger, void* hwnd) {
+		EditArchive editArchive(static_cast<HWND>(hwnd), TreeControlSetup(0,0,500,400,"editConditionSetup",true));
 		return editArchive.edit(trigger);
 	}
 

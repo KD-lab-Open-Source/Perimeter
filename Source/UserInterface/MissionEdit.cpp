@@ -174,7 +174,8 @@ bool MissionEditor::keyPressed(const sKey& Key)
 				terRenderDevice->Flush(hWndVisGeneric);
                 SDL_ShowCursor(SDL_TRUE);
 				ShareHandle<SaveUnitData> data = unit->universalSave(0);
-				EditArchive editArchive(hWndVisGeneric, TreeControlSetup(0, 0, 500, 400, "editObjectPropsSetup"));
+                HWND hwnd = static_cast<HWND>(hWndVisGeneric);
+				EditArchive editArchive(hwnd, TreeControlSetup(0, 0, 500, 400, "editObjectPropsSetup"));
 				if(editArchive.edit(data)){
 					CSELECT_AUTOLOCK();
 					const UnitList& select_list = universe()->select.GetSelectList();

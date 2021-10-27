@@ -5,90 +5,16 @@
 #include <cstdint>
 #include <cstdlib>
 #include <unistd.h>
+#include "types.h"
         
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Win32 macros/types stuff
-
-typedef void* HANDLE;
-
-#ifdef PERIMETER_HEADLESS
-//Win32 types and their equivalent
- 
-using INT     = int32_t;
-using UINT    = uint32_t;
-
-using LONG    = int32_t;
-using ULONG   = uint32_t;
-
-using HRESULT = int32_t;
-
-using WCHAR   = wchar_t;
-
-using BOOL    = INT;
-
-using VOID    = void;
-
-using BYTE    = uint8_t;
-
-using SHORT   = int16_t;
-using USHORT  = uint16_t;
-
-using FLOAT    = float;
-
-using DWORD   = uint32_t;
-using WORD    = uint16_t;
-
-using HDC      = HANDLE;
-using HWND     = HANDLE;
-using HKEY     = HANDLE;
-using COLORREF = DWORD;
-
-using LPSTR    = char*;
-using LPCSTR   = const char*;
-
-struct POINT {
-    LONG x;
-    LONG y;
-};
-
-struct RECT {
-    LONG left;
-    LONG top;
-    LONG right;
-    LONG bottom;
-};
-
-struct SIZE {
-    LONG cx;
-    LONG cy;
-};
-#endif
-
-//For some reason not present in dxvk-native headers
-#ifdef PERIMETER_ARCH_64
-typedef uint64_t UINT_PTR;
-typedef int64_t LONG_PTR;
-#else
-typedef unsigned int UINT_PTR;
-typedef long LONG_PTR;
-#endif
-typedef UINT_PTR WPARAM;
-typedef LONG_PTR LPARAM;
-typedef const char* LPCSTR;
-typedef LPCSTR LPCTSTR;
-
-struct _FILETIME {
-    unsigned short dwLowDateTime;
-    unsigned short dwHighDateTime;
-};
-typedef _FILETIME FILETIME;
+//Win32 macros
 
 #define MAX_PATH 260
 #define _MAX_DRIVE   3
 #define _MAX_FNAME   256
 #define _MAX_DIR   _MAX_FNAME
 #define _MAX_EXT   _MAX_FNAME
-#define MAX_COMPUTERNAME_LENGTH 31
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FPU control

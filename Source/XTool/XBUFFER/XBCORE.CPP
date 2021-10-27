@@ -10,37 +10,37 @@
 #include <iostream>
 #endif
 
-void XBuffer::alloc(unsigned int sz)
+void XBuffer::alloc(size_t sz)
 {
     free();
 	buf = (char*)malloc(size = sz);
 	offset = 0L;
 	digits = XB_DEFDIGITS;
-	MakeFree = 1;
+	automatic_free = true;
 	if(size) *buf = 0;
 }
 
-XBuffer::XBuffer(unsigned int sz, bool automatic_realloc_) {
+XBuffer::XBuffer(size_t sz, bool automatic_realloc_) {
     buf = nullptr;
-    MakeFree = 1;
+    automatic_free = true;
     alloc(sz);
     digits = XB_DEFDIGITS;
     automatic_realloc = automatic_realloc_;
 }
 
-XBuffer::XBuffer(void* p, int sz)
+XBuffer::XBuffer(void* p, size_t sz)
 {
 	buf = (char*)p;
 	size = sz;
 	offset = 0;
 	digits = XB_DEFDIGITS;
-	MakeFree = 0;
+	automatic_free = false;
 	automatic_realloc = false;
 }
 
-void XBuffer::free(void)
+void XBuffer::free()
 {
-	if(MakeFree && buf){
+	if (automatic_free && buf) {
 		::free(buf);
 		buf = nullptr;
     }
@@ -49,7 +49,7 @@ void XBuffer::free(void)
 void XBuffer::fill(char fc)
 { memset(buf,fc,size); }
 
-void XBuffer::set(int off,int mode)
+void XBuffer::set(size_t off, int mode)
 {
 	switch(mode){
 		case XB_BEG:
@@ -64,7 +64,7 @@ void XBuffer::set(int off,int mode)
 		}
 }
 
-unsigned int XBuffer::read(void* s, unsigned int len) 
+size_t XBuffer::read(void* s, size_t len) 
 {	
 	memcpy(s, buf + offset, len); 
 	offset += len; 
@@ -81,7 +81,7 @@ void XBuffer::handleOutOfSize()
 	}
 }
 
-unsigned int XBuffer::write(const void* s, unsigned int len, int bin_flag) 
+size_t XBuffer::write(const void* s, size_t len, bool bin_flag) 
 {	
 	while(offset + len > size) {
         handleOutOfSize();

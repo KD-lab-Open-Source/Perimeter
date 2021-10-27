@@ -58,10 +58,6 @@ void setup_argcv(int argc, char *argv[]);
 ///Returns the value by the switch name from key=value at argv
 const char* check_command_line(const char* switch_str);
 
-//https://docs.microsoft.com/en-gb/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
-struct _FILETIME;
-void EpochToFileTime(int64_t epoch, _FILETIME* pft);
-
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
 //Adds char to string in end if not present

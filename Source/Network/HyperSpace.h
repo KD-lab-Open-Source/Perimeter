@@ -39,18 +39,18 @@ public:
 
 	bool multiPlayer() const { return pNetCenter != 0; }
 
-	unsigned long getCurrentGameQuant() { return currentQuant; }
-	unsigned long getConfirmQuant() { return confirmQuant; }
+	size_t getCurrentGameQuant() { return currentQuant; }
+	size_t getConfirmQuant() { return confirmQuant; }
 protected:
 	PNetCenter* pNetCenter; // живет дольше this, !0 == MultiPlayer
 
 private:
 
-	unsigned long currentQuant;
+	size_t currentQuant;
 	//bool flag_endCurQuant;
-	unsigned long lagQuant;
-	unsigned long dropQuant;
-	unsigned long confirmQuant;
+	size_t lagQuant;
+	size_t dropQuant;
+	size_t confirmQuant;
 
 	unsigned int signatureGame;
 
@@ -114,7 +114,7 @@ public:
 	bool flag_rePlayReel;
 	bool flag_autoSavePlayReel;
 
-	void sendListGameCommand2Host(unsigned int begQuant, unsigned int endQuant=ULONG_MAX);
+	void sendListGameCommand2Host(unsigned int begQuant, unsigned int endQuant=UINT_MAX);
 	void putInputGameCommand2fullListGameCommandAndCheckAllowedRun(netCommandGame* pnc);
 
 
@@ -193,14 +193,14 @@ public:
 		}
 	}
 
-	unsigned long clientGeneralCommandCounterInListCommand;// аналог fullListGameCommands.size()
-	unsigned long lastRealizedQuant; //по идее это currentQuant
-	unsigned long allowedRealizingQuant;
+	size_t clientGeneralCommandCounterInListCommand;// аналог fullListGameCommands.size()
+	size_t lastRealizedQuant; //по идее это currentQuant
+	size_t allowedRealizingQuant;
 
-	unsigned long lastQuantAllowedTimeCommand;
-	unsigned long generalCommandCounter4TimeCommand;
+	size_t lastQuantAllowedTimeCommand;
+	size_t generalCommandCounter4TimeCommand;
 
-	long getInternalLagQuant(void);
+	size_t getInternalLagQuant();
 
 	void logQuant();
 	void sendLog(unsigned int quant);

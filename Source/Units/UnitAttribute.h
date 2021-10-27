@@ -1388,23 +1388,26 @@ struct ModelData
 	}
 };
 
-class FileTime : _FILETIME
+class FileTime
 {
 public:
-	FileTime() {
-		dwLowDateTime = dwHighDateTime = 0;
-	}
+    uint16_t LowDateTime = 0;
+    uint16_t HighDateTime = 0;
 
-	FileTime(const char* fname);
+	FileTime() = default;
+
+	explicit FileTime(const char* fname);
 
 	SERIALIZE(ar) {
-		ar & TRANSLATE_NAME(dwLowDateTime, "LowDateTime", "LowDateTime");
-		ar & TRANSLATE_NAME(dwHighDateTime, "HighDateTime", "HighDateTime");
+		ar & TRANSLATE_NAME(LowDateTime, "LowDateTime", "LowDateTime");
+		ar & TRANSLATE_NAME(HighDateTime, "HighDateTime", "HighDateTime");
 	}
 
 	bool operator==(const FileTime& rhs) const {
-		return dwLowDateTime == rhs.dwLowDateTime && dwHighDateTime == rhs.dwHighDateTime;
+		return LowDateTime == rhs.LowDateTime && HighDateTime == rhs.HighDateTime;
 	}
+
+    void setFromEpoch(int64_t epoch);
 };
 
 struct GeometryAttribute: SerializeVirtual

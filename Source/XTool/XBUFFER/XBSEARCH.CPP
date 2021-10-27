@@ -2,7 +2,7 @@
 #include <cctype>
 #include "xbuffer.h"
 
-int XBuffer::search(char* what, int mode, int cs)
+size_t XBuffer::search(char* what, int mode, int cs)
 {
 	int i,j;
 	unsigned int wlen = strlen(what) - 1;

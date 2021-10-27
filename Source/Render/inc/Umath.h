@@ -509,9 +509,9 @@ class CMatrix {
           _31, _32, _33, _34,
           _41, _42, _43, _44;
 #else //PERIMETER_D3D9
+#ifdef PERIMETER_EXODUS
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
-#ifdef PERIMETER_EXODUS
 // D3DXMATRIX = CMatrix -> D3DMATRIX
 #include <d3d9types.h>
 class CMatrix : public D3DMATRIX {

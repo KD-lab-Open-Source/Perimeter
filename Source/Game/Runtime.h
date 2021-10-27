@@ -61,7 +61,7 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 const char* popupMenu(std::vector<const char*> items); // returns zero if cancel
 int popupMenuIndex(std::vector<const char*> items); // returns -1 if cancel
 const char* editText(const char* defaultValue);
-const char* editTextMultiLine(const char* defaultValue, HWND hwnd);
+const char* editTextMultiLine(const char* defaultValue, void* hwnd);
 const std::string getLocale();
 const std::string getLocDataPath();
 

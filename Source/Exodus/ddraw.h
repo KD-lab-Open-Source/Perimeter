@@ -1,8 +1,6 @@
 #ifndef PERIMETER_DDRAW_H
 #define PERIMETER_DDRAW_H
 
-#include "windows.h"
-
 //This file contains parts of WINE project source code for d3dx9math licensed under GPLv2
 
 //Structs copied from WINE project ddraw.h
@@ -57,8 +55,8 @@ typedef struct _DDPIXELFORMAT {
         DWORD	dwZBitMask;
         DWORD	dwBumpDvBitMask;
         struct {
-            WORD	wFlipMSTypes;
-            WORD	wBltMSTypes;
+            uint16_t wFlipMSTypes;
+            uint16_t wBltMSTypes;
         } MultiSampleCaps;
     } DUMMYUNIONNAME3;
     union {
@@ -84,7 +82,7 @@ typedef struct _DDSURFACEDESC2
     DWORD	dwHeight;	/* 8: height of surface to be created*/
     DWORD	dwWidth;	/* C: width of input surface*/
     union {
-        LONG	lPitch;	      /*10: distance to start of next line (return value only)*/
+        int32_t	lPitch;	      /*10: distance to start of next line (return value only)*/
         DWORD   dwLinearSize; /*10: formless late-allocated optimized surface size */
     } DUMMYUNIONNAME1;
     union {

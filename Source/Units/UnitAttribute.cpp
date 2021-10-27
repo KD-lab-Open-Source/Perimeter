@@ -700,8 +700,6 @@ void AttributeBase::initIntfBalanceData(const AttributeBase* missile)
 FileTime::FileTime(const char* fname)
 {
     if (!fname) {
-        dwLowDateTime = 0;
-        dwHighDateTime = 0;
         return;
     }
     std::error_code error;
@@ -710,15 +708,19 @@ FileTime::FileTime(const char* fname)
 #if PERIMETER_DEBUG
         fprintf(stderr, "Error reading %s: %d %s\n", fname, error.value(), error.message().c_str());
 #endif
-        dwLowDateTime = 0;
-        dwHighDateTime = 0;
         return;
     }
     auto duration = ftime.time_since_epoch();
     int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
-    EpochToFileTime(nanos, this);
+    setFromEpoch(nanos);
 }
 
+void FileTime::setFromEpoch(int64_t epoch) {
+    //https://docs.microsoft.com/en-gb/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
+    int64_t ll = (epoch * 10000000LL) + 116444736000000000LL;
+    LowDateTime = (uint16_t) ll;
+    HighDateTime = (uint16_t) (ll >> 32);
+}
 
 void copyAttributes();
 void copyInterfaceAttributes();

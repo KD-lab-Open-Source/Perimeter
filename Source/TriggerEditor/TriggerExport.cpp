@@ -2,7 +2,11 @@
 
 #include <cstring>
 #include <climits>
+#include "tweaks.h"
+#ifndef PERIMETER_HEADLESS
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
+#endif
 #include "StdAfx.h"
 #include "XPrmArchive.h"
 #include "TriggerExport.h"

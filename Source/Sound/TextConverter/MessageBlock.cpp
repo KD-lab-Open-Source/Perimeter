@@ -77,7 +77,7 @@ void InitStringID(bool beng,bool beginner)
 	int sizeparam,sizeparam_m_rul;
 
 	ParamBlock* m_rul=ReadRules("message.rul",&sizeparam_m_rul);
-	LPSTR tname=beng?
+    char* tname=beng?
 		(beginner?"message_beginner_e.txt":"message_e.txt"):
 		(beginner?"message_beginner.txt":"message.txt");
 	ParamBlock* pp=ReadRules(tname,&sizeparam,m_rul);

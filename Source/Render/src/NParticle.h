@@ -330,7 +330,7 @@ struct EmitterKeyBase:public EmitterKeyLight//EmitterKeyInterface
 	KeyPos* GetOrCreatePosKey(float t,bool* create);
 	KeyRotate* GetOrCreateRotateKey(float t,bool* create);
 	void GetPosition(float t,MatXf& m);
-	void Load3DModelPos(cEmitter3dObject* model/*LPCTSTR fname*/);
+	void Load3DModelPos(cEmitter3dObject* model);
 protected:
 	virtual void SaveInternal(CSaver& s);
 	virtual void LoadInternal(CLoadData* ld);
