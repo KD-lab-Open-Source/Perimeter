@@ -52,7 +52,8 @@ There is instructions available in:
   - Example: file placed in Addons/AddonName/Resource/Icons/logo.tga will replace usage of
     Resource/Icons/logo.tga file.
   - Uses may include adding custom textures, models, resolutions, maps, scripts...
-  - Perimeter ET Scripts and Resources can also be added as an addon to include extra units in main game
+  - Perimeter ET Scripts and Resources can also be added as an addon to include extra units in main game and missions
+  - Addons can be enabled/disabled from main menu
 - 64 bits support
 - Frame selection in battle/multiplayer menu and new colors
 - Experimental widescreen and custom resolutions support:
@@ -62,8 +63,10 @@ There is instructions available in:
     that still use 4:3 aspect ratio
   - Both .ini and resx= resy= command arguments accept custom resolutions, these will use
     the closest UI resolutions upscaled/centered to maintain visual consistency.
-- Experimental resizable windows (Enabled by default unless Graphics ResizableWindow in Perimeter.ini or resizablewindow= is 0)
+- Experimental resizable windows
+- Better save game map / content checking
 - Experimental support for Perimeter Emperor Testament
+- Experimental support for TCP/IP multiplayer
 
 ## Repository contents
 
@@ -76,10 +79,9 @@ There is instructions available in:
   * Game/ - _Working_ - Contains entry point for game in Runtime.cpp and other game related code.
     * Scripts - _Working_ - Destination folder for generated hi/cppi files from .prm script files, these are
       compiled using XPrm
-  * HT - _Working_ - From "HyperTreading", contains some threading related stuff
-  * Network - _Windows_ - Contains high abstraction networking code which is used from other parts of game and 
-    also low level networking code used by higher abstraction networking code.
-  * PlayOgg - _Windows_ - Handles .ogg files loading and playing using a dedicated thread.
+  * HT - _Working_ - From "HyperTreading", contains some multithreading related stuff.
+  * Network - _Working_ - Contains high abstraction networking code which is used from other parts of game and 
+    low level networking code used by higher abstraction networking code. TCP sockets are provided by SDL_net.
   * PluginMAX - _Working_ - Handles game 3D models loading from M3D/L3D files. Name comes from "3ds Max" which was used
     originally for creating and exporting these models.
   * Render - _Working_ - Provides graphics/rendering abstraction API, uses DirectX APIs under the hood which is provided
@@ -87,7 +89,7 @@ There is instructions available in:
   * Scripts/ - _Working_ - Contains .prm files that are compiled using XPrm tool, *Library files that are loaded by game at runtime
     which contain some game configs/data and Texts.tdb containing ingame texts. Some game copies may contain a copy of this folder.
     * Triggers - Trigger chains containing maps and AI triggers/behaviors.
-  * Sound - _Windows_ - Provides sound effects abstraction API, uses DirectSound under the hood.
+  * Sound - _Working_ - Provides sound effects abstraction and music control API, uses SDL_mixer.
   * Terra - _Working_ - Seems to contain deformable terrain related code.
   * TriggerEditor - _Unknown_ - A GUI providing library which could be called from debug builds of game to edit Trigger chains.
   * tx3d - _Working_ - "Procedural 3D Texture Library", used by Terra and SCodeInterpreter
@@ -95,9 +97,9 @@ There is instructions available in:
     * SCodeInterpreter - _Working_ - Interpreter for chain history files seen during main menu and campaign.
   * Util - _Working_ - Utilities for game and other modules.
   * XPrm - _Working_ - Tool for compiling .prm into declaration/implementation files such as hi/cppi.
-  * XUtil - _Working_ - Previously a separate library containing various X* named helpers for different projects,
+  * XTool - _Working_ - Previously a separate library containing various X* named helpers for different projects,
     currently only the essential stuff for the game remain. Some removed stuff may be need to ported from original
-    XUtil sources for the rest of tools.
+    XTool/XUtil sources for the rest of tools.
   
 * XLibs.Net/ - Contains some library headers and binaries
 * MSDXSDK_02_06/ - DirectX SDK used by the game

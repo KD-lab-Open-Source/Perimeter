@@ -36,7 +36,7 @@ These dependencies are downloaded and compiled automatically if needed by CMake 
 
 # Windows + Visual Studio (MSVC)
 
-Recommended method.
+Recommended method on Windows. 
 
 ### Requirements
 
@@ -55,8 +55,6 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
 ---
 
 # Windows + MinGW/MSYS
-
-May generate bigger binaries than MSVC. Has support for stack traces which is useful during crashes.
 
 ### Requirements
 
