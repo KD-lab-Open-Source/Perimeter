@@ -47,7 +47,7 @@
 #include "GameContent.h"
 
 const char* currentVersion = 
-"Ver "
+"Version "
 #include "../version.h"
 #ifdef _FINAL_VERSION_
 " Final"
@@ -63,19 +63,9 @@ const char* currentVersion =
 " (" __DATE__ " " __TIME__ ")"
 ;
 
-#ifdef _SINGLE_DEMO_
-const char* currentShortVersion = 
-"Комтек'04 демо, v"
+const char* currentShortVersion =
 #include "../version.h"
 ;
-#endif
-
-#ifndef _DEMO_
-const char* currentShortVersion = 
-"v"
-#include "../version.h"
-;
-#endif
 
 static int terMissionEdit = 0;
 

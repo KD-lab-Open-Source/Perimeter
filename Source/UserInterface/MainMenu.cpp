@@ -750,12 +750,6 @@ int SwitchMenuBGQuant2( float, float ) {
 							replayBtn->Enable( gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::REPLAY );
 						}
 
-						#ifdef _DEMO_
-							if (replayBtn) {
-								replayBtn->Enable(false);
-							}
-						#endif
-
 						hideTables();
 						_shellIconManager.GetWnd(SQSH_MM_STATS_TOTAL_RAMKA)->Show(0);
 						_shellIconManager.GetWnd(SQSH_MM_STATS_TOTAL_HEAD_LIST)->Show(1);
@@ -939,14 +933,10 @@ int SwitchMenuScreenQuant1( float, float ) {
 						list->NewItem(1);
 						list->Clear();
 
-						#ifdef _DEMO_
-							int lastWinnedMissionNumber = 1;
-						#else
-							int lastWinnedMissionNumber = gameShell->currentSingleProfile.getLastMissionNumber();
-							if (lastWinnedMissionNumber >= historyScene.missionCount()) {
-								lastWinnedMissionNumber = historyScene.missionCount() - 1;
-							}
-						#endif
+                        int lastWinnedMissionNumber = gameShell->currentSingleProfile.getLastMissionNumber();
+                        if (lastWinnedMissionNumber >= historyScene.missionCount()) {
+                            lastWinnedMissionNumber = historyScene.missionCount() - 1;
+                        }
 
 						for (int i = 0; i <= lastWinnedMissionNumber; i++) {
 							const char* stringFromBase = qdTextDB::instance().getText(historyScene.getMission(i).name.c_str());
@@ -1136,27 +1126,15 @@ int SwitchMenuScreenQuant1( float, float ) {
 					bgScene.done();
 					bwScene.done();
 					historyScene.done();
-					//only for preview
-					#ifdef _DEMO_
-						gameShell->reelAbortEnabled = lastDemoReel.abortEnabled;
-						if (lastDemoReel.video) {
-							gb_Music.SetVolume(0);
-							gb_Music.Stop();
-							gameShell->showReelModal(lastDemoReel.name, 0, lastDemoReel.localized);
-						} else {
-							gameShell->showPictureModal(lastDemoReel.name, lastDemoReel.localized, lastDemoReel.time);
-						}
-					#else
-						//show last splash
-						gameShell->reelAbortEnabled = lastReel.abortEnabled;
-						if (lastReel.video) {
-							gb_Music.SetVolume(0.0f);
-							gb_Music.Stop();
-							gameShell->showReelModal(lastReel.name, 0, lastReel.localized);
-						} else {
-							gameShell->showPictureModal(lastReel.name, lastReel.localized, lastReel.time);
-						}
-					#endif
+                    //show last splash
+                    gameShell->reelAbortEnabled = lastReel.abortEnabled;
+                    if (lastReel.video) {
+                        gb_Music.SetVolume(0.0f);
+                        gb_Music.Stop();
+                        gameShell->showReelModal(lastReel.name, 0, lastReel.localized);
+                    } else {
+                        gameShell->showPictureModal(lastReel.name, lastReel.localized, lastReel.time);
+                    }
 					gameShell->GameContinue = 0;
 //					_shellIconManager.GetWnd(SQSH_MM_SPLASH_LAST)->Show(1);
 //					_shellIconManager.SetModalWnd(SQSH_MM_SPLASH_LAST);
@@ -1730,18 +1708,14 @@ void onMMStatsBuildingsButton(CShellWindow* pWnd, InterfaceEventCode code, int p
 
 //inmission menu
 void onMMInMissSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-#ifndef _DEMO_
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
 		_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_SAVE_GAME_SCR );
-	}		
-#endif
+	}
 }
 void onMMInMissLoadButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-#ifndef _DEMO_
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
 		_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOAD_IN_GAME_SCR);
-	}		
-#endif
+	}
 }
 void onMMInMissOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {

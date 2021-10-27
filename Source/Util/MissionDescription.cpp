@@ -3,8 +3,7 @@
 #include "EditFunctions.h"
 #include "Scripts/Config.hi"
 #include "GameContent.h"
-
-const char* SAVE_VERSION = "V2.00";
+#include "Runtime.h"
 
 PlayerData::PlayerData()
 {
@@ -80,7 +79,7 @@ void PlayerData::write(XBuffer& out) const
 //-------------------------------------------------
 void MissionDescription::init()
 {
-	version = SAVE_VERSION;
+	version = currentShortVersion;
 	worldName = "";
 	difficulty = DIFFICULTY_HARD;
 	missionNumber = - 1;

@@ -31,9 +31,6 @@ const char * KEY_REPLAY_REEL="replay";
 #define FILE_REPLAY_MAGIC_LEN 20
 static const char filePlayReelID[FILE_REPLAY_MAGIC_LEN] = "PerimeterReplay001\0";
 
-const unsigned int INTERNAL_BUILD_VERSION=1003;
-
-
 #ifndef _FINAL_VERSION_
 class cMonowideFont {
 	cFont* pfont;

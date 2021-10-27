@@ -277,10 +277,8 @@ void DebugPrm::serialize(Archive& ar)
 
 void DebugPrm::save()
 {
-#ifndef _DEMO_
 #ifndef _FINAL_VERSION_
 	XPrmOArchive(debugPrmName) << WRAP_NAME(*this, "DebugPrm");
-#endif
 #endif
 }
 void DebugPrm::edit()

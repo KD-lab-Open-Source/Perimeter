@@ -1024,11 +1024,7 @@ void terUniverse::SetActivePlayer(int id)
 		SNDSetBelligerentIndex(1);
 		break;
 	case EMPIRE:
-#ifndef _DEMO_
 		SNDSetBelligerentIndex(2);
-#else
-		SNDSetBelligerentIndex(1);
-#endif
 		break;
 	}
 

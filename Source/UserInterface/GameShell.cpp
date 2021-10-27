@@ -71,16 +71,6 @@ bool terEnableGDIPixel=false;
 //extern XStream quantTimeLog;
 
 int showReels( float, float ) {
-#ifdef _DEMO_
-	for (int i = 0; i < DEMO_REEL_COUNT; i++) {
-		gameShell->reelAbortEnabled = demoReels[i].abortEnabled;
-		if (demoReels[i].video) {
-			gameShell->showReelModal(demoReels[i].name, 0, demoReels[i].localized);
-		} else {
-			gameShell->showPictureModal(demoReels[i].name, demoReels[i].localized, demoReels[i].time);
-		}
-	}
-#else
 	for (int i = 0; i < REEL_COUNT; i++) {
 		gameShell->reelAbortEnabled = reels[i].abortEnabled;
 		if (reels[i].video) {
@@ -89,7 +79,6 @@ int showReels( float, float ) {
 			gameShell->showPictureModal(reels[i].name, reels[i].localized, reels[i].time);
 		}
 	}
-#endif
 	gameShell->reelAbortEnabled = true;
 //	_shellIconManager.GetWnd(SQSH_MM_SPLASH4)->Show(1);
 //	_shellIconManager.SetModalWnd(SQSH_MM_SPLASH4);

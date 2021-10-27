@@ -1676,13 +1676,6 @@ void CShellComplexPushButton::OnFormatPopupMessage(char* cbBuffer)
 
 	const AttributeBase* attr = universe()->activePlayer()->unitAttribute(sid);
 
-	#ifdef _DEMO_
-		if (isForbidden(sid)) {
-			_shellIconManager.FormatMessageText("<unit_derived_inaccess>", cbBuffer, attr->interfaceName());
-			return;
-		}
-	#endif
-
 	switch(ID)
 	{
 	case SQSH_YADRO_ID:
@@ -6125,11 +6118,7 @@ CCreditsWindow::~CCreditsWindow() {
 void CCreditsWindow::Load(const sqshControl* attr) {
 	CShellWindow::Load(attr);
 
-#ifdef _SINGLE_DEMO_
-	textData = qdTextDB::instance().getText("Interface.DemoCredits");
-#else
 	textData = qdTextDB::instance().getText(attr->text);
-#endif
 
 	if (m_hTexture) {
 		float tx = absoluteUISizeX(m_attr->image.dx, anchor);

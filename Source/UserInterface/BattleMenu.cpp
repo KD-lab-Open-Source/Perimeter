@@ -91,14 +91,10 @@ void onBattleMenuOpening() {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MAP_LIST);
 	list->NewItem(1);
 	list->Clear();
-	#ifdef _DEMO_
-		int s = 2;
-	#else
-		int s = defaultBattleMapCount + gameShell->currentSingleProfile.getLastMissionNumber();
-//		int s = defaultBattleMapCount;
-		if(s > battleMaps.size() || s < 0)
-			s = battleMaps.size();
-	#endif
+    int s = defaultBattleMapCount + gameShell->currentSingleProfile.getLastMissionNumber();
+//	int s = defaultBattleMapCount;
+    if(s > battleMaps.size() || s < 0)
+        s = battleMaps.size();
 
 	for (int i = 0; i < s; i++) {
 		std::string name = "MapNames.";
@@ -163,12 +159,6 @@ void startBattle(int pos, CShellWindow* pWnd) {
 				diff = DIFFICULTY_HARD;
 			}
 			missionToExec.playersData[i].difficulty = (Difficulty) diff;
-
-			#ifdef _DEMO_
-				if (missionToExec.playersData[i].difficulty == DIFFICULTY_HARD) {
-					missionToExec.playersData[i].difficulty = DIFFICULTY_NORMAL;
-				}
-			#endif
 
 			combo = (CComboWindow*) _shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_CLAN_BTN + i);
 			missionToExec.playersData[i].clan = combo->pos;
@@ -273,9 +263,7 @@ void onMMBattleSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 		pCombo->Array.push_back( getItemTextFromBase("Closed").c_str() );
 		pCombo->Array.push_back( getItemTextFromBase("AI (Easy)").c_str() );
 		pCombo->Array.push_back( getItemTextFromBase("AI (Normal)").c_str() );
-		#ifndef _DEMO_
-			pCombo->Array.push_back( getItemTextFromBase("AI (Hard)").c_str() );
-		#endif
+        pCombo->Array.push_back( getItemTextFromBase("AI (Hard)").c_str() );
 		pCombo->size = pCombo->Array.size();
 		pCombo->pos = 0;
 	} else if ( (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) && intfCanHandleInput() ) {

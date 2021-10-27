@@ -3859,12 +3859,6 @@ void LogicUpdater::updateGunsData() {
             default:
                 break;
 		}
-
-		#ifdef _DEMO_
-			if (isForbidden(i)) {
-				button->enabled = false;
-			}
-		#endif
 	}
 	logicData->hasGun = bHasGun;
 }
@@ -3920,12 +3914,6 @@ void LogicUpdater::updateBuildingsData() {
 
         button->visible = visible;
 		button->enabled = enabled && visible && !bBuildProgress;
-
-		#ifdef _DEMO_
-			if (isForbidden(i)) {
-				button->enabled = false;
-			}
-		#endif
 	}
 	logicData->hasBuilding = bHasBuilding;
 }
@@ -4173,13 +4161,7 @@ void LogicUpdater::updateSquadsData() {
 						break;
                     default:
                         break;
-				}
-				#ifdef _DEMO_
-					if (isForbidden(i)) {
-						button->enabled = false;
-					}
-				#endif
-			
+				}			
 			}
 
 			int nBaseUnitCount = pSquad->squadMutationMolecula().aliveElementCount(DAMAGE_FILTER_BASE);

@@ -21,7 +21,6 @@ ReelManager::~ReelManager() {
 }
 
 void ReelManager::showModal(const char* binkFileName, const char* soundFileName, bool stopBGMusic, int alpha) {
-#ifndef _DEMO_
 	bink = PlayBink::Create();
 	if(!bink->Init(binkFileName))
 	{
@@ -131,7 +130,6 @@ void ReelManager::showModal(const char* binkFileName, const char* soundFileName,
 		gb_Music.Stop();
 	}
 	hide();
-#endif
 }
 
 void ReelManager::showPictureModal(const char* pictureFileName, int stableTime) {

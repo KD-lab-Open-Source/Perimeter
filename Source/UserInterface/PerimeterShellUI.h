@@ -2265,39 +2265,6 @@ inline std::string getTextFromBase(const char *keyStr) {
 	return (*stringFromBase) ? stringFromBase : keyStr;
 }
 
-#ifdef _DEMO_
-	inline bool isForbidden(int id) {
-		switch (id) {
-			case UNIT_ATTRIBUTE_GUN_SCUM_DISRUPTOR:
-			case UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR:
-			case UNIT_ATTRIBUTE_GUN_BALLISTIC:
-
-			case UNIT_ATTRIBUTE_HARKBACK_STATION1:
-			case UNIT_ATTRIBUTE_HARKBACK_STATION2:
-			case UNIT_ATTRIBUTE_HARKBACK_STATION3:
-
-			case UNIT_ATTRIBUTE_SUBTERRA_STATION1:
-			case UNIT_ATTRIBUTE_SUBTERRA_STATION2:
-
-			case UNIT_ATTRIBUTE_GUN_SUBCHASER:
-			case UNIT_ATTRIBUTE_SCUMER:
-			case UNIT_ATTRIBUTE_DIGGER:
-			case UNIT_ATTRIBUTE_PIERCER:
-			case UNIT_ATTRIBUTE_EXTIRPATOR:
-
-			case UNIT_ATTRIBUTE_SCUM_THROWER:
-			case UNIT_ATTRIBUTE_FILTH_SPOT0:
-			case UNIT_ATTRIBUTE_FILTH_SPOT1:
-			case UNIT_ATTRIBUTE_FILTH_SPOT2:
-			case UNIT_ATTRIBUTE_FILTH_SPOT3:
-
-				return true;
-			default:
-				return false;
-		}
-	}
-#endif
-
 //inline cTextureScale* createTextureScale(const char* texture)
 //{
 //	return terVisGeneric->CreateTextureScale( texture,  Vect2f(terRenderDevice->GetSizeX() / SQSH_COORD_WIDTH_SCALE,terRenderDevice->GetSizeY() / SQSH_COORD_HEIGHT_SCALE));

@@ -46,18 +46,14 @@ void onMMBattleButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     }
 }
 void onMMLoadButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-#ifndef _DEMO_
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOAD_SCR);
     }
-#endif
 }
 void onMMLoadReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-#ifndef _DEMO_
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
         _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOAD_REPLAY_SCR);
     }
-#endif
 }
 
 //profile menu
@@ -334,9 +330,7 @@ void onMMDifficultyCombo(CShellWindow* pWnd, InterfaceEventCode code, int param)
         CComboWindow *pCombo = (CComboWindow*) pWnd;
         pCombo->Array.push_back( getItemTextFromBase("Easy").c_str() );
         pCombo->Array.push_back( getItemTextFromBase("Normal").c_str() );
-#ifndef _DEMO_
         pCombo->Array.push_back( getItemTextFromBase("Hard").c_str() );
-#endif
         pCombo->size = pCombo->Array.size();
         pCombo->pos = 0;
     } else if ( (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) && intfCanHandleInput() )	{
