@@ -382,7 +382,6 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	setScriptReelEnabled(false);
 
-	defaultSaveName_ = "";
 	check_determinacy_quant(true);
 
 //	HTManager::instance()->GameClose();
@@ -1199,7 +1198,6 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			universalSave(saveName.c_str(), false);
-			defaultSaveName_ = saveName;
 		}
 		break;
 		}

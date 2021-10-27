@@ -17,14 +17,14 @@ INCLUDE_DIRECTORIES(
 
 SET(Network_SRCS
         CommonEvents.cpp
-        EventBufferDP.cpp
+        NetComEventBuffer.cpp
         HyperSpace.cpp
         ServerList.cpp
         P2P_interface1Th.cpp
         P2P_interface2Th.cpp
         P2P_interface2ThSDL.cpp
-        P2P_interface3ThSDL.cpp
         P2P_interfaceAnyTh.cpp
+        NetConnection.cpp
 )
 
 ADD_LIBRARY(Network STATIC ${Network_SRCS})

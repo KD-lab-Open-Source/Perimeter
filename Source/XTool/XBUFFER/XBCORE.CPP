@@ -20,7 +20,7 @@ void XBuffer::alloc(unsigned int sz)
 	if(size) *buf = 0;
 }
 
-XBuffer::XBuffer(unsigned int sz, int automatic_realloc_) {
+XBuffer::XBuffer(unsigned int sz, bool automatic_realloc_) {
     buf = nullptr;
     MakeFree = 1;
     alloc(sz);
@@ -28,21 +28,21 @@ XBuffer::XBuffer(unsigned int sz, int automatic_realloc_) {
     automatic_realloc = automatic_realloc_;
 }
 
-XBuffer::XBuffer(void* p,int sz)
+XBuffer::XBuffer(void* p, int sz)
 {
 	buf = (char*)p;
 	size = sz;
 	offset = 0;
 	digits = XB_DEFDIGITS;
 	MakeFree = 0;
-	automatic_realloc = 0;
+	automatic_realloc = false;
 }
 
 void XBuffer::free(void)
 {
 	if(MakeFree && buf){
 		::free(buf);
-		buf = NULL;
+		buf = nullptr;
     }
 }
 
@@ -73,9 +73,9 @@ unsigned int XBuffer::read(void* s, unsigned int len)
 
 void XBuffer::handleOutOfSize()
 {
-	if(automatic_realloc)
-		buf = (char*)realloc(buf, size *= 2);
-	else {
+	if(automatic_realloc) {
+        buf = (char*) realloc(buf, size *= 2);
+    } else {
 		xassert(0 && "Out of XBuffer");
 		ErrH.Abort("Out of XBuffer");
 	}
@@ -83,8 +83,9 @@ void XBuffer::handleOutOfSize()
 
 unsigned int XBuffer::write(const void* s, unsigned int len, int bin_flag) 
 {	
-	while(offset + len >= size) 
-		handleOutOfSize();
+	while(offset + len > size) {
+        handleOutOfSize();
+    }
 
 	memcpy(buf + offset, s, len);
 	offset += len;

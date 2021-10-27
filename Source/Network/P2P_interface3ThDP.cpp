@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-#include "P2P_interfaceAux.h"
+#include "NetConnectionAux.h"
 
 
 HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer)
@@ -280,8 +280,8 @@ LErrorReturn:
 			pReceiveMsg = (PDPNMSG_RECEIVE)pMsgBuffer;
 
 			{
-				m_DPPacketList.push_back(XDPacket());
-				m_DPPacketList.back().set(pReceiveMsg->netidSender, pReceiveMsg->dwReceiveDataSize, pReceiveMsg->pReceiveData);
+				m_InputPacketList.push_back(XDPacket());
+				m_InputPacketList.back().set(pReceiveMsg->netidSender, pReceiveMsg->dwReceiveDataSize, pReceiveMsg->pReceiveData);
 
 				InOutNetComBuffer tmp(2048, true);
 				tmp.putBufferPacket(pReceiveMsg->pReceiveData, pReceiveMsg->dwReceiveDataSize);

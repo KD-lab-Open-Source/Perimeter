@@ -32,11 +32,14 @@ struct XBuffer
 	unsigned int offset;
 	int digits;
 	int MakeFree;
-	int automatic_realloc;
+	bool automatic_realloc;
 
-	XBuffer(unsigned int sz = XB_DEFSIZE, int automatic_realloc_ = 0);
-	XBuffer(void* p,int sz);
+	explicit XBuffer(unsigned int sz = XB_DEFSIZE, bool automatic_realloc_ = false);
+	XBuffer(void* p, int sz);
 	~XBuffer(void){ free(); }
+    
+    XBuffer(const XBuffer&) = delete;
+    XBuffer& operator=(XBuffer const&) = delete;
 
 	void SetDigits(int d) { digits = d; }
 
@@ -120,7 +123,7 @@ struct XBuffer
 	char& operator[](int ind){ return buf[ind]; }
 	char& operator()(){ return buf[offset]; }
 
-	template<typename T> XBuffer& write(const T& v){ while(offset + sizeof(T) >= size) handleOutOfSize(); memcpy(&buf[offset], &v, sizeof(T)); offset += sizeof(T); return *this; }
+	template<typename T> XBuffer& write(const T& v){ while(offset + sizeof(T) > size) handleOutOfSize(); memcpy(&buf[offset], &v, sizeof(T)); offset += sizeof(T); return *this; }
 	template<typename T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
 
 private:

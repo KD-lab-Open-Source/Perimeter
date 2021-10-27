@@ -773,6 +773,10 @@ int main(int argc, char *argv[])
     if (sdlresult < 0) {
         ErrH.Abort("Error initializing SDL", XERR_CRITICAL, sdlresult, SDL_GetError());
     }
+    sdlresult = SDLNet_Init();
+    if (sdlresult < 0) {
+        ErrH.Abort("Error initializing SDLNet", XERR_CRITICAL, sdlresult, SDLNet_GetError());
+    }
         
     //Do game content detection
     detectGameContent();
@@ -835,6 +839,7 @@ int main(int argc, char *argv[])
 
     delete runtime_object;
 	
+    SDLNet_Quit();
 	SDL_Quit();
     
     if (applicationRestartFlag) {

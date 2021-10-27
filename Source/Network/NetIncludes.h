@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <climits>
 #include <SDL_net.h>
+#include <map>
 
 #ifndef PERIMETER_HEADLESS
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
@@ -28,9 +29,8 @@
 #include "DebugUtil.h"
 #include "SystemUtil.h"
 
-#include "NetID.h"
-#include "ConnectionDP.h"
-#include "EventBufferDP.h"
+#include "NetConnection.h"
+#include "NetComEventBuffer.h"
 #include "CommonEvents.h"
 
 #endif //PERIMETER_NETINCLUDES_H

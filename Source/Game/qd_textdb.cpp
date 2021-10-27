@@ -259,6 +259,9 @@ void qdTextDB::load_supplementary_texts(const std::string& lang) {
        "Interface.Menu.Multiplayer.StartNewGame=Start a new game",
        "Interface.Menu.Messages.WrongIPPort=IP port is wrong",
        "Interface.Menu.Messages.Multiplayer.IncorrectContent=Server has different game content",
+       "Interface.Menu.Messages.Multiplayer.IncorrectArch=Server has different bits or CPU architecture, different build type (Debug/Release) or used a different compiler (MSVC/Clang/GCC), please ensure they match",
+       "Interface.Menu.Messages.Multiplayer.SignatureError=Signature or CRC checks failed, connection may be unreliable",
+       "Interface.Menu.Messages.Multiplayer.HostTerminated=Host has terminated session or disconnected",
        //Addon menu messages
        "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
        "Interface.Menu.Messages.Confirmations.ApplyAddonsChanges=Game restart is required to apply changes, are you sure?"

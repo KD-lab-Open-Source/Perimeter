@@ -12,6 +12,14 @@ extern LogStream fout;
 extern MissionDescription missionToExec;
 extern MusicPlayer gb_Music;
 
+std::vector<MissionDescription> multiplayerMaps;
+
+void loadMultiplayerList() {
+    if (multiplayerMaps.empty()) {
+        loadMapVector(multiplayerMaps, "RESOURCE/MULTIPLAYER", ".spg");
+    }
+}
+
 int getMultiplayerMapNumber(const std::string& saveName) {
     for (int i = 0, s = multiplayerMaps.size(); i < s; i++) {
         if (saveName == multiplayerMaps[i].saveName()) {
@@ -184,12 +192,11 @@ int showTerminationToMultiplayerQuant(float, float ) {
             case GameShell::GENERAL_CONNECTION_FAILED:
                 textID = "Interface.Menu.Messages.Multiplayer.ConnectionFailed";
                 break;
-            case GameShell::HOST_TERMINATED:
-//				if (universe()) {
-//					textID = "Interface.Menu.Messages.UnknownError";
-//				} else {
+            case GameShell::CLIENT_DROPPED:
                 textID = "Interface.Menu.Messages.Multiplayer.ClientDropped";
-//				}
+                break;
+            case GameShell::HOST_TERMINATED:
+                textID = "Interface.Menu.Messages.Multiplayer.HostTerminated";
                 break;
             default:
                 textID = "Interface.Menu.Messages.UnknownError";

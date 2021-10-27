@@ -21,6 +21,7 @@
 #include "../HT/ht.h"
 #include "qd_textdb.h"
 
+#include "Menu/MultiplayerCommon.h"
 #include "MessageBox.h"
 #include "BelligerentSelect.h"
 #include "GameContent.h"
@@ -43,7 +44,6 @@ HistoryScene historyScene;
 HistoryScene bwScene;
 BGScene bgScene;
 
-std::vector<MissionDescription> multiplayerMaps;
 std::vector<MissionDescription> savedGames;
 std::vector<MissionDescription> replays;
 MissionDescription missionToExec;
@@ -865,10 +865,7 @@ int SwitchMenuScreenQuant1( float, float ) {
                 }
 
                 loadBattleList();
-
-                if (multiplayerMaps.empty()) {
-                    loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
-                }
+                loadMultiplayerList();
 
                 //Needed to initialize bgScene
                 StartSpace();
@@ -1070,6 +1067,7 @@ int SwitchMenuScreenQuant1( float, float ) {
                         gameShell->getNetClient()->StartFindHost();
                         
                         historyScene.stop();
+                        StartSpace();
                         historyScene.done();
                     }
                     break;
@@ -1102,7 +1100,8 @@ int SwitchMenuScreenQuant1( float, float ) {
 					{
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_IP_INPUT);
 						if (input->getText().empty()) {
-							input->SetText(PERIMETER_IP_HOST_DEFAULT);
+                            std::string text = getStringSettings("JoinIP");
+							input->SetText(text.c_str());
 						}
 					}
 					break;

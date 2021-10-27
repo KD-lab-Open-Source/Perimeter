@@ -7,7 +7,6 @@ extern float CAMERA_SCROLL_SPEED_DELTA,CAMERA_BORDER_SCROLL_SPEED_DELTA;
 
 extern int terCurrentServerIP;
 extern int terCurrentServerPort;
-extern char* terCurrentServerName;
 
 extern float terMapLevelLOD;
 extern int terDrawMeshShadow;
@@ -76,15 +75,6 @@ void PerimeterDataChannelLoad()
     ini_no_check.getInt("Game","RunBackground", applicationRunBackground);
     check_command_line_parameter("RunBackground", applicationRunBackground);
 
-	//Network
-	const char* s = ini_no_check.get("Network","ServerName");
-	if(s){
-		terCurrentServerName = new char[strlen(s) + 1];
-		strcpy(terCurrentServerName,s);
-	}
-	else 
-		terCurrentServerName = NULL;
-
 	CAMERA_SCROLL_SPEED_DELTA = CAMERA_BORDER_SCROLL_SPEED_DELTA = ini.getInt("Game","ScrollRate");
 	CAMERA_MOUSE_ANGLE_SPEED_DELTA = ini_no_check.getFloat("Game","MouseLookRate");
 	if (CAMERA_MOUSE_ANGLE_SPEED_DELTA == 0) {
@@ -134,8 +124,5 @@ void PerimeterDataChannelSave()
 //	ini.putInt("Graphics","MapReflection", terMapReflection);
 //	ini.putInt("Graphics","ObjectReflection", terObjectReflection);
 //	ini.putFloat("Graphics","Gamma", terGraphicsGamma);
-
-	//Network
-	ini.put("Network","ServerName", terCurrentServerName);
 }
 

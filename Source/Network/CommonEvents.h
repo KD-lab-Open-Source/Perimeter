@@ -2,11 +2,6 @@
 #define _PERIMETER_COMMON_EVENTS_
 
 
-const char SIMPLE_GAME_CURRENT_VERSION[]= 
-#include "../version.h"
-;
-
-extern const unsigned int INTERNAL_BUILD_VERSION;
 //-------------------------------
 
 // Адаптация строк для передачи по сети
@@ -52,7 +47,7 @@ enum terEventID
 	NETCOM_4G_ID_UNIT_COMMAND,
 	NETCOM_4G_ID_REGION,
 	NETCOM_4G_ID_FORCED_DEFEAT,
-
+    NETCOM_4G_ID_EXIT,
 	NETCOM_4G_ID_CHAT_MESSAGE,
 
 	NETCOM_4H_ID_BACK_GAME_INFORMATION,
@@ -69,9 +64,6 @@ enum terEventID
 
 	NETCOM_ID_NEXT_QUANT,
 
-	EVENT_ID_VERSION,
-	EVENT_ID_ERROR,
-
 	////---
 	NETCOMC_ID_JOIN_REQUEST,
 	NETCOM_4C_ID_JOIN_RESPONSE,
@@ -80,10 +72,8 @@ enum terEventID
 	NETCOM_4C_ID_REJOIN_RESPONCE,
 	NETCOM_4C_ID_REQUEST_LAST_QUANTS_COMMANDS,
 	NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS,
-	//NETCOM_4C_ID_REJOIN_RESPONSE,
 
 	NETCOMC_ID_PLAYER_READY,
-	NETCOM_ID_START_GAME,
 	NETCOM_4C_ID_CONTINUE_GAME_AFTER_HOST_MIGRATE,
 
 	NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO,
@@ -96,9 +86,6 @@ enum terEventID
 	NETCOM_4H_ID_CHANGE_MAP,
 
 	NETCOM_4H_ID_START_LOAD_GAME,
-
-	EVENT_ID_CREATE_GAME,
-	NETCOM_4H_ID_CREATE_GAME,
 
 	NETCOM_4C_ID_ALIFE_PACKET,
 	NETCOM_4H_ID_ALIFE_PACKET,
@@ -115,7 +102,7 @@ struct netCommandGeneral
 	terEventID EventID;
 
 	netCommandGeneral(terEventID event_id) { EventID = event_id; }
-	virtual ~netCommandGeneral() {}
+	virtual ~netCommandGeneral() = default;
 
 	virtual void Write(XBuffer& out) const {}
 };
@@ -124,7 +111,24 @@ struct netCommandGeneral
 
 struct terEventPing : netCommandGeneral
 {
-	terEventPing() : netCommandGeneral(EVENT_ID_PING){ };
+    terEventPing() : netCommandGeneral(EVENT_ID_PING){ };
+};
+
+//-------------------------------
+
+struct netCommand4G_Exit : netCommandGeneral
+{
+    NETID netid;
+    explicit netCommand4G_Exit(NETID netid_) : netCommandGeneral(NETCOM_4G_ID_EXIT), netid(netid_) {
+    }
+    
+    explicit netCommand4G_Exit(XBuffer& in) : netCommandGeneral(NETCOM_4G_ID_EXIT) {
+        in.read(&netid, sizeof(netid));
+    }
+
+    void Write(XBuffer& out) const override {
+        out.write(&netid, sizeof(netid));
+    }
 };
 
 //-------------------------------------------
@@ -141,7 +145,7 @@ struct netCommand4C_StartLoadGame : netCommandGeneral {
 		missionDescription_.read(in);
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		missionDescription_.write(out);
 	}
 };
@@ -180,7 +184,7 @@ public:
 		in.read(&userID, sizeof(userID));
 		in.read(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
 	}
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&curCommandQuant_, sizeof(curCommandQuant_));
 		out.write(&curCommandCounter_, sizeof(curCommandCounter_));
 		out.write(&userID, sizeof(userID));
@@ -210,7 +214,7 @@ public:
 		//in.read(*this);
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&curCommandQuant_, sizeof(curCommandQuant_));
 		out.write(&curCommandCounter_, sizeof(curCommandCounter_));
 		out.write(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
@@ -271,7 +275,7 @@ public:
 		pData_=0;
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&playerID_, sizeof(playerID_));
 		out.write(&curCommandQuant_, sizeof(curCommandQuant_));
 		out.write(&curCommandCounter_, sizeof(curCommandCounter_));
@@ -317,7 +321,7 @@ public:
 		pData_=new char[dataSize_];
 		in.read(pData_, dataSize_);
 	}
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&userID, sizeof(userID));
 		out.write(&dataSize_, sizeof(dataSize_));
 		out.write(pData_, dataSize_);
@@ -361,7 +365,7 @@ public:
 		delete pGData_;
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&quant_, sizeof(quant_));
 		out.write(&VDataSize_, sizeof(VDataSize_));
 		out.write(pVData_, VDataSize_);
@@ -400,7 +404,7 @@ public:
 	~netCommand4H_SimpleBackGameInformation(void){
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&quant_, sizeof(quant_));
 		out.write(&signature_, sizeof(signature_));
 	}
@@ -428,7 +432,7 @@ public:
 		in.read(&state_, sizeof(state_));
 	}
 
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&lagQuant_, sizeof(lagQuant_));
 		out.write(&quant_, sizeof(quant_));
 		out.write(&signature_, sizeof(signature_));
@@ -465,7 +469,7 @@ public:
 		delete pDAData_;
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&DASize_, sizeof(DASize_));
 		out.write(pDAData_, DASize_);
 	}
@@ -482,7 +486,7 @@ public:
 	netCommand4C_SaveLog(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
 		in > v;
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out < v;
 	};
 	int v;
@@ -496,7 +500,7 @@ public:
 	netCommand4C_sendLog2Host (XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_SEND_LOG_2_HOST){
 		in > begQuant;
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out < begQuant;
 	};
 	unsigned int begQuant;
@@ -516,7 +520,7 @@ struct netCommand4H_RequestPause : netCommandGeneral
 		in.read(&playerID, sizeof(playerID));
 		in.read(&pause, sizeof(pause));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&playerID, sizeof(playerID));
 		out.write(&pause, sizeof(pause));
 	}
@@ -535,7 +539,7 @@ struct netCommand4C_Pause : netCommandGeneral
 		in.read(&playersIDArr[0], sizeof(playersIDArr));
 		in.read(&pause, sizeof(pause));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&playersIDArr[0], sizeof(playersIDArr));
 		out.write(&pause, sizeof(pause));
 	}
@@ -570,7 +574,7 @@ struct netCommandNextQuant : netCommandGeneral
 		in.read(&kTime_, sizeof(kTime_));
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&numberQuant_, sizeof(numberQuant_));
 		out.write(&amountCommandsPerQuant_, sizeof(amountCommandsPerQuant_));
 		out.write(&quantConfirmation_, sizeof(quantConfirmation_));
@@ -580,38 +584,9 @@ struct netCommandNextQuant : netCommandGeneral
 	}
 };
 
-
-//------------------------------
-
-struct terEventVersion : netCommandGeneral
-{
-	unsigned int Version;
-
-	terEventVersion(unsigned int version) : netCommandGeneral(EVENT_ID_VERSION) { 
-		Version = version; 
-	}
-	terEventVersion(XBuffer& in);
-
-	void Write(XBuffer& out) const;
-};
-
 //---------------------------------
 
-struct terEventError : netCommandGeneral
-{
-	unsigned int PlayerID;
-	unsigned int ErrorCode;
-
-	terEventError(unsigned int player_id,unsigned int error_code) : netCommandGeneral(EVENT_ID_ERROR) {
-		ErrorCode = error_code;
-		PlayerID = player_id;
-	}
-	terEventError(XBuffer& in);
-
-	void Write(XBuffer& out) const;
-};
-
-
+/*
 //Сейчас фактически не используется т.к. запускается её внутренний аналог - ExecuteInternalCommand(PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST, true);
 struct netCommand4H_CreateGame : netCommandGeneral {
 	MissionDescription missionDescription_;
@@ -638,7 +613,7 @@ struct netCommand4H_CreateGame : netCommandGeneral {
 		in.read(&internalNumverVersion_, sizeof(internalNumverVersion_));
 		in.read(&simpleGameVersion_, sizeof(simpleGameVersion_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(gameName_, MAX_MULTIPALYER_GAME_NAME);
 		out.write(computerName_, MAX_COMPUTERNAME_LENGTH+1);
 		missionDescription_.write(out);
@@ -649,17 +624,14 @@ struct netCommand4H_CreateGame : netCommandGeneral {
 };
 
 
-
-
 struct netCommandC_JoinRequest : netCommandGeneral
 {
-	//DWORD hostGameID_;
 	PlayerData joinPlayerData_;
 	char computerName_[MAX_COMPUTERNAME_LENGTH+1];
 	unsigned int internalNumverVersion_;
 	char simpleGameVersion_[sizeof(SIMPLE_GAME_CURRENT_VERSION)];
 
-	netCommandC_JoinRequest(/*DWORD hostGameID,*/ PlayerData& joinPlayerData, const char* computerName) : netCommandGeneral(NETCOMC_ID_JOIN_REQUEST) {
+	netCommandC_JoinRequest(PlayerData& joinPlayerData, const char* computerName) : netCommandGeneral(NETCOMC_ID_JOIN_REQUEST) {
 		//hostGameID_=hostGameID;
 		joinPlayerData_=joinPlayerData;
 		strncpy(computerName_, computerName, MAX_COMPUTERNAME_LENGTH+1);
@@ -674,7 +646,7 @@ struct netCommandC_JoinRequest : netCommandGeneral
 		in.read(&simpleGameVersion_, sizeof(simpleGameVersion_));
 	}
 
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		//out.write(&hostGameID_, sizeof(hostGameID_));
 		out.write(&joinPlayerData_, sizeof(joinPlayerData_));
 		out.write(computerName_, MAX_COMPUTERNAME_LENGTH+1);
@@ -705,14 +677,13 @@ struct netCommand4C_JoinResponse : netCommandGeneral
 		in.read(&result_, sizeof(result_));
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&playerNETID_, sizeof(playerNETID_));
 		out.write(&groupNETID_, sizeof(groupNETID_));
 		out.write(&result_, sizeof(result_));
 	}
 };
-
-
+*/
 
 
 struct netCommand4H_ReJoinRequest : netCommandGeneral
@@ -728,7 +699,7 @@ struct netCommand4H_ReJoinRequest : netCommandGeneral
 		in.read(&confirmedQuant, sizeof(confirmedQuant));
 	}
 
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&currentLastQuant, sizeof(currentLastQuant));
 		out.write(&confirmedQuant, sizeof(confirmedQuant));
 	}
@@ -743,7 +714,7 @@ struct netCommand4C_ReJoineResponce : netCommandGeneral
 	netCommand4C_ReJoineResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONCE){
 		in.read(&hostNETID_, sizeof(hostNETID_));
 	}
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&hostNETID_, sizeof(hostNETID_));
 	}
 };
@@ -758,7 +729,7 @@ struct netCommand4C_RequestLastQuantsCommands : netCommandGeneral
 		in.read(&beginQunat_, sizeof(beginQunat_));
 	}
 
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&beginQunat_, sizeof(beginQunat_));
 	}
 };
@@ -769,14 +740,14 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 	unsigned int endQuantCommandTransmit;
 	unsigned int finGeneraCommandCounter;
 	unsigned int sizeCommandBuf;
-	unsigned char* pData;
+	char* pData;
 
-	netCommand4H_ResponceLastQuantsCommands(unsigned int _bQC, unsigned int _eQC, unsigned int _fGCC, unsigned int _szBuf, unsigned char* _pData) : netCommandGeneral(NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS) {
+	netCommand4H_ResponceLastQuantsCommands(unsigned int _bQC, unsigned int _eQC, unsigned int _fGCC, unsigned int _szBuf, char* _pData) : netCommandGeneral(NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS) {
 		beginQuantCommandTransmit=_bQC;
 		endQuantCommandTransmit=_eQC;
 		finGeneraCommandCounter=_fGCC;
 		sizeCommandBuf=_szBuf;
-		pData= new unsigned char[sizeCommandBuf];
+		pData= new char[sizeCommandBuf];
 		memcpy(pData, _pData, sizeCommandBuf);
 	}
 	netCommand4H_ResponceLastQuantsCommands(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS) {
@@ -784,13 +755,13 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 		in.read(&endQuantCommandTransmit, sizeof(endQuantCommandTransmit));
 		in.read(&finGeneraCommandCounter,sizeof(finGeneraCommandCounter));
 		in.read(&sizeCommandBuf, sizeof(sizeCommandBuf));
-		pData= new unsigned char[sizeCommandBuf];
+		pData= new char[sizeCommandBuf];
 		in.read(pData, sizeCommandBuf);
 	}
 	~netCommand4H_ResponceLastQuantsCommands(void){
 		delete pData;
 	}
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&beginQuantCommandTransmit, sizeof(beginQuantCommandTransmit));
 		out.write(&endQuantCommandTransmit, sizeof(endQuantCommandTransmit));
 		out.write(&finGeneraCommandCounter,sizeof(finGeneraCommandCounter));
@@ -812,7 +783,7 @@ struct netCommand4C_ReJoinResponse : netCommandGeneral
 		in.read(&groupNETID_, sizeof(groupNETID_));
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&playerNETID_, sizeof(playerNETID_));
 		out.write(&groupNETID_, sizeof(groupNETID_));
 	}
@@ -830,7 +801,7 @@ struct netCommandC_PlayerReady : netCommandGeneral
 	netCommandC_PlayerReady(XBuffer& in) : netCommandGeneral(NETCOMC_ID_PLAYER_READY){
 		in.read(&gameCRC_, sizeof(gameCRC_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&gameCRC_, sizeof(gameCRC_));
 	}
 };
@@ -840,7 +811,7 @@ struct netCommandStartGame : netCommandGeneral
 {
 	netCommandStartGame() : netCommandGeneral(NETCOM_ID_START_GAME){}
 	netCommandStartGame(XBuffer& in) : netCommandGeneral(NETCOM_ID_START_GAME){}
-	//void Write(XBuffer& out) const;
+	//void Write(XBuffer& out) const override;
 };
 */
 struct netCommand4C_AlifePacket : netCommandGeneral
@@ -864,7 +835,7 @@ struct netCommand4C_ClientIsNotResponce : netCommandGeneral
 	netCommand4C_ClientIsNotResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
 		in > StringInWrapper(clientNotResponceList);
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out < StringOutWrapper(clientNotResponceList);
 	}
 	std::string clientNotResponceList;
@@ -877,7 +848,7 @@ struct netCommand4C_ContinueGameAfterHostMigrate : netCommandGeneral
 {
 	netCommand4C_ContinueGameAfterHostMigrate() : netCommandGeneral(NETCOM_4C_ID_CONTINUE_GAME_AFTER_HOST_MIGRATE){}
 	netCommand4C_ContinueGameAfterHostMigrate(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CONTINUE_GAME_AFTER_HOST_MIGRATE){}
-	//void Write(XBuffer& out) const;
+	//void Write(XBuffer& out) const override;
 };
 
 struct netCommand4H_StartLoadGame : netCommandGeneral
@@ -888,7 +859,7 @@ struct netCommand4H_StartLoadGame : netCommandGeneral
 	netCommand4H_StartLoadGame(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_START_LOAD_GAME){
 		in > v;
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out < v;
 	};
 	int v;
@@ -907,7 +878,7 @@ struct netCommand4C_CurrentMissionDescriptionInfo : netCommandGeneral
 		missionDescription_.simpleRead(in);
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		//missionDescription_.write(out);
 		missionDescription_.simpleWrite(out);
 	}
@@ -924,7 +895,7 @@ struct netCommand4H_ChangePlayerBelligerent : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&newBelligerent_, sizeof(newBelligerent_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&newBelligerent_, sizeof(newBelligerent_));
 	};
@@ -934,20 +905,24 @@ struct netCommand4H_ChangePlayerBelligerent : netCommandGeneral
 
 struct netCommand4H_ChangePlayerColor : netCommandGeneral
 {
-	netCommand4H_ChangePlayerColor(int idxPlayerData, int newColor) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_COLOR){
+	netCommand4H_ChangePlayerColor(int idxPlayerData, int newColor, bool direction_) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_COLOR){
 		idxPlayerData_=idxPlayerData;
 		newColor_=newColor;
+        direction=direction_;
 	}
 	netCommand4H_ChangePlayerColor(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_COLOR){
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&newColor_, sizeof(newColor_));
+        in.read(&direction, sizeof(direction));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&newColor_, sizeof(newColor_));
+        out.write(&direction, sizeof(direction));
 	};
 	int idxPlayerData_;
 	int newColor_;
+    bool direction;
 };
 
 
@@ -961,7 +936,7 @@ struct netCommand4H_ChangeRealPlayerType : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&newRealPlayerType_, sizeof(newRealPlayerType_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&newRealPlayerType_, sizeof(newRealPlayerType_));
 	};
@@ -979,7 +954,7 @@ struct netCommand4H_ChangePlayerDifficulty : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&difficulty_, sizeof(difficulty_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&difficulty_, sizeof(difficulty_));
 	};
@@ -996,7 +971,7 @@ struct netCommand4H_ChangePlayerClan : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&clan_, sizeof(clan_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&clan_, sizeof(clan_));
 	};
@@ -1015,7 +990,7 @@ struct netCommand4H_ChangePlayerHandicap : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&handicap_, sizeof(handicap_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&handicap_, sizeof(handicap_));
 	};
@@ -1034,7 +1009,7 @@ struct netCommand4H_ChangeMap : netCommandGeneral
 	netCommand4H_ChangeMap(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_MAP){
 		missionDescription_.read(in);
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		missionDescription_.write(out);
 	}
 };
@@ -1050,7 +1025,7 @@ struct terEventControlServerTime : netCommandGeneral
 	terEventControlServerTime(float s) : netCommandGeneral(EVENT_ID_SERVER_TIME_CONTROL){ scale = s; }
 	terEventControlServerTime(XBuffer& in);
 
-	void Write(XBuffer& out) const ;
+	void Write(XBuffer& out) const override;
 };
 
 //-------------------------------

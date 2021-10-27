@@ -210,7 +210,7 @@ bool terHyperSpace::loadPlayReel(const char* fname)
 //	unsigned char* tbuf=new unsigned char[sizePlayReelData];
 //	fi.read(tbuf, sizePlayReelData);
 	InOutNetComBuffer in_buffer(sizePlayReelData, 1); //проверить необходимость автоувелечения!
-	in_buffer.putBufferPacket((unsigned char*)(mdBuf.address()+mdBuf.tell()), sizePlayReelData);
+	in_buffer.putBufferPacket(mdBuf.address()+mdBuf.tell(), sizePlayReelData);
 //	delete [] tbuf;
 
 	while(in_buffer.currentNetCommandID()!=NETCOM_ID_NONE) {
@@ -441,7 +441,7 @@ void terHyperSpace::logQuant()
 
 	signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
 	if((currentQuant & maskPeriodSendLogQuant)==0){ //Каждый 8 квант отсылается сигнатура
-        netCommandGeneral event = netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state);
+        netCommand4H_BackGameInformation2 event = netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state);
 		pNetCenter->SendEvent(&event);
 		signatureGame=startCRC32;
 	}
@@ -462,7 +462,7 @@ void terHyperSpace::sendLog(unsigned int quant)
 			sgn=crc32((unsigned char*)pLogElemente->pLog->address(), pLogElemente->pLog->tell(), sgn);
 
 		}
-        netCommandGeneral event = netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state);
+        netCommand4H_BackGameInformation2 event = netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state);
         pNetCenter->SendEvent(&event);
 	}
 }
@@ -650,7 +650,7 @@ void terHyperSpace::sendListGameCommand2Host(unsigned int begQuant, unsigned int
 		if( ((*p)->curCommandQuant_ >=begQuant) && ((*p)->curCommandQuant_ <=endQuant))
 			out_buffer.putNetCommand((*p));
 	}
-	netCommand4H_ResponceLastQuantsCommands nco(begQuant, endQuant, clientGeneralCommandCounterInListCommand, out_buffer.filled_size, (unsigned char*) out_buffer.address() );
+	netCommand4H_ResponceLastQuantsCommands nco(begQuant, endQuant, clientGeneralCommandCounterInListCommand, out_buffer.filled_size, out_buffer.address() );
 	if(pNetCenter){
 		pNetCenter->SendEvent(&nco);
 	}
@@ -839,7 +839,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 				netCommand4C_SaveLog nc(in_buffer);
 
 				XBuffer tb;
-				tb < "outNet_" < pNetCenter->internalPlayerData.name() < " _" <= clocki() < "_" <= pNetCenter->m_localNETID < ".log";
+				tb < "outNet_" < pNetCenter->m_GameName.c_str() < " _"  < pNetCenter->m_PlayerName.c_str() < " _" <= clocki() < "_" <= pNetCenter->m_localNETID < ".log";
 
 				XStream f(tb, XS_OUT);
 				//const char* currentVersion;

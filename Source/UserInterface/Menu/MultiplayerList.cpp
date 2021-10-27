@@ -21,17 +21,15 @@ int startCmdlineQuant(float, float ) {
         auto client = gameShell->getNetClient();
         client->publicServerHost = cmdLineData.publicHost;
 
-        GameHostConnection conn;
-        if (!PNetCenter::resolveHostAddress(conn, cmdLineData.address)) {
+        NetAddress conn;
+        if (!NetAddress::resolve(conn, cmdLineData.address)) {
             setMessageBoxTextID("Interface.Menu.Messages.WrongIPAdress");
             showMessageBoxButtons();
         } else {
             //This forces initializing stuff required by game
             _shellIconManager.initialMenu = SQSH_MM_MULTIPLAYER_LOBBY_SCR;
             if (cmdLineData.server) {
-                if(multiplayerMaps.empty()){
-                    loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
-                }
+                loadMultiplayerList();
                 if (multiplayerMaps.empty()) {
                     setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
                     showMessageBoxButtons();
@@ -78,7 +76,7 @@ void GameShell::startCmdline(const CommandLineData& data) {
 
 /// Game hosts listing
 
-GameHostConnection selectedHost;
+NetAddress selectedHost;
 
 std::string formatGameInfo(const GameHostInfo& info, bool oneLine) {
     if (info.gameName.empty()) {

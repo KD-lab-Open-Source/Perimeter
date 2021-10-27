@@ -70,7 +70,7 @@ struct sqshControl
 
 	BGObj bgObject = {};
 
-	//����� � ��� �������� ��� ������ ����
+	//текст и его смещение для кнопок меню
 	string text = "";
 	float    txt_dx = 0;
 	float    txt_dy = 0;
@@ -135,7 +135,7 @@ struct sqshControlContainer
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//tabsheets ��� ������ ����������
+//tabsheets для нового интерфейса
 struct TabIcon {
 	sqshImage image = {};
 	sqshImage image_h = {};
@@ -1533,7 +1533,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 
 
 		{
-			//�����
+			//карта
 			type = SQSH_MAP_WINDOW_TYPE;
 			id   = SQSH_MAP_WINDOW_ID;
 			x = 9.0f / 1024.0f;
@@ -1542,7 +1542,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			sy= 128.0f / 768.0f;
 		},
 		{
-			//������� ����
+			//рабочая зона
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_WORKAREA3_ID;
 			state= SQSH_VISIBLE|SQSH_ENABLED|SQSH_SWITCH;
@@ -1580,7 +1580,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			};
 		},
 		{
-			//���
+			//ров
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_WORKAREA2_ID;
 			state= SQSH_VISIBLE|SQSH_ENABLED|SQSH_SWITCH;
@@ -1646,7 +1646,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			};
 		},
 		{
-			//���� ���.
+			//поле вкл.
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_FIELD_ON_ID;
 			state = SQSH_ENABLED|SQSH_VISIBLE;
@@ -1684,7 +1684,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			};
 		},
 		{
-			//���� ����.
+			//поле выкл.
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_FIELD_OFF_ID;
 			state = SQSH_ENABLED|SQSH_VISIBLE;
@@ -1723,7 +1723,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		},
 
 		{
-			//�����
+			//пауза
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_SPEED_PAUSE;
 			state= SQSH_VISIBLE|SQSH_ENABLED|SQSH_SWITCH;
@@ -1746,7 +1746,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			popup = "<Pause>";
 		},
 		{
-			//�������� 50%
+			//скорость 50%
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_SPEED_50;
 			state= SQSH_VISIBLE|SQSH_ENABLED|SQSH_SWITCH;
@@ -1769,7 +1769,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			popup = "<Speed50>";
 		},
 		{
-			//�������� 100%
+			//скорость 100%
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_SPEED_100;
 			state= SQSH_VISIBLE|SQSH_ENABLED|SQSH_SWITCH;
@@ -1792,7 +1792,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			popup = "<Speed100>";
 		},
 		{
-			//�������� 150%
+			//скорость 150%
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_SPEED_150;
 			state= SQSH_VISIBLE|SQSH_ENABLED|SQSH_SWITCH;
@@ -2263,7 +2263,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			};
 			image_disabled = {
 				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = (166.0f + 40.0f * 0); _iy = (0.I0f + 37.0f * 2);
+				_ix = (166.0f + 40.0f * 0); _iy = (0.0f + 37.0f * 2);
 			};
 			parent_id = SQSH_TAB_BUILD_ID;
 			popup = "<station_fly>";
@@ -2834,7 +2834,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 
 		//squad buttons
 		{
-			//������
+			//солдат
 			type = SQSH_ATOM_BUTTON_TYPE;
 			id   = SQSH_SOLDIER_ID;
 			state = SQSH_ENABLED|SQSH_VISIBLE;
@@ -2875,7 +2875,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			canHandleDisabledInput = 1;
 		},
 		{
-			//������
+			//офицер
 			type = SQSH_ATOM_BUTTON_TYPE;
 			id   = SQSH_OFFICER_ID;
 			state = SQSH_ENABLED|SQSH_VISIBLE;
@@ -2916,7 +2916,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			canHandleDisabledInput = 1;
 		},
 		{
-			//������
+			//техник
 			type = SQSH_ATOM_BUTTON_TYPE;
 			id   = SQSH_TECHNIC_ID;
 			state = SQSH_ENABLED|SQSH_VISIBLE;
@@ -2956,7 +2956,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 			canHandleDisabledInput = 1;
 		},
 		{
-			//����������
+			//объединить
 			type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
 			id   = SQSH_TOGETHER_ID;
 			state = SQSH_ENABLED|SQSH_VISIBLE;
@@ -2991,7 +2991,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		},
 		//line 1
 		{
-			//���������
+			//разобрать
 			type = SQSH_ATOM_BUTTON_TYPE;
 			id   = SQSH_SQUAD_DISINTEGRATE_ID;
 			state = SQSH_ENABLED|SQSH_VISIBLE;
@@ -3985,7 +3985,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	};
 },
 
-//������� ����
+//главное меню
 //In case a new menu is wanted to add, ensure that you are not reusing the same element IDs from other menus
 //since all menu elements are created in memory at startup and they may conflict or override handlers
 //you can register new IDs in SquadShellEnums.inl after SQSH_MM_START_SCR and before SQSH_MM_SCREENS_MAX
@@ -4712,9 +4712,9 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 
         //Back/Next buttons
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;							x=rightSeparateBottomBtn.x;  y=rightSeparateBottomBtn.y; sx=rightSeparateBottomBtn.sx; sy=rightSeparateBottomBtn.sy; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_JOIN_NEXT_BTN;		x=rightSeparateBottomBtn.x;  y=rightSeparateBottomBtn.y; sx=rightSeparateBottomBtn.sx; sy=rightSeparateBottomBtn.sy; text="START"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button"; bgObject = {name = "group next2"; chainName = "next2";};image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_JOIN_NEXT_BTN;		x=rightSeparateBottomBtn.x;  y=rightSeparateBottomBtn.y; sx=rightSeparateBottomBtn.sx; sy=rightSeparateBottomBtn.sy; text="JOIN"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button"; bgObject = {name = "group next2"; chainName = "next2";};image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; },
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;							x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; ystart=42/768; hitTestMode = HITTEST_NONE; },
-		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_MULTIPLAYER_JOIN_BTN;	x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; text="QUIT"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; }
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_BACK_FROM_MULTIPLAYER_JOIN_BTN;	x=leftSeparateBottomBtn.x;  y=leftSeparateBottomBtn.y; sx=leftSeparateBottomBtn.sx; sy=leftSeparateBottomBtn.sy; text="BACK"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; }
 
 	};
 	bgObjects = new BGObj[] {
@@ -5680,7 +5680,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	defaultEscBtnID = SQSH_MM_BACK_CREDITS_BTN;
 },
 
-//��������
+//заставка
 {
 	type = SQSH_SPLASHSCREEN;
 	id = SQSH_MM_SPLASH1;

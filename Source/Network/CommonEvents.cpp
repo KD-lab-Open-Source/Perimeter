@@ -1,31 +1,6 @@
 #include "NetIncludes.h"
 #include "CommonEvents.h"
 
-
-terEventVersion::terEventVersion(XBuffer& in)
-: netCommandGeneral(EVENT_ID_VERSION)
-{
-	in > Version;
-}
-
-void terEventVersion::Write(XBuffer& out) const
-{
-	out < Version;
-}
-
-//----------------------------------------------------------
- 
-terEventError::terEventError(XBuffer& in)
-: netCommandGeneral(EVENT_ID_ERROR)
-{
-	in > ErrorCode;
-}
-
-void terEventError::Write(XBuffer& out) const
-{
-	out < ErrorCode;
-}
-
 //----------------------------------
 
 terEventControlServerTime::terEventControlServerTime(XBuffer& in)

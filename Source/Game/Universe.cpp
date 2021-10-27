@@ -185,7 +185,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	}
 
     PlayerData playerData;
-    playerData.set(Players.size(), "World", BELLIGERENT_EXODUS0, playerWorldColorIdx, REAL_PLAYER_TYPE_WORLD);
+    playerData.set("World", NETID_NONE, Players.size(), BELLIGERENT_EXODUS0, playerWorldColorIdx, REAL_PLAYER_TYPE_WORLD);
 	terPlayer* world_player = addPlayer(playerData);
 	world_player->loadWorld(data);
 	world_player->setDifficulty(mission.difficulty);

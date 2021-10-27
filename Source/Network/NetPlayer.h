@@ -3,9 +3,6 @@
 
 #include "UnitAttribute.h"
 #include "Serialization.h"
-#include "NetID.h"
-
-const int PLAYER_MAX_NAME_LEN = 64;
 
 struct SavePrm;
 
@@ -36,12 +33,11 @@ public:
 	int handicap = 100;
 	bool flag_playerStartReady = false;
 	bool flag_playerGameReady = false;
-	unsigned int gameVersion = 0;
-	NETID netid = 0;
+	NETID netid = NETID_NONE;
 	
 	PlayerData();
 
-	void set(int playerIDIn, const std::string& name, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
+	void set(const std::string& name, NETID netid = NETID_NONE, int playerIDIn = PLAYER_ID_NONE, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
 
     const char* name() const { return playerName; }
     void setName(const std::string& name);
@@ -50,7 +46,10 @@ public:
 	void write(XBuffer& out) const;
 
     SERIALIZE(ar) {
-        int compAndUserID = 0; //Not used anymore but we need to load existing saves
+        //These are not used anymore but we need to load existing saves
+        int compAndUserID = 0;
+        unsigned int gameVersion = 0;
+        
         ar & WRAP_OBJECT(playerID);
         ar & WRAP_OBJECT(realPlayerType);
         ar & TRANSLATE_OBJECT(belligerent, "Сторона");
@@ -126,15 +125,15 @@ public:
 
 	void disconnect2PlayerData(int idxPlayerData);
 	void connectAI2PlayersData(int idxPlayerData);
-	int connectNewPlayer2PlayersData(PlayerData& pd, NETID netid);
-	int connectLoadPlayer2PlayersData(PlayerData& pd, NETID netid);
+	int connectNewPlayer2PlayersData(PlayerData& pd);
+	int connectLoadPlayer2PlayersData(PlayerData& pd);
 	bool disconnectPlayer2PlayerDataByIndex(unsigned int idx);
 	bool disconnectPlayer2PlayerDataByNETID(NETID netid);
 	bool setPlayerNETID(unsigned int idx, NETID netid);
 
-	int getUniquePlayerColor(int begColor=0, bool dirBack=0);
-	bool changePlayerColor(int playerIdx, int color, bool dirBack=0);
-	bool changePlayerColor(NETID netid, int color, bool dirBack=0);
+	int getUniquePlayerColor(int playerIdx, int begColor=0, bool direction=true);
+	bool changePlayerColor(int playerIdx, int color, bool direction=true);
+	bool changePlayerColor(NETID netid, int color, bool direction=true);
 
 	bool changePlayerDifficulty(int playerIdx, Difficulty difficulty);
 	bool changePlayerDifficulty(NETID netid, Difficulty difficulty);

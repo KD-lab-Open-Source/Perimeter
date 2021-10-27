@@ -47,17 +47,15 @@ void GameShell::callBack_CreateGameReturnCode(e_CreateGameReturnCode retCode) {
 
 int creatingHostDialogQuant(float, float ) {
     if (menuChangingDone) {
-        if (multiplayerMaps.empty()) {
-            loadMapVector(multiplayerMaps, "RESOURCE\\MULTIPLAYER\\", ".spg");
-        }
+        loadMultiplayerList();
 
         CEditWindow* portInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PORT_INPUT));
-        GameHostConnection conn;
+        NetAddress conn;
         std::string address = PERIMETER_IP_HOST_DEFAULT;
         if (!portInput->getText().empty()) {
             address += ":" + portInput->getText();
         }
-        bool resolveFailed = !PNetCenter::resolveHostAddress(conn, address);
+        bool resolveFailed = !NetAddress::resolve(conn, address);
 
         if (multiplayerMaps.empty()) {
             setMessageBoxTextID("Interface.Menu.Messages.UnknownError");

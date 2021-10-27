@@ -11,7 +11,7 @@
 
 #include "dxerr9.h"
 
-#include "P2P_interfaceAux.h"
+#include "NetConnectionAux.h"
 
 WCHAR wstrSession[] = L"Session1";
 WCHAR wstrPlayer[]  = L"Player1";
@@ -117,7 +117,7 @@ XDPConnection::~XDPConnection()
 }
 */
 
-bool PNetCenter::Init(void)
+bool PNetCenter::Init()
 {
     HRESULT hr;
 //	hr = CoCreateInstance(CLSID_DirectPlay8Peer, NULL, 

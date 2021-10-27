@@ -1,37 +1,63 @@
 #ifndef PERIMETER_SERVERLIST_H
 #define PERIMETER_SERVERLIST_H
 
-//Contains host connection info provided by server list or for direct connections
-class GameHostConnection {
-private:
-public:
-    uint64_t server_id; //ID provided by server list, 0 for direct connections
-    IPaddress host_ip; //IP provided by server list upon connection request
+//Contains game related parameters
+struct GameStatusInfo {
+    uint8_t maximumPlayers = 0;
+    uint8_t currrentPlayers = 0;
+    bool flag_gameRun = false;
+    int ping = 0;
+    std::string world;
 
-    void operator=(const GameHostConnection& other) {
-        this->server_id = other.server_id;
-        this->host_ip.host = other.host_ip.host;
-        this->host_ip.port = other.host_ip.port;
+    GameStatusInfo() = default;
+
+    GameStatusInfo(uint8_t _maxPlayers, uint8_t _curPlayers, bool _flag_gameRun, int _ping, const std::string& world): GameStatusInfo() {
+        set(_maxPlayers, _curPlayers, _flag_gameRun, _ping, world);
     }
 
-    GameHostConnection();
-    explicit GameHostConnection(uint64_t server_id);
-    explicit GameHostConnection(const IPaddress& host_ip);
+    void set(uint8_t _maxPlayers, uint8_t _curPlayers, bool _flag_gameRun, int _ping, const std::string& _world) {
+        maximumPlayers=_maxPlayers;
+        currrentPlayers=_curPlayers;
+        flag_gameRun=_flag_gameRun;
+        ping=_ping;
+        world=_world;
+    }
+};
 
-    std::string getString() const;
-    std::string getStringIP() const;  
+//Contains info about host and game inside host
+struct GameHostInfo {
+    NetAddress gameHost;
+    std::string hostName;
+    std::string gameName;
+    GameStatusInfo gameStatusInfo;
+
+    GameHostInfo() = default;
+
+    GameHostInfo(const NetAddress* _gameHost, const char * _hostName, const char * _gameName, const GameStatusInfo* gsi): GameHostInfo() {
+        set(_gameHost, _hostName, _gameName, gsi);
+    }
+
+    void set(const NetAddress* _gameHost, const char * _hostName, const char * _gameName, const GameStatusInfo* gsi){
+        if (_gameHost) gameHost = *_gameHost;
+        if (_hostName) hostName = _hostName;
+        if (_gameName) gameName = _gameName;
+        if (gsi) gameStatusInfo = *gsi;
+    }
 };
 
 class ServerList {
 private:
     bool findingHosts = false;
-    std::vector<GameHostConnection> foundHosts;
 
 public:
+    std::vector<GameHostInfo> gameHostInfoList{};
+    
     ServerList();
     ~ServerList();
     void startHostFind();
     void stopHostFind();
+    void clearHostInfoList();
+    void refreshHostInfoList();
 };
 
 #endif //PERIMETER_SERVERLIST_H

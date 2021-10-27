@@ -232,12 +232,14 @@ public:
 	void callBack_CreateGameReturnCode(e_CreateGameReturnCode retCode);
 	enum e_JoinGameReturnCode {
 		JG_RC_OK,
+        JG_RC_SIGNATURE_ERR,
 		JG_RC_PASSWORD_ERR,
 		JG_RC_CONNECTION_ERR,
 		JG_RC_GAME_IS_RUN_ERR,
 		JG_RC_GAME_IS_FULL_ERR,
 		JG_RC_GAME_NOT_EQUAL_VERSION_ERR,
-        JG_RC_GAME_NOT_EQUAL_CONTENT_ERR
+        JG_RC_GAME_NOT_EQUAL_CONTENT_ERR,
+        JG_RC_GAME_NOT_EQUAL_ARCH_ERR
 	};
 	void callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode);
 	
@@ -248,6 +250,7 @@ public:
 
 	enum GeneralErrorType {
 		GENERAL_CONNECTION_FAILED,
+        CLIENT_DROPPED,
 		HOST_TERMINATED
 	};
 	void generalErrorOccured(GeneralErrorType error);
@@ -311,8 +314,6 @@ private:
 	class PNetCenter* NetClient;
 		
 	MissionEditor* missionEditor_;
-
-	std::string defaultSaveName_;
 
 	int synchroByClock_;
 	int framePeriod_;

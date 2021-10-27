@@ -59,8 +59,16 @@ void GameShell::callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode) {
             setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectContent");
             showMessageBoxButtons();
             break;
+        case JG_RC_GAME_NOT_EQUAL_ARCH_ERR:
+            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectArch");
+            showMessageBoxButtons();
+            break;
         case JG_RC_PASSWORD_ERR:
             setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectPassword");
+            showMessageBoxButtons();
+            break;
+        case JG_RC_SIGNATURE_ERR:
+            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.SignatureError");
             showMessageBoxButtons();
             break;
         default:
@@ -70,8 +78,8 @@ void GameShell::callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode) {
     }
 }
 
-int multiplayerJoinInterruptHandler( float, float ) {
-    //interrupt connecting
+int multiplayerJoinBackHandler( float, float ) {
+    //handles connection failed
     gameShell->getNetClient()->FinishGame();
     gameShell->getNetClient()->StartFindHost();
     hideMessageBox();
@@ -111,8 +119,9 @@ void onMMMultiplayerJoinNextBtn(CShellWindow* pWnd, InterfaceEventCode code, int
 			showMessageBox();
         } else {
             putStringSettings(regLanName, input->getText());
+            putStringSettings("JoinIP", ipInput->getText());
             
-            setupOkMessageBox(multiplayerJoinInterruptHandler, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_BACK, false);
+            setupOkMessageBox(multiplayerJoinBackHandler, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_BACK, false);
             showMessageBox();
 
             _shellIconManager.AddDynamicHandler( joinHostHandler, CBCODE_QUANT );

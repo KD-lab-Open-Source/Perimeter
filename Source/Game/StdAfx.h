@@ -58,9 +58,8 @@
 #include "SystemUtil.h"
 #include "DebugUtil.h"
 
-#include "NetID.h"
-#include "ConnectionDP.h"
-#include "EventBufferDP.h"
+#include "NetConnection.h"
+#include "NetComEventBuffer.h"
 #include "CommonEvents.h"
 
 //TODO wtf?
