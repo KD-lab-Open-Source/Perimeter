@@ -221,31 +221,9 @@ void GameShell::generalErrorOccured(GeneralErrorType error) {
 
 ////////// Lobby/Ingame chat /////////////
 
-std::string colorComponentToString(unsigned char component) {
-    char buff[3];
-    snprintf(buff, 3, "%x", component);
-    buff[2] = 0;
-    if (strlen(buff) > 1) {
-        return buff;
-    } else {
-        return std::string("0") + buff;
-    }
-}
-
-void chatWindowInput(CChatInGameEditWindow* chatInput, int clan, const sColor4c& color, const std::string& name) {
-    std::string strToSay =
-            "&"
-            +	colorComponentToString(color.r)
-            +	colorComponentToString(color.g)
-            +	colorComponentToString(color.b)
-            +	name
-            +	"&FFFFFF"
-            +	(clan == -2 ? "" : chatInput->getModePostfix())
-            +	": "
-            +	chatInput->getText();
-
-    //gameShell->addStringToChatWindow(strToSay);
-    gameShell->getNetClient()->chatMessage(clan < 0 ? -1 : clan, strToSay.c_str());
+void chatWindowInput(CChatInGameEditWindow* chatInput, bool lobby) {
+    std::string strToSay = (lobby ? "" : chatInput->getModePostfix()) + ": " + chatInput->getText();
+    gameShell->getNetClient()->chatMessage(lobby ? false : chatInput->alliesOnlyMode, strToSay.c_str());
     chatInput->SetText("");
 }
 
@@ -253,16 +231,7 @@ void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int p
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
         if (!chatInput->getText().empty()) {
-            MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
-            int colorIndex = currMission.getActivePlayerData().colorIndex;
-            sColor4c activePlayerColor = sColor4c(sColor4f(playerColors[colorIndex].unitColor));
-
-            chatWindowInput(
-                chatInput,
-                -2,
-                activePlayerColor,
-                currMission.getActivePlayerData().name()
-            );
+            chatWindowInput(chatInput, true);
         }
     }
 }
@@ -272,14 +241,7 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
         terPlayer* activePlayer = universe()->activePlayer();
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
         if (activePlayer && !chatInput->getText().empty()) {
-            int colorIndex = activePlayer->colorIndex();
-            sColor4c activePlayerColor = sColor4c( sColor4f(playerColors[colorIndex].unitColor) );
-            chatWindowInput(
-                chatInput,
-                chatInput->alliesOnlyMode ? activePlayer->clan() : -1,
-                activePlayerColor,
-                activePlayer->name()
-            );
+            chatWindowInput(chatInput, false);
         }
     }
 }
@@ -298,14 +260,11 @@ int addStringToChatHintWindowQuant( float, float ) {
     return 0;
 }
 
-void GameShell::addStringToChatWindow(int clanNum, const char* newString) {
+void GameShell::addStringToChatWindow(const std::string& newString) {
     toChatStr = newString;
     if (_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT)) {
         _shellIconManager.AddDynamicHandler( addStringToChatWindowQuant, CBCODE_QUANT );
     } else {
-        terPlayer* activePlayer = universe()->activePlayer();
-        if (clanNum == -1 || (activePlayer && activePlayer->clan() == clanNum)) {
-            _shellIconManager.AddDynamicHandler( addStringToChatHintWindowQuant, CBCODE_QUANT );
-        }
+        _shellIconManager.AddDynamicHandler( addStringToChatHintWindowQuant, CBCODE_QUANT );
     }
 }

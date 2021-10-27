@@ -547,7 +547,7 @@ public:
 	bool clientInPacketPause;
 
 	//Chat
-	void chatMessage(int userID, const char* str);
+	void chatMessage(bool clanOnly, const char* str);
 
     //NetConnection stuff
     void handleIncomingClientConnection(NetConnection* connection);

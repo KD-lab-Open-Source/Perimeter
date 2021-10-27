@@ -368,7 +368,7 @@ void PNetCenter::HandlerInputNetCommand()
 		case NETCOM_4G_ID_CHAT_MESSAGE:
 			{
 				netCommand4G_ChatMessage nc_ChatMessage(in_ClientBuf);
-				gameShell->addStringToChatWindow(nc_ChatMessage.userID, nc_ChatMessage.getText());
+				gameShell->addStringToChatWindow(nc_ChatMessage.text);
 			}
 			break;
 		default: 
@@ -519,9 +519,9 @@ void PNetCenter::changePlayerHandicap(int idxPlayerData, int handicap)
 	SendEvent(&nc_ChH);
 }
 
-void PNetCenter::chatMessage(int userID, const char* str)
+void PNetCenter::chatMessage(bool clanOnly, const char* str)
 {
-	netCommand4G_ChatMessage nc_ChatMessage(userID, str);
+	netCommand4G_ChatMessage nc_ChatMessage(clanOnly, str);
 	SendEvent(&nc_ChatMessage);
 }
 

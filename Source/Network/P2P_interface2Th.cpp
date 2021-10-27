@@ -14,6 +14,18 @@
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
 
 
+std::string colorComponentToString(float component) {
+    uint8_t val = static_cast<uint8_t>(std::round(255 * component));
+    char buff[3];
+    snprintf(buff, 3, "%x", val);
+    buff[2] = 0;
+    if (strlen(buff) > 1) {
+        return buff;
+    } else {
+        return std::string("0") + buff;
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 PClientData::PClientData(unsigned int mdIdx, const char* name, NETID netid)
@@ -1348,7 +1360,35 @@ void PNetCenter::HostReceiveQuant()
 					case NETCOM_4G_ID_CHAT_MESSAGE:
 						{
 							netCommand4G_ChatMessage nc_ChatMessage(in_HostBuf);
-							SendEvent(nc_ChatMessage, NETID_ALL);
+                            
+                            //Get player data that send this
+                            int playerID = hostMissionDescription.findPlayer(netid);
+                            if (playerID != -1) {
+                                nc_ChatMessage.playerID = playerID;
+                                const auto& playerData = hostMissionDescription.playersData[playerID];
+                                const auto& pc = playerColors[playerData.colorIndex].unitColor;
+                                
+                                //Add color and name of player to text
+                                std::string text = "&"
+                                   + colorComponentToString(pc[0])
+                                   + colorComponentToString(pc[1])
+                                   + colorComponentToString(pc[2])
+                                   + playerData.name()
+                                   + "&FFFFFF"
+                                   + nc_ChatMessage.text;
+                                nc_ChatMessage.text = text;
+                                
+                                //Find if we need to send to sender clan or everyone (sender included)
+                                if (nc_ChatMessage.clanOnly) {
+                                    for (const auto& missionPlayer : hostMissionDescription.playersData) {
+                                        if (missionPlayer.clan == playerData.clan) {
+                                            SendEvent(nc_ChatMessage, missionPlayer.netid);
+                                        }
+                                    }
+                                } else {
+                                    SendEvent(nc_ChatMessage, NETID_ALL);
+                                }
+                            }
 						}
 						break;
 					case EVENT_ID_SERVER_TIME_CONTROL:

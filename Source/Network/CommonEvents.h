@@ -309,32 +309,29 @@ public:
 class netCommand4G_ChatMessage : public netCommandGeneral
 {
 public:
-	netCommand4G_ChatMessage(const int _userID, const char* textStr) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
-		userID=_userID;
-		dataSize_=strlen(textStr)+1;
-		pData_=new char[dataSize_];
-		memcpy(pData_, textStr, dataSize_);
+	netCommand4G_ChatMessage(const bool clanOnly_, const std::string& text_) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
+        playerID = -1; //Added by host
+        clanOnly = clanOnly_;
+		text = text_;
 	}
+    
 	netCommand4G_ChatMessage(XBuffer& in) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
-		in.read(&userID, sizeof(userID));
-		in.read(&dataSize_, sizeof(dataSize_));
-		pData_=new char[dataSize_];
-		in.read(pData_, dataSize_);
+        in.read(&playerID, sizeof(playerID));
+        in.read(&clanOnly, sizeof(clanOnly));
+		in > StringInWrapper(text);
 	}
+    
+    ~netCommand4G_ChatMessage() = default;
+    
 	void Write(XBuffer& out) const override {
-		out.write(&userID, sizeof(userID));
-		out.write(&dataSize_, sizeof(dataSize_));
-		out.write(pData_, dataSize_);
+        out.write(&playerID, sizeof(playerID));
+        out.write(&clanOnly, sizeof(clanOnly));
+		out < StringOutWrapper(text);
 	}
-	const char* getText(){
-		if(dataSize_>0){
-			pData_[dataSize_-1]=0;
-		}
-		return pData_;
-	}
-	int userID;
-	unsigned int dataSize_;
-	char* pData_;
+    
+	int playerID;
+    bool clanOnly;
+	std::string text;
 };
 
 ////////////////////////////////////////////////////////////////////////////

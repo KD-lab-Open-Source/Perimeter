@@ -257,7 +257,7 @@ public:
 
 	void abnormalNetCenterTermination();
 
-	void addStringToChatWindow(int clanNum, const char* newString);
+	void addStringToChatWindow(const std::string& newString);
 
 	//-----end of network function----
 
