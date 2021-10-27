@@ -440,7 +440,7 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
             " - This message" << std::endl <<
             " - Log file from " << basePath << log_name.c_str() << std::endl <<
             " - Crash files from " << basePath << CRASH_DIR << std::endl <<
-            "To https://t.me/PerimeterGame or https://github.com/KranX/Perimeter" << std::endl;
+            "To https://t.me/PerimeterGame or https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
     std::string str =  stream.str();
 
     //Write to log, only if constructor was called since static code can also cause issues before we are constructed

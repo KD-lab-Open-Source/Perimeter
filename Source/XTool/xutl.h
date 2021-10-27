@@ -2,7 +2,7 @@
 #ifndef __XUTL_H
 #define __XUTL_H
 
-#define GET_PREF_PATH() SDL_GetPrefPath("KranX Productions", "Perimeter")
+#define GET_PREF_PATH() SDL_GetPrefPath("KD Vision", "Perimeter")
 #define PRINTF_FLOATING_FORMAT "%.*f"
 #define PRINTF_LONG_FLOATING_FORMAT "%.*Lf"
 
