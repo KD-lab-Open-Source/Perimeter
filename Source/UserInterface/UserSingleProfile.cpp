@@ -138,11 +138,13 @@ void UserSingleProfile::setCurrentProfileIndex(int index) {
 }
 
 void UserSingleProfile::deleteSave(const std::string& name) {
-	std::string fullName = getSavesDirectory() + name;
+    std::string savesDir = getSavesDirectory();
+	std::string fullName = savesDir + name;
 	std::remove( (fullName + ".spg").c_str() );
 	std::remove( (fullName + ".gmp").c_str() );
 	std::remove( (fullName + ".dat").c_str() );
 	std::remove( (fullName + ".sph").c_str() );
+    scan_resource_paths(savesDir);
 }
 
 std::string UserSingleProfile::getAllSavesDirectory() {

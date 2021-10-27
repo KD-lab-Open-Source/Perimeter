@@ -18,6 +18,7 @@
 #include "PerimeterShellUI.h"
 #include "qd_textdb.h"
 #include "WarBuilding.h"
+#include "BelligerentSelect.h"
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
@@ -109,18 +110,18 @@ bool ConditionIsPlayerAI::check(AIPlayer& aiPlayer)
 
 bool ConditionCheckBelligerent::check(AIPlayer& aiPlayer) 
 { 
+    BELLIGERENT_FACTION faction = getBelligerentFaction(aiPlayer.belligerent());
 	switch(belligerent){
-	case EXODUS:
-		return aiPlayer.belligerent() == BELLIGERENT_EXODUS0 || aiPlayer.belligerent() == BELLIGERENT_EXODUS1 ||
-			aiPlayer.belligerent() == BELLIGERENT_EXODUS2 || aiPlayer.belligerent() == BELLIGERENT_EXODUS3 || aiPlayer.belligerent() == BELLIGERENT_EXODUS4;
-	case HARKBACKHOOD:
-		return aiPlayer.belligerent() == BELLIGERENT_HARKBACKHOOD0 || aiPlayer.belligerent() == BELLIGERENT_HARKBACKHOOD1;
-	case EMPIRE:
-		return aiPlayer.belligerent() == BELLIGERENT_EMPIRE0 || aiPlayer.belligerent() == BELLIGERENT_EMPIRE1 ||
-			aiPlayer.belligerent() == BELLIGERENT_EMPIRE2 || aiPlayer.belligerent() == BELLIGERENT_EMPIRE_VICE || 
-			aiPlayer.belligerent() == BELLIGERENT_EMPIRE3  || aiPlayer.belligerent() == BELLIGERENT_EMPIRE4;
+	case Belligerent::EXODUS:
+        return faction == BELLIGERENT_FACTION::EXODUS;
+	case Belligerent::HARKBACKHOOD:
+        return faction == BELLIGERENT_FACTION::HARKBACK;
+    case Belligerent::EMPIRE:
+		return faction == BELLIGERENT_FACTION::EMPIRE;
+    default:
+        xassert(0);
+        return false;
 	}
-	return false; 
 }
 
 bool ConditionObjectExists::check(AIPlayer& aiPlayer) 
@@ -1387,7 +1388,7 @@ bool ActionSetCameraAtObject::workedOut(AIPlayer& aiPlayer)
 
 void ActionSetControls::activate(AIPlayer& aiPlayer)
 { 
-	gameShell->changeControlState(controls);
+	gameShell->changeControlState(controls, false);
 } 
 
 void ActionSelectUnit::activate(AIPlayer& aiPlayer)
@@ -1861,12 +1862,16 @@ void SaveUnitLink::setLink(terUnitBase*& unit) const
 
 void SaveUnitLink::resolveLink() const
 {
-	if(unitID){
-		*unitLink_ = universe()->findUnit(terUnitID(unitID, playerID));
-		xassert(*unitLink_);
-	}
-	else
-		*unitLink_ = 0;
+    terUnitBase* unit = nullptr;
+    if (unitID) {
+        unit = universe()->findUnit(terUnitID(unitID, playerID));
+		//xassert(unit);
+    }
+    if (!unit) {
+        *unitLink_ = nullptr;
+    } else {
+        *unitLink_ = unit;
+    }
 }
 
 

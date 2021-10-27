@@ -1,0 +1,2307 @@
+TriggerChain = {
+	name = "";
+	triggers = {
+		33;
+		{
+			name = "START";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				8;
+				{
+					triggerName = "ЗАДАНИЕ";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 16;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 15;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 16;
+						y = 16;
+					};
+					childOffset = {
+						x = 15;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "старт";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 107;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -46;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 107;
+						y = 16;
+					};
+					childOffset = {
+						x = -46;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "на взрыв";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = -10;
+					childOffsetX_ = -128;
+					childOffsetY_ = -6;
+					parentOffset = {
+						x = 128;
+						y = -10;
+					};
+					childOffset = {
+						x = -128;
+						y = -6;
+					};
+				},
+				{
+					triggerName = "выкл. интерфейс0";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 124;
+					parentOffsetY_ = -16;
+					childOffsetX_ = -122;
+					childOffsetY_ = 16;
+					parentOffset = {
+						x = 124;
+						y = -16;
+					};
+					childOffset = {
+						x = -122;
+						y = 16;
+					};
+				},
+				{
+					triggerName = "уровень сложности";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 4;
+					childOffsetX_ = -128;
+					childOffsetY_ = 3;
+					parentOffset = {
+						x = 128;
+						y = 4;
+					};
+					childOffset = {
+						x = -128;
+						y = 3;
+					};
+				},
+				{
+					triggerName = "уровень сложность 1";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 6;
+					childOffsetX_ = -128;
+					childOffsetY_ = -10;
+					parentOffset = {
+						x = 128;
+						y = 6;
+					};
+					childOffset = {
+						x = -128;
+						y = -10;
+					};
+				},
+				{
+					triggerName = "уровень сложности0";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 7;
+					childOffsetX_ = -128;
+					childOffsetY_ = -13;
+					parentOffset = {
+						x = 128;
+						y = 7;
+					};
+					childOffset = {
+						x = -128;
+						y = -13;
+					};
+				},
+				{
+					triggerName = "11";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -128;
+					parentOffsetY_ = -2;
+					childOffsetX_ = 128;
+					childOffsetY_ = -5;
+					parentOffset = {
+						x = -128;
+						y = -2;
+					};
+					childOffset = {
+						x = 128;
+						y = -5;
+					};
+				}
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 0;
+			left_ = 0;
+			top_ = 0;
+			right_ = 256;
+			bottom_ = 32;
+			cellIndex = {
+				x = 0;
+				y = 0;
+			};
+			boundingRect = {
+				left = 0;
+				top = 0;
+				right = 256;
+				bottom = 32;
+			};
+		},
+		{
+			name = "Victory";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionTeleportation" {
+							state_ = true;
+							internalColor_ = 0;
+							teleportationType = TELEPORTATION_TYPE_OMEGA;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionVictory" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 12632256;
+			cellNumberX = 2;
+			cellNumberY = 3;
+			left_ = 576;
+			top_ = 192;
+			right_ = 832;
+			bottom_ = 224;
+			cellIndex = {
+				x = 2;
+				y = 3;
+			};
+			boundingRect = {
+				left = 576;
+				top = 192;
+				right = 832;
+				bottom = 224;
+			};
+		},
+		{
+			name = "Camera";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								0;
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionSetCamera" {
+				internalColor_ = 0;
+				cameraSplineName = "Camera0";
+				stepTime = 7.8125e-003;
+				cycles = 1059815424;
+				smoothTransition = false;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "кат-сцена";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 30;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 25;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 30;
+						y = 16;
+					};
+					childOffset = {
+						x = 25;
+						y = -16;
+					};
+				}
+			};
+			state_ = CHECKING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -1;
+			cellNumberY = 0;
+			left_ = -288;
+			top_ = 0;
+			right_ = -32;
+			bottom_ = 32;
+			cellIndex = {
+				x = -1;
+				y = 0;
+			};
+			boundingRect = {
+				left = -288;
+				top = 0;
+				right = -32;
+				bottom = 32;
+			};
+		},
+		{
+			name = "ЗАДАНИЕ";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = AND;
+							conditions = {
+								1;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_FRAME;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								}
+							};
+						};
+					}
+				};
+			};
+			action = "struct ActionTask" {
+				internalColor_ = 0;
+				type = ASSIGNED;
+				taskID = "Mission Tasks.Mission 00.Task 1";
+				duration = 15;
+				syncroBySound = false;
+				showTips = true;
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "активировать метку ядра";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -3;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -4;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = -3;
+						y = 16;
+					};
+					childOffset = {
+						x = -4;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "1подсказка";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 56;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 56;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 56;
+						y = 16;
+					};
+					childOffset = {
+						x = 56;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 14277119;
+			cellNumberX = 0;
+			cellNumberY = 1;
+			left_ = 0;
+			top_ = 64;
+			right_ = 256;
+			bottom_ = 96;
+			cellIndex = {
+				x = 0;
+				y = 1;
+			};
+			boundingRect = {
+				left = 0;
+				top = 64;
+				right = 256;
+				bottom = 96;
+			};
+		},
+		{
+			name = "телепортится";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_STARTED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORRIDOR_OMEGA;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionTeleportationOut" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "Victory";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 120;
+					parentOffsetY_ = -16;
+					childOffsetX_ = -88;
+					childOffsetY_ = 16;
+					parentOffset = {
+						x = 120;
+						y = -16;
+					};
+					childOffset = {
+						x = -88;
+						y = 16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 7;
+			left_ = 288;
+			top_ = 448;
+			right_ = 544;
+			bottom_ = 480;
+			cellIndex = {
+				x = 1;
+				y = 7;
+			};
+			boundingRect = {
+				left = 288;
+				top = 448;
+				right = 544;
+				bottom = 480;
+			};
+		},
+		{
+			name = "активировать метку ядра";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionActivateObjectByLabel" {
+				internalColor_ = 0;
+				label = "ядро";
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "деактивировать метку ядра";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 0;
+					childOffsetX_ = -128;
+					childOffsetY_ = 0;
+					parentOffset = {
+						x = 128;
+						y = 0;
+					};
+					childOffset = {
+						x = -128;
+						y = 0;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 4;
+			left_ = 0;
+			top_ = 256;
+			right_ = 256;
+			bottom_ = 288;
+			cellIndex = {
+				x = 0;
+				y = 4;
+			};
+			boundingRect = {
+				left = 0;
+				top = 256;
+				right = 256;
+				bottom = 288;
+			};
+		},
+		{
+			name = "деактивировать метку ядра";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					3;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectNearObjectByLabel" {
+							state_ = false;
+							internalColor_ = 0;
+							label = "ядро";
+							object = UNIT_ATTRIBUTE_CORE;
+							objectConstructed = true;
+							playerType = AI_PLAYER_TYPE_ME;
+							distance = 150.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectNearObjectByLabel" {
+							state_ = false;
+							internalColor_ = 0;
+							label = "ядро";
+							object = UNIT_ATTRIBUTE_FRAME;
+							objectConstructed = false;
+							playerType = AI_PLAYER_TYPE_ME;
+							distance = 150.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_CORRIDOR_OMEGA;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionDeactivateObjectByLabel" {
+				internalColor_ = 0;
+				label = "ядро";
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 4;
+			left_ = 288;
+			top_ = 256;
+			right_ = 544;
+			bottom_ = 288;
+			cellIndex = {
+				x = 1;
+				y = 4;
+			};
+			boundingRect = {
+				left = 288;
+				top = 256;
+				right = 544;
+				bottom = 288;
+			};
+		},
+		{
+			name = "проигрыш1";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionDefeat" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 2;
+			cellNumberY = 2;
+			left_ = 576;
+			top_ = 128;
+			right_ = 832;
+			bottom_ = 160;
+			cellIndex = {
+				x = 2;
+				y = 2;
+			};
+			boundingRect = {
+				left = 576;
+				top = 128;
+				right = 832;
+				bottom = 160;
+			};
+		},
+		{
+			name = "старт";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct Action" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "Victory";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 0;
+					childOffsetX_ = -128;
+					childOffsetY_ = 0;
+					parentOffset = {
+						x = 128;
+						y = 0;
+					};
+					childOffset = {
+						x = -128;
+						y = 0;
+					};
+				},
+				{
+					triggerName = "задание1-провалено";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 82;
+					parentOffsetY_ = -16;
+					childOffsetX_ = 84;
+					childOffsetY_ = 16;
+					parentOffset = {
+						x = 82;
+						y = -16;
+					};
+					childOffset = {
+						x = 84;
+						y = 16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 3;
+			left_ = 288;
+			top_ = 192;
+			right_ = 544;
+			bottom_ = 224;
+			cellIndex = {
+				x = 1;
+				y = 3;
+			};
+			boundingRect = {
+				left = 288;
+				top = 192;
+				right = 544;
+				bottom = 224;
+			};
+		},
+		{
+			name = "после установки первого ядра";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectNearObjectByLabel" {
+							state_ = false;
+							internalColor_ = 0;
+							label = "ядро";
+							object = UNIT_ATTRIBUTE_CORE;
+							objectConstructed = true;
+							playerType = AI_PLAYER_TYPE_ME;
+							distance = 150.;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionMessage" {
+				internalColor_ = 0;
+				messageID = "Mission Tips.Mission 00.Tip 2";
+				message = "";
+				delay = 0;
+				duration = 5;
+				syncroBySound = true;
+				delayTimer = {
+					time = 0;
+				};
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 14540287;
+			cellNumberX = 0;
+			cellNumberY = 3;
+			left_ = 0;
+			top_ = 192;
+			right_ = 256;
+			bottom_ = 224;
+			cellIndex = {
+				x = 0;
+				y = 3;
+			};
+			boundingRect = {
+				left = 0;
+				top = 192;
+				right = 256;
+				bottom = 224;
+			};
+		},
+		{
+			name = "задание1 выполнено";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionTask" {
+				internalColor_ = 0;
+				type = COMPLETED;
+				taskID = "Mission Tasks.Mission 00.Task 1";
+				duration = 5;
+				syncroBySound = false;
+				showTips = true;
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "задание2 выполнено";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 81;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 81;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 81;
+						y = 16;
+					};
+					childOffset = {
+						x = 81;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "задание2";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 40;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 41;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 40;
+						y = 16;
+					};
+					childOffset = {
+						x = 41;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 12615935;
+			cellNumberX = 0;
+			cellNumberY = 5;
+			left_ = 0;
+			top_ = 320;
+			right_ = 256;
+			bottom_ = 352;
+			cellIndex = {
+				x = 0;
+				y = 5;
+			};
+			boundingRect = {
+				left = 0;
+				top = 320;
+				right = 256;
+				bottom = 352;
+			};
+		},
+		{
+			name = "задание2";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_STARTED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionTask" {
+				internalColor_ = 0;
+				type = ASSIGNED;
+				taskID = "Mission Tasks.Mission 00.Task 2";
+				duration = 5;
+				syncroBySound = false;
+				showTips = true;
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				4;
+				{
+					triggerName = "задание2 выполнено";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 39;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 38;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 39;
+						y = 16;
+					};
+					childOffset = {
+						x = 38;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "на фрейм";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 61;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 61;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "телепортится";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 117;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -12;
+					parentOffset = {
+						x = 117;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -12;
+					};
+				},
+				{
+					triggerName = "выкл. интерфейс";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 104;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -10;
+					parentOffset = {
+						x = 104;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -10;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 14540287;
+			cellNumberX = 0;
+			cellNumberY = 6;
+			left_ = 0;
+			top_ = 384;
+			right_ = 256;
+			bottom_ = 416;
+			cellIndex = {
+				x = 0;
+				y = 6;
+			};
+			boundingRect = {
+				left = 0;
+				top = 384;
+				right = 256;
+				bottom = 416;
+			};
+		},
+		{
+			name = "задание2 выполнено";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_ENABLED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionTask" {
+				internalColor_ = 0;
+				type = COMPLETED;
+				taskID = "Mission Tasks.Mission 00.Task 2";
+				duration = 5;
+				syncroBySound = false;
+				showTips = true;
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 12615935;
+			cellNumberX = 0;
+			cellNumberY = 7;
+			left_ = 0;
+			top_ = 448;
+			right_ = 256;
+			bottom_ = 480;
+			cellIndex = {
+				x = 0;
+				y = 7;
+			};
+			boundingRect = {
+				left = 0;
+				top = 448;
+				right = 256;
+				bottom = 480;
+			};
+		},
+		{
+			name = "1подсказка";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionMessage" {
+				internalColor_ = 0;
+				messageID = "Mission Tips.Mission 00.Tip 1";
+				message = "";
+				delay = 0;
+				duration = 5;
+				syncroBySound = true;
+				delayTimer = {
+					time = 0;
+				};
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "после установки первого ядра";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 49;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 47;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 49;
+						y = 16;
+					};
+					childOffset = {
+						x = 47;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "пауза1";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -102;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 123;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = -102;
+						y = 16;
+					};
+					childOffset = {
+						x = 123;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 14540287;
+			cellNumberX = 0;
+			cellNumberY = 2;
+			left_ = 0;
+			top_ = 128;
+			right_ = 256;
+			bottom_ = 160;
+			cellIndex = {
+				x = 0;
+				y = 2;
+			};
+			boundingRect = {
+				left = 0;
+				top = 128;
+				right = 256;
+				bottom = 160;
+			};
+		},
+		{
+			name = "кат-сцена";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSetCamera" {
+				internalColor_ = 0;
+				cameraSplineName = "начало";
+				stepTime = 2.;
+				cycles = 1;
+				smoothTransition = true;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "вкл.интерфейс";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 38;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 38;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 38;
+						y = 16;
+					};
+					childOffset = {
+						x = 38;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "2";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -43;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -46;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = -43;
+						y = 16;
+					};
+					childOffset = {
+						x = -46;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 12632256;
+			cellNumberX = -1;
+			cellNumberY = 1;
+			left_ = -288;
+			top_ = 64;
+			right_ = -32;
+			bottom_ = 96;
+			cellIndex = {
+				x = -1;
+				y = 1;
+			};
+			boundingRect = {
+				left = -288;
+				top = 64;
+				right = -32;
+				bottom = 96;
+			};
+		},
+		{
+			name = "UserCamera";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = 0;
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -1;
+			cellNumberY = -1;
+			left_ = -288;
+			top_ = -64;
+			right_ = -32;
+			bottom_ = -32;
+			cellIndex = {
+				x = -1;
+				y = -1;
+			};
+			boundingRect = {
+				left = -288;
+				top = -64;
+				right = -32;
+				bottom = -32;
+			};
+		},
+		{
+			name = "вкл.интерфейс";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionSetInterface" {
+				internalColor_ = 0;
+				enableInterface = true;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "1подсказка";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = -11;
+					childOffsetX_ = -120;
+					childOffsetY_ = 16;
+					parentOffset = {
+						x = 128;
+						y = -11;
+					};
+					childOffset = {
+						x = -120;
+						y = 16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -1;
+			cellNumberY = 3;
+			left_ = -288;
+			top_ = 192;
+			right_ = -32;
+			bottom_ = 224;
+			cellIndex = {
+				x = -1;
+				y = 3;
+			};
+			boundingRect = {
+				left = -288;
+				top = 192;
+				right = -32;
+				bottom = 224;
+			};
+		},
+		{
+			name = "выкл. интерфейс";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_STARTED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					}
+				};
+			};
+			action = "struct ActionSetInterface" {
+				internalColor_ = 0;
+				enableInterface = false;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 8;
+			left_ = 288;
+			top_ = 512;
+			right_ = 544;
+			bottom_ = 544;
+			cellIndex = {
+				x = 1;
+				y = 8;
+			};
+			boundingRect = {
+				left = 288;
+				top = 512;
+				right = 544;
+				bottom = 544;
+			};
+		},
+		{
+			name = "на фрейм";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_STARTED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					}
+				};
+			};
+			action = "struct ActionSetCameraAtObject" {
+				internalColor_ = 0;
+				object = UNIT_ATTRIBUTE_FRAME;
+				playerType = AI_PLAYER_TYPE_ME;
+				transitionTime = 0;
+				setFollow = true;
+				turnTime = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 12632256;
+			cellNumberX = 1;
+			cellNumberY = 9;
+			left_ = 288;
+			top_ = 576;
+			right_ = 544;
+			bottom_ = 608;
+			cellIndex = {
+				x = 1;
+				y = 9;
+			};
+			boundingRect = {
+				left = 288;
+				top = 576;
+				right = 544;
+				bottom = 608;
+			};
+		},
+		{
+			name = "задание1-провалено";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					3;
+					{
+						type = INVERTED;
+						condition = "struct ConditionFrameState" {
+							state_ = false;
+							internalColor_ = 0;
+							state = AI_FRAME_STATE_TELEPORTATION_STARTED;
+							playerType = AI_PLAYER_TYPE_ME;
+							spiralChargingPercent = 100;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionTeleportation" {
+							state_ = false;
+							internalColor_ = 0;
+							teleportationType = TELEPORTATION_TYPE_OMEGA;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					},
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
+				};
+			};
+			action = "struct ActionTask" {
+				internalColor_ = 0;
+				type = FAILED;
+				taskID = "Mission Tasks.Mission 00.Task 1";
+				duration = 5;
+				syncroBySound = false;
+				showTips = true;
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "задание2-провалено";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 0;
+					childOffsetX_ = -128;
+					childOffsetY_ = 0;
+					parentOffset = {
+						x = 128;
+						y = 0;
+					};
+					childOffset = {
+						x = -128;
+						y = 0;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 8421631;
+			cellNumberX = 1;
+			cellNumberY = 1;
+			left_ = 288;
+			top_ = 64;
+			right_ = 544;
+			bottom_ = 96;
+			cellIndex = {
+				x = 1;
+				y = 1;
+			};
+			boundingRect = {
+				left = 288;
+				top = 64;
+				right = 544;
+				bottom = 96;
+			};
+		},
+		{
+			name = "задание2-провалено";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionTask" {
+				internalColor_ = 0;
+				type = FAILED;
+				taskID = "Mission Tasks.Mission 00.Task 2";
+				duration = 5;
+				syncroBySound = false;
+				showTips = true;
+				durationTimer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "проигрыш1";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -40;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -40;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = -40;
+						y = 16;
+					};
+					childOffset = {
+						x = -40;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 8421631;
+			cellNumberX = 2;
+			cellNumberY = 1;
+			left_ = 576;
+			top_ = 64;
+			right_ = 832;
+			bottom_ = 96;
+			cellIndex = {
+				x = 2;
+				y = 1;
+			};
+			boundingRect = {
+				left = 576;
+				top = 64;
+				right = 832;
+				bottom = 96;
+			};
+		},
+		{
+			name = "на взрыв";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionKillObject" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionSetCameraAtObject" {
+				internalColor_ = 0;
+				object = UNIT_ATTRIBUTE_FRAME;
+				playerType = AI_PLAYER_TYPE_ME;
+				transitionTime = 0;
+				setFollow = false;
+				turnTime = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 12632256;
+			cellNumberX = 1;
+			cellNumberY = 0;
+			left_ = 288;
+			top_ = 0;
+			right_ = 544;
+			bottom_ = 32;
+			cellIndex = {
+				x = 1;
+				y = 0;
+			};
+			boundingRect = {
+				left = 288;
+				top = 0;
+				right = 544;
+				bottom = 32;
+			};
+		},
+		{
+			name = "выкл. интерфейс0";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionKillObject" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionSetInterface" {
+				internalColor_ = 0;
+				enableInterface = false;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = -1;
+			left_ = 288;
+			top_ = -64;
+			right_ = 544;
+			bottom_ = -32;
+			cellIndex = {
+				x = 1;
+				y = -1;
+			};
+			boundingRect = {
+				left = 288;
+				top = -64;
+				right = 544;
+				bottom = -32;
+			};
+		},
+		{
+			name = "на фрейм0";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					1;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSkipCutScene" {
+							state_ = true;
+							internalColor_ = 0;
+						};
+					}
+				};
+			};
+			action = "struct ActionSetCamera" {
+				internalColor_ = 0;
+				cameraSplineName = "на фрейм";
+				stepTime = 1.;
+				cycles = 1;
+				smoothTransition = false;
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "вкл.интерфейс";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 124;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -128;
+					childOffsetY_ = -11;
+					parentOffset = {
+						x = 124;
+						y = 16;
+					};
+					childOffset = {
+						x = -128;
+						y = -11;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 12632256;
+			cellNumberX = -2;
+			cellNumberY = 2;
+			left_ = -576;
+			top_ = 128;
+			right_ = -320;
+			bottom_ = 160;
+			cellIndex = {
+				x = -2;
+				y = 2;
+			};
+			boundingRect = {
+				left = -576;
+				top = 128;
+				right = -320;
+				bottom = 160;
+			};
+		},
+		{
+			name = "уровень сложности";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 20;
+				showTimer = false;
+				scaleByDifficulty = true;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "Г3";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = -23;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -22;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = -23;
+						y = 16;
+					};
+					childOffset = {
+						x = -22;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 3;
+			cellNumberY = 0;
+			left_ = 864;
+			top_ = 0;
+			right_ = 1120;
+			bottom_ = 32;
+			cellIndex = {
+				x = 3;
+				y = 0;
+			};
+			boundingRect = {
+				left = 864;
+				top = 0;
+				right = 1120;
+				bottom = 32;
+			};
+		},
+		{
+			name = "Г3";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionActivateObjectByLabel" {
+				internalColor_ = 0;
+				label = "_Г3";
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 3;
+			cellNumberY = 1;
+			left_ = 864;
+			top_ = 64;
+			right_ = 1120;
+			bottom_ = 96;
+			cellIndex = {
+				x = 3;
+				y = 1;
+			};
+			boundingRect = {
+				left = 864;
+				top = 64;
+				right = 1120;
+				bottom = 96;
+			};
+		},
+		{
+			name = "уровень сложность 1";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 50;
+				showTimer = false;
+				scaleByDifficulty = true;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "Г4";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 30;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 24;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 30;
+						y = 16;
+					};
+					childOffset = {
+						x = 24;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 3;
+			cellNumberY = 2;
+			left_ = 864;
+			top_ = 128;
+			right_ = 1120;
+			bottom_ = 160;
+			cellIndex = {
+				x = 3;
+				y = 2;
+			};
+			boundingRect = {
+				left = 864;
+				top = 128;
+				right = 1120;
+				bottom = 160;
+			};
+		},
+		{
+			name = "Г4";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionActivateObjectByLabel" {
+				internalColor_ = 0;
+				label = "_Г4";
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 3;
+			cellNumberY = 3;
+			left_ = 864;
+			top_ = 192;
+			right_ = 1120;
+			bottom_ = 224;
+			cellIndex = {
+				x = 3;
+				y = 3;
+			};
+			boundingRect = {
+				left = 864;
+				top = 192;
+				right = 1120;
+				bottom = 224;
+			};
+		},
+		{
+			name = "уровень сложности0";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 80;
+				showTimer = false;
+				scaleByDifficulty = true;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "Г5";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 25;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 26;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 25;
+						y = 16;
+					};
+					childOffset = {
+						x = 26;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 3;
+			cellNumberY = 4;
+			left_ = 864;
+			top_ = 256;
+			right_ = 1120;
+			bottom_ = 288;
+			cellIndex = {
+				x = 3;
+				y = 4;
+			};
+			boundingRect = {
+				left = 864;
+				top = 256;
+				right = 1120;
+				bottom = 288;
+			};
+		},
+		{
+			name = "Г5";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionActivateObjectByLabel" {
+				internalColor_ = 0;
+				label = "_Г5";
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = 3;
+			cellNumberY = 5;
+			left_ = 864;
+			top_ = 320;
+			right_ = 1120;
+			bottom_ = 352;
+			cellIndex = {
+				x = 3;
+				y = 5;
+			};
+			boundingRect = {
+				left = 864;
+				top = 320;
+				right = 1120;
+				bottom = 352;
+			};
+		},
+		{
+			name = "2";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 1;
+				showTimer = false;
+				scaleByDifficulty = false;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -1;
+			cellNumberY = 2;
+			left_ = -288;
+			top_ = 128;
+			right_ = -32;
+			bottom_ = 160;
+			cellIndex = {
+				x = -1;
+				y = 2;
+			};
+			boundingRect = {
+				left = -288;
+				top = 128;
+				right = -32;
+				bottom = 160;
+			};
+		},
+		{
+			name = "11";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					0;
+				};
+			};
+			action = "struct Action" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				2;
+				{
+					triggerName = "на фрейм0";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 38;
+					parentOffsetY_ = 16;
+					childOffsetX_ = 36;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 38;
+						y = 16;
+					};
+					childOffset = {
+						x = 36;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "2";
+					color = STRATEGY_GREEN;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 110;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -123;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 110;
+						y = 16;
+					};
+					childOffset = {
+						x = -123;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -2;
+			cellNumberY = 0;
+			left_ = -576;
+			top_ = 0;
+			right_ = -320;
+			bottom_ = 32;
+			cellIndex = {
+				x = -2;
+				y = 0;
+			};
+			boundingRect = {
+				left = -576;
+				top = 0;
+				right = -320;
+				bottom = 32;
+			};
+		},
+		{
+			name = "пауза1";
+			condition = "struct ConditionSwitcher" {
+				state_ = true;
+				internalColor_ = 0;
+				type = AND;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionSwitcher" {
+							state_ = true;
+							internalColor_ = 0;
+							type = OR;
+							conditions = {
+								3;
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectExists" {
+										state_ = true;
+										internalColor_ = 0;
+										object = UNIT_ATTRIBUTE_CORRIDOR_OMEGA;
+										counter = 1;
+										playerType = AI_PLAYER_TYPE_ME;
+										constructedAndConstructing = true;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectNearObjectByLabel" {
+										state_ = false;
+										internalColor_ = 0;
+										label = "ядро";
+										object = UNIT_ATTRIBUTE_CORE;
+										objectConstructed = false;
+										playerType = AI_PLAYER_TYPE_ME;
+										distance = 150.;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionObjectNearObjectByLabel" {
+										state_ = false;
+										internalColor_ = 0;
+										label = "ядро";
+										object = UNIT_ATTRIBUTE_FRAME;
+										objectConstructed = false;
+										playerType = AI_PLAYER_TYPE_ME;
+										distance = 150.;
+									};
+								}
+							};
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = false;
+						};
+					}
+				};
+			};
+			action = "struct ActionDelay" {
+				internalColor_ = 0;
+				delay = 5;
+				showTimer = false;
+				scaleByDifficulty = false;
+				timer = {
+					time = 0;
+				};
+			};
+			outcomingLinks = {
+				1;
+				{
+					triggerName = "задание1 выполнено";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffsetX_ = 128;
+					parentOffsetY_ = 11;
+					childOffsetX_ = -110;
+					childOffsetY_ = -16;
+					parentOffset = {
+						x = 128;
+						y = 11;
+					};
+					childOffset = {
+						x = -110;
+						y = -16;
+					};
+				}
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 0;
+			cellNumberX = -1;
+			cellNumberY = 4;
+			left_ = -288;
+			top_ = 256;
+			right_ = -32;
+			bottom_ = 288;
+			cellIndex = {
+				x = -1;
+				y = 4;
+			};
+			boundingRect = {
+				left = -288;
+				top = 256;
+				right = -32;
+				bottom = 288;
+			};
+		}
+	};
+	left_ = -151;
+	top_ = -48;
+	right_ = 632;
+	bottom_ = 644;
+	boundingRect = {
+		left = -151;
+		top = -48;
+		right = 632;
+		bottom = 644;
+	};
+	viewRect = {
+		left = -151;
+		top = -48;
+		right = 632;
+		bottom = 644;
+	};
+};

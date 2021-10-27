@@ -242,20 +242,17 @@ STARFORCE_API void processInterfaceMessageLater(terUniverseInterfaceMessage id, 
 STARFORCE_API void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	mapVector.clear();
-	std::string path_str = convert_path_resource(path.c_str());
-	if (path_str.empty()) return;
+	std::string path_str = convert_path(path.c_str());
+    strlwr(path_str.data());
 	
 	//Collect files and order
 	std::vector<std::string> paths;
-	std::error_code error;
-    for (const auto & entry : std::filesystem::directory_iterator(path_str, error)) {
-        std::string entry_path = entry.path().string();
+    for (const auto & entry : get_resource_paths_directory(path_str)) {
+        std::string entry_path = entry.second;
+        strlwr(entry_path.data());
         if (mask.empty() || endsWith(entry_path, mask)) {
-            paths.emplace_back(entry_path);
+            paths.emplace_back(entry.second);
         }
-    }
-    if (error) {
-        fprintf(stderr, "Error loading maps from %s: %d %s\n", path.c_str(), error.value(), error.message().c_str());
     }
     sort(paths.begin(), paths.end());
     
@@ -493,23 +490,21 @@ STARFORCE_API void fillStatsLists() {
 //			terPlayer* player = universe()->findPlayer(playerID);
 			const PlayerStats& stats = player->getStats();
 			sColor4c clr = sColor4c(player->unitColor());
+            BELLIGERENT_FACTION faction = getBelligerentFaction(player->belligerent());
 			int race;
-			switch (player->belligerent()) {
-				case BELLIGERENT_EXODUS0:
-				case BELLIGERENT_EXODUS1:
+			switch (faction) {
+                case EXODUS:
 					race = 1;
 					break;
-				case BELLIGERENT_HARKBACKHOOD0:
-				case BELLIGERENT_HARKBACKHOOD1:
+				case HARKBACK:
 					race = 2;
 					break;
-				case BELLIGERENT_EMPIRE0:
-				case BELLIGERENT_EMPIRE1:
+				case EMPIRE:
 				default:
 					race = 0;
 			}
 
-			int time = gameShell->gameTimer();
+            time_type time = std::max(10000U, gameShell->gameTimer());
 
 			temp.clear();
 			temp.push_back(gameShell->CurrentMission.playersData[i].name());
@@ -923,7 +918,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_LAN_SCR:
 					{
 						gameShell->getNetClient()->StartFindHost();
-						std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+						std::string name = getStringSettings(regLanName);
 						if (name.empty()) name = gameShell->currentSingleProfile.getCurrentProfile().name;
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
@@ -1127,7 +1122,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_NAME_INPUT_SCR:
 					{
-					    std::string name = getStringFromReg(mainCurrUserRegFolder, regLanName);
+					    std::string name = getStringSettings(regLanName);
                         if (name.empty()) name = gameShell->currentSingleProfile.getCurrentProfile().name;
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_PLAYER_NAME_INPUT);
 						if (!name.empty()) {
@@ -1192,6 +1187,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					gameShell->resumeGame(true);
 					_shellCursorManager.m_bShowSideArrows=1;
 					_shellCursorManager.ShowCursor();
+                    menuChangingDone = true;
 					_bMenuMode = 0;
 					break;
 				case CONTINUE_BRIEFING:
@@ -1705,7 +1701,7 @@ void onMMProfileList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		int pos = list->GetCurSel();
 		if (pos != -1) {
 			gameShell->currentSingleProfile.setCurrentProfileIndex( pos );
-			putStringToReg(mainCurrUserRegFolder, "ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
+            putStringSettings("ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
 			showSingleMenu(pWnd);
 		}
 	}
@@ -1759,7 +1755,7 @@ void onMMSelectProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 	if ( code == EVENT_UNPRESSED && intfCanHandleInput() && pWnd->isEnabled() ) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
 		gameShell->currentSingleProfile.setCurrentProfileIndex( list->GetCurSel() );
-		putStringToReg(mainCurrUserRegFolder, "ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
+        putStringSettings("ProfileName", gameShell->currentSingleProfile.getCurrentProfile().name);
 		showSingleMenu(pWnd);
 	} else if (code == EVENT_DRAWWND) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_PROFILE_LIST);
@@ -1889,49 +1885,51 @@ void onMMDifficultyCombo(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		gameShell->currentSingleProfile.setDifficulty((Difficulty)pCombo->pos);
 	}
 }
+
+void launchCurrentMission(CShellWindow* pWnd) {
+    CListBoxWindow* list = (CListBoxWindow*) _shellIconManager.GetWnd(SQSH_MM_MISSION_LIST);
+    int missionNumber = list->GetCurSel();
+    if ( gameShell->briefingEnabled && missionNumber >= firstMissionNumber) {
+        historyScene.setMissionNumberToExecute(missionNumber);
+        if (missionNumber == 0 || missionNumber == firstMissionNumber) {
+            //Weird workaround by trial and error for Perimeter (not ET) first mission but works for ET too
+            //this basically jumpstarts the history to the first mission while showing the intro vid
+            historyScene.goToMission(0);
+            int year = historyScene.getController()->getMissionYear(missionNumber);
+            year = std::max(0, year-2);
+            historyScene.getController()->goToYear(year);
+        } else {
+            //Start after finishing the prev mission, so we can see all the plot and also not have screwed up
+            //dialog or camera
+            historyScene.goToJustAfterMissionPosition(missionNumber - 1);
+        }
+        historyScene.hideText();
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_BRIEFING_SCR);
+    } else {
+        historyScene.goToMission(missionNumber);
+        missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(missionNumber).fileName).c_str() );
+
+        //NOTE: should be removed when difficulty will be implemented for each separate player
+        missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
+        missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
+        //NOTE: Setup all names
+
+        gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
+
+        gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
+    }
+}
+
 void onMMMissionList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
-		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MISSION_LIST);
-		if ( gameShell->briefingEnabled && list->GetCurSel() >= firstMissionNumber) {
-			historyScene.goToMission(list->GetCurSel() - firstMissionNumber); 
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_BRIEFING_SCR);
-		} else {
-			historyScene.goToMission(list->GetCurSel());
-			missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(list->GetCurSel()).fileName).c_str() );
-
-			//NOTE: should be removed when difficulty will be implemented for each separate player
-			missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
-			missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
-			//NOTE: Setup all names
-
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
-
-			gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
-		}
+        launchCurrentMission(pWnd);
 	}
 }
 
 void onMMGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-		CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_MISSION_LIST));
-		if ( gameShell->briefingEnabled && list->GetCurSel() >= firstMissionNumber) {
-			historyScene.goToMission(list->GetCurSel() - firstMissionNumber);
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_BRIEFING_SCR);
-		} else {
-			historyScene.goToMission(list->GetCurSel());
-			missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(list->GetCurSel()).fileName).c_str() );
-
-			//NOTE: should be removed when difficulty will be implemented for each separate player
-			missionToExec.getActivePlayerData().difficulty = gameShell->currentSingleProfile.getDifficulty();
-			missionToExec.getActivePlayerData().setName(gameShell->currentSingleProfile.getCurrentProfile().name.c_str());
-			//NOTE: Setup all names
-
-			gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::SCENARIO);
-
-			gb_Music.FadeVolume(_fEffectButtonTotalTime*0.001f);
-			_shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_LOADING_MISSION_SCR);
-		}
+        launchCurrentMission(pWnd);
 	}
 }
 

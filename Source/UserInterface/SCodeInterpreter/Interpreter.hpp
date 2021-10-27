@@ -124,6 +124,11 @@ class Interpreter : public Controller {
 		int getCurrentYear() const {
 			return currentYear - rollbackDelta;
 		}
+    
+        int getMissionYear(int number) const {
+            if (number < 0 || number >= missions.size()) return -1;
+            return missions[number].year;
+        }
 
 		int getRealCurrentYear() const {
 			return currentYear;

@@ -13,6 +13,8 @@
 #include "UnitAttribute.h"
 #include "SoundScript.h"
 #include "InterfaceScript.h"
+#include "GameContent.h"
+#include "BelligerentSelect.h"
 
 ///////////////////////////////////////////////////////////////
 class EffectLibraryDispatcher
@@ -140,6 +142,31 @@ EffectLib(0)
 
 void AttributeBase::init()
 {
+    //Avoid loading stuff that user may not have
+    if (unavailableContentUnitAttribute(ID) || unavailableContentBelligerent(belligerent)) {
+        return;
+    }
+    
+    //Specific workarounds
+    switch (ID) {
+        case UNIT_ATTRIBUTE_FRAME:
+            switch (belligerent) {
+                case BELLIGERENT_EMPIRE4:
+                    if (terGameContent & GAME_CONTENT::PERIMETER && terGameContent & GAME_CONTENT::PERIMETER_ET) {
+                        //Okay this is Perimeter with ET extra content, use infected model we previously mapped from ET
+                        std::string& logicName = modelData.logicName.value();
+                        logicName.insert(logicName.find('.'), "_infected");
+                        std::string& modelName = modelData.modelName.value();
+                        modelName.insert(modelName.find('.'), "_infected");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        default:
+            break;
+    }
+    
 	if(strlen(interfaceNameTag())) {
 		std::string path = std::string("Interface.Tips.NAMES.") + interfaceNameTag();
 		InterfaceName = qdTextDB::instance().getText(path.c_str());
@@ -245,7 +272,7 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute.InstallBound && !(modelTime == FileTime(modelData.modelName) || modelScaleOld != modelScale)){
+	if(attribute.InstallBound && !(modelTime == FileTime(modelData.modelName))) { // || modelScaleOld != modelScale)){
 		modelTime = FileTime(modelData.modelName);
 
 		cObjectNodeRoot* model = createObject(modelData.modelName, attribute.belligerent);
@@ -337,26 +364,17 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 
 std::string GetBelligerentTexturePath(terBelligerent belligerent)
 {
+    BELLIGERENT_FACTION faction = getBelligerentFaction(belligerent);
 	std::string path = "Resource\\Models\\Main\\";
-	switch(belligerent){
-	case BELLIGERENT_NONE:
-	case BELLIGERENT_EXODUS0:
-	case BELLIGERENT_EXODUS1:
-	case BELLIGERENT_EXODUS2:
-	case BELLIGERENT_EXODUS3:
-	case BELLIGERENT_EXODUS4:
+	switch(faction){
+	case EXODUS:
+    default:
 		path += "EXODUS\\";
 		break;
-	case BELLIGERENT_HARKBACKHOOD0:
-	case BELLIGERENT_HARKBACKHOOD1:
+	case HARKBACK:
 		path += "HARKBACKHOOD\\";
 		break;
-	case BELLIGERENT_EMPIRE0:
-	case BELLIGERENT_EMPIRE1:
-	case BELLIGERENT_EMPIRE2:
-	case BELLIGERENT_EMPIRE3:
-	case BELLIGERENT_EMPIRE4:
-	case BELLIGERENT_EMPIRE_VICE:
+	case EMPIRE:
 		path += "EMPIRE\\";
 		break;
 	}
@@ -649,31 +667,8 @@ const char* AttributeBase::internalName() const
 
 bool AttributeBase::enabledByBelligerent(terBelligerent belligerentIn) const
 {
-	switch(belligerent){
-	case BELLIGERENT_NONE:
-		return true;
-	case BELLIGERENT_EXODUS0:
-	case BELLIGERENT_EXODUS1:
-	case BELLIGERENT_EXODUS2:
-	case BELLIGERENT_EXODUS3:
-	case BELLIGERENT_EXODUS4:
-		return belligerentIn == BELLIGERENT_EXODUS0 || belligerentIn == BELLIGERENT_EXODUS1 || belligerentIn == BELLIGERENT_EXODUS2 ||
-               belligerentIn == BELLIGERENT_EXODUS3 || belligerentIn == BELLIGERENT_EXODUS4;
-	case BELLIGERENT_HARKBACKHOOD0:
-	case BELLIGERENT_HARKBACKHOOD1:
-		return belligerentIn == BELLIGERENT_HARKBACKHOOD0 || belligerentIn == BELLIGERENT_HARKBACKHOOD1;
-	case BELLIGERENT_EMPIRE0:
-	case BELLIGERENT_EMPIRE1:
-	case BELLIGERENT_EMPIRE2:
-	case BELLIGERENT_EMPIRE3:
-	case BELLIGERENT_EMPIRE4:
-    case BELLIGERENT_EMPIRE_VICE: //This was in Exodus for some reason
-		return belligerentIn == BELLIGERENT_EMPIRE0 || belligerentIn == BELLIGERENT_EMPIRE1 || belligerentIn == BELLIGERENT_EMPIRE2 ||
-               belligerentIn == BELLIGERENT_EMPIRE3 || belligerentIn == BELLIGERENT_EMPIRE4 || belligerentIn == BELLIGERENT_EMPIRE_VICE;
-	default:
-		xassert(0);
-		return false;
-	}
+    BELLIGERENT_FACTION faction = getBelligerentFaction(belligerent);
+    return faction == FACTION_NONE || faction == getBelligerentFaction(belligerentIn);
 }
 
 void AttributeBase::initIntfBalanceData(const AttributeBase* missile) 
@@ -727,17 +722,23 @@ void copyInterfaceAttributes();
 void copyRigidBodyTable();
 void copyInterfaceAttributesIndispensable();
 
-void debugStartUp()
+void initAttributes()
 {
 	globalAttr();
 	interfaceAttr();
-
 //	soundScriptTable();
-//	copyRigidBodyTable();
+
+    
+    int use_attrs=IniManager("Perimeter.ini", false).getInt("Game","UseAttributes");
+    check_command_line_parameter("use_attributes", use_attrs);
+    if (!use_attrs) {
+        copyRigidBodyTable();
+        copyAttributes();
+        copyInterfaceAttributes();
+    }
+
 //	rigidBodyPrmLibrary.edit();
-//	copyAttributes();
 //	attributeLibrary.edit();
-//	copyInterfaceAttributes();
 //	interfaceAttr.edit();
 //	ErrH.Exit();
 

@@ -16,6 +16,7 @@
 
 #include "MessageBox.h"
 #include "BelligerentSelect.h"
+#include "GameContent.h"
 
 extern LogStream fout;
 extern MpegSound gb_Music;
@@ -187,7 +188,7 @@ void onMMLanCreateGameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 			setupOkMessageBox(0, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
 			showMessageBox();
 		} else {
-			putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+            putStringSettings(regLanName, input->getText());
 			setupOkMessageBox(exitCreating, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Creating"), MBOX_EXIT, false);
 			showMessageBox();
 			_shellIconManager.AddDynamicHandler( createQuant, CBCODE_QUANT );
@@ -322,7 +323,7 @@ void onMMJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			setupOkMessageBox(0, 0, qdTextDB::instance().getText("Interface.Menu.Messages.NameEmpty"), MBOX_OK);
 			showMessageBox();
 		} else {
-			putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+            putStringSettings(regLanName, input->getText());
 
 //			setupOkMessageBox(interruptConnecting, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT);
 			setupOkMessageBox(interruptConnecting, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT, false);
@@ -341,7 +342,7 @@ void onMMLanBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		if (gameShell->isStartedWithMainmenu()) {
 			CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 			if (!input->getText().empty()) {
-				putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+                putStringSettings(regLanName, input->getText());
 			}
 			_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_START_SCR );
 		} else {
@@ -437,30 +438,23 @@ void setFrm(CComboWindow* combo, int number) {
 					currMission.activePlayerID == currMission.playersData[number].playerID
 				||	(currMission.activePlayerID == currMission.playersData[0].playerID && currMission.playersData[number].realPlayerType == REAL_PLAYER_TYPE_AI)
 			);
-		switch (currMission.playersData[number].belligerent) {
-			case BELLIGERENT_EXODUS0:
-			case BELLIGERENT_EXODUS1:
-			case BELLIGERENT_EXODUS2:
-			case BELLIGERENT_EXODUS3:
-			case BELLIGERENT_EXODUS4:
+        BELLIGERENT_FACTION faction = getBelligerentFaction(currMission.playersData[number].belligerent);
+		switch (faction) {
+			case EXODUS:
+            default:
 				combo->pos = 0;
 				break;
-			case BELLIGERENT_HARKBACKHOOD0:
-			case BELLIGERENT_HARKBACKHOOD1:
-				#if defined(_DEMO_) || defined(_PERIMETER_ADDON_)
-					combo->pos = 2;
-				#else
-					combo->pos = 0;
-					gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
-				#endif
+			case HARKBACK:
+                if (terGameContent == GAME_CONTENT::PERIMETER_ET) {
+                    combo->pos = 0;
+                    gameShell->getNetClient()->changePlayerBelligerent(number, BELLIGERENT_EXODUS0);
+                } else {
+                    combo->pos = 2;
+                }
 				break;
-			case BELLIGERENT_EMPIRE0:
-			case BELLIGERENT_EMPIRE1:
-			case BELLIGERENT_EMPIRE2:
-			case BELLIGERENT_EMPIRE3:
-			case BELLIGERENT_EMPIRE4:
-			default:
+			case EMPIRE:
 				combo->pos = 1;
+                break;
 		}
 	} else {
 		combo->Show(false);
@@ -1040,7 +1034,7 @@ void GameShell::startOnline(CommandLineData data) {
 	_bCursorVisible = 1;
 	_WaitCursor();
 	cmdLineData = data;
-	putStringToReg(mainCurrUserRegFolder, regLanName, data.name);
+    putStringSettings(regLanName, data.name);
 	_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 	CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_LAN_PLAYER_NAME_INPUT);
 	input->SetText(data.name.c_str());
@@ -1157,7 +1151,7 @@ void onMMApplyNameBtn(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			showMessageBox();
 */
 		} else {
-			putStringToReg(mainCurrUserRegFolder, regLanName, input->getText());
+            putStringSettings(regLanName, input->getText());
 			//TODO: put ipInput->getText() if pCombo->pos
 
 //			setupOkMessageBox(exitCreatingNetCenter, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_BACK);

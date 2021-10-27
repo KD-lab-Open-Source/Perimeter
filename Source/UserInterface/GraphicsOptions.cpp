@@ -3,6 +3,9 @@
 #include "GameShellSq.h"
 #include "GameShell.h"
 #include "Universe.h"
+#include "SourceUIResolution.h"
+#include <set>
+#include <unordered_set>
 
 
 extern cInterfaceRenderDevice* terRenderDevice;
@@ -111,24 +114,89 @@ void CustomGraphOptions::apply() {
 
 void GraphOptions::load(const char* sectionName, const char* iniFileName) {
 	customOptions.load(sectionName, iniFileName);
-	IniManager iniManager(iniFileName);
 
-	resolution = iniManager.getInt("Graphics", "ScreenSizeX");
-	for (int i = 0; i < RESOLUTION_COUNT; i++) {
-		if (resolution == RESOLUTIONS[i].x) {
-			resolution = i;
-			break;
-		}
-	}
-	colorDepth = iniManager.getInt("Graphics", "BPP");
+    IniManager iniManager(iniFileName);
+    colorDepth = iniManager.getInt("Graphics", "BPP");
+    
+    std::set<DisplayMode> resSet;
+	resolutions.clear();
+
+    //Add current resolution
+    if (terFullScreen) {
+        resolution.set(true, terScreenIndex, terScreenSizeX, terScreenSizeY, terScreenRefresh);
+    } else {
+        resolution.set(false, -1, terScreenSizeX, terScreenSizeY, 0);
+    }
+    resSet.insert(resolution);
+
+    //Get display modes for screens
+    Vect2i smallest(0, 0);
+    SDL_DisplayMode current;
+    for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i){
+        int result = SDL_GetCurrentDisplayMode(i, &current);
+        if (result != 0) {
+            fprintf(stderr, "Could not get display mode for display %d: %s", i, SDL_GetError());
+            continue;
+        }
+
+        //printf("Display %d: %dx%d %dhz\n", i, current.w, current.h, current.refresh_rate);
+        resSet.emplace(true, i, current.w, current.h, current.refresh_rate);
+        resSet.emplace(false, -1, current.w, current.h, 0);
+        if (smallest.x == 0 || current.w < smallest.x) {
+            smallest.x = current.w;
+        }
+        if (smallest.y == 0 || current.w < smallest.y) {
+            smallest.y = current.h;
+        }
+    }
+    
+    //Add source resolutions, only if they are smaller than smallest dimensions (user can still resize manually)
+    for (const UIResolution& res : getSourceUIResolutions()) {
+        resSet.emplace(false, -1, res.x, res.y, 0);
+    }
+    
+    //Dump set into vector and order it, dont add window modes that are smaller
+    for (DisplayMode res : resSet) {
+        if (smallest.x != 0 && smallest.x < res.x) continue;
+        if (smallest.y != 0 && smallest.y < res.y) continue;
+        resolutions.emplace_back(res);
+    }
+    
+    std::sort(resolutions.begin(), resolutions.end());
+
+#if PERIMETER_DEBUG
+    printf("Current mode %s\n", resolution.text().c_str());
+    for (DisplayMode& res : resolutions) {
+        printf("- %s\n", res.text().c_str());
+    }
+#endif
 }
+
 void GraphOptions::apply() {
-	bool change_depth=terBitPerPixel!=colorDepth;
-	bool change_size=terRenderDevice->GetSizeX() != RESOLUTIONS[resolution].x || terRenderDevice->GetSizeY() != RESOLUTIONS[resolution].y;
-	if (change_size || change_depth)
-	{
+    
+	bool change_depth=terBitPerPixel!=colorDepth; 
+    bool change_display_mode = terFullScreen != resolution.fullscreen;
+    if (resolution.fullscreen) {
+        change_display_mode |= terScreenRefresh != resolution.refresh || terScreenIndex != resolution.display;
+    } else {
+        //If window then check if user moved it to another display first
+        int windowScreenIndex = SDL_GetWindowDisplayIndex(sdlWindow);
+        if (0 <= windowScreenIndex && terScreenIndex != windowScreenIndex) {
+            terScreenIndex = windowScreenIndex;
+        }
+    }
+    
+	bool change_size = terScreenSizeX != resolution.x || terScreenSizeY != resolution.y;
+	if (change_display_mode || change_size || change_depth) {
 		terBitPerPixel = colorDepth;
-		gameShell->updateResolution(RESOLUTIONS[resolution].x, RESOLUTIONS[resolution].y,change_depth,change_size);
+        terFullScreen = resolution.fullscreen;
+        if (terFullScreen) {
+            terScreenIndex = resolution.display;
+            terScreenRefresh = resolution.refresh;
+        }
+        terScreenSizeX = resolution.x;
+        terScreenSizeY = resolution.y;
+		gameShell->updateResolution(change_depth, change_size, change_display_mode || change_size);
 	}
 	customOptions.apply();
 }
@@ -136,8 +204,15 @@ void GraphOptions::apply() {
 void GraphOptions::save(const char* iniFileName) {
 	customOptions.save(iniFileName);
 	IniManager iniManager(iniFileName);
-	iniManager.putInt("Graphics", "ScreenSizeX", RESOLUTIONS[resolution].x);
-	iniManager.putInt("Graphics", "ScreenSizeY", RESOLUTIONS[resolution].y);
+    iniManager.putInt("Graphics", "Fullscreen", terFullScreen);
+    int screenIndex = 0;
+    if (0 <= terScreenIndex) {
+        screenIndex = terScreenIndex;
+    }
+    iniManager.putInt("Graphics", "ScreenIndex", screenIndex);
+    iniManager.putInt("Graphics", "ScreenSizeX", resolution.x);
+    iniManager.putInt("Graphics", "ScreenSizeY", resolution.y);
+    iniManager.putInt("Graphics", "ScreenRefresh", terScreenRefresh);
 	iniManager.putInt("Graphics", "BPP", colorDepth);
 }
 

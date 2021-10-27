@@ -109,6 +109,7 @@ void abortWithMessage(const std::string& messageID) {
 }
 
 void ErrorInitialize3D() {
+    fprintf(stderr, "%dx%d %dhz Display: %d\n", terScreenSizeX, terScreenSizeY, terScreenRefresh, terScreenIndex);
 	abortWithMessage("Interface.Menu.Messages.Init3DError");
 }
 
@@ -124,7 +125,6 @@ CommandLineData::CommandLineData(bool host, std::string name, bool p2p, std::str
 					 : host(host), name(name), p2p(p2p), ip(ip), gameID(gameID), roomName(roomName), password(password) {
 }
 
-std::string GameShell::locale;
 
 //------------------------
 GameShell::GameShell(bool mission_edit) :
@@ -162,6 +162,8 @@ windowClientSize_(1024, 768)
 
 	MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 
+    IniManager("Perimeter.ini", false).getInt("Game","DoubleClickTime", doubleClickTime);
+
 	debug_allow_replay = true; //IniManager("Perimeter.ini", false).getInt("Game","EnableReplay");
 
 	check_command_line_parameter("mainmenu", MainMenuEnable);
@@ -169,7 +171,7 @@ windowClientSize_(1024, 768)
 		MainMenuEnable = false;
 
 	currentSingleProfile.scanProfiles();
-	currentSingleProfile.setCurrentProfile(getStringFromReg(mainCurrUserRegFolder, "ProfileName"));
+	currentSingleProfile.setCurrentProfile(getStringSettings("ProfileName"));
 	if (!MainMenuEnable && currentSingleProfile.getCurrentProfileIndex() == -1) {
 		if (!currentSingleProfile.getProfilesVector().size()) {
 			currentSingleProfile.addProfile("Test");
@@ -222,6 +224,7 @@ windowClientSize_(1024, 768)
 	mouseRightPressed_ = false;
 	mousePosition_ = Vect2f::ZERO;
 	mousePositionDelta_ = Vect2f::ZERO;
+    mousePositionRelative_ = Vect2f::ZERO;
 	
 	CursorOverInterface = false;
 
@@ -293,7 +296,7 @@ windowClientSize_(1024, 768)
 			name = "XXX";
 		name = setExtention((path + name).c_str(), "spg");
 
-		if(!XStream(0).open(name.c_str())) {
+		if(!XStream(0).open(convert_path_resource(name.c_str()))) {
 			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){
 				size_t pos = name.rfind(resource_path);
 				if(pos != std::string::npos)
@@ -400,11 +403,15 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 		PlayerData* data = &CurrentMission.playersData[i];
+        std::string playerName = "";
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
-			data->setName(currentSingleProfile.getCurrentProfile().name.c_str());
+            playerName = currentSingleProfile.getCurrentProfile().name;
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
-			data->setName(getBelligerentName(data->belligerent));
+            playerName = getBelligerentName(data->belligerent);
 		}
+        if (!playerName.empty()) {
+            data->setName(playerName.c_str());
+        }
 	}
 
 	LoadProgressStart();
@@ -436,9 +443,16 @@ void GameShell::GameStart(const MissionDescription& mission)
 	CurrentMission.packPlayerIDs();
 	new terUniverse(NetClient, CurrentMission, savePrm(), LoadProgressUpdate);
 
+    int fogEnable = 1;
+    IniManager("Perimeter.ini", false).getInt("Graphics", "FogEnable", fogEnable);
 	IniManager world_ini(GetTargetName(vMap.worldIniFile).c_str());
-	FogStart = world_ini.getFloat("Visualization Parameters","FogStart");
-	FogEnd = world_ini.getFloat("Visualization Parameters","FogEnd");
+    if (fogEnable) {
+        FogStart = world_ini.getFloat("Visualization Parameters", "FogStart");
+        FogEnd = world_ini.getFloat("Visualization Parameters", "FogEnd");
+    } else {
+        FogStart = 0;
+        FogEnd = 0;
+    }
 	world_ini.getFloatArray("Visualization Parameters","FogColor", 3, &FogColor.r);
 	FogColor /= 255;
 
@@ -611,6 +625,7 @@ void GameShell::GraphQuant()
 	Show();
 	
 	mousePositionDelta_ = Vect2f::ZERO;
+    mousePositionRelative_ = Vect2f::ZERO;
 }
 
 bool GameShell::showEnergy() const 
@@ -683,6 +698,15 @@ void GameShell::showWays() {
 	}
 }
 
+void renderEndScene() {
+    //We need to flush, otherwise the primitive vertex will be after the cursor in the buffer
+    terRenderDevice->FlushPrimitive2D();
+    terRenderDevice->FlushPrimitive3D();
+    //Draw cursor
+    _shellCursorManager.draw();
+    //End scene
+    terRenderDevice->EndScene();
+}
 
 void GameShell::Show()
 {
@@ -763,7 +787,7 @@ void GameShell::Show()
 //		terCamera->GetCamera()->DrawTestGrid();
 		HTManager::instance()->Show();
 
-		terRenderDevice->EndScene();
+        renderEndScene();
 
 		if(recordMovie_)
 			makeMovieShot();
@@ -826,7 +850,8 @@ void GameShell::Show()
 
 		//m_ShellDispatcher.draw();
 
-		terRenderDevice->EndScene();
+        renderEndScene();
+
 		terRenderDevice->Flush();
 		terScene->PostDraw(terCamera->GetCamera());
 	}
@@ -895,16 +920,27 @@ void GameShell::EventHandler(SDL_Event& event) {
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
             bool pressed = event.button.state == SDL_PRESSED;
-            Vect2f where = convert(event.button.x, event.button.y);            
+            bool doubleClick = false;
+            if (!pressed) {
+                doubleClick = (clockf() - lastClickTime) < doubleClickTime && lastClickButton == event.button.button;
+                lastClickTime = clockf();
+                if (doubleClick) lastClickTime -= doubleClickTime;
+                lastClickButton = event.button.button;
+            }
+            Vect2f where = convert(event.button.x, event.button.y);
+            //printf("M %fx%f B %dn", where.x, where.y, event.button.button, pressed);
             switch (event.button.button) {
                 case SDL_BUTTON_LEFT:
-                    if (pressed) {
+                    if (doubleClick) {
                         MouseLeftPressed(where);
-                    } else {
                         MouseLeftUnpressed(where);
-                    }
-                    if (event.button.clicks == 2) {
                         MouseLeftDoubleClick(where);
+                    } else {
+                        if (pressed) {
+                            MouseLeftPressed(where);
+                        } else {
+                            MouseLeftUnpressed(where);
+                        }
                     }
                     break;
                 case SDL_BUTTON_MIDDLE:
@@ -915,13 +951,16 @@ void GameShell::EventHandler(SDL_Event& event) {
                     }
                     break;
                 case SDL_BUTTON_RIGHT:
-                    if (pressed) {
+                    if (doubleClick) {
                         MouseRightPressed(where);
-                    } else {
                         MouseRightUnpressed(where);
-                    }
-                    if (event.button.clicks == 2) {
                         MouseRightDoubleClick(where);
+                    } else {
+                        if (pressed) {
+                            MouseRightPressed(where);
+                        } else {
+                            MouseRightUnpressed(where);
+                        }
                     }
                     break;
                 default:
@@ -936,7 +975,12 @@ void GameShell::EventHandler(SDL_Event& event) {
             break;
         }
         case SDL_MOUSEMOTION: {
-            MouseMove(convert(event.motion.x, event.motion.y));
+            Vect2f where = convert(event.motion.x, event.motion.y);
+            //printf("M %fx%f\n", where.x, where.y * 100);
+            MouseMove(where, Vect2f(
+                static_cast<float>(event.motion.xrel),
+                static_cast<float>(event.motion.yrel)
+            ));
             break;
         }
         case SDL_KEYDOWN: {
@@ -1505,6 +1549,7 @@ void GameShell::ControlPressed(int key)
 					cameraMouseTrack = true;
 					mousePressControl_ = mousePosition();
 					_shellCursorManager.HideCursor();
+                    SDL_SetRelativeMouseMode(SDL_TRUE);
 				}
 			break;
 
@@ -1602,9 +1647,10 @@ void GameShell::ControlUnpressed(int key)
 }
 
 void GameShell::cancelMouseLook() {
-	if(cameraMouseTrack && IsMapArea(mousePosition()))
+	if(cameraMouseTrack)
 	{
 		cameraMouseTrack = false;
+        SDL_SetRelativeMouseMode(SDL_FALSE);
 		setCursorPosition(mousePressControl_);
 
 		if(_shellIconManager.IsInterface())
@@ -1618,7 +1664,7 @@ void GameShell::updatePosition()
 	BuildingInstaller.SetBuildPosition(Vect2f(mousePosition().x, mousePosition().y), universe()->activePlayer());
 }
 
-void GameShell::MouseMove(const Vect2f& pos)
+void GameShell::MouseMove(const Vect2f& pos, const Vect2f& rel)
 {
 	if(missionEditor_ && missionEditor_->mouseMove(pos))
 		return;
@@ -1628,18 +1674,21 @@ void GameShell::MouseMove(const Vect2f& pos)
 	if(MousePositionLock){
 		mousePosition_ = pos;
 		mousePositionDelta_ = Vect2f::ZERO;
+        mousePositionRelative_ = Vect2f::ZERO;
 	}
 	else{
-		mousePositionDelta_ = pos - mousePosition();
+        mousePositionDelta_ = pos - mousePosition(); //Do this before setting the current position so we can get Delta
 		mousePosition_ = pos;
+        mousePositionRelative_ = rel;
 		MouseMoveFlag = 1;
 	}
 
 	if(BuildingInstaller.inited()){
-		if(isShiftPressed())
-			BuildingInstaller.ChangeBuildAngle(mousePositionDelta().y*50, universe()->activePlayer());
-		else
-			BuildingInstaller.SetBuildPosition(pos, universe()->activePlayer());
+		if(isShiftPressed()) {
+            BuildingInstaller.ChangeBuildAngle(mousePositionDelta().y * 50, universe()->activePlayer());
+        } else {
+            BuildingInstaller.SetBuildPosition(pos, universe()->activePlayer());
+        }
 	}
 
 	_shellCursorManager.OnMouseMove(mousePosition().x+0.5f, mousePosition().y+0.5f);
@@ -1851,7 +1900,7 @@ void GameShell::ShotsScan()
 {
 	shotNumber_ = 0;
 
-    std::string path_str = convert_path_resource(terScreenShotsPath, true);
+    std::string path_str = convert_path(terScreenShotsPath);
     create_directories(path_str.c_str());
 
     std::vector<std::string> paths;
@@ -1893,7 +1942,7 @@ void GameShell::startStopRecordMovie()
 		movieShotNumber_ = 0;
 		movieStartTime_ = frame_time();
 		
-        std::string path_str = convert_path_resource(terMoviePath, true);
+        std::string path_str = convert_path(terMoviePath);
         create_directories(path_str.c_str());
 
         if (path_str.empty()) return;
@@ -1963,7 +2012,7 @@ void GameShell::CameraQuant()
 	
 	//поворот вслед за мышью
 	if(cameraMouseTrack && MouseMoveFlag){
-		terCamera->tilt(mousePositionDelta());
+		terCamera->tilt(mousePositionRelative_);
 		
 		MousePositionLock = 1;
 		setCursorPosition(Vect2f::ZERO);
@@ -1975,8 +2024,9 @@ void GameShell::CameraQuant()
 		setCursorPosition(mapMoveStartPoint());
 		MousePositionLock = 1;
 	}
-	
-	terCamera->quant(mousePositionDelta().x, mousePositionDelta().y, frame_time.delta()*PerimeterCameraControlFPS/1000.0f);
+
+    float delta = frame_time.delta() / 1000.0f;// * PerimeterCameraControlFPS / 1000.0f;
+	terCamera->quant(mousePositionDelta().x, mousePositionDelta().y, delta, cameraMouseTrack && MouseMoveFlag);
 	
 //	mousePositionDelta_ = Vect2f::ZERO;
 	MouseMoveFlag = 0;
@@ -2060,43 +2110,47 @@ void CShellLogicDispatcher::init()
 
 	m_hCamera = m_hScene->CreateCamera();
 	m_hCamera->SetAttr(ATTRCAMERA_PERSPECTIVE); // перспектива
+    m_hCamera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
 
 	MatXf CameraMatrix;
 	Identity(CameraMatrix);
 	Vect3f CameraPos(0, 0, -1024);
 	SetPosition(CameraMatrix,CameraPos,Vect3f(0,0,0));
 	SetCameraPosition(m_hCamera, CameraMatrix);
-
-
-//	float _small_camera_x = small_camera_x*float(terScreenSizeX);
-//	float _small_camera_y = small_camera_y*float(terScreenSizeY);
-//	float _small_camera_rect_dx  = small_camera_rect_dx*float(terScreenSizeX)/2.f;
-//	float _small_camera_rect_dy  = small_camera_rect_dy*float(terScreenSizeY)/2.f;
-
-	float _small_camera_x = small_camera_x;
-	float _small_camera_y = small_camera_y;
-	float _small_camera_rect_dx  = small_camera_rect_dx/2.f;
-	float _small_camera_rect_dy  = small_camera_rect_dy/2.f;
-
-    Vect2f center(_small_camera_x + _small_camera_rect_dx,
-                  _small_camera_y + _small_camera_rect_dy);
-    sRectangle4f clip(-_small_camera_rect_dx, -_small_camera_rect_dy,
-                      _small_camera_rect_dx, _small_camera_rect_dy);
-    Vect2f focus(1.0f, 1.0f);
-    Vect2f zplane(30.0f, 10000.0f);
-    m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
-            &center,								// центр камеры
-            &clip,									// видимая область камеры
-            &focus,									// фокус камеры
-            &zplane									// ближайший и дальний z-плоскости отсечения
-    );
-
-	m_hCamera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
+    
+    updateSmallCamera();
 }
 
 void CShellLogicDispatcher::updateSmallCamera() {
-	if (m_hCamera) {
-		m_hCamera->Update();
+    if (m_hCamera) {
+        //float _small_camera_x = small_camera_x*float(terScreenSizeX);
+        //float _small_camera_y = small_camera_y*float(terScreenSizeY);
+        //float _small_camera_rect_dx  = small_camera_rect_dx*float(terScreenSizeX)/2.f;
+        //float _small_camera_rect_dy  = small_camera_rect_dy*float(terScreenSizeY)/2.f;
+
+        //m_hCamera handles the small 3D view of selected stuff
+        //clip takes screen relative position but hardcoded positions are relative to 4:3
+        //so we just convert X stuff to absolute and then make it relative to screen position
+        //this way they are properly positioned/sized in different resolutions
+
+        float renderX = static_cast<float>(terRenderDevice->GetSizeX());
+        float _small_camera_x = absoluteUIPosX(small_camera_x, SHELL_ANCHOR_DEFAULT) / renderX;
+        float _small_camera_y = small_camera_y;
+        float _small_camera_rect_dx  = (absoluteUISizeX(small_camera_rect_dx, SHELL_ANCHOR_DEFAULT) / renderX)/2.f;
+        float _small_camera_rect_dy  = small_camera_rect_dy/2.f;
+
+        Vect2f center(_small_camera_x + _small_camera_rect_dx,
+                      _small_camera_y + _small_camera_rect_dy);
+        sRectangle4f clip(-_small_camera_rect_dx, -_small_camera_rect_dy,
+                          _small_camera_rect_dx, _small_camera_rect_dy);
+        Vect2f focus(1.0f, 1.0f);
+        Vect2f zplane(30.0f, 10000.0f);
+        m_hCamera->SetFrustum(                          // устанавливается пирамида видимости
+                &center,								// центр камеры
+                &clip,									// видимая область камеры
+                &focus,									// фокус камеры
+                &zplane									// ближайший и дальний z-плоскости отсечения
+        );
 	}
 }
 
@@ -2205,6 +2259,7 @@ void GameShell::setSpeed(float d)
 
 void GameShell::setWindowClientSize(const Vect2i& size) {
     windowClientSize_ = size;
+    setSourceUIResolution(size);
 }
 
 void GameShell::setCursorPosition(const Vect2f& pos)
@@ -2298,8 +2353,8 @@ void GameShell::setActivePlayerAIOff() {
 	}
 }
 
-void GameShell::changeControlState(const std::vector<SaveControlData>& newControlStates) {
-	_shellIconManager.changeControlState(newControlStates);
+void GameShell::changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls) {
+	_shellIconManager.changeControlState(newControlStates, reset_controls);
 }
 
 void GameShell::fillControlState(std::vector<SaveControlData>& controlStatesToSave) {
@@ -2328,12 +2383,16 @@ void GameShell::updateMap() {
 	}
 }
 
-void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_size) {
-	terScreenSizeX = sx;
-	terScreenSizeY = sy;
+extern bool isTrueFullscreen();
+extern void PerimeterSetupDisplayMode();
 
+void GameShell::updateResolution(bool change_depth, bool change_size, bool change_display_mode) {
+    if (change_display_mode) {
+        PerimeterSetupDisplayMode();
+    }
+    
 	int mode=RENDERDEVICE_MODE_RETURNERROR;
-	if(!terFullScreen)
+	if(!isTrueFullscreen())
 		mode|=RENDERDEVICE_MODE_WINDOW;
 	if(terBitPerPixel==16)
 		mode|=RENDERDEVICE_MODE_RGB16;
@@ -2341,8 +2400,8 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 		mode|=RENDERDEVICE_MODE_RGB32;
 
 	if(!terRenderDevice->ChangeSize(
-		sx,
-		sy,
+		terScreenSizeX,
+		terScreenSizeY,
 		mode
 	))
 	{
@@ -2354,12 +2413,11 @@ void GameShell::updateResolution(int sx, int sy,bool change_depth,bool change_si
 		gameShell->setWindowClientSize(Vect2i(terScreenSizeX, terScreenSizeY));
 	}
 
-	if(change_size)
-	{
+    if(change_size) {
+        setSourceUIResolution(Vect2i(terScreenSizeX, terScreenSizeY));
 		historyScene.onResolutionChanged();
 		bwScene.onResolutionChanged();
 		bgScene.onResolutionChanged();
-
 		_shellIconManager.onSizeChanged();
 		terVisGeneric->ReloadAllFont();
 	}
@@ -2479,6 +2537,15 @@ void GameShell::preLoad() {
 	#else
 		qdTextDB::instance().load(path.c_str(), "RESOURCE\\Texts_comments.btdb");
 	#endif
+
+    //Load texts, don't delete already loaded ones but replace existing ones
+    for (const auto& entry : get_resource_paths_directory(getLocDataPath() + "Text")) {
+        std::string name = std::filesystem::path(entry.first).filename().string();
+        strlwr(name.data());
+        if (name == "texts.btdb") continue;
+        bool noreplace = name.rfind("_noreplace.") != std::string::npos;
+        qdTextDB::instance().load(entry.second.c_str(), nullptr, false, noreplace);
+    }
 }
 
 void GameShell::setSkipCutScene(bool skip) 

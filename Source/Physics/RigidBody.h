@@ -158,7 +158,7 @@ public:
 	void finalizeResolve();
 	
 	// Debug
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	void show();
 	void print(XBuffer& buf);
 	void reload_parameters();
@@ -258,7 +258,7 @@ private:
 	bool underMutation_;
 	
 	// Debug
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	sColor4c bounding_box_color;
 #endif
 
@@ -282,7 +282,7 @@ private:
 	bool kangarooEnabled() const;
 
 	// Debug
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	void set_debug_color(sColor4c color) { bounding_box_color = color; }
 #else
 	void set_debug_color(sColor4c color) {}

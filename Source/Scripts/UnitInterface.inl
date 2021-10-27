@@ -145,6 +145,7 @@ static struct UnitInterfaceData
 
 	UnitInterfacePrm  station_rocket1  = { actions =  Station1; upgrade_button_id = SQSH_SELPANEL_UPGRADE_ROCKET1_ID; popup = "<station_rocket>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_laser1  = { actions =  Station1;  upgrade_button_id = SQSH_SELPANEL_UPGRADE_LASER1_ID;  popup = "<station_laser>"; format_group = POPUP_FORMAT_BUILDING;};
+	UnitInterfacePrm  station_electro1  = { actions =  Station1;  upgrade_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO1_ID;  popup = "<station_electro>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_bomb1  = { actions =  Station1;   upgrade_button_id = SQSH_SELPANEL_UPGRADE_BOMB1_ID;   popup = "<station_bomb>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_fly1  = { actions =  Station1;    upgrade_button_id = SQSH_SELPANEL_UPGRADE_FLY_ID;     popup = "<station_fly>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_exodus1  = { actions =  Station1; upgrade_button_id = SQSH_SELPANEL_UPGRADE_EXODUS1_ID; popup = "<station_exodus>"; format_group = POPUP_FORMAT_BUILDING;};
@@ -154,6 +155,7 @@ static struct UnitInterfaceData
 
 	UnitInterfacePrm  station_rocket2  = { actions =  Station1; upgrade_button_id = SQSH_SELPANEL_UPGRADE_ROCKET2_ID; upgrading_button_id = SQSH_SELPANEL_UPGRADE_ROCKET1_ID; popup = "<upgrade_rocket1_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_laser2  = { actions =  Station1;  upgrade_button_id = SQSH_SELPANEL_UPGRADE_LASER2_ID; upgrading_button_id = SQSH_SELPANEL_UPGRADE_LASER1_ID;   popup = "<upgrade_laser1_unit>"; format_group = POPUP_FORMAT_BUILDING;};
+	UnitInterfacePrm  station_electro2  = { actions =  Station1;  upgrade_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO2_ID; upgrading_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO1_ID;   popup = "<upgrade_electro1_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_bomb2  = { actions =  Station1;   upgrade_button_id = SQSH_SELPANEL_UPGRADE_BOMB2_ID; upgrading_button_id = SQSH_SELPANEL_UPGRADE_BOMB1_ID;     popup = "<upgrade_bomb1_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_exodus2  = { actions =  Station1; upgrade_button_id = SQSH_SELPANEL_UPGRADE_EXODUS2_ID; upgrading_button_id = SQSH_SELPANEL_UPGRADE_EXODUS1_ID; popup = "<upgrade_exodus1_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_empire2  = { actions =  Station1; upgrade_button_id = SQSH_SELPANEL_UPGRADE_EMPIRE2_ID; upgrading_button_id = SQSH_SELPANEL_UPGRADE_EMPIRE1_ID; popup = "<upgrade_empire1_unit>"; format_group = POPUP_FORMAT_BUILDING;};
@@ -163,6 +165,7 @@ static struct UnitInterfaceData
 
 	UnitInterfacePrm  station_rocket3  = { actions =  Station2; upgrading_button_id = SQSH_SELPANEL_UPGRADE_ROCKET2_ID; popup = "<upgrade_rocket2_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_laser3  = { actions =  Station2;  upgrading_button_id = SQSH_SELPANEL_UPGRADE_LASER2_ID;  popup = "<upgrade_laser2_unit>"; format_group = POPUP_FORMAT_BUILDING;};
+	UnitInterfacePrm  station_electro3  = { actions =  Station2;  upgrading_button_id = SQSH_SELPANEL_UPGRADE_ELECTRO2_ID;  popup = "<upgrade_electro2_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_bomb3  = { actions =  Station2;   upgrading_button_id = SQSH_SELPANEL_UPGRADE_BOMB2_ID;   popup = "<upgrade_bomb2_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_exodus3  = { actions =  Station2; upgrading_button_id = SQSH_SELPANEL_UPGRADE_EXODUS2_ID; popup = "<upgrade_exodus2_unit>"; format_group = POPUP_FORMAT_BUILDING;};
 	UnitInterfacePrm  station_empire3  = { actions =  Station2; upgrading_button_id = SQSH_SELPANEL_UPGRADE_EMPIRE2_ID; popup = "<upgrade_empire2_unit>"; format_group = POPUP_FORMAT_BUILDING;};
@@ -180,6 +183,7 @@ static struct UnitInterfaceData
 	UnitInterfacePrm  prorab  = { actions =  Prorab; popup = "<prorab_unit>"; format_group = POPUP_FORMAT_MMP;};
 
 	UnitInterfacePrm  gun_laser = { actions =  Gun1;  popup = "<gun_laser>"; format_group = POPUP_FORMAT_GUN;};
+	UnitInterfacePrm  gun_electro = { actions =  Gun1;  popup = "<gun_electro>"; format_group = POPUP_FORMAT_GUN;};
 	UnitInterfacePrm  gun_rocket = { actions =  Gun1; popup = "<gun_rocket>"; format_group = POPUP_FORMAT_GUN;};
 	UnitInterfacePrm  gun_howitzer = { actions =  Gun2; popup = "<gun_howitzer>"; format_group = POPUP_FORMAT_GUN;};
 	UnitInterfacePrm  gun_subchaser = { actions =  Gun2; popup = "<gun_subchaser>"; format_group = POPUP_FORMAT_GUN;};

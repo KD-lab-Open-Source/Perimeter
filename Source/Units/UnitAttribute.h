@@ -48,6 +48,7 @@ DECLARE_ENUM_DESCRIPTOR(EnvironmentalDamageType)
 DECLARE_ENUM_DESCRIPTOR(SoundID)
 DECLARE_ENUM_DESCRIPTOR(ChainNodeID)
 DECLARE_ENUM_DESCRIPTOR(ShellControlID)
+DECLARE_ENUM_DESCRIPTOR(ShellControlType)
 DECLARE_ENUM_DESCRIPTOR(Difficulty)
 DECLARE_ENUM_DESCRIPTOR(terBelligerent)
 DECLARE_ENUM_DESCRIPTOR(CollisionGroupID)
@@ -57,6 +58,7 @@ DECLARE_ENUM_DESCRIPTOR(ChainID)
 DECLARE_ENUM_DESCRIPTOR(terEffectID)
 DECLARE_ENUM_DESCRIPTOR(PlacementStrategy)
 DECLARE_ENUM_DESCRIPTOR(ChooseSquadID)
+DECLARE_ENUM_DESCRIPTOR(GAME_CONTENT)
 DECLARE_ENUM_DESCRIPTOR_ENCLOSED(RigidBodyPrm, RigidBodyType)
 #endif
 
@@ -1554,7 +1556,7 @@ public:
 	float sightRadius() const { return weaponSetup.sightRadius; }
 
 	static void setBuildCost(float energyPerElement) { energyPerElement_ = energyPerElement; }
-	float buildEnergy() const { return energyPerElement_*damageMolecula.elementCount()/constructionSpeedCoeff; }
+	float buildEnergy() const { return energyPerElement_*static_cast<float>(damageMolecula.elementCount())/constructionSpeedCoeff; }
 
 	bool isBuilding() const { return ::isBuilding(ID); }
 	bool isLegionary() const { return ::isLegionary(ID); }

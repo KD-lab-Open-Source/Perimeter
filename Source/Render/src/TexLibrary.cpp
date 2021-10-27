@@ -311,8 +311,8 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
         std::string normal_path = texpath.parent_path().string();
         std::string extension = texpath.filename().extension().string();
         std::string filename = texpath.filename().string();
-        string_replace(filename, extension.c_str(), "");
-        string_replace(filename, "_bump", "");
+        string_replace_all(filename, extension, "");
+        string_replace_all(filename, "_bump", "");
         normal_path += PATH_SEP + filename + "_normal" + extension;
         if (std::filesystem::exists(normal_path)) {
             Texture->SetName(normal_path.c_str());

@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include <SDL.h>
+#include "Config.h"
+#include "GameContent.h"
 
 //#include <crtdbg.h>
 
@@ -22,7 +24,8 @@ bool isPressed(uint32_t key) {
     if (!applicationHasFocus()) return false;
 
     //According to key type, use diff SDL2 methods
-    SDL_Keycode keycode;
+    SDL_Keycode keycode = 0;
+    std::vector<SDL_Keycode> keycodes;
     switch (key) {
         case VK_LBUTTON:
         case VK_MBUTTON:
@@ -36,7 +39,10 @@ bool isPressed(uint32_t key) {
             return SDL_GetModState() & KMOD_ALT;
         case VK_BACK:           keycode = SDLK_BACKSPACE; break;
         case VK_TAB:            keycode = SDLK_TAB; break;
-        case VK_RETURN:         keycode = SDLK_RETURN; break;
+        case VK_RETURN:
+            keycodes.emplace_back(SDLK_RETURN);
+            keycodes.emplace_back(SDLK_KP_ENTER);
+            break;
         case VK_PAUSE:          keycode = SDLK_PAUSE; break;
         case VK_CAPITAL:        keycode = SDLK_CAPSLOCK; break;
         case VK_ESCAPE:         keycode = SDLK_ESCAPE; break;
@@ -63,10 +69,32 @@ bool isPressed(uint32_t key) {
         case VK_F10:            keycode = SDLK_F10; break;
         case VK_F11:            keycode = SDLK_F11; break;
         case VK_F12:            keycode = SDLK_F12; break;
-        case VK_TILDE:          keycode = SDLK_BACKSLASH; break;
-        case VK_ADD:            keycode = SDLK_PLUS; break;
+        case VK_TILDE:          keycode = SDLK_BACKQUOTE; break;
+        case VK_SLASH:          keycode = SDLK_SLASH; break;
+        case VK_BKSLASH:        keycode = SDLK_BACKSLASH; break;
+        case VK_NUMPAD0:        keycode = SDLK_KP_0; break;
+        case VK_NUMPAD1:        keycode = SDLK_KP_1; break;
+        case VK_NUMPAD2:        keycode = SDLK_KP_2; break;
+        case VK_NUMPAD3:        keycode = SDLK_KP_3; break;
+        case VK_NUMPAD4:        keycode = SDLK_KP_4; break;
+        case VK_NUMPAD5:        keycode = SDLK_KP_5; break;
+        case VK_NUMPAD6:        keycode = SDLK_KP_6; break;
+        case VK_NUMPAD7:        keycode = SDLK_KP_7; break;
+        case VK_NUMPAD8:        keycode = SDLK_KP_8; break;
+        case VK_NUMPAD9:        keycode = SDLK_KP_9; break;
+        case VK_MULTIPLY:       keycode = SDLK_KP_MULTIPLY; break;
+        case VK_DIVIDE:         keycode = SDLK_KP_DIVIDE; break;
+        case VK_NUMLOCK:        keycode = SDLK_NUMLOCKCLEAR; break;
+        case VK_SCROLL:         keycode = SDLK_SCROLLLOCK; break;
+        case VK_ADD:
+            keycodes.emplace_back(SDLK_PLUS);
+            keycodes.emplace_back(SDLK_KP_PLUS);
+            break;
         case VK_SEPARATOR:      keycode = SDLK_SEPARATOR; break;
-        case VK_SUBTRACT:       keycode = SDLK_MINUS; break;
+        case VK_SUBTRACT:
+            keycodes.emplace_back(SDLK_MINUS);
+            keycodes.emplace_back(SDLK_KP_MINUS);
+            break;
         default:
 #ifdef PERIMETER_DEBUG
             printf("Unknown VK keycode requested %u\n", key);
@@ -78,17 +106,32 @@ bool isPressed(uint32_t key) {
     int numkeys;
     const Uint8 *state = SDL_GetKeyboardState(&numkeys);
 
-    //Convert VK to scancode and return state
-    SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
-    if (scancode >= numkeys) return false;
-    return state[scancode];
+    do {
+        //If we have more keycodes put them
+        if (!keycodes.empty()) {
+            keycode = keycodes.back();
+            keycodes.pop_back();
+        }
+        
+        //Convert VK to scancode and return state
+        SDL_Scancode scancode = SDL_GetScancodeFromKey(keycode);
+        if (scancode >= numkeys) continue;
+        if (state[scancode]) return true;
+    } while (!keycodes.empty());
+    return false;
 }
 
 sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
     fullkey = 0;
     switch (keysym.sym) {
+        case SDLK_LGUI:
+        case SDLK_RGUI:
+        case SDLK_PRINTSCREEN:
+            //Ignore these
+            break;
         case SDLK_BACKSPACE:    fullkey = VK_BACK; break;
         case SDLK_TAB:          fullkey = VK_TAB; break;
+        case SDLK_KP_ENTER:
         case SDLK_RETURN:       fullkey = VK_RETURN; break;
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:       fullkey = VK_SHIFT; break;
@@ -122,9 +165,27 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_F10:          fullkey = VK_F10; break;
         case SDLK_F11:          fullkey = VK_F11; break;
         case SDLK_F12:          fullkey = VK_F12; break;
-        case SDLK_BACKSLASH:    fullkey = VK_TILDE; break;
+        case SDLK_BACKQUOTE:    fullkey = VK_TILDE; break;
+        case SDLK_SLASH:        fullkey = VK_SLASH; break;
+        case SDLK_BACKSLASH:    fullkey = VK_BKSLASH; break;
+        case SDLK_KP_0:         fullkey = VK_NUMPAD0; break;
+        case SDLK_KP_1:         fullkey = VK_NUMPAD1; break;
+        case SDLK_KP_2:         fullkey = VK_NUMPAD2; break;
+        case SDLK_KP_3:         fullkey = VK_NUMPAD3; break;
+        case SDLK_KP_4:         fullkey = VK_NUMPAD4; break;
+        case SDLK_KP_5:         fullkey = VK_NUMPAD5; break;
+        case SDLK_KP_6:         fullkey = VK_NUMPAD6; break;
+        case SDLK_KP_7:         fullkey = VK_NUMPAD7; break;
+        case SDLK_KP_8:         fullkey = VK_NUMPAD8; break;
+        case SDLK_KP_9:         fullkey = VK_NUMPAD9; break;
+        case SDLK_KP_MULTIPLY:  fullkey = VK_MULTIPLY; break;
+        case SDLK_KP_DIVIDE:    fullkey = VK_DIVIDE; break;
+        case SDLK_NUMLOCKCLEAR: fullkey = VK_NUMLOCK; break;
+        case SDLK_SCROLLLOCK:   fullkey = VK_SCROLL; break;
+        case SDLK_KP_PLUS:
         case SDLK_PLUS:         fullkey = VK_ADD; break;
         case SDLK_SEPARATOR:    fullkey = VK_SEPARATOR; break;
+        case SDLK_KP_MINUS:
         case SDLK_MINUS:        fullkey = VK_SUBTRACT; break;
         default:
             //Apparently game uses uppercase ASCII codes for keys
@@ -150,7 +211,7 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         fullkey |= KBD_CTRL;
         ctrl |= 1;
     }
-    if ((mod & KMOD_GUI) != 0) {
+    if ((mod & KMOD_ALT) != 0) {
         fullkey |= KBD_MENU;
         menu |= 1;
     }
@@ -206,9 +267,10 @@ bool create_directories(const char* path, std::error_code* error) {
 }
 
 // ---   Ini file   ---------------------
-IniManager::IniManager(const char* fname, bool check_existence) {
+IniManager::IniManager(const char* fname, bool check_existence, bool full_path) {
     fname_ = fname;
     check_existence_ = check_existence;
+    is_full_path = full_path;
 }
 
 const char* IniManager::get(const char* section, const char* key)
@@ -216,13 +278,17 @@ const char* IniManager::get(const char* section, const char* key)
 	static char buf[256];
     static char path[MAX_PATH];
     
-    std::string pathres = convert_path_resource(fname_.c_str());
-    if(pathres.empty())
-        ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+    if (!is_full_path) {
+        std::string pathres = convert_path_resource(fname_.c_str());
+        if (pathres.empty())
+            ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
 
-    //GetPrivateProfileString needs full path
-    if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-        ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+        //GetPrivateProfileString needs full path
+        if (_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
+            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+    } else {
+        strncpy(path, fname_.c_str(), MAX_PATH);
+    }
     
 	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
 		*buf = 0;
@@ -237,13 +303,17 @@ void IniManager::put(const char* section, const char* key, const char* val)
 {
     static char path[MAX_PATH];
 
-    std::string pathres = convert_path_resource(fname_.c_str());
-    if(pathres.empty())
-        ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
-
-    //WritePrivateProfileString needs full path
-    if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
-        ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+    if (!is_full_path) {
+        std::string pathres = convert_path_resource(fname_.c_str());
+        if(pathres.empty())
+            ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
+    
+        //WritePrivateProfileString needs full path
+        if(_fullpath(path, pathres.c_str(), MAX_PATH) == NULL)
+            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
+    } else {
+        strncpy(path, fname_.c_str(), MAX_PATH);
+    }
 
 	WritePrivateProfileString(section,key,val,path);
 }
@@ -295,44 +365,64 @@ void IniManager::putFloatArray(const char* section, const char* key, int size, c
 	put(section, key, buf);
 }
 
-std::string getStringFromReg(const std::string& folderName, const std::string& keyName) {
-    //TODO we should read this in some file
-	std::string res;
-#ifndef PERIMETER_EXODUS
-	HKEY hKey;
-	char name[PERIMETER_CONTROL_NAME_SIZE];
-	DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
-	LONG lRet;
+static IniManager* settingsManager;
 
-	lRet = RegOpenKeyEx( HKEY_CURRENT_USER, folderName.c_str(), 0, KEY_QUERY_VALUE, &hKey );
-
-	if ( lRet == ERROR_SUCCESS ) {
-		lRet = RegQueryValueEx( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
-
-		if ( (lRet == ERROR_SUCCESS) && nameLen && (nameLen <= PERIMETER_CONTROL_NAME_SIZE) ) {
-			res = name;
-		}
-
-		RegCloseKey( hKey );
-	}
-#endif
-	return res;
+IniManager* getSettings() {
+    if (!settingsManager) {
+        std::string prefPath = GET_PREF_PATH();
+        terminate_with_char(prefPath, PATH_SEP);
+        prefPath = prefPath + "Settings.ini";
+        if (!std::filesystem::exists(prefPath)) {
+            //Create file if doesn't exist
+            XStream f(prefPath,XS_OUT);
+            f.close();
+        }
+        settingsManager = new IniManager(prefPath.c_str(), false, true);
+    }
+    return settingsManager;
 }
-void putStringToReg(const std::string& folderName, const std::string& keyName, const std::string& value) {
-	//TODO we should store this in some file
-#ifndef PERIMETER_EXODUS
-	HKEY hKey;
-	DWORD dwDisposition;
-	LONG lRet;
-	
-	lRet = RegCreateKeyEx( HKEY_CURRENT_USER, folderName.c_str(), 0, "", 0, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition );
 
-	if ( lRet == ERROR_SUCCESS ) {
-		lRet = RegSetValueEx( hKey, keyName.c_str(), 0, REG_SZ, (LPBYTE) (value.c_str()), value.length() );
+std::string getStringSettings(const std::string& keyName, const std::string& defaultValue) {
+    std::string res;
+    bool found = false;
 
-		RegCloseKey( hKey );
-	}
+    IniManager* ini = getSettings();
+    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getEnumName(terGameContentBase);
+    const char* result = ini->get(key.c_str(), keyName.c_str());
+    if (result) {
+        found = true;
+        res = result;
+    }
+    
+    //In case of Windows try checking registry if this fails
+#ifdef _WIN32
+    if (!found) {
+        HKEY hKey;
+        char name[PERIMETER_CONTROL_NAME_SIZE];
+        DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
+        LONG lRet;
+    
+        lRet = RegOpenKeyEx( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
+    
+        if ( lRet == ERROR_SUCCESS ) {
+            lRet = RegQueryValueEx( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
+    
+            if ( (lRet == ERROR_SUCCESS) && nameLen && (nameLen <= PERIMETER_CONTROL_NAME_SIZE) ) {
+                found = true;
+                res = name;
+            }
+    
+            RegCloseKey( hKey );
+        }
+    }
 #endif
+    return found ? res : defaultValue;
+}
+
+void putStringSettings(const std::string& keyName, const std::string& value) {
+    IniManager* ini = getSettings();
+    std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getEnumName(terGameContentBase); 
+    ini->put(key.c_str(), keyName.c_str(), value.c_str());
 }
 
 std::string formatTimeWithHour(int timeMilis) {

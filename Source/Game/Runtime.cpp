@@ -37,11 +37,15 @@
 #include <SDL_syswm.h>
 #endif
 
+//#define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN
+#define WINDOW_FULLSCREEN_FLAG SDL_WINDOW_FULLSCREEN_DESKTOP
+
 #ifndef PERIMETER_EXODUS
 #include <commdlg.h>
 #endif
 #include "../HT/ht.h"
 #include "GraphicsOptions.h"
+#include "GameContent.h"
 
 const char* currentVersion = 
 "Ver "
@@ -85,11 +89,15 @@ cUnkLight* terLight = NULL;
 cTileMap* terMapPoint = NULL;
 
 int terBitPerPixel = 16;
-int tepRefreshRateInHz = 0;					  
+int terScreenRefresh = 0;
+int terScreenIndex = 0;
 int terFullScreen = 0;
+int terResizableWindow = 1;
 int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
+int terGrabInput = 1;
+int applicationRunBackground = 0;
 
 int terDrawMeshShadow = 2;
 int terShadowType	= 0;
@@ -102,14 +110,16 @@ float terMapLevelLOD = 0.5f;
 
 GameShell* gameShell = 0;
 
-static Vect2i windowClientSize = Vect2i(1024, 768);
+Vect2i lastWindowSize(0,0);
+//Countdown for delaying the window resize propagation
+int lastWindowResize = 0;
 
 static bool applicationHasFocus_ = true;
 
 SDL_Window* sdlWindow = nullptr;
 HWND hWndVisGeneric = nullptr;
 
-int terSetDebugWindow = 0;
+extern char _bMenuMode;
 
 SyncroTimer global_time;
 SyncroTimer frame_time;
@@ -185,21 +195,32 @@ void RestoreGDI()
 
 void InternalErrorHandler()
 {
-	RestoreGDI();
+    if (sdlWindow && terGrabInput) {
+        SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
+    }
+#ifndef _FINAL_VERSION_
+    RestoreGDI();
 	if(universe()) universe()->allSavePlayReel();
+#endif
 }
 
 void refresh_window_size(bool update_resolution) {
-    if(terFullScreen){
-        windowClientSize.x = terScreenSizeX;
-        windowClientSize.y = terScreenSizeY;
+    Vect2i size;
+    if (terFullScreen) {
+        size.x = terScreenSizeX;
+        size.y = terScreenSizeY;
     } else {
-        SDL_GetWindowSize(sdlWindow, &windowClientSize.x, &windowClientSize.y);
+        SDL_GetWindowSize(sdlWindow, &size.x, &size.y);
     }
-    if(gameShell) {
-        gameShell->setWindowClientSize(windowClientSize);
-        if (update_resolution) {
-            gameShell->updateResolution(windowClientSize.x, windowClientSize.y, false, true);
+    if (!update_resolution || size != lastWindowSize) {
+        lastWindowSize = size;
+        if(gameShell) {
+            gameShell->setWindowClientSize(size);
+            if (update_resolution) {
+                terScreenSizeX = size.x;
+                terScreenSizeY = size.y;
+                gameShell->updateResolution(false, true, false);
+            }
         }
         _shellCursorManager.OnWMSetCursor();
     }
@@ -223,15 +244,15 @@ void CrashHandler()
     }
 }
 
+void initAttributes();
+
 void HTManager::init()
 {
 	interpolation_timer_ = 0;
 	interpolation_factor_ = 0;
 
     ErrH.SetPrefix(currentVersion);
-#ifndef _FINAL_VERSION_
-	ErrH.SetRestore(InternalErrorHandler);
-#endif
+    ErrH.SetRestore(InternalErrorHandler);
     ErrH.SetCrash(CrashHandler);
 	SetAssertRestoreGraphicsFunction(RestoreGDI);
 	
@@ -253,8 +274,7 @@ void HTManager::init()
 
 	initGraphics();
 
-	void debugStartUp();
-	debugStartUp();
+	initAttributes();
 
 	allocation_tracking("PerimeterGraphicsInit");
 	
@@ -341,32 +361,150 @@ void HTManager::GraphQuant()
 //--------------------------------
 void ErrorInitialize3D();
 
-HWND PerimeterCreateWindow(int size_x, int size_y, bool full_screen) {
-    Uint32 window_flags = SDL_WINDOW_SHOWN;
+///Returns true if its true fullscreen (no borderless window)
+bool isTrueFullscreen() {
+    return terFullScreen && WINDOW_FULLSCREEN_FLAG == SDL_WINDOW_FULLSCREEN;
+}
+
+void PerimeterSetupDisplayMode() {
+#if PERIMETER_DEBUG
+    printf("PerimeterSetupDisplayMode\n");
+#endif
+    bool windowFullscreen = SDL_GetWindowFlags(sdlWindow)&WINDOW_FULLSCREEN_FLAG;
+    
+    //Create display mode with current settings
+    SDL_DisplayMode mode;
+    mode.w = terScreenSizeX;
+    mode.h = terScreenSizeY;
+    mode.format = 0;
+    mode.refresh_rate = terScreenRefresh;
+    mode.driverdata = nullptr;
+
+    //Get display mode if no display was set previously
+    int windowScreenIndex = SDL_GetWindowDisplayIndex(sdlWindow);
+    if (windowScreenIndex < 0) {
+        SDL_PRINT_ERROR("SDL_GetWindowDisplayIndex");
+    }
+    if (terScreenIndex < 0) {
+        terScreenIndex = windowScreenIndex;
+        if (SDL_GetDesktopDisplayMode(terScreenIndex, &mode) != 0) {
+            SDL_PRINT_ERROR("SDL_GetDesktopDisplayMode");
+            terScreenIndex = -1;
+        } else if (!terFullScreen) {
+            //Preserve window size if we are retrieving screen mode
+            mode.w = terScreenSizeX;
+            mode.h = terScreenSizeY;
+        }
+    }
+
+    //Place window in selected display
+    if (0 <= terScreenIndex && terScreenIndex != windowScreenIndex) {
+#if PERIMETER_DEBUG
+        printf("SDL_SetWindowPosition %d -> %d\n", windowScreenIndex, terScreenIndex);
+#endif
+        unsigned int windowPos = SDL_WINDOWPOS_CENTERED_DISPLAY(terScreenIndex);
+        SDL_SetWindowPosition(sdlWindow, windowPos, windowPos);
+    }
+
+    //Set current fullscreen state
+    if (windowFullscreen != terFullScreen) {
+#if PERIMETER_DEBUG
+        printf("SDL_SetWindowFullscreen %d\n", terFullScreen);
+#endif
+        SDL_SetWindowFullscreen(sdlWindow, terFullScreen ? WINDOW_FULLSCREEN_FLAG : 0);
+    }
+    
+    //Set the display mode only on true fullscreen
+    if (0 <= terScreenIndex) {
+        if (terFullScreen) {
+            SDL_DisplayMode closest;
+            if (SDL_GetClosestDisplayMode(terScreenIndex, &mode, &closest) == nullptr) {
+                SDL_PRINT_ERROR("SDL_GetClosestDisplayMode");
+            } else {
+                if (SDL_SetWindowDisplayMode(sdlWindow, &closest)) {
+                    SDL_PRINT_ERROR("SDL_SetWindowDisplayMode");
+                } else {
+#if PERIMETER_DEBUG
+                    printf("SDL_SetWindowDisplayMode\n");
+#endif
+                    //Get refresh rate
+                    if (SDL_GetCurrentDisplayMode(terScreenIndex, &mode) != 0) {
+                        SDL_PRINT_ERROR("SDL_GetCurrentDisplayMode");
+                        terScreenRefresh = 0;
+                    } else {
+                        terScreenRefresh = mode.refresh_rate;
+                    }
+                }
+            }
+        }
+
+        //bool trueFullScreen = WINDOW_FULLSCREEN_FLAG == SDL_WINDOW_FULLSCREEN;
+        if (!terFullScreen) {
+            terScreenRefresh = mode.refresh_rate;
+            //Check if we need to restore before resizing, otherwise the set size does nothing
+            if (SDL_GetWindowFlags(sdlWindow)&(SDL_WINDOW_MAXIMIZED|SDL_WINDOW_MINIMIZED)) {
+                SDL_RestoreWindow(sdlWindow);
+            }
+            SDL_SetWindowSize(sdlWindow, mode.w, mode.h);
+#if PERIMETER_DEBUG
+            printf("SDL_SetWindowSize\n");
+#endif
+        }
+    }
+
+    //Update globals with our window size
+    SDL_GetWindowSize(sdlWindow, &terScreenSizeX, &terScreenSizeY);
+}
+
+HWND PerimeterCreateWindow() {
+    Uint32 window_flags = SDL_WINDOW_HIDDEN;
 #ifndef _WIN32
     //On non Windows we use dxvk-native which uses Vulkan
     window_flags |= SDL_WINDOW_VULKAN;
 #endif
-    if (full_screen) {
-        window_flags |= SDL_WINDOW_FULLSCREEN;
+    if (terFullScreen) {
+        window_flags |= WINDOW_FULLSCREEN_FLAG;
     }
-    /* TODO
     if (terResizableWindow) {
         window_flags |= SDL_WINDOW_RESIZABLE;
     }
-    */
+    unsigned int windowPos = SDL_WINDOWPOS_UNDEFINED;
+    if (0 <= terScreenIndex) {
+        if (terFullScreen) {
+            windowPos = SDL_WINDOWPOS_CENTERED_DISPLAY(terScreenIndex);
+        } else {
+            windowPos = SDL_WINDOWPOS_UNDEFINED_DISPLAY(terScreenIndex);            
+        }
+    }
     sdlWindow = SDL_CreateWindow(
             "Perimeter",
-            SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,
-            size_x, size_y,
+            windowPos, windowPos,
+            terScreenSizeX, terScreenSizeY,
             window_flags
     );
     if (!sdlWindow) {
         ErrH.Abort("Error creating SDL window", XERR_CRITICAL, window_flags, SDL_GetError());
     }
 
+    //Set minimum resolution
+    if (terResizableWindow) {
+        const UIResolution& minRes = getMinimumUIResolution();
+        SDL_SetWindowMinimumSize(sdlWindow, minRes.x, minRes.y);
+    }
+
     //Setup window icon
     //TODO SDL_SetWindowIcon(sdlWindow, icon);
+    
+    //Show the window
+    SDL_ShowWindow(sdlWindow);
+
+    //Setup the window display mode
+    PerimeterSetupDisplayMode();
+    
+    //Grab input
+    if (terGrabInput) {
+        SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+    }
 
 #ifdef _WIN32
     //Get HWND from SDL window
@@ -381,26 +519,29 @@ HWND PerimeterCreateWindow(int size_x, int size_y, bool full_screen) {
 #endif
 }
 
-cInterfaceRenderDevice* SetGraph(int Mode, int xScr, int yScr, int FullScr, int ColorBit, int RefreshRateInHz)
+cInterfaceRenderDevice* SetGraph()
 {
-	cInterfaceRenderDevice *IRenderDevice=0;
-	IRenderDevice=CreateIRenderDevice();
+	cInterfaceRenderDevice *IRenderDevice=CreateIRenderDevice();
 
 	int ModeRender=0;
-	if(FullScr==0) 
-		ModeRender |= RENDERDEVICE_MODE_WINDOW;
-	if(ColorBit==32) 
-		ModeRender|=RENDERDEVICE_MODE_RGB32; 
-	else 
-		ModeRender|=RENDERDEVICE_MODE_RGB16;
+	if (!isTrueFullscreen()) {
+        ModeRender |= RENDERDEVICE_MODE_WINDOW;
+    }
+	if (terBitPerPixel==32) {
+        ModeRender |= RENDERDEVICE_MODE_RGB32;
+    } else {
+        ModeRender |= RENDERDEVICE_MODE_RGB16;
+    }
 
 //	if(HTManager::instance()->IsUseHT())
 		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
 
-    hWndVisGeneric = PerimeterCreateWindow(xScr, yScr, FullScr != 0);
+    hWndVisGeneric = PerimeterCreateWindow();
 
-	if(IRenderDevice->Init(xScr,yScr,ModeRender,hWndVisGeneric,RefreshRateInHz))
+    int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,hWndVisGeneric,terScreenRefresh);
+	if(error)
 	{
+        fprintf(stderr, "SetGraph init error: %d\n", error);
 		ErrorInitialize3D();
 	}
 
@@ -419,6 +560,7 @@ void GameShell::SetFontDirectory()
 
 void HTManager::initGraphics()
 {
+    initSourceUIResolution();
 	terLogicGeneric = CreateILogicGeneric();
 	terVisGeneric = CreateIVisGeneric();
 	terVisGeneric->SetMapLevel(terMapLevelLOD);
@@ -436,7 +578,7 @@ void HTManager::initGraphics()
 	terVisGeneric->SetMipMapBlur(terMipMapBlur);
 	terVisGeneric->SetMipMapLevel(terMipMapLevel);
 
-	terRenderDevice = SetGraph(1, terScreenSizeX,terScreenSizeY,terFullScreen,terBitPerPixel,tepRefreshRateInHz);
+	terRenderDevice = SetGraph();
 
 //	terRenderDevice = (cInterfaceRenderDevice*)(terVisGeneric -> CreateGraph(terGraphicsMode));
 //	terVisGeneric -> SetGraph(terRenderDevice,terScreenSizeX,terScreenSizeY,terFullScreen,16);
@@ -474,7 +616,9 @@ void HTManager::initGraphics()
 		terRenderDevice->Flush();
 	};*/
 
-	vMap.prepare("RESOURCE\\Worlds\\WORLDS.PRM");//,NULL,NULL,0,terRenderDevice->GetSizeX(),terRenderDevice->GetSizeY());
+    setSourceUIResolution(Vect2i(terScreenSizeX, terScreenSizeY));
+
+	vMap.prepare("RESOURCE\\Worlds");
 	GraphOptionsManager::getInstance().load();
 	GraphOptionsManager::getInstance().apply();
 }
@@ -506,6 +650,13 @@ void HTManager::finitGraphics()
 	terRenderDevice = NULL;
 	terVisGeneric = NULL;
 	terLogicGeneric = NULL;
+    
+    if (sdlWindow) {
+        SDL_ShowCursor(SDL_TRUE);
+        SDL_DestroyWindow(sdlWindow);
+        sdlWindow = nullptr;
+        hWndVisGeneric = nullptr;
+    }
 }
 
 //--------------------------------
@@ -524,7 +675,7 @@ STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
 	if(terSoundEnable  || terMusicEnable){
 		static int inited = 0;
 
-		SNDSetLocDataDirectory(GameShell::getLocDataPath().c_str());
+		SNDSetLocDataDirectory(getLocDataPath().c_str());
 
 		if(!inited){
 			inited = 1;
@@ -615,9 +766,16 @@ int main(int argc, char *argv[])
     
     //Create crash folder
     std::filesystem::create_directories(CRASH_DIR);
-    
-    //Scan resources first
-    scan_resource_paths();
+
+    //Do game content detection
+    detectGameContent();
+
+    //Load perimeter parameters
+    int xprmcompiler=IniManager("Perimeter.ini", false).getInt("Game","XPrmCompiler");
+    check_command_line_parameter("xprm_compiler", xprmcompiler);
+    if (xprmcompiler) {
+        reload_parameters();
+    }
 
     g_controls_converter.LoadKeyNameTable();
 
@@ -684,7 +842,17 @@ int main(int argc, char *argv[])
 //--------------------------------
 
 void SDL_event_poll() {
+    //Check if window resizing has been calm down and propagate event
+    if (0 < lastWindowResize) {
+        lastWindowResize--;
+        if (lastWindowResize <= 0) {
+            refresh_window_size(true);
+        }
+    }
+    
     uint32_t windowID = SDL_GetWindowID(sdlWindow);
+
+    //Iterate each SDL event that we may have queued since last poll
     SDL_Event event;
     bool closing = false;
     while (SDL_PollEvent(&event) == 1) {
@@ -693,8 +861,9 @@ void SDL_event_poll() {
             continue;
         }
 
-        if(gameShell)
+        if (gameShell) {
             gameShell->EventHandler(event);
+        }
 
         /* TODO how this should be impl?
             case WM_SETCURSOR:
@@ -711,6 +880,13 @@ void SDL_event_poll() {
 
         //Handle event by type and subtype
         switch (event.type) {
+            case SDL_MOUSEBUTTONDOWN: {
+                //Grab window at click if window is resizable and is not already grabbed
+                if (terGrabInput && applicationHasFocus_ && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
+                    SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+                }
+                break;
+            }
             case SDL_WINDOWEVENT: {
                 switch (event.window.event) {
                     case SDL_WINDOWEVENT_SHOWN: {
@@ -718,19 +894,29 @@ void SDL_event_poll() {
                     }
                     case SDL_WINDOWEVENT_RESIZED:
                     case SDL_WINDOWEVENT_SIZE_CHANGED: {
-                        refresh_window_size(!terFullScreen);
+                        if (0 <= lastWindowResize) {
+                            if (_bMenuMode) {
+                                lastWindowResize = 15;
+                            } else {
+                                //Game can be unstable during frequent resizing
+                                lastWindowResize = 30;
+                            }
+                        }
                         break;
                     }
-#ifndef PERIMETER_DEBUG
                     case SDL_WINDOWEVENT_FOCUS_LOST: {
-                        applicationHasFocus_ = false;
+                        if (terGrabInput) {
+                            SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
+                        }
+                        if (!applicationRunBackground) {
+                            applicationHasFocus_ = false;
+                        }
                         break;
                     }
                     case SDL_WINDOWEVENT_FOCUS_GAINED: {
-                        applicationHasFocus_= true;
+                        applicationHasFocus_ = true;
                         break;
                     }
-#endif
                     case SDL_WINDOWEVENT_CLOSE: {
                         //NOTE: Seems that MacOS uses this event instead of SDL_QUIT when window is requested to close
                         closing = true;
@@ -956,3 +1142,31 @@ const char* editTextMultiLine(const char* defaultValue, HWND hwnd)
 	return editTextString.c_str();
 }
 
+std::string locale;
+
+const std::string getLocale() {
+    if (locale.empty()) {
+        locale = getStringSettings("Locale");
+        if (locale.empty()) {
+            locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
+            if (locale.empty()) {
+                locale = "English";
+            }
+        }
+        if (locale.empty()
+            || (convert_path_resource(("RESOURCE\\LocData\\" + locale + "\\").c_str()).empty())) {
+            //Apparently on Steam the DefaultLanguage is Russian which gives issues when downloading game as non russian
+            //so we try switching it in case we don't found on gamedata, in case English fails use Russian by default
+            if (locale == "English") {
+                locale = "Russian";
+            } else {
+                locale = "English";
+            }
+        }
+    }
+    return locale;
+}
+
+const std::string getLocDataPath() {
+    return "Resource/LocData/" + getLocale() + "/";
+}

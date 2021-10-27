@@ -64,7 +64,28 @@ bool cVisGeneric::assertEnabled_ = false;
 
 bool Option_ShowType[SHOW_MAX];
 
-THREAD_LOCAL DWORD tls_is_graph=MT_LOGIC_THREAD;
+//Per thread variable
+thread_local uint32_t tls_thread_type=MT_LOGIC_THREAD;
+
+void debug_dump_mt_tls() {
+    printf("dump_mt_tls: L%d G%d\n", MT_IS_LOGIC(), MT_IS_GRAPH());
+}
+
+uint32_t MT_GET_TYPE() {
+    return tls_thread_type;
+}
+
+void MT_SET_TYPE(uint32_t val) {
+    tls_thread_type = val;
+}
+
+bool MT_IS_GRAPH() {
+    return (tls_thread_type & MT_GRAPH_THREAD) != 0;
+}
+
+bool MT_IS_LOGIC() {
+    return (tls_thread_type & MT_LOGIC_THREAD) != 0;
+}
 
 float CONVERT_PROCENT(float x,float min,float max)
 {
@@ -84,7 +105,13 @@ cVisGeneric::cVisGeneric() : cUnknownClass(KIND_UI_VISGENERIC)//: SceneArray(KIN
 {
 	MTINIT(lock_effect_library);
 	logic_quant=graph_logic_quant=0;
-	tls_is_graph=MT_GRAPH_THREAD;
+    if (check_command_line("dump_mt_tls")) {
+        debug_dump_mt_tls();
+    }
+    MT_SET_TYPE(MT_GRAPH_THREAD);
+    if (check_command_line("dump_mt_tls")) {
+        debug_dump_mt_tls();
+    }
 	for(int i=0;i<SHOW_MAX;i++)
 		Option_ShowType[i]=true;
 	Option_ShowType[SHOW_INFO]=false;

@@ -49,6 +49,7 @@ struct sqshControl {
 	ShellControlType type;
 	ShellControlID id;
 	int state;
+	int content;
 	float x;
 	float y;
 	float sx;

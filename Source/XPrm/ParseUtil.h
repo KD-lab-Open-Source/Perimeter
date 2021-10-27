@@ -16,19 +16,19 @@ public:
 class duplicate_token : public parsing_error 
 {
 public:
-  duplicate_token(const char* __s) : parsing_error(__s) {}
+  duplicate_token(const char* __s) : parsing_error((std::string("Duplicate token: ") + __s).c_str()) {}
 };
 
 class unexpected_token : public parsing_error 
 {
 public:
-  unexpected_token(const char* __s) : parsing_error(__s) {}
+  unexpected_token(const char* __s) : parsing_error((std::string("Expected token: ") + __s).c_str()) {}
 };
 
 class expected_token : public parsing_error 
 {
 public:
-  expected_token(const char* __s) : parsing_error(__s) {}
+  expected_token(const char* __s) : parsing_error((std::string("Unexpected token: ") + __s).c_str()) {}
 };
 
 
@@ -116,14 +116,6 @@ inline int is_name(const char* str)
 	return isalpha(str[0]) || str[0] == '_';
 }
 
-inline std::string get_exe_path()
-{
-    std::string exe_path = __argv[0];
-    size_t pos = exe_path.rfind(PATH_SEP) + 1;
-	exe_path.erase(pos, exe_path.size() - pos);
-	return exe_path;
-}
-
 inline unsigned CRC(const char* str, unsigned crc)
 {
 	if(!str)
@@ -154,4 +146,17 @@ inline std::string strip_string(const char* str)
 	parameter.erase(0, 1);
 	parameter.pop_back();
 	return parameter;
+}
+
+static std::string convert_path_xprm(const char* path) {
+    std::string result = convert_path(path);
+    //Certain dependencies need to use convert_path_resource during game runtime compiler
+    bool check_exists = endsWith(result, ".prm") || endsWith(result, ".inl");
+    if (check_exists && !std::filesystem::exists(result)) {
+        std::string resource = convert_path_resource(path);
+        if (!resource.empty()) {
+            result = resource;
+        }
+    }
+    return result;
 }

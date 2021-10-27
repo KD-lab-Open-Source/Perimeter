@@ -93,6 +93,9 @@ void terCorridor::Quant()
 			//frame_->Player->clearFrame();
 			frame_->Kill();
 			mode_ = IDLE;
+            if (!attr().moveFrame) {
+                BodyPoint->setVelocity(Vect3f::ZERO);
+            }
 			realAvatar()->requestChain(CHAIN_CLOSED);
 		}
 		break; }

@@ -63,8 +63,8 @@ public:
 
 	Section(const char* name) : Token(name), TokenList(name) { using_namespace = 0; }
 	int variables() const;
-	bool definition(const char* sources, bool rebuild, StringList& dependencies);
-	bool declaration(const char* sources, bool rebuild);
+	bool definition(const char* sources, bool rebuild, bool fail_outdated, StringList& dependencies);
+	bool declaration(const char* sources, bool rebuild, bool fail_outdated);
 	unsigned description();
 	void copy(class ParameterSection& prm);
     std::string align_path(const char* sources, const std::string& str);
@@ -135,15 +135,12 @@ class Compiler
 	std::string prim_s();
 
 	TokenList& top_context();
-	
-protected:
-    std::string exe_path;
 
 public:							
 	Compiler();
 	void clear();
 	int parse_file(const char* fname, XBuffer& sout); // returns the number of errors
-	bool compile(const char* fname, const char* sources, bool rebuild); // returns 1 if succeeds
+	bool compile(const char* fname, const char* sources, bool rebuild, bool fail_outdated); // returns 1 if succeeds
 	bool sectionUpdated() const { return sectionUpdated_; }
 	Section* getSection(const char* name);
 
@@ -336,11 +333,12 @@ public:
 	void write_value(WriteStream& buf) const;
 	void copy_value(void* val) const;
 	void write_name(XBuffer& buf) const { Variable::write_name(buf); buf < "["; if(declare_size) buf <= size(); buf < "]"; }
-	void description(unsigned& crc) const { Variable::description(crc); crc = CRC(size(), crc); }
+	void description(unsigned& crc) const;
 	int sizeOf() const { return type.sizeOf()*size(); }
 	Token* clone() const;
 	int size() const { return list<ShareHandle<Variable> >::size(); }
-	const Variable& at(int index) const { if(index < 0 || index >= current_size) throw parsing_error("Array index is out of bound"); const_iterator i = begin(); while(index--) i++; return **i; } 
+	const Variable& at(int index) const { if(index < 0 || index >= current_size) throw parsing_error("Array index is out of bound"); const_iterator i = begin(); while(index--) i++; return **i; }
+    const std::string& get_size_var_name() const { return size_var_name; };
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,6 +387,7 @@ public:
 	void init(Compiler& comp);
 	void write_value(WriteStream& buf) const;
 	void copy_value(void* val) const;
+    void description(unsigned& crc) const;
 	Token* clone() const { return new StructVariable(*this); } 
 };
 

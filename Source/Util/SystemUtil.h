@@ -75,8 +75,9 @@ class IniManager
 {
 	std::string fname_;
 	bool check_existence_;
+    bool is_full_path;
 public:
-	IniManager(const char* fname, bool check_existence = true);
+	explicit IniManager(const char* fname, bool check_existence = true, bool full_path = false);
 	const char* get(const char* section, const char* key);
 	void put(const char* section, const char* key, const char* val);
 	int getInt(const char* section, const char* key);
@@ -113,9 +114,10 @@ inline std::string getExtention(const char* file_name)
 		return "";
 }
 
-// --- Registry ------
-std::string getStringFromReg(const std::string& folderName, const std::string& keyName);
-void putStringToReg(const std::string& folderName, const std::string& keyName, const std::string& value);
+// --- Settings ------
+IniManager* getSettings();
+std::string getStringSettings(const std::string& keyName, const std::string& defaultValue = "");
+void putStringSettings(const std::string& keyName, const std::string& value);
 
 // --- Formatting ------
 std::string formatTimeWithHour(int timeMilis);

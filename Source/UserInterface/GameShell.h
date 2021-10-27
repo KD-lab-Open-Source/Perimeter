@@ -88,7 +88,7 @@ public:
 	void MouseMidPressed(const Vect2f& pos);
 	void MouseMidUnpressed(const Vect2f& pos);
 
-	void MouseMove(const Vect2f& pos);
+	void MouseMove(const Vect2f& pos, const Vect2f& rel);
 	void MouseLeftDoubleClick(const Vect2f& pos);
 	void MouseRightDoubleClick(const Vect2f& pos);
 	void MouseWheel(int delta);
@@ -105,7 +105,7 @@ public:
 	Vect2i convertToScreenAbsolute(const Vect2f& pos); // Absolute screen for cursor positioning
 
 	void updateMap();
-	void updateResolution(int sx, int sy,bool change_depth,bool change_size);
+	void updateResolution(bool change_depth, bool change_size, bool change_display_mode);
 
 	void recreateChaos();
 	void createChaos();
@@ -155,7 +155,8 @@ public:
 	bool mouseLeftPressed() const { return mouseLeftPressed_; }
 	bool mouseRightPressed() const { return mouseRightPressed_; }
 	const Vect2f mousePosition() const { return mousePosition_; }
-	const Vect2f mousePositionDelta() const { return mousePositionDelta_; }
+    const Vect2f mousePositionDelta() const { return mousePositionDelta_; }
+    const Vect2f& mousePositionRelative() const { return mousePositionRelative_; }
 	
 	const Vect2f mousePressControl() const { return mousePressControl_; }
 	void setMousePressControl(const Vect2f& pos) { mousePressControl_ = pos; }
@@ -221,7 +222,7 @@ public:
 	void showReelModal(const char* binkFileName, const char* soundFileName, bool localized = false, bool stopBGMusic = true, int alpha = 255);
 	void showPictureModal(const char* pictureFileName, bool localized, int stableTime);
 
-	void changeControlState(const std::vector<SaveControlData>& newControlStates);
+	void changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls);
 	void fillControlState(std::vector<SaveControlData>& controlStatesToSave);
 
 	void setScriptReelEnabled(bool isScriptReelEnabled);
@@ -231,20 +232,6 @@ public:
 
 	void toggleScriptReelEnabled() {
 		setScriptReelEnabled(!scriptReelEnabled);
-	}
-
-	static const std::string& getLocDataPath() {
-		if (locale.empty()) {
-			locale = getStringFromReg(mainCurrUserRegFolder, "Locale");
-			if (locale.empty()) {
-				locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
-				if (locale.empty()) {
-					locale = "English";
-				}
-			}
-			locale = "RESOURCE\\LocData\\" + locale + "\\"; 
-		}
-		return locale;
 	}
 
 	//-----Network function-----
@@ -320,9 +307,10 @@ private:
 
 	bool mouseLeftPressed_;
 	bool mouseRightPressed_;
-	Vect2f mousePosition_;
+    Vect2f mousePosition_;
 	Vect2f mousePositionDelta_;
-	Vect2f mousePressControl_;
+    Vect2f mousePositionRelative_;
+    Vect2f mousePressControl_;
 
 	bool alwaysRun_;
 	bool interfaceShowFlag_;
@@ -368,6 +356,11 @@ private:
 	bool cutSceneSkipped_;
 	MeasurementTimer lastSkipTime_;
 
+    //Double clicking vars
+    int doubleClickTime = 300;
+    int lastClickButton = 0;
+    double lastClickTime = 0;
+
 	//---------------------------------
 	void ShotsScan();
 	void MakeShot();
@@ -389,8 +382,6 @@ private:
 	ReelManager reelManager;
 
 	void setLocalizedFontSizes();
-
-	static std::string locale;
 
 	bool soundPushedByPause;
 	int soundPushedPushLevel;

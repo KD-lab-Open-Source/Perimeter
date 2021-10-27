@@ -387,26 +387,26 @@ GlobalAttributes = {
 				soundTracks = {
 					3;
 					{
-						fileName = "RESOURCE\\MUSIC\\Empire_Primary.ogg";
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Primary.ogg";
 						fileNames = {
 							1;
-							"RESOURCE\\MUSIC\\Empire_Primary.ogg"
+							"RESOURCE\\MUSIC\\Harkbackhood_Primary.ogg"
 						};
 						randomChoice = false;
 					},
 					{
-						fileName = "RESOURCE\\MUSIC\\Empire_Military.ogg";
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Military.ogg";
 						fileNames = {
 							1;
-							"RESOURCE\\MUSIC\\Empire_Military.ogg"
+							"RESOURCE\\MUSIC\\Harkbackhood_Military.ogg"
 						};
 						randomChoice = false;
 					},
 					{
-						fileName = "RESOURCE\\MUSIC\\Empire_Covered.ogg";
+						fileName = "RESOURCE\\MUSIC\\Harkbackhood_Covered.ogg";
 						fileNames = {
 							1;
-							"RESOURCE\\MUSIC\\Empire_Covered.ogg"
+							"RESOURCE\\MUSIC\\Harkbackhood_Covered.ogg"
 						};
 						randomChoice = false;
 					}

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 //	XScript declaration
 //	Section: UnitAttributePrm
-//	Number of variables: 336
+//	Number of variables: 348
 //	This is computer generated code, don't try to change it
 //////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __XScript_struct_ModelProperty__
@@ -905,6 +905,7 @@ extern InterfaceTV interfaceTV_PlantOfficer;
 extern InterfaceTV interfaceTV_PlantTechnician;
 extern InterfaceTV interfaceTV_Amplifier;
 extern InterfaceTV interfaceTV_GunLaser;
+extern InterfaceTV interfaceTV_GunElectro;
 extern InterfaceTV interfaceTV_GunRocket;
 extern InterfaceTV interfaceTV_GunHowitzer;
 extern InterfaceTV interfaceTV_GunSubchaser;
@@ -913,10 +914,12 @@ extern InterfaceTV interfaceTV_FilthNavigator;
 extern InterfaceTV interfaceTV_ScumDisruptor;
 extern InterfaceTV interfaceTV_Sniper;
 extern InterfaceTV interfaceTV_Leamo;
+extern InterfaceTV interfaceTV_Impaler;
 extern InterfaceTV interfaceTV_Rocker;
 extern InterfaceTV interfaceTV_Mortar;
 extern InterfaceTV interfaceTV_Ceptor;
 extern InterfaceTV interfaceTV_Gyroid;
+extern InterfaceTV interfaceTV_Eflair;
 extern InterfaceTV interfaceTV_Wargon;
 extern InterfaceTV interfaceTV_Bombie;
 extern InterfaceTV interfaceTV_RProjector;
@@ -925,6 +928,7 @@ extern InterfaceTV interfaceTV_Unseen;
 extern InterfaceTV interfaceTV_ScumSplitter;
 extern InterfaceTV interfaceTV_ScumTwister;
 extern InterfaceTV interfaceTV_ScumHeater;
+extern InterfaceTV interfaceTV_Conductor;
 extern InterfaceTV interfaceTV_ScumThrower;
 extern InterfaceTV interfaceTV_LabRocket1;
 extern InterfaceTV interfaceTV_LabRocket2;
@@ -932,6 +936,9 @@ extern InterfaceTV interfaceTV_LabRocket3;
 extern InterfaceTV interfaceTV_LabLaser1;
 extern InterfaceTV interfaceTV_LabLaser2;
 extern InterfaceTV interfaceTV_LabLaser3;
+extern InterfaceTV interfaceTV_LabElectro1;
+extern InterfaceTV interfaceTV_LabElectro2;
+extern InterfaceTV interfaceTV_LabElectro3;
 extern InterfaceTV interfaceTV_LabBomb1;
 extern InterfaceTV interfaceTV_LabBomb2;
 extern InterfaceTV interfaceTV_LabBomb3;
@@ -1030,6 +1037,7 @@ extern SoundSetup scumDisruptorSound;
 extern SoundSetup howitzerGunSound;
 extern SoundSetup rocketGunSound;
 extern SoundSetup laserGunSound;
+extern SoundSetup electroGunSound;
 extern SoundSetup bombieSound;
 extern SoundSetup wargonSound;
 extern SoundSetup extirpatorSound;
@@ -1037,10 +1045,12 @@ extern SoundSetup leechSound;
 extern SoundSetup scumThrowerSound;
 extern SoundSetup straferSound;
 extern SoundSetup gyroidSound;
+extern SoundSetup eflairSound;
 extern SoundSetup ceptorSound;
 extern SoundSetup mortarSound;
 extern SoundSetup rockerSound;
 extern SoundSetup leamoSound;
+extern SoundSetup impalerSound;
 extern SoundSetup sniperSound;
 extern SoundSetup officerSound;
 extern SoundSetup technicSound;
@@ -1056,6 +1066,7 @@ extern SoundSetup officerPlantSound;
 extern SoundSetup commandCenterSound;
 extern SoundSetup labRocketSound;
 extern SoundSetup labLaserSound;
+extern SoundSetup labElectroSound;
 extern SoundSetup labBombSound;
 extern SoundSetup labAntigravSound;
 extern SoundSetup labSubterraSound;
@@ -1072,6 +1083,7 @@ extern SoundSetup disintegratorSound;
 extern SoundSetup scumSplitterSound;
 extern SoundSetup scumTwisterSound;
 extern SoundSetup scumHeaterSound;
+extern SoundSetup conductorSound;
 extern SoundSetup unseenSound;
 extern SoundSetup rockerRocketSound;
 extern SoundSetup rprojectorRocketSound;
@@ -1338,6 +1350,9 @@ struct terUnitAttributeDataTable {
 	terUnitAttributeData LabLaser1;
 	terUnitAttributeData LabLaser2;
 	terUnitAttributeData LabLaser3;
+	terUnitAttributeData LabElectro1;
+	terUnitAttributeData LabElectro2;
+	terUnitAttributeData LabElectro3;
 	terUnitAttributeData LabBomb1;
 	terUnitAttributeData LabBomb2;
 	terUnitAttributeData LabBomb3;
@@ -1363,6 +1378,9 @@ struct terUnitAttributeDataTable {
 	terUnitAttributeData ScumTwister;
 	terUnitAttributeData ScumHeater;
 	terUnitAttributeData ScumThrower;
+	terUnitAttributeData Impaler;
+	terUnitAttributeData Eflair;
+	terUnitAttributeData Conductor;
 	terUnitAttributeData Extirpator;
 	terUnitAttributeData Wargon;
 	terUnitAttributeData Bombie;
@@ -1374,6 +1392,7 @@ struct terUnitAttributeDataTable {
 	terUnitAttributeData filthSpot3;
 	terUnitAttributeData Leech;
 	terUnitAttributeData GunLaser;
+	terUnitAttributeData GunElectro;
 	terUnitAttributeData GunRocket;
 	terUnitAttributeData GunHowitzer;
 	terUnitAttributeData GunSubchaser;
@@ -1465,11 +1484,17 @@ struct terUnitAttributeDataTable {
 	terUnitAttributeData AlphaPotential;
 	terUnitAttributeData FrameExodus0;
 	terUnitAttributeData FrameExodus1;
+	terUnitAttributeData FrameExodus2;
+	terUnitAttributeData FrameExodus3;
+	terUnitAttributeData FrameExodus4;
 	terUnitAttributeData FrameHarkBackHood0;
 	terUnitAttributeData FrameHarkBackHood1;
 	terUnitAttributeData FrameEmpire0;
 	terUnitAttributeData FrameEmpire1;
 	terUnitAttributeData FrameEmpireVice;
+	terUnitAttributeData FrameEmpire2;
+	terUnitAttributeData FrameEmpire3;
+	terUnitAttributeData FrameEmpire4;
  // Рассматриваем последовательность расположенных рядом структур как массив
 	int size() const { xassert(sizeof(*this) % sizeof(terUnitAttributeData) == 0); return sizeof(*this)/sizeof(terUnitAttributeData); }
 	const terUnitAttributeData& operator[](int i) const { xassert(i >= 0 && i < size()); return ((terUnitAttributeData*)this)[i]; }

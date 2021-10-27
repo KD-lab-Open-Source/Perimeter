@@ -43,8 +43,8 @@ STARFORCE_API void loadBattleList() {
 					break;
 				}
                 std::string filename(buff);
-                string_replace(filename, "\n", "");
-                string_replace(filename, "\r", "");
+                string_replace_all(filename, "\n", "");
+                string_replace_all(filename, "\r", "");
 				MissionDescription mission;
 				std::string name = scenario_path + filename;
 				mission.setSaveName(name.c_str());

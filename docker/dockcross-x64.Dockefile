@@ -4,7 +4,7 @@ ENV DEFAULT_DOCKCROSS_IMAGE dockcross-x64-perimeter
 
 RUN apt-get install software-properties-common lsb-release -y
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9
-RUN add-apt-repository "deb [arch=amd64] http://pkg.mxe.cc/repos/apt `lsb_release -sc` main"
+RUN add-apt-repository "deb [arch=amd64] http://pkg.mxe.cc/repos/apt buster main"
 RUN apt-get update
  
 # Download boost, untar, setup install with bootstrap and install

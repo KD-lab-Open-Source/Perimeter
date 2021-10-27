@@ -672,7 +672,7 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -22.3137;
-					y = -15.9315;
+					y = -15.9316;
 					z = -14.1105;
 				};
 				logicObjectBoundMax = {
@@ -1207,8 +1207,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "off position";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -1267,7 +1267,7 @@ AttributeLibrary = {
 					z = -12.4775;
 				};
 				logicObjectBoundMax = {
-					x = 10.4041;
+					x = 10.4042;
 					y = 10.9703;
 					z = 16.5362;
 				};
@@ -1766,8 +1766,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -1826,7 +1826,7 @@ AttributeLibrary = {
 					z = -15.6221;
 				};
 				logicObjectBoundMax = {
-					x = 43.7801;
+					x = 43.7802;
 					y = 44.337;
 					z = 32.2754;
 				};
@@ -2453,8 +2453,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -3140,8 +3140,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -3827,8 +3827,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -3891,7 +3891,7 @@ AttributeLibrary = {
 					y = 25.3801;
 					z = 29.6758;
 				};
-				boundRadius = 45.0161;
+				boundRadius = 45.0162;
 				logicObjectBoundOriginalMin = {
 					x = -61.2864;
 					y = -51.3978;
@@ -4386,8 +4386,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -4441,16 +4441,16 @@ AttributeLibrary = {
 				BasementInscribedRadius = 29.5633;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -25.2039;
+					x = -25.2038;
 					y = -21.5344;
 					z = -8.13545;
 				};
 				logicObjectBoundMax = {
 					x = 24.501;
 					y = 21.3186;
-					z = 13.1169;
+					z = 13.1168;
 				};
-				boundRadius = 34.4914;
+				boundRadius = 34.4913;
 				logicObjectBoundOriginalMin = {
 					x = -50.4077;
 					y = -43.0688;
@@ -5047,7 +5047,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -5707,7 +5707,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -6367,7 +6367,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -6428,7 +6428,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 46.2927;
 					y = 45.2173;
-					z = 35.3311;
+					z = 35.3312;
 				};
 				boundRadius = 69.8892;
 				logicObjectBoundOriginalMin = {
@@ -7027,7 +7027,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -7086,7 +7086,7 @@ AttributeLibrary = {
 					z = -17.3115;
 				};
 				logicObjectBoundMax = {
-					x = 13.2671;
+					x = 13.267;
 					y = 15.604;
 					z = 46.7913;
 				};
@@ -7687,7 +7687,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -7741,7 +7741,7 @@ AttributeLibrary = {
 				BasementInscribedRadius = 43.8683;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -49.8299;
+					x = -49.8298;
 					y = -41.5307;
 					z = -12.7923;
 				};
@@ -8346,8 +8346,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -9006,8 +9006,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -9666,8 +9666,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -9728,7 +9728,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 37.9601;
 					y = 38.1693;
-					z = 24.3136;
+					z = 24.3137;
 				};
 				boundRadius = 58.9278;
 				logicObjectBoundOriginalMin = {
@@ -10326,8 +10326,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -10388,7 +10388,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 37.9601;
 					y = 38.1693;
-					z = 24.3136;
+					z = 24.3137;
 				};
 				boundRadius = 58.9278;
 				logicObjectBoundOriginalMin = {
@@ -10986,8 +10986,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -11012,63 +11012,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -57.8464;
-					y = -58.0306;
+					x = -64.1283;
+					y = -64.5432;
 				};
 				BasementMax = {
-					x = 56.3059;
-					y = 56.1216;
+					x = 65.0546;
+					y = 64.5165;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = -56.8464;
-						y = 55.1216;
+						x = -63.1283;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = 55.1216;
+						x = 64.0546;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = -57.0306;
+						x = 64.0546;
+						y = -63.5431;
 					},
 					{
-						x = -56.8464;
-						y = -57.0306;
+						x = -63.1283;
+						y = -63.5431;
 					}
 				};
-				BasementInscribedRadius = 56.1216;
+				BasementInscribedRadius = 64.1283;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -34.2184;
-					y = -33.4253;
-					z = -22.9936;
+					x = -40.0656;
+					y = -40.9551;
+					z = -8.13765;
 				};
 				logicObjectBoundMax = {
-					x = 34.0585;
-					y = 33.2819;
-					z = 163.849;
+					x = 41.3624;
+					y = 40.4729;
+					z = 52.5446;
 				};
-				boundRadius = 104.907;
+				boundRadius = 65.0834;
 				logicObjectBoundOriginalMin = {
-					x = -45.6245;
-					y = -44.567;
-					z = -30.6581;
+					x = -53.4208;
+					y = -54.6068;
+					z = -10.8502;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 45.4113;
-					y = 44.3759;
-					z = 218.466;
+					x = 55.1499;
+					y = 53.9639;
+					z = 70.0595;
 				};
-				boundRadiusOriginal = 139.876;
+				boundRadiusOriginal = 86.7779;
 				modelTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				logicTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				dockingSlots = {
 					0;
@@ -11646,8 +11646,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -11672,63 +11672,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -57.8464;
-					y = -58.0306;
+					x = -64.1283;
+					y = -64.5432;
 				};
 				BasementMax = {
-					x = 56.3059;
-					y = 56.1216;
+					x = 65.0546;
+					y = 64.5165;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = -56.8464;
-						y = 55.1216;
+						x = -63.1283;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = 55.1216;
+						x = 64.0546;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = -57.0306;
+						x = 64.0546;
+						y = -63.5431;
 					},
 					{
-						x = -56.8464;
-						y = -57.0306;
+						x = -63.1283;
+						y = -63.5431;
 					}
 				};
-				BasementInscribedRadius = 56.1216;
+				BasementInscribedRadius = 64.1283;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -34.2184;
-					y = -33.4253;
-					z = -22.9936;
+					x = -40.0656;
+					y = -40.9551;
+					z = -8.13765;
 				};
 				logicObjectBoundMax = {
-					x = 34.0585;
-					y = 33.2819;
-					z = 163.849;
+					x = 41.3624;
+					y = 40.4729;
+					z = 52.5446;
 				};
-				boundRadius = 104.907;
+				boundRadius = 65.0834;
 				logicObjectBoundOriginalMin = {
-					x = -45.6245;
-					y = -44.567;
-					z = -30.6581;
+					x = -53.4208;
+					y = -54.6068;
+					z = -10.8502;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 45.4113;
-					y = 44.3759;
-					z = 218.466;
+					x = 55.1499;
+					y = 53.9639;
+					z = 70.0595;
 				};
-				boundRadiusOriginal = 139.876;
+				boundRadiusOriginal = 86.7779;
 				modelTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				logicTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				dockingSlots = {
 					0;
@@ -12133,7 +12133,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main1";
-					channel_power_on = "";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -12621,7 +12621,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main1";
-					channel_power_on = "";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -13109,7 +13109,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main1";
-					channel_power_on = "";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -13170,7 +13170,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 46.2927;
 					y = 45.2173;
-					z = 35.3311;
+					z = 35.3312;
 				};
 				boundRadius = 69.8892;
 				logicObjectBoundOriginalMin = {
@@ -13597,7 +13597,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main1";
-					channel_power_on = "";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -13656,7 +13656,7 @@ AttributeLibrary = {
 					z = -17.3115;
 				};
 				logicObjectBoundMax = {
-					x = 13.2671;
+					x = 13.267;
 					y = 15.604;
 					z = 46.7913;
 				};
@@ -14085,7 +14085,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main1";
-					channel_power_on = "";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -14139,7 +14139,7 @@ AttributeLibrary = {
 				BasementInscribedRadius = 43.8683;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -49.8299;
+					x = -49.8298;
 					y = -41.5307;
 					z = -12.7923;
 				};
@@ -14572,8 +14572,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -15060,8 +15060,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main1";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -15548,8 +15548,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main1";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -15610,7 +15610,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 37.9601;
 					y = 38.1693;
-					z = 24.3136;
+					z = 24.3137;
 				};
 				boundRadius = 58.9278;
 				logicObjectBoundOriginalMin = {
@@ -16036,8 +16036,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -16098,7 +16098,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 37.9601;
 					y = 38.1693;
-					z = 24.3136;
+					z = 24.3137;
 				};
 				boundRadius = 58.9278;
 				logicObjectBoundOriginalMin = {
@@ -16524,8 +16524,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main1";
+					channel_power_on = "main1";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -16550,63 +16550,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -57.8464;
-					y = -58.0306;
+					x = -64.1283;
+					y = -64.5432;
 				};
 				BasementMax = {
-					x = 56.3059;
-					y = 56.1216;
+					x = 65.0546;
+					y = 64.5165;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = -56.8464;
-						y = 55.1216;
+						x = -63.1283;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = 55.1216;
+						x = 64.0546;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = -57.0306;
+						x = 64.0546;
+						y = -63.5431;
 					},
 					{
-						x = -56.8464;
-						y = -57.0306;
+						x = -63.1283;
+						y = -63.5431;
 					}
 				};
-				BasementInscribedRadius = 56.1216;
+				BasementInscribedRadius = 64.1283;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -34.2184;
-					y = -33.4253;
-					z = -22.9936;
+					x = -40.0656;
+					y = -40.9551;
+					z = -8.13765;
 				};
 				logicObjectBoundMax = {
-					x = 34.0585;
-					y = 33.2819;
-					z = 163.849;
+					x = 41.3624;
+					y = 40.4729;
+					z = 52.5446;
 				};
-				boundRadius = 104.907;
+				boundRadius = 65.0834;
 				logicObjectBoundOriginalMin = {
-					x = -45.6245;
-					y = -44.567;
-					z = -30.6581;
+					x = -53.4208;
+					y = -54.6068;
+					z = -10.8502;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 45.4113;
-					y = 44.3759;
-					z = 218.466;
+					x = 55.1499;
+					y = 53.9639;
+					z = 70.0595;
 				};
-				boundRadiusOriginal = 139.876;
+				boundRadiusOriginal = 86.7779;
 				modelTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				logicTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				dockingSlots = {
 					0;
@@ -17012,8 +17012,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -17038,63 +17038,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -57.8464;
-					y = -58.0306;
+					x = -64.1283;
+					y = -64.5432;
 				};
 				BasementMax = {
-					x = 56.3059;
-					y = 56.1216;
+					x = 65.0546;
+					y = 64.5165;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = -56.8464;
-						y = 55.1216;
+						x = -63.1283;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = 55.1216;
+						x = 64.0546;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = -57.0306;
+						x = 64.0546;
+						y = -63.5431;
 					},
 					{
-						x = -56.8464;
-						y = -57.0306;
+						x = -63.1283;
+						y = -63.5431;
 					}
 				};
-				BasementInscribedRadius = 56.1216;
+				BasementInscribedRadius = 64.1283;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -34.2184;
-					y = -33.4253;
-					z = -22.9936;
+					x = -40.0656;
+					y = -40.9551;
+					z = -8.13765;
 				};
 				logicObjectBoundMax = {
-					x = 34.0585;
-					y = 33.2819;
-					z = 163.849;
+					x = 41.3624;
+					y = 40.4729;
+					z = 52.5446;
 				};
-				boundRadius = 104.907;
+				boundRadius = 65.0834;
 				logicObjectBoundOriginalMin = {
-					x = -45.6245;
-					y = -44.567;
-					z = -30.6581;
+					x = -53.4208;
+					y = -54.6068;
+					z = -10.8502;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 45.4113;
-					y = 44.3759;
-					z = 218.466;
+					x = 55.1499;
+					y = 53.9639;
+					z = 70.0595;
 				};
-				boundRadiusOriginal = 139.876;
+				boundRadiusOriginal = 86.7779;
 				modelTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				logicTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				dockingSlots = {
 					0;
@@ -17501,7 +17501,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main2";
-					channel_power_on = "";
+					channel_power_on = "main2";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -17990,7 +17990,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main2";
-					channel_power_on = "";
+					channel_power_on = "main2";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -18479,7 +18479,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "main2";
-					channel_power_on = "";
+					channel_power_on = "main2";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -18540,7 +18540,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 46.2927;
 					y = 45.2173;
-					z = 35.3311;
+					z = 35.3312;
 				};
 				boundRadius = 69.8892;
 				logicObjectBoundOriginalMin = {
@@ -20604,8 +20604,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main2";
+					channel_power_on = "main2";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -21093,8 +21093,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -21582,8 +21582,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main2";
+					channel_power_on = "main2";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -21644,7 +21644,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 37.9601;
 					y = 38.1693;
-					z = 24.3136;
+					z = 24.3137;
 				};
 				boundRadius = 58.9278;
 				logicObjectBoundOriginalMin = {
@@ -22071,8 +22071,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -22133,7 +22133,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 37.9601;
 					y = 38.1693;
-					z = 24.3136;
+					z = 24.3137;
 				};
 				boundRadius = 58.9278;
 				logicObjectBoundOriginalMin = {
@@ -22560,8 +22560,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main2";
+					channel_power_on = "main2";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -22586,63 +22586,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -57.8464;
-					y = -58.0306;
+					x = -64.1283;
+					y = -64.5432;
 				};
 				BasementMax = {
-					x = 56.3059;
-					y = 56.1216;
+					x = 65.0546;
+					y = 64.5165;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = -56.8464;
-						y = 55.1216;
+						x = -63.1283;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = 55.1216;
+						x = 64.0546;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = -57.0306;
+						x = 64.0546;
+						y = -63.5431;
 					},
 					{
-						x = -56.8464;
-						y = -57.0306;
+						x = -63.1283;
+						y = -63.5431;
 					}
 				};
-				BasementInscribedRadius = 56.1216;
+				BasementInscribedRadius = 64.1283;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -34.2184;
-					y = -33.4253;
-					z = -22.9936;
+					x = -40.0656;
+					y = -40.9551;
+					z = -8.13765;
 				};
 				logicObjectBoundMax = {
-					x = 34.0585;
-					y = 33.2819;
-					z = 163.849;
+					x = 41.3624;
+					y = 40.4729;
+					z = 52.5446;
 				};
-				boundRadius = 104.907;
+				boundRadius = 65.0834;
 				logicObjectBoundOriginalMin = {
-					x = -45.6245;
-					y = -44.567;
-					z = -30.6581;
+					x = -53.4208;
+					y = -54.6068;
+					z = -10.8502;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 45.4113;
-					y = 44.3759;
-					z = 218.466;
+					x = 55.1499;
+					y = 53.9639;
+					z = 70.0595;
 				};
-				boundRadiusOriginal = 139.876;
+				boundRadiusOriginal = 86.7779;
 				modelTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				logicTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				dockingSlots = {
 					0;
@@ -23049,8 +23049,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -23075,63 +23075,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -57.8464;
-					y = -58.0306;
+					x = -64.1283;
+					y = -64.5432;
 				};
 				BasementMax = {
-					x = 56.3059;
-					y = 56.1216;
+					x = 65.0546;
+					y = 64.5165;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = -56.8464;
-						y = 55.1216;
+						x = -63.1283;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = 55.1216;
+						x = 64.0546;
+						y = 63.5165;
 					},
 					{
-						x = 55.3059;
-						y = -57.0306;
+						x = 64.0546;
+						y = -63.5431;
 					},
 					{
-						x = -56.8464;
-						y = -57.0306;
+						x = -63.1283;
+						y = -63.5431;
 					}
 				};
-				BasementInscribedRadius = 56.1216;
+				BasementInscribedRadius = 64.1283;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -34.2184;
-					y = -33.4253;
-					z = -22.9936;
+					x = -40.0656;
+					y = -40.9551;
+					z = -8.13765;
 				};
 				logicObjectBoundMax = {
-					x = 34.0585;
-					y = 33.2819;
-					z = 163.849;
+					x = 41.3624;
+					y = 40.4729;
+					z = 52.5446;
 				};
-				boundRadius = 104.907;
+				boundRadius = 65.0834;
 				logicObjectBoundOriginalMin = {
-					x = -45.6245;
-					y = -44.567;
-					z = -30.6581;
+					x = -53.4208;
+					y = -54.6068;
+					z = -10.8502;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 45.4113;
-					y = 44.3759;
-					z = 218.466;
+					x = 55.1499;
+					y = 53.9639;
+					z = 70.0595;
 				};
-				boundRadiusOriginal = 139.876;
+				boundRadiusOriginal = 86.7779;
 				modelTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				logicTime = {
-					LowDateTime = 1176509312;
-					HighDateTime = 29697178;
+					LowDateTime = 227785984;
+					HighDateTime = 29628571;
 				};
 				dockingSlots = {
 					0;
@@ -23504,8 +23504,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Corridor Alpha";
@@ -23966,15 +23966,15 @@ AttributeLibrary = {
 					popup = "<CorridorOmega>";
 				};
 				interfaceTV = {
-					radius = 80.;
+					radius = 250.;
 					pos_dx = 0.;
-					pos_dy = 0.;
+					pos_dy = 20.;
 					angle_x = 70.;
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -24518,8 +24518,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -25122,7 +25122,7 @@ AttributeLibrary = {
 					actions = {
 						op_move = 0;
 						op_stop = 0;
-						op_stop2 = 0;
+						op_stop2 = 1;
 						op_attack = 1;
 						op_back = 0;
 						op_offdeff = 0;
@@ -25153,8 +25153,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -26170,7 +26170,7 @@ AttributeLibrary = {
 					actions = {
 						op_move = 0;
 						op_stop = 0;
-						op_stop2 = 0;
+						op_stop2 = 1;
 						op_attack = 1;
 						op_back = 0;
 						op_offdeff = 0;
@@ -26201,8 +26201,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "RESOURCE\\Models\\Interface\\intrf_rocket_launcher.m3d";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -26261,9 +26261,9 @@ AttributeLibrary = {
 					z = -2.38481;
 				};
 				logicObjectBoundMax = {
-					x = 10.3218;
+					x = 10.3217;
 					y = 7.21235;
-					z = 17.4192;
+					z = 17.4193;
 				};
 				boundRadius = 17.1821;
 				logicObjectBoundOriginalMin = {
@@ -26809,8 +26809,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "RESOURCE\\Models\\Interface\\intrf_haubiz.m3d";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -27417,8 +27417,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -28079,8 +28079,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -28710,8 +28710,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -28767,7 +28767,7 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -31.5868;
 					y = -30.1737;
-					z = -16.065;
+					z = -16.0651;
 				};
 				logicObjectBoundMax = {
 					x = 32.5179;
@@ -29069,7 +29069,7 @@ AttributeLibrary = {
 						0,
 						0,
 						0,
-						8000
+						1000
 					};
 				};
 				unitDamage = {
@@ -29343,8 +29343,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -29369,63 +29369,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -49.1065;
-					y = -49.3841;
+					x = -36.4233;
+					y = -49.4258;
 				};
 				BasementMax = {
-					x = 49.9841;
-					y = 49.7066;
+					x = 37.4756;
+					y = 49.1286;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = -48.1065;
-						y = 48.7066;
+						x = 36.4756;
+						y = 48.1286;
 					},
 					{
-						x = 48.9841;
-						y = 48.7066;
+						x = 36.4756;
+						y = -48.4258;
 					},
 					{
-						x = 48.9841;
-						y = -48.3841;
+						x = -35.4233;
+						y = -48.4258;
 					},
 					{
-						x = -48.1065;
-						y = -48.3841;
+						x = -35.4233;
+						y = 48.1286;
 					}
 				};
-				BasementInscribedRadius = 49.1065;
+				BasementInscribedRadius = 36.4233;
 				modelScale = 0.75;
 				logicObjectBoundMin = {
-					x = -35.1912;
-					y = -33.4992;
-					z = -11.4215;
+					x = -29.965;
+					y = -28.6894;
+					z = -13.7795;
 				};
 				logicObjectBoundMax = {
-					x = 32.3088;
-					y = 34.0008;
-					z = 89.5965;
+					x = 28.7121;
+					y = 29.9878;
+					z = 27.2215;
 				};
-				boundRadius = 69.493;
+				boundRadius = 46.2794;
 				logicObjectBoundOriginalMin = {
-					x = -46.9216;
-					y = -44.6656;
-					z = -15.2286;
+					x = -39.9534;
+					y = -38.2525;
+					z = -18.3726;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 43.0784;
-					y = 45.3344;
-					z = 119.462;
+					x = 38.2828;
+					y = 39.9837;
+					z = 36.2953;
 				};
-				boundRadiusOriginal = 92.6574;
+				boundRadiusOriginal = 61.7058;
 				modelTime = {
-					LowDateTime = 2991869056;
-					HighDateTime = 29697189;
+					LowDateTime = 649167872;
+					HighDateTime = 29623568;
 				};
 				logicTime = {
-					LowDateTime = 2991869056;
-					HighDateTime = 29697189;
+					LowDateTime = 649167872;
+					HighDateTime = 29623568;
 				};
 				dockingSlots = {
 					0;
@@ -29726,8 +29726,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -30106,8 +30106,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -30132,115 +30132,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -125.613;
-					y = -149.264;
+					x = -130.477;
+					y = -144.124;
 				};
 				BasementMax = {
-					x = 116.717;
-					y = 125.372;
+					x = 139.323;
+					y = 125.676;
 				};
 				BasementPoints = {
-					17;
+					4;
 					{
-						x = -124.613;
-						y = 7.40389;
+						x = -129.477;
+						y = 124.676;
 					},
 					{
-						x = -124.613;
-						y = 30.4497;
+						x = 138.323;
+						y = 124.676;
 					},
 					{
-						x = -90.2615;
-						y = 96.5432;
+						x = 138.323;
+						y = -143.124;
 					},
 					{
-						x = -76.3471;
-						y = 116.11;
-					},
-					{
-						x = -53.3013;
-						y = 124.372;
-					},
-					{
-						x = -16.3411;
-						y = 123.502;
-					},
-					{
-						x = 68.3708;
-						y = 112.44;
-					},
-					{
-						x = 109.641;
-						y = 64.2223;
-					},
-					{
-						x = 115.717;
-						y = 47.2996;
-					},
-					{
-						x = 114.107;
-						y = -21.2946;
-					},
-					{
-						x = 94.1047;
-						y = -80.8658;
-					},
-					{
-						x = 88.0172;
-						y = -95.2151;
-					},
-					{
-						x = 62.3624;
-						y = -126.523;
-					},
-					{
-						x = -28.5162;
-						y = -148.264;
-					},
-					{
-						x = -47.6486;
-						y = -144.35;
-					},
-					{
-						x = -90.6963;
-						y = -98.6937;
-					},
-					{
-						x = -101.132;
-						y = -77.3872;
+						x = -129.477;
+						y = -143.124;
 					}
 				};
-				BasementInscribedRadius = 116.717;
+				BasementInscribedRadius = 125.676;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -124.307;
-					y = -147.093;
-					z = -72.2674;
+					x = -84.744;
+					y = -91.185;
+					z = -72.2675;
 				};
 				logicObjectBoundMax = {
-					x = 113.437;
-					y = 124.353;
-					z = 26.2277;
+					x = 92.689;
+					y = 97.9565;
+					z = 35.8135;
 				};
-				boundRadius = 187.021;
+				boundRadius = 140.48;
 				logicObjectBoundOriginalMin = {
-					x = -248.615;
-					y = -294.187;
+					x = -169.488;
+					y = -182.37;
 					z = -144.535;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 226.874;
-					y = 248.706;
-					z = 52.4553;
+					x = 185.378;
+					y = 195.913;
+					z = 71.627;
 				};
-				boundRadiusOriginal = 374.041;
+				boundRadiusOriginal = 280.96;
 				modelTime = {
-					LowDateTime = 1153501440;
-					HighDateTime = 29691735;
+					LowDateTime = 1275107840;
+					HighDateTime = 29607085;
 				};
 				logicTime = {
-					LowDateTime = 1153501440;
-					HighDateTime = 29691735;
+					LowDateTime = 1275107840;
+					HighDateTime = 29607085;
 				};
 				dockingSlots = {
 					0;
@@ -30538,8 +30486,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -30918,8 +30866,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -31318,8 +31266,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Building";
@@ -32027,7 +31975,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -32772,7 +32720,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -33461,7 +33409,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -34150,7 +34098,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -34895,7 +34843,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -35614,8 +35562,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "lighting_on";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -36306,8 +36254,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "lighting_on";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -36995,8 +36943,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "lighting_on";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -37072,12 +37020,12 @@ AttributeLibrary = {
 				};
 				boundRadiusOriginal = 120.149;
 				modelTime = {
-					LowDateTime = 4009521792;
-					HighDateTime = 29697423;
+					LowDateTime = 2441903360;
+					HighDateTime = 29615090;
 				};
 				logicTime = {
-					LowDateTime = 4009521792;
-					HighDateTime = 29697423;
+					LowDateTime = 2441903360;
+					HighDateTime = 29615090;
 				};
 				dockingSlots = {
 					1;
@@ -37685,7 +37633,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -37761,12 +37709,12 @@ AttributeLibrary = {
 				};
 				boundRadiusOriginal = 176.054;
 				modelTime = {
-					LowDateTime = 2737682432;
-					HighDateTime = 29688958;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				logicTime = {
-					LowDateTime = 2737682432;
-					HighDateTime = 29688958;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				dockingSlots = {
 					1;
@@ -38374,7 +38322,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -38399,63 +38347,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -134.975;
-					y = -133.303;
+					x = -103.521;
+					y = -101.805;
 				};
 				BasementMax = {
-					x = 134.234;
-					y = 133.518;
+					x = 102.518;
+					y = 102.411;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = 133.234;
-						y = 132.518;
+						x = 101.518;
+						y = 101.411;
 					},
 					{
-						x = 133.234;
-						y = -132.303;
+						x = 101.517;
+						y = -100.805;
 					},
 					{
-						x = -133.975;
-						y = -132.303;
+						x = -102.521;
+						y = -100.805;
 					},
 					{
-						x = -133.975;
-						y = 132.518;
+						x = -102.521;
+						y = 101.411;
 					}
 				};
-				BasementInscribedRadius = 133.303;
+				BasementInscribedRadius = 101.805;
 				modelScale = 1.;
 				logicObjectBoundMin = {
-					x = -137.327;
-					y = -134.906;
-					z = -110.219;
+					x = -103.508;
+					y = -101.446;
+					z = -111.353;
 				};
 				logicObjectBoundMax = {
-					x = 135.934;
-					y = 135.445;
-					z = 99.4798;
+					x = 102.114;
+					y = 101.986;
+					z = 89.4339;
 				};
-				boundRadius = 218.938;
+				boundRadius = 176.054;
 				logicObjectBoundOriginalMin = {
-					x = -137.327;
-					y = -134.906;
-					z = -110.219;
+					x = -103.508;
+					y = -101.446;
+					z = -111.353;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 135.934;
-					y = 135.445;
-					z = 99.4798;
+					x = 102.114;
+					y = 101.986;
+					z = 89.4339;
 				};
-				boundRadiusOriginal = 218.938;
+				boundRadiusOriginal = 176.054;
 				modelTime = {
-					LowDateTime = 643500032;
-					HighDateTime = 29688983;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				logicTime = {
-					LowDateTime = 643500032;
-					HighDateTime = 29688983;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				dockingSlots = {
 					1;
@@ -39063,7 +39011,7 @@ AttributeLibrary = {
 					angle_z = 0.;
 					model = "";
 					channel = "fly";
-					channel_power_on = "";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -39139,12 +39087,12 @@ AttributeLibrary = {
 				};
 				boundRadiusOriginal = 176.054;
 				modelTime = {
-					LowDateTime = 2812561024;
-					HighDateTime = 29671831;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				logicTime = {
-					LowDateTime = 2812561024;
-					HighDateTime = 29671831;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				dockingSlots = {
 					1;
@@ -39754,8 +39702,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "lighting_on";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -39780,63 +39728,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -74.9737;
-					y = -72.1017;
+					x = -106.154;
+					y = -104.242;
 				};
 				BasementMax = {
-					x = 74.7243;
-					y = 77.6894;
+					x = 104.249;
+					y = 106.16;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = 73.7243;
-						y = 76.6893;
+						x = 103.249;
+						y = 105.16;
 					},
 					{
-						x = 73.7242;
-						y = -71.1017;
+						x = 103.249;
+						y = -103.242;
 					},
 					{
-						x = -73.9737;
-						y = -71.1016;
+						x = -105.154;
+						y = -103.242;
 					},
 					{
-						x = -73.9737;
-						y = 76.6894;
+						x = -105.154;
+						y = 105.16;
 					}
 				};
-				BasementInscribedRadius = 72.1017;
+				BasementInscribedRadius = 104.242;
 				modelScale = 1.;
 				logicObjectBoundMin = {
-					x = -74.5797;
-					y = -71.9563;
-					z = -74.6345;
+					x = -88.059;
+					y = -210.897;
+					z = -86.4056;
 				};
 				logicObjectBoundMax = {
-					x = 73.3168;
-					y = 74.4693;
-					z = 32.3648;
+					x = 86.1285;
+					y = -39.2962;
+					z = 86.0496;
 				};
-				boundRadius = 117.007;
+				boundRadius = 149.607;
 				logicObjectBoundOriginalMin = {
-					x = -74.5797;
-					y = -71.9563;
-					z = -74.6345;
+					x = -88.059;
+					y = -210.897;
+					z = -86.4056;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 73.3168;
-					y = 74.4693;
-					z = 32.3648;
+					x = 86.1285;
+					y = -39.2962;
+					z = 86.0496;
 				};
-				boundRadiusOriginal = 117.007;
+				boundRadiusOriginal = 149.607;
 				modelTime = {
-					LowDateTime = 1469263872;
-					HighDateTime = 29697568;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				logicTime = {
-					LowDateTime = 1469263872;
-					HighDateTime = 29697568;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				dockingSlots = {
 					1;
@@ -40446,8 +40394,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "lighting_on";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -40472,63 +40420,63 @@ AttributeLibrary = {
 				GroundPlaneSpeed = 0.;
 				GroundAngleSpeed = 0.;
 				BasementMin = {
-					x = -121.763;
-					y = -119.852;
+					x = -106.154;
+					y = -104.242;
 				};
 				BasementMax = {
-					x = 119.858;
-					y = 121.77;
+					x = 104.249;
+					y = 106.16;
 				};
 				BasementPoints = {
 					4;
 					{
-						x = 118.858;
-						y = 120.77;
+						x = 103.249;
+						y = 105.16;
 					},
 					{
-						x = 118.858;
-						y = -118.852;
+						x = 103.249;
+						y = -103.242;
 					},
 					{
-						x = -120.763;
-						y = -118.852;
+						x = -105.154;
+						y = -103.242;
 					},
 					{
-						x = -120.763;
-						y = 120.77;
+						x = -105.154;
+						y = 105.16;
 					}
 				};
-				BasementInscribedRadius = 119.852;
+				BasementInscribedRadius = 104.242;
 				modelScale = 1.;
 				logicObjectBoundMin = {
-					x = -109.935;
-					y = -106.047;
-					z = -112.705;
+					x = -87.8533;
+					y = -84.6072;
+					z = -88.7815;
 				};
 				logicObjectBoundMax = {
-					x = 108.069;
-					y = 109.789;
-					z = 41.5302;
+					x = 86.3342;
+					y = 87.848;
+					z = 82.8195;
 				};
-				boundRadius = 171.683;
+				boundRadius = 149.607;
 				logicObjectBoundOriginalMin = {
-					x = -109.935;
-					y = -106.047;
-					z = -112.705;
+					x = -87.8533;
+					y = -84.6072;
+					z = -88.7815;
 				};
 				logicObjectBoundOriginalMax = {
-					x = 108.069;
-					y = 109.789;
-					z = 41.5302;
+					x = 86.3342;
+					y = 87.848;
+					z = 82.8195;
 				};
-				boundRadiusOriginal = 171.683;
+				boundRadiusOriginal = 149.607;
 				modelTime = {
-					LowDateTime = 2923759360;
-					HighDateTime = 29691590;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				logicTime = {
-					LowDateTime = 2923759360;
-					HighDateTime = 29691590;
+					LowDateTime = 1762322688;
+					HighDateTime = 29688947;
 				};
 				dockingSlots = {
 					1;
@@ -41138,8 +41086,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "lighting_on";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Frame";
@@ -41215,12 +41163,12 @@ AttributeLibrary = {
 				};
 				boundRadiusOriginal = 120.149;
 				modelTime = {
-					LowDateTime = 4009521792;
-					HighDateTime = 29697423;
+					LowDateTime = 2441903360;
+					HighDateTime = 29615090;
 				};
 				logicTime = {
-					LowDateTime = 4009521792;
-					HighDateTime = 29697423;
+					LowDateTime = 2441903360;
+					HighDateTime = 29615090;
 				};
 				dockingSlots = {
 					1;
@@ -41624,8 +41572,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -41979,8 +41927,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Truck";
@@ -42416,8 +42364,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Flying";
@@ -42457,11 +42405,11 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -12.5884;
 					y = -17.5224;
-					z = -3.51276;
+					z = -3.51275;
 				};
 				logicObjectBoundMax = {
 					x = 12.7996;
-					y = 11.3674;
+					y = 11.3673;
 					z = 17.6926;
 				};
 				boundRadius = 21.9592;
@@ -42766,8 +42714,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Block";
@@ -43226,13 +43174,13 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
 				};
-				forwardVelocity = 300.;
+				forwardVelocity = 100.;
 				flyingHeight = 50.;
 				LifeTime = 0;
 				SoundName = "";
@@ -43271,7 +43219,7 @@ AttributeLibrary = {
 				};
 				logicObjectBoundMax = {
 					x = 2.37559;
-					y = 1.1969;
+					y = 1.19691;
 					z = 3.69738;
 				};
 				boundRadius = 5.38835;
@@ -43655,13 +43603,13 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Flying";
 				};
-				forwardVelocity = 300.;
+				forwardVelocity = 100.;
 				flyingHeight = 50.;
 				LifeTime = 0;
 				SoundName = "";
@@ -43694,8 +43642,8 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -2.25226;
-					y = -1.64289;
+					x = -2.25225;
+					y = -1.64288;
 					z = -7.0556;
 				};
 				logicObjectBoundMax = {
@@ -44096,13 +44044,13 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
 				};
-				forwardVelocity = 300.;
+				forwardVelocity = 100.;
 				flyingHeight = 50.;
 				LifeTime = 0;
 				SoundName = "";
@@ -44545,8 +44493,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -44918,8 +44866,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "RESOURCE\\Models\\Interface\\intrf_rocker.m3d";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -45368,8 +45316,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "RESOURCE\\Models\\Interface\\intrf_mortar.m3d";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -45773,8 +45721,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "RESOURCE\\Models\\Interface\\intrf_ceptor.m3d";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Flying Military";
@@ -45813,8 +45761,8 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -4.36926;
-					y = -11.9506;
-					z = -4.76776;
+					y = -11.9507;
+					z = -4.76777;
 				};
 				logicObjectBoundMax = {
 					x = 4.35721;
@@ -46227,8 +46175,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Flying Military";
@@ -46677,8 +46625,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "RESOURCE\\Models\\Interface\\intrf_wargon.m3d";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -46718,12 +46666,12 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -7.5141;
 					y = -11.2311;
-					z = -2.79147;
+					z = -2.79148;
 				};
 				logicObjectBoundMax = {
 					x = 6.9544;
 					y = 12.502;
-					z = 15.1435;
+					z = 15.1434;
 				};
 				boundRadius = 16.5397;
 				logicObjectBoundOriginalMin = {
@@ -47083,8 +47031,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Flying Military";
@@ -47489,8 +47437,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "RESOURCE\\Models\\Interface\\intrf_r_progector.m3d";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -47894,8 +47842,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -48099,7 +48047,7 @@ AttributeLibrary = {
 					0;
 				};
 				UnitClass = UNIT_CLASS_AIR | UNIT_CLASS_IGNORE;
-				AttackClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_UNDERGROUND | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_BUILDER | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_BUILDER | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_UNDERGROUND_FILTH | UNIT_CLASS_IGNORE;
 				MilitaryUnit = true;
 				enemyWorld = false;
 				ExcludeCollision = 0;
@@ -48350,8 +48298,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Flying Military";
@@ -48390,7 +48338,7 @@ AttributeLibrary = {
 				modelScale = 0.75;
 				logicObjectBoundMin = {
 					x = -17.884;
-					y = -21.176;
+					y = -21.1759;
 					z = -9.62782;
 				};
 				logicObjectBoundMax = {
@@ -48438,7 +48386,7 @@ AttributeLibrary = {
 				FallAcceleration = 0.;
 				is_base_unit = 0;
 				formationRadiusFactor = 0.9;
-				dynamicAttack = 1;
+				dynamicAttack = 0;
 				attackTurnRadius = 150.;
 				attackAngleDeviation = 0.;
 				ignoreUninstalledFrame = 0;
@@ -48767,8 +48715,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Flying Military";
@@ -48815,7 +48763,7 @@ AttributeLibrary = {
 					y = 21.7159;
 					z = 43.577;
 				};
-				boundRadius = 40.3664;
+				boundRadius = 40.3665;
 				logicObjectBoundOriginalMin = {
 					x = -46.5499;
 					y = -46.3225;
@@ -49209,8 +49157,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -49626,8 +49574,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -49672,7 +49620,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 11.7795;
 					y = 33.2401;
-					z = 10.3233;
+					z = 10.3232;
 				};
 				boundRadius = 30.3155;
 				logicObjectBoundOriginalMin = {
@@ -50044,8 +49992,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Scum Heater";
@@ -50090,7 +50038,7 @@ AttributeLibrary = {
 				logicObjectBoundMax = {
 					x = 39.2111;
 					y = 37.172;
-					z = 16.6515;
+					z = 16.6516;
 				};
 				boundRadius = 55.221;
 				logicObjectBoundOriginalMin = {
@@ -50495,8 +50443,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -50540,7 +50488,7 @@ AttributeLibrary = {
 				};
 				logicObjectBoundMax = {
 					x = 22.1644;
-					y = 19.794;
+					y = 19.7939;
 					z = 16.7973;
 				};
 				boundRadius = 34.3694;
@@ -50592,7 +50540,7 @@ AttributeLibrary = {
 				destroyZeroLayer = true;
 				EnableStructure = {
 					2;
-					UNIT_ATTRIBUTE_BOMB_STATION2,
+					UNIT_ATTRIBUTE_BOMB_STATION3,
 					UNIT_ATTRIBUTE_EXODUS_STATION3
 				};
 			};
@@ -50945,8 +50893,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -51389,8 +51337,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -51838,8 +51786,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -51886,7 +51834,7 @@ AttributeLibrary = {
 					y = 16.1761;
 					z = 8.4597;
 				};
-				boundRadius = 17.5587;
+				boundRadius = 17.5588;
 				logicObjectBoundOriginalMin = {
 					x = -19.6808;
 					y = -20.3185;
@@ -52036,9 +51984,9 @@ AttributeLibrary = {
 				damageMolecula = {
 					elements = {
 						5;
-						2,
+						0,
 						7,
-						2,
+						3,
 						0,
 						10
 					};
@@ -52388,13 +52336,13 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
 				};
-				forwardVelocity = 7.;
+				forwardVelocity = 12.;
 				flyingHeight = 50.;
 				LifeTime = 0;
 				SoundName = "";
@@ -52433,7 +52381,7 @@ AttributeLibrary = {
 				};
 				logicObjectBoundMax = {
 					x = 3.54905;
-					y = 16.1624;
+					y = 16.1623;
 					z = 3.5231;
 				};
 				boundRadius = 16.332;
@@ -52939,8 +52887,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -53363,8 +53311,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -53732,8 +53680,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -53860,7 +53808,7 @@ AttributeLibrary = {
 					0;
 				};
 				UnitClass = UNIT_CLASS_MEDIUM | UNIT_CLASS_IGNORE;
-				AttackClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_STRUCTURE_ENVIRONMENT | UNIT_CLASS_FRAME | UNIT_CLASS_GROUND | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_STRUCTURE_ENVIRONMENT | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
 				MilitaryUnit = true;
 				enemyWorld = false;
 				ExcludeCollision = 0;
@@ -54100,8 +54048,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -54139,7 +54087,7 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -10.2649;
+					x = -10.2648;
 					y = -20.5382;
 					z = -6.1585;
 				};
@@ -54148,7 +54096,7 @@ AttributeLibrary = {
 					y = 19.6486;
 					z = 11.4783;
 				};
-				boundRadius = 24.2109;
+				boundRadius = 24.2108;
 				logicObjectBoundOriginalMin = {
 					x = -20.5297;
 					y = -41.0765;
@@ -54198,7 +54146,7 @@ AttributeLibrary = {
 				EnableStructure = {
 					2;
 					UNIT_ATTRIBUTE_HARKBACK_STATION2,
-					UNIT_ATTRIBUTE_FLY_STATION1
+					UNIT_ATTRIBUTE_SUBTERRA_STATION1
 				};
 			};
 		},
@@ -54229,7 +54177,7 @@ AttributeLibrary = {
 					0;
 				};
 				UnitClass = UNIT_CLASS_MEDIUM | UNIT_CLASS_IGNORE;
-				AttackClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_STRUCTURE_ENVIRONMENT | UNIT_CLASS_FRAME | UNIT_CLASS_GROUND | UNIT_CLASS_IGNORE;
+				AttackClass = UNIT_CLASS_STRUCTURE | UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_STRUCTURE_SPECIAL | UNIT_CLASS_STRUCTURE_ENVIRONMENT | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
 				MilitaryUnit = true;
 				enemyWorld = false;
 				ExcludeCollision = 0;
@@ -54348,7 +54296,7 @@ AttributeLibrary = {
 					laserWidth = 2.;
 					reloadConsumption = {
 						energy = 0.31;
-						time = 10000;
+						time = 20000;
 						priority = 12;
 						name = "reloadConsumption Scourge2";
 					};
@@ -54469,8 +54417,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -54838,8 +54786,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -54934,9 +54882,10 @@ AttributeLibrary = {
 				LegionType = LEGION_GROUND;
 				destroyZeroLayer = true;
 				EnableStructure = {
-					2;
+					3;
 					UNIT_ATTRIBUTE_HARKBACK_STATION3,
-					UNIT_ATTRIBUTE_FLY_STATION2
+					UNIT_ATTRIBUTE_FLY_STATION2,
+					UNIT_ATTRIBUTE_LASER_STATION3
 				};
 			};
 		},
@@ -56534,8 +56483,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -56929,8 +56878,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -56968,13 +56917,13 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -3.56509;
+					x = -3.56508;
 					y = -10.3944;
 					z = -3.67059;
 				};
 				logicObjectBoundMax = {
 					x = 3.47787;
-					y = 11.4836;
+					y = 11.4837;
 					z = 3.55904;
 				};
 				boundRadius = 12.047;
@@ -57311,8 +57260,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Flying";
@@ -57693,8 +57642,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Flying";
@@ -58063,8 +58012,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -58404,8 +58353,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -58449,7 +58398,7 @@ AttributeLibrary = {
 				};
 				logicObjectBoundMax = {
 					x = 5.47315;
-					y = 3.21277;
+					y = 3.21276;
 					z = 5.95215;
 				};
 				boundRadius = 9.0235;
@@ -58745,8 +58694,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -59096,8 +59045,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ghost";
@@ -59436,8 +59385,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Eye";
@@ -59830,8 +59779,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Crow";
@@ -60212,8 +60161,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Flying";
@@ -60253,7 +60202,7 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -13.49;
 					y = -10.9679;
-					z = -10.1462;
+					z = -10.1461;
 				};
 				logicObjectBoundMax = {
 					x = 12.8149;
@@ -60594,8 +60543,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -60633,14 +60582,14 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -3.90571;
+					x = -3.9057;
 					y = -7.0752;
 					z = -3.48322;
 				};
 				logicObjectBoundMax = {
 					x = 3.66265;
 					y = 4.70794;
-					z = 3.71541;
+					z = 3.7154;
 				};
 				boundRadius = 7.8731;
 				logicObjectBoundOriginalMin = {
@@ -60988,8 +60937,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -61382,8 +61331,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Crow";
@@ -61766,8 +61715,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Debris";
@@ -61806,8 +61755,8 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -1.60835;
-					y = -1.88023;
-					z = -2.30733;
+					y = -1.88022;
+					z = -2.30732;
 				};
 				logicObjectBoundMax = {
 					x = 1.76585;
@@ -62150,8 +62099,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Debris";
@@ -62190,8 +62139,8 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -1.60835;
-					y = -1.88023;
-					z = -2.30733;
+					y = -1.88022;
+					z = -2.30732;
 				};
 				logicObjectBoundMax = {
 					x = 1.76585;
@@ -62532,8 +62481,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -62904,8 +62853,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -62943,8 +62892,8 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -3.77395;
-					y = -4.74996;
+					x = -3.77396;
+					y = -4.74997;
 					z = -2.23542;
 				};
 				logicObjectBoundMax = {
@@ -63274,8 +63223,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -63615,8 +63564,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -63660,7 +63609,7 @@ AttributeLibrary = {
 				};
 				logicObjectBoundMax = {
 					x = 5.47315;
-					y = 3.21277;
+					y = 3.21276;
 					z = 5.95215;
 				};
 				boundRadius = 9.0235;
@@ -63956,8 +63905,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -64339,8 +64288,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -64378,16 +64327,16 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -9.02456;
+					x = -9.02455;
 					y = -14.009;
-					z = -8.83066;
+					z = -8.83065;
 				};
 				logicObjectBoundMax = {
 					x = 9.75865;
 					y = 11.5232;
-					z = 6.13086;
+					z = 6.13085;
 				};
-				boundRadius = 17.5253;
+				boundRadius = 17.5254;
 				logicObjectBoundOriginalMin = {
 					x = -18.0491;
 					y = -28.0179;
@@ -64733,8 +64682,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Crow";
@@ -64773,13 +64722,13 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -4.9734;
-					y = -5.22914;
+					y = -5.22915;
 					z = -2.30706;
 				};
 				logicObjectBoundMax = {
-					x = 5.57343;
+					x = 5.57345;
 					y = 6.83825;
-					z = 3.96928;
+					z = 3.96927;
 				};
 				boundRadius = 8.60595;
 				logicObjectBoundOriginalMin = {
@@ -65115,8 +65064,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Flying";
@@ -65154,16 +65103,16 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -53.6682;
+					x = -53.668;
 					y = -33.8053;
 					z = -42.41;
 				};
 				logicObjectBoundMax = {
-					x = 87.2313;
-					y = 41.3412;
-					z = 42.6515;
+					x = 87.2315;
+					y = 41.3411;
+					z = 42.6516;
 				};
-				boundRadius = 90.4642;
+				boundRadius = 90.464;
 				logicObjectBoundOriginalMin = {
 					x = -107.336;
 					y = -67.6106;
@@ -65485,8 +65434,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -65524,14 +65473,14 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -8.07798;
+					x = -8.078;
 					y = -11.302;
-					z = -9.22137;
+					z = -9.22135;
 				};
 				logicObjectBoundMax = {
-					x = 7.84621;
+					x = 7.8462;
 					y = 24.0187;
-					z = 7.49243;
+					z = 7.49245;
 				};
 				boundRadius = 21.0979;
 				logicObjectBoundOriginalMin = {
@@ -65826,8 +65775,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -65867,14 +65816,14 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -5.5745;
 					y = -3.55548;
-					z = -6.61111;
+					z = -6.6111;
 				};
 				logicObjectBoundMax = {
-					x = 5.47317;
+					x = 5.47315;
 					y = 3.21276;
-					z = 5.95216;
+					z = 5.95215;
 				};
-				boundRadius = 9.02352;
+				boundRadius = 9.0235;
 				logicObjectBoundOriginalMin = {
 					x = -11.149;
 					y = -7.11096;
@@ -66167,8 +66116,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Dragon";
@@ -66208,14 +66157,14 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -5.5745;
 					y = -4.17079;
-					z = -6.13553;
+					z = -6.13555;
 				};
 				logicObjectBoundMax = {
-					x = 5.47317;
-					y = 4.54059;
-					z = 5.47658;
+					x = 5.47315;
+					y = 4.5406;
+					z = 5.4766;
 				};
-				boundRadius = 9.12113;
+				boundRadius = 9.12115;
 				logicObjectBoundOriginalMin = {
 					x = -11.149;
 					y = -8.34158;
@@ -66550,8 +66499,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Flying";
@@ -66590,7 +66539,7 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -14.4196;
-					y = -12.4639;
+					y = -12.464;
 					z = -30.9572;
 				};
 				logicObjectBoundMax = {
@@ -66932,8 +66881,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -66971,13 +66920,13 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -8.66139;
-					y = -9.52833;
-					z = -6.94672;
+					x = -8.6614;
+					y = -9.52835;
+					z = -6.9467;
 				};
 				logicObjectBoundMax = {
-					x = 9.08999;
-					y = 8.38741;
+					x = 9.09;
+					y = 8.3874;
 					z = 7.10645;
 				};
 				boundRadius = 14.4359;
@@ -67326,8 +67275,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -67367,7 +67316,7 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -13.6091;
 					y = -15.717;
-					z = -9.86639;
+					z = -9.8664;
 				};
 				logicObjectBoundMax = {
 					x = 14.0148;
@@ -67708,8 +67657,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Flying";
@@ -67748,15 +67697,15 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -6.16485;
-					y = -5.42752;
-					z = -5.69917;
+					y = -5.4275;
+					z = -5.69915;
 				};
 				logicObjectBoundMax = {
-					x = 5.74602;
-					y = 6.36883;
+					x = 5.746;
+					y = 6.36885;
 					z = 1.97418;
 				};
-				boundRadius = 9.21823;
+				boundRadius = 9.21825;
 				logicObjectBoundOriginalMin = {
 					x = -12.3297;
 					y = -10.855;
@@ -68102,8 +68051,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Filth Ground";
@@ -68471,8 +68420,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Rocket";
@@ -68840,8 +68789,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Rocket";
@@ -69209,8 +69158,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Rocket";
@@ -69578,8 +69527,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Rocket";
@@ -69947,8 +69896,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile GunBallistic";
@@ -70284,8 +70233,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Wargon";
@@ -70323,16 +70272,16 @@ AttributeLibrary = {
 				BasementInscribedRadius = 0.;
 				modelScale = 0.5;
 				logicObjectBoundMin = {
-					x = -2.15518;
+					x = -2.15517;
 					y = -1.85565;
 					z = -2.45412;
 				};
 				logicObjectBoundMax = {
-					x = 2.09753;
+					x = 2.09752;
 					y = 1.91922;
-					z = 2.89948;
+					z = 2.89949;
 				};
-				boundRadius = 3.90501;
+				boundRadius = 3.905;
 				logicObjectBoundOriginalMin = {
 					x = -4.31035;
 					y = -3.7113;
@@ -70621,8 +70570,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Mortar";
@@ -70958,8 +70907,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Howitzer";
@@ -70998,7 +70947,7 @@ AttributeLibrary = {
 				modelScale = 0.5;
 				logicObjectBoundMin = {
 					x = -1.17915;
-					y = -1.18734;
+					y = -1.18735;
 					z = -1.05088;
 				};
 				logicObjectBoundMax = {
@@ -71295,8 +71244,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile ScumThrower";
@@ -71617,8 +71566,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Soldier";
@@ -71939,8 +71888,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Strafer";
@@ -72312,8 +72261,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Extirpator";
@@ -72723,8 +72672,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Piercer";
@@ -73060,8 +73009,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Unit Ground";
@@ -73430,8 +73379,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -73782,8 +73731,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -74158,8 +74107,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -74233,7 +74182,7 @@ AttributeLibrary = {
 				attributeID = UNIT_ATTRIBUTE_SCUM_STORM;
 				belligerent = BELLIGERENT_NONE;
 			};
-			second = "class AttributeReal" {
+			second = "class AttributeProjectile" {
 				ID = UNIT_ATTRIBUTE_SCUM_STORM;
 				belligerent = BELLIGERENT_NONE;
 				ClassID = UNIT_CLASS_ID_SCUM_STORM;
@@ -74286,7 +74235,7 @@ AttributeLibrary = {
 				ConnectionPointNames = {
 					0;
 				};
-				UnitClass = UNIT_CLASS_IGNORE;
+				UnitClass = UNIT_CLASS_MISSILE;
 				AttackClass = UNIT_CLASS_IGNORE;
 				MilitaryUnit = false;
 				enemyWorld = false;
@@ -74512,8 +74461,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile ScumStorm";
@@ -74846,8 +74795,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -75168,8 +75117,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -75490,8 +75439,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -75812,8 +75761,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -76134,8 +76083,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Environment";
@@ -76474,8 +76423,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -76796,8 +76745,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -77118,8 +77067,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -77440,8 +77389,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -77762,8 +77711,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -78081,8 +78030,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Missile Bomb";
@@ -78122,12 +78071,12 @@ AttributeLibrary = {
 				logicObjectBoundMin = {
 					x = -1.36793;
 					y = -1.1888;
-					z = -2.4108;
+					z = -2.41079;
 				};
 				logicObjectBoundMax = {
 					x = 1.28449;
 					y = 1.14127;
-					z = 1.76124;
+					z = 1.76123;
 				};
 				boundRadius = 2.73269;
 				logicObjectBoundOriginalMin = {
@@ -78433,8 +78382,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Debris";
@@ -78785,8 +78734,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Debris";
@@ -79143,8 +79092,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Debris";
@@ -79495,8 +79444,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Debris";
@@ -79943,8 +79892,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -80373,8 +80322,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -80803,8 +80752,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -81125,8 +81074,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -81465,8 +81414,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -81931,8 +81880,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -82271,8 +82220,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -82611,8 +82560,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -82951,8 +82900,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -83291,8 +83240,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -83613,8 +83562,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -83935,8 +83884,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -84257,8 +84206,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -84579,8 +84528,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -84901,8 +84850,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -85223,8 +85172,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Environment";
@@ -85563,8 +85512,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -85903,8 +85852,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -86225,8 +86174,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -86565,8 +86514,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "";
@@ -86931,8 +86880,8 @@ AttributeLibrary = {
 					angle_y = 0.;
 					angle_z = 0.;
 					model = "";
-					channel = "";
-					channel_power_on = "";
+					channel = "main";
+					channel_power_on = "main";
 				};
 				rigidBodyPrm = {
 					key = "Debris";

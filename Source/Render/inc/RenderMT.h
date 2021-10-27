@@ -2,23 +2,27 @@
 
 #include <SDL_mutex.h>
 
-extern THREAD_LOCAL DWORD tls_is_graph;
 enum
 {
 	MT_GRAPH_THREAD=1,
 	MT_LOGIC_THREAD=2,
 };
 
-#define MTG() xassert(tls_is_graph&MT_GRAPH_THREAD)
-#define MTL() xassert(tls_is_graph&MT_LOGIC_THREAD)
-#define MT_IS_GRAPH()  (tls_is_graph&MT_GRAPH_THREAD)
-#define MT_IS_LOGIC()  (tls_is_graph&MT_LOGIC_THREAD)
+uint32_t MT_GET_TYPE();
+void MT_SET_TYPE(uint32_t val);
+bool MT_IS_GRAPH();
+bool MT_IS_LOGIC();
+
+#define MTG() xassert(MT_IS_GRAPH())
+#define MTL() xassert(MT_IS_LOGIC())
 
 #define MTDECLARE(x) SDL_mutex* x;
 #define MTINIT(x) x = SDL_CreateMutex()
 #define MTDONE(x) SDL_DestroyMutex(x)
 #define MTENTER(x) SDL_LockMutex(x)
 #define MTLEAVE(x) SDL_UnlockMutex(x)
+
+void debug_dump_mt_tls();
 
 struct MTEnter
 {
@@ -99,16 +103,16 @@ public:
 */
 class MTAutoSkipAssert
 {
-	DWORD real_tls;
+    uint32_t real_tls;
 public:
 	MTAutoSkipAssert()
 	{
-		real_tls=tls_is_graph;
-		tls_is_graph=MT_GRAPH_THREAD|MT_LOGIC_THREAD;
+		real_tls= MT_GET_TYPE();
+        MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
 	}
 
 	~MTAutoSkipAssert()
 	{
-		tls_is_graph=real_tls;
+        MT_SET_TYPE(real_tls);
 	}
 };

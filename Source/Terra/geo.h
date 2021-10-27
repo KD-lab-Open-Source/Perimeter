@@ -64,6 +64,7 @@ struct CWormFormLib {
 			VBitMap1.release();
 	};
 	CWormFormLib(){
+#if 0
 		XBuffer tb;
 		//tb < dirBitMap   < "\\" < fname;
 		tb < "RESOURCE\\Tools\\wormform.tga";
@@ -77,10 +78,11 @@ struct CWormFormLib {
 			VBitMap1.create(tgahead.Width, tgahead.Height);
 			tgahead.load2buf(VBitMap1.data);
 		}
-		else{
+		else
+#endif
+        {
 			VBitMap1.create(WSXSY, WSXSY);
 			VBitMap1.clear();
-
 		}
 	};
 	void put2WF(float alpha, tFormWorm* FormWormsNew){

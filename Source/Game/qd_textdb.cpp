@@ -58,7 +58,7 @@ const char* qdTextDB::getComment(const char* text_id) const
 	return str;
 }
 
-bool qdTextDB::load(const char* file_name,const char* comments_file_name,bool clear_old_texts)
+bool qdTextDB::load(const char* file_name, const char* comments_file_name, bool clear_old_texts, bool replace_old_texts)
 {
 	XStream fh(0);
 	if(!fh.open(convert_path_resource(file_name),XS_IN))
@@ -91,7 +91,10 @@ bool qdTextDB::load(const char* file_name,const char* comments_file_name,bool cl
 		snd_str.resize(snd_length);
 		fh.read(&*snd_str.begin(),snd_length);
 
-		texts_.insert(qdTextMap::value_type(id_str.c_str(),qdText(txt_str.c_str(),snd_str.c_str())));
+        //Avoid adding if text already exists
+        if (replace_old_texts || texts_.count(id_str) == 0) {
+            texts_.insert(qdTextMap::value_type(id_str.c_str(), qdText(txt_str.c_str(),snd_str.c_str())));
+        }
 	}
 
 	fh.close();

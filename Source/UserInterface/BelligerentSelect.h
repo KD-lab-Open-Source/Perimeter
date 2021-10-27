@@ -6,7 +6,7 @@
 class CShellWindow;
 
 enum BELLIGERENT_FACTION {
-    NONE = -1,
+    FACTION_NONE = -1,
     EXODUS,
     EMPIRE,
     HARKBACK
@@ -24,15 +24,14 @@ static terBelligerent SelectableBelligerents[] = {
         BELLIGERENT_EMPIRE_VICE, //Vice
         BELLIGERENT_EMPIRE2, //Addon: Vice ET
         //BELLIGERENT_EMPIRE3, //Unused old Vice ET, not usable
-        BELLIGERENT_EMPIRE4, //Infected Vice?
+        BELLIGERENT_EMPIRE4, //Infected Vice
         BELLIGERENT_HARKBACKHOOD0, //Freeborn
         BELLIGERENT_HARKBACKHOOD1, //Zodiac
 };
 
-bool isAddonBelligerent(terBelligerent belligerent);
 uint8_t getBelligerentIndex(terBelligerent belligerent);
 terBelligerent getBelligerentFromIndex(uint8_t index);
-const char* getBelligerentName(terBelligerent belligerent);
+std::string getBelligerentName(terBelligerent belligerent);
 BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent);
 std::string getBelligerentFactionName(BELLIGERENT_FACTION faction);
 std::string getBelligerentAndFactionName(terBelligerent belligerent, const std::string& separator = "\n");

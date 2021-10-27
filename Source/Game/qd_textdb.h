@@ -37,7 +37,7 @@ public:
 	Если clear_old_texts == true, то загруженная в данный момент база очищается.
 	В финальной версии база комментариев игнорируется.
 	*/
-	bool load(const char* file_name,const char* comments_file_name = NULL,bool clear_old_texts = true);
+	bool load(const char* file_name, const char* comments_file_name = NULL, bool clear_old_texts = true, bool replace_old_texts = true);
 
 	typedef std::list<std::string> IdList;
 	void getIdList(const char* mask, IdList& idList);

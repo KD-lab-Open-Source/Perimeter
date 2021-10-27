@@ -108,10 +108,6 @@ class UserSingleProfile {
 		terUniverseInterfaceMessage result;
 };
 
-#ifdef _PERIMETER_ADDON_
-const int firstMissionNumber = 0;
-#else
-const int firstMissionNumber = 1;
-#endif
+extern int firstMissionNumber;
 
 #endif //_USERSINGLEPROFILE_H

@@ -24,6 +24,7 @@
 #include "IronPort.h"
 #include "qd_textdb.h"
 #include <stdarg.h>     // for va_start
+#include "GameContent.h"
 
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
@@ -55,6 +56,7 @@ int Structure2ButtonID(int i);
 int Structure2ButtonID_(int i);
 STARFORCE_API_NEW  terUnitAttributeID Button2StructureID(int nBtnID);
 int LegionID2Button(int nAttrID);
+terUnitAttributeID Button2UnitAttributeID(int nBtnID);
 terUnitSquad* GetSquadByNumber(int n);
 
 extern std::string getItemTextFromBase(const char *keyStr);
@@ -415,6 +417,9 @@ _handlertbl[] = {
 	{SQSH_SQUAD_UNIT23, OnButtonSquadMutate},
 	{SQSH_SQUAD_UNIT24, OnButtonSquadMutate},
 	{SQSH_SQUAD_UNIT25, OnButtonSquadMutate},
+    {SQSH_SQUAD_UNIT26, OnButtonSquadMutate},
+    {SQSH_SQUAD_UNIT27, OnButtonSquadMutate},
+    {SQSH_SQUAD_UNIT28, OnButtonSquadMutate},
 	{SQSH_MAP_WINDOW_ID, OnMapWindowClicked},
 
 	{SQSH_FRAME_TERRAIN_BUILD1_ID, OnButtonTerrainBuild},
@@ -573,7 +578,7 @@ void CShellCursorManager::OnMouseMove(float x, float y)
 	//проверка на курсор сдвига карты
 	m_nCursorShift = 0;
 
-	if(m_bShowSideArrows/* && !gameShell->CursorOverInterface*/)
+	if(_bCursorVisible && m_bShowSideArrows/* && !gameShell->CursorOverInterface*/)
 	{
 		if(x < CAMERA_BORDER_SCROLL_AREA_HORZ)
 			m_nCursorShift = arrow_left;
@@ -688,6 +693,24 @@ void CShellCursorManager::draw()
         if (_shellIconManager.m_pCtrlHover && !_bMenuMode) {
             cursor = m_pCursorDefault;
         }
+
+#if 0 //Shows current hovering control 
+        if (_shellIconManager.m_pCtrlHover) {
+            std::string text;
+            EnumWrapper<ShellControlID> eid = static_cast<ShellControlID>(_shellIconManager.m_pCtrlHover->ID); 
+            text += std::string("C:") + getEnumName(eid);
+            if (_shellIconManager.m_pCtrlHover->m_attr) {
+                text += std::string(" MI:") + getEnumName(_shellIconManager.m_pCtrlHover->m_attr->id);
+                text += std::string(" MT:") + getEnumName(_shellIconManager.m_pCtrlHover->m_attr->type);
+            }
+            if (_shellIconManager.m_pCtrlHover->m_attr_cont) {
+                EnumWrapper<ShellControlID> cid = static_cast<ShellControlID>(_shellIconManager.m_pCtrlHover->m_attr_cont->id);
+                text += std::string(" CI:") + getEnumName(cid);
+                text += std::string(" CT:") + getEnumName(_shellIconManager.m_pCtrlHover->m_attr_cont->type);
+            }
+            printf("%s\n", text.c_str());
+        }
+#endif
         
 	    //Get cursor scale factor
 		float fScale = 1.0f;
@@ -791,6 +814,7 @@ CShellIconManager::CShellIconManager()
 
 	m_nControlGroupLoaded = -1;
 
+    externalControlStates.resize(SQSH_MAX);
 	externalBuildTabStates.resize(3);
 	externalSquadTabStates.resize(5);
 	int i;
@@ -960,11 +984,29 @@ void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
 
 extern HistoryScene historyScene;
 void CShellIconManager::fillTaskWnd() {
-	std::string taskTxt;
-	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
-		taskTxt = qdTextDB::instance().getText(historyScene.getMission(historyScene.getMissionNumberToExecute()).name.c_str());
-		taskTxt += "\n\n";
-	}
+	std::string taskTxt = gameShell->CurrentMission.missionDescription();
+
+    if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
+        std::string name = qdTextDB::instance().getText(historyScene.getMissionToExecute().name.c_str());
+        if (!name.empty()) {
+            if (taskTxt.empty()) {
+                taskTxt = name;
+            } else if (!startsWith(taskTxt, std::string("&FFFF00") + name)) {
+                taskTxt = name + " - " + taskTxt;
+            }
+        }
+    }
+    
+    if (taskTxt.empty()) {
+        taskTxt = gameShell->CurrentMission.worldName.value();
+    }
+    
+    if (!taskTxt.empty()) {
+        if (taskTxt[0] != '&') {
+            taskTxt = std::string("&FFFF00") + taskTxt;
+        }
+        taskTxt += "\n\n";
+    };
 	
 	std::list<Task>::iterator i;
 	FOR_EACH(tasks, i) {
@@ -1087,6 +1129,7 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 		for(int c=0; c<cont.controls.size(); c++)
 		{
 			const sqshControl& tc = cont.controls[c];
+			if (tc.content && !(tc.content & terGameContent)) continue;
 
 			CShellWindow* pCtrl = CreateWnd(tc.id, tc.type, pWndCntr, _GetEventHandler(tc.id));
 			xassert(tc.id <= SQSH_MAX);
@@ -1331,7 +1374,7 @@ float CShellIconManager::playSpeech(const char* id) {
 		size_t pos = sound.find("Voice");
 		if(pos != std::string::npos)
 			sound.erase(0, pos);
-		std::string soundName = gameShell->getLocDataPath() + sound;
+		std::string soundName = getLocDataPath() + sound;
 		SNDEnableVoices(false);
 		speechSound->SetVolume(round(255*terSoundVolume));
 		int ret = speechSound->OpenToPlay(soundName.c_str(), false);
@@ -2067,7 +2110,8 @@ void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
 		balance += cbTemp;
 	}
 	if (!gun) {
-		_shellIconManager.FormatMessageText("<armor>", cbTemp, round(attr->intfBalanceData.armor) );
+        int armor = round(attr->intfBalanceData.armor);
+		_shellIconManager.FormatMessageText("<armor>", cbTemp, armor );
 		if (balance.empty()) {
 			balance += "\n";
 		}
@@ -2191,7 +2235,8 @@ void PopupFormatCore(const AttributeBase* attr, char* cbBuffer, terUnitBase* uni
 }
 void PopupFormatFrame(const AttributeBase* attr, char* cbBuffer, terUnitBase* unit)
 {
-	int spiralLevel = unit ? round(100 * safe_cast<terFrame*>(unit)->spiralLevel() - 0.5f) : 0;
+	int spiralLevel = unit ? static_cast<int>(std::round(100 * safe_cast<terFrame*>(unit)->spiralLevel() - 0.5f)) : 0;
+    spiralLevel = std::max(0, spiralLevel);
 	_shellIconManager.FormatMessageText(
 		attr->interfacePrm.popup,
 		cbBuffer,
@@ -2243,6 +2288,12 @@ void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffe
 		PopupFormatMMP(attr, cbBuffer, unit);
 		break;
 	}
+
+    if (!strlen(cbBuffer)) {
+        std::string finalPopup = attr->interfaceName();
+        finalPopup += cbBuffer;
+        strcpy(cbBuffer, finalPopup.c_str());
+    }
 
 	if (strlen(cbBuffer) && unit && !unit->Player->isWorld()) {
 //		string finalPopup(qdTextDB::instance().getText("Player"));
@@ -2519,82 +2570,174 @@ float GetUnitUpgradeProgress(terBuilding* p) {
 	return res > 0 ? res : FLT_EPS;
 }
 
-
-void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates) {
-	for (int i = 0, s = newControlStates.size(); i < s; i++) {
-		if (newControlStates[i].controlID == SQSH_TAB_BUILD_ID) {
-			if (newControlStates[i].tabNumber == -1) {
-				externalControlStates[newControlStates[i].controlID] = newControlStates[i];
+void CShellIconManager::changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls) {
+    //Get the base content and if is a campaign
+    bool isCampaign = gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO;
+    GAME_CONTENT content = isCampaign ? terGameContentBase : terGameContent;
+    
+    //Reset all controls to their default, since new control states might not have them
+    if (reset_controls) {
+        for (int i = 0; i < externalControlStates.size(); i++) {
+            SaveControlData& data = externalControlStates[i];
+            data.controlID = static_cast<ShellControlID>(i);
+            data.visible = !isCampaign;
+            data.enabled = true;
+            data.flashing = false;
+        }
+    }
+    
+    //Load state from new controls
+	for (const SaveControlData& data : newControlStates) {
+        xassert(data.controlID < externalControlStates.size());
+		if (data.controlID == SQSH_TAB_BUILD_ID) {
+			if (data.tabNumber == -1) {
+				externalControlStates[data.controlID] = data;
 			} else {
-				externalBuildTabStates[newControlStates[i].tabNumber] = newControlStates[i];
+                xassert(data.tabNumber < externalBuildTabStates.size());
+				externalBuildTabStates[data.tabNumber] = data;
 			}
-		} else if (newControlStates[i].controlID == SQSH_TAB_SQUAD_ID) {
-			if (newControlStates[i].tabNumber == -1) {
-				externalControlStates[newControlStates[i].controlID] = newControlStates[i];
+		} else if (data.controlID == SQSH_TAB_SQUAD_ID) {
+			if (data.tabNumber == -1) {
+				externalControlStates[data.controlID] = data;
 			} else {
-				externalSquadTabStates[newControlStates[i].tabNumber] = newControlStates[i];
+                xassert(data.tabNumber < externalSquadTabStates.size());
+				externalSquadTabStates[data.tabNumber] = data;
 			}
 		} else {
-			externalControlStates[newControlStates[i].controlID] = newControlStates[i];
+			externalControlStates[data.controlID] = data;
 		}
 	}
+    
+    //Manually edit certain controls based on logic
+    for (int i = 0; i < externalControlStates.size(); i++) {
+        SaveControlData& data = externalControlStates[i];
+        
+        if (!isCampaign) {
+#if 0
+            //Allow using disabled stuff
+            switch (data.controlID) {
+                case SQSH_CORRIDOR_OMEGA_ID:
+                case SQSH_CORRIDOR_ALPHA_ID:
+                case SQSH_STATIC_BOMB_ID:
+                case SQSH_SELPANEL_FRAME_TELEPORTATE_ID:
+                case SQSH_SELPANEL_UPGRADE_OMEGA_ID:
+                    data.visible = true;
+                    data.enabled = true;
+                    break;
+                default:
+                    break;
+            }
+#endif
+    
+            //Enable harkback stuff since some ET maps might disable them
+            if (terGameContent & GAME_CONTENT::PERIMETER) {
+                switch (data.controlID) {
+                    case SQSH_STATION_HARKBACK_LAB_ID:
+                    case SQSH_GUN_FILTH_ID:
+                        data.visible = true;
+                        data.enabled = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //Disable those that are unavailable
+        terUnitAttributeID id = Button2UnitAttributeID(data.controlID);
+        if (id != UNIT_ATTRIBUTE_NONE && unavailableContentUnitAttribute(id, content)) {
+            data.visible = false;
+            data.enabled = false;
+        }
+    }
 }
 
 void CShellIconManager::fillControlState(std::vector<SaveControlData>& controlStatesToSave) {
 	controlStatesToSave.clear();
-	for (int i = 0; i < SQSH_GAME_MAX; i++) {
-		externalControlStates[i].controlID = (ShellControlID)i;
-		controlStatesToSave.push_back(externalControlStates[i]);
-		if (i == SQSH_TAB_BUILD_ID) {
+    for (int i = 0; i < externalControlStates.size(); i++) {
+        SaveControlData& data = externalControlStates[i];
+        data.controlID = (ShellControlID) i;
+        //Skip legacy squad region
+        if (SQSH_SQUAD_LEGACY_1 <= i && i <= SQSH_SQUAD_LEGACY_26) continue;
+        //Skip menu region
+        if (SQSH_GAME_MAX <= i && i <= SQSH_MENU_MAX) continue;
+        //Skip certain elements
+        switch (data.controlID) {
+            case SQSH_STATIC_ID:
+            case SQSH_GAME_SCREEN_ID:
+            case SQSH_BACKGRND_ID:
+            case SQSH_SQUAD_MAX:
+            case SQSH_MAX:
+                continue;
+            default:
+                break;
+        }
+		controlStatesToSave.push_back(data);
+		if (data.controlID == SQSH_TAB_BUILD_ID) {
 			controlStatesToSave.back().tabNumber = -1;
 			for (int j = 0, s = externalBuildTabStates.size(); j < s; j++) {
-				externalBuildTabStates[j].controlID = SQSH_TAB_BUILD_ID;
-				externalBuildTabStates[j].tabNumber = j;
-				controlStatesToSave.push_back(externalBuildTabStates[j]);
+                SaveControlData& buildTab = externalBuildTabStates[j];
+				buildTab.controlID = SQSH_TAB_BUILD_ID;
+                buildTab.tabNumber = j;
+				controlStatesToSave.push_back(buildTab);
 			}
-		} else if (i == SQSH_TAB_SQUAD_ID) {
+		} else if (data.controlID == SQSH_TAB_SQUAD_ID) {
 			controlStatesToSave.back().tabNumber = -1;
 			for (int j = 0, s = externalSquadTabStates.size(); j < s; j++) {
-				externalSquadTabStates[j].controlID = SQSH_TAB_SQUAD_ID;
-				externalSquadTabStates[j].tabNumber = j;
-				controlStatesToSave.push_back(externalSquadTabStates[j]);
+                SaveControlData& squadTab = externalSquadTabStates[j];
+				squadTab.controlID = SQSH_TAB_SQUAD_ID;
+				squadTab.tabNumber = j;
+				controlStatesToSave.push_back(squadTab);
 			}
 		}
 	}
-
 }
 
 STARFORCE_API_NEW void CancelEditWorkarea();
 
 void CShellIconManager::updateControlsFromExternalStates() {
-	for (int i = 0; i < SQSH_GAME_MAX; i++) {
-		CShellWindow* wnd = GetWnd(externalControlStates[i].controlID);
+    for (int i = 0; i < externalControlStates.size(); i++) {
+        SaveControlData& data = externalControlStates[i];
+		CShellWindow* wnd = GetWnd(data.controlID);
 		if (wnd) {
-			if (externalControlStates[i].controlID == SQSH_TAB_BUILD_ID) {
-			} else if (externalControlStates[i].controlID == SQSH_TAB_SQUAD_ID) {
-			} else {
-				if (externalControlStates[i].controlID >= SQSH_FRAME_TERRAIN_BUILD1_ID && externalControlStates[i].controlID <= SQSH_FRAME_TERRAIN_BUILD5_ID) {
-					((CTerrainBuildButton*)wnd)->partDisable = externalControlStates[i].tabNumber;
-				}
-				if (!externalControlStates[i].visible) {
-					wnd->Show(0);
-					wnd->Enable(false);
-				}
-				if (!externalControlStates[i].enabled) {
-					if (
-							((_pShellDispatcher->m_nEditRegion == editRegion1) && (externalControlStates[i].controlID == SQSH_WORKAREA3_ID))
-						||	((_pShellDispatcher->m_nEditRegion == editRegion2) && (externalControlStates[i].controlID == SQSH_WORKAREA2_ID))	) {
+            //Skip legacy squad region
+            if (SQSH_SQUAD_LEGACY_1 <= i && i <= SQSH_SQUAD_LEGACY_26) continue;
+            //Skip menu region
+            if (SQSH_GAME_MAX <= i && i <= SQSH_MENU_MAX) continue;
+            //Skip certain elements
+            switch (data.controlID) {
+                case SQSH_STATIC_ID:
+                case SQSH_GAME_SCREEN_ID:
+                case SQSH_BACKGRND_ID:
+                case SQSH_SQUAD_MAX:
+                case SQSH_MAX:
+                case SQSH_TAB_BUILD_ID:
+                case SQSH_TAB_SQUAD_ID:
+                    continue;
+                default:
+                    break;
+            }
+            if (data.controlID >= SQSH_FRAME_TERRAIN_BUILD1_ID && data.controlID <= SQSH_FRAME_TERRAIN_BUILD5_ID) {
+                ((CTerrainBuildButton*)wnd)->partDisable = data.tabNumber;
+            }
+            if (!data.visible) {
+                wnd->Show(0);
+                wnd->Enable(false);
+            }
+            if (!data.enabled) {
+                if (
+                        ((_pShellDispatcher->m_nEditRegion == editRegion1) && (data.controlID == SQSH_WORKAREA3_ID))
+                    ||	((_pShellDispatcher->m_nEditRegion == editRegion2) && (data.controlID == SQSH_WORKAREA2_ID))	) {
 
-						CancelEditWorkarea();
-					}
-					wnd->Enable(false);
-				}
-				if ( externalControlStates[i].flashing ) {
-					wnd->setFlashingInterval(0);
-				} else if ( wnd->getFlashingInterval() == 0 ) {
-					wnd->setFlashingInterval(-1);
-				}
-			}
+                    CancelEditWorkarea();
+                }
+                wnd->Enable(false);
+            }
+            if ( data.flashing ) {
+                wnd->setFlashingInterval(0);
+            } else if ( wnd->getFlashingInterval() == 0 ) {
+                wnd->setFlashingInterval(-1);
+            }
 		}
 	}
 	CUITabSheet* pSheet = (CUITabSheet*)GetWnd(SQSH_TAB_BUILD_ID);
@@ -2860,6 +3003,7 @@ void CShellIconManager::UpdateBuildingsIcons() {
 //			} else if (i >= UNIT_ATTRIBUTE_LASER_STATION1 && i <= UNIT_ATTRIBUTE_HARKBACK_STATION3 && pSheetBuild && (pSheetBuild->GetActivePage() == 1)) {
 //				pBtn->Show(button->visible);
 //			}
+            if (!pBtn) continue;
 			if (i >= UNIT_ATTRIBUTE_LASER_STATION1 && i <= UNIT_ATTRIBUTE_HARKBACK_STATION3 && pSheetBuild && (pSheetBuild->GetActivePage() == 1)) {
 				pBtn->Show(button->visible);
 			}
@@ -2884,6 +3028,7 @@ void CShellIconManager::UpdateGunsIcons() {
 		if (iButton > 0) {
 			ComplexButtonData* button = &(logicData->guns[i - UNIT_ATTRIBUTE_CORRIDOR_ALPHA]);
 			CShellComplexPushButton* pBtn = (CShellComplexPushButton*)GetWnd(iButton);
+            if (!pBtn) continue;
 			if (((i >= UNIT_ATTRIBUTE_GUN_SCUM_DISRUPTOR && i <= UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR) || i == UNIT_ATTRIBUTE_STATIC_BOMB || i == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || i == UNIT_ATTRIBUTE_CORRIDOR_OMEGA) && pSheetBuild && (pSheetBuild->GetActivePage() == 2)) {
 				pBtn->Show(button->visible);
 			}
@@ -3325,8 +3470,8 @@ void CShellIconManager::UpdateSquadIcons()
 		SQSH_SQUAD_UNIT7, SQSH_SQUAD_UNIT8,	SQSH_SQUAD_UNIT9, SQSH_SQUAD_UNIT10, SQSH_SQUAD_UNIT11,
 		SQSH_SQUAD_UNIT12, SQSH_SQUAD_UNIT13, SQSH_SQUAD_UNIT14, SQSH_SQUAD_UNIT15, SQSH_SQUAD_UNIT16,
 		SQSH_SQUAD_UNIT17, SQSH_SQUAD_UNIT18, SQSH_SQUAD_UNIT19, SQSH_SQUAD_UNIT20, SQSH_SQUAD_UNIT21,
-		SQSH_SQUAD_UNIT22, SQSH_SQUAD_UNIT23, SQSH_SQUAD_UNIT24, SQSH_SQUAD_UNIT25,
-		SQSH_SOLDIER_ID,SQSH_OFFICER_ID,SQSH_TECHNIC_ID };
+		SQSH_SQUAD_UNIT22, SQSH_SQUAD_UNIT23, SQSH_SQUAD_UNIT24, SQSH_SQUAD_UNIT25, SQSH_SQUAD_UNIT26,
+		SQSH_SQUAD_UNIT27, SQSH_SQUAD_UNIT28, SQSH_SOLDIER_ID,SQSH_OFFICER_ID,SQSH_TECHNIC_ID };
 
 	CUITabSheet* pSquadSheet = (CUITabSheet*)GetWnd(SQSH_TAB_SQUAD_ID);
 /*
@@ -3340,7 +3485,7 @@ void CShellIconManager::UpdateSquadIcons()
 */
 	ShowControls(true, ids, sizeof(ids) / sizeof(ShellControlID));
 
-	for (int id = SQSH_SQUAD_DISINTEGRATE_ID; id <= SQSH_SQUAD_UNIT25; id++) {
+	for (int id = SQSH_SQUAD_DISINTEGRATE_ID; id < SQSH_SQUAD_MAX; id++) {
 		CShellLegionButton* pWnd = (CShellLegionButton*)_shellIconManager.GetWnd(id);
 		if (pWnd) {
 //			if (isControlAccessible(id)) {
@@ -3526,18 +3671,18 @@ void SQUAD_ICON::init() {
 		disabledTexture = 0;
 	}
 
-	uv = relativeUV(attr->image._ix, attr->image._iy, texture);
-	dudv = relativeUV(attr->image.ix, attr->image.iy, texture);
+	uv = relativeUV(attr->image._ix, attr->image._iy, texture, SHELL_ANCHOR_DEFAULT);
+	dudv = relativeUV(attr->image.ix, attr->image.iy, texture, SHELL_ANCHOR_DEFAULT);
 
-	highUV = relativeUV(attr->image_h._ix, attr->image_h._iy, highlightTexture);
-	highDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, highlightTexture);
+	highUV = relativeUV(attr->image_h._ix, attr->image_h._iy, highlightTexture, SHELL_ANCHOR_DEFAULT);
+	highDUDV = relativeUV(attr->image_h.ix, attr->image_h.iy, highlightTexture, SHELL_ANCHOR_DEFAULT);
 
-	checkedUV = relativeUV(attr->image_check._ix, attr->image_check._iy, checkedTexture);
-	checkedDUDV = relativeUV(attr->image_check.ix, attr->image_check.iy, checkedTexture);
+	checkedUV = relativeUV(attr->image_check._ix, attr->image_check._iy, checkedTexture, SHELL_ANCHOR_DEFAULT);
+	checkedDUDV = relativeUV(attr->image_check.ix, attr->image_check.iy, checkedTexture, SHELL_ANCHOR_DEFAULT);
 
 	if (disabledTexture) {
-		disabledUV = relativeUV(attr->image_disabled._ix, attr->image_disabled._iy, disabledTexture);
-		disabledDUDV = relativeUV(attr->image_disabled.ix, attr->image_disabled.iy, disabledTexture);
+		disabledUV = relativeUV(attr->image_disabled._ix, attr->image_disabled._iy, disabledTexture, SHELL_ANCHOR_DEFAULT);
+		disabledDUDV = relativeUV(attr->image_disabled.ix, attr->image_disabled.iy, disabledTexture, SHELL_ANCHOR_DEFAULT);
 	} else {
 		disabledUV = Vect2f(0, 0);
 		disabledDUDV = Vect2f(0, 0);
@@ -3630,7 +3775,7 @@ BELLIGERENT_FACTION getRace(int id) {
 		case UNIT_ATTRIBUTE_PIERCER:
 			return EMPIRE;
 		default:
-			return NONE;
+			return FACTION_NONE;
 	}
 }
 
@@ -3648,6 +3793,8 @@ bool isRaceUnitsVisible(BELLIGERENT_FACTION race) {
 				return player->GetEvolutionBuildingData(UNIT_ATTRIBUTE_HARKBACK_STATION1).Worked;
 			case EMPIRE:
 				return player->GetEvolutionBuildingData(UNIT_ATTRIBUTE_EMPIRE_STATION1).Worked;
+            default:
+                break;
 		}
 	}
 	return true;
@@ -3702,6 +3849,8 @@ void LogicUpdater::updateGunsData() {
 			case EMPIRE:
 				button->visible &= empireEnabled;
 				break;
+            default:
+                break;
 		}
 
 		#ifdef _DEMO_
@@ -3730,25 +3879,23 @@ void LogicUpdater::updateBuildingsData() {
 		EnableData& evolution = player->GetEvolutionBuildingData(id);
 
 		bool visible = true;
-		if (id >= UNIT_ATTRIBUTE_LASER_STATION1 && id <= UNIT_ATTRIBUTE_HARKBACK_STATION3) {
+        bool enabled = evolution.Enabled;
+
+        //Faction buildings should only show for player faction
+        BELLIGERENT_FACTION buildingRace = getRace(id);
+        if (visible && buildingRace != FACTION_NONE && buildingRace != race) {
+            visible = false;
+        }
+        
+        //If laboratories are built they are not visible / кнопки снанций невидимы, если станция уже есть
+        if (visible && id >= UNIT_ATTRIBUTE_LASER_STATION1 && id <= UNIT_ATTRIBUTE_HARKBACK_STATION3) {
 			visible = !evolution.Constructed;
-
-			//кнопки снанций невидимы, если станция уже есть
-			button->visible = visible;
 		}
 
-		BELLIGERENT_FACTION buildingRace = getRace(id);
-		if (buildingRace != NONE && buildingRace != race) {
-			visible = false;
-			button->visible = visible;
+		//Max 5 command centers / только 5 ком.центров
+		if (enabled && visible && id == UNIT_ATTRIBUTE_COMMANDER) {
+			enabled = player->countUnits(UNIT_ATTRIBUTE_COMMANDER) < 4;
 		}
-
-		//только 5 ком.центров
-		if (id == UNIT_ATTRIBUTE_COMMANDER) {
-			visible = visible && player->countUnits(UNIT_ATTRIBUTE_COMMANDER) < 4;
-		}
-
-		bool enabled = evolution.Enabled;
 
 		bool bBuildProgress = false;
 		terBuildingList& lst = universe()->activePlayer()->buildingList(i);
@@ -3764,9 +3911,8 @@ void LogicUpdater::updateBuildingsData() {
 			bHasBuilding = true;
 		}
 
-		visible = visible && !bBuildProgress;
-
-		button->enabled = enabled && visible;
+        button->visible = visible;
+		button->enabled = enabled && visible && !bBuildProgress;
 
 		#ifdef _DEMO_
 			if (isForbidden(i)) {
@@ -3989,6 +4135,7 @@ void LogicUpdater::updateSquadsData() {
 
 			for (int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX; i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++) {
 				terUnitAttributeID id = (terUnitAttributeID)i;
+                if (unavailableContentUnitAttribute(id)) continue;
 				DamageMolecula damage_molecula(universe()->activePlayer()->unitAttribute(id)->damageMolecula);
 				int countPossible = pSquad->countPossibleUnits(id);
 				int count = pSquad->countUnits(id);
@@ -4017,6 +4164,8 @@ void LogicUpdater::updateSquadsData() {
 					case EMPIRE:
 						button->visible &= empireEnabled;
 						break;
+                    default:
+                        break;
 				}
 				#ifdef _DEMO_
 					if (isForbidden(i)) {
@@ -4086,6 +4235,7 @@ void LogicUpdater::updateSquadsData() {
 
 			for (int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX; i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++) {
 				terUnitAttributeID id = (terUnitAttributeID)i;
+                if (unavailableContentUnitAttribute(id)) continue;
 				DamageMolecula damage_molecula(universe()->activePlayer()->unitAttribute(id)->damageMolecula);
 				MutationButtonData* button = &(page->mutationButtons[i - UNIT_ATTRIBUTE_SOLDIER - MUTATION_ATOM_MAX]);
 				button->id = id;
@@ -4150,6 +4300,11 @@ void LogicUpdater::updateMiniMap() {
 
 		float w = logicData->getWidth() / vMap.H_SIZE;
 		float h = logicData->getHeight() / vMap.V_SIZE;
+        //Previously colH was 8, which caused stripped lines when h > 0.10
+        int colH = 8;
+        if (0 < h) {
+            colH = std::max(0, static_cast<int>(std::floor(8.0 * 0.10f / h)));
+        }
 
 		logicData->miniMapLabels.clear();
 		logicData->miniMapSquadCount = 0;
@@ -4162,7 +4317,7 @@ void LogicUpdater::updateMiniMap() {
 				int y0 = 0, y = 0;
 				FOR_EACH(player->energyColumn(), i_line) {
 					CellLine::const_iterator i_cell;
-					if((y - y0) > 8){
+					if(colH == 0 || (y - y0) > colH){
 						FOR_EACH(*i_line,i_cell) {
 							terMapClusterLine(y * h, i_cell->xl * w, i_cell->xr * w, player->unitColor());
 						}
@@ -4322,7 +4477,7 @@ void CShellIconManager::gameTypeChanged(UserSingleProfile::GameType newType) {
 }
 
 bool CShellIconManager::menuVisible() {
-	for (int i = (SQSH_GAME_MAX + 1); i < SQSH_MAX; i++) {
+	for (int i = (SQSH_GAME_MAX + 1); i < SQSH_MENU_MAX; i++) {
 		if ( controls[i] && controls[i]->isVisible() ) {
 			return true;
 		}

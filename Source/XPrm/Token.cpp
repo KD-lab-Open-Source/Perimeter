@@ -21,8 +21,9 @@ Parser::~Parser()
 void Parser::open(const char* fname_)
 {
 	XStream ff(0);
-	if(!ff.open((fname = fname_).c_str(), XS_IN))
-		throw std::logic_error(std::string("File not found: ") + fname);
+    fname = convert_path_xprm(fname_);
+	if(!ff.open(fname, XS_IN))
+		throw std::logic_error(std::string("File not found: ") + fname + " " + fname_);
 	int len = ff.size();
 	if(buffer)
 		delete buffer;
@@ -374,6 +375,36 @@ int Compiler::parse_file(const char* fname, XBuffer& sout)
 	return errors;
 }
 
+bool Compiler::compile(const char* input, const char* sources, bool rebuild, bool fail_outdated)
+{
+    int errors = 0;
+    std::string fname = convert_path_xprm(input);
+    sectionUpdated_ = false;
+    try {
+        XBuffer bout(1024, 1);
+        errors = parse_file(fname.c_str(), bout);
+        std::cout << bout;
+        if(!errors){
+            SectionList::iterator i;
+            FOR_EACH(sections, i){
+                int updated = (*i)->declaration(sources, rebuild, fail_outdated);
+                if ((*i)->definition(sources, updated || rebuild, fail_outdated, dependencies)) {
+                    updated |= true;
+                }
+                sectionUpdated_ |= updated;
+            }
+        }
+        else
+            std::cout << fname << ": " << errors << " error(s)" << std::endl;
+    }
+    catch(const std::exception& exc){
+        std::cout << "Compilation error: " << exc.what() << "\r\n";
+        errors++;
+    }
+
+    return !errors;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //		TokenList
 ///////////////////////////////////////////////////////////////////////////
@@ -483,15 +514,18 @@ unsigned Section::description()
 
 std::string Section::align_path(const char* sources, const std::string& str)
 {
-	std::string path = convert_path(script_file.c_str());
+    size_t n;
+	std::string path = convert_path_xprm(script_file.c_str());
 
 	//Check and remove the initial sources dir
-    std::string sources_path = sources;
-    terminate_with_char(sources_path, PATH_SEP);
-    size_t n = path.find(sources_path);
-    if(n != std::string::npos && n == 0) {
-        path.erase(0, sources_path.length());
-        path = std::string(".") + PATH_SEP + path;
+    if (sources) {
+        std::string sources_path = sources;
+        terminate_with_char(sources_path, PATH_SEP);
+        n = path.find(sources_path);
+        if (n != std::string::npos && n == 0) {
+            path.erase(0, sources_path.length());
+            path = std::string(".") + PATH_SEP + path;
+        }
     }
     
     //Remove filename from path
@@ -514,7 +548,18 @@ std::string Section::align_path(const char* sources, const std::string& str)
 	return path + name;
 }
 
-bool Section::definition(const char* sources, bool rebuild, StringList& dependencies)
+///Ensure that differences are because of content and not because differing newline styles, in future we should use \n only
+bool differentContent(std::string generated, std::string existing, bool fail_outdated) {
+    if (generated == existing) return false;
+
+    //If we are just compiling then don't do exhaustive checks
+    if (!fail_outdated) return true;
+    
+    string_replace_all(generated, "\r", "");
+    return generated != existing;
+}
+
+bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, StringList& dependencies)
 {
 	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript definition\r\n"
@@ -527,18 +572,22 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 	char* description_str = "\tdescription = ";
 	FILETIME section_time = { 0, 0 };
 	
-	FILETIME definition_time = { 0, 0 };
+	//FILETIME definition_time = { 0, 0 };
 	std::string file;
-	std::string definition_file_path = std::string(sources) + PATH_SEP + definition_file;
+	std::string definition_file_path;
+    if (sources) definition_file_path = std::string(sources) + PATH_SEP;
+    definition_file_path += definition_file;
 	XStream ff(0);
 	if(!rebuild && ff.open(definition_file_path.c_str(), XS_IN)) {
 		int len = ff.size();
 		file.insert((size_type)0, (size_type)len, ' ');
 		ff.read(&file[0], len);
 		ff.close();
-		getFileTime(definition_file_path.c_str(), &definition_time);
+		//getFileTime(definition_file_path.c_str(), &definition_time);
 	}
-	size_t head_pos = file.find(head);
+
+    size_t head_pos = file.find(head);
+    /* Doesn't update unless you change the structure
 	size_t end_pos = std::string::npos;
 	if(head_pos != std::string::npos){
 		end_pos = file.find("XScript end:", head_pos);
@@ -554,6 +603,7 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 			}
 			//}
 		}
+    */
 
 	WriteStream buf;
 	buf < "//	Number of variables: " <= variables() < "\r\n";
@@ -581,7 +631,6 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 	buf < "\r\n#ifdef _PRM_EDIT_\r\nstruct " < name() < "_ParameterSection : ParameterSection\r\n{\r\n\t"
 	< name() < "_ParameterSection() : ParameterSection(\"" < name() < "\")\r\n{\r\n";
 
-	unsigned int sourceCRC = 83838383;
 	StringList::iterator si;
 	FOR_EACH(dependencies, si){
 		std::string s_add = "\tadd_dependency(\"";
@@ -604,17 +653,18 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 		//	}
 		//buf <  s_add.c_str() <= time.dwLowDateTime < ", " <= time.dwHighDateTime < ");\r\n";
 		buf < s_add.c_str() < ");\r\n";
-		sourceCRC = Parser(si->c_str()).CRC(sourceCRC);
-		}
-	buf < "\tsourceCRC = " <= sourceCRC < ";\r\n";
+    }
 	buf < description_str <= description() < ";\r\n";
 
 	buf < "\treserve(" <= variables() < ");\r\n";
-	FOR_EACH(*this, i){
+	FOR_EACH(*this, i) {
 		const Variable* var = dynamic_cast<Variable*>(&**i);
-		if(var && var->definible())
-			buf < "\tadd(&" < var->name() < ", \"" < var->name() < "\");\r\n";
-		}
+		if(var && var->definible()) {
+            unsigned int crc = 83838383;
+            var->description(crc);
+            buf < "\tadd(&" < var->name() < ", \"" < var->name() < "\", " < std::to_string(crc).c_str() < ");\r\n";
+        }
+    }
 
 	buf < "\tadd_parameter_section(this);\r\n}\r\n};\r\n";
 	buf < "static " < name() < "_ParameterSection " < name() < "_ParameterSectionObject;\r\n";
@@ -625,29 +675,27 @@ bool Section::definition(const char* sources, bool rebuild, StringList& dependen
 	std::string operation;
 	if(head_pos == std::string::npos){ // first time
 		operation = "Creating";
-		file += head;
-		file += buf;
-		file += tail;
-		}
-	else{
+    } else {
 		operation = "Updating";
-        size_t end_pos = file.find(tail, head_pos);
-		if(end_pos == std::string::npos)
-			end_pos = tail.size();
-		head_pos += head.size();
-		file.erase(head_pos, end_pos - head_pos);
-		file.insert(head_pos, buf);
-		}
-	if(file != file0){
+    }
+    file = head;
+    file += buf;
+    file += tail;
+	if (differentContent(file, file0, fail_outdated)) {
 		std::cout << operation << " definition of section \"" << name() << "\" in " << definition_file_path << std::endl;
 		ff.open(definition_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
+        if (fail_outdated) {
+            string_replace_all(file, "\r", "");
+            std::cout << file << std::endl;
+            throw std::logic_error("Definition needs to be updated! recompile and save changes");
+        }
 		return 1;
-		}
+    }
 	return 0;
 }
 
-bool Section::declaration(const char* sources, bool rebuild)
+bool Section::declaration(const char* sources, bool rebuild, bool fail_outdated)
 {
 	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
 			"//	XScript declaration\r\n"
@@ -686,7 +734,9 @@ bool Section::declaration(const char* sources, bool rebuild)
 
 	if(using_namespace) buf < "}\r\nusing namespace "< name() < "_namespace;\r\n";
 
-    std::string declaration_file_path = std::string(sources) + PATH_SEP + declaration_file;
+    std::string declaration_file_path;
+    if (sources) declaration_file_path = std::string(sources) + PATH_SEP;
+    declaration_file_path += declaration_file;
     std::string file;
 	XStream ff(0);
 	if(!rebuild && ff.open(declaration_file_path.c_str(), XS_IN)){
@@ -699,27 +749,25 @@ bool Section::declaration(const char* sources, bool rebuild)
 
     std::string operation;
 	size_t head_pos = file.find(head);
-	if(head_pos == std::string::npos){ // first time
-		operation = "Creating";
-		head += buf;
-		head += tail;
-		file.insert(0, head);
-		}
-	else{
-		operation = "Updating";
-		size_t end_pos = file.find(tail, head_pos);
-		if(end_pos == std::string::npos)
-			end_pos = tail.size();
-		head_pos += head.size();
-		file.erase(head_pos, end_pos - head_pos);
-		file.insert(head_pos, buf);
-		}
-	if(file != file0){
+    if(head_pos == std::string::npos){ // first time
+        operation = "Creating";
+    } else {
+        operation = "Updating";
+    }
+    file = head;
+    file += buf;
+    file += tail;
+    if (differentContent(file, file0, fail_outdated)) {
         std::cout << operation << " declaration of section \"" << name() << "\" in " << declaration_file_path << std::endl;
 		ff.open(declaration_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
+        if (fail_outdated) {
+            string_replace_all(file, "\r", "");
+            std::cout << file << std::endl;
+            throw std::logic_error("Declaration needs to be updated! recompile and save changes");
+        }
 		return 1;
-		}
+	}
 	return 0;
 }
 
@@ -873,8 +921,18 @@ void ArrayVariable::copy_value(void* val) const
 { 
 	int n = 0;
 	const_iterator i;
-	FOR_EACH(*this, i)
-		(*i)->copy_value((char*)val  +  n++ * type.sizeOf());
+	FOR_EACH(*this, i) {
+        (*i)->copy_value((char*) val + n++ * type.sizeOf());
+    }
+}
+
+void ArrayVariable::description(unsigned& crc) const {
+    Variable::description(crc);
+    crc = CRC(size(), crc);
+    const_iterator i;
+    FOR_EACH(*this, i){
+        (*i)->description(crc);
+    }
 }
 
 Token* ArrayVariable::clone() const 
@@ -1006,11 +1064,11 @@ DataType(name(), 0)
 void StructDataType::description(unsigned& crc) const 
 { 
 	DataType::description(crc); 
+    crc = CRC(this->size(), crc);
 	const_iterator i;
 	FOR_EACH(*this, i){
-		const Variable* var = dynamic_cast<const Variable*>(&**i);
-		if(var && var->definible())
-			var->description(crc);
+		const DescriptedToken* var = dynamic_cast<const DescriptedToken*>(&**i);
+		if (var) var->description(crc);
 	}
 }
 
@@ -1138,6 +1196,16 @@ void StructVariable::copy_value(void* val) const
 			offs += var->sizeOf();
 			}
 		}
+}
+
+void StructVariable::description(unsigned& crc) const
+{
+    Variable::description(crc);
+    const_iterator i;
+    FOR_EACH(*this, i) {
+        const DescriptedToken* var = dynamic_cast<const DescriptedToken*>(&**i);
+        if (var) var->description(crc);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

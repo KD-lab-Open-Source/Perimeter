@@ -4,27 +4,13 @@
 #include "BelligerentSelect.h"
 #include "GameShell.h"
 #include "MainMenu.h"
-#include "Runtime.h"
 #include "PerimeterShellUI.h"
+#include "GameContent.h"
 
 extern std::string getItemTextFromBase(const char *keyStr);
 
 uint8_t getBelligerentIndex(terBelligerent belligerent) {
     return belligerent;
-}
-
-bool isAddonBelligerent(terBelligerent belligerent) {
-    switch (belligerent) {
-        case BELLIGERENT_EXODUS2:
-        case BELLIGERENT_EXODUS3:
-        case BELLIGERENT_EXODUS4:
-        case BELLIGERENT_EMPIRE2:
-        case BELLIGERENT_EMPIRE3:
-        case BELLIGERENT_EMPIRE4:
-            return true;
-        default:
-            return false;
-    }
 }
 
 terBelligerent getBelligerentFromIndex(uint8_t index) {
@@ -47,8 +33,18 @@ terBelligerent getBelligerentFromIndex(uint8_t index) {
     }
 }
 
-const char* getBelligerentName(terBelligerent belligerent) {
-    return qdTextDB::instance().getText(aiNameIDs[belligerent]);
+std::string getBelligerentName(terBelligerent belligerent) {
+    std::string key = aiNameIDs[belligerent];
+    std::string text = qdTextDB::instance().getText(key.c_str());
+    if (text.empty()) {
+        //If there is no name use the key name as workaround
+        text = key;
+        size_t pos = key.find('.');
+        if (pos != std::string::npos) {
+            text.erase(0, pos + 1);
+        }
+    }
+    return text;
 }
 
 BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent) {
@@ -66,13 +62,15 @@ BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent) {
         case BELLIGERENT_EMPIRE1:
         case BELLIGERENT_EMPIRE2:
         case BELLIGERENT_EMPIRE3:
-        case BELLIGERENT_EMPIRE4:
         case BELLIGERENT_EMPIRE_VICE:
             return EMPIRE;
+        case BELLIGERENT_EMPIRE4:
+            //Infected vice acts as Empire in ET, harkback otherwise
+            return terGameContent == GAME_CONTENT::PERIMETER_ET ? EMPIRE : HARKBACK;
         case BELLIGERENT_NONE:
             break;
     }
-    return NONE;
+    return FACTION_NONE;
 }
 
 std::string getBelligerentFactionName(BELLIGERENT_FACTION faction) {
@@ -83,27 +81,46 @@ std::string getBelligerentFactionName(BELLIGERENT_FACTION faction) {
             return "Empire";
         case HARKBACK:
             return "Harkback";
-        case NONE:
+        case FACTION_NONE:
             break;
     }
-    return std::string();
+    return "";
 }
 
 std::string getBelligerentAndFactionName(terBelligerent belligerent, const std::string& separator) {
     std::string text = getBelligerentName(belligerent);
     BELLIGERENT_FACTION faction = getBelligerentFaction(belligerent);
-    if (faction != NONE) {
-        text += separator + "(" + getItemTextFromBase(getBelligerentFactionName(faction).c_str()) + ")"; 
+    bool isAddonFrame = false;
+    switch (belligerent) {
+        case BELLIGERENT_EXODUS2:
+        case BELLIGERENT_EXODUS3:
+        case BELLIGERENT_EXODUS4:
+        case BELLIGERENT_EMPIRE2:
+        case BELLIGERENT_EMPIRE3:
+        case BELLIGERENT_EMPIRE4:
+            isAddonFrame = true;
+            break;
+        default:
+            break;
+    }
+    if (faction != FACTION_NONE || isAddonFrame) {
+        text += separator;
+        if (faction != FACTION_NONE) {
+            text += getItemTextFromBase(getBelligerentFactionName(faction).c_str());
+            if (isAddonFrame) text += ", ";
+        }
+        if (isAddonFrame) {
+            text += "ET";
+        }
     }
     return text;
 }
 
 void setupFrameHandler(CComboWindow* combo, int number, bool sendNetCommand, bool direction) {
-#ifndef _PERIMETER_ADDON_
-    //Discard belligerents belonging to addon
+    //Discard certain belligerents
     while (true) {
         terBelligerent selected = SelectableBelligerents[combo->pos];
-        if (isAddonBelligerent(selected)) {
+        if (unavailableContentBelligerent(selected)) {
             if (direction) {
                 combo->pos++;
                 if (combo->pos >= combo->size) combo->pos = 0;
@@ -115,7 +132,6 @@ void setupFrameHandler(CComboWindow* combo, int number, bool sendNetCommand, boo
             break;
         }
     }
-#endif
     
     //Send to players
     if (sendNetCommand && gameShell->getNetClient()) {

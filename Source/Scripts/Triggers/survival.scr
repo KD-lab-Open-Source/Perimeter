@@ -1,7 +1,7 @@
 TriggerChain = {
-	name = "survival.scr";
+	name = "";
 	triggers = {
-		6;
+		5;
 		{
 			name = "START";
 			condition = "struct ConditionSwitcher" {
@@ -14,40 +14,22 @@ TriggerChain = {
 			};
 			action = 0;
 			outcomingLinks = {
-				2;
+				1;
 				{
-					triggerName = "старт";
+					triggerName = "ппп";
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
+					parentOffsetX_ = 113;
+					parentOffsetY_ = 16;
+					childOffsetX_ = -115;
+					childOffsetY_ = -16;
 					parentOffset = {
-						x = -128;
-						y = 0;
-					};
-					childOffset = {
-						x = 128;
-						y = 0;
-					};
-				},
-				{
-					triggerName = "3 сек";
-					color = STRATEGY_RED;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 117;
+						x = 113;
 						y = 16;
 					};
 					childOffset = {
-						x = -126;
+						x = -115;
 						y = -16;
 					};
 				}
@@ -55,6 +37,12 @@ TriggerChain = {
 			state_ = CHECKING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 0;
+			left_ = 0;
+			top_ = 0;
+			right_ = 256;
+			bottom_ = 32;
 			cellIndex = {
 				x = 0;
 				y = 0;
@@ -80,15 +68,21 @@ TriggerChain = {
 				internalColor_ = 0;
 				cameraSplineName = "Camera0";
 				stepTime = 0.;
-				cycles = 1;
+				cycles = 0;
 				smoothTransition = false;
 			};
 			outcomingLinks = {
 				0;
 			};
-			state_ = SLEEPING;
+			state_ = CHECKING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 0;
+			left_ = 288;
+			top_ = 0;
+			right_ = 544;
+			bottom_ = 32;
 			cellIndex = {
 				x = 1;
 				y = 0;
@@ -117,6 +111,12 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 2;
+			cellNumberY = 0;
+			left_ = 576;
+			top_ = 0;
+			right_ = 832;
+			bottom_ = 32;
 			cellIndex = {
 				x = 2;
 				y = 0;
@@ -135,7 +135,18 @@ TriggerChain = {
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
-					0;
+					1;
+					{
+						type = INVERTED;
+						condition = "struct ConditionObjectExists" {
+							state_ = true;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+							constructedAndConstructing = true;
+						};
+					}
 				};
 			};
 			action = "struct ActionDefeat" {
@@ -147,80 +158,35 @@ TriggerChain = {
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 0;
+			cellNumberY = 1;
+			left_ = 0;
+			top_ = 64;
+			right_ = 256;
+			bottom_ = 96;
 			cellIndex = {
 				x = 0;
-				y = 2;
+				y = 1;
 			};
 			boundingRect = {
 				left = 0;
-				top = 128;
+				top = 64;
 				right = 256;
-				bottom = 160;
+				bottom = 96;
 			};
 		},
 		{
-			name = "старт";
+			name = "ппп";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
 					0;
 				};
 			};
-			action = "struct ActionSetCamera" {
+			action = "struct Action" {
 				internalColor_ = 0;
-				cameraSplineName = "Camera2";
-				stepTime = 4.;
-				cycles = 1;
-				smoothTransition = false;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -1;
-				y = 0;
-			};
-			boundingRect = {
-				left = -288;
-				top = 0;
-				right = -32;
-				bottom = 32;
-			};
-		},
-		{
-			name = "3 сек";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_FRAME;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
-						};
-					}
-				};
-			};
-			action = "struct ActionDelay" {
-				internalColor_ = 0;
-				delay = 3;
-				showTimer = false;
-				scaleByDifficulty = false;
-				timer = {
-					time = 0;
-				};
 			};
 			outcomingLinks = {
 				1;
@@ -229,23 +195,29 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
+					parentOffsetX_ = -128;
+					parentOffsetY_ = -10;
+					childOffsetX_ = 114;
+					childOffsetY_ = 16;
 					parentOffset = {
 						x = -128;
-						y = 4;
+						y = -10;
 					};
 					childOffset = {
-						x = 128;
-						y = -1;
+						x = 114;
+						y = 16;
 					};
 				}
 			};
 			state_ = SLEEPING;
 			executionCounter_ = 0;
 			internalColor_ = 0;
+			cellNumberX = 1;
+			cellNumberY = 2;
+			left_ = 288;
+			top_ = 128;
+			right_ = 544;
+			bottom_ = 160;
 			cellIndex = {
 				x = 1;
 				y = 2;
@@ -258,16 +230,20 @@ TriggerChain = {
 			};
 		}
 	};
+	left_ = -43;
+	top_ = -163;
+	right_ = 793;
+	bottom_ = 577;
 	boundingRect = {
-		left = -288;
-		top = 0;
-		right = 832;
-		bottom = 160;
+		left = -43;
+		top = -163;
+		right = 793;
+		bottom = 577;
 	};
 	viewRect = {
-		left = -59;
-		top = -41;
-		right = 1191;
-		bottom = 818;
+		left = -43;
+		top = -163;
+		right = 793;
+		bottom = 577;
 	};
 };

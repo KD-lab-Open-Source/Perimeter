@@ -1,17 +1,72 @@
 #pragma once
-#ifndef PERIMETER_WINDOWS_H
-#define PERIMETER_WINDOWS_H
+#ifndef PERIMETER_EXODUS_H
+#define PERIMETER_EXODUS_H
 
 #include <cstdint>
-#include <windows.h>
+#include <cstdlib>
 #include <unistd.h>
         
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Win32 macros/types stuff
 
+/*
+//Win32 types and their equivalent
+ 
+using INT     = int32_t;
+using UINT    = uint32_t;
+
+using LONG    = int32_t;
+using ULONG   = uint32_t;
+
+using HRESULT = int32_t;
+
+using WCHAR   = wchar_t;
+
+using BOOL    = INT;
+
+using VOID    = void;
+
+using BYTE    = uint8_t;
+
+using SHORT   = int16_t;
+using USHORT  = uint16_t;
+
+using FLOAT    = float;
+
+using DWORD   = uint32_t;
+using WORD    = uint16_t;
+
+using HDC      = HANDLE;
+using HWND     = HANDLE;
+using HKEY     = HANDLE;
+using COLORREF = DWORD;
+
+using LPSTR    = char*;
+using LPCSTR   = const char*;
+
+struct POINT {
+    LONG x;
+    LONG y;
+};
+
+struct RECT {
+    LONG left;
+    LONG top;
+    LONG right;
+    LONG bottom;
+};
+
+struct SIZE {
+    LONG cx;
+    LONG cy;
+};
+ */
+
+typedef void* HANDLE;
+
 //For some reason not present in dxvk-native headers
 typedef uint8_t UCHAR;
-typedef LPVOID PVOID;
+typedef void* PVOID;
 #ifdef PERIMETER_ARCH_64
 typedef uint64_t UINT_PTR;
 typedef int64_t LONG_PTR;
@@ -74,14 +129,14 @@ unsigned int _controlfp(unsigned int newval, unsigned int mask);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-DWORD GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
-                              char* returnBuffer, DWORD bufferSize, const char* filePath);
+uint32_t GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
+                              char* returnBuffer, uint32_t bufferSize, const char* filePath);
 
-DWORD WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath);
+uint32_t WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath);
 
-bool GetComputerName(char* out, DWORD* size);
+bool GetComputerName(char* out, uint32_t* size);
 
-bool GetUserName(char* out, DWORD* size);
+bool GetUserName(char* out, uint32_t* size);
 
 void ZeroMemory(void* p, std::size_t n);
 
@@ -123,12 +178,10 @@ void SetEvent(HANDLE event);
 
 void ResetEvent(HANDLE event);
 
-DWORD WaitForSingleObject(HANDLE event, uint64_t milliseconds);
+uint32_t WaitForSingleObject(HANDLE event, uint64_t milliseconds);
 
-DWORD WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds);
+uint32_t WaitForMultipleObjects(int count, HANDLE* events, bool waitAll, uint64_t milliseconds);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define D3D9b_SDK_VERSION D3D_SDK_VERSION
-
-#endif //PERIMETER_WINDOWS_H
+#endif //PERIMETER_EXODUS_H

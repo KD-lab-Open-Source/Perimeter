@@ -2,11 +2,11 @@
 
 ![Perimeter](https://cdn.akamai.steamstatic.com/steam/apps/289440/header.jpg)
 
-[![Linux Build](https://github.com/KranX/Perimeter/actions/workflows/linux_build.yml/badge.svg)](https://github.com/KranX/Perimeter/actions/workflows/linux_build.yml)
-[![Windows MSVC amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_x86_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_x86_build.yml)
-[![Windows MSVC amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_amd64_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msvc_amd64_build.yml)
-[![Windows MSYS amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_32_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_32_build.yml)
-[![Windows MSYS amd64 Build](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_64_build.yml/badge.svg)](https://github.com/Kranx/Perimeter/actions/workflows/windows_msys_64_build.yml)
+[![Linux Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/linux_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/linux_build.yml)
+[![Windows MSVC amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_x86_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_x86_build.yml)
+[![Windows MSVC amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_amd64_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_amd64_build.yml)
+[![Windows MSYS amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_32_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_32_build.yml)
+[![Windows MSYS amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_64_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_64_build.yml)
 
 [![Join the chat at https://t.me/PerimeterGame](https://patrolavia.github.io/telegram-badge/chat.svg)](https://t.me/PerimeterGame)
 
@@ -40,8 +40,30 @@ There is instructions available in:
 
 ## Enhancements from original game
 
+- Bugfixes
+- Right click on morph units to request basic units required
+- Automatic game assets searching in these paths order:
+  - Path from content= command argument
+  - Linux: $HOME/.local/share/KD Vision/Perimeter/Content
+  - Executable path
+  - Windows: %AppData%\\Roaming\\KD Vision\\Perimeter\\Content
+  - Previous used content stored in settings
+- Addons system that overlay files in original resources without altering them:
+  - Example: file placed in Addons/AddonName/Resource/Icons/logo.tga will replace usage of
+    Resource/Icons/logo.tga file.
+  - Uses may include adding custom textures, models, resolutions, maps, scripts...
+  - Perimeter ET Scripts and Resources can also be added as an addon to include extra units in main game
 - 64 bits support
-- Frame selection in battle/multiplayer menu
+- Frame selection in battle/multiplayer menu and new colors
+- Experimental widescreen and custom resolutions support:
+  - Game scans Resource/Icons/intf for XxY named folders such as 1920x1080 and adds as selectable option
+  - Custom resolutions uses the height to load Resource/Icons/MainMenu/ and Resource/Icons/Portraits/ 
+    with folder name xY such as x1080 with above example. This allows reusing same height menu elements
+    that still use 4:3 aspect ratio
+  - Both .ini and resx= resy= command arguments accept custom resolutions, these will use
+    the closest UI resolutions upscaled/centered to maintain visual consistency.
+- Experimental resizable windows (Enabled by default unless Graphics ResizableWindow in Perimeter.ini or resizablewindow= is 0)
+- Experimental support for Perimeter Emperor Testament
 
 ## Repository contents
 
@@ -86,4 +108,4 @@ There is instructions available in:
 
 **Working** - Compilable with modern compilers and available in other platforms such as Windows and Linux.
 
-Meta issue for tracking code modernization/porting progress: https://github.com/KranX/Perimeter/issues/58
+Meta issue for tracking code modernization/porting progress: https://github.com/KD-lab-Open-Source/Perimeter/issues/58

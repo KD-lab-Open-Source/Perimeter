@@ -89,11 +89,9 @@ bool isWorldIDValid(int worldID) {
 std::string GetTargetName(int numWorld, const char* name)
 {
 	if ( !isWorldIDValid(numWorld) ) ErrH.Abort("World Index out of range");
-    char* buf = vMap.wTable[numWorld].dir;
-    std::string path;
-    if (buf[0]) {
-        path = convert_path_resource(buf);
-        path += PATH_SEP;
+    std::string path = vMap.wTable[numWorld].dir;
+    if (!path.empty()) {
+        terminate_with_char(path, PATH_SEP);
     }
     if (name) path += name;
     return path;
@@ -111,7 +109,6 @@ vrtMap::vrtMap(void)
 	GeonetMESH=200;
 	cWorld = -1;
 
-	wTable = 0;
 	Buf = NULL;
 
 	changedT = NULL;
@@ -177,8 +174,6 @@ vrtMap::vrtMap(void)
 
 vrtMap::~vrtMap(void)
 {
-	free(dirWorldPrm);
-
 	cWorld = -1;
 
 	if(changedT) { delete changedT; changedT = NULL; }
@@ -187,9 +182,7 @@ vrtMap::~vrtMap(void)
 
 	delLeveledTexture();//Необходимо вызывать до удаления VxDBuf !
 	if(VxGBuf!=0) releaseMem4Buf();
-	if(wTable!=0){
-		delete [] wTable;
-	}
+	wTable.clear();
 	landRelease();
 
 	worldFree();
@@ -421,33 +414,19 @@ void vrtMap::prepare(char* name)
 	//Инициализация графического режима
 	hCamera=500;
 	fCamera=500;
-	std::string path = convert_path_resource(name);
 
-	//Копирование только имени каталога в dirWorldPrm
-	std::string parent = std::filesystem::path(path).parent_path().string(); 
-	dirWorldPrm = strdup(parent.c_str());
-
-	// Заполнение таблицы миров
-	prmFile.init(path.c_str());
-	maxWorld = atoi(prmFile.getAtom());
-	if(maxWorld < 1) ErrH.Abort("Empty world list");
-	int i;
-	char* atom;
-	char tString[256];
-	wTable = new vrtWorld[maxWorld];
-	for(i = 0;i < maxWorld;i++){
-		atom = prmFile.getAtom();
-		if(!atom) ErrH.Abort("Null world name");
-		wTable[i].name = strdup(atom);
-		atom = prmFile.getAtom();
-		if(!atom) ErrH.Abort("Null world path");
-
-		strcpy(tString,dirWorldPrm);//копирование в строку пути до каталога с worlds.prm
-		if(*dirWorldPrm) strcat(tString,PATH_SEP_STR);		
-		strcat(tString,atom);		//добавление в строку пути до каталога с миром
-		wTable[i].dir = strdup(tString);
-		}
-	prmFile.finit();
+	//Scan resources worlds and create table with name and path
+	wTable.clear();
+    for (const auto& entry : get_resource_paths_directory("resource/worlds")) {
+        std::string res_path = entry.second;
+        
+        std::filesystem::path path(entry.second);
+        if (std::filesystem::is_directory(path)) {            
+            wTable.emplace_back(path.filename().string(), path.string());
+        }
+    }
+    maxWorld = wTable.size();
+    if(maxWorld < 1) ErrH.Abort("Empty world list");
 }
 
 //Для Периметра
@@ -564,11 +543,8 @@ void vrtMap::newLoad(const char* dirName)
 {
 	UndoDispatcher_KillAllUndo(); //Очистка всего буфера Undo-Redo
 
-	free(wTable[0].name);
-	free(wTable[0].dir);
-
-	wTable[0].name = strdup("SurMap_world");
-	wTable[0].dir = strdup(dirName);
+    wTable.clear();
+    wTable.emplace_back("SurMap_world", dirName);
 
 	cWorld = 0;
 

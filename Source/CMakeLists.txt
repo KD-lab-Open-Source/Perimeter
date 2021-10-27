@@ -1,4 +1,4 @@
-
+SET(perimeter_SRCS "")
 SET(perimeter_LINK_LIBS
         #Our libs
         XTool
@@ -32,31 +32,37 @@ IF(NOT PERIMETER_WINDOWS)
     FetchContent_MakeAvailable(pevents)
     ADD_DEFINITIONS(-DWFMO)
 
-    #DXVK-native wrapper lib retrieval and building
-    ExternalProject_Add(dxvk-native
-            GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
-            GIT_TAG           origin/master
-            GIT_SHALLOW       ON
-            BUILD_ALWAYS      OFF
-            CONFIGURE_COMMAND meson ../dxvk-native
-            BUILD_COMMAND     ninja
-            INSTALL_COMMAND   ""
-    )
-    ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
-    set(DXVK_NATIVE_INCLUDE_DIRS
-            "${SOURCE_DIR}/include/native/directx"
-            "${SOURCE_DIR}/include/native/windows"
-    )
-    set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
-
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
-
     #Includes
     INCLUDE_DIRECTORIES(
             "${PROJECT_SOURCE_DIR}/Source/Exodus"
             "${pevents_SOURCE_DIR}/src"
-            "${DXVK_NATIVE_INCLUDE_DIRS}"
     )
+
+    IF (OPTION_DXVK)
+        MESSAGE("Using DXVK-native for D3D9 API")
+        #DXVK-native wrapper lib retrieval and building
+        ExternalProject_Add(dxvk-native
+                GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
+                GIT_TAG           origin/master
+                GIT_SHALLOW       ON
+                BUILD_ALWAYS      OFF
+                CONFIGURE_HANDLED_BY_BUILD ON
+                CONFIGURE_COMMAND meson ../dxvk-native
+                BUILD_COMMAND     ninja
+                INSTALL_COMMAND   ""
+        )
+        ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
+        set(DXVK_NATIVE_INCLUDE_DIRS
+                "${SOURCE_DIR}/include/native/directx"
+                "${SOURCE_DIR}/include/native/windows"
+        )
+        set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+    
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
+        INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
+    ELSE()
+        MESSAGE("Not using D3D9 API providing library")
+    ENDIF()
 ELSE()
     #DirectX SDK libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
@@ -75,7 +81,7 @@ ADD_SUBDIRECTORY("Network")
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus ExodusD3D9)
 ELSE()
     ADD_SUBDIRECTORY("PlayOgg")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)
@@ -143,7 +149,10 @@ INCLUDE_DIRECTORIES(
     "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
 )
 
-SET(perimeter_SRCS
+#This is the only way I know to force download of external project from any targets
+ADD_CUSTOM_TARGET(dependencies ALL)
+
+SET(perimeter_SRCS ${perimeter_SRCS}
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
@@ -156,6 +165,7 @@ SET(perimeter_SRCS
         Game/Runtime.cpp
         Game/CopyToGraph.cpp
         Game/Region.cpp
+        Game/GameContent.cpp
         Units/DefenceMap.cpp
         Units/GenericControls.cpp
         Units/GeoControl.cpp
@@ -220,6 +230,7 @@ SET(perimeter_SRCS
         UserInterface/chaos.cpp
         UserInterface/controls.cpp
         UserInterface/ExternalShow.cpp
+        UserInterface/SourceUIResolution.cpp
         UserInterface/GameShell.cpp
         UserInterface/HotKey.cpp
         UserInterface/Installer.cpp
@@ -273,30 +284,45 @@ SET(perimeter_SRCS
 
 ADD_EXECUTABLE(perimeter ${PERIMETER_EXE_FLAGS} ${perimeter_SRCS})
 
+#Add TriggerEditor
 if(NOT OPTION_FINAL_VERSION)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} TriggerEditor)
 ENDIF()
 
+#Add gperftools
 IF(OPTION_GPERFTOOLS)
     MESSAGE("WARNING: Linking gperftools")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc)
 ENDIF()
 
+#Add XPrmLib if Debug build
+IF(PERIMETER_DEBUG)
+    ADD_DEPENDENCIES(dependencies XPrmLib)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} XPrmLib)
+ENDIF()
+
 TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
 
-#This is the only way I know to force download of external project from any targets
-ADD_CUSTOM_TARGET(dependencies ALL)
-
-IF(OPTION_PROCESS_SCRIPTS)
-    ADD_DEPENDENCIES(dependencies Scripts)
-    ADD_DEPENDENCIES(Scripts XPrm)
+IF(NOT PERIMETER_DEBUG)
+    IF (MSVC_CL_BUILD)
+        MESSAGE("Scripts won't be checked under MSVC yet")
+    ELSE()
+        ADD_DEPENDENCIES(dependencies ScriptsCheck)
+        MESSAGE("Scripts will be checked")
+    ENDIF()
+ELSEIF(OPTION_PROCESS_SCRIPTS)
+    ADD_DEPENDENCIES(dependencies ScriptsCompile)
+    MESSAGE("Scripts will be compiled")
 ELSE()
-    MESSAGE("Processing Scripts not enabled")
+    MESSAGE("Not compiling or checking Scripts")
 ENDIF()
 IF(NOT PERIMETER_WINDOWS)
-    ADD_DEPENDENCIES(dependencies dxvk-native)
-    ADD_DEPENDENCIES(Exodus dxvk-native)
-    ADD_DEPENDENCIES(XTool dxvk-native)
+    #Make Exodus D3D9 depend on lib that provides D3D9 API
+    IF (OPTION_DXVK)
+        ADD_DEPENDENCIES(ExodusD3D9 dxvk-native)
+    ENDIF()
+    #Make other modules depend on Exodus D3D9
+    ADD_DEPENDENCIES(dependencies ExodusD3D9)
 ELSE()
     ADD_DEPENDENCIES(PlayOgg dependencies)
 ENDIF()

@@ -148,6 +148,8 @@ struct CShellLogicDispatcher
 private:
 	class terRegionColumnMain* pColumnMain;
 	bool alwaysShowLifeBars;
+    bool mouseMoveGame = false;
+    double lastMouseMoveHoverCheck = 0;
 };
 
 extern CShellLogicDispatcher*  _pShellDispatcher;

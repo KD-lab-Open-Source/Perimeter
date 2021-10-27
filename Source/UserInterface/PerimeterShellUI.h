@@ -8,6 +8,7 @@
 #include "PlayOgg.h"
 #include "Universe.h"
 #include "qd_textdb.h"
+#include "SourceUIResolution.h"
 
 enum
 {
@@ -85,6 +86,8 @@ public:
 	const char*        m_sound;
 	const sqshControl* m_attr;
 	const sqshControlContainer* m_attr_cont;
+    SHELL_ANCHOR anchor;
+    SHELL_ANCHOR anchor_children;
 
 	float x, y;
 	float sx, sy;
@@ -156,6 +159,7 @@ public:
 
 	virtual void LoadMenuWnd(const sqshControlContainer* attr);
 	virtual void Load(const sqshControl* attr);
+    virtual void loadAnchor();
 	virtual void reload();
 	virtual int  HitTest(float _x, float _y);
 	virtual void OnMouseMove(float _x, float _y);
@@ -311,7 +315,7 @@ protected:
 
 	cFont*      m_hFontLabel;
 	sColor4f    m_ColorLabel;
-	float       m_label_x;
+	float       m_label_x; //TODO seem to be unused
 	float		m_label_y;
 	enum
 	{
@@ -615,6 +619,8 @@ public:
 	}
 protected:
 	int worldID;
+    float mx, my;
+    float msx, msy;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1628,7 +1634,7 @@ class CShellIconManager
 
 	void updateControlsFromExternalStates();
 
-	SaveControlData externalControlStates[SQSH_GAME_MAX];
+    std::vector<SaveControlData> externalControlStates;
 	std::vector<SaveControlData> externalBuildTabStates;
 	std::vector<SaveControlData> externalSquadTabStates;
 
@@ -1718,7 +1724,7 @@ public:
 	int OnRButtonDown(float x, float y);
 	int OnRButtonUp(float x, float y);
 
-	void changeControlState(const std::vector<SaveControlData>& newControlStates);
+	void changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls);
 	void fillControlState(std::vector<SaveControlData>& controlStatesToSave);
 
 	int OnMouseMove(float x, float y);
@@ -2092,72 +2098,7 @@ void OnButtonBrigadierBuild(CShellWindow* pWnd, InterfaceEventCode code, int par
 
 void OnButtonReplayPlayer(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-inline float relativeX(float x) {
-	return x * terRenderDevice->GetSizeX() / SQSH_COORD_WIDTH_SCALE;
-}
-
-inline float relativeY(float y) {
-	return y * terRenderDevice->GetSizeY() / SQSH_COORD_HEIGHT_SCALE;
-}
-
-inline Vect2f relativeUV(float x, float y, cTexture *texture) {
-    xassert(texture != nullptr);
-	return Vect2f(
-			relativeX(x) / (float)texture->GetWidth(),
-			relativeY(y) / (float)texture->GetHeight() );
-}
-
-inline int absoluteX(float x) {
-	if (x >= 2.0f) {
-		x /= 1024.0f;
-	}
-	return round(x * terRenderDevice->GetSizeX());
-}
-
-inline int absoluteY(float y) {
-	if (y >= 2.0f) {
-		y /= 768.0f;
-	}
-	return round(y * terRenderDevice->GetSizeY());
-}
-
-inline std::string getImageFileName(const sqshImage* image, const char* fileName = 0) {
-	std::string fullname = fileName ? fileName : static_cast<std::string>(image->texture);
-	fullname = convert_path(fullname.c_str());
-	if ( !fullname.empty() ) {
-		if (image->hasResolutionVersion) {
-			char intBuffer[11 + 1];
-			sprintf(intBuffer, "%d", terRenderDevice->GetSizeX());
-			std::string resolution = std::string(intBuffer);
-			fullname.insert(fullname.rfind(PATH_SEP), PATH_SEP + resolution);
-		}
-		if (image->hasBelligerentVersion && universe() && universe()->activePlayer()) {
-			switch (universe()->activePlayer()->belligerent()) {
-				case BELLIGERENT_EXODUS0:
-				case BELLIGERENT_EXODUS1:
-				case BELLIGERENT_EXODUS2:
-				case BELLIGERENT_EXODUS3:
-				case BELLIGERENT_EXODUS4:
-					fullname.insert(fullname.find('.'), "_xodus");
-					break;
-				case BELLIGERENT_HARKBACKHOOD0:
-				case BELLIGERENT_HARKBACKHOOD1:
-					fullname.insert(fullname.find('.'), "_hback");
-					break;
-				case BELLIGERENT_EMPIRE0:
-				case BELLIGERENT_EMPIRE1:
-				case BELLIGERENT_EMPIRE2:
-				case BELLIGERENT_EMPIRE3:
-				case BELLIGERENT_EMPIRE4:
-				case BELLIGERENT_EMPIRE_VICE:
-
-				default:
-					fullname.insert(fullname.find('.'), "_mperia");
-			}
-		}
-	}
-	return fullname;
-}
+std::string getImageFileName(const sqshImage* image, const char* fileName = 0);
 
 //relative------------------
 /*

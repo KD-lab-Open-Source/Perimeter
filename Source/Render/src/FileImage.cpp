@@ -1396,7 +1396,9 @@ public:
 // реализация интерфейса cFileImage
 cFileImage* cFileImage::Create(const char *fname)
 {
-	_strlwr((char*)fname);
+    std::string path(fname);
+	_strlwr(path.data());
+    fname = path.c_str();
 	if(strstr(fname,".tga")) {
         return new cTGAImage;
     } else if(strstr(fname,".avi")) {

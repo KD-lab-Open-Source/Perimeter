@@ -16,6 +16,8 @@
 #include "Scripts/ForceField.hi"
 #include "EnergyConsumer.h"
 
+#include "GameContent.h"
+
 void terPlayer::EconomicQuant()
 {
 //	watch_i(clusters_.size(), this);
@@ -63,6 +65,7 @@ void terPlayer::UpdateStructureAccessible()
 	if(frame()){
 		for(int i = 0;i < UNIT_ATTRIBUTE_STRUCTURE_MAX;i++){
 			terUnitAttributeID evolution_id = (terUnitAttributeID)i;
+            if (unavailableContentUnitAttribute(evolution_id)) continue;
 			const AttributeBuilding& attr = *safe_cast<const AttributeBuilding*>(unitAttribute(evolution_id));
 			EnableData& evolution = GetEvolutionBuildingData(evolution_id);
 			bool enabled = true;
@@ -112,8 +115,13 @@ void terPlayer::UpdateStructureAccessible()
 	}
 
 	for(int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX;i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++){
-		EnableData& mutation = GetMutationElement((terUnitAttributeID)i);
-		const AttributeLegionary& attr = *safe_cast<const AttributeLegionary*>(unitAttribute((terUnitAttributeID)i));
+        terUnitAttributeID unitID = (terUnitAttributeID) i;
+        EnableData& mutation = GetMutationElement(unitID);
+        if (unavailableContentUnitAttribute(unitID)) {
+            mutation.clear();
+            continue;
+        }
+		const AttributeLegionary& attr = *safe_cast<const AttributeLegionary*>(unitAttribute(unitID));
 		mutation.Enabled = 1;
 		for(int j = 0;j < attr.EnableStructure.size();j++)
 			if(!GetEvolutionBuildingData(attr.EnableStructure[j]).Worked){

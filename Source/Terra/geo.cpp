@@ -787,6 +787,7 @@ struct CWormForm {
 	sVBitMap VBitMap;
 	CWormForm(){
 		FormWormsNew=FormWormsOld=&FormWorms1;
+#if 0
 		XBuffer tb;
 		//tb < dirBitMap   < "\\" < fname;
 		tb < Path2TTerraResource < "wormform.tga"; //"RESOURCE\\Tools\\wormform.tga";
@@ -801,7 +802,9 @@ struct CWormForm {
 			tgahead.load2buf(VBitMap.data);
 			put2WF(0);
 		}
-		else{
+		else
+#endif
+        {
 			VBitMap.create(WSXSY, WSXSY);
 		}
 	};

@@ -1,7 +1,7 @@
 TriggerChain = {
 	name = "07biodamage2.scr";
 	triggers = {
-		89;
+		57;
 		{
 			name = "START";
 			condition = "struct ConditionSwitcher" {
@@ -14,16 +14,40 @@ TriggerChain = {
 			};
 			action = 0;
 			outcomingLinks = {
-				5;
+				6;
+				{
+					triggerName = "поражение";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffset = {
+						x = -55;
+						y = 16;
+					};
+					childOffset = {
+						x = 104;
+						y = -16;
+					};
+				},
+				{
+					triggerName = "победа";
+					color = STRATEGY_RED;
+					type = THIN;
+					active_ = false;
+					parentOffset = {
+						x = -109;
+						y = 16;
+					};
+					childOffset = {
+						x = 97;
+						y = -16;
+					};
+				},
 				{
 					triggerName = "Camera";
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -127;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 122;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -127;
 						y = 16;
@@ -38,10 +62,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 128;
-					parentOffsetY_ = 3;
-					childOffsetX_ = -128;
-					childOffsetY_ = -8;
 					parentOffset = {
 						x = 128;
 						y = 3;
@@ -56,10 +76,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -3;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -10;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -3;
 						y = 16;
@@ -74,10 +90,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 15;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 15;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 15;
 						y = 16;
@@ -85,24 +97,6 @@ TriggerChain = {
 					childOffset = {
 						x = 15;
 						y = -16;
-					};
-				},
-				{
-					triggerName = "войска";
-					color = STRATEGY_RED;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = -128;
-						y = 8;
-					};
-					childOffset = {
-						x = 128;
-						y = -7;
 					};
 				}
 			};
@@ -123,7 +117,7 @@ TriggerChain = {
 		{
 			name = "Install Frame";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -131,7 +125,7 @@ TriggerChain = {
 					{
 						type = INVERTED;
 						condition = "struct ConditionFrameState" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							state = AI_FRAME_STATE_INSTALLED;
 							playerType = AI_PLAYER_TYPE_ME;
@@ -151,10 +145,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -14;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -13;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -14;
 						y = 16;
@@ -169,10 +159,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 128;
-					parentOffsetY_ = 1;
-					childOffsetX_ = -128;
-					childOffsetY_ = 1;
 					parentOffset = {
 						x = 128;
 						y = 1;
@@ -187,10 +173,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 120;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -128;
-					childOffsetY_ = -13;
 					parentOffset = {
 						x = 120;
 						y = 16;
@@ -304,19 +286,19 @@ TriggerChain = {
 				internalColor_ = 0;
 				type = OR;
 				conditions = {
-					3;
+					2;
 					{
 						type = NORMAL;
 						condition = "struct ConditionSwitcher" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							type = AND;
 							conditions = {
-								3;
+								2;
 								{
 									type = INVERTED;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -332,36 +314,14 @@ TriggerChain = {
 										playerType = AI_PLAYER_TYPE_ME;
 										spiralChargingPercent = 100;
 									};
-								},
-								{
-									type = INVERTED;
-									condition = "struct ConditionObjectExists" {
-										state_ = false;
-										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_OFFICER_PLANT;
-										counter = 1;
-										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
-									};
 								}
 							};
 						};
 					},
 					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = true;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = true;
-						};
-					},
-					{
 						type = NORMAL;
 						condition = "struct ConditionFrameState" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							state = AI_FRAME_STATE_SPIRAL_CHARGING;
 							playerType = AI_PLAYER_TYPE_ME;
@@ -373,7 +333,7 @@ TriggerChain = {
 			action = "struct ActionOrderBuilding" {
 				internalColor_ = 12189692;
 				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_OFFICER_PLANT;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
 				placementStrategy = PLACEMENT_STRATEGY_STATION;
 				energyReserve = 50.;
 				buildDurationMax = 300;
@@ -386,10 +346,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 2;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -425,7 +381,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionSwitcher" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							type = AND;
 							conditions = {
@@ -433,7 +389,7 @@ TriggerChain = {
 								{
 									type = INVERTED;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -456,7 +412,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionFrameState" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							state = AI_FRAME_STATE_SPIRAL_CHARGING;
 							playerType = AI_PLAYER_TYPE_ME;
@@ -481,10 +437,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -16;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -19;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -16;
 						y = 16;
@@ -512,7 +464,7 @@ TriggerChain = {
 		{
 			name = "Усилитель";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -539,7 +491,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionEnegyLevelLowerReserve" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							energyReserve = 30000.;
 						};
@@ -555,7 +507,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionSwitcher" {
-										state_ = false;
+										state_ = true;
 										internalColor_ = 0;
 										type = AND;
 										conditions = {
@@ -563,7 +515,7 @@ TriggerChain = {
 											{
 												type = INVERTED;
 												condition = "struct ConditionFrameState" {
-													state_ = true;
+													state_ = false;
 													internalColor_ = 0;
 													state = AI_FRAME_STATE_SPIRAL_CHARGING;
 													playerType = AI_PLAYER_TYPE_ME;
@@ -586,7 +538,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -614,10 +566,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -653,7 +601,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionSwitcher" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							type = AND;
 							conditions = {
@@ -661,7 +609,7 @@ TriggerChain = {
 								{
 									type = INVERTED;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -684,7 +632,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionFrameState" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							state = AI_FRAME_STATE_SPIRAL_CHARGING;
 							playerType = AI_PLAYER_TYPE_ME;
@@ -709,10 +657,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -20;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -23;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -20;
 						y = 16;
@@ -748,7 +692,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionSwitcher" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							type = AND;
 							conditions = {
@@ -756,7 +700,7 @@ TriggerChain = {
 								{
 									type = INVERTED;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -779,7 +723,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionFrameState" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
 							state = AI_FRAME_STATE_SPIRAL_CHARGING;
 							playerType = AI_PLAYER_TYPE_ME;
@@ -804,10 +748,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 82;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 81;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 82;
 						y = 16;
@@ -870,7 +810,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionSwitcher" {
-										state_ = false;
+										state_ = true;
 										internalColor_ = 0;
 										type = AND;
 										conditions = {
@@ -878,7 +818,7 @@ TriggerChain = {
 											{
 												type = INVERTED;
 												condition = "struct ConditionFrameState" {
-													state_ = true;
+													state_ = false;
 													internalColor_ = 0;
 													state = AI_FRAME_STATE_SPIRAL_CHARGING;
 													playerType = AI_PLAYER_TYPE_ME;
@@ -901,7 +841,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -929,10 +869,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -991,10 +927,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 30;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 20;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 30;
 						y = 16;
@@ -1030,7 +962,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionSwitcher" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							type = AND;
 							conditions = {
@@ -1038,7 +970,7 @@ TriggerChain = {
 								{
 									type = INVERTED;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -1086,10 +1018,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -1148,10 +1076,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -1220,10 +1144,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -1251,7 +1171,7 @@ TriggerChain = {
 		{
 			name = "лазерная пушка";
 			condition = "struct ConditionSwitcher" {
-				state_ = true;
+				state_ = false;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -1259,7 +1179,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 12189692;
 							building = UNIT_ATTRIBUTE_LASER_CANNON;
 							factor = 1.;
@@ -1286,10 +1206,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -1317,7 +1233,7 @@ TriggerChain = {
 		{
 			name = "ракетница";
 			condition = "struct ConditionSwitcher" {
-				state_ = true;
+				state_ = false;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -1325,7 +1241,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionNumberOfBuildingByCoresCapacity" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 8454143;
 							building = UNIT_ATTRIBUTE_ROCKET_LAUNCHER;
 							factor = 2.;
@@ -1352,10 +1268,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -1418,10 +1330,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -1490,10 +1398,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 0;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 0;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 0;
 						y = 16;
@@ -1508,10 +1412,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -49;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -54;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -49;
 						y = 16;
@@ -1526,10 +1426,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 126;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -128;
-					childOffsetY_ = -14;
 					parentOffset = {
 						x = 126;
 						y = 16;
@@ -1604,6 +1500,104 @@ TriggerChain = {
 			};
 		},
 		{
+			name = "победа";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionKillObject" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionCaptureBuilding" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					}
+				};
+			};
+			action = "struct ActionVictory" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 8421504;
+			cellIndex = {
+				x = 0;
+				y = -2;
+			};
+			boundingRect = {
+				left = 0;
+				top = -128;
+				right = 256;
+				bottom = -96;
+			};
+		},
+		{
+			name = "поражение";
+			condition = "struct ConditionSwitcher" {
+				state_ = false;
+				internalColor_ = 0;
+				type = OR;
+				conditions = {
+					2;
+					{
+						type = NORMAL;
+						condition = "struct ConditionKillObject" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_FRAME;
+							counter = 1;
+							playerType = AI_PLAYER_TYPE_ME;
+						};
+					},
+					{
+						type = NORMAL;
+						condition = "struct ConditionCaptureBuilding" {
+							state_ = false;
+							internalColor_ = 0;
+							object = UNIT_ATTRIBUTE_COLLECTOR;
+							playerType = AI_PLAYER_TYPE_ENEMY;
+						};
+					}
+				};
+			};
+			action = "struct ActionDefeat" {
+				internalColor_ = 0;
+			};
+			outcomingLinks = {
+				0;
+			};
+			state_ = SLEEPING;
+			executionCounter_ = 0;
+			internalColor_ = 8421504;
+			cellIndex = {
+				x = 0;
+				y = -1;
+			};
+			boundingRect = {
+				left = 0;
+				top = -64;
+				right = 256;
+				bottom = -32;
+			};
+		},
+		{
 			name = "ядро к врагу";
 			condition = "struct ConditionSwitcher" {
 				state_ = true;
@@ -1641,7 +1635,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionSwitcher" {
-										state_ = false;
+										state_ = true;
 										internalColor_ = 0;
 										type = AND;
 										conditions = {
@@ -1649,7 +1643,7 @@ TriggerChain = {
 											{
 												type = INVERTED;
 												condition = "struct ConditionFrameState" {
-													state_ = true;
+													state_ = false;
 													internalColor_ = 0;
 													state = AI_FRAME_STATE_SPIRAL_CHARGING;
 													playerType = AI_PLAYER_TYPE_ME;
@@ -1672,7 +1666,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -1829,7 +1823,7 @@ TriggerChain = {
 			action = "struct ActionHoldBuilding" {
 				internalColor_ = 0;
 				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_OFFICER_PLANT;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
 			};
 			outcomingLinks = {
 				0;
@@ -2443,13 +2437,13 @@ TriggerChain = {
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
-					4;
+					3;
 					{
 						type = NORMAL;
 						condition = "struct ConditionObjectExists" {
 							state_ = true;
 							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
+							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
 							counter = 1;
 							playerType = AI_PLAYER_TYPE_ME;
 							constructedAndConstructing = false;
@@ -2474,7 +2468,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionSwitcher" {
-										state_ = false;
+										state_ = true;
 										internalColor_ = 0;
 										type = AND;
 										conditions = {
@@ -2482,7 +2476,7 @@ TriggerChain = {
 											{
 												type = INVERTED;
 												condition = "struct ConditionFrameState" {
-													state_ = true;
+													state_ = false;
 													internalColor_ = 0;
 													state = AI_FRAME_STATE_SPIRAL_CHARGING;
 													playerType = AI_PLAYER_TYPE_ME;
@@ -2505,7 +2499,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -2514,24 +2508,13 @@ TriggerChain = {
 								}
 							};
 						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
-							counter = 2;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
-						};
 					}
 				};
 			};
 			action = "struct ActionOrderBuilding" {
 				internalColor_ = 0;
 				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_OFFICER_PLANT;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
 				placementStrategy = PLACEMENT_STRATEGY_PLANT;
 				energyReserve = 50.;
 				buildDurationMax = 300;
@@ -2544,10 +2527,6 @@ TriggerChain = {
 					color = STRATEGY_BLUE;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 12;
-					parentOffsetY_ = -16;
-					childOffsetX_ = 10;
-					childOffsetY_ = 16;
 					parentOffset = {
 						x = 12;
 						y = -16;
@@ -2579,7 +2558,7 @@ TriggerChain = {
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
-					4;
+					3;
 					{
 						type = NORMAL;
 						condition = "struct ConditionObjectExists" {
@@ -2610,7 +2589,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionSwitcher" {
-										state_ = false;
+										state_ = true;
 										internalColor_ = 0;
 										type = AND;
 										conditions = {
@@ -2618,7 +2597,7 @@ TriggerChain = {
 											{
 												type = INVERTED;
 												condition = "struct ConditionFrameState" {
-													state_ = true;
+													state_ = false;
 													internalColor_ = 0;
 													state = AI_FRAME_STATE_SPIRAL_CHARGING;
 													playerType = AI_PLAYER_TYPE_ME;
@@ -2641,7 +2620,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionFrameState" {
-										state_ = true;
+										state_ = false;
 										internalColor_ = 0;
 										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
@@ -2649,17 +2628,6 @@ TriggerChain = {
 									};
 								}
 							};
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
-							counter = 2;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
 						};
 					}
 				};
@@ -2680,10 +2648,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -11;
-					parentOffsetY_ = -16;
-					childOffsetX_ = -11;
-					childOffsetY_ = 16;
 					parentOffset = {
 						x = -11;
 						y = -16;
@@ -2773,10 +2737,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -27;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -29;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -27;
 						y = 16;
@@ -2832,10 +2792,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 19;
-					parentOffsetY_ = -16;
-					childOffsetX_ = 18;
-					childOffsetY_ = 16;
 					parentOffset = {
 						x = 19;
 						y = -16;
@@ -2898,10 +2854,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 73;
-					parentOffsetY_ = -16;
-					childOffsetX_ = 78;
-					childOffsetY_ = 16;
 					parentOffset = {
 						x = 73;
 						y = -16;
@@ -2962,10 +2914,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 43;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 41;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 43;
 						y = 16;
@@ -3110,16 +3058,12 @@ TriggerChain = {
 				internalColor_ = 0;
 			};
 			outcomingLinks = {
-				27;
+				26;
 				{
 					triggerName = "продавать любое строение";
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 128;
-					childOffsetY_ = -15;
 					parentOffset = {
 						x = -128;
 						y = 16;
@@ -3134,10 +3078,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 128;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -25;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 128;
 						y = 16;
@@ -3152,10 +3092,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -19;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -19;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -19;
 						y = 16;
@@ -3170,10 +3106,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 111;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -98;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 111;
 						y = 16;
@@ -3188,10 +3120,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -30;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -30;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -30;
 						y = 16;
@@ -3206,10 +3134,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -101;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 110;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -101;
 						y = 16;
@@ -3224,10 +3148,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -39;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -42;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -39;
 						y = 16;
@@ -3242,10 +3162,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -88;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 104;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -88;
 						y = 16;
@@ -3260,10 +3176,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -73;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 93;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -73;
 						y = 16;
@@ -3278,10 +3190,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -71;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -73;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -71;
 						y = 16;
@@ -3296,10 +3204,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 66;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -117;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 66;
 						y = 16;
@@ -3314,10 +3218,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 2;
-					childOffsetX_ = 124;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -128;
 						y = 2;
@@ -3332,10 +3232,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 6;
-					childOffsetX_ = 106;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -128;
 						y = 6;
@@ -3350,10 +3246,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 0;
-					childOffsetX_ = 128;
-					childOffsetY_ = 11;
 					parentOffset = {
 						x = -128;
 						y = 0;
@@ -3368,10 +3260,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 11;
-					childOffsetX_ = 114;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -128;
 						y = 11;
@@ -3386,10 +3274,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 4;
-					childOffsetX_ = 124;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -128;
 						y = 4;
@@ -3404,10 +3288,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 118;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -128;
 						y = 16;
@@ -3422,10 +3302,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = -3;
-					childOffsetX_ = 128;
-					childOffsetY_ = -11;
 					parentOffset = {
 						x = -128;
 						y = -3;
@@ -3440,10 +3316,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 6;
-					childOffsetX_ = 118;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -128;
 						y = 6;
@@ -3458,10 +3330,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 2;
-					childOffsetX_ = 128;
-					childOffsetY_ = -12;
 					parentOffset = {
 						x = -128;
 						y = 2;
@@ -3476,10 +3344,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 9;
-					childOffsetX_ = 128;
-					childOffsetY_ = -13;
 					parentOffset = {
 						x = -128;
 						y = 9;
@@ -3494,10 +3358,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 101;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -121;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 101;
 						y = 16;
@@ -3512,10 +3372,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 87;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -117;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 87;
 						y = 16;
@@ -3530,10 +3386,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = 79;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -115;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 79;
 						y = 16;
@@ -3544,56 +3396,30 @@ TriggerChain = {
 					};
 				},
 				{
-					triggerName = "Laser2";
+					triggerName = "soldier Plant0";
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
 					parentOffset = {
-						x = 0;
-						y = 16;
+						x = 128;
+						y = 5;
 					};
 					childOffset = {
-						x = 0;
+						x = -126;
 						y = -16;
 					};
 				},
 				{
-					triggerName = "летная лаборатория";
+					triggerName = "дополнительный завод офицеров0";
 					color = STRATEGY_RED;
 					type = THICK;
 					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
 					parentOffset = {
-						x = 28;
-						y = 16;
+						x = 128;
+						y = 15;
 					};
 					childOffset = {
-						x = -29;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "летная 2";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 20;
-						y = 16;
-					};
-					childOffset = {
-						x = -21;
+						x = -128;
 						y = -16;
 					};
 				}
@@ -3615,7 +3441,7 @@ TriggerChain = {
 		{
 			name = "подземная лаборатория0";
 			condition = "struct ConditionSwitcher" {
-				state_ = false;
+				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -3623,7 +3449,7 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionSwitcher" {
-							state_ = false;
+							state_ = true;
 							internalColor_ = 0;
 							type = OR;
 							conditions = {
@@ -3631,7 +3457,7 @@ TriggerChain = {
 								{
 									type = NORMAL;
 									condition = "struct ConditionObjectExists" {
-										state_ = false;
+										state_ = true;
 										internalColor_ = 0;
 										object = UNIT_ATTRIBUTE_SUBTERRA_STATION1;
 										counter = 1;
@@ -3723,10 +3549,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 126;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -126;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 126;
 						y = 16;
@@ -3798,10 +3620,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 120;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -127;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = 120;
 						y = 16;
@@ -3898,10 +3716,6 @@ TriggerChain = {
 					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -21;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -22;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -21;
 						y = 16;
@@ -3947,10 +3761,6 @@ TriggerChain = {
 					color = STRATEGY_YELLOW;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 37;
-					parentOffsetY_ = -16;
-					childOffsetX_ = 41;
-					childOffsetY_ = 16;
 					parentOffset = {
 						x = 37;
 						y = -16;
@@ -3965,10 +3775,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 128;
-					parentOffsetY_ = -7;
-					childOffsetX_ = -106;
-					childOffsetY_ = 16;
 					parentOffset = {
 						x = 128;
 						y = -7;
@@ -3983,10 +3789,6 @@ TriggerChain = {
 					color = STRATEGY_BLUE;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = 105;
-					parentOffsetY_ = -16;
-					childOffsetX_ = -115;
-					childOffsetY_ = 16;
 					parentOffset = {
 						x = 105;
 						y = -16;
@@ -4055,10 +3857,6 @@ TriggerChain = {
 					color = STRATEGY_GREEN;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -128;
-					parentOffsetY_ = 11;
-					childOffsetX_ = 123;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -128;
 						y = 11;
@@ -4127,10 +3925,6 @@ TriggerChain = {
 					color = STRATEGY_BLUE;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -127;
-					parentOffsetY_ = 16;
-					childOffsetX_ = 105;
-					childOffsetY_ = -16;
 					parentOffset = {
 						x = -127;
 						y = 16;
@@ -4156,1632 +3950,52 @@ TriggerChain = {
 			};
 		},
 		{
-			name = "гироид";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 16629619;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_GYROID;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 12;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 60;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = false;
-				interruptable = true;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = -1;
-			};
-			boundingRect = {
-				left = -1440;
-				top = -64;
-				right = -1184;
-				bottom = -32;
-			};
-		},
-		{
-			name = "С1 базовые";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				soldiers = 0;
-				officers = 140;
-				technics = 60;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 0;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 0;
-				right = -1184;
-				bottom = 32;
-			};
-		},
-		{
-			name = "варгоны";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_2;
-				attackByType = UNIT_ATTRIBUTE_WARGON;
-				unitsToAttack = {
-					5;
-					UNIT_ATTRIBUTE_GUN_SUBCHASER,
-					UNIT_ATTRIBUTE_GUN_HOWITZER,
-					UNIT_ATTRIBUTE_ROCKET_LAUNCHER,
-					UNIT_ATTRIBUTE_LASER_CANNON,
-					UNIT_ATTRIBUTE_CORE
-				};
-				unitClassToAttack = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 10;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 360;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 2;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 128;
-				right = -1184;
-				bottom = 160;
-			};
-		},
-		{
-			name = "С2базовые0";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_2;
-				soldiers = 20;
-				officers = 0;
-				technics = 80;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 1;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 64;
-				right = -1184;
-				bottom = 96;
-			};
-		},
-		{
-			name = "сложный0";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionDifficultyLevel" {
-							state_ = false;
-							internalColor_ = 0;
-							difficulty = DIFFICULTY_HARD;
-						};
-					}
-				};
-			};
-			action = "struct ActionDelay" {
-				internalColor_ = 0;
-				delay = 5;
-				showTimer = false;
-				scaleByDifficulty = false;
-				timer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				7;
-				{
-					triggerName = "С1 базовые";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = 124;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -128;
-					childOffsetY_ = -13;
-					parentOffset = {
-						x = 124;
-						y = 16;
-					};
-					childOffset = {
-						x = -128;
-						y = -13;
-					};
-				},
-				{
-					triggerName = "варгоны";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = 104;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -124;
-					childOffsetY_ = -16;
-					parentOffset = {
-						x = 104;
-						y = 16;
-					};
-					childOffset = {
-						x = -124;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "С2базовые0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = 106;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -118;
-					childOffsetY_ = -16;
-					parentOffset = {
-						x = 106;
-						y = 16;
-					};
-					childOffset = {
-						x = -118;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "С1 базовые";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 72;
-						y = 16;
-					};
-					childOffset = {
-						x = -72;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "варгоны";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 24;
-						y = 16;
-					};
-					childOffset = {
-						x = -24;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "С2базовые0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 36;
-						y = 16;
-					};
-					childOffset = {
-						x = -36;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "гироид";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 128;
-						y = 0;
-					};
-					childOffset = {
-						x = -128;
-						y = 0;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -6;
-				y = -1;
-			};
-			boundingRect = {
-				left = -1728;
-				top = -64;
-				right = -1472;
-				bottom = -32;
-			};
-		},
-		{
-			name = "нормал";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionDifficultyLevel" {
-							state_ = false;
-							internalColor_ = 0;
-							difficulty = DIFFICULTY_NORMAL;
-						};
-					}
-				};
-			};
-			action = "struct ActionDelay" {
-				internalColor_ = 0;
-				delay = 20;
-				showTimer = false;
-				scaleByDifficulty = false;
-				timer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				2;
-				{
-					triggerName = "С1базовые1";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 72;
-						y = 16;
-					};
-					childOffset = {
-						x = -72;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "гироид0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 128;
-						y = 0;
-					};
-					childOffset = {
-						x = -128;
-						y = 0;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -6;
-				y = 3;
-			};
-			boundingRect = {
-				left = -1728;
-				top = 192;
-				right = -1472;
-				bottom = 224;
-			};
-		},
-		{
-			name = "гироид0";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 16629619;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_GYROID;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 8;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 40;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = false;
-				interruptable = true;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 3;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 192;
-				right = -1184;
-				bottom = 224;
-			};
-		},
-		{
-			name = "С1базовые1";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				soldiers = 0;
-				officers = 50;
-				technics = 25;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 4;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 256;
-				right = -1184;
-				bottom = 288;
-			};
-		},
-		{
-			name = "С2базовые";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_2;
-				soldiers = 15;
-				officers = 0;
-				technics = 50;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -4;
-				y = 8;
-			};
-			boundingRect = {
-				left = -1152;
-				top = 512;
-				right = -896;
-				bottom = 544;
-			};
-		},
-		{
-			name = "варгоны0";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_2;
-				attackByType = UNIT_ATTRIBUTE_WARGON;
-				unitsToAttack = {
-					5;
-					UNIT_ATTRIBUTE_GUN_SUBCHASER,
-					UNIT_ATTRIBUTE_GUN_HOWITZER,
-					UNIT_ATTRIBUTE_ROCKET_LAUNCHER,
-					UNIT_ATTRIBUTE_LASER_CANNON,
-					UNIT_ATTRIBUTE_CORE
-				};
-				unitClassToAttack = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 6;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 360;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -4;
-				y = 9;
-			};
-			boundingRect = {
-				left = -1152;
-				top = 576;
-				right = -896;
-				bottom = 608;
-			};
-		},
-		{
-			name = "легкий0";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionDifficultyLevel" {
-							state_ = true;
-							internalColor_ = 0;
-							difficulty = DIFFICULTY_EASY;
-						};
-					}
-				};
-			};
-			action = "struct ActionDelay" {
-				internalColor_ = 0;
-				delay = 60;
-				showTimer = false;
-				scaleByDifficulty = false;
-				timer = {
-					time = 57800;
-				};
-			};
-			outcomingLinks = {
-				4;
-				{
-					triggerName = "С1базовые2";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 72;
-						y = 16;
-					};
-					childOffset = {
-						x = -72;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "С2базовые01";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 36;
-						y = 16;
-					};
-					childOffset = {
-						x = -36;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "варгоны1";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 24;
-						y = 16;
-					};
-					childOffset = {
-						x = -24;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "гироид1";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 128;
-						y = 0;
-					};
-					childOffset = {
-						x = -128;
-						y = 0;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -6;
-				y = 7;
-			};
-			boundingRect = {
-				left = -1728;
-				top = 448;
-				right = -1472;
-				bottom = 480;
-			};
-		},
-		{
-			name = "гироид1";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 16629619;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_GYROID;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 5;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 30;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = false;
-				interruptable = true;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 7;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 448;
-				right = -1184;
-				bottom = 480;
-			};
-		},
-		{
-			name = "С1базовые2";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				soldiers = 0;
-				officers = 30;
-				technics = 15;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 8;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 512;
-				right = -1184;
-				bottom = 544;
-			};
-		},
-		{
-			name = "С2базовые01";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionMutationEnabled" {
-							state_ = true;
-							internalColor_ = 0;
-							unitType = UNIT_ATTRIBUTE_MORTAR;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_2;
-				soldiers = 10;
-				officers = 0;
-				technics = 25;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 9;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 576;
-				right = -1184;
-				bottom = 608;
-			};
-		},
-		{
-			name = "варгоны1";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_2;
-				attackByType = UNIT_ATTRIBUTE_WARGON;
-				unitsToAttack = {
-					4;
-					UNIT_ATTRIBUTE_ROCKET_LAUNCHER,
-					UNIT_ATTRIBUTE_GUN_HOWITZER,
-					UNIT_ATTRIBUTE_LASER_CANNON,
-					UNIT_ATTRIBUTE_CORE
-				};
-				unitClassToAttack = UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 3;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 360;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 137900;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 16711808;
-			cellIndex = {
-				x = -5;
-				y = 10;
-			};
-			boundingRect = {
-				left = -1440;
-				top = 640;
-				right = -1184;
-				bottom = 672;
-			};
-		},
-		{
-			name = "войска";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct Action" {
-				internalColor_ = 0;
-			};
-			outcomingLinks = {
-				3;
-				{
-					triggerName = "сложный1";
-					color = STRATEGY_RED;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "нормал0";
-					color = STRATEGY_RED;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "легкий1";
-					color = STRATEGY_RED;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -3;
-				y = -4;
-			};
-			boundingRect = {
-				left = -864;
-				top = -256;
-				right = -608;
-				bottom = -224;
-			};
-		},
-		{
-			name = "Laser2";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelUpperReserve" {
-							state_ = true;
-							internalColor_ = 0;
-							energyReserve = 3000.;
-						};
-					}
-				};
-			};
-			action = "struct ActionOrderBuilding" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_LASER_STATION2;
-				placementStrategy = PLACEMENT_STRATEGY_STATION;
-				energyReserve = 50.;
-				buildDurationMax = 500;
-				priority = 3;
-			};
-			outcomingLinks = {
-				1;
-				{
-					triggerName = "остановить строительство";
-					color = STRATEGY_GREEN;
-					type = THIN;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 65535;
-			cellIndex = {
-				x = 4;
-				y = 5;
-			};
-			boundingRect = {
-				left = 1152;
-				top = 320;
-				right = 1408;
-				bottom = 352;
-			};
-		},
-		{
-			name = "остановить строительство";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = INVERTED;
-						condition = "struct ConditionOutOfEnergyCapacity" {
-							state_ = true;
-							internalColor_ = 9945343;
-							chargingPercent = 30.;
-						};
-					}
-				};
-			};
-			action = "struct ActionHoldBuilding" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_LASER_STATION2;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 33023;
-			cellIndex = {
-				x = 4;
-				y = 6;
-			};
-			boundingRect = {
-				left = 1152;
-				top = 384;
-				right = 1408;
-				bottom = 416;
-			};
-		},
-		{
-			name = "С1-базовые: героид, цептор, бомбер";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				soldiers = 40;
-				officers = 45;
-				technics = 85;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = -3;
-			};
-			boundingRect = {
-				left = -576;
-				top = -192;
-				right = -320;
-				bottom = -160;
-			};
-		},
-		{
-			name = "героид";
+			name = "soldier Plant0";
 			condition = "struct ConditionSwitcher" {
 				state_ = true;
 				internalColor_ = 0;
 				type = OR;
 				conditions = {
-					6;
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SOLDIER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SNIPER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_ROCKER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_MORTAR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_GYROID;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 10;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 30;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 24100;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = -2;
-			};
-			boundingRect = {
-				left = -576;
-				top = -128;
-				right = -320;
-				bottom = -96;
-			};
-		},
-		{
-			name = "цептор";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = OR;
-				conditions = {
-					6;
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_CEPTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_GYROID;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_WARGON;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_BOMBER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_R_PROJECTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_STRAFER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_CEPTOR;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 10;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 30;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = -1;
-			};
-			boundingRect = {
-				left = -576;
-				top = -64;
-				right = -320;
-				bottom = -32;
-			};
-		},
-		{
-			name = "бомбер0";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					12;
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_CEPTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_GYROID;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_WARGON;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_BOMBER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_R_PROJECTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_STRAFER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_MORTAR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SOLDIER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SNIPER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_ROCKER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_BOMBER;
-				unitsToAttack = {
 					2;
-					UNIT_ATTRIBUTE_GUN_HOWITZER,
-					UNIT_ATTRIBUTE_CORE
-				};
-				unitClassToAttack = UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 7;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 50;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = 0;
-			};
-			boundingRect = {
-				left = -576;
-				top = 0;
-				right = -320;
-				bottom = 32;
-			};
-		},
-		{
-			name = "летная лаборатория";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					5;
 					{
 						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = true;
-							internalColor_ = 13565951;
-							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
+						condition = "struct ConditionSwitcher" {
 							state_ = true;
 							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_LASER_CANNON;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
+							type = AND;
+							conditions = {
+								2;
+								{
+									type = INVERTED;
+									condition = "struct ConditionFrameState" {
+										state_ = false;
+										internalColor_ = 0;
+										state = AI_FRAME_STATE_SPIRAL_CHARGING;
+										playerType = AI_PLAYER_TYPE_ME;
+										spiralChargingPercent = 100;
+									};
+								},
+								{
+									type = NORMAL;
+									condition = "struct ConditionFrameState" {
+										state_ = true;
+										internalColor_ = 0;
+										state = AI_FRAME_STATE_INSTALLED;
+										playerType = AI_PLAYER_TYPE_ME;
+										spiralChargingPercent = 100;
+									};
+								}
+							};
 						};
 					},
 					{
 						type = NORMAL;
-						condition = "struct ConditionEnegyLevelUpperReserve" {
-							state_ = true;
-							internalColor_ = 0;
-							energyReserve = 4000.;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
+						condition = "struct ConditionFrameState" {
 							state_ = false;
 							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_COMMANDER;
-							counter = 1;
+							state = AI_FRAME_STATE_SPIRAL_CHARGING;
 							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_FLY_STATION1;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
+							spiralChargingPercent = 100;
 						};
 					}
 				};
@@ -5789,29 +4003,25 @@ TriggerChain = {
 			action = "struct ActionOrderBuilding" {
 				internalColor_ = 12189692;
 				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_FLY_STATION1;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
 				placementStrategy = PLACEMENT_STRATEGY_STATION;
 				energyReserve = 50.;
-				buildDurationMax = 500;
-				priority = 3;
+				buildDurationMax = 300;
+				priority = 2;
 			};
 			outcomingLinks = {
 				1;
 				{
-					triggerName = "остановить стр. летной 1";
-					color = STRATEGY_GREEN;
+					triggerName = "остановить стр. завода офице0";
+					color = STRATEGY_RED;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
 					parentOffset = {
 						x = 0;
 						y = 16;
 					};
 					childOffset = {
-						x = 0;
+						x = 2;
 						y = -16;
 					};
 				}
@@ -5821,19 +4031,19 @@ TriggerChain = {
 			internalColor_ = 65535;
 			cellIndex = {
 				x = 6;
-				y = 2;
+				y = 0;
 			};
 			boundingRect = {
 				left = 1728;
-				top = 128;
+				top = 0;
 				right = 1984;
-				bottom = 160;
+				bottom = 32;
 			};
 		},
 		{
-			name = "остановить стр. летной 1";
+			name = "остановить стр. завода офице0";
 			condition = "struct ConditionSwitcher" {
-				state_ = true;
+				state_ = false;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
@@ -5841,9 +4051,9 @@ TriggerChain = {
 					{
 						type = NORMAL;
 						condition = "struct ConditionEnegyLevelLowerReserve" {
-							state_ = true;
+							state_ = false;
 							internalColor_ = 0;
-							energyReserve = 1000.;
+							energyReserve = 500.;
 						};
 					}
 				};
@@ -5851,7 +4061,7 @@ TriggerChain = {
 			action = "struct ActionHoldBuilding" {
 				internalColor_ = 0;
 				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_FLY_STATION1;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
 			};
 			outcomingLinks = {
 				0;
@@ -5861,28 +4071,28 @@ TriggerChain = {
 			internalColor_ = 33023;
 			cellIndex = {
 				x = 6;
-				y = 3;
+				y = 1;
 			};
 			boundingRect = {
 				left = 1728;
-				top = 192;
+				top = 64;
 				right = 1984;
-				bottom = 224;
+				bottom = 96;
 			};
 		},
 		{
-			name = "летная 2";
+			name = "дополнительный завод офицеров0";
 			condition = "struct ConditionSwitcher" {
 				state_ = true;
 				internalColor_ = 0;
 				type = AND;
 				conditions = {
-					5;
+					3;
 					{
 						type = NORMAL;
 						condition = "struct ConditionObjectExists" {
 							state_ = true;
-							internalColor_ = 13565951;
+							internalColor_ = 0;
 							object = UNIT_ATTRIBUTE_SOLDIER_PLANT;
 							counter = 1;
 							playerType = AI_PLAYER_TYPE_ME;
@@ -5891,24 +4101,10 @@ TriggerChain = {
 					},
 					{
 						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = true;
-							internalColor_ = 13565951;
-							object = UNIT_ATTRIBUTE_OFFICER_PLANT;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = false;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
+						condition = "struct ConditionEnegyLevelUpperReserve" {
 							state_ = true;
 							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC_PLANT;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ME;
-							constructedAndConstructing = true;
+							energyReserve = 3000.;
 						};
 					},
 					{
@@ -5918,1516 +4114,118 @@ TriggerChain = {
 							internalColor_ = 0;
 							type = OR;
 							conditions = {
-								7;
+								2;
 								{
 									type = NORMAL;
-									condition = "struct ConditionObjectExists" {
+									condition = "struct ConditionSwitcher" {
 										state_ = true;
 										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_BOMB_STATION2;
-										counter = 1;
-										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
+										type = AND;
+										conditions = {
+											2;
+											{
+												type = INVERTED;
+												condition = "struct ConditionFrameState" {
+													state_ = false;
+													internalColor_ = 0;
+													state = AI_FRAME_STATE_SPIRAL_CHARGING;
+													playerType = AI_PLAYER_TYPE_ME;
+													spiralChargingPercent = 100;
+												};
+											},
+											{
+												type = NORMAL;
+												condition = "struct ConditionFrameState" {
+													state_ = true;
+													internalColor_ = 0;
+													state = AI_FRAME_STATE_INSTALLED;
+													playerType = AI_PLAYER_TYPE_ME;
+													spiralChargingPercent = 100;
+												};
+											}
+										};
 									};
 								},
 								{
 									type = NORMAL;
-									condition = "struct ConditionObjectExists" {
+									condition = "struct ConditionFrameState" {
 										state_ = false;
 										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_BOMB_STATION3;
-										counter = 1;
+										state = AI_FRAME_STATE_SPIRAL_CHARGING;
 										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
-									};
-								},
-								{
-									type = NORMAL;
-									condition = "struct ConditionObjectExists" {
-										state_ = false;
-										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_EMPIRE_STATION3;
-										counter = 1;
-										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
-									};
-								},
-								{
-									type = NORMAL;
-									condition = "struct ConditionObjectExists" {
-										state_ = false;
-										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_EXODUS_STATION3;
-										counter = 1;
-										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
-									};
-								},
-								{
-									type = NORMAL;
-									condition = "struct ConditionObjectExists" {
-										state_ = false;
-										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_HARKBACK_STATION3;
-										counter = 1;
-										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
-									};
-								},
-								{
-									type = NORMAL;
-									condition = "struct ConditionObjectExists" {
-										state_ = false;
-										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_EXODUS_STATION2;
-										counter = 1;
-										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
-									};
-								},
-								{
-									type = NORMAL;
-									condition = "struct ConditionObjectExists" {
-										state_ = false;
-										internalColor_ = 0;
-										object = UNIT_ATTRIBUTE_HARKBACK_STATION2;
-										counter = 1;
-										playerType = AI_PLAYER_TYPE_ME;
-										constructedAndConstructing = true;
+										spiralChargingPercent = 100;
 									};
 								}
 							};
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelUpperReserve" {
-							state_ = true;
-							internalColor_ = 0;
-							energyReserve = 5000.;
 						};
 					}
 				};
 			};
 			action = "struct ActionOrderBuilding" {
-				internalColor_ = 12189692;
+				internalColor_ = 0;
 				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_FLY_STATION2;
-				placementStrategy = PLACEMENT_STRATEGY_STATION;
+				building = UNIT_ATTRIBUTE_SOLDIER_PLANT;
+				placementStrategy = PLACEMENT_STRATEGY_PLANT;
 				energyReserve = 50.;
-				buildDurationMax = 500;
-				priority = 1;
+				buildDurationMax = 300;
+				priority = 2;
 			};
 			outcomingLinks = {
-				1;
+				2;
 				{
-					triggerName = "остановить стр. летной 2";
-					color = STRATEGY_RED;
+					triggerName = "остановить стр. завода офице0";
+					color = STRATEGY_BLUE;
 					type = THIN;
 					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
 					parentOffset = {
-						x = 0;
-						y = 16;
+						x = 12;
+						y = -16;
 					};
 					childOffset = {
-						x = 0;
+						x = 10;
+						y = 16;
+					};
+				},
+				{
+					triggerName = "остановить стр. завода офице0";
+					color = STRATEGY_BLUE;
+					type = THIN;
+					active_ = false;
+					parentOffset = {
+						x = 12;
 						y = -16;
+					};
+					childOffset = {
+						x = 10;
+						y = 16;
 					};
 				}
 			};
 			state_ = SLEEPING;
 			executionCounter_ = 0;
-			internalColor_ = 65535;
+			internalColor_ = 47541;
 			cellIndex = {
 				x = 6;
-				y = 4;
+				y = 2;
 			};
 			boundingRect = {
 				left = 1728;
-				top = 256;
+				top = 128;
 				right = 1984;
-				bottom = 288;
-			};
-		},
-		{
-			name = "остановить стр. летной 2";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionEnegyLevelLowerReserve" {
-							state_ = false;
-							internalColor_ = 0;
-							energyReserve = 1000.;
-						};
-					}
-				};
-			};
-			action = "struct ActionHoldBuilding" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				building = UNIT_ATTRIBUTE_FLY_STATION2;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 33023;
-			cellIndex = {
-				x = 6;
-				y = 5;
-			};
-			boundingRect = {
-				left = 1728;
-				top = 320;
-				right = 1984;
-				bottom = 352;
-			};
-		},
-		{
-			name = "сложный1";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionDifficultyLevel" {
-							state_ = false;
-							internalColor_ = 0;
-							difficulty = DIFFICULTY_HARD;
-						};
-					}
-				};
-			};
-			action = "struct ActionDelay" {
-				internalColor_ = 0;
-				delay = 60;
-				showTimer = false;
-				scaleByDifficulty = false;
-				timer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				7;
-				{
-					triggerName = "героид";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = 128;
-					parentOffsetY_ = 5;
-					childOffsetX_ = -128;
-					childOffsetY_ = 5;
-					parentOffset = {
-						x = 128;
-						y = 5;
-					};
-					childOffset = {
-						x = -128;
-						y = 5;
-					};
-				},
-				{
-					triggerName = "цептор";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = 123;
-					parentOffsetY_ = 16;
-					childOffsetX_ = -128;
-					childOffsetY_ = -9;
-					parentOffset = {
-						x = 123;
-						y = 16;
-					};
-					childOffset = {
-						x = -128;
-						y = -9;
-					};
-				},
-				{
-					triggerName = "С1-базовые: героид, цептор, бомбер";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = 128;
-					parentOffsetY_ = -8;
-					childOffsetX_ = -120;
-					childOffsetY_ = 16;
-					parentOffset = {
-						x = 128;
-						y = -8;
-					};
-					childOffset = {
-						x = -120;
-						y = 16;
-					};
-				},
-				{
-					triggerName = "героид";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 128;
-						y = 0;
-					};
-					childOffset = {
-						x = -128;
-						y = 0;
-					};
-				},
-				{
-					triggerName = "цептор";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 72;
-						y = 16;
-					};
-					childOffset = {
-						x = -72;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "С1-базовые: героид, цептор, бомбер";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 72;
-						y = -16;
-					};
-					childOffset = {
-						x = -72;
-						y = 16;
-					};
-				},
-				{
-					triggerName = "бомбер0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 36;
-						y = 16;
-					};
-					childOffset = {
-						x = -36;
-						y = -16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -3;
-				y = -2;
-			};
-			boundingRect = {
-				left = -864;
-				top = -128;
-				right = -608;
-				bottom = -96;
-			};
-		},
-		{
-			name = "нормал0";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionDifficultyLevel" {
-							state_ = false;
-							internalColor_ = 0;
-							difficulty = DIFFICULTY_NORMAL;
-						};
-					}
-				};
-			};
-			action = "struct ActionDelay" {
-				internalColor_ = 0;
-				delay = 120;
-				showTimer = false;
-				scaleByDifficulty = false;
-				timer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				4;
-				{
-					triggerName = "героид0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 128;
-						y = 0;
-					};
-					childOffset = {
-						x = -128;
-						y = 0;
-					};
-				},
-				{
-					triggerName = "цептор0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 72;
-						y = 16;
-					};
-					childOffset = {
-						x = -72;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "С1-базовые: героид, цептор, бомбер0";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "бомбер00";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 36;
-						y = 16;
-					};
-					childOffset = {
-						x = -36;
-						y = -16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -3;
-				y = 3;
-			};
-			boundingRect = {
-				left = -864;
-				top = 192;
-				right = -608;
-				bottom = 224;
-			};
-		},
-		{
-			name = "легкий1";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					1;
-					{
-						type = NORMAL;
-						condition = "struct ConditionDifficultyLevel" {
-							state_ = true;
-							internalColor_ = 0;
-							difficulty = DIFFICULTY_EASY;
-						};
-					}
-				};
-			};
-			action = "struct ActionDelay" {
-				internalColor_ = 0;
-				delay = 60;
-				showTimer = false;
-				scaleByDifficulty = false;
-				timer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				4;
-				{
-					triggerName = "героид1";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 72;
-						y = 16;
-					};
-					childOffset = {
-						x = -72;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "цептор1";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 36;
-						y = 16;
-					};
-					childOffset = {
-						x = -36;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "С1-базовые: героид, цептор, бомбер1";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 0;
-						y = 16;
-					};
-					childOffset = {
-						x = 0;
-						y = -16;
-					};
-				},
-				{
-					triggerName = "бомбер01";
-					color = STRATEGY_RED;
-					type = THICK;
-					active_ = false;
-					parentOffsetX_ = -2147483648;
-					parentOffsetY_ = -2147483648;
-					childOffsetX_ = -2147483648;
-					childOffsetY_ = -2147483648;
-					parentOffset = {
-						x = 24;
-						y = 16;
-					};
-					childOffset = {
-						x = -24;
-						y = -16;
-					};
-				}
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -3;
-				y = 7;
-			};
-			boundingRect = {
-				left = -864;
-				top = 448;
-				right = -608;
-				bottom = 480;
-			};
-		},
-		{
-			name = "героид0";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = OR;
-				conditions = {
-					6;
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SOLDIER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SNIPER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_ROCKER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_MORTAR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_GYROID;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 6;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 30;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = 3;
-			};
-			boundingRect = {
-				left = -576;
-				top = 192;
-				right = -320;
-				bottom = 224;
-			};
-		},
-		{
-			name = "цептор0";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = OR;
-				conditions = {
-					6;
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_CEPTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_GYROID;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_WARGON;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_BOMBER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_R_PROJECTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_STRAFER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_CEPTOR;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 6;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 30;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = 4;
-			};
-			boundingRect = {
-				left = -576;
-				top = 256;
-				right = -320;
-				bottom = 288;
-			};
-		},
-		{
-			name = "бомбер00";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					12;
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_CEPTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_GYROID;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_WARGON;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_BOMBER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_R_PROJECTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_STRAFER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_MORTAR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SOLDIER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SNIPER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_ROCKER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_BOMBER;
-				unitsToAttack = {
-					2;
-					UNIT_ATTRIBUTE_GUN_HOWITZER,
-					UNIT_ATTRIBUTE_CORE
-				};
-				unitClassToAttack = UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 4;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 50;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = 5;
-			};
-			boundingRect = {
-				left = -576;
-				top = 320;
-				right = -320;
-				bottom = 352;
-			};
-		},
-		{
-			name = "героид1";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = OR;
-				conditions = {
-					6;
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SOLDIER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SNIPER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_ROCKER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_MORTAR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_GYROID;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_BASE | UNIT_CLASS_LIGHT | UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_BUILDER | UNIT_CLASS_BLOCK | UNIT_CLASS_AIR_FILTH | UNIT_CLASS_GROUND_FILTH | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 3;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 30;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 11300;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = 8;
-			};
-			boundingRect = {
-				left = -576;
-				top = 512;
-				right = -320;
-				bottom = 544;
-			};
-		},
-		{
-			name = "цептор1";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = OR;
-				conditions = {
-					6;
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_CEPTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_GYROID;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_WARGON;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_BOMBER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_R_PROJECTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = NORMAL;
-						condition = "struct ConditionObjectExists" {
-							state_ = true;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_STRAFER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_CEPTOR;
-				unitsToAttack = {
-					0;
-				};
-				unitClassToAttack = UNIT_CLASS_MEDIUM | UNIT_CLASS_HEAVY | UNIT_CLASS_AIR | UNIT_CLASS_AIR_HEAVY | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 3;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 30;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = 9;
-			};
-			boundingRect = {
-				left = -576;
-				top = 576;
-				right = -320;
-				bottom = 608;
-			};
-		},
-		{
-			name = "бомбер01";
-			condition = "struct ConditionSwitcher" {
-				state_ = false;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					12;
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_CEPTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_GYROID;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_WARGON;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_BOMBER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_R_PROJECTOR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = true;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_STRAFER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_MORTAR;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = true;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SOLDIER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = true;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_OFFICER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_TECHNIC;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_SNIPER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					},
-					{
-						type = INVERTED;
-						condition = "struct ConditionObjectExists" {
-							state_ = false;
-							internalColor_ = 0;
-							object = UNIT_ATTRIBUTE_ROCKER;
-							counter = 1;
-							playerType = AI_PLAYER_TYPE_ENEMY;
-							constructedAndConstructing = true;
-						};
-					}
-				};
-			};
-			action = "struct ActionSquadAttack" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				attackByType = UNIT_ATTRIBUTE_BOMBER;
-				unitsToAttack = {
-					2;
-					UNIT_ATTRIBUTE_GUN_HOWITZER,
-					UNIT_ATTRIBUTE_CORE
-				};
-				unitClassToAttack = UNIT_CLASS_STRUCTURE_GUN | UNIT_CLASS_FRAME | UNIT_CLASS_IGNORE;
-				offensive = true;
-				unitsNumber = 2;
-				soldiers = 0;
-				officers = 0;
-				technics = 0;
-				attackTime = 50;
-				remutateCounter = 1;
-				holdProduction = true;
-				squadFollowDistance = 0.;
-				squadToFollowBy = CHOOSE_SQUAD_2;
-				ignoreLastTarget = false;
-				returnToBase = true;
-				interruptable = false;
-				attackTimer = {
-					time = 0;
-				};
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -2;
-				y = 10;
-			};
-			boundingRect = {
-				left = -576;
-				top = 640;
-				right = -320;
-				bottom = 672;
-			};
-		},
-		{
-			name = "С1-базовые: героид, цептор, бомбер0";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				soldiers = 25;
-				officers = 25;
-				technics = 50;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -3;
-				y = 4;
-			};
-			boundingRect = {
-				left = -864;
-				top = 256;
-				right = -608;
-				bottom = 288;
-			};
-		},
-		{
-			name = "С1-базовые: героид, цептор, бомбер1";
-			condition = "struct ConditionSwitcher" {
-				state_ = true;
-				internalColor_ = 0;
-				type = AND;
-				conditions = {
-					0;
-				};
-			};
-			action = "struct ActionSquadOrderUnits" {
-				internalColor_ = 0;
-				onlyIfAi = true;
-				chooseSquadID = CHOOSE_SQUAD_1;
-				soldiers = 15;
-				officers = 15;
-				technics = 25;
-				energyReserve = 100.;
-			};
-			outcomingLinks = {
-				0;
-			};
-			state_ = SLEEPING;
-			executionCounter_ = 0;
-			internalColor_ = 0;
-			cellIndex = {
-				x = -3;
-				y = 8;
-			};
-			boundingRect = {
-				left = -864;
-				top = 512;
-				right = -608;
-				bottom = 544;
+				bottom = 160;
 			};
 		}
 	};
 	boundingRect = {
-		left = -1728;
+		left = 0;
 		top = -320;
 		right = 1984;
 		bottom = 736;
 	};
 	viewRect = {
-		left = -846;
-		top = -375;
-		right = 337;
-		bottom = 648;
+		left = 1301;
+		top = -232;
+		right = 2165;
+		bottom = 547;
 	};
 };

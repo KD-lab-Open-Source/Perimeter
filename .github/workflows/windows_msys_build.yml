@@ -1,0 +1,102 @@
+name: Windows MSYS Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        env: [
+          {bits: 64, arch: x86_64, arch_zip: x64},
+          {bits: 32, arch: i686, arch_zip: x86}
+        ]
+    name: ${{matrix.build_type}} ${{matrix.env.bits}} bits
+    defaults:
+      run:
+        shell: msys2 {0}
+    runs-on: windows-latest
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW${{matrix.env.bits}}
+          install:
+            mingw-w64-${{matrix.env.arch}}-ninja
+            mingw-w64-${{matrix.env.arch}}-gcc
+            mingw-w64-${{matrix.env.arch}}-cmake
+            mingw-w64-${{matrix.env.arch}}-make
+            mingw-w64-${{matrix.env.arch}}-SDL2
+            mingw-w64-${{matrix.env.arch}}-SDL2_image
+            mingw-w64-${{matrix.env.arch}}-boost
+            mingw-w64-${{matrix.env.arch}}-libvorbis
+            mingw-w64-${{matrix.env.arch}}-lld
+            mingw-w64-${{matrix.env.arch}}-libbacktrace
+            mingw-w64-${{matrix.env.arch}}-nasm
+            mingw-w64-${{matrix.env.arch}}-yasm
+            wget
+            unzip
+            git
+            bash
+      - name: SDL2 extras -- download
+        run: |
+          wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.5-win32-${{matrix.env.arch_zip}}.zip -O SDL2_image.zip
+          unzip SDL2_image.zip -d /SDL2_image
+      - name: ffmpeg -- download
+        run: git clone --depth 1 --branch n4.2.2 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+      - name: ffmpeg -- configure
+        run: |
+          ./configure --enable-shared --prefix=/mingw${{matrix.env.bits}} \
+          --disable-everything \
+          --enable-swscale \
+          --enable-zlib \
+          --enable-demuxer=avi,rawvideo \
+          --enable-decoder=png,bink,rawvideo \
+          --enable-parser=png \
+          --enable-protocol=file \
+          --disable-d3d11va \
+          --disable-dxva2 \
+          --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg \
+          --disable-static --disable-bzlib --disable-libopenjpeg --disable-iconv
+        working-directory: ffmpeg
+      - name: ffmpeg -- build and install
+        run: |
+          mingw32-make -j4
+          mingw32-make install
+        working-directory: ffmpeg
+      - uses: actions/checkout@v2
+      - name: perimeter -- create build dir
+        run: mkdir build
+      - name: perimeter -- configure build
+        run: cmake -G Ninja .. -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+        working-directory: build
+      - name: perimeter -- make
+        run: ninja
+        working-directory: build
+      - name: perimeter -- prepare artifact folder
+        run: |
+          mkdir -p perimeter/bin
+          cp /mingw${{matrix.env.bits}}/bin/SDL2.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/libgcc_*.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/libstdc++-6.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/libwinpthread-1.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/libogg-0.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/libvorbis-0.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/libvorbisfile-3.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/libbacktrace-0.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/avcodec-58.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/avformat-58.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/avutil-56.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/zlib1.dll perimeter/bin/
+          cp /SDL2_image/SDL2_image.dll perimeter/bin/
+          cp /SDL2_image/libjpeg-9.dll perimeter/bin/
+          cp /SDL2_image/libpng16-16.dll perimeter/bin/
+          cp build/Source/perimeter.exe perimeter/bin/
+      - name: perimeter -- strip binary
+        run: strip perimeter/bin/perimeter.exe
+        if: matrix.build_type == 'Release'
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Perimeter MSYS ${{matrix.build_type}} ${{matrix.env.bits}} bits
+          path: perimeter

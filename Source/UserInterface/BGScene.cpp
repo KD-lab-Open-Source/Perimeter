@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "BGScene.h"
 #include "GameShellSq.h"
+#include "SourceUIResolution.h"
 
 BGScene::BGScene() {
 	scene = 0;
@@ -26,16 +27,7 @@ void BGScene::init(cVisGeneric* visGeneric) {
 	camera->SetAttr(ATTRCAMERA_PERSPECTIVE);
 	camera->SetAttr(ATTRCAMERA_CLEARZBUFFER);
 
-    Vect2f center(0.5f,0.5f);
-    sRectangle4f clip(-0.5f,-0.5f,0.5f,0.5f);
-    Vect2f focus(1.0f, 1.0f);
-    Vect2f zplane(10.0f, 10000.0f);
-    camera->SetFrustum(
-            &center,								// центр камеры
-            &clip,									// видимая область камеры
-            &focus,									// фокус камеры
-            &zplane									// ближайший и дальний z-плоскости отсечения
-    );
+    onResolutionChanged();
 
 	Vect3f pos;
 	pos.setSpherical(bgCameraPsi, bgCameraTheta, bgCameraDist);
@@ -68,7 +60,20 @@ void BGScene::init(cVisGeneric* visGeneric) {
 
 void BGScene::onResolutionChanged() {
 	if (camera) {
-		camera->Update();
+        Vect2f center(0.5f,0.5f);
+        float x = 0.5f;
+        //x *= (1.0f / static_cast<float>(source_ui_factor.x));
+        sRectangle4f clip(-x,-0.5f,x,0.5f);
+        //This keeps aspect ratio fixed on Y axis
+        float f = MAIN_MENU_RATIO / getRenderRatio();
+        Vect2f focus(f, f);
+        Vect2f zplane(10.0f, 10000.0f);
+        camera->SetFrustum(
+                &center,								// центр камеры
+                &clip,									// видимая область камеры
+                &focus,									// фокус камеры
+                &zplane									// ближайший и дальний z-плоскости отсечения
+        );
 	}
 }
 

@@ -1344,8 +1344,8 @@ InterfaceAttributes = {
 		{
 			image = {
 				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 470.;
-				_iy = 822.;
+				_ix = 135.;
+				_iy = 796.;
 				ix = 66.;
 				iy = 25.;
 				dx = 0.;
@@ -1357,8 +1357,8 @@ InterfaceAttributes = {
 			};
 			image_h = {
 				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 470.;
-				_iy = 900.;
+				_ix = 135.;
+				_iy = 874.;
 				ix = 66.;
 				iy = 25.;
 				dx = 0.;
@@ -1370,8 +1370,8 @@ InterfaceAttributes = {
 			};
 			image_check = {
 				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 470.;
-				_iy = 978.;
+				_ix = 135.;
+				_iy = 952.;
 				ix = 66.;
 				iy = 25.;
 				dx = 0.;
@@ -1412,7 +1412,7 @@ InterfaceAttributes = {
 			image = {
 				texture = "resource\\icons\\intf\\intf.tga";
 				_ix = 537.;
-				_iy = 822.;
+				_iy = 796.;
 				ix = 66.;
 				iy = 25.;
 				dx = 0.;
@@ -1425,7 +1425,7 @@ InterfaceAttributes = {
 			image_h = {
 				texture = "resource\\icons\\intf\\intf.tga";
 				_ix = 537.;
-				_iy = 900.;
+				_iy = 874.;
 				ix = 66.;
 				iy = 25.;
 				dx = 0.;
@@ -1438,7 +1438,7 @@ InterfaceAttributes = {
 			image_check = {
 				texture = "resource\\icons\\intf\\intf.tga";
 				_ix = 537.;
-				_iy = 978.;
+				_iy = 952.;
 				ix = 66.;
 				iy = 25.;
 				dx = 0.;
@@ -1478,7 +1478,7 @@ InterfaceAttributes = {
 		{
 			image = {
 				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 403.;
+				_ix = 202.;
 				_iy = 822.;
 				ix = 66.;
 				iy = 25.;
@@ -1491,7 +1491,7 @@ InterfaceAttributes = {
 			};
 			image_h = {
 				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 403.;
+				_ix = 202.;
 				_iy = 900.;
 				ix = 66.;
 				iy = 25.;
@@ -1504,7 +1504,7 @@ InterfaceAttributes = {
 			};
 			image_check = {
 				texture = "resource\\icons\\intf\\intf.tga";
-				_ix = 403.;
+				_ix = 202.;
 				_iy = 978.;
 				ix = 66.;
 				iy = 25.;
@@ -2699,7 +2699,7 @@ InterfaceAttributes = {
 						hasBelligerentVersion = 1;
 					};
 					ctrls = {
-						16;
+						15;
 						13,
 						14,
 						15,
@@ -2712,7 +2712,6 @@ InterfaceAttributes = {
 						22,
 						23,
 						24,
-						25,
 						26,
 						27,
 						28
@@ -2808,9 +2807,8 @@ InterfaceAttributes = {
 						hasBelligerentVersion = 1;
 					};
 					ctrls = {
-						11;
+						10;
 						32,
-						33,
 						34,
 						35,
 						37,
@@ -2881,7 +2879,7 @@ InterfaceAttributes = {
 				hasBelligerentVersion = 0;
 			};
 			controls = {
-				131;
+				127;
 				{
 					type = SQSH_BACKGROUND_TYPE;
 					id = SQSH_BACKGRND_ID;
@@ -5919,328 +5917,6 @@ InterfaceAttributes = {
 						1;
 						{
 							name = "tvUpgradeLaser2";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "<hotkey_general>";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_DEFAULT;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
-					id = SQSH_SELPANEL_UPGRADE_ELECTRO1_ID;
-					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.359375;
-					y = 0.822917;
-					sx = 3.71094e-002;
-					sy = 3.51563e-002;
-					xstart = 0.;
-					ystart = 0.;
-					image = {
-						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 249.;
-						_iy = 646.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 492.;
-						_iy = 678.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 492.;
-						_iy = 678.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "<upgrade_electro1_btn>";
-					popupChecked = "";
-					target = -1;
-					parent_id = 2;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						1;
-						{
-							name = "tvUpgradeElectro1";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "<hotkey_general>";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_DEFAULT;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_COMPLEX_PUSH_BUTTON_TYPE;
-					id = SQSH_SELPANEL_UPGRADE_ELECTRO2_ID;
-					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.359375;
-					y = 0.822917;
-					sx = 3.71094e-002;
-					sy = 3.51563e-002;
-					xstart = 0.;
-					ystart = 0.;
-					image = {
-						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 249.;
-						_iy = 674.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 492.;
-						_iy = 706.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 492.;
-						_iy = 706.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "<upgrade_electro2_btn>";
-					popupChecked = "";
-					target = -1;
-					parent_id = 2;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						1;
-						{
-							name = "tvUpgradeElectro2";
 							code = EVENT_PRESSED;
 							param = 0;
 							hotKeyPopup = "<hotkey_general>";
@@ -15018,7 +14694,7 @@ InterfaceAttributes = {
 					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_STATION_EMPIRE_LAB_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.270508;
+					x = 0.231445;
 					y = 0.928385;
 					sx = 3.61328e-002;
 					sy = 4.42708e-002;
@@ -15179,7 +14855,7 @@ InterfaceAttributes = {
 					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_STATION_EXODUS_LAB_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.30957;
+					x = 0.270508;
 					y = 0.928385;
 					sx = 3.61328e-002;
 					sy = 4.42708e-002;
@@ -15340,7 +15016,7 @@ InterfaceAttributes = {
 					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_STATION_HARKBACK_LAB_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.348633;
+					x = 0.30957;
 					y = 0.928385;
 					sx = 3.61328e-002;
 					sy = 4.42708e-002;
@@ -16145,8 +15821,8 @@ InterfaceAttributes = {
 					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_GUN_SUBCHASER_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.149414;
-					y = 0.877604;
+					x = 0.301758;
+					y = 0.822917;
 					sx = 4.6875e-002;
 					sy = 5.07813e-002;
 					xstart = 0.;
@@ -16306,7 +15982,7 @@ InterfaceAttributes = {
 					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_GUN_BALLISTIC_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.200195;
+					x = 0.149414;
 					y = 0.877604;
 					sx = 4.6875e-002;
 					sy = 5.07813e-002;
@@ -16467,7 +16143,7 @@ InterfaceAttributes = {
 					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_GUN_GIMLET_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.250977;
+					x = 0.200195;
 					y = 0.877604;
 					sx = 4.6875e-002;
 					sy = 5.07813e-002;
@@ -16628,7 +16304,7 @@ InterfaceAttributes = {
 					type = SQSH_ATOM_BUTTON_TYPE;
 					id = SQSH_GUN_FILTH_ID;
 					state = SQSH_ENABLED | SQSH_NOEFFECT;
-					x = 0.301758;
+					x = 0.250977;
 					y = 0.877604;
 					sx = 4.6875e-002;
 					sy = 5.07813e-002;
@@ -18680,7 +18356,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT5;
 					state = SQSH_VISIBLE | SQSH_SWITCH;
-					x = 0.900391;
+					x = 0.854492;
 					y = 0.820313;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -18871,7 +18547,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT9;
 					state = SQSH_VISIBLE | SQSH_SWITCH;
-					x = 0.946289;
+					x = 0.900391;
 					y = 0.820313;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -19062,7 +18738,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT20;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.854492;
+					x = 0.946289;
 					y = 0.820313;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -20017,7 +19693,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT15;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.900391;
+					x = 0.854492;
 					y = 0.861979;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -20208,7 +19884,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT24;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.946289;
+					x = 0.900391;
 					y = 0.861979;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -20399,7 +20075,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT21;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.854492;
+					x = 0.946289;
 					y = 0.861979;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -20408,7 +20084,7 @@ InterfaceAttributes = {
 					image = {
 						texture = "resource\\icons\\intf\\intf.tga";
 						_ix = 975.;
-						_iy = 694.;
+						_iy = 433.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -20421,7 +20097,7 @@ InterfaceAttributes = {
 					image_h = {
 						texture = "resource\\icons\\intf\\intf.tga";
 						_ix = 975.;
-						_iy = 725.;
+						_iy = 561.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -20433,8 +20109,8 @@ InterfaceAttributes = {
 					};
 					image_check = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 929.;
-						_iy = 726.;
+						_ix = 586.;
+						_iy = 323.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -20447,7 +20123,7 @@ InterfaceAttributes = {
 					image_disabled = {
 						texture = "resource\\icons\\intf\\intf.tga";
 						_ix = 975.;
-						_iy = 662.;
+						_iy = 304.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -21354,7 +21030,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT18;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.900391;
+					x = 0.854492;
 					y = 0.903646;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -21545,7 +21221,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT25;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.946289;
+					x = 0.900391;
 					y = 0.903646;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -21736,7 +21412,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT22;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.854492;
+					x = 0.946289;
 					y = 0.903646;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -21744,8 +21420,8 @@ InterfaceAttributes = {
 					ystart = 0.;
 					image = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 740.;
-						_iy = 497.;
+						_ix = 975.;
+						_iy = 465.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -21757,8 +21433,8 @@ InterfaceAttributes = {
 					};
 					image_h = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 740.;
-						_iy = 625.;
+						_ix = 975.;
+						_iy = 593.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -21770,8 +21446,8 @@ InterfaceAttributes = {
 					};
 					image_check = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 351.;
-						_iy = 387.;
+						_ix = 586.;
+						_iy = 355.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -21783,8 +21459,8 @@ InterfaceAttributes = {
 					};
 					image_disabled = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 740.;
-						_iy = 368.;
+						_ix = 975.;
+						_iy = 336.;
 						ix = 1024.;
 						iy = 1024.;
 						dx = 0.;
@@ -22309,7 +21985,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT10;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.900391;
+					x = 0.854492;
 					y = 0.945313;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -22500,7 +22176,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT19;
 					state = SQSH_VISIBLE | SQSH_SWITCH;
-					x = 0.946289;
+					x = 0.900391;
 					y = 0.945313;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -22691,7 +22367,7 @@ InterfaceAttributes = {
 					type = SQSH_LEGION_BUTTON_TYPE;
 					id = SQSH_SQUAD_UNIT23;
 					state = SQSH_VISIBLE | SQSH_ENABLED | SQSH_SWITCH;
-					x = 0.854492;
+					x = 0.946289;
 					y = 0.945313;
 					sx = 4.00391e-002;
 					sy = 3.64583e-002;
@@ -22699,7 +22375,7 @@ InterfaceAttributes = {
 					ystart = 0.;
 					image = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 693.;
+						_ix = 975.;
 						_iy = 497.;
 						ix = 1024.;
 						iy = 1024.;
@@ -22712,7 +22388,7 @@ InterfaceAttributes = {
 					};
 					image_h = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 693.;
+						_ix = 975.;
 						_iy = 625.;
 						ix = 1024.;
 						iy = 1024.;
@@ -22725,7 +22401,7 @@ InterfaceAttributes = {
 					};
 					image_check = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 304.;
+						_ix = 586.;
 						_iy = 387.;
 						ix = 1024.;
 						iy = 1024.;
@@ -22738,7 +22414,7 @@ InterfaceAttributes = {
 					};
 					image_disabled = {
 						texture = "resource\\icons\\intf\\intf.tga";
-						_ix = 693.;
+						_ix = 975.;
 						_iy = 368.;
 						ix = 1024.;
 						iy = 1024.;
@@ -50669,7 +50345,7 @@ InterfaceAttributes = {
 					state = SQSH_ENABLED;
 					x = 0.181641;
 					y = 0.122396;
-					sx = 0.371094;
+					sx = 0.292969;
 					sy = 0.670573;
 					xstart = 0.;
 					ystart = 0.670573;
@@ -50858,7 +50534,7 @@ InterfaceAttributes = {
 					type = SQSH_SCALE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
-					x = 0.522461;
+					x = 0.444336;
 					y = 0.136719;
 					sx = 2.34375e-002;
 					sy = 0.596354;
@@ -51051,7 +50727,7 @@ InterfaceAttributes = {
 					state = SQSH_VISIBLE | SQSH_ENABLED;
 					x = 0.18457;
 					y = 0.136719;
-					sx = 0.361328;
+					sx = 0.283203;
 					sy = 0.596354;
 					xstart = 2.34375e-002;
 					ystart = 4.55729e-002;
@@ -51242,7 +50918,7 @@ InterfaceAttributes = {
 					state = SQSH_ENABLED;
 					x = 0.195313;
 					y = 0.739583;
-					sx = 0.34375;
+					sx = 0.265625;
 					sy = 3.90625e-003;
 					xstart = 0.;
 					ystart = 3.90625e-003;
@@ -53408,7 +53084,7 @@ InterfaceAttributes = {
 					state = SQSH_ENABLED;
 					x = 0.181641;
 					y = 0.122396;
-					sx = 0.371094;
+					sx = 0.292969;
 					sy = 0.670573;
 					xstart = 0.;
 					ystart = 0.670573;
@@ -53597,7 +53273,7 @@ InterfaceAttributes = {
 					type = SQSH_SCALE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
-					x = 0.522461;
+					x = 0.444336;
 					y = 0.136719;
 					sx = 2.34375e-002;
 					sy = 0.596354;
@@ -53790,7 +53466,7 @@ InterfaceAttributes = {
 					state = SQSH_VISIBLE | SQSH_ENABLED;
 					x = 0.18457;
 					y = 0.136719;
-					sx = 0.361328;
+					sx = 0.283203;
 					sy = 0.596354;
 					xstart = 2.34375e-002;
 					ystart = 4.55729e-002;
@@ -53981,7 +53657,7 @@ InterfaceAttributes = {
 					state = SQSH_ENABLED;
 					x = 0.195313;
 					y = 0.739583;
-					sx = 0.34375;
+					sx = 0.265625;
 					sy = 3.90625e-003;
 					xstart = 0.;
 					ystart = 3.90625e-003;
@@ -56140,7 +55816,7 @@ InterfaceAttributes = {
 				hasBelligerentVersion = 0;
 			};
 			controls = {
-				18;
+				16;
 				{
 					type = SQSH_MOVE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
@@ -56529,8 +56205,8 @@ InterfaceAttributes = {
 					state = SQSH_ENABLED;
 					x = 0.166016;
 					y = 0.278646;
-					sx = 0.3125;
-					sy = 0.332031;
+					sx = 0.292969;
+					sy = 0.3125;
 					xstart = 0.;
 					ystart = 0.3125;
 					image = {
@@ -56719,8 +56395,8 @@ InterfaceAttributes = {
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
 					x = 0.166016;
-					y = 0.604167;
-					sx = 0.3125;
+					y = 0.591146;
+					sx = 0.292969;
 					sy = 2.60417e-002;
 					xstart = 0.;
 					ystart = 2.60417e-002;
@@ -56909,400 +56585,18 @@ InterfaceAttributes = {
 					type = SQSH_SCALE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
-					x = 0.448242;
+					x = 0.428711;
 					y = 0.289063;
 					sx = 2.34375e-002;
-					sy = 4.81771e-002;
+					sy = 0.31901;
 					xstart = 0.;
-					ystart = 4.81771e-002;
+					ystart = 0.31901;
 					image = {
 						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
 						_ix = 483.;
 						_iy = 3.;
 						ix = 24.;
-						iy = 37.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.448242;
-					y = 0.33724;
-					sx = 2.34375e-002;
-					sy = 0.196615;
-					xstart = 0.;
-					ystart = 0.196615;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 483.;
-						_iy = 40.;
-						ix = 24.;
-						iy = 151.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.448242;
-					y = 0.533854;
-					sx = 2.34375e-002;
-					sy = 4.81771e-002;
-					xstart = 0.;
-					ystart = 4.81771e-002;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 483.;
-						_iy = 213.;
-						ix = 24.;
-						iy = 37.;
+						iy = 245.;
 						dx = 0.;
 						dy = 0.;
 						dsx = 0.;
@@ -57484,8 +56778,8 @@ InterfaceAttributes = {
 					state = SQSH_VISIBLE | SQSH_ENABLED;
 					x = 0.166016;
 					y = 0.289063;
-					sx = 0.302734;
-					sy = 0.292969;
+					sx = 0.283203;
+					sy = 0.321615;
 					xstart = 2.34375e-002;
 					ystart = 4.55729e-002;
 					image = {
@@ -57607,7 +56901,7 @@ InterfaceAttributes = {
 					};
 					text = "";
 					txt_dx = 1.30208e-002;
-					txt_dy = 6.51042e-003;
+					txt_dy = 9.11458e-003;
 					txt_align = SHELL_ALIGN_CENTER;
 					txt_vert_align = SHELL_ALIGN_LEFT;
 					font_group = 1;
@@ -57670,13 +56964,204 @@ InterfaceAttributes = {
 					canHandleDisabledInput = 0;
 				},
 				{
+					type = SQSH_SCALE_BUTTON_TYPE;
+					id = SQSH_MM_RAMKA;
+					state = SQSH_VISIBLE | SQSH_ENABLED;
+					x = 0.326172;
+					y = 0.66276;
+					sx = 0.141602;
+					sy = 5.85938e-002;
+					xstart = 0.;
+					ystart = 5.85938e-002;
+					image = {
+						texture = "resource\\icons\\MainMenu\\new_menu.tga";
+						_ix = 340.;
+						_iy = 291.;
+						ix = 145.;
+						iy = 45.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2 = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					sound = "button_press";
+					popup = "";
+					popupChecked = "";
+					target = -1;
+					parent_id = -1;
+					diagram_delta_x = 0;
+					diagram_delta_sx = 0;
+					diagram_delta_y = 0;
+					diagram_delta_sy = 0;
+					bgObject = {
+						name = "";
+						chainName = "";
+					};
+					text = "";
+					txt_dx = 0.;
+					txt_dy = 0.;
+					txt_align = SHELL_ALIGN_CENTER;
+					txt_vert_align = SHELL_ALIGN_LEFT;
+					font_group = 1;
+					flashR = 255;
+					flashG = 0;
+					flashB = 0;
+					flashA = 255;
+					flashBG_R = 255;
+					flashBG_G = 0;
+					flashBG_B = 0;
+					flashBG_A = 255;
+					tickTime = 900.;
+					diaR = 0;
+					diaG = 255;
+					diaB = 0;
+					diaA = 64;
+					actions = {
+						6;
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						}
+					};
+					passive = 0;
+					flashWithImage = 0;
+					alnum = 1;
+					hitTestMode = HITTEST_NONE;
+					canHandleDisabledInput = 0;
+				},
+				{
 					type = SQSH_PUSH_BUTTON_TYPE;
 					id = SQSH_MM_LOAD_IN_GAME_DEL_BTN;
 					state = SQSH_ENABLED;
-					x = 0.170898;
-					y = 0.588542;
+					x = 0.333008;
+					y = 0.665365;
 					sx = 0.12793;
-					sy = 4.16667e-002;
+					sy = 5.33854e-002;
 					xstart = 0.;
 					ystart = 0.;
 					image = {
@@ -57858,197 +57343,6 @@ InterfaceAttributes = {
 					flashWithImage = 0;
 					alnum = 1;
 					hitTestMode = HITTEST_DEFAULT;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.175781;
-					y = 0.588542;
-					sx = 0.292969;
-					sy = 3.90625e-003;
-					xstart = 0.;
-					ystart = 3.90625e-003;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 2.;
-						_iy = 987.;
-						ix = 272.;
-						iy = 3.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "resource\\icons\\MainMenu\\tv.avi";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 60.;
-						iy = 1.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 0;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.3;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
 					canHandleDisabledInput = 0;
 				},
 				{
@@ -58628,9 +57922,9 @@ InterfaceAttributes = {
 					type = SQSH_TEXT_WINDOW_TYPE;
 					id = SQSH_MM_LOAD_IN_GAME_MAP_DESCR_TXT;
 					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.495117;
+					x = 0.475586;
 					y = 0.451823;
-					sx = 0.373047;
+					sx = 0.392578;
 					sy = 0.166667;
 					xstart = 0.;
 					ystart = 0.;
@@ -59623,7 +58917,7 @@ InterfaceAttributes = {
 				hasBelligerentVersion = 0;
 			};
 			controls = {
-				22;
+				18;
 				{
 					type = SQSH_MOVE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
@@ -60012,8 +59306,8 @@ InterfaceAttributes = {
 					state = SQSH_ENABLED;
 					x = 0.166016;
 					y = 0.278646;
-					sx = 0.3125;
-					sy = 0.332031;
+					sx = 0.292969;
+					sy = 0.3125;
 					xstart = 0.;
 					ystart = 0.3125;
 					image = {
@@ -60202,8 +59496,8 @@ InterfaceAttributes = {
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
 					x = 0.166016;
-					y = 0.604167;
-					sx = 0.3125;
+					y = 0.591146;
+					sx = 0.292969;
 					sy = 2.60417e-002;
 					xstart = 0.;
 					ystart = 2.60417e-002;
@@ -60392,400 +59686,18 @@ InterfaceAttributes = {
 					type = SQSH_SCALE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
-					x = 0.448242;
+					x = 0.428711;
 					y = 0.289063;
 					sx = 2.34375e-002;
-					sy = 4.81771e-002;
+					sy = 0.31901;
 					xstart = 0.;
-					ystart = 4.81771e-002;
+					ystart = 0.31901;
 					image = {
 						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
 						_ix = 483.;
 						_iy = 3.;
 						ix = 24.;
-						iy = 37.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.448242;
-					y = 0.33724;
-					sx = 2.34375e-002;
-					sy = 0.196615;
-					xstart = 0.;
-					ystart = 0.196615;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 483.;
-						_iy = 40.;
-						ix = 24.;
-						iy = 151.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.448242;
-					y = 0.533854;
-					sx = 2.34375e-002;
-					sy = 4.81771e-002;
-					xstart = 0.;
-					ystart = 4.81771e-002;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 483.;
-						_iy = 213.;
-						ix = 24.;
-						iy = 37.;
+						iy = 245.;
 						dx = 0.;
 						dy = 0.;
 						dsx = 0.;
@@ -60967,8 +59879,8 @@ InterfaceAttributes = {
 					state = SQSH_VISIBLE | SQSH_ENABLED;
 					x = 0.166016;
 					y = 0.289063;
-					sx = 0.302734;
-					sy = 0.292969;
+					sx = 0.283203;
+					sy = 0.321615;
 					xstart = 2.34375e-002;
 					ystart = 4.55729e-002;
 					image = {
@@ -61090,7 +60002,7 @@ InterfaceAttributes = {
 					};
 					text = "";
 					txt_dx = 1.30208e-002;
-					txt_dy = 6.51042e-003;
+					txt_dy = 9.11458e-003;
 					txt_align = SHELL_ALIGN_CENTER;
 					txt_vert_align = SHELL_ALIGN_LEFT;
 					font_group = 1;
@@ -61150,787 +60062,23 @@ InterfaceAttributes = {
 					flashWithImage = 0;
 					alnum = 1;
 					hitTestMode = HITTEST_DEFAULT;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_PUSH_BUTTON_TYPE;
-					id = SQSH_MM_SAVE_REPLAY_DEL_BTN;
-					state = SQSH_ENABLED;
-					x = 0.170898;
-					y = 0.588542;
-					sx = 0.12793;
-					sy = 4.6875e-002;
-					xstart = 0.;
-					ystart = 0.;
-					image = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "mainmenu_button";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "DELETE";
-					txt_dx = 0.;
-					txt_dy = 1.43229e-002;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 2;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_DEFAULT;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.175781;
-					y = 0.588542;
-					sx = 0.292969;
-					sy = 3.90625e-003;
-					xstart = 0.;
-					ystart = 3.90625e-003;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 2.;
-						_iy = 987.;
-						ix = 272.;
-						iy = 3.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "resource\\icons\\MainMenu\\tv.avi";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 60.;
-						iy = 1.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 0;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.3;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
 					canHandleDisabledInput = 0;
 				},
 				{
 					type = SQSH_SCALE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
 					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.327148;
-					y = 0.661458;
-					sx = 9.47266e-002;
-					sy = 6.11979e-002;
+					x = 0.486328;
+					y = 0.66276;
+					sx = 0.222656;
+					sy = 5.98958e-002;
 					xstart = 0.;
 					ystart = 5.98958e-002;
 					image = {
 						texture = "resource\\icons\\MainMenu\\new_menu.tga";
 						_ix = 340.;
 						_iy = 233.;
-						ix = 97.;
-						iy = 46.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.421875;
-					y = 0.661458;
-					sx = 0.193359;
-					sy = 6.11979e-002;
-					xstart = 0.;
-					ystart = 5.98958e-002;
-					image = {
-						texture = "resource\\icons\\MainMenu\\new_menu.tga";
-						_ix = 345.;
-						_iy = 233.;
-						ix = 184.;
-						iy = 46.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.615234;
-					y = 0.661458;
-					sx = 9.47266e-002;
-					sy = 6.11979e-002;
-					xstart = 0.;
-					ystart = 5.98958e-002;
-					image = {
-						texture = "resource\\icons\\MainMenu\\new_menu.tga";
-						_ix = 437.;
-						_iy = 233.;
-						ix = 97.;
+						ix = 194.;
 						iy = 46.;
 						dx = 0.;
 						dy = 0.;
@@ -62111,10 +60259,10 @@ InterfaceAttributes = {
 					type = SQSH_EDIT_BOX_TYPE;
 					id = SQSH_MM_REPLAY_NAME_INPUT;
 					state = SQSH_ENABLED;
-					x = 0.332031;
+					x = 0.488281;
 					y = 0.66276;
-					sx = 0.371094;
-					sy = 5.98958e-002;
+					sx = 0.210938;
+					sy = 4.16667e-002;
 					xstart = 0.;
 					ystart = 0.;
 					image = {
@@ -62240,6 +60388,388 @@ InterfaceAttributes = {
 					txt_align = SHELL_ALIGN_LEFT;
 					txt_vert_align = SHELL_ALIGN_LEFT;
 					font_group = 1;
+					flashR = 255;
+					flashG = 0;
+					flashB = 0;
+					flashA = 255;
+					flashBG_R = 255;
+					flashBG_G = 0;
+					flashBG_B = 0;
+					flashBG_A = 255;
+					tickTime = 900.;
+					diaR = 0;
+					diaG = 255;
+					diaB = 0;
+					diaA = 64;
+					actions = {
+						6;
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						}
+					};
+					passive = 0;
+					flashWithImage = 0;
+					alnum = 1;
+					hitTestMode = HITTEST_DEFAULT;
+					canHandleDisabledInput = 0;
+				},
+				{
+					type = SQSH_SCALE_BUTTON_TYPE;
+					id = SQSH_MM_RAMKA;
+					state = SQSH_VISIBLE | SQSH_ENABLED;
+					x = 0.326172;
+					y = 0.66276;
+					sx = 0.141602;
+					sy = 5.85938e-002;
+					xstart = 0.;
+					ystart = 5.85938e-002;
+					image = {
+						texture = "resource\\icons\\MainMenu\\new_menu.tga";
+						_ix = 340.;
+						_iy = 291.;
+						ix = 145.;
+						iy = 45.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2 = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					sound = "button_press";
+					popup = "";
+					popupChecked = "";
+					target = -1;
+					parent_id = -1;
+					diagram_delta_x = 0;
+					diagram_delta_sx = 0;
+					diagram_delta_y = 0;
+					diagram_delta_sy = 0;
+					bgObject = {
+						name = "";
+						chainName = "";
+					};
+					text = "";
+					txt_dx = 0.;
+					txt_dy = 0.;
+					txt_align = SHELL_ALIGN_CENTER;
+					txt_vert_align = SHELL_ALIGN_LEFT;
+					font_group = 1;
+					flashR = 255;
+					flashG = 0;
+					flashB = 0;
+					flashA = 255;
+					flashBG_R = 255;
+					flashBG_G = 0;
+					flashBG_B = 0;
+					flashBG_A = 255;
+					tickTime = 900.;
+					diaR = 0;
+					diaG = 255;
+					diaB = 0;
+					diaA = 64;
+					actions = {
+						6;
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						}
+					};
+					passive = 0;
+					flashWithImage = 0;
+					alnum = 1;
+					hitTestMode = HITTEST_NONE;
+					canHandleDisabledInput = 0;
+				},
+				{
+					type = SQSH_PUSH_BUTTON_TYPE;
+					id = SQSH_MM_SAVE_REPLAY_DEL_BTN;
+					state = SQSH_ENABLED;
+					x = 0.333008;
+					y = 0.665365;
+					sx = 0.12793;
+					sy = 5.33854e-002;
+					xstart = 0.;
+					ystart = 0.;
+					image = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2 = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					sound = "mainmenu_button";
+					popup = "";
+					popupChecked = "";
+					target = -1;
+					parent_id = -1;
+					diagram_delta_x = 0;
+					diagram_delta_sx = 0;
+					diagram_delta_y = 0;
+					diagram_delta_sy = 0;
+					bgObject = {
+						name = "";
+						chainName = "";
+					};
+					text = "DELETE";
+					txt_dx = 0.;
+					txt_dy = 1.43229e-002;
+					txt_align = SHELL_ALIGN_CENTER;
+					txt_vert_align = SHELL_ALIGN_LEFT;
+					font_group = 2;
 					flashR = 255;
 					flashG = 0;
 					flashB = 0;
@@ -62875,9 +61405,9 @@ InterfaceAttributes = {
 					type = SQSH_TEXT_WINDOW_TYPE;
 					id = SQSH_MM_SAVE_REPLAY_DESCR_TXT;
 					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.495117;
+					x = 0.475586;
 					y = 0.451823;
-					sx = 0.373047;
+					sx = 0.392578;
 					sy = 0.166667;
 					xstart = 0.;
 					ystart = 0.;
@@ -63870,7 +62400,7 @@ InterfaceAttributes = {
 				hasBelligerentVersion = 0;
 			};
 			controls = {
-				22;
+				18;
 				{
 					type = SQSH_MOVE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
@@ -64259,8 +62789,8 @@ InterfaceAttributes = {
 					state = SQSH_ENABLED;
 					x = 0.166016;
 					y = 0.278646;
-					sx = 0.3125;
-					sy = 0.332031;
+					sx = 0.292969;
+					sy = 0.3125;
 					xstart = 0.;
 					ystart = 0.3125;
 					image = {
@@ -64449,8 +62979,8 @@ InterfaceAttributes = {
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
 					x = 0.166016;
-					y = 0.604167;
-					sx = 0.3125;
+					y = 0.591146;
+					sx = 0.292969;
 					sy = 2.60417e-002;
 					xstart = 0.;
 					ystart = 2.60417e-002;
@@ -64639,400 +63169,18 @@ InterfaceAttributes = {
 					type = SQSH_SCALE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
 					state = SQSH_ENABLED;
-					x = 0.448242;
+					x = 0.428711;
 					y = 0.289063;
 					sx = 2.34375e-002;
-					sy = 4.81771e-002;
+					sy = 0.31901;
 					xstart = 0.;
-					ystart = 4.81771e-002;
+					ystart = 0.31901;
 					image = {
 						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
 						_ix = 483.;
 						_iy = 3.;
 						ix = 24.;
-						iy = 37.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.448242;
-					y = 0.33724;
-					sx = 2.34375e-002;
-					sy = 0.196615;
-					xstart = 0.;
-					ystart = 0.196615;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 483.;
-						_iy = 40.;
-						ix = 24.;
-						iy = 151.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.448242;
-					y = 0.533854;
-					sx = 2.34375e-002;
-					sy = 4.81771e-002;
-					xstart = 0.;
-					ystart = 4.81771e-002;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 483.;
-						_iy = 213.;
-						ix = 24.;
-						iy = 37.;
+						iy = 245.;
 						dx = 0.;
 						dy = 0.;
 						dsx = 0.;
@@ -65214,8 +63362,8 @@ InterfaceAttributes = {
 					state = SQSH_VISIBLE | SQSH_ENABLED;
 					x = 0.166016;
 					y = 0.289063;
-					sx = 0.302734;
-					sy = 0.292969;
+					sx = 0.283203;
+					sy = 0.321615;
 					xstart = 2.34375e-002;
 					ystart = 4.55729e-002;
 					image = {
@@ -65337,7 +63485,7 @@ InterfaceAttributes = {
 					};
 					text = "";
 					txt_dx = 1.30208e-002;
-					txt_dy = 6.51042e-003;
+					txt_dy = 9.11458e-003;
 					txt_align = SHELL_ALIGN_CENTER;
 					txt_vert_align = SHELL_ALIGN_LEFT;
 					font_group = 1;
@@ -65397,787 +63545,23 @@ InterfaceAttributes = {
 					flashWithImage = 0;
 					alnum = 1;
 					hitTestMode = HITTEST_DEFAULT;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_PUSH_BUTTON_TYPE;
-					id = SQSH_MM_SAVE_GAME_DEL_BTN;
-					state = SQSH_ENABLED;
-					x = 0.170898;
-					y = 0.588542;
-					sx = 0.12793;
-					sy = 4.16667e-002;
-					xstart = 0.;
-					ystart = 0.;
-					image = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "mainmenu_button";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "DELETE";
-					txt_dx = 0.;
-					txt_dy = 1.43229e-002;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 2;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_DEFAULT;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_ENABLED;
-					x = 0.175781;
-					y = 0.588542;
-					sx = 0.292969;
-					sy = 3.90625e-003;
-					xstart = 0.;
-					ystart = 3.90625e-003;
-					image = {
-						texture = "resource\\icons\\MainMenu\\Main_menu.tga";
-						_ix = 2.;
-						_iy = 987.;
-						ix = 272.;
-						iy = 3.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "resource\\icons\\MainMenu\\tv.avi";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 60.;
-						iy = 1.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 0;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.3;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
 					canHandleDisabledInput = 0;
 				},
 				{
 					type = SQSH_SCALE_BUTTON_TYPE;
 					id = SQSH_MM_RAMKA;
 					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.327148;
-					y = 0.661458;
-					sx = 9.47266e-002;
-					sy = 6.11979e-002;
+					x = 0.486328;
+					y = 0.66276;
+					sx = 0.222656;
+					sy = 5.98958e-002;
 					xstart = 0.;
 					ystart = 5.98958e-002;
 					image = {
 						texture = "resource\\icons\\MainMenu\\new_menu.tga";
 						_ix = 340.;
 						_iy = 233.;
-						ix = 97.;
-						iy = 46.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.421875;
-					y = 0.661458;
-					sx = 0.193359;
-					sy = 6.11979e-002;
-					xstart = 0.;
-					ystart = 5.98958e-002;
-					image = {
-						texture = "resource\\icons\\MainMenu\\new_menu.tga";
-						_ix = 345.;
-						_iy = 233.;
-						ix = 184.;
-						iy = 46.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2 = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_h = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_check = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					image2_disabled = {
-						texture = "";
-						_ix = 0.;
-						_iy = 0.;
-						ix = 1024.;
-						iy = 1024.;
-						dx = 0.;
-						dy = 0.;
-						dsx = 0.;
-						dsy = 0.;
-						hasResolutionVersion = 1;
-						hasBelligerentVersion = 0;
-					};
-					sound = "button_press";
-					popup = "";
-					popupChecked = "";
-					target = -1;
-					parent_id = -1;
-					diagram_delta_x = 0;
-					diagram_delta_sx = 0;
-					diagram_delta_y = 0;
-					diagram_delta_sy = 0;
-					bgObject = {
-						name = "";
-						chainName = "";
-					};
-					text = "";
-					txt_dx = 0.;
-					txt_dy = 0.;
-					txt_align = SHELL_ALIGN_CENTER;
-					txt_vert_align = SHELL_ALIGN_LEFT;
-					font_group = 1;
-					flashR = 255;
-					flashG = 0;
-					flashB = 0;
-					flashA = 255;
-					flashBG_R = 255;
-					flashBG_G = 0;
-					flashBG_B = 0;
-					flashBG_A = 255;
-					tickTime = 900.;
-					diaR = 0;
-					diaG = 255;
-					diaB = 0;
-					diaA = 64;
-					actions = {
-						6;
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						},
-						{
-							name = "";
-							code = EVENT_PRESSED;
-							param = 0;
-							hotKeyPopup = "";
-						}
-					};
-					passive = 0;
-					flashWithImage = 0;
-					alnum = 1;
-					hitTestMode = HITTEST_NONE;
-					canHandleDisabledInput = 0;
-				},
-				{
-					type = SQSH_SCALE_BUTTON_TYPE;
-					id = SQSH_MM_RAMKA;
-					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.615234;
-					y = 0.661458;
-					sx = 9.47266e-002;
-					sy = 6.11979e-002;
-					xstart = 0.;
-					ystart = 5.98958e-002;
-					image = {
-						texture = "resource\\icons\\MainMenu\\new_menu.tga";
-						_ix = 437.;
-						_iy = 233.;
-						ix = 97.;
+						ix = 194.;
 						iy = 46.;
 						dx = 0.;
 						dy = 0.;
@@ -66358,10 +63742,10 @@ InterfaceAttributes = {
 					type = SQSH_EDIT_BOX_TYPE;
 					id = SQSH_MM_SAVE_NAME_INPUT;
 					state = SQSH_ENABLED;
-					x = 0.332031;
+					x = 0.488281;
 					y = 0.66276;
-					sx = 0.371094;
-					sy = 5.98958e-002;
+					sx = 0.210938;
+					sy = 4.16667e-002;
 					xstart = 0.;
 					ystart = 0.;
 					image = {
@@ -66487,6 +63871,388 @@ InterfaceAttributes = {
 					txt_align = SHELL_ALIGN_LEFT;
 					txt_vert_align = SHELL_ALIGN_LEFT;
 					font_group = 1;
+					flashR = 255;
+					flashG = 0;
+					flashB = 0;
+					flashA = 255;
+					flashBG_R = 255;
+					flashBG_G = 0;
+					flashBG_B = 0;
+					flashBG_A = 255;
+					tickTime = 900.;
+					diaR = 0;
+					diaG = 255;
+					diaB = 0;
+					diaA = 64;
+					actions = {
+						6;
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						}
+					};
+					passive = 0;
+					flashWithImage = 0;
+					alnum = 1;
+					hitTestMode = HITTEST_DEFAULT;
+					canHandleDisabledInput = 0;
+				},
+				{
+					type = SQSH_SCALE_BUTTON_TYPE;
+					id = SQSH_MM_RAMKA;
+					state = SQSH_VISIBLE | SQSH_ENABLED;
+					x = 0.326172;
+					y = 0.66276;
+					sx = 0.141602;
+					sy = 5.85938e-002;
+					xstart = 0.;
+					ystart = 5.85938e-002;
+					image = {
+						texture = "resource\\icons\\MainMenu\\new_menu.tga";
+						_ix = 340.;
+						_iy = 291.;
+						ix = 145.;
+						iy = 45.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2 = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					sound = "button_press";
+					popup = "";
+					popupChecked = "";
+					target = -1;
+					parent_id = -1;
+					diagram_delta_x = 0;
+					diagram_delta_sx = 0;
+					diagram_delta_y = 0;
+					diagram_delta_sy = 0;
+					bgObject = {
+						name = "";
+						chainName = "";
+					};
+					text = "";
+					txt_dx = 0.;
+					txt_dy = 0.;
+					txt_align = SHELL_ALIGN_CENTER;
+					txt_vert_align = SHELL_ALIGN_LEFT;
+					font_group = 1;
+					flashR = 255;
+					flashG = 0;
+					flashB = 0;
+					flashA = 255;
+					flashBG_R = 255;
+					flashBG_G = 0;
+					flashBG_B = 0;
+					flashBG_A = 255;
+					tickTime = 900.;
+					diaR = 0;
+					diaG = 255;
+					diaB = 0;
+					diaA = 64;
+					actions = {
+						6;
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						},
+						{
+							name = "";
+							code = EVENT_PRESSED;
+							param = 0;
+							hotKeyPopup = "";
+						}
+					};
+					passive = 0;
+					flashWithImage = 0;
+					alnum = 1;
+					hitTestMode = HITTEST_NONE;
+					canHandleDisabledInput = 0;
+				},
+				{
+					type = SQSH_PUSH_BUTTON_TYPE;
+					id = SQSH_MM_SAVE_GAME_DEL_BTN;
+					state = SQSH_ENABLED;
+					x = 0.333008;
+					y = 0.665365;
+					sx = 0.12793;
+					sy = 5.33854e-002;
+					xstart = 0.;
+					ystart = 0.;
+					image = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2 = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_h = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_check = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					image2_disabled = {
+						texture = "";
+						_ix = 0.;
+						_iy = 0.;
+						ix = 1024.;
+						iy = 1024.;
+						dx = 0.;
+						dy = 0.;
+						dsx = 0.;
+						dsy = 0.;
+						hasResolutionVersion = 1;
+						hasBelligerentVersion = 0;
+					};
+					sound = "mainmenu_button";
+					popup = "";
+					popupChecked = "";
+					target = -1;
+					parent_id = -1;
+					diagram_delta_x = 0;
+					diagram_delta_sx = 0;
+					diagram_delta_y = 0;
+					diagram_delta_sy = 0;
+					bgObject = {
+						name = "";
+						chainName = "";
+					};
+					text = "DELETE";
+					txt_dx = 0.;
+					txt_dy = 1.43229e-002;
+					txt_align = SHELL_ALIGN_CENTER;
+					txt_vert_align = SHELL_ALIGN_LEFT;
+					font_group = 2;
 					flashR = 255;
 					flashG = 0;
 					flashB = 0;
@@ -67122,9 +64888,9 @@ InterfaceAttributes = {
 					type = SQSH_TEXT_WINDOW_TYPE;
 					id = SQSH_MM_SAVE_GAME_MAP_DESCR_TXT;
 					state = SQSH_VISIBLE | SQSH_ENABLED;
-					x = 0.495117;
+					x = 0.475586;
 					y = 0.451823;
-					sx = 0.373047;
+					sx = 0.392578;
 					sy = 0.166667;
 					xstart = 0.;
 					ystart = 0.;

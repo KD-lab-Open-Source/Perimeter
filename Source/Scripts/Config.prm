@@ -117,12 +117,45 @@ struct PlayerColor
 
 PlayerColor playerColors[int playerColorsSize] =
 {
-	{ unitColor = { 0, 0, 0.8, 1 }; fieldColor =	{ 0, 0, 0.6, 1 }; zeroLayerColor =		{ 0.4, 0.4, 0.5, 0.8 }; },
-	{ unitColor = { 0, 0.8, 0.8, 1 }; fieldColor =	{ 0, 0.6, 0.6, 1 }; zeroLayerColor =	{ 0.4, 0.6, 0.5, 0.8 }; },
-	{ unitColor = { 0.8, 0, 0, 1 }; fieldColor =	{ 0.6, 0, 0, 1 }; zeroLayerColor =		{ 0.6, 0.25, 0.1, 0.8 }; },
-	{ unitColor = { 0.8, 0.4, 0, 1 }; fieldColor =	{ 0.6, 0.2, 0, 1 }; zeroLayerColor =	{ 0.6, 0.4, 0.1, 0.8 }; },
-	{ unitColor = { 0, 0.8, 0, 1 }; fieldColor =	{ 0, 0.6, 0, 1 }; zeroLayerColor =		{ 0.4, 0.6, 0.3, 0.8 }; },
-	{ unitColor = { 0.8, 0.8, 0, 1 }; fieldColor =	{ 0.6, 0.6, 0, 1 }; zeroLayerColor =	{ 0.6, 0.6, 0.3, 0.8 }; },
+    //Blue
+	{ unitColor = { 0.0, 0.0, 0.8, 1.0 }; fieldColor = { 0.0, 0.0, 0.6, 1.0 }; zeroLayerColor = { 0.4, 0.4, 0.5, 0.8 }; },
+	//Cyan
+	{ unitColor = { 0.0, 0.8, 0.8, 1.0 }; fieldColor = { 0.0, 0.6, 0.6, 1.0 }; zeroLayerColor = { 0.4, 0.6, 0.5, 0.8 }; },
+	//Red
+	{ unitColor = { 0.8, 0.0, 0.0, 1.0 }; fieldColor = { 0.6, 0.0, 0.0, 1.0 }; zeroLayerColor = { 0.6, 0.2, 0.1, 0.8 }; },
+	//Orange
+	{ unitColor = { 0.8, 0.4, 0.0, 1.0 }; fieldColor = { 0.6, 0.2, 0.0, 1.0 }; zeroLayerColor = { 0.6, 0.4, 0.1, 0.8 }; },
+	//Green
+	{ unitColor = { 0.0, 0.8, 0.0, 1.0 }; fieldColor = { 0.0, 0.6, 0.0, 1.0 }; zeroLayerColor = { 0.4, 0.6, 0.3, 0.8 }; },
+    //Yellow
+	{ unitColor = { 0.8, 0.8, 0.0, 1.0 }; fieldColor = { 0.6, 0.6, 0.0, 1.0 }; zeroLayerColor = { 0.6, 0.6, 0.3, 0.8 }; },
+    //Lime
+	{ unitColor = { 0.4, 0.8, 0.0, 1.0 }; fieldColor = { 0.4, 0.6, 0.0, 1.0 }; zeroLayerColor = { 0.3, 0.6, 0.1, 0.8 }; },
+    //Pink
+	{ unitColor = { 0.8, 0.0, 0.8, 1.0 }; fieldColor = { 0.6, 0.0, 0.6, 1.0 }; zeroLayerColor = { 0.6, 0.1, 0.5, 0.8 }; },
+    //Magenta
+	//{ unitColor = { 0.8, 0.0, 0.3, 1.0 }; fieldColor = { 0.6, 0.0, 0.3, 1.0 }; zeroLayerColor = { 0.6, 0.1, 0.2, 0.8 }; },
+    //Purple
+	{ unitColor = { 0.4, 0.0, 0.8, 1.0 }; fieldColor = { 0.4, 0.0, 0.6, 1.0 }; zeroLayerColor = { 0.2, 0.1, 0.6, 0.8 }; },
+    //Blue dark
+	{ unitColor = { 0.0, 0.0, 0.3, 1.0 }; fieldColor = { 0.0, 0.0, 0.3, 1.0 }; zeroLayerColor = { 0.2, 0.2, 0.3, 0.8 }; },
+	//Cyan dark
+	{ unitColor = { 0.0, 0.3, 0.3, 1.0 }; fieldColor = { 0.0, 0.3, 0.3, 1.0 }; zeroLayerColor = { 0.2, 0.3, 0.3, 0.8 }; },
+	//Red dark
+	{ unitColor = { 0.3, 0.0, 0.0, 1.0 }; fieldColor = { 0.3, 0.0, 0.0, 1.0 }; zeroLayerColor = { 0.3, 0.1, 0.0, 0.8 }; },
+	//Orange dark
+	{ unitColor = { 0.3, 0.2, 0.0, 1.0 }; fieldColor = { 0.3, 0.1, 0.0, 1.0 }; zeroLayerColor = { 0.3, 0.2, 0.0, 0.8 }; },
+	//Green dark
+	{ unitColor = { 0.0, 0.3, 0.0, 1.0 }; fieldColor = { 0.0, 0.3, 0.0, 1.0 }; zeroLayerColor = { 0.2, 0.3, 0.0, 0.8 }; },
+    //Yellow dark
+	{ unitColor = { 0.3, 0.3, 0.0, 1.0 }; fieldColor = { 0.3, 0.3, 0.0, 1.0 }; zeroLayerColor = { 0.3, 0.3, 0.0, 0.8 }; },
+    //Purple dark
+	{ unitColor = { 0.2, 0.0, 0.3, 1.0 }; fieldColor = { 0.2, 0.0, 0.3, 1.0 }; zeroLayerColor = { 0.1, 0.0, 0.3, 0.8 }; },
+    //Grey
+	{ unitColor = { 0.4, 0.4, 0.4, 1.0 }; fieldColor = { 0.3, 0.3, 0.3, 1.0 }; zeroLayerColor = { 0.3, 0.3, 0.3, 0.8 }; },
+    //Black
+	{ unitColor = { 0.1, 0.1, 0.1, 1.0 }; fieldColor = { 0.1, 0.1, 0.1, 1.0 }; zeroLayerColor = { 0.1, 0.1, 0.1, 0.8 }; },
+	//Neutral
 	{ unitColor = { 1.0, 1.0, 0.7, 1 }; }
 };
 

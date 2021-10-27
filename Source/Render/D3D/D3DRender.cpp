@@ -129,8 +129,8 @@ bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
 	DWORD Adapter=0;
 	if(!lpD3D)
 	{
-		lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Временно, когда появится специфичное для 9.0c переправить обратно
-		//lpD3D=Direct3DCreate9(D3D_SDK_VERSION);
+		//lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Временно, когда появится специфичное для 9.0c переправить обратно
+		lpD3D=Direct3DCreate9(D3D_SDK_VERSION);
 		if(!lpD3D)
 			return false;
 	}
@@ -172,8 +172,8 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	RenderMode=Mode;
 
 	if(!lpD3D)
-		//RDERR((lpD3D=Direct3DCreate9(D3D_SDK_VERSION))==0);
-		RDERR((lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION))==0);
+		RDERR((lpD3D=Direct3DCreate9(D3D_SDK_VERSION))==0);
+		//RDERR((lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION))==0);
 		
 	if(lpD3D==0) return 2;
 	D3DDISPLAYMODE d3ddm;
@@ -458,15 +458,18 @@ void cD3DRender::UpdateRenderMode()
 	}
 }
 
-bool cD3DRender::ChangeSize(int xscr,int yscr,int mode)
+bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
 {
-    if (xScr==xscr && yScr==yscr) {
-        return true; //Nothing to do
-    }
 	MTTexObjAutoLock lock;
+    
+    int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW
+                 |RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
+    
+	if (xScr==xscr && yScr==yscr && (RenderMode&mode_mask) == mode) {
+        return true; //Nothing to do
+	}
+	
 	KillFocus();
-	int mode_mask=RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_WINDOW|
-				  RENDERDEVICE_MODE_RGB16|RENDERDEVICE_MODE_RGB32;
 
 	RenderMode&=~mode_mask;
 	RenderMode|=mode;

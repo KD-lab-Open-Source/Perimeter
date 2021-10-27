@@ -186,6 +186,21 @@ SoundSetup laserGunSound = {
 	};
 };
 
+SoundSetup electroGunSound = {
+	sounds = new SoundControllerSetup[]
+	{
+		{ ID = SOUND_SHOT; name = "Struct_Proc_Shot_LaserGun"; }
+	};
+
+	events = new SoundEventSetup[]
+	{
+		{ ID = SOUND_EVENT_EXPLOSION; name = "Struct_Explosion_LaserGun"; is3D = 1; },
+		{ ID = SOUND_EVENT_SELECT; name = "Struct_Proc_Work_LaserGun"; is3D = 1; },
+		{ ID = SOUND_VOICE_BUILDING_READY; name = "ElectroGun_Ready"; isVoice = 1;},
+		{ ID = SOUND_VOICE_BUILDING_DESTROYED; name = "ElectroGun_Destroyed"; isVoice = 1; }
+	};
+};
+
 SoundSetup bombieSound = {
 	sounds = new SoundControllerSetup[]
 	{
@@ -277,6 +292,19 @@ SoundSetup gyroidSound = {
 	};
 };
 
+SoundSetup eflairSound = {
+	sounds = new SoundControllerSetup[]
+	{
+		{ ID = SOUND_SHOT; name = "Unit_Shot_Gyroid"; },
+		{ ID = SOUND_MOVE; name = "Unit_Move_Gyroid"; cycled = 1; }
+	};
+
+	events = new SoundEventSetup[]
+	{
+		{ ID = SOUND_EVENT_EXPLOSION; name = "explosion_mid"; is3D = 1; }
+	};
+};
+
 SoundSetup ceptorSound = {
 	sounds = new SoundControllerSetup[]
 	{
@@ -317,6 +345,19 @@ SoundSetup rockerSound = {
 };
 
 SoundSetup leamoSound = {
+	sounds = new SoundControllerSetup[]
+	{
+		{ ID = SOUND_SHOT; name = "Unit_Shot_Leamo"; },
+		{ ID = SOUND_MOVE; name = "Unit_Move_Leamo"; cycled = 1; }
+	};
+
+	events = new SoundEventSetup[]
+	{
+		{ ID = SOUND_EVENT_EXPLOSION; name = "explosion_heavy"; is3D = 1; }
+	};
+};
+
+SoundSetup impalerSound = {
 	sounds = new SoundControllerSetup[]
 	{
 		{ ID = SOUND_SHOT; name = "Unit_Shot_Leamo"; },
@@ -517,6 +558,17 @@ SoundSetup labLaserSound = {
 	};
 };
 
+SoundSetup labElectroSound = {
+	events = new SoundEventSetup[]
+	{
+		{ ID = SOUND_EVENT_EXPLOSION; name = "Struct_Explosion_LaserLab"; is3D = 1; },
+		{ ID = SOUND_EVENT_SELECT; name = "Struct_Proc_Work_LaserLab"; is3D = 1; },
+		{ ID = SOUND_VOICE_BUILDING_READY; name = "Labor_Ready"; isVoice = 1; },
+		{ ID = SOUND_VOICE_BUILDING_UNDER_ATTACK; name = "Labor_Under_Attack"; isVoice = 1; pauseTime = 20000;},
+		{ ID = SOUND_VOICE_BUILDING_DESTROYED; name = "Labor_Destroyed"; isVoice = 1; pauseTime = 5000;}
+	};
+};
+
 SoundSetup labBombSound = {
 	events = new SoundEventSetup[]
 	{
@@ -690,6 +742,19 @@ SoundSetup scumTwisterSound = {
 };
 
 SoundSetup scumHeaterSound = {
+	sounds = new SoundControllerSetup[]
+	{
+		{ ID = SOUND_SHOT; name = "Unit_Shot_Heater"; cycled = 1; },
+		{ ID = SOUND_MOVE; name = "Unit_Move_Heater"; cycled = 1; }
+	};
+
+	events = new SoundEventSetup[]
+	{
+		{ ID = SOUND_EVENT_EXPLOSION; name = "explosion_mid"; is3D = 1; }
+	};
+};
+
+SoundSetup conductorSound = {
 	sounds = new SoundControllerSetup[]
 	{
 		{ ID = SOUND_SHOT; name = "Unit_Shot_Heater"; cycled = 1; },

@@ -70,6 +70,8 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
+#include "BelligerentSelect.h"
+
 const int REGION_DATA_FILE_VERSION = 8383;
 
 RandomGenerator logicRND;
@@ -158,7 +160,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	loadProgressUpdate(0.9f);
 	
 	//---------------------
-	gameShell->changeControlState(manualData.controls);
+	gameShell->changeControlState(manualData.controls, true);
 	
 	// Загрузка игроков
 	xassert(manualData.players.size() <= NETWORK_PLAYERS_MAX);
@@ -587,26 +589,34 @@ bool terUniverse::forcedDefeat(int playerID)
 }
 
 //---------------------------------------------------
-void terUniverse::MakeGenericList(const Vect2f& pos, UnitList& unit_list)
+terUnitBase* terUniverse::TraceUnit(const Vect2f& pos, terUnitID* unit_filter)
 {
 	Vect3f v0,v1;
 	terCamera->calcRayIntersection(pos.x, pos.y, v0, v1);
 	Vect3f v01 = v1 - v0;
 
 	float dist, distMin = FLT_INF;
-	terUnitBase* unitMin = 0;
+	terUnitBase* unitMin = nullptr;
 
 	PlayerVect::iterator pi;
 	FOR_EACH(Players, pi){
+        if (unit_filter && (*pi)->playerID() != unit_filter->playerID()) {
+            //Not our player
+            continue;
+        }
 		CUNITS_LOCK(*pi);
 		const UnitList& unit_list=(*pi)->units();
 		UnitList::const_iterator i_unit;
-		FOR_EACH(unit_list, i_unit){
+		FOR_EACH(unit_list, i_unit) {
 			terUnitBase* unit = *i_unit;
+            if (unit_filter && unit->unitID() != unit_filter->unitID()) {
+                //Not our unit
+                continue;
+            }
 			//if(unit->alive() && unit->selectAble() && (unit->collisionGroup() & (COLLISION_GROUP_ENEMY | COLLISION_GROUP_SELECTED)))
 			if(unit->alive() && unit->selectAble() && unit->attr().ID != UNIT_ATTRIBUTE_SQUAD){
 				if(unit->avatar() && unit->avatar()->GetModelPoint()){
-					safe_cast<cObjectNodeRoot*>(unit->avatar()->GetModelPoint())->Update();
+					//safe_cast<cObjectNodeRoot*>(unit->avatar()->GetModelPoint())->Update();
 					if(safe_cast<cObjectNode*>(unit->avatar()->GetModelPoint())->Intersect(v0,v1) &&
 						distMin > (dist = unit->position().distance2(v0))){
 							distMin = dist;
@@ -626,8 +636,7 @@ void terUniverse::MakeGenericList(const Vect2f& pos, UnitList& unit_list)
 		}
 	}
 
-	if(unitMin)
-		unit_list.push_back(unitMin);
+	return unitMin;
 }
 
 //---------------------------------------------------
@@ -939,8 +948,7 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 	else
 		remove(setExtention(mission.saveName(), "dat").c_str());
 
-    scan_resource_paths(mission.saveName());
-	return true;
+    return true;
 }
 
 void terUniverse::relaxLoading()
@@ -999,24 +1007,16 @@ void terUniverse::SetActivePlayer(int id)
 	activePlayer()->SetActivePlayer();
 	select.Quant();
 
-	switch(activePlayer()->belligerent()){
-	case BELLIGERENT_EXODUS0:
-	case BELLIGERENT_EXODUS1:
-	case BELLIGERENT_EXODUS2:
-	case BELLIGERENT_EXODUS3:
-	case BELLIGERENT_EXODUS4:
+    BELLIGERENT_FACTION faction = getBelligerentFaction(activePlayer()->belligerent());
+	switch(faction){
+    default:
+	case EXODUS:
 		SNDSetBelligerentIndex(0);
 		break;
-	case BELLIGERENT_HARKBACKHOOD0:
-	case BELLIGERENT_HARKBACKHOOD1:
+	case HARKBACK:
 		SNDSetBelligerentIndex(1);
 		break;
-	case BELLIGERENT_EMPIRE0:
-	case BELLIGERENT_EMPIRE1:
-	case BELLIGERENT_EMPIRE2:
-	case BELLIGERENT_EMPIRE3:
-	case BELLIGERENT_EMPIRE4:
-    case BELLIGERENT_EMPIRE_VICE:
+	case EMPIRE:
 #ifndef _DEMO_
 		SNDSetBelligerentIndex(2);
 #else

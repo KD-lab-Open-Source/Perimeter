@@ -49,22 +49,22 @@
 //#define VK_RWIN           0x5C
 //#define VK_APPS           0x5D
 
-//#define VK_NUMPAD0        0x60
-//#define VK_NUMPAD1        0x61
-//#define VK_NUMPAD2        0x62
-//#define VK_NUMPAD3        0x63
-//#define VK_NUMPAD4        0x64
-//#define VK_NUMPAD5        0x65
-//#define VK_NUMPAD6        0x66
-//#define VK_NUMPAD7        0x67
-//#define VK_NUMPAD8        0x68
-//#define VK_NUMPAD9        0x69
-//#define VK_MULTIPLY       0x6A
+#define VK_NUMPAD0        0x60
+#define VK_NUMPAD1        0x61
+#define VK_NUMPAD2        0x62
+#define VK_NUMPAD3        0x63
+#define VK_NUMPAD4        0x64
+#define VK_NUMPAD5        0x65
+#define VK_NUMPAD6        0x66
+#define VK_NUMPAD7        0x67
+#define VK_NUMPAD8        0x68
+#define VK_NUMPAD9        0x69
+#define VK_MULTIPLY       0x6A
 #define VK_ADD            0x6B
 #define VK_SEPARATOR      0x6C
 #define VK_SUBTRACT       0x6D
 //#define VK_DECIMAL        0x6E
-//#define VK_DIVIDE         0x6F
+#define VK_DIVIDE         0x6F
 #define VK_F1             0x70
 #define VK_F2             0x71
 #define VK_F3             0x72
@@ -90,8 +90,8 @@
 //#define VK_F23            0x86
 //#define VK_F24            0x87
 
-//#define VK_NUMLOCK        0x90
-//#define VK_SCROLL         0x91
+#define VK_NUMLOCK        0x90
+#define VK_SCROLL         0x91
 
 /*
  * VK_L* & VK_R* - left and right Alt, Ctrl and Shift virtual keys.
@@ -125,8 +125,8 @@
 //#define VK_OEM_PLUS		0xBB
 //#define VK_OEM_ALT		0x12
 
-//#define VK_SLASH	0xBF
-//#define VK_BKSLASH	0x5C
+#define VK_SLASH	0xBF
+#define VK_BKSLASH	0x5C
 #define VK_TILDE	0xC0
 //#define VK_LBR		0x5B
 //#define VK_RBR		0x5D
