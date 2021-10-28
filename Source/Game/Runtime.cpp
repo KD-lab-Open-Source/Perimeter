@@ -28,6 +28,7 @@
 #include "Universe.h"
 #include "../resource.h"
 #include "files/files.h"
+#include "Localization.h"
 
 #include <SDL.h>
 #ifdef _WIN32
@@ -552,21 +553,13 @@ cInterfaceRenderDevice* SetGraph()
 
 //--------------------------------
 
-void GameShell::SetFontDirectory()
-{
-	terVisGeneric->SetFontRootDirectory("RESOURCE\\LocData");
-	std::string dir=getLocDataPath();
-	dir+="Fonts";
-	terVisGeneric->SetFontDirectory(dir.c_str());
-}
-
 void HTManager::initGraphics()
 {
     initSourceUIResolution();
 	terLogicGeneric = CreateILogicGeneric();
 	terVisGeneric = CreateIVisGeneric();
 	terVisGeneric->SetMapLevel(terMapLevelLOD);
-	GameShell::SetFontDirectory();
+    terVisGeneric->SetFontRootDirectory(getLocRootPath());
 
 	terVisGeneric->SetEffectLibraryPath("RESOURCE\\FX","RESOURCE\\FX\\TEXTURES");
 
@@ -779,7 +772,7 @@ int main(int argc, char *argv[])
     if (sdlresult < 0) {
         ErrH.Abort("Error initializing SDLNet", XERR_CRITICAL, sdlresult, SDLNet_GetError());
     }
-        
+
     //Do game content detection
     detectGameContent();
 
@@ -1190,44 +1183,4 @@ const char* editTextMultiLine(const char* defaultValue, void* hwnd)
 	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE), static_cast<HWND>(hwnd), DialogProc);
 #endif
 	return editTextString.c_str();
-}
-
-std::string locale;
-std::string localePath;
-
-const std::string& getLocale() {
-    if (locale.empty()) {
-        const char* cmdlineLocale = check_command_line("locale");
-        if (cmdlineLocale) {
-            locale = cmdlineLocale;
-        }
-        if (locale.empty()) {
-            locale = getStringSettings("Locale");
-        }
-        if (locale.empty()) {
-            locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
-            if (locale.empty()) {
-                locale = "English";
-            }
-        }
-        if (locale.empty()
-            || (convert_path_content("Resource/LocData/" + locale).empty())) {
-            //Apparently on Steam the DefaultLanguage is Russian which gives issues when downloading game as non russian
-            //so we try switching it in case we don't found on gamedata, in case English fails use Russian by default
-            if (locale == "English") {
-                locale = "Russian";
-            } else {
-                locale = "English";
-            }
-        }
-        localePath = "Resource/LocData/" + locale + "/";
-    }
-    return locale;
-}
-
-const std::string& getLocDataPath() {
-    if (localePath.empty()) {
-        getLocale();
-    }
-    return localePath;
 }

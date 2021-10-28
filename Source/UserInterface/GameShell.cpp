@@ -44,6 +44,7 @@
 #include "SoundScript.h"
 #include "BelligerentSelect.h"
 #include "files/files.h"
+#include "Localization.h"
 #include <SDL.h>
 
 int terShowFPS = 0;
@@ -902,6 +903,13 @@ void GameShell::EventHandler(SDL_Event& event) {
             break;
     }
 */
+    if (_shellIconManager.isInEditMode() != SDL_IsTextInputActive()) {
+        if (_shellIconManager.isInEditMode()) {
+            SDL_StartTextInput();
+        } else {
+            SDL_StopTextInput();
+        }
+    }
 
     sKey s;
     switch (event.type) {
@@ -977,22 +985,34 @@ void GameShell::EventHandler(SDL_Event& event) {
             s = sKey(key.keysym, true);
             if (key.state == SDL_PRESSED) {
                 KeyPressed(s);
-            } else {
-                KeyUnpressed(s);
-                
-                //Simulate WM_CHAR
-                SDL_Keycode sym = key.keysym.sym;
-                if ((_bMenuMode || sym == SDLK_BACKSPACE) && _shellIconManager.isInEditMode()) {
-                    //TODO Hacky, check if there is better way
-                    if (sym <= 0xFF) {
-                        char c = static_cast<char>(sym & 0xFF);
-                        if (s.shift) {
-                            c = toupper(c);
-                        }
-                        _shellIconManager.OnChar(c);
+
+                //We need to send certain keys when editing as SDL_TEXTINPUT don't receive them
+                if (_shellIconManager.isInEditMode()) {
+                    switch (s.key) {
+                        case VK_BACK:
+                        case VK_RETURN:
+                            _shellIconManager.OnChar(static_cast<char>(s.key));
+                            break;
+                        default:
+                            break;
                     }
                 }
+            } else {
+                KeyUnpressed(s);
             }
+            break;
+        }
+        case SDL_TEXTINPUT: {
+            //NOTE: _shellIconManager.isInEditMode() is implicit here as SDL2 edit mode is changed accordingly
+            //printf("TI %s\n", event.text.text);
+            char key = getLocaleChar(event.text.text);
+            if (key) {
+                _shellIconManager.OnChar(key);
+            }
+            break;
+        }
+        case SDL_TEXTEDITING: {
+            //printf("TE %s S %d L %d\n", event.edit.text,  event.edit.start, event.edit.length);
             break;
         }
         case SDL_WINDOWEVENT: {

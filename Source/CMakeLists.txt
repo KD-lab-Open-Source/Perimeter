@@ -221,6 +221,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Util/SynchroTimer.cpp
         Util/SystemUtil.cpp
         Util/XPrmArchive.cpp
+        Util/Localization.cpp
         UserInterface/BGScene.cpp
         UserInterface/chaos.cpp
         UserInterface/controls.cpp

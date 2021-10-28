@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Font.h"
 #include "../3dx/Lib3dx.h"
+#include "Localization.h"
 
 void Init3dxshader();
 void Done3dxshader();
@@ -690,37 +691,37 @@ void cVisGeneric::SetFontRootDirectory(const char* dir)
 	font_root_directory=dir;
 }
 
-void cVisGeneric::SetFontDirectory(const char* dir)
-{
-	font_directory=dir;
-}
-
 void cVisGeneric::ReloadAllFont()
 {
 	MTG();
 	for(int i=0;i<fonts.size();i++)
 	{
-		fonts[i]->Reload(font_root_directory.c_str(),font_directory.c_str());
+		fonts[i]->Reload(font_root_directory.c_str());
 	}
 }
 
-cFont* cVisGeneric::CreateFont(const char *TextureFileName,int h,bool silentErr)
+cFont* cVisGeneric::CreateFont(const char* TextureFileName, int h, bool silentErr, std::string locale)
 {
-	if(TextureFileName==0||TextureFileName[0]==0) return NULL;
+	if(TextureFileName==nullptr||TextureFileName[0]==0) return nullptr;
+    
+    if (locale.empty()) {
+        locale = getLocale();
+    }
 
 	std::vector<cFontInternal*>::iterator it;
 	FOR_EACH(fonts,it)
 	{
 		cFontInternal* f=*it;
-		if(stricmp(f->font_name.c_str(),TextureFileName)==0 &&
-			f->GetStatementHeight()==h)
+		if(stricmp(f->font_name.c_str(),TextureFileName)==0
+        && f->locale==locale
+        && f->GetStatementHeight()==h)
 		{
 			return new cFont(f);
 		}
 	}
 
 	cFontInternal *UObj=new cFontInternal;
-	if(!UObj->Create(font_root_directory.c_str(),font_directory.c_str(),TextureFileName,h,silentErr))
+	if(!UObj->Create(font_root_directory,locale,TextureFileName,h,silentErr))
 	{
 		delete UObj;
 		return NULL;

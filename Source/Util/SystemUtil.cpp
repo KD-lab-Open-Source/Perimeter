@@ -130,84 +130,87 @@ bool isPressed(uint32_t key) {
 }
 
 sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
-    fullkey = 0;
+    key = 0;
     switch (keysym.sym) {
         case SDLK_LGUI:
         case SDLK_RGUI:
         case SDLK_PRINTSCREEN:
             //Ignore these
             break;
-        case SDLK_BACKSPACE:    fullkey = VK_BACK; break;
-        case SDLK_TAB:          fullkey = VK_TAB; break;
+        case SDLK_BACKSPACE:    key = VK_BACK; break;
+        case SDLK_TAB:          key = VK_TAB; break;
         case SDLK_KP_ENTER:
-        case SDLK_RETURN:       fullkey = VK_RETURN; break;
+        case SDLK_RETURN:       key = VK_RETURN; break;
         case SDLK_LSHIFT:
-        case SDLK_RSHIFT:       fullkey = VK_SHIFT; break;
+        case SDLK_RSHIFT:       key = VK_SHIFT; break;
         case SDLK_LCTRL:
-        case SDLK_RCTRL:        fullkey = VK_CONTROL; break;
+        case SDLK_RCTRL:        key = VK_CONTROL; break;
         case SDLK_LALT:
-        case SDLK_RALT:         fullkey = VK_MENU; break;
-        case SDLK_PAUSE:        fullkey = VK_PAUSE; break;
-        case SDLK_CAPSLOCK:     fullkey = VK_CAPITAL; break;
-        case SDLK_ESCAPE:       fullkey = VK_ESCAPE; break;
-        case SDLK_SPACE:        fullkey = VK_SPACE; break;
-        case SDLK_PAGEUP:       fullkey = VK_PRIOR; break;
-        case SDLK_PAGEDOWN:     fullkey = VK_NEXT; break;
-        case SDLK_END:          fullkey = VK_END; break;
-        case SDLK_HOME:         fullkey = VK_HOME; break;
-        case SDLK_LEFT:         fullkey = VK_LEFT; break;
-        case SDLK_UP:           fullkey = VK_UP; break;
-        case SDLK_RIGHT:        fullkey = VK_RIGHT; break;
-        case SDLK_DOWN:         fullkey = VK_DOWN; break;
-        case SDLK_INSERT:       fullkey = VK_INSERT; break;
-        case SDLK_DELETE:       fullkey = VK_DELETE; break;
-        case SDLK_F1:           fullkey = VK_F1; break;
-        case SDLK_F2:           fullkey = VK_F2; break;
-        case SDLK_F3:           fullkey = VK_F3; break;
-        case SDLK_F4:           fullkey = VK_F4; break;
-        case SDLK_F5:           fullkey = VK_F5; break;
-        case SDLK_F6:           fullkey = VK_F6; break;
-        case SDLK_F7:           fullkey = VK_F7; break;
-        case SDLK_F8:           fullkey = VK_F8; break;
-        case SDLK_F9:           fullkey = VK_F9; break;
-        case SDLK_F10:          fullkey = VK_F10; break;
-        case SDLK_F11:          fullkey = VK_F11; break;
-        case SDLK_F12:          fullkey = VK_F12; break;
-        case SDLK_BACKQUOTE:    fullkey = VK_TILDE; break;
-        case SDLK_SLASH:        fullkey = VK_SLASH; break;
-        case SDLK_BACKSLASH:    fullkey = VK_BKSLASH; break;
-        case SDLK_KP_0:         fullkey = VK_NUMPAD0; break;
-        case SDLK_KP_1:         fullkey = VK_NUMPAD1; break;
-        case SDLK_KP_2:         fullkey = VK_NUMPAD2; break;
-        case SDLK_KP_3:         fullkey = VK_NUMPAD3; break;
-        case SDLK_KP_4:         fullkey = VK_NUMPAD4; break;
-        case SDLK_KP_5:         fullkey = VK_NUMPAD5; break;
-        case SDLK_KP_6:         fullkey = VK_NUMPAD6; break;
-        case SDLK_KP_7:         fullkey = VK_NUMPAD7; break;
-        case SDLK_KP_8:         fullkey = VK_NUMPAD8; break;
-        case SDLK_KP_9:         fullkey = VK_NUMPAD9; break;
-        case SDLK_KP_MULTIPLY:  fullkey = VK_MULTIPLY; break;
-        case SDLK_KP_DIVIDE:    fullkey = VK_DIVIDE; break;
-        case SDLK_NUMLOCKCLEAR: fullkey = VK_NUMLOCK; break;
-        case SDLK_SCROLLLOCK:   fullkey = VK_SCROLL; break;
+        case SDLK_RALT:         key = VK_MENU; break;
+        case SDLK_PAUSE:        key = VK_PAUSE; break;
+        case SDLK_CAPSLOCK:     key = VK_CAPITAL; break;
+        case SDLK_ESCAPE:       key = VK_ESCAPE; break;
+        case SDLK_SPACE:        key = VK_SPACE; break;
+        case SDLK_PAGEUP:       key = VK_PRIOR; break;
+        case SDLK_PAGEDOWN:     key = VK_NEXT; break;
+        case SDLK_END:          key = VK_END; break;
+        case SDLK_HOME:         key = VK_HOME; break;
+        case SDLK_LEFT:         key = VK_LEFT; break;
+        case SDLK_UP:           key = VK_UP; break;
+        case SDLK_RIGHT:        key = VK_RIGHT; break;
+        case SDLK_DOWN:         key = VK_DOWN; break;
+        case SDLK_INSERT:       key = VK_INSERT; break;
+        case SDLK_DELETE:       key = VK_DELETE; break;
+        case SDLK_F1:           key = VK_F1; break;
+        case SDLK_F2:           key = VK_F2; break;
+        case SDLK_F3:           key = VK_F3; break;
+        case SDLK_F4:           key = VK_F4; break;
+        case SDLK_F5:           key = VK_F5; break;
+        case SDLK_F6:           key = VK_F6; break;
+        case SDLK_F7:           key = VK_F7; break;
+        case SDLK_F8:           key = VK_F8; break;
+        case SDLK_F9:           key = VK_F9; break;
+        case SDLK_F10:          key = VK_F10; break;
+        case SDLK_F11:          key = VK_F11; break;
+        case SDLK_F12:          key = VK_F12; break;
+        case SDLK_BACKQUOTE:    key = VK_TILDE; break;
+        case SDLK_SLASH:        key = VK_SLASH; break;
+        case SDLK_BACKSLASH:    key = VK_BKSLASH; break;
+        case SDLK_KP_0:         key = VK_NUMPAD0; break;
+        case SDLK_KP_1:         key = VK_NUMPAD1; break;
+        case SDLK_KP_2:         key = VK_NUMPAD2; break;
+        case SDLK_KP_3:         key = VK_NUMPAD3; break;
+        case SDLK_KP_4:         key = VK_NUMPAD4; break;
+        case SDLK_KP_5:         key = VK_NUMPAD5; break;
+        case SDLK_KP_6:         key = VK_NUMPAD6; break;
+        case SDLK_KP_7:         key = VK_NUMPAD7; break;
+        case SDLK_KP_8:         key = VK_NUMPAD8; break;
+        case SDLK_KP_9:         key = VK_NUMPAD9; break;
+        case SDLK_KP_MULTIPLY:  key = VK_MULTIPLY; break;
+        case SDLK_KP_DIVIDE:    key = VK_DIVIDE; break;
+        case SDLK_NUMLOCKCLEAR: key = VK_NUMLOCK; break;
+        case SDLK_SCROLLLOCK:   key = VK_SCROLL; break;
         case SDLK_KP_PLUS:
-        case SDLK_PLUS:         fullkey = VK_ADD; break;
-        case SDLK_SEPARATOR:    fullkey = VK_SEPARATOR; break;
+        case SDLK_PLUS:         key = VK_ADD; break;
+        case SDLK_SEPARATOR:    key = VK_SEPARATOR; break;
         case SDLK_KP_MINUS:
-        case SDLK_MINUS:        fullkey = VK_SUBTRACT; break;
+        case SDLK_MINUS:        key = VK_SUBTRACT; break;
         default:
             //Apparently game uses uppercase ASCII codes for keys
             uint8_t byte = keysym.sym & 0xFF;
             if (byte >= 'a' && byte <= 'z') {
-                fullkey = toupper(byte);
+                key = toupper(byte);
             } else if (byte >= '0' && byte <= '9') {
-                fullkey = byte;
+                key = byte;
             } else {
 #ifdef PERIMETER_DEBUG
                 printf("Unknown SDL key requested scan %d sym %d\n", keysym.scancode, keysym.sym);
 #endif
             }
     }
+    
+    //store base key at fullkey before applying extras
+    fullkey = key;
     
     //Add modifiers
     auto mod = keysym.mod;
@@ -240,8 +243,8 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         menu |= 1;
 }
 
-sKey::sKey(int fullkey_, bool set_by_async_funcs) {
-    fullkey = fullkey_;
+sKey::sKey(int key_, bool set_by_async_funcs) {
+    fullkey = key = key_;
     if(set_by_async_funcs){
         ctrl = isControlPressed();
         shift = isShiftPressed();

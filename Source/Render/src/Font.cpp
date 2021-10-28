@@ -304,11 +304,12 @@ bool cFontImage::Load(const char* fname)
 bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+=PATH_SEP;
-	ffont=cache_dir;ffont+=PATH_SEP;
+    std::string cache_path = convert_path_content(cache_dir, true);
+	ftga=cache_path;ftga+=PATH_SEP;
+	ffont=cache_path;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
-    create_directories(cache_dir);
+    create_directories(cache_path.c_str());
 
 	if(!fnt.Save(ftga.c_str()))
 		return false;
@@ -328,8 +329,9 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 bool cFontInternal::Load(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+=PATH_SEP;
-	ffont=cache_dir;ffont+=PATH_SEP;
+    std::string cache_path = convert_path_content(cache_dir, true);
+	ftga=cache_path;ftga+=PATH_SEP;
+	ffont=cache_path;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
 
@@ -356,66 +358,39 @@ void str_replace_slash(char* str)
 			*p='_';
 }
 
-bool cFontInternal::Create(const char* root_dir, const char* language_dir, const char* fname, int h, bool silentErr)
+bool cFontInternal::Create(const std::string& root_dir, const std::string& locale_, const std::string& fname, int h, bool silentErr)
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
     xassert(0<ScreenY);
 
 	int height=(int)round((float)(h*ScreenY)/768.0f);
 	statement_height=h;
+    locale=locale_;
+    font_name=fname;
+    _strlwr(font_name.data());
 
-	std::string prefix;
-	std::string texture_name;
-	std::string fontname;
+    std::string font_path = locale + PATH_SEP + "Fonts" + PATH_SEP;
+    
+    //Create texture name for caching
+    std::string texture_name = font_path + font_name + "-" + std::to_string(height);
+    _strlwr(texture_name.data());
+    str_replace_slash(texture_name.data());
+    
+    //Get path for font
+    font_path = root_dir + font_path + font_name + ".font";
 
-	if(root_dir)
+	if(!CreateTexture(texture_name.c_str(),font_path.c_str(),height))
 	{
-		prefix = convert_path_native(root_dir);
-		terminate_with_char(prefix, PATH_SEP);
-		str_replace_slash(prefix.data());
-		_strlwr(prefix.data());
-	}
-/* TODO remove?
-	if(root_dir)
-	{
-		strcpy(texture_name,root_dir);
-		str_add_slash(texture_name);
-	}
-*/
-	if(language_dir)
-	{
-		texture_name = convert_path_native(language_dir);
-        terminate_with_char(texture_name, PATH_SEP);
-	}
-	
-
-	fontname = texture_name + fname + ".font";
-
-    texture_name += std::string(fname) + "-" + std::to_string(height);
-	_strlwr(texture_name.data());
-	str_replace_slash(texture_name.data());
-	// @caiiiycuk: need to check
-	const char *p;
-	const char *c;
-	for(p=prefix.c_str(),c=texture_name.c_str();*p;p++,c++)
-	{
-		if(*p!=*c)
-			break;
-	}
-
-	if(!CreateTexture(c,fontname.c_str(),height))
-	{
-		if(!silentErr) VisError<<"Cannot load font: "<< fontname <<VERR_END;
+		if(!silentErr) VisError<<"Cannot load font: "<< font_path <<VERR_END;
 		return false;
 	}
 
-	font_name=fname;
-	_strlwr(font_name.data());
 	return true;
 }
 
-bool cFontInternal::Reload(const char* root_dir, const char* language_dir)
+bool cFontInternal::Reload(const char* root_dir)
 {
+    std::string l=locale;
 	std::string f=font_name;
-	return Create(root_dir,language_dir,f.c_str(),GetStatementHeight());
+	return Create(root_dir,l,f,GetStatementHeight());
 }

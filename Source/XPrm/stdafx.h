@@ -12,8 +12,6 @@
 //  or project specific include files that are used frequently, but
 //      are changed infrequently
 
-#include "tweaks.h"
-
 #ifdef _AFXDLL
 
 #include <windows.h>
@@ -29,6 +27,7 @@
 #include <time.h>
 
 // STL
+#include <string>
 #include <vector> 
 #include <list>
 #include <string>

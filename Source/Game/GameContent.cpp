@@ -10,6 +10,7 @@ namespace scripts_export {
 #include "Runtime.h"
 #include "BelligerentSelect.h"
 #include "qd_textdb.h"
+#include "Localization.h"
 
 #include <map>
 #include <set>

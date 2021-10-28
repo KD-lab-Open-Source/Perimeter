@@ -56,7 +56,7 @@ struct sKey {
 
     explicit sKey(SDL_Keysym keysym, bool set_by_async_funcs = false);
 
-	sKey(int fullkey_ = 0, bool set_by_async_funcs = false);
+	sKey(int key_ = 0, bool set_by_async_funcs = false);
 	
 	bool pressed() const {
 		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(menu ^ isAltPressed());

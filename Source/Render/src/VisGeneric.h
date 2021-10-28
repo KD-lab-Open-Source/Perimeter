@@ -49,12 +49,11 @@ public:
 	//Предполагаестя, что все фонты лежат в одной директории,
 	//а SetFontDirectory и ReloadAllFont переключает языки 
 	void SetFontRootDirectory(const char* dir);//"Resource\fonts\"
-	void SetFontDirectory(const char* language_dir);//russian,english и т.д.
 	void ReloadAllFont();
 
 	//Создаёт фонт. height - высота фонта в логических единицах.
 	//в 1024x768 логическая единица равна пикселю.
-	virtual cFont* CreateFont(const char *TextureFileName,int height=20, bool silentErr=0);
+    cFont* CreateFont(const char *TextureFileName,int height=20, bool silentErr=0, std::string locale="");
 	virtual cFont* CreateDebugFont();
 
 	// функции для работы со спрайтами
@@ -148,7 +147,6 @@ private:
 	cObjLibrary				*ObjLibrary;
 	class cLib3dx			*Lib3dx;
 	std::string font_root_directory;
-	std::string font_directory;
 	std::vector<class cFontInternal*>	fonts;
 	friend class cD3DRender;
 

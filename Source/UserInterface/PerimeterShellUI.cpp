@@ -17,6 +17,7 @@
 #include "../Sound/PerimeterSound.h"
 #include "../Game/MusicManager.h"
 #include "files/files.h"
+#include "Localization.h"
 
 #define _RELEASE(p) if(p) {(p)->Release(); (p) = 0;}
 
@@ -3884,17 +3885,18 @@ void ChatWindow::Clear()
 	updateScroller();
 }
 
-void ChatWindow::AddString(const char* cb)
+void ChatWindow::AddString(const LocalizedText* localizedText)
 {
-	int break_len = GetStringBreak(cb);
+    //TODO deal with locale
+    std::string text = localizedText->text;
+	int break_len = GetStringBreak(text);
 
 	if(break_len != -1){
-		std::string text = cb;
 		std::string text1 = text.substr(break_len, text.size() - break_len);
 
-		int break_len1 = GetStringBreak(text1.c_str());
+		int break_len1 = GetStringBreak(text1);
 		if(break_len1 != -1){
-			break_len1 = GetStringBreak(cb, true);
+			break_len1 = GetStringBreak(text, true);
 			m_data.push_back(text.substr(0, break_len1));
 			m_data.push_back(text.substr(break_len1, text.size() - break_len1));
 		}
@@ -3903,23 +3905,23 @@ void ChatWindow::AddString(const char* cb)
 			m_data.push_back(text1);
 		}
 	}
-	else 
-		m_data.push_back(cb);
+	else {
+        m_data.push_back(localizedText->text);
+    }
 
 	updateScroller();
 }
 
-int ChatWindow::GetStringBreak(const char* str, bool ignore_spaces) const
+int ChatWindow::GetStringBreak(const std::string& str, bool ignore_spaces) const
 {
 	terRenderDevice->SetFont(m_hFont);
 
 	float x = sx - vScrollSX - txtdx;
+    const char* textStart = str.c_str();
 
-	if(terRenderDevice->GetFontLength(str) > x){
+	if(terRenderDevice->GetFontLength(textStart) > x){
 		sColor4c diffuse(0,0,0,0);
 
-		std::string text = str;
-		const char* textStart = text.c_str();
 
 		float width = 0;
 		int last_space = -1;
@@ -3937,7 +3939,7 @@ int ChatWindow::GetStringBreak(const char* str, bool ignore_spaces) const
 		}
 	}
 
-	terRenderDevice->SetFont(0);
+	terRenderDevice->SetFont(nullptr);
 
 	return -1;
 }
@@ -5828,9 +5830,10 @@ CChatInfoWindow::~CChatInfoWindow()
 	_RELEASE(m_hFont);
 }
 
-void CChatInfoWindow::addString(const std::string& newString) {
+void CChatInfoWindow::addString(const LocalizedText* newString) {
+    //TODO deal with locale
 	textData += '\n';
-	textData += newString;
+	textData += newString->text; 
 }
 
 void CChatInfoWindow::draw(int bFocus) {

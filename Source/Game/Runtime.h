@@ -62,7 +62,5 @@ const char* popupMenu(std::vector<const char*> items); // returns zero if cancel
 int popupMenuIndex(std::vector<const char*> items); // returns -1 if cancel
 const char* editText(const char* defaultValue);
 const char* editTextMultiLine(const char* defaultValue, void* hwnd);
-const std::string& getLocale();
-const std::string& getLocDataPath();
 
 #endif //__RUNTIME_H__

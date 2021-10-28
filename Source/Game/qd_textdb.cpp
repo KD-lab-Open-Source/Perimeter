@@ -230,7 +230,7 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
 void qdTextDB::load_supplementary_texts(const std::string& lang) {
     //Load per language texts
     //TODO
-    if (lang == "Russian") {
+    if (lang == "russian") {
         load_lines({
             
         }, false);

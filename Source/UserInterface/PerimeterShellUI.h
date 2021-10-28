@@ -21,6 +21,7 @@ enum
 };
 
 class CShellWindow;
+struct LocalizedText;
 
 typedef void(*EVENTPROC)(CShellWindow* pWnd, InterfaceEventCode code, int param);
 typedef int(*DYNCALLBACK)(float,float);
@@ -976,7 +977,7 @@ class ChatWindow : public CShellWindow {
 	int CheckClick(float _x,float  _y);
 	/// возвращает длину части строки, которая влезет в окно по ширине
 	/// если строка войдёт целиком, то возвращает -1
-	int GetStringBreak(const char* str, bool ignore_spaces = false) const;
+	int GetStringBreak(const std::string& str, bool ignore_spaces = false) const;
 
 public:
 	ChatWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
@@ -985,7 +986,7 @@ public:
 	void updateScroller();
 
 	void Clear();
-	void AddString(const char* cb);
+	void AddString(const LocalizedText* text);
 
 	int GetRowCount(){
 		return m_data.size();
@@ -1419,7 +1420,7 @@ public:
 	virtual int  HitTest(float _x, float _y){
 		return 0;
 	}
-	void addString(const std::string& newString);
+	void addString(const LocalizedText* newString);
 	void draw(int bFocus);
 };
 
@@ -1751,7 +1752,7 @@ public:
 
 	void onSizeChanged();
 
-	void addChatString(const std::string& newChatString);
+	void addChatString(const LocalizedText* newChatString);
 
 	void showHintDisconnect(const std::string& players, int showTime, bool disconnected);
 	void showHint(const char* text, int showTime, ActionTask::Type actionType = ActionTask::ASSIGNED);

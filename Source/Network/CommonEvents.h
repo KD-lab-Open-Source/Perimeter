@@ -309,16 +309,18 @@ public:
 class netCommand4G_ChatMessage : public netCommandGeneral
 {
 public:
-	netCommand4G_ChatMessage(const bool clanOnly_, const std::string& text_) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
+	netCommand4G_ChatMessage(const bool clanOnly_, const std::string& text_, const std::string& locale_) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
         playerID = -1; //Added by host
         clanOnly = clanOnly_;
-		text = text_;
+        text = text_;
+        locale = locale_;
 	}
     
 	netCommand4G_ChatMessage(XBuffer& in) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
         in.read(&playerID, sizeof(playerID));
         in.read(&clanOnly, sizeof(clanOnly));
 		in > StringInWrapper(text);
+        in > StringInWrapper(locale);
 	}
     
     ~netCommand4G_ChatMessage() = default;
@@ -327,11 +329,13 @@ public:
         out.write(&playerID, sizeof(playerID));
         out.write(&clanOnly, sizeof(clanOnly));
 		out < StringOutWrapper(text);
+        out < StringOutWrapper(locale);
 	}
     
 	int playerID;
     bool clanOnly;
-	std::string text;
+    std::string text;
+    std::string locale;
 };
 
 ////////////////////////////////////////////////////////////////////////////

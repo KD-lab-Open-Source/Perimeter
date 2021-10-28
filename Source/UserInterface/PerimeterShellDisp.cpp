@@ -25,6 +25,7 @@
 #include "qd_textdb.h"
 #include <stdarg.h>     // for va_start
 #include "GameContent.h"
+#include "Localization.h"
 
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
@@ -862,7 +863,7 @@ CShellIconManager::~CShellIconManager()
 	}
 }
 
-void CShellIconManager::addChatString(const std::string& newChatString) {
+void CShellIconManager::addChatString(const LocalizedText* newChatString) {
 	CChatInfoWindow* wnd;
 	if (cutSceneModeOn) {
 		wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
@@ -891,8 +892,8 @@ void CShellIconManager::showHintDisconnect(const std::string& players, int showT
 		static char tempBuffer[bufferSize];
 		sprintf(tempBuffer, res.c_str(), players.c_str());
 
-
-		wnd->addString(tempBuffer);
+        LocalizedText text(tempBuffer);
+		wnd->addString(&text);
 		wnd->Show(true);
 		wnd->updateTime(showTime);
 	}
@@ -1695,12 +1696,12 @@ void CShellIconManager::SetFocus(int id)
 
 int CShellIconManager::IsFocusControl()
 {
-	return _bMenuMode && (m_pLastClicked != 0);
+	return _bMenuMode && (m_pLastClicked != nullptr);
 }
 
 bool CShellIconManager::isInEditMode() const
 {
-	return (m_pLastClicked != 0 && m_pLastClicked->isEditWindow());
+	return (m_pLastClicked != nullptr && m_pLastClicked->isEditWindow());
 }
 
 void CShellIconManager::SetModalWnd(int id)

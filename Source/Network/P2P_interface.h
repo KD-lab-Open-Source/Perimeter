@@ -29,8 +29,9 @@
  a NetConnectionInfo to provide the details about the client such as the version, system arch, player name, password etc
  
  The server must always respond with NetConnectionInfoResponse even when the connection can't be kept because is already
- maxed. This lets client know what the reason of refusal was and to inform the player. In case of success
- the server sends NetConnectionInfoResponse with OK and the client is added into server list of players.
+ maxed or other reasons such as unstable connection or incompatible arch. This lets client know what the reason of
+ refusal was and to inform the player. In case of success the server sends NetConnectionInfoResponse with OK and the
+ client is added into server list of players.
 
  Current network stack is the following:
  
@@ -548,7 +549,7 @@ public:
 	bool clientInPacketPause;
 
 	//Chat
-	void chatMessage(bool clanOnly, const char* str);
+	void chatMessage(bool clanOnly, const std::string& text, const std::string& locale);
 
     //NetConnection stuff
     void handleIncomingClientConnection(NetConnection* connection);

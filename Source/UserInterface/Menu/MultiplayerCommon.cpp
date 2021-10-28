@@ -4,6 +4,7 @@
 #include "PerimeterShellUI.h"
 #include "MessageBox.h"
 #include "../../HT/ht.h"
+#include "Localization.h"
 #include "MultiplayerCommon.h"
 
 //This file handles mostly ingame multiplayer stuff but some parts are shared with main menu
@@ -222,7 +223,7 @@ void GameShell::generalErrorOccured(GeneralErrorType error) {
 
 void chatWindowInput(CChatInGameEditWindow* chatInput, bool lobby) {
     std::string strToSay = (lobby ? "" : chatInput->getModePostfix()) + ": " + chatInput->getText();
-    gameShell->getNetClient()->chatMessage(lobby ? false : chatInput->alliesOnlyMode, strToSay.c_str());
+    gameShell->getNetClient()->chatMessage(lobby ? false : chatInput->alliesOnlyMode, strToSay, getLocale());
     chatInput->SetText("");
 }
 
@@ -246,21 +247,21 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
 }
 
 
-std::string toChatStr;
+LocalizedText toChatText;
 
 int addStringToChatWindowQuant( float, float ) {
     ChatWindow* chatWnd = (ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT);
-    chatWnd->AddString(toChatStr.c_str());
+    chatWnd->AddString(&toChatText);
     return 0;
 }
 
 int addStringToChatHintWindowQuant( float, float ) {
-    _shellIconManager.addChatString(toChatStr);
+    _shellIconManager.addChatString(&toChatText);
     return 0;
 }
 
-void GameShell::addStringToChatWindow(const std::string& newString) {
-    toChatStr = newString;
+void GameShell::addStringToChatWindow(const std::string& newString, const std::string& locale) {
+    toChatText.set(newString, locale);
     if (_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT)) {
         _shellIconManager.AddDynamicHandler( addStringToChatWindowQuant, CBCODE_QUANT );
     } else {

@@ -257,7 +257,7 @@ public:
 
 	void abnormalNetCenterTermination();
 
-	void addStringToChatWindow(const std::string& newString);
+	void addStringToChatWindow(const std::string& newString, const std::string& locale);
 
 	//-----end of network function----
 
@@ -265,8 +265,6 @@ public:
 
 	void setCutSceneMode(bool on, bool animated = true);
 	bool isCutSceneMode();
-
-	static void SetFontDirectory();
 
 	void prepareForInGameMenu();
 

@@ -5,6 +5,7 @@
 #include "GameShellSq.h"
 #include "qd_textdb.h"
 #include "tx3d.hpp"
+#include "Localization.h"
 
 extern GameShell* gameShell;
 extern cInterfaceRenderDevice* terRenderDevice;
