@@ -443,10 +443,11 @@ public:
 	bool AddClientToMigratedHost(const NETID _netid, unsigned int _curLastQuant, unsigned int _confirmQuant);
 
 
-	MissionDescription curMD; //1t
-	MissionDescription& getCurrentMissionDescription(void){
-		return curMD;
+	MissionDescription lobbyMissionDescription;
+	const MissionDescription& getLobbyMissionDescription() {
+		return lobbyMissionDescription;
 	};
+
 	unsigned int m_numberGameQuant; //Кванты на хосте Кванты считаются с 1-цы!
 	void HostReceiveQuant();
 	void ClientPredReceiveQuant();

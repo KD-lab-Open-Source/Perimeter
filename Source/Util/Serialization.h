@@ -380,11 +380,12 @@ public:
 		value_ = value; zeroPointer_ = false; return *this; 
 	}
 	operator const char*() const { 
-		return !zeroPointer_ ? value_.c_str() : 0; 
+		return zeroPointer_ ? nullptr : value_.c_str(); 
 	}
 
 	std::string& value() { return value_; }
 	const std::string& value() const { return value_; }
+    bool empty() const { return zeroPointer_ ? true : value_.empty() ; }
 
 private:
 	std::string value_;

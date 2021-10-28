@@ -372,12 +372,12 @@ void PNetCenter::UpdateBattleData()
 
 void PNetCenter::UpdateCurrentMissionDescription4C()
 {
-	MissionDescription curMD=hostMissionDescription;
-	for(int i=0; i<curMD.playerAmountScenarioMax; i++){
-		if(curMD.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-			curMD.activePlayerID=curMD.playersData[i].playerID;
-			netCommand4C_CurrentMissionDescriptionInfo nccmd(curMD);
-			SendEvent(nccmd, curMD.playersData[i].netid);
+	MissionDescription md=hostMissionDescription;
+	for(int i=0; i<md.playerAmountScenarioMax; i++){
+		if(md.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+			md.activePlayerID=md.playersData[i].playerID;
+			netCommand4C_CurrentMissionDescriptionInfo nccmd(md);
+			SendEvent(nccmd, md.playersData[i].netid);
 		}
 	}
 }

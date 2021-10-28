@@ -20,10 +20,10 @@ void loadMultiplayerList() {
     }
 }
 
-int getMultiplayerMapNumber(const std::string& saveName) {
-    for (int i = 0, s = multiplayerMaps.size(); i < s; i++) {
-        if (saveName == multiplayerMaps[i].saveName()) {
-            return i;
+int getMultiplayerMapNumber(const std::string& missionName) {
+    for (uint32_t i = 0, s = multiplayerMaps.size(); i < s; i++) {
+        if (missionName == multiplayerMaps[i].missionName()) {
+            return static_cast<int>(i);
         }
     }
     return -1;
@@ -85,8 +85,7 @@ int multiplayerMapNotFoundQuant(float, float ) {
 }
 
 void GameShell::MultiplayerGameStart(const MissionDescription& mission) {
-//	fout < "LANGameStart()\n";
-    if ( !isWorldIDValid(mission.worldID()) || getMultiplayerMapNumber(mission.saveName()) == -1 ) {
+    if ( !isWorldIDValid(mission.worldID()) || getMultiplayerMapNumber(mission.missionName()) == -1 ) {
         _shellIconManager.AddDynamicHandler(multiplayerMapNotFoundQuant, CBCODE_QUANT);
     } else {
         missionToExec = mission;

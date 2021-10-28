@@ -1181,7 +1181,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 	case 'S':
 		if(!missionEditor()){
-			std::string name = CurrentMission.saveName();
+			std::string name = CurrentMission.savePathContent();
 			size_t pos = name.rfind(PATH_SEP);
 			if(pos != std::string::npos)
 				name.erase(0, pos + 1);
@@ -1191,7 +1191,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		break;
 
 	case 'S' | KBD_CTRL: {
-		std::string saveName = CurrentMission.saveName();
+		std::string saveName = CurrentMission.savePathContent();
 		std::string savesDir = UserSingleProfile::getAllSavesDirectory();
 		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
 			size_t pos = saveName.rfind(convert_path_content("RESOURCE") + PATH_SEP);
@@ -1203,7 +1203,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		}
 
 	case 'O' | KBD_CTRL: {
-		std::string saveName = CurrentMission.saveName();
+		std::string saveName = CurrentMission.savePathKey();
         std::string savesDir = UserSingleProfile::getAllSavesDirectory();
 		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
 			size_t pos = saveName.rfind(convert_path_content("RESOURCE") + PATH_SEP);
@@ -2616,7 +2616,7 @@ void GameShell::editParameters()
 		}
 	}
 	else if(item == mission){
-		if(EditArchive().edit(savePrm().manualData, CurrentMission.saveName())){
+		if(EditArchive().edit(savePrm().manualData, CurrentMission.savePathContent().c_str())){
 			SavePrm data;
 			CurrentMission.loadMission(data);
 			data.manualData = manualData();
@@ -2624,7 +2624,7 @@ void GameShell::editParameters()
 		}
 	}
 	else if(item == missionAll){
-		if(EditArchive().edit(savePrm(), CurrentMission.saveName())){
+		if(EditArchive().edit(savePrm(), CurrentMission.savePathContent().c_str())){
 			SavePrm data = savePrm();
 			CurrentMission.saveMission(data, false);
 		}

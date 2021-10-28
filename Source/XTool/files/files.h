@@ -87,10 +87,10 @@ public:
 void split_path_parent(const std::string& path, std::string& parent, std::string* filename = nullptr);
 
 //Converts Windows/POSIX to native path
-std::string convert_path_native(const char* path);
+std::string convert_path_native(const std::string& path);
 
 //Do a conversion for Windows -> POSIX paths
-std::string convert_path_posix(const char* path);
+std::string convert_path_posix(const std::string& path);
 
 //Do a conversion from path key to filesystem entry path_content
 std::string convert_path_content(const std::string& path, bool parent_only = false);

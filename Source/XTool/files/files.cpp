@@ -45,7 +45,7 @@ void filesystem_entry::set(filesystem_entry* entry) {
 
 ///Prepares path to remove source path 
 void prepare_path(std::string& path, const std::string& source_path) {
-    path = convert_path_native(path.c_str());
+    path = convert_path_native(path);
     if (path == "." || path == source_path) {
         path.clear();
     }
@@ -68,7 +68,7 @@ void prepare_path(std::string& path, const std::string& source_path) {
 }
 
 void split_path_parent(const std::string& path, std::string& parent, std::string* filename) {
-    std::filesystem::path path_fs(path);
+    std::filesystem::path path_fs(convert_path_native(path));
     parent = path_fs.parent_path().string();
     if (parent.empty()) {
         parent = content_root_path;
@@ -78,9 +78,9 @@ void split_path_parent(const std::string& path, std::string& parent, std::string
     }
 }
 
-std::string convert_path_native(const char* path) {
+std::string convert_path_native(const std::string& path) {
     std::string conv;
-    size_t size = strlen(path);
+    size_t size = path.size();
     for (int i = 0; i < size; ++i) {
 #ifdef _WIN32
         conv.push_back(path[i] == '/' ? PATH_SEP : path[i]);
@@ -91,9 +91,9 @@ std::string convert_path_native(const char* path) {
     return conv;
 }
 
-std::string convert_path_posix(const char* path) {
+std::string convert_path_posix(const std::string& path) {
     std::string conv;
-    size_t size = strlen(path);
+    size_t size = path.size();
     for (int i = 0; i < size; ++i) {
         conv.push_back(path[i] == '\\' ? '/' : path[i]);
     }
@@ -119,7 +119,7 @@ std::string convert_path_content(const std::string& path, bool parent_only) {
     if (path.empty()) {
         return "";
     }
-    std::string conv = convert_path_native(path.c_str());
+    std::string conv = convert_path_native(path);
     if (startsWith(conv, curdir_path)) {
         conv.erase(0, 2);
     }
@@ -260,7 +260,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         bool path_is_directory = std::filesystem::is_directory(std::filesystem::path(path_content));
 
         //Create absolute path too
-        std::string entry_key_content = convert_path_native(path_content.c_str());
+        std::string entry_key_content = convert_path_native(path_content);
         strlwr(entry_key_content.data());
         std::string entry_key_root = content_root_path + entry_key;
         strlwr(entry_key_root.data());

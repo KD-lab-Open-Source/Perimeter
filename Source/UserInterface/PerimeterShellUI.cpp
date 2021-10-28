@@ -84,7 +84,7 @@ void MusicEnable(int enable)
 
 std::string getImageFileName(const sqshImage* image, const char* fileName) {
     std::string fullname = fileName ? fileName : static_cast<std::string>(image->texture);
-    fullname = convert_path_native(fullname.c_str());
+    fullname = convert_path_native(fullname);
     if ( !fullname.empty() ) {
         if (image->hasResolutionVersion) {
             std::string respath;

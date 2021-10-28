@@ -1987,7 +1987,7 @@ void onMMMultiplayerHostBackButton(CShellWindow* pWnd, InterfaceEventCode code, 
 
 //lobby
 void fillMultiplayerLobbyList();
-void onMMLobby(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param);

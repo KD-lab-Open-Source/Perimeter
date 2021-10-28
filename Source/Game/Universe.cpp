@@ -72,7 +72,6 @@
 
 #include "BelligerentSelect.h"
 #include "GameContent.h"
-#include "files/files.h"
 
 const int REGION_DATA_FILE_VERSION = 8383;
 
@@ -146,16 +145,16 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	SaveManualData& manualData = data.manualData;
 
 	//---------------------
-	std::string mapName = setExtension(mission.saveNameBinary(), "gmp");
+	std::string mapName = setExtension(mission.savePathContent(), "gmp");
 	XStream ffMap(0);
 	if(ffMap.open(mapName.c_str(), XS_IN)){
 		ffMap.close();
 		vMap.loadGameMap(mapName.c_str(), IniManager("Perimeter.ini").getInt("TD","FastLoad"));
 		UpdateRegionMap(0,0,vMap.H_SIZE - 1,vMap.V_SIZE - 1);
 		loadedGmpName_ = mapName;
-	}
-	else
-		loadedGmpName_ = "";
+	} else {
+        loadedGmpName_ = "";
+    }
 	vMap.initGrid();
 	if(manualData.loadHardness)
 		vMap.loadHardness();
@@ -193,7 +192,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 
 	//---------------------
 	XStream ff(0);
-	if(ff.open(setExtension(mission.saveNameBinary(), "dat").c_str(), XS_IN)){
+	if(ff.open(setExtension(mission.savePathContent(), "dat").c_str(), XS_IN)){
 		XBuffer binaryData(ff.size());
 		ff.read(binaryData.address(), ff.size());
 
@@ -701,70 +700,77 @@ int terUniverse::SelectUnit(terUnitBase* p)
 }
 
 //---------------------------------------------------------
-MissionDescription::MissionDescription(const char* fname, GameType gameType)
-: missionDescriptionID(editMissionDescriptionID)
-{
-	setChanged();
-	xassert(fname);
 
-	gameType_ = gameType;
+void MissionDescription::refresh() {
+    if(gameType_ != GT_playRellGame){
+        if (!savePathKey_.empty()) {
+            savePathContent_ = resolve_mission_path(savePathKey_);
+        }
+        if (!savePathContent_.empty()) {
+            missionDescriptionStr_ = qdTextDB::instance().getText(missionDescriptionID);
+            if (missionDescriptionStr_.empty()) {
+                missionDescriptionStr_ = missionDescriptionID;
+            }
+        }
+    }
 
-	if(gameType_ == GT_playRellGame){
-		init();
-		getMissionDescriptionInThePlayReelFile(fname, *this);
-		gameType_ = GT_playRellGame;
-		setReelName(fname);
-	}
-	else{
-		setSaveName(fname);
+    version = currentShortVersion;
 
-		if(getExtension(saveName(), true) == "spg"){
-			std::string headerName = setExtension(saveName(), "sph");
-			XPrmIArchive ia;
-			if(ia.open(headerName.c_str()))
-				ia >> WRAP_NAME(*this, "MissionDescriptionPrm");
-			else if(!ia.open(saveName()))
-				return;
-			ia >> WRAP_NAME(*this, "MissionDescriptionPrm");
-		}
-		else{
-			BinaryIArchive bia;
-			if(!bia.open(saveName()))
-				return;
-			bia >> WRAP_NAME(*this, "MissionDescriptionPrm");
-		}
-
-		missionDescriptionStr_ = qdTextDB::instance().getText(missionDescriptionID);
-		if(missionDescriptionStr_ == "")
-			missionDescriptionStr_ = missionDescriptionID;
-
-		// Установка АИ
-		for(int i = 0; i < min(NETWORK_PLAYERS_MAX, playerAmountScenarioMax); i++){
-			playersData[i].clan = i;
-			switch(gameType_){
-			case GT_SINGLE_PLAYER:
-				playersData[i].realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
-				break;
-			case GT_SINGLE_PLAYER_ALL_AI:
-				playersData[i].realPlayerType = REAL_PLAYER_TYPE_AI;
-				break;
-			case GT_SINGLE_PLAYER_NO_AI:
-				playersData[i].realPlayerType = REAL_PLAYER_TYPE_PLAYER;
-				break;
-			case GT_createMPGame:
-			case GT_loadMPGame:
-				playersData[i].realPlayerType = REAL_PLAYER_TYPE_OPEN;
-				break;
-			}
-		}
-	}
-
-	version = currentShortVersion;
-    load();
+    if (!worldName_.empty()) {
+        worldID_ = vMap.getWorldID(worldName_.value().c_str());
+    } else if (0 <= worldID_) {
+        worldName_ = vMap.getWorldName(worldID_);
+    }
 }
 
-void MissionDescription::load() {
-    worldID_ = vMap.getWorldID(worldName);
+void MissionDescription::loadDescription() {    
+    if(gameType_ == GT_playRellGame){
+        init();
+        gameType_ = GT_playRellGame;
+        getMissionDescriptionInThePlayReelFile(playReelPath().c_str(), *this);
+    } else {
+        if (!savePathContent_.empty()) {
+            if (getExtension(savePathContent_, true) == "spg") {
+                std::string headerName = setExtension(savePathContent_, "sph");
+                XPrmIArchive ia;
+                if (ia.open(headerName.c_str())) {
+                    ia >> WRAP_NAME(*this, "MissionDescriptionPrm");
+                } else if (!ia.open(savePathContent_.c_str())) {
+                    return;
+                }
+                ia >> WRAP_NAME(*this, "MissionDescriptionPrm");
+            } else {
+                BinaryIArchive bia;
+                if (!bia.open(savePathContent_.c_str()))
+                    return;
+                bia >> WRAP_NAME(*this, "MissionDescriptionPrm");
+            }
+
+            // Установка АИ
+            for (int i = 0; i < min(NETWORK_PLAYERS_MAX, playerAmountScenarioMax); i++) {
+                playersData[i].clan = i;
+                switch (gameType_) {
+                    case GT_SINGLE_PLAYER:
+                        playersData[i].realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
+                        break;
+                    case GT_SINGLE_PLAYER_ALL_AI:
+                        playersData[i].realPlayerType = REAL_PLAYER_TYPE_AI;
+                        break;
+                    case GT_SINGLE_PLAYER_NO_AI:
+                        playersData[i].realPlayerType = REAL_PLAYER_TYPE_PLAYER;
+                        break;
+                    case GT_createMPGame:
+                    case GT_loadMPGame:
+                        playersData[i].realPlayerType = REAL_PLAYER_TYPE_OPEN;
+                        break;
+                    case GT_playRellGame:
+                        break;
+                }
+            }
+        }
+    }
+    
+    refresh();
 }
 
 bool MissionDescription::loadMission(SavePrm& savePrm) const
@@ -772,17 +778,19 @@ bool MissionDescription::loadMission(SavePrm& savePrm) const
 	savePrm = SavePrm();
 	MissionDescription missionDescription;
 	
-	if(getExtension(saveName(), true) == "spg"){
+	if(getExtension(savePathContent_, true) == "spg"){
 		XPrmIArchive ia;
-		if(!ia.open(saveName()))
-			return false;
+		if(!ia.open(savePathContent_.c_str())) {
+            return false;
+        }
 		ia >> WRAP_NAME(missionDescription, "MissionDescriptionPrm");
 		ia >> WRAP_NAME(savePrm, "SavePrm");
 	}
 	else{
 		BinaryIArchive bia;
-		if(!bia.open(saveName()))
-			return false;
+		if(!bia.open(savePathContent_.c_str())) {
+            return false;
+        }
 		bia >> WRAP_NAME(missionDescription, "MissionDescriptionPrm");
 		bia >> WRAP_NAME(savePrm, "SavePrm");
 	}
@@ -797,9 +805,6 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
     
     data.gameContent = data.missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
 
-	if(!strlen(data.worldName))
-		data.worldName = vMap.getWorldName(worldID());
-
 	if(!userSave){
 		data.activePlayerID = 0;
 		for(int i = 0; i < NETWORK_PLAYERS_MAX; i++){
@@ -807,7 +812,7 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 			data.playersData[i].colorIndex = i;
 			data.playersShufflingIndices[i] = i;
 		}
-		std::string name = saveName();
+		std::string name = savePathKey_;
 		strlwr((char*)name.c_str());
 		data.originalSaveName = strstr(name.c_str(), "resource");
 	}
@@ -816,61 +821,17 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 //	boa << WRAP_NAME(data, "MissionDescriptionPrm");
 //	boa << WRAP_NAME(savePrm, "SavePrm");
 
-	XPrmOArchive oa(setExtension(saveName(), "spg").c_str());
-	oa << WRAP_NAME(data, "MissionDescriptionPrm");
-	oa << WRAP_NAME(savePrm, "SavePrm");
-	return oa.close();
+    XPrmOArchive oa(setExtension(savePathContent(), "spg").c_str());
+    oa << WRAP_NAME(data, "MissionDescriptionPrm");
+    oa << WRAP_NAME(savePrm, "SavePrm");
+    return oa.close();
 }
 
-void MissionDescription::restart() 
-{ 
-	if(originalSaveName)
-		setSaveName(originalSaveName);
-}
-
-std::string resolve_mission_path(const std::string& path) {
-    //First try full path as resource (existing file)
-    std::string conv = convert_path_content(path);
-    //Otherwise try only parent path (new file)
-    if (conv.empty()) conv = convert_path_content(path, true);
-    //Otherwise just use provided path
-    if (conv.empty()) conv = convert_path_native(path.c_str());
-    return conv;
-}
-
-void MissionDescription::setSaveName(const char* fname) 
-{ 
-	saveName_ = fname;
-	if (getExtension(saveName_.c_str(), true) != "spb") {
-        saveName_ = setExtension(saveName_.c_str(), "spg");
-    }
-	saveName_ = resolve_mission_path(saveName_);
-	saveNameBinary_ = saveName_;
-	saveNameBinary_.erase(saveNameBinary_.size() - 4, saveNameBinary_.size()); 
-	for(int i = 0; i < DIFFICULTY_MAX; i++){
-		const char* str = missionDifficultyPostfix[i];
-		if(!strlen(str))
-			continue;
-		size_t pos = saveNameBinary_.rfind(str);
-		if(pos != std::string::npos)
-			saveNameBinary_.erase(pos, saveNameBinary_.size() - pos);
-	}
-
-	missionName_ = saveNameBinary_;
-	size_t pos = missionName_.rfind(PATH_SEP);
-	if(pos != std::string::npos)
-		missionName_.erase(0, pos + 1);
-	//_strupr((char*)missionName_.c_str());
-}
-
-void MissionDescription::setReelName(const char* name) 
+void MissionDescription::restart()
 {
-	fileNamePlayReelGame = resolve_mission_path(name);
-
-	missionNamePlayReelGame = fileNamePlayReelGame;
-	size_t pos = missionNamePlayReelGame.rfind(PATH_SEP);
-	if(pos != std::string::npos)
-		missionNamePlayReelGame.erase(0, pos + 1);
+    if(originalSaveName) {
+        setSaveName(originalSaveName);
+    }
 }
 
 //---------------------------------------------------------
@@ -913,14 +874,14 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 
 	//---------------------
 	// Map changes
-	std::string mapName = setExtension(mission.saveNameBinary(), "gmp");
+	std::string mapName = setExtension(mission.savePathContent(), "gmp");
 	if(vMap.IsChanged() || (!loadedGmpName_.empty() && (!XStream(0).open(mapName.c_str(), XS_IN) || mapName != loadedGmpName_)) || check_command_line("force_save_gmp")){
 		if(!vMap.saveGameMap(mapName.c_str()))
 			return false;
 		loadedGmpName_ = mapName;
-	}
-	else if(loadedGmpName_.empty())
-		remove(mapName.c_str());
+	} else if(loadedGmpName_.empty()) {
+        remove(mapName.c_str());
+    }
 
 	if(gameShell->missionEditor() && gameShell->missionEditor()->hardnessChanged()){
 		gameShell->missionEditor()->clearHardnessChanged();
@@ -943,17 +904,17 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 			++changedCounter;
 		}
 	}
-	if(changedCounter){
+	if (changedCounter) {
 		int size = binaryData.tell();
 		binaryData.set(0);
 		binaryData < REGION_DATA_FILE_VERSION < changedCounter;
-		XStream ff(setExtension(mission.saveNameBinary(), "dat").c_str(), XS_OUT, 0);
+		XStream ff(setExtension(mission.savePathContent(), "dat").c_str(), XS_OUT, 0);
 		ff.write(binaryData, size);
 		if(ff.ioError())
 			return false;
-	}
-	else
-		remove(setExtension(mission.saveName(), "dat").c_str());
+	} else {
+        remove(setExtension(mission.savePathContent(), "dat").c_str());
+    }
 
     return true;
 }

@@ -438,10 +438,11 @@ const char* MissionEditor::info()
 {
 	info_.init();
 
-	std::string missionName = gameShell->CurrentMission.saveName();
-	size_t pos = missionName.rfind("RESOURCE\\");
-	if(pos != std::string::npos)
-		missionName.erase(0, pos);
+	std::string missionName = gameShell->CurrentMission.savePathKey();
+	size_t pos = missionName.rfind(std::string("resource") + PATH_SEP);
+	if(pos != std::string::npos) {
+        missionName.erase(0, pos);
+    }
 	info_ < "Миссия: " < missionName.c_str() < "\n";
 
 	terPlayer* player = universe()->activePlayer();

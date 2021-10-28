@@ -354,7 +354,8 @@ struct vrtMap {
 	short clipXLeft, clipXRight, clipYTop, clipYBottom; 
 #endif
 
-	int maxWorld,cWorld;
+	uint32_t maxWorld;
+    int32_t cWorld;
 	std::vector<vrtWorld> wTable;
 
 
@@ -385,9 +386,8 @@ struct vrtMap {
 	bool loadGameMap(const char* fname, bool flag_FastLoad=1);
 	bool saveGameMap(const char* fname);
 
-	void getWorldList(std::vector<const char*>& world_list) { world_list.clear(); for(int i = 0; i < maxWorld; i++) world_list.push_back(wTable[i].name.c_str()); }
 	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(stricmp(wTable[i].name.c_str(), world_name) == 0) return i; return -1; }
-	const char* getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name.c_str(); }
+	const std::string& getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name; }
 
 	enum eSurfaceMode{
 		Geologic,

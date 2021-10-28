@@ -5,6 +5,7 @@
 #include "Scripts/Config.hi"
 #include "GameContent.h"
 #include "Runtime.h"
+#include "files/files.h"
 
 PlayerData::PlayerData()
 {
@@ -67,7 +68,7 @@ void PlayerData::write(XBuffer& out) const
 void MissionDescription::init()
 {
 	version = currentShortVersion;
-	worldName = "";
+	worldName_ = "";
 	difficulty = DIFFICULTY_HARD;
 	missionNumber = - 1;
 	playerAmountScenarioMax = 0;
@@ -86,12 +87,91 @@ MissionDescription::MissionDescription()
 : missionDescriptionID(editMissionDescriptionID)
 {
 	init();
-    load();
+    refresh();
+}
+
+MissionDescription::MissionDescription(const char* fname, GameType gameType)
+        : missionDescriptionID(editMissionDescriptionID)
+{
+    setChanged();
+    xassert(fname);
+
+    gameType_ = gameType;
+
+    if(gameType_ == GT_playRellGame){
+        setReelName(fname);
+    } else {
+        setSaveName(fname);
+    }
+    
+    loadDescription();
+}
+
+void MissionDescription::setSaveName(const char* fname)
+{
+    //Extract the resource relative path for this file, so we can save/send it without breaking compat
+    std::string tmp = fname;
+    
+    //First try full path as resource (existing file)
+    filesystem_entry* entry = get_content_entry(tmp);
+    
+    if (entry) {
+        savePathKey_ = entry->key;
+    } else {
+        //Otherwise try only parent path (new file)
+        std::string parent;
+        std::string filename;
+        split_path_parent(tmp, parent, &filename);
+        entry = get_content_entry(parent);
+        if (entry) {
+            savePathKey_ = entry->key + PATH_SEP + filename;
+        } else {
+            //Not found? use provided path
+            savePathKey_ = convert_path_native(fname);
+        }
+    }
+    
+    //Set extension to spg unless is spb (was this ever used?)
+    std::string extension = getExtension(savePathKey_, true);
+    if (extension != "spb" && extension != "spg") {
+        savePathKey_ = setExtension(savePathKey_, "spg");
+    }
+
+    //Store resolved path too
+    savePathContent_ = resolve_mission_path(savePathKey_);
+    
+    //Remove difficulty postfix (is this used?)
+    std::string savePathBase = setExtension(savePathContent_, nullptr);
+    for(int i = 0; i < DIFFICULTY_MAX; i++) {
+        const char* str = missionDifficultyPostfix[i];
+        if(!strlen(str)) {
+            continue;
+        }
+        size_t pos = savePathBase.rfind(str);
+        if(pos != std::string::npos) {
+            savePathBase.erase(pos, savePathBase.size() - pos);
+        }
+    }
+
+    //Get filename of saved binary
+    split_path_parent(savePathBase, tmp, &missionName_);
+
+    //Lowercase the key just in case now that we got the filename case stored in savePathContent_
+    strlwr(savePathKey_.data());
+}
+
+void MissionDescription::setReelName(const char* name)
+{
+    playReelPath_ = resolve_mission_path(name);
+
+    //Get filename of reel
+    std::string tmp;
+    split_path_parent(playReelPath_, tmp, &missionNamePlayReelGame);
 }
 
 void MissionDescription::read(XBuffer& in) 
 {
-	in > StringInWrapper(worldName.value()) > StringInWrapper(missionName_) > StringInWrapper(missionDescriptionStr_) > StringInWrapper(saveName_) > StringInWrapper(saveNameBinary_); 
+    in > StringInWrapper(worldName_.value()) > StringInWrapper(missionName_) > StringInWrapper(missionDescriptionID.value()) > StringInWrapper(savePathKey_); 
 	in.read(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
 		playersData[i].read(in);
@@ -101,12 +181,12 @@ void MissionDescription::read(XBuffer& in)
 	in.read(&activePlayerID, sizeof(activePlayerID));
     in.read(&missionNumber,sizeof(missionNumber));
     in.read(&gameContent,sizeof(gameContent));
-    load();
+    refresh();
 }
 
 void MissionDescription::write(XBuffer& out) const 
-{ 
-	out < StringOutWrapper(worldName.value()) < StringOutWrapper(missionName_) < StringOutWrapper(missionDescriptionStr_) < StringOutWrapper(saveName_) < StringOutWrapper(saveNameBinary_); 
+{
+    out < StringOutWrapper(worldName_.value()) < StringOutWrapper(missionName_) < StringOutWrapper(missionDescriptionID.value()) < StringOutWrapper(savePathKey_); 
 	out.write(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
 		playersData[i].write(out);
@@ -119,11 +199,11 @@ void MissionDescription::write(XBuffer& out) const
 }
 
 void MissionDescription::simpleRead(XBuffer& in) 
-{ 
-	in > StringInWrapper(worldName.value()) > StringInWrapper(missionName_) > StringInWrapper(saveName_) > StringInWrapper(saveNameBinary_);
+{
+    in > StringInWrapper(worldName_.value()) > StringInWrapper(missionName_) > StringInWrapper(savePathKey_);
 	unsigned char tmp;
 	int i;
-    char playerName[PLAYER_MAX_NAME_LEN+1];
+    std::string tmp_str;
 	for(i=0; i<NETWORK_PLAYERS_MAX; i++){
 		in.read(&tmp, sizeof(tmp)); playersData[i].playerID=(int)tmp;
 		in.read(&tmp, sizeof(tmp)); playersData[i].realPlayerType=(RealPlayerType)tmp;
@@ -133,22 +213,20 @@ void MissionDescription::simpleRead(XBuffer& in)
 		in.read(&tmp, sizeof(tmp)); playersData[i].difficulty=(Difficulty)tmp;
 		in.read(&tmp, sizeof(tmp)); playersData[i].handicap=(int)tmp;
 		in.read(&playersData[i].flag_playerStartReady, sizeof(playersData[i].flag_playerStartReady) );
-		//read string
-        in.read(playerName, PLAYER_MAX_NAME_LEN);
-        playerName[PLAYER_MAX_NAME_LEN] = 0;
-        playersData[i].setName(playerName);
+        in > StringInWrapper(tmp_str);
+        playersData->setName(tmp_str);
 	}
 	in.read(&tmp, sizeof(tmp)); playerAmountScenarioMax=(int)tmp;
 	in.read(&tmp, sizeof(tmp)); gameType_=(GameType)tmp;
 	in.read(&tmp, sizeof(tmp)); activePlayerID=(int)tmp;
     in.read(&tmp, sizeof(tmp)); missionNumber=(int)tmp;
     in.read(&tmp, sizeof(tmp)); gameContent=(int)tmp;
-    load();
+    refresh();
 }
 
 void MissionDescription::simpleWrite(XBuffer& out) const 
-{ 
-	out < StringOutWrapper(worldName.value()) < StringOutWrapper(missionName_) < StringOutWrapper(saveName_) < StringOutWrapper(saveNameBinary_);
+{
+    out < StringOutWrapper(worldName_.value()) < StringOutWrapper(missionName_) < StringOutWrapper(savePathKey_);
 	unsigned char tmp;
 	int i;
 	for(i=0; i<NETWORK_PLAYERS_MAX; i++){
@@ -160,7 +238,7 @@ void MissionDescription::simpleWrite(XBuffer& out) const
 		tmp=(unsigned char)playersData[i].difficulty;		out.write(&tmp, sizeof(tmp));
 		tmp=(unsigned char)playersData[i].handicap;			out.write(&tmp, sizeof(tmp));
 		out.write(&playersData[i].flag_playerStartReady, sizeof(playersData[i].flag_playerStartReady) );
-        out.write(playersData[i].name(), PLAYER_MAX_NAME_LEN);
+        out < StringOutWrapper(playersData[i].name());
 	}
 	tmp=(unsigned char)playerAmountScenarioMax;		out.write(&tmp, sizeof(tmp));
 	tmp=(unsigned char)gameType_;					out.write(&tmp, sizeof(tmp));
@@ -169,6 +247,39 @@ void MissionDescription::simpleWrite(XBuffer& out) const
     tmp=(unsigned char)gameContent;					out.write(&tmp, sizeof(tmp));
 }
 
+std::string MissionDescription::resolve_mission_path(const std::string& path) {
+    //First try full path as resource (existing file)
+    std::string conv = convert_path_content(path);
+    //Otherwise try only parent path (new file)
+    if (conv.empty()) conv = convert_path_content(path, true);
+    //Otherwise just use provided path
+    if (conv.empty()) conv = convert_path_native(path);
+    return conv;
+}
+
+const std::string& MissionDescription::worldName() const {
+    return worldName_.value();
+}
+
+const std::string& MissionDescription::savePathKey() const {
+    return savePathKey_;
+}
+
+const std::string& MissionDescription::savePathContent() const {
+    return savePathContent_;
+}
+
+const std::string& MissionDescription::playReelPath() const {
+    return playReelPath_;
+}
+
+const std::string& MissionDescription::missionName() const {
+    return missionName_;
+}
+
+const std::string& MissionDescription::missionDescription() const {
+    return missionDescriptionStr_;
+}
 
 void MissionDescription::clearAllPlayerStartReady()
 {

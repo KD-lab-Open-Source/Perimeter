@@ -54,7 +54,7 @@ bool intfCanHandleInput() {
 }
 
 std::string getOriginalMissionName(const std::string& originalSaveName) {
-	std::string res = convert_path_native(originalSaveName.c_str());
+	std::string res = convert_path_native(originalSaveName);
 	res.erase(res.size() - 4, res.size()); 
 	size_t pos = res.rfind(PATH_SEP);
 	if (pos != std::string::npos) {
@@ -247,7 +247,7 @@ void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string
 	std::vector<std::string> paths;
     for (const auto & entry : get_content_entries_directory(path_str)) {
         if (mask.empty() || endsWith(entry->key, mask)) {
-            paths.emplace_back(entry->path_content);
+            paths.emplace_back(entry->key);
         }
     }
     sort(paths.begin(), paths.end());
@@ -258,7 +258,7 @@ void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string
         mission.setSaveName(entry_path.c_str());
         mission.setReelName(entry_path.c_str());
 //			mission.gameType_ = replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame;
-        if((!replay) || isCorrectPlayReelFile(mission.fileNamePlayReelGame.c_str())) {
+        if((!replay) || isCorrectPlayReelFile(mission.playReelPath().c_str())) {
             mapVector.push_back(mission);
 //			MissionDescription mission((string(path) + FindFileData.cFileName).c_str(), replay ? MissionDescription::GT_playRellGame : MissionDescription::GT_SPGame);
 //			if(mission.worldID() != -1)
@@ -268,12 +268,12 @@ void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string
 }
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect) {
 	if (mVect[index].worldID() == -1) {
-		mVect[index] = MissionDescription(mVect[index].saveName());
+		mVect[index] = MissionDescription(mVect[index].savePathKey().c_str());
 	}
 }
 void checkReplayMissionDescription(int index, std::vector<MissionDescription>& mVect) {
 	if (mVect[index].worldID() == -1) {
-		mVect[index] = MissionDescription(mVect[index].fileNamePlayReelGame.c_str(), GT_playRellGame);
+		mVect[index] = MissionDescription(mVect[index].playReelPath().c_str(), GT_playRellGame);
 	}
 }
 std::string checkMissingContent(MissionDescription& mission) {
@@ -294,7 +294,7 @@ std::string checkMissingContent(MissionDescription& mission) {
     } else if (mission.worldID() == -1) {
         //Game content is OK but we still don't have this map
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
-        msg += mission.worldName.value();
+        msg += mission.worldName();
     }
     
     return msg;
@@ -320,7 +320,7 @@ void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapW
 	}
 	if (inputWndID != -1) {
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(inputWndID);
-		input->SetText(mVect[index].missionName());
+		input->SetText(mVect[index].missionName().c_str());
 	}
 }
 void setupReplayDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
@@ -363,7 +363,7 @@ void fillList(int listID, std::vector<MissionDescription>& mVect, int mapWndID, 
 	int i;
 	int s;
 	for (i = 0, s = mVect.size(); i < s; i++) {
-		list->AddString( mVect[i].missionName(), 0 );
+		list->AddString( mVect[i].missionName().c_str(), 0 );
 	}
 	if (s) {
 		list->SetCurSel(0);
@@ -976,7 +976,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 //						StartSpace();
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_REPLAY_NAME_INPUT);
 //						if (input->getText().empty()) {
-							input->SetText(gameShell->CurrentMission.worldName);
+							input->SetText(gameShell->CurrentMission.worldName().c_str());
 //						}
 						fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
 					}
@@ -997,7 +997,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 						loadMapVector(savedGames, savesDir, ".spg");
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
 //						if (input->getText().empty()) {
-							input->SetText(gameShell->CurrentMission.worldName);
+							input->SetText(gameShell->CurrentMission.worldName().c_str());
 //						}
 
 //						StartSpace();
@@ -1018,7 +1018,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 								txtWnd->setText( qdTextDB::instance().getText("Interface.Menu.Messages.Survival") );
 								break;
 							default:
-								txtWnd->SetText(missionToExec.missionDescription());
+								txtWnd->SetText(missionToExec.missionDescription().c_str());
 						}
 						
 						CShowMapWindow* mapWnd = (CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_MAPWINDOW);
@@ -1870,7 +1870,7 @@ void onMMDelSaveButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 //load replay
 int delLoadReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_REPLAY_LIST);
-	std::remove( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
+	std::remove( replays[list->GetCurSel()].playReelPath().c_str() );
     scan_resource_paths(convert_path_content(REPLAY_PATH));
 	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
@@ -2070,10 +2070,9 @@ void onMMSaveGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_MAP_LIST);
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
-		int i;
-		int s;
+		size_t i, s = 0;
 		for (i = 0, s = savedGames.size(); i < s; i++) {
-			if (strcmp(input->GetText(), savedGames[i].missionName()) == 0) {
+			if (input->GetText() == savedGames[i].missionName()) {
 				break;
 			}
 		}
@@ -2121,7 +2120,7 @@ void onMMDelSaveGameButton(CShellWindow* pWnd, InterfaceEventCode code, int para
 //save replay
 int delSaveReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_LIST);
-    std::remove( replays[list->GetCurSel()].fileNamePlayReelGame.c_str() );
+    std::remove( replays[list->GetCurSel()].playReelPath().c_str() );
 	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
 	return 0;
@@ -2134,7 +2133,7 @@ int toSaveReplayQuant( float, float ) {
 	return 1;
 }
 int saveReplay(float i, float) {
-	switch ( universe()->savePlayReel(replays[i].fileNamePlayReelGame.c_str()) ) {
+	switch ( universe()->savePlayReel(replays[i].playReelPath().c_str()) ) {
 		case terHyperSpace::SAVE_REPLAY_OK:
 			hideMessageBox();
 			_shellIconManager.AddDynamicHandler( toSaveReplayQuant, CBCODE_QUANT );

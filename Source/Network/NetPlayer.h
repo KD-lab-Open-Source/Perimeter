@@ -87,7 +87,8 @@ public:
 	MissionDescription();
 	explicit MissionDescription(const char* save_name, GameType gameType = GT_SINGLE_PLAYER);
     void init();
-    void load();
+    void refresh();
+    void loadDescription();
 
 	bool loadMission(SavePrm& savePrm) const; 
 	bool saveMission(const SavePrm& savePrm, bool userSave) const; 
@@ -102,10 +103,12 @@ public:
 	void simpleRead(XBuffer& in);
 	void simpleWrite(XBuffer& out) const;
 
-	const char* saveName() const { return saveName_.c_str(); }
-	const char* saveNameBinary() const { return saveNameBinary_.c_str(); }
-	const char* missionName() const { return missionName_.c_str(); }
-	const char* missionDescription() const { return missionDescriptionStr_.c_str(); }
+    const std::string& worldName() const;
+    const std::string& savePathKey() const;
+    const std::string& savePathContent() const;
+	const std::string& playReelPath() const;
+	const std::string& missionName() const;
+	const std::string& missionDescription() const;
 
 	int worldID() const { return worldID_; }
 
@@ -165,7 +168,7 @@ public:
 
     SERIALIZE(ar) {
         ar & WRAP_OBJECT(version);
-        ar & TRANSLATE_OBJECT(worldName, "Имя мира");
+        ar & TRANSLATE_NAME(worldName_, "worldName", "Имя мира");
         ar & TRANSLATE_NAME(missionDescriptionID, "missionDescription", "Описание миссии");
         ar & TRANSLATE_OBJECT(difficulty, "Уровень сложности");
         ar & TRANSLATE_OBJECT(playersData, "Игроки");
@@ -184,7 +187,6 @@ public:
     }
 
 	PrmString version;
-	PrmString worldName;
 	CustomString missionDescriptionID;
 	EnumWrapper<Difficulty> difficulty;
 	PlayerData playersData[4];
@@ -198,17 +200,20 @@ public:
     BitVector<GAME_CONTENT> gameContent;
 	PrmString originalSaveName;
 
-	std::string fileNamePlayReelGame;
 	std::string missionNamePlayReelGame;
 	GameType gameType_;
 	bool flag_missionDescriptionUpdate;
 
 private:
+    std::string resolve_mission_path(const std::string& path);
+    
 	int worldID_;
-	std::string saveName_;
-	std::string saveNameBinary_;
+    PrmString worldName_;
+	std::string savePathKey_;
+    std::string savePathContent_;
 	std::string missionName_;
 	std::string missionDescriptionStr_;
+    std::string playReelPath_;
 	unsigned int serverRnd_;
 };
 

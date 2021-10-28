@@ -182,7 +182,7 @@ PNetCenter::~PNetCenter()
 
 const char* PNetCenter::getMissionName() {
 	if (!isHost()) return ""; 
-    return hostMissionDescription.missionName();
+    return hostMissionDescription.missionName().c_str();
 }
 
 const char* PNetCenter::getGameName() {
@@ -332,7 +332,7 @@ void PNetCenter::HandlerInputNetCommand()
 		case NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO: 
 			{
 				netCommand4C_CurrentMissionDescriptionInfo ncCMD(in_ClientBuf);
-				curMD=ncCMD.missionDescription_;
+                lobbyMissionDescription=ncCMD.missionDescription_;
 			}
 			break;
 		case NETCOM_4C_ID_DISPLAY_DISTRINC_AREAS:

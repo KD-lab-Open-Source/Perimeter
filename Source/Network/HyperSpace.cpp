@@ -142,7 +142,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 //	}
 	if(mission.gameType_==GT_playRellGame){
 		flag_rePlayReel=true;
-		loadPlayReel(mission.fileNamePlayReelGame.c_str());
+		loadPlayReel(mission.playReelPath().c_str());
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;

@@ -65,7 +65,7 @@ void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 }
 
 void setFrm(CComboWindow* combo, int number) {
-	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+	const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 	if (
 			currMission.playerAmountScenarioMax > number
 		&&	currMission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN
@@ -93,7 +93,7 @@ void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 }
 
 void setSlot(CComboWindow* combo, int number) {
-	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+    const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 	if ( currMission.playerAmountScenarioMax > number ) {
 		combo->Show(true);
 		combo->Enable(currMission.activePlayerID == currMission.playersData[0].playerID);
@@ -188,7 +188,7 @@ void onMMLobbySlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 }
 
 void setClan(CComboWindow* combo, int number) {
-	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+    const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 	if (
 			currMission.playerAmountScenarioMax > number
 		&&	currMission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN
@@ -244,7 +244,7 @@ void onMMLobbyClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 }
 
 void setHC(CComboWindow* combo, int number) {
-	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+	const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 	if (
 			currMission.playerAmountScenarioMax > number
 		&&	currMission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN
@@ -322,7 +322,7 @@ void onMMLobbyHCButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 }
 
 void setClr(CColorComboWindow* combo, CShellWindow* bg, int number) {
-	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+	const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 	if (
 			currMission.playerAmountScenarioMax > number
 		&&	currMission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN
@@ -368,7 +368,7 @@ void onMMLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 }
 
 void setName(CShellPushButton* btn, int number) {
-	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+	const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 	if (
 			currMission.playerAmountScenarioMax > number
 		&&	currMission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN
@@ -387,7 +387,7 @@ void onMMLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 }
 
 void setReady(CShellWindow* wnd, int number) {
-	MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+	const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 	wnd->Show (
 					currMission.playerAmountScenarioMax > number
 				&&	currMission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN
@@ -403,19 +403,19 @@ void setLobbyMapListVisible(bool visible) {
 	_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST_RAMKA4)->Show(visible);
 }
 
-void onMMLobby(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if (code == EVENT_DRAWWND) {
         CPushButton* btn = reinterpret_cast<CPushButton*>(pWnd);
         btn->setText(gameShell->getNetClient()->m_GameName);
         
-		MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+		const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 //		((CPushButton*)pWnd)->setText(currMission.missionDescription());
 
 		if (gameShell->getNetClient()->isHost()) {
 			setLobbyMapListVisible(true);
 			_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP)->Show(0);
 			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_HOST_GAME_MAP))->setWorldID( currMission.worldID() );
-			int pos = getMultiplayerMapNumber(currMission.saveName());
+			int pos = getMultiplayerMapNumber(currMission.missionName());
 			if (pos != -1) {
 				((CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST))->SetCurSelPassive(pos);
 			}
@@ -440,7 +440,7 @@ void onMMLobby(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 
 void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if (code == EVENT_DRAWWND){
-		MissionDescription& currMission = gameShell->getNetClient()->getCurrentMissionDescription();
+        const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 		pWnd->Enable(currMission.playersAmount() > 1);
 	} else if (code == EVENT_UNPRESSED){
 //		fout < "StartLoadTheGame()\n";

@@ -228,7 +228,7 @@ _handlertbl[] = {
 
 	//multiplayer lobby
     {SQSH_MM_MULTIPLAYER_GAME_SPEED_SLIDER,  onMMMultiplayerGameSpeedSlider},
-	{SQSH_MM_LOBBY_GAME_NAME_BTN,            onMMLobby},
+	{SQSH_MM_LOBBY_GAME_NAME_BTN,            onMMLobbyGameNameButton},
 	{SQSH_MM_LOBBY_PLAYER1_NAME_BTN,         onMMLobbyNameButton},
 	{SQSH_MM_LOBBY_PLAYER2_NAME_BTN,         onMMLobbyNameButton},
 	{SQSH_MM_LOBBY_PLAYER3_NAME_BTN,         onMMLobbyNameButton},
@@ -979,7 +979,7 @@ void CShellIconManager::fillTaskWnd() {
     }
     
     if (taskTxt.empty()) {
-        taskTxt = gameShell->CurrentMission.worldName.value();
+        taskTxt = gameShell->CurrentMission.worldName();
     }
     
     if (!taskTxt.empty()) {
