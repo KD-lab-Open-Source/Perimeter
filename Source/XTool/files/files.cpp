@@ -60,10 +60,21 @@ void prepare_path(std::string& path, const std::string& source_path) {
         }
     }
 
-    //Remove ./ since it screws with setExtention
+    //Remove ./ since it screws with setExtension
     size_t path_pos = path.find(curdir_path);
     if (path_pos != std::string::npos && path_pos == 0) {
         path.erase(0, curdir_path.size());
+    }
+}
+
+void split_path_parent(const std::string& path, std::string& parent, std::string* filename) {
+    std::filesystem::path path_fs(path);
+    parent = path_fs.parent_path().string();
+    if (parent.empty()) {
+        parent = content_root_path;
+    }
+    if (filename) {
+        *filename = path_fs.filename().string();
     }
 }
 
@@ -91,7 +102,7 @@ std::string convert_path_posix(const char* path) {
 
 std::shared_ptr<filesystem_entry> get_content_entry_internal(filesystem_entries_map& paths, const std::string& path) {
     if (paths.count(path)) {
-        return paths[path];
+        return paths.at(path);
     }
     return nullptr;
 }

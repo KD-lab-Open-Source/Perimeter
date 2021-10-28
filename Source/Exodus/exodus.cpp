@@ -112,38 +112,6 @@ char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) 
     return nullptr;
 }
 
-void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext) {
-    std::filesystem::path path_input = convert_path_native(path);
-    
-    //Not used, but just in case
-    if (drive) {
-        *drive = 0;
-    }
-    
-    //Get dir, file and extension from path
-    std::string dir_str = path_input.parent_path().string();
-    if (dir) {
-        terminate_with_char(dir_str, PATH_SEP);
-        SDL_strlcpy(dir, dir_str.c_str(), _MAX_DIR);
-    }
-    std::string ext_str = path_input.extension().string();
-    if (ext) {
-        SDL_strlcpy(ext, ext_str.c_str(), _MAX_EXT);
-    }
-    //Remove extension from filename and store
-    if (fname) {
-        std::string filename_str = path_input.filename().string();
-        string_replace_all(filename_str, ext_str, "");
-        SDL_strlcpy(fname, filename_str.c_str(), _MAX_FNAME);
-    }
-}
-
-void _makepath(char* path, const char*, const char* dir, const char* fname, const char* ext) {
-    std::filesystem::path fullpath = std::string(dir);
-    fullpath.append(std::string(fname) + ext);
-    SDL_strlcpy(path, fullpath.string().c_str(), MAX_PATH);
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 HANDLE CreateEvent(int, bool manualReset, bool initialState, int) {

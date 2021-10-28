@@ -11,10 +11,6 @@
 //Win32 macros
 
 #define MAX_PATH 260
-#define _MAX_DRIVE   3
-#define _MAX_FNAME   256
-#define _MAX_DIR   _MAX_FNAME
-#define _MAX_EXT   _MAX_FNAME
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FPU control
@@ -60,9 +56,6 @@ int __iscsym(int c);
 
 char *_fullpath(char* absolutePath, const char* relativePath, size_t maxLength);
 
-void _splitpath(const char* path_out, char* drive, char* dir, char* fname, char* ext);
-
-void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Event/Thread stuff

@@ -8,6 +8,7 @@
 #include "MeshBank.h"
 #include "ObjMesh.h"
 #include "xmath.h"
+#include "files/files.h"
 
 static RandomGenerator rnd;
 static std::vector<Vect2f> rotate_angle;
@@ -3430,20 +3431,13 @@ bool EffectLibrary::Load(const char* fname,const char* texture_path)
 		ek->Load(ld);
 
 		if(texture_path)
-		{
-			char path_buffer[MAX_PATH];
-			char drive[_MAX_DRIVE];
-			char dir[_MAX_DIR];
-			char fname[_MAX_FNAME];
-			char ext[_MAX_EXT];
-			
+		{			
 			std::vector<EmitterKeyInterface*>::iterator it;
 			FOR_EACH(ek->key,it)
 			{
 				std::string& t=(*it)->texture_name;
-				_splitpath(t.c_str(),drive,dir,fname,ext);
-				sprintf(path_buffer,"%s%s%s",path.c_str(),fname,ext);
-				t=path_buffer;
+                t = convert_path_native(t);
+				t = path + std::filesystem::path(t).filename().string();
 			}
 		}
 

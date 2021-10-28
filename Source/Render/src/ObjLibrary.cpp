@@ -1005,13 +1005,10 @@ cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,con
 
 cObjectNodeRoot* cObjLibrary::LoadLod(const char *in_filename,const char *TexturePath)
 {
-	char path_buffer[MAX_PATH];
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	_splitpath(in_filename,drive,dir,fname,ext);
-	strcat(fname,"_lod");
-	_makepath(path_buffer,drive,dir,fname,ext);
-	return GetElementInternal(path_buffer,TexturePath,false);
+    std::string path_buffer = in_filename;
+    size_t pos = path_buffer.rfind('.');
+    if (pos != std::string::npos) {
+        path_buffer.insert(pos, "_lod");
+    }
+	return GetElementInternal(path_buffer.c_str(),TexturePath,false);
 }

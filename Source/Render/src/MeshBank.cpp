@@ -2,6 +2,7 @@
 #include "MeshBank.h"
 #include "MeshTri.h"
 #include "Scene.h"
+#include "files/files.h"
 
 struct Points
 {
@@ -490,14 +491,8 @@ cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,con
 	if(!pTexture)
 		return NULL;
 
-	char path_buffer[MAX_PATH];
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	_splitpath(pTexture->GetName(),drive,dir,fname,ext);
-	strcpy(path_buffer,fname);
-	strcat(path_buffer,ext);
+    std::string filename = convert_path_native(pTexture->GetName());
+    filename = std::filesystem::path(filename).filename().string();
 
 	std::string attr;
     if (pTexture->GetAttribute(TEXTURE_BUMP)) {
@@ -506,7 +501,7 @@ cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,con
     if (pTexture->GetAttribute(TEXTURE_NORMAL)) {
         attr += " Normal";
     }
-	return LoadTextureDef(path_buffer,annoter_path,def_texture_path,attr.data());
+	return LoadTextureDef(filename.c_str(),annoter_path,def_texture_path,attr.data());
 }
 
 

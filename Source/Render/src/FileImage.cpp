@@ -42,20 +42,6 @@ int ResourceFileRead(const char *fname,char *&buf,int &size);
 
 extern bool ResourceIsZIP();
 
-void SetExtension(const char *fnameOld,const char *extension,char *fnameNew)
-{
-	strcpy(fnameNew,fnameOld);
-	int l;
-	for(l=strlen(fnameNew)-1;l>=0 && fnameNew[l]!='\\' && fnameNew[l]!='/';l--)
-		if(fnameNew[l]=='.')
-			break;
-	if(l>=0&&fnameNew[l]=='.') 
-		strcpy(&fnameNew[l+1],extension);
-	else
-		strcat(fnameNew,extension);
-}
-
-
 void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst,
 							  void *pSrc,int bppSrc,int bplSrc,int acSrc,int asSrc,int xSrc,int ySrc)
 {

@@ -730,8 +730,8 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 		} else {
 			size_t index = params.find("ICON") + 5;
 			icon = "RESOURCE\\ICONS\\Portraits\\" + params.substr(index, params.length() - index - 1) + ".tga";
-			index = params.find("\"");
-			int backIndex = params.rfind("\"");
+			index = params.find('\"');
+			size_t backIndex = params.rfind('\"');
 			text = params.substr(index + 1, backIndex - index - 1);
 		}
 

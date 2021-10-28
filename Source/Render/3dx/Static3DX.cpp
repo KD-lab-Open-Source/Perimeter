@@ -4,6 +4,7 @@
 #include "NParticle.h"
 #include "VisError.h"
 #include <algorithm>
+#include "files/files.h"
 
 enum eTextureMapType
 { /* texture map in 3dSMAX */
@@ -591,14 +592,10 @@ int cStatic3dx::LoadMaterialsNum(CLoadDirectory rd)
 
 void cStatic3dx::LoadMaterials(CLoadDirectory rd,int num_materials)
 {
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	_splitpath(file_name.c_str(),drive,dir,fname,ext);
-	std::string path_name=drive;
-	path_name+=dir;
-	path_name+="TEXTURES\\";
+	std::string path_name;
+    split_path_parent(file_name, path_name);
+	path_name += "TEXTURES";
+    path_name += PATH_SEP;
 
 	int cur_mat=0;
 	materials.resize(num_materials);

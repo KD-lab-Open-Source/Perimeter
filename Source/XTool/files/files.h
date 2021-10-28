@@ -83,6 +83,9 @@ public:
     void set(filesystem_entry* entry);
 };
 
+//Splits path into parent and filename
+void split_path_parent(const std::string& path, std::string& parent, std::string* filename = nullptr);
+
 //Converts Windows/POSIX to native path
 std::string convert_path_native(const char* path);
 

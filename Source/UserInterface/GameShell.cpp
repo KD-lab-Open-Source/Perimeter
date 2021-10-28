@@ -286,7 +286,7 @@ windowClientSize_(1024, 768)
 
 		if(name == "")
 			name = "XXX";
-		name = setExtention((path + name).c_str(), "spg");
+		name = setExtension((path + name).c_str(), "spg");
 
 		if(!XStream(0).open(convert_path_content(name))) {
 			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){

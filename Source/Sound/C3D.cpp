@@ -6,6 +6,7 @@
 #include "Sample.h"
 #include <cfloat>
 #include <algorithm>
+#include "files/files.h"
 
 int SNDScript::belligerentIndex = 0;
 std::string SNDScript::locDataPath;
@@ -274,17 +275,13 @@ const char* SNDScript::filePath(const ScriptParam* prm,const char* file_name,int
 		fname < locDataPath.c_str() < file_name < ".wav";
 
 	if(prm->belligerent_dependency){
-		char drive[_MAX_DRIVE];
-   		char dir[_MAX_DIR];
-		char name[_MAX_FNAME];
-   		char ext[_MAX_EXT];
-
-		_splitpath(fname.address(),drive,dir,name,ext);
+		std::string path_parent, path_filename;
+        split_path_parent(fname.address(), path_parent, &path_filename);
 
 		xassert(belligerent_index >= 0 && belligerent_index < soundScriptTable().belligerentPrefix.size());
 
 		fname.init();
-		fname < drive < dir < soundScriptTable().belligerentPrefix[belligerent_index] < name < ext;
+		fname < path_parent.c_str() < soundScriptTable().belligerentPrefix[belligerent_index] < path_filename.c_str();
 	}
 
 	return fname.address();

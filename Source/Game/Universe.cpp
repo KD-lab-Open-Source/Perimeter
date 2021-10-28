@@ -146,7 +146,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	SaveManualData& manualData = data.manualData;
 
 	//---------------------
-	std::string mapName = setExtention(mission.saveNameBinary(), "gmp");
+	std::string mapName = setExtension(mission.saveNameBinary(), "gmp");
 	XStream ffMap(0);
 	if(ffMap.open(mapName.c_str(), XS_IN)){
 		ffMap.close();
@@ -193,7 +193,7 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 
 	//---------------------
 	XStream ff(0);
-	if(ff.open(setExtention(mission.saveNameBinary(), "dat").c_str(), XS_IN)){
+	if(ff.open(setExtension(mission.saveNameBinary(), "dat").c_str(), XS_IN)){
 		XBuffer binaryData(ff.size());
 		ff.read(binaryData.address(), ff.size());
 
@@ -718,8 +718,8 @@ MissionDescription::MissionDescription(const char* fname, GameType gameType)
 	else{
 		setSaveName(fname);
 
-		if(getExtention(saveName()) == "spg"){
-			std::string headerName = setExtention(saveName(), "sph");
+		if(getExtension(saveName(), true) == "spg"){
+			std::string headerName = setExtension(saveName(), "sph");
 			XPrmIArchive ia;
 			if(ia.open(headerName.c_str()))
 				ia >> WRAP_NAME(*this, "MissionDescriptionPrm");
@@ -772,7 +772,7 @@ bool MissionDescription::loadMission(SavePrm& savePrm) const
 	savePrm = SavePrm();
 	MissionDescription missionDescription;
 	
-	if(getExtention(saveName()) == "spg"){
+	if(getExtension(saveName(), true) == "spg"){
 		XPrmIArchive ia;
 		if(!ia.open(saveName()))
 			return false;
@@ -812,11 +812,11 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 		data.originalSaveName = strstr(name.c_str(), "resource");
 	}
 
-//	BinaryOArchive boa(setExtention(saveName(), "spb").c_str());
+//	BinaryOArchive boa(setExtension(saveName(), "spb").c_str());
 //	boa << WRAP_NAME(data, "MissionDescriptionPrm");
 //	boa << WRAP_NAME(savePrm, "SavePrm");
 
-	XPrmOArchive oa(setExtention(saveName(), "spg").c_str());
+	XPrmOArchive oa(setExtension(saveName(), "spg").c_str());
 	oa << WRAP_NAME(data, "MissionDescriptionPrm");
 	oa << WRAP_NAME(savePrm, "SavePrm");
 	return oa.close();
@@ -841,8 +841,8 @@ std::string resolve_mission_path(const std::string& path) {
 void MissionDescription::setSaveName(const char* fname) 
 { 
 	saveName_ = fname;
-	if(getExtention(saveName_.c_str()) != "spb") {
-        saveName_ = setExtention(saveName_.c_str(), "spg");
+	if (getExtension(saveName_.c_str(), true) != "spb") {
+        saveName_ = setExtension(saveName_.c_str(), "spg");
     }
 	saveName_ = resolve_mission_path(saveName_);
 	saveNameBinary_ = saveName_;
@@ -913,13 +913,13 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 
 	//---------------------
 	// Map changes
-	std::string mapName = setExtention(mission.saveNameBinary(), "gmp");
-	if(vMap.IsChanged() || (loadedGmpName_ != "" && (!XStream(0).open(mapName.c_str(), XS_IN) || mapName != loadedGmpName_)) || check_command_line("force_save_gmp")){
+	std::string mapName = setExtension(mission.saveNameBinary(), "gmp");
+	if(vMap.IsChanged() || (!loadedGmpName_.empty() && (!XStream(0).open(mapName.c_str(), XS_IN) || mapName != loadedGmpName_)) || check_command_line("force_save_gmp")){
 		if(!vMap.saveGameMap(mapName.c_str()))
 			return false;
 		loadedGmpName_ = mapName;
 	}
-	else if(loadedGmpName_ == "")
+	else if(loadedGmpName_.empty())
 		remove(mapName.c_str());
 
 	if(gameShell->missionEditor() && gameShell->missionEditor()->hardnessChanged()){
@@ -947,13 +947,13 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 		int size = binaryData.tell();
 		binaryData.set(0);
 		binaryData < REGION_DATA_FILE_VERSION < changedCounter;
-		XStream ff(setExtention(mission.saveNameBinary(), "dat").c_str(), XS_OUT, 0);
+		XStream ff(setExtension(mission.saveNameBinary(), "dat").c_str(), XS_OUT, 0);
 		ff.write(binaryData, size);
 		if(ff.ioError())
 			return false;
 	}
 	else
-		remove(setExtention(mission.saveName(), "dat").c_str());
+		remove(setExtension(mission.saveName(), "dat").c_str());
 
     return true;
 }

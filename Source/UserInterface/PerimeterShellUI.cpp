@@ -109,16 +109,19 @@ std::string getImageFileName(const sqshImage* image, const char* fileName) {
         }
         if (image->hasBelligerentVersion && universe() && universe()->activePlayer()) {
             BELLIGERENT_FACTION faction = getBelligerentFaction(universe()->activePlayer()->belligerent());
-            switch (faction) {
-                case EXODUS:
-                    fullname.insert(fullname.find('.'), "_xodus");
-                    break;
-                case HARKBACK:
-                    fullname.insert(fullname.find('.'), "_hback");
-                    break;
-                case EMPIRE:
-                default:
-                    fullname.insert(fullname.find('.'), "_mperia");
+            size_t pos = fullname.rfind('.');
+            if (pos != std::string::npos) {
+                switch (faction) {
+                    case EXODUS:
+                        fullname.insert(pos, "_xodus");
+                        break;
+                    case HARKBACK:
+                        fullname.insert(pos, "_hback");
+                        break;
+                    case EMPIRE:
+                    default:
+                        fullname.insert(pos, "_mperia");
+                }
             }
         }
     }
