@@ -1911,9 +1911,10 @@ void GameShell::MakeShot()
 {
 	if(shotNumber_ == -1)
 		ShotsScan();
-	XBuffer fname(MAX_PATH);
-	fname < convert_path_native(terScreenShotsPath).c_str() < PATH_SEP < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
+	XBuffer fname;
+	fname <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
 	shotNumber_++;
+    std::string path = convert_path_native(terScreenShotsPath) + PATH_SEP + terScreenShotName + fname.address();
 	terRenderDevice->SetScreenShot(fname);
 }
 
@@ -1965,10 +1966,12 @@ void GameShell::startStopRecordMovie()
 
 void GameShell::makeMovieShot()
 {
-	XBuffer fname(MAX_PATH);
-	fname < movieName_.c_str() < PATH_SEP < terMovieFrameName <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
+	XBuffer fname;
+	fname <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
+    shotNumber_++;
+    std::string path = movieName_ + PATH_SEP + terMovieFrameName + fname.address();
 	movieShotNumber_++;
-	terRenderDevice->SetScreenShot(fname);
+	terRenderDevice->SetScreenShot(path.c_str());
 
 	terRenderDevice->BeginScene();
 	terRenderDevice->SetFont(_pShellDispatcher->getFont());
@@ -2199,7 +2202,8 @@ bool CShellLogicDispatcher::ShowTerraform() const
 void GameShell::initResourceDispatcher()
 {
 	synchroByClock_ = IniManager("Perimeter.ini").getInt("Timer","SynchroByClock");
-	framePeriod_ = 1000/IniManager("Perimeter.ini").getInt("Timer","StandartFrameRate");
+    int sfr = IniManager("Perimeter.ini").getInt("Timer","StandartFrameRate");
+	framePeriod_ = 1000/sfr;
 
 	check_command_line_parameter("synchro_by_clock", synchroByClock_);
 

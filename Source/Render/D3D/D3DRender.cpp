@@ -194,7 +194,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 //	if(TexFmtData[SURFMT_RENDERMAP].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLORALPHA].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLOR].TexFmtD3D==D3DFMT_UNKNOWN)
 //		return 5; // don't support render to texture
 	RDCALL(lpD3D->GetDeviceCaps(Adapter,D3DDEVTYPE_HAL,&DeviceCaps));
-	ZeroMemory(&d3dpp,sizeof(d3dpp));
+    memset(&d3dpp, 0, sizeof(d3dpp));
 	d3dpp.BackBufferWidth			= xScr=xscr;
 	d3dpp.BackBufferHeight			= yScr=yscr;
 	d3dpp.MultiSampleType			= D3DMULTISAMPLE_NONE;

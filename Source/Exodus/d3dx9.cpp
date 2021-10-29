@@ -177,7 +177,7 @@ struct argb_conversion_info
 static void init_argb_conversion_info(const struct pixel_format_desc *srcformat, const struct pixel_format_desc *destformat, struct argb_conversion_info *info)
 {
     UINT i;
-    ZeroMemory(info->process_channel, 4 * sizeof(bool));
+    memset(info->process_channel, 0, 4 * sizeof(bool));
     info->channelmask = 0;
 
     info->srcformat  =  srcformat;
@@ -379,7 +379,7 @@ void convert_argb_pixels(const BYTE *src, UINT src_row_pitch, UINT src_slice_pit
     UINT min_width, min_height, min_depth;
     UINT x, y, z;
 
-    ZeroMemory(channels, sizeof(channels));
+    memset(channels, 0, sizeof(channels));
     init_argb_conversion_info(src_format, dst_format, &conv_info);
 
     min_width = std::min(src_size->width, dst_size->width);
@@ -484,7 +484,7 @@ void point_filter_argb_pixels(const BYTE *src, UINT src_row_pitch, UINT src_slic
     DWORD channels[4];
     UINT x, y, z;
 
-    ZeroMemory(channels, sizeof(channels));
+    memset(channels, 0, sizeof(channels));
     init_argb_conversion_info(src_format, dst_format, &conv_info);
 
     if (color_key)

@@ -62,7 +62,7 @@ struct ScriptParam
 		belligerent_dependency(false)
 	{};
 
-	void LoadSound(const char* name);
+	void LoadSound(const std::string& name);
 
 	void Release();
 
@@ -151,7 +151,7 @@ protected:
 
 	bool RemoveScriptInternal(const char* name);
 	
-	static const char* filePath(const ScriptParam* prm,const char* file_name,int belligerent_index = 0);
+	static std::string filePath(const ScriptParam* prm,const char* file_name,int belligerent_index = 0);
 };
 
 extern SNDScript script3d;

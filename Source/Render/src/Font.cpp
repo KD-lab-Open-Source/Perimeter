@@ -356,19 +356,6 @@ void str_replace_slash(char* str)
 			*p='_';
 }
 
-void str_add_slash(char* str)
-{
-	int len=strlen(str);
-	if(len>0)
-	{
-		if(str[len-1]!='/' && str[len-1]!='\\')
-		{
-			str[len]=PATH_SEP;
-			str[len+1]=0;
-		}
-	}
-}
-
 bool cFontInternal::Create(const char* root_dir, const char* language_dir, const char* fname, int h, bool silentErr)
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
@@ -377,20 +364,18 @@ bool cFontInternal::Create(const char* root_dir, const char* language_dir, const
 	int height=(int)round((float)(h*ScreenY)/768.0f);
 	statement_height=h;
 
-	char prefix[MAX_PATH];
-	char texture_name[MAX_PATH];
-	char fontname[MAX_PATH];
-	prefix[0]=0;
-	texture_name[0]=0;
+	std::string prefix;
+	std::string texture_name;
+	std::string fontname;
 
 	if(root_dir)
 	{
-		strcpy(prefix,root_dir);
-		str_add_slash(prefix);
-		str_replace_slash(prefix);
-		_strlwr(prefix);
+		prefix = convert_path_native(root_dir);
+		terminate_with_char(prefix, PATH_SEP);
+		str_replace_slash(prefix.data());
+		_strlwr(prefix.data());
 	}
-/*
+/* TODO remove?
 	if(root_dir)
 	{
 		strcpy(texture_name,root_dir);
@@ -399,29 +384,26 @@ bool cFontInternal::Create(const char* root_dir, const char* language_dir, const
 */
 	if(language_dir)
 	{
-		strcat(texture_name,language_dir);
-		str_add_slash(texture_name);
+		texture_name = convert_path_native(language_dir);
+        terminate_with_char(texture_name, PATH_SEP);
 	}
 	
 
-	strcpy(fontname,texture_name);
-	strcat(fontname,fname);
-	strcat(fontname,".font");
+	fontname = texture_name + fname + ".font";
 
-	int len=strlen(texture_name);
-	sprintf(texture_name+len,"%s-%i",fname,height);
-	_strlwr(texture_name);
-	str_replace_slash(texture_name);
+    texture_name += std::string(fname) + "-" + std::to_string(height);
+	_strlwr(texture_name.data());
+	str_replace_slash(texture_name.data());
 	// @caiiiycuk: need to check
-	char *p;
-	char *c;
-	for(p=prefix,c=texture_name;*p;p++,c++)
+	const char *p;
+	const char *c;
+	for(p=prefix.c_str(),c=texture_name.c_str();*p;p++,c++)
 	{
 		if(*p!=*c)
 			break;
 	}
 
-	if(!CreateTexture(c,fontname,height))
+	if(!CreateTexture(c,fontname.c_str(),height))
 	{
 		if(!silentErr) VisError<<"Cannot load font: "<< fontname <<VERR_END;
 		return false;

@@ -280,32 +280,28 @@ IniManager::IniManager(const char* fname, bool check_existence, bool full_path) 
     is_full_path = full_path;
 }
 
-void IniManager::getFilePath(char* path) {
+std::string IniManager::getFilePath() {
     if (!is_full_path) {
         std::string pathres = convert_path_content(fname_);
         if (pathres.empty()) {
             ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
         }
 
-        //GetPrivateProfileString needs full path
-        if (_fullpath(path, pathres.c_str(), MAX_PATH) == NULL) {
-            ErrH.Abort("Ini full path not found: ", XERR_USER, 0, pathres.c_str());
-        }
+        return pathres;
     } else {
-        strncpy(path, fname_.c_str(), MAX_PATH);
+        return fname_;
     }
 }
 
 const char* IniManager::get(const char* section, const char* key)
 {
 	static char buf[256];
-    static char path[MAX_PATH];
-    getFilePath(path);
+    std::string path = getFilePath();
     
-	if(!GetPrivateProfileString(section,key,NULL,buf,256,path)){
+	if(!GetPrivateProfileString(section,key,NULL,buf,256,path.c_str())){
 		*buf = 0;
 		if (check_existence_) {
-            fprintf(stderr, "INI key not found %s %s %s\n", path, section, key);
+            fprintf(stderr, "INI key not found %s %s %s\n", path.c_str(), section, key);
         }
 	}
 
@@ -313,10 +309,9 @@ const char* IniManager::get(const char* section, const char* key)
 }
 void IniManager::put(const char* section, const char* key, const char* val)
 {
-    static char path[MAX_PATH];
-    getFilePath(path);
+    std::string path = getFilePath();
     
-	WritePrivateProfileString(section,key,val,path);
+	WritePrivateProfileString(section,key,val,path.c_str());
 }
 
 int IniManager::getInt(const char* section, const char* key) 

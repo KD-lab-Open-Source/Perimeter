@@ -56,10 +56,6 @@ uint32_t WritePrivateProfileString(const char* section,const char* key,const cha
     return 1;
 }
 
-void ZeroMemory(void *p, size_t n) {
-    memset(p, 0, n);
-}
-
 void Sleep(uint32_t millis) {
     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
@@ -92,24 +88,6 @@ char* _strupr(char* str)
 int __iscsym(int c) {
     if (c == '_') return 1;
     return isalnum(c);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-char* _fullpath(char* absolutePath, const char* relativePath, size_t maxLength) {
-    if (relativePath) {
-        bool malloced = absolutePath == nullptr;
-        if (malloced) {
-            absolutePath = static_cast<char*>(malloc(maxLength));
-        }
-        if (realpath(convert_path_native(relativePath).c_str(), absolutePath) != nullptr) {
-            return absolutePath;
-        }
-        if (malloced) {
-            free(absolutePath);
-        }
-    }
-    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

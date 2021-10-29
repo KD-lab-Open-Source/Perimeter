@@ -263,28 +263,26 @@ void SNDScript::PlayByLevel(int pause_level)
 	}
 }
 
-const char* SNDScript::filePath(const ScriptParam* prm,const char* file_name,int belligerent_index)
+std::string SNDScript::filePath(const ScriptParam* prm,const char* file_name,int belligerent_index)
 {
-	static XBuffer fname(MAX_PATH);
+	std::string path;
 
-	fname.init();
-
-	if(!prm->language_dependency)
-		fname < SNDGetSoundDirectory() < file_name < ".wav";
-	else
-		fname < locDataPath.c_str() < file_name < ".wav";
+	if(!prm->language_dependency) {
+        path = SNDGetSoundDirectory() + file_name + ".wav";
+    } else {
+        path = locDataPath + file_name + ".wav";
+    }
 
 	if(prm->belligerent_dependency){
 		std::string path_parent, path_filename;
-        split_path_parent(fname.address(), path_parent, &path_filename);
+        split_path_parent(path, path_parent, &path_filename);
 
 		xassert(belligerent_index >= 0 && belligerent_index < soundScriptTable().belligerentPrefix.size());
 
-		fname.init();
-		fname < path_parent.c_str() < soundScriptTable().belligerentPrefix[belligerent_index] < path_filename.c_str();
+        path = path_parent + PATH_SEP + soundScriptTable().belligerentPrefix[belligerent_index].value() + path_filename;
 	}
 
-	return fname.address();
+	return path;
 }
 
 ///////////SNDOneBuffer///////////////////////////////////
@@ -326,12 +324,12 @@ bool SNDOneBuffer::SetFrequency(float frequency)
 }
 
 
-void ScriptParam::LoadSound(const char* name)
+void ScriptParam::LoadSound(const std::string& name)
 {
     SND_Sample* sample=SNDLoadSound(name);
 
 	if (sample == nullptr) {
-        logs("Sound not loaded: %s\n", name);
+        logs("Sound not loaded: %s\n", name.c_str());
     } else {
         sample->channel_group = SND_GROUP_EFFECTS;
         GetSounds().push_back(sample);

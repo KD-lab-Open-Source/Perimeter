@@ -10,7 +10,7 @@ void SNDEnableVoices(bool enable);
 bool SNDIsVoicesEnabled();
 
 void SNDSetSoundDirectory(const char* dir);
-const char* SNDGetSoundDirectory();
+const std::string& SNDGetSoundDirectory();
 
 void SNDSetLocDataDirectory(const char* dir);
 void SNDSetBelligerentIndex(int idx);

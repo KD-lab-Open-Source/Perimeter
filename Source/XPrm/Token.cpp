@@ -157,6 +157,12 @@ unsigned int Parser::CRC(unsigned int crc)
 	return ::CRC(buffer, crc);
 }
 
+XBuffer& operator<=(XBuffer& os, const Parser& p) {
+    std::string full = convert_path_native(p.fname);
+    full = std::filesystem::absolute(std::filesystem::path(full)).string();
+    os < full.c_str() < '(' <= p.line < ") : "; return os;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 //		Compiler

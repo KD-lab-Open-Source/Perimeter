@@ -3,7 +3,7 @@
 
 #include "xmath.h"
 
-const char Path2TTerraResource[]="RESOURCE\\Tools\\";
+const std::string Path2TTerraResource="RESOURCE\\Tools\\";
 
 class CGeoInfluence {
 	//unsigned char* inVxG;

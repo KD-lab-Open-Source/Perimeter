@@ -2556,10 +2556,8 @@ sTVolcano::sTVolcano(int _x, int _y, int _sx, int _sy)
 
 	const int kFirstScale = round((0.55f+frnd(0.15f))*(float)(1<<16));
 	max_template_volcano_height = 0;
-	XBuffer tfb;
-	tfb < Path2TTerraResource < "volcano.dat";
 	XStream fo(0);
-	fo.open(convert_path_content(tfb.address()), XS_IN);
+	fo.open(convert_path_content(Path2TTerraResource + "volcano.dat"), XS_IN);
 	unsigned short buf[256*2];
 	cnt = 0;
 	for(i = 0; i < tv_arraySY*tv_keyPoints; i++){
@@ -2751,10 +2749,8 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 		numPreImage=NUMBER_PRE_IMAGE;
 		preImage=new unsigned short[tb_arraySX*tb_arraySY*tb_keyPoints*numPreImage];
 
-        XBuffer cb;
-        cb < Path2TTerraResource < "bub.dat";
 		XStream fi;
-		fi.open(convert_path_content(cb.address()), XS_IN);
+		fi.open(convert_path_content(Path2TTerraResource + "bub.dat"), XS_IN);
 		fi.seek(0,XS_BEG);
 		//unsigned short buf[][256*2];
 		fi.read(preImage, tb_keyPoints * tb_arraySY*tb_arraySX*sizeof(unsigned short)*numPreImage);
@@ -5901,13 +5897,11 @@ void s_Mesh2VMapDispather::deleteEarthUnit(s_EarthUnit* eu, bool autoDeleteMVMDa
 
 meshM2VM* s_Mesh2VMapDispather::getMeshFrom3DS(const char * name3DS)
 {
-	char cb[MAX_PATH];
-	strcpy(cb, Path2TTerraResource);
-	strcat(cb, name3DS);
+    std::string path = Path2TTerraResource + name3DS;
 
 	std::list<meshM2VM*>::iterator mi;
 	for(mi=meshList.begin(); mi!=meshList.end(); mi++){
-		if(stricmp(cb, (*mi)->fname3DS)==0) break;
+		if(stricmp(path.c_str(), (*mi)->fname3DS)==0) break;
 	}
 	if(mi!=meshList.end()){
 		return *mi;
@@ -5916,7 +5910,7 @@ meshM2VM* s_Mesh2VMapDispather::getMeshFrom3DS(const char * name3DS)
 		meshM2VM* pMesh=new meshM2VM();
 
 
-		pMesh->load(cb);
+		pMesh->load(path.c_str());
 		meshList.push_back(pMesh);
 		return pMesh;
 	}

@@ -22,7 +22,7 @@ static bool g_enable_voices = true;
 
 SND3DListener snd_listener;
 
-static char sound_directory[260]="";
+static std::string sound_directory="";
 
 namespace SND {
 float global_volume = 1.0f;
@@ -99,11 +99,10 @@ bool SNDIsVoicesEnabled() {
 
 void SNDSetSoundDirectory(const char* dir)
 {
-	strncpy(sound_directory,dir,sizeof(sound_directory));
-	sound_directory[sizeof(sound_directory)-1]=0;
+	sound_directory = dir;
 }
 
-const char* SNDGetSoundDirectory()
+const std::string& SNDGetSoundDirectory()
 {
 	return sound_directory;
 }
@@ -266,7 +265,7 @@ bool SNDScriptPrmEnableAll()
 	return true;
 }
 
-SND_Sample* SNDLoadSound(const char* fxname)
+SND_Sample* SNDLoadSound(const std::string& fxname)
 {
 	if(!SND::has_sound_init || !g_enable_sound) {
         return nullptr;
@@ -279,7 +278,7 @@ SND_Sample* SNDLoadSound(const char* fxname)
     
     Mix_Chunk* chunk = Mix_LoadWAV(path.c_str());
     if(!chunk) {
-        fprintf(stderr, "Mix_LoadWAV error %s : %s\n", fxname, Mix_GetError());
+        fprintf(stderr, "Mix_LoadWAV error %s : %s\n", fxname.c_str(), Mix_GetError());
         return nullptr;
     }
 

@@ -6,7 +6,7 @@
 void SNDSetupChannelCallback(bool init);
 void SNDUpdateAllSoundVolume();
 class SND_Sample;
-SND_Sample* SNDLoadSound(const char* fname);
+SND_Sample* SNDLoadSound(const std::string& fname);
 
 namespace SND {
 extern float global_volume;

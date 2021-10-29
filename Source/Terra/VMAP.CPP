@@ -59,11 +59,9 @@ unsigned char vrtMap::GetGeoType(int offset, int h)
 char* GetINIstringV(const std::string& iniFile,const char* section,const char* key)
 {
 	static char buffer[255+1];
-	static char fullPath[MAX_PATH];
 	std::string path = convert_path_content(iniFile);
     if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
-	if(_fullpath(fullPath, path.c_str(), MAX_PATH) == NULL) ErrH.Abort("Ini file not found: ", XERR_USER, 0, path.c_str());
-	if(!GetPrivateProfileString(section,key,"",buffer,255,fullPath)){//fullPath
+	if(!GetPrivateProfileString(section,key,"",buffer,255,path.c_str())){//fullPath
 		buffer[0]=0;
 	}
 	return buffer;
@@ -71,11 +69,9 @@ char* GetINIstringV(const std::string& iniFile,const char* section,const char* k
 void SaveINIstringV(const std::string& iniFile,const char* section,const char* key,const char* var)
 {
 	//WritePrivateProfileString(section,key,var,iniFile);
-	static char fullPath[MAX_PATH];
 	std::string path = convert_path_content(iniFile);
     if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
-    if(_fullpath(fullPath, path.c_str(), MAX_PATH) == NULL) ErrH.Abort("Ini file not found: ", XERR_USER, 0, path.c_str());
-	WritePrivateProfileString(section,key,var,fullPath);//fullPath
+	WritePrivateProfileString(section,key,var,path.c_str());//fullPath
 }
 
 std::string GetTargetName(const char* name)
