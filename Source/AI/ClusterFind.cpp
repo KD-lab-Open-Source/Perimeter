@@ -37,7 +37,7 @@ ClusterFind::ClusterFind(int _dx,int _dy,int _max_distance)
 {
 	dx=_dx;dy=_dy;
 	max_distance=_max_distance;
-	pmap=new DWORD[dx*dy];
+	pmap=new uint32_t[dx * dy];
 	pone=new Front[max_cell_in_front];
 	ptwo=new Front[max_cell_in_front];
 	size_one=size_two=0;
@@ -94,7 +94,7 @@ void ClusterFind::Set(bool enable_smooting)
 	{
 		for(int x=0;x<dx;x++)
 		{
-			DWORD p=pmap[y*dx+x];
+			uint32_t p=pmap[y * dx + x];
 			if(p==0)
 			{
 				all_cluster.resize(cur_num+1);
@@ -124,7 +124,7 @@ void ClusterFind::Relink()
 
 		for(int i=0;i<size;i++)
 		{
-			DWORD il=c.index_link[i];
+			uint32_t il=c.index_link[i];
 			xassert(//il>=0 && 
 				il<all_cluster.size());
 			c.link[i]=&all_cluster[il];
@@ -146,7 +146,7 @@ void ClusterFind::CheckAllLink()
 		xassert(c.ycenter>=0 && c.ycenter<4096);
 		xassert(/*c.self_id>=0 &&*/	c.self_id<8192);
 
-		std::vector<DWORD>::iterator itd;
+		std::vector<uint32_t>::iterator itd;
 		FOR_EACH(c.index_link,itd)
 		{
 			xassert(/* *itd>=0 && */*itd<all_cluster.size());
@@ -192,15 +192,15 @@ void ClusterFind::ClusterOne(int x,int y,int id,Cluster& c)
 		for(int j=0;j<size_one;j++)
 		{
 			Front& pos=pone[j];
-			DWORD& p=pmap[pos.y*dx+pos.x];
+            uint32_t & p=pmap[pos.y * dx + pos.x];
 
 			for(int k=0;k<size_child;k++)
 			{
-				DWORD xx=pos.x+sx[k],yy=pos.y+sy[k];
+				uint32_t xx= pos.x + sx[k],yy= pos.y + sy[k];
 				if(xx>=dx || yy>=dy)continue;
 
-				DWORD addp=yy*dx+xx;
-				DWORD& pd=pmap[addp];
+				uint32_t addp= yy * dx + xx;
+                uint32_t & pd=pmap[addp];
 				uint8_t w=walk_map[addp];
 
 				if(pd!=0)
@@ -241,10 +241,10 @@ void ClusterFind::ClusterOne(int x,int y,int id,Cluster& c)
 	c.ycenter/=num_point;
 	c.temp_set=true;
 
-	std::vector<DWORD>::iterator it;
+	std::vector<uint32_t>::iterator it;
 	FOR_EACH(vtemp_set,it)
 	{
-		DWORD d=*it;
+		uint32_t d=*it;
 		xassert(d<all_cluster.size());
 		Cluster& cd=all_cluster[d];
 		cd.temp_set=true;
@@ -321,9 +321,9 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 	xassert(up.x>=0 && up.x<dx && up.y>=0 && up.y<dy);
 	xassert(up_to.x>=0 && up_to.x<dx && up_to.y>=0 && up_to.y<dy);
 
-	DWORD qfrom=pmap[from.y*dx+from.x];
-	DWORD qcenter=pmap[up.y*dx+up.x];
-	DWORD qto=pmap[up_to.y*dx+up_to.x];
+	uint32_t qfrom=pmap[from.y * dx + from.x];
+	uint32_t qcenter=pmap[up.y * dx + up.x];
+	uint32_t qto=pmap[up_to.y * dx + up_to.x];
 
 	Vect2i out;
 	LINE_RET ret;
@@ -391,7 +391,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 	
 	for(int i=0;i<size_child8;i++)
 	{
-		DWORD xx=f.x+sx8[i],yy=f.y+sy8[i];
+		uint32_t xx= f.x + sx8[i],yy= f.y + sy8[i];
 		if(xx<dx && yy<dy)
 		{
 			if(pmap[yy*dx+xx]==qcenter)
@@ -415,7 +415,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 		{
 			for(int i=0;i<size_child8;i++)
 			{
-				DWORD xx=cf.x+sx8[i],yy=cf.y+sy8[i];
+				uint32_t xx= cf.x + sx8[i],yy= cf.y + sy8[i];
 				if(xx<dx && yy<dy)
 				{
 					if(is_used[yy*dx+xx]==b)
@@ -520,9 +520,9 @@ public:
 };
 
 ClusterFind::LINE_RET 
-	ClusterFind::Line(int xfrom,int yfrom,int xto,int yto,
-					   DWORD prev,DWORD eq,int& xeq,int& yeq,
-					   bool enable_add_one)
+	ClusterFind::Line(int xfrom, int yfrom, int xto, int yto,
+                      uint32_t prev, uint32_t eq, int& xeq, int& yeq,
+                      bool enable_add_one)
 {
 	float x,y;
 	float lx,ly;
@@ -573,7 +573,7 @@ ClusterFind::LINE_RET
 	{
 		//Здесь использовать x,y
 		int ix=round(x),iy=round(y);
-		DWORD q=pmap[iy*dx+ix];
+		uint32_t q=pmap[iy * dx + ix];
 		Cluster& cur=all_cluster[q-1];
 
 #ifdef CF_UP_BIT
@@ -655,8 +655,8 @@ bool ClusterFind::LineWalk(int xfrom, int yfrom, int xto, int yto,
 }
 
 
-void ClusterFind::FindClusterFront(int x,int y,DWORD to,
-	std::vector<Front>& front)
+void ClusterFind::FindClusterFront(int x, int y, uint32_t to,
+                                   std::vector<Front>& front)
 {
 	{
 		if(is_used_xmin<=is_used_xmax)
@@ -681,7 +681,7 @@ void ClusterFind::FindClusterFront(int x,int y,DWORD to,
 	size_one=1;
 
 	int num_point=1;
-	DWORD id=pmap[y*dx+x];
+	uint32_t id=pmap[y * dx + x];
 
 	is_used[y*dx+x]=1;
 
@@ -696,17 +696,17 @@ void ClusterFind::FindClusterFront(int x,int y,DWORD to,
 		for(int j=0;j<size_one;j++)
 		{
 			Front& pos=pone[j];
-			DWORD& p=pmap[pos.y*dx+pos.x];
+            uint32_t & p=pmap[pos.y * dx + pos.x];
 
 			bool enable_add=false;
 
 			for(int k=0;k<size_child8;k++)
 			{
-				DWORD xx=pos.x+sx8[k],yy=pos.y+sy8[k];
+				uint32_t xx= pos.x + sx8[k],yy= pos.y + sy8[k];
 				if(xx>=dx || yy>=dy)continue;
 
-				DWORD addp=yy*dx+xx;
-				DWORD& pd=pmap[addp];
+				uint32_t addp= yy * dx + xx;
+                uint32_t & pd=pmap[addp];
 				uint8_t& w=is_used[addp];
 
 				if(pd!=id)
@@ -1029,7 +1029,7 @@ bool ClusterFind::SetLaterQuant()
 	{
 		for(int x = 0;x<dx;x++)
 		{
-			DWORD p = pmap[y*dx+x];
+			uint32_t p = pmap[y * dx + x];
 			if(p==0)
 			{
 				all_cluster.resize(set_later_cur_num+1);

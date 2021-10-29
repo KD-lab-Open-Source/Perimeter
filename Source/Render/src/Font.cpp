@@ -316,7 +316,7 @@ bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 	if(file==-1)
 		return false;
 
-	DWORD size=Font.size();
+	uint32_t size=Font.size();
 	_write(file,&FontHeight,sizeof(FontHeight));
 	_write(file,&size,sizeof(size));
 	_write(file,&Font[0],size*sizeof(Vect3f));
@@ -340,7 +340,7 @@ bool cFontInternal::Load(const char* fname,cFontImage& fnt)
 	if(file==-1)
 		return false;
 
-	DWORD size=0;
+	uint32_t size=0;
 	_read(file,&FontHeight,sizeof(FontHeight));
 	_read(file,&size,sizeof(size));
 	Font.resize(size);

@@ -256,7 +256,7 @@ void terBuildingInstaller::InitTexture()
 	uint8_t* buf = (uint8_t*)pTexture->LockTexture(Pitch);
 	for(int y=0;y<dy;y++)
 	{
-		DWORD* c = (DWORD*)(buf+y*Pitch);
+        uint32_t * c = (uint32_t*)(buf + y * Pitch);
 		for(int x = 0; x < dx; x++,c++)
 			*c = 0;
 	}
@@ -350,7 +350,7 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 	char* p = BaseBuff;
 	for(int i = 0;i < BaseBuffSY;i++)
 	{
-		DWORD* c = (DWORD*)(buf+i*Pitch);
+        uint32_t * c = (uint32_t*)(buf + i * Pitch);
 		for(int j = 0;j < BaseBuffSX;j++)
 		{
 			if((*p) & 1){

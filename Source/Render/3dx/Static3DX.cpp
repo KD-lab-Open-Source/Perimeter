@@ -655,7 +655,7 @@ void cStaticMaterial::Load(CLoadDirectory rd,const char* path_name)
 	case C3DX_MATERIAL_TEXTUREMAP:
 		{
 			CLoadIterator it(ld);
-			DWORD slot=-1;
+			uint32_t slot=-1;
 			std::string name;
 			it>>slot;
 			it>>name;

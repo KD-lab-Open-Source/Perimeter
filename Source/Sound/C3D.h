@@ -13,7 +13,7 @@ struct SNDOneBuffer
     float frequency;
 
     SND_Sample* buffer;
-	DWORD nSamplesPerSec;//Частота сэмпла см. WAVEFORMATEX
+	uint32_t nSamplesPerSec;//Частота сэмпла см. WAVEFORMATEX
 
 	VirtualSound3D* p3DBuffer;
 

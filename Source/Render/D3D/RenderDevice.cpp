@@ -244,7 +244,7 @@ void BuildDot3Map(int xs,int ys,void *pSrc,void *pDst)
 }
 
 unsigned int ColorByNormal(Vect3f n);
-Vect3f NormalByColor(DWORD d);
+Vect3f NormalByColor(uint32_t d);
 
 void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst,
 				 int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int Attr)

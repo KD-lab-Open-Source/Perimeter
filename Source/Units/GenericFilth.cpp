@@ -1004,7 +1004,7 @@ void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int m
 
 	for(int iteration=0;iteration<2;iteration++)
 	{
-		DWORD ignore_unit_class=(iteration==0)?UNIT_CLASS_FRAME:~(DWORD)UNIT_CLASS_FRAME;
+		uint32_t ignore_unit_class= (iteration == 0) ? UNIT_CLASS_FRAME : ~(uint32_t)UNIT_CLASS_FRAME;
 		FOR_EACH(universe()->Players, pi)
 		{
 			terPlayer* player=*pi;
@@ -1031,7 +1031,7 @@ void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int m
 					continue;
 				if(player->isWorld())
 				{
-					ignore_unit_class=~(DWORD)UNIT_CLASS_STRUCTURE_ENVIRONMENT;
+					ignore_unit_class=~(uint32_t)UNIT_CLASS_STRUCTURE_ENVIRONMENT;
 				}
 				break;
 			default:

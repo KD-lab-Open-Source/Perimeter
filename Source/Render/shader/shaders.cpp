@@ -60,10 +60,11 @@ cVertexShader::~cVertexShader()
 	Delete();
 }
 
-HRESULT cVertexShader::Compile(const char* name,const DWORD* shader)
+HRESULT cVertexShader::Compile(const char* name,const uint32_t* shader)
 {
 	LPDIRECT3DVERTEXSHADER9 ddshader=0;
-	HRESULT hr=gb_RenderDevice3D->lpD3DDevice->CreateVertexShader(shader, &ddshader);
+    const DWORD* shader_code = checked_reinterpret_cast_ptr<const uint32_t, const DWORD>(shader);
+	HRESULT hr=gb_RenderDevice3D->lpD3DDevice->CreateVertexShader(shader_code, &ddshader);
 	SHADER s;
 	s.pShader=ddshader;
 	pShader.push_back(s);
@@ -169,10 +170,11 @@ inline void cVertexShader::SetFloat(const SHADER_HANDLE& h,const float vect)
 	}
 }
 
-void cVertexShader::CompileAndFound(const char* name,const DWORD* shader)
+void cVertexShader::CompileAndFound(const char* name,const uint32_t* shader)
 {
 	LPDIRECT3DVERTEXSHADER9 ddshader=0;
-	RDCALL(gb_RenderDevice3D->lpD3DDevice->CreateVertexShader(shader, &ddshader));
+    const DWORD* shader_code = checked_reinterpret_cast_ptr<const uint32_t, const DWORD>(shader);
+	RDCALL(gb_RenderDevice3D->lpD3DDevice->CreateVertexShader(shader_code, &ddshader));
 	GetHandle();
 	SHADER s;
 	s.pShader=ddshader;
@@ -242,10 +244,11 @@ void PixelShader::Select()
 	gb_RenderDevice3D->SetPixelShader(pShader);
 }
 
-HRESULT PixelShader::Compile(const char* name,const DWORD* shader)
+HRESULT PixelShader::Compile(const char* name,const uint32_t* shader)
 {
 	RELEASE(pShader);
-	return gb_RenderDevice3D->lpD3DDevice->CreatePixelShader(shader, &pShader);
+    const DWORD* shader_code = checked_reinterpret_cast_ptr<const uint32_t, const DWORD>(shader);
+	return gb_RenderDevice3D->lpD3DDevice->CreatePixelShader(shader_code, &pShader);
 }
 
 void PixelShader::Delete()

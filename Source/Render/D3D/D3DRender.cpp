@@ -128,7 +128,7 @@ cD3DRender::~cD3DRender()
 
 bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
 {
-	DWORD Adapter=0;
+	uint32_t Adapter=0;
 	if(!lpD3D)
 	{
 		//lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Временно, когда появится специфичное для 9.0c переправить обратно
@@ -179,7 +179,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 		
 	if(lpD3D==0) return 2;
 	D3DDISPLAYMODE d3ddm;
-	DWORD Adapter=0/*D3DADAPTER_DEFAULT*/;
+	uint32_t Adapter=0/*D3DADAPTER_DEFAULT*/;
 	RDERR(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 	if(Mode&RENDERDEVICE_MODE_WINDOW) {
 		if(d3ddm.Format==D3DFMT_X8R8G8B8||d3ddm.Format==D3DFMT_R8G8B8||d3ddm.Format==D3DFMT_A8R8G8B8)
@@ -210,7 +210,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 
 	bSupportVertexShaderHardware=bSupportVertexShader=(D3DSHADER_VERSION_MAJOR(DeviceCaps.VertexShaderVersion)>=1);
 
-	DWORD mt=D3DCREATE_FPU_PRESERVE;
+	uint32_t mt=D3DCREATE_FPU_PRESERVE;
 
 	if(RenderMode&RENDERDEVICE_MODE_MULTITHREAD)
 		mt|=D3DCREATE_MULTITHREADED;
@@ -308,12 +308,12 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 
 D3DFORMAT cD3DRender::GetBackBufferFormat(int Mode)
 {
-	DWORD Adapter=0;
+	uint32_t Adapter=0;
 	D3DFORMAT BackBufferFormat=D3DFMT_X8R8G8B8;
 	if(Mode&RENDERDEVICE_MODE_WINDOW)
 	{
 		D3DDISPLAYMODE d3ddm;
-		DWORD Adapter=0;
+		uint32_t Adapter=0;
 		RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 		BackBufferFormat = d3ddm.Format;
 	}else
@@ -362,7 +362,7 @@ void cD3DRender::UpdateRenderMode()
 	d3dpp.Windowed					= (RenderMode&(RENDERDEVICE_MODE_WINDOW|RENDERDEVICE_MODE_ONEBACKBUFFER))?TRUE:FALSE;
 
 	D3DDISPLAYMODE d3ddm;
-	DWORD Adapter=0;
+	uint32_t Adapter=0;
 	RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 	if(RenderMode&RENDERDEVICE_MODE_COMPRESS)
 	{
@@ -1002,8 +1002,8 @@ void cD3DRender::FlushLine3D()
 {
 	if(lines3d.empty())return;
 
-	DWORD prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	DWORD prev_fog=GetRenderState(D3DRS_FOGENABLE);
+	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
+	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_FOGENABLE,FALSE);
 	SetNoMaterial(ALPHA_BLEND);
@@ -1040,8 +1040,8 @@ void cD3DRender::FlushPoint3D()
 {
 	if(points3d.empty())return;
 
-	DWORD prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	DWORD prev_fog=GetRenderState(D3DRS_FOGENABLE);
+	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
+	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_FOGENABLE,FALSE);
 	SetNoMaterial(ALPHA_BLEND);
@@ -1317,7 +1317,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 	else
 		SetNoMaterial(blend_mode,phase,Tex2,Tex1,mode);
 
-	DWORD index1=GetTextureStageState(1,D3DTSS_TEXCOORDINDEX);
+	uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
 	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
 	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,1);
 
@@ -2245,7 +2245,7 @@ void cD3DRender::SetDialogBoxMode(bool enable)
 	if(enable)
 		RenderMode|=RENDERDEVICE_MODE_ONEBACKBUFFER;
 	else
-		RenderMode&=~(DWORD)RENDERDEVICE_MODE_ONEBACKBUFFER;
+		RenderMode&=~(uint32_t)RENDERDEVICE_MODE_ONEBACKBUFFER;
 
 	KillFocus();
 	SetFocus(false);

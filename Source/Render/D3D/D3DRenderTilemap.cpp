@@ -932,11 +932,11 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 
 	calcVisMap(DrawNode, TileMap, visMap, true);
 
-	DWORD minfilter1=gb_RenderDevice3D->GetSamplerState(1,D3DSAMP_MINFILTER);
-	DWORD magfilter1=gb_RenderDevice3D->GetSamplerState(1,D3DSAMP_MAGFILTER);
+	uint32_t minfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MINFILTER);
+	uint32_t magfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MAGFILTER);
 
-	DWORD zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
-	DWORD cull=gb_RenderDevice3D->GetRenderState(D3DRS_CULLMODE);
+	uint32_t zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
+	uint32_t cull=gb_RenderDevice3D->GetRenderState(D3DRS_CULLMODE);
 //	gb_RenderDevice3D->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
 
 	if(shadow)
@@ -1101,8 +1101,8 @@ int st_VBSw = 0, st_TexSw = 0, st_Poly = 0;
 
 //	if(pNormalCamera==DrawNode)
 //		gb_RenderDevice3D->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-	DWORD tss_colorarg2=gb_RenderDevice3D->GetTextureStageState(0,D3DTSS_COLORARG2);
-	DWORD tss_alphaarg2=gb_RenderDevice3D->GetTextureStageState(0,D3DTSS_ALPHAARG2);
+	uint32_t tss_colorarg2=gb_RenderDevice3D->GetTextureStageState(0, D3DTSS_COLORARG2);
+	uint32_t tss_alphaarg2=gb_RenderDevice3D->GetTextureStageState(0, D3DTSS_ALPHAARG2);
 	gb_RenderDevice3D->SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TFACTOR);
 	gb_RenderDevice3D->SetTextureStageState(0,D3DTSS_ALPHAARG2,D3DTA_TFACTOR);
 
@@ -1140,8 +1140,8 @@ int st_VBSw = 0, st_TexSw = 0, st_Poly = 0;
 			}
 
 			int nPolygon=0;
-			DWORD pageSize=gb_RenderDevice3D->GetVertexPool()->GetPageSize(bumpTile->vtx);
-			DWORD base_vertex_index=pageSize * bumpTile->vtx.page;
+			uint32_t pageSize=gb_RenderDevice3D->GetVertexPool()->GetPageSize(bumpTile->vtx);
+			uint32_t base_vertex_index= pageSize * bumpTile->vtx.page;
 
 			for(int i=0;i<bumpTile->index.size();i++)
 			{

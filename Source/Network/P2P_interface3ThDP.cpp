@@ -12,14 +12,14 @@
 #include "NetConnectionAux.h"
 
 
-HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer)
+HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, uint32_t dwMessageId, PVOID pMsgBuffer)
 {
 	return ((PNetCenter*)pvUserContext)->DirectPlayMessageHandler(dwMessageId, pMsgBuffer);
 }
 
 
 
-HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer)
+HRESULT PNetCenter::DirectPlayMessageHandler(uint32_t dwMessageId, PVOID pMsgBuffer)
 {
 
 	CAutoLock _lock(m_GeneralLock);
@@ -151,7 +151,7 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 			NETID netid=pCreatePlayerMsg->netidPlayer;
 
 			HRESULT hr;
-			DWORD dwSize = 0;
+			uint32_t dwSize = 0;
 			DPN_PLAYER_INFO* pdpPlayerInfo = NULL;
 
 			// Get the peer info and extract its name 
@@ -439,7 +439,7 @@ void PNetCenter::DeleteClientByMissionDescriptionIdx(const int missionDescriptio
 		LogMsg("error in missionDescription\n");
 }
 
-void PNetCenter::DeleteClientByNETID(const NETID netid, DWORD dwReason)
+void PNetCenter::DeleteClientByNETID(const NETID netid, uint32_t dwReason)
 {
 	if(isHost()){
 		hostMissionDescription.setChanged();

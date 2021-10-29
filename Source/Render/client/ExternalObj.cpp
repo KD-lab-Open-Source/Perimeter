@@ -36,7 +36,7 @@ void cExternalObj::Draw(cCamera *DrawNode)
 		Render->SetNoMaterial(ALPHA_NONE,GetFrame()->GetPhase(),GetTexture());
 	}
 
-	DWORD zwrite=gb_RenderDevice3D->GetRenderState( D3DRS_ZWRITEENABLE);
+	uint32_t zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
 	if(sort_pass)
 		gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
 

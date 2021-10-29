@@ -515,9 +515,9 @@ class CUITabSheet : public CShellWindow
 
 	int   m_nTabHover;
 	bool  m_bLabelHover;
-	DWORD m_nVisiblePagesBits;
-	DWORD m_nEnabledPagesBits;
-	DWORD m_nSelectedPagesBits;
+	uint32_t m_nVisiblePagesBits;
+	uint32_t m_nEnabledPagesBits;
+	uint32_t m_nSelectedPagesBits;
 	std::vector<float> flashTimers;
 	int   m_nActivePage;
 

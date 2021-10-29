@@ -12,7 +12,7 @@ TETreeManager::~TETreeManager(void)
 {
 }
 
-bool TETreeManager::create(CFrameWnd* pParent, DWORD dwStyle)
+bool TETreeManager::create(CFrameWnd* pParent, uint32_t dwStyle)
 {
 	parentFrame_ = pParent;
 

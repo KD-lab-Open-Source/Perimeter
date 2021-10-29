@@ -221,7 +221,7 @@ public:
 
 	bool SetFocus(bool wait,bool focus_error=true);
 	int KillFocus();
-	LPDIRECT3DTEXTURE9 CreateSurface(int x,int y,eSurfaceFormat TextureFormat,int MipMap,bool enable_assert,DWORD attribute);
+	LPDIRECT3DTEXTURE9 CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute);
 
 	inline IDirect3DBaseTexture9* GetTexture(int dwStage)
 	{
@@ -249,7 +249,7 @@ public:
 		SetTexture(dwStage,Texture->GetDDSurface(nFrame));
 	}
 
-	inline void SetTexture(DWORD dwStage,IDirect3DBaseTexture9 *pTexture)
+	inline void SetTexture(uint32_t dwStage, IDirect3DBaseTexture9 *pTexture)
 	{
 		VISASSERT(dwStage<TEXTURE_MAX);
 		if(CurrentTexture[dwStage]!=pTexture)
@@ -272,7 +272,7 @@ public:
 		}
 	}
 
-	inline void SetFVF(DWORD handle)
+	inline void SetFVF(uint32_t handle)
 	{
 		xassert(handle);
 		if(handle!=CurrentFVF)
@@ -318,12 +318,12 @@ public:
 		}
 	}
 
-	FORCEINLINE DWORD GetTextureStageState(unsigned int Stage, D3DTEXTURESTAGESTATETYPE Type)
+	FORCEINLINE uint32_t GetTextureStageState(unsigned int Stage, D3DTEXTURESTAGESTATETYPE Type)
 	{
 		return ArrayTextureStageState[Stage][Type];
 	}
 
-	inline void SetSamplerState(DWORD Stage,D3DSAMPLERSTATETYPE Type,DWORD Value)
+	inline void SetSamplerState(uint32_t Stage, D3DSAMPLERSTATETYPE Type, uint32_t Value)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
 		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
@@ -334,7 +334,7 @@ public:
 		}
 	}
 
-	inline DWORD GetSamplerState(DWORD Stage,D3DSAMPLERSTATETYPE Type)
+	inline uint32_t GetSamplerState(uint32_t Stage, D3DSAMPLERSTATETYPE Type)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
 		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
@@ -434,16 +434,16 @@ protected:
 	IDirect3DIndexBuffer9 *		CurrentIndexBuffer;
 	IDirect3DVertexShader9 *	CurrentVertexShader;	// vertex shader
 	IDirect3DPixelShader9 *		CurrentPixelShader;
-	DWORD						CurrentFVF;
+	uint32_t						CurrentFVF;
 	int							CurrentCullMode;
 	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
 
 	cSlotManagerInit<sSlotVB>	LibVB;
 	cSlotManagerInit<sSlotIB>	LibIB;
 	
-	DWORD				ArrayRenderState[RENDERSTATE_MAX];
-	DWORD				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
-	DWORD				ArraytSamplerState[TEXTURE_MAX][SAMPLERSTATE_MAX];
+	uint32_t				ArrayRenderState[RENDERSTATE_MAX];
+	uint32_t				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
+	uint32_t				ArraytSamplerState[TEXTURE_MAX][SAMPLERSTATE_MAX];
 	
 	VertexPoolManager vertex_pool_manager;
 	IndexPoolManager index_pool_manager;

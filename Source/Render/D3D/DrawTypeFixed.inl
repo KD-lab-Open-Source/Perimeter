@@ -17,7 +17,7 @@ void DrawTypeFixedPipeline::SetSimplyMaterial(cObjMesh *Mesh,sDataRenderMaterial
 	if(specular)
 		Data->mat|=MAT_COLOR_ADD_SPECULAR;
 	else
-		Data->mat&=~(DWORD)MAT_COLOR_ADD_SPECULAR;
+		Data->mat&=~(uint32_t)MAT_COLOR_ADD_SPECULAR;
 
 	bool bump=Data->mat&MAT_BUMP;
 	SetMaterial(Data->MaterialAnimPhase,Data->Tex[0],bump?NULL:Data->Tex[1],Data);

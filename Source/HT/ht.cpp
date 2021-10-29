@@ -110,7 +110,7 @@ void HTManager::GameClose()
 	{
 		end_logic=CreateEvent(NULL,FALSE,FALSE,NULL);
 
-		DWORD ret=WaitForSingleObject(end_logic,INFINITE);
+		uint32_t ret=WaitForSingleObject(end_logic, INFINITE);
 		xassert(ret==WAIT_OBJECT_0);
 
         DestroyEvent(end_logic);

@@ -79,7 +79,7 @@ void cObjLight::Draw(cCamera *DrawNode)
 
 	float alpha=255.0f*GetIntensity();
 
-	DWORD zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
+	uint32_t zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 
 	if(occlusion.IsInit() && !DrawNode->GetParent())
 	{

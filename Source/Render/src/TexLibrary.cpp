@@ -92,7 +92,7 @@ void cTexLibrary::Free(FILE* f)
 	textures.clear();
 }
 
-cTexture* cTexLibrary::CreateRenderTexture(int width,int height,DWORD attr,bool enable_assert)
+cTexture* cTexLibrary::CreateRenderTexture(int width, int height, uint32_t attr, bool enable_assert)
 {
 	MTAuto mtenter(&lock);
 	if(!attr)
@@ -524,7 +524,7 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		}
 	} auto_delete(buf);
 
-	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(DWORD*)buf);
+	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(uint32_t*)buf);
 	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP)
 	{
 		LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;

@@ -72,7 +72,7 @@ void CCoolDialogBar::OnUpdateCmdUI(class CFrameWnd *pTarget, int bDisableIfNoHnd
 }
 
 BOOL CCoolDialogBar::Create(CWnd* pParentWnd, CDialog *pDialog,
-                            DWORD dwStyle, uint32_t nID) 
+                            uint32_t dwStyle, uint32_t nID) 
 {
     ASSERT_VALID(pParentWnd);   // must have a parent
     ASSERT (!((dwStyle & CBRS_SIZE_FIXED) && (dwStyle & CBRS_SIZE_DYNAMIC)));
@@ -131,7 +131,7 @@ CSize CCoolDialogBar::CalcFixedLayout(BOOL bStretch, BOOL bHorz)
         return CSize(m_sizeVert.cx, nVertDockBarHeight);
 }
 
-CSize CCoolDialogBar::CalcDynamicLayout(int nLength, DWORD dwMode)
+CSize CCoolDialogBar::CalcDynamicLayout(int nLength, uint32_t dwMode)
 {
 	// Rob Wolpov 10/15/98 Added support for diagonal sizing
 	if (IsFloating())
@@ -313,7 +313,7 @@ void CCoolDialogBar::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* l
     GetWindowRect(m_rectBorder);
     m_rectBorder = CRect(0, 0, m_rectBorder.Width(), m_rectBorder.Height());
     
-    DWORD dwBorderStyle = m_dwStyle | CBRS_BORDER_ANY;
+    uint32_t dwBorderStyle = m_dwStyle | CBRS_BORDER_ANY;
 
     switch(m_nDockBarID)
     {

@@ -6,7 +6,7 @@ DrawTypeRadeon8500::DrawTypeRadeon8500()
 	const int dx=2048;
 	pLookupMap=GetTexLibrary()->CreateTexture(dx,1,false);
 	int Pitch;
-	DWORD* pBuf=(DWORD*)pLookupMap->LockTexture(Pitch);
+	uint32_t* pBuf=(uint32_t*)pLookupMap->LockTexture(Pitch);
 	for(int i = 0; i < dx; i++ )
 	{
 		*pBuf++ = D3DCOLOR_RGBA( i & 0xFF, (i & 0xFF00) >> 3, 0, 0 );

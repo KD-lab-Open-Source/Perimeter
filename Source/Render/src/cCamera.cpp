@@ -133,7 +133,7 @@ void cCamera::DrawScene()
 
 	RenderDevice->SetRenderState( RS_ZWRITEENABLE, TRUE );
 
-	DWORD fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
+	uint32_t fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
 	if(GetAttribute(ATTRCAMERA_SHADOW|ATTRCAMERA_SHADOWMAP|ATTRCAMERA_SHADOW_STRENCIL))
 		RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 	
@@ -204,11 +204,11 @@ void cCamera::DrawScene()
 				{
 					std::vector<cIUnkClass*>::iterator it;
 
-					DWORD zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
+					uint32_t zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 					gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, D3DCMP_GREATER);
-					DWORD zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
+					uint32_t zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
 					gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
-					DWORD fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
+					uint32_t fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
 					gb_RenderDevice3D->SetRenderState(D3DRS_FOGENABLE,FALSE);
 					gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
 			
@@ -686,7 +686,7 @@ void cCamera::DrawSortObject()
 
 	stable_sort(SortArray.begin(),SortArray.end(),ObjectSortByRadius());
 
-	DWORD fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
+	uint32_t fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
 	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 
 	std::vector<ObjectSort>::iterator it;
@@ -978,7 +978,7 @@ void cCamera::DrawSortMaterialShadowStrencilOneSide()
 void cCamera::DrawShadowPlane()
 {
 	cD3DRender* rd=GetRenderDevice3D();
-	DWORD fog=rd->GetRenderState( D3DRS_FOGENABLE);
+	uint32_t fog=rd->GetRenderState(D3DRS_FOGENABLE);
     // Set renderstates (disable z-buffering, enable stencil, disable fog, and
     // turn on alphablending)
     rd->SetRenderState( D3DRS_ZENABLE,          FALSE );
@@ -1269,7 +1269,7 @@ void cCamera::DrawShadowDebug()
 		cCamera* pShadow=FindCildCamera((Option_ShowRenderTextureDBG!=2)?ATTRCAMERA_SHADOWMAP:ATTRCAMERA_SHADOW);
 		if(pShadow && pShadow->GetRenderTarget())
 		{
-			DWORD fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
+			uint32_t fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
 			RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 
 			if(Option_ShowRenderTextureDBG!=4)
@@ -1392,11 +1392,11 @@ void cCameraPlanarLight::DrawScene()
 	RenderDevice->SetGlobalLight(NULL);
 
 	RenderDevice->SetRenderState( RS_ZWRITEENABLE, FALSE );
-	DWORD ZFUNC=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
+	uint32_t ZFUNC=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 	gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, CMP_ALWAYS );
 	
 
-	DWORD fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
+	uint32_t fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
 	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 	
 	RenderDevice->Draw(GetScene());

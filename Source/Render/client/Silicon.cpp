@@ -324,7 +324,7 @@ void ElasticLink::Draw(cCamera *DrawNode)
 
 	DrawStripT2 strip;
 
-	DWORD old_cull;
+	uint32_t old_cull;
 	old_cull=gb_RenderDevice3D->GetRenderState(D3DRS_CULLMODE);
 	gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	gb_RenderDevice->SetNoMaterial(blendMode,GetFrame()->GetPhase(),GetTexture(),GetTexture2(),COLOR_MOD);

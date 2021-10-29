@@ -95,7 +95,7 @@ public:
 
 	virtual void RestoreDeviceIfLost()											{ }
 
-	DWORD GetRenderMode(){return RenderMode;}
+	uint32_t GetRenderMode(){return RenderMode;}
 
 	virtual LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData) {return NULL;}
 
@@ -110,7 +110,7 @@ public:
 
 	bool				bActiveScene;
 	bool				bWireFrame;
-	DWORD				nSupportTexture;
+	uint32_t				nSupportTexture;
 
 	float				kShadow;
 protected:

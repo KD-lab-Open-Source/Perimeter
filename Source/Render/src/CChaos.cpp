@@ -90,8 +90,8 @@ void cChaos::RenderAllTexture()
 
 		bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 		rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
-		DWORD zenable=rd->GetRenderState(D3DRS_ZENABLE);
-		DWORD zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE); 
+		uint32_t zenable=rd->GetRenderState(D3DRS_ZENABLE);
+		uint32_t zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE); 
 		RenderTexture();
 		RenderTex0();
 		rd->SetRenderState(D3DRS_FOGENABLE, fog);
@@ -225,11 +225,11 @@ void cChaos::Draw(cCamera *DrawNode)
 	}
 
 	float woldsize=max(plane_size.x,plane_size.y);
-	DWORD fogcolor=rd->GetRenderState(D3DRS_FOGCOLOR);
-	DWORD fogstart=rd->GetRenderState(D3DRS_FOGSTART);
-	DWORD fogend=rd->GetRenderState(D3DRS_FOGEND);
-	DWORD tablemode=rd->GetRenderState(D3DRS_FOGTABLEMODE);
-	DWORD vertexmode=rd->GetRenderState( D3DRS_FOGVERTEXMODE);
+	uint32_t fogcolor=rd->GetRenderState(D3DRS_FOGCOLOR);
+	uint32_t fogstart=rd->GetRenderState(D3DRS_FOGSTART);
+	uint32_t fogend=rd->GetRenderState(D3DRS_FOGEND);
+	uint32_t tablemode=rd->GetRenderState(D3DRS_FOGTABLEMODE);
+	uint32_t vertexmode=rd->GetRenderState(D3DRS_FOGVERTEXMODE);
 
 //	rd->SetRenderState(D3DRS_FOGENABLE, TRUE);
 
@@ -586,7 +586,7 @@ void CBox::Draw(cCamera *DrawNode)
 
 	rd->SetFVF(CubeVector::fmt);
 
-	DWORD zfunc=rd->GetRenderState(D3DRS_ZFUNC);
+	uint32_t zfunc=rd->GetRenderState(D3DRS_ZFUNC);
 	if(!reflection)
 		rd->SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 
@@ -804,8 +804,8 @@ void CSkySpere::PreDraw(cCamera *DrawNode)
 void CSkySpere::Draw(cCamera *DrawNode)
 {
 	cD3DRender* rd=DrawNode->GetRenderDevice3D();
-	DWORD zfunc=rd->GetRenderState(D3DRS_ZFUNC);
-	DWORD zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE);
+	uint32_t zfunc=rd->GetRenderState(D3DRS_ZFUNC);
+	uint32_t zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE);
     bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 	rd->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);

@@ -21,7 +21,7 @@ public:
 	inline int GetNumberTexture()							{ return textures.size(); }
 	inline cTexture* GetTexture(int number)					{ return textures[number]; }
 
-	cTexture* CreateRenderTexture(int width,int height,DWORD attr=0,bool enable_assert=true);
+	cTexture* CreateRenderTexture(int width, int height, uint32_t attr=0, bool enable_assert=true);
 	cTexture* CreateTexture(int sizex,int sizey,bool alpha);
 	cTexture* CreateTextureDefaultPool(int sizex,int sizey,bool alpha);
 

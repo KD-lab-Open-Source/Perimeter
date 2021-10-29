@@ -33,16 +33,16 @@ public:
 	virtual class Column* GetColumn(int player){return NULL;}
 	virtual void GetBorder(int player,borderCall call,void* data){}
 
-	virtual void GetTileColor(char* Texture,DWORD pitch,int xstart,int ystart,int xend,int yend,int step)
+	virtual void GetTileColor(char* Texture, uint32_t pitch, int xstart, int ystart, int xend, int yend, int step)
 	{
 		for(int y = ystart; y < yend; y += step)
 		{
-			DWORD* tx=(DWORD*)Texture;
+            uint32_t * tx=(uint32_t*)Texture;
 			int yy=min(max(0,y),vMap.clip_mask_y);;
 			for (int x = xstart; x < xend; x += step)
 			{
 				int xx=min(max(0,x),vMap.clip_mask_x);
-				DWORD color=vMap.getColor32(xx,yy);
+				uint32_t color=vMap.getColor32(xx, yy);
 				if(GetZ(xx,yy)<=vMap.hZeroPlast)
 					color|=0xFE000000;
 				else

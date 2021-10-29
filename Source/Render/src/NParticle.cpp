@@ -2455,7 +2455,7 @@ void EffectBeginSpeed::Save(CSaver& s)
 {
 	s.push(IDS_BUILDKEY_BEGIN_SPEED);
 	s<<name;
-	s<<(DWORD)velocity;
+	s<<(uint32_t)velocity;
 	s<<mul;
 	s<<rotation.s();
 	s<<rotation.x();
@@ -2469,7 +2469,7 @@ void EffectBeginSpeed::Save(CSaver& s)
 
 void EffectBeginSpeed::Load(CLoadIterator rd)
 {
-	DWORD itemp;
+	uint32_t itemp;
 	rd>>name;
 	rd>>itemp;velocity=(EMITTER_TYPE_VELOCITY)itemp;
 	rd>>mul;
@@ -2863,7 +2863,7 @@ void EmitterKeyBase::SaveInternal(CSaver& s)
 	s<<emitter_life_time;
 	s<<particle_life_time;
 	s<<cycled;
-	s<<(DWORD)rotation_direction;
+	s<<(uint32_t)rotation_direction;
 	s<<chFill;
 	s<<relative;
 	s.pop();
@@ -2945,7 +2945,7 @@ void EmitterKeyBase::LoadInternal(CLoadData* ld)
 			rd>>particle_life_time;
 			rd>>cycled;
 
-			DWORD d=rotation_direction;
+			uint32_t d=rotation_direction;
 			rd>>d;
 			rotation_direction=(EMITTER_TYPE_ROTATION_DIRECTION)d;
 			rd>>chFill;
@@ -3202,7 +3202,7 @@ void EmitterKeySpl::Save(CSaver& s)
 		s.pop();
 
 		s.push(IDS_BUILDKEY_SPL_DIRECTION);
-		s<<(DWORD)direction;
+		s<<(uint32_t)direction;
 		s.pop();
 
 		p_position.Save(s,IDS_BUILDKEY_SPL_POSITION);
@@ -3226,7 +3226,7 @@ void EmitterKeySpl::Load(CLoadDirectory rd)
 		case IDS_BUILDKEY_SPL_DIRECTION:
 			{
 				CLoadIterator rd(ld);
-				DWORD d;
+				uint32_t d;
 				rd>>d;
 				direction=(EMITTER_TYPE_DIRECTION_SPL)d;
 			}

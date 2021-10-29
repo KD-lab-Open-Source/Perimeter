@@ -134,7 +134,7 @@ bool PNetCenter::Init()
 	//m_pDPClient=m_pDPServer;//Пока
 
     // Init IDirectPlay8Server
-	DWORD dwFlags=0;
+	uint32_t dwFlags=0;
 	if(workMode==PNCWM_LAN) dwFlags|=DPNINITIALIZE_HINT_LANSESSION;
     hr = m_pDPPeer->Initialize(this, ::DirectPlayMessageHandler, dwFlags);
 	XDP_CHECK_HR(hr, "Initialize");
@@ -282,7 +282,7 @@ int PNetCenter::ServerStart(const char* _name, int port)
 GUID PNetCenter::getHostGUIDInstance()
 {
     HRESULT hr;
-    DWORD dwSize = 0;
+    uint32_t dwSize = 0;
     //hr = m_pDPServer->GetApplicationDesc( NULL, &dwSize, NULL );
     hr = m_pDPPeer->GetApplicationDesc( NULL, &dwSize, NULL );
 	

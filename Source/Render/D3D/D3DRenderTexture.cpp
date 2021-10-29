@@ -1,7 +1,7 @@
 #include "StdAfxRD.h"
 #include "FileImage.h"
 
-LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x,int y,eSurfaceFormat TextureFormat,int MipMap,bool enable_assert,DWORD attribute)
+LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute)
 {
 	LPDIRECT3DTEXTURE9 lpTexture=0;
 
@@ -106,7 +106,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 	VISASSERT((dx==dxout && dy==dyout)||(Texture->GetNumberMipMap()==1) );
 	bool resample=!(dx==dxout && dy==dyout);
-	DWORD dither=(RenderMode&RENDERDEVICE_MODE_RGB16)?D3DX_FILTER_DITHER:0;
+	uint32_t dither= (RenderMode & RENDERDEVICE_MODE_RGB16) ? D3DX_FILTER_DITHER : 0;
 	bool is_alpha_test=false;
 	bool is_alpha_blend=false;
 	bool is_skin=Texture->skin_color.a==255;
@@ -292,7 +292,7 @@ unsigned int ColorByNormal(Vect3f n)
 
 	return z+(x<<8)+(y<<16);
 }
-Vect3f NormalByColor(DWORD d)
+Vect3f NormalByColor(uint32_t d)
 {
 	Vect3f v;
 	v.y = ((d>> 16) & 0xFF);

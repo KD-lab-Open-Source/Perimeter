@@ -31,7 +31,6 @@ constexpr CT& checked_reinterpret_cast_ref(ST& r) {
 #include <cstdint>
 
 using HRESULT  = int32_t;     //154 usages
-using DWORD    = uint32_t;    //373 usages
 using HANDLE   = void*;       //20 usages
 using HWND     = HANDLE;      //47 usages
 
