@@ -64,7 +64,7 @@ public:
 	virtual void SetDefaultFont(cFont *pFont);
 
 	virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true)	{ return -1; }
-	virtual int CreateCubeTexture(class cTexture *Texture,LPCSTR fname)			{ return -1;};
+	virtual int CreateCubeTexture(class cTexture *Texture, const char* fname)			{ return -1;};
 	virtual int DeleteTexture(class cTexture *Texture)							{ return -1; }
 	virtual void* LockTexture(class cTexture *Texture,int& Pitch)				{VISASSERT(0);return NULL;}
 	virtual void UnlockTexture(class cTexture *Texture)							{VISASSERT(0);}
@@ -97,7 +97,7 @@ public:
 
 	DWORD GetRenderMode(){return RenderMode;}
 
-	virtual LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, UINT SrcData) {return NULL;}
+	virtual LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData) {return NULL;}
 
 	virtual void SetDialogBoxMode(bool enable)=0;
 //protected:
@@ -136,7 +136,7 @@ void BuildBumpMap(int x,int y,void *pSrc,void *pDst,int fmtBumpMap);
 extern class cURenderDevice *gb_RenderDevice;
 
 //Величина visMap должна быть TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,BYTE* visMap,bool clear);
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear);
 void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box);
 
 enum TILEMAP_DRAW

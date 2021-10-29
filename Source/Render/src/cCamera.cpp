@@ -1215,7 +1215,7 @@ void cCamera::InitGridTest(int grid_dx,int grid_dy,int grid_size)
 	}
 	VISASSERT(grid_size==1);
 	
-	pTestGrid=new BYTE[TestGridSize.x*TestGridSize.y];
+	pTestGrid=new uint8_t[TestGridSize.x * TestGridSize.y];
 }
 
 void cCamera::CalcTestForGrid()

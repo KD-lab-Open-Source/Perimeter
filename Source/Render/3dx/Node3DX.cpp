@@ -802,7 +802,7 @@ void cObject3dx::SetUserTransform(int nodeindex,const MatXf& pos)
 	cNode3dx& s=nodes[nodeindex];
 	if(s.IsAdditionalTransform())
 	{
-		BYTE add_index=s.additional_transform;
+		uint8_t add_index=s.additional_transform;
 		xassert(add_index<additional_transformations.size());
 		additional_transformations[add_index].mat=pos;
 	}else

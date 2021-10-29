@@ -102,7 +102,7 @@ CString const& ToolTip::getToolTipText() const{
 	return toolTipText_;
 }
 
-BOOL ToolTip::OnTTNGetDispInfo(UINT id, NMHDR * pTTTStruct, LRESULT * pResult ) const
+BOOL ToolTip::OnTTNGetDispInfo(uint32_t id, NMHDR * pTTTStruct, LRESULT * pResult ) const
 {
 	NMTTDISPINFO* pdi = reinterpret_cast<NMTTDISPINFO *>(pTTTStruct);
 	switch(pTTTStruct->code) {

@@ -481,7 +481,7 @@ cIUnkClass* cScene::CreateZPlaneObj(const char* Tex0,const char* Tex1,float k0,f
 	return PlaneObj; 
 }
 
-cChaos* cScene::CreateChaos(Vect2f size,LPCSTR str_tex0,LPCSTR str_tex1,LPCSTR str_bump,int tile,bool enable_bump)
+cChaos* cScene::CreateChaos(Vect2f size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enable_bump)
 {
 	cChaos* p=new cChaos(size,str_tex0,str_tex1,str_bump,tile,enable_bump);
 
@@ -489,14 +489,14 @@ cChaos* cScene::CreateChaos(Vect2f size,LPCSTR str_tex0,LPCSTR str_tex1,LPCSTR s
 	return p;
 }
 
-cIUnkClass* cScene::CreateBox(Vect3f size,LPCSTR str_cube)
+cIUnkClass* cScene::CreateBox(Vect3f size, const char* str_cube)
 {
 	CBox* p=new CBox(size,str_cube);
 	AttachObj(p);
 	return p;
 }
 
-cIUnkClass* cScene::CreateSkySpere(LPCSTR str_name,LPCSTR str_texture,int h_size)
+cIUnkClass* cScene::CreateSkySpere(const char* str_name, const char* str_texture, int h_size)
 {
 	CSkySpere* p=new CSkySpere(GetObjLibrary(),str_name,str_texture,h_size);
 	AttachObj(p);

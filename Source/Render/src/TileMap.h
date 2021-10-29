@@ -19,7 +19,7 @@ enum eAttributeTile
 struct sTile : public sAttribute
 {
 	int bumpTileID;
-	BYTE zmin,zmax;
+	uint8_t zmin,zmax;
 
 	std::vector<std::vector<Vect2s> > region_point;//region_point[player][point]
 

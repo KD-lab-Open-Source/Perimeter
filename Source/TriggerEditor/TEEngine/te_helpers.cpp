@@ -21,10 +21,10 @@
 namespace te_h{
 
 
-BYTE check_inters(const CPoint& a, const CPoint& b, const CPoint* pts, 
-				  float* pkx, float *pky)
+uint8_t check_inters(const CPoint& a, const CPoint& b, const CPoint* pts,
+                          float* pkx, float *pky)
 {
-	for(BYTE i = 0; i < 3; ++i)
+	for(uint8_t i = 0; i < 3; ++i)
 	{
 		if(cross_segms(a, b, pts[i], pts[i+1],pkx, pky))
 			return i;
@@ -103,7 +103,7 @@ CSize getLinkOffset(const CPoint& ptFrom, const CPoint& ptTo,
 
 	float kx = 0.f;
 
-	BYTE bSide = check_inters(ptFrom, ptTo,pts, &kx, NULL);
+	uint8_t bSide = check_inters(ptFrom, ptTo, pts, &kx, NULL);
 	ASSERT(0.f<= kx&&kx<=1.f);
 
 	CSize dir = ptTo - ptFrom;

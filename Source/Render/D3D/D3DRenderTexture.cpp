@@ -51,7 +51,7 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x,int y,eSurfaceFormat TextureF
 	return lpTexture;
 }
 
-inline BYTE ByteInterpolate(BYTE a,BYTE b,BYTE factor)
+inline uint8_t ByteInterpolate(uint8_t a, uint8_t b, uint8_t factor)
 {
 //	float f=factor/255.0f;
 //	return round(a+(int(b-a))*f);
@@ -201,7 +201,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
     return 0;
 }
 
-int cD3DRender::CreateCubeTexture(class cTexture *Texture,LPCSTR fname)
+int cD3DRender::CreateCubeTexture(class cTexture *Texture, const char* fname)
 {
 	LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;
 	if(FAILED(D3DXCreateCubeTextureFromFile(lpD3DDevice,fname,&pCubeTexture)))
@@ -306,7 +306,7 @@ Vect3f NormalByColor(DWORD d)
 void cD3DRender::ConvertDot3(uint32_t* ibuf,int dx,int dy,float h_mul)
 {
 	const int byte_per_pixel=4;
-	BYTE* buf=(BYTE*)ibuf;
+	uint8_t* buf=(uint8_t*)ibuf;
 #define GET(x,y) buf[(clamp(x,0,dx-1)+dx*clamp(y,0,dy-1))*byte_per_pixel]
     uint32_t* out=new uint32_t[dx*dy];
 

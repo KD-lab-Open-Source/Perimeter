@@ -203,8 +203,8 @@ void BuildBumpMap(int xs,int ys,void *pSrc,void *pDst,int fmtBumpMap)
             switch( fmtBumpMap )
             {
                 case D3DFMT_V8U8:
-                    *dst++ = (BYTE)iDu;
-                    *dst++ = (BYTE)iDv;
+                    *dst++ = (uint8_t)iDu;
+                    *dst++ = (uint8_t)iDv;
                     break;
 
                 case D3DFMT_L6V5U5:
@@ -215,10 +215,10 @@ void BuildBumpMap(int xs,int ys,void *pSrc,void *pDst,int fmtBumpMap)
                     break;
 
                 case D3DFMT_X8L8V8U8:
-                    *dst++ = (BYTE)iDu;
-                    *dst++ = (BYTE)iDv;
-                    *dst++ = (BYTE)uL;
-                    *dst++ = (BYTE)0L;
+                    *dst++ = (uint8_t)iDu;
+                    *dst++ = (uint8_t)iDv;
+                    *dst++ = (uint8_t)uL;
+                    *dst++ = (uint8_t)0L;
                     break;
             }
         }

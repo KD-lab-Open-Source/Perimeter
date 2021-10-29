@@ -293,7 +293,7 @@ float cD3DRender::GetFontLength(const char *string)
 	for(const char* str=string;*str;str++)
 	{
 		ChangeTextColor(str,diffuse);
-		BYTE c=(unsigned char)*str;
+		uint8_t c=(unsigned char)*str;
 		if(!c || c==10)break;
 		if(c<32)continue;
 		xOfs+=xSize*cf->Font[c].z-1;

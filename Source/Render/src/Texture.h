@@ -37,8 +37,8 @@ public:
 	inline void New(int number);
 	inline eSurfaceFormat GetFmt();
 
-	BYTE* LockTexture(int& Pitch);
-	BYTE* LockTexture(int& Pitch,Vect2i lock_min,Vect2i lock_size);
+	uint8_t* LockTexture(int& Pitch);
+	uint8_t* LockTexture(int& Pitch, Vect2i lock_min, Vect2i lock_size);
 	void UnlockTexture();
 	virtual bool IsScaleTexture(){return false;}
 	virtual bool IsAviScaleTexture(){return false;}
@@ -65,7 +65,7 @@ private:
 	float count;
 public:
 	cTextureAviScale(const char *TexName=0):cTexture(TexName){};
-	void Init(UINT n_count, int dx, int dy, UINT tx, UINT ty)
+	void Init(uint32_t n_count, int dx, int dy, uint32_t tx, uint32_t ty)
 	{
 		SetWidth(tx);
 		SetHeight(ty);
@@ -86,7 +86,7 @@ public:
 	}
 	inline RECT& GetFramePos(float phase)
 	{
-		UINT i = round(phase*count -0.5);
+		uint32_t i = round(phase * count - 0.5);
 		xassert(i<pos.size());
 		return pos[i];
 	}

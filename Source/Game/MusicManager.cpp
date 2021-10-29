@@ -49,11 +49,11 @@ public:
 		active=false;
 	}
 
-	bool Play(PLAY play, LPCSTR default_fname)
+	bool Play(PLAY play, const char* default_fname)
 	{
 		if(!terMusicEnable)
 			return false;
-		LPCSTR fname = gameShell->manualData().soundTracks[play].fileName();
+		const char* fname = gameShell->manualData().soundTracks[play].fileName();
 		if(fname==NULL)
 			fname=default_fname;
 

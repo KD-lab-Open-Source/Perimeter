@@ -93,7 +93,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd)
 	SetRenderState(D3DRS_CULLMODE, cull );
 }
 
-void cD3DRender::Draw(FieldDispatcher *ffd,BYTE transparent)
+void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 {
 //	start_timer_auto(Draw_ForceField,1);
 

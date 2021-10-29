@@ -163,7 +163,7 @@ struct sVertexDot3:public sVertexXYZNT1
 
 struct sVertexXYZINT1:public sVertexXYZ
 {
-	BYTE index[4];
+	uint8_t index[4];
 	Vect3f	n;
 	float			uv[2];
 	inline Vect2f& GetTexel()			{ return *(Vect2f*)&uv[0]; }
@@ -176,7 +176,7 @@ struct sVertexXYZW4INT1
 {
 	Vect3f	pos;
 	float weight[4];
-	BYTE index[4];
+	uint8_t index[4];
 	Vect3f	n;
 	float			uv[2];
 	inline Vect2f& GetTexel()			{ return *(Vect2f*)&uv[0]; }
@@ -206,7 +206,7 @@ public:
 	Vect3f& GetPos(){return *(Vect3f*)cur;}
 	sColor4c& GetIndex(){return *(sColor4c*)(3+cur);}
 	Vect3f& GetNorm(){return *(Vect3f*)(4+cur);}
-	BYTE& GetWeight(int idx);
+	uint8_t& GetWeight(int idx);
 	Vect2f& GetTexel(){return *(Vect2f*)(7+(num_weight?1:0)+cur);}
 	Vect3f& GetBumpS(){return *(Vect3f*)(9+(num_weight?1:0)+cur);}
 	Vect3f& GetBumpT(){return *(Vect3f*)(12+(num_weight?1:0)+cur);}

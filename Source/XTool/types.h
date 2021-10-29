@@ -30,11 +30,8 @@ constexpr CT& checked_reinterpret_cast_ref(ST& r) {
 #else //_WIN32
 #include <cstdint>
 
-using BYTE     = uint8_t;     //176 usages
-using UINT     = uint32_t;    //80 usages
 using HRESULT  = int32_t;     //154 usages
 using DWORD    = uint32_t;    //373 usages
-using LPCSTR   = const char*; //53 usages
 using HANDLE   = void*;       //20 usages
 using HWND     = HANDLE;      //47 usages
 

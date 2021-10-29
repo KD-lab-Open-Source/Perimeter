@@ -619,7 +619,7 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
 
 void cTileMap::CalcZMinMax(int x_tile,int y_tile)
 {
-	BYTE zmin=255,zmax=0;
+	uint8_t zmin=255,zmax=0;
 /*
 	int dx=GetTileSize().x,dy=GetTileSize().y;
 	int xMap=dx*GetTileNumber().x;
@@ -650,7 +650,7 @@ void cTileMap::CalcZMinMax(int x_tile,int y_tile)
 		{
 			for(int x=x_start;x<x_end;x++)
 			{
-				BYTE z=terra->GetReductionZ(x,y);
+				uint8_t z=terra->GetReductionZ(x, y);
 				if(z<zmin)
 					zmin=z;
 				if(z>zmax)

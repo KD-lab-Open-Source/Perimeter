@@ -1965,7 +1965,7 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 {
 	int i;
 	short maxDH=0;
-	unsigned char maxDir=(BYTE)-1;
+	unsigned char maxDir=(uint8_t)-1;
 	short startH=vMap.GVBuf[vMap.offsetGBuf(xg, yg)];
 	for(i=0; i<COUNT_DIRECT_TSTBRK; i++){
 		short h=vMap.GVBuf[vMap.offsetGBufC(xg+SDir[i].x, yg+SDir[i].y)];

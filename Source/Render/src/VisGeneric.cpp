@@ -640,12 +640,12 @@ cTexture* cVisGeneric::CreateTextureScreen()
 	hr=sys_surface->LockRect(&lock_in,NULL,0);
 	VISASSERT(SUCCEEDED(hr));
 	int out_pitch=0;
-	BYTE* out_data=pTextureBackground->LockTexture(out_pitch);
+	uint8_t* out_data=pTextureBackground->LockTexture(out_pitch);
 
 	for(int y=0;y<dy;y++)
 	{
-		BYTE* in=lock_in.Pitch*y+(BYTE*)lock_in.pBits;
-		BYTE* out=out_pitch*y+out_data;
+		uint8_t* in= lock_in.Pitch * y + (uint8_t*)lock_in.pBits;
+		uint8_t* out= out_pitch * y + out_data;
 		memcpy(out,in,dx*4);
 	}
 

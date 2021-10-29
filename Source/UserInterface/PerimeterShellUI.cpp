@@ -5094,7 +5094,7 @@ void CEditWindow::OnChar(char key)
 					m_data += key;
 				}
 			} else {
-				BYTE c = (unsigned char) key;
+				uint8_t c = (unsigned char) key;
 				if (c >= 32) {
 					m_data += key;
 				}
@@ -5206,7 +5206,7 @@ void CChatInGameEditWindow::OnChar(char key)
 					m_data += key;
 				}
 			} else {
-				BYTE c = (unsigned char) key;
+				uint8_t c = (unsigned char) key;
 				if (c >= 32) {
 					m_data += key;
 				}

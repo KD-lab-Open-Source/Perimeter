@@ -68,7 +68,7 @@ void SND2DPanByX(float width,float power) {
     power2d_width = power/width;
 }
 
-void SNDSetLocDataDirectory(LPCSTR dir)
+void SNDSetLocDataDirectory(const char* dir)
 {
 	SNDScript::setLocDataPath(dir);
 }
@@ -97,13 +97,13 @@ bool SNDIsVoicesEnabled() {
 	return g_enable_voices;
 }
 
-void SNDSetSoundDirectory(LPCSTR dir)
+void SNDSetSoundDirectory(const char* dir)
 {
 	strncpy(sound_directory,dir,sizeof(sound_directory));
 	sound_directory[sizeof(sound_directory)-1]=0;
 }
 
-LPCSTR SNDGetSoundDirectory()
+const char* SNDGetSoundDirectory()
 {
 	return sound_directory;
 }
@@ -234,7 +234,7 @@ void SNDReleaseSound()
 	}
 }
 
-bool SNDEnableErrorLog(LPCSTR file)
+bool SNDEnableErrorLog(const char* file)
 {
 	if(snd_error)fclose(snd_error);
 	snd_error=fopen(file,"wt");
@@ -481,7 +481,7 @@ SND3DSound::~SND3DSound()
 	Destroy();
 }
 
-bool SND3DSound::Init(LPCSTR name)
+bool SND3DSound::Init(const char* name)
 {
 	Destroy();
 	if(!g_enable_sound)return false;
@@ -588,7 +588,7 @@ bool SND3DSound::IsPlayed()
 
 ////////////////////////////////////////////////////////////
 
-bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
+bool SNDScript::FindFree(const char* name, ScriptParam*& script, int& nfree)
 {
 	script=NULL;
 	nfree=-1;
@@ -718,9 +718,9 @@ bool SNDScript::FindFree(LPCSTR name,ScriptParam*& script,int& nfree)
 	return true;
 }
 
-bool SND3DPlaySound(LPCSTR name,
-					const Vect3f* pos,
-					const Vect3f* velocity//По умолчанию объект считается неподвижным
+bool SND3DPlaySound(const char* name,
+                    const Vect3f* pos,
+                    const Vect3f* velocity//По умолчанию объект считается неподвижным
 					)
 {
 	if(!g_enable_sound)
@@ -811,7 +811,7 @@ SND2DSound::~SND2DSound()
 	Destroy();
 }
 
-bool SND2DSound::Init(LPCSTR name)
+bool SND2DSound::Init(const char* name)
 {
 	Destroy();
 	if(!g_enable_sound)return false;

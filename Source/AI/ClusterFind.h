@@ -13,7 +13,7 @@ public:
 	{
 		int x,y;//Левая верхняя точка.
 		int xcenter,ycenter;//Не обязательно попадает в кластер
-		BYTE walk;//Сложность продвижения по этому куску
+		uint8_t walk;//Сложность продвижения по этому куску
 		bool temp_set;//Можно ли писать в link
 		DWORD self_id;
 
@@ -43,7 +43,7 @@ public:
 	~ClusterFind();
 
 	// Доступ к карте для заполнения перед Set/SetLater
-	BYTE* GetWalkMap(){ return walk_map; }
+	uint8_t* GetWalkMap(){ return walk_map; }
 
 	//Создать сеть кластеров по walk_map
 	void Set(bool enable_smooting);
@@ -118,7 +118,7 @@ public:
 protected:
 	int dx,dy;
 	DWORD* pmap;
-	BYTE* walk_map;
+	uint8_t* walk_map;
 
 	enum{
 		max_cell_in_front=64,
@@ -133,7 +133,7 @@ protected:
 
 	std::vector<Cluster> all_cluster;
 
-	BYTE* is_used;//Для SoftPath
+	uint8_t* is_used;//Для SoftPath
 	DWORD is_used_size;
 	int is_used_xmin,is_used_xmax,is_used_ymin,is_used_ymax;
 
@@ -164,8 +164,8 @@ protected:
 	LINE_RET Line(int xfrom,int yfrom,int xto,int yto,
 			DWORD prev,DWORD eq,int& xeq,int& yeq,bool enable_add_one=false);
 
-	bool LineWalk(int xfrom,int yfrom,int xto,int yto,
-					   BYTE max_walk);
+	bool LineWalk(int xfrom, int yfrom, int xto, int yto,
+                  uint8_t max_walk);
 
 	//То-же поиск волной. Ищет ячейки соприкасающиеся с to.
 	void FindClusterFront(int x,int y,DWORD to,
@@ -183,7 +183,7 @@ protected:
 
 template<class ClusterHeuristic>
 void SoftPath2(std::vector<Vect2i>& out_path,
-               int dx,int dy,BYTE* walk_map,
+               int dx, int dy, uint8_t* walk_map,
                ClusterHeuristic& heuristic)
 {
     //for(int iteration=0;iteration<2;iteration++)
@@ -223,8 +223,8 @@ void SoftPath2(std::vector<Vect2i>& out_path,
 
 //Ещё большее сглаживание пути
 template<class ClusterHeuristic>
-float HeuristicLine(int xfrom,int yfrom,int xto,int yto,
-                    int dx,int dy,BYTE* walk_map,ClusterHeuristic& heuristic,
+float HeuristicLine(int xfrom, int yfrom, int xto, int yto,
+                    int dx, int dy, uint8_t* walk_map, ClusterHeuristic& heuristic,
                     bool& debug_xor )
 {
     float x,y;
@@ -253,7 +253,7 @@ float HeuristicLine(int xfrom,int yfrom,int xto,int yto,
 
     float sq_mul=sqrtf(sqr(lx)+sqr(ly));
     float len=0;
-    BYTE walk_from,walk_to;
+    uint8_t walk_from,walk_to;
     walk_from=walk_map[yfrom*dx+xfrom];
 
     debug_xor=false;

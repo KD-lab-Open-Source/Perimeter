@@ -7,7 +7,7 @@
 #include "Runtime.h"
 
 DefenceMap::DefenceMap(int hsize,int vsize) 
-: Map2D<BYTE, 4>(hsize, vsize, 0)
+: Map2D<uint8_t, 4>(hsize, vsize, 0)
 { 
 	path_finder = new ClusterFind(sizeX(), sizeY(), defenceMapPathFind.clusterSize);
 	path_finder2 = new ClusterFind(sizeX(), sizeY(), defenceMapPathFind.clusterSize);
@@ -51,7 +51,7 @@ void DefenceMap::addGun(const Vect2f& positionWorld, float radiusWorld)
 		int xl = clamp(position.x - delta, 0, sizeX() - 1);
 		int xr = clamp(position.x + delta, 0, sizeX() - 1);
 		for(int x = xl; x <= xr; x++){
-			BYTE& byte = (*this)(x, yc);
+			uint8_t& byte = (*this)(x, yc);
 			byte |= (byte + 1) & ClusterFind::DOWN_MASK;
 		}
 	}
@@ -84,7 +84,7 @@ public:
 					sqr(pos->ycenter - center_.yi()))*gmul;
 	}
 
-	float operator()(BYTE walk_from,BYTE walk_to)
+	float operator()(uint8_t walk_from, uint8_t walk_to)
 	{
 		if((walk_from^walk_to)&ClusterFind::UP_MASK)
 			return 1000.0f;
@@ -219,14 +219,14 @@ terUnitBase* DefenceMap::findPathToTarget(const Vect2i& from_w, const UnitList& 
 		return targets.front();
 }
 
-void DefenceMap::rebuildWalkMap(BYTE* walk_map)
+void DefenceMap::rebuildWalkMap(uint8_t* walk_map)
 {
 	memcpy(walk_map, map(), sizeY()*sizeX());
 }
 
 void DefenceMap::analizeChaos()
 {
-	const BYTE value = 64;
+	const uint8_t value = 64;
 
 	for(int x = 0; x < sizeX(); x++)
 		(*this)(x, 0) = (*this)(x, sizeY() - 1) = value;
@@ -248,7 +248,7 @@ void DefenceMap::analizeChaos()
 
 void DefenceMap::analizeField(int playerID)
 {
-	const BYTE value = 64;
+	const uint8_t value = 64;
 
 	if(field_dispatcher){
 		xassert(FieldDispatcher::scale == tileSizeShl);

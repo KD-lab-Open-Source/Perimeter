@@ -253,7 +253,7 @@ void terBuildingInstaller::InitTexture()
 	if(pTexture == 0)return;
 
 	int Pitch;
-	BYTE* buf = (BYTE*)pTexture->LockTexture(Pitch);
+	uint8_t* buf = (uint8_t*)pTexture->LockTexture(Pitch);
 	for(int y=0;y<dy;y++)
 	{
 		DWORD* c = (DWORD*)(buf+y*Pitch);
@@ -342,7 +342,7 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 	}
 
 	int Pitch;
-	BYTE* buf = (BYTE*)pTexture->LockTexture(Pitch);
+	uint8_t* buf = (uint8_t*)pTexture->LockTexture(Pitch);
 
 	sColor4c cempty(0,0,0,0);
 	sColor4c cgood = valid() ? sColor4c(0,255,0,128) : sColor4c(200,128,128,128);

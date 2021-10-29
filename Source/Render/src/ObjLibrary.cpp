@@ -257,7 +257,7 @@ cMeshBank* ReadMeshMat(cAllMeshBank *pBanks,sObjectMesh *ObjectMesh,cMaterialObj
 		 ReflectionName[512]="",BumpName[512]="";
 	for(int nSubTex=0;nSubTex<Material->SubTexMap.length();nSubTex++)
 	{
-		LPCSTR name=GetFileName(Material->SubTexMap[nSubTex]->name.c_str());
+		const char* name=GetFileName(Material->SubTexMap[nSubTex]->name.c_str());
 		switch(Material->SubTexMap[nSubTex]->ID)
 		{
 			case TEXMAP_DI:

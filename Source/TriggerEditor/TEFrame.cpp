@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // TEFrame
 
-static UINT indicators[] =
+static uint32_t indicators[] =
 {
 	ID_SEPARATOR,           // status line indicator
 	ID_INDICATOR_CAPS,
@@ -133,7 +133,7 @@ int TEFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	
 
 	if (!wndStatusBar_.Create(this) ||
-		!wndStatusBar_.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT)))
+		!wndStatusBar_.SetIndicators(indicators, sizeof(indicators)/sizeof(uint32_t)))
 	{
 		TRACE0(_T("Failed to create status bar\n"));
 		return -1;      // fail to create
@@ -194,8 +194,8 @@ int TEFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL TEFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, 
-					   AFX_CMDHANDLERINFO* pHandlerInfo) 
+BOOL TEFrame::OnCmdMsg(uint32_t nID, int nCode, void* pExtra,
+                       AFX_CMDHANDLERINFO* pHandlerInfo) 
 {
 	if (triggerEditorView_
 		&&triggerEditorView_->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))

@@ -238,7 +238,7 @@ public:
 	int tileMapSizeX() const { return tile_map_.sizeX(); }
 	int tileMapSizeY() const { return tile_map_.sizeY(); }
 
-	BYTE tileMap(int x, int y) const { return tile_map_(x, y); } 
+	uint8_t tileMap(int x, int y) const { return tile_map_(x, y); } 
 
 	int w2t(int x) const { return tile_map_.w2m(x); } // World to tile
 	int t2w(int x) const  { return tile_map_.m2w(x); }
@@ -276,10 +276,10 @@ private:
 	cTexture	*Texture[2];
 	cFrame	*Frame;
 
-	typedef Map2D<BYTE, tile_scale> TileMap;
+	typedef Map2D<uint8_t, tile_scale> TileMap;
 	TileMap tile_map_;
 	
-	BYTE tile_global;
+	uint8_t tile_global;
 
 	class FFDData* pDrawData; //Используется Draw(class FieldDispatcher *rd);
 

@@ -1,10 +1,11 @@
 
-#define FP_BITS(fp) (*(DWORD *)&(fp))
+#define FP_BITS(fp) (*(uint32_t *)&(fp))
+
+/* TODO unused?
 #define FP_ABS_BITS(fp) (FP_BITS(fp)&0x7FFFFFFF)
 #define FP_SIGN_BIT(fp) (FP_BITS(fp)&0x80000000)
 #define FP_ONE_BITS 0x3F800000
 
-/* TODO unused?
 // r = 1/p
 #define FP_INV(r,p)                                                          \
 {                                                                            \

@@ -80,7 +80,7 @@ public:
 	void* LockTexture(class cTexture *Texture,int& Pitch,Vect2i lock_min,Vect2i lock_size);
 	void UnlockTexture(class cTexture *Texture);
 
-	virtual int CreateCubeTexture(class cTexture *Texture,LPCSTR fname);
+	virtual int CreateCubeTexture(class cTexture *Texture, const char* fname);
 	virtual int CreateBumpTexture(class cTexture *Texture);
 
 	virtual void SetDrawNode(class cCamera *DrawNode);
@@ -93,7 +93,7 @@ public:
 	virtual void CreateFFDData(class FieldDispatcher *rd);
 	virtual void DeleteFFDData(class FieldDispatcher *rd);
 
-	virtual void Draw(class FieldDispatcher *rd,BYTE transparent);
+	virtual void Draw(class FieldDispatcher *rd, uint8_t transparent);
 
 	virtual void Draw(class ElasticSphere *es);
 
@@ -365,7 +365,7 @@ public:
 		RDCALL(lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,0,OfsVertex,nVertex,3*nOfsPolygon,nPolygon));
 		NumberPolygon+=nPolygon;
 	}
-	inline void DrawPrimitiveUP(D3DPRIMITIVETYPE Type,UINT Count,void* pVertex,UINT Size)
+	inline void DrawPrimitiveUP(D3DPRIMITIVETYPE Type, uint32_t Count, void* pVertex, uint32_t Size)
 	{
 		RDCALL(lpD3DDevice->DrawPrimitiveUP(Type,Count,pVertex,Size));
 	}
@@ -408,7 +408,7 @@ public:
 
 	sPtrIndexBuffer& GetStandartIB(){return standart_ib;}
 
-	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, UINT SrcData)
+	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
 	{
 		LPDIRECT3DTEXTURE9 pTexture=NULL;
 		HRESULT hr=D3DXCreateTextureFromFileInMemory(lpD3DDevice,

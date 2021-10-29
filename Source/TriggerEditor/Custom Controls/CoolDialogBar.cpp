@@ -71,8 +71,8 @@ void CCoolDialogBar::OnUpdateCmdUI(class CFrameWnd *pTarget, int bDisableIfNoHnd
     UpdateDialogControls(pTarget, bDisableIfNoHndler);
 }
 
-BOOL CCoolDialogBar::Create(CWnd* pParentWnd, CDialog *pDialog, 
-							DWORD dwStyle, UINT nID) 
+BOOL CCoolDialogBar::Create(CWnd* pParentWnd, CDialog *pDialog,
+                            DWORD dwStyle, uint32_t nID) 
 {
     ASSERT_VALID(pParentWnd);   // must have a parent
     ASSERT (!((dwStyle & CBRS_SIZE_FIXED) && (dwStyle & CBRS_SIZE_DYNAMIC)));
@@ -232,7 +232,7 @@ void CCoolDialogBar::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos)
 	}
 
     // Find on which side are we docked
-    UINT nDockBarID = GetParent()->GetDlgCtrlID();
+    uint32_t nDockBarID = GetParent()->GetDlgCtrlID();
 
     // Return if dropped at same location
     if (nDockBarID == m_nDockBarID // no docking side change
@@ -249,7 +249,7 @@ void CCoolDialogBar::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos)
     m_bInRecalcNC = FALSE;
 }
 
-BOOL CCoolDialogBar::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
+BOOL CCoolDialogBar::OnSetCursor(CWnd* pWnd, uint32_t nHitTest, uint32_t message) 
 {
     if ((nHitTest != HTSIZE) || m_bTracking)
         return CControlBar::OnSetCursor(pWnd, nHitTest, message);
@@ -264,7 +264,7 @@ BOOL CCoolDialogBar::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 /////////////////////////////////////////////////////////////////////////
 // Mouse Handling
 //
-void CCoolDialogBar::OnLButtonUp(UINT nFlags, CPoint point) 
+void CCoolDialogBar::OnLButtonUp(uint32_t nFlags, CPoint point) 
 {
     if (!m_bTracking)
         CControlBar::OnLButtonUp(nFlags, point);
@@ -275,7 +275,7 @@ void CCoolDialogBar::OnLButtonUp(UINT nFlags, CPoint point)
     }
 }
 
-void CCoolDialogBar::OnMouseMove(UINT nFlags, CPoint point) 
+void CCoolDialogBar::OnMouseMove(uint32_t nFlags, CPoint point) 
 {
     if (IsFloating() || !m_bTracking)
     {
@@ -372,7 +372,7 @@ void CCoolDialogBar::OnNcPaint()
 	InvalidateRect( &pRect, FALSE );
 }
 
-void CCoolDialogBar::OnNcLButtonDown(UINT nHitTest, CPoint point) 
+void CCoolDialogBar::OnNcLButtonDown(uint32_t nHitTest, CPoint point) 
 {
     if (m_bTracking) return;
 
@@ -392,7 +392,7 @@ void CCoolDialogBar::OnNcLButtonDown(UINT nHitTest, CPoint point)
         CControlBar::OnNcLButtonDown(nHitTest, point);
 }
 
-UINT CCoolDialogBar::OnNcHitTest(CPoint point) 
+uint32_t CCoolDialogBar::OnNcHitTest(CPoint point) 
 {
     if (IsFloating())
         return CControlBar::OnNcHitTest(point);
@@ -412,7 +412,7 @@ UINT CCoolDialogBar::OnNcHitTest(CPoint point)
         return CControlBar::OnNcHitTest(point);
 }
 
-void CCoolDialogBar::OnLButtonDown(UINT nFlags, CPoint point) 
+void CCoolDialogBar::OnLButtonDown(uint32_t nFlags, CPoint point) 
 {
     // only start dragging if clicked in "void" space
     if (m_pDockBar != NULL)
@@ -428,7 +428,7 @@ void CCoolDialogBar::OnLButtonDown(UINT nFlags, CPoint point)
     }
 }
 
-void CCoolDialogBar::OnLButtonDblClk(UINT nFlags, CPoint point) 
+void CCoolDialogBar::OnLButtonDblClk(uint32_t nFlags, CPoint point) 
 {
     // only toggle docking if clicked in "void" space
     if (m_pDockBar != NULL)
@@ -633,7 +633,7 @@ void CCoolDialogBar::DrawGripper(CDC & dc)
 
 }
 
-void CCoolDialogBar::OnNcLButtonDblClk(UINT nHitTest, CPoint point) 
+void CCoolDialogBar::OnNcLButtonDblClk(uint32_t nHitTest, CPoint point) 
 {
 	// TODO: Add your message handler code here and/or call default
     if ((m_pDockBar != NULL) && (nHitTest == HTCAPTION))

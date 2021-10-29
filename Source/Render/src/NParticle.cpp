@@ -320,11 +320,11 @@ inline Vect3f* cEmitterBase::GetNormal(const int& ix)
 	switch(particle_position.type)
 	{
 	case EMP_3DMODEL:
-		if ((UINT)ix<parent->GetNorm().size())
+		if ((uint32_t)ix < parent->GetNorm().size())
 			return &parent->GetNorm()[ix];
 		break;
 	case EMP_3DMODEL_INSIDE:
-		if ((UINT)ix<begin_position.size())
+		if ((uint32_t)ix < begin_position.size())
 			return &normal_position[ix];
 		break;
 	}
@@ -1008,7 +1008,7 @@ Vect3f cEmitterInt::GetVdir(int i)
 {
 	if (i==-1)
 		return Vect3f::ZERO;
-	xassert((UINT)i<Particle.size());
+	xassert((uint32_t)i < Particle.size());
 	nParticle& p = Particle[i];
 	KeyParticleInt& k0=keys[p.key];
 	KeyParticleInt& k1=keys[p.key+1];
@@ -1019,7 +1019,7 @@ Vect3f cEmitterInt::GetVdir(int i)
 
 void cEmitterInt::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 {
-	xassert((UINT)ix_cur<Particle.size());
+	xassert((uint32_t)ix_cur < Particle.size());
 	nParticle& cur = Particle[ix_cur];
 	float t=time*inv_emitter_life_time;
 	float inv_life=inv_life_time.Get(t);
@@ -1766,7 +1766,7 @@ Vect3f cEmitterSpl::GetVdir(int i)
 {
 	if (i==-1)
 		return Vect3f::ZERO;
-	xassert((UINT)i<Particle.size());
+	xassert((uint32_t)i < Particle.size());
 	nParticle& p = Particle[i];
 	HeritKey& k = hkeys[p.hkey];
 	Vect3f pos;
@@ -1778,7 +1778,7 @@ Vect3f cEmitterSpl::GetVdir(int i)
 
 void cEmitterSpl::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 {
-	xassert((UINT)ix_cur<Particle.size());
+	xassert((uint32_t)ix_cur < Particle.size());
 	nParticle& cur = Particle[ix_cur];
 	float t=time*inv_emitter_life_time;
 	float inv_life=inv_life_time.Get(t);
@@ -2553,15 +2553,15 @@ void CKeyPosHermit::Save(CSaver& s,int id)
 {
 	s.push(id);
 	CKeyPos::SaveInternal(s);
-	s<<(BYTE)cbegin;
-	s<<(BYTE)cend;
+	s<<(uint8_t)cbegin;
+	s<<(uint8_t)cend;
 	s.pop();
 }
 
 void CKeyPosHermit::Load(CLoadIterator rd)
 {
 	CKeyPos::Load(rd);
-	BYTE b=T_FREE;
+	uint8_t b=T_FREE;
 	rd>>b;
 	cbegin=(CLOSING)b;
 	rd>>b;
@@ -4025,7 +4025,7 @@ bool cEmitterZ::GetRndPos(Vect3f& pos, Vect3f* norm)
 
 void cEmitterZ::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 {
-	xassert((UINT)ix_cur<Particle.size());
+	xassert((uint32_t)ix_cur < Particle.size());
 	nParticle& cur = Particle[ix_cur];
 	cEmitterInt::EmitOne(ix_cur,begin_time);
 	if(angle_by_center)

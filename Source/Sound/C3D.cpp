@@ -27,7 +27,7 @@ SNDScript::~SNDScript()
 }
 
 
-ScriptParam* SNDScript::Find(LPCSTR name)
+ScriptParam* SNDScript::Find(const char* name)
 {
 	if(!name)
 		return NULL;
@@ -57,7 +57,7 @@ bool SNDScript::AddScript(const struct SoundScriptPrm* prm)
 	return true;
 }
 
-bool SNDScript::RemoveScript(LPCSTR name)
+bool SNDScript::RemoveScript(const char* name)
 {
 	if(!RemoveScriptInternal(name))
 		return false;
@@ -65,7 +65,7 @@ bool SNDScript::RemoveScript(LPCSTR name)
 	return true;
 }
 
-bool SNDScript::RemoveScriptInternal(LPCSTR name)
+bool SNDScript::RemoveScriptInternal(const char* name)
 {
 	std::vector<OneScript*>::iterator it;
 	FOR_EACH(map_map,it)

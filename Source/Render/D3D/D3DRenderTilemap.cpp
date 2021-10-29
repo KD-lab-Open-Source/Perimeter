@@ -85,7 +85,7 @@ public:
 	sBumpTile(cTileMap *TileMap, int lod,int xpos,int ypos);
 	~sBumpTile();
 	D3DLOCKED_RECT *LockTex();
-	BYTE *LockVB();
+	uint8_t *LockVB();
 	void UnlockTex();
 	void UnlockVB();
 	void Calc(cTileMap *TileMap,bool update_texture);
@@ -167,7 +167,7 @@ class cTileMapRender
 	int index_offset[TILEMAP_LOD];
 	int index_size[TILEMAP_LOD];
 
-	BYTE* visMap;
+	uint8_t* visMap;
 	char* vis_lod;
 
 	char* update_stat;
@@ -219,7 +219,7 @@ static std::vector<sTilemapTexturePool*> bumpTexPools;
 //
 // **************** TILEMAP - SHARED ****************
 // 
-static void fillVisPoly(BYTE *buf, std::vector<Vect2f>& vert,int VISMAP_W,int VISMAP_H)
+static void fillVisPoly(uint8_t *buf, std::vector<Vect2f>& vert, int VISMAP_W, int VISMAP_H)
 {
 	if(vert.empty())return;
 	const int VISMAP_W_MAX=128,VISMAP_H_MAX=128;
@@ -311,7 +311,7 @@ void drawCMesh(CMesh& cmesh)
 	}
 }
 
-void calcVisMap(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber,Vect2i TileSize,BYTE* visMap,bool clear)
+void calcVisMap(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
 {
 	APolygons poly;
 	cmesh.BuildPolygon(poly);
@@ -354,14 +354,14 @@ sBox6f calcBoundInDirection(CMesh& cmesh,Mat3f& m)
 	return box;
 }
 
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,BYTE* visMap,bool clear)
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
 {
 	CMesh cmesh;
 	calcCMesh(DrawNode,TileNumber,TileSize,cmesh);
 	calcVisMap(DrawNode,cmesh,TileNumber,TileSize,visMap,clear);
 }
 
-void calcVisMap(cCamera *DrawNode, cTileMap *TileMap,BYTE* visMap,bool clear)
+void calcVisMap(cCamera *DrawNode, cTileMap *TileMap, uint8_t* visMap, bool clear)
 {
 	calcVisMap(DrawNode, TileMap->GetTileNumber(),TileMap->GetTileSize(),visMap,clear);
 }
@@ -449,7 +449,7 @@ cTileMapRender::cTileMapRender(cTileMap *pTileMap)
 	tilemapIB=NULL;
 
 	int dxy=TileMap->GetTileNumber().x*TileMap->GetTileNumber().y;
-	visMap=new BYTE[dxy];
+	visMap=new uint8_t[dxy];
 	vis_lod=new char[dxy];
 	for(int i=0;i<dxy;i++)
 		vis_lod[i]=-1;
@@ -798,9 +798,9 @@ D3DLOCKED_RECT *sBumpTile::LockTex()
 	return bumpTexPools[texPool]->lockPage(texPage);
 }
 
-BYTE *sBumpTile::LockVB()
+uint8_t *sBumpTile::LockVB()
 {
-	return (BYTE*)gb_RenderDevice3D->GetVertexPool()->LockPage(vtx);
+	return (uint8_t*)gb_RenderDevice3D->GetVertexPool()->LockPage(vtx);
 }
 
 void sBumpTile::UnlockTex()
@@ -1753,12 +1753,12 @@ void cTileMapRender::SaveUpdateStat()
 	int dx=TileMap->GetTileNumber().x,dy=TileMap->GetTileNumber().y;
 	int dxy=dx*dy;
 
-	BYTE* buf=new BYTE[dxy*4];
+	uint8_t* buf=new uint8_t[dxy * 4];
 	memset(buf,0,dxy*4);
 	for(int y=0;y<dy;y++)
 	for(int x=0;x<dx;x++)
 	{
-		BYTE* color=&buf[(y*dx+x)*4];
+		uint8_t* color=&buf[(y * dx + x) * 4];
 		int num_update=0;
 		int lod=-1;
 		bool change_lod=false;

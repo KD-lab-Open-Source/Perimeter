@@ -1,7 +1,7 @@
 #include "StdAfxRD.h"
 #include "CChaos.h"
 
-cChaos::cChaos(Vect2f g_size,LPCSTR str_tex0,LPCSTR str_tex1,LPCSTR str_bump,int tile,bool enablebump_)
+cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enablebump_)
 :cIUnkObj(KIND_NULL)
 {
 	plane_size=g_size;
@@ -346,14 +346,14 @@ void cChaos::InitBumpTexture1(cTexture* pTex)
 {
 	int Pitch;
 	int dx=pTex->GetWidth(),dy=pTex->GetHeight();
-	BYTE* pBuffer=(BYTE*)pTex->LockTexture(Pitch);
+	uint8_t* pBuffer=(uint8_t*)pTex->LockTexture(Pitch);
 
 	float cx=64.0f/dx,cy=64.0f/dy;
 	float cx1=60.0f/dx,cy1=60.0f/dy;
 
 	struct VU
 	{
-		BYTE v,u;
+		uint8_t v,u;
 	};
 
 	VISASSERT(sizeof(VU)==2);
@@ -382,7 +382,7 @@ void cChaos::InitBumpTexture2(cTexture* pTex)
 {
 	int Pitch;
 	int dx=pTex->GetWidth(),dy=pTex->GetHeight();
-	BYTE* pBuffer=pTex->LockTexture(Pitch);
+	uint8_t* pBuffer=pTex->LockTexture(Pitch);
 
 	float cx=32.0f/dx,cy=32.0f/dy;
 
@@ -419,13 +419,13 @@ void cChaos::ConvertToBump(cTexture*& pOut,cTexture* pIn)
 	pOut=gb_VisGeneric->CreateBumpTexture(dx,dy);
 
 	int PitchIn,PitchOut;
-	BYTE* pBufferIn=pIn->LockTexture(PitchIn);
-	BYTE* pBufferOut=pOut->LockTexture(PitchOut);
+	uint8_t* pBufferIn=pIn->LockTexture(PitchIn);
+	uint8_t* pBufferOut=pOut->LockTexture(PitchOut);
 
 	for(int iy=0;iy<dy;iy++)
 	{
-		BYTE* pi=pBufferIn;
-		BYTE* po=pBufferOut;
+		uint8_t* pi=pBufferIn;
+		uint8_t* po=pBufferOut;
 
 		for(int ix=0;ix<dx;ix++)
 		{
@@ -488,7 +488,7 @@ void cChaos::RenderTex0()
 //////////////////////
 int CBox::CubeVector::fmt=D3DFVF_XYZ|D3DFVF_TEX1;
 
-CBox::CBox(Vect3f size,LPCSTR str_cube)
+CBox::CBox(Vect3f size, const char* str_cube)
 :cIUnkObj(KIND_NULL)
 {
 	sz_rect=size;
@@ -758,7 +758,7 @@ void CBox::CreateVB()
 ///////////////////////////////////////////////
 #include "ObjLibrary.h"
 #include "ObjMesh.h"
-CSkySpere::CSkySpere(cObjLibrary* pObj,LPCSTR str_name,LPCSTR str_texture,int h_size)
+CSkySpere::CSkySpere(cObjLibrary* pObj, const char* str_name, const char* str_texture, int h_size)
 :cIUnkObj(KIND_NULL)
 {
 	pSkySphere=pObj->GetElement(str_name,str_texture);

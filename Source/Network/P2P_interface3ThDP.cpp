@@ -163,7 +163,7 @@ HRESULT PNetCenter::DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer
 				hr = m_pDP->GetPeerInfo( netid, pdpPlayerInfo, &dwSize, 0 );
 
 			if( hr == DPNERR_BUFFERTOOSMALL ) {
-				pdpPlayerInfo = (DPN_PLAYER_INFO*) new BYTE[ dwSize ];
+				pdpPlayerInfo = (DPN_PLAYER_INFO*) new uint8_t[ dwSize ];
 				if( NULL == pdpPlayerInfo ) {
 					hr = E_OUTOFMEMORY;
 					goto LErrorReturn;

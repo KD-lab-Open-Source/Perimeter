@@ -227,7 +227,7 @@ protected:
 
 	Vect2i TestGridSize;
 	int TestGridShl;
-	BYTE* pTestGrid;
+	uint8_t* pTestGrid;
 	void InitGridTest(int grid_dx,int grid_dy,int grid_size);
 	void CalcTestForGrid();
 	inline eTestVisible GridTest(Vect3f p[8]);

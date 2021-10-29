@@ -27,10 +27,10 @@ int sVertexDot3::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2
 int sVertexXYZINT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB1|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
 int sVertexXYZW4INT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB5|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
 
-BYTE& cSkinVertex::GetWeight(int idx)
+uint8_t& cSkinVertex::GetWeight(int idx)
 {
 	VISASSERT(num_weight>0);
-	BYTE* b=(BYTE*)(7+cur);
+	uint8_t* b=(uint8_t*)(7 + cur);
 	switch(idx)
 	{
 	case 0:
@@ -141,7 +141,7 @@ bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
 		return true;
 
 	D3DFORMAT BackBufferFormat=GetBackBufferFormat(Mode);
-	UINT modes=lpD3D->GetAdapterModeCount(Adapter,BackBufferFormat);
+	uint32_t modes=lpD3D->GetAdapterModeCount(Adapter, BackBufferFormat);
 
 	for(int i=0;i<modes;i++)
 	{
@@ -1792,7 +1792,7 @@ cVertexBufferInternal::~cVertexBufferInternal()
 {
 }
 
-BYTE* cVertexBufferInternal::Lock(int minvertex)
+uint8_t* cVertexBufferInternal::Lock(int minvertex)
 {
 	MTG();
 	void* min_index=NULL;
@@ -1808,7 +1808,7 @@ BYTE* cVertexBufferInternal::Lock(int minvertex)
 		cur_min_vertex=0;
 	}
 
-	return (BYTE*)min_index;
+	return (uint8_t*)min_index;
 }
 
 void cVertexBufferInternal::Unlock(int num_write_vertex)
@@ -1831,14 +1831,14 @@ void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
 	xassert(vertexsize==vb.size);
 }
 
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type,UINT Count,const MatXf &m)
+void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
 {
 	MTG();
 	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,m);
 	DrawPrimitive(Type,Count);
 }
 
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type,UINT Count)
+void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count)
 {
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
@@ -1847,7 +1847,7 @@ void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type,UINT Count)
 	RDCALL(rd->lpD3DDevice->DrawPrimitive((D3DPRIMITIVETYPE)Type,start_vertex,Count));
 }
 
-void cVertexBufferInternal::DrawIndexedPrimitive(UINT Count)
+void cVertexBufferInternal::DrawIndexedPrimitive(uint32_t Count)
 {
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
@@ -1899,7 +1899,7 @@ void* cQuadBufferInternal::Get()
 		BeginDraw();
 	}
 
-	BYTE* cur=start_vertex+vertex_index*vb.size;
+	uint8_t* cur= start_vertex + vertex_index * vb.size;
 	vertex_index+=4;
 	return cur;
 }

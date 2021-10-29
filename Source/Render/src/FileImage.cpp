@@ -1509,10 +1509,10 @@ bool cAviScaleFileImage::Init(const char* fName)
 		n_count = t3;
 		const int x_count = x/rdx;
 
-		dat = new UINT[x*y*n_count];
+		dat = new uint32_t[x * y * n_count];
 		if (dat)	
 		{
-			UINT* lpBuf = new  UINT[dx*dy];
+			uint32_t* lpBuf = new  uint32_t[dx * dy];
 			if (lpBuf) 
 			{
 				int time=0;
@@ -1525,7 +1525,7 @@ bool cAviScaleFileImage::Init(const char* fName)
 					const int offset_y = rdy*(i/x_count)*this->x + rdx*(i%x_count);
 					for(int y=0; y<dy; ++y)
 					{
-						UINT* p = dat + (int)((y+1)*x) + offset_y;
+						uint32_t* p = dat + (int)((y + 1) * x) + offset_y;
 						memcpy(p+1, lpBuf + (int)(y*dx), dx*sizeof(*lpBuf));
 						*(p) = lpBuf[(int)(y*dx)];
 						*(p+(int)dx+1)= lpBuf[(int)(y*dx+dx-1)];

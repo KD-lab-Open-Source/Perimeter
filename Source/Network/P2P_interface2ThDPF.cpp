@@ -292,7 +292,7 @@ GUID PNetCenter::getHostGUIDInstance()
 //       return hr;
 
     // Allocate the memory
-    DPN_APPLICATION_DESC* pAppDesc = (DPN_APPLICATION_DESC*) new BYTE[ dwSize ];
+    DPN_APPLICATION_DESC* pAppDesc = (DPN_APPLICATION_DESC*) new uint8_t[ dwSize ];
 
 //    if( NULL == pAppDesc )
 //        return E_OUTOFMEMORY;
@@ -706,7 +706,7 @@ int PNetCenter::Send(const char* buffer, int size, NETID netid, bool flag_guaran
 	DPNHANDLE hAsync;
 	DPN_BUFFER_DESC bufferDesc;
 	bufferDesc.dwBufferSize = size;
-	bufferDesc.pBufferData  = (BYTE*)buffer;
+	bufferDesc.pBufferData  = (uint8_t*)buffer;
 
 /*	switch(m_mode)
 	{

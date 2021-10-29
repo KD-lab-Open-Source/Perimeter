@@ -406,10 +406,10 @@ void cMapWind::Space(int mode)
 }
 
 
-void cMapWind::GetSpeed(BYTE* data,int pitch,float mul)
+void cMapWind::GetSpeed(uint8_t* data, int pitch, float mul)
 {
 	Vect2i size=grid.GetSize();
-	BYTE* curdata=data;
+	uint8_t* curdata=data;
 	WindNode* nd = grid.nds;
 	for(int y=0;y<size.y;y++)
 	{

@@ -9,14 +9,14 @@ void SNDEnableSound(bool enable);
 void SNDEnableVoices(bool enable);
 bool SNDIsVoicesEnabled();
 
-void SNDSetSoundDirectory(LPCSTR dir);
-LPCSTR SNDGetSoundDirectory();
+void SNDSetSoundDirectory(const char* dir);
+const char* SNDGetSoundDirectory();
 
-void SNDSetLocDataDirectory(LPCSTR dir);
+void SNDSetLocDataDirectory(const char* dir);
 void SNDSetBelligerentIndex(int idx);
 
 //Работа с ошибками
-bool SNDEnableErrorLog(LPCSTR file);
+bool SNDEnableErrorLog(const char* file);
 
 void SNDSetVolume(float volume);//volume=0..1
 
@@ -45,7 +45,7 @@ class SND3DSound
 public:
 	SND3DSound();
 	~SND3DSound();
-	bool Init(LPCSTR name);
+	bool Init(const char* name);
 
 	bool Play(bool cycled=true);
 	bool Stop();
@@ -66,9 +66,9 @@ protected:
 	void Destroy();
 };
 
-bool SND3DPlaySound(LPCSTR name,
-					const Vect3f* pos,
-					const Vect3f* velocity=NULL//По умолчанию объект считается неподвижным
+bool SND3DPlaySound(const char* name,
+                    const Vect3f* pos,
+                    const Vect3f* velocity=NULL//По умолчанию объект считается неподвижным
 					);
 
 class SND3DListener
@@ -143,7 +143,7 @@ class SND2DSound
 public:
 	SND2DSound();
 	~SND2DSound();
-	bool Init(LPCSTR name);
+	bool Init(const char* name);
 
 	bool Play(bool cycled=true);
 	bool Stop();

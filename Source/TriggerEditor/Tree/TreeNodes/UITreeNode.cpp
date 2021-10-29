@@ -78,7 +78,7 @@ void UITreeNode::onBeginDrag(TETreeLogic& logic)
 {
 	std::auto_ptr<COleDataSource> source(new COleDataSource);
 	CString strCFName((LPTSTR)IDS_CB_FORMAT_NAME);
-	UINT clFromatId = RegisterClipboardFormat(strCFName);
+	uint32_t clFromatId = RegisterClipboardFormat(strCFName);
 	
 	HGLOBAL h = ::GlobalAlloc( GMEM_SHARE, 
 		sizeof(TCHAR)*(action_.size()+1) + sizeof(int));

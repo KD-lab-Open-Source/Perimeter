@@ -93,7 +93,7 @@ class SNDScript
 {
 	struct ltstr
 	{
-	  bool operator()(LPCSTR s1,LPCSTR s2) const
+	  bool operator()(const char* s1, const char* s2) const
 	  {
 		return strcmp(s1, s2) < 0;
 	  }
@@ -103,7 +103,7 @@ class SNDScript
 	static std::string locDataPath;
 
 public:
-	typedef std::map<LPCSTR, ScriptParam*, ltstr> MapScript;
+	typedef std::map<const char*, ScriptParam*, ltstr> MapScript;
 
 	struct OneScript
 	{
@@ -125,11 +125,11 @@ public:
 	~SNDScript();
 
 	bool AddScript(const struct SoundScriptPrm* prm);
-	bool RemoveScript(LPCSTR name);
+	bool RemoveScript(const char* name);
 	void RemoveAll();
 
-	ScriptParam* Find(LPCSTR name);
-	bool FindFree(LPCSTR name,ScriptParam*& script,int& nfree);
+	ScriptParam* Find(const char* name);
+	bool FindFree(const char* name, ScriptParam*& script, int& nfree);
 
 	void PauseAllPlayed(int pause_level);
 	void PlayByLevel(int pause_level);
@@ -149,7 +149,7 @@ protected:
 	void ParseSoundScriptPrm(const struct SoundScriptPrm* prm,
 		std::vector<ScriptParam>& vc);
 
-	bool RemoveScriptInternal(LPCSTR name);
+	bool RemoveScriptInternal(const char* name);
 	
 	static const char* filePath(const ScriptParam* prm,const char* file_name,int belligerent_index = 0);
 };

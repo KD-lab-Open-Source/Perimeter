@@ -48,7 +48,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ChooseName message handlers
 
-void ChooseName::OnShowWindow(BOOL bShow, UINT nStatus) 
+void ChooseName::OnShowWindow(BOOL bShow, uint32_t nStatus) 
 {
 	CDialog::OnShowWindow(bShow, nStatus);
 	

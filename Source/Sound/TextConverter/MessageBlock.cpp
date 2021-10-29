@@ -89,9 +89,9 @@ void InitStringID(bool beng,bool beginner)
 		stringID.push_back(s);
 	}
 
-	LPCSTR outname=beng?
-		(beginner?"message_beginner_e.dat":"message_e.dat"):
-		(beginner?"message_beginner.dat":"message.dat");
+	const char* outname= beng ?
+                            (beginner?"message_beginner_e.dat":"message_e.dat") :
+                            (beginner?"message_beginner.dat":"message.dat");
 	int f= file_open(outname, _O_RDWR | _O_CREAT | _O_TRUNC | _O_BINARY,
                      _S_IREAD | _S_IWRITE);
 	if(f==-1)
@@ -106,7 +106,7 @@ void InitStringID(bool beng,bool beginner)
 	delete pp;
 }
 
-bool StringIDByConst(LPCSTR name,LPCSTR value,int& ret)
+bool StringIDByConst(const char* name, const char* value, int& ret)
 {
 	if(name[0]!='T' || name[1]!='E' || 
 	   name[2]!='X' || name[3]!='T')
@@ -116,7 +116,7 @@ bool StringIDByConst(LPCSTR name,LPCSTR value,int& ret)
 
 	for(int i=0;i<stringID.size();i++)
 	{
-		LPCSTR ss=stringID[i].c_str();
+		const char* ss=stringID[i].c_str();
 		if(strcmp(ss,value)==0)
 		{
 			ret=i;

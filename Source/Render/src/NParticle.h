@@ -217,9 +217,9 @@ protected:
 	Dat dat[2];
 	int active;
 public:
-	void SetActive(int ix){ xassert((UINT)ix<2); active = ix;}
+	void SetActive(int ix){ xassert((uint32_t)ix < 2); active = ix;}
 	Dat& GetActiveData(){return dat[active];}
-	Dat& GetData(int ix){xassert((UINT)ix<2); return dat[ix];}
+	Dat& GetData(int ix){xassert((uint32_t)ix < 2); return dat[ix];}
 	void Save(CSaver& s, int id)
 	{
 		if (s.GetData()!=EXPORT_TO_GAME)
@@ -670,10 +670,10 @@ protected:
 public:
 	virtual void CalculatePos(bool mode){calc_pos = mode;}
 	virtual int GetParticleCount(){return Particle.size();}
-	virtual Vect3f& GetParticlePos(int ix){xassert((UINT)ix<Particle.size());return Particle[ix].pos0;}
+	virtual Vect3f& GetParticlePos(int ix){xassert((uint32_t)ix < Particle.size());return Particle[ix].pos0;}
 	virtual void ResetPlumePos(int ix)
 	{
-		xassert((UINT)ix<Particle.size());
+		xassert((uint32_t)ix < Particle.size());
 		nParticle& p = Particle[ix]; 
 		std::vector<Vect3f>::iterator i;
 		FOR_EACH(p.plume_pos,i)
@@ -892,7 +892,7 @@ public:
 
 	std::vector<Vect3f>& GetPos(){return begin_position;}
 	std::vector<Vect3f>& GetNorm(){return normal_position;}
-	cEmitterBase* GetEmitN(int n){xassert((UINT)n<emitters.size()); return (cEmitterBase*)emitters[n];}
+	cEmitterBase* GetEmitN(int n){xassert((uint32_t)n < emitters.size()); return (cEmitterBase*)emitters[n];}
 	void SetFunctorGetZ(FunctorGetZ* func);//Делается вовремя addref,release
 protected:
 #ifdef  NEED_TREANGLE_COUNT

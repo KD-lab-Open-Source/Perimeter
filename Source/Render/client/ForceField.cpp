@@ -181,7 +181,7 @@ void FieldDispatcher::UpdateTile()
 	tile_global = 0;
 	for(int yt = 0; yt < tileMapSizeY(); yt++)
 		for(int xt = 0; xt < tileMapSizeX(); xt++){
-			BYTE& cur_tile = tile_map_(xt, yt);
+			uint8_t& cur_tile = tile_map_(xt, yt);
 			cur_tile = 0;
 			int tile_size = t2m(1);
 			int x_begin = t2m(xt);

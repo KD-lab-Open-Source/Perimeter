@@ -52,9 +52,9 @@ public:
 	virtual cPlane* CreatePlaneObj();
 
 	virtual cIUnkClass* CreateZPlaneObj(const char* Tex0,const char* Tex1,float k0,float k1,int op,float v0x,float v0y,float v1x,float v1y);
-	virtual class cChaos* CreateChaos(Vect2f size,LPCSTR str_tex0,LPCSTR str_tex1,LPCSTR str_bump,int tile,bool enable_bump);
-	virtual cIUnkClass* CreateBox(Vect3f size,LPCSTR str_cube);
-	virtual cIUnkClass* CreateSkySpere(LPCSTR str_name,LPCSTR str_texture,int h_size);
+	virtual class cChaos* CreateChaos(Vect2f size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enable_bump);
+	virtual cIUnkClass* CreateBox(Vect3f size, const char* str_cube);
+	virtual cIUnkClass* CreateSkySpere(const char* str_name, const char* str_texture, int h_size);
 
 	// функции для работы с диспетчером регионов
 	virtual class FieldDispatcher* CreateForceFieldDispatcher(int xmax,int ymax, int zeroLayerHeight, const char* TextureName1=0, const char* TextureName2=0);
