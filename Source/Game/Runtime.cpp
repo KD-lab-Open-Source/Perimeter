@@ -1193,10 +1193,17 @@ const char* editTextMultiLine(const char* defaultValue, void* hwnd)
 }
 
 std::string locale;
+std::string localePath;
 
-const std::string getLocale() {
+const std::string& getLocale() {
     if (locale.empty()) {
-        locale = getStringSettings("Locale");
+        const char* cmdlineLocale = check_command_line("locale");
+        if (cmdlineLocale) {
+            locale = cmdlineLocale;
+        }
+        if (locale.empty()) {
+            locale = getStringSettings("Locale");
+        }
         if (locale.empty()) {
             locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
             if (locale.empty()) {
@@ -1213,10 +1220,14 @@ const std::string getLocale() {
                 locale = "English";
             }
         }
+        localePath = "Resource/LocData/" + locale + "/";
     }
     return locale;
 }
 
-const std::string getLocDataPath() {
-    return "Resource/LocData/" + getLocale() + "/";
+const std::string& getLocDataPath() {
+    if (localePath.empty()) {
+        getLocale();
+    }
+    return localePath;
 }
