@@ -170,7 +170,7 @@ void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, in
 
 ///Join handler
 
-extern int multiplayerJoinInterruptHandler(float, float);
+extern int multiplayerJoinBackHandler(float, float);
 
 int joinQuant( float, float ) {
     if (menuChangingDone) {
@@ -190,7 +190,7 @@ void onMMMultiplayerListJoinButton(CShellWindow* pWnd, InterfaceEventCode code, 
         } else {
             putStringSettings(regLanName, input->getText());
 
-            setupOkMessageBox(multiplayerJoinInterruptHandler, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT, false);
+            setupOkMessageBox(multiplayerJoinBackHandler, 0, qdTextDB::instance().getText("Interface.Menu.Messages.Connecting"), MBOX_EXIT, false);
             showMessageBox();
 
             _shellIconManager.AddDynamicHandler( joinQuant, CBCODE_QUANT );

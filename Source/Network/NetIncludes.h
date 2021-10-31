@@ -9,9 +9,9 @@
 #include <SDL_net.h>
 #include <map>
 
-#ifndef PERIMETER_D3D9
-#include <d3d9.h>
-#endif
+//#ifdef PERIMETER_D3D9
+//#include <d3d9.h>
+//#endif
 
 #include "tweaks.h"
 #include "xutil.h"
