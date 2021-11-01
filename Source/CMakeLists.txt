@@ -44,7 +44,7 @@ IF(NOT PERIMETER_WINDOWS)
         MESSAGE("Using DXVK-native for D3D9 API")
         #DXVK-native wrapper lib retrieval and building
         ExternalProject_Add(dxvk-native
-                GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
+                GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
                 GIT_TAG           origin/master
                 GIT_SHALLOW       ON
                 BUILD_ALWAYS      OFF
