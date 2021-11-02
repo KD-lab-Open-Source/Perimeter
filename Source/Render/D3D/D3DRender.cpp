@@ -278,6 +278,13 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	Flush();
 
 	dtFixed=new DrawTypeFixedPipeline;
+
+    /*
+     * These don't work properly under Vulkan in MacOS, disable them for now
+     * Bump mapping and Self shadow are disabled by not loading shaders
+     * Bump chaos is disabled manually elsewhere
+     */
+#ifndef __APPLE__
 	if(DeviceCaps.PixelShaderVersion>= D3DPS_VERSION(2,0) && lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_D16)==0)
 		dtAdvanceOriginal=new DrawTypeGeforceFX;
 	else
@@ -290,6 +297,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	else
 	if( DeviceCaps.PixelShaderVersion>= D3DPS_VERSION(1,4))
 		dtAdvanceOriginal=new DrawTypeRadeon8500;
+#endif
 
 	VISASSERT(occlusion_query.empty());
 

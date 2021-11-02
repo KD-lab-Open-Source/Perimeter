@@ -486,7 +486,7 @@ bool cVisGeneric::GetShowType(eShowType type)
 
 bool cVisGeneric::PossibilityBump()
 {
-	return gb_RenderDevice3D->PossibilityBump();
+	return gb_RenderDevice3D->hasAdvanceDrawType();
 }
 
 void cVisGeneric::SetEnableBump(bool enable)
@@ -682,7 +682,11 @@ void cVisGeneric::SetShadowMapSelf4x4(bool b4x4)
 
 bool cVisGeneric::PossibilityBumpChaos()
 {
+#ifdef __APPLE__
+    return false;
+#else
 	return gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP;
+#endif
 }
 
 

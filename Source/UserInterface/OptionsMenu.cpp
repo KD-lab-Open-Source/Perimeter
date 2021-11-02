@@ -37,7 +37,7 @@ void OnIngameGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int 
 		onPointLightCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_POINT_LIGHT_COMBO), EVENT_CREATEWND, -1);
 		onSamplesCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_SAMPLES_COMBO), EVENT_CREATEWND, -1);
 		onBumpCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_COMBO), EVENT_CREATEWND, -1);
-//		onBumpChaosCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_CHAOS_COMBO), EVENT_CREATEWND, -1);
+		onBumpChaosCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_CHAOS_COMBO), EVENT_CREATEWND, -1);
 		onCompressCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_COMPRESS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsFurrows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_FURROWS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsShadows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_COMBO), EVENT_CREATEWND, -1);

@@ -195,7 +195,7 @@ public:
 	void SetAnisotropic(bool enable);
 	bool GetAnisotropic();
 
-	bool PossibilityBump(){	return dtAdvanceOriginal!=NULL;}
+	bool hasAdvanceDrawType(){	return dtAdvanceOriginal != NULL;}
 
 	virtual void SetDialogBoxMode(bool enable);
 private:
