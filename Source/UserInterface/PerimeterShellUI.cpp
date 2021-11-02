@@ -5622,7 +5622,22 @@ void FormatProgressText(char* cb, void* param)
 	int elements = pSquad->squadMutationMolecula().elementCount(DAMAGE_FILTER_BASE);
     int energy = static_cast<int>(std::round(pSquad->mutationEnergy()*100));
     energy = std::max(0, energy);
-	_shellIconManager.FormatMessageText("<Mutation_bar>", cb, elements, energy); 
+    std::string text = qdTextDB::instance().getText("Interface.Tips.Mutation_bar");
+    std::vector<size_t> newlines;
+
+    //Some languages have more than 2 lines in popup (like Spanish which has time left to full charge)
+    //We need to remove those as we only support 2 lines
+    for (size_t i = 0; i < text.length(); i++) {
+        char c = text[i];
+        if (c == '\n') {
+            newlines.emplace_back(i);
+        }
+    }
+    if (1 < newlines.size()) {
+        text.erase(newlines[1]);
+    }
+    text = "#" + text;
+	_shellIconManager.FormatMessageText(text.c_str(), cb, elements, energy);
 }
 void CProgressMutation::OnWindow(int enable)
 {

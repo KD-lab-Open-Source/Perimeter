@@ -1240,7 +1240,9 @@ char* CShellIconManager::FormatMessageText(const char* cbTag, char* cb, ...)
 		tag = tag.substr(1, tag.length() - 2);
 		tag = "Interface.Tips." + tag;
 		text = qdTextDB::instance().getText(tag.c_str());
-	}
+	} else if (*cbTag == '#') {
+        text = (cbTag + 1);
+    }
 	if (text.length()) {
 		strncpy(cbTempBuffer, text.c_str(), text.length());
 		cbTempBuffer[text.length()] = '\0';
