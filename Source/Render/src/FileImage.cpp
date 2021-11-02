@@ -671,10 +671,11 @@ public:
 	{
 		char* buf;
 		int size;
-		char name[512];
-		strcpy(name,fname);
-		strcat(name,"x");
-		int ret=ResourceFileRead(name,buf,size);
+		std::string name = fname;
+        if (endsWith(name, ".avi")) {
+            name += 'x';
+        }
+		int ret=ResourceFileRead(name.c_str(),buf,size);
 		if(ret)
 			return ret;
 		data=(AVIX*)buf;
@@ -1379,18 +1380,23 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cFileImage
-cFileImage* cFileImage::Create(const char *fname)
+cFileImage* cFileImage::Create(const std::string& fname)
 {
     std::string path(fname);
 	_strlwr(path.data());
-    fname = path.c_str();
-	if(strstr(fname,".tga")) {
+	if(endsWith(path,".tga")) {
         return new cTGAImage;
-    } else if(strstr(fname,".avi")) {
-        return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
-    } else if(strstr(fname,".cur") || strstr(fname,".ani")) {
+    } else if(endsWith(path,".avi")) {
+        if (ResourceIsZIP()) {
+            return new cAVIXImage;
+        } else {
+            return new cAVIImage;
+        }
+    } else if(endsWith(path,".avix")) {
+        return new cAVIXImage;
+    } else if(endsWith(path,".cur") || endsWith(path,".ani")) {
 	    //Since we don't know which ".cur" files are actually CUR or ANI... we do runtime checking
-        std::string file_path = convert_path_content(fname);
+        std::string file_path = convert_path_content(path);
         char type[4];
         XStream s;
         s.open(file_path);
@@ -1401,8 +1407,10 @@ cFileImage* cFileImage::Create(const char *fname)
         } else {
             return new cSDLImage;
         }
-    } else if(strstr(fname,".jpg") || strstr(fname,".jpe") || strstr(fname,".png")) {
+    } else if(endsWith(path,".jpg") || endsWith(path,".jpe") || endsWith(path,".png")) {
         return new cSDLImage;
+    } else {
+        fprintf(stderr, "Unknown image type %s\n", fname.c_str());
     }
 	return nullptr;
 }

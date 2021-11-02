@@ -413,9 +413,15 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 	//Get path for file and open it
 	std::string path = convert_path_content(Texture->GetName());
 	if (path.empty()) {
-	    //File not found
-        Error(Texture);
-        return false;
+        path = Texture->GetName();
+        if (endsWith(path, ".avi") && !convert_path_content(path + "x").empty()) {
+            //Use AVIX if available when AVI is absent
+            path += "x";
+        } else {
+            //File not found
+            Error(Texture);
+            return false;
+        }
 	}
 	
 	FileImage=cFileImage::Create(path.c_str());

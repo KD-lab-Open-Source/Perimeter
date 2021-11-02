@@ -30,7 +30,7 @@ public:
 	inline int GetBitPerPixel()													{ return bpp; }
 	static void InitFileImage();
 	static void DoneFileImage();
-	static cFileImage* Create(const char *fname);
+	static cFileImage* Create(const std::string& fname);
 };
 class cAviScaleFileImage : public cFileImage
 {
