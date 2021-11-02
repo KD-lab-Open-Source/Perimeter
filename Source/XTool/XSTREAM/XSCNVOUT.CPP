@@ -62,7 +62,7 @@ XStream& XStream::operator>= (int32_t& var)
 	if(!ret) return *this;
 	char* p = convBuf;
 	p[ret] = ' ';
-	var = strtol(p,&p,0);
+	var = (int32_t)strtol(p,&p,0);
 	seek(p - convBuf + 1 - ret,XS_CUR);
 	return *this;
 }
@@ -73,7 +73,7 @@ XStream& XStream::operator>= (uint32_t& var)
 	if(!ret) return *this;
 	char* p = convBuf;
 	p[ret] = ' ';
-	var = strtoul(p,&p,0);
+	var = (uint32_t)strtoul(p,&p,0);
 	seek(p - convBuf + 1 - ret,XS_CUR);
 	return *this;
 }
@@ -84,7 +84,7 @@ XStream& XStream::operator>= (int64_t& var)
 	if(!ret) return *this;
 	char* p = convBuf;
 	p[ret] = ' ';
-	var = strtol(p,&p,0);
+	var = strtoll(p,&p,0);
 	seek(p - convBuf + 1 - ret,XS_CUR);
 	return *this;
 }
@@ -95,7 +95,7 @@ XStream& XStream::operator>= (uint64_t& var)
 	if(!ret) return *this;
 	char* p = convBuf;
 	p[ret] = ' ';
-	var = strtoul(p,&p,0);
+	var = strtoull(p,&p,0);
 	seek(p - convBuf + 1 - ret,XS_CUR);
 	return *this;
 }
