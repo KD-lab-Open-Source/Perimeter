@@ -5,11 +5,18 @@
 #include "GameShell.h"
 #include "Universe.h"
 
+arch_flags server_arch_mask = 0;
+
 bool PNetCenter::Init()
 {
     connectionHandler.reset();
 	SetConnectionTimeout(TIMEOUT_DISCONNECT); //30s //3600000
     m_hostNETID = m_localNETID = NETID_NONE;
+    server_arch_mask = 0;
+    const char* server_arch_mask_str = check_command_line("ServerArchMask");
+    if (server_arch_mask_str) {
+        server_arch_mask = ~strtoull(server_arch_mask_str, nullptr, 16);
+    }
 
 	return true;
 }
@@ -197,8 +204,8 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
             if (!clientInfo.checkCRCCorrect()) {
                 fprintf(stderr, "Connection info CRC failed\n");
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE, 0, 0);
-            } else if (!clientInfo.isArchCompatible()) {
-                    response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_ARCH, 0, 0);
+            } else if (!clientInfo.isArchCompatible(server_arch_mask)) {
+                response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_ARCH, 0, 0);
             } else if (clientInfo.gameContent != terGameContentSelect) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT, 0, 0);
             } else if (m_bStarted) { // Игра запущена
@@ -206,6 +213,14 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
             } else if ((!gamePassword.empty()) && (!clientInfo.isPasswordCorrect(gamePassword.c_str()))) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_PASWORD, 0, 0);
             } else {
+                //Print warning if arch is diff but was masked
+                if (!clientInfo.isArchCompatible(0)) {
+                    fprintf(
+                        stderr, "Arch mismatch! Server %llX Client %llX Mask %llX\n",
+                        NetConnectionInfo::getArchFlags(), clientInfo.arch, server_arch_mask
+                    );
+                }
+
                 //All OK
                 PlayerData pd;
                 pd.set(clientInfo.playerName, connection->netid);

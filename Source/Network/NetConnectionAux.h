@@ -72,24 +72,14 @@ struct NetConnectionInfo {
     
     static arch_flags getArchFlags() {
         arch_flags val = 0;
-        //CPU width - 1-2nd bits (1 = 32, 2 = 64)
-#ifdef PERIMETER_ARCH_64
-        val |= 2;
-#else
+
+        //Release build - 0 (1) bit
+#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
         val |= 1;
 #endif
-        //CPU endianness - 3rd bit
-#ifdef SDL_BIG_ENDIAN
-        val |= 1<<2;
-#endif
         
-        //Release build - 4th bit
-#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
-        val |= 1<<3;
-#endif
-        
-        //Compiler type - 5-6-7-8 bits
-        int compiler;
+        //Compiler type - 1-7 (7) bits
+        arch_flags compiler;
 #if defined(_MSC_VER)
         compiler = 1;
 #elif defined(__clang__)
@@ -99,8 +89,34 @@ struct NetConnectionInfo {
 #else
         compiler = 0;
 #endif
-        xassert(compiler <= 0xF);
-        val |= compiler<<5;
+        xassert(compiler <= 0x7F);
+        val |= compiler<<1;
+
+        //OS type - 8-15 (8) bits
+        arch_flags os;
+#if defined(__linux__)
+        os = 1;
+#elif defined( __APPLE__)
+        os = 2;
+#elif defined(_WIN32)
+        os = 3;
+#else
+        os = 0;
+#endif
+        xassert(os <= 0xFF);
+        val |= os<<8;
+
+        //CPU type - 60-61-62-63 (4) bits
+        arch_flags cpu = 0;
+        //Arch - 60-61 bits (0 = under 32, 1 = 32, 2 = 64, 3 = above 64)
+        cpu |= (sizeof(void*) / 4) & 3;
+        //CPU endianness - 63 bit
+#ifdef SDL_BIG_ENDIAN
+        cpu |= 1<<3;
+#endif
+        xassert(cpu <= 0xF);
+        val |= cpu<<60;
+
         return val;
     }
 
@@ -130,8 +146,12 @@ struct NetConnectionInfo {
         return crc == calcOwnCRC();
     }
 
-    bool isArchCompatible() {
-        return arch == getArchFlags();
+    bool isArchCompatible(arch_flags mask) {
+        if (mask) {
+            return (arch & mask) == (getArchFlags() & mask);
+        } else {
+            return arch == getArchFlags();
+        }
     }
 
     bool isPasswordCorrect(const char* _password) {
