@@ -58,7 +58,11 @@ IF(NOT PERIMETER_WINDOWS)
                 "${SOURCE_DIR}/include/native/directx"
                 "${SOURCE_DIR}/include/native/windows"
         )
-        set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+        IF (MACOS)
+            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.dylib)
+        ELSE()
+            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+        ENDIF()
     
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
         INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
