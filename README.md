@@ -3,10 +3,8 @@
 ![Perimeter](https://cdn.akamai.steamstatic.com/steam/apps/289440/header.jpg)
 
 [![Linux Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/linux_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/linux_build.yml)
-[![Windows MSVC amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_x86_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_x86_build.yml)
-[![Windows MSVC amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_amd64_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_amd64_build.yml)
-[![Windows MSYS amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_32_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_32_build.yml)
-[![Windows MSYS amd64 Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_64_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_64_build.yml)
+[![Windows MSVC Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_build.yml)
+[![Windows MSYS Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_build.yml)
 
 [![Join the chat at https://t.me/PerimeterGame](https://patrolavia.github.io/telegram-badge/chat.svg)](https://t.me/PerimeterGame)
 
@@ -45,6 +43,7 @@ There is instructions available in:
 - Automatic game assets searching in these paths order:
   - Path from content= command argument
   - Linux: $HOME/.local/share/KD Vision/Perimeter/Content
+  - MacOS: $HOME/Library/Application Support/KD Vision/Perimeter/Content
   - Executable path
   - Windows: %AppData%\\Roaming\\KD Vision\\Perimeter\\Content
   - Previous used content stored in settings
@@ -54,7 +53,7 @@ There is instructions available in:
   - Uses may include adding custom textures, models, resolutions, maps, scripts...
   - Perimeter ET Scripts and Resources can also be added as an addon to include extra units in main game and missions
   - Addons can be enabled/disabled from main menu
-- 64 bits support
+- 64 bits support and experimental support for non x86 CPUs
 - Frame selection in battle/multiplayer menu and new colors
 - Experimental widescreen and custom resolutions support:
   - Game scans Resource/Icons/intf for XxY named folders such as 1920x1080 and adds as selectable option
@@ -67,6 +66,7 @@ There is instructions available in:
 - Better save game map / content checking
 - Experimental support for Perimeter Emperor Testament
 - Experimental support for TCP/IP multiplayer
+- Experimental support for MacOS
 
 ## Repository contents
 
@@ -108,6 +108,6 @@ There is instructions available in:
 
 **Windows** - Compilable with modern compilers but not available in more platforms than Windows.
 
-**Working** - Compilable with modern compilers and available in other platforms such as Windows and Linux.
+**Working** - Compilable and available in other platforms such as Windows, MacOS and Linux.
 
 Meta issue for tracking code modernization/porting progress: https://github.com/KD-lab-Open-Source/Perimeter/issues/58

@@ -83,7 +83,7 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
 
 # Linux
 
-Still experimental support, it uses libraries like dxvk-native and some libraries to supply Windows platform stuff.
+Experimental support, it uses dxvk-native for D3D9 API and some libraries to supply Windows platform stuff.
 
 ### Requirements
 
@@ -97,7 +97,8 @@ Still experimental support, it uses libraries like dxvk-native and some librarie
   - vulkan headers (for DXVK)
   - glsllang-tools (for DXVK which needs glslangValidator program) 
 
-Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glslang-tools lld libsdl2-dev libogg-dev libvorbis-dev libboost-dev`
+Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glslang-tools lld cmake meson 
+libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev libavcodec-dev libavformat-dev`
 
 ### Instructions
 
@@ -107,7 +108,35 @@ Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glsl
 - `ninja -j$(nproc --all)` or `ninja -j4` (replace 4 with number of logical cores in your computer)
 
 ### Launching the game
-Copy generated perimeter executable to the game directory or run executable while current directory is the game directory.
+Run executable while current directory is the game directory or pass content= with game path.
+
+---
+
+# MacOS
+
+Experimental support, it uses dxvk-native for D3D9 API and some libraries to supply Windows platform stuff.
+
+### Requirements
+
+- Main dependencies +
+  - gcc
+  - make
+  - ninja
+  - meson
+  - libbacktrace
+  - Vulkan SDK or MoltenVK (for DXVK)
+
+Packages in MacPorts: `ninja cmake meson ffmpeg boost libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev`
+
+### Instructions
+
+- `mkdir build`
+- `cd build`
+- `cmake -G Ninja ..`
+- `ninja -j$(nproc --all)` or `ninja -j4` (replace 4 with number of logical cores in your computer)
+
+### Launching the game
+Run executable while current directory is the game directory or pass content= with game path.
 
 ---
 
