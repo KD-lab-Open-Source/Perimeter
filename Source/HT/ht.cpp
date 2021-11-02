@@ -5,7 +5,7 @@
 #include "Config.h"
 #include "Universe.h"
 #include "LagStatistic.h"
-#include <malloc.h>
+#include <cstdlib>
 #include <thread>
 #include <SDL_thread.h>
 
