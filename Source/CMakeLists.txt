@@ -42,6 +42,16 @@ IF(NOT PERIMETER_WINDOWS)
 
     IF (OPTION_DXVK)
         MESSAGE("Using DXVK-native for D3D9 API")
+
+        SET(DXVK_NATIVE_BUILD_COMMAND meson)
+        IF (MACOS AND CMAKE_OSX_ARCHITECTURES)
+            #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
+            SET(DXVK_NATIVE_BUILD_COMMAND
+                    ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
+                    ${CMAKE_OSX_ARCHITECTURES}
+                    ${PROJECT_SOURCE_DIR}/macos/
+            )
+        ENDIF()
         #DXVK-native wrapper lib retrieval and building
         ExternalProject_Add(dxvk-native
                 GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
@@ -49,7 +59,7 @@ IF(NOT PERIMETER_WINDOWS)
                 GIT_SHALLOW       ON
                 BUILD_ALWAYS      OFF
                 CONFIGURE_HANDLED_BY_BUILD ON
-                CONFIGURE_COMMAND meson ../dxvk-native -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
+                CONFIGURE_COMMAND ${DXVK_NATIVE_BUILD_COMMAND} ../dxvk-native -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
                 BUILD_COMMAND     ninja
                 INSTALL_COMMAND   ""
         )

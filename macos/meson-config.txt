@@ -1,0 +1,8 @@
+[binaries]
+c = 'clang'
+cpp = 'clang++'
+c_ld = 'ld'
+cpp_ld = 'ld'
+ar = 'ar'
+strip = 'strip'
+pkgconfig = 'pkg-config'
