@@ -98,7 +98,7 @@ ENDIF()
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
-    #Select 64 or 32 compiled libs
+    #DirectX 64 or 32 libs
     IF(PERIMETER_ARCH_64)
         MESSAGE("Linking against DirectX 64 bits")
         SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
@@ -109,7 +109,6 @@ IF(PERIMETER_WINDOWS)
     LINK_DIRECTORIES(BEFORE ${LIBS_MSDXSDK})
 
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-        #DirectX libs
         ${LIBS_MSDXSDK}/d3d9.lib
         ${LIBS_MSDXSDK}/d3dx9.lib
         ${LIBS_MSDXSDK}/DxErr.lib
