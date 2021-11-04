@@ -71,7 +71,10 @@ void findGameContent() {
 #else
     paths.emplace_back(prefPath);
     paths.emplace_back(SDL_GetBasePath());
+#ifndef __APPLE__
+    //Mac apps get exception when trying to scan it's own dir
     paths.emplace_back(std::filesystem::current_path().string());
+#endif
 #endif
     if (settingsPath) paths.emplace_back(settingsPath);
 
@@ -358,6 +361,9 @@ void detectGameContent() {
         ErrH.Abort("Couldn't identify game content type in Resource, some data may be missing.", XERR_USER, terGameContentAvailable);
         return;
     }
+
+    //Set current path to preferences, this is specially needed for MacOS as it forbids writing inside .app
+    std::filesystem::current_path(GET_PREF_PATH());
 
     //Check if we should select another content, this has to be done before loading addons
     const char* content_selection = check_command_line("content_select");

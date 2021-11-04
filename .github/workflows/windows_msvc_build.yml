@@ -32,6 +32,7 @@ jobs:
           key: MSVC-${{matrix.env.arch}}-${{ hashFiles('**/vcpkg.json') }}
       - uses: lukka/get-cmake@latest
       - name: Restore from cache and run vcpkg
+        if: steps.cache.outputs.cache-hit != 'true'
         uses: lukka/run-vcpkg@v7
         with:
           setupOnly: true

@@ -28,42 +28,33 @@ mkdir $APP_DIR/Contents/Frameworks
 mkdir $APP_DIR/Contents/Libs
 mkdir $APP_DIR/Contents/MacOS
 
-cp -a $LIB_DIR/libSDL2-2.0.0.dylib $APP_DIR/Contents/Libs/
-cp -a $LIB_DIR/libSDL2_image-2.0.0.dylib $APP_DIR/Contents/Libs/
-cp -a $LIB_DIR/libSDL2_mixer-2.0.0.dylib $APP_DIR/Contents/Libs/
-cp -a $LIB_DIR/libSDL2_net-2.0.0.dylib $APP_DIR/Contents/Libs/
+#cp -L $LIB_DIR/libSDL2-2.0.0.dylib $APP_DIR/Contents/Libs/
+#cp -L $LIB_DIR/libSDL2_image-2.0.0.dylib $APP_DIR/Contents/Libs/
+#cp -L $LIB_DIR/libSDL2_mixer-2.0.0.dylib $APP_DIR/Contents/Libs/
+#cp -L $LIB_DIR/libSDL2_net-2.0.0.dylib $APP_DIR/Contents/Libs/
 
-cp -a $LIB_DIR/libavcodec.58*.dylib $APP_DIR/Contents/Libs/
-cp -a $LIB_DIR/libavformat.58*.dylib $APP_DIR/Contents/Libs/
-cp -a $LIB_DIR/libavutil.56*.dylib $APP_DIR/Contents/Libs/
+#cp -a $LIB_DIR/libavcodec.58*.dylib $APP_DIR/Contents/Libs/
+#cp -a $LIB_DIR/libavformat.58*.dylib $APP_DIR/Contents/Libs/
+#cp -a $LIB_DIR/libavutil.56*.dylib $APP_DIR/Contents/Libs/
 
-cp -L $LIB_DIR/libogg.0.dylib $APP_DIR/Contents/Libs/
-cp -L $LIB_DIR/libvorbis.0.dylib $APP_DIR/Contents/Libs/
-cp -L $LIB_DIR/libvorbisfile.3.dylib $APP_DIR/Contents/Libs/
+#cp -L $LIB_DIR/libogg.0.dylib $APP_DIR/Contents/Libs/
+#cp -L $LIB_DIR/libvorbis.0.dylib $APP_DIR/Contents/Libs/
+#cp -L $LIB_DIR/libvorbisfile.3.dylib $APP_DIR/Contents/Libs/
 
-cp -a $VULKAN_LIB_DIR/libvulkan.*.dylib $APP_DIR/Contents/Libs/
-cp -a $VULKAN_LIB_DIR/libMoltenVK.dylib $APP_DIR/Contents/Libs/
+#cp -L $VULKAN_LIB_DIR/libvulkan.1.dylib $APP_DIR/Contents/Libs/
+#cp -L $VULKAN_LIB_DIR/libMoltenVK.dylib $APP_DIR/Contents/Libs/
 
-cp $DXVK_NATIVE_PATH $APP_DIR/Contents/Libs/
+rm -f $BUILD_DIR/libdxvk_d3d9.dylib
+cp $DXVK_NATIVE_PATH $BUILD_DIR/libdxvk_d3d9.dylib
 
 cp $BUILD_DIR/Source/perimeter $APP_DIR/Contents/MacOS/Perimeter
 
-install_name_tool -change "@rpath/libvulkan.1.dylib" "$VULKAN_LIB_DIR/libvulkan.1.dylib" $APP_DIR/Contents/Libs/libdxvk_d3d9.dylib
-install_name_tool -change "@rpath/libdxvk_d3d9.dylib" "$APP_DIR/Contents/Libs/libdxvk_d3d9.dylib" $APP_DIR/Contents/MacOS/Perimeter
+#Fix dxvk-native before bundling
+install_name_tool -change "@rpath/libvulkan.1.dylib" "$VULKAN_LIB_DIR/libvulkan.1.dylib" $BUILD_DIR/libdxvk_d3d9.dylib
+install_name_tool -change "@rpath/libdxvk_d3d9.dylib" "$BUILD_DIR/libdxvk_d3d9.dylib" $APP_DIR/Contents/MacOS/Perimeter
 
-dylibbundler -x $APP_DIR/Contents/MacOS/Perimeter
+dylibbundler -x $APP_DIR/Contents/MacOS/Perimeter -b -d $APP_DIR/Contents/Libs
 
 chmod 777 $APP_DIR/Contents/Libs/*
 
-install_name_tool -change /usr/local/opt/libogg/lib/libogg.0.dylib "@executable_path/../Libs/libogg.0.dylib" $APP_DIR/Contents/Libs/libvorbis.0.dylib
-install_name_tool -change /usr/local/Cellar/libvorbis/1.3.6/lib/libvorbis.0.dylib "@executable_path/../Libs/libvorbis.0.dylib" $APP_DIR/Contents/Libs/libvorbisfile.3.dylib
-install_name_tool -change /usr/local/opt/libogg/lib/libogg.0.dylib "@executable_path/../Libs/libogg.0.dylib" $APP_DIR/Contents/Libs/libvorbisfile.3.dylib
-#install_name_tool -change "$LIB_DIR/libavutil.56.dylib" "@executable_path/../Libs/libavutil.56.dylib" $APP_DIR/Contents/Libs/libavcodec.58.dylib
-#install_name_tool -change "$LIB_DIR/libavutil.56.dylib" "@executable_path/../Libs/libavutil.56.dylib" $APP_DIR/Contents/Libs/libavformat.58.dylib
-#install_name_tool -change "$LIB_DIR/libavcodec.58.dylib" "@executable_path/../Libs/libavcodec.58.dylib" $APP_DIR/Contents/Libs/libavformat.58.dylib
-install_name_tool -change "/usr/local/opt/sdl2/lib/libSDL2-2.0.0.dylib" "@executable_path/../Libs/libSDL2-2.0.0.dylib" $APP_DIR/Contents/Libs/libSDL2_image-2.0.0.dylib
-install_name_tool -change "/usr/local/opt/sdl2/lib/libSDL2-2.0.0.dylib" "@executable_path/../Libs/libSDL2-2.0.0.dylib" $APP_DIR/Contents/Libs/libSDL2_mixer-2.0.0.dylib
-install_name_tool -change "/usr/local/opt/sdl2/lib/libSDL2-2.0.0.dylib" "@executable_path/../Libs/libSDL2-2.0.0.dylib" $APP_DIR/Contents/Libs/libSDL2_net-2.0.0.dylib
-install_name_tool -change "/usr/local/opt/sdl2/lib/libSDL2-2.0.0.dylib" "@executable_path/../Libs/libSDL2-2.0.0.dylib" $APP_DIR/Contents/Libs/libSDL2_net-2.0.0.dylib
-install_name_tool -change "$VULKAN_LIB_DIR/libvulkan.1.dylib" "@executable_path/../Libs/libvulkan.1.dylib" "$APP_DIR/Contents/Libs/libdxvk_d3d9.dylib"
-install_name_tool -change "$APP_DIR/Contents/Libs/libdxvk_d3d9.dylib" "@executable_path/../Libs/libdxvk_d3d9.dylib" $APP_DIR/Contents/MacOS/Perimeter
+cp -L /usr/local/lib/libvulkan.1.2.189.dylib $APP_DIR/Contents/Libs/libvulkan.1.2.189.dylib

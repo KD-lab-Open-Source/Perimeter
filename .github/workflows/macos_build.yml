@@ -7,7 +7,7 @@ on:
 env:
   VULKAN_SDK_VERSION: '1.2.189.0'
   MACOSX_DEPLOYMENT_TARGET: '10.15'
-  GH_CACHE_KEY: 1
+  GH_CACHE_KEY: 3
 
 jobs:
   build:
@@ -15,10 +15,10 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          {build_type: Debug,   arch_name: Apple Silicon, arch: arm64},
-          #{build_type: Release, arch_name: Apple Silicon, arch: arm64},
-          {build_type: Debug,   arch_name: Intel, arch: x86_64},
-          {build_type: Release, arch_name: Intel, arch: x86_64}
+          #{build_type: Debug,   arch_name: Apple Silicon, arch_apple: arm64, arch: aarch64},
+          #{build_type: Release, arch_name: Apple Silicon, arch_apple: arm64, arch: aarch64},
+          {build_type: Debug,   arch_name: Intel, arch_apple: x86_64, arch: x86_64},
+          {build_type: Release, arch_name: Intel, arch_apple: x86_64, arch: x86_64}
         ]
     name: ${{matrix.build_type}} ${{matrix.env.arch_name}}
     runs-on: macos-latest
@@ -34,26 +34,31 @@ jobs:
         with:
           path: |
             ~/VulkanSDK
-            ~/ffmpeg
-          key: MacOS-${{matrix.env.arch}}-${{ env.VULKAN_SDK_VERSION }}-${{ env.GH_CACHE_KEY }}
-      - name: install Vulkan SDK
+            ffmpeg
+          key: MacOS-${{matrix.env.arch_apple}}-${{ env.VULKAN_SDK_VERSION }}-${{ env.GH_CACHE_KEY }}
+      - name: download and install Vulkan SDK
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           wget https://sdk.lunarg.com/sdk/download/${{ env.VULKAN_SDK_VERSION }}/mac/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}.dmg?Human=true -O vulkansdk-macos.dmg
           hdiutil attach vulkansdk-macos.dmg
           sudo /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
           hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
+      - name: install Vulkan SDK
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          sudo ~/VulkanSDK/install_vulkan.py
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch n4.3.3 https://git.ffmpeg.org/ffmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./configure --enable-shared --prefix=/usr/local
-          --cc=clang
+          --cc="clang"
           --arch=${{matrix.env.arch}}
-          --extra-cflags="-arch ${{matrix.env.arch}}"
-          --extra-ldflags="-arch ${{matrix.env.arch}}"
-          --enable-cross-compile
+          --extra-cflags="-arch ${{matrix.env.arch_apple}}"
+          --extra-ldflags="-arch ${{matrix.env.arch_apple}}"
+          --target-os=darwin
+          --sysroot=$(xcrun --sdk macosx --show-sdk-path)
           --disable-everything
           --enable-swscale
           --enable-zlib
@@ -76,7 +81,7 @@ jobs:
       - name: perimeter -- create build dir
         run: mkdir build
       - name: perimeter -- configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_OSX_ARCHITECTURES=${{matrix.env.arch}}
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_OSX_ARCHITECTURES=${{matrix.env.arch_apple}}
         working-directory: build
       - name: perimeter -- build dependencies
         run: ninja dependencies

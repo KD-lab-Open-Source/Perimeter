@@ -10,3 +10,4 @@ docker/dockcross-*-perimeter
 logfile.txt
 perimeter.dxvk-cache
 perimeter_crash
+.DS_Store

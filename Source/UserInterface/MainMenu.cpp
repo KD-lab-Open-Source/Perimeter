@@ -1513,6 +1513,7 @@ void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
             case SQSH_MM_MULTIPLAYER_LIST_SCR:
             case SQSH_MM_ADDONS_SCR:
             case SQSH_MM_OPTIONS_SCR:
+            case SQSH_MM_CREDITS_SCR:
                 nShow = SQSH_MM_START_SCR;
                 break;
 			case SQSH_MM_GAME_SCR:
