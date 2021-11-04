@@ -12,15 +12,24 @@ jobs:
   build:
     strategy:
       matrix:
-        build_type: [Debug, Release]
         env: [
-          {bits: 64, arch: amd64, arch_installed: x64},
-          {bits: 32, arch: x86, arch_installed: x86}
+          #{bits: 32, arch_installed: x86, build_type: Debug,   arch_name: x86, arch: x86},
+          {bits: 64, arch_installed: x64, build_type: Debug,   arch_name: x86, arch: amd64},
+          #{bits: 64, arch_installed: x64, build_type: Debug,   arch_name: ARM, arch: amd64_arm64},
+          {bits: 32, arch_installed: x86, build_type: Release, arch_name: x86, arch: x86},
+          {bits: 64, arch_installed: x64, build_type: Release, arch_name: x86, arch: amd64},
+          #{bits: 64, arch_installed: x64, build_type: Release, arch_name: ARM, arch: amd64_arm64}
         ]
-    name: ${{matrix.build_type}} ${{matrix.env.bits}} bits
+    name: ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: |
+            ${{ github.workspace }}\vcpkg
+          key: MSVC-${{matrix.env.arch}}-${{ hashFiles('**/vcpkg.json') }}
       - uses: lukka/get-cmake@latest
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v7
@@ -38,7 +47,7 @@ jobs:
         run: |
           mkdir ${{ env.buildDir }}
           cd ${{ env.buildDir }}
-          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake ..
       - name: Build the project
         run: |
           cd ${{ env.buildDir }}
@@ -53,5 +62,5 @@ jobs:
           copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
       - uses: actions/upload-artifact@v2
         with:
-          name: Perimeter MSVC ${{matrix.build_type}} ${{matrix.env.bits}} bits
+          name: Perimeter MSVC ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
           path: ${{ env.outDir }}

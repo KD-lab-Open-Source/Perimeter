@@ -32,8 +32,11 @@ char convBuf[CONV_BUFFER_LEN + 1];
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
 #include "boost/stacktrace.hpp"
-#include "tweaks.h"
+#endif
 
+#if defined(_WIN32) && (defined(_M_IX86) || defined (_M_AMD64))
+//Specific to Windows X86/X86_64 archs
+#define USE_ORIGINAL_HANDLER
 #endif
 
 #ifndef _WIN32
@@ -52,8 +55,8 @@ char *rterrorMSG	= "RUN-TIME ERROR";
 #pragma init_seg(lib)
 XErrorHandler ErrH;
 
-//All the Win32 specific error handling
-#ifdef _WIN32
+//All the Win32 on x86/64 specific error handling
+#ifdef USE_ORIGINAL_HANDLER
 void win32_break(char* error,char* msg) {
     std::cerr << "--------------------------------\n";
     std::cerr << error << "\n";
@@ -155,13 +158,13 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
     strcat(msg, dwtoa((uint32_t) except_info->ExceptionRecord->ExceptionAddress));
 #endif
 
-	static int attempt_to_show_context = 0;
-	if(!attempt_to_show_context){
+	static int attempted_to_show_context = 0;
+	if(!attempted_to_show_context){
 		PCONTEXT p = except_info -> ContextRecord;
 		if((p -> ContextFlags & CONTEXT_INTEGER) && (p -> ContextFlags & CONTEXT_CONTROL) &&
 			(p -> ContextFlags & CONTEXT_CONTROL)){
+            attempted_to_show_context = 1;
 #ifdef PERIMETER_ARCH_64
-            attempt_to_show_context = 1;
             strcat(msg,"\r\n\r\nRegisters:\r\n");
             strcat(msg,"RAX="); strcat(msg, qwtoa(p -> Rax));
             strcat(msg,"  CS="); strcat(msg, wtoa(p -> SegCs));
@@ -197,7 +200,6 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
                 strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
             }
 #else
-			attempt_to_show_context = 1;
 			strcat(msg,"\r\n\r\nRegisters:\r\n");
 			strcat(msg,"EAX="); strcat(msg, dwtoa(p -> Eax));
 			strcat(msg,"  CS="); strcat(msg, wtoa(p -> SegCs));
@@ -244,7 +246,7 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 	return EXCEPTION_EXECUTE_HANDLER;
 #endif
 }
-#endif //_WIN32
+#endif //USE_ORIGINAL_HANDLER
 
 void setSignalHandler(sighandler signalHandler) {
     signal(SIGSEGV, signalHandler);
@@ -398,7 +400,7 @@ XErrorHandler::XErrorHandler() {
     }
 
     //Register handler
-#ifdef _WIN32
+#ifdef USE_ORIGINAL_HANDLER
     SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
 #else
     setTerminateHandler(handleTerminate);
