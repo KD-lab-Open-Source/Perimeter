@@ -1203,7 +1203,12 @@ void PNetCenter::HostReceiveQuant()
 							if(netid==m_hostNETID){//только Host может менять карту
 								int i;
 								for(i=0; i< nc_changeMap.missionDescription_.playerAmountScenarioMax; i++){
-									nc_changeMap.missionDescription_.playersData[i]=hostMissionDescription.playersData[i];
+                                    if (i < hostMissionDescription.playerAmountScenarioMax) {
+                                        nc_changeMap.missionDescription_.playersData[i] = hostMissionDescription.playersData[i];
+                                    } else {
+                                        //Don't copy from previous description since this slot wasnt used and may contain unknown data
+                                        nc_changeMap.missionDescription_.playersData[i].realPlayerType = REAL_PLAYER_TYPE_OPEN;
+                                    }
 								}
                                 //Remove players that exceed scenario max
 								for(i; i< NETWORK_PLAYERS_MAX; i++){

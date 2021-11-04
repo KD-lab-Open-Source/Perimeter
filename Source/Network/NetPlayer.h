@@ -37,7 +37,7 @@ public:
 	
 	PlayerData();
 
-	void set(const std::string& name, NETID netid = NETID_NONE, int playerIDIn = PLAYER_ID_NONE, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
+	void set(const std::string& name = "", NETID netid = NETID_NONE, int playerIDIn = PLAYER_ID_NONE, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
 
     const char* name() const { return playerName; }
     void setName(const std::string& name);

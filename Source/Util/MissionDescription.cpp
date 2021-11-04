@@ -349,7 +349,7 @@ int MissionDescription::getUniquePlayerColor(int playerIdx, int begColor, bool d
         }
     }
     for (int i = 0; i < playerAllowedColorSize; ++i) {
-        int curColor=(begColor + (direction ? i : -i)) % playerAllowedColorSize;
+        int curColor=(begColor + (direction ? i : playerAllowedColorSize-i)) % playerAllowedColorSize;
         if (!used.count(curColor)) {
             return curColor;
         }
@@ -386,12 +386,8 @@ void MissionDescription::disconnect2PlayerData(int idxPlayerData)
 void MissionDescription::connectAI2PlayersData(int idxPlayerData)
 {
 	setChanged();
-	//if(playersData[i].playerID==PlayerData::PLAYER_ID_NONE)
-	playersData[idxPlayerData].playerID=idxPlayerData;
-	playersData[idxPlayerData].realPlayerType=REAL_PLAYER_TYPE_AI;
-	playersData[idxPlayerData].netid=NETID_NONE;
-	int colorNewPlayer=getUniquePlayerColor(idxPlayerData);
-	if(colorNewPlayer!=-1) playersData[idxPlayerData].colorIndex=colorNewPlayer;
+    int colorNewPlayer=getUniquePlayerColor(idxPlayerData);
+    playersData[idxPlayerData].set("", NETID_NONE, idxPlayerData, BELLIGERENT_EXODUS0, colorNewPlayer, REAL_PLAYER_TYPE_AI);
 	//int newClan=getUniquePlayerClan();
 	//if(newClan!=-1) playersData[idxPlayerData].clan=newClan;
     playersData[idxPlayerData].clan=idxPlayerData;
@@ -402,7 +398,7 @@ int MissionDescription::connectNewPlayer2PlayersData(PlayerData& pd)
 	setChanged();
 	int result=-1;
 	for(int pidx=0; pidx < playerAmountScenarioMax; pidx++){
-		if(playersData[pidx].realPlayerType==REAL_PLAYER_TYPE_OPEN){ 
+		if(playersData[pidx].realPlayerType==REAL_PLAYER_TYPE_OPEN){
 			playersData[pidx].set(pd.name(), pd.netid, pidx);
 			playersData[pidx].realPlayerType=REAL_PLAYER_TYPE_PLAYER;
 			int colorNewPlayer=getUniquePlayerColor(pidx);
