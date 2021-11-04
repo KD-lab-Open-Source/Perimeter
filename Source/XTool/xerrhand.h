@@ -35,7 +35,7 @@ struct XErrorHandler
 
 	const char* prefix;
 
-    std::string log_name;
+    std::string log_path;
     std::fstream log_file;
 
 	void (*restore_func)();

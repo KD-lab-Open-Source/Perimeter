@@ -32,6 +32,8 @@ char convBuf[CONV_BUFFER_LEN + 1];
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
 #include "boost/stacktrace.hpp"
+#include "xutl.h"
+
 #endif
 
 #if defined(_WIN32) && (defined(_M_IX86) || defined (_M_AMD64))
@@ -387,15 +389,11 @@ XErrorHandler::XErrorHandler() {
     crash_func = nullptr;
     restore_func = nullptr;
     state = 0;
-
-#ifndef __HAIKU__
-    log_name = "logfile.txt";
-#else
-    log_name = GET_PREF_PATH();
-	log_name += "/logfile.txt";
-#endif
-	if (std::filesystem::exists(log_name)) {
-        log_file.open(log_name.c_str(), std::ios::out | std::ios::trunc);
+    log_path = GET_PREF_PATH();
+    terminate_with_char(log_path, PATH_SEP);
+    log_path += "logfile.txt";
+	if (std::filesystem::exists(log_path)) {
+        log_file.open(log_path.c_str(), std::ios::out | std::ios::trunc);
         log_file.close();
     }
 
@@ -437,20 +435,21 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
         stream << "Subj: " << subj << std::endl;
     }
 
-    std::string basePath = SDL_GetBasePath();
+    std::string crash_path = GET_PREF_PATH();
+    terminate_with_char(crash_path, PATH_SEP);
     std::list<std::string> linesStackTrace;
     stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);
     stream << std::endl << "Please send:" << std::endl <<
-            " - This message" << std::endl <<
-            " - Log file from " << basePath << log_name.c_str() << std::endl <<
-            " - Crash files from " << basePath << CRASH_DIR << std::endl <<
+           " - This message" << std::endl <<
+           " - Log file from " << log_path.c_str() << std::endl <<
+           " - Crash files from " << crash_path << CRASH_DIR << std::endl <<
             "To https://t.me/PerimeterGame or https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
     std::string str =  stream.str();
 
     //Write to log, only if constructor was called since static code can also cause issues before we are constructed
     if (initialized) {
-        log_file.open(log_name.c_str(), std::ios::out | std::ios::app);
+        log_file.open(log_path.c_str(), std::ios::out | std::ios::app);
         log_file << str;
         log_file.close();
     }

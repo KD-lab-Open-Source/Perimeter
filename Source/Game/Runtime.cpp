@@ -232,7 +232,9 @@ void refresh_window_size(bool update_resolution) {
 void CrashHandler()
 {
     if (gameShell && universe()) {
-        std::string crash = std::string(CRASH_DIR) + PATH_SEP + std::to_string(time(nullptr)) + "_";
+        std::string crash = GET_PREF_PATH();
+        terminate_with_char(crash, PATH_SEP);
+        crash = crash + CRASH_DIR + PATH_SEP + std::to_string(time(nullptr)) + "_";
         
         //First attempt to save reel
         terHyperSpace::SAVE_REPLAY_RESULT statereel = universe()->savePlayReel((crash + "reel").c_str());
@@ -761,7 +763,9 @@ int main(int argc, char *argv[])
     checkSingleRunning();
     
     //Create crash folder
-    std::filesystem::create_directories(CRASH_DIR);
+    std::string crash_dir = GET_PREF_PATH();
+    terminate_with_char(crash_dir, PATH_SEP);
+    std::filesystem::create_directories(crash_dir + CRASH_DIR);
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
