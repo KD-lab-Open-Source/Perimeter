@@ -83,6 +83,8 @@
 #include "FilthVolcano.h"
 #include "../HT/ht.h"
 
+#include <set>
+
 //-------------------------------------
 terPlayer::terPlayer(const PlayerData& playerData) 
 : structure_column_(vMap.V_SIZE), 
@@ -436,21 +438,35 @@ void terPlayer::clearFrame()
 	if(!frame())
 		return;
 
-	frame_ = 0; 
+	frame_ = nullptr;
 
 	if(gameShell->CurrentMission.isMultiPlayer()){
-		if(active())
-			_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT, false); 
-		else{
-			bool victory = true;
-			PlayerVect::iterator pi;
-			FOR_EACH(universe()->Players, pi)
-				if((*pi)->frame() && (*pi)->clan() != clan()){
-					victory = false;
-					break;
-				}
-			if(victory)
-				_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY, false); 
+        //bool isHost = gameShell->getNetClient() && gameShell->getNetClient()->isHost();
+        int active_clan = -1;
+        std::set<int> clans;
+        for (auto player: universe()->Players) {
+            if (!player->frame()) {
+                continue;
+            }
+            clans.emplace(player->clan());
+            if (player->active()) {
+                active_clan = player->clan();
+            }
+        }
+
+        if (active()) {
+            //Our frame went kaput, stop accepting commands from the grave
+            universe()->setShouldIgnoreIntfCommands(true);
+        }
+
+        if (clans.size() < 2) {
+            if (active_clan == -1) {
+                //Our clan is dead, only one clan is left so game is over for all
+                _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT, false);
+            } else {
+                //Last enemy of our clan got destroyed so we are the winners
+                _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY, false);
+            }
 		}
 	}
 }

@@ -1197,8 +1197,9 @@ void ActionVictory::activate(AIPlayer& aiPlayer)
 } 
 
 void ActionDefeat::activate(AIPlayer& aiPlayer) 
-{ 
-	if(aiPlayer.active()){
+{
+    //TODO check this better
+	if (aiPlayer.active() && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 		gameShell->setTriggersDisabled();
 		_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT); 
 	}

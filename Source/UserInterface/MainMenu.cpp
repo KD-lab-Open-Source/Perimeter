@@ -71,8 +71,6 @@ std::string getItemTextFromBase(const char *keyStr) {
 //	return (*stringFromBase) ? stringFromBase : keyStr;
 }
 
-terUniverseInterfaceMessage resultID = UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED;
-
 void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
 	if (_shellIconManager.isCutSceneMode()) {
 		_shellIconManager.setCutSceneMode(false, false);
@@ -85,7 +83,7 @@ void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -
 
 #ifdef _FINAL_VERSION_
 	bool disableBack = 
-			gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE
+			(gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER)
 		||	gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT
 		||	(gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED && id == UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT);
 
@@ -217,11 +215,14 @@ void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -
 	}
 }
 
+int resultWNDID = -1;
+terUniverseInterfaceMessage resultID = UNIVERSE_INTERFACE_MESSAGE_GAME_RESULT_UNDEFINED;
+
 int goToResultQuant( float, float ) {
 	if (!gameShell->GameActive) {
 		return 0;
 	} else if (menuChangingDone) {
-		processInterfaceMessage(resultID);
+		processInterfaceMessage(resultID, resultWNDID);
 		return 0;
 	}
 	return 1;
@@ -229,8 +230,8 @@ int goToResultQuant( float, float ) {
 
 void processInterfaceMessageLater(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
-		gameShell->getNetClient()->FinishGame();
 		resultID = id;
+        resultWNDID = wndIDToHide;
 		_shellIconManager.AddDynamicHandler( goToResultQuant, CBCODE_QUANT );
 	} else {
 		processInterfaceMessage(id, wndIDToHide);
@@ -721,7 +722,7 @@ int SwitchMenuBGQuant2( float, float ) {
 				case SQSH_MM_ENDMISSION_SCR:
 					{
 					#ifdef _FINAL_VERSION_
-						bool disableBack = gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE || gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT;
+						bool disableBack = (gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::BATTLE || gameShell->currentSingleProfile.getGameResult() == UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT) && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER;
 						_shellIconManager.GetWnd( SQSH_MM_RESUME_BTN )->Show(!disableBack);
 						_shellIconManager.GetWnd( SQSH_MM_RESUME_BORDER )->Show(!disableBack);
 					#else
