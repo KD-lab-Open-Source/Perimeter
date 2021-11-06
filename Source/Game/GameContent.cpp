@@ -99,11 +99,17 @@ void findGameContent() {
     
     //Detect if resource dir is present
     if (convert_path_content("Resource").empty()) {
-        std::string msg = "Resource directory not found, if resource.pak exists please unzip it. Scanned paths:\n";
+        std::string msg;
+        if (convert_path_content("Perimeter.ini").empty()) {
+            msg = "Game content not found. Scanned paths:\n";
+        } else {
+            msg = "Resource directory not found, if resource.pak exists please unzip it. Scanned paths:\n";
+        }
         for (const std::string& rootPath : scannedPaths) {
             msg += rootPath + "\n";
         }
-        ErrH.Abort(msg);
+        ErrH.ShowErrorMessage(msg.c_str());
+        ErrH.Exit();
         return;
     }
     

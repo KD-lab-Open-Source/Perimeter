@@ -456,13 +456,7 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 
     fprintf(stderr, "%s\n", str.c_str());
 
-    int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                             "Perimeter error",
-                             str.c_str(),
-                             nullptr);
-    if (err) {
-        SDL_PRINT_ERROR("Creating error window");
-    }
+    ShowErrorMessage(str.c_str());
 
     if (crash_func) {
         //Store pointer before calling to avoid cyclic calls in case handler fails
@@ -477,6 +471,18 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 
 void XErrorHandler::Abort(const std::string& message, int code, int val, const char* subj) {
     Abort(message.c_str(), code, val, subj);
+}
+
+bool XErrorHandler::ShowErrorMessage(const char* message) {
+    int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                                       "Perimeter error",
+                                       message,
+                                       nullptr);
+    if (err) {
+        SDL_PRINT_ERROR("Creating error window");
+    }
+
+    return err != 0;
 }
 
 void XErrorHandler::Exit()
