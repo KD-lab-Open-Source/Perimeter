@@ -724,10 +724,11 @@ void MissionDescription::refresh() {
 }
 
 void MissionDescription::loadDescription() {    
-    if(gameType_ == GT_playRellGame){
+    if (gameType_ == GT_playRellGame) {
         init();
-        gameType_ = GT_playRellGame;
         getMissionDescriptionInThePlayReelFile(playReelPath().c_str(), *this);
+        //Set this again otherwise the game type of replay is set
+        gameType_ = GT_playRellGame;
     } else {
         if (!savePathContent_.empty()) {
             if (getExtension(savePathContent_, true) == "spg") {

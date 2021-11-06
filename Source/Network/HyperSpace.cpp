@@ -186,7 +186,8 @@ bool isCorrectPlayReelFile(const char* fname)
 {
     std::string path = convert_path_content(fname);
     if (path.empty()) return false;
-	XStream fi(path, XS_IN);
+	XStream fi(false);
+    if (!fi.open(path, XS_IN)) return false;
     return checkPlayReelMagic(fi);
 }
 
