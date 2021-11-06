@@ -37,10 +37,10 @@ public:
 
     ///Loads texts from lines using a basic format as:
     ///text_id=text content\nmore content etc
-    void load_lines(const std::vector<std::string>& lines, bool replace_old_texts);
+    void load_lines(const std::vector<std::string>& lines, bool replace_old_texts, const std::string& locale = "");
 
     ///Includes texts that are not usually in retail game translations, these only are added if DB don't have them already
-    void load_supplementary_texts(const std::string& lang);
+    void load_supplementary_texts(const std::string& locale);
 
 	typedef std::list<std::string> IdList;
 	void getIdList(const char* mask, IdList& idList);

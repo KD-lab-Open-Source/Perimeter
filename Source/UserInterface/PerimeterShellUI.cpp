@@ -719,7 +719,7 @@ void CComboWindow::draw(int bFocus)
 			x+xx, y+yy,
 			(char*)toScr.c_str(), clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv, fmodf(m_ftime,1000)/1000, pushButtonTextureWeight);
 	} else {
-		OutText( x+xx, y+0.5f*sy-m_hFont->GetHeight()/2, 
+		OutText( x+xx, y+yy-m_hFont->GetHeight()/2,
 			(char*)toScr.c_str(), &clr, m_attr->txt_align );
 	}
 	terRenderDevice->SetFont(0);
@@ -955,7 +955,8 @@ void CShellPushButton::draw(int bFocus)
 		}
 
 		terRenderDevice->SetFont(font);
-		float centerY = y + sy / 2 - font->GetHeight() / 2;
+        float yy = (m_attr->txt_vert_align == SHELL_ALIGN_LEFT) ? 0.5f*sy - font->GetHeight()/2 : txtdy;
+		float centerY = y + yy;
 
 		std::string toScr = getValidatedText(labelText, sx);
 

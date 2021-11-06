@@ -84,7 +84,8 @@ void onMMMultiplayerHostTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, i
     CComboWindow *pCombo = (CComboWindow*) pWnd;
     if (code == EVENT_CREATEWND) {
         pCombo->Array.emplace_back(getItemTextFromBase("Private Server").c_str() );
-        pCombo->Array.emplace_back(getItemTextFromBase("Public Server").c_str() );
+        //TODO enable this once implemented the public listing
+        //pCombo->Array.emplace_back(getItemTextFromBase("Public Server").c_str() );
         pCombo->size = pCombo->Array.size();
         pCombo->pos = 0;
     }

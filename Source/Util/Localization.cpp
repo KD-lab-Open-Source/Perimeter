@@ -76,7 +76,7 @@ char getLocaleChar(const char* utf8, const std::string& locale) {
     }
     if (!utf8) return 0;
     
-    // Decode UTF-8
+    //Convert UTF-8 into UTF-32
     std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utf8cvt;
     std::u32string conv = utf8cvt.from_bytes(utf8);
     char32_t input = conv.at(0);
@@ -92,9 +92,9 @@ char getLocaleChar(const char* utf8, const std::string& locale) {
     //Check if unicode is in table
     if (map->count(input)) {
         return static_cast<char>(map->at(input));
+    } else {
+        return '?';
     }
-    
-    return 0;
 }
 
 char getLocaleChar(const char* unicode) {
@@ -102,6 +102,37 @@ char getLocaleChar(const char* unicode) {
         initLocale();
     }
     return getLocaleChar(unicode, localeCurrent);
+}
+
+std::string getLocaleString(const char* utf8, const std::string& locale) {
+    if (!isLocaleInit) {
+        initLocale();
+    }
+    std::string result;
+    if (!utf8) return result;
+
+    //Russian language uses 1251, the rest of languages which game was released uses 1250
+    CodepageMap* map;
+    if (locale == "russian") {
+        map = &codepage_windows1251;
+    } else {
+        map = &codepage_windows1250;
+    }
+
+    //Convert UTF-8 into UTF-32
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utf8cvt;
+    std::u32string conv = utf8cvt.from_bytes(utf8);
+
+    for (char32_t input : conv) {
+        //Check if unicode is in table
+        if (map->count(input)) {
+            result += static_cast<char>(map->at(input));
+        } else {
+            result += '?';
+        }
+    }
+
+    return result;
 }
 
 void initCodePages() {

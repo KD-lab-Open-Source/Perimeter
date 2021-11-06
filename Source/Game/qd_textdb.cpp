@@ -6,6 +6,7 @@
 #include "tweaks.h"
 #include "files/files.h"
 #include "qd_textdb.h"
+#include "Localization.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -212,45 +213,69 @@ bool qdTextDB::load(const char* file_name, const char* comments_file_name,
 	return true;
 }
 
-void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_old_texts) {
+void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_old_texts, const std::string& locale) {
     for (auto& line : lines) {
         size_t pos = line.find('=');
         if(pos == std::string::npos) {
             continue;
         }
+
         std::string id_str = line.substr(0, pos);
         if (id_str.empty()) continue;
+        strlwr(id_str.data());
+
         std::string txt_str = line.substr(pos + 1);
         if (txt_str.empty()) continue;
-        strlwr(id_str.data());
+        if (!locale.empty()) {
+            txt_str = getLocaleString(txt_str.c_str(), locale);
+        }
+
         add_entry(id_str, qdText(txt_str, ""), replace_old_texts);
     }
 }
 
-void qdTextDB::load_supplementary_texts(const std::string& lang) {
+void qdTextDB::load_supplementary_texts(const std::string& locale) {
     //Load per language texts
-    //TODO
-    if (lang == "russian") {
+    if (locale == "russian") {
         load_lines({
-            
-        }, false);
+           "GAME_CONTENT.PERIMETER=Периметр",
+           "GAME_CONTENT.PERIMETER_ET=Периметр: Завет Императора",
+           "GAME_CONTENT.PERIMETER_HD=Периметр: HD",
+           "Interface.Menu.Messages.GameContentMissing=Содержит ресурсы, которые не представлены или не включены в этой копии игры, убедитесь, что они установлены и включены:\n",
+           "Interface.Menu.Messages.WorldMissing=Содержит карту, которая не представлена или не включена в этой копии игры, убедитесь, что она установлена и включена:\n\n",
+           "Interface.Menu.ButtonLabels.MULTI PLAYER=МУЛЬТИПЛЕЕР",
+           "Interface.Menu.ButtonLabels.ADDONS=ДОПОЛНЕНИЯ",
+           "Interface.Menu.ButtonLabels.ADDON ENABLE STATE=Дополнение:",
+           "Interface.Menu.ButtonLabels.CHANGE_CONTENTS=СМЕНИТЬ\nКАМПАНИЮ",
+           "Interface.Menu.ButtonLabels.DIRECT=ВВОД IP",
+           "Interface.Menu.ButtonLabels.Password=Пароль:",
+           "Interface.Menu.ButtonLabels.Port=Порт:",
+           "Interface.Menu.ButtonLabels.SERVER TYPE=Тип сервера:",
+           "Interface.Menu.ComboItems.Private Server=Частный/Локальный сервер",
+           "Interface.Menu.ComboItems.Public Server=Публичный/Интернет сервер",
+           "Interface.Menu.Multiplayer.StartNewGame=Начать новую игру",
+           "Interface.Menu.Messages.WrongIPPort=Этот IP-адрес недоступен",
+           "Interface.Menu.Messages.Multiplayer.IncorrectContent=Сервер содержит другие игровые ресурсы",
+           "Interface.Menu.Messages.Multiplayer.IncorrectArch=Сервер имеет другую битность или архитектуру ЦПУ, другой тип билда (Debug/Release), операционную систему или использован другой компилятор (MSVC/Clang/GCC), пожалуйста, убедитесь, что они совпадают",
+           "Interface.Menu.Messages.Multiplayer.SignatureError=Проверка подписи или CRC не прошла, соединение может быть ненадёжным",
+           "Interface.Menu.Messages.Multiplayer.HostTerminated=Хост прекратил игру или отключился",
+           "Interface.Menu.Messages.Confirmations.PendingChanges=Отложенные изменения не будут применены, вернуться в главное меню?",
+           "Interface.Menu.Messages.Confirmations.ApplyAddonsChanges=Чтобы применить изменения, требуется перезапуск игры, вы уверены?"
+        }, false, locale);
     }
-    
+
     //Load english ones to fill any previously missing texts
     load_lines({
-       //Game content names
        "GAME_CONTENT.PERIMETER=Perimeter",
        "GAME_CONTENT.PERIMETER_ET=Perimeter: Emperor's Testament",
        "GAME_CONTENT.PERIMETER_HD=Perimeter: HD",
-       //Extra interface messages
        "Interface.Menu.Messages.GameContentMissing=This contains game content that is not present or enabled in your installation, make sure these are installed and enabled in your game:\n",
        "Interface.Menu.Messages.WorldMissing=This contains a map/world that is not present or enabled in your installation, make sure that is installed and enabled in your game:\n\n",
-       //New main menu items
        "Interface.Menu.ButtonLabels.MULTI PLAYER=MULTI PLAYER",
        "Interface.Menu.ButtonLabels.ADDONS=ADDONS",
        "Interface.Menu.ButtonLabels.ADDON ENABLE STATE=This addon is:",
-       "Interface.Menu.ButtonLabels.CONTENTS=CONTENTS",
-       "Interface.Menu.ButtonLabels.DIRECT=DIRECT",
+       "Interface.Menu.ButtonLabels.CHANGE_CONTENTS=CHANGE\nCAMPAIGN",
+       "Interface.Menu.ButtonLabels.DIRECT=ENTER IP",
        "Interface.Menu.ButtonLabels.Password=Password:",
        "Interface.Menu.ButtonLabels.Port=Port:",
        "Interface.Menu.ButtonLabels.SERVER TYPE=Server Type:",
@@ -262,7 +287,6 @@ void qdTextDB::load_supplementary_texts(const std::string& lang) {
        "Interface.Menu.Messages.Multiplayer.IncorrectArch=Server has different bits or CPU architecture, different build type (Debug/Release), Operating System or used a different compiler (MSVC/Clang/GCC), please ensure they match",
        "Interface.Menu.Messages.Multiplayer.SignatureError=Signature or CRC checks failed, connection may be unreliable",
        "Interface.Menu.Messages.Multiplayer.HostTerminated=Host has terminated session or disconnected",
-       //Addon menu messages
        "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
        "Interface.Menu.Messages.Confirmations.ApplyAddonsChanges=Game restart is required to apply changes, are you sure?"
    }, false);
