@@ -46,8 +46,8 @@ jobs:
       - name: install Vulkan SDK
         if: steps.cache.outputs.cache-hit == 'true'
         run: |
+          cd ~/VulkanSDK
           sudo ./install_vulkan.py
-        working-directory: ~/VulkanSDK
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch n4.3.3 https://git.ffmpeg.org/ffmpeg.git ffmpeg
