@@ -6,6 +6,9 @@ extern const char* currentShortVersion;
 #include "UnitAttribute.h"
 #include "../Terra/crc.h"
 
+//#define ATTRIBUTES_CRC_ARCHIVE XPrmOArchive
+#define ATTRIBUTES_CRC_ARCHIVE BinaryOArchive
+
 ///First packet sent upon connection
 typedef uint64_t arch_flags;
 const uint32_t NC_INFO_ID = 0xF8C20001;
@@ -40,15 +43,19 @@ private:
         return crc32(reinterpret_cast<const unsigned char*>(str), strlen(str), startCRC32);
     }
 
+public:
+
     static uint32_t getAttributesCRC() {
+        const int floatDigits = 2;
         uint32_t attrcrc = startCRC32;
-        attrcrc = getSerializationCRC<BinaryOArchive>(attributeLibrary(), attrcrc);
-        attrcrc = getSerializationCRC<BinaryOArchive>(rigidBodyPrmLibrary(), attrcrc);
-        attrcrc = getSerializationCRC<BinaryOArchive>(globalAttr(), attrcrc);
+        attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(attributeLibrary(), attrcrc, floatDigits);
+        LogMsg("attributeLibrary CRC %X\n", attrcrc);
+        attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(rigidBodyPrmLibrary(), attrcrc, floatDigits);
+        LogMsg("rigidBodyPrmLibrary CRC %X\n", attrcrc);
+        attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(globalAttr(), attrcrc, floatDigits);
+        LogMsg("globalAttr CRC %X\n", attrcrc);
         return attrcrc;
     }
-
-public:
 
     static arch_flags computeArchFlags() {
         arch_flags val = 0;
@@ -178,8 +185,8 @@ public:
         return arch;
     }
 
-    bool isGameContentCompatible(GAME_CONTENT content) const {
-        return gameContent == content && attributesCRC == getAttributesCRC();
+    bool isGameContentCompatible(GAME_CONTENT content, uint32_t attrcrc) const {
+        return gameContent == content && (attrcrc == 0 || attributesCRC == attrcrc);
     }
 
     bool isPasswordCorrect(const char* _password) const {

@@ -6,6 +6,7 @@
 #include "Universe.h"
 
 arch_flags server_arch_mask = 0;
+uint32_t server_content_crc = 0;
 
 bool PNetCenter::Init()
 {
@@ -16,6 +17,10 @@ bool PNetCenter::Init()
     const char* server_arch_mask_str = check_command_line("ServerArchMask");
     if (server_arch_mask_str) {
         server_arch_mask = ~strtoull(server_arch_mask_str, nullptr, 16);
+    }
+    server_content_crc = 0;
+    if (check_command_line("ServerIgnoreContent") == nullptr) {
+        server_content_crc = NetConnectionInfo::getAttributesCRC();
     }
 
 	return true;
@@ -206,7 +211,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE, 0, 0);
             } else if (!clientInfo.isArchCompatible(server_arch_mask)) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_ARCH, 0, 0);
-            } else if (!clientInfo.isGameContentCompatible(terGameContentSelect)) {
+            } else if (!clientInfo.isGameContentCompatible(terGameContentSelect, server_content_crc)) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT, 0, 0);
             } else if (m_bStarted) { // Игра запущена
                 response.set(NetConnectionInfoResponse::CR_ERR_GAME_STARTED, 0, 0);

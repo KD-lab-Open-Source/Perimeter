@@ -13,10 +13,11 @@ extern unsigned int crc32(const unsigned char *address, unsigned int size, unsig
 
 //Does serialization of T into OArchive format and computes CRC of the output buffer
 template<class OArchive, class T>
-static uint32_t getSerializationCRC(T& t, uint32_t crc) {
+static uint32_t getSerializationCRC(T& t, uint32_t crc, int floatDigits) {
     OArchive ar("");
-    ar << makeObjectWrapper(t, 0, 0);
     XBuffer& buf = ar.getBuffer();
+    buf.SetDigits(floatDigits);
+    ar << makeObjectWrapper(t, 0, 0);
     crc = crc32(reinterpret_cast<const unsigned char*>(buf.address()), buf.tell(), crc);
     return crc;
 }
