@@ -7,7 +7,7 @@ on:
 env:
   VULKAN_SDK_VERSION: '1.2.189.0'
   MACOSX_DEPLOYMENT_TARGET: '10.15'
-  GH_CACHE_KEY: 3
+  GH_CACHE_KEY: 4
 
 jobs:
   build:
@@ -33,21 +33,18 @@ jobs:
         id: cache
         with:
           path: |
-            ~/VulkanSDK
+            vulkansdk-macos.dmg
             ffmpeg
           key: MacOS-${{matrix.env.arch_apple}}-${{ env.VULKAN_SDK_VERSION }}-${{ env.GH_CACHE_KEY }}
-      - name: download and install Vulkan SDK
+      - name: download Vulkan SDK
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           wget https://sdk.lunarg.com/sdk/download/${{ env.VULKAN_SDK_VERSION }}/mac/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}.dmg?Human=true -O vulkansdk-macos.dmg
+      - name: install Vulkan SDK
+        run: |
           hdiutil attach vulkansdk-macos.dmg
           sudo /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
           hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
-      - name: install Vulkan SDK
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          cd ~/VulkanSDK
-          sudo ./install_vulkan.py
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch n4.3.3 https://git.ffmpeg.org/ffmpeg.git ffmpeg
