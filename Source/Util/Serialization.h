@@ -541,12 +541,6 @@ public:
 		return saveParameters(instance());
 	}
 
-	/* troublesome, since EditArchive is declared on another .h which requires this header, we use normal edit(ea)
-	static bool edit() {
-		return edit(EditArchive());
-	}
-    */
-
 	static bool edit(EditArchive& ea) {
 		return editParameters(instance(), ea);
 	}

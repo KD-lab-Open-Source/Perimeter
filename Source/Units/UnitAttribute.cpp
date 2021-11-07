@@ -722,10 +722,10 @@ void FileTime::setFromEpoch(int64_t epoch) {
     HighDateTime = (uint16_t) (ll >> 32);
 }
 
-void copyAttributes();
+void copyAttributes(bool);
 void copyInterfaceAttributes();
-void copyRigidBodyTable();
-void copyInterfaceAttributesIndispensable();
+void copyRigidBodyTable(bool);
+//void copyInterfaceAttributesIndispensable();
 
 void initAttributes()
 {
@@ -734,20 +734,18 @@ void initAttributes()
 //	soundScriptTable();
 
     
-    int use_attrs=IniManager("Perimeter.ini", false).getInt("Game","UseAttributes");
-    check_command_line_parameter("use_attributes", use_attrs);
-    if (!use_attrs) {
-        copyRigidBodyTable();
-        copyAttributes();
-        copyInterfaceAttributes();
-    }
+    int override=IniManager("Perimeter.ini", false).getInt("Game","OverrideAttributes");
+    check_command_line_parameter("override_attributes", override);
+    copyRigidBodyTable(override);
+    copyAttributes(override);
+    copyInterfaceAttributes();
+
+	//copyInterfaceAttributesIndispensable();
 
 //	rigidBodyPrmLibrary.edit();
 //	attributeLibrary.edit();
 //	interfaceAttr.edit();
 //	ErrH.Exit();
-
-	copyInterfaceAttributesIndispensable();
 
 	const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK); 
     AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
@@ -758,19 +756,6 @@ void initAttributes()
 		if(attribute->ID != UNIT_ATTRIBUTE_NONE)
 			attribute->initIntfBalanceData((attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE) ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0);
 	}
-
-    //Patch some sounds
-    /*
-    for (auto& table : soundScriptTable().table) {
-        if (strcmp(table.name, "mainmenu") == 0) {
-            for (auto& sound : table.data) {
-                if (strcmp(sound.name, "mainmenu_clock") == 0) {
-                    sound.max_num_sound = 8;
-                }
-            }
-        }
-    }
-    */
 }
 
 /////////////////////////////////////////
