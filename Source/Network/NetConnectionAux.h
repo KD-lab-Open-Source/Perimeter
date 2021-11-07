@@ -8,83 +8,63 @@ extern const char* currentShortVersion;
 
 ///First packet sent upon connection
 typedef uint64_t arch_flags;
-const uint32_t NC_INFO_ID = 0xF8C217E5;
-struct NetConnectionInfo {
+const uint32_t NC_INFO_ID = 0xF8C20001;
+class NetConnectionInfo {
+private:
+    //Header
     uint32_t id = 0;
     uint32_t versionCRC = 0;
-
+    //Content
     arch_flags arch = 0;
     uint32_t passwordCRC = 0;
     uint32_t gameContent = 0;
+    uint32_t attributesCRC = 0;
     char playerName[PLAYER_MAX_NAME_LEN] = "";
     uint32_t crc = 0;
 
-    NetConnectionInfo() = default;
-    
-    static size_t getSize() {
-        size_t size = 0;
-        size += sizeof(id);
-        size += sizeof(versionCRC);
-        
-        size += sizeof(arch);
-        size += sizeof(passwordCRC);
-        size += sizeof(gameContent);
-        size += sizeof(playerName);
-        size += sizeof(crc);
-        return size;
-    }
-
     uint32_t calcOwnCRC(){
         uint32_t ownCRC=startCRC32;
+        //Header
         ownCRC=crc32((unsigned char*)&id, sizeof(id), ownCRC);
         ownCRC=crc32((unsigned char*)&versionCRC, sizeof(versionCRC), ownCRC);
-        
+        //Content
         ownCRC=crc32((unsigned char*)&arch, sizeof(arch), ownCRC);
         ownCRC=crc32((unsigned char*)&passwordCRC, sizeof(passwordCRC), ownCRC);
         ownCRC=crc32((unsigned char*)&gameContent, sizeof(gameContent), ownCRC);
+        ownCRC=crc32((unsigned char*)&attributesCRC, sizeof(attributesCRC), ownCRC);
         ownCRC=crc32((unsigned char*)&playerName, sizeof(playerName), ownCRC);
         return ownCRC;
     }
 
-    void read_header(XBuffer& in) {
-        in.read(id);
-        in.read(versionCRC);
+    static uint32_t getStringCRC(const char* str) {
+        return crc32(reinterpret_cast<const unsigned char*>(str), strlen(str), startCRC32);
     }
 
-    void read_content(XBuffer& in) {
-        in.read(arch);
-        in.read(passwordCRC);
-        in.read(gameContent);
-        in.read(playerName, sizeof(playerName));
-        in.read(crc);
+    static uint32_t getAttributesCRC() {
+        uint32_t attrcrc = startCRC32;
+        attrcrc = getSerializationCRC<BinaryOArchive>(attributeLibrary(), attrcrc);
+        attrcrc = getSerializationCRC<BinaryOArchive>(rigidBodyPrmLibrary(), attrcrc);
+        attrcrc = getSerializationCRC<BinaryOArchive>(globalAttr(), attrcrc);
+        return attrcrc;
     }
 
-    void write(XBuffer& out) const {
-        out.write(id);
-        out.write(versionCRC);
-        
-        out.write(arch);
-        out.write(passwordCRC);
-        out.write(gameContent);
-        out.write(playerName, sizeof(playerName));
-        out.write(crc);
-    }
-    
-    static arch_flags getArchFlags() {
+public:
+
+    static arch_flags computeArchFlags() {
         arch_flags val = 0;
 
         //Release build - 0 (1) bit
 #if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
         val |= 1;
 #endif
-        
+
         //Compiler type - 1-7 (7) bits
         arch_flags compiler;
 #if defined(_MSC_VER)
         compiler = 1;
 #elif defined(__clang__)
         compiler = 2;
-#elif defined(__GNUC__) 
+#elif defined(__GNUC__)
         compiler = 3; //Must be checked after clang as it also defines __GNUC__
 #else
         compiler = 0;
@@ -119,26 +99,66 @@ struct NetConnectionInfo {
 
         return val;
     }
-
-    static uint32_t getStringCRC(const char* str) {
-        return crc32(reinterpret_cast<const unsigned char*>(str), strlen(str), startCRC32);
+    
+    
+    NetConnectionInfo() = default;
+    
+    static size_t getSize() {
+        size_t size = 0;
+        size += sizeof(id);
+        size += sizeof(versionCRC);
+        
+        size += sizeof(arch);
+        size += sizeof(passwordCRC);
+        size += sizeof(gameContent);
+        size += sizeof(attributesCRC);
+        size += sizeof(playerName);
+        size += sizeof(crc);
+        return size;
     }
 
+    void read_header(XBuffer& in) {
+        in.read(id);
+        in.read(versionCRC);
+    }
+
+    void read_content(XBuffer& in) {
+        in.read(arch);
+        in.read(passwordCRC);
+        in.read(gameContent);
+        in.read(attributesCRC);
+        in.read(playerName, sizeof(playerName));
+        in.read(crc);
+    }
+
+    void write(XBuffer& out) const {
+        out.write(id);
+        out.write(versionCRC);
+
+        out.write(arch);
+        out.write(passwordCRC);
+        out.write(gameContent);
+        out.write(attributesCRC);
+        out.write(playerName, sizeof(playerName));
+        out.write(crc);
+    }
+    
     void set(const char* _version, const char* _password, unsigned int _gameContent, const char* _playerName) {
         id=NC_INFO_ID;
-        arch=getArchFlags();
+        arch= computeArchFlags();
         versionCRC=getStringCRC(_version);
         passwordCRC=getStringCRC(_password);
         gameContent = _gameContent;
+        attributesCRC=getAttributesCRC();
         strncpy(playerName, _playerName, PLAYER_MAX_NAME_LEN);
         crc=calcOwnCRC();
     }
 
-    bool isIDCorrect() {
+    bool isIDCorrect() const {
         return id == NC_INFO_ID;
     }
 
-    bool isVersionCorrect(const char* _version) {
+    bool isVersionCorrect(const char* _version) const {
         return versionCRC == getStringCRC(_version);
     }
 
@@ -146,16 +166,28 @@ struct NetConnectionInfo {
         return crc == calcOwnCRC();
     }
 
-    bool isArchCompatible(arch_flags mask) {
+    bool isArchCompatible(arch_flags mask) const {
         if (mask) {
-            return (arch & mask) == (getArchFlags() & mask);
+            return (arch & mask) == (computeArchFlags() & mask);
         } else {
-            return arch == getArchFlags();
+            return arch == computeArchFlags();
         }
     }
+    
+    arch_flags getArchFlags() const {
+        return arch;
+    }
 
-    bool isPasswordCorrect(const char* _password) {
+    bool isGameContentCompatible(GAME_CONTENT content) const {
+        return gameContent == content && attributesCRC == getAttributesCRC();
+    }
+
+    bool isPasswordCorrect(const char* _password) const {
         return passwordCRC == getStringCRC(_password);
+    }
+    
+    const char* getPlayerName() const {
+        return playerName;
     }
 };
 

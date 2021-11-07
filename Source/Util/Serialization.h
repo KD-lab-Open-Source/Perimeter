@@ -9,6 +9,18 @@
 #include "SerializationMacro.h"
 #include "xutl.h"
 
+extern unsigned int crc32(const unsigned char *address, unsigned int size, unsigned int crc);
+
+//Does serialization of T into OArchive format and computes CRC of the output buffer
+template<class OArchive, class T>
+static uint32_t getSerializationCRC(T& t, uint32_t crc) {
+    OArchive ar("");
+    ar << makeObjectWrapper(t, 0, 0);
+    XBuffer& buf = ar.getBuffer();
+    crc = crc32(reinterpret_cast<const unsigned char*>(buf.address()), buf.tell(), crc);
+    return crc;
+}
+
 //Previously typeid(CLASS_T).name() was used which is not portable, so we attempt to ignore the extra struct/class
 static void extract_type_name(std::string& name) {
     if (startsWith(name, "struct ")) {

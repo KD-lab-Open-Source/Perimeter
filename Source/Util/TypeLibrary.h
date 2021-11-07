@@ -103,7 +103,7 @@ public:
 		else
 			map_.clear();
 
-#include "TypeLibrary-1251.inl"
+        ar & TRANSLATE_NAME(tmpStorage, "types", "Список");
 		
 		if(ar.isInput()){
 			comboList_.clear();

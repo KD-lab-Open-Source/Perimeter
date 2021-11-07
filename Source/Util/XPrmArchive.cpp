@@ -88,7 +88,9 @@ XPrmOArchive::~XPrmOArchive()
 
 void XPrmOArchive::open(const char* fname)
 {
-	fileName_ = fname;
+    if (fname) {
+        fileName_ = fname;
+    }
 	buffer_.alloc(10000);
 	buffer_.SetDigits(6);
 }
@@ -96,6 +98,9 @@ void XPrmOArchive::open(const char* fname)
 bool XPrmOArchive::close()
 {
 	xassert(offset_.empty() && "Block isnt closed");
+    if (fileName_.empty()) {
+        return false;
+    }
 	XStream ff(0);
 	if(ff.open(fileName_.c_str(), XS_IN)){
 		if(ff.size() == buffer_.tell()){

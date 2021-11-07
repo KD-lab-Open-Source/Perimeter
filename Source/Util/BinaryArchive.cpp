@@ -18,7 +18,9 @@ BinaryOArchive::~BinaryOArchive()
 
 void BinaryOArchive::open(const char* fname, int version)
 {
-	fileName_ = fname;
+    if (fname) {
+        fileName_ = fname;
+    }
 	buffer_.init();
 	buffer_.alloc(10000);
 	buffer_ < "BinX" < version;
@@ -26,6 +28,9 @@ void BinaryOArchive::open(const char* fname, int version)
 
 bool BinaryOArchive::close()
 {
+    if (fileName_.empty()) {
+        return false;
+    }
 	XStream ff(0);
 	if(ff.open(fileName_.c_str(), XS_IN)){
 		if(ff.size() == buffer_.tell()){

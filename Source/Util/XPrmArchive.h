@@ -35,6 +35,10 @@ public:
 		return true;
 	}
 
+    XBuffer& getBuffer() {
+        return buffer_;
+    }
+
 	template<class T>
     XPrmOArchive& operator<<(const T & t){
         return (*this) & t;
@@ -79,7 +83,7 @@ public:
 private:
 	XBuffer buffer_;
 	std::string offset_;
-	std::string fileName_;
+	std::string fileName_ = "";
 
 	///////////////////////////////////
 	void saveString(const char* value) {

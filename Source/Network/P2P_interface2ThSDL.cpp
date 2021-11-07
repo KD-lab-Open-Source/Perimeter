@@ -206,7 +206,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE, 0, 0);
             } else if (!clientInfo.isArchCompatible(server_arch_mask)) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_ARCH, 0, 0);
-            } else if (clientInfo.gameContent != terGameContentSelect) {
+            } else if (!clientInfo.isGameContentCompatible(terGameContentSelect)) {
                 response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT, 0, 0);
             } else if (m_bStarted) { // Игра запущена
                 response.set(NetConnectionInfoResponse::CR_ERR_GAME_STARTED, 0, 0);
@@ -217,13 +217,13 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
                 if (!clientInfo.isArchCompatible(0)) {
                     fprintf(
                         stderr, "Arch mismatch! Server %llX Client %llX Mask %llX\n",
-                        NetConnectionInfo::getArchFlags(), clientInfo.arch, server_arch_mask
+                        NetConnectionInfo::computeArchFlags(), clientInfo.getArchFlags(), server_arch_mask
                     );
                 }
 
                 //All OK
                 PlayerData pd;
-                pd.set(clientInfo.playerName, connection->netid);
+                pd.set(clientInfo.getPlayerName(), connection->netid);
                 int resultIdx = AddClient(pd);
                 if (resultIdx == -1) {// Игра полная
                     response.set(NetConnectionInfoResponse::CR_ERR_GAME_FULL, 0, 0);
