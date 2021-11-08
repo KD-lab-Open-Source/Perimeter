@@ -267,14 +267,15 @@ void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string
         }
     }
 }
-void checkMissionDescription(int index, std::vector<MissionDescription>& mVect) {
+void checkMissionDescription(int index, std::vector<MissionDescription>& mVect, GameType gameType) {
 	if (mVect[index].worldID() == -1) {
-		mVect[index] = MissionDescription(mVect[index].savePathKey().c_str());
-	}
-}
-void checkReplayMissionDescription(int index, std::vector<MissionDescription>& mVect) {
-	if (mVect[index].worldID() == -1) {
-		mVect[index] = MissionDescription(mVect[index].playReelPath().c_str(), GT_playRellGame);
+        const char* filepath;
+        if (gameType == GT_playRellGame) {
+            filepath = mVect[index].playReelPath().c_str();
+        } else {
+            filepath = mVect[index].savePathKey().c_str();
+        }
+		mVect[index] = MissionDescription(filepath, gameType);
 	}
 }
 std::string checkMissingContent(MissionDescription& mission) {
@@ -301,7 +302,7 @@ std::string checkMissingContent(MissionDescription& mission) {
     return msg;
 }
 void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
-	checkMissionDescription(index, mVect);
+	checkMissionDescription(index, mVect, GT_SINGLE_PLAYER);
 
     MissionDescription& mission = mVect[index];
     std::string missingContent = checkMissingContent(mission);
@@ -325,7 +326,7 @@ void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapW
 	}
 }
 void setupReplayDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
-	checkReplayMissionDescription(index, mVect);
+	checkMissionDescription(index, mVect, GT_playRellGame);
 
     MissionDescription& mission = mVect[index];
     std::string missingContent = checkMissingContent(mission);
@@ -1796,7 +1797,7 @@ bool setupMissionToExec(int pos) {
     if (pos < 0 || pos > savedGames.size()) {
         return false;
     }
-    checkMissionDescription(pos, savedGames);
+    checkMissionDescription(pos, savedGames, GT_SINGLE_PLAYER);
     missionToExec = savedGames[pos];
 
     //Check if content is compatible
@@ -1881,7 +1882,7 @@ int delLoadReplayAction(float, float) {
 void loadReplay(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
 	if (pos != -1) {
-		checkReplayMissionDescription(pos, replays);
+        checkMissionDescription(pos, replays, GT_playRellGame);
         missionToExec = replays[pos];
 
         //Check if content is compatible

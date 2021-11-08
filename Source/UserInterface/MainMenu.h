@@ -5,7 +5,7 @@ std::string getItemTextFromBase(const char *keyStr);
 
 void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay = false);
 
-void checkMissionDescription(int index, std::vector<MissionDescription>& mVect);
+void checkMissionDescription(int index, std::vector<MissionDescription>& mVect, GameType gameType);
 
 void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1);
 

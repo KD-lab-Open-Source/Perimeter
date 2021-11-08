@@ -214,7 +214,7 @@ void MissionDescription::simpleRead(XBuffer& in)
 		in.read(&tmp, sizeof(tmp)); playersData[i].handicap=(int)tmp;
 		in.read(&playersData[i].flag_playerStartReady, sizeof(playersData[i].flag_playerStartReady) );
         in > StringInWrapper(tmp_str);
-        playersData->setName(tmp_str);
+        playersData[i].setName(tmp_str);
 	}
 	in.read(&tmp, sizeof(tmp)); playerAmountScenarioMax=(int)tmp;
 	in.read(&tmp, sizeof(tmp)); gameType_=(GameType)tmp;

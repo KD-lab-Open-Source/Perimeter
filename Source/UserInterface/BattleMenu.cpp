@@ -81,7 +81,7 @@ void setSlotVisible(int i, bool visible) {
 	_shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_CLR_BG + i)->Show(visible && slotStateVisible);
 }
 void setupBattleDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID) {
-	checkMissionDescription(index, mVect);
+	checkMissionDescription(index, mVect, GT_SINGLE_PLAYER);
 	((CShowMapWindow*)_shellIconManager.GetWnd(mapWndID))->setWorldID( mVect[index].worldID() );
 //	((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( mVect[index].missionDescription() );
 	((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_BATTLE_SURVIVAL_TXT))->setText( getSurvivalText(index) );
@@ -128,7 +128,7 @@ std::string getSurvivalFileName(const std::string& fileName) {
 }
 
 void startBattle(int pos, CShellWindow* pWnd) {
-	checkMissionDescription(pos, battleMaps);
+	checkMissionDescription(pos, battleMaps, GT_SINGLE_PLAYER);
 	missionToExec = battleMaps[pos];
 	int i;
 	for (i = 1; i < missionToExec.playersAmountScenarioMax(); i++) {
@@ -195,7 +195,7 @@ void onMMMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MAP_LIST);
 		int pos = list->GetCurSel();
 		if (pos >= 0 && pos < battleMaps.size()) {
-			checkMissionDescription(pos, battleMaps);
+			checkMissionDescription(pos, battleMaps, GT_SINGLE_PLAYER);
 			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_BATTLE_MAP))->setWorldID( battleMaps[pos].worldID() );
 			((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_BATTLE_MAP_DESCR_TXT))->setText( battleMaps[pos].missionDescription() );
 			((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_BATTLE_SURVIVAL_TXT))->setText( getSurvivalText(pos) );

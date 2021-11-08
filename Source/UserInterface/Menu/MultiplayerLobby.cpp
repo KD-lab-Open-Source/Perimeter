@@ -46,13 +46,13 @@ void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code,
 
 void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if ( code == EVENT_PRESSED && intfCanHandleInput() ) {
-		CListBoxWindow* list = (CListBoxWindow*)pWnd;
 		if (param >= 0 && param < multiplayerMaps.size()) {
-			checkMissionDescription(param, multiplayerMaps);
+			checkMissionDescription(param, multiplayerMaps, GT_createMPGame);
 			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[param].missionName();
 			gameShell->getNetClient()->changeMap(missionName.c_str());
 		}
 /*
+        CListBoxWindow* list = (CListBoxWindow*)pWnd; 
 		int pos = list->GetCurSel();
 		if (pos >= 0 && pos < multiplayerMaps.size()) {
 			checkMissionDescription(pos, multiplayerMaps);
