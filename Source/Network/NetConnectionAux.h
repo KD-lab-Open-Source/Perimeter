@@ -6,8 +6,8 @@ extern const char* currentShortVersion;
 #include "UnitAttribute.h"
 #include "../Terra/crc.h"
 
-//#define ATTRIBUTES_CRC_ARCHIVE XPrmOArchive
-#define ATTRIBUTES_CRC_ARCHIVE BinaryOArchive
+#define ATTRIBUTES_CRC_ARCHIVE XPrmOArchive
+//#define ATTRIBUTES_CRC_ARCHIVE BinaryOArchive
 
 ///First packet sent upon connection
 typedef uint64_t arch_flags;
