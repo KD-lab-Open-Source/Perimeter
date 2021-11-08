@@ -1391,12 +1391,10 @@ struct ModelData
 class FileTime
 {
 public:
-    uint16_t LowDateTime = 0;
-    uint16_t HighDateTime = 0;
+    uint32_t LowDateTime = 0;
+    uint32_t HighDateTime = 0;
 
 	FileTime() = default;
-
-	explicit FileTime(const char* fname);
 
 	SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(LowDateTime, "LowDateTime", "LowDateTime");
@@ -1406,8 +1404,6 @@ public:
 	bool operator==(const FileTime& rhs) const {
 		return LowDateTime == rhs.LowDateTime && HighDateTime == rhs.HighDateTime;
 	}
-
-    void setFromEpoch(int64_t epoch);
 };
 
 struct GeometryAttribute: SerializeVirtual

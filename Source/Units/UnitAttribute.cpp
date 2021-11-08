@@ -235,19 +235,16 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
     if(!modelData.logicName)
 		return;
 
-	if(!(logicTime == FileTime(modelData.logicName))){
-		logicTime = FileTime(modelData.logicName);
-		cLogicObject* logic = terLogicGeneric->GetElement(modelData.logicName);
-		xassert(logic);
-		logic->SetPosition(MatXf::ID);
-		logic->SetScale(Vect3f(1,1,1));
-		logic->Update();
-	
-		boundRadiusOriginal = logic->GetBoundRadius();
-		logic->GetBoundBox(logicObjectBoundOriginal);
+    cLogicObject* logic = terLogicGeneric->GetElement(modelData.logicName);
+    xassert(logic);
+    logic->SetPosition(MatXf::ID);
+    logic->SetScale(Vect3f(1,1,1));
+    logic->Update();
 
-		logic->Release();
-	}
+    boundRadiusOriginal = logic->GetBoundRadius();
+    logic->GetBoundBox(logicObjectBoundOriginal);
+
+    logic->Release();
 
 	modelScale = 1;
 	if(attribute.ID == UNIT_ATTRIBUTE_FRAME || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)
@@ -275,9 +272,7 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute.InstallBound && !(modelTime == FileTime(modelData.modelName))) { // || modelScaleOld != modelScale)){
-		modelTime = FileTime(modelData.modelName);
-
+	if(attribute.InstallBound || modelScaleOld != modelScale) {
 		cObjectNodeRoot* model = createObject(modelData.modelName, attribute.belligerent);
 
 		int vertex_num = 0;
@@ -695,31 +690,6 @@ void AttributeBase::initIntfBalanceData(const AttributeBase* missile)
 			intfBalanceData.width = missile->unitDamage.splashDamage.width;
 		}
 	}
-}
-
-FileTime::FileTime(const char* fname)
-{
-    if (!fname) {
-        return;
-    }
-    std::error_code error;
-    auto ftime = std::filesystem::last_write_time(convert_path_content(fname).c_str(), error);
-    if (error) {
-#if PERIMETER_DEBUG
-        fprintf(stderr, "Error reading %s: %d %s\n", fname, error.value(), error.message().c_str());
-#endif
-        return;
-    }
-    auto duration = ftime.time_since_epoch();
-    int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
-    setFromEpoch(nanos);
-}
-
-void FileTime::setFromEpoch(int64_t epoch) {
-    //https://docs.microsoft.com/en-gb/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
-    int64_t ll = (epoch * 10000000LL) + 116444736000000000LL;
-    LowDateTime = (uint16_t) ll;
-    HighDateTime = (uint16_t) (ll >> 32);
 }
 
 void copyAttributes(bool);
