@@ -20,7 +20,7 @@ std::vector<AddonInfo> addonList;
 
 void loadAddonsList() {
     addonList.clear();
-    for (const auto& entry : get_content_entries_directory("addons")) {
+    for (const auto& entry : get_content_entries_directory("mods")) {
         if (entry->is_directory) {
             std::filesystem::path entry_path(entry->path_content);
             std::string name = entry_path.filename().string();
@@ -170,7 +170,7 @@ void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 
 void onMMAddonsApplyButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
     if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
-        std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.ApplyAddonsChanges");
+        std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.ApplyChangesRestart");
         setupYesNoMessageBox(addonsApplyConfirmationHandler, 0, text);
         showMessageBox();
     }

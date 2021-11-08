@@ -649,14 +649,14 @@ enum ShellControlID
     SQSH_SQUAD_UNIT18, //disintegrator
     SQSH_SQUAD_UNIT19, //scum thrower
     SQSH_SQUAD_UNIT20, //spider
-    SQSH_SQUAD_UNIT21, //fish / ADDON - impaler
-    SQSH_SQUAD_UNIT22, //wasp / ADDON - eflair
-    SQSH_SQUAD_UNIT23, //worm / ADDON - conductor
+    SQSH_SQUAD_UNIT21, //fish / PET - impaler
+    SQSH_SQUAD_UNIT22, //wasp / PET - eflair
+    SQSH_SQUAD_UNIT23, //worm / PET - conductor
     SQSH_SQUAD_UNIT24, //scum twister
     SQSH_SQUAD_UNIT25, //scum heater
-    SQSH_SQUAD_UNIT26, //ADDON - impaler
-    SQSH_SQUAD_UNIT27, //ADDON - eflair
-    SQSH_SQUAD_UNIT28, //ADDON - conductor
+    SQSH_SQUAD_UNIT26, //PET - impaler
+    SQSH_SQUAD_UNIT27, //PET - eflair
+    SQSH_SQUAD_UNIT28, //PET - conductor
 
     SQSH_SQUAD_MAX,
 

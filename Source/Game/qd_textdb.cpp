@@ -244,8 +244,8 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Messages.GameContentMissing=Содержит ресурсы, которые не представлены или не включены в этой копии игры, убедитесь, что они установлены и включены:\n",
            "Interface.Menu.Messages.WorldMissing=Содержит карту, которая не представлена или не включена в этой копии игры, убедитесь, что она установлена и включена:\n\n",
            "Interface.Menu.ButtonLabels.MULTI PLAYER=МУЛЬТИПЛЕЕР",
-           "Interface.Menu.ButtonLabels.ADDONS=ДОПОЛНЕНИЯ",
-           "Interface.Menu.ButtonLabels.ADDON ENABLE STATE=Дополнение:",
+           "Interface.Menu.ButtonLabels.MODS=МОДЫ",
+           "Interface.Menu.ButtonLabels.MOD ENABLE STATE=мод состояние:",
            "Interface.Menu.ButtonLabels.CHANGE_CONTENTS=СМЕНИТЬ\nКАМПАНИЮ",
            "Interface.Menu.ButtonLabels.DIRECT=ВВОД IP",
            "Interface.Menu.ButtonLabels.Password=Пароль:",
@@ -260,7 +260,7 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Messages.Multiplayer.SignatureError=Проверка подписи или CRC не прошла, соединение может быть ненадёжным",
            "Interface.Menu.Messages.Multiplayer.HostTerminated=Хост прекратил игру или отключился",
            "Interface.Menu.Messages.Confirmations.PendingChanges=Отложенные изменения не будут применены, вернуться в главное меню?",
-           "Interface.Menu.Messages.Confirmations.ApplyAddonsChanges=Чтобы применить изменения, требуется перезапуск игры, вы уверены?"
+           "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Чтобы применить изменения, требуется перезапуск игры, вы уверены?"
         }, false, locale);
     }
 
@@ -272,8 +272,8 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
        "Interface.Menu.Messages.GameContentMissing=This contains game content that is not present or enabled in your installation, make sure these are installed and enabled in your game:\n",
        "Interface.Menu.Messages.WorldMissing=This contains a map/world that is not present or enabled in your installation, make sure that is installed and enabled in your game:\n\n",
        "Interface.Menu.ButtonLabels.MULTI PLAYER=MULTI PLAYER",
-       "Interface.Menu.ButtonLabels.ADDONS=ADDONS",
-       "Interface.Menu.ButtonLabels.ADDON ENABLE STATE=This addon is:",
+       "Interface.Menu.ButtonLabels.MODS=MODS",
+       "Interface.Menu.ButtonLabels.MOD ENABLE STATE=Mod state:",
        "Interface.Menu.ButtonLabels.CHANGE_CONTENTS=CHANGE\nCAMPAIGN",
        "Interface.Menu.ButtonLabels.DIRECT=ENTER IP",
        "Interface.Menu.ButtonLabels.Password=Password:",
@@ -288,7 +288,7 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
        "Interface.Menu.Messages.Multiplayer.SignatureError=Signature or CRC checks failed, connection may be unreliable",
        "Interface.Menu.Messages.Multiplayer.HostTerminated=Host has terminated session or disconnected",
        "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
-       "Interface.Menu.Messages.Confirmations.ApplyAddonsChanges=Game restart is required to apply changes, are you sure?"
+       "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Game restart is required to apply changes, are you sure?"
    }, false);
 }
 

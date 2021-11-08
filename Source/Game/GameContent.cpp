@@ -386,10 +386,10 @@ void detectGameContent() {
         
     //Detect if we have extra contents
     int loadAddons = 1;
-    check_command_line_parameter("addons", loadAddons);
+    check_command_line_parameter("mods", loadAddons);
     std::vector<std::string> addons;
     if (loadAddons) {
-        for (const auto& entry: get_content_entries_directory("addons")) {
+        for (const auto& entry: get_content_entries_directory("mods")) {
             if (entry->is_directory) {
                 std::filesystem::path entry_path(entry->path_content);
                 std::string addonName = entry_path.filename().string();
@@ -407,7 +407,7 @@ void detectGameContent() {
 
     //Load addons
     for (std::string& addonName : addons) {
-        std::string addonDir = std::string("Addons") + PATH_SEP + addonName + PATH_SEP;
+        std::string addonDir = std::string("mods") + PATH_SEP + addonName + PATH_SEP;
         loadAddonCommon(addonName, addonDir);
         if (!convert_path_content(addonDir + "Resource/Missions/01x4.spg").empty()) {
             loadAddonET(addonName, addonDir);
