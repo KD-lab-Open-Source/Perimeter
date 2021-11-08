@@ -999,7 +999,7 @@ void SDL_event_poll() {
 
 void setLogicFp()
 {
-	_controlfp(_PC_24, _MCW_PC);
+	//_controlfp(_PC_24, _MCW_PC);
 
 #ifndef _FINAL_VERSION_
 	static int enable = IniManager("Perimeter.ini").getInt("Game","ControlFpEnable");

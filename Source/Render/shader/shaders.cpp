@@ -103,14 +103,14 @@ void cVertexShader::Delete()
 
 void cVertexShader::Restore()
 {
-	unsigned int fp=_controlfp(0,0);
-	_controlfp( _MCW_EM,  _MCW_EM );
+	//unsigned int fp=_controlfp(0,0);
+	//_controlfp( _MCW_EM,  _MCW_EM );
 
 	Delete();
 	RestoreShader();
 
-	_clearfp();
-	_controlfp(fp,0xFFFFFFFFul);
+	//_clearfp();
+	//_controlfp(fp,0xFFFFFFFFul);
 }
 
 inline void cVertexShader::SetMatrix(const SHADER_HANDLE& h,const D3DXMATRIX* mat)

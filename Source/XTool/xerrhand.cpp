@@ -109,8 +109,8 @@ char* uctoa(uint8_t a)
 long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 {
     fprintf(stderr, "exHandler\n");
-	_clearfp();
-	_controlfp( _controlfp(0,0) & ~(0), _MCW_EM );
+	//_clearfp();
+	//_controlfp( _controlfp(0,0) & ~(0), _MCW_EM );
 	SetUnhandledExceptionFilter(NULL);
 
 	static char msg[10000];
