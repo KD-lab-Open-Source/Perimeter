@@ -7,9 +7,13 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        build_type: [Debug, Release]
-    name: ${{matrix.build_type}} 64 bits
+        env: [
+          {build_type: Debug, arch: x86_64},
+          {build_type: Release, arch: x86_64}
+        ]
+    name: ${{matrix.env.build_type}} ${{matrix.env.arch}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,11 +24,44 @@ jobs:
       - name: create build dir
         run: mkdir build
       - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DOPTION_DEBUG_ASSERT=ON
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DOPTION_DEBUG_ASSERT=ON
         working-directory: build
       - name: build dependencies
         run: ninja dependencies
         working-directory: build
       - name: build project
         run: ninja
+        working-directory: build
+      - name: Package
+        run: |
+          mkdir perimeter
+          cp Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so perimeter/
+          cp Source/perimeter perimeter/
+          chmod 777 perimeter/perimeter
+        working-directory: build
+      - name: Strip binary
+        run: strip perimeter/perimeter
+        if: matrix.env.build_type == 'Release'
+      - name: Release tar
+        run: tar -cvf Perimeter.tar perimeter
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Perimeter ${{matrix.env.build_type}} ${{matrix.env.arch}}
+          path: Perimeter.tar
+  check_scripts:
+    name: Check Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: update repos
+        run: sudo apt-get update
+      - name: install libs
+        run: sudo apt-get install cmake meson libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev libavcodec-dev libavformat-dev libvulkan-dev glslang-tools lld
+      - name: create build dir
+        run: mkdir build
+      - name: configure
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOPTION_CHECK_SCRIPTS=ON
+        working-directory: build
+      - name: Scripts check
+        run: ninja ScriptsCheck
         working-directory: build
