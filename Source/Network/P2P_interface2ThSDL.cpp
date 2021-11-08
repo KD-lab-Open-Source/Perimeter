@@ -19,9 +19,7 @@ bool PNetCenter::Init()
         server_arch_mask = ~strtoull(server_arch_mask_str, nullptr, 16);
     }
     server_content_crc = 0;
-    //TODO enable this again
-    //if (check_command_line("ServerIgnoreContent") == nullptr) {
-    if (check_command_line("ServerCheckContent") != nullptr) {
+    if (check_command_line("ServerIgnoreContent") == nullptr) {
         server_content_crc = NetConnectionInfo::getAttributesCRC();
     }
 

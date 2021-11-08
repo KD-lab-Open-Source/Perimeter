@@ -23,7 +23,7 @@ int startCmdlineQuant(float, float ) {
 
         NetAddress conn;
         if (!NetAddress::resolve(conn, cmdLineData.address)) {
-            setMessageBoxTextID("Interface.Menu.Messages.WrongIPAdress");
+            setMessageBoxTextID("Interface.Menu.Messages.IPEmpty");
             showMessageBoxButtons();
         } else {
             //This forces initializing stuff required by game

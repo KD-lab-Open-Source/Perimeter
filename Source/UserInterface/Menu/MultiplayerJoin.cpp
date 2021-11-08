@@ -93,7 +93,7 @@ int joinHostHandler( float, float ) {
         bool resolveFailed = !NetAddress::resolve(conn, addressInput->getText());
 
         if (resolveFailed) {
-            setMessageBoxTextID("Interface.Menu.Messages.WrongIPAdress");
+            setMessageBoxTextID("Interface.Menu.Messages.IPEmpty");
             showMessageBoxButtons();
         } else {
             CEditWindow* playerNameInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT));
