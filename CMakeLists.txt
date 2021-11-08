@@ -13,6 +13,7 @@ SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15")
 # Options and inputs
 OPTION(OPTION_FINAL_VERSION "Generate Final version" ON)
 OPTION(OPTION_STATIC_BUILD "Generate static build" OFF)
+OPTION(OPTION_CHECK_SCRIPTS "Check game scripts with XPrm" OFF)
 OPTION(OPTION_PROCESS_SCRIPTS "Re-Process game scripts with XPrm" OFF)
 OPTION(OPTION_DISABLE_STACKTRACE "Disable stacktrace support" OFF)
 OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
