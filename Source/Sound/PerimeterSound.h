@@ -2,7 +2,7 @@
 #define PERIMETER_SOUND_H
 
 //Инициализация/деинициализация библиотеки
-bool SNDInitSound(int mixChannels);
+bool SNDInitSound(int mixChannels, int chunkSizeFactor);
 void SNDReleaseSound();
 
 void SNDEnableSound(bool enable);

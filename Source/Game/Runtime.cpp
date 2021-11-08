@@ -89,7 +89,7 @@ int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
 int terGrabInput = 1;
-int applicationRunBackground = 0;
+int applicationRunBackground = 1;
 
 int terDrawMeshShadow = 2;
 int terShadowType	= 0;
@@ -663,6 +663,7 @@ void InitSound(bool sound, bool music, bool firstTime)
 	terSoundEnable = sound;
 	terMusicEnable = music;
     int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
+    int chunkSizeFactor = 12; //1056 bytes under 2 channel 22khz 16 bits 
 
 	if (firstTime) {
 		IniManager ini("Perimeter.ini");
@@ -670,6 +671,7 @@ void InitSound(bool sound, bool music, bool firstTime)
 		terMusicVolume = ini.getFloat("Sound","MusicVolume");
         IniManager ini_no("Perimeter.ini", false);
         ini_no.getInt("Sound","MixChannels", mixChannels);
+        ini_no.getInt("Sound","ChunkSize", chunkSizeFactor);
 	}
 
 	if(terSoundEnable  || terMusicEnable){
@@ -685,7 +687,7 @@ void InitSound(bool sound, bool music, bool firstTime)
 			if(terEnableSoundLog)
 				SNDEnableErrorLog("sound.txt");
 
-			if(SNDInitSound(mixChannels)){
+			if(SNDInitSound(mixChannels, chunkSizeFactor)){
 				SNDScriptPrmEnableAll();
 			}
 		}

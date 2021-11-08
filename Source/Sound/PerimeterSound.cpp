@@ -7,8 +7,6 @@
 #include "Sample.h"
 #include "files/files.h"
 
-#define SND_CHUNK_SIZE 1024
-
 //Audio formats
 #define AUDIO_FORMAT_8 AUDIO_S8
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
@@ -115,7 +113,7 @@ void AllocateMixChannel(int channel, int group) {
     }
 }
 
-bool SNDInitSound(int mixChannels)
+bool SNDInitSound(int mixChannels, int chunkSizeFactor)
 {
 	SNDReleaseSound();
 
@@ -142,7 +140,9 @@ bool SNDInitSound(int mixChannels)
 	};
 
 	for(int i=SIZE(formats)-1;i>=0;i--) {
-        if (Mix_OpenAudio(formats[i].hertz, formats[i].bits, formats[i].channels, SND_CHUNK_SIZE) == 0) {
+        int chunksize = chunkSizeFactor * (formats[i].hertz / 1000) * formats[i].channels;
+        chunksize *= AUDIO_FORMAT_8 == formats[i].bits ? 1 : 2;
+        if (Mix_OpenAudio(formats[i].hertz, formats[i].bits, formats[i].channels, chunksize) == 0) {
             has_sound_init = true;
             break;
         } else {
