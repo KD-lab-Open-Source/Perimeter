@@ -50,7 +50,6 @@ public:
     }
 	cStream& operator << (float a);
 	cStream& operator << (double a);
-	cStream& operator << (long double a);
 	cStream& operator << (const char *a);
 /*
 	cStream& operator >> (char &a);
@@ -63,7 +62,6 @@ public:
 	cStream& operator >> (unsigned long &a);
 	cStream& operator >> (float &a);
 	cStream& operator >> (double &a);
-	cStream& operator >> (long double &a);
 	cStream& operator >> (char *a);
 */
 private:

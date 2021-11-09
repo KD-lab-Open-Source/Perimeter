@@ -67,7 +67,6 @@ struct XStream
     XStream& operator< (uint64_t v) { return write(v); }
     XStream& operator< (float v) { return write(v); }
     XStream& operator< (double v) { return write(v); }
-    XStream& operator< (long double v) { return write(v); }
 
     XStream& operator> (char* v) { read(v,(unsigned)strlen(v)); return *this; }
     XStream& operator> (char& v) { return read(v); }
@@ -81,7 +80,6 @@ struct XStream
     XStream& operator> (uint64_t& v) { return read(v); }
     XStream& operator> (float& v) { return read(v); }
     XStream& operator> (double& v) { return read(v); }
-    XStream& operator> (long double& v) { return read(v); }
 
     template<typename T>
     XStream& operator<= (T var) {
@@ -91,7 +89,6 @@ struct XStream
     }
 	XStream& operator<= (float);
 	XStream& operator<= (double);
-	XStream& operator<= (long double);
 
 	XStream& operator>= (char& var);
 	XStream& operator>= (int8_t& var);
@@ -104,7 +101,6 @@ struct XStream
 	XStream& operator>= (uint64_t& var);
     XStream& operator>= (float&);
 	XStream& operator>= (double&);
-	XStream& operator>= (long double&);
 
 	//Apparently never set but is checked
 	bool ioError() const { return false; }

@@ -82,18 +82,10 @@ XBuffer& XBuffer::operator>= (double& var)
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (long double& var)
-{
-	char* p = buf + offset;
-	var = strtod(p,&p);
-	offset += p - (buf + offset);
-	return *this;
-}
-
 XBuffer& XBuffer::operator>= (float& var)
 {
 	char* p = buf + offset;
-	var = (float)strtod(p,&p);
+	var = strtof(p,&p);
 	offset += p - (buf + offset);
 	return *this;
 }

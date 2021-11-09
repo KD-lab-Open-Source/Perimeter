@@ -117,18 +117,7 @@ XStream& XStream::operator>= (float& var)
 	if(!ret) return *this;
 	char* p = convBuf;
 	p[ret] = ' ';
-	var = (float)strtod(p,&p);
-	seek(p - convBuf + 1 - ret,XS_CUR);
-	return *this;
-}
-
-XStream& XStream::operator>= (long double& var)
-{
-	int ret = read(convBuf,XS_CONV_BUFFER_LEN);
-	if(!ret) return *this;
-	char* p = convBuf;
-	p[ret] = ' ';
-	var = strtod(p,&p);
+	var = strtof(p,&p);
 	seek(p - convBuf + 1 - ret,XS_CUR);
 	return *this;
 }

@@ -220,14 +220,6 @@ cStream& cStream::operator << (double a)
 	write(buf,strlen(buf));
 	return *this; 
 }
-cStream& cStream::operator << (long double a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%Lf",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
 cStream& cStream::operator << (const char *a)
 { 
 	assert(lpBuffer); 
@@ -313,14 +305,6 @@ cStream& cStream::operator >> (double &a)
 	char buf[256];
 	(*this)>>buf;
 	a=(double)StringToFloat(buf);
-	return *this; 
-}
-cStream& cStream::operator >> (long double &a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	(*this)>>buf;
-	a=(long double)StringToFloat(buf);
 	return *this; 
 }
 cStream& cStream::operator >> (char *buf)

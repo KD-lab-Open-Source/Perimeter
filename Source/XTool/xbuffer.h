@@ -75,7 +75,6 @@ struct XBuffer
 	XBuffer& operator< (uint64_t v) { return write(v); }
 	XBuffer& operator< (float v) { return write(v); }
 	XBuffer& operator< (double v) { return write(v); }
-    XBuffer& operator< (long double v) { return write(v); }
 
 	XBuffer& operator> (char* v);
 	XBuffer& operator> (char& v) { return read(v); }
@@ -89,7 +88,6 @@ struct XBuffer
 	XBuffer& operator> (uint64_t& v) { return read(v); }
 	XBuffer& operator> (float& v) { return read(v); }
 	XBuffer& operator> (double& v) { return read(v); }
-    XBuffer& operator> (long double& v) { return read(v); }
 
     template<typename T>
     XBuffer& operator<= (T var) {
@@ -99,7 +97,6 @@ struct XBuffer
     }
 	XBuffer& operator<= (float);
 	XBuffer& operator<= (double);
-	XBuffer& operator<= (long double);
 
     XBuffer& operator>= (char&);
     XBuffer& operator>= (int8_t&);
@@ -112,7 +109,6 @@ struct XBuffer
 	XBuffer& operator>= (uint64_t&);
 	XBuffer& operator>= (float&);
 	XBuffer& operator>= (double&);
-    XBuffer& operator>= (long double&);
 
 #ifdef _WIN32
     //These are required for Windows which doesn't allow "long" to be implicitly casted to std types...
