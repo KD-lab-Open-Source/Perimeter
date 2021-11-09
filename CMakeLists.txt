@@ -183,6 +183,7 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
     SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
     IF(NOT MACOS)
+        SET(CMAKE_BUILD_RPATH "$ORIGIN") #let binary find libs on own dir
         SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -no-pie -fno-pie")
     ENDIF()
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize")
