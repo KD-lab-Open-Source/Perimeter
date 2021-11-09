@@ -552,9 +552,13 @@ template<class T>
 class SingletonPrm 
 {
 public:
-	static void save() {
-		return saveParameters(instance());
-	}
+    static void load() {
+        return loadParameters(instance());
+    }
+
+    static void save() {
+        return saveParameters(instance());
+    }
 
 	static bool edit(EditArchive& ea) {
 		return editParameters(instance(), ea);

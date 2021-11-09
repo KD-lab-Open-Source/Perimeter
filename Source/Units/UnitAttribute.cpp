@@ -697,20 +697,30 @@ void copyInterfaceAttributes();
 void copyRigidBodyTable(bool);
 //void copyInterfaceAttributesIndispensable();
 
+void initInterfaceAttributes() {
+    interfaceAttr();
+    copyInterfaceAttributes();
+    //copyInterfaceAttributesIndispensable();
+}
+
 void initAttributes()
 {
-	globalAttr();
-	interfaceAttr();
 //	soundScriptTable();
 
+    //Clear previous data
+    rigidBodyPrmLibrary().map().clear();
+    attributeLibrary().map().clear();
     
+    //Deserialize
+    SingletonPrm<RigidBodyPrmLibrary>::load();
+    SingletonPrm<AttributeLibrary>::load();
+    SingletonPrm<GlobalAttributes>::load();
+
+    //Copy hardcoded data in this executable that is missing in files
     int override=IniManager("Perimeter.ini", false).getInt("Game","OverrideAttributes");
     check_command_line_parameter("override_attributes", override);
     copyRigidBodyTable(override);
     copyAttributes(override);
-    copyInterfaceAttributes();
-
-	//copyInterfaceAttributesIndispensable();
 
 //	rigidBodyPrmLibrary.edit();
 //	attributeLibrary.edit();
@@ -723,8 +733,12 @@ void initAttributes()
 	AttributeLibrary::Map::iterator i;
 	FOR_EACH(attributeLibrary().map(), i){
 		AttributeBase* attribute = i->second;
-		if(attribute->ID != UNIT_ATTRIBUTE_NONE)
-			attribute->initIntfBalanceData((attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE) ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0);
+		if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
+            attribute->initIntfBalanceData(
+                (attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE)
+                ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0
+            );
+        }
 	}
 }
 

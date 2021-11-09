@@ -249,7 +249,7 @@ void CrashHandler()
     }
 }
 
-void initAttributes();
+void initInterfaceAttributes();
 
 void HTManager::init()
 {
@@ -279,7 +279,8 @@ void HTManager::init()
 
 	initGraphics();
 
-	initAttributes();
+    initInterfaceAttributes();
+    initAttributes();
 
 	allocation_tracking("PerimeterGraphicsInit");
 	

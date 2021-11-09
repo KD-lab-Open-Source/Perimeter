@@ -18,10 +18,22 @@ bool PNetCenter::Init()
     if (server_arch_mask_str) {
         server_arch_mask = ~strtoull(server_arch_mask_str, nullptr, 16);
     }
+    
+    //Reset our attributes in case we played before
+    initAttributes();
+    
     server_content_crc = 0;
     if (check_command_line("ServerIgnoreContent") == nullptr) {
         server_content_crc = NetConnectionInfo::getAttributesCRC();
     }
+    
+#if defined(PERIMETER_DEBUG) && defined(PERIMETER_EXODUS) && 0
+    //Dump current attrs
+    XPrmOArchive ar("/tmp/test");
+    XBuffer& buf = ar.getBuffer();
+    ar << makeObjectWrapper(rigidBodyPrmLibrary(), nullptr, nullptr);
+    ar.close();
+#endif
 
 	return true;
 }

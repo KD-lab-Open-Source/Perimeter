@@ -36,11 +36,16 @@ struct RigidBodyPrm : ShareHandleBase
 			ar & TRANSLATE_OBJECT(amplitude_decrement, "amplitude_decrement");
 			ar & TRANSLATE_OBJECT(omega_increment, "omega_increment");
 			ar & TRANSLATE_OBJECT(omega_disperse, "omega_disperse");
-			if(!ar.isOutput())
-				set();
+			if(!ar.isOutput() && phase == 0) {
+                set();
+            }
 		}
 
-		void set() { phase = terLogicRNDfrnd()*M_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
+		void set() { 
+            phase = terLogicRNDfrnd()*M_PI;
+            omega += terLogicRNDfrnd()*omega*omega_disperse; 
+        }
+        
 		float operator() (float dt, float velocity){ return amplitude*sin(phase += omega*(1 + omega_increment*velocity)*dt)/(1 + amplitude_decrement*velocity); }
 	};
 
