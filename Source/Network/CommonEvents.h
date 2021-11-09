@@ -854,16 +854,16 @@ struct netCommand4C_ContinueGameAfterHostMigrate : netCommandGeneral
 
 struct netCommand4H_StartLoadGame : netCommandGeneral
 {
-	netCommand4H_StartLoadGame() : netCommandGeneral(NETCOM_4H_ID_START_LOAD_GAME){
-		v=0;
+    uint32_t ready;
+	netCommand4H_StartLoadGame(bool state) : netCommandGeneral(NETCOM_4H_ID_START_LOAD_GAME){
+        ready=state?1:0;
 	}
 	netCommand4H_StartLoadGame(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_START_LOAD_GAME){
-		in > v;
+		in > ready;
 	}
 	void Write(XBuffer& out) const override {
-		out < v;
+		out < ready;
 	};
-	int v;
 };
 
 struct netCommand4C_CurrentMissionDescriptionInfo : netCommandGeneral

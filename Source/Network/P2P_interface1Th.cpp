@@ -556,9 +556,9 @@ bool PNetCenter::setPause(bool pause)
 
 
 
-void PNetCenter::StartLoadTheGame()
+void PNetCenter::StartLoadTheGame(bool state)
 {
-	netCommand4H_StartLoadGame ncslg;
+	netCommand4H_StartLoadGame ncslg(state);
 	if(isConnected()) {
 		SendEventSync(&ncslg);
 	}

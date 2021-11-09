@@ -1225,11 +1225,10 @@ void PNetCenter::HostReceiveQuant()
 						break;
 					case NETCOM_4H_ID_START_LOAD_GAME:
 						{
-							hostMissionDescription.setChanged();
-
 							netCommand4H_StartLoadGame ncslg(in_HostBuf);
-							hostMissionDescription.setPlayerStartReady(netid);
-							///StartGame();
+                            if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+                            
+							hostMissionDescription.setPlayerStartReady(netid, ncslg.ready != 0);
 						}
 						break;
 					case NETCOMC_ID_PLAYER_READY:
@@ -1237,7 +1236,7 @@ void PNetCenter::HostReceiveQuant()
 							hostMissionDescription.setChanged();
 
 							netCommandC_PlayerReady event(in_HostBuf);
-							(*p)->m_flag_Ready=1;
+							(*p)->m_flag_Ready=true;
 							(*p)->clientGameCRC=event.gameCRC_;
 
 							LogMsg("Player 0x%X %d (GCRC=0x%X) reported ready\n", netid, (*p)->missionDescriptionIdx, (*p)->clientGameCRC);

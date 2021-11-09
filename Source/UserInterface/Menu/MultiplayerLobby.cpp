@@ -443,9 +443,12 @@ void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param
         const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
 		pWnd->Enable(currMission.playersAmount() > 1);
 	} else if (code == EVENT_UNPRESSED){
-//		fout < "StartLoadTheGame()\n";
-//		gameShell->getNetClient()->StartLoadTheGame();
-		_shellIconManager.SwitchMenuScreens( READY, READY );
+        const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
+        bool state = !currMission.playersData[currMission.activePlayerID].flag_playerStartReady;
+		gameShell->getNetClient()->StartLoadTheGame(state);
+        //Set button state
+        CPushButton* btn = reinterpret_cast<CPushButton*>(pWnd);
+        btn->setText(qdTextDB::instance().getText(state ? "Interface.Menu.ButtonLabels.CANCEL" : "Interface.Menu.ButtonLabels.READY"));
 	}
 }
 void onMMLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {

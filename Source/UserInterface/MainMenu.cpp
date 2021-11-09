@@ -1161,7 +1161,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					historyScene.stopAudio();
 					break;
 				case READY:
-					gameShell->getNetClient()->StartLoadTheGame();
+					gameShell->getNetClient()->StartLoadTheGame(true);
 					menuChangingDone = true;
 					break;
 				case SKIP_MISSION:

@@ -421,8 +421,8 @@ public:
 	void changeMap(const char* missionName);
 
 
-	void StartLoadTheGame();
-	void GameIsReady(void);
+	void StartLoadTheGame(bool state);
+	void GameIsReady();
 
 
 	void P2PIQuant();

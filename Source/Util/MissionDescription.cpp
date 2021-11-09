@@ -285,19 +285,19 @@ void MissionDescription::clearAllPlayerStartReady()
 {
 	setChanged();
 	for(unsigned int i=0; i<playerAmountScenarioMax; i++){
-		playersData[i].flag_playerStartReady=0;
+		playersData[i].flag_playerStartReady = false;
 	}
 }
 
-bool MissionDescription::setPlayerStartReady(NETID netid)
+bool MissionDescription::setPlayerStartReady(NETID netid, bool state)
 {
 	setChanged();
 	for(int i=0; i<playerAmountScenarioMax; i++){
 		if(playersData[i].netid==netid){
-			playersData[i].flag_playerStartReady=true;
+			playersData[i].flag_playerStartReady=state;
 		}
 	}
-	return 0;
+	return false;
 }
 
 bool MissionDescription::isAllRealPlayerStartReady()

@@ -122,7 +122,7 @@ public:
 
 	void clearAllPlayerStartReady(void);
 
-	bool setPlayerStartReady(NETID netid);
+	bool setPlayerStartReady(NETID netid, bool state);
 	bool isAllRealPlayerStartReady(void);
 	void clearAllPlayerGameReady(void);
 
