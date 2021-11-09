@@ -113,13 +113,17 @@ CellLine& CellLine::operator=(const CellLine& line)
 void CellLine::find_interval(const Interval& in, iterator& il, iterator& ir_)
 {
 	// find [il, ir_) of Intervals wich intersects in
-	FOR_EACH(*this, il)
-		if(il->xr >= in.xl)
-			break;
+    for (il = this->begin(); il != this->end(); ++il) {
+        if (il->xr >= in.xl) {
+            break;
+        }
+    }
 
-	for(ir_ = il; ir_ != end(); ++ir_)
-		if(ir_->xl > in.xr)
-			break;
+	for(ir_ = il; ir_ != end(); ++ir_) {
+        if (ir_->xl > in.xr) {
+            break;
+        }
+    }
 }
 
 void CellLine::add(const Interval& in, Region* region)

@@ -248,19 +248,15 @@ void terUnitBase::commandOutcoming(const UnitCommand& commandIn)
 void terUnitBase::commandOutcomingLogic(const UnitCommand& commandIn)
 {
 	if(Player->controlEnabled()) {
-		if(!universe()->multiPlayer()){
-			//executeCommand(commandIn);
-			UnitCommand command = commandIn;
-			command.prepareToSend();
-			universe()->sendCommand(netCommand4G_UnitCommand(*this, command));
-		}
-		else{
-			UnitCommand command = commandIn;
-			command.prepareToSend();
-			commandList().push_back(command);
-			universe()->sendCommand(netCommand4G_UnitCommand(*this, command));
-		}
-	}
+        UnitCommand command = commandIn;
+        command.prepareToSend();
+        if (universe()->multiPlayer()) {
+            commandList().push_back(command);
+        } else {
+            //executeCommand(commandIn);
+        }
+        universe()->sendCommand(new netCommand4G_UnitCommand(*this, command));
+    }
 }
 
 void terUnitBase::executeCommand(const UnitCommand& command)

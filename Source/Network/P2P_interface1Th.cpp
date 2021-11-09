@@ -174,6 +174,7 @@ PNetCenter::~PNetCenter()
 
     DestroyEvent(hSecondThreadInitComplete);
     DestroyEvent(hCommandExecuted);
+
     LogMsg("Destroyed PNetCenter\n");
 }
 

@@ -703,7 +703,7 @@ terUnitBase* terPlayer::traceUnit(const Vect2f& pos)
 
 void terPlayer::ChangeRegion(XBuffer& out)
 {
-	universe()->sendCommand(netCommand4G_Region(playerID(), out));
+	universe()->sendCommand(new netCommand4G_Region(playerID(), out));
 }
 
 //-------------------------------------

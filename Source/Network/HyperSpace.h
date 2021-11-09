@@ -32,8 +32,7 @@ public:
 	virtual bool forcedDefeat(int playerID)=0;
 
 
-	void sendCommand(const netCommand4G_UnitCommand& command);
-	void sendCommand(const netCommand4G_Region& command);
+	void sendCommand(netCommandGame* command);
 
 	virtual void Quant(){}
 

@@ -469,38 +469,20 @@ void terHyperSpace::sendLog(unsigned int quant)
 }
 
 
-// !!! Вызывается из логического кванта !!!
-void terHyperSpace::sendCommand(const netCommand4G_UnitCommand& command) 
-{ 
-	if(!pNetCenter){
-		//Lock!
-		CAutoLock lock(m_FullListGameCommandLock);
-
-		netCommand4G_UnitCommand* pnc=new netCommand4G_UnitCommand(command);
-		pnc->setCurCommandQuantAndCounter(currentQuant+1,0);
-		fullListGameCommands.push_back(pnc);
-		/////receiveCommand(command);
-	}
-	else {
-		pNetCenter->SendEvent(&command);
-	}
-}
-
-// !!! Вызывается из Графического кванта !!!
-void terHyperSpace::sendCommand(const netCommand4G_Region& command) 
-{ 
-	if(!pNetCenter){
-		//Lock!
-		CAutoLock lock(m_FullListGameCommandLock);
-
-		netCommand4G_Region* pnc=new netCommand4G_Region(command);
-		pnc->setCurCommandQuantAndCounter(currentQuant+1,0);
-		fullListGameCommands.push_back(pnc);
-		/////receiveCommand(command);
-	}
-	else {
-		pNetCenter->SendEvent(&command); 
-	}
+// netCommand4G_Region from graphics thread, netCommand4G_UnitCommand from logic thread
+void terHyperSpace::sendCommand(netCommandGame* command) 
+{
+    if(!pNetCenter){
+        //Lock!
+        CAutoLock lock(m_FullListGameCommandLock);
+        
+        command->setCurCommandQuantAndCounter(currentQuant+1,0);
+        fullListGameCommands.push_back(command);
+        /////receiveCommand(command);
+    } else {
+        pNetCenter->SendEvent(command);
+        delete command;
+    }
 }
 
 //----------------------------- Dread Place ----------------------------

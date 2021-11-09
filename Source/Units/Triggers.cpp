@@ -1190,7 +1190,7 @@ void ActionOscillateCamera::activate(AIPlayer& aiPlayer)
 
 void ActionVictory::activate(AIPlayer& aiPlayer) 
 { 
-	if (aiPlayer.active() && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
+	if (aiPlayer.active() && !universe()->multiPlayer()) {
 		gameShell->setTriggersDisabled();
 		_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY); 
 	}
@@ -1198,7 +1198,7 @@ void ActionVictory::activate(AIPlayer& aiPlayer)
 
 void ActionDefeat::activate(AIPlayer& aiPlayer) 
 {
-	if (aiPlayer.active() && gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
+	if (aiPlayer.active() && !universe()->multiPlayer()) {
 		gameShell->setTriggersDisabled();
 		_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT); 
 	}

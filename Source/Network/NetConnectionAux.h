@@ -6,8 +6,8 @@ extern const char* currentShortVersion;
 #include "UnitAttribute.h"
 #include "../Terra/crc.h"
 
-#define ATTRIBUTES_CRC_ARCHIVE XPrmOArchive
-//#define ATTRIBUTES_CRC_ARCHIVE BinaryOArchive
+//#define ATTRIBUTES_CRC_ARCHIVE XPrmOArchive
+#define ATTRIBUTES_CRC_ARCHIVE BinaryOArchive
 
 ///First packet sent upon connection
 typedef uint64_t arch_flags;
@@ -46,14 +46,12 @@ private:
 public:
 
     static uint32_t getAttributesCRC() {
-        const int floatDigits = 2;
+        const int floatDigits = 0;
         uint32_t attrcrc = startCRC32;
         attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(attributeLibrary(), attrcrc, floatDigits);
-        LogMsg("attributeLibrary CRC %X\n", attrcrc);
         attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(rigidBodyPrmLibrary(), attrcrc, floatDigits);
-        LogMsg("rigidBodyPrmLibrary CRC %X\n", attrcrc);
         attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(globalAttr(), attrcrc, floatDigits);
-        LogMsg("globalAttr CRC %X\n", attrcrc);
+        LogMsg("attributes CRC %X\n", attrcrc);
         return attrcrc;
     }
 

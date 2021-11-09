@@ -1013,7 +1013,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 
 						switch(gameShell->currentSingleProfile.getLastGameType()) {
                             case UserSingleProfile::BATTLE:
-                            //TODO is this required? - case UserSingleProfile::MULTIPLAYER:
+                            case UserSingleProfile::MULTIPLAYER:
 								txtWnd->setText( qdTextDB::instance().getText("Interface.Menu.Messages.Battle") );
 								break;
 							case UserSingleProfile::SURVIVAL:
