@@ -878,7 +878,7 @@ void CShellIconManager::addChatString(const LocalizedText* newChatString) {
 	}
 }
 
-void CShellIconManager::showHintDisconnect(const std::string& players, int showTime, bool disconnected) {
+void CShellIconManager::showHintChat(const LocalizedText* text, int showTime) {
 	CChatInfoWindow* wnd;
 	if (cutSceneModeOn) {
 		wnd = (CChatInfoWindow*)controls[SQSH_CHAT_INFO_ID];
@@ -886,14 +886,7 @@ void CShellIconManager::showHintDisconnect(const std::string& players, int showT
 		wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
 	}
 	if (wnd) {
-		std::string res = qdTextDB::instance().getText(disconnected ? "Interface.Menu.Messages.PlayersDisconnected" : "Interface.Menu.Messages.PlayersExited");
-
-		const int bufferSize = 200;
-		static char tempBuffer[bufferSize];
-		sprintf(tempBuffer, res.c_str(), players.c_str());
-
-        LocalizedText text(tempBuffer);
-		wnd->addString(&text);
+		wnd->addString(text);
 		wnd->Show(true);
 		wnd->updateTime(showTime);
 	}

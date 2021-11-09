@@ -1754,7 +1754,7 @@ public:
 
 	void addChatString(const LocalizedText* newChatString);
 
-	void showHintDisconnect(const std::string& players, int showTime, bool disconnected);
+	void showHintChat(const LocalizedText* text, int showTime);
 	void showHint(const char* text, int showTime, ActionTask::Type actionType = ActionTask::ASSIGNED);
 	void setTask(const char* text, ActionTask::Type actionType = ActionTask::ASSIGNED);
 

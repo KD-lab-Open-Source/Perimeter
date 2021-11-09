@@ -2440,7 +2440,14 @@ void GameShell::updateResolution(bool change_depth, bool change_size, bool chang
 }
 
 void GameShell::playerDisconnected(std::string& playerName, bool disconnectOrExit) {
-	_shellIconManager.showHintDisconnect(playerName, 3000, disconnectOrExit);
+    std::string res = qdTextDB::instance().getText(disconnectOrExit ? "Interface.Menu.Messages.PlayersDisconnected" : "Interface.Menu.Messages.PlayersExited");
+
+    const int bufferSize = 200;
+    static char tempBuffer[bufferSize];
+    sprintf(tempBuffer, res.c_str(), playerName.c_str());
+
+    LocalizedText text(tempBuffer);
+	_shellIconManager.showHintChat(&text, 3000);
 }
 
 void GameShell::showReelModal(const char* binkFileName, const char* soundFileName, bool localized, bool stopBGMusic, int alpha) {
