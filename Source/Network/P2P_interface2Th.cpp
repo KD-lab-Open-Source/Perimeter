@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <SDL.h>
+#include "files/files.h"
 
 
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
@@ -607,7 +608,7 @@ void PNetCenter::LLogicQuant()
 						else {
 							if( (*firstList.begin()).quant_ != (*secondList.begin()).quant_ ) {
 								//xassert(0 && "Unmatched number quants");
-								XStream f("outnet.log", XS_OUT);
+								XStream f(convert_path_content("outnet.log", true), XS_OUT);
 								f.write(BUFFER_LOG.address(), BUFFER_LOG.tell());
 								f < currentVersion < "\r\n";
 								f < "Unmatched number quants !" < "\n";
@@ -620,9 +621,9 @@ void PNetCenter::LLogicQuant()
 								}
 								f.close();
 
-								XBuffer to(1024,1);
-								to < "Unmatched number quants !" < "N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
-                                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
+                                XBuffer to(1024,true);
+								to < "Unmatched number quants ! N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
+                                fprintf(stderr, "Error network synchronization: %s\n", to.address());
 								ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
 								return;
 							}
@@ -631,14 +632,10 @@ void PNetCenter::LLogicQuant()
 								if( (*firstList.begin()).signature_ != (*secondList.begin()).signature_ ){
                                     netCommand4C_SaveLog ev = netCommand4C_SaveLog();
 									SendEvent(ev, NETID_ALL);
-									XBuffer to(1024,1);
-									XStream f("outnet.log", XS_OUT);
-									f < currentVersion < "\r\n";
-									f < "Unmatched game quants !" < "on Quant=" <= (*firstList.begin()).quant_;
-									f.close();
-
-									to < "Unmatched game quants !" < "on Quant=" <= (*firstList.begin()).quant_;
-                                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
+                                    
+									XBuffer to(1024,true);
+									to < "Unmatched game quants ! on Quant=" <= (*firstList.begin()).quant_;
+                                    fprintf(stderr, "Error network synchronization: %s\n", to.address());
 									ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
 									return;
 								}

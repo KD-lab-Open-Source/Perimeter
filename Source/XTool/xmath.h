@@ -12,6 +12,8 @@
 #include "tweaks.h"
 #include <cmath>
 
+#define _XMATH_USE_IOSTREAM
+
 #ifdef _XMATH_USE_IOSTREAM
 #include <iostream>
 using std::istream;
@@ -1850,6 +1852,7 @@ public:
   friend istream& operator>>(istream& is, Se3f& se3);
 #endif
 
+/*
   friend XStream& operator<= (XStream& s,const Se3f& v);
   friend XStream& operator>= (XStream& s,Se3f& v);
   friend XStream& operator< (XStream& s,const Se3f& v);
@@ -1859,6 +1862,7 @@ public:
   friend XBuffer& operator>= (XBuffer& b,Se3f& v);
   friend XBuffer& operator< (XBuffer& b,const Se3f& v);
   friend XBuffer& operator> (XBuffer& b,Se3f& v);
+*/
 
   template<class Archive>
   void serialize(Archive& ar);

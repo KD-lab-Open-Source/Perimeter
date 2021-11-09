@@ -416,12 +416,6 @@ bool terHyperSpace::MultiQuant()
 
 		log_var(vMap.getChAreasInformationCRC());
 
-		//signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
-		//if((currentQuant&0x07)==0){ //Каждый 8 квант отсылается сигнатура
-		//	pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame));
-		//	signatureGame=startCRC32;
-		//}
-		//pushBackLogList(currentQuant, net_log_buffer);
 		logQuant();
 
 		lastRealizedQuant=currentQuant;
@@ -434,14 +428,19 @@ bool terHyperSpace::MultiQuant()
 
 }
 
-const unsigned int periodSendLogQuant=8; //степень двойки!
+const unsigned int periodSendLogQuant=8; //power of two / степень двойки!
 const unsigned int maskPeriodSendLogQuant=periodSendLogQuant-1;//
 void terHyperSpace::logQuant()
 {
 	lagQuant=getInternalLagQuant(); //Для сервера
 
-	signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
+    signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
 	if((currentQuant & maskPeriodSendLogQuant)==0){ //Каждый 8 квант отсылается сигнатура
+        //Basic cheap check for desync
+        XBuffer rnd;
+        rnd < terLogicRNDfrand();
+        signatureGame=crc32((unsigned char*)rnd.address(), rnd.tell(), signatureGame);
+        
         netCommand4H_BackGameInformation2 event = netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state);
 		pNetCenter->SendEvent(&event);
 		signatureGame=startCRC32;
@@ -821,15 +820,33 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				netCommand4C_SaveLog nc(in_buffer);
 
-				XBuffer tb;
-				tb < "outNet_" < pNetCenter->m_GameName.c_str() < " _"  < pNetCenter->m_PlayerName.c_str() < " _" <= clocki() < "_" <= pNetCenter->m_localNETID < ".log";
+                std::string crash_dir = GET_PREF_PATH();
+                terminate_with_char(crash_dir, PATH_SEP);
+                crash_dir += std::string(CRASH_DIR)
+                        + PATH_SEP + pNetCenter->m_GameName
+                        + "_" + pNetCenter->m_PlayerName
+                        + "_" + std::to_string(clocki())
+                        + PATH_SEP;
+                std::filesystem::create_directories(crash_dir);
 
-				XStream f(tb, XS_OUT);
-				//const char* currentVersion;
+                //Write net log
+				XStream f(crash_dir + "netlog.txt", XS_OUT);
 				f < currentVersion < "\r\n";
+                f < " " <= pNetCenter->m_localNETID;
+                f < " " <= pNetCenter->m_hostNETID; 
+                f < "\r\n";
 				writeLogList2File(f);
 				f.close();
-                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", "Unique!!!; outnet.log saved", nullptr);
+
+                //Attempt to save reel
+                universe()->savePlayReel((crash_dir + "reel").c_str());
+
+                //Attempt to save state
+                MissionDescription& mission = gameShell->CurrentMission;
+                mission.setSaveName((crash_dir + "save").c_str());
+                universe()->universalSave(mission, true);
+                
+                ErrH.ShowErrorMessage(("Error network synchronization, dumped at: " + crash_dir).c_str());
 				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED);
 			}
 			break;

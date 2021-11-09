@@ -235,15 +235,14 @@ void CrashHandler()
         std::string crash = GET_PREF_PATH();
         terminate_with_char(crash, PATH_SEP);
         crash = crash + CRASH_DIR + PATH_SEP + std::to_string(time(nullptr)) + "_";
-        
-        //First attempt to save reel
+
+        //Attempt to save reel
         terHyperSpace::SAVE_REPLAY_RESULT statereel = universe()->savePlayReel((crash + "reel").c_str());
         fprintf(stderr, "Crash reel result: %d\n", statereel);
 
         //Attempt to save state
-        MissionDescription mission(gameShell->CurrentMission);
+        MissionDescription& mission = gameShell->CurrentMission;
         mission.setSaveName((crash + "save").c_str());
-        mission.missionNumber = gameShell->currentSingleProfile.getCurrentMissionNumber();
         bool statesave = universe()->universalSave(mission, true);
         fprintf(stderr, "Crash save result: %d\n", statesave);
     }

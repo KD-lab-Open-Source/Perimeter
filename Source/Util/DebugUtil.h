@@ -148,7 +148,7 @@ void show_watch();
 
 //#define _FORCE_NET_LOG_
 
-#if (!defined(_FINAL_VERSION_) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
+#if (!defined(_FINAL_VERSION_) || defined(PERIMETER_DEBUG) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
 #define _DO_LOG_
 #endif
 
