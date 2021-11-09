@@ -34,7 +34,7 @@ ENDIF()
 
 #Detect 32 or 64 bits compiler
 IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    MESSAGE("Architecture: 64 bits - WARNING: EXPERIMENTAL!")
+    MESSAGE("Architecture: 64 bits")
     SET(PERIMETER_ARCH_64 ON)
     ADD_DEFINITIONS(-DPERIMETER_ARCH_64)
 ELSE()
@@ -43,6 +43,7 @@ ELSE()
 ENDIF()
 
 # Host detections and tweaks
+MESSAGE("CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 SET(MACOS OFF)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOS ON)
@@ -148,6 +149,13 @@ IF(FFMPEG_FOUND)
     INCLUDE_DIRECTORIES(${FFMPEG_INCLUDE_DIRS})
 ENDIF()
 
+#Required for more compilant floating point math
+IF(MSVC_CL_BUILD)
+    add_compile_options(/fp:precise)
+ELSE()
+    add_compile_options(-fno-fast-math)
+ENDIF()
+
 IF(NOT MSVC_CL_BUILD)
     # Configure lib suffixes for MinGW unless is static build
     IF(MINGW AND NOT OPTION_STATIC_BUILD)
@@ -164,6 +172,9 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
     
     #Others
+    IF(CLANG)
+        add_compile_options(-Werror=unused-command-line-argument)
+    ENDIF()
     INCLUDE(CheckCXXCompilerFlag)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-non-virtual-dtor -Wno-conversion-null")
     IF(OPTION_LINKER_LLD)
@@ -174,10 +185,16 @@ IF(NOT MSVC_CL_BUILD)
     IF(NOT MACOS)
         SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -no-pie -fno-pie")
     ENDIF()
-    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize -ffast-math")
-    CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
+    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize")
+    
+    #SSE2 detection
+    SET(HAVE_SIMDSSE OFF)
+    IF (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
+        CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
+    ENDIF()
     IF(HAVE_SIMDSSE)
-        SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -msse2")
+        add_compile_options(-msse -msse2)
+        MESSAGE("Has SSE support")
     ENDIF()
 
     #TODO remove these once code is more tidy

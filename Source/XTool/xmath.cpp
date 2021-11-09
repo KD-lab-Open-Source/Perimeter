@@ -15,6 +15,14 @@
 #pragma warning(disable : 4073 )
 #pragma init_seg(lib)
 
+//Assert that types are IEEE compilant
+#include <limits>
+static_assert(sizeof(float) == 4);
+static_assert(sizeof(double) == 8);
+static_assert(std::numeric_limits<float>::is_iec559);
+static_assert(std::numeric_limits<double>::is_iec559);
+static_assert(std::numeric_limits<long double>::is_iec559);
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 //	Constants
