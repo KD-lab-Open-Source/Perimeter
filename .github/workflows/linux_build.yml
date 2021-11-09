@@ -35,10 +35,9 @@ jobs:
       - name: Package
         run: |
           mkdir perimeter
-          cp Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so perimeter/
-          cp Source/perimeter perimeter/
+          cp build/Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so perimeter/
+          cp build/Source/perimeter perimeter/
           chmod 777 perimeter/perimeter
-        working-directory: build
       - name: Strip binary
         run: strip perimeter/perimeter
         if: matrix.env.build_type == 'Release'
