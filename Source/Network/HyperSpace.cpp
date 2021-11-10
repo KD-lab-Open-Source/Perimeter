@@ -823,14 +823,14 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				netCommand4C_SaveLog nc(in_buffer);
 
-                std::string crash_dir = GET_PREF_PATH();
+                std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
                 terminate_with_char(crash_dir, PATH_SEP);
-                crash_dir += std::string(CRASH_DIR)
-                        + PATH_SEP + pNetCenter->m_GameName
+                crash_dir += pNetCenter->m_GameName
                         + "_" + pNetCenter->m_PlayerName
-                        + "_" + std::to_string(clocki())
+                        + "_" + std::to_string(time(nullptr))
                         + PATH_SEP;
                 std::filesystem::create_directories(crash_dir);
+                scan_resource_paths(crash_dir);
 
                 //Write net log
 				XStream f(crash_dir + "netlog.txt", XS_OUT);
@@ -841,13 +841,13 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 				writeLogList2File(f);
 				f.close();
 
-                //Attempt to save reel
-                universe()->savePlayReel((crash_dir + "reel").c_str());
-
                 //Attempt to save state
                 MissionDescription& mission = gameShell->CurrentMission;
                 mission.setSaveName((crash_dir + "save").c_str());
                 universe()->universalSave(mission, true);
+
+                //Attempt to save reel
+                universe()->savePlayReel((crash_dir + "reel").c_str());
                 
                 fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
 				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_DESYNC);

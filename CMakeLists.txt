@@ -154,6 +154,12 @@ IF(MSVC_CL_BUILD)
     add_compile_options(/fp:precise)
 ELSE()
     add_compile_options(-fno-fast-math)
+    
+    #Enable SSE/SSE2 in x86 arch
+    IF (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
+        MESSAGE("CPU is x86 type, using SSE")
+        add_compile_options(-mfpmath=sse -msse -msse2)
+    ENDIF()
 ENDIF()
 
 IF(NOT MSVC_CL_BUILD)
@@ -190,16 +196,6 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -ftree-vectorize")
     
-    #SSE2 detection
-    SET(HAVE_SIMDSSE OFF)
-    IF (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
-        CHECK_CXX_COMPILER_FLAG("-msse2" HAVE_SIMDSSE)
-    ENDIF()
-    IF(HAVE_SIMDSSE)
-        add_compile_options(-msse -msse2)
-        MESSAGE("Has SSE support")
-    ENDIF()
-
     #TODO remove these once code is more tidy
     add_compile_options(-Wno-misleading-indentation)
     add_compile_options(-Wno-unused-parameter)

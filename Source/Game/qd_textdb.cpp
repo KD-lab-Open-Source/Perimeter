@@ -46,6 +46,7 @@ const char* qdTextDB::getText(const char* text_id) const
         if (!startsWith(id_str, "interface.tips.names.")
          && !startsWith(id_str, "interface.menu.buttonlabels.name")
          && !startsWith(id_str, "mission frames.")
+         && !startsWith(id_str, "mapnames.")
          && !endsWith(id_str, "interface.menu.buttonlabels.")) {
             fprintf(stderr, "getText missing: '%s'\n", id_str.c_str());
         }

@@ -3,7 +3,9 @@
 #include <filesystem>
 #include <csignal>
 #include <sstream>
+#include <vector>
 #include <SDL.h>
+#include "files/files.h"
 
 #ifdef _WIN32 //For Windows specific exHandler code
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
@@ -435,15 +437,14 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
         stream << "Subj: " << subj << std::endl;
     }
 
-    std::string crash_path = GET_PREF_PATH();
-    terminate_with_char(crash_path, PATH_SEP);
+    std::string crash_path = get_content_root_path() + CRASH_DIR;
     std::list<std::string> linesStackTrace;
     stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);
     stream << std::endl << "Please send:" << std::endl <<
            " - This message" << std::endl <<
            " - Log file from " << log_path.c_str() << std::endl <<
-           " - Crash files from " << crash_path << CRASH_DIR << std::endl <<
+           " - Crash files from " << crash_path << std::endl <<
             "To https://t.me/PerimeterGame or https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
     std::string str =  stream.str();
 

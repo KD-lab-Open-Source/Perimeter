@@ -15,7 +15,7 @@ const int NORMAL_QUANT_INTERVAL=100;
 
 SDL_threadID net_thread_id=-1;
 
-const char* PNetCenter::getStrState()
+const char* PNetCenter::getStrState() const
 {
 	switch(m_state){
 	case		PNC_STATE__NONE:

@@ -295,7 +295,7 @@ public:
 	typedef std::vector<PClientData*> ClientMapType;
 
 	e_PNCState m_state;
-	const char* getStrState();
+	const char* getStrState() const;
 
 
 	e_PNCStateClient m_clientState;

@@ -296,10 +296,10 @@ bool PNetCenter::SecondThread(void)
             //Check connection states
             connectionHandler.pollConnections();
 
+            //Host/Client quant
             if (isHost()) {
                 HostReceiveQuant();
             } else {
-                //Client receive quant!
                 ClientPredReceiveQuant();
             }
         }
@@ -803,12 +803,6 @@ end_while_01:;
 		ClearDeletePlayerGameCommand(); /// ???????
 		break;
 	case PNC_STATE__CLIENT_GAME:
-		{
-		}
-		break;
-	case PNC_STATE__END:
-		{
-		}
 		break;
 	case PNC_STATE__NEWHOST_PHASE_0:
 		{
@@ -979,10 +973,13 @@ end_while_01:;
 			}
 		}
 		break;
+    case PNC_STATE__NONE:
+    case PNC_STATE__END:
 	case PNC_STATE__NET_CENTER_CRITICAL_ERROR:
 		{
+            LogMsg("Final state, closing: %s\n", getStrState());
 			//Close(false);
-			//ExecuteInternalCommand(PNC_COMMAND__END, false);
+			ExecuteInternalCommand(PNC_COMMAND__END, false);
 		}
 		break;
 	case PNC_STATE__ENDING_GAME:
@@ -1034,9 +1031,8 @@ void PNetCenter::ClientPredReceiveQuant()
 				cnt++;
 			}
 			else break;
-		}
-		else {
-			xassert(0&&"Commands not from a host!");
+		} else {
+			fprintf(stderr, "Received packet from non-host! %llu", packet->netid);
             delete packet;
 			p=m_InputPacketList.erase(p);
 		}
