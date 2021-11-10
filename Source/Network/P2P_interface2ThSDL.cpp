@@ -11,12 +11,15 @@ uint32_t server_content_crc = 0;
 bool PNetCenter::Init()
 {
     connectionHandler.reset();
-	SetConnectionTimeout(TIMEOUT_DISCONNECT); //30s //3600000
+	
+    SetConnectionTimeout(TIMEOUT_DISCONNECT);
+    
     m_hostNETID = m_localNETID = NETID_NONE;
-    server_arch_mask = 0;
+    
+    server_arch_mask = 0xFF00; //Allow different OSes
     const char* server_arch_mask_str = check_command_line("ServerArchMask");
     if (server_arch_mask_str) {
-        server_arch_mask = ~strtoull(server_arch_mask_str, nullptr, 16);
+        server_arch_mask = strtoull(server_arch_mask_str, nullptr, 16);
     }
     
     //Reset our attributes in case we played before
@@ -82,7 +85,7 @@ bool PNetCenter::Connect() {
         //Send the connection info to server, this provides the client data and other connection info
         NetConnectionInfo connectInfo;
         connectInfo.set(currentShortVersion, gamePassword.c_str(), terGameContentSelect, m_PlayerName.c_str());
-        XBuffer buffer(NetConnectionInfo::getSize());
+        XBuffer buffer(256, true);
         connectInfo.write(buffer);
         connection->send(buffer);
         
@@ -100,6 +103,7 @@ bool PNetCenter::Connect() {
                         connection->state = NC_STATE_ACTIVE;
                         m_hostNETID = response.hostID;
                         m_localNETID = response.clientID;
+                        m_GameName = response.gameName;
                         rc = GameShell::JG_RC_OK;
                         break;
                     case NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE:
@@ -193,7 +197,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
     if (connection->netid == NETID_NONE) {
         fprintf(stderr, "Incoming connection couldn't be allocated\n");
         //Send the reply that game is full and close it without reading connection info
-        response.set(NetConnectionInfoResponse::CR_ERR_GAME_FULL, 0, 0);
+        response.reject(NetConnectionInfoResponse::CR_ERR_GAME_FULL);
     } else {
         //Read incoming data into buffer
         ret = connection->receive(buffer, CONNECTION_HANDSHAKE_TIMEOUT);
@@ -201,7 +205,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
 
     if (ret == 0) {
         fprintf(stderr, "Incoming connection handshake timeout\n");
-        response.set(NetConnectionInfoResponse::CR_NONE, 0, 0);
+        response.reject(NetConnectionInfoResponse::CR_NONE);
     } else if (0 < ret) {
         //Load data
         NetConnectionInfo clientInfo;
@@ -210,9 +214,9 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
         //Check header first in case format changed in future
         if (!clientInfo.isIDCorrect()) {
             fprintf(stderr, "Connection info header ID failed\n");
-            response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE, 0, 0);
+            response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE);
         } else if (!clientInfo.isVersionCorrect(currentShortVersion)) { //Несоответствующая версия игры
-            response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_VERSION, 0, 0);
+            response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_VERSION);
         } else {
             //Read all the info if OK
             clientInfo.read_content(buffer);
@@ -220,20 +224,20 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
             //Check rest
             if (!clientInfo.checkCRCCorrect()) {
                 fprintf(stderr, "Connection info CRC failed\n");
-                response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE, 0, 0);
-            } else if (!clientInfo.isArchCompatible(server_arch_mask)) {
-                response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_ARCH, 0, 0);
+                response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE);
+            } else if (!clientInfo.isArchCompatible(~server_arch_mask)) {
+                response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_ARCH);
             } else if (!clientInfo.isGameContentCompatible(terGameContentSelect, server_content_crc)) {
-                response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT, 0, 0);
+                response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT);
             } else if (m_bStarted) { // Игра запущена
-                response.set(NetConnectionInfoResponse::CR_ERR_GAME_STARTED, 0, 0);
+                response.reject(NetConnectionInfoResponse::CR_ERR_GAME_STARTED);
             } else if ((!gamePassword.empty()) && (!clientInfo.isPasswordCorrect(gamePassword.c_str()))) {
-                response.set(NetConnectionInfoResponse::CR_ERR_INCORRECT_PASWORD, 0, 0);
+                response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_PASWORD);
             } else {
                 //Print warning if arch is diff but was masked
                 if (!clientInfo.isArchCompatible(0)) {
                     fprintf(
-                        stderr, "Arch mismatch! Server %llX Client %llX Mask %llX\n",
+                        stderr, "Arch mismatch, desync may happen! Server %llX Client %llX Mask %llX\n",
                         NetConnectionInfo::computeArchFlags(), clientInfo.getArchFlags(), server_arch_mask
                     );
                 }
@@ -243,9 +247,9 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
                 pd.set(clientInfo.getPlayerName(), connection->netid);
                 int resultIdx = AddClient(pd);
                 if (resultIdx == -1) {// Игра полная
-                    response.set(NetConnectionInfoResponse::CR_ERR_GAME_FULL, 0, 0);
+                    response.reject(NetConnectionInfoResponse::CR_ERR_GAME_FULL);
                 } else {
-                    response.set(NetConnectionInfoResponse::CR_OK, pd.netid, m_hostNETID);
+                    response.accept(NetConnectionInfoResponse::CR_OK, pd.netid, m_hostNETID, m_GameName);
                     connection->state = NC_STATE_ACTIVE;
                 }
             }
@@ -254,7 +258,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
 
     //Respond connection if there is result
     if (response.connectResult != NetConnectionInfoResponse::CR_NONE) {
-        XBuffer responseBuffer(NetConnectionInfoResponse::getSize());
+        XBuffer responseBuffer(256, true);
         response.write(responseBuffer);
         ret = connection->send(responseBuffer);
     }

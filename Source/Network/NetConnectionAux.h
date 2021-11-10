@@ -107,20 +107,6 @@ public:
     
     
     NetConnectionInfo() = default;
-    
-    static size_t getSize() {
-        size_t size = 0;
-        size += sizeof(id);
-        size += sizeof(versionCRC);
-        
-        size += sizeof(arch);
-        size += sizeof(passwordCRC);
-        size += sizeof(gameContent);
-        size += sizeof(attributesCRC);
-        size += sizeof(playerName);
-        size += sizeof(crc);
-        return size;
-    }
 
     void read_header(XBuffer& in) {
         in.read(id);
@@ -216,19 +202,10 @@ struct NetConnectionInfoResponse {
     e_ConnectResult connectResult = CR_NONE;
     NETID clientID = 0;
     NETID hostID = 0;
+    std::string gameName;
     uint32_t crc = 0;
 
     NetConnectionInfoResponse() = default;
-
-    static size_t getSize() {
-        size_t size = 0;
-        size += sizeof(id);
-        size += sizeof(connectResult);
-        size += sizeof(clientID);
-        size += sizeof(hostID);
-        size += sizeof(crc);
-        return size;
-    }
 
     uint32_t calcOwnCRC(){
         uint32_t ownCRC=startCRC32;
@@ -236,6 +213,7 @@ struct NetConnectionInfoResponse {
         ownCRC=crc32((unsigned char*)&connectResult, sizeof(connectResult), ownCRC);
         ownCRC=crc32((unsigned char*)&clientID, sizeof(clientID), ownCRC);
         ownCRC=crc32((unsigned char*)&hostID, sizeof(hostID), ownCRC);
+        ownCRC=crc32((unsigned char*)gameName.c_str(), gameName.length(), ownCRC);
         return ownCRC;
     }
 
@@ -244,6 +222,7 @@ struct NetConnectionInfoResponse {
         in.read(connectResult);
         in.read(clientID);
         in.read(hostID);
+        in > StringInWrapper(gameName);
         in.read(crc);
     }
 
@@ -252,14 +231,25 @@ struct NetConnectionInfoResponse {
         out.write(connectResult);
         out.write(clientID);
         out.write(hostID);
+        out < StringOutWrapper(gameName);
         out.write(crc);
     }
 
-    void set(e_ConnectResult cR, NETID clientID_, NETID hostID_) {
+    void reject(e_ConnectResult cR) {
+        id=NC_INFO_REPLY_ID;
+        connectResult=cR;
+        clientID=0;
+        hostID=0;
+        gameName.clear();
+        crc=calcOwnCRC();
+    }
+
+    void accept(e_ConnectResult cR, NETID clientID_, NETID hostID_, const std::string& gameName_) {
         id=NC_INFO_REPLY_ID;
         connectResult=cR;
         clientID=clientID_;
         hostID=hostID_;
+        gameName=gameName_;
         crc=calcOwnCRC();
     }
 
