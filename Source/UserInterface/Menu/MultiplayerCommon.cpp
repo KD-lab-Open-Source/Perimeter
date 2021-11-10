@@ -198,6 +198,9 @@ int showTerminationToMultiplayerQuant(float, float ) {
             case GameShell::HOST_TERMINATED:
                 textID = "Interface.Menu.Messages.Multiplayer.HostTerminated";
                 break;
+            case GameShell::DESYNC:
+                textID = "Interface.Menu.Messages.Multiplayer.Nonsinchronization";
+                break;
             default:
                 textID = "Interface.Menu.Messages.UnknownError";
         }

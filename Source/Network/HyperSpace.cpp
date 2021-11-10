@@ -850,7 +850,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
                 universe()->universalSave(mission, true);
                 
                 fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
-				//pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED);
+				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_DESYNC);
 			}
 			break;
 

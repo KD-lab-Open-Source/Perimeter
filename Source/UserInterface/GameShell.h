@@ -251,7 +251,8 @@ public:
 	enum GeneralErrorType {
 		GENERAL_CONNECTION_FAILED,
         CLIENT_DROPPED,
-		HOST_TERMINATED
+		HOST_TERMINATED,
+        DESYNC
 	};
 	void generalErrorOccured(GeneralErrorType error);
 
