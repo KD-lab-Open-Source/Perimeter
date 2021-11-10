@@ -255,7 +255,7 @@ void terUnitBase::commandOutcomingLogic(const UnitCommand& commandIn)
         } else {
             //executeCommand(commandIn);
         }
-        universe()->sendCommand(new netCommand4G_UnitCommand(*this, command));
+        universe()->sendCommand(new netCommand4G_UnitCommand(playerID(), *this, command));
     }
 }
 

@@ -84,8 +84,18 @@ void PNetCenter::ClearClients()
 
 //Запускается из 2 и 3-го потока
 /// !!! педается указатель !!! удаление происходит автоматом после осылки !!!
-void PNetCenter::PutGameCommand2Queue_andAutoDelete(netCommandGame* pCommand)
+void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame* pCommand)
 {
+    //Ensure command is from correct sender
+    if (pCommand->EventID != NETCOM_4G_ID_FORCED_DEFEAT) {
+        unsigned int i = pCommand->PlayerID_;
+        if (i < 0 || i >= hostMissionDescription.playerAmountScenarioMax
+            || hostMissionDescription.playersData[i].netid != netid) {
+            LogMsg("Discarding game command from incorrect netid %llu to player %d\n", netid, i);
+            return;
+        }
+    }
+    
 	pCommand->setCurCommandQuantAndCounter(m_numberGameQuant, hostGeneralCommandCounter);
 	m_CommandList.push_back(pCommand);
 	hostGeneralCommandCounter++;

@@ -20,6 +20,7 @@ void terEventControlServerTime::Write(XBuffer& out) const
 bool netCommandGame::operator == (const netCommandGame &secop) const 
 {
 	if(EventID!=secop.EventID) return false;
+    if(PlayerID_!=secop.PlayerID_) return false;
 
 	if(EventID==NETCOM_4G_ID_UNIT_COMMAND){
 		const auto& fop=dynamic_cast<const netCommand4G_UnitCommand&>(*this);

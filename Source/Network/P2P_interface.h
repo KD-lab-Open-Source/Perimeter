@@ -373,7 +373,7 @@ public:
 //	void QuantTimeProc();
 	//Host !!!
 	void SendEvent(netCommandGeneral& event, NETID destination);
-	void PutGameCommand2Queue_andAutoDelete(netCommandGame* pCommand);
+	void PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame* pCommand);
 
 
 ///	void SetGameSpeedScale(float scale, NETID netidFrom);

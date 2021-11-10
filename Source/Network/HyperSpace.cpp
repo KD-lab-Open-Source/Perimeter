@@ -374,21 +374,22 @@ bool terHyperSpace::MultiQuant()
 		for(; p!=fullListGameCommands.end(); p++) {
 			if((*p)->curCommandQuant_ != currentQuant ) break; //проверка на конец команд кванта
 			if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND){
-				netCommand4G_UnitCommand* pNC_UnitCommant=static_cast<netCommand4G_UnitCommand*>(*p);
+				netCommand4G_UnitCommand* pNC_UnitCommant=dynamic_cast<netCommand4G_UnitCommand*>(*p);
 				receiveCommand(*pNC_UnitCommant);
+                log_var(pNC_UnitCommant->PlayerID_);
 				log_var(pNC_UnitCommant->unitCommand().commandID());
 				log_var(pNC_UnitCommant->unitCommand().position());
 			}
 			else if((*p)->EventID==NETCOM_4G_ID_REGION){
-				netCommand4G_Region* pNC_Region=static_cast<netCommand4G_Region*>(*p);
+				netCommand4G_Region* pNC_Region=dynamic_cast<netCommand4G_Region*>(*p);
 				receiveCommand(*pNC_Region);
-				log_var(pNC_Region->playerID_);
+				log_var(pNC_Region->PlayerID_);
 			}
 			else if((*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
 				///
-				netCommand4G_ForcedDefeat* pNC_ForceDefeate=static_cast<netCommand4G_ForcedDefeat*>(*p);
-				forcedDefeat(pNC_ForceDefeate->userID);
-				log_var(pNC_ForceDefeate->userID);
+				netCommand4G_ForcedDefeat* pNC_ForceDefeate=dynamic_cast<netCommand4G_ForcedDefeat*>(*p);
+				forcedDefeat(pNC_ForceDefeate->PlayerID_);
+				log_var(pNC_ForceDefeate->PlayerID_);
 			}
 			else xassert(0&&"Incorrect net comman in fullListGameCommands");
 		}
@@ -500,20 +501,21 @@ bool terHyperSpace::SingleQuant()
 		for(p=curRePlayPosition; p!=replayListGameCommands.end(); p++){
 			if((*p)->curCommandQuant_==currentQuant){
 				if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND){
-					netCommand4G_UnitCommand* pNC_UnitCommant=static_cast<netCommand4G_UnitCommand*>(*p);
+					netCommand4G_UnitCommand* pNC_UnitCommant=dynamic_cast<netCommand4G_UnitCommand*>(*p);
 					receiveCommand(*pNC_UnitCommant);
+                    log_var(pNC_UnitCommant->PlayerID_);
 					log_var(pNC_UnitCommant->unitCommand().commandID());
 					log_var(pNC_UnitCommant->unitCommand().position());
 				}
 				else if((*p)->EventID==NETCOM_4G_ID_REGION){
-					netCommand4G_Region* pNC_Region=static_cast<netCommand4G_Region*>(*p);
+					netCommand4G_Region* pNC_Region=dynamic_cast<netCommand4G_Region*>(*p);
 					receiveCommand(*pNC_Region);
-					log_var(pNC_Region->playerID_);
+					log_var(pNC_Region->PlayerID_);
 				}
 				else if((*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
-					netCommand4G_ForcedDefeat* pNC_ForceDefeate=static_cast<netCommand4G_ForcedDefeat*>(*p);
-					forcedDefeat(pNC_ForceDefeate->userID);
-					log_var(pNC_ForceDefeate->userID);
+					netCommand4G_ForcedDefeat* pNC_ForceDefeate=dynamic_cast<netCommand4G_ForcedDefeat*>(*p);
+					forcedDefeat(pNC_ForceDefeate->PlayerID_);
+					log_var(pNC_ForceDefeate->PlayerID_);
 				}
 
 				else xassert(0&&"Incorrect net comman in replayListGameCommands");
@@ -534,20 +536,21 @@ bool terHyperSpace::SingleQuant()
 		for(curGameComPosition; curGameComPosition<fullListGameCommands.size(); curGameComPosition++){
 			if(fullListGameCommands[curGameComPosition]->curCommandQuant_==currentQuant){
 				if(fullListGameCommands[curGameComPosition]->EventID==NETCOM_4G_ID_UNIT_COMMAND){
-					netCommand4G_UnitCommand* pNC_UnitCommant=static_cast<netCommand4G_UnitCommand*>(fullListGameCommands[curGameComPosition]);
+					netCommand4G_UnitCommand* pNC_UnitCommant=dynamic_cast<netCommand4G_UnitCommand*>(fullListGameCommands[curGameComPosition]);
 					receiveCommand(*pNC_UnitCommant);
+                    log_var(pNC_UnitCommant->PlayerID_);
 					log_var(pNC_UnitCommant->unitCommand().commandID());
 					log_var(pNC_UnitCommant->unitCommand().position());
 				}
 				else if(fullListGameCommands[curGameComPosition]->EventID==NETCOM_4G_ID_REGION){
-					netCommand4G_Region* pNC_Region=static_cast<netCommand4G_Region*>(fullListGameCommands[curGameComPosition]);
+					netCommand4G_Region* pNC_Region=dynamic_cast<netCommand4G_Region*>(fullListGameCommands[curGameComPosition]);
 					receiveCommand(*pNC_Region);
-					log_var(pNC_Region->playerID_);
+					log_var(pNC_Region->PlayerID_);
 				}
 				else if(fullListGameCommands[curGameComPosition]->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
-					netCommand4G_ForcedDefeat* pNC_ForceDefeate=static_cast<netCommand4G_ForcedDefeat*>(fullListGameCommands[curGameComPosition]);
-					forcedDefeat(pNC_ForceDefeate->userID);
-					log_var(pNC_ForceDefeate->userID);
+					netCommand4G_ForcedDefeat* pNC_ForceDefeate=dynamic_cast<netCommand4G_ForcedDefeat*>(fullListGameCommands[curGameComPosition]);
+					forcedDefeat(pNC_ForceDefeate->PlayerID_);
+					log_var(pNC_ForceDefeate->PlayerID_);
 				}
 				else xassert(0&&"Incorrect net comman in fullListGameCommands");
 			}
@@ -846,8 +849,8 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
                 mission.setSaveName((crash_dir + "save").c_str());
                 universe()->universalSave(mission, true);
                 
-                ErrH.ShowErrorMessage(("Error network synchronization, dumped at: " + crash_dir).c_str());
-				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED);
+                fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
+				//pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED);
 			}
 			break;
 

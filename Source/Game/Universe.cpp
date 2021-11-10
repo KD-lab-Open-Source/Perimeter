@@ -470,7 +470,7 @@ void terUniverse::ShowInfo()
 
 void terUniverse::receiveCommand(const netCommand4G_Region& reg)
 {
-	terPlayer* player = findPlayer(reg.playerID_);
+	terPlayer* player = findPlayer(reg.PlayerID_);
 	if (player) {
 		player->incomingCommandRegion(reg);
 		if (player->shouldIgnoreIntfCommands() && player == activePlayer()) {

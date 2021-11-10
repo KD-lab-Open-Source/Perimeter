@@ -730,7 +730,7 @@ end_while_01:;
 			//перенесение всех команд удаления в список комманд на выполнение
 			std::list<netCommand4G_ForcedDefeat*>::iterator p;
 			for(p=m_DeletePlayerCommand.begin(); p!=m_DeletePlayerCommand.end(); p++){
-				PutGameCommand2Queue_andAutoDelete(*p);
+				PutGameCommand2Queue_andAutoDelete(m_hostNETID, *p);
 			}
 			m_DeletePlayerCommand.clear();
 
@@ -1243,20 +1243,14 @@ void PNetCenter::HostReceiveQuant()
 
 					case NETCOM_4G_ID_UNIT_COMMAND:
 						{
-							netCommand4G_UnitCommand * pCommand = new netCommand4G_UnitCommand(in_HostBuf);
-							//pCommand->setCurCommandQuant(m_numberGameQuant);
-							//m_CommandList.push_back(pCommand);
-							//m_nQuantCommandCounter++;
-							PutGameCommand2Queue_andAutoDelete(pCommand);
+							netCommand4G_UnitCommand* pCommand = new netCommand4G_UnitCommand(in_HostBuf);
+							PutGameCommand2Queue_andAutoDelete(netid, pCommand);
 						}
 						break;
 					case NETCOM_4G_ID_REGION:
 						{
 							netCommand4G_Region* pCommand=new netCommand4G_Region(in_HostBuf);
-							//pCommand->setCurCommandQuant(m_numberGameQuant);
-							//m_CommandList.push_back(pCommand);
-							//m_nQuantCommandCounter++;
-							PutGameCommand2Queue_andAutoDelete(pCommand);
+							PutGameCommand2Queue_andAutoDelete(netid, pCommand);
 						}
 						break;
 					case NETCOM_4H_ID_BACK_GAME_INFORMATION:

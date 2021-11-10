@@ -156,14 +156,16 @@ struct netCommand4C_StartLoadGame : netCommandGeneral {
 //////////////////////////////////////////////////////////////////////////////////////////////
 class netCommandGame : public netCommandGeneral {
 public:
+    unsigned int PlayerID_ = 0;
     unsigned int curCommandQuant_ = -1;
     unsigned int curCommandCounter_ = -1;
     bool flag_lastCommandInQuant_ = false;
     
-	explicit netCommandGame(terEventID event_id) : netCommandGeneral(event_id) {
+	explicit netCommandGame(unsigned int playerID, terEventID event_id) : netCommandGeneral(event_id), PlayerID_(playerID) {
 	}
 
-    explicit netCommandGame(terEventID event_id, XBuffer& in) : netCommandGame(event_id) {
+    explicit netCommandGame(terEventID event_id, XBuffer& in) : netCommandGame(0, event_id) {
+        in.read(&PlayerID_, sizeof(PlayerID_));
         in.read(&curCommandQuant_, sizeof(curCommandQuant_));
         in.read(&curCommandCounter_, sizeof(curCommandCounter_));
         in.read(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
@@ -180,6 +182,7 @@ public:
 	bool operator == (const netCommandGame &secop) const;
     
     void Write(XBuffer& out) const override {
+        out.write(&PlayerID_, sizeof(PlayerID_));
         out.write(&curCommandQuant_, sizeof(curCommandQuant_));
         out.write(&curCommandCounter_, sizeof(curCommandCounter_));
         out.write(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
@@ -190,34 +193,29 @@ public:
 class netCommand4G_ForcedDefeat : public netCommandGame
 {
 public:
-    int userID;
 
-	explicit netCommand4G_ForcedDefeat(const int _userID) : netCommandGame(NETCOM_4G_ID_FORCED_DEFEAT){
-		userID=_userID;
+	explicit netCommand4G_ForcedDefeat(unsigned int playerID) : netCommandGame(playerID, NETCOM_4G_ID_FORCED_DEFEAT){
 	}
 
 	explicit netCommand4G_ForcedDefeat(XBuffer& in) : netCommandGame(NETCOM_4G_ID_FORCED_DEFEAT, in){
-        in.read(&userID, sizeof(userID));
 	}
 
 	void Write(XBuffer& out) const override {
         netCommandGame::Write(out);
-        out.write(&userID, sizeof(userID));
 	}
 
     bool operator == (const netCommand4G_ForcedDefeat &secop) const{
         return(curCommandQuant_	==secop.curCommandQuant_		&&
         curCommandCounter_		==secop.curCommandCounter_		&&
-        flag_lastCommandInQuant_==secop.flag_lastCommandInQuant_&&
-        userID					==secop.userID);
+        flag_lastCommandInQuant_==secop.flag_lastCommandInQuant_);
     }
 };
 
 class netCommand4G_UnitCommand : public netCommandGame
 {
 public:
-	netCommand4G_UnitCommand(const terUnitID& owner, const UnitCommand& unitCommand)
-					: netCommandGame(NETCOM_4G_ID_UNIT_COMMAND), owner_(owner), unitCommand_(unitCommand) {
+	netCommand4G_UnitCommand(unsigned int playerID, const terUnitID& owner, const UnitCommand& unitCommand)
+					: netCommandGame(playerID, NETCOM_4G_ID_UNIT_COMMAND), owner_(owner), unitCommand_(unitCommand) {
 	}
 	explicit netCommand4G_UnitCommand(XBuffer& in) : netCommandGame(NETCOM_4G_ID_UNIT_COMMAND, in){
 		in.read(&owner_, sizeof(owner_));
@@ -250,14 +248,12 @@ private:
 
 struct netCommand4G_Region : public netCommandGame {
 public:
-	netCommand4G_Region(unsigned int playerID, XBuffer& out) : netCommandGame(NETCOM_4G_ID_REGION) {
-		playerID_=playerID;
+	netCommand4G_Region(unsigned int playerID, XBuffer& out) : netCommandGame(playerID, NETCOM_4G_ID_REGION) {
 		dataSize_=out.tell();
 		pData_=new unsigned char[dataSize_];
 		memcpy(pData_, out, dataSize_);
 	}
 	netCommand4G_Region(XBuffer& in) : netCommandGame(NETCOM_4G_ID_REGION, in){
-		in.read(&playerID_, sizeof(playerID_));
 		in.read(&dataSize_, sizeof(dataSize_));
 		pData_=new unsigned char[dataSize_];
 		in.read(pData_, dataSize_);
@@ -269,21 +265,18 @@ public:
 	
 	void Write(XBuffer& out) const override {
         netCommandGame::Write(out);
-		out.write(&playerID_, sizeof(playerID_));
 		out.write(&dataSize_, sizeof(dataSize_));
 		out.write(pData_, dataSize_);
 	}
 
 	bool operator == (const netCommand4G_Region &secop) const{
-		return(playerID_			==secop.playerID_					&&
-			curCommandQuant_		==secop.curCommandQuant_			&&
+		return(curCommandQuant_		==secop.curCommandQuant_			&&
 			curCommandCounter_		==secop.curCommandCounter_			&&
 			flag_lastCommandInQuant_==secop.flag_lastCommandInQuant_	&&
 			dataSize_				==secop.dataSize_					&&
 			(memcmp(pData_, secop.pData_, dataSize_)==0) );
 	}
 
-	unsigned int playerID_;
 	unsigned int dataSize_;
 	unsigned char* pData_;
 };
@@ -886,7 +879,6 @@ struct netCommand4C_CurrentMissionDescriptionInfo : netCommandGeneral
 		//missionDescription_.write(out);
 		missionDescription_.simpleWrite(out);
 	}
-
 };
 
 struct netCommand4H_ChangePlayerBelligerent : netCommandGeneral
