@@ -263,16 +263,21 @@ void terPlayer::Quant()
 
 	voiceDispatcher_.quant();
 
-	UnitList::iterator ui;
-	FOR_EACH(Units,ui)
-		if((*ui)->alive()){
-			log_var("Quant");
-			log_var(getEnumName((*ui)->attr().ID));
-			(*ui)->Quant();
-			log_var(vMap.getChAreasInformationCRC());
-			log_var(terLogicRNDfrnd());
-			log_var((*ui)->position());
-		}
+#ifdef _DO_LOG_
+    log_var("PlayerQuant");
+    log_var(playerID());
+	for (auto ui : Units) {
+        if (ui->alive()) {
+            log_var("Quant");
+            log_var(getEnumName(ui->attr().ID));
+            log_var(ui->unitID());
+            ui->Quant();
+            log_var(vMap.getChAreasInformationCRC());
+            log_var(terLogicRNDfrnd());
+            log_var(ui->position());
+        }
+    }
+#endif
 
 	rebuildDefenceMapQuant();
 	chooseEnemyQuant();

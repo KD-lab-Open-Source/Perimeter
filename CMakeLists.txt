@@ -80,6 +80,10 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug)
     SET(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 ENDIF()
 
+#To allow downloading deps
+INCLUDE(FetchContent)
+INCLUDE(ExternalProject)
+
 # Dependencies
 FIND_PACKAGE(Boost REQUIRED)
 IF(MSVC_CL_BUILD)

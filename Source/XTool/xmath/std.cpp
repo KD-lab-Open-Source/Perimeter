@@ -3,6 +3,7 @@
 #include "xmath.h"
 #include <cmath>
 
+#ifndef XMATH_USE_GAMEMATH
 namespace xm {
     double floor(double x) { return std::floor(x); }    
     double ceil(double x) { return std::ceil(x); }    
@@ -29,3 +30,4 @@ namespace xm {
     float fmod(float x, float y) { return std::fmod(x, y); };
     double pow(double x, double y) { return std::pow(x, y); };
 }
+#endif

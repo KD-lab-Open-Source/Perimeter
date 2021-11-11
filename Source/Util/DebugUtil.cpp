@@ -176,10 +176,10 @@ void ShowDispatcher::draw()
 //			Watch System
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-std::ostrstream& watch_buffer()
+XBuffer& watch_buffer()
 {
 	const int buffer_size = 10000;
-	static std::ostrstream buffer(new char[buffer_size], buffer_size);
+	static XBuffer buffer(buffer_size);
 	return buffer;
 }
 

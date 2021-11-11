@@ -92,7 +92,15 @@ struct XBuffer
     template<typename T>
     XBuffer& operator<= (T var) {
         std::string str = std::to_string(var);
-        write(str.c_str(), str.length(), 0);
+        write(str.c_str(), str.length(), false);
+        return *this;
+    }
+    XBuffer& operator<= (const char* var) {
+        write(var, strlen(var), false);
+        return *this;
+    }
+    XBuffer& operator<= (const std::string& var) {
+        write(var.c_str(), var.length(), false);
         return *this;
     }
 	XBuffer& operator<= (float);

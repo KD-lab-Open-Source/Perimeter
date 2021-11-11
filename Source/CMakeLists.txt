@@ -21,9 +21,6 @@ ENDIF()
 
 IF(NOT PERIMETER_WINDOWS)
     #Non Windows target specifics
-    
-    INCLUDE(FetchContent)
-    INCLUDE(ExternalProject)    
 
     #pevents retrieval
     FetchContent_Declare(pevents

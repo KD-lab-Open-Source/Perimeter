@@ -11,7 +11,7 @@
 
 #include "tweaks.h"
 
-#define _XMATH_USE_IOSTREAM
+//#define _XMATH_USE_IOSTREAM
 
 #ifdef _XMATH_USE_IOSTREAM
 #include <iostream>
@@ -85,6 +85,9 @@ const int INT_INF = 0x7fffffff;
 ///////////////////////////////////////////////////////////////////////////////
 //	math lib functions glue
 ///////////////////////////////////////////////////////////////////////////////
+
+//Use gamemath instead of stdlib
+#define XMATH_USE_GAMEMATH
 
 namespace xm {
     //Math functions

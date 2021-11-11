@@ -1032,7 +1032,7 @@ void PNetCenter::ClientPredReceiveQuant()
 			}
 			else break;
 		} else {
-			fprintf(stderr, "Received packet from non-host! %llu", packet->netid);
+			fprintf(stderr, "Received packet from non-host! %llu\n", packet->netid);
             delete packet;
 			p=m_InputPacketList.erase(p);
 		}
