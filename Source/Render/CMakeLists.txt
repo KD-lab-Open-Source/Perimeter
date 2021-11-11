@@ -78,5 +78,6 @@ ENDIF()
 SET(Render_LINK_LIBS PluginMAX)
 
 ADD_LIBRARY(Render STATIC ${Render_SRCS})
+target_compile_options(Render PUBLIC ${PERIMETER_COMPILE_OPTIONS})
 
 TARGET_LINK_LIBRARIES(Render ${Render_LINK_LIBS})

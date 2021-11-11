@@ -142,6 +142,7 @@ INCLUDE_DIRECTORIES(SYSTEM
     ${SDL2_MIXER_INCLUDE_DIR}
     ${SDL2_NET_INCLUDE_DIR}
 )
+SET(PERIMETER_COMPILE_OPTIONS)
 
 IF(FFMPEG_FOUND)
     #FFMPEG is found
@@ -182,7 +183,7 @@ IF(NOT MSVC_CL_BUILD)
         add_compile_options(-Werror=unused-command-line-argument)
     ENDIF()
     INCLUDE(CheckCXXCompilerFlag)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-non-virtual-dtor -Wno-conversion-null")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Werror=delete-non-virtual-dtor -Wno-conversion-null")
     IF(OPTION_LINKER_LLD)
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=lld")
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=lld")
@@ -216,15 +217,12 @@ IF(NOT MSVC_CL_BUILD)
     add_compile_options(-Wno-narrowing)
     add_compile_options(-Wno-write-strings)
     add_compile_options(-Wno-return-type)
-    add_compile_options(-Wno-reorder)
     IF(CLANG)
         add_compile_options(-Wno-reorder-ctor)
     ENDIF()
 
     add_compile_options(-Wno-unknown-pragmas) #TODO we should remove these pragmas?
-    add_compile_options(-Werror=shift-negative-value)
     add_compile_options(-Werror=dangling-else)
-    add_compile_options(-Werror=parentheses)
     add_compile_options(-Werror=return-type)
     # add_compile_options(-Werror=switch) #TODO enable for strict check of switch block
     # add_compile_options(-Werror=write-strings) #TODO enable this again
@@ -232,6 +230,10 @@ IF(NOT MSVC_CL_BUILD)
     if (CLANG)
         add_compile_options(-Werror=mismatched-new-delete )
     endif()
+    
+    #These options may cause issues with external code compilation, so we apply only to our own targets
+    SET(PERIMETER_COMPILE_OPTIONS -Werror=shift-negative-value)
+    SET(PERIMETER_COMPILE_OPTIONS -Werror=parentheses)
 ENDIF()
 
 ADD_DEFINITIONS(-D_PERIMETER_)

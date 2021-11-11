@@ -76,6 +76,7 @@ SET(TriggerEditor_SRCS
 ADD_DEFINITIONS(-D_TRIGGER_EDITOR)
 
 ADD_LIBRARY(TriggerEditor STATIC ${TriggerEditor_SRCS})
+target_compile_options(TriggerEditor PUBLIC ${PERIMETER_COMPILE_OPTIONS})
 
 TARGET_LINK_LIBRARIES(TriggerEditor
         ${BOOST_LIBRARY}

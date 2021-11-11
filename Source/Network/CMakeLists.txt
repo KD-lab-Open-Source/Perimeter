@@ -28,3 +28,4 @@ SET(Network_SRCS
 )
 
 ADD_LIBRARY(Network STATIC ${Network_SRCS})
+target_compile_options(Network PUBLIC ${PERIMETER_COMPILE_OPTIONS})
