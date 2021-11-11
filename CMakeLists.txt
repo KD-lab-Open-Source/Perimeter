@@ -153,7 +153,7 @@ ENDIF()
 IF(MSVC_CL_BUILD)
     add_compile_options(/fp:precise)
 ELSE()
-    add_compile_options(-fno-fast-math)
+    add_compile_options(-fno-fast-math -ffp-contract=off)
     
     #Enable SSE/SSE2 in x86 arch
     IF (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")

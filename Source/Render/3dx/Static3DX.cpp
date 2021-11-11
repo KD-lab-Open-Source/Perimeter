@@ -1024,7 +1024,7 @@ void cStaticVisibilityChainGroup::CalcBumpST()
 		edge02.set( v2.GetPos().x-v0.GetPos().x, v2.GetTexel().x-v0.GetTexel().x, v2.GetTexel().y-v0.GetTexel().y );
 
 		cp.cross(edge01,edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.GetBumpS().x += -cp.y / cp.x;
 			v0.GetBumpT().x += -cp.z / cp.x;
@@ -1041,7 +1041,7 @@ void cStaticVisibilityChainGroup::CalcBumpST()
 		edge02.set( v2.GetPos().y-v0.GetPos().y, v2.GetTexel().x-v0.GetTexel().x, v2.GetTexel().y-v0.GetTexel().y );
 
 		cp.cross(edge01, edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.GetBumpS().y += -cp.y / cp.x;
 			v0.GetBumpT().y += -cp.z / cp.x;
@@ -1058,7 +1058,7 @@ void cStaticVisibilityChainGroup::CalcBumpST()
 		edge02.set( v2.GetPos().z-v0.GetPos().z, v2.GetTexel().x-v0.GetTexel().x, v2.GetTexel().y-v0.GetTexel().y );
 
 		cp.cross(edge01,edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.GetBumpS().z += -cp.y / cp.x;
 			v0.GetBumpT().z += -cp.z / cp.x;

@@ -169,8 +169,8 @@ void ElasticSphere::getAngles(const Vect3f& point, int& psi, int& theta)
 {
 	Vect3f v;
 	GetGlobalMatrix().invXformPoint(point, v);
-	psi = (int)round(v.psi()*psi_size/(M_PI*2)) & psi_mask;
-	theta = (int)round(v.theta()*theta_size/M_PI) & theta_mask;
+	psi = (int) xm::round(v.psi() * psi_size / (M_PI * 2)) & psi_mask;
+	theta = (int) xm::round(v.theta() * theta_size / M_PI) & theta_mask;
 }	
 
 void ElasticSphere::getPoint(int psi, int theta, Vect3f& point)
@@ -193,12 +193,12 @@ ElasticLink::ElasticLink(ElasticSphere* sphere1_, ElasticSphere* sphere2_)
 	sphere2->getPoint(psi2, theta2, point2);
 	initial_length = point1.distance(point2);
 	thickness_factor = 1;
-	line_size = round(initial_length*oscillating_link_density);
+	line_size = xm::round(initial_length * oscillating_link_density);
 	x_height = new float[2*line_size];
 	x_velocity = x_height + line_size;
 	memset(x_height, 0, 2*line_size*sizeof(float));
 	for(int i = 0; i < line_size; i++)
-		x_height[i] = 20*sin(i*0.25);
+		x_height[i] = 20 * xm::sin(i * 0.25);
 
 	z_axis = point2 - point1;
 	z_axis.Normalize();
@@ -233,7 +233,7 @@ void ElasticLink::evolve()
 	length = max(z_axis.norm(), 0.1f);
 	GetRadius() = 0.5f*length;
 	z_axis /= length;
-	thickness_factor = pow(fabs(initial_length/length), elastic_link_thickness_pow);
+	thickness_factor = xm::pow(xm::abs(initial_length / length), elastic_link_thickness_pow);
 
 	if(dot(z_axis, sphere2->position() - sphere1->position()) < 0)
 		length = -length;

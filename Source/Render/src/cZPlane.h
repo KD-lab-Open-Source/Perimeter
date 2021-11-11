@@ -40,8 +40,8 @@ public:
 	double sfmod(double a,double b)
 	{
 		if(a>0)
-			return fmod(a,b);
-		return b-fmod(-a,b);
+			return xm::fmod(a,b);
+		return b-xm::fmod(-a,b);
 	}
 };
 

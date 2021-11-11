@@ -52,8 +52,8 @@ void LagStatistic::NextLogicQuant()
 void LagStatistic::Show()
 {
 	MTAuto lock(&lock_lag);
-	int x=round(terScreenSizeX*0.85f);
-	int y=round(terScreenSizeY*0.1f);
+	int x= xm::round(terScreenSizeX * 0.85f);
+	int y= xm::round(terScreenSizeY * 0.1f);
 	ShowAverage(Vect2i(x,y),max_average_interval);
 }
 
@@ -90,7 +90,7 @@ void LagStatistic::ShowAverage(Vect2i pos,int interval)
 
 	Vect2f bmin,bmax;
 	terRenderDevice->OutTextRect(0,0,"A",-1,bmin,bmax);
-	int height=round(bmax.y-bmin.y);
+	int height= xm::round(bmax.y - bmin.y);
 	char str[128];
 
 	sprintf(str,"lag_quant: %2.2f",lag_quant);
@@ -127,5 +127,5 @@ int LagStatistic::CalcDTime()
 		speed_up=(big_speed_up-small_speed_up)*s+small_speed_up;
 	}
 
-	return round(dtime*speed_up);
+	return xm::round(dtime * speed_up);
 }

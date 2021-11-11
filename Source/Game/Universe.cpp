@@ -1092,7 +1092,7 @@ void terPlayer::CollisionQuant()
 			if(p->collisionGroup() & COLLISION_GROUP_REAL){
 				int x = p->position2D().xi();
 				int y = p->position2D().yi();
-				int r = round(p->radius());
+				int r = xm::round(p->radius());
 				terRealCollisionOperator op(p);
 				universe()->UnitGrid.Scan(x, y, r, op);
 			}
@@ -1127,7 +1127,7 @@ struct terRealHightOperator
 				return;
 
 			b->matrix().invXformPoint(v);
-			if(fabs(v.x) < b->boxMax().x + Radius && fabs(v.y) < b->boxMax().y + Radius){
+			if(xm::abs(v.x) < b->boxMax().x + Radius && fabs(v.y) < b->boxMax().y + Radius){
 				if((b->position().z + b->boxMax().z) > Height)
 					Height = b->position().z + b->boxMax().z;
 			}
@@ -1138,7 +1138,7 @@ struct terRealHightOperator
 float GetRealHeight(float x,float y,float r)
 {
 	terRealHightOperator op(x,y,r);
-	universe()->UnitGrid.Scan(round(x), round(y), round(r), op);
+	universe()->UnitGrid.Scan(xm::round(x), xm::round(y), xm::round(r), op);
 	return op.Height;
 }
 

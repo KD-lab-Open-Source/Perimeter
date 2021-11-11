@@ -180,8 +180,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(POINT from,Heuristic* hr, std::vector<PO
 				{
 					POINT pp;
 					pp=PosBy(parent->parent);
-					xassert(abs(p.x-pp.x)<=1 && 
-						abs(p.y-pp.y)<=1);
+					xassert(xm::abs(p.x - pp.x) <= 1 && xm::abs(p.y - pp.y) <= 1);
 				}
 
 				parent=parent->parent;

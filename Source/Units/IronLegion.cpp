@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 #include "Player.h"
 #include "RealInterpolation.h"
@@ -14,7 +12,7 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeLegionary, "Ëåãèîíåð");
+REGISTER_CLASS(AttributeBase, AttributeLegionary, "Ð›ÐµÐ³Ð¸Ð¾Ð½ÐµÑ€");
 
 AttributeLegionary::AttributeLegionary()
 {
@@ -425,9 +423,9 @@ public:
 
 	void operator()(terUnitBase* unit2)
 	{
-		if(!unit1->isEnemy(unit2) || !unit1->checkFireClass(unit2)) // íåëüçÿ ñòðåëÿòü
+		if(!unit1->isEnemy(unit2) || !unit1->checkFireClass(unit2)) // Ð½ÐµÐ»ÑŒÐ·Ñ ÑÑ‚Ñ€ÐµÐ»ÑÑ‚ÑŒ
 			return;
-		if(unit1->includingCluster() != unit2->includingCluster()) // çàêðûò êóïîëîì
+		if(unit1->includingCluster() != unit2->includingCluster()) // Ð·Ð°ÐºÑ€Ñ‹Ñ‚ ÐºÑƒÐ¿Ð¾Ð»Ð¾Ð¼
 			return;
 		if(unit2->isUnseen())
 			return;
@@ -543,7 +541,7 @@ int CheckFieldLine(const Vect3f& from,const Vect3f& v,float d,int cluster_id)
 		dv *= 1.0f / (float)num;
 		Vect3f p = from;
 		for(int i = 0;i < num;i++){
-			if(FieldCluster::get_cluster_id(field_dispatcher->getIncludingCluster(Vect3f(vMap.XCYCL(round(p.x)),vMap.YCYCL(round(p.y)),p.z))) != cluster_id)
+			if(FieldCluster::get_cluster_id(field_dispatcher->getIncludingCluster(Vect3f(vMap.XCYCL(xm::round(p.x)),vMap.YCYCL(xm::round(p.y)),p.z))) != cluster_id)
 				return 0;
 			p += dv;
 		}
@@ -561,13 +559,13 @@ int CheckShotLine(const Vect3f& from,const Vect3f& to)
 	int step,max_step;	
 	int x0,y0,x1,y1,z0,z1;
 	
-	x0 = (int)round(from.x) >> kmGrid;
-	y0 = (int)round(from.y) >> kmGrid;
-	z0 = (int)round(from.z);
+	x0 = (int)xm::round(from.x) >> kmGrid;
+	y0 = (int)xm::round(from.y) >> kmGrid;
+	z0 = (int)xm::round(from.z);
 	
-	x1 = (int)round(to.x) >> kmGrid;
-	y1 = (int)round(to.y) >> kmGrid;
-	z1 = (int)round(to.z);
+	x1 = (int)xm::round(to.x) >> kmGrid;
+	y1 = (int)xm::round(to.y) >> kmGrid;
+	z1 = (int)xm::round(to.z);
 	
 	dx = x1 - x0;
 	dy = y1 - y0;
@@ -576,7 +574,7 @@ int CheckShotLine(const Vect3f& from,const Vect3f& to)
 	if(!dx && !dy)
 		return 1;
 	
-	if(abs(dx) > abs(dy)){
+	if(xm::abs(dx) > xm::abs(dy)){
 		if(dx > 0){
 			max_step = dx;
 			dy = (dy << PERIMETER_PATH_FIND_SHOOT_SHIFT) / max_step;

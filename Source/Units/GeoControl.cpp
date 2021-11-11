@@ -157,12 +157,12 @@ void terGeoControl::ShowInfo()
 		terRenderDevice->SetFont(gameShell->debugFont());
 		if(selected())
 		{
-			terRenderDevice->OutText(round(e.x),round(e.y),"Geo",sColor4f(1.0f,1.0f,1.0f,1.0f));
-			terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,sColor4c(255,255,255,255),0);
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), "Geo", sColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, sColor4c(255, 255, 255, 255), 0);
 		}else
 		{
-			terRenderDevice->OutText(round(e.x),round(e.y),"Geo",sColor4f(1.0f,1.0f,1.0f,0.5f));
-			terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,pathColor,0);
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), "Geo", sColor4f(1.0f, 1.0f, 1.0f, 0.5f));
+			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 		}
 		terRenderDevice->SetFont(0);
 	}
@@ -213,7 +213,7 @@ void terGeoInfluence::Generate(float time)
 	if(mount)
 		return;
 
-	mount=new CGeoInfluence(round(position().x-radius()),round(position().y-radius()),radius()*2,radius()*2);
+	mount=new CGeoInfluence(xm::round(position().x - radius()), xm::round(position().y - radius()), radius() * 2, radius() * 2);
 }
 
 void terGeoInfluence::Stop()
@@ -273,7 +273,7 @@ void terGeoBreak::Generate(float time)
 	if(mount)
 		return;
 
-	mount=new geoBreak1(round(position().x-radius()),round(position().y-radius()),radius(),num_break);
+	mount=new geoBreak1(xm::round(position().x - radius()), xm::round(position().y - radius()), radius(), num_break);
 }
 
 void terGeoBreak::Stop()
@@ -334,7 +334,7 @@ void terGeoFault::Generate(float time)
 	if(mount)
 		return;
 
-	Vect2f p(round(position().x),round(position().y));
+	Vect2f p(xm::round(position().x), xm::round(position().y));
 	mount=new sGeoFault(p,angle*M_PI/180.0f,length);
 }
 
@@ -405,7 +405,7 @@ void terGeoHead::Quant()
 	terGeoControl::Quant();
 	if(mount)
 	{
-		mount->quant(round(position().x),round(position().y));
+		mount->quant(xm::round(position().x), xm::round(position().y));
 	}
 }
 
@@ -415,7 +415,7 @@ void terGeoHead::Generate(float time)
 		return;
 
 	mount=new s_HeadGeoAction;
-	mount->init(round(position().x),round(position().y),radius());
+	mount->init(xm::round(position().x), xm::round(position().y), radius());
 }
 
 void terGeoHead::Stop()

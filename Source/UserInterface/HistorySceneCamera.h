@@ -31,7 +31,7 @@ class CameraPosition {
 
 		static void correctToShortestAngle(float leadingAngle, float* followingAngle) {
 			float d = fmod( *followingAngle - leadingAngle, M_PI * 2.0f );
-			float ad = (float) fabs(d);
+			float ad = (float) xm::abs(d);
 			*followingAngle = leadingAngle + d;
 			if(ad > M_PI) {
 				*followingAngle += (d < 0) ? (2.0f * M_PI) : (-2.0f * M_PI); 

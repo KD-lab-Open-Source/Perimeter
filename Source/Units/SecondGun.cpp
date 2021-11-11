@@ -73,8 +73,8 @@ public:
 		valueMax_ = M_PI * 2.0f;
 	}
 
-	bool operator == (float val) const { return (fabs(getDeltaAngle(val,value_)) <= valuePrecision_); }
-	bool operator != (float val) const { return (fabs(getDeltaAngle(val,value_)) > valuePrecision_); }
+	bool operator == (float val) const { return (xm::abs(getDeltaAngle(val, value_)) <= valuePrecision_); }
+	bool operator != (float val) const { return (xm::abs(getDeltaAngle(val, value_)) > valuePrecision_); }
 
 	bool checkAngle(float angle) const
 	{
@@ -1384,7 +1384,8 @@ bool terWeaponFreezeLaser::fire(const Vect3f& to,terUnitBase* target)
 	xassert(owner());
 
 	if(target){
-		target->SetFreezeCount(round(float(terOfficerFreezeTime)/float(target->damageMolecula().elementCount())));
+		target->SetFreezeCount(
+                xm::round(float(terOfficerFreezeTime) / float(target->damageMolecula().elementCount())));
 		owner()->DestroyLink();
 	}
 
@@ -1500,8 +1501,8 @@ void terWeaponScumHeater::quant()
 			float angle = terLogicRNDfrand()*M_PI*2;
 			float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-			pos.x += dist * cos(angle);
-			pos.y += dist * sin(angle);
+			pos.x += dist * xm::cos(angle);
+			pos.y += dist * xm::sin(angle);
 			pos.z = 0;
 
 			if(field_dispatcher->getIncludingCluster(pos) == owner()->includingCluster()){
@@ -1553,8 +1554,8 @@ void terWeaponConductor::quant()
 				float angle = terLogicRNDfrand()*M_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-				pos.x += dist * cos(angle);
-				pos.y += dist * sin(angle);
+				pos.x += dist * xm::cos(angle);
+				pos.y += dist * xm::sin(angle);
 				pos.z = 0;
 
 				if(field_dispatcher->getIncludingCluster(pos) == owner()->includingCluster()){
@@ -1574,8 +1575,8 @@ void terWeaponConductor::quant()
 				float angle = terLogicRNDfrand()*M_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-				pos.x += dist * cos(angle);
-				pos.y += dist * sin(angle);
+				pos.x += dist * xm::cos(angle);
+				pos.y += dist * xm::sin(angle);
 
 				vect.push_back(To3D(pos));
 			}
@@ -1645,8 +1646,8 @@ void terWeaponScumTwister::quant()
 				float angle = terLogicRNDfrand()*M_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-				pos.x += dist * cos(angle);
-				pos.y += dist * sin(angle);
+				pos.x += dist * xm::cos(angle);
+				pos.y += dist * xm::sin(angle);
 
 				p->setPose(Se3f(QuatF::ID,pos),true);
 				p->Start();
@@ -1750,8 +1751,8 @@ void terWeaponScumSplitter::quant()
 					float angle = terLogicRNDfrand()*M_PI*2;
 					float radius = setup().accuracyRadius * terLogicRNDfrand();
 
-					pos.x += radius * cos(angle);
-					pos.y += radius * sin(angle);
+					pos.x += radius * xm::cos(angle);
+					pos.y += radius * xm::sin(angle);
 
 					missile_->setPose(Se3f(QuatF(angle,Vect3f::K),pos),true);
 					missile_->Start();
@@ -2050,8 +2051,8 @@ bool terWeaponFilthSpot::fire(const Vect3f& to,terUnitBase* target)
 	float angle = terLogicRNDfrand()*M_PI*2;
 	float radius = setup().accuracyRadius * terLogicRNDfrand();
 
-	trg_pos.x += radius * cos(angle);
-	trg_pos.y += radius * sin(angle);
+	trg_pos.x += radius * xm::cos(angle);
+	trg_pos.y += radius * xm::sin(angle);
 
 	p->setParameters(&terFilthMutationsPrm[setup().weaponIndex]);
 	p->setPosition(trg_pos);

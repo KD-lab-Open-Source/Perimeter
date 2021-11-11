@@ -24,7 +24,7 @@ terFilthSwarmRat::terFilthSwarmRat(terFilthSpot* spot,const Vect3f& pos,int atta
 	attack_period=attack_period_;
 	BirthProcessPoint=NULL;
 	if(!terCheckFilthChaos(position) && SpotPoint->initialGeoprocess())
-		BirthProcessPoint = new s_WaspBirthGeoAction(round(position.x),round(position.y), 4);
+		BirthProcessPoint = new s_WaspBirthGeoAction(xm::round(position.x), xm::round(position.y), 4);
 
 	sound.Init("Filth_Move_Rat");
 	sound.SetPos(To3D(pos));
@@ -143,7 +143,8 @@ void terFilthSwarmRat::Quant()
 				if(TargetCount < 0){
 					TargetPosition.x = vMap.H_SIZE / 4 + terLogicRND(vMap.H_SIZE / 2);
 					TargetPosition.y = vMap.V_SIZE / 4 + terLogicRND(vMap.V_SIZE / 2);
-					TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(round(TargetPosition.x)),vMap.YCYCL(round(TargetPosition.y))) >> VX_FRACTION);
+					TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(TargetPosition.x)), vMap.YCYCL(
+                            xm::round(TargetPosition.y))) >> VX_FRACTION);
 					TargetCount = 100;
 				}
 				v = TargetPosition;
@@ -175,8 +176,8 @@ void terFilthSwarmRat::Quant()
 				nv.x = -v2.y;
 				nv.y = v2.x;
 				nv.z = 0;
-				nv *= sinf(DeltaAngle);
-				v2 *= cosf(DeltaAngle);
+				nv *= xm::sin(DeltaAngle);
+				v2 *= xm::cos(DeltaAngle);
 				v = v2;
 				v += nv;
 				v += v1;
@@ -249,7 +250,7 @@ void terFilthSwarmRat::GenerationProcess()
 		v.z = 0;
 		if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE)
 		{
-			if(SpotPoint && SpotPoint->terCheckFilthPoint(round(v.x),round(v.y)))
+			if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y)))
 			{
 				terFilthRat* p = safe_cast<terFilthRat*>(player->buildUnit(GetUnitID()));
 				p->setPose(Se3f(QuatF(terLogicRNDfrand()*M_PI, Vect3f::K), v), false);
@@ -329,7 +330,7 @@ void terFilthRat::Quant()
 	if(free_destroy && !DeathProcessPoint && FilthStatus==FILTH_RAT_STATUS_RUN)
 	{
 		FilthStatus=FILTH_RAT_STATUS_STOP;
-		DeathProcessPoint = c3DSGeoActionCreator::Build(round(position().x),round(position().y), angleZ(),&geo_ant_death);
+		DeathProcessPoint = c3DSGeoActionCreator::Build(xm::round(position().x), xm::round(position().y), angleZ(), &geo_ant_death);
 	}
 
 	if(DeathProcessPoint)
@@ -419,7 +420,7 @@ void terFilthRat::SetFreeDestroy()
 	if(FilthStatus!=FILTH_RAT_STATUS_DEATH)
 	{
 		if(!terCheckFilthChaos(position()))
-			DeathProcessPoint = c3DSGeoActionCreator::Build(round(position().x),round(position().y), angleZ(),&geo_ant_death);
+			DeathProcessPoint = c3DSGeoActionCreator::Build(xm::round(position().x), xm::round(position().y), angleZ(), &geo_ant_death);
 			
 		StartDeath();
 	}

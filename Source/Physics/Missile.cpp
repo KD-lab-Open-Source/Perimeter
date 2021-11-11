@@ -152,12 +152,12 @@ float RigidBodyPrm::calcTurnTheta(float x, float z, float velocity) const
 	float theta = r[0] > upper ? upper : (r[0] < lower ? lower : r[0]);
 	if(minimize_theta){
 		for(int i = 1; i < 4; i++)
-			if(fabs(theta) > fabs(r[i]) && r[i] < upper && r[i] > lower)
+			if(xm::abs(theta) > xm::abs(r[i]) && r[i] < upper && r[i] > lower)
 				theta = r[i];
 		}
 	else
 		for(int i = 1; i < 4; i++)
-			if(fabs(theta) < fabs(r[i]) && r[i] < upper && r[i] > lower)
+			if(xm::abs(theta) < xm::abs(r[i]) && r[i] < upper && r[i] > lower)
 				theta = r[i];
 	return theta;
 }

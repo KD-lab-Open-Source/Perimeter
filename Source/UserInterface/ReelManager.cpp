@@ -175,11 +175,11 @@ void ReelManager::showPictureModal(const char* pictureFileName, int stableTime) 
 */
             int alpha = 0;
             if (timeElapsed <= SPLASH_FADE_IN_TIME) {
-                alpha = round(255.0f * timeElapsed / SPLASH_FADE_IN_TIME);
+                alpha = xm::round(255.0f * timeElapsed / SPLASH_FADE_IN_TIME);
             } else if (stableTime < 0 || timeElapsed <= (SPLASH_FADE_IN_TIME + stableTime)) {
                 alpha = 255;
             } else {
-                alpha = round(255.0f * (maxTime - timeElapsed) / SPLASH_FADE_OUT_TIME);
+                alpha = xm::round(255.0f * (maxTime - timeElapsed) / SPLASH_FADE_OUT_TIME);
             }
             float dy = screenHeight / (float)screenWidth;
             terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,

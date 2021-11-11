@@ -160,7 +160,7 @@ void CWinVGView::OnDraw(CDC* pDC)
 		dt=((double)time-(double)g_CurTime)*m_ScaleTime;
 		if(dt<0 || dt>1000)dt=0;
 		double dtime=gd_CurTime+dt;
-		int int_time=round(dtime);
+		int int_time=xm::round(dtime);
 		
 		FramePhase.AddPhase((float)int_time);
 		gb_Scene->dSetTime((float)int_time);
@@ -200,7 +200,7 @@ void CWinVGView::Draw(bool show_old_model)
 		float r=150;
 		t+=dt*1.5e-3f;
 		MatXf pos=UObj->GetPosition();
-		pos.trans()=target_pos+Vect3f(r*cosf(t),r*sinf(t),0);
+		pos.trans()=target_pos+Vect3f(r*xm::cosf(t),r*xm::sinf(t),0);
 		UObj->SetPosition(pos);
 	}
 */
@@ -751,7 +751,7 @@ void CWinVGView::ObjectControl(Vect3f &dPos,Vect3f &dAngle,float dScale)
 						lobj->SetScale(Scale);
 					}
 
-					if(fabsf(dScale-1.0f)>FLT_EPS)
+					if(xm::fabsf(dScale - 1.0f) > FLT_EPS)
 					{
 						cIUnkClass* unk=*it;
 						cObjectNodeRoot* cur=dynamic_cast<cObjectNodeRoot*>(*it);
@@ -781,9 +781,9 @@ void CWinVGView::ObjectControl(Vect3f &dPos,Vect3f &dAngle,float dScale)
 				teta+=dAngle.z*mul;
 
 				Vect3f d;
-				d.x=cosf(teta)*cosf(alpha);
-				d.y=cosf(teta)*sinf(alpha);
-				d.z=sinf(teta);
+				d.x= xm::cosf(teta) * xm::cosf(alpha);
+				d.y= xm::cosf(teta) * xm::sinf(alpha);
+				d.z= xm::sinf(teta);
 
 				gb_ULight1->SetDirection(d);
 			}
@@ -1116,7 +1116,7 @@ void CWinVGView::OnScreenShoot()
 		return;
 
 	int cx=screenshot_x;
-	int cy=round(cx*(dwScrY/(float)dwScrX));
+	int cy=xm::round(cx*(dwScrY/(float)dwScrX));
 
 	if(gb_IRenderDevice->ChangeSize(cx,cy,RENDERDEVICE_MODE_WINDOW|RENDERDEVICE_MODE_ALPHA|RENDERDEVICE_MODE_RETURNERROR))
 	{

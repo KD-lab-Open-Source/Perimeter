@@ -33,7 +33,7 @@ bool invertmatrix(Mat4f& b)
             }
         }
 		k=kmax;
-		if(!(fabs(fkmax)>epsilon))
+		if(!(xm::fabs(fkmax)>epsilon))
 			return false;
 
         if( k!=i )
@@ -101,14 +101,14 @@ bool invertmatrix(Mat4f& b)
 
         for(;k<n;k++)
         {
-            if( fabs(a[k][i])>fkmax )
+            if(xm::fabs(a[k][i]) > fkmax )
             {
-				fkmax=fabs(a[k][i]);
+				fkmax= xm::fabs(a[k][i]);
 				kmax=k;
             }
         }
 		k=kmax;
-		if(!(fabs(fkmax)>epsilon))
+		if(!(xm::fabs(fkmax) > epsilon))
 			return false;
 
         if( k!=i )

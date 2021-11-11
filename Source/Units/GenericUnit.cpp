@@ -64,9 +64,9 @@ void terUnitGeneric::setPose(const Se3f& pose, bool initPose)
 	terUnitBase::setPose(pose, initPose);
 
 	if(inserted())
-		universe()->UnitGrid.Move(*this, round(position().x), round(position().y), round(radius()));
+		universe()->UnitGrid.Move(*this, xm::round(position().x), xm::round(position().y), xm::round(radius()));
 	else
-		universe()->UnitGrid.Insert(*this, round(position().x), round(position().y), round(radius()));
+		universe()->UnitGrid.Insert(*this, xm::round(position().x), xm::round(position().y), xm::round(radius()));
 }
 
 void terUnitGeneric::Quant()
@@ -129,7 +129,7 @@ void terUnitGeneric::explode()
 		int num = db.count;
 
 		if(db.countRnd == -1)
-			num += round(pow(radius() / 4,1.5f));
+			num += xm::round(pow(radius() / 4, 1.5f));
 		else
 			num += terLogicRND(db.countRnd);
 

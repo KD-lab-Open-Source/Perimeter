@@ -46,7 +46,7 @@ SET(Render_SRCS
         client/SceneClient.cpp
         client/Silicon.cpp
         client/WinVideo.cpp
-        gemsiii/filter.c
+        gemsiii/filter.cpp
         saver/Saver.cpp
         src/cCamera.cpp
         src/Font.cpp

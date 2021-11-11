@@ -23,7 +23,7 @@ terFilthSwarmWorm::terFilthSwarmWorm(terFilthSpot* spot,const Vect3f& pos,int at
 : terFilthSwarm(spot,pos)
 {
 	attack_period=attack_period_;
-	pWorm=new CGeoWorm(round(position.x)-WSXSY05,round(position.y)-WSXSY05);
+	pWorm=new CGeoWorm(xm::round(position.x) - WSXSY05, xm::round(position.y) - WSXSY05);
 
 	speed=2.0f;
 	angle=terLogicRNDfrand()*2*M_PI;
@@ -161,7 +161,7 @@ void terFilthSwarmWorm::Move()
 	if(change_angle<=0)
 	{
 		angle+=terLogicRNDfrnd()*WORM_DANGLE;
-		change_angle=round(WORM_TIME_CHANGE_ANGLE+terLogicRNDfrnd()*WORM_DTIME_CHANGE_ANGLE);
+		change_angle= xm::round(WORM_TIME_CHANGE_ANGLE + terLogicRNDfrnd() * WORM_DTIME_CHANGE_ANGLE);
 	}
 
 	if(TargetPoint)
@@ -171,7 +171,7 @@ void terFilthSwarmWorm::Move()
 
 		a=uncycle(a,angle,2*M_PI);
 
-		Vect2f p(cosf(a),sinf(a)),p1(delta.x,delta.y);
+		Vect2f p(xm::cos(a), xm::sin(a)),p1(delta.x, delta.y);
 		p1.normalize(1);
 		float f=p.dot(p1);
 
@@ -180,27 +180,27 @@ void terFilthSwarmWorm::Move()
 	}else
 		angle=cycle(angle,2*M_PI);
 
-	Vect2f dx(cosf(angle)*speed,sinf(angle)*speed);
+	Vect2f dx(xm::cos(angle) * speed, xm::sin(angle) * speed);
 
 	position.x+=dx.x;
 	position.y+=dx.y;
 
 	position.x=clamp(position.x,0,vMap.H_SIZE);
 	position.y=clamp(position.y,0,vMap.V_SIZE);
-	pWorm->step(round(position.x)-WSXSY05,round(position.y)-WSXSY05,angle);
+	pWorm->step(xm::round(position.x) - WSXSY05, xm::round(position.y) - WSXSY05, angle);
 }
 
 bool terFilthSwarmWorm::isMoveToChaos()
 {
 	float len=WSXSY05;
-	Vect2f dx(cosf(angle)*len,sinf(angle)*len);
+	Vect2f dx(xm::cos(angle) * len, xm::sin(angle) * len);
 
 	Vect3f pos(position.x+dx.x,position.y+dx.y,0);
 	pos=To3D(pos);
 	if(show_filth_debug)
 		show_vector(pos,2,GREEN);
 
-	return terCheckFilthChaos(round(pos.x),round(pos.y));
+	return terCheckFilthChaos(xm::round(pos.x), xm::round(pos.y));
 }
 
 //////////////////////////////////////////////////////////
@@ -240,7 +240,7 @@ void terFilthWorm::StartAttack()
 {
 	setAttack(true);
 
-	pWormOut=new CWormOut(round(position().x),round(position().y));
+	pWormOut=new CWormOut(xm::round(position().x), xm::round(position().y));
 	realAvatar()->setChain(terLogicRND(2)?CHAIN_BUILD1:CHAIN_BUILD2);
 
 	Se3f pos=pose();
@@ -346,7 +346,7 @@ void terFilthWorm::Quant()
 		int end_radius=5;
 		terSphericalCollisionOperatorWorm op(this,end_radius);
 		Vect3f pos=GetEndPos();
-		universe()->UnitGrid.Scan(round(pos.x), round(pos.y), end_radius, op);
+		universe()->UnitGrid.Scan(xm::round(pos.x), xm::round(pos.y), end_radius, op);
 	}
 
 	sound.SetPos(To3D(position()));

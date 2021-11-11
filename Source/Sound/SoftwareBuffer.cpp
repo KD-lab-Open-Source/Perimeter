@@ -164,7 +164,7 @@ void SoftSound3D::RecalculatePos()
 		pSound->volume = 0.0f;
 	} else {
 		float volume_scale;
-		float flDist = sqrtf( flDistSqrd );
+		float flDist = xm::sqrt(flDistSqrd);
 		if( flDist <= min_distance )
 			volume_scale = 1.0;
 		else if( flDist >= max_distance )
@@ -202,7 +202,7 @@ void SoftSound3D::RecalculatePos()
             //TODO review if this is correct compared to original DS code
             /*
             const int mulpan=3900;
-            int lPan = round( 2*mulpan * pan_scale );
+            int lPan = xm::round( 2*mulpan * pan_scale );
             lPan = clamp( lPan, -mulpan,mulpan);
             pSound->SetPan(lPan );
             */
@@ -239,7 +239,7 @@ void SoftSound3D::RecalculatePos()
 				lFrequency = DSBFREQUENCY_MAX - 1;
 			flTemp = ( float )RealFrequency;
 			flFreqAdjust = ( float )( lFrequency - flTemp ) / flTemp;
-			flAbsFreqAdjust = ( float )fabs( flFreqAdjust );
+			flAbsFreqAdjust = ( float )xm::fabs( flFreqAdjust );
 
 
 			if( flAbsFreqAdjust > 2.0 )
@@ -334,7 +334,7 @@ void SoftSound3D::Pause(bool p) {
 	1.0 - стандартное, 0.0 - нет затухания, 10.0 - максимальное
 	Формула по идее встроенная в Listener
 	
-	flScale = 1.0f - (( sqrt(dist) - pSound->GetMinDist()) / ( pSound0->GetMaxDist() - pSound->GetMinDist()));
+	flScale = 1.0f - (( xm::sqrt(dist) - pSound->GetMinDist()) / ( pSound0->GetMaxDist() - pSound->GetMinDist()));
 	flScale *= g_pSoundMgr->m_fRolloffFactor;
 	flScale - умножается на громкость звука, 
 	dist - расстояние от звука до слушателя
@@ -352,7 +352,7 @@ void SoftSound3D::Pause(bool p) {
 		lFrequency = DSBFREQUENCY_MAX - 1;
 	flTemp = ( float )pInstance->GetFrequency( );
 	flFreqAdjust = ( float )( lFrequency - flTemp ) / flTemp;
-	flAbsFreqAdjust = ( float )fabs( flFreqAdjust );
+	flAbsFreqAdjust = ( float )xm::fabs( flFreqAdjust );
 
 
 	if( flAbsFreqAdjust > 2.0 )

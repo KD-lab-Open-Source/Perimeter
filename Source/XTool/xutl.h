@@ -10,33 +10,6 @@ unsigned int XRnd(unsigned int m);
 void XRndSet(unsigned int m);
 unsigned int XRndGet();
 
-/*
-__forceinline int BitSR(int x)
-{
-	int return_var;
-	_asm {
-		mov eax, x
-		cdq
-		xor eax,edx
-		sub     eax,edx
-		bsr     eax,eax
-		mov [return_var],eax
-	}
-	return return_var;
-}
-*/
-
-// Copied C version from Vangers
-// TODO(amdmi3): very inefficient; rewrite
-inline int BitSR(int x) {
-    unsigned int a = abs(x);
-    for (int i = 31; i > 0; i--)
-        if (a & (1 << i))
-            return i;
-
-    return 0;
-}
-
 void initclock();
 int clocki();
 double clockf();

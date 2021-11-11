@@ -659,9 +659,9 @@ void CShellCursorManager::draw()
 		}
 
 		//сдвиг карты
-		terRenderDevice->DrawSprite(round(terScreenSizeX*cur_x) + dx,round(terScreenSizeY*cur_y) + dy,
-			m_cursors[m_nCursorShift].sx, m_cursors[m_nCursorShift].sy,
-			0, 0, 1, 1, m_cursors[m_nCursorShift].hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
+		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * cur_x) + dx, xm::round(terScreenSizeY * cur_y) + dy,
+                                    m_cursors[m_nCursorShift].sx, m_cursors[m_nCursorShift].sy,
+                                    0, 0, 1, 1, m_cursors[m_nCursorShift].hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
 		return;
 	}
 
@@ -709,9 +709,9 @@ void CShellCursorManager::draw()
         }
 
         //Draw it
-		terRenderDevice->DrawSprite(round(terScreenSizeX*draw_cur_x),round(terScreenSizeY*draw_cur_y),
+		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * draw_cur_x), xm::round(terScreenSizeY * draw_cur_y),
 			fScale*cursor->sx, fScale*cursor->sy,
-			0, 0, 1, 1, cursor->hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
+                                    0, 0, 1, 1, cursor->hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
 
 	    //высота до зерослоя / Text for toolzer
 	    if(!_pShellDispatcher->m_bToolzerSizeChangeMode
@@ -2076,7 +2076,7 @@ void PopupFormatAttack(const AttributeBase* attr, char* cbBuffer, bool gun) {
 		balance += cbTemp;
 	}
 	if (!gun) {
-        int armor = round(attr->intfBalanceData.armor);
+        int armor = xm::round(attr->intfBalanceData.armor);
 		_shellIconManager.FormatMessageText("<armor>", cbTemp, armor );
 		if (balance.empty()) {
 			balance += "\n";
@@ -2201,7 +2201,7 @@ void PopupFormatCore(const AttributeBase* attr, char* cbBuffer, terUnitBase* uni
 }
 void PopupFormatFrame(const AttributeBase* attr, char* cbBuffer, terUnitBase* unit)
 {
-	int spiralLevel = unit ? static_cast<int>(std::round(100 * safe_cast<terFrame*>(unit)->spiralLevel() - 0.5f)) : 0;
+	int spiralLevel = unit ? static_cast<int>(xm::round(100 * safe_cast<terFrame*>(unit)->spiralLevel() - 0.5f)) : 0;
     spiralLevel = std::max(0, spiralLevel);
 	_shellIconManager.FormatMessageText(
 		attr->interfacePrm.popup,
@@ -4288,7 +4288,7 @@ void LogicUpdater::updateMiniMap() {
         //Previously colH was 8, which caused stripped lines when h > 0.10
         int colH = 8;
         if (0 < h) {
-            colH = std::max(0, static_cast<int>(std::floor(8.0 * 0.10f / h)));
+            colH = std::max(0, static_cast<int>(xm::floor(8.0 * 0.10f / h)));
         }
 
 		logicData->miniMapLabels.clear();
@@ -4391,8 +4391,8 @@ void LogicUpdater::updateMiniMap() {
 				}
 
 				if (color.a != 0) {
-					int x = round(pos.x * w);
-					int y = round(pos.y * h);
+					int x = xm::round(pos.x * w);
+					int y = xm::round(pos.y * h);
 					xassert(x < logicData->getWidth() && x >= 0.0f);
 					xassert(y < logicData->getHeight() && y >= 0.0f);
 					terMapClusterRect(x - smallShift, y - smallShift, x + bigShift, y + bigShift, color);

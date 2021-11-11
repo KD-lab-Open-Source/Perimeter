@@ -17,7 +17,7 @@ public:
 
 	inline int IsAnimated()							{ return dcount!=0; }
 	inline float GetPhase()							{ return count; }
-	inline void SetPhase(float phase)				{ count=fmodf(phase+FRAME_PHASE_RANGE,FRAME_PHASE_RANGE); }
+	inline void SetPhase(float phase)				{ count= xm::fmod(phase + FRAME_PHASE_RANGE, FRAME_PHASE_RANGE); }
 	inline float GetPeriod()						{ return dcount ? 1.f/dcount : 0; }
 	inline float GetFinish()						{ return finish; }
 

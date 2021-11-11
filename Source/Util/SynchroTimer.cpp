@@ -28,7 +28,7 @@ void SyncroTimer::adjust()
 
 	if(syncro_by_clock){
 		time_type clock = int_clock();
-		time_type dt = round((clock - clock_prev)*time_speed);
+		time_type dt = xm::round((clock - clock_prev) * time_speed);
 		if(dt > max_time_interval)
 			dt = max_time_interval;
 		time += dt;
@@ -43,7 +43,7 @@ void SyncroTimer::next_frame()
 		adjust();									 
 	else{
 		time_prev = time;
-		time += round(time_per_frame*time_speed);
+		time += xm::round(time_per_frame * time_speed);
 	}
 	calcAverageDelta();
 }
@@ -88,5 +88,5 @@ void SyncroTimer::calcAverageDelta()
 		average_delta=dt;
 	}
 
-	out_delta=round(average_delta);
+	out_delta= xm::round(average_delta);
 }

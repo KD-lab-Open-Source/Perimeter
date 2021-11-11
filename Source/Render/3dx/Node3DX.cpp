@@ -1026,7 +1026,7 @@ bool IntersectSphere(const MatXf& pos,float radius,const Vect3f& p0,const Vect3f
 	float B=d.x*l.x+d.y*l.y+d.z*l.z;
 	float det=B*B-A*C;
 	if(det<0)return false;
-	det=sqrtf(det);
+	det= xm::sqrt(det);
 	float t1=(-B+det)/A;
 	float t2=(-B-det)/A;
 	if((t1>1||t1<0)&&(t2>1||t2<0)) return false;

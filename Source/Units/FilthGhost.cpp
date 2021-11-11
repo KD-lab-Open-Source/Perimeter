@@ -139,8 +139,8 @@ void terFilthSwarmGhost::SnakeMove()
 		terFilthGhost* p=*it;
 
 		Vect3f pos;
-		pos.x=position.x+r*cos(a);
-		pos.y=position.y+r*sin(a);
+		pos.x=position.x+r*xm::cos(a);
+		pos.y=position.y+r*xm::sin(a);
 		pos.z=0;
 		pos=To3D(pos);
 		pos.z+=FILTH_GHOST_HEIGHT;
@@ -173,12 +173,12 @@ void terFilthSwarmGhost::GenerationProcess()
 	a+=da*prev_unit_num;
 
 	for(int i = 0;i < num;i++){
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(position.x),round(position.y))){
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(position.x), xm::round(position.y))){
 			p = safe_cast<terFilthGhost*>(player->buildUnit(GetUnitID()));
 
 			Vect3f pos;
-			pos.x=position.x+r*cos(a);
-			pos.y=position.y+r*sin(a);
+			pos.x=position.x+r*xm::cos(a);
+			pos.y=position.y+r*xm::sin(a);
 			pos.z=0;
 			p->setPose(Se3f(QuatF::ID, pos), false);
 			p->SetAttackPeriod(attack_period);
@@ -371,14 +371,14 @@ void terFilthGhost::Quant()
 			)
 		{
 			GhostHolePoint = new ghostToolzer(16);
-			GhostHolePoint->start(round(position().x),round(position().y));
+			GhostHolePoint->start(xm::round(position().x), xm::round(position().y));
 		}
 	}
 	last_deltaz=dz;
 
 	if(GhostHolePoint)
 	{
-		if(!GhostHolePoint->quant(round(position().x),round(position().y)))
+		if(!GhostHolePoint->quant(xm::round(position().x), xm::round(position().y)))
 		{
 			delete GhostHolePoint;
 			GhostHolePoint = NULL;

@@ -225,10 +225,10 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Util/DebugUtil.cpp
         Util/EditArchive.cpp
         Util/MissionDescription.cpp
-        Util/SaveSQSH-1251.cpp
-        Util/SaveConditions-1251.cpp
-        Util/SaveActions-1251.cpp
-        Util/SaveOthers-1251.cpp
+        Util/SaveSQSH.cpp
+        Util/SaveConditions.cpp
+        Util/SaveActions.cpp
+        Util/SaveOthers.cpp
         Util/Save.cpp
         Util/AVWrapper.cpp
         Util/SynchroTimer.cpp

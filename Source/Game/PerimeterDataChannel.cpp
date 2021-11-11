@@ -89,8 +89,8 @@ void PerimeterDataChannelSave()
 
 	//GameSection
 	ini.putInt("Game", "ShowTips", terShowTips);
-	ini.putInt("Game", "ScrollRate", round(CAMERA_SCROLL_SPEED_DELTA));
-	ini.putFloat("Game", "MouseLookRate", round(CAMERA_MOUSE_ANGLE_SPEED_DELTA));
+	ini.putInt("Game", "ScrollRate", xm::round(CAMERA_SCROLL_SPEED_DELTA));
+	ini.putFloat("Game", "MouseLookRate", xm::round(CAMERA_MOUSE_ANGLE_SPEED_DELTA));
 //	ini.putFloat("Game", "GameSpeed", gameShell->getSpeed());
 	
 	//GraphicsSection
@@ -111,12 +111,12 @@ void PerimeterDataChannelSave()
 //	ini.putInt("Graphics","BPP", terBitPerPixel);
 
 
-//	ini.putInt("Graphics","MapLevelLOD", round(terMapLevelLOD));
+//	ini.putInt("Graphics","MapLevelLOD", xm::round(terMapLevelLOD));
 //	ini.putInt("Graphics","DrawMeshShadow", terDrawMeshShadow);
 //	ini.putInt("Graphics","ShadowType", terShadowType);
 
-	ini.putInt("Graphics","NearDistanceLOD", round(terNearDistanceLOD));
-	ini.putInt("Graphics","FarDistanceLOD", round(terFarDistanceLOD));
+	ini.putInt("Graphics", "NearDistanceLOD", xm::round(terNearDistanceLOD));
+	ini.putInt("Graphics", "FarDistanceLOD", xm::round(terFarDistanceLOD));
 
 
 	ini.putInt("Graphics","MipMapBlur", terMipMapBlur);

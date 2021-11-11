@@ -8,14 +8,11 @@
  *	@author Alexander Porechnov (scm)
  */
 
-#pragma once
-
 #ifndef _TX3D_TEXTURE3DUTILS_H
 #define _TX3D_TEXTURE3DUTILS_H
 
+#include "xmath.h"
 #include "Vector3D.hpp"
-
-#include <cmath>
 
 namespace tx3d {
 
@@ -26,7 +23,7 @@ namespace tx3d {
 			}
 
 			static long round(float f) {
-                return (long) std::round(f);
+                return (long) xm::round(f);
                 /*
 				long res;
 
@@ -40,7 +37,7 @@ namespace tx3d {
 			}
 
 			static void round(float f, long* res) {
-                *res = (long) std::round(f);
+                *res = (long) xm::round(f);
                 /*
 				_asm {
 					fld		f
@@ -50,7 +47,7 @@ namespace tx3d {
 			}
 
 			static long floor(float f) {
-                return (long) std::floor(f);
+                return (long) xm::floor(f);
                 /*
 				long res;
 				float h = 0.5f - 1.e-6f;

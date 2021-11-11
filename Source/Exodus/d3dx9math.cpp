@@ -60,7 +60,7 @@ D3DXVECTOR4* D3DXVec4Transform(D3DXVECTOR4 *out, const D3DXVECTOR4 *pv, const D3
 }
 
 float D3DXVec4Length(D3DXVECTOR4* v) {
-    return (float) sqrt(v->x * v->x + v->y * v->y + v->z * v->z + v->w * v->w);
+    return (float) xm::sqrt(v->x * v->x + v->y * v->y + v->z * v->z + v->w * v->w);
 }
 
 
@@ -209,8 +209,8 @@ D3DXMATRIX * D3DXMatrixLookAtLH(D3DXMATRIX *out, const D3DXVECTOR3 *eye, const D
 //Implementation copied from WINE project d3dx9_36/math.c
 D3DXMATRIX* D3DXMatrixPerspectiveFovLH(D3DXMATRIX *pout, float fovy, float aspect, float zn, float zf) {
     D3DXMatrixIdentity(pout);
-    pout->m[0][0] = 1.0f / (aspect * tanf(fovy/2.0f));
-    pout->m[1][1] = 1.0f / tanf(fovy/2.0f);
+    pout->m[0][0] = 1.0f / (aspect * xm::tan(fovy / 2.0f));
+    pout->m[1][1] = 1.0f / xm::tan(fovy / 2.0f);
     pout->m[2][2] = zf / (zf - zn);
     pout->m[2][3] = 1.0f;
     pout->m[3][2] = (zf * zn) / (zn - zf);

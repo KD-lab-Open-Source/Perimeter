@@ -1410,7 +1410,7 @@ double Compiler::term_f()
 		else
 			if(!strcmp(token_name, "/")){
 				double d = prim_f();
-				if(fabs(d) < 1e-10)
+				if(xm::abs(d) < 1e-10)
 					throw parsing_error("Divide by zero");
 				left /= d;
 				}

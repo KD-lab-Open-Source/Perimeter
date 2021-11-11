@@ -10,7 +10,6 @@
 #define __XMATH_H__
 
 #include "tweaks.h"
-#include <cmath>
 
 #define _XMATH_USE_IOSTREAM
 
@@ -84,19 +83,83 @@ const int INT_INF = 0x7fffffff;
 #define xm_inline FORCEINLINE
 
 ///////////////////////////////////////////////////////////////////////////////
+//	math lib functions glue
+///////////////////////////////////////////////////////////////////////////////
+
+namespace xm {
+    //Math functions
+    double floor(double);
+    double ceil(double);
+    double round(double);
+    int abs(int);
+    float abs(float);
+    double abs(double);
+    double sqrt(double);
+    float sqrt(float);
+    double log(double);
+    double exp(double);
+    double sin(double);
+    float sin(float);
+    double cos(double);
+    float cos(float);
+    double acos(double);
+    float acos(float);
+    double tan(double);
+    float tan(float);
+    float atan(float);
+    double atan2(double, double);
+    float atan2(float, float);
+    double fmod(double, double);
+    float fmod(float, float);
+    double pow(double, double);
+
+    //Helpers for common variations of above functions
+    xm_inline int round(float x) {
+        return static_cast<int>(xm::round(static_cast<double>(x)));
+    }
+    xm_inline float sqrt(int x) {
+        return xm::sqrt(static_cast<float>(x));
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 //
 //  		Scalar Functions
 //
 ///////////////////////////////////////////////////////////////////////////////
+
+/*
+__forceinline int BitSR(int x)
+{
+	int return_var;
+	_asm {
+		mov eax, x
+		cdq
+		xor eax,edx
+		sub     eax,edx
+		bsr     eax,eax
+		mov [return_var],eax
+	}
+	return return_var;
+}
+*/
+// Copied C version from Vangers
+// TODO(amdmi3): very inefficient; rewrite
+inline int BitSR(int x) {
+    unsigned int a = xm::abs(x);
+    for (int i = 31; i > 0; i--)
+        if (a & (1 << i))
+            return i;
+
+    return 0;
+}
 
 template <class T> 
 xm_inline T sqr(const T& x){ return x*x; }
 
 template <class T> 
 xm_inline int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
-
-xm_inline double SIGN(double a, double b) { return b >= 0.0 ? fabs(a) : -fabs(a); }
-xm_inline float SIGN(float a, float b) { return b >= 0.0f ? fabsf(a) : -fabsf(a); }
+xm_inline float SIGNF(float a, float b) { return b >= 0.0f ? xm::abs(a) : -xm::abs(a); }
 
 class RandomGenerator 
 {
@@ -140,6 +203,7 @@ xm_inline double max(double x,double y){ return x > y ? x : y; }
 template <class T> xm_inline T min(const T& a, const T& b, const T& c) { return min(min(a, b), c); }
 template <class T> xm_inline T max(const T& a, const T& b, const T& c) { return max(max(a, b), c); }
 
+/*
 xm_inline int mina(int x,int y){ return abs(x) < abs(y) ? x : y; }
 xm_inline int mina(int x,int y,int z){ return mina(mina(x,y),z); }
 
@@ -155,26 +219,26 @@ xm_inline double maxa(double x,double y,double z){ return maxa(maxa(x,y),z); }
 xm_inline int minAbs(int x,int y){ return abs(x) < abs(y) ? abs(x) : abs(y); }
 xm_inline int minAbs(int x,int y,int z){ return minAbs(minAbs(x,y),z); }
 
-xm_inline int maxAbs(int x,int y){ return abs(x) > abs(y) ? abs(x) : abs(y); }
+xm_inline int maxAbs(int x,int y){ return xm::abs(x) > abs(y) ? abs(x) : abs(y); }
 xm_inline int maxAbs(int x,int y,int z){ return maxAbs(maxAbs(x,y),z); }
 
 xm_inline double minAbs(double x,double y){ return fabs(x) < fabs(y) ? fabs(x) : fabs(y); }
 xm_inline double minAbs(double x,double y,double z){ return minAbs(minAbs(x,y),z); }
 
-xm_inline double maxAbs(double x,double y){ return fabs(x) > fabs(y) ? fabs(x) : fabs(y); }
+xm_inline double maxAbs(double x,double y){ return fabs(x) > xm::fabs(y) ? fabs(x) : fabs(y); }
 xm_inline double maxAbs(double x,double y,double z){ return maxAbs(maxAbs(x,y),z); }
-
+*/
 
 xm_inline void average(double& x_avr, double x, double tau){ x_avr = x_avr*(1. - tau) + tau*x; }
-xm_inline void average(double& x_avr, double x, double tau, double factor){ tau = pow(tau, factor); x_avr = x_avr*(1. - tau) + tau*x; }
+xm_inline void average(double& x_avr, double x, double tau, double factor){ tau = xm::pow(tau, factor); x_avr = x_avr*(1. - tau) + tau*x; }
 xm_inline void average(float& x_avr, float x, float tau){ x_avr = x_avr*(1.f - tau) + tau*x; }
-xm_inline void average(float& x_avr, float x, float tau, float factor){ tau = (float)pow(tau, factor); x_avr = x_avr*(1.f - tau) + tau*x; }
+xm_inline void average(float& x_avr, float x, float tau, float factor){ tau = (float)xm::pow(tau, factor); x_avr = x_avr*(1.f - tau) + tau*x; }
 
 #define G2R(x) ((x)*M_PI/180.f)  
 #define R2G(x) ((x)*180.f/M_PI)
 
-xm_inline float Acos(float  x){ return x > 1.f ? 0 : (x < -1.f ? M_PI : acosf(x)); }
-xm_inline double Acos(double  x){ return x > 1. ? 0 : (x < -1. ? M_PI : acos(x)); }
+//xm_inline float Acos(float  x){ return x > 1.f ? 0 : (x < -1.f ? M_PI : acosf(x)); }
+xm_inline double Acos(double  x){ return x > 1. ? 0 : (x < -1. ? M_PI : xm::acos(x)); }
 
 template<class T, class T1, class T2> 
 xm_inline T clamp(const T& x, const T1& xmin, const T2& xmax) { if(x < xmin) return xmin; if(x > xmax) return xmax; return x; }
@@ -204,8 +268,8 @@ public:
 	xm_inline Vect2f& set(float x_, float y_)			{ x = x_; y = y_; return *this; }
 	xm_inline Vect2f operator - () const				{ return Vect2f(-x,-y); }
 
-	xm_inline int xi() const { return round(x); }
-	xm_inline int yi() const { return round(y); }
+	xm_inline int xi() const { return xm::round(x); }
+	xm_inline int yi() const { return xm::round(y); }
 
 	xm_inline const float& operator[](int i) const			{ return *(&x + i); }
 	xm_inline float& operator[](int i)						{ return *(&x + i); }
@@ -223,7 +287,8 @@ public:
 	xm_inline Vect2f operator * (float f)	const		{ return Vect2f(*this) *= f; }
 	xm_inline Vect2f operator / (float f)	const		{ return Vect2f(*this) /= f; }
 
-	xm_inline bool eq(const Vect2f &v, float delta = FLT_COMPARE_TOLERANCE) const { return fabsf(v.x - x) < delta && fabsf(v.y - y) < delta; }
+	xm_inline bool eq(const Vect2f &v, float delta = FLT_COMPARE_TOLERANCE) const { return xm::abs(v.x - x) < delta &&
+                xm::abs(v.y - y) < delta; }
     xm_inline int operator== (const Vect2f& v) const { return eq(v); };
     xm_inline int operator!= (const Vect2f& v) const { return !eq(v); };
 
@@ -232,11 +297,11 @@ public:
 
 	xm_inline float operator % (const Vect2f &v) const { return x*v.y - y*v.x; }
 
-	xm_inline float norm()	const						{ return sqrtf(x*x + y*y); }
+	xm_inline float norm()	const						{ return xm::sqrt(x * x + y * y); }
 	xm_inline float norm2() const						{ return x*x + y*y; }
-	xm_inline void normalize(float norma)				{ float f = norma/sqrtf(x*x + y*y); x *= f; y *= f; }
-	xm_inline void Normalize(float norma)				{ float f = sqrtf(x*x + y*y); if(f > FLT_EPS){ f = norma/f; x *= f; y *= f; } }
-	xm_inline float distance(const Vect2f &v) const	{ return sqrtf(distance2(v)); }
+	xm_inline void normalize(float norma)				{ float f = norma/ xm::sqrt(x * x + y * y); x *= f; y *= f; }
+	xm_inline void Normalize(float norma)				{ float f = xm::sqrt(x * x + y * y); if(f > FLT_EPS){ f = norma / f; x *= f; y *= f; } }
+	xm_inline float distance(const Vect2f &v) const	{ return xm::sqrt(distance2(v)); }
 	xm_inline float distance2(const Vect2f &v) const	{ float dx = x - v.x, dy = y - v.y; return dx*dx + dy*dy; }
 
 	xm_inline void swap(Vect2f &v)					{ Vect2f tmp = v; v = *this; *this = tmp; }
@@ -278,13 +343,13 @@ public:
 
 	xm_inline Vect2i()								{ }
 	xm_inline Vect2i(int x_, int y_)						{ x = x_; y = y_; }
-	xm_inline Vect2i(float x_, float y_)					{ x = round(x_); y = round(y_); }
+	xm_inline Vect2i(float x_, float y_)					{ x = xm::round(x_); y = xm::round(y_); }
 	
-	xm_inline Vect2i(const Vect2f& v)			{ x = round(v.x); y = round(v.y); }
+	xm_inline Vect2i(const Vect2f& v)			{ x = xm::round(v.x); y = xm::round(v.y); }
 	xm_inline Vect2i(const Vect2s& v);
 
 	xm_inline void set(int x_, int y_)					{ x = x_; y=y_; }
-	xm_inline void set(float x_, float y_)				{ x = round(x_); y = round(y_); }
+	xm_inline void set(float x_, float y_)				{ x = xm::round(x_); y = xm::round(y_); }
 	xm_inline Vect2i operator - () const				{ return Vect2i(-x, -y); }
 
 	xm_inline const int& operator[](int i) const			{ return *(&x + i); }
@@ -305,7 +370,7 @@ public:
 	xm_inline Vect2i& operator >>= (int n)				{ x >>= n; y >>= n; return *this; }
 	xm_inline Vect2i operator >> (int n) const 		{ return Vect2i(*this) >>= n; }
 
-	xm_inline Vect2i& operator *= (float f)				{ x = round(x*f); y = round(y*f); return *this; }
+	xm_inline Vect2i& operator *= (float f)				{ x = xm::round(x*f); y = xm::round(y*f); return *this; }
 	xm_inline Vect2i& operator /= (float f)				{  return *this *= 1.f/f; }
 	xm_inline Vect2i operator * (float f) const 		{ return Vect2i(*this) *= f; }
 	xm_inline Vect2i operator / (float f) const 		{  return Vect2i(*this) /= f; }
@@ -315,7 +380,7 @@ public:
 	
 	xm_inline int operator % (const Vect2i &v) const { return x*v.y - y*v.x; }
 
-	xm_inline int norm() const 						{ return round(sqrtf(float(x*x+y*y))); }
+	xm_inline int norm() const 						{ return xm::round(xm::sqrt(float(x * x + y * y))); }
 	xm_inline int norm2() const						{ return x*x+y*y; }
 
 	xm_inline int operator == (const Vect2i& v)	const	{ return x == v.x && y == v.y; }
@@ -361,7 +426,7 @@ public:
 	xm_inline Vect2s()										{ }
 	xm_inline Vect2s(int x_,int y_)							{ x = x_; y = y_; }
 
-	xm_inline Vect2s(const Vect2f& v)			{ x = round(v.x); y = round(v.y); }
+	xm_inline Vect2s(const Vect2f& v)			{ x = xm::round(v.x); y = xm::round(v.y); }
 	xm_inline Vect2s(const Vect2i& v)			{ x = v.x; y = v.y; }
 
 	xm_inline void set(int x_, int y_)					{ x = x_; y = y_; }
@@ -373,20 +438,21 @@ public:
 	xm_inline Vect2s& operator += (const Vect2s& v)	{ x += v.x; y += v.y; return *this; }
 	xm_inline Vect2s& operator -= (const Vect2s& v)	{ x -= v.x; y -= v.y; return *this; }
 	xm_inline Vect2s& operator *= (const Vect2s& v)	{ x *= v.x; y *= v.y; return *this; }
-	xm_inline Vect2s& operator *= (float f)			{ x = round(x*f); y = round(y*f); return *this; }
-	xm_inline Vect2s& operator /= (float f)			{ if(f!=0.f) f=1/f; else f=0.0001f; x=round(x*f); y=round(y*f); return *this; }
+	xm_inline Vect2s& operator *= (float f)			{ x = xm::round(x*f); y = xm::round(y*f); return *this; }
+	xm_inline Vect2s& operator /= (float f)			{ if(f!=0.f) f=1/f; else f=0.0001f; x=xm::round(x*f); y=xm::round(y*f); return *this; }
 	xm_inline Vect2s operator - (const Vect2s& v) const	{ return Vect2s(x - v.x, y - v.y); }
 	xm_inline Vect2s operator + (const Vect2s& v) const	{ return Vect2s(x + v.x, y + v.y); }
 	xm_inline Vect2s operator * (const Vect2s& v) const	{ return Vect2s(x*v.x, y*v.y); }
-	xm_inline Vect2s operator * (float f) const				{ Vect2s tmp(round(x*f),round(y*f)); return tmp; }
-	xm_inline Vect2s operator / (float f) const				{ if(f!=0.f) f=1/f; else f=0.0001f; Vect2s tmp(round(x*f),round(y*f)); return tmp; }
+	xm_inline Vect2s operator * (float f) const				{ Vect2s tmp(xm::round(x*f),xm::round(y*f)); return tmp; }
+	xm_inline Vect2s operator / (float f) const				{ if(f!=0.f) f=1/f; else f=0.0001f; Vect2s tmp(xm::round(x*f),xm::round(y*f)); return tmp; }
 
 	xm_inline int operator == (const Vect2s& v)	const	{ return x == v.x && y == v.y; }
 
-	xm_inline int norm() const								{ return round(sqrtf((float)(x*x+y*y))); }
+	xm_inline int norm() const								{ return xm::round(xm::sqrt((float) (x * x + y * y))); }
 	xm_inline int norm2() const								{ return x*x+y*y; }
-	xm_inline int distance(const Vect2s& v) const			{ int dx=v.x-x,dy=v.y-y; return round(sqrtf((float)(dx*dx+dy*dy))); }
-	xm_inline void normalize(int norma)				{ float f=(float)norma/(float)sqrtf((float)(x*x+y*y)); x=round(x*f); y=round(y*f); }
+	xm_inline int distance(const Vect2s& v) const			{ int dx=v.x-x,dy=v.y-y; return xm::round(
+                xm::sqrt((float) (dx * dx + dy * dy))); }
+	xm_inline void normalize(int norma)				{ float f=(float)norma/(float) xm::sqrt((float) (x * x + y * y)); x=xm::round(x * f); y=xm::round(y * f); }
 
 	xm_inline void swap(Vect2s &v)					{ Vect2s tmp = v; v = *this; *this = tmp; }
 	
@@ -425,7 +491,7 @@ public:
 	Mat2f(){}
 	explicit Mat2f(float angle) { set(angle); }
 	Mat2f(float xx_, float xy_, float yx_, float yy_) { xx = xx_; xy = xy_; yx = yx_; yy = yy_; }
-	void set(float angle){ xx = yy = cosf(angle); yx = sinf(angle); xy = -yx; }
+	void set(float angle){ xx = yy = xm::cos(angle); yx = xm::sin(angle); xy = -yx; }
 	
 	// Rows
 	xm_inline const Vect2f& operator[](int i) const	{ return ((Vect2f*)&xx)[i]; } 
@@ -535,9 +601,9 @@ public:
   xm_inline float& operator()(int i)       {return *(&x + i - 1);}
 
   // Convertion to int ///////
-  xm_inline int xi() const { return round(x); }
-  xm_inline int yi() const { return round(y); }
-  xm_inline int zi() const { return round(z); }
+  xm_inline int xi() const { return xm::round(x); }
+  xm_inline int yi() const { return xm::round(y); }
+  xm_inline int zi() const { return xm::round(z); }
 
   //  Negate  ////////////////////////////////////
   xm_inline Vect3f operator- () const;
@@ -698,9 +764,9 @@ public:
   xm_inline double& operator[](int i)       {return *(&x + i);}
 
   // Convertion to int ///////
-  xm_inline int xi() const { return round(x); }
-  xm_inline int yi() const { return round(y); }
-  xm_inline int zi() const { return round(z); }
+  xm_inline int xi() const { return xm::round(x); }
+  xm_inline int yi() const { return xm::round(y); }
+  xm_inline int zi() const { return xm::round(z); }
 
   //  Negate  ////////////////////////////////////
   xm_inline Vect3d operator- () const;
@@ -1558,7 +1624,7 @@ public:
   xm_inline QuatF& normalize(const QuatF& q); 	      // q/|q|
   xm_inline QuatF& normalize();			      // this/|this|
   xm_inline friend QuatF normalize(const QuatF& q);
-  xm_inline float norm() const { return sqrtf(x_*x_ + y_*y_ + z_*z_ + s_*s_); }
+  xm_inline float norm() const { return xm::sqrt(x_ * x_ + y_ * y_ + z_ * z_ + s_ * s_); }
   xm_inline float norm2() const { return x_*x_ + y_*y_ + z_*z_ + s_*s_; }
 
   //  Invertion  /////////////////////////
@@ -1706,7 +1772,7 @@ public:
   xm_inline QuatD& normalize(const QuatD& q); 	      // q/|q|
   xm_inline QuatD& normalize();			      // this/|this|
   xm_inline friend QuatD normalize(const QuatD& q);
-  xm_inline double norm() const { return sqrt(x_*x_ + y_*y_ + z_*z_ + s_*s_); }
+  xm_inline double norm() const { return xm::sqrt(x_*x_ + y_*y_ + z_*z_ + s_*s_); }
 
   //  Invertion  /////////////////////////
   xm_inline QuatD& invert(const QuatD& q);		      // q^-1
@@ -1995,10 +2061,10 @@ public:
   xm_inline float& operator[](int i)       {return *(&x + i);}
 
   // Convertion to int ///////
-  xm_inline int xi() const { return round(x); }
-  xm_inline int yi() const { return round(y); }
-  xm_inline int zi() const { return round(z); }
-  xm_inline int wi() const { return round(w); }
+  xm_inline int xi() const { return xm::round(x); }
+  xm_inline int yi() const { return xm::round(y); }
+  xm_inline int zi() const { return xm::round(z); }
+  xm_inline int wi() const { return xm::round(w); }
 
   //  Logical operations  ////////////////////////////////
   xm_inline bool eq(const Vect4f& v, float delta = FLT_COMPARE_TOLERANCE) const;
@@ -2188,6 +2254,7 @@ public:
 
 
 
+/*
   //	I/O operations    //////////////////////////////////////
 #ifdef _XMATH_USE_IOSTREAM
   friend ostream& operator<< (ostream& os, const Mat4f& M);
@@ -2203,6 +2270,7 @@ public:
   friend XBuffer& operator>= (XBuffer& b,Mat4f& M);
   friend XBuffer& operator< (XBuffer& b,const Mat4f& M);
   friend XBuffer& operator> (XBuffer& b,Mat4f& M);
+*/
 
   template<class Archive>
   void serialize(Archive& ar);
@@ -2275,9 +2343,9 @@ Vect3f::operator Vect3d () const
 
 bool Vect3f::eq(const Vect3f& other, float delta) const
 {
-  return fabs(x - other.x) < delta && 
-	    fabs(y - other.y) < delta && 
-	    fabs(z - other.z) < delta;
+  return xm::abs(x - other.x) < delta &&
+          xm::abs(y - other.y) < delta &&
+          xm::abs(z - other.z) < delta;
 }
 
 Vect3f Vect3f::operator- () const
@@ -2288,25 +2356,25 @@ Vect3f Vect3f::operator- () const
 //  Norm operations /////////
 float Vect3f::sumAbs() const
 {
-	return (float)(fabs(x) + fabs(y) + fabs(z));
+	return (float)(xm::abs(x) + xm::abs(y) + xm::abs(z));
 }
 
 
 //  Descart - spherical function  //////////////
 float Vect3f::psi() const
 {
-	return (float)atan2(y,x);
+	return (float)xm::atan2(y,x);
 }
 float Vect3f::theta() const
 {
-	return (float)acos(z/(norm() + FLT_EPS));
+	return (float)xm::acos(z/(norm() + FLT_EPS));
 }
 Vect3f& Vect3f::setSpherical(float psi,float theta,float radius)
 {
-	x = radius*(float)sin(theta);
-	y = x*(float)sin(psi);
-	x = x*(float)cos(psi);
-	z = radius*(float)cos(theta);
+	x = radius*(float)xm::sin(theta);
+	y = x*(float)xm::sin(psi);
+	x = x*(float)xm::cos(psi);
+	z = radius*(float)xm::cos(theta);
 	return *this;
 }
 
@@ -2318,7 +2386,7 @@ float Vect3f::dot (const Vect3f& other) const
 
 float Vect3f::norm() const
 {
-  return (float)sqrt(x * x + y * y + z * z);
+  return (float)xm::sqrt(x * x + y * y + z * z);
 }
 
 
@@ -2362,9 +2430,9 @@ float Vect3f::minAbs() const
 {
   float ax, ay, az;
 
-  ax = (float)fabs(x);
-  ay = (float)fabs(y);
-  az = (float)fabs(z);
+  ax = (float) xm::abs(x);
+  ay = (float) xm::abs(y);
+  az = (float) xm::abs(z);
   return (ax <= ay) ? ((ax <= az) ? ax : az) : ((ay <= az) ? ay : az);
 }
 
@@ -2373,9 +2441,9 @@ float Vect3f::maxAbs() const
 {
   float ax, ay, az;
 
-  ax = (float)fabs(x);
-  ay = (float)fabs(y);
-  az = (float)fabs(z);
+  ax = (float) xm::abs(x);
+  ay = (float) xm::abs(y);
+  az = (float) xm::abs(z);
   return (ax >= ay) ? ((ax >= az) ? ax : az) : ((ay >= az) ? ay : az);
 }
 
@@ -2392,7 +2460,7 @@ void Vect3f::swap(Vect3f& other)
 
 Vect3f& Vect3f::normalize(const Vect3f& v, float r)
 {
-  float s = r / (float)sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+  float s = r / (float)xm::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
   x = s * v.x;
   y = s * v.y;
   z = s * v.z;
@@ -2402,7 +2470,7 @@ Vect3f& Vect3f::normalize(const Vect3f& v, float r)
 
 Vect3f& Vect3f::normalize(float r)
 {
-  float s = r / (float)sqrt(x * x + y * y + z * z);
+  float s = r / (float)xm::sqrt(x * x + y * y + z * z);
   x *= s;
   y *= s;
   z *= s;
@@ -2412,7 +2480,7 @@ Vect3f& Vect3f::normalize(float r)
 
 Vect3f& Vect3f::Normalize(const Vect3f& v, float r)
 {
-  float s = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+  float s = xm::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
   if(s > FLT_EPS){
 	  s = r/s;
 	  x = s * v.x;
@@ -2425,7 +2493,7 @@ Vect3f& Vect3f::Normalize(const Vect3f& v, float r)
 
 Vect3f& Vect3f::Normalize(float r)
 {
-  float s = sqrtf(x * x + y * y + z * z);
+  float s = xm::sqrt(x * x + y * y + z * z);
   if(s > FLT_EPS){
 	  s = r/s;
 	  x *= s;
@@ -2636,9 +2704,9 @@ Vect3f& Vect3f::interpolate(const Vect3f& u, const Vect3f& v, float lambda)
 
 bool Vect3d::eq(const Vect3d& other, double delta) const
 {
-  return fabs(x - other.x) < delta && 
-	    fabs(y - other.y) < delta && 
-	    fabs(z - other.z) < delta;
+  return xm::abs(x - other.x) < delta &&
+          xm::abs(y - other.y) < delta &&
+          xm::abs(z - other.z) < delta;
 }
 
 Vect3d Vect3d::operator- () const
@@ -2649,25 +2717,25 @@ Vect3d Vect3d::operator- () const
 //  Norm operations /////////
 double Vect3d::sumAbs() const
 {
-	return fabs(x) + fabs(y) + fabs(z);
+	return xm::abs(x) + xm::abs(y) + xm::abs(z);
 }
 
 
 //  Descart - spherical function  //////////////
 double Vect3d::psi() const
 {
-	return atan2(y,x);
+	return xm::atan2(y,x);
 }
 double Vect3d::theta() const
 {
-	return acos(z/(norm() + DBL_EPS));
+	return xm::acos(z/(norm() + DBL_EPS));
 }
 Vect3d& Vect3d::setSpherical(double psi,double theta,double radius)
 {
-	x = radius*sin(theta);
-	y = x*sin(psi);
-	x = x*cos(psi);
-	z = radius*cos(theta);
+	x = radius*xm::sin(theta);
+	y = x*xm::sin(psi);
+	x = x*xm::cos(psi);
+	z = radius*xm::cos(theta);
 	return *this;
 }
 
@@ -2679,7 +2747,7 @@ double Vect3d::dot (const Vect3d& other) const
 
 double Vect3d::norm() const
 {
-  return sqrt(x * x + y * y + z * z);
+  return xm::sqrt(x * x + y * y + z * z);
 }
 
 
@@ -2723,9 +2791,9 @@ double Vect3d::minAbs() const
 {
   double ax, ay, az;
 
-  ax = fabs(x);
-  ay = fabs(y);
-  az = fabs(z);
+  ax = xm::abs(x);
+  ay = xm::abs(y);
+  az = xm::abs(z);
   return (ax <= ay) ? ((ax <= az) ? ax : az) : ((ay <= az) ? ay : az);
 }
 
@@ -2734,9 +2802,9 @@ double Vect3d::maxAbs() const
 {
   double ax, ay, az;
 
-  ax = fabs(x);
-  ay = fabs(y);
-  az = fabs(z);
+  ax = xm::abs(x);
+  ay = xm::abs(y);
+  az = xm::abs(z);
   return (ax >= ay) ? ((ax >= az) ? ax : az) : ((ay >= az) ? ay : az);
 }
 
@@ -2753,7 +2821,7 @@ void Vect3d::swap(Vect3d& other)
 
 Vect3d& Vect3d::normalize(const Vect3d& v, double r)
 {
-  double s = r / sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+  double s = r / xm::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
   x = s * v.x;
   y = s * v.y;
   z = s * v.z;
@@ -2763,7 +2831,7 @@ Vect3d& Vect3d::normalize(const Vect3d& v, double r)
 
 Vect3d& Vect3d::normalize(double r)
 {
-  double s = r / sqrt(x * x + y * y + z * z);
+  double s = r / xm::sqrt(x * x + y * y + z * z);
   x *= s;
   y *= s;
   z *= s;
@@ -2773,7 +2841,7 @@ Vect3d& Vect3d::normalize(double r)
 
 Vect3d& Vect3d::Normalize(const Vect3d& v, double r)
 {
-  double s = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+  double s = xm::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
   if(s > DBL_EPS){
 	  s = r/s;
 	  x = s * v.x;
@@ -2786,7 +2854,7 @@ Vect3d& Vect3d::Normalize(const Vect3d& v, double r)
 
 Vect3d& Vect3d::Normalize(double r)
 {
-  double s = sqrt(x * x + y * y + z * z);
+  double s = xm::sqrt(x * x + y * y + z * z);
   if(s > DBL_EPS){
 	  s = r/s;
 	  x *= s;
@@ -3007,8 +3075,8 @@ Mat3f::Mat3f(float xx_,float xy_,float xz_,
 Mat3f& Mat3f::set(float angle, eAxis axis)
 {
 //	------ Calculate Matrix for ROTATE point an angle ------
-	float calpha = (float)cos(angle);
-	float salpha = (float)sin(angle);
+	float calpha = (float)xm::cos(angle);
+	float salpha = (float)xm::sin(angle);
 	switch(axis){
 		case Z_AXIS:
 			xx   =	calpha; xy	 = -salpha; xz	 = 0;
@@ -3502,8 +3570,8 @@ Mat3d::Mat3d(double xx_,double xy_,double xz_,
 Mat3d& Mat3d::set(double angle, eAxis axis)
 {
 //	------ Calculate Matrix for ROTATE point an angle ------
-	double calpha = cos(angle);
-	double salpha = sin(angle);
+	double calpha = xm::cos(angle);
+	double salpha = xm::sin(angle);
 	switch(axis){
 		case Z_AXIS:
 			xx   =	calpha; xy	 = -salpha; xz	 = 0;
@@ -4250,10 +4318,10 @@ QuatF::operator QuatD () const
 
 bool QuatF::eq(const QuatF& other, float delta) const
 {
-  return fabs(s_ - other.s_) < delta && 
-	    fabs(x_ - other.x_) < delta && 
-	    fabs(y_ - other.y_) < delta && 
-	    fabs(z_ - other.z_) < delta;
+  return xm::abs(s_ - other.s_) < delta &&
+          xm::abs(x_ - other.x_) < delta &&
+          xm::abs(y_ - other.y_) < delta &&
+          xm::abs(z_ - other.z_) < delta;
 }
 
 Vect3f QuatF::axis() const
@@ -4267,7 +4335,7 @@ Vect3f QuatF::axis() const
 
 float QuatF::angle() const
 {
-  return 2 * acosf(s_);
+  return 2 * xm::acos(s_);
 }
 
 
@@ -4275,7 +4343,7 @@ QuatF& QuatF::normalize(const QuatF& q)
 {
   float scale;
 
-  scale = 1.f / sqrtf(q.s_*q.s_ + q.x_*q.x_ + q.y_*q.y_ + q.z_*q.z_);
+  scale = 1.f / xm::sqrt(q.s_ * q.s_ + q.x_ * q.x_ + q.y_ * q.y_ + q.z_ * q.z_);
   s_ = scale * q.s_;
   x_ = scale * q.x_;
   y_ = scale * q.y_;
@@ -4286,7 +4354,7 @@ QuatF& QuatF::normalize(const QuatF& q)
 QuatF normalize(const QuatF& q)
 {
   float scale;
-  scale = 1.f / sqrtf(q.s_*q.s_ + q.x_*q.x_ + q.y_*q.y_ + q.z_*q.z_);
+  scale = 1.f / xm::sqrt(q.s_ * q.s_ + q.x_ * q.x_ + q.y_ * q.y_ + q.z_ * q.z_);
   return QuatF(scale * q.s_, scale * q.x_, scale * q.y_, scale * q.z_);
 }
 
@@ -4295,7 +4363,7 @@ QuatF& QuatF::normalize()
 {
   float scale;
 
-  scale = 1.f / sqrtf(s_*s_ + x_*x_ + y_*y_ + z_*z_);
+  scale = 1.f / xm::sqrt(s_ * s_ + x_ * x_ + y_ * y_ + z_ * z_);
   s_ *= scale;
   x_ *= scale;
   y_ *= scale;
@@ -4402,10 +4470,10 @@ xm_inline void QuatF::slerp(const QuatF& a,const QuatF& b,float t)
         // calculate coefficients
        if ((1.0 - cosom) > 1e-5f ) {
                 // standard case (slerp)
-                float omega = acosf(cosom);
-                float sinom = sinf(omega);
-                scale0 = sinf((1.0f - t) * omega) / sinom;
-                scale1 = sinf(t * omega) / sinom;
+                float omega = xm::acos(cosom);
+                float sinom = xm::sin(omega);
+                scale0 = xm::sin((1.0f - t) * omega) / sinom;
+                scale1 = xm::sin(t * omega) / sinom;
 		}
         else {	// "from" and "to" quaternions are very close, so we can do a linear interpolation
                 scale0 = 1.0f - t;
@@ -4428,10 +4496,10 @@ QuatD::operator QuatF () const
 
 bool QuatD::eq(const QuatD& other, double delta) const
 {
-  return fabs(s_ - other.s_) < delta && 
-	    fabs(x_ - other.x_) < delta && 
-	    fabs(y_ - other.y_) < delta && 
-	    fabs(z_ - other.z_) < delta;
+  return xm::abs(s_ - other.s_) < delta &&
+          xm::abs(x_ - other.x_) < delta &&
+          xm::abs(y_ - other.y_) < delta &&
+          xm::abs(z_ - other.z_) < delta;
 }
 
 Vect3d QuatD::axis() const
@@ -4445,7 +4513,7 @@ Vect3d QuatD::axis() const
 
 double QuatD::angle() const
 {
-  return 2 * acos(s_);
+  return 2 * xm::acos(s_);
 }
 
 
@@ -4453,7 +4521,7 @@ QuatD& QuatD::normalize(const QuatD& q)
 {
   double scale;
 
-  scale = 1.0 / sqrt(q.s_*q.s_ + q.x_*q.x_ + q.y_*q.y_ + q.z_*q.z_);
+  scale = 1.0 / xm::sqrt(q.s_*q.s_ + q.x_*q.x_ + q.y_*q.y_ + q.z_*q.z_);
   s_ = scale * q.s_;
   x_ = scale * q.x_;
   y_ = scale * q.y_;
@@ -4464,7 +4532,7 @@ QuatD& QuatD::normalize(const QuatD& q)
 QuatD normalize(const QuatD& q)
 {
   double scale;
-  scale = 1.0 / sqrt(q.s_*q.s_ + q.x_*q.x_ + q.y_*q.y_ + q.z_*q.z_);
+  scale = 1.0 / xm::sqrt(q.s_*q.s_ + q.x_*q.x_ + q.y_*q.y_ + q.z_*q.z_);
   return QuatD(scale * q.s_, scale * q.x_, scale * q.y_, scale * q.z_);
 }
 
@@ -4473,7 +4541,7 @@ QuatD& QuatD::normalize()
 {
   double scale;
 
-  scale = 1.0 / sqrt(s_*s_ + x_*x_ + y_*y_ + z_*z_);
+  scale = 1.0 / xm::sqrt(s_*s_ + x_*x_ + y_*y_ + z_*z_);
   s_ *= scale;
   x_ *= scale;
   y_ *= scale;
@@ -4580,10 +4648,10 @@ xm_inline void QuatD::slerp(const QuatD& a,const QuatD& b, double t)
         // calculate coefficients
        if ((1.0 - cosom) > 1e-5f ) {
                 // standard case (slerp)
-                double omega = acos(cosom);
-                double sinom = sin(omega);
-                scale0 = sin((1.0 - t) * omega) / sinom;
-                scale1 = sin(t * omega) / sinom;
+                double omega = xm::acos(cosom);
+                double sinom = xm::sin(omega);
+                scale0 = xm::sin((1.0 - t) * omega) / sinom;
+                scale1 = xm::sin(t * omega) / sinom;
 		}
         else {	// "from" and "to" quaternions are very close, so we can do a linear interpolation
                 scale0 = 1.0 - t;
@@ -4851,10 +4919,10 @@ bool Se3d::eq(const Se3d& other, double transDelta, double rotDelta) const
 
 bool Vect4f::eq(const Vect4f& other, float delta) const
 {
-  return fabs(x - other.x) < delta && 
-	    fabs(y - other.y) < delta && 
-	    fabs(z - other.z) < delta && 
-	    fabs(w - other.w) < delta;
+  return xm::abs(x - other.x) < delta &&
+          xm::abs(y - other.y) < delta &&
+          xm::abs(z - other.z) < delta &&
+          xm::abs(w - other.w) < delta;
 }
 
 void Vect4f::swap(Vect4f& other)

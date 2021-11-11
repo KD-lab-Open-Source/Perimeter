@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Universe.h"
@@ -16,7 +14,7 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeCorridor, "Телепорт");
+REGISTER_CLASS(AttributeBase, AttributeCorridor, "РўРµР»РµРїРѕСЂС‚");
 
 AttributeCorridor::AttributeCorridor()
 {
@@ -245,8 +243,8 @@ Vect2f terCorridorAlpha::potentialPosition(float t)
 	else if(size == 1)
 		return potentials_.front();
 
-	int i = round(floor(t));
-	float u = t - floor(t);
+	int i = xm::round(xm::floor(t));
+	float u = t - xm::floor(t);
 
 	Vect2f P[4];
 	P[0] = get(i - 1);
@@ -367,7 +365,7 @@ void terUnitAplhaPotential::ShowInfo()
 		XBuffer buf;
 		buf <= index_;
 		buf.SetDigits(2);
-		terRenderDevice->OutText(round(e.x),round(e.y),buf,selected() ? sColor4f(1,1,1,1) : sColor4f(0.8f,0.8f,0.8f,1));
+		terRenderDevice->OutText(xm::round(e.x),xm::round(e.y),buf,selected() ? sColor4f(1,1,1,1) : sColor4f(0.8f,0.8f,0.8f,1));
 		terRenderDevice->SetFont(0);
 	}
 }

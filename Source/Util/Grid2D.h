@@ -287,7 +287,7 @@ public:
 		if(!dx && !dy)
 			Cell(rect.x0,rect.y0,op);
 		else{
-			if(abs(dx) > abs(dy)){
+			if(xm::abs(dx) > xm::abs(dy)){
 				if(dx > 0){
 					max_step = dx;
 					dy = (dy << PRECISION) / max_step;
@@ -367,7 +367,7 @@ public:
 		if(!dx && !dy)
 			return ConditionCell(rect.x0,rect.y0,op);
 		else{
-			if(abs(dx) > abs(dy)){
+			if(xm::abs(dx) > xm::abs(dy)){
 				if(dx > 0){
 					max_step = dx;
 					dy = (dy << PRECISION) / max_step;

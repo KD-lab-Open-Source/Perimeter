@@ -1,8 +1,5 @@
 #include "stdafxTr.h"
 
-#include <math.h>
-
-
 #include "pnint.h"
 
 #define B 0x100
@@ -170,7 +167,7 @@ static void normalize2(float v[2])
 {
 	float s;
 
-	s = (float)sqrt(v[0] * v[0] + v[1] * v[1]);
+	s = (float)xm::sqrt(v[0] * v[0] + v[1] * v[1]);
 	v[0] = v[0] / s;
 	v[1] = v[1] / s;
 }
@@ -183,10 +180,10 @@ static void normalize3(int vv[3])
 	v[1]=(double)vv[1]/(1<<NOISE_FRACTION);
 	v[2]=(double)vv[2]/(1<<NOISE_FRACTION);
 
-	s = (float)sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-	vv[0] = round((v[0] / s)*(1<<NOISE_FRACTION));
-	vv[1] = round((v[1] / s)*(1<<NOISE_FRACTION));
-	vv[2] = round((v[2] / s)*(1<<NOISE_FRACTION));
+	s = (float) xm::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+	vv[0] = xm::round((v[0] / s) * (1 << NOISE_FRACTION));
+	vv[1] = xm::round((v[1] / s) * (1 << NOISE_FRACTION));
+	vv[2] = xm::round((v[2] / s) * (1 << NOISE_FRACTION));
 }
 //#include "_xtool.h"
 //#define rand() XRnd(B + B)
@@ -200,10 +197,10 @@ void pnintInit(void)
 	for (i = 0 ; i < B ; i++) {
 		p[i] = i;
 
-		g1[i] = round((float)((rand() % (B + B)) - B) / B);
+		g1[i] = xm::round((float) ((rand() % (B + B)) - B) / B);
 
 		for (j = 0 ; j < 2 ; j++)
-			g2[i][j] = round((float)((rand() % (B + B)) - B) / B);
+			g2[i][j] = xm::round((float) ((rand() % (B + B)) - B) / B);
 //		normalize2(g2[i]);
 
 		for (j = 0 ; j < 3 ; j++)
@@ -236,10 +233,10 @@ void pnintInit(int begRnd)
 	for (i = 0 ; i < B ; i++) {
 		p[i] = i;
 
-		g1[i] = round((float)((rand() % (B + B)) - B) / B);
+		g1[i] = xm::round((float) ((rand() % (B + B)) - B) / B);
 
 		for (j = 0 ; j < 2 ; j++)
-			g2[i][j] = round((float)((rand() % (B + B)) - B) / B);
+			g2[i][j] = xm::round((float) ((rand() % (B + B)) - B) / B);
 //		normalize2(g2[i]);
 
 		for (j = 0 ; j < 3 ; j++)
@@ -272,19 +269,19 @@ float turbulence01_08(int point[3])
 
 	t = 0; 
 //	for (freq = 0.1f ; freq < 1.6f ; freq *= 2.) {
-	t += (float)fabs(noise3(point)*NOISE_DIVIDER) * 10.f; 
+	t += (float) xm::abs(noise3(point) * NOISE_DIVIDER) * 10.f; 
 	point[0] *= 2; 
 	point[1] *= 2; 
 	point[2] *= 2; 
-	t += (float)fabs(noise3(point)*NOISE_DIVIDER) * 5.f; 
+	t += (float) xm::abs(noise3(point) * NOISE_DIVIDER) * 5.f; 
 	point[0] *= 2; 
 	point[1] *= 2; 
 	point[2] *= 2; 
-	t += (float)fabs(noise3(point)*NOISE_DIVIDER) * 2.5f; 
+	t += (float) xm::abs(noise3(point) * NOISE_DIVIDER) * 2.5f; 
 	point[0] *= 2; 
 	point[1] *= 2; 
 	point[2] *= 2; 
-	t += (float)fabs(noise3(point)*NOISE_DIVIDER) *1.25f; 
+	t += (float) xm::abs(noise3(point) * NOISE_DIVIDER) * 1.25f; 
 	return t - 0.3f; /* readjust to make mean value = 0.0 */ 
 } 
 
@@ -323,11 +320,11 @@ float turbulence05_10(int point[3])
 	point[0] = point[0] + 2022703;//14//4045406;//15//505675;//12//8090812;//16//(123.456*(1<<NOISE_FRACTION)); 
 
 	t = 0; 
-	t += (float)fabs(noise3(point)*NOISE_DIVIDER) * 2.f; 
+	t += (float) xm::abs(noise3(point) * NOISE_DIVIDER) * 2.f; 
 	point[0] *= 2; 
 	point[1] *= 2; 
 	point[2] *= 2; 
-	t += (float)fabs(noise3(point)*NOISE_DIVIDER); 
+	t += (float) xm::abs(noise3(point) * NOISE_DIVIDER); 
 	return t - 0.3f; /* readjust to make mean value = 0.0 */ 
 } 
 
@@ -336,10 +333,10 @@ int turbulence05_10i(int point[3])
 	int t;
 
 	t = 0; 
-	t += abs(noise3(point)) * 2; 
+	t += xm::abs(noise3(point)) * 2; 
 	point[0] *= 2; 
 	point[1] *= 2; 
 	point[2] *= 2; 
-	t += abs(noise3(point)); 
+	t += xm::abs(noise3(point)); 
 	return t; /* readjust to make mean value = 0.0 */
 } 

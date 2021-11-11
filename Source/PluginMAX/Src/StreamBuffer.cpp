@@ -5,12 +5,8 @@
 #include <memory.h>
 #include <assert.h>
 #include <stdio.h>
-#include <math.h>
 #include "StreamBuffer.h"
-
-#define STREAM_BUFFER_RESIZE					1024
-
-#
+#include "xmath.h"
 
 inline double StringToFloat(char *buf)
 {
@@ -54,7 +50,7 @@ inline double StringToFloat(char *buf)
 		if(buf[i]=='-') { f_sign_power=-1; i++; } else { if(buf[i]=='+') i++; f_sign_power=1; }
 		for(;buf[i]&&'0'<=buf[i]&&buf[i]<='9';i++)
 			f_power=(f_power*10)+(buf[i]-'0');
-		f_power=pow(10.,f_power*f_sign_power);
+		f_power=xm::pow(10.,f_power*f_sign_power);
 	}
 	assert(std::isfinite(a));
 	return a=f_sign*(f_int+f_fract)*f_power;

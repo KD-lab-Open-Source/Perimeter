@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Runtime.h"
@@ -260,7 +258,7 @@ void terUnitSquad::Quant()
 				if(!mutationChargeConsumption_.attached()){
 					ConsumptionData data = attr().productionConsumption;
 					float factor = squadMolecula().elementCount();
-					int time = round((float)data.time/factor);
+					int time = xm::round((float) data.time / factor);
 					if(time < 200){
 						time = 200;
 						factor = (float)data.time/time;
@@ -623,7 +621,7 @@ void terUnitSquad::showPath(const std::vector<Vect2f>& wayPoints, const std::vec
 				Vect3f w, e;
 				terCamera->GetCamera()->ConvertorWorldToViewPort(&posPrev,&w,&e);
 				if(e.z < 1.0f)
-					terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,pathColor,0);
+					terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 			}
 			else
 				showFlag = false;
@@ -636,7 +634,7 @@ void terUnitSquad::showPath(const std::vector<Vect2f>& wayPoints, const std::vec
 					Vect3f pos = To3D(*pi);
 					terCamera->GetCamera()->ConvertorWorldToViewPort(&pos,&w,&e);
 					if(e.z < 1.0f)
-						terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,patrolColor,0);
+						terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, patrolColor, 0);
 					terRenderDevice->DrawLine(posPrev, pos, patrolColor);
 					posPrev = pos;
 				}
@@ -693,7 +691,7 @@ void terUnitSquad::ShowInfo()
 					Vect3f pos = To3D(*pi);
 					terCamera->GetCamera()->ConvertorWorldToViewPort(&pos,&w,&e);
 					if(e.z < 1.0f)
-						terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,patrolColor,0);
+						terRenderDevice->DrawRectangle(round(e.x) - 2,xm::round(e.y) - 2,4,4,patrolColor,0);
 					terRenderDevice->DrawLine(posPrev, pos, patrolColor);
 					posPrev = pos;
 				}
@@ -1225,7 +1223,7 @@ void terUnitSquad::calcCenter()
 	FOR_EACH(Units, ui){
 		terUnitLegionary& unit = **ui;
 		xassert(unit.inSquad() || unit.attr().is_base_unit);
-		if(!unit.inSquad() || (n_complex_units && unit.attr().is_base_unit)) // не учитывать не дошедших и базовых, когда есть производные
+		if(!unit.inSquad() || (n_complex_units && unit.attr().is_base_unit)) // РЅРµ СѓС‡РёС‚С‹РІР°С‚СЊ РЅРµ РґРѕС€РµРґС€РёС… Рё Р±Р°Р·РѕРІС‹С…, РєРѕРіРґР° РµСЃС‚СЊ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ
 			continue;
 		average_position += unit.position2D();
 		counter++;
@@ -1279,7 +1277,7 @@ void terUnitSquad::calcCenter()
 			continue;
 		described_radius = max(described_radius, unit.position2D().distance2(average_position) + sqr(formationRadius()));
 	}
-	described_radius = min(sqrtf(described_radius), squad_described_radius_max);
+	described_radius = min(xm::sqrt(described_radius), squad_described_radius_max);
 	setRadius(described_radius);
 
 	// Calc including_cluster
@@ -1393,17 +1391,17 @@ void terUnitSquad::repositionFormation(bool forceReposition)
 	}
 	
 	if(!forceReposition && Units.size() == position_generator.counter()){ 
-		// Просто пересчитать без паковки позиций
+		// РџСЂРѕСЃС‚Рѕ РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ Р±РµР· РїР°РєРѕРІРєРё РїРѕР·РёС†РёР№
 		SquadUnitList::iterator ui;
-		if(dot(prev_forward_direction, forwardDirection()) < 0){ // инвертировать 
+		if(dot(prev_forward_direction, forwardDirection()) < 0){ // РёРЅРІРµСЂС‚РёСЂРѕРІР°С‚СЊ 
 			FOR_EACH(Units,ui)
 				(*ui)->setLocalPosition(position_generator.invert((*ui)->localPosition()));
 			position_generator.inversion();
 		}
 	}
 	else{ 
-		// паковать позиции
-		if(dot(prev_forward_direction, forwardDirection()) < 0){ // сначала инвертируем
+		// РїР°РєРѕРІР°С‚СЊ РїРѕР·РёС†РёРё
+		if(dot(prev_forward_direction, forwardDirection()) < 0){ // СЃРЅР°С‡Р°Р»Р° РёРЅРІРµСЂС‚РёСЂСѓРµРј
 			SquadUnitList::iterator ui;
 			FOR_EACH(Units,ui)
 				if((*ui)->inSquad())
@@ -1464,14 +1462,14 @@ void terUnitSquad::repositionToAttack(AttackPoint& attackPoint, bool repeated)
 	else{
 		float min_radius = currentAttribute()->fireRadiusMin();
 		float max_radius = currentAttribute()->fireRadius();// - formationRadius()*2*clamp(position_generator.numLines() - 1, 0.5, 100);
-		xassert_s(min_radius < max_radius, (string("Недостаточный радиус атаки у ") + currentAttribute()->internalName()).c_str());
+		xassert_s(min_radius < max_radius, (string("РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅС‹Р№ СЂР°РґРёСѓСЃ Р°С‚Р°РєРё Сѓ ") + currentAttribute()->internalName()).c_str());
 
 		if(dist < min_radius)
 			optimalRadius_ = min_radius*(1 + squad_reposition_to_attack_radius_tolerance);
 		else if(dist > max_radius)
 			optimalRadius_ = max_radius*(1 - squad_reposition_to_attack_radius_tolerance);
 		else
-			return; // Цель в допустимой области - перестраиваться не надо
+			return; // Р¦РµР»СЊ РІ РґРѕРїСѓСЃС‚РёРјРѕР№ РѕР±Р»Р°СЃС‚Рё - РїРµСЂРµСЃС‚СЂР°РёРІР°С‚СЊСЃСЏ РЅРµ РЅР°РґРѕ
 
 		//if(attackPoint.squad()){
 		//	terUnitSquad& squad = *attackPoint.squad();
@@ -1542,7 +1540,7 @@ void terUnitSquad::addTarget(terUnitBase* target)
 
 bool lineCircleIntersection(const Vect2f& p0, const Vect2f& p1, const Vect2f& pc, float radius, Vect2f& result)
 {
-	// Ищет первое пересечение отрезка (0..1) с окружностью 
+	// РС‰РµС‚ РїРµСЂРІРѕРµ РїРµСЂРµСЃРµС‡РµРЅРёРµ РѕС‚СЂРµР·РєР° (0..1) СЃ РѕРєСЂСѓР¶РЅРѕСЃС‚СЊСЋ 
 	Vect2f dp = p1 - p0;
 	Vect2f dc = p0 - pc;
 	float dp_2 = dp.norm2();
@@ -1554,7 +1552,7 @@ bool lineCircleIntersection(const Vect2f& p0, const Vect2f& p1, const Vect2f& pc
 	float t = (-dp_dc - sqrt(det2))/(dp_2 + 0.001);
 	if(t > 0 && t < 1){
 		result = p0 + dp*t;
-		xassert(fabs(result.distance(pc) - radius) < 1);
+		xassert(xm::abs(result.distance(pc) - radius) < 1);
 		return true;
 	}
 	return false;
@@ -1642,9 +1640,9 @@ public:
 			return;
 		if(!unit2->damageMolecula().isAlive())
 			return;
-		if(!ignoreField_ && including_cluster != unit2->includingCluster()) // закрыт куполом
+		if(!ignoreField_ && including_cluster != unit2->includingCluster()) // Р·Р°РєСЂС‹С‚ РєСѓРїРѕР»РѕРј
 			return;
-		if(!(unit2->unitClass() & AttackClass)) // нельзя стрелять
+		if(!(unit2->unitClass() & AttackClass)) // РЅРµР»СЊР·СЏ СЃС‚СЂРµР»СЏС‚СЊ
 			return;
 		if(unit2->isUnseen())
 			return;
@@ -1652,7 +1650,7 @@ public:
 		float dist2 = position.distance2(unit2->position2D());
 		if(dist2 < radius_max2)
 		{
-			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + fabs(optimal_radius2 - dist2));
+			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + xm::abs(optimal_radius2 - dist2));
 			if(dist2 <= radius_min2)
 				f /= 1000 + dist2;
 			if(dist2 >= fire_radius2)
@@ -1735,7 +1733,7 @@ public:
 	{
 		if(!unit2->damageMolecula().isAlive())
 			return;
-		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // закрыт куполом
+		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // Р·Р°РєСЂС‹С‚ РєСѓРїРѕР»РѕРј
 			return;
 		if(excludeHolograms_ && unit2->isBuilding() && !unit2->isConstructed())
 			return;
@@ -1777,10 +1775,10 @@ public:
 
 private:
 
-	/// режим сканирования для базового сквада 
+	/// СЂРµР¶РёРј СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ РґР»СЏ Р±Р°Р·РѕРІРѕРіРѕ СЃРєРІР°РґР° 
 	/** 
-		targets_[0] - цели для солдат
-		targets_[1] - цели для офицеров
+		targets_[0] - С†РµР»Рё РґР»СЏ СЃРѕР»РґР°С‚
+		targets_[1] - С†РµР»Рё РґР»СЏ РѕС„РёС†РµСЂРѕРІ
 	*/
 	bool basicSquadMode_;
 
@@ -1849,7 +1847,7 @@ public:
 	{
 		if(!unit2->damageMolecula().isAlive())
 			return;
-		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // закрыт куполом
+		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // Р·Р°РєСЂС‹С‚ РєСѓРїРѕР»РѕРј
 			return;
 
 		float dist2 = position_.distance2(unit2->position2D());
@@ -1889,7 +1887,7 @@ terUnitBase* terUnitSquad::findBestTarget(const Vect2f& pos, float radius)
 
 void terUnitSquad::attackQuant()
 {
-	if(!attack_points.empty()){ // Есть указанная цель.
+	if(!attack_points.empty()){ // Р•СЃС‚СЊ СѓРєР°Р·Р°РЅРЅР°СЏ С†РµР»СЊ.
 		if(!attack_points.front().positionTarget()){
 			terUnitBase* target = 0;
 			SquadUnitList::iterator ui;
@@ -1933,7 +1931,7 @@ void terUnitSquad::attackQuant()
 				repositionToAttack(attack_points.front(), true);
 		}
 	}
-	else{ // Поиск цели
+	else{ // РџРѕРёСЃРє С†РµР»Рё
 		if(offensiveMode() || currentAttribute()->isDefenciveAttackEnabled()){
 			if(!targets_scan_timer()){
 				float fire_radius = offensiveMode() && !patrolMode() ? currentAttribute()->sightRadius() : currentAttribute()->fireRadius();
@@ -1960,7 +1958,7 @@ void terUnitSquad::attackQuant()
 					}
 
 					bool ret_flag = true;
-					while(ret_flag){ // распределение целей по незадействованным юнитам
+					while(ret_flag){ // СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ С†РµР»РµР№ РїРѕ РЅРµР·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рј СЋРЅРёС‚Р°Рј
 						ret_flag = false;
 						FOR_EACH(op.targets(),ti){
 							if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_SOLDIER,true))
@@ -1976,7 +1974,7 @@ void terUnitSquad::attackQuant()
 					}
 
 					ret_flag = true;
-					while(ret_flag){ // распределение целей по незадействованным юнитам
+					while(ret_flag){ // СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ С†РµР»РµР№ РїРѕ РЅРµР·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рј СЋРЅРёС‚Р°Рј
 						ret_flag = false;
 						FOR_EACH(op.targets(1),ti){
 							if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_OFFICER,true))
@@ -1992,7 +1990,7 @@ void terUnitSquad::attackQuant()
 					}
 
 					bool ret_flag = true;
-					while(ret_flag){ // распределение целей по незадействованным юнитам
+					while(ret_flag){ // СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ С†РµР»РµР№ РїРѕ РЅРµР·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рј СЋРЅРёС‚Р°Рј
 						ret_flag = false;
 						FOR_EACH(op.targets(),ti){
 							if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_NONE,true))

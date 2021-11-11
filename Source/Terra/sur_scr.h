@@ -169,9 +169,9 @@ struct s_sur_scr  { //: s_row
 		int xc,yc;
 		for(int i=0; i<numbers_cell; i++){
 			row[0].get_el(i,xc);
-			if(abs(calcDX(x,xc))<=delta){
+			if(xm::abs(calcDX(x, xc)) <= delta){
 				row[1].get_el(i,yc);
-				if(abs(calcDY(y,yc))<=delta) return i;
+				if(xm::abs(calcDY(y, yc)) <= delta) return i;
 			}
 		}
 		return -1;

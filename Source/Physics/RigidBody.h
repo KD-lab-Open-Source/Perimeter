@@ -68,7 +68,7 @@ public:
 	const Se3f& pose() const { return pose_; }
 	const Mat3f& rotation() const { return matrix_.rot(); }
 	const MatXf& matrix() const { return matrix_; }
-	float angleZ() const { return atan2f(rotation()[1][0], rotation()[0][0]); }
+	float angleZ() const { return xm::atan2(rotation()[1][0], rotation()[0][0]); }
 	const Se3f& posePrev() const { return posePrev_; }
 
 	void initPose(const Se3f& pose); // Вызывать при первой установке

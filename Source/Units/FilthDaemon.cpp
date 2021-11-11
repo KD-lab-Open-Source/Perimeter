@@ -164,7 +164,7 @@ void terFilthSwarmDaemon::Generate()
 		return;
 	GenerationCount--;
 	GenerationFactor += GenerationSpeed;
-	int num = round(floor(GenerationFactor));
+	int num = xm::round(floor(GenerationFactor));
 
 
 	for(int i = 0;i < num;i++)
@@ -176,7 +176,7 @@ void terFilthSwarmDaemon::Generate()
 		Vect3f pos=init_pos[ip];
 		init_pos.erase(init_pos.begin()+ip);
 
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(pos.x),round(pos.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(pos.x), xm::round(pos.y)))
 		{
 			terFilthDaemon* p;
 			p = safe_cast<terFilthDaemon*>(player->buildUnit(GetUnitID()));
@@ -229,7 +229,7 @@ void terFilthDaemon::Start()
 	if(false)
 	{
 		geo_effect=new demonToolzer(32);
-		geo_effect->start(round(position().x),round(position().y));
+		geo_effect->start(xm::round(position().x), xm::round(position().y));
 	}
 
 	sound.Init("Filth_Move_Daemon");
@@ -302,7 +302,7 @@ void terFilthDaemon::MoveQuant()
 		p.phase=realAvatar()->phase();
 
 		Vect3f dd=p.pos.trans()-back;
-//		xassert(fabs(dd.x)<10 && fabs(dd.y)<10);
+//		xassert(fabs(dd.x)<10 && xm::fabs(dd.y)<10);
 
 		object_pos.push_back(p);
 		object_pos.pop_front();

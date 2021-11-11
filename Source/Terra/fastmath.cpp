@@ -1,6 +1,5 @@
 #include "stdafxTr.h"
 
-#include <math.h>
 #include "fastmath.h"
 
 
@@ -26,7 +25,7 @@ void  build_sqrt_table()
     //  and an exponent of 0, stored as 127
     
     s.i = (i << 8) | (0x7F << 23);
-    s.f = (float)sqrt(s.f);
+    s.f = (float)xm::sqrt(s.f);
     
     // Take the square root then strip the first 7 bits of
     //  the mantissa into the table
@@ -37,7 +36,7 @@ void  build_sqrt_table()
     //  stored as 128
     
     s.i = (i << 8) | (0x80 << 23);
-    s.f = (float)sqrt(s.f);
+    s.f = (float)xm::sqrt(s.f);
     
     fast_sqrt_table[i] = (s.i & 0x7FFFFF);
   }
@@ -71,7 +70,7 @@ int main(int argc, char* argv[])
   t = 1234.121234f;
   
   test_sqrt = fastsqrt(t);
-  printf("sqrt expected %20.10f  approx %20.10f\n", sqrt(t), test_sqrt);
+  printf("sqrt expected %20.10f  approx %20.10f\n", xm::sqrt(t), test_sqrt);
 
   FP_INV(it,t);
   printf("inv  expected %20.10f  approx %20.10f\n", 1/t, it);
@@ -102,8 +101,8 @@ float  fastsqrtN (float x)
     EPS = x * eps;
     sq = x;
     sqold = x + 30.0f;         /* != sq */
-    while (fabs (sq * sq - x) >= EPS) {
-    /*     fabs( sq - sqold )>= EPS    */
+    while (xm::abs(sq * sq - x) >= EPS) {
+    /*     xm::fabs( sq - sqold )>= EPS    */
         sqold = sq;
         sq = 0.5f * (sq + x / sq);
     }
@@ -115,7 +114,7 @@ unsigned short sqrtTable4IntegerCalculate[1024];
 void init_sqrtTable4IntegerCalculate(void)
 {
 	int i;
-	for(i=0; i<1024; i++) sqrtTable4IntegerCalculate[i]=round(sqrtf(i)*2048);
+	for(i=0; i<1024; i++) sqrtTable4IntegerCalculate[i]= xm::round(xm::sqrt(i) * 2048);
 }
 
 

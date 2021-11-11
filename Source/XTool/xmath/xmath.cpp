@@ -12,24 +12,40 @@
 #include "xbuffer.h"
 #include "xstream.h"
 
-#pragma warning(disable : 4073 )
-#pragma init_seg(lib)
-
+////////////////////////////////////////////////////////////////////////////////
 //Assert that types are IEEE compilant
+
 #include <limits>
-static_assert(sizeof(float) == 4);
-static_assert(sizeof(double) == 8);
-static_assert(std::numeric_limits<float>::is_iec559);
-static_assert(std::numeric_limits<double>::is_iec559);
+#include <climits>
+#include <cfloat>
+
+static_assert(sizeof(float) * CHAR_BIT == 32);
+static_assert(sizeof(double) * CHAR_BIT == 64);
+static_assert(FLT_RADIX == 2);
+static_assert(FLT_DECIMAL_DIG == 9);
+static_assert(DBL_DECIMAL_DIG == 17);
+static_assert(FLT_HAS_SUBNORM == 1);
+static_assert(DBL_HAS_SUBNORM == 1);
+static_assert(FLT_EVAL_METHOD == 0);
+
+template<typename T>
+inline constexpr bool check_float_type() {
+    return std::numeric_limits<T>::radix == 2
+        && std::numeric_limits<T>::is_iec559
+        && std::numeric_limits<T>::has_infinity
+        && std::numeric_limits<T>::round_style == std::float_round_style::round_to_nearest
+        && std::numeric_limits<T>::has_denorm == std::float_denorm_style::denorm_present
+    ;
+}
+
+static_assert(check_float_type<float>());
+static_assert(check_float_type<double>());
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 //	Constants
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-
-#define STR_LENGTH 1000  // for i/o operations
 
 const Vect2f Vect2f::ZERO(0, 0);
 const Vect2f Vect2f::ID(1, 1);
@@ -134,7 +150,7 @@ int Mat3d::invert(const Mat3d& M)
 {
   double D, oneOverDet;
 
-  if (fabs(D = M.det()) < 1.0e-12) return 1; // not invertible
+  if (xm::abs(D = M.det()) < 1.0e-12) return 1; // not invertible
   oneOverDet = 1 / D;
 
   xx = (M.yy * M.zz - M.yz * M.zy) * oneOverDet;
@@ -156,7 +172,7 @@ int Mat3d::invert()
   double D, oneOverDet;
   double oxy, oyz, ozx, oyx, ozy, oxz, oxx, oyy;
 
-  if (fabs(D = det()) < 1.0e-12) return 1; // not invertible
+  if (xm::abs(D = det()) < 1.0e-12) return 1; // not invertible
   oneOverDet = 1 / D;
 
   oxx = xx; oyy = yy;
@@ -291,7 +307,7 @@ int Mat3f::invert(const Mat3f& M)
 {
   float D, oneOverDet;
 
-  if (fabs(D = M.det()) < 1.0e-12) return 1; // not invertible
+  if (xm::abs(D = M.det()) < 1.0e-12) return 1; // not invertible
   oneOverDet = 1 / D;
 
   xx = (M.yy * M.zz - M.yz * M.zy) * oneOverDet;
@@ -313,7 +329,7 @@ int Mat3f::invert()
   float D, oneOverDet;
   float oxy, oyz, ozx, oyx, ozy, oxz, oxx, oyy;
 
-  if (fabs(D = det()) < 1.0e-12) return 1; // not invertible
+  if (xm::abs(D = det()) < 1.0e-12) return 1; // not invertible
   oneOverDet = 1 / D;
 
   oxx = xx; oyy = yy;
@@ -756,8 +772,8 @@ MatXf& MatXf::Invert()
 QuatD& QuatD::set(double angle, const Vect3d& axis, int normalizeAxis)
 {
 	double theta = 0.5 * angle;
-	double sine = sin(theta);
-	s_ = cos(theta);
+	double sine = xm::sin(theta);
+	s_ = xm::cos(theta);
 
 	if(normalizeAxis){
 		double n2;
@@ -765,7 +781,7 @@ QuatD& QuatD::set(double angle, const Vect3d& axis, int normalizeAxis)
 			*this = QuatD::ID;
 			return *this;
 			}
-		sine /= sqrt(n2);
+		sine /= xm::sqrt(n2);
 		}
 
 	x_ = axis.x * sine;
@@ -799,28 +815,28 @@ QuatD& QuatD::set(const Mat3d& R)
   // compute signed quaternion components using numerically stable method
   switch(i) {
   case 0:
-    s_ = sqrt(qs2);
+    s_ = xm::sqrt(qs2);
     tmp = 0.25 / s_;
     x_ = (R.zy - R.yz) * tmp;
     y_ = (R.xz - R.zx) * tmp;
     z_ = (R.yx - R.xy) * tmp;
     break;
   case 1:
-    x_ = sqrt(qx2);
+    x_ = xm::sqrt(qx2);
     tmp = 0.25 / x_;
     s_ = (R.zy - R.yz) * tmp;
     y_ = (R.xy + R.yx) * tmp;
     z_ = (R.xz + R.zx) * tmp;
     break;
   case 2:
-    y_ = sqrt(qy2);
+    y_ = xm::sqrt(qy2);
     tmp = 0.25 / y_;
     s_ = (R.xz - R.zx) * tmp;
     z_ = (R.yz + R.zy) * tmp;
     x_ = (R.yx + R.xy) * tmp;
     break;
   case 3:
-    z_ = sqrt(qz2);
+    z_ = xm::sqrt(qz2);
     tmp = 0.25 / z_;
     s_ = (R.yx - R.xy) * tmp;
     x_ = (R.zx + R.xz) * tmp;
@@ -835,7 +851,7 @@ QuatD& QuatD::set(const Mat3d& R)
     z_ = -z_;
   }
   // normalize, just to be safe
-  tmp = 1.0 / sqrt(s_*s_ + x_*x_ + y_*y_ + z_*z_);
+  tmp = 1.0 / xm::sqrt(s_*s_ + x_*x_ + y_*y_ + z_*z_);
   s_ *= tmp;
   x_ *= tmp;
   y_ *= tmp;
@@ -963,8 +979,8 @@ Vect3d& QuatD::invXform(Vect3d& v) const
 QuatF& QuatF::set(float angle, const Vect3f& axis, int normalizeAxis)
 {
 	float theta = 0.5f * angle;
-	float sine = sinf(theta);
-	s_ = cosf(theta);
+	float sine = xm::sin(theta);
+	s_ = xm::cos(theta);
 
 	if(normalizeAxis){
 		float n2;
@@ -972,8 +988,8 @@ QuatF& QuatF::set(float angle, const Vect3f& axis, int normalizeAxis)
 			*this = QuatD::ID;
 			return *this;
 			}
-		sine /= sqrtf(n2);
-		}
+		sine /= xm::sqrt(n2);
+    }
 
 	x_ = axis.x * sine;
 	y_ = axis.y * sine;
@@ -1005,28 +1021,28 @@ QuatF& QuatF::set(const Mat3f& R)
   // compute signed quaternion components using numerically stable method
   switch(i) {
   case 0:
-    s_ = sqrtf(qs2);
+    s_ = xm::sqrt(qs2);
     tmp = 0.25f / s_;
     x_ = (R.zy - R.yz) * tmp;
     y_ = (R.xz - R.zx) * tmp;
     z_ = (R.yx - R.xy) * tmp;
     break;
   case 1:
-    x_ = sqrtf(qx2);
+    x_ = xm::sqrt(qx2);
     tmp = 0.25f / x_;
     s_ = (R.zy - R.yz) * tmp;
     y_ = (R.xy + R.yx) * tmp;
     z_ = (R.xz + R.zx) * tmp;
     break;
   case 2:
-    y_ = sqrtf(qy2);
+    y_ = xm::sqrt(qy2);
     tmp = 0.25f / y_;
     s_ = (R.xz - R.zx) * tmp;
     z_ = (R.yz + R.zy) * tmp;
     x_ = (R.yx + R.xy) * tmp;
     break;
   case 3:
-    z_ = sqrtf(qz2);
+    z_ = xm::sqrt(qz2);
     tmp = 0.25f / z_;
     s_ = (R.yx - R.xy) * tmp;
     x_ = (R.zx + R.xz) * tmp;
@@ -1041,7 +1057,7 @@ QuatF& QuatF::set(const Mat3f& R)
     z_ = -z_;
   }
   // normalize, just to be safe
-  tmp = 1.f / sqrtf(s_*s_ + x_*x_ + y_*y_ + z_*z_);
+  tmp = 1.f / xm::sqrt(s_ * s_ + x_ * x_ + y_ * y_ + z_ * z_);
   s_ *= tmp;
   x_ *= tmp;
   y_ *= tmp;
@@ -1577,10 +1593,11 @@ XBuffer& operator> (XBuffer& b,QuatF& q)
 //////////////////////////////////////////////////////////////////////////////////
 QuatD Slerp(const QuatD& A,const QuatD& B,double t)
 {
-	double theta = acos(dot(A,B));
-	double sin_theta = sin(theta);
-	if(fabs(sin_theta) < DBL_EPS)
-		return A;
+	double theta = xm::acos(dot(A,B));
+	double sin_theta = xm::sin(theta);
+	if(xm::abs(sin_theta) < DBL_EPS) {
+        return A;
+    }
 	sin_theta = 1/sin_theta;
-	return A*(sin(theta*(1 - t))*sin_theta) + B*(sin(theta* t)*sin_theta);
+	return A*(xm::sin(theta*(1 - t))*sin_theta) + B*(xm::sin(theta* t)*sin_theta);
 }

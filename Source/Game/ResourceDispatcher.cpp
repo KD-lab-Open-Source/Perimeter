@@ -143,7 +143,7 @@ void ResourceDispatcher::evolve(time_type interval, int do_log)
 //					timer = clocki() + 2000;
 //					XBuffer buf;
 //					buf < "World: " < vMap -> wTable[vMap -> cWorld].name < "\n";
-//					buf < (check_command_line("verify") ? "Verifying: " : "Saving: ") <= round(100.*t_min/syncro_timer()) < " %\n";
+//					buf < (check_command_line("verify") ? "Verifying: " : "Saving: ") <= xm::round(100.*t_min/syncro_timer()) < " %\n";
 //					int s = t_min/1000;
 //					int m = s/60;
 //					s -= m*60;

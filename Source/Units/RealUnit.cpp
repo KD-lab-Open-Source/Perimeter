@@ -426,7 +426,7 @@ void terUnitReal::Quant()
 		if(damage_ratio >= attr().environmentalDamage.damageRatioMin){
 			if(attr().environmentalDamage.period){
 				if(envDamageTimer_.get_start_time()){
-					int delta = round(float(attr().environmentalDamage.periodDelta) * (1.0f - damage_ratio));
+					int delta = xm::round(float(attr().environmentalDamage.periodDelta) * (1.0f - damage_ratio));
 
 					if(envDamageTimer_() >= delta){
 						DamageData damage = attr().environmentalDamage.damage(damage_ratio);
@@ -827,7 +827,7 @@ void terUnitReal::showPath(const std::vector<Vect3f>& wayPoints) {
 			Vect3f w, e;
 			terCamera->GetCamera()->ConvertorWorldToViewPort(&posPrev,&w,&e);
 			if(e.z < 1.0f)
-				terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,pathColor,0);
+				terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 		}
 	}
 }
@@ -854,7 +854,7 @@ void terUnitReal::ShowInfo()
 			Vect3f w, e;
 			terCamera->GetCamera()->ConvertorWorldToViewPort(&posPrev,&w,&e);
 			if(e.z < 1.0f)
-				terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,pathColor,0);
+				terRenderDevice->DrawRectangle(round(e.x) - 2,xm::round(e.y) - 2,4,4,pathColor,0);
 		}
 
 //		if(targetUnit()) targetUnit()->SelectEnemy();
@@ -872,7 +872,7 @@ void terUnitReal::ShowInfo()
 		float radiusFactor = terCamera->GetCamera()->GetFocusViewPort().x / pv.z;
 		int r = 0;
 		if (radius()) {
-			r = round( radius() * radiusFactor );
+			r = xm::round(radius() * radiusFactor);
 		}
 
 		if (pv.z > 0) {
@@ -1019,7 +1019,7 @@ void terUnitReal::splashDamage()
 {
 	if(!(BodyPoint->clusterColliding()) && attr().unitDamage.splashDamageRadius){
 		terUnitGridSplashDamageOperator op(this, ownerUnit_ ? ownerUnit_ : this);
-		universe()->UnitGrid.Scan(round(position().x), round(position().y), attr().unitDamage.splashDamageRadius, op);
+		universe()->UnitGrid.Scan(xm::round(position().x), xm::round(position().y), attr().unitDamage.splashDamageRadius, op);
 	}
 }
 
@@ -1205,7 +1205,7 @@ void terUnitReal::freeZeroLayer()
 		terMapPoint->UpdateMap(position2D(), attr().ZeroLayerRadius);
 
         FreeZeroLayerOp op = FreeZeroLayerOp(this);
-		universe()->UnitGrid.Scan(position().xi(), position().yi(), round(attr().ZeroLayerRadius*2.5), op);
+		universe()->UnitGrid.Scan(position().xi(), position().yi(), xm::round(attr().ZeroLayerRadius * 2.5), op);
 	}
 }
 

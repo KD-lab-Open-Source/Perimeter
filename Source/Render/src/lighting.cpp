@@ -266,7 +266,7 @@ float cLighting::OneLight::get(std::vector<float>& p,float t)//линейная 
 
 void cLighting::OneLight::BuildStrip(cCamera *pCamera,cLighting* parent)
 {
-	float tn=round(pos_end.distance(pos_begin)/parent->param.strip_length);
+	float tn= xm::round(pos_end.distance(pos_begin) / parent->param.strip_length);
 	strip_list.resize(position.size());
 	for(int i=0;i<position.size();i++)
 	{

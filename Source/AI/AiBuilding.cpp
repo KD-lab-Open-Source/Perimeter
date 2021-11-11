@@ -180,7 +180,7 @@ void AIPlayer::findWhereToDigQuant()
 				if(place_scan_op->found()) {
 					if(scanStep_ > ai_scan_step_min) {
 						Vect2i pos = place_scan_op->bestPosition(); 
-						Vect2i off((int)round(ai_scan_size_of_step_factor*scanStep_), (int)round(ai_scan_size_of_step_factor*scanStep_));
+						Vect2i off((int) xm::round(ai_scan_size_of_step_factor * scanStep_), (int) xm::round(ai_scan_size_of_step_factor * scanStep_));
 						startPlace(place_scan_op, pos - off, pos + off, scanStep_/2);
 					}
 					else{
@@ -257,7 +257,7 @@ void AIPlayer::CircleShape::make(int radius_)
 	clear();
 	reserve(radius*2 + 1);
 	for(int y = -radius; y <= radius; y++){
-		int x = round(sqrtf(sqr(radius) - sqr(y)));
+		int x = xm::round(xm::sqrt(sqr(radius) - sqr(y)));
 		push_back(Interval(-x, 1 + x));
 	}
 }

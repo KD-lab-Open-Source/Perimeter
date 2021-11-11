@@ -433,12 +433,12 @@ void cMeshBank::GetMaterial(int nChannel,float phase,double MaterialAnimTime,
 	if(Texture[0] && Texture[0]->GetTimePerFrame())
 	{
 		double len=Texture[0]->GetNumberFrame()*Texture[0]->GetTimePerFrame();
-		Data.MaterialAnimPhase=fmod(MaterialAnimTime,len)/len;
+		Data.MaterialAnimPhase=xm::fmod(MaterialAnimTime,len)/len;
 	}else
 	if(Texture[1] && Texture[1]->GetTimePerFrame())
 	{
 		double len=Texture[1]->GetNumberFrame()*Texture[1]->GetTimePerFrame();
-		Data.MaterialAnimPhase=fmod(MaterialAnimTime,len)/len;
+		Data.MaterialAnimPhase=xm::fmod(MaterialAnimTime,len)/len;
 	}else
 		Data.MaterialAnimPhase=0;
 }

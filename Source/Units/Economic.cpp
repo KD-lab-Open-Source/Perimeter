@@ -780,7 +780,7 @@ void Cluster::startField()
 	Vect2s p0 = path.back();
 	Vect2sVect::iterator pi;
 	FOR_EACH(path, pi){
-		length_ += sqrtf((*pi - p0).norm2());
+		length_ += xm::sqrt((*pi - p0).norm2());
 		p0 = *pi;
 	}
 

@@ -155,7 +155,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 	Vect2i size(0,0);
 
 	float mul=height/float(real_height);
-	int yborder=max((int)round(2*mul),2);
+	int yborder=max((int) xm::round(2 * mul), 2);
 	int sz;
 	for(sz=0;sz<sizes_size;sz++)
 	{
@@ -165,7 +165,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 		for(i=char_min;i<char_max;i++)
 		{
 
-			int dx=(int)round(chars[i].width*mul+2);
+			int dx=(int) xm::round(chars[i].width * mul + 2);
 			if(x+dx>size.x)
 			{
 				y+=(height+yborder);
@@ -190,7 +190,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 	FontHeight=height/float(size.y);
 
 	//Создаём текстуру
-	Vect2i real_size((int)round(size.x/mul),(int)round(size.y/mul));
+	Vect2i real_size((int) xm::round(size.x / mul), (int) xm::round(size.y / mul));
 	uint8_t* gray_in=new uint8_t[real_size.x * real_size.y];
 	memset(gray_in,0,real_size.x*real_size.y);
 
@@ -199,7 +199,7 @@ bool cFontInternal::CreateImage(const char* filename, const char* fontname, int 
 	{
 
 		int w=chars[i].width;
-		int dx=(int)round(w*mul+2);
+		int dx=(int) xm::round(w * mul + 2);
 		if(x+dx>size.x)
 		{
 			y+=(height+yborder);
@@ -363,7 +363,7 @@ bool cFontInternal::Create(const std::string& root_dir, const std::string& local
 	int ScreenY=gb_RenderDevice->GetSizeY();
     xassert(0<ScreenY);
 
-	int height=(int)round((float)(h*ScreenY)/768.0f);
+	int height=(int) xm::round((float) (h * ScreenY) / 768.0f);
 	statement_height=h;
     locale=locale_;
     font_name=fname;

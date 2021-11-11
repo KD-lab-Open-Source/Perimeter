@@ -305,7 +305,7 @@ void s_sur_scr::lex2convert(char* world, char*& buf, XStream &fout)
 			}
 			if(row[num_old_row].type==DOUBLE_VARIABLE){
 				row[num_old_row].get_el(i,t_double);
-				if(row[numbers_rows].type==INT_VARIABLE){ t_int=round(t_double); row[numbers_rows].set_el(i,t_int);}
+				if(row[numbers_rows].type==INT_VARIABLE){ t_int= xm::round(t_double); row[numbers_rows].set_el(i, t_int);}
 				if(row[numbers_rows].type==DOUBLE_VARIABLE) row[numbers_rows].set_el(i,t_double);
 				if(row[numbers_rows].type==CHAR_VARIABLE){
 					XBuffer bbb; bbb <= t_double;

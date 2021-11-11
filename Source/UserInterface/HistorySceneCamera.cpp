@@ -191,28 +191,28 @@ void HistorySceneCamera::quant(const Vect2f& mousePos, float dt) {
 		
 		if (
 				g_controls_converter.key(CTRL_CAMERA_MOVE_UP).pressed()
-			||	fabs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP ) {
+			|| xm::abs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP ) {
 
 			position.theta -= HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if (
 				g_controls_converter.key(CTRL_CAMERA_MOVE_DOWN).pressed()
-			||	fabs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN ) {
+			|| xm::abs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN ) {
 
 			position.theta += HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if (
 				g_controls_converter.key(CTRL_CAMERA_MOVE_LEFT).pressed()
-			||	fabs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
+			|| xm::abs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
 
 			position.psi += HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if ( 
 				g_controls_converter.key(CTRL_CAMERA_MOVE_RIGHT).pressed()
-			||	fabs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
+			|| xm::abs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
 
 			position.psi -= HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}

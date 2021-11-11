@@ -37,8 +37,8 @@ struct BitMap {
 		x+=vMap.H_SIZE;
 		y+=vMap.V_SIZE;
 		int x1,y1;
-		x1 = round(A11*x + A12*y + X);
-		y1 = round(A21*x + A22*y + Y);
+		x1 = xm::round(A11 * x + A12 * y + X);
+		y1 = xm::round(A21 * x + A22 * y + Y);
 		while (x<0){ x+=sx;}
 		while (y<0){ y+=sy;}
 		if(!mode) return delta*(64 - data[(y1%sy)*sx + (x1%sx)])/64; 
@@ -52,8 +52,8 @@ struct BitMap {
 		x+=vMap.H_SIZE;
 		y+=vMap.V_SIZE;
 		int x1,y1;
-		x1 = round(A11*x + A12*y + X);
-		y1 = round(A21*x + A22*y + Y);
+		x1 = xm::round(A11 * x + A12 * y + X);
+		y1 = xm::round(A21 * x + A22 * y + Y);
 		while (x<0){ x+=sx;}
 		while (y<0){ y+=sy;}
 		return MosaicTypes[data[(y1%sy)*sx + (x1%sx)]%8]; 
@@ -65,8 +65,8 @@ struct BitMap {
 		x+=vMap.H_SIZE;
 		y+=vMap.V_SIZE;
 		int x1,y1;
-		x1 = round(A11*x + A12*y + X);
-		y1 = round(A21*x + A22*y + Y);
+		x1 = xm::round(A11 * x + A12 * y + X);
+		y1 = xm::round(A21 * x + A22 * y + Y);
 		while (x<0){ x+=sx;}
 		while (y<0){ y+=sy;}
 		return data[(y1%sy)*sx + (x1%sx)]; 
@@ -76,8 +76,8 @@ struct BitMap {
 		X0+=vMap.H_SIZE;
 		Y0+=vMap.V_SIZE;
 		alpha-=90;
-		A11 = A22 = cos(alpha*3.1415926535/180);
-		A21 = -(A12 = sin(alpha*3.1415926535/180));
+		A11 = A22 = xm::cos(alpha * 3.1415926535 / 180);
+		A21 = -(A12 = xm::sin(alpha * 3.1415926535 / 180));
 		X = X0 - A11*X0 - A12*Y0;
 		Y = Y0 - A21*X0 - A22*Y0;
 	};
@@ -350,7 +350,7 @@ public:
 						cy = vMap.YCYCL(y+yy[j]);
 						cx = vMap.XCYCL(x + xx[j]);
 						h = vMap.SGetAlt(cx,cy);
-						if(abs(h - mean) < eql) {
+						if(xm::abs(h - mean) < eql) {
 							if(h > mean){ //voxSet(cx,cy,-1);
 								//tVoxSet( vMap.offsetBuf(cx, cy), -DH_MEAN);
 								tVoxSetAll( vMap.offsetBuf(cx, cy), -DH_MEAN);
@@ -375,7 +375,7 @@ public:
 							cy = vMap.YCYCL(y+yy[j]);
 							cx = vMap.XCYCL(x + xx[j]);
 							h = vMap.SGetAlt(cx,cy);
-							if(abs(h - mean) < eql) {
+							if(xm::abs(h - mean) < eql) {
 								if(h > mean){ //voxSet(cx,cy,-1);
 									//tVoxSet( vMap.offsetBuf(cx, cy), -DH_MEAN);
 									tVoxSetAll( vMap.offsetBuf(cx, cy), -DH_MEAN);
@@ -415,7 +415,7 @@ public:
 								for(dy = -1;dy <= 1;dy++){
 									for(dx = -1;dx <= 1;dx++){
 										cx_ = vMap.XCYCL(cx+dx);
-										if(abs(dx) + abs(dy) == 2)
+										if(xm::abs(dx) + xm::abs(dy) == 2)
 											v += vMap.SGetAlt(cx_,vMap.YCYCL(cy +dy));
 									}
 								}
@@ -458,7 +458,7 @@ public:
 									for(dy = -1;dy <= 1;dy++){
 										for(dx = -1;dx <= 1;dx++){
 											cx_ = vMap.XCYCL(cx+dx);
-											if(abs(dx) + abs(dy) == 2)
+											if(xm::abs(dx) + xm::abs(dy) == 2)
 												v += vMap.SGetAlt(cx_,vMap.YCYCL(cy +dy));
 										}
 									}
@@ -776,25 +776,31 @@ public:
 			case 0:
 				//toolzerAligmentTerrain4ZP.influenceDZ(x, y, 5, -3<<VX_FRACTION, 3 );
 				//toolzerAligmentTerrain4ZP.influenceDZ(x, y, 16, 0<<VX_FRACTION, 5 );
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(10*trucksIntrumentParameter.kRadius4DigZL), round(-3*trucksIntrumentParameter.kHeigh4DigZL*(1<<VX_FRACTION)), 3 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(10 * trucksIntrumentParameter.kRadius4DigZL),
+													  xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
+																	(1 << VX_FRACTION)), 3 );
 			case 1:
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(20*trucksIntrumentParameter.kRadius4DigZL), 0<<VX_FRACTION, 5 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(20 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 5 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
 				break;
 			case 2:
 				//toolzerAligmentTerrain4ZP.influenceDZ(x, y, 5, -3<<VX_FRACTION, 3 );
 				//toolzerAligmentTerrain4ZP.influenceDZ(x, y, 16, 0<<VX_FRACTION, 6 );
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(10*trucksIntrumentParameter.kRadius4DigZL), round(-3*trucksIntrumentParameter.kHeigh4DigZL*(1<<VX_FRACTION)), 3 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(10 * trucksIntrumentParameter.kRadius4DigZL),
+													  xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
+																	(1 << VX_FRACTION)), 3 );
 			case 3:
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(20*trucksIntrumentParameter.kRadius4DigZL), 0<<VX_FRACTION, 6 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(20 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 6 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
 				break;
 			case 4:
 				//toolzerAligmentTerrain4ZP.influenceDZ(x, y, 5, -3<<VX_FRACTION, 3 );
 				//toolzerAligmentTerrain4ZP.influenceDZ(x, y, 16, 0<<VX_FRACTION, 7 );
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(10*trucksIntrumentParameter.kRadius4DigZL), round(-3*trucksIntrumentParameter.kHeigh4DigZL*(1<<VX_FRACTION)), 3 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(10 * trucksIntrumentParameter.kRadius4DigZL),
+													  xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
+																	(1 << VX_FRACTION)), 3 );
 			case 5:
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(20*trucksIntrumentParameter.kRadius4DigZL), 0<<VX_FRACTION, 7 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(20 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 7 );
 				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				return 0;
 				break;
@@ -806,18 +812,30 @@ public:
 		else {
 			switch(phase){
 			case 0:
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(5*trucksIntrumentParameter.kRadius4DigZL), round(-3*trucksIntrumentParameter.kHeigh4DigZL*(1<<VX_FRACTION)), 3 );
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4DigZL), 0<<VX_FRACTION, 5 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(5 * trucksIntrumentParameter.kRadius4DigZL),
+															xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
+																		  (1 << VX_FRACTION)), 3 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(16 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 5 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
 				break;
 			case 1:
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(5*trucksIntrumentParameter.kRadius4DigZL), round(-3*trucksIntrumentParameter.kHeigh4DigZL*(1<<VX_FRACTION)), 3 );
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4DigZL), 0<<VX_FRACTION, 6 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(5 * trucksIntrumentParameter.kRadius4DigZL),
+															xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
+																		  (1 << VX_FRACTION)), 3 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(16 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 6 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
 				break;
 			case 2:
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(5*trucksIntrumentParameter.kRadius4DigZL), round(-3*trucksIntrumentParameter.kHeigh4DigZL*(1<<VX_FRACTION)), 3 );
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4DigZL), 0<<VX_FRACTION, 7 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(5 * trucksIntrumentParameter.kRadius4DigZL),
+															xm::round(-3 * trucksIntrumentParameter.kHeigh4DigZL *
+																		  (1 << VX_FRACTION)), 3 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(16 * trucksIntrumentParameter.kRadius4DigZL), 0 << VX_FRACTION, 7 );
 //				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				damagingBuildingsTolzer(x,y,16);
 				return 0;
@@ -844,13 +862,17 @@ public:
 		if(flag_leveled_status) {
 			switch(phase){
 			case 0:
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), round(2*trucksIntrumentParameter.kHeigh4PutZL*(1<<VX_FRACTION)), 10 );
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), 0<<VX_FRACTION, 3 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(16 * trucksIntrumentParameter.kRadius4PutZL),
+													  xm::round(2 * trucksIntrumentParameter.kHeigh4PutZL *
+																	(1 << VX_FRACTION)), 10 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(16 * trucksIntrumentParameter.kRadius4PutZL), 0 << VX_FRACTION, 3 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
 				break;
 			case 1:
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), round(1*trucksIntrumentParameter.kHeigh4PutZL*(1<<VX_FRACTION)), 10 );
-				toolzerAligmentTerrain4ZP.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), 0<<VX_FRACTION, 3 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(16 * trucksIntrumentParameter.kRadius4PutZL),
+													  xm::round(1 * trucksIntrumentParameter.kHeigh4PutZL *
+																	(1 << VX_FRACTION)), 10 );
+				toolzerAligmentTerrain4ZP.influenceDZ(x, y, xm::round(16 * trucksIntrumentParameter.kRadius4PutZL), 0 << VX_FRACTION, 3 );
 				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				return 0;
 				break;
@@ -862,13 +884,21 @@ public:
 		else {
 			switch(phase){
 			case 0:
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), round(2*trucksIntrumentParameter.kHeigh4PutZL*(1<<VX_FRACTION)), 10 );
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), 0<<VX_FRACTION, 3 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(16 * trucksIntrumentParameter.kRadius4PutZL),
+															xm::round(2 * trucksIntrumentParameter.kHeigh4PutZL *
+																		  (1 << VX_FRACTION)), 10 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(16 * trucksIntrumentParameter.kRadius4PutZL), 0 << VX_FRACTION, 3 );
 				///clearAtrBaseOfBuildingCorrupt(x,y,16);
 				break;
 			case 1:
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), round(1*trucksIntrumentParameter.kHeigh4PutZL*(1<<VX_FRACTION)), 10 );
-				toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4PutZL), 0<<VX_FRACTION, 3 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(16 * trucksIntrumentParameter.kRadius4PutZL),
+															xm::round(1 * trucksIntrumentParameter.kHeigh4PutZL *
+																		  (1 << VX_FRACTION)), 10 );
+				toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+															xm::round(16 * trucksIntrumentParameter.kRadius4PutZL), 0 << VX_FRACTION, 3 );
 				clearAtrBaseOfBuildingCorrupt(x,y,16);
 				return 0;
 				break;
@@ -908,22 +938,33 @@ public:
 
 		switch(phase){
 		case 0:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(5*trucksIntrumentParameter.kRadius4DigGarbage), round(-0.4f*trucksIntrumentParameter.kHeigh4DigGarbage*(1<<VX_FRACTION)), 5 );//5 //-4
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(5 * trucksIntrumentParameter.kRadius4DigGarbage),
+														xm::round(
+																-0.4f * trucksIntrumentParameter.kHeigh4DigGarbage *
+																(1 << VX_FRACTION)), 5 );//5 //-4
 			break;
 		case 1:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(10*trucksIntrumentParameter.kRadius4DigGarbage), 0<<VX_FRACTION, 8 ); //16
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(10 * trucksIntrumentParameter.kRadius4DigGarbage), 0 << VX_FRACTION, 8 ); //16
 			break;
 		case 2:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(6*trucksIntrumentParameter.kRadius4DigGarbage), round(-0.3f*trucksIntrumentParameter.kHeigh4DigGarbage*(1<<VX_FRACTION)), 8 );//5 //-4
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(6 * trucksIntrumentParameter.kRadius4DigGarbage),
+														xm::round(
+																-0.3f * trucksIntrumentParameter.kHeigh4DigGarbage *
+																(1 << VX_FRACTION)), 8 );//5 //-4
 			break;
 		case 3:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(10*trucksIntrumentParameter.kRadius4DigGarbage), 0<<VX_FRACTION, 7 ); //16
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(10 * trucksIntrumentParameter.kRadius4DigGarbage), 0 << VX_FRACTION, 7 ); //16
 			break;
 //		case 4:
 //			toolzerAligmentTerrainVariableH.influenceDZ(x, y, 3, (-0.4f)*(1<<VX_FRACTION), 3 );//5 //-4
 //			break;
 		case 4:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(16*trucksIntrumentParameter.kRadius4DigGarbage), 0<<VX_FRACTION, 2 ); //16
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(16 * trucksIntrumentParameter.kRadius4DigGarbage), 0 << VX_FRACTION, 2 ); //16
 			return 0;
 			break;
 		default:
@@ -963,19 +1004,29 @@ public:
 		//steps = {	{ type = TOOLZER_DZ; sx = 32; sy = 32; dh = 0.0; shape = 2;}	};
 		switch(phase){
 		case 0:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(5*trucksIntrumentParameter.kRadius4PutGarbage), round(0.4f*trucksIntrumentParameter.kHeigh4PutGarbage*(1<<VX_FRACTION)), 10 );//16 //0.5f
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(5 * trucksIntrumentParameter.kRadius4PutGarbage),
+														xm::round(
+																0.4f * trucksIntrumentParameter.kHeigh4PutGarbage *
+																(1 << VX_FRACTION)), 10 );//16 //0.5f
 			break;
 		case 1:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(7*trucksIntrumentParameter.kRadius4PutGarbage), round(0.3f*trucksIntrumentParameter.kHeigh4PutGarbage*(1<<VX_FRACTION)), 10 );//16 //0.5f
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(7 * trucksIntrumentParameter.kRadius4PutGarbage),
+														xm::round(
+																0.3f * trucksIntrumentParameter.kHeigh4PutGarbage *
+																(1 << VX_FRACTION)), 10 );//16 //0.5f
 			break;
 //		case 2:
-//			toolzerAligmentTerrainVariableH.influenceDZ(x, y, 10, round(0.5f*(1<<VX_FRACTION)), 10 );//16 //0.5f
+//			toolzerAligmentTerrainVariableH.influenceDZ(x, y, 10, xm::round(0.5f*(1<<VX_FRACTION)), 10 );//16 //0.5f
 //			break;
 		case 2:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(10*trucksIntrumentParameter.kRadius4PutGarbage), 0, 6 );//16
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(10 * trucksIntrumentParameter.kRadius4PutGarbage), 0, 6 );//16
 			break;
 		case 3:
-			toolzerAligmentTerrainVariableH.influenceDZ(x, y, round(10*trucksIntrumentParameter.kRadius4PutGarbage), 0, 2 );//16
+			toolzerAligmentTerrainVariableH.influenceDZ(x, y,
+														xm::round(10 * trucksIntrumentParameter.kRadius4PutGarbage), 0, 2 );//16
 			return 0;
 			break;
 		default:
@@ -1005,23 +1056,23 @@ public:
 
 		switch(phase){
 		case 0:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*32), 2*(1<<VX_FRACTION), 3 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 32), 2 * (1 << VX_FRACTION), 3 );
 			break;
 		case 1:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*24), -4*(1<<VX_FRACTION), 3 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 24), -4 * (1 << VX_FRACTION), 3 );
 			break;
 		case 2:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*16), -4*(1<<VX_FRACTION), 4 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 16), -4 * (1 << VX_FRACTION), 4 );
 			break;
 		case 3:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*32), 0, 2 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 32), 0, 2 );
 			break;
 		case 4:
-			toolzerPlotingSoot.influenceDZ(x, y, round(kScale*27), 1*(1<<VX_FRACTION), 10);
+			toolzerPlotingSoot.influenceDZ(x, y, xm::round(kScale * 27), 1 * (1 << VX_FRACTION), 10);
 			break;
 		case 5:
-			toolzerPlotingSoot.influenceDZ(x, y, round(kScale*38), 1*(1<<VX_FRACTION), 7);
-			damagingBuildingsTolzer(x, y, round(kScale*32));
+			toolzerPlotingSoot.influenceDZ(x, y, xm::round(kScale * 38), 1 * (1 << VX_FRACTION), 7);
+			damagingBuildingsTolzer(x, y, xm::round(kScale * 32));
 			return 0;
 			break;
 		default:
@@ -1046,10 +1097,10 @@ public:
 		//toolzerPlotingSoot
 		//int influenceDZ(int x, int y, int rad, short dz, int smMode)
 		//int influenceBM(int x, int y, int sx, int sy, unsigned char * imageArea)
-		int xu=vMap.XCYCL(round(x+cos(angle)*10.));
-		int yu=vMap.YCYCL(round(y+sin(angle)*10.));
-		int xd=vMap.XCYCL(round(x-cos(angle)*10.));
-		int yd=vMap.YCYCL(round(y-sin(angle)*10.));
+		int xu=vMap.XCYCL(xm::round(x+xm::cos(angle)*10.));
+		int yu=vMap.YCYCL(xm::round(y+xm::sin(angle)*10.));
+		int xd=vMap.XCYCL(xm::round(x-xm::cos(angle)*10.));
+		int yd=vMap.YCYCL(xm::round(y-xm::sin(angle)*10.));
 		switch(phase){
 		case 0:
 			toolzerChangeTerHeight.influenceDZ(xu, yu, 14, 4*(1<<VX_FRACTION), 10 );
@@ -1058,12 +1109,12 @@ public:
 			toolzerChangeTerHeight.influenceDZ(xd, yd, 16, 0, 3 );
 			break;
 		case 1:
-			toolzerChangeTerHeight.influenceDZ(xu, yu, 14, round(0.5*(1<<VX_FRACTION)), 10 );
-			toolzerChangeTerHeight.influenceDZ(xd, yd, 14, round(0.5*(1<<VX_FRACTION)), 10 );
+			toolzerChangeTerHeight.influenceDZ(xu, yu, 14, xm::round(0.5 * (1 << VX_FRACTION)), 10 );
+			toolzerChangeTerHeight.influenceDZ(xd, yd, 14, xm::round(0.5 * (1 << VX_FRACTION)), 10 );
 			break;
 		case 2:
-			toolzerChangeTerHeight.influenceDZ(xu, yu, 14, -round(0.5*(1<<VX_FRACTION)), 10 );
-			toolzerChangeTerHeight.influenceDZ(xd, yd, 14, -round(0.5*(1<<VX_FRACTION)), 10 );
+			toolzerChangeTerHeight.influenceDZ(xu, yu, 14, -xm::round(0.5 * (1 << VX_FRACTION)), 10 );
+			toolzerChangeTerHeight.influenceDZ(xd, yd, 14, -xm::round(0.5 * (1 << VX_FRACTION)), 10 );
 			break;
 		case 3:
 			toolzerChangeTerHeight.influenceDZ(xu, yu, 16, 0, 3 );
@@ -1093,10 +1144,10 @@ public:
 		//toolzerPlotingSoot
 		//int influenceDZ(int x, int y, int rad, short dz, int smMode)
 		//int influenceBM(int x, int y, int sx, int sy, unsigned char * imageArea)
-		int xu=vMap.XCYCL(round(x+cos(angle)*10.));
-		int yu=vMap.YCYCL(round(y+sin(angle)*10.));
-		int xd=vMap.XCYCL(round(x-cos(angle)*10.));
-		int yd=vMap.YCYCL(round(y-sin(angle)*10.));
+		int xu=vMap.XCYCL(xm::round(x+xm::cos(angle)*10.));
+		int yu=vMap.YCYCL(xm::round(y+xm::sin(angle)*10.));
+		int xd=vMap.XCYCL(xm::round(x-xm::cos(angle)*10.));
+		int yd=vMap.YCYCL(xm::round(y-xm::sin(angle)*10.));
 		switch(phase){
 		case 0:
 			toolzerChangeTerHeight.influenceDZ(xu, yu, 20, 2*(1<<VX_FRACTION), 5 );
@@ -1151,22 +1202,22 @@ public:
 
 		switch(phase){
 		case 0:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*32), -2*(1<<VX_FRACTION), 3 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 32), -2 * (1 << VX_FRACTION), 3 );
 			break;
 		case 1:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*24), +4*(1<<VX_FRACTION), 3 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 24), +4 * (1 << VX_FRACTION), 3 );
 			break;
 		case 2:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*16), +4*(1<<VX_FRACTION), 4 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 16), +4 * (1 << VX_FRACTION), 4 );
 			break;
 		case 3:
-			toolzerChangeTerHeight.influenceDZ(x, y, round(kScale*32), 0, 2 );
+			toolzerChangeTerHeight.influenceDZ(x, y, xm::round(kScale * 32), 0, 2 );
 			break;
 		case 4:
-			toolzerPlotingSoot.influenceDZ(x, y, round(kScale*27), 1*(1<<VX_FRACTION), 10);
+			toolzerPlotingSoot.influenceDZ(x, y, xm::round(kScale * 27), 1 * (1 << VX_FRACTION), 10);
 			break;
 		case 5:
-			toolzerPlotingSoot.influenceDZ(x, y, round(kScale*32), 1*(1<<VX_FRACTION), 10);
+			toolzerPlotingSoot.influenceDZ(x, y, xm::round(kScale * 32), 1 * (1 << VX_FRACTION), 10);
 			return 0;
 			break;
 		default:
@@ -1197,10 +1248,10 @@ public:
 
 		switch(phase){
 		case 0:
-			toolzerPlottingVeryLightDam.influenceDZ(x, y, round(kScale*27), 1*(1<<VX_FRACTION), 5);
+			toolzerPlottingVeryLightDam.influenceDZ(x, y, xm::round(kScale * 27), 1 * (1 << VX_FRACTION), 5);
 			break;
 		case 1:
-			toolzerPlottingVeryLightDam.influenceDZ(x, y, round(kScale*32), 1*(1<<VX_FRACTION), 10);
+			toolzerPlottingVeryLightDam.influenceDZ(x, y, xm::round(kScale * 32), 1 * (1 << VX_FRACTION), 10);
 			return 0;
 			break;
 		default:
@@ -1230,19 +1281,19 @@ public:
 
 		switch(phase){
 		case 0:
-			toolzerPlotingSoot.influenceDZ(x, y, round(kScale*18), 1*(1<<VX_FRACTION), 10, 0);
+			toolzerPlotingSoot.influenceDZ(x, y, xm::round(kScale * 18), 1 * (1 << VX_FRACTION), 10, 0);
 			break;
 		case 1:
 		case 2:
 			break;
 		case 3:
-			toolzerPlotingSoot.influenceDZ(x, y, round(kScale*24), 1*(1<<VX_FRACTION), 10, 2);
+			toolzerPlotingSoot.influenceDZ(x, y, xm::round(kScale * 24), 1 * (1 << VX_FRACTION), 10, 2);
 			break;
 		case 4:
 		case 5:
 			break;
 		case 6:
-			toolzerPlotingSoot.influenceDZ(x, y, round(kScale*32), 1*(1<<VX_FRACTION), 10, 2);
+			toolzerPlotingSoot.influenceDZ(x, y, xm::round(kScale * 32), 1 * (1 << VX_FRACTION), 10, 2);
 			return 0;
 			break;
 		default:
@@ -1446,8 +1497,8 @@ struct sVBitMapMosaic {
 		x+=vMap.H_SIZE;
 		y+=vMap.V_SIZE;
 		int x1,y1;
-		x1 = round(A11*x + A12*y + X);
-		y1 = round(A21*x + A22*y + Y);
+		x1 = xm::round(A11 * x + A12 * y + X);
+		y1 = xm::round(A21 * x + A22 * y + Y);
 		while (x<0){ x+=sx;}
 		while (y<0){ y+=sy;}
 		if(!effect) return delta*(data[(y1%sy)*sx + (x1%sx)])/256; //-128
@@ -1460,7 +1511,7 @@ struct sVBitMapMosaic {
 		y+=vMap.V_SIZE;
 		int x1,y1;
 		x1 = round(A11*x + A12*y + X);
-		y1 = round(A21*x + A22*y + Y);
+		y1 = xm::round(A21*x + A22*y + Y);
 		while (x<0){ x+=sx;}
 		while (y<0){ y+=sy;}
 		return MosaicTypes[data[(y1%sy)*sx + (x1%sx)]%8]; 
@@ -1471,8 +1522,8 @@ struct sVBitMapMosaic {
 		x+=vMap.H_SIZE;
 		y+=vMap.V_SIZE;
 		int x1,y1;
-		x1 = round(A11*x + A12*y + X);
-		y1 = round(A21*x + A22*y + Y);
+		x1 = xm::round(A11 * x + A12 * y + X);
+		y1 = xm::round(A21 * x + A22 * y + Y);
 		while (x<0){ x+=sx;}
 		while (y<0){ y+=sy;}
 		return data[(y1%sy)*sx + (x1%sx)]; 
@@ -1482,8 +1533,8 @@ struct sVBitMapMosaic {
 		X0+=vMap.H_SIZE;
 		Y0+=vMap.V_SIZE;
 		//alpha-=90;
-		A11 = A22 = cos(alpha*3.1415926535/180);
-		A21 = -(A12 = sin(alpha*3.1415926535/180));
+		A11 = A22 = xm::cos(alpha * 3.1415926535 / 180);
+		A21 = -(A12 = xm::sin(alpha * 3.1415926535 / 180));
 		X = X0 - A11*X0 - A12*Y0;
 		Y = Y0 - A21*X0 - A22*Y0;
 	};
@@ -1559,16 +1610,16 @@ struct sVBitMap {
 
 	inline int getColor(int x, int y){
 		int x1,y1;
-		x1 = round((A11*x + A12*y + X)*kX+(sx>>1));
-		y1 = round((A21*x + A22*y + Y)*kY+(sy>>1));
+		x1 = xm::round((A11 * x + A12 * y + X) * kX + (sx >> 1));
+		y1 = xm::round((A21 * x + A22 * y + Y) * kY + (sy >> 1));
 		if(x1<0 || y1<0 || x1>=sx || y1>=sy) return -1;
 		return data[(y1%sy)*sx + (x1%sx)]; 
 	};
 
 	inline int getPreciseColor(int x, int y){
 		int x1,y1,xt, yt;
-		xt = round( ((A11*x + A12*y + X)*kX+(sx>>1))*256 );
-		yt = round( ((A21*x + A22*y + Y)*kY+(sy>>1))*256 );
+		xt = xm::round(((A11 * x + A12 * y + X) * kX + (sx >> 1)) * 256);
+		yt = xm::round(((A21 * x + A22 * y + Y) * kY + (sy >> 1)) * 256);
 		x1=xt>>8; y1=yt>>8; xt&=0xFF; yt&=0xFF;
 		if(x1<0 || y1<0 || (x1+1)>=sx || (y1+1)>=sy) return 0;
 		int h0,h1,h2,h3;
@@ -1585,11 +1636,11 @@ struct sVBitMap {
 		int x,y;
 		float Ik_scale= 1.0f/k_scale;
 		unsigned short * b=GRAF_BUF;
-		int addx=ViewX-round((float)(GB_MAXX>>1)*Ik_scale);
-		int addy=ViewY-round((float)(GB_MAXY>>1)*Ik_scale);
+		int addx= ViewX - xm::round((float) (GB_MAXX >> 1) * Ik_scale);
+		int addy= ViewY - xm::round((float) (GB_MAXY >> 1) * Ik_scale);
 		for(y=0; y<GB_MAXY; y++){
 			for(x=0; x<GB_MAXX; x++){
-				int c=getColor(addx+round((float)x*Ik_scale), addy+round((float)y*Ik_scale));
+				int c=getColor(addx + xm::round((float) x * Ik_scale), addy + xm::round((float) y * Ik_scale));
 				//if(c!=-1) *b=c;
 				if(c>0) *b=c;
 				b++;
@@ -1598,16 +1649,16 @@ struct sVBitMap {
 	};
 
 	void set_alpha(float alpha, int X0, int Y0, float _kX, float _kY, float _kZ){
-		A11 = A22 = cosf(alpha*3.1415926535f/180.f);
-		A21 = -(A12 = sinf(alpha*3.1415926535f/180.f));
+		A11 = A22 = xm::cos(alpha * 3.1415926535f / 180.f);
+		A21 = -(A12 = xm::sin(alpha * 3.1415926535f / 180.f));
 		X = - A11*X0 - A12*Y0 ;
 		Y = - A21*X0 - A22*Y0 ;
 		kX=_kX; kY=_kY; kZ=_kZ;
 		mX=X0; mY=Y0;
 	};
 	void set_alphaR(float alpha, int X0, int Y0){
-		A11 = A22 = cosf(alpha);
-		A21 = -(A12 = sinf(alpha));
+		A11 = A22 = xm::cos(alpha);
+		A21 = -(A12 = xm::sin(alpha));
 		X = - A11*X0 - A12*Y0 ;
 		Y = - A21*X0 - A22*Y0 ;
 		kX=1.f; kY=1.f; kZ=1.f;

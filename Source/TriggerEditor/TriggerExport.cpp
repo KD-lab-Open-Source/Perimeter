@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include <cstring>
 #include <climits>
 #include "tweaks.h"
@@ -56,7 +54,7 @@ void ConditionSwitcher::writeInfo(XBuffer& buffer, std::string offset) const
 		conditions.front().writeInfo(buffer, offset);
 		return;
 	}
-	buffer < (type == AND ? "И" : "ИЛИ") < " = " < (state_ ? "1" : "0") < "\r\n";
+	buffer < (type == AND ? "Р" : "РР›Р") < " = " < (state_ ? "1" : "0") < "\r\n";
 	offset += "    ";
     FOR_EACH_AUTO(conditions, ci)
 		ci->writeInfo(buffer, offset);
@@ -65,14 +63,14 @@ void ConditionSwitcher::writeInfo(XBuffer& buffer, std::string offset) const
 void ConditionNode::writeInfo(XBuffer& buffer, std::string offset) const
 {
 	if(!condition){
-		buffer < "Нулевое условие, нужно удалить!!!\r\n";
+		buffer < "РќСѓР»РµРІРѕРµ СѓСЃР»РѕРІРёРµ, РЅСѓР¶РЅРѕ СѓРґР°Р»РёС‚СЊ!!!\r\n";
 		return;
 	}
 
 	buffer < offset.c_str();
 	bool state = condition->state();
 	if(type == INVERTED){
-		buffer < "НЕ ";
+		buffer < "РќР• ";
 		state = !state;
 	}
 
@@ -169,8 +167,8 @@ bool Trigger::removeLinkByChild(Trigger * child)
 		if (link.child == child)
 		{
 /*!
-	раскоментировать, если 
-	из remove_link удален вызов метода initialize()
+	СЂР°СЃРєРѕРјРµРЅС‚РёСЂРѕРІР°С‚СЊ, РµСЃР»Рё 
+	РёР· remove_link СѓРґР°Р»РµРЅ РІС‹Р·РѕРІ РјРµС‚РѕРґР° initialize()
 
 //			typedef IncomingLinksList::iterator Iterator;
 //			Iterator res = find(child->incomingLinks_.begin(), 
@@ -308,7 +306,7 @@ bool TriggerChain::removeLink(int parentIndex, int childIndex)
 	Trigger& child = const_cast<Trigger&>(triggers[childIndex]);
 	if (parent.removeLinkByChild(&child))
 	{
-		//! перед удалением исправить removeLinkByChild(&child))
+		//! РїРµСЂРµРґ СѓРґР°Р»РµРЅРёРµРј РёСЃРїСЂР°РІРёС‚СЊ removeLinkByChild(&child))
 		buildLinks();
 		return true;
 	}

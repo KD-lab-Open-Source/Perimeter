@@ -173,7 +173,7 @@ public:
 
 		if(!prm_.minimizeDiggingRadius && !zeroLayerConnection_){
 			float dist = best_position.distance(best_connecting_building);
-			int n = round(dist/ai_additional_toolzer_radius);
+			int n = xm::round(dist / ai_additional_toolzer_radius);
 			for(int i = 1; i < n; i++){
 				float t = i*ai_additional_toolzer_radius/dist;
 				region_disp->operateByCircle(best_position*t + best_connecting_building*(1.f - t), ai_additional_toolzer_radius, 1);

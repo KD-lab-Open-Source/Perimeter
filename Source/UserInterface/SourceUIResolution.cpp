@@ -40,16 +40,16 @@ int absoluteUIPosX(float x, SHELL_ANCHOR anchor) {
             break;
         }
     }
-    return round(x);
+    return xm::round(x);
 }
 
 int absoluteUISizeX(float x, SHELL_ANCHOR anchor) {
     if (x >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
     if (anchor == SHELL_ANCHOR_DEFAULT) anchor = shell_anchor;
     if (anchor == SHELL_ANCHOR_SCALED) {
-        return round(x * terRenderDevice->GetSizeX());
+        return xm::round(x * terRenderDevice->GetSizeX());
     } else {
-        return round(x * getUIX(anchor) * source_ui_factor.y);
+        return xm::round(x * getUIX(anchor) * source_ui_factor.y);
     }
 }
 

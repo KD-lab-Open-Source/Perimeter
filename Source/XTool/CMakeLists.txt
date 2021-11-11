@@ -3,7 +3,8 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(XTool_SRCS
-    xmath.cpp
+    xmath/xmath.cpp
+    xmath/std.cpp
     XBUFFER/XBCNVIN.CPP
     XBUFFER/XBCNVOUT.CPP
     XBUFFER/XBCORE.CPP

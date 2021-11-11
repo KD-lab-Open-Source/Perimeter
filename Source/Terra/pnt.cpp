@@ -7,7 +7,6 @@ By Ken Perlin, New York University
 *****************************************************************/ 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 
 #define DOT(a,b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) 
 #define B 256 
@@ -84,7 +83,7 @@ void initNoise()
 			s = DOT(v,v); 
 		} while (s > 1.0); 
 		/* If not in sphere try again */ 
-		s = (float)sqrt(s); 
+		s = (float)xm::sqrt(s); 
 		for (j = 0 ; j < 3 ; j++) /* Else normalize */ 
 			g[i][j] = v[j] / s; 
 	} 
@@ -117,7 +116,7 @@ float turbulence(float point[3], float lofreq, float hifreq)
 	t = 0; 
 	for (freq = lofreq ; freq < hifreq ; freq *= 2.) {
 extern float noise3(float vec[3]);
-		t += (float)fabs(noise3(p)) / freq; 
+		t += (float) xm::abs(noise3(p)) / freq; 
 		p[0] *= 2.; 
 		p[1] *= 2.; 
 		p[2] *= 2.; 
@@ -148,7 +147,7 @@ extern float noise3(float vec[3]);
 	point[0] *= 2.; 
 	point[1] *= 2.; 
 	point[2] *= 2.; 
-	t += fabs(noise3(point)) *1.25f; 
+	t += xm::fabs(noise3(point)) *1.25f; 
 	return t - 0.3; 
 } */
 

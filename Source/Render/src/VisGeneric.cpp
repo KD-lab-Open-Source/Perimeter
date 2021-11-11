@@ -745,7 +745,7 @@ cFont* cVisGeneric::CreateDebugFont()
 	for(int i=0;i<fonts.size();i++)
 	{
 		float h=fonts[i]->GetHeight();
-		float dh=fabsf(h-15);
+		float dh= xm::abs(h - 15);
 		if(dh<dhoptimal)
 		{
 			dhoptimal=dh;

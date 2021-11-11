@@ -380,8 +380,8 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 	FOR_EACH(front,it)
 	{
 		Front c=*it;
-		float d=sqrtf(sqr(from.x-c.x)+sqr(from.y-c.y));
-		d+=sqrtf(sqr(to.x-c.x)+sqr(to.y-c.y));
+		float d= xm::sqrt(sqr(from.x - c.x) + sqr(from.y - c.y));
+		d+= xm::sqrt(sqr(to.x - c.x) + sqr(to.y - c.y));
 		if(distance>d)
 		{
 			f=c;
@@ -542,15 +542,15 @@ ClusterFind::LINE_RET
 	lx=xto-xfrom;
 	ly=yto-yfrom;
 	int t,maxt;
-	if(fabsf(lx)>fabsf(ly))
+	if(xm::abs(lx) > xm::abs(ly))
 	{
-		maxt=fabsf(lx);
-		ly=ly/fabsf(lx);
+		maxt= xm::abs(lx);
+		ly= ly / xm::abs(lx);
 		lx=(lx>0)?+1:-1;
 	}else
 	{
-		maxt=fabsf(ly);
-		lx=lx/fabsf(ly);
+		maxt= xm::abs(ly);
+		lx= lx / xm::abs(ly);
 		ly=(ly>0)?+1:-1;
 	}
 
@@ -572,7 +572,7 @@ ClusterFind::LINE_RET
 	for(t=0;t<=maxt;t++)
 	{
 		//Здесь использовать x,y
-		int ix=round(x),iy=round(y);
+		int ix= xm::round(x),iy= xm::round(y);
 		uint32_t q=pmap[iy * dx + ix];
 		Cluster& cur=all_cluster[q-1];
 
@@ -854,7 +854,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 			for(j=0;j>=imin;j--)
 			{
 				c=in_path[j];
-				len_from+=sqrtf(sqr(c.x-cur.x)+sqr(c.y-cur.y));
+				len_from+= xm::sqrt(sqr(c.x - cur.x) + sqr(c.y - cur.y));
 				cur=c;
 			}
 
@@ -862,7 +862,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 			for(j=0;j<=imax;j++)
 			{
 				c=in_path[j];
-				len_to+=sqrtf(sqr(c.x-cur.x)+sqr(c.y-cur.y));
+				len_to+= xm::sqrt(sqr(c.x - cur.x) + sqr(c.y - cur.y));
 				cur=c;
 			}
 
@@ -886,7 +886,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 		cf.dx=c1.x-c0.x;
 		cf.dy=c1.y-c0.y;
 
-		float len=sqrtf(sqr(cf.dx)+sqr(cf.dy));
+		float len= xm::sqrt(sqr(cf.dx) + sqr(cf.dy));
 		float mul=(left)?1:-1;
 		cf.cs= (cf.dy/len)*mul;
 		cf.sn=-(cf.dx/len)*mul;
@@ -921,8 +921,8 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 
 				Vect2i cur;//Рассчитать
 				cur=in_path[i];
-				cur.x+=round(cf.cs*curd);
-				cur.y+=round(cf.sn*curd);
+				cur.x+= xm::round(cf.cs * curd);
+				cur.y+= xm::round(cf.sn * curd);
 
 
 				if(cur.x<0)cur.x=0;

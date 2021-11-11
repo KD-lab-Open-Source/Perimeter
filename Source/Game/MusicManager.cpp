@@ -91,7 +91,7 @@ public:
 		on_cluster=global_time();
 	}
 
-	inline int change_time(){return round(music_change_time*1000);}
+	inline int change_time(){return xm::round(music_change_time * 1000);}
 
 	void Quant()
 	{

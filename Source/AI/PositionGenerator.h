@@ -50,7 +50,7 @@ public:
 	Vect2f invert(const Vect2f& pc) const 
 	{ 
 		Vect2f p = uncurvate(pc);
-		float x = fabs(p.x) - radius_*0.2;
+		float x = xm::abs(p.x) - radius_ * 0.2;
 		float y_max = -2*radius_;
 		LineList::const_iterator i;
 		FOR_EACH(lines, i){
@@ -78,8 +78,8 @@ public:
 			if(r > FLT_EPS)
 			{
 				float phi = p.x/r;
-				//xassert(fabsf(phi) < M_PI && "PositionGenerator: cycling.");
-				return Vect2f(r*sinf(phi), r*cos(phi) - curvature_radius);
+				//xassert(xm::fabsf(phi) < M_PI && "PositionGenerator: cycling.");
+				return Vect2f(r * xm::sin(phi), r * xm::cos(phi) - curvature_radius);
 			}
 			//else
 			//	xassert(0&&"Position generator: curvature radius_ is too small.");

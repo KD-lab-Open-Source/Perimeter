@@ -15,8 +15,8 @@ RECT& geoLine(int xbeg, int ybeg, int sx, int sy, int width, RECT& r)
 	int x_cur=xbeg<<16;
 	int y_cur=ybeg<<16;
 
-	if(abs(sx)>=abs(sy)){
-		int stepdy=sy*(1<<16)/abs(sx);
+	if(xm::abs(sx) >= xm::abs(sy)){
+		int stepdy= sy * (1<<16) / xm::abs(sx);
 		int stepdx;
 		if(sx>0)stepdx=1; else stepdx=-1;
 		for(int i=0; i!=sx; i+=stepdx, x_cur+=stepdx<<16, y_cur+=stepdy)
@@ -33,8 +33,8 @@ RECT& geoLine(int xbeg, int ybeg, int sx, int sy, int width, RECT& r)
 		}
 	}
 	else { // sy_real> sx_real
-		if(abs(sy)>abs(sx)){
-			int stepdx=sx*(1<<16)/abs(sy);
+		if(xm::abs(sy) > xm::abs(sx)){
+			int stepdx= sx * (1<<16) / xm::abs(sy);
 			int stepdy;
 			if(sy>0)stepdy=1; else stepdy=-1;
 			for(int i=0; i!=sy; i+=stepdy, y_cur+=stepdy<<16, x_cur+=stepdx)
@@ -81,7 +81,7 @@ RECT& LineAA(int Xd, int Yd, int Xf, int Yf, RECT& r)
   int Imax = DeltaAlt;
 
   dX = Xf - Xd; dY = Yf - Yd;
-  DeltaX = abs(dX); DeltaY = abs(dY);
+  DeltaX = xm::abs(dX); DeltaY = xm::abs(dY);
   if (dX > 0) Xinc = +1; else Xinc = -1;
   if (dY > 0) Yinc = +1; else Yinc = -1;
 
@@ -116,8 +116,8 @@ RECT& LineAA(int Xd, int Yd, int Xf, int Yf, RECT& r)
 			D -= DeltaX;
 		}
 	  }
-      Cp = abs( D / DeltaX );
-      I_s = round(Cp * Imax);
+      Cp = xm::abs(D / DeltaX);
+      I_s = xm::round(Cp * Imax);
       I_p = Imax - I_s;
       _PutAlt(X, Y, I_p);
       _PutAlt(X, Ys, I_s);
@@ -152,8 +152,8 @@ RECT& LineAA(int Xd, int Yd, int Xf, int Yf, RECT& r)
           D-= DeltaY;
 		}
 	  }
-      Cp = abs(D / DeltaY);
-      I_s = round(Cp * Imax);
+      Cp = xm::abs(D / DeltaY);
+      I_s = xm::round(Cp * Imax);
       I_p = Imax - I_s;
       _PutAlt(X, Y, I_p);
       _PutAlt(Xs, Y, I_s);

@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Universe.h"
@@ -14,7 +12,7 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeProjectile, "Ñíàðÿäû");
+REGISTER_CLASS(AttributeBase, AttributeProjectile, "Ð¡Ð½Ð°Ñ€ÑÐ´Ñ‹");
 
 AttributeProjectile::AttributeProjectile()
 {
@@ -90,8 +88,8 @@ void terProjectileBase::setTarget(terUnitBase* p,const Vect3f& target,float targ
 	if(target_delta > FLT_EPS){
 		float angle = M_PI * 2.0f * terLogicRNDfrand();
 		float radius = terLogicRNDfrnd() * target_delta;
-		targetPosition_.x += radius * cos(angle);
-		targetPosition_.y += radius * sin(angle);
+		targetPosition_.x += radius * xm::cos(angle);
+		targetPosition_.y += radius * xm::sin(angle);
 	}
 
 	if(attr().LifeTime)
@@ -470,8 +468,8 @@ void terProjectileScumStorm::WayPointController()
 		float angle = BodyPoint->velocity().psi();
 
 		angle += terScumStormTurnAngle + terLogicRNDfrnd()*terScumStormTurnAngleDelta;
-		pos.x += 100.0f * cos(angle);
-		pos.y += 100.0f * sin(angle);
+		pos.x += 100.0f * xm::cos(angle);
+		pos.y += 100.0f * xm::sin(angle);
 
 		wayPoints_.clear();
 		wayPoints_.push_back(pos);

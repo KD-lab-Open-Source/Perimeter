@@ -2246,8 +2246,8 @@ inline void draw_circle(Vect2i& v, int r, sColor4c& c)
 
 	while(phi < 2*M_PI)
 	{
-		x = r*cos(phi) + v.x;
-		y = r*sin(phi) + v.y;
+		x = r*xm::cos(phi) + v.x;
+		y = r*xm::sin(phi) + v.y;
 
 		terRenderDevice->DrawLine(x, y, x1, y1, c);
 

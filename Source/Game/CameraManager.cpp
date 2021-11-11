@@ -76,7 +76,7 @@ void CameraCoordinate::interpolateHermite(const CameraCoordinate coords[4], floa
 
 void CameraCoordinate::check(bool restricted)
 {
-	float z = FieldCluster::ZeroGround;//(float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))) >> VX_FRACTION);
+	float z = FieldCluster::ZeroGround;//(float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
 	float zm = 100;
 	
 	position_.z = z;
@@ -115,7 +115,7 @@ void CameraCoordinate::check(bool restricted)
 
 int CameraCoordinate::height()
 {
-	return vMap.IsFullLoad() ? vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))) >> VX_FRACTION : 0;
+	return vMap.IsFullLoad() ? vMap.GetAlt(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION : 0;
 }
 
 //-------------------------------------------------------------------
@@ -309,20 +309,20 @@ void terCameraType::mouseQuant(const Vect2f& mousePos)
 	if(interpolationTimer_ || unit_follow)
 		return;
 
-	if(fabs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ){
+	if(xm::abs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ){
 		if(coordinate().position().x > 0)
 			cameraPositionForce.x = -CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
-	else if(fabs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ){
+	else if(xm::abs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ){
 		if(coordinate().position().x < vMap.H_SIZE) 
 			cameraPositionForce.x = CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
 	
-	if(fabs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP){
+	if(xm::abs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP){
 		if(coordinate().position().y > 0)
 			cameraPositionForce.y = -CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
-	else if(fabs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN){
+	else if(xm::abs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN){
 		if(coordinate().position().y < vMap.V_SIZE) 
 			cameraPositionForce.y = CAMERA_BORDER_SCROLL_SPEED_DELTA;
 	}
@@ -357,12 +357,12 @@ void terCameraType::tilt(Vect2f mouseDelta)
     //printf("X %f %f F %f V %f\n", mouseDelta.x, gameShell->mousePositionRelative().x, cameraPsiForce, cameraPsiVelocity);
     
     //Check if is tilting
-    tilting_ = CAMERA_MOUSE_DEAD_THRESHOLD < fabs(mouseDelta.y);
-    bool rotating = CAMERA_MOUSE_DEAD_THRESHOLD < fabs(mouseDelta.x);
+    tilting_ = CAMERA_MOUSE_DEAD_THRESHOLD < xm::abs(mouseDelta.y);
+    bool rotating = CAMERA_MOUSE_DEAD_THRESHOLD < xm::abs(mouseDelta.x);
 
     //Do axis locking
     if (cameraTiltLock) {
-        if (fabs(mouseDelta.y) <= fabs(mouseDelta.x)) {
+        if (xm::abs(mouseDelta.y) <= xm::abs(mouseDelta.x)) {
             tilting_ = false;
         } else {
             rotating = false;
@@ -473,7 +473,7 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 		if(restricted()){
 			//if(!cameraMouseTrack){
 			//при зуме камера должна принимать макс. допустимый наклон
-//			if(fabs(cameraZoomVelocity) > 1.0f)
+//			if(xm::fabs(cameraZoomVelocity) > 1.0f)
 			if(cameraZoomVelocity < -1.0f)
 				cameraThetaForce += CAMERA_KBD_ANGLE_SPEED_DELTA;
 			//}

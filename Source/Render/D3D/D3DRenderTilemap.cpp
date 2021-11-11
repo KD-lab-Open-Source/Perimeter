@@ -228,13 +228,13 @@ static void fillVisPoly(uint8_t *buf, std::vector<Vect2f>& vert, int VISMAP_W, i
 	int i, y, ytop, ybot;
 
 	// find top/bottom y
-	ytop = floor(vert[0].y);
-	ybot = ceil(vert[0].y);
+	ytop = xm::floor(vert[0].y);
+	ybot = xm::ceil(vert[0].y);
 	for(i=1;i<vert.size();i++)
 	{
 		float y=vert[i].y;
-		if (y < ytop) ytop = floor(y);
-		if (y > ybot) ybot = ceil(y);
+		if (y < ytop) ytop = xm::floor(y);
+		if (y > ybot) ybot = xm::ceil(y);
 	}
 
 	for (i = 0; i < VISMAP_H; i++)
@@ -273,8 +273,8 @@ static void fillVisPoly(uint8_t *buf, std::vector<Vect2f>& vert, int VISMAP_W, i
 	for (y = max(0, ytop); y <= min(ybot, VISMAP_H-1); y++)
 	{
 		if (lx[y] > rx[y]) continue;
-		int x1 = (int)max((float)floor(lx[y]), 0.0f);
-		int x2 = (int)min((float)ceil(rx[y]), (float)VISMAP_W);
+		int x1 = (int)max((float)xm::floor(lx[y]), 0.0f);
+		int x2 = (int)min((float)xm::ceil(rx[y]), (float)VISMAP_W);
 		if(x1>=x2)continue;
 		memset(buf + y*VISMAP_W + x1, 1, x2-x1);
 	}

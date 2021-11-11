@@ -43,7 +43,7 @@ void terUnitBuildingBlock::AvatarQuant()
 	avatar()->setPose(BodyPoint->pose());
 
 	realAvatar()->setBuild(0.5f);
-	realAvatar()->setHologram(0.5f + sinf(ConstructionScale) * 0.5f);
+	realAvatar()->setHologram(0.5f + xm::sin(ConstructionScale) * 0.5f);
 	realAvatar()->setTexture(Player->HologramPoint);
 
 	switch(ChainMode){

@@ -139,7 +139,7 @@ void terFilthSwarmEye::GenerationProcess()
 		pos.y=center_pos.y+r*terLogicRNDfrnd();
 		pos.z=0;
 
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(pos.x),round(pos.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(pos.x), xm::round(pos.y)))
 		{
 			p = safe_cast<terFilthEye*>(player->buildUnit(GetUnitID()));
 			p->setPose(Se3f(QuatF::ID, pos), false);
@@ -211,7 +211,7 @@ void terFilthEye::WayPointStart()
 {
 	const int rb=8;
 	if(!terCheckFilthChaos(position()))
-		bubble=new sTBubble(round(position().x),round(position().y),rb*2,rb*2);
+		bubble=new sTBubble(xm::round(position().x), xm::round(position().y), rb * 2, rb * 2);
 	terFilthGeneric::WayPointStart();
 	avatar()->SetChain("main");
 	DestroyAnimation.startPhase(1.0f,-0.1f,false);
@@ -234,7 +234,7 @@ bool terFilthEye::is_point_reached(const Vect3f& point)
 	if(BodyPoint->is_point_reached(point))
 	{
 		Vect3f pnt=To3D(point);
-		return fabsf(BodyPoint->flying_height+pnt.z-position().z)<4;
+		return xm::fabsf(BodyPoint->flying_height+pnt.z-position().z)<4;
 	}
 /*/
 	Vect3f pnt=To3D(point);

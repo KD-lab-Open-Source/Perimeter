@@ -88,9 +88,10 @@ cLogicGeneric* CreateILogicGeneric();
 struct sParticleKey
 {
 	sColor4c	diffuse;	// diffuse of particle
-	Vect2f		rotate;		// sin & cos угла поворота * size of particle
+	Vect2f		rotate;		// xm::sin & xm::cos угла поворота * size of particle
 	Vect2f		TexPos;		// texture position
-	inline void SetRotate(float angle,float size)		{ rotate.x=size*cosf(angle); rotate.y=size*sinf(angle); }
+	inline void SetRotate(float angle,float size)		{ rotate.x= size * xm::cos(angle); rotate.y= size *
+                                                                                                      xm::sin(angle); }
 };
 
 

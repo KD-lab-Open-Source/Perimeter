@@ -33,7 +33,7 @@ terFilthSwarmDragon::terFilthSwarmDragon(terFilthSpot* spot, const Vect3f& pos,i
 	AttackCount = attack_period_;
 
 	use_geo=SpotPoint->initialGeoprocess();
-	BirthProcessPoint=new s_WaspBirthGeoAction(round(position.x),round(position.y), 16);
+	BirthProcessPoint=new s_WaspBirthGeoAction(xm::round(position.x), xm::round(position.y), 16);
 }
 
 terFilthSwarmDragon::~terFilthSwarmDragon()
@@ -113,7 +113,8 @@ void terFilthSwarmDragon::Quant()
 				if(TargetCount < 0){
 					TargetPosition.x = vMap.H_SIZE / 4 + terLogicRND(vMap.H_SIZE / 2);
 					TargetPosition.y = vMap.V_SIZE / 4 + terLogicRND(vMap.V_SIZE / 2);
-					TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(round(TargetPosition.x)),vMap.YCYCL(round(TargetPosition.y))) >> VX_FRACTION);
+					TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(TargetPosition.x)), vMap.YCYCL(
+                            xm::round(TargetPosition.y))) >> VX_FRACTION);
 					TargetCount = 100;
 				}
 				v1 = v = TargetPosition;
@@ -160,8 +161,8 @@ void terFilthSwarmDragon::GenerationProcess()
 
 	v = position;
 	float angle = terLogicRNDfrand() * M_PI * 2.0f;
-	dv.x = 0;//cosf(angle) * prm->CreatureGenerationRadius;
-	dv.y = 0;//sinf(angle) * prm->CreatureGenerationRadius;
+	dv.x = 0;//xm::cosf(angle) * prm->CreatureGenerationRadius;
+	dv.y = 0;//xm::sinf(angle) * prm->CreatureGenerationRadius;
 	dv.z = -35;
 
 	HeadPoint = safe_cast<terFilthDragonHead*>(player->buildUnit(prm->id_head));
@@ -246,7 +247,7 @@ terUnitBase* terFilthSwarmDragon::CalcDistance(terUnitBase* unit,float& dist,con
 		float t=p.x*direction.x+p.y*direction.y;
 		if(t<0)
 			return NULL;
-		float n=fabsf(p.x*direction.y-p.y*direction.x);
+		float n= xm::abs(p.x * direction.y - p.y * direction.x);
 		if(n>attack_width)
 			return NULL;
 	}
@@ -415,7 +416,7 @@ void terFilthDragon::Quant()
 			if(!terCheckFilthChaos(position()))
 			{
 				crater=new craterToolzerDestroyZP(scale*0.3f);
-				crater->start(round(pos.x),round(pos.y));
+				crater->start(xm::round(pos.x), xm::round(pos.y));
 			}
 			crater_run=true;
 		}
@@ -614,20 +615,20 @@ void terFilthDragonHead::addWayPoint()
 			TargetPosition=target->position();
 
 			Vect3f last_pos=prev_pos;
-			float aprev=atan2(n.y,n.x);
+			float aprev=xm::atan2(n.y,n.x);
 			for(int i=0;i<5;i++)
 			{
 				Vect3f p=TargetPosition-last_pos;
 				p.z=0;
 				p.Normalize();
 				float da=M_PI/4;
-				float agood=atan2(p.y,p.x);
+				float agood=xm::atan2(p.y,p.x);
 				float a1=aprev+da,a2=aprev-da;
 
 				Vect3f n0,n1,n2;
-				n0.set(cos(aprev),sin(aprev),0);
-				n1.set(cos(a1),sin(a1),0);
-				n2.set(cos(a2),sin(a2),0);
+				n0.set(xm::cos(aprev),xm::sin(aprev),0);
+				n1.set(xm::cos(a1),xm::sin(a1),0);
+				n2.set(xm::cos(a2),xm::sin(a2),0);
 
 				float f0=p.dot(n0);
 				float f1=p.dot(n1);

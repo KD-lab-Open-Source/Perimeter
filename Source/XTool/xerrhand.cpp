@@ -55,8 +55,6 @@ char *defprefix 	= "XHANDLER  INFORM";
 char *exceptMSG 	= "EXCEPTION OCCURED";
 char *rterrorMSG	= "RUN-TIME ERROR";
 
-#pragma warning (disable : 4073)
-#pragma init_seg(lib)
 XErrorHandler ErrH;
 
 //All the Win32 on x86/64 specific error handling

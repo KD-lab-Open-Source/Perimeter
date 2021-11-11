@@ -29,13 +29,13 @@ void terFilthSwarmWasp::SetHole(std::vector<terFilthSpot::HoleStruct>& hole_posi
 	{
 		Vect3f v(hole_position_[i].pos.x,hole_position_[i].pos.y,0);
 
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(v.x),round(v.y)) && 
-			!terCheckFilthChaos(round(v.x),round(v.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y)) &&
+           !terCheckFilthChaos(xm::round(v.x), xm::round(v.y)))
 		{
 			hole_position.push_back(v);
 
 			if(SpotPoint->initialGeoprocess() && !hole_position_[i].inited)
-				wasp_hole_point.push_back(new s_WaspBirthGeoAction(round(v.x),round(v.y),4));
+				wasp_hole_point.push_back(new s_WaspBirthGeoAction(xm::round(v.x), xm::round(v.y), 4));
 			hole_position_[i].inited=true;
 		}
 	}
@@ -208,7 +208,7 @@ void terFilthSwarmWasp::GenerationProcess()
 		int holei=terLogicRND(hole_position.size());
 		Vect3f pos(hole_position[holei].x,hole_position[holei].y,0);
 
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(pos.x),round(pos.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(pos.x), xm::round(pos.y)))
 		{
 			terFilthWasp* p = safe_cast<terFilthWasp*>(player->buildUnit(GetUnitID()));
 			p->SetSwarm(this);
@@ -379,7 +379,7 @@ void terFilthWasp::addWayPoint()
 	if(begin_move)
 	{
 		float dz=prev_pos_z.z-prev_pos.z;
-		if(fabsf(dz)>speed)
+		if(xm::abs(dz) > speed)
 		{
 			Vect3f pos=prev_pos;
 			pos+=n;

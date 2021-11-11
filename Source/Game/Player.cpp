@@ -1132,7 +1132,7 @@ RigidBody* GetMissileTest(RigidBody* object,RigidBody* source,RigidBody* target)
 	r = object->radius();
 
 	terMissileTestOperator op(object,source,target);
-	universe()->UnitGrid.ConditionScan(round(x), round(y), round(r), op);
+	universe()->UnitGrid.ConditionScan(xm::round(x), xm::round(y), xm::round(r), op);
 	return (op.HitPoint);
 }
 

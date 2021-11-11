@@ -86,7 +86,7 @@ int cSelectManager::calcGroupPriority(UnitList& unit_list) {
 void cSelectManager::areaToSelection(float x0, float y0, float x1, float y1, int mode) {
 	cancelActions();
 	CSELECT_AUTOLOCK();
-	if (fabs(x0 - x1) < 0.005f && fabs(y0 - y1) < 0.005f) {
+	if (xm::abs(x0 - x1) < 0.005f && xm::abs(y0 - y1) < 0.005f) {
 		terUnitBase* unit = player->traceUnit(Vect2f(x0, y0));
 		if (unit) {
 			unitToSelection(unit, mode);
@@ -211,7 +211,7 @@ void cSelectManager::grade(terUnitBase* from, terUnitBase* to) {
 void cSelectManager::selectInAreaAndCurrentSelection(float x0, float y0, float x1, float y1, int mode) {
 	cancelActions();
 	CSELECT_AUTOLOCK();
-	if (fabs(x0 - x1) < 0.005f && fabs(y0 - y1) < 0.005f) {
+	if (xm::abs(x0 - x1) < 0.005f && xm::abs(y0 - y1) < 0.005f) {
 		terUnitBase* unit = player->traceUnit(Vect2f(x0, y0));
 		if (unit) {
 			selectUnitAndCurrentSelection(unit, mode);

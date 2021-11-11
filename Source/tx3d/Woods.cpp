@@ -38,7 +38,7 @@ void Wood::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 		
 void WoodSin::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 	noise = noise * ringCount;
-	noise = ((1.0 + sin(noise - Texture3DUtils::floor(noise))) / 2.0);
+	noise = ((1.0 + xm::sin(noise - Texture3DUtils::floor(noise))) / 2.0);
 
 	if (noise > 1.0) {
 		noise = 1.0;
@@ -52,7 +52,7 @@ void WoodSin::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 
 void WoodCos::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 	noise = noise * ringCount;
-	noise = ((1.0 + cos(noise - Texture3DUtils::floor(noise))) / 2.0);
+	noise = ((1.0 + xm::cos(noise - Texture3DUtils::floor(noise))) / 2.0);
 
 	if (noise > 1.0) {
 		noise = 1.0;
@@ -65,9 +65,9 @@ void WoodCos::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 }
 
 void WoodBackSin::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
-	noise = 1.0 / fabs(noise) / 100;
+	noise = 1.0 / xm::abs(noise) / 100;
 	noise = noise * ringCount;
-	noise = ((1.0 + sin(noise - Texture3DUtils::floor(noise))) / 2.0);
+	noise = ((1.0 + xm::sin(noise - Texture3DUtils::floor(noise))) / 2.0);
 
 	if (noise > 1.0) {
 		noise = 1.0;

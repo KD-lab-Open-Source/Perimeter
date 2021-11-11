@@ -7,6 +7,12 @@
 #pragma warning( disable : 4244 4018)
 #pragma warning( disable : 4554 4996)
 
+// disable FP contractions
+#ifdef _MSC_VER
+#pragma fp_contract (off)
+#endif
+#pragma STDC FP_CONTRACT OFF
+
 #ifdef __ICL
 #pragma warning( disable : 880 1125)
 #endif

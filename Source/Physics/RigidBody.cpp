@@ -95,9 +95,9 @@ void RigidBody::initPose(const Se3f& pose, bool modify_z)
 		rotation().xform(Vect3f(0, (box_max.y - box_min.y)/(2*Dy), 0), dpy);
 
 		const int shl = 12, mul = 1 << shl;
-		int p0x = round(p0.x*mul), p0y = round(p0.y*mul), p0z = round(p0.z*mul);
-		int dpx_x = round(dpx.x*mul), dpx_y = round(dpx.y*mul), dpx_z = round(dpx.z*mul);
-		int dpy_x = round(dpy.x*mul), dpy_y = round(dpy.y*mul),	dpy_z = round(dpy.z*mul);
+		int p0x = xm::round(p0.x * mul), p0y = xm::round(p0.y * mul), p0z = xm::round(p0.z * mul);
+		int dpx_x = xm::round(dpx.x * mul), dpx_y = xm::round(dpx.y * mul), dpx_z = xm::round(dpx.z * mul);
+		int dpy_x = xm::round(dpy.x * mul), dpy_y = xm::round(dpy.y * mul),	dpy_z = xm::round(dpy.z * mul);
 		int z_max = 0;
 
 		for(int y = -Dy; y <= Dy; y++)
@@ -211,17 +211,17 @@ void RigidBody::ground_analysis(float dt)
 	int chaosCollidingCounter = 0;
 
 	const int shl = 12, mul = 1 << shl;
-	int p0x=round(p0.x*mul),
-		p0y=round(p0.y*mul),
-		p0z=round(p0.z*mul);
+	int p0x= xm::round(p0.x * mul),
+		p0y= xm::round(p0.y * mul),
+		p0z= xm::round(p0.z * mul);
 
-	int dpx_x=round(dpx.x*mul),
-		dpx_y=round(dpx.y*mul),
-		dpx_z=round(dpx.z*mul);
+	int dpx_x= xm::round(dpx.x * mul),
+		dpx_y= xm::round(dpx.y * mul),
+		dpx_z= xm::round(dpx.z * mul);
 
-	int dpy_x=round(dpy.x*mul),
-		dpy_y=round(dpy.y*mul),
-		dpy_z=round(dpy.z*mul);
+	int dpy_x= xm::round(dpy.x * mul),
+		dpy_y= xm::round(dpy.y * mul),
+		dpy_z= xm::round(dpy.z * mul);
 
 	for(int y = -Dy; y <= Dy; y++)
 	{
@@ -276,7 +276,7 @@ void RigidBody::ground_analysis(float dt)
 				kangaroo_height = 0;
 			}
 			//z_max = max(z_max, kangaroo_height_prev);
-			//dz_max = max(dz_max, kangaroo_height_prev - round(position().z + box_min.z));
+			//dz_max = max(dz_max, kangaroo_height_prev - xm::round(position().z + box_min.z));
 		}
 
 		if(prm().flying_height_relative)
@@ -299,11 +299,11 @@ void RigidBody::ground_analysis(float dt)
 		float N = 4.0f*t14+t9+t13;
 		float A = 3.0f*Sxz/Dx/(t9+1.0f+t8+(3.0f+(4.0f*Dy+2.0f)*Dx)*Dx)*kx;
 		float B = 3.0f*Syz/Dy/(t8+t13+(3.0f+(4.0f*Dx+2.0f)*Dy)*Dy)*ky;
-		float psi = atan2f(rotation()[0][1], rotation()[1][1]);
-		float cos_psi = cosf(psi);
-		float sin_psi = sinf(psi);
+		float psi = xm::atan2(rotation()[0][1], rotation()[1][1]);
+		float cos_psi = xm::cos(psi);
+		float sin_psi = xm::sin(psi);
 		z_axis.set(-A*cos_psi - B*sin_psi, A*sin_psi - B*cos_psi, 1);
-		int zc = round(position().z + box_min.z);
+		int zc = xm::round(position().z + box_min.z);
 
 		if(prm().analyse_terraint_obstacle && obstacle_counter){
 			Vect3f point((obstacle_x*cos_psi + obstacle_y*sin_psi)/obstacle_counter, (-obstacle_x*sin_psi + obstacle_y*cos_psi)/obstacle_counter, 0);
@@ -323,8 +323,9 @@ void RigidBody::ground_analysis(float dt)
 		}
 		
 		if((prm().gravicap_enabled && !diggingMode() && 
-		  (fabs(z_axis.x) > prm().gravicap_pitch_roll_threshould || fabs(z_axis.y) > prm().gravicap_pitch_roll_threshould 
-		  || z_max - zc > prm().gravicap_dz_treshould || zc - z_min > prm().gravicap_dz_treshould)) 
+		  (xm::abs(z_axis.x) > prm().gravicap_pitch_roll_threshould ||
+                  xm::abs(z_axis.y) > prm().gravicap_pitch_roll_threshould
+           || z_max - zc > prm().gravicap_dz_treshould || zc - z_min > prm().gravicap_dz_treshould)) 
 		  || on_upper_position()){ // Гравицапа
 			gravicap_mode = 1;
 			set_debug_color(MAGENTA);
@@ -378,7 +379,7 @@ void RigidBody::ground_analysis(float dt)
 	}
 
 	// Устраняет ступор перед вертикальными стенками
-	float norm_xy = sqrtf(sqr(velocity().x) + sqr(velocity().y));
+	float norm_xy = xm::sqrt(sqr(velocity().x) + sqr(velocity().y));
 	if((norm_xy < prm().minimal_velocity_xy || (gravicap_mode && dz_max > deep_penetration_dz)) && norm_xy > FLT_EPS){
 		float k = prm().minimal_velocity_xy*general_velocity_factor/norm_xy;
 		velocity_.x *= k;
@@ -443,15 +444,15 @@ void RigidBody::apply_control_force()
 		dir = Mat2f(angleZ()).invXform(dir);
 		dir.x = -dir.x;
 
-		float rudder = fabs(dir.y) > steering_control_min_distance ? atan2(dir.x, dir.y)/M_PI : 0;
+		float rudder = xm::abs(dir.y) > steering_control_min_distance ? atan2(dir.x, dir.y) / M_PI : 0;
 		if(rudder < steering_control_negative_rudder_threshould)
 			rudder = 1;
 
 		rudder *= 1.f - (float)suppress_steering_timer()/prm().suppress_steering_duration;
 	
 		float ang_acc = (prm().steering_linear_velocity_min + v_local_y)*prm().rudder_speed*rudder;
-		if(fabs(ang_acc) > prm().steering_acceleration_max)
-			ang_acc = SIGN(prm().steering_acceleration_max, ang_acc);
+		if(xm::abs(ang_acc) > prm().steering_acceleration_max)
+			ang_acc = SIGNF(prm().steering_acceleration_max, ang_acc);
 		angular_acceleration.z += ang_acc;
 
 		if(v_local_y < forwardVelocity()*general_velocity_factor)
@@ -558,7 +559,7 @@ void RigidBody::obstacle_analysis()
 			float t10 = normal[0];
 			float t9 = normal[1];
 			float Azz = normal[2]*normal[2]*mass_inv+(mass_inv+t11*t11*TOI_inv)*t9*t9+(-2.0f*t12*TOI_inv*t11*t9+(mass_inv+t12*t12*TOI_inv)*t10)*t10;
-			Azz = fabs(Azz) > FLT_EPS ? 1.f/Azz : 0;
+			Azz = xm::abs(Azz) > FLT_EPS ? 1.f / Azz : 0;
 			float j_n = -Azz*(1.f + prm().obstacle_restitution)*u_n;	
 			velocity_.scaleAdd(normal, j_n*mass_inv);
 			angularVelocity_.z += TOI_inv*j_n*(rg[0]*normal[1] - rg[1]*normal[0]);

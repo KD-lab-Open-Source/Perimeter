@@ -4,8 +4,6 @@
 /* coherent noise function over 1, 2 or 3 dimensions */
 /* (copyright Ken Perlin) */
 
-#include <math.h>
-
 #define B 0x100
 #define BM 0xff
 
@@ -174,7 +172,7 @@ static void normalize2(float v[2])
 {
 	float s;
 
-	s = (float)sqrt(v[0] * v[0] + v[1] * v[1]);
+	s = (float)xm::sqrt(v[0] * v[0] + v[1] * v[1]);
 	v[0] = v[0] / s;
 	v[1] = v[1] / s;
 }
@@ -183,7 +181,7 @@ static void normalize3(float v[3])
 {
 	float s;
 
-	s = (float)sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+	s = (float)xm::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 	v[0] = v[0] / s;
 	v[1] = v[1] / s;
 	v[2] = v[2] / s;

@@ -93,8 +93,8 @@ void cEmitterBase::InitRotateAngle()
 	{
 		float a=(i*2*M_PI)/rotate_angle_size;
 		Vect2f& p=rotate_angle[i];
-		p.x=cos(a);
-		p.y=sin(a);
+		p.x=xm::cos(a);
+		p.y=xm::sin(a);
 	}
 }
 
@@ -155,8 +155,8 @@ Vect3f cEmitterBase::RndCylinder(float r,float dr,float z)
 	Vect3f f;
 	float a=rnd.frand()*2*M_PI;
 	float rr=r+dr*(rnd.frand()-0.5f);
-	f.x=rr*sin(a);
-	f.y=rr*cos(a);
+	f.x=rr*xm::sin(a);
+	f.y=rr*xm::cos(a);
 	f.z=z*(rnd.frand()-0.5f);
 	return f;
 }
@@ -166,9 +166,9 @@ Vect3f cEmitterBase::RndRing(float r,float alpha_min,float alpha_max,float teta_
 	Vect3f f;
 	float teta=teta_min+rnd.frand()*(teta_max-teta_min);
 	float alpha=alpha_min+rnd.frand()*(alpha_max-alpha_min);
-	f.x=r*sin(alpha)*cos(teta);
-	f.y=r*cos(alpha)*cos(teta);
-	f.z=r*sin(teta);
+	f.x=r*xm::sin(alpha)*xm::cos(teta);
+	f.y=r*xm::cos(alpha)*xm::cos(teta);
+	f.z=r*xm::sin(teta);
 	return f;
 }
 
@@ -364,8 +364,8 @@ void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
 			i %= num.y*num.x*num.z;
 			float alpha = (i%num.x)*2*M_PI/num.x;
 			float r = (i/(num.x*num.y)+1)*(particle_position.size.x/num.z);
-			pos.x = cos(alpha)*r;
-			pos.y = -sin(alpha)*r;
+			pos.x = xm::cos(alpha)*r;
+			pos.y = -xm::sin(alpha)*r;
 			pos.z = ((i/num.x)%num.y)*(particle_position.size.y/(num.y<=1? 1:num.y-1)) - particle_position.size.y/2; 
 		}
 			break;
@@ -384,9 +384,9 @@ void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
 			float alpha = (i%num.x)*(particle_position.alpha_max-particle_position.alpha_min)/num.x + particle_position.alpha_min;
 			float theta = ((i/num.x)%num.y)*(particle_position.teta_max - particle_position.teta_min)/num.y+ particle_position.teta_min;
 			float r = (i/(num.x*num.y)+1)*(particle_position.size.x/num.z);
-			pos.x=r*sin(alpha)*cos(theta);
-			pos.y=r*cos(alpha)*cos(theta);
-			pos.z=r*sin(theta);
+			pos.x=r*xm::sin(alpha)*xm::cos(theta);
+			pos.y=r*xm::cos(alpha)*xm::cos(theta);
+			pos.z=r*xm::sin(theta);
 		}
 			break;
 	}
@@ -485,7 +485,7 @@ int cEmitterBase::CalcProlongedNum(float dt)
 	float t=time*inv_emitter_life_time;
 	float rate=max(num_particle.Get(t),1.0f)*parent->GetParticleRateReal();
 	time_emit_prolonged+=dt;
-	int n=round(time_emit_prolonged*rate);
+	int n= xm::round(time_emit_prolonged * rate);
 	if(rate>1e-3f)
 		time_emit_prolonged-=n/rate;
 	else
@@ -738,13 +738,13 @@ void cEmitterInt::Draw(cCamera *pCamera)
 
 		//Добавить в массив
 		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[(int)round(angle*rotate_angle_size)&rotate_angle_mask];
+		Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
 		rot*=psize*=p.begin_size;
 		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
 		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-		sColor4c color(round(fcolor.r*p.begin_color.r),round(fcolor.g*p.begin_color.g),
-					   round(fcolor.b*p.begin_color.b),round(fcolor.a));
+		sColor4c color(xm::round(fcolor.r * p.begin_color.r), xm::round(fcolor.g * p.begin_color.g),
+                       xm::round(fcolor.b * p.begin_color.b), xm::round(fcolor.a));
 		const cTextureAviScale::RECT& rt = texture?
 						((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
 						cTextureAviScale::RECT::ID;	
@@ -839,7 +839,7 @@ inline void cEmitterInt::nParticle::PutToBuf(const float& dtime_global, const Ke
 	mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
 	sColor4c color(round(fcolor.r*begin_color.r),round(fcolor.g*begin_color.g),
-				round(fcolor.b*begin_color.b),round(fcolor.a));
+				round(fcolor.b*begin_color.b),xm::round(fcolor.a));
 
 	sVertexXYZDT1 *v=pBuf->Get();
 
@@ -1353,7 +1353,7 @@ inline void cEmitterSpl::nParticle::PutToBuf(const float& dtime_global, HeritKey
 	mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
 	mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-	sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
+	sColor4c color(round(fcolor.r),round(fcolor.g),xm::round(fcolor.b),round(fcolor.a));
 		
 	sVertexXYZDT1 *v=pBuf->Get();
 	v[0].pos=pos-sx-sy; v[0].diffuse=color; v[0].GetTexel().set(rt.left, rt.top);	//set(0,0);
@@ -1503,12 +1503,12 @@ void cEmitterSpl::Draw(cCamera *pCamera)
 
 		//Добавить в массив
 		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[(int)round(angle*rotate_angle_size)&rotate_angle_mask];
+		Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
 		rot*=psize*=p.begin_size;
 		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
 		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-		sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
+		sColor4c color(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a));
 		const cTextureAviScale::RECT& rt = texture ?
 			((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
 						cTextureAviScale::RECT::ID;	
@@ -1577,7 +1577,7 @@ void cEmitterSpl::Draw(cCamera *pCamera)
 		mat.invXformVect(Vect3f(+rot.x,-rot.y,0),sx);
 		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 
-		sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
+		sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),xm::round(fcolor.a));
 		
 		sVertexXYZDT1 *v=pBuf->Get();
 		const cTextureAviScale::RECT& rt = isAviTexture ?
@@ -2075,7 +2075,7 @@ void cEffect::Init(EffectKey& effect_key_,cEmitter3dObject* models,float scale)
 #endif //_DEBUG
 
 	EffectKey scaled_effect;
-	if(fabsf(scale-1.0f)>FLT_EPS)
+	if(xm::abs(scale - 1.0f) > FLT_EPS)
 	{
 		scaled_effect=effect_key_;
 		scaled_effect.RelativeScale(scale);
@@ -3180,7 +3180,7 @@ EmitterKeySpl::EmitterKeySpl()
 	{
 		float r=25*exp(-t*0.1f);
 		pos0.time=1+(t-mx+1)*0.05;
-		pos0.pos.set(t*3,25-r*cos(t),50+r*sin(t));
+		pos0.pos.set(t*3,25-r*xm::cos(t),50+r*xm::sin(t));
 		p_position.push_back(pos0);
 	}
 */
@@ -3554,7 +3554,7 @@ public:
 	float GetZ(float pos_x,float pos_y)
 	{
 		float out_z;
-		int x=round(pos_x),y=round(pos_y);
+		int x= xm::round(pos_x),y= xm::round(pos_y);
 		if(x>=0 && x<terra_x && y>=0 && y<terra_y && terra)
 			out_z=terra->GetZ(x,y);
 		else
@@ -3706,7 +3706,7 @@ inline void cEmitterInt::nParticle::ZPutToBuf(const float& dtime_global, const K
 		mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 	}
 
-	sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
+	sColor4c color(xm::round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
 
 	sVertexXYZDT1 *v=pBuf->Get();
 
@@ -3876,7 +3876,7 @@ void cEmitterZ::Draw(cCamera *pCamera)
 
 		//Добавить в массив
 		Vect3f sx,sy;
-		Vect2f rot=rotate_angle[(int)round(angle*rotate_angle_size)&rotate_angle_mask];
+		Vect2f rot=rotate_angle[(int) xm::round(angle * rotate_angle_size) & rotate_angle_mask];
 		rot*=psize*=p.begin_size;
 		if(planar)
 		{
@@ -3892,7 +3892,7 @@ void cEmitterZ::Draw(cCamera *pCamera)
 			mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 		}
 
-		sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
+		sColor4c color(xm::round(fcolor.r), xm::round(fcolor.g), xm::round(fcolor.b), xm::round(fcolor.a));
 		const cTextureAviScale::RECT& rt = texture ?
 						((cTextureAviScale*)texture)->GetFramePos(p.time_summary>=1? 0.99f : p.time_summary) :
 						cTextureAviScale::RECT::ID;	
@@ -3969,7 +3969,7 @@ void cEmitterZ::Draw(cCamera *pCamera)
 			mat.invXformVect(Vect3f(+rot.y,+rot.x,0),sy);
 		}
 
-		sColor4c color(round(fcolor.r),round(fcolor.g),round(fcolor.b),round(fcolor.a));
+		sColor4c color(round(fcolor.r),round(fcolor.g),xm::round(fcolor.b),round(fcolor.a));
 		
 		sVertexXYZDT1 *v=pBuf->Get();
 		const cTextureAviScale::RECT& rt = isAviTexture ?
@@ -4069,7 +4069,7 @@ float cEmitterZ::CalcZ(float pos_x,float pos_y)
 {
 /*
 	float out_z;
-	int x=round(pos_x),y=round(pos_y);
+	int x=round(pos_x),y=xm::round(pos_y);
 	if(x>=0 && x<terra_x && y>=0 && y<terra_y)
 		out_z=terra->GetZ(x,y);
 	else

@@ -114,7 +114,7 @@ public:
 		atan_table = new char[atan_max*2 + 1];
 		atan_table += atan_max;
 		for(int i = -atan_max; i <= atan_max; i++)
-			atan_table[i] = n_max + round(atan((float)i/cell_size)*n_max/(M_PI/2));
+			atan_table[i] = n_max + xm::round(atan((float) i / cell_size) * n_max / (M_PI / 2));
 
 		normals = new Vect3f[(2*n_max + 1) << normals_per_Pi_shift];
 		for(int y = 0; y < 2*n_max + 1; y++)
@@ -122,7 +122,7 @@ public:
 				if(x || y){
 					float nx = (float)(x - n_max)*(M_PI/2)/n_max;
 					float ny = (float)(y - n_max)*(M_PI/2)/n_max;
-					Mat3f M(Vect3f(ny, -nx, 0), sqrtf(sqr(nx) + sqr(ny)));
+					Mat3f M(Vect3f(ny, -nx, 0), xm::sqrt(sqr(nx) + sqr(ny)));
 					normals[x + (y << normals_per_Pi_shift)] = M*Vect3f::K;
 					}
 				else

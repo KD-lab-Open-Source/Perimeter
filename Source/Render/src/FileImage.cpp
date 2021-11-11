@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <cstdint>
 #include <memory>
+#include "xmath.h"
 
 #ifdef PERIMETER_FFMPEG
 #include "AVWrapper.h"
@@ -33,12 +34,8 @@
 
 int ResourceFileRead(const char *fname,char *&buf,int &size);
 
-#ifndef ABS
-#define ABS(a)										((a)>=0?(a):-(a))
-#endif // ABS
-#ifndef SIGN
-#define SIGN(a)										((a)>0?1:((a)<0)?-1:0)
-#endif // SIGN
+#define FI_ABS(a)										((a)>=0?(a):-(a))
+#define FI_SIGN(a)										((a)>0?1:((a)<0)?-1:0)
 
 extern bool ResourceIsZIP();
 
@@ -72,7 +69,7 @@ void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,int asD
 	char *dst=(char*)pDst,*src=(char*)pSrc;
 	for(int jDst=0,jSrc=0;jDst<yDst;jDst++,jSrc+=dj)
 	{
-		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(ABS(jSrc)>>16)*SIGN(dj);
+		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(FI_ABS(jSrc)>>16)*FI_SIGN(dj);
 		for(int iDst=0,iSrc=0;iDst<xDst;iDst++,iSrc+=di)
 		{
 			unsigned int alpha=0,color=0;
@@ -126,7 +123,7 @@ void cFileImage_GetFrame(void *pDst,int bppDst,int bplDst,int rcDst,int rsDst,in
 	char *dst=(char*)pDst,*src=(char*)pSrc;
 	for(int jDst=0,jSrc=0;jDst<yDst;jDst++,jSrc+=dj)
 	{
-		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(ABS(jSrc)>>16)*SIGN(dj);
+		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(FI_ABS(jSrc)>>16)*FI_SIGN(dj);
 		for(int iDst=0,iSrc=0;iDst<xDst;iDst++,iSrc+=di)
 		{
 			unsigned int r=0,g=0,b=0,color=0;
@@ -433,8 +430,8 @@ public:
         y = wrapper.videoCodecCtx->height;
         
         //Set time (milliseconds of total duration)
-        time = static_cast<int>(round(
-            static_cast<float>(wrapper.formatCtx->duration) / AV_TIME_BASE * 1000.0f
+        time = static_cast<int>(xm::round(
+                static_cast<float>(wrapper.formatCtx->duration) / AV_TIME_BASE * 1000.0f
         ));
         
         //Set bpp
@@ -1318,7 +1315,7 @@ public:
         int lowest_delay = 0;
         for (int i = 0; i < data.steps; ++i) {
             //Convert jiffies (1/60 sec) to ms
-            frame_delay[i] = static_cast<uint32_t>(round((static_cast<float>(frame_delay[i]) / 60.0) * 1000));
+            frame_delay[i] = static_cast<uint32_t>(xm::round((static_cast<float>(frame_delay[i]) / 60.0) * 1000));
             int v = frame_delay[i];
             time += v;
             if (lowest_delay == 0 || v < lowest_delay) {

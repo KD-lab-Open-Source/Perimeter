@@ -30,7 +30,7 @@ bool AITile::update(int x,int y)
 			unsigned short attr = attr_buffer[xx];
 			
 			if(!GRIDTST_TALLER_HZEROPLAST(attr) || (attr & GRIDAT_MASK_HARDNESS) == GRIDAT_MASK_HARDNESS)
-				dig_work += abs(h_buffer[xx] - hZeroPlast);
+				dig_work += xm::abs(h_buffer[xx] - hZeroPlast);
 			else
 				dig_less = true;
 
@@ -140,8 +140,8 @@ public:
 	//Предполагаемые затраты на продвижение из pos1 к окончанию
 	inline float GetH(Node* pos)
 	{
-		return sqrtf(sqr(pos->xcenter-end->xcenter)+
-					sqr(pos->ycenter-end->ycenter))*gmul;
+		return xm::sqrt(sqr(pos->xcenter - end->xcenter) +
+                        sqr(pos->ycenter - end->ycenter)) * gmul;
 	}
 
 	inline float operator()(uint8_t walk_from, uint8_t walk_to)
@@ -157,8 +157,8 @@ public:
 	{
 		float mul=(pos2->walk&ClusterFind::DOWN_MASK)+gmul;
 
-		float f=sqrtf(sqr(pos1->xcenter-pos2->xcenter)+
-					sqr(pos1->ycenter-pos2->ycenter))*mul;
+		float f= xm::sqrt(sqr(pos1->xcenter - pos2->xcenter) +
+                          sqr(pos1->ycenter - pos2->ycenter)) * mul;
 
 		if((pos1->walk^pos2->walk)&ClusterFind::UP_MASK)
 			f+=gfield;
@@ -200,8 +200,8 @@ public:
 	//Предполагаемые затраты на продвижение из pos1 к окончанию
 	inline float GetH(Node* pos)
 	{
-		return sqrtf(sqr(pos->xcenter-end->xcenter)+
-					sqr(pos->ycenter-end->ycenter));
+		return xm::sqrt(sqr(pos->xcenter - end->xcenter) +
+                        sqr(pos->ycenter - end->ycenter));
 	}
 
 	inline float operator()(uint8_t walk_from, uint8_t walk_to)
@@ -214,8 +214,8 @@ public:
 	{
 		float mul=(pos2->walk&ClusterFind::DOWN_MASK)*10000.0f+1;
 
-		float f=sqrtf(sqr(pos1->xcenter-pos2->xcenter)+
-					sqr(pos1->ycenter-pos2->ycenter))*mul;
+		float f= xm::sqrt(sqr(pos1->xcenter - pos2->xcenter) +
+                          sqr(pos1->ycenter - pos2->ycenter)) * mul;
 		return f;
 	}
 

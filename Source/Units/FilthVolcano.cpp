@@ -57,8 +57,8 @@ void terFilthSwarmVolcano::SetPrm(terFilthVolcanoStruct* prm_)
 	prm=prm_;
 	if(first) {
 		int size=prm->volcano_size;
-		//BirthProcessPoint = new CGeoInfluence(round(position.x)-size/2,round(position.y)-size/2, size,size);
-		BirthProcessPoint = new sTVolcano(round(position.x),round(position.y), 128, 128);
+		//BirthProcessPoint = new CGeoInfluence(round(position.x)-size/2,xm::round(position.y)-size/2, size,size);
+		BirthProcessPoint = new sTVolcano(xm::round(position.x), xm::round(position.y), 128, 128);
 	}
 }
 
@@ -109,7 +109,7 @@ void terFilthSwarmVolcano::GenerationProcess()
 		creature_num--;
 		xassert(creature_num>=0);
 		Vect3f pos=To3D(position);
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(pos.x),round(pos.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(pos.x), xm::round(pos.y)))
 		{
 			
 			terFilthVolcano* p = safe_cast<terFilthVolcano*>(player->buildUnit(GetUnitID()));
@@ -125,8 +125,8 @@ void terFilthSwarmVolcano::GenerationProcess()
 				float angle=terLogicRNDfrand()*2*M_PI;
 
 
-				float x=speed*cos(angle);
-				float y=speed*sin(angle);
+				float x=speed*xm::cos(angle);
+				float y=speed*xm::sin(angle);
 				float z=prm->speed_min_vertical+
 					(prm->speed_max_vertical-prm->speed_min_vertical)*terLogicRNDfrand();
 				
@@ -213,7 +213,7 @@ void terFilthVolcano::Quant()
 		cEffect* effect=terScene->CreateEffect(*key,NULL,Scale,true);
 		effect->SetPosition(MatXf(Mat3f::ID,position()));
 		
-		bool chaos=terCheckFilthChaos(round(position().x),round(position().y));
+		bool chaos=terCheckFilthChaos(xm::round(position().x), xm::round(position().y));
 		if(begin_wait_destroy && !chaos)
 		{
 			begin_wait_destroy--;

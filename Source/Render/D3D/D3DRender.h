@@ -516,7 +516,7 @@ protected:
 
 FORCEINLINE int VectorToRGBA(Vect3f &v, int a=255)
 {
-    int r=round(127.0f*v.x)+128,g=round(127.0f*v.y)+128,b=round(127.0f*v.z)+128;
+    int r= xm::round(127.0f * v.x) + 128,g= xm::round(127.0f * v.y) + 128,b= xm::round(127.0f * v.z) + 128;
     return (a<<24)+(r<<16)+(g<<8)+(b<<0);
 }
 

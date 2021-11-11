@@ -449,8 +449,8 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 	int err=1;
 	if(Texture->IsScaleTexture())
 	{
-		int dx_out=round(Texture->GetWidth()*kscale.x);
-		int dy_out=round(Texture->GetHeight()*kscale.y);
+		int dx_out= xm::round(Texture->GetWidth() * kscale.x);
+		int dy_out= xm::round(Texture->GetHeight() * kscale.y);
 		int newx=Power2up(dx_out);
 		int newy=Power2up(dy_out);
 		Vect2f uvscale;

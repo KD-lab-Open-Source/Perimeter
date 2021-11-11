@@ -19,7 +19,7 @@ const float mapBordersForCamera = 10.0f;
 
 void CorrectMapZ(Vect3f& v)
 {
-	float z = (float)(vMap.GetAlt(vMap.XCYCL(round(v.x)),vMap.YCYCL(round(v.y))) >> VX_FRACTION);
+	float z = (float)(vMap.GetAlt(vMap.XCYCL(round(v.x)),vMap.YCYCL(xm::round(v.y))) >> VX_FRACTION);
 	if(v.z < CAMERA_MIN_HEIGHT + z)
 		v.z = CAMERA_MIN_HEIGHT + z;
 	else

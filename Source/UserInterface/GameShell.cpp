@@ -646,7 +646,7 @@ void TestText()
 	terRenderDevice->SetFont(pFont);
 
 	float time=2.0f;
-	float phase=fmodf(clockf()*1e-3,time)/time;
+	float phase= xm::fmod(clockf() * 1e-3, time) / time;
 
 	cTexture *pTexture0,*pTexture1;
 	pTexture0 = terVisGeneric->CreateTexture( "RESOURCE\\ICONS\\MAINMENU\\lightmap.tga" );

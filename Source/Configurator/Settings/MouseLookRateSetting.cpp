@@ -32,7 +32,7 @@ int MouseLookRateSetting::storeValueToWnd(float storeValue) const
 {
 //	if (storeValue < 10e-5)
 //		storeValue = .0f;
-	return round(storeValue*100.f);
+	return xm::round(storeValue * 100.f);
 }
 
 float MouseLookRateSetting::wndValueToStore(int value) const{

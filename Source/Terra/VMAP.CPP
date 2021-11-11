@@ -1268,35 +1268,35 @@ void vrtMap::convertPal2TableSurCol(unsigned char palBuf[SIZE_GEO_PALETTE],eSurf
 			cb=B*(Lum0+dLum*(double)j); if(cb<0)cb=0; if(cb>255)cb=255;
 			cg=G*(Lum0+dLum*(double)j); if(cg<0)cg=0; if(cg>255)cg=255;
 			cr=R*(Lum0+dLum*(double)j); if(cr<0)cr=0; if(cr>255)cr=255;
-			col =((int)round(cb)  >>3)&0x1F;
-			col+=((int)round(cg)  <<3)&0x7E0;
-			col+=((int)round(cr)  <<8)&0x0F800;
+			col =((int)xm::round(cb)  >>3)&0x1F;
+			col+=((int)xm::round(cg)  <<3)&0x7E0;
+			col+=((int)xm::round(cr)  <<8)&0x0F800;
 			Sur2Col[i][j+SurBufOffset]=col;
-			col32= (int)round(cb); col32+= (int)round(cg)<<8; col32+= (int)round(cr)<<16;
+			col32= (int)xm::round(cb); col32+= (int)xm::round(cg)<<8; col32+= (int)xm::round(cr)<<16;
 			Sur2Col32[i][j+SurBufOffset]=col32;
 			//ВРЕМЕННО !!!! (для совместимости с отсутствием текстуры выровненной поверхности)
 			Tex2Col[j+SurBufOffset][i]=col;
 			Tex2Col32[j+SurBufOffset][i]=col32;
 
-			col =((int)round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
-			col+=((int)round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
-			col+=((int)round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
+			col =((int)xm::round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
+			col+=((int)xm::round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
+			col+=((int)xm::round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
 			SurZP2Col[j+SurBufOffset][i]=col;
-			col32= (int)round(cb*colZeroPlast.alpha/256.0 + bZP);
-			col32+= (int)round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
-			col32+= (int)round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
+			col32= (int)xm::round(cb*colZeroPlast.alpha/256.0 + bZP);
+			col32+= (int)xm::round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
+			col32+= (int)xm::round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
 			SurZP2Col32[j+SurBufOffset][i]=col32;
 			//ВРЕМЕННО !!!! (для совместимости с отсутствием текстуры выровненной поверхности)
 			TexZP2Col[j+SurBufOffset][i]=col;
 			TexZP2Col32[j+SurBufOffset][i]=col32;
 
-//			col =(round(cb*colZeroPlastEmpty.alpha/256.0 + bZPE)  >>3)&0x1F;
-//			col+=(round(cg*colZeroPlastEmpty.alpha/256.0 + gZPE)  <<3)&0x7E0;
-//			col+=(round(cr*colZeroPlastEmpty.alpha/256.0 + rZPE)  <<8)&0x0F800;
+//			col =(xm::round(cb*colZeroPlastEmpty.alpha/256.0 + bZPE)  >>3)&0x1F;
+//			col+=(xm::round(cg*colZeroPlastEmpty.alpha/256.0 + gZPE)  <<3)&0x7E0;
+//			col+=(xm::round(cr*colZeroPlastEmpty.alpha/256.0 + rZPE)  <<8)&0x0F800;
 //			SurZPE2Col[j+SurBufOffset][i]=col;
-//			col32=round(cb*colZeroPlast.alpha/256.0 + bZPE);
-//			col32+=round(cg*colZeroPlast.alpha/256.0 + gZPE)<<8;
-//			col32+=round(cr*colZeroPlast.alpha/256.0 + rZPE)<<16;
+//			col32=xm::round(cb*colZeroPlast.alpha/256.0 + bZPE);
+//			col32+=xm::round(cg*colZeroPlast.alpha/256.0 + gZPE)<<8;
+//			col32+=xm::round(cr*colZeroPlast.alpha/256.0 + rZPE)<<16;
 //			SurZPE2Col32[j+SurBufOffset][i]=col32;
 		}
 	}
@@ -1371,20 +1371,20 @@ void vrtMap::convertPal2TableTexCol()
 			cb=B*(Lum0+dLum*(double)j); if(cb<0)cb=0; if(cb>255)cb=255;
 			cg=G*(Lum0+dLum*(double)j); if(cg<0)cg=0; if(cg>255)cg=255;
 			cr=R*(Lum0+dLum*(double)j); if(cr<0)cr=0; if(cr>255)cr=255;
-			col =((int)round(cb)  >>3)&0x1F;
-			col+=((int)round(cg)  <<3)&0x7E0;
-			col+=((int)round(cr)  <<8)&0x0F800;
+			col =((int)xm::round(cb)  >>3)&0x1F;
+			col+=((int)xm::round(cg)  <<3)&0x7E0;
+			col+=((int)xm::round(cr)  <<8)&0x0F800;
 			Tex2Col[j][i]=Tex2Col[j+128][i]=col;
-			col32= (int)round(cb); col32+= (int)round(cg)<<8; col32+= (int)round(cr)<<16;
+			col32= (int)xm::round(cb); col32+= (int)xm::round(cg)<<8; col32+= (int)xm::round(cr)<<16;
 			Tex2Col32[j][i]=Tex2Col32[j+128][i]=col32;
 
-			col =((int)round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
-			col+=((int)round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
-			col+=((int)round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
+			col =((int)xm::round(cb*colZeroPlast.alpha/256.0 + bZP)  >>3)&0x1F;
+			col+=((int)xm::round(cg*colZeroPlast.alpha/256.0 + gZP)  <<3)&0x7E0;
+			col+=((int)xm::round(cr*colZeroPlast.alpha/256.0 + rZP)  <<8)&0x0F800;
 			TexZP2Col[j][i]=TexZP2Col[j+128][i]=col;
-			col32= (int)round(cb*colZeroPlast.alpha/256.0 + bZP);
-			col32+= (int)round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
-			col32+= (int)round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
+			col32= (int)xm::round(cb*colZeroPlast.alpha/256.0 + bZP);
+			col32+= (int)xm::round(cg*colZeroPlast.alpha/256.0 + gZP)<<8;
+			col32+= (int)xm::round(cr*colZeroPlast.alpha/256.0 + rZP)<<16;
 			TexZP2Col32[j][i]=TexZP2Col32[j+128][i]=col32;
 
 		}
@@ -1840,8 +1840,8 @@ void vrtMap::viewV(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int yside)
 		//x0+d*65536*cos(aa+FOV),y0+d*65536*sin(aa+FOV),
 		//h-30,100*256/(d+1));
 		int xx0=x0+d*65536*cos(aa-FOV);
-		int yy0=y0+d*65536*sin(aa-FOV);
-		int xx1=x0+d*65536*cos(aa+FOV);
+		int yy0=y0+d*65536*xm::sin(aa-FOV);
+		int xx1=x0+d*65536*xm::cos(aa+FOV);
 		int yy1=y0+d*65536*sin(aa+FOV);
 
 		int scaling=1000*256/(d+1); //scaling=100*256/(d+1);
@@ -1974,24 +1974,26 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 	unsigned char* lvG = &(VxGBuf[0]); 
 	unsigned char* lvD = &(VxDBuf[0]); 
 
-	float tga=tan(cameraAngleLean*3.14/180);
-	int dh=round(65536*(sin((cameraAngleLean-90)*3.14/180)*focusC/(focusC+cameraDZ)) );
+	float tga=xm::tan(cameraAngleLean*3.14/180);
+	int dh=xm::round(65536*(xm::sin((cameraAngleLean - 90) * 3.14 / 180) * focusC / (focusC + cameraDZ)) );
 	int DY,DX;
 	for (d=-yside-200; d<yside; d++){
-		DY = round(sqrt( pow(d*(focusC+cameraDZ)/(d+tga*focusC),2) + pow(tga*d*(focusC+cameraDZ)/(d+tga*focusC),2) )*65536);
+		DY = xm::round(xm::sqrt(pow(d * (focusC + cameraDZ) / (d + tga * focusC), 2) +
+                                    pow(tga * d * (focusC + cameraDZ) / (d + tga * focusC), 2)) * 65536);
 		if(d<0)DY=-DY;
-		DX = round( 65536*xside*(focusC+( cameraDZ-(d*(focusC+cameraDZ)/(d+tga*focusC)) ) )/focusC );
+		DX = xm::round(
+                65536 * xside * (focusC + (cameraDZ - (d * (focusC + cameraDZ) / (d + tga * focusC)))) / focusC);
 
 
 	// Draw the landscape from near to far without overdraw
 	//for ( d=0; d<1000; d+=1 ){//d+=1+(d>>6)
-		//Line(x0+d*65536*cos(aa-FOV),y0+d*65536*sin(aa-FOV),
-		//x0+d*65536*cos(aa+FOV),y0+d*65536*sin(aa+FOV),
+		//Line(x0+d*65536*xm::cos(aa-FOV),y0+d*65536*xm::sin(aa-FOV),
+		//x0+d*65536*xm::cos(aa+FOV),y0+d*65536*xm::sin(aa+FOV),
 		//h-30,100*256/(d+1));
 		/*int xx0=(x0-DX)*cos(aa)-(y0-DY)*sin(aa);
 		int yy0=(y0-DY)*cos(aa)+(x0-DX)*sin(aa);
 		int xx1=(x0+DX)*cos(aa)-(y0-DY)*sin(aa);
-		int yy1=(y0-DY)*cos(aa)+(x0+DX)*sin(aa);*/
+		int yy1=(y0-DY)*xm::cos(aa)+(x0+DX)*xm::sin(aa);*/
 
 		int xx0=x0+( (-DX)*cos(turnAngleAroundZ)-(-DY)*sin(turnAngleAroundZ) );
 		int yy0=y0+( (-DY)*cos(turnAngleAroundZ)+(-DX)*sin(turnAngleAroundZ) );
@@ -2441,7 +2443,7 @@ int vrtMap::drawCircleZeroLayer(int _x, int _y, int _r)
 	int i;
 	const r2=_r*_r;
 	for(i=0; i<=_r; i++){
-		int dx=sqrt(r2-i*i);
+		int dx=xm::sqrt(r2-i*i);
 		for(j=0; j<=dx; j++){
 			if()
 		}
@@ -2867,9 +2869,9 @@ void vrtMap::superWrldShot(int k)
 				float Lum=1.5f;//!!!! константы взяты из кода выше !!!
 				float Lum0=0.05f;
 				float lght=Lum0+(Lum-Lum0)*((float)RnrBuf[offb]/127.f);
-				int r=round(clr.x*lght*255.f); r=clamp(r, 0, 255);
-				int g=round(clr.y*lght*255.f); g=clamp(g, 0, 255);
-				int b=round(clr.z*lght*255.f); b=clamp(b, 0, 255);
+				int r=xm::round(clr.x*lght*255.f); r=clamp(r, 0, 255);
+				int g=xm::round(clr.y*lght*255.f); g=clamp(g, 0, 255);
+				int b=xm::round(clr.z*lght*255.f); b=clamp(b, 0, 255);
 				*p++ = (unsigned char)b;
 				*p++ = (unsigned char)g;
 				*p++ = (unsigned char)r;
@@ -3204,13 +3206,13 @@ void vrtMap::scalingHeighMap(int percent)
 			int offb=offsetBuf(i,j);
 			if(VxDBuf[offb]==0){ //geo
 				short v=SGetAlt(offb);
-				v=round(v*k);
+				v=xm::round(v*k);
 				if(v>MAX_VX_HEIGHT)v=MAX_VX_HEIGHT; if(v<0)v=0;
 				SPutAltGeo(offb, v);
 			}
 			else { //dam
-				short v=round((float)SGetAlt(offb)*k);
-				short cv=round((float)VxGBuf[offb]*k);
+				short v=xm::round((float)SGetAlt(offb)*k);
+				short cv=xm::round((float)VxGBuf[offb]*k);
 				if(cv>MAX_VX_HEIGHT_WHOLE)cv=MAX_VX_HEIGHT_WHOLE; if(cv<0)cv=0;
 				VxGBuf[offb]=cv;
 				VxDBuf[offb]=v>>VX_FRACTION;

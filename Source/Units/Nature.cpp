@@ -193,7 +193,7 @@ void terNatureObject::AvatarQuant()
 		else
 			avatar()->setPose(pose());
 
-		if(fabs(ObjectAnimation.deltaPhase()) > FLT_EPS)
+		if(xm::abs(ObjectAnimation.deltaPhase()) > FLT_EPS)
 			realAvatar()->setPhase(ObjectAnimation.phase());
 
 		if(visible_ || gameShell->missionEditor())
@@ -223,13 +223,13 @@ void terNatureObject::ShowInfo()
 		if(selected()){
 			Vect3f e,w;
 			terCamera->GetCamera()->ConvertorWorldToViewPort(&position(),&w,&e);
-			terRenderDevice->DrawRectangle(round(e.x) - 8,round(e.y) - 2, 16, 4,sColor4c(255,255,255,255),0);
+			terRenderDevice->DrawRectangle(xm::round(e.x) - 8, xm::round(e.y) - 2, 16, 4, sColor4c(255, 255, 255, 255), 0);
 		}
 
 		if(strlen(label())){
 			Vect3f e,w;
 			terCamera->GetCamera()->ConvertorWorldToViewPort(&position(),&w,&e);
-			terRenderDevice->OutText(round(e.x),round(e.y), label(), sColor4f(RED));
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), label(), sColor4f(RED));
 		}
 	}
 }
@@ -351,7 +351,7 @@ void terNatureWorm::Start()
 	terNatureTerrain::Start();
 	TargetPosition = position();
 	TargetAngle = terLogicRNDfrand() * M_PI * 2.0f;
-	pWormImmediately=new CGeoWorm(round(position().x),round(position().y));
+	pWormImmediately=new CGeoWorm(xm::round(position().x), xm::round(position().y));
 }
 
 const float PERIMETER_NATURE_WORM_MOVE_ANGLE = M_PI * 0.5f;
@@ -368,8 +368,8 @@ void terNatureWorm::Quant()
 	float r = sqr(radius());	
 
 	if(d > r){
-		//worms(round(position().x),round(position().y));
-		pWormImmediately->step(round(position().x),round(position().y));
+		//worms(round(position().x),xm::round(position().y));
+		pWormImmediately->step(xm::round(position().x), xm::round(position().y));
 
 		v = Vect3f(v.x,v.y,0);
 		float s = v.norm();
@@ -396,7 +396,7 @@ void terNatureWorm::Quant()
 		l = Vect3f(0,s,0) * Mat3f(angleZ(), Z_AXIS);
 
 		setPosition(position() + l);
-		setPositionZ((float)(vMap.GetAlt(round(position().x),round(position().y)) >> VX_FRACTION) + radius());
+		setPositionZ((float)(vMap.GetAlt(xm::round(position().x), xm::round(position().y)) >> VX_FRACTION) + radius());
 	}
 	else{
 		if(terLogicRND(100) < 50)
@@ -447,7 +447,7 @@ void terNatureTorpedo::Start()
 	terNatureTerrain::Start();
 	Direction.normalize(1.0f);
 	StartPosition = position();
-	float z = (float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))) >> VX_FRACTION);
+	float z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
 	ClusterID = FieldCluster::get_cluster_id(field_dispatcher->getIncludingCluster(Vect3f(position().x,position().y,z)));
 }
 
@@ -476,7 +476,7 @@ void terNatureTorpedo::Quant()
 				TorpedoImmediately = new sTorpedo(position().x,position().y,Direction);
 		}
 		else{
-			if(!Player->energyColumn().filled(round(position().x), round(position().y)))
+			if(!Player->energyColumn().filled(xm::round(position().x), xm::round(position().y)))
 				Contact = 20;
 		}
 	}
@@ -534,7 +534,7 @@ void terNatureFace::Start()
 	terFaceDemoEnable = 0;
 	TargetPosition = position();
 	TargetAngle = terLogicRNDfrand() * M_PI * 2.0f;
-	headGeoAction.init(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y)),1);
+	headGeoAction.init(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y)), 1);
 }
 
 const float PERIMETER_FACE_MOVE_RADIUS = 10;
@@ -550,7 +550,7 @@ void terNatureFace::Quant()
 	Vect2f delta = (const Vect2f&)TargetPosition - position2D();
 	float dist = delta.norm2();
 	if(dist > sqr(PERIMETER_FACE_MOVE_RADIUS)){
-		if(!headGeoAction.quant(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))))
+		if(!headGeoAction.quant(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))))
 			Kill();
 
 		float speed = clamp(dist, 0, attr().GroundPlaneSpeed);
@@ -592,7 +592,7 @@ void terNatureFace::Quant()
 
 terNatureFallTree::terNatureFallTree(const UnitTemplate& data) : terUnitBase(data)
 {
-	Time = round(globalAttr().FallTreeTime*1000./terLogicTimePeriod);
+	Time = xm::round(globalAttr().FallTreeTime * 1000. / terLogicTimePeriod);
 }
 
 void terNatureFallTree::Start()
@@ -629,9 +629,9 @@ void terNatureFallTree::Quant()
 		v *= Mat3f(Rotation);
 		
 		v += position();
-		float z = (float)(vMap.GetAlt(vMap.XCYCL(round(v.x)),vMap.YCYCL(round(v.y))) >> VX_FRACTION);
+		float z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(v.x)), vMap.YCYCL(xm::round(v.y))) >> VX_FRACTION);
 		if(v.z < z){
-			if(fabs(v.z - z) > FLT_EPS)
+			if(xm::abs(v.z - z) > FLT_EPS)
 				Rotation.premult(QuatF(atan2((v.z - z),radius()),Axis));
 			Time = 0;
 		}

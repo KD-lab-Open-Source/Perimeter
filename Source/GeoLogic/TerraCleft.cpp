@@ -177,7 +177,7 @@ void CTerraCleftSystem::init_radial(const Vect2i& pos1)
 		for(int j = 0; j<jC; j++, a+=dA)
 		{
 			//new point
-			Vect2i v(int(pos1.x + r*sin(a))+_xnoise(), int(pos1.y + r*cos(a)) + _xnoise());
+			Vect2i v(int(pos1.x + r * xm::sin(a)) + _xnoise(), int(pos1.y + r * xm::cos(a)) + _xnoise());
 
 			m_nodes[ID(i+1, j)] = v;
 

@@ -128,7 +128,7 @@ void terUnitMonk::setPathPosition(float pathPosition)
 
 	for(;;){
 		int index = (pathIndex_ + 1) % (*path_).size();
-		float d = sqrtf(((*path_)[index] - (*path_)[pathIndex_]).norm2());
+		float d = xm::sqrt(((*path_)[index] - (*path_)[pathIndex_]).norm2());
 		if(pathRemainder_ < d)
 			break;
 		pathRemainder_ -= d;
@@ -148,8 +148,8 @@ void terUnitMonk::CalcBorderPosition()
 {
 	Vect3f position;
 	position.interpolate(SleepPosition, BorderPosition, BorderPhase);
-	float t = (0.5f - fabs(BorderPhase - 0.5f)) * 2.0f;
-	position.z += sqrtf(t) * 128.0f;
+	float t = (0.5f - xm::abs(BorderPhase - 0.5f)) * 2.0f;
+	position.z += xm::sqrt(t) * 128.0f;
 	setPosition(position);
 }
 
@@ -179,9 +179,9 @@ void terUnitMonk::setPosition(const Vect3f& pos)
 	terMonkGridType& grid=universe()->monks.grid;
 	if(monk_mode_ != MONK_MODE_SLEEP){
 		if(inserted())
-			grid.Move(*this, round(position().x), round(position().y), round(radius()));
+			grid.Move(*this, xm::round(position().x), xm::round(position().y), xm::round(radius()));
 		else
-			grid.Insert(*this, round(position().x), round(position().y), round(radius()));
+			grid.Insert(*this, xm::round(position().x), xm::round(position().y), xm::round(radius()));
 	}
 	else{
 		if(inserted())

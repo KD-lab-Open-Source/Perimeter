@@ -81,7 +81,7 @@ Key* CKeyBase<Key>::GetOrCreateKey(float t,float life_time,float create_time,boo
 	{
 		Key& p=*it;
 		float tp=p.time*life_time+create_time;
-		if(fabsf(tp-t)<=KeyGeneral::time_delta)
+		if(xm::abs(tp - t) <= KeyGeneral::time_delta)
 			return &p;
 	}
 

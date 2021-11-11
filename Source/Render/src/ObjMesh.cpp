@@ -91,7 +91,7 @@ void cObjMesh::CalcBorder(Vect3f& Min,Vect3f& Max)
 {
 	Vect3f min(1e30f,1e30f,1e30f),max(-1e30f,-1e30f,-1e30f);
 	GetTri()->GetBoundingBox(min,max);
-	if(fabs(min.x)<1e20f)
+	if(xm::abs(min.x) < 1e20f)
 	{
 		Min=::GetMin(min,Min);
 		Min=::GetMin(max,Min);

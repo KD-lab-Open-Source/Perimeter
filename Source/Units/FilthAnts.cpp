@@ -130,7 +130,8 @@ void terFilthSwarmAnt::Quant()
 			if(TargetCount < 0){
 				TargetPosition.x = vMap.H_SIZE / 4 + terLogicRND(vMap.H_SIZE / 2);
 				TargetPosition.y = vMap.V_SIZE / 4 + terLogicRND(vMap.V_SIZE / 2);
-				TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(round(TargetPosition.x)),vMap.YCYCL(round(TargetPosition.y))) >> VX_FRACTION);
+				TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(TargetPosition.x)), vMap.YCYCL(
+                        xm::round(TargetPosition.y))) >> VX_FRACTION);
 				TargetCount = 100;
 			}
 			v2 = v = TargetPosition;
@@ -164,8 +165,8 @@ void terFilthSwarmAnt::Quant()
 			nv.x = -v2.y;
 			nv.y = v2.x;
 			nv.z = 0;
-			nv *= sinf(DeltaAngle);
-			v2 *= cosf(DeltaAngle);
+			nv *= xm::sin(DeltaAngle);
+			v2 *= xm::cos(DeltaAngle);
 			v = v2;
 			v += nv;
 			v += v1;
@@ -221,12 +222,12 @@ void terFilthSwarmAnt::GenerationProcess()
 		float a = terLogicRNDfrand()*M_PI*2.0f;
 		float r = BaseParam->SwarmRadius;
 		Vect3f v;
-		v.x = cosf(a) * r;
-		v.y = sinf(a) * r;
+		v.x = xm::cos(a) * r;
+		v.y = xm::sin(a) * r;
 		v += position;
 		v.z = 0;
 		if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE){
-			if(SpotPoint && SpotPoint->terCheckFilthPoint(round(v.x),round(v.y))){
+			if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 				terFilthAnt* p = safe_cast<terFilthAnt*>(player->buildUnit(GetUnitID()));
 				p->setPose(Se3f(QuatF(terLogicRNDfrand()*M_PI, Vect3f::K), v), true);
 				p->SetAttackPeriod(attack_period);
@@ -286,7 +287,7 @@ void terFilthAnt::WayPointStart()
 
 	if(!BirthProcessPoint && initial_geoprocess)
 	{
-		BirthProcessPoint=c3DSGeoActionCreator::Build(round(position().x),round(position().y), angleZ(),&geo_ant_birth);
+		BirthProcessPoint=c3DSGeoActionCreator::Build(xm::round(position().x), xm::round(position().y), angleZ(), &geo_ant_birth);
 	}
 }
 
@@ -297,11 +298,11 @@ void terFilthAnt::WayPointController()
 	BodyPoint->way_points.clear();
 	BodyPoint->setVelocityFactor(1);
 
-	if(free_destroy || terCheckFilthZero(round(position().x),round(position().y)) || 
+	if(free_destroy || terCheckFilthZero(xm::round(position().x), xm::round(position().y)) || 
 		BodyPoint->chaosCollidingFactor()>=0.5f)
 	{
 		if(!DestroyProcessPoint)
-			DestroyProcessPoint = c3DSGeoActionCreator::Build(round(position().x),round(position().y), angleZ(),&geo_ant_death);
+			DestroyProcessPoint = c3DSGeoActionCreator::Build(xm::round(position().x), xm::round(position().y), angleZ(), &geo_ant_death);
 	}
 
 	if(!death_requested)

@@ -146,7 +146,7 @@ public:
 	CycledHermite(){ reset(); }
 	int reset();
 	float t_max() const { return t_max_; }
-	float cycle(float t) const { t = fmodf(fmodf(t, t_max_) + t_max_, t_max_); return t; }
+	float cycle(float t) const { t = xm::fmod(xm::fmod(t, t_max_) + t_max_, t_max_); return t; }
 
 	float suggest_dt(float len);
 	void set_offset(float t){ offset = cycle(t); }

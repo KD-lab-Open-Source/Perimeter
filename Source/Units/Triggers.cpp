@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "CameraManager.h"
@@ -97,7 +95,7 @@ AIPlayer* Condition::getPlayer(AIPlayer& aiPlayer, AIPlayerType playerType)
 	case AI_PLAYER_TYPE_WORLD:
 		return safe_cast<AIPlayer*>(universe()->worldPlayer());
 	default:
-		xassert(0 && "Недопустимое значение типа игрока - 'Любой игрок'");
+		xassert(0 && "РќРµРґРѕРїСѓСЃС‚РёРјРѕРµ Р·РЅР°С‡РµРЅРёРµ С‚РёРїР° РёРіСЂРѕРєР° - 'Р›СЋР±РѕР№ РёРіСЂРѕРє'");
 		return &aiPlayer;
 	}
 }
@@ -302,7 +300,7 @@ bool ConditionObjectNearObjectByLabel::check(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 		return false;
 	}												
 	else{
@@ -319,7 +317,7 @@ bool ConditionObjectNearObjectByLabel::check(AIPlayer& aiPlayer)
 
 bool ConditionWeaponIsFiring::check(AIPlayer& aiPlayer)
 {
-	xassert(isBuilding(gun) && "'Спецоружие стреляет' - указать пушку");
+	xassert(isBuilding(gun) && "'РЎРїРµС†РѕСЂСѓР¶РёРµ СЃС‚СЂРµР»СЏРµС‚' - СѓРєР°Р·Р°С‚СЊ РїСѓС€РєСѓ");
 	terBuildingList& list = aiPlayer.buildingList(gun);
 	if(list.empty())
 		return false;
@@ -365,7 +363,7 @@ bool ConditionOutOfEnergyCapacity::check(AIPlayer& aiPlayer)
 bool ConditionNumberOfBuildingByCoresCapacity::check(AIPlayer& aiPlayer)
 {
 	AIPlayer* player = getPlayer(aiPlayer, playerType);
-	return compare((int)round(player->countUnits(building)*factor), player->countUnits(building2), compareOp);
+	return compare((int) xm::round(player->countUnits(building) * factor), player->countUnits(building2), compareOp);
 }
 
 void ConditionUnitClassUnderAttack::checkEvent(AIPlayer& aiPlayer, const Event& event)
@@ -538,7 +536,7 @@ bool ConditionDifficultyLevel::check(AIPlayer& aiPlayer)
 //------------------------------------------------------
 void ActionDelay::activate(AIPlayer& aiPlayer) 
 { 
-	timer.start(scaleByDifficulty ? round(aiPlayer.difficultyPrm().triggerDelayFactor*delay*1000) : delay*1000); 
+	timer.start(scaleByDifficulty ? xm::round(aiPlayer.difficultyPrm().triggerDelayFactor * delay * 1000) : delay * 1000); 
 }
 
 bool ActionDelay::workedOut(AIPlayer& aiPlayer)
@@ -737,7 +735,7 @@ terUnitBase* ActionSellBuilding::findBuilding(AIPlayer& aiPlayer) const
 			}
 			break;
 		case AI_SELL_IF_GUN_CANT_REACH_BUILDINGS: 
-			xassert(0 && "Нельзя в стратегии продажи пушек указывать любое здание");
+			xassert(0 && "РќРµР»СЊР·СЏ РІ СЃС‚СЂР°С‚РµРіРёРё РїСЂРѕРґР°Р¶Рё РїСѓС€РµРє СѓРєР°Р·С‹РІР°С‚СЊ Р»СЋР±РѕРµ Р·РґР°РЅРёРµ");
 			break;
 		}
 	}
@@ -786,7 +784,7 @@ void ActionUpgradeOmega::activate(AIPlayer& aiPlayer)
 //-------------------------------------
 bool ActionChargeCores::automaticCondition(AIPlayer& aiPlayer) const 
 {
-	// !!! Расчитано пока только на зарядку всех
+	// !!! Р Р°СЃС‡РёС‚Р°РЅРѕ РїРѕРєР° С‚РѕР»СЊРєРѕ РЅР° Р·Р°СЂСЏРґРєСѓ РІСЃРµС…
 	terBuildingList& cores = aiPlayer.buildingList(UNIT_ATTRIBUTE_CORE);
 	terBuildingList::iterator ci;
 	FOR_EACH(cores, ci)
@@ -1009,8 +1007,8 @@ bool ActionSquadAttack::workedOut(AIPlayer& aiPlayer)
 				if(target){
 					#ifndef _FINAL_
 						//XBuffer buf;
-						//buf < "Не назначен класс атаки у " < getEnumNameAlt(squad->currentMutation())
-						//	< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
+						//buf < "РќРµ РЅР°Р·РЅР°С‡РµРЅ РєР»Р°СЃСЃ Р°С‚Р°РєРё Сѓ " < getEnumNameAlt(squad->currentMutation())
+						//	< ", С‡С‚РѕР±С‹ Р°С‚Р°РєРѕРІР°С‚СЊ " < getEnumNameAlt(target->attr().ID);
 						//xassert_s(squad->squadUnits().front()->checkFireClass(target), buf);
 					#endif
 					if(!path.empty()){
@@ -1107,8 +1105,8 @@ void ActionAttackBySpecialWeapon::activate(AIPlayer& aiPlayer)
 		terUnitBase* target = findTarget(aiPlayer, warBuilding->position2D(), unit->attr().fireRadiusMin());
 		#ifndef _FINAL_
 			XBuffer buf;
-			buf < "Не назначен класс атаки у " < getEnumNameAlt(unit->attr().ID)
-				< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
+			buf < "РќРµ РЅР°Р·РЅР°С‡РµРЅ РєР»Р°СЃСЃ Р°С‚Р°РєРё Сѓ " < getEnumNameAlt(unit->attr().ID)
+				< ", С‡С‚РѕР±С‹ Р°С‚Р°РєРѕРІР°С‚СЊ " < getEnumNameAlt(target->attr().ID);
 			xassert_s(unit->checkFireClass(target), buf);
 		#endif
 		if(target)
@@ -1166,7 +1164,7 @@ void ActionSetCamera::activate(AIPlayer& aiPlayer)
 			}
 			else{
 				terCamera->loadPath(*spline, smoothTransition);
-				terCamera->startReplayPath(round(stepTime*1000), cycles);
+				terCamera->startReplayPath(xm::round(stepTime * 1000), cycles);
 			}
 		}
 	}
@@ -1238,7 +1236,7 @@ void ActionRepareObjectByLabel::activate(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 	}
 	else{
 		unit->setDamageMolecula(unit->attr().damageMolecula);
@@ -1250,7 +1248,7 @@ void ActionActivateObjectByLabel::activate(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 	}
 	else{
 		unit->setActivity(true);
@@ -1261,7 +1259,7 @@ void ActionDeactivateObjectByLabel::activate(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 	}
 	else{
 		unit->setActivity(false);
@@ -1276,7 +1274,7 @@ bool ActionMessage::workedOut(AIPlayer& aiPlayer)
 				return true;
 			started_ = true;
 			float soundDuration = _shellIconManager.playSpeech(messageID);
-			int time = syncroBySound && 0 < soundDuration ? static_cast<int>(round(soundDuration*1000.0f)) + speechDurationAddition : duration*1000;
+			int time = syncroBySound && 0 < soundDuration ? static_cast<int>(xm::round(soundDuration * 1000.0f)) + speechDurationAddition : duration * 1000;
 			_shellIconManager.showHint(messageID, time);
 			if(duration)
 				durationTimer.start(time);
@@ -1293,7 +1291,7 @@ void ActionTask::activate(AIPlayer& aiPlayer)
 		return;
 
 	float soundDuration = _shellIconManager.playSpeech(taskID);
-	int time = syncroBySound && 0 < soundDuration ? static_cast<int>(round(soundDuration*1000.0f)) + speechDurationAddition : duration*1000;
+	int time = syncroBySound && 0 < soundDuration ? static_cast<int>(xm::round(soundDuration * 1000.0f)) + speechDurationAddition : duration * 1000;
 	if(showTips)
 		_shellIconManager.showHint(taskID, time, type);
 	_shellIconManager.setTask(taskID, type);
@@ -1324,7 +1322,7 @@ terUnitBase* ActionSetCameraAtObject::findUnit(AIPlayer& aiPlayer)
 			unit = universe()->findUnit(object);
 	}
 
-	xassert(unit && "Самера на объект: объект не найден");
+	xassert(unit && "РЎР°РјРµСЂР° РЅР° РѕР±СЉРµРєС‚: РѕР±СЉРµРєС‚ РЅРµ РЅР°Р№РґРµРЅ");
 
 	return unit;
 }
@@ -1484,7 +1482,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	switch(state_){
 	case SLEEPING:
 	case DONE:{
-		// Входящие стрелки одного цвета - И, разных - ИЛИ
+		// Р’С…РѕРґСЏС‰РёРµ СЃС‚СЂРµР»РєРё РѕРґРЅРѕРіРѕ С†РІРµС‚Р° - Р, СЂР°Р·РЅС‹С… - РР›Р
 		std::vector<int> conditions(STRATEGY_COLOR_MAX, 0);
 		FOR_EACH_AUTO(incomingLinks_, li)
 			conditions[(*li)->getType()] |= (*li)->active() ? 1 : 2;
@@ -1492,7 +1490,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 		FOR_EACH_AUTO(conditions, bi)
 			if(*bi == 1){
 				state_ = CHECKING;
-				triggerChain.addLogRecord(*this, (std::string("П: ") + name()).c_str());
+				triggerChain.addLogRecord(*this, (std::string("Рџ: ") + name()).c_str());
 				break;
 			}
 		
@@ -1503,7 +1501,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	case CHECKING:
 		if((!condition || condition->checkDebug(aiPlayer)) && (!action || action->automaticCondition(aiPlayer))){
 			activate(aiPlayer, triggerChain);
-			triggerChain.addLogRecord(*this, (std::string("С: ") + name()).c_str());
+			triggerChain.addLogRecord(*this, (std::string("РЎ: ") + name()).c_str());
 		}
 		else
 			break;
@@ -1515,7 +1513,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 			state_ = DONE;
 			if(!active())
 				triggerChain.deactivateTrigger(this);
-			triggerChain.addLogRecord(*this, (std::string("Ф: ") + name()).c_str());
+			triggerChain.addLogRecord(*this, (std::string("Р¤: ") + name()).c_str());
 		}
 		break;
 	}
@@ -1533,16 +1531,16 @@ void Trigger::activate(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 		condition->clear();
 
 	FOR_EACH_AUTO(incomingLinks_, li){
-		if((*li)->active()){ // Деактивировать связи из родительского триггера других цветов
+		if((*li)->active()){ // Р”РµР°РєС‚РёРІРёСЂРѕРІР°С‚СЊ СЃРІСЏР·Рё РёР· СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ С‚СЂРёРіРіРµСЂР° РґСЂСѓРіРёС… С†РІРµС‚РѕРІ
 			Trigger* trigger = (*li)->parent;
             FOR_EACH_AUTO(trigger->outcomingLinks_, lj)
 				if(lj->getType() != (*li)->getType() && !lj->autoRestarted()){
-					if(lj->child && lj->child->state_ == CHECKING) // Выключить другие триггера
+					if(lj->child && lj->child->state_ == CHECKING) // Р’С‹РєР»СЋС‡РёС‚СЊ РґСЂСѓРіРёРµ С‚СЂРёРіРіРµСЂР°
 						lj->child->state_ = lj->child->executionCounter_ ? DONE : SLEEPING;
 					lj->deactivate(triggerChain);
 				}
 			}
-		if(!(*li)->autoRestarted()) // Деактивировать, если тонкая
+		if(!(*li)->autoRestarted()) // Р”РµР°РєС‚РёРІРёСЂРѕРІР°С‚СЊ, РµСЃР»Рё С‚РѕРЅРєР°СЏ
 			(*li)->deactivate(triggerChain);
 		}
 	

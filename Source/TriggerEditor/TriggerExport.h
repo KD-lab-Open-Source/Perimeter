@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #ifndef __TRIGGER_EXPORT_H__
 #define __TRIGGER_EXPORT_H__
 
@@ -22,28 +20,28 @@ class CRect : public RECT {
 //This was originally on Conditions.h, had to be moved since C++ now forbids forward declaring enums
 enum AIPlayerType
 {
-    AI_PLAYER_TYPE_ME, // Я
-    AI_PLAYER_TYPE_ENEMY, // Другой
-    AI_PLAYER_TYPE_WORLD, // Мир
-    AI_PLAYER_TYPE_ANY // Любой
+    AI_PLAYER_TYPE_ME, // РЇ
+    AI_PLAYER_TYPE_ENEMY, // Р”СЂСѓРіРѕР№
+    AI_PLAYER_TYPE_WORLD, // РњРёСЂ
+    AI_PLAYER_TYPE_ANY // Р›СЋР±РѕР№
 };
 
 DECLARE_ENUM_DESCRIPTOR(AIPlayerType)
 
 enum CompareOperator
 {
-    COMPARE_LESS,	// Меньше
-    COMPARE_LESS_EQ, // Меньше либо равно
-    COMPARE_EQ, // Равно
-    COMPARE_NOT_EQ, // Не равно
-    COMPARE_GREATER, // Больше
-    COMPARE_GREATER_EQ // Больше либо равно		 
+    COMPARE_LESS,	// РњРµРЅСЊС€Рµ
+    COMPARE_LESS_EQ, // РњРµРЅСЊС€Рµ Р»РёР±Рѕ СЂР°РІРЅРѕ
+    COMPARE_EQ, // Р Р°РІРЅРѕ
+    COMPARE_NOT_EQ, // РќРµ СЂР°РІРЅРѕ
+    COMPARE_GREATER, // Р‘РѕР»СЊС€Рµ
+    COMPARE_GREATER_EQ // Р‘РѕР»СЊС€Рµ Р»РёР±Рѕ СЂР°РІРЅРѕ		 
 };
 
 DECLARE_ENUM_DESCRIPTOR(CompareOperator)
 
 //-----------------------------
-// Для отделения контента
+// Р”Р»СЏ РѕС‚РґРµР»РµРЅРёСЏ РєРѕРЅС‚РµРЅС‚Р°
 #ifndef _SURMAP_
 #define virtual_ virtual
 #else
@@ -122,7 +120,7 @@ public:
 };
 
 //-----------------------------
-struct Condition : ShareHandleBaseSerializeVirtual // Не выполняется никогда (для выключения триггеров)
+struct Condition : ShareHandleBaseSerializeVirtual // РќРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РЅРёРєРѕРіРґР° (РґР»СЏ РІС‹РєР»СЋС‡РµРЅРёСЏ С‚СЂРёРіРіРµСЂРѕРІ)
 {
 	Condition() {
 		state_ = false; 
@@ -155,7 +153,7 @@ struct Condition : ShareHandleBaseSerializeVirtual // Не выполняется никогда (дл
     static bool compare(float op1, float op2, CompareOperator op);
 
     VIRTUAL_SERIALIZE(ar) {
-		ar & TRANSLATE_OBJECT(state_, "_Текущее состояние");
+		ar & TRANSLATE_OBJECT(state_, "_РўРµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ");
 		ar & WRAP_OBJECT(internalColor_);
 	}
 
@@ -169,8 +167,8 @@ protected:
 struct ConditionNode //
 {
 	enum Type {
-		NORMAL, // да
-		INVERTED // НЕ
+		NORMAL, // РґР°
+		INVERTED // РќР•
 	};
 	EnumWrapper<Type> type; 
 	ShareHandle<Condition> condition; 
@@ -183,18 +181,18 @@ struct ConditionNode //
 	bool check(AIPlayer& aiPlayer) { return condition ? (type == NORMAL ? condition->checkDebug(aiPlayer) : !condition->checkDebug(aiPlayer)) : false; }
 
 	SERIALIZE(ar) {
-		ar & TRANSLATE_OBJECT(type, "&Тип");
+		ar & TRANSLATE_OBJECT(type, "&РўРёРї");
 		ar & TRANSLATE_OBJECT(condition, "&");
 	}
 };
 
 DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionNode, Type);
 
-struct ConditionSwitcher : Condition // И/ИЛИ
+struct ConditionSwitcher : Condition // Р/РР›Р
 {
 	enum Type {
-		AND, // И
-		OR // ИЛИ
+		AND, // Р
+		OR // РР›Р
 	};
 	EnumWrapper<Type> type;
 	std::vector<ConditionNode, TriggerAllocator<ConditionNode> > conditions;
@@ -210,15 +208,15 @@ struct ConditionSwitcher : Condition // И/ИЛИ
 
     VIRTUAL_SERIALIZE(ar) {
 		Condition::serialize_template(ar);
-		ar & TRANSLATE_OBJECT(type, "&Тип");
-		ar & TRANSLATE_OBJECT(conditions, "Условия");
+		ar & TRANSLATE_OBJECT(type, "&РўРёРї");
+		ar & TRANSLATE_OBJECT(conditions, "РЈСЃР»РѕРІРёСЏ");
 	}
 };
 
 DECLARE_ENUM_DESCRIPTOR_ENCLOSED(ConditionSwitcher, Type);
 
 //-----------------------------
-struct Action : ShareHandleBaseSerializeVirtual // Пустое действие, вставлять не надо!
+struct Action : ShareHandleBaseSerializeVirtual // РџСѓСЃС‚РѕРµ РґРµР№СЃС‚РІРёРµ, РІСЃС‚Р°РІР»СЏС‚СЊ РЅРµ РЅР°РґРѕ!
 {		
 	int internalColor_;
 
@@ -276,10 +274,10 @@ struct CRectSerialized : CRect
 
 enum ColorType
 {
-	STRATEGY_RED, // Красный
-	STRATEGY_GREEN, // Зеленый
-	STRATEGY_BLUE, // Синий
-	STRATEGY_YELLOW, // Желтый
+	STRATEGY_RED, // РљСЂР°СЃРЅС‹Р№
+	STRATEGY_GREEN, // Р—РµР»РµРЅС‹Р№
+	STRATEGY_BLUE, // РЎРёРЅРёР№
+	STRATEGY_YELLOW, // Р–РµР»С‚С‹Р№
 	STRATEGY_COLOR_0,
 	STRATEGY_COLOR_1,
 	STRATEGY_COLOR_2,
@@ -292,11 +290,11 @@ enum ColorType
 
 DECLARE_ENUM_DESCRIPTOR(ColorType)
 
-struct TriggerLink // Связь
+struct TriggerLink // РЎРІСЏР·СЊ
 {
 	enum Type {
-		THIN, // Тонкая
-		THICK // Толстая
+		THIN, // РўРѕРЅРєР°СЏ
+		THICK // РўРѕР»СЃС‚Р°СЏ
 	};
 
 	TriggerLink();
@@ -374,14 +372,14 @@ DECLARE_ENUM_DESCRIPTOR_ENCLOSED(TriggerLink, Type)
 typedef std::vector<TriggerLink, TriggerAllocator<TriggerLink> > OutcomingLinksList;
 typedef std::vector<TriggerLink*, TriggerAllocator<TriggerLink*> > IncomingLinksList;
 
-class Trigger // Триггер
+class Trigger // РўСЂРёРіРіРµСЂ
 {
 public:
 	enum State {
-		SLEEPING, // Проверяет входные связи
-		CHECKING, // Проверяет условия
-		WORKING, // Выполняется
-		DONE // Выполнен
+		SLEEPING, // РџСЂРѕРІРµСЂСЏРµС‚ РІС…РѕРґРЅС‹Рµ СЃРІСЏР·Рё
+		CHECKING, // РџСЂРѕРІРµСЂСЏРµС‚ СѓСЃР»РѕРІРёСЏ
+		WORKING, // Р’С‹РїРѕР»РЅСЏРµС‚СЃСЏ
+		DONE // Р’С‹РїРѕР»РЅРµРЅ
 	};
 
 	Trigger();
@@ -458,12 +456,12 @@ public:
 	}
 
 	SERIALIZE(ar) {
-		ar & TRANSLATE_NAME(name_, "name", "&Имя");	
+		ar & TRANSLATE_NAME(name_, "name", "&РРјСЏ");	
 		ar & TRANSLATE_OBJECT(condition, "");
-		ar & TRANSLATE_OBJECT(action, "Действие");
-		ar & TRANSLATE_NAME(outcomingLinks_, "outcomingLinks", "_Исходящие связи");
-		ar & TRANSLATE_OBJECT(state_, "_Текущее состояние");
-		ar & TRANSLATE_OBJECT(executionCounter_, "_Запускался");
+		ar & TRANSLATE_OBJECT(action, "Р”РµР№СЃС‚РІРёРµ");
+		ar & TRANSLATE_NAME(outcomingLinks_, "outcomingLinks", "_РСЃС…РѕРґСЏС‰РёРµ СЃРІСЏР·Рё");
+		ar & TRANSLATE_OBJECT(state_, "_РўРµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ");
+		ar & TRANSLATE_OBJECT(executionCounter_, "_Р—Р°РїСѓСЃРєР°Р»СЃСЏ");
 		ar & WRAP_OBJECT(internalColor_);
 		
 		ar & WRAP_NAME(cellIndex_, "cellIndex");
@@ -514,13 +512,13 @@ struct TriggerEvent
 typedef std::vector<Trigger, TriggerAllocator<Trigger> > TriggerList;
 
 //-----------------------------
-class TriggerChain // Стратегия игрока
+class TriggerChain // РЎС‚СЂР°С‚РµРіРёСЏ РёРіСЂРѕРєР°
 {
 public:
 	typedef std::vector<TriggerEvent, TriggerAllocator<TriggerEvent> > TriggerEventList;
 
 	PrmString name;
-	TriggerList triggers; // 0-й trigger - стартовый
+	TriggerList triggers; // 0-Р№ trigger - СЃС‚Р°СЂС‚РѕРІС‹Р№
 
 	TriggerChain();
 	
@@ -574,8 +572,8 @@ public:
 	}
 
 	SERIALIZE(ar) {
-		ar & TRANSLATE_OBJECT(name, "Имя");
-		ar & TRANSLATE_OBJECT(triggers, "Триггера");
+		ar & TRANSLATE_OBJECT(name, "РРјСЏ");
+		ar & TRANSLATE_OBJECT(triggers, "РўСЂРёРіРіРµСЂР°");
 
 		ar & WRAP_NAME(boundingRect_, "boundingRect");
 		ar & WRAP_NAME(viewRect_, "viewRect");

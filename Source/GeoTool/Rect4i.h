@@ -67,8 +67,8 @@ struct Rect4i {
 		max.y = unZoom(max.y, degree);
 */
 
-		min.x = round( ((float)min.x / (float)degree) + 0.5f );
-		min.y = round( ((float)min.y / (float)degree) + 0.5f );
+		min.x = xm::round(((float) min.x / (float) degree) + 0.5f);
+		min.y = xm::round(((float) min.y / (float) degree) + 0.5f);
 		max.x = unZoom(max.x, degree);
 		max.y = unZoom(max.y, degree);
 
@@ -109,7 +109,7 @@ struct Rect4i {
 	}
 
 	static int unZoom(int src, int degree) {
-		return round( ((float)src / (float)degree) - 0.5f );
+		return xm::round(((float) src / (float) degree) - 0.5f);
 	}
 };
 

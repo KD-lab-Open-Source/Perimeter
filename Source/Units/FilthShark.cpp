@@ -78,7 +78,7 @@ void terFilthSwarmShark::GenerationProcess()
 		v.z = -50;
 		if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE)
 		{
-			if(SpotPoint && SpotPoint->terCheckFilthPoint(round(v.x),round(v.y)))
+			if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y)))
 			{
 				terFilthShark* p = safe_cast<terFilthShark*>(player->buildUnit(GetUnitID()));
 				p->setPose(Se3f(QuatF(0, Vect3f::K), v), false);
@@ -250,7 +250,7 @@ void terFilthShark::EffectRun()
 
 	{
 		int geo_radius=terFilthSharkPrm.geo_radius;
-		int x=round(cur_pos.x),y=round(cur_pos.y);
+		int x= xm::round(cur_pos.x),y= xm::round(cur_pos.y);
 		if(x-geo_radius>0 && y-geo_radius>0 &&
 			x+geo_radius<vMap.H_SIZE && y+geo_radius<vMap.V_SIZE &&
 			!terCheckFilthChaos(position()))
@@ -262,8 +262,8 @@ void terFilthShark::EffectRun()
 		}
 	}
 
-	if(terCheckFilthZero(round(cur_pos.x),round(cur_pos.y)) || 
-	   terCheckFilthChaos(round(cur_pos.x),round(cur_pos.y)))
+	if(terCheckFilthZero(xm::round(cur_pos.x), xm::round(cur_pos.y)) ||
+       terCheckFilthChaos(xm::round(cur_pos.x), xm::round(cur_pos.y)))
 	{
 		MustDie();
 	}

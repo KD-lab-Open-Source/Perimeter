@@ -358,10 +358,10 @@ void cCamera::Update()
 		}
 	}
 
-	vp.X = round((GetCenterX()+Clip.xmin())*RenderSize.x);
-	vp.Y = round((GetCenterY()+Clip.ymin())*RenderSize.y);
-	vp.Width = round((GetCenterX()+Clip.xmax())*RenderSize.x)-vp.X;
-	vp.Height = round((GetCenterY()+Clip.ymax())*RenderSize.y)-vp.Y;
+	vp.X = xm::round((GetCenterX() + Clip.xmin()) * RenderSize.x);
+	vp.Y = xm::round((GetCenterY() + Clip.ymin()) * RenderSize.y);
+	vp.Width = xm::round((GetCenterX() + Clip.xmax()) * RenderSize.x) - vp.X;
+	vp.Height = xm::round((GetCenterY() + Clip.ymax()) * RenderSize.y) - vp.Y;
 	vp.MinZ=0; vp.MaxZ=1;
 
 	matView.set( 
@@ -596,7 +596,7 @@ void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f
 	if(pw==0) return;
 	if(pe==0) pe=&pe0;
 	matViewProjScr.Convert( *pw, pv, *pe );
-	if(ScreenRadius) *ScreenRadius=round(WorldRadius*GetFocusViewPort().x/pv.z);
+	if(ScreenRadius) *ScreenRadius= xm::round(WorldRadius * GetFocusViewPort().x / pv.z);
 }
 
 void cCamera::ConvertorWorldToCamera(const Vect3f *pw,Vect3f *pe)
@@ -1038,7 +1038,7 @@ eTestVisible cCamera::GridTest(Vect3f p[8])
 {
 	for(int i=0;i<8;i++)
 	{
-		int x=(int)round(p[i].x)>>TestGridShl,y= (int)round(p[i].y)>>TestGridShl;
+		int x=(int) xm::round(p[i].x) >> TestGridShl,y= (int) xm::round(p[i].y) >> TestGridShl;
 		if(x<0 || x>=TestGridSize.x || y<0 || y>=TestGridSize.y)
 			continue;
 		if(pTestGrid[x+y*TestGridSize.x])

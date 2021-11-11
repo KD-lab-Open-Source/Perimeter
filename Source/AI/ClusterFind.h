@@ -239,19 +239,19 @@ float HeuristicLine(int xfrom, int yfrom, int xto, int yto,
     lx=xto-xfrom;
     ly=yto-yfrom;
     int t,maxt;
-    if(fabsf(lx)>fabsf(ly))
+    if(xm::abs(lx) > xm::abs(ly))
     {
-        maxt=fabsf(lx);
-        ly=ly/fabsf(lx);
+        maxt= xm::abs(lx);
+        ly= ly / xm::abs(lx);
         lx=(lx>0)?+1:-1;
     }else
     {
-        maxt=fabsf(ly);
-        lx=lx/fabsf(ly);
+        maxt= xm::abs(ly);
+        lx= lx / xm::abs(ly);
         ly=(ly>0)?+1:-1;
     }
 
-    float sq_mul=sqrtf(sqr(lx)+sqr(ly));
+    float sq_mul= xm::sqrt(sqr(lx) + sqr(ly));
     float len=0;
     uint8_t walk_from,walk_to;
     walk_from=walk_map[yfrom*dx+xfrom];
@@ -262,7 +262,7 @@ float HeuristicLine(int xfrom, int yfrom, int xto, int yto,
     {
         x+=lx;y+=ly;
 
-        int ix=round(x),iy=round(y);
+        int ix= xm::round(x),iy= xm::round(y);
         xassert(ix>=0 && ix<dx && iy>=0 && iy<dy);
 
         walk_to=walk_map[iy*dx+ix];

@@ -437,7 +437,8 @@ void HistoryScene::drawPopup() {
 	Vect2f mousePos = historyCamera->getMousePos();
 	World* w = traceWorld(mousePos);
 
-	POINT pt = { round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()), round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
+	POINT pt = {xm::round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()),
+                xm::round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
 
 	//TODO is this needed to port?
 	//ClientToScreen(hWndVisGeneric, &pt);
@@ -525,10 +526,10 @@ void HistoryScene::draw() {
 
 //		terRenderDevice->OutText(0,0,historyCamera->log.c_str(),sColor4f(1,1,1,1));
 		terRenderDevice->OutText(
-			round(BRIEFING_LOG_X * terRenderDevice->GetSizeX()),
-			round(BRIEFING_LOG_Y * terRenderDevice->GetSizeY()),
-			interpreter->log.c_str(),
-			sColor4f(1, 1, 1, BRIEFING_LOG_ALPHA) );
+                xm::round(BRIEFING_LOG_X * terRenderDevice->GetSizeX()),
+                xm::round(BRIEFING_LOG_Y * terRenderDevice->GetSizeY()),
+                interpreter->log.c_str(),
+                sColor4f(1, 1, 1, BRIEFING_LOG_ALPHA) );
 		terRenderDevice->SetFont( NULL );
 	}
 }

@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "CameraManager.h"
@@ -26,12 +24,12 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeFrame, "Ôðåéì");
+REGISTER_CLASS(AttributeBase, AttributeFrame, "Ð¤Ñ€ÐµÐ¹Ð¼");
 
 AttributeFrame::AttributeFrame()
 {
 	heightMax = 30;
-	accumulatedEnergyInitial = 1; // 0..1, òîëüêî äëÿ âíîâü óñòàíîâëåííîãî ôðåéìà, èíà÷å - â ðåäàêòîðå ìèññèé
+	accumulatedEnergyInitial = 1; // 0..1, Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ Ð²Ð½Ð¾Ð²ÑŒ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½Ð½Ð¾Ð³Ð¾ Ñ„Ñ€ÐµÐ¹Ð¼Ð°, Ð¸Ð½Ð°Ñ‡Ðµ - Ð² Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¾Ñ€Ðµ Ð¼Ð¸ÑÑÐ¸Ð¹
 	repairElementsPerQuant = FrameRepairElementsPerQuant;
 
 	oneStepMovement = 5;
@@ -341,7 +339,7 @@ void terFrame::Quant()
 	}
 
 	float percent = 0.05f;
-	if(fmodf(spiralLevelPrev_, percent) > percent/2 && fmodf(spiralLevel(), percent) < percent/2)
+	if(xm::fmod(spiralLevelPrev_, percent) > percent / 2 && xm::fmod(spiralLevel(), percent) < percent / 2)
 		Player->soundEvent(SOUND_VOICE_SPIRAL_CHARGING);
 
 	spiralLevelPrev_ = spiralLevel();
@@ -842,14 +840,14 @@ bool terFrame::canTeleportate() const
 
 bool terFrame::analyzeTerrain()
 {
-	int D = clamp((int)round(Vect2f(BodyPoint->boxMax()).norm()) >> kmGrid, 1, 1000);
-	int x0 = (int)round(position().x) >> kmGrid;
-	int y0 = (int)round(position().y) >> kmGrid;
+	int D = clamp((int) xm::round(Vect2f(BodyPoint->boxMax()).norm()) >> kmGrid, 1, 1000);
+	int x0 = (int) xm::round(position().x) >> kmGrid;
+	int y0 = (int) xm::round(position().y) >> kmGrid;
 	int z0 = vMap.hZeroPlast;
 	int dzMax = attr().heightMax;
 	for(int y = -D; y <= D; y++)
 		for(int x = -D; x <= D; x++){
-			if(abs(vMap.GVBuf[vMap.offsetGBufC(x + x0, y + y0)] - z0) > dzMax)
+			if(xm::abs(vMap.GVBuf[vMap.offsetGBufC(x + x0, y + y0)] - z0) > dzMax)
 				return false;
 		}
 

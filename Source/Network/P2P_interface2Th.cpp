@@ -16,7 +16,7 @@ const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
 
 
 std::string colorComponentToString(float component) {
-    uint8_t val = static_cast<uint8_t>(std::round(255 * component));
+    uint8_t val = static_cast<uint8_t>(xm::round(255 * component));
     char buff[3];
     snprintf(buff, 3, "%x", val);
     buff[2] = 0;

@@ -538,11 +538,11 @@ void fillStatsLists() {
 
 			sprintf(buffer, "%d", stats.getMaxLeveledArea());
 			temp.push_back(buffer);
-			sprintf(buffer, "%d%%", round(stats.getMedEfficiency() * 100));
+			sprintf(buffer, "%d%%", xm::round(stats.getMedEfficiency() * 100));
 			temp.push_back(buffer);
 			sprintf(buffer, "%d", stats.getScourgeKilled());
 			temp.push_back(buffer);
-			sprintf(buffer, "%d", round(stats.getEnergy()));
+			sprintf(buffer, "%d", xm::round(stats.getEnergy()));
 			temp.push_back(buffer);
 			sprintf(buffer, "%d", stats.getGeneralTotalScore(time));
 			temp.push_back(buffer);

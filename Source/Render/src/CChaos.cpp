@@ -365,11 +365,11 @@ void cChaos::InitBumpTexture1(cTexture* pTex)
 		for(int ix=0;ix<dx;ix++,p++)
 		{
 			float du,dv;
-			du=0;//cos((ix+iy)*cx*M_PI)+cos((ix-iy)*cx1*M_PI);
-			dv=0;//sin((ix+iy)*cy*M_PI)+sin((ix-iy)*cy1*M_PI);
+			du=0;//cos((ix+iy)*cx*M_PI)+xm::cos((ix-iy)*cx1*M_PI);
+			dv=0;//sin((ix+iy)*cy*M_PI)+xm::sin((ix-iy)*cy1*M_PI);
 			
-			p->u=round(du*16);
-			p->v=round(dv*16);
+			p->u= xm::round(du * 16);
+			p->v= xm::round(dv * 16);
 		}
 
 		pBuffer+=Pitch;
@@ -400,11 +400,11 @@ void cChaos::InitBumpTexture2(cTexture* pTex)
 		for(int ix=0;ix<dx;ix++,p++)
 		{
 			float du,dv;
-			du=cos(iy*cx*M_PI)*0.9f;
-			dv=sin(iy*cy*M_PI)*0.9f;
+			du= xm::cos(iy * cx * M_PI) * 0.9f;
+			dv= xm::sin(iy * cy * M_PI) * 0.9f;
 			
-			p->u=round((du+1)*64);
-			p->v=round((dv+1)*64);
+			p->u= xm::round((du + 1) * 64);
+			p->v= xm::round((dv + 1) * 64);
 		}
 
 		pBuffer+=Pitch;
@@ -470,11 +470,11 @@ void cChaos::RenderTex0()
 	rd->SetRenderTarget(pTex0,NULL);
 
 	float umin,vmin,umin1,vmin1;
-	umin=1-fmodf(time*0.1f,1.0f);
-	vmin=1-fmodf(time*0.2f,1.0f);
+	umin=1- xm::fmod(time * 0.1f, 1.0f);
+	vmin=1- xm::fmod(time * 0.2f, 1.0f);
 
-	umin1=fmodf(time*0.1f,1.0f);
-	vmin1=fmodf(time*0.2f,1.0f);
+	umin1= xm::fmod(time * 0.1f, 1.0f);
+	vmin1= xm::fmod(time * 0.2f, 1.0f);
 	
 	rd->DrawSprite2(0,0,pTexRender->GetWidth(),pTexRender->GetHeight(),
 					umin,vmin,1,1,

@@ -30,7 +30,7 @@ ScrollRateSetting::~ScrollRateSetting()
 
 int ScrollRateSetting::storeValueToWnd(float storeValue) const
 {
-	return round(storeValue*10.f);
+	return xm::round(storeValue * 10.f);
 }
 
 float ScrollRateSetting::wndValueToStore(int value) const{

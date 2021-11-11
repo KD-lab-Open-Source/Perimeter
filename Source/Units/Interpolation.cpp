@@ -67,9 +67,9 @@ void terAnimationPhaseIteratorType::setEndPhase(float endPhase, bool cycled)
 { 
 	xassert(endPhase>=0 && endPhase<=1);
 	endPhase_ = endPhase; 
-	float deltaPhase_Abs = fabsf(deltaPhase_);
+	float deltaPhase_Abs = xm::abs(deltaPhase_);
 	if(cycled){
-		deltaPhase_ = SIGN(deltaPhase_Abs, getDist(phase_, endPhase_, 1 + FLT_EPS));
+		deltaPhase_ = SIGNF(deltaPhase_Abs, getDist(phase_, endPhase_, 1 + FLT_EPS));
 		if(deltaPhase_ > 0 && endPhase_ < phase_)
 			endPhase_ += 1;
 		else if(deltaPhase_ < 0 && endPhase_ > phase_)

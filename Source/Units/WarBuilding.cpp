@@ -169,7 +169,7 @@ void terBuildingMilitary::MoveQuant()
 bool terBuildingMilitary::findTarget()
 {
 	terUnitGridTeamOffensiveOperator op(this);
-	universe()->UnitGrid.Scan(round(position().x), round(position().y), round(attr().sightRadius()), op);
+	universe()->UnitGrid.Scan(xm::round(position().x), xm::round(position().y), xm::round(attr().sightRadius()), op);
 
 	targetsScanTimer_.start(static_gun_targets_scan_period);
 

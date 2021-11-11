@@ -54,7 +54,7 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 inline uint8_t ByteInterpolate(uint8_t a, uint8_t b, uint8_t factor)
 {
 //	float f=factor/255.0f;
-//	return round(a+(int(b-a))*f);
+//	return xm::round(a+(int(b-a))*f);
 	return a+(int(b-a))*int(factor)/255;
 }
 

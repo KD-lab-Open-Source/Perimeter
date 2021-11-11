@@ -69,16 +69,16 @@ int s_f3d::calcMarble(int x, int y, int z)
 	VAR[0]=x*dr_kmx;//(x<<NOISE_FRACTION)/kmx;
 	VAR[1]=y*dr_kmy;//(y<<NOISE_FRACTION)/kmy;
 	VAR[2]=z*dr_kmz;//(z<<NOISE_FRACTION)/(kmz*(1<<VX_FRACTION));
-	//int tmp=((float)sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1f,1))+1)*127.5;
+	//int tmp=((float)xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1f,1))+1)*127.5;
 	///float var=VAR[2]*VAR[0]*VAR[1];
 	float var=(VAR[2]*NOISE_DIVIDER)*(VAR[0]*NOISE_DIVIDER)*(VAR[1]*NOISE_DIVIDER);
-	int tmp=round(((float)sin(var+turbulence01_08(VAR))+1)*127.5); 
+	int tmp=xm::round(((float)xm::sin(var+turbulence01_08(VAR))+1)*127.5); 
 //	float tt=turbulence(VAR,0.5,1)*20;
 //	int tmp=127.5+(tt-(int)tt)*127.5; 
 
 	//if(tmp==254)tmp=253;
 	//if(tmp==255)tmp=0;
-	return tmp;//cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
+	return tmp;//xm::cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
 }
 
 /*
@@ -92,14 +92,14 @@ int s_f3d::calcTree(int x, int y, int z)
 	///VAR[0]=(x<<NOISE_FRACTION)/kmx;
 	///VAR[1]=(y<<NOISE_FRACTION)/kmy;
 	///VAR[2]=(z<<NOISE_FRACTION)/kmz;
-//		int tmp=(sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
+//		int tmp=(xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
 	float tt=turbulence(VAR,0.5,1)*20;
 	//int tmp=127.5+(tt-(int)tt)*127.5; 
 	int tmp=256.f*tt;
 
 	//if(tmp==254)tmp=253;
 	//if(tmp==255)tmp=0;
-	return tmp;//cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
+	return tmp;//xm::cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
 }
 */
 
@@ -310,7 +310,7 @@ void pn(void)
 			VAR[1]=(float)i/km;//(vMap.V_SIZE>>5);
 			int of=vMap.offsetBuf(j,i);
 			VAR[2]=(float)vMap.VxGBuf[of]/kmz;//(float)200/40.;////
-//			int tmp=(sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
+//			int tmp=(xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
 			//float tt=turbulence(VAR,0.2,1);
 			//int tmp=127.5+(tt-(int)tt)*127.5 ; //+bufTga4Noise[((i*j)&0xFFff)]
 
@@ -319,14 +319,14 @@ void pn(void)
 
 
 			//float radius, angle;
-			//radius = sqrt(VAR[0]+VAR[1]);
+			//radius = xm::sqrt(VAR[0]+VAR[1]);
 			//if (VAR[3]==0) angle = 3.14159265358979323846/2;
 			//else angle = atan(VAR[2]);
-			//int tmp= round(radius+tt*256) % 256;
+			//int tmp= xm::round(radius+tt*256) % 256;
 
 
 
-			vMap.SurBuf[of]=tmp;//cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
+			vMap.SurBuf[of]=tmp;//xm::cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
 		}
 	}*/
 
@@ -352,9 +352,9 @@ void pn(void)
 			VAR[1]=(float)255/300.;//(vMap.V_SIZE>>5);
 			int of=vMap.offsetBuf(j,i);
 			VAR[2]=(float)(511-i)/300.;//(float)200/40.;////
-			int tmp=(sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
+			int tmp=(xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
 
-			vMap.SurBuf[of]=tmp;//cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
+			vMap.SurBuf[of]=tmp;//xm::cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
 		}
 	}
 */
@@ -379,8 +379,8 @@ void pn(void)
 			//VAR[2]=(float)vMap.VxGBuf[of]/100;
 			VAR[2]=(float)(512-i);///100
 			//int tmp=(sin(VAR[2]*256*j+turbulence(VAR,0.01,1))+1)*127.5; 
-			int tmp=((sin(sqrt(256*256+j*j+3*turbulence(VAR, 0.01,1)))))*127.5; 
-			vMap.RnrBuf[of]=tmp;//cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
+			int tmp=((xm::sin(xm::sqrt(256*256+j*j+3*turbulence(VAR, 0.01,1)))))*127.5; 
+			vMap.RnrBuf[of]=tmp;//xm::cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
 		}
 	}
 */
@@ -403,11 +403,11 @@ inline unsigned char vrtMap::GetGeoType(int offset, int h)
 		VAR[1]=(float)i/km;//(vMap.V_SIZE>>5);
 		int of=vMap.offsetBuf(j,i);
 		VAR[2]=(float)vMap.VxGBuf[of]/kmz;//(float)200/40.;////
-//		int tmp=(sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
+//		int tmp=(xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,0.1,1))+1)*127.5; 
 		float tt=turbulence(VAR,0.5,1)*20;
 		int tmp=127.5+(tt-(int)tt)*127.5; 
 
-		return tmp;//cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
+		return tmp;//xm::cos(VAR[0]+noise3(VAR))*100;//noise3(VAR)*100;
 		//(offset+(offset>>H_SIZE_POWER))%MAX_GEOLOGIC_SURFACE_TYPE; // (x+y)%
 }
 

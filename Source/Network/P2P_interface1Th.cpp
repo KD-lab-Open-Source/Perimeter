@@ -221,7 +221,7 @@ void PNetCenter::CreateGame(const NetAddress& connection, const std::string& gam
     hostConnection = connection;
     gamePassword = password;
 
-	m_quantInterval=NORMAL_QUANT_INTERVAL; //round((float)NORMAL_QUANT_INTERVAL/gameSpeed);
+	m_quantInterval=NORMAL_QUANT_INTERVAL; //xm::round((float)NORMAL_QUANT_INTERVAL/gameSpeed);
 
     //Argument PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST
 	hostMissionDescription = MissionDescription(missionName.c_str(), GT_createMPGame);

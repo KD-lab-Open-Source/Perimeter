@@ -336,9 +336,9 @@ void cD3DRender::OutTextRect(int x,int y,const char *string,int align,Vect2f& bm
 		{
 			float StringWidth = GetFontLength( str );
 			if( align==0 )
-				xOfs -= round(StringWidth*0.5f);
+				xOfs -= xm::round(StringWidth * 0.5f);
 			else
-				xOfs -= round(StringWidth);
+				xOfs -= xm::round(StringWidth);
 		}
 		for( ; *str!=10 ; str++ )
 		{
@@ -419,9 +419,9 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 		{
 			float StringWidth = GetFontLength( str );
 			if( align==0 )
-				xOfs -= round(StringWidth*0.5f);
+				xOfs -= xm::round(StringWidth * 0.5f);
 			else
-				xOfs -= round(StringWidth);
+				xOfs -= xm::round(StringWidth);
 		}
 		for( ; *str!=10 ; str++ )
 		{
@@ -515,9 +515,9 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 		{
 			float StringWidth = GetFontLength( str );
 			if( align==0 )
-				xOfs -= round(StringWidth*0.5f);
+				xOfs -= xm::round(StringWidth * 0.5f);
 			else
-				xOfs -= round(StringWidth);
+				xOfs -= xm::round(StringWidth);
 		}
 		for( ; *str!=10 ; str++ )
 		{

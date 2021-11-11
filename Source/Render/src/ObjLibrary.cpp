@@ -495,7 +495,7 @@ void ReadAnimNode(sChannelAnimation *Channel,sLodObject *LodObject,cAnimChannelN
 	for(int i=0;i<AnimChain->GetNumberVisible();i++)
 	{
 		AnimChain->GetVisible(i).time=AnimationVisibility[i][0]-StartTime;
-		AnimChain->GetVisible(i).visible=round(AnimationVisibility[i][1]);
+		AnimChain->GetVisible(i).visible= xm::round(AnimationVisibility[i][1]);
 	}
 
 	if(NodeObject->AnimationPosition.length()>1 || 
@@ -510,7 +510,7 @@ void ReadAnimNode(sChannelAnimation *Channel,sLodObject *LodObject,cAnimChannelN
 		for(int nFrame=0;nFrame<Channel->NumberFrame;nFrame++)
 		{
 			MatXf Matrix;
-			int TimeFrame=round(nFrame*AnimTime);
+			int TimeFrame= xm::round(nFrame * AnimTime);
 			GetMatrixObj(StartTime+TimeFrame,Matrix,LodObject,NodeObject);
 			AnimChain->GetMatrix(nFrame).time=TimeFrame;
 			AnimChain->GetMatrix(nFrame).mat=Matrix;

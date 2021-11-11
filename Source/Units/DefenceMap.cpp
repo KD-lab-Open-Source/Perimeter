@@ -42,12 +42,12 @@ bool DefenceMap::recalcMapQuant()
 void DefenceMap::addGun(const Vect2f& positionWorld, float radiusWorld)
 {
 	Vect2i position = w2m(positionWorld);
-	int radius = w2m(round(radiusWorld) + defenceMapPathFind.gunExtraRadius);
+	int radius = w2m(xm::round(radiusWorld) + defenceMapPathFind.gunExtraRadius);
 	for(int y = -radius; y <= radius; y++){
 		int yc = position.y + y;
 		if(yc < 0 || yc >= sizeY())
 			continue;
-		int delta = round(sqrtf(sqr(radius) - sqr(y)));
+		int delta = xm::round(xm::sqrt(sqr(radius) - sqr(y)));
 		int xl = clamp(position.x - delta, 0, sizeX() - 1);
 		int xr = clamp(position.x + delta, 0, sizeX() - 1);
 		for(int x = xl; x <= xr; x++){
@@ -80,8 +80,8 @@ public:
 	//Предполагаемые затраты на продвижение из pos1 к окончанию
 	float GetH(Node* pos)
 	{
-		return sqrtf(sqr(pos->xcenter - center_.xi())+
-					sqr(pos->ycenter - center_.yi()))*gmul;
+		return xm::sqrt(sqr(pos->xcenter - center_.xi()) +
+                        sqr(pos->ycenter - center_.yi())) * gmul;
 	}
 
 	float operator()(uint8_t walk_from, uint8_t walk_to)
@@ -97,8 +97,8 @@ public:
 	{
 		float mul=(pos2->walk&ClusterFind::DOWN_MASK)+gmul;
 
-		float f=sqrtf(sqr(pos1->xcenter-pos2->xcenter)+
-					sqr(pos1->ycenter-pos2->ycenter))*mul;
+		float f= xm::sqrt(sqr(pos1->xcenter - pos2->xcenter) +
+                          sqr(pos1->ycenter - pos2->ycenter)) * mul;
 
 		if((pos1->walk^pos2->walk)&ClusterFind::UP_MASK)
 			f+=1000.0f;

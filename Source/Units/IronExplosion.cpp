@@ -21,7 +21,7 @@ void terDestructionCraterType::Start()
 	terUnitBase::Start();
 
 	ToolPoint.setKScale(radius() / 48.0f);
-	ToolPoint.start(round(position().x),round(position().y));
+	ToolPoint.start(xm::round(position().x), xm::round(position().y));
 
 /*	unsigned short p;
 	p = *(vMap.GABuf + (vMap.YCYCLG(round(Position.y) >> kmGrid) << (vMap.V_SIZE_POWER - kmGrid)) + vMap.XCYCLG(round(Position.x) >> kmGrid));
@@ -38,7 +38,7 @@ void terDestructionCraterType::Start()
 	}
 
 	if(SootToolPoint)
-		SootToolPoint->start(round(Position.x),round(Position.y));*/
+		SootToolPoint->start(round(Position.x),xm::round(Position.y));*/
 }
 
 void terDestructionCraterType::Quant()
@@ -54,7 +54,7 @@ void terDestructionCraterType::Quant()
 void terDestructionCraterType::setPose(const Se3f& poseIn, bool initPose)
 {
 	Se3f pose = poseIn;
-	pose.trans().z = (float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))) >> VX_FRACTION);
+	pose.trans().z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
 	terUnitBase::setPose(pose, false);
 }
 
@@ -70,7 +70,7 @@ void terDebrisCraterType::Start()
 	terUnitBase::Start();
 
 	ToolPoint.setRadius(radius());
-	ToolPoint.start(round(position().x),round(position().y));
+	ToolPoint.start(xm::round(position().x), xm::round(position().y));
 }
  
 void terDebrisCraterType::Quant()
@@ -86,7 +86,7 @@ void terDebrisCraterType::Quant()
 void terDebrisCraterType::setPose(const Se3f& poseIn, bool initPose)
 {
 	Se3f pose = poseIn;
-	pose.trans().z = (float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))) >> VX_FRACTION);
+	pose.trans().z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
 	terUnitBase::setPose(pose, false);
 }
 

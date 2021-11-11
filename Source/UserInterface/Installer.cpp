@@ -278,7 +278,7 @@ void terBuildingInstaller::SetBuildPosition(const Vect2f& mousePos, terPlayer* p
 			v.y = clamp(v.y, radius, vMap.V_SIZE - radius);
 			visible_ = 1;
 
-			SetBuildPosition(v, round(cycle(angle_set, 2*M_PI)/(M_PI/4))*(M_PI/4), player);
+			SetBuildPosition(v, xm::round(cycle(angle_set, 2 * M_PI) / (M_PI / 4)) * (M_PI / 4), player);
 
 			ObjectPoint->ClearAttr(ATTRUNKOBJ_IGNORE);
 

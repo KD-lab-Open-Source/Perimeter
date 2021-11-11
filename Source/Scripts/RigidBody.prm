@@ -68,7 +68,7 @@ delegate:
 		float phase = omega*t;
 		float f = 0;
 		for(int i = 0; i < N; i++)
-			f += A[i]*sin(phase*(i + 1));
+			f += A[i]*xm::sin(phase*(i + 1));
 		return f*exp(-t*decay)*amplitude; 
 	}
 };

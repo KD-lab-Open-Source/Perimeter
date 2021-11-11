@@ -86,7 +86,7 @@ public:
 	}
 	inline RECT& GetFramePos(float phase)
 	{
-		uint32_t i = round(phase * count - 0.5);
+		uint32_t i = xm::round(phase * count - 0.5);
 		xassert(i<pos.size());
 		return pos[i];
 	}

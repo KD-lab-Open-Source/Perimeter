@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "xmath.h"
 #include "SoundInternal.h"
 #include "files/files.h"
 #include "Sample.h"
@@ -177,7 +178,7 @@ bool MusicPlayer::IsPause() {
 void MusicPlayer::SetVolume(float volume) {
     if (!SND::has_sound_init) return;
     volume = std::max(0.0f, std::min(1.0f, volume)) * MIX_MAX_VOLUME;
-    Mix_VolumeMusic(static_cast<int>(std::round(volume)));
+    Mix_VolumeMusic(static_cast<int>(xm::round(volume)));
 }
 
 void MusicPlayer::FadeVolume(float time, float new_volume) {
@@ -185,7 +186,7 @@ void MusicPlayer::FadeVolume(float time, float new_volume) {
        Ion: we should implement a linear volume -> new_volume while playing without using SDL_mixer as these
        stop/start the music, which doesn't happen in original code afaik but the way FadeVolume is used this should suffice
     */
-    int time_ms = static_cast<int>(std::round(time * 1000.0f));
+    int time_ms = static_cast<int>(xm::round(time * 1000.0f));
     if (new_volume <= 0) {
         if (0 >= music_faded_out_pos && this->IsPlay() && Mix_FadingMusic() != MIX_FADING_OUT) {
             Mix_FadeOutMusic(time_ms);

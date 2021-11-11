@@ -215,7 +215,7 @@ void terInterpolationReal::SetModel(const char* name,float scale)
 {
 	PhaseControlList.clear();
 
-	xassert(fabs(scale) > 1e-6);
+	xassert(xm::abs(scale) > 1e-6);
 	cObjectNodeRoot* NewObjectPoint = createObject(name, Owner->Player->belligerent());
 	if(scale > 0)
 		NewObjectPoint->SetScale(Vect3f(scale,scale,scale));

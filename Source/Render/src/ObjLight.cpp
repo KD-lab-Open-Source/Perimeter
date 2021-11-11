@@ -88,7 +88,8 @@ void cObjLight::Draw(cCamera *DrawNode)
 		gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	}
 
-	sColor4c Diffuse(round(GetDiffuse().r*alpha),round(GetDiffuse().g*alpha),round(GetDiffuse().b*alpha),round(GetDiffuse().a*alpha));
+	sColor4c Diffuse(xm::round(GetDiffuse().r * alpha), xm::round(GetDiffuse().g * alpha), xm::round(GetDiffuse().b * alpha),
+                     xm::round(GetDiffuse().a * alpha));
 	float radius=GetRadius()*GetGlobalMatrix().rot().xcol().norm();
 
 	cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice->GetBufferXYZDT1();

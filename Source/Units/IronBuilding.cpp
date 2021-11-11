@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Runtime.h"
@@ -20,8 +18,8 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeBuilding, "Çäàíèå");
-REGISTER_CLASS(AttributeBase, AttributeSquad, "Ñêâàä");
+REGISTER_CLASS(AttributeBase, AttributeBuilding, "Ð—Ð´Ð°Ð½Ð¸Ðµ");
+REGISTER_CLASS(AttributeBase, AttributeSquad, "Ð¡ÐºÐ²Ð°Ð´");
 
 AttributeBuilding::AttributeBuilding() 
 {
@@ -140,7 +138,7 @@ int terBuilding::repairRequest() const
 	if(!(buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION)){
 		int element_count = damageMolecula().deadElementCount();
 		if(element_count){
-			element_count = round(float(element_count) / attr().constructionSpeedCoeff + 0.5f) - repairRequested();
+			element_count = xm::round(float(element_count) / attr().constructionSpeedCoeff + 0.5f) - repairRequested();
 			return (element_count > 0) ? element_count : 0;
 		}
 	}
@@ -209,7 +207,7 @@ ChainID terBuilding::chainRequest() const
 	}
 	else {
 		if(!attr().isUpgrade && attr().MakingChainNum != -1){
-			int chain_index = floor(damageMolecula().phase() * float(attr().MakingChainNum));
+			int chain_index = xm::floor(damageMolecula().phase() * float(attr().MakingChainNum));
 			return ChainID(CHAIN_BUILD1 + chain_index);
 		}
 		else
@@ -282,7 +280,7 @@ void terBuilding::MapUpdateHit(float x0,float y0,float x1,float y1)
 
 int terBuilding::damageMoleculaRepair(int element_count)
 {
-	element_count = round(float(element_count) * attr().constructionSpeedCoeff);
+	element_count = xm::round(float(element_count) * attr().constructionSpeedCoeff);
 	int ret = terUnitGeneric::damageMoleculaRepair(element_count);
 
 	if(!isConstructed()){
@@ -624,7 +622,7 @@ void terBuildingHologram::AvatarQuant()
 	if(MasterPoint)
 		real_avatar->setBuild(1.0f - MasterPoint->damageMolecula().phase()*0.8f);
 
-	real_avatar->setHologram(0.5f + sinf(ConstructionScale)*0.5f);
+	real_avatar->setHologram(0.5f + xm::sin(ConstructionScale) * 0.5f);
 	real_avatar->setTexture(Player->HologramPoint);
 
 	real_avatar->setPhase(1.0f);
@@ -744,7 +742,7 @@ void terBuildingUninstall::Quant()
 
 	terInterpolationUninstall* p = safe_cast<terInterpolationUninstall*>(avatar());
 	p->setSight(sight_);
-	p->setHologram(0.5f + sinf(hologram_)*0.5f);
+	p->setHologram(0.5f + xm::sin(hologram_) * 0.5f);
 	p->setTexture(Player->HologramPoint);
 
 	hologram_ += 0.1f * M_PI;

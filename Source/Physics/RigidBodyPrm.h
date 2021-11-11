@@ -46,7 +46,7 @@ struct RigidBodyPrm : ShareHandleBase
             omega += terLogicRNDfrnd()*omega*omega_disperse; 
         }
         
-		float operator() (float dt, float velocity){ return amplitude*sin(phase += omega*(1 + omega_increment*velocity)*dt)/(1 + amplitude_decrement*velocity); }
+		float operator() (float dt, float velocity){ return amplitude*xm::sin(phase += omega*(1 + omega_increment*velocity)*dt)/(1 + amplitude_decrement*velocity); }
 	};
 
 	struct Stiffness
