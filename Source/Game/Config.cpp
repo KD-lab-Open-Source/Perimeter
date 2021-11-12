@@ -887,6 +887,7 @@ UnitInterfacePrm interface_frame_uninstalled;
 
 void copyInterfaceAttributesIndispensable()
 {
+    //This extracts some specific info that will be used later in game
 	copy(interface_squad1_prm, scripts_export::interface_squad1_prm);
 	copy(interface_squad3_prm, scripts_export::interface_squad3_prm);
 	copy(interface_frame_uninstalled, scripts_export::interface_frame_uninstalled);

@@ -693,12 +693,12 @@ void AttributeBase::initIntfBalanceData(const AttributeBase* missile)
 void copyAttributes(bool);
 void copyInterfaceAttributes();
 void copyRigidBodyTable(bool);
-//void copyInterfaceAttributesIndispensable();
+void copyInterfaceAttributesIndispensable();
 
 void initInterfaceAttributes() {
     interfaceAttr();
     copyInterfaceAttributes();
-    //copyInterfaceAttributesIndispensable();
+    copyInterfaceAttributesIndispensable();
 }
 
 void initAttributes()
