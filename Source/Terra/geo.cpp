@@ -6318,7 +6318,7 @@ c3DSGeoAction* c3DSGeoActionCreator::BuildD(short xc, short yc, float orientatio
 	}
 
 	s_EarthUnit* pEarthUnit=NULL;
-	float tmp=xm::fmod(orientation, 2*XM_PI);
+	float tmp=xm::fmod(orientation, static_cast<float>(2*XM_PI));
 	if(tmp<0)tmp+=2*XM_PI;
 
 	float ANT_RAD_IN_CELL_ARR=(2*XM_PI)/cache->MMDateArr.size();
