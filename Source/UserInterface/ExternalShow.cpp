@@ -27,7 +27,7 @@ void terExternalQuant()
 	gameShell->BuildingInstaller.ShowCircle();
 	
 
-	terExternalEnergyTextureStart = fmod(terExternalEnergyTextureStart + (float)scale_time.delta()*0.001f*GAME_SHELL_SHOW_REGION_U_SPEED + 1.0f,1.0f);
+	terExternalEnergyTextureStart = xm::fmod(terExternalEnergyTextureStart + (float)scale_time.delta()*0.001f*GAME_SHELL_SHOW_REGION_U_SPEED + 1.0f,1.0f);
 	terExternalEnergyTextureEnd = terExternalEnergyTextureStart + GAME_SHELL_SHOW_REGION_U_STEP;
 
 	gbCircleShow->Quant();
@@ -177,7 +177,7 @@ void cCircleShow::Clear()
 
 void cCircleShow::Quant()
 {
-	u_begin=fmod(u_begin + (float)scale_time.delta()*0.001f*RegionUSpeedDotted + 1.0f,1.0f);
+	u_begin=xm::fmod(u_begin + (float)scale_time.delta()*0.001f*RegionUSpeedDotted + 1.0f,1.0f);
 }
 
 void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circleColor)

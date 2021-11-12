@@ -473,7 +473,7 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 		if(restricted()){
 			//if(!cameraMouseTrack){
 			//при зуме камера должна принимать макс. допустимый наклон
-//			if(xm::fabs(cameraZoomVelocity) > 1.0f)
+//			if(xm::abs(cameraZoomVelocity) > 1.0f)
 			if(cameraZoomVelocity < -1.0f)
 				cameraThetaForce += CAMERA_KBD_ANGLE_SPEED_DELTA;
 			//}

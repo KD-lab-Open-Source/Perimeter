@@ -653,7 +653,7 @@ void terUnitSquad::showPath(const std::vector<Vect2f>& wayPoints, const std::vec
 			flagModel_->SetPhase(flagModelPhase_);
 		}
 	}
-	flagModelPhase_ = fmod(flagModelPhase_ + (float)(frame_time.delta()) / terModelWayFlagSpeed,1.0f);
+	flagModelPhase_ = xm::fmod(flagModelPhase_ + (float)(frame_time.delta()) / terModelWayFlagSpeed,1.0f);
 }
 
 void terUnitSquad::ShowInfo()
@@ -1354,7 +1354,7 @@ void terUnitSquad::recalcWayPoints()
 	// Calc new orientation
 	Vect2f delta = wayPoints_.front() - position2D();
 	if(delta.norm() > FLT_EPS)
-		setAngleZ(atan2(delta.y, delta.x) + XM_PI/2);
+		setAngleZ(xm::atan2(delta.y, delta.x) + XM_PI/2);
 
 	repositionFormation(false);
 
@@ -1549,7 +1549,7 @@ bool lineCircleIntersection(const Vect2f& p0, const Vect2f& p1, const Vect2f& pc
 	float det2 = sqr(dp_dc) + dp_2*(sqr(radius) - dc_2);
 	if(det2 < FLT_EPS)
 		return false;
-	float t = (-dp_dc - sqrt(det2))/(dp_2 + 0.001);
+	float t = (-dp_dc - xm::sqrt(det2))/(dp_2 + 0.001f);
 	if(t > 0 && t < 1){
 		result = p0 + dp*t;
 		xassert(xm::abs(result.distance(pc) - radius) < 1);

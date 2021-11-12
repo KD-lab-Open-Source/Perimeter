@@ -129,7 +129,7 @@ void terUnitGeneric::explode()
 		int num = db.count;
 
 		if(db.countRnd == -1)
-			num += xm::round(pow(radius() / 4, 1.5f));
+			num += xm::round(xm::pow(radius() / 4, 1.5f));
 		else
 			num += terLogicRND(db.countRnd);
 

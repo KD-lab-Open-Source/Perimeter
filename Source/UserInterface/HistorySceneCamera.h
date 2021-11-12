@@ -30,7 +30,7 @@ class CameraPosition {
 			CameraPosition* res);
 
 		static void correctToShortestAngle(float leadingAngle, float* followingAngle) {
-			float d = fmod( *followingAngle - leadingAngle, XM_PI * 2.0f );
+			float d = xm::fmod( *followingAngle - leadingAngle, static_cast<float>(XM_PI * 2.0f) );
 			float ad = (float) xm::abs(d);
 			*followingAngle = leadingAngle + d;
 			if(ad > XM_PI) {

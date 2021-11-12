@@ -99,8 +99,8 @@ public:
 	void setForwardVelocity(float v){ forwardVelocity_ = v; }
 	bool is_point_reached(const Vect2f& point) const;
 	bool on_upper_position() const { return kangaroo_mode > kangaroo_mode_avr_threshould; } // юнит расположен над другим 
-	float speed() const { return fabs(average_forward_velocity); }
-	float speedFactor() const { float f = fabs(average_forward_velocity*prm().speed_map_factor); return f < 1 ? f : 1; }
+	float speed() const { return xm::abs(average_forward_velocity); }
+	float speedFactor() const { float f = xm::abs(average_forward_velocity*prm().speed_map_factor); return f < 1 ? f : 1; }
 	void stopMovement() { velocity_factor = 0; velocity_ = Vect3f::ZERO; }
 
 	// States

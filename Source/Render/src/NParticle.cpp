@@ -4031,7 +4031,7 @@ void cEmitterZ::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 	if(angle_by_center)
 	{
 		Vect3f& v=cur.pos0/*-GetGlobalMatrix().trans()*/;
-		cur.angle0=(atan2(v.x,v.y)-base_angle)*INV_2_PI;
+		cur.angle0=(xm::atan2(v.x,v.y)-base_angle)*INV_2_PI;
 	}
 
 //	cur.pos0.z=CalcZ(cur.pos0.x,cur.pos0.y);

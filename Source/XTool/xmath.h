@@ -77,7 +77,10 @@ const int INT_INF = 0x7fffffff;
 #define xm_inline FORCEINLINE
 
 ///////////////////////////////////////////////////////////////////////////////
-//	math lib functions glue
+//	math lib functions
+//
+//  we avoid using stdlib as each OS/compiler has own version that might
+//  give different result and cause desync on multiplayer
 ///////////////////////////////////////////////////////////////////////////////
 
 //Use gamemath instead of stdlib
@@ -222,7 +225,7 @@ xm_inline int maxAbs(int x,int y,int z){ return maxAbs(maxAbs(x,y),z); }
 xm_inline double minAbs(double x,double y){ return fabs(x) < fabs(y) ? fabs(x) : fabs(y); }
 xm_inline double minAbs(double x,double y,double z){ return minAbs(minAbs(x,y),z); }
 
-xm_inline double maxAbs(double x,double y){ return fabs(x) > xm::fabs(y) ? fabs(x) : fabs(y); }
+xm_inline double maxAbs(double x,double y){ return fabs(x) > xm::abs(y) ? fabs(x) : fabs(y); }
 xm_inline double maxAbs(double x,double y,double z){ return maxAbs(maxAbs(x,y),z); }
 */
 
@@ -2009,6 +2012,7 @@ public:
   friend istream& operator>>(istream& is, Se3d& se3);
 #endif
 
+/*
   friend XStream& operator<= (XStream& s,const Se3d& v);
   friend XStream& operator>= (XStream& s,Se3d& v);
   friend XStream& operator< (XStream& s,const Se3d& v);
@@ -2018,6 +2022,7 @@ public:
   friend XBuffer& operator>= (XBuffer& b,Se3d& v);
   friend XBuffer& operator< (XBuffer& b,const Se3d& v);
   friend XBuffer& operator> (XBuffer& b,Se3d& v);
+*/
 
   template<class Archive>
   void serialize(Archive& ar);
@@ -2107,6 +2112,7 @@ public:
   friend istream& operator>> (istream& is, Vect4f& v);
 #endif
 
+/*
   friend XStream& operator<= (XStream& s,const Vect4f& v);
   friend XStream& operator>= (XStream& s,Vect4f& v);
   friend XStream& operator< (XStream& s,const Vect4f& v);
@@ -2116,6 +2122,7 @@ public:
   friend XBuffer& operator>= (XBuffer& b,Vect4f& v);
   friend XBuffer& operator< (XBuffer& b,const Vect4f& v);
   friend XBuffer& operator> (XBuffer& b,Vect4f& v);
+*/
 
   template<class Archive>
   void serialize(Archive& ar);

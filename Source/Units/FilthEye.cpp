@@ -234,7 +234,7 @@ bool terFilthEye::is_point_reached(const Vect3f& point)
 	if(BodyPoint->is_point_reached(point))
 	{
 		Vect3f pnt=To3D(point);
-		return xm::fabsf(BodyPoint->flying_height+pnt.z-position().z)<4;
+		return xm::absf(BodyPoint->flying_height+pnt.z-position().z)<4;
 	}
 /*/
 	Vect3f pnt=To3D(point);

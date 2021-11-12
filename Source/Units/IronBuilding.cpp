@@ -458,7 +458,7 @@ terIconBuilding::~terIconBuilding()
 void terIconBuilding::quant()
 {
 	model_->SetAttr(ATTRUNKOBJ_IGNORE);
-	phase_ = fmod(phase_ + (float)(frame_time.delta())/terModelBuildingSpeed, 1.0f);
+	phase_ = xm::fmod(phase_ + (float)(frame_time.delta())/terModelBuildingSpeed, 1.0f);
 }
 
 void terIconBuilding::show(const Vect3f& pos)

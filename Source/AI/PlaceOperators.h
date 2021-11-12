@@ -204,7 +204,7 @@ public:
 			if(unit && distBest > (dist = unit->position2D().distance2(pos)))
 				distBest = dist;
 		}
-		return sqrt(distBest);
+		return xm::sqrt(distBest);
 	}
 
 	int buildDuration() const { return buildDuration_; }

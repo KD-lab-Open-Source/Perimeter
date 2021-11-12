@@ -734,7 +734,7 @@ void HistoryScene::updateNomadMarker(const Vect3f& cameraPos, float dt) {
 			nomadMarker->SetColor( 0, &color );
 		}
 		timer += dt;
-		nomadMarker->SetPhase(fmod(timer, NOMAD_MARKER_PERIOD) / NOMAD_MARKER_PERIOD, true);
+		nomadMarker->SetPhase(xm::fmod(timer, NOMAD_MARKER_PERIOD) / NOMAD_MARKER_PERIOD, true);
 	} else {
 		nomadMarker->SetAttr(ATTRUNKOBJ_IGNORE);
 	}

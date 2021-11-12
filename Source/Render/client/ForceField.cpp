@@ -521,7 +521,7 @@ float ray_triangle_intersection(const Vect3f points[3], const Vect3f& origin, co
 	float t44 = b[1];
 	float t43 = b[2];
 	float t36 = t51*t48+t50*t46+t49*t47;
-	if(fabs(t36) < FLT_EPS)
+	if(xm::abs(t36) < FLT_EPS)
 		return FLT_INF;
 	t36 = 1/t36;
 	float t2 = -((t40*t44-t43*t41)*t48+(t45*t41-t42*t44)*t46+(t42*t43-t45*t40)*t47)*t36;

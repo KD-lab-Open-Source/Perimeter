@@ -661,7 +661,7 @@ void CShellCursorManager::draw()
 		//сдвиг карты
 		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * cur_x) + dx, xm::round(terScreenSizeY * cur_y) + dy,
                                     m_cursors[m_nCursorShift].sx, m_cursors[m_nCursorShift].sy,
-                                    0, 0, 1, 1, m_cursors[m_nCursorShift].hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
+                                    0, 0, 1, 1, m_cursors[m_nCursorShift].hCursorProgram, sColor4c(255, 255, 255, 255), xm::fmod(m_ftime, 1000)/1000.f);
 		return;
 	}
 
@@ -711,7 +711,7 @@ void CShellCursorManager::draw()
         //Draw it
 		terRenderDevice->DrawSprite(xm::round(terScreenSizeX * draw_cur_x), xm::round(terScreenSizeY * draw_cur_y),
 			fScale*cursor->sx, fScale*cursor->sy,
-                                    0, 0, 1, 1, cursor->hCursorProgram, sColor4c(255, 255, 255, 255), fmod(m_ftime, 1000)/1000.f);
+                                    0, 0, 1, 1, cursor->hCursorProgram, sColor4c(255, 255, 255, 255), xm::fmod(m_ftime, 1000)/1000.f);
 
 	    //высота до зерослоя / Text for toolzer
 	    if(!_pShellDispatcher->m_bToolzerSizeChangeMode

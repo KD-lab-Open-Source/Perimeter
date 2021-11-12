@@ -92,7 +92,7 @@ struct CWormFormLib {
 			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 			for(j=0; j<WSXSY; j++){
 				//float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-				//float f=exp(-(fabsf(x*x)+xm::fabsf(y*y))/(0.4*0.4));
+				//float f=exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
 				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 				int hh=VBitMap1.getPreciseColor(j, i);
 				(*FormWormsNew)[i][j]=hh<<8;

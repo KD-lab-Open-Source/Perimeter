@@ -201,7 +201,7 @@ void terFilthSwarmDragon::GenerationProcess()
 		prev = p;
 
 		r += dr;
-		phase = fmod(phase + dphase,1.0f);
+		phase = xm::fmod(phase + dphase,1.0f);
 	}
 
 	for(int i = 0;i < prm->BrushNum - num;i++){
@@ -215,7 +215,7 @@ void terFilthSwarmDragon::GenerationProcess()
 		prev = p;
 
 		r += dr;
-		phase = fmod(phase + dphase,1.0f);
+		phase = xm::fmod(phase + dphase,1.0f);
 	}
 	prev->SetNextPoint(NULL);
 

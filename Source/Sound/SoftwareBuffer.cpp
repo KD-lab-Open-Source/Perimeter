@@ -239,7 +239,7 @@ void SoftSound3D::RecalculatePos()
 				lFrequency = DSBFREQUENCY_MAX - 1;
 			flTemp = ( float )RealFrequency;
 			flFreqAdjust = ( float )( lFrequency - flTemp ) / flTemp;
-			flAbsFreqAdjust = ( float )xm::fabs( flFreqAdjust );
+			flAbsFreqAdjust = ( float )xm::abs( flFreqAdjust );
 
 
 			if( flAbsFreqAdjust > 2.0 )
@@ -352,7 +352,7 @@ void SoftSound3D::Pause(bool p) {
 		lFrequency = DSBFREQUENCY_MAX - 1;
 	flTemp = ( float )pInstance->GetFrequency( );
 	flFreqAdjust = ( float )( lFrequency - flTemp ) / flTemp;
-	flAbsFreqAdjust = ( float )xm::fabs( flFreqAdjust );
+	flAbsFreqAdjust = ( float )xm::abs( flFreqAdjust );
 
 
 	if( flAbsFreqAdjust > 2.0 )

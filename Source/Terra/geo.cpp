@@ -165,7 +165,7 @@ float turbulence2(float point[2], float lofreq, float hifreq)
 	t = 0; 
 	for (freq = lofreq ; freq < hifreq ; freq *= 2.) {
 extern float noise2(float vec[2]);
-		t += xm::fabs(noise2(p)) / freq; 
+		t += xm::abs(noise2(p)) / freq; 
 		p[0] *= 2.; 
 		p[1] *= 2.; 
 	} 
@@ -817,7 +817,7 @@ struct CWormForm {
 			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 			for(j=0; j<WSXSY; j++){
 				//float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-				//float f=xm::exp(-(fabsf(x*x)+xm::fabsf(y*y))/(0.4*0.4));
+				//float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
 				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 				int hh=VBitMap.getPreciseColor(j, i);
 				(*FormWormsNew)[i][j]=hh<<8;
@@ -880,7 +880,7 @@ void worms(int x, int y)
 //			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 //			for(j=0; j<WSXSY; j++){
 //				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-//				float f=xm::exp(-(fabsf(x*x)+xm::fabsf(y*y))/(0.4*0.4));
+//				float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
 //				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 //			}
 /*			for(j=WSXSY>>1; j<WSXSY; j++){
@@ -927,7 +927,7 @@ void worms(int x, int y)
 		static float alpha=0;
 		float dAlpha=alpha-curAlpha;
 		alpha=curAlpha;
-//		if(xm::fabs(dAlpha) > (5.0*(3.14/180.0)) ){
+//		if(xm::abs(dAlpha) > (5.0*(3.14/180.0)) ){
 			wormForm.put2WF2();
 //		}
 //		else {
@@ -1228,7 +1228,7 @@ void CGeoWorm::step(int x, int y, float angle)
 //			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 //			for(j=0; j<WSXSY; j++){
 //				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-//				float f=xm::exp(-(fabsf(x*x)+xm::fabsf(y*y))/(0.4*0.4));
+//				float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
 //				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 //			}
 /*			for(j=WSXSY>>1; j<WSXSY; j++){
@@ -1275,7 +1275,7 @@ void CGeoWorm::step(int x, int y, float angle)
 		static float alpha=0;
 		float dAlpha=alpha-curAlpha;
 		alpha=curAlpha;
-//		if(xm::fabs(dAlpha) > (15.0*(3.14/180.0)) ){
+//		if(xm::abs(dAlpha) > (15.0*(3.14/180.0)) ){
 			wormFormLib.put2WF2(FormWormsNew);
 //		}
 //		else {
@@ -2112,7 +2112,7 @@ CLandslip::CLandslip(int _x, int _y, int _sx, int _sy, int _hmin, int _hmax, flo
 			float yy=(float)rbmp.getY(j)/(sy/2)/(1<<16);
 
 //			if(j<sx/2) { xx=0; yy=(float)rbmp.getY(sx/2)/(sy/2)/(1<<16);}
-//			float f=xm::exp(-(fabsf(xx*xx*xx*xx)+xm::fabsf(yy*yy*yy*yy))/(0.4*0.4));
+//			float f=xm::exp(-(fabsf(xx*xx*xx*xx)+xm::absf(yy*yy*yy*yy))/(0.4*0.4));
 			float f=(float)tmpltGeo[cnt]/(float)(1<<16);
 			//int curV=hmax-(deltaHLS*tmpltGeo[cnt]>>16);
 			int dh= xm::round(deltaHLS * f);

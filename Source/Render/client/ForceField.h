@@ -114,7 +114,7 @@ public:
 		atan_table = new char[atan_max*2 + 1];
 		atan_table += atan_max;
 		for(int i = -atan_max; i <= atan_max; i++)
-			atan_table[i] = n_max + xm::round(atan((float) i / cell_size) * n_max / (XM_PI / 2));
+			atan_table[i] = n_max + xm::round(xm::atan((float) i / cell_size) * n_max / (XM_PI / 2));
 
 		normals = new Vect3f[(2*n_max + 1) << normals_per_Pi_shift];
 		for(int y = 0; y < 2*n_max + 1; y++)

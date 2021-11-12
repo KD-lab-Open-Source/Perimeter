@@ -14,7 +14,7 @@ cFrame::~cFrame()
 }
 void cFrame::Set(float Period,float Start,float Finish)
 {
-	if(Period) dcount=SIGN(Period)*fmod(1/ xm::abs(Period), 1);
+	if(Period) dcount=SIGN(Period)*xm::fmod(1/ xm::abs(Period), 1);
 	else dcount=0;
 	if(Start!=-1) SetPhase(Start);
 	finish=Finish; 

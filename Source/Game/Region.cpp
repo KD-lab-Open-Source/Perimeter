@@ -1493,7 +1493,7 @@ void CycledHermite::find_x_min_max(float& t_min, float& x_min, float& t_max, flo
 		float t10 = x2*x2+t18*x_1+(10.0*x_1-11.0*x2+25.0*x1)*x1+(-49.0*x1+10.0*x2-11.0*x_1+25.0*x0)*x0;
 		if(t10 < 0)
 			continue;
-		t10 = sqrt(t10);
+		t10 = xm::sqrt(t10);
 		
 		float u = (-t10+t16)*t17;
 		if(u > 0 && u < 1.f){
@@ -1557,7 +1557,7 @@ void CycledHermite::find_y_min_max(float& t_min, float& y_min, float& t_max, flo
 		float t10 = y2*y2+t18*y_1+(10.0*y_1-11.0*y2+25.0*y1)*y1+(-49.0*y1+10.0*y2-11.0*y_1+25.0*y0)*y0;
 		if(t10 < 0)
 			continue;
-		t10 = sqrt(t10);
+		t10 = xm::sqrt(t10);
 		
 		float u = (-t10+t16)*t17;
 		if(u > 0 && u < 1.f){

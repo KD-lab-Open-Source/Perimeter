@@ -78,7 +78,7 @@ public:
 			if(r > FLT_EPS)
 			{
 				float phi = p.x/r;
-				//xassert(xm::fabsf(phi) < XM_PI && "PositionGenerator: cycling.");
+				//xassert(xm::absf(phi) < XM_PI && "PositionGenerator: cycling.");
 				return Vect2f(r * xm::sin(phi), r * xm::cos(phi) - curvature_radius);
 			}
 			//else
@@ -92,8 +92,8 @@ public:
 		if(curvature_radius)
 		{
 			float y = p.y + curvature_radius;
-			float r = sqrt(sqr(p.x) + sqr(y));
-			float phi = atan2(p.x, y);
+			float r = xm::sqrt(sqr(p.x) + sqr(y));
+			float phi = xm::atan2(p.x, y);
 			return Vect2f(r*phi, r - curvature_radius);
 		}
 		return p;

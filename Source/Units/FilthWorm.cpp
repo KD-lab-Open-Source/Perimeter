@@ -167,7 +167,7 @@ void terFilthSwarmWorm::Move()
 	if(TargetPoint)
 	{
 		Vect3f delta=TargetPoint->position()-position;
-		float a=atan2(delta.y,delta.x);
+		float a=xm::atan2(delta.y,delta.x);
 
 		a=uncycle(a,angle,2*XM_PI);
 

@@ -1429,7 +1429,7 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 	if(fGamma<=0) fGamma=1.f; else fGamma=1/fGamma;
     for(int i=0;i<256;i++)
     {
-		int dwGamma= xm::round(65536 * (fStart + (fFinish - fStart) * pow(i / 255.f, fGamma)));
+		int dwGamma= xm::round(65536 * (fStart + (fFinish - fStart) * xm::pow(i / 255.f, fGamma)));
 		if(dwGamma<0) dwGamma=0; else if(dwGamma>65535) dwGamma=65535;
         gamma.red[i]=gamma.green[i]=gamma.blue[i]=dwGamma;
     }

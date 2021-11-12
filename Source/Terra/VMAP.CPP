@@ -1978,8 +1978,8 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 	int dh=xm::round(65536*(xm::sin((cameraAngleLean - 90) * 3.14 / 180) * focusC / (focusC + cameraDZ)) );
 	int DY,DX;
 	for (d=-yside-200; d<yside; d++){
-		DY = xm::round(xm::sqrt(pow(d * (focusC + cameraDZ) / (d + tga * focusC), 2) +
-                                    pow(tga * d * (focusC + cameraDZ) / (d + tga * focusC), 2)) * 65536);
+		DY = xm::round(xm::sqrt(xm::pow(d * (focusC + cameraDZ) / (d + tga * focusC), 2) +
+                                xm::pow(tga * d * (focusC + cameraDZ) / (d + tga * focusC), 2)) * 65536);
 		if(d<0)DY=-DY;
 		DX = xm::round(
                 65536 * xside * (focusC + (cameraDZ - (d * (focusC + cameraDZ) / (d + tga * focusC)))) / focusC);
@@ -1995,10 +1995,10 @@ void vrtMap::viewV2D(int cx,int cy,int xc,int yc,int xside,int yside, unsigned s
 		int xx1=(x0+DX)*cos(aa)-(y0-DY)*sin(aa);
 		int yy1=(y0-DY)*xm::cos(aa)+(x0+DX)*xm::sin(aa);*/
 
-		int xx0=x0+( (-DX)*cos(turnAngleAroundZ)-(-DY)*sin(turnAngleAroundZ) );
-		int yy0=y0+( (-DY)*cos(turnAngleAroundZ)+(-DX)*sin(turnAngleAroundZ) );
-		int xx1=x0+( (+DX)*cos(turnAngleAroundZ)-(-DY)*sin(turnAngleAroundZ) );
-		int yy1=y0+( (-DY)*cos(turnAngleAroundZ)+(+DX)*sin(turnAngleAroundZ) );
+		int xx0=x0+( (-DX)*xm::cos(turnAngleAroundZ)-(-DY)*xm::sin(turnAngleAroundZ) );
+		int yy0=y0+( (-DY)*xm::cos(turnAngleAroundZ)+(-DX)*xm::sin(turnAngleAroundZ) );
+		int xx1=x0+( (+DX)*xm::cos(turnAngleAroundZ)-(-DY)*xm::sin(turnAngleAroundZ) );
+		int yy1=y0+( (-DY)*xm::cos(turnAngleAroundZ)+(+DX)*xm::sin(turnAngleAroundZ) );
 
 		//int scaling=100;///(d+1); //scaling=100*256/(d+1);
 

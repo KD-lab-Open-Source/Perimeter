@@ -10,7 +10,7 @@ void RigidBody::suggestMissileTurnAngels(const RigidBodyPrm& prm, const RigidBod
 	Vect3f r;
 	firing_object.matrix().invXformPoint(target, r);
 	psi = r.psi() - XM_PI/2;
-	theta = prm.calcTurnTheta(sqrt(sqr(r.x) + sqr(r.y)), r.z, prm.forward_velocity_max);
+	theta = prm.calcTurnTheta(xm::sqrt(sqr(r.x) + sqr(r.y)), r.z, prm.forward_velocity_max);
 }
 
 void RigidBody::suggestMissileTurnAngels(const RigidBody& firingObject, const Vect3f& firingPosition, const Vect3f& target, float& psi, float& theta)
@@ -46,7 +46,7 @@ void RigidBody::startMissile(const RigidBody& firing_object, const Vect3f& posit
 	{
 		Vect3f r = target - position;
 		float psi = r.psi() - XM_PI/2;
-		float theta = prm().calcTurnTheta(sqrt(sqr(r.x) + sqr(r.y)), r.z, forwardVelocity());
+		float theta = prm().calcTurnTheta(xm::sqrt(sqr(r.x) + sqr(r.y)), r.z, forwardVelocity());
 
 		setOrientation(Mat3f(psi, Z_AXIS)*Mat3f(theta, X_AXIS));
 	}
@@ -122,14 +122,14 @@ float RigidBodyPrm::calcTurnTheta(float x, float z, float velocity) const
 		//xassert_s(forward_velocity_max < FLT_EPS && "1. Can't reach the target. Increase forward_velocity_max for ", name);
 		return XM_PI/4;
 	}
-	t9 = sqrt(t9);
+	t9 = xm::sqrt(t9);
 	float t8 = t9+t27;
 	float t17 = t8*t29;
 	if(t17 < FLT_EPS) {
 		//xassert_s(forward_velocity_max < FLT_EPS && "2. Can't reach the target. Increase forward_velocity_max for ", name);
 		return XM_PI/4;
 	}
-	t17 = sqrt(t17);
+	t17 = xm::sqrt(t17);
 	float t24 = (t8*t25+gravity)/t17*t26;
 	float t7 = -t9+t27;
 	float t18 = t7*t29;
@@ -137,16 +137,16 @@ float RigidBodyPrm::calcTurnTheta(float x, float z, float velocity) const
 		//xassert_s(forward_velocity_max < FLT_EPS && "3. Can't reach the target. Increase forward_velocity_max for ", name);
 		return XM_PI/4;
 	}
-	t18 = sqrt(t18);
+	t18 = xm::sqrt(t18);
 	float t23 = (t7*t25+gravity)/t18*t26;
 	float t22 = t15*x*t28;
 	float t21 = t18*t22;
 	float t20 = t17*t22;
 	float r[4];
-	r[0] = atan2(t23,t21);
-	r[1] = atan2(-t23,-t21);
-	r[2] = atan2(t24,t20);
-	r[3] = atan2(-t24,-t20);
+	r[0] = xm::atan2(t23,t21);
+	r[1] = xm::atan2(-t23,-t21);
+	r[2] = xm::atan2(t24,t20);
+	r[3] = xm::atan2(-t24,-t20);
 	float lower = G2R(lower_theta);
 	float upper = G2R(upper_theta);
 	float theta = r[0] > upper ? upper : (r[0] < lower ? lower : r[0]);

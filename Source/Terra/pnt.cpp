@@ -147,7 +147,7 @@ extern float noise3(float vec[3]);
 	point[0] *= 2.; 
 	point[1] *= 2.; 
 	point[2] *= 2.; 
-	t += xm::fabs(noise3(point)) *1.25f; 
+	t += xm::abs(noise3(point)) *1.25f; 
 	return t - 0.3; 
 } */
 

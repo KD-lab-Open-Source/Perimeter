@@ -102,7 +102,7 @@ float  fastsqrtN (float x)
     sq = x;
     sqold = x + 30.0f;         /* != sq */
     while (xm::abs(sq * sq - x) >= EPS) {
-    /*     xm::fabs( sq - sqold )>= EPS    */
+    /*     xm::abs( sq - sqold )>= EPS    */
         sqold = sq;
         sq = 0.5f * (sq + x / sq);
     }

@@ -128,7 +128,7 @@ void cQuantumWind::operator()(WindNode& nd, float x, float y)
 {
 	x-=pos.x;
 	y-=pos.y;
-	float r1 = sqrt(x*x+y*y);
+	float r1 = xm::sqrt(x*x+y*y);
 	if (r1>=r) return;
 	Vect2f nr1(x,y); FastNormalize(nr1);
 	Vect2f nv(vel);	 FastNormalize(nv);
@@ -150,13 +150,13 @@ void cQuantumWind::Animate(float dt)
 }
 bool cQuantumWind::IsLive()
 {
-	return sqrt(vel.x*vel.x + vel.y*vel.y)>10;
+	return xm::sqrt(vel.x*vel.x + vel.y*vel.y)>10;
 }
 
 void cQuantumWind::Draw()
 {
 	xassert(ef);
-	ef->SetPosition(MatXf(Mat3f(XM_PI/2+atan2(vel.y,vel.x),Z_AXIS), Vect3f(pos.x, pos.y, surf_z + maxz)));
+	ef->SetPosition(MatXf(Mat3f(XM_PI/2+xm::atan2(vel.y,vel.x),Z_AXIS), Vect3f(pos.x, pos.y, surf_z + maxz)));
 }
 
 //====================================================================
@@ -164,7 +164,7 @@ void cQuantumWindW::operator()(WindNode& nd, float x, float y)
 {
 	x-=pos.x;
 	y-=pos.y;
-	float r1 = sqrt(x*x+y*y);
+	float r1 = xm::sqrt(x*x+y*y);
 	if (r1>=r) return;
 	float k = xm::sin(r1 / r * XM_PI);
 	nd.vel.x += w*y*k;
@@ -173,7 +173,7 @@ void cQuantumWindW::operator()(WindNode& nd, float x, float y)
 	if (r1>ss*r)
 	{
 		Vect2f next(x+nd.vel.x*dtime, y+ nd.vel.y*dtime);
-		float nr = sqrt(sqr(next.x)+sqr(next.y));
+		float nr = xm::sqrt(sqr(next.x)+sqr(next.y));
 		if(r1<nr)
 		{
 			next = next - next*(nr/r1);
@@ -417,7 +417,7 @@ void cMapWind::GetSpeed(uint8_t* data, int pitch, float mul)
 		{
 			Vect2f& vel=nd->vel;
 			++nd;
-			float f= xm::abs(vel.x) + fabs(vel.y);
+			float f= xm::abs(vel.x) + xm::abs(vel.y);
 			int p=xm::round(f*mul);
 			p=clamp(p,0,255);
 			curdata[x]=p;

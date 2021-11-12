@@ -57,7 +57,7 @@ void terNatureObject::universalLoad(const SaveUnitData* baseData)
 	visible_ = data->visible;
 	setRadius(data->radius); // sets the model name
 
-	ObjectAnimation.startPhase(fmod(data->chainPhase, 1), data->chainPeriod ? terLogicTimePeriod/data->chainPeriod : 0, 1);
+	ObjectAnimation.startPhase(xm::fmod(data->chainPhase, 1), data->chainPeriod ? terLogicTimePeriod/data->chainPeriod : 0, 1);
 	AvatarQuant();
 }
 
@@ -555,7 +555,7 @@ void terNatureFace::Quant()
 
 		float speed = clamp(dist, 0, attr().GroundPlaneSpeed);
 
-		float angle = getDeltaAngle(cycleAngle(atan2(delta.y, delta.x) - XM_PI * 0.5f), angleZ());
+		float angle = getDeltaAngle(cycleAngle(xm::atan2(delta.y, delta.x) - XM_PI * 0.5f), angleZ());
 		if(angle < 0){
 			if(angle < -attr().GroundAngleSpeed){
 				angle = -attr().GroundAngleSpeed;
@@ -632,7 +632,7 @@ void terNatureFallTree::Quant()
 		float z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(v.x)), vMap.YCYCL(xm::round(v.y))) >> VX_FRACTION);
 		if(v.z < z){
 			if(xm::abs(v.z - z) > FLT_EPS)
-				Rotation.premult(QuatF(atan2((v.z - z),radius()),Axis));
+				Rotation.premult(QuatF(xm::atan2((v.z - z),radius()),Axis));
 			Time = 0;
 		}
 		setPose(Se3f(Rotation, position()), false);

@@ -471,7 +471,7 @@ bool CShellWindow::updateColor() {
 				flashTimer = -1;
 			}
 		}
-		if(tickTime != 0 && fmod(m_ftime, tickTime) / tickTime < 0.5f) {
+		if(tickTime != 0 && xm::fmod(m_ftime, tickTime) / tickTime < 0.5f) {
 			m_cColor = clrNormal;
 //			m_cBGColor.set(0, 0, 0, 0);
 			return false;
@@ -718,7 +718,7 @@ void CComboWindow::draw(int bFocus)
 		terRenderDevice->OutText(
 			x+xx, y+yy,
             (char*)toScr.c_str(), clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-            fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+            xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 	} else {
 		OutText( x+xx, y+yy-m_hFont->GetHeight()/2,
 			(char*)toScr.c_str(), &clr, m_attr->txt_align );
@@ -980,14 +980,14 @@ void CShellPushButton::draw(int bFocus)
 			if (m_hTexture) {
 				if (m_attr->txt_align == SHELL_ALIGN_CENTER) {
 					terRenderDevice->OutText(x + sx / 2.0f, centerY, toScr.c_str(), clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                             fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                             xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 				} else if (m_attr->txt_align == SHELL_ALIGN_RIGHT) {
 					float txtWidth = terRenderDevice->GetFontLength(toScr.c_str());
 					terRenderDevice->OutText(x + sx - txtWidth - 1, centerY, toScr.c_str(), clr, SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                             fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                             xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 				} else {
 					terRenderDevice->OutText(x, centerY, toScr.c_str(), clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                             fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                             xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 				}
 			} else {
 				if (m_attr->txt_align == SHELL_ALIGN_CENTER) {
@@ -1006,14 +1006,14 @@ void CShellPushButton::draw(int bFocus)
 			if (m_hTexture) {
 				if (m_attr->txt_align == SHELL_ALIGN_CENTER) {
 					terRenderDevice->OutText(x + sx / 2.0f, centerY, toScr.c_str(), clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                             fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                             xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 				} else if (m_attr->txt_align == SHELL_ALIGN_RIGHT) {
 					float txtWidth = terRenderDevice->GetFontLength(toScr.c_str());
 					terRenderDevice->OutText(x + sx - txtWidth - 1, centerY, toScr.c_str(), clr, SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                             fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                             xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 				} else {
 					terRenderDevice->OutText(x, centerY, toScr.c_str(), clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                             fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                             xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 				}
 			} else {
 				if (m_attr->txt_align == SHELL_ALIGN_CENTER) {
@@ -1132,7 +1132,7 @@ void CGeneralWindow::draw(int bFocus)
 	}
 	DrawSprite( x, y, sx, sy, 
 		m_vTexPos[0].x, m_vTexPos[0].y, m_vTexPos[1].x, m_vTexPos[1].y, 
-		m_hTexture, sColor4c(255,255,255,Alpha*255), fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA);
+		m_hTexture, sColor4c(255,255,255,Alpha*255), xm::fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA);
 
 	if( m_handler )
 		m_handler(this, EVENT_DRAWWND, 0);
@@ -1170,12 +1170,12 @@ void CWorldEffect::draw(int bFocus)
 			{ phase=1; if (!OnEffectStop(m_effect)) return; }
 		
 		DrawSprite2(x, y, sx, phase*sy, 0, 0, sx/128, sy/128,
-                    m_hTexture3, m_hTexture2, sColor4c(255,255,255,100), fmod(m_ftime, 250) / 250 );
+                    m_hTexture3, m_hTexture2, sColor4c(255,255,255,100), xm::fmod(m_ftime, 250) / 250 );
 
 		DrawSprite2(x, y+phase*sy, sx, (1-phase)*sy, 0, 0, sx/128, sy/128,
-                    m_hTexture3, m_hTexture2, sColor4c(150-iColor,150-iColor,150-iColor,a), fmod(m_ftime, 250) / 250 );
+                    m_hTexture3, m_hTexture2, sColor4c(150-iColor,150-iColor,150-iColor,a), xm::fmod(m_ftime, 250) / 250 );
 		DrawSprite(x, y+phase*sy, sx, 0.1f*sy, 0, 0, sx/128, 0.1f*sy/128,
-                   m_hTexture3, sColor4c(196,196,196,Alpha), fmod(m_ftime, 300) / 300 );
+                   m_hTexture3, sColor4c(196,196,196,Alpha), xm::fmod(m_ftime, 300) / 300 );
 	}
 //	else if( ( _id_on==SQSH_MM_BRIEFING_SCR && m_effect==effectButtonsFadeIn && _id_off==SQSH_MM_SCREEN2 ) ||
 //		( _id_off==SQSH_MM_BRIEFING_SCR && m_effect==effectButtonsFadeOut && _id_on==SQSH_MM_SCREEN2 ) )
@@ -1200,9 +1200,9 @@ void CWorldEffect::draw(int bFocus)
 			{ phase=1; if (!OnEffectStop(m_effect)) return; }
 		
 		DrawSprite2(x, y, sx, sy, 0, 0, sx/128, sy/128,
-                    m_hTexture3, m_hTexture2, sColor4c(150,150,150,a), fmod(m_ftime, 250) / 250 );
+                    m_hTexture3, m_hTexture2, sColor4c(150,150,150,a), xm::fmod(m_ftime, 250) / 250 );
 		DrawSprite(x, y+phase*sy, sx, 0.1f*sy, 0, 0, sx/128, 0.1f*sy/128,
-                   m_hTexture3, sColor4c(196,196,196,Alpha), fmod(m_ftime, 300) / 300 );
+                   m_hTexture3, sColor4c(196,196,196,Alpha), xm::fmod(m_ftime, 300) / 300 );
 	}
 //	else if( ID==SQSH_MM_SCREEN2 )
 //		DrawSprite2(x, y, sx, sy, 0, 0, sx/128, sy/128, 
@@ -2532,7 +2532,7 @@ bool CUITabSheet::updateColor() {
 			}
 		}
 	}
-	if (tickTime != 0 && fmod(m_ftime, tickTime) / tickTime < 0.5f) {
+	if (tickTime != 0 && xm::fmod(m_ftime, tickTime) / tickTime < 0.5f) {
 //		markColor = clrNormal;
 		return false;
 	} else {
@@ -2551,7 +2551,7 @@ void CUITabSheet::draw(int bFocus)
 /*	for (int i = 0, s = tabAttrs.size(); i < s; i++) {
 		sqshTabElement* pTabAttr = tabAttrs[i];
 		if( pTabAttr->flashBG_A != 0 && (m_nMarkedPagesBits & (1 << i)) )	{
-			if(pTabAttr->tickTime == 0 || fmod(m_ftime, pTabAttr->tickTime) / pTabAttr->tickTime >= 0.5f) {
+			if(pTabAttr->tickTime == 0 || xm::fmod(m_ftime, pTabAttr->tickTime) / pTabAttr->tickTime >= 0.5f) {
 				m_cBGColor.set(pTabAttr->flashBG_R, pTabAttr->flashBG_G, pTabAttr->flashBG_B, pTabAttr->flashBG_A);
 				draw_rect(
 					Vect2i(tabXs[i], tabYs[i]),
@@ -2889,7 +2889,7 @@ void CMapWindow::draw(int bFocus)
 			std::list<Vect2f>::iterator pi;
 			FOR_EACH(logicData->miniMapLabels, pi) {
 				terRenderDevice->DrawSprite(x + map_xs * (*pi).x - activeObjectSx / 2, y + map_ys * (*pi).y - activeObjectSy / 2, activeObjectSx, activeObjectSy, 0, 0, 1, 1, activeObjectTx, sColor4c(255,255,255,255),
-                                            fmod(m_ftime, activeObjectSymbol.period) / activeObjectSymbol.period);
+                                            xm::fmod(m_ftime, activeObjectSymbol.period) / activeObjectSymbol.period);
 			}
 			std::list<MiniMapEventIcon>::iterator ii;
 			FOR_EACH(_shellIconManager.getMiniMapEventIcons(), ii) {
@@ -3167,7 +3167,7 @@ void CTextWindow::draw(int bFocus)
                     COLOR_MOD,
                     uv,
                     dudv,
-                    fmod(m_ftime, 1000) / 1000,
+                    xm::fmod(m_ftime, 1000) / 1000,
                     pushButtonTextureWeight);
 		} else {
 			sColor4f color;
@@ -3301,7 +3301,7 @@ void CTextStringWindow::draw(int bFocus)
                     COLOR_MOD,
                     uv,
                     dudv,
-                    fmod(m_ftime, 1000) / 1000,
+                    xm::fmod(m_ftime, 1000) / 1000,
                     pushButtonTextureWeight);
 		} else {
 			sColor4f color;
@@ -3567,7 +3567,7 @@ void CListBoxWindow::draw(int bFocus)
 				x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y,
                 m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                 thumbTexture, m_hTextureBG,
-                mapTextureWeight, Alpha * scaleButtonAlpha, fmod(m_ftime, 1000) / 1000,
+                mapTextureWeight, Alpha * scaleButtonAlpha, xm::fmod(m_ftime, 1000) / 1000,
                 COLOR_MOD, ALPHA_ADDBLENDALPHA);
 		} else {
 			DrawSprite(x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, 
@@ -3635,7 +3635,7 @@ void CListBoxWindow::draw(int bFocus)
 					x+sx*m_pItem[nItem].x + txtdx,
 //					x+m_fStringHeight/2+sx*m_pItem[nItem].x + txtdx,
 					yS, (char*)toStr.c_str(), color, SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTextureBG, COLOR_MOD, uv, dudv,
-                    fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                    xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 			} else if (m_attr->alnum) {
 				OutText(
 					x+sx*m_pItem[nItem].x + txtdx, 
@@ -3823,7 +3823,7 @@ void CStatListBoxWindow::draw(int bFocus) {
 				colors[i].a = 255 * Alpha;
 				terRenderDevice->DrawSprite(
 					x + sx * m_pItem[nItem].x + txtdx, y_str + txtdy / 2, sy, sy, m_vTexPosRace[0][races[i]].x, m_vTexPosRace[0][races[i]].y, m_vTexPosRace[1][races[i]].x, m_vTexPosRace[1][races[i]].y,
-                    m_hTexture, colors[i], fmod(m_ftime, 1000) / 1000, ALPHA_ADDBLENDALPHA);
+                    m_hTexture, colors[i], xm::fmod(m_ftime, 1000) / 1000, ALPHA_ADDBLENDALPHA);
 //				terRenderDevice->DrawSprite(
 //					x + sx * m_pItem[nItem].x + txtdx, y_str + txtdy, sy, sy, m_vTexPosRace[0][races[i]].x, m_vTexPosRace[0][races[i]].y, m_vTexPosRace[1][races[i]].x, m_vTexPosRace[1][races[i]].y,
 //					m_hTexture, colors[i], fmodf(m_ftime,1000)/1000);
@@ -4080,7 +4080,7 @@ void ChatWindow::draw(int bFocus)
 				x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y,
                 m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                 thumbTexture, m_hTextureBG,
-                mapTextureWeight, Alpha * scaleButtonAlpha, fmod(m_ftime, 1000) / 1000,
+                mapTextureWeight, Alpha * scaleButtonAlpha, xm::fmod(m_ftime, 1000) / 1000,
                 COLOR_MOD, ALPHA_ADDBLENDALPHA);
 		} else {
 			DrawSprite(x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, 
@@ -4118,7 +4118,7 @@ void ChatWindow::draw(int bFocus)
 			terRenderDevice->OutText(
 				x + txtdx,
                 yS, (char*)toStr.c_str(), color, SHELL_ALIGN_LEFT, ALPHA_ADDBLENDALPHA, m_hTextureBG, COLOR_MOD, uv, dudv,
-                fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 		} else if (m_attr->alnum) {
 			OutText(
 				x + txtdx, 
@@ -4221,14 +4221,14 @@ void CSliderWindow::draw(int bFocus)
                     x, y, sx, sy, m_vTexPos[0].x, m_vTexPos[0].y, m_vTexPos[1].x, m_vTexPos[1].y,
                     m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                     m_hTexture, m_hTextureBG,
-                    mapTextureWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                    mapTextureWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                     COLOR_MOD, ALPHA_ADDBLENDALPHA);
 			// draw pos
 			terRenderDevice->DrawSprite2(
 				xc-thumbSize/2, y, thumbSize, sy, thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y,
                 m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                 m_hTexture, m_hTextureBG,
-                mapTextureWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                mapTextureWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                 COLOR_MOD, ALPHA_ADDBLENDALPHA);
 			if (arrowSize) {
 				// draw left arrow
@@ -4236,14 +4236,14 @@ void CSliderWindow::draw(int bFocus)
 					x - arrowSize, y, arrowSize, sy, leftArrowUV.x, leftArrowUV.y, leftArrowDUDV.x, leftArrowDUDV.y,
                     m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                     m_hTexture, m_hTextureBG,
-                    mapTextureWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                    mapTextureWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                     COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				// draw right arrow
 				terRenderDevice->DrawSprite2(
 					x + sx, y, arrowSize, sy, rightArrowUV.x, rightArrowUV.y, rightArrowDUDV.x, rightArrowDUDV.y,
                     m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                     m_hTexture, m_hTextureBG,
-                    mapTextureWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                    mapTextureWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                     COLOR_MOD, ALPHA_ADDBLENDALPHA);
 			}
 		} else {
@@ -4382,22 +4382,22 @@ void CMultiTexWindow::draw(int bFocus)
 	{
 		if (m_attr_cont->image2.hasBelligerentVersion) {
 			DrawSprite(x, y, sx, sy, 0, 0, sx/128, sy/128,
-                       m_hTexture3, sColor4c(255,255,255,100), fmod(m_ftime, 250) / 250 );
+                       m_hTexture3, sColor4c(255,255,255,100), xm::fmod(m_ftime, 250) / 250 );
 			DrawSprite(x, y, sx, sy, 0, 0, 1, 1,
-                       m_hTexture2, sColor4c(255,255,255,255), fmod(m_ftime, 250) / 250 );
+                       m_hTexture2, sColor4c(255,255,255,255), xm::fmod(m_ftime, 250) / 250 );
 		} else {
 			DrawSprite2(x, y, sx, sy, 0, 0, sx/128, sy/128,
-                        m_hTexture3, m_hTexture2, sColor4c(255,255,255,100), fmod(m_ftime, 250) / 250 );
+                        m_hTexture3, m_hTexture2, sColor4c(255,255,255,100), xm::fmod(m_ftime, 250) / 250 );
 		}
 	}
 	else if( m_hTexture3 )
 	{
 		if (m_attr_cont->image2.hasBelligerentVersion) {
 			DrawSprite(x, y, sx, sy, 0, 0, 1, 1,
-                       m_hTexture3, sColor4c(255,255,255,50), fmod(m_ftime, 250) / 250 );
+                       m_hTexture3, sColor4c(255,255,255,50), xm::fmod(m_ftime, 250) / 250 );
 		} else {
 			DrawSprite(x, y, sx, sy, 0, 0, sx/128, sy/128,
-                       m_hTexture3, sColor4c(255,255,255,50), fmod(m_ftime, 250) / 250 );
+                       m_hTexture3, sColor4c(255,255,255,50), xm::fmod(m_ftime, 250) / 250 );
 		}
 	}
 
@@ -4502,7 +4502,7 @@ void CShowMapWindow::draw(int bFocus)
                         mx, my, msx, msy, 0, 0, 1, 1,
                         m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                         m_hTexture, m_hTextureBG,
-                        mapTextureWeight, Alpha, fmod(m_ftime, 1000) / 1000,
+                        mapTextureWeight, Alpha, xm::fmod(m_ftime, 1000) / 1000,
                         COLOR_MOD, ALPHA_ADDBLENDALPHA);
 			} else {
 				DrawSprite( mx, my, msx, msy, 0, 0, 1, 1, m_hTexture, sColor4c(255, 255, 255, 255*Alpha) );
@@ -4595,7 +4595,7 @@ void CMoveButton::draw(int bFocus)
 		int _y = xm::round(y + phase * (ystart - y));
 		DrawSprite(_x, _y, sx, sy, 
 			m_vTexPos[0].x, m_vTexPos[0].y, m_vTexPos[1].x, m_vTexPos[1].y, 
-			m_hTexture, sColor4c(255,255,255,255), fmod(m_ftime,1000.f)/1000.f );
+			m_hTexture, sColor4c(255,255,255,255), xm::fmod(m_ftime,1000.f)/1000.f );
 	}
 
 	if(m_handler)
@@ -4675,7 +4675,7 @@ void CPortraitWindow::draw(int bFocus)
                     x, y, sx, sy, m_vTexPos[0].x, m_vTexPos[0].y, m_vTexPos[1].x, m_vTexPos[1].y,
                     m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                     m_hTexture, m_hTextureBG,
-                    mapTextureWeight, Alpha, fmod(m_ftime, 1000) / 1000,
+                    mapTextureWeight, Alpha, xm::fmod(m_ftime, 1000) / 1000,
                     COLOR_MOD, ALPHA_ADDBLENDALPHA);
 		} else {
 			terRenderDevice->DrawSprite(
@@ -4749,7 +4749,7 @@ void CLogoWindow::draw(int bFocus)
                     x, y, sx, sy, m_vTexPosRace[0][race].x, m_vTexPosRace[0][race].y, m_vTexPosRace[1][race].x, m_vTexPosRace[1][race].y,
                     m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                     m_hTexture, m_hTextureBG,
-                    mapTextureWeight, Alpha, fmod(m_ftime, 1000) / 1000,
+                    mapTextureWeight, Alpha, xm::fmod(m_ftime, 1000) / 1000,
                     COLOR_MOD, ALPHA_ADDBLENDALPHA);
 		} else {
 			DrawSprite( x, y, sx, sy, 0, 0, 1, 1, m_hTexture, sColor4c(255, 255, 255, 255*Alpha) );
@@ -4879,19 +4879,19 @@ void CScaleButton::draw(int bFocus)
                         _x, _y, _sx, _sy, m_vTexPos[0].x, m_vTexPos[0].y, m_vTexPos[1].x, m_vTexPos[1].y,
                         m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                         m_hTexture, m_hTextureBG,
-                        mapTextureWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                        mapTextureWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                         COLOR_MOD, ALPHA_ADDBLENDALPHA);
 			} else {
 				DrawSprite( _x, _y, _sx, _sy, 
 					m_vTexPos[0].x, m_vTexPos[0].y, m_vTexPos[1].x, m_vTexPos[1].y, 
-					m_hTexture, sColor4c(255,255,255,iColor), fmod(m_ftime,1000.f)/1000.f);
+					m_hTexture, sColor4c(255,255,255,iColor), xm::fmod(m_ftime,1000.f)/1000.f);
 			}
 		}
 		if( m_hTexture && m_hTexture3 && (m_effect==effectButtonsFadeIn || m_effect==effectButtonsFadeOut) )
 		{
 			DrawSprite( _x, _y, _sx, _size, 
 				0, 0, 1, 1, 
-				m_hTexture3, sColor4c(255,255,255,Color3), fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
+				m_hTexture3, sColor4c(255,255,255,Color3), xm::fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
 		}
 		if( m_hTexture2 && (m_effect==effectButtonsFadeIn || m_effect==effectButtonsFadeOut) )
 		{
@@ -4902,15 +4902,15 @@ void CScaleButton::draw(int bFocus)
                             _x, _y, _sx, _sy, 0, 0, 1, 1,
                             0, 0, 1, 1,
                             m_hTexture2, m_hTexture3,
-                            scaleButtonWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                            scaleButtonWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                             COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				} else {
 					terRenderDevice->DrawSprite2(_x, _y, _sx, _sy,
-						0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3, sColor4c(255,255,255,255-iColor), fmod(m_ftime,1000.f)/1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
+						0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3, sColor4c(255,255,255,255-iColor), xm::fmod(m_ftime,1000.f)/1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				}
 			} else {
 					terRenderDevice->DrawSprite(_x, _y, _sx, _sy, 
-						0, 0, 1, 1, m_hTexture2, sColor4c(255,255,255,255-iColor), fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
+						0, 0, 1, 1, m_hTexture2, sColor4c(255,255,255,255-iColor), xm::fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
 			}
 		}
 	}
@@ -5068,7 +5068,7 @@ void CEditWindow::draw(int bFocus)
 //			terRenderDevice->SetFont(hFontMainmenu2);
 			if (m_hTexture) {
 				terRenderDevice->OutText(x, y + txtdy, c, clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                         fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                         xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 			} else {
 				OutText(x, y + txtdy, c, &clr);
 			}
@@ -5076,7 +5076,7 @@ void CEditWindow::draw(int bFocus)
 			terRenderDevice->SetFont(0);
 		}
 
-		if(isEnabled() && bFocus && fmod(m_ftime, 1000) > 500){
+		if(isEnabled() && bFocus && xm::fmod(m_ftime, 1000) > 500){
 			terRenderDevice->SetFont(m_hFont);
 			OutText(x_caret, y + txtdy, "|", &clr);
 			terRenderDevice->SetFont(0);
@@ -5192,7 +5192,7 @@ void CChatInGameEditWindow::draw(int bFocus) {
 		//			terRenderDevice->SetFont(hFontMainmenu2);
 					if (m_hTexture) {
 						terRenderDevice->OutText(x, y + txtdy, c, clr, m_attr->txt_align, ALPHA_ADDBLENDALPHA, m_hTexture, COLOR_MOD, uv, dudv,
-                                                 fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
+                                                 xm::fmod(m_ftime, 1000) / 1000, pushButtonTextureWeight);
 					} else {
 						OutText(x, y + txtdy, c, &clr);
 					}
@@ -5200,7 +5200,7 @@ void CChatInGameEditWindow::draw(int bFocus) {
 					terRenderDevice->SetFont(0);
 		//			}
 
-				if(isEnabled() && bFocus && fmod(m_ftime, 1000) > 500)
+				if(isEnabled() && bFocus && xm::fmod(m_ftime, 1000) > 500)
 					draw_line(Vect2f(x_caret, y), Vect2f(x_caret, y+sy), sColor4f(1, 1, 1, Alpha));
 		}
 	}
@@ -5488,7 +5488,7 @@ void CProgressCollected::draw(int bFocus)
 
 		if (isFlashing()) {
 			m_ftime += frame_time.delta();
-			if (tickTime == 0 || fmod(m_ftime, tickTime) / tickTime < 0.5f) {
+			if (tickTime == 0 || xm::fmod(m_ftime, tickTime) / tickTime < 0.5f) {
 				m_cColor = markColor;
 			}
 		}
@@ -5625,7 +5625,7 @@ void CProgressMutation::draw(int bFocus)
 	}
 	if (isFlashing()) {
 		m_ftime += frame_time.delta();
-		if (tickTime == 0 || fmod(m_ftime, tickTime) / tickTime < 0.5f) {
+		if (tickTime == 0 || xm::fmod(m_ftime, tickTime) / tickTime < 0.5f) {
 			m_cColor = markColor;
 		}
 	}
@@ -6104,19 +6104,19 @@ void CScaleResultButton::draw(int bFocus) {
                         _x, _y, _sx, _sy, m_texPos[0].x, m_texPos[0].y, m_texPos[1].x, m_texPos[1].y,
                         m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                         texture, m_hTextureBG,
-                        mapTextureWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                        mapTextureWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                         COLOR_MOD, ALPHA_ADDBLENDALPHA);
 			} else {
 				DrawSprite( _x, _y, _sx, _sy, 
 					m_texPos[0].x, m_texPos[0].y, m_texPos[1].x, m_texPos[1].y, 
-					texture, sColor4c(255,255,255,iColor), fmod(m_ftime,1000.f)/1000.f);
+					texture, sColor4c(255,255,255,iColor), xm::fmod(m_ftime,1000.f)/1000.f);
 			}
 		}
 		if( texture && m_hTexture3 && (m_effect==effectButtonsFadeIn || m_effect==effectButtonsFadeOut) )
 		{
 			DrawSprite( _x, _y, _sx, _size, 
 				0, 0, 1, 1, 
-				m_hTexture3, sColor4c(255,255,255,Color3), fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
+				m_hTexture3, sColor4c(255,255,255,Color3), xm::fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
 		}
 		if( m_hTexture2 && (m_effect==effectButtonsFadeIn || m_effect==effectButtonsFadeOut) )
 		{
@@ -6127,15 +6127,15 @@ void CScaleResultButton::draw(int bFocus) {
                             _x, _y, _sx, _sy, 0, 0, 1, 1,
                             0, 0, 1, 1,
                             m_hTexture2, m_hTexture3,
-                            scaleButtonWeight, alpha, fmod(m_ftime, 1000) / 1000,
+                            scaleButtonWeight, alpha, xm::fmod(m_ftime, 1000) / 1000,
                             COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				} else {
 					terRenderDevice->DrawSprite2(_x, _y, _sx, _sy,
-						0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3, sColor4c(255,255,255,255-iColor), fmod(m_ftime,1000.f)/1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
+						0, 0, 1, 1, 0, 0, 1, 1, m_hTexture2, m_hTexture3, sColor4c(255,255,255,255-iColor), xm::fmod(m_ftime,1000.f)/1000.f, COLOR_MOD, ALPHA_ADDBLENDALPHA);
 				}
 			} else {
 					terRenderDevice->DrawSprite(_x, _y, _sx, _sy, 
-						0, 0, 1, 1, m_hTexture2, sColor4c(255,255,255,255-iColor), fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
+						0, 0, 1, 1, m_hTexture2, sColor4c(255,255,255,255-iColor), xm::fmod(m_ftime,1000.f)/1000.f, ALPHA_ADDBLENDALPHA );
 			}
 		}
 	}
@@ -6269,7 +6269,7 @@ void CCreditsWindow::draw(int bFocus)
                     COLOR_MOD,
                     uv,
                     dudv,
-                    fmod(m_ftime, 1000) / 1000,
+                    xm::fmod(m_ftime, 1000) / 1000,
                     pushButtonTextureWeight);
 		} else {
             sColor4f c(1, 1, 1, Alpha);

@@ -1127,7 +1127,7 @@ struct terRealHightOperator
 				return;
 
 			b->matrix().invXformPoint(v);
-			if(xm::abs(v.x) < b->boxMax().x + Radius && fabs(v.y) < b->boxMax().y + Radius){
+			if(xm::abs(v.x) < b->boxMax().x + Radius && xm::abs(v.y) < b->boxMax().y + Radius){
 				if((b->position().z + b->boxMax().z) > Height)
 					Height = b->position().z + b->boxMax().z;
 			}

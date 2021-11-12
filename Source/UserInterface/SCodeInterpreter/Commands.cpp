@@ -149,7 +149,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int KillAlphaPortal::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
+		return xm::ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
 	}
 
 	std::string KillAlphaPortal::toString() const {
@@ -175,7 +175,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int KillOmegaPortal::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
+		return xm::ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
 	}
 
 	std::string KillOmegaPortal::toString() const {
@@ -204,7 +204,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int KillWorld::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
+		return xm::ceil(worlds->getWorldBySysName(worldName)->getTimeFactor() * float(duration));
 	}
 
 	std::string KillWorld::toString() const {
@@ -293,7 +293,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int JumpToWorld::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	std::string JumpToWorld::toString() const {
@@ -333,7 +333,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int BuildFrame::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(worlds->getWorldBySysName(worldSysName)->getTimeFactor() * float(duration));
+		return xm::ceil(worlds->getWorldBySysName(worldSysName)->getTimeFactor() * float(duration));
 	}
 
 	std::string BuildFrame::toString() const {
@@ -404,7 +404,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int CreateAlphaPortal::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 
@@ -425,7 +425,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int CreateOmegaPortal::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	std::string CreateOmegaPortal::toString() const {
@@ -469,7 +469,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int CreateLink::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	std::string CreateLink::toString() const {
@@ -499,7 +499,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int TransferFrame::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	World* TransferFrame::getWorldToTransfer(Worlds* worlds) {
@@ -533,7 +533,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int ReachWorld::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	World* ReachWorld::getWorldToReach(Worlds* worlds) {
@@ -562,7 +562,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int DestroyFrame::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	std::string DestroyFrame::toString() const {
@@ -639,7 +639,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int SendTestament::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	std::string SendTestament::toString() const {
@@ -665,7 +665,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 	}
 
 	int StopFrame::calculateLength(Worlds* worlds, Frames* frames) const {
-		return ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
+		return xm::ceil(getFrame(frames)->getCurrentWorld()->getTimeFactor() * float(duration));
 	}
 
 	std::string StopFrame::toString() const {

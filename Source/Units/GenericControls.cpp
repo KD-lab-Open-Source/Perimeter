@@ -111,8 +111,8 @@ void terUnitBase::setDamage(const DamageData& damage,terUnitBase* agressor)
 
 void terUnitBase::setPose(const Se3f& pose, bool initPose) 
 {
-	pose_.trans().x = clamp(pose.trans().x, radius(), (vMap.H_SIZE - 1) - radius());
-	pose_.trans().y = clamp(pose.trans().y, radius(), (vMap.V_SIZE - 1) - radius());
+	pose_.trans().x = clamp(pose.trans().x, radius(), static_cast<float>(vMap.H_SIZE - 1) - radius());
+	pose_.trans().y = clamp(pose.trans().y, radius(), static_cast<float>(vMap.V_SIZE - 1) - radius());
 	pose_.trans().z = pose.trans().z;
 	pose_.rot() = pose.rot();
 
