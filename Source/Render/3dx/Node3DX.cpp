@@ -111,7 +111,7 @@ void cObject3dx::UpdateMatrix()
 	Mat3f& r=nodes[0].pos.rot();
 /*
 	//Mat3f correct;
-	//correct.set(M_PI/2,X_AXIS);
+	//correct.set(XM_PI/2,X_AXIS);
 	//r=correct*r;
 	//r*=scale;
 	//fix

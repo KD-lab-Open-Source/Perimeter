@@ -426,7 +426,7 @@ void terFilthSpot::GenerationProcess()
 		case FILTH_SPOT_ID_A_SPIDER:
 			for(i = 0;i < num;i++)
 			{
-				float a = terLogicRNDfrand()*M_PI*2.0f;
+				float a = terLogicRNDfrand()*XM_PI*2.0f;
 				float r = BaseParam->SwarmRadius;
 				v.x = xm::cos(a) * r;
 				v.y = xm::sin(a) * r;
@@ -467,7 +467,7 @@ void terFilthSpot::GenerationProcess()
 			{
 				if(hole_pos.empty())
 				{
-					float a = terLogicRNDfrand()*M_PI*2.0f;
+					float a = terLogicRNDfrand()*XM_PI*2.0f;
 					for(int i=0;i<BaseParam->SwarmMax;i++)
 					{
 						HoleStruct v;
@@ -768,7 +768,7 @@ void terFilthSpot::ShowInfo()
 
 			if(attack_width>0)
 			{
-				float a=attack_direction*M_PI/180.0f;
+				float a=attack_direction*XM_PI/180.0f;
 				Vect3f direction(xm::cos(a),xm::sin(a),0);
 				Vect3f norm(direction.y,-direction.x,0);
 				terRenderDevice->DrawLine(To3D(position()),To3D(position()+direction*20),RED);
@@ -995,7 +995,7 @@ void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int m
 		return;
 
 	int target_list_size=0;
-	float a=attack_direction*M_PI/180.0f;
+	float a=attack_direction*XM_PI/180.0f;
 	Vect2f direction(xm::cos(a),xm::sin(a));
 
 	//На фрэйм нападать только, если нет других целей.

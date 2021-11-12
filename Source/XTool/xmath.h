@@ -61,14 +61,8 @@ enum eAxis
 ///////////////////////////////////////////////////////////////////////////////
 //  		Constants
 ///////////////////////////////////////////////////////////////////////////////
-#ifdef M_PI
-#undef M_PI
-#endif
-#ifdef M_PI_2
-#undef M_PI_2
-#endif
-#define M_PI  3.14159265358979323846f
-#define M_PI_2  1.57079632679489661923f
+const double XM_PI = 3.14159265358979323846f;
+const double XM_PI_2 = 1.57079632679489661923f;
 
 const double DBL_EPS = 1.e-15;
 const double DBL_INF = 1.e+100;
@@ -237,11 +231,11 @@ xm_inline void average(double& x_avr, double x, double tau, double factor){ tau 
 xm_inline void average(float& x_avr, float x, float tau){ x_avr = x_avr*(1.f - tau) + tau*x; }
 xm_inline void average(float& x_avr, float x, float tau, float factor){ tau = (float)xm::pow(tau, factor); x_avr = x_avr*(1.f - tau) + tau*x; }
 
-#define G2R(x) ((x)*M_PI/180.f)  
-#define R2G(x) ((x)*180.f/M_PI)
+#define G2R(x) ((x)*XM_PI/180.f)  
+#define R2G(x) ((x)*180.f/XM_PI)
 
-//xm_inline float Acos(float  x){ return x > 1.f ? 0 : (x < -1.f ? M_PI : acosf(x)); }
-xm_inline double Acos(double  x){ return x > 1. ? 0 : (x < -1. ? M_PI : xm::acos(x)); }
+//xm_inline float Acos(float  x){ return x > 1.f ? 0 : (x < -1.f ? XM_PI : acosf(x)); }
+xm_inline double Acos(double  x){ return x > 1. ? 0 : (x < -1. ? XM_PI : xm::acos(x)); }
 
 template<class T, class T1, class T2> 
 xm_inline T clamp(const T& x, const T1& xmin, const T2& xmax) { if(x < xmin) return xmin; if(x > xmax) return xmax; return x; }

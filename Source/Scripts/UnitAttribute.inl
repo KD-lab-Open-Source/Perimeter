@@ -1,99 +1,99 @@
 enum terBelligerent
 {
-	BELLIGERENT_NONE, // Любая
-	BELLIGERENT_EXODUS0, // Исходники 1
-	BELLIGERENT_EXODUS1, // Исходники 2
-	BELLIGERENT_HARKBACKHOOD0, // Возвратники 1
-	BELLIGERENT_HARKBACKHOOD1, // Возвратники 2
-	BELLIGERENT_EMPIRE0, // Империя 1
-	BELLIGERENT_EMPIRE1, // Империя 2
-	BELLIGERENT_EMPIRE_VICE, // Имперский наместник
+	BELLIGERENT_NONE, // Р›СЋР±Р°СЏ
+	BELLIGERENT_EXODUS0, // РСЃС…РѕРґРЅРёРєРё 1
+	BELLIGERENT_EXODUS1, // РСЃС…РѕРґРЅРёРєРё 2
+	BELLIGERENT_HARKBACKHOOD0, // Р’РѕР·РІСЂР°С‚РЅРёРєРё 1
+	BELLIGERENT_HARKBACKHOOD1, // Р’РѕР·РІСЂР°С‚РЅРёРєРё 2
+	BELLIGERENT_EMPIRE0, // РРјРїРµСЂРёСЏ 1
+	BELLIGERENT_EMPIRE1, // РРјРїРµСЂРёСЏ 2
+	BELLIGERENT_EMPIRE_VICE, // РРјРїРµСЂСЃРєРёР№ РЅР°РјРµСЃС‚РЅРёРє
 
-	// АДДОН
-	BELLIGERENT_EXODUS2, // Исходники 1
-	BELLIGERENT_EXODUS3, // Исходники 2
-	BELLIGERENT_EXODUS4, // Исходники 3
-	BELLIGERENT_EMPIRE2, // Имперский наместник 1
-	BELLIGERENT_EMPIRE3, // Имперский наместник 2
-	BELLIGERENT_EMPIRE4  // Имперский наместник 3
+	// РђР”Р”РћРќ
+	BELLIGERENT_EXODUS2, // РСЃС…РѕРґРЅРёРєРё 1
+	BELLIGERENT_EXODUS3, // РСЃС…РѕРґРЅРёРєРё 2
+	BELLIGERENT_EXODUS4, // РСЃС…РѕРґРЅРёРєРё 3
+	BELLIGERENT_EMPIRE2, // РРјРїРµСЂСЃРєРёР№ РЅР°РјРµСЃС‚РЅРёРє 1
+	BELLIGERENT_EMPIRE3, // РРјРїРµСЂСЃРєРёР№ РЅР°РјРµСЃС‚РЅРёРє 2
+	BELLIGERENT_EMPIRE4  // РРјРїРµСЂСЃРєРёР№ РЅР°РјРµСЃС‚РЅРёРє 3
 };
 
 enum terUnitAttributeID
 {
-	UNIT_ATTRIBUTE_ANY = -2, // Любой
-	UNIT_ATTRIBUTE_NONE = -1, // Никто 
+	UNIT_ATTRIBUTE_ANY = -2, // Р›СЋР±РѕР№
+	UNIT_ATTRIBUTE_NONE = -1, // РќРёРєС‚Рѕ 
 
 	///////////////////////////////////////
-	// Сначала строения - 
-	// иды используются для индексирования.
-	// В порядке распределения энергии.
+	// РЎРЅР°С‡Р°Р»Р° СЃС‚СЂРѕРµРЅРёСЏ - 
+	// РёРґС‹ РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ РґР»СЏ РёРЅРґРµРєСЃРёСЂРѕРІР°РЅРёСЏ.
+	// Р’ РїРѕСЂСЏРґРєРµ СЂР°СЃРїСЂРµРґРµР»РµРЅРёСЏ СЌРЅРµСЂРіРёРё.
 	///////////////////////////////////////
-	UNIT_ATTRIBUTE_CORE, // Ядро
-	// - единственный, производящий энергию
-	UNIT_ATTRIBUTE_RELAY,   // Трансмиттер
-	// - последний, транслирующий энергию
-	UNIT_ATTRIBUTE_COLLECTOR, // Коллектор
+	UNIT_ATTRIBUTE_CORE, // РЇРґСЂРѕ
+	// - РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№, РїСЂРѕРёР·РІРѕРґСЏС‰РёР№ СЌРЅРµСЂРіРёСЋ
+	UNIT_ATTRIBUTE_RELAY,   // РўСЂР°РЅСЃРјРёС‚С‚РµСЂ
+	// - РїРѕСЃР»РµРґРЅРёР№, С‚СЂР°РЅСЃР»РёСЂСѓСЋС‰РёР№ СЌРЅРµСЂРіРёСЋ
+	UNIT_ATTRIBUTE_COLLECTOR, // РљРѕР»Р»РµРєС‚РѕСЂ
 
-	UNIT_ATTRIBUTE_SOLDIER_PLANT, // Завод по производству Солдат
-	UNIT_ATTRIBUTE_OFFICER_PLANT, // Завод по производству Офицеров
-	UNIT_ATTRIBUTE_TECHNIC_PLANT, // Завод по производству Техников
+	UNIT_ATTRIBUTE_SOLDIER_PLANT, // Р—Р°РІРѕРґ РїРѕ РїСЂРѕРёР·РІРѕРґСЃС‚РІСѓ РЎРѕР»РґР°С‚
+	UNIT_ATTRIBUTE_OFFICER_PLANT, // Р—Р°РІРѕРґ РїРѕ РїСЂРѕРёР·РІРѕРґСЃС‚РІСѓ РћС„РёС†РµСЂРѕРІ
+	UNIT_ATTRIBUTE_TECHNIC_PLANT, // Р—Р°РІРѕРґ РїРѕ РїСЂРѕРёР·РІРѕРґСЃС‚РІСѓ РўРµС…РЅРёРєРѕРІ
 
-	UNIT_ATTRIBUTE_COMMANDER, // Командный центр
+	UNIT_ATTRIBUTE_COMMANDER, // РљРѕРјР°РЅРґРЅС‹Р№ С†РµРЅС‚СЂ
 
 	//  Stations
-	UNIT_ATTRIBUTE_LASER_STATION1, // Лаборатория лазерного оружия Уровень 1
-	UNIT_ATTRIBUTE_ROCKET_STATION1, // Лаборатория ракетного оружия Уровень 1
-	UNIT_ATTRIBUTE_BOMB_STATION1, // Лаборатория бомбового оружия Уровень 1
-	UNIT_ATTRIBUTE_FLY_STATION1, // Лаборатория летной технологии Уровень 1
-	UNIT_ATTRIBUTE_SUBTERRA_STATION1, // Лаборатория подземной технологии Уровень 1
-	UNIT_ATTRIBUTE_ELECTRO_STATION1, // АДДОН Лаборатория электрического оружия Уровень 1
+	UNIT_ATTRIBUTE_LASER_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р»Р°Р·РµСЂРЅРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 1
+	UNIT_ATTRIBUTE_ROCKET_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ СЂР°РєРµС‚РЅРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 1
+	UNIT_ATTRIBUTE_BOMB_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р±РѕРјР±РѕРІРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 1
+	UNIT_ATTRIBUTE_FLY_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р»РµС‚РЅРѕР№ С‚РµС…РЅРѕР»РѕРіРёРё РЈСЂРѕРІРµРЅСЊ 1
+	UNIT_ATTRIBUTE_SUBTERRA_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РїРѕРґР·РµРјРЅРѕР№ С‚РµС…РЅРѕР»РѕРіРёРё РЈСЂРѕРІРµРЅСЊ 1
+	UNIT_ATTRIBUTE_ELECTRO_STATION1, // РђР”Р”РћРќ Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ СЌР»РµРєС‚СЂРёС‡РµСЃРєРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 1
 
-	UNIT_ATTRIBUTE_EXODUS_STATION1, // Лаборатория Исходников Уровень 1
-	UNIT_ATTRIBUTE_EMPIRE_STATION1, // Лаборатория Империи Уровень 1
-	UNIT_ATTRIBUTE_HARKBACK_STATION1, // Лаборатория Возвратникиков Уровень 1
+	UNIT_ATTRIBUTE_EXODUS_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РСЃС…РѕРґРЅРёРєРѕРІ РЈСЂРѕРІРµРЅСЊ 1
+	UNIT_ATTRIBUTE_EMPIRE_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РРјРїРµСЂРёРё РЈСЂРѕРІРµРЅСЊ 1
+	UNIT_ATTRIBUTE_HARKBACK_STATION1, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р’РѕР·РІСЂР°С‚РЅРёРєРёРєРѕРІ РЈСЂРѕРІРµРЅСЊ 1
 
-	UNIT_ATTRIBUTE_LASER_STATION2, // Лаборатория лазерного оружия Уровень 2
-	UNIT_ATTRIBUTE_ROCKET_STATION2, // Лаборатория ракетного оружия Уровень 2
-	UNIT_ATTRIBUTE_BOMB_STATION2, // Лаборатория бомбового оружия Уровень 2
-	UNIT_ATTRIBUTE_FLY_STATION2, // Лаборатория летной технологии Уровень 2
-	UNIT_ATTRIBUTE_SUBTERRA_STATION2, // Лаборатория подземной технологии Уровень 2
-	UNIT_ATTRIBUTE_ELECTRO_STATION2, // АДДОН Лаборатория электрического оружия Уровень 2
+	UNIT_ATTRIBUTE_LASER_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р»Р°Р·РµСЂРЅРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 2
+	UNIT_ATTRIBUTE_ROCKET_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ СЂР°РєРµС‚РЅРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 2
+	UNIT_ATTRIBUTE_BOMB_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р±РѕРјР±РѕРІРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 2
+	UNIT_ATTRIBUTE_FLY_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р»РµС‚РЅРѕР№ С‚РµС…РЅРѕР»РѕРіРёРё РЈСЂРѕРІРµРЅСЊ 2
+	UNIT_ATTRIBUTE_SUBTERRA_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РїРѕРґР·РµРјРЅРѕР№ С‚РµС…РЅРѕР»РѕРіРёРё РЈСЂРѕРІРµРЅСЊ 2
+	UNIT_ATTRIBUTE_ELECTRO_STATION2, // РђР”Р”РћРќ Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ СЌР»РµРєС‚СЂРёС‡РµСЃРєРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 2
 
-   	UNIT_ATTRIBUTE_EXODUS_STATION2, // Лаборатория Исходников Уровень 2
-	UNIT_ATTRIBUTE_EMPIRE_STATION2, // Лаборатория Империи Уровень 2
-	UNIT_ATTRIBUTE_HARKBACK_STATION2, // Лаборатория Возвратникиков Уровень 2
+   	UNIT_ATTRIBUTE_EXODUS_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РСЃС…РѕРґРЅРёРєРѕРІ РЈСЂРѕРІРµРЅСЊ 2
+	UNIT_ATTRIBUTE_EMPIRE_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РРјРїРµСЂРёРё РЈСЂРѕРІРµРЅСЊ 2
+	UNIT_ATTRIBUTE_HARKBACK_STATION2, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р’РѕР·РІСЂР°С‚РЅРёРєРёРєРѕРІ РЈСЂРѕРІРµРЅСЊ 2
 
-	UNIT_ATTRIBUTE_LASER_STATION3, // Лаборатория лазерного оружия Уровень 3
-	UNIT_ATTRIBUTE_ROCKET_STATION3, // Лаборатория ракетного оружия Уровень 3
-	UNIT_ATTRIBUTE_BOMB_STATION3, // Лаборатория бомбового оружия Уровень 3
-	UNIT_ATTRIBUTE_ELECTRO_STATION3, // АДДОН Лаборатория электрического оружия Уровень 3
+	UNIT_ATTRIBUTE_LASER_STATION3, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р»Р°Р·РµСЂРЅРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 3
+	UNIT_ATTRIBUTE_ROCKET_STATION3, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ СЂР°РєРµС‚РЅРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 3
+	UNIT_ATTRIBUTE_BOMB_STATION3, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р±РѕРјР±РѕРІРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 3
+	UNIT_ATTRIBUTE_ELECTRO_STATION3, // РђР”Р”РћРќ Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ СЌР»РµРєС‚СЂРёС‡РµСЃРєРѕРіРѕ РѕСЂСѓР¶РёСЏ РЈСЂРѕРІРµРЅСЊ 3
 	
-	UNIT_ATTRIBUTE_EXODUS_STATION3, // Лаборатория Исходников Уровень 3
-	UNIT_ATTRIBUTE_EMPIRE_STATION3, // Лаборатория Империи Уровень 3
-	UNIT_ATTRIBUTE_HARKBACK_STATION3, // Лаборатория Возвратникиков Уровень 3
+	UNIT_ATTRIBUTE_EXODUS_STATION3, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РСЃС…РѕРґРЅРёРєРѕРІ РЈСЂРѕРІРµРЅСЊ 3
+	UNIT_ATTRIBUTE_EMPIRE_STATION3, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РРјРїРµСЂРёРё РЈСЂРѕРІРµРЅСЊ 3
+	UNIT_ATTRIBUTE_HARKBACK_STATION3, // Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ Р’РѕР·РІСЂР°С‚РЅРёРєРёРєРѕРІ РЈСЂРѕРІРµРЅСЊ 3
 	// End of structures after this enum
 
-	UNIT_ATTRIBUTE_CORRIDOR_ALPHA, // Коридор Альфа
-	UNIT_ATTRIBUTE_CORRIDOR_OMEGA, // Коридор Омега
+	UNIT_ATTRIBUTE_CORRIDOR_ALPHA, // РљРѕСЂРёРґРѕСЂ РђР»СЊС„Р°
+	UNIT_ATTRIBUTE_CORRIDOR_OMEGA, // РљРѕСЂРёРґРѕСЂ РћРјРµРіР°
 
-	UNIT_ATTRIBUTE_STATIC_BOMB, // Строение-бомба
+	UNIT_ATTRIBUTE_STATIC_BOMB, // РЎС‚СЂРѕРµРЅРёРµ-Р±РѕРјР±Р°
 
 	//  Static Gun 
-	UNIT_ATTRIBUTE_LASER_CANNON, // Стационарная лазерная пушка
-	UNIT_ATTRIBUTE_ELECTRO_CANNON, // Стационарная электрическая пушка
-	UNIT_ATTRIBUTE_ROCKET_LAUNCHER, // Стационарная ракетная пушка
-	UNIT_ATTRIBUTE_GUN_HOWITZER, // Стационарная гаубица
-	UNIT_ATTRIBUTE_GUN_SUBCHASER, // Стационарная установка против подземных юнитов
+	UNIT_ATTRIBUTE_LASER_CANNON, // РЎС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ Р»Р°Р·РµСЂРЅР°СЏ РїСѓС€РєР°
+	UNIT_ATTRIBUTE_ELECTRO_CANNON, // РЎС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ СЌР»РµРєС‚СЂРёС‡РµСЃРєР°СЏ РїСѓС€РєР°
+	UNIT_ATTRIBUTE_ROCKET_LAUNCHER, // РЎС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ СЂР°РєРµС‚РЅР°СЏ РїСѓС€РєР°
+	UNIT_ATTRIBUTE_GUN_HOWITZER, // РЎС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ РіР°СѓР±РёС†Р°
+	UNIT_ATTRIBUTE_GUN_SUBCHASER, // РЎС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ СѓСЃС‚Р°РЅРѕРІРєР° РїСЂРѕС‚РёРІ РїРѕРґР·РµРјРЅС‹С… СЋРЅРёС‚РѕРІ
 
-	UNIT_ATTRIBUTE_GUN_SCUM_DISRUPTOR, // стационарная установка для запуска возмущений поверхности
-	UNIT_ATTRIBUTE_GUN_BALLISTIC, // Стационарная установка для запуска баллистической ракеты
-	UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR, // Стационарная установка для вызова скверны в заданной точке
+	UNIT_ATTRIBUTE_GUN_SCUM_DISRUPTOR, // СЃС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ СѓСЃС‚Р°РЅРѕРІРєР° РґР»СЏ Р·Р°РїСѓСЃРєР° РІРѕР·РјСѓС‰РµРЅРёР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё
+	UNIT_ATTRIBUTE_GUN_BALLISTIC, // РЎС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ СѓСЃС‚Р°РЅРѕРІРєР° РґР»СЏ Р·Р°РїСѓСЃРєР° Р±Р°Р»Р»РёСЃС‚РёС‡РµСЃРєРѕР№ СЂР°РєРµС‚С‹
+	UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR, // РЎС‚Р°С†РёРѕРЅР°СЂРЅР°СЏ СѓСЃС‚Р°РЅРѕРІРєР° РґР»СЏ РІС‹Р·РѕРІР° СЃРєРІРµСЂРЅС‹ РІ Р·Р°РґР°РЅРЅРѕР№ С‚РѕС‡РєРµ
 	
-	UNIT_ATTRIBUTE_SCUM_SPOT, // Скам спот
-	UNIT_ATTRIBUTE_SCUM_SPOT2, // Скам спот 2
-	UNIT_ATTRIBUTE_SCUM_SPOT3, // Скам спот 3
-	UNIT_ATTRIBUTE_SCUM_SPOT4, // Скам спот 4
-	UNIT_ATTRIBUTE_BLACK_HOLE, // Черная дыра
+	UNIT_ATTRIBUTE_SCUM_SPOT, // РЎРєР°Рј СЃРїРѕС‚
+	UNIT_ATTRIBUTE_SCUM_SPOT2, // РЎРєР°Рј СЃРїРѕС‚ 2
+	UNIT_ATTRIBUTE_SCUM_SPOT3, // РЎРєР°Рј СЃРїРѕС‚ 3
+	UNIT_ATTRIBUTE_SCUM_SPOT4, // РЎРєР°Рј СЃРїРѕС‚ 4
+	UNIT_ATTRIBUTE_BLACK_HOLE, // Р§РµСЂРЅР°СЏ РґС‹СЂР°
 
 	UNIT_ATTRIBUTE_STRUCTURE_MAX, // --------------------------
 	
@@ -101,72 +101,72 @@ enum terUnitAttributeID
 	////////////////////////////
 	
 	//  Builders
-	UNIT_ATTRIBUTE_FRAME, // Фрейм
+	UNIT_ATTRIBUTE_FRAME, // Р¤СЂРµР№Рј
 
-	UNIT_ATTRIBUTE_TERRAIN_MASTER, // Бригадир
-	UNIT_ATTRIBUTE_TRUCK, // Ковш
+	UNIT_ATTRIBUTE_TERRAIN_MASTER, // Р‘СЂРёРіР°РґРёСЂ
+	UNIT_ATTRIBUTE_TRUCK, // РљРѕРІС€
 
-	UNIT_ATTRIBUTE_BUILD_MASTER, // Прораб
-	UNIT_ATTRIBUTE_BUILDING_BLOCK, // Блок
+	UNIT_ATTRIBUTE_BUILD_MASTER, // РџСЂРѕСЂР°Р±
+	UNIT_ATTRIBUTE_BUILDING_BLOCK, // Р‘Р»РѕРє
 
 	//  Legion
-	UNIT_ATTRIBUTE_SOLDIER, // Базовый солдат
-	UNIT_ATTRIBUTE_OFFICER, // Базовый офицер
-	UNIT_ATTRIBUTE_TECHNIC, // Базовый техник
+	UNIT_ATTRIBUTE_SOLDIER, // Р‘Р°Р·РѕРІС‹Р№ СЃРѕР»РґР°С‚
+	UNIT_ATTRIBUTE_OFFICER, // Р‘Р°Р·РѕРІС‹Р№ РѕС„РёС†РµСЂ
+	UNIT_ATTRIBUTE_TECHNIC, // Р‘Р°Р·РѕРІС‹Р№ С‚РµС…РЅРёРє
 
-	// Первый производный юнит
-	UNIT_ATTRIBUTE_SNIPER, // Снайпер
-	UNIT_ATTRIBUTE_ROCKER, // Рокер
-	UNIT_ATTRIBUTE_MORTAR, // Мортар
-	UNIT_ATTRIBUTE_CEPTOR, // Цептор
-	UNIT_ATTRIBUTE_GYROID, // Гироид
-	UNIT_ATTRIBUTE_WARGON, // Варгон
-	UNIT_ATTRIBUTE_BOMBER, // Бомбер
-	UNIT_ATTRIBUTE_R_PROJECTOR, // Р-Проектор
-	UNIT_ATTRIBUTE_UNSEEN, // Невидимка
+	// РџРµСЂРІС‹Р№ РїСЂРѕРёР·РІРѕРґРЅС‹Р№ СЋРЅРёС‚
+	UNIT_ATTRIBUTE_SNIPER, // РЎРЅР°Р№РїРµСЂ
+	UNIT_ATTRIBUTE_ROCKER, // Р РѕРєРµСЂ
+	UNIT_ATTRIBUTE_MORTAR, // РњРѕСЂС‚Р°СЂ
+	UNIT_ATTRIBUTE_CEPTOR, // Р¦РµРїС‚РѕСЂ
+	UNIT_ATTRIBUTE_GYROID, // Р“РёСЂРѕРёРґ
+	UNIT_ATTRIBUTE_WARGON, // Р’Р°СЂРіРѕРЅ
+	UNIT_ATTRIBUTE_BOMBER, // Р‘РѕРјР±РµСЂ
+	UNIT_ATTRIBUTE_R_PROJECTOR, // Р -РџСЂРѕРµРєС‚РѕСЂ
+	UNIT_ATTRIBUTE_UNSEEN, // РќРµРІРёРґРёРјРєР°
 
-	UNIT_ATTRIBUTE_STRAFER, // Стрейфер
-	UNIT_ATTRIBUTE_DISINTEGRATOR, // Дизинтегратор
-	UNIT_ATTRIBUTE_SCUM_SPLITTER, // Сплиттер
-	UNIT_ATTRIBUTE_SCUM_TWISTER, // Твистер
-	UNIT_ATTRIBUTE_SCUM_HEATER, // Грелка
-	UNIT_ATTRIBUTE_SCUM_THROWER, // Метатель
-	UNIT_ATTRIBUTE_EXTIRPATOR, // Икстирпатор
+	UNIT_ATTRIBUTE_STRAFER, // РЎС‚СЂРµР№С„РµСЂ
+	UNIT_ATTRIBUTE_DISINTEGRATOR, // Р”РёР·РёРЅС‚РµРіСЂР°С‚РѕСЂ
+	UNIT_ATTRIBUTE_SCUM_SPLITTER, // РЎРїР»РёС‚С‚РµСЂ
+	UNIT_ATTRIBUTE_SCUM_TWISTER, // РўРІРёСЃС‚РµСЂ
+	UNIT_ATTRIBUTE_SCUM_HEATER, // Р“СЂРµР»РєР°
+	UNIT_ATTRIBUTE_SCUM_THROWER, // РњРµС‚Р°С‚РµР»СЊ
+	UNIT_ATTRIBUTE_EXTIRPATOR, // РРєСЃС‚РёСЂРїР°С‚РѕСЂ
 
-	UNIT_ATTRIBUTE_LEECH, // Соска
-	UNIT_ATTRIBUTE_LEAMO, // Лимо
+	UNIT_ATTRIBUTE_LEECH, // РЎРѕСЃРєР°
+	UNIT_ATTRIBUTE_LEAMO, // Р›РёРјРѕ
 
-	UNIT_ATTRIBUTE_SCUMER, // Скамер
-	UNIT_ATTRIBUTE_DIGGER, // Диггер
-	UNIT_ATTRIBUTE_PIERCER, // Пирсер
+	UNIT_ATTRIBUTE_SCUMER, // РЎРєР°РјРµСЂ
+	UNIT_ATTRIBUTE_DIGGER, // Р”РёРіРіРµСЂ
+	UNIT_ATTRIBUTE_PIERCER, // РџРёСЂСЃРµСЂ
 
-	// мутации в скверну
-	UNIT_ATTRIBUTE_FILTH_SPOT0, // Сквад-скверна Муравьи
-	UNIT_ATTRIBUTE_FILTH_SPOT1, // Сквад-скверна Рыба
-	UNIT_ATTRIBUTE_FILTH_SPOT2, // Сквад-скверна Осы
-	UNIT_ATTRIBUTE_FILTH_SPOT3, // Сквад-скверна Червяк
+	// РјСѓС‚Р°С†РёРё РІ СЃРєРІРµСЂРЅСѓ
+	UNIT_ATTRIBUTE_FILTH_SPOT0, // РЎРєРІР°Рґ-СЃРєРІРµСЂРЅР° РњСѓСЂР°РІСЊРё
+	UNIT_ATTRIBUTE_FILTH_SPOT1, // РЎРєРІР°Рґ-СЃРєРІРµСЂРЅР° Р С‹Р±Р°
+	UNIT_ATTRIBUTE_FILTH_SPOT2, // РЎРєРІР°Рґ-СЃРєРІРµСЂРЅР° РћСЃС‹
+	UNIT_ATTRIBUTE_FILTH_SPOT3, // РЎРєРІР°Рґ-СЃРєРІРµСЂРЅР° Р§РµСЂРІСЏРє
 
-	UNIT_ATTRIBUTE_EFLAIR,		// АДДОН Eflair
-	UNIT_ATTRIBUTE_IMPALER,		// АДДОН Impaler
-	UNIT_ATTRIBUTE_CONDUCTOR,	// АДДОН Conductor
+	UNIT_ATTRIBUTE_EFLAIR,		// РђР”Р”РћРќ Eflair
+	UNIT_ATTRIBUTE_IMPALER,		// РђР”Р”РћРќ Impaler
+	UNIT_ATTRIBUTE_CONDUCTOR,	// РђР”Р”РћРќ Conductor
 
 	UNIT_ATTRIBUTE_LEGIONARY_MAX, // --------------------------
 	
-	UNIT_ATTRIBUTE_SQUAD, // Сквад
+	UNIT_ATTRIBUTE_SQUAD, // РЎРєРІР°Рґ
 
 	//  Filth
-	UNIT_ATTRIBUTE_FILTH_ANTS, // Скверна Муравей
-	UNIT_ATTRIBUTE_FILTH_WASP, // Скверна Оса
-	UNIT_ATTRIBUTE_FILTH_WASP_EYE, //Глаза как у осы
-	UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD, // Скверна Змей (голова)
-	UNIT_ATTRIBUTE_FILTH_DRAGON_BODY, // Скверна Змей (тело)
-	UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL, // Скверна Змей (хвост)
-	UNIT_ATTRIBUTE_FILTH_GHOST, // Скверна Привидение
-	UNIT_ATTRIBUTE_FILTH_EYE, // Скверна Глаз
-	UNIT_ATTRIBUTE_FILTH_CROW, // Скверна Птица
-	UNIT_ATTRIBUTE_FILTH_DAEMON, // Скверна Демон
-	UNIT_ATTRIBUTE_FILTH_RAT, // Скверна Крыса
-	UNIT_ATTRIBUTE_FILTH_WORM, // Скверна Червь
+	UNIT_ATTRIBUTE_FILTH_ANTS, // РЎРєРІРµСЂРЅР° РњСѓСЂР°РІРµР№
+	UNIT_ATTRIBUTE_FILTH_WASP, // РЎРєРІРµСЂРЅР° РћСЃР°
+	UNIT_ATTRIBUTE_FILTH_WASP_EYE, //Р“Р»Р°Р·Р° РєР°Рє Сѓ РѕСЃС‹
+	UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD, // РЎРєРІРµСЂРЅР° Р—РјРµР№ (РіРѕР»РѕРІР°)
+	UNIT_ATTRIBUTE_FILTH_DRAGON_BODY, // РЎРєРІРµСЂРЅР° Р—РјРµР№ (С‚РµР»Рѕ)
+	UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL, // РЎРєРІРµСЂРЅР° Р—РјРµР№ (С…РІРѕСЃС‚)
+	UNIT_ATTRIBUTE_FILTH_GHOST, // РЎРєРІРµСЂРЅР° РџСЂРёРІРёРґРµРЅРёРµ
+	UNIT_ATTRIBUTE_FILTH_EYE, // РЎРєРІРµСЂРЅР° Р“Р»Р°Р·
+	UNIT_ATTRIBUTE_FILTH_CROW, // РЎРєРІРµСЂРЅР° РџС‚РёС†Р°
+	UNIT_ATTRIBUTE_FILTH_DAEMON, // РЎРєРІРµСЂРЅР° Р”РµРјРѕРЅ
+	UNIT_ATTRIBUTE_FILTH_RAT, // РЎРєРІРµСЂРЅР° РљСЂС‹СЃР°
+	UNIT_ATTRIBUTE_FILTH_WORM, // РЎРєРІРµСЂРЅР° Р§РµСЂРІСЊ
 	UNIT_ATTRIBUTE_FILTH_SHARK,
 	UNIT_ATTRIBUTE_FILTH_VOLCANO,
 	UNIT_ATTRIBUTE_FILTH_VOLCANO_SCUM_DISRUPTOR,
@@ -176,17 +176,17 @@ enum terUnitAttributeID
 	UNIT_ATTRIBUTE_FILTH_DRAGON_BODY2,
 	UNIT_ATTRIBUTE_FILTH_DRAGON_TAIL2,
 	//new filth
-	UNIT_ATTRIBUTE_FILTH_A_ANTS, //Новый муравей
-	UNIT_ATTRIBUTE_FILTH_A_CROW, //Новая ворона
-	UNIT_ATTRIBUTE_FILTH_A_DAEMON, //Новый демон
-	UNIT_ATTRIBUTE_FILTH_A_DRAGON_HEAD,//Новый дракон
+	UNIT_ATTRIBUTE_FILTH_A_ANTS, //РќРѕРІС‹Р№ РјСѓСЂР°РІРµР№
+	UNIT_ATTRIBUTE_FILTH_A_CROW, //РќРѕРІР°СЏ РІРѕСЂРѕРЅР°
+	UNIT_ATTRIBUTE_FILTH_A_DAEMON, //РќРѕРІС‹Р№ РґРµРјРѕРЅ
+	UNIT_ATTRIBUTE_FILTH_A_DRAGON_HEAD,//РќРѕРІС‹Р№ РґСЂР°РєРѕРЅ
 	UNIT_ATTRIBUTE_FILTH_A_DRAGON_BODY,
 	UNIT_ATTRIBUTE_FILTH_A_DRAGON_TAIL,
-	UNIT_ATTRIBUTE_FILTH_A_EYE, //Новые глаза как у осы
-	UNIT_ATTRIBUTE_FILTH_A_RAT, //Новые крысы
-	UNIT_ATTRIBUTE_FILTH_A_SPIDER, //Новые пауки
-	UNIT_ATTRIBUTE_FILTH_A_WASP, //Новые осы
-	UNIT_ATTRIBUTE_FILTH_A_WORM, //Новый червь
+	UNIT_ATTRIBUTE_FILTH_A_EYE, //РќРѕРІС‹Рµ РіР»Р°Р·Р° РєР°Рє Сѓ РѕСЃС‹
+	UNIT_ATTRIBUTE_FILTH_A_RAT, //РќРѕРІС‹Рµ РєСЂС‹СЃС‹
+	UNIT_ATTRIBUTE_FILTH_A_SPIDER, //РќРѕРІС‹Рµ РїР°СѓРєРё
+	UNIT_ATTRIBUTE_FILTH_A_WASP, //РќРѕРІС‹Рµ РѕСЃС‹
+	UNIT_ATTRIBUTE_FILTH_A_WORM, //РќРѕРІС‹Р№ С‡РµСЂРІСЊ
 
 	//  Missile
 	UNIT_ATTRIBUTE_CEPTOR_MISSILE,
@@ -446,42 +446,42 @@ enum CommandID
 
 enum terUnitClassType
 {
-	UNIT_CLASS_IGNORE = 0, // Никто
+	UNIT_CLASS_IGNORE = 0, // РќРёРєС‚Рѕ
 
-	UNIT_CLASS_BASE = 1 << 0,  // Базовые
-	UNIT_CLASS_LIGHT = 1 << 1, // Легкие
-	UNIT_CLASS_MEDIUM = 1 << 2, // Средние
-	UNIT_CLASS_HEAVY = 1 << 3, // Тяжелые
-	UNIT_CLASS_AIR = 1 << 4, // Воздушные
-	UNIT_CLASS_AIR_HEAVY = 1 << 5, // Воздушные тяжелые
-	UNIT_CLASS_UNDERGROUND = 1 << 6, // Подземные
+	UNIT_CLASS_BASE = 1 << 0,  // Р‘Р°Р·РѕРІС‹Рµ
+	UNIT_CLASS_LIGHT = 1 << 1, // Р›РµРіРєРёРµ
+	UNIT_CLASS_MEDIUM = 1 << 2, // РЎСЂРµРґРЅРёРµ
+	UNIT_CLASS_HEAVY = 1 << 3, // РўСЏР¶РµР»С‹Рµ
+	UNIT_CLASS_AIR = 1 << 4, // Р’РѕР·РґСѓС€РЅС‹Рµ
+	UNIT_CLASS_AIR_HEAVY = 1 << 5, // Р’РѕР·РґСѓС€РЅС‹Рµ С‚СЏР¶РµР»С‹Рµ
+	UNIT_CLASS_UNDERGROUND = 1 << 6, // РџРѕРґР·РµРјРЅС‹Рµ
 
-	UNIT_CLASS_STRUCTURE = 1 << 7, // Здания
-	UNIT_CLASS_STRUCTURE_GUN = 1 << 8, // Военные здания
-	UNIT_CLASS_STRUCTURE_SPECIAL = 1 << 9, // Спецоружие
-	UNIT_CLASS_STRUCTURE_CORE = 1 << 10, // Ядра
-	UNIT_CLASS_STRUCTURE_ENVIRONMENT = 1 << 11, // Особое здание на мире
+	UNIT_CLASS_STRUCTURE = 1 << 7, // Р—РґР°РЅРёСЏ
+	UNIT_CLASS_STRUCTURE_GUN = 1 << 8, // Р’РѕРµРЅРЅС‹Рµ Р·РґР°РЅРёСЏ
+	UNIT_CLASS_STRUCTURE_SPECIAL = 1 << 9, // РЎРїРµС†РѕСЂСѓР¶РёРµ
+	UNIT_CLASS_STRUCTURE_CORE = 1 << 10, // РЇРґСЂР°
+	UNIT_CLASS_STRUCTURE_ENVIRONMENT = 1 << 11, // РћСЃРѕР±РѕРµ Р·РґР°РЅРёРµ РЅР° РјРёСЂРµ
 
-	UNIT_CLASS_FRAME = 1 << 12, // Фрейм
-	UNIT_CLASS_BUILDER = 1 << 13, // Строитель
-	UNIT_CLASS_TRUCK = 1 << 14, // Ковши
-	UNIT_CLASS_BLOCK = 1 << 15, // Блоки
+	UNIT_CLASS_FRAME = 1 << 12, // Р¤СЂРµР№Рј
+	UNIT_CLASS_BUILDER = 1 << 13, // РЎС‚СЂРѕРёС‚РµР»СЊ
+	UNIT_CLASS_TRUCK = 1 << 14, // РљРѕРІС€Рё
+	UNIT_CLASS_BLOCK = 1 << 15, // Р‘Р»РѕРєРё
 
-	UNIT_CLASS_MISSILE = 1 << 16, // Снаряды
+	UNIT_CLASS_MISSILE = 1 << 16, // РЎРЅР°СЂСЏРґС‹
 
-	UNIT_CLASS_NATURE = 1 << 17, // Деревья
-	UNIT_CLASS_AIR_FILTH = 1 << 18, // Скверна воздушная
-	UNIT_CLASS_GROUND_FILTH = 1 << 19, // Скверна наземная
-	UNIT_CLASS_UNDERGROUND_FILTH = 1 << 20, // Скверна подземная
+	UNIT_CLASS_NATURE = 1 << 17, // Р”РµСЂРµРІСЊСЏ
+	UNIT_CLASS_AIR_FILTH = 1 << 18, // РЎРєРІРµСЂРЅР° РІРѕР·РґСѓС€РЅР°СЏ
+	UNIT_CLASS_GROUND_FILTH = 1 << 19, // РЎРєРІРµСЂРЅР° РЅР°Р·РµРјРЅР°СЏ
+	UNIT_CLASS_UNDERGROUND_FILTH = 1 << 20, // РЎРєРІРµСЂРЅР° РїРѕРґР·РµРјРЅР°СЏ
 
-	UNIT_CLASS_CORRIDOR = 1 << 21, // Коридор
+	UNIT_CLASS_CORRIDOR = 1 << 21, // РљРѕСЂРёРґРѕСЂ
 
-	UNIT_CLASS_GROUND = 1 << 22 // Земля
+	UNIT_CLASS_GROUND = 1 << 22 // Р—РµРјР»СЏ
 };
 
-enum // Автоматические скрипты не допускают дублирования флагов
+enum // РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРёРµ СЃРєСЂРёРїС‚С‹ РЅРµ РґРѕРїСѓСЃРєР°СЋС‚ РґСѓР±Р»РёСЂРѕРІР°РЅРёСЏ С„Р»Р°РіРѕРІ
 {
-	UNIT_CLASS_ALL = -1   // Все
+	UNIT_CLASS_ALL = -1   // Р’СЃРµ
 };
 
 enum terMutationAtomType
@@ -497,9 +497,9 @@ enum terMutationAtomType
 enum terMissionObjectType
 {
 	NATURE_FLAG_NONE = 0,
-	NATURE_FLAG_DESTROY = 1, // Уничтожение
-	NATURE_FLAG_REAL = 2, // Столкновения
-	NATURE_FLAG_LIGHT = 4 // Освещение
+	NATURE_FLAG_DESTROY = 1, // РЈРЅРёС‡С‚РѕР¶РµРЅРёРµ
+	NATURE_FLAG_REAL = 2, // РЎС‚РѕР»РєРЅРѕРІРµРЅРёСЏ
+	NATURE_FLAG_LIGHT = 4 // РћСЃРІРµС‰РµРЅРёРµ
 };
 
 enum terExplosionSchemeType
@@ -522,75 +522,75 @@ enum terLinkEffectIDType
 enum terFilthSpotID
 {
 	FILTH_SPOT_ID_NONE=0,
-	FILTH_SPOT_ID_ANTS, //Муравьи
-	FILTH_SPOT_ID_WASP, //Осы
-	FILTH_SPOT_ID_DRAGON, //Дракон
-	FILTH_SPOT_ID_GHOST, //Приведения
-	FILTH_SPOT_ID_EYE,  //Глаза
-	FILTH_SPOT_ID_CROW, //Вороны
-	FILTH_SPOT_ID_DAEMON, //Демоны
-	FILTH_SPOT_ID_RAT, //Крысы
-	FILTH_SPOT_ID_WORM,// Червь
-	FILTH_SPOT_ID_SHARK, // Акулы
-	FILTH_SPOT_ID_VOLCANO, // Вулкан
-	FILTH_SPOT_ID_ANTS2, //Муравьи2
-	FILTH_SPOT_ID_SNAKE, //Змеи
-	FILTH_SPOT_ID_DRAGON2, //Дракон2
-	FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR,//Вулкан от скамдизраптора
-	FILTH_SPOT_ID_A_ANTS, //Муравьи aant.M3D
-	FILTH_SPOT_ID_A_CROW, //Вороны abird.M3D
-	FILTH_SPOT_ID_A_DAEMON, //Демоны ad_DAEMON.M3D
-	FILTH_SPOT_ID_A_DRAGON, //Дракон adragon_body.M3D adragon_head.M3D adragon_tail.M3D
-	FILTH_SPOT_ID_A_EYE,  //Глаза aeye.M3D
-	FILTH_SPOT_ID_A_RAT, //Крысы arat.M3D
-	FILTH_SPOT_ID_A_SPIDER, //Муравьи2 aspider.M3D aspider1.M3D
-	FILTH_SPOT_ID_A_WASP, //Осы awasp.M3D
-	FILTH_SPOT_ID_A_WORM// Червь aworm.M3D
+	FILTH_SPOT_ID_ANTS, //РњСѓСЂР°РІСЊРё
+	FILTH_SPOT_ID_WASP, //РћСЃС‹
+	FILTH_SPOT_ID_DRAGON, //Р”СЂР°РєРѕРЅ
+	FILTH_SPOT_ID_GHOST, //РџСЂРёРІРµРґРµРЅРёСЏ
+	FILTH_SPOT_ID_EYE,  //Р“Р»Р°Р·Р°
+	FILTH_SPOT_ID_CROW, //Р’РѕСЂРѕРЅС‹
+	FILTH_SPOT_ID_DAEMON, //Р”РµРјРѕРЅС‹
+	FILTH_SPOT_ID_RAT, //РљСЂС‹СЃС‹
+	FILTH_SPOT_ID_WORM,// Р§РµСЂРІСЊ
+	FILTH_SPOT_ID_SHARK, // РђРєСѓР»С‹
+	FILTH_SPOT_ID_VOLCANO, // Р’СѓР»РєР°РЅ
+	FILTH_SPOT_ID_ANTS2, //РњСѓСЂР°РІСЊРё2
+	FILTH_SPOT_ID_SNAKE, //Р—РјРµРё
+	FILTH_SPOT_ID_DRAGON2, //Р”СЂР°РєРѕРЅ2
+	FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR,//Р’СѓР»РєР°РЅ РѕС‚ СЃРєР°РјРґРёР·СЂР°РїС‚РѕСЂР°
+	FILTH_SPOT_ID_A_ANTS, //РњСѓСЂР°РІСЊРё aant.M3D
+	FILTH_SPOT_ID_A_CROW, //Р’РѕСЂРѕРЅС‹ abird.M3D
+	FILTH_SPOT_ID_A_DAEMON, //Р”РµРјРѕРЅС‹ ad_DAEMON.M3D
+	FILTH_SPOT_ID_A_DRAGON, //Р”СЂР°РєРѕРЅ adragon_body.M3D adragon_head.M3D adragon_tail.M3D
+	FILTH_SPOT_ID_A_EYE,  //Р“Р»Р°Р·Р° aeye.M3D
+	FILTH_SPOT_ID_A_RAT, //РљСЂС‹СЃС‹ arat.M3D
+	FILTH_SPOT_ID_A_SPIDER, //РњСѓСЂР°РІСЊРё2 aspider.M3D aspider1.M3D
+	FILTH_SPOT_ID_A_WASP, //РћСЃС‹ awasp.M3D
+	FILTH_SPOT_ID_A_WORM// Р§РµСЂРІСЊ aworm.M3D
 };
 
 enum terFilthAttackType
 {
-	//Понятно что в битовую маску должно превратиться потом
-	FILTH_ATTACK_ALL=0,		//Атаковать всех
-	FILTH_ATTACK_PLAYER=1,  //Атаковать игрока
-	FILTH_ATTACK_AI=2,		//Атаковать AI
-	FILTH_ATTACK_NOSELF=3,	//Атаковать не себя
-	FILTH_ATTACK_NOSELF_NOWORLD=4//Спец. атака оружия возвратников.
-	//Атакует противника, из объектов принадлежащих миру атакует ттолько споты.
+	//РџРѕРЅСЏС‚РЅРѕ С‡С‚Рѕ РІ Р±РёС‚РѕРІСѓСЋ РјР°СЃРєСѓ РґРѕР»Р¶РЅРѕ РїСЂРµРІСЂР°С‚РёС‚СЊСЃСЏ РїРѕС‚РѕРј
+	FILTH_ATTACK_ALL=0,		//РђС‚Р°РєРѕРІР°С‚СЊ РІСЃРµС…
+	FILTH_ATTACK_PLAYER=1,  //РђС‚Р°РєРѕРІР°С‚СЊ РёРіСЂРѕРєР°
+	FILTH_ATTACK_AI=2,		//РђС‚Р°РєРѕРІР°С‚СЊ AI
+	FILTH_ATTACK_NOSELF=3,	//РђС‚Р°РєРѕРІР°С‚СЊ РЅРµ СЃРµР±СЏ
+	FILTH_ATTACK_NOSELF_NOWORLD=4//РЎРїРµС†. Р°С‚Р°РєР° РѕСЂСѓР¶РёСЏ РІРѕР·РІСЂР°С‚РЅРёРєРѕРІ.
+	//РђС‚Р°РєСѓРµС‚ РїСЂРѕС‚РёРІРЅРёРєР°, РёР· РѕР±СЉРµРєС‚РѕРІ РїСЂРёРЅР°РґР»РµР¶Р°С‰РёС… РјРёСЂСѓ Р°С‚Р°РєСѓРµС‚ С‚С‚РѕР»СЊРєРѕ СЃРїРѕС‚С‹.
 };
 
 enum ChooseSquadID
 {
-	CHOOSE_SQUAD_1, // сквад 1
-	CHOOSE_SQUAD_2, // сквад 2
-	CHOOSE_SQUAD_3, // сквад 3
-	CHOOSE_SQUAD_4, // сквад 4
-	CHOOSE_SQUAD_5, // сквад 5
-	CHOOSE_SQUAD_SMALLEST, // самый маленький сквад 
-	CHOOSE_SQUAD_LARGEST, // самый большой сквад 
-	CHOOSE_SQUAD_NEAREST_TO_FRAME, // ближайший к фрейму сквад
-	CHOOSE_SQUAD_FARTHEST_FROM_FRAME // самый дальний от фрейма сквад
+	CHOOSE_SQUAD_1, // СЃРєРІР°Рґ 1
+	CHOOSE_SQUAD_2, // СЃРєРІР°Рґ 2
+	CHOOSE_SQUAD_3, // СЃРєРІР°Рґ 3
+	CHOOSE_SQUAD_4, // СЃРєРІР°Рґ 4
+	CHOOSE_SQUAD_5, // СЃРєРІР°Рґ 5
+	CHOOSE_SQUAD_SMALLEST, // СЃР°РјС‹Р№ РјР°Р»РµРЅСЊРєРёР№ СЃРєРІР°Рґ 
+	CHOOSE_SQUAD_LARGEST, // СЃР°РјС‹Р№ Р±РѕР»СЊС€РѕР№ СЃРєРІР°Рґ 
+	CHOOSE_SQUAD_NEAREST_TO_FRAME, // Р±Р»РёР¶Р°Р№С€РёР№ Рє С„СЂРµР№РјСѓ СЃРєРІР°Рґ
+	CHOOSE_SQUAD_FARTHEST_FROM_FRAME // СЃР°РјС‹Р№ РґР°Р»СЊРЅРёР№ РѕС‚ С„СЂРµР№РјР° СЃРєРІР°Рґ
 };
 
 enum PlacementStrategy
 {
-	PLACEMENT_STRATEGY_CORE, // Ядро -> ближе к фрейму
-	PLACEMENT_STRATEGY_CORE_OFFENSIVE, // Ядро -> ближе к врагу
-	PLACEMENT_STRATEGY_CORE_CATCHING, // Ядро -> ближе к нейтральному зданию
-	PLACEMENT_STRATEGY_CORE_CATCHING_CORRIDOR, // Ядро -> ближе к коридору
-	PLACEMENT_STRATEGY_CORE_AWAY_FROM_ENEMY, // Ядро -> дальше от врага
-	PLACEMENT_STRATEGY_PLANT, // Завод -> ближе к фрейму
-	PLACEMENT_STRATEGY_COMMANDER, // Командный центр -> ближе к фрейму, 5 зданий
-	PLACEMENT_STRATEGY_STATION, // Станция -> ближе к фрейму, одно здание
-	PLACEMENT_STRATEGY_GUN, // Пушка -> ближе к врагу или скверне
-	PLACEMENT_STRATEGY_GUN_TO_ENEMY, // Пушка -> ближе к врагу
-	PLACEMENT_STRATEGY_GUN_TO_FILTH, // Пушка -> ближе к скверне
-	PLACEMENT_STRATEGY_GUN_TO_ENEMY_BUILDING, // В радиус действия пушки должо попадать здание врага
-	PLACEMENT_STRATEGY_SPECIAL_WEAPON // Спец.оружие -> ближе к врагу, одно здание
+	PLACEMENT_STRATEGY_CORE, // РЇРґСЂРѕ -> Р±Р»РёР¶Рµ Рє С„СЂРµР№РјСѓ
+	PLACEMENT_STRATEGY_CORE_OFFENSIVE, // РЇРґСЂРѕ -> Р±Р»РёР¶Рµ Рє РІСЂР°РіСѓ
+	PLACEMENT_STRATEGY_CORE_CATCHING, // РЇРґСЂРѕ -> Р±Р»РёР¶Рµ Рє РЅРµР№С‚СЂР°Р»СЊРЅРѕРјСѓ Р·РґР°РЅРёСЋ
+	PLACEMENT_STRATEGY_CORE_CATCHING_CORRIDOR, // РЇРґСЂРѕ -> Р±Р»РёР¶Рµ Рє РєРѕСЂРёРґРѕСЂСѓ
+	PLACEMENT_STRATEGY_CORE_AWAY_FROM_ENEMY, // РЇРґСЂРѕ -> РґР°Р»СЊС€Рµ РѕС‚ РІСЂР°РіР°
+	PLACEMENT_STRATEGY_PLANT, // Р—Р°РІРѕРґ -> Р±Р»РёР¶Рµ Рє С„СЂРµР№РјСѓ
+	PLACEMENT_STRATEGY_COMMANDER, // РљРѕРјР°РЅРґРЅС‹Р№ С†РµРЅС‚СЂ -> Р±Р»РёР¶Рµ Рє С„СЂРµР№РјСѓ, 5 Р·РґР°РЅРёР№
+	PLACEMENT_STRATEGY_STATION, // РЎС‚Р°РЅС†РёСЏ -> Р±Р»РёР¶Рµ Рє С„СЂРµР№РјСѓ, РѕРґРЅРѕ Р·РґР°РЅРёРµ
+	PLACEMENT_STRATEGY_GUN, // РџСѓС€РєР° -> Р±Р»РёР¶Рµ Рє РІСЂР°РіСѓ РёР»Рё СЃРєРІРµСЂРЅРµ
+	PLACEMENT_STRATEGY_GUN_TO_ENEMY, // РџСѓС€РєР° -> Р±Р»РёР¶Рµ Рє РІСЂР°РіСѓ
+	PLACEMENT_STRATEGY_GUN_TO_FILTH, // РџСѓС€РєР° -> Р±Р»РёР¶Рµ Рє СЃРєРІРµСЂРЅРµ
+	PLACEMENT_STRATEGY_GUN_TO_ENEMY_BUILDING, // Р’ СЂР°РґРёСѓСЃ РґРµР№СЃС‚РІРёСЏ РїСѓС€РєРё РґРѕР»Р¶Рѕ РїРѕРїР°РґР°С‚СЊ Р·РґР°РЅРёРµ РІСЂР°РіР°
+	PLACEMENT_STRATEGY_SPECIAL_WEAPON // РЎРїРµС†.РѕСЂСѓР¶РёРµ -> Р±Р»РёР¶Рµ Рє РІСЂР°РіСѓ, РѕРґРЅРѕ Р·РґР°РЅРёРµ
 };
 
 
-// идентификаторы спецэффектов для зданий и юнитов
+// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ СЃРїРµС†СЌС„С„РµРєС‚РѕРІ РґР»СЏ Р·РґР°РЅРёР№ Рё СЋРЅРёС‚РѕРІ
 enum terEffectID
 {
 	EFFECT_ID_EXPLOSION,
@@ -608,7 +608,7 @@ enum terEffectID
 	EFFECT_ID_MAX
 };
 
-// типы элементов для DamageMolecula
+// С‚РёРїС‹ СЌР»РµРјРµРЅС‚РѕРІ РґР»СЏ DamageMolecula
 enum DamageElementType
 {
 	DAMAGE_ELEMENT_SOLDIER = 0,
@@ -620,7 +620,7 @@ enum DamageElementType
 	DAMAGE_ELEMENT_TYPE_MAX
 };
 
-// фильтры для избирательного поражения элементов в DamageMolecula
+// С„РёР»СЊС‚СЂС‹ РґР»СЏ РёР·Р±РёСЂР°С‚РµР»СЊРЅРѕРіРѕ РїРѕСЂР°Р¶РµРЅРёСЏ СЌР»РµРјРµРЅС‚РѕРІ РІ DamageMolecula
 enum DamageElementFilter
 {
 	DAMAGE_FILTER_SOLDIERS = 1 << DAMAGE_ELEMENT_SOLDIER,
@@ -634,25 +634,25 @@ enum DamageElementFilter
 };
 
 //-------------------------------------------------------------
-//			Анимация	
-// Совокупность анимационных цепочек представляет собой
-// граф, т.к. переключать цепочки можно только в определенный
-// момент времени (нет блендинга). Направленные ветки графа - это 
-// анимационные цепочки, а узлы - это точки, в которых можно переходить
-// с одной цепочки на другую.
-// Идентификаторы цепочек и узлов общие для всех моделей. Рекомендуется 
-// придерживаться правила: цепочки, обозначающие переход из одного состояния 
-// в другое - CHAIN_глагол, зацикленные цепочки и узлы означают состояние - 
-// CHAIN_причастие_прошедшего_времени(-ed). 
+//			РђРЅРёРјР°С†РёСЏ	
+// РЎРѕРІРѕРєСѓРїРЅРѕСЃС‚СЊ Р°РЅРёРјР°С†РёРѕРЅРЅС‹С… С†РµРїРѕС‡РµРє РїСЂРµРґСЃС‚Р°РІР»СЏРµС‚ СЃРѕР±РѕР№
+// РіСЂР°С„, С‚.Рє. РїРµСЂРµРєР»СЋС‡Р°С‚СЊ С†РµРїРѕС‡РєРё РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РІ РѕРїСЂРµРґРµР»РµРЅРЅС‹Р№
+// РјРѕРјРµРЅС‚ РІСЂРµРјРµРЅРё (РЅРµС‚ Р±Р»РµРЅРґРёРЅРіР°). РќР°РїСЂР°РІР»РµРЅРЅС‹Рµ РІРµС‚РєРё РіСЂР°С„Р° - СЌС‚Рѕ 
+// Р°РЅРёРјР°С†РёРѕРЅРЅС‹Рµ С†РµРїРѕС‡РєРё, Р° СѓР·Р»С‹ - СЌС‚Рѕ С‚РѕС‡РєРё, РІ РєРѕС‚РѕСЂС‹С… РјРѕР¶РЅРѕ РїРµСЂРµС…РѕРґРёС‚СЊ
+// СЃ РѕРґРЅРѕР№ С†РµРїРѕС‡РєРё РЅР° РґСЂСѓРіСѓСЋ.
+// РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ С†РµРїРѕС‡РµРє Рё СѓР·Р»РѕРІ РѕР±С‰РёРµ РґР»СЏ РІСЃРµС… РјРѕРґРµР»РµР№. Р РµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ 
+// РїСЂРёРґРµСЂР¶РёРІР°С‚СЊСЃСЏ РїСЂР°РІРёР»Р°: С†РµРїРѕС‡РєРё, РѕР±РѕР·РЅР°С‡Р°СЋС‰РёРµ РїРµСЂРµС…РѕРґ РёР· РѕРґРЅРѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ 
+// РІ РґСЂСѓРіРѕРµ - CHAIN_РіР»Р°РіРѕР», Р·Р°С†РёРєР»РµРЅРЅС‹Рµ С†РµРїРѕС‡РєРё Рё СѓР·Р»С‹ РѕР·РЅР°С‡Р°СЋС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ - 
+// CHAIN_РїСЂРёС‡Р°СЃС‚РёРµ_РїСЂРѕС€РµРґС€РµРіРѕ_РІСЂРµРјРµРЅРё(-ed). 
 // ATTACH - ATTACHED, SWITCH_ON - SWITCHED_ON.
-// Анимация задается для всей модели, или для анимационной группы.
+// РђРЅРёРјР°С†РёСЏ Р·Р°РґР°РµС‚СЃСЏ РґР»СЏ РІСЃРµР№ РјРѕРґРµР»Рё, РёР»Рё РґР»СЏ Р°РЅРёРјР°С†РёРѕРЅРЅРѕР№ РіСЂСѓРїРїС‹.
 
-// Цепочки анимации
+// Р¦РµРїРѕС‡РєРё Р°РЅРёРјР°С†РёРё
 enum ChainID
 {
 	CHAIN_NONE,
 
-	CHAIN_DEFAULT, // универсальное имя
+	CHAIN_DEFAULT, // СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕРµ РёРјСЏ
 
 	// Common
 	CHAIN_SWITCH_ON,
@@ -722,13 +722,13 @@ enum ChainID
 	CHAIN_LANDING
 };
 
-// Узлы анимации для объединения цепочек в графы
+// РЈР·Р»С‹ Р°РЅРёРјР°С†РёРё РґР»СЏ РѕР±СЉРµРґРёРЅРµРЅРёСЏ С†РµРїРѕС‡РµРє РІ РіСЂР°С„С‹
 enum ChainNodeID
 {
 	CHAIN_NODE_NONE,
 
-	CHAIN_NODE_DEFAULT,  // универсальное имя 
-	CHAIN_NODE_DEFAULT_OTHER,  // универсальное имя для незацикленных цепочек
+	CHAIN_NODE_DEFAULT,  // СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕРµ РёРјСЏ 
+	CHAIN_NODE_DEFAULT_OTHER,  // СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕРµ РёРјСЏ РґР»СЏ РЅРµР·Р°С†РёРєР»РµРЅРЅС‹С… С†РµРїРѕС‡РµРє
 
 	// Common
 	CHAIN_NODE_SWITCHED_ON,
@@ -772,7 +772,7 @@ enum ChainNodeID
 	CHAIN_NODE_UNDERGROUND
 };
 
-// Группы анимации
+// Р“СЂСѓРїРїС‹ Р°РЅРёРјР°С†РёРё
 enum AnimationGroupID
 {
 	ANIMATION_GROUP_ROOT,
@@ -790,7 +790,7 @@ enum AnimationGroupID
 	ANIMATION_GROUP_FIRE
 };
 
-// Типы оружия
+// РўРёРїС‹ РѕСЂСѓР¶РёСЏ
 enum WeaponType
 {
 	WEAPON_NONE,
@@ -817,37 +817,37 @@ enum WeaponFlags
 {
 	WEAPON_HAS_FIRE_CONTROLLER = 1,
 
-	// если анимация стрельбы идет не через отдельную группу,
-	// а просто назначается юниту
+	// РµСЃР»Рё Р°РЅРёРјР°С†РёСЏ СЃС‚СЂРµР»СЊР±С‹ РёРґРµС‚ РЅРµ С‡РµСЂРµР· РѕС‚РґРµР»СЊРЅСѓСЋ РіСЂСѓРїРїСѓ,
+	// Р° РїСЂРѕСЃС‚Рѕ РЅР°Р·РЅР°С‡Р°РµС‚СЃСЏ СЋРЅРёС‚Сѓ
 	WEAPON_ROOT_FIRE_ANIMATION = 1 << 1,
 
-	// если анимация стрельбы зациклена
+	// РµСЃР»Рё Р°РЅРёРјР°С†РёСЏ СЃС‚СЂРµР»СЊР±С‹ Р·Р°С†РёРєР»РµРЅР°
 	WEAPON_CYCLE_FIRE_ANIMATION = 1 << 2,
 
-	// если после выстрела не надо запоминать точку прицеливания
-	// (для оружия, которое стреляет по земле)
+	// РµСЃР»Рё РїРѕСЃР»Рµ РІС‹СЃС‚СЂРµР»Р° РЅРµ РЅР°РґРѕ Р·Р°РїРѕРјРёРЅР°С‚СЊ С‚РѕС‡РєСѓ РїСЂРёС†РµР»РёРІР°РЅРёСЏ
+	// (РґР»СЏ РѕСЂСѓР¶РёСЏ, РєРѕС‚РѕСЂРѕРµ СЃС‚СЂРµР»СЏРµС‚ РїРѕ Р·РµРјР»Рµ)
 	WEAPON_CLEAN_TARGET_AFTER_FIRE = 1 << 3,
 
-	// оружие при работе разряжается постепенно
+	// РѕСЂСѓР¶РёРµ РїСЂРё СЂР°Р±РѕС‚Рµ СЂР°Р·СЂСЏР¶Р°РµС‚СЃСЏ РїРѕСЃС‚РµРїРµРЅРЅРѕ
 	WEAPON_NEED_CHARGE = 1 << 4,
 
-	// запрет самоcтоятельной атаки в defencive режиме
+	// Р·Р°РїСЂРµС‚ СЃР°РјРѕcС‚РѕСЏС‚РµР»СЊРЅРѕР№ Р°С‚Р°РєРё РІ defencive СЂРµР¶РёРјРµ
 	WEAPON_DISABLE_DEFENCIVE_ATTACK = 1 << 5,
 
-	// есть анимация зарядки оружия
+	// РµСЃС‚СЊ Р°РЅРёРјР°С†РёСЏ Р·Р°СЂСЏРґРєРё РѕСЂСѓР¶РёСЏ
 	WEAPON_CHARGE_ANIMATION = 1 << 6,
 
-	// есть анимация готовности к стрельбе
+	// РµСЃС‚СЊ Р°РЅРёРјР°С†РёСЏ РіРѕС‚РѕРІРЅРѕСЃС‚Рё Рє СЃС‚СЂРµР»СЊР±Рµ
 	WEAPON_READY_ANIMATION = 1 << 7,
 
-	// стреляет сквозь защитное поле
+	// СЃС‚СЂРµР»СЏРµС‚ СЃРєРІРѕР·СЊ Р·Р°С‰РёС‚РЅРѕРµ РїРѕР»Рµ
 	WEAPON_IGNORE_FIELD = 1 << 8,
 
-	// разряжать при отключении
+	// СЂР°Р·СЂСЏР¶Р°С‚СЊ РїСЂРё РѕС‚РєР»СЋС‡РµРЅРёРё
 	WEAPON_UNLOAD_WHEN_DISABLED = 1 << 9
 };
 
-// Разделение боевых юнитов по способу передвижения.
+// Р Р°Р·РґРµР»РµРЅРёРµ Р±РѕРµРІС‹С… СЋРЅРёС‚РѕРІ РїРѕ СЃРїРѕСЃРѕР±Сѓ РїРµСЂРµРґРІРёР¶РµРЅРёСЏ.
 enum terLegionType
 {
 	LEGION_GROUND,
@@ -855,38 +855,38 @@ enum terLegionType
 	LEGION_SUBTERRANEAN
 };
 
-// Типы повреждений, наносимых миром.
+// РўРёРїС‹ РїРѕРІСЂРµР¶РґРµРЅРёР№, РЅР°РЅРѕСЃРёРјС‹С… РјРёСЂРѕРј.
 enum EnvironmentalDamageType
 {
-	ENV_DAMAGE_NONE,	// нет повреждений
-	ENV_DAMAGE_CHAOS,	// повреждения от хаоса
-	ENV_DAMAGE_BASEMENT	// повреждения от нарушенного зеро-слоя
+	ENV_DAMAGE_NONE,	// РЅРµС‚ РїРѕРІСЂРµР¶РґРµРЅРёР№
+	ENV_DAMAGE_CHAOS,	// РїРѕРІСЂРµР¶РґРµРЅРёСЏ РѕС‚ С…Р°РѕСЃР°
+	ENV_DAMAGE_BASEMENT	// РїРѕРІСЂРµР¶РґРµРЅРёСЏ РѕС‚ РЅР°СЂСѓС€РµРЅРЅРѕРіРѕ Р·РµСЂРѕ-СЃР»РѕСЏ
 };
 
-// Идентификаторы звуков.
-// звуки юнитов/строений, управляемые через terSoundController
+// РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ Р·РІСѓРєРѕРІ.
+// Р·РІСѓРєРё СЋРЅРёС‚РѕРІ/СЃС‚СЂРѕРµРЅРёР№, СѓРїСЂР°РІР»СЏРµРјС‹Рµ С‡РµСЂРµР· terSoundController
 enum SoundID
 {
 	SOUND_NONE,
 
-	// звуки юнитов/строений
+	// Р·РІСѓРєРё СЋРЅРёС‚РѕРІ/СЃС‚СЂРѕРµРЅРёР№
 
-	// выстрел
+	// РІС‹СЃС‚СЂРµР»
 	SOUND_SHOT,
-	// передвижение
+	// РїРµСЂРµРґРІРёР¶РµРЅРёРµ
 	SOUND_MOVE,
-	// производство
+	// РїСЂРѕРёР·РІРѕРґСЃС‚РІРѕ
 	SOUND_PRODUCTION
 };
 
-// единовременно вызываемые звуки юнитов/строений
+// РµРґРёРЅРѕРІСЂРµРјРµРЅРЅРѕ РІС‹Р·С‹РІР°РµРјС‹Рµ Р·РІСѓРєРё СЋРЅРёС‚РѕРІ/СЃС‚СЂРѕРµРЅРёР№
 enum SoundEventID
 {
 	SOUND_EVENT_NONE,
 
-	// взрыв
+	// РІР·СЂС‹РІ
 	SOUND_EVENT_EXPLOSION,
-	// селект юнита
+	// СЃРµР»РµРєС‚ СЋРЅРёС‚Р°
 	SOUND_EVENT_SELECT,
 	SOUND_EVENT_SELECT_ALTERNATE,
 
@@ -897,9 +897,9 @@ enum SoundEventID
 	SOUND_EVENT_BUILDING_CONNECTED,
 	SOUND_EVENT_BUILDING_DISCONNECTED,
 
-	// голоса
+	// РіРѕР»РѕСЃР°
 
-	// общие
+	// РѕР±С‰РёРµ
 	SOUND_VOICE_SQUAD_SELECTED,		
 	SOUND_VOICE_SQUAD_MOVES,		
 	SOUND_VOICE_SQUAD_ATTACKS,		
@@ -935,13 +935,13 @@ enum SoundEventID
 	SOUND_VOICE_FILTH_DETECTED,
 	SOUND_VOICE_GEOACTIVITY_DETECTED,
 
-	// по юнитам/зданиям
+	// РїРѕ СЋРЅРёС‚Р°Рј/Р·РґР°РЅРёСЏРј
 	SOUND_VOICE_BUILDING_DISASSEMBLED,	
 	SOUND_VOICE_BUILDING_UPGRADE_FINISHED,	
 
-	SOUND_VOICE_UNIT_MOVE,			// + для фрейма
+	SOUND_VOICE_UNIT_MOVE,			// + РґР»СЏ С„СЂРµР№РјР°
 	SOUND_VOICE_UNIT_SELECTED,		
-	SOUND_VOICE_UNIT_PRODUCTION_STARTED,	// + для зданий
+	SOUND_VOICE_UNIT_PRODUCTION_STARTED,	// + РґР»СЏ Р·РґР°РЅРёР№
 	SOUND_VOICE_UNIT_UNDER_ATTACK,		
 	SOUND_VOICE_BUILDING_UNDER_ATTACK,	
 	SOUND_VOICE_UNIT_READY,			// -
@@ -972,14 +972,14 @@ enum ExcludeCollisionGroup
 
 enum BuildingStatus
 {
-	BUILDING_STATUS_CONSTRUCTED = 1, // Построено
-	BUILDING_STATUS_PLUGGED_IN = 2, // Включен в интерфейсе
-	BUILDING_STATUS_CONNECTED = 4, // Здание подключено: Я-Т посредством воздушных связей, остальные - через зеропласт
-	BUILDING_STATUS_ENABLED = 8, // Разрешено деревом развития
-	BUILDING_STATUS_POWERED = 16, // Получает энергию, не выводится иконка отсутствия энергии
-	BUILDING_STATUS_UPGRADING = 32, // Апгрейдится в данный момент
-	BUILDING_STATUS_MOUNTED = 64, // Разложено
-	BUILDING_STATUS_HOLD_CONSTRUCTION = 128 // Остановлено строительство
+	BUILDING_STATUS_CONSTRUCTED = 1, // РџРѕСЃС‚СЂРѕРµРЅРѕ
+	BUILDING_STATUS_PLUGGED_IN = 2, // Р’РєР»СЋС‡РµРЅ РІ РёРЅС‚РµСЂС„РµР№СЃРµ
+	BUILDING_STATUS_CONNECTED = 4, // Р—РґР°РЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРѕ: РЇ-Рў РїРѕСЃСЂРµРґСЃС‚РІРѕРј РІРѕР·РґСѓС€РЅС‹С… СЃРІСЏР·РµР№, РѕСЃС‚Р°Р»СЊРЅС‹Рµ - С‡РµСЂРµР· Р·РµСЂРѕРїР»Р°СЃС‚
+	BUILDING_STATUS_ENABLED = 8, // Р Р°Р·СЂРµС€РµРЅРѕ РґРµСЂРµРІРѕРј СЂР°Р·РІРёС‚РёСЏ
+	BUILDING_STATUS_POWERED = 16, // РџРѕР»СѓС‡Р°РµС‚ СЌРЅРµСЂРіРёСЋ, РЅРµ РІС‹РІРѕРґРёС‚СЃСЏ РёРєРѕРЅРєР° РѕС‚СЃСѓС‚СЃС‚РІРёСЏ СЌРЅРµСЂРіРёРё
+	BUILDING_STATUS_UPGRADING = 32, // РђРїРіСЂРµР№РґРёС‚СЃСЏ РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚
+	BUILDING_STATUS_MOUNTED = 64, // Р Р°Р·Р»РѕР¶РµРЅРѕ
+	BUILDING_STATUS_HOLD_CONSTRUCTION = 128 // РћСЃС‚Р°РЅРѕРІР»РµРЅРѕ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІРѕ
 };
 
 enum {

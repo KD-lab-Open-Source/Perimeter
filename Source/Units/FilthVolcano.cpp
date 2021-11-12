@@ -122,7 +122,7 @@ void terFilthSwarmVolcano::GenerationProcess()
 				float fdelta=prm->speed_max_horizontal-prm->speed_min_horizontal;
 
 				float speed=fmin+fdelta*terLogicRNDfrand();
-				float angle=terLogicRNDfrand()*2*M_PI;
+				float angle=terLogicRNDfrand()*2*XM_PI;
 
 
 				float x=speed*xm::cos(angle);
@@ -132,7 +132,7 @@ void terFilthSwarmVolcano::GenerationProcess()
 				
 				Vect3f vel(x,y,z);
 				Vect3f set_pos=pos;//-vel*0.1f;
-				p->setPose(Se3f(QuatF(terLogicRNDfrand()*M_PI, Vect3f::K), set_pos), false);
+				p->setPose(Se3f(QuatF(terLogicRNDfrand()*XM_PI, Vect3f::K), set_pos), false);
 
 				p->GetRigidBodyPoint()->setVelocity(vel);
 			}

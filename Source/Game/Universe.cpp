@@ -1029,7 +1029,7 @@ terUnitBase* terUniverse::createDebugObject(terUnitAttributeID id, const Vect3f&
 	if(player){
 		terUnitBase* p = player->buildUnit(id);
 		if(!angle)
-			angle = terLogicRNDfrand()*M_PI*2;
+			angle = terLogicRNDfrand()*XM_PI*2;
 		p->setPose(Se3f(QuatF(angle, Vect3f::K), pos), true);
 		p->Start();
 		return p;

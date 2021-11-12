@@ -350,11 +350,11 @@ void terNatureWorm::Start()
 {
 	terNatureTerrain::Start();
 	TargetPosition = position();
-	TargetAngle = terLogicRNDfrand() * M_PI * 2.0f;
+	TargetAngle = terLogicRNDfrand() * XM_PI * 2.0f;
 	pWormImmediately=new CGeoWorm(xm::round(position().x), xm::round(position().y));
 }
 
-const float PERIMETER_NATURE_WORM_MOVE_ANGLE = M_PI * 0.5f;
+const float PERIMETER_NATURE_WORM_MOVE_ANGLE = XM_PI * 0.5f;
 
 void terNatureWorm::Quant()
 {
@@ -374,7 +374,7 @@ void terNatureWorm::Quant()
 		v = Vect3f(v.x,v.y,0);
 		float s = v.norm();
 
-		float a = getDeltaAngle(cycleAngle(v.psi() - M_PI * 0.5f), angleZ());
+		float a = getDeltaAngle(cycleAngle(v.psi() - XM_PI * 0.5f), angleZ());
 
 		if(s > attr().GroundPlaneSpeed)
 			s = attr().GroundPlaneSpeed;
@@ -533,7 +533,7 @@ void terNatureFace::Start()
 
 	terFaceDemoEnable = 0;
 	TargetPosition = position();
-	TargetAngle = terLogicRNDfrand() * M_PI * 2.0f;
+	TargetAngle = terLogicRNDfrand() * XM_PI * 2.0f;
 	headGeoAction.init(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y)), 1);
 }
 
@@ -555,7 +555,7 @@ void terNatureFace::Quant()
 
 		float speed = clamp(dist, 0, attr().GroundPlaneSpeed);
 
-		float angle = getDeltaAngle(cycleAngle(atan2(delta.y, delta.x) - M_PI * 0.5f), angleZ());
+		float angle = getDeltaAngle(cycleAngle(atan2(delta.y, delta.x) - XM_PI * 0.5f), angleZ());
 		if(angle < 0){
 			if(angle < -attr().GroundAngleSpeed){
 				angle = -attr().GroundAngleSpeed;
@@ -600,7 +600,7 @@ void terNatureFallTree::Start()
 	terUnitBase::Start();
 
 	Angle = 0;
-	DeltaAngle = 2.0 * M_PI / (float)((Time + 1)* Time);
+	DeltaAngle = 2.0 * XM_PI / (float)((Time + 1)* Time);
 
 	Transparency = 1.0f;
 

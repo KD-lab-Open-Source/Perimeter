@@ -65,12 +65,12 @@ public:
 	AimAngleController() : object_(NULL), logicTile_(NULL)
 	{
 		value_ = valueDefault_ = 0.0f;
-		speed_ = M_PI * 0.2f;
-		valuePrecision_ = M_PI * 0.001f;
+		speed_ = XM_PI * 0.2f;
+		valuePrecision_ = XM_PI * 0.001f;
 		valueInterpolator_ = 0;
 
 		valueMin_ = 0.0f;
-		valueMax_ = M_PI * 2.0f;
+		valueMax_ = XM_PI * 2.0f;
 	}
 
 	bool operator == (float val) const { return (xm::abs(getDeltaAngle(val, value_)) <= valuePrecision_); }
@@ -704,20 +704,20 @@ bool AimControllerDirectional::init(cLogicObject* logic_root,cObjectNodeRoot* mo
 		xassert(ret);
 	}
 
-	psi_.setSpeed(setup.turnSpeed[0]*M_PI);
-	theta_.setSpeed(setup.turnSpeed[1]*M_PI);
+	psi_.setSpeed(setup.turnSpeed[0]*XM_PI);
+	theta_.setSpeed(setup.turnSpeed[1]*XM_PI);
 	
-	psi_.setLimits(setup.psiLimit[0]*M_PI,setup.psiLimit[1]*M_PI);
-	theta_.setLimits(setup.thetaLimit[0]*M_PI,setup.thetaLimit[1]*M_PI);
+	psi_.setLimits(setup.psiLimit[0]*XM_PI,setup.psiLimit[1]*XM_PI);
+	theta_.setLimits(setup.thetaLimit[0]*XM_PI,setup.thetaLimit[1]*XM_PI);
 
-	psi_.setPrecision(setup.targetingPrecision[0]*M_PI);
-	theta_.setPrecision(setup.targetingPrecision[1]*M_PI);
+	psi_.setPrecision(setup.targetingPrecision[0]*XM_PI);
+	theta_.setPrecision(setup.targetingPrecision[1]*XM_PI);
 
-	psi_.setDefaultValue(setup.defaultAngles[0]*M_PI);
-	theta_.setDefaultValue(setup.defaultAngles[1]*M_PI);
+	psi_.setDefaultValue(setup.defaultAngles[0]*XM_PI);
+	theta_.setDefaultValue(setup.defaultAngles[1]*XM_PI);
 
-	psi_.setValue(setup.defaultAngles[0]*M_PI);
-	theta_.setValue(setup.defaultAngles[1]*M_PI);
+	psi_.setValue(setup.defaultAngles[0]*XM_PI);
+	theta_.setValue(setup.defaultAngles[1]*XM_PI);
 
 	psi_.setChain("main");
 	theta_.setChain("main");
@@ -1498,7 +1498,7 @@ void terWeaponScumHeater::quant()
 		if(missileID() != UNIT_ATTRIBUTE_NONE){ // crater
 			Vect3f pos = owner()->position();
 
-			float angle = terLogicRNDfrand()*M_PI*2;
+			float angle = terLogicRNDfrand()*XM_PI*2;
 			float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
 			pos.x += dist * xm::cos(angle);
@@ -1551,7 +1551,7 @@ void terWeaponConductor::quant()
 			if(missileID() != UNIT_ATTRIBUTE_NONE){ // crater
 				Vect3f pos = owner()->position();
 
-				float angle = terLogicRNDfrand()*M_PI*2;
+				float angle = terLogicRNDfrand()*XM_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
 				pos.x += dist * xm::cos(angle);
@@ -1572,7 +1572,7 @@ void terWeaponConductor::quant()
 			for(int i = 0; i < 5; i++){
 				Vect2f pos = owner()->position2D();
 
-				float angle = terLogicRNDfrand()*M_PI*2;
+				float angle = terLogicRNDfrand()*XM_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
 				pos.x += dist * xm::cos(angle);
@@ -1643,7 +1643,7 @@ void terWeaponScumTwister::quant()
 
 				Vect3f pos = missile_->position();
 
-				float angle = terLogicRNDfrand()*M_PI*2;
+				float angle = terLogicRNDfrand()*XM_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
 				pos.x += dist * xm::cos(angle);
@@ -1748,7 +1748,7 @@ void terWeaponScumSplitter::quant()
 					missile_ = owner()->Player->buildUnit(missileID());
 
 					Vect3f pos = targetPos_;
-					float angle = terLogicRNDfrand()*M_PI*2;
+					float angle = terLogicRNDfrand()*XM_PI*2;
 					float radius = setup().accuracyRadius * terLogicRNDfrand();
 
 					pos.x += radius * xm::cos(angle);
@@ -2048,7 +2048,7 @@ bool terWeaponFilthSpot::fire(const Vect3f& to,terUnitBase* target)
 
 	Vect3f trg_pos = (target) ? target->position() : to;
 
-	float angle = terLogicRNDfrand()*M_PI*2;
+	float angle = terLogicRNDfrand()*XM_PI*2;
 	float radius = setup().accuracyRadius * terLogicRNDfrand();
 
 	trg_pos.x += radius * xm::cos(angle);

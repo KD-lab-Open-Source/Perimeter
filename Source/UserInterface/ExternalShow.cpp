@@ -188,10 +188,10 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		Vect2f tp,dn;
 
-		int num_du = xm::round((2.0f * r * M_PI) / circleColor.length);
+		int num_du = xm::round((2.0f * r * XM_PI) / circleColor.length);
 		if(num_du<2)
 			return;
-		int num_da = xm::round((2.0f * r * M_PI) / region_show_spline_space);
+		int num_da = xm::round((2.0f * r * XM_PI) / region_show_spline_space);
 		if(num_da<2)
 			return;
 
@@ -205,7 +205,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			diffuse.a = (alpha > 255) ? 255.0f : alpha;
 		}
 
-		float da = M_PI * 2.0f / (float)(num_da);
+		float da = XM_PI * 2.0f / (float)(num_da);
 		float du=num_du/ (float)(num_da);
 		float a=0, u=0;
 

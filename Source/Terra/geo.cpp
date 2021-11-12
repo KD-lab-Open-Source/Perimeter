@@ -1149,7 +1149,7 @@ loc_notOverlapped: ;
 static const float STEP_WORM=5.0;
 static const float K_FRND=2.0;
 static const float MIN_SPEED=0.5;
-static const float MAX_TURN_ANGLE=30*(M_PI/180.0);
+static const float MAX_TURN_ANGLE=30*(XM_PI/180.0);
 CGeoWorm::CGeoWorm(int xBeg, int yBeg, int xTrgt, int yTrgt)
 {
 	FormWormsNew=&FormWorms1;
@@ -1158,7 +1158,7 @@ CGeoWorm::CGeoWorm(int xBeg, int yBeg, int xTrgt, int yTrgt)
 	xOld=xBeg; yOld=yBeg;
 	counter=0;
 	cPosition=tPosition=Vect3f::ZERO;
-	cDirection=FRnd()* M_PI * 2.0f;
+	cDirection=FRnd()* XM_PI * 2.0f;
 	cSpeed=MIN_SPEED + K_FRND*FRnd();
 }
 
@@ -1174,7 +1174,7 @@ int CGeoWorm::quant()
 		period=MIN_WORM_PERIOD+XRnd(MAX_WORM_ADDPERIOD);
 	}
 LGWQ_1:
-	cDirection=addAngle+noise1(counter/40.0)* M_PI * 2.0f;
+	cDirection=addAngle+noise1(counter/40.0)* XM_PI * 2.0f;
 	cSpeed=0.5 + 0.5*noise1(counter/10.0);
 	float x, y;
 	float dd=cSpeed*STEP_WORM;
@@ -1182,7 +1182,7 @@ LGWQ_1:
 	y=yOld+xm::sin(cDirection)*dd;
 	if(x<0 || (x+WSXSY)>vMap.H_SIZE || y<0 || (y+WSXSY)>vMap.V_SIZE){
 		if(addAngle>0) addAngle=0;
-		else addAngle=M_PI;
+		else addAngle=XM_PI;
 		goto LGWQ_1;
 	}
 	step(x,y);
@@ -1279,7 +1279,7 @@ void CGeoWorm::step(int x, int y, float angle)
 			wormFormLib.put2WF2(FormWormsNew);
 //		}
 //		else {
-//			wormFormLib.put2WF(alpha+M_PI/2, FormWormsNew);
+//			wormFormLib.put2WF(alpha+XM_PI/2, FormWormsNew);
 //		}
 		//ter.restore();
 
@@ -1742,7 +1742,7 @@ eReturnQuantResult singleGeoBreak::quant(void)
 	headSection+=1;
 	static int beg_offfsety=0;
 	if(headSection <= numSections){//Идет рост трещины
-		const float dispersionAngle=40.f*M_PI/180.f;
+		const float dispersionAngle=40.f*XM_PI/180.f;
 		const float dispersionAngle05=dispersionAngle/2.f;
 		const float dispersionAngle025=dispersionAngle/4.f;
 		int x_recomend=xbeg+(dx_step*headSection>>16);
@@ -2031,11 +2031,11 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 	CLandslip* lsp;
 	if(begH>endH){ //обвал идет с beg point
 		float al=xm::atan2(static_cast<float>(endLSY-begLSY), static_cast<float>(endLSX-begLSX));
-		lsp=new CLandslip((begLSX<<kmGrid)+2, (begLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, endH<<VX_FRACTION, begH<<VX_FRACTION, (float)M_PI+al );
+		lsp=new CLandslip((begLSX<<kmGrid)+2, (begLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, endH<<VX_FRACTION, begH<<VX_FRACTION, (float)XM_PI+al );
 	}
 	else{ //обвал идет с end point
 		float al= xm::atan2(static_cast<float>(begLSY - endLSY), static_cast<float>(begLSX - endLSX));
-		lsp=new CLandslip((endLSX<<kmGrid)+2, (endLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, begH<<VX_FRACTION, endH<<VX_FRACTION, (float)M_PI+al );
+		lsp=new CLandslip((endLSX<<kmGrid)+2, (endLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, begH<<VX_FRACTION, endH<<VX_FRACTION, (float)XM_PI+al );
 	}
 	return lsp;
 }
@@ -2084,7 +2084,7 @@ CLandslip::CLandslip(int _x, int _y, int _sx, int _sy, int _hmin, int _hmax, flo
 	hmin=_hmin; hmax=_hmax;
 	deltaHLS= xm::round(KH_LANDSLIP * (hmax - hmin));
 	hminLS=hmax-deltaHLS;
-	direction=_direction;//_direction*M_PI/180.0f;
+	direction=_direction;//_direction*XM_PI/180.0f;
 	speed=BEGIN_SPEED_LANDSLIP;
 	cntQuant=0;
 	xPrec=x<<16; yPrec=y<<16;
@@ -2173,9 +2173,9 @@ void CLandslip::prepTmplt(void)
 int CLandslip::geoQuant(void)
 {
 //Отладка вращающегося битмапа постоянной высоты
-/*	static float al=0;//M_PI/4.0;//+M_PI/18.0;
+/*	static float al=0;//XM_PI/4.0;//+XM_PI/18.0;
 	srBmp rbmp(al, sx, sy);
-	al=al+M_PI/18.0;
+	al=al+XM_PI/18.0;
 	unsigned char* geo=vMap.VxGBuf;
 	unsigned char* dam=vMap.VxDBuf;
 	unsigned char* atr=vMap.AtrBuf;
@@ -2230,7 +2230,7 @@ int CLandslip::geoQuant(void)
 
 	int xoldPrec=xPrec, yoldPrec=yPrec;
 
-	srBmp rbmpT(direction , sx, sy);//+ (M_PI/180)*(2-XRnd(4))
+	srBmp rbmpT(direction , sx, sy);//+ (XM_PI/180)*(2-XRnd(4))
 //расчет максимального битмапа
 	rbmpT.setStr(0);
 	int x1= xm::abs(rbmpT.getX(0));
@@ -2306,8 +2306,8 @@ int CLandslip::geoQuant(void)
 		}
 	}
 
-	xPrec=xPrec+ -rbmpT.stpX; //speed*xm::cos(M_PI+direction);
-	yPrec=yPrec+ -rbmpT.stpY; //speed*xm::sin(M_PI+direction);
+	xPrec=xPrec+ -rbmpT.stpX; //speed*xm::cos(XM_PI+direction);
+	yPrec=yPrec+ -rbmpT.stpY; //speed*xm::sin(XM_PI+direction);
 	x=vMap.XCYCL(xPrec>>16);//vMap.XCYCL(xm::round(xPrec));
 	y=vMap.YCYCL(yPrec>>16);//vMap.YCYCL(xm::round(yPrec));
 
@@ -3026,10 +3026,10 @@ void bubble(int x, int y)
 
 	static int begX=0, begY=0; 
 	static float curX=x, curY=y;
-	static float begAngle=-M_PI/10.;
+	static float begAngle=-XM_PI/10.;
 	static int step=0;
 //	if(begX!=x || begY!=y){
-//		begAngle+=M_PI/4;
+//		begAngle+=XM_PI/4;
 //		begX=x; begY=y;
 //		curX=begX; curY=begY;
 //	};
@@ -3097,7 +3097,7 @@ void bubble(int x, int y)
 	int num_bubble=XRnd(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
 	for(i=0; i<num_bubble; i++){
 		if(num_el_arr>=MAX_EL_ARR-1) return;
-		float dirAngl=fabsRnd(2*M_PI);
+		float dirAngl=fabsRnd(2*XM_PI);
 		float MAX_D=50.f;
 		float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1.f)*MAX_D);
 		float addx=xm::cos(dirAngl)*r;
@@ -3128,7 +3128,7 @@ void bubble(int x, int y)
 		num_bubble=xm::round(maxQuantTailBubble);
 		for(i=0; i<num_bubble; i++){
 			if(num_el_arr>=MAX_EL_ARR-1) return;
-			float dirAngl=fabsRnd(2*M_PI);
+			float dirAngl=fabsRnd(2*XM_PI);
 			float MAX_D=tailR;
 			float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
 			float addx=xm::cos(dirAngl)*r;
@@ -3186,7 +3186,7 @@ void bubble(int x, int y)
 sTorpedo::sTorpedo(int x, int y)
 {
 
-	float angl=fabsRnd(M_PI*2);
+	float angl=fabsRnd(XM_PI*2);
 	Vect2f tmp(xm::cos(angl), xm::sin(angl));
 	init(x, y, tmp);
 }
@@ -3202,7 +3202,7 @@ void sTorpedo::init(int _x, int _y, Vect2f& _direction)
 	curX=beginX; curY=beginY;
 	for(int m=0; m<CTORPEDO_MAX_EL_ARR; m++) bubArr[m]=0;
 	num_el_arr=0;
-	//begAngle=_begAngle;//-M_PI/10.;
+	//begAngle=_begAngle;//-XM_PI/10.;
 	direction=_direction;
 	direction.normalize(1.);
 	step=0;
@@ -3313,7 +3313,7 @@ bool sTorpedo::quant(void)
 	int num_bubble=XRnd(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
 	for(i=0; i<num_bubble; i++){
 		if(num_el_arr>=CTORPEDO_MAX_EL_ARR) break;
-		float dirAngl=fabsRnd(2*M_PI);
+		float dirAngl=fabsRnd(2*XM_PI);
 		float MAX_D=50.f;
 		float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
 		float addx=xm::cos(dirAngl)*r;
@@ -3343,7 +3343,7 @@ bool sTorpedo::quant(void)
 		num_bubble=xm::round(maxQuantTailBubble);
 		for(i=0; i<num_bubble; i++){
 			if(num_el_arr>=CTORPEDO_MAX_EL_ARR) break;
-			float dirAngl=fabsRnd(2*M_PI);
+			float dirAngl=fabsRnd(2*XM_PI);
 			float MAX_D=tailR;
 			float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
 			float addx=xm::cos(dirAngl)*r;
@@ -3722,9 +3722,9 @@ void sUPoligon::quant(float angle_grad)
 	result.cross(v_o, v_2);
 	if(result.z<0) angle_grad=-angle_grad;
 
-	//static float planeAngle=0.5f*M_PI/180.f;//0.f;
-	//planeAngle-=0.5f*M_PI/180.f;
-	float planeAngle=angle_grad*M_PI/180.f;
+	//static float planeAngle=0.5f*XM_PI/180.f;//0.f;
+	//planeAngle-=0.5f*XM_PI/180.f;
+	float planeAngle=angle_grad*XM_PI/180.f;
 	QuatF wQuat(planeAngle, qVect);
 /*		for(i=0; i<sy; i++){
 		yy=vMap.YCYCL(upBorder+i);
@@ -4013,7 +4013,7 @@ bool poiligonUP(int _x, int _y)
 
 	//static int begX=0, begY=0; 
 	//static float curX=x, curY=y;
-	static float begAngle=-M_PI/10.;
+	static float begAngle=-XM_PI/10.;
 
 
 	const int MAX_CROSS_POINT=20;
@@ -4029,8 +4029,8 @@ bool poiligonUP(int _x, int _y)
 		bool flag_right=1;
 		const float AVERAGE_SPEED=50.0;//4
 		const float DELTA_SPEED=40.0;
-		const float MIN_ANGLE_NORMAL=5.f*(M_PI/180.f);
-		const float MAX_ANGLE_NORMAL=50.f*(M_PI/180.f);
+		const float MIN_ANGLE_NORMAL=5.f*(XM_PI/180.f);
+		const float MAX_ANGLE_NORMAL=50.f*(XM_PI/180.f);
 		Vect2f curPoint(_x,_y);
 		for(i=0; i<=MAX_CROSS_POINT; i++){
 			float angleNorm=MIN_ANGLE_NORMAL+fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
@@ -4110,7 +4110,7 @@ bool poiligonUP(int _x, int _y)
 
 sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int _x, int _y
 {
-	//const float begAngle=fabsRnd(2*M_PI);//-M_PI/10.;
+	//const float begAngle=fabsRnd(2*XM_PI);//-XM_PI/10.;
 
 	const int MAX_CROSS_POINT=20;
 	const int MAX_EARTH_POLIGON=MAX_CROSS_POINT-2;
@@ -4121,8 +4121,8 @@ sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int
 	bool flag_right=1;
 	const float AVERAGE_SPEED=70.0;//4
 	const float DELTA_SPEED=30.0;
-	const float MIN_ANGLE_NORMAL=15.f*(M_PI/180.f);
-	const float MAX_ANGLE_NORMAL=40.f*(M_PI/180.f);
+	const float MIN_ANGLE_NORMAL=15.f*(XM_PI/180.f);
+	const float MAX_ANGLE_NORMAL=40.f*(XM_PI/180.f);
 	Vect2f curPoint(begPoint);
 	for(int i=0; i<=MAX_CROSS_POINT; i++){
 		float angleNorm=MIN_ANGLE_NORMAL+fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
@@ -4261,7 +4261,7 @@ void poiligonUPOld(int x0, int y0)
 
 ///////////////////////////////////////////////////////////////////
 //Круговое вспучивание
-#define GRAD2RADF(a)  ((a)*M_PI/180.f)
+#define GRAD2RADF(a)  ((a)*XM_PI/180.f)
 sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 {
 	const int MIN_BEG_RADIUS_GEO_POLIGONS=10;
@@ -4272,7 +4272,7 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 	const int MIN_GEO_POLIGONS=5;
 	const int MAX_GEO_POLIGONS=9;
 
-	//const float MAX_ANGLE_GEO_POLIGON=70.f*(M_PI/180.f);
+	//const float MAX_ANGLE_GEO_POLIGON=70.f*(XM_PI/180.f);
 
 	int numPoligons=MIN_GEO_POLIGONS + XRnd(MAX_GEO_POLIGONS-MIN_GEO_POLIGONS);
 
@@ -4286,12 +4286,12 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 		angleArr[i]=MIN_ANGLE_GEO_POLIGON+fabsRnd(DELTA_ANGLE_GEO_POLIGON);
 		sumNorm+=angleArr[i];
 	}
-	sumNorm=2.f*M_PI/sumNorm;
+	sumNorm=2.f*XM_PI/sumNorm;
 	for(i=0; i<numPoligons; i++){
 		angleArr[i]*=sumNorm;
 	}
 
-	float begAngle=(float)XRnd(360)*M_PI/180.f;
+	float begAngle=(float)XRnd(360)*XM_PI/180.f;
 
 	Vect2f pnt1, pnt2, pnt3, pnt4;
 	point4UP arr[3];
@@ -4694,9 +4694,9 @@ bool sUPoligonN::quant(float angle_grad)
 	result.cross(v_o, v_2);
 	if(result.z<0) angle_grad=-angle_grad;
 
-	//static float planeAngle=0.5f*M_PI/180.f;//0.f;
-	//planeAngle-=0.5f*M_PI/180.f;
-	float planeAngle=angle_grad*M_PI/180.f;
+	//static float planeAngle=0.5f*XM_PI/180.f;//0.f;
+	//planeAngle-=0.5f*XM_PI/180.f;
+	float planeAngle=angle_grad*XM_PI/180.f;
 	QuatF wQuat(planeAngle, qVect);
 
 /*//Проверка правильности поворота полигона - кватернионом
@@ -5242,9 +5242,9 @@ void meshM2VM::rotateAndScaling(int XA, int YA, int ZA, float kX, float kY, floa
 	//A_shape.set(Vect3f(0.5,-0.5,-0.5), Vect3f::ZERO);
 	A_shape.set(Vect3f(kX, kY, -kZ), Vect3f::ZERO);
 
-	A_shape = Mat3f((float)XA*(M_PI/180.0),X_AXIS)*A_shape;
-	A_shape = Mat3f((float)-YA*(M_PI/180.0),Y_AXIS)*A_shape;
-	A_shape = Mat3f((float)ZA*(M_PI/180.0),Z_AXIS)*A_shape;
+	A_shape = Mat3f((float)XA*(XM_PI/180.0),X_AXIS)*A_shape;
+	A_shape = Mat3f((float)-YA*(XM_PI/180.0),Y_AXIS)*A_shape;
+	A_shape = Mat3f((float)ZA*(XM_PI/180.0),Z_AXIS)*A_shape;
 
 	matrix=A_shape;
 /*	matrix.xx=A_shape[0][0];
@@ -6318,10 +6318,10 @@ c3DSGeoAction* c3DSGeoActionCreator::BuildD(short xc, short yc, float orientatio
 	}
 
 	s_EarthUnit* pEarthUnit=NULL;
-	float tmp=xm::fmod(orientation, 2*M_PI);
-	if(tmp<0)tmp+=2*M_PI;
+	float tmp=xm::fmod(orientation, 2*XM_PI);
+	if(tmp<0)tmp+=2*XM_PI;
 
-	float ANT_RAD_IN_CELL_ARR=(2*M_PI)/cache->MMDateArr.size();
+	float ANT_RAD_IN_CELL_ARR=(2*XM_PI)/cache->MMDateArr.size();
 
 	int granulateOrientation= xm::round(tmp / ANT_RAD_IN_CELL_ARR);
 	if(granulateOrientation>=cache->MMDateArr.size())
@@ -6373,8 +6373,8 @@ s_AntBirthGeoAction::s_AntBirthGeoAction(short xc, short yc, float orientation)
 
 	//pEarthUnit=mesh2VMapDispather.getEarthUnit(1);
 	//pEarthUnit->init(xc, yc);
-	float tmp=fmod(orientation, 2*M_PI);
-	if(tmp<0)tmp+=2*M_PI;
+	float tmp=fmod(orientation, 2*XM_PI);
+	if(tmp<0)tmp+=2*XM_PI;
 	int granulateOrientation=round(tmp/ANT_RAD_IN_CELL_ARR);
 	if(granulateOrientation>=ANT_MAX_MESH2VMAPDATE)granulateOrientation=ANT_MAX_MESH2VMAPDATE-1;
 	if(MMDateArr[granulateOrientation]==0){
@@ -6407,8 +6407,8 @@ s_AntDeathGeoAction::s_AntDeathGeoAction(short xc, short yc, float orientation)
 	//pEarthUnit=mesh2VMapDispather.getEarthUnit(2);
 	//pEarthUnit->init(xc, yc);
 
-	float tmp=fmod(orientation, 2*M_PI);
-	if(tmp<0)tmp+=2*M_PI;
+	float tmp=fmod(orientation, 2*XM_PI);
+	if(tmp<0)tmp+=2*XM_PI;
 	int granulateOrientation=xm::round(tmp/ANT_RAD_IN_CELL_ARR);
 	if(granulateOrientation>=ANT_MAX_MESH2VMAPDATE)granulateOrientation=ANT_MAX_MESH2VMAPDATE-1;
 	if(MMDateArr[granulateOrientation]==0){
@@ -6445,24 +6445,24 @@ s_HeadGeoAction::s_HeadGeoAction(void)
 	Vect3f orient(0,0,0);
 	pEarthUnit->meshDate->command_setKeyFrame(0, "", 20, orient, scaling, 0, 0);
 	pEarthUnit->meshDate->command_setKeyFrame(1, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 5*(M_PI/180.f);
+	orient.x= 5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(2, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 5*(M_PI/180.f); orient.y= 5*(M_PI/180.f);
+	orient.x= 5*(XM_PI/180.f); orient.y= 5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(3, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 5*(M_PI/180.f); orient.y= 5*(M_PI/180.f); orient.z= 5*(M_PI/180.f);
+	orient.x= 5*(XM_PI/180.f); orient.y= 5*(XM_PI/180.f); orient.z= 5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(4, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 3*(M_PI/180.f); orient.y= 2*(M_PI/180.f); orient.z= 2*(M_PI/180.f);
+	orient.x= 3*(XM_PI/180.f); orient.y= 2*(XM_PI/180.f); orient.z= 2*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(5, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 0*(M_PI/180.f); orient.y= 0*(M_PI/180.f); orient.z= 0*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= 0*(XM_PI/180.f); orient.z= 0*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(6, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= -2*(M_PI/180.f); orient.y= -2*(M_PI/180.f); orient.z= -3*(M_PI/180.f);
+	orient.x= -2*(XM_PI/180.f); orient.y= -2*(XM_PI/180.f); orient.z= -3*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(7, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 0*(M_PI/180.f); orient.y= -5*(M_PI/180.f); orient.z= -5*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= -5*(XM_PI/180.f); orient.z= -5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(8, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 0*(M_PI/180.f); orient.y= 0*(M_PI/180.f); orient.z= -5*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= 0*(XM_PI/180.f); orient.z= -5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(9, "head.M3D", 2, orient, scaling, 0, 0, 1, INT_MAX);
 
-	orient.x= 0*(M_PI/180.f); orient.y= 0*(M_PI/180.f); orient.z= 0*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= 0*(XM_PI/180.f); orient.z= 0*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(9, "head.M3D", 10, orient, scaling, 0, 0);
 	scaling.x=scaling.y=2.f;
 	scaling.z=0.5f;
@@ -6535,7 +6535,7 @@ bool sGeoWave::quant(void)
 		short curBegRadWave= 1 + xm::round(SGEOWAVE_SPEED_WAVE * (float) (step - 1));
 		float curMaxAmpWave=calcMaxAmpWave(curBegRadWave);
 		for(i = 0; i < SGEOWAVE_LONG_WAVE; i++){
-            int32_t curAmp= xm::round(curMaxAmpWave * xm::sin((float) i * ((2 * M_PI) / SGEOWAVE_LONG_WAVE)));
+            int32_t curAmp= xm::round(curMaxAmpWave * xm::sin((float) i * ((2 * XM_PI) / SGEOWAVE_LONG_WAVE)));
 			int curRad=curBegRadWave+i;
 			int max = maxRad[curRad];
 			int* xx = xRad[curRad];
@@ -6561,7 +6561,7 @@ bool sGeoWave::quant(void)
 
 	float curMaxAmpWave=calcMaxAmpWave(curBegRadWave);
 	for(i = 0; i < SGEOWAVE_LONG_WAVE; i++){
-        int32_t curAmp= xm::round(curMaxAmpWave * xm::sin((float) i * ((2 * M_PI) / SGEOWAVE_LONG_WAVE)));
+        int32_t curAmp= xm::round(curMaxAmpWave * xm::sin((float) i * ((2 * XM_PI) / SGEOWAVE_LONG_WAVE)));
 		int curRad=curBegRadWave+i;
 		int max = maxRad[curRad];
 		int* xx = xRad[curRad];

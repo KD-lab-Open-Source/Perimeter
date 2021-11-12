@@ -41,25 +41,25 @@ CameraPathType& GetPositionCircuit(const Vect3f& pos, CameraPathType& path)
 	float circuitDistance = v0.distance(pos);
 	float circuitViewAngle = acosf((v0.z - pos.z)/circuitDistance);
 
-	if(circuitViewAngle < M_PI/10)
-		circuitViewAngle = M_PI/10;
+	if(circuitViewAngle < XM_PI/10)
+		circuitViewAngle = XM_PI/10;
 
-	float dPsi = 2*M_PI/circuitStepping;
-	float psi = M_PI/2 - atan2f((v0-pos).x, (v0-pos).y);
+	float dPsi = 2*XM_PI/circuitStepping;
+	float psi = XM_PI/2 - atan2f((v0-pos).x, (v0-pos).y);
 	float da  = 0;
 
-	while(da < 2*M_PI)
+	while(da < 2*XM_PI)
 	{
 		v.setSpherical(psi, circuitViewAngle, circuitDistance);
 
-		float angle = M_PI/2 - psi;
+		float angle = XM_PI/2 - psi;
 		//float angle = atan2f(v.x, v.y);
-		if(angle > 2*M_PI)
-			angle -= 2*M_PI;
+		if(angle > 2*XM_PI)
+			angle -= 2*XM_PI;
 		if(angle < 0)
-			angle += 2*M_PI;
+			angle += 2*XM_PI;
 		if(angle < 0)
-			angle += 2*M_PI;
+			angle += 2*XM_PI;
 
 		v += pos;
 		if(v.x < mapBordersForCamera)
@@ -72,7 +72,7 @@ CameraPathType& GetPositionCircuit(const Vect3f& pos, CameraPathType& path)
 			v.y = vMap.V_SIZE - mapBordersForCamera;
 
 		CorrectMapZ(v);
-		path.push_back(CAMERA_PATH_POINT(v, Vect3f(circuitViewAngle + M_PI/10, 0, angle)));
+		path.push_back(CAMERA_PATH_POINT(v, Vect3f(circuitViewAngle + XM_PI/10, 0, angle)));
 
 		psi += dPsi;
 		da += dPsi;

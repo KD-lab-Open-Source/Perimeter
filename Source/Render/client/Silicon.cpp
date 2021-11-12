@@ -22,7 +22,7 @@ ElasticSphere::ElasticSphere()
 		inited = 1;
 		for(int theta = 0; theta < theta_size; theta++)
 			for(int psi = 0; psi < psi_size; psi++)
-				unit_sphere[psi][theta].setSpherical(psi*M_PI*2/psi_size, theta*M_PI/(theta_size - 1), 1);
+				unit_sphere[psi][theta].setSpherical(psi*XM_PI*2/psi_size, theta*XM_PI/(theta_size - 1), 1);
 		}
 
 	setRadius(100, 0.3f);
@@ -54,7 +54,7 @@ void ElasticSphere::SetPosition(const MatXf& Matrix)
 	dir.x = frnd(1);
 	dir.y = frnd(1);
 	dir.z = frnd(1);
-	GlobalMatrix.rot().set(dir, frnd(M_PI));
+	GlobalMatrix.rot().set(dir, frnd(XM_PI));
 }
 
 void ElasticSphere::PreDraw(cCamera *DrawNode)
@@ -169,13 +169,13 @@ void ElasticSphere::getAngles(const Vect3f& point, int& psi, int& theta)
 {
 	Vect3f v;
 	GetGlobalMatrix().invXformPoint(point, v);
-	psi = (int) xm::round(v.psi() * psi_size / (M_PI * 2)) & psi_mask;
-	theta = (int) xm::round(v.theta() * theta_size / M_PI) & theta_mask;
+	psi = (int) xm::round(v.psi() * psi_size / (XM_PI * 2)) & psi_mask;
+	theta = (int) xm::round(v.theta() * theta_size / XM_PI) & theta_mask;
 }	
 
 void ElasticSphere::getPoint(int psi, int theta, Vect3f& point)
 {
-	point.setSpherical(psi*M_PI*2/psi_size, theta*M_PI/theta_size, height_map[psi][theta]*elastic_sphere_get_point_radius_factor);
+	point.setSpherical(psi*XM_PI*2/psi_size, theta*XM_PI/theta_size, height_map[psi][theta]*elastic_sphere_get_point_radius_factor);
 	GetGlobalMatrix().xformPoint(point);
 }	
 

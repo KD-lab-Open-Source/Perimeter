@@ -10,8 +10,8 @@
 #include "xmath.h"
 #include "filter.h"
 
-#ifndef M_PI
-#define M_PI  3.14159265358979323846f
+#ifndef XM_PI
+#define XM_PI  3.14159265358979323846f
 #endif
 
 #ifndef EXIT_SUCCESS
@@ -150,7 +150,7 @@ double B_spline_filter(double t) {
 }
 
 double sinc(double x) {
-	x *= M_PI;
+	x *= XM_PI;
 	if(x != 0) return(xm::sin(x) / x);
 	return(1.0);
 }

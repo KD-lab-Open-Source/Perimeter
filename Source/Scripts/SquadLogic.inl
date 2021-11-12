@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 //		SquadLogic.inl
 //
-// Описвает логику сквада.
-// Все данные определяются как static (не будут
-// транслироваться в cpp/h) и будут встраиваться
-// в terUnitAttributeData.
+// РћРїРёСЃРІР°РµС‚ Р»РѕРіРёРєСѓ СЃРєРІР°РґР°.
+// Р’СЃРµ РґР°РЅРЅС‹Рµ РѕРїСЂРµРґРµР»СЏСЋС‚СЃСЏ РєР°Рє static (РЅРµ Р±СѓРґСѓС‚
+// С‚СЂР°РЅСЃР»РёСЂРѕРІР°С‚СЊСЃСЏ РІ cpp/h) Рё Р±СѓРґСѓС‚ РІСЃС‚СЂР°РёРІР°С‚СЊСЃСЏ
+// РІ terUnitAttributeData.
 ////////////////////////////////////////////////////////////////////////////////////
 
 struct LegionaryPrm
@@ -24,19 +24,19 @@ struct LegionaryPrm
 /////////////////////////////////////////////////////////////////////////////////
 //			Base Units
 /////////////////////////////////////////////////////////////////////////////////
-// солдат
+// СЃРѕР»РґР°С‚
 static LegionaryPrm soldierSquadPrm = 
 {
 	is_base_unit = 1;
 };
 
- // техник
+ // С‚РµС…РЅРёРє
 static LegionaryPrm technicSquadPrm = 
 {
 	is_base_unit = 1;
 };
 
-// офицер
+// РѕС„РёС†РµСЂ
 static LegionaryPrm officierSquadPrm = 
 {
 	is_base_unit = 1;
@@ -199,7 +199,7 @@ static LegionaryPrm filthSpot3SquadPrm =
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-//		Атакуемость: приоритеты
+//		РђС‚Р°РєСѓРµРјРѕСЃС‚СЊ: РїСЂРёРѕСЂРёС‚РµС‚С‹
 /////////////////////////////////////////////////////////////////////////////////
 struct AttackablePrm 
 {
@@ -215,7 +215,7 @@ static struct AttackableData
 		_Truck = 1,
 		_BuildingBlock = 1,
 
-		//  Строения
+		//  РЎС‚СЂРѕРµРЅРёСЏ
 		_Frame = 1,
 		_SoldierPlant,
 		_OfficerPlant,
@@ -229,7 +229,7 @@ static struct AttackableData
 		_Core,
 		_StaticBomb,
 
-		// Простые юниты сквада
+		// РџСЂРѕСЃС‚С‹Рµ СЋРЅРёС‚С‹ СЃРєРІР°РґР°
 		_Soldier,
 		_Officer,
 		_Technic,
@@ -255,19 +255,19 @@ static struct AttackableData
 		_Impaler,
 		_Extirpator,
 		
-		//  Скверна
+		//  РЎРєРІРµСЂРЅР°
 		_FilthFly,
 		_FilthGround,
 		_FilthUnderGround,
 		
-		//  Стационарные орудия
+		//  РЎС‚Р°С†РёРѕРЅР°СЂРЅС‹Рµ РѕСЂСѓРґРёСЏ
 		_LaserGun, 
 		_ElectroGun, 
 		_RocketGun,
 		_Howitzer,
 		_Subchaser,
 
-		// Продвинутые юниты
+		// РџСЂРѕРґРІРёРЅСѓС‚С‹Рµ СЋРЅРёС‚С‹
 		_Bombie,
 
 		_Wargon,
@@ -298,7 +298,7 @@ static struct AttackableData
 	AttackablePrm Default = {};
 
 	//////////////////////////////////////////////////
-	//		Служебные юниты
+	//		РЎР»СѓР¶РµР±РЅС‹Рµ СЋРЅРёС‚С‹
 	//////////////////////////////////////////////////
 	AttackablePrm Brigadier = { kill_priority = _Brigadier; };
 	AttackablePrm BuildMaster = { kill_priority = _BuildMaster; };
@@ -306,7 +306,7 @@ static struct AttackableData
 	AttackablePrm BuildingBlock = { kill_priority = _BuildingBlock; };
 
 	//////////////////////////////////////////////////
-	//		Строения
+	//		РЎС‚СЂРѕРµРЅРёСЏ
 	//////////////////////////////////////////////////
 	AttackablePrm Frame = { kill_priority = _Frame; };
 	AttackablePrm PlantSoldier = { kill_priority = _SoldierPlant; };
@@ -322,7 +322,7 @@ static struct AttackableData
 	AttackablePrm StaticBomb = { kill_priority = _StaticBomb; };
 
 	//////////////////////////////////////////////////
-	//		Простые юниты сквада
+	//		РџСЂРѕСЃС‚С‹Рµ СЋРЅРёС‚С‹ СЃРєРІР°РґР°
 	//////////////////////////////////////////////////
 	AttackablePrm Soldier = { kill_priority = _Soldier; };
 	AttackablePrm Officer = { kill_priority = _Officer; };
@@ -358,7 +358,7 @@ static struct AttackableData
 	AttackablePrm Piercer = { kill_priority = _Piercer; };
 
 	///////////////////////////////////////////////
-	//		Скверна
+	//		РЎРєРІРµСЂРЅР°
 	///////////////////////////////////////////////
 	AttackablePrm AntsFilth = { kill_priority = _FilthFly; };
 	AttackablePrm RatFilth = { kill_priority = _FilthFly; };
@@ -367,7 +367,7 @@ static struct AttackableData
 
 	
 	//////////////////////////////////////////////////		 
-	//		Стационарные орудия
+	//		РЎС‚Р°С†РёРѕРЅР°СЂРЅС‹Рµ РѕСЂСѓРґРёСЏ
 	//////////////////////////////////////////////////
 	AttackablePrm LaserGun = { kill_priority = _LaserGun; };
 	AttackablePrm ElectroGun = { kill_priority = _ElectroGun; };
@@ -377,7 +377,7 @@ static struct AttackableData
 
 
 	//////////////////////////////////////////////////
-	//		Продвинутые юниты
+	//		РџСЂРѕРґРІРёРЅСѓС‚С‹Рµ СЋРЅРёС‚С‹
 	//////////////////////////////////////////////////
 	AttackablePrm Bombie = { kill_priority = _Bombie; };
 	AttackablePrm Disintegrator = { kill_priority = _Disintegrator; };

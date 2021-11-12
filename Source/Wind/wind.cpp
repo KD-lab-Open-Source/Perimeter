@@ -156,7 +156,7 @@ bool cQuantumWind::IsLive()
 void cQuantumWind::Draw()
 {
 	xassert(ef);
-	ef->SetPosition(MatXf(Mat3f(M_PI/2+atan2(vel.y,vel.x),Z_AXIS), Vect3f(pos.x, pos.y, surf_z + maxz)));
+	ef->SetPosition(MatXf(Mat3f(XM_PI/2+atan2(vel.y,vel.x),Z_AXIS), Vect3f(pos.x, pos.y, surf_z + maxz)));
 }
 
 //====================================================================
@@ -166,7 +166,7 @@ void cQuantumWindW::operator()(WindNode& nd, float x, float y)
 	y-=pos.y;
 	float r1 = sqrt(x*x+y*y);
 	if (r1>=r) return;
-	float k = xm::sin(r1 / r * M_PI);
+	float k = xm::sin(r1 / r * XM_PI);
 	nd.vel.x += w*y*k;
 	nd.vel.y += -w*x*k;
 	float ss = 0.3f+rnd.frand()*0.3f;
@@ -352,7 +352,7 @@ void cMapWind::Init(int w, int h, int n,cWater* pWater_)
 		cObject3dx* obj = terScene->CreateObject3dx("resource\\balmer\\wind.3DX");
 		float x = rnd(200)+1000;
 		float y = rnd(200)+1000;
-		MatXf pos(Mat3f(rnd.frand()*2*M_PI,Z_AXIS), Vect3f(x,y,GetZ(x,y)));
+		MatXf pos(Mat3f(rnd.frand()*2*XM_PI,Z_AXIS), Vect3f(x,y,GetZ(x,y)));
 		obj->SetPosition(pos);
 		obj->Update();
 		obj->SetScale(rnd.frand()*0.5f+0.3f);

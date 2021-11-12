@@ -16,8 +16,8 @@ section UnitAttributePrm( declaration = "Game\Scripts\UnitAttribute.hi", definit
 #include "interfaceTV.inl" 
 #include "Sound.inl" 
 
-static float M_PI = 3.14159265358979323846;
-static float G2R = M_PI/180;
+static float XM_PI = 3.14159265358979323846;
+static float G2R = XM_PI/180;
 
 //-------------------------
 int DAMAGE_CHECK_COUNT = 150;
@@ -26,53 +26,53 @@ int MUTATION_CHECK_COUNT = 20;
 int terShootMapTest = 0;
 int terShootUnitTest = 0;
 
-// Âðåìÿ, íà êîòîðîå îôèöåð çàìîðàæèâàåò áàçîâûé þíèò, â ìèëëèñåêóíäàõ.
+// Ð’Ñ€ÐµÐ¼Ñ, Ð½Ð° ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ðµ Ð¾Ñ„Ð¸Ñ†ÐµÑ€ Ð·Ð°Ð¼Ð¾Ñ€Ð°Ð¶Ð¸Ð²Ð°ÐµÑ‚ Ð±Ð°Ð·Ð¾Ð²Ñ‹Ð¹ ÑŽÐ½Ð¸Ñ‚, Ð² Ð¼Ð¸Ð»Ð»Ð¸ÑÐµÐºÑƒÐ½Ð´Ð°Ñ….
 int terOfficerFreezeTime = 10000;
-// Âðåìÿ, íà êîòîðîå ïðîëå÷åííûé þíèò çåëåíååò, â ìèëëèñåêóíäàõ.
+// Ð’Ñ€ÐµÐ¼Ñ, Ð½Ð° ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ðµ Ð¿Ñ€Ð¾Ð»ÐµÑ‡ÐµÐ½Ð½Ñ‹Ð¹ ÑŽÐ½Ð¸Ñ‚ Ð·ÐµÐ»ÐµÐ½ÐµÐµÑ‚, Ð² Ð¼Ð¸Ð»Ð»Ð¸ÑÐµÐºÑƒÐ½Ð´Ð°Ñ….
 int terTechnicHealTime = 1000;
 
 float terScumStormTurnAngle = 30 * G2R;
 float terScumStormTurnAngleDelta = 10 * G2R;
 int terScumStormTurnDelay = 400;
 
-// Âðåìÿ, íà êîòîðîå unseen äåëàåò þíèòà íåâèäèìûì, ìñ.
+// Ð’Ñ€ÐµÐ¼Ñ, Ð½Ð° ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ðµ unseen Ð´ÐµÐ»Ð°ÐµÑ‚ ÑŽÐ½Ð¸Ñ‚Ð° Ð½ÐµÐ²Ð¸Ð´Ð¸Ð¼Ñ‹Ð¼, Ð¼Ñ.
 int terInvisibilityTime = 4000;
-// Ìàêñèìàëüíîå âðåìÿ íåâèäèìîñòè, ìñ.
+// ÐœÐ°ÐºÑÐ¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ðµ Ð²Ñ€ÐµÐ¼Ñ Ð½ÐµÐ²Ð¸Ð´Ð¸Ð¼Ð¾ÑÑ‚Ð¸, Ð¼Ñ.
 int terInvisibilityTimeMax = 8000;
 
-// Êîýôô. ïðîçðà÷íîñòè äëÿ ñîáñòâåííûõ íåâèäèìûõ þíèòîâ.
+// ÐšÐ¾ÑÑ„Ñ„. Ð¿Ñ€Ð¾Ð·Ñ€Ð°Ñ‡Ð½Ð¾ÑÑ‚Ð¸ Ð´Ð»Ñ ÑÐ¾Ð±ÑÑ‚Ð²ÐµÐ½Ð½Ñ‹Ñ… Ð½ÐµÐ²Ð¸Ð´Ð¸Ð¼Ñ‹Ñ… ÑŽÐ½Ð¸Ñ‚Ð¾Ð².
 float terInvisibilityCoeff = 0.5;
 
 //------------------------------------------------------
-// ïàðàìåòðû îñêîëêîâ
+// Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ð¾ÑÐºÐ¾Ð»ÐºÐ¾Ð²
 struct terDebrisData
 {
 	terUnitAttributeID debrisID = UNIT_ATTRIBUTE_NONE;
 
 	int count = 10;
-	// åñëè ðàâíî -1, òî îñêîëêîâ áóäåò count + round(pow(radius / 4,1.5f));
+	// ÐµÑÐ»Ð¸ Ñ€Ð°Ð²Ð½Ð¾ -1, Ñ‚Ð¾ Ð¾ÑÐºÐ¾Ð»ÐºÐ¾Ð² Ð±ÑƒÐ´ÐµÑ‚ count + round(pow(radius / 4,1.5f));
 	int countRnd = 10;
 
 	float speed = 150.0f;
 };
 
-// ñïåöýôôåêò
+// ÑÐ¿ÐµÑ†ÑÑ„Ñ„ÐµÐºÑ‚
 struct terUnitEffectData
 {
-	// èäåíòèôèêàòîð ýôôåêòà
+	// Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€ ÑÑ„Ñ„ÐµÐºÑ‚Ð°
 	terEffectID effectID = EFFECT_ID_EXPLOSION;
-	// èìÿ äëÿ ïîèñêà â áèáëèîòåêå
+	// Ð¸Ð¼Ñ Ð´Ð»Ñ Ð¿Ð¾Ð¸ÑÐºÐ° Ð² Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐµ
 	string effectName = "";
-	// == 1 åñëè ýôôåêòó íàäî ïåðåäàâàòü îðèåíòàöèþ þíèòà
+	// == 1 ÐµÑÐ»Ð¸ ÑÑ„Ñ„ÐµÐºÑ‚Ñƒ Ð½Ð°Ð´Ð¾ Ð¿ÐµÑ€ÐµÐ´Ð°Ð²Ð°Ñ‚ÑŒ Ð¾Ñ€Ð¸ÐµÐ½Ñ‚Ð°Ñ†Ð¸ÑŽ ÑŽÐ½Ð¸Ñ‚Ð°
 	int needOrientation = 1;
 
-	// (äëÿ îãíÿ/äûìà îò ãîðÿùèõ çäàíèé)
-	// óðîâåíü ïîâðåæäåíèé, ïðè êîòîðîì âêëþ÷àåòñÿ ýôôåêò
+	// (Ð´Ð»Ñ Ð¾Ð³Ð½Ñ/Ð´Ñ‹Ð¼Ð° Ð¾Ñ‚ Ð³Ð¾Ñ€ÑÑ‰Ð¸Ñ… Ð·Ð´Ð°Ð½Ð¸Ð¹)
+	// ÑƒÑ€Ð¾Ð²ÐµÐ½ÑŒ Ð¿Ð¾Ð²Ñ€ÐµÐ¶Ð´ÐµÐ½Ð¸Ð¹, Ð¿Ñ€Ð¸ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð¼ Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ÑÑ ÑÑ„Ñ„ÐµÐºÑ‚
 	// [0, 1]
 	float startupDamage = 0.0;
 };
 
-// ïàðàìåòðû ñïåöýôôåêòîâ þíèòà/çäàíèÿ - èìÿ ôàéëà, èìåíà ýôôåêòîâ è ò.ä.
+// Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ ÑÐ¿ÐµÑ†ÑÑ„Ñ„ÐµÐºÑ‚Ð¾Ð² ÑŽÐ½Ð¸Ñ‚Ð°/Ð·Ð´Ð°Ð½Ð¸Ñ - Ð¸Ð¼Ñ Ñ„Ð°Ð¹Ð»Ð°, Ð¸Ð¼ÐµÐ½Ð° ÑÑ„Ñ„ÐµÐºÑ‚Ð¾Ð² Ð¸ Ñ‚.Ð´.
 struct terUnitEffects
 {
 	string libraryFileName = "";
@@ -84,128 +84,128 @@ struct terUnitEffects
 		{ effectID = EFFECT_ID_UNIT_MOVE; effectName = "smoke"; }
 	};
 
-	// îñêîëêè
+	// Ð¾ÑÐºÐ¾Ð»ÐºÐ¸
 	terDebrisData debrisData[int debrisDataNum = 2] = { };
 
-	// âðåìÿ ñóùåñòâîâàíèÿ òðóïà îò þíèòà
+	// Ð²Ñ€ÐµÐ¼Ñ ÑÑƒÑ‰ÐµÑÑ‚Ð²Ð¾Ð²Ð°Ð½Ð¸Ñ Ñ‚Ñ€ÑƒÐ¿Ð° Ð¾Ñ‚ ÑŽÐ½Ð¸Ñ‚Ð°
 	int corpseLifeTime = 0;
 
-	// òèï òðóïà
-	// UNIT_ATTRIBUTE_CORPSE_DYNAMIC - äëÿ þíèòîâ
-	// UNIT_ATTRIBUTE_FALL_STRUCTURE - äëÿ çäàíèé
-	// UNIT_ATTRIBUTE_NONE - åñëè òðóïà íåòó
+	// Ñ‚Ð¸Ð¿ Ñ‚Ñ€ÑƒÐ¿Ð°
+	// UNIT_ATTRIBUTE_CORPSE_DYNAMIC - Ð´Ð»Ñ ÑŽÐ½Ð¸Ñ‚Ð¾Ð²
+	// UNIT_ATTRIBUTE_FALL_STRUCTURE - Ð´Ð»Ñ Ð·Ð´Ð°Ð½Ð¸Ð¹
+	// UNIT_ATTRIBUTE_NONE - ÐµÑÐ»Ð¸ Ñ‚Ñ€ÑƒÐ¿Ð° Ð½ÐµÑ‚Ñƒ
 	terUnitAttributeID corpseID = UNIT_ATTRIBUTE_NONE;
 
-	// ðàäèóñ âîðîíêè îò âçðûâà
-	// íîëü åñëè âîðîíêè íåòó
+	// Ñ€Ð°Ð´Ð¸ÑƒÑ Ð²Ð¾Ñ€Ð¾Ð½ÐºÐ¸ Ð¾Ñ‚ Ð²Ð·Ñ€Ñ‹Ð²Ð°
+	// Ð½Ð¾Ð»ÑŒ ÐµÑÐ»Ð¸ Ð²Ð¾Ñ€Ð¾Ð½ÐºÐ¸ Ð½ÐµÑ‚Ñƒ
 	float craterRadius = 0;
-	// òèï êðàòåðà
+	// Ñ‚Ð¸Ð¿ ÐºÑ€Ð°Ñ‚ÐµÑ€Ð°
 	terUnitAttributeID craterID = UNIT_ATTRIBUTE_DESTRUCTION_CRATER;
 
-	// çàäåðæêà ïåðåä ïîÿâëåíèåì êðàòåðà îò âçðûâà
+	// Ð·Ð°Ð´ÐµÑ€Ð¶ÐºÐ° Ð¿ÐµÑ€ÐµÐ´ Ð¿Ð¾ÑÐ²Ð»ÐµÐ½Ð¸ÐµÐ¼ ÐºÑ€Ð°Ñ‚ÐµÑ€Ð° Ð¾Ñ‚ Ð²Ð·Ñ€Ñ‹Ð²Ð°
 	int craterDelay = 0;
 
-	// êðàòåð, âûçûâàþùèéñÿ ïðè äâèæåíèè þíèòà, äëÿ ïîäçåìíûõ ñíàðÿäîâ
+	// ÐºÑ€Ð°Ñ‚ÐµÑ€, Ð²Ñ‹Ð·Ñ‹Ð²Ð°ÑŽÑ‰Ð¸Ð¹ÑÑ Ð¿Ñ€Ð¸ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ð¸ ÑŽÐ½Ð¸Ñ‚Ð°, Ð´Ð»Ñ Ð¿Ð¾Ð´Ð·ÐµÐ¼Ð½Ñ‹Ñ… ÑÐ½Ð°Ñ€ÑÐ´Ð¾Ð²
 	terUnitAttributeID movementCraterID = UNIT_ATTRIBUTE_NONE;
-	// ÷àðåç êàêîå ðàññòîÿíèå êëàñòü êðàòåð ïðè äâèæåíèè
-	// åñëè îáíóëèòü, áóäåò âûçûâàòüñÿ íåïðåðûâíî ïðè äâèæåíèè
+	// Ñ‡Ð°Ñ€ÐµÐ· ÐºÐ°ÐºÐ¾Ðµ Ñ€Ð°ÑÑÑ‚Ð¾ÑÐ½Ð¸Ðµ ÐºÐ»Ð°ÑÑ‚ÑŒ ÐºÑ€Ð°Ñ‚ÐµÑ€ Ð¿Ñ€Ð¸ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ð¸
+	// ÐµÑÐ»Ð¸ Ð¾Ð±Ð½ÑƒÐ»Ð¸Ñ‚ÑŒ, Ð±ÑƒÐ´ÐµÑ‚ Ð²Ñ‹Ð·Ñ‹Ð²Ð°Ñ‚ÑŒÑÑ Ð½ÐµÐ¿Ñ€ÐµÑ€Ñ‹Ð²Ð½Ð¾ Ð¿Ñ€Ð¸ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ð¸
 	float movementCraterDelta = 1;
 };
 
-// ïàðàìåòðû óïðàâëåíèÿ íàâåäåíèåì îðóæèÿ
+// Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸ÐµÐ¼ Ð¾Ñ€ÑƒÐ¶Ð¸Ñ
 struct terWeaponControllerSetup
 {
-	// èìåíà äàììè äëÿ óïðàâëåíèÿ ìîäåëüþ áàøíè è ñòâîëà
+	// Ð¸Ð¼ÐµÐ½Ð° Ð´Ð°Ð¼Ð¼Ð¸ Ð´Ð»Ñ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð¼Ð¾Ð´ÐµÐ»ÑŒÑŽ Ð±Ð°ÑˆÐ½Ð¸ Ð¸ ÑÑ‚Ð²Ð¾Ð»Ð°
 	string objectName[2] = { "group bashnia","group dulo" };
-	// èìåíà ëîãè÷åñêèõ îáúåêòîâ äëÿ óïðàâëåíèÿ áàøíåé è ñòâîëîì
+	// Ð¸Ð¼ÐµÐ½Ð° Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ñ… Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð² Ð´Ð»Ñ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð±Ð°ÑˆÐ½ÐµÐ¹ Ð¸ ÑÑ‚Ð²Ð¾Ð»Ð¾Ð¼
 	string logicObjectName[2] = { "bashnia","dulo" };
 
-	// èìåíà ëîãè÷åñêèõ îáúåêòîâ äëÿ ïðèöåëèâàíèÿ (öåíòð áàøíè è êîíåö ñòâîëà)
+	// Ð¸Ð¼ÐµÐ½Ð° Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ñ… Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð² Ð´Ð»Ñ Ð¿Ñ€Ð¸Ñ†ÐµÐ»Ð¸Ð²Ð°Ð½Ð¸Ñ (Ñ†ÐµÐ½Ñ‚Ñ€ Ð±Ð°ÑˆÐ½Ð¸ Ð¸ ÐºÐ¾Ð½ÐµÑ† ÑÑ‚Ð²Ð¾Ð»Ð°)
 	string targetingObjectName = 0;
 
-	// òî÷íîñòü ïðèöåëèâàíèÿ, â äîëÿõ PI
+	// Ñ‚Ð¾Ñ‡Ð½Ð¾ÑÑ‚ÑŒ Ð¿Ñ€Ð¸Ñ†ÐµÐ»Ð¸Ð²Ð°Ð½Ð¸Ñ, Ð² Ð´Ð¾Ð»ÑÑ… PI
 	float targetingPrecision[2] = { 0.001, 0.001 };
 
-	// ñêîðîñòü ïîâîðîòîâ ïî ãîðèçîíòàëè è ïî âåòðèêàëè
-	// â äîëÿõ PI
+	// ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ Ð¿Ð¾Ð²Ð¾Ñ€Ð¾Ñ‚Ð¾Ð² Ð¿Ð¾ Ð³Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»Ð¸ Ð¸ Ð¿Ð¾ Ð²ÐµÑ‚Ñ€Ð¸ÐºÐ°Ð»Ð¸
+	// Ð² Ð´Ð¾Ð»ÑÑ… PI
 	float turnSpeed[2] = { 0.2, 0.2 };
 
-	// îãðàíè÷åíèÿ ïîâîðîòà ñòâîëà ïî ãîðèçîíòàëè
-	// â äîëÿõ PI
+	// Ð¾Ð³Ñ€Ð°Ð½Ð¸Ñ‡ÐµÐ½Ð¸Ñ Ð¿Ð¾Ð²Ð¾Ñ€Ð¾Ñ‚Ð° ÑÑ‚Ð²Ð¾Ð»Ð° Ð¿Ð¾ Ð³Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»Ð¸
+	// Ð² Ð´Ð¾Ð»ÑÑ… PI
 	float psiLimit[2] = { 0, 2 };
 
-	// îãðàíè÷åíèÿ ïîâîðîòà ñòâîëà ïî âåðòèêàëè
-	// â äîëÿõ PI
+	// Ð¾Ð³Ñ€Ð°Ð½Ð¸Ñ‡ÐµÐ½Ð¸Ñ Ð¿Ð¾Ð²Ð¾Ñ€Ð¾Ñ‚Ð° ÑÑ‚Ð²Ð¾Ð»Ð° Ð¿Ð¾ Ð²ÐµÑ€Ñ‚Ð¸ÐºÐ°Ð»Ð¸
+	// Ð² Ð´Ð¾Ð»ÑÑ… PI
 	float thetaLimit[2] = { -0.5, 0.5 };
 
-	// íàïðàâëåíèå ñòâîëà ïî óìîë÷àíèþ, â äîëÿõ PI
+	// Ð½Ð°Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ ÑÑ‚Ð²Ð¾Ð»Ð° Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ, Ð² Ð´Ð¾Ð»ÑÑ… PI
 	float defaultAngles[2] = { 0, 0 };
 };
 
-// îðóæèå
+// Ð¾Ñ€ÑƒÐ¶Ð¸Ðµ
 struct terWeaponSetup
 {
-	// òèï îðóæèÿ
+	// Ñ‚Ð¸Ð¿ Ð¾Ñ€ÑƒÐ¶Ð¸Ñ
 	WeaponType weaponType = WEAPON_LASER;
 
-	// ôëàãè, êîìáèíàöèÿ çíà÷åíèé enum WeaponFlags
+	// Ñ„Ð»Ð°Ð³Ð¸, ÐºÐ¾Ð¼Ð±Ð¸Ð½Ð°Ñ†Ð¸Ñ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ð¹ enum WeaponFlags
 	int flags = 0;
 
-	// ID ñíàðÿäà
+	// ID ÑÐ½Ð°Ñ€ÑÐ´Ð°
 	terUnitAttributeID missileID = UNIT_ATTRIBUTE_NONE;
-	// ìàêñèìàëüíîå êîëè÷åñòâî îäíîâðåìåííî æèâóùèõ íà ìèðå ñíàðÿäîâ
-	// 0 åñëè íåò îãðàíè÷åíèÿ
+	// Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ðµ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð¾Ð´Ð½Ð¾Ð²Ñ€ÐµÐ¼ÐµÐ½Ð½Ð¾ Ð¶Ð¸Ð²ÑƒÑ‰Ð¸Ñ… Ð½Ð° Ð¼Ð¸Ñ€Ðµ ÑÐ½Ð°Ñ€ÑÐ´Ð¾Ð²
+	// 0 ÐµÑÐ»Ð¸ Ð½ÐµÑ‚ Ð¾Ð³Ñ€Ð°Ð½Ð¸Ñ‡ÐµÐ½Ð¸Ñ
 	int missileLimit = 0;
 
-	// âðåìÿ ïîñëå íàâåäåíèÿ, ïî èñòå÷åíèè êîòîðîãî
-	// îðóæèå ðàçâîðà÷èâàåòñÿ â íàïðàâëåíèè ïî-óìîë÷àíèþ
+	// Ð²Ñ€ÐµÐ¼Ñ Ð¿Ð¾ÑÐ»Ðµ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ñ, Ð¿Ð¾ Ð¸ÑÑ‚ÐµÑ‡ÐµÐ½Ð¸Ð¸ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð³Ð¾
+	// Ð¾Ñ€ÑƒÐ¶Ð¸Ðµ Ñ€Ð°Ð·Ð²Ð¾Ñ€Ð°Ñ‡Ð¸Ð²Ð°ÐµÑ‚ÑÑ Ð² Ð½Ð°Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ð¸ Ð¿Ð¾-ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ
 	//
-	// â ìèëèèñåêóíäàõ
+	// Ð² Ð¼Ð¸Ð»Ð¸Ð¸ÑÐµÐºÑƒÐ½Ð´Ð°Ñ…
 	int aimResetDelay = 1500;
 
-	// âðåìÿ, â òå÷åíèè êîòîðîãî ïîñëå âûñòðåëà íåëüçÿ ñòðåëüíóòü åù¸
+	// Ð²Ñ€ÐµÐ¼Ñ, Ð² Ñ‚ÐµÑ‡ÐµÐ½Ð¸Ð¸ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð³Ð¾ Ð¿Ð¾ÑÐ»Ðµ Ð²Ñ‹ÑÑ‚Ñ€ÐµÐ»Ð° Ð½ÐµÐ»ÑŒÐ·Ñ ÑÑ‚Ñ€ÐµÐ»ÑŒÐ½ÑƒÑ‚ÑŒ ÐµÑ‰Ñ‘
 	int fireDisableTime = 0;
 
-	// çàäåðæêà ìåæäó âûñòðåëàìè
-	// äëÿ îðóæèÿ, êîòîðîå êàêîå-òî âðåìÿ çàðÿæàåòñÿ,
-	// ïîòîì íåêîòîðîå âðåìÿ ðàáîòàåò
+	// Ð·Ð°Ð´ÐµÑ€Ð¶ÐºÐ° Ð¼ÐµÐ¶Ð´Ñƒ Ð²Ñ‹ÑÑ‚Ñ€ÐµÐ»Ð°Ð¼Ð¸
+	// Ð´Ð»Ñ Ð¾Ñ€ÑƒÐ¶Ð¸Ñ, ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ðµ ÐºÐ°ÐºÐ¾Ðµ-Ñ‚Ð¾ Ð²Ñ€ÐµÐ¼Ñ Ð·Ð°Ñ€ÑÐ¶Ð°ÐµÑ‚ÑÑ,
+	// Ð¿Ð¾Ñ‚Ð¾Ð¼ Ð½ÐµÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ðµ Ð²Ñ€ÐµÐ¼Ñ Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÐµÑ‚
 	int fireDelay = 1000;
 
-	// çàäåðæêà ïåðåçàðÿäêè ïîñëå âûñòðåëà,
-	// èñïîëüçóåòñÿ äëÿ ðàêåòíèö
+	// Ð·Ð°Ð´ÐµÑ€Ð¶ÐºÐ° Ð¿ÐµÑ€ÐµÐ·Ð°Ñ€ÑÐ´ÐºÐ¸ Ð¿Ð¾ÑÐ»Ðµ Ð²Ñ‹ÑÑ‚Ñ€ÐµÐ»Ð°,
+	// Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ÑÑ Ð´Ð»Ñ Ñ€Ð°ÐºÐµÑ‚Ð½Ð¸Ñ†
 	int missileLoadDelay = 300;
 
-	// prm äëÿ ðàñ÷åòà íàâåäåíèÿ
+	// prm Ð´Ð»Ñ Ñ€Ð°ÑÑ‡ÐµÑ‚Ð° Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ñ
 	RigidBodyPrm* turnSuggestPrm = 0;
 
-	// óïðàâëåíèå íàâåäåíèåì
+	// ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸ÐµÐ¼
 	terWeaponControllerSetup* controllerSetup = 0;
 
 	float dischargeSpeed = 0.3;
 
-	// äàëüíîñòü ñòðåëüáû, min/max
+	// Ð´Ð°Ð»ÑŒÐ½Ð¾ÑÑ‚ÑŒ ÑÑ‚Ñ€ÐµÐ»ÑŒÐ±Ñ‹, min/max
 	float fireRadius[2] = { 0, 100 };
 
-	// ðàäèóñ âèäèìîñòè öåëè
+	// Ñ€Ð°Ð´Ð¸ÑƒÑ Ð²Ð¸Ð´Ð¸Ð¼Ð¾ÑÑ‚Ð¸ Ñ†ÐµÐ»Ð¸
 	float sightRadius = 100;
 
-	// ðàäèóñ, â êîòðîì ëîæàòñÿ ñíàðÿäû
+	// Ñ€Ð°Ð´Ð¸ÑƒÑ, Ð² ÐºÐ¾Ñ‚Ñ€Ð¾Ð¼ Ð»Ð¾Ð¶Ð°Ñ‚ÑÑ ÑÐ½Ð°Ñ€ÑÐ´Ñ‹
 	float accuracyRadius = 0;
 
-	// âíóòðåííèé èíäåêñ, íàçíà÷åíèå çàâèñèò îò îðóæèÿ
+	// Ð²Ð½ÑƒÑ‚Ñ€ÐµÐ½Ð½Ð¸Ð¹ Ð¸Ð½Ð´ÐµÐºÑ, Ð½Ð°Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð·Ð°Ð²Ð¸ÑÐ¸Ñ‚ Ð¾Ñ‚ Ð¾Ñ€ÑƒÐ¶Ð¸Ñ
 	int weaponIndex = 0;
 
-	// äëÿ ëàçåðà - òîëùèíà ëó÷à
+	// Ð´Ð»Ñ Ð»Ð°Ð·ÐµÑ€Ð° - Ñ‚Ð¾Ð»Ñ‰Ð¸Ð½Ð° Ð»ÑƒÑ‡Ð°
 	float laserWidth = 2.0;
 
 	ConsumptionData reloadConsumption = {
 		name = "reloadConsumption";
 	};
 
-	float thetaForced = -360; // Èãíîðèðîâàòü theta, âîçâðàùàåìîå suggest 
+	float thetaForced = -360; // Ð˜Ð³Ð½Ð¾Ñ€Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ theta, Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÐ¼Ð¾Ðµ suggest 
 
-	// 0 - èíäèâèäóàëüíàÿ ïðîâåðêà ðàññòîÿíèÿ äî öåëè
-	// 1 - ïðîâåðêà ðàññòîÿíèÿ äî öåëè ïî ñêâàäó
+	// 0 - Ð¸Ð½Ð´Ð¸Ð²Ð¸Ð´ÑƒÐ°Ð»ÑŒÐ½Ð°Ñ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ñ€Ð°ÑÑÑ‚Ð¾ÑÐ½Ð¸Ñ Ð´Ð¾ Ñ†ÐµÐ»Ð¸
+	// 1 - Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ñ€Ð°ÑÑÑ‚Ð¾ÑÐ½Ð¸Ñ Ð´Ð¾ Ñ†ÐµÐ»Ð¸ Ð¿Ð¾ ÑÐºÐ²Ð°Ð´Ñƒ
 	int squadMode = 1;
 
 delegate:
@@ -223,13 +223,13 @@ delegate:
 struct EnableDataPrm
 {
 	terUnitAttributeID EnableStructure[int StructureNum] =  { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE };
-	terUnitAttributeID Downgrades[int DowngradesNum] = { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }; // äëÿ ñêàíèðîâàíèÿ, â _îáðàòíîì_ ïîðÿäêå
-	terUnitAttributeID Upgrade = UNIT_ATTRIBUTE_NONE; // Òîëüêî áëèæàéøèé àïãðåéä
+	terUnitAttributeID Downgrades[int DowngradesNum] = { UNIT_ATTRIBUTE_NONE, UNIT_ATTRIBUTE_NONE }; // Ð´Ð»Ñ ÑÐºÐ°Ð½Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ, Ð² _Ð¾Ð±Ñ€Ð°Ñ‚Ð½Ð¾Ð¼_ Ð¿Ð¾Ñ€ÑÐ´ÐºÐµ
+	terUnitAttributeID Upgrade = UNIT_ATTRIBUTE_NONE; // Ð¢Ð¾Ð»ÑŒÐºÐ¾ Ð±Ð»Ð¸Ð¶Ð°Ð¹ÑˆÐ¸Ð¹ Ð°Ð¿Ð³Ñ€ÐµÐ¹Ð´
 
-	int Enabled = 0; // ðàçðåøåíà äëÿ ñòðîèòåëüñòâà, ðàçðåøåíà ìóòàöèÿ äëÿ þíèòîâ
-	int Requested = 0; // êîë-âî çàïðîøåííûõ è ïîñòðîåííûõ
-	int Constructed = 0; // êîë-âî ïîñòðîåííûõ
-	int Worked = 0; // ðàáîòàåò
+	int Enabled = 0; // Ñ€Ð°Ð·Ñ€ÐµÑˆÐµÐ½Ð° Ð´Ð»Ñ ÑÑ‚Ñ€Ð¾Ð¸Ñ‚ÐµÐ»ÑŒÑÑ‚Ð²Ð°, Ñ€Ð°Ð·Ñ€ÐµÑˆÐµÐ½Ð° Ð¼ÑƒÑ‚Ð°Ñ†Ð¸Ñ Ð´Ð»Ñ ÑŽÐ½Ð¸Ñ‚Ð¾Ð²
+	int Requested = 0; // ÐºÐ¾Ð»-Ð²Ð¾ Ð·Ð°Ð¿Ñ€Ð¾ÑˆÐµÐ½Ð½Ñ‹Ñ… Ð¸ Ð¿Ð¾ÑÑ‚Ñ€Ð¾ÐµÐ½Ð½Ñ‹Ñ…
+	int Constructed = 0; // ÐºÐ¾Ð»-Ð²Ð¾ Ð¿Ð¾ÑÑ‚Ñ€Ð¾ÐµÐ½Ð½Ñ‹Ñ…
+	int Worked = 0; // Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÐµÑ‚
 
 delegate:
 	void clear() { Enabled = Worked = Constructed = Requested = 0; }
@@ -250,7 +250,7 @@ struct terUnitAttributeData
 	terUnitAttributeID ID = UNIT_ATTRIBUTE_NONE;
 	terUnitClassID ClassID = UNIT_CLASS_ID_NONE;
 	terInterpolationID InterpolationType = INTERPOLATION_ID_NONE;
-	terBelligerent belligerent = BELLIGERENT_NONE; // âûäåëÿåò ñïåöèàëèçàöèè ïî âîþþùåé ñòîðîíå, ìàññèâ _îáùèé_
+	terBelligerent belligerent = BELLIGERENT_NONE; // Ð²Ñ‹Ð´ÐµÐ»ÑÐµÑ‚ ÑÐ¿ÐµÑ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸ Ð¿Ð¾ Ð²Ð¾ÑŽÑŽÑ‰ÐµÐ¹ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ðµ, Ð¼Ð°ÑÑÐ¸Ð² _Ð¾Ð±Ñ‰Ð¸Ð¹_
 
 	string InterfaceName = "None";
 	string ModelNameArray[int ModelNameNum = 2] = { 0, 0 };
@@ -267,17 +267,17 @@ struct terUnitAttributeData
 	ToolzerSetup* toolzerSetup = 0;
 
 	int SelectAble = 0;
-	int saveAsCommonObject = 0; // Çàïèñûâàòü îáúåêò (íåëüçÿ ñòàâèòü äëÿ îáúåêòîâ, êîòîðûå óæå ïèøóòñÿ â ñîñòàâå îáùåé èåðàðõèè)
+	int saveAsCommonObject = 0; // Ð—Ð°Ð¿Ð¸ÑÑ‹Ð²Ð°Ñ‚ÑŒ Ð¾Ð±ÑŠÐµÐºÑ‚ (Ð½ÐµÐ»ÑŒÐ·Ñ ÑÑ‚Ð°Ð²Ð¸Ñ‚ÑŒ Ð´Ð»Ñ Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð², ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ ÑƒÐ¶Ðµ Ð¿Ð¸ÑˆÑƒÑ‚ÑÑ Ð² ÑÐ¾ÑÑ‚Ð°Ð²Ðµ Ð¾Ð±Ñ‰ÐµÐ¹ Ð¸ÐµÑ€Ð°Ñ€Ñ…Ð¸Ð¸)
 	
-	float BoundScale = 1; // Îòíîñèòåëüíîå ìàñøòàáèðîâàíèå 
-	float BoundRadius = 0; // Åñëè çàäàí, òî èñïîëüçóåòñÿ àáñîëþòíîå ìàñøòàáèðîâàíèå äî ýòîãî ðàäèóñà
+	float BoundScale = 1; // ÐžÑ‚Ð½Ð¾ÑÐ¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾Ðµ Ð¼Ð°ÑÑˆÑ‚Ð°Ð±Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ 
+	float BoundRadius = 0; // Ð•ÑÐ»Ð¸ Ð·Ð°Ð´Ð°Ð½, Ñ‚Ð¾ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ÑÑ Ð°Ð±ÑÐ¾Ð»ÑŽÑ‚Ð½Ð¾Ðµ Ð¼Ð°ÑÑˆÑ‚Ð°Ð±Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ Ð´Ð¾ ÑÑ‚Ð¾Ð³Ð¾ Ñ€Ð°Ð´Ð¸ÑƒÑÐ°
 	float GroundPlaneSpeed = 0;
 	float GroundAngleSpeed = 0*G2R;
 	
 	int MilitaryUnit = 0;
 	int UnitClass = UNIT_CLASS_IGNORE;
 	int AttackClass = UNIT_CLASS_IGNORE;
-	int enemyWorld = 0; // Îúåêòû, ïðèíàäëåæàùèå ìèðó, áóäóò àòàêîâàòüñÿ. Ñêâåðíà.
+	int enemyWorld = 0; // ÐžÑŠÐµÐºÑ‚Ñ‹, Ð¿Ñ€Ð¸Ð½Ð°Ð´Ð»ÐµÐ¶Ð°Ñ‰Ð¸Ðµ Ð¼Ð¸Ñ€Ñƒ, Ð±ÑƒÐ´ÑƒÑ‚ Ð°Ñ‚Ð°ÐºÐ¾Ð²Ð°Ñ‚ÑŒÑÑ. Ð¡ÐºÐ²ÐµÑ€Ð½Ð°.
 
 	terLegionType LegionType = LEGION_GROUND;
 
@@ -295,7 +295,7 @@ struct terUnitAttributeData
 	int ExcludeCollision = 0;
 	int CollisionGroup = 0;
 
-	float MakeEnergy = 0; // â ñåêóíäó
+	float MakeEnergy = 0; // Ð² ÑÐµÐºÑƒÐ½Ð´Ñƒ
 	float energyCapacity = 0;
 
 	float ConnectionRadius = 0;
@@ -306,16 +306,16 @@ struct terUnitAttributeData
 
 	int destroyZeroLayer = 1;
 
-	// äëÿ çäàíèé - ïðèîðèòåò ñòðîèòåëüñòâà
+	// Ð´Ð»Ñ Ð·Ð´Ð°Ð½Ð¸Ð¹ - Ð¿Ñ€Ð¸Ð¾Ñ€Ð¸Ñ‚ÐµÑ‚ ÑÑ‚Ñ€Ð¾Ð¸Ñ‚ÐµÐ»ÑŒÑÑ‚Ð²Ð°
 	int constructionPriority = 0;
 
-	// äëÿ çäàíèé,
-	// = 1 åñëè åñòü àíèìàöèÿ äëÿ îòêëþ÷åííîãî ñîñòîÿíèÿ
-	// èíà÷å ïðîñòî îñòàíàâëèâàåòñÿ òåêóùàÿ àíèìàöèÿ
+	// Ð´Ð»Ñ Ð·Ð´Ð°Ð½Ð¸Ð¹,
+	// = 1 ÐµÑÐ»Ð¸ ÐµÑÑ‚ÑŒ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ñ Ð´Ð»Ñ Ð¾Ñ‚ÐºÐ»ÑŽÑ‡ÐµÐ½Ð½Ð¾Ð³Ð¾ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ
+	// Ð¸Ð½Ð°Ñ‡Ðµ Ð¿Ñ€Ð¾ÑÑ‚Ð¾ Ð¾ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ÑÑ Ñ‚ÐµÐºÑƒÑ‰Ð°Ñ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ñ
 	int disconnectAnimation = 0;
 
-	// êîýôôèöèåíò, íà êîòîðûé óìíîæàåòñÿ êîëè÷åñòâî ýëåìåíòîâ, 
-	// ïðèíîñèìûõ ñòðîèòåëüíûì áëîêîì ïðè ïîñòðîéêå çäàíèÿ
+	// ÐºÐ¾ÑÑ„Ñ„Ð¸Ñ†Ð¸ÐµÐ½Ñ‚, Ð½Ð° ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ ÑƒÐ¼Ð½Ð¾Ð¶Ð°ÐµÑ‚ÑÑ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð², 
+	// Ð¿Ñ€Ð¸Ð½Ð¾ÑÐ¸Ð¼Ñ‹Ñ… ÑÑ‚Ñ€Ð¾Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¼ Ð±Ð»Ð¾ÐºÐ¾Ð¼ Ð¿Ñ€Ð¸ Ð¿Ð¾ÑÑ‚Ñ€Ð¾Ð¹ÐºÐµ Ð·Ð´Ð°Ð½Ð¸Ñ
 	float constructionSpeedCoeff = 1.0f;
 
 	int FallDelay = 20;
@@ -343,8 +343,8 @@ struct terUnitAttributeData
 	int considerInFieldPathFind = 1;
 	
 	EnableDataPrmBase enableData = {};
-	RigidBodyPrm* rigidBodyPrm = 0; // Ïàðàìåòðû ôèçèêè
-	LegionaryPrm legionaryPrm = {}; // Ïàðàìåòû ëîãèêè ñêâàäà
+	RigidBodyPrm* rigidBodyPrm = 0; // ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ñ„Ð¸Ð·Ð¸ÐºÐ¸
+	LegionaryPrm legionaryPrm = {}; // ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ‹ Ð»Ð¾Ð³Ð¸ÐºÐ¸ ÑÐºÐ²Ð°Ð´Ð°
 	AttackablePrm attackablePrm = attackable_data.Default; 
 	UnitInterfacePrm interfacePrm = unit_interface_data.Default;
 	InterfaceTV* interfaceTV = 0;
@@ -359,13 +359,13 @@ struct terUnitAttributeData
 };
 
 //------------------------------------------------------
-// Òàáëèöà àòòðèáóòîâ 
+// Ð¢Ð°Ð±Ð»Ð¸Ñ†Ð° Ð°Ñ‚Ñ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¾Ð² 
 struct terUnitAttributeDataTable
 {
 	////////////////////////////////////////////
-	//	Ìåëêèå âíóòðåííèå ïðåäóñòàíîâêè
+	//	ÐœÐµÐ»ÐºÐ¸Ðµ Ð²Ð½ÑƒÑ‚Ñ€ÐµÐ½Ð½Ð¸Ðµ Ð¿Ñ€ÐµÐ´ÑƒÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ¸
 
-	// Âîåííûå þíèòû
+	// Ð’Ð¾ÐµÐ½Ð½Ñ‹Ðµ ÑŽÐ½Ð¸Ñ‚Ñ‹
 	struct Military : terUnitAttributeData
 	{
 		MilitaryUnit = 1;
@@ -384,7 +384,7 @@ struct terUnitAttributeDataTable
 		interfacePrm = unit_interface_data.squad;
 	};
 	
-	// Cíàðÿäû, áîìáû, ìèíû
+	// CÐ½Ð°Ñ€ÑÐ´Ñ‹, Ð±Ð¾Ð¼Ð±Ñ‹, Ð¼Ð¸Ð½Ñ‹
 	struct Missile : terUnitAttributeData 
 	{
 		UnitClass = UNIT_CLASS_MISSILE;
@@ -498,7 +498,7 @@ struct terUnitAttributeDataTable
 	};
 	
 	////////////////////////////////////////////
-	//		Îáúåêòû
+	//		ÐžÐ±ÑŠÐµÐºÑ‚Ñ‹
 	////////////////////////////////////////////
 	terUnitAttributeData Frame = 
 	{
@@ -4240,7 +4240,7 @@ struct terUnitAttributeDataTable
 		attackablePrm = attackable_data.Leech;
 		interfaceTV = &interfaceTV_Leech;
 
-		// ýíåðãèÿ, êîòîðóþ þíèò òðàòèò ó ïðîòèâíèêà
+		// ÑÐ½ÐµÑ€Ð³Ð¸Ñ, ÐºÐ¾Ñ‚Ð¾Ñ€ÑƒÑŽ ÑŽÐ½Ð¸Ñ‚ Ñ‚Ñ€Ð°Ñ‚Ð¸Ñ‚ Ñƒ Ð¿Ñ€Ð¾Ñ‚Ð¸Ð²Ð½Ð¸ÐºÐ°
 		productionConsumption = new ConsumptionData {
 			energy = balance.Leech.StealEnergy;
 			time = 0; 
@@ -4833,8 +4833,8 @@ struct terUnitAttributeDataTable
 				name = "reloadConsumption Gun Scum Disruptor";
 			};
 
-			// ñêîðîñòü ðàçðÿäêè ïðè âûñòðåëå íà ðàññòîÿíèå â 1000
-			// íà äðóãèå ðàññòîÿíèÿ ïðîïîðöèîíàëüíî ìåíÿåòñÿ
+			// ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ Ñ€Ð°Ð·Ñ€ÑÐ´ÐºÐ¸ Ð¿Ñ€Ð¸ Ð²Ñ‹ÑÑ‚Ñ€ÐµÐ»Ðµ Ð½Ð° Ñ€Ð°ÑÑÑ‚Ð¾ÑÐ½Ð¸Ðµ Ð² 1000
+			// Ð½Ð° Ð´Ñ€ÑƒÐ³Ð¸Ðµ Ñ€Ð°ÑÑÑ‚Ð¾ÑÐ½Ð¸Ñ Ð¿Ñ€Ð¾Ð¿Ð¾Ñ€Ñ†Ð¸Ð¾Ð½Ð°Ð»ÑŒÐ½Ð¾ Ð¼ÐµÐ½ÑÐµÑ‚ÑÑ
 			dischargeSpeed = balance.GunScumDisruptor.DischargeSpeed;
 
 			fireRadius = { 300,	balance.GunScumDisruptor.RangeFire };
@@ -5573,7 +5573,7 @@ struct terUnitAttributeDataTable
 
 		rigidBodyPrm = &rigidBodyTable.AntPrm;
 		attackablePrm = attackable_data.AntsFilth;
-		setModelDataArray = &setModelTable.ants; //?? Äóáëèðîâàíèå ModelNameArray??
+		setModelDataArray = &setModelTable.ants; //?? Ð”ÑƒÐ±Ð»Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ ModelNameArray??
 		animationSetup = &antAnimation;
 
 		soundSetup=&filthAntSound;
@@ -6027,7 +6027,7 @@ struct terUnitAttributeDataTable
 				width = balance.DragonBody.maWidth;
 			};
 			splashDamageRadius = balance.DragonBody.saRadius;
-			splashDamage = {//Â äàííîì ñëó÷àå àëüòåðíàòèâíûé mainDamage, íàíîñÿùèéñÿ ïî ôðåéìó
+			splashDamage = {//Ð’ Ð´Ð°Ð½Ð½Ð¾Ð¼ ÑÐ»ÑƒÑ‡Ð°Ðµ Ð°Ð»ÑŒÑ‚ÐµÑ€Ð½Ð°Ñ‚Ð¸Ð²Ð½Ñ‹Ð¹ mainDamage, Ð½Ð°Ð½Ð¾ÑÑÑ‰Ð¸Ð¹ÑÑ Ð¿Ð¾ Ñ„Ñ€ÐµÐ¹Ð¼Ñƒ
 				power = balance.DragonBody.saPower;
 				width = balance.DragonBody.saWidth;
 			};
@@ -6061,7 +6061,7 @@ struct terUnitAttributeDataTable
 				width = balance.DragonTail.maWidth;
 			};
 			splashDamageRadius = balance.DragonTail.saRadius;
-			splashDamage = {//Â äàííîì ñëó÷àå àëüòåðíàòèâíûé mainDamage, íàíîñÿùèéñÿ ïî ôðåéìó
+			splashDamage = {//Ð’ Ð´Ð°Ð½Ð½Ð¾Ð¼ ÑÐ»ÑƒÑ‡Ð°Ðµ Ð°Ð»ÑŒÑ‚ÐµÑ€Ð½Ð°Ñ‚Ð¸Ð²Ð½Ñ‹Ð¹ mainDamage, Ð½Ð°Ð½Ð¾ÑÑÑ‰Ð¸Ð¹ÑÑ Ð¿Ð¾ Ñ„Ñ€ÐµÐ¹Ð¼Ñƒ
 				power = balance.DragonTail.saPower;
 				width = balance.DragonTail.saWidth;
 			};
@@ -6352,7 +6352,7 @@ struct terUnitAttributeDataTable
 
 		rigidBodyPrm = &rigidBodyTable.AntPrm;
 		attackablePrm = attackable_data.AntsFilth;
-		setModelDataArray = &setModelTable.ants; //?? Äóáëèðîâàíèå ModelNameArray??
+		setModelDataArray = &setModelTable.ants; //?? Ð”ÑƒÐ±Ð»Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ ModelNameArray??
 		animationSetup = &antAnimation;
 
 		soundSetup=&filthAntSound;
@@ -6642,7 +6642,7 @@ struct terUnitAttributeDataTable
 		InterpolationType = INTERPOLATION_ID_DUMMY;
 		SelectAble = 1;
 
-		productionConsumption = new ConsumptionData { // çàðÿäêà ýíåðãèè ìóòàöèè
+		productionConsumption = new ConsumptionData { // Ð·Ð°Ñ€ÑÐ´ÐºÐ° ÑÐ½ÐµÑ€Ð³Ð¸Ð¸ Ð¼ÑƒÑ‚Ð°Ñ†Ð¸Ð¸
 			energy = 0.1;
 			time = 1000;  
 			priority = 90;
@@ -6858,7 +6858,7 @@ struct terUnitAttributeDataTable
 		};
 	};
 	
-	// ÀÄÄÎÍ
+	// ÐÐ”Ð”ÐžÐ
 
 	terUnitAttributeData FrameExodus2 = Frame
 	{
@@ -7025,7 +7025,7 @@ struct terUnitAttributeDataTable
 		damageMolecula = { 0,0,0,0,1000 };
 	};
 	
-	// ÀÄÄÎÍ
+	// ÐÐ”Ð”ÐžÐ
 
 	terUnitAttributeData FrameEmpire2 = Frame
 	{
@@ -7098,7 +7098,7 @@ struct terUnitAttributeDataTable
 	
 	//-----------------------------------
 
-delegate: // Ðàññìàòðèâàåì ïîñëåäîâàòåëüíîñòü ðàñïîëîæåííûõ ðÿäîì ñòðóêòóð êàê ìàññèâ
+delegate: // Ð Ð°ÑÑÐ¼Ð°Ñ‚Ñ€Ð¸Ð²Ð°ÐµÐ¼ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ Ñ€Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð½Ñ‹Ñ… Ñ€ÑÐ´Ð¾Ð¼ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€ ÐºÐ°Ðº Ð¼Ð°ÑÑÐ¸Ð²
 	int size() const { xassert(sizeof(*this) % sizeof(terUnitAttributeData) == 0); return sizeof(*this)/sizeof(terUnitAttributeData); }
 	const terUnitAttributeData& operator[](int i) const { xassert(i >= 0 && i < size()); return ((terUnitAttributeData*)this)[i]; }
 };

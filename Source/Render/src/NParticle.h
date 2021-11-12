@@ -114,10 +114,10 @@ struct EmitterType
 	{
 		type=EMP_BOX;
 		size.set(0,0,0);
-		alpha_min=-M_PI;
-		alpha_max=+M_PI;
-		teta_min=-M_PI/2;
-		teta_max=+M_PI/2;
+		alpha_min=-XM_PI;
+		alpha_max=+XM_PI;
+		teta_min=-XM_PI/2;
+		teta_max=+XM_PI/2;
 		fix_pos = false;
 		num.x = num.y = 5;
 		num.z =1;

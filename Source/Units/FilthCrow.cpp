@@ -323,7 +323,7 @@ void terFilthCrow::addWayPoint()
 			float dfactor=go_out?0:1;
 
 			float sgn=(velocity%to_center).z;
-			float angle=(sgn>0?+1:-1)*dfactor*M_PI/4;
+			float angle=(sgn>0?+1:-1)*dfactor*XM_PI/4;
 			Vect2f v=Mat2f(angle)*Vect2f(velocity);
 			velocity.x=v.x;
 			velocity.y=v.y;

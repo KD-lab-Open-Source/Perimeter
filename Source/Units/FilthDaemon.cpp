@@ -250,7 +250,7 @@ void terFilthDaemon::MoveQuant()
 	float dt=0.1f;
 	Vect3f pos=position();
 
-	float angle=atan2(direction.y,direction.x)-M_PI*0.5f;
+	float angle=atan2(direction.y,direction.x)-XM_PI*0.5f;
 	QuatF rot(angle,Vect3f(0,0,1));
 
 	if(mul_speed<1.0f)

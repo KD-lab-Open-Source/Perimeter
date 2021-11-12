@@ -20,7 +20,7 @@ terFilthSwarmGhost::terFilthSwarmGhost(terFilthSpot* spot, const Vect3f& pos,int
 
 	attack_period = attack_period_;
 
-	angle_z=terLogicRNDfrnd()*2*M_PI;
+	angle_z=terLogicRNDfrnd()*2*XM_PI;
 	sound.Init("Filth_Move_Ghost");
 	sound.SetPos(To3D(pos));
 	sound.Play();
@@ -52,7 +52,7 @@ void terFilthSwarmGhost::SetFreeDestroy()
 
 const float FILTH_GHOST_HEIGHT = 20.0f;
 const float FILTH_GHOST_HEIGHT_DOWN = -50.0f;
-const float FILTH_GHOST_ANGLE_Z = M_PI * 0.01f;
+const float FILTH_GHOST_ANGLE_Z = XM_PI * 0.01f;
 const float FILTH_GHOST_SPEED = 1.5f;
 const float FILTH_GHOST_OBJECT_ANIMATION=0.9f;
 const float FILTH_GHOST_BEGIN_ANIMATION=0.05f;
@@ -132,7 +132,7 @@ void terFilthSwarmGhost::SnakeMove()
 	int num=unitList.size();
 	float r=terFilthGhostPrm.CreatureGenerationRadius*max(num,1);
 	float a=angle_z;
-	float da=(2*M_PI)/max(num,1);
+	float da=(2*XM_PI)/max(num,1);
 
 	FOR_EACH(unitList,it)
 	{
@@ -169,7 +169,7 @@ void terFilthSwarmGhost::GenerationProcess()
 	int unit_num=prev_unit_num+num;
 	float r=terFilthGhostPrm.CreatureGenerationRadius*max(unit_num,1);
 	float a=angle_z;
-	float da=(2*M_PI)/max(unit_num,1);
+	float da=(2*XM_PI)/max(unit_num,1);
 	a+=da*prev_unit_num;
 
 	for(int i = 0;i < num;i++){
@@ -289,7 +289,7 @@ void terFilthGhost::AvatarQuant()
 	terFilthGeneric::AvatarQuant();
 	RequestAttackQuant();
 
-	Se3f attack_angle(QuatF(M_PI/2*AttackAnimation.phase(),Vect3f(0,0,1)),Vect3f(0,0,0));
+	Se3f attack_angle(QuatF(XM_PI/2*AttackAnimation.phase(),Vect3f(0,0,1)),Vect3f(0,0,0));
 
 	avatar()->Show();
 	avatar()->setPose(BodyPoint->pose()*attack_angle);

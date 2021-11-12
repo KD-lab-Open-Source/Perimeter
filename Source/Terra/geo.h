@@ -1052,7 +1052,7 @@ protected:
 };
 
 
-const float ANT_RAD_IN_CELL_ARR=(2*M_PI)/ANT_MAX_MESH2VMAPDATE;
+const float ANT_RAD_IN_CELL_ARR=(2*XM_PI)/ANT_MAX_MESH2VMAPDATE;
 /*
 struct s_AntBirthGeoAction {
 	static s_Mesh2VMapDate* MMDateArr[ANT_MAX_MESH2VMAPDATE];

@@ -70,7 +70,7 @@ void terPlayer::quantZeroplast()
 		multiply+=mul;
 /*/
 		float t=dt/fade;
-		multiply+=zeroplastBurn.strength*(xm::cos((t - 0.5f) * 2 * M_PI) + 1);
+		multiply+=zeroplastBurn.strength*(xm::cos((t - 0.5f) * 2 * XM_PI) + 1);
 /**/
 		it++;
 	}

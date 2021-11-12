@@ -93,7 +93,7 @@ void terFrameChild::Quant()
 
 Vect2f terFrameChild::homePosition() 
 {
-	float a = (2*M_PI*slotNumber_)/5;
+	float a = (2*XM_PI*slotNumber_)/5;
 	float r = FramePoint->attr().mmpHomePositionRadius;
 	return FramePoint->position2D() + Vect2f(r*xm::cos(a), r*xm::sin(a));
 }

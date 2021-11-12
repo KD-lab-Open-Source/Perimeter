@@ -2239,12 +2239,12 @@ inline void draw_point(const Vect2i& a, const sColor4f& c = sColor4f(0, 0, 0, 1)
 
 inline void draw_circle(Vect2i& v, int r, sColor4c& c)
 {
-	float dp = M_PI/40, phi = dp;
+	float dp = XM_PI/40, phi = dp;
 	int x1 = r + v.x;
 	int y1 = v.y;
 	int x, y;
 
-	while(phi < 2*M_PI)
+	while(phi < 2*XM_PI)
 	{
 		x = r*xm::cos(phi) + v.x;
 		y = r*xm::sin(phi) + v.y;

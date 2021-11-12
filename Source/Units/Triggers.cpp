@@ -1370,7 +1370,7 @@ bool ActionSetCameraAtObject::workedOut(AIPlayer& aiPlayer)
 			if(unit){
 				SaveCameraSplineData spline;
 				spline.path.push_back(SaveCameraData());
-				CameraCoordinate coord(unit->position2D(), cycle(terCamera->coordinate().psi(), 2*M_PI) + 2*M_PI, terCamera->coordinate().theta(), terCamera->coordinate().distance());
+				CameraCoordinate coord(unit->position2D(), cycle(terCamera->coordinate().psi(), 2*XM_PI) + 2*XM_PI, terCamera->coordinate().theta(), terCamera->coordinate().distance());
 				coord.save(spline.path.back());
 				terCamera->loadPath(spline, true);
 				terCamera->startReplayPath(turnTime*1000, 1);

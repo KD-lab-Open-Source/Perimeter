@@ -335,7 +335,7 @@ void terGeoFault::Generate(float time)
 		return;
 
 	Vect2f p(xm::round(position().x), xm::round(position().y));
-	mount=new sGeoFault(p,angle*M_PI/180.0f,length);
+	mount=new sGeoFault(p,angle*XM_PI/180.0f,length);
 }
 
 void terGeoFault::Stop()
@@ -355,7 +355,7 @@ void terGeoFault::ShowInfo()
 	{
 		if(selected())
 		{
-			float a=angle*M_PI/180.0f;
+			float a=angle*XM_PI/180.0f;
 			Mat3f mat(a,Z_AXIS);
 
 			const float len=30;

@@ -78,7 +78,7 @@ public:
 			if(r > FLT_EPS)
 			{
 				float phi = p.x/r;
-				//xassert(xm::fabsf(phi) < M_PI && "PositionGenerator: cycling.");
+				//xassert(xm::fabsf(phi) < XM_PI && "PositionGenerator: cycling.");
 				return Vect2f(r * xm::sin(phi), r * xm::cos(phi) - curvature_radius);
 			}
 			//else

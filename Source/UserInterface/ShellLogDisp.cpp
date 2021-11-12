@@ -255,10 +255,10 @@ void CShellLogicDispatcher::quant(bool game_active)
 
 	if(m_hModel && !_bMenuMode)
 	{
-		tvModelPosition.rot() *=Mat3f((M_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
+		tvModelPosition.rot() *=Mat3f((XM_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
 		m_hModel->SetPosition(tvModelPosition);
 //		MatXf mat=m_hModel->GetPosition();
-//		mat.rot() *=Mat3f((M_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
+//		mat.rot() *=Mat3f((XM_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
 //		m_hModel->SetPosition(mat);
 	}
 }

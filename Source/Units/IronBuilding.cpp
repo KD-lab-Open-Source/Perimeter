@@ -467,7 +467,7 @@ void terIconBuilding::show(const Vect3f& pos)
 	Mat3f mat;
 	mat.xpose(terCamera->GetCamera()->GetMatrix().rot());
 
-	model_->SetPosition(MatXf(mat*Mat3f(M_PI, Z_AXIS), pos));
+	model_->SetPosition(MatXf(mat*Mat3f(XM_PI, Z_AXIS), pos));
 	
 	model_->ClearAttr(ATTRUNKOBJ_IGNORE);
 	model_->SetPhase(phase_);
@@ -603,7 +603,7 @@ void terBuildingHologram::Quant()
 	terUnitBase::Quant();
 
 	if(MasterPoint && !(MasterPoint->isConstructed())){
-		ConstructionScale += 0.1f * M_PI;
+		ConstructionScale += 0.1f * XM_PI;
 	}
 	else
 		Kill();
@@ -745,7 +745,7 @@ void terBuildingUninstall::Quant()
 	p->setHologram(0.5f + xm::sin(hologram_) * 0.5f);
 	p->setTexture(Player->HologramPoint);
 
-	hologram_ += 0.1f * M_PI;
+	hologram_ += 0.1f * XM_PI;
 
 	if(!lifeTimer_())
 		Kill();

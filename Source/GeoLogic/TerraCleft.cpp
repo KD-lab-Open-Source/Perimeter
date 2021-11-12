@@ -173,7 +173,7 @@ void CTerraCleftSystem::init_radial(const Vect2i& pos1)
 	for(int i=0, r = dR; i<cleftRadCount; i++, r+=dR)
 	{
 		double a = 0;
-		double dA = 2*M_PI/jC;
+		double dA = 2*XM_PI/jC;
 		for(int j = 0; j<jC; j++, a+=dA)
 		{
 			//new point

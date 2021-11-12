@@ -275,7 +275,7 @@ void terFilthEye::AvatarQuant()
 	terFilthGeneric::AvatarQuant();
 	RequestAttackQuant();
 
-	Se3f attack_angle(QuatF(M_PI/2*AttackAnimation.phase(),Vect3f(0,0,1)),Vect3f(0,0,0));
+	Se3f attack_angle(QuatF(XM_PI/2*AttackAnimation.phase(),Vect3f(0,0,1)),Vect3f(0,0,0));
 
 	avatar()->Show();
 	avatar()->setPose(BodyPoint->pose()*attack_angle);

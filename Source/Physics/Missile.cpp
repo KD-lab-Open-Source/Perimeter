@@ -9,7 +9,7 @@ void RigidBody::suggestMissileTurnAngels(const RigidBodyPrm& prm, const RigidBod
 {
 	Vect3f r;
 	firing_object.matrix().invXformPoint(target, r);
-	psi = r.psi() - M_PI/2;
+	psi = r.psi() - XM_PI/2;
 	theta = prm.calcTurnTheta(sqrt(sqr(r.x) + sqr(r.y)), r.z, prm.forward_velocity_max);
 }
 
@@ -17,8 +17,8 @@ void RigidBody::suggestMissileTurnAngels(const RigidBody& firingObject, const Ve
 {
 	Vect3f r;
 	MatXf(firingObject.rotation(), firingPosition).invXformPoint(target, r);
-	psi = r.psi() - M_PI/2;
-	theta = M_PI/2 - r.theta();
+	psi = r.psi() - XM_PI/2;
+	theta = XM_PI/2 - r.theta();
 }
 
 int RigidBody::testMissileShot(const RigidBodyPrm& prm, const Vect3f box_min, const Vect3f box_max, const RigidBody& firing_object, const Vect3f& position, const Vect3f& direction, RigidBody* target)
@@ -45,7 +45,7 @@ void RigidBody::startMissile(const RigidBody& firing_object, const Vect3f& posit
 	if(!prm().keep_direction_time || direction == Vect3f::ZERO)
 	{
 		Vect3f r = target - position;
-		float psi = r.psi() - M_PI/2;
+		float psi = r.psi() - XM_PI/2;
 		float theta = prm().calcTurnTheta(sqrt(sqr(r.x) + sqr(r.y)), r.z, forwardVelocity());
 
 		setOrientation(Mat3f(psi, Z_AXIS)*Mat3f(theta, X_AXIS));
@@ -120,14 +120,14 @@ float RigidBodyPrm::calcTurnTheta(float x, float z, float velocity) const
 	float t9 = t13*t13+(t13*t30-t16*gravity)*gravity;
 	if(t9 < 0) {
 		//xassert_s(forward_velocity_max < FLT_EPS && "1. Can't reach the target. Increase forward_velocity_max for ", name);
-		return M_PI/4;
+		return XM_PI/4;
 	}
 	t9 = sqrt(t9);
 	float t8 = t9+t27;
 	float t17 = t8*t29;
 	if(t17 < FLT_EPS) {
 		//xassert_s(forward_velocity_max < FLT_EPS && "2. Can't reach the target. Increase forward_velocity_max for ", name);
-		return M_PI/4;
+		return XM_PI/4;
 	}
 	t17 = sqrt(t17);
 	float t24 = (t8*t25+gravity)/t17*t26;
@@ -135,7 +135,7 @@ float RigidBodyPrm::calcTurnTheta(float x, float z, float velocity) const
 	float t18 = t7*t29;
 	if(t18 < FLT_EPS) {
 		//xassert_s(forward_velocity_max < FLT_EPS && "3. Can't reach the target. Increase forward_velocity_max for ", name);
-		return M_PI/4;
+		return XM_PI/4;
 	}
 	t18 = sqrt(t18);
 	float t23 = (t7*t25+gravity)/t18*t26;

@@ -53,49 +53,49 @@ enum ShellControlID
 	SQSH_GAME_SCREEN_ID,
 	SQSH_BACKGRND_ID,
 	SQSH_MAP_WINDOW_ID,
-	SQSH_WORKAREA2_ID, //Тулзер рвов
-	SQSH_WORKAREA3_ID, //Тулзер выравнивания
-	SQSH_WORKAREA4_ID, //Тулзер отмены ровняния и рвов
-	SQSH_FIELD_ON_ID, //Общее включения поля
-	SQSH_FIELD_OFF_ID, //Общее выключение поля
-	SQSH_SOLDIER_ID, //Заказ солдата
-	SQSH_OFFICER_ID, //Заказ оффицера
-	SQSH_TECHNIC_ID, //Заказ техника
-	SQSH_TOGETHER_ID, //Объединение сквадов
-	SQSH_YADRO_ID, //Ядро
-	SQSH_YADRO_EX_ID, //Усилитель
-	SQSH_SOLDIER_PLANT_ID, //Завод солдат
-	SQSH_OFFICER_PLANT_ID, //Завод офицеров
-	SQSH_TECHNIC_PLANT_ID, //Завод техников
-	SQSH_COMMANDER_ID, //Командный центр
-	SQSH_RELAY_ID, //Транслятор
-	SQSH_STATION1_ID, //Ракетная лаборатория
-	SQSH_STATION2_ID, //Лазерная лаборатория
-	SQSH_STATION3_ID, //Бомбовая лаборатория
-	SQSH_STATION4_ID, //Подземная лаборатория
-	SQSH_STATION5_ID, //Антигравитационная лаборатория
-	SQSH_STATION_ELECTRO_LAB_ID, //АДДОН Электрическая лаборатория
-	SQSH_STATION_EXODUS_LAB_ID, //Лаборатория исходников
-	SQSH_STATION_EMPIRE_LAB_ID, //Лаборатория империи
-	SQSH_STATION_HARKBACK_LAB_ID, //Лаборатория возвратников
-	SQSH_CORRIDOR_ALPHA_ID, //Альфа портал
-	SQSH_CORRIDOR_OMEGA_ID, //Омега портал 
-	SQSH_STATIC_BOMB_ID, //Бомба
-	SQSH_GUN_LASER_ID, //Лазерная пушка
-	SQSH_GUN_ELECTRO_ID, //Электрическая пушка
-	SQSH_GUN_ROCKET_ID, //Ракетная пушка
-	SQSH_GUN_HOWITZER_ID, //Гаубица
-	SQSH_GUN_FILTH_ID, //Генератор скверны
-	SQSH_GUN_GIMLET_ID, //Скаморазрушитель
-	SQSH_GUN_SUBCHASER_ID, //Подземпушка
-	SQSH_GUN_BALLISTIC_ID, //Баллистическая ракета
+	SQSH_WORKAREA2_ID, //РўСѓР»Р·РµСЂ СЂРІРѕРІ
+	SQSH_WORKAREA3_ID, //РўСѓР»Р·РµСЂ РІС‹СЂР°РІРЅРёРІР°РЅРёСЏ
+	SQSH_WORKAREA4_ID, //РўСѓР»Р·РµСЂ РѕС‚РјРµРЅС‹ СЂРѕРІРЅСЏРЅРёСЏ Рё СЂРІРѕРІ
+	SQSH_FIELD_ON_ID, //РћР±С‰РµРµ РІРєР»СЋС‡РµРЅРёСЏ РїРѕР»СЏ
+	SQSH_FIELD_OFF_ID, //РћР±С‰РµРµ РІС‹РєР»СЋС‡РµРЅРёРµ РїРѕР»СЏ
+	SQSH_SOLDIER_ID, //Р—Р°РєР°Р· СЃРѕР»РґР°С‚Р°
+	SQSH_OFFICER_ID, //Р—Р°РєР°Р· РѕС„С„РёС†РµСЂР°
+	SQSH_TECHNIC_ID, //Р—Р°РєР°Р· С‚РµС…РЅРёРєР°
+	SQSH_TOGETHER_ID, //РћР±СЉРµРґРёРЅРµРЅРёРµ СЃРєРІР°РґРѕРІ
+	SQSH_YADRO_ID, //РЇРґСЂРѕ
+	SQSH_YADRO_EX_ID, //РЈСЃРёР»РёС‚РµР»СЊ
+	SQSH_SOLDIER_PLANT_ID, //Р—Р°РІРѕРґ СЃРѕР»РґР°С‚
+	SQSH_OFFICER_PLANT_ID, //Р—Р°РІРѕРґ РѕС„РёС†РµСЂРѕРІ
+	SQSH_TECHNIC_PLANT_ID, //Р—Р°РІРѕРґ С‚РµС…РЅРёРєРѕРІ
+	SQSH_COMMANDER_ID, //РљРѕРјР°РЅРґРЅС‹Р№ С†РµРЅС‚СЂ
+	SQSH_RELAY_ID, //РўСЂР°РЅСЃР»СЏС‚РѕСЂ
+	SQSH_STATION1_ID, //Р Р°РєРµС‚РЅР°СЏ Р»Р°Р±РѕСЂР°С‚РѕСЂРёСЏ
+	SQSH_STATION2_ID, //Р›Р°Р·РµСЂРЅР°СЏ Р»Р°Р±РѕСЂР°С‚РѕСЂРёСЏ
+	SQSH_STATION3_ID, //Р‘РѕРјР±РѕРІР°СЏ Р»Р°Р±РѕСЂР°С‚РѕСЂРёСЏ
+	SQSH_STATION4_ID, //РџРѕРґР·РµРјРЅР°СЏ Р»Р°Р±РѕСЂР°С‚РѕСЂРёСЏ
+	SQSH_STATION5_ID, //РђРЅС‚РёРіСЂР°РІРёС‚Р°С†РёРѕРЅРЅР°СЏ Р»Р°Р±РѕСЂР°С‚РѕСЂРёСЏ
+	SQSH_STATION_ELECTRO_LAB_ID, //РђР”Р”РћРќ Р­Р»РµРєС‚СЂРёС‡РµСЃРєР°СЏ Р»Р°Р±РѕСЂР°С‚РѕСЂРёСЏ
+	SQSH_STATION_EXODUS_LAB_ID, //Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РёСЃС…РѕРґРЅРёРєРѕРІ
+	SQSH_STATION_EMPIRE_LAB_ID, //Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РёРјРїРµСЂРёРё
+	SQSH_STATION_HARKBACK_LAB_ID, //Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ РІРѕР·РІСЂР°С‚РЅРёРєРѕРІ
+	SQSH_CORRIDOR_ALPHA_ID, //РђР»СЊС„Р° РїРѕСЂС‚Р°Р»
+	SQSH_CORRIDOR_OMEGA_ID, //РћРјРµРіР° РїРѕСЂС‚Р°Р» 
+	SQSH_STATIC_BOMB_ID, //Р‘РѕРјР±Р°
+	SQSH_GUN_LASER_ID, //Р›Р°Р·РµСЂРЅР°СЏ РїСѓС€РєР°
+	SQSH_GUN_ELECTRO_ID, //Р­Р»РµРєС‚СЂРёС‡РµСЃРєР°СЏ РїСѓС€РєР°
+	SQSH_GUN_ROCKET_ID, //Р Р°РєРµС‚РЅР°СЏ РїСѓС€РєР°
+	SQSH_GUN_HOWITZER_ID, //Р“Р°СѓР±РёС†Р°
+	SQSH_GUN_FILTH_ID, //Р“РµРЅРµСЂР°С‚РѕСЂ СЃРєРІРµСЂРЅС‹
+	SQSH_GUN_GIMLET_ID, //РЎРєР°РјРѕСЂР°Р·СЂСѓС€РёС‚РµР»СЊ
+	SQSH_GUN_SUBCHASER_ID, //РџРѕРґР·РµРјРїСѓС€РєР°
+	SQSH_GUN_BALLISTIC_ID, //Р‘Р°Р»Р»РёСЃС‚РёС‡РµСЃРєР°СЏ СЂР°РєРµС‚Р°
 
 
-	SQSH_FRAME_TERRAIN_BUILD1_ID, //Заказ в первый слот бригадира или прораба
-	SQSH_FRAME_TERRAIN_BUILD2_ID, //Заказ во второй слот бригадира или прораба
-	SQSH_FRAME_TERRAIN_BUILD3_ID, //Заказ в третий слот бригадира или прораба
-	SQSH_FRAME_TERRAIN_BUILD4_ID, //Заказ в четвертый слот бригадира или прораба
-	SQSH_FRAME_TERRAIN_BUILD5_ID, //Заказ в пятый слот бригадира или прораба
+	SQSH_FRAME_TERRAIN_BUILD1_ID, //Р—Р°РєР°Р· РІ РїРµСЂРІС‹Р№ СЃР»РѕС‚ Р±СЂРёРіР°РґРёСЂР° РёР»Рё РїСЂРѕСЂР°Р±Р°
+	SQSH_FRAME_TERRAIN_BUILD2_ID, //Р—Р°РєР°Р· РІРѕ РІС‚РѕСЂРѕР№ СЃР»РѕС‚ Р±СЂРёРіР°РґРёСЂР° РёР»Рё РїСЂРѕСЂР°Р±Р°
+	SQSH_FRAME_TERRAIN_BUILD3_ID, //Р—Р°РєР°Р· РІ С‚СЂРµС‚РёР№ СЃР»РѕС‚ Р±СЂРёРіР°РґРёСЂР° РёР»Рё РїСЂРѕСЂР°Р±Р°
+	SQSH_FRAME_TERRAIN_BUILD4_ID, //Р—Р°РєР°Р· РІ С‡РµС‚РІРµСЂС‚С‹Р№ СЃР»РѕС‚ Р±СЂРёРіР°РґРёСЂР° РёР»Рё РїСЂРѕСЂР°Р±Р°
+	SQSH_FRAME_TERRAIN_BUILD5_ID, //Р—Р°РєР°Р· РІ РїСЏС‚С‹Р№ СЃР»РѕС‚ Р±СЂРёРіР°РґРёСЂР° РёР»Рё РїСЂРѕСЂР°Р±Р°
 
     //Keep these as placeholder due to hardcoded id's in InterfaceAttributes
     //Used to be SQSH_SQUAD_*
@@ -126,84 +126,84 @@ enum ShellControlID
     SQSH_SQUAD_LEGACY_25,
     SQSH_SQUAD_LEGACY_26,
 
-	SQSH_SPEED_PAUSE, //Пауза
-	SQSH_SPEED_50, //50% скорость игры
-	SQSH_SPEED_100, //100% скорость игры
-	SQSH_SPEED_150, //150% скорость игры
+	SQSH_SPEED_PAUSE, //РџР°СѓР·Р°
+	SQSH_SPEED_50, //50% СЃРєРѕСЂРѕСЃС‚СЊ РёРіСЂС‹
+	SQSH_SPEED_100, //100% СЃРєРѕСЂРѕСЃС‚СЊ РёРіСЂС‹
+	SQSH_SPEED_150, //150% СЃРєРѕСЂРѕСЃС‚СЊ РёРіСЂС‹
 
 	SQSH_MENU_BUTTON_ID,
 	SQSH_TASK_BUTTON_ID,
 	SQSH_REPLAY_PLAYER_BUTTON_ID,
     SQSH_EMBLEM_ID,
 
-	SQSH_TAB_BUILD_ID, //Папки зданий
-	SQSH_TAB_SQUAD_ID, //Папки сквадов
+	SQSH_TAB_BUILD_ID, //РџР°РїРєРё Р·РґР°РЅРёР№
+	SQSH_TAB_SQUAD_ID, //РџР°РїРєРё СЃРєРІР°РґРѕРІ
 
 	SQSH_HINT_ID,
 
-	SQSH_SELPANEL_MOVE_ID, // ТВ двигаться
-	SQSH_SELPANEL_STOP_ID, // ТВ стоп
-	SQSH_SELPANEL_STOP2_ID, // ТВ стоп спец. пушек
-	SQSH_SELPANEL_SQ_ATTACK_ID, //ТВ атаковать
-	SQSH_SELPANEL_SQ_BACK_ID, //ТВ вернуться на базу
-	SQSH_SELPANEL_SQ_OFDEF_ID, //ТВ оффенс-дефенс
-	SQSH_SELPANEL_SQ_PATROL_ID, //ТВ патрулировать
-	SQSH_SELPANEL_BRIG_BACK_ID, //ТВ бриг-прораб во фрейм
-	SQSH_SELPANEL_BRIG_CHANGE_ID, //ТВ бриг-прораб замена
-	SQSH_SELPANEL_BRIG_BUILD_ID, //ТВ чинить
-	SQSH_SELPANEL_START_CHARGE_ID, //ТВ зарядка
+	SQSH_SELPANEL_MOVE_ID, // РўР’ РґРІРёРіР°С‚СЊСЃСЏ
+	SQSH_SELPANEL_STOP_ID, // РўР’ СЃС‚РѕРї
+	SQSH_SELPANEL_STOP2_ID, // РўР’ СЃС‚РѕРї СЃРїРµС†. РїСѓС€РµРє
+	SQSH_SELPANEL_SQ_ATTACK_ID, //РўР’ Р°С‚Р°РєРѕРІР°С‚СЊ
+	SQSH_SELPANEL_SQ_BACK_ID, //РўР’ РІРµСЂРЅСѓС‚СЊСЃСЏ РЅР° Р±Р°Р·Сѓ
+	SQSH_SELPANEL_SQ_OFDEF_ID, //РўР’ РѕС„С„РµРЅСЃ-РґРµС„РµРЅСЃ
+	SQSH_SELPANEL_SQ_PATROL_ID, //РўР’ РїР°С‚СЂСѓР»РёСЂРѕРІР°С‚СЊ
+	SQSH_SELPANEL_BRIG_BACK_ID, //РўР’ Р±СЂРёРі-РїСЂРѕСЂР°Р± РІРѕ С„СЂРµР№Рј
+	SQSH_SELPANEL_BRIG_CHANGE_ID, //РўР’ Р±СЂРёРі-РїСЂРѕСЂР°Р± Р·Р°РјРµРЅР°
+	SQSH_SELPANEL_BRIG_BUILD_ID, //РўР’ С‡РёРЅРёС‚СЊ
+	SQSH_SELPANEL_START_CHARGE_ID, //РўР’ Р·Р°СЂСЏРґРєР°
 	SQSH_SELPANEL_STOP_CHARGE_ID,
 	SQSH_SELPANEL_UNIT_CHARGE_ID,
 
-	SQSH_SELPANEL_POWERON_ID, //ТВ включить здание
-	SQSH_SELPANEL_POWEROFF_ID, //ТВ выключить здание
+	SQSH_SELPANEL_POWERON_ID, //РўР’ РІРєР»СЋС‡РёС‚СЊ Р·РґР°РЅРёРµ
+	SQSH_SELPANEL_POWEROFF_ID, //РўР’ РІС‹РєР»СЋС‡РёС‚СЊ Р·РґР°РЅРёРµ
 //	SQSH_SELPANEL_ONOFF_ID,
-	SQSH_SELPANEL_SELL_ID, //ТВ продать
+	SQSH_SELPANEL_SELL_ID, //РўР’ РїСЂРѕРґР°С‚СЊ
 	SQSH_SELPANEL_UPGRADE_ID,
-	SQSH_SELPANEL_UPGRADE_LASER1_ID,  //апгрейд до лазер. 2 уровня
-	SQSH_SELPANEL_UPGRADE_LASER2_ID,  //апгрейд до лазер. 3 уровня
-	SQSH_SELPANEL_UPGRADE_ELECTRO1_ID,  //АДДОН апгрейд до электр. 2 уровня
-	SQSH_SELPANEL_UPGRADE_ELECTRO2_ID,  //АДДОН апгрейд до электр. 3 уровня
-	SQSH_SELPANEL_UPGRADE_BOMB1_ID,   //апгрейд до бомб. 2 уровня
-	SQSH_SELPANEL_UPGRADE_BOMB2_ID,   //апгрейд до бомб. 3 уровня
-	SQSH_SELPANEL_UPGRADE_ROCKET1_ID, //апгрейд до ракет. 2 уровня
-	SQSH_SELPANEL_UPGRADE_ROCKET2_ID, //апгрейд до ракет. 3 уровня
+	SQSH_SELPANEL_UPGRADE_LASER1_ID,  //Р°РїРіСЂРµР№Рґ РґРѕ Р»Р°Р·РµСЂ. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_LASER2_ID,  //Р°РїРіСЂРµР№Рґ РґРѕ Р»Р°Р·РµСЂ. 3 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_ELECTRO1_ID,  //РђР”Р”РћРќ Р°РїРіСЂРµР№Рґ РґРѕ СЌР»РµРєС‚СЂ. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_ELECTRO2_ID,  //РђР”Р”РћРќ Р°РїРіСЂРµР№Рґ РґРѕ СЌР»РµРєС‚СЂ. 3 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_BOMB1_ID,   //Р°РїРіСЂРµР№Рґ РґРѕ Р±РѕРјР±. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_BOMB2_ID,   //Р°РїРіСЂРµР№Рґ РґРѕ Р±РѕРјР±. 3 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_ROCKET1_ID, //Р°РїРіСЂРµР№Рґ РґРѕ СЂР°РєРµС‚. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_ROCKET2_ID, //Р°РїРіСЂРµР№Рґ РґРѕ СЂР°РєРµС‚. 3 СѓСЂРѕРІРЅСЏ
 
-	SQSH_SELPANEL_UPGRADE_EXODUS1_ID, //апгрейд до исход. 2 уровня
-	SQSH_SELPANEL_UPGRADE_EXODUS2_ID, //апгрейд до исход. 3 уровня
-	SQSH_SELPANEL_UPGRADE_EMPIRE1_ID, //апгрейд до импер. 2 уровня
-	SQSH_SELPANEL_UPGRADE_EMPIRE2_ID,  //апгрейд до импер. 3 уровня
-	SQSH_SELPANEL_UPGRADE_HARKBACK1_ID,  //апгрейд до возврат. 2 уровня
-	SQSH_SELPANEL_UPGRADE_HARKBACK2_ID,  //апгрейд до возврат. 3 уровня
+	SQSH_SELPANEL_UPGRADE_EXODUS1_ID, //Р°РїРіСЂРµР№Рґ РґРѕ РёСЃС…РѕРґ. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_EXODUS2_ID, //Р°РїРіСЂРµР№Рґ РґРѕ РёСЃС…РѕРґ. 3 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_EMPIRE1_ID, //Р°РїРіСЂРµР№Рґ РґРѕ РёРјРїРµСЂ. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_EMPIRE2_ID,  //Р°РїРіСЂРµР№Рґ РґРѕ РёРјРїРµСЂ. 3 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_HARKBACK1_ID,  //Р°РїРіСЂРµР№Рґ РґРѕ РІРѕР·РІСЂР°С‚. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_HARKBACK2_ID,  //Р°РїРіСЂРµР№Рґ РґРѕ РІРѕР·РІСЂР°С‚. 3 СѓСЂРѕРІРЅСЏ
 
-	SQSH_SELPANEL_UPGRADE_FLY_ID,  //апгрейд до летной 2 уровня
-	SQSH_SELPANEL_UPGRADE_SUBTERRA_ID,  //апгрейд до подзем. 2 уровня
-	SQSH_SELPANEL_UPGRADE_OMEGA_ID,  //апгрейд омеги
-	SQSH_SELPANEL_FIELDON_ID, //ТВ поле
+	SQSH_SELPANEL_UPGRADE_FLY_ID,  //Р°РїРіСЂРµР№Рґ РґРѕ Р»РµС‚РЅРѕР№ 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_SUBTERRA_ID,  //Р°РїРіСЂРµР№Рґ РґРѕ РїРѕРґР·РµРј. 2 СѓСЂРѕРІРЅСЏ
+	SQSH_SELPANEL_UPGRADE_OMEGA_ID,  //Р°РїРіСЂРµР№Рґ РѕРјРµРіРё
+	SQSH_SELPANEL_FIELDON_ID, //РўР’ РїРѕР»Рµ
 	SQSH_SELPANEL_FIELDOFF_ID,
 //	SQSH_SELPANEL_FIELD_ID,
 
-	SQSH_SELPANEL_FRAME_INSTALL_ID, //ТВ инсталлировать-деинсталлировать фрейм
-	SQSH_SELPANEL_FRAME_ALARM_ID, //ТВ всем во фрейм
-	SQSH_SELPANEL_FRAME_TELEPORTATE_ID, //ТВ кнопка телепортатации фрейма
+	SQSH_SELPANEL_FRAME_INSTALL_ID, //РўР’ РёРЅСЃС‚Р°Р»Р»РёСЂРѕРІР°С‚СЊ-РґРµРёРЅСЃС‚Р°Р»Р»РёСЂРѕРІР°С‚СЊ С„СЂРµР№Рј
+	SQSH_SELPANEL_FRAME_ALARM_ID, //РўР’ РІСЃРµРј РІРѕ С„СЂРµР№Рј
+	SQSH_SELPANEL_FRAME_TELEPORTATE_ID, //РўР’ РєРЅРѕРїРєР° С‚РµР»РµРїРѕСЂС‚Р°С‚Р°С†РёРё С„СЂРµР№РјР°
 
 	SQSH_PROGRESS_ENERGY,
-	SQSH_PROGRESS_COLLECTED, //Прогресс энергии
+	SQSH_PROGRESS_COLLECTED, //РџСЂРѕРіСЂРµСЃСЃ СЌРЅРµСЂРіРёРё
 	SQSH_RAMKA_ID,
 	SQSH_INFOWND_ID,
 
-	SQSH_BAR_SQUAD1_ID, //Прогресс мутации сквада 1
-	SQSH_BAR_SQUAD2_ID, //Прогресс мутации сквада 2
-	SQSH_BAR_SQUAD3_ID, //Прогресс мутации сквада 3
-	SQSH_BAR_SQUAD4_ID, //Прогресс мутации сквада 4
-	SQSH_BAR_SQUAD5_ID, //Прогресс мутации сквада 5
+	SQSH_BAR_SQUAD1_ID, //РџСЂРѕРіСЂРµСЃСЃ РјСѓС‚Р°С†РёРё СЃРєРІР°РґР° 1
+	SQSH_BAR_SQUAD2_ID, //РџСЂРѕРіСЂРµСЃСЃ РјСѓС‚Р°С†РёРё СЃРєРІР°РґР° 2
+	SQSH_BAR_SQUAD3_ID, //РџСЂРѕРіСЂРµСЃСЃ РјСѓС‚Р°С†РёРё СЃРєРІР°РґР° 3
+	SQSH_BAR_SQUAD4_ID, //РџСЂРѕРіСЂРµСЃСЃ РјСѓС‚Р°С†РёРё СЃРєРІР°РґР° 4
+	SQSH_BAR_SQUAD5_ID, //РџСЂРѕРіСЂРµСЃСЃ РјСѓС‚Р°С†РёРё СЃРєРІР°РґР° 5
 
 	SQSH_CHAT_INFO_ID,
 	SQSH_INGAME_CHAT_EDIT_ID,
 
 	SQSH_GAME_MAX,
 
-//главное меню
+//РіР»Р°РІРЅРѕРµ РјРµРЅСЋ
 	SQSH_MM_START_SCR,
 	SQSH_MM_SINGLE_SCR,
 	SQSH_MM_PROFILE_SCR,
@@ -628,7 +628,7 @@ enum ShellControlID
     SQSH_MENU_MAX,
     
     //unit buttons
-    SQSH_SQUAD_DISINTEGRATE_ID, //Разобрать на базовые юниты
+    SQSH_SQUAD_DISINTEGRATE_ID, //Р Р°Р·РѕР±СЂР°С‚СЊ РЅР° Р±Р°Р·РѕРІС‹Рµ СЋРЅРёС‚С‹
     SQSH_SQUAD_UNIT1, //rocker
     SQSH_SQUAD_UNIT2, //sniper
     SQSH_SQUAD_UNIT3, //mortar
@@ -741,9 +741,9 @@ enum ParticularWndCmdID {
     RESTART_GAME
 };
 enum Difficulty {
-	DIFFICULTY_EASY, // Легкий
-	DIFFICULTY_NORMAL, // Нормальный
-	DIFFICULTY_HARD, // Сложный 
+	DIFFICULTY_EASY, // Р›РµРіРєРёР№
+	DIFFICULTY_NORMAL, // РќРѕСЂРјР°Р»СЊРЅС‹Р№
+	DIFFICULTY_HARD, // РЎР»РѕР¶РЅС‹Р№ 
 	DIFFICULTY_MAX
 };
 
@@ -753,9 +753,9 @@ enum ControlHitTestMode
 	HITTEST_NONE
 };
 
-/// идентификаторы интерфейсных событий
+/// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ РёРЅС‚РµСЂС„РµР№СЃРЅС‹С… СЃРѕР±С‹С‚РёР№
 enum iEventID
 {
 	iEVENT_ID_DEFAULT	= -1,
-	iEVENT_ID_EFFECT			// запустить эффект (появление/исчезание кнопок и т.п.)
+	iEVENT_ID_EFFECT			// Р·Р°РїСѓСЃС‚РёС‚СЊ СЌС„С„РµРєС‚ (РїРѕСЏРІР»РµРЅРёРµ/РёСЃС‡РµР·Р°РЅРёРµ РєРЅРѕРїРѕРє Рё С‚.Рї.)
 };

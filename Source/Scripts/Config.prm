@@ -22,7 +22,7 @@ string shellMainFont = "aero";
 
 static float _PI = 3.14159265358979323846;
 
-//горизонтальное перемещение камеры
+//РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅРѕРµ РїРµСЂРµРјРµС‰РµРЅРёРµ РєР°РјРµСЂС‹
 float CAMERA_SCROLL_SPEED_DELTA = 10.0f;
 float CAMERA_BORDER_SCROLL_SPEED_DELTA = 10.0f;
 float CAMERA_SHIFT_SPEED_DELTA = 400.0f;
@@ -33,7 +33,7 @@ float CAMERA_BORDER_SCROLL_AREA_UP = 0.008;
 float CAMERA_BORDER_SCROLL_AREA_DN = 0.014;
 float CAMERA_BORDER_SCROLL_AREA_HORZ = 0.008;
 
-//вращение и наклон
+//РІСЂР°С‰РµРЅРёРµ Рё РЅР°РєР»РѕРЅ
 float HISTORY_CAMERA_ANGLE_SPEED_DELTA = _PI/4000;
 float CAMERA_KBD_ANGLE_SPEED_DELTA = _PI/30;
 float CAMERA_MOUSE_ANGLE_SPEED_DELTA = _PI/1;
@@ -48,7 +48,7 @@ float CAMERA_ZOOM_SPEED_MASS = 2.0f;
 
 float CAMERA_FOLLOW_AVERAGE_TAU = 0.1;
 
-//ограничения
+//РѕРіСЂР°РЅРёС‡РµРЅРёСЏ
 float CAMERA_MAX_HEIGHT = 1000.0f;
 float CAMERA_MIN_HEIGHT = 200.0f;
 float CAMERA_DEFAULT_HEIGHT = 500.0f;
@@ -66,15 +66,15 @@ float CAMERA_WORLD_SCROLL_BORDER = 200.0f;
 
 int CAMERA_REPLAY_DURATION = 4000;
 
-//ширина звука
+//С€РёСЂРёРЅР° Р·РІСѓРєР°
 float fSoundWidthPower = 0.5;
 
-//fSoundZMultiple=0..1 коэффициэнт масштабирования громкости по оси Z
+//fSoundZMultiple=0..1 РєРѕСЌС„С„РёС†РёСЌРЅС‚ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ РіСЂРѕРјРєРѕСЃС‚Рё РїРѕ РѕСЃРё Z
 float fSoundZMultiple =0.5;
 
 int dbgShowCursorPos = 0;
 
-//Делает в окошке аналог полного экрана для этого нужно чтобы экранное разрешение совпадало с выбранным
+//Р”РµР»Р°РµС‚ РІ РѕРєРѕС€РєРµ Р°РЅР°Р»РѕРі РїРѕР»РЅРѕРіРѕ СЌРєСЂР°РЅР° РґР»СЏ СЌС‚РѕРіРѕ РЅСѓР¶РЅРѕ С‡С‚РѕР±С‹ СЌРєСЂР°РЅРЅРѕРµ СЂР°Р·СЂРµС€РµРЅРёРµ СЃРѕРІРїР°РґР°Р»Рѕ СЃ РІС‹Р±СЂР°РЅРЅС‹Рј
 int terEnableSoundLog = 0;
 
 int bShowSplash = 0;
@@ -107,7 +107,7 @@ string terMovieName = "Track";
 string terMovieFrameName = "frame";
 
 //--------------------------------
-// Цвета игроков
+// Р¦РІРµС‚Р° РёРіСЂРѕРєРѕРІ
 struct PlayerColor
 {
 	float unitColor[4] = { 1, 1, 1, 1 };
@@ -163,7 +163,7 @@ int playerWorldColorIdx = playerColorsSize - 1;
 int playerAllowedColorSize = playerColorsSize - 1;
 
 //--------------------------------
-// Цвета радиусов стрельбы и ядер
+// Р¦РІРµС‚Р° СЂР°РґРёСѓСЃРѕРІ СЃС‚СЂРµР»СЊР±С‹ Рё СЏРґРµСЂ
 string sRegionTextureCircle = "Resource\\Effect\\Region.tga";
 string sRegionTextureCircleDotted = "Resource\\Effect\\dotted_line.tga";
 float RegionUSpeedDotted=1;
@@ -261,7 +261,7 @@ ZeroplastBurn zeroplastBurn = {};
 int pathColor[4] = { 200,255,180,128 };
 int patrolColor[4] = { 200,200,180,128 };
 
-int IronDiggerVolume=64;//Объём переносимого ковша (64 было)
+int IronDiggerVolume=64;//РћР±СЉС‘Рј РїРµСЂРµРЅРѕСЃРёРјРѕРіРѕ РєРѕРІС€Р° (64 Р±С‹Р»Рѕ)
 
 string missionDifficultyPostfix[] = {
 	"_easy",
@@ -296,7 +296,7 @@ float SCOURGE_WEIGHT = 1;
 float ENERGY_WEIGHT = 10000;
 
 
-float music_change_time=30;//сек. Время задержки до изменения музыки.
+float music_change_time=30;//СЃРµРє. Р’СЂРµРјСЏ Р·Р°РґРµСЂР¶РєРё РґРѕ РёР·РјРµРЅРµРЅРёСЏ РјСѓР·С‹РєРё.
 
 
 struct ModelProperty
@@ -355,24 +355,24 @@ string terTextureLaserZ[int terTextureLaserSizeZ] = { "RESOURCE\\EFFECT\\laserZ.
 int terShootMapTest = 0;
 int terShootUnitTest = 0;
 
-// Время, на которое офицер замораживает базовый юнит, в миллисекундах.
+// Р’СЂРµРјСЏ, РЅР° РєРѕС‚РѕСЂРѕРµ РѕС„РёС†РµСЂ Р·Р°РјРѕСЂР°Р¶РёРІР°РµС‚ Р±Р°Р·РѕРІС‹Р№ СЋРЅРёС‚, РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С….
 int terOfficerFreezeTime = 10000;
-// Время, на которое пролеченный юнит зеленеет, в миллисекундах.
+// Р’СЂРµРјСЏ, РЅР° РєРѕС‚РѕСЂРѕРµ РїСЂРѕР»РµС‡РµРЅРЅС‹Р№ СЋРЅРёС‚ Р·РµР»РµРЅРµРµС‚, РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С….
 int terTechnicHealTime = 1000;
 
-static float M_PI = 3.14159265358979323846;
-static float G2R = M_PI/180;
+static float CONFIG_PI = 3.14159265358979323846;
+static float CONFIG_G2R = CONFIG_PI/180;
 
-float terScumStormTurnAngle = 30 * G2R;
-float terScumStormTurnAngleDelta = 10 * G2R;
+float terScumStormTurnAngle = 30 * CONFIG_G2R;
+float terScumStormTurnAngleDelta = 10 * CONFIG_G2R;
 int terScumStormTurnDelay = 400;
 
-// Время, на которое unseen делает юнита невидимым, мс.
+// Р’СЂРµРјСЏ, РЅР° РєРѕС‚РѕСЂРѕРµ unseen РґРµР»Р°РµС‚ СЋРЅРёС‚Р° РЅРµРІРёРґРёРјС‹Рј, РјСЃ.
 int terInvisibilityTime = 4000;
-// Максимальное время невидимости, мс.
+// РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ РЅРµРІРёРґРёРјРѕСЃС‚Рё, РјСЃ.
 int terInvisibilityTimeMax = 8000;
 
-// Коэфф. прозрачности для собственных невидимых юнитов.
+// РљРѕСЌС„С„. РїСЂРѕР·СЂР°С‡РЅРѕСЃС‚Рё РґР»СЏ СЃРѕР±СЃС‚РІРµРЅРЅС‹С… РЅРµРІРёРґРёРјС‹С… СЋРЅРёС‚РѕРІ.
 float terInvisibilityCoeff = 0.5;
 
 int FrameRepairElementsPerQuant = 10;

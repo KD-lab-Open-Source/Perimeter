@@ -86,7 +86,7 @@ void terProjectileBase::setTarget(terUnitBase* p,const Vect3f& target,float targ
 		targetPosition_ = target;
 
 	if(target_delta > FLT_EPS){
-		float angle = M_PI * 2.0f * terLogicRNDfrand();
+		float angle = XM_PI * 2.0f * terLogicRNDfrand();
 		float radius = terLogicRNDfrnd() * target_delta;
 		targetPosition_.x += radius * xm::cos(angle);
 		targetPosition_.y += radius * xm::sin(angle);

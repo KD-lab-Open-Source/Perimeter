@@ -1,7 +1,7 @@
 
 //---------------------------------------------------
 
-// Ïàðàìåòðû àíèìàöèîííîé öåïî÷êè
+// ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¾Ð½Ð½Ð¾Ð¹ Ñ†ÐµÐ¿Ð¾Ñ‡ÐºÐ¸
 struct AnimationChain
 {
 	ChainID chainID = CHAIN_NONE;
@@ -11,7 +11,7 @@ struct AnimationChain
 	ChainNodeID begin = CHAIN_NODE_NONE;
 	ChainNodeID end = CHAIN_NODE_NONE;
 	int periodDeviation = 0; // !0: period += rnd(perionDeviation), phase = rnd(1)
-	int enableReverse = 0; // Ðàçðåøèòü ðåâåðñ ìåæäó ñìåæíûìè öåïî÷êàìè
+	int enableReverse = 0; // Ð Ð°Ð·Ñ€ÐµÑˆÐ¸Ñ‚ÑŒ Ñ€ÐµÐ²ÐµÑ€Ñ Ð¼ÐµÐ¶Ð´Ñƒ ÑÐ¼ÐµÐ¶Ð½Ñ‹Ð¼Ð¸ Ñ†ÐµÐ¿Ð¾Ñ‡ÐºÐ°Ð¼Ð¸
 	int counter = 0; // for path finding
 	SoundEventID soundID = SOUND_EVENT_NONE;
 delegate:
@@ -19,7 +19,7 @@ delegate:
 	float phaseEnd() const { return period > 0 ? 1 : (period < 0 ? 0 : phase); }
 };
 
-// Íàáîð àíèìàöèîííûõ öåïî÷åê äëÿ îïðåäåëåííîãî óçëà
+// ÐÐ°Ð±Ð¾Ñ€ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ñ… Ñ†ÐµÐ¿Ð¾Ñ‡ÐµÐº Ð´Ð»Ñ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð½Ð¾Ð³Ð¾ ÑƒÐ·Ð»Ð°
 struct AnimationData
 {
 	AnimationGroupID groupID = ANIMATION_GROUP_ROOT;
@@ -27,11 +27,11 @@ struct AnimationData
 	AnimationChain* chains = new AnimationChain[int size] {};
 	int setPhaseRecursive = 0;
 delegate:
-	const AnimationChain* initial() const { return size ? &chains[0] : 0; }	// ïåðâàÿ öåïî÷êà âêëþ÷àåòñÿ ïðè ñîçäàíèè îáúåêòà
+	const AnimationChain* initial() const { return size ? &chains[0] : 0; }	// Ð¿ÐµÑ€Ð²Ð°Ñ Ñ†ÐµÐ¿Ð¾Ñ‡ÐºÐ° Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ÑÑ Ð¿Ñ€Ð¸ ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ð¸ Ð¾Ð±ÑŠÐµÐºÑ‚Ð°
 	const AnimationChain* find(ChainID chainID) const  { for(int i = 0; i < size; i++) if(chains[i].chainID == chainID) return &chains[i]; return 0; }
 };
 
-// Ìàññèâ íàáîðîâ äëÿ ìîäåëè
+// ÐœÐ°ÑÑÐ¸Ð² Ð½Ð°Ð±Ð¾Ñ€Ð¾Ð² Ð´Ð»Ñ Ð¼Ð¾Ð´ÐµÐ»Ð¸
 struct AnimationSetup
 {
 	AnimationData* data = new AnimationData[int size] {};
@@ -54,7 +54,7 @@ struct DockingSlotsSetup
 
 //------------------------------------------------------
 
-// Ïàðàìåòðû àíèìàöèè þíèòîâ è çäàíèé.
+// ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¸ ÑŽÐ½Ð¸Ñ‚Ð¾Ð² Ð¸ Ð·Ð´Ð°Ð½Ð¸Ð¹.
 
 AnimationChain buildChain1 = { chainID = CHAIN_BUILD1; chainName = "build1"; phase = 0; period = 1000;
 				begin = CHAIN_NODE_BUILD0; end = CHAIN_NODE_BUILD1; };
@@ -475,7 +475,7 @@ AnimationSetup frameAnimation = {
 			};
 		},
 			
-		{	// Ïîñòîÿííî âêëþ÷åííàÿ àíèìàöèÿ ãîðîäà
+		{	// ÐŸÐ¾ÑÑ‚Ð¾ÑÐ½Ð½Ð¾ Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½Ð½Ð°Ñ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ñ Ð³Ð¾Ñ€Ð¾Ð´Ð°
 			groupID = ANIMATION_GROUP_CITY;
 			groupName = "group rotate";
 			chains = new AnimationChain[] {
@@ -484,7 +484,7 @@ AnimationSetup frameAnimation = {
 			};
 		},
 			
-		{	// Êîëîííû ñ îãîíüêàìè
+		{	// ÐšÐ¾Ð»Ð¾Ð½Ð½Ñ‹ Ñ Ð¾Ð³Ð¾Ð½ÑŒÐºÐ°Ð¼Ð¸
 			groupID = ANIMATION_GROUP_PILLAR;
 			groupName = "group lighting";
 			chains = new AnimationChain[] {
@@ -502,7 +502,7 @@ AnimationSetup frameAnimation = {
 			};
 		},
 
-		{	// Îæèâëÿæ
+		{	// ÐžÐ¶Ð¸Ð²Ð»ÑÐ¶
 			groupID = ANIMATION_GROUP_ANIMATE;
 			groupName = "group truck";
 			chains = new AnimationChain[] {

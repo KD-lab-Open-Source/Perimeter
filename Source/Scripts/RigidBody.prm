@@ -1,7 +1,7 @@
 section RigidBodyPrm(declaration = "Game\Scripts\RigidBody.hi", definition = "Game\Scripts\RigidBody.cppi")
 {
 
-int closestFeaturesHTsizeMax = 500; // Максимальный размер хеш-таблицы перед автоочищением
+int closestFeaturesHTsizeMax = 500; // РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ С…РµС€-С‚Р°Р±Р»РёС†С‹ РїРµСЂРµРґ Р°РІС‚РѕРѕС‡РёС‰РµРЅРёРµРј
 
 // Terrain analyze
 float dz_max_avr_tau = 0.1;

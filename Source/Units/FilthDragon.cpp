@@ -160,14 +160,14 @@ void terFilthSwarmDragon::GenerationProcess()
 	position.z+=150;
 
 	v = position;
-	float angle = terLogicRNDfrand() * M_PI * 2.0f;
+	float angle = terLogicRNDfrand() * XM_PI * 2.0f;
 	dv.x = 0;//xm::cosf(angle) * prm->CreatureGenerationRadius;
 	dv.y = 0;//xm::sinf(angle) * prm->CreatureGenerationRadius;
 	dv.z = -35;
 
 	HeadPoint = safe_cast<terFilthDragonHead*>(player->buildUnit(prm->id_head));
 	Se3f pose_tail,pose_head;
-	pose_tail.rot().set(M_PI*0.5f,Vect3f(1,0,0));
+	pose_tail.rot().set(XM_PI*0.5f,Vect3f(1,0,0));
 
 	pose_head.rot().mult(QuatF::ID,pose_tail.rot());
 
@@ -621,7 +621,7 @@ void terFilthDragonHead::addWayPoint()
 				Vect3f p=TargetPosition-last_pos;
 				p.z=0;
 				p.Normalize();
-				float da=M_PI/4;
+				float da=XM_PI/4;
 				float agood=xm::atan2(p.y,p.x);
 				float a1=aprev+da,a2=aprev-da;
 

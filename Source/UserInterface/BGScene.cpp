@@ -35,7 +35,7 @@ void BGScene::init(cVisGeneric* visGeneric) {
 	pos += Vect3f(bgCameraX, bgCameraY, bgCameraZ);
 
 	MatXf matrix = MatXf::ID;
-	matrix.rot() = Mat3f(bgCameraTheta, X_AXIS) * Mat3f(M_PI / 2 - bgCameraPsi, Z_AXIS);
+	matrix.rot() = Mat3f(bgCameraTheta, X_AXIS) * Mat3f(XM_PI / 2 - bgCameraPsi, Z_AXIS);
 	matrix *= MatXf(Mat3f::ID, -pos);	
 
 	MatXf ml = MatXf::ID;

@@ -123,7 +123,7 @@ void terUnitSquad::addUnit(terUnitLegionary* unit, bool set_position)
 		unit->setLocalPosition(localPos);
 		Vect2f globalPos = stablePose()*localPos;
 		if(set_position){
-			unit->setPose(Se3f(QuatF(angleZ() + M_PI, Vect3f::K), To3D(globalPos)), true);
+			unit->setPose(Se3f(QuatF(angleZ() + XM_PI, Vect3f::K), To3D(globalPos)), true);
 			unit->setInSquad();
 		}
 		else
@@ -1354,7 +1354,7 @@ void terUnitSquad::recalcWayPoints()
 	// Calc new orientation
 	Vect2f delta = wayPoints_.front() - position2D();
 	if(delta.norm() > FLT_EPS)
-		setAngleZ(atan2(delta.y, delta.x) + M_PI/2);
+		setAngleZ(atan2(delta.y, delta.x) + XM_PI/2);
 
 	repositionFormation(false);
 
@@ -1370,7 +1370,7 @@ void terUnitSquad::recalcWayPoints()
 	if(wayPoints_.size() > 1){
 		unitsWayPoinsSize_ = 2;
 		Vect2f delta = wayPoints_[1] - wayPoints_[0];
-		//MatX2f secondPose(Mat2f(atan2(delta.y, delta.x) - M_PI/2), wayPoints_[1] + average_position_offset);
+		//MatX2f secondPose(Mat2f(atan2(delta.y, delta.x) - XM_PI/2), wayPoints_[1] + average_position_offset);
 		MatX2f secondPose(firstPose.rot, wayPoints_[1] + average_position_offset);
 		FOR_EACH(Units,ui)
 			(*ui)->addWayPoint(secondPose*(*ui)->localPosition());

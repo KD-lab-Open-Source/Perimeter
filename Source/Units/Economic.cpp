@@ -337,7 +337,7 @@ void terPlayer::CalcStructureRegion()
 	if(frame()) {
 		if(frame()->attached()){
 			const AttributeBase& attr = frame()->attr();
-			area = sqr(attr.ZeroLayerRadius)*M_PI;
+			area = sqr(attr.ZeroLayerRadius)*XM_PI;
 			frame()->placeZeroLayer(false);
 		} else {
             frame()->freeZeroLayer();
@@ -349,7 +349,7 @@ void terPlayer::CalcStructureRegion()
 		terBuilding& b = **bi;
 		if(b.isBuildingEnable()){
 			const AttributeBase& attr = b.attr();
-			area += sqr(attr.ZeroLayerRadius)*M_PI;
+			area += sqr(attr.ZeroLayerRadius)*XM_PI;
 			b.placeZeroLayer(false);
 		}
 		else
@@ -811,7 +811,7 @@ void Cluster::startField()
 
 float Cluster::velocityFactor() const
 {
-	return (fieldPrm.monksPerCore*length_)/(2*M_PI*generators().front()->attr().FieldRadius*monks_.size());
+	return (fieldPrm.monksPerCore*length_)/(2*XM_PI*generators().front()->attr().FieldRadius*monks_.size());
 }
 
 bool Cluster::destroyLinks()

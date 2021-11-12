@@ -2753,7 +2753,7 @@ void DrawSquad(const Vect2f& p, float a, const sColor4f& cl)
 {
 	Vect3f pp;
 	Vect2f _pts[3];
-	Mat3f  _mat(a + M_PI, Z_AXIS);
+	Mat3f  _mat(a + XM_PI, Z_AXIS);
 	for(int i=0; i<3; i++)
 		_pts[i] = p + Vect2f(_mat.xform(_arrowSquad[i], pp));
 
@@ -2924,9 +2924,9 @@ void CMapWindow::draw(int bFocus)
                 float r = -terCamera->coordinate().psi();
                 float at = xm::abs(t);
                 if (t < 0) {
-                    r += M_PI / 2;
+                    r += XM_PI / 2;
                 } else {
-                    r -= M_PI / 2;
+                    r -= XM_PI / 2;
                 }
                 //Where the camera is pointing at currently
                 Vect2f ground = Vect2f(
@@ -2936,10 +2936,10 @@ void CMapWindow::draw(int bFocus)
                 //Assemble polygon
                 vCamera[0].x = pos.x;
                 vCamera[0].y = pos.y;
-                vCamera[1].x = ground.x + a * xm::sin(r - M_PI_2);
-                vCamera[1].y = ground.y + a * xm::cos(r - M_PI_2);
-                vCamera[2].x = ground.x + a * xm::sin(r + M_PI_2);
-                vCamera[2].y = ground.y + a * xm::cos(r + M_PI_2);
+                vCamera[1].x = ground.x + a * xm::sin(r - XM_PI_2);
+                vCamera[1].y = ground.y + a * xm::cos(r - XM_PI_2);
+                vCamera[2].x = ground.x + a * xm::sin(r + XM_PI_2);
+                vCamera[2].y = ground.y + a * xm::cos(r + XM_PI_2);
                 DrawPolygon(vCamera, 3, cameraColor);
                 //vCamera[1].x = ground.x;
                 //vCamera[1].y = ground.y;

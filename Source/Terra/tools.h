@@ -1089,7 +1089,7 @@ public:
 		setAngle(_angle);
 	};
 	void setAngle(float _angle){
-		angle=_angle + M_PI/2;
+		angle=_angle + XM_PI/2;
 	};
 	int simpleQuant(){
 		//toolzerChangeTerHeight
@@ -1136,7 +1136,7 @@ public:
 		setAngle(_angle);
 	};
 	void setAngle(float _angle){
-		angle=_angle + M_PI/2;
+		angle=_angle + XM_PI/2;
 	};
 	int simpleQuant(){
 		//toolzerChangeTerHeight

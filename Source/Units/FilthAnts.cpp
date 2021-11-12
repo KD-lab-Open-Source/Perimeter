@@ -219,7 +219,7 @@ void terFilthSwarmAnt::GenerationProcess()
 	int num = gen.Quant();
 
 	for(int i = 0;i < num;i++){
-		float a = terLogicRNDfrand()*M_PI*2.0f;
+		float a = terLogicRNDfrand()*XM_PI*2.0f;
 		float r = BaseParam->SwarmRadius;
 		Vect3f v;
 		v.x = xm::cos(a) * r;
@@ -229,7 +229,7 @@ void terFilthSwarmAnt::GenerationProcess()
 		if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE){
 			if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 				terFilthAnt* p = safe_cast<terFilthAnt*>(player->buildUnit(GetUnitID()));
-				p->setPose(Se3f(QuatF(terLogicRNDfrand()*M_PI, Vect3f::K), v), true);
+				p->setPose(Se3f(QuatF(terLogicRNDfrand()*XM_PI, Vect3f::K), v), true);
 				p->SetAttackPeriod(attack_period);
 				p->setInitialGeoprocess(SpotPoint->initialGeoprocess());
 				p->Start();

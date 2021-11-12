@@ -8,8 +8,8 @@
 #include "Scripts/Mutation.hi"
 
 static float volume_power = 3;
-static float Volume(float radius) { return 4./3*M_PI*pow(radius/debuScales.spheres, 3); }
-static float Radius(float volume) { return xm::pow(volume * 0.75 / M_PI, 1. / 3.) * debuScales.spheres; }
+static float Volume(float radius) { return 4./3*XM_PI*pow(radius/debuScales.spheres, 3); }
+static float Radius(float volume) { return xm::pow(volume * 0.75 / XM_PI, 1. / 3.) * debuScales.spheres; }
 
 MutationProcess::Sphere::Sphere()
 {

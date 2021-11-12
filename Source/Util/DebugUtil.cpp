@@ -79,12 +79,12 @@ void clip_pixel(int x1,int y1,sColor4c color, int size)
 void clip_circle_3D(const Vect3f& vc, float radius, sColor4c color)
 {
 	float segment_length = 3;
-	int N = xm::round(2*M_PI*radius/segment_length);
+	int N = xm::round(2*XM_PI*radius/segment_length);
 	if(N < 10)
 		N = 10;
-	float dphi = 2*M_PI/N;
+	float dphi = 2*XM_PI/N;
 	Vect3f v0 = vc + Vect3f(radius,0,0);
-	for(float phi = dphi;phi < 2*M_PI + dphi/2; phi += dphi)
+	for(float phi = dphi;phi < 2*XM_PI + dphi/2; phi += dphi)
 	{
 		Vect3f v1 = vc + Vect3f(xm::cos(phi), xm::sin(phi),0)*radius;
 		terRenderDevice->DrawLine(v0, v1,color);

@@ -67,7 +67,7 @@ void terUnitBuildingBlock::Quant()
 {
 	terUnitReal::Quant();
 
-	ConstructionScale += 0.1f * M_PI;
+	ConstructionScale += 0.1f * XM_PI;
 
 	average(fireFactor_, (float)(BlockMode == BUILDING_BLOCK_MODE_WORK), 0.2f);
 }

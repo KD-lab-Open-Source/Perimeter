@@ -453,7 +453,7 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 
 	Vect3f fix=(box.max-box.min)*0.05f;
 /*
-	D3DXMatrixPerspectiveFovLH(&look_proj,M_PI/3,1, (box.min.z-fix.z),(box.max.z+fix.z));
+	D3DXMatrixPerspectiveFovLH(&look_proj,XM_PI/3,1, (box.min.z-fix.z),(box.max.z+fix.z));
 /*/
 	{
 		float zf=box.max.z+fix.z;

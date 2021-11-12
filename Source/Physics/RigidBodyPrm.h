@@ -42,7 +42,7 @@ struct RigidBodyPrm : ShareHandleBase
 		}
 
 		void set() { 
-            phase = terLogicRNDfrnd()*M_PI;
+            phase = terLogicRNDfrnd()*XM_PI;
             omega += terLogicRNDfrnd()*omega*omega_disperse; 
         }
         

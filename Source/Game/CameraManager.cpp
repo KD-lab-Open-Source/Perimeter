@@ -54,16 +54,16 @@ CameraCoordinate CameraCoordinate::operator+(const CameraCoordinate& coord) cons
 
 void CameraCoordinate::uncycle(const CameraCoordinate& coord0)
 {
-	psi_ = ::uncycle(psi_, coord0.psi(), 2*M_PI);
-	theta_ = ::uncycle(theta_, coord0.theta(), 2*M_PI);
+	psi_ = ::uncycle(psi_, coord0.psi(), 2*XM_PI);
+	theta_ = ::uncycle(theta_, coord0.theta(), 2*XM_PI);
 }
 
 void CameraCoordinate::interpolate(const CameraCoordinate& coord0, const CameraCoordinate& coord1, float t)
 {
 	position_.interpolate(coord0.position(), coord1.position(), t);
 	//psi_ = coord0.psi() + (coord1.psi() - coord0.psi())*t;
-	psi_ = cycle(coord0.psi() + getDist(coord1.psi(), coord0.psi(), 2*M_PI)*t, 2*M_PI);
-	theta_ = cycle(coord0.theta() + getDist(coord1.theta(), coord0.theta(), 2*M_PI)*t, 2*M_PI);
+	psi_ = cycle(coord0.psi() + getDist(coord1.psi(), coord0.psi(), 2*XM_PI)*t, 2*XM_PI);
+	theta_ = cycle(coord0.theta() + getDist(coord1.theta(), coord0.theta(), 2*XM_PI)*t, 2*XM_PI);
 	distance_ = coord0.distance() + (coord1.distance() - coord0.distance())*t;
 }
 
@@ -110,7 +110,7 @@ void CameraCoordinate::check(bool restricted)
 	else
 		distance_ = clamp(distance(), 100, 10000);
 	
-	//psi_ = cycle(psi(), 2*M_PI);
+	//psi_ = cycle(psi(), 2*XM_PI);
 }
 
 int CameraCoordinate::height()
@@ -187,7 +187,7 @@ void terCameraType::update()
 		position.z = clamp(position.z, coordinate().height(), 10000);
 
 	matrix_ = MatXf::ID;
-	matrix_.rot() = Mat3f(coordinate().theta(), X_AXIS)*Mat3f(M_PI/2 - coordinate().psi(), Z_AXIS);
+	matrix_.rot() = Mat3f(coordinate().theta(), X_AXIS)*Mat3f(XM_PI/2 - coordinate().psi(), Z_AXIS);
 	matrix_ *= MatXf(Mat3f::ID, -position);	
 
 	SetCameraPosition(Camera, matrix_);
@@ -458,7 +458,7 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
         const float move_factor = 40.0f;
         const float rotation_factor = 60.0f;
         //Limit for rotation velocity, this avoids too high rotation causing erratic behavior
-        const float rotation_velocity_limit = M_PI * 2.0f;
+        const float rotation_velocity_limit = XM_PI * 2.0f;
         //Velocity damping factor
         float damp_factor = delta_time * 0.0005f;
         //Force cooldown factor
@@ -483,7 +483,7 @@ void terCameraType::quant(float mouseDeltaX, float mouseDeltaY, float delta_time
 		cameraPositionVelocity += cameraPositionForce*CAMERA_SCROLL_SPEED_MASS*move_factor;
 		
 		float d = coordinate().distance()/CAMERA_MOVE_ZOOM_SCALE*delta_time;
-		coordinate().position() += Mat3f(-M_PI/2 + coordinate().psi(), Z_AXIS)*cameraPositionVelocity*d;
+		coordinate().position() += Mat3f(-XM_PI/2 + coordinate().psi(), Z_AXIS)*cameraPositionVelocity*d;
 		
 		//rotate
         limitValue(cameraPsiForce, CAMERA_KBD_ANGLE_SPEED_DELTA * rotate_force_limit);
@@ -631,7 +631,7 @@ void terCameraType::erasePath()
 { 
 	stopReplayPath();
 	path_.clear(); 
-	coordinate().psi() = cycle(coordinate().psi(), 2*M_PI);
+	coordinate().psi() = cycle(coordinate().psi(), 2*XM_PI);
 }
 
 void terCameraType::savePath(SaveCameraSplineData& data)

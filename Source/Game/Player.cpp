@@ -111,7 +111,7 @@ playerStrategyIndex_(0)
 	belligerent_ = playerData.belligerent;
 	
 	const AttributeBase* coreAttr = unitAttribute(UNIT_ATTRIBUTE_CORE);
-	EnergyData.setEnergyPerArea(coreAttr->MakeEnergy/(10*sqr(coreAttr->ZeroLayerRadius)*M_PI));
+	EnergyData.setEnergyPerArea(coreAttr->MakeEnergy/(10*sqr(coreAttr->ZeroLayerRadius)*XM_PI));
 	
 	TrustMap = new terTerraformDispatcher(this);
 

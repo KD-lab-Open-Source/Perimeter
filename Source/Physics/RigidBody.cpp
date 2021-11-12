@@ -444,7 +444,7 @@ void RigidBody::apply_control_force()
 		dir = Mat2f(angleZ()).invXform(dir);
 		dir.x = -dir.x;
 
-		float rudder = xm::abs(dir.y) > steering_control_min_distance ? atan2(dir.x, dir.y) / M_PI : 0;
+		float rudder = xm::abs(dir.y) > steering_control_min_distance ? atan2(dir.x, dir.y) / XM_PI : 0;
 		if(rudder < steering_control_negative_rudder_threshould)
 			rudder = 1;
 

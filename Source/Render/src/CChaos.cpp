@@ -365,8 +365,8 @@ void cChaos::InitBumpTexture1(cTexture* pTex)
 		for(int ix=0;ix<dx;ix++,p++)
 		{
 			float du,dv;
-			du=0;//cos((ix+iy)*cx*M_PI)+xm::cos((ix-iy)*cx1*M_PI);
-			dv=0;//sin((ix+iy)*cy*M_PI)+xm::sin((ix-iy)*cy1*M_PI);
+			du=0;//cos((ix+iy)*cx*XM_PI)+xm::cos((ix-iy)*cx1*XM_PI);
+			dv=0;//sin((ix+iy)*cy*XM_PI)+xm::sin((ix-iy)*cy1*XM_PI);
 			
 			p->u= xm::round(du * 16);
 			p->v= xm::round(dv * 16);
@@ -400,8 +400,8 @@ void cChaos::InitBumpTexture2(cTexture* pTex)
 		for(int ix=0;ix<dx;ix++,p++)
 		{
 			float du,dv;
-			du= xm::cos(iy * cx * M_PI) * 0.9f;
-			dv= xm::sin(iy * cy * M_PI) * 0.9f;
+			du= xm::cos(iy * cx * XM_PI) * 0.9f;
+			dv= xm::sin(iy * cy * XM_PI) * 0.9f;
 			
 			p->u= xm::round((du + 1) * 64);
 			p->v= xm::round((dv + 1) * 64);
@@ -572,7 +572,7 @@ void CBox::Draw(cCamera *DrawNode)
 		D3DXMATRIX matView = matViewSave;
 		D3DXMATRIX matProj = matViewSave;
 		matView._41 = matView._42 = matView._43 = 0.0f;
-		D3DXMatrixPerspectiveFovLH( &matProj, M_PI/2, 1.0f, 0.5f, 10000.0f );
+		D3DXMatrixPerspectiveFovLH( &matProj, XM_PI/2, 1.0f, 0.5f, 10000.0f );
 		rd->lpD3DDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 		rd->lpD3DDevice->SetTransform( D3DTS_VIEW,       &matView );
 

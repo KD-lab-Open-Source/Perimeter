@@ -69,7 +69,7 @@ void terFilthSwarmShark::GenerationProcess()
 
 	for(int i = 0;i < num;i++)
 	{
-		float a = terLogicRNDfrand()*M_PI*2.0f;
+		float a = terLogicRNDfrand()*XM_PI*2.0f;
 		float r = terFilthSharkPrm.CreatureGenerationRadius;
 		Vect3f v;
 		v = position;

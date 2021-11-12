@@ -165,7 +165,7 @@ void terFilthSwarmRat::Quant()
 			{
 				ChangeAngleCount--;
 				if(ChangeAngleCount <= 0){
-					float delta_angle=terFilthRatPrm.noise_angle_delta*(M_PI/180.0f);
+					float delta_angle=terFilthRatPrm.noise_angle_delta*(XM_PI/180.0f);
 					if(DeltaAngle > 0)
 						DeltaAngle = -terLogicRNDfrand() * delta_angle;
 					else
@@ -243,7 +243,7 @@ void terFilthSwarmRat::GenerationProcess()
 	int num = gen.Quant();
 
 	for(int i = 0;i < num;i++){
-		float a = terLogicRNDfrand()*M_PI*2.0f;
+		float a = terLogicRNDfrand()*XM_PI*2.0f;
 		float r = terFilthRatPrm.CreatureGenerationRadius;
 		Vect3f v;
 		v = position;
@@ -253,7 +253,7 @@ void terFilthSwarmRat::GenerationProcess()
 			if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y)))
 			{
 				terFilthRat* p = safe_cast<terFilthRat*>(player->buildUnit(GetUnitID()));
-				p->setPose(Se3f(QuatF(terLogicRNDfrand()*M_PI, Vect3f::K), v), false);
+				p->setPose(Se3f(QuatF(terLogicRNDfrand()*XM_PI, Vect3f::K), v), false);
 				p->SetAttackPeriod(attack_period);
 				p->Start();
 				unitList.push_back(p);
@@ -366,7 +366,7 @@ void terFilthRat::Quant()
 		float dz=position().z-pos.z;
 		if(dz<0)
 		{
-			last_x_angle=M_PI*0.5f;
+			last_x_angle=XM_PI*0.5f;
 		}
 
 		if(dz>0)

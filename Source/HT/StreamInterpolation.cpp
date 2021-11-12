@@ -262,8 +262,8 @@ int fAngleInterpolation(cIUnkObj* cur,void* data)
 	cObjectNode* node=(cObjectNode*)cur;
 
 //	float angle=p[0]*timer_+p[1]*timer;
-	static float M_PI2=2*M_PI;
-	float angle=cycle(p[0] + getDist(p[1], p[0], M_PI2)*timer, M_PI2);
+	static float XM_PI2=2*XM_PI;
+	float angle=cycle(p[0] + getDist(p[1], p[0], XM_PI2)*timer, XM_PI2);
     Mat3f m(angle,axis);
 	node->SetRotate(&m);
 

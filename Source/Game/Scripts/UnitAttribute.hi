@@ -98,7 +98,7 @@ struct Oscillator {
 	float omega_increment;
 	float omega_disperse;
 
-		void set() { phase = terLogicRNDfrnd()*M_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
+		void set() { phase = terLogicRNDfrnd()*XM_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
 		float operator() (float dt, float velocity){ return amplitude*sin(phase += omega*(1 + omega_increment*velocity)*dt)/(1 + amplitude_decrement*velocity); }
 	};
 #pragma pack( pop, __XScript_struct_pack__)
@@ -297,7 +297,7 @@ struct RigidBodyTable {
 	RigidBodyPrm debris_prm;
 	RigidBodyPrm VolcanoPrm;
 	RigidBodyPrm CorpseDynamicPrm;
- // Ðàññìàòðèâàåì ïîñëåäîâàòåëüíîñòü ðàñïîëîæåííûõ ðÿäîì ñòðóêòóð êàê ìàññèâ
+ // Ð Ð°ÑÑÐ¼Ð°Ñ‚Ñ€Ð¸Ð²Ð°ÐµÐ¼ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ Ñ€Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð½Ñ‹Ñ… Ñ€ÑÐ´Ð¾Ð¼ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€ ÐºÐ°Ðº Ð¼Ð°ÑÑÐ¸Ð²
 	int size() const { xassert(sizeof(*this) % sizeof(RigidBodyPrm) == 0); return sizeof(*this)/sizeof(RigidBodyPrm); }
 	const RigidBodyPrm& operator[](int i) const { xassert(i >= 0 && i < size()); return ((RigidBodyPrm*)this)[i]; }
 };
@@ -519,7 +519,7 @@ struct AnimationData {
 	AnimationChain const* chains;
 	int setPhaseRecursive;
 
-	const AnimationChain* initial() const { return size ? &chains[0] : 0; }	// ïåðâàÿ öåïî÷êà âêëþ÷àåòñÿ ïðè ñîçäàíèè îáúåêòà
+	const AnimationChain* initial() const { return size ? &chains[0] : 0; }	// Ð¿ÐµÑ€Ð²Ð°Ñ Ñ†ÐµÐ¿Ð¾Ñ‡ÐºÐ° Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ÑÑ Ð¿Ñ€Ð¸ ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ð¸ Ð¾Ð±ÑŠÐµÐºÑ‚Ð°
 	const AnimationChain* find(ChainID chainID) const  { for(int i = 0; i < size; i++) if(chains[i].chainID == chainID) return &chains[i]; return 0; }
 };
 #pragma pack( pop, __XScript_struct_pack__)
@@ -687,7 +687,7 @@ struct terUnitDamageData {
 	DamageData splashDamage;
 
 
-	// îöåíêà êîëè÷åñòâà ýëåìåíòîâ, âûøèáàåìûõ ñ îäíîãî ðàçà
+	// Ð¾Ñ†ÐµÐ½ÐºÐ° ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð², Ð²Ñ‹ÑˆÐ¸Ð±Ð°ÐµÐ¼Ñ‹Ñ… Ñ Ð¾Ð´Ð½Ð¾Ð³Ð¾ Ñ€Ð°Ð·Ð°
 	int estimatedDamage() const { return ((mainDamage.power + splashDamage.power + 3)/8 + 1); }
 };
 #pragma pack( pop, __XScript_struct_pack__)
@@ -1495,7 +1495,7 @@ struct terUnitAttributeDataTable {
 	terUnitAttributeData FrameEmpire2;
 	terUnitAttributeData FrameEmpire3;
 	terUnitAttributeData FrameEmpire4;
- // Ðàññìàòðèâàåì ïîñëåäîâàòåëüíîñòü ðàñïîëîæåííûõ ðÿäîì ñòðóêòóð êàê ìàññèâ
+ // Ð Ð°ÑÑÐ¼Ð°Ñ‚Ñ€Ð¸Ð²Ð°ÐµÐ¼ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ Ñ€Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð½Ñ‹Ñ… Ñ€ÑÐ´Ð¾Ð¼ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€ ÐºÐ°Ðº Ð¼Ð°ÑÑÐ¸Ð²
 	int size() const { xassert(sizeof(*this) % sizeof(terUnitAttributeData) == 0); return sizeof(*this)/sizeof(terUnitAttributeData); }
 	const terUnitAttributeData& operator[](int i) const { xassert(i >= 0 && i < size()); return ((terUnitAttributeData*)this)[i]; }
 };

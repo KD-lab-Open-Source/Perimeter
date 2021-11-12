@@ -18,7 +18,7 @@ KeyPos::value KeyPos::none=Vect3f::ZERO;
 KeyRotate::value KeyRotate::none=QuatF::ID;
 KeyColor::value KeyColor::none=sColor4f(0,0,0,0);
 float KeyGeneral::time_delta=0.05f;//в секундах
-static const float INV_2_PI=1/(2*M_PI);
+static const float INV_2_PI=1/(2*XM_PI);
 
 float cEffect::GetParticleRateReal()const
 {
@@ -91,7 +91,7 @@ void cEmitterBase::InitRotateAngle()
 	rotate_angle.resize(rotate_angle_size);
 	for(int i=0;i<rotate_angle_size;i++)
 	{
-		float a=(i*2*M_PI)/rotate_angle_size;
+		float a=(i*2*XM_PI)/rotate_angle_size;
 		Vect2f& p=rotate_angle[i];
 		p.x=xm::cos(a);
 		p.y=xm::sin(a);
@@ -153,7 +153,7 @@ Vect3f cEmitterBase::RndSpere(float r)
 Vect3f cEmitterBase::RndCylinder(float r,float dr,float z)
 {
 	Vect3f f;
-	float a=rnd.frand()*2*M_PI;
+	float a=rnd.frand()*2*XM_PI;
 	float rr=r+dr*(rnd.frand()-0.5f);
 	f.x=rr*xm::sin(a);
 	f.y=rr*xm::cos(a);
@@ -362,7 +362,7 @@ void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
 		case EMP_CYLINDER:
 		{
 			i %= num.y*num.x*num.z;
-			float alpha = (i%num.x)*2*M_PI/num.x;
+			float alpha = (i%num.x)*2*XM_PI/num.x;
 			float r = (i/(num.x*num.y)+1)*(particle_position.size.x/num.z);
 			pos.x = xm::cos(alpha)*r;
 			pos.y = -xm::sin(alpha)*r;
@@ -372,8 +372,8 @@ void cEmitterBase::OneOrderedPos(int i,Vect3f& pos)
 		case EMP_SPHERE:
 		{
 			i %= num.x*num.y*num.z;
-			float alpha = (i%num.x)*2*M_PI/num.x;
-			float theta = ((i/num.x)%num.y)*2*M_PI/num.y;
+			float alpha = (i%num.x)*2*XM_PI/num.x;
+			float theta = ((i/num.x)%num.y)*2*XM_PI/num.y;
 			float r = (i/(num.x*num.y)+1)*(particle_position.size.x/num.z);
 			pos.setSpherical(alpha,theta,r);
 		}
@@ -1815,7 +1815,7 @@ void cEmitterSpl::EmitOne(int ix_cur/*nParticle& cur*/,float begin_time)
 		break;
 	case ETDS_ROTATEZ:
 		need_transform = OnePos(ix_cur,pos);
-		cur.pos.rot().set(Vect3f(0,0,1), rnd.frand()*2*M_PI,1);
+		cur.pos.rot().set(Vect3f(0,0,1), rnd.frand()*2*XM_PI,1);
 		break;
 	case ETDS_BURST1:
 		{
@@ -3584,7 +3584,7 @@ cEmitterZ::cEmitterZ()
 	add_z=20;
 	planar=true;
 	angle_by_center=true;
-	base_angle=M_PI/2;
+	base_angle=XM_PI/2;
 
 	use_force_field=false;
 	func_getz=NULL;
@@ -4105,7 +4105,7 @@ EmitterKeyZ::EmitterKeyZ()
 	add_z=20;
 	planar=true;
 	angle_by_center=true;
-	base_angle=M_PI/2;
+	base_angle=XM_PI/2;
 	use_force_field=false;
 }
 

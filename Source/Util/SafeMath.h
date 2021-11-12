@@ -22,12 +22,12 @@ inline float uncycle(float f1, float f0, float size)
 
 inline float getDeltaAngle(float to,float from)
 {
-	return getDist(to, from, 2*M_PI);
+	return getDist(to, from, 2*XM_PI);
 }
 
 inline float cycleAngle(float a)
 {
-	return cycle(a, 2*M_PI);
+	return cycle(a, 2*XM_PI);
 }
 
 

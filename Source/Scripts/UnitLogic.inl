@@ -14,11 +14,11 @@ struct FieldPrm
 {
 	int monksPerCore = 20; 
 	int monksPerCoreMin = 3;
-	float monksVelocity = 5; // Скорость при нормальных условиях
+	float monksVelocity = 5; // РЎРєРѕСЂРѕСЃС‚СЊ РїСЂРё РЅРѕСЂРјР°Р»СЊРЅС‹С… СѓСЃР»РѕРІРёСЏС…
 	float monksAccelerationFactor = 0.2; 
 	float monksPositionFactor = 0.1f;
-	int monksWetPlace = 8; // Радиус выравниваемой поверхности при смерти молельщика
-	float chargeLevelToStartMin = 0.1; // Ядро с таким уровнем зарядки включится при тотальном режиме
+	int monksWetPlace = 8; // Р Р°РґРёСѓСЃ РІС‹СЂР°РІРЅРёРІР°РµРјРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РїСЂРё СЃРјРµСЂС‚Рё РјРѕР»РµР»СЊС‰РёРєР°
+	float chargeLevelToStartMin = 0.1; // РЇРґСЂРѕ СЃ С‚Р°РєРёРј СѓСЂРѕРІРЅРµРј Р·Р°СЂСЏРґРєРё РІРєР»СЋС‡РёС‚СЃСЏ РїСЂРё С‚РѕС‚Р°Р»СЊРЅРѕРј СЂРµР¶РёРјРµ
 	ConsumptionData fieldConsumption = {
 		energy = 1.0;
 		priority = 20;
@@ -41,14 +41,14 @@ FieldPrm fieldPrm = {};
 //-------------------------
 struct DebugScales
 {
-	float frame = 1; // фрейм
-	float legion = 0.5; // легион
-	float buildins = 0.5; // здания
-	float spheres = 0.5; // капли
-	float other = 0.5; // остальные
+	float frame = 1; // С„СЂРµР№Рј
+	float legion = 0.5; // Р»РµРіРёРѕРЅ
+	float buildins = 0.5; // Р·РґР°РЅРёСЏ
+	float spheres = 0.5; // РєР°РїР»Рё
+	float other = 0.5; // РѕСЃС‚Р°Р»СЊРЅС‹Рµ
 };
 
-DebugScales debuScales = {}; // Отладочное масштабирование
+DebugScales debuScales = {}; // РћС‚Р»Р°РґРѕС‡РЅРѕРµ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
 
 //------------------------------------------------------
 struct CorridorPrm
@@ -66,7 +66,7 @@ struct CorridorPrm
 struct FramePrm
 {
 	int heightMax = 30;
-	float accumulatedEnergyInitial = 1; // 0..1, только для вновь установленного фрейма, иначе - в редакторе миссий
+	float accumulatedEnergyInitial = 1; // 0..1, С‚РѕР»СЊРєРѕ РґР»СЏ РІРЅРѕРІСЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅРѕРіРѕ С„СЂРµР№РјР°, РёРЅР°С‡Рµ - РІ СЂРµРґР°РєС‚РѕСЂРµ РјРёСЃСЃРёР№
 	ConsumptionData antigravConsumption = {
 		energy = 0.07;
 		priority = 0;
@@ -112,8 +112,8 @@ struct SquadPrm
 	float formationRadiusBase = 10;
 	float followDistanceFactor = 1; // followDistanceFactor*(radius1 + radius2)
 
-	// квадрат радиуса, в котором базовый сквад
-	// ремонтирует и защищает другие сквады своими техниками
+	// РєРІР°РґСЂР°С‚ СЂР°РґРёСѓСЃР°, РІ РєРѕС‚РѕСЂРѕРј Р±Р°Р·РѕРІС‹Р№ СЃРєРІР°Рґ
+	// СЂРµРјРѕРЅС‚РёСЂСѓРµС‚ Рё Р·Р°С‰РёС‰Р°РµС‚ РґСЂСѓРіРёРµ СЃРєРІР°РґС‹ СЃРІРѕРёРјРё С‚РµС…РЅРёРєР°РјРё
 	float supportRadius = 200 * 200;
 };
 
@@ -127,22 +127,22 @@ ConsumptionData buildingBlockConsumption = {
 	name = "buildingBlockConsumption";
 };
 
-float sellBuildingEfficiency = 0.5; // Возвращаемая при продаже энергия
+float sellBuildingEfficiency = 0.5; // Р’РѕР·РІСЂР°С‰Р°РµРјР°СЏ РїСЂРё РїСЂРѕРґР°Р¶Рµ СЌРЅРµСЂРіРёСЏ
 
 //-----------------------------
 struct DifficultyPrm
 {
 	string name = ""; 
 
-	//filthDensity - влияет на количество генерируемой скверны и период генерации.
-	//mul=1 - все значения без изменения.
-	//При уменьшении - уменьшается сначало количество скверны, когда
-	//количество скверны уменьшится до 1, начинает увеличиваиться период генерации.
+	//filthDensity - РІР»РёСЏРµС‚ РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ РіРµРЅРµСЂРёСЂСѓРµРјРѕР№ СЃРєРІРµСЂРЅС‹ Рё РїРµСЂРёРѕРґ РіРµРЅРµСЂР°С†РёРё.
+	//mul=1 - РІСЃРµ Р·РЅР°С‡РµРЅРёСЏ Р±РµР· РёР·РјРµРЅРµРЅРёСЏ.
+	//РџСЂРё СѓРјРµРЅСЊС€РµРЅРёРё - СѓРјРµРЅСЊС€Р°РµС‚СЃСЏ СЃРЅР°С‡Р°Р»Рѕ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРєРІРµСЂРЅС‹, РєРѕРіРґР°
+	//РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРєРІРµСЂРЅС‹ СѓРјРµРЅСЊС€РёС‚СЃСЏ РґРѕ 1, РЅР°С‡РёРЅР°РµС‚ СѓРІРµР»РёС‡РёРІР°РёС‚СЊСЃСЏ РїРµСЂРёРѕРґ РіРµРЅРµСЂР°С†РёРё.
 	float filthDensity = 1;
 	
-	int aiDelay = 0; // Задержка АИ
+	int aiDelay = 0; // Р—Р°РґРµСЂР¶РєР° РђР
 	
-	float triggerDelayFactor = 1; // Коэффициент триггера задержка
+	float triggerDelayFactor = 1; // РљРѕСЌС„С„РёС†РёРµРЅС‚ С‚СЂРёРіРіРµСЂР° Р·Р°РґРµСЂР¶РєР°
 };
 
 DifficultyPrm difficultyPrmArray[DIFFICULTY_MAX] = 
@@ -169,7 +169,7 @@ DifficultyPrm difficultyPrmArray[DIFFICULTY_MAX] =
 
 
 //-----------------------------
-//Параметры настраивающие ковшей
+//РџР°СЂР°РјРµС‚СЂС‹ РЅР°СЃС‚СЂР°РёРІР°СЋС‰РёРµ РєРѕРІС€РµР№
 struct TrucksIntrumentParameter {
 	float kRadius4DigZL=1.2;
 	float kHeigh4DigZL=1.2;
@@ -360,7 +360,7 @@ struct BelligerentPropertyTable
 			};
 		},
 
-		// АДДОН
+		// РђР”Р”РћРќ
 
 		{
 			belligerent = BELLIGERENT_EXODUS2;

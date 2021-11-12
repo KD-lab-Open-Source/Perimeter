@@ -17,7 +17,7 @@
 
 const int WORM_TIME_CHANGE_ANGLE=50;
 const int WORM_DTIME_CHANGE_ANGLE=25;
-const float WORM_DANGLE=M_PI*0.3f;
+const float WORM_DANGLE=XM_PI*0.3f;
 
 terFilthSwarmWorm::terFilthSwarmWorm(terFilthSpot* spot,const Vect3f& pos,int attack_period_)
 : terFilthSwarm(spot,pos)
@@ -26,7 +26,7 @@ terFilthSwarmWorm::terFilthSwarmWorm(terFilthSpot* spot,const Vect3f& pos,int at
 	pWorm=new CGeoWorm(xm::round(position.x) - WSXSY05, xm::round(position.y) - WSXSY05);
 
 	speed=2.0f;
-	angle=terLogicRNDfrand()*2*M_PI;
+	angle=terLogicRNDfrand()*2*XM_PI;
 	change_angle=WORM_TIME_CHANGE_ANGLE;
 	pWormModel=NULL;
 	first=true;
@@ -169,7 +169,7 @@ void terFilthSwarmWorm::Move()
 		Vect3f delta=TargetPoint->position()-position;
 		float a=atan2(delta.y,delta.x);
 
-		a=uncycle(a,angle,2*M_PI);
+		a=uncycle(a,angle,2*XM_PI);
 
 		Vect2f p(xm::cos(a), xm::sin(a)),p1(delta.x, delta.y);
 		p1.normalize(1);
@@ -178,7 +178,7 @@ void terFilthSwarmWorm::Move()
 		float t=0.1f;
 		angle=a*t+angle*(1-t);
 	}else
-		angle=cycle(angle,2*M_PI);
+		angle=cycle(angle,2*XM_PI);
 
 	Vect2f dx(xm::cos(angle) * speed, xm::sin(angle) * speed);
 
@@ -244,7 +244,7 @@ void terFilthWorm::StartAttack()
 	realAvatar()->setChain(terLogicRND(2)?CHAIN_BUILD1:CHAIN_BUILD2);
 
 	Se3f pos=pose();
-	pos.rot().set(M_PI*terLogicRNDfrnd(),Vect3f(0,0,1));
+	pos.rot().set(XM_PI*terLogicRNDfrnd(),Vect3f(0,0,1));
 	setPose(pos,false);
 }
 

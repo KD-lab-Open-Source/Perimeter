@@ -961,8 +961,8 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 			&pivotPosition.y );
 		distanceToPivot *= HISTORY_SCENE_SCALE;
 		pivotPosition *= HISTORY_SCENE_SCALE; 
-		theta = -theta - M_PI / 2.0f;
-		psi += M_PI;
+		theta = -theta - XM_PI / 2.0f;
+		psi += XM_PI;
 		pivotPosition.z = -pivotPosition.z;
 	}
 
@@ -1011,7 +1011,7 @@ const std::string FinishHistory::NAME = "FINISHHISTORY";
 			&theta );
 
 		radius *= HISTORY_SCENE_SCALE;
-		theta = -theta - M_PI / 2.0f;
+		theta = -theta - XM_PI / 2.0f;
 	}
 
 	void CameraFollowNomad::execute(Worlds* worlds, Frames* frames, Controller* controller, Commander* commander) {
