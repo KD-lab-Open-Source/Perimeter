@@ -179,7 +179,7 @@ size_t PNetCenter::Send(const char* buffer, size_t size, NETID destination) {
          || destination == NETID_NONE
         ) {
             fprintf(stderr, "Discarding sending %lu bytes to %lu from %lu\n", size, destination, m_localNETID);
-            xassert(0);
+            //xassert(0);
             return size;
         }
         sendToConnection(buffer, size, connectionHandler.getConnection(destination));

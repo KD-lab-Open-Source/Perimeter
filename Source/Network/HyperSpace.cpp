@@ -358,6 +358,8 @@ bool terHyperSpace::MultiQuant()
 	setLogicFp();
 
 	if(allowedRealizingQuant > lastRealizedQuant){
+        log_var("============== MultiQuant ==============");
+        
 		//Начало кванта
 		currentQuant++;		//currentQuant=lastQuant_inFullListGameCommands;
 
@@ -417,6 +419,7 @@ bool terHyperSpace::MultiQuant()
 		///pNetCenter->SendEvent(&netCommand4H_BackGameInformation(currentQuant, vmapbuf, net_log_buffer));
 
 		log_var(vMap.getChAreasInformationCRC());
+        log_var(vMap.getWorldCRC());
 
 		logQuant();
 
@@ -430,7 +433,12 @@ bool terHyperSpace::MultiQuant()
 
 }
 
-const unsigned int periodSendLogQuant=8; //power of two / степень двойки!
+//power of two / степень двойки!
+#ifdef PERIMETER_DEBUG
+const unsigned int periodSendLogQuant=2;
+#else
+const unsigned int periodSendLogQuant=8;
+#endif
 const unsigned int maskPeriodSendLogQuant=periodSendLogQuant-1;//
 void terHyperSpace::logQuant()
 {
@@ -837,8 +845,8 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 				XStream f(crash_dir + "netlog.txt", XS_OUT);
 				f < currentVersion < "\r\n";
                 f < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
-                f < "HostNETID: " <= pNetCenter->m_hostNETID;
-                f < "LocalNETID: " <= pNetCenter->m_localNETID;
+                f < " HostNETID: " <= pNetCenter->m_hostNETID;
+                f < " LocalNETID: " <= pNetCenter->m_localNETID;
                 f < "\r\n";
 				writeLogList2File(f);
 				f.close();

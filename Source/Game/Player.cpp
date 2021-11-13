@@ -264,11 +264,10 @@ void terPlayer::Quant()
 	voiceDispatcher_.quant();
 
 #ifdef _DO_LOG_
-    log_var("PlayerQuant");
+    log_var("=== PlayerQuant Start ===");
     log_var(playerID());
 	for (auto ui : Units) {
         if (ui->alive()) {
-            log_var("Quant");
             log_var(getEnumName(ui->attr().ID));
             log_var(ui->unitID());
             ui->Quant();
@@ -277,6 +276,7 @@ void terPlayer::Quant()
             log_var(ui->position());
         }
     }
+    log_var("=== PlayerQuant End ===");
 #endif
 
 	rebuildDefenceMapQuant();
@@ -341,16 +341,18 @@ void terPlayer::MoveQuant()
 	}
 	BrigadierWorking = 0;
 
-	UnitList::iterator ui;
-	FOR_EACH(Units,ui)
-	if((*ui)->alive())
-	{
-		log_var("MoveQuant");
-		log_var(getEnumName((*ui)->attr().ID));
-		(*ui)->MoveQuant();
-		log_var(vMap.getChAreasInformationCRC());
-		log_var(terLogicRNDfrnd());
-	}
+    log_var("=== MoveQuant Start ===");
+    log_var(playerID());
+	for (auto ui : Units) {
+        if (ui->alive()) {
+            log_var(getEnumName(ui->attr().ID));
+            log_var(ui->unitID());
+            ui->MoveQuant();
+            log_var(vMap.getChAreasInformationCRC());
+            log_var(terLogicRNDfrnd());
+        }
+    }
+    log_var("=== MoveQuant End ===");
 }
 
 void terPlayer::AvatarQuant()
