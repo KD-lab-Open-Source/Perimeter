@@ -1,4 +1,5 @@
 #include <string>
+#include "xutl.h"
 #include "xstream.h"
 
 XStream& XStream::operator>= (char& var)
@@ -106,7 +107,7 @@ XStream& XStream::operator>= (double& var)
 	if(!ret) return *this;
 	char* p = convBuf;
 	p[ret] = ' ';
-	var = strtod(p,&p);
+	var = string_to_double(p,&p);
 	seek(p - convBuf + 1 - ret,XS_CUR);
 	return *this;
 }
@@ -117,7 +118,7 @@ XStream& XStream::operator>= (float& var)
 	if(!ret) return *this;
 	char* p = convBuf;
 	p[ret] = ' ';
-	var = strtof(p,&p);
+	var = string_to_float(p,&p);
 	seek(p - convBuf + 1 - ret,XS_CUR);
 	return *this;
 }

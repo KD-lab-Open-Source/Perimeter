@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cstring>
+#include "xutl.h"
 #include "xbuffer.h"
 
 XBuffer& XBuffer::operator>= (char& var)
@@ -77,7 +78,7 @@ XBuffer& XBuffer::operator>= (uint64_t& var)
 XBuffer& XBuffer::operator>= (double& var)
 {
 	char* p = buf + offset;
-	var = strtod(p,&p);
+	var = string_to_double(p,&p);
 	offset += p - (buf + offset);
 	return *this;
 }
@@ -85,7 +86,7 @@ XBuffer& XBuffer::operator>= (double& var)
 XBuffer& XBuffer::operator>= (float& var)
 {
 	char* p = buf + offset;
-	var = strtof(p,&p);
+	var = string_to_float(p,&p);
 	offset += p - (buf + offset);
 	return *this;
 }

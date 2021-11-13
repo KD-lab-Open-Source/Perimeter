@@ -705,6 +705,11 @@ void initAttributes()
 {
 //	soundScriptTable();
 
+    //Reset generators just in case
+    XRndSet(1);
+    logicRND.set(1);
+    xm_random_generator.set(1);
+
     //Clear previous data
     rigidBodyPrmLibrary().map().clear();
     attributeLibrary().map().clear();

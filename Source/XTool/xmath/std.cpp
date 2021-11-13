@@ -1,9 +1,10 @@
 //Uses std math functions
 
 #include "xmath.h"
-#include <cmath>
 
 #ifndef XMATH_USE_GAMEMATH
+#include <cmath>
+
 namespace xm {
     double floor(double x) { return std::floor(x); }    
     double ceil(double x) { return std::ceil(x); }    

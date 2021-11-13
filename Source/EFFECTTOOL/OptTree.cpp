@@ -56,14 +56,14 @@ float COptTree::SetParamSpiral(CKeyPos& kp)
 	int size = kp.size();
 	if (size<2) return 0 ;
 	Vect3f cnt = GetKeyPosCenter(kp);
-	float ang = acos(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize().dot(Vect3f(kp[1].pos.x,kp[1].pos.y,0).Normalize()));
+	float ang = xm::acos(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize().dot(Vect3f(kp[1].pos.x,kp[1].pos.y,0).Normalize()));
 	Write(IX_SpAngle,R2G(ang));
-	float alpha = acos(Vect3f(1,0,0).dot(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize()));
+	float alpha = xm::acos(Vect3f(1,0,0).dot(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize()));
 	Write(IX_SpHeight1,kp[0].pos.z);
 	Write(IX_SpHeight2,kp[size-1].pos.z);
-	float r = sqrt(pow(kp[0].pos.x-cnt.x,2)+pow(kp[0].pos.y-cnt.y,2));
+	float r = xm::sqrt(xm::pow(kp[0].pos.x-cnt.x,2)+xm::pow(kp[0].pos.y-cnt.y,2));
 	Write(IX_SpRadius1,r);
-	r = sqrt(pow(kp[size-1].pos.x-cnt.x,2)+pow(kp[size-1].pos.y-cnt.y,2));
+	r = xm::sqrt(xm::pow(kp[size-1].pos.x-cnt.x,2)+xm::pow(kp[size-1].pos.y-cnt.y,2));
 	Write(IX_SpRadius2,r);
 	Write(IX_SpCompress,1);
 	return alpha;
@@ -1282,7 +1282,7 @@ int RBNum(UINT num,USHORT n=2)
 	int i=1;
 	while(t/=10) i++;
 	if (i<n) return num;
-	return (num/round(pow(10,i-n)))*pow(10,i-n);
+	return (num/round(xm::pow(10,i-n)))*xm::pow(10,i-n);
 }
 			  
 void COptTree::SetFps(float fps)

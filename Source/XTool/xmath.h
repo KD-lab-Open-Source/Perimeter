@@ -2376,10 +2376,10 @@ float Vect3f::theta() const
 }
 Vect3f& Vect3f::setSpherical(float psi,float theta,float radius)
 {
-	x = radius*(float)xm::sin(theta);
-	y = x*(float)xm::sin(psi);
-	x = x*(float)xm::cos(psi);
-	z = radius*(float)xm::cos(theta);
+	x = radius*static_cast<float>(xm::sin(theta));
+	y = x*static_cast<float>(xm::sin(psi));
+	x = x*static_cast<float>(xm::cos(psi));
+	z = radius*static_cast<float>(xm::cos(theta));
 	return *this;
 }
 
@@ -2391,7 +2391,7 @@ float Vect3f::dot (const Vect3f& other) const
 
 float Vect3f::norm() const
 {
-  return (float)xm::sqrt(x * x + y * y + z * z);
+  return static_cast<float>(xm::sqrt(x * x + y * y + z * z));
 }
 
 

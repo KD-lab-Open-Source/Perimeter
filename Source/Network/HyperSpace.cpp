@@ -419,7 +419,10 @@ bool terHyperSpace::MultiQuant()
 		///pNetCenter->SendEvent(&netCommand4H_BackGameInformation(currentQuant, vmapbuf, net_log_buffer));
 
 		log_var(vMap.getChAreasInformationCRC());
+
+#ifdef NET_LOG_EXHAUSTIVE
         log_var(vMap.getWorldCRC());
+#endif
 
 		logQuant();
 

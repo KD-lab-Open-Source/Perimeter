@@ -54,4 +54,10 @@ static bool endsWith(const std::string& str, const std::string& suffix)
     return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
 }
 
+//Converts string to double, same as strtod
+double string_to_double(const char* in, char** end);
+
+//Converts string to float, same as strtof
+float string_to_float(const char* in, char** end);
+
 #endif

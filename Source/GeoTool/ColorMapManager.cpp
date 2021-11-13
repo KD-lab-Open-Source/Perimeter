@@ -158,7 +158,7 @@ void ColorMapManager::lightUpGeoColorMap(
 			int offset = vMapY * vMapWidth + vMapX;
 			float h = vMap.GetAltGeo(offset);
 			float h1 = vMap.GetAltGeo(offset + 1);
-			factor = 1.178f - atan(	(h1 - h) / 160.0f );
+			factor = 1.178f - xm::atan(	(h1 - h) / 160.0f );
 
 			if (factor < 0.52f) {
 				depth = 0.33f;

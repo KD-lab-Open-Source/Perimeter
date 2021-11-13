@@ -10,6 +10,7 @@
 #include <windows.h>
 #endif
 #include "xutil.h"
+#include "xmath.h"
 
 #ifndef _WIN32
 bool argcv_setup_done = false;
@@ -178,3 +179,110 @@ void string_replace_all(std::string& text, const std::string& from, const std::s
 
     text.swap(newString);
 }
+
+//Converts string to double manually since we can't rely on stdlib for deterministic results
+double string_to_double(const char* in, char** end) {
+    char* ptr = const_cast<char*>(in);
+    if (end) {
+        *end = ptr;
+    }
+    if (!in) return 0;
+    double value = 0; //Stores final value
+    uint64_t integer = 0; //Stores integer part
+    uint64_t fraction = 0; //Stores fraction part
+    int64_t floating = -1; //Amount of numbers to shift the fraction part
+    int64_t exponent = 0; //Amount of numbers to shift the value
+    bool negative = false;
+    bool foundNumber = false;
+    uint64_t tmp;
+    char tmpstr[2] = { 0, 0 };
+    
+    while (*ptr != 0) {
+        char c = *ptr;
+        
+        //Ignore whitespaces
+        if (!foundNumber) {
+            switch (c) {
+                case ' ':
+                case '\n':
+                case '\r':
+                case '\t':
+                    ptr++;
+                    continue;
+                default:
+                    foundNumber = true;
+                    break;
+            }
+        }
+        
+        if ('0' <= c && c <= '9') {
+            //Is a digit
+            tmpstr[0] = c;
+            tmp = strtoul(tmpstr, nullptr, 10);
+            if (floating != -1) {
+                floating++;
+                fraction *= 10;
+                fraction += tmp;
+            } else {
+                integer *= 10;
+                integer += tmp;
+            }
+        } else if ('.' == c && floating == -1) {
+            //Switch to floating mode
+            floating = 0;
+        } else if ('e' == c) {
+            //Advance e
+            ptr++;
+            //Get exponent and break
+            exponent = strtol(ptr, &ptr, 10);
+            break;
+        } else if (c == '-' && !negative) {
+            negative = true;
+        } else {
+            //Finished here
+            break;
+        }
+        ptr++;
+    }
+    
+    //Assemble all parts
+    if (floating != -1 && fraction != 0) {
+        value = static_cast<double>(fraction);
+        value /= static_cast<double>(xm::pow(10.0, static_cast<double>(floating)));
+    }
+    value += static_cast<double>(integer);
+    if (exponent != 0) {
+        value *= static_cast<double>(xm::pow(10.0, static_cast<double>(exponent)));
+    }
+    if (negative) {
+        value = -value;
+    }
+
+    if (end) {
+        *end = ptr;
+    }
+
+#if defined(PERIMETER_DEBUG) && 0
+    size_t len = ptr - in;
+    if (len == 0) {
+        printf("empty? ");
+        len = 5;
+    }
+    ptr = (char*) malloc(len);
+    ptr = strncpy(ptr, in, len - 1);
+    printf("string_to_float: '%s' -> %f\n", ptr, value);
+
+    //Check against strtod
+    double other = strtod(in, &ptr);
+    xassert(xm::round(other * 100) == xm::round(value * 100));
+    if (end) {
+        xassert(ptr == *end);
+    }
+#endif
+    return value;
+}
+
+float string_to_float(const char* in, char** end) {
+    return static_cast<float>(string_to_double(in, end));
+}
+

@@ -150,6 +150,7 @@ void show_watch();
 
 #if (!defined(_FINAL_VERSION_) || defined(PERIMETER_DEBUG) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
 #define _DO_LOG_
+//#define NET_LOG_EXHAUSTIVE
 #endif
 
 #ifdef _DO_LOG_
@@ -217,23 +218,32 @@ extern RandomGenerator terEffectRND;
 
 inline int logicRNDi(int x, const char* file, int line)
 {
-	//log_var(file);
-	//log_var(line);
-	//log_var(logicRND.get());
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::path(file).filename().string();
+    log_var(filename);
+    log_var(line);
+    log_var(logicRND.get());
+#endif
 	return logicRND(x);
 }
 inline float logicRNDf(const char* file, int line)
 {
-	//log_var(file);
-	//log_var(line);
-	//log_var(logicRND.get());
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::path(file).filename().string();
+    log_var(filename);
+    log_var(line);
+    log_var(logicRND.get());
+#endif
 	return logicRND.frnd();
 }
 inline float logicRNDfa(const char* file, int line)
 {
-	//log_var(file);
-	//log_var(line);
-	//log_var(logicRND.get());
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::path(file).filename().string();
+    log_var(filename);
+	log_var(line);
+	log_var(logicRND.get());
+#endif
 	return logicRND.frand();
 }
 
