@@ -16,7 +16,7 @@ bool PNetCenter::Init()
     
     m_hostNETID = m_localNETID = NETID_NONE;
     
-    server_arch_mask = 0xFF00; //Allow different OSes
+    server_arch_mask = 0xFFFE; //Allow different OSes and compilers
     const char* server_arch_mask_str = check_command_line("ServerArchMask");
     if (server_arch_mask_str) {
         server_arch_mask = strtoull(server_arch_mask_str, nullptr, 16);

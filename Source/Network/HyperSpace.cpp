@@ -10,6 +10,7 @@
 #include "GameShell.h"
 #include "files/files.h"
 #include "GameContent.h"
+#include "NetConnectionAux.h"
 
 bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
@@ -835,8 +836,9 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
                 //Write net log
 				XStream f(crash_dir + "netlog.txt", XS_OUT);
 				f < currentVersion < "\r\n";
-                f < " " <= pNetCenter->m_localNETID;
-                f < " " <= pNetCenter->m_hostNETID; 
+                f < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
+                f < "HostNETID: " <= pNetCenter->m_hostNETID;
+                f < "LocalNETID: " <= pNetCenter->m_localNETID;
                 f < "\r\n";
 				writeLogList2File(f);
 				f.close();
