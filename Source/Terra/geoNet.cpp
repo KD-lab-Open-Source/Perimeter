@@ -180,10 +180,10 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 				random_center = square_size<<(VX_FRACTION); ///?
 				random_range = random_center << 1;
 
-				p1 += random(random_range) - random_center;
-				p2 += random(random_range) - random_center;
-				p3 += random(random_range) - random_center;
-				p4 += random(random_range) - random_center;
+				p1 += xm_random(random_range) - random_center;
+				p2 += xm_random(random_range) - random_center;
+				p3 += xm_random(random_range) - random_center;
+				p4 += xm_random(random_range) - random_center;
 
 				if(p1 < Cmin_alt) p1 = Cmin_alt; else if(p1 > Cmax_alt) p1 = Cmax_alt;
 				if(p2 < Cmin_alt) p2 = Cmin_alt; else if(p2 > Cmax_alt) p2 = Cmax_alt;
@@ -252,10 +252,10 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 				random_center = square_size*MAP_T(x1,y1)/GeonetMESH;
 				random_range = random_center << 1;
 
-				p1 += (random(random_range) - random_center);
-				p2 += (random(random_range) - random_center);
-				p3 += (random(random_range) - random_center);
-				p4 += (random(random_range) - random_center);
+				p1 += (xm_random(random_range) - random_center);
+				p2 += (xm_random(random_range) - random_center);
+				p3 += (xm_random(random_range) - random_center);
+				p4 += (xm_random(random_range) - random_center);
 
 				if(p1 < Cmin_alt) p1 = Cmin_alt; else if(p1 > Cmax_alt) p1 = Cmax_alt;
 				if(p2 < Cmin_alt) p2 = Cmin_alt; else if(p2 > Cmax_alt) p2 = Cmax_alt;

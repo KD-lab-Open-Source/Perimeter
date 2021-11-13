@@ -180,9 +180,10 @@ public:
 
 #undef random
 extern RandomGenerator xm_random_generator;
-xm_inline unsigned random(unsigned m){ return xm_random_generator(m); }
+xm_inline unsigned xm_random(unsigned m){ return xm_random_generator(m); }
 xm_inline float frnd(float x){ return xm_random_generator.frnd(x); }
 xm_inline float fabsRnd(float x){ return xm_random_generator.fabsRnd(x); }
+xm_inline float xm_frand(){ return xm_random_generator.frand(); }
 
 
 #ifndef NOMINMAX

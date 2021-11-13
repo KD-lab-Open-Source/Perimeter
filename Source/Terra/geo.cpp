@@ -1585,7 +1585,7 @@ void gBreak(int xbeg, int ybeg, char fl_first)
 	//static int fl_first=0;
 	static geoBreak1 * gb=0;//, * gb1, *gb2, *gb3, *gb4, *gb5, *gb6;
 	if(fl_first==1){
-		srand( 7 );
+		//srand( 7 );
 		x=xbeg; y=ybeg;
 		if(!gb) delete gb;
 		gb=new geoBreak1(xbeg, ybeg);

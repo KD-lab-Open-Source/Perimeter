@@ -72,6 +72,10 @@ ELSE()
     ADD_DEFINITIONS(-DPERIMETER_D3D9)
 ENDIF()
 
+#To allow downloading deps
+INCLUDE(FetchContent)
+INCLUDE(ExternalProject)
+
 #Is a debug build?
 SET(PERIMETER_DEBUG OFF)
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -79,10 +83,6 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug)
     #On debug mode don't download every time unless its absent
     SET(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 ENDIF()
-
-#To allow downloading deps
-INCLUDE(FetchContent)
-INCLUDE(ExternalProject)
 
 # Dependencies
 FIND_PACKAGE(Boost REQUIRED)

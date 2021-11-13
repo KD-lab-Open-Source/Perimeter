@@ -67,28 +67,27 @@ float noise3D(float vec[3])
 
 	return 1.5f * lerp(sz, c, d); /* interpolate in z */ 
 }
+/*
 void initNoise() 
 { 
-	/*long random();*/ 
 	int i, j, k; 
 	float v[3], s; 
-	/* Create an array of random gradient vectors uniformly on the unit sphere */ 
-	/*srandom(1);*/ 
-	srand(1); 
+	// Create an array of random gradient vectors uniformly on the unit sphere 
+	//srand(1); 
 	for (i = 0 ; i < B ; i++) {
 		do {
-			/* Choose uniformly in a cube */ 
+			//Choose uniformly in a cube 
 			for (j=0 ; j<3 ; j++)
 				v[j] = (float)((rand() % (B + B)) - B) / B;
 			s = DOT(v,v); 
 		} while (s > 1.0); 
-		/* If not in sphere try again */ 
+		// If not in sphere try again
 		s = (float)xm::sqrt(s); 
-		for (j = 0 ; j < 3 ; j++) /* Else normalize */ 
+		for (j = 0 ; j < 3 ; j++) // Else normalize 
 			g[i][j] = v[j] / s; 
 	} 
 
-	/* Create a pseudorandom permutation of [1..B] */ 
+	// Create a pseudorandom permutation of [1..B] 
 	for (i = 0 ; i < B ; i++) 
 		p[i] = i; 
 	for (i = B ; i > 0 ; i -= 2) { 
@@ -97,13 +96,14 @@ void initNoise()
 		p[j] = k; 
 	} 
 
-	/* Extend g and p arrays to allow for faster indexing */ 
+	// Extend g and p arrays to allow for faster indexing
 	for (i = 0 ; i < B + 2 ; i++) {
 		p[B + i] = p[i]; 
 		for (j = 0 ; j < 3 ; j++) 
 			g[B + i][j] = g[i][j]; 
 	} 
 } 
+*/
 
 float turbulence(float point[3], float lofreq, float hifreq) 
 { 
@@ -121,9 +121,8 @@ extern float noise3(float vec[3]);
 		p[1] *= 2.; 
 		p[2] *= 2.; 
 	} 
-	return t - 0.3f; /* readjust to make mean value = 0.0 */ 
+	return t - 0.3f; // readjust to make mean value = 0.0 
 } 
-
 
 //turbulence(VAR, 0.1f, 1.6f)
 /*float turbulence01_08(float point[3])

@@ -5,7 +5,7 @@
 /Source/cache_font
 .scc
 cmake-build-*
-build
+build/
 docker/dockcross-*-perimeter
 logfile.txt
 perimeter.dxvk-cache

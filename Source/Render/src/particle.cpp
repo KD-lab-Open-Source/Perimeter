@@ -48,7 +48,7 @@ void cParticle::PreDraw(cCamera *DrawNode)
 		pUpdate=RAND_MAX;
 	}else
 		pUpdate=RAND_MAX/10;
-	if(dTime&&(rand()<pUpdate)) 
+	if(dTime&&(parrand() < pUpdate)) 
 	{
 //		start_timer(Particle_Update,1);
 		Bound.min.set(1e30f,1e30f,1e30f);
