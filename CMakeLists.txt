@@ -160,10 +160,21 @@ IF(MSVC_CL_BUILD)
 ELSE()
     add_compile_options(-fno-fast-math -ffp-contract=off)
     
-    #Enable SSE/SSE2 in x86 arch
+    #Arch specific flags
     IF (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
+        #Enable SSE/SSE2 in x86 arch
         MESSAGE("CPU is x86 type, using SSE")
         add_compile_options(-mfpmath=sse -msse -msse2)
+        IF (NOT PERIMETER_ARCH_64)
+            #Might be required for SSE being enabled
+            add_compile_options(-march=pentium4)
+        ENDIF()
+    ELSEIF (${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch")
+        #ARM32/ARM64
+        IF (NOT PERIMETER_ARCH_64)
+            MESSAGE("CPU is ARM, using VFP WARNING: untested")
+            add_compile_options(-mfpmath=vfp)
+        ENDIF()
     ENDIF()
 ENDIF()
 

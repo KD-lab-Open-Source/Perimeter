@@ -999,6 +999,7 @@ void SDL_event_poll() {
 
 void setLogicFp()
 {
+#ifdef _WIN32
 	//_controlfp(_PC_24, _MCW_PC);
 
 #ifndef _FINAL_VERSION_
@@ -1007,6 +1008,7 @@ void setLogicFp()
 		_controlfp( _controlfp(0,0) & ~(EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL |  EM_INVALID),  _MCW_EM ); 
 		_clearfp();
 	}
+#endif
 #endif
 }
 
