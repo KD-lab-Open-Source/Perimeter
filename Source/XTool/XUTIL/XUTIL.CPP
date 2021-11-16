@@ -204,6 +204,7 @@ double string_to_double(const char* in, char** end) {
         if (!foundNumber) {
             switch (c) {
                 case ' ':
+                case '+':
                 case '\n':
                 case '\r':
                 case '\t':

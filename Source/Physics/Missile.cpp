@@ -165,7 +165,11 @@ float RigidBodyPrm::calcTurnTheta(float x, float z, float velocity) const
 void RigidBody::startDebris(const Vect3f& position, const Vect3f& velocity)
 {
 	setVelocity(velocity);
-	setAngularVelocity(Vect3f(terLogicRNDfrnd(), terLogicRNDfrnd(), terLogicRNDfrnd())*prm().debris_angular_velocity);
+    Vect3f v;
+    v.x = terLogicRNDfrnd();
+    v.y = terLogicRNDfrnd();
+    v.z = terLogicRNDfrnd();
+	setAngularVelocity(v*prm().debris_angular_velocity);
 
 	setPose(Se3f(QuatF::ID, position));
 	posePrev_ = Se3f::ID;

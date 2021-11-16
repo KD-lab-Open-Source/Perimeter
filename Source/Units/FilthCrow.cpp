@@ -342,7 +342,10 @@ void terFilthCrow::addWayPoint()
 			p.y=target().y;
 		}else
 		{
-			Vect3f velocity(terLogicRNDfrnd(),terLogicRNDfrnd(),0);
+			Vect3f velocity;
+            velocity.x = terLogicRNDfrnd();
+            velocity.y = terLogicRNDfrnd();
+            velocity.z = 0;
 			velocity.Normalize();
 			p.x=way_points.back().x+velocity.x*terFilthCrowPrm.linear_speed;
 			p.y=way_points.back().y+velocity.y*terFilthCrowPrm.linear_speed;
