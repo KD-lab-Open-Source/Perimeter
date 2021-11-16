@@ -477,16 +477,23 @@ public:
 
 struct netCommand4C_SaveLog : public netCommandGeneral {
 public:
-	netCommand4C_SaveLog() : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
-		v=0;
+	netCommand4C_SaveLog(NETID netid_, const std::string& gameID_) : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
+        netid = netid_;
+        gameID = gameID_;
 	}
+
 	netCommand4C_SaveLog(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
-		in > v;
+        in > netid;
+        in > StringInWrapper(gameID);
 	}
+
 	void Write(XBuffer& out) const override {
-		out < v;
+        out < netid;
+        out < StringOutWrapper(gameID);
 	};
-	int v;
+
+    NETID netid;
+    std::string gameID;
 };
 
 struct netCommand4C_sendLog2Host : public netCommandGeneral {

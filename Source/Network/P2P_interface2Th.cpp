@@ -34,15 +34,16 @@ PClientData::PClientData(unsigned int mdIdx, const char* name, NETID netid)
 	missionDescriptionIdx=mdIdx;
     strncpy(playerName, name, PLAYER_MAX_NAME_LEN);
     netidPlayer = netid;
-	m_flag_Ready=0;
+	m_flag_Ready=false;
 	lagQuant=0;
 	lastExecuteQuant=0;
 	curLastQuant=0;
 	lastTimeBackPacket=clocki();
 	confirmQuant=0;
+    desync=false;
 
-	requestPause=0;
-	clientPause=0;
+	requestPause=false;
+	clientPause=false;
 	timeRequestPause=0;
 
 }
@@ -420,7 +421,7 @@ void PNetCenter::ResetAllClients()
 	ClientMapType::iterator k;
 	for(k=m_clients.begin(); k!=m_clients.end(); k++){
 		///ResetEvent(i->second->m_hReady);
-		(*k)->m_flag_Ready=0;
+		(*k)->m_flag_Ready=false;
 		(*k)->lastTimeBackPacket=curTime;//Необходимо для корректного начального таймаута
 		(*k)->backGameInf2List.clear();
 	}
@@ -602,11 +603,13 @@ void PNetCenter::LLogicQuant()
 				k++;
 				unsigned int countCompare=0;
 				for(; k!=m_clients.end(); k++){
-					std::vector<netCommand4H_BackGameInformation2> &  secondList=(*k)->backGameInf2List;
-					if(!secondList.empty()){
-						if( *firstList.begin() == *secondList.begin() ) countCompare++;//if( (**firstList.begin()).equalVData(**secondList.begin()) )
-						else {
-							if( (*firstList.begin()).quant_ != (*secondList.begin()).quant_ ) {
+                    PClientData* client = *k;
+					std::vector<netCommand4H_BackGameInformation2> &  secondList=client->backGameInf2List;
+					if(!secondList.empty()) {
+						if( *firstList.begin() == *secondList.begin() ) {
+                            countCompare++;//if( (**firstList.begin()).equalVData(**secondList.begin()) )
+                        } else {
+                            if( (*firstList.begin()).quant_ != (*secondList.begin()).quant_ ) {
 								//xassert(0 && "Unmatched number quants");
 								XStream f(convert_path_content("outnet.log", true), XS_OUT);
 								f.write(BUFFER_LOG.address(), BUFFER_LOG.tell());
@@ -623,28 +626,36 @@ void PNetCenter::LLogicQuant()
 
                                 XBuffer to(1024,true);
 								to < "Unmatched number quants ! N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
-                                fprintf(stderr, "Error network synchronization: %s\n", to.address());
+                                fprintf(stderr, "Error network synchronization with %llX: %s\n", client->netidPlayer, to.address());
 								ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
-								return;
-							}
-							else {
+                                return;
+							} else {
 								// Сравнение для netCommand4H_BackGameInformation2
-								if( (*firstList.begin()).signature_ != (*secondList.begin()).signature_ ){
-                                    netCommand4C_SaveLog ev = netCommand4C_SaveLog();
-									SendEvent(ev, NETID_ALL);
+                                bool desync = (*firstList.begin()).signature_ != (*secondList.begin()).signature_;
+								if( desync && !client->desync) {
+                                    client->desync = true;
+                                    std::string gameID = std::to_string(time(nullptr)) + "_" + m_GameName;
+                                    netCommand4C_SaveLog ev = netCommand4C_SaveLog(client->netidPlayer, gameID);
+                                    SendEvent(ev, client->netidPlayer);
+                                    SendEvent(ev, m_hostNETID);
                                     
 									XBuffer to(1024,true);
-									to < "Unmatched game quants ! on Quant=" <= (*firstList.begin()).quant_;
-                                    fprintf(stderr, "Error network synchronization: %s\n", to.address());
-									ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
-									return;
-								}
+									to < "Unmatched game quants ! ID=" < gameID.c_str() < "on Quant=" <= (*firstList.begin()).quant_;
+                                    fprintf(stderr, "Error network synchronization with %llX: %s\n", client->netidPlayer, to.address());
+									//ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
+								} else if ( !desync && client->desync ) {
+                                    //Resynced
+                                    client->desync = false;
+                                    fprintf(stdout, "Client network synchronization restored with %llX\n", client->netidPlayer);
+                                }
+                                countCompare++;
 							}
 							///else xassert(0 && "Нераспознанная десинхронизация");
 						}
 					}
 					else goto end_while_01; //break; //завершение while если один из спмсков кончится раньше первого
 				}
+                
 				if(countCompare+1>=m_clients.size()) {
 						quantConfirmation=(*(*m_clients.begin())->backGameInf2List.begin()).quant_;
 					//erase begin elements

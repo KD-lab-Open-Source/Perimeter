@@ -185,9 +185,10 @@ void GameShell::abnormalNetCenterTermination() {
 
 GameShell::GeneralErrorType gtError;
 
-int showTerminationToMultiplayerQuant(float, float ) {
+int showGeneralErrorMessageQuant(float, float ) {
     if (menuChangingDone) {
         std::string textID;
+        bool terminate = true;
         switch (gtError) {
             case GameShell::GENERAL_CONNECTION_FAILED:
                 textID = "Interface.Menu.Messages.Multiplayer.ConnectionFailed";
@@ -200,15 +201,23 @@ int showTerminationToMultiplayerQuant(float, float ) {
                 break;
             case GameShell::DESYNC:
                 textID = "Interface.Menu.Messages.Multiplayer.Nonsinchronization";
+                terminate = false;
                 break;
             default:
                 textID = "Interface.Menu.Messages.UnknownError";
+                break;
         }
-
-
-        setupOkMessageBox(exitToMultiplayerScreenAction, 0, qdTextDB::instance().getText(textID.c_str()), MBOX_EXIT);
+        
+        if (terminate) {
+            gameShell->getNetClient()->FinishGame();
+            setupOkMessageBox(exitToMultiplayerScreenAction, 0, 
+                              qdTextDB::instance().getText(textID.c_str()), MBOX_EXIT);
+        } else {
+            setupOkMessageBox(nullptr, 0,
+                              qdTextDB::instance().getText(textID.c_str()), MBOX_OK);
+        }
         gameShell->prepareForInGameMenu();
-//		fout < "showTerminationToMultiplayerQuant showMessageBox()\n";
+//		fout < "showGeneralErrorMessageQuant showMessageBox()\n";
         showMessageBox();
         return 0;
     }
@@ -217,9 +226,7 @@ int showTerminationToMultiplayerQuant(float, float ) {
 
 void GameShell::generalErrorOccured(GeneralErrorType error) {
     gtError = error;
-    gameShell->getNetClient()->FinishGame();
-//	fout < "generalErrorOccured AddDynamicHandler(showTerminationToMultiplayerQuant)\n";
-    _shellIconManager.AddDynamicHandler(showTerminationToMultiplayerQuant, CBCODE_QUANT);
+    _shellIconManager.AddDynamicHandler(showGeneralErrorMessageQuant, CBCODE_QUANT);
 }
 
 ////////// Lobby/Ingame chat /////////////

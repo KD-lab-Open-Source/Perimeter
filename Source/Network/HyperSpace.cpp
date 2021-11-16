@@ -837,9 +837,8 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 
                 std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
                 terminate_with_char(crash_dir, PATH_SEP);
-                crash_dir += pNetCenter->m_GameName
+                crash_dir += nc.gameID
                         + "_" + pNetCenter->m_PlayerName
-                        + "_" + std::to_string(time(nullptr))
                         + PATH_SEP;
                 std::filesystem::create_directories(crash_dir);
                 scan_resource_paths(crash_dir);
@@ -850,6 +849,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
                 f < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
                 f < " HostNETID: " <= pNetCenter->m_hostNETID;
                 f < " LocalNETID: " <= pNetCenter->m_localNETID;
+                f < " DesyncNETID: " <= nc.netid;
                 f < "\r\n";
 				writeLogList2File(f);
 				f.close();
@@ -863,7 +863,6 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
                 universe()->savePlayReel((crash_dir + "reel").c_str());
                 
                 fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
-                pNetCenter->ExecuteInternalCommand(PNC_COMMAND__END_GAME, false);
 				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_DESYNC);
 			}
 			break;

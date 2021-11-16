@@ -444,7 +444,7 @@ void PNetCenter::P2PIQuant()
 		break;
     case PNC_INTERFACE_COMMAND_DESYNC:
         gameShell->generalErrorOccured(GameShell::DESYNC);
-        ExecuteInternalCommand(PNC_COMMAND__END_GAME, true);
+        //ExecuteInternalCommand(PNC_COMMAND__END_GAME, true);
         break;
 	case PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED:
 		xassert(0&& "Host stoping, game ending");

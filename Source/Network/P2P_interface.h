@@ -140,6 +140,8 @@ struct PClientData
 
 	unsigned int missionDescriptionIdx;
 	unsigned int confirmQuant;
+    
+    bool desync;
 
 	PClientData(unsigned int mdIdx, const char* name, NETID netid);
 	~PClientData();
