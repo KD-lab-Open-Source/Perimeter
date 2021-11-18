@@ -27,7 +27,7 @@ jobs:
       - name: install libs
         run: |
           brew install ninja yasm dylibbundler \
-          libogg libvorbis boost meson cmake \
+          libogg libvorbis boost meson cmake zlib \
           sdl2 sdl2_image sdl2_mixer sdl2_net
       - uses: actions/cache@v2
         id: cache

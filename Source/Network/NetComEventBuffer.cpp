@@ -87,7 +87,7 @@ void InOutNetComBuffer::putNetCommand(const netCommandGeneral* event)
 
 	event->Write(*this);
 
-	int off = tell();
+	size_t off = tell();
 	set(pointer_to_size_of_event);
 	size_of_event=off-pointer_to_size_of_event - sizeof(size_of_event);
 	write(&size_of_event, sizeof(size_of_event));
@@ -147,7 +147,7 @@ terEventID InOutNetComBuffer::nextNetCommand()
 {
 	if(event_ID != NETCOM_ID_NONE){
 		if(next_event_pointer /*+ sizeof(size_of_event)*/ > filled_size){
-			xassert(0&&"dividual packet ?!");
+			xassert(0&&"Incomplete packet ?!");
 			init();
 			reset();
 			return NETCOM_ID_NONE;
@@ -169,7 +169,7 @@ terEventID InOutNetComBuffer::nextNetCommand()
 		read(&size_of_event, sizeof(size_of_event)); //get_short();
 		unsigned int new_pointer = next_event_pointer + size_of_event + sizeof(size_of_event);
 		if(new_pointer > filled_size){
-			xassert(0&&"dividual packet ?!");
+			xassert(0&&"Incomplete packet ?!");
 			set(next_event_pointer);
 			init();
 			reset();

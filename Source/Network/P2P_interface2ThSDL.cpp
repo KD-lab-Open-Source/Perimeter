@@ -156,7 +156,7 @@ void sendToConnection(const char* buffer, size_t size, NetConnection* connection
     }
     while (0 < retries) {
         int sent = connection->send(buffer, size);
-        if (sent == size) {
+        if (0 < sent) {
             return;
         } else if (!connection->is_active()) {
             fprintf(stderr, "sendToConnection error sending %lu sent %d to %lu closed\n", size, sent, connection->netid);
@@ -208,6 +208,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
         response.reject(NetConnectionInfoResponse::CR_NONE);
     } else if (0 < ret) {
         //Load data
+        buffer.set(0);
         NetConnectionInfo clientInfo;
         clientInfo.read_header(buffer);
 

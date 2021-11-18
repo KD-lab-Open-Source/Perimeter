@@ -36,7 +36,7 @@ SET(XTool_SRCS
     files/files.cpp
 )
 
-SET(XTool_LINK_LIBS gamemath_static_lib)
+SET(XTool_LINK_LIBS gamemath_static_lib ZLIB::ZLIB)
 
 IF(NOT MSVC_CL_BUILD AND NOT OPTION_DISABLE_STACKTRACE)
     IF(PERIMETER_WINDOWS)

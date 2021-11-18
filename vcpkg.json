@@ -2,6 +2,7 @@
 	"name": "perimeter",
 	"version": "2.0.0",
 	"dependencies": [
+		"zlib",
 		"boost-stacktrace",
 		"boost-iterator",
 		"boost-type-index",

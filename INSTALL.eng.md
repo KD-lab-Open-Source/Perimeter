@@ -24,6 +24,7 @@ We have several CI in github which can serve as hint and examples.
 - SDL2_mixer
 - ffmpeg / avcodec / avformat
 - boost
+- ZLIB
 
 ### Automatic dependencies
 
@@ -67,7 +68,7 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
   - lld
   - libbacktrace
 
-Packages: `gcc cmake make ninja SDL2 libvorbis boost lld libbacktrace`
+Packages: `gcc cmake make ninja SDL2 libvorbis boost lld libbacktrace zlib`
 
 ### Instructions
 
@@ -97,8 +98,8 @@ Experimental support, it uses dxvk-native for D3D9 API and some libraries to sup
   - vulkan headers (for DXVK)
   - glsllang-tools (for DXVK which needs glslangValidator program) 
 
-Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glslang-tools lld cmake meson 
-libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev libavcodec-dev libavformat-dev`
+Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glslang-tools lld cmake meson zlib1g-dev
+libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev libavcodec-dev libavformat-dev `
 
 ### Instructions
 
@@ -126,7 +127,7 @@ Experimental support, it uses dxvk-native for D3D9 API and some libraries to sup
   - libbacktrace
   - Vulkan SDK or MoltenVK (for DXVK)
 
-Packages in MacPorts: `ninja cmake meson ffmpeg boost libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev`
+Packages in MacPorts: `ninja cmake meson ffmpeg boost libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev zlib`
 
 ### Instructions
 

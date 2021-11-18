@@ -42,6 +42,7 @@ jobs:
             mingw-w64-${{matrix.env.arch}}-libbacktrace
             mingw-w64-${{matrix.env.arch}}-nasm
             mingw-w64-${{matrix.env.arch}}-yasm
+            mingw-w64-${{matrix.env.arch}}-zlib
             wget
             unzip
             git

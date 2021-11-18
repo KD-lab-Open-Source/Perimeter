@@ -37,10 +37,19 @@ struct XBuffer
 
 	explicit XBuffer(size_t sz = XB_DEFSIZE, bool automatic_realloc_ = false);
 	XBuffer(void* p, size_t sz);
-	~XBuffer() { free(); }
+    XBuffer(const XBuffer& buffer);
+    ~XBuffer() { free(); }
     
-    XBuffer(const XBuffer&) = delete;
-    XBuffer& operator=(XBuffer const&) = delete;
+    ///Copy and swap operator
+    XBuffer& operator=(XBuffer v) {
+        std::swap(buf, v.buf);
+        std::swap(size, v.size);
+        std::swap(offset, v.offset);
+        std::swap(digits, v.digits);
+        std::swap(automatic_free, v.automatic_free);
+        std::swap(automatic_realloc, v.automatic_realloc);
+        return *this;
+    }
 
 	void SetDigits(int d) { digits = d; }
 
@@ -54,7 +63,7 @@ struct XBuffer
 
 	size_t tell() const { return offset; }
 	size_t length() const { return size; }
-	char* address(){ return buf; }
+	char* address() const { return buf; }
 
 	size_t read(void* s, size_t len);
 	size_t write(const void* s, size_t len, bool bin_flag = true);
@@ -74,7 +83,15 @@ struct XBuffer
 	XBuffer& operator< (int64_t v) { return write(v); }
 	XBuffer& operator< (uint64_t v) { return write(v); }
 	XBuffer& operator< (float v) { return write(v); }
-	XBuffer& operator< (double v) { return write(v); }
+    XBuffer& operator< (double v) { return write(v); }
+    XBuffer& operator< (const XBuffer& v) {
+        uint32_t len = v.tell();
+        write(len);
+        if (len) {
+            write(v.address(), v.tell());
+        }
+        return *this;
+    }
 
 	XBuffer& operator> (char* v);
 	XBuffer& operator> (char& v) { return read(v); }
@@ -88,6 +105,17 @@ struct XBuffer
 	XBuffer& operator> (uint64_t& v) { return read(v); }
 	XBuffer& operator> (float& v) { return read(v); }
 	XBuffer& operator> (double& v) { return read(v); }
+    XBuffer& operator> (XBuffer& v) {
+        uint32_t len = 0;
+        read(len);
+        if (len) {
+            while(v.tell() + len > v.length()) {
+                v.handleOutOfSize();
+            }
+            read(v.address(), len);
+        }
+        return *this;
+    }
 
     template<typename T>
     XBuffer& operator<= (T var) {
@@ -126,6 +154,24 @@ struct XBuffer
     XBuffer& operator>= (unsigned long& v) { return this->operator>=(checked_reinterpret_cast_ref<unsigned long, uint32_t>(v)); };
 #endif
 
+    /**
+     * Compresses this buffer into output
+     * 
+     * @param output the buffer to contain the compressed data 
+     * @param len amount of compressed bytes written into output, null to ignore
+     * @return 0 if OK
+     */
+    int compress(XBuffer& output, uint32_t* len = nullptr) const;
+
+    /**
+     * Decompresses this buffer into output
+     * 
+     * @param output the buffer to contain the decompressed data 
+     * @param len amount of decompressed bytes written into output, null to ignore
+     * @return 0 if OK
+     */
+    int uncompress(XBuffer& output, uint32_t* len = nullptr);
+
 	operator const char* () const { return buf; }
 	const char* operator ()(int offs){ return buf + offs; }
 	XBuffer& operator++(){ offset++; return *this; }
@@ -140,7 +186,7 @@ struct XBuffer
 	char& operator()(){ return buf[offset]; }
 
 private:
-	char convBuf[XB_CONV_BUFFER_LEN + 1];
+	char convBuf[XB_CONV_BUFFER_LEN + 1] = "";
 };
 
 

@@ -3,7 +3,9 @@
 
 #define PERIMETER_IP_PORT_DEFAULT 12987
 #define PERIMETER_IP_HOST_DEFAULT "127.0.0.1"
-const uint32_t PERIMETER_MAX_MESSAGE_SIZE = 16*1024*1024;
+const uint32_t PERIMETER_MESSAGE_MAX_SIZE = 64 * 1024 * 1024;
+const uint32_t PERIMETER_MESSAGE_COMPRESSION_SIZE = 128*1024;
+const uint16_t PERIMETER_MESSAGE_FLAG_COMPRESSED = 1;
 ///How many milliseconds extra to wait for the data part once getting header
 const int RECV_DATA_AFTER_HEADER_TIMEOUT = 10000;
 ///How many milliseconds to wait for handshake to be sent/recv
@@ -125,22 +127,20 @@ public:
      * Writes data to connection
      * Closes connection upon error
      * 
-     * @param buffer pointer of data to send into connection
-     * @param len amount of data to send 
+     * @param buffer data to send into connection
      * @return amount of bytes sent, <0 if error or closed
      */
-    int send(const void* buffer, uint32_t len);
+    int send(const XBuffer& data);
 
     /**
      * Writes data to connection
      * Closes connection upon error
      * 
-     * @param buffer data to send into connection
+     * @param buffer pointer of data to send into connection
+     * @param len amount of data to send 
      * @return amount of bytes sent, <0 if error or closed
      */
-    int send(XBuffer& data) {
-        return send(data.buf, data.length());
-    }
+    int send(const void* buffer, uint32_t len);
 
     /**
      * Receives data from connection if any

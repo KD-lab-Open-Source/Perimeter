@@ -120,33 +120,52 @@ void NetConnection::close(bool error) {
     }
 }
 
+int NetConnection::send(const XBuffer& data) {
+    return send(data.buf, data.length());
+}
+
 int NetConnection::send(const void* buffer, uint32_t len) {
     if (!has_socket()) {
         return -1;
     }
-    const uint16_t reserved = 0xABCD; //unused for now
+    uint16_t flags = 0;
+    XBuffer sending_buffer(const_cast<void*>(buffer), len);
+    sending_buffer.set(len);
+    
+    //Compression
+    if (len > PERIMETER_MESSAGE_COMPRESSION_SIZE) {
+        XBuffer compress_buffer(len, true);
+        if (sending_buffer.compress(compress_buffer) == 0)  {
+            sending_buffer = std::move(compress_buffer);
+            len = sending_buffer.tell();
+            flags |= PERIMETER_MESSAGE_FLAG_COMPRESSED;
+        }
+    }
 
     //Check len
-    xassert(len < PERIMETER_MAX_MESSAGE_SIZE);
-    len = std::min(PERIMETER_MAX_MESSAGE_SIZE, len);
+    if (len > PERIMETER_MESSAGE_MAX_SIZE) {
+        xassert(0);
+        fprintf(stderr, "TCP send data too big len %d\n", len);
+        return -2;
+    }
     
     //Assemble header and data
     int msg_size = static_cast<int>(len + sizeof(NC_HEADER_MAGIC));
     XBuffer xbuf(msg_size);
-    xbuf.write(NC_HEADER_MAGIC);
+    xbuf < NC_HEADER_MAGIC;
     xbuf.set(1);
-    xbuf.write(reserved);
+    xbuf < flags;
     xbuf.set(3);
-    xbuf.write(len);
+    xbuf < len;
     xbuf.set(8);
-    xbuf.write(buffer, len);
+    xbuf.write(sending_buffer, len);
     
     //Send buffer
     int amount = SDLNet_TCP_Send(socket, xbuf.buf, msg_size);
     if (amount != msg_size) {
         fprintf(stderr, "TCP send data failed amount %d msg %d len %d %s\n", amount, msg_size, len, SDLNet_GetError());
         close_error();
-        return -2;
+        return -3;
     }
 
     return static_cast<int>(len);
@@ -208,12 +227,12 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
     }
 
     //Extract header stuff
-    //uint16_t reserved = (header >> 8) & 0xFFFF;
+    uint16_t flags = (header >> 8) & 0xFFFF;
     uint32_t data_size = (header >> 24) & 0xFFFFFFFF;
 
     //Ensure is not too big
-    xassert(data_size < PERIMETER_MAX_MESSAGE_SIZE);
-    data_size = std::min(data_size, PERIMETER_MAX_MESSAGE_SIZE);
+    xassert(data_size < PERIMETER_MESSAGE_MAX_SIZE);
+    data_size = std::min(data_size, PERIMETER_MESSAGE_MAX_SIZE);
     
     //(re)allocate it to fit our data
     buffer.alloc(data_size);
@@ -229,7 +248,19 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
             amount = -6;
         }
     }
-    
+
+    //Decompression
+    if (0 < amount && flags & PERIMETER_MESSAGE_FLAG_COMPRESSED) {
+        XBuffer output(data_size, true);
+        int ret = buffer.uncompress(output);
+        if (ret != 0) {
+            return -7;
+        }
+        amount = static_cast<int>(output.tell());
+        buffer = std::move(output);
+    }
+
+    buffer.set(amount);
     return amount;
 }
 

@@ -1025,7 +1025,7 @@ void PNetCenter::ClientPredReceiveQuant()
 
 			//отфильтровывание команды
 			InOutNetComBuffer tmp(2048, true);
-			tmp.putBufferPacket(packet->address(), packet->size);
+			tmp.putBufferPacket(packet->address(), packet->tell());
 			if(tmp.currentNetCommandID()==NETCOM_4C_ID_START_LOAD_GAME){
 				ExecuteInternalCommand(PNC_COMMAND__CLIENT_STARTING_LOAD_GAME, false);
 			}
@@ -1036,7 +1036,7 @@ void PNetCenter::ClientPredReceiveQuant()
 			}
 
 			//комманды клиенту
-			if(in_ClientBuf.putBufferPacket(packet->address(), packet->size)){
+			if(in_ClientBuf.putBufferPacket(packet->address(), packet->tell())){
                 delete packet;
 				p=m_InputPacketList.erase(p);
 				cnt++;
@@ -1478,7 +1478,7 @@ bool PNetCenter::PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf, NETID& retu
 		while(p != m_InputPacketList.end()){
             InputPacket* packet = *p;
 			if(returnNETID==packet->netid){
-				if(netBuf.putBufferPacket(packet->address(), packet->size)) {
+				if(netBuf.putBufferPacket(packet->address(), packet->tell())) {
                     delete packet;
 					p=m_InputPacketList.erase(p);
 					cnt++;
