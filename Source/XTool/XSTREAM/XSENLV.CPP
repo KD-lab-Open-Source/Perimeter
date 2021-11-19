@@ -30,6 +30,7 @@ int XStream::open(const char* name, unsigned f) {
 
 int XStream::open(const std::string& name, unsigned f)
 {
+    close();
     /*
 	DWORD fa = 0;
 	DWORD fs = 0;
@@ -96,6 +97,7 @@ int XStream::open(const std::string& name, unsigned f)
 
 int XStream::open(XStream* owner,size_t s,size_t ext_sz)
 {
+    close();
 	fname = owner -> fname;
 	handler = owner -> handler;
 	pos = 0;

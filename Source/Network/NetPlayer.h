@@ -156,9 +156,9 @@ public:
 	bool changePlayerBelligerent(int playerIdx, terBelligerent newBelligerent);
 	bool changePlayerBelligerent(NETID netid, terBelligerent newBelligerent);
 
-	bool isChanged(void){return flag_missionDescriptionUpdate;}
-	void setChanged(void){flag_missionDescriptionUpdate=true;}
-	void clearChanged(void){flag_missionDescriptionUpdate=0;}
+	bool isChanged() const { return flag_missionDescriptionUpdate; }
+	void setChanged() { flag_missionDescriptionUpdate=true; }
+	void clearChanged() { flag_missionDescriptionUpdate=false; }
 
 	void setSinglePlayerDifficulty(Difficulty difficuty);
 
@@ -204,6 +204,11 @@ public:
 	GameType gameType_;
 	bool flag_missionDescriptionUpdate;
 
+    //These may be empty, used for bundling extra data along with MissionDescription
+    XBuffer saveData = XBuffer(0, true); //Contains SavePrm content usually present in .spg
+    XBuffer binaryData = XBuffer(0, true); //Contains compressed binary data (.bin, previously .gmp and .dat)
+    XBuffer scriptsData = XBuffer(0, true); //Contains Scripts attributes
+
 private:
     std::string resolve_mission_path(const std::string& path);
     
@@ -214,7 +219,6 @@ private:
 	std::string missionName_;
 	std::string missionDescriptionStr_;
     std::string playReelPath_;
-	unsigned int serverRnd_;
 };
 
 #endif

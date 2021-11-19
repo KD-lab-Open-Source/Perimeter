@@ -19,6 +19,7 @@
 
 typedef std::vector<Vect2i> Vect2iVect;
 typedef std::vector<PrmString> PrmStringList;
+typedef std::list<TriggerChain> TriggerChainList;
 
 /* for debug
 #ifdef __BINARY_ARCHIVE_H__
@@ -2565,7 +2566,7 @@ struct SavePlayerData
 	std::vector<ShareHandle<SaveUnitData> > catchedFrames;
 	SavePlayerStats playerStats;
 	std::vector<ShareHandle<SaveUnitData> > commonObjects;
-	std::list<TriggerChain> currentTriggerChains;
+    TriggerChainList currentTriggerChains;
 	
 	SERIALIZE(ar) {
 		ar & WRAP_OBJECT(frame);
@@ -2740,6 +2741,16 @@ struct SavePrm {
 		ar & TRANSLATE_NAME(manualData, "manualData", "Данные, редактируемые вручную");
 	}
 };
+
+struct SavePrmBinary
+{
+    std::vector<TriggerChainList> TriggerChains;
+
+    SERIALIZE(ar) {
+        ar & WRAP_NAME(TriggerChains, "TriggerChains");
+    }
+};
+
 
 typedef std::vector<ShareHandle<Condition> > ConditionList;
 typedef std::vector<ShareHandle<SaveUnitData> > SaveUnitDataList;

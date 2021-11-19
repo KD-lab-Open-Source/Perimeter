@@ -32,7 +32,7 @@ public:
 	void PrepareQuant();
 	void triggerQuant();
 
-	bool universalSave(const MissionDescription& mission, bool userSave);
+	bool universalSave(const MissionDescription& mission, bool userSave, MissionDescription* destination = nullptr);
 	void relaxLoading();
 
 	void addLinkToResolve(const SaveUnitLink* link) { saveUnitLinks_.push_back(link); }
@@ -148,8 +148,6 @@ private:
 	ChangeOwnerList changeOwnerList;
 
 	RegionMetaDispatcher* activeRegionDispatcher_;
-
-	std::string loadedGmpName_;
 
 	MultiBodyDispatcher multibody_dispatcher;
 

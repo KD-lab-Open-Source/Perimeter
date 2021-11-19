@@ -293,8 +293,8 @@ struct vrtMap {
 	tColor colZeroPlast;
 
 	void initGrid(void);
-	void loadGrid(XStream & ff);
-	void saveGrid(XStream & ff);
+	void loadGrid(XBuffer& ff);
+	void saveGrid(XBuffer& ff);
 	void recalcArea2Grid(int xl, int yt, int xr, int yb );
 	void loadHardness2Grid(void);
 	void loadHardness(void);
@@ -383,8 +383,8 @@ struct vrtMap {
 	bool saveAllWorldAs(const char* _patch2world);
 #endif
 	bool worldChanged;
-	bool loadGameMap(const char* fname, bool flag_FastLoad=1);
-	bool saveGameMap(const char* fname);
+	bool loadGameMap(XBuffer& ff, bool flag_FastLoad=1);
+	bool saveGameMap(XBuffer& ff);
 
 	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(stricmp(wTable[i].name.c_str(), world_name) == 0) return i; return -1; }
 	const std::string& getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name; }
@@ -497,12 +497,12 @@ struct vrtMap {
 	void newSave(const char* dirName);
 
 
-	bool IsChanged(void) { return worldChanged;}
+	bool IsChanged() { return worldChanged;}
 
 	bool IsHardWCC(Vect2i crd){
 		unsigned short p = GABuf[offsetGBuf(w2mClampX(crd.x), w2mClampY(crd.y))];
-		if((p & GRIDAT_MASK_HARDNESS) == GRIDAT_MASK_HARDNESS) return 0;
-		else return 1;
+		if((p & GRIDAT_MASK_HARDNESS) == GRIDAT_MASK_HARDNESS) return false;
+		else return true;
 	}
 
 	bool IsFullLoad(void) { return (VxGBuf!=0);}

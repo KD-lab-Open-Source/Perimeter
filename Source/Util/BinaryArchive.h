@@ -98,7 +98,7 @@ private:
 class BinaryOArchive 
 {
 public:
-	BinaryOArchive(const char* fname, int version = 0);
+	BinaryOArchive(const char* fname = nullptr, int version = 0);
 	~BinaryOArchive();
 
 	void open(const char* fname, int version = 0); 
@@ -120,7 +120,7 @@ public:
 		return true;
 	}
 
-    XBuffer& getBuffer() {
+    XBuffer& buffer() {
         return buffer_;
     }
 
@@ -326,6 +326,10 @@ public:
 	bool laterThan(int version) const {
 		return version_ > version;
 	}
+
+    XBuffer& buffer() {
+        return buffer_;
+    }
 
 	template<class T>
     BinaryIArchive& operator>>(T& t){

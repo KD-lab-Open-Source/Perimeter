@@ -238,7 +238,7 @@ void vrtMap::recalcArea2Grid(int xl, int yt, int xr, int yb )
 }
 
 
-void vrtMap::saveGrid(XStream & ff)
+void vrtMap::saveGrid(XBuffer& ff)
 {
 	int i;//,j,kx,ky;
 	char flag_taller_h_zp=0;
@@ -248,7 +248,7 @@ void vrtMap::saveGrid(XStream & ff)
 	}
 }
 
-void vrtMap::loadGrid(XStream & ff)
+void vrtMap::loadGrid(XBuffer & ff)
 {
 	int i;//,j,kx,ky;
 	char flag_taller_h_zp=0;

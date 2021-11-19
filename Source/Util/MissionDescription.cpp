@@ -91,7 +91,7 @@ MissionDescription::MissionDescription()
 }
 
 MissionDescription::MissionDescription(const char* fname, GameType gameType)
-        : missionDescriptionID(editMissionDescriptionID)
+: missionDescriptionID(editMissionDescriptionID)
 {
     setChanged();
     xassert(fname);
@@ -171,7 +171,11 @@ void MissionDescription::setReelName(const char* name)
 
 void MissionDescription::read(XBuffer& in) 
 {
-    in > StringInWrapper(worldName_.value()) > StringInWrapper(missionName_) > StringInWrapper(missionDescriptionID.value()) > StringInWrapper(savePathKey_); 
+    in > StringInWrapper(version.value());
+    in > StringInWrapper(worldName_.value());
+    in > StringInWrapper(missionName_);
+    in > StringInWrapper(missionDescriptionID.value());
+    in > StringInWrapper(savePathKey_); 
 	in.read(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
 		playersData[i].read(in);
@@ -181,12 +185,31 @@ void MissionDescription::read(XBuffer& in)
 	in.read(&activePlayerID, sizeof(activePlayerID));
     in.read(&missionNumber,sizeof(missionNumber));
     in.read(&gameContent,sizeof(gameContent));
+    in > saveData;
+    in > binaryData;
+    in > scriptsData;
+    if (saveData.length()) {
+        saveData.realloc(saveData.tell());
+        saveData.set(0);
+    }
+    if (binaryData.length()) {
+        binaryData.realloc(binaryData.tell());
+        binaryData.set(0);
+    }
+    if (scriptsData.length()) {
+        scriptsData.realloc(scriptsData.tell());
+        scriptsData.set(0);
+    }
     refresh();
 }
 
 void MissionDescription::write(XBuffer& out) const 
 {
-    out < StringOutWrapper(worldName_.value()) < StringOutWrapper(missionName_) < StringOutWrapper(missionDescriptionID.value()) < StringOutWrapper(savePathKey_); 
+    out < StringOutWrapper(version.value());
+    out < StringOutWrapper(worldName_.value());
+    out < StringOutWrapper(missionName_);
+    out < StringOutWrapper(missionDescriptionID.value());
+    out < StringOutWrapper(savePathKey_); 
 	out.write(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
 		playersData[i].write(out);
@@ -196,6 +219,9 @@ void MissionDescription::write(XBuffer& out) const
 	out.write(&activePlayerID, sizeof(activePlayerID));
     out.write(&missionNumber,sizeof(missionNumber));
     out.write(&gameContent,sizeof(gameContent));
+    out < saveData;
+    out < binaryData;
+    out < scriptsData;
 }
 
 void MissionDescription::simpleRead(XBuffer& in) 

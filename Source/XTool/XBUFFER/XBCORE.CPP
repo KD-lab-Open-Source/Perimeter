@@ -23,6 +23,15 @@ void XBuffer::alloc(size_t sz)
 	automatic_free = true;
 }
 
+void XBuffer::realloc(size_t sz) {
+    if (buf && sz) {
+        size = sz;
+        buf = static_cast<char*>(std::realloc(buf, size));
+    } else {
+        alloc(sz);
+    }
+}
+
 XBuffer::XBuffer(size_t sz, bool automatic_realloc_) {
     buf = nullptr;
     automatic_free = true;
@@ -89,11 +98,7 @@ size_t XBuffer::read(void* s, size_t len)
 void XBuffer::handleOutOfSize()
 {
 	if (automatic_realloc) {
-        if (size && buf) {
-            buf = static_cast<char*>(realloc(buf, size *= 2));
-        } else {
-            alloc(256);
-        }
+        this->realloc(size == 0 ? 256 : size * 2);
     } else {
 		xassert(0 && "Out of XBuffer");
 		ErrH.Abort("Out of XBuffer");

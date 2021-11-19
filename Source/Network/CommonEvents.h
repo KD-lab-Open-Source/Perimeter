@@ -139,7 +139,7 @@ struct netCommand4C_StartLoadGame : netCommandGeneral {
 
 	MissionDescription missionDescription_;
 
-	netCommand4C_StartLoadGame(MissionDescription& missionDescription) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
+	netCommand4C_StartLoadGame(const MissionDescription& missionDescription) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
 		missionDescription_=missionDescription;
 	}
 
@@ -1000,7 +1000,7 @@ struct netCommand4H_ChangePlayerHandicap : netCommandGeneral
 	int handicap_;
 };
 
-
+///Command sent to host when a map is selected from list, establishes the hostMissionDescription
 struct netCommand4H_ChangeMap : netCommandGeneral
 {
 	MissionDescription missionDescription_;
@@ -1015,10 +1015,6 @@ struct netCommand4H_ChangeMap : netCommandGeneral
 		missionDescription_.write(out);
 	}
 };
-
-
-
-
 
 struct terEventControlServerTime : netCommandGeneral
 {

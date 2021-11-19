@@ -853,9 +853,8 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 	worldChanged=0;
 }
 
-bool vrtMap::loadGameMap(const char* fname, bool flag_FastLoad)
+bool vrtMap::loadGameMap(XBuffer& ff, bool flag_FastLoad)
 {
-	XStream ff(fname, XS_IN);
 	//Чтение номера мира
 	int nW;
 	ff.read(&nW, sizeof(cWorld));
@@ -914,7 +913,6 @@ bool vrtMap::loadGameMap(const char* fname, bool flag_FastLoad)
 	}
 
 	loadGrid(ff);
-	ff.close();
 
 	checkAndRecover();
 #ifdef _PERIMETER_
@@ -926,13 +924,12 @@ bool vrtMap::loadGameMap(const char* fname, bool flag_FastLoad)
 	if(!flag_FastLoad) f3d.recalcWorld();
 #endif
 	//WorldRender();
-	worldChanged=0;
-	return 1;
+	worldChanged=false;
+	return true;
 }
 
-bool vrtMap::saveGameMap(const char* fname)
+bool vrtMap::saveGameMap(XBuffer& ff)
 {
-	XStream ff(fname, XS_OUT);
 	//Запись номера мира
 	ff.write(&cWorld, sizeof(cWorld));
 	//Запись таблицы измененных областей
@@ -991,7 +988,7 @@ bool vrtMap::saveGameMap(const char* fname)
 	saveGrid(ff);
 
 	worldChanged=0;
-	return !ff.ioError();
+	return true;
 }
 
 typedef unsigned int typeAmountCellChAreas;

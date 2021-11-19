@@ -54,6 +54,7 @@ struct XBuffer
 	void SetDigits(int d) { digits = d; }
 
 	void alloc(size_t sz);
+    void realloc(size_t sz);
 	void free();
 	void fill(char fc = '\0');
 	void set(size_t off, int mode = XB_BEG);
@@ -88,7 +89,7 @@ struct XBuffer
         uint32_t len = v.tell();
         write(len);
         if (len) {
-            write(v.address(), v.tell());
+            write(v.address(), len);
         }
         return *this;
     }
@@ -113,6 +114,7 @@ struct XBuffer
                 v.handleOutOfSize();
             }
             read(v.address(), len);
+            v.set(len, XB_CUR);
         }
         return *this;
     }

@@ -76,7 +76,7 @@ inline std::string& collapse_spec_chars(std::string& s)
 //			ScriptParser
 ///////////////////////////////////////////////////////////////////////////////////////
 XPrmOArchive::XPrmOArchive(const char* fname) :
-buffer_(10, 1)
+buffer_(10, true)
 {
 	open(fname);
 }
@@ -99,7 +99,7 @@ bool XPrmOArchive::close()
 {
 	xassert(offset_.empty() && "Block isnt closed");
     if (fileName_.empty()) {
-        return false;
+        return true;
     }
 	XStream ff(0);
 	if(ff.open(fileName_.c_str(), XS_IN)){
@@ -132,8 +132,11 @@ void XPrmOArchive::saveStringEnclosed(const char* prmString)
 XPrmIArchive::XPrmIArchive(const char* fname) :
 buffer_(10, 1)
 {
-	if(fname && !open(fname))
-		ErrH.Abort("File not found: ", XERR_USER, 0, fname);
+	if(fname && !open(fname)) {
+        ErrH.Abort("File not found: ", XERR_USER, 0, fname);
+    } else {
+        reset();
+    }
 }
 
 XPrmIArchive::~XPrmIArchive() 
@@ -150,10 +153,15 @@ bool XPrmIArchive::open(const char* fname)
 	buffer_.alloc(ff.size() + 1);
 	ff.read(buffer_.address(), ff.size());
 	buffer_[(int)ff.size()] = 0;
-	replaced_symbol = 0;
-	putTokenOffset_ = 0;
-	readingStarts_.push_back(0);
+    reset();
 	return true;
+}
+
+void XPrmIArchive::reset() {
+    replaced_symbol = 0;
+    putTokenOffset_ = 0;
+    readingStarts_.clear();
+    readingStarts_.push_back(0);
 }
 
 void XPrmIArchive::close()

@@ -13,7 +13,7 @@ class XPrmIArchive;
 class XPrmOArchive
 {
 public:
-	XPrmOArchive(const char* fname);
+	XPrmOArchive(const char* fname = nullptr);
 	~XPrmOArchive();
 
 	void open(const char* fname);
@@ -35,7 +35,7 @@ public:
 		return true;
 	}
 
-    XBuffer& getBuffer() {
+    XBuffer& buffer() {
         return buffer_;
     }
 
@@ -275,6 +275,7 @@ public:
 	~XPrmIArchive();
 
 	bool open(const char* fname);  // true if file exists
+    void reset();
 	void close();
 	bool findSection(const char* sectionName);
 
