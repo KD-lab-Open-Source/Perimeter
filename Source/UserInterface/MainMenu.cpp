@@ -301,8 +301,8 @@ std::string checkMissingContent(MissionDescription& mission) {
     
     return msg;
 }
-void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID) {
-	checkMissionDescription(index, mVect, GT_SINGLE_PLAYER);
+void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID, GameType gameType) {
+	checkMissionDescription(index, mVect, gameType);
 
     MissionDescription& mission = mVect[index];
     std::string missingContent = checkMissingContent(mission);
@@ -494,8 +494,10 @@ void fillStatsLists() {
 	terPlayer* player;
 	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 		int playerID = gameShell->CurrentMission.playersData[i].playerID;
-		if (
-				( gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER || gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI )
+		if (( gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
+              || gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
+              || gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI 
+            )
 			&&	playerID >= 0
 			&&	playerID < universe()->Players.size()
 			&& !(player = universe()->findPlayer(playerID))->isWorld()) {
@@ -985,7 +987,6 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOAD_IN_GAME_SCR:
 					{
-//						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 						loadMapVector(savedGames, savesDir, ".spg");
 //						StartSpace();
@@ -994,13 +995,10 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_SAVE_GAME_SCR:
 					{
-//						loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
-						loadMapVector(savedGames, savesDir, ".spg");
+                        const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+                        loadMapVector(savedGames, savesDir, ".spg");
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
-//						if (input->getText().empty()) {
-							input->SetText(gameShell->CurrentMission.worldName().c_str());
-//						}
+                        input->SetText(gameShell->CurrentMission.worldName().c_str());
 
 //						StartSpace();
 						fillList(SQSH_MM_SAVE_GAME_MAP_LIST, savedGames, SQSH_MM_SAVE_GAME_MAP, SQSH_MM_SAVE_GAME_MAP_DESCR_TXT);
@@ -1998,10 +1996,8 @@ void onMMDelLoadInGameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 //save game
 int delSaveGameSaveAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_MAP_LIST);
-//	DeleteFile( savedGames[list->GetCurSel()].saveName() );
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
-//	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+    const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_SAVE_GAME_MAP_LIST, savedGames, SQSH_MM_SAVE_GAME_MAP, SQSH_MM_SAVE_GAME_MAP_DESCR_TXT);
 	return 0;
@@ -2025,7 +2021,7 @@ int saveGame_(float i, float) {
 //		_shellIconManager.SwitchMenuScreens( SQSH_MM_SAVE_GAME_SCR, SQSH_MM_INMISSION_SCR );
 	} else {
 		setupOkMessageBox(
-			0,
+			nullptr,
 			0,
 			qdTextDB::instance().getText("Interface.Menu.Messages.DiskFull"),
 			MBOX_BACK );

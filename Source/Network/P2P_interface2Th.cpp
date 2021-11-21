@@ -29,9 +29,8 @@ std::string colorComponentToString(float component) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-PClientData::PClientData(unsigned int mdIdx, const char* name, NETID netid)
+PClientData::PClientData(const char* name, NETID netid)
 {
-	missionDescriptionIdx=mdIdx;
     strncpy(playerName, name, PLAYER_MAX_NAME_LEN);
     netidPlayer = netid;
 	m_flag_Ready=false;
@@ -215,8 +214,8 @@ bool PNetCenter::SecondThread(void)
 
 					LogMsg("New game <%s> for start...\n", m_GameName.c_str());
 
-					hostMissionDescription.clearAllPlayerGameReady();
-					hostMissionDescription.setChanged();
+					hostMissionDescription->clearAllPlayerGameReady();
+					hostMissionDescription->setChanged();
 				}
 				SetEvent(hCommandExecuted);
 				break;
@@ -353,28 +352,50 @@ void PNetCenter::UpdateBattleData()
 	//!!! Сервер не может нормально сконфигурить игру
 	///MissionDescription battle(m_missionName.c_str());
 
-	if(hostMissionDescription.gameType_==GT_createMPGame){
+    MissionDescription& mission = *hostMissionDescription;
+	if (mission.gameType_==GT_createMPGame) {
 		//Random xchg
 		////random_shuffle(missionDescription.playersData, missionDescription.playersData+missionDescription.playersAmount);
-		hostMissionDescription.shufflePlayers();
+		mission.shufflePlayers();
+	} else if (mission.gameType_==GT_loadMPGame) {
+        //Set the current allocated client player names
+        for(int i=0; i<mission.playerAmountScenarioMax; i++) {
+            PlayerData& pd = mission.playersData[i];
+            if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+                for (auto client : m_clients) {
+                    if (client->netidPlayer == pd.netid) {
+                        pd.setName(client->playerName);
+                        pd.setNameInitial(client->playerName);
+                        break;
+                    }
+                }
+            }
+        }
 	}
-	else if(hostMissionDescription.gameType_==GT_loadMPGame){
-	}
-	hostMissionDescription.packPlayerIDs();
-	for(int i=0; i<hostMissionDescription.playerAmountScenarioMax; i++){
-		if(hostMissionDescription.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-			hostMissionDescription.activePlayerID=hostMissionDescription.playersData[i].playerID;
-			netCommand4C_StartLoadGame nccsl(hostMissionDescription);
-			SendEvent(nccsl, hostMissionDescription.playersData[i].netid);
+    mission.packPlayerIDs();
+    
+	for(int i=0; i<mission.playerAmountScenarioMax; i++){
+        PlayerData& pd = mission.playersData[i];
+        //Close open positions
+        if (pd.realPlayerType == REAL_PLAYER_TYPE_OPEN) {
+            pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
+        }
+        //Send data
+		if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER){
+            mission.activePlayerID=pd.playerID;
+			netCommand4C_StartLoadGame nccsl(mission);
+            printf("Sending to %d %d %lu\n", i, pd.playerID, pd.netid);
+			SendEvent(nccsl, pd.netid);
 		}
 	}
+    mission.activePlayerID = mission.findPlayer(m_localNETID);
 
 	LogMsg("Sent battle info\n");
 }
 
 void PNetCenter::UpdateCurrentMissionDescription4C()
 {
-	MissionDescription md=hostMissionDescription;
+	MissionDescription md = *hostMissionDescription;
 	for(int i=0; i<md.playerAmountScenarioMax; i++){
 		if(md.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
 			md.activePlayerID=md.playersData[i].playerID;
@@ -391,7 +412,7 @@ void PNetCenter::CheckClients()
 		///if(WaitForSingleObject(i->second->m_hReady, 0) == WAIT_TIMEOUT)
 		if(!((*i)->m_flag_Ready))
 		{
-			LogMsg("Client NID %lu PID %d is not ready. removing.\n", (*i)->netidPlayer, (*i)->missionDescriptionIdx);
+			LogMsg("Client NID %lu is not ready. removing.\n", (*i)->netidPlayer);
 
 			///m_pConnection->DelPlayerFromGroup(m_netidGroupGame, i->second->netidPlayer);
 			RemovePlayer((*i)->netidPlayer);
@@ -433,7 +454,7 @@ void PNetCenter::DumpClients()
 	ClientMapType::iterator i;
 	FOR_EACH(m_clients, i)
 	{
-        LogMsg("Client NID %lu PID %d\n", (*i)->netidPlayer, (*i)->missionDescriptionIdx);
+        LogMsg("Client NID %lu\n", (*i)->netidPlayer);
 	}
 	LogMsg("-----------------------------------------\n");
 }
@@ -450,17 +471,17 @@ bool PNetCenter::AddClientToMigratedHost(const NETID _netid, unsigned int _curLa
 		if( (*p)->netidPlayer == _netid) return 0;
 	}
 
-	int idxPlayerData=hostMissionDescription.findPlayer(_netid);
+	int idxPlayerData=hostMissionDescription->findPlayer(_netid);
 	if(idxPlayerData!=-1){
-        //TODO use name instead?
-		PClientData* pPCD=new PClientData(idxPlayerData, "TODO", _netid);
+        PlayerData& pd = hostMissionDescription->playersData[idxPlayerData];
+		PClientData* pPCD=new PClientData(pd.name(), _netid);
 		m_clients.push_back(pPCD);
 		//m_pConnection->AddPlayerToGroup(m_netidGroupGame, netid);
 		pPCD->curLastQuant=_curLastQuant;//m_clientNumberGameQuant;
 		pPCD->confirmQuant=_confirmQuant;
-		hostMissionDescription.playersData[idxPlayerData].flag_playerStartReady=1;
+		pd.flag_playerStartReady = true;
 
-		hostMissionDescription.setChanged();
+		hostMissionDescription->setChanged();
 
 		LogMsg("ReJoin client NID %lu PID %d for game %s\n", _netid, idxPlayerData, m_GameName.c_str());
 
@@ -525,12 +546,12 @@ void PNetCenter::LLogicQuant()
 
 			m_numberGameQuant= 1;//!
 
-			if(hostMissionDescription.isChanged()){
+			if(hostMissionDescription->isChanged()){
 				UpdateCurrentMissionDescription4C();
-				hostMissionDescription.clearChanged();
+				hostMissionDescription->clearChanged();
 			}
 			///if(m_flag_PlayerListReady)//end waite
-			if(hostMissionDescription.isAllRealPlayerStartReady()){
+			if(hostMissionDescription->isAllRealPlayerStartReady()){
 
 				LogMsg("Game Started\n");
 
@@ -553,18 +574,21 @@ void PNetCenter::LLogicQuant()
 		{
 			CAutoLock _lock(m_GeneralLock); //! Lock
 
-			bool flag_ready=1;
+			bool flag_ready = true;
 			ClientMapType::iterator i;
-			for(i=m_clients.begin(); i!=m_clients.end(); i++){
-				flag_ready&=(*i)->m_flag_Ready;
-				if(flag_ready) 
-					if( (*m_clients.begin())->clientGameCRC != (*i)->clientGameCRC ) {
-						XBuffer buf;
-						buf < "Game of the player " <= (*i)->netidPlayer < "does not meet to game of the player " <= (*m_clients.begin())->netidPlayer;
-						xxassert(0 , buf.buf);
-					}
+			for (i=m_clients.begin(); i!=m_clients.end(); i++) {
+                PClientData* client = *i;
+				flag_ready &= client->m_flag_Ready;
+				if (flag_ready) {
+                    if ((*m_clients.begin())->clientGameCRC != (*i)->clientGameCRC) {
+                        XBuffer buf;
+                        buf < "Game of the player " <= (*i)->netidPlayer < "does not meet to game of the player " <=
+                        (*m_clients.begin())->netidPlayer;
+                        xxassert(0, buf.buf);
+                    }
+                }
 			}
-			if(flag_ready){
+			if (flag_ready) {
 				CheckClients();
 				DumpClients();
 
@@ -640,7 +664,7 @@ void PNetCenter::LLogicQuant()
                                     SendEvent(ev, m_hostNETID);
                                     
 									XBuffer to(1024,true);
-									to < "Unmatched game quants ! ID=" < gameID.c_str() < "on Quant=" <= (*firstList.begin()).quant_;
+									to < "Unmatched game quants signatures ! ID=" < gameID.c_str() < " on Quant=" <= (*firstList.begin()).quant_;
                                     fprintf(stderr, "Error network synchronization with %llX: %s\n", client->netidPlayer, to.address());
 									//ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
 								} else if ( !desync && client->desync ) {
@@ -683,8 +707,8 @@ end_while_01:;
 				}
 				if(clocki() > ((*k)->lastTimeBackPacket + TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION)){
 					NETID d=(*k)->netidPlayer;
-					int n=hostMissionDescription.findPlayer(d);
-					if(n!=-1) { notResponceClientList+=hostMissionDescription.playersData[n].name(); notResponceClientList+=' '; }
+					int n=hostMissionDescription->findPlayer(d);
+					if(n!=-1) { notResponceClientList+=hostMissionDescription->playersData[n].name(); notResponceClientList+=' '; }
 				}
 			}
 			/// Подгонка под всех клиентов !
@@ -711,9 +735,9 @@ end_while_01:;
 				if((*k)->requestPause){
 					xassert(curPlayer<NETWORK_PLAYERS_MAX);
 					if(curPlayer<NETWORK_PLAYERS_MAX){
-						int idx=hostMissionDescription.findPlayer((*k)->netidPlayer);
+						int idx=hostMissionDescription->findPlayer((*k)->netidPlayer);
 						xassert(idx!=-1);
-						if(idx!=-1) playersIDArr[curPlayer++]=hostMissionDescription.playersData[idx].playerID;
+						if(idx!=-1) playersIDArr[curPlayer++]=hostMissionDescription->playersData[idx].playerID;
 					}
 				}
 			}
@@ -841,8 +865,8 @@ end_while_01:;
 
 			ClearClientData();
 			//Т.к. миграция разрешается только после START_LOAD_GAME clientMissionDescription корректен
-			hostMissionDescription=clientMissionDescription;
-			hostMissionDescription.clearAllPlayerStartReady();
+			*hostMissionDescription = clientMissionDescription;
+			hostMissionDescription->clearAllPlayerStartReady();
 			//missionDescription.clearAllPlayerGameReady();
 			//clientMissionDescription
 
@@ -875,7 +899,7 @@ end_while_01:;
 			///for(p=m_pConnection->gameGroupMemberList.begin(); p!=m_pConnection->gameGroupMemberList.end(); p++){
 			///	result&=(missionDescription.isPlayerStartReady(*p));
 			///}
-			if(hostMissionDescription.isAllRealPlayerStartReady()){
+			if(hostMissionDescription->isAllRealPlayerStartReady()){
 				result=1;
 			}
 			else result=0;
@@ -916,7 +940,7 @@ end_while_01:;
 		{
 			//if( ((clocki()-m_beginWaitTime) > MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST) ) {
 			//}
-			if( (netidClientWhichWeWait==-1) || (hostMissionDescription.findPlayer(netidClientWhichWeWait)==-1) ){ //игрок выбыл до прихода нужных хосту игровых комманд
+			if( (netidClientWhichWeWait==-1) || (hostMissionDescription->findPlayer(netidClientWhichWeWait)==-1) ){ //игрок выбыл до прихода нужных хосту игровых комманд
 				unsigned int maxQuant=0;
 				unsigned int minQuant=UINT_MAX;
 				NETID maxQuantClientNETID=NETID_NONE;
@@ -1024,24 +1048,24 @@ void PNetCenter::ClientPredReceiveQuant()
 		if(packet->netid==m_hostNETID){
 
 			//отфильтровывание команды
-			InOutNetComBuffer tmp(2048, true);
-			tmp.putBufferPacket(packet->address(), packet->tell());
-			if(tmp.currentNetCommandID()==NETCOM_4C_ID_START_LOAD_GAME){
+			InOutNetComBuffer tmp(packet->address(),packet->tell());
+            int cmd = tmp.currentNetCommandID();
+			if (cmd == NETCOM_4C_ID_START_LOAD_GAME) {
 				ExecuteInternalCommand(PNC_COMMAND__CLIENT_STARTING_LOAD_GAME, false);
-			}
-			else if(tmp.currentNetCommandID()==NETCOM_ID_NEXT_QUANT){
-				if(m_state==PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_AB){
+			} else if (cmd == NETCOM_ID_NEXT_QUANT) {
+				if (m_state == PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_AB) {
 					m_state=PNC_STATE__CLIENT_GAME;
 				}
 			}
 
 			//комманды клиенту
-			if(in_ClientBuf.putBufferPacket(packet->address(), packet->tell())){
+			if (in_ClientBuf.putBufferPacket(packet->address(), packet->tell())) {
                 delete packet;
 				p=m_InputPacketList.erase(p);
 				cnt++;
-			}
-			else break;
+			} else {
+                break;
+            }
 		} else {
 			fprintf(stderr, "Received packet from non-host! %llu\n", packet->netid);
             delete packet;
@@ -1104,35 +1128,62 @@ void PNetCenter::HostReceiveQuant()
 					case NETCOM_4H_ID_CHANGE_REAL_PLAYER_TYPE:
 						{
 							netCommand4H_ChangeRealPlayerType ncChRT(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME) break;
 
-							hostMissionDescription.setChanged();
 							if(netid==m_hostNETID){
+                                bool isSave = isSaveGame();
+                                MissionDescription& mission = *hostMissionDescription;
+                                mission.setChanged();
 								xassert(ncChRT.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-								if( ncChRT.idxPlayerData_!=hostMissionDescription.findPlayer(m_hostNETID) ){//Проверка на то, что меняется не у Host-а
-									if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER) ncChRT.newRealPlayerType_=REAL_PLAYER_TYPE_OPEN; //Дополнительная проверка
-									if(hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+                                //Проверка на то, что меняется не у Host-а / check that we are not changing host
+								if (ncChRT.idxPlayerData_!=mission.findPlayer(m_hostNETID)) {
+                                    PlayerData& pd = mission.playersData[ncChRT.idxPlayerData_];
+                                    //Eject player
+									if (pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER) {
 										//Отбрасывание игрока
-										NETID delPlayerNETID=hostMissionDescription.playersData[ncChRT.idxPlayerData_].netid;
-										hostMissionDescription.disconnect2PlayerData(ncChRT.idxPlayerData_);
-										hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
-										RemovePlayer(delPlayerNETID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
-
-									}
-									else if(hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType==REAL_PLAYER_TYPE_AI){ //Если был AI
-										if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_CLOSE){
-											//Закрывать AI
-											hostMissionDescription.disconnect2PlayerData(ncChRT.idxPlayerData_);
-										}
-									}
-									else { //Если был Close Или Open
-										if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_AI){ 
-											hostMissionDescription.connectAI2PlayersData(ncChRT.idxPlayerData_);
-										}
-										else if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_CLOSE){
-											hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType=ncChRT.newRealPlayerType_;
-										}
-									}
+										NETID delPlayerNETID=pd.netid;
+										mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
+                                        if (isSave) {
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_PLAYER_AI) {
+                                                pd.realPlayerType = pd.realPlayerType;
+                                            }
+                                        } else {
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
+                                                pd.realPlayerType = pd.realPlayerType;
+                                            }
+                                        }
+										RemovePlayer(delPlayerNETID);
+									} else if (pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER_AI) {
+                                        if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN) {
+                                            mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
+                                            pd.realPlayerType=ncChRT.newRealPlayerType_;
+                                        }
+                                    }
+                                    
+                                    if (isSave) {
+                                        if (pd.realPlayerType==REAL_PLAYER_TYPE_OPEN && ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER_AI) {
+                                            pd.realPlayerType = ncChRT.newRealPlayerType_;
+                                        }
+                                    } else {
+                                        if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER) {
+                                            ncChRT.newRealPlayerType_ = REAL_PLAYER_TYPE_OPEN;
+                                        }
+                                        if (pd.realPlayerType == REAL_PLAYER_TYPE_AI) { //Если был AI
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN
+                                             || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
+                                                //Закрывать AI
+                                                mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
+                                                pd.realPlayerType=ncChRT.newRealPlayerType_;
+                                            }
+                                        } else { //Если был Close Или Open
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_AI) {
+                                                mission.connectAI2PlayersData(ncChRT.idxPlayerData_);
+                                            } else if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN ||
+                                                       ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
+                                                pd.realPlayerType = ncChRT.newRealPlayerType_;
+                                            }
+                                        }
+                                    }
 								}
 							}
 						}
@@ -1140,75 +1191,112 @@ void PNetCenter::HostReceiveQuant()
 					case NETCOM_4H_ID_CHANGE_PLAYER_BELLIGERENT:
 						{
 							netCommand4H_ChangePlayerBelligerent  ncChB(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChB.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(netid==m_hostNETID) hostMissionDescription.changePlayerBelligerent(ncChB.idxPlayerData_, ncChB.newBelligerent_);//
-							else hostMissionDescription.changePlayerBelligerent(netid, ncChB.newBelligerent_);//
+                            int playerIndex = netid == m_hostNETID ? ncChB.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+                            hostMissionDescription->changePlayerBelligerent(playerIndex, ncChB.newBelligerent_);
 						}
 						break;
-
 					case NETCOM_4H_ID_CHANGE_PLAYER_COLOR:
 						{
 							netCommand4H_ChangePlayerColor  ncChC(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять цвет любого
-							if(netid==m_hostNETID) hostMissionDescription.changePlayerColor(ncChC.idxPlayerData_, ncChC.newColor_, ncChC.direction);
-							else hostMissionDescription.changePlayerColor(netid, ncChC.newColor_, ncChC.direction);
+                            int playerIndex = netid == m_hostNETID ? ncChC.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerColor(playerIndex, ncChC.newColor_, ncChC.direction);
 						}
 						break;
 					case NETCOM_4H_ID_CHANGE_PLAYER_DIFFICULTY:
 						{
 							netCommand4H_ChangePlayerDifficulty ncChD(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChD.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(netid==m_hostNETID) hostMissionDescription.changePlayerDifficulty(ncChD.idxPlayerData_, ncChD.difficulty_);
-							else hostMissionDescription.changePlayerDifficulty(netid, ncChD.difficulty_);
+                            int playerIndex = netid == m_hostNETID ? ncChD.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerDifficulty(playerIndex, ncChD.difficulty_);
 						}
 						break;
 					case NETCOM_4H_ID_CHANGE_PLAYER_CLAN:
 						{
 							netCommand4H_ChangePlayerClan ncChC(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(netid==m_hostNETID) hostMissionDescription.changePlayerClan(ncChC.idxPlayerData_, ncChC.clan_);
-							else hostMissionDescription.changePlayerClan(netid, ncChC.clan_);
+                            int playerIndex = netid == m_hostNETID ? ncChC.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerClan(playerIndex, ncChC.clan_);
 						}
 						break;
 					case NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP:
 						{
 							netCommand4H_ChangePlayerHandicap ncChH(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChH.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(netid==m_hostNETID) hostMissionDescription.changePlayerHandicap(ncChH.idxPlayerData_, ncChH.handicap_);
-							else hostMissionDescription.changePlayerHandicap(netid, ncChH.handicap_);
+                            int playerIndex = netid == m_hostNETID ? ncChH.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerHandicap(playerIndex, ncChH.handicap_);
 						}
 						break;
+                    case NETCOM_4H_ID_CHANGE_PLAYER_SEAT:
+                        {
+                            netCommand4H_ChangePlayerSeat ncChS(in_HostBuf);
+                            if (m_state!=PNC_STATE__HOST_TUNING_GAME || !isSaveGame()) break;
+
+                            MissionDescription& mission = *hostMissionDescription;
+                            xassert(ncChS.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+                            //Check if player who wants to change seat is the sender
+                            int originIndex = mission.findPlayer(netid);
+                            if (originIndex != -1 && ncChS.idxPlayerData_ < NETWORK_PLAYERS_MAX) {
+                                PlayerData& origin = mission.playersData[originIndex];
+                                PlayerData& destination = mission.playersData[ncChS.idxPlayerData_];
+                                bool allowed = false;
+                                switch (destination.realPlayerType) {
+                                    case REAL_PLAYER_TYPE_OPEN:
+                                    case REAL_PLAYER_TYPE_PLAYER:
+                                    case REAL_PLAYER_TYPE_PLAYER_AI:
+                                        allowed = true;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (!origin.flag_playerStartReady && !destination.flag_playerStartReady) {
+                                    //Swap the players
+                                    std::string originName = origin.name();
+                                    if (destination.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+                                        origin.setName(destination.name());
+                                    } else {
+                                        origin.setName(origin.nameInitial());
+                                    }
+                                    destination.setName(originName);
+                                    std::swap(origin.netid, destination.netid);
+                                    std::swap(origin.realPlayerType, destination.realPlayerType);
+                                    mission.setChanged();
+                                }
+                            }
+                        }
+                        break;
 					case NETCOM_4H_ID_CHANGE_MAP:
 						{
 							netCommand4H_ChangeMap nc_changeMap(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							if(netid==m_hostNETID){//только Host может менять карту
 								int i;
 								for(i=0; i< nc_changeMap.missionDescription_.playerAmountScenarioMax; i++){
-                                    if (i < hostMissionDescription.playerAmountScenarioMax) {
-                                        nc_changeMap.missionDescription_.playersData[i] = hostMissionDescription.playersData[i];
+                                    if (i < hostMissionDescription->playerAmountScenarioMax) {
+                                        nc_changeMap.missionDescription_.playersData[i] = hostMissionDescription->playersData[i];
                                     } else {
                                         //Don't copy from previous description since this slot wasnt used and may contain unknown data
                                         nc_changeMap.missionDescription_.playersData[i].realPlayerType = REAL_PLAYER_TYPE_OPEN;
@@ -1216,14 +1304,14 @@ void PNetCenter::HostReceiveQuant()
 								}
                                 //Remove players that exceed scenario max
 								for(i; i< NETWORK_PLAYERS_MAX; i++){
-									if(hostMissionDescription.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-										NETID delPlayerNETID=hostMissionDescription.playersData[i].netid;
-										hostMissionDescription.disconnect2PlayerData(i);
-										//hostMissionDescription.playersData[i].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
+									if(hostMissionDescription->playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+										NETID delPlayerNETID=hostMissionDescription->playersData[i].netid;
+										hostMissionDescription->disconnect2PlayerData(i);
+										//hostMissionDescription->playersData[i].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
 										RemovePlayer(delPlayerNETID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
 									}
 								}
-								hostMissionDescription=nc_changeMap.missionDescription_;
+								*hostMissionDescription = nc_changeMap.missionDescription_;
 							}
 						}
 						break;
@@ -1232,18 +1320,18 @@ void PNetCenter::HostReceiveQuant()
 							netCommand4H_StartLoadGame ncslg(in_HostBuf);
                             if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
                             
-							hostMissionDescription.setPlayerStartReady(netid, ncslg.ready != 0);
+							hostMissionDescription->setPlayerStartReady(netid, ncslg.ready != 0);
 						}
 						break;
 					case NETCOMC_ID_PLAYER_READY:
 						{
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 
 							netCommandC_PlayerReady event(in_HostBuf);
 							(*p)->m_flag_Ready=true;
 							(*p)->clientGameCRC=event.gameCRC_;
 
-							LogMsg("Player 0x%X %d (GCRC=0x%X) reported ready\n", netid, (*p)->missionDescriptionIdx, (*p)->clientGameCRC);
+							LogMsg("Player 0x%X (GCRC=0x%X) reported ready\n", netid, (*p)->clientGameCRC);
 							///SetEvent(m_hReady);
 						}
 						break;
@@ -1364,10 +1452,10 @@ void PNetCenter::HostReceiveQuant()
 							netCommand4G_ChatMessage nc_ChatMessage(in_HostBuf);
                             
                             //Get player data that send this
-                            int playerID = hostMissionDescription.findPlayer(netid);
+                            int playerID = hostMissionDescription->findPlayer(netid);
                             if (playerID != -1) {
                                 nc_ChatMessage.playerID = playerID;
-                                const auto& playerData = hostMissionDescription.playersData[playerID];
+                                const auto& playerData = hostMissionDescription->playersData[playerID];
                                 const auto& pc = playerColors[playerData.colorIndex].unitColor;
                                 
                                 //Add color and name of player to text
@@ -1382,7 +1470,7 @@ void PNetCenter::HostReceiveQuant()
                                 
                                 //Find if we need to send to sender clan or everyone (sender included)
                                 if (nc_ChatMessage.clanOnly) {
-                                    for (const auto& missionPlayer : hostMissionDescription.playersData) {
+                                    for (const auto& missionPlayer : hostMissionDescription->playersData) {
                                         if (missionPlayer.clan == playerData.clan) {
                                             SendEvent(nc_ChatMessage, missionPlayer.netid);
                                         }

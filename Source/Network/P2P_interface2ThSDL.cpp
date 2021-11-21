@@ -26,14 +26,11 @@ bool PNetCenter::Init()
     initAttributes();
     
     server_content_crc = 0;
-    if (check_command_line("ServerIgnoreContent") == nullptr) {
-        server_content_crc = NetConnectionInfo::getAttributesCRC();
-    }
     
 #if defined(PERIMETER_DEBUG) && defined(PERIMETER_EXODUS) && 0
     //Dump current attrs
     XPrmOArchive ar("/tmp/test");
-    XBuffer& buf = ar.getBuffer();
+    XBuffer& buf = ar.buffer();
     ar << makeObjectWrapper(rigidBodyPrmLibrary(), nullptr, nullptr);
     ar.close();
 #endif
@@ -296,14 +293,14 @@ void PNetCenter::ExitClient(NETID netid) {
 void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
     LogMsg("DeleteClient NID %lu normal %d\n", netid, normalExit);
     if(isHost()){
-        hostMissionDescription.setChanged();
+        hostMissionDescription->setChanged();
 
         if(m_bStarted){
             //idx == playerID (на всякий случай);
-            int idx=hostMissionDescription.findPlayer(netid);
+            int idx=hostMissionDescription->findPlayer(netid);
             xassert(idx!=-1);
             if(idx!=-1){
-                int playerID=hostMissionDescription.playersData[idx].playerID;
+                int playerID=hostMissionDescription->playersData[idx].playerID;
                 netCommand4G_ForcedDefeat* pncfd=new netCommand4G_ForcedDefeat(playerID);
                 //PutGameCommand2Queue_andAutoDelete(pncfd);
                 m_DeletePlayerCommand.push_back(pncfd);
@@ -314,14 +311,14 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
         ClientMapType::iterator p;
         for(p=m_clients.begin(); p!= m_clients.end(); p++) {
             if((*p)->netidPlayer==netid) {
-                LogMsg("Client NID %lu PID %d disconnecting-", (*p)->netidPlayer, (*p)->missionDescriptionIdx);
+                LogMsg("Client NID %lu disconnecting-", (*p)->netidPlayer);
                 delete *p;
                 m_clients.erase(p);
                 break;
             }
         }
 
-        if(hostMissionDescription.disconnectPlayer2PlayerDataByNETID(netid))
+        if(hostMissionDescription->disconnectPlayer2PlayerDataByNETID(netid))
                 LogMsg("OK\n");
         else
                 LogMsg("error in missionDescription\n");

@@ -237,6 +237,8 @@ windowClientSize_(1024, 768)
 		
         if (server) {
             checkCmdLineArg(server, "server");
+            const char* savePath = check_command_line("save");
+            if (savePath) data.save = savePath;
             const char* roomName = check_command_line("room");
             if (roomName) data.roomName = roomName;
             data.address = server;
@@ -396,7 +398,9 @@ void GameShell::GameStart(const MissionDescription& mission)
 		PlayerData* data = &CurrentMission.playersData[i];
         std::string playerName;
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
-            playerName = currentSingleProfile.getCurrentProfile().name;
+            if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
+                playerName = currentSingleProfile.getCurrentProfile().name;
+            }
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
             playerName = getBelligerentName(data->belligerent);
 		}

@@ -18,6 +18,7 @@ public:
 public:
 	size_t filled_size;//in
 	InOutNetComBuffer(unsigned int size, bool autoRealloc);
+    InOutNetComBuffer(void* p, size_t sz);
 
 	void clearBufferOfTheProcessedCommands(void);//out
 	int send(PNetCenter& conn, NETID netid);//out

@@ -29,6 +29,15 @@ InOutNetComBuffer::InOutNetComBuffer(unsigned int size, bool autoRealloc)
 	event_ID = NETCOM_ID_NONE;
 }
 
+InOutNetComBuffer::InOutNetComBuffer(void* p, size_t sz)
+: XBuffer(p, sz)
+{
+    reset();
+    byte_sending=0;
+    byte_receive=size;
+    event_ID = NETCOM_ID_NONE;
+    filled_size=size;
+}
 
 void InOutNetComBuffer::reset()
 {
@@ -124,7 +133,7 @@ bool InOutNetComBuffer::putBufferPacket(char* buf, unsigned int size)
 
 	clearBufferOfTheProcessedCommands();
 	if(length()-filled_size < size) {
-		xassert("Net input buffer is small.");
+		xassert(0 && "Net input buffer is small.");
 		return 0;
 	}
 	memcpy(address() + filled_size, buf, size);

@@ -14,10 +14,14 @@ extern MissionDescription missionToExec;
 extern MusicPlayer gb_Music;
 
 std::vector<MissionDescription> multiplayerMaps;
+std::vector<MissionDescription> multiplayerSaves;
 
 void loadMultiplayerList() {
     if (multiplayerMaps.empty()) {
         loadMapVector(multiplayerMaps, "RESOURCE/MULTIPLAYER", ".spg");
+    }
+    if (multiplayerSaves.empty()) {
+        loadMapVector(multiplayerSaves, "RESOURCE/SAVES/MULTIPLAYER", ".spg");
     }
 }
 
@@ -86,7 +90,8 @@ int multiplayerMapNotFoundQuant(float, float ) {
 }
 
 void GameShell::MultiplayerGameStart(const MissionDescription& mission) {
-    if ( !isWorldIDValid(mission.worldID()) || getMultiplayerMapNumber(mission.missionName()) == -1 ) {
+    if (!isWorldIDValid(mission.worldID())
+     || (mission.gameType_ == GT_createMPGame && getMultiplayerMapNumber(mission.missionName()) == -1)) {
         _shellIconManager.AddDynamicHandler(multiplayerMapNotFoundQuant, CBCODE_QUANT);
     } else {
         missionToExec = mission;

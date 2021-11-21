@@ -1366,8 +1366,10 @@ void CShellIconManager::playGameOverSound(const char* path) {
         speechSound->Stop();
 		speechSound->SetVolume(terSoundVolume);
 		resultMusicStarted = true;
-		int ret = speechSound->OpenToPlay(path, false);
-        xassert(ret);
+		bool ret = speechSound->OpenToPlay(path, false);
+        if (!ret) {
+            fprintf(stderr, "playGameOverSound error");
+        }
 	}
 }
 void CShellIconManager::setupAudio() {

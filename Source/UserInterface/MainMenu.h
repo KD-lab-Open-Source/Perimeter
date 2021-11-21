@@ -7,7 +7,7 @@ void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string
 
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect, GameType gameType);
 
-void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1);
+void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1, GameType gameType = GT_SINGLE_PLAYER);
 
 void clearMapDescWnd(int mapWndID, int mapDescrWndID, int inputWndID = -1);
 

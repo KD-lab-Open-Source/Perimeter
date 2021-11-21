@@ -10,7 +10,8 @@ enum RealPlayerType {
 	REAL_PLAYER_TYPE_CLOSE,
 	REAL_PLAYER_TYPE_OPEN,
 	REAL_PLAYER_TYPE_PLAYER,
-	REAL_PLAYER_TYPE_AI,
+    REAL_PLAYER_TYPE_AI,
+    REAL_PLAYER_TYPE_PLAYER_AI, //Player that is absent and AI takes over until comes back
 	REAL_PLAYER_TYPE_WORLD
 };
 
@@ -19,6 +20,7 @@ DECLARE_ENUM_DESCRIPTOR(RealPlayerType)
 struct PlayerData {
 private:
     char playerName[PLAYER_MAX_NAME_LEN] = "";
+    char playerNameInitial[PLAYER_MAX_NAME_LEN] = "";
 public:
 	enum  {
 		PLAYER_ID_NONE = -1
@@ -40,7 +42,9 @@ public:
 	void set(const std::string& name = "", NETID netid = NETID_NONE, int playerIDIn = PLAYER_ID_NONE, terBelligerent belligerentIn = BELLIGERENT_EXODUS0, int colorIndexIn = 0, RealPlayerType realPlayerTypeIn = REAL_PLAYER_TYPE_PLAYER);
 
     const char* name() const { return playerName; }
+    const char* nameInitial() const { return playerNameInitial; }
     void setName(const std::string& name);
+    void setNameInitial(const std::string& name);
 
 	void read(XBuffer& in);
 	void write(XBuffer& out) const;
@@ -64,13 +68,14 @@ public:
         ar & WRAP_OBJECT(gameVersion);
         std::string name = playerName;
         ar & WRAP_OBJECT(name);
-        setName(name);
+        if(ar.isInput()) {
+            setName(name);
+        }
 
         if(ar.isInput() && !handicap)
             handicap = 100;
     }
 };
-
 
 enum GameType {
 	GT_SINGLE_PLAYER,
@@ -90,7 +95,8 @@ public:
     void refresh();
     void loadDescription();
 
-	bool loadMission(SavePrm& savePrm) const; 
+	bool loadMission(SavePrm& savePrm) const;
+    void loadIntoMemory();
 	bool saveMission(const SavePrm& savePrm, bool userSave) const; 
 	void restart();
 
@@ -132,21 +138,16 @@ public:
 	int connectLoadPlayer2PlayersData(PlayerData& pd);
 	bool disconnectPlayer2PlayerDataByIndex(unsigned int idx);
 	bool disconnectPlayer2PlayerDataByNETID(NETID netid);
-	bool setPlayerNETID(unsigned int idx, NETID netid);
 
 	int getUniquePlayerColor(int playerIdx, int begColor=0, bool direction=true);
 	bool changePlayerColor(int playerIdx, int color, bool direction=true);
-	bool changePlayerColor(NETID netid, int color, bool direction=true);
 
 	bool changePlayerDifficulty(int playerIdx, Difficulty difficulty);
-	bool changePlayerDifficulty(NETID netid, Difficulty difficulty);
 
 	int getUniquePlayerClan();
 	bool changePlayerClan(int playerIdx, int clan);
-	bool changePlayerClan(NETID netid, int clan);
 
 	bool changePlayerHandicap(int playerIdx, int handicap);
-	bool changePlayerHandicap(NETID netid, int handicap);
 
 	void getAllOtherPlayerName(std::string& outStr);
 	void getPlayerName(int _playerID, std::string& outStr);
@@ -154,7 +155,6 @@ public:
 	int findPlayer(NETID netid);
 
 	bool changePlayerBelligerent(int playerIdx, terBelligerent newBelligerent);
-	bool changePlayerBelligerent(NETID netid, terBelligerent newBelligerent);
 
 	bool isChanged() const { return flag_missionDescriptionUpdate; }
 	void setChanged() { flag_missionDescriptionUpdate=true; }

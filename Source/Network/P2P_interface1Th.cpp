@@ -12,6 +12,7 @@
 extern const char* currentShortVersion;
 
 const int NORMAL_QUANT_INTERVAL=100;
+const int PNETCENTER_BUFFER_SIZE = PERIMETER_MESSAGE_MAX_SIZE * 2;
 
 SDL_threadID net_thread_id=-1;
 
@@ -59,8 +60,8 @@ const char* PNetCenter::getStrState() const
 }
 
 PNetCenter::PNetCenter() :
-in_ClientBuf(1000000, true), out_ClientBuf(1000000, true),
-in_HostBuf(1000000, true), out_HostBuf(1000000, true),
+in_ClientBuf(PNETCENTER_BUFFER_SIZE, true), out_ClientBuf(PNETCENTER_BUFFER_SIZE, true),
+in_HostBuf(PNETCENTER_BUFFER_SIZE, true), out_HostBuf(PNETCENTER_BUFFER_SIZE, true),
 connectionHandler(this)
 {
     publicServerHost=false;
@@ -174,6 +175,11 @@ PNetCenter::~PNetCenter()
 
     DestroyEvent(hSecondThreadInitComplete);
     DestroyEvent(hCommandExecuted);
+    
+    if (hostMissionDescription) {
+        delete hostMissionDescription;
+        hostMissionDescription = nullptr;
+    }
 
     LogMsg("Destroyed PNetCenter\n");
 }
@@ -183,7 +189,7 @@ PNetCenter::~PNetCenter()
 
 const char* PNetCenter::getMissionName() {
 	if (!isHost()) return ""; 
-    return hostMissionDescription.missionName().c_str();
+    return hostMissionDescription->missionName().c_str();
 }
 
 const char* PNetCenter::getGameName() {
@@ -197,12 +203,12 @@ const char* PNetCenter::getGameVer() {
 
 int PNetCenter::getNumPlayers() {
 	if(!isHost()) return 0; 
-    return hostMissionDescription.playersAmount();
+    return hostMissionDescription->playersAmount();
 }
 
 int PNetCenter::getMaxPlayers() {
 	if(!isHost()) return 0; 
-    return hostMissionDescription.playersMaxEasily();//playersAmountScenarioMax();
+    return hostMissionDescription->playersMaxEasily();//playersAmountScenarioMax();
 }
 
 int PNetCenter::getHostPort() {
@@ -213,7 +219,7 @@ int PNetCenter::getHostPort() {
 //////////////////////////////////////////////
 /// New network game creation or joining
 
-void PNetCenter::CreateGame(const NetAddress& connection, const std::string& gameName, const std::string& missionName, const std::string& playerName, const std::string& password)
+void PNetCenter::CreateGame(const NetAddress& connection, const std::string& gameName, MissionDescription* mission, const std::string& playerName, const std::string& password)
 {
     LogMsg("Create Game\n");
 	clientPause=false;
@@ -222,9 +228,14 @@ void PNetCenter::CreateGame(const NetAddress& connection, const std::string& gam
     gamePassword = password;
 
 	m_quantInterval=NORMAL_QUANT_INTERVAL; //xm::round((float)NORMAL_QUANT_INTERVAL/gameSpeed);
+    
+    //Setup mission
+    xassert(mission);
+    hostMissionDescription = mission;
+    hostMissionDescription->activePlayerID = -1; //Remove activePlayerID on multi
 
     //Argument PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST
-	hostMissionDescription = MissionDescription(missionName.c_str(), GT_createMPGame);
+    
 	m_GameName = gameName;
 	m_PlayerName = playerName;
 	ExecuteInternalCommand(PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST, true);
@@ -522,6 +533,11 @@ void PNetCenter::changePlayerHandicap(int idxPlayerData, int handicap)
 {
 	netCommand4H_ChangePlayerHandicap nc_ChH(idxPlayerData, handicap);
 	SendEvent(&nc_ChH);
+}
+void PNetCenter::changePlayerSeat(int idxPlayerData)
+{
+    netCommand4H_ChangePlayerSeat nc_ChS(idxPlayerData);
+    SendEvent(&nc_ChS);
 }
 
 void PNetCenter::chatMessage(bool clanOnly, const std::string& text, const std::string& locale)

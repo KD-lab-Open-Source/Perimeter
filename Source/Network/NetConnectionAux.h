@@ -21,7 +21,7 @@ private:
     arch_flags arch = 0;
     uint32_t passwordCRC = 0;
     uint32_t gameContent = 0;
-    uint32_t attributesCRC = 0;
+    uint32_t gameContentCRC = 0;
     char playerName[PLAYER_MAX_NAME_LEN] = "";
     uint32_t crc = 0;
 
@@ -34,7 +34,7 @@ private:
         ownCRC=crc32((unsigned char*)&arch, sizeof(arch), ownCRC);
         ownCRC=crc32((unsigned char*)&passwordCRC, sizeof(passwordCRC), ownCRC);
         ownCRC=crc32((unsigned char*)&gameContent, sizeof(gameContent), ownCRC);
-        ownCRC=crc32((unsigned char*)&attributesCRC, sizeof(attributesCRC), ownCRC);
+        ownCRC=crc32((unsigned char*)&gameContentCRC, sizeof(gameContentCRC), ownCRC);
         ownCRC=crc32((unsigned char*)&playerName, sizeof(playerName), ownCRC);
         return ownCRC;
     }
@@ -44,17 +44,6 @@ private:
     }
 
 public:
-
-    static uint32_t getAttributesCRC() {
-        const int floatDigits = 0;
-        uint32_t attrcrc = startCRC32;
-        attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(attributeLibrary(), attrcrc, floatDigits);
-        attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(rigidBodyPrmLibrary(), attrcrc, floatDigits);
-        attrcrc = getSerializationCRC<ATTRIBUTES_CRC_ARCHIVE>(globalAttr(), attrcrc, floatDigits);
-        LogMsg("attributes CRC %X\n", attrcrc);
-        return attrcrc;
-    }
-
     static arch_flags computeArchFlags() {
         arch_flags val = 0;
 
@@ -117,7 +106,7 @@ public:
         in.read(arch);
         in.read(passwordCRC);
         in.read(gameContent);
-        in.read(attributesCRC);
+        in.read(gameContentCRC);
         in.read(playerName, sizeof(playerName));
         in.read(crc);
     }
@@ -129,7 +118,7 @@ public:
         out.write(arch);
         out.write(passwordCRC);
         out.write(gameContent);
-        out.write(attributesCRC);
+        out.write(gameContentCRC);
         out.write(playerName, sizeof(playerName));
         out.write(crc);
     }
@@ -140,7 +129,7 @@ public:
         versionCRC=getStringCRC(_version);
         passwordCRC=getStringCRC(_password);
         gameContent = _gameContent;
-        attributesCRC=getAttributesCRC();
+        gameContentCRC=0;
         strncpy(playerName, _playerName, PLAYER_MAX_NAME_LEN);
         crc=calcOwnCRC();
     }
@@ -169,8 +158,8 @@ public:
         return arch;
     }
 
-    bool isGameContentCompatible(GAME_CONTENT content, uint32_t attrcrc) const {
-        return gameContent == content && (attrcrc == 0 || attributesCRC == attrcrc);
+    bool isGameContentCompatible(GAME_CONTENT content, uint32_t contentCRC) const {
+        return gameContent == content && (contentCRC == 0 || gameContentCRC == contentCRC);
     }
 
     bool isPasswordCorrect(const char* _password) const {

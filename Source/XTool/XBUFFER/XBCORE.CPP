@@ -44,7 +44,7 @@ XBuffer::XBuffer(size_t sz, bool automatic_realloc_) {
 
 XBuffer::XBuffer(void* p, size_t sz)
 {
-	buf = (char*)p;
+	buf = static_cast<char*>(p);
 	size = sz;
 	offset = 0L;
 	digits = XB_DEFDIGITS;

@@ -677,7 +677,7 @@ void InitSound(bool sound, bool music, bool firstTime)
 
 		SNDSetLocDataDirectory(getLocDataPath().c_str());
 
-		if(!inited){
+		if(!inited && check_command_line("disable_sound") == nullptr){
 			inited = 1;
 
 			SNDSetSoundDirectory("RESOURCE\\SOUNDS\\EFF\\");

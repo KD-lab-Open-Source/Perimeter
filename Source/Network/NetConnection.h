@@ -3,7 +3,7 @@
 
 #define PERIMETER_IP_PORT_DEFAULT 12987
 #define PERIMETER_IP_HOST_DEFAULT "127.0.0.1"
-const uint32_t PERIMETER_MESSAGE_MAX_SIZE = 64 * 1024 * 1024;
+const uint32_t PERIMETER_MESSAGE_MAX_SIZE = 32 * 1024 * 1024;
 const uint32_t PERIMETER_MESSAGE_COMPRESSION_SIZE = 128*1024;
 const uint16_t PERIMETER_MESSAGE_FLAG_COMPRESSED = 1;
 ///How many milliseconds extra to wait for the data part once getting header

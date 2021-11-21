@@ -81,7 +81,8 @@ enum terEventID
 	NETCOM_4H_ID_CHANGE_REAL_PLAYER_TYPE,
 	NETCOM_4H_ID_CHANGE_PLAYER_DIFFICULTY,
 	NETCOM_4H_ID_CHANGE_PLAYER_CLAN,
-	NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP,
+    NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP,
+    NETCOM_4H_ID_CHANGE_PLAYER_SEAT,
 	NETCOM_4H_ID_CHANGE_MAP,
 
 	NETCOM_4H_ID_START_LOAD_GAME,
@@ -984,20 +985,34 @@ struct netCommand4H_ChangePlayerClan : netCommandGeneral
 
 struct netCommand4H_ChangePlayerHandicap : netCommandGeneral
 {
-	netCommand4H_ChangePlayerHandicap(int idxPlayerData, int handicap) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
-		idxPlayerData_=idxPlayerData;
-		handicap_=handicap;
-	}
-	netCommand4H_ChangePlayerHandicap(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
-		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
-		in.read(&handicap_, sizeof(handicap_));
-	}
-	void Write(XBuffer& out) const override {
-		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
-		out.write(&handicap_, sizeof(handicap_));
-	};
-	int idxPlayerData_;
-	int handicap_;
+    netCommand4H_ChangePlayerHandicap(int idxPlayerData, int handicap) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
+        idxPlayerData_=idxPlayerData;
+        handicap_=handicap;
+    }
+    netCommand4H_ChangePlayerHandicap(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
+        in.read(&idxPlayerData_, sizeof(idxPlayerData_));
+        in.read(&handicap_, sizeof(handicap_));
+    }
+    void Write(XBuffer& out) const override {
+        out.write(&idxPlayerData_, sizeof(idxPlayerData_));
+        out.write(&handicap_, sizeof(handicap_));
+    };
+    int idxPlayerData_;
+    int handicap_;
+};
+
+struct netCommand4H_ChangePlayerSeat : netCommandGeneral
+{
+    netCommand4H_ChangePlayerSeat(int idxPlayerData) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_SEAT){
+        idxPlayerData_=idxPlayerData;
+    }
+    netCommand4H_ChangePlayerSeat(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_SEAT){
+        in > idxPlayerData_;
+    }
+    void Write(XBuffer& out) const override {
+        out < idxPlayerData_;
+    };
+    int idxPlayerData_;
 };
 
 ///Command sent to host when a map is selected from list, establishes the hostMissionDescription

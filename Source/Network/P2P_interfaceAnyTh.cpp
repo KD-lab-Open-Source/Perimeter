@@ -44,21 +44,22 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 int PNetCenter::AddClient(PlayerData& pd)
 {
 	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
-
+    
+    MissionDescription& mission = *hostMissionDescription;
 	int idxPlayerData=-1;
-	if (hostMissionDescription.gameType_==GT_createMPGame) {
-		idxPlayerData=hostMissionDescription.connectNewPlayer2PlayersData(pd);
-	} else if(hostMissionDescription.gameType_==GT_loadMPGame) {
-		idxPlayerData=hostMissionDescription.connectLoadPlayer2PlayersData(pd);
+	if (mission.gameType_==GT_createMPGame) {
+		idxPlayerData=mission.connectNewPlayer2PlayersData(pd);
+	} else if(mission.gameType_==GT_loadMPGame) {
+		idxPlayerData=mission.connectLoadPlayer2PlayersData(pd);
 	}
 	
-    hostMissionDescription.setChanged();
+    mission.setChanged();
     
 	if (0 <= idxPlayerData) {
 		//missionDescription.playersData[idxPlayerData].netid=netid;
 		//missionDescription.playersData[idxPlayerData].flag_playerStartReady=1;
 
-		PClientData* pCD=new PClientData(idxPlayerData, pd.name(), pd.netid);
+		PClientData* pCD=new PClientData(pd.name(), pd.netid);
 		pCD->backGameInf2List.reserve(20000);//резерв под 20000 квантов
 		m_clients.push_back(pCD);
 
@@ -89,8 +90,8 @@ void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame*
     //Ensure command is from correct sender
     if (pCommand->EventID != NETCOM_4G_ID_FORCED_DEFEAT) {
         unsigned int i = pCommand->PlayerID_;
-        if (i < 0 || i >= hostMissionDescription.playerAmountScenarioMax
-            || hostMissionDescription.playersData[i].netid != netid) {
+        if (i < 0 || i >= hostMissionDescription->playerAmountScenarioMax
+            || hostMissionDescription->playersData[i].netid != netid) {
             LogMsg("Discarding game command from incorrect netid %llu to player %d\n", netid, i);
             return;
         }

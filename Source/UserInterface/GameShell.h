@@ -16,6 +16,7 @@ class MissionEditor;
 
 struct CommandLineData {
     bool server;
+    std::string save;
     std::string address;
     std::string playerName;
     std::string roomName;

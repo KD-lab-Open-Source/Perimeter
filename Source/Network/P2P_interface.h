@@ -138,12 +138,11 @@ struct PClientData
 
 	unsigned int lastTimeBackPacket;
 
-	unsigned int missionDescriptionIdx;
 	unsigned int confirmQuant;
     
     bool desync;
 
-	PClientData(unsigned int mdIdx, const char* name, NETID netid);
+	PClientData(const char* name, NETID netid);
 	~PClientData();
 
 };
@@ -330,7 +329,7 @@ public:
     bool publicServerHost;
 
 	//bool flag_missionDescriptionUpdate;
-	MissionDescription hostMissionDescription;
+	MissionDescription* hostMissionDescription = nullptr;
 
 	MissionDescription clientMissionDescription; //Only 1
 
@@ -403,7 +402,7 @@ public:
 	bool ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution);
 	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, const char* str=0);
 
-	void CreateGame(const NetAddress& connection, const std::string& gameName, const std::string& missionName, const std::string& playerName, const std::string& password="");
+	void CreateGame(const NetAddress& connection, const std::string& gameName, MissionDescription* mission, const std::string& playerName, const std::string& password="");
 
 	void JoinGame(const NetAddress& connection, const std::string& playerName, const std::string& password="");
 
@@ -421,6 +420,7 @@ public:
 	void changePlayerDifficulty(int idxPlayerData, Difficulty difficulty);
 	void changePlayerClan(int idxPlayerData, int clan);
 	void changePlayerHandicap(int idxPlayerData, int handicap);
+    void changePlayerSeat(int idxPlayerData);
 	void changeMap(const char* missionName);
 
 
@@ -475,6 +475,10 @@ public:
 		if(m_state&PNC_State_GameRun) return 1;
 		else return 0;
 	}
+
+    bool isSaveGame() {
+        return lobbyMissionDescription.gameType_ == GT_loadMPGame;
+    }
 
     NETID	m_hostNETID;
     NETID	m_localNETID;

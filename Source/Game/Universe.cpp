@@ -102,17 +102,101 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 
 	setLogicFp();
 
-	XRndSet(1);
-	logicRND.set(1);
-	xm_random_generator.set(1);
+    //---------------------
+    //Load binary data from memory or from files
+
+    bool binaryDataLoaded = false;
+    XBuffer binarySavePrmBinary(0, true);
+    XBuffer binaryMapData(0, true);
+    XBuffer binaryRegionData(0, true);
+
+    //Try compressed format (from mission or bin file)
+    {
+        XBuffer compressedData(0, true);
+        XStream ff(0);
+        if (mission.binaryData.length()) {
+            std::swap(compressedData, mission.binaryData);
+        } else if (mission.gameType_ != GT_loadMPGame) {
+            if (ff.open(setExtension(mission.savePathContent(), "bin"), XS_IN) && 0 < ff.size()) {
+                compressedData.alloc(ff.size());
+                ff.read(compressedData.address(), ff.size());
+            }
+        }
+        if (compressedData.length()) {
+            XBuffer uncompressedData(compressedData.length(), true);
+            if (compressedData.uncompress(uncompressedData) == 0) {
+                binaryDataLoaded = true;
+                uncompressedData.set(0);
+                uncompressedData > binarySavePrmBinary;
+                binarySavePrmBinary.realloc(binarySavePrmBinary.tell());
+                binarySavePrmBinary.set(0);
+                uncompressedData > binaryMapData;
+                binaryMapData.realloc(binaryMapData.tell());
+                binaryMapData.set(0);
+                uncompressedData > binaryRegionData;
+                binaryRegionData.realloc(binaryRegionData.tell());
+                binaryRegionData.set(0);
+            } else {
+                fprintf(stderr, "Error decompressing binary save data!\n");
+            }
+        }
+    }
+
+    //Try legacy format (dat/gmp files)
+    if (!binaryDataLoaded && mission.gameType_ != GT_loadMPGame) {
+        XStream ff(0);
+        if (ff.open(setExtension(mission.savePathContent(), "gmp"), XS_IN) && 0 < ff.size()) {
+            binaryMapData.alloc(ff.size());
+            ff.read(binaryMapData.address(), ff.size());
+        }
+        if(ff.open(setExtension(mission.savePathContent(), "dat"), XS_IN) && 0 < ff.size()) {
+            binaryRegionData.alloc(ff.size());
+            ff.read(binaryRegionData.address(), ff.size());
+        }
+    }
+
+    //---------------------
+
+    SavePrmBinary savePrmBinary;
+    
+    if (binarySavePrmBinary.length()) {
+        XPrmIArchive ia;
+        std::swap(ia.buffer(), binarySavePrmBinary);
+        ia.reset();
+        ia >> WRAP_NAME(savePrmBinary, "SavePrmBinary");
+        
+        //Restore random generators
+        XRndSet(savePrmBinary.X_RND);
+        logicRND.set(savePrmBinary.logic_RND);
+        xm_random_generator.set(savePrmBinary.xm_RND);
+    } else {
+        XRndSet(1);
+        logicRND.set(1);
+        xm_random_generator.set(1);
+    }
+    log_var(XRndGet());
+    log_var(logicRND.get());
+    log_var(xm_random_generator.get());
+    
+    //---------------------
     
     if (mission.scriptsData.length()) {
         XPrmIArchive ia;
         std::swap(ia.buffer(), mission.scriptsData);
-        ia >> WRAP_NAME(attributeLibrary(), "attributeLibrary");
         ia >> WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+        ia >> WRAP_NAME(attributeLibrary(), "attributeLibrary");
         ia >> WRAP_NAME(globalAttr(), "globalAttr");
+
+#ifdef PERIMETER_DEBUG
+        uint32_t attrcrc = startCRC32;
+        attrcrc = getSerializationCRC<BinaryOArchive>(rigidBodyPrmLibrary(), attrcrc);
+        attrcrc = getSerializationCRC<BinaryOArchive>(attributeLibrary(), attrcrc);
+        attrcrc = getSerializationCRC<BinaryOArchive>(globalAttr(), attrcrc);
+        log_var(attrcrc);
+#endif
     }
+
+    //---------------------
 
 	ai_tile_map = new AITileMap(1 << vMap.H_SIZE_POWER, 1 << vMap.V_SIZE_POWER);
 
@@ -162,65 +246,9 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	SaveManualData& manualData = data.manualData;
 
     //---------------------
-    
-    bool binaryDataLoaded = false;
-    XBuffer binarySavePrmBinary(0, true);
-    XBuffer binaryMapData(0, true);
-    XBuffer binaryRegionData(0, true);
-    
-    //Try compressed format (from mission or bin file)
-    {
-        XBuffer compressedData;
-        XStream ff(0);
-        if (mission.binaryData.length()) {
-            std::swap(compressedData, mission.binaryData);
-        } else if (ff.open(setExtension(mission.savePathContent(), "bin"), XS_IN)) {
-            compressedData.alloc(ff.size());
-            ff.read(compressedData.address(), ff.size());
-        }
-        if (compressedData.length()) {
-            XBuffer uncompressedData(compressedData.length(), true);
-            if (compressedData.uncompress(uncompressedData) == 0) {
-                binaryDataLoaded = true;
-                uncompressedData.set(0);
-                uncompressedData > binarySavePrmBinary;
-                binarySavePrmBinary.realloc(binarySavePrmBinary.tell());
-                binarySavePrmBinary.set(0);
-                uncompressedData > binaryMapData;
-                binaryMapData.realloc(binaryMapData.tell());
-                binaryMapData.set(0);
-                uncompressedData > binaryRegionData;
-                binaryRegionData.realloc(binaryRegionData.tell());
-                binaryRegionData.set(0);
-            } else {
-                fprintf(stderr, "Error decompressing binary save data!\n");
-            }
-        }
-    }
-
-    //Try legacy format (dat/gmp files)
-    if (!binaryDataLoaded) {
-        XStream ff(0);
-        if (ff.open(setExtension(mission.savePathContent(), "gmp"), XS_IN)) {
-            binaryMapData.alloc(ff.size());
-            ff.read(binaryMapData.address(), ff.size());
-        }
-        if(ff.open(setExtension(mission.savePathContent(), "dat"), XS_IN)) {
-            binaryRegionData.alloc(ff.size());
-            ff.read(binaryRegionData.address(), ff.size());
-        }
-    }
-
-    //---------------------
     // Save Prm Binary
 
-    if (binarySavePrmBinary.length()) {
-        SavePrmBinary savePrmBinary;
-        XPrmIArchive ia;
-        std::swap(ia.buffer(), binarySavePrmBinary);
-        ia.reset();
-        ia >> WRAP_NAME(savePrmBinary, "SavePrmBinary");
-        
+    if (binarySavePrmBinary.length()) {        
         //Restore trigger chains
         for (int i = 0; i < savePrmBinary.TriggerChains.size(); ++i) {
             if (i < data.players.size()) {
@@ -248,10 +276,13 @@ terUniverse::terUniverse(PNetCenter* net_client, MissionDescription& mission, Sa
 	xassert(manualData.players.size() <= NETWORK_PLAYERS_MAX);
 	std::vector<int> playerLoadIndices;
 	for(int i = 0; i < manualData.players.size(); i++){
-		if(mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI){
+		if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
+           || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
+           || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
 			int playerIndex = mission.playersShufflingIndices[i];
-			if(gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO)
-				mission.playersData[i].colorIndex = belligerentPropertyTable.find(mission.playersData[i].belligerent).colorIndex;
+			if(gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::SCENARIO) {
+                mission.playersData[i].colorIndex = belligerentPropertyTable.find(mission.playersData[i].belligerent).colorIndex;
+            }
 
 			terPlayer* player = addPlayer(mission.playersData[i]);
 			player->setTriggerChains(manualData.players[playerIndex]);
@@ -834,20 +865,43 @@ void MissionDescription::loadDescription() {
 
             // Установка АИ
             for (int i = 0; i < min(NETWORK_PLAYERS_MAX, playerAmountScenarioMax); i++) {
-                playersData[i].clan = i;
+                PlayerData& pd = playersData[i];
+                pd.flag_playerStartReady = false;
+                pd.flag_playerGameReady = false;
                 switch (gameType_) {
                     case GT_SINGLE_PLAYER:
-                        playersData[i].realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
+                        pd.clan = i;
+                        pd.realPlayerType = i ? REAL_PLAYER_TYPE_AI : REAL_PLAYER_TYPE_PLAYER;
                         break;
                     case GT_SINGLE_PLAYER_ALL_AI:
-                        playersData[i].realPlayerType = REAL_PLAYER_TYPE_AI;
+                        pd.clan = i;
+                        pd.realPlayerType = REAL_PLAYER_TYPE_AI;
                         break;
                     case GT_SINGLE_PLAYER_NO_AI:
-                        playersData[i].realPlayerType = REAL_PLAYER_TYPE_PLAYER;
+                        pd.clan = i;
+                        pd.realPlayerType = REAL_PLAYER_TYPE_PLAYER;
                         break;
                     case GT_createMPGame:
+                        pd.clan = i;
+                        pd.realPlayerType = REAL_PLAYER_TYPE_OPEN;
+                        break;
                     case GT_loadMPGame:
-                        playersData[i].realPlayerType = REAL_PLAYER_TYPE_OPEN;
+                        //Old multi saves have opened players with empty name when not in use, mark as closed
+                        if (pd.realPlayerType == REAL_PLAYER_TYPE_OPEN && strlen(pd.name()) == 0) {
+                            pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
+                        }
+                        switch (pd.realPlayerType) {
+                            case REAL_PLAYER_TYPE_CLOSE:
+                            case REAL_PLAYER_TYPE_WORLD:
+                            case REAL_PLAYER_TYPE_AI:
+                                break;
+                            case REAL_PLAYER_TYPE_OPEN:
+                            case REAL_PLAYER_TYPE_PLAYER:
+                            case REAL_PLAYER_TYPE_PLAYER_AI:
+                                pd.setNameInitial(pd.name());
+                                pd.realPlayerType = REAL_PLAYER_TYPE_OPEN;
+                                break;
+                        }
                         break;
                     case GT_playRellGame:
                         break;
@@ -913,6 +967,31 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
     return oa.close();
 }
 
+void MissionDescription::loadIntoMemory() {
+    XStream ff;
+    
+    //Load saveprm
+    SavePrm savePrm;
+    loadMission(savePrm);
+    XPrmOArchive oaSavePrm;
+    oaSavePrm << WRAP_NAME(savePrm, "SavePrm");
+    std::swap(saveData, oaSavePrm.buffer());
+    
+    //Load compressed binary data from file
+    if (ff.open(setExtension(savePathContent(), "bin"), XS_IN) && 0 < ff.size()) {
+        binaryData.alloc(ff.size());
+        ff.read(binaryData.address(), ff.size());
+        binaryData.set(ff.size());
+    }
+    
+    //Load current attributes
+    XPrmOArchive oaScripts;
+    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
+    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
+    std::swap(scriptsData, oaScripts.buffer());
+}
+
 void MissionDescription::restart()
 {
     if(originalSaveName) {
@@ -939,19 +1018,26 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 
 	PlayerVect playersToSave(NETWORK_PLAYERS_MAX, 0);
 	for(int i = 0; i < data.manualData.players.size(); i++){
-		if(mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI){
-			playersToSave[mission.playersShufflingIndices[i]] = i < Players.size() - 1 ? Players[i] : 0;
+		if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
+            || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
+            || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI){
+			playersToSave[mission.playersShufflingIndices[i]] = i < Players.size() - 1 ? Players[i] : nullptr;
 		}
 	}
 
     //Store some data in binary prm
-    SavePrmBinary dataBinary;
+    SavePrmBinary savePrmBinary;
+    
+    //Save RND generator states
+    savePrmBinary.X_RND = XRndGet();
+    savePrmBinary.logic_RND = logicRND.get();
+    savePrmBinary.xm_RND = xm_random_generator.get();
 
 	for (auto& pi : playersToSave) {
 		SavePlayerData& savePlayer = data.players.emplace_back();
 		if (pi) {
             pi->universalSave(savePlayer, userSave);
-            std::swap(savePlayer.currentTriggerChains, dataBinary.TriggerChains.emplace_back());
+            std::swap(savePlayer.currentTriggerChains, savePrmBinary.TriggerChains.emplace_back());
         }
 	}
 
@@ -975,15 +1061,13 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
     // Save Prm Binary
 
     XPrmOArchive oa;
-    oa << WRAP_NAME(dataBinary, "SavePrmBinary");
+    oa << WRAP_NAME(savePrmBinary, "SavePrmBinary");
     uncompressedData < oa.buffer();
 
 	//---------------------
 	// Map changes
-	if(vMap.IsChanged() || check_command_line("force_save_gmp")){
-		if(!vMap.saveGameMap(binaryData)) {
-            return false;
-        }
+    if(!vMap.saveGameMap(binaryData)) {
+        return false;
     }
     uncompressedData < binaryData;
     binaryData.set(0);
@@ -1388,6 +1472,7 @@ REGISTER_ENUM(REAL_PLAYER_TYPE_CLOSE, "REAL_PLAYER_TYPE_CLOSE");
 REGISTER_ENUM(REAL_PLAYER_TYPE_OPEN, "REAL_PLAYER_TYPE_OPEN");
 REGISTER_ENUM(REAL_PLAYER_TYPE_PLAYER, "REAL_PLAYER_TYPE_PLAYER");
 REGISTER_ENUM(REAL_PLAYER_TYPE_AI, "REAL_PLAYER_TYPE_AI");
+REGISTER_ENUM(REAL_PLAYER_TYPE_PLAYER_AI, "REAL_PLAYER_TYPE_PLAYER_AI");
 REGISTER_ENUM(REAL_PLAYER_TYPE_WORLD, "REAL_PLAYER_TYPE_WORLD");
 END_ENUM_DESCRIPTOR(RealPlayerType);
 

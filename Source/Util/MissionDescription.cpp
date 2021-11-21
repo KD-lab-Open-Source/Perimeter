@@ -17,13 +17,6 @@ void PlayerData::set(const std::string& name, NETID netid_, int playerIDIn, terB
 	playerID = playerIDIn;
 	realPlayerType = realPlayerTypeIn;
 
-//	if(isMultiplayer) 
-//		realPlayerType=zREAL_PLAYER_TYPE_OPEN;
-//	else if(isAIIn) 
-//		realPlayerType=REAL_PLAYER_TYPE_AI;
-//	else 
-//		realPlayerType=REAL_PLAYER_TYPE_PLAYER;
-
 	belligerent = belligerentIn;
 	colorIndex = colorIndexIn;
     setName(name);
@@ -32,6 +25,10 @@ void PlayerData::set(const std::string& name, NETID netid_, int playerIDIn, terB
 
 void PlayerData::setName(const std::string& name) {
     strncpy(playerName, name.c_str(), PLAYER_MAX_NAME_LEN);
+}
+
+void PlayerData::setNameInitial(const std::string& name) {
+    strncpy(playerNameInitial, name.c_str(), PLAYER_MAX_NAME_LEN);
 }
 
 void PlayerData::read(XBuffer& in) 
@@ -46,6 +43,7 @@ void PlayerData::read(XBuffer& in)
 	in.read(flag_playerStartReady);
 	in.read(flag_playerGameReady);
     in.read(playerName, sizeof(playerName));
+    in.read(playerNameInitial, sizeof(playerNameInitial));
 	in.read(netid);
 }
 
@@ -61,6 +59,7 @@ void PlayerData::write(XBuffer& out) const
 	out.write(flag_playerStartReady);
 	out.write(flag_playerGameReady);
     out.write(playerName, sizeof(playerName));
+    out.write(playerNameInitial, sizeof(playerNameInitial));
 	out.write(netid);
 }
 
@@ -175,16 +174,19 @@ void MissionDescription::read(XBuffer& in)
     in > StringInWrapper(worldName_.value());
     in > StringInWrapper(missionName_);
     in > StringInWrapper(missionDescriptionID.value());
-    in > StringInWrapper(savePathKey_); 
-	in.read(difficulty);
-	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
-		playersData[i].read(in);
+    in > StringInWrapper(savePathKey_);
+	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+        playersData[i].read(in);
+    }
 	in.read(&playersShufflingIndices[0], sizeof(playersShufflingIndices[0])*NETWORK_PLAYERS_MAX);
-	in.read(&playerAmountScenarioMax, sizeof(playerAmountScenarioMax));
 	in.read(&gameType_,sizeof(gameType_));
-	in.read(&activePlayerID, sizeof(activePlayerID));
-    in.read(&missionNumber,sizeof(missionNumber));
     in.read(&gameContent,sizeof(gameContent));
+    uint32_t difficultyVal = 0;
+    in > difficultyVal; difficulty.value() = static_cast<Difficulty>(difficultyVal);
+    in > playerAmountScenarioMax;
+    in > activePlayerID;
+    in > missionNumber;
+    in > globalTime;
     in > saveData;
     in > binaryData;
     in > scriptsData;
@@ -210,15 +212,17 @@ void MissionDescription::write(XBuffer& out) const
     out < StringOutWrapper(missionName_);
     out < StringOutWrapper(missionDescriptionID.value());
     out < StringOutWrapper(savePathKey_); 
-	out.write(difficulty);
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
 		playersData[i].write(out);
 	out.write(&playersShufflingIndices[0], sizeof(playersShufflingIndices[0])*NETWORK_PLAYERS_MAX);
-	out.write(&playerAmountScenarioMax, sizeof(playerAmountScenarioMax));
-	out.write(&gameType_,sizeof(gameType_));
-	out.write(&activePlayerID, sizeof(activePlayerID));
-    out.write(&missionNumber,sizeof(missionNumber));
+    out.write(&gameType_,sizeof(gameType_));
     out.write(&gameContent,sizeof(gameContent));
+    uint32_t difficultyVal = difficulty.value();
+    out < difficultyVal;
+    out < playerAmountScenarioMax;
+    out < activePlayerID;
+    out < missionNumber;
+    out < globalTime;
     out < saveData;
     out < binaryData;
     out < scriptsData;
@@ -241,6 +245,8 @@ void MissionDescription::simpleRead(XBuffer& in)
 		in.read(&playersData[i].flag_playerStartReady, sizeof(playersData[i].flag_playerStartReady) );
         in > StringInWrapper(tmp_str);
         playersData[i].setName(tmp_str);
+        in > StringInWrapper(tmp_str);
+        playersData[i].setNameInitial(tmp_str);
 	}
 	in.read(&tmp, sizeof(tmp)); playerAmountScenarioMax=(int)tmp;
 	in.read(&tmp, sizeof(tmp)); gameType_=(GameType)tmp;
@@ -265,6 +271,7 @@ void MissionDescription::simpleWrite(XBuffer& out) const
 		tmp=(unsigned char)playersData[i].handicap;			out.write(&tmp, sizeof(tmp));
 		out.write(&playersData[i].flag_playerStartReady, sizeof(playersData[i].flag_playerStartReady) );
         out < StringOutWrapper(playersData[i].name());
+        out < StringOutWrapper(playersData[i].nameInitial());
 	}
 	tmp=(unsigned char)playerAmountScenarioMax;		out.write(&tmp, sizeof(tmp));
 	tmp=(unsigned char)gameType_;					out.write(&tmp, sizeof(tmp));
@@ -328,10 +335,11 @@ bool MissionDescription::setPlayerStartReady(NETID netid, bool state)
 
 bool MissionDescription::isAllRealPlayerStartReady()
 {
-	bool result=1;
-	for(unsigned int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER)
-			result&=playersData[i].flag_playerStartReady;
+	bool result = true;
+	for (unsigned int i=0; i<playerAmountScenarioMax; i++) {
+		if (playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+            result &= playersData[i].flag_playerStartReady;
+        }
 	}
 	return result;
 }
@@ -404,8 +412,12 @@ int MissionDescription::getUniquePlayerClan()
 void MissionDescription::disconnect2PlayerData(int idxPlayerData)
 {
 	setChanged();
-	if(playersData[idxPlayerData].realPlayerType==REAL_PLAYER_TYPE_PLAYER || playersData[idxPlayerData].realPlayerType==REAL_PLAYER_TYPE_AI){
-		playersData[idxPlayerData].realPlayerType=REAL_PLAYER_TYPE_OPEN;
+    PlayerData& pd = playersData[idxPlayerData];
+	if (pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER || pd.realPlayerType==REAL_PLAYER_TYPE_AI || pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER_AI) {
+        pd.setName(pd.nameInitial());
+		pd.realPlayerType = REAL_PLAYER_TYPE_OPEN;
+        pd.flag_playerStartReady = false;
+        pd.netid = NETID_NONE;
 	}
 }
 
@@ -443,46 +455,60 @@ int MissionDescription::connectLoadPlayer2PlayersData(PlayerData& pd)
 {
 	setChanged();
 	int result=-1;
-	for (int i=0; i<playerAmountScenarioMax; i++) {
-        //TODO revisit this, do we need to match name? we should just and use colors as matching
-		if (playersData[i].name()==pd.name()) {
-			if(playersData[i].realPlayerType==REAL_PLAYER_TYPE_OPEN){
-                playersData[i].setName(pd.name());
-				playersData[i].realPlayerType=REAL_PLAYER_TYPE_PLAYER;
-				playersData[i].netid=pd.netid;
-				result=i;
-				break;
-			}
-		}
-	}
-	return result;
-}
+    
+    //Try match by name first
+    std::string pd_name = pd.name();
+    strlwr(pd_name.data());
+    for (int i=0; i<playerAmountScenarioMax; i++) {
+        PlayerData& player = playersData[i];
+        if (player.realPlayerType!=REAL_PLAYER_TYPE_OPEN) {
+            continue;
+        }
+        std::string name = player.nameInitial();
+        strlwr(name.data());
+        if (name==pd_name) {
+            player.setName(pd.name());
+            player.realPlayerType=REAL_PLAYER_TYPE_PLAYER;
+            player.netid=pd.netid;
+            result=i;
+            break;
+        }
+    }
 
-bool MissionDescription::setPlayerNETID(unsigned int idx, NETID netid)
-{
-	setChanged();
-	xassert(idx < playerAmountScenarioMax);
-	if(idx < playerAmountScenarioMax){
-		if(playersData[idx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-			playersData[idx].netid=netid;
-			return 1;
-		}
-	}
-	return 0;
+    //Allocate first empty player if there is no player with same name
+    if (result == -1) {
+        for (int i = 0; i < playerAmountScenarioMax; i++) {
+            PlayerData& player = playersData[i];
+            if (player.realPlayerType == REAL_PLAYER_TYPE_OPEN) {
+                player.setName(pd.name());
+                player.realPlayerType = REAL_PLAYER_TYPE_PLAYER;
+                player.netid = pd.netid;
+                result = i;
+                break;
+            }
+        }
+    }
+	return result;
 }
 
 bool MissionDescription::disconnectPlayer2PlayerDataByIndex(unsigned int idx)
 {
 	setChanged();
 	xassert(idx < playerAmountScenarioMax);
-	if(idx < playerAmountScenarioMax){
-		if(playersData[idx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-			playersData[idx].realPlayerType=REAL_PLAYER_TYPE_OPEN;
-		}
+	if (idx < playerAmountScenarioMax) {
+		if (playersData[idx].realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+            if (activePlayerID == -1) {
+                //Still on lobby, leave open
+                playersData[idx].realPlayerType = REAL_PLAYER_TYPE_OPEN;
+            } else {
+                //Game is running
+                playersData[idx].realPlayerType = REAL_PLAYER_TYPE_PLAYER_AI;
+            }
+        }
         playersData[idx].netid=NETID_NONE;
-        return 1;
+        return true;
 	}
-	return 0;
+	return false;
 }
 
 bool MissionDescription::disconnectPlayer2PlayerDataByNETID(NETID netid)
@@ -493,7 +519,7 @@ bool MissionDescription::disconnectPlayer2PlayerDataByNETID(NETID netid)
 			return disconnectPlayer2PlayerDataByIndex(i);
 		}
 	}
-	return 0;
+	return false;
 }
 
 
@@ -535,109 +561,59 @@ int MissionDescription::findPlayer(NETID netid)
 bool MissionDescription::changePlayerBelligerent(int playerIdx, terBelligerent newBelligerent)
 {
 	setChanged();
-	if(playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+    if (playerIdx < 0 || playerAmountScenarioMax <= playerIdx) return false;
+    if(playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
 		playersData[playerIdx].belligerent=newBelligerent;
-		return 1;
+		return true;
 	}
-	return 0;
-}
-
-bool MissionDescription::changePlayerBelligerent(NETID netid, terBelligerent newBelligerent)
-{
-	setChanged();
-	for(int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].netid==netid){
-			return changePlayerBelligerent(i, newBelligerent);
-		}
-	}
-	return 0;
+    return false;
 }
 
 bool MissionDescription::changePlayerColor(int playerIdx, int color, bool direction)
 {
 	setChanged();
-	if(playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+    if (playerIdx < 0 || playerAmountScenarioMax <= playerIdx) return false; 
+	if (playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER) {
 		int colorNew=getUniquePlayerColor(playerIdx, color, direction);
 		if(colorNew!=-1) {
 			playersData[playerIdx].colorIndex=colorNew;
-			return 1;
+			return true;
 		}
-	}
-	return 0;
-}
-
-bool MissionDescription::changePlayerColor(NETID netid, int color, bool direction)
-{
-	setChanged();
-	for(int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].netid==netid){
-			return changePlayerColor(i, color, direction);
-		}
-	}
-	return 0;
+    }
+    return false;
 }
 
 bool MissionDescription::changePlayerDifficulty(int playerIdx, Difficulty difficulty)
 {
 	setChanged();
-	if(playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+    if (playerIdx < 0 || playerAmountScenarioMax <= playerIdx) return false; 
+	if (playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER) {
 		playersData[playerIdx].difficulty=difficulty;
-		return 1;
+		return true;
 	}
-	return 0;
-}
-
-bool MissionDescription::changePlayerDifficulty(NETID netid, Difficulty difficulty)
-{
-	setChanged();
-	for(int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].netid==netid){
-			return changePlayerDifficulty(i, difficulty);
-		}
-	}
-	return 0;
+    return false;
 }
 
 bool MissionDescription::changePlayerClan(int playerIdx, int clan)
 {
 	setChanged();
-	if(playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+    if (playerIdx < 0 || playerAmountScenarioMax <= playerIdx) return false; 
+	if (playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER) {
 		playersData[playerIdx].clan=clan;
-		return 1;
+		return true;
 	}
-	return 0;
-}
-
-bool MissionDescription::changePlayerClan(NETID netid, int clan)
-{
-	setChanged();
-	for(int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].netid==netid){
-			return changePlayerClan(i, clan);
-		}
-	}
-	return 0;
+    return false;
 }
 
 bool MissionDescription::changePlayerHandicap(int playerIdx, int handicap)
 {
 	setChanged();
-	if(playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+    if (playerIdx < 0 || playerAmountScenarioMax <= playerIdx) return false; 
+	if (playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[playerIdx].realPlayerType==REAL_PLAYER_TYPE_PLAYER) {
 		playersData[playerIdx].handicap=handicap;
-		return 1;
+		return true;
 	}
-	return 0;
-}
-
-bool MissionDescription::changePlayerHandicap(NETID netid, int handicap)
-{
-	setChanged();
-	for(int i=0; i<playerAmountScenarioMax; i++){
-		if(playersData[i].netid==netid){
-			return changePlayerHandicap(i, handicap);
-		}
-	}
-	return 0;
+    return false;
 }
 
 PlayerData& MissionDescription::getActivePlayerData() 

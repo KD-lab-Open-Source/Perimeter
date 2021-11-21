@@ -237,12 +237,21 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
     //(re)allocate it to fit our data
     buffer.alloc(data_size);
     
-    //Read data
-    amount = receive_raw(buffer.buf, data_size, std::max(timeout, 0) + RECV_DATA_AFTER_HEADER_TIMEOUT);
-    if (amount == 0) {
-        fprintf(stderr, "TCP recv data failed timeout size %d %s\n", data_size, SDLNet_GetError());
-        amount = -5;
-    } else if (amount != data_size) {
+    //Read data until all is received
+    amount = 0;
+    while (amount < data_size) {
+        uint32_t left = data_size - amount;
+        int received = receive_raw(buffer.buf + buffer.tell(), left, std::max(timeout, 0) + RECV_DATA_AFTER_HEADER_TIMEOUT);
+        if (received == 0) {
+            fprintf(stderr, "TCP recv data chunk failed left %d amount %d size %d %s\n", left, amount, data_size, SDLNet_GetError());
+            amount = -5;
+            break;
+        }
+        buffer.set(received, XB_CUR);
+        amount += received;
+    }
+    
+    if (amount != data_size) {
         fprintf(stderr, "TCP recv data failed amount %d size %d %s\n", amount, data_size, SDLNet_GetError());
         if (amount > 0) {
             amount = -6;
@@ -251,13 +260,14 @@ int NetConnection::receive(XBuffer& buffer, int timeout) {
 
     //Decompression
     if (0 < amount && flags & PERIMETER_MESSAGE_FLAG_COMPRESSED) {
+        buffer.set(0);
         XBuffer output(data_size, true);
         int ret = buffer.uncompress(output);
         if (ret != 0) {
             return -7;
         }
         amount = static_cast<int>(output.tell());
-        buffer = std::move(output);
+        std::swap(buffer, output);
     }
 
     buffer.set(amount);

@@ -70,8 +70,21 @@ int creatingHostDialogQuant(float, float ) {
             std::string gameName = gameNameInput->getText();
             CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PASSWORD_INPUT));
             std::string password = passwordInput->getText();
-            std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[0].missionName();
-            gameShell->getNetClient()->CreateGame(conn, gameName, missionName, playerName, password);
+            
+            //Load multiplayer save or use first multiplayer map
+            CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST);
+            int pos = list->GetCurSel() - 1;
+            MissionDescription* mission;
+            if (0 <= pos && pos < multiplayerSaves.size()) {
+                std::string missionName = std::string("RESOURCE/SAVES/MULTIPLAYER/") + multiplayerSaves[pos].missionName();
+                mission = new MissionDescription(missionName.c_str(), GT_loadMPGame);
+                mission->loadIntoMemory();
+            } else {
+                std::string missionName = std::string("RESOURCE/MULTIPLAYER/") + multiplayerMaps[0].missionName();
+                mission = new MissionDescription(missionName.c_str(), GT_createMPGame);
+            }
+
+            gameShell->getNetClient()->CreateGame(conn, gameName, mission, playerName, password);
         }
         return 0;
     }
@@ -93,20 +106,18 @@ void onMMMultiplayerHostTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, i
 
 /// List and button handlers
 
-std::vector<MissionDescription> multiplayerSaves;
-
 void fillMultiplayerHostList() {
     CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST);
     list->NewItem(1);
     list->Clear();
     std::string first = qdTextDB::instance().getText("Interface.Menu.Multiplayer.StartNewGame");
     list->AddString(first.c_str(), 0);
-    list->SetCurSel(0);
-    if (multiplayerSaves.empty()) {
-        clearMapDescWnd(SQSH_MM_MULTIPLAYER_HOST_MAP, SQSH_MM_MULTIPLAYER_HOST_MAP_DESCR_TXT, -1);
-    } else {
-        setupMapDescWnd(0, multiplayerSaves, SQSH_MM_MULTIPLAYER_HOST_MAP, SQSH_MM_MULTIPLAYER_HOST_MAP_DESCR_TXT, -1);
+    for (int i = 0; i < multiplayerSaves.size(); i++) {
+        std::string name = multiplayerSaves[i].missionName();
+        list->AddString(name.c_str(), 0);
     }
+    list->SetCurSel(0);
+    clearMapDescWnd(SQSH_MM_MULTIPLAYER_HOST_MAP, SQSH_MM_MULTIPLAYER_HOST_MAP_DESCR_TXT, -1);
 }
 
 void onListSelect() {
@@ -130,8 +141,8 @@ void onMMMultiplayerHostMapList(CShellWindow* pWnd, InterfaceEventCode code, int
     if ( code == EVENT_PRESSED && intfCanHandleInput() ) {
         CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST);
         int pos = list->GetCurSel() - 1;
-        if (0 <= pos && pos < multiplayerMaps.size()) {
-            setupMapDescWnd(pos - 1, multiplayerSaves, SQSH_MM_MULTIPLAYER_HOST_MAP, SQSH_MM_MULTIPLAYER_HOST_MAP_DESCR_TXT, -1);
+        if (0 <= pos && pos < multiplayerSaves.size()) {
+            setupMapDescWnd(pos, multiplayerSaves, SQSH_MM_MULTIPLAYER_HOST_MAP, SQSH_MM_MULTIPLAYER_HOST_MAP_DESCR_TXT, -1, GT_loadMPGame);
         } else {
             clearMapDescWnd(SQSH_MM_MULTIPLAYER_HOST_MAP, SQSH_MM_MULTIPLAYER_HOST_MAP_DESCR_TXT, -1);
         }

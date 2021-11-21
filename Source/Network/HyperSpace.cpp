@@ -32,7 +32,7 @@ const char * KEY_REPLAY_REEL="replay";
 #define FILE_REPLAY_MAGIC_LEN 20
 static const char filePlayReelID[FILE_REPLAY_MAGIC_LEN] = "PerimeterReplay001\0";
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 class cMonowideFont {
 	cFont* pfont;
 public:
@@ -51,7 +51,7 @@ public:
 	}
 };
 cMonowideFont* pMonowideFont;
-#endif //_FINAL_VERSION_
+#endif //PERIMETER_DEBUG
 
 bool checkPlayReelMagic(XStream& fi) {
     char magic[FILE_REPLAY_MAGIC_LEN];
@@ -113,9 +113,9 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	confirmQuant=0;
 	signatureGame=startCRC32;
 
-#ifndef _FINAL_VERSION_
-	pMonowideFont= new cMonowideFont();
-#endif //_FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
+	pMonowideFont = new cMonowideFont();
+#endif
 
 	//Очистка списков команд
 	{
@@ -333,9 +333,9 @@ terHyperSpace::~terHyperSpace()
 	endQuant_inReplayListGameCommands=0;
 
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	delete pMonowideFont;
-#endif //_FINAL_VERSION_
+#endif
 	SDL_DestroyMutex(m_FullListGameCommandLock);
 
 }
@@ -594,14 +594,15 @@ bool terHyperSpace::SingleQuant()
 
 void terHyperSpace::ShowInfo()
 {
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	if(pNetCenter){
 		XBuffer msg;
 		msg.SetDigits(10);
 		msg < "curQnt: " <= currentQuant;
+		msg < " confirmQnt: " <= confirmQuant;
+		msg < " diffQnt: " <= (currentQuant - confirmQuant);
 		msg < " intrnlLagQnt: " <= lagQuant;
-		msg < " dropQnt:" <= dropQuant;
-		msg < " confirmQnt" <= confirmQuant;
+		msg < " dropQnt: " <= dropQuant;
 
 		//terRenderDevice->SetFont(pMonowideFont->getFont());
 		//terRenderDevice->OutText(20, 40, msg, sColor4f(1, 1, 1, 1));

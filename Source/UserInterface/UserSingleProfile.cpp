@@ -47,10 +47,14 @@ void UserSingleProfile::scanProfiles() {
     for (const auto & entry : get_content_entries_directory(getAllSavesDirectory())) {
         if (entry->is_directory) {
             std::string path = std::filesystem::path(entry->path_content).filename().string();
-            profiles.emplace_back(Profile(path));
+            std::string path_lwr = path;
+            strlwr(path_lwr.data());
+            if (startsWith(path_lwr, "profile")) {
+                profiles.emplace_back(Profile(path));
+            }
         }
     }
-	for (int i = 0, s = profiles.size(); i < s; i++) {
+	for (size_t i = 0, s = profiles.size(); i < s; i++) {
 		loadProfile(i);
 		maxIndex = max(maxIndex, profiles[i].dirIndex);
 	}
@@ -151,10 +155,9 @@ void UserSingleProfile::setCurrentProfileIndex(int index) {
 void UserSingleProfile::deleteSave(const std::string& name) {
     std::string savesDir = getSavesDirectory();
 	std::string fullName = savesDir + name;
-	std::remove( (fullName + ".spg").c_str() );
-	std::remove( (fullName + ".gmp").c_str() );
-	std::remove( (fullName + ".dat").c_str() );
-	std::remove( (fullName + ".sph").c_str() );
+    for (auto& ext : {".spg", ".bin", ".sph", ".gmp", ".dat"}) {
+        std::remove((fullName + ext).c_str());
+    }
     scan_resource_paths(savesDir);
 }
 
@@ -163,7 +166,14 @@ std::string UserSingleProfile::getAllSavesDirectory() {
 }
 
 std::string UserSingleProfile::getSavesDirectory() const {
-	return getAllSavesDirectory() + profiles[currentProfileIndex].dirName + PATH_SEP;
+    std::string savesDir = getAllSavesDirectory();
+    if (getLastGameType() == UserSingleProfile::MULTIPLAYER) {
+        //Workaround for when inside multiplayer
+        savesDir += "Multiplayer";
+    } else {
+        savesDir += profiles[currentProfileIndex].dirName;
+    }
+	return savesDir + PATH_SEP;
 }
 
 void UserSingleProfile::loadProfile(int index) {

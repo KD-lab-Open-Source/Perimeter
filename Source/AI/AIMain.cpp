@@ -55,8 +55,9 @@ aiLog_(0)
 
 	onlyIfCoreDamaged_ = true;
 
-	if(player_data.realPlayerType == REAL_PLAYER_TYPE_AI)
-		setAI(true);
+	if(player_data.realPlayerType == REAL_PLAYER_TYPE_AI || player_data.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
+        setAI(true);
+    }
 }
 
 AIPlayer::~AIPlayer()
