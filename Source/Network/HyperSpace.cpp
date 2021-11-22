@@ -250,8 +250,9 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 {
 
 	XStream fo(0);
-	if(!fo.open(convert_path_content(fname, true), XS_OUT)){
-//		::MessageBox(0, "It is impossible to write down a game reel on a disk ", "Save play reel error:", MB_OK);
+    std::string path = convert_path_content(fname, true);
+    if (path.empty()) path = fname;
+	if(!fo.open(path, XS_OUT)){
 		return SAVE_REPLAY_RW_ERROR;
 	}
 
