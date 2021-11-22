@@ -24,12 +24,12 @@ struct XStream
 	typedef std::fstream* XSHANDLE;
 
 	XSHANDLE handler;
-    size_t	pos;
+    int64_t	pos;
 	bool	eofFlag;
 	int	ErrHUsed;
 	std::string fname;
-	size_t	extSize;
-	size_t	extPos;
+	int64_t	extSize;
+	int64_t	extPos;
 
 	XStream(int err = 1);
     XStream(const char* name, unsigned flags,int err = 1);
@@ -38,15 +38,15 @@ struct XStream
 
     int	open(const char* name, unsigned f = XS_IN);
     int	open(const std::string& name, unsigned f = XS_IN);
-	int	open(XStream* owner,size_t start,size_t ext_sz = -1);
+	int	open(XStream* owner,int64_t start,int64_t ext_sz = -1);
 	void	close();
-	size_t read(void* buf, size_t len);
-    size_t write(const void* buf, size_t len);
-    size_t	seek(size_t offset, int dir);
-    size_t	tell() const { return pos; }
-	char*	getline(char* buf, size_t len);
+	int64_t read(void* buf, int64_t len);
+    int64_t write(const void* buf, int64_t len);
+    int64_t	seek(int64_t offset, int dir);
+    int64_t	tell() const { return pos; }
+	char*	getline(char* buf, int64_t len);
 	bool eof() const { return eofFlag || pos >= size(); }
-    size_t	size() const;
+    int64_t	size() const;
 	//int	gethandler(){ return (int)handler; } //TODO seems unused? also not allowed in modern C
 	//void	gettime(unsigned& date,unsigned& time);
 	void	flush();

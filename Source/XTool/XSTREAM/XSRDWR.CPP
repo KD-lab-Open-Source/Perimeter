@@ -1,9 +1,9 @@
 #include <fstream>
 #include "xstream.h"
 
-size_t XStream::read(void* buf, size_t len)
+int64_t XStream::read(void* buf, int64_t len)
 {
-    size_t ret;
+    int64_t ret;
 	/*
 	if(!ReadFile(handler,buf,len,&ret,0)) {
         if (ErrHUsed) ErrH.Abort(readMSG, XERR_USER, GetLastError(), fname);
@@ -27,9 +27,9 @@ size_t XStream::read(void* buf, size_t len)
 	return ret;
 }
 
-size_t XStream::write(const void* buf, size_t len)
+int64_t XStream::write(const void* buf, int64_t len)
 {
-    size_t ret;
+    int64_t ret;
 	/*
 	if(!WriteFile(handler,buf,len,&ret,0)) {
         if (ErrHUsed) ErrH.Abort(writeMSG, XERR_USER, GetLastError(), fname);

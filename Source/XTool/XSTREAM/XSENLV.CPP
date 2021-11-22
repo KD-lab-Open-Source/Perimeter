@@ -73,9 +73,9 @@ int XStream::open(const std::string& name, unsigned f)
     //Do a conversion for Windows -> POSIX paths
     std::string path = convert_path_native(name);
 
-    std::fstream *file = open_file(path.c_str(), f);
+    std::fstream *file = path.empty() ? nullptr : open_file(path.c_str(), f);
     handler = file;
-    if (file->is_open()) {
+    if (file && file->is_open()) {
         fname = path;
         pos = file->tellg();
         eofFlag = 0;
@@ -95,7 +95,7 @@ int XStream::open(const std::string& name, unsigned f)
     return 1;
 }
 
-int XStream::open(XStream* owner,size_t s,size_t ext_sz)
+int XStream::open(XStream* owner,int64_t s,int64_t ext_sz)
 {
     close();
 	fname = owner -> fname;
