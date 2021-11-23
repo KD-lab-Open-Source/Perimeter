@@ -1669,6 +1669,29 @@ public:
 	}
 };
 
+struct TargetData
+{
+    TargetData(terUnitBase* unit,float factor) : unit_(unit), factor_(factor) { }
+
+    bool operator == (const terUnitBase* unit) const { return unit_ == unit; }
+
+    terUnitBase* unit_;
+    float factor_;
+};
+
+struct TargetOrderingOp {
+    bool operator() (const TargetData& t0,const TargetData& t1) {
+        unsigned int t0unitID = t0.unit_->unitID();
+        unsigned int t1unitID = t1.unit_->unitID();
+        unsigned int t0playerID = t0.unit_->playerID();
+        unsigned int t1playerID = t1.unit_->playerID();
+        return std::tie(t0.factor_, t0unitID, t0playerID)
+             > std::tie(t1.factor_, t1unitID, t1playerID);
+    }
+};
+
+typedef std::vector<TargetData> TargetDataList;
+
 class SquadSearchTargetsScanOp
 {
 public:
@@ -1703,31 +1726,11 @@ public:
 		targets_[0].reserve(16);
 	}
 
-	struct TargetData
-	{
-		TargetData(terUnitBase* unit,float factor) : unit_(unit), factor_(factor) { }
-
-		bool operator > (const TargetData& data) const { return factor_ < data.factor_; }
-		bool operator == (const terUnitBase* unit) const { return unit_ == unit; }
-
-		terUnitBase* unit_;
-		float factor_;
-	};
-
-	typedef std::vector<TargetData> TargetDataList;
-	typedef TargetDataList::iterator iterator;
-	typedef TargetDataList::const_iterator const_iterator;
-
 	const TargetDataList& targets(int idx = 0) const { return targets_[idx]; }
 
-	struct TargetOrderingOp
-	{
-		bool operator() (const TargetData& t0,const TargetData& t1){
-			return t0.factor_ > t1.factor_;
-		}
-	};
-	
-	void sortTargets(int idx = 0){ std::sort(targets_[idx].begin(),targets_[idx].end(),TargetOrderingOp()); }
+    void sortTargets(int idx = 0) {
+        std::sort(targets_[idx].begin(), targets_[idx].end(), TargetOrderingOp());
+    }
 
 	void operator()(terUnitBase* unit2)
 	{
@@ -1817,31 +1820,11 @@ public:
 		targets_.reserve(16);
 	}
 
-	struct TargetData
-	{
-		TargetData(terUnitBase* unit,float factor) : unit_(unit), factor_(factor) { }
-
-		bool operator > (const TargetData& data) const { return factor_ < data.factor_; }
-		bool operator == (const terUnitBase* unit) const { return unit_ == unit; }
-
-		terUnitBase* unit_;
-		float factor_;
-	};
-
-	typedef std::vector<TargetData> TargetDataList;
-	typedef TargetDataList::iterator iterator;
-	typedef TargetDataList::const_iterator const_iterator;
-
 	const TargetDataList& targets() const { return targets_; }
-
-	struct TargetOrderingOp
-	{
-		bool operator() (const TargetData& t0,const TargetData& t1){
-			return t0.factor_ > t1.factor_;
-		}
-	};
-	
-	void sortTargets(){ sort(targets_.begin(),targets_.end(),TargetOrderingOp()); }
+    
+	void sortTargets() {
+        std::sort(targets_.begin(), targets_.end(), TargetOrderingOp());
+    }
 
 	void operator()(terUnitBase* unit2)
 	{
@@ -1951,7 +1934,7 @@ void terUnitSquad::attackQuant()
 				bool attack_flag = false;
 
 				if(currentMutation() == UNIT_ATTRIBUTE_NONE){
-					SquadSearchTargetsScanOp::const_iterator ti;
+					TargetDataList::const_iterator ti;
 					FOR_EACH(op.targets(),ti){
 						if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_SOLDIER))
 							attack_flag = true;
@@ -1983,7 +1966,7 @@ void terUnitSquad::attackQuant()
 					}
 				}
 				else {
-					SquadSearchTargetsScanOp::const_iterator ti;
+                    TargetDataList::const_iterator ti;
 					FOR_EACH(op.targets(),ti){
 						if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_))))
 							attack_flag = true;
@@ -2261,7 +2244,7 @@ void terUnitSquad::techniciansQuant()
 
 	if(op.targets().empty()) return;
 
-	SquadTechnicianSearchTargetsScanOp::const_iterator ti = op.targets().begin();
+    TargetDataList::const_iterator ti = op.targets().begin();
 
 	FOR_EACH(Units, ui){
 		if((*ui)->attr().ID == UNIT_ATTRIBUTE_TECHNIC && !(*ui)->hasAttackTarget() && (*ui)->isWeaponReady()){
