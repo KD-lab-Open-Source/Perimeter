@@ -98,6 +98,8 @@ private:
 class BinaryOArchive 
 {
 public:
+    bool binary_friendly = true; //Useless, just to make it par with XPrmOArchive
+    
 	BinaryOArchive(const char* fname = nullptr, int version = 0);
 	~BinaryOArchive();
 

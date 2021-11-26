@@ -87,6 +87,9 @@ struct XBuffer
     XBuffer& operator< (double v) { return write(v); }
     XBuffer& operator< (const XBuffer& v) {
         uint32_t len = v.tell();
+        if (len == 0 && 0 < v.length()) {
+            len = v.length();
+        }
         write(len);
         if (len) {
             write(v.address(), len);

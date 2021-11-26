@@ -65,7 +65,10 @@ There is instructions available in:
 - Experimental resizable windows
 - Better save game map / content checking
 - Experimental support for Perimeter Emperor Testament
-- Experimental support for TCP/IP multiplayer
+- Experimental enhancements for multiplayer:
+  - TCP/IP protocol instead of DirectPlay8
+  - Support for saving and continuing multiplayer saves
+  - Experimental recovery mechanism for desyncs
 - Experimental support for MacOS
 
 ## Repository contents

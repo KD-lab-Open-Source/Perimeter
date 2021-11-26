@@ -185,10 +185,10 @@ public:
 			else break;
 		}
 	}
-	void writeLogList2File(XStream& file){
+	void writeLogList2Buffer(XBuffer& buf){
 		std::list<sLogElement>::iterator p;
 		for(p=logList.begin(); p!=logList.end(); p++){
-			file.write(p->pLog->address(), p->pLog->tell());
+            buf.write(p->pLog->address(), p->pLog->tell());
 		}
 	}
 

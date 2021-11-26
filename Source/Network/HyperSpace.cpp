@@ -10,7 +10,6 @@
 #include "GameShell.h"
 #include "files/files.h"
 #include "GameContent.h"
-#include "NetConnectionAux.h"
 
 bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
@@ -141,7 +140,7 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 //	if(check_command_line(KEY_SAVE_PLAY_REEL)){
 		flag_savePlayReel=true;
 //	}
-	if(mission.gameType_==GT_playRellGame){
+	if(mission.gameType_ == GT_PLAY_RELL){
 		flag_rePlayReel=true;
 		loadPlayReel(mission.playReelPath().c_str());
 	}
@@ -833,42 +832,6 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 				putInputGameCommand2fullListGameCommandAndCheckAllowedRun(pnc);
 			}
 			break;
-		case NETCOM_4C_ID_SAVE_LOG:
-			{
-				netCommand4C_SaveLog nc(in_buffer);
-
-                std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
-                terminate_with_char(crash_dir, PATH_SEP);
-                crash_dir += nc.gameID
-                        + "_" + pNetCenter->m_PlayerName
-                        + PATH_SEP;
-                std::filesystem::create_directories(crash_dir);
-                scan_resource_paths(crash_dir);
-
-                //Write net log
-				XStream f(crash_dir + "netlog.txt", XS_OUT);
-				f < currentVersion < "\r\n";
-                f < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
-                f < " HostNETID: " <= pNetCenter->m_hostNETID;
-                f < " LocalNETID: " <= pNetCenter->m_localNETID;
-                f < " DesyncNETID: " <= nc.netid;
-                f < "\r\n";
-				writeLogList2File(f);
-				f.close();
-
-                //Attempt to save state
-                MissionDescription& mission = gameShell->CurrentMission;
-                mission.setSaveName((crash_dir + "save").c_str());
-                universe()->universalSave(mission, true);
-
-                //Attempt to save reel
-                universe()->savePlayReel((crash_dir + "reel").c_str());
-                
-                fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
-				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_DESYNC);
-			}
-			break;
-
 		case EVENT_ID_SERVER_TIME_CONTROL: {
 			terEventControlServerTime event(in_buffer);
 			SetServerSpeedScale(event.scale);

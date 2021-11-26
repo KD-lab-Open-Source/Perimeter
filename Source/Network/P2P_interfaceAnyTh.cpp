@@ -47,9 +47,9 @@ int PNetCenter::AddClient(PlayerData& pd)
     
     MissionDescription& mission = *hostMissionDescription;
 	int idxPlayerData=-1;
-	if (mission.gameType_==GT_createMPGame) {
+	if (mission.gameType_ == GT_MULTI_PLAYER_CREATE) {
 		idxPlayerData=mission.connectNewPlayer2PlayersData(pd);
-	} else if(mission.gameType_==GT_loadMPGame) {
+	} else if(mission.gameType_ == GT_MULTI_PLAYER_LOAD) {
 		idxPlayerData=mission.connectLoadPlayer2PlayersData(pd);
 	}
 	
@@ -93,6 +93,7 @@ void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame*
         if (i < 0 || i >= hostMissionDescription->playerAmountScenarioMax
             || hostMissionDescription->playersData[i].netid != netid) {
             LogMsg("Discarding game command from incorrect netid %llu to player %d\n", netid, i);
+            delete pCommand;
             return;
         }
     }
@@ -103,20 +104,10 @@ void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame*
 	m_nQuantCommandCounter++;
 }
 
-void PNetCenter::ClearDeletePlayerGameCommand()
-{
-	std::list<netCommand4G_ForcedDefeat*>::iterator p;
-	for(p=m_DeletePlayerCommand.begin(); p!=m_DeletePlayerCommand.end(); p++){
-		delete *p;
-	}
-	m_DeletePlayerCommand.clear();
-}
-
-
-bool PNetCenter::ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, const char* str)
+bool PNetCenter::ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_ptr<LocalizedText> text)
 {
 	{
-		interfaceCommandList.push_back(sPNCInterfaceCommand(ic, str));
+		interfaceCommandList.push_back(new sPNCInterfaceCommand(ic, std::move(text)));
 	}
 	return 1;
 }

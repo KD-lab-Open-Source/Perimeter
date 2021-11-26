@@ -301,9 +301,9 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
             xassert(idx!=-1);
             if(idx!=-1){
                 int playerID=hostMissionDescription->playersData[idx].playerID;
-                netCommand4G_ForcedDefeat* pncfd=new netCommand4G_ForcedDefeat(playerID);
+                //netCommand4G_ForcedDefeat* pncfd=new netCommand4G_ForcedDefeat(playerID);
                 //PutGameCommand2Queue_andAutoDelete(pncfd);
-                m_DeletePlayerCommand.push_back(pncfd);
+                //m_DeletePlayerCommand.push_back(pncfd);
             }
         }
 
@@ -324,19 +324,6 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
                 LogMsg("error in missionDescription\n");
     }
     else {
-        if(m_bStarted){
-            //idx == playerID (на всякий случай);
-            int idx=clientMissionDescription.findPlayer(netid);
-            xassert(idx!=-1);
-            if(idx!=-1){
-                int playerID=clientMissionDescription.playersData[idx].playerID;
-                netCommand4G_ForcedDefeat* pncfd=new netCommand4G_ForcedDefeat(playerID);
-                //PutGameCommand2Queue_andAutoDelete(pncfd);
-                //Нужно в случае миграции хоста
-                m_DeletePlayerCommand.push_back(pncfd);
-            }
-        }
-
         if (netid == NETID_HOST) {
             ExecuteInternalCommand(PNC_COMMAND__END_GAME, false);
             ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
@@ -347,9 +334,13 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
         xassert(idx!=-1);
         if(idx!=-1){
             //отсылка сообщения о том, что игрок вышел
+            PlayerData& pd = clientMissionDescription.playersData[idx];
+            std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
+                pd.name()
+            );
             ExecuteInterfaceCommand(
-                    normalExit ? PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT : PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED,
-                    clientMissionDescription.playersData[idx].name()
+                normalExit ? PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT : PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED,
+                std::move(text)
             );
         }
         //Удаление игрока из clientMD

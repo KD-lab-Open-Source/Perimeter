@@ -11,7 +11,7 @@
 
 const SDL_threadID bad_thread_id=-1;
 
-HTManager* HTManager::self=NULL;
+HTManager* HTManager::self=nullptr;
 HTManager::HTManager(bool ht)
 {
 	lag_stat=new LagStatistic;
@@ -28,7 +28,7 @@ HTManager::HTManager(bool ht)
 	scale_time.setAverageInterval(-1);
 	self=this;
 	init_logic=false;
-	end_logic=NULL;
+	end_logic=nullptr;
 
 	start_timer=false;
 	dtime=100;
@@ -40,7 +40,7 @@ HTManager::~HTManager()
 {
     MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
 	done();
-	self=NULL;
+	self=nullptr;
 	delete lag_stat;
 }
 
@@ -108,13 +108,13 @@ void HTManager::GameClose()
     MT_SET_TYPE(MT_LOGIC_THREAD | MT_GRAPH_THREAD);
 	if(use_ht && logic_thread_id!=bad_thread_id)
 	{
-		end_logic=CreateEvent(NULL,FALSE,FALSE,NULL);
+		end_logic=SDL_CreateSemaphore(0);
 
-		uint32_t ret=WaitForSingleObject(end_logic, INFINITE);
-		xassert(ret==WAIT_OBJECT_0);
+		uint32_t ret= SDL_SemWait(end_logic);
+		xassert(ret==0);
 
-        DestroyEvent(end_logic);
-		end_logic=NULL;
+        SDL_DestroySemaphore(end_logic);
+		end_logic=nullptr;
 		logic_thread_id=bad_thread_id;
 	}
 
@@ -142,7 +142,7 @@ void HTManager::logic_thread()
         debug_dump_mt_tls();
     }
 
-	while(end_logic==NULL)
+	while(end_logic== nullptr)
 	{
 		while(!applicationIsGo())
 			Sleep(10);
@@ -181,7 +181,7 @@ void HTManager::logic_thread()
 			Sleep(10);
 	}
 
-	SetEvent(end_logic);
+	SDL_SemPost(end_logic);
 }
 
 bool HTManager::Quant()

@@ -15,6 +15,7 @@ extern unsigned int crc32(const unsigned char *address, unsigned int size, unsig
 template<class OArchive, class T>
 static uint32_t getSerializationCRC(T& t, uint32_t crc, int floatDigits = 0) {
     OArchive ar;
+    ar.binary_friendly = true;
     XBuffer& buf = ar.buffer();
     if (floatDigits) {
         buf.SetDigits(floatDigits);

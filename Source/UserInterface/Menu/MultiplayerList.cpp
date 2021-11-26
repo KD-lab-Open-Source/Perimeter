@@ -44,10 +44,10 @@ int startCmdlineQuant(float, float ) {
                     MissionDescription* mission;
                     if (cmdLineData.save.empty()) {
                         std::string missionName = std::string("RESOURCE/MULTIPLAYER/") + multiplayerMaps[0].missionName();
-                        mission = new MissionDescription(missionName.c_str(), GT_createMPGame);
+                        mission = new MissionDescription(missionName.c_str(), GT_MULTI_PLAYER_CREATE);
                     } else {
                         std::string missionName = std::string("RESOURCE/SAVES/MULTIPLAYER/") + cmdLineData.save;
-                        mission = new MissionDescription(missionName.c_str(), GT_loadMPGame);
+                        mission = new MissionDescription(missionName.c_str(), GT_MULTI_PLAYER_LOAD);
                         mission->loadIntoMemory();
                     }
                     _shellIconManager.initialMenu = SQSH_MM_MULTIPLAYER_LOBBY_SCR;

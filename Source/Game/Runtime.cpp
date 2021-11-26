@@ -239,9 +239,7 @@ void CrashHandler()
         fprintf(stderr, "Crash reel result: %d\n", statereel);
 
         //Attempt to save state
-        MissionDescription& mission = gameShell->CurrentMission;
-        mission.setSaveName((crash + "save").c_str());
-        bool statesave = universe()->universalSave(mission, true);
+        bool statesave = gameShell->universalSave((crash + "save").c_str(), true);
         fprintf(stderr, "Crash save result: %d\n", statesave);
     }
 }

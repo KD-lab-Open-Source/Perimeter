@@ -1,6 +1,7 @@
 #ifndef __P2P_INTERFACE_H__
 #define __P2P_INTERFACE_H__
 
+#include <Localization.h>
 #include "NetIncludes.h"
 #include "NetComEventBuffer.h"
 #include "CommonEvents.h"
@@ -93,6 +94,9 @@
 
  */
 
+extern const int PNC_DESYNC_RESTORE_ATTEMPTS;
+extern const int PNC_DESYNC_RESTORE_MODE_FULL;
+
 #ifdef PERIMETER_DEBUG
 #define LogMsg(...) fprintf(stdout, __VA_ARGS__)
 #else
@@ -115,6 +119,16 @@ public:
 // {DF006380-BF70-4397-9A18-51133CEEE3B6}
 
 int InternalServerThread(void* lpParameter);
+
+enum e_PNCDesyncState {
+    PNC_DESYNC_NONE,
+    PNC_DESYNC_DETECTED,
+    PNC_DESYNC_NOTIFIED,
+    PNC_DESYNC_ACKNOLEDGED,
+    PNC_DESYNC_SENT_RESTORE,
+    PNC_DESYNC_RESTORE_FINISHED,
+    PNC_DESYNC_RESTORE_FAILED
+};
 
 struct PClientData
 {
@@ -140,7 +154,12 @@ struct PClientData
 
 	unsigned int confirmQuant;
     
-    bool desync;
+    //Desync recovery vars
+    int desync_amount;
+    int desync_last_time;
+    e_PNCDesyncState desync_state;
+    std::unique_ptr<MissionDescription> desync_missionDescription;
+    XBuffer desync_netlog;
 
 	PClientData(const char* name, NETID netid);
 	~PClientData();
@@ -167,6 +186,7 @@ enum e_PNCInterfaceCommands {
 	PNC_INTERFACE_COMMAND_CONNECTION_DROPPED,
 	PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT,
 	PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED,
+    PNC_INTERFACE_COMMAND_INFO_MESSAGE,
 
 	PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME,
 	PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED,
@@ -175,14 +195,14 @@ enum e_PNCInterfaceCommands {
 };
 struct sPNCInterfaceCommand {
 	e_PNCInterfaceCommands icID;
-	std::string textInfo;
+    std::unique_ptr<LocalizedText> text = nullptr;
 
-	sPNCInterfaceCommand() {
-		icID=PNC_INTERFACE_COMMAND_NONE;
-	}
-	explicit sPNCInterfaceCommand(e_PNCInterfaceCommands _icID, const char* str=0){
+    sPNCInterfaceCommand() {
+        icID = PNC_INTERFACE_COMMAND_NONE;
+    }
+	explicit sPNCInterfaceCommand(e_PNCInterfaceCommands _icID, std::unique_ptr<LocalizedText> text_ = nullptr){
 		icID=_icID;
-		if(str) textInfo=str;
+		if (text_) text=std::move(text_);
 	}
 };
 
@@ -207,7 +227,8 @@ enum e_PNCInternalCommand{
 	PNC_COMMAND__ABORT_PROGRAM,
 	
 	PNC_COMMAND__END_GAME,
-	PNC_COMMAND__START_FIND_HOST
+	PNC_COMMAND__START_FIND_HOST,
+    PNC_COMMAND__DESYNC
 
 };
 
@@ -219,7 +240,6 @@ enum e_PNCState{
 	PNC_STATE__CLIENT_FIND_HOST=1,
 
 	PNC_STATE__CONNECTION=2,
-	//PNC_STATE__INFINITE_CONNECTION_2_IP=3,
 	PNC_STATE__CLIENT_TUNING_GAME=4,
 	PNC_STATE__CLIENT_LOADING_GAME=PNC_State_GameRun|5,
 	PNC_STATE__CLIENT_GAME=PNC_State_GameRun|6,
@@ -241,8 +261,12 @@ enum e_PNCState{
 	PNC_STATE__NEWHOST_PHASE_A=PNC_State_GameRun|PNC_State_Host|15,
 	PNC_STATE__NEWHOST_PHASE_B=PNC_State_GameRun|PNC_State_Host|16,
 
+    //Desync states
+    PNC_STATE__CLIENT_DESYNC=PNC_State_GameRun|17,
+    PNC_STATE__HOST_DESYNC=PNC_State_GameRun|PNC_State_Host|18,
+
 	// Состояние завершения
-	PNC_STATE__ENDING_GAME=17
+	PNC_STATE__ENDING_GAME=19
 };
 
 enum e_PNCStateClient{
@@ -290,37 +314,13 @@ public:
 	std::list<e_PNCInternalCommand> internalCommandList;
 	HANDLE hSecondThreadInitComplete;
 	HANDLE hCommandExecuted;
-	std::list<sPNCInterfaceCommand> interfaceCommandList;
+	std::list<sPNCInterfaceCommand*> interfaceCommandList;
 
 	//typedef hash_map<NETID, PClientData*> ClientMapType;
 	typedef std::vector<PClientData*> ClientMapType;
 
 	e_PNCState m_state;
 	const char* getStrState() const;
-
-
-	e_PNCStateClient m_clientState;
-	e_PNCStateClient m_previsionClientState;
-	e_PNCStateHost m_hostState;
-	e_PNCStateHost m_previsionHostState;
-	void setClientStateAndStorePrevisionState(e_PNCStateClient state){
-		m_previsionClientState=m_clientState;
-		m_clientState=state;
-	}
-	void restorePrevisionClientState(){
-		m_clientState=m_previsionClientState;
-	}
-
-	void setHostStateAndStorePrevisionState(e_PNCStateHost state){
-		m_previsionHostState=m_hostState;
-		m_hostState=state;
-	}
-	void restorePrevisionHostState(){
-		m_hostState=m_previsionHostState;
-	}
-
-	unsigned char m_amountPlayersInHost; //info only
-	unsigned char m_amountPlayerInDP;  //info only
 
 	//int m_quantPeriod;
 	size_t m_nextQuantTime;
@@ -347,10 +347,8 @@ public:
 	bool           m_bStarted;
 
 	std::list<netCommandGeneral*>   m_CommandList;
-	std::list<netCommand4G_ForcedDefeat*> m_DeletePlayerCommand;
 
 	void ClearCommandList();
-	void ClearDeletePlayerGameCommand();
 
 
 	///HANDLE             m_hPlayerListReady;
@@ -369,7 +367,6 @@ public:
 	void UpdateCurrentMissionDescription4C();
 	void CheckClients();
 	void DumpClients();
-	void WaitForAllClientsReady(int ms);
 	void ResetAllClients();
 
 //	void QuantTimeProc();
@@ -400,7 +397,7 @@ public:
 	void clearInOutClientHostBuffers();
 
 	bool ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution);
-	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, const char* str=0);
+	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_ptr<LocalizedText> text = nullptr);
 
 	void CreateGame(const NetAddress& connection, const std::string& gameName, MissionDescription* mission, const std::string& playerName, const std::string& password="");
 
@@ -477,7 +474,7 @@ public:
 	}
 
     bool isSaveGame() {
-        return lobbyMissionDescription.gameType_ == GT_loadMPGame;
+        return lobbyMissionDescription.gameType_ == GT_MULTI_PLAYER_LOAD;
     }
 
     NETID	m_hostNETID;

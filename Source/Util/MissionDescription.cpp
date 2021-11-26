@@ -97,7 +97,7 @@ MissionDescription::MissionDescription(const char* fname, GameType gameType)
 
     gameType_ = gameType;
 
-    if(gameType_ == GT_playRellGame){
+    if(gameType_ == GT_PLAY_RELL){
         setReelName(fname);
     } else {
         setSaveName(fname);
@@ -111,29 +111,33 @@ void MissionDescription::setSaveName(const char* fname)
     //Extract the resource relative path for this file, so we can save/send it without breaking compat
     std::string tmp = fname;
     
-    //First try full path as resource (existing file)
-    filesystem_entry* entry = get_content_entry(tmp);
-    
-    if (entry) {
-        savePathKey_ = entry->key;
+    if (tmp.empty()) {
+        savePathKey_.clear();
     } else {
-        //Otherwise try only parent path (new file)
-        std::string parent;
-        std::string filename;
-        split_path_parent(tmp, parent, &filename);
-        entry = get_content_entry(parent);
+        //First try full path as resource (existing file)
+        filesystem_entry* entry = get_content_entry(tmp);
+
         if (entry) {
-            savePathKey_ = entry->key + PATH_SEP + filename;
+            savePathKey_ = entry->key;
         } else {
-            //Not found? use provided path
-            savePathKey_ = convert_path_native(fname);
+            //Otherwise try only parent path (new file)
+            std::string parent;
+            std::string filename;
+            split_path_parent(tmp, parent, &filename);
+            entry = get_content_entry(parent);
+            if (entry) {
+                savePathKey_ = entry->key + PATH_SEP + filename;
+            } else {
+                //Not found? use provided path
+                savePathKey_ = convert_path_native(fname);
+            }
         }
-    }
-    
-    //Set extension to spg unless is spb (was this ever used?)
-    std::string extension = getExtension(savePathKey_, true);
-    if (extension != "spb" && extension != "spg") {
-        savePathKey_ = setExtension(savePathKey_, "spg");
+
+        //Set extension to spg unless is spb (was this ever used?)
+        std::string extension = getExtension(savePathKey_, true);
+        if (extension != "spb" && extension != "spg") {
+            savePathKey_ = setExtension(savePathKey_, "spg");
+        }
     }
 
     //Store resolved path too
@@ -497,13 +501,7 @@ bool MissionDescription::disconnectPlayer2PlayerDataByIndex(unsigned int idx)
 	xassert(idx < playerAmountScenarioMax);
 	if (idx < playerAmountScenarioMax) {
 		if (playersData[idx].realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
-            if (activePlayerID == -1) {
-                //Still on lobby, leave open
-                playersData[idx].realPlayerType = REAL_PLAYER_TYPE_OPEN;
-            } else {
-                //Game is running
-                playersData[idx].realPlayerType = REAL_PLAYER_TYPE_PLAYER_AI;
-            }
+            playersData[idx].realPlayerType = REAL_PLAYER_TYPE_OPEN;
         }
         playersData[idx].netid=NETID_NONE;
         return true;

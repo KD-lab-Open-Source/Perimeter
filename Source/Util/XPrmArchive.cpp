@@ -117,15 +117,63 @@ bool XPrmOArchive::close()
 }
 
 //////////////////////////////////////////////////////
+void XPrmOArchive::saveString(const char* value) {
+    buffer_ < value;
+}
+
 void XPrmOArchive::saveStringEnclosed(const char* prmString)
 {
 	if(prmString){
 		std::string s1 = prmString;
 		expand_spec_chars(s1);
 		buffer_ < "\"" < s1.c_str() < "\"";
-	}
-	else
-		buffer_ < "0";
+	} else {
+        buffer_ < "0";
+    }
+}
+
+void XPrmOArchive::openNode(const char* name) {
+    if(name) {
+        buffer_ < offset_.c_str() < name;
+        buffer_ < " = ";
+    }
+}
+
+void XPrmOArchive::closeNode(const char* name) {
+    if (name) {
+        buffer_ < (binary_friendly ? ";" : ";\r\n");
+    }
+}
+
+void XPrmOArchive::openBracket() {
+    if (binary_friendly) {
+        buffer_ < "{\n";
+    } else {
+        buffer_ < "{\r\n";
+        offset_ += "\t";
+    }
+}
+
+void XPrmOArchive::closeBracket() {
+    if (!binary_friendly) {
+        offset_.pop_back();
+    }
+    buffer_ < offset_.c_str() < "}";
+}
+
+void XPrmOArchive::openCollection(int counter){
+    openBracket();
+    buffer_ < offset_.c_str() <= counter < (binary_friendly ? ";" : ";\r\n");
+}
+
+void XPrmOArchive::closeCollection(bool erasePrevComma) {
+    if(erasePrevComma){
+        buffer_ -= (binary_friendly ? 1 : 3);
+        if (!binary_friendly) {
+            buffer_ < "\r\n";
+        }
+    }
+    closeBracket();
 }
 
 //////////////////////////////////////////////

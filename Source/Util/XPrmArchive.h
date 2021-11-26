@@ -13,6 +13,9 @@ class XPrmIArchive;
 class XPrmOArchive
 {
 public:
+    //Makes output more compressed and adequate for binary transmission
+    bool binary_friendly = false;
+    
 	XPrmOArchive(const char* fname = nullptr);
 	~XPrmOArchive();
 
@@ -83,50 +86,27 @@ public:
 private:
 	XBuffer buffer_;
 	std::string offset_;
-	std::string fileName_ = "";
+	std::string fileName_;
 
 	///////////////////////////////////
-	void saveString(const char* value) {
-		buffer_ < value;
-	}
+	void saveString(const char* value);
 	void saveStringEnclosed(const char* value);
 
-	void openNode(const char* name) {
-		if(name)
-			buffer_ < offset_.c_str() < name < " = ";
-	}
+	void openNode(const char* name);
+	void closeNode(const char* name);
 
-	void closeNode(const char* name) {
-		if(name)
-			buffer_ < ";\r\n";
-	}
+	void openBracket();
+	void closeBracket();
 
-	void openBracket() {
-		buffer_ < "{\r\n";
-		offset_ += "\t";
-	}
-	void closeBracket() {
-		offset_.pop_back();
-		buffer_ < offset_.c_str() < "}";
-	}
+	void openCollection(int counter);
+	void closeCollection(bool erasePrevComma);
 
-	void openCollection(int counter){
-		openBracket();
-		buffer_ < offset_.c_str() <= counter < ";\r\n";
-	}
-	template<class T>
-	void saveElement(const T& t) {
-		buffer_ < offset_.c_str();
-		(*this) & WRAP_NAME(t, 0);
-		buffer_ < ",\r\n";
-	}
-	void closeCollection(bool erasePrevComma) {
-		if(erasePrevComma){
-			buffer_ -= 3;
-			buffer_ < "\r\n";
-		}
-		closeBracket();
-	}
+    template<class T>
+    void saveElement(const T& t) {
+        buffer_ < offset_.c_str();
+        (*this) & WRAP_NAME(t, 0);
+        buffer_ < (binary_friendly ? "," : ",\r\n");
+    }
 
     template<class T>
     struct save_primitive_impl {
@@ -167,6 +147,24 @@ private:
 			ar.closeCollection(count);
 		}
     };
+
+    XPrmOArchive& operator&(const float& value) {
+        if (binary_friendly) {
+            encode_raw_float(&buffer_, value);
+        } else {
+            buffer_ <= value;
+        }
+        return *this;
+    }
+
+    XPrmOArchive& operator&(const double& value) {
+        if (binary_friendly) {
+            encode_raw_double(&buffer_, value);
+        } else {
+            buffer_ <= value;
+        }
+        return *this;
+    }
 
 	template<class T>
     XPrmOArchive& operator&(const T& value) {

@@ -12,6 +12,7 @@
 #include "ReelManager.h"
 #include <SDL_events.h>
 
+struct LocalizedText;
 class MissionEditor;
 
 struct CommandLineData {
@@ -42,8 +43,9 @@ public:
 	void switchToInitialMenu();
 
 	void MultiplayerGameStart(const MissionDescription& mission);
+    void MultiplayerGameRestore(const MissionDescription& mission);
 
-	bool universalSave(const char* name, bool userSave);
+	bool universalSave(const char* name, bool userSave, MissionDescription* missionOutput = nullptr);
 	SavePrm& savePrm() { return savePrm_; }
 	const SaveManualData& manualData() { return savePrm_.manualData; }
 	
@@ -247,7 +249,7 @@ public:
 	void showConnectFailedInGame(const std::string& playerList);
 	void hideConnectFailedInGame(bool connectionRestored = true);
 
-	void playerDisconnected(std::string& playerName, bool disconnectOrExit);
+    void serverMessage(LocalizedText* message);
 
 	enum GeneralErrorType {
 		GENERAL_CONNECTION_FAILED,

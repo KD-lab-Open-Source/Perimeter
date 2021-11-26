@@ -582,7 +582,7 @@ int terUniverse::SelectUnit(terUnitBase* p)
 //---------------------------------------------------------
 
 void MissionDescription::refresh() {
-    if(gameType_ != GT_playRellGame){
+    if(gameType_ != GT_PLAY_RELL){
         if (!savePathKey_.empty()) {
             savePathContent_ = resolve_mission_path(savePathKey_);
         }
@@ -604,11 +604,11 @@ void MissionDescription::refresh() {
 }
 
 void MissionDescription::loadDescription() {    
-    if (gameType_ == GT_playRellGame) {
+    if (gameType_ == GT_PLAY_RELL) {
         init();
         getMissionDescriptionInThePlayReelFile(playReelPath().c_str(), *this);
         //Set this again otherwise the game type of replay is set
-        gameType_ = GT_playRellGame;
+        gameType_ = GT_PLAY_RELL;
     } else {
         if (!savePathContent_.empty()) {
             if (getExtension(savePathContent_, true) == "spg") {
@@ -645,11 +645,11 @@ void MissionDescription::loadDescription() {
                         pd.clan = i;
                         pd.realPlayerType = REAL_PLAYER_TYPE_PLAYER;
                         break;
-                    case GT_createMPGame:
+                    case GT_MULTI_PLAYER_CREATE:
                         pd.clan = i;
                         pd.realPlayerType = REAL_PLAYER_TYPE_OPEN;
                         break;
-                    case GT_loadMPGame:
+                    case GT_MULTI_PLAYER_LOAD:
                         //Old multi saves have opened players with empty name when not in use, mark as closed
                         if (pd.realPlayerType == REAL_PLAYER_TYPE_OPEN && strlen(pd.name()) == 0) {
                             pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
@@ -667,7 +667,7 @@ void MissionDescription::loadDescription() {
                                 break;
                         }
                         break;
-                    case GT_playRellGame:
+                    default:
                         break;
                 }
             }
@@ -732,7 +732,7 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 }
 
 void MissionDescription::loadIntoMemory() {
-    XStream ff;
+    XStream ff(0);
     
     //Load saveprm
     SavePrm savePrm;
@@ -748,14 +748,6 @@ void MissionDescription::loadIntoMemory() {
         ff.read(binaryData.address(), ff.size());
         binaryData.set(ff.size());
     }
-    
-    //Load current attributes
-    XPrmOArchive oaScripts;
-    oaScripts.binary_friendly = true;
-    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
-    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
-    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
-    std::swap(scriptsData, oaScripts.buffer());
 }
 
 void MissionDescription::restart()
@@ -767,10 +759,20 @@ void MissionDescription::restart()
 
 //---------------------------------------------------------
 
-bool terUniverse::universalLoad(MissionDescription& mission, SavePrm& data, PROGRESSCALLBACK loadProgressUpdate) {
+bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data, PROGRESSCALLBACK loadProgressUpdate) {
     MTAuto lock(HTManager::instance()->GetLockLogic());
     
-    gameShell->CurrentMission = mission;
+    gameShell->CurrentMission = missionToLoad;
+    MissionDescription& mission = gameShell->CurrentMission;
+
+    switch (mission.gameType_) {
+        case GT_MULTI_PLAYER_RESTORE_PARTIAL:
+        case GT_MULTI_PLAYER_RESTORE_FULL:
+            mission.gameType_ = GT_MULTI_PLAYER_LOAD;
+            break;
+        default:
+            break;
+    }
     
     setLogicFp();
 
@@ -788,7 +790,7 @@ bool terUniverse::universalLoad(MissionDescription& mission, SavePrm& data, PROG
         XStream ff(0);
         if (mission.binaryData.length()) {
             std::swap(compressedData, mission.binaryData);
-        } else if (mission.gameType_ != GT_loadMPGame) {
+        } else if (mission.gameType_ != GT_MULTI_PLAYER_LOAD) {
             if (ff.open(setExtension(mission.savePathContent(), "bin"), XS_IN) && 0 < ff.size()) {
                 compressedData.alloc(ff.size());
                 ff.read(compressedData.address(), ff.size());
@@ -816,7 +818,7 @@ bool terUniverse::universalLoad(MissionDescription& mission, SavePrm& data, PROG
     }
 
     //Try legacy format (dat/gmp files)
-    if (!binaryDataLoaded && mission.gameType_ != GT_loadMPGame) {
+    if (!binaryDataLoaded && gameShell->CurrentMission.gameType_ != GT_MULTI_PLAYER_LOAD) {
         XStream ff(0);
         if (ff.open(setExtension(mission.savePathContent(), "gmp"), XS_IN) && 0 < ff.size()) {
             binaryMapData.alloc(ff.size());
@@ -1026,13 +1028,14 @@ bool terUniverse::universalLoad(MissionDescription& mission, SavePrm& data, PROG
     stream_interpolator.ClearData();
     
     mission.clearData();
+    missionToLoad.clearData();
 
     if (loadProgressUpdate) loadProgressUpdate(1);
     
     return true;
 }
 
-bool terUniverse::universalSave(const MissionDescription& mission, bool userSave, MissionDescription* destination)
+bool terUniverse::universalSave(MissionDescription& mission, bool userSave)
 {
 	SavePrm data;
 
@@ -1077,14 +1080,16 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
 	worldPlayer()->saveWorld(data);
 
 	gameShell->fillControlState(data.manualData.controls);
-	
-    if (destination) {
-        XPrmOArchive oa;
-        oa.binary_friendly = true;
-        oa << WRAP_NAME(data, "SavePrm");
-        std::swap(oa.buffer(), destination->saveData);
-    } else if(!mission.saveMission(data, userSave)) {
-        return false;
+
+    XPrmOArchive oaSavePrm;
+    oaSavePrm.binary_friendly = true;
+    oaSavePrm << WRAP_NAME(data, "SavePrm");
+    std::swap(oaSavePrm.buffer(), mission.saveData);
+    
+    if (!mission.savePathKey().empty()) {
+        if (!mission.saveMission(data, userSave)) {
+            return false;
+        }
     }
     
     //Binary data file content
@@ -1094,10 +1099,10 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
     //---------------------
     // Save Prm Binary
 
-    XPrmOArchive oa;
-    oa.binary_friendly = true;
-    oa << WRAP_NAME(savePrmBinary, "SavePrmBinary");
-    uncompressedData < oa.buffer();
+    XPrmOArchive oaSavePrmBinary;
+    oaSavePrmBinary.binary_friendly = true;
+    oaSavePrmBinary << WRAP_NAME(savePrmBinary, "SavePrmBinary");
+    uncompressedData < oaSavePrmBinary.buffer();
 
 	//---------------------
 	// Map changes
@@ -1107,7 +1112,7 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
     uncompressedData < binaryData;
     binaryData.set(0);
 
-	if (!destination && gameShell->missionEditor() && gameShell->missionEditor()->hardnessChanged()){
+	if (gameShell->missionEditor() && gameShell->missionEditor()->hardnessChanged()){
 		gameShell->missionEditor()->clearHardnessChanged();
 		vMap.saveHardness();
 	}
@@ -1139,19 +1144,15 @@ bool terUniverse::universalSave(const MissionDescription& mission, bool userSave
     binaryData.set(0);
 
     //---------------------
-
-    if (destination) {
-        //Compress and store binary data into destination
-        uncompressedData.compress(destination->binaryData);
+    //Compress and save binary data into file
+    if (uncompressedData.compress(mission.binaryData) != 0) {
+        return false;
+    }
+    if (mission.savePathKey().empty()) {
         return true;
     } else {
-        //Compress and save binary data into file
-        XBuffer compressData(uncompressedData.tell(), true);
-        if (uncompressedData.compress(compressData) != 0) {
-            return false;
-        }
         XStream ff(setExtension(mission.savePathContent(), "bin").c_str(), XS_OUT, 0);
-        ff.write(compressData, compressData.tell());
+        ff.write(mission.binaryData, mission.binaryData.tell());
         return !ff.ioError();
     }
 }

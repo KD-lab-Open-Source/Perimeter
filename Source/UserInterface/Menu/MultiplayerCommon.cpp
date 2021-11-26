@@ -45,6 +45,29 @@ int SwitchMultiplayerToLoadQuant(float, float ) {
     return 1;
 }
 
+int SwitchMultiplayerToRestoreQuant(float, float ) {
+    if (menuChangingDone) {
+        if (missionToExec.gameType_ == GT_MULTI_PLAYER_RESTORE_PARTIAL) {
+            MTAuto lock(HTManager::instance()->GetLockLogic());
+            MTAutoSkipAssert skip_assert;
+            universe()->clear();
+            universe()->universalLoad(missionToExec, gameShell->savePrm(), nullptr);
+            missionToExec.gameType_ = GT_MULTI_PLAYER_LOAD;
+            //Report host that we finished
+            gameShell->getNetClient()->GameIsReady();
+        } else {
+            gb_Music.FadeVolume(_fEffectButtonTotalTime * 0.001f);
+            HTManager::instance()->GameClose();
+            StartSpace();
+            _shellIconManager.SetModalWnd(0);
+            _shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
+            _shellIconManager.SwitchMenuScreens(-1, SQSH_MM_LOADING_MISSION_SCR);
+        }
+        return 0;
+    }
+    return 1;
+}
+
 int exitMultiplayerGameQuant(float, float ) {
     if (menuChangingDone) {
         //meassge to NetCenter
@@ -91,12 +114,17 @@ int multiplayerMapNotFoundQuant(float, float ) {
 
 void GameShell::MultiplayerGameStart(const MissionDescription& mission) {
     if (!isWorldIDValid(mission.worldID())
-     || (mission.gameType_ == GT_createMPGame && getMultiplayerMapNumber(mission.missionName()) == -1)) {
+        || (mission.gameType_ == GT_MULTI_PLAYER_CREATE && getMultiplayerMapNumber(mission.missionName()) == -1)) {
         _shellIconManager.AddDynamicHandler(multiplayerMapNotFoundQuant, CBCODE_QUANT);
     } else {
         missionToExec = mission;
         _shellIconManager.AddDynamicHandler(SwitchMultiplayerToLoadQuant, CBCODE_QUANT);
     }
+}
+
+void GameShell::MultiplayerGameRestore(const MissionDescription& mission) {
+    missionToExec = mission;
+    _shellIconManager.AddDynamicHandler(SwitchMultiplayerToRestoreQuant, CBCODE_QUANT);
 }
 
 //////////show/hide message ingame////////////////////

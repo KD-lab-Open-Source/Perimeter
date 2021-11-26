@@ -81,9 +81,11 @@ enum GameType {
 	GT_SINGLE_PLAYER,
 	GT_SINGLE_PLAYER_NO_AI,
 	GT_SINGLE_PLAYER_ALL_AI,
-	GT_createMPGame,
-	GT_loadMPGame,
-	GT_playRellGame
+	GT_MULTI_PLAYER_CREATE,
+	GT_MULTI_PLAYER_LOAD,
+	GT_PLAY_RELL,
+    GT_MULTI_PLAYER_RESTORE_PARTIAL,
+    GT_MULTI_PLAYER_RESTORE_FULL
 };
 
 class MissionDescription 
@@ -118,7 +120,7 @@ public:
 
 	int worldID() const { return worldID_; }
 
-	bool isMultiPlayer() const { return gameType_ == GT_createMPGame || gameType_ == GT_loadMPGame;	}
+	bool isMultiPlayer() const { return gameType_ == GT_MULTI_PLAYER_CREATE || gameType_ == GT_MULTI_PLAYER_LOAD;	}
 
 	int playersAmountScenarioMax() const { return playerAmountScenarioMax; }
 	int playersAmount() const;

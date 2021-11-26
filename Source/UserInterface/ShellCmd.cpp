@@ -106,7 +106,7 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 			xassert(0);
 		}
 
-		bool replay = gameShell->CurrentMission.gameType_ == GT_playRellGame;
+		bool replay = gameShell->CurrentMission.gameType_ == GT_PLAY_RELL;
 
 		CancelEditWorkarea();
 
@@ -155,7 +155,7 @@ bool CShellIconManager::getCurrentEnabledOperation() {
 
 int OnLBUpWorkarea(float,float)
 {
-	if (gameShell->CurrentMission.gameType_ != GT_playRellGame) {
+	if (gameShell->CurrentMission.gameType_ != GT_PLAY_RELL) {
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		_pShellDispatcher->RegionEndEdit();
 	}
@@ -164,7 +164,7 @@ int OnLBUpWorkarea(float,float)
 
 int OnLBDownWorkarea(float x,float y)
 {
-	if (gameShell->CurrentMission.gameType_ != GT_playRellGame) {
+	if (gameShell->CurrentMission.gameType_ != GT_PLAY_RELL) {
 		bWasShiftUnpressed = false;
 
 		if(_pShellDispatcher->m_nEditRegion != editRegion1)
@@ -204,7 +204,11 @@ void CancelEditWorkarea()
 		return;
 	}
 	MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
-	bool replay = gameShell->CurrentMission.gameType_ == GT_playRellGame;
+    if (_pShellDispatcher->m_nEditRegion == editRegionNone) {
+        return;
+    }
+    
+	bool replay = gameShell->CurrentMission.gameType_ == GT_PLAY_RELL;
 	if (!replay) {
 		_pShellDispatcher->regionMetaDispatcher()->endLine();
 

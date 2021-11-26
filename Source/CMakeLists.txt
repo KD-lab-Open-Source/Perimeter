@@ -52,7 +52,7 @@ IF(NOT PERIMETER_WINDOWS)
         #DXVK-native wrapper lib retrieval and building
         ExternalProject_Add(dxvk-native
                 GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
-                GIT_TAG           origin/master
+                GIT_TAG           "aed08f8e5f4b069514dc4068b91e624cd4e0a495"
                 GIT_SHALLOW       ON
                 BUILD_ALWAYS      OFF
                 CONFIGURE_HANDLED_BY_BUILD ON

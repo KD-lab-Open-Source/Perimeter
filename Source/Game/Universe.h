@@ -34,7 +34,7 @@ public:
 	void triggerQuant();
 
     bool universalLoad(MissionDescription& mission, SavePrm& data, PROGRESSCALLBACK loadProgressUpdate);
-	bool universalSave(const MissionDescription& mission, bool userSave, MissionDescription* destination = nullptr);
+	bool universalSave(MissionDescription& mission, bool userSave);
 	void relaxLoading();
 
 	void addLinkToResolve(const SaveUnitLink* link) { saveUnitLinks_.push_back(link); }

@@ -303,7 +303,7 @@ windowClientSize_(1024, 768)
 		
 		if(check_command_line(KEY_REPLAY_REEL)){
 			const char* fname=check_command_line(KEY_REPLAY_REEL);
-			HTManager::instance()->GameStart(MissionDescription(fname, GT_playRellGame));
+			HTManager::instance()->GameStart(MissionDescription(fname, GT_PLAY_RELL));
 		}
 		else{
 			int aiMode = 1;
@@ -443,11 +443,13 @@ void GameShell::GameStart(const MissionDescription& mission)
     log_var(XRndGet());
     log_var(logicRND.get());
     log_var(xm_random_generator.get());
+    /*
     uint32_t attrcrc = startCRC32;
     attrcrc = getSerializationCRC<BinaryOArchive>(rigidBodyPrmLibrary(), attrcrc);
     attrcrc = getSerializationCRC<BinaryOArchive>(attributeLibrary(), attrcrc);
     attrcrc = getSerializationCRC<BinaryOArchive>(globalAttr(), attrcrc);
     log_var(attrcrc);
+    */
 #endif
 
     int fogEnable = 1;
@@ -499,7 +501,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 	terScene->Compact();
 
 	universe()->relaxLoading();
-	universe()->setShouldIgnoreIntfCommands(CurrentMission.gameType_ == GT_playRellGame);
+	universe()->setShouldIgnoreIntfCommands(CurrentMission.gameType_ == GT_PLAY_RELL);
 
 	game_speed_to_resume = game_speed;
 
@@ -511,8 +513,9 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	startResourceDispatcher();
 
-	if(NetClient) 
-		NetClient->GameIsReady();
+	if (NetClient) {
+        NetClient->GameIsReady();
+    }
 
 	_shellIconManager.gameTypeChanged(currentSingleProfile.getLastGameType());
 
@@ -568,24 +571,33 @@ void GameShell::GameClose()
 	debugPrm_.save();
 }
 
-bool GameShell::universalSave(const char* name, bool userSave)
+bool GameShell::universalSave(const char* name, bool userSave, MissionDescription* missionOutput)
 {
 	MTAuto lock(HTManager::instance()->GetLockLogic());
 	MTAutoSkipAssert skip_assert;
 
-	MissionDescription mission(CurrentMission);
-	mission.setSaveName(name);
-	mission.missionNumber = currentSingleProfile.getCurrentMissionNumber();
-    mission.gameContent = mission.missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
-	if(userSave){
-		mission.globalTime = global_time();
-		mission.gameSpeed = game_speed ? game_speed : game_speed_to_resume;
-		mission.gamePaused = !gamePausedByMenu && !game_speed;
-	}
-
-	bool result = universe()->universalSave(mission, userSave);
-    if (result) {
+    MissionDescription* mission;
+    if (missionOutput) {
+        *missionOutput = MissionDescription(CurrentMission);
+        mission = missionOutput;
+    } else {
+        mission = new MissionDescription(CurrentMission);
+    }
+    mission->missionNumber = currentSingleProfile.getCurrentMissionNumber();
+    mission->gameContent = mission->missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    if(userSave){
+        mission->globalTime = global_time();
+        mission->gameSpeed = game_speed ? game_speed : game_speed_to_resume;
+        mission->gamePaused = !gamePausedByMenu && !game_speed;
+    }
+    mission->setSaveName(name ? name : "");
+    bool result = universe()->universalSave(*mission, userSave);
+    if (!mission->savePathKey().empty()) {
         scan_resource_paths(currentSingleProfile.getSavesDirectory());
+    }
+    if (!missionOutput) {
+        //Delete mission since it was temporary
+        delete mission;
     }
 	return result;
 }
@@ -1081,14 +1093,14 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		terCamera->erasePath();
 		break;
     case 'C' | KBD_CTRL | KBD_SHIFT: {
-        MissionDescription md = CurrentMission;
-        universe()->universalSave(gameShell->CurrentMission, true, &md);
+        MissionDescription md;
+        gameShell->universalSave(nullptr, true, &md);
         universe()->universalLoad(md, this->savePrm(), nullptr);
         break;
     }
     case 'V' | KBD_CTRL | KBD_SHIFT: {
-        MissionDescription md = CurrentMission;
-        universe()->universalSave(gameShell->CurrentMission, true, &md);
+        MissionDescription md;
+        gameShell->universalSave(nullptr, true, &md);
         HTManager::instance()->setMissionToStart(md);
         break;
     }
@@ -2470,15 +2482,8 @@ void GameShell::updateResolution(bool change_depth, bool change_size, bool chang
 	}
 }
 
-void GameShell::playerDisconnected(std::string& playerName, bool disconnectOrExit) {
-    std::string res = qdTextDB::instance().getText(disconnectOrExit ? "Interface.Menu.Messages.PlayersDisconnected" : "Interface.Menu.Messages.PlayersExited");
-
-    const int bufferSize = 200;
-    static char tempBuffer[bufferSize];
-    sprintf(tempBuffer, res.c_str(), playerName.c_str());
-
-    LocalizedText text(tempBuffer);
-	_shellIconManager.showHintChat(&text, 3000);
+void GameShell::serverMessage(LocalizedText* text) {
+    _shellIconManager.showHintChat(text, 5000);
 }
 
 void GameShell::showReelModal(const char* binkFileName, const char* soundFileName, bool localized, bool stopBGMusic, int alpha) {

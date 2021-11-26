@@ -51,7 +51,9 @@ enum terEventID
 
 	NETCOM_4H_ID_BACK_GAME_INFORMATION,
 	NETCOM_4C_ID_DISPLAY_DISTRINC_AREAS,
-	NETCOM_4C_ID_SAVE_LOG,
+    NETCOM_4C_ID_DESYNC_NOTIFY,
+    NETCOM_4H_ID_DESYNC_ACKNOWLEDGE,
+    NETCOM_4C_ID_DESYNC_RESTORE,  
 	NETCOM_4C_ID_SEND_LOG_2_HOST,
 
 	NETCOM_4H_ID_BACK_GAME_INFORMATION_2,
@@ -140,8 +142,9 @@ struct netCommand4C_StartLoadGame : netCommandGeneral {
 
 	MissionDescription missionDescription_;
 
-	netCommand4C_StartLoadGame(const MissionDescription& missionDescription) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
+	netCommand4C_StartLoadGame(const MissionDescription& missionDescription, int playerID) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
 		missionDescription_=missionDescription;
+        missionDescription_.activePlayerID = playerID;
 	}
 
 	netCommand4C_StartLoadGame(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
@@ -475,25 +478,69 @@ public:
 	unsigned char* pDAData_;
 };
 
-struct netCommand4C_SaveLog : public netCommandGeneral {
+///Sent from server when client is detected to be desynced
+struct netCommand4C_DesyncNotify : public netCommandGeneral {
 public:
-	netCommand4C_SaveLog(NETID netid_, const std::string& gameID_) : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
-        netid = netid_;
-        gameID = gameID_;
-	}
-
-	netCommand4C_SaveLog(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
-        in > netid;
-        in > StringInWrapper(gameID);
-	}
-
-	void Write(XBuffer& out) const override {
-        out < netid;
-        out < StringOutWrapper(gameID);
-	};
-
-    NETID netid;
+    int desync_amount;
     std::string gameID;
+
+    netCommand4C_DesyncNotify(const std::string& gameID_) : netCommandGeneral(NETCOM_4C_ID_DESYNC_NOTIFY) {
+        desync_amount = 0;
+        gameID = gameID_;
+    }
+
+    netCommand4C_DesyncNotify(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_DESYNC_NOTIFY) {
+        in > desync_amount;
+        in > StringInWrapper(gameID);
+    }
+
+    void Write(XBuffer& out) const override {
+        out < desync_amount;
+        out < StringOutWrapper(gameID);
+    };
+};
+
+///Sent to server to share the state of client and also acknowledge that its now in desync state
+struct netCommand4H_DesyncAcknowledge : public netCommandGeneral {
+public:
+    std::unique_ptr<MissionDescription> missionDescription;
+    XBuffer netlog = XBuffer(0, true);
+
+    netCommand4H_DesyncAcknowledge(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
+    }
+
+    netCommand4H_DesyncAcknowledge(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
+        missionDescription = std::make_unique<MissionDescription>();
+        missionDescription->read(in);
+        in > netlog;
+    }
+
+    void Write(XBuffer& out) const override {
+        missionDescription->write(out);
+        out < netlog;
+    }
+};
+
+///Sent by server to restore client state from same state
+struct netCommand4C_DesyncRestore : public netCommandGeneral {
+public:
+    int desync_amount;
+    std::unique_ptr<MissionDescription> missionDescription;
+
+    netCommand4C_DesyncRestore(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE) {
+        desync_amount = 0;
+    }
+
+    netCommand4C_DesyncRestore(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE) {
+        in > desync_amount;
+        missionDescription = std::make_unique<MissionDescription>();
+        missionDescription->read(in);
+    }
+
+    void Write(XBuffer& out) const override {
+        out < desync_amount;
+        missionDescription->write(out);
+    }
 };
 
 struct netCommand4C_sendLog2Host : public netCommandGeneral {
@@ -589,106 +636,6 @@ struct netCommandNextQuant : netCommandGeneral
 };
 
 //---------------------------------
-
-/*
-//Сейчас фактически не используется т.к. запускается её внутренний аналог - ExecuteInternalCommand(PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST, true);
-struct netCommand4H_CreateGame : netCommandGeneral {
-	MissionDescription missionDescription_;
-	PlayerData createPlayerData_;
-	char gameName_[MAX_MULTIPALYER_GAME_NAME];
-	char computerName_[MAX_COMPUTERNAME_LENGTH+1];
-	unsigned int internalNumverVersion_;
-	char simpleGameVersion_[sizeof(SIMPLE_GAME_CURRENT_VERSION)];
-
-	netCommand4H_CreateGame(const char* gameName, const char * computerName, MissionDescription& missionDescription, PlayerData& createPlayerData) : netCommandGeneral(NETCOM_4H_ID_CREATE_GAME) {
-		strncpy(gameName_, gameName, MAX_MULTIPALYER_GAME_NAME);
-		strncpy(computerName_, computerName, MAX_COMPUTERNAME_LENGTH+1);
-		missionDescription_=missionDescription;
-		createPlayerData_=createPlayerData;
-		internalNumverVersion_=INTERNAL_BUILD_VERSION;
-		strncpy(simpleGameVersion_, SIMPLE_GAME_CURRENT_VERSION, sizeof(simpleGameVersion_));
-	}
-
-	netCommand4H_CreateGame(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CREATE_GAME) {
-		in.read(gameName_, MAX_MULTIPALYER_GAME_NAME);
-		in.read(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		missionDescription_.read(in);
-		in.read(&createPlayerData_, sizeof(createPlayerData_));
-		in.read(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		in.read(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-	void Write(XBuffer& out) const override {
-		out.write(gameName_, MAX_MULTIPALYER_GAME_NAME);
-		out.write(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		missionDescription_.write(out);
-		out.write(&createPlayerData_, sizeof(createPlayerData_));
-		out.write(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		out.write(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-};
-
-
-struct netCommandC_JoinRequest : netCommandGeneral
-{
-	PlayerData joinPlayerData_;
-	char computerName_[MAX_COMPUTERNAME_LENGTH+1];
-	unsigned int internalNumverVersion_;
-	char simpleGameVersion_[sizeof(SIMPLE_GAME_CURRENT_VERSION)];
-
-	netCommandC_JoinRequest(PlayerData& joinPlayerData, const char* computerName) : netCommandGeneral(NETCOMC_ID_JOIN_REQUEST) {
-		//hostGameID_=hostGameID;
-		joinPlayerData_=joinPlayerData;
-		strncpy(computerName_, computerName, MAX_COMPUTERNAME_LENGTH+1);
-		internalNumverVersion_=INTERNAL_BUILD_VERSION;
-		strncpy(simpleGameVersion_, SIMPLE_GAME_CURRENT_VERSION, sizeof(simpleGameVersion_));
-	}
-	netCommandC_JoinRequest(XBuffer& in) : netCommandGeneral(NETCOMC_ID_JOIN_REQUEST){
-		//in.read(&hostGameID_, sizeof(hostGameID_));
-		in.read(&joinPlayerData_, sizeof(joinPlayerData_));
-		in.read(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		in.read(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		in.read(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-
-	void Write(XBuffer& out) const override {
-		//out.write(&hostGameID_, sizeof(hostGameID_));
-		out.write(&joinPlayerData_, sizeof(joinPlayerData_));
-		out.write(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		out.write(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		out.write(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-};
-
-enum netCommandJoinRequestResult{
-	NCJRR_OK,
-	NCJRR_INCORRECT_VERSION,
-	NCJRR_GAME_CLOSED
-};
-
-struct netCommand4C_JoinResponse : netCommandGeneral
-{
-	NETID playerNETID_;
-	NETID groupNETID_;
-	netCommandJoinRequestResult result_;
-	netCommand4C_JoinResponse(NETID playerNETID, NETID groupNETID, netCommandJoinRequestResult result) : netCommandGeneral(NETCOM_4C_ID_JOIN_RESPONSE) {
-		playerNETID_=playerNETID;
-		groupNETID_=groupNETID;
-		result_=result;
-	}
-	netCommand4C_JoinResponse(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_JOIN_RESPONSE) {
-		in.read(&playerNETID_, sizeof(playerNETID_));
-		in.read(&groupNETID_, sizeof(groupNETID_));
-		in.read(&result_, sizeof(result_));
-	}
-
-	void Write(XBuffer& out) const override {
-		out.write(&playerNETID_, sizeof(playerNETID_));
-		out.write(&groupNETID_, sizeof(groupNETID_));
-		out.write(&result_, sizeof(result_));
-	}
-};
-*/
-
 
 struct netCommand4H_ReJoinRequest : netCommandGeneral
 {
@@ -873,8 +820,9 @@ struct netCommand4C_CurrentMissionDescriptionInfo : netCommandGeneral
 {
 	MissionDescription missionDescription_;
 
-	netCommand4C_CurrentMissionDescriptionInfo(MissionDescription& missionDescription) : netCommandGeneral(NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO) {
+	netCommand4C_CurrentMissionDescriptionInfo(const MissionDescription& missionDescription, int playerID) : netCommandGeneral(NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO) {
 		missionDescription_=missionDescription;
+        missionDescription_.activePlayerID = playerID;
 	}
 
 	netCommand4C_CurrentMissionDescriptionInfo(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO) {
@@ -1040,16 +988,6 @@ struct terEventControlServerTime : netCommandGeneral
 
 	void Write(XBuffer& out) const override;
 };
-
-//-------------------------------
-
-#ifndef PERIMETER_EXODUS
-struct GameInfo
-{
-	DWORD id;
-	char  Name[PERIMETER_CONTROL_NAME_SIZE];
-};
-#endif
 
 //-------------------------------
 

@@ -95,6 +95,8 @@ defenceMap_(vMap.H_SIZE, vMap.V_SIZE),
 playerStrategyIndex_(0)
 {
 	MTINIT(lock_burn_zeroplast);
+
+    isAI_ = false;
     
     setPlayerData(playerData);
 
@@ -135,7 +137,6 @@ playerStrategyIndex_(0)
 	totalDefenceMode_ = false;
 
 	active_ = false;
-	isAI_ = false;
 
 #ifndef _FINAL_VERSION_
 	if(active()){
@@ -441,18 +442,7 @@ terUnitBase* terPlayer::buildUnit(terUnitAttributeID id)
 
 terUnitBase* terPlayer::loadUnit(SaveUnitData* data, bool auto_load)
 {
-    terUnitBase* p = nullptr;
-    for (terUnitBase* unit : Units) {
-        if (unit->unitID() == data->unitID) {
-            p = unit;
-            //We unset the unitID in SaveUnitData to avoid UnitID changing when doing universalLoad
-            data->unitID = 0;
-            break;
-        }
-    }
-    if (!p) {
-         p = buildUnit(data->attributeID);
-    }
+    terUnitBase* p = buildUnit(data->attributeID);
     if (auto_load) {
         p->universalLoad(data);
         p->Start();

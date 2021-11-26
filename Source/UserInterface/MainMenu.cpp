@@ -270,7 +270,7 @@ void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string
 void checkMissionDescription(int index, std::vector<MissionDescription>& mVect, GameType gameType) {
 	if (mVect[index].worldID() == -1) {
         const char* filepath;
-        if (gameType == GT_playRellGame) {
+        if (gameType == GT_PLAY_RELL) {
             filepath = mVect[index].playReelPath().c_str();
         } else {
             filepath = mVect[index].savePathKey().c_str();
@@ -326,7 +326,7 @@ void setupMapDescWnd(int index, std::vector<MissionDescription>& mVect, int mapW
 	}
 }
 void setupReplayDescWnd(int index, std::vector<MissionDescription>& mVect, int mapWndID, int mapDescrWndID, int inputWndID = -1) {
-	checkMissionDescription(index, mVect, GT_playRellGame);
+	checkMissionDescription(index, mVect, GT_PLAY_RELL);
 
     MissionDescription& mission = mVect[index];
     std::string missingContent = checkMissingContent(mission);
@@ -1009,17 +1009,26 @@ int SwitchMenuScreenQuant1( float, float ) {
 
 						CTextWindow* txtWnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_MISSION_DESCR_TXT);
 
-						switch(gameShell->currentSingleProfile.getLastGameType()) {
-                            case UserSingleProfile::BATTLE:
-                            case UserSingleProfile::MULTIPLAYER:
-								txtWnd->setText( qdTextDB::instance().getText("Interface.Menu.Messages.Battle") );
-								break;
-							case UserSingleProfile::SURVIVAL:
-								txtWnd->setText( qdTextDB::instance().getText("Interface.Menu.Messages.Survival") );
-								break;
-							default:
-								txtWnd->SetText(missionToExec.missionDescription().c_str());
-						}
+                        switch (missionToExec.gameType_) {
+                            case GT_MULTI_PLAYER_RESTORE_PARTIAL:
+                            case GT_MULTI_PLAYER_RESTORE_FULL:
+                                txtWnd->setText( qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization") );
+                                break;
+                            default:
+                                switch(gameShell->currentSingleProfile.getLastGameType()) {
+                                    case UserSingleProfile::BATTLE:
+                                    case UserSingleProfile::MULTIPLAYER:
+                                        txtWnd->setText( qdTextDB::instance().getText("Interface.Menu.Messages.Battle") );
+                                        break;
+                                    case UserSingleProfile::SURVIVAL:
+                                        txtWnd->setText( qdTextDB::instance().getText("Interface.Menu.Messages.Survival") );
+                                        break;
+                                    default:
+                                        txtWnd->SetText(missionToExec.missionDescription().c_str());
+                                }
+                                break;
+                        }
+
 						
 						CShowMapWindow* mapWnd = (CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_MAPWINDOW);
 						mapWnd->setWorldID(missionToExec.worldID());
@@ -1880,7 +1889,7 @@ int delLoadReplayAction(float, float) {
 void loadReplay(CListBoxWindow* listBox) {
 	int pos = listBox->GetCurSel();
 	if (pos != -1) {
-        checkMissionDescription(pos, replays, GT_playRellGame);
+        checkMissionDescription(pos, replays, GT_PLAY_RELL);
         missionToExec = replays[pos];
 
         //Check if content is compatible

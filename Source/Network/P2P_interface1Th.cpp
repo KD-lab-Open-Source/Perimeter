@@ -6,8 +6,14 @@
 
 #include "GameShell.h"
 #include "Universe.h"
+#include "files/files.h"
+#include "NetConnectionAux.h"
+#include "Runtime.h"
+#include "../HT/ht.h"
 
 #include <algorithm>
+#include "qd_textdb.h"
+#include "Localization.h"
 
 extern const char* currentShortVersion;
 
@@ -31,6 +37,8 @@ const char* PNetCenter::getStrState() const
 		return("PNC_STATE__CLIENT_LOADING_GAME");
 	case		PNC_STATE__CLIENT_GAME:
 		return("PNC_STATE__CLIENT_GAME");
+    case		PNC_STATE__CLIENT_DESYNC:
+        return("PNC_STATE__CLIENT_DESYNC");
 
 	case		PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_0:
 		return("PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_0");
@@ -47,6 +55,8 @@ const char* PNetCenter::getStrState() const
 		return("PNC_STATE__HOST_LOADING_GAME");
 	case		PNC_STATE__HOST_GAME:
 		return("PNC_STATE__HOST_GAME");
+    case		PNC_STATE__HOST_DESYNC:
+        return("PNC_STATE__HOST_DESYNC");
 
 	case		PNC_STATE__NEWHOST_PHASE_0:
 		return("PNC_STATE__NEWHOST_PHASE_0");
@@ -160,8 +170,6 @@ PNetCenter::~PNetCenter()
         SetEvent(hSecondThread); //TODO not sure if this even necessary
 	}
 
-	ClearDeletePlayerGameCommand();
-
 	ClearClients();
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -179,6 +187,10 @@ PNetCenter::~PNetCenter()
     if (hostMissionDescription) {
         delete hostMissionDescription;
         hostMissionDescription = nullptr;
+    }
+    
+    for (auto cmd : interfaceCommandList) {
+        delete cmd;
     }
 
     LogMsg("Destroyed PNetCenter\n");
@@ -233,6 +245,14 @@ void PNetCenter::CreateGame(const NetAddress& connection, const std::string& gam
     xassert(mission);
     hostMissionDescription = mission;
     hostMissionDescription->activePlayerID = -1; //Remove activePlayerID on multi
+    
+    //Load current attributes
+    XPrmOArchive oaScripts;
+    oaScripts.binary_friendly = true;
+    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
+    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
+    std::swap(hostMissionDescription->scriptsData, oaScripts.buffer());
 
     //Argument PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST
     
@@ -383,6 +403,106 @@ void PNetCenter::HandlerInputNetCommand()
 				gameShell->addStringToChatWindow(nc_ChatMessage.text, nc_ChatMessage.locale);
 			}
 			break;
+        case NETCOM_4C_ID_DESYNC_NOTIFY: {
+            netCommand4C_DesyncNotify nc(in_ClientBuf);
+            
+            if (!isHost()) {
+                ExecuteInternalCommand(PNC_COMMAND__DESYNC, false);
+            }
+
+            std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
+            terminate_with_char(crash_dir, PATH_SEP);
+            crash_dir += nc.gameID + "_" + m_PlayerName + PATH_SEP;
+            std::filesystem::create_directories(crash_dir);
+            scan_resource_paths(crash_dir);
+
+            //Write net log
+            XBuffer netlog(2048, true);
+            netlog < currentVersion < "\r\n";
+            netlog < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
+            netlog < " HostNETID: " <= m_hostNETID;
+            netlog < " LocalNETID: " <= m_localNETID;
+            netlog < " Amount: " <= nc.desync_amount;
+            netlog < "\r\n";
+            universe()->writeLogList2Buffer(netlog);
+            XStream f(crash_dir + "netlog.txt", XS_OUT);
+            f.write(netlog.address(), netlog.tell());
+            f.close();
+            universe()->clearLogList();
+
+            //Attempt to save state
+            std::unique_ptr<MissionDescription> md = std::make_unique<MissionDescription>();
+            gameShell->universalSave((crash_dir + "save").c_str(), true, md.get());
+
+            //Attempt to save reel
+            universe()->savePlayReel((crash_dir + "reel").c_str());
+
+            fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
+            
+            if (nc.desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
+                ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_DESYNC);
+            } else {
+                std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
+                        qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization")
+                );
+                text->text += " " + std::to_string(nc.desync_amount);
+                ExecuteInterfaceCommand(
+                        PNC_INTERFACE_COMMAND_INFO_MESSAGE,
+                        std::move(text)
+                );
+
+#ifndef PERIMETER_DEBUG 
+                //Do not send save data to host except host itself
+                if (m_localNETID != m_hostNETID) {
+                    md.reset();
+                }
+#endif
+
+                if (md) {
+                    //Trim some data in partial mode
+                    if (nc.desync_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
+                        md->binaryData.alloc(0);
+                        md->scriptsData.alloc(0);
+                    }
+                    md->setSaveName("");
+                }
+                
+                //Send the ack
+                netCommand4H_DesyncAcknowledge ack(std::move(md));
+                std::swap(ack.netlog, netlog);
+                SendEventSync(&ack);
+            }
+            break;
+        }
+        case NETCOM_4C_ID_DESYNC_RESTORE: {
+            //Load the mission state sent by host
+            netCommand4C_DesyncRestore nc(in_ClientBuf);
+            clientMissionDescription=*nc.missionDescription;
+
+            if (!isHost()) {
+                CAutoLock _lock(m_GeneralLock); //! Lock   
+
+                ClearInputPacketList();
+                clearInOutClientHostBuffers();
+            }
+            
+            {
+                CAutoLock _lock(m_GeneralLock); //! Lock
+                gameShell->MultiplayerGameRestore(clientMissionDescription);
+            }
+
+            clientMissionDescription.gameType_ = GT_MULTI_PLAYER_LOAD;
+        
+            LogMsg("Desync Restore attempt %d\n", nc.desync_amount);
+            
+            if (!isHost()) {
+                //Return to usual client business
+                m_state = PNC_STATE__CLIENT_GAME;
+                flag_SkipProcessingGameCommand = false;
+            }
+
+            break;
+        }
 		default: 
 			{
 				/* !!! передается HiperSpace
@@ -419,9 +539,12 @@ void PNetCenter::P2PIQuant()
 		CAutoLock p_Lock(m_GeneralLock);
 		if(!interfaceCommandList.empty()){
 			////Сейчас сделано так, что нельзя поместить команду если другая выполняется
-			curInterfaceCommand=*interfaceCommandList.begin();
+            sPNCInterfaceCommand* cmd = *interfaceCommandList.begin();
 			interfaceCommandList.pop_front();
-		}
+            curInterfaceCommand.icID=cmd->icID;
+            curInterfaceCommand.text=std::move(cmd->text);
+            delete cmd;
+        }
 
 		serverList.refreshHostInfoList();
 
@@ -434,11 +557,20 @@ void PNetCenter::P2PIQuant()
 	case PNC_INTERFACE_COMMAND_NONE:
 		break;
 	case PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED:
-		gameShell->playerDisconnected(curInterfaceCommand.textInfo, true);
-		break;
-	case PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT:
-		gameShell->playerDisconnected(curInterfaceCommand.textInfo, false);
-		break;
+    case PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT: {
+        bool disconnected = curInterfaceCommand.icID == PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED;
+        std::string res = qdTextDB::instance().getText(disconnected ? "Interface.Menu.Messages.PlayersDisconnected"
+                                                                    : "Interface.Menu.Messages.PlayersExited");
+        const int bufferSize = 500;
+        static char tempBuffer[bufferSize];
+        snprintf(tempBuffer, bufferSize, res.c_str(), curInterfaceCommand.text->text.c_str());
+        curInterfaceCommand.text->text = tempBuffer;
+        gameShell->serverMessage(curInterfaceCommand.text.get());
+        break;
+    }
+    case PNC_INTERFACE_COMMAND_INFO_MESSAGE:
+        gameShell->serverMessage(curInterfaceCommand.text.get());
+        break;
 	case PNC_INTERFACE_COMMAND_CONNECTION_FAILED:
 		//gameShell->abnormalNetCenterTermination();
 		gameShell->generalErrorOccured(GameShell::GENERAL_CONNECTION_FAILED);
@@ -455,7 +587,6 @@ void PNetCenter::P2PIQuant()
 		break;
     case PNC_INTERFACE_COMMAND_DESYNC:
         gameShell->generalErrorOccured(GameShell::DESYNC);
-        //ExecuteInternalCommand(PNC_COMMAND__END_GAME, true);
         break;
 	case PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED:
 		xassert(0&& "Host stoping, game ending");
@@ -548,7 +679,7 @@ void PNetCenter::chatMessage(bool clanOnly, const std::string& text, const std::
 
 void PNetCenter::changeMap(const char* missionName)
 {
-	MissionDescription md(missionName, GT_createMPGame);
+	MissionDescription md(missionName, GT_MULTI_PLAYER_CREATE);
 	netCommand4H_ChangeMap nc_changeMap(md);
 	SendEvent(&nc_changeMap);
 }
@@ -587,6 +718,8 @@ void PNetCenter::StartLoadTheGame(bool state)
 
 void PNetCenter::GameIsReady()
 {
+    //Clear MD data in case we restored it
+    clientMissionDescription.clearData();
 	netCommandC_PlayerReady event2(vMap.getWorldCRC());
 	SendEventSync(&event2);
 }

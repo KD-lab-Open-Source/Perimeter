@@ -27,7 +27,7 @@ bool isEditAllowed(const MissionDescription& mission, int number) {
 
 bool showPlayerControls(const MissionDescription& mission, int number) {
     return 0 <= number && number < mission.playerAmountScenarioMax
-    && (mission.gameType_ == GT_loadMPGame || mission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN)
+    && (mission.gameType_ == GT_MULTI_PLAYER_LOAD || mission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN)
     && mission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_CLOSE;
 }
 
@@ -63,7 +63,7 @@ void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code,
 void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if ( code == EVENT_PRESSED && intfCanHandleInput() ) {
 		if (param >= 0 && param < multiplayerMaps.size()) {
-			checkMissionDescription(param, multiplayerMaps, GT_createMPGame);
+			checkMissionDescription(param, multiplayerMaps, GT_MULTI_PLAYER_CREATE);
 			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[param].missionName();
 			gameShell->getNetClient()->changeMap(missionName.c_str());
 		}
@@ -387,7 +387,7 @@ void onMMLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param) 
 
 void setName(CShellPushButton* btn, int number) {
 	const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-    bool isSave = currMission.gameType_ == GT_loadMPGame;
+    bool isSave = currMission.gameType_ == GT_MULTI_PLAYER_LOAD;
     const PlayerData& pd = currMission.playersData[number];
     if (showPlayerControls(currMission, number)
     && pd.realPlayerType != REAL_PLAYER_TYPE_AI) {
@@ -478,7 +478,7 @@ void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param
         const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
         bool enable = currMission.playersAmount() > 1;
         //Lock host enable until all slots are closed
-        if (gameShell->getNetClient()->isHost() && currMission.gameType_ == GT_loadMPGame) {
+        if (gameShell->getNetClient()->isHost() && currMission.gameType_ == GT_MULTI_PLAYER_LOAD) {
             for (int i = 0; i < currMission.playerAmountScenarioMax; ++i) {
                 if (currMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_OPEN) {
                     enable = false;

@@ -179,21 +179,23 @@ void string_replace_all(std::string& text, const std::string& from, const std::s
     text.swap(newString);
 }
 
-//Converts string to double manually since we can't rely on stdlib for deterministic results
-double string_to_double(const char* in, char** end) {
+//Converts string to float/double manually since we can't rely on stdlib for deterministic results
+template<typename FT, typename IT, typename UIT>
+FT string_to_floating(const char* in, char** end) {
     char* ptr = const_cast<char*>(in);
     if (end) {
         *end = ptr;
     }
     if (!in) return 0;
-    double value = 0; //Stores final value
-    uint64_t integer = 0; //Stores integer part
-    uint64_t fraction = 0; //Stores fraction part
-    int64_t floating = -1; //Amount of numbers to shift the fraction part
-    int64_t exponent = 0; //Amount of numbers to shift the value
+    FT value = 0; //Stores final value
+    UIT integer = 0; //Stores integer part
+    UIT fraction = 0; //Stores fraction part
+    IT floating = -1; //Amount of numbers to shift the fraction part
+    IT exponent = 0; //Amount of numbers to shift the value
     bool negative = false;
+    bool raw = false;
     bool foundNumber = false;
-    uint64_t tmp;
+    UIT tmp;
     char tmpstr[2] = { 0, 0 };
     
     while (*ptr != 0) {
@@ -228,61 +230,91 @@ double string_to_double(const char* in, char** end) {
                 integer += tmp;
             }
         } else if ('.' == c && floating == -1) {
+            xassert(!raw);
             //Switch to floating mode
             floating = 0;
-        } else if ('e' == c) {
+        } else if ('e' == c || 'E' == c) {
+            xassert(!raw);
             //Advance e
             ptr++;
             //Get exponent and break
             exponent = strtol(ptr, &ptr, 10);
             break;
         } else if (c == '-' && !negative) {
+            xassert(!raw);
             negative = true;
+        } else if (c == 'X' && !raw) {
+            xassert(!negative);
+            xassert(floating == -1);
+            xassert(exponent == 0);
+            raw = true;
         } else {
             //Finished here
             break;
         }
         ptr++;
     }
-    
-    //Assemble all parts
-    if (floating != -1 && fraction != 0) {
-        value = static_cast<double>(fraction);
-        value /= static_cast<double>(xm::pow(10.0, static_cast<double>(floating)));
-    }
-    value += static_cast<double>(integer);
-    if (exponent != 0) {
-        value *= static_cast<double>(xm::pow(10.0, static_cast<double>(exponent)));
-    }
-    if (negative) {
-        value = -value;
-    }
 
     if (end) {
         *end = ptr;
     }
+    
+    if (raw) {
+        //Write IT binary value into FT type
+        UIT* value_raw = checked_reinterpret_cast_ptr<FT, UIT>(&value);
+        *value_raw = integer;
+    } else {
+        //Assemble all parts
+        if (floating != -1 && fraction != 0) {
+            value = static_cast<FT>(fraction);
+            value /= static_cast<FT>(xm::pow(10.0, static_cast<double>(floating)));
+        }
+        value += static_cast<FT>(integer);
+        if (exponent != 0) {
+            value *= static_cast<FT>(xm::pow(10.0, static_cast<double>(exponent)));
+        }
+        if (negative) {
+            value = -value;
+        }
+    }
+    
+    return value;
+}
 
+double string_to_double(const char* in, char** end) {
+    double value = static_cast<double>(string_to_floating<double, int64_t, uint64_t>(in, end));
 #if defined(PERIMETER_DEBUG) && 0
+    char* ptr = *end;
     size_t len = ptr - in;
-    if (len == 0) {
-        printf("empty? ");
-        len = 5;
-    }
-    ptr = (char*) malloc(len);
-    ptr = strncpy(ptr, in, len - 1);
-    printf("string_to_float: '%s' -> %f\n", ptr, value);
-
-    //Check against strtod
-    double other = strtod(in, &ptr);
-    xassert(xm::round(other * 100) == xm::round(value * 100));
-    if (end) {
-        xassert(ptr == *end);
-    }
+        if (len == 0) {
+            printf("empty? ");
+            len = 5;
+        }
+        ptr = (char*) malloc(len);
+        ptr = strncpy(ptr, in, len - 1);
+        printf("string_to_float: '%s' -> %f\n", ptr, value);
+    
+        //Check against strtod
+        double other = strtod(in, &ptr);
+        xassert(xm::round(other * 100) == xm::round(value * 100));
+        if (end) {
+            xassert(ptr == *end);
+        }
 #endif
     return value;
 }
 
 float string_to_float(const char* in, char** end) {
-    return static_cast<float>(string_to_double(in, end));
+    return static_cast<float>(string_to_floating<float, int32_t, uint32_t>(in, end));
+}
+
+void encode_raw_float(XBuffer* buffer, float value) {
+    uint32_t* value_raw = checked_reinterpret_cast_ptr<float, uint32_t>(&value);
+    (*buffer) < 'X' <= (*value_raw);
+}
+
+void encode_raw_double(XBuffer* buffer, double value) {
+    uint64_t* value_raw = checked_reinterpret_cast_ptr<double, uint64_t>(&value);
+    (*buffer) < 'X' <= (*value_raw);
 }
 

@@ -6,6 +6,8 @@
 #define PRINTF_FLOATING_FORMAT "%.*f"
 #define PRINTF_LONG_FLOATING_FORMAT "%.*Lf"
 
+struct XBuffer;
+
 unsigned int XRnd(unsigned int m);
 void XRndSet(unsigned int m);
 unsigned int XRndGet();
@@ -59,5 +61,11 @@ double string_to_double(const char* in, char** end);
 
 //Converts string to float, same as strtof
 float string_to_float(const char* in, char** end);
+
+//Encodes a float using "raw format" in text form
+void encode_raw_float(XBuffer* buffer, float value);
+
+//Encodes a double using "raw format" in text form
+void encode_raw_double(XBuffer* buffer, double value);
 
 #endif
