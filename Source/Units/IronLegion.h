@@ -84,7 +84,7 @@ public:
 	void finalizeConstruction();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 	
 	void DestroyLink();
 

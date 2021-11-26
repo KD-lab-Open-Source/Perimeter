@@ -331,7 +331,7 @@ SaveUnitData* terUnitBase::universalSave(SaveUnitData* data)
 	return data;
 }
 
-void terUnitBase::universalLoad(const SaveUnitData* data)
+void terUnitBase::universalLoad(SaveUnitData* data)
 {
     Se3f pose(data->orientaion, data->position);
 	setPose(pose, true);

@@ -95,20 +95,15 @@ defenceMap_(vMap.H_SIZE, vMap.V_SIZE),
 playerStrategyIndex_(0)
 {
 	MTINIT(lock_burn_zeroplast);
-	playerID_ = playerData.playerID;
-	clan_ = playerData.clan != -1 ? playerData.clan : playerID_;
-	setDifficulty(DIFFICULTY_HARD);
-	isWorld_ = playerData.realPlayerType == REAL_PLAYER_TYPE_WORLD;
-	name_ = playerData.name();
-	handicap_ = playerData.handicap/100.;
+    
+    setPlayerData(playerData);
 
-	controlEnabled_ = true;
-	ignoreIntfCommands = false;
+    setDifficulty(DIFFICULTY_HARD);
+    
+    controlEnabled_ = true;
+    ignoreIntfCommands = false;
 
-	UnitCount = 0;
-
-	setColorIndex(playerData.colorIndex);
-	belligerent_ = playerData.belligerent;
+    UnitCount = 0;
 	
 	const AttributeBase* coreAttr = unitAttribute(UNIT_ATTRIBUTE_CORE);
 	EnergyData.setEnergyPerArea(coreAttr->MakeEnergy/(10*sqr(coreAttr->ZeroLayerRadius)*XM_PI));
@@ -224,6 +219,18 @@ void terPlayer::refreshCameraTrigger(const char* triggerName)
 	trigger->setState(Trigger::CHECKING);
 }
 
+void terPlayer::setPlayerData(const PlayerData& playerData) {
+    playerID_ = playerData.playerID;
+    clan_ = playerData.clan != -1 ? playerData.clan : playerID_;
+    isWorld_ = playerData.realPlayerType == REAL_PLAYER_TYPE_WORLD;
+    name_ = playerData.name();
+    handicap_ = playerData.handicap/100.;
+    setColorIndex(playerData.colorIndex);
+    belligerent_ = playerData.belligerent;
+
+    setAI(playerData.realPlayerType == REAL_PLAYER_TYPE_AI || playerData.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI);
+}
+
 void terPlayer::setAI(bool isAI)
 {
 	if(isWorld())
@@ -235,9 +242,11 @@ int terPlayer::registerUnitID(int unitID)
 { 
 	UnitCount = max(unitID, UnitCount); 
 	UnitList::iterator ui;
-	FOR_EACH(Units, ui)
-		if(unitID == (*ui)->unitID())
-			return ++UnitCount;
+	for (auto unit : Units) {
+        if (unitID == unit->unitID()) {
+            return ++UnitCount;
+        }
+    }
 	return unitID;
 }
 
@@ -284,6 +293,40 @@ void terPlayer::Quant()
 	
 	if(frame())
 		lastFramePosition_ = frame()->position2D();
+    
+    if (frameClearedFlag) {
+        frameClearedFlag = false;
+        
+        if(gameShell->CurrentMission.isMultiPlayer()){
+            //bool isHost = gameShell->getNetClient() && gameShell->getNetClient()->isHost();
+            int active_clan = -1;
+            std::set<int> clans;
+            for (auto player: universe()->Players) {
+                if (!player->frame()) {
+                    continue;
+                }
+                clans.emplace(player->clan());
+                if (player->active()) {
+                    active_clan = player->clan();
+                }
+            }
+
+            if (active()) {
+                //Our frame went kaput, stop accepting commands from the grave
+                universe()->setShouldIgnoreIntfCommands(true);
+            }
+
+            if (clans.size() < 2) {
+                if (active_clan == -1) {
+                    //Our clan is dead, only one clan is left so game is over for all
+                    _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT, false);
+                } else {
+                    //Last enemy of our clan got destroyed so we are the winners
+                    _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY, false);
+                }
+            }
+        }
+    }
 }
 
 void terPlayer::DestroyLink()
@@ -390,10 +433,31 @@ void terPlayer::ShowInfo()
 
 terUnitBase* terPlayer::buildUnit(terUnitAttributeID id)
 {
-	terUnitBase* p = createUnit(UnitTemplate(unitAttribute(id), this));
-	p->setRealModel(0, 1);
-	addUnit(p);
-	return p;
+    terUnitBase* p = createUnit(UnitTemplate(unitAttribute(id), this));
+    p->setRealModel(0, 1);
+    addUnit(p);
+    return p;
+}
+
+terUnitBase* terPlayer::loadUnit(SaveUnitData* data, bool auto_load)
+{
+    terUnitBase* p = nullptr;
+    for (terUnitBase* unit : Units) {
+        if (unit->unitID() == data->unitID) {
+            p = unit;
+            //We unset the unitID in SaveUnitData to avoid UnitID changing when doing universalLoad
+            data->unitID = 0;
+            break;
+        }
+    }
+    if (!p) {
+         p = buildUnit(data->attributeID);
+    }
+    if (auto_load) {
+        p->universalLoad(data);
+        p->Start();
+    }
+    return p;
 }
 
 void terPlayer::addUnit(terUnitBase* unit)
@@ -446,36 +510,7 @@ void terPlayer::clearFrame()
 		return;
 
 	frame_ = nullptr;
-
-	if(gameShell->CurrentMission.isMultiPlayer()){
-        //bool isHost = gameShell->getNetClient() && gameShell->getNetClient()->isHost();
-        int active_clan = -1;
-        std::set<int> clans;
-        for (auto player: universe()->Players) {
-            if (!player->frame()) {
-                continue;
-            }
-            clans.emplace(player->clan());
-            if (player->active()) {
-                active_clan = player->clan();
-            }
-        }
-
-        if (active()) {
-            //Our frame went kaput, stop accepting commands from the grave
-            universe()->setShouldIgnoreIntfCommands(true);
-        }
-
-        if (clans.size() < 2) {
-            if (active_clan == -1) {
-                //Our clan is dead, only one clan is left so game is over for all
-                _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT, false);
-            } else {
-                //Last enemy of our clan got destroyed so we are the winners
-                _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY, false);
-            }
-		}
-	}
+    frameClearedFlag = true;
 }
 
 void terPlayer::killAllUnits()
@@ -942,27 +977,19 @@ void terPlayer::loadWorld(const SavePrm& data)
 {
 	SaveUnitDataList::const_iterator i;
 	FOR_EACH(data.environment.objects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.filth.objects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.nobodysBuildings.objects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.worldObjects.alphaPotentials, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 }
 
@@ -992,39 +1019,36 @@ void terPlayer::saveWorld(SavePrm& data)
 	}
 }
 
-void terPlayer::universalLoad(const SavePlayerData& data)
+void terPlayer::universalLoad(SavePlayerData& data)
 {
 	if(data.frame){
-		terUnitBase* unit = buildUnit(data.frame->attributeID);
-		unit->universalLoad(data.frame);
-		unit->Start();
+		loadUnit(data.frame);
 	}
 
 	SaveUnitDataList::const_iterator i;
 	FOR_EACH(data.buildings, i){
-		terUnitBase* building = buildUnit((*i)->attributeID);
-		building->universalLoad(*i);
-		building->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.commonObjects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.catchedFrames, i){
-		terUnitBase* frame;
-		terBelligerent frameBelligerent = safe_cast<const SaveUnitFrameData*>(&**i)->belligerent;
+        /*
+        //TODO review this, probably fixes the captured frames changing belligerent when reloading saves but maybe was
+        //commented already for a reason
+		terBelligerent frameBelligerent = safe_cast<SaveUnitFrameData*>(&**i)->belligerent;
 		if(frameBelligerent != belligerent()){
 			//attributes_.set(frameBelligerent, unitAttributeDataTable);
 			frame = buildUnit(UNIT_ATTRIBUTE_FRAME);
 			//attributes_.set(belligerent(), unitAttributeDataTable);
-		}
-		else
-			frame = buildUnit(UNIT_ATTRIBUTE_FRAME);
+		} else {
+            frame = buildUnit(UNIT_ATTRIBUTE_FRAME);
+        }
 		frame->universalLoad(*i);
-		frame->Start();
+        */
+        loadUnit(*i);
 	}
 
 	(SavePlayerStats&)stats = data.playerStats;

@@ -171,11 +171,11 @@ SaveUnitData* terFrameChild::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFrameChild::universalLoad(const SaveUnitData* baseData)
+void terFrameChild::universalLoad(SaveUnitData* baseData)
 {
 	terUnitReal::universalLoad(baseData);
 
-	const SaveUnitFrameChildData* data = dynamic_cast<const SaveUnitFrameChildData*>(baseData);
+	SaveUnitFrameChildData* data = dynamic_cast<SaveUnitFrameChildData*>(baseData);
 	if(data){
 		alarmStatus_ = data->alarmStatus;
 	}

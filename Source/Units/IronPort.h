@@ -79,7 +79,7 @@ public:
 	void MoveQuant();
 	void Quant();
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 	void checkConnection();
 
 	void ShowInfo();
@@ -112,7 +112,7 @@ public:
 	bool readyToTeleportate() const;
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 	
 	void checkConnection();
 

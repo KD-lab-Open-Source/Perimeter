@@ -421,10 +421,10 @@ SaveUnitData* terFilthSwarmGhost::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmGhost::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmGhost::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmGhost* data = safe_cast<const SaveFilthSwarmGhost*>(baseData);
+	SaveFilthSwarmGhost* data = safe_cast<SaveFilthSwarmGhost*>(baseData);
 	angle_z=data->angle_z;
 	gen.Load(data->generate);
 	attack_period=data->attack_period;
@@ -435,9 +435,10 @@ void terFilthSwarmGhost::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthGhost* unit = safe_cast<terFilthGhost*>(player->buildUnit((*it)->attributeID));
-		unitList.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthGhost* unit = safe_cast<terFilthGhost*>(player->loadUnit(*it));
+        if (std::find(unitList.begin(), unitList.end(), unit) == unitList.end()) {
+            unitList.push_back(unit);
+        }
 	}
 }
 
@@ -467,9 +468,9 @@ SaveUnitData* terFilthGhost::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthGhost::universalLoad(const SaveUnitData* baseData)
+void terFilthGhost::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthGhost* data = safe_cast<const SaveFilthGhost*>(baseData);
+	SaveFilthGhost* data = safe_cast<SaveFilthGhost*>(baseData);
 
 	target_position=data->target_position;
 	attack_position=data->attack_position;

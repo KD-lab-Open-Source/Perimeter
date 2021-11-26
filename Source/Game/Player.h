@@ -291,6 +291,7 @@ public:
 	void setPlayerStrategyIndex(int playerStrategyIndex) { playerStrategyIndex_ = playerStrategyIndex; }
 	int playerStrategyIndex() const { return playerStrategyIndex_; }
 	void refreshCameraTrigger(const char* triggerName);
+    void setPlayerData(const PlayerData& playerData);
 
 	//-----------------------------
 	bool active() const { return active_; }
@@ -397,7 +398,8 @@ public:
 
 	void incomingCommandRegion(const netCommand4G_Region& reg);
 
-	terUnitBase* buildUnit(terUnitAttributeID id);
+    terUnitBase* buildUnit(terUnitAttributeID id);
+    terUnitBase* loadUnit(SaveUnitData* data, bool auto_load = true);
 	virtual void addUnit(terUnitBase* p);
 	virtual void removeUnit(terUnitBase* p);
 	
@@ -425,7 +427,7 @@ public:
 
 	void ShowInfo();
 
-	void universalLoad(const SavePlayerData& data);
+	void universalLoad(SavePlayerData& data);
 	void universalSave(SavePlayerData& data, bool userSave);
 
 	void loadWorld(const SavePrm& data);
@@ -621,6 +623,8 @@ private:
 	bool rasterize_region_on_next_quant;
 
 	Vect2f lastFramePosition_;
+    
+    bool frameClearedFlag = false;
 
 	int playerStrategyIndex_;
 

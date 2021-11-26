@@ -520,7 +520,7 @@ void NodeController::universalSave(SaveNodeController& data) const
 	data.requestedPhase = requestedPhase_;
 }
 
-void NodeController::universalLoad(const SaveNodeController& data)
+void NodeController::universalLoad(SaveNodeController& data)
 {
 	if(data.currentChain != CHAIN_NONE){
 		setChain(data.currentChain);

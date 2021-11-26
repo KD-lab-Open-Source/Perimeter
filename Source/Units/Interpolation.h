@@ -381,7 +381,7 @@ public:
 	void setSoundEventID(SoundEventID id){ soundEventID_ = id; }
 
 	void universalSave(struct SaveNodeController& data) const;
-	void universalLoad(const SaveNodeController& data);
+	void universalLoad(SaveNodeController& data);
 
 	void writeDebugInfo(XBuffer& buf);
 

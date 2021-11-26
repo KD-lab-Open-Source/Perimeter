@@ -443,10 +443,10 @@ SaveUnitData* terFilthSwarmWasp::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmWasp::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmWasp::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmWasp* data = safe_cast<const SaveFilthSwarmWasp*>(baseData);
+	SaveFilthSwarmWasp* data = safe_cast<SaveFilthSwarmWasp*>(baseData);
 
 	unit_id=data->unit_id;
 	gen.Load(data->generate);
@@ -461,9 +461,11 @@ void terFilthSwarmWasp::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthWasp* unit = safe_cast<terFilthWasp*>(player->buildUnit((*it)->attributeID));
-		unit->SetSwarm(this);
-		unit_list.push_back(unit);
+		terFilthWasp* unit = safe_cast<terFilthWasp*>(player->loadUnit(*it, false));
+        if (std::find(unit_list.begin(), unit_list.end(), unit) == unit_list.end()) {
+            unit->SetSwarm(this);
+            unit_list.push_back(unit);
+        }
 		unit->universalLoad(*it);
 	}
 }
@@ -487,9 +489,9 @@ SaveUnitData* terFilthWasp::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthWasp::universalLoad(const SaveUnitData* baseData)
+void terFilthWasp::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthWasp* data = safe_cast<const SaveFilthWasp*>(baseData);
+	SaveFilthWasp* data = safe_cast<SaveFilthWasp*>(baseData);
 
 	target_position=data->target_position;
 	center_position=data->center_position;

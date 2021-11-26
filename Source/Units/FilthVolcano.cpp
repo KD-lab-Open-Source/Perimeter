@@ -263,10 +263,10 @@ SaveUnitData* terFilthSwarmVolcano::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmVolcano::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmVolcano::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmVolcano* data = safe_cast<const SaveFilthSwarmVolcano*>(baseData);
+	SaveFilthSwarmVolcano* data = safe_cast<SaveFilthSwarmVolcano*>(baseData);
 	generation_period=data->generation_period;
 	creature_num=data->creature_num;
 
@@ -274,11 +274,13 @@ void terFilthSwarmVolcano::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		const SaveUnitData* one_base_data=*it;
-		const SaveFilthVolcano* one_data = safe_cast<const SaveFilthVolcano*>(one_base_data);
-		terFilthVolcano* unit = safe_cast<terFilthVolcano*>(player->buildUnit((*it)->attributeID));
-		unit->SetPrm(prm);
-		unitList.push_back(unit);
+		SaveUnitData* one_base_data=*it;
+		SaveFilthVolcano* one_data = safe_cast<SaveFilthVolcano*>(one_base_data);
+		terFilthVolcano* unit = safe_cast<terFilthVolcano*>(player->loadUnit(*it, false));
+        unit->SetPrm(prm);
+        if (std::find(unitList.begin(), unitList.end(), unit) == unitList.end()) {
+            unitList.push_back(unit);
+        }
 		unit->universalLoad(*it);
 	}
 }
@@ -292,9 +294,9 @@ SaveUnitData* terFilthVolcano::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthVolcano::universalLoad(const SaveUnitData* baseData)
+void terFilthVolcano::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthVolcano* data = safe_cast<const SaveFilthVolcano*>(baseData);
+	SaveFilthVolcano* data = safe_cast<SaveFilthVolcano*>(baseData);
 	begin_wait_destroy=data->begin_wait_destroy;
 	time_from_last_damage=data->time_from_last_damage;
 

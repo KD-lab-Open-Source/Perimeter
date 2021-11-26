@@ -525,9 +525,9 @@ SaveUnitData* terUnitReal::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terUnitReal::universalLoad(const SaveUnitData* baseData)
+void terUnitReal::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitRealData* data = safe_cast<const SaveUnitRealData*>(baseData);
+	SaveUnitRealData* data = safe_cast<SaveUnitRealData*>(baseData);
 	terUnitBase::universalLoad(data);
 
 	uninstallBasement();

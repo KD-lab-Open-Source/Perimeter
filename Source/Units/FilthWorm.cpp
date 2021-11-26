@@ -427,10 +427,10 @@ SaveUnitData* terFilthSwarmWorm::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmWorm::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmWorm::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmWorm* data = safe_cast<const SaveFilthSwarmWorm*>(baseData);
+	SaveFilthSwarmWorm* data = safe_cast<SaveFilthSwarmWorm*>(baseData);
 
 	attack_period=data->attack_period;
 	change_angle=data->change_angle;
@@ -441,8 +441,8 @@ void terFilthSwarmWorm::universalLoad(const SaveUnitData* baseData)
 
 	if(data->pWormModel)
 	{
-		pWormModel = safe_cast<terFilthWorm*>(player->buildUnit(data->pWormModel->attributeID));
-		pWormModel->universalLoad(data->pWormModel);
+		pWormModel = safe_cast<terFilthWorm*>(player->loadUnit(data->pWormModel, false));
+        pWormModel->universalLoad(data->pWormModel);
 	}
 }
 
@@ -454,9 +454,9 @@ SaveUnitData* terFilthWorm::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthWorm::universalLoad(const SaveUnitData* baseData)
+void terFilthWorm::universalLoad(SaveUnitData* baseData)
 {
 	terFilthGeneric::universalLoad(baseData);
-	const SaveFilthVorm* data = safe_cast<const SaveFilthVorm*>(baseData);
+	SaveFilthVorm* data = safe_cast<SaveFilthVorm*>(baseData);
 	Start();//?????
 }

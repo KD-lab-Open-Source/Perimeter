@@ -279,9 +279,9 @@ SaveUnitData* terCrater::universalSave(SaveUnitData* base_data)
 	return data;
 }
 
-void terCrater::universalLoad(const SaveUnitData* base_data)
+void terCrater::universalLoad(SaveUnitData* base_data)
 {
-	const SaveCraterData* data = safe_cast<const SaveCraterData*>(base_data);
+	SaveCraterData* data = safe_cast<SaveCraterData*>(base_data);
 	terUnitBase::universalLoad(data);
 
 	toolzer_.universalLoad(&data->toolzer);

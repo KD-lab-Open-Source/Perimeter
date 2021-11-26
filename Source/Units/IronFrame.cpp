@@ -632,9 +632,9 @@ SaveUnitData* terFrame::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFrame::universalLoad(const SaveUnitData* baseData)
+void terFrame::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitFrameData* data = safe_cast<const SaveUnitFrameData*>(baseData);
+	SaveUnitFrameData* data = safe_cast<SaveUnitFrameData*>(baseData);
 	terUnitReal::universalLoad(data);
 	
 	spiralConsumer_.setProgress(data->spiralLevel);
@@ -655,6 +655,7 @@ void terFrame::universalLoad(const SaveUnitData* baseData)
 		RequestStatus = ATTACHED;
 	
 	if(data->squad){
+        if (!data->unitID) data->squad->unitID = 0;
 		SquadPoint->universalLoad(data->squad);
 		SquadPoint->Start();
 	}
@@ -663,9 +664,7 @@ void terFrame::universalLoad(const SaveUnitData* baseData)
 		SaveUnitData* childData = data->frameSlots[i];
 		terFrameSlot& slot = frameSlots_[i];
 		if(childData){
-			terFrameChild* unit = safe_cast<terFrameChild*>(Player->buildUnit(childData->attributeID));
-			unit->universalLoad(childData);
-			unit->Start();
+			terFrameChild* unit = safe_cast<terFrameChild*>(Player->loadUnit(childData));
 			unit->SetFramePoint(this);
 			unit->setSlotNumber(i);
 
@@ -674,7 +673,7 @@ void terFrame::universalLoad(const SaveUnitData* baseData)
 			slot.ProductionID = unit->attr().ID;
 		}
 		
-		const SaveFrameSlotData& slotData = data->slotsData[i];
+		SaveFrameSlotData& slotData = data->slotsData[i];
 		if(slotData.status != -1){
 			slot.status_ = (terFrameSlot::Status)slotData.status;
 			slot.ProductionID = slotData.productionID;

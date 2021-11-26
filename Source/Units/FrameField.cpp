@@ -178,9 +178,9 @@ SaveUnitData* terProtector::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terProtector::universalLoad(const SaveUnitData* baseData)
+void terProtector::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitProtectorData* data = dynamic_cast<const SaveUnitProtectorData*>(baseData);
+	SaveUnitProtectorData* data = dynamic_cast<SaveUnitProtectorData*>(baseData);
 	terBuildingEnergy::universalLoad(data);
 
 	fieldState_ = (FieldState)data->fieldState;

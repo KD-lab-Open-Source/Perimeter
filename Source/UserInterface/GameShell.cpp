@@ -436,7 +436,19 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	LoadProgressBlock(0.6f);
 	CurrentMission.packPlayerIDs();
-	new terUniverse(NetClient, CurrentMission, savePrm(), LoadProgressUpdate);
+	new terUniverse(NetClient, CurrentMission, LoadProgressUpdate);
+    universe()->universalLoad(CurrentMission, this->savePrm(), LoadProgressUpdate);
+    
+#ifdef PERIMETER_DEBUG
+    log_var(XRndGet());
+    log_var(logicRND.get());
+    log_var(xm_random_generator.get());
+    uint32_t attrcrc = startCRC32;
+    attrcrc = getSerializationCRC<BinaryOArchive>(rigidBodyPrmLibrary(), attrcrc);
+    attrcrc = getSerializationCRC<BinaryOArchive>(attributeLibrary(), attrcrc);
+    attrcrc = getSerializationCRC<BinaryOArchive>(globalAttr(), attrcrc);
+    log_var(attrcrc);
+#endif
 
     int fogEnable = 1;
     IniManager("Perimeter.ini", false).getInt("Graphics", "FogEnable", fogEnable);
@@ -1068,6 +1080,18 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case VK_F9 | KBD_CTRL | KBD_SHIFT:
 		terCamera->erasePath();
 		break;
+    case 'C' | KBD_CTRL | KBD_SHIFT: {
+        MissionDescription md = CurrentMission;
+        universe()->universalSave(gameShell->CurrentMission, true, &md);
+        universe()->universalLoad(md, this->savePrm(), nullptr);
+        break;
+    }
+    case 'V' | KBD_CTRL | KBD_SHIFT: {
+        MissionDescription md = CurrentMission;
+        universe()->universalSave(gameShell->CurrentMission, true, &md);
+        HTManager::instance()->setMissionToStart(md);
+        break;
+    }
 	case VK_F9 | KBD_CTRL: {
 		if(!terCamera->isPlayingBack()){
 			const char* name = manualData().popupCameraSplineName();
@@ -1077,9 +1101,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 					terCamera->loadPath(*spline, false);
 			}
 			terCamera->startReplayPath(CAMERA_REPLAY_DURATION, 10);
-		}
-		else
+		} else {
 			terCamera->stopReplayPath();
+        }
 		break;
 		}
 	case VK_F9 | KBD_CTRL | KBD_MENU: {
@@ -1258,7 +1282,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		break;
 	case 'X'|KBD_SHIFT:
 		universe()->activePlayer()->setAI(!universe()->activePlayer()->isAI());
-		break;
+        break;
 	case 'F':
 		terShowFPS ^= 1;
 //		gb_VisGeneric->SetShadowMapSelf4x4(terShowFPS);

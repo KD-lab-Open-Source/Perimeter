@@ -166,6 +166,8 @@ public:
 
 	PlayerData& getActivePlayerData();
 
+    void clearData();
+
     SERIALIZE(ar) {
         ar & WRAP_OBJECT(version);
         ar & TRANSLATE_NAME(worldName_, "worldName", "Имя мира");

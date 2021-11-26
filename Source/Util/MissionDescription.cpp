@@ -649,3 +649,9 @@ void MissionDescription::shufflePlayers()
 {
 	shuffle(&playersShufflingIndices[0], &playersShufflingIndices[0] + playerAmountScenarioMax, std::default_random_engine(clocki()));
 }
+
+void MissionDescription::clearData() {
+    saveData.alloc(0);
+    binaryData.alloc(0);
+    scriptsData.alloc(0);
+}

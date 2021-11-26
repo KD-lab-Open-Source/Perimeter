@@ -160,7 +160,7 @@ public:
 	void RefreshAttribute();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void showDebugInfo();
 

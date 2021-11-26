@@ -15,7 +15,7 @@ public:
 	void MustDieFree();
 	void SetAttackPeriod(int attack_period_){attack_period=attack_period_;}
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	void EffectRun();
 	Vect3f target;
@@ -45,7 +45,7 @@ public:
 	terUnitAttributeID GetUnitID() {return UNIT_ATTRIBUTE_FILTH_SHARK;}
 	void SetFreeDestroy();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	int attack_period;
 	typedef std::vector<terFilthShark*> FilthListType;

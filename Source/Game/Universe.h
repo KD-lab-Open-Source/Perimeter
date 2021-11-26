@@ -23,15 +23,17 @@ typedef Grid2D<terUnitGeneric, 5, GridVector<terUnitGeneric, 8> > terUnitGridTyp
 class terUniverse : public terHyperSpace
 {
 public:
-	terUniverse(PNetCenter* net_client, MissionDescription& mission, SavePrm& data,  PROGRESSCALLBACK loadProgressUpdate);
+	terUniverse(PNetCenter* net_client, MissionDescription& mission, PROGRESSCALLBACK loadProgressUpdate);
 
 	~terUniverse();
 
+    void clear();
 	void Quant();
 	void AvatarQuant();
 	void PrepareQuant();
 	void triggerQuant();
 
+    bool universalLoad(MissionDescription& mission, SavePrm& data, PROGRESSCALLBACK loadProgressUpdate);
 	bool universalSave(const MissionDescription& mission, bool userSave, MissionDescription* destination = nullptr);
 	void relaxLoading();
 

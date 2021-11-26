@@ -200,9 +200,9 @@ SaveUnitData* terFilthSpot::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSpot::universalLoad(const SaveUnitData* baseData)
+void terFilthSpot::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitFilthData* data = safe_cast<const SaveUnitFilthData*>(baseData);
+	SaveUnitFilthData* data = safe_cast<SaveUnitFilthData*>(baseData);
 	terUnitBase::universalLoad(data);
 
 	setRadius(data->radius);
@@ -245,11 +245,16 @@ void terFilthSpot::universalLoad(const SaveUnitData* baseData)
 		}
 	}
 
+    for (auto existing : swarm_list) {
+        delete existing;
+    }
+    swarm_list.clear();
+    
 	FilthSwarmListType& new_swarm=swarm_list;
 	SaveUnitDataList::const_iterator it;
 	FOR_EACH(data->swarmList,it)
 	{
-		const SaveFilthSwarm* swarm_data=safe_cast<const SaveFilthSwarm*>(it->get());
+		SaveFilthSwarm* swarm_data=safe_cast<SaveFilthSwarm*>(it->get());
 		switch(FilthParamID){
 			case FILTH_SPOT_ID_ANTS:
 			case FILTH_SPOT_ID_ANTS2:
@@ -1278,10 +1283,10 @@ SaveUnitData* terFilthSpline::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSpline::universalLoad(const SaveUnitData* baseData)
+void terFilthSpline::universalLoad(SaveUnitData* baseData)
 {
 	terFilthGeneric::universalLoad(baseData);
-	const SaveFilthSpline* data = safe_cast<const SaveFilthSpline*>(baseData);
+	SaveFilthSpline* data = safe_cast<SaveFilthSpline*>(baseData);
 	delta_time=data->delta_time;
 	cur_way_point=data->cur_way_point;
 	acceleration=data->acceleration;
@@ -1352,9 +1357,9 @@ SaveUnitData* terFilthSwarm::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarm::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarm::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthSwarm* data = safe_cast<const SaveFilthSwarm*>(baseData);
+	SaveFilthSwarm* data = safe_cast<SaveFilthSwarm*>(baseData);
 	position=data->position;
 	attack_width=data->attack_width;
 	attack_direction=data->attack_direction;

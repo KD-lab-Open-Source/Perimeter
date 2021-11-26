@@ -462,10 +462,10 @@ SaveUnitData* terFilthSwarmRat::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmRat::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmRat::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmRat* data = safe_cast<const SaveFilthSwarmRat*>(baseData);
+	SaveFilthSwarmRat* data = safe_cast<SaveFilthSwarmRat*>(baseData);
 
 	gen.Load(data->generate);
 	DeltaAngle=data->DeltaAngle;
@@ -478,9 +478,10 @@ void terFilthSwarmRat::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthRat* unit = safe_cast<terFilthRat*>(player->buildUnit((*it)->attributeID));
-		unitList.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthRat* unit = safe_cast<terFilthRat*>(player->loadUnit(*it));
+        if (std::find(unitList.begin(), unitList.end(), unit) == unitList.end()) {
+            unitList.push_back(unit);
+        }
 	}
 }
 
@@ -502,9 +503,9 @@ SaveUnitData* terFilthRat::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthRat::universalLoad(const SaveUnitData* baseData)
+void terFilthRat::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthRat* data = safe_cast<const SaveFilthRat*>(baseData);
+	SaveFilthRat* data = safe_cast<SaveFilthRat*>(baseData);
 
 	FilthStatus=(terFilthRatStatusType)data->FilthStatus;
 	TargetPosition=data->TargetPosition;

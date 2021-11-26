@@ -846,10 +846,10 @@ SaveUnitData* terFilthSwarmDragon::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmDragon::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmDragon::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmDragon* data = safe_cast<const SaveFilthSwarmDragon*>(baseData);
+	SaveFilthSwarmDragon* data = safe_cast<SaveFilthSwarmDragon*>(baseData);
 	use_geo=data->use_geo;
 	AttackCount=data->AttackCount;
 	TargetPosition=data->TargetPosition;
@@ -858,7 +858,7 @@ void terFilthSwarmDragon::universalLoad(const SaveUnitData* baseData)
 
 	if(data->HeadPoint)
 	{
-		HeadPoint = safe_cast<terFilthDragonHead*>(player->buildUnit(data->HeadPoint->attributeID));
+		HeadPoint = safe_cast<terFilthDragonHead*>(player->loadUnit(data->HeadPoint, false));
 		HeadPoint->SetSwarm(this);
 		HeadPoint->universalLoad(data->HeadPoint);
 
@@ -890,10 +890,10 @@ SaveUnitData* terFilthDragon::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthDragon::universalLoad(const SaveUnitData* baseData)
+void terFilthDragon::universalLoad(SaveUnitData* baseData)
 {
 	terFilthGeneric::universalLoad(baseData);
-	const SaveFilthDragon* data = safe_cast<const SaveFilthDragon*>(baseData);
+	SaveFilthDragon* data = safe_cast<SaveFilthDragon*>(baseData);
 	scale=data->scale;
 	crater_run=data->crater_run;
 	is_die=data->is_die;
@@ -909,7 +909,7 @@ void terFilthDragon::universalLoad(const SaveUnitData* baseData)
 
 	if(data->NextPoint)
 	{
-		NextPoint = safe_cast<terFilthDragon*>(swarm->player->buildUnit(data->NextPoint->attributeID));
+		NextPoint = safe_cast<terFilthDragon*>(swarm->player->loadUnit(data->NextPoint, false));
 		NextPoint->SetSwarm(swarm);
 		NextPoint->universalLoad(data->NextPoint);
 	}
@@ -934,10 +934,10 @@ SaveUnitData* terFilthDragonHead::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthDragonHead::universalLoad(const SaveUnitData* baseData)
+void terFilthDragonHead::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSpline::universalLoad(baseData);
-	const SaveFilthDragonHead* data = safe_cast<const SaveFilthDragonHead*>(baseData);
+	SaveFilthDragonHead* data = safe_cast<SaveFilthDragonHead*>(baseData);
 
 	ObjectAnimation.startPeriod(data->ObjectAnimationPhase,swarm->prm->AnimationHeadPeriod,1);
 	attack=data->attack;
@@ -955,7 +955,7 @@ void terFilthDragonHead::universalLoad(const SaveUnitData* baseData)
 
 	if(data->NextPoint)
 	{
-		NextPoint = safe_cast<terFilthDragon*>(swarm->player->buildUnit(data->NextPoint->attributeID));
+		NextPoint = safe_cast<terFilthDragon*>(swarm->player->loadUnit(data->NextPoint));
 		NextPoint->SetSwarm(swarm);
 		NextPoint->universalLoad(data->NextPoint);
 	}

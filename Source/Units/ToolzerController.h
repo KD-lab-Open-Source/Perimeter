@@ -42,7 +42,7 @@ public:
 	static void resetActionOp();
 
 	SaveToolzerControllerData* universalSave(SaveToolzerControllerData* data);
-	void universalLoad(const SaveToolzerControllerData* data);
+	void universalLoad(SaveToolzerControllerData* data);
 
 private:
 

@@ -44,7 +44,7 @@ public:
 	bool selectAble() const { return false; }
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 protected:
 
@@ -128,7 +128,7 @@ public:
 	}
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 private:
 
@@ -166,7 +166,7 @@ public:
 	void setTarget(terUnitBase* p,const Vect3f& target,float target_delta = 0.0f);
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 private:
 

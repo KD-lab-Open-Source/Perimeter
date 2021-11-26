@@ -531,7 +531,7 @@ public:
 	void destroyLink();
 
 	SaveWeaponData* universalSave(SaveWeaponData* data);
-	void universalLoad(const SaveWeaponData* data);
+	void universalLoad(SaveWeaponData* data);
 
 private:
 
@@ -601,7 +601,7 @@ public:
 	void destroyLink();
 
 	SaveWeaponData* universalSave(SaveWeaponData* data);
-	void universalLoad(const SaveWeaponData* data);
+	void universalLoad(SaveWeaponData* data);
 
 private:
 
@@ -622,7 +622,7 @@ public:
 	void quant();
 
 	SaveWeaponData* universalSave(SaveWeaponData* data);
-	void universalLoad(const SaveWeaponData* data);
+	void universalLoad(SaveWeaponData* data);
 
 private:
 
@@ -848,7 +848,7 @@ SaveWeaponData* terWeapon::universalSave(SaveWeaponData* data)
 	return data;
 }
 
-void terWeapon::universalLoad(const SaveWeaponData* data)
+void terWeapon::universalLoad(SaveWeaponData* data)
 {
 	if(!data) return;
 
@@ -1682,7 +1682,7 @@ SaveWeaponData* terWeaponScumTwister::universalSave(SaveWeaponData* data)
 	return data;
 }
 
-void terWeaponScumTwister::universalLoad(const SaveWeaponData* data)
+void terWeaponScumTwister::universalLoad(SaveWeaponData* data)
 {
 	WeaponOmnidirectionalBase::universalLoad(data);
 
@@ -1900,7 +1900,7 @@ SaveWeaponData* terWeaponScumDisruptor::universalSave(SaveWeaponData* data)
 	return data;
 }
 
-void terWeaponScumDisruptor::universalLoad(const SaveWeaponData* data)
+void terWeaponScumDisruptor::universalLoad(SaveWeaponData* data)
 {
 	WeaponOmnidirectionalBase::universalLoad(data);
 
@@ -2025,11 +2025,11 @@ SaveWeaponData* terWeaponFilthNavigator::universalSave(SaveWeaponData* base_data
 	return base_data;
 }
 
-void terWeaponFilthNavigator::universalLoad(const SaveWeaponData* base_data)
+void terWeaponFilthNavigator::universalLoad(SaveWeaponData* base_data)
 {
 	WeaponOmnidirectionalBase::universalLoad(base_data);
 
-	if(const SaveWeaponFilthNavigatorData* data = dynamic_cast<const SaveWeaponFilthNavigatorData*>(base_data)){
+	if(SaveWeaponFilthNavigatorData* data = dynamic_cast<SaveWeaponFilthNavigatorData*>(base_data)){
 		prmIndex_ = data->prmIndex;
 	}
 }

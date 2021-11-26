@@ -126,7 +126,7 @@ public:
 	void finishIO();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void GetInterfaceFrameProduction(int* phase,int* id,terUnitBase* unit[FRAME_SLOTS_MAX]);
 

@@ -21,7 +21,7 @@ public:
 
 	void setInitialGeoprocess(bool b){initial_geoprocess=b;}
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	class c3DSGeoAction* BirthProcessPoint;
 	class c3DSGeoAction* DestroyProcessPoint;
@@ -55,7 +55,7 @@ public:
 	terUnitAttributeID GetUnitID();
 	void SetFreeDestroy();
 	virtual SaveUnitData* universalSave(SaveUnitData* baseData);
-	virtual void universalLoad(const SaveUnitData* baseData);
+	virtual void universalLoad(SaveUnitData* baseData);
 protected:
 	typedef std::list<terFilthAnt*> FilthListType;
 	FilthListType unitList;

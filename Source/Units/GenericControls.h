@@ -97,7 +97,7 @@ public:
 	virtual void setRealModel(int modelIndex, float scale) {} 
 
 	virtual SaveUnitData* universalSave(SaveUnitData* data);
-	virtual void universalLoad(const SaveUnitData* data);
+	virtual void universalLoad(SaveUnitData* data);
 
 	virtual void Collision(terUnitBase* p) {}
 

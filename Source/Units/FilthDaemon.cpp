@@ -493,10 +493,10 @@ SaveUnitData* terFilthSwarmDaemon::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmDaemon::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmDaemon::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmDaemon* data = safe_cast<const SaveFilthSwarmDaemon*>(baseData);
+	SaveFilthSwarmDaemon* data = safe_cast<SaveFilthSwarmDaemon*>(baseData);
 	must_init_pos=data->must_init_pos;
 	init_pos=data->init_pos;
 	attack_pos=data->attack_pos;
@@ -516,9 +516,10 @@ void terFilthSwarmDaemon::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unit_list,it)
 	if(*it)
 	{
-		terFilthDaemon* unit = safe_cast<terFilthDaemon*>(player->buildUnit((*it)->attributeID));
-		unit_list.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthDaemon* unit = safe_cast<terFilthDaemon*>(player->loadUnit(*it));
+        if (std::find(unit_list.begin(), unit_list.end(), unit) == unit_list.end()) {
+            unit_list.push_back(unit);
+        }
 	}
 }
 
@@ -537,10 +538,10 @@ SaveUnitData* terFilthDaemon::universalSave(SaveUnitData* baseData)
 	return data;	
 }
 
-void terFilthDaemon::universalLoad(const SaveUnitData* baseData)
+void terFilthDaemon::universalLoad(SaveUnitData* baseData)
 {
 	terFilthGeneric::universalLoad(baseData);
-	const SaveFilthDaemon* data = safe_cast<const SaveFilthDaemon*>(baseData);
+	SaveFilthDaemon* data = safe_cast<SaveFilthDaemon*>(baseData);
 
 	free_destroy=data->free_destroy;
 	on_zeroplast=data->on_zeroplast;

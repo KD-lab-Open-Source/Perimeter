@@ -141,7 +141,7 @@ void terInterpolationReal::universalSave(struct SaveInterpolationReal& data) con
 	}
 }
 
-void terInterpolationReal::universalLoad(const SaveInterpolationReal& data)
+void terInterpolationReal::universalLoad(SaveInterpolationReal& data)
 {
 	node.universalLoad(data.node);
 

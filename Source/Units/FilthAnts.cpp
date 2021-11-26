@@ -396,10 +396,10 @@ SaveUnitData* terFilthSwarmAnt::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmAnt::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmAnt::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmAnt* data = safe_cast<const SaveFilthSwarmAnt*>(baseData);
+	SaveFilthSwarmAnt* data = safe_cast<SaveFilthSwarmAnt*>(baseData);
 	gen.Load(data->generate);
 	DeltaAngle=data->DeltaAngle;
 	ChangeAngleCount=data->ChangeAngleCount;
@@ -411,9 +411,10 @@ void terFilthSwarmAnt::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthAnt* unit = safe_cast<terFilthAnt*>(player->buildUnit((*it)->attributeID));
-		unitList.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthAnt* unit = safe_cast<terFilthAnt*>(player->loadUnit(*it));
+        if (std::find(unitList.begin(), unitList.end(), unit) == unitList.end()) {
+            unitList.push_back(unit);
+        }
 	}
 
 }
@@ -433,9 +434,9 @@ SaveUnitData* terFilthAnt::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthAnt::universalLoad(const SaveUnitData* baseData)
+void terFilthAnt::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthAnt* data = safe_cast<const SaveFilthAnt*>(baseData);
+	SaveFilthAnt* data = safe_cast<SaveFilthAnt*>(baseData);
 	terUnitReal::universalLoad(data);
 
 	TargetPosition=data->TargetPosition;

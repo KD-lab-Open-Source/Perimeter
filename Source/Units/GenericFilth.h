@@ -76,7 +76,7 @@ struct terFilthSpline: terFilthGeneric,terSplineController
 	void AvatarQuant();
 	void MoveQuant();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	virtual const Se3f& GetPose()const {return pose();}
 	virtual void addWayPoint()=0;
@@ -113,7 +113,7 @@ struct terFilthSwarm
 	virtual void SetFreeDestroy(){};
 
 	virtual SaveUnitData* universalSave(SaveUnitData* baseData);
-	virtual void universalLoad(const SaveUnitData* baseData);
+	virtual void universalLoad(SaveUnitData* baseData);
 protected:
 	terPlayer* player;
 	const AttributeBase* attribute;
@@ -145,7 +145,7 @@ struct terFilthSpot : terUnitBase
 	virtual ~terFilthSpot();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void Start();
 	void MoveQuant();

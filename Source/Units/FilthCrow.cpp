@@ -417,10 +417,10 @@ SaveUnitData* terFilthSwarmCrow::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmCrow::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmCrow::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmCrow* data = safe_cast<const SaveFilthSwarmCrow*>(baseData);
+	SaveFilthSwarmCrow* data = safe_cast<SaveFilthSwarmCrow*>(baseData);
 	generate_creature_num=data->generate_creature_num;
 	attack_pos=data->attack_pos;
 	attack_period=data->attack_period;
@@ -429,9 +429,10 @@ void terFilthSwarmCrow::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthCrow* unit = safe_cast<terFilthCrow*>(player->buildUnit((*it)->attributeID));
-		unit_list.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthCrow* unit = safe_cast<terFilthCrow*>(player->loadUnit(*it));
+        if (std::find(unit_list.begin(), unit_list.end(), unit) == unit_list.end()) {
+            unit_list.push_back(unit);
+        }
 	}
 }
 
@@ -451,10 +452,10 @@ SaveUnitData* terFilthCrow::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthCrow::universalLoad(const SaveUnitData* baseData)
+void terFilthCrow::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSpline::universalLoad(baseData);
-	const SaveFilthCrow* data = safe_cast<const SaveFilthCrow*>(baseData);
+	SaveFilthCrow* data = safe_cast<SaveFilthCrow*>(baseData);
 
 	free_destroy=data->free_destroy;
 	target_position=data->target_position;

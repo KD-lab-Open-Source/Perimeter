@@ -86,9 +86,9 @@ SaveUnitData* terBuilding::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terBuilding::universalLoad(const SaveUnitData* baseData)
+void terBuilding::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitBuildingData* data = safe_cast<const SaveUnitBuildingData*>(baseData);
+	SaveUnitBuildingData* data = safe_cast<SaveUnitBuildingData*>(baseData);
 	terUnitReal::universalLoad(data);
 
 	setBuildingStatus(data->buildingStatusBV);

@@ -682,9 +682,9 @@ SaveUnitData* terUnitLegionary::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terUnitLegionary::universalLoad(const SaveUnitData* baseData)
+void terUnitLegionary::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitLegionaryData* data = safe_cast<const SaveUnitLegionaryData*>(baseData);
+	SaveUnitLegionaryData* data = safe_cast<SaveUnitLegionaryData*>(baseData);
 
 	if(data->flyingMode)
 		BodyPoint->setFlyingMode(true);
@@ -695,6 +695,8 @@ void terUnitLegionary::universalLoad(const SaveUnitData* baseData)
 	}
 
 	terUnitReal::universalLoad(data);
+
+    transportAtom_ = DamageMolecula();
 
 	addToTransport(MUTATION_ATOM_SOLDIER, data->transportedSoldiers);
 	addToTransport(MUTATION_ATOM_OFFICER, data->transportedOfficers);

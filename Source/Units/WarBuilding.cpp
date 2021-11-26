@@ -244,11 +244,11 @@ SaveUnitData* terBuildingMilitary::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terBuildingMilitary::universalLoad(const SaveUnitData* baseData)
+void terBuildingMilitary::universalLoad(SaveUnitData* baseData)
 {
 	terBuildingPowered::universalLoad(baseData);
 	
-	const SaveUnitBuildingMilitaryData* data = dynamic_cast<const SaveUnitBuildingMilitaryData*>(baseData);
+	SaveUnitBuildingMilitaryData* data = dynamic_cast<SaveUnitBuildingMilitaryData*>(baseData);
 	if(data){
 		data->attackTarget.setLink((terUnitBase*&)attackTarget_);
 		data->lastAttackTarget.setLink((terUnitBase*&)lastAttackTarget_);

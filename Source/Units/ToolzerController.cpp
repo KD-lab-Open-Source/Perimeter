@@ -228,7 +228,7 @@ SaveToolzerControllerData* ToolzerController::universalSave(SaveToolzerControlle
 	return data;
 }
 
-void ToolzerController::universalLoad(const SaveToolzerControllerData* data)
+void ToolzerController::universalLoad(SaveToolzerControllerData* data)
 {
 	scale_ = data->scale;
 	currentStep_ = data->currentStep;

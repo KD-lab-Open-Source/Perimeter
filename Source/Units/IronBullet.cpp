@@ -178,9 +178,9 @@ SaveUnitData* terProjectileBase::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terProjectileBase::universalLoad(const SaveUnitData* baseData)
+void terProjectileBase::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitProjectileData* data = safe_cast<const SaveUnitProjectileData*>(baseData);
+	SaveUnitProjectileData* data = safe_cast<SaveUnitProjectileData*>(baseData);
 	terUnitReal::universalLoad(data);
 
 	data->target.setLink((terUnitBase*&)target_);
@@ -383,9 +383,9 @@ SaveUnitData* terProjectileUnderground::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terProjectileUnderground::universalLoad(const SaveUnitData* baseData)
+void terProjectileUnderground::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitProjectileUndergroundData* data = safe_cast<const SaveUnitProjectileUndergroundData*>(baseData);
+	SaveUnitProjectileUndergroundData* data = safe_cast<SaveUnitProjectileUndergroundData*>(baseData);
 	terProjectileBase::universalLoad(data);
 
 	lastCraterPosition_ = data->lastCraterPosition;
@@ -488,9 +488,9 @@ SaveUnitData* terProjectileScumStorm::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terProjectileScumStorm::universalLoad(const SaveUnitData* baseData)
+void terProjectileScumStorm::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitScumStormData* data = safe_cast<const SaveUnitScumStormData*>(baseData);
+	SaveUnitScumStormData* data = safe_cast<SaveUnitScumStormData*>(baseData);
 	terProjectileBase::universalLoad(data);
 
 	if(data->freeMovementTimer)

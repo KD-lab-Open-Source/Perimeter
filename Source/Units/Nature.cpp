@@ -46,9 +46,9 @@ SaveUnitData* terNatureObject::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terNatureObject::universalLoad(const SaveUnitData* baseData)
+void terNatureObject::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitNatureData* data = safe_cast<const SaveUnitNatureData*>(baseData);
+	SaveUnitNatureData* data = safe_cast<SaveUnitNatureData*>(baseData);
 	terUnitGeneric::universalLoad(data);
 
 	ModelName = data->modelName;

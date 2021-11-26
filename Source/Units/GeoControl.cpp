@@ -50,9 +50,9 @@ SaveUnitData* terGeoControl::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoControl::universalLoad(const SaveUnitData* baseData)
+void terGeoControl::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoControl* data = safe_cast<const SaveGeoControl*>(baseData);
+	SaveGeoControl* data = safe_cast<SaveGeoControl*>(baseData);
 	terUnitBase::universalLoad(data);
 
 	sleep_ = data->sleep;
@@ -189,9 +189,9 @@ SaveUnitData* terGeoInfluence::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoInfluence::universalLoad(const SaveUnitData* baseData)
+void terGeoInfluence::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoInfluence* data = safe_cast<const SaveGeoInfluence*>(baseData);
+	SaveGeoInfluence* data = safe_cast<SaveGeoInfluence*>(baseData);
 	terGeoControl::universalLoad(data);
 	setRadius(data->geoRadius);
 }
@@ -249,9 +249,9 @@ SaveUnitData* terGeoBreak::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoBreak::universalLoad(const SaveUnitData* baseData)
+void terGeoBreak::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoBreak* data = safe_cast<const SaveGeoBreak*>(baseData);
+	SaveGeoBreak* data = safe_cast<SaveGeoBreak*>(baseData);
 	terGeoControl::universalLoad(data);
 	setRadius(data->geoRadius);
 	num_break = data->num_break;
@@ -310,9 +310,9 @@ SaveUnitData* terGeoFault::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoFault::universalLoad(const SaveUnitData* baseData)
+void terGeoFault::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoFault* data = safe_cast<const SaveGeoFault*>(baseData);
+	SaveGeoFault* data = safe_cast<SaveGeoFault*>(baseData);
 	terGeoControl::universalLoad(data);
 	length=data->length;
 	angle=data->angle;
@@ -391,9 +391,9 @@ SaveUnitData* terGeoHead::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoHead::universalLoad(const SaveUnitData* baseData)
+void terGeoHead::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoBreak* data = safe_cast<const SaveGeoBreak*>(baseData);
+	SaveGeoBreak* data = safe_cast<SaveGeoBreak*>(baseData);
 	terGeoControl::universalLoad(data);
 	setRadius(data->geoRadius);
 }

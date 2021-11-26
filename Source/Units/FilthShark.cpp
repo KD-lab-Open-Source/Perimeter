@@ -330,10 +330,10 @@ SaveUnitData* terFilthSwarmShark::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmShark::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmShark::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmShark* data = safe_cast<const SaveFilthSwarmShark*>(baseData);
+	SaveFilthSwarmShark* data = safe_cast<SaveFilthSwarmShark*>(baseData);
 	attack_period=data->attack_period;
 	gen.Load(data->generate);
 
@@ -341,9 +341,10 @@ void terFilthSwarmShark::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthShark* unit = safe_cast<terFilthShark*>(player->buildUnit((*it)->attributeID));
-		units.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthShark* unit = safe_cast<terFilthShark*>(player->loadUnit(*it));
+        if (std::find(units.begin(), units.end(), unit) == units.end()) {
+            units.push_back(unit);
+        }
 	}
 }
 
@@ -364,9 +365,9 @@ SaveUnitData* terFilthShark::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthShark::universalLoad(const SaveUnitData* baseData)
+void terFilthShark::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthShark* data = safe_cast<const SaveFilthShark*>(baseData);
+	SaveFilthShark* data = safe_cast<SaveFilthShark*>(baseData);
 
 	target=data->target;
 	pin=data->pin;

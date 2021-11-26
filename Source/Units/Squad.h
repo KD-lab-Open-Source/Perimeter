@@ -105,7 +105,7 @@ public:
 	int countPossibleUnits(terUnitAttributeID id) const;
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	terUnitSquad* GetSquadPoint(){ return this; }
 

@@ -200,9 +200,9 @@ SaveUnitData* terCorridorAlpha::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terCorridorAlpha::universalLoad(const SaveUnitData* baseData)
+void terCorridorAlpha::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitCorridorAlphaData* data = safe_cast<const SaveUnitCorridorAlphaData*>(baseData);
+	SaveUnitCorridorAlphaData* data = safe_cast<SaveUnitCorridorAlphaData*>(baseData);
 	terBuilding::universalLoad(data);
 
 	if(data->free)
@@ -310,9 +310,9 @@ SaveUnitData* terCorridorOmega::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terCorridorOmega::universalLoad(const SaveUnitData* baseData)
+void terCorridorOmega::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitCorridorOmegaData* data = safe_cast<const SaveUnitCorridorOmegaData*>(baseData);
+	SaveUnitCorridorOmegaData* data = safe_cast<SaveUnitCorridorOmegaData*>(baseData);
 	terBuilding::universalLoad(data);
 	
 	upgraded_ = data->upgraded;

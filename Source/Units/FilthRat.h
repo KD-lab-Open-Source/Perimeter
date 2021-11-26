@@ -22,7 +22,7 @@ public:
 	void setPose(const Se3f& poseIn, bool initPose);
 	void setFieldDamage(const DamageData& damage);
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	enum terFilthRatStatusType
 	{
@@ -66,7 +66,7 @@ public:
 	terUnitAttributeID GetUnitID();
 	void SetFreeDestroy();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	struct s_WaspBirthGeoAction* BirthProcessPoint;
 

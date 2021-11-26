@@ -548,12 +548,12 @@ SaveUnitData* terUnitSquad::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terUnitSquad::universalLoad(const SaveUnitData* baseData)
+void terUnitSquad::universalLoad(SaveUnitData* baseData)
 {
 	if(!baseData)
 		return;
 
-	const SaveUnitSquadData* data = safe_cast<const SaveUnitSquadData*>(baseData);
+	SaveUnitSquadData* data = safe_cast<SaveUnitSquadData*>(baseData);
 
 	terUnitBase::universalLoad(data);
 
@@ -562,11 +562,15 @@ void terUnitSquad::universalLoad(const SaveUnitData* baseData)
 
 	currentMutation_ = data->currentMutation;
 	position_generator.setMode(PositionGenerator::Square, data->curvatureRadius);
+    squadMutationMolecula_ = DamageMolecula();
 
 	SaveUnitDataList::const_iterator mi;
 	FOR_EACH(data->squadMembers, mi){
-		terUnitBase* unit = Player->buildUnit((*mi)->attributeID);
-		addUnit(safe_cast<terUnitLegionary*>(unit), false);
+		terUnitBase* unit = Player->loadUnit(*mi, false);
+        //Add unit to squad if not already added
+        if (std::find(Units.begin(), Units.end(), unit) == Units.end()) {
+            addUnit(safe_cast<terUnitLegionary*>(unit), false);
+        }
 		unit->universalLoad(*mi);
 		unit->Start();
 		unit->setCollisionGroup(unit->collisionGroup() | COLLISION_GROUP_REAL);

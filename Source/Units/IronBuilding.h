@@ -78,7 +78,7 @@ public:
 	void Quant();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* parser);
+	void universalLoad(SaveUnitData* parser);
 
 	virtual void checkConnection() {}
 
