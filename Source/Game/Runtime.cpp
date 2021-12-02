@@ -262,8 +262,9 @@ void HTManager::init()
 
 	allocation_tracking("before");
 
-	if(IniManager("Perimeter.ini").getInt("Game","ZIP"))
-		ZIPOpen("resource.pak");
+	if (IniManager("Perimeter.ini").getInt("Game","ZIP")) {
+        ZIPOpen("resource.pak");
+    }
 
 	PerimeterDataChannelLoad();
 

@@ -88,7 +88,7 @@ void findGameContent() {
             clear_content_entries();
             set_content_root_path(rootPath);
             if (scan_resource_paths()) {
-                if (!convert_path_content("Resource").empty()) {
+                if (!convert_path_content("Perimeter.ini").empty()) {
                     break;
                 }
             }
@@ -98,13 +98,8 @@ void findGameContent() {
     }
     
     //Detect if resource dir is present
-    if (convert_path_content("Resource").empty()) {
-        std::string msg;
-        if (convert_path_content("Perimeter.ini").empty()) {
-            msg = "Game content not found. Scanned paths:\n";
-        } else {
-            msg = "Resource directory not found, if resource.pak exists please unzip it. Scanned paths:\n";
-        }
+    if (convert_path_content("Perimeter.ini").empty()) {
+        std::string msg = "Game content not found. Scanned paths:\n";
         for (const std::string& rootPath : scannedPaths) {
             msg += rootPath + "\n";
         }
@@ -358,7 +353,7 @@ void detectGameContent() {
         addGameContent(GAME_CONTENT::PERIMETER_ET);
         terGameContentBase = GAME_CONTENT::PERIMETER_ET;
     }
-    if (!convert_path_content("Resource/Missions/Tutorial.spg").empty()) {
+    if (!convert_path_content("resource.pak").empty() || !convert_path_content("Resource/Missions/Tutorial.spg").empty()) {
         addGameContent(GAME_CONTENT::PERIMETER);
         terGameContentBase = GAME_CONTENT::PERIMETER;
     }

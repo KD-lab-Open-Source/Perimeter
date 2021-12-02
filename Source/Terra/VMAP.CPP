@@ -90,8 +90,14 @@ std::string GetTargetName(int numWorld, const char* name)
     if (!path.empty()) {
         terminate_with_char(path, PATH_SEP);
     }
-    if (name) path += name;
-    return path;
+    if (name) {
+        path += name;
+    }
+    std::string result = convert_path_content(path);
+    if (result.empty()) {
+        result = convert_path_native(path);
+    }
+    return result;
 }
 
 std::string safeGetTargetName(int numWorld, const char* name)
@@ -415,9 +421,9 @@ void vrtMap::prepare(char* name)
 	//Scan resources worlds and create table with name and path
 	wTable.clear();
     for (const auto& entry : get_content_entries_directory("resource/worlds")) {
-        std::filesystem::path path(entry->path_content);
-        if (std::filesystem::is_directory(path)) {            
-            wTable.emplace_back(path.filename().string(), path.string());
+        if (entry->is_directory) {
+            std::filesystem::path path(entry->path_content);
+            wTable.emplace_back(path.filename().string(), entry->key);
         }
     }
     maxWorld = wTable.size();
@@ -798,7 +804,9 @@ void vrtMap::fullLoad(bool flag_fastLoad)
 	if(VxGBuf!=0) releaseMem4Buf();
 	allocMem4Buf();
 
-	fmap.open(GetTargetName(worldDataFileLinear), XS_IN);
+	if (!fmap.open(GetTargetName(worldDataFileLinear), XS_IN)) {
+        ErrH.Abort("VMP file not found");
+    }
 
 	//const char id[4]={'S','2','T','0'};
 	fmap.seek(0,XS_BEG);

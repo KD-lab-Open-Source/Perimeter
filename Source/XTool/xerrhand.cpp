@@ -18,6 +18,7 @@
 #include "tweaks.h"
 #include "xstream.h"
 #include "xerrhand.h"
+#include "xutl.h"
 
 static void (*assert_restore_graphics_function)() = nullptr;
 
@@ -34,7 +35,6 @@ char convBuf[CONV_BUFFER_LEN + 1];
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
 #include "boost/stacktrace.hpp"
-#include "xutl.h"
 
 #endif
 

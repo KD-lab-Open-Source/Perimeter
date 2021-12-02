@@ -55,10 +55,8 @@ XZIP_FileHeader::~XZIP_FileHeader(void)
 
 void XZIP_FileHeader::SetName(const char* p)
 {
-	int i,sz = strlen(p);
-	fileName = strdup(p); 
-	for(i = 0; i < sz; i ++)
-		if(fileName[i] == '/') fileName[i] = '\\';
+	fileName = strdup(p);
+    strlwr(fileName);
 }
 
 void XZIP_FileHeader::save(XStream& fh)
@@ -172,6 +170,9 @@ void XZIP_Resource::LoadHeaders(void)
 				file.seek(ecr.zipfile_comment_length,XS_CUR);
 				fl = 1;
 				break;
+            default:
+                xassert(0);
+                break;
 		}
 	}
 	file.seek(0,XS_BEG);
@@ -180,31 +181,31 @@ void XZIP_Resource::LoadHeaders(void)
 void XZIP_Resource::SaveIndex(void)
 {
 	XStream fh(idxName.c_str(),XS_OUT);
-	//TODO not sure if we should use 64 bits here
-	fh < (uint32_t) fileList.size();
+	fh < static_cast<uint32_t>(fileList.size());
 
-	FileList::iterator fi;
-	FOR_EACH(fileList, fi)
-		fi->save(fh);
+    for (auto& fi : fileList) {
+        fi.save(fh);
+    }
 
 	fh.close();
 }
 
 XZIP_FileHeader* XZIP_Resource::find(const char* fname)
 {
-	FileList::iterator fi;
-	FOR_EACH(fileList, fi)
-		if(!stricmp(fi->name(),fname))
-			return &*fi;
+	for (auto& fi : fileList) {
+        if (strcmp(fi.name(), fname) == 0) {
+            return &fi;
+        }
+    }
 
-	return 0;
+	return nullptr;
 }
 
-int XZIP_Resource::open(const char* fname,XStream& fh,int mode)
+int XZIP_Resource::open(const std::string& fname,XStream& fh,int mode)
 {
-	XZIP_FileHeader* p = find(fname);
-	if(p){
-		 fh.open(&file,p -> offset(),p -> size());
+	XZIP_FileHeader* p = find(fname.c_str());
+	if (p) {
+		 fh.open(&file, p->offset(), p->size());
 		 return 1;
 	}
 	return 0;

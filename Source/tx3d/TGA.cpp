@@ -58,15 +58,14 @@ bool TGA::load(const char *fileName) {
 	memcpy(tmpPixels, pixels, width * height * bpp);
 //---------
 */
-    std::string filePath = convert_path_content(fileName);
 #ifndef _SURMAP_
 	ZIPStream file;
 #else
 	XStream file(filePath, XS_IN);
 #endif
-	if (!file.open(filePath.c_str())) {
+	if (!file.open(fileName)) {
 		std::string errMsg("Error reading GeoTx TGA: ");
-		errMsg += filePath;
+		errMsg += fileName;
 		if(enable_load_assert)
 			xxassert(0, errMsg.c_str());
 		return false;

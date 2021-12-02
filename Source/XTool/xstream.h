@@ -10,8 +10,6 @@
 #define XS_OUT		0x0002
 #define XS_NOREPLACE	0x0004
 #define XS_APPEND	0x0008
-#define XS_NOBUFFERING	0x0010
-#define XS_NOSHARING	0x0020
 
 #define XS_BEG		0
 #define XS_CUR		1
@@ -24,6 +22,7 @@ struct XStream
 	typedef std::fstream* XSHANDLE;
 
 	XSHANDLE handler;
+    bool free_handler;
     int64_t	pos;
 	bool	eofFlag;
 	int	ErrHUsed;
@@ -35,6 +34,9 @@ struct XStream
     XStream(const char* name, unsigned flags,int err = 1);
     XStream(const std::string& name, unsigned flags,int err = 1);
 	~XStream();
+
+    XStream(const XStream& xs) = delete;
+    XStream& operator=(XStream xs) = delete;
 
     int	open(const char* name, unsigned f = XS_IN);
     int	open(const std::string& name, unsigned f = XS_IN);

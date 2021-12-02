@@ -5,6 +5,7 @@ XStream::XStream(int err)
 {
 	ErrHUsed = err;
 	handler  = nullptr;
+    free_handler = true;
 	eofFlag  = 1;
 	extSize  = -1;
 	extPos	 = 0;
@@ -19,6 +20,7 @@ XStream::XStream(const char* name, unsigned flags,int err)
 {
     ErrHUsed = err;
     handler  = nullptr;
+    free_handler = true;
     eofFlag  = 1;
     extSize  = -1;
     extPos	 = 0;
@@ -29,6 +31,7 @@ XStream::XStream(const std::string& name, unsigned flags,int err)
 {
     ErrHUsed = err;
     handler  = nullptr;
+    free_handler = true;
     eofFlag  = 1;
     extSize  = -1;
     extPos	 = 0;

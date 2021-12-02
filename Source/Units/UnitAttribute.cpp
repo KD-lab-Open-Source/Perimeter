@@ -20,7 +20,7 @@ class EffectLibraryDispatcher
 {
 public:
 	EffectLibraryDispatcher(){ 
-		set_textures_path(convert_path_content("RESOURCE\\FX\\TEXTURES").c_str());
+		set_textures_path(convert_path_native("RESOURCE\\FX\\TEXTURES").c_str());
 	}
 	~EffectLibraryDispatcher(){ }
 

@@ -4435,7 +4435,7 @@ void CShowMapWindow::setWorldID(int id) {
 		if ( isWorldIDValid(worldID) ) {
 			mapPath = GetTargetName( worldID, "map.tga" );
 		} else {
-			mapPath = convert_path_content("RESOURCE\\Icons\\MainMenu\\UnknownWorld.tga");
+			mapPath = "RESOURCE\\Icons\\MainMenu\\UnknownWorld.tga";
 		}
 		m_hTexture = terVisGeneric->CreateTexture( mapPath.c_str() );
         mx = x;

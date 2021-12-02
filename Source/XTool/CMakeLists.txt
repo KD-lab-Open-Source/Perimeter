@@ -40,11 +40,15 @@ SET(XTool_LINK_LIBS gamemath_static_lib ZLIB::ZLIB)
 
 IF(NOT MSVC_CL_BUILD AND NOT OPTION_DISABLE_STACKTRACE)
     IF(PERIMETER_WINDOWS)
-        #Use Backtrace in MinGW/MSYS
+        #Use Backtrace in MinGW/MSYS if available, else ADDR2LINE
         FIND_PACKAGE(Backtrace)
         IF(Backtrace_FOUND)
             ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_BACKTRACE)
             SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ${Backtrace_LIBRARIES})
+        ELSE()
+            ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_ADDR2LINE)
+            # dl is required for dladdr in stacktrace
+            SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} dl)
         ENDIF()
     ELSE()
         #Use ADDR2LINE in POSIX

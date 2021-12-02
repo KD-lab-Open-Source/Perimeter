@@ -3413,14 +3413,10 @@ bool EffectLibrary::Load(const char* fname,const char* texture_path)
 	filename=fname;
 
 	std::string path;
-	if(texture_path && strlen(texture_path)>0)
+	if(texture_path)
 	{
-		char c=texture_path[strlen(texture_path)-1];
-		path=texture_path;
-		if(c!='\\' && c!='/')
-		{
-			path+=PATH_SEP;
-		}
+		path=convert_path_native(texture_path);
+        terminate_with_char(path, PATH_SEP);
 	}
 
 	while(CLoadData* ld=s.next())

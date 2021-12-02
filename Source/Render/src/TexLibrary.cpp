@@ -309,7 +309,9 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
         Texture->SetAttribute(MAT_BUMP);
         
         //If file with _normal name is found, set attribute for normal
-        std::filesystem::path texpath(convert_path_content(Texture->GetName()));
+        std::string textpathstr = convert_path_content(Texture->GetName());
+        if (textpathstr.empty()) textpathstr = convert_path_native(Texture->GetName());
+        std::filesystem::path texpath(textpathstr);
         std::string normal_path = texpath.parent_path().string();
         std::string extension = texpath.filename().extension().string();
         std::string filename = texpath.filename().string();
@@ -417,10 +419,6 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
         if (endsWith(path, ".avi") && !convert_path_content(path + "x").empty()) {
             //Use AVIX if available when AVI is absent
             path += "x";
-        } else {
-            //File not found
-            Error(Texture);
-            return false;
         }
 	}
 	

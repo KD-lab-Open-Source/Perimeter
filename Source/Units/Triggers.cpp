@@ -1005,8 +1005,8 @@ bool ActionSquadAttack::workedOut(AIPlayer& aiPlayer)
 				if(ignoreLastTarget)
 					lastTarget_ = target;
 				if(target){
-					#ifndef _FINAL_
-						//XBuffer buf;
+					#ifndef _FINAL_VERSION_
+						//XBuffer buf(512, true);
 						//buf < "Не назначен класс атаки у " < getEnumNameAlt(squad->currentMutation())
 						//	< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
 						//xassert_s(squad->squadUnits().front()->checkFireClass(target), buf);
@@ -1103,8 +1103,8 @@ void ActionAttackBySpecialWeapon::activate(AIPlayer& aiPlayer)
 	if(unit){
 		terBuildingMilitary* warBuilding = safe_cast<terBuildingMilitary*>(unit);
 		terUnitBase* target = findTarget(aiPlayer, warBuilding->position2D(), unit->attr().fireRadiusMin());
-		#ifndef _FINAL_
-			XBuffer buf;
+		#ifndef _FINAL_VERSION_
+			XBuffer buf(512, true);
 			buf < "Не назначен класс атаки у " < getEnumNameAlt(unit->attr().ID)
 				< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
 			xassert_s(unit->checkFireClass(target), buf);

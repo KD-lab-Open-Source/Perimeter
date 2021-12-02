@@ -262,7 +262,9 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.Messages.Multiplayer.SignatureError=Проверка подписи или CRC не прошла, соединение может быть ненадёжным",
            "Interface.Menu.Messages.Multiplayer.HostTerminated=Хост прекратил игру или отключился",
            "Interface.Menu.Messages.Confirmations.PendingChanges=Отложенные изменения не будут применены, вернуться в главное меню?",
-           "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Чтобы применить изменения, требуется перезапуск игры, вы уверены?"
+           "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Чтобы применить изменения, требуется перезапуск игры, вы уверены?",
+           //Empty to not mess with ,'s
+           ""
         }, false, locale);
     }
 
@@ -291,7 +293,14 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
        "Interface.Menu.Messages.Multiplayer.SignatureError=Signature or CRC checks failed, connection may be unreliable",
        "Interface.Menu.Messages.Multiplayer.HostTerminated=Host has terminated session or disconnected",
        "Interface.Menu.Messages.Confirmations.PendingChanges=Pending changes will not be applied, return to main menu?",
-       "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Game restart is required to apply changes, are you sure?"
+       "Interface.Menu.Messages.Confirmations.ApplyChangesRestart=Game restart is required to apply changes, are you sure?",
+       //These should be in released games but seems to be absent sometimes
+       "Interface.Tips.ToClanPostfix=(&FF00FFto clan&FFFFFF)",
+       "Interface.Tips.ToAllPostfix=(&FF00FFto all&FFFFFF)",
+       "Interface.Tips.ToClanPrefix=&FF00FFTo clan&FFFFFF: ",
+       "Interface.Tips.ToAllPrefix=&FF00FFTo all&FFFFFF: ",
+       //Empty to not mess with ,'s
+       ""
    }, false);
 }
 

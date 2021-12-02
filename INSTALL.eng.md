@@ -68,7 +68,7 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
   - lld
   - libbacktrace
 
-Packages: `gcc cmake make ninja SDL2 libvorbis boost lld libbacktrace zlib`
+Packages: `gcc cmake make ninja SDL2 SDL2_image SDL2_net SDL2_mixer boost lld libbacktrace zlib`
 
 ### Instructions
 

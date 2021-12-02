@@ -1384,7 +1384,7 @@ cFileImage* cFileImage::Create(const std::string& fname)
 	if(endsWith(path,".tga")) {
         return new cTGAImage;
     } else if(endsWith(path,".avi")) {
-        if (ResourceIsZIP()) {
+        if (ResourceIsZIP() && convert_path_content(path).empty()) {
             return new cAVIXImage;
         } else {
             return new cAVIImage;

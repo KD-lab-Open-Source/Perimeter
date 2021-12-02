@@ -48,7 +48,7 @@ class XZIP_Resource
 
 	XZIP_FileHeader* find(const char* fname);
 public:
-	int open(const char* fname,XStream& fh,int mode = 0);
+	int open(const std::string& fname,XStream& fh,int mode = 0);
 
 	void LoadHeaders();
 	void LoadIndex();

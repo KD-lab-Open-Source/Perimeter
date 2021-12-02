@@ -18,7 +18,7 @@ int ResourceFileRead(const char *fname,char *&buf,int &size)
 {
 	buf=0; size=0;
 	ZIPStream f;
-	if(!f.open(convert_path_content(fname).c_str())) {
+	if(!f.open(fname)) {
 	    f.close();
 	    return -1; 
 	}
@@ -642,14 +642,21 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
     filesystem_entry* model_entry = get_content_entry(pFileName);
     if (model_entry) {
         fname = model_entry->path_content;
-        _strlwr(fname.data());
         DefPath = std::filesystem::path(model_entry->key).parent_path().string() + PATH_SEP + "textures" + PATH_SEP;
-        _strlwr(DefPath.data());
+    } else {
+        fname = pFileName;
+        DefPath = std::filesystem::path(convert_path_native(fname)).parent_path().string() + PATH_SEP + "textures" + PATH_SEP;
     }
+    _strlwr(fname.data());
+    _strlwr(DefPath.data());
 
 	if(pTexturePath) 
 	{
-        TexturePath = convert_path_content(pTexturePath);
+        if (model_entry) {
+            TexturePath = convert_path_content(pTexturePath);
+        } else {
+            TexturePath = pTexturePath;
+        }
 		_strlwr(TexturePath.data());
 		if(stricmp(TexturePath.c_str(),DefPath.c_str())!=0)
 			DefTexturePath=DefPath;

@@ -70,7 +70,7 @@ int XStream::open(const std::string& name, unsigned f)
 #endif
 
 
-    //Do a conversion for Windows -> POSIX paths
+    //Do a conversion to native path format
     std::string path = convert_path_native(name);
 
     std::fstream *file = path.empty() ? nullptr : open_file(path.c_str(), f);
@@ -98,6 +98,7 @@ int XStream::open(const std::string& name, unsigned f)
 int XStream::open(XStream* owner,int64_t s,int64_t ext_sz)
 {
     close();
+    free_handler = false;
 	fname = owner -> fname;
 	handler = owner -> handler;
 	pos = 0;
@@ -126,14 +127,14 @@ void XStream::close()
 #ifdef XSTREAM_DEBUG
     fprintf(stderr, "DBG: XStream::close %s\n", fname.c_str());
 #endif
-    if(handler == nullptr)
-        return;
-
-    if (handler->is_open())
-        handler->close();
-
-    delete handler;
+    if (handler && free_handler) {
+        if (handler->is_open()) {
+            handler->close();
+        }
+        delete handler;
+    }
     handler = nullptr;
+    free_handler = true;
     fname.clear();
     pos = 0L;
     eofFlag = 1;

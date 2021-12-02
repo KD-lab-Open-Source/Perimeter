@@ -161,6 +161,7 @@ int64_t XStream::size() const
     int64_t tmp = extSize;
     int64_t tmp2;
     if(tmp == -1){
+        xassert(handler);
         //tmp=GetFileSize(handler,0);
         if (handler->flags() & std::ios::in) {
             tmp2 = handler->tellg();
