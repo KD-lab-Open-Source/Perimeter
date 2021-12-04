@@ -339,7 +339,7 @@ void Compiler::remove_new_emulated(Token* token)
 int Compiler::parse_file(const char* fname, XBuffer& sout)
 {
 	int errors = 0;
-	sout < "XPrm v" < _VERSION_ < ": compiling...\r\n" < fname < "\r\n";
+	sout < "XPrm v" < _VERSION_ < ": compiling...\n" < fname < "\n";
 	//string full_name = exe_path + fname;
 	parsers.clear();
 	//open(full_name.c_str());
@@ -356,23 +356,23 @@ int Compiler::parse_file(const char* fname, XBuffer& sout)
 		}
 
 	catch(const expected_token& exc){
-		sout <= parser() < exc.what() < " expected\r\n";
+		sout <= parser() < exc.what() < " expected\n";
 		errors++;
 		}
 	catch(const unexpected_token& exc){
-		sout <= parser() < "unexpected token: " < exc.what() < "\r\n";
+		sout <= parser() < "unexpected token: " < exc.what() < "\n";
 		errors++;
 		}
 	catch(const duplicate_token& exc){
-		sout <= parser() < "duplicate token: " < exc.what() < "\r\n";
+		sout <= parser() < "duplicate token: " < exc.what() < "\n";
 		errors++;
 		}
 	catch(const parsing_error& exc){
-		sout <= parser() < exc.what() < "\r\n";
+		sout <= parser() < exc.what() < "\n";
 		errors++;
 		}
 	catch(const std::exception& exc){
-		sout <= parser() < exc.what() < "\r\n";
+		sout <= parser() < exc.what() < "\n";
 		errors++;
 	}
 
@@ -404,7 +404,7 @@ bool Compiler::compile(const char* input, const char* sources, bool rebuild, boo
             std::cout << fname << ": " << errors << " error(s)" << std::endl;
     }
     catch(const std::exception& exc){
-        std::cout << "Compilation error: " << exc.what() << "\r\n";
+        std::cout << "Compilation error: " << exc.what() << "\n";
         errors++;
     }
 
@@ -556,24 +556,18 @@ std::string Section::align_path(const char* sources, const std::string& str)
 
 ///Ensure that differences are because of content and not because differing newline styles, in future we should use \n only
 bool differentContent(std::string generated, std::string existing, bool fail_outdated) {
-    if (generated == existing) return false;
-
-    //If we are just compiling then don't do exhaustive checks
-    if (!fail_outdated) return true;
-    
-    string_replace_all(generated, "\r", "");
     return generated != existing;
 }
 
 bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, StringList& dependencies)
 {
-	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
-			"//	XScript definition\r\n"
-			"//	Section: " + std::string(name()) + "\r\n";
+	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\n"
+			"//	XScript definition\n"
+			"//	Section: " + std::string(name()) + "\n";
 
-	std::string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
-		"//	XScript end: " + std::string(name()) + "\r\n"
-		"//////////////////////////////////////////////////////////////////////////////////////////////\r\n";
+	std::string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\n"
+		"//	XScript end: " + std::string(name()) + "\n"
+		"//////////////////////////////////////////////////////////////////////////////////////////////\n";
 
 	char* description_str = "\tdescription = ";
 	std::string file;
@@ -608,10 +602,10 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
     */
 
 	WriteStream buf;
-	buf < "//	Number of variables: " <= variables() < "\r\n";
-	buf < "//	This is computer generated code, don't try to change it\r\n";
-	buf < "//////////////////////////////////////////////////////////////////////////////////////////////\r\n";
-	if(using_namespace) buf < "namespace " < name() < "_namespace\r\n{\r\n";
+	buf < "//	Number of variables: " <= variables() < "\n";
+	buf < "//	This is computer generated code, don't try to change it\n";
+	buf < "//////////////////////////////////////////////////////////////////////////////////////////////\n";
+	if(using_namespace) buf < "namespace " < name() < "_namespace\n{\n";
 
 	iterator i;
 	FOR_EACH(*this, i){
@@ -620,7 +614,7 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 			var->write_name(buf);
 			buf < " = ";
 			var->write_value(buf);
-			buf < ";\r\n"; 
+			buf < ";\n"; 
 			continue;
 			}
 		const StructDataType* str = dynamic_cast<const StructDataType*>(&**i);
@@ -630,32 +624,32 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 			}
 		}
 
-	buf < "\r\n#ifdef _PRM_EDIT_\r\nstruct " < name() < "_ParameterSection : ParameterSection\r\n{\r\n\t"
-	< name() < "_ParameterSection() : ParameterSection(\"" < name() < "\")\r\n{\r\n";
+	buf < "\n#ifdef _PRM_EDIT_\nstruct " < name() < "_ParameterSection : ParameterSection\n{\n\t"
+	< name() < "_ParameterSection() : ParameterSection(\"" < name() < "\")\n{\n";
 
 	StringList::iterator si;
 	FOR_EACH(dependencies, si){
 		std::string s_add = "\tadd_dependency(\"";
 		s_add += expand_spec_chars(align_path(sources, *si)).c_str();
 		s_add += "\"";
-		buf < s_add.c_str() < ");\r\n";
+		buf < s_add.c_str() < ");\n";
     }
-	buf < description_str <= description() < ";\r\n";
+	buf < description_str <= description() < ";\n";
 
-	buf < "\treserve(" <= variables() < ");\r\n";
+	buf < "\treserve(" <= variables() < ");\n";
 	FOR_EACH(*this, i) {
 		const Variable* var = dynamic_cast<Variable*>(&**i);
 		if(var && var->definible()) {
             unsigned int crc = 83838383;
             var->description(crc);
-            buf < "\tadd(&" < var->name() < ", \"" < var->name() < "\", " < std::to_string(crc).c_str() < ");\r\n";
+            buf < "\tadd(&" < var->name() < ", \"" < var->name() < "\", " < std::to_string(crc).c_str() < ");\n";
         }
     }
 
-	buf < "\tadd_parameter_section(this);\r\n}\r\n};\r\n";
-	buf < "static " < name() < "_ParameterSection " < name() < "_ParameterSectionObject;\r\n";
-	if(using_namespace) buf < "}\r\n";
-	buf < "#endif  //  _PRM_EDIT_\r\n";
+	buf < "\tadd_parameter_section(this);\n}\n};\n";
+	buf < "static " < name() < "_ParameterSection " < name() < "_ParameterSectionObject;\n";
+	if(using_namespace) buf < "}\n";
+	buf < "#endif  //  _PRM_EDIT_\n";
 
 	std::string file0 = file;
 	std::string operation;
@@ -672,7 +666,6 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 		ff.open(definition_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
         if (fail_outdated) {
-            string_replace_all(file, "\r", "");
             std::cout << file << std::endl;
             throw std::logic_error("Definition needs to be updated! recompile and save changes");
         }
@@ -683,19 +676,19 @@ bool Section::definition(const char* sources, bool rebuild, bool fail_outdated, 
 
 bool Section::declaration(const char* sources, bool rebuild, bool fail_outdated)
 {
-	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
-			"//	XScript declaration\r\n"
-			"//	Section: " + std::string(name()) + "\r\n";
+	std::string head = "//////////////////////////////////////////////////////////////////////////////////////////////\n"
+			"//	XScript declaration\n"
+			"//	Section: " + std::string(name()) + "\n";
 
-	std::string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\r\n"
-		"//	XScript end: " + std::string(name()) + "\r\n"
-		"//////////////////////////////////////////////////////////////////////////////////////////////\r\n";
+	std::string tail =  "//////////////////////////////////////////////////////////////////////////////////////////////\n"
+		"//	XScript end: " + std::string(name()) + "\n"
+		"//////////////////////////////////////////////////////////////////////////////////////////////\n";
 
 	XBuffer buf(100000, 1);
-	buf < "//	Number of variables: " <= variables() < "\r\n";
-	buf < "//	This is computer generated code, don't try to change it\r\n";
-	buf < "//////////////////////////////////////////////////////////////////////////////////////////////\r\n";
-	if(using_namespace) buf < "namespace "< name() < "_namespace\r\n{\r\n";
+	buf < "//	Number of variables: " <= variables() < "\n";
+	buf < "//	This is computer generated code, don't try to change it\n";
+	buf < "//////////////////////////////////////////////////////////////////////////////////////////////\n";
+	if(using_namespace) buf < "namespace "< name() < "_namespace\n{\n";
 
 	iterator i;
 	FOR_EACH(*this, i){
@@ -703,7 +696,7 @@ bool Section::declaration(const char* sources, bool rebuild, bool fail_outdated)
 		if(var && var->declarable()){
 			buf < "extern ";
 			var->write_name(buf);
-			buf < ";\r\n";
+			buf < ";\n";
 			continue;
 			}
 		const StructDataType* str = dynamic_cast<const StructDataType*>(&**i);
@@ -718,7 +711,7 @@ bool Section::declaration(const char* sources, bool rebuild, bool fail_outdated)
 			}
 		}
 
-	if(using_namespace) buf < "}\r\nusing namespace "< name() < "_namespace;\r\n";
+	if(using_namespace) buf < "}\nusing namespace "< name() < "_namespace;\n";
 
     std::string declaration_file_path;
     if (sources) declaration_file_path = std::string(sources) + PATH_SEP;
@@ -748,7 +741,6 @@ bool Section::declaration(const char* sources, bool rebuild, bool fail_outdated)
 		ff.open(declaration_file_path.c_str(), XS_OUT);
 		ff < file.c_str();
         if (fail_outdated) {
-            string_replace_all(file, "\r", "");
             std::cout << file << std::endl;
             throw std::logic_error("Declaration needs to be updated! recompile and save changes");
         }
@@ -1062,17 +1054,17 @@ void StructDataType::declaration(XBuffer& buf) const
 {
 	if(dont_declare)
 		return;
-	buf < "#ifndef __XScript_struct_" < name() < "__\r\n";
-	buf < "#define __XScript_struct_" < name() < "__\r\n";
-	buf < "#pragma pack( push, __XScript_struct_pack__, 4 )\r\n";
-	buf < "struct " < name() < " {\r\n";
+	buf < "#ifndef __XScript_struct_" < name() < "__\n";
+	buf < "#define __XScript_struct_" < name() < "__\n";
+	buf < "#pragma pack( push, __XScript_struct_pack__, 4 )\n";
+	buf < "struct " < name() < " {\n";
 	const_iterator i;
 	FOR_EACH(*this, i){
 		const Variable* var = dynamic_cast<const Variable*>(&**i);
 		if(var && var->declarable()){
 			buf < "\t";
 			var->write_name(buf);
-			buf < ";\r\n";
+			buf < ";\n";
 			continue;
 			}
 		const StructDataType* str = dynamic_cast<const StructDataType*>(&**i);
@@ -1088,9 +1080,9 @@ void StructDataType::declaration(XBuffer& buf) const
 		}
 	if(!delegate_code.empty())
 		buf < delegate_code.c_str();
-	buf < "};\r\n";
-	buf < "#pragma pack( pop, __XScript_struct_pack__)\r\n";
-	buf < "#endif  // __XScript_struct_" < name() < "__\r\n";
+	buf < "};\n";
+	buf < "#pragma pack( pop, __XScript_struct_pack__)\n";
+	buf < "#endif  // __XScript_struct_" < name() < "__\n";
 }
 
 Variable* StructDataType::create(const char* name) const 

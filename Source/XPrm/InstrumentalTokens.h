@@ -136,7 +136,7 @@ struct EnumList : DataType, std::list<ShareHandle<IntConstant> >
 	{
 		if(dont_declare)
 			return;
-		buf < "enum " < name() < " {\r\n";
+		buf < "enum " < name() < " {\n";
 		const_iterator i;
 		int value = 0;
 		FOR_EACH(*this, i){
@@ -144,11 +144,11 @@ struct EnumList : DataType, std::list<ShareHandle<IntConstant> >
 			buf < var -> name();
 			if(value != *var)
 				buf < " = " <= (value = *var); 
-			buf < ",\r\n";
+			buf < ",\n";
 			value++;
 			}
-		buf -= 3;
-		buf < "\r\n};\r\n";
+		buf -= 2;
+		buf < "\n};\n";
 	}
 	Variable* create(const char* name) const { return new EnumVariable(name, *this); }
 };

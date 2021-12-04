@@ -184,7 +184,7 @@ public:
 	    //Don't add zeroes in round numbers
         SetDigits(-XB_DEFDIGITS);
 	}
-	void check_line() { if(tell() - offset_ > line_lenght){ (*this) < " \r\n "; offset_ = tell(); } }
+	void check_line() { if(tell() - offset_ > line_lenght){ (*this) < " \n "; offset_ = tell(); } }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////

@@ -1610,8 +1610,8 @@ static sqshControl _controls_46[] = { { SQSH_SCALE_BUTTON_TYPE
 static BGObj _bgObjects_45[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group background", "background on" } 
   };
-static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA 
- , 2, 3, 0.24414062f, 0.34375f, 0.48828125f, 0.00390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\Main_menu.tga" 
+static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2 
+ , 3, 0.24414062f, 0.34375f, 0.48828125f, 0.00390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\Main_menu.tga" 
  , 2.f, 987.f, 500.f, 3.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
@@ -2623,8 +2623,8 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
 static BGObj _bgObjects_39[] = { { "group battle" 
  , "battle" }, { "group back2", "back2" }, { "group background", "background on" } 
   };
-static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA 
- , 2, 3, 0.24414062f, 0.34375f, 0.48828125f, 0.00390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\Main_menu.tga" 
+static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2 
+ , 3, 0.24414062f, 0.34375f, 0.48828125f, 0.00390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\Main_menu.tga" 
  , 2.f, 987.f, 500.f, 3.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
@@ -9217,12 +9217,12 @@ SqshBorder rightBottomBtn = { 0.75f, 0.88411458f
  , 0.12988281f, 0.06510417f };
 SqshBorder leftSeparateBottomBtn = { 0.09179688f, 0.93619792f 
  , 0.11425781f, 0.04817708f };
-SqshBorder middleSeparateBottomBtn = { 0.43164062f 
- , 0.93619792f, 0.11425781f, 0.04817708f };
-SqshBorder rightSeparateBottomBtn = { 0.76464844f 
- , 0.93619792f, 0.11425781f, 0.04817708f };
-SqshBorder mainMenuMap = { 0.61132812f 
- , 0.40755208f, 0.29296875f, 0.19140625f };
+SqshBorder middleSeparateBottomBtn = { 0.43164062f, 0.93619792f 
+ , 0.11425781f, 0.04817708f };
+SqshBorder rightSeparateBottomBtn = { 0.76464844f, 0.93619792f 
+ , 0.11425781f, 0.04817708f };
+SqshBorder mainMenuMap = { 0.61132812f, 0.40755208f 
+ , 0.29296875f, 0.19140625f };
 int customUp = 80;
 int customStep = 50;
 int ingameCustomUp = 90;

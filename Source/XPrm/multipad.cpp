@@ -184,12 +184,12 @@ void ShowProfileDialog::OnOK()
 {
 	GetDlgItemText(IDC_SHOW_PROFILE_EDIT, text_buffer);
 	fstream prof("profile", ios::app | ios::binary);
-	prof << "\r\n\r\n=========================================================================================\r\n";
+	prof << "\n\n=========================================================================================\n";
 	time_t aclock;
 	time( &aclock );                 /* Get time in seconds */
 	prof << asctime( localtime( &aclock ) ) << endl;
 	prof << text_buffer << endl; 
-	prof << "=========================================================================================\r\n";
+	prof << "=========================================================================================\n";
 	CDialog::OnOK();
 }
 
