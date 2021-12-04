@@ -25,7 +25,7 @@ bool PNetCenter::Init()
     //Reset our attributes in case we played before
     initAttributes();
     
-    server_content_crc = 0;
+    server_content_crc = get_content_crc();
     
 #if defined(PERIMETER_DEBUG) && defined(PERIMETER_EXODUS) && 0
     //Dump current attrs
@@ -75,6 +75,7 @@ void PNetCenter::Close(bool flag_immediate)
 bool PNetCenter::Connect() {
     LogMsg("Connect %s\n", hostConnection.getString().c_str());
     m_hostNETID = m_localNETID = NETID_NONE;
+    std::string extraInfo = "";
 
     GameShell::e_JoinGameReturnCode rc = GameShell::JG_RC_CONNECTION_ERR;
     NetConnection* connection = connectionHandler.startConnection(&hostConnection);
@@ -115,6 +116,32 @@ bool PNetCenter::Connect() {
                     case NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT:
                         rc = GameShell::JG_RC_GAME_NOT_EQUAL_CONTENT_ERR;
                         break;
+                    case NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT_FILES:
+                        rc = GameShell::JG_RC_GAME_NOT_EQUAL_CONTENT_ERR;
+                        if (!response.gameContentList.empty()) {
+                            extraInfo += "RMM=resource/models/main\n";
+                            std::string differ = "";
+                            std::string missing = "";
+                            const auto& ourList = get_content_list();
+                            for (const auto& entry : response.gameContentList) {
+                                std::string shorted = entry.first;
+                                string_replace_all(shorted, "resource/models/main", "RMM");
+                                if (ourList.count(entry.first)) {
+                                    uint32_t ourCRC = ourList.at(entry.first);
+                                    if (ourCRC != entry.second) {
+                                        if (!differ.empty()) differ += "\n";
+                                        differ += shorted;
+                                    }
+                                } else {
+                                    //We don't have this file
+                                    if (!missing.empty()) missing += "\n";
+                                    missing += shorted;
+                                }
+                            }
+                            if (!differ.empty()) extraInfo += "Differ:\n" + differ + "\n";
+                            if (!missing.empty()) extraInfo += "Missing:\n" + missing + "\n";
+                        }
+                        break;
                     case NetConnectionInfoResponse::CR_ERR_GAME_STARTED:
                         rc = GameShell::JG_RC_GAME_IS_RUN_ERR;
                         break;
@@ -137,7 +164,7 @@ bool PNetCenter::Connect() {
 
     flag_connected = rc == GameShell::JG_RC_OK;
 
-    gameShell->callBack_JoinGameReturnCode(rc);
+    gameShell->callBack_JoinGameReturnCode(rc, extraInfo);
 
 	return flag_connected;
 }
@@ -225,8 +252,10 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
                 response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_SIGNATURE);
             } else if (!clientInfo.isArchCompatible(~server_arch_mask)) {
                 response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_ARCH);
-            } else if (!clientInfo.isGameContentCompatible(terGameContentSelect, server_content_crc)) {
+            } else if (!clientInfo.isGameContentCompatible(terGameContentSelect)) {
                 response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT);
+            } else if (!clientInfo.isGameContentCRCCorrect(server_content_crc)) {
+                response.reject(NetConnectionInfoResponse::CR_ERR_INCORRECT_CONTENT_FILES);
             } else if (m_bStarted) { // Игра запущена
                 response.reject(NetConnectionInfoResponse::CR_ERR_GAME_STARTED);
             } else if ((!gamePassword.empty()) && (!clientInfo.isPasswordCorrect(gamePassword.c_str()))) {

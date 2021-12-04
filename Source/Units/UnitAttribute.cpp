@@ -14,6 +14,8 @@
 #include "GameContent.h"
 #include "BelligerentSelect.h"
 #include "files/files.h"
+#include "crc.h"
+#include "../PluginMAX/ZIPStream.h"
 
 ///////////////////////////////////////////////////////////////
 class EffectLibraryDispatcher
@@ -637,6 +639,53 @@ const DamageMolecula& DamageMolecula::operator=(const SaveDamageMolecula& data)
 }
 
 //---------------------------------
+
+uint32_t contentCRC = 0;
+std::map<std::string, uint32_t> contentFiles;
+
+uint32_t get_content_crc() {
+    return contentCRC;
+}
+
+const std::map<std::string, uint32_t>& get_content_list() {
+    return contentFiles;
+}
+
+void collect_model_crc(const ModelData& modelData) {
+    std::string line = convert_path_posix(modelData.logicName.value());
+    strlwr(line.data());
+
+    //Read logic model data and create CRC
+    ZIPStream ff;
+    XBuffer buf;
+    if (!ff.open(line.c_str())) return;
+    buf.alloc(ff.size());
+    ff.read(buf.address(), ff.size());
+    
+    //Record CRCs
+    uint32_t lineCRC = crc32(reinterpret_cast<const unsigned char*>(buf.address()), ff.size(), startCRC32);
+    contentCRC = crc32(reinterpret_cast<const unsigned char*>(&lineCRC), sizeof(lineCRC), contentCRC);
+    contentFiles[line] = lineCRC;
+}
+
+void collect_content_crc() {
+    contentCRC = 0;
+    for (auto& i : attributeLibrary().map()) {
+        AttributeBase* attribute = i.second;
+        if (attribute->ID == UNIT_ATTRIBUTE_NONE) continue;
+        //Avoid loading stuff that user may not have
+        if (unavailableContentUnitAttribute(attribute->ID, terGameContentSelect) 
+        || unavailableContentBelligerent(attribute->belligerent)) {
+            continue;
+        }
+        collect_model_crc(attribute->modelData);
+        for (auto& model : attribute->additionalModelsData) {
+            collect_model_crc(model);
+        }
+    }
+}
+
+//---------------------------------
 //void initAttributes()
 //{ 
 //	AttributeLibrary::
@@ -733,9 +782,8 @@ void initAttributes()
 	const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK); 
     AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
 
-	AttributeLibrary::Map::iterator i;
-	FOR_EACH(attributeLibrary().map(), i){
-		AttributeBase* attribute = i->second;
+    for (auto& i : attributeLibrary().map()) {
+		AttributeBase* attribute = i.second;
 		if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
             attribute->initIntfBalanceData(
                 (attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE)
@@ -743,6 +791,8 @@ void initAttributes()
             );
         }
 	}
+
+    collect_content_crc();
 }
 
 /////////////////////////////////////////

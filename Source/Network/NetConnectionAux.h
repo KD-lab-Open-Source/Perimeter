@@ -129,7 +129,7 @@ public:
         versionCRC=getStringCRC(_version);
         passwordCRC=getStringCRC(_password);
         gameContent = _gameContent;
-        gameContentCRC=0;
+        gameContentCRC = get_content_crc();
         strncpy(playerName, _playerName, PLAYER_MAX_NAME_LEN);
         crc=calcOwnCRC();
     }
@@ -158,8 +158,12 @@ public:
         return arch;
     }
 
-    bool isGameContentCompatible(GAME_CONTENT content, uint32_t contentCRC) const {
-        return gameContent == content && (contentCRC == 0 || gameContentCRC == contentCRC);
+    bool isGameContentCompatible(GAME_CONTENT content) const {
+        return gameContent == content;
+    }
+
+    bool isGameContentCRCCorrect(uint32_t contentCRC) const {
+        return contentCRC == 0 || gameContentCRC == contentCRC;
     }
 
     bool isPasswordCorrect(const char* _password) const {
@@ -182,6 +186,7 @@ struct NetConnectionInfoResponse {
         CR_ERR_INCORRECT_ARCH,
         CR_ERR_INCORRECT_VERSION,
         CR_ERR_INCORRECT_CONTENT,
+        CR_ERR_INCORRECT_CONTENT_FILES,
         CR_ERR_INCORRECT_PASWORD,
         CR_ERR_GAME_STARTED,
         CR_ERR_GAME_FULL
@@ -193,6 +198,7 @@ struct NetConnectionInfoResponse {
     NETID hostID = 0;
     std::string gameName;
     uint32_t crc = 0;
+    std::map<std::string, uint32_t> gameContentList;
 
     NetConnectionInfoResponse() = default;
 
@@ -212,6 +218,15 @@ struct NetConnectionInfoResponse {
         in.read(clientID);
         in.read(hostID);
         in > StringInWrapper(gameName);
+        uint32_t gameContentListSz;
+        in > gameContentListSz;
+        std::string line;
+        for (int i = 0; i < gameContentListSz; ++i) {
+            in > StringInWrapper(line);
+            uint32_t lineCRC;
+            in > lineCRC;
+            gameContentList[line] = lineCRC;
+        }
         in.read(crc);
     }
 
@@ -221,6 +236,11 @@ struct NetConnectionInfoResponse {
         out.write(clientID);
         out.write(hostID);
         out < StringOutWrapper(gameName);
+        out < static_cast<uint32_t>(gameContentList.size());
+        for (auto& entry : gameContentList) {
+            out < StringOutWrapper(entry.first);
+            out < entry.second;
+        }
         out.write(crc);
     }
 
@@ -230,6 +250,9 @@ struct NetConnectionInfoResponse {
         clientID=0;
         hostID=0;
         gameName.clear();
+        if (cR == CR_ERR_INCORRECT_CONTENT_FILES) {
+            gameContentList = get_content_list();
+        }
         crc=calcOwnCRC();
     }
 

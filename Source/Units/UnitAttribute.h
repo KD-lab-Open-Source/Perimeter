@@ -1716,6 +1716,8 @@ inline void setKeyC(AttributeIDBelligerent& data, const char* str) {
 typedef TypeLibrary<AttributeIDBelligerent, AttributeBase> AttributeLibrary;
 extern SingletonPrm<AttributeLibrary> attributeLibrary;
 void initAttributes();
+uint32_t get_content_crc();
+const std::map<std::string, uint32_t>& get_content_list();
 
 class cObjectNodeRoot* createObject(const char* name, terBelligerent belligerent);
 

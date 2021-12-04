@@ -34,48 +34,49 @@ int hideBoxToLobbyQuant( float, float ) {
 
 ///Join handling
 
-void GameShell::callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode) {
+void GameShell::callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode, std::string extraInfo) {
+    std::string textID;
     switch (retCode) {
         case JG_RC_OK:
             _shellIconManager.AddDynamicHandler( hideBoxToLobbyQuant, CBCODE_QUANT );
-            break;
+            return;
         case JG_RC_CONNECTION_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.ConnectionFailed");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.ConnectionFailed";
             break;
         case JG_RC_GAME_IS_RUN_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.AlreadyRun");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.AlreadyRun";
             break;
         case JG_RC_GAME_IS_FULL_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.ServerFull");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.ServerFull";
             break;
         case JG_RC_GAME_NOT_EQUAL_VERSION_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectVersion");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.IncorrectVersion";
             break;
         case JG_RC_GAME_NOT_EQUAL_CONTENT_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectContent");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.IncorrectContent";
             break;
         case JG_RC_GAME_NOT_EQUAL_ARCH_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectArch");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.IncorrectArch";
             break;
         case JG_RC_PASSWORD_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.IncorrectPassword");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.IncorrectPassword";
             break;
         case JG_RC_SIGNATURE_ERR:
-            setMessageBoxTextID("Interface.Menu.Messages.Multiplayer.SignatureError");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.Multiplayer.SignatureError";
             break;
         default:
             xassert(0);
-            setMessageBoxTextID("Interface.Menu.Messages.UnknownError");
-            showMessageBoxButtons();
+            textID = "Interface.Menu.Messages.UnknownError";
+            break;
     }
+    
+    std::string text = qdTextDB::instance().getText(textID.c_str());
+    if (!extraInfo.empty()) {
+        text += "\n\n" + extraInfo;
+        printf("Connection response info: \n%s\n", text.c_str());
+    }
+    dynamic_cast<CTextWindow*>(_shellIconManager.GetWnd(SQSH_MM_SUBMIT_TXT))->setText(text);
+    showMessageBoxButtons();
 }
 
 int multiplayerJoinBackHandler( float, float ) {

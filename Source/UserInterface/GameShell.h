@@ -244,7 +244,7 @@ public:
         JG_RC_GAME_NOT_EQUAL_CONTENT_ERR,
         JG_RC_GAME_NOT_EQUAL_ARCH_ERR
 	};
-	void callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode);
+	void callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode, std::string extraInfo);
 	
 	void showConnectFailedInGame(const std::string& playerList);
 	void hideConnectFailedInGame(bool connectionRestored = true);
