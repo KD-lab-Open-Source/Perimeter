@@ -252,7 +252,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
     //Lowercase it for case-insensitive path matching
     strlwr(entry_key.data());
     if (startsWith(entry_key, "resource")
-        || startsWith(entry_key, "cache_font")
+        || startsWith(entry_key, "cache")
         || startsWith(entry_key, "mods")
         || startsWith(entry_key, "scripts")
         || endsWith(entry_key, ".ini")) {

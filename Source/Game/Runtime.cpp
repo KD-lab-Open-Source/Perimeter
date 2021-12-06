@@ -774,10 +774,16 @@ int main(int argc, char *argv[])
     //Do game content detection
     detectGameContent();
 
-    //Create crash folder
-    std::string crash_dir = get_content_root_path() + CRASH_DIR;
-    std::filesystem::create_directories(crash_dir);
-    scan_resource_paths(crash_dir);
+    //Create some folders
+    for (auto path : {
+        CRASH_DIR,
+        "cache",
+        "cache/font",
+    }) {
+        std::filesystem::create_directories(get_content_root_path() + convert_path_native(path));
+    }
+    scan_resource_paths(CRASH_DIR);
+    scan_resource_paths("cache");
 
     //Load perimeter parameters
     int xprmcompiler = IniManager("Perimeter.ini", false).getInt("Game", "XPrmCompiler");

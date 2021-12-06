@@ -13,10 +13,9 @@
 #endif 
 
 #include "../gemsiii/filter.h"
-//#include "../../Terra/tgai.h"
 #include "files/files.h"
 
-static char* cache_dir="cache_font";
+static char* cache_dir="cache/font";
 
 class cFontImage:public cFileImage
 {
@@ -304,12 +303,12 @@ bool cFontImage::Load(const char* fname)
 bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-    std::string cache_path = convert_path_content(cache_dir, true);
+    std::string cache_path = convert_path_content(cache_dir, false);
+    xassert(!cache_path.empty());
 	ftga=cache_path;ftga+=PATH_SEP;
 	ffont=cache_path;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
-    create_directories(cache_path.c_str());
 
 	if(!fnt.Save(ftga.c_str()))
 		return false;
