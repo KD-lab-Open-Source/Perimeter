@@ -263,14 +263,14 @@ sKey::sKey(int key_, bool set_by_async_funcs) {
 //		File/Paths
 /////////////////////////////////////////////////////////////////////////////////
 
-bool create_directories(const char* path, std::error_code* error) {
+bool create_directories(const std::string& path, std::error_code* error) {
     bool result;
     if (error) {
         result = std::filesystem::create_directories(path, *error);
     } else {
         result = std::filesystem::create_directories(path);
     }
-    if (result) {
+    if (result || std::filesystem::is_directory(path)) {
         scan_resource_paths(path);
     }
     return result;

@@ -413,8 +413,7 @@ void PNetCenter::HandlerInputNetCommand()
             std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
             terminate_with_char(crash_dir, PATH_SEP);
             crash_dir += nc.gameID + "_" + m_PlayerName + PATH_SEP;
-            std::filesystem::create_directories(crash_dir);
-            scan_resource_paths(crash_dir);
+            create_directories(crash_dir);
 
             //Write net log
             XBuffer netlog(2048, true);

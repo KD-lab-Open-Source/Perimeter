@@ -1951,7 +1951,7 @@ void GameShell::ShotsScan()
 	shotNumber_ = 0;
 
     std::string path_str = convert_path_native(terScreenShotsPath);
-    create_directories(path_str.c_str());
+    create_directories(path_str);
 
     std::vector<std::string> paths;
     for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
@@ -1994,9 +1994,8 @@ void GameShell::startStopRecordMovie()
 		movieStartTime_ = frame_time();
 		
         std::string path_str = convert_path_native(terMoviePath);
-        create_directories(path_str.c_str());
-
         if (path_str.empty()) return;
+        create_directories(path_str);
 
         int movieNumber = 0;
         std::vector<std::string> paths;
@@ -2018,7 +2017,7 @@ void GameShell::startStopRecordMovie()
 		XBuffer buffer;
 		buffer < path_str.c_str() < PATH_SEP < terMovieName <= movieNumber/10 % 10 <= movieNumber % 10;
 		movieName_ = buffer;
-        create_directories(movieName_.c_str());
+        create_directories(movieName_);
 	} 
 	else{
 		HTManager::instance()->setSyncroTimer(synchroByClock_, framePeriod_, terMaxTimeInterval);

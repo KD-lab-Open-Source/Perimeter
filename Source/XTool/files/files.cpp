@@ -255,6 +255,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         || startsWith(entry_key, "cache")
         || startsWith(entry_key, "mods")
         || startsWith(entry_key, "scripts")
+        || startsWith(entry_key, "autosave")
         || endsWith(entry_key, ".ini")) {
         
         bool path_is_directory = std::filesystem::is_directory(std::filesystem::path(path_content));
@@ -314,12 +315,22 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         paths[entry_key_root] = entry;
         
         if (entry->is_directory) {
+            std::string destination_path_copy = destination_path;
+            std::string source_path_copy = source_path;
             if (endsWith(path_content, PATH_SEP_STR)) {
                 path_content.erase(path_content.length()-1);
+                if (endsWith(destination_path_copy, PATH_SEP_STR)) {
+                    destination_path_copy.erase(destination_path_copy.length()-1);
+                }
+                if (endsWith(source_path_copy, PATH_SEP_STR)) {
+                    source_path_copy.erase(source_path_copy.length()-1);
+                }
             } else {
                 terminate_with_char(path_content, PATH_SEP);
+                terminate_with_char(destination_path_copy, PATH_SEP);
+                terminate_with_char(source_path_copy, PATH_SEP);
             }
-            add_filesystem_entry_internal(paths, path_content, destination_path, source_path, options);
+            add_filesystem_entry_internal(paths, path_content, destination_path_copy, source_path_copy, options);
         }
 
         return entry.get();

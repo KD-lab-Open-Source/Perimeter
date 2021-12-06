@@ -93,7 +93,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	std::string path = root + newProfile.dirName;
 	std::string origin = root + PATH_SEP + "DefaultPlayerData";
     std::error_code error;
-    std::filesystem::create_directories(path, error);
+    create_directories(path, &error);
 	if( error ) {
         ErrH.Abort("Can't create profile directory: ", XERR_USER, error.value(), error.message().c_str());
 	} else {
@@ -102,7 +102,6 @@ void UserSingleProfile::addProfile(const std::string& name) {
         if (error) {
             ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
         } else {
-            scan_resource_paths(path);
             profiles.push_back( newProfile );
             IniManager man( path_data.c_str(), true );
             man.put("General", "name", name.c_str());

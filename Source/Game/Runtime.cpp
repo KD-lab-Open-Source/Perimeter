@@ -775,16 +775,21 @@ int main(int argc, char *argv[])
     detectGameContent();
 
     //Create some folders
-    for (auto path : {
+    for (std::string path : {
         CRASH_DIR,
         "cache",
         "cache/font",
-        "cache/bump"
+        "cache/bump",
     }) {
-        std::filesystem::create_directories(get_content_root_path() + convert_path_native(path));
+        path = get_content_root_path() + convert_path_native(path);
+        bool ok = create_directories(path);
+        xassert(ok || std::filesystem::is_directory(path));
     }
-    scan_resource_paths(CRASH_DIR);
-    scan_resource_paths("cache");
+    std::string path = convert_path_content("resource/saves/") + "Multiplayer";
+    if (!std::filesystem::exists(std::filesystem::path(path))) {
+        bool ok = create_directories(path);
+        xassert(ok || std::filesystem::is_directory(path));
+    }
 
     //Load perimeter parameters
     int xprmcompiler = IniManager("Perimeter.ini", false).getInt("Game", "XPrmCompiler");

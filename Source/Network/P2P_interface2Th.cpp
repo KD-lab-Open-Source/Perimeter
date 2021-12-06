@@ -929,8 +929,7 @@ end_while_01:;
             terminate_with_char(crash_dir, PATH_SEP);
             crash_dir += std::to_string(time(nullptr)) + "_" + m_GameName + "_" + m_PlayerName + "_restore" + PATH_SEP;
             fprintf(stderr, "Dumped desync restore data at: %s\n", crash_dir.c_str());
-            std::filesystem::create_directories(crash_dir);
-            scan_resource_paths(crash_dir);
+            create_directories(crash_dir);
             for (auto& client : to_restore) {
                 if (client->desync_missionDescription.get() == nullptr) {
                     continue;

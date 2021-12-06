@@ -2217,7 +2217,7 @@ void onMMSaveReplayGoButton(CShellWindow* pWnd, InterfaceEventCode code, int par
 			showMessageBox();
 		} else {
 			std::string path = convert_path_content(REPLAY_PATH, true);
-            create_directories(path.c_str());
+            create_directories(path);
 			path += PATH_SEP + input->getText();
 
 			switch ( universe()->savePlayReel(path.c_str()) ) {
