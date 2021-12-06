@@ -142,7 +142,13 @@ void terNatureObject::MapUpdateHit(float x0,float y0,float x1,float y1)
 		terNatureFallTree* t = safe_cast<terNatureFallTree*>(Player->buildUnit(UNIT_ATTRIBUTE_FALL_TREE));
 		t->setPose(pose(), false);
 
-		Vect3f v = Vect3f(position().x + radius() - 2.0f * terLogicRNDfrand()*radius(), position().y + radius() - 2.0f * terLogicRNDfrand() * radius(), position().z);
+        float x = position().x + radius() - 2.0f * terLogicRNDfrand() * radius();
+        float y = position().y + radius() - 2.0f * terLogicRNDfrand() * radius();
+		Vect3f v = Vect3f(
+            x,
+            y,
+            position().z
+        );
 		t->setAxis(v);
 
 		t->SetModelName(ModelName.c_str());
