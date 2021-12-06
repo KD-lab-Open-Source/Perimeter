@@ -1,5 +1,7 @@
 #include "StdAfxRD.h"
 #include "FileImage.h"
+#include "files/files.h"
+#include "SystemUtil.h"
 
 LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute)
 {
@@ -147,10 +149,58 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 			ApplySkinColor(lpBuf,dx,dy,Texture->skin_color);
 		}
 
-        //Convert grayscale bump map into normal map
+        //We need to convert grayscale bumpmap to normalmap
 		if(Texture->GetAttribute(TEXTURE_BUMP) && !Texture->GetAttribute(TEXTURE_NORMAL))
 		{
-			ConvertDot3(lpBuf,dx,dy,1.0e-2f*current_bump_scale);
+            //Get key of cache for this texture file and the file to store/retrieve the cache
+            std::string key;
+            filesystem_entry* entry = get_content_entry(Texture->GetName());
+            if (entry) key = entry->key;
+            if (key.empty()) key = convert_path_posix(Texture->GetName());
+            strlwr(key.data());
+            string_replace_all(key, "/", "_");
+            key += ".bin";
+            std::string path = convert_path_content(std::string("cache") + PATH_SEP + "bump" + PATH_SEP + key, true);
+
+            //Attempt to use cache since it takes some time to convert big files
+            int64_t len = static_cast<int64_t>(dxy * sizeof(uint32_t));
+            XStream ff(0);
+            bool usable = ff.open(path, XS_IN) && 0 < ff.size();
+            if (usable) {
+                std::string sourcefile = convert_path_content(Texture->GetName());
+                //If empty then the texture was loaded from .pak so assume is older than cache
+                if (!sourcefile.empty()) {
+                    auto cachetime = std::filesystem::last_write_time(std::filesystem::path(path));
+                    auto sourcetime = std::filesystem::last_write_time(std::filesystem::path(sourcefile));
+                    //Mark as not usable if source file is modified after cache creation
+                    usable = sourcetime <= cachetime;
+                }
+            }
+            if (usable) {
+                //Load file and uncompress it
+                XBuffer buf(ff.size(), true);
+                XBuffer dest = XBuffer(len, true);
+                ff.read(buf.address(), ff.size());
+                if (buf.uncompress(dest) == 0 && dest.tell() == len) {
+                    memcpy(lpBuf, dest.address(), len);
+                } else {
+                    usable = false;
+                }
+            }
+            
+            if (!usable) {
+                //Convert grayscale bump map into normal map and cache it
+                ConvertDot3(lpBuf, dx, dy, 1.0e-2f * current_bump_scale);
+                if (ff.open(path, XS_OUT)) {
+                    XBuffer buf(lpBuf, len);
+                    buf.set(len);
+                    XBuffer compressed(len, true);
+                    if (buf.compress(compressed) == 0) {
+                        ff.write(compressed, compressed.tell());
+                    }
+                }
+            }
+            ff.close();            
 		}
 
 		RECT rect={0,0,dx,dy};

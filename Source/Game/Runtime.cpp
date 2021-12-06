@@ -779,6 +779,7 @@ int main(int argc, char *argv[])
         CRASH_DIR,
         "cache",
         "cache/font",
+        "cache/bump"
     }) {
         std::filesystem::create_directories(get_content_root_path() + convert_path_native(path));
     }
