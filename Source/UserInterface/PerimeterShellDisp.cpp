@@ -312,6 +312,10 @@ _handlertbl[] = {
 
 	{SQSH_MM_GRAPHICS_FURROWS_COMBO,OnComboGraphicsFurrows},
 	{SQSH_MM_GAME_TOOLTIPS_COMBO,OnComboGameTooltips},
+    {SQSH_MM_GAME_RUN_BACKGROUND_COMBO,OnComboGameRunBackground},
+    {SQSH_MM_GRAPHICS_UI_ANCHOR_COMBO,OnComboGraphicsUIAnchor},
+    {SQSH_MM_GRAPHICS_GRAB_INPUT_COMBO,OnComboGraphicsInputGrab},
+    {SQSH_MM_GRAPHICS_FOG_COMBO,OnComboGraphicsFog},
 	{SQSH_MM_GRAPHICS_COLORDEPTH_COMBO,OnComboGraphicsColorDepth},
 	{SQSH_MM_GRAPHICS_MODE_COMBO,OnComboGraphicsMode},
 	{SQSH_MM_GRAPHICS_SHADOWS_COMBO,OnComboGraphicsShadows},
@@ -1368,7 +1372,7 @@ void CShellIconManager::playGameOverSound(const char* path) {
 		resultMusicStarted = true;
 		bool ret = speechSound->OpenToPlay(path, false);
         if (!ret) {
-            fprintf(stderr, "playGameOverSound error");
+            fprintf(stderr, "playGameOverSound %s error\n", path);
         }
 	}
 }

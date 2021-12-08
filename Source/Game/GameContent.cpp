@@ -296,7 +296,7 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
 
 ///Load addon contents into root of virtual resources
 void loadAddon(const std::string& addonName, const std::string& addonDir) {
-    printf("Loading addon: %s\n", addonName.c_str());
+    printf("Loading mod: %s\n", addonName.c_str());
     
     //Skip certain resource dirs such as saves and replays
     for (const auto& entry : get_content_entries_directory(addonDir + "Resource")) {
@@ -389,7 +389,7 @@ void detectGameContent() {
                 std::filesystem::path entry_path(entry->path_content);
                 std::string addonName = entry_path.filename().string();
                 if (endsWith(addonName, ".off")) {
-                    printf("Skipping disabled addon: %s\n", addonName.c_str());
+                    printf("Skipping disabled mod: %s\n", addonName.c_str());
                     continue;
                 }
                 addons.emplace_back(addonName);
@@ -410,7 +410,7 @@ void detectGameContent() {
             loadAddon(addonName, addonDir);
         }
         
-        printf("Loaded addon: %s\n", addonName.c_str());
+        printf("Loaded mod: %s\n", addonName.c_str());
     }
     
     //Do some workarounds

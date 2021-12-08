@@ -8,6 +8,7 @@
 bool isLocaleInit = false;
 std::string localeCurrent;
 std::string localePath;
+std::vector<std::string> localesAvailable;
 
 void initCodePages();
 
@@ -43,6 +44,12 @@ void initLocale() {
     }
     localePath = getLocRootPath();
     localePath += localeCurrent + "/";
+
+
+    for (filesystem_entry* entry : get_content_entries_directory("Resource/LocData")) {
+        std::filesystem::path path(entry->path_content);
+        localesAvailable.emplace_back(path.filename().string());
+    }
     
     isLocaleInit = true;
 }
@@ -52,6 +59,13 @@ const std::string& getLocale() {
         initLocale();
     }
     return localeCurrent;
+}
+
+const std::vector<std::string>& getLocales() {
+    if (!isLocaleInit) {
+        initLocale();
+    }
+    return localesAvailable;
 }
 
 const char* getLocRootPath() {

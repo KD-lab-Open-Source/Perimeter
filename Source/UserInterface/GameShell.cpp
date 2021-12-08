@@ -2596,9 +2596,10 @@ void GameShell::preLoad() {
     for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
         std::filesystem::path entry_path(entry->key);
         std::string name = entry_path.filename().string();
+        strlwr(name.data());
         if (name == "texts.btdb") continue;
         bool replace = name.rfind("_noreplace.") == std::string::npos;
-        bool txt = entry_path.extension().string() == "txt";
+        bool txt = getExtension(name, true) == "txt";
         qdTextDB::instance().load(entry->path_content.c_str(), nullptr, false, replace, txt);
     }
     

@@ -113,7 +113,13 @@ bool qdTextDB::load(const char* file_name, const char* comments_file_name,
             fh.read(&c,1);
             
             //Only handle special chars if not escaped
-            if (!escape) {
+            if (escape) {
+                //Transform \ + n into \n
+                if (c == 'n') {
+                    c = '\n';
+                }
+                escape = false;
+            } else {
                 if (c == '\n') {
                     //Newline, store accumulator and clear
                     lines.emplace_back(acc_line);
@@ -127,11 +133,6 @@ bool qdTextDB::load(const char* file_name, const char* comments_file_name,
                     //This is a comment, skip
                     continue;
                 }
-            }
-            
-            //Transform \ + n into \n
-            if (c == 'n' && escape) {
-                c = '\n';
             }
             
             //Append current char
@@ -253,6 +254,16 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
            "Interface.Menu.ButtonLabels.Port=Порт:",
            "Interface.Menu.ButtonLabels.SERVER TYPE=Тип сервера:",
            "Interface.Menu.ButtonLabels.CANCEL=ОТМЕНА",
+           "Interface.Menu.ButtonLabels.RUN IN BACKGROUND=ЗАПУСТИТЬ ИГРУ НА ФОНЕ",
+           "Interface.Menu.ButtonLabels.UI POSITION=ПОЗИЦИОНИРОВАНИЕ UI",
+           "Interface.Menu.ButtonLabels.GRAB INPUT=ЗАХВАТ ВВОДА",
+           "Interface.Menu.ButtonLabels.FOG=ТУМАН",
+           "Interface.Menu.ComboItems.Centered=По центру",
+           "Interface.Menu.ComboItems.Left side=Левая сторона",
+           "Interface.Menu.ComboItems.Right side=Правая сторона",
+           "Interface.Menu.ComboItems.Stretched=Растянутый",
+           "Interface.Menu.ComboItems.Screen=Экран",
+           "Interface.Menu.ComboItems.Windowed=Оконный",
            "Interface.Menu.ComboItems.Private Server=Частный/Локальный сервер",
            "Interface.Menu.ComboItems.Public Server=Публичный/Интернет сервер",
            "Interface.Menu.Multiplayer.StartNewGame=Начать новую игру",
@@ -284,6 +295,16 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
        "Interface.Menu.ButtonLabels.Port=Port:",
        "Interface.Menu.ButtonLabels.SERVER TYPE=Server Type:",
        "Interface.Menu.ButtonLabels.CANCEL=CANCEL",
+       "Interface.Menu.ButtonLabels.RUN IN BACKGROUND=RUN GAME IN BACKGROUND",
+       "Interface.Menu.ButtonLabels.UI POSITION=UI POSITIONING",
+       "Interface.Menu.ButtonLabels.GRAB INPUT=CAPTURE INPUT",
+       "Interface.Menu.ButtonLabels.FOG=FOG",
+       "Interface.Menu.ComboItems.Centered=Centered",
+       "Interface.Menu.ComboItems.Left side=Left side",
+       "Interface.Menu.ComboItems.Right side=Right side",
+       "Interface.Menu.ComboItems.Stretched=Stretched",
+       "Interface.Menu.ComboItems.Screen=Screen",
+       "Interface.Menu.ComboItems.Windowed=Windowed",
        "Interface.Menu.ComboItems.Private Server=Private/Local Server",
        "Interface.Menu.ComboItems.Public Server=Public/Online Server",
        "Interface.Menu.Multiplayer.StartNewGame=Start a new game",

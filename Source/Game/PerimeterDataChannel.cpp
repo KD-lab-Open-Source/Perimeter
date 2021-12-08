@@ -70,7 +70,7 @@ void PerimeterDataChannelLoad()
 //	terObjectReflection = ini.getInt("Graphics","ObjectReflection");
 	terGraphicsGamma = ini.getFloat("Graphics","Gamma");
 	terShowTips = ini.getInt("Game","ShowTips");
-    ini_no_check.getInt("Game","GrabInput", terGrabInput);
+    ini_no_check.getInt("Graphics","GrabInput", terGrabInput);
     check_command_line_parameter("GrabInput", terGrabInput);
     ini_no_check.getInt("Game","RunBackground", applicationRunBackground);
     check_command_line_parameter("RunBackground", applicationRunBackground);
@@ -88,7 +88,8 @@ void PerimeterDataChannelSave()
 	IniManager ini("Perimeter.ini");
 
 	//GameSection
-	ini.putInt("Game", "ShowTips", terShowTips);
+    ini.putInt("Game", "ShowTips", terShowTips);
+    ini.putInt("Game", "RunBackground", applicationRunBackground);
 	ini.putInt("Game", "ScrollRate", xm::round(CAMERA_SCROLL_SPEED_DELTA));
 	ini.putFloat("Game", "MouseLookRate", xm::round(CAMERA_MOUSE_ANGLE_SPEED_DELTA));
 //	ini.putFloat("Game", "GameSpeed", gameShell->getSpeed());

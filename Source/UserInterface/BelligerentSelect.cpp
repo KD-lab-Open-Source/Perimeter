@@ -115,7 +115,7 @@ std::string getBelligerentAndFactionName(terBelligerent belligerent, const std::
             break;
     }
     if (faction != FACTION_NONE || isAddonFrame) {
-        text += separator;
+        text += separator + "&777777";
         if (faction != FACTION_NONE) {
             text += getItemTextFromBase(getBelligerentFactionName(faction).c_str());
             if (isAddonFrame) text += ", ";

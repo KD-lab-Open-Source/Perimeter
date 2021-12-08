@@ -116,12 +116,18 @@ class GraphOptions : public Options {
 		std::vector<DisplayMode> resolutions;
         DisplayMode resolution;
 		int colorDepth;
+        int uiAnchor;
+        bool grabInput;
+        bool fogEnable;
 
 		bool operator == (const GraphOptions &cgo) const {
 			return (
 						customOptions == cgo.customOptions
 					&&	resolution == cgo.resolution
-					&&	colorDepth == cgo.colorDepth
+                    &&	colorDepth == cgo.colorDepth
+                    &&	uiAnchor == cgo.uiAnchor
+                    &&	grabInput == cgo.grabInput
+                    &&	fogEnable == cgo.fogEnable
 				);
 		}
 		bool operator != (const GraphOptions &cgo) const {

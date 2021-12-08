@@ -552,7 +552,9 @@ void HistoryScene::startAudio(const string& name) {
 		if (terSoundEnable) {
 			playingVoice = true;
 			int ret = voice.OpenToPlay((getLocDataPath() + name).c_str(), 0);
-			xassert(ret);
+			if (!ret) {
+                fprintf(stderr, "startAudio %s error\n", name.c_str());
+            }
 			voice.SetVolume(terSoundVolume);
 		}
 	}

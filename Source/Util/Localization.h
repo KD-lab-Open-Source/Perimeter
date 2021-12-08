@@ -16,6 +16,7 @@ struct LocalizedText {
 
 void initLocale();
 const std::string& getLocale();
+const std::vector<std::string>& getLocales();
 const char* getLocRootPath();
 const std::string& getLocDataPath();
 char getLocaleChar(const char* utf8, const std::string& locale);

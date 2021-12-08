@@ -2018,6 +2018,9 @@ void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void OnSliderMusicVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //graphics
+void OnComboGraphicsUIAnchor(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGraphicsInputGrab(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGraphicsFog(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsSettings(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnGraphicsApplyBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2052,6 +2055,7 @@ void OnComboSoundMusic(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboSoundEffects(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnSliderScrollRate(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderAngleSens(CShellWindow* pWnd, InterfaceEventCode code, int param);

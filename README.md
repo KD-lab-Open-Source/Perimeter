@@ -3,6 +3,7 @@
 ![Perimeter](https://cdn.akamai.steamstatic.com/steam/apps/289440/header.jpg)
 
 [![Linux Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/linux_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/linux_build.yml)
+[![MacOS Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/macos_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/macos_build.yml)
 [![Windows MSVC Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msvc_build.yml)
 [![Windows MSYS Build](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_build.yml/badge.svg)](https://github.com/KD-lab-Open-Source/Perimeter/actions/workflows/windows_msys_build.yml)
 
