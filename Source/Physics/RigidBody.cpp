@@ -10,7 +10,7 @@
 int RigidBody::IDs;
 
 SINGLETON_PRM(RigidBodyPrmLibrary, "RigidBodyPrmLibrary", "Scripts\\RigidBodyPrmLibrary") rigidBodyPrmLibrary;
-#include "RigidBody-1251.inl"
+REGISTER_CLASS(RigidBodyPrm, RigidBodyPrm, "Базовая физика");
 
 RigidBody::RigidBody()
 {

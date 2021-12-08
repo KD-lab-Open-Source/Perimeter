@@ -68,12 +68,14 @@ public:
         ar & WRAP_OBJECT(gameVersion);
         std::string name = playerName;
         ar & WRAP_OBJECT(name);
+
         if(ar.isInput()) {
             setName(name);
+            
+            if(!handicap) {
+                handicap = 100;
+            }
         }
-
-        if(ar.isInput() && !handicap)
-            handicap = 100;
     }
 };
 

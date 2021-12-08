@@ -428,10 +428,10 @@ public:
 	void ShowInfo();
 
 	void universalLoad(SavePlayerData& data);
-	void universalSave(SavePlayerData& data, bool userSave);
+	void universalSave(SavePlayerData& data, bool userSave) const;
 
 	void loadWorld(const SavePrm& data);
-	void saveWorld(SavePrm& data);
+	void saveWorld(SavePrm& data) const;
 
 
 	void ScanRegion(RegionDispatcher* region);

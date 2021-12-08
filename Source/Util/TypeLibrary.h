@@ -68,18 +68,20 @@ public:
 		operator const Type* () const { return get(); }
 
         SERIALIZE(ar) {
-			if(ar.type() & ARCHIVE_EDIT){
+			if (ar.type() & ARCHIVE_EDIT) {
 				ComboListString comboStr(instance().comboList(), key2String(key_).c_str());
 				ar & TRANSLATE_NAME(comboStr, 0, 0);
-				if(ar.isInput())
-					setKeyC(key_, comboStr);
-			}
-			else
-				ar & WRAP_NAME(key_, !SuppressBracket<Reference>::value ? "key" : 0);
+				if(ar.isInput()) {
+                    setKeyC(key_, comboStr);
+                }
+			} else {
+                ar & WRAP_NAME(key_, !SuppressBracket<Reference>::value ? "key" : 0);
+            }
 
-			if(ar.isInput())
-				setKey(key_);
-			}
+			if(ar.isInput()) {
+                setKey(key_);
+            }
+        }
 
 	private:
 		Key key_;
@@ -95,24 +97,24 @@ public:
     SERIALIZE(ar) {
 		typedef std::list<typename Map::value_type> List;
 		List tmpStorage;
-		if(ar.isOutput()){
-            typename Map::iterator i;
-			FOR_EACH(map_, i)
-				tmpStorage.push_back(*i);
-		}
-		else
-			map_.clear();
+		if (ar.isOutput()) {
+			for (auto& i : map_) {
+                tmpStorage.push_back(i);
+            }
+		} else {
+            map_.clear();
+        }
 
         ar & TRANSLATE_NAME(tmpStorage, "types", "Список");
 		
-		if(ar.isInput()){
+		if (ar.isInput()) {
 			comboList_.clear();
-            typename List::iterator i;
-			FOR_EACH(tmpStorage, i){
-				map_.insert(*i);
-				if(!comboList_.empty())
-					comboList_ += "|";
-				comboList_ += key2String(i->first).c_str();
+			for (auto& i : tmpStorage) {
+				map_.insert(i);
+				if (!comboList_.empty()) {
+                    comboList_ += "|";
+                }
+				comboList_ += key2String(i.first).c_str();
 			}
 		}
 	}
@@ -178,9 +180,10 @@ public:
 
         SERIALIZE(ar) {
 			ComboListString comboStr(instance().comboList_.c_str(), (const char*)(*this));
-			ar & TRANSLATE_NAME(comboStr, 0, 0);
-			if(ar.isInput())
-				*this = instance().find(comboStr);
+			ar & TRANSLATE_NAME(comboStr, nullptr, nullptr);
+			if (ar.isInput()) {
+                *this = instance().find(comboStr);
+            }
 		}
 
 	private:
@@ -210,13 +213,13 @@ public:
 
     SERIALIZE(ar) {
 		ar & TRANSLATE_NAME(strings_, "strings", editName);
-		if(ar.isInput()){
+		if (ar.isInput()) {
 			comboList_ = "";
-			Strings::iterator i;		
-			FOR_EACH(strings_, i){
-				if(!comboList_.empty())
-					comboList_ += "|";
-				comboList_ += *i;
+			for (auto& i : strings_) {
+				if (!comboList_.empty()) {
+                    comboList_ += "|";
+                }
+				comboList_ += i;
 			}
 		}
 	}

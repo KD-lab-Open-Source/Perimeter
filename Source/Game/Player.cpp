@@ -983,8 +983,7 @@ void terPlayer::loadWorld(const SavePrm& data)
 	}
 }
 
-void terPlayer::saveWorld(SavePrm& data)
-{
+void terPlayer::saveWorld(SavePrm& data) const {
 	MTL();
 	UnitList::const_iterator ui;
 	FOR_EACH(Units,ui){
@@ -1051,30 +1050,27 @@ void terPlayer::universalLoad(SavePlayerData& data)
 	}
 }
 
-void terPlayer::universalSave(SavePlayerData& data, bool userSave)
-{
+void terPlayer::universalSave(SavePlayerData& data, bool userSave) const {
 	if(frame())
 		data.frame = frame()->universalSave(data.frame);
 	
 	for(int i = 0;i < UNIT_ATTRIBUTE_STRUCTURE_MAX;i++){
-		terBuildingList::iterator bi;
-		FOR_EACH(buildingList(i),bi){
-			if((*bi)->dockMode() == DOCK_MODE_NONE){
-				data.buildings.push_back((*bi)->universalSave(0));
+		for (auto& bi : buildingList(i)) {
+			if(bi->dockMode() == DOCK_MODE_NONE){
+				data.buildings.push_back(bi->universalSave(0));
 				xassert(data.buildings.back());
 			}
 			else 
 				xassert_s(0 && "Игнорируется запись здания: ", (*bi)->attr().internalName());
 		}
 	}
-	
-	UnitList::iterator ui;
-	FOR_EACH(Units, ui){
-		if((*ui)->attr().ID == UNIT_ATTRIBUTE_FRAME && *ui != frame()){
-			data.catchedFrames.push_back((*ui)->universalSave(0));
+
+	for (auto& ui : Units) {
+		if (ui->attr().ID == UNIT_ATTRIBUTE_FRAME && ui != frame()){
+			data.catchedFrames.push_back(ui->universalSave(0));
 		}
-		else if((*ui)->attr().saveAsCommonObject){
-			data.commonObjects.push_back((*ui)->universalSave(0));
+		else if(ui->attr().saveAsCommonObject){
+			data.commonObjects.push_back(ui->universalSave(0));
 		}
 	}
 

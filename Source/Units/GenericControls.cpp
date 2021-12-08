@@ -118,6 +118,7 @@ void terUnitBase::setPose(const Se3f& pose, bool initPose)
 
 	updateIncludingCluster();
 
+    log_var(unitID());
     log_var(pose_.rot());
     log_var(pose_.trans());
 }

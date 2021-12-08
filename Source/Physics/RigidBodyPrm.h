@@ -36,7 +36,7 @@ struct RigidBodyPrm : ShareHandleBase
 			ar & TRANSLATE_OBJECT(amplitude_decrement, "amplitude_decrement");
 			ar & TRANSLATE_OBJECT(omega_increment, "omega_increment");
 			ar & TRANSLATE_OBJECT(omega_disperse, "omega_disperse");
-			if(!ar.isOutput() && phase == 0) {
+			if (ar.isInput() && phase == 0) {
                 set();
             }
 		}

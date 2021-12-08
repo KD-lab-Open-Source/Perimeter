@@ -531,7 +531,7 @@ SaveUnitData* terUnitSquad::universalSave(SaveUnitData* baseData)
 
 	AttackPointList::const_iterator ai;
 	FOR_EACH(attack_points, ai){
-		data->attackPoints.push_back(SaveAttackPoint());
+		data->attackPoints.emplace_back();
 		ai->save(data->attackPoints.back());
 	}
 	data->squadToFollow = squadToFollow_;

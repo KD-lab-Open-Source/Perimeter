@@ -65,7 +65,9 @@ struct ConditionCreateObject : Condition // Объект создан
 		ar & TRANSLATE_OBJECT(object, "Объект");
 		ar & TRANSLATE_OBJECT(counter, "Количество");
 		ar & TRANSLATE_OBJECT(playerType, "Владелец объекта");
-		created_ = 0;
+        if (ar.isInput()) {
+            created_ = 0;
+        }
 	}
 
 protected:
@@ -93,7 +95,9 @@ struct ConditionKillObject : Condition // Объект уничтожен
 		ar & TRANSLATE_OBJECT(object, "Объект");
 		ar & TRANSLATE_OBJECT(counter, "Количество");
 		ar & TRANSLATE_OBJECT(playerType, "Владелец объекта");
-		killed_ = 0;
+        if (ar.isInput()) {
+            killed_ = 0;
+        }
 	}
 
 private:
@@ -219,7 +223,9 @@ struct ConditionEnegyLevelBelowMaximum : Condition // Уровень энерг�
     VIRTUAL_SERIALIZE(ar) {
         Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(delta, "Погрешность: текущий < максимальный - погрешность");
-		accumulatedMax_ = 0;
+        if (ar.isInput()) {
+            accumulatedMax_ = 0;
+        }
 	}
 
 private:
@@ -440,7 +446,9 @@ struct ConditionBuildingNearBuilding : Condition // Расстояние от я
 		ar & TRANSLATE_OBJECT(distance, "Расстояние");
 		ar & TRANSLATE_OBJECT(playerType1, "Игрок1");
 		ar & TRANSLATE_OBJECT(playerType2, "Игрок2");
-		index_ = 0;
+        if (ar.isInput()) {
+            index_ = 0;
+        }
 	}
 
 private:
@@ -470,7 +478,9 @@ struct ConditionPlayerState : Condition // Проверка состояния �
 	VIRTUAL_SERIALIZE(ar) {
 		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(playerState, "Интересующее состояние");
-		active_ = false;
+        if (ar.isInput()) {
+            active_ = false;
+        }
 	}
 
 private:
@@ -601,7 +611,9 @@ struct ConditionClickOnButton : Condition // Клик по кнопке
 		Condition::serialize_template(ar);
 		ar & TRANSLATE_OBJECT(controlID, "Идентификатор кнопки");
 		ar & TRANSLATE_OBJECT(counter, "Количество кликов");
-		counter_ = 0;
+        if (ar.isInput()) {
+            counter_ = 0;
+        }
 	}
 
 private:

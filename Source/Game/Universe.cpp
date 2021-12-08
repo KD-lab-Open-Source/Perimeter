@@ -1035,8 +1035,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     return true;
 }
 
-bool terUniverse::universalSave(MissionDescription& mission, bool userSave)
-{
+bool terUniverse::universalSave(MissionDescription& mission, bool userSave) const {
 	SavePrm data;
 
 	data.manualData = gameShell->manualData();
@@ -1052,7 +1051,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave)
 		activePlayer()->refreshCameraTrigger("UserCamera");
 	}
 
-	PlayerVect playersToSave(NETWORK_PLAYERS_MAX, 0);
+	PlayerVect playersToSave(NETWORK_PLAYERS_MAX, nullptr);
 	for(int i = 0; i < data.manualData.players.size(); i++){
 		if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
@@ -1073,7 +1072,9 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave)
 		SavePlayerData& savePlayer = data.players.emplace_back();
 		if (pi) {
             pi->universalSave(savePlayer, userSave);
-            std::swap(savePlayer.currentTriggerChains, savePrmBinary.TriggerChains.emplace_back());
+            if (!check_command_line("not_triggerchains_binary")) {
+                std::swap(savePlayer.currentTriggerChains, savePrmBinary.TriggerChains.emplace_back());
+            }
         }
 	}
 
@@ -1119,17 +1120,18 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave)
 
 	//---------------------
 	// Region
-	if (activePlayer()) {
-        *activePlayer()->RegionPoint = *activeRegionDispatcher();
-    }
 
 	int changedCounter = 0;
     binaryData < REGION_DATA_FILE_VERSION < changedCounter;
 	for (auto player : Players) {
-		MetaRegionLock lock(player->RegionPoint);
-		if(player->RegionPoint->changed()){
+        RegionMetaDispatcher* regionPoint = player->RegionPoint;
+        if (player == activePlayer()) {
+            regionPoint = activeRegionDispatcher();
+        }
+		MetaRegionLock lock(regionPoint);
+		if(regionPoint->changed()){
             binaryData < player->playerStrategyIndex();
-			player->RegionPoint->saveEditing(binaryData);
+            regionPoint->saveEditing(binaryData);
 			++changedCounter;
 		}
 	}

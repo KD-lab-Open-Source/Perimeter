@@ -1656,8 +1656,9 @@ public:
 
 		GeometryAttribute::serialize_template(ar);
 
-		if(!ar.isOutput())
-			init();
+        if (ar.isInput()) {
+            init();
+        }
 	}
 
 private:

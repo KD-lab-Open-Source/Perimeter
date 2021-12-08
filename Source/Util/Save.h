@@ -1677,7 +1677,10 @@ struct SaveCameraSplineData // Сплайн камеры
 		ar & WRAP_OBJECT(position);
 		ar & WRAP_OBJECT(angle);
 		ar & WRAP_OBJECT(distance);
-		initialize();
+        
+        if (ar.isInput()) {
+            initialize();
+        }
 	}
 };
 
@@ -1866,7 +1869,10 @@ struct ActionOrderBuilding : ActionForAI // Заказать здание
 		ar & TRANSLATE_OBJECT(energyReserve, "Резерв энергии");
 		ar & TRANSLATE_OBJECT(buildDurationMax, "Максимальная длительность строительства");
 		ar & TRANSLATE_OBJECT(priority, "Приоритет (0 - самый высокий)");
-		initialize();
+
+        if (ar.isInput()) {
+            initialize();
+        }
 	}
 
 protected:
@@ -1921,7 +1927,10 @@ struct ActionSellBuilding : ActionForAI // Продать здание
 		ar & TRANSLATE_OBJECT(building, "Тип здания");
 		ar & TRANSLATE_OBJECT(sellFactor, "Условие продажи");
 		ar & TRANSLATE_OBJECT(damagePercent, "процент урона");
-		index_ = 0;
+        
+        if (ar.isInput()) {
+            index_ = 0;
+        }
 	}
 
 private:
@@ -2121,7 +2130,10 @@ struct ActionSquadAttack : ActionForAI // Атаковать сквадом
 		ar & TRANSLATE_OBJECT(returnToBase, "Возвращаться на базу");
 		ar & TRANSLATE_OBJECT(interruptable, "Прерываемое");
 		ar & WRAP_OBJECT(attackTimer);
-		initialize();
+        
+        if (ar.isInput()) {
+            initialize();
+        }
 	}	
 
 private:
@@ -2492,11 +2504,14 @@ struct SavePlayerManualData
 	TriggerChain triggerChainOld; 
 
 	SERIALIZE(ar) {
-		if(ar.isInput())
-			ar & WRAP_NAME(triggerChainOld, "strategy");
+		if(ar.isInput()) {
+            ar & WRAP_NAME(triggerChainOld, "strategy");
+        }
+
 		ar & TRANSLATE_NAME(triggerChainNames, "TriggerChainNames", "Триггера");
 		ar & WRAP_NAME(triggerChainNamesOld, "triggerChainNames");
-		if(!ar.isOutput()){
+
+        if (ar.isInput()) {
 			PrmStringList::iterator i;
 			FOR_EACH(triggerChainNamesOld, i)
 				triggerChainNames.push_back(TriggerChainName(*i));
@@ -2686,9 +2701,9 @@ struct SaveManualData // Данные, редактируемые руками
 				ar & TRANSLATE_OBJECT(soundTracks[2], "Regular");
 				ar.closeBlock();
 			}
-		}
-		else
-			ar & TRANSLATE_OBJECT(soundTracks, "Музыкальные треки");
+		} else {
+            ar & TRANSLATE_OBJECT(soundTracks, "Музыкальные треки");
+        }
 
 		ar & TRANSLATE_OBJECT(players, "Игроки");
 		ar & TRANSLATE_OBJECT(controls, "Кнопки");

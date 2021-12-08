@@ -466,8 +466,10 @@ public:
 		
 		ar & WRAP_NAME(cellIndex_, "cellIndex");
 		ar & WRAP_NAME(boundingRect_, "boundingRect");
-		
-		initialize();
+
+        if(ar.isInput()) {
+            initialize();
+        }
 	}
 
 	ShareHandle<Condition> condition; 
@@ -578,7 +580,9 @@ public:
 		ar & WRAP_NAME(boundingRect_, "boundingRect");
 		ar & WRAP_NAME(viewRect_, "viewRect");
 
-		initialize();
+        if(ar.isInput()) {
+            initialize();
+        }
 	}
 
 private:

@@ -238,10 +238,12 @@ struct vrtMap {
 		ar & WRAP_OBJECT(G_ZL);
 		ar & WRAP_OBJECT(B_ZL);
 		ar & WRAP_OBJECT(A_ZL);
-		colZeroPlast.r=R_ZL;
-		colZeroPlast.g=G_ZL;
-		colZeroPlast.b=B_ZL;
-		colZeroPlast.alpha=A_ZL;
+        if (ar.isInput()) {
+            colZeroPlast.r = R_ZL;
+            colZeroPlast.g = G_ZL;
+            colZeroPlast.b = B_ZL;
+            colZeroPlast.alpha = A_ZL;
+        }
 
 		ar & WRAP_OBJECT(GeonetMESH);
 		ar & WRAP_OBJECT(NOISE_AMPL);
