@@ -55,7 +55,10 @@ SET(PERIMETER_EXODUS OFF)
 IF(CMAKE_HOST_WIN32 OR MINGW)
     MESSAGE("Windows or MinGW build")
     SET(PERIMETER_WINDOWS ON)
-    SET(PERIMETER_EXE_FLAGS WIN32) #Compile exe as Win32 App instead of Console App
+    #Compile exe as Win32 App instead of Console App
+    #Also add icon via .rc
+    SET(PERIMETER_EXE_FLAGS WIN32 perimeter.rc)
+    #Tells SDL that we handle main
     add_definitions(-DSDL_MAIN_HANDLED)
 ELSE()
     MESSAGE("Not Windows or MinGW build - WARNING: EXPERIMENTAL!")

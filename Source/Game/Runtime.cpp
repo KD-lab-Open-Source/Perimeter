@@ -31,6 +31,8 @@
 #include "Localization.h"
 
 #include <SDL.h>
+#include <SDL_image.h>
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
@@ -495,7 +497,28 @@ void PerimeterCreateWindow() {
     }
 
     //Setup window icon
-    //TODO SDL_SetWindowIcon(sdlWindow, icon);
+    std::string icon_path;
+    const char* icon_path_str = check_command_line("icon");
+    if (icon_path_str) icon_path = icon_path_str;
+    if (icon_path.empty()) {
+        icon_path = convert_path_content("resource/icons/icon.png");
+    }
+    if (icon_path.empty()) {
+        icon_path = GET_PREF_PATH();
+        terminate_with_char(icon_path, PATH_SEP);
+        icon_path += "icon.png";
+    }
+    if (std::filesystem::exists(icon_path)) {
+        SDL_Surface* icon = IMG_Load(icon_path.c_str());
+        if (icon) {
+            SDL_SetWindowIcon(sdlWindow, icon);
+            SDL_FreeSurface(icon);
+        } else {
+            fprintf(stderr, "Window icon IMG_Load error: %s\n", IMG_GetError());
+        }
+    } else {
+        printf("Window icon not found in resource/icons/icon.png or in %s\n", icon_path.c_str());
+    }
     
     //Show the window
     SDL_ShowWindow(sdlWindow);
