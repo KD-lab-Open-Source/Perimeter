@@ -726,29 +726,6 @@ void FinitSound()
 	SNDReleaseSound();
 }
 
-//--------------------------------
-
-void checkSingleRunning()
-{
-#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG) && !defined(PERIMETER_EXODUS)
-    //NOTE: with PERIMETER_EXODUS this is disabled due to pevents not supporting named events
-    
-	static HANDLE hSingularEvent = 0;
-	static char psSingularEventName[] = "Perimeter";
-
-    hSingularEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, psSingularEventName);
-    if(!hSingularEvent){
-		hSingularEvent = CreateEvent(0, TRUE, TRUE, psSingularEventName);
-    }
-	else{
-		HWND hwnd = FindWindow(0, psSingularEventName);
-		if(hwnd)
-			SetForegroundWindow(hwnd);
-		ErrH.Exit();
-	}
-#endif
-}
-
 //------------------------------
 int main(int argc, char *argv[])
 {
@@ -757,9 +734,6 @@ int main(int argc, char *argv[])
     
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
-
-    //Check if only one instance is running
-    checkSingleRunning();
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
