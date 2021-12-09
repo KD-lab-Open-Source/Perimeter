@@ -1,7 +1,6 @@
 #ifndef __HYPERSPACE_H__
 #define __HYPERSPACE_H__
 
-extern const char * KEY_SAVE_PLAY_REEL;
 extern const char * KEY_REPLAY_REEL;
 
 

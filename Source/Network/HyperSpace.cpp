@@ -18,7 +18,6 @@ XBuffer net_log_buffer(8192, 1);
 const char* autoSavePlayReelDir = "AUTOSAVE";
 
 
-const char * KEY_SAVE_PLAY_REEL="saveplay";
 const char * KEY_REPLAY_REEL="replay";
 
 //Old RePlayReel date (до патча 1.2)
@@ -146,7 +145,8 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-        create_directories(convert_path_content(autoSavePlayReelDir, true).c_str());
+        std::string path = get_content_root_path() + autoSavePlayReelDir;
+        create_directories(path.c_str());
 	}
 
 	currentQuant=0;
@@ -299,14 +299,23 @@ void terHyperSpace::autoSavePlayReel()
 {
 	//autosave
     time_t result = time(nullptr);
-    std::string path = std::string(autoSavePlayReelDir) + PATH_SEP + "autosaveFrom_" + std::to_string(result);
+    std::string name = gameShell->CurrentMission.missionName();
+    if (name.empty()) name = gameShell->CurrentMission.worldName();
+    std::string path = std::string(autoSavePlayReelDir) + PATH_SEP + "autosave_" + name;
+    for (int i = 0; i < gameShell->CurrentMission.playerAmountScenarioMax; ++i) {
+        PlayerData& p = gameShell->CurrentMission.playersData[i];
+        if (p.realPlayerType == REAL_PLAYER_TYPE_PLAYER || p.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
+            path += std::string("_") + p.name();
+        }
+    }
+    path += "_" + std::to_string(result);
 	savePlayReel(path.c_str());
 }
 
 void terHyperSpace::allSavePlayReel()
 {
 	if(flag_savePlayReel){
-		const char* fname=check_command_line(KEY_SAVE_PLAY_REEL);
+		const char* fname=check_command_line("saveplay");
 		if(fname) savePlayReel(fname);//savePlay to file
 	}
 
