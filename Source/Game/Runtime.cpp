@@ -760,6 +760,10 @@ int main(int argc, char *argv[])
 
     //Check if only one instance is running
     checkSingleRunning();
+    
+    //Redirect stdio and print version
+    ErrH.RedirectStdio();
+    printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);

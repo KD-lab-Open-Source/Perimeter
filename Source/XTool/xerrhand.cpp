@@ -393,6 +393,7 @@ XErrorHandler::XErrorHandler() {
     terminate_with_char(log_path, PATH_SEP);
     log_path += "logfile.txt";
 	if (std::filesystem::exists(log_path)) {
+        std::fstream log_file;
         log_file.open(log_path.c_str(), std::ios::out | std::ios::trunc);
         log_file.close();
     }
@@ -404,14 +405,19 @@ XErrorHandler::XErrorHandler() {
     setTerminateHandler(handleTerminate);
 #endif
     setSignalHandler(handleSignal);
-    
-    initialized = true;
 }
 
 XErrorHandler::~XErrorHandler() {
-    if(log_file.is_open()) {
-        log_file.close();
+}
+
+void XErrorHandler::RedirectStdio() const {
+    if (log_path.empty() || check_command_line("no_console_redirect") != nullptr) {
+        return;
     }
+    //Check if we should redirect stdio
+    printf("Redirecting console stdio output into log file, to prevent this pass arg no_console_redirect=1\n");
+    freopen(log_path.c_str(), "a", stdout);
+    freopen(log_path.c_str(), "a", stderr);
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)
@@ -445,13 +451,6 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
            " - Crash files from " << crash_path << std::endl <<
             "To https://t.me/PerimeterGame or https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
     std::string str =  stream.str();
-
-    //Write to log, only if constructor was called since static code can also cause issues before we are constructed
-    if (initialized) {
-        log_file.open(log_path.c_str(), std::ios::out | std::ios::app);
-        log_file << str;
-        log_file.close();
-    }
 
     fprintf(stderr, "%s\n", str.c_str());
 

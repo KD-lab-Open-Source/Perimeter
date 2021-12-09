@@ -31,12 +31,10 @@
 struct XErrorHandler
 {
 	unsigned state;
-	bool initialized = false;
 
 	const char* prefix;
 
     std::string log_path;
-    std::fstream log_file;
 
 	void (*restore_func)();
     void (*crash_func)();
@@ -44,6 +42,7 @@ struct XErrorHandler
      XErrorHandler();
     ~XErrorHandler();
 
+    void RedirectStdio() const;
 	void	 SetPrefix(const char* s);
 	void	 SetRestore(void (*rf)());
     void	 SetCrash(void (*cf)());
