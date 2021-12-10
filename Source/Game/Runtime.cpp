@@ -374,6 +374,7 @@ void PerimeterSetupDisplayMode() {
 #if PERIMETER_DEBUG
     printf("PerimeterSetupDisplayMode\n");
 #endif
+    SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
     bool windowFullscreen = SDL_GetWindowFlags(sdlWindow)&WINDOW_FULLSCREEN_FLAG;
     
     //Create display mode with current settings
@@ -453,6 +454,11 @@ void PerimeterSetupDisplayMode() {
 #if PERIMETER_DEBUG
             printf("SDL_SetWindowSize\n");
 #endif
+            
+            //Grab window
+            if (terGrabInput) {
+                SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+            }
         }
     }
 
@@ -527,7 +533,7 @@ void PerimeterCreateWindow() {
     PerimeterSetupDisplayMode();
     
     //Grab input
-    if (terGrabInput) {
+    if (terGrabInput && !terFullScreen) {
         SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
     }
 
@@ -947,7 +953,7 @@ void SDL_event_poll() {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN: {
                 //Grab window at click if window is resizable and is not already grabbed
-                if (terGrabInput && applicationHasFocus_ && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
+                if (terGrabInput && !terFullScreen && applicationHasFocus_ && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
                     SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
                 }
                 break;
