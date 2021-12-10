@@ -750,11 +750,17 @@ void FinitSound()
 }
 
 //------------------------------
-int main(int argc, char *argv[])
-{
+#ifndef _WIN32
+int main(int argc, char *argv[]) {
     //Call SDL main init
     SDL_SetMainReady();
-    
+
+    return SDL_main(argc, argv);
+}
+#endif
+
+int SDL_main(int argc, char *argv[])
+{
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
     

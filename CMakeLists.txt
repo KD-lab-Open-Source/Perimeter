@@ -58,8 +58,6 @@ IF(CMAKE_HOST_WIN32 OR MINGW)
     #Compile exe as Win32 App instead of Console App
     #Also add icon via .rc
     SET(PERIMETER_EXE_FLAGS WIN32 perimeter.rc)
-    #Tells SDL that we handle main
-    add_definitions(-DSDL_MAIN_HANDLED)
 ELSE()
     MESSAGE("Not Windows or MinGW build - WARNING: EXPERIMENTAL!")
     SET(PERIMETER_WINDOWS OFF)
@@ -126,8 +124,6 @@ ELSE()
     
     SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
     
-    #This makes SDL2 not include SDL2main
-    SET(SDL2_BUILDING_LIBRARY ON)
     FIND_PACKAGE(SDL2 REQUIRED)
     FIND_PACKAGE(SDL2-image REQUIRED)
     FIND_PACKAGE(SDL2-mixer REQUIRED)

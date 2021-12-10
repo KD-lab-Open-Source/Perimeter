@@ -132,6 +132,10 @@ IF(PERIMETER_WINDOWS)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
             legacy_stdio_definitions
         )
+    ELSE()
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+            mingw32
+        )
     ENDIF()
 ENDIF()
 
@@ -310,6 +314,11 @@ IF(PERIMETER_DEBUG)
     ADD_DEPENDENCIES(dependencies XPrmLib)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} XPrmLib)
 ENDIF()
+
+#Add SDL2 main
+SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+    ${SDL2MAIN_LIBRARY}
+)
 
 TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
 
