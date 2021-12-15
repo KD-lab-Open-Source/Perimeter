@@ -1,127 +1,95 @@
-# Locate the FFmpeg libraries
+# Locate ffmpeg
 # This module defines
-# {AVUTIL,AVCODEC,AVFORMAT}_INCLUDE_DIR
-# {AVUTIL,AVCODEC,AVFORMAT}_LIBRARY
-# FFMPEG_INCLUDE_DIRS
 # FFMPEG_LIBRARIES
+# FFMPEG_FOUND, if false, do not try to link to ffmpeg
+# FFMPEG_INCLUDE_DIR, where to find the headers
 #
+# $FFMPEG_DIR is an environment variable that would
+# correspond to the ./configure --prefix=$FFMPEG_DIR
+#
+# Created by Robert Osfield.
+# Modified by Lukas Lalinsky.
+# Modified by Ion Agorria for Perimeter specifics needs.
+
+
+#In ffmpeg code, old version use "#include <header.h>" and newer use "#include <libname/header.h>"
+#In OSG ffmpeg plugin, we use "#include <header.h>" for compatibility with old version of ffmpeg
+
+#We have to search the path which contain the header.h (usefull for old version)
+#and search the path which contain the libname/header.h (usefull for new version)
+
+#Then we need to include ${FFMPEG_libname_INCLUDE_DIRS} (in old version case, use by ffmpeg header and osg plugin code)
+#                                                       (in new version case, use by ffmpeg header) 
+#and ${FFMPEG_libname_INCLUDE_DIRS/libname}             (in new version case, use by osg plugin code)
+
+# Macro to find header and lib directories
+# example: FFMPEG_FIND(AVFORMAT avformat avformat.h)
+MACRO(FFMPEG_FIND varname shortname headername)
+
+	FIND_PATH(FFMPEG_${varname}_INCLUDE_DIRS
+			NAMES
+			lib${shortname}/${headername}
+			PATHS
+			${FFMPEG_SEARCH_PATHS}
+			PATH_SUFFIXES
+			include
+			include/ffmpeg
+			ffmpeg
+			DOC "Location of FFMPEG Headers"
+			)
+	
+	FIND_LIBRARY(FFMPEG_${varname}_LIBRARIES
+			NAMES
+			${shortname}
+			PATHS
+			${FFMPEG_SEARCH_PATHS}
+			PATH_SUFFIXES
+			lib64
+			lib
+			lib64/ffmpeg
+			lib/ffmpeg
+			)
+
+	IF (FFMPEG_${varname}_LIBRARIES AND FFMPEG_${varname}_INCLUDE_DIRS)
+		SET(FFMPEG_${varname}_FOUND 1)
+		MESSAGE("Found FFMPEG ${shortname}: ${FFMPEG_${varname}_INCLUDE_DIRS} ${FFMPEG_${varname}_LIBRARIES}")
+	ENDIF()
+
+ENDMACRO(FFMPEG_FIND)
+
+SET(FFMPEG_ROOT "$ENV{FFMPEG_DIR}" CACHE PATH "Location of FFMPEG")
 
 SET(FFMPEG_SEARCH_PATHS
+		${FFMPEG_ROOT}/include
+		$ENV{FFMPEG_DIR}/include
 		/usr/pkg/include/ffmpeg3/
 		/local/bin
 		/bin
 		${FFMPEG_SEARCH_PATHS}
 		${LIBRARY_SEARCH_PATHS}
-)
+		)
 
-FIND_PATH(AVUTIL_INCLUDE_DIR
-	NAMES
-		libavutil/avutil.h
-	PATHS
-		${FFMPEG_SEARCH_PATHS}
-	PATH_SUFFIXES
-		include
-		include/ffmpeg
-		ffmpeg
-)
+FFMPEG_FIND(LIBAVFORMAT avformat avformat.h)
+#FFMPEG_FIND(LIBAVDEVICE avdevice avdevice.h)
+FFMPEG_FIND(LIBAVFILTER avfilter avfilter.h)
+FFMPEG_FIND(LIBAVCODEC avcodec avcodec.h)
+FFMPEG_FIND(LIBAVCODEC_FFT avcodec avfft.h)
+FFMPEG_FIND(LIBAVUTIL avutil avutil.h)
+FFMPEG_FIND(LIBSWSCALE swscale swscale.h)
+#FFMPEG_FIND(LIBSWRESAMPLE swresample swresample.h)
 
-FIND_PATH(AVCODEC_INCLUDE_DIR
-	NAMES
-		libavcodec/avcodec.h
-	PATHS
-		${FFMPEG_SEARCH_PATHS}
-	PATH_SUFFIXES
-		include
-		include/ffmpeg
-		ffmpeg
-)
-
-FIND_PATH(AVFORMAT_INCLUDE_DIR
-	NAMES
-		libavformat/avformat.h
-	PATHS
-		${FFMPEG_SEARCH_PATHS}
-	PATH_SUFFIXES
-		include
-		include/ffmpeg
-		ffmpeg
-)
-
-FIND_LIBRARY(AVUTIL_LIBRARY
-	NAMES
-		avutil
-		avutil-55
-		avutil-56
-	PATHS
-		${FFMPEG_SEARCH_PATHS}
-	PATH_SUFFIXES
-		lib64
-		lib
-		lib64/ffmpeg
-		lib/ffmpeg
-)
-
-FIND_LIBRARY(AVCODEC_LIBRARY
-	NAMES
-		avcodec
-		avcodec-57
-		avcodec-58
-	PATHS
-		${FFMPEG_SEARCH_PATHS}
-	PATH_SUFFIXES
-		lib64
-		lib
-		lib64/ffmpeg
-		lib/ffmpeg
-)
-
-FIND_LIBRARY(AVFORMAT_LIBRARY
-	NAMES
-		avformat
-		avformat-57
-		avformat-58
-	PATHS
-		${FFMPEG_SEARCH_PATHS}
-	PATH_SUFFIXES
-		lib64
-		lib
-		lib64/ffmpeg
-		lib/ffmpeg
-)
-
-get_filename_component(FFMPEG_PARENT_DIR ${AVCODEC_INCLUDE_DIR} DIRECTORY)
-
-SET(FFMPEG_INCLUDE_DIRS
-	${AVUTIL_INCLUDE_DIR}
-	${AVCODEC_INCLUDE_DIR}
-	${AVFORMAT_INCLUDE_DIR}
-	${FFMPEG_PARENT_DIR}
-)
-
-SET(FFMPEG_LIBRARIES)
-
-IF(AVUTIL_LIBRARY)
+SET(FFMPEG_FOUND "NO")
+# Note we don't check FFMPEG_LIBSWSCALE_FOUND or FFMPEG_LIBSWRESAMPLE_FOUND here, it's optional.
+# We also don't need FFMPEG_LIBAVDEVICE_FOUND
+IF (FFMPEG_LIBAVFORMAT_FOUND AND FFMPEG_LIBAVCODEC_FOUND AND FFMPEG_LIBAVUTIL_FOUND)
+	SET(FFMPEG_FOUND "YES")
+	SET(FFMPEG_INCLUDE_DIRS ${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS})
+	SET(FFMPEG_LIBRARY_DIRS ${FFMPEG_LIBAVFORMAT_LIBRARY_DIRS})
 	SET(FFMPEG_LIBRARIES
-		${FFMPEG_LIBRARIES}
-		${AVUTIL_LIBRARY}
+			${FFMPEG_LIBAVFORMAT_LIBRARIES}
+			${FFMPEG_LIBAVCODEC_LIBRARIES}
+			${FFMPEG_LIBAVUTIL_LIBRARIES}
 	)
-ENDIF(AVUTIL_LIBRARY)
-
-IF(AVCODEC_LIBRARY)
-	SET(FFMPEG_LIBRARIES
-		${FFMPEG_LIBRARIES}
-		${AVCODEC_LIBRARY}
-	)
-ENDIF(AVCODEC_LIBRARY)
-
-IF(AVFORMAT_LIBRARY)
-	SET(FFMPEG_LIBRARIES
-		${FFMPEG_LIBRARIES}
-		${AVFORMAT_LIBRARY}
-	)
-ENDIF(AVFORMAT_LIBRARY)
-
-
-INCLUDE(FindPackageHandleStandardArgs)
-
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(FFMPEG REQUIRED_VARS AVUTIL_LIBRARY AVCODEC_LIBRARY AVFORMAT_LIBRARY AVUTIL_INCLUDE_DIR AVCODEC_INCLUDE_DIR AVFORMAT_INCLUDE_DIR)
+ELSE ()
+	MESSAGE(STATUS "Could not find FFMPEG")
+ENDIF()

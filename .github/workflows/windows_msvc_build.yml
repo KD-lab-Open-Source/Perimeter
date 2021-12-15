@@ -59,6 +59,8 @@ jobs:
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/ogg.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbis.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbisfile.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swscale-5.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swresample-3.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.dll ${{ env.outDir }}
           copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
       - uses: actions/upload-artifact@v2

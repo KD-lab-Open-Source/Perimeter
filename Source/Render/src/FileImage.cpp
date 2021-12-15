@@ -426,35 +426,32 @@ public:
             return ret;
         }
 
-        x = wrapper.videoCodecCtx->width;
-        y = wrapper.videoCodecCtx->height;
+        x = wrapper.getVideoWidth();
+        y = wrapper.getVideoHeight();
         
         //Set time (milliseconds of total duration)
         time = static_cast<int>(xm::round(
-                static_cast<float>(wrapper.formatCtx->duration) / AV_TIME_BASE * 1000.0f
+            wrapper.getDuration() * 1000.0f
         ));
         
         //Set bpp
-        bpp = wrapper.videoCodecCtx->bits_per_coded_sample;
+        bpp = wrapper.getVideoBPP();
 
-        //Set length (amount of frames), this seems to be the only way to get for now
-        bool reading = true;
-        while (reading) {
-            AVWrapperType type = wrapper.readPacket();
-            switch (type) {
-                case None:
-                    reading = false;
-                    break;
-                case Audio:
-                    break;
-                case Video:
-                case AudioVideo:
-                    uint8_t* buffer = nullptr;
-                    wrapper.getVideoFrameBuffer(&buffer);
-                    frames.emplace_back(buffer);
-                    break;
-            }
+        //Read all wrapper packets
+        while (!wrapper.end) {
+            wrapper.readPacket();
         }
+        //Discard any audio frames
+        wrapper.audioFrames.clear();
+        //Order video frames
+        wrapper.videoFrames.sort(AVWrapperFrame_compare);
+        for (auto frame : wrapper.videoFrames) {
+            //Read video frame and make buffer
+            uint8_t* buffer = nullptr;
+            frame->copyBuffer(&buffer);
+            frames.emplace_back(buffer);
+        }
+        wrapper.close();
         length = static_cast<int>(frames.size());
 
         if (length <= 1) {

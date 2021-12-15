@@ -7,6 +7,7 @@ extern SyncroTimer scale_time; // недетерминированный уск�
 
 //--------------------------------------
 
+void app_event_poll();
 void setLogicFp();
 
 void PlayMusic(const char *str);

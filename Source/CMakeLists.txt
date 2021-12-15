@@ -17,6 +17,9 @@ SET(perimeter_LINK_LIBS
 
 IF(FFMPEG_FOUND)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBRARIES})
+    IF(OPTION_FFMPEG_MOVIES)
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBSWSCALE_LIBRARIES} ${FFMPEG_LIBAVFILTER_LIBRARIES})
+    ENDIF()
 ENDIF()
 
 IF(NOT PERIMETER_WINDOWS)
@@ -50,6 +53,7 @@ IF(NOT PERIMETER_WINDOWS)
             )
         ENDIF()
         #DXVK-native wrapper lib retrieval and building
+        #TODO change this to upstream once changes are merged
         ExternalProject_Add(dxvk-native
                 GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
                 GIT_TAG           "aed08f8e5f4b069514dc4068b91e624cd4e0a495"
@@ -166,7 +170,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
-        Game/PlayBink.cpp
+        Game/VideoPlayer.cpp
         Game/qd_textdb.cpp
         Units/Economic.cpp
         Game/Player.cpp

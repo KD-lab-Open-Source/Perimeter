@@ -14,15 +14,7 @@ class MixChunkWrapper {
 public:
     Mix_Chunk* chunk = nullptr;
     explicit MixChunkWrapper(Mix_Chunk* chunk_) : chunk(chunk_) {}
-    ~MixChunkWrapper() {
-        if (chunk) {
-            //Only free if sound is inited
-            if (SND::has_sound_init) {
-                Mix_FreeChunk(chunk);
-            }
-            chunk = nullptr;
-        }
-    }
+    ~MixChunkWrapper();
 };
 
 //Wrapper to store certain data that will be user for mixer channels
@@ -57,6 +49,9 @@ public:
     }
 
     ~SND_Sample();
+
+    ///Loads raw data into sample and creates new chunk to hold it, assumes data is in device format
+    bool loadRawData(uint8_t* src_data, size_t src_len, bool copy);
 
     ///Plays provided sample as effect and returns used channel if any
     int play();

@@ -76,8 +76,8 @@ public:
 	virtual void UnlockIndexBuffer(sPtrIndexBuffer &ib);
 	virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true);
 	virtual int DeleteTexture(class cTexture *Texture);
-	void* LockTexture(class cTexture *Texture,int& Pitch);
-	void* LockTexture(class cTexture *Texture,int& Pitch,Vect2i lock_min,Vect2i lock_size);
+	void* LockTexture(class cTexture *Texture, int& Pitch);
+	void* LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size);
 	void UnlockTexture(class cTexture *Texture);
 
 	virtual int CreateCubeTexture(class cTexture *Texture, const char* fname);

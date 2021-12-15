@@ -38,7 +38,7 @@ public:
 	inline eSurfaceFormat GetFmt();
 
 	uint8_t* LockTexture(int& Pitch);
-	uint8_t* LockTexture(int& Pitch, Vect2i lock_min, Vect2i lock_size);
+	uint8_t* LockTexture(int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size);
 	void UnlockTexture();
 	virtual bool IsScaleTexture(){return false;}
 	virtual bool IsAviScaleTexture(){return false;}

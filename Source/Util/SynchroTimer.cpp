@@ -67,7 +67,7 @@ unsigned int SyncroTimer::int_clock()
 {
 	if(use_perfomance)
 	{
-		double timediff=((double)SDL_GetPerformanceCounter())/frequency;
+		double timediff=static_cast<double>(getPerformanceCounter())/frequency;
 		return (time_type)(timediff*1000);
 	}
 

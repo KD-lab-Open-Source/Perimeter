@@ -933,6 +933,31 @@ void SNDStopAll()
 	script3d.StopAllPlayed();
 	script2d.StopAllPlayed();
 }
+
+int SNDDeviceFrequency() {
+    return SND::deviceFrequency;
+}
+
+int SNDDeviceChannels() {
+    return SND::deviceChannels;
+}
+
+SDL_AudioFormat SNDDeviceFormat() {
+    return SND::deviceFormat;
+}
+
+uint64_t SNDcomputeAudioLengthUS(uint64_t bytes) {
+    //Code based from Carlos Faruolo https://gist.github.com/hydren/f60d107f144fcb41dd6f898b126e17b2
+    /* bytes / samplesize == sample points */
+    const uint64_t points = bytes / SNDformatSampleSize(SND::deviceFormat);
+
+    /* sample points / channels == sample frames */
+    const uint64_t frames = (points / SND::deviceChannels);
+
+    /* (sample frames * 1000000) / frequency == play length, in ms */
+    return (frames * 1000000) / SND::deviceFrequency;
+}
+
 ////////////////////////Pause///////////////////////////
 
 void SNDPausePush()

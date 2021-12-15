@@ -124,8 +124,6 @@ SyncroTimer scale_time;
 void PerimeterDataChannelLoad();
 void PerimeterDataChannelSave();
 
-void SDL_event_poll();
-
 bool applicationHasFocus()
 {
 	return applicationHasFocus_;
@@ -822,7 +820,7 @@ int SDL_main(int argc, char *argv[])
 
     bool run = true;
     while (run) {
-        SDL_event_poll();
+        app_event_poll();
 
         //NetworkPause handler
         static bool runapp = true;
@@ -901,7 +899,7 @@ int SDL_main(int argc, char *argv[])
 
 //--------------------------------
 
-void SDL_event_poll() {
+void app_event_poll() {
     //Check if window resizing has been calm down and propagate event
     if (0 < lastWindowResize) {
         lastWindowResize--;

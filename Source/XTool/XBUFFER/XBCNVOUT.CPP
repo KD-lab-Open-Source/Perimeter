@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cstring>
+#include <cstdint>
 #include "xutl.h"
 #include "xbuffer.h"
 #include "xerrhand.h"

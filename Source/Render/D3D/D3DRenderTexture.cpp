@@ -303,7 +303,7 @@ bool cD3DRender::SetScreenShot(const char *fname)
 	return SUCCEEDED(hr);
 }
 
-void* cD3DRender::LockTexture(class cTexture *Texture,int& Pitch)
+void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch)
 {
 	D3DLOCKED_RECT d3dLockRect;
 	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);
@@ -313,7 +313,7 @@ void* cD3DRender::LockTexture(class cTexture *Texture,int& Pitch)
 	return d3dLockRect.pBits;
 }
 
-void* cD3DRender::LockTexture(class cTexture *Texture,int& Pitch,Vect2i lock_min,Vect2i lock_size)
+void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size)
 {
 	D3DLOCKED_RECT d3dLockRect;
 	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);

@@ -99,7 +99,8 @@ Experimental support, it uses dxvk-native for D3D9 API and some libraries to sup
   - glsllang-tools (for DXVK which needs glslangValidator program) 
 
 Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glslang-tools lld cmake meson zlib1g-dev
-libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev libavcodec-dev libavformat-dev `
+libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev
+libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev`
 
 ### Instructions
 

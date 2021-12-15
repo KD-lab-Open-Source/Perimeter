@@ -7,6 +7,7 @@
 		"boost-iterator",
 		"boost-type-index",
 		"libvorbis",
+		"libvpx",
 		"sdl2",
 		"sdl2-image",
 		{
@@ -17,7 +18,7 @@
 		{
 			"name": "ffmpeg",
 			"default-features": false,
-			"features": [ "avcodec", "avformat" ]
+			"features": [ "avcodec", "avformat", "avfilter", "swscale", "swresample" ]
 		}
 	]
 }

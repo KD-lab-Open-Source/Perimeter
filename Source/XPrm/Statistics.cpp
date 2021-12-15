@@ -95,7 +95,7 @@ Profiler::Profiler()
 : total_data("Total", 0, 1),
 timers(*new TimerDataList)
 {
-	start_ticks = getRDTSC();
+	start_ticks = getPerformanceCounter();
 	started = 0;
 }
 
@@ -119,13 +119,13 @@ void Profiler::start_stop()
 		
 		started = 1;
 		milliseconds = clock();
-		ticks = getRDTSC();
+		ticks = getPerformanceCounter();
 		frames = 0;
 		memory = total_memory_used();
 		}
 	else{
 		milliseconds = clock() - milliseconds;
-		ticks = getRDTSC() - ticks;
+		ticks = getPerformanceCounter() - ticks;
 		
 		static XBuffer buf(10000, 1);
 		buf.init();

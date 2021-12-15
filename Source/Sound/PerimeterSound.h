@@ -35,6 +35,27 @@ int SNDGetPushLevel();//Возвращает уровень вложенност
 
 void SNDStopAll();//Остановить все звуки
 
+int SNDDeviceFrequency();
+int SNDDeviceChannels();
+SDL_AudioFormat SNDDeviceFormat();
+
+static inline Uint16 SNDformatSampleSize(Uint16 format) {
+    return (format & 0xFF) / 8;
+}
+
+///Get audio buffer time length (in us) given its size and current audio format
+uint64_t SNDcomputeAudioLengthUS(uint64_t bytes);
+
+///Get audio buffer time length (in ms) given its size and current audio format
+static inline uint64_t SNDcomputeAudioLengthMS(uint64_t bytes) {
+    return SNDcomputeAudioLengthUS(bytes) / 1000;
+}
+
+///Get audio buffer time length (in secs) given its size and current audio format
+static inline double SNDcomputeAudioLengthS(size_t len) {
+    return static_cast<double>(SNDcomputeAudioLengthUS(len)) / 1000000.0;
+}
+
 ////////////////////////////3D/////////////////////////////////
 
 

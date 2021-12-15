@@ -37,7 +37,7 @@
 
 #include "qd_textdb.h"
 #include "../HT/ht.h"
-#include "PlayBink.h"
+#include "VideoPlayer.h"
 
 #include "EditArchive.h"
 #include "XPrmArchive.h"
@@ -257,7 +257,7 @@ windowClientSize_(1024, 768)
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 		//_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCREEN1);
 
-        if (IniManager("Perimeter.ini").getInt("Game","StartSplash")) {
+        if (IniManager("Perimeter.ini").getInt("Game","StartSplash") || check_command_line("start_splash")) {
 			_bCursorVisible = 0;
 //			_shellIconManager.GetWnd(SQSH_MM_SPLASH1)->Show(1);
 //			_shellIconManager.SetModalWnd(SQSH_MM_SPLASH1);
@@ -920,20 +920,26 @@ void GameShell::EventHandler(SDL_Event& event) {
     if (reelManager.isVisible()) {
         if (reelAbortEnabled) {
             switch (event.type) {
-                case SDL_KEYDOWN:
-                    if (sKey(event.key.keysym, true).fullkey != VK_SPACE) {
-                        return;
+                case SDL_KEYUP: {
+                    int key = sKey(event.key.keysym, true).fullkey;
+                    if (key == VK_SPACE || key == VK_ESCAPE || key == VK_END) {
+                        reelManager.hide();
                     }
                     break;
-                case SDL_MOUSEBUTTONDOWN:
-                    if (event.button.button & (SDL_BUTTON_LMASK | SDL_BUTTON_MMASK)) {
+                }
+                case SDL_MOUSEBUTTONUP:
+                    if (event.button.button & (SDL_BUTTON_LMASK | SDL_BUTTON_MMASK | SDL_BUTTON_RMASK)) {
                         reelManager.hide();
                     }
                     break;
                 default:
-                    return;
+                    break;
             }
         }
+        if (!GameContinue) {
+            reelManager.hide();
+        }
+        return;
     }
 
 /*
@@ -2495,12 +2501,12 @@ void GameShell::serverMessage(LocalizedText* text) {
     _shellIconManager.showHintChat(text, 5000);
 }
 
-void GameShell::showReelModal(const char* binkFileName, const char* soundFileName, bool localized, bool stopBGMusic, int alpha) {
+void GameShell::showReelModal(const char* videoFileName, const char* soundFileName, bool localized, bool stopBGMusic, int alpha) {
 	std::string path;
 	if (localized) {
-		path = getLocDataPath() + std::string("Video\\") + binkFileName;
+		path = getLocDataPath() + std::string("Video\\") + videoFileName;
 	} else {
-		path = binkFileName;
+		path = videoFileName;
 	}
 	reelManager.showModal(path.c_str(), soundFileName, stopBGMusic, alpha);
 	if (stopBGMusic) {

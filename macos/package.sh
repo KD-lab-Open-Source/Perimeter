@@ -28,22 +28,6 @@ mkdir $APP_DIR/Contents/Frameworks
 mkdir $APP_DIR/Contents/Libs
 mkdir $APP_DIR/Contents/MacOS
 
-#cp -L $LIB_DIR/libSDL2-2.0.0.dylib $APP_DIR/Contents/Libs/
-#cp -L $LIB_DIR/libSDL2_image-2.0.0.dylib $APP_DIR/Contents/Libs/
-#cp -L $LIB_DIR/libSDL2_mixer-2.0.0.dylib $APP_DIR/Contents/Libs/
-#cp -L $LIB_DIR/libSDL2_net-2.0.0.dylib $APP_DIR/Contents/Libs/
-
-#cp -a $LIB_DIR/libavcodec.58*.dylib $APP_DIR/Contents/Libs/
-#cp -a $LIB_DIR/libavformat.58*.dylib $APP_DIR/Contents/Libs/
-#cp -a $LIB_DIR/libavutil.56*.dylib $APP_DIR/Contents/Libs/
-
-#cp -L $LIB_DIR/libogg.0.dylib $APP_DIR/Contents/Libs/
-#cp -L $LIB_DIR/libvorbis.0.dylib $APP_DIR/Contents/Libs/
-#cp -L $LIB_DIR/libvorbisfile.3.dylib $APP_DIR/Contents/Libs/
-
-#cp -L $VULKAN_LIB_DIR/libvulkan.1.dylib $APP_DIR/Contents/Libs/
-#cp -L $VULKAN_LIB_DIR/libMoltenVK.dylib $APP_DIR/Contents/Libs/
-
 rm -f $BUILD_DIR/libdxvk_d3d9.dylib
 cp $DXVK_NATIVE_PATH $BUILD_DIR/libdxvk_d3d9.dylib
 

@@ -174,11 +174,13 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
     
     std::sort(resolutions.begin(), resolutions.end());
 
-#if PERIMETER_DEBUG
+#if defined(PERIMETER_DEBUG)
     printf("Current mode %s\n", resolution.text().c_str());
+#if 0
     for (DisplayMode& res : resolutions) {
         printf("- %s\n", res.text().c_str());
     }
+#endif
 #endif
 }
 

@@ -4,7 +4,6 @@
 
 #define GET_PREF_PATH() SDL_GetPrefPath("KD Vision", "Perimeter")
 #define PRINTF_FLOATING_FORMAT "%.*f"
-#define PRINTF_LONG_FLOATING_FORMAT "%.*Lf"
 
 struct XBuffer;
 
@@ -12,8 +11,19 @@ unsigned int XRnd(unsigned int m);
 void XRndSet(unsigned int m);
 unsigned int XRndGet();
 
+///Get high performance counter
+uint64_t getPerformanceCounter();
+
+///How much ticks are in one second in high performance counter
+uint64_t getPerformanceFrequency();
+
+///Initializes clock
 void initclock();
+
+///Current time in integer ms since start
 int clocki();
+
+///Current time in fractional ms since start
 double clockf();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

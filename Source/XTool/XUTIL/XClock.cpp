@@ -1,62 +1,39 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include <cstring>
 #include <cstdint>
-#include <string>
 
-#include "tweaks.h"
-#include "xmath.h"
 #include "xutl.h"
 #include <SDL.h>
 
-int64_t tick_per_sec=0;
-int64_t beg_tick=0;
+uint64_t tick_per_sec=0;
+uint64_t beg_tick=0;
 
-#if defined(_MSC_VER) && _MSC_VER >= 1310
-__declspec (noinline)
-#endif // _MSC_VER >= 1310
+uint64_t getPerformanceCounter() {
+    return SDL_GetPerformanceCounter();
+}
 
-int64_t getRDTSC() {
-    return static_cast<int64_t>(SDL_GetPerformanceCounter());
+uint64_t getPerformanceFrequency() {
+    return SDL_GetPerformanceFrequency();
 }
 
 void initclock()
 {
-	if(tick_per_sec!=0)
-		return;
-	/*
-	timeBeginPeriod(1);
+	if (tick_per_sec!=0) {
+        return;
+    }
 
-	unsigned int t2=timeGetTime(), t1 = t2;
-
-	while(t1==t2){ 
-		t2=timeGetTime();
-	};
-
-    int64_t tickb=getRDTSC();
-	t1=t2;
-	while(t1+MS_PER_PERIOD > t2){
-		t2=timeGetTime();
-	}
-    int64_t ticke=getRDTSC();
-	tick_per_sec = (ticke-tickb)/MS_PER_PERIOD;
-	beg_tick=getRDTSC();
-	*/
-
-	tick_per_sec = static_cast<int64_t>(SDL_GetPerformanceFrequency() / 1000);
-    beg_tick=getRDTSC();
-
-	//timeEndPeriod(1);
+	tick_per_sec = getPerformanceFrequency() / static_cast<uint64_t>(1000);
+    beg_tick = getPerformanceCounter();
 }
 
 double clockf()
 {
-	return (double)(getRDTSC() - beg_tick) / (double)tick_per_sec;
+	return static_cast<double>(getPerformanceCounter() - beg_tick) / static_cast<double>(tick_per_sec);
 } 
 
 int clocki()
 {
-	return (int)((getRDTSC() - beg_tick) / tick_per_sec);
+    return static_cast<int>((getPerformanceCounter() - beg_tick) / tick_per_sec);
 }
 

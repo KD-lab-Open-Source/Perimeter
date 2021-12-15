@@ -1,7 +1,7 @@
 
 #GameMath retrieval
 FetchContent_Declare(gamemath
-    GIT_REPOSITORY    https://github.com/IonAgorria/gamemath
+    GIT_REPOSITORY    https://github.com/TheAssemblyArmada/GameMath
     GIT_TAG           origin/master
     GIT_SHALLOW       ON
 )

@@ -13,7 +13,7 @@ extern float global_volume;
 extern bool has_sound_init;
 extern int deviceFrequency;
 extern int deviceChannels;
-extern Uint16 deviceFormat;
+extern SDL_AudioFormat deviceFormat;
 ///Minimum required volume to be played, this avoids starving channels by too many low volume effects
 const float EFFECT_VOLUME_THRESHOLD = 0.05;
 void logs(const char *format, ...);

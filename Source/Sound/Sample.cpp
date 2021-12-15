@@ -3,24 +3,6 @@
 #include "Sample.h"
 #include <unordered_map>
 
-
-static inline Uint16 formatSampleSize(Uint16 format) {
-    return (format & 0xFF) / 8;
-}
-
-// Get chunk time length (in ms) given its size and current audio format
-static Uint64 computeAudioLengthMS(Uint32 bytes) {
-    //Code based from Carlos Faruolo https://gist.github.com/hydren/f60d107f144fcb41dd6f898b126e17b2
-    /* bytes / samplesize == sample points */
-    const Uint32 points = bytes / formatSampleSize(SND::deviceFormat);
-
-    /* sample points / channels == sample frames */
-    const Uint32 frames = (points / SND::deviceChannels);
-
-    /* (sample frames * 1000) / frequency == play length, in ms */
-    return (frames * 1000) / SND::deviceFrequency;
-}
-
 ///Used for tracking what channel is playing what sample, if sample is not here then is not being played
 std::unordered_map<int, SND_Sample*> channelSamples;
 
@@ -40,12 +22,22 @@ void SNDSetupChannelCallback(bool init) {
     }
 }
 
+MixChunkWrapper::~MixChunkWrapper() {
+    if (chunk) {
+        //Only free if sound is inited
+        if (SND::has_sound_init) {
+            Mix_FreeChunk(chunk);
+        }
+        chunk = nullptr;
+    }
+}
+
 SND_Sample::SND_Sample(const std::shared_ptr<MixChunkWrapper>& chunk)  {
     this->chunk = chunk;
     this->chunk_source = chunk;
     Mix_Chunk* current = getChunk();
     if (current) {
-        this->chunk_millis = computeAudioLengthMS(current->alen);
+        this->chunk_millis = SNDcomputeAudioLengthMS(current->alen);
     } else {
         this->chunk_millis = 0;
     }
@@ -54,6 +46,27 @@ SND_Sample::SND_Sample(const std::shared_ptr<MixChunkWrapper>& chunk)  {
 SND_Sample::~SND_Sample() {
     chunk_source = nullptr;
     chunk = nullptr;
+}
+
+bool SND_Sample::loadRawData(uint8_t* src_data, size_t src_len, bool copy) {
+    Mix_Chunk* new_chunk = (Mix_Chunk*) SDL_malloc(sizeof(Mix_Chunk));
+    new_chunk->allocated = 1;
+    if (copy) {
+        new_chunk->abuf = (Uint8*) SDL_calloc(1, src_len);
+        SDL_memcpy(new_chunk->abuf, src_data, src_len);
+    } else {
+        new_chunk->abuf = src_data;
+    }
+    new_chunk->alen = src_len;
+    if (chunk_source) {
+        new_chunk->volume = chunk_source->chunk->volume;
+    } else {
+        new_chunk->volume = 128;
+    }
+    chunk_source = chunk = std::make_shared<MixChunkWrapper>(new_chunk);
+    this->chunk_millis = SNDcomputeAudioLengthMS(src_len);
+    this->chunk_frequency = this->frequency;
+    return true;
 }
 
 int SND_Sample::play() {
@@ -105,7 +118,7 @@ int SND_Sample::play() {
         Mix_Chunk* chunk_play = getChunk();
         chunk_play->volume = getChunkSource()->volume;
         bool loop = this->external_looped_restart ? false : this->looped; //Set loop flag if not externally controlled 
-        channel = Mix_PlayChannel(channel, chunk_play, loop ? 1 : 0);
+        channel = Mix_PlayChannel(channel, chunk_play, loop ? -1 : 0);
         if(channel == -1) { //Return's -1 if fails to play
             fprintf(stderr, "Mix_PlayChannel error: %s\n", Mix_GetError());
             channel = SND_NO_CHANNEL;
@@ -253,7 +266,7 @@ bool SND_Sample::convertChunkFrequency() {
             new_chunk->abuf = cvt.buf;
             new_chunk->alen = cvt.len_cvt;
             chunk = std::make_shared<MixChunkWrapper>(new_chunk);
-            this->chunk_millis = computeAudioLengthMS(cvt.len_cvt);
+            this->chunk_millis = SNDcomputeAudioLengthMS(cvt.len_cvt);
             this->chunk_frequency = this->frequency;
             return true;
         }

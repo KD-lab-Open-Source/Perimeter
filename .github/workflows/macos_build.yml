@@ -7,7 +7,7 @@ on:
 env:
   VULKAN_SDK_VERSION: '1.2.189.0'
   MACOSX_DEPLOYMENT_TARGET: '10.15'
-  GH_CACHE_KEY: 4
+  GH_CACHE_KEY: 8
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
       - name: install libs
         run: |
           brew install ninja yasm dylibbundler \
-          libogg libvorbis boost meson cmake zlib \
+          libogg libvorbis libvpx boost meson cmake zlib \
           sdl2 sdl2_image sdl2_mixer sdl2_net
       - uses: actions/cache@v2
         id: cache
@@ -47,10 +47,10 @@ jobs:
           hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone --depth 1 --branch n4.3.3 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        run: git clone --depth 1 --branch n4.4.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./configure --enable-shared --prefix=/usr/local
+        run: ./configure --enable-shared --prefix=/usr/local 
           --cc="clang"
           --arch=${{matrix.env.arch}}
           --extra-cflags="-arch ${{matrix.env.arch_apple}}"
@@ -59,10 +59,14 @@ jobs:
           --sysroot=$(xcrun --sdk macosx --show-sdk-path)
           --disable-everything
           --enable-swscale
+          --enable-swresample
           --enable-zlib
-          --enable-demuxer=avi,rawvideo
-          --enable-decoder=png,bink,rawvideo
-          --enable-parser=png
+          --enable-libvpx
+          --enable-libvorbis
+          --enable-demuxer=avi,rawvideo,bink,matroska
+          --enable-decoder=png,rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9
+          --enable-parser=png,vp9
+          --enable-filter=aresample,aformat
           --enable-protocol=file
           --disable-d3d11va
           --disable-dxva2

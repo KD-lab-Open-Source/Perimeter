@@ -5,7 +5,7 @@ on:
   pull_request:
 
 env:
-  GH_CACHE_KEY: 1
+  GH_CACHE_KEY: 5
 
 jobs:
   build:
@@ -40,6 +40,7 @@ jobs:
             mingw-w64-${{matrix.env.arch}}-boost
             mingw-w64-${{matrix.env.arch}}-lld
             mingw-w64-${{matrix.env.arch}}-libbacktrace
+            mingw-w64-${{matrix.env.arch}}-libvpx
             mingw-w64-${{matrix.env.arch}}-nasm
             mingw-w64-${{matrix.env.arch}}-yasm
             mingw-w64-${{matrix.env.arch}}-zlib
@@ -62,17 +63,21 @@ jobs:
           wget https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.4-win32-${{matrix.env.arch_zip}}.zip -O downloads/SDL2_mixer.zip
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
-        run: git clone --depth 1 --branch n4.3.3 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        run: git clone --depth 1 --branch n4.4.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
       - name: ffmpeg -- configure
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           ./configure --enable-shared --prefix=/mingw${{matrix.env.bits}} \
           --disable-everything \
           --enable-swscale \
+          --enable-swresample \
           --enable-zlib \
-          --enable-demuxer=avi,rawvideo \
-          --enable-decoder=png,bink,rawvideo \
-          --enable-parser=png \
+          --enable-libvpx \
+          --enable-libvorbis \
+          --enable-demuxer=avi,rawvideo,bink,matroska \
+          --enable-decoder=png,rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9 \
+          --enable-parser=png,vp9 \
+          --enable-filter=aresample,aformat \
           --enable-protocol=file \
           --disable-d3d11va \
           --disable-dxva2 \
@@ -108,8 +113,11 @@ jobs:
           cp /mingw${{matrix.env.bits}}/bin/libwinpthread-1.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/libbacktrace-0.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/avcodec-58.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/avfilter-7.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/avformat-58.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/avutil-56.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/swscale-5.dll perimeter/bin/
+          cp /mingw${{matrix.env.bits}}/bin/swresample-3.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/zlib1.dll perimeter/bin/
           cp /SDL2_image/SDL2_image.dll perimeter/bin/
           cp /SDL2_image/libjpeg-9.dll perimeter/bin/

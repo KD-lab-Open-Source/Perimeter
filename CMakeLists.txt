@@ -21,6 +21,7 @@ OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
 OPTION(OPTION_HEADLESS "Enable headless mode (no window or rendering)" OFF)
 OPTION(OPTION_DXVK "Use dxvk-native for D3D9 API in Linux" ON)
+OPTION(OPTION_FFMPEG_MOVIES "Use FFMPEG to decode ingame movies" ON)
 
 # Compiler detections
 SET(MSVC_CL_BUILD OFF)
@@ -152,6 +153,15 @@ IF(FFMPEG_FOUND)
     #FFMPEG is found
     ADD_DEFINITIONS(-DPERIMETER_FFMPEG)
     INCLUDE_DIRECTORIES(${FFMPEG_INCLUDE_DIRS})
+    IF(OPTION_FFMPEG_MOVIES)
+        ADD_DEFINITIONS(-DPERIMETER_FFMPEG_MOVIE)
+        INCLUDE_DIRECTORIES(${FFMPEG_LIBSWSCALE_INCLUDE_DIRS})
+        INCLUDE_DIRECTORIES(${FFMPEG_LIBAVFILTER_INCLUDE_DIRS})
+    ELSE()
+        MESSAGE("WARNING: Movies disabled!")
+    ENDIF()
+ELSE()
+    MESSAGE("WARNING: FFMPEG not found!, movies unavailable!")
 ENDIF()
 
 #Required for more compilant floating point math

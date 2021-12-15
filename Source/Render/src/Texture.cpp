@@ -27,12 +27,12 @@ void cTexture::SetNumberMipMap(int number)
 
 uint8_t* cTexture::LockTexture(int& Pitch)
 {
-	return (uint8_t*)gb_VisGeneric->GetRenderDevice()->LockTexture(this, Pitch);
+	return static_cast<uint8_t*>(gb_VisGeneric->GetRenderDevice()->LockTexture(this, Pitch));
 }
 
-uint8_t* cTexture::LockTexture(int& Pitch, Vect2i lock_min, Vect2i lock_size)
+uint8_t* cTexture::LockTexture(int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size)
 {
-	return (uint8_t*)gb_RenderDevice3D->LockTexture(this, Pitch, lock_min, lock_size);
+	return static_cast<uint8_t*>(gb_RenderDevice3D->LockTexture(this, Pitch, lock_min, lock_size));
 }
 
 void cTexture::UnlockTexture()
