@@ -156,16 +156,17 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
             std::string key;
             filesystem_entry* entry = get_content_entry(Texture->GetName());
             if (entry) key = entry->key;
-            if (key.empty()) key = convert_path_posix(Texture->GetName());
+            if (key.empty()) key = convert_path_native(Texture->GetName());
             strlwr(key.data());
-            string_replace_all(key, "/", "_");
-            key += ".bin";
-            std::string path = convert_path_content(std::string("cache") + PATH_SEP + "bump" + PATH_SEP + key, true);
+            string_replace_all(key, PATH_SEP_STR, "_");
+            key = std::string("cache") + PATH_SEP + "bump" + PATH_SEP + key +  ".bin";
+            std::string path = convert_path_content(key, true);
+            xassert(!path.empty());
 
             //Attempt to use cache since it takes some time to convert big files
             int64_t len = static_cast<int64_t>(dxy * sizeof(uint32_t));
             XStream ff(0);
-            bool usable = ff.open(path, XS_IN) && 0 < ff.size();
+            bool usable = !path.empty() && ff.open(path, XS_IN) && 0 < ff.size();
             if (usable) {
                 std::string sourcefile = convert_path_content(Texture->GetName());
                 //If empty then the texture was loaded from .pak so assume is older than cache

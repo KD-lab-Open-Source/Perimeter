@@ -406,41 +406,41 @@ void PNetCenter::HandlerInputNetCommand()
         case NETCOM_4C_ID_DESYNC_NOTIFY: {
             netCommand4C_DesyncNotify nc(in_ClientBuf);
             
-            if (!isHost()) {
-                ExecuteInternalCommand(PNC_COMMAND__DESYNC, false);
-            }
-
-            std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
-            terminate_with_char(crash_dir, PATH_SEP);
-            crash_dir += nc.gameID + "_" + m_PlayerName + PATH_SEP;
-            create_directories(crash_dir);
-
-            //Write net log
-            XBuffer netlog(2048, true);
-            netlog < currentVersion < "\r\n";
-            netlog < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
-            netlog < " HostNETID: " <= m_hostNETID;
-            netlog < " LocalNETID: " <= m_localNETID;
-            netlog < " Amount: " <= nc.desync_amount;
-            netlog < "\r\n";
-            universe()->writeLogList2Buffer(netlog);
-            XStream f(crash_dir + "netlog.txt", XS_OUT);
-            f.write(netlog.address(), netlog.tell());
-            f.close();
-            universe()->clearLogList();
-
-            //Attempt to save state
-            std::unique_ptr<MissionDescription> md = std::make_unique<MissionDescription>();
-            gameShell->universalSave((crash_dir + "save").c_str(), true, md.get());
-
-            //Attempt to save reel
-            universe()->savePlayReel((crash_dir + "reel").c_str());
-
-            fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
-            
             if (nc.desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
                 ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_DESYNC);
             } else {
+                if (!isHost()) {
+                    ExecuteInternalCommand(PNC_COMMAND__DESYNC, false);
+                }
+
+                std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
+                terminate_with_char(crash_dir, PATH_SEP);
+                crash_dir += "desync_" + nc.gameID + "_" + m_PlayerName + PATH_SEP;
+                create_directories(crash_dir);
+
+                //Write net log
+                XBuffer netlog(2048, true);
+                netlog < currentVersion < "\r\n";
+                netlog < "ArchFlags: " <= NetConnectionInfo::computeArchFlags();
+                netlog < " HostNETID: " <= m_hostNETID;
+                netlog < " LocalNETID: " <= m_localNETID;
+                netlog < " Amount: " <= nc.desync_amount;
+                netlog < "\r\n";
+                universe()->writeLogList2Buffer(netlog);
+                XStream f(crash_dir + "netlog.txt", XS_OUT);
+                f.write(netlog.address(), netlog.tell());
+                f.close();
+                universe()->clearLogList();
+
+                //Attempt to save state
+                std::unique_ptr<MissionDescription> md = std::make_unique<MissionDescription>();
+                gameShell->universalSave((crash_dir + "save").c_str(), true, md.get());
+
+                //Attempt to save reel
+                universe()->savePlayReel((crash_dir + "reel").c_str());
+
+                fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
+
                 std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
                         qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization")
                 );

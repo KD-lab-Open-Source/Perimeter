@@ -656,19 +656,31 @@ void PNetCenter::LLogicQuant()
                                 switch (client->desync_state) {
                                     case PNC_DESYNC_NONE:
                                     case PNC_DESYNC_RESTORE_FINISHED:
-                                        client_desync |= true;
-                                        if (clocki() - client->desync_last_time > PNC_DESYNC_RESTORE_ATTEMPTS_TIME) {
-                                            client->desync_amount = 0;
-                                        }
                                         client->desync_amount++;
-                                        client->desync_state = PNC_DESYNC_DETECTED;
                                         client->desync_last_time = clocki();
-                                        fprintf(stderr, "Error network synchronization with %llX: "
-                                                        "Unmatched game quants signatures ! Quant=%u\n", client->netidPlayer, (*firstList.begin()).quant_);
+                                        if (client->desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
+                                            client->desync_state = PNC_DESYNC_RESTORE_FAILED;
+                                            std::string gameID = std::to_string(time(nullptr)) + "_" + m_GameName + "_failed";
+                                            netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
+                                            ev_notify.desync_amount = client->desync_amount;
+                                            SendEvent(ev_notify, client->netidPlayer);
+                                            fprintf(stderr, "Failed to recover network synchronization with %llX after %d times\n", client->netidPlayer, client->desync_amount);
+                                        } else {
+                                            client_desync |= true;
+                                            if (clocki() - client->desync_last_time >
+                                                PNC_DESYNC_RESTORE_ATTEMPTS_TIME) {
+                                                client->desync_amount = 0;
+                                            }
+                                            client->desync_state = PNC_DESYNC_DETECTED;
+                                            fprintf(stderr, "Error network synchronization with %llX: "
+                                                            "Unmatched game quants signatures ! Quant=%u\n",
+                                                    client->netidPlayer, (*firstList.begin()).quant_);
+                                        }
                                         break;
                                     case PNC_DESYNC_RESTORE_FAILED:
                                         //Take it as valid for now
                                         countCompare++;
+                                        break;
                                     case PNC_DESYNC_DETECTED:
                                         break;
                                     default: 
@@ -889,12 +901,7 @@ end_while_01:;
                 }
                 SendEvent(ev_notify, client->netidPlayer);
                 
-                if (client->desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
-                    client->desync_state = PNC_DESYNC_RESTORE_FAILED;
-                    fprintf(stderr, "Failed to recover network synchronization with %llX after %d times\n", client->netidPlayer, client->desync_amount);
-                } else {
-                    client->desync_state = PNC_DESYNC_NOTIFIED;
-                }
+                client->desync_state = PNC_DESYNC_NOTIFIED;
             }
         } else if (!waiting_ack && !to_restore.empty()) {
             //Find host client data

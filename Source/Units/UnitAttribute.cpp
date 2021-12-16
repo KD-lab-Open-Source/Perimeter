@@ -158,9 +158,11 @@ void AttributeBase::init()
                     if (terGameContentAvailable & GAME_CONTENT::PERIMETER && terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
                         //Okay this is Perimeter with ET extra content, use infected model we previously mapped from ET
                         std::string& logicName = modelData.logicName.value();
-                        logicName.insert(logicName.find('.'), "_infected");
-                        std::string& modelName = modelData.modelName.value();
-                        modelName.insert(modelName.find('.'), "_infected");
+                        if (logicName.find("_infected.") == std::string::npos) {
+                            logicName.insert(logicName.find('.'), "_infected");
+                            std::string& modelName = modelData.modelName.value();
+                            modelName.insert(modelName.find('.'), "_infected");
+                        }
                     }
                     break;
                 default:
