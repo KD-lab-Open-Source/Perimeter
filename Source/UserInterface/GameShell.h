@@ -37,7 +37,7 @@ public:
 	void GameStart(const MissionDescription& mission);
 	void GameClose();
 	void done();
-	void terminate() { GameContinue = false; }
+	void terminate();
 
 	void startCmdline(const CommandLineData& data);
 	void switchToInitialMenu();

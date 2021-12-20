@@ -824,17 +824,6 @@ int SDL_main(int argc, char *argv[])
     while (run) {
         SDL_event_poll();
 
-#ifndef PERIMETER_EXODUS
-        //TODO is this necessary under SDL2 in Win32?
-        MSG msg;
-        if(PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)){
-            if(!GetMessage(&msg, NULL, 0, 0))
-                break;
-            TranslateMessage( &msg );
-            DispatchMessage( &msg );
-            continue;
-        }
-#endif
         //NetworkPause handler
         static bool runapp = true;
         if (applicationIsGo() != runapp) {

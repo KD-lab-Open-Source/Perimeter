@@ -166,8 +166,6 @@ terFilthVolcano::terFilthVolcano(const UnitTemplate& data)
 	bool b=sound.Init("Missile_Fly_Vulcan");
 	sound.SetPos(position());
 	sound.Play();
-	xassert(b);
-
 }
 
 terFilthVolcano::~terFilthVolcano()

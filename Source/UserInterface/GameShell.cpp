@@ -79,6 +79,9 @@ int showReels( float, float ) {
 		} else {
 			gameShell->showPictureModal(reels[i].name, reels[i].localized, reels[i].time);
 		}
+        if (!gameShell->GameContinue) {
+            break;
+        }
 	}
 	gameShell->reelAbortEnabled = true;
 //	_shellIconManager.GetWnd(SQSH_MM_SPLASH4)->Show(1);
@@ -351,6 +354,13 @@ void GameShell::done() {
 	bgScene.done();
 	_shellIconManager.Done();
 	_shellCursorManager.Done();
+}
+
+void GameShell::terminate() {
+    GameContinue = false;
+    if (reelManager.isVisible()) {
+        reelManager.hide();
+    }
 }
 
 PNetCenter* GameShell::getNetClient() {
