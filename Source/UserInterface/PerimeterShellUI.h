@@ -1980,6 +1980,7 @@ void onMMMultiplayerListBackButton(CShellWindow* pWnd, InterfaceEventCode code, 
 
 //multiplayer host
 void fillMultiplayerHostList();
+void onMMMultiplayerHostDelButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMMultiplayerHostMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMMultiplayerHostNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMMultiplayerHostTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);

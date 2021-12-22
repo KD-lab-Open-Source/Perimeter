@@ -363,8 +363,13 @@ bool PNetCenter::SecondThread(void)
 
 void PNetCenter::UpdateBattleData()
 {
-	//!!! Сервер не может нормально сконфигурить игру
-	///MissionDescription battle(m_missionName.c_str());
+    //Load current attributes into host mission
+    XPrmOArchive oaScripts;
+    oaScripts.binary_friendly = true;
+    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
+    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
+    std::swap(hostMissionDescription->scriptsData, oaScripts.buffer());
 
     MissionDescription& mission = *hostMissionDescription;
 	if (mission.gameType_ == GT_MULTI_PLAYER_CREATE) {

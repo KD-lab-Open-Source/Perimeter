@@ -28,7 +28,7 @@ const char * KEY_REPLAY_REEL="replay";
 //static const GUID filePlayReelID = { 0xbdfbd2ad, 0xf686, 0x4dd1, { 0xa5, 0xe1, 0x95, 0x44, 0xc7, 0x82, 0xaa, 0xb1 } };
 
 #define FILE_REPLAY_MAGIC_LEN 20
-static const char filePlayReelID[FILE_REPLAY_MAGIC_LEN] = "PerimeterReplay001\0";
+static const char filePlayReelID[FILE_REPLAY_MAGIC_LEN] = "PerimeterReplay002\0";
 
 #ifdef PERIMETER_DEBUG
 class cMonowideFont {

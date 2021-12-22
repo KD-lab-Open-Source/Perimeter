@@ -223,6 +223,7 @@ _handlertbl[] = {
 
 	//multiplayer host
 	{SQSH_MM_MULTIPLAYER_HOST_LIST,          onMMMultiplayerHostMapList},
+    {SQSH_MM_MULTIPLAYER_HOST_DEL_BTN,       onMMMultiplayerHostDelButton},
     {SQSH_MM_MULTIPLAYER_HOST_TYPE_COMBO,    onMMMultiplayerHostTypeCombo},
 	{SQSH_MM_MULTIPLAYER_HOST_NEXT_BTN,      onMMMultiplayerHostNextButton},
 	{SQSH_MM_BACK_FROM_MULTIPLAYER_HOST_BTN, onMMMultiplayerHostBackButton},

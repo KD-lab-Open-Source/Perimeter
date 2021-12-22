@@ -151,13 +151,13 @@ void UserSingleProfile::setCurrentProfileIndex(int index) {
 	currentProfileIndex = index;
 }
 
-void UserSingleProfile::deleteSave(const std::string& name) {
-    std::string savesDir = getSavesDirectory();
-	std::string fullName = savesDir + name;
-    for (auto& ext : {".spg", ".bin", ".sph", ".gmp", ".dat"}) {
-        std::remove((fullName + ext).c_str());
+void UserSingleProfile::deleteSave(const std::string& path) {
+    for (auto& ext : {"spg", "bin", "sph", "gmp", "dat"}) {
+        std::string path_ext = setExtension(path, ext);
+        std::remove(path_ext.c_str());
     }
-    scan_resource_paths(savesDir);
+    std::filesystem::path path_path(path);
+    scan_resource_paths(path_path.parent_path().string());
 }
 
 std::string UserSingleProfile::getAllSavesDirectory() {

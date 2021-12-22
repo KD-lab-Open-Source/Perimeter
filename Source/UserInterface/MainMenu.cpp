@@ -1101,7 +1101,12 @@ int SwitchMenuScreenQuant1( float, float ) {
 
                         CComboWindow* hostTypeCombo = (CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_TYPE_COMBO);
                         hostTypeCombo->pos = 0;
+                        
+                        //Sets for proper saves deletion
+                        gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::MULTIPLAYER);
 
+                        //Ensure saves are updated before listing
+                        multiplayerSaves.clear();
                         fillMultiplayerHostList();
                     }
                     break;
@@ -1794,7 +1799,7 @@ int delLoadSaveAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_MAP_LIST);
 //	DeleteFile( savedGames[list->GetCurSel()].saveName() );
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
-	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
+	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].savePathContent());
 	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
@@ -1948,7 +1953,7 @@ void onMMDelReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 int delLoadInGameSaveAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_IN_GAME_MAP_LIST);
 //	DeleteFile( savedGames[list->GetCurSel()].saveName() );
-	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
+	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].savePathContent());
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, ".spg");
@@ -2005,7 +2010,7 @@ void onMMDelLoadInGameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 //save game
 int delSaveGameSaveAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_MAP_LIST);
-	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].missionName());
+	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].savePathContent());
     const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_SAVE_GAME_MAP_LIST, savedGames, SQSH_MM_SAVE_GAME_MAP, SQSH_MM_SAVE_GAME_MAP_DESCR_TXT);
@@ -2022,7 +2027,7 @@ int toSaveQuant( float, float ) {
 
 int saveGame_(float i, float) {
     size_t ii = static_cast<size_t>(i);
-	gameShell->currentSingleProfile.deleteSave(savedGames[ii].missionName());
+	gameShell->currentSingleProfile.deleteSave(savedGames[ii].savePathContent());
 	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[ii].missionName();
 	if ( gameShell->universalSave(saveName.c_str(), true) ) {
 		hideMessageBox();

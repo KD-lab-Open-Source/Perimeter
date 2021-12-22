@@ -107,6 +107,9 @@ void onMMMultiplayerHostTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, i
 /// List and button handlers
 
 void fillMultiplayerHostList() {
+    if (multiplayerSaves.empty()) {
+        loadMultiplayerList();
+    }
     CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST);
     list->NewItem(1);
     list->Clear();
@@ -134,6 +137,37 @@ void onListSelect() {
             showMessageBox();
             _shellIconManager.AddDynamicHandler(creatingHostDialogQuant, CBCODE_QUANT);
         }
+    }
+}
+
+int delMultiSaveGameAction(float, float) {
+    CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST));
+    int pos = list->GetCurSel() - 1;
+    if (0 <= pos && pos < multiplayerSaves.size()) {
+        gameShell->currentSingleProfile.deleteSave(multiplayerSaves[pos].savePathContent());
+        multiplayerSaves.clear();
+        loadMultiplayerList();
+        fillMultiplayerHostList();
+    }
+    return 0;
+}
+
+void onMMMultiplayerHostDelButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if( code == EVENT_UNPRESSED && intfCanHandleInput() && param == VK_LBUTTON) {
+        CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST));
+        int pos = list->GetCurSel() - 1;
+        if (0 <= pos && pos < multiplayerSaves.size()) {
+            std::string text = qdTextDB::instance().getText("Interface.Menu.Messages.Confirmations.DeleteSave");
+            std::string saveName = multiplayerSaves[pos].missionName();
+            char* mess = new char[text.length() + saveName.length()];
+            sprintf(mess, text.c_str(), saveName.c_str());
+            setupYesNoMessageBox(delMultiSaveGameAction, 0, mess);
+            delete [] mess;
+            showMessageBox();
+        }
+    } else if (code == EVENT_DRAWWND) {
+        CListBoxWindow* list = dynamic_cast<CListBoxWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST));
+        pWnd->Enable( list->GetCurSel() >= 1 );
     }
 }
 

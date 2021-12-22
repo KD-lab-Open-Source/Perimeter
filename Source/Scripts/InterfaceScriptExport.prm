@@ -4832,6 +4832,11 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		//Separator
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;                             x=200/1024; y=348/768; sx=(390-28)/1024; sy=3/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 2; _iy = 987; ix = 272; iy = 3;}; state = SQSH_ENABLED; ystart=3/768; image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 60; iy = 1;hasResolutionVersion=0;};txt_dx =0.3f; hitTestMode = HITTEST_NONE;},
 
+        //List delete button
+        {type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;					            x=595/1024;     y=565/768;   sx=220/1024; sy=45/768; image={texture="resource\\icons\\MainMenu\\new_menu.tga";_ix = 340; _iy = 234; ix = 194; iy = 45;}; ystart=45/768; hitTestMode = HITTEST_NONE; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_HOST_DEL_BTN;	        x=(595+7)/1024; y=(565+2)/768; sx=(220-14)/1024; sy=(45-4)/768; text="DELETE"; font_group=2; txt_dx=81; txt_dy = 11; sound = "mainmenu_button"; state = SQSH_ENABLED; },
+		//{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_MULTIPLAYER_HOST_DEL_BTN;		    x=600/1024;   y=565/768; sx=256/1024; sy=51/768; txt_align = SHELL_ALIGN_LEFT; text="DELETE"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+
 		//List bar
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;                             x=(390+155)/1024; y=358/768; sx=24/1024; sy=245/768; image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 483; _iy = 3; ix = 24; iy = 245;}; state = SQSH_ENABLED; ystart=245/768; image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 10; iy = 120;hasResolutionVersion=0;}; hitTestMode = HITTEST_NONE;},
 
@@ -4840,7 +4845,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 																					        image_check={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 24; iy = 24;dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};
 											 										        image={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 0; _iy = 992; ix = 226; iy = 26;};
 																					        image_h={texture="resource\\icons\\MainMenu\\Main_menu.tga";_ix = 328; _iy = 427; ix = 24; iy = 30;}; txt_dx = listBoxTextLeftOffset; txt_dy = 7/768; xstart = 24/1024; ystart = 35/768;},
-
+        //Map and description
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;						x=646/1024; y=55/768; sx=256/1024; sy=256/768; ystart=256/768; hitTestMode = HITTEST_NONE; },
 		{type = SQSH_MAPWINDOW; id = SQSH_MM_MULTIPLAYER_HOST_MAP;					x=646/1024; y=55/768; sx=256/1024; sy=256/768; image={texture="";ix = 1; iy = 1;};image_h={texture="resource\\icons\\MainMenu\\tv.avi";_ix = 0; _iy = 0; ix = 120; iy = 120;hasResolutionVersion=0;}; },
 		{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;						x=mainMenuMap.x; y=mainMenuMap.y; sx=mainMenuMap.sx; sy=mainMenuMap.sy; ystart=296/768; hitTestMode = HITTEST_NONE; },

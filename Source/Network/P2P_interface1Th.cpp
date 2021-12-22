@@ -244,15 +244,6 @@ void PNetCenter::CreateGame(const NetAddress& connection, const std::string& gam
     //Setup mission
     xassert(mission);
     hostMissionDescription = mission;
-    hostMissionDescription->activePlayerID = -1; //Remove activePlayerID on multi
-    
-    //Load current attributes
-    XPrmOArchive oaScripts;
-    oaScripts.binary_friendly = true;
-    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
-    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
-    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
-    std::swap(hostMissionDescription->scriptsData, oaScripts.buffer());
 
     //Argument PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST
     
