@@ -391,7 +391,7 @@ void PNetCenter::HandlerInputNetCommand()
 		case NETCOM_4G_ID_CHAT_MESSAGE:
 			{
 				netCommand4G_ChatMessage nc_ChatMessage(in_ClientBuf);
-				gameShell->addStringToChatWindow(nc_ChatMessage.text, nc_ChatMessage.locale);
+				gameShell->addStringToChatWindow(nc_ChatMessage.clanOnly, nc_ChatMessage.text, nc_ChatMessage.locale);
 			}
 			break;
         case NETCOM_4C_ID_DESYNC_NOTIFY: {

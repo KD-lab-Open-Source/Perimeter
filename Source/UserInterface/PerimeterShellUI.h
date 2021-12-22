@@ -1125,12 +1125,14 @@ public:
 	void OnChar(char key);
 
 	bool alliesOnlyMode;
-	std::string getModePostfix() const {
-		return alliesOnlyMode ? qdTextDB::instance().getText("Interface.Tips.ToClanPostfix") : qdTextDB::instance().getText("Interface.Tips.ToAllPostfix");
+
+    static const char* getModePostfix(bool clanOnly) {
+		return qdTextDB::instance().getText(clanOnly ? "Interface.Tips.ToClanPostfix" : "Interface.Tips.ToAllPostfix");
 	}
+
 protected:
-	std::string getModePrefix() const {
-		return alliesOnlyMode ? qdTextDB::instance().getText("Interface.Tips.ToClanPrefix") : qdTextDB::instance().getText("Interface.Tips.ToAllPrefix");
+	const char* getModePrefix() const {
+		return qdTextDB::instance().getText(alliesOnlyMode ? "Interface.Tips.ToClanPrefix" : "Interface.Tips.ToAllPrefix");
 	}
 };
 

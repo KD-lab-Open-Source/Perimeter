@@ -240,7 +240,6 @@ void processInterfaceMessageLater(terUniverseInterfaceMessage id, int wndIDToHid
 
 void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
-	mapVector.clear();
 	std::string path_str = convert_path_native(path.c_str());
     strlwr(path_str.data());
 	
@@ -881,7 +880,16 @@ int SwitchMenuScreenQuant1( float, float ) {
 			}
 			switch (_id_on) {
 				case SQSH_MM_START_SCR:
-                    gameShell->destroyNetClient();
+                    if (gameShell->getNetClient()) {
+                        gameShell->destroyNetClient();
+                        
+                        //Re-init attributes since server might have provided a different one than ours
+                        initAttributes();
+                    }
+                    //Remove last game type Multiplayer if set
+                    if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
+                        gameShell->currentSingleProfile.setLastGameType(UserSingleProfile::UNDEFINED);
+                    }
                     historyScene.stop();
                     StartSpace();
                     historyScene.done();
@@ -962,6 +970,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_LOAD_SCR:
 					{
 						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
+                        savedGames.clear();
 						loadMapVector(savedGames, savesDir, ".spg");
 						StartSpace();
 						fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
@@ -969,6 +978,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOAD_REPLAY_SCR:
 					{
+                        replays.clear();
 						loadMapVector(replays, REPLAY_PATH, "", true);
 						StartSpace();
 						fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
@@ -976,6 +986,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_SAVE_REPLAY_SCR:
 					{
+                        replays.clear();
 						loadMapVector(replays, REPLAY_PATH, "", true);
 //						StartSpace();
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_REPLAY_NAME_INPUT);
@@ -987,6 +998,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOAD_IN_GAME_SCR:
 					{
+                        savedGames.clear();
 						const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 						loadMapVector(savedGames, savesDir, ".spg");
 //						StartSpace();
@@ -995,6 +1007,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_SAVE_GAME_SCR:
 					{
+                        savedGames.clear();
                         const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
                         loadMapVector(savedGames, savesDir, ".spg");
 						CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_NAME_INPUT);
@@ -1808,6 +1821,7 @@ int delLoadSaveAction(float, float) {
 //	DeleteFile( savedGames[list->GetCurSel()].saveName() );
 //	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].savePathContent());
+    savedGames.clear();
 	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_LOAD_MAP_LIST, savedGames, SQSH_MM_LOAD_MAP, SQSH_MM_LOAD_MAP_DESCR_TXT);
@@ -1895,6 +1909,7 @@ int delLoadReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_REPLAY_LIST);
 	std::remove( replays[list->GetCurSel()].playReelPath().c_str() );
     scan_resource_paths(convert_path_content(REPLAY_PATH));
+    replays.clear();
 	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_LOAD_REPLAY_LIST, replays, SQSH_MM_LOAD_REPLAY_MAP, SQSH_MM_LOAD_REPLAY_DESCR_TXT);
 	return 0;
@@ -1960,9 +1975,8 @@ void onMMDelReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 //load in game
 int delLoadInGameSaveAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOAD_IN_GAME_MAP_LIST);
-//	DeleteFile( savedGames[list->GetCurSel()].saveName() );
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].savePathContent());
-//	loadMapVector(savedGames, "RESOURCE\\SAVES\\", "RESOURCE\\SAVES\\*.spg");
+    savedGames.clear();
 	const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_LOAD_IN_GAME_MAP_LIST, savedGames, SQSH_MM_LOAD_IN_GAME_MAP, SQSH_MM_LOAD_IN_GAME_MAP_DESCR_TXT);
@@ -2019,6 +2033,7 @@ void onMMDelLoadInGameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 int delSaveGameSaveAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_GAME_MAP_LIST);
 	gameShell->currentSingleProfile.deleteSave(savedGames[list->GetCurSel()].savePathContent());
+    savedGames.clear();
     const std::string& savesDir = gameShell->currentSingleProfile.getSavesDirectory();
 	loadMapVector(savedGames, savesDir, ".spg");
 	fillList(SQSH_MM_SAVE_GAME_MAP_LIST, savedGames, SQSH_MM_SAVE_GAME_MAP, SQSH_MM_SAVE_GAME_MAP_DESCR_TXT);
@@ -2142,6 +2157,7 @@ void onMMDelSaveGameButton(CShellWindow* pWnd, InterfaceEventCode code, int para
 int delSaveReplayAction(float, float) {
 	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_SAVE_REPLAY_LIST);
     std::remove( replays[list->GetCurSel()].playReelPath().c_str() );
+    replays.clear();
 	loadMapVector(replays, REPLAY_PATH, "", true);
 	fillReplayList(SQSH_MM_SAVE_REPLAY_LIST, replays, SQSH_MM_SAVE_REPLAY_MAP, SQSH_MM_SAVE_REPLAY_DESCR_TXT);
 	return 0;

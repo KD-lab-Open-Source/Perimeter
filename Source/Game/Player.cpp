@@ -273,21 +273,21 @@ void terPlayer::Quant()
 
 	voiceDispatcher_.quant();
 
-#ifdef _DO_LOG_
     log_var("=== PlayerQuant Start ===");
     log_var(playerID());
 	for (auto ui : Units) {
         if (ui->alive()) {
+            ui->Quant();
+#ifdef _DO_LOG_
             log_var(getEnumName(ui->attr().ID));
             log_var(ui->unitID());
-            ui->Quant();
             log_var(vMap.getChAreasInformationCRC());
             log_var(terLogicRNDfrnd());
             log_var(ui->position());
+#endif
         }
     }
     log_var("=== PlayerQuant End ===");
-#endif
 
 	rebuildDefenceMapQuant();
 	chooseEnemyQuant();
@@ -298,12 +298,12 @@ void terPlayer::Quant()
     if (frameClearedFlag) {
         frameClearedFlag = false;
         
-        if(gameShell->CurrentMission.isMultiPlayer()){
+        if(gameShell->CurrentMission.isMultiPlayer() && !isWorld()) {
             //bool isHost = gameShell->getNetClient() && gameShell->getNetClient()->isHost();
             int active_clan = -1;
             std::set<int> clans;
             for (auto player: universe()->Players) {
-                if (!player->frame()) {
+                if (!player->frame() || player->isWorld()) {
                     continue;
                 }
                 clans.emplace(player->clan());

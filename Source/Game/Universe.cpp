@@ -855,12 +855,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     //---------------------
 
     if (mission.scriptsData.length()) {
-        XPrmIArchive ia;
-        std::swap(ia.buffer(), mission.scriptsData);
-        ia.buffer().set(0);
-        ia >> WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
-        ia >> WRAP_NAME(attributeLibrary(), "attributeLibrary");
-        ia >> WRAP_NAME(globalAttr(), "globalAttr");
+        initAttributes(&mission.scriptsData);
     }
 
     if (loadProgressUpdate) loadProgressUpdate(0.7f);

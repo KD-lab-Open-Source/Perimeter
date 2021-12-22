@@ -672,6 +672,7 @@ void collect_model_crc(const ModelData& modelData) {
 
 void collect_content_crc() {
     contentCRC = 0;
+    contentFiles.clear();
     for (auto& i : attributeLibrary().map()) {
         AttributeBase* attribute = i.second;
         if (attribute->ID == UNIT_ATTRIBUTE_NONE) continue;
@@ -752,29 +753,34 @@ void initInterfaceAttributes() {
     copyInterfaceAttributesIndispensable();
 }
 
-void initAttributes()
+void initAttributes(XBuffer* scriptsSerialized)
 {
 //	soundScriptTable();
-
-    //Reset generators just in case
-    XRndSet(1);
-    logicRND.set(1);
-    xm_random_generator.set(1);
 
     //Clear previous data
     rigidBodyPrmLibrary().map().clear();
     attributeLibrary().map().clear();
     
-    //Deserialize
-    SingletonPrm<RigidBodyPrmLibrary>::load();
-    SingletonPrm<AttributeLibrary>::load();
-    SingletonPrm<GlobalAttributes>::load();
+    if (scriptsSerialized) {
+        //Deserialize from buffer
+        XPrmIArchive ia;
+        std::swap(ia.buffer(), *scriptsSerialized);
+        ia.buffer().set(0);
+        ia >> WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+        ia >> WRAP_NAME(attributeLibrary(), "attributeLibrary");
+        ia >> WRAP_NAME(globalAttr(), "globalAttr");
+    } else {
+        //Deserialize from files
+        SingletonPrm<RigidBodyPrmLibrary>::load();
+        SingletonPrm<AttributeLibrary>::load();
+        SingletonPrm<GlobalAttributes>::load();
 
-    //Copy hardcoded data in this executable that is missing in files
-    int override=IniManager("Perimeter.ini", false).getInt("Game","OverrideAttributes");
-    check_command_line_parameter("override_attributes", override);
-    copyRigidBodyTable(override);
-    copyAttributes(override);
+        //Copy hardcoded data in this executable that is missing in files
+        int override=IniManager("Perimeter.ini", false).getInt("Game","OverrideAttributes");
+        check_command_line_parameter("override_attributes", override);
+        copyRigidBodyTable(override);
+        copyAttributes(override);
+    }
 
 //	rigidBodyPrmLibrary.edit();
 //	attributeLibrary.edit();
@@ -794,7 +800,9 @@ void initAttributes()
         }
 	}
 
-    collect_content_crc();
+    if (!scriptsSerialized) {
+        collect_content_crc();
+    }
 }
 
 /////////////////////////////////////////

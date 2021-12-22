@@ -386,9 +386,6 @@ void GameShell::destroyNetClient() {
 	if (NetClient) {
 		delete NetClient;
 		NetClient = nullptr;
-
-        //Re-init attributes since server might have provided a different one than ours
-        initAttributes();
 	}
 }
 

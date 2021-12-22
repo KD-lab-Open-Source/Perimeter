@@ -261,7 +261,7 @@ public:
 
 	void abnormalNetCenterTermination();
 
-	void addStringToChatWindow(const std::string& newString, const std::string& locale);
+	void addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale);
 
 	//-----end of network function----
 

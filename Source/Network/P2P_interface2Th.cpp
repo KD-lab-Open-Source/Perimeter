@@ -1686,7 +1686,7 @@ void PNetCenter::HostReceiveQuant()
                                    + colorComponentToString(pc[1])
                                    + colorComponentToString(pc[2])
                                    + playerData.name()
-                                   + "&FFFFFF"
+                                   + "&FFFFFF: "
                                    + nc_ChatMessage.text;
                                 nc_ChatMessage.text = text;
                                 

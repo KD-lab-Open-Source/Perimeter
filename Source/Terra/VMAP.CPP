@@ -920,7 +920,9 @@ bool vrtMap::loadGameMap(XBuffer& ff, bool flag_FastLoad)
 		}
 	}
 
-	loadGrid(ff);
+    if (ff.tell() < ff.length()) {
+        loadGrid(ff);
+    }
 
 	checkAndRecover();
 #ifdef _PERIMETER_

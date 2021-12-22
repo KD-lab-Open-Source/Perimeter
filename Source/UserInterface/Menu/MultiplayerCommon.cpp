@@ -264,9 +264,8 @@ void GameShell::generalErrorOccured(GeneralErrorType error) {
 
 ////////// Lobby/Ingame chat /////////////
 
-void chatWindowInput(CChatInGameEditWindow* chatInput, bool lobby) {
-    std::string strToSay = (lobby ? "" : chatInput->getModePostfix()) + ": " + chatInput->getText();
-    gameShell->getNetClient()->chatMessage(lobby ? false : chatInput->alliesOnlyMode, strToSay, getLocale());
+void chatWindowInput(CChatInGameEditWindow* chatInput) {
+    gameShell->getNetClient()->chatMessage(chatInput->alliesOnlyMode, chatInput->getText(), getLocale());
     chatInput->SetText("");
 }
 
@@ -274,7 +273,7 @@ void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int p
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
         if (!chatInput->getText().empty()) {
-            chatWindowInput(chatInput, true);
+            chatWindowInput(chatInput);
         }
     }
 }
@@ -284,7 +283,7 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
         terPlayer* activePlayer = universe()->activePlayer();
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
         if (activePlayer && !chatInput->getText().empty()) {
-            chatWindowInput(chatInput, false);
+            chatWindowInput(chatInput);
         }
     }
 }
@@ -303,11 +302,15 @@ int addStringToChatHintWindowQuant( float, float ) {
     return 0;
 }
 
-void GameShell::addStringToChatWindow(const std::string& newString, const std::string& locale) {
+void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale) {
     toChatText.set(newString, locale);
     if (_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT)) {
         _shellIconManager.AddDynamicHandler( addStringToChatWindowQuant, CBCODE_QUANT );
     } else {
+        //This is done on client side so the text can have local language
+        toChatText.text.insert(0, " ")
+        .insert(0, CChatInGameEditWindow::getModePostfix(clanOnly))
+        .insert(0, "&FFFFFF");
         _shellIconManager.AddDynamicHandler( addStringToChatHintWindowQuant, CBCODE_QUANT );
     }
 }

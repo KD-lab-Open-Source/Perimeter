@@ -288,6 +288,9 @@ std::string IniManager::getFilePath() {
     if (!is_full_path) {
         std::string pathres = convert_path_content(fname_);
         if (pathres.empty()) {
+            pathres = convert_path_content(fname_, true);
+        }
+        if (pathres.empty()) {
             ErrH.Abort("Ini file not found: ", XERR_USER, 0, fname_.c_str());
         }
 
