@@ -371,13 +371,18 @@ void getStackTrace(std::ostringstream& stream) {
         }
 
         //Pull the stacktrace info
-        std::string line = boost::stacktrace::detail::to_string(&st.as_vector()[i], 1);
-        std::string::size_type size = line.size();
-        if (10 <= size) {
+        const boost::stacktrace::frame& frame = st.as_vector()[i];
+        std::string line;
+        line += boost::stacktrace::detail::to_hex_array(frame.address()).data();
+        line += "|" + frame.name();
+        std::string detail = boost::stacktrace::detail::to_string(&frame, 1);
+        std::string::size_type detail_size = detail.size();
+        if (10 <= detail_size) {
             //Remove the start number and end newline
-            line = line.substr(4, size - 5);
-            stream << line << std::endl;
+            line += "|" + detail.substr(4, detail_size - 5);
+            
         }
+        stream << line << std::endl;
     }
 #else
     stream << "OPTION_DISABLE_STACKTRACE set, no stacktrace available" << std::endl;

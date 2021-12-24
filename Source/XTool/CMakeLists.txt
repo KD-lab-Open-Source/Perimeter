@@ -1,4 +1,6 @@
 
+OPTION(OPTION_USE_BACKTRACE "Use libbacktrace if present" OFF)
+
 #GameMath retrieval
 FetchContent_Declare(gamemath
     GIT_REPOSITORY    https://github.com/TheAssemblyArmada/GameMath
@@ -38,23 +40,39 @@ SET(XTool_SRCS
 
 SET(XTool_LINK_LIBS gamemath_static_lib ZLIB::ZLIB)
 
-IF(NOT MSVC_CL_BUILD AND NOT OPTION_DISABLE_STACKTRACE)
-    IF(PERIMETER_WINDOWS)
-        #Use Backtrace in MinGW/MSYS if available, else ADDR2LINE
+IF(NOT OPTION_DISABLE_STACKTRACE)
+    #https://www.boost.org/doc/libs/1_78_0/doc/html/stacktrace/configuration_and_build.html
+    IF(MSVC_CL_BUILD)
+        #Use WinDbg for MSVC
+        MESSAGE("Using WinDbg")
+        ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_WINDBG)
+        SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ole32 dbgeng)
+    ELSEIF(PERIMETER_WINDOWS)
+        #Use Backtrace if available in Msys/Mingw, else WinDbg
         FIND_PACKAGE(Backtrace)
         IF(Backtrace_FOUND)
+            MESSAGE("Using Backtrace")
             ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_BACKTRACE)
             SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ${Backtrace_LIBRARIES})
         ELSE()
+            MESSAGE("Using WinDbg")
+            ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_WINDBG)
+            SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ole32 dbgeng)
+        ENDIF()
+    ELSE()
+        #Use ADDR2LINE in POSIX unless Backtrace is wanted
+        FIND_PACKAGE(Backtrace)
+        IF(Backtrace_FOUND AND OPTION_USE_BACKTRACE)
+            MESSAGE("Using Backtrace")
+            INCLUDE_DIRECTORIES(${Backtrace_INCLUDE_DIR})
+            ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_BACKTRACE)
+            SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} ${Backtrace_LIBRARIES})
+        ELSE()
+            MESSAGE("Using Addr2Line")
             ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_ADDR2LINE)
             # dl is required for dladdr in stacktrace
             SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} dl)
         ENDIF()
-    ELSE()
-        #Use ADDR2LINE in POSIX
-        ADD_DEFINITIONS(-DBOOST_STACKTRACE_USE_ADDR2LINE)
-        # dl is required for dladdr in stacktrace
-        SET(XTool_LINK_LIBS ${XTool_LINK_LIBS} dl)
     ENDIF()
 ENDIF()
 

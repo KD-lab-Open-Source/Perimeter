@@ -4,6 +4,8 @@ set -e
 
 mkdir -p build
 
+NCPU=$(nproc --all)
+
 echo "Triplet: ${CROSS_TRIPLE}"
 if [[ $CROSS_TRIPLE == *shared ]]; then
   LIB_SUFFIX=.dll.a
@@ -14,8 +16,8 @@ if [[ $CROSS_TRIPLE == x86_64* ]]; then
   IS_64=1
 fi
 
-#BOOST_DIR="/usr/local/include"
-BOOST_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include"
+BOOST_DIR="/usr/local/include"
+#BOOST_DIR="/usr/lib/mxe/usr/${CROSS_TRIPLE}/include"
 
 #rm -rf build/${CROSS_TRIPLE}
 
@@ -27,6 +29,7 @@ ${CROSS_TRIPLE}-cmake \
 -G"Ninja" \
 -DLIBRARY_SEARCH_PATHS=$BASE_DIR \
 -DBoost_INCLUDE_DIR=$BOOST_DIR \
+-DBacktrace_INCLUDE_DIR="/usr/local/include" \
 -DZLIB_INCLUDE_DIR="${BASE_DIR}/include" \
 -DSDL2_INCLUDE_DIR="${BASE_DIR}/include/SDL2" \
 -DSDL2_IMAGE_INCLUDE_DIR="${BASE_DIR}/include/SDL2-image" \
@@ -35,6 +38,7 @@ ${CROSS_TRIPLE}-cmake \
 -DOFF_AVUTIL_INCLUDE_DIR="${BASE_DIR}/include" \
 -DOFF_AVCODEC_INCLUDE_DIR="${BASE_DIR}/include" \
 -DOFF_AVFORMAT_INCLUDE_DIR="${BASE_DIR}/include" \
+-DBacktrace_LIBRARY="/usr/local/lib/libbacktrace.a" \
 -DZLIB_LIBRARY="${BASE_DIR}/lib/libz${LIB_SUFFIX}" \
 -DSDL2_LIBRARY="${BASE_DIR}/lib/libSDL2${LIB_SUFFIX}" \
 -DSDL2MAIN_LIBRARY="${BASE_DIR}/lib/libSDL2main.a" \
@@ -44,13 +48,12 @@ ${CROSS_TRIPLE}-cmake \
 -DOFF_AVUTIL_LIBRARY="${BASE_DIR}/lib/libavutil${LIB_SUFFIX}" \
 -DOFF_AVCODEC_LIBRARY="${BASE_DIR}/lib/libavcodec${LIB_SUFFIX}" \
 -DOFF_AVFORMAT_LIBRARY="${BASE_DIR}/lib/libavformat${LIB_SUFFIX}" \
--DOPTION_DISABLE_STACKTRACE=ON \
 -DOPTION_LINKER_LLD=OFF \
 $@
 
 cd build/${CROSS_TRIPLE}
 
-ninja -j$(nproc --all)
+ninja -j$NCPU
 
 mkdir -p output
 

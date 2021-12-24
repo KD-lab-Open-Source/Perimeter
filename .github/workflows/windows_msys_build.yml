@@ -5,7 +5,7 @@ on:
   pull_request:
 
 env:
-  GH_CACHE_KEY: 5
+  GH_CACHE_KEY: 6
 
 jobs:
   build:
@@ -44,6 +44,7 @@ jobs:
             mingw-w64-${{matrix.env.arch}}-nasm
             mingw-w64-${{matrix.env.arch}}-yasm
             mingw-w64-${{matrix.env.arch}}-zlib
+            base-devel
             wget
             unzip
             git
@@ -111,7 +112,7 @@ jobs:
           cp /mingw${{matrix.env.bits}}/bin/libgcc_*.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/libstdc++-6.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/libwinpthread-1.dll perimeter/bin/
-          cp /mingw${{matrix.env.bits}}/bin/libbacktrace-0.dll perimeter/bin/
+          #cp /mingw${{matrix.env.bits}}/bin/libbacktrace-0.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/avcodec-58.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/avfilter-7.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/avformat-58.dll perimeter/bin/
