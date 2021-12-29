@@ -2270,21 +2270,39 @@ void CShellIconManager::FormatUnitPopup(const AttributeBase* attr, char* cbBuffe
 
 	if (strlen(cbBuffer) && unit && !unit->Player->isWorld()) {
 //		string finalPopup(qdTextDB::instance().getText("Player"));
-		std::string finalPopup("[");
-		finalPopup += unit->Player->name();
+		std::string finalPopup = "[";
+        finalPopup += unit->Player->name();
+        finalPopup += "]\n";
 
-		if(gameShell->CurrentMission.isMultiPlayer() || gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::BATTLE){
+		if(gameShell->CurrentMission.isMultiPlayer() || gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::BATTLE) {
 			std::string clan_str = getItemTextFromBase("Clan");
 
 			char buff[30 + 1];
 			sprintf(buff, "%d", (unit->Player->clan() + 1));
 
-			finalPopup += " / ";
 			finalPopup += clan_str;
 			finalPopup += buff;
+
+            if (unit->Player->isAI()) {
+                finalPopup += " / ";
+                
+                switch (unit->Player->difficulty()) {
+                    case DIFFICULTY_EASY:
+                        finalPopup += getItemTextFromBase("AI (Easy)");
+                        break;
+                    case DIFFICULTY_NORMAL:
+                        finalPopup += getItemTextFromBase("AI (Normal)");
+                        break;
+                    case DIFFICULTY_HARD:
+                        finalPopup += getItemTextFromBase("AI (Hard)");
+                        break;
+                    default:
+                        break;
+                }
+            }
 		}
 
-		finalPopup += "&FFFFFF]\n\n";
+		finalPopup += "&FFFFFF\n\n";
 		finalPopup += cbBuffer;
 		strcpy(cbBuffer, finalPopup.c_str());
 	}
