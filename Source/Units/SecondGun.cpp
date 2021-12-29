@@ -518,7 +518,7 @@ class terWeaponScumTwister : public WeaponOmnidirectionalBase
 {
 public:
 	terWeaponScumTwister(terUnitReal* owner);
-	~terWeaponScumTwister();
+	~terWeaponScumTwister() override;
 
 	void quant();
 
@@ -543,6 +543,7 @@ class terWeaponScumSplitter : public WeaponOmnidirectionalBase
 {
 public:
 	terWeaponScumSplitter(terUnitReal* owner) : WeaponOmnidirectionalBase(owner), missile_(NULL), targetPos_(0,0,0) { }
+    ~terWeaponScumSplitter() override;
 
 	void quant();
 
@@ -550,6 +551,7 @@ public:
 	int estimatedDamage() const { return 0; }
 	
 	void destroyLink();
+    void kill();
 
 private:
 
@@ -591,12 +593,14 @@ class terWeaponScumDisruptor : public WeaponOmnidirectionalBase
 {
 public:
 	terWeaponScumDisruptor(terUnitReal* owner);
+    ~terWeaponScumDisruptor();
 
 	bool fire(const Vect3f& to,terUnitBase* target);
 	int estimatedDamage() const { return 0; }
 
 	void disable();
 	void quant();
+    void kill();
 	
 	void destroyLink();
 
@@ -1615,6 +1619,10 @@ terWeaponScumTwister::terWeaponScumTwister(terUnitReal* owner) : WeaponOmnidirec
 
 terWeaponScumTwister::~terWeaponScumTwister()
 {
+    if(missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
 }
 
 void terWeaponScumTwister::quant()
@@ -1659,7 +1667,7 @@ void terWeaponScumTwister::quant()
 	else {
 		if(missile_){
 			missile_->Kill();
-			missile_ = NULL;
+			missile_ = nullptr;
 		}
 	}
 	
@@ -1704,7 +1712,7 @@ void terWeaponScumTwister::destroyLink()
 	WeaponOmnidirectionalBase::destroyLink();
 
 	if(missile_ && !missile_->alive()){
-		missile_ = NULL;
+		missile_ = nullptr;
 		reloadStart();
 
 		setFireAnimationMode(false);
@@ -1716,10 +1724,10 @@ void terWeaponScumTwister::unload()
 	WeaponOmnidirectionalBase::unload();
 
 	if(isSwitchedOn()){
-		if(missile_)
-			missile_->Kill();
-
-		missile_ = NULL;
+		if(missile_) {
+            missile_->Kill();
+            missile_ = nullptr;
+        }
 
 		reloadStart();
 	}
@@ -1727,13 +1735,20 @@ void terWeaponScumTwister::unload()
 
 void terWeaponScumTwister::kill()
 {
-	if(missile_)
-		missile_->Kill();
-
-	missile_ = NULL;
+	if(missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
 }
 
 //-------------------------------------------------------
+
+terWeaponScumSplitter::~terWeaponScumSplitter() {
+    if(missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
+}
 
 void terWeaponScumSplitter::quant()
 {
@@ -1765,7 +1780,7 @@ void terWeaponScumSplitter::quant()
 	else {
 		if(missile_){
 			missile_->Kill();
-			missile_ = NULL;
+			missile_ = nullptr;
 		}
 	}
 	
@@ -1778,7 +1793,7 @@ void terWeaponScumSplitter::destroyLink()
 	WeaponOmnidirectionalBase::destroyLink();
 
 	if(missile_ && !missile_->alive()){
-		missile_ = NULL;
+		missile_ = nullptr;
 		reloadStart();
 
 		setFireAnimationMode(false);
@@ -1790,6 +1805,13 @@ bool terWeaponScumSplitter::fire(const Vect3f& to,terUnitBase* target)
 	switchOn();
 	targetPos_ = (target) ? target->position() : to;
 	return true;
+}
+
+void terWeaponScumSplitter::kill() {
+    if (missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
 }
 
 //-------------------------------------------------------
@@ -1886,6 +1908,14 @@ terWeaponScumDisruptor::terWeaponScumDisruptor(terUnitReal* owner) : WeaponOmnid
 {
 }
 
+terWeaponScumDisruptor::~terWeaponScumDisruptor()
+{
+    if(missile_) {
+        missile_->SetFreeDestroy();
+        missile_ = nullptr;
+    }
+}
+
 SaveWeaponData* terWeaponScumDisruptor::universalSave(SaveWeaponData* data)
 {
 	if(isSwitchedOn() && missile_){
@@ -1916,7 +1946,7 @@ void terWeaponScumDisruptor::quant()
 	if(!isSwitchedOn()){
 		if(missile_){
 			missile_->SetFreeDestroy();
-			missile_ = NULL;
+            missile_ = nullptr;
 		}
 	}
 }
@@ -1924,10 +1954,10 @@ void terWeaponScumDisruptor::quant()
 void terWeaponScumDisruptor::disable()
 {
 	if(isSwitchedOn()){
-		if(missile_)
-			missile_->SetFreeDestroy();
-
-		missile_ = NULL;
+		if(missile_) {
+            missile_->SetFreeDestroy();
+            missile_ = nullptr;
+        }
 
 		reloadStart();
 	}
@@ -1939,8 +1969,9 @@ void terWeaponScumDisruptor::destroyLink()
 {
 	WeaponOmnidirectionalBase::destroyLink();
 
-	if(missile_ && !missile_->alive())
-		missile_ = NULL;
+	if(missile_ && !missile_->alive()) {
+        missile_ = nullptr;
+    }
 }
 
 bool terWeaponScumDisruptor::fire(const Vect3f& to,terUnitBase* target)
@@ -1967,6 +1998,13 @@ bool terWeaponScumDisruptor::fire(const Vect3f& to,terUnitBase* target)
 	switchOn();
 
 	return true;
+}
+
+void terWeaponScumDisruptor::kill() {
+    if (missile_) {
+        missile_->SetFreeDestroy();
+        missile_ = nullptr;
+    }
 }
 
 //-------------------------------------------------------
