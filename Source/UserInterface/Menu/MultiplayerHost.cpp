@@ -70,6 +70,9 @@ int creatingHostDialogQuant(float, float ) {
             std::string gameName = gameNameInput->getText();
             CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PASSWORD_INPUT));
             std::string password = passwordInput->getText();
+
+            putStringSettings("HostName", gameName);
+            putStringSettings("HostPort", std::to_string(conn.port()));
             
             //Load multiplayer save or use first multiplayer map
             CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_LIST);

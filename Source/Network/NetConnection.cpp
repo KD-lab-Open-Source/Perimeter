@@ -60,6 +60,7 @@ bool NetAddress::resolve(NetAddress& address, const std::string& host) {
         std::string port_str = host.substr(pos + 1);
         char* end;
         port = static_cast<uint16_t>(strtol(port_str.c_str(), &end, 10));
+        if (!port) port = PERIMETER_IP_PORT_DEFAULT;
     }
     int ret = SDLNet_ResolveHost(&address.addr, ip.c_str(), port) == 0;
     if (ret < 0 || address.addr.host == INADDR_NONE) {

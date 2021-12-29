@@ -1089,15 +1089,23 @@ int SwitchMenuScreenQuant1( float, float ) {
                 case SQSH_MM_MULTIPLAYER_HOST_SCR:
                     {
                         CEditWindow* playerNameInput = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT);
-                        std::string name = playerNameInput->getText();
-                        if (name.empty()) name = getStringSettings(regLanName);
-                        name = name.empty() ? "Game Server" : (name + " Server");
-                        
+                        std::string name = getStringSettings("HostName");
+                        if (name.empty()) {
+                            //Get player name and add Server
+                            name = playerNameInput->getText();
+                            if (name.empty()) name = getStringSettings(regLanName);
+                            name = name.empty() ? "Game Server" : (name + " Server");
+                        }
+
                         CEditWindow* hostNameInput = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_NAME_INPUT);
                         hostNameInput->SetText(name.c_str());
 
+                        std::string text = getStringSettings("HostPort");
+                        if (text.empty()) {
+                            text = std::to_string(PERIMETER_IP_PORT_DEFAULT);
+                        }
                         CEditWindow* hostPortInput = (CEditWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PORT_INPUT);
-                        hostPortInput->SetText(std::to_string(PERIMETER_IP_PORT_DEFAULT).c_str());
+                        hostPortInput->SetText(text.c_str());
 
                         CComboWindow* hostTypeCombo = (CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_TYPE_COMBO);
                         hostTypeCombo->pos = 0;
