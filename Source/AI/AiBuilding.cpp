@@ -124,28 +124,35 @@ void AIPlayer::applyRegionChanges()
 
 void AIPlayer::installFrame()
 {
-	if(!frame())
-		return;
-
+	if(!frame() || frame()->attached()) {
+        return;
+    }
+    
+    installingFrame_ = true;
+    
+    if (frame()->attaching()) {
+        return;
+    }
+    
 	MetaRegionLock lock(RegionPoint);
 	ZeroRegionPoint->operateByCircle(frame()->position2D(), frame()->attr().ZeroLayerRadius, 1);
 	ZeroRegionPoint->postOperateAnalyze();
 	applyRegionChanges();
 
 	MoveBrigadiersToPoint(frame()->position2D() + Vect2f(moveBrigadiersToInstallFrameOffsetFactor)*frame()->radius(), ai_brigadier_move_to_point_offset);
-	installingFrame_ = true;
 }
 
 bool AIPlayer::installFrameQuant()
 {
-	if(!frame())
-		return true;
+	if (!installingFrame_ || !frame() || frame()->attached()) {
+        installingFrame_ = false;
+        return true;
+    }
 
-	if(installingFrame_ && frame()->basementReady() && frame()->GetRigidBodyPoint()->velocity().norm() < 0.1f){
-		frame()->executeCommand(UnitCommand(COMMAND_ID_FRAME_ATTACH, 0));
-		installingFrame_ = false;
-		return true;
+	if (!frame()->attaching() && frame()->basementReady() && frame()->GetRigidBodyPoint()->velocity().norm() < 0.1f) {
+        frame()->executeCommand(UnitCommand(COMMAND_ID_FRAME_ATTACH, 0));
 	}
+
 	return false;
 }
 
