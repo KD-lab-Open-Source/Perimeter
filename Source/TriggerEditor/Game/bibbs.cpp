@@ -1,3 +1,4 @@
+#if 0
 #include "StdAfx.h"
 #include "GameInclude.h"
 
@@ -155,3 +156,4 @@ char const* editCameraSplineName(void* hwnd, const TreeNode* treeNode){
 	return customFunctions.editCameraSplineName(hwnd, treeNode);
 }
 
+#endif

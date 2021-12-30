@@ -1149,11 +1149,10 @@ void ActionSetCamera::activate(AIPlayer& aiPlayer)
 		gameShell->setSkipCutScene(false);
 		terCamera->SetCameraFollow(0);
 		std::string camera = cameraSplineName.value();
-		if(camera == "Camera0" || camera == "Camera1" || camera == "Camera2" || camera == "Camera3"){
-			XBuffer buffer;
-			buffer < "Camera" <= aiPlayer.playerStrategyIndex();
-			camera = buffer;
-		}
+		if ((startsWith(camera, "Camera") && camera.length() == 7)
+         || (startsWith(camera, "UserCamera") && camera.length() == 11)) {
+			camera = camera.substr(0, camera.length() - 1) + std::to_string(aiPlayer.playerStrategyIndex());
+        }
 		const SaveCameraSplineData* spline = gameShell->manualData().findCameraSpline(camera.c_str());
 		if(spline){
 			xassert(!spline->path.empty());
@@ -1591,18 +1590,6 @@ void TriggerChain::initializeTriggersAndLinks()
 	find("START")->state_ = Trigger::CHECKING;
 }
 
-void TriggerChain::initializeCameraTrigger(int playerIndex)
-{
-	Trigger* trigger = find("Camera");
-	trigger->state_ = Trigger::CHECKING;
-	if(!trigger->action)
-		trigger->action = new ActionSetCamera;
-	XBuffer buf;
-	buf < "Camera" <= playerIndex;
-	safe_cast<ActionSetCamera*>(trigger->action())->cameraSplineName = buf;
-	activateTrigger(trigger);
-}
-
 void TriggerChain::quant(AIPlayer& aiPlayer)
 {
 	for(int i = 0; i < activeTriggers_.size(); i++)
@@ -1618,8 +1605,9 @@ void TriggerChain::checkEvent(AIPlayer& aiPlayer, const Event& event)
 
 void TriggerChain::activateTrigger(Trigger* trigger)
 {
-	if(std::find(activeTriggers_.begin(), activeTriggers_.end(), trigger) == activeTriggers_.end())
-		activeTriggers_.push_back(trigger);
+	if (std::find(activeTriggers_.begin(), activeTriggers_.end(), trigger) == activeTriggers_.end()) {
+        activeTriggers_.push_back(trigger);
+    }
 }
 
 void TriggerChain::deactivateTrigger(Trigger* trigger)
@@ -1641,35 +1629,65 @@ const char* SaveManualData::popupCameraSplineName() const
 
 SaveCameraSplineData* SaveManualData::findCameraSpline(const char* name)
 {
-	std::vector<SaveCameraSplineData>::iterator ci;
-	FOR_EACH(cameras, ci)
-		if(!strcmp(name, ci->name))
-			return &*ci;
+    for (SaveCameraSplineData& ci : cameras) {
+        if(!strcmp(name, ci.name)) {
+            return &ci;
+        }
+    }
 	return 0;
 }
 
 const SaveCameraSplineData* SaveManualData::findCameraSpline(const char* name) const
 {
-	std::vector<SaveCameraSplineData>::const_iterator ci;
-	FOR_EACH(cameras, ci)
-		if(!strcmp(name, ci->name))
-			return &*ci;
-	return 0;
+    for (const SaveCameraSplineData& ci : cameras) {
+        if(!strcmp(name, ci.name)) {
+            return &ci;
+        }
+    }
+	return nullptr;
 }
 
 void SaveManualData::saveCamera(int playerID, const char* triggerName)
 {
-	if(playerID >= players.size())
-		return;
+	if(playerID >= players.size()) {
+        return;
+    }
 	XBuffer name;
 	name < triggerName <= playerID;
 	SaveCameraSplineData* spline = findCameraSpline(name);
 	if(!spline){
-		cameras.push_back(SaveCameraSplineData());
+        cameras.emplace_back();
 		spline = &cameras.back();
 	}
 	spline->name = name;
 	spline->set(terCamera->coordinate().position(), terCamera->coordinate().psi(), terCamera->coordinate().theta(), terCamera->coordinate().distance());
+}
+
+void SaveManualData::copyCamera(int playerID, const char* triggerName, const char* sourceTriggerName) {
+    if(playerID >= players.size()) {
+        return;
+    }
+    std::string sourceSplineName = sourceTriggerName + std::to_string(playerID);
+    if (!findCameraSpline(sourceSplineName.c_str())) {
+        return;
+    }
+    std::string name = triggerName + std::to_string(playerID);
+    SaveCameraSplineData* spline = findCameraSpline(name.c_str());
+    if(!spline){
+        cameras.emplace_back();
+        spline = &cameras.back();
+    }
+    //Get pointer after potential allocation
+    SaveCameraSplineData* sourceSpline = findCameraSpline(sourceSplineName.c_str());
+    spline->name = name;
+    spline->position = sourceSpline->position;
+    spline->angle = sourceSpline->angle;
+    spline->distance = sourceSpline->distance;
+    spline->path.clear();
+    for (const auto& path : sourceSpline->path) {
+        spline->path.emplace_back(path);
+    }
+    spline->useAsSpline = sourceSpline->useAsSpline;
 }
 
 //------------------------------------------------------

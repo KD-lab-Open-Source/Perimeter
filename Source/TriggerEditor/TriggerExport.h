@@ -553,7 +553,6 @@ public:
 	void setLogRecord(int index);
 	void addLogRecord(const Trigger& trigger, const char* event);
 
-	void initializeCameraTrigger(int playerIndex);
 	void initializeTriggersAndLinks();
 
 	void activateTrigger(Trigger* trigger);

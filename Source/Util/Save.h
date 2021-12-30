@@ -1659,15 +1659,18 @@ struct SaveCameraSplineData // Сплайн камеры
 			set(position, angle.y, angle.x, distance);
 	}
 
-	void set(const Vect2f& position, float psi, float theta, float distance)
+	void set(const Vect2f& position_, float psi_, float theta_, float distance_)
 	{
 		path.clear();
-		path.push_back(SaveCameraData());
-		path.back().position = position;
-		path.back().psi = psi;
-		path.back().theta = theta;
-		path.back().distance = distance;
+		path.emplace_back();
+		path.back().position = position_;
+		path.back().psi = psi_;
+		path.back().theta = theta_;
+		path.back().distance = distance_;
 		useAsSpline = false;
+        position = position_;
+        angle.set(theta_, psi_);
+        distance = distance_;
 	}
 
 	SERIALIZE(ar) {
@@ -2692,6 +2695,7 @@ struct SaveManualData // Данные, редактируемые руками
 	const char* popupCameraSplineName() const;
 	const SaveCameraSplineData* findCameraSpline(const char* name) const;
 	void saveCamera(int playerID, const char* triggerName);
+    void copyCamera(int playerID, const char* triggerName, const char* sourceTriggerName);
 
 	SERIALIZE(ar) {
 		if(ar.type() & ARCHIVE_EDIT){

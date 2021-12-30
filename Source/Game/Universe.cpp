@@ -934,6 +934,13 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
                 player->universalLoad(data.players[playerIndex]);
                 player->setDifficulty(mission.playersData[i].difficulty);
             }
+            //Check if UserCamera exists, otherwise use Camera as spline name for camera initialization
+            std::string cameraSplineName = "UserCamera";
+            const SaveManualData* manualDataConst = &data.manualData;
+            if (!manualDataConst->findCameraSpline((cameraSplineName + std::to_string(playerIndex)).c_str())) {
+                cameraSplineName = "Camera";
+            }
+            player->initializeCameraTrigger(cameraSplineName.c_str());
             worldPlayerData.playerID++;
         }
     }
@@ -1039,11 +1046,15 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
 		_shellIconManager.save(data.activeTasks);
 		data.manualData.interfaceEnabled = true;
 		
-		for(int i = 0; i < data.manualData.players.size(); i++) {
-            data.manualData.saveCamera(i, "UserCamera");
+		for (int i = 0; i < data.manualData.players.size(); i++) {
+            //Set camera to UserCamera for active player once save is opened, the rest use default Camera pos
+            //Note that we use strategy index instead of player index so the original camera idx can match user camera
+            if (i == activePlayer()->playerStrategyIndex()) {
+                data.manualData.saveCamera(i, "UserCamera");
+            } else {
+                data.manualData.copyCamera(i, "UserCamera", "Camera");
+            }
         }
-
-		activePlayer()->refreshCameraTrigger("UserCamera");
 	}
 
 	PlayerVect playersToSave(NETWORK_PLAYERS_MAX, nullptr);
@@ -1051,7 +1062,8 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
 		if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI){
-			playersToSave[mission.playersShufflingIndices[i]] = i < Players.size() - 1 ? Players[i] : nullptr;
+            terPlayer* player = i < Players.size() - 1 ? Players[i] : nullptr;
+			playersToSave[mission.playersShufflingIndices[i]] = player;
 		}
 	}
 

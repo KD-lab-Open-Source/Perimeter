@@ -290,7 +290,7 @@ public:
 	void setTriggerChains(const SavePlayerManualData& names);
 	void setPlayerStrategyIndex(int playerStrategyIndex) { playerStrategyIndex_ = playerStrategyIndex; }
 	int playerStrategyIndex() const { return playerStrategyIndex_; }
-	void refreshCameraTrigger(const char* triggerName);
+	void initializeCameraTrigger(const char* triggerName);
     void setPlayerData(const PlayerData& playerData);
 
 	//-----------------------------

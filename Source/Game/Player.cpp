@@ -199,25 +199,33 @@ void terPlayer::setTriggerChains(const SavePlayerManualData& data)
 		FOR_EACH(data.triggerChainNames, i){
 			triggerChains_.push_back(TriggerChain());
 			triggerChains_.back().load(*i);
-			triggerChains_.back().initializeCameraTrigger(playerID());
 		}
-	}
-	else
-		triggerChains_.push_back(data.triggerChainOld);
+	} else {
+        triggerChains_.push_back(data.triggerChainOld);
+    }
 }
 
-void terPlayer::refreshCameraTrigger(const char* triggerName)
+void terPlayer::initializeCameraTrigger(const char* triggerName)
 {
 	if(triggerChains_.empty())
 		return;
-	TriggerChain& strategy = triggerChains_.front();
-	Trigger* trigger = strategy.find(triggerName);
-	if(!trigger->action)
-		trigger->action = new ActionSetCamera;
-	XBuffer name;
-	name < triggerName <= playerStrategyIndex();
-	safe_cast<ActionSetCamera*>(trigger->action())->cameraSplineName = name;
-	trigger->setState(Trigger::CHECKING);
+    TriggerChain& strategy = triggerChains_.front();
+    Trigger* trigger;
+    trigger = strategy.find(triggerName);
+    trigger->setState(Trigger::CHECKING);
+    if(!trigger->action)
+        trigger->action = new ActionSetCamera;
+    safe_cast<ActionSetCamera*>(trigger->action())->cameraSplineName = triggerName + std::to_string(playerStrategyIndex());
+    strategy.activateTrigger(trigger);
+
+    //Disable Camera trigger if UserCamera is used as sometimes it may run after UserCamera
+    if (strcmp(triggerName, "UserCamera") == 0) {
+        trigger = strategy.find("Camera");
+        if (!trigger) {
+            return;
+        }
+        trigger->action = nullptr;
+    }
 }
 
 void terPlayer::setPlayerData(const PlayerData& playerData) {
@@ -1044,9 +1052,6 @@ void terPlayer::universalLoad(SavePlayerData& data)
 
 	if(!data.currentTriggerChains.empty()){ // userSave
 		triggerChains_ = data.currentTriggerChains;
-		//TriggerChains::iterator tci;
-		//FOR_EACH(triggerChains_, tci)
-		//	tci->initializeCameraTrigger(playerID());
 	}
 }
 
@@ -1074,12 +1079,13 @@ void terPlayer::universalSave(SavePlayerData& data, bool userSave) const {
 		}
 	}
 
-	data.playerStats = stats;
+	data.playerStats = stats;    
 
-	if(userSave)
-		data.currentTriggerChains = triggerChains_;
-	else
-		data.currentTriggerChains.clear();
+	if(userSave) {
+        data.currentTriggerChains = triggerChains_;
+    } else {
+        data.currentTriggerChains.clear();
+    }
 }
 
 
