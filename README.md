@@ -37,6 +37,11 @@ There is instructions available in:
 
 [English](INSTALL.eng.md)
 
+## Supported games
+
+- Perimeter
+- Perimeter: Emperor Testament
+
 ## Enhancements from original game
 
 - Bugfixes
@@ -65,9 +70,11 @@ There is instructions available in:
     the closest UI resolutions upscaled/centered to maintain visual consistency.
 - Experimental resizable windows
 - Better save game map / content checking
-- Experimental support for Perimeter Emperor Testament
-- Experimental enhancements for multiplayer:
+- Enhancements for multiplayer:
   - TCP/IP protocol instead of DirectPlay8
+  - Cross platform multiplayer
+  - Host Scripts transfer and basic l3d files checksum to ensure matching gameplay between players
+  - Allow players to watch game after being defeated
   - Support for saving and continuing multiplayer saves
   - Experimental recovery mechanism for desyncs
 - Experimental support for MacOS

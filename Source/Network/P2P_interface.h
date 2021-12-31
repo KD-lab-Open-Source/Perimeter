@@ -16,15 +16,17 @@
  Game follows Server/Client architecture, where the host/server that creates the lobby is the authority
  in the multiplayer game session.
 
- Both Host and Client use PNetCenter but some parts are specific to the role of game in the network game.
+ Both Host and Client use PNetCenter but some parts are specific to the role of game in the network game. 
+
+ ---
 
  Events act as messages between host and client, some messages are used by both (4G) while others are for host (4H)
  or to client (4C) only. To see a list of event IDs check terEventID enum in CommonEvents.h
  
- Player actions are sent to server in events form which are then processed and/or relayed to the rest of clients.
- 
  Events destined for oneself are directly fed into in-buffer without passing to network stack, there is no a internal
- client/socket connected to server in host machine.
+ client/socket connected to server in host machine. 
+
+ ---
  
  The contact is established by clients when socket is opened to the listening port at server, then the client must send
  a NetConnectionInfo to provide the details about the client such as the version, system arch, player name, password etc
@@ -33,6 +35,38 @@
  maxed or other reasons such as unstable connection or incompatible arch. This lets client know what the reason of
  refusal was and to inform the player. In case of success the server sends NetConnectionInfoResponse with OK and the
  client is added into server list of players.
+ 
+ ---
+ 
+ Player actions are sent to server in events form which are then processed and/or relayed to the rest of clients
+ when advancing a quant, a quant is the logic step/update unit in game. The clients must acknowledge the quant once
+ finished and provide a signature, this signature is checked by server to know if desync occurred.
+ 
+ Things that cause desync:
+ - Different computation result giving different values in a operation
+ - Doing or not doing something compared to the rest of clients
+ 
+ Examples of things that can cause problems:
+ - Using math functions like sin/cos/atan... from std library instead of a common one, as each OS or libc implementation
+ may provide different results.
+ - Sort operations that result in stalemate ordering (same values between elements compare) since some sort implementation
+ may decide to place them differently from others, this has occurred on auto targeting when sorted by same distance as
+ some units where selected differently due to the array order being different between clients.
+ - Code similar to Vect3(terLogicRNDfrnd(), terLogicRNDfrnd(), terLogicRNDfrnd()) as order which terLogicRNDfrnd are called
+ per arg might be different, first call might go to z instead of x like it happens in MacOS M1, assigning x and y individually
+ before calling Vect3 constructor solved it.
+ - Anything that may depend on render/visual side of game, locale, or any value that is not synchronized and same between clients.
+
+ Once a small desync occurs the effect cascades as next values are affected by previous ones until the effects are magnified
+ and entire game becomes different, this is why is important to ensure all results are the same and all operations are done
+ in same way and order, as long as the result of a function doesn't differ ever and function doesn't produce any different
+ side effect  it doesn't matter if the way of computing is different. This allows having game working between different
+ CPU architectures and OS'es.
+ 
+ All floating operations must conform IEEE-754 and code must be compiled with proper flags to ensure this. 
+ (for example SSE in x86)
+
+ ---
 
  Current network stack is the following:
  
