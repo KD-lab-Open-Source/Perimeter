@@ -692,13 +692,11 @@ terUnitBase* terPlayer::createUnit(const UnitTemplate& data)
 
 void terPlayer::incomingCommandRegion(const netCommand4G_Region& reg)
 {
-	//Region Buffer можно сделать глобальным
-	XBuffer RegionBuffer(5000, 1);
-	RegionBuffer.init();
-	RegionBuffer.write(reg.pData_, reg.dataSize_);
+	//Create XBuffer without allocating
+	XBuffer RegionBuffer(reg.pData_, reg.dataSize_);
 	RegionBuffer.set(0);
 	MetaRegionLock lock(RegionPoint);
-	RegionPoint->load(RegionBuffer);
+    RegionPoint->loadEditing(RegionBuffer);
 	if(MT_IS_LOGIC())
 		RasterizeRegion();
 	else

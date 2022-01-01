@@ -2247,11 +2247,12 @@ void CShellLogicDispatcher::close()
 
 void CShellLogicDispatcher::RegionEndEdit()
 {
-	XBuffer buffer(5000, 1);
-	regionMetaDispatcher()->save(buffer);
-	universe()->activePlayer()->ChangeRegion(buffer);
+	XBuffer buffer(8192, true);
+    auto regionDispatcher = regionMetaDispatcher();
+    regionDispatcher->saveEditing(buffer);
+    universe()->activePlayer()->ChangeRegion(buffer);
 	buffer.set(0);
-	regionMetaDispatcher()->load(buffer);
+    regionDispatcher->loadEditing(buffer);
 }
 
 bool CShellLogicDispatcher::ShowTerraform() const
