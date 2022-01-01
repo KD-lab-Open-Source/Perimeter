@@ -939,7 +939,7 @@ end_while_01:;
             //Save the data for debugging
             std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
             terminate_with_char(crash_dir, PATH_SEP);
-            crash_dir += std::to_string(time(nullptr)) + "_" + m_GameName + "_" + m_PlayerName + "_restore" + PATH_SEP;
+            crash_dir += "desync_" + std::to_string(time(nullptr)) + "_" + m_GameName + "_" + m_PlayerName + "_restore" + PATH_SEP;
             fprintf(stderr, "Dumped desync restore data at: %s\n", crash_dir.c_str());
             create_directories(crash_dir);
             for (auto& client : to_restore) {
