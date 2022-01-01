@@ -665,7 +665,7 @@ void PNetCenter::LLogicQuant()
                                         client->desync_last_time = clocki();
                                         if (client->desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
                                             client->desync_state = PNC_DESYNC_RESTORE_FAILED;
-                                            std::string gameID = std::to_string(time(nullptr)) + "_" + m_GameName + "_failed";
+                                            std::string gameID = std::to_string(time(nullptr)) + "_failed";
                                             netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
                                             ev_notify.desync_amount = client->desync_amount;
                                             SendEvent(ev_notify, client->netidPlayer);
@@ -896,7 +896,7 @@ end_while_01:;
             }
             
             //Send notify first
-            std::string gameID = std::to_string(time(nullptr)) + "_" + m_GameName;
+            std::string gameID = std::to_string(time(nullptr));
             netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
             for (auto& client : to_notify) {
                 if (client->netidPlayer == m_hostNETID) {
@@ -939,7 +939,7 @@ end_while_01:;
             //Save the data for debugging
             std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
             terminate_with_char(crash_dir, PATH_SEP);
-            crash_dir += "desync_" + std::to_string(time(nullptr)) + "_" + m_GameName + "_" + m_PlayerName + "_restore" + PATH_SEP;
+            crash_dir += "desync_" + std::to_string(time(nullptr)) + "_" + std::to_string(m_localNETID) + "_restore" + PATH_SEP;
             fprintf(stderr, "Dumped desync restore data at: %s\n", crash_dir.c_str());
             create_directories(crash_dir);
             for (auto& client : to_restore) {

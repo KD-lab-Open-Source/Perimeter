@@ -406,7 +406,7 @@ void PNetCenter::HandlerInputNetCommand()
 
                 std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
                 terminate_with_char(crash_dir, PATH_SEP);
-                crash_dir += "desync_" + nc.gameID + "_" + m_PlayerName + PATH_SEP;
+                crash_dir += "desync_" + nc.gameID + "_" + std::to_string(m_localNETID) + PATH_SEP;
                 create_directories(crash_dir);
 
                 //Write net log
