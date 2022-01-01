@@ -430,7 +430,7 @@ void PNetCenter::HandlerInputNetCommand()
                 //Attempt to save reel
                 universe()->savePlayReel((crash_dir + "reel").c_str());
 
-                fprintf(stderr, "Error network synchronization, dumped at: %s\n", crash_dir.c_str());
+                fprintf(stderr, "%d Error network synchronization, dumped at: %s\n", clocki(), crash_dir.c_str());
 
                 std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
                         qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization")
@@ -441,21 +441,21 @@ void PNetCenter::HandlerInputNetCommand()
                         std::move(text)
                 );
 
-#ifndef PERIMETER_DEBUG 
-                //Do not send save data to host except host itself
+#if !defined(PERIMETER_DEBUG) && !defined(_DO_LOG_)
+                //Do not send binary and script data to host except host itself
                 if (m_localNETID != m_hostNETID) {
-                    md.reset();
+                    md->binaryData.alloc(0);
+                    md->scriptsData.alloc(0);
                 }
 #endif
 
-                if (md) {
-                    //Trim some data in partial mode
-                    if (nc.desync_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
-                        md->binaryData.alloc(0);
-                        md->scriptsData.alloc(0);
-                    }
-                    md->setSaveName("");
+                //Trim some data in partial mode
+                if (nc.desync_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
+                    md->binaryData.alloc(0);
+                    md->scriptsData.alloc(0);
                 }
+
+                md->setSaveName("");
                 
                 //Send the ack
                 netCommand4H_DesyncAcknowledge ack(std::move(md));

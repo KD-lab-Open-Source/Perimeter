@@ -285,14 +285,12 @@ void terPlayer::Quant()
     log_var(playerID());
 	for (auto ui : Units) {
         if (ui->alive()) {
-            ui->Quant();
-#ifdef _DO_LOG_
             log_var(getEnumName(ui->attr().ID));
             log_var(ui->unitID());
-            log_var(vMap.getChAreasInformationCRC());
+            ui->Quant();
             log_var(terLogicRNDfrnd());
             log_var(ui->position());
-#endif
+            log_var(vMap.getChAreasInformationCRC());
         }
     }
     log_var("=== PlayerQuant End ===");
@@ -400,8 +398,9 @@ void terPlayer::MoveQuant()
             log_var(getEnumName(ui->attr().ID));
             log_var(ui->unitID());
             ui->MoveQuant();
-            log_var(vMap.getChAreasInformationCRC());
             log_var(terLogicRNDfrnd());
+            log_var(ui->position());
+            log_var(vMap.getChAreasInformationCRC());
         }
     }
     log_var("=== MoveQuant End ===");

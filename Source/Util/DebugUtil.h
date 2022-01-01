@@ -146,7 +146,7 @@ void show_watch();
 //	_FORCE_NET_LOG_ - to force network log under _FINAL_VERSION_
 /////////////////////////////////////////////////////////////////////////////////
 
-//#define _FORCE_NET_LOG_
+#define _FORCE_NET_LOG_
 
 #if (!defined(_FINAL_VERSION_) || defined(PERIMETER_DEBUG) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
 #define _DO_LOG_

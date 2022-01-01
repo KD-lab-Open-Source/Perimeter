@@ -12,7 +12,7 @@
 #include "files/files.h"
 
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
-const int PNC_DESYNC_RESTORE_ATTEMPTS = 5;
+const int PNC_DESYNC_RESTORE_ATTEMPTS = 10;
 const int PNC_DESYNC_RESTORE_MODE_PARTIAL = 0; //2; TODO set back once partial load is finished 
 const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 5 * 60 * 1000; //5 mins
 const int PNC_DESYNC_RESTORE_MODE_FULL = PNC_DESYNC_RESTORE_MODE_PARTIAL + 1; 
