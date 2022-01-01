@@ -26,7 +26,6 @@ cp -r $TEMPLATE_DIR $APP_DIR
 
 mkdir $APP_DIR/Contents/Frameworks
 mkdir $APP_DIR/Contents/Libs
-mkdir $APP_DIR/Contents/MacOS
 
 rm -f $BUILD_DIR/libdxvk_d3d9.dylib
 cp $DXVK_NATIVE_PATH $BUILD_DIR/libdxvk_d3d9.dylib

@@ -5,7 +5,7 @@
   <key>CFBundleGetInfoString</key>
   <string>Perimeter</string>
   <key>CFBundleExecutable</key>
-  <string>Perimeter</string>
+  <string>start</string>
   <key>CFBundleIdentifier</key>
   <string>com.kdvision.perimeter</string>
   <key>CFBundleName</key>

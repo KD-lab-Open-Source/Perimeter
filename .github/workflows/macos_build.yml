@@ -91,6 +91,10 @@ jobs:
       - name: perimeter -- build project
         run: ninja
         working-directory: build
+      - name: perimeter -- strip binary
+        run: strip Source/Perimeter
+        working-directory: build
+        if: matrix.env.build_type == 'Release'
       - name: perimeter -- package app
         run: macos/package.sh
         env:
@@ -98,9 +102,6 @@ jobs:
           BUILD_DIR: "build"
           APP_DIR: "Perimeter.app"
           LIB_DIR: "/usr/local/lib"
-      - name: perimeter -- strip binary
-        run: strip Perimeter.app/Contents/MacOS/Perimeter
-        if: matrix.env.build_type == 'Release'
       - name: perimeter -- release tar
         run: tar -cvf Perimeter.app.tar Perimeter.app
       - uses: actions/upload-artifact@v2
