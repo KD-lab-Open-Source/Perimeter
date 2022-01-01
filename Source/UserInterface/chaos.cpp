@@ -2,6 +2,7 @@
 #include "Runtime.h"
 #include "terra.h"
 #include "chaos.h"
+#include "files/files.h"
 
 
 CChaos::CChaos(int hsize,int vsize,bool bump)
@@ -13,8 +14,13 @@ CChaos::CChaos(int hsize,int vsize,bool bump)
 		"RESOURCE\\EFFECT\\WorldGround.tga","RESOURCE\\EFFECT\\WorldGround01.tga",
 		"RESOURCE\\EFFECT\\Chaos\\oceanBump.tga",tile,bump);
 
-	pSkySphere=NULL;
-	pSkySphere = terScene->CreateSkySpere("RESOURCE\\Models\\FX\\skysphere.M3D",GetTargetName("").c_str(),vMap.H_SIZE);
+    //Get path of world, remove absolute path since we might need to access .pak textures
+    std::string texturePath = GetTargetName("");
+    if (startsWith(texturePath, get_content_root_path())) {
+        string_replace_all(texturePath, get_content_root_path(), "");
+    }
+    pSkySphere = nullptr;
+    pSkySphere = terScene->CreateSkySpere("RESOURCE\\Models\\FX\\skysphere.M3D", texturePath.c_str(),vMap.H_SIZE);
 }
 
 CChaos::~CChaos()
