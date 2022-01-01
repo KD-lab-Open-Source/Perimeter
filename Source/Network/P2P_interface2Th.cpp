@@ -1693,7 +1693,7 @@ void PNetCenter::HostReceiveQuant()
                                 //Find if we need to send to sender clan or everyone (sender included)
                                 if (nc_ChatMessage.clanOnly) {
                                     for (const auto& missionPlayer : hostMissionDescription->playersData) {
-                                        if (missionPlayer.clan == playerData.clan) {
+                                        if (missionPlayer.clan == playerData.clan && missionPlayer.netid) {
                                             SendEvent(nc_ChatMessage, missionPlayer.netid);
                                         }
                                     }
