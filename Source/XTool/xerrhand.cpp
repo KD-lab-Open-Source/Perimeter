@@ -445,6 +445,7 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
     if (subj) {
         stream << "Subj: " << subj << std::endl;
     }
+    stream << "Clock: " << clocki() << std::endl;
 
     std::string crash_path = get_content_root_path() + CRASH_DIR;
     std::list<std::string> linesStackTrace;

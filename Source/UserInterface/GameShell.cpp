@@ -178,7 +178,7 @@ windowClientSize_(1024, 768)
 	briefingEnabled = !(disableBriefing || check_command_line("disableBriefing"));
 
 	terCamera->setRestriction(IniManager("Perimeter.ini").getInt("Game","CameraRestriction") && !mission_edit);
-	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial;
+	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial || check_command_line("debug_key_handler");
 
 	shotNumber_ = -1;
 	recordMovie_ = false;
