@@ -372,9 +372,12 @@ static IniManager* settingsManager;
 
 IniManager* getSettings() {
     if (!settingsManager) {
-        std::string prefPath = GET_PREF_PATH();
-        terminate_with_char(prefPath, PATH_SEP);
-        prefPath = prefPath + "Settings.ini";
+        const char* prefPath_ptr = GET_PREF_PATH();
+        std::string prefPath;
+        if (prefPath_ptr) {
+            prefPath = prefPath_ptr;
+        }
+        prefPath += "Settings.ini";
         if (!std::filesystem::exists(prefPath)) {
             //Create file if doesn't exist
             XStream f(prefPath,XS_OUT);
