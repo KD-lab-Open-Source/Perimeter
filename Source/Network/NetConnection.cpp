@@ -331,10 +331,16 @@ void NetConnectionHandler::pollConnections() {
         NetConnection* connection = entry.second;
         switch (connection->state) {
             case NC_STATE_ACTIVE: {
-                InputPacket* packet = new InputPacket(connection->netid);
-                int len = connection->receive(*packet);
-                if (0 < len) {
-                    net_center->m_InputPacketList.push_back(packet);
+                size_t total_recv = 0;
+                while (total_recv < 1024 * 1024) {
+                    InputPacket* packet = new InputPacket(connection->netid);
+                    int len = connection->receive(*packet);
+                    if (0 < len) {
+                        net_center->m_InputPacketList.push_back(packet);
+                    } else {
+                        delete packet;
+                        break;
+                    }
                 }
                 break;
             }
