@@ -427,8 +427,10 @@ bool terHyperSpace::MultiQuant()
 		///vMap.generateChAreasInformation(vmapbuf);
 		///pNetCenter->SendEvent(&netCommand4H_BackGameInformation(currentQuant, vmapbuf, net_log_buffer));
 
+#if defined(PERIMETER_DEBUG) || defined(NET_LOG_EXHAUSTIVE)
 		log_var(vMap.getChAreasInformationCRC());
-
+#endif
+        
 #ifdef NET_LOG_EXHAUSTIVE
         log_var(vMap.getWorldCRC());
 #endif
@@ -821,7 +823,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				xassert(!flag_HostMigrate);
 				netCommand4G_UnitCommand*  pnc= new netCommand4G_UnitCommand(in_buffer);
-				xassert(pnc->curCommandQuant_ < 0xcdcd0000);
+				//xassert(pnc->curCommandQuant_ < 0xcdcd0000);
 				putInputGameCommand2fullListGameCommandAndCheckAllowedRun(pnc);
 			}
 			break;
@@ -829,7 +831,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				xassert(!flag_HostMigrate);
 				netCommand4G_Region*  pnc= new netCommand4G_Region(in_buffer);
-				xassert(pnc->curCommandQuant_ < 0xcdcd0000);
+				//xassert(pnc->curCommandQuant_ < 0xcdcd0000);
 				putInputGameCommand2fullListGameCommandAndCheckAllowedRun(pnc);
 			}
 			break;
@@ -837,7 +839,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				xassert(!flag_HostMigrate);
 				netCommand4G_ForcedDefeat*  pnc= new netCommand4G_ForcedDefeat(in_buffer);
-				xassert(pnc->curCommandQuant_ < 0xcdcd0000);
+				//xassert(pnc->curCommandQuant_ < 0xcdcd0000);
 				putInputGameCommand2fullListGameCommandAndCheckAllowedRun(pnc);
 			}
 			break;
