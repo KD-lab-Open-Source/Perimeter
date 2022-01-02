@@ -58,7 +58,8 @@ public:
 	// Команды
 	typedef std::list<UnitCommand> CommandList;
 	CommandList& commandList(){ return commandList_; }
-	CommandID lastCommand() const { return commandList_.empty() ? COMMAND_ID_NONE : commandList_.back().commandID(); }
+    const UnitCommand* lastCommand() const { return commandList_.empty() ? nullptr : &commandList_.back(); }
+    CommandID lastCommandID() const { return commandList_.empty() ? COMMAND_ID_NONE : commandList_.back().commandID(); }
 	const UnitCommand* findCommand(CommandID commandID) const;
 	
 	void commandOutcoming(const UnitCommand& command);

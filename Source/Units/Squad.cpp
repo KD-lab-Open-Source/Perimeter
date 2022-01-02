@@ -751,8 +751,10 @@ void terUnitSquad::AvatarQuant()
 
 int terUnitSquad::GetInterfaceOffensiveMode()
 {
-	if(lastCommand() == COMMAND_ID_UNIT_OFFENSIVE)
-		return findCommand(COMMAND_ID_UNIT_OFFENSIVE)->commandData();
+    const UnitCommand* cmd = lastCommand();
+	if(cmd && cmd->commandID() == COMMAND_ID_UNIT_OFFENSIVE) {
+        return cmd->commandData();
+    }
 	return offensiveMode();
 }
 
@@ -815,7 +817,7 @@ int terUnitSquad::GetInterfaceLegionMode()
 	int stop,attack,move,patrol,back;
 
 	back = stop = attack = move = patrol = 0;
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_OBJECT:
 		attack = 1;
 		break;
@@ -909,42 +911,52 @@ void terUnitSquad::GetAtomProduction(DamageMolecula& atom_request,DamageMolecula
 	atom_request = atomsRequested_;
 	atom_progress = atomsProgress_;
 
-	switch(lastCommand()){
-		case COMMAND_ID_PRODUCTION_INC:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_INC)->commandData()]++;
-			break;
-		case COMMAND_ID_PRODUCTION_INC_10:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_INC_10)->commandData()] += 10;
-			break;
-		case COMMAND_ID_PRODUCTION_DEC:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_DEC)->commandData()]--;
-			break;
-		case COMMAND_ID_PRODUCTION_DEC_10:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_DEC_10)->commandData()] -= 10;
-			break;
-	    default:
-            break;
-	}
+    //To show still not sent commands as requested
+    const UnitCommand* cmd = lastCommand();
+    if (cmd) {
+        int& num = atom_request[cmd->commandData()];
+        switch (cmd->commandID()) {
+            case COMMAND_ID_PRODUCTION_INC:
+                num++;
+                break;
+            case COMMAND_ID_PRODUCTION_INC_10:
+                num += 10;
+                break;
+            case COMMAND_ID_PRODUCTION_DEC:
+                if (num) num--;
+                break;
+            case COMMAND_ID_PRODUCTION_DEC_10:
+                if (num >= 10) num -= 10;
+                break;
+            default:
+                break;
+        }
+    }
 
-	if(commander() && commander()->isBuildingEnable())
-		for(int i = 0;i < MUTATION_ATOM_MAX;i++)
-			atom_enabled[i] = Player->GetEvolutionBuildingData((terUnitAttributeID)(UNIT_ATTRIBUTE_SOLDIER_PLANT + i)).Worked;
+	if (commander() && commander()->isBuildingEnable()) {
+        for (int i = 0; i < MUTATION_ATOM_MAX; i++) {
+            atom_enabled[i] = Player->GetEvolutionBuildingData(static_cast<terUnitAttributeID>(UNIT_ATTRIBUTE_SOLDIER_PLANT + i)).Worked;
+        }
+    }
 }
 
 void terUnitSquad::GetAtomPaused(DamageMolecula& paused)
 { 
 	paused = DamageMolecula(-1,-1,-1);
-
-	switch(lastCommand()){
-		case COMMAND_ID_PRODUCTION_PAUSE_ON:
-			paused[findCommand(COMMAND_ID_PRODUCTION_PAUSE_ON)->commandData()] = 1;
-			break;
-		case COMMAND_ID_PRODUCTION_PAUSE_OFF:
-			paused[findCommand(COMMAND_ID_PRODUCTION_PAUSE_OFF)->commandData()] = 0;
-			break;
-	    default:
-	        break;
-	}
+    
+    const UnitCommand* cmd = lastCommand();
+    if (cmd) {
+        switch (cmd->commandID()) {
+            case COMMAND_ID_PRODUCTION_PAUSE_ON:
+                paused[cmd->commandData()] = 1;
+                break;
+            case COMMAND_ID_PRODUCTION_PAUSE_OFF:
+                paused[cmd->commandData()] = 0;
+                break;
+            default:
+                break;
+        }
+    }
 
 	for(int i = 0;i < MUTATION_ATOM_MAX;i++){
 		if(paused[i] == -1)

@@ -522,7 +522,7 @@ void terBuilding::setCanselConstructionTime(int time)
 
 int terBuilding::isPluggedIn()
 {
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_POWER_ON:
 		return 1;
 	case COMMAND_ID_POWER_OFF:

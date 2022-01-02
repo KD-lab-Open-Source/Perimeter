@@ -4087,10 +4087,11 @@ void LogicUpdater::updateSquadsData() {
 
 	//squads
 	logicData->totalUnitCount = 0;
+    /* Inefficient
 	bool plantExists = (	player->countBuildingsPowered(UNIT_ATTRIBUTE_SOLDIER_PLANT)
 						+	player->countBuildingsPowered(UNIT_ATTRIBUTE_OFFICER_PLANT)
 						+	player->countBuildingsPowered(UNIT_ATTRIBUTE_TECHNIC_PLANT) ) > 0;
-
+    */
 	bool exodusEnabled = isRaceUnitsVisible(EXODUS);
 	bool harkbackEnabled = isRaceUnitsVisible(HARKBACK);
 	bool empireEnabled = isRaceUnitsVisible(EMPIRE);
@@ -4111,7 +4112,7 @@ void LogicUpdater::updateSquadsData() {
 					&&	pSquad->commander() && pSquad->commander()->isConstructed();
 
 
-		page->enabled = page->visible && (plantExists || !pSquad->Empty());
+		page->enabled = page->visible; // && (plantExists || !pSquad->Empty());
 
 
 		page->wayPoints.clear();
@@ -4163,7 +4164,8 @@ void LogicUpdater::updateSquadsData() {
 				button->count = countPossible;
 				button->append = count > 0;
 //				button->visible = !bEmpty && player->GetMutationElement(id).Enabled;
-				button->enabled = (!bEmpty || plantExists) && player->GetMutationElement(id).Enabled;
+				//button->enabled = (!bEmpty || plantExists) && player->GetMutationElement(id).Enabled;
+                button->enabled = player->GetMutationElement(id).Enabled;
 				button->bS = atom_data[0] >= damage_molecula[0];
 				button->bO = atom_data[1] >= damage_molecula[1];
 				button->bT = atom_data[2] >= damage_molecula[2];

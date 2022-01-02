@@ -186,7 +186,7 @@ int terBuildingMilitary::GetInterfaceLegionMode()
 	int stop = 0;
 	int attack = 0;
 
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_POINT:
 	case COMMAND_ID_OBJECT:
 		attack = 1;
@@ -194,10 +194,8 @@ int terBuildingMilitary::GetInterfaceLegionMode()
 	case COMMAND_ID_STOP:
 		stop = 1;
 		break;
-	case COMMAND_ID_NONE:
-		break;
-	//default:
-		//xassert(0);
+	default:
+        break;
 	}
 
 	if(stop)

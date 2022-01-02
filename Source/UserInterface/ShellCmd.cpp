@@ -434,19 +434,17 @@ void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param)
 	}
 }
 
-void CheckSelectDefaultSquad(bool bEmptyCheck = false)
+terUnitSquad* CheckSelectDefaultSquad(bool select = true)
 {
 	CUITabSheet* pSquadSheet = (CUITabSheet*)_shellIconManager.GetWnd(SQSH_TAB_SQUAD_ID);
 
 	terUnitSquad* pSquad = GetSquadByNumber(pSquadSheet->GetActivePage());
 
-	if(pSquad && !(bEmptyCheck && pSquad->Empty()))
-		universe()->SelectSquad(pSquad);
-}
-
-inline void ChancelUnits(int nAtomID)
-{
-	universe()->makeCommand(isShiftPressed() ? COMMAND_ID_PRODUCTION_DEC_10 : COMMAND_ID_PRODUCTION_DEC, nAtomID);
+	if (pSquad && select) {
+        universe()->SelectSquad(pSquad);
+    }
+    
+    return pSquad;
 }
 
 void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param)
@@ -455,41 +453,41 @@ void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 	if(code == EVENT_PRESSED)
 	{
-		CheckSelectDefaultSquad();
+        terUnitSquad* pSquad = CheckSelectDefaultSquad(false);
+        if (!pSquad) return;
 
-		CShellAtomButton* pBtn = (CShellAtomButton*)pWnd;
-		if(pBtn->GetPause())
-		{
+		CShellAtomButton* pBtn = dynamic_cast<CShellAtomButton*>(pWnd);
+        CommandID cmdID = COMMAND_ID_NONE;
+		if(pBtn->GetPause()) {
 			pBtn->Pause(false);
-			universe()->makeCommand(COMMAND_ID_PRODUCTION_PAUSE_OFF, nAtomID);
-		}
-		else
-		{
+            cmdID = COMMAND_ID_PRODUCTION_PAUSE_OFF;
+		} else {
 //			SND2DPlaySound("training");
-
-			universe()->makeCommand((isShiftPressed() || param == 10) ? COMMAND_ID_PRODUCTION_INC_10 : COMMAND_ID_PRODUCTION_INC, nAtomID);
+			cmdID = (isShiftPressed() || param == 10) ? COMMAND_ID_PRODUCTION_INC_10 : COMMAND_ID_PRODUCTION_INC;
 		}
+        if (cmdID != COMMAND_ID_NONE) {
+            pSquad->commandOutcoming(UnitCommand(cmdID, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
+        }
 	}
 	else if(code == EVENT_RPRESSED)
 	{
-		CheckSelectDefaultSquad();
+        terUnitSquad* pSquad = CheckSelectDefaultSquad(false);
+        if (!pSquad) return;
 
-		CShellAtomButton* pBtn = (CShellAtomButton*)pWnd;
+		CShellAtomButton* pBtn = dynamic_cast<CShellAtomButton*>(pWnd);
 		if (!pBtn->GetPause() && pBtn->isEnabled()) {
 			if (pBtn->CanPause()) {
 				pBtn->Pause(true);
-				universe()->makeCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, nAtomID);
+                pSquad->commandOutcoming(UnitCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
 			} else {
 				int nReqCount = isShiftPressed() ? 10 : 1;
-				for(int i=0; i<nReqCount; i++)
-					universe()->makeCommand(COMMAND_ID_BASIC_UNIT_DESTROY, nAtomID);
-//				ChancelUnits(nAtomID);
+				for(int i=0; i<nReqCount; i++) {
+                    pSquad->commandOutcoming(UnitCommand(COMMAND_ID_BASIC_UNIT_DESTROY, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
+                }
 			}
 		} else {
-			int nReqCount = isShiftPressed() ? 10 : 1;
-			for(int i=0; i<nReqCount; i++)
-				universe()->makeCommand(COMMAND_ID_PRODUCTION_DEC, nAtomID);
-//			ChancelUnits(nAtomID);
+            CommandID cmdID = (isShiftPressed() || param == 10) ? COMMAND_ID_PRODUCTION_DEC_10 : COMMAND_ID_PRODUCTION_DEC;
+            pSquad->commandOutcoming(UnitCommand(cmdID, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
 		}
 	}
 }

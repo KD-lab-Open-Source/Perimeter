@@ -719,22 +719,24 @@ void terFrame::GetInterfaceFrameProduction(int* phase,int* id,terUnitBase* unit[
 		}
 	}
 
-	switch(lastCommand()){
-	case COMMAND_ID_BUILD_MASTER_INC:
-	case COMMAND_ID_TERRAIN_MASTER_INC:{
-		const UnitCommand& command = *findCommand(lastCommand());
-		if(frameSlots_[command.commandData()].status_ == terFrameSlot::STATUS_FREE){
-			phase[command.commandData()] = 1;
-			id[command.commandData()] = command.commandID() - COMMAND_ID_BUILD_MASTER_INC;
-		}
-		else{
-			if(frameSlots_[command.commandData()].status_== terFrameSlot::STATUS_COMPLETE)
-				id[command.commandData()] = command.commandID() - COMMAND_ID_BUILD_MASTER_INC;
-		}
-		break; }
-    default:
-        break;
-	}
+    const UnitCommand* cmd = lastCommand();
+    if (cmd) {
+        CommandID cmdID = cmd->commandID();
+        switch (cmdID) {
+            case COMMAND_ID_BUILD_MASTER_INC:
+            case COMMAND_ID_TERRAIN_MASTER_INC: {
+                if (frameSlots_[cmd->commandData()].status_ == terFrameSlot::STATUS_FREE) {
+                    phase[cmd->commandData()] = 1;
+                    id[cmd->commandData()] = cmdID - COMMAND_ID_BUILD_MASTER_INC;
+                } else if (frameSlots_[cmd->commandData()].status_ == terFrameSlot::STATUS_COMPLETE) {
+                    id[cmd->commandData()] = cmdID - COMMAND_ID_BUILD_MASTER_INC;
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
 }
 
 //---------------------------------------
@@ -742,7 +744,7 @@ int terFrame::GetInterfaceLegionMode()
 {
 	int stop = 0;
 	int move = 0;
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_STOP:
 		stop = 1;
 		break;
