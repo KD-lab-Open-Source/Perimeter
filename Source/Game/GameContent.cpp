@@ -60,9 +60,12 @@ void findGameContent() {
     if (!lastContent.empty()) settingsPath = ini->get(lastContent.c_str(), "GameContent");
 
     //On Windows use app dir before remembered and prefs path, on other OS data is usually separated from executable
-    std::string prefPath = GET_PREF_PATH();
-    terminate_with_char(prefPath, PATH_SEP);
-    prefPath += "Content";
+    std::string prefPath;
+    const char* prefPath_ptr = GET_PREF_PATH();
+    if (prefPath_ptr) {
+        prefPath = prefPath_ptr;
+        prefPath += "Content";
+    }
 
 #ifdef _WIN32
     paths.emplace_back(std::filesystem::current_path().string());
@@ -81,6 +84,7 @@ void findGameContent() {
     //Check paths for Resource dir
     std::set<std::string> scannedPaths;
     for (std::string rootPath : paths) {
+        if (rootPath.empty()) continue;
         terminate_with_char(rootPath, PATH_SEP);
         scannedPaths.insert(rootPath);
         printf("Checking game content from: %s\n", rootPath.c_str());
@@ -364,7 +368,10 @@ void detectGameContent() {
     }
 
     //Set current path to preferences, this is specially needed for MacOS as it forbids writing inside .app
-    std::filesystem::current_path(GET_PREF_PATH());
+    const char* prefPath_ptr = GET_PREF_PATH();
+    if (prefPath_ptr) {
+        std::filesystem::current_path(prefPath_ptr);
+    }
 
     //Check if we should select another content, this has to be done before loading addons
     const char* content_selection = check_command_line("content_select");

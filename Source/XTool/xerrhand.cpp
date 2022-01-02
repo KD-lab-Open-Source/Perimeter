@@ -394,10 +394,12 @@ XErrorHandler::XErrorHandler() {
     crash_func = nullptr;
     restore_func = nullptr;
     state = 0;
-    log_path = GET_PREF_PATH();
-    terminate_with_char(log_path, PATH_SEP);
+    log_path.clear();
+    const char* lop_path_ptr = GET_PREF_PATH();
+    if (lop_path_ptr) log_path = lop_path_ptr;
     log_path += "logfile.txt";
-	if (std::filesystem::exists(log_path)) {
+    printf("Writing log  at %s\n", log_path.c_str());
+	if (std::filesystem::exists(std::filesystem::path(log_path))) {
         std::fstream log_file;
         log_file.open(log_path.c_str(), std::ios::out | std::ios::trunc);
         log_file.close();

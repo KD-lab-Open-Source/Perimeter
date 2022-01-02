@@ -310,7 +310,7 @@ ENDIF()
 #Add gperftools
 IF(OPTION_GPERFTOOLS)
     MESSAGE("WARNING: Linking gperftools")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc -lprofiler)
 ENDIF()
 
 #Add XPrmLib if Debug build
@@ -324,7 +324,7 @@ SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
     ${SDL2MAIN_LIBRARY}
 )
 
-TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
+TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
 
 IF(OPTION_PROCESS_SCRIPTS)
     ADD_DEPENDENCIES(dependencies ScriptsCompile)
