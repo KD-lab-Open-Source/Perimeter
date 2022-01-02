@@ -264,8 +264,8 @@ void GameShell::generalErrorOccured(GeneralErrorType error) {
 
 ////////// Lobby/Ingame chat /////////////
 
-void chatWindowInput(CChatInGameEditWindow* chatInput) {
-    gameShell->getNetClient()->chatMessage(chatInput->alliesOnlyMode, chatInput->getText(), getLocale());
+void chatWindowInput(CChatInGameEditWindow* chatInput, bool ingame) {
+    gameShell->getNetClient()->chatMessage(ingame && chatInput->alliesOnlyMode, chatInput->getText(), getLocale());
     chatInput->SetText("");
 }
 
@@ -273,7 +273,7 @@ void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int p
     if( code == EVENT_DOUBLECLICK && intfCanHandleInput() ) {
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
         if (!chatInput->getText().empty()) {
-            chatWindowInput(chatInput);
+            chatWindowInput(chatInput, false);
         }
     }
 }
@@ -283,7 +283,7 @@ void onMMInGameChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int 
         terPlayer* activePlayer = universe()->activePlayer();
         CChatInGameEditWindow* chatInput = (CChatInGameEditWindow*) pWnd;
         if (activePlayer && !chatInput->getText().empty()) {
-            chatWindowInput(chatInput);
+            chatWindowInput(chatInput, true);
         }
     }
 }
