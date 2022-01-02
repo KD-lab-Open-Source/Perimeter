@@ -935,7 +935,6 @@ end_while_01:;
                 ErrH.Abort("Host client unavailable or doesn't contain mission description");
             }
 
-#ifdef PERIMETER_DEBUG
             //Save the data for debugging
             std::string crash_dir = get_content_root_path() + CRASH_DIR + PATH_SEP;
             terminate_with_char(crash_dir, PATH_SEP);
@@ -943,19 +942,20 @@ end_while_01:;
             fprintf(stderr, "Dumped desync restore data at: %s\n", crash_dir.c_str());
             create_directories(crash_dir);
             for (auto& client : to_restore) {
-                if (client->desync_missionDescription.get() == nullptr) {
-                    continue;
-                }
-                MissionDescription mission(*client->desync_missionDescription);
-
                 std::string path = crash_dir + std::to_string(client->netidPlayer) + "_" + client->playerName;
-                client->desync_missionDescription->setSaveName(path.c_str());
-
+                
                 if (client->desync_netlog.tell()) {
                     XStream ffnl(setExtension(path, "log").c_str(), XS_OUT, 0);
                     ffnl.write(client->desync_netlog.address(), client->desync_netlog.tell());
                     ffnl.close();
                 }
+                
+                if (client->desync_missionDescription == nullptr) {
+                    continue;
+                }
+                MissionDescription mission(*client->desync_missionDescription);
+                
+                client->desync_missionDescription->setSaveName(path.c_str());
 
                 XStream ffp(setExtension(path, "prm").c_str(), XS_OUT, 0);
                 ffp.write(mission.saveData, mission.saveData.length());
@@ -975,7 +975,6 @@ end_while_01:;
                 }
                 client->desync_missionDescription->saveMission(savePrm, true);
             }
-#endif
 
             //Clear host buffers
             ClearInputPacketList();

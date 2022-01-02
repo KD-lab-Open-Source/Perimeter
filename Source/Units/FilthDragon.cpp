@@ -955,7 +955,7 @@ void terFilthDragonHead::universalLoad(SaveUnitData* baseData)
 
 	if(data->NextPoint)
 	{
-		NextPoint = safe_cast<terFilthDragon*>(swarm->player->loadUnit(data->NextPoint));
+		NextPoint = safe_cast<terFilthDragon*>(swarm->player->loadUnit(data->NextPoint, false));
 		NextPoint->SetSwarm(swarm);
 		NextPoint->universalLoad(data->NextPoint);
 	}

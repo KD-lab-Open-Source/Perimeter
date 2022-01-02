@@ -139,6 +139,12 @@ void terProjectileBase::Quant()
 {
 	terUnitReal::Quant();
 
+    log_var(targetPosition_);
+    if (target_) {
+        log_var(target_->playerID());
+        log_var(target_->unitID());
+    }
+
 	if(alive() && killTimer_.was_started() && !killTimer_()){
 		explode();
 		Kill();

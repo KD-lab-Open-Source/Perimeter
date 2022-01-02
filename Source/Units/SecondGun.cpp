@@ -1113,6 +1113,11 @@ void terWeapon::fireEvent(const Vect3f& to,terUnitBase* target)
 
 	firePosition_ = to;
 	fireTarget_ = target;
+    log_var(firePosition_);
+    if (fireTarget_) {
+        log_var(fireTarget_->playerID());
+        log_var(fireTarget_->unitID());
+    }
 
 	bool call_fire = true;
 	if(setup_.hasFireController()){

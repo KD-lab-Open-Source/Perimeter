@@ -449,7 +449,7 @@ bool terHyperSpace::MultiQuant()
 
 //power of two / степень двойки!
 #ifdef PERIMETER_DEBUG
-const unsigned int periodSendLogQuant=2;
+const unsigned int periodSendLogQuant=1;
 #else
 const unsigned int periodSendLogQuant=8;
 #endif
