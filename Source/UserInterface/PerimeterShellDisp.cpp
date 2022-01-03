@@ -3642,7 +3642,8 @@ void CShellIconManager::UpdateSquadIcons()
 //	HT-SELECT!!!
 	if (mt_interface_quant) {
 
-		bool showTogetherBtn = false;
+        bool disableTogetherBtn = false;
+        bool showTogetherBtn = false;
 		if (	(_pShellDispatcher->GetSelectedUnitsCount() > 1) && 
 				(_pShellDispatcher->GetSelectedUnit()->attr().ID == UNIT_ATTRIBUTE_SQUAD)
 			) {
@@ -3659,15 +3660,22 @@ void CShellIconManager::UpdateSquadIcons()
 				for (selIt = selList.begin(); selIt != selList.end(); selIt++) {
 					b = *selIt;
 					terUnitSquad* sq = (terUnitSquad*)(*selIt);
-					if (sq != pSquadSelected && !sq->Empty() && sq->isBase()) {
-		//			if ((*selIt) != pSquadSelected && !((terUnitSquad*)(*selIt))->Empty()) {
-						showTogetherBtn = true;
-						break;
+					if (!sq->Empty()) {
+                        if (!sq->mutationFinished()) {
+                            disableTogetherBtn = true;
+                        }
+                        if (sq != pSquadSelected && sq->isBase()) {
+                            showTogetherBtn = true;
+                        }
 					}
 				}
 			}
 		}
-		GetWnd(SQSH_TOGETHER_ID)->Show(showTogetherBtn);
+        CShellWindow* btn = GetWnd(SQSH_TOGETHER_ID);
+        btn->Show(showTogetherBtn);
+        if (showTogetherBtn) {
+            btn->Enable(!disableTogetherBtn);
+        }
 	}
 }
 

@@ -1228,7 +1228,6 @@ void OnButtonDisintegrate(CShellWindow* pWnd, InterfaceEventCode code, int param
 }
 
 void OnButtonTogether(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-//	joinSelectedToSquad( GetSquadByNumber(((CUITabSheet*)GetWnd(SQSH_TAB_SQUAD_ID))->GetActivePage()) );
 	if (code == EVENT_PRESSED) {
 		CUITabSheet* pSquadSheet = (CUITabSheet*)_shellIconManager.GetWnd(SQSH_TAB_SQUAD_ID);
 		int nActivePage = pSquadSheet->GetActivePage();

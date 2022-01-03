@@ -419,8 +419,9 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 		break;
 
 	case COMMAND_ID_UNIT_MORPHING:
-		if(mutationFinished() && mutate((terUnitAttributeID)command.commandData()))
-			soundEvent(SOUND_VOICE_SQUAD_TRANSFORM_STARTED);
+		if (mutationFinished() && mutate((terUnitAttributeID)command.commandData())) {
+            soundEvent(SOUND_VOICE_SQUAD_TRANSFORM_STARTED);
+        }
 		break;
 
 	case COMMAND_ID_STOP: 
@@ -2109,8 +2110,10 @@ bool terUnitSquad::killBaseUnit(const UnitCommand& command)
 
 void terUnitSquad::addSquad(terUnitSquad* squad)
 {
-	if(squad->currentMutation() != UNIT_ATTRIBUTE_NONE)
-		return;
+    if (!squad || !mutationFinished()
+    || !squad->mutationFinished() || !squad->isBase()) {
+        return;
+    }
 	
 	while(!squad->Units.empty()){
 		terUnitLegionary* unit = squad->Units.front();
