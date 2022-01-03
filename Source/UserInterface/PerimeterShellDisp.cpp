@@ -4160,26 +4160,34 @@ void LogicUpdater::updateSquadsData() {
 
 			for (int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX; i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++) {
 				terUnitAttributeID id = (terUnitAttributeID)i;
-                if (unavailableContentUnitAttribute(id)) continue;
-				DamageMolecula damage_molecula(universe()->activePlayer()->unitAttribute(id)->damageMolecula);
-				int countPossible = pSquad->countPossibleUnits(id);
-				int count = pSquad->countUnits(id);
-				if (count > 0) {
-					countPossible = countPossible - count;
-				}
-				MutationButtonData* button = &(page->mutationButtons[i - UNIT_ATTRIBUTE_SOLDIER - MUTATION_ATOM_MAX]);
-				button->id = id;
+                MutationButtonData* button = &(page->mutationButtons[i - UNIT_ATTRIBUTE_SOLDIER - MUTATION_ATOM_MAX]);
+                button->id = id;
+                int countPossible = 0;
+                int count = 0;
+				DamageMolecula damage_molecula;
+                if (unavailableContentUnitAttribute(id)) {
+                    button->visible = false;
+                    button->enabled = false;
+                } else {
+                    button->visible = true;
+                    button->enabled = player->GetMutationElement(id).Enabled;
+                    damage_molecula = (universe()->activePlayer()->unitAttribute(id)->damageMolecula);
+                    countPossible = pSquad->countPossibleUnits(id);
+                    count = pSquad->countUnits(id);
+                }
+                if (count > 0) {
+                    countPossible = countPossible - count;
+                }
 				button->count = countPossible;
 				button->append = count > 0;
 //				button->visible = !bEmpty && player->GetMutationElement(id).Enabled;
 				//button->enabled = (!bEmpty || plantExists) && player->GetMutationElement(id).Enabled;
-                button->enabled = player->GetMutationElement(id).Enabled;
 				button->bS = atom_data[0] >= damage_molecula[0];
 				button->bO = atom_data[1] >= damage_molecula[1];
 				button->bT = atom_data[2] >= damage_molecula[2];
 				button->bNoMutationEnergy = bNoMutEnergy;
 
-				button->visible = true;
+                //Hide faction specific buttons
 				switch (getRace(id)) {
 					case EXODUS:
 						button->visible &= exodusEnabled;
@@ -4192,7 +4200,7 @@ void LogicUpdater::updateSquadsData() {
 						break;
                     default:
                         break;
-				}			
+				}
 			}
 
 			int nBaseUnitCount = pSquad->squadMutationMolecula().aliveElementCount(DAMAGE_FILTER_BASE);
@@ -4255,13 +4263,10 @@ void LogicUpdater::updateSquadsData() {
 
 			for (int i = UNIT_ATTRIBUTE_SOLDIER + MUTATION_ATOM_MAX; i < UNIT_ATTRIBUTE_LEGIONARY_MAX; i++) {
 				terUnitAttributeID id = (terUnitAttributeID)i;
-                if (unavailableContentUnitAttribute(id)) continue;
-				DamageMolecula damage_molecula(universe()->activePlayer()->unitAttribute(id)->damageMolecula);
 				MutationButtonData* button = &(page->mutationButtons[i - UNIT_ATTRIBUTE_SOLDIER - MUTATION_ATOM_MAX]);
 				button->id = id;
 				button->count = 0;
 				button->append = false;
-//				button->visible = !bEmpty && player->GetMutationElement(id).Enabled;
 				button->enabled = false;
 				button->bS = false;
 				button->bO = false;

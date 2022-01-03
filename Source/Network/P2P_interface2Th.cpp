@@ -12,7 +12,7 @@
 #include "files/files.h"
 
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
-const int PNC_DESYNC_RESTORE_ATTEMPTS = 10;
+const int PNC_DESYNC_RESTORE_ATTEMPTS = 8;
 const int PNC_DESYNC_RESTORE_MODE_PARTIAL = 0; //2; TODO set back once partial load is finished 
 const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 5 * 60 * 1000; //5 mins
 const int PNC_DESYNC_RESTORE_MODE_FULL = PNC_DESYNC_RESTORE_MODE_PARTIAL + 1; 
@@ -662,7 +662,6 @@ void PNetCenter::LLogicQuant()
                                     case PNC_DESYNC_NONE:
                                     case PNC_DESYNC_RESTORE_FINISHED:
                                         client->desync_amount++;
-                                        client->desync_last_time = clocki();
                                         if (client->desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
                                             client->desync_state = PNC_DESYNC_RESTORE_FAILED;
                                             std::string gameID = std::to_string(time(nullptr)) + "_failed";
@@ -672,15 +671,16 @@ void PNetCenter::LLogicQuant()
                                             fprintf(stderr, "Failed to recover network synchronization with %llX after %d times\n", client->netidPlayer, client->desync_amount);
                                         } else {
                                             client_desync |= true;
-                                            if (clocki() - client->desync_last_time >
+                                            if (client->desync_last_time && clocki() - client->desync_last_time >
                                                 PNC_DESYNC_RESTORE_ATTEMPTS_TIME) {
-                                                client->desync_amount = 0;
+                                                client->desync_amount = 1;
                                             }
                                             client->desync_state = PNC_DESYNC_DETECTED;
                                             fprintf(stderr, "Error network synchronization with %llX: "
                                                             "Unmatched game quants signatures ! Quant=%u\n",
                                                     client->netidPlayer, (*firstList.begin()).quant_);
                                         }
+                                        client->desync_last_time = clocki();
                                         break;
                                     case PNC_DESYNC_RESTORE_FAILED:
                                         //Take it as valid for now

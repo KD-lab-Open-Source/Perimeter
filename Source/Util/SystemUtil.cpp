@@ -395,7 +395,7 @@ std::string getStringSettings(const std::string& keyName, const std::string& def
     IniManager* ini = getSettings();
     std::string key = terGameContentBase == GAME_CONTENT::CONTENT_NONE ? "Global" : getGameContentEnumName(terGameContentBase);
     const char* result = ini->get(key.c_str(), keyName.c_str());
-    if (result) {
+    if (*result) {
         found = true;
         res = result;
     }
