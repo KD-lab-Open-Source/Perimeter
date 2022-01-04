@@ -18,6 +18,11 @@ if [[ -z $LIB_DIR ]]; then
   echo "LIB_DIR missing"
   exit 1
 fi
+if [[ -z $VULKAN_LIB_VERSION ]]; then
+  echo "VULKAN_LIB_VERSION missing"
+  exit 1
+fi
+
 
 VULKAN_LIB_DIR="/usr/local/lib"
 DXVK_NATIVE_PATH="$BUILD_DIR/Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.dylib"
@@ -40,4 +45,4 @@ dylibbundler -x $APP_DIR/Contents/MacOS/Perimeter -b -d $APP_DIR/Contents/Libs
 
 chmod 777 $APP_DIR/Contents/Libs/*
 
-cp -L /usr/local/lib/libvulkan.1.2.189.dylib $APP_DIR/Contents/Libs/libvulkan.1.2.189.dylib
+cp -L /usr/local/lib/libvulkan.$VULKAN_LIB_VERSION.dylib $APP_DIR/Contents/Libs/
