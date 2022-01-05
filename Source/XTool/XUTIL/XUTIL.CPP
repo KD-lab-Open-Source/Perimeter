@@ -100,6 +100,38 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
     return choice == 1;
 }
 
+int MessageBoxChoice(const char* title, const char* message, const std::vector<std::string>& buttons, uint32_t flags) {
+    if (flags == 0) {
+        flags = SDL_MESSAGEBOX_INFORMATION;
+    }
+    
+    std::vector<SDL_MessageBoxButtonData> buttonData;
+    int i = 1;
+    for (auto& button : buttons) {
+        buttonData.push_back({ 0, i, button.c_str() });
+        i++;
+    }
+
+    const SDL_MessageBoxData data = {
+            flags, /* .flags */
+            nullptr, /* .window */
+            title, /* .title */
+            message, /* .message */
+            static_cast<int>(buttonData.size()), /* .numbuttons */
+            buttonData.data(), /* .buttons */
+            nullptr /* .colorScheme */
+    };
+
+    int choice = 0;
+    int err = SDL_ShowMessageBox(&data, &choice);
+    if (err) {
+        fprintf(stdout, "MessageBoxChoice: %s\n", title);
+        SDL_PRINT_ERROR("Creating MessageBoxQuestion window");
+    }
+    
+    return choice;
+}
+
 void terminate_with_char(std::string& buffer, const char chr) {
     //Check if already has
     if (!buffer.empty() && buffer[buffer.length() - 1] != chr) {

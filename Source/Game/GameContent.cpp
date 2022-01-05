@@ -243,6 +243,7 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
     for (std::string& path : lang_paths) {
         std::string texts_path = path + "Text/Texts.btdb";
         if (!convert_path_content(addonDir + texts_path).empty()) {
+            //Override texts if game content selection is ET only
             if (terGameContentSelect == PERIMETER_ET) {
                 paths[texts_path] = locpath + "Text/Texts_ET.btdb";
                 //paths[path + "Fonts"] = locpath;
@@ -250,7 +251,7 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
             } else {
                 paths[texts_path] = locpath + "Text/Texts_ET_noreplace.btdb";
             }
-            //printf("Addon ET: Using texts %s\n", path.c_str());
+            printf("Addon ET: Using locale at %s\n", path.c_str());
             break;
         }
     }

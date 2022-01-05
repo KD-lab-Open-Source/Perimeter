@@ -45,6 +45,8 @@ const char* check_command_line(const char* switch_str);
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
+int MessageBoxChoice(const char* title, const char* message, const std::vector<std::string>& buttons, uint32_t flags = 0);
+
 //Adds char to string in end if not present
 void terminate_with_char(std::string& buffer, char chr);
 

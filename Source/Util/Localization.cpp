@@ -14,6 +14,13 @@ void initCodePages();
 
 void initLocale() {
     initCodePages();
+
+    for (filesystem_entry* entry : get_content_entries_directory("Resource/LocData")) {
+        if (entry->is_directory) {
+            std::filesystem::path path(entry->path_content);
+            localesAvailable.emplace_back(path.filename().string());
+        }
+    }
     
     const char* cmdlineLocale = check_command_line("locale");
     
@@ -21,35 +28,62 @@ void initLocale() {
         localeCurrent = cmdlineLocale;
     }
     if (localeCurrent.empty()) {
-        localeCurrent = getStringSettings("Locale");
+        localeCurrent = IniManager("Perimeter.ini", false).get("Game", "Language");
     }
     if (localeCurrent.empty()) {
-        localeCurrent = IniManager("Perimeter.ini", false).get("Game", "DefaultLanguage");
-        if (localeCurrent.empty()) {
-            localeCurrent = "english";
+        localeCurrent = getStringSettings("Locale");
+        if (!localeCurrent.empty()) {
+            fprintf(stdout, "Previously selected locale: %s\n", localeCurrent.c_str());
         }
     }
+    //Clear language if requested
+    if (check_command_line("clearlocale") || IniManager("Perimeter.ini", false).getInt("Game","ClearLocale")) {
+        fprintf(stdout, "Clearing previously selected locale\n");
+        localeCurrent = "";
+        putStringSettings("Locale", localeCurrent);
+    }
+    //Check if locale is actually available
     if (!localeCurrent.empty()) {
         _strlwr(localeCurrent.data());
-    }
-    if (localeCurrent.empty()
-        || (convert_path_content("Resource/LocData/" + localeCurrent).empty())) {
-        //Apparently on Steam the DefaultLanguage is Russian which gives issues when downloading game as non russian
-        //so we try switching it in case we don't found on gamedata, in case English fails use Russian by default
-        if (localeCurrent == "english") {
-            localeCurrent = "russian";
-        } else {
-            localeCurrent = "english";
+        bool found = false;
+        for (auto& locale : localesAvailable) {
+            found |= stricmp(locale.c_str(), localeCurrent.c_str()) == 0;
+            if (found) break;
+        }
+        if (!found) {
+            localeCurrent = "";
         }
     }
+    //Show selector if there is more than 1 locales available and none is currently active
+    if (localeCurrent.empty() && 1 < localesAvailable.size()) {
+        int choice = MessageBoxChoice("Perimeter", "Select language:", localesAvailable);
+        if (0 < choice && choice <= localesAvailable.size()) {
+            localeCurrent = localesAvailable[choice - 1];
+            _strlwr(localeCurrent.data());
+            
+            //Save user selection
+            putStringSettings("Locale", localeCurrent);
+            fprintf(stdout, "User selected locale: %s\n", localeCurrent.c_str());
+        }
+    }  
+    if (localeCurrent.empty()) {
+        if (localesAvailable.empty()) {
+            //No languages in locales dir ???
+            localeCurrent = "?";
+            fprintf(stderr, "No locale available!");
+        } else {
+            //Just choose first available lang
+            localeCurrent = localesAvailable.front();
+            _strlwr(localeCurrent.data());
+            fprintf(stdout, "No locale selected, using first available: %s\n", localeCurrent.c_str());
+        }
+        
+    }
+
+    fprintf(stdout, "Current locale: %s\n", localeCurrent.c_str());
+    
     localePath = getLocRootPath();
     localePath += localeCurrent + "/";
-
-
-    for (filesystem_entry* entry : get_content_entries_directory("Resource/LocData")) {
-        std::filesystem::path path(entry->path_content);
-        localesAvailable.emplace_back(path.filename().string());
-    }
     
     isLocaleInit = true;
 }
