@@ -1096,8 +1096,10 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
-	FOR_EACH(items, i)
-		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
+	FOR_EACH(items, i) {
+        std::string text = getLocaleString(*i, getLocale());
+		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
+    }
 	
 	Vect2i ps = gameShell->convertToScreenAbsolute(gameShell->mousePosition());
 	int index = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, ps.x, ps.y, 0, hWndVisGeneric, 0);
@@ -1110,6 +1112,7 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 		return 0;
 #else
     //TODO
+    fprintf(stderr, "popupMenu not implemented for this platform\n");
     return 0;
 #endif
 }
@@ -1123,8 +1126,10 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
-	FOR_EACH(items, i)
-		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
+	FOR_EACH(items, i) {
+        std::string text = getLocaleString(*i, getLocale());
+		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
+    }
 	
 	Vect2i ps = gameShell->convertToScreenAbsolute(gameShell->mousePosition());
 	int index = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, ps.x, ps.y, 0, hWndVisGeneric, 0);
@@ -1137,6 +1142,7 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 		return -1;
 #else
     //TODO
+    fprintf(stderr, "popupMenuIndex not implemented for this platform\n");
     return -1;
 #endif
 }
@@ -1192,6 +1198,9 @@ const char* editText(const char* defaultValue)
 	editTextString = defaultValue;
 #ifndef PERIMETER_EXODUS
 	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT),hWndVisGeneric,DialogProc);
+#else
+    //TODO
+    fprintf(stderr, "editText not implemented for this platform\n");
 #endif
 	return editTextString.c_str();
 }
@@ -1201,6 +1210,9 @@ const char* editTextMultiLine(const char* defaultValue, void* hwnd)
 	editTextString = defaultValue;
 #ifndef PERIMETER_EXODUS
 	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE), static_cast<HWND>(hwnd), DialogProc);
+#else
+    //TODO
+    fprintf(stderr, "editTextMultiLine not implemented for this platform\n");
 #endif
 	return editTextString.c_str();
 }

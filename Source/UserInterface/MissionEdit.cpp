@@ -15,6 +15,7 @@
 #include "ScanPoly.h"
 #include "GeoControl.h"
 #include "EditArchive.h"
+#include "qd_textdb.h"
 
 //------------------------------------------------
 MissionEditor::MissionEditor()
@@ -30,9 +31,10 @@ MissionEditor::MissionEditor()
 
 MissionEditor::~MissionEditor()
 {
-	if(hardnessChanged_ && 
-		MessageBoxQuestion("Mission Editor", "Редактирование неразрушаемости незаписано. Записать?"))
-				vMap.saveHardness();
+    const char* msg = getLocale() == "russian" ? "Редактирование неразрушаемости незаписано. Записать?" : "Editing hardness unsaved. Write?";
+    if (hardnessChanged_ && MessageBoxQuestion("Mission Editor", msg)) {
+        vMap.saveHardness();
+    }
 }
 
 void MissionEditor::quant()
@@ -130,27 +132,33 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		createUnit();
 		return true;
 		
-	case VK_DELETE:
-		if(editingHardness_){
-			if(MessageBoxQuestion("MissionEditor", "Стереть всю неразрушаемость?"))
-				clearHardness();
-		}
-		else if(universe()->selectedObject() && MessageBoxQuestion("MissionEditor", "Удалить выделенный объект?")){
-			universe()->DeleteSelectedObjects();
-			_pUnitHover = 0;
-		}
-		return true;
+	case VK_DELETE: {
+        bool russian = getLocale() == "russian";
+        if (editingHardness_) {
+            if (MessageBoxQuestion("MissionEditor", russian ? "Стереть всю неразрушаемость?" : "Erase all hardness?")) {
+                clearHardness();
+            }
+        } else if (universe()->selectedObject() && MessageBoxQuestion("MissionEditor", russian ? "Удалить выделенный объект?" : "Delete selected objects?")) {
+            universe()->DeleteSelectedObjects();
+            _pUnitHover = 0;
+        }
+        return true;
+    }
 
-	case 'D':
-		if(universe()->selectedObject() && MessageBoxQuestion("MissionEditor", "Удалить выделенный объект?")){
-			universe()->DeleteSelectedObjects();
-			_pUnitHover = 0;
-		}
-		return true;
+	case 'D': {
+        const char* msg = getLocale() == "russian" ? "Удалить выделенный объект?" : "Delete selected objects?";
+        if (universe()->selectedObject() && MessageBoxQuestion("MissionEditor", msg)) {
+            universe()->DeleteSelectedObjects();
+            _pUnitHover = 0;
+        }
+        return true;
+    }
 
 	case 'D' | KBD_SHIFT:
-		universe()->DeleteSelectedObjects();
-		_pUnitHover = 0;
+        if (universe()->selectedObject()) {
+            universe()->DeleteSelectedObjects();
+            _pUnitHover = 0;
+        }
 		return true;
 
 	case 'H' | KBD_CTRL:
@@ -203,8 +211,9 @@ bool MissionEditor::keyPressed(const sKey& Key)
 
 	case VK_ESCAPE: 
 	case VK_ESCAPE | KBD_SHIFT:
-		if(editingHardness_)
-			hardnessPolygon_.clear();
+		if(editingHardness_) {
+            hardnessPolygon_.clear();
+        }
 		return true; 
 
 	}
@@ -283,18 +292,21 @@ terFilthSpotID SelectFilth()
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
+    bool russian = getLocale() == "russian";
 	std::vector<const char*> filth;
-	for(int i=0;i<sz;i++)
-		filth.push_back(name[i].name);
+	for (int i=0;i<sz;i++) {
+        if (russian) {
+            filth.push_back(name[i].name);
+        } else {
+            filth.push_back(getEnumDescriptor(FILTH_SPOT_ID_NONE).name(name[i].id));
+        }
+    }
 
-	const char* choose=popupMenu(filth);
+    int choose=popupMenuIndex(filth);
 
-	if(choose)
-	for(int i=0;i<sz;i++)
-	if(name[i].name==choose)
-	{
-		return name[i].id;
-	}
+    if(0 < choose) {
+        return name[choose].id;
+    }
 
 	return FILTH_SPOT_ID_NONE;
 }
@@ -314,18 +326,21 @@ terUnitAttributeID SelectGeo()
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
-	std::vector<const char*> filth;
-	for(int i=0;i<sz;i++)
-		filth.push_back(name[i].name);
+    bool russian = getLocale() == "russian";
+    std::vector<const char*> filth;
+    for (int i=0;i<sz;i++) {
+        if (russian) {
+            filth.push_back(name[i].name);
+        } else {
+            filth.push_back(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(name[i].id));
+        }
+    }
 
-	const char* choose=popupMenu(filth);
+	int choose=popupMenuIndex(filth);
 
-	if(choose)
-	for(int i=0;i<sz;i++)
-	if(name[i].name==choose)
-	{
-		return name[i].id;
-	}
+	if(0 < choose) {
+        return name[choose].id;
+    }
 
 	return UNIT_ATTRIBUTE_NONE;
 }
@@ -335,11 +350,12 @@ void MissionEditor::createUnit()
 	terUnitAttributeID attributeID = UNIT_ATTRIBUTE_NONE;
 	const char* modelDirectory = 0;
 
-	const char* itemBuildings = "Здания";
-	const char* itemNature = "Деревья";
-	const char* itemFilth = "Скверна";
-	const char* itemSensors = "Сенсора";
-	const char* itemGeoprocess = "Геопроцессы";
+    bool russian = getLocale() == "russian";
+	const char* itemBuildings = russian ? "Здания" : "Buildings";
+	const char* itemNature = russian ? "Деревья" : "Nature";
+	const char* itemFilth = russian ? "Скверна" : "Scourge";
+	const char* itemSensors = russian ? "Сенсора" : "Sensors";
+	const char* itemGeoprocess = russian ? "Геопроцессы" : "Geoprocess";
 	std::vector<const char*> items;
 	items.push_back(itemBuildings);
 	items.push_back(itemNature);
@@ -350,15 +366,21 @@ void MissionEditor::createUnit()
 	if(item == itemBuildings){
 		terPlayer* player = universe()->activePlayer();
 		items.clear();
-		items.push_back(player->unitAttribute((terUnitAttributeID)UNIT_ATTRIBUTE_FRAME)->internalName());
+		items.push_back(player->unitAttribute(static_cast<terUnitAttributeID>(UNIT_ATTRIBUTE_FRAME))->internalName(russian));
 		for(int i = 0; i < UNIT_ATTRIBUTE_MAX; i++){
 			terUnitAttributeID id = (terUnitAttributeID)i;
-			if(isBuilding(id) || isLegionary(id))
-				items.push_back(player->unitAttribute(id)->internalName());
+			if(isBuilding(id) || isLegionary(id)) {
+                items.push_back(player->unitAttribute(id)->internalName(russian));
+            }
 		}
-		const char* item = popupMenu(items);
-		if(item)
-			attributeID = (terUnitAttributeID)getEnumDescriptor(UNIT_ATTRIBUTE_NONE).keyByNameAlt(item);
+		const char* itemSel = popupMenu(items);
+		if(itemSel) {
+            if (russian) {
+                attributeID = static_cast<terUnitAttributeID>(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).keyByNameAlt(itemSel));
+            } else {
+                attributeID = static_cast<terUnitAttributeID>(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).keyByName(itemSel));
+            }
+        }
 	}
 	else if(item == itemNature){
 		setPlayer(-1);
@@ -372,7 +394,7 @@ void MissionEditor::createUnit()
 	else if(item == itemSensors){
 		setPlayer(-1);
 		items.clear();
-		const char* itemAlphaPotential = "Полюса для Альфы";
+		const char* itemAlphaPotential = russian ? "Полюса для Альфы" : "Alpha potential";
 		items.push_back(itemAlphaPotential);
 		const char* item = popupMenu(items);
 		if(item == itemAlphaPotential)
@@ -382,7 +404,6 @@ void MissionEditor::createUnit()
 		Vect3f v;
 		if(universe()->worldPlayer() && terCamera->cursorTrace(gameShell->mousePosition(),v))
 		{
-			terUnitAttributeID SelectGeo();
 			terUnitAttributeID id=SelectGeo();
 			if(id!=UNIT_ATTRIBUTE_NONE)
 			{
@@ -436,47 +457,111 @@ void MissionEditor::createUnit()
 
 const char* MissionEditor::info()
 {
-	info_.init();
+    const std::string& locale = getLocale();
+    bool russian = locale == "russian";
+    info_.clear();
+    
+    //TODO use qdTextDB instead of hardcoding texts here
 
+    //Mission name
 	std::string missionName = gameShell->CurrentMission.savePathKey();
 	size_t pos = missionName.rfind(std::string("resource") + PATH_SEP);
 	if(pos != std::string::npos) {
         missionName.erase(0, pos);
     }
-	info_ < "Миссия: " < missionName.c_str() < "\n";
+    if (russian) {
+        info_ += getLocaleString("Миссия: ", locale);
+    } else {
+        info_ += "Mission: ";
+    }
+    info_ += missionName + "\n";
 
+    //Active Player
 	terPlayer* player = universe()->activePlayer();
-	if(player->isWorld())
-		info_ < "Игрок \"Мир\"\n";
-	else 
-		switch(player->playerID()){
-		case 0:
-			info_ < "Игрок1 \"Я\"\n";
-			break;
-		case 1:
-			info_ < "Игрок2 \"Враг\"\n";
-			break;
-		default:
-			info_ < "Игрок" <= player->playerID() < "\n";
-		}
+    info_ += qdTextDB::instance().getText("Interface.Menu.ComboItems.Player");
+    if (russian) {
+        if(player->isWorld()) {
+            info_ += getLocaleString(" \"Мир\"", locale);
+        } else if (player->playerID() == 0) {
+            info_ += getLocaleString(" \"Я\"", locale);
+        } else if (player->playerID() == 1) {
+            info_ += getLocaleString(" \"Враг\"", locale);
+        }
+    } else {
+        if(player->isWorld()) {
+            info_ += " \"World\"";
+        } else if (player->playerID() == 0) {
+            info_ += " \"Me\"";
+        } else if (player->playerID() == 1) {
+            info_ += " \"Enemy\"";
+        }
+    }
+    info_ += " " + std::to_string(player->playerID()) + "\n";
 
+    //Selected object
 	terUnitBase* unit = universe()->selectedObject();
-	if(unit){
-		info_ < "Объект: " < unit->attr().internalName() < "\n";
-		if(unit->GetModelName())
-			info_ < "Модель: " < unit->GetModelName() < "\n";
+	if (unit) {
+        if (russian) {
+            info_ += getLocaleString("Объект: ", locale);
+        } else {
+            info_ += "Object: ";
+        }
+        info_ += getLocaleString(unit->attr().internalName(false), locale);
+        if (russian) {
+            //Most alt names are in russian anyway
+            info_ += " - ";
+            info_ += getLocaleString(unit->attr().internalName(true), locale);
+        }
+        info_ += "\n";
+		if (unit->GetModelName()) {
+            if (russian) {
+                info_ += getLocaleString("Модель: ", locale);
+            } else {
+                info_ += "Model: ";
+            }
+            info_ += getLocaleString(unit->GetModelName(), locale);
+            info_ += "\n";
+        }
 	}
 
-	if(copiedData_)
-		info_ < "Запомнен: " < getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(copiedData_->attributeID) < "\n";
+    
+    //Copied item
+	if (copiedData_) {
+        if (russian) {
+            info_ += getLocaleString("Запомнен: ", locale);
+        } else {
+            info_ += "Copied: ";
+        }
+        info_ += getLocaleString(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(copiedData_->attributeID), locale);
+        info_ += "\n";
+    }
 
-	if(editingHardness_)
-		info_ < (!isShiftPressed() ? "Редактирование некопаемых областей\n" : "Редактирование копаемых областей\n");
+    //Hardness edit
+	if (editingHardness_) {
+        if (russian) {
+            info_ += getLocaleString(
+                    !isShiftPressed() ? "Редактирование некопаемых областей\n"
+                                      : "Редактирование копаемых областей\n",
+                    locale
+            );
+        } else {
+            info_ += !isShiftPressed() ? "Editing non-digging regions\n" : "Editing regions to dig\n";
+        }
+    }
 
-	if(terCamera->pathSize())
-		info_ < (terCamera->restricted() ? "Camera: " : "Camera (ограничена): ") <= terCamera->pathSize() < "\n";
-
-	return info_.address();
+    //Camera
+	if (terCamera->pathSize()) {
+        if (terCamera->restricted()) {
+            info_ += "Camera: ";
+        } else if (russian) {
+            info_ += getLocaleString("Camera (ограничена): ", locale);
+        } else {
+            info_ += "Camera (restricted): ";
+        }
+        info_ += std::to_string(terCamera->pathSize()) + "\n";
+    }
+    
+	return info_.c_str();
 }
 
 void MissionEditor::copyUnit()

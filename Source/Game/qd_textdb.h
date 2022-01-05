@@ -33,7 +33,7 @@ public:
 	Если clear_old_texts == true, то загруженная в данный момент база очищается.
 	В финальной версии база комментариев игнорируется.
 	*/
-	bool load(const char* file_name, const char* comments_file_name, bool clear_old_texts, bool replace_old_texts, bool format_txt);
+	bool load(const std::string& locale, const char* file_name, const char* comments_file_name, bool clear_old_texts, bool replace_old_texts, bool format_txt);
 
     ///Loads texts from lines using a basic format as:
     ///text_id=text content\nmore content etc

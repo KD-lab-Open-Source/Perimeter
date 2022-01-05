@@ -22,7 +22,7 @@ public:
 	void clearHardnessChanged() { hardnessChanged_ = false; }
 
 private:
-	XBuffer info_;
+	std::string info_;
 
 	terUnitAttributeID copiedID_;
 	struct SaveUnitData* copiedData_;

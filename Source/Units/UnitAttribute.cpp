@@ -708,9 +708,13 @@ void collect_content_crc() {
 //	}
 //}
 
-const char* AttributeBase::internalName() const
+const char* AttributeBase::internalName(bool alt) const
 {
-	return getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(ID);
+    if (alt) {
+        return getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(ID);
+    } else {
+        return getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(ID);
+    }
 }
 
 bool AttributeBase::enabledByBelligerent(terBelligerent belligerentIn) const

@@ -763,12 +763,22 @@ void terFilthSpot::ShowInfo()
 {
 	if(gameShell->missionEditor())
 	{
-		Vect3f e,w;
+        std::string text;
+        const std::string& locale = getLocale();
+        if (locale == "russian") {
+            text = getLocaleString("Скверна: ", locale);
+            text += getLocaleString(getEnumDescriptor(FILTH_SPOT_ID_NONE).nameAlt(FilthParamID), locale);
+            text += "\n";
+        } else {
+            text = "Scourge:\n";
+        }
+        text += getEnumDescriptor(FILTH_SPOT_ID_NONE).name(FilthParamID);
+        Vect3f e,w;
 		terCamera->GetCamera()->ConvertorWorldToViewPort(&position(),&w,&e);
 		terRenderDevice->SetFont(gameShell->debugFont());
 		if(selected())
 		{
-			terRenderDevice->OutText(xm::round(e.x),xm::round(e.y),"Filth",sColor4f(1.0f,1.0f,1.0f,1.0f));
+			terRenderDevice->OutText(xm::round(e.x),xm::round(e.y),text.c_str(),sColor4f(1.0f,1.0f,1.0f,1.0f));
 			terRenderDevice->DrawRectangle(xm::round(e.x) - 2,xm::round(e.y) - 2,4,4,sColor4c(255,255,255,255),0);
 
 			if(attack_width>0)
@@ -786,7 +796,7 @@ void terFilthSpot::ShowInfo()
 			}
 		}else
 		{
-			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), "Filth", sColor4f(1.0f, 1.0f, 1.0f, 0.5f));
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 0.5f));
 			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 		}
 		terRenderDevice->SetFont(0);

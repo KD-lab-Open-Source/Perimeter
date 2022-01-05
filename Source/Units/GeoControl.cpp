@@ -155,13 +155,23 @@ void terGeoControl::ShowInfo()
 		Vect3f e,w;
 		terCamera->GetCamera()->ConvertorWorldToViewPort(&position(),&w,&e);
 		terRenderDevice->SetFont(gameShell->debugFont());
+        std::string text;
+        const std::string& locale = getLocale();
+        if (locale == "russian") {
+            text = getLocaleString("Гео: ", locale);
+            text += getLocaleString(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr().ID), locale);
+            text += "\n";
+        } else {
+            text = "Geo:\n";
+        }
+        text += getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(attr().ID);
 		if(selected())
 		{
-			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), "Geo", sColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 1.0f));
 			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, sColor4c(255, 255, 255, 255), 0);
 		}else
 		{
-			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), "Geo", sColor4f(1.0f, 1.0f, 1.0f, 0.5f));
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 0.5f));
 			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 		}
 		terRenderDevice->SetFont(0);

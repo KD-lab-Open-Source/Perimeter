@@ -89,7 +89,7 @@ void qdTextDB::add_entry(const std::string& id_str, const qdText& text, bool rep
     }
 }
 
-bool qdTextDB::load(const char* file_name, const char* comments_file_name,
+bool qdTextDB::load(const std::string& locale, const char* file_name, const char* comments_file_name,
                     bool clear_old_texts, bool replace_old_texts, bool format_txt)
 {
     XStream fh(0);
@@ -144,6 +144,7 @@ bool qdTextDB::load(const char* file_name, const char* comments_file_name,
         
         load_lines(lines, replace_old_texts);
     } else {
+        bool russian = locale == "russian";
         int text_cnt;
         fh > text_cnt;
 
@@ -170,7 +171,14 @@ bool qdTextDB::load(const char* file_name, const char* comments_file_name,
             fh.read(snd_str, snd_length);
             snd_str[snd_length] = 0;
 
-            add_entry(id_str, qdText(txt_str, snd_str), replace_old_texts);
+            bool discard = false;
+            if (!russian && strcmp(id_str, "Interface.Tips.mission_editor_help") == 0) {
+                //Was never translated in other languages in releases so we discard it
+                discard = true;
+            }
+            if (!discard) {
+                add_entry(id_str, qdText(txt_str, snd_str), replace_old_texts);
+            }
 
             free(id_str);
             free(txt_str);
@@ -320,6 +328,41 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
        "Interface.Tips.ToAllPostfix=(&FF00FFto all&FFFFFF)",
        "Interface.Tips.ToClanPrefix=&FF00FFTo clan&FFFFFF: ",
        "Interface.Tips.ToAllPrefix=&FF00FFTo all&FFFFFF: ",
+       //Not translated
+       "Interface.Tips.mission_editor_help=Mission Editor:\n\n"
+       "Q - Player \"Me\"\n"
+       "W - Player \"World\"\n"
+       "E - Player \"Enemy\"\n\n"
+       "Working with an object:\n\n"
+       "F, INS - Create object\n"
+       "D, DEL - Delete object\n"
+       "Shift-D - Delete Object Silently\n\n"
+       "Ctrl-C - Save Object\n"
+       "Ctrl-V - Copy Object\n\n"
+       "V + mouse_move - Move object\n"
+       "Shift-V + mouse_move - Move object by Z\n"
+       "C + mouse_move - Rotate the object\n"
+       "Shift-C + mouse_move - Move object\n"
+       "Ctrl-Shift-C + mouse_move - Move object directly\n"
+       "X + mouse_move - Zoom in / out the object\n\n"
+       "F4 - Edit Text Data\n"
+       "Ctrl-Enter - Trigger Editor from Ilyuha\n"
+       "Ctrl-S - Record Mission\n"
+       "Ctrl-O - Open mission file\n"
+       "Ctrl-Shift-O - Reopen the current mission\n"
+       "Ctrl-M - Remember the camera of the current player\n\n"
+       "Ctrl-H - Enable / disable indestructibility editing\n"
+       "         Edit LeftMouse _clockwise_,\n"
+       "         Shift - destructible\n"
+       "Enter - End the current region (the right button is busy rotating)\n"
+       "Cancel - Cancel the current region\n"
+       "Ctrl-Alt-H - Erase All Indestructibility\n\n"
+       "Camera:\n"
+       "F9 - Add Spline Control Point\n"
+       "Shift-F9 - Delete the last point of the spline\n"
+       "Ctrl-F9 - start / stop playback\n"
+       "Ctrl-Shift-F9 - Clear Current Spline\n"
+       "Ctrl-Alt-F9 - write current spline ",
        //Empty to not mess with ,'s
        ""
    }, false);

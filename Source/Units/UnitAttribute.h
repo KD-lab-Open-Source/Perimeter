@@ -1567,7 +1567,7 @@ public:
 	bool isDefenciveAttackEnabled() const { if(weaponSetup.checkFlag(WEAPON_DISABLE_DEFENCIVE_ATTACK)) return false; else return true; }
 	bool checkWeaponFlag(int flag) const { return weaponSetup.checkFlag(flag); }
 
-	const char* internalName() const;
+	const char* internalName(bool alt) const;
 	const char* interfaceName() const { return InterfaceName.c_str(); }
 	const char* interfaceNameTag() const { return InterfaceNameTag; }
 	void setInterfaceName(const char* name) { InterfaceName = name; }

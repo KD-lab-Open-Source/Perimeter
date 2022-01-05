@@ -1065,9 +1065,9 @@ void terPlayer::universalSave(SavePlayerData& data, bool userSave) const {
 			if(bi->dockMode() == DOCK_MODE_NONE){
 				data.buildings.push_back(bi->universalSave(0));
 				xassert(data.buildings.back());
-			}
-			else 
-				xassert_s(0 && "Игнорируется запись здания: ", (*bi)->attr().internalName());
+			} else {
+                xassert_s(0 && "Ignoring building entry: ", (*bi)->attr().internalName(false));
+            }
 		}
 	}
 

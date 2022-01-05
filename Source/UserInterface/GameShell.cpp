@@ -271,52 +271,65 @@ windowClientSize_(1024, 768)
 		missionEditor_ = new MissionEditor;
 
 	if(!MainMenuEnable){
-	    std::string resource_path = convert_path_content("RESOURCE") + PATH_SEP;
-		std::string name = resource_path;
-		std::string path;
+	    std::string resource_path = convert_path_content("RESOURCE");
+		std::string name;
+		std::string path = resource_path;
 
 		if(check_command_line("save")){
-			path = UserSingleProfile::getAllSavesDirectory();
+			path = convert_path_content(UserSingleProfile::getAllSavesDirectory());
 			name = check_command_line("save");
-		}
-		if(check_command_line("mission")){
-			path = std::string(MISSIONS_PATH) + PATH_SEP;
+		} else if(check_command_line("mission")){
+			path = convert_path_content(MISSIONS_PATH);
 			name = check_command_line("mission");
-		}
-		if(mission_edit){
-			path = std::string(MISSIONS_PATH) + PATH_SEP;
+		} else if (check_command_line("open")) {
+            name = check_command_line("open");
+        } else if (mission_edit) {
+			path = convert_path_content(MISSIONS_PATH);
 			name = "";
 		}
-		if(check_command_line("open"))
-			name = check_command_line("open");
 
-		if(name == "")
-			name = "XXX";
-		name = setExtension((path + name).c_str(), "spg");
+        if (path.empty()) {
+            path = resource_path;
+        }
+		if (name.empty()) {
+            name = "XXX";
+        }
+        
+        terminate_with_char(path, PATH_SEP);
+		std::string spgPath = setExtension(path + name, "spg");
+        //spgPath = convert_path_content(spgPath, true);
 
-		if(!XStream(0).open(convert_path_content(name))) {
-			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){
-				size_t pos = name.rfind(resource_path);
-				if(pos != std::string::npos)
-					name.erase(0, pos);
-			}
-			else
-				ErrH.Exit();
+		if (!XStream(0).open(spgPath)) {
+            if (name != "XXX") {
+                fprintf(stderr, "File not found: %s\n", spgPath.c_str());
+            }
+			if (openFileDialog(spgPath, path.c_str(), "spg", "Mission Name")){
+				size_t pos = spgPath.rfind(path);
+				if (pos != std::string::npos) {
+                    spgPath.erase(0, pos);
+                }
+			} else {
+                ErrH.Exit();
+            }
         }
 		
 		if(check_command_line(KEY_REPLAY_REEL)){
 			const char* fname=check_command_line(KEY_REPLAY_REEL);
 			HTManager::instance()->GameStart(MissionDescription(fname, GT_PLAY_RELL));
-		}
-		else{
+		} else {
 			int aiMode = 1;
 			check_command_line_parameter("AI", aiMode);
+            
+            if (!XStream(0).open(spgPath)) {
+                fprintf(stderr, "File not found: %s\n", spgPath.c_str());
+                ErrH.Exit();
+            }
 
-			HTManager::instance()->GameStart(MissionDescription(name.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI)));
+			HTManager::instance()->GameStart(MissionDescription(spgPath.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI)));
 		}
 
 		if(check_command_line("convert")){
-			universalSave(name.c_str(), false);
+			universalSave(spgPath.c_str(), false);
 			SNDReleaseSound();
 			ErrH.Exit();
 		}
@@ -2604,7 +2617,7 @@ void GameShell::preLoad() {
 #else
     const char* comments_path = "RESOURCE\\Texts_comments.btdb";
 #endif
-    qdTextDB::instance().load(path.c_str(), comments_path, true, true, false);
+    qdTextDB::instance().load(getLocale(), path.c_str(), comments_path, true, true, false);
 
     //Load texts, don't delete already loaded ones but replace existing ones
     for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
@@ -2614,7 +2627,7 @@ void GameShell::preLoad() {
         if (name == "texts.btdb") continue;
         bool replace = name.rfind("_noreplace.") == std::string::npos;
         bool txt = getExtension(name, true) == "txt";
-        qdTextDB::instance().load(entry->path_content.c_str(), nullptr, false, replace, txt);
+        qdTextDB::instance().load(getLocale(), entry->path_content.c_str(), nullptr, false, replace, txt);
     }
     
     //Load the builtin texts that might not be provided by addons
@@ -2662,16 +2675,17 @@ void GameShell::editParameters()
 	bool reloadParameters = false;
 	savePrm().manualData.zeroLayerHeight = vMap.hZeroPlast;
     
-	const char* header = "Заголовок миссии";
-	const char* mission = "Миссия";
-	const char* missionAll = "Миссия все данные";
+    bool russian = getLocale() == "russian";
+	const char* header = russian ? "Заголовок миссии" : "Mission header";
+	const char* mission = russian ? "Миссия" : "Mission";
+	const char* missionAll = russian ? "Миссия все данные" : "Mission all data";
 	const char* debugPrm = "Debug.prm";
-	const char* global = "Глобальные параметры";
-	const char* attribute = "Атрибуты";
-	const char* sounds = "Звуки";
-	const char* interface_ = "Интерфейс";
-	const char* physics = "Физические параметры";
-	const char* separator = "--------------";
+	const char* global = russian ? "Глобальные параметры" : "Global parameters";
+	const char* attribute = russian ? "Атрибуты" : "Attributes";
+	const char* sounds = russian ? "Звуки" : "Sounds";
+	const char* interface_ = russian ? "Интерфейс" : "Interface";
+	const char* physics = russian ? "Физические параметры" : "Physics parameters";
+    const char* separator = "--------------";
 
 	std::vector<const char*> items;
 	items.push_back(header);

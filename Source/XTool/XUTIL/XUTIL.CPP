@@ -69,13 +69,14 @@ const char* check_command_line(const char* switch_str) {
     return nullptr;
 }
 
-bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) {
-    const SDL_MessageBoxButtonData buttons[] = {
-            /* .flags, .buttonid, .text */
-            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Yes" },
-            { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "No"  },
-    };
+//TODO reconfigure this based on current locale using yes/no in qdTextDB and use this as default values
+static SDL_MessageBoxButtonData messageBoxQuestionButtons[] = {
+        /* .flags, .buttonid, .text */
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "YES / ДА" },
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "NO / НЕТ"  },
+};
 
+bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) {
     if (flags == 0) {
         flags = SDL_MESSAGEBOX_INFORMATION;
     }
@@ -85,8 +86,8 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
             nullptr, /* .window */
             title, /* .title */
             message, /* .message */
-            SDL_arraysize(buttons), /* .numbuttons */
-            buttons, /* .buttons */
+            SDL_arraysize(messageBoxQuestionButtons), /* .numbuttons */
+            messageBoxQuestionButtons, /* .buttons */
             nullptr /* .colorScheme */
     };
 
