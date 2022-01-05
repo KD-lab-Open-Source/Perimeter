@@ -1916,19 +1916,27 @@ void terUnitSquad::attackQuant()
 			}
 			else
 				attack_points.pop_front();
-		}
-		else{
+		} else { //Position target
 			Vect3f target = attack_points.front().position();
+            bool canAttack = false;
 
 			SquadUnitList::iterator ui;
 			FOR_EACH(Units, ui){
 				terUnitLegionary& unit = **ui;
-				if(unit.attr().ID != UNIT_ATTRIBUTE_TECHNIC)
-					unit.setAttackPosition(target, true);
+                const AttributeLegionary& attr = unit.attr();
+                if ((attr.AttackClass & UNIT_CLASS_GROUND) && attr.ID != UNIT_ATTRIBUTE_TECHNIC) {
+                    canAttack = true;
+                    unit.setAttackPosition(target, true);
+                }
 			}
 
-			if(offensiveMode() && !patrolMode() && noWayPoints())
-				repositionToAttack(attack_points.front(), true);
+            if (canAttack) {
+                if (offensiveMode() && !patrolMode() && noWayPoints()) {
+                    repositionToAttack(attack_points.front(), true);
+                }
+            } else {
+                attack_points.pop_front();
+            }
 		}
 	}
 	else{ // Поиск цели

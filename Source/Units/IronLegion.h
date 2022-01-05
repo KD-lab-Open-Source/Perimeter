@@ -76,7 +76,7 @@ public:
 	terUnitLegionary(const UnitTemplate& data);
 	~terUnitLegionary() {}
 
-	const AttributeLegionary& attr() const {
+	const AttributeLegionary& attr() const override {
 		return safe_cast_ref<const AttributeLegionary&>(terUnitReal::attr());
 	}
 

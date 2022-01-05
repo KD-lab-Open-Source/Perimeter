@@ -233,7 +233,7 @@ public:
 	void DeleteInterpolator();
 	virtual bool needCrater() const { return true; }
 
-	const AttributeBase& attr() const {
+	virtual const AttributeBase& attr() const {
 		return *attr_;
 	}
 
