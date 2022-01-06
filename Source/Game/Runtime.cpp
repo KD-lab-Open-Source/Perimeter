@@ -716,7 +716,10 @@ void InitSound(bool sound, bool music, bool firstTime)
 
 			if(SNDInitSound(mixChannels, chunkSizeFactor)){
 				SNDScriptPrmEnableAll();
-			}
+			} else {
+                terMusicEnable = false;
+                terSoundEnable = false;
+            }
 		}
 	
 		SetVolumeMusic( terMusicVolume );

@@ -53,8 +53,11 @@ static void sleep_us(int64_t microseconds) {
 
 AudioBuffer::AudioBuffer(double seconds) : XBuffer(0, false) {
     size_t len = 1024;
-    while (SNDcomputeAudioLengthS(len) < seconds) {
-        len *= 2;
+    //Len might return 0 if audio device is not inited 
+    if (terMusicEnable | terSoundEnable) {
+        while (SNDcomputeAudioLengthS(len) < seconds) {
+            len *= 2;
+        }
     }
     realloc(len);
     clear();
@@ -146,11 +149,12 @@ VideoPlayer::VideoPlayer() {
     wrapper = new AVWrapper();
     audioBuffer = new AudioBuffer(AUDIO_BUFFER_SIZE);
     
-    //Setup sample
-    sample = new SND_Sample(nullptr);
-    sample->channel_group = SND_GROUP_SPEECH;
-    sample->steal_channel = true; //Just in case another speech or audio is playing
-    
+    //Setup sample if audio is enabled
+    if (terMusicEnable | terSoundEnable) {
+        sample = new SND_Sample(nullptr);
+        sample->channel_group = SND_GROUP_SPEECH;
+        sample->steal_channel = true; //Just in case another speech or audio is playing
+    }    
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -208,21 +212,24 @@ bool VideoPlayer::Init(const char* path) {
 
 	RELEASE(pTexture);
     pTexture=gb_VisGeneric->CreateTexture(dx_p2,dy_p2,false);
-    
-    //Tell wrapper to output audio in device format
-    AVSampleFormat format = AVWrapper::fromSDLAudioFormat(SNDDeviceFormat(), false);
-    //wrapper->setupAudioConverter(format, SNDDeviceChannels(), 0);
-    wrapper->setupAudioConverter(format, SNDDeviceChannels(), SNDDeviceFrequency());
 
-    //Load a silent sound buffer, so we can get a looping sample that will poll our buffer
-    //This is a workaround since SDL_mixer doesn't have a way to stream audio continuously
-    //But Channel effects allows us to achieve a similar effect by passing audio data each time channel
-    //audio is processed by SDL_mixer
-    sample->looped = true;
-    const int samples = SNDDeviceFrequency() / 10;
-    size_t buf_len = SNDformatSampleSize(SNDDeviceFormat()) * SNDDeviceChannels() * samples;
-    void* buf = SDL_calloc(buf_len, 1);
-    sample->loadRawData(static_cast<uint8_t*>(buf), buf_len, false);
+    //Only if there is audio output
+    if (sample) {
+        //Tell wrapper to output audio in device format
+        AVSampleFormat format = AVWrapper::fromSDLAudioFormat(SNDDeviceFormat(), false);
+        //wrapper->setupAudioConverter(format, SNDDeviceChannels(), 0);
+        wrapper->setupAudioConverter(format, SNDDeviceChannels(), SNDDeviceFrequency());
+    
+        //Load a silent sound buffer, so we can get a looping sample that will poll our buffer
+        //This is a workaround since SDL_mixer doesn't have a way to stream audio continuously
+        //But Channel effects allows us to achieve a similar effect by passing audio data each time channel
+        //audio is processed by SDL_mixer
+        sample->looped = true;
+        const int samples = SNDDeviceFrequency() / 10;
+        size_t buf_len = SNDformatSampleSize(SNDDeviceFormat()) * SNDDeviceChannels() * samples;
+        void* buf = SDL_calloc(buf_len, 1);
+        sample->loadRawData(static_cast<uint8_t*>(buf), buf_len, false);
+    }
     
 #if 0 && defined(PERIMETER_DEBUG)
     while (!wrapper->end) {
@@ -275,6 +282,7 @@ bool VideoPlayer::IsEnd() {
 }
 
 void VideoPlayer::SetVolume(float vol) {
+    if (!sample) return;
     vol=clamp(vol,0.0f,2.0f);
     sample->volume = vol;
     sample->updateEffects();
@@ -285,7 +293,7 @@ void VideoPlayer::setPause(bool state) {
     
     if (state) {
         lastUpdateTime = 0;
-        if (sample->isPlaying()) {
+        if (sample && sample->isPlaying()) {
             sample->stop();
         }
     } else {
@@ -296,6 +304,7 @@ void VideoPlayer::setPause(bool state) {
 }
 
 void VideoPlayer::startAudioPlayer() {
+    if (!sample) return;
     int channel = sample->play();
     if (channel != SND_NO_CHANNEL) {
         if (!Mix_RegisterEffect(channel, VideoPlayer::channelBufferEffect, nullptr, audioBuffer)) {
@@ -362,7 +371,7 @@ bool VideoPlayer::InternalUpdate() {
         updatedTexture = true;
     }
 
-    if (0 < audioBuffer->written && !sample->isPlaying()) {
+    if (0 < audioBuffer->written && sample && !sample->isPlaying()) {
         startAudioPlayer();
     }
         
@@ -401,6 +410,9 @@ void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
 }
 
 void VideoPlayer::WriteAudioFrame(AVWrapperFrame* frame) {
+    //No sample to output, just do nothing
+    if (!sample) return;
+    
     size_t buf_size;
     uint8_t* buf = nullptr;
     double pts = frame->getPresentationTime();

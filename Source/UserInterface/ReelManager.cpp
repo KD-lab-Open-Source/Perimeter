@@ -27,13 +27,14 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
 		delete player;
 		return;
 	}
+    //Not required to set volume as its globally set from terSoundVolume
 	if (stopBGMusic) {
 		gb_Music.Stop();
 //		player->SetVolume(max(terMusicVolume, terSoundVolume));
 //	} else {
 //		player->SetVolume(0);
 	}
-	player->SetVolume(max(terMusicVolume, terSoundVolume));
+	//player->SetVolume(max(terMusicVolume, terSoundVolume));
 
 	std::string soundPath = soundFileName ? soundFileName : "";
 

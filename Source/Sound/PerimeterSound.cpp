@@ -139,18 +139,19 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
 		{2,44100,AUDIO_FORMAT_16},
 	};
 
+    bool open_audio_ok = false;
 	for(int i=SIZE(formats)-1;i>=0;i--) {
         int chunksize = chunkSizeFactor * (formats[i].hertz / 1000) * formats[i].channels;
         chunksize *= AUDIO_FORMAT_8 == formats[i].bits ? 1 : 2;
         if (Mix_OpenAudio(formats[i].hertz, formats[i].bits, formats[i].channels, chunksize) == 0) {
-            has_sound_init = true;
+            open_audio_ok = true;
             break;
         } else {
             fprintf(stderr, "Mix_OpenAudio error with format %i: %s\n", i, Mix_GetError());
         }
 	}
     
-    if (!has_sound_init) {
+    if (!open_audio_ok) {
         logs("All Mix_OpenAudio failed!\n");
         return false;
     }
@@ -159,11 +160,8 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
     int numtimesopened = Mix_QuerySpec(&deviceFrequency, &deviceFormat, &deviceChannels);
     if(!numtimesopened) {
         fprintf(stderr, "Mix_QuerySpec error: %s\n",Mix_GetError());
-        has_sound_init = false;
         return false;
-    }
-#ifdef PERIMETER_DEBUG
-    else {
+    } else {
         char *format_str="Unknown";
         switch(deviceFormat) {
             case AUDIO_U8: format_str="U8"; break;
@@ -175,7 +173,8 @@ bool SNDInitSound(int mixChannels, int chunkSizeFactor)
         }
         printf("Audio opened=%d times frequency=%dHz format=%s channels=%d\n", numtimesopened, deviceFrequency, format_str, deviceChannels);
     }
-#endif
+
+    has_sound_init = true;
 
     initclock();
 
@@ -947,6 +946,11 @@ SDL_AudioFormat SNDDeviceFormat() {
 }
 
 uint64_t SNDcomputeAudioLengthUS(uint64_t bytes) {
+    //Sometimes audio might not be initialized when calling this, avoid zerodiv
+    if (!has_sound_init) {
+        return 0;
+    }
+    
     //Code based from Carlos Faruolo https://gist.github.com/hydren/f60d107f144fcb41dd6f898b126e17b2
     /* bytes / samplesize == sample points */
     const uint64_t points = bytes / SNDformatSampleSize(SND::deviceFormat);
