@@ -129,8 +129,7 @@ jobs:
           cp /SDL2_mixer/libvorbisfile-3.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
       - name: perimeter -- strip binary
-        run: strip perimeter/bin/perimeter.exe
-        if: matrix.env.build_type == 'Release'
+        run: strip -g -x perimeter/bin/perimeter.exe
       - uses: actions/upload-artifact@v1
         with:
           name: Perimeter MSYS ${{matrix.env.build_type}} ${{matrix.env.bits}} bits

@@ -93,9 +93,8 @@ jobs:
         run: ninja
         working-directory: build
       - name: perimeter -- strip binary
-        run: strip Source/Perimeter
+        run: strip -x Source/Perimeter
         working-directory: build
-        if: matrix.env.build_type == 'Release'
       - name: perimeter -- package app
         run: macos/package.sh
         env:

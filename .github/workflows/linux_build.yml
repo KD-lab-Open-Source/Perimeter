@@ -39,8 +39,7 @@ jobs:
           cp build/Source/perimeter perimeter/
           chmod 777 perimeter/perimeter
       - name: Strip binary
-        run: strip perimeter/perimeter
-        if: matrix.env.build_type == 'Release'
+        run: strip -g -x perimeter/perimeter
       - name: Release tar
         run: tar -cvf Perimeter.tar perimeter
       - uses: actions/upload-artifact@v2
