@@ -262,6 +262,7 @@ void loadAddonET(const std::string& addonName, const std::string& addonDir) {
         paths["Resource/Icons"] = "";
         paths["Resource/Missions"] = "";
         paths["Resource/Music"] = "";
+        paths["Resource/Video"] = "";
         paths["Scripts/Triggers"] = "";
         paths["Scripts"] = "";
     } else {
