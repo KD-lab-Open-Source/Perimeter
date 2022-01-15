@@ -131,14 +131,14 @@ std::string convert_path_content(const std::string& path, bool parent_only) {
         if (conv.empty()) {
             result = content_root_path + path_fs.filename().string();
         } else {
-            strlwr(conv.data());
+            conv = string_to_lower(conv.c_str());
             filesystem_entry* entry = get_content_entry_internal(filesystem_entries, conv).get();
             if (entry) {
                 result = entry->path_content + PATH_SEP + path_fs.filename().string();
             }
         }
     } else {
-        strlwr(conv.data());
+        conv = string_to_lower(conv.c_str());
         filesystem_entry* entry = get_content_entry_internal(filesystem_entries, conv).get();
         if (entry) {
             result = entry->path_content;
@@ -152,13 +152,13 @@ std::string convert_path_content(const std::string& path, bool parent_only) {
 
 filesystem_entry* get_content_entry(std::string path) {
     prepare_path(path, content_root_path);
-    strlwr(path.data());
+    path = string_to_lower(path.c_str());
     return get_content_entry_internal(filesystem_entries, path).get();
 }
 
 std::vector<filesystem_entry*> get_content_entries_recursive(std::string path) {
     prepare_path(path, content_root_path);
-    strlwr(path.data());
+    path = string_to_lower(path.c_str());
     std::vector<filesystem_entry*> paths;
     for (const auto& entry : filesystem_entries) {
         if (path.empty() || startsWith(entry.first, path)) {
@@ -170,7 +170,7 @@ std::vector<filesystem_entry*> get_content_entries_recursive(std::string path) {
 
 std::vector<filesystem_entry*> get_content_entries_directory(std::string path) {
     prepare_path(path, content_root_path);
-    strlwr(path.data());
+    path = string_to_lower(path.c_str());
     terminate_with_char(path, PATH_SEP);
     std::vector<filesystem_entry*> paths;
     for (const auto& entry : filesystem_entries) {
@@ -250,7 +250,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
     }
 
     //Lowercase it for case-insensitive path matching
-    strlwr(entry_key.data());
+    entry_key = string_to_lower(entry_key.c_str());
     if (startsWith(entry_key, "resource")
         || startsWith(entry_key, "cache")
         || startsWith(entry_key, "mods")
@@ -262,9 +262,9 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
 
         //Create absolute path too
         std::string entry_key_content = convert_path_native(path_content);
-        strlwr(entry_key_content.data());
+        entry_key_content = string_to_lower(entry_key_content.c_str());
         std::string entry_key_root = content_root_path + entry_key;
-        strlwr(entry_key_root.data());
+        entry_key_root = string_to_lower(entry_key_root.c_str());
 
         //Check if an override occurs
         std::shared_ptr<filesystem_entry> entry = get_content_entry_internal(paths, entry_key);
@@ -353,7 +353,7 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
 
     //Prepare destination too
     prepare_path(destination_path, content_root_path);
-    strlwr(destination_path.data());
+    destination_path = string_to_lower(destination_path.c_str());
 
     //Setup options
     filesystem_scan_options scanOptions;

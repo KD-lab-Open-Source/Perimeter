@@ -1376,8 +1376,7 @@ public:
 // реализация интерфейса cFileImage
 cFileImage* cFileImage::Create(const std::string& fname)
 {
-    std::string path(fname);
-	_strlwr(path.data());
+    std::string path = string_to_lower(fname.c_str());
 	if(endsWith(path,".tga")) {
         return new cTGAImage;
     } else if(endsWith(path,".avi")) {
@@ -1436,30 +1435,6 @@ void GetFilePath(const char *FullName,char *path)
 		l--;
 	memcpy(path,FullName,l);
 	path[l]=0;
-}
-void GetFileVirginName(const char *FullName,char *name)
-{
-	name[0]=0;
-	GetFileName(FullName,name);
-	if(name==0||name[0]==0) return;
-	int l=strlen(name)-1;
-	while(l>=0&&name[l]!='.') 
-		l--;
-	name[l]=0; l--;
-	while(l>=0&&'0'<=name[l]&&name[l]<='9')
-		l--;
-	name[l+1]=0;
-}
-int CmpFileVirginName(const char *fname1,const char *fname2)
-{
-	char name1[1024],name2[1024];
-	GetFileName(fname1,name1); _strlwr(name1);
-	GetFileName(fname2,name2); _strlwr(name2);
-	int l1=strlen(name1),l2=strlen(name2);
-	if(l1!=l2) return 0;
-	while(l1>=0&&(name1[l1]==name2[l1]||('0'<=name1[l1]&&name1[l1]<='9'&&'0'<=name2[l1]&&name2[l1]<='9')))
-		l1--;
-	return l1<0;
 }
 #ifdef _UTILTVA_
 int ResourceFileRead(const char *filename,char *&buf,int &size)

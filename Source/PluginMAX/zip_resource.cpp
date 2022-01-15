@@ -6,7 +6,6 @@
 
 XZIP_FileHeader::XZIP_FileHeader(void)
 {
-	fileName = NULL;
 	dataOffset = 0;
 	dataSize = 0;
 
@@ -47,23 +46,20 @@ void XZIP_FileHeader::load(XStream& fh)
 
 XZIP_FileHeader::~XZIP_FileHeader(void)
 {
-	if(fileName) free(fileName);
-
 	if(extData)
 		delete extData;
 }
 
 void XZIP_FileHeader::SetName(const char* p)
 {
-	fileName = strdup(p);
-    strlwr(fileName);
+	fileName = string_to_lower(p);
 }
 
 void XZIP_FileHeader::save(XStream& fh)
 {
-	int sz = strlen(fileName);
+	int32_t sz = static_cast<int32_t>(fileName.size());
 	fh < sz;
-	fh.write(fileName,sz);
+	fh.write(fileName.c_str(),sz);
 	fh < dataOffset < dataSize < extDataSize;
 
 	if(extDataSize)

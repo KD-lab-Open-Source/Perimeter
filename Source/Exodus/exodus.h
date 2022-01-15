@@ -23,13 +23,7 @@ uint32_t WritePrivateProfileString(const char* section,const char* key,const cha
 
 void Sleep(uint32_t millis);
 
-char* _strlwr(char* str);
-char* _strupr(char* str);
-
 int __iscsym(int c);
-
-#define strlwr _strlwr
-#define strupr _strupr
 
 #define IsCharAlphaNumeric isalnum
 

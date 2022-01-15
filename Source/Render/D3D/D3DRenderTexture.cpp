@@ -157,7 +157,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
             filesystem_entry* entry = get_content_entry(Texture->GetName());
             if (entry) key = entry->key;
             if (key.empty()) key = convert_path_native(Texture->GetName());
-            strlwr(key.data());
+            key = string_to_lower(key.c_str());
             string_replace_all(key, PATH_SEP_STR, "_");
             key = std::string("cache") + PATH_SEP + "bump" + PATH_SEP + key +  ".bin";
             std::string path = convert_path_content(key, true);

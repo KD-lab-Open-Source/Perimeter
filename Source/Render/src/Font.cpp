@@ -365,14 +365,13 @@ bool cFontInternal::Create(const std::string& root_dir, const std::string& local
 	int height=(int) xm::round((float) (h * ScreenY) / 768.0f);
 	statement_height=h;
     locale=locale_;
-    font_name=fname;
-    _strlwr(font_name.data());
+    font_name=string_to_lower(fname.c_str());
 
     std::string font_path = locale + PATH_SEP + "Fonts" + PATH_SEP;
     
     //Create texture name for caching
     std::string texture_name = font_path + font_name + "-" + std::to_string(height);
-    _strlwr(texture_name.data());
+    texture_name = string_to_lower(texture_name.c_str());
     str_replace_slash(texture_name.data());
     
     //Get path for font

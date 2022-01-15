@@ -44,7 +44,7 @@ void initLocale() {
     }
     //Check if locale is actually available
     if (!localeCurrent.empty()) {
-        _strlwr(localeCurrent.data());
+        localeCurrent = string_to_lower(localeCurrent.c_str());
         bool found = false;
         for (auto& locale : localesAvailable) {
             found |= stricmp(locale.c_str(), localeCurrent.c_str()) == 0;
@@ -58,8 +58,7 @@ void initLocale() {
     if (localeCurrent.empty() && 1 < localesAvailable.size()) {
         int choice = MessageBoxChoice("Perimeter", "Select language:", localesAvailable);
         if (0 < choice && choice <= localesAvailable.size()) {
-            localeCurrent = localesAvailable[choice - 1];
-            _strlwr(localeCurrent.data());
+            localeCurrent = string_to_lower(localesAvailable[choice - 1].c_str());
             
             //Save user selection
             putStringSettings("Locale", localeCurrent);
@@ -73,8 +72,7 @@ void initLocale() {
             fprintf(stderr, "No locale available!");
         } else {
             //Just choose first available lang
-            localeCurrent = localesAvailable.front();
-            _strlwr(localeCurrent.data());
+            localeCurrent = string_to_lower(localesAvailable.front().c_str());
             fprintf(stdout, "No locale selected, using first available: %s\n", localeCurrent.c_str());
         }
         

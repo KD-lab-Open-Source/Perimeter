@@ -647,8 +647,8 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
         fname = pFileName;
         DefPath = std::filesystem::path(convert_path_native(fname)).parent_path().string() + PATH_SEP + "textures" + PATH_SEP;
     }
-    _strlwr(fname.data());
-    _strlwr(DefPath.data());
+    fname = string_to_lower(fname.c_str());
+    DefPath = string_to_lower(DefPath.c_str());
 
 	if(pTexturePath) 
 	{
@@ -657,7 +657,7 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
         } else {
             TexturePath = pTexturePath;
         }
-		_strlwr(TexturePath.data());
+        TexturePath = string_to_lower(TexturePath.c_str());
 		if(stricmp(TexturePath.c_str(),DefPath.c_str())!=0)
 			DefTexturePath=DefPath;
 	}
@@ -795,15 +795,15 @@ cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,con
 	int nChannel;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
-		char* name=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
-		_strlwr(name);
+        std::string& name = MeshScene.ChannelLibrary[nChannel]->name;
+        name = string_to_lower(name.c_str());
 	}
 /*	// поиск и установка первым канала анимации с именем "main"
 	int nChannelMain=-1;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
-		char* name=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
-		_strlwr(name);
+        std::string& name = MeshScene.ChannelLibrary[nChannel]->name;
+        name = string_to_lower(name.c_str());
 		if(stricmp(name,"main")==0)
 			nChannelMain=nChannel;
 	}

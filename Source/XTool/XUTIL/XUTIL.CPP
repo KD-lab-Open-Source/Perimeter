@@ -212,6 +212,26 @@ void string_replace_all(std::string& text, const std::string& from, const std::s
     text.swap(newString);
 }
 
+std::string string_to_lower(const char* str)
+{
+    //Convert UTF-8 into UTF-16
+    std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> utf8cvt;
+    std::u16string conv = utf8cvt.from_bytes(str);
+    if (conv.empty()) return "";
+    
+    //Process each code
+    for (int i = 0; i < conv.size(); ++i) {
+        auto c = conv[i];
+        c = std::towlower(c);
+        conv[i] = c;
+    }
+
+    //Convert UTF-16 into UTF-8
+    std::string output = utf8cvt.to_bytes(conv.c_str());
+    
+    return output;
+}
+
 //Converts string to float/double manually since we can't rely on stdlib for deterministic results
 template<typename FT, typename IT, typename UIT>
 FT string_to_floating(const char* in, char** end) {

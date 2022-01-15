@@ -97,7 +97,7 @@ std::string getImageFileName(const sqshImage* image, const char* fileName) {
                 } else {
                     //If interface then add width too, otherwise use height only
                     std::string path = fullname.substr(0, pos);
-                    strlwr(path.data());
+                    path = string_to_lower(path.c_str());
                     if (endsWith(path, "intf")) {
                         respath = std::to_string(source_ui_resolution.x) + "x";
                     } else {

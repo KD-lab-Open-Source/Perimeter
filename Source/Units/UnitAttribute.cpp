@@ -655,7 +655,7 @@ const std::map<std::string, uint32_t>& get_content_list() {
 
 void collect_model_crc(const ModelData& modelData) {
     std::string line = convert_path_posix(modelData.logicName.value());
-    strlwr(line.data());
+    line = string_to_lower(line.c_str());
 
     //Read logic model data and create CRC
     ZIPStream ff;

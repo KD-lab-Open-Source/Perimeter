@@ -241,7 +241,7 @@ void processInterfaceMessageLater(terUniverseInterfaceMessage id, int wndIDToHid
 void loadMapVector(std::vector<MissionDescription>& mapVector, const std::string& path, const std::string& mask, bool replay) {
 	//fill map list
 	std::string path_str = convert_path_native(path.c_str());
-    strlwr(path_str.data());
+    path_str = string_to_lower(path_str.c_str());
 	
 	//Collect files and order
 	std::vector<std::string> paths;

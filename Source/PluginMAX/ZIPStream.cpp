@@ -48,7 +48,7 @@ int	ZIPStream::open(const char* name, unsigned f) {
 #ifndef _NOZIP
 	if(pzip && !b_open) {
         std::string zippath = convert_path_posix(name);
-        _strlwr(zippath.data());
+        zippath = string_to_lower(zippath.c_str());
         b_open = pzip->open(zippath, *this) != 0;
 	}
 #endif //_NOZIP

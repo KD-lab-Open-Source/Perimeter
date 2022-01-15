@@ -258,7 +258,6 @@ void HTManager::init()
 	
 	//xt_get_cpuid();
 	//xt_getMMXstatus();
-	initclock();
 
 	allocation_tracking("before");
 
@@ -773,10 +772,16 @@ int SDL_main(int argc, char *argv[])
 {
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
+
+    //Init clock
+    initclock();
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
     printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
+    
+    //Setup locale
+    //std::locale::global(std::locale("en_US.utf8"));
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);

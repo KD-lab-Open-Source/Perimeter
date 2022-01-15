@@ -436,8 +436,7 @@ void MissionEditor::createUnit()
 		if(modelDirectory){
 			std::string modelName;
 			if(openFileDialog(modelName, modelDirectory, "m3d", "3D Model")){
-                std::string modelNameLwr = modelName;
-				strlwr((char*)modelNameLwr.c_str());
+                std::string modelNameLwr = string_to_lower(modelName.c_str());
 				size_t pos = modelNameLwr.rfind("resource\\");
 				if(pos != std::string::npos)
 					modelName.erase(0, pos);

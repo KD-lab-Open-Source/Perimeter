@@ -63,8 +63,6 @@ extern void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,
 
 extern void GetFileName(const char *FullName,char *fname);				// возвращает имя файла, обрезает каталог
 extern void GetFilePath(const char *FullName,char *path);				// возвращает каталог
-extern void GetFileVirginName(const char *FullName,char *name);			// возвращает имя файла, обрезает каталог, удаляет расширение и номер в имени
-extern int CmpFileVirginName(const char *fname1,const char *fname2);	// сравнивает имена файлов, без учета номеров
 
 bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel);
 bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,int& byte_per_pixel);

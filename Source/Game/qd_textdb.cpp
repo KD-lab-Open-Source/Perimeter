@@ -35,8 +35,7 @@ void qdTextDB::clear() {
 const char* qdTextDB::getText(const char* text_id) const
 {
     if (text_id != nullptr && *(text_id) != 0) {
-        std::string id_str = text_id;
-        strlwr(id_str.data());
+        std::string id_str = string_to_lower(text_id);
         if (0 < texts_.count(id_str)) {
             return texts_.at(id_str).text_.c_str();
         }
@@ -58,8 +57,7 @@ const char* qdTextDB::getText(const char* text_id) const
 
 const char* qdTextDB::getSound(const char* text_id) const
 {
-    std::string id_str = text_id;
-    strlwr(id_str.data());
+    std::string id_str = string_to_lower(text_id);
 	qdTextMap::const_iterator it = texts_.find(id_str);
 	if(it != texts_.end())
 		return it->second.sound_.c_str();
@@ -71,8 +69,7 @@ const char* qdTextDB::getSound(const char* text_id) const
 const char* qdTextDB::getComment(const char* text_id) const
 {
 #ifndef _FINAL_VERSION_
-    std::string id_str = text_id;
-    strlwr(id_str.data());
+    std::string id_str = string_to_lower(text_id);
 	qdTextMap::const_iterator it = texts_.find(id_str);
 	if(it != texts_.end())
 		return it->second.comment_.c_str();
@@ -155,7 +152,7 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
             char* id_str = static_cast<char*>(malloc((id_length + 1) * sizeof(char)));
             fh.read(id_str, id_length);
             id_str[id_length] = 0;
-            strlwr(id_str);
+            std::string id_str_lwr = string_to_lower(id_str);
 
             int txt_length;
             fh > txt_length;
@@ -172,12 +169,12 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
             snd_str[snd_length] = 0;
 
             bool discard = false;
-            if (!russian && strcmp(id_str, "Interface.Tips.mission_editor_help") == 0) {
-                //Was never translated in other languages in releases so we discard it
+            if (!russian && id_str_lwr == "interface.tips.mission_editor_help") {
+                //Was never translated in other languages in releases, so we discard it
                 discard = true;
             }
             if (!discard) {
-                add_entry(id_str, qdText(txt_str, snd_str), replace_old_texts);
+                add_entry(id_str_lwr, qdText(txt_str, snd_str), replace_old_texts);
             }
 
             free(id_str);
@@ -232,7 +229,7 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
 
         std::string id_str = line.substr(0, pos);
         if (id_str.empty()) continue;
-        strlwr(id_str.data());
+        id_str = string_to_lower(id_str.c_str());
 
         std::string txt_str = line.substr(pos + 1);
         if (txt_str.empty()) continue;

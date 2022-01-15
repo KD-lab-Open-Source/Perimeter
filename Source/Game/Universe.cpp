@@ -716,8 +716,7 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 			data.playersData[i].colorIndex = i;
 			data.playersShufflingIndices[i] = i;
 		}
-		std::string name = savePathKey_;
-		strlwr((char*)name.c_str());
+		std::string name = string_to_lower(savePathKey_.c_str());
 		data.originalSaveName = strstr(name.c_str(), "resource");
 	}
 

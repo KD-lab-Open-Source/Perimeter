@@ -113,7 +113,7 @@ inline std::string getExtension(const std::string& file_name, bool process)
 	if (pos != std::string::npos) {
 		str.erase(0, pos + 1);
         if (process) {
-            strlwr((char*) str.c_str());
+            str = string_to_lower(str.c_str());
             while (isspace(str[str.size() - 1])) {
                 str.erase(str.size() - 1);
             }

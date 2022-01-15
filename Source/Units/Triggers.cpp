@@ -1763,7 +1763,7 @@ const char* editModelNameDialog(void* hwnd, const char* initialString)
 	static std::string name;
 	name = initialString;
 	if(openFileDialog(name, "Resourse\\Missions", "m3d", "Mission Name")){
-		strlwr((char*)name.c_str());
+        name = string_to_lower(name.c_str());
         size_t pos = name.find("resource");
 		if(pos != std::string::npos)
 			name.erase(0, pos);
@@ -1777,7 +1777,7 @@ const char* editTriggerChainNameDialog(void* hwnd, const char* initialString)
 	static std::string name;
 	name = initialString;
 	if(openFileDialog(name, "Scripts" PATH_SEP_STR "Triggers", "scr", "Trigger Chain Name")){
-		strlwr((char*)name.c_str());
+        name = string_to_lower(name.c_str());
 		size_t pos = name.rfind(PATH_SEP);
 		if(pos != std::string::npos)
 			name.erase(0, pos + 1);
@@ -1842,7 +1842,7 @@ const char* editCameraSplineName(void* hwnd, const char* initialString)
 //	static string name;
 //	name = gameShell->CurrentMission.saveName();
 //	name.erase(name.size() - 4, name.size()); 
-//	strlwr((char*)name.c_str());
+//	string_to_lower((char*)name.c_str());
 //	string subString = "resource\\";
 //	size_t pos = name.find(subString);
 //	xassert(pos != string::npos);

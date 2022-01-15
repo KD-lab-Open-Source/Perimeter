@@ -56,6 +56,9 @@ void terminate_float_text(char* buffer, size_t max, int digits);
 //Replaces all "from" in "text" with "to"
 void string_replace_all(std::string& text, const std::string& from, const std::string& to);
 
+//Changes string to lowercase
+std::string string_to_lower(const char* str);
+
 static bool startsWith(const std::string& str, const std::string& prefix)
 {
     //SRC: https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c

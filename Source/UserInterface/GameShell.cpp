@@ -2623,7 +2623,7 @@ void GameShell::preLoad() {
     for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
         std::filesystem::path entry_path(entry->key);
         std::string name = entry_path.filename().string();
-        strlwr(name.data());
+        name = string_to_lower(name.c_str());
         if (name == "texts.btdb") continue;
         bool replace = name.rfind("_noreplace.") == std::string::npos;
         bool txt = getExtension(name, true) == "txt";

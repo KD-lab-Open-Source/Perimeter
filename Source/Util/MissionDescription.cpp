@@ -160,7 +160,7 @@ void MissionDescription::setSaveName(const char* fname)
     split_path_parent(savePathBase, tmp, &missionName_);
 
     //Lowercase the key just in case now that we got the filename case stored in savePathContent_
-    strlwr(savePathKey_.data());
+    savePathKey_ = string_to_lower(savePathKey_.c_str());
 }
 
 void MissionDescription::setReelName(const char* name)
@@ -461,15 +461,13 @@ int MissionDescription::connectLoadPlayer2PlayersData(PlayerData& pd)
 	int result=-1;
     
     //Try match by name first
-    std::string pd_name = pd.name();
-    strlwr(pd_name.data());
+    std::string pd_name = string_to_lower(pd.name());
     for (int i=0; i<playerAmountScenarioMax; i++) {
         PlayerData& player = playersData[i];
         if (player.realPlayerType!=REAL_PLAYER_TYPE_OPEN) {
             continue;
         }
-        std::string name = player.nameInitial();
-        strlwr(name.data());
+        std::string name = string_to_lower(player.nameInitial());
         if (name==pd_name) {
             player.setName(pd.name());
             player.realPlayerType=REAL_PLAYER_TYPE_PLAYER;

@@ -47,8 +47,7 @@ void UserSingleProfile::scanProfiles() {
     for (const auto & entry : get_content_entries_directory(getAllSavesDirectory())) {
         if (entry->is_directory) {
             std::string path = std::filesystem::path(entry->path_content).filename().string();
-            std::string path_lwr = path;
-            strlwr(path_lwr.data());
+            std::string path_lwr = string_to_lower(path.c_str());
             if (startsWith(path_lwr, "profile")) {
                 profiles.emplace_back(Profile(path));
             }

@@ -310,7 +310,7 @@ void loadAddon(const std::string& addonName, const std::string& addonDir) {
         std::string entry_name = entry_path.filename().string();
         std::string destination = std::string("Resource") + PATH_SEP + entry_name;
         //Check if we should skip certain dirs
-        strlwr(entry_name.data());
+        entry_name = string_to_lower(entry_name.c_str());
         if (entry_name == "saves" || entry_name == "replay") continue;
 
         //Load content from entry to destination
