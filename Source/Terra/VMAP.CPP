@@ -422,8 +422,8 @@ void vrtMap::prepare(char* name)
 	wTable.clear();
     for (const auto& entry : get_content_entries_directory("resource/worlds")) {
         if (entry->is_directory) {
-            std::filesystem::path path(entry->path_content);
-            wTable.emplace_back(path.filename().string(), entry->key);
+            std::filesystem::path path = std::filesystem::u8path(entry->path_content);
+            wTable.emplace_back(path.filename().u8string(), entry->key);
         }
     }
     maxWorld = wTable.size();

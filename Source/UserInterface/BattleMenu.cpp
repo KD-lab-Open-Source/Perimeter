@@ -123,7 +123,7 @@ void onBattleMenuOpening() {
 std::string getSurvivalFileName(const std::string& fileName) {
     //Will return empty string if file wasn't indexed
     std::string path = convert_path_content("Resource/BATTLE/SURVIVAL/" + fileName + ".spg");
-    bool exists = !path.empty() && std::filesystem::exists(path);
+    bool exists = !path.empty() && std::filesystem::exists(std::filesystem::u8path(path));
 	return exists ? path : std::string();
 }
 

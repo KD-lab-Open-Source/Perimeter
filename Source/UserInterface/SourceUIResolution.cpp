@@ -73,9 +73,9 @@ void initSourceUIResolution() {
     
     //Scan for extra resolutions
     for (const auto & entry : get_content_entries_directory("resource/icons/intf")) {
-        std::filesystem::path entry_path(entry->path_content);
+        std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
         if (std::filesystem::is_directory(entry_path)) {
-            std::string name = entry_path.filename().string();
+            std::string name = entry_path.filename().u8string();
             size_t pos = name.find('x');
             if (pos == std::string::npos) {
                 continue;

@@ -46,7 +46,7 @@ void UserSingleProfile::scanProfiles() {
 
     for (const auto & entry : get_content_entries_directory(getAllSavesDirectory())) {
         if (entry->is_directory) {
-            std::string path = std::filesystem::path(entry->path_content).filename().string();
+            std::string path = std::filesystem::u8path(entry->path_content).filename().u8string();
             std::string path_lwr = string_to_lower(path.c_str());
             if (startsWith(path_lwr, "profile")) {
                 profiles.emplace_back(Profile(path));
@@ -97,7 +97,11 @@ void UserSingleProfile::addProfile(const std::string& name) {
         ErrH.Abort("Can't create profile directory: ", XERR_USER, error.value(), error.message().c_str());
 	} else {
         std::string path_data = path + PATH_SEP + "data";
-        std::filesystem::copy_file(origin, path_data, error);
+        std::filesystem::copy_file(
+                std::filesystem::u8path(origin),
+                std::filesystem::u8path(path_data),
+                error
+        );
         if (error) {
             ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
         } else {
@@ -118,7 +122,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
 bool UserSingleProfile::removeDir(const std::string& dir) {
     std::error_code error;
     std::string allSaves = getAllSavesDirectory();
-    std::filesystem::path target_path = allSaves + PATH_SEP + dir;
+    std::filesystem::path target_path = std::filesystem::u8path(allSaves + PATH_SEP + dir);
     std::filesystem::remove_all(target_path, error);
     if( error ) {
         ErrH.Abort("Can't remove profile directory: ", XERR_USER, error.value(), error.message().c_str());
@@ -155,8 +159,8 @@ void UserSingleProfile::deleteSave(const std::string& path) {
         std::string path_ext = setExtension(path, ext);
         std::remove(path_ext.c_str());
     }
-    std::filesystem::path path_path(path);
-    scan_resource_paths(path_path.parent_path().string());
+    std::filesystem::path path_path = std::filesystem::u8path(path);
+    scan_resource_paths(path_path.parent_path().u8string());
 }
 
 std::string UserSingleProfile::getAllSavesDirectory() {

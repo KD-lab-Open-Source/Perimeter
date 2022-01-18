@@ -528,7 +528,7 @@ public:
 	{
 		AVISTREAMINFO FAR psi;
 
-		HRESULT hr=AVIStreamOpenFromFile(&pavi,fname,streamtypeVIDEO,0,OF_READ,NULL);
+		HRESULT hr=AVIStreamOpenFromFileA(&pavi,fname,streamtypeVIDEO,0,OF_READ,NULL);
 		if(hr) return 1;
 		time=AVIStreamLengthTime(pavi);
 		AVIStreamInfo(pavi,&psi,sizeof(AVISTREAMINFO FAR));
@@ -556,7 +556,7 @@ public:
 		PAVISTREAM pcomp=0;
 		PAVIFILE fAVI=0;
 		remove(fname);
-		err = AVIFileOpen(&fAVI,fname,OF_CREATE|OF_WRITE,NULL);
+		err = AVIFileOpenA(&fAVI,fname,OF_CREATE|OF_WRITE,NULL);
 		if(err)
 			return 1;
 		AVISTREAMINFO avi;

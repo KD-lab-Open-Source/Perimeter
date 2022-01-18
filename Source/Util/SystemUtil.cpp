@@ -266,12 +266,13 @@ sKey::sKey(int key_, bool set_by_async_funcs) {
 bool create_directories(const std::string& path, std::error_code* error) {
     bool result;
     std::string pathstr = convert_path_native(path);
+    std::filesystem::path path_fs = std::filesystem::u8path(pathstr);
     if (error) {
-        result = std::filesystem::create_directories(pathstr, *error);
+        result = std::filesystem::create_directories(path_fs, *error);
     } else {
-        result = std::filesystem::create_directories(pathstr);
+        result = std::filesystem::create_directories(path_fs);
     }
-    if (result || std::filesystem::is_directory(pathstr)) {
+    if (result || std::filesystem::is_directory(path_fs)) {
         scan_resource_paths(pathstr);
     }
     return result;
@@ -305,7 +306,7 @@ const char* IniManager::get(const char* section, const char* key)
 	static char buf[256];
     std::string path = getFilePath();
     
-	if(!GetPrivateProfileString(section,key,NULL,buf,256,path.c_str())){
+	if(!ReadIniString(section, key, NULL, buf, 256, path.c_str())){
 		*buf = 0;
 		if (check_existence_) {
             fprintf(stderr, "INI key not found %s %s %s\n", path.c_str(), section, key);
@@ -376,9 +377,10 @@ IniManager* getSettings() {
         std::string prefPath;
         if (prefPath_ptr) {
             prefPath = prefPath_ptr;
+            SDL_free((void*) prefPath_ptr);
         }
         prefPath += "Settings.ini";
-        if (!std::filesystem::exists(prefPath)) {
+        if (!std::filesystem::exists(std::filesystem::u8path(prefPath))) {
             //Create file if doesn't exist
             XStream f(prefPath,XS_OUT);
             f.close();
@@ -406,10 +408,10 @@ std::string getStringSettings(const std::string& keyName, const std::string& def
         HKEY hKey;
         char name[PERIMETER_CONTROL_NAME_SIZE];
         DWORD nameLen = PERIMETER_CONTROL_NAME_SIZE;
-        int32_t lRet = RegOpenKeyEx( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
+        int32_t lRet = RegOpenKeyExA( HKEY_CURRENT_USER, mainCurrUserRegFolder, 0, KEY_QUERY_VALUE, &hKey );
     
         if ( lRet == ERROR_SUCCESS ) {
-            lRet = RegQueryValueEx( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
+            lRet = RegQueryValueExA( hKey, keyName.c_str(), NULL, NULL, (LPBYTE) name, &nameLen );
     
             if ( (lRet == ERROR_SUCCESS) && nameLen && (nameLen <= PERIMETER_CONTROL_NAME_SIZE) ) {
                 found = true;

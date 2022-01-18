@@ -311,14 +311,14 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
         //If file with _normal name is found, set attribute for normal
         std::string textpathstr = convert_path_content(Texture->GetName());
         if (textpathstr.empty()) textpathstr = convert_path_native(Texture->GetName());
-        std::filesystem::path texpath(textpathstr);
-        std::string normal_path = texpath.parent_path().string();
-        std::string extension = texpath.filename().extension().string();
-        std::string filename = texpath.filename().string();
+        std::filesystem::path texpath = std::filesystem::u8path(textpathstr);
+        std::string normal_path = texpath.parent_path().u8string();
+        std::string extension = texpath.filename().extension().u8string();
+        std::string filename = texpath.filename().u8string();
         string_replace_all(filename, extension, "");
         string_replace_all(filename, "_bump", "");
         normal_path += PATH_SEP + filename + "_normal" + extension;
-        if (std::filesystem::exists(normal_path)) {
+        if (std::filesystem::exists(std::filesystem::u8path(normal_path))) {
             Texture->SetName(normal_path.c_str());
             Texture->SetAttribute(MAT_NORMAL);
         }
@@ -532,7 +532,7 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP)
 	{
 		LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;
-		if(FAILED(D3DXCreateCubeTextureFromFileInMemory(gb_RenderDevice3D->lpD3DDevice,buf,size,&pCubeTexture)))
+		if(FAILED(D3DXCreateCubeTextureFromFileInMemory(gb_RenderDevice3D->lpD3DDevice, buf, size, &pCubeTexture)))
 		{
 			Error(Texture);
 			Texture->Release();

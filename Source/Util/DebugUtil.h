@@ -219,7 +219,7 @@ extern RandomGenerator terEffectRND;
 inline int logicRNDi(int x, const char* file, int line)
 {
 #ifdef NET_LOG_EXHAUSTIVE
-    std::string filename = std::filesystem::path(file).filename().string();
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
     log_var(filename);
     log_var(line);
     log_var(logicRND.get());
@@ -229,7 +229,7 @@ inline int logicRNDi(int x, const char* file, int line)
 inline float logicRNDf(const char* file, int line)
 {
 #ifdef NET_LOG_EXHAUSTIVE
-    std::string filename = std::filesystem::path(file).filename().string();
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
     log_var(filename);
     log_var(line);
     log_var(logicRND.get());
@@ -239,7 +239,7 @@ inline float logicRNDf(const char* file, int line)
 inline float logicRNDfa(const char* file, int line)
 {
 #ifdef NET_LOG_EXHAUSTIVE
-    std::string filename = std::filesystem::path(file).filename().string();
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
     log_var(filename);
 	log_var(line);
 	log_var(logicRND.get());

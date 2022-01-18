@@ -232,7 +232,7 @@ void refresh_window_size(bool update_resolution) {
 void CrashHandler()
 {
     if (gameShell && universe()) {
-        std::string crash = get_content_root_path() + CRASH_DIR + PATH_SEP + std::to_string(time(nullptr)) + "_";
+        std::string crash = get_content_root_path_str() + CRASH_DIR + PATH_SEP + std::to_string(time(nullptr)) + "_";
 
         //Attempt to save reel
         terHyperSpace::SAVE_REPLAY_RESULT statereel = universe()->savePlayReel((crash + "reel").c_str());
@@ -510,10 +510,11 @@ void PerimeterCreateWindow() {
         const char* icon_path_ptr = GET_PREF_PATH();
         if (icon_path_ptr) {
             icon_path += "icon.png";
+            SDL_free((void*) icon_path_ptr);
         }
     }
     if (!icon_path.empty()) {
-        if (std::filesystem::exists(icon_path)) {
+        if (std::filesystem::exists(std::filesystem::u8path(icon_path))) {
             SDL_Surface* icon = IMG_Load(icon_path.c_str());
             if (icon) {
                 SDL_SetWindowIcon(sdlWindow, icon);
@@ -781,7 +782,6 @@ int SDL_main(int argc, char *argv[])
     printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
     
     //Setup locale
-    //std::locale::global(std::locale("en_US.utf8"));
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
@@ -803,14 +803,14 @@ int SDL_main(int argc, char *argv[])
         "cache/font",
         "cache/bump",
     }) {
-        path = get_content_root_path() + convert_path_native(path);
+        path = get_content_root_path_str() + convert_path_native(path);
         bool ok = create_directories(path);
-        xassert(ok || std::filesystem::is_directory(path));
+        xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
     }
     std::string path = convert_path_content("resource/saves/") + "Multiplayer";
-    if (!std::filesystem::exists(std::filesystem::path(path))) {
+    if (!std::filesystem::exists(std::filesystem::u8path(path))) {
         bool ok = create_directories(path);
-        xassert(ok || std::filesystem::is_directory(path));
+        xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
     }
 
     //Load perimeter parameters
@@ -1041,7 +1041,7 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
 
 #ifndef PERIMETER_EXODUS
-	OPENFILENAME ofn;
+	OPENFILENAMEA ofn;
 	memset(&ofn,0,sizeof(ofn));
 	char fname[2048];
 	strcpy(fname,filename.c_str());
@@ -1055,7 +1055,7 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 	ofn.lpstrInitialDir = initialDir;
 	ofn.Flags = OFN_PATHMUSTEXIST|OFN_HIDEREADONLY|OFN_EXPLORER|OFN_NOCHANGEDIR;
 	ofn.lpstrDefExt = extention;
-	if(!GetOpenFileName(&ofn))
+	if(!GetOpenFileNameA(&ofn))
 		return false;
 	filename = fname;
 	return true;
@@ -1071,7 +1071,7 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
 
 #ifndef PERIMETER_EXODUS
-	OPENFILENAME ofn;
+	OPENFILENAMEA ofn;
 	memset(&ofn,0,sizeof(ofn));
 	char fname[2048];
 	strcpy(fname,filename.c_str());
@@ -1085,7 +1085,7 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 	ofn.lpstrInitialDir = initialDir;
 	ofn.Flags = OFN_PATHMUSTEXIST|OFN_HIDEREADONLY|OFN_EXPLORER|OFN_NOCHANGEDIR;
 	ofn.lpstrDefExt = extention;
-	if(!GetSaveFileName(&ofn))
+	if(!GetSaveFileNameA(&ofn))
 		return false;
 	filename = fname;
 	return true;
@@ -1106,7 +1106,7 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 	std::vector<const char*>::iterator i;
 	FOR_EACH(items, i) {
         std::string text = getLocaleString(*i, getLocale());
-		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
+		AppendMenuA(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
     }
 	
 	Vect2i ps = gameShell->convertToScreenAbsolute(gameShell->mousePosition());
@@ -1136,7 +1136,7 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 	std::vector<const char*>::iterator i;
 	FOR_EACH(items, i) {
         std::string text = getLocaleString(*i, getLocale());
-		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
+		AppendMenuA(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
     }
 	
 	Vect2i ps = gameShell->convertToScreenAbsolute(gameShell->mousePosition());
@@ -1177,7 +1177,7 @@ static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPara
 			HWND h;
 
 			h=GetDlgItem(hwnd,IDC_INPUT_TEXT);
-			GetWindowText(h,tmpstr,256);
+			GetWindowTextA(h,tmpstr,256);
 			editTextString = tmpstr;
 
 			EndDialog(hwnd,IDOK);
@@ -1193,7 +1193,7 @@ static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPara
 		{
 			HWND h;
 			h=GetDlgItem(hwnd,IDC_INPUT_TEXT);
-			SetWindowText(h, editTextString.c_str());
+			SetWindowTextA(h, editTextString.c_str());
 		}
 		return TRUE;
 	}

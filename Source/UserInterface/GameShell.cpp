@@ -1980,8 +1980,8 @@ void GameShell::ShotsScan()
     create_directories(path_str);
 
     std::vector<std::string> paths;
-    for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
-        std::string entry_path = entry.path().string();
+    for (const auto & entry : std::filesystem::directory_iterator(std::filesystem::u8path(path_str))) {
+        std::string entry_path = entry.path().u8string();
         if (endsWith(entry_path, terScreenShotExt)) {
             const char* p = strstr(entry_path.c_str(), terScreenShotName);
             if(p){
@@ -2025,8 +2025,8 @@ void GameShell::startStopRecordMovie()
 
         int movieNumber = 0;
         std::vector<std::string> paths;
-        for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
-            std::string entry_path = entry.path().string();
+        for (const auto & entry : std::filesystem::directory_iterator(std::filesystem::u8path(path_str))) {
+            std::string entry_path = entry.path().u8string();
             if (startsWith(entry_path, terMovieName)) {
 				const char* p = strstr(entry_path.c_str(), terMovieName);
 				if(p){
@@ -2621,8 +2621,8 @@ void GameShell::preLoad() {
 
     //Load texts, don't delete already loaded ones but replace existing ones
     for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
-        std::filesystem::path entry_path(entry->key);
-        std::string name = entry_path.filename().string();
+        std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
+        std::string name = entry_path.filename().u8string();
         name = string_to_lower(name.c_str());
         if (name == "texts.btdb") continue;
         bool replace = name.rfind("_noreplace.") == std::string::npos;

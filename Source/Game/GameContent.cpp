@@ -59,45 +59,67 @@ void findGameContent() {
     std::string lastContent = getStringSettings("LastContent");
     if (!lastContent.empty()) settingsPath = ini->get(lastContent.c_str(), "GameContent");
 
-    //On Windows use app dir before remembered and prefs path, on other OS data is usually separated from executable
+    //Path for content in preferences path
     std::string prefPath;
     const char* prefPath_ptr = GET_PREF_PATH();
     if (prefPath_ptr) {
         prefPath = prefPath_ptr;
         prefPath += "Content";
+        SDL_free((void*) prefPath_ptr);
     }
-
-#ifdef _WIN32
-    paths.emplace_back(std::filesystem::current_path().string());
-    paths.emplace_back(SDL_GetBasePath());
+    
+#ifndef _WIN32
+    //On other OS data is usually separated from executable so is wise to check there first
     paths.emplace_back(prefPath);
 #else
+    //On Windows use current dir as relative to avoid non-ascii path breaking the game
+    paths.emplace_back(".");
+#endif
+
+    //Running binary directory
+    const char* basePath_ptr = SDL_GetBasePath();
+    if (basePath_ptr) {
+        paths.emplace_back(basePath_ptr);
+        SDL_free((void*) basePath_ptr);
+    }
+
+#if !defined(__APPLE__) && !defined(_WIN32)
+    //Current working directory absolute path
+    //Mac apps get exception when trying to scan it's own dir so don't do it
+    //On Windows we use relative current directory instead of absolute (see above)
+    paths.emplace_back(std::filesystem::current_path().u8string());
+#endif
+    
+#ifdef _WIN32
+    //Check pref dir on Windows after working dir
     paths.emplace_back(prefPath);
-    paths.emplace_back(SDL_GetBasePath());
-#ifndef __APPLE__
-    //Mac apps get exception when trying to scan it's own dir
-    paths.emplace_back(std::filesystem::current_path().string());
 #endif
-#endif
+
+    //Path stored in settings from last run
     if (settingsPath) paths.emplace_back(settingsPath);
 
     //Check paths for Resource dir
     std::set<std::string> scannedPaths;
-    for (std::string rootPath : paths) {
-        if (rootPath.empty()) continue;
-        terminate_with_char(rootPath, PATH_SEP);
-        scannedPaths.insert(rootPath);
-        printf("Checking game content from: %s\n", rootPath.c_str());
-        if (std::filesystem::exists(std::filesystem::path(rootPath))) {
+    for (std::string rootPathStr : paths) {
+        if (rootPathStr.empty()) continue;
+        terminate_with_char(rootPathStr, PATH_SEP);
+        scannedPaths.insert(rootPathStr);
+        std::filesystem::path rootPath = std::filesystem::u8path(rootPathStr);
+        printf("Checking game content from: %s\n", rootPathStr.c_str());
+        if (std::filesystem::exists(rootPath)) {
             clear_content_entries();
             set_content_root_path(rootPath);
             if (scan_resource_paths()) {
-                if (!convert_path_content("Perimeter.ini").empty()) {
+                if (convert_path_content("Perimeter.ini").empty()) {
+                    fprintf(stderr, "Path for content doesn't contain game: %s\n", rootPathStr.c_str());
+                } else {
                     break;
                 }
+            } else {
+                fprintf(stderr, "Path for content can't be scanned: %s\n", rootPathStr.c_str());
             }
         } else {
-            printf("Path doesn't exist: %s\n", rootPath.c_str());
+            fprintf(stderr, "Path for content doesn't exist: %s\n", rootPathStr.c_str());
         }
     }
     
@@ -112,7 +134,7 @@ void findGameContent() {
         return;
     }
     
-    printf("Using game content at: %s\n", get_content_root_path().c_str());
+    printf("Using game content at: %s\n", get_content_root_path_str().c_str());
 }
 
 void addGameContent(GAME_CONTENT content) {
@@ -306,8 +328,8 @@ void loadAddon(const std::string& addonName, const std::string& addonDir) {
     
     //Skip certain resource dirs such as saves and replays
     for (const auto& entry : get_content_entries_directory(addonDir + "Resource")) {
-        std::filesystem::path entry_path(entry->key);
-        std::string entry_name = entry_path.filename().string();
+        std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
+        std::string entry_name = entry_path.filename().u8string();
         std::string destination = std::string("Resource") + PATH_SEP + entry_name;
         //Check if we should skip certain dirs
         entry_name = string_to_lower(entry_name.c_str());
@@ -369,11 +391,8 @@ void detectGameContent() {
         return;
     }
 
-    //Set current path to preferences, this is specially needed for MacOS as it forbids writing inside .app
-    const char* prefPath_ptr = GET_PREF_PATH();
-    if (prefPath_ptr) {
-        std::filesystem::current_path(prefPath_ptr);
-    }
+    //Set current path to game directory, this is specially needed for MacOS as it forbids writing inside .app
+    std::filesystem::current_path(get_content_root_path());
 
     //Check if we should select another content, this has to be done before loading addons
     const char* content_selection = check_command_line("content_select");
@@ -386,7 +405,7 @@ void detectGameContent() {
     //Store current game content type and the path in its settings
     IniManager* ini = getSettings();
     ini->put("Global", "LastContent", getGameContentEnumName(terGameContentBase).c_str());
-    putStringSettings("GameContent", get_content_root_path());
+    putStringSettings("GameContent", get_content_root_path_str());
         
     //Detect if we have extra contents
     int loadAddons = 1;
@@ -395,8 +414,8 @@ void detectGameContent() {
     if (loadAddons) {
         for (const auto& entry: get_content_entries_directory("mods")) {
             if (entry->is_directory) {
-                std::filesystem::path entry_path(entry->path_content);
-                std::string addonName = entry_path.filename().string();
+                std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
+                std::string addonName = entry_path.filename().u8string();
                 if (endsWith(addonName, ".off")) {
                     printf("Skipping disabled mod: %s\n", addonName.c_str());
                     continue;

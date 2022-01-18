@@ -642,10 +642,10 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
     filesystem_entry* model_entry = get_content_entry(pFileName);
     if (model_entry) {
         fname = model_entry->path_content;
-        DefPath = std::filesystem::path(model_entry->key).parent_path().string() + PATH_SEP + "textures" + PATH_SEP;
+        DefPath = std::filesystem::u8path(model_entry->key).parent_path().u8string() + PATH_SEP + "textures" + PATH_SEP;
     } else {
         fname = pFileName;
-        DefPath = std::filesystem::path(convert_path_native(fname)).parent_path().string() + PATH_SEP + "textures" + PATH_SEP;
+        DefPath = std::filesystem::u8path(convert_path_native(fname)).parent_path().u8string() + PATH_SEP + "textures" + PATH_SEP;
     }
     fname = string_to_lower(fname.c_str());
     DefPath = string_to_lower(DefPath.c_str());

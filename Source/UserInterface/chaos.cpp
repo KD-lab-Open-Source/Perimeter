@@ -16,8 +16,8 @@ CChaos::CChaos(int hsize,int vsize,bool bump)
 
     //Get path of world, remove absolute path since we might need to access .pak textures
     std::string texturePath = GetTargetName("");
-    if (startsWith(texturePath, get_content_root_path())) {
-        string_replace_all(texturePath, get_content_root_path(), "");
+    if (startsWith(texturePath, get_content_root_path_str())) {
+        string_replace_all(texturePath, get_content_root_path_str(), "");
     }
     pSkySphere = nullptr;
     pSkySphere = terScene->CreateSkySpere("RESOURCE\\Models\\FX\\skysphere.M3D", texturePath.c_str(),vMap.H_SIZE);

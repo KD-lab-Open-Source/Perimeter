@@ -396,10 +396,13 @@ XErrorHandler::XErrorHandler() {
     state = 0;
     log_path.clear();
     const char* lop_path_ptr = GET_PREF_PATH();
-    if (lop_path_ptr) log_path = lop_path_ptr;
+    if (lop_path_ptr) {
+        log_path = lop_path_ptr;
+        SDL_free((void*) lop_path_ptr);
+    }
     log_path += "logfile.txt";
     printf("Writing log  at %s\n", log_path.c_str());
-	if (std::filesystem::exists(std::filesystem::path(log_path))) {
+	if (std::filesystem::exists(std::filesystem::u8path(log_path))) {
         std::fstream log_file;
         log_file.open(log_path.c_str(), std::ios::out | std::ios::trunc);
         log_file.close();
@@ -449,7 +452,7 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
     }
     stream << "Clock: " << clocki() << std::endl;
 
-    std::string crash_path = get_content_root_path() + CRASH_DIR;
+    std::string crash_path = get_content_root_path_str() + CRASH_DIR;
     std::list<std::string> linesStackTrace;
     stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);

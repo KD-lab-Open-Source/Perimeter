@@ -17,6 +17,7 @@
  * and the possibility of supporting addons that "add" files to game without altering the real dirs structure.
  */
 
+#include <filesystem>
 #include <memory>
 
 //Use POSIX for MS funcs
@@ -112,10 +113,13 @@ void dump_filesystem_entries(const std::string& xs);
 void clear_content_entries();
 
 //Sets the current resources root path
-void set_content_root_path(const std::string& path);
+void set_content_root_path(const std::filesystem::path& path);
 
 //Returns the current resources root path
-const std::string& get_content_root_path();
+const std::filesystem::path& get_content_root_path();
+
+//Returns the current resources root path string
+const std::string& get_content_root_path_str();
 
 //Scans source dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
 //Removes the source path in each scanned path before saving to internal resource path list to destination path

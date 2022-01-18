@@ -31,7 +31,8 @@ bool first_scan_flag = true;
 
 filesystem_entries_map filesystem_entries;
 
-std::string content_root_path;
+std::filesystem::path content_root_path;
+std::string content_root_path_str;
 
 void filesystem_entry::set(filesystem_entry* entry) {
     if (entry == nullptr) return;
@@ -68,13 +69,13 @@ void prepare_path(std::string& path, const std::string& source_path) {
 }
 
 void split_path_parent(const std::string& path, std::string& parent, std::string* filename) {
-    std::filesystem::path path_fs(convert_path_native(path));
-    parent = path_fs.parent_path().string();
+    std::filesystem::path path_fs = std::filesystem::u8path(convert_path_native(path));
+    parent = path_fs.parent_path().u8string();
     if (parent.empty()) {
-        parent = content_root_path;
+        parent = content_root_path_str;
     }
     if (filename) {
-        *filename = path_fs.filename().string();
+        *filename = path_fs.filename().u8string();
     }
 }
 
@@ -126,15 +127,15 @@ std::string convert_path_content(const std::string& path, bool parent_only) {
     std::string result;
     if (parent_only) {
         //Search the parent and append filename
-        std::filesystem::path path_fs(conv);
-        conv = path_fs.parent_path().string();
+        std::filesystem::path path_fs = std::filesystem::u8path(conv);
+        conv = path_fs.parent_path().u8string();
         if (conv.empty()) {
-            result = content_root_path + path_fs.filename().string();
+            result = content_root_path_str + path_fs.filename().u8string();
         } else {
             conv = string_to_lower(conv.c_str());
             filesystem_entry* entry = get_content_entry_internal(filesystem_entries, conv).get();
             if (entry) {
-                result = entry->path_content + PATH_SEP + path_fs.filename().string();
+                result = entry->path_content + PATH_SEP + path_fs.filename().u8string();
             }
         }
     } else {
@@ -151,13 +152,13 @@ std::string convert_path_content(const std::string& path, bool parent_only) {
 }
 
 filesystem_entry* get_content_entry(std::string path) {
-    prepare_path(path, content_root_path);
+    prepare_path(path, content_root_path_str);
     path = string_to_lower(path.c_str());
     return get_content_entry_internal(filesystem_entries, path).get();
 }
 
 std::vector<filesystem_entry*> get_content_entries_recursive(std::string path) {
-    prepare_path(path, content_root_path);
+    prepare_path(path, content_root_path_str);
     path = string_to_lower(path.c_str());
     std::vector<filesystem_entry*> paths;
     for (const auto& entry : filesystem_entries) {
@@ -169,7 +170,7 @@ std::vector<filesystem_entry*> get_content_entries_recursive(std::string path) {
 }
 
 std::vector<filesystem_entry*> get_content_entries_directory(std::string path) {
-    prepare_path(path, content_root_path);
+    prepare_path(path, content_root_path_str);
     path = string_to_lower(path.c_str());
     terminate_with_char(path, PATH_SEP);
     std::vector<filesystem_entry*> paths;
@@ -196,19 +197,27 @@ std::vector<filesystem_entry*> get_content_entries_directory(std::string path) {
 void dump_filesystem_entries(const std::string& path) {
     XStream xs(path, XS_OUT);
     for (const auto& pair : filesystem_entries) {
+        std::string line;
         filesystem_entry* entry = pair.second.get();
-        xs <   "+-[Entry]-+";
-        xs < "\n| Map  Key: " < pair.first.c_str();
-        xs < "\n| Rel  Key: " < entry->key.c_str();
-        xs < "\n| Abs  Key: " < entry->key_content.c_str();
-        xs < "\n| Abs Path: " < entry->path_content.c_str();
-        xs < "\n| Rel Path: " < entry->path_content_relative.c_str();
+        line +=   "+-[Entry]-+";
+        line += "\n| Map  Key: ";
+        line += pair.first;
+        line += "\n| Rel  Key: ";
+        line += entry->key;
+        line += "\n| Abs  Key: ";
+        line += entry->key_content;
+        line += "\n| Abs Path: ";
+        line += entry->path_content;
+        line += "\n| Rel Path: ";
+        line += entry->path_content_relative;
         filesystem_entry* original = entry->original_entry.get();
         while (original) {
-            xs < "\n| Replaces: " < original->path_content.c_str();
+            line += "\n| Replaces: ";
+            line += original->path_content;
             original = original->original_entry.get();
         }
-        xs < "\n+---------+\n\n";
+        line += "\n+---------+\n\n";
+        xs < line.c_str();
     }
     xs.close();
 }
@@ -216,16 +225,29 @@ void dump_filesystem_entries(const std::string& path) {
 void clear_content_entries() {
     first_scan_flag = true;
     content_root_path.clear();
+    content_root_path_str.clear();
     filesystem_entries.clear();
 }
 
-void set_content_root_path(const std::string& path) {
-    content_root_path = path;
-    terminate_with_char(content_root_path, PATH_SEP);
+void set_content_root_path(const std::filesystem::path& path) {
+    if (path == "." || path == curdir_path) {
+        content_root_path.clear();
+        content_root_path_str.clear();
+    } else {
+        content_root_path = path;
+        content_root_path_str = content_root_path.u8string();
+        if (!content_root_path_str.empty()) {
+            terminate_with_char(content_root_path_str, PATH_SEP);
+        }
+    }
 }
 
-const std::string& get_content_root_path() {
+const std::filesystem::path& get_content_root_path() {
     return content_root_path;
+}
+
+const std::string& get_content_root_path_str() {
+    return content_root_path_str;
 }
 
 ///Adds a new filesystem entry
@@ -258,12 +280,12 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         || startsWith(entry_key, "autosave")
         || endsWith(entry_key, ".ini")) {
         
-        bool path_is_directory = std::filesystem::is_directory(std::filesystem::path(path_content));
+        bool path_is_directory = std::filesystem::is_directory(std::filesystem::u8path(path_content));
 
         //Create absolute path too
         std::string entry_key_content = convert_path_native(path_content);
         entry_key_content = string_to_lower(entry_key_content.c_str());
-        std::string entry_key_root = content_root_path + entry_key;
+        std::string entry_key_root = content_root_path_str + entry_key;
         entry_key_root = string_to_lower(entry_key_root.c_str());
 
         //Check if an override occurs
@@ -305,7 +327,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         entry->key_content = entry_key_content;
         entry->path_content = path_content;
         std::string path_content_relative = path_content;
-        prepare_path(path_content_relative, content_root_path);
+        prepare_path(path_content_relative, content_root_path_str);
         entry->path_content_relative = path_content_relative;
         entry->is_directory = path_is_directory;
 
@@ -338,7 +360,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
     return nullptr;
 }
 
-bool scan_resource_paths(std::string destination_path, std::string source_path, const filesystem_scan_options* options) {
+bool scan_resource_paths(std::string destination_path, std::string source_path, const filesystem_scan_options* options) {    
     //Use destination as source path assuming its a call to refresh subdir resources in root
     if (source_path.empty() && !destination_path.empty()) {
         source_path = destination_path;
@@ -346,13 +368,13 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     bool same_paths = source_path == destination_path;
 
     //Remove root or any other stuff from source before adding
-    prepare_path(source_path, content_root_path);
-    if (!content_root_path.empty() && content_root_path != curdir_path) {
-        source_path = content_root_path + source_path;
+    prepare_path(source_path, content_root_path_str);
+    if (!content_root_path_str.empty() && content_root_path_str != curdir_path) {
+        source_path = content_root_path_str + source_path;
     }
 
     //Prepare destination too
-    prepare_path(destination_path, content_root_path);
+    prepare_path(destination_path, content_root_path_str);
     destination_path = string_to_lower(destination_path.c_str());
 
     //Setup options
@@ -365,8 +387,8 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     scanOptions.set(options);
 
     //If is actually a file then just add it
-    if (std::filesystem::is_regular_file(std::filesystem::path(source_path))) {
-        std::string source_parent_path = std::filesystem::path(source_path).parent_path().string();
+    if (std::filesystem::is_regular_file(std::filesystem::u8path(source_path))) {
+        std::string source_parent_path = std::filesystem::u8path(source_path).parent_path().u8string();
         terminate_with_char(source_parent_path, PATH_SEP);
         add_filesystem_entry_internal(filesystem_entries,
                                       source_path,
@@ -384,12 +406,13 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     }
 
     //We need this to scan dirs in current dir
-    if (content_root_path == curdir_path) {
+    if (content_root_path_str == curdir_path) {
         source_path = curdir_path + source_path;
     }
 
     //Check if is actually a dir
-    if (!std::filesystem::is_directory(source_path)) {
+    if (!std::filesystem::is_directory(std::filesystem::u8path(source_path))) {
+        fprintf(stderr, "scan_resource_paths not a directory %s\n", source_path.c_str());
         return false;
     }
     terminate_with_char(source_path, PATH_SEP);
@@ -417,9 +440,9 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     }
 
     //Do recursive search on source path
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::path(source_path))) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::u8path(source_path))) {
         if (entry.is_regular_file() || entry.is_directory()) {
-            add_filesystem_entry_internal(paths, entry.path().string(), destination_path, source_path, scanOptions);
+            add_filesystem_entry_internal(paths, entry.path().u8string(), destination_path, source_path, scanOptions);
         }
     }
 

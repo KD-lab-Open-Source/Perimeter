@@ -22,8 +22,8 @@ void loadAddonsList() {
     addonList.clear();
     for (const auto& entry : get_content_entries_directory("mods")) {
         if (entry->is_directory) {
-            std::filesystem::path entry_path(entry->path_content);
-            std::string name = entry_path.filename().string();
+            std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
+            std::string name = entry_path.filename().u8string();
             AddonInfo info;
             if (endsWith(name, ".off")) {
                 name.erase(name.rfind(".off"));
@@ -96,7 +96,11 @@ int addonsApplyConfirmationQuant(float, float) {
                     newPath.erase(pos);
                 }
                 std::error_code error;
-                std::filesystem::rename(addon.path, newPath, error);
+                std::filesystem::rename(
+                        std::filesystem::u8path(addon.path),
+                        std::filesystem::u8path(newPath),
+                        error
+                );
                 if (error) {
                     ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
                 }

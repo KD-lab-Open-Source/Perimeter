@@ -846,10 +846,10 @@ HRESULT D3DXCreateTextureFromFileInMemory(IDirect3DDevice9 *device, const void *
     return 1;
 }
 
-HRESULT D3DXCreateCubeTextureFromFile(IDirect3DDevice9 *device,
-                                      const char *srcfile, struct IDirect3DCubeTexture9 **cube) {
+HRESULT D3DXCreateCubeTextureFromFileA(IDirect3DDevice9 *device,
+                                       const char *srcfile, struct IDirect3DCubeTexture9 **cube) {
     //TODO
-    WARN("Called unimplemented D3DXCreateCubeTextureFromFile\n");
+    WARN("Called unimplemented D3DXCreateCubeTextureFromFileA\n");
     return 1;
 }
 
@@ -857,12 +857,5 @@ HRESULT D3DXCreateCubeTextureFromFileInMemory(struct IDirect3DDevice9 *device,
                                               const void *data, UINT datasize, struct IDirect3DCubeTexture9 **texture) {
     //TODO
     WARN("Called unimplemented D3DXCreateCubeTextureFromFileInMemory\n");
-    return 1;
-}
-
-HRESULT D3DXSaveSurfaceToFile(const char *destfile, D3DXIMAGE_FILEFORMAT destformat,
-                              IDirect3DSurface9 *srcsurface, const PALETTEENTRY *srcpalette, const RECT *srcrect) {
-    //TODO
-    WARN("Called unimplemented D3DXSaveSurfaceToFile\n");
     return 1;
 }

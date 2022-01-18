@@ -3433,7 +3433,7 @@ bool EffectLibrary::Load(const char* fname,const char* texture_path)
 			{
 				std::string& t=(*it)->texture_name;
                 t = convert_path_native(t);
-				t = path + std::filesystem::path(t).filename().string();
+				t = path + std::filesystem::u8path(t).filename().u8string();
 			}
 		}
 

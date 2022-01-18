@@ -209,12 +209,12 @@ FARPROC getPrmEditDLLFunction(const char* name)
     static HINSTANCE lh;
     if(!lh){
         static bool showError = true;
-        lh = LoadLibrary("PrmEdit.dll");
+        lh = LoadLibraryA("PrmEdit.dll");
         if(!lh && showError){
             showError = false;
             XBuffer buf;
             buf < "PrmEdit.dll not found, error code: " <= GetLastError();
-            MessageBox ( 0, buf, "PrmEdit error",  MB_TASKMODAL | MB_SETFOREGROUND | MB_OK | MB_ICONERROR);
+            MessageBoxA(0, buf, "PrmEdit error",  MB_TASKMODAL | MB_SETFOREGROUND | MB_OK | MB_ICONERROR);
         }
     }
     if(lh){

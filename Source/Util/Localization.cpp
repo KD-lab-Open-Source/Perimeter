@@ -17,8 +17,8 @@ void initLocale() {
 
     for (filesystem_entry* entry : get_content_entries_directory("Resource/LocData")) {
         if (entry->is_directory) {
-            std::filesystem::path path(entry->path_content);
-            localesAvailable.emplace_back(path.filename().string());
+            std::filesystem::path path = std::filesystem::u8path(entry->path_content);
+            localesAvailable.emplace_back(path.filename().u8string());
         }
     }
     

@@ -492,7 +492,7 @@ cTexture* TextureWithAnnoterPath(cTexture* pTexture,const char* annoter_path,con
 		return NULL;
 
     std::string filename = convert_path_native(pTexture->GetName());
-    filename = std::filesystem::path(filename).filename().string();
+    filename = std::filesystem::u8path(filename).filename().u8string();
 
 	std::string attr;
     if (pTexture->GetAttribute(TEXTURE_BUMP)) {

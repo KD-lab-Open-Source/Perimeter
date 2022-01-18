@@ -171,8 +171,8 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
                 std::string sourcefile = convert_path_content(Texture->GetName());
                 //If empty then the texture was loaded from .pak so assume is older than cache
                 if (!sourcefile.empty()) {
-                    auto cachetime = std::filesystem::last_write_time(std::filesystem::path(path));
-                    auto sourcetime = std::filesystem::last_write_time(std::filesystem::path(sourcefile));
+                    auto cachetime = std::filesystem::last_write_time(std::filesystem::u8path(path));
+                    auto sourcetime = std::filesystem::last_write_time(std::filesystem::u8path(sourcefile));
                     //Mark as not usable if source file is modified after cache creation
                     usable = sourcetime <= cachetime;
                 }
@@ -255,7 +255,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 int cD3DRender::CreateCubeTexture(class cTexture *Texture, const char* fname)
 {
 	LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;
-	if(FAILED(D3DXCreateCubeTextureFromFile(lpD3DDevice,fname,&pCubeTexture)))
+	if(FAILED(D3DXCreateCubeTextureFromFileA(lpD3DDevice, fname, &pCubeTexture)))
 		return 1;
 
 	Texture->BitMap.push_back((IDirect3DTexture9*)pCubeTexture);
@@ -294,13 +294,18 @@ int cD3DRender::DeleteTexture(cTexture *Texture)
 }
 bool cD3DRender::SetScreenShot(const char *fname)
 {
+#ifndef PERIMETER_EXODUS
 	LPDIRECT3DSURFACE9 lpRenderSurface=0;
 	RDCALL(lpD3DDevice->GetRenderTarget(0,&lpRenderSurface));
-	HRESULT hr=D3DXSaveSurfaceToFile(fname,D3DXIFF_BMP,lpRenderSurface,NULL,NULL);
-	//HRESULT hr=D3DXSaveSurfaceToFile(fname,D3DXIFF_PNG,lpRenderSurface,NULL,NULL);
+	HRESULT hr=D3DXSaveSurfaceToFileA(fname,D3DXIFF_BMP,lpRenderSurface,NULL,NULL);
 	
 	RELEASE(lpRenderSurface);
 	return SUCCEEDED(hr);
+#else
+    //TODO implement this
+    fprintf(stderr, "Called unimplemented cD3DRender::SetScreenShot\n");
+    return false;
+#endif
 }
 
 void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch)
