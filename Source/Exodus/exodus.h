@@ -16,17 +16,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint32_t GetPrivateProfileString(const char* section,const char* key,const char* defaultVal,
-                              char* returnBuffer, uint32_t bufferSize, const char* filePath);
-
-uint32_t WritePrivateProfileString(const char* section,const char* key,const char* value, const char* filePath);
-
 void Sleep(uint32_t millis);
 
 int __iscsym(int c);
-
-#define IsCharAlphaNumeric isalnum
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Event/Thread stuff

@@ -4,12 +4,7 @@
 #include "GameContent.h"
 #include "files/files.h"
 
-#ifdef _WIN32
-//For RegOpenKeyEx
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-#include <winreg.h>
-#endif
+#include <SimpleIni.h>
 
 //#include <crtdbg.h>
 
@@ -279,6 +274,45 @@ bool create_directories(const std::string& path, std::error_code* error) {
 }
 
 // ---   Ini file   ---------------------
+
+
+uint32_t ReadIniString(const char* section, const char* key, const char* defaultVal,
+                       char* returnBuffer, uint32_t bufferSize, const char* filePath) {
+    CSimpleIniA ini;
+    SI_Error rc = ini.LoadFile(filePath);
+    if (rc < 0) {
+        fprintf(stderr, "Error reading %s file: %d\n", filePath, rc);
+        return 0;
+    };
+    const char* val = ini.GetValue(section, key, defaultVal);
+    if (val) {
+        SDL_strlcpy(returnBuffer, val, bufferSize);
+    } else {
+        *returnBuffer = 0;
+    }
+    return 1;
+}
+
+uint32_t WriteIniString(const char* section, const char* key, const char* value, const char* filePath) {
+    CSimpleIniA ini;
+    SI_Error rc = ini.LoadFile(filePath);
+    if (rc < 0) {
+        fprintf(stderr, "Error loading %s file for writing: %d\n", filePath, rc);
+        return 0;
+    };
+    rc = ini.SetValue(section, key, value);
+    if (rc < 0) {
+        fprintf(stderr, "Error writing %s %s %s in file %s: %d\n", section, key, value, filePath, rc);
+        return 0;
+    };
+    ini.SaveFile(filePath);
+    if (rc < 0) {
+        fprintf(stderr, "Error writing %s file: %d\n", filePath, rc);
+        return 0;
+    };
+    return 1;
+}
+
 IniManager::IniManager(const char* fname, bool check_existence, bool full_path) {
     fname_ = fname;
     check_existence_ = check_existence;
@@ -318,8 +352,9 @@ const char* IniManager::get(const char* section, const char* key)
 void IniManager::put(const char* section, const char* key, const char* val)
 {
     std::string path = getFilePath();
-    
-	WritePrivateProfileString(section,key,val,path.c_str());
+
+
+    WriteIniString(section, key, val, path.c_str());
 }
 
 int IniManager::getInt(const char* section, const char* key) 

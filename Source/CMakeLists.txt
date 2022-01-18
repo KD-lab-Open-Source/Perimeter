@@ -22,6 +22,15 @@ IF(FFMPEG_FOUND)
     ENDIF()
 ENDIF()
 
+#simpleini
+FetchContent_Declare(simpleini
+        GIT_REPOSITORY    https://github.com/brofield/simpleini
+        GIT_TAG           origin/master
+        GIT_SHALLOW       ON
+)
+FetchContent_MakeAvailable(simpleini)
+INCLUDE_DIRECTORIES(${simpleini_SOURCE_DIR})
+
 IF(NOT PERIMETER_WINDOWS)
     #Non Windows target specifics
 

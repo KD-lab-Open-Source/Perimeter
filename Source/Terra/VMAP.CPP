@@ -61,7 +61,7 @@ char* GetINIstringV(const std::string& iniFile,const char* section,const char* k
 	static char buffer[255+1];
 	std::string path = convert_path_content(iniFile);
     if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
-	if(!GetPrivateProfileString(section,key,"",buffer,255,path.c_str())){//fullPath
+	if(!ReadIniString(section, key, "", buffer, 255, path.c_str())){//fullPath
 		buffer[0]=0;
 	}
 	return buffer;
@@ -71,7 +71,7 @@ void SaveINIstringV(const std::string& iniFile,const char* section,const char* k
 	//WritePrivateProfileString(section,key,var,iniFile);
 	std::string path = convert_path_content(iniFile);
     if (path.empty()) ErrH.Abort("Ini file not found: ", XERR_USER, 0, iniFile.c_str());
-	WritePrivateProfileString(section,key,var,path.c_str());//fullPath
+    WriteIniString(section, key, var, path.c_str());//fullPath
 }
 
 std::string GetTargetName(const char* name)

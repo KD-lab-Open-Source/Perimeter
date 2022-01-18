@@ -5105,7 +5105,7 @@ void CEditWindow::OnChar(char key)
 			m_handler(this, EVENT_DOUBLECLICK, 0);
 		} else if ( width + terRenderDevice->GetCharLength(key) < sx ) {
 			if (m_attr->alnum) {
-				if ( IsCharAlphaNumeric(key) ) {
+				if ( isalnum(key) ) {
 					m_data += key;
 				}
 			} else {
@@ -5218,7 +5218,7 @@ void CChatInGameEditWindow::OnChar(char key)
 			m_handler(this, EVENT_DOUBLECLICK, 0);
 		} else if ( width + terRenderDevice->GetCharLength(key) < sx ) {
 			if (m_attr->alnum) {
-				if ( IsCharAlphaNumeric(key) ) {
+				if ( isalnum(key) ) {
 					m_data += key;
 				}
 			} else {

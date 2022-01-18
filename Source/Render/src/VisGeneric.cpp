@@ -11,7 +11,7 @@ void Done3dxshader();
 
 static void get_string(char*& str,char* s)
 {
-	while(*str && IsCharAlphaNumeric(*str))
+	while(*str && isalnum(*str))
 		*s++=*str++;
 
 	*s=0;

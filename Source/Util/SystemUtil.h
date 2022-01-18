@@ -71,6 +71,12 @@ extern HWND hWndVisGeneric;
 inline void RestoreFocus() { SDL_RaiseWindow(sdlWindow); }
 
 // ---   Ini file   ------------------------------
+
+uint32_t ReadIniString(const char* section, const char* key, const char* defaultVal,
+                       char* returnBuffer, uint32_t bufferSize, const char* filePath);
+
+uint32_t WriteIniString(const char* section, const char* key, const char* value, const char* filePath);
+
 class IniManager
 {
 private:

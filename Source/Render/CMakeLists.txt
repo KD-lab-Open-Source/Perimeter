@@ -45,7 +45,6 @@ SET(Render_SRCS
         client/ForceField.cpp
         client/SceneClient.cpp
         client/Silicon.cpp
-        client/WinVideo.cpp
         gemsiii/filter.cpp
         saver/Saver.cpp
         src/cCamera.cpp
