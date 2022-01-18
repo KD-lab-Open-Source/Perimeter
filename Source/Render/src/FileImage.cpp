@@ -527,9 +527,17 @@ public:
 	virtual int load(const char *fname)
 	{
 		AVISTREAMINFO FAR psi;
+        
+        std::string aviname = convert_path_content(fname);
+        if (aviname.empty()) {
+            return 1; // Couldn't find file
+        }
 
-		HRESULT hr=AVIStreamOpenFromFileA(&pavi,fname,streamtypeVIDEO,0,OF_READ,NULL);
-		if(hr) return 1;
+		HRESULT hr=AVIStreamOpenFromFileA(&pavi,aviname.c_str(),streamtypeVIDEO,0,OF_READ,NULL);
+		if (hr) {
+            fprintf(stderr, "cAVIImage couldn't open: %s %s\n", fname, aviname.c_str());
+            return 1;
+        }
 		time=AVIStreamLengthTime(pavi);
 		AVIStreamInfo(pavi,&psi,sizeof(AVISTREAMINFO FAR));
 		x=psi.rcFrame.right-psi.rcFrame.left;
@@ -555,7 +563,7 @@ public:
 		if(bpp!=32) return -2;
 		PAVISTREAM pcomp=0;
 		PAVIFILE fAVI=0;
-		remove(fname);
+		std::remove(fname);
 		err = AVIFileOpenA(&fAVI,fname,OF_CREATE|OF_WRITE,NULL);
 		if(err)
 			return 1;

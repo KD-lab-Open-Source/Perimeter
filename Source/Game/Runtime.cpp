@@ -232,7 +232,9 @@ void refresh_window_size(bool update_resolution) {
 void CrashHandler()
 {
     if (gameShell && universe()) {
-        std::string crash = get_content_root_path_str() + CRASH_DIR + PATH_SEP + std::to_string(time(nullptr)) + "_";
+        std::string crash = CRASH_DIR;
+        terminate_with_char(crash, PATH_SEP);
+        crash += std::to_string(time(nullptr)) + "_";
 
         //Attempt to save reel
         terHyperSpace::SAVE_REPLAY_RESULT statereel = universe()->savePlayReel((crash + "reel").c_str());
@@ -803,7 +805,7 @@ int SDL_main(int argc, char *argv[])
         "cache/font",
         "cache/bump",
     }) {
-        path = get_content_root_path_str() + convert_path_native(path);
+        path = convert_path_native(path);
         bool ok = create_directories(path);
         xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
     }

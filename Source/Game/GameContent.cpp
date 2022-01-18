@@ -109,6 +109,9 @@ void findGameContent() {
         if (std::filesystem::exists(rootPath)) {
             clear_content_entries();
             set_content_root_path(rootPath);
+            //Set current path to game directory to allow relative paths inside
+            //This is specially needed for MacOS as it forbids writing inside .app
+            std::filesystem::current_path(rootPath);
             if (scan_resource_paths()) {
                 if (convert_path_content("Perimeter.ini").empty()) {
                     fprintf(stderr, "Path for content doesn't contain game: %s\n", rootPathStr.c_str());
@@ -390,9 +393,6 @@ void detectGameContent() {
         ErrH.Abort("Couldn't identify game content type in Resource, some data may be missing.", XERR_USER, terGameContentAvailable);
         return;
     }
-
-    //Set current path to game directory, this is specially needed for MacOS as it forbids writing inside .app
-    std::filesystem::current_path(get_content_root_path());
 
     //Check if we should select another content, this has to be done before loading addons
     const char* content_selection = check_command_line("content_select");

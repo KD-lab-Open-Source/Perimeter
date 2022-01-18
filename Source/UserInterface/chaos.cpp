@@ -14,11 +14,13 @@ CChaos::CChaos(int hsize,int vsize,bool bump)
 		"RESOURCE\\EFFECT\\WorldGround.tga","RESOURCE\\EFFECT\\WorldGround01.tga",
 		"RESOURCE\\EFFECT\\Chaos\\oceanBump.tga",tile,bump);
 
-    //Get path of world, remove absolute path since we might need to access .pak textures
+    //Get path of world dir
     std::string texturePath = GetTargetName("");
-    if (startsWith(texturePath, get_content_root_path_str())) {
-        string_replace_all(texturePath, get_content_root_path_str(), "");
-    }
+    //TODO remove
+    //Remove absolute path since we might need to access .pak textures
+    //if (startsWith(texturePath, get_content_root_path_str())) {
+    //    string_replace_all(texturePath, get_content_root_path_str(), "");
+    //}
     pSkySphere = nullptr;
     pSkySphere = terScene->CreateSkySpere("RESOURCE\\Models\\FX\\skysphere.M3D", texturePath.c_str(),vMap.H_SIZE);
 }

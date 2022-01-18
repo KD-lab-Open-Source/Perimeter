@@ -404,7 +404,7 @@ void PNetCenter::HandlerInputNetCommand()
                     ExecuteInternalCommand(PNC_COMMAND__DESYNC, false);
                 }
 
-                std::string crash_dir = get_content_root_path_str() + CRASH_DIR + PATH_SEP;
+                std::string crash_dir = CRASH_DIR;
                 terminate_with_char(crash_dir, PATH_SEP);
                 crash_dir += "desync_" + nc.gameID + "_" + std::to_string(m_localNETID) + PATH_SEP;
                 create_directories(crash_dir);

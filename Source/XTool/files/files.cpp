@@ -38,7 +38,6 @@ void filesystem_entry::set(filesystem_entry* entry) {
     if (entry == nullptr) return;
     this->key = entry->key;
     this->key_content = entry->key_content;
-    this->path_content_relative = entry->path_content_relative;
     this->path_content = entry->path_content;
     this->is_directory = entry->is_directory;
     this->original_entry = entry->original_entry;
@@ -208,8 +207,6 @@ void dump_filesystem_entries(const std::string& path) {
         line += entry->key_content;
         line += "\n| Abs Path: ";
         line += entry->path_content;
-        line += "\n| Rel Path: ";
-        line += entry->path_content_relative;
         filesystem_entry* original = entry->original_entry.get();
         while (original) {
             line += "\n| Replaces: ";
@@ -259,6 +256,7 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         const filesystem_scan_options& options
 ) {
     //Remove ./ from res path since it can mess with some code dealing with extensions
+    //Remove root since working directory is already there
     prepare_path(path_content, "");
 
     //Make relative path from path_content
@@ -285,12 +283,10 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         //Create absolute path too
         std::string entry_key_content = convert_path_native(path_content);
         entry_key_content = string_to_lower(entry_key_content.c_str());
-        std::string entry_key_root = content_root_path_str + entry_key;
-        entry_key_root = string_to_lower(entry_key_root.c_str());
 
         //Check if an override occurs
         std::shared_ptr<filesystem_entry> entry = get_content_entry_internal(paths, entry_key);
-        if (!entry) entry = get_content_entry_internal(paths, entry_key_root);
+        //if (!entry) entry = get_content_entry_internal(paths, entry_key_root);
         if (entry) {
             if (entry->path_content == path_content) {
                 //Already added
@@ -326,15 +322,11 @@ filesystem_entry* add_filesystem_entry_internal( // NOLINT(misc-no-recursion)
         entry->key = entry_key;
         entry->key_content = entry_key_content;
         entry->path_content = path_content;
-        std::string path_content_relative = path_content;
-        prepare_path(path_content_relative, content_root_path_str);
-        entry->path_content_relative = path_content_relative;
         entry->is_directory = path_is_directory;
 
         //Store path relative and absolute internal paths pointing the real FS path
         paths[entry->key] = entry;
         paths[entry->key_content] = entry;
-        paths[entry_key_root] = entry;
         
         if (entry->is_directory) {
             std::string destination_path_copy = destination_path;
@@ -369,9 +361,6 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
 
     //Remove root or any other stuff from source before adding
     prepare_path(source_path, content_root_path_str);
-    if (!content_root_path_str.empty() && content_root_path_str != curdir_path) {
-        source_path = content_root_path_str + source_path;
-    }
 
     //Prepare destination too
     prepare_path(destination_path, content_root_path_str);
@@ -405,13 +394,9 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
         scanOptions.prepend_destination_to_path = true;
     }
 
-    //We need this to scan dirs in current dir
-    if (content_root_path_str == curdir_path) {
-        source_path = curdir_path + source_path;
-    }
-
     //Check if is actually a dir
-    if (!std::filesystem::is_directory(std::filesystem::u8path(source_path))) {
+    std::filesystem::path source_dir = std::filesystem::u8path(source_path.empty() ? curdir_path : source_path);
+    if (!std::filesystem::is_directory(source_dir)) {
         fprintf(stderr, "scan_resource_paths not a directory %s\n", source_path.c_str());
         return false;
     }
@@ -440,7 +425,7 @@ bool scan_resource_paths(std::string destination_path, std::string source_path, 
     }
 
     //Do recursive search on source path
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::u8path(source_path))) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(source_dir)) {
         if (entry.is_regular_file() || entry.is_directory()) {
             add_filesystem_entry_internal(paths, entry.path().u8string(), destination_path, source_path, scanOptions);
         }

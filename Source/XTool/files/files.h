@@ -62,12 +62,10 @@ class filesystem_entry {
 public:
     //Relative path in game structure of this entry that serves as key 
     std::string key;
-    //Real path including content root that serves as key of this entry 
+    //Real path relative to content root that serves as key of this entry 
     std::string key_content;
     
-    //Path relative to content root
-    std::string path_content_relative;
-    //Real path including content root where this entry can be found
+    //Real path where this entry can be found inside content root
     std::string path_content;
     
     //Is this entry a directory?
@@ -77,7 +75,7 @@ public:
     std::shared_ptr<filesystem_entry> original_entry;
     
     explicit filesystem_entry():
-            key(), key_content(), path_content_relative(), path_content(), is_directory(false), original_entry() {
+            key(), path_content(), is_directory(false), original_entry() {
     }
     ~filesystem_entry() = default;
     
