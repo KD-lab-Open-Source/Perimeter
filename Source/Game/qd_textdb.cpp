@@ -6,7 +6,7 @@
 #include "tweaks.h"
 #include "files/files.h"
 #include "qd_textdb.h"
-#include "Localization.h"
+#include "codepages/codepages.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -234,7 +234,7 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
         std::string txt_str = line.substr(pos + 1);
         if (txt_str.empty()) continue;
         if (!locale.empty()) {
-            txt_str = getLocaleString(txt_str.c_str(), locale);
+            txt_str = convertToCodepage(txt_str.c_str(), locale);
         }
 
         add_entry(id_str, qdText(txt_str, ""), replace_old_texts);

@@ -16,6 +16,7 @@
 #include "GeoControl.h"
 #include "EditArchive.h"
 #include "qd_textdb.h"
+#include "codepages/codepages.h"
 
 //------------------------------------------------
 MissionEditor::MissionEditor()
@@ -469,7 +470,7 @@ const char* MissionEditor::info()
         missionName.erase(0, pos);
     }
     if (russian) {
-        info_ += getLocaleString("Миссия: ", locale);
+        info_ += convertToCodepage("Миссия: ", locale);
     } else {
         info_ += "Mission: ";
     }
@@ -480,11 +481,11 @@ const char* MissionEditor::info()
     info_ += qdTextDB::instance().getText("Interface.Menu.ComboItems.Player");
     if (russian) {
         if(player->isWorld()) {
-            info_ += getLocaleString(" \"Мир\"", locale);
+            info_ += convertToCodepage(" \"Мир\"", locale);
         } else if (player->playerID() == 0) {
-            info_ += getLocaleString(" \"Я\"", locale);
+            info_ += convertToCodepage(" \"Я\"", locale);
         } else if (player->playerID() == 1) {
-            info_ += getLocaleString(" \"Враг\"", locale);
+            info_ += convertToCodepage(" \"Враг\"", locale);
         }
     } else {
         if(player->isWorld()) {
@@ -501,24 +502,24 @@ const char* MissionEditor::info()
 	terUnitBase* unit = universe()->selectedObject();
 	if (unit) {
         if (russian) {
-            info_ += getLocaleString("Объект: ", locale);
+            info_ += convertToCodepage("Объект: ", locale);
         } else {
             info_ += "Object: ";
         }
-        info_ += getLocaleString(unit->attr().internalName(false), locale);
+        info_ += convertToCodepage(unit->attr().internalName(false), locale);
         if (russian) {
             //Most alt names are in russian anyway
             info_ += " - ";
-            info_ += getLocaleString(unit->attr().internalName(true), locale);
+            info_ += convertToCodepage(unit->attr().internalName(true), locale);
         }
         info_ += "\n";
 		if (unit->GetModelName()) {
             if (russian) {
-                info_ += getLocaleString("Модель: ", locale);
+                info_ += convertToCodepage("Модель: ", locale);
             } else {
                 info_ += "Model: ";
             }
-            info_ += getLocaleString(unit->GetModelName(), locale);
+            info_ += convertToCodepage(unit->GetModelName(), locale);
             info_ += "\n";
         }
 	}
@@ -527,18 +528,18 @@ const char* MissionEditor::info()
     //Copied item
 	if (copiedData_) {
         if (russian) {
-            info_ += getLocaleString("Запомнен: ", locale);
+            info_ += convertToCodepage("Запомнен: ", locale);
         } else {
             info_ += "Copied: ";
         }
-        info_ += getLocaleString(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(copiedData_->attributeID), locale);
+        info_ += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(copiedData_->attributeID), locale);
         info_ += "\n";
     }
 
     //Hardness edit
 	if (editingHardness_) {
         if (russian) {
-            info_ += getLocaleString(
+            info_ += convertToCodepage(
                     !isShiftPressed() ? "Редактирование некопаемых областей\n"
                                       : "Редактирование копаемых областей\n",
                     locale
@@ -553,7 +554,7 @@ const char* MissionEditor::info()
         if (terCamera->restricted()) {
             info_ += "Camera: ";
         } else if (russian) {
-            info_ += getLocaleString("Camera (ограничена): ", locale);
+            info_ += convertToCodepage("Camera (ограничена): ", locale);
         } else {
             info_ += "Camera (restricted): ";
         }

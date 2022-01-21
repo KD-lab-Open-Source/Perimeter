@@ -16,6 +16,7 @@
 #include "GameShell.h"
 
 #include "GeoControl.h"
+#include "codepages/codepages.h"
 
 terGeoControl::terGeoControl(const UnitTemplate& data):terUnitBase(data)
 {
@@ -158,8 +159,8 @@ void terGeoControl::ShowInfo()
         std::string text;
         const std::string& locale = getLocale();
         if (locale == "russian") {
-            text = getLocaleString("Гео: ", locale);
-            text += getLocaleString(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr().ID), locale);
+            text = convertToCodepage("Гео: ", locale);
+            text += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr().ID), locale);
             text += "\n";
         } else {
             text = "Geo:\n";

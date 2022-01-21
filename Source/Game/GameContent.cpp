@@ -346,7 +346,9 @@ void loadAddon(const std::string& addonName, const std::string& addonDir) {
     }
 
     //Load scripts
-    scan_resource_paths("Scripts", addonDir + "Scripts");
+    if (get_content_entry(addonDir + "Scripts") != nullptr) {
+        scan_resource_paths("Scripts", addonDir + "Scripts");
+    }
 }
 
 void applyWorkarounds() {

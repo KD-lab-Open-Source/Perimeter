@@ -14,6 +14,7 @@
 
 #include "PerimeterSound.h"
 #include "GameShell.h"
+#include "codepages/codepages.h"
 
 #include "FilthAnts.h"
 #include "FilthWasp.h"
@@ -766,8 +767,8 @@ void terFilthSpot::ShowInfo()
         std::string text;
         const std::string& locale = getLocale();
         if (locale == "russian") {
-            text = getLocaleString("Скверна: ", locale);
-            text += getLocaleString(getEnumDescriptor(FILTH_SPOT_ID_NONE).nameAlt(FilthParamID), locale);
+            text = convertToCodepage("Скверна: ", locale);
+            text += convertToCodepage(getEnumDescriptor(FILTH_SPOT_ID_NONE).nameAlt(FilthParamID), locale);
             text += "\n";
         } else {
             text = "Scourge:\n";

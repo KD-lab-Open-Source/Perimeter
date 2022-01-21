@@ -36,6 +36,7 @@ SET(XTool_SRCS
     XUTIL/XUTIL.CPP
     XUTIL/XClock.cpp
     files/files.cpp
+    codepages/codepages.cpp
 )
 
 SET(XTool_LINK_LIBS gamemath_static_lib ZLIB::ZLIB)

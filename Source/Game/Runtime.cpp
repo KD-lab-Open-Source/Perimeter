@@ -29,6 +29,7 @@
 #include "../resource.h"
 #include "files/files.h"
 #include "Localization.h"
+#include "codepages/codepages.h"
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -1107,7 +1108,7 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 	
 	std::vector<const char*>::iterator i;
 	FOR_EACH(items, i) {
-        std::string text = getLocaleString(*i, getLocale());
+        std::string text = convertToCodepage(*i, getLocale());
 		AppendMenuA(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
     }
 	
@@ -1137,7 +1138,7 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 	
 	std::vector<const char*>::iterator i;
 	FOR_EACH(items, i) {
-        std::string text = getLocaleString(*i, getLocale());
+        std::string text = convertToCodepage(*i, getLocale());
 		AppendMenuA(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
     }
 	

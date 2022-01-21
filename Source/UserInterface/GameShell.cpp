@@ -45,6 +45,7 @@
 #include "BelligerentSelect.h"
 #include "files/files.h"
 #include "Localization.h"
+#include "codepages/codepages.h"
 #include <SDL.h>
 
 int terShowFPS = 0;
@@ -1062,9 +1063,9 @@ void GameShell::EventHandler(SDL_Event& event) {
         case SDL_TEXTINPUT: {
             //NOTE: _shellIconManager.isInEditMode() is implicit here as SDL2 edit mode is changed accordingly
             //printf("TI %s\n", event.text.text);
-            char key = getLocaleChar(event.text.text);
-            if (key) {
-                _shellIconManager.OnChar(key);
+            std::string key = convertToCodepage(event.text.text, getLocale());
+            if (!key.empty()) {
+                _shellIconManager.OnChar(key.front());
             }
             break;
         }

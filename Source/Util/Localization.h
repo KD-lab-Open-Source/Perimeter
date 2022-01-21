@@ -19,8 +19,5 @@ const std::string& getLocale();
 const std::vector<std::string>& getLocales();
 const char* getLocRootPath();
 const std::string& getLocDataPath();
-char getLocaleChar(const char* utf8, const std::string& locale);
-char getLocaleChar(const char* utf8);
-std::string getLocaleString(const char* utf8, const std::string& locale);
 
 #endif //PERIMETER_LOCALIZATION_H
