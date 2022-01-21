@@ -1475,8 +1475,10 @@ void ActionSetControlEnabled::activate(AIPlayer& aiPlayer)
 //------------------------------------------------------
 void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 {
-	if((action && action->onlyIfAI() && !aiPlayer.isAI()) || (gameShell->triggersDisabled() && aiPlayer.active()) || gameShell->missionEditor())
-		return;
+	if((action && action->onlyIfAI() && !aiPlayer.isAI()) || (gameShell->triggersDisabled() && aiPlayer.active()) || gameShell->missionEditor()) {
+        triggerChain.addLogRecord(*this, (std::string("Skip: ") + name()).c_str());
+        return;
+    }
 
 	switch(state_){
 	case SLEEPING:
@@ -1489,7 +1491,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 		FOR_EACH_AUTO(conditions, bi)
 			if(*bi == 1){
 				state_ = CHECKING;
-				triggerChain.addLogRecord(*this, (std::string("П: ") + name()).c_str());
+				triggerChain.addLogRecord(*this, (std::string("Process: ") + name()).c_str());
 				break;
 			}
 		
@@ -1500,19 +1502,21 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	case CHECKING:
 		if((!condition || condition->checkDebug(aiPlayer)) && (!action || action->automaticCondition(aiPlayer))){
 			activate(aiPlayer, triggerChain);
-			triggerChain.addLogRecord(*this, (std::string("С: ") + name()).c_str());
+			triggerChain.addLogRecord(*this, (std::string("Start: ") + name()).c_str());
 		}
 		else
 			break;
 
 	case WORKING:
 		if(!action || action->workedOut(aiPlayer)){
-			FOR_EACH_AUTO(outcomingLinks_, li)
-				li->activate(triggerChain);
+			FOR_EACH_AUTO(outcomingLinks_, li) {
+                li->activate(triggerChain);
+            }
 			state_ = DONE;
-			if(!active())
-				triggerChain.deactivateTrigger(this);
-			triggerChain.addLogRecord(*this, (std::string("Ф: ") + name()).c_str());
+			if(!active()) {
+                triggerChain.deactivateTrigger(this);
+            }
+			triggerChain.addLogRecord(*this, (std::string("Finish: ") + name()).c_str());
 		}
 		break;
 	}
@@ -1592,8 +1596,12 @@ void TriggerChain::initializeTriggersAndLinks()
 
 void TriggerChain::quant(AIPlayer& aiPlayer)
 {
-	for(int i = 0; i < activeTriggers_.size(); i++)
-		activeTriggers_[i]->quant(aiPlayer, *this);
+#ifdef PERIMETER_DEBUG
+    //printf("TCQ: %s %ld\n", aiPlayer.name(), activeTriggers_.size());
+#endif
+	for(int i = 0; i < activeTriggers_.size(); i++) {
+        activeTriggers_[i]->quant(aiPlayer, *this);
+    }
 }
 
 void TriggerChain::checkEvent(AIPlayer& aiPlayer, const Event& event)
@@ -1607,12 +1615,16 @@ void TriggerChain::activateTrigger(Trigger* trigger)
 {
 	if (std::find(activeTriggers_.begin(), activeTriggers_.end(), trigger) == activeTriggers_.end()) {
         activeTriggers_.push_back(trigger);
+        addLogRecord(*trigger, (std::string("Activate: ") + trigger->name()).c_str());
     }
 }
 
 void TriggerChain::deactivateTrigger(Trigger* trigger)
 {
-	activeTriggers_.erase(remove(activeTriggers_.begin(), activeTriggers_.end(), trigger), activeTriggers_.end());
+	auto it = activeTriggers_.erase(remove(activeTriggers_.begin(), activeTriggers_.end(), trigger), activeTriggers_.end());
+    if (it != activeTriggers_.end()) {
+        addLogRecord(*trigger, (std::string("Discard: ") + trigger->name()).c_str());
+    }
 }
 
 //------------------------------------------------------

@@ -1,12 +1,15 @@
 #include <cstring>
 #include <climits>
 #include "tweaks.h"
+
 #ifndef PERIMETER_HEADLESS
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #endif
+
 #include "StdAfx.h"
 #include "XPrmArchive.h"
+#include "codepages/codepages.h"
 #include "TriggerExport.h"
 
 //----------------------------------------------------------
@@ -54,7 +57,7 @@ void ConditionSwitcher::writeInfo(XBuffer& buffer, std::string offset) const
 		conditions.front().writeInfo(buffer, offset);
 		return;
 	}
-	buffer < (type == AND ? "И" : "ИЛИ") < " = " < (state_ ? "1" : "0") < "\r\n";
+	buffer < (type == AND ? "AND" : "OR") < " = " < (state_ ? "1" : "0") < "\n";
 	offset += "    ";
     FOR_EACH_AUTO(conditions, ci)
 		ci->writeInfo(buffer, offset);
@@ -63,14 +66,14 @@ void ConditionSwitcher::writeInfo(XBuffer& buffer, std::string offset) const
 void ConditionNode::writeInfo(XBuffer& buffer, std::string offset) const
 {
 	if(!condition){
-		buffer < "Нулевое условие, нужно удалить!!!\r\n";
+		buffer < "Empty Condition, must be removed!!!\r\n";
 		return;
 	}
 
 	buffer < offset.c_str();
 	bool state = condition->state();
 	if(type == INVERTED){
-		buffer < "НЕ ";
+		buffer < "NOT ";
 		state = !state;
 	}
 
@@ -78,7 +81,7 @@ void ConditionNode::writeInfo(XBuffer& buffer, std::string offset) const
 		condition->writeInfo(buffer, offset);
 	}
 	else{
-		buffer < triggerInterface().conditionName(*condition) < " = " < (state ? "1" : "0") < "\r\n";
+		buffer < condition->name() < " = " < (state ? "1" : "0") < "\n";
 	}
 }
 
@@ -133,7 +136,7 @@ bool Trigger::active() const
 
 const char* Trigger::displayText() const
 {
-	static XBuffer buffer(1024, 1);
+	static XBuffer buffer(1024, true);
 	buffer.init();
 	buffer < name();
 	if(action)
@@ -143,18 +146,35 @@ const char* Trigger::displayText() const
 
 const char* Trigger::debugDisplayText() const
 {
-	static XBuffer buffer(1024, 1);
+	static XBuffer buffer(1024, true);
 	buffer.init();
 	buffer < "[" <= executionCounter_ < "] " < name();
 	if(action)
 		buffer < " (" < action->name() < ")";
 	if(condition){
-		buffer < "\r\n";
+		buffer < "\n";
 		condition->writeInfo(buffer, "");
-		buffer -= 2;
+		buffer -= 1;
 		buffer < "";
 	}
 	return buffer;
+}
+
+const char* Trigger::logText() const
+{
+    static XBuffer buffer(1024, true);
+    buffer.init();
+    if(action) {
+        buffer < " (Action: " < action->name() < ")";
+    }
+    if(condition) {
+        buffer < " (Condition: " < condition->name() < ")";
+        buffer < "\n";
+        condition->writeInfo(buffer, "");
+        buffer -= 1;
+        buffer < "";
+    }
+    return buffer;
 }
 
 bool Trigger::removeLinkByChild(Trigger * child)
@@ -230,7 +250,7 @@ void TriggerChain::buildLinks()
 
 void TriggerChain::initialize()
 {
-	if(triggers.empty() || strcmp(triggers.front().name(), "START"))
+	if(triggers.empty() || strcmp(triggers.front().name(), "START") != 0)
 		triggers.insert(triggers.begin(), Trigger());
 	triggers.front().setName("START");
 
@@ -346,18 +366,27 @@ int TriggerChain::triggerIndex(const Trigger& trigger) const
 
 void TriggerChain::addLogRecord(const Trigger& trigger, const char* event)
 {
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	triggerEvents_.push_back(TriggerEvent());
 	TriggerEvent& record = triggerEvents_.back();
 	XBuffer buf;
 	buf < event;// < " " <= global_time();
 	record.event = buf;
 	record.state = trigger.state_;
-	for(int i = 0; i < triggers.size(); i++)
-		if(&triggers[i] == &trigger){
-			record.index = i;
-			break;
-		}
+	for(int i = 0; i < triggers.size(); i++) {
+        if (&triggers[i] == &trigger) {
+            record.index = i;
+            break;
+        }
+    }
+#if 0
+    printf("Chain: %s State: %s - %s - %s\n",
+       convertToUnicode(this->name.value(), 1251).c_str(),
+       getEnumName(record.state),
+       convertToUnicode(record.event.value(), 1251).c_str(),
+       trigger.logText()
+   );
+#endif
 #endif
 }
 
@@ -390,3 +419,7 @@ const char* Action::name() const
 	return triggerInterface().actionName(*this);
 }
 
+const char* Condition::name() const
+{
+    return triggerInterface().conditionName(*this);
+}

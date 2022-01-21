@@ -1788,6 +1788,7 @@ struct ActionVictory : Action // Победа
 	void activate(AIPlayer& aiPlayer);
 
     VIRTUAL_SERIALIZE(ar) {
+        Action::serialize_template(ar);
     }
 };
 
@@ -1796,6 +1797,7 @@ struct ActionDefeat : Action // Поражение
 	void activate(AIPlayer& aiPlayer);
 
     VIRTUAL_SERIALIZE(ar) {
+        Action::serialize_template(ar);
     }
 };
 
@@ -1806,6 +1808,7 @@ struct ActionTeleportationOut : Action // Телепортировать Фре�
 	void activate(AIPlayer& aiPlayer);
 
     VIRTUAL_SERIALIZE(ar) {
+        Action::serialize_template(ar);
     }
 };	
 
@@ -1834,6 +1837,7 @@ struct ActionInstallFrame : ActionForAI // Инсталлировать фрей
 	bool workedOut(AIPlayer& aiPlayer);
 
     VIRTUAL_SERIALIZE(ar) {
+        ActionForAI::serialize_template(ar);
     }
 };																													  
 

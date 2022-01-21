@@ -129,6 +129,8 @@ struct Condition : ShareHandleBaseSerializeVirtual // Не выполняетс�
 	virtual ~Condition() {
 	}
 
+    const char* name() const;
+
 	bool checkDebug(AIPlayer& aiPlayer) { 
 		return state_ = check(aiPlayer); 
 	}
@@ -393,6 +395,7 @@ public:
 
 	const char* displayText() const;
 	const char* debugDisplayText() const;
+    const char* logText() const;
 	bool active() const;
 
 	bool isChild(const Trigger& child) const;
