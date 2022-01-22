@@ -155,7 +155,7 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
         if (smallest.x == 0 || current.w < smallest.x) {
             smallest.x = current.w;
         }
-        if (smallest.y == 0 || current.w < smallest.y) {
+        if (smallest.y == 0 || current.h < smallest.y) {
             smallest.y = current.h;
         }
     }
@@ -167,8 +167,10 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
     
     //Dump set into vector and order it, dont add window modes that are smaller
     for (DisplayMode res : resSet) {
-        if (smallest.x != 0 && smallest.x < res.x) continue;
-        if (smallest.y != 0 && smallest.y < res.y) continue;
+        if (!res.fullscreen) {
+            if (smallest.x != 0 && smallest.x < res.x) continue;
+            if (smallest.y != 0 && smallest.y < res.y) continue;
+        }
         resolutions.emplace_back(res);
     }
     

@@ -16,8 +16,8 @@ public:
         this->set(false, -1, 0, 0, 0);
     }
 
-    FORCEINLINE DisplayMode(bool windowed_, int display_, int x_, int y_, int refresh_) {
-        this->set(windowed_, display_, x_, y_, refresh_);
+    FORCEINLINE DisplayMode(bool fullscreen_, int display_, int x_, int y_, int refresh_) {
+        this->set(fullscreen_, display_, x_, y_, refresh_);
     }
 
     FORCEINLINE void set(bool fullscreen_, int display_, int x_, int y_, int refresh_) {
