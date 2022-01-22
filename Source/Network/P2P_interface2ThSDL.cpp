@@ -297,7 +297,7 @@ void PNetCenter::handleIncomingClientConnection(NetConnection* connection) {
 
     //If not OK close it
     if (ret <= 0) {
-        fprintf(stderr, "Incoming connection %lu closed\n", connection->netid);
+        fprintf(stderr, "Incoming connection %lu closed response %d ret %d\n", connection->netid, response.connectResult, ret);
         connection->close();
         
         //Delete connection since is not stored anywhere

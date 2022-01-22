@@ -220,7 +220,13 @@ std::string string_to_lower(const char* str)
 {
     //Convert UTF-8 into UTF-16
     std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> utf8cvt;
-    std::u16string conv = utf8cvt.from_bytes(str);
+    std::u16string conv;
+    try {
+        conv = utf8cvt.from_bytes(str);
+    } catch (std::exception& e) {
+        fprintf(stderr, "string_to_lower exception %s with input '%s'\n", e.what(), str);
+        return str;
+    }
     if (conv.empty()) return "";
     
     //Process each code
