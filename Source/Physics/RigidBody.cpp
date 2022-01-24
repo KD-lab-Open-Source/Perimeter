@@ -567,7 +567,7 @@ void RigidBody::obstacle_analysis()
 		
 		if(rl.y > 0)
 			average(obstacle_turn_avr, SIGN(rl.x), obstacle_turn_avr_tau);
-		}
+    }
 
 	obstacle_point_avr.set(0, 0, 0);
 	obstacle_point_counter = 0;

@@ -194,10 +194,12 @@ int Contact::set(float penetration_, const Vect3f& cp1_, const Vect3f& cp2_, Rig
 	if(!body1->prm().analyse_body_obstacle || !body2->prm().analyse_body_obstacle)
 		return 0;
 
+    /* TODO this seems to mess flying units when colliding specially Bombies, Im not smart enough to figure out the purpose of obstacle points
 	if(body1->controlled())
 		body1->add_obstacle_point(body1->position() + cp1g);
 	if(body2->controlled())
 		body2->add_obstacle_point(body2->position() + cp2g);
+    */
 
 	show(RED);
 	normal.z = 0;
