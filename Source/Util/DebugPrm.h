@@ -129,12 +129,10 @@ extern int debug_show_lag_stat;
 
 struct DebugPrm {
 	DebugPrm();
+    void load();
 	void save();
 	void edit();
 	template<class Archive>	void serialize(Archive& ar);
-
-private:
-	const char* debugPrmName;
 };
 
 

@@ -196,7 +196,9 @@ bool XPrmIArchive::open(const char* fname)
 {
 	fileName_ = fname;
 	XStream ff(0);
-	if(!ff.open(convert_path_content(fname), XS_IN))
+    std::string path = convert_path_content(fname);
+    if (path.empty()) path = convert_path_native(fname);
+	if(!ff.open(path, XS_IN))
 		return false;
 	buffer_.alloc(ff.size() + 1);
 	ff.read(buffer_.address(), ff.size());

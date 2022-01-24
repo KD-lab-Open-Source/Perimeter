@@ -221,6 +221,13 @@ windowClientSize_(1024, 768)
 	hotKeyManager = new HotKeyManager();
 	_shellCursorManager.Load();
 
+#ifdef PERIMETER_DEBUG
+    debugPrm_.load();
+    if(check_command_line("explore")){
+        debugPrm_.edit();
+        ErrH.Exit();
+    }
+#endif
 
 	if (check_command_line("pause")) {
 		ErrH.Abort("Pause!!!");
@@ -799,6 +806,7 @@ void GameShell::Show()
 
 		terRenderDevice->SetDrawTransform(terCamera->GetCamera());
 		if(debug_show_mode){
+            MTAuto lock(HTManager::instance()->GetLockLogic());
 			universe()->showDebugInfo();
 			show_dispatcher.draw();
 		}

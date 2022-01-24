@@ -220,19 +220,6 @@ DebugPrm::DebugPrm()
 	debug_show_intf_borders = 0;
 	debug_allow_replay = 1;
 	debug_show_lag_stat = 0;
-
-#ifndef _FINAL_VERSION_
-	debugPrmName = "Debug.dat";
-	XStream ff(0);
-	if(ff.open(debugPrmName, XS_IN)){
-		ff.close();
-		XPrmIArchive(debugPrmName) >> WRAP_NAME(*this, "DebugPrm");
-	}
-	if(check_command_line("explore")){
-		edit();
-		ErrH.Exit();
-	}
-#endif
 }
 
 template<class Archive>	
@@ -274,19 +261,30 @@ void DebugPrm::serialize(Archive& ar)
 	ar & WRAP_OBJECT(debug_show_lag_stat);
 }
 
+void DebugPrm::load() {
+    XStream ff(0);
+    if(ff.open("Debug.prm", XS_IN)){
+        ff.close();
+        XPrmIArchive("Debug.prm") >> WRAP_NAME(*this, "DebugPrm");
+    }
+}
 
 void DebugPrm::save()
 {
-#ifndef _FINAL_VERSION_
-	XPrmOArchive(debugPrmName) << WRAP_NAME(*this, "DebugPrm");
+#ifdef PERIMETER_DEBUG
+	XPrmOArchive("Debug.prm") << WRAP_NAME(*this, "DebugPrm");
 #endif
 }
+
 void DebugPrm::edit()
 {
+#ifdef PERIMETER_DEBUG
 	EditArchive ea;
 	ea.setTranslatedOnly(false);
-	if(ea.edit(*this, "DebugPrm"))
-		XPrmOArchive(debugPrmName) << WRAP_NAME(*this, "DebugPrm");
+	if (ea.edit(*this, "DebugPrm")) {
+        XPrmOArchive("Debug.prm") << WRAP_NAME(*this, "DebugPrm");
+    }
+#endif
 }
 
 DebugPrm debugPrm;

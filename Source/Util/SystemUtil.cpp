@@ -99,7 +99,7 @@ bool isPressed(uint32_t key) {
             keycodes.emplace_back(SDLK_KP_MINUS);
             break;
         default:
-#ifdef PERIMETER_DEBUG
+#if defined(PERIMETER_DEBUG) && 0
             printf("Unknown VK keycode requested %u\n", key);
 #endif
             return false;
