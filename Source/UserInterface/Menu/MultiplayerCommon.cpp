@@ -221,7 +221,6 @@ GameShell::GeneralErrorType gtError;
 int showGeneralErrorMessageQuant(float, float ) {
     if (menuChangingDone) {
         std::string textID;
-        bool terminate = true;
         switch (gtError) {
             case GameShell::GENERAL_CONNECTION_FAILED:
                 textID = "Interface.Menu.Messages.Multiplayer.ConnectionFailed";
@@ -234,21 +233,13 @@ int showGeneralErrorMessageQuant(float, float ) {
                 break;
             case GameShell::DESYNC:
                 textID = "Interface.Menu.Messages.Multiplayer.Nonsinchronization";
-                terminate = false;
                 break;
             default:
                 textID = "Interface.Menu.Messages.UnknownError";
                 break;
         }
         
-        if (terminate) {
-            gameShell->getNetClient()->FinishGame();
-            setupOkMessageBox(exitToMultiplayerScreenAction, 0, 
-                              qdTextDB::instance().getText(textID.c_str()), MBOX_EXIT);
-        } else {
-            setupOkMessageBox(nullptr, 0,
-                              qdTextDB::instance().getText(textID.c_str()), MBOX_OK);
-        }
+        setupOkMessageBox(nullptr, 0, qdTextDB::instance().getText(textID.c_str()), MBOX_OK);
         gameShell->prepareForInGameMenu();
 //		fout < "showGeneralErrorMessageQuant showMessageBox()\n";
         showMessageBox();
