@@ -1988,10 +1988,11 @@ bool terWeaponScumDisruptor::fire(const Vect3f& to,terUnitBase* target)
 
 	Vect3f trg_pos = (target) ? target->position() : to;
 
+    /*
+    //Adjust discharge speed by distance
 	float dist_factor = owner()->position().distance(trg_pos) / 1000.0f;
-	float life_time = reloadConsumption().energy() / (10.0f * setup().dischargeSpeed * dist_factor);
-
 	setDischargeSpeed(setup().dischargeSpeed * dist_factor);
+    */
 
 	missile_->setParameters(&terScumDisruptorPrm);
 	missile_->setPosition(trg_pos);
