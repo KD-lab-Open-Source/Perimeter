@@ -403,9 +403,11 @@ XErrorHandler::XErrorHandler() {
     log_path += "logfile.txt";
     printf("Writing log  at %s\n", log_path.c_str());
 	if (std::filesystem::exists(std::filesystem::u8path(log_path))) {
-        std::fstream log_file;
-        log_file.open(log_path.c_str(), std::ios::out | std::ios::trunc);
-        log_file.close();
+        std::error_code error;
+        std::filesystem::remove(std::filesystem::u8path(log_path), error);
+        if (error) {
+           fprintf(stderr, "Error deleting log file: %d %s at %s\n",  error.value(), error.message().c_str(), log_path.c_str());
+        }
     }
 
     //Register handler
@@ -426,8 +428,17 @@ void XErrorHandler::RedirectStdio() const {
     }
     //Check if we should redirect stdio
     printf("Redirecting console stdio output into log file, to prevent this pass arg no_console_redirect=1\n");
+
+    //Reopen streams, Win32 needs wide char version to handle cyrilic
+#ifdef _WIN32
+    std::u16string log_path_16 = utf8_to_utf16(log_path.c_str());
+    const wchar_t* log_path_wchar = checked_reinterpret_cast_ptr<const char16_t, const wchar_t>(log_path_16.c_str()); 
+    _wfreopen(log_path_wchar, L"a", stdout);
+    _wfreopen(log_path_wchar, L"a", stderr);
+#else
     freopen(log_path.c_str(), "a", stdout);
     freopen(log_path.c_str(), "a", stderr);
+#endif
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)

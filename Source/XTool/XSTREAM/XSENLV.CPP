@@ -21,7 +21,7 @@ std::fstream *open_file(const char* name, unsigned f)
     if (f & XS_APPEND)
         mode |= std::ios::app;
 
-    return new std::fstream(name, mode);
+    return new std::fstream(std::filesystem::u8path(name), mode);
 }
 
 int XStream::open(const char* name, unsigned f) {

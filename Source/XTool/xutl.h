@@ -47,6 +47,12 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags =
 
 int MessageBoxChoice(const char* title, const char* message, const std::vector<std::string>& buttons, uint32_t flags = 0);
 
+//Convert UTF-8 into UTF-16
+std::u16string utf8_to_utf16(const char* str);
+
+//Convert UTF-16 into UTF-8
+std::string utf16_to_utf8(const std::u16string& str);
+
 //Adds char to string in end if not present
 void terminate_with_char(std::string& buffer, char chr);
 

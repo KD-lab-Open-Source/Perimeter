@@ -15,6 +15,8 @@
 #include "xutil.h"
 #include "xmath.h"
 
+std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> utf8cvt;
+
 #ifndef _WIN32
 bool argcv_setup_done = false;
 int __argc = 0;
@@ -136,6 +138,26 @@ int MessageBoxChoice(const char* title, const char* message, const std::vector<s
     return choice;
 }
 
+std::u16string utf8_to_utf16(const char* str) {
+    std::u16string conv;
+    try {
+        conv = utf8cvt.from_bytes(str);
+    } catch (std::exception& e) {
+        fprintf(stderr, "utf8_to_utf16 exception %s with input '%s'\n", e.what(), str);
+    }
+    return conv;
+}
+
+std::string utf16_to_utf8(const std::u16string& str) {
+    std::string conv;
+    try {
+        conv = utf8cvt.to_bytes(str);
+    } catch (std::exception& e) {
+        fprintf(stderr, "utf16_to_utf8 exception %s\n", e.what());
+    }
+    return conv;
+}
+
 void terminate_with_char(std::string& buffer, const char chr) {
     //Check if already has
     if (!buffer.empty() && buffer[buffer.length() - 1] != chr) {
@@ -216,20 +238,11 @@ void string_replace_all(std::string& text, const std::string& from, const std::s
     text.swap(newString);
 }
 
-std::string string_to_lower(const char* str)
-{
-    //Convert UTF-8 into UTF-16
-    std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> utf8cvt;
-    std::u16string conv;
-    try {
-        conv = utf8cvt.from_bytes(str);
-    } catch (std::exception& e) {
-        fprintf(stderr, "string_to_lower exception %s with input '%s'\n", e.what(), str);
-        return str;
-    }
-    if (conv.empty()) return "";
+std::string string_to_lower(const char* str) {
+    std::u16string conv = utf8_to_utf16(str);
+    if (conv.empty()) return str;
     
-    //Process each code
+    //Process each UTF16 code
     for (int i = 0; i < conv.size(); ++i) {
         auto c = conv[i];
         c = std::towlower(c);
@@ -237,7 +250,7 @@ std::string string_to_lower(const char* str)
     }
 
     //Convert UTF-16 into UTF-8
-    std::string output = utf8cvt.to_bytes(conv.c_str());
+    std::string output = utf16_to_utf8(conv);
     
     return output;
 }

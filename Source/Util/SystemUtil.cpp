@@ -4,6 +4,7 @@
 #include "GameContent.h"
 #include "files/files.h"
 
+#define SI_SUPPORT_IOSTREAMS 1
 #include <SimpleIni.h>
 
 //#include <crtdbg.h>
@@ -274,42 +275,62 @@ bool create_directories(const std::string& path, std::error_code* error) {
 }
 
 // ---   Ini file   ---------------------
-
+//TODO move CSimpleIniA into IniManager so we avoid loading/saving file each time we read/write a key
 
 uint32_t ReadIniString(const char* section, const char* key, const char* defaultVal,
-                       char* returnBuffer, uint32_t bufferSize, const char* filePath) {
+                       char* returnBuffer, uint32_t bufferSize, const std::string& filePath) {
+    //Load file content
+    std::ifstream istream(std::filesystem::u8path(filePath));
     CSimpleIniA ini;
-    SI_Error rc = ini.LoadFile(filePath);
+    SI_Error rc = ini.LoadData(istream);
     if (rc < 0) {
-        fprintf(stderr, "Error reading %s file: %d\n", filePath, rc);
+        fprintf(stderr, "Error reading %s file: %d\n", filePath.c_str(), rc);
         return 0;
-    };
+    }
+    istream.close();
+    
+    //Read value and close
     const char* val = ini.GetValue(section, key, defaultVal);
     if (val) {
         SDL_strlcpy(returnBuffer, val, bufferSize);
     } else {
         *returnBuffer = 0;
     }
+    
+    ini.Reset();
+    
     return 1;
 }
 
-uint32_t WriteIniString(const char* section, const char* key, const char* value, const char* filePath) {
+uint32_t WriteIniString(const char* section, const char* key, const char* value, const std::string& filePath) {
+    //Load file content
+    std::ifstream istream(std::filesystem::u8path(filePath));
     CSimpleIniA ini;
-    SI_Error rc = ini.LoadFile(filePath);
+    SI_Error rc = ini.LoadData(istream);
     if (rc < 0) {
-        fprintf(stderr, "Error loading %s file for writing: %d\n", filePath, rc);
+        fprintf(stderr, "Error loading %s file for writing: %d\n", filePath.c_str(), rc);
         return 0;
-    };
+    }
+    istream.close();
+    
+    //Write our value
     rc = ini.SetValue(section, key, value);
     if (rc < 0) {
-        fprintf(stderr, "Error writing %s %s %s in file %s: %d\n", section, key, value, filePath, rc);
+        fprintf(stderr, "Error writing %s %s %s in file %s: %d\n", section, key, value, filePath.c_str(), rc);
         return 0;
-    };
-    ini.SaveFile(filePath);
+    }
+    
+    //Save file changes
+    std::ofstream ostream(std::filesystem::u8path(filePath));
+    ini.Save(ostream);
     if (rc < 0) {
-        fprintf(stderr, "Error writing %s file: %d\n", filePath, rc);
+        fprintf(stderr, "Error writing %s file: %d\n", filePath.c_str(), rc);
         return 0;
-    };
+    }
+    ostream.close();
+
+    ini.Reset();
+
     return 1;
 }
 
@@ -340,7 +361,7 @@ const char* IniManager::get(const char* section, const char* key)
 	static char buf[256];
     std::string path = getFilePath();
     
-	if(!ReadIniString(section, key, NULL, buf, 256, path.c_str())){
+	if(!ReadIniString(section, key, NULL, buf, 256, path)){
 		*buf = 0;
 		if (check_existence_) {
             fprintf(stderr, "INI key not found %s %s %s\n", path.c_str(), section, key);
@@ -354,7 +375,7 @@ void IniManager::put(const char* section, const char* key, const char* val)
     std::string path = getFilePath();
 
 
-    WriteIniString(section, key, val, path.c_str());
+    WriteIniString(section, key, val, path);
 }
 
 int IniManager::getInt(const char* section, const char* key) 
@@ -417,8 +438,16 @@ IniManager* getSettings() {
         prefPath += "Settings.ini";
         if (!std::filesystem::exists(std::filesystem::u8path(prefPath))) {
             //Create file if doesn't exist
-            XStream f(prefPath,XS_OUT);
-            f.close();
+            XStream f;
+            if (f.open(prefPath,XS_OUT)) {
+                f.close();
+            } else {
+                //Failed to create in user dir, use game content
+                prefPath = "Settings.ini";
+                if (f.open(prefPath,XS_OUT)) {
+                    f.close();
+                }
+            }
         }
         settingsManager = new IniManager(prefPath.c_str(), false, true);
     }
