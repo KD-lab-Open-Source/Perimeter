@@ -763,6 +763,41 @@ void FinitSound()
 }
 
 //------------------------------
+
+void decode_stacktrace() {
+    const char* stackframes_str = check_command_line("stack_frames");
+    if (stackframes_str) {
+        uint64_t frame_offset = 0;
+        const char* sdlmain_frame_str = check_command_line("stack_reference");
+        if (sdlmain_frame_str) {
+            frame_offset = strtoull(sdlmain_frame_str, nullptr,16);
+        }
+        
+        //Parse each frame address
+        XBuffer buf((char*) stackframes_str, strlen(stackframes_str));
+        while (!buf.end()) {
+            char* p = buf.address() + buf.offset;
+            if (*p == ',') p++;
+            if (*p == '\0') break;
+            uint64_t addr = strtoull(p, &p, 16);
+            buf.offset += p - (buf.address() + buf.offset);
+            
+            //Apply offset if any and correct to our one
+            if (frame_offset) {
+                addr -= frame_offset;
+                addr += reinterpret_cast<uint64_t>(&decodeStackAddress);
+            }
+
+            std::string line = decodeStackAddress(reinterpret_cast<void*>(addr));
+            if (line.empty()) continue;
+            printf("%s\n", line.c_str());
+        }
+        
+        ErrH.Exit();
+    }
+}
+
+//------------------------------
 #ifndef _WIN32
 int main(int argc, char *argv[]) {
     //Call SDL main init
@@ -777,14 +812,15 @@ int SDL_main(int argc, char *argv[])
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
 
+    //Decode stacktrace if requested
+    decode_stacktrace();
+
     //Init clock
     initclock();
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
     printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
-    
-    //Setup locale
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);

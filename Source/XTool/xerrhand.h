@@ -54,6 +54,8 @@ struct XErrorHandler
 	void	 RTC(const char *file,unsigned int line, const char *expr);
 };
 
+std::string decodeStackAddress(const void* addr);
+
 extern XErrorHandler ErrH;
 
 // Use this macro for after any operation for errors diagnostic

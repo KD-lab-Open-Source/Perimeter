@@ -354,6 +354,24 @@ void handleSignal(int sig) {
     raise(sig);
 }
 
+std::string decodeStackAddress(const void* addr) {
+    std::string line;
+#ifndef OPTION_DISABLE_STACKTRACE
+    //Create frame and try to decode data
+    boost::stacktrace::frame frame(addr);
+    line += boost::stacktrace::detail::to_hex_array(frame.address()).data();
+    line += "|" + frame.name();
+    std::string detail = boost::stacktrace::detail::to_string(&frame, 1);
+    std::string::size_type detail_size = detail.size();
+    if (10 <= detail_size) {
+        //Remove the start number and end newline
+        line += "|" + detail.substr(4, detail_size - 5);
+    }
+#endif
+
+    return line;
+}
+
 void getStackTrace(std::ostringstream& stream) {
 #ifndef OPTION_DISABLE_STACKTRACE
     //Get current
@@ -363,27 +381,27 @@ void getStackTrace(std::ostringstream& stream) {
         return;
     }
     //Write lines
-    for (size_t i = 0; i < st.size(); ++i) {
+    std::string cmdline = "stack_reference=";
+    cmdline += boost::stacktrace::detail::to_hex_array(reinterpret_cast<const void*>(&decodeStackAddress)).data();
+    cmdline += " stack_frames=";
+    for (size_t i = 0; i < st.size(); ++i) {        
         //Just store the name instead of full name as we don't really care our own name
         if (i == 0) {
             stream << "getStackTrace <- last call" << std::endl;
             continue;
         }
 
-        //Pull the stacktrace info
+        //Pull the stacktrace info and decode
         const boost::stacktrace::frame& frame = st.as_vector()[i];
-        std::string line;
-        line += boost::stacktrace::detail::to_hex_array(frame.address()).data();
-        line += "|" + frame.name();
-        std::string detail = boost::stacktrace::detail::to_string(&frame, 1);
-        std::string::size_type detail_size = detail.size();
-        if (10 <= detail_size) {
-            //Remove the start number and end newline
-            line += "|" + detail.substr(4, detail_size - 5);
-            
-        }
+        
+        cmdline += boost::stacktrace::detail::to_hex_array(frame.address()).data();
+        cmdline += ",";
+        
+        std::string line = decodeStackAddress(frame.address());
         stream << line << std::endl;
     }
+    
+    stream << cmdline << std::endl;
 #else
     stream << "OPTION_DISABLE_STACKTRACE set, no stacktrace available" << std::endl;
 #endif
@@ -401,7 +419,6 @@ XErrorHandler::XErrorHandler() {
         SDL_free((void*) lop_path_ptr);
     }
     log_path += "logfile.txt";
-    printf("Writing log  at %s\n", log_path.c_str());
 	if (std::filesystem::exists(std::filesystem::u8path(log_path))) {
         std::error_code error;
         std::filesystem::remove(std::filesystem::u8path(log_path), error);
@@ -427,7 +444,7 @@ void XErrorHandler::RedirectStdio() const {
         return;
     }
     //Check if we should redirect stdio
-    printf("Redirecting console stdio output into log file, to prevent this pass arg no_console_redirect=1\n");
+    printf("Redirecting console stdio output into log file at %s, to prevent this pass arg no_console_redirect=1\n", log_path.c_str());
 
     //Reopen streams, Win32 needs wide char version to handle cyrilic
 #ifdef _WIN32
@@ -443,7 +460,7 @@ void XErrorHandler::RedirectStdio() const {
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)
 {
-    fprintf(stderr, "XErrorHandler::Abort called!");
+    fprintf(stderr, "XErrorHandler::Abort called!\n");
 	if (restore_func) {
 		restore_func();
 		restore_func = nullptr;
