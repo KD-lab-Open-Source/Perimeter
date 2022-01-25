@@ -21,25 +21,21 @@ jobs:
           #{bits: 64, arch_installed: x64, build_type: Release, arch_name: ARM, arch: amd64_arm64}
         ]
     name: ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{matrix.env.arch}}-windows
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        id: cache
-        with:
-          path: |
-            ${{ github.workspace }}\vcpkg
-          key: MSVC-${{matrix.env.arch}}-${{ hashFiles('**/vcpkg.json') }}
       - uses: lukka/get-cmake@latest
-      - name: Restore from cache and run vcpkg
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: lukka/run-vcpkg@v7
+      - name: Restore artifacts, or run vcpkg, build (and cache artifacts as post step)
+        uses: lukka/run-vcpkg@v10
+        id: runvcpkg
         with:
-          setupOnly: true
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
-          vcpkgTriplet: ${{matrix.env.arch}}-windows
-          vcpkgGitCommitId: 92b42c4c680defe94f1665a847d04ded890f372e
+          appendedCacheKey: '${{ env.VCPKG_DEFAULT_TRIPLET }}'
+          vcpkgGitCommitId: 1085a57da0725c19e19586025438e8c16f34c890
+          vcpkgJsonGlob: 'vcpkg.json'
+          runVcpkgInstall: false
       - name: Configure developer command prompt
         uses: ilammy/msvc-dev-cmd@v1
         with:
