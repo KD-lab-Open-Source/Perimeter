@@ -10,6 +10,7 @@
 #include "GameShell.h"
 #include "files/files.h"
 #include "GameContent.h"
+#include "codepages/codepages.h"
 
 bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
@@ -304,7 +305,8 @@ void terHyperSpace::autoSavePlayReel()
     for (int i = 0; i < gameShell->CurrentMission.playerAmountScenarioMax; ++i) {
         PlayerData& p = gameShell->CurrentMission.playersData[i];
         if (p.realPlayerType == REAL_PLAYER_TYPE_PLAYER || p.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
-            path += std::string("_") + p.name();
+            std::string conv = convertToUnicode(p.name(), getLocale());
+            path += std::string("_") + conv;
         }
     }
     path += "_" + std::to_string(result);
