@@ -931,14 +931,14 @@ void CControlView::OnTimer(UINT nIDEvent)
 				else if(fTime - pActiveEmitter->data_light->emitter_create_time > pActiveEmitter->ParticleLifeTime())
 					m_slider_time.SetPos(m_slider_time.GetRangeMax() - 1);
 				else
-					m_slider_time.SetPos(round((fTime - pActiveEmitter->data_light->emitter_create_time)*_fSliderScale));
+					m_slider_time.SetPos(xm::round((fTime - pActiveEmitter->data_light->emitter_create_time) * _fSliderScale));
 			}else{
 				if(fTime < pActiveEmitter->data->emitter_create_time)
 					m_slider_time.SetPos(0);
 				else if(fTime - pActiveEmitter->data->emitter_create_time > pActiveEmitter->ParticleLifeTime())
 					m_slider_time.SetPos(m_slider_time.GetRangeMax() - 1);
 				else
-					m_slider_time.SetPos(round((fTime - pActiveEmitter->data->emitter_create_time)*_fSliderScale));
+					m_slider_time.SetPos(xm::round((fTime - pActiveEmitter->data->emitter_create_time) * _fSliderScale));
 			}
 		}
 		else if(GetDocument()->m_pActiveEffect)

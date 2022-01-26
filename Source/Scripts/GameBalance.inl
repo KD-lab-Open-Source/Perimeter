@@ -1110,4 +1110,4 @@ static struct Balance
 
 static Balance balance = {};
 
-//static float aaaa = balance.unit1.damage; // использование
+//static float aaaa = balance.unit1.damage; // п≥пёп═п÷п°п╗п╙п÷п╖п▒п·п≥п∙

@@ -59,10 +59,10 @@ protected:
 	std::vector<SHADER> pShader;
 	void Select(int num=0);
 	virtual void RestoreShader()=0;
-	HRESULT Compile(const char* name,const DWORD* shader);
+	HRESULT Compile(const char* name,const uint32_t* shader);
 	void GetVariableByName(SHADER_HANDLE& h,const char* name);
 	void GetConstantByName(SHADER_HANDLE& h,const char* name);
-	void CompileAndFound(const char* name,const DWORD* shader);
+	void CompileAndFound(const char* name,const uint32_t* shader);
 	virtual void GetHandle();
 };
 
@@ -76,7 +76,7 @@ public:
 	void Select();
 	void Delete();
 protected:
-	HRESULT Compile(const char* name,const DWORD* shader);
+	HRESULT Compile(const char* name,const uint32_t* shader);
 };
 
 class PSShowMap:public PixelShader

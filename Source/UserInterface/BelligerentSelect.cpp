@@ -13,6 +13,17 @@ uint8_t getBelligerentIndex(terBelligerent belligerent) {
     return belligerent;
 }
 
+uint8_t getSelectableBelligerentIndex(terBelligerent belligerent) {
+    int i = 0;
+    for (terBelligerent selectable : SelectableBelligerents) {
+        if (belligerent == selectable) {
+            return i;
+        }
+        i++;
+    }
+    return 0;
+}
+
 terBelligerent getBelligerentFromIndex(uint8_t index) {
     switch(index){
         case 0:     return BELLIGERENT_NONE;
@@ -66,7 +77,7 @@ BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent) {
             return EMPIRE;
         case BELLIGERENT_EMPIRE4:
             //Infected vice acts as Empire in ET, harkback otherwise
-            return terGameContent == GAME_CONTENT::PERIMETER_ET ? EMPIRE : HARKBACK;
+            return terGameContentSelect == GAME_CONTENT::PERIMETER_ET ? EMPIRE : HARKBACK;
         case BELLIGERENT_NONE:
             break;
     }
@@ -104,7 +115,7 @@ std::string getBelligerentAndFactionName(terBelligerent belligerent, const std::
             break;
     }
     if (faction != FACTION_NONE || isAddonFrame) {
-        text += separator;
+        text += separator + "&777777";
         if (faction != FACTION_NONE) {
             text += getItemTextFromBase(getBelligerentFactionName(faction).c_str());
             if (isAddonFrame) text += ", ";
@@ -117,16 +128,33 @@ std::string getBelligerentAndFactionName(terBelligerent belligerent, const std::
 }
 
 void setupFrameHandler(CComboWindow* combo, int number, bool sendNetCommand, bool direction) {
+    int pos = combo->pos;
+
+    //Change pos if passive
+    if (combo->m_attr->passive) {
+        if (direction) {
+            pos++;
+            if (pos >= combo->size) pos = 0;
+        } else {
+            pos--;
+            if (pos < 0) pos = combo->size - 1;
+        }
+    }
+    
     //Discard certain belligerents
     while (true) {
-        terBelligerent selected = SelectableBelligerents[combo->pos];
-        if (unavailableContentBelligerent(selected)) {
+        terBelligerent selected = SelectableBelligerents[pos];
+        if (unavailableContentBelligerent(selected, terGameContentSelect)) {
             if (direction) {
-                combo->pos++;
-                if (combo->pos >= combo->size) combo->pos = 0;
+                pos++;
+                if (pos >= combo->size) pos = 0;
             } else {
-                combo->pos--;
-                if (combo->pos < 0) combo->pos = combo->size - 1;
+                pos--;
+                if (pos < 0) pos = combo->size - 1;
+            }
+            //Don't apply pos if passive
+            if (!combo->m_attr->passive) {
+                combo->pos = pos;
             }
         } else {
             break;
@@ -135,7 +163,7 @@ void setupFrameHandler(CComboWindow* combo, int number, bool sendNetCommand, boo
     
     //Send to players
     if (sendNetCommand && gameShell->getNetClient()) {
-        terBelligerent selected = SelectableBelligerents[combo->pos];
+        terBelligerent selected = SelectableBelligerents[pos];
         gameShell->getNetClient()->changePlayerBelligerent(number, selected);
     }
 }
@@ -148,8 +176,7 @@ void setupFrameButton(CShellWindow* pWnd, InterfaceEventCode code, int number, b
         }
         pCombo->size = pCombo->Array.size();
         pCombo->pos = 0;
-    } else if ((code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED)
-            && intfCanHandleInput() && !pCombo->m_attr->passive) {
-        setupFrameHandler(pCombo, number, sendNetCommand, code == EVENT_UNPRESSED);
+    } else if ((code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED)&& intfCanHandleInput()) {
+         setupFrameHandler(pCombo, number, sendNetCommand, code == EVENT_UNPRESSED);
     }
 }

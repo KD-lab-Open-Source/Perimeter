@@ -17,7 +17,7 @@ public:
 	void WayPointController();
 
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 
 	void executeCommand(const UnitCommand& command);
 

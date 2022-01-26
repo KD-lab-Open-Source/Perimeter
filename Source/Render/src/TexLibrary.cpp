@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "FileImage.h"
+#include "files/files.h"
 
 #include "ddraw.h"
 
@@ -91,7 +92,7 @@ void cTexLibrary::Free(FILE* f)
 	textures.clear();
 }
 
-cTexture* cTexLibrary::CreateRenderTexture(int width,int height,DWORD attr,bool enable_assert)
+cTexture* cTexLibrary::CreateRenderTexture(int width, int height, uint32_t attr, bool enable_assert)
 {
 	MTAuto mtenter(&lock);
 	if(!attr)
@@ -186,25 +187,26 @@ cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,char *pMode)
 cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 {
 	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
+	if(TextureName==nullptr||TextureName[0]==0) return nullptr; // имя текстуры пустое
+    std::string path = convert_path_native(TextureName);
 
 	for(int i=0;i<GetNumberTexture();i++)
 	{
 		cTexture* cur=GetTexture(i);
 		xassert(cur->GetX()>=0 && cur->GetX()<=15);
 		xassert(cur->GetY()>=0 && cur->GetY()<=15);
-		if( cur && stricmp(cur->GetName(),TextureName)==0)
+		if( cur && stricmp(cur->GetName(),path.c_str())==0)
 		{
 			cur->IncRef();
 			return cur;
 		}
 	}
 
-	cTexture *Texture=new cTexture(TextureName);
+	cTexture *Texture=new cTexture(path.c_str());
 
 	if(!LoadTexture(Texture,pMode,Vect2f(1.0f,1.0f)))
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	textures.push_back(Texture); Texture->IncRef();
@@ -307,14 +309,16 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
         Texture->SetAttribute(MAT_BUMP);
         
         //If file with _normal name is found, set attribute for normal
-        std::filesystem::path texpath(convert_path_resource(Texture->GetName()));
-        std::string normal_path = texpath.parent_path().string();
-        std::string extension = texpath.filename().extension().string();
-        std::string filename = texpath.filename().string();
+        std::string textpathstr = convert_path_content(Texture->GetName());
+        if (textpathstr.empty()) textpathstr = convert_path_native(Texture->GetName());
+        std::filesystem::path texpath = std::filesystem::u8path(textpathstr);
+        std::string normal_path = texpath.parent_path().u8string();
+        std::string extension = texpath.filename().extension().u8string();
+        std::string filename = texpath.filename().u8string();
         string_replace_all(filename, extension, "");
         string_replace_all(filename, "_bump", "");
         normal_path += PATH_SEP + filename + "_normal" + extension;
-        if (std::filesystem::exists(normal_path)) {
+        if (std::filesystem::exists(std::filesystem::u8path(normal_path))) {
             Texture->SetName(normal_path.c_str());
             Texture->SetAttribute(MAT_NORMAL);
         }
@@ -406,14 +410,16 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		}
 	}
 */
-	cFileImage *FileImage=0;
+	cFileImage *FileImage=nullptr;
 
 	//Get path for file and open it
-	std::string path = convert_path_resource(Texture->GetName());
+	std::string path = convert_path_content(Texture->GetName());
 	if (path.empty()) {
-	    //File not found
-        Error(Texture);
-        return false;
+        path = Texture->GetName();
+        if (endsWith(path, ".avi") && !convert_path_content(path + "x").empty()) {
+            //Use AVIX if available when AVI is absent
+            path += "x";
+        }
 	}
 	
 	FileImage=cFileImage::Create(path.c_str());
@@ -422,7 +428,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		return ReLoadDDS(Texture);
 	}
 	
-	if(!FileImage||FileImage->load(path.c_str()))
+	if(FileImage->load(path.c_str()))
 	{
 		delete FileImage;
 		Error(Texture);
@@ -441,8 +447,8 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 	int err=1;
 	if(Texture->IsScaleTexture())
 	{
-		int dx_out=round(Texture->GetWidth()*kscale.x);
-		int dy_out=round(Texture->GetHeight()*kscale.y);
+		int dx_out= xm::round(Texture->GetWidth() * kscale.x);
+		int dy_out= xm::round(Texture->GetHeight() * kscale.y);
 		int newx=Power2up(dx_out);
 		int newy=Power2up(dy_out);
 		Vect2f uvscale;
@@ -459,7 +465,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		err=gb_RenderDevice->CreateTexture(Texture,FileImage,-1,-1);
 	}
 
-	if(FileImage) delete FileImage;
+	delete FileImage;
 	if(err)
 	{
 		Error(Texture);
@@ -522,11 +528,11 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		}
 	} auto_delete(buf);
 
-	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(DWORD*)buf);
+	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(uint32_t*)buf);
 	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP)
 	{
 		LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;
-		if(FAILED(D3DXCreateCubeTextureFromFileInMemory(gb_RenderDevice3D->lpD3DDevice,buf,size,&pCubeTexture)))
+		if(FAILED(D3DXCreateCubeTextureFromFileInMemory(gb_RenderDevice3D->lpD3DDevice, buf, size, &pCubeTexture)))
 		{
 			Error(Texture);
 			Texture->Release();

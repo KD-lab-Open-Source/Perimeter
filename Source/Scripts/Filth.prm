@@ -6,42 +6,42 @@ section FilthPrm( declaration = "Game\Scripts\filth.hi", definition = "Game\Scri
 
 struct terFilthSwarmParameter
 {
-	float SwarmRadius = 100;		//Радиус генерации роев
-	int SwarmMax = 1;				//Кол-во роев
-	int CreatureNum = 1;			//Кол-во скверны в рое
-	int GenerationPeriod = 1;		//Время генерации скверны
+	float SwarmRadius = 100;		//Р Р°РґРёСѓСЃ РіРµРЅРµСЂР°С†РёРё СЂРѕРµРІ
+	int SwarmMax = 1;				//РљРѕР»-РІРѕ СЂРѕРµРІ
+	int CreatureNum = 1;			//РљРѕР»-РІРѕ СЃРєРІРµСЂРЅС‹ РІ СЂРѕРµ
+	int GenerationPeriod = 1;		//Р’СЂРµРјСЏ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹
 };
 
 struct terFilthSpotParameters
 {
-	// все параметры передаются напрямую в terFilthSpot
-	// все времена в секундах
+	// РІСЃРµ РїР°СЂР°РјРµС‚СЂС‹ РїРµСЂРµРґР°СЋС‚СЃСЏ РЅР°РїСЂСЏРјСѓСЋ РІ terFilthSpot
+	// РІСЃРµ РІСЂРµРјРµРЅР° РІ СЃРµРєСѓРЅРґР°С…
 
-	// ID спота
+	// ID СЃРїРѕС‚Р°
 	terFilthSpotID spotID = FILTH_SPOT_ID_NONE;
 
-	// время до первой генерации
+	// РІСЂРµРјСЏ РґРѕ РїРµСЂРІРѕР№ РіРµРЅРµСЂР°С†РёРё
 	float firstSleepTime = 0;
 
-	// время, через которое происходит следующая генерация
+	// РІСЂРµРјСЏ, С‡РµСЂРµР· РєРѕС‚РѕСЂРѕРµ РїСЂРѕРёСЃС…РѕРґРёС‚ СЃР»РµРґСѓСЋС‰Р°СЏ РіРµРЅРµСЂР°С†РёСЏ
 	float sleepPeriod = 5;
 	float sleepPeriodDelta = 0;
 
-	// время жизни сгенеренной скверны
+	// РІСЂРµРјСЏ Р¶РёР·РЅРё СЃРіРµРЅРµСЂРµРЅРЅРѕР№ СЃРєРІРµСЂРЅС‹
 	float attackPeriod = 5;
 	float attackPeriodDelta = 0;
 
-	// ширина полосы поиска целей для сверны
+	// С€РёСЂРёРЅР° РїРѕР»РѕСЃС‹ РїРѕРёСЃРєР° С†РµР»РµР№ РґР»СЏ СЃРІРµСЂРЅС‹
 	float attackWidth = -1;
-	// направление, в котором ищутся цели
+	// РЅР°РїСЂР°РІР»РµРЅРёРµ, РІ РєРѕС‚РѕСЂРѕРј РёС‰СѓС‚СЃСЏ С†РµР»Рё
 	float attackDirection = 0;
 
-	// количество юнитов скверны, которые будут сгенерированы в одном цикле генерации
+	// РєРѕР»РёС‡РµСЃС‚РІРѕ СЋРЅРёС‚РѕРІ СЃРєРІРµСЂРЅС‹, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅС‹ РІ РѕРґРЅРѕРј С†РёРєР»Рµ РіРµРЅРµСЂР°С†РёРё
 	int creatureNum = 1;
-	// если сверны много, она появляется не вся сразу, а через это время
+	// РµСЃР»Рё СЃРІРµСЂРЅС‹ РјРЅРѕРіРѕ, РѕРЅР° РїРѕСЏРІР»СЏРµС‚СЃСЏ РЅРµ РІСЃСЏ СЃСЂР°Р·Сѓ, Р° С‡РµСЂРµР· СЌС‚Рѕ РІСЂРµРјСЏ
 	int creatureGenerationPeriod = 1;
 
-	// время жизни спота
+	// РІСЂРµРјСЏ Р¶РёР·РЅРё СЃРїРѕС‚Р°
 	float lifeTime = 0;
 };
 
@@ -80,7 +80,7 @@ struct terFilthWaspStruct
 	float move_len=30;
 	float move_width=100;
 
-	float creature_attack_count=0.5;//ос на квант
+	float creature_attack_count=0.5;//РѕСЃ РЅР° РєРІР°РЅС‚
 };
 terFilthWaspStruct terFilthWaspPrm={};
 terFilthWaspStruct terFilthWaspEyePrm={};
@@ -109,11 +109,11 @@ struct terFilthDragonStruct
 	float AnimationHeadPeriod = 2000;
 	float AnimationBodyPeriod = 1000;
 
-	int BrushNum = 40;		//Длина хвоста
+	int BrushNum = 40;		//Р”Р»РёРЅР° С…РІРѕСЃС‚Р°
 	int CreatureGenerationRadius = 12;
 
 	float fire_distance=150;
-	float free_die_time=2.0; //сек
+	float free_die_time=2.0; //СЃРµРє
 
 	terUnitAttributeID id_head=UNIT_ATTRIBUTE_FILTH_DRAGON_HEAD;
 	terUnitAttributeID id_body=UNIT_ATTRIBUTE_FILTH_DRAGON_BODY;
@@ -143,7 +143,7 @@ terFilthSwarmParameter terFilthGhostBaseParameter =
 
 struct terFilthGhostStruct
 {
-	float CreatureGenerationRadius = 10; //Радиус генерации скверны
+	float CreatureGenerationRadius = 10; //Р Р°РґРёСѓСЃ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹
 };
 terFilthGhostStruct terFilthGhostPrm={};
 
@@ -156,7 +156,7 @@ terFilthSwarmParameter terFilthEyeBaseParameter =
 
 struct terFilthEyeStruct
 {
-	float CreatureGenerationRadius = 100; //Радиус генерации скверны
+	float CreatureGenerationRadius = 100; //Р Р°РґРёСѓСЃ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹
 	float height_down=-50;
 	float speed_angle_z= 0.3f;
 	float destruct_angle_acceleration = 1.0f;
@@ -174,7 +174,7 @@ struct terFilthCrowStruct
 	float swarm_speed = 2;
 	float z = 200;
 	float free_destroy_len = 100;
-	int at_one_time_atrack = 4;//Количество одновременно атакующих
+	int at_one_time_atrack = 4;//РљРѕР»РёС‡РµСЃС‚РІРѕ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ Р°С‚Р°РєСѓСЋС‰РёС…
 };
 terFilthCrowStruct terFilthCrowPrm={};
 
@@ -187,7 +187,7 @@ terFilthSwarmParameter terFilthDaemonBaseParameter =
 
 struct terFilthDaemonStruct
 {
-	float CreatureGenerationRadius = 200; //Радиус генерации скверны
+	float CreatureGenerationRadius = 200; //Р Р°РґРёСѓСЃ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹
 	float DaemonHeight=5;
 };
 terFilthDaemonStruct terFilthDaemonPrm={};
@@ -210,11 +210,11 @@ terFilthSwarmParameter terFilthSnakeBaseParameter =
 
 struct terFilthRatStruct
 {
-	int CreatureGenerationRadius = 30; //Радиус генерации скверны
+	int CreatureGenerationRadius = 30; //Р Р°РґРёСѓСЃ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹
 	float follow_distance = 5.0;
 	float brake_distance = 30.0;
 	int noise_change_time = 30;
-	float noise_angle_delta=40;//Градусов
+	float noise_angle_delta=40;//Р“СЂР°РґСѓСЃРѕРІ
 	float radius_mul=1.2;
 };
 terFilthRatStruct terFilthRatPrm={};
@@ -235,11 +235,11 @@ terFilthSwarmParameter terFilthSharkBaseParameter =
 
 struct terFilthSharkStruct
 {
-	int CreatureGenerationRadius = 100; //Радиус генерации скверны
+	int CreatureGenerationRadius = 100; //Р Р°РґРёСѓСЃ РіРµРЅРµСЂР°С†РёРё СЃРєРІРµСЂРЅС‹
 	float test_z_up=-6;
 	float test_z_down=15;
 	int geo_radius=16+18;
-	float free_die_time=2.0; //сек
+	float free_die_time=2.0; //СЃРµРє
 	float show_z=-12;
 };
 terFilthSharkStruct terFilthSharkPrm={};
@@ -256,7 +256,7 @@ struct terFilthVolcanoStruct
 
 	int volcano_size=80;
 	float crater_scale=1.2;
-	float collision_damage_rate=0.1;//сек (меньше 0.1 не имеет смысла ставить.)
+	float collision_damage_rate=0.1;//СЃРµРє (РјРµРЅСЊС€Рµ 0.1 РЅРµ РёРјРµРµС‚ СЃРјС‹СЃР»Р° СЃС‚Р°РІРёС‚СЊ.)
 
 	terUnitAttributeID unit_id=UNIT_ATTRIBUTE_FILTH_VOLCANO;
 };
@@ -289,7 +289,7 @@ struct terFilthAntsStruct
 {
 	float follow_distance=5.0;
 	float brake_distance=30.0;
-	int noise_change_time=30;//Логических квантов
+	int noise_change_time=30;//Р›РѕРіРёС‡РµСЃРєРёС… РєРІР°РЅС‚РѕРІ
 	float noise_angle_delta = 3.1459 * 0.4;
 };
 

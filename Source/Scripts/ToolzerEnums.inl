@@ -1,8 +1,8 @@
 
-// Типы воздействия тулзера
+// РўРёРїС‹ РІРѕР·РґРµР№СЃС‚РІРёСЏ С‚СѓР»Р·РµСЂР°
 enum ToolzerActionID
 {
-	TOOLZER_NONE,	// никакого воздействия
+	TOOLZER_NONE,	// РЅРёРєР°РєРѕРіРѕ РІРѕР·РґРµР№СЃС‚РІРёСЏ
 	TOOLZER_4ZP,	// toolzerAligmentTerrain4ZP
 	TOOLZER_VH,	// toolzerAligmentTerrainVariableH
 	TOOLZER_H,	// toolzerChangeTerHeight
@@ -12,24 +12,24 @@ enum ToolzerActionID
 	TOOLZER_EZ	// toolzerEraseZP
 };
 
-// Режимы нанесения повреждений зданиям.
-// Задается в ToolzerStepData
+// Р РµР¶РёРјС‹ РЅР°РЅРµСЃРµРЅРёСЏ РїРѕРІСЂРµР¶РґРµРЅРёР№ Р·РґР°РЅРёСЏРј.
+// Р—Р°РґР°РµС‚СЃСЏ РІ ToolzerStepData
 enum ToolzerBuildingDamageMode
 {
-	BUILDING_DAMAGE_CIRCLE,		// повреждения в круге радиусом buildingDamageRadius
-	BUILDING_DAMAGE_SQUARE		// повреждения в квадрате buildingDamageRadius на buildingDamageRadius
+	BUILDING_DAMAGE_CIRCLE,		// РїРѕРІСЂРµР¶РґРµРЅРёСЏ РІ РєСЂСѓРіРµ СЂР°РґРёСѓСЃРѕРј buildingDamageRadius
+	BUILDING_DAMAGE_SQUARE		// РїРѕРІСЂРµР¶РґРµРЅРёСЏ РІ РєРІР°РґСЂР°С‚Рµ buildingDamageRadius РЅР° buildingDamageRadius
 };
 
-// Фазы тулзера для ToolzerController
+// Р¤Р°Р·С‹ С‚СѓР»Р·РµСЂР° РґР»СЏ ToolzerController
 enum ToolzerPhaseID
 {
 	TOOLZER_PHASE_NONE,
 				
-	TOOLZER_PHASE_DEFAULT,		// универсальное имя
+	TOOLZER_PHASE_DEFAULT,		// СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕРµ РёРјСЏ
 
-	// для подземных юнитов
-	TOOLZER_PHASE_START_MOVE,	// включается в момент начала движения
-	TOOLZER_PHASE_MOVE,		// включается во время движения
-	TOOLZER_PHASE_END_MOVE		// включается в момент остановки
+	// РґР»СЏ РїРѕРґР·РµРјРЅС‹С… СЋРЅРёС‚РѕРІ
+	TOOLZER_PHASE_START_MOVE,	// РІРєР»СЋС‡Р°РµС‚СЃСЏ РІ РјРѕРјРµРЅС‚ РЅР°С‡Р°Р»Р° РґРІРёР¶РµРЅРёСЏ
+	TOOLZER_PHASE_MOVE,		// РІРєР»СЋС‡Р°РµС‚СЃСЏ РІРѕ РІСЂРµРјСЏ РґРІРёР¶РµРЅРёСЏ
+	TOOLZER_PHASE_END_MOVE		// РІРєР»СЋС‡Р°РµС‚СЃСЏ РІ РјРѕРјРµРЅС‚ РѕСЃС‚Р°РЅРѕРІРєРё
 };
 

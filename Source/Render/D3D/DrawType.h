@@ -88,8 +88,8 @@ protected:
 class DrawTypeRadeon9700:public DrawType
 {
 	cCamera* pShadow;
-	DWORD min_filter;
-	DWORD mag_filter;
+	uint32_t min_filter;
+	uint32_t mag_filter;
 
 	PSShowMap* pShowMap;
 	VSShadow* pVSObjectShadow;
@@ -147,9 +147,9 @@ protected:
 class DrawTypeRadeon8500:public DrawType
 {
 	cCamera* pShadow;
-	DWORD min_filter;
-	DWORD mag_filter;
-	DWORD dither_enable;
+	uint32_t min_filter;
+	uint32_t mag_filter;
+	uint32_t dither_enable;
 	cTexture* pLookupMap;
 
 	VSShadow* pVSTileMapShadow;
@@ -208,7 +208,7 @@ class DrawTypeGeforce3:public DrawTypeFixedPipeline
 {
 	IDirect3DTexture9* ptZBuffer;
 	cCamera* pShadow;
-	DWORD min_filter,mag_filter,mip_filter;
+	uint32_t min_filter,mag_filter,mip_filter;
 
 	VSScene* pVSObjectScene;
 	VSScene* pVSObjectSceneLight;
@@ -293,7 +293,7 @@ class DrawTypeGeforceFX:public DrawTypeFixedPipeline
 {
 	IDirect3DTexture9* ptZBuffer;
 	cCamera* pShadow;
-	DWORD min_filter,mag_filter,mip_filter;
+	uint32_t min_filter,mag_filter,mip_filter;
 
 	VSScene* pVSObjectScene;
 	VSScene* pVSObjectSceneLight;

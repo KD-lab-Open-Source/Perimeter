@@ -16,27 +16,16 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(Network_SRCS
-        dplay8guid.cpp
-        CommonCommands.cpp
         CommonEvents.cpp
-        ConnectionDP.cpp
-        EventBufferDP.cpp
+        NetComEventBuffer.cpp
         HyperSpace.cpp
+        ServerList.cpp
         P2P_interface1Th.cpp
         P2P_interface2Th.cpp
+        P2P_interface2ThSDL.cpp
         P2P_interfaceAnyTh.cpp
+        NetConnection.cpp
 )
 
-IF(PERIMETER_EXODUS)
-    SET(Network_SRCS ${Network_SRCS}
-        P2P_interface2ThSDL.cpp
-        P2P_interface3ThSDL.cpp
-    )
-ELSE()
-    SET(Network_SRCS ${Network_SRCS}
-        P2P_interface2ThDPF.cpp
-        P2P_interface3ThDP.cpp
-    )
-ENDIF()
-
 ADD_LIBRARY(Network STATIC ${Network_SRCS})
+target_compile_options(Network PUBLIC ${PERIMETER_COMPILE_OPTIONS})

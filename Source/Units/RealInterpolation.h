@@ -158,7 +158,7 @@ public:
 	void SetModelPoint(cObjectNodeRoot* p);
 
 	void universalSave(struct SaveInterpolationReal& data) const;
-	void universalLoad(const SaveInterpolationReal& data);
+	void universalLoad(SaveInterpolationReal& data);
 };
 
 const int PERIMETER_PORT_LIGHT_POINT_MAX = 4;

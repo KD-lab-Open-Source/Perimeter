@@ -100,8 +100,8 @@ struct ClusterFindPrm {
 #endif  // __XScript_struct_ClusterFindPrm__
 ClusterFindPrm terrainPathFind = { 10 
  , 12, 1, 8, 64, 2, 0, 0, 0, 6, 40000 };
-ClusterFindPrm defenceMapPathFind = { 10 
- , 40, 1, 8, 64, 2, 0, 100, 100, 6, 40000 };
+ClusterFindPrm defenceMapPathFind = { 10, 40 
+ , 1, 8, 64, 2, 0, 100, 100, 6, 40000 };
 float squad_described_radius_min = 16.f;
 float squad_described_radius_max = 100.f;
 float squad_speed_correction_relaxation_time_inv = 0.25f;

@@ -6,7 +6,7 @@ static vector<string> stringID;
 
 ParamBlock* ReadRules(char* rul,int* psize,ParamBlock* pRulesX)
 {
-	int f=_open( rul, _O_RDONLY |_O_BINARY);
+	int f= file_open(rul, _O_RDONLY | _O_BINARY);
 	if(f==-1)
 	{
 		message_printf("Не могу открыть %s",rul);
@@ -77,7 +77,7 @@ void InitStringID(bool beng,bool beginner)
 	int sizeparam,sizeparam_m_rul;
 
 	ParamBlock* m_rul=ReadRules("message.rul",&sizeparam_m_rul);
-	LPSTR tname=beng?
+    char* tname=beng?
 		(beginner?"message_beginner_e.txt":"message_e.txt"):
 		(beginner?"message_beginner.txt":"message.txt");
 	ParamBlock* pp=ReadRules(tname,&sizeparam,m_rul);
@@ -89,11 +89,11 @@ void InitStringID(bool beng,bool beginner)
 		stringID.push_back(s);
 	}
 
-	LPCSTR outname=beng?
-		(beginner?"message_beginner_e.dat":"message_e.dat"):
-		(beginner?"message_beginner.dat":"message.dat");
-	int f=_open( outname, _O_RDWR | _O_CREAT | _O_TRUNC | _O_BINARY, 
-                      _S_IREAD | _S_IWRITE );
+	const char* outname= beng ?
+                            (beginner?"message_beginner_e.dat":"message_e.dat") :
+                            (beginner?"message_beginner.dat":"message.dat");
+	int f= file_open(outname, _O_RDWR | _O_CREAT | _O_TRUNC | _O_BINARY,
+                     _S_IREAD | _S_IWRITE);
 	if(f==-1)
 	{
 		message_printf("Не могу записать %s",outname);
@@ -106,7 +106,7 @@ void InitStringID(bool beng,bool beginner)
 	delete pp;
 }
 
-bool StringIDByConst(LPCSTR name,LPCSTR value,int& ret)
+bool StringIDByConst(const char* name, const char* value, int& ret)
 {
 	if(name[0]!='T' || name[1]!='E' || 
 	   name[2]!='X' || name[3]!='T')
@@ -116,7 +116,7 @@ bool StringIDByConst(LPCSTR name,LPCSTR value,int& ret)
 
 	for(int i=0;i<stringID.size();i++)
 	{
-		LPCSTR ss=stringID[i].c_str();
+		const char* ss=stringID[i].c_str();
 		if(strcmp(ss,value)==0)
 		{
 			ret=i;

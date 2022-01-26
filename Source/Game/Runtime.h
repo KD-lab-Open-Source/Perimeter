@@ -7,15 +7,16 @@ extern SyncroTimer scale_time; // недетерминированный уск�
 
 //--------------------------------------
 
+void app_event_poll();
 void setLogicFp();
 
 void PlayMusic(const char *str);
 void SetVolumeMusic(float f);
 void MusicEnable(int enable);
-STARFORCE_API void InitSound(bool sound, bool music, bool firstTime = true);
+void InitSound(bool sound, bool music, bool firstTime = true);
 void SoundQuant();
 void FinitSound();
-
+void request_application_restart(std::vector<std::string>* args = nullptr);
 
 //--------------------------------------
 extern class cVisGeneric* terVisGeneric;
@@ -50,7 +51,7 @@ extern float terGraphicsGamma;	// 0.5..2.5
 extern int terShadowType;
 extern int terDrawMeshShadow;
 extern bool terEnableBumpChaos;
-STARFORCE_API void SetShadowType(int shadow_map,int shadow_size,bool update);
+void SetShadowType(int shadow_map,int shadow_size,bool update);
 
 extern const char* currentVersion;
 extern const char* currentShortVersion;
@@ -61,8 +62,6 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 const char* popupMenu(std::vector<const char*> items); // returns zero if cancel
 int popupMenuIndex(std::vector<const char*> items); // returns -1 if cancel
 const char* editText(const char* defaultValue);
-const char* editTextMultiLine(const char* defaultValue, HWND hwnd);
-const std::string getLocale();
-const std::string getLocDataPath();
+const char* editTextMultiLine(const char* defaultValue, void* hwnd);
 
 #endif //__RUNTIME_H__

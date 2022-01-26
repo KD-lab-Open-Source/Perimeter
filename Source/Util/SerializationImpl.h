@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #ifndef __SERIALIZATION_IMPL_H__
 #define __SERIALIZATION_IMPL_H__
 
@@ -81,14 +79,14 @@ void Mat3d::serialize(Archive& ar) {
 
 template<class Archive>
 void MatXf::serialize(Archive& ar) {
-    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-    ar & makeObjectWrapper(trans(), "position", "Позиция");
+    ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+    ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
 }
 
 template<class Archive>
 void MatXd::serialize(Archive& ar) {
-    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-    ar & makeObjectWrapper(trans(), "position", "Позиция");
+    ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+    ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
 }
 
 template<class Archive>
@@ -113,14 +111,14 @@ void QuatD::serialize(Archive& ar) {
 
 template<class Archive>
 void Se3f::serialize(Archive& ar) {
-    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-    ar & makeObjectWrapper(trans(), "position", "Позиция");
+    ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+    ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
 }
 
 template<class Archive>
 void Se3d::serialize(Archive& ar) {
-    ar & makeObjectWrapper(rot(), "rotation", "Ориентация");
-    ar & makeObjectWrapper(trans(), "position", "Позиция");
+    ar & makeObjectWrapper(rot(), "rotation", "РћСЂРёРµРЅС‚Р°С†РёСЏ");
+    ar & makeObjectWrapper(trans(), "position", "РџРѕР·РёС†РёСЏ");
 }
 
 template<class Archive>

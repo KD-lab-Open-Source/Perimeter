@@ -2,13 +2,13 @@ section RegionPrm(declaration = "Game\Scripts\Region.hi", definition = "Game\Scr
 {
 int toolzer_radius_min = 20;
 int toolzer_radius_max = 120;
-int toolzer_clear_back_layers_radius_delta = 32; // Запас для стирающих толзеров фоновых слоев
-int toolzer_radius_fixed = 8; // Радиус рвов и насыпей
-int toolzer_segment_autoclip_radius = 34; // Радиус взаимного клиппинга отрезков 
-int toolzer_lineto_saved_segments_number = 1; // Число незатираемых отрезков с конца
+int toolzer_clear_back_layers_radius_delta = 32; // Р—Р°РїР°СЃ РґР»СЏ СЃС‚РёСЂР°СЋС‰РёС… С‚РѕР»Р·РµСЂРѕРІ С„РѕРЅРѕРІС‹С… СЃР»РѕРµРІ
+int toolzer_radius_fixed = 8; // Р Р°РґРёСѓСЃ СЂРІРѕРІ Рё РЅР°СЃС‹РїРµР№
+int toolzer_segment_autoclip_radius = 34; // Р Р°РґРёСѓСЃ РІР·Р°РёРјРЅРѕРіРѕ РєР»РёРїРїРёРЅРіР° РѕС‚СЂРµР·РєРѕРІ 
+int toolzer_lineto_saved_segments_number = 1; // Р§РёСЃР»Рѕ РЅРµР·Р°С‚РёСЂР°РµРјС‹С… РѕС‚СЂРµР·РєРѕРІ СЃ РєРѕРЅС†Р°
 float toolzer_lineto_radius_factor = 0.3;
 
-float region_segment_length = 40; // Определяет степень усреднения
+float region_segment_length = 40; // РћРїСЂРµРґРµР»СЏРµС‚ СЃС‚РµРїРµРЅСЊ СѓСЃСЂРµРґРЅРµРЅРёСЏ
 
 int minimal_region_size = 20;
 float region_perimeter_epsilon = 0.5;

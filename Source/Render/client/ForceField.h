@@ -114,15 +114,15 @@ public:
 		atan_table = new char[atan_max*2 + 1];
 		atan_table += atan_max;
 		for(int i = -atan_max; i <= atan_max; i++)
-			atan_table[i] = n_max + round(atan((float)i/cell_size)*n_max/(M_PI/2));
+			atan_table[i] = n_max + xm::round(xm::atan((float) i / cell_size) * n_max / (XM_PI / 2));
 
 		normals = new Vect3f[(2*n_max + 1) << normals_per_Pi_shift];
 		for(int y = 0; y < 2*n_max + 1; y++)
 			for(int x = 0; x < 2*n_max + 1; x++){
 				if(x || y){
-					float nx = (float)(x - n_max)*(M_PI/2)/n_max;
-					float ny = (float)(y - n_max)*(M_PI/2)/n_max;
-					Mat3f M(Vect3f(ny, -nx, 0), sqrtf(sqr(nx) + sqr(ny)));
+					float nx = (float)(x - n_max)*(XM_PI/2)/n_max;
+					float ny = (float)(y - n_max)*(XM_PI/2)/n_max;
+					Mat3f M(Vect3f(ny, -nx, 0), xm::sqrt(sqr(nx) + sqr(ny)));
 					normals[x + (y << normals_per_Pi_shift)] = M*Vect3f::K;
 					}
 				else
@@ -238,7 +238,7 @@ public:
 	int tileMapSizeX() const { return tile_map_.sizeX(); }
 	int tileMapSizeY() const { return tile_map_.sizeY(); }
 
-	BYTE tileMap(int x, int y) const { return tile_map_(x, y); } 
+	uint8_t tileMap(int x, int y) const { return tile_map_(x, y); } 
 
 	int w2t(int x) const { return tile_map_.w2m(x); } // World to tile
 	int t2w(int x) const  { return tile_map_.m2w(x); }
@@ -276,10 +276,10 @@ private:
 	cTexture	*Texture[2];
 	cFrame	*Frame;
 
-	typedef Map2D<BYTE, tile_scale> TileMap;
+	typedef Map2D<uint8_t, tile_scale> TileMap;
 	TileMap tile_map_;
 	
-	BYTE tile_global;
+	uint8_t tile_global;
 
 	class FFDData* pDrawData; //Используется Draw(class FieldDispatcher *rd);
 

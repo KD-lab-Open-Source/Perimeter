@@ -71,8 +71,8 @@ static void InitCirclePos()
 	for(int i=0;i<segments;i++)
 	{
 		float a=(2*M_PI*i)/segments;
-		pos[i].x=cos(a);
-		pos[i].y=sin(a);
+		pos[i].x=xm::cos(a);
+		pos[i].y=xm::sin(a);
 	}
 }
 

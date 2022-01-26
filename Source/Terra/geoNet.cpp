@@ -83,14 +83,14 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 			//WORK_GRID(xNet, yNet)=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT);
 			if(BorderForm!=0){
 				float x=(float)(xNet-sx05)/(float)sx05; 
-				float f=exp(-(fabsf(x*x*x*x)+fabsf(y*y*y*y))/(0.4*0.4));
-				WORK_GRID(xNet, yNet)=round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
+				float f=xm::exp(-(xm::abs(x * x * x * x) + xm::abs(y * y * y * y)) / (0.4 * 0.4));
+				WORK_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
 			}
 			else{ WORK_GRID(xNet, yNet)=MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT); }
 
-			//ROUGH_GRID(xNet, yNet)=round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
+			//ROUGH_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
 			//f=1;
-			//WORK_GRID(xNet, yNet)=round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
+			//WORK_GRID(xNet, yNet)=xm::round((MIN_GG_ALT+XRnd(MAX_GG_ALT-MIN_GG_ALT))*f);
 /*			if(WORK_GRID(xNet, yNet)==0){
 				int dx=1+XRnd(4);
 				int dy=1+XRnd(4);
@@ -180,10 +180,10 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 				random_center = square_size<<(VX_FRACTION); ///?
 				random_range = random_center << 1;
 
-				p1 += random(random_range) - random_center;
-				p2 += random(random_range) - random_center;
-				p3 += random(random_range) - random_center;
-				p4 += random(random_range) - random_center;
+				p1 += xm_random(random_range) - random_center;
+				p2 += xm_random(random_range) - random_center;
+				p3 += xm_random(random_range) - random_center;
+				p4 += xm_random(random_range) - random_center;
 
 				if(p1 < Cmin_alt) p1 = Cmin_alt; else if(p1 > Cmax_alt) p1 = Cmax_alt;
 				if(p2 < Cmin_alt) p2 = Cmin_alt; else if(p2 > Cmax_alt) p2 = Cmax_alt;
@@ -252,10 +252,10 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 				random_center = square_size*MAP_T(x1,y1)/GeonetMESH;
 				random_range = random_center << 1;
 
-				p1 += (random(random_range) - random_center);
-				p2 += (random(random_range) - random_center);
-				p3 += (random(random_range) - random_center);
-				p4 += (random(random_range) - random_center);
+				p1 += (xm_random(random_range) - random_center);
+				p2 += (xm_random(random_range) - random_center);
+				p3 += (xm_random(random_range) - random_center);
+				p4 += (xm_random(random_range) - random_center);
 
 				if(p1 < Cmin_alt) p1 = Cmin_alt; else if(p1 > Cmax_alt) p1 = Cmax_alt;
 				if(p2 < Cmin_alt) p2 = Cmin_alt; else if(p2 > Cmax_alt) p2 = Cmax_alt;
@@ -302,18 +302,18 @@ void geoGeneration(sGeoPMO& var)///(int _x, int _y, int sx, int sy, int MAX_GG_A
 				f=1;
 				break;
 			case 2:
-				f=exp(-(fabsf(x*x*x*x)+fabsf(y*y*y*y))/(0.4*0.4));
+				f=xm::exp(-(xm::abs(x * x * x * x) + xm::abs(y * y * y * y)) / (0.4 * 0.4));
 				break;
 			case 3:
-				f=exp(-(fabsf(x*x*x)+fabsf(y*y*y))/(0.4*0.4));
+				f=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.4 * 0.4));
 				break;
 			case 4:
-				f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
+				f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4 * 0.4));
 				break;
 			}
 			if(_inverse)f=-f;
-			//vMap.voxSet(xBeg+xMap, yBeg+yMap, round(MAP_2(xMap, yMap)*f));
-			TerrainMetod.put(vMap.XCYCL(xBeg+xMap), vMap.YCYCL(yBeg+yMap), round(MAP_2(xMap, yMap)*f));
+			//vMap.voxSet(xBeg+xMap, yBeg+yMap, xm::round(MAP_2(xMap, yMap)*f));
+			TerrainMetod.put(vMap.XCYCL(xBeg+xMap), vMap.YCYCL(yBeg+yMap), xm::round(MAP_2(xMap, yMap) * f));
 		}
 		ch[vMap.YCYCL(yBeg+yMap)] = 1;
 	}
@@ -340,7 +340,7 @@ static void gaussFilter(int * alt_buff, double filter_scaling, int x_size, int y
 	double filter_scaling_inv_2 = sqr(1/filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -357,8 +357,8 @@ static void gaussFilter(int * alt_buff, double filter_scaling, int x_size, int y
 				for(x = -H;x < H;x++){
 					f += filter_array[H + y][H + x]*double(alt_buff[((yy + y)&border_mask_y)*x_size + ((xx + x)&border_mask_x)]);
 					}
-			unsigned char c = round(f*norma_inv);
-			new_alt_buff[((yy)*x_size) + (xx)] = round(f*norma_inv);
+			unsigned char c = xm::round(f * norma_inv);
+			new_alt_buff[((yy)*x_size) + (xx)] = xm::round(f * norma_inv);
 			}
 	}
 	//cout <<endl<<endl;

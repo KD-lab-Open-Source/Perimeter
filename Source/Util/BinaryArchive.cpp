@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "BinaryArchive.h"
+#include "files/files.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //			ScriptParser
@@ -17,7 +18,9 @@ BinaryOArchive::~BinaryOArchive()
 
 void BinaryOArchive::open(const char* fname, int version)
 {
-	fileName_ = fname;
+    if (fname) {
+        fileName_ = fname;
+    }
 	buffer_.init();
 	buffer_.alloc(10000);
 	buffer_ < "BinX" < version;
@@ -25,6 +28,9 @@ void BinaryOArchive::open(const char* fname, int version)
 
 bool BinaryOArchive::close()
 {
+    if (fileName_.empty()) {
+        return false;
+    }
 	XStream ff(0);
 	if(ff.open(fileName_.c_str(), XS_IN)){
 		if(ff.size() == buffer_.tell()){
@@ -57,7 +63,7 @@ bool BinaryIArchive::open(const char* fname)
 {
 	fileName_ = fname;
 	XStream ff(0);
-	if(!ff.open(convert_path_resource(fname), XS_IN))
+	if(!ff.open(convert_path_content(fname), XS_IN))
 		return false;
 	buffer_.alloc(ff.size() + 1);
 	ff.read(buffer_.address(), ff.size());

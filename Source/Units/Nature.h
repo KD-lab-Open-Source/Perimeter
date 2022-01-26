@@ -13,7 +13,7 @@ public:
 	void AvatarQuant();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void setPose(const Se3f& pose, bool initPose);
 	void setRadius(float radius);

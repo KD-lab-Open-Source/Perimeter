@@ -74,7 +74,7 @@ void vrtMap::landPrepare(void)
 	if(calc){
 		for(j=-MAX_RADIUS_CIRCLEARR; j<=MAX_RADIUS_CIRCLEARR; j++)
 			for(i=-MAX_RADIUS_CIRCLEARR; i<=MAX_RADIUS_CIRCLEARR; i++, p++){
-				r = (int)sqrt(i*(double)i + j*(double)j);
+				r = (int) xm::sqrt(i * (double) i + j * (double) j);
 				if(r > MAX_RADIUS_CIRCLEARR) *p = -1;
 				else {
 					*p = r;
@@ -197,7 +197,7 @@ void vrtMap::deltaZone(sToolzerPMO& var) //(int x,int y,int rad,int smth,int dh,
 					cy=YCYCL(y+yy[j]);
 					cx = XCYCL(x + xx[j]);
 					h = GetAlt(cx,cy);
-					if(abs(h - mean) < eql) {
+					if(xm::abs(h - mean) < eql) {
                         if (h > mean) voxSet(cx, cy, -1);
                         else if (h < mean) voxSet(cx, cy, 1);
                     }
@@ -217,7 +217,7 @@ void vrtMap::deltaZone(sToolzerPMO& var) //(int x,int y,int rad,int smth,int dh,
 						cy=YCYCL(y+yy[j]);
 						cx = XCYCL(x + xx[j]);
 						h = GetAlt(cx,cy);
-						if(abs(h - mean) < eql) {
+						if(xm::abs(h - mean) < eql) {
                             if (h > mean) voxSet(cx, cy, -1);
                             else if (h < mean) voxSet(cx, cy, 1);
                         }
@@ -251,7 +251,7 @@ void vrtMap::deltaZone(sToolzerPMO& var) //(int x,int y,int rad,int smth,int dh,
 							for(dy = -1; dy <= 1; dy++){
 								for(dx = -1;dx <= 1;dx++){
 									cx_ = XCYCL(cx+dx);
-									if(abs(dx) + abs(dy) == 2)
+									if(xm::abs(dx) + xm::abs(dy) == 2)
 										v += GetAlt(cx_,YCYCL(cy +dy));
 								}
 							}
@@ -292,7 +292,7 @@ void vrtMap::deltaZone(sToolzerPMO& var) //(int x,int y,int rad,int smth,int dh,
 								for(dy = -1;dy <= 1;dy++){
 									for(dx = -1;dx <= 1;dx++){
 										cx_ = XCYCL(cx+dx);
-										if(abs(dx) + abs(dy) == 2)
+										if(xm::abs(dx) + xm::abs(dy) == 2)
 											v += GetAlt(cx_,YCYCL(cy +dy));
 									}
 								}
@@ -400,7 +400,7 @@ void vrtMap::squareDeltaZone(sSquareToolzerPMO& var)//(int x,int y,int rad,int s
 						for(dy = -1;dy <= 1;dy++){
 							for(dx = -1;dx <= 1;dx++){
 								cx_ = XCYCL(cx+dx);
-								if(abs(dx) + abs(dy) == 2)
+								if(xm::abs(dx) + xm::abs(dy) == 2)
 									v += GetAlt(cx_,YCYCL(cy +dy));
 							}
 						}
@@ -441,7 +441,7 @@ void vrtMap::squareDeltaZone(sSquareToolzerPMO& var)//(int x,int y,int rad,int s
 							for(dy = -1;dy <= 1;dy++){
 								for(dx = -1;dx <= 1;dx++){
 									cx_ = XCYCL(cx+dx);
-									if(abs(dx) + abs(dy) == 2)
+									if(xm::abs(dx) + xm::abs(dy) == 2)
 										v += GetAlt(cx_,YCYCL(cy +dy));
 								}
 							}
@@ -480,7 +480,7 @@ void vrtMap::gaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 		store_radius=_rad;
 		int m;
 		for(m=0; m<=_rad; m++){
-			y2x[m]=round(sqrtf(_rad*_rad - m*m));
+			y2x[m]= xm::round(xm::sqrt(_rad * _rad - m * m));
 		}
 	}
 	//int border_mask_x=x_size-1;
@@ -492,7 +492,7 @@ void vrtMap::gaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 	double filter_scaling_inv_2 = sqr(1/_filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -504,8 +504,8 @@ void vrtMap::gaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 
 	int xx, yy;
 	for(yy = 0; yy < Diameter; yy++){
-		int dx=y2x[abs(_rad-yy)]*2;
-		int bx=_rad - y2x[abs(_rad-yy)];
+		int dx= y2x[xm::abs(_rad - yy)] * 2;
+		int bx=_rad - y2x[xm::abs(_rad - yy)];
 		for(xx = bx; xx < dx+bx; xx++){
 			f = 0;
 			for(y = -H;y < H;y++)
@@ -513,8 +513,9 @@ void vrtMap::gaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 					unsigned short alt=GetAlt(XCYCL(xBeg + xx + x), YCYCL(yBeg+yy+y));
 					f += filter_array[H + y][H + x]*double(alt);
 					}
-			unsigned char c = round(f*norma_inv);
-			new_alt_buff[((yy)*Diameter) + (xx)] = round(f*norma_inv)-GetAlt(XCYCL(xBeg+xx), YCYCL(yBeg+yy));
+			unsigned char c = xm::round(f * norma_inv);
+			new_alt_buff[((yy)*Diameter) + (xx)] =
+                    xm::round(f * norma_inv) - GetAlt(XCYCL(xBeg + xx), YCYCL(yBeg + yy));
 			}
 	}
 	//cout <<endl<<endl;
@@ -545,7 +546,7 @@ void vrtMap::squareGaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 	double filter_scaling_inv_2 = sqr(1/_filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -564,8 +565,9 @@ void vrtMap::squareGaussFilter(int _x,int _y,int _rad, double _filter_scaling)
 					unsigned short alt=GetAlt(XCYCL(xBeg + xx + x), YCYCL(yBeg+yy+y));
 					f += filter_array[H + y][H + x]*double(alt);
 					}
-			unsigned char c = round(f*norma_inv);
-			new_alt_buff[((yy)*Diameter) + (xx)] = round(f*norma_inv)-GetAlt(XCYCL(xBeg+xx), YCYCL(yBeg+yy));
+			unsigned char c = xm::round(f * norma_inv);
+			new_alt_buff[((yy)*Diameter) + (xx)] =
+                    xm::round(f * norma_inv) - GetAlt(XCYCL(xBeg + xx), YCYCL(yBeg + yy));
 			}
 	}
 	//cout <<endl<<endl;
@@ -591,7 +593,7 @@ void vrtMap::AllworldGaussFilter(double _filter_scaling)
 	double filter_scaling_inv_2 = sqr(1/_filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -613,8 +615,8 @@ void vrtMap::AllworldGaussFilter(double _filter_scaling)
 					f += filter_array[H + y][H + x]*double(alt);
 				}
 			}
-			unsigned char c = round(f*norma_inv);
-			new_alt_buff[((yy)*H_SIZE) + (xx)] = round(f*norma_inv)-GetAlt(XCYCL(xx), YCYCL(yy));
+			unsigned char c = xm::round(f * norma_inv);
+			new_alt_buff[((yy)*H_SIZE) + (xx)] = xm::round(f * norma_inv) - GetAlt(XCYCL(xx), YCYCL(yy));
 		}
 	}
 	for(yy = 0;yy < V_SIZE; yy++){
@@ -973,8 +975,8 @@ void RenderPrepare1(void)
 			if(k<0)k=0;
 			terra.light_front[0][i][j]=round((double)(255-terra.ambient_light[0][i])*(sqrt(k*k)));//+l_ras
 			terra.light_sideways[0][i][j]= round( (double) ((d_y)/sqrt(dz*dz+d_y*d_y)) *255 );
-			terra.light_front[1][i][j]=round((double)(255-terra.ambient_light[0][i])*(sqrt(k*k)));//+l_ras
-			terra.light_sideways[1][i][j]= round( (double) ((d_y)/sqrt(dz*dz+d_y*d_y)) *255 );
+			terra.light_front[1][i][j]=xm::round((double)(255-terra.ambient_light[0][i])*(sqrt(k*k)));//+l_ras
+			terra.light_sideways[1][i][j]= round( (double) ((d_y)/xm::sqrt(dz*dz+d_y*d_y)) *255 );
 		}
 //		int begzl=terra.light_front[0][i][256*3];
 //		for(j=(256*3-1);j>0;j--){
@@ -1032,7 +1034,7 @@ void vrtMap::ShadowControl(bool shadow)
 	shadow_control=shadow;
 	if(shadow){
 		double k=-C_light/(-A_light); // k -это tg угла падения света
-		delta_s=round(k*(1<<16)*(1<<VX_FRACTION)); 
+		delta_s= xm::round(k * (1 << 16) * (1 << VX_FRACTION)); 
 	}
 	else{
 		delta_s=MAX_VX_HEIGHT*(1<<16);///
@@ -1042,23 +1044,23 @@ void vrtMap::ShadowControl(bool shadow)
 void vrtMap::RenderPrepare1(void)
 {
 	A_vw=0; B_vw=1; C_vw=1;
-	float L_light=sqrt(A_light*A_light + B_light*B_light + C_light*C_light);
+	float L_light=xm::sqrt(A_light*A_light + B_light*B_light + C_light*C_light);
 	A_light/=L_light; B_light/=L_light; C_light/=L_light;
-	float L_vw=sqrt(A_vw*A_vw + B_vw*B_vw + C_vw*C_vw);
+	float L_vw=xm::sqrt(A_vw*A_vw + B_vw*B_vw + C_vw*C_vw);
 	A_vw/=L_vw; B_vw/=L_vw; C_vw/=L_vw;
 
 	A_lightS=0;
 	B_lightS=0.5f;
 	C_lightS=-1;
-	float L_lightS=sqrt(A_lightS*A_lightS + B_lightS*B_lightS + C_lightS*C_lightS);
+	float L_lightS=xm::sqrt(A_lightS*A_lightS + B_lightS*B_lightS + C_lightS*C_lightS);
 	A_lightS/=L_lightS; B_lightS/=L_lightS; C_lightS/=L_lightS;
 
-	iA_light=round(A_light*(1<<15));
-	iB_light=round(B_light*(1<<15));
-	iC_light=round(C_light*(1<<15));
-	iA_lightS=round(A_lightS*(1<<15));
-	iB_lightS=round(B_lightS*(1<<15));
-	iC_lightS=round(C_lightS*(1<<15));
+	iA_light= xm::round(A_light * (1 << 15));
+	iB_light= xm::round(B_light * (1 << 15));
+	iC_light= xm::round(C_light * (1 << 15));
+	iA_lightS= xm::round(A_lightS * (1 << 15));
+	iB_lightS= xm::round(B_lightS * (1 << 15));
+	iC_lightS= xm::round(C_lightS * (1 << 15));
 
 	int i,j;
 
@@ -1069,20 +1071,20 @@ void vrtMap::RenderPrepare1(void)
 	//damType2Mater[1]=(0<<SHIFT_4TYPE_MATERIALS)|(1&FLAG_SPECULAR_MATERIAL);
 
 	for(i=0; i<MaxAmountMaterials; i++){
-		LightDifSM[i]=round(kDifSM[i]*(float)Light);
-		AmbientLightDifSM[i]=round(kDifSM[i]*(float)AmbientLight);
+		LightDifSM[i]= xm::round(kDifSM[i] * (float) Light);
+		AmbientLightDifSM[i]= xm::round(kDifSM[i] * (float) AmbientLight);
 		for(j=-256; j<256; j++){
-			//double m=pow((double)j/256,((double)ref_n[i]/10) )* ((double)ref_k[i]/100);
-			double m=pow((double)j/256, (double)nSpecSM[i] )* ((double)kSpecSM[i]);
-			COSnG[i][256+j]=round(m*256);
+			//double m=xm::pow((double)j/256,((double)ref_n[i]/10) )* ((double)ref_k[i]/100);
+			double m= xm::pow((double) j / 256, (double) nSpecSM[i]) * ((double)kSpecSM[i]);
+			COSnG[i][256+j]= xm::round(m * 256);
 		}
 	}
 
 	double k=-C_light/(-A_light); // k -это tg угла падения света
-	///delta_s=round(k*(1<<16)*(1<<VX_FRACTION)); 
+	///delta_s=xm::round(k*(1<<16)*(1<<VX_FRACTION)); 
 	///delta_s=MAX_VX_HEIGHT*(1<<16);///
 	ShadowControl(shadow_control);
-	RENDER_BORDER_ZONE=abs(round(k*64.0)); //64 возможный перепад высот
+	RENDER_BORDER_ZONE=abs(xm::round(k * 64.0)); //64 возможный перепад высот
 
 	for(i=0; i<32; i++){
 		shL[i]=(float)(31-i)/31.f;
@@ -1102,10 +1104,10 @@ void vrtMap::RenderPrepare1(void)
 		int dV=i-SLT_05SIZE;
 		float x=dV;
 		float y=1.0f;
-		float l=1/sqrt(x*x + y*y);
+		float l=1/xm::sqrt(x*x + y*y);
 		x*=l; y*=l;
 		float scalar=x*X_LIGHT+ y*Y_LIGHT;
-		if(scalar>0) SLightTable[i]=round(scalar*LUM_LIGHT);
+		if(scalar>0) SLightTable[i]=xm::round(scalar*LUM_LIGHT);
 		else SLightTable[i]=0;
 	};
 #endif
@@ -1226,9 +1228,9 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			//float B=(float)(V-Vh)/(float)(1<<VX_FRACTION);
 			//float C=-1;
 
-			//int L=round(sqrt(A*A+B*B+C*C)); 
+			//int L=xm::round(xm::sqrt(A*A+B*B+C*C)); 
 			///extern inline float fastsqrt(float n);
-			///int L=round(fastsqrt(A*A+B*B+C*C));
+			///int L=xm::round(fastsqrt(A*A+B*B+C*C));
 			int L=fastsqrtI(A*A+B*B+C*C);
 
 			//A=(A<<8)/L; B=(B<<8)/L; C=(C<<8)/L;
@@ -1244,7 +1246,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 					int icosAS=(A*iA_lightS + B*iB_lightS + C*iC_lightS)/L;
 					int shI=(h_s-((int)V<<16))>>(16+2); 
 					//if(shI > 31) shI=31;
-					//lght=round(AmbientLight*cosAS*shL[31-shI]) + round((Light*cosA+AmbientLight)*shL[shI]);
+					//lght=round(AmbientLight*cosAS*shL[31-shI]) + xm::round((Light*cosA+AmbientLight)*shL[shI]);
 					//lght=( (AmbientLight*icosAS*shI) + ((Light*icosA+(AmbientLight<<15))*(31-shI)) )>>(15+5);
 					if(shI>=31){
 						lght=(LightShadow*icosAS) >>15;
@@ -1259,8 +1261,8 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 				}
 				else{
 					icosA=(A*iA_light + B*iB_light + C*iC_light)/L;
-					//lght=round(Light*cosA);// + round(AmbientLt*cosAS);
-					lght=(Light*icosA)>>15;// + round(AmbientLt*cosAS);
+					//lght=round(Light*cosA);// + xm::round(AmbientLt*cosAS);
+					lght=(Light*icosA)>>15;// + xm::round(AmbientLt*cosAS);
 					lght+=AmbientLight;
 					prevShadow=0;
 				}
@@ -1274,7 +1276,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			float A=(float)(Vr-V)/(float)(1<<(VX_FRACTION));
 			float B=(float)(V-Vh)/(float)(1<<(VX_FRACTION));
 			float C=-2; //C=-1 // 2 для большей плавности рельефа т.к. точность была потеряна при переходе на VX_FRACTION=5
-			float L=sqrt(A*A+B*B+C*C);
+			float L=xm::sqrt(A*A+B*B+C*C);
 			//extern inline float fastsqrt(float n);
 			//float L=fastsqrt(A*A+B*B+C*C);
 			A=A/L; B=B/L; C=C/L;
@@ -1306,7 +1308,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 				if( h_s > ((int)V<<16)) {
 					float cosAS=(A*A_lightS + B*B_lightS + C*C_lightS);
 					int shI=h_s-((int)V<<16)>>(16+2); if(shI > 31) shI=31;
-					lght=round(AmbientLightDifSM[material]*cosAS*shL[31-shI]) + round((LightDifSM[material]*cosA+AmbientLight)*shL[shI]);
+					lght=round(AmbientLightDifSM[material]*cosAS*shL[31-shI]) + xm::round((LightDifSM[material]*cosA+AmbientLight)*shL[shI]);
 					prevShadow=1;
 					*(pa+i)|=At_SHADOWV;
 				}
@@ -1364,7 +1366,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 					int cosG;
 					cosLV=A_light*A_vw + B_light*B_vw + C_light*C_vw;
 					cosB=( (int)A*A_vw +(int)B*B_vw +(int)C*C_vw)/256.;
-					cosG=round((cosLV-2*cosA*cosB)*255);
+					cosG=xm::round((cosLV-2*cosA*cosB)*255);
 					if (cosG > 255) cosG=255; if(cosG < 0)cosG=0;
 					short Lspec=COSnG[material][256+cosG];
 					lght=round(LightDifSM[material]*cosA)+ Lspec ;//+ round(AmbientLtSl*cosAS);
@@ -1390,7 +1392,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			if( h_s > ((int)V<<16)) {
 				int shI=h_s-((int)V<<16)>>(16+2); if(shI > 31) shI=31;
 				if(terrain>200) lght=round(AmbientLtSl*cosAS*shL[31-shI]) + round(LtSl*cosA*shL[shI]);
-				else lght=round(AmbientLt*cosAS*shL[31-shI]) + round(Lt*cosA*shL[shI]);
+				else lght=round(AmbientLt*cosAS*shL[31-shI]) + xm::round(Lt*cosA*shL[shI]);
 				prevShadow=1;
 				*(pa+i)|=At_SHADOWV;
 			}
@@ -1403,7 +1405,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 			//lght-=(255-(V>>VX_FRACTION))>>1;
 
 			//затенение по краям
-			//lght=round(f*lght);
+			//lght=xm::round(f*lght);
 			//затенение по краям
 #ifdef _SURMAP_
 			if(ShadowingOnEdges)lght=f*lght>>shift4Fraction;
@@ -1420,7 +1422,7 @@ int vrtMap::RenderStr(int XL, int Y, int dx)
 /*			float cosA=(A*A_light + B*B_light + C*C_light)/256.;
 			float cosLV=A_light*A_vw + B_light*B_vw + C_light*C_vw;
 			float cosB=( (int)A*A_vw +(int)B*B_vw +(int)C*C_vw)/256.;
-			int cosG=round((cosLV-2*cosA*cosB)*255);
+			int cosG=xm::round((cosLV-2*cosA*cosB)*255);
 			if (cosG > 255) cosG=255; if(cosG < 0)cosG=0; //if(cosG < -255)cosG=-255;
 			short Lspec=COSnG[terrain][256+cosG];
 
@@ -1488,7 +1490,7 @@ void RenderShadovM3D(int number, float y)
 			unsigned char *pc0=&(ClTrBuf[y<<H_SIZE_POWER]);
 			unsigned char *pa0=&(AtBuf[y*XS_Buf]);
 			v=(*(pv0+(x_cycl)))/fraction;
-			int xshade=round((Sh.x-x)-(Sh.z-v)*f_dzx);
+			int xshade=xm::round((Sh.x-x)-(Sh.z-v)*f_dzx);
 			while(xshade<Sh.xShade)
 			{
 				if((xshade>0)&&(shadeBuf[xshade]>=(v=*(pv0+(x_cycl))/fraction ))&&((pa0[x_cycl]&At_SHADOW)==0))

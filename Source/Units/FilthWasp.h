@@ -22,7 +22,7 @@ struct terFilthWasp : terFilthSpline
 	void Collision(terUnitBase* p);
 	void SetSwarm(terFilthSwarmWasp* swarm_){swarm=swarm_;}
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	terFilthSwarmWasp* swarm;
 	bool free_destroy;
@@ -58,7 +58,7 @@ struct terFilthSwarmWasp : terFilthSwarm
 
 	struct terFilthWaspStruct* prm;
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	terUnitAttributeID unit_id;
 	std::vector<struct s_WaspBirthGeoAction*> wasp_hole_point;

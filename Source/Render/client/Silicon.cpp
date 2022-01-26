@@ -22,7 +22,7 @@ ElasticSphere::ElasticSphere()
 		inited = 1;
 		for(int theta = 0; theta < theta_size; theta++)
 			for(int psi = 0; psi < psi_size; psi++)
-				unit_sphere[psi][theta].setSpherical(psi*M_PI*2/psi_size, theta*M_PI/(theta_size - 1), 1);
+				unit_sphere[psi][theta].setSpherical(psi*XM_PI*2/psi_size, theta*XM_PI/(theta_size - 1), 1);
 		}
 
 	setRadius(100, 0.3f);
@@ -54,7 +54,7 @@ void ElasticSphere::SetPosition(const MatXf& Matrix)
 	dir.x = frnd(1);
 	dir.y = frnd(1);
 	dir.z = frnd(1);
-	GlobalMatrix.rot().set(dir, frnd(M_PI));
+	GlobalMatrix.rot().set(dir, frnd(XM_PI));
 }
 
 void ElasticSphere::PreDraw(cCamera *DrawNode)
@@ -169,13 +169,13 @@ void ElasticSphere::getAngles(const Vect3f& point, int& psi, int& theta)
 {
 	Vect3f v;
 	GetGlobalMatrix().invXformPoint(point, v);
-	psi = (int)round(v.psi()*psi_size/(M_PI*2)) & psi_mask;
-	theta = (int)round(v.theta()*theta_size/M_PI) & theta_mask;
+	psi = (int) xm::round(v.psi() * psi_size / (XM_PI * 2)) & psi_mask;
+	theta = (int) xm::round(v.theta() * theta_size / XM_PI) & theta_mask;
 }	
 
 void ElasticSphere::getPoint(int psi, int theta, Vect3f& point)
 {
-	point.setSpherical(psi*M_PI*2/psi_size, theta*M_PI/theta_size, height_map[psi][theta]*elastic_sphere_get_point_radius_factor);
+	point.setSpherical(psi*XM_PI*2/psi_size, theta*XM_PI/theta_size, height_map[psi][theta]*elastic_sphere_get_point_radius_factor);
 	GetGlobalMatrix().xformPoint(point);
 }	
 
@@ -193,12 +193,12 @@ ElasticLink::ElasticLink(ElasticSphere* sphere1_, ElasticSphere* sphere2_)
 	sphere2->getPoint(psi2, theta2, point2);
 	initial_length = point1.distance(point2);
 	thickness_factor = 1;
-	line_size = round(initial_length*oscillating_link_density);
+	line_size = xm::round(initial_length * oscillating_link_density);
 	x_height = new float[2*line_size];
 	x_velocity = x_height + line_size;
 	memset(x_height, 0, 2*line_size*sizeof(float));
 	for(int i = 0; i < line_size; i++)
-		x_height[i] = 20*sin(i*0.25);
+		x_height[i] = 20 * xm::sin(i * 0.25);
 
 	z_axis = point2 - point1;
 	z_axis.Normalize();
@@ -233,7 +233,7 @@ void ElasticLink::evolve()
 	length = max(z_axis.norm(), 0.1f);
 	GetRadius() = 0.5f*length;
 	z_axis /= length;
-	thickness_factor = pow(fabs(initial_length/length), elastic_link_thickness_pow);
+	thickness_factor = xm::pow(xm::abs(initial_length / length), elastic_link_thickness_pow);
 
 	if(dot(z_axis, sphere2->position() - sphere1->position()) < 0)
 		length = -length;
@@ -324,7 +324,7 @@ void ElasticLink::Draw(cCamera *DrawNode)
 
 	DrawStripT2 strip;
 
-	DWORD old_cull;
+	uint32_t old_cull;
 	old_cull=gb_RenderDevice3D->GetRenderState(D3DRS_CULLMODE);
 	gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	gb_RenderDevice->SetNoMaterial(blendMode,GetFrame()->GetPhase(),GetTexture(),GetTexture2(),COLOR_MOD);

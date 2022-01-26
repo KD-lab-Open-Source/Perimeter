@@ -627,8 +627,8 @@ static SoundEventSetup buildMasterSound_events_314[] = { { SOUND_EVENT_EXPLOSION
   }, { SOUND_VOICE_MMP_BACK_TO_FRAME, "BMaster_Back2Frame", 0, 1, 0, 1000, 0, 2000 
   }, { SOUND_VOICE_UNIT_UNDER_ATTACK, "Building_Under_Attack", 0, 1, 0, 20000, 0, 2000 
   } };
-static SoundControllerSetup buildMasterSound_sounds_313[] = { { SOUND_MOVE 
- , "move_build_master", 1 } };
+static SoundControllerSetup buildMasterSound_sounds_313[] = { { SOUND_MOVE, "move_build_master" 
+ , 1 } };
 static SoundEventSetup terrainMasterSound_events_312[] = { { SOUND_EVENT_EXPLOSION 
  , "explosion_heavy", 1, 0, 0, 0, 0, 2000 }, { SOUND_VOICE_UNIT_READY, "Frame_Brigadier_Ready" 
  , 0, 1, 0, 5000, 0, 2000 }, { SOUND_VOICE_UNIT_SELECTED, "Brigadier_Selected", 0, 1 
@@ -787,14 +787,13 @@ static DockingSlotData dockingSlotsCeptor_data_249[] = { { "targeting a 01"
   }, { "targeting a 02" }, { "targeting a 03" }, { "targeting a 04" } };
 static DockingSlotData dockingSlotsPlantTechnician_data_248[] = { { "solider" 
   } };
-static DockingSlotData dockingSlotsPlantOfficer_data_247[] = { { "solider" 
+static DockingSlotData dockingSlotsPlantOfficer_data_247[] = { { "solider" } 
+  };
+static DockingSlotData dockingSlotsPlantSoldier_data_246[] = { { "solider" } };
+static DockingSlotData dockingSlotsFrame_data_245[] = { { "way" 
   } };
-static DockingSlotData dockingSlotsPlantSoldier_data_246[] = { { "solider" 
-  } };
-static DockingSlotData dockingSlotsFrame_data_245[] = { { "way" } };
-static AnimationChain blackHoleAnimation__chains_244[] = { { CHAIN_DEFAULT 
- , "main", 0.f, 3000, CHAIN_NODE_DEFAULT, CHAIN_NODE_DEFAULT, 0, 0, 0, SOUND_EVENT_NONE 
-  } };
+static AnimationChain blackHoleAnimation__chains_244[] = { { CHAIN_DEFAULT, "main" 
+ , 0.f, 3000, CHAIN_NODE_DEFAULT, CHAIN_NODE_DEFAULT, 0, 0, 0, SOUND_EVENT_NONE } };
 static AnimationData blackHoleAnimation_data_243[] = { { ANIMATION_GROUP_ROOT 
  , 0, 1, blackHoleAnimation__chains_244, 0 } };
 static AnimationChain wormAnimation__chains_242[] = { { CHAIN_BUILD1 
@@ -1001,9 +1000,9 @@ static AnimationChain eflairAnimation__chains_187[] = { { CHAIN_MOVE, "main"
  , 0.f, 1000, CHAIN_NODE_FLIGHT, CHAIN_NODE_FLIGHT, 0, 0, 0, SOUND_EVENT_NONE }, { CHAIN_STOP 
  , "main", 0.f, 1000, CHAIN_NODE_FLIGHT, CHAIN_NODE_FLIGHT, 0, 0, 0, SOUND_EVENT_NONE 
   } };
-static AnimationData eflairAnimation_data_186[] = { { ANIMATION_GROUP_ROOT 
- , 0, 2, eflairAnimation__chains_187, 0 }, { ANIMATION_GROUP_FIRE, "group fire", 4 
- , eflairAnimation__chains_188, 0 } };
+static AnimationData eflairAnimation_data_186[] = { { ANIMATION_GROUP_ROOT, 0 
+ , 2, eflairAnimation__chains_187, 0 }, { ANIMATION_GROUP_FIRE, "group fire", 4, eflairAnimation__chains_188 
+ , 0 } };
 static AnimationChain gyroidAnimation__chains_185[] = { { CHAIN_SWITCHED_OFF 
  , "main", 0.f, 1, CHAIN_NODE_SWITCHED_OFF, CHAIN_NODE_SWITCHED_OFF, 0, 0, 0, SOUND_EVENT_NONE 
   }, { CHAIN_FIRE, "fire", 0.f, 200, CHAIN_NODE_SWITCHED_OFF, CHAIN_NODE_SWITCHED_ON 
@@ -1571,15 +1570,15 @@ static ToolzerStepData destructionCraterToolzer_steps_87[] = { { TOOLZER_PHASE_D
  , 0.f, BUILDING_DAMAGE_SQUARE, 32, 1, destructionCraterToolzer__actions_93 } };
 static ToolzerActionData _actions_86[] = { { TOOLZER_S 
  , 38, 1.f, 7, -1 } };
-static ToolzerActionData _actions_85[] = { { TOOLZER_S, 27 
- , 1.f, 10, -1 } };
-static ToolzerActionData _actions_84[] = { { TOOLZER_H, 32, 0.f 
- , 2, -1 } };
-static ToolzerActionData _actions_83[] = { { TOOLZER_H, 16, -4.f, 4 
- , -1 } };
-static ToolzerActionData _actions_82[] = { { TOOLZER_H, 24, -4.f, 3, -1 
+static ToolzerActionData _actions_85[] = { { TOOLZER_S, 27, 1.f 
+ , 10, -1 } };
+static ToolzerActionData _actions_84[] = { { TOOLZER_H, 32, 0.f, 2, -1 
   } };
-static ToolzerActionData _actions_81[] = { { TOOLZER_H, 32, 2.f, 3, -1 } };
+static ToolzerActionData _actions_83[] = { { TOOLZER_H, 16, -4.f, 4, -1 } };
+static ToolzerActionData _actions_82[] = { { TOOLZER_H 
+ , 24, -4.f, 3, -1 } };
+static ToolzerActionData _actions_81[] = { { TOOLZER_H, 32 
+ , 2.f, 3, -1 } };
 static ToolzerStepData craterToolzerSteps_80[] = { { TOOLZER_PHASE_DEFAULT 
  , 1, TOOLZER_PHASE_DEFAULT, 0.f, BUILDING_DAMAGE_SQUARE, 0, 1, _actions_81 }, { TOOLZER_PHASE_DEFAULT 
  , 1, TOOLZER_PHASE_DEFAULT, 0.f, BUILDING_DAMAGE_SQUARE, 0, 1, _actions_82 }, { TOOLZER_PHASE_DEFAULT 
@@ -1922,7 +1921,7 @@ struct Oscillator {
 	float omega_increment;
 	float omega_disperse;
 
-		void set() { phase = terLogicRNDfrnd()*M_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
+		void set() { phase = terLogicRNDfrnd()*XM_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
 		float operator() (float dt, float velocity){ return amplitude*sin(phase += omega*(1 + omega_increment*velocity)*dt)/(1 + amplitude_decrement*velocity); }
 	};
 #pragma pack( pop, __XScript_struct_pack__)
@@ -2121,7 +2120,7 @@ struct RigidBodyTable {
 	RigidBodyPrm debris_prm;
 	RigidBodyPrm VolcanoPrm;
 	RigidBodyPrm CorpseDynamicPrm;
- // Ðàññìàòðèâàåì ïîñëåäîâàòåëüíîñòü ðàñïîëîæåííûõ ðÿäîì ñòðóêòóð êàê ìàññèâ
+ // Ð Ð°ÑÑÐ¼Ð°Ñ‚Ñ€Ð¸Ð²Ð°ÐµÐ¼ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ Ñ€Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð½Ñ‹Ñ… Ñ€ÑÐ´Ð¾Ð¼ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€ ÐºÐ°Ðº Ð¼Ð°ÑÑÐ¸Ð²
 	int size() const { xassert(sizeof(*this) % sizeof(RigidBodyPrm) == 0); return sizeof(*this)/sizeof(RigidBodyPrm); }
 	const RigidBodyPrm& operator[](int i) const { xassert(i >= 0 && i < size()); return ((RigidBodyPrm*)this)[i]; }
 };
@@ -2911,7 +2910,7 @@ struct AnimationData {
 	AnimationChain const* chains;
 	int setPhaseRecursive;
 
-	const AnimationChain* initial() const { return size ? &chains[0] : 0; }	// ïåðâàÿ öåïî÷êà âêëþ÷àåòñÿ ïðè ñîçäàíèè îáúåêòà
+	const AnimationChain* initial() const { return size ? &chains[0] : 0; }	// Ð¿ÐµÑ€Ð²Ð°Ñ Ñ†ÐµÐ¿Ð¾Ñ‡ÐºÐ° Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ÑÑ Ð¿Ñ€Ð¸ ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ð¸ Ð¾Ð±ÑŠÐµÐºÑ‚Ð°
 	const AnimationChain* find(ChainID chainID) const  { for(int i = 0; i < size; i++) if(chains[i].chainID == chainID) return &chains[i]; return 0; }
 };
 #pragma pack( pop, __XScript_struct_pack__)
@@ -2988,126 +2987,126 @@ AnimationSetup coreAnimation = { 3
  , coreAnimation_data_104 };
 AnimationSetup transmitterAnimation = { 2, transmitterAnimation_data_108 
   };
-AnimationSetup commandCenterAnimation = { 1, commandCenterAnimation_data_111 
+AnimationSetup commandCenterAnimation = { 1, commandCenterAnimation_data_111 };
+AnimationSetup staticBombAnimation = { 1 
+ , staticBombAnimation_data_113 };
+AnimationSetup lab1Animation = { 1, lab1Animation_data_115 
   };
-AnimationSetup staticBombAnimation = { 1, staticBombAnimation_data_113 };
-AnimationSetup lab1Animation = { 1 
- , lab1Animation_data_115 };
-AnimationSetup lab2Animation = { 1, lab2Animation_data_117 
+AnimationSetup lab2Animation = { 1, lab2Animation_data_117 };
+AnimationSetup lab3Animation = { 1 
+ , lab3Animation_data_119 };
+AnimationSetup plantAnimation = { 1, plantAnimation_data_121 
   };
-AnimationSetup lab3Animation = { 1, lab3Animation_data_119 };
-AnimationSetup plantAnimation = { 1 
- , plantAnimation_data_121 };
 AnimationSetup filthNavigatorAnimation = { 1, filthNavigatorAnimation_data_123 
   };
 AnimationSetup ballisticLauncherAnimation = { 1, ballisticLauncherAnimation_data_125 
   };
-AnimationSetup scumDisruptorAnimation = { 1, scumDisruptorAnimation_data_127 
+AnimationSetup scumDisruptorAnimation = { 1, scumDisruptorAnimation_data_127 };
+AnimationSetup collectorAnimation = { 1 
+ , collectorAnimation_data_129 };
+AnimationSetup corridorAlphaAnimation = { 1, &corridorAlphaAnimation_data_131 
   };
-AnimationSetup collectorAnimation = { 1, collectorAnimation_data_129 };
-AnimationSetup corridorAlphaAnimation = { 1 
- , &corridorAlphaAnimation_data_131 };
-AnimationSetup corridorOmegaAnimation = { 1 
- , &corridorOmegaAnimation_data_133 };
-AnimationSetup frameAnimation = { 4, frameAnimation_data_135 
+AnimationSetup corridorOmegaAnimation = { 1, &corridorOmegaAnimation_data_133 
   };
-AnimationSetup laserGunAnimation = { 2, laserGunAnimation_data_140 };
-AnimationSetup electroGunAnimation = { 2 
- , electroGunAnimation_data_143 };
-AnimationSetup howitzerGunAnimation = { 2, howitzerGunAnimation_data_146 
+AnimationSetup frameAnimation = { 4, frameAnimation_data_135 };
+AnimationSetup laserGunAnimation = { 2 
+ , laserGunAnimation_data_140 };
+AnimationSetup electroGunAnimation = { 2, electroGunAnimation_data_143 
   };
-AnimationSetup subchaserGunAnimation = { 1, subchaserGunAnimation_data_149 };
-AnimationSetup rprojectorAnimation = { 1 
- , rprojectorAnimation_data_151 };
-AnimationSetup chaserAnimation = { 2, chaserAnimation_data_153 
+AnimationSetup howitzerGunAnimation = { 2, howitzerGunAnimation_data_146 };
+AnimationSetup subchaserGunAnimation = { 1 
+ , subchaserGunAnimation_data_149 };
+AnimationSetup rprojectorAnimation = { 1, rprojectorAnimation_data_151 
   };
-AnimationSetup sniperAnimation = { 2, sniperAnimation_data_156 };
-AnimationSetup leamoAnimation = { 2 
- , leamoAnimation_data_159 };
-AnimationSetup impalerAnimation = { 2, impalerAnimation_data_162 
+AnimationSetup chaserAnimation = { 2, chaserAnimation_data_153 };
+AnimationSetup sniperAnimation = { 2 
+ , sniperAnimation_data_156 };
+AnimationSetup leamoAnimation = { 2, leamoAnimation_data_159 
   };
-AnimationSetup mortarAnimation = { 2, mortarAnimation_data_165 };
-AnimationSetup buildMasterAnimation = { 1 
- , buildMasterAnimation_data_168 };
-AnimationSetup terrainMasterAnimation = { 1, terrainMasterAnimation_data_170 
+AnimationSetup impalerAnimation = { 2, impalerAnimation_data_162 };
+AnimationSetup mortarAnimation = { 2 
+ , mortarAnimation_data_165 };
+AnimationSetup buildMasterAnimation = { 1, buildMasterAnimation_data_168 
   };
-AnimationSetup rocketAnimation = { 1, rocketAnimation_data_172 };
-AnimationSetup ballisticRocketAnimation = { 1 
- , ballisticRocketAnimation_data_174 };
-AnimationSetup wargonAnimation = { 2, wargonAnimation_data_176 
+AnimationSetup terrainMasterAnimation = { 1, terrainMasterAnimation_data_170 };
+AnimationSetup rocketAnimation = { 1 
+ , rocketAnimation_data_172 };
+AnimationSetup ballisticRocketAnimation = { 1, ballisticRocketAnimation_data_174 
   };
-AnimationSetup subterraneanAnimation = { 1, subterraneanAnimation_data_179 };
-AnimationSetup ceptorAnimation = { 1 
- , ceptorAnimation_data_181 };
-AnimationSetup gyroidAnimation = { 2, gyroidAnimation_data_183 
+AnimationSetup wargonAnimation = { 2, wargonAnimation_data_176 };
+AnimationSetup subterraneanAnimation = { 1 
+ , subterraneanAnimation_data_179 };
+AnimationSetup ceptorAnimation = { 1, ceptorAnimation_data_181 
   };
-AnimationSetup eflairAnimation = { 2, eflairAnimation_data_186 };
-AnimationSetup straferAnimation = { 2 
- , straferAnimation_data_189 };
-AnimationSetup officerAnimation = { 1, officerAnimation_data_192 
+AnimationSetup gyroidAnimation = { 2, gyroidAnimation_data_183 };
+AnimationSetup eflairAnimation = { 2 
+ , eflairAnimation_data_186 };
+AnimationSetup straferAnimation = { 2, straferAnimation_data_189 
   };
-AnimationSetup soldierAnimation = { 2, soldierAnimation_data_194 };
-AnimationSetup technicAnimation = { 1 
- , technicAnimation_data_197 };
-AnimationSetup bombieAnimation = { 1, bombieAnimation_data_199 
+AnimationSetup officerAnimation = { 1, officerAnimation_data_192 };
+AnimationSetup soldierAnimation = { 2 
+ , soldierAnimation_data_194 };
+AnimationSetup technicAnimation = { 1, technicAnimation_data_197 
   };
-AnimationSetup unseenAnimation = { 1, unseenAnimation_data_201 };
-AnimationSetup disintegratorAnimation = { 1 
- , disintegratorAnimation_data_203 };
-AnimationSetup leechAnimation = { 1, leechAnimation_data_205 
+AnimationSetup bombieAnimation = { 1, bombieAnimation_data_199 };
+AnimationSetup unseenAnimation = { 1 
+ , unseenAnimation_data_201 };
+AnimationSetup disintegratorAnimation = { 1, disintegratorAnimation_data_203 
   };
-AnimationSetup extirpatorAnimation = { 2, extirpatorAnimation_data_207 };
-AnimationSetup scumSplitterAnimation = { 1 
- , scumSplitterAnimation_data_210 };
-AnimationSetup scumTwisterAnimation = { 1, scumTwisterAnimation_data_212 
+AnimationSetup leechAnimation = { 1, leechAnimation_data_205 };
+AnimationSetup extirpatorAnimation = { 2 
+ , extirpatorAnimation_data_207 };
+AnimationSetup scumSplitterAnimation = { 1, scumSplitterAnimation_data_210 
   };
-AnimationSetup scumStormAnimation = { 1, scumStormAnimation_data_214 };
-AnimationSetup scumHeaterAnimation = { 1 
- , scumHeaterAnimation_data_216 };
-AnimationSetup conductorAnimation = { 1, conductorAnimation_data_218 
+AnimationSetup scumTwisterAnimation = { 1, scumTwisterAnimation_data_212 };
+AnimationSetup scumStormAnimation = { 1 
+ , scumStormAnimation_data_214 };
+AnimationSetup scumHeaterAnimation = { 1, scumHeaterAnimation_data_216 
   };
-AnimationSetup scumThrowerAnimation = { 2, scumThrowerAnimation_data_220 };
-AnimationSetup crowAnimation = { 1 
- , crowAnimation_data_223 };
-AnimationSetup waspAnimation = { 1, waspAnimation_data_225 
+AnimationSetup conductorAnimation = { 1, conductorAnimation_data_218 };
+AnimationSetup scumThrowerAnimation = { 2 
+ , scumThrowerAnimation_data_220 };
+AnimationSetup crowAnimation = { 1, crowAnimation_data_223 
   };
-AnimationSetup waspEyeAnimation = { 1, waspEyeAnimation_data_227 };
-AnimationSetup daemonAnimation = { 1 
- , daemonAnimation_data_229 };
-AnimationSetup dragonHeadAnimation = { 1, dragonHeadAnimation_data_231 
+AnimationSetup waspAnimation = { 1, waspAnimation_data_225 };
+AnimationSetup waspEyeAnimation = { 1 
+ , waspEyeAnimation_data_227 };
+AnimationSetup daemonAnimation = { 1, daemonAnimation_data_229 
   };
-AnimationSetup ratAnimation = { 1, ratAnimation_data_233 };
-AnimationSetup snakeAnimation = { 1 
- , snakeAnimation_data_235 };
-AnimationSetup antAnimation = { 1, antAnimation_data_237 
+AnimationSetup dragonHeadAnimation = { 1, dragonHeadAnimation_data_231 };
+AnimationSetup ratAnimation = { 1 
+ , ratAnimation_data_233 };
+AnimationSetup snakeAnimation = { 1, snakeAnimation_data_235 
   };
-AnimationSetup ant2Animation = { 1, ant2Animation_data_239 };
-AnimationSetup wormAnimation = { 1 
- , wormAnimation_data_241 };
-AnimationSetup blackHoleAnimation = { 1, blackHoleAnimation_data_243 
+AnimationSetup antAnimation = { 1, antAnimation_data_237 };
+AnimationSetup ant2Animation = { 1 
+ , ant2Animation_data_239 };
+AnimationSetup wormAnimation = { 1, wormAnimation_data_241 
   };
-DockingSlotsSetup dockingSlotsFrame = { 1, dockingSlotsFrame_data_245 };
-DockingSlotsSetup dockingSlotsPlantSoldier = { 1 
- , dockingSlotsPlantSoldier_data_246 };
-DockingSlotsSetup dockingSlotsPlantOfficer = { 1 
- , dockingSlotsPlantOfficer_data_247 };
-DockingSlotsSetup dockingSlotsPlantTechnician = { 1 
- , dockingSlotsPlantTechnician_data_248 };
-DockingSlotsSetup dockingSlotsCeptor = { 4 
- , dockingSlotsCeptor_data_249 };
-DockingSlotsSetup dockingSlotsRProjector = { 4, dockingSlotsRProjector_data_250 
+AnimationSetup blackHoleAnimation = { 1, blackHoleAnimation_data_243 };
+DockingSlotsSetup dockingSlotsFrame = { 1 
+ , dockingSlotsFrame_data_245 };
+DockingSlotsSetup dockingSlotsPlantSoldier = { 1, dockingSlotsPlantSoldier_data_246 
   };
-DockingSlotsSetup dockingSlotsRocker = { 1, dockingSlotsRocker_data_251 };
-DockingSlotsSetup dockingSlotsGunRocket = { 4 
- , dockingSlotsGunRocket_data_252 };
-DockingSlotsSetup dockingSlotsGunBallistic = { 1 
- , dockingSlotsGunBallistic_data_253 };
-DockingSlotsSetup dockingSlotsDragonHead = { 1 
- , dockingSlotsDragonHead_data_254 };
-DockingSlotsSetup dockingSlotsDragonBody = { 1 
- , dockingSlotsDragonBody_data_255 };
-DockingSlotsSetup dockingSlotsDragonTail = { 1 
- , dockingSlotsDragonTail_data_256 };
+DockingSlotsSetup dockingSlotsPlantOfficer = { 1, dockingSlotsPlantOfficer_data_247 
+  };
+DockingSlotsSetup dockingSlotsPlantTechnician = { 1, dockingSlotsPlantTechnician_data_248 
+  };
+DockingSlotsSetup dockingSlotsCeptor = { 4, dockingSlotsCeptor_data_249 };
+DockingSlotsSetup dockingSlotsRProjector = { 4 
+ , dockingSlotsRProjector_data_250 };
+DockingSlotsSetup dockingSlotsRocker = { 1, dockingSlotsRocker_data_251 
+  };
+DockingSlotsSetup dockingSlotsGunRocket = { 4, dockingSlotsGunRocket_data_252 
+  };
+DockingSlotsSetup dockingSlotsGunBallistic = { 1, dockingSlotsGunBallistic_data_253 
+  };
+DockingSlotsSetup dockingSlotsDragonHead = { 1, dockingSlotsDragonHead_data_254 
+  };
+DockingSlotsSetup dockingSlotsDragonBody = { 1, dockingSlotsDragonBody_data_255 
+  };
+DockingSlotsSetup dockingSlotsDragonTail = { 1, dockingSlotsDragonTail_data_256 
+  };
 #ifndef __XScript_struct_DamageData__
 #define __XScript_struct_DamageData__
 #pragma pack( push, __XScript_struct_pack__, 4 )
@@ -3155,7 +3154,7 @@ struct terUnitDamageData {
 	DamageData splashDamage;
 
 
-	// îöåíêà êîëè÷åñòâà ýëåìåíòîâ, âûøèáàåìûõ ñ îäíîãî ðàçà
+	// Ð¾Ñ†ÐµÐ½ÐºÐ° ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð², Ð²Ñ‹ÑˆÐ¸Ð±Ð°ÐµÐ¼Ñ‹Ñ… Ñ Ð¾Ð´Ð½Ð¾Ð³Ð¾ Ñ€Ð°Ð·Ð°
 	int estimatedDamage() const { return ((mainDamage.power + splashDamage.power + 3)/8 + 1); }
 };
 #pragma pack( pop, __XScript_struct_pack__)
@@ -3439,15 +3438,15 @@ InterfaceTV interfaceTV_ScumDisruptor = { 100.f
  , 0.f, -15.f, 50.f, 0.f, 0.f, "", "", "" };
 InterfaceTV interfaceTV_Sniper = { 75.f 
  , 0.f, 7.f, 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_Leamo = { 80.f 
- , 0.f, 7.f, 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_Impaler = { 80.f 
- , 0.f, 7.f, 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_Rocker = { 80.f 
- , 0.f, -2.f, 50.f, 0.f, 0.f, "RESOURCE\\Models\\Interface\\intrf_rocker.m3d", "", "" 
+InterfaceTV interfaceTV_Leamo = { 80.f, 0.f 
+ , 7.f, 50.f, 0.f, 0.f, "", "", "" };
+InterfaceTV interfaceTV_Impaler = { 80.f, 0.f 
+ , 7.f, 50.f, 0.f, 0.f, "", "", "" };
+InterfaceTV interfaceTV_Rocker = { 80.f, 0.f 
+ , -2.f, 50.f, 0.f, 0.f, "RESOURCE\\Models\\Interface\\intrf_rocker.m3d", "", "" };
+InterfaceTV interfaceTV_Mortar = { 120.f 
+ , 0.f, 7.f, 50.f, 0.f, 0.f, "RESOURCE\\Models\\Interface\\intrf_mortar.m3d", "", "" 
   };
-InterfaceTV interfaceTV_Mortar = { 120.f, 0.f, 7.f, 50.f, 0.f, 0.f, "RESOURCE\\Models\\Interface\\intrf_mortar.m3d" 
- , "", "" };
 InterfaceTV interfaceTV_Ceptor = { 85.f, 0.f, 0.f, 50.f, 0.f, 0.f, "RESOURCE\\Models\\Interface\\intrf_ceptor.m3d" 
  , "main", "" };
 InterfaceTV interfaceTV_Gyroid = { 100.f, 0.f, -9.f, 50.f, 0.f, 0.f 
@@ -3461,24 +3460,24 @@ InterfaceTV interfaceTV_Bombie = { 90.f
 InterfaceTV interfaceTV_RProjector = { 70.f 
  , 0.f, 12.f, 50.f, 0.f, 0.f, "RESOURCE\\Models\\Interface\\intrf_r_progector.m3d" 
  , "", "" };
-InterfaceTV interfaceTV_Minotaur = { 70.f, 0.f, -4.f, 50.f, 0.f, 0.f 
+InterfaceTV interfaceTV_Minotaur = { 70.f, 0.f, -4.f, 50.f, 0.f, 0.f, "" 
+ , "", "" };
+InterfaceTV interfaceTV_Unseen = { 80.f, 0.f, 0.f, 50.f, 0.f, 0.f, "" 
+ , "", "" };
+InterfaceTV interfaceTV_ScumSplitter = { 80.f, 0.f, 0.f, 50.f, 0.f, 0.f 
  , "", "", "" };
-InterfaceTV interfaceTV_Unseen = { 80.f, 0.f, 0.f, 50.f, 0.f, 0.f 
- , "", "", "" };
-InterfaceTV interfaceTV_ScumSplitter = { 80.f, 0.f, 0.f, 50.f, 0.f 
+InterfaceTV interfaceTV_ScumTwister = { 60.f, 0.f, 0.f, 50.f, 0.f 
  , 0.f, "", "", "" };
-InterfaceTV interfaceTV_ScumTwister = { 60.f, 0.f, 0.f, 50.f 
+InterfaceTV interfaceTV_ScumHeater = { 400.f, 0.f, 0.f, 50.f 
  , 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_ScumHeater = { 400.f, 0.f, 0.f 
+InterfaceTV interfaceTV_Conductor = { 400.f, 0.f, 0.f, 50.f 
+ , 0.f, 0.f, "", "", "" };
+InterfaceTV interfaceTV_ScumThrower = { 100.f, 0.f, 0.f 
  , 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_Conductor = { 400.f, 0.f 
- , 0.f, 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_ScumThrower = { 100.f 
- , 0.f, 0.f, 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_LabRocket1 = { 90.f 
- , 0.f, 10.f, 50.f, 0.f, 0.f, "", "main", "" };
-InterfaceTV interfaceTV_LabRocket2 = { 90.f 
- , 0.f, 10.f, 50.f, 0.f, 0.f, "", "main1", "" };
+InterfaceTV interfaceTV_LabRocket1 = { 90.f, 0.f, 10.f 
+ , 50.f, 0.f, 0.f, "", "main", "" };
+InterfaceTV interfaceTV_LabRocket2 = { 90.f, 0.f 
+ , 10.f, 50.f, 0.f, 0.f, "", "main1", "" };
 InterfaceTV interfaceTV_LabRocket3 = { 90.f 
  , 0.f, 10.f, 50.f, 0.f, 0.f, "", "main2", "" };
 InterfaceTV interfaceTV_LabLaser1 = { 150.f 
@@ -3523,10 +3522,10 @@ InterfaceTV interfaceTV_Disintegrator = { 220.f
  , 0.f, 20.f, 50.f, 0.f, 0.f, "", "", "" };
 InterfaceTV interfaceTV_Extirpator = { 70.f 
  , 0.f, 0.f, 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_Leech = { 90.f 
- , 0.f, 10.f, 50.f, 0.f, 0.f, "", "", "" };
-InterfaceTV interfaceTV_Scumer = { 80.f 
- , 0.f, 10.f, 50.f, 0.f, 0.f, "", "", "" };
+InterfaceTV interfaceTV_Leech = { 90.f, 0.f 
+ , 10.f, 50.f, 0.f, 0.f, "", "", "" };
+InterfaceTV interfaceTV_Scumer = { 80.f, 0.f 
+ , 10.f, 50.f, 0.f, 0.f, "", "", "" };
 InterfaceTV interfaceTV_FilthSpot0 = { 75.f 
  , 0.f, -10.f, 50.f, 0.f, 0.f, "", "", "" };
 InterfaceTV interfaceTV_FilthSpot1 = { 75.f 
@@ -3670,67 +3669,66 @@ SoundSetup transmitterSound = { 0, 0, 2, transmitterSound_events_316
 SoundSetup collectorSound = { 0, 0, 2, collectorSound_events_317 };
 SoundSetup soldierPlantSound = { 0 
  , 0, 4, soldierPlantSound_events_318 };
-SoundSetup technicianPlantSound = { 0, 0 
- , 4, technicianPlantSound_events_319 };
-SoundSetup officerPlantSound = { 0, 0, 4 
- , officerPlantSound_events_320 };
-SoundSetup commandCenterSound = { 0, 0, 2, commandCenterSound_events_321 
+SoundSetup technicianPlantSound = { 0, 0, 4 
+ , technicianPlantSound_events_319 };
+SoundSetup officerPlantSound = { 0, 0, 4, officerPlantSound_events_320 
   };
-SoundSetup labRocketSound = { 0, 0, 5, labRocketSound_events_322 };
-SoundSetup labLaserSound = { 0 
- , 0, 5, labLaserSound_events_323 };
-SoundSetup labElectroSound = { 0, 0, 5, labElectroSound_events_324 
+SoundSetup commandCenterSound = { 0, 0, 2, commandCenterSound_events_321 };
+SoundSetup labRocketSound = { 0 
+ , 0, 5, labRocketSound_events_322 };
+SoundSetup labLaserSound = { 0, 0, 5, labLaserSound_events_323 
   };
-SoundSetup labBombSound = { 0, 0, 5, labBombSound_events_325 };
-SoundSetup labAntigravSound = { 0 
- , 0, 5, labAntigravSound_events_326 };
-SoundSetup labSubterraSound = { 0, 0, 5, labSubterraSound_events_327 
+SoundSetup labElectroSound = { 0, 0, 5, labElectroSound_events_324 };
+SoundSetup labBombSound = { 0 
+ , 0, 5, labBombSound_events_325 };
+SoundSetup labAntigravSound = { 0, 0, 5, labAntigravSound_events_326 
   };
-SoundSetup labExodusSound = { 0, 0, 5, labExodusSound_events_328 };
-SoundSetup labEmpireSound = { 0 
- , 0, 5, labEmpireSound_events_329 };
-SoundSetup labHarkbarkhoodSound = { 0, 0, 5 
- , labHarkbarkhoodSound_events_330 };
-SoundSetup truckSound = { 1, truckSound_sounds_331 
- , 1, truckSound_events_332 };
-SoundSetup buildingBlockSound = { 0, 0, 1, buildingBlockSound_events_333 
+SoundSetup labSubterraSound = { 0, 0, 5, labSubterraSound_events_327 };
+SoundSetup labExodusSound = { 0 
+ , 0, 5, labExodusSound_events_328 };
+SoundSetup labEmpireSound = { 0, 0, 5, labEmpireSound_events_329 
   };
-SoundSetup scumerSound = { 1, scumerSound_sounds_334, 1, scumerSound_events_335 
-  };
-SoundSetup diggerSound = { 1, diggerSound_sounds_336, 1, diggerSound_events_337 
-  };
-SoundSetup piercerSound = { 1, piercerSound_sounds_338, 1, piercerSound_events_339 
-  };
-SoundSetup piercerMissileSound = { 1, piercerMissileSound_sounds_340, 1, piercerMissileSound_events_341 
-  };
-SoundSetup disintegratorSound = { 2, disintegratorSound_sounds_342, 1, disintegratorSound_events_343 
-  };
-SoundSetup scumSplitterSound = { 2, scumSplitterSound_sounds_344, 1, scumSplitterSound_events_345 
-  };
-SoundSetup scumTwisterSound = { 2, scumTwisterSound_sounds_346, 1, scumTwisterSound_events_347 
-  };
-SoundSetup scumHeaterSound = { 2, scumHeaterSound_sounds_348, 1, scumHeaterSound_events_349 
-  };
-SoundSetup conductorSound = { 2, conductorSound_sounds_350, 1, conductorSound_events_351 
-  };
-SoundSetup unseenSound = { 1, unseenSound_sounds_352, 1, unseenSound_events_353 
-  };
-SoundSetup rockerRocketSound = { 1, rockerRocketSound_sounds_354, 1, rockerRocketSound_events_355 
-  };
-SoundSetup rprojectorRocketSound = { 1, rprojectorRocketSound_sounds_356, 1, rprojectorRocketSound_events_357 
-  };
-SoundSetup ceptorRocketSound = { 1, ceptorRocketSound_sounds_358, 1, ceptorRocketSound_events_359 
-  };
-SoundSetup ballisticMissileSound = { 1, ballisticMissileSound_sounds_360, 1, ballisticMissileSound_events_361 
-  };
-SoundSetup wargonMissileSound = { 1, wargonMissileSound_sounds_362, 1, wargonMissileSound_events_363 
-  };
-SoundSetup subchaserMissileSound = { 1, subchaserMissileSound_sounds_364, 1, subchaserMissileSound_events_365 
-  };
-SoundSetup extirpatorMissileSound = { 1, extirpatorMissileSound_sounds_366, 1 
- , extirpatorMissileSound_events_367 };
-SoundSetup scumThrowerMissileSound = { 1, scumThrowerMissileSound_sounds_368 
- , 1, scumThrowerMissileSound_events_369 };
+SoundSetup labHarkbarkhoodSound = { 0, 0, 5, labHarkbarkhoodSound_events_330 };
+SoundSetup truckSound = { 1 
+ , truckSound_sounds_331, 1, truckSound_events_332 };
+SoundSetup buildingBlockSound = { 0 
+ , 0, 1, buildingBlockSound_events_333 };
+SoundSetup scumerSound = { 1, scumerSound_sounds_334 
+ , 1, scumerSound_events_335 };
+SoundSetup diggerSound = { 1, diggerSound_sounds_336 
+ , 1, diggerSound_events_337 };
+SoundSetup piercerSound = { 1, piercerSound_sounds_338 
+ , 1, piercerSound_events_339 };
+SoundSetup piercerMissileSound = { 1, piercerMissileSound_sounds_340 
+ , 1, piercerMissileSound_events_341 };
+SoundSetup disintegratorSound = { 2, disintegratorSound_sounds_342 
+ , 1, disintegratorSound_events_343 };
+SoundSetup scumSplitterSound = { 2, scumSplitterSound_sounds_344 
+ , 1, scumSplitterSound_events_345 };
+SoundSetup scumTwisterSound = { 2, scumTwisterSound_sounds_346 
+ , 1, scumTwisterSound_events_347 };
+SoundSetup scumHeaterSound = { 2, scumHeaterSound_sounds_348 
+ , 1, scumHeaterSound_events_349 };
+SoundSetup conductorSound = { 2, conductorSound_sounds_350 
+ , 1, conductorSound_events_351 };
+SoundSetup unseenSound = { 1, unseenSound_sounds_352 
+ , 1, unseenSound_events_353 };
+SoundSetup rockerRocketSound = { 1, rockerRocketSound_sounds_354 
+ , 1, rockerRocketSound_events_355 };
+SoundSetup rprojectorRocketSound = { 1, rprojectorRocketSound_sounds_356 
+ , 1, rprojectorRocketSound_events_357 };
+SoundSetup ceptorRocketSound = { 1, ceptorRocketSound_sounds_358 
+ , 1, ceptorRocketSound_events_359 };
+SoundSetup ballisticMissileSound = { 1, ballisticMissileSound_sounds_360 
+ , 1, ballisticMissileSound_events_361 };
+SoundSetup wargonMissileSound = { 1, wargonMissileSound_sounds_362 
+ , 1, wargonMissileSound_events_363 };
+SoundSetup subchaserMissileSound = { 1, subchaserMissileSound_sounds_364 
+ , 1, subchaserMissileSound_events_365 };
+SoundSetup extirpatorMissileSound = { 1, extirpatorMissileSound_sounds_366 
+ , 1, extirpatorMissileSound_events_367 };
+SoundSetup scumThrowerMissileSound = { 1 
+ , scumThrowerMissileSound_sounds_368, 1, scumThrowerMissileSound_events_369 };
 SoundSetup gunHowitzerMissileSound = { 1 
  , gunHowitzerMissileSound_sounds_370, 1, gunHowitzerMissileSound_events_371 };
 SoundSetup bombieMissileSound = { 1 
@@ -4147,7 +4145,7 @@ struct terUnitAttributeDataTable {
 	terUnitAttributeData FrameEmpire2;
 	terUnitAttributeData FrameEmpire3;
 	terUnitAttributeData FrameEmpire4;
- // Ðàññìàòðèâàåì ïîñëåäîâàòåëüíîñòü ðàñïîëîæåííûõ ðÿäîì ñòðóêòóð êàê ìàññèâ
+ // Ð Ð°ÑÑÐ¼Ð°Ñ‚Ñ€Ð¸Ð²Ð°ÐµÐ¼ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ Ñ€Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð½Ñ‹Ñ… Ñ€ÑÐ´Ð¾Ð¼ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€ ÐºÐ°Ðº Ð¼Ð°ÑÑÐ¸Ð²
 	int size() const { xassert(sizeof(*this) % sizeof(terUnitAttributeData) == 0); return sizeof(*this)/sizeof(terUnitAttributeData); }
 	const terUnitAttributeData& operator[](int i) const { xassert(i >= 0 && i < size()); return ((terUnitAttributeData*)this)[i]; }
 };

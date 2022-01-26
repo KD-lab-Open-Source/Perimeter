@@ -387,7 +387,7 @@ extern char const* mainMenuMusic;
 extern char const* briefingMusic;
 extern int DeltaToolzerRadius;
 extern float CHATINFO_FADE_TIME;
-extern float CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT;
+extern int CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT;
 extern float statsTableRowHeight;
 extern float totalColumnStatsWeights[6];
 extern float generalColumnStatsWeights[7];

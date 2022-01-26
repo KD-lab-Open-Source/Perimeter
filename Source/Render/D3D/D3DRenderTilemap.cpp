@@ -85,7 +85,7 @@ public:
 	sBumpTile(cTileMap *TileMap, int lod,int xpos,int ypos);
 	~sBumpTile();
 	D3DLOCKED_RECT *LockTex();
-	BYTE *LockVB();
+	uint8_t *LockVB();
 	void UnlockTex();
 	void UnlockVB();
 	void Calc(cTileMap *TileMap,bool update_texture);
@@ -167,7 +167,7 @@ class cTileMapRender
 	int index_offset[TILEMAP_LOD];
 	int index_size[TILEMAP_LOD];
 
-	BYTE* visMap;
+	uint8_t* visMap;
 	char* vis_lod;
 
 	char* update_stat;
@@ -219,7 +219,7 @@ static std::vector<sTilemapTexturePool*> bumpTexPools;
 //
 // **************** TILEMAP - SHARED ****************
 // 
-static void fillVisPoly(BYTE *buf, std::vector<Vect2f>& vert,int VISMAP_W,int VISMAP_H)
+static void fillVisPoly(uint8_t *buf, std::vector<Vect2f>& vert, int VISMAP_W, int VISMAP_H)
 {
 	if(vert.empty())return;
 	const int VISMAP_W_MAX=128,VISMAP_H_MAX=128;
@@ -228,13 +228,13 @@ static void fillVisPoly(BYTE *buf, std::vector<Vect2f>& vert,int VISMAP_W,int VI
 	int i, y, ytop, ybot;
 
 	// find top/bottom y
-	ytop = floor(vert[0].y);
-	ybot = ceil(vert[0].y);
+	ytop = xm::floor(vert[0].y);
+	ybot = xm::ceil(vert[0].y);
 	for(i=1;i<vert.size();i++)
 	{
 		float y=vert[i].y;
-		if (y < ytop) ytop = floor(y);
-		if (y > ybot) ybot = ceil(y);
+		if (y < ytop) ytop = xm::floor(y);
+		if (y > ybot) ybot = xm::ceil(y);
 	}
 
 	for (i = 0; i < VISMAP_H; i++)
@@ -273,8 +273,8 @@ static void fillVisPoly(BYTE *buf, std::vector<Vect2f>& vert,int VISMAP_W,int VI
 	for (y = max(0, ytop); y <= min(ybot, VISMAP_H-1); y++)
 	{
 		if (lx[y] > rx[y]) continue;
-		int x1 = (int)max((float)floor(lx[y]), 0.0f);
-		int x2 = (int)min((float)ceil(rx[y]), (float)VISMAP_W);
+		int x1 = (int)max((float)xm::floor(lx[y]), 0.0f);
+		int x2 = (int)min((float)xm::ceil(rx[y]), (float)VISMAP_W);
 		if(x1>=x2)continue;
 		memset(buf + y*VISMAP_W + x1, 1, x2-x1);
 	}
@@ -311,7 +311,7 @@ void drawCMesh(CMesh& cmesh)
 	}
 }
 
-void calcVisMap(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber,Vect2i TileSize,BYTE* visMap,bool clear)
+void calcVisMap(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
 {
 	APolygons poly;
 	cmesh.BuildPolygon(poly);
@@ -354,14 +354,14 @@ sBox6f calcBoundInDirection(CMesh& cmesh,Mat3f& m)
 	return box;
 }
 
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,BYTE* visMap,bool clear)
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
 {
 	CMesh cmesh;
 	calcCMesh(DrawNode,TileNumber,TileSize,cmesh);
 	calcVisMap(DrawNode,cmesh,TileNumber,TileSize,visMap,clear);
 }
 
-void calcVisMap(cCamera *DrawNode, cTileMap *TileMap,BYTE* visMap,bool clear)
+void calcVisMap(cCamera *DrawNode, cTileMap *TileMap, uint8_t* visMap, bool clear)
 {
 	calcVisMap(DrawNode, TileMap->GetTileNumber(),TileMap->GetTileSize(),visMap,clear);
 }
@@ -449,7 +449,7 @@ cTileMapRender::cTileMapRender(cTileMap *pTileMap)
 	tilemapIB=NULL;
 
 	int dxy=TileMap->GetTileNumber().x*TileMap->GetTileNumber().y;
-	visMap=new BYTE[dxy];
+	visMap=new uint8_t[dxy];
 	vis_lod=new char[dxy];
 	for(int i=0;i<dxy;i++)
 		vis_lod[i]=-1;
@@ -798,9 +798,9 @@ D3DLOCKED_RECT *sBumpTile::LockTex()
 	return bumpTexPools[texPool]->lockPage(texPage);
 }
 
-BYTE *sBumpTile::LockVB()
+uint8_t *sBumpTile::LockVB()
 {
-	return (BYTE*)gb_RenderDevice3D->GetVertexPool()->LockPage(vtx);
+	return (uint8_t*)gb_RenderDevice3D->GetVertexPool()->LockPage(vtx);
 }
 
 void sBumpTile::UnlockTex()
@@ -932,11 +932,11 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 
 	calcVisMap(DrawNode, TileMap, visMap, true);
 
-	DWORD minfilter1=gb_RenderDevice3D->GetSamplerState(1,D3DSAMP_MINFILTER);
-	DWORD magfilter1=gb_RenderDevice3D->GetSamplerState(1,D3DSAMP_MAGFILTER);
+	uint32_t minfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MINFILTER);
+	uint32_t magfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MAGFILTER);
 
-	DWORD zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
-	DWORD cull=gb_RenderDevice3D->GetRenderState(D3DRS_CULLMODE);
+	uint32_t zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
+	uint32_t cull=gb_RenderDevice3D->GetRenderState(D3DRS_CULLMODE);
 //	gb_RenderDevice3D->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
 
 	if(shadow)
@@ -1101,8 +1101,8 @@ int st_VBSw = 0, st_TexSw = 0, st_Poly = 0;
 
 //	if(pNormalCamera==DrawNode)
 //		gb_RenderDevice3D->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-	DWORD tss_colorarg2=gb_RenderDevice3D->GetTextureStageState(0,D3DTSS_COLORARG2);
-	DWORD tss_alphaarg2=gb_RenderDevice3D->GetTextureStageState(0,D3DTSS_ALPHAARG2);
+	uint32_t tss_colorarg2=gb_RenderDevice3D->GetTextureStageState(0, D3DTSS_COLORARG2);
+	uint32_t tss_alphaarg2=gb_RenderDevice3D->GetTextureStageState(0, D3DTSS_ALPHAARG2);
 	gb_RenderDevice3D->SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TFACTOR);
 	gb_RenderDevice3D->SetTextureStageState(0,D3DTSS_ALPHAARG2,D3DTA_TFACTOR);
 
@@ -1140,8 +1140,8 @@ int st_VBSw = 0, st_TexSw = 0, st_Poly = 0;
 			}
 
 			int nPolygon=0;
-			DWORD pageSize=gb_RenderDevice3D->GetVertexPool()->GetPageSize(bumpTile->vtx);
-			DWORD base_vertex_index=pageSize * bumpTile->vtx.page;
+			uint32_t pageSize=gb_RenderDevice3D->GetVertexPool()->GetPageSize(bumpTile->vtx);
+			uint32_t base_vertex_index= pageSize * bumpTile->vtx.page;
 
 			for(int i=0;i<bumpTile->index.size();i++)
 			{
@@ -1753,12 +1753,12 @@ void cTileMapRender::SaveUpdateStat()
 	int dx=TileMap->GetTileNumber().x,dy=TileMap->GetTileNumber().y;
 	int dxy=dx*dy;
 
-	BYTE* buf=new BYTE[dxy*4];
+	uint8_t* buf=new uint8_t[dxy * 4];
 	memset(buf,0,dxy*4);
 	for(int y=0;y<dy;y++)
 	for(int x=0;x<dx;x++)
 	{
-		BYTE* color=&buf[(y*dx+x)*4];
+		uint8_t* color=&buf[(y * dx + x) * 4];
 		int num_update=0;
 		int lod=-1;
 		bool change_lod=false;

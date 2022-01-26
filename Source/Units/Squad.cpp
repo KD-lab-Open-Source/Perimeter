@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Runtime.h"
@@ -125,7 +123,7 @@ void terUnitSquad::addUnit(terUnitLegionary* unit, bool set_position)
 		unit->setLocalPosition(localPos);
 		Vect2f globalPos = stablePose()*localPos;
 		if(set_position){
-			unit->setPose(Se3f(QuatF(angleZ() + M_PI, Vect3f::K), To3D(globalPos)), true);
+			unit->setPose(Se3f(QuatF(angleZ() + XM_PI, Vect3f::K), To3D(globalPos)), true);
 			unit->setInSquad();
 		}
 		else
@@ -260,7 +258,7 @@ void terUnitSquad::Quant()
 				if(!mutationChargeConsumption_.attached()){
 					ConsumptionData data = attr().productionConsumption;
 					float factor = squadMolecula().elementCount();
-					int time = round((float)data.time/factor);
+					int time = xm::round((float) data.time / factor);
 					if(time < 200){
 						time = 200;
 						factor = (float)data.time/time;
@@ -421,8 +419,9 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 		break;
 
 	case COMMAND_ID_UNIT_MORPHING:
-		if(mutationFinished() && mutate((terUnitAttributeID)command.commandData()))
-			soundEvent(SOUND_VOICE_SQUAD_TRANSFORM_STARTED);
+		if (mutationFinished() && mutate((terUnitAttributeID)command.commandData())) {
+            soundEvent(SOUND_VOICE_SQUAD_TRANSFORM_STARTED);
+        }
 		break;
 
 	case COMMAND_ID_STOP: 
@@ -533,7 +532,7 @@ SaveUnitData* terUnitSquad::universalSave(SaveUnitData* baseData)
 
 	AttackPointList::const_iterator ai;
 	FOR_EACH(attack_points, ai){
-		data->attackPoints.push_back(SaveAttackPoint());
+		data->attackPoints.emplace_back();
 		ai->save(data->attackPoints.back());
 	}
 	data->squadToFollow = squadToFollow_;
@@ -550,12 +549,12 @@ SaveUnitData* terUnitSquad::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terUnitSquad::universalLoad(const SaveUnitData* baseData)
+void terUnitSquad::universalLoad(SaveUnitData* baseData)
 {
 	if(!baseData)
 		return;
 
-	const SaveUnitSquadData* data = safe_cast<const SaveUnitSquadData*>(baseData);
+	SaveUnitSquadData* data = safe_cast<SaveUnitSquadData*>(baseData);
 
 	terUnitBase::universalLoad(data);
 
@@ -564,11 +563,15 @@ void terUnitSquad::universalLoad(const SaveUnitData* baseData)
 
 	currentMutation_ = data->currentMutation;
 	position_generator.setMode(PositionGenerator::Square, data->curvatureRadius);
+    squadMutationMolecula_ = DamageMolecula();
 
 	SaveUnitDataList::const_iterator mi;
 	FOR_EACH(data->squadMembers, mi){
-		terUnitBase* unit = Player->buildUnit((*mi)->attributeID);
-		addUnit(safe_cast<terUnitLegionary*>(unit), false);
+		terUnitBase* unit = Player->loadUnit(*mi, false);
+        //Add unit to squad if not already added
+        if (std::find(Units.begin(), Units.end(), unit) == Units.end()) {
+            addUnit(safe_cast<terUnitLegionary*>(unit), false);
+        }
 		unit->universalLoad(*mi);
 		unit->Start();
 		unit->setCollisionGroup(unit->collisionGroup() | COLLISION_GROUP_REAL);
@@ -623,7 +626,7 @@ void terUnitSquad::showPath(const std::vector<Vect2f>& wayPoints, const std::vec
 				Vect3f w, e;
 				terCamera->GetCamera()->ConvertorWorldToViewPort(&posPrev,&w,&e);
 				if(e.z < 1.0f)
-					terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,pathColor,0);
+					terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 			}
 			else
 				showFlag = false;
@@ -636,7 +639,7 @@ void terUnitSquad::showPath(const std::vector<Vect2f>& wayPoints, const std::vec
 					Vect3f pos = To3D(*pi);
 					terCamera->GetCamera()->ConvertorWorldToViewPort(&pos,&w,&e);
 					if(e.z < 1.0f)
-						terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,patrolColor,0);
+						terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, patrolColor, 0);
 					terRenderDevice->DrawLine(posPrev, pos, patrolColor);
 					posPrev = pos;
 				}
@@ -655,7 +658,7 @@ void terUnitSquad::showPath(const std::vector<Vect2f>& wayPoints, const std::vec
 			flagModel_->SetPhase(flagModelPhase_);
 		}
 	}
-	flagModelPhase_ = fmod(flagModelPhase_ + (float)(frame_time.delta()) / terModelWayFlagSpeed,1.0f);
+	flagModelPhase_ = xm::fmod(flagModelPhase_ + (float)(frame_time.delta()) / terModelWayFlagSpeed,1.0f);
 }
 
 void terUnitSquad::ShowInfo()
@@ -693,7 +696,7 @@ void terUnitSquad::ShowInfo()
 					Vect3f pos = To3D(*pi);
 					terCamera->GetCamera()->ConvertorWorldToViewPort(&pos,&w,&e);
 					if(e.z < 1.0f)
-						terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,patrolColor,0);
+						terRenderDevice->DrawRectangle(round(e.x) - 2,xm::round(e.y) - 2,4,4,patrolColor,0);
 					terRenderDevice->DrawLine(posPrev, pos, patrolColor);
 					posPrev = pos;
 				}
@@ -749,8 +752,10 @@ void terUnitSquad::AvatarQuant()
 
 int terUnitSquad::GetInterfaceOffensiveMode()
 {
-	if(lastCommand() == COMMAND_ID_UNIT_OFFENSIVE)
-		return findCommand(COMMAND_ID_UNIT_OFFENSIVE)->commandData();
+    const UnitCommand* cmd = lastCommand();
+	if(cmd && cmd->commandID() == COMMAND_ID_UNIT_OFFENSIVE) {
+        return cmd->commandData();
+    }
 	return offensiveMode();
 }
 
@@ -813,7 +818,7 @@ int terUnitSquad::GetInterfaceLegionMode()
 	int stop,attack,move,patrol,back;
 
 	back = stop = attack = move = patrol = 0;
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_OBJECT:
 		attack = 1;
 		break;
@@ -907,42 +912,52 @@ void terUnitSquad::GetAtomProduction(DamageMolecula& atom_request,DamageMolecula
 	atom_request = atomsRequested_;
 	atom_progress = atomsProgress_;
 
-	switch(lastCommand()){
-		case COMMAND_ID_PRODUCTION_INC:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_INC)->commandData()]++;
-			break;
-		case COMMAND_ID_PRODUCTION_INC_10:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_INC_10)->commandData()] += 10;
-			break;
-		case COMMAND_ID_PRODUCTION_DEC:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_DEC)->commandData()]--;
-			break;
-		case COMMAND_ID_PRODUCTION_DEC_10:
-			atom_request[findCommand(COMMAND_ID_PRODUCTION_DEC_10)->commandData()] -= 10;
-			break;
-	    default:
-            break;
-	}
+    //To show still not sent commands as requested
+    const UnitCommand* cmd = lastCommand();
+    if (cmd) {
+        int& num = atom_request[cmd->commandData()];
+        switch (cmd->commandID()) {
+            case COMMAND_ID_PRODUCTION_INC:
+                num++;
+                break;
+            case COMMAND_ID_PRODUCTION_INC_10:
+                num += 10;
+                break;
+            case COMMAND_ID_PRODUCTION_DEC:
+                if (num) num--;
+                break;
+            case COMMAND_ID_PRODUCTION_DEC_10:
+                if (num >= 10) num -= 10;
+                break;
+            default:
+                break;
+        }
+    }
 
-	if(commander() && commander()->isBuildingEnable())
-		for(int i = 0;i < MUTATION_ATOM_MAX;i++)
-			atom_enabled[i] = Player->GetEvolutionBuildingData((terUnitAttributeID)(UNIT_ATTRIBUTE_SOLDIER_PLANT + i)).Worked;
+	if (commander() && commander()->isBuildingEnable()) {
+        for (int i = 0; i < MUTATION_ATOM_MAX; i++) {
+            atom_enabled[i] = Player->GetEvolutionBuildingData(static_cast<terUnitAttributeID>(UNIT_ATTRIBUTE_SOLDIER_PLANT + i)).Worked;
+        }
+    }
 }
 
 void terUnitSquad::GetAtomPaused(DamageMolecula& paused)
 { 
 	paused = DamageMolecula(-1,-1,-1);
-
-	switch(lastCommand()){
-		case COMMAND_ID_PRODUCTION_PAUSE_ON:
-			paused[findCommand(COMMAND_ID_PRODUCTION_PAUSE_ON)->commandData()] = 1;
-			break;
-		case COMMAND_ID_PRODUCTION_PAUSE_OFF:
-			paused[findCommand(COMMAND_ID_PRODUCTION_PAUSE_OFF)->commandData()] = 0;
-			break;
-	    default:
-	        break;
-	}
+    
+    const UnitCommand* cmd = lastCommand();
+    if (cmd) {
+        switch (cmd->commandID()) {
+            case COMMAND_ID_PRODUCTION_PAUSE_ON:
+                paused[cmd->commandData()] = 1;
+                break;
+            case COMMAND_ID_PRODUCTION_PAUSE_OFF:
+                paused[cmd->commandData()] = 0;
+                break;
+            default:
+                break;
+        }
+    }
 
 	for(int i = 0;i < MUTATION_ATOM_MAX;i++){
 		if(paused[i] == -1)
@@ -1225,7 +1240,7 @@ void terUnitSquad::calcCenter()
 	FOR_EACH(Units, ui){
 		terUnitLegionary& unit = **ui;
 		xassert(unit.inSquad() || unit.attr().is_base_unit);
-		if(!unit.inSquad() || (n_complex_units && unit.attr().is_base_unit)) // не учитывать не дошедших и базовых, когда есть производные
+		if(!unit.inSquad() || (n_complex_units && unit.attr().is_base_unit)) // РЅРµ СѓС‡РёС‚С‹РІР°С‚СЊ РЅРµ РґРѕС€РµРґС€РёС… Рё Р±Р°Р·РѕРІС‹С…, РєРѕРіРґР° РµСЃС‚СЊ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ
 			continue;
 		average_position += unit.position2D();
 		counter++;
@@ -1279,7 +1294,7 @@ void terUnitSquad::calcCenter()
 			continue;
 		described_radius = max(described_radius, unit.position2D().distance2(average_position) + sqr(formationRadius()));
 	}
-	described_radius = min(sqrtf(described_radius), squad_described_radius_max);
+	described_radius = min(xm::sqrt(described_radius), squad_described_radius_max);
 	setRadius(described_radius);
 
 	// Calc including_cluster
@@ -1356,7 +1371,7 @@ void terUnitSquad::recalcWayPoints()
 	// Calc new orientation
 	Vect2f delta = wayPoints_.front() - position2D();
 	if(delta.norm() > FLT_EPS)
-		setAngleZ(atan2(delta.y, delta.x) + M_PI/2);
+		setAngleZ(xm::atan2(delta.y, delta.x) + XM_PI/2);
 
 	repositionFormation(false);
 
@@ -1372,7 +1387,7 @@ void terUnitSquad::recalcWayPoints()
 	if(wayPoints_.size() > 1){
 		unitsWayPoinsSize_ = 2;
 		Vect2f delta = wayPoints_[1] - wayPoints_[0];
-		//MatX2f secondPose(Mat2f(atan2(delta.y, delta.x) - M_PI/2), wayPoints_[1] + average_position_offset);
+		//MatX2f secondPose(Mat2f(atan2(delta.y, delta.x) - XM_PI/2), wayPoints_[1] + average_position_offset);
 		MatX2f secondPose(firstPose.rot, wayPoints_[1] + average_position_offset);
 		FOR_EACH(Units,ui)
 			(*ui)->addWayPoint(secondPose*(*ui)->localPosition());
@@ -1393,17 +1408,17 @@ void terUnitSquad::repositionFormation(bool forceReposition)
 	}
 	
 	if(!forceReposition && Units.size() == position_generator.counter()){ 
-		// Просто пересчитать без паковки позиций
+		// РџСЂРѕСЃС‚Рѕ РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ Р±РµР· РїР°РєРѕРІРєРё РїРѕР·РёС†РёР№
 		SquadUnitList::iterator ui;
-		if(dot(prev_forward_direction, forwardDirection()) < 0){ // инвертировать 
+		if(dot(prev_forward_direction, forwardDirection()) < 0){ // РёРЅРІРµСЂС‚РёСЂРѕРІР°С‚СЊ 
 			FOR_EACH(Units,ui)
 				(*ui)->setLocalPosition(position_generator.invert((*ui)->localPosition()));
 			position_generator.inversion();
 		}
 	}
 	else{ 
-		// паковать позиции
-		if(dot(prev_forward_direction, forwardDirection()) < 0){ // сначала инвертируем
+		// РїР°РєРѕРІР°С‚СЊ РїРѕР·РёС†РёРё
+		if(dot(prev_forward_direction, forwardDirection()) < 0){ // СЃРЅР°С‡Р°Р»Р° РёРЅРІРµСЂС‚РёСЂСѓРµРј
 			SquadUnitList::iterator ui;
 			FOR_EACH(Units,ui)
 				if((*ui)->inSquad())
@@ -1464,14 +1479,14 @@ void terUnitSquad::repositionToAttack(AttackPoint& attackPoint, bool repeated)
 	else{
 		float min_radius = currentAttribute()->fireRadiusMin();
 		float max_radius = currentAttribute()->fireRadius();// - formationRadius()*2*clamp(position_generator.numLines() - 1, 0.5, 100);
-		xassert_s(min_radius < max_radius, (string("Недостаточный радиус атаки у ") + currentAttribute()->internalName()).c_str());
+		xassert_s(min_radius < max_radius, (string("РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅС‹Р№ СЂР°РґРёСѓСЃ Р°С‚Р°РєРё Сѓ ") + currentAttribute()->internalName()).c_str());
 
 		if(dist < min_radius)
 			optimalRadius_ = min_radius*(1 + squad_reposition_to_attack_radius_tolerance);
 		else if(dist > max_radius)
 			optimalRadius_ = max_radius*(1 - squad_reposition_to_attack_radius_tolerance);
 		else
-			return; // Цель в допустимой области - перестраиваться не надо
+			return; // Р¦РµР»СЊ РІ РґРѕРїСѓСЃС‚РёРјРѕР№ РѕР±Р»Р°СЃС‚Рё - РїРµСЂРµСЃС‚СЂР°РёРІР°С‚СЊСЃСЏ РЅРµ РЅР°РґРѕ
 
 		//if(attackPoint.squad()){
 		//	terUnitSquad& squad = *attackPoint.squad();
@@ -1542,7 +1557,7 @@ void terUnitSquad::addTarget(terUnitBase* target)
 
 bool lineCircleIntersection(const Vect2f& p0, const Vect2f& p1, const Vect2f& pc, float radius, Vect2f& result)
 {
-	// Ищет первое пересечение отрезка (0..1) с окружностью 
+	// РС‰РµС‚ РїРµСЂРІРѕРµ РїРµСЂРµСЃРµС‡РµРЅРёРµ РѕС‚СЂРµР·РєР° (0..1) СЃ РѕРєСЂСѓР¶РЅРѕСЃС‚СЊСЋ 
 	Vect2f dp = p1 - p0;
 	Vect2f dc = p0 - pc;
 	float dp_2 = dp.norm2();
@@ -1551,10 +1566,10 @@ bool lineCircleIntersection(const Vect2f& p0, const Vect2f& p1, const Vect2f& pc
 	float det2 = sqr(dp_dc) + dp_2*(sqr(radius) - dc_2);
 	if(det2 < FLT_EPS)
 		return false;
-	float t = (-dp_dc - sqrt(det2))/(dp_2 + 0.001);
+	float t = (-dp_dc - xm::sqrt(det2))/(dp_2 + 0.001f);
 	if(t > 0 && t < 1){
 		result = p0 + dp*t;
-		xassert(fabs(result.distance(pc) - radius) < 1);
+		xassert(xm::abs(result.distance(pc) - radius) < 1);
 		return true;
 	}
 	return false;
@@ -1642,9 +1657,9 @@ public:
 			return;
 		if(!unit2->damageMolecula().isAlive())
 			return;
-		if(!ignoreField_ && including_cluster != unit2->includingCluster()) // закрыт куполом
+		if(!ignoreField_ && including_cluster != unit2->includingCluster()) // Р·Р°РєСЂС‹С‚ РєСѓРїРѕР»РѕРј
 			return;
-		if(!(unit2->unitClass() & AttackClass)) // нельзя стрелять
+		if(!(unit2->unitClass() & AttackClass)) // РЅРµР»СЊР·СЏ СЃС‚СЂРµР»СЏС‚СЊ
 			return;
 		if(unit2->isUnseen())
 			return;
@@ -1652,7 +1667,7 @@ public:
 		float dist2 = position.distance2(unit2->position2D());
 		if(dist2 < radius_max2)
 		{
-			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + fabs(optimal_radius2 - dist2));
+			float f = sqr(unit2->attr().kill_priority) + 1.f/(1.f + xm::abs(optimal_radius2 - dist2));
 			if(dist2 <= radius_min2)
 				f /= 1000 + dist2;
 			if(dist2 >= fire_radius2)
@@ -1670,6 +1685,29 @@ public:
 		return best_target; 
 	}
 };
+
+struct TargetData
+{
+    TargetData(terUnitBase* unit,float factor) : unit_(unit), factor_(factor) { }
+
+    bool operator == (const terUnitBase* unit) const { return unit_ == unit; }
+
+    terUnitBase* unit_;
+    float factor_;
+};
+
+struct TargetOrderingOp {
+    bool operator() (const TargetData& t0,const TargetData& t1) {
+        unsigned int t0unitID = t0.unit_->unitID();
+        unsigned int t1unitID = t1.unit_->unitID();
+        unsigned int t0playerID = t0.unit_->playerID();
+        unsigned int t1playerID = t1.unit_->playerID();
+        return std::tie(t0.factor_, t0unitID, t0playerID)
+             > std::tie(t1.factor_, t1unitID, t1playerID);
+    }
+};
+
+typedef std::vector<TargetData> TargetDataList;
 
 class SquadSearchTargetsScanOp
 {
@@ -1705,37 +1743,17 @@ public:
 		targets_[0].reserve(16);
 	}
 
-	struct TargetData
-	{
-		TargetData(terUnitBase* unit,float factor) : unit_(unit), factor_(factor) { }
-
-		bool operator > (const TargetData& data) const { return factor_ < data.factor_; }
-		bool operator == (const terUnitBase* unit) const { return unit_ == unit; }
-
-		terUnitBase* unit_;
-		float factor_;
-	};
-
-	typedef std::vector<TargetData> TargetDataList;
-	typedef TargetDataList::iterator iterator;
-	typedef TargetDataList::const_iterator const_iterator;
-
 	const TargetDataList& targets(int idx = 0) const { return targets_[idx]; }
 
-	struct TargetOrderingOp
-	{
-		bool operator() (const TargetData& t0,const TargetData& t1){
-			return t0.factor_ > t1.factor_;
-		}
-	};
-	
-	void sortTargets(int idx = 0){ std::sort(targets_[idx].begin(),targets_[idx].end(),TargetOrderingOp()); }
+    void sortTargets(int idx = 0) {
+        std::sort(targets_[idx].begin(), targets_[idx].end(), TargetOrderingOp());
+    }
 
 	void operator()(terUnitBase* unit2)
 	{
 		if(!unit2->damageMolecula().isAlive())
 			return;
-		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // закрыт куполом
+		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // Р·Р°РєСЂС‹С‚ РєСѓРїРѕР»РѕРј
 			return;
 		if(excludeHolograms_ && unit2->isBuilding() && !unit2->isConstructed())
 			return;
@@ -1777,10 +1795,10 @@ public:
 
 private:
 
-	/// режим сканирования для базового сквада 
+	/// СЂРµР¶РёРј СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ РґР»СЏ Р±Р°Р·РѕРІРѕРіРѕ СЃРєРІР°РґР° 
 	/** 
-		targets_[0] - цели для солдат
-		targets_[1] - цели для офицеров
+		targets_[0] - С†РµР»Рё РґР»СЏ СЃРѕР»РґР°С‚
+		targets_[1] - С†РµР»Рё РґР»СЏ РѕС„РёС†РµСЂРѕРІ
 	*/
 	bool basicSquadMode_;
 
@@ -1819,37 +1837,17 @@ public:
 		targets_.reserve(16);
 	}
 
-	struct TargetData
-	{
-		TargetData(terUnitBase* unit,float factor) : unit_(unit), factor_(factor) { }
-
-		bool operator > (const TargetData& data) const { return factor_ < data.factor_; }
-		bool operator == (const terUnitBase* unit) const { return unit_ == unit; }
-
-		terUnitBase* unit_;
-		float factor_;
-	};
-
-	typedef std::vector<TargetData> TargetDataList;
-	typedef TargetDataList::iterator iterator;
-	typedef TargetDataList::const_iterator const_iterator;
-
 	const TargetDataList& targets() const { return targets_; }
-
-	struct TargetOrderingOp
-	{
-		bool operator() (const TargetData& t0,const TargetData& t1){
-			return t0.factor_ > t1.factor_;
-		}
-	};
-	
-	void sortTargets(){ sort(targets_.begin(),targets_.end(),TargetOrderingOp()); }
+    
+	void sortTargets() {
+        std::sort(targets_.begin(), targets_.end(), TargetOrderingOp());
+    }
 
 	void operator()(terUnitBase* unit2)
 	{
 		if(!unit2->damageMolecula().isAlive())
 			return;
-		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // закрыт куполом
+		if(!ignoreField_ && includingCluster_ != unit2->includingCluster()) // Р·Р°РєСЂС‹С‚ РєСѓРїРѕР»РѕРј
 			return;
 
 		float dist2 = position_.distance2(unit2->position2D());
@@ -1889,7 +1887,7 @@ terUnitBase* terUnitSquad::findBestTarget(const Vect2f& pos, float radius)
 
 void terUnitSquad::attackQuant()
 {
-	if(!attack_points.empty()){ // Есть указанная цель.
+	if(!attack_points.empty()){ // Р•СЃС‚СЊ СѓРєР°Р·Р°РЅРЅР°СЏ С†РµР»СЊ.
 		if(!attack_points.front().positionTarget()){
 			terUnitBase* target = 0;
 			SquadUnitList::iterator ui;
@@ -1918,22 +1916,30 @@ void terUnitSquad::attackQuant()
 			}
 			else
 				attack_points.pop_front();
-		}
-		else{
+		} else { //Position target
 			Vect3f target = attack_points.front().position();
+            bool canAttack = false;
 
 			SquadUnitList::iterator ui;
 			FOR_EACH(Units, ui){
 				terUnitLegionary& unit = **ui;
-				if(unit.attr().ID != UNIT_ATTRIBUTE_TECHNIC)
-					unit.setAttackPosition(target, true);
+                const AttributeLegionary& attr = unit.attr();
+                if ((attr.AttackClass & UNIT_CLASS_GROUND) && attr.ID != UNIT_ATTRIBUTE_TECHNIC) {
+                    canAttack = true;
+                    unit.setAttackPosition(target, true);
+                }
 			}
 
-			if(offensiveMode() && !patrolMode() && noWayPoints())
-				repositionToAttack(attack_points.front(), true);
+            if (canAttack) {
+                if (offensiveMode() && !patrolMode() && noWayPoints()) {
+                    repositionToAttack(attack_points.front(), true);
+                }
+            } else {
+                attack_points.pop_front();
+            }
 		}
 	}
-	else{ // Поиск цели
+	else{ // РџРѕРёСЃРє С†РµР»Рё
 		if(offensiveMode() || currentAttribute()->isDefenciveAttackEnabled()){
 			if(!targets_scan_timer()){
 				float fire_radius = offensiveMode() && !patrolMode() ? currentAttribute()->sightRadius() : currentAttribute()->fireRadius();
@@ -1953,14 +1959,14 @@ void terUnitSquad::attackQuant()
 				bool attack_flag = false;
 
 				if(currentMutation() == UNIT_ATTRIBUTE_NONE){
-					SquadSearchTargetsScanOp::const_iterator ti;
+					TargetDataList::const_iterator ti;
 					FOR_EACH(op.targets(),ti){
 						if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_SOLDIER))
 							attack_flag = true;
 					}
 
 					bool ret_flag = true;
-					while(ret_flag){ // распределение целей по незадействованным юнитам
+					while(ret_flag){ // СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ С†РµР»РµР№ РїРѕ РЅРµР·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рј СЋРЅРёС‚Р°Рј
 						ret_flag = false;
 						FOR_EACH(op.targets(),ti){
 							if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_SOLDIER,true))
@@ -1976,7 +1982,7 @@ void terUnitSquad::attackQuant()
 					}
 
 					ret_flag = true;
-					while(ret_flag){ // распределение целей по незадействованным юнитам
+					while(ret_flag){ // СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ С†РµР»РµР№ РїРѕ РЅРµР·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рј СЋРЅРёС‚Р°Рј
 						ret_flag = false;
 						FOR_EACH(op.targets(1),ti){
 							if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_OFFICER,true))
@@ -1985,14 +1991,14 @@ void terUnitSquad::attackQuant()
 					}
 				}
 				else {
-					SquadSearchTargetsScanOp::const_iterator ti;
+                    TargetDataList::const_iterator ti;
 					FOR_EACH(op.targets(),ti){
 						if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_))))
 							attack_flag = true;
 					}
 
 					bool ret_flag = true;
-					while(ret_flag){ // распределение целей по незадействованным юнитам
+					while(ret_flag){ // СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ С†РµР»РµР№ РїРѕ РЅРµР·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рј СЋРЅРёС‚Р°Рј
 						ret_flag = false;
 						FOR_EACH(op.targets(),ti){
 							if(distributeAttackTarget(AttackPoint(const_cast<terUnitBase*>(ti->unit_)),UNIT_ATTRIBUTE_NONE,true))
@@ -2112,8 +2118,10 @@ bool terUnitSquad::killBaseUnit(const UnitCommand& command)
 
 void terUnitSquad::addSquad(terUnitSquad* squad)
 {
-	if(squad->currentMutation() != UNIT_ATTRIBUTE_NONE)
-		return;
+    if (!squad || !mutationFinished()
+    || !squad->mutationFinished() || !squad->isBase()) {
+        return;
+    }
 	
 	while(!squad->Units.empty()){
 		terUnitLegionary* unit = squad->Units.front();
@@ -2263,7 +2271,7 @@ void terUnitSquad::techniciansQuant()
 
 	if(op.targets().empty()) return;
 
-	SquadTechnicianSearchTargetsScanOp::const_iterator ti = op.targets().begin();
+    TargetDataList::const_iterator ti = op.targets().begin();
 
 	FOR_EACH(Units, ui){
 		if((*ui)->attr().ID == UNIT_ATTRIBUTE_TECHNIC && !(*ui)->hasAttackTarget() && (*ui)->isWeaponReady()){

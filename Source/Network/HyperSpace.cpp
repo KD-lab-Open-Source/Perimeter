@@ -1,14 +1,16 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include <SDL.h>
+
+#include "SystemUtil.h"
 #include "Runtime.h"
 #include "UnitAttribute.h"
 #include "Universe.h"
 #include "P2P_interface.h"
 #include "GameShell.h"
-
-#include "lmcons.h"
-
+#include "files/files.h"
+#include "GameContent.h"
+#include "codepages/codepages.h"
 
 bool net_log_mode=0;
 XBuffer net_log_buffer(8192, 1);
@@ -17,7 +19,6 @@ XBuffer net_log_buffer(8192, 1);
 const char* autoSavePlayReelDir = "AUTOSAVE";
 
 
-const char * KEY_SAVE_PLAY_REEL="saveplay";
 const char * KEY_REPLAY_REEL="replay";
 
 //Old RePlayReel date (до патча 1.2)
@@ -25,13 +26,12 @@ const char * KEY_REPLAY_REEL="replay";
 //static const GUID filePlayReelID = { 0x62177a85, 0xc27c, 0x4f6a, { 0x98, 0x37, 0x92, 0x2f, 0x63, 0x5c, 0x7b, 0x8 } };
 //RePlayReel date (с патча 1.2)
 // {BDFBD2AD-F686-4dd1-A5E1-9544C782AAB1}
-static const GUID filePlayReelID = { 0xbdfbd2ad, 0xf686, 0x4dd1, { 0xa5, 0xe1, 0x95, 0x44, 0xc7, 0x82, 0xaa, 0xb1 } };
+//static const GUID filePlayReelID = { 0xbdfbd2ad, 0xf686, 0x4dd1, { 0xa5, 0xe1, 0x95, 0x44, 0xc7, 0x82, 0xaa, 0xb1 } };
 
+#define FILE_REPLAY_MAGIC_LEN 20
+static const char filePlayReelID[FILE_REPLAY_MAGIC_LEN] = "PerimeterReplay002\0";
 
-const unsigned int INTERNAL_BUILD_VERSION=1003;
-
-
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 class cMonowideFont {
 	cFont* pfont;
 public:
@@ -50,7 +50,13 @@ public:
 	}
 };
 cMonowideFont* pMonowideFont;
-#endif //_FINAL_VERSION_
+#endif //PERIMETER_DEBUG
+
+bool checkPlayReelMagic(XStream& fi) {
+    char magic[FILE_REPLAY_MAGIC_LEN];
+    fi.read(&magic, FILE_REPLAY_MAGIC_LEN);
+    return strncmp(filePlayReelID, magic, FILE_REPLAY_MAGIC_LEN) == 0;
+}
 
 terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission)
 {
@@ -106,9 +112,9 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 	confirmQuant=0;
 	signatureGame=startCRC32;
 
-#ifndef _FINAL_VERSION_
-	pMonowideFont= new cMonowideFont();
-#endif //_FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
+	pMonowideFont = new cMonowideFont();
+#endif
 
 	//Очистка списков команд
 	{
@@ -134,13 +140,13 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 //	if(check_command_line(KEY_SAVE_PLAY_REEL)){
 		flag_savePlayReel=true;
 //	}
-	if(mission.gameType_==GT_playRellGame){
+	if(mission.gameType_ == GT_PLAY_RELL){
 		flag_rePlayReel=true;
-		loadPlayReel(mission.fileNamePlayReelGame.c_str());
+		loadPlayReel(mission.playReelPath().c_str());
 	}
 	if(IniManager("Perimeter.ini").getInt("Game","AutoSavePlayReel")!=0){
 		flag_autoSavePlayReel=true;
-        create_directories(convert_path_resource(autoSavePlayReelDir, true).c_str());
+        create_directories(autoSavePlayReelDir);
 	}
 
 	currentQuant=0;
@@ -150,8 +156,9 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 	net_log_buffer.init();
 
-//	if(terGameMode == PERIMETER_GAME_MODE_SINGLEPLAYER)
-//		GameStart();
+    if (!mission.gameContent) {
+        mission.gameContent = mission.missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    }
 
 	//if(flag_rePlayReel) mission=curMission; //Порядок Важен!
 	if(flag_savePlayReel || flag_autoSavePlayReel) curMission=mission;
@@ -162,11 +169,9 @@ terHyperSpace::terHyperSpace(PNetCenter* net_client, MissionDescription& mission
 
 void getMissionDescriptionInThePlayReelFile(const char* fname, MissionDescription& md)
 {
-	XStream fi(convert_path_resource(fname).c_str(), XS_IN);
+	XStream fi(convert_path_content(fname).c_str(), XS_IN);
 
-	GUID fguid;
-	fi.read(&fguid, sizeof(fguid));
-	if(filePlayReelID!=fguid) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
+	if(!checkPlayReelMagic(fi)) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
 
 	int sizeOtherData=fi.size()-fi.tell();
 	XBuffer mdBuf(sizeOtherData);
@@ -179,19 +184,18 @@ void getMissionDescriptionInThePlayReelFile(const char* fname, MissionDescriptio
 
 bool isCorrectPlayReelFile(const char* fname)
 {
-	XStream fi(fname, XS_IN);
-	GUID fguid;
-	fi.read(&fguid, sizeof(fguid));
-	return (filePlayReelID==fguid);
+    std::string path = convert_path_content(fname);
+    if (path.empty()) return false;
+	XStream fi(false);
+    if (!fi.open(path, XS_IN)) return false;
+    return checkPlayReelMagic(fi);
 }
 
 bool terHyperSpace::loadPlayReel(const char* fname)
 {
-	XStream fi(convert_path_resource(fname), XS_IN);
+	XStream fi(convert_path_content(fname), XS_IN);
 
-	GUID fguid;
-	fi.read(&fguid, sizeof(fguid));
-	if(filePlayReelID!=fguid) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
+	if(!checkPlayReelMagic(fi)) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
 
 	int sizeOtherData=fi.size()-fi.tell();
 	XBuffer mdBuf(sizeOtherData);
@@ -207,7 +211,7 @@ bool terHyperSpace::loadPlayReel(const char* fname)
 //	unsigned char* tbuf=new unsigned char[sizePlayReelData];
 //	fi.read(tbuf, sizePlayReelData);
 	InOutNetComBuffer in_buffer(sizePlayReelData, 1); //проверить необходимость автоувелечения!
-	in_buffer.putBufferPacket((unsigned char*)(mdBuf.address()+mdBuf.tell()), sizePlayReelData);
+	in_buffer.putBufferPacket(mdBuf.address()+mdBuf.tell(), sizePlayReelData);
 //	delete [] tbuf;
 
 	while(in_buffer.currentNetCommandID()!=NETCOM_ID_NONE) {
@@ -245,8 +249,9 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 {
 
 	XStream fo(0);
-	if(!fo.open(convert_path_resource(fname, true), XS_OUT)){
-//		::MessageBox(0, "It is impossible to write down a game reel on a disk ", "Save play reel error:", MB_OK);
+    std::string path = convert_path_content(fname, true);
+    if (path.empty()) path = fname;
+	if(!fo.open(path, XS_OUT)){
 		return SAVE_REPLAY_RW_ERROR;
 	}
 
@@ -283,7 +288,7 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
     if (fo.ioError()) {
         return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
     } else {
-        scan_resource_paths(REPLAY_PATH);
+        scan_resource_paths(convert_path_content(REPLAY_PATH));
         return SAVE_REPLAY_OK;
     }
 }
@@ -294,14 +299,24 @@ void terHyperSpace::autoSavePlayReel()
 {
 	//autosave
     time_t result = time(nullptr);
-    std::string path = std::string(autoSavePlayReelDir) + PATH_SEP + "autosaveFrom_" + std::to_string(result);
+    std::string name = gameShell->CurrentMission.missionName();
+    if (name.empty()) name = gameShell->CurrentMission.worldName();
+    std::string path = std::string(autoSavePlayReelDir) + PATH_SEP + "autosave_" + name;
+    for (int i = 0; i < gameShell->CurrentMission.playerAmountScenarioMax; ++i) {
+        PlayerData& p = gameShell->CurrentMission.playersData[i];
+        if (p.realPlayerType == REAL_PLAYER_TYPE_PLAYER || p.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
+            std::string conv = convertToUnicode(p.name(), getLocale());
+            path += std::string("_") + conv;
+        }
+    }
+    path += "_" + std::to_string(result);
 	savePlayReel(path.c_str());
 }
 
 void terHyperSpace::allSavePlayReel()
 {
 	if(flag_savePlayReel){
-		const char* fname=check_command_line(KEY_SAVE_PLAY_REEL);
+		const char* fname=check_command_line("saveplay");
 		if(fname) savePlayReel(fname);//savePlay to file
 	}
 
@@ -327,9 +342,9 @@ terHyperSpace::~terHyperSpace()
 	endQuant_inReplayListGameCommands=0;
 
 
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	delete pMonowideFont;
-#endif //_FINAL_VERSION_
+#endif
 	SDL_DestroyMutex(m_FullListGameCommandLock);
 
 }
@@ -343,7 +358,7 @@ bool terHyperSpace::PrimaryQuant()
 }
 
 
-long terHyperSpace::getInternalLagQuant(void)
+size_t terHyperSpace::getInternalLagQuant(void)
 {
 	return allowedRealizingQuant-currentQuant;
 }
@@ -353,6 +368,8 @@ bool terHyperSpace::MultiQuant()
 	setLogicFp();
 
 	if(allowedRealizingQuant > lastRealizedQuant){
+        log_var("============== MultiQuant ==============");
+        
 		//Начало кванта
 		currentQuant++;		//currentQuant=lastQuant_inFullListGameCommands;
 
@@ -370,21 +387,22 @@ bool terHyperSpace::MultiQuant()
 		for(; p!=fullListGameCommands.end(); p++) {
 			if((*p)->curCommandQuant_ != currentQuant ) break; //проверка на конец команд кванта
 			if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND){
-				netCommand4G_UnitCommand* pNC_UnitCommant=static_cast<netCommand4G_UnitCommand*>(*p);
+				netCommand4G_UnitCommand* pNC_UnitCommant=dynamic_cast<netCommand4G_UnitCommand*>(*p);
 				receiveCommand(*pNC_UnitCommant);
+                log_var(pNC_UnitCommant->PlayerID_);
 				log_var(pNC_UnitCommant->unitCommand().commandID());
 				log_var(pNC_UnitCommant->unitCommand().position());
 			}
 			else if((*p)->EventID==NETCOM_4G_ID_REGION){
-				netCommand4G_Region* pNC_Region=static_cast<netCommand4G_Region*>(*p);
+				netCommand4G_Region* pNC_Region=dynamic_cast<netCommand4G_Region*>(*p);
 				receiveCommand(*pNC_Region);
-				log_var(pNC_Region->playerID_);
+				log_var(pNC_Region->PlayerID_);
 			}
 			else if((*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
 				///
-				netCommand4G_ForcedDefeat* pNC_ForceDefeate=static_cast<netCommand4G_ForcedDefeat*>(*p);
-				forcedDefeat(pNC_ForceDefeate->userID);
-				log_var(pNC_ForceDefeate->userID);
+				netCommand4G_ForcedDefeat* pNC_ForceDefeate=dynamic_cast<netCommand4G_ForcedDefeat*>(*p);
+				forcedDefeat(pNC_ForceDefeate->PlayerID_);
+				log_var(pNC_ForceDefeate->PlayerID_);
 			}
 			else xassert(0&&"Incorrect net comman in fullListGameCommands");
 		}
@@ -410,14 +428,14 @@ bool terHyperSpace::MultiQuant()
 		///vMap.generateChAreasInformation(vmapbuf);
 		///pNetCenter->SendEvent(&netCommand4H_BackGameInformation(currentQuant, vmapbuf, net_log_buffer));
 
+#if defined(PERIMETER_DEBUG) || defined(NET_LOG_EXHAUSTIVE)
 		log_var(vMap.getChAreasInformationCRC());
+#endif
+        
+#ifdef NET_LOG_EXHAUSTIVE
+        log_var(vMap.getWorldCRC());
+#endif
 
-		//signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
-		//if((currentQuant&0x07)==0){ //Каждый 8 квант отсылается сигнатура
-		//	pNetCenter->SendEvent(&netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame));
-		//	signatureGame=startCRC32;
-		//}
-		//pushBackLogList(currentQuant, net_log_buffer);
 		logQuant();
 
 		lastRealizedQuant=currentQuant;
@@ -430,15 +448,25 @@ bool terHyperSpace::MultiQuant()
 
 }
 
-const unsigned int periodSendLogQuant=8; //степень двойки!
+//power of two / степень двойки!
+#ifdef PERIMETER_DEBUG
+const unsigned int periodSendLogQuant=1;
+#else
+const unsigned int periodSendLogQuant=8;
+#endif
 const unsigned int maskPeriodSendLogQuant=periodSendLogQuant-1;//
 void terHyperSpace::logQuant()
 {
 	lagQuant=getInternalLagQuant(); //Для сервера
 
-	signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
+    signatureGame=crc32((unsigned char*)net_log_buffer.address(), net_log_buffer.tell(), signatureGame);
 	if((currentQuant & maskPeriodSendLogQuant)==0){ //Каждый 8 квант отсылается сигнатура
-        netCommandGeneral event = netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state);
+        //Basic cheap check for desync
+        XBuffer rnd;
+        rnd < terLogicRNDfrand();
+        signatureGame=crc32((unsigned char*)rnd.address(), rnd.tell(), signatureGame);
+        
+        netCommand4H_BackGameInformation2 event = netCommand4H_BackGameInformation2(lagQuant, currentQuant, signatureGame, false, pNetCenter->m_state);
 		pNetCenter->SendEvent(&event);
 		signatureGame=startCRC32;
 	}
@@ -459,44 +487,26 @@ void terHyperSpace::sendLog(unsigned int quant)
 			sgn=crc32((unsigned char*)pLogElemente->pLog->address(), pLogElemente->pLog->tell(), sgn);
 
 		}
-        netCommandGeneral event = netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state);
+        netCommand4H_BackGameInformation2 event = netCommand4H_BackGameInformation2(0, quant, sgn, true, pNetCenter->m_state);
         pNetCenter->SendEvent(&event);
 	}
 }
 
 
-// !!! Вызывается из логического кванта !!!
-void terHyperSpace::sendCommand(const netCommand4G_UnitCommand& command) 
-{ 
-	if(!pNetCenter){
-		//Lock!
-		CAutoLock lock(m_FullListGameCommandLock);
-
-		netCommand4G_UnitCommand* pnc=new netCommand4G_UnitCommand(command);
-		pnc->setCurCommandQuantAndCounter(currentQuant+1,0);
-		fullListGameCommands.push_back(pnc);
-		/////receiveCommand(command);
-	}
-	else {
-		pNetCenter->SendEvent(&command);
-	}
-}
-
-// !!! Вызывается из Графического кванта !!!
-void terHyperSpace::sendCommand(const netCommand4G_Region& command) 
-{ 
-	if(!pNetCenter){
-		//Lock!
-		CAutoLock lock(m_FullListGameCommandLock);
-
-		netCommand4G_Region* pnc=new netCommand4G_Region(command);
-		pnc->setCurCommandQuantAndCounter(currentQuant+1,0);
-		fullListGameCommands.push_back(pnc);
-		/////receiveCommand(command);
-	}
-	else {
-		pNetCenter->SendEvent(&command); 
-	}
+// netCommand4G_Region from graphics thread, netCommand4G_UnitCommand from logic thread
+void terHyperSpace::sendCommand(netCommandGame* command) 
+{
+    if(!pNetCenter){
+        //Lock!
+        CAutoLock lock(m_FullListGameCommandLock);
+        
+        command->setCurCommandQuantAndCounter(currentQuant+1,0);
+        fullListGameCommands.push_back(command);
+        /////receiveCommand(command);
+    } else {
+        pNetCenter->SendEvent(command);
+        delete command;
+    }
 }
 
 //----------------------------- Dread Place ----------------------------
@@ -515,20 +525,21 @@ bool terHyperSpace::SingleQuant()
 		for(p=curRePlayPosition; p!=replayListGameCommands.end(); p++){
 			if((*p)->curCommandQuant_==currentQuant){
 				if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND){
-					netCommand4G_UnitCommand* pNC_UnitCommant=static_cast<netCommand4G_UnitCommand*>(*p);
+					netCommand4G_UnitCommand* pNC_UnitCommant=dynamic_cast<netCommand4G_UnitCommand*>(*p);
 					receiveCommand(*pNC_UnitCommant);
+                    log_var(pNC_UnitCommant->PlayerID_);
 					log_var(pNC_UnitCommant->unitCommand().commandID());
 					log_var(pNC_UnitCommant->unitCommand().position());
 				}
 				else if((*p)->EventID==NETCOM_4G_ID_REGION){
-					netCommand4G_Region* pNC_Region=static_cast<netCommand4G_Region*>(*p);
+					netCommand4G_Region* pNC_Region=dynamic_cast<netCommand4G_Region*>(*p);
 					receiveCommand(*pNC_Region);
-					log_var(pNC_Region->playerID_);
+					log_var(pNC_Region->PlayerID_);
 				}
 				else if((*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
-					netCommand4G_ForcedDefeat* pNC_ForceDefeate=static_cast<netCommand4G_ForcedDefeat*>(*p);
-					forcedDefeat(pNC_ForceDefeate->userID);
-					log_var(pNC_ForceDefeate->userID);
+					netCommand4G_ForcedDefeat* pNC_ForceDefeate=dynamic_cast<netCommand4G_ForcedDefeat*>(*p);
+					forcedDefeat(pNC_ForceDefeate->PlayerID_);
+					log_var(pNC_ForceDefeate->PlayerID_);
 				}
 
 				else xassert(0&&"Incorrect net comman in replayListGameCommands");
@@ -549,20 +560,21 @@ bool terHyperSpace::SingleQuant()
 		for(curGameComPosition; curGameComPosition<fullListGameCommands.size(); curGameComPosition++){
 			if(fullListGameCommands[curGameComPosition]->curCommandQuant_==currentQuant){
 				if(fullListGameCommands[curGameComPosition]->EventID==NETCOM_4G_ID_UNIT_COMMAND){
-					netCommand4G_UnitCommand* pNC_UnitCommant=static_cast<netCommand4G_UnitCommand*>(fullListGameCommands[curGameComPosition]);
+					netCommand4G_UnitCommand* pNC_UnitCommant=dynamic_cast<netCommand4G_UnitCommand*>(fullListGameCommands[curGameComPosition]);
 					receiveCommand(*pNC_UnitCommant);
+                    log_var(pNC_UnitCommant->PlayerID_);
 					log_var(pNC_UnitCommant->unitCommand().commandID());
 					log_var(pNC_UnitCommant->unitCommand().position());
 				}
 				else if(fullListGameCommands[curGameComPosition]->EventID==NETCOM_4G_ID_REGION){
-					netCommand4G_Region* pNC_Region=static_cast<netCommand4G_Region*>(fullListGameCommands[curGameComPosition]);
+					netCommand4G_Region* pNC_Region=dynamic_cast<netCommand4G_Region*>(fullListGameCommands[curGameComPosition]);
 					receiveCommand(*pNC_Region);
-					log_var(pNC_Region->playerID_);
+					log_var(pNC_Region->PlayerID_);
 				}
 				else if(fullListGameCommands[curGameComPosition]->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
-					netCommand4G_ForcedDefeat* pNC_ForceDefeate=static_cast<netCommand4G_ForcedDefeat*>(fullListGameCommands[curGameComPosition]);
-					forcedDefeat(pNC_ForceDefeate->userID);
-					log_var(pNC_ForceDefeate->userID);
+					netCommand4G_ForcedDefeat* pNC_ForceDefeate=dynamic_cast<netCommand4G_ForcedDefeat*>(fullListGameCommands[curGameComPosition]);
+					forcedDefeat(pNC_ForceDefeate->PlayerID_);
+					log_var(pNC_ForceDefeate->PlayerID_);
 				}
 				else xassert(0&&"Incorrect net comman in fullListGameCommands");
 			}
@@ -593,14 +605,15 @@ bool terHyperSpace::SingleQuant()
 
 void terHyperSpace::ShowInfo()
 {
-#ifndef _FINAL_VERSION_
+#ifdef PERIMETER_DEBUG
 	if(pNetCenter){
 		XBuffer msg;
 		msg.SetDigits(10);
 		msg < "curQnt: " <= currentQuant;
+		msg < " confirmQnt: " <= confirmQuant;
+		msg < " diffQnt: " <= (currentQuant - confirmQuant);
 		msg < " intrnlLagQnt: " <= lagQuant;
-		msg < " dropQnt:" <= dropQuant;
-		msg < " confirmQnt" <= confirmQuant;
+		msg < " dropQnt: " <= dropQuant;
 
 		//terRenderDevice->SetFont(pMonowideFont->getFont());
 		//terRenderDevice->OutText(20, 40, msg, sColor4f(1, 1, 1, 1));
@@ -625,7 +638,7 @@ void terHyperSpace::ShowInfo()
 		//terRenderDevice->OutText(20, 40, msg, sColor4f(1, 1, 1, 1));
 		terRenderDevice->OutText(360, 20, msg, sColor4f(1, 1, 1, 1));
 
-		msg2 < pNetCenter->getStrWorkMode() < " " < pNetCenter->getStrState();
+		msg2 < pNetCenter->getStrState();
 		msg2 < " byteReceive=" <= rb < " byteSending=" <=sb;
 		//terRenderDevice->OutText(20, 60, msg2, sColor4f(1, 1, 1, 1));
 		terRenderDevice->OutText(360, 35, msg2, sColor4f(1, 1, 1, 1));
@@ -647,7 +660,7 @@ void terHyperSpace::sendListGameCommand2Host(unsigned int begQuant, unsigned int
 		if( ((*p)->curCommandQuant_ >=begQuant) && ((*p)->curCommandQuant_ <=endQuant))
 			out_buffer.putNetCommand((*p));
 	}
-	netCommand4H_ResponceLastQuantsCommands nco(begQuant, endQuant, clientGeneralCommandCounterInListCommand, out_buffer.filled_size, (unsigned char*) out_buffer.address() );
+	netCommand4H_ResponceLastQuantsCommands nco(begQuant, endQuant, clientGeneralCommandCounterInListCommand, out_buffer.filled_size, out_buffer.address() );
 	if(pNetCenter){
 		pNetCenter->SendEvent(&nco);
 	}
@@ -811,7 +824,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				xassert(!flag_HostMigrate);
 				netCommand4G_UnitCommand*  pnc= new netCommand4G_UnitCommand(in_buffer);
-				xassert(pnc->curCommandQuant_ < 0xcdcd0000);
+				//xassert(pnc->curCommandQuant_ < 0xcdcd0000);
 				putInputGameCommand2fullListGameCommandAndCheckAllowedRun(pnc);
 			}
 			break;
@@ -819,7 +832,7 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				xassert(!flag_HostMigrate);
 				netCommand4G_Region*  pnc= new netCommand4G_Region(in_buffer);
-				xassert(pnc->curCommandQuant_ < 0xcdcd0000);
+				//xassert(pnc->curCommandQuant_ < 0xcdcd0000);
 				putInputGameCommand2fullListGameCommandAndCheckAllowedRun(pnc);
 			}
 			break;
@@ -827,37 +840,10 @@ bool terHyperSpace::ReceiveEvent(terEventID event, InOutNetComBuffer& in_buffer)
 			{
 				xassert(!flag_HostMigrate);
 				netCommand4G_ForcedDefeat*  pnc= new netCommand4G_ForcedDefeat(in_buffer);
-				xassert(pnc->curCommandQuant_ < 0xcdcd0000);
+				//xassert(pnc->curCommandQuant_ < 0xcdcd0000);
 				putInputGameCommand2fullListGameCommandAndCheckAllowedRun(pnc);
 			}
 			break;
-		case NETCOM_4C_ID_SAVE_LOG:
-			{
-				netCommand4C_SaveLog nc(in_buffer);
-
-				const int BUF_CN_SIZE=MAX_COMPUTERNAME_LENGTH + 1;
-				DWORD cns = BUF_CN_SIZE;
-				char cname[BUF_CN_SIZE];
-				GetComputerName(cname, &cns);
-
-				const int BUF_UN_SIZE=UNLEN + 1;
-				DWORD uns = BUF_UN_SIZE;
-				char username[BUF_UN_SIZE];
-				GetUserName(username, &uns);
-
-				XBuffer tb;
-				tb < "outNet_" < cname < "_" < username <= pNetCenter->m_localDPNID < ".log";
-
-				XStream f(tb, XS_OUT);
-				//const char* currentVersion;
-				f < currentVersion < "\r\n";
-				writeLogList2File(f);
-				f.close();
-                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", "Unique!!!; outnet.log saved", nullptr);
-				pNetCenter->ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED);
-			}
-			break;
-
 		case EVENT_ID_SERVER_TIME_CONTROL: {
 			terEventControlServerTime event(in_buffer);
 			SetServerSpeedScale(event.scale);

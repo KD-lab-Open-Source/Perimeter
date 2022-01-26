@@ -38,17 +38,17 @@ void CloudAbs::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= fabs(noise);
+	*destClr *= xm::abs(noise);
 	*destClr += bgColor;
 }
 
 void CloudEmboss::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
-	noise = fabs(noise);
+	noise = xm::abs(noise);
 	if (noise > 1.0) {
 		noise = 1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= sqrt(1 - (noise - 1.0) * (noise - 1.0));
+	*destClr *= xm::sqrt(1 - (noise - 1.0) * (noise - 1.0));
 	*destClr += bgColor;
 }
 
@@ -59,6 +59,6 @@ void CloudSin::computeColor(Vector3D *destClr, const Vector3D &v, float noise) {
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= ((1.0 + sin(1.0 / noise / 10)) / 2.0);
+	*destClr *= ((1.0 + xm::sin(1.0 / noise / 10)) / 2.0);
 	*destClr += bgColor;
 }

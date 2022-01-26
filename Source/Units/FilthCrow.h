@@ -20,7 +20,7 @@ struct terFilthCrow : terFilthSpline
 	void SetFreeDestroy(){free_destroy=true;};
 	bool GetFreeDestroy(){return free_destroy;}
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	terUnitBase* TargetPoint;
 	bool free_destroy;
@@ -49,7 +49,7 @@ struct terFilthSwarmCrow : terFilthSwarm
 	terUnitAttributeID GetUnitID();
 	void SetFreeDestroy();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	void Generate();
 	typedef std::list<terFilthCrow*> FilthListType;

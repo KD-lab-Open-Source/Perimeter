@@ -1,10 +1,8 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 #include "resource.h"
 #include "AnimationGroup.h"
 
-//осталось только переименование группы сделать.
+//РѕСЃС‚Р°Р»РѕСЃСЊ С‚РѕР»СЊРєРѕ РїРµСЂРµРёРјРµРЅРѕРІР°РЅРёРµ РіСЂСѓРїРїС‹ СЃРґРµР»Р°С‚СЊ.
 
 DlgAnimationGroup::DlgAnimationGroup()
 {
@@ -210,7 +208,7 @@ HTREEITEM DlgAnimationGroup::AddGroup(string group_name)
 		AnimationGroup& s=animation_group[i];
 		if(s.name==group_name)
 		{
-			MessageBox(hwnd,"Такое имя группы уже существует","Error",MB_OK);
+			MessageBox(hwnd,"РўР°РєРѕРµ РёРјСЏ РіСЂСѓРїРїС‹ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚","Error",MB_OK);
 			return NULL;
 		}
 	}
@@ -248,7 +246,7 @@ HTREEITEM DlgAnimationGroup::GetSelectionGroup()
 	HTREEITEM hGroup=TreeView_GetSelection(hTreeGroup);
 	if(hGroup==NULL)
 	{
-		MessageBox(hwnd,"Группа не выделена","Error",MB_OK);
+		MessageBox(hwnd,"Р“СЂСѓРїРїР° РЅРµ РІС‹РґРµР»РµРЅР°","Error",MB_OK);
 		return NULL;
 	}
 
@@ -260,7 +258,7 @@ void DlgAnimationGroup::OnAddObjectInGroup()
 	HTREEITEM hObject=TreeView_GetSelection(hTreeObject);
 	if(hObject==NULL)
 	{
-		MessageBox(hwnd,"Объект не выделен","Error",MB_OK);
+		MessageBox(hwnd,"РћР±СЉРµРєС‚ РЅРµ РІС‹РґРµР»РµРЅ","Error",MB_OK);
 		return;
 	}
 
@@ -277,7 +275,7 @@ void DlgAnimationGroup::OnAddObjectInGroupSubtree()
 	HTREEITEM hObject=TreeView_GetSelection(hTreeObject);
 	if(hObject==NULL)
 	{
-		MessageBox(hwnd,"Объект не выделен","Error",MB_OK);
+		MessageBox(hwnd,"РћР±СЉРµРєС‚ РЅРµ РІС‹РґРµР»РµРЅ","Error",MB_OK);
 		return;
 	}
 
@@ -307,7 +305,7 @@ void DlgAnimationGroup::AddObjectInGroup(HTREEITEM hGroup,HTREEITEM hObject)
 
 void DlgAnimationGroup::AddObjectInGroup(HTREEITEM hGroup,IGameNode* pGameNode)
 {
-	{//Добраться до root
+	{//Р”РѕР±СЂР°С‚СЊСЃСЏ РґРѕ root
 		HTREEITEM hParent=hGroup;
 		do
 		{

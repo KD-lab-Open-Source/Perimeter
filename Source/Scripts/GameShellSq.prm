@@ -17,7 +17,7 @@ struct _V2f
 	float y = 0;
 };
 
-//курсоры
+//РєСѓСЂСЃРѕСЂС‹
 struct sqshCursor
 {
 	int system = 0;
@@ -150,7 +150,7 @@ sqshCursor _sqsh_cursors[int _sqsh_cursor_count]={
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//галограмы
+//РіР°Р»РѕРіСЂР°РјС‹
 
 struct ShellGalogramType
 {
@@ -264,7 +264,7 @@ ShellGalogramType shell_galogram_table[int shell_galogram_table_size] = {
 
 string shell_galogram_texture = "RESOURCE\\EFFECT\\lightmap.tga";
 
-//галограмы
+//РіР°Р»РѕРіСЂР°РјС‹
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -316,7 +316,7 @@ float sqshDisabledG = 0.5;
 float sqshDisabledB = 0.5;
 float sqshDisabledA = 1;
 
-//положение подсказок на экране
+//РїРѕР»РѕР¶РµРЅРёРµ РїРѕРґСЃРєР°Р·РѕРє РЅР° СЌРєСЂР°РЅРµ
 float nPopupTextPosX = 750.0f / 1024.0f;
 float nPopupTextPosY = 448 / 768.0f;
 float nPopupSX = 300.0f / 1024.0f;
@@ -353,13 +353,13 @@ int nNrjOutputY = 308;
 int nNrjUsedX = 970;
 int nNrjUsedY = 308;
 
-//карта
+//РєР°СЂС‚Р°
 float _map_window_dx = 5;
 float _map_window_dy = 28;
 float _map_window_sx = 128;
 float _map_window_sy = 128;
 
-//прогресс бары
+//РїСЂРѕРіСЂРµСЃСЃ Р±Р°СЂС‹
 struct _ProgressBar
 {
 	_V2i points[] = {{},{}};
@@ -440,7 +440,7 @@ _ProgressBar _bar_squad =
 	points ={{x = 2; y = -23;},{x = 62; y = -16;}};
 };
 
-//задержки для интерфейсных звуков
+//Р·Р°РґРµСЂР¶РєРё РґР»СЏ РёРЅС‚РµСЂС„РµР№СЃРЅС‹С… Р·РІСѓРєРѕРІ
 int sound_shield_on_delay = 1000;
 
 
@@ -459,14 +459,14 @@ int nMsgRectX2 = 1010;
 int nMsgRectY2 = 570;
 
 //tutorial
-int tutTextWindowDx = 10; //относительное начало текста в SQSH_TUT_TEXTWINDOW_ID
+int tutTextWindowDx = 10; //РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕРµ РЅР°С‡Р°Р»Рѕ С‚РµРєСЃС‚Р° РІ SQSH_TUT_TEXTWINDOW_ID
 int tutTextWindowDy = 40;
 
 int tutMarkWindowPeriod = 1000;
 
 int nAtomPerSqadMax = 150;
 
-//прогресс загрузки
+//РїСЂРѕРіСЂРµСЃСЃ Р·Р°РіСЂСѓР·РєРё
 _ProgressBar _bar_load =
 {
 	points ={{x = 621; y = 471;},{x = 304; y = 5;}}; //x,y; sx,sy
@@ -475,7 +475,7 @@ _ProgressBar _bar_load =
 int progress_tex_sz = 2;
 string progress_texture = "resource\\icons\\intf\\progress.tga";
 
-//заставка
+//Р·Р°СЃС‚Р°РІРєР°
 int splash_delay_time = 1000;
 int alpha_delta = 5;
 
@@ -537,13 +537,13 @@ float comboBoxRowHeight = 32.0f;
 
 float collectedProgressRelaxationTime = 1000.0f;
 
-//время эффекта для кнопок меню
+//РІСЂРµРјСЏ СЌС„С„РµРєС‚Р° РґР»СЏ РєРЅРѕРїРѕРє РјРµРЅСЋ
 int _fEffectButtonTime1 = 200;
 int _fEffectButtonTime2 = 200;
 int _fEffectButtonTime3 = 300;
 int _fEffectButtonTotalTime = _fEffectButtonTime1+_fEffectButtonTime2+_fEffectButtonTime3;
 
-//время эффекта для кнопок интерфейса
+//РІСЂРµРјСЏ СЌС„С„РµРєС‚Р° РґР»СЏ РєРЅРѕРїРѕРє РёРЅС‚РµСЂС„РµР№СЃР°
 int _fEffectIntfRoll1 = 400; //->x
 int _fEffectIntfRoll2 = 400; //->y
 int _fEffectIntfRoll3 = 400; //->alpha
@@ -772,7 +772,7 @@ string aiNameIDs[] = {
 	"Mission Frames.Existor", //BELLIGERENT_EMPIRE1
 	"Mission Frames.Vice", //BELLIGERENT_EMPIRE_VICE
 	
-	// АДДОН
+	// РђР”Р”РћРќ
 	"Mission Frames.LostFrame", //BELLIGERENT_EXODUS2
 	"Mission Frames.AncientFrame", //BELLIGERENT_EXODUS3
 	"Mission Frames.Enclave", //BELLIGERENT_EXODUS4
@@ -787,7 +787,7 @@ string briefingMusic = "Resource\\Music\\Exodus_Psychosphere.ogg";
 int DeltaToolzerRadius = 5;
 
 float CHATINFO_FADE_TIME = 1000;
-float CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000;
+int CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT = 1000;
 
 float statsTableRowHeight = 40 / 768;
 

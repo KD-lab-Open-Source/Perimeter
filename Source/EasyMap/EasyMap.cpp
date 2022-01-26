@@ -543,8 +543,8 @@ void Demo3D::DrawMousePos()
 
 		float div=1<<cWater::grid_shift;
 		Vect2f vel;
-		int xx=round(pos.x/div);
-		int yy=round(pos.y/div);
+		int xx= xm::round(pos.x / div);
+		int yy= xm::round(pos.y / div);
 		if(xx<0)xx=0;
 		if(yy<0)yy=0;
 		pWater->GetVelocity(vel,xx,yy);

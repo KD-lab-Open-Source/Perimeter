@@ -15,6 +15,7 @@
 //#include "InterfaceScript.h"
 #include "PerimeterShellUI.h"
 #include "Controls.h"
+#include "GameContent.h"
 
 #include "Silicon.h"
 #include "HistoryScene.h"
@@ -36,12 +37,15 @@
 
 #include "qd_textdb.h"
 #include "../HT/ht.h"
-#include "PlayBink.h"
+#include "VideoPlayer.h"
 
 #include "EditArchive.h"
 #include "XPrmArchive.h"
 #include "SoundScript.h"
 #include "BelligerentSelect.h"
+#include "files/files.h"
+#include "Localization.h"
+#include "codepages/codepages.h"
 #include <SDL.h>
 
 int terShowFPS = 0;
@@ -53,18 +57,15 @@ extern char _bMenuMode;
 extern char  _bCursorVisible;
 extern bool bWasShiftUnpressed;
 
-extern GUID selectedLanGameID;
-
 void SetCameraPosition(cCamera *UCamera,const MatXf &Matrix);
-STARFORCE_API_NEW void ToolzerSizeChangeQuant();
+void ToolzerSizeChangeQuant();
 
 void EnterInMissionMenu();
-STARFORCE_API_NEW void CancelEditWorkarea();
+void CancelEditWorkarea();
 
 extern HistoryScene historyScene;
 extern HistoryScene bwScene;
 extern BGScene bgScene;
-extern std::string cmdlineRoomName;
 extern void PlayMusic(const char *str = 0);
 
 bool terEnableGDIPixel=false;
@@ -72,16 +73,6 @@ bool terEnableGDIPixel=false;
 //extern XStream quantTimeLog;
 
 int showReels( float, float ) {
-#ifdef _DEMO_
-	for (int i = 0; i < DEMO_REEL_COUNT; i++) {
-		gameShell->reelAbortEnabled = demoReels[i].abortEnabled;
-		if (demoReels[i].video) {
-			gameShell->showReelModal(demoReels[i].name, 0, demoReels[i].localized);
-		} else {
-			gameShell->showPictureModal(demoReels[i].name, demoReels[i].localized, demoReels[i].time);
-		}
-	}
-#else
 	for (int i = 0; i < REEL_COUNT; i++) {
 		gameShell->reelAbortEnabled = reels[i].abortEnabled;
 		if (reels[i].video) {
@@ -89,21 +80,19 @@ int showReels( float, float ) {
 		} else {
 			gameShell->showPictureModal(reels[i].name, reels[i].localized, reels[i].time);
 		}
+        if (!gameShell->GameContinue) {
+            break;
+        }
 	}
-#endif
 	gameShell->reelAbortEnabled = true;
 //	_shellIconManager.GetWnd(SQSH_MM_SPLASH4)->Show(1);
 //	_shellIconManager.SetModalWnd(SQSH_MM_SPLASH4);
 
-	_bCursorVisible = 1;
-	_WaitCursor();
-	_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_START_SCR);
-	_shellIconManager.SetModalWnd(0);
+	gameShell->switchToInitialMenu();
 	return 0;
 }
 
 void abortWithMessage(const std::string& messageID) {
-	MpegDeinitLibrary();
 	SNDReleaseSound();
 	ErrH.Abort( qdTextDB::instance().getText(messageID.c_str()) );
 }
@@ -113,18 +102,12 @@ void ErrorInitialize3D() {
 	abortWithMessage("Interface.Menu.Messages.Init3DError");
 }
 
-void checkCmdLineArg(const char* argument) {
+void checkCmdLineArg(const char* argument, const char* argName) {
 	if (!argument) {
         std::string msg("Missing cmdline argument ");
-        msg += argument;
-        ErrH.Abort(msg.c_str());
+        ErrH.Abort(msg + argName);
 	}
 }
-
-CommandLineData::CommandLineData(bool host, std::string name, bool p2p, std::string ip, GUID gameID, std::string roomName, std::string password)
-					 : host(host), name(name), p2p(p2p), ip(ip), gameID(gameID), roomName(roomName), password(password) {
-}
-
 
 //------------------------
 GameShell::GameShell(bool mission_edit) :
@@ -196,7 +179,7 @@ windowClientSize_(1024, 768)
 	briefingEnabled = !(disableBriefing || check_command_line("disableBriefing"));
 
 	terCamera->setRestriction(IniManager("Perimeter.ini").getInt("Game","CameraRestriction") && !mission_edit);
-	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial;
+	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial || check_command_line("debug_key_handler");
 
 	shotNumber_ = -1;
 	recordMovie_ = false;
@@ -238,34 +221,57 @@ windowClientSize_(1024, 768)
 	hotKeyManager = new HotKeyManager();
 	_shellCursorManager.Load();
 
+#ifdef PERIMETER_DEBUG
+    debugPrm_.load();
+    if(check_command_line("explore")){
+        debugPrm_.edit();
+        ErrH.Exit();
+    }
+#endif
 
 	if (check_command_line("pause")) {
 		ErrH.Abort("Pause!!!");
 	}
-	const char* playerName=check_command_line("playerName");
-    if(check_command_line("p2p")){
-		const char* strIP=check_command_line("ip");
-        checkCmdLineArg(playerName);
-		if(check_command_line("host")){
-			startOnline(CommandLineData(true, playerName, true, "", GUID()));
-		}
-		else if(check_command_line("client")){
-            checkCmdLineArg(strIP);
-			startOnline(CommandLineData(false, playerName, true, strIP, GUID()));
-		}
-	}
-	else if (MainMenuEnable) {
+
+    const char* server = check_command_line("server"); 
+    const char* connect = check_command_line("connect");
+    if (server || connect) {
+        CommandLineData data;
+        data.server = server != nullptr;
+        
+        const char* password = check_command_line("password");
+        if (password) data.password = password;
+        
+        const char* playerName = check_command_line("name");
+        checkCmdLineArg(playerName, "name");
+        data.playerName = playerName;
+		
+        if (server) {
+            checkCmdLineArg(server, "server");
+            const char* savePath = check_command_line("save");
+            if (savePath) data.save = savePath;
+            const char* roomName = check_command_line("room");
+            if (roomName) data.roomName = roomName;
+            data.address = server;
+		} else {
+            checkCmdLineArg(connect, "connect");
+            data.address = connect;
+        }
+        data.publicHost = check_command_line("public") != nullptr;
+
+        startCmdline(data);
+	} else if (MainMenuEnable) {
 		startedWithMainmenu = true;
 		_shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
 		//_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_SCREEN1);
-		
-		if (IniManager("Perimeter.ini").getInt("Game","StartSplash")) {
+
+        if (IniManager("Perimeter.ini").getInt("Game","StartSplash") || check_command_line("start_splash")) {
 			_bCursorVisible = 0;
 //			_shellIconManager.GetWnd(SQSH_MM_SPLASH1)->Show(1);
 //			_shellIconManager.SetModalWnd(SQSH_MM_SPLASH1);
 			_shellIconManager.AddDynamicHandler(showReels, CBCODE_QUANT); //ждать пока не слетится
 		} else {
-			startWithScreen(SQSH_MM_START_SCR);
+            switchToInitialMenu();
 		}
 	}
 
@@ -273,53 +279,65 @@ windowClientSize_(1024, 768)
 		missionEditor_ = new MissionEditor;
 
 	if(!MainMenuEnable){
-	    std::string resource_path = convert_path_resource("RESOURCE") + PATH_SEP;
-		std::string name = resource_path;
-		std::string path;
+	    std::string resource_path = convert_path_content("RESOURCE");
+		std::string name;
+		std::string path = resource_path;
 
 		if(check_command_line("save")){
-			path = UserSingleProfile::getAllSavesDirectory();
+			path = convert_path_content(UserSingleProfile::getAllSavesDirectory());
 			name = check_command_line("save");
-		}
-		if(check_command_line("mission")){
-			path = std::string(MISSIONS_PATH) + PATH_SEP;
+		} else if(check_command_line("mission")){
+			path = convert_path_content(MISSIONS_PATH);
 			name = check_command_line("mission");
-		}
-		if(mission_edit){
-			path = std::string(MISSIONS_PATH) + PATH_SEP;
+		} else if (check_command_line("open")) {
+            name = check_command_line("open");
+        } else if (mission_edit) {
+			path = convert_path_content(MISSIONS_PATH);
 			name = "";
 		}
-		if(check_command_line("open"))
-			name = check_command_line("open");
 
-		if(name == "")
-			name = "XXX";
-		name = setExtention((path + name).c_str(), "spg");
+        if (path.empty()) {
+            path = resource_path;
+        }
+		if (name.empty()) {
+            name = "XXX";
+        }
+        
+        terminate_with_char(path, PATH_SEP);
+		std::string spgPath = setExtension(path + name, "spg");
+        //spgPath = convert_path_content(spgPath, true);
 
-		if(!XStream(0).open(convert_path_resource(name.c_str()))) {
-			if(openFileDialog(name, (resource_path + "Missions").c_str(), "spg", "Mission Name")){
-				size_t pos = name.rfind(resource_path);
-				if(pos != std::string::npos)
-					name.erase(0, pos);
-			}
-			else
-				ErrH.Exit();
+		if (!XStream(0).open(spgPath)) {
+            if (name != "XXX") {
+                fprintf(stderr, "File not found: %s\n", spgPath.c_str());
+            }
+			if (openFileDialog(spgPath, path.c_str(), "spg", "Mission Name")){
+				size_t pos = spgPath.rfind(path);
+				if (pos != std::string::npos) {
+                    spgPath.erase(0, pos);
+                }
+			} else {
+                ErrH.Exit();
+            }
         }
 		
 		if(check_command_line(KEY_REPLAY_REEL)){
 			const char* fname=check_command_line(KEY_REPLAY_REEL);
-			HTManager::instance()->GameStart(MissionDescription(fname, GT_playRellGame));
-		}
-		else{
+			HTManager::instance()->GameStart(MissionDescription(fname, GT_PLAY_RELL));
+		} else {
 			int aiMode = 1;
 			check_command_line_parameter("AI", aiMode);
+            
+            if (!XStream(0).open(spgPath)) {
+                fprintf(stderr, "File not found: %s\n", spgPath.c_str());
+                ErrH.Exit();
+            }
 
-			HTManager::instance()->GameStart(MissionDescription(name.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI)));
+			HTManager::instance()->GameStart(MissionDescription(spgPath.c_str(), aiMode == 1 ? GT_SINGLE_PLAYER : (aiMode == 2 ? GT_SINGLE_PLAYER_ALL_AI : GT_SINGLE_PLAYER_NO_AI)));
 		}
 
 		if(check_command_line("convert")){
-			universalSave(name.c_str(), false);
-			MpegDeinitLibrary();
+			universalSave(spgPath.c_str(), false);
 			SNDReleaseSound();
 			ErrH.Exit();
 		}
@@ -359,6 +377,13 @@ void GameShell::done() {
 	_shellCursorManager.Done();
 }
 
+void GameShell::terminate() {
+    GameContinue = false;
+    if (reelManager.isVisible()) {
+        reelManager.hide();
+    }
+}
+
 PNetCenter* GameShell::getNetClient() {
 //	if (!NetClient) {
 //		NetClient = new PNetCenter(true);
@@ -366,25 +391,22 @@ PNetCenter* GameShell::getNetClient() {
 	return NetClient;
 }
 
-void GameShell::startWithScreen(int id) {
+void GameShell::switchToInitialMenu() {
 	_bCursorVisible = 1;
 	_WaitCursor();
-	_shellIconManager.SwitchMenuScreens(-1, id);
+	_shellIconManager.SwitchMenuScreens(-1, _shellIconManager.initialMenu);
 	_shellIconManager.SetModalWnd(0);
 }
 
-void GameShell::createNetClient(PNetCenter::e_PNCWorkMode _workMode, const char* playerName, const char* InternetAddress, const char* password)
-{
-	#ifndef _SINGLE_DEMO_
-		stopNetClient();
-		NetClient = new PNetCenter(_workMode, playerName, InternetAddress, password);
-	#endif
+void GameShell::createNetClient() {
+    destroyNetClient();
+    NetClient = new PNetCenter();
 }
 
-void GameShell::stopNetClient() {
+void GameShell::destroyNetClient() {
 	if (NetClient) {
 		delete NetClient;
-		NetClient = 0;
+		NetClient = nullptr;
 	}
 }
 
@@ -394,7 +416,6 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	setScriptReelEnabled(false);
 
-	defaultSaveName_ = "";
 	check_determinacy_quant(true);
 
 //	HTManager::instance()->GameClose();
@@ -403,14 +424,16 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
 		PlayerData* data = &CurrentMission.playersData[i];
-        std::string playerName = "";
+        std::string playerName;
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
-            playerName = currentSingleProfile.getCurrentProfile().name;
+            if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
+                playerName = currentSingleProfile.getCurrentProfile().name;
+            }
 		} else if (data->realPlayerType == REAL_PLAYER_TYPE_AI) {
             playerName = getBelligerentName(data->belligerent);
 		}
         if (!playerName.empty()) {
-            data->setName(playerName.c_str());
+            data->setName(playerName);
         }
 	}
 
@@ -441,7 +464,21 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	LoadProgressBlock(0.6f);
 	CurrentMission.packPlayerIDs();
-	new terUniverse(NetClient, CurrentMission, savePrm(), LoadProgressUpdate);
+	new terUniverse(NetClient, CurrentMission, LoadProgressUpdate);
+    universe()->universalLoad(CurrentMission, this->savePrm(), LoadProgressUpdate);
+    
+#ifdef PERIMETER_DEBUG
+    log_var(XRndGet());
+    log_var(logicRND.get());
+    log_var(xm_random_generator.get());
+    /*
+    uint32_t attrcrc = startCRC32;
+    attrcrc = getSerializationCRC<BinaryOArchive>(rigidBodyPrmLibrary(), attrcrc);
+    attrcrc = getSerializationCRC<BinaryOArchive>(attributeLibrary(), attrcrc);
+    attrcrc = getSerializationCRC<BinaryOArchive>(globalAttr(), attrcrc);
+    log_var(attrcrc);
+    */
+#endif
 
     int fogEnable = 1;
     IniManager("Perimeter.ini", false).getInt("Graphics", "FogEnable", fogEnable);
@@ -492,7 +529,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 	terScene->Compact();
 
 	universe()->relaxLoading();
-	universe()->setShouldIgnoreIntfCommands(CurrentMission.gameType_ == GT_playRellGame);
+	universe()->setShouldIgnoreIntfCommands(CurrentMission.gameType_ == GT_PLAY_RELL);
 
 	game_speed_to_resume = game_speed;
 
@@ -504,8 +541,9 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	startResourceDispatcher();
 
-	if(NetClient) 
-		NetClient->GameIsReady();
+	if (NetClient) {
+        NetClient->GameIsReady();
+    }
 
 	_shellIconManager.gameTypeChanged(currentSingleProfile.getLastGameType());
 
@@ -561,23 +599,33 @@ void GameShell::GameClose()
 	debugPrm_.save();
 }
 
-bool GameShell::universalSave(const char* name, bool userSave)
+bool GameShell::universalSave(const char* name, bool userSave, MissionDescription* missionOutput)
 {
 	MTAuto lock(HTManager::instance()->GetLockLogic());
 	MTAutoSkipAssert skip_assert;
 
-	MissionDescription mission(CurrentMission);
-	mission.setSaveName(name);
-	mission.missionNumber = currentSingleProfile.getCurrentMissionNumber();
-	if(userSave){
-		mission.globalTime = global_time();
-		mission.gameSpeed = game_speed ? game_speed : game_speed_to_resume;
-		mission.gamePaused = !gamePausedByMenu && !game_speed;
-	}
-
-	bool result = universe()->universalSave(mission, userSave);
-    if (result) {
+    MissionDescription* mission;
+    if (missionOutput) {
+        *missionOutput = MissionDescription(CurrentMission);
+        mission = missionOutput;
+    } else {
+        mission = new MissionDescription(CurrentMission);
+    }
+    mission->missionNumber = currentSingleProfile.getCurrentMissionNumber();
+    mission->gameContent = mission->missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
+    if(userSave){
+        mission->globalTime = global_time();
+        mission->gameSpeed = game_speed ? game_speed : game_speed_to_resume;
+        mission->gamePaused = !gamePausedByMenu && !game_speed;
+    }
+    mission->setSaveName(name ? name : "");
+    bool result = universe()->universalSave(*mission, userSave);
+    if (!mission->savePathKey().empty()) {
         scan_resource_paths(currentSingleProfile.getSavesDirectory());
+    }
+    if (!missionOutput) {
+        //Delete mission since it was temporary
+        delete mission;
     }
 	return result;
 }
@@ -654,7 +702,7 @@ void TestText()
 	terRenderDevice->SetFont(pFont);
 
 	float time=2.0f;
-	float phase=fmodf(clockf()*1e-3,time)/time;
+	float phase= xm::fmod(clockf() * 1e-3, static_cast<double>(time)) / time;
 
 	cTexture *pTexture0,*pTexture1;
 	pTexture0 = terVisGeneric->CreateTexture( "RESOURCE\\ICONS\\MAINMENU\\lightmap.tga" );
@@ -758,6 +806,7 @@ void GameShell::Show()
 
 		terRenderDevice->SetDrawTransform(terCamera->GetCamera());
 		if(debug_show_mode){
+            MTAuto lock(HTManager::instance()->GetLockLogic());
 			universe()->showDebugInfo();
 			show_dispatcher.draw();
 		}
@@ -890,20 +939,26 @@ void GameShell::EventHandler(SDL_Event& event) {
     if (reelManager.isVisible()) {
         if (reelAbortEnabled) {
             switch (event.type) {
-                case SDL_KEYDOWN:
-                    if (sKey(event.key.keysym, true).fullkey != VK_SPACE) {
-                        return;
+                case SDL_KEYUP: {
+                    int key = sKey(event.key.keysym, true).fullkey;
+                    if (key == VK_SPACE || key == VK_ESCAPE || key == VK_END) {
+                        reelManager.hide();
                     }
                     break;
-                case SDL_MOUSEBUTTONDOWN:
-                    if (event.button.button & (SDL_BUTTON_LMASK | SDL_BUTTON_MMASK)) {
+                }
+                case SDL_MOUSEBUTTONUP:
+                    if (event.button.button & (SDL_BUTTON_LMASK | SDL_BUTTON_MMASK | SDL_BUTTON_RMASK)) {
                         reelManager.hide();
                     }
                     break;
                 default:
-                    return;
+                    break;
             }
         }
+        if (!GameContinue) {
+            reelManager.hide();
+        }
+        return;
     }
 
 /*
@@ -914,6 +969,13 @@ void GameShell::EventHandler(SDL_Event& event) {
             break;
     }
 */
+    if (_shellIconManager.isInEditMode() != SDL_IsTextInputActive()) {
+        if (_shellIconManager.isInEditMode()) {
+            SDL_StartTextInput();
+        } else {
+            SDL_StopTextInput();
+        }
+    }
 
     sKey s;
     switch (event.type) {
@@ -989,22 +1051,34 @@ void GameShell::EventHandler(SDL_Event& event) {
             s = sKey(key.keysym, true);
             if (key.state == SDL_PRESSED) {
                 KeyPressed(s);
-            } else {
-                KeyUnpressed(s);
-                
-                //Simulate WM_CHAR
-                SDL_Keycode sym = key.keysym.sym;
-                if ((_bMenuMode || sym == SDLK_BACKSPACE) && _shellIconManager.isInEditMode()) {
-                    //TODO Hacky, check if there is better way
-                    if (sym <= 0xFF) {
-                        char c = static_cast<char>(sym & 0xFF);
-                        if (s.shift) {
-                            c = toupper(c);
-                        }
-                        _shellIconManager.OnChar(c);
+
+                //We need to send certain keys when editing as SDL_TEXTINPUT don't receive them
+                if (_shellIconManager.isInEditMode()) {
+                    switch (s.key) {
+                        case VK_BACK:
+                        case VK_RETURN:
+                            _shellIconManager.OnChar(static_cast<char>(s.key));
+                            break;
+                        default:
+                            break;
                     }
                 }
+            } else {
+                KeyUnpressed(s);
             }
+            break;
+        }
+        case SDL_TEXTINPUT: {
+            //NOTE: _shellIconManager.isInEditMode() is implicit here as SDL2 edit mode is changed accordingly
+            //printf("TI %s\n", event.text.text);
+            std::string key = convertToCodepage(event.text.text, getLocale());
+            if (!key.empty()) {
+                _shellIconManager.OnChar(key.front());
+            }
+            break;
+        }
+        case SDL_TEXTEDITING: {
+            //printf("TE %s S %d L %d\n", event.edit.text,  event.edit.start, event.edit.length);
             break;
         }
         case SDL_WINDOWEVENT: {
@@ -1053,6 +1127,18 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 	case VK_F9 | KBD_CTRL | KBD_SHIFT:
 		terCamera->erasePath();
 		break;
+    case 'C' | KBD_CTRL | KBD_SHIFT: {
+        MissionDescription md;
+        gameShell->universalSave(nullptr, true, &md);
+        universe()->universalLoad(md, this->savePrm(), nullptr);
+        break;
+    }
+    case 'V' | KBD_CTRL | KBD_SHIFT: {
+        MissionDescription md;
+        gameShell->universalSave(nullptr, true, &md);
+        HTManager::instance()->setMissionToStart(md);
+        break;
+    }
 	case VK_F9 | KBD_CTRL: {
 		if(!terCamera->isPlayingBack()){
 			const char* name = manualData().popupCameraSplineName();
@@ -1062,9 +1148,9 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 					terCamera->loadPath(*spline, false);
 			}
 			terCamera->startReplayPath(CAMERA_REPLAY_DURATION, 10);
-		}
-		else
+		} else {
 			terCamera->stopReplayPath();
+        }
 		break;
 		}
 	case VK_F9 | KBD_CTRL | KBD_MENU: {
@@ -1193,7 +1279,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 	case 'S':
 		if(!missionEditor()){
-			std::string name = CurrentMission.saveName();
+			std::string name = CurrentMission.savePathContent();
 			size_t pos = name.rfind(PATH_SEP);
 			if(pos != std::string::npos)
 				name.erase(0, pos + 1);
@@ -1203,23 +1289,22 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		break;
 
 	case 'S' | KBD_CTRL: {
-		std::string saveName = CurrentMission.saveName();
+		std::string saveName = CurrentMission.savePathContent();
 		std::string savesDir = UserSingleProfile::getAllSavesDirectory();
 		if(saveFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
-			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
+			size_t pos = saveName.rfind(convert_path_content("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			universalSave(saveName.c_str(), false);
-			defaultSaveName_ = saveName;
 		}
 		break;
 		}
 
 	case 'O' | KBD_CTRL: {
-		std::string saveName = CurrentMission.saveName();
+		std::string saveName = CurrentMission.savePathKey();
         std::string savesDir = UserSingleProfile::getAllSavesDirectory();
 		if(openFileDialog(saveName, missionEditor() ? MISSIONS_PATH : savesDir.c_str(), "spg", "Mission Name")){
-			size_t pos = saveName.rfind(convert_path_resource("RESOURCE") + PATH_SEP);
+			size_t pos = saveName.rfind(convert_path_content("RESOURCE") + PATH_SEP);
 			if(pos != std::string::npos)
 				saveName.erase(0, pos);
 			//Несколько кривой участок кода, не будет работать с HT
@@ -1244,7 +1329,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		break;
 	case 'X'|KBD_SHIFT:
 		universe()->activePlayer()->setAI(!universe()->activePlayer()->isAI());
-		break;
+        break;
 	case 'F':
 		terShowFPS ^= 1;
 //		gb_VisGeneric->SetShadowMapSelf4x4(terShowFPS);
@@ -1402,7 +1487,7 @@ void GameShell::KeyPressed(sKey& Key)
 		return;
 	}
 
-	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::LAN) {
+	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
 		if ( Key.fullkey == VK_INSERT ) {
@@ -1452,7 +1537,7 @@ void GameShell::KeyPressed(sKey& Key)
 	switch(Key.fullkey)
 	{
 		case VK_PAUSE:
-			if(!_shellIconManager.isCutSceneMode() && currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if(!_shellIconManager.isCutSceneMode() && currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				if(!isPaused())
 					pauseGame();
 				else
@@ -1512,17 +1597,17 @@ void GameShell::ControlPressed(int key)
 	switch(ctrl)
 	{
 		case CTRL_TIME_NORMAL:
-			if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				_shellIconManager.setNormalSpeed();
 			}
 			break;
 		case CTRL_TIME_DEC:
-			if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				_shellIconManager.decrSpeedStep();
 			}
 			break;
 		case CTRL_TIME_INC:
-			if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+			if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 				_shellIconManager.incrSpeedStep();
 			}
 			break;
@@ -1900,12 +1985,12 @@ void GameShell::ShotsScan()
 {
 	shotNumber_ = 0;
 
-    std::string path_str = convert_path(terScreenShotsPath);
-    create_directories(path_str.c_str());
+    std::string path_str = convert_path_native(terScreenShotsPath);
+    create_directories(path_str);
 
     std::vector<std::string> paths;
-    for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
-        std::string entry_path = entry.path().string();
+    for (const auto & entry : std::filesystem::directory_iterator(std::filesystem::u8path(path_str))) {
+        std::string entry_path = entry.path().u8string();
         if (endsWith(entry_path, terScreenShotExt)) {
             const char* p = strstr(entry_path.c_str(), terScreenShotName);
             if(p){
@@ -1924,9 +2009,10 @@ void GameShell::MakeShot()
 {
 	if(shotNumber_ == -1)
 		ShotsScan();
-	XBuffer fname(MAX_PATH);
-	fname < convert_path(terScreenShotsPath).c_str() < PATH_SEP < terScreenShotName <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
+	XBuffer fname;
+	fname <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
 	shotNumber_++;
+    std::string path = convert_path_native(terScreenShotsPath) + PATH_SEP + terScreenShotName + fname.address();
 	terRenderDevice->SetScreenShot(fname);
 }
 
@@ -1942,15 +2028,14 @@ void GameShell::startStopRecordMovie()
 		movieShotNumber_ = 0;
 		movieStartTime_ = frame_time();
 		
-        std::string path_str = convert_path(terMoviePath);
-        create_directories(path_str.c_str());
-
+        std::string path_str = convert_path_native(terMoviePath);
         if (path_str.empty()) return;
+        create_directories(path_str);
 
         int movieNumber = 0;
         std::vector<std::string> paths;
-        for (const auto & entry : std::filesystem::directory_iterator(path_str)) {
-            std::string entry_path = entry.path().string();
+        for (const auto & entry : std::filesystem::directory_iterator(std::filesystem::u8path(path_str))) {
+            std::string entry_path = entry.path().u8string();
             if (startsWith(entry_path, terMovieName)) {
 				const char* p = strstr(entry_path.c_str(), terMovieName);
 				if(p){
@@ -1967,7 +2052,7 @@ void GameShell::startStopRecordMovie()
 		XBuffer buffer;
 		buffer < path_str.c_str() < PATH_SEP < terMovieName <= movieNumber/10 % 10 <= movieNumber % 10;
 		movieName_ = buffer;
-        create_directories(movieName_.c_str());
+        create_directories(movieName_);
 	} 
 	else{
 		HTManager::instance()->setSyncroTimer(synchroByClock_, framePeriod_, terMaxTimeInterval);
@@ -1978,10 +2063,12 @@ void GameShell::startStopRecordMovie()
 
 void GameShell::makeMovieShot()
 {
-	XBuffer fname(MAX_PATH);
-	fname < movieName_.c_str() < PATH_SEP < terMovieFrameName <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
+	XBuffer fname;
+	fname <= movieShotNumber_/1000 % 10 <= movieShotNumber_/100 % 10 <= movieShotNumber_/10 % 10 <= movieShotNumber_ % 10 < terScreenShotExt;
+    shotNumber_++;
+    std::string path = movieName_ + PATH_SEP + terMovieFrameName + fname.address();
 	movieShotNumber_++;
-	terRenderDevice->SetScreenShot(fname);
+	terRenderDevice->SetScreenShot(path.c_str());
 
 	terRenderDevice->BeginScene();
 	terRenderDevice->SetFont(_pShellDispatcher->getFont());
@@ -2182,11 +2269,12 @@ void CShellLogicDispatcher::close()
 
 void CShellLogicDispatcher::RegionEndEdit()
 {
-	XBuffer buffer(5000, 1);
-	regionMetaDispatcher()->save(buffer);
-	universe()->activePlayer()->ChangeRegion(buffer);
+	XBuffer buffer(8192, true);
+    auto regionDispatcher = regionMetaDispatcher();
+    regionDispatcher->saveEditing(buffer);
+    universe()->activePlayer()->ChangeRegion(buffer);
 	buffer.set(0);
-	regionMetaDispatcher()->load(buffer);
+    regionDispatcher->loadEditing(buffer);
 }
 
 bool CShellLogicDispatcher::ShowTerraform() const
@@ -2212,7 +2300,8 @@ bool CShellLogicDispatcher::ShowTerraform() const
 void GameShell::initResourceDispatcher()
 {
 	synchroByClock_ = IniManager("Perimeter.ini").getInt("Timer","SynchroByClock");
-	framePeriod_ = 1000/IniManager("Perimeter.ini").getInt("Timer","StandartFrameRate");
+    int sfr = IniManager("Perimeter.ini").getInt("Timer","StandartFrameRate");
+	framePeriod_ = 1000/sfr;
 
 	check_command_line_parameter("synchro_by_clock", synchroByClock_);
 
@@ -2428,16 +2517,16 @@ void GameShell::updateResolution(bool change_depth, bool change_size, bool chang
 	}
 }
 
-void GameShell::playerDisconnected(std::string& playerName, bool disconnectOrExit) {
-	_shellIconManager.showHintDisconnect(playerName, 3000, disconnectOrExit);
+void GameShell::serverMessage(LocalizedText* text) {
+    _shellIconManager.showHintChat(text, 5000);
 }
 
-void GameShell::showReelModal(const char* binkFileName, const char* soundFileName, bool localized, bool stopBGMusic, int alpha) {
+void GameShell::showReelModal(const char* videoFileName, const char* soundFileName, bool localized, bool stopBGMusic, int alpha) {
 	std::string path;
 	if (localized) {
-		path = getLocDataPath() + std::string("Video\\") + binkFileName;
+		path = getLocDataPath() + std::string("Video\\") + videoFileName;
 	} else {
-		path = binkFileName;
+		path = videoFileName;
 	}
 	reelManager.showModal(path.c_str(), soundFileName, stopBGMusic, alpha);
 	if (stopBGMusic) {
@@ -2482,7 +2571,7 @@ void GameShell::prepareForInGameMenu() {
 	_shellCursorManager.ShowCursor();
 	_bMenuMode = 1;
 
-	if (currentSingleProfile.getLastGameType() != UserSingleProfile::LAN) {
+	if (currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER) {
 		pauseGame(true);
 	}
 }
@@ -2532,19 +2621,37 @@ void GameShell::preLoad() {
     historyScene.loadProgram("RESOURCE\\scenario.hst");
     bwScene.loadProgram("RESOURCE\\menu.hst");
 	std::string path = getLocDataPath() + "Text\\Texts.btdb";
-	#ifdef _FINAL_VERSION_
-		qdTextDB::instance().load(path.c_str(), nullptr );
-	#else
-		qdTextDB::instance().load(path.c_str(), "RESOURCE\\Texts_comments.btdb");
-	#endif
+#ifdef _FINAL_VERSION_
+    const char* comments_path = nullptr;
+#else
+    const char* comments_path = "RESOURCE\\Texts_comments.btdb";
+#endif
+    qdTextDB::instance().load(getLocale(), path.c_str(), comments_path, true, true, false);
 
     //Load texts, don't delete already loaded ones but replace existing ones
-    for (const auto& entry : get_resource_paths_directory(getLocDataPath() + "Text")) {
-        std::string name = std::filesystem::path(entry.first).filename().string();
-        strlwr(name.data());
+    for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
+        std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
+        std::string name = entry_path.filename().u8string();
+        name = string_to_lower(name.c_str());
         if (name == "texts.btdb") continue;
-        bool noreplace = name.rfind("_noreplace.") != std::string::npos;
-        qdTextDB::instance().load(entry.second.c_str(), nullptr, false, noreplace);
+        bool replace = name.rfind("_noreplace.") == std::string::npos;
+        bool txt = getExtension(name, true) == "txt";
+        qdTextDB::instance().load(getLocale(), entry->path_content.c_str(), nullptr, false, replace, txt);
+    }
+    
+    //Load the builtin texts that might not be provided by addons
+    qdTextDB::instance().load_supplementary_texts(getLocale());
+    
+    //Setup initial menu
+    const char* initial_menu_str = check_command_line("initial_menu");
+    if (initial_menu_str) {
+        std::string initial_menu = std::string("SQSH_MM_") + initial_menu_str + "_SCR";
+        int id = getEnumDescriptor(SQSH_MM_START_SCR).keyByName(initial_menu.c_str());
+        if (id < SQSH_MM_START_SCR || id >= SQSH_MM_SCREENS_MAX) {
+            fprintf(stderr, "Initial menu %s not found\n", initial_menu.c_str());
+        } else {
+            _shellIconManager.initialMenu = static_cast<ShellControlID>(id);
+        }
     }
 }
 
@@ -2577,16 +2684,17 @@ void GameShell::editParameters()
 	bool reloadParameters = false;
 	savePrm().manualData.zeroLayerHeight = vMap.hZeroPlast;
     
-	const char* header = "Заголовок миссии";
-	const char* mission = "Миссия";
-	const char* missionAll = "Миссия все данные";
+    bool russian = getLocale() == "russian";
+	const char* header = russian ? "Заголовок миссии" : "Mission header";
+	const char* mission = russian ? "Миссия" : "Mission";
+	const char* missionAll = russian ? "Миссия все данные" : "Mission all data";
 	const char* debugPrm = "Debug.prm";
-	const char* global = "Глобальные параметры";
-	const char* attribute = "Атрибуты";
-	const char* sounds = "Звуки";
-	const char* interface_ = "Интерфейс";
-	const char* physics = "Физические параметры";
-	const char* separator = "--------------";
+	const char* global = russian ? "Глобальные параметры" : "Global parameters";
+	const char* attribute = russian ? "Атрибуты" : "Attributes";
+	const char* sounds = russian ? "Звуки" : "Sounds";
+	const char* interface_ = russian ? "Интерфейс" : "Interface";
+	const char* physics = russian ? "Физические параметры" : "Physics parameters";
+    const char* separator = "--------------";
 
 	std::vector<const char*> items;
 	items.push_back(header);
@@ -2612,7 +2720,7 @@ void GameShell::editParameters()
 		}
 	}
 	else if(item == mission){
-		if(EditArchive().edit(savePrm().manualData, CurrentMission.saveName())){
+		if(EditArchive().edit(savePrm().manualData, CurrentMission.savePathContent().c_str())){
 			SavePrm data;
 			CurrentMission.loadMission(data);
 			data.manualData = manualData();
@@ -2620,7 +2728,7 @@ void GameShell::editParameters()
 		}
 	}
 	else if(item == missionAll){
-		if(EditArchive().edit(savePrm(), CurrentMission.saveName())){
+		if(EditArchive().edit(savePrm(), CurrentMission.savePathContent().c_str())){
 			SavePrm data = savePrm();
 			CurrentMission.saveMission(data, false);
 		}

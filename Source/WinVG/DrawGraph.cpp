@@ -35,8 +35,8 @@ void DrawGraph::Draw(DrawFunctor& f)
 	sColor4c color(255,255,255);
 	float fxmin=gb_IRenderDevice->GetSizeX()*wxmin;
 	float fxrange=gb_IRenderDevice->GetSizeX()*(wxmax-wxmin);
-	int ixmin=round(fxmin);
-	int ixmax=round(gb_IRenderDevice->GetSizeX()*wxmax);
+	int ixmin= xm::round(fxmin);
+	int ixmax= xm::round(gb_IRenderDevice->GetSizeX() * wxmax);
 
 	int xold=0,yold=0;
 	for(int ix=ixmin;ix<=ixmax;ix++)
@@ -48,7 +48,7 @@ void DrawGraph::Draw(DrawFunctor& f)
 		float fy=(y-ymin)/(ymax-ymin);
 		int iy;
 		fy=fy*(wymax-wymin)+wymin;
-		iy=round((1-fy)*gb_IRenderDevice->GetSizeY());
+		iy=xm::round((1-fy)*gb_IRenderDevice->GetSizeY());
 
 		if(ix>ixmin)
 			gb_IRenderDevice->DrawLine(xold,yold,ix,iy,color);

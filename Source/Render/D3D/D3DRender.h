@@ -12,8 +12,8 @@ enum
 	SAMPLERSTATE_MAX=14,
 };
 
-inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
-inline FLOAT DW2F( DWORD f ) { return *((FLOAT*)&f); }
+inline uint32_t F2DW( float f ) { return *((uint32_t*)&f); }
+inline float DW2F( uint32_t f ) { return *((float*)&f); }
 
 struct sSlotVB
 {
@@ -76,11 +76,11 @@ public:
 	virtual void UnlockIndexBuffer(sPtrIndexBuffer &ib);
 	virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true);
 	virtual int DeleteTexture(class cTexture *Texture);
-	void* LockTexture(class cTexture *Texture,int& Pitch);
-	void* LockTexture(class cTexture *Texture,int& Pitch,Vect2i lock_min,Vect2i lock_size);
+	void* LockTexture(class cTexture *Texture, int& Pitch);
+	void* LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size);
 	void UnlockTexture(class cTexture *Texture);
 
-	virtual int CreateCubeTexture(class cTexture *Texture,LPCSTR fname);
+	virtual int CreateCubeTexture(class cTexture *Texture, const char* fname);
 	virtual int CreateBumpTexture(class cTexture *Texture);
 
 	virtual void SetDrawNode(class cCamera *DrawNode);
@@ -93,7 +93,7 @@ public:
 	virtual void CreateFFDData(class FieldDispatcher *rd);
 	virtual void DeleteFFDData(class FieldDispatcher *rd);
 
-	virtual void Draw(class FieldDispatcher *rd,BYTE transparent);
+	virtual void Draw(class FieldDispatcher *rd, uint8_t transparent);
 
 	virtual void Draw(class ElasticSphere *es);
 
@@ -195,7 +195,7 @@ public:
 	void SetAnisotropic(bool enable);
 	bool GetAnisotropic();
 
-	bool PossibilityBump(){	return dtAdvanceOriginal!=NULL;}
+	bool hasAdvanceDrawType(){	return dtAdvanceOriginal != NULL;}
 
 	virtual void SetDialogBoxMode(bool enable);
 private:
@@ -221,7 +221,7 @@ public:
 
 	bool SetFocus(bool wait,bool focus_error=true);
 	int KillFocus();
-	LPDIRECT3DTEXTURE9 CreateSurface(int x,int y,eSurfaceFormat TextureFormat,int MipMap,bool enable_assert,DWORD attribute);
+	LPDIRECT3DTEXTURE9 CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute);
 
 	inline IDirect3DBaseTexture9* GetTexture(int dwStage)
 	{
@@ -249,7 +249,7 @@ public:
 		SetTexture(dwStage,Texture->GetDDSurface(nFrame));
 	}
 
-	inline void SetTexture(DWORD dwStage,IDirect3DBaseTexture9 *pTexture)
+	inline void SetTexture(uint32_t dwStage, IDirect3DBaseTexture9 *pTexture)
 	{
 		VISASSERT(dwStage<TEXTURE_MAX);
 		if(CurrentTexture[dwStage]!=pTexture)
@@ -272,7 +272,7 @@ public:
 		}
 	}
 
-	inline void SetFVF(DWORD handle)
+	inline void SetFVF(uint32_t handle)
 	{
 		xassert(handle);
 		if(handle!=CurrentFVF)
@@ -318,12 +318,12 @@ public:
 		}
 	}
 
-	FORCEINLINE DWORD GetTextureStageState(unsigned int Stage, D3DTEXTURESTAGESTATETYPE Type)
+	FORCEINLINE uint32_t GetTextureStageState(unsigned int Stage, D3DTEXTURESTAGESTATETYPE Type)
 	{
 		return ArrayTextureStageState[Stage][Type];
 	}
 
-	inline void SetSamplerState(DWORD Stage,D3DSAMPLERSTATETYPE Type,DWORD Value)
+	inline void SetSamplerState(uint32_t Stage, D3DSAMPLERSTATETYPE Type, uint32_t Value)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
 		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
@@ -334,7 +334,7 @@ public:
 		}
 	}
 
-	inline DWORD GetSamplerState(DWORD Stage,D3DSAMPLERSTATETYPE Type)
+	inline uint32_t GetSamplerState(uint32_t Stage, D3DSAMPLERSTATETYPE Type)
 	{
 		VISASSERT(Stage<TEXTURE_MAX);
 		VISASSERT(0<=Type && Type<SAMPLERSTATE_MAX);
@@ -365,7 +365,7 @@ public:
 		RDCALL(lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,0,OfsVertex,nVertex,3*nOfsPolygon,nPolygon));
 		NumberPolygon+=nPolygon;
 	}
-	inline void DrawPrimitiveUP(D3DPRIMITIVETYPE Type,UINT Count,void* pVertex,UINT Size)
+	inline void DrawPrimitiveUP(D3DPRIMITIVETYPE Type, uint32_t Count, void* pVertex, uint32_t Size)
 	{
 		RDCALL(lpD3DDevice->DrawPrimitiveUP(Type,Count,pVertex,Size));
 	}
@@ -408,7 +408,7 @@ public:
 
 	sPtrIndexBuffer& GetStandartIB(){return standart_ib;}
 
-	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, UINT SrcData)
+	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
 	{
 		LPDIRECT3DTEXTURE9 pTexture=NULL;
 		HRESULT hr=D3DXCreateTextureFromFileInMemory(lpD3DDevice,
@@ -434,16 +434,16 @@ protected:
 	IDirect3DIndexBuffer9 *		CurrentIndexBuffer;
 	IDirect3DVertexShader9 *	CurrentVertexShader;	// vertex shader
 	IDirect3DPixelShader9 *		CurrentPixelShader;
-	DWORD						CurrentFVF;
+	uint32_t						CurrentFVF;
 	int							CurrentCullMode;
 	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
 
 	cSlotManagerInit<sSlotVB>	LibVB;
 	cSlotManagerInit<sSlotIB>	LibIB;
 	
-	DWORD				ArrayRenderState[RENDERSTATE_MAX];
-	DWORD				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
-	DWORD				ArraytSamplerState[TEXTURE_MAX][SAMPLERSTATE_MAX];
+	uint32_t				ArrayRenderState[RENDERSTATE_MAX];
+	uint32_t				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
+	uint32_t				ArraytSamplerState[TEXTURE_MAX][SAMPLERSTATE_MAX];
 	
 	VertexPoolManager vertex_pool_manager;
 	IndexPoolManager index_pool_manager;
@@ -516,7 +516,7 @@ protected:
 
 FORCEINLINE int VectorToRGBA(Vect3f &v, int a=255)
 {
-    int r=round(127.0f*v.x)+128,g=round(127.0f*v.y)+128,b=round(127.0f*v.z)+128;
+    int r= xm::round(127.0f * v.x) + 128,g= xm::round(127.0f * v.y) + 128,b= xm::round(127.0f * v.z) + 128;
     return (a<<24)+(r<<16)+(g<<8)+(b<<0);
 }
 

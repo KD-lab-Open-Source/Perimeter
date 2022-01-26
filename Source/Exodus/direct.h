@@ -1,8 +1,0 @@
-#ifndef PERIMETER_DIRECT_H
-#define PERIMETER_DIRECT_H
-
-/**
- * TODO
- */
-
-#endif //PERIMETER_DIRECT_H

@@ -30,7 +30,7 @@ bool AITile::update(int x,int y)
 			unsigned short attr = attr_buffer[xx];
 			
 			if(!GRIDTST_TALLER_HZEROPLAST(attr) || (attr & GRIDAT_MASK_HARDNESS) == GRIDAT_MASK_HARDNESS)
-				dig_work += abs(h_buffer[xx] - hZeroPlast);
+				dig_work += xm::abs(h_buffer[xx] - hZeroPlast);
 			else
 				dig_less = true;
 
@@ -140,11 +140,11 @@ public:
 	//Предполагаемые затраты на продвижение из pos1 к окончанию
 	inline float GetH(Node* pos)
 	{
-		return sqrtf(sqr(pos->xcenter-end->xcenter)+
-					sqr(pos->ycenter-end->ycenter))*gmul;
+		return xm::sqrt(sqr(pos->xcenter - end->xcenter) +
+                        sqr(pos->ycenter - end->ycenter)) * gmul;
 	}
 
-	inline float operator()(BYTE walk_from,BYTE walk_to)
+	inline float operator()(uint8_t walk_from, uint8_t walk_to)
 	{
 		if((walk_from^walk_to)&ClusterFind::UP_MASK)
 			return gfield;
@@ -157,8 +157,8 @@ public:
 	{
 		float mul=(pos2->walk&ClusterFind::DOWN_MASK)+gmul;
 
-		float f=sqrtf(sqr(pos1->xcenter-pos2->xcenter)+
-					sqr(pos1->ycenter-pos2->ycenter))*mul;
+		float f= xm::sqrt(sqr(pos1->xcenter - pos2->xcenter) +
+                          sqr(pos1->ycenter - pos2->ycenter)) * mul;
 
 		if((pos1->walk^pos2->walk)&ClusterFind::UP_MASK)
 			f+=gfield;
@@ -182,7 +182,7 @@ public:
 			return 1000.0f;
 		return ClusterHeuristic::GetG(pos1,pos2);
 	}
-	inline float operator()(BYTE walk_from,BYTE walk_to)
+	inline float operator()(uint8_t walk_from, uint8_t walk_to)
 	{
 		if((walk_to & ClusterFind::DOWN_MASK) == heuristic_ditch)
 			return 1000.0f;
@@ -200,11 +200,11 @@ public:
 	//Предполагаемые затраты на продвижение из pos1 к окончанию
 	inline float GetH(Node* pos)
 	{
-		return sqrtf(sqr(pos->xcenter-end->xcenter)+
-					sqr(pos->ycenter-end->ycenter));
+		return xm::sqrt(sqr(pos->xcenter - end->xcenter) +
+                        sqr(pos->ycenter - end->ycenter));
 	}
 
-	inline float operator()(BYTE walk_from,BYTE walk_to)
+	inline float operator()(uint8_t walk_from, uint8_t walk_to)
 	{
 		return (walk_to&ClusterFind::DOWN_MASK)*10000.0f+1;
 	}
@@ -214,8 +214,8 @@ public:
 	{
 		float mul=(pos2->walk&ClusterFind::DOWN_MASK)*10000.0f+1;
 
-		float f=sqrtf(sqr(pos1->xcenter-pos2->xcenter)+
-					sqr(pos1->ycenter-pos2->ycenter))*mul;
+		float f= xm::sqrt(sqr(pos1->xcenter - pos2->xcenter) +
+                          sqr(pos1->ycenter - pos2->ycenter)) * mul;
 		return f;
 	}
 
@@ -250,7 +250,7 @@ bool AITileMap::findPath(const Vect2i& from_w, const Vect2i& to_w, std::vector<V
 	return b;
 }
 
-void AITileMap::rebuildWalkMap(BYTE* walk_map)
+void AITileMap::rebuildWalkMap(uint8_t* walk_map)
 {
 	int size = sizeY()*sizeX();
 	memset(walk_map,0,size);
@@ -367,22 +367,22 @@ void AITileMap::recalcPathFind()
 	}
 }
 
-void AITileMap::updateWalkMap(BYTE* walk_map)
+void AITileMap::updateWalkMap(uint8_t* walk_map)
 {
 	if(!pWalkMap)
 		pWalkMap=GetTexLibrary()->CreateTexture(sizeX(),sizeY(),false);
 	int Pitch;
-	BYTE* pBits=pWalkMap->LockTexture(Pitch);
-	BYTE mul=255/terrainPathFind.levelOfDetail;
+	uint8_t* pBits=pWalkMap->LockTexture(Pitch);
+	uint8_t mul= 255 / terrainPathFind.levelOfDetail;
 
 	for(int y=0;y<sizeY();y++)
 	{
 		sColor4c* p=(sColor4c*)pBits;
-		BYTE* pwalk=walk_map+y*sizeX();
+		uint8_t* pwalk= walk_map + y * sizeX();
 		for(int x=0;x<sizeX();x++,p++,pwalk++)
 		{
-			BYTE c=mul* *pwalk;
-			BYTE up=ClusterFind::UP_MASK & *pwalk;
+			uint8_t c= mul * *pwalk;
+			uint8_t up= ClusterFind::UP_MASK & *pwalk;
 			if(up)
 				p->set(0,255,0);
 			else
@@ -413,7 +413,7 @@ void AITileMap::drawWalkMap()
 
 void AITileMap::updateHardMap()
 {
-	BYTE* walk_map=path_hard_map->GetWalkMap();
+	uint8_t* walk_map=path_hard_map->GetWalkMap();
 	int size = sizeY()*sizeX();
 	for(int i = 0;i < size;i++)
 	{

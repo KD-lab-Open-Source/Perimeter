@@ -4,13 +4,14 @@
 #include "Scene.h"
 #include "Font.h"
 #include "../3dx/Lib3dx.h"
+#include "Localization.h"
 
 void Init3dxshader();
 void Done3dxshader();
 
 static void get_string(char*& str,char* s)
 {
-	while(*str && IsCharAlphaNumeric(*str))
+	while(*str && isalnum(*str))
 		*s++=*str++;
 
 	*s=0;
@@ -485,7 +486,7 @@ bool cVisGeneric::GetShowType(eShowType type)
 
 bool cVisGeneric::PossibilityBump()
 {
-	return gb_RenderDevice3D->PossibilityBump();
+	return gb_RenderDevice3D->hasAdvanceDrawType();
 }
 
 void cVisGeneric::SetEnableBump(bool enable)
@@ -640,12 +641,12 @@ cTexture* cVisGeneric::CreateTextureScreen()
 	hr=sys_surface->LockRect(&lock_in,NULL,0);
 	VISASSERT(SUCCEEDED(hr));
 	int out_pitch=0;
-	BYTE* out_data=pTextureBackground->LockTexture(out_pitch);
+	uint8_t* out_data=pTextureBackground->LockTexture(out_pitch);
 
 	for(int y=0;y<dy;y++)
 	{
-		BYTE* in=lock_in.Pitch*y+(BYTE*)lock_in.pBits;
-		BYTE* out=out_pitch*y+out_data;
+		uint8_t* in= lock_in.Pitch * y + (uint8_t*)lock_in.pBits;
+		uint8_t* out= out_pitch * y + out_data;
 		memcpy(out,in,dx*4);
 	}
 
@@ -681,7 +682,11 @@ void cVisGeneric::SetShadowMapSelf4x4(bool b4x4)
 
 bool cVisGeneric::PossibilityBumpChaos()
 {
+#ifdef __APPLE__
+    return false;
+#else
 	return gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP;
+#endif
 }
 
 
@@ -690,37 +695,37 @@ void cVisGeneric::SetFontRootDirectory(const char* dir)
 	font_root_directory=dir;
 }
 
-void cVisGeneric::SetFontDirectory(const char* dir)
-{
-	font_directory=dir;
-}
-
 void cVisGeneric::ReloadAllFont()
 {
 	MTG();
 	for(int i=0;i<fonts.size();i++)
 	{
-		fonts[i]->Reload(font_root_directory.c_str(),font_directory.c_str());
+		fonts[i]->Reload(font_root_directory.c_str());
 	}
 }
 
-cFont* cVisGeneric::CreateFont(const char *TextureFileName,int h,bool silentErr)
+cFont* cVisGeneric::CreateFont(const char* TextureFileName, int h, bool silentErr, std::string locale)
 {
-	if(TextureFileName==0||TextureFileName[0]==0) return NULL;
+	if(TextureFileName==nullptr||TextureFileName[0]==0) return nullptr;
+    
+    if (locale.empty()) {
+        locale = getLocale();
+    }
 
 	std::vector<cFontInternal*>::iterator it;
 	FOR_EACH(fonts,it)
 	{
 		cFontInternal* f=*it;
-		if(stricmp(f->font_name.c_str(),TextureFileName)==0 &&
-			f->GetStatementHeight()==h)
+		if(stricmp(f->font_name.c_str(),TextureFileName)==0
+        && f->locale==locale
+        && f->GetStatementHeight()==h)
 		{
 			return new cFont(f);
 		}
 	}
 
 	cFontInternal *UObj=new cFontInternal;
-	if(!UObj->Create(font_root_directory.c_str(),font_directory.c_str(),TextureFileName,h,silentErr))
+	if(!UObj->Create(font_root_directory,locale,TextureFileName,h,silentErr))
 	{
 		delete UObj;
 		return NULL;
@@ -740,7 +745,7 @@ cFont* cVisGeneric::CreateDebugFont()
 	for(int i=0;i<fonts.size();i++)
 	{
 		float h=fonts[i]->GetHeight();
-		float dh=fabsf(h-15);
+		float dh= xm::abs(h - 15);
 		if(dh<dhoptimal)
 		{
 			dhoptimal=dh;

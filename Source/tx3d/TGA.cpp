@@ -1,16 +1,9 @@
 #include "stdafxTX3D.h"
 #include "TGA.hpp"
-/*
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <io.h>
-#include <stdio.h>
-*/
 #include <cstring>
 #include "xutil.h"
+#include "files/files.h"
 
-#include <windows.h>
 #include <stdio.h>
 #include <fstream>
 
@@ -65,15 +58,14 @@ bool TGA::load(const char *fileName) {
 	memcpy(tmpPixels, pixels, width * height * bpp);
 //---------
 */
-    std::string filePath = convert_path_resource(fileName);
 #ifndef _SURMAP_
 	ZIPStream file;
 #else
 	XStream file(filePath, XS_IN);
 #endif
-	if (!file.open(filePath.c_str())) {
+	if (!file.open(fileName)) {
 		std::string errMsg("Error reading GeoTx TGA: ");
-		errMsg += filePath;
+		errMsg += fileName;
 		if(enable_load_assert)
 			xxassert(0, errMsg.c_str());
 		return false;
@@ -89,7 +81,7 @@ bool TGA::load(const char *fileName) {
 	width = hdr.width;
 	height = hdr.height;
 
-	unsigned long numBytes = width * height * bpp;
+    size_t numBytes = width * height * bpp;
 
 	pixels = new unsigned char[numBytes];
 	file.read(pixels, numBytes);
@@ -148,7 +140,7 @@ bool TGA::loadTest(const char *fileName) {
 	// Заголовок TGA фала
 	unsigned char Header[18];
 
-	FILE *File = fopen(convert_path_resource(fileName).c_str(), "rb");
+	FILE *File = fopen(convert_path_content(fileName).c_str(), "rb");
 	
     if (File == NULL) 
 	{

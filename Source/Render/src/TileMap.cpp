@@ -453,7 +453,7 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 
 	Vect3f fix=(box.max-box.min)*0.05f;
 /*
-	D3DXMatrixPerspectiveFovLH(&look_proj,M_PI/3,1, (box.min.z-fix.z),(box.max.z+fix.z));
+	D3DXMatrixPerspectiveFovLH(&look_proj,XM_PI/3,1, (box.min.z-fix.z),(box.max.z+fix.z));
 /*/
 	{
 		float zf=box.max.z+fix.z;
@@ -619,7 +619,7 @@ void cTileMap::AddFixedLightCamera(cCamera *DrawNode)
 
 void cTileMap::CalcZMinMax(int x_tile,int y_tile)
 {
-	BYTE zmin=255,zmax=0;
+	uint8_t zmin=255,zmax=0;
 /*
 	int dx=GetTileSize().x,dy=GetTileSize().y;
 	int xMap=dx*GetTileNumber().x;
@@ -650,7 +650,7 @@ void cTileMap::CalcZMinMax(int x_tile,int y_tile)
 		{
 			for(int x=x_start;x<x_end;x++)
 			{
-				BYTE z=terra->GetReductionZ(x,y);
+				uint8_t z=terra->GetReductionZ(x, y);
 				if(z<zmin)
 					zmin=z;
 				if(z>zmax)
@@ -735,8 +735,8 @@ void cTileMapBorderCall(void* data,Vect2f& p)
 {
 	cTileMap* tm=(cTileMap*)data;
 
-	int x= (int)round(p.x)>>TILEMAP_SHL;
-	int y= (int)round(p.y)>>TILEMAP_SHL;
+	int x= (int) xm::round(p.x) >> TILEMAP_SHL;
+	int y= (int) xm::round(p.y) >> TILEMAP_SHL;
 	//xassert(x>=0 && x<tm->TileNumber.x);
 	//xassert(y>=0 && y<tm->TileNumber.y);
 	sTile& tile=tm->GetTile(x,y);
@@ -818,7 +818,7 @@ Vect3f cTileMap::To3D(const Vect2f& pos)
 	p.x=pos.x;
 	p.y=pos.y;
 
-	int x = round(pos.x), y = round(pos.y);
+	int x = xm::round(pos.x), y = xm::round(pos.y);
 	if(x >= 0 && x < terra->SizeX() && y >= 0 && y < terra->SizeY())
 	{
 		p.z=terra->GetZ(x,y);
@@ -851,7 +851,7 @@ void cTileMap::DrawLines()
 		FOR_EACH(debug_rect,it)
 		{
 			DebugRect& r=*it;
-			sColor4c c(255,255,255,round(255*r.time/debug_fade_interval));
+			sColor4c c(255, 255, 255, xm::round(255 * r.time / debug_fade_interval));
 			Vect3f p0,p1,p2,p3;
 			p0=To3D(Vect2f(r.p1.x,r.p1.y));
 			p1=To3D(Vect2f(r.p2.x,r.p1.y));

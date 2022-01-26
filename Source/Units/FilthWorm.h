@@ -23,7 +23,7 @@ public:
 
 	void ChangePos(Vect3f pos);
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	void setAttack(bool a);
 	cLogicTile* end_tail;
@@ -51,7 +51,7 @@ public:
 	bool isMoveToChaos();
 	void SetFreeDestroy();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	void Move();
 	int attack_period;

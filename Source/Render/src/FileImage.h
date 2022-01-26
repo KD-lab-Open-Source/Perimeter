@@ -30,11 +30,11 @@ public:
 	inline int GetBitPerPixel()													{ return bpp; }
 	static void InitFileImage();
 	static void DoneFileImage();
-	static cFileImage* Create(const char *fname);
+	static cFileImage* Create(const std::string& fname);
 };
 class cAviScaleFileImage : public cFileImage
 {
-	UINT* dat;
+	uint32_t* dat;
 	int dx;
 	int dy;
 	int n_count;
@@ -63,10 +63,6 @@ extern void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,
 
 extern void GetFileName(const char *FullName,char *fname);				// возвращает имя файла, обрезает каталог
 extern void GetFilePath(const char *FullName,char *path);				// возвращает каталог
-extern void GetFileVirginName(const char *FullName,char *name);			// возвращает имя файла, обрезает каталог, удаляет расширение и номер в имени
-extern int CmpFileVirginName(const char *fname1,const char *fname2);	// сравнивает имена файлов, без учета номеров
-
-void SetExtension(const char *fnameOld,const char *extension,char *fnameNew);
 
 bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel);
 bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,int& byte_per_pixel);

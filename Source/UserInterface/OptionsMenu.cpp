@@ -23,6 +23,7 @@ extern BGScene bgScene;
 extern HistoryScene historyScene;
 extern HistoryScene bwScene;
 extern int terShowTips;
+extern int applicationRunBackground;
 
 extern std::string getItemTextFromBase(const char *keyStr);
 
@@ -37,7 +38,7 @@ void OnIngameGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int 
 		onPointLightCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_POINT_LIGHT_COMBO), EVENT_CREATEWND, -1);
 		onSamplesCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_SAMPLES_COMBO), EVENT_CREATEWND, -1);
 		onBumpCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_COMBO), EVENT_CREATEWND, -1);
-//		onBumpChaosCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_CHAOS_COMBO), EVENT_CREATEWND, -1);
+		onBumpChaosCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_BUMP_CHAOS_COMBO), EVENT_CREATEWND, -1);
 		onCompressCombo(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_COMPRESS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsFurrows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_FURROWS_COMBO), EVENT_CREATEWND, -1);
 		OnComboGraphicsShadows(_shellIconManager.GetWnd(SQSH_MM_GRAPHICS_SHADOWS_COMBO), EVENT_CREATEWND, -1);
@@ -96,12 +97,12 @@ void OnComboGraphicsResolution(CShellWindow* pWnd, InterfaceEventCode code, int 
                 if (0 <= res.display) {
                     const char* name = SDL_GetDisplayName(res.display);
                     if (name) {
-                        text += "\nScreen ";
+                        text += "\n" + getItemTextFromBase("Screen") + " ";
                         text += std::string(name).substr(0, 10);
                     }
                 }
                 if (!res.fullscreen) {
-                    text += "\nWindowed";
+                    text += "\n" + getItemTextFromBase("Windowed");
                 }
                 pCombo->Array.emplace_back(text);
                 if (res == current) {
@@ -116,6 +117,50 @@ void OnComboGraphicsResolution(CShellWindow* pWnd, InterfaceEventCode code, int 
         if (graphOptions.resolutions.empty()) return;
         graphOptions.resolution = graphOptions.resolutions[pCombo->pos];
 	}
+}
+
+void OnComboGraphicsUIAnchor(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    CComboWindow *pCombo = (CComboWindow*) pWnd;
+    if ( code == EVENT_CREATEWND ) {
+        if (param != -1) {
+            pCombo->Array.emplace_back(getItemTextFromBase("Centered"));
+            pCombo->Array.emplace_back(getItemTextFromBase("Left side"));
+            pCombo->Array.emplace_back(getItemTextFromBase("Right side"));
+            pCombo->Array.emplace_back(getItemTextFromBase("Stretched"));
+            pCombo->size = pCombo->Array.size();
+        }
+        pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().uiAnchor;
+    } else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
+        GraphOptionsManager::getInstance().getGraphicsOptions().uiAnchor = pCombo->pos;
+    }
+}
+
+void OnComboGraphicsInputGrab(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    CComboWindow *pCombo = (CComboWindow*) pWnd;
+    if ( code == EVENT_CREATEWND ) {
+        if (param != -1) {
+            pCombo->Array.emplace_back( getItemTextFromBase("Off").c_str() );
+            pCombo->Array.emplace_back( getItemTextFromBase("On").c_str() );
+            pCombo->size = pCombo->Array.size();
+        }
+        pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().grabInput ? 1 : 0;
+    } else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
+        GraphOptionsManager::getInstance().getGraphicsOptions().grabInput = pCombo->pos != 0;
+    }
+}
+
+void OnComboGraphicsFog(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    CComboWindow *pCombo = (CComboWindow*) pWnd;
+    if ( code == EVENT_CREATEWND ) {
+        if (param != -1) {
+            pCombo->Array.emplace_back( getItemTextFromBase("Off").c_str() );
+            pCombo->Array.emplace_back( getItemTextFromBase("On").c_str() );
+            pCombo->size = pCombo->Array.size();
+        }
+        pCombo->pos = GraphOptionsManager::getInstance().getGraphicsOptions().fogEnable ? 1 : 0;
+    } else if ( code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED ) {
+        GraphOptionsManager::getInstance().getGraphicsOptions().fogEnable = pCombo->pos != 0;
+    }
 }
 
 void OnComboGraphicsColorDepth(CShellWindow* pWnd, InterfaceEventCode code, int param)
@@ -441,11 +486,13 @@ void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	CSliderWindow *pSlider = (CSliderWindow*) pWnd;
 	if( code == EVENT_SLIDERUPDATE ) {
-		SNDSetVolume( terSoundVolume = pSlider->pos );
-		historyScene.setupAudio();
-		_shellIconManager.setupAudio();
+        terSoundVolume = pSlider->pos;
+    } else if ( code == EVENT_UNPRESSED ) {
+        SNDSetVolume( terSoundVolume = pSlider->pos );
+        historyScene.setupAudio();
+        _shellIconManager.setupAudio();
+        SND2DPlaySound("mainmenu_clock");
 	} else if ( code == EVENT_CREATEWND ) {
-		pSlider->sounded = true;
 		SNDSetVolume( pSlider->pos = terSoundVolume );
 		historyScene.setupAudio();
 		_shellIconManager.setupAudio();
@@ -472,25 +519,54 @@ void OnSliderAngleSens(CShellWindow* pWnd, InterfaceEventCode code, int param)
 }
 void OnSliderScrollRate(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
-	CSliderWindow *pSlider = (CSliderWindow*) pWnd;
+	CSliderWindow *pSlider = dynamic_cast<CSliderWindow*>(pWnd);
 	if( code == EVENT_SLIDERUPDATE )
 		CAMERA_SCROLL_SPEED_DELTA = 
 		CAMERA_BORDER_SCROLL_SPEED_DELTA = 1+pSlider->pos*19.f;
 	else if( code == EVENT_CREATEWND )
 		pSlider->pos = (CAMERA_SCROLL_SPEED_DELTA-1)/19.f;
 }
-void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param)
-{
-	CComboWindow *pCombo = (CComboWindow*) pWnd;
-	if( code == EVENT_CREATEWND )
-	{
+
+void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+	CComboWindow *pCombo = dynamic_cast<CComboWindow*>(pWnd);
+	if( code == EVENT_CREATEWND ) {
 		pCombo->pos = terShowTips;
-		pCombo->Array.push_back( getItemTextFromBase("Off").c_str() );
-		pCombo->Array.push_back( getItemTextFromBase("On").c_str() );
-		pCombo->size = 2;
-	}
-	else if( code == EVENT_UNPRESSED )
-		terShowTips = pCombo->pos;
+		pCombo->Array.emplace_back( getItemTextFromBase("Off").c_str() );
+		pCombo->Array.emplace_back( getItemTextFromBase("On").c_str() );
+		pCombo->size = pCombo->Array.size();
+	} else if( code == EVENT_UNPRESSED ) {
+        terShowTips = pCombo->pos;
+    }
+}
+
+/*
+void OnComboGameLanguage(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
+    if( code == EVENT_CREATEWND ) {
+        pCombo->pos = 0;
+        for (auto& locale : getLocales()) {
+            if (locale == getLocale()) {
+                pCombo->pos = static_cast<int>(pCombo->Array.size());
+            }
+            pCombo->Array.emplace_back(locale);
+        }
+        pCombo->size = pCombo->Array.size();
+    } else if( code == EVENT_UNPRESSED ) {
+        std::string lang = pCombo->Array[pCombo->pos];
+    }
+}
+*/
+
+void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    CComboWindow* pCombo = dynamic_cast<CComboWindow*>(pWnd);
+    if( code == EVENT_CREATEWND ) {
+        pCombo->pos = applicationRunBackground ? 1 : 0;
+        pCombo->Array.emplace_back( getItemTextFromBase("Off").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("On").c_str() );
+        pCombo->size = pCombo->Array.size();
+    } else if( code == EVENT_UNPRESSED ) {
+        applicationRunBackground = pCombo->pos;
+    }
 }
 
 //main menu options-----------------------

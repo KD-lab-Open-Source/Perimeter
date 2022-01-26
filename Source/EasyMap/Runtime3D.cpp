@@ -198,14 +198,14 @@ void Runtime3D::DrawFps(int x,int y)
 	fps.GetFPSminmax(fpsmin,fpsmax);
 
 	if(cur_fps>100.0f)
-		sprintf(str,"fps=%i",round(cur_fps));
+		sprintf(str, "fps=%i", xm::round(cur_fps));
 	else 
 	if(cur_fps>10.0f)
-		sprintf(str,"fps=%.1f",round(cur_fps*10)*0.1f);
+		sprintf(str, "fps=%.1f", xm::round(cur_fps * 10) * 0.1f);
 	else
-		sprintf(str,"fps=%.2f",round(cur_fps*100)*0.01f);
+		sprintf(str, "fps=%.2f", xm::round(cur_fps * 100) * 0.01f);
 
-	sprintf(str+strlen(str)," min=%.1f, max=%.1f",round(fpsmin*10)*0.1f,round(fpsmax*10)*0.1f);
+	sprintf(str+strlen(str), " min=%.1f, max=%.1f", xm::round(fpsmin * 10) * 0.1f, xm::round(fpsmax * 10) * 0.1f);
 
 	terRenderDevice->OutText(x,y,str,sColor4f(1,1,0,1));
 }

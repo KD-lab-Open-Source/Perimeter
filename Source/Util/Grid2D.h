@@ -65,7 +65,11 @@ class GridVector : public std::vector<T*>
 {
 public:
 	GridVector() { if(reserve_size) this->reserve(reserve_size); }
-	void insert(T* obj) { this->push_back(obj); obj->incrInsertion(); }
+	void insert(T* obj) {
+        xassert(obj != nullptr);
+        this->push_back(obj);
+        obj->incrInsertion();
+    }
 	void remove(T* obj)
     {  // Ищем для удаления в обратную сторону,
         // т.к. более подвижные объекты лежат в конце.
@@ -85,7 +89,11 @@ template<class T>
 class GridSingleList : public std::list<T*>
 {
 public:
-	void insert(T* obj) { this->push_front(obj); obj->incrInsertion(); }
+    void insert(T* obj) {
+        xassert(obj != nullptr);
+        this->push_front(obj);
+        obj->incrInsertion();
+    }
 	void remove(T* obj) { obj->decrInsertion(); std::list<T*>::remove(obj); }
 };
 
@@ -279,7 +287,7 @@ public:
 		if(!dx && !dy)
 			Cell(rect.x0,rect.y0,op);
 		else{
-			if(abs(dx) > abs(dy)){
+			if(xm::abs(dx) > xm::abs(dy)){
 				if(dx > 0){
 					max_step = dx;
 					dy = (dy << PRECISION) / max_step;
@@ -359,7 +367,7 @@ public:
 		if(!dx && !dy)
 			return ConditionCell(rect.x0,rect.y0,op);
 		else{
-			if(abs(dx) > abs(dy)){
+			if(xm::abs(dx) > xm::abs(dy)){
 				if(dx > 0){
 					max_step = dx;
 					dy = (dy << PRECISION) / max_step;

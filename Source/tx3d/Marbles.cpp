@@ -30,7 +30,7 @@ void MarbleSolidX::computeColor(Vector3D *destClr, const Vector3D &v, float nois
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= (( 1.0 + sqrt(0.5 * (cos(v.x + noise) + 1.0)) ) / 2.0);
+	*destClr *= (( 1.0 + xm::sqrt(0.5 * (xm::cos(v.x + noise) + 1.0)) ) / 2.0);
 	*destClr += bgColor;
 }
 
@@ -41,7 +41,7 @@ void MarbleRareX::computeColor(Vector3D *destClr, const Vector3D &v, float noise
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= (( 1.0 + cos(v.x + noise) ) / 2.0);
+	*destClr *= (( 1.0 + xm::cos(v.x + noise) ) / 2.0);
 	*destClr += bgColor;
 }
 
@@ -52,7 +52,7 @@ void MarbleChaosX::computeColor(Vector3D *destClr, const Vector3D &v, float nois
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= (( 1.0 + cos(3.1415926 * (v.x + noise)) ) / 2.0);
+	*destClr *= (( 1.0 + xm::cos(3.1415926 * (v.x + noise)) ) / 2.0);
 	*destClr += bgColor;
 }
 
@@ -63,7 +63,7 @@ void MarbleChaos::computeColor(Vector3D *destClr, const Vector3D &v, float noise
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= (( 1.0 + sin(3.1415926 * noise) ) / 2.0);
+	*destClr *= (( 1.0 + xm::sin(3.1415926 * noise) ) / 2.0);
 	*destClr += bgColor;
 }
 
@@ -74,7 +74,7 @@ void MarbleLeopard::computeColor(Vector3D *destClr, const Vector3D &v, float noi
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= ((1.0 + 0.5 * cos(5.0 * noise)) / 2.0);
+	*destClr *= ((1.0 + 0.5 * xm::cos(5.0 * noise)) / 2.0);
 	*destClr += bgColor;
 }
 
@@ -85,7 +85,7 @@ void MarbleSolidY::computeColor(Vector3D *destClr, const Vector3D &v, float nois
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= (( 1.0 + sqrt(0.5 * (cos(v.y + noise) + 1.0)) ) / 2.0);
+	*destClr *= (( 1.0 + xm::sqrt(0.5 * (xm::cos(v.y + noise) + 1.0)) ) / 2.0);
 	*destClr += bgColor;
 }
 
@@ -96,7 +96,7 @@ void MarbleRareY::computeColor(Vector3D *destClr, const Vector3D &v, float noise
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= (( 1.0 + cos(v.y + noise) ) / 2.0);
+	*destClr *= (( 1.0 + xm::cos(v.y + noise) ) / 2.0);
 	*destClr += bgColor;
 }
 
@@ -107,7 +107,7 @@ void MarbleChaosY::computeColor(Vector3D *destClr, const Vector3D &v, float nois
 		noise = -1.0;
 	}
 	*destClr = diffColor; 
-	*destClr *= (( 1.0 + cos(3.1415926 * (v.y + noise)) ) / 2.0);
+	*destClr *= (( 1.0 + xm::cos(3.1415926 * (v.y + noise)) ) / 2.0);
 	*destClr += bgColor;
 }
 

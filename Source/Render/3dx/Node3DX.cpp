@@ -111,7 +111,7 @@ void cObject3dx::UpdateMatrix()
 	Mat3f& r=nodes[0].pos.rot();
 /*
 	//Mat3f correct;
-	//correct.set(M_PI/2,X_AXIS);
+	//correct.set(XM_PI/2,X_AXIS);
 	//r=correct*r;
 	//r*=scale;
 	//fix
@@ -802,7 +802,7 @@ void cObject3dx::SetUserTransform(int nodeindex,const MatXf& pos)
 	cNode3dx& s=nodes[nodeindex];
 	if(s.IsAdditionalTransform())
 	{
-		BYTE add_index=s.additional_transform;
+		uint8_t add_index=s.additional_transform;
 		xassert(add_index<additional_transformations.size());
 		additional_transformations[add_index].mat=pos;
 	}else
@@ -1026,7 +1026,7 @@ bool IntersectSphere(const MatXf& pos,float radius,const Vect3f& p0,const Vect3f
 	float B=d.x*l.x+d.y*l.y+d.z*l.z;
 	float det=B*B-A*C;
 	if(det<0)return false;
-	det=sqrtf(det);
+	det= xm::sqrt(det);
 	float t1=(-B+det)/A;
 	float t2=(-B-det)/A;
 	if((t1>1||t1<0)&&(t2>1||t2<0)) return false;

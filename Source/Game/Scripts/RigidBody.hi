@@ -52,8 +52,8 @@ struct HarmonicOscillator {
 		float phase = omega*t;
 		float f = 0;
 		for(int i = 0; i < N; i++)
-			f += A[i]*sin(phase*(i + 1));
-		return f*exp(-t*decay)*amplitude; 
+			f += A[i]*xm::sin(phase*(i + 1));
+		return f*xm::exp(-t*decay)*amplitude; 
 	}
 };
 #pragma pack( pop, __XScript_struct_pack__)

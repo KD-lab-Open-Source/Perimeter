@@ -1,15 +1,17 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include "P2P_interface.h"
 
-
+extern SDL_threadID net_thread_id;
 
 //Запускается из 1 2 3-го потока
 //Может вызываться с фдагом waitExecution только из одного потока (сейчас 1-го)
+//Runs from 1 2 3rd thread
+//Can be called with the waitExecution flag from only one thread (now the 1st one) 
 bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution)
 {
 	if( WaitForSingleObject(hSecondThread, 0) == WAIT_OBJECT_0) {
-		return 0;
+		return false;
 	}
 
 	if(waitExecution) ResetEvent(hCommandExecuted);
@@ -17,58 +19,61 @@ bool PNetCenter::ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecut
 	{
 		internalCommandList.push_back(ic);
 	}
-	if(waitExecution){
+	if (waitExecution) {
+#ifdef PERIMETER_DEBUG
+        //Ensure is not being called from net thread since it will deadlock
+        xassert(net_thread_id != SDL_ThreadID() && "Waiting execution from net thread!");
+#endif
+        
 		//if(WaitForSingleObject(hCommandExecuted, INFINITE) != WAIT_OBJECT_0) xassert(0&&"Error execute command");
 		const unsigned char ha_size=2;
 		HANDLE ha[ha_size];
 		ha[0]=hSecondThread;
 		ha[1]=hCommandExecuted;
-		DWORD result=WaitForMultipleObjects(ha_size, ha, FALSE, INFINITE);
+		uint32_t result=WaitForMultipleObjects(ha_size, ha, false, INFINITE);
 		if(result<WAIT_OBJECT_0 || result>= (WAIT_OBJECT_0+ha_size)) {
 			xassert(0&&"Error execute command");
 		}
 	}
-	return 1;
+	return true;
 }
 
 
 
 //Запускается из 2 3-го потока
-int PNetCenter::AddClient(PlayerData& pd, const DPNID dpnid, const char* descr)
+int PNetCenter::AddClient(PlayerData& pd)
 {
 	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
-
+    
+    MissionDescription& mission = *hostMissionDescription;
 	int idxPlayerData=-1;
-	if(hostMissionDescription.gameType_==GT_createMPGame){
-		idxPlayerData=hostMissionDescription.connectNewPlayer2PlayersData(pd, dpnid);
+	if (mission.gameType_ == GT_MULTI_PLAYER_CREATE) {
+		idxPlayerData=mission.connectNewPlayer2PlayersData(pd);
+	} else if(mission.gameType_ == GT_MULTI_PLAYER_LOAD) {
+		idxPlayerData=mission.connectLoadPlayer2PlayersData(pd);
 	}
-	else if(hostMissionDescription.gameType_==GT_loadMPGame){
-		idxPlayerData=hostMissionDescription.connectLoadPlayer2PlayersData(pd, dpnid);
-	}
-	hostMissionDescription.setChanged();
-	if(idxPlayerData!=-1){
-		//missionDescription.playersData[idxPlayerData].dpnid=dpnid;
+	
+    mission.setChanged();
+    
+	if (0 <= idxPlayerData) {
+		//missionDescription.playersData[idxPlayerData].netid=netid;
 		//missionDescription.playersData[idxPlayerData].flag_playerStartReady=1;
 
-		PClientData* pCD=new PClientData(idxPlayerData, dpnid, descr);
+		PClientData* pCD=new PClientData(pd.name(), pd.netid);
 		pCD->backGameInf2List.reserve(20000);//резерв под 20000 квантов
 		m_clients.push_back(pCD);
 
-		///m_pConnection->AddPlayerToGroup(m_dpnidGroupGame, dpnid);
+		LogMsg("New client %d %s for game %s\n", idxPlayerData, pd.name(), m_GameName.c_str());
 
-		LogMsg("New client 0x%X(%s) for game %s\n", dpnid, descr, m_GameName.c_str());
-
-//		netCommand4C_JoinResponse ncjr(dpnid, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/, NCJRR_OK);
-//		SendEvent(ncjr, dpnid);
+//		netCommand4C_JoinResponse ncjr(netid, NETID_ALL_PLAYERS_GROUP/*m_netidGroupGame*/, NCJRR_OK);
+//		SendEvent(ncjr, netid);
 		return idxPlayerData;
-	}
-	else {
-		LogMsg("client 0x%X(%s) for game %s id denied\n", dpnid, descr, m_GameName.c_str());
+	} else {
+		LogMsg("Client %s for game %s id denied\n", pd.name(), m_GameName.c_str());
 		return -1;
 	}
 
 }
-
 //Запускается из 1-го(деструктор) и 2-го потока
 void PNetCenter::ClearClients()
 {
@@ -78,44 +83,31 @@ void PNetCenter::ClearClients()
 	m_clients.clear();
 }
 
-//Запускается из 1 и 2-го потока
-void PNetCenter::clearInternalFoundHostList(void) 
-{
-#ifndef PERIMETER_EXODUS
-	CAutoLock _lock(m_GeneralLock); //В этой функции в некоторых вызовах будет вложенный
-	std::vector<INTERNAL_HOST_ENUM_INFO*>::iterator p;
-	for(p=internalFoundHostList.begin(); p!=internalFoundHostList.end(); p++){
-		delete *p;
-	}
-	internalFoundHostList.erase(internalFoundHostList.begin(), internalFoundHostList.end());
-#endif
-}
-
-
 //Запускается из 2 и 3-го потока
 /// !!! педается указатель !!! удаление происходит автоматом после осылки !!!
-void PNetCenter::PutGameCommand2Queue_andAutoDelete(netCommandGame* pCommand)
+void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame* pCommand)
 {
+    //Ensure command is from correct sender
+    if (pCommand->EventID != NETCOM_4G_ID_FORCED_DEFEAT) {
+        unsigned int i = pCommand->PlayerID_;
+        if (i < 0 || i >= hostMissionDescription->playerAmountScenarioMax
+            || hostMissionDescription->playersData[i].netid != netid) {
+            LogMsg("Discarding game command from incorrect netid %llu to player %d\n", netid, i);
+            delete pCommand;
+            return;
+        }
+    }
+    
 	pCommand->setCurCommandQuantAndCounter(m_numberGameQuant, hostGeneralCommandCounter);
 	m_CommandList.push_back(pCommand);
 	hostGeneralCommandCounter++;
 	m_nQuantCommandCounter++;
 }
 
-void PNetCenter::ClearDeletePlayerGameCommand()
-{
-	std::list<netCommand4G_ForcedDefeat*>::iterator p;
-	for(p=m_DeletePlayerCommand.begin(); p!=m_DeletePlayerCommand.end(); p++){
-		delete *p;
-	}
-	m_DeletePlayerCommand.clear();
-}
-
-
-bool PNetCenter::ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, const char* str)
+bool PNetCenter::ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_ptr<LocalizedText> text)
 {
 	{
-		interfaceCommandList.push_back(sPNCInterfaceCommand(ic, str));
+		interfaceCommandList.push_back(new sPNCInterfaceCommand(ic, std::move(text)));
 	}
 	return 1;
 }

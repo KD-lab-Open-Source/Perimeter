@@ -93,7 +93,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd)
 	SetRenderState(D3DRS_CULLMODE, cull );
 }
 
-void cD3DRender::Draw(FieldDispatcher *ffd,BYTE transparent)
+void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 {
 //	start_timer_auto(Draw_ForceField,1);
 
@@ -117,9 +117,9 @@ void cD3DRender::Draw(FieldDispatcher *ffd,BYTE transparent)
 	LPDIRECT3DVERTEXBUFFER9 vb=pfd->vb.ptr->p;
 	SetStreamSource(pfd->vb);
 
-	DWORD AlphaTest = GetRenderState(D3DRS_ALPHATESTENABLE);
-	DWORD AlphaRef = GetRenderState(D3DRS_ALPHAREF);
-	DWORD zwrite = GetRenderState(D3DRS_ZWRITEENABLE);
+	uint32_t AlphaTest = GetRenderState(D3DRS_ALPHATESTENABLE);
+	uint32_t AlphaRef = GetRenderState(D3DRS_ALPHAREF);
+	uint32_t zwrite = GetRenderState(D3DRS_ZWRITEENABLE);
 	
 	if(transparent==FieldCluster::TT_TRANSPARENT_ADD){
 		SetRenderState(D3DRS_ZWRITEENABLE,FALSE);

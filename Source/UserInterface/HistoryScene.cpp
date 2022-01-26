@@ -5,6 +5,7 @@
 #include "GameShellSq.h"
 #include "qd_textdb.h"
 #include "tx3d.hpp"
+#include "Localization.h"
 
 extern GameShell* gameShell;
 extern cInterfaceRenderDevice* terRenderDevice;
@@ -13,7 +14,7 @@ extern HWND hWndVisGeneric;
 extern int terSoundEnable;
 extern float terSoundVolume;
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 
 HistoryScene::HistoryScene() {
 	scene = 0;
@@ -436,7 +437,8 @@ void HistoryScene::drawPopup() {
 	Vect2f mousePos = historyCamera->getMousePos();
 	World* w = traceWorld(mousePos);
 
-	POINT pt = { round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()), round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
+	POINT pt = {xm::round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()),
+                xm::round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
 
 	//TODO is this needed to port?
 	//ClientToScreen(hWndVisGeneric, &pt);
@@ -524,10 +526,10 @@ void HistoryScene::draw() {
 
 //		terRenderDevice->OutText(0,0,historyCamera->log.c_str(),sColor4f(1,1,1,1));
 		terRenderDevice->OutText(
-			round(BRIEFING_LOG_X * terRenderDevice->GetSizeX()),
-			round(BRIEFING_LOG_Y * terRenderDevice->GetSizeY()),
-			interpreter->log.c_str(),
-			sColor4f(1, 1, 1, BRIEFING_LOG_ALPHA) );
+                xm::round(BRIEFING_LOG_X * terRenderDevice->GetSizeX()),
+                xm::round(BRIEFING_LOG_Y * terRenderDevice->GetSizeY()),
+                interpreter->log.c_str(),
+                sColor4f(1, 1, 1, BRIEFING_LOG_ALPHA) );
 		terRenderDevice->SetFont( NULL );
 	}
 }
@@ -540,7 +542,7 @@ void HistoryScene::setupAudio() {
 	if (!terSoundEnable) {
 		stopAudio();
 	}
-	voice.SetVolume( round(255 * terSoundVolume) );
+	voice.SetVolume(terSoundVolume);
 }
 
 void HistoryScene::startAudio(const string& name) {
@@ -550,8 +552,10 @@ void HistoryScene::startAudio(const string& name) {
 		if (terSoundEnable) {
 			playingVoice = true;
 			int ret = voice.OpenToPlay((getLocDataPath() + name).c_str(), 0);
-			xassert(ret);
-			voice.SetVolume( round(255 * terSoundVolume) );
+			if (!ret) {
+                fprintf(stderr, "startAudio %s error\n", name.c_str());
+            }
+			voice.SetVolume(terSoundVolume);
 		}
 	}
 
@@ -732,7 +736,7 @@ void HistoryScene::updateNomadMarker(const Vect3f& cameraPos, float dt) {
 			nomadMarker->SetColor( 0, &color );
 		}
 		timer += dt;
-		nomadMarker->SetPhase(fmod(timer, NOMAD_MARKER_PERIOD) / NOMAD_MARKER_PERIOD, true);
+		nomadMarker->SetPhase(xm::fmod(timer, NOMAD_MARKER_PERIOD) / NOMAD_MARKER_PERIOD, true);
 	} else {
 		nomadMarker->SetAttr(ATTRUNKOBJ_IGNORE);
 	}
@@ -793,5 +797,9 @@ void HistoryScene::setNormalSpeedMode(bool normal) {
 	getController()->setNormalSpeedMode(normal);
 }
 void HistoryScene::playMusic() {
-	PlayMusic(("RESOURCE\\MUSIC\\" + musicNamePath).c_str());
+    if (musicNamePath.empty()) {
+        gb_Music.Stop();
+    } else {
+        PlayMusic(("RESOURCE\\MUSIC\\" + musicNamePath).c_str());
+    }
 }

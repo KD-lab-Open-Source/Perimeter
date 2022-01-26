@@ -1,7 +1,6 @@
 #ifndef __UMATH_H__
 #define __UMATH_H__
 
-#include <math.h>
 #include "xmath.h"
 
 #define ABS(a)										((a) >= 0 ? (a) :-(a))
@@ -13,24 +12,26 @@ struct sVect3c
 	sVect3c()										{ }
 	sVect3c(int _x,int _y,int _z)						{ x=_x; y=_y; z=_z; }
 	sVect3c(sVect3c &v)								{ x=v.x; y=v.y; z=v.z; }
-	sVect3c(Vect3f& v)								{ x=round(v.x); y=round(v.y); z=round(v.z); }
+	sVect3c(Vect3f& v)								{ x=xm::round(v.x); y=xm::round(v.y); z=xm::round(v.z); }
 
-	inline int norm()								{ return round(sqrtf((float)(x*x+y*y+z*z))); }
+	inline int norm()								{ return xm::round(xm::sqrt((float) (x * x + y * y + z * z))); }
 	inline int norm2()								{ return x*x+y*y+z*z; }
-	inline int distance(const sVect3c &v)			{ int dx=v.x-x,dy=v.y-y,dz=v.z-z; return round(sqrtf((float)(dx*dx+dy*dy+dz*dz))); }
-	inline void normalize(int norma)					{ float f=(float)norma/(float)sqrtf((float)(x*x+y*y+z*z)); x=round(x*f); y=round(y*f); z=round(z*f); }
+	inline int distance(const sVect3c &v)			{ int dx=v.x-x,dy=v.y-y,dz=v.z-z; return xm::round(
+                xm::sqrt((float) (dx * dx + dy * dy + dz * dz))); }
+	inline void normalize(int norma)					{ float f=(float)norma/(float) xm::sqrt(
+                (float) (x * x + y * y + z * z)); x=xm::round(x * f); y=xm::round(y * f); z=xm::round(z * f); }
 	inline void set(int x,int y,int z)				{ sVect3c::x=x; sVect3c::y=y; sVect3c::z=z; }
 	inline sVect3c& operator += (const sVect3c& v)	{ x+=v.x; y+=v.y; z+=v.z; return *this; }
 	inline sVect3c& operator -= (const sVect3c& v)	{ x-=v.x; y-=v.y; z-=v.z; return *this; }
 	inline sVect3c& operator *= (const sVect3c& v)	{ x*=v.x; y*=v.y; z*=v.z; return *this; }
-	inline sVect3c& operator *= (float f)			{ x=round(x*f); y=round(y*f); z=round(z*f); return *this; }
-	inline sVect3c& operator /= (float f)			{ if(f!=0.f) f=1/f; else f=0.0001f; x=round(x*f); y=round(y*f); z=round(z*f); return *this; }
+	inline sVect3c& operator *= (float f)			{ x=xm::round(x*f); y=xm::round(y*f); z=xm::round(z*f); return *this; }
+	inline sVect3c& operator /= (float f)			{ if(f!=0.f) f=1/f; else f=0.0001f; x=xm::round(x*f); y=xm::round(y*f); z=xm::round(z*f); return *this; }
 	inline sVect3c& operator = (const sVect3c& v)	{ x=v.x; y=v.y; z=v.z; return *this; }
 	inline sVect3c operator - (const sVect3c &v)	{ sVect3c tmp(x-v.x,y-v.y,z-v.z); return tmp; }
 	inline sVect3c operator + (const sVect3c &v)	{ sVect3c tmp(x+v.x,y+v.y,z+v.z); return tmp; }
 	inline sVect3c operator * (const sVect3c &v)	{ sVect3c tmp(x*v.x,y*v.y,z*v.z); return tmp; }
-	inline sVect3c operator * (float f)				{ sVect3c tmp(round(x*f),round(y*f),round(z*f)); return tmp; }
-	inline sVect3c operator / (float f)				{ if(f!=0.f) f=1/f; else f=0.0001f; sVect3c tmp(round(x*f),round(y*f),round(z*f)); return tmp; }
+	inline sVect3c operator * (float f)				{ sVect3c tmp(xm::round(x*f),xm::round(y*f),xm::round(z*f)); return tmp; }
+	inline sVect3c operator / (float f)				{ if(f!=0.f) f=1/f; else f=0.0001f; sVect3c tmp(xm::round(x*f),xm::round(y*f),xm::round(z*f)); return tmp; }
 	inline int operator == (const sVect3c& v)		{ return ((x==v.x)&&(y==v.y)&&(z==v.z)); }
 	inline operator float* () const					{ return (float*)this; }
 };
@@ -55,13 +56,13 @@ struct sColor4f
 	inline sColor4f	operator * (const sColor4f &color) const	{ sColor4f tmp(r*color.r,g*color.g,b*color.b,a*color.a); return tmp; }
 	inline sColor4f	operator * (float f) const 		{ sColor4f tmp(r*f,g*f,b*f,a*f); return tmp; }
 	inline sColor4f	operator / (float f) const 		{ if(f!=0.f) f=1/f; else f=0.001f; sColor4f tmp(r*f,g*f,b*f,a*f); return tmp; }
-	inline int GetR() const 						{ return (int)round(255*r); }
-	inline int GetG() const 						{ return (int)round(255*g); }
-	inline int GetB() const 						{ return (int)round(255*b); }
-	inline int GetA() const 						{ return (int)round(255*a); }
-	inline DWORD RGBA() const 						{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b) | ((int)round(255*a) << 24); }
-	inline DWORD GetRGB() const 					{ return ((int)round(255*r) << 16) | ((int)round(255*g) << 8) | (int)round(255*b); }
-	inline DWORD RGBGDI() const 					{ return (int)round(255*r) | ((int)round(255*g) << 8) | ((int)round(255*b) << 16); }
+	inline int GetR() const 						{ return (int)xm::round(255*r); }
+	inline int GetG() const 						{ return (int)xm::round(255*g); }
+	inline int GetB() const 						{ return (int)xm::round(255*b); }
+	inline int GetA() const 						{ return (int)xm::round(255*a); }
+	inline uint32_t RGBA() const 						{ return ((int)xm::round(255*r) << 16) | ((int)xm::round(255*g) << 8) | (int)xm::round(255*b) | ((int)xm::round(255*a) << 24); }
+	inline uint32_t GetRGB() const 					{ return ((int)xm::round(255*r) << 16) | ((int)xm::round(255*g) << 8) | (int)xm::round(255*b); }
+	inline uint32_t RGBGDI() const 					{ return (int)xm::round(255*r) | ((int)xm::round(255*g) << 8) | ((int)xm::round(255*b) << 16); }
 	inline void interpolate(const sColor4f &u,const sColor4f &v,float f) { r=u.r+(v.r-u.r)*f; g=u.g+(v.g-u.g)*f; b=u.b+(v.b-u.b)*f; a=u.a+(v.a-u.a)*f; }
 	inline void interpolate3(const sColor4f &u,const sColor4f &v,float f) { r=u.r+(v.r-u.r)*f; g=u.g+(v.g-u.g)*f; b=u.b+(v.b-u.b)*f; }
 	inline bool operator == (const sColor4f &color) const { return (r == color.r) && (g == color.g) && (b == color.b) && (a == color.a); }
@@ -81,18 +82,18 @@ struct sColor4c
 	inline void set(int rc,int gc,int bc)			{ r=rc; g=gc; b=bc; a=255; }
 	inline void set(int rc,int gc,int bc,int ac)	{ r=rc; g=gc; b=bc; a=ac; }
 	inline void set(const sColor4f& color)			{ set(color.GetR(),color.GetG(),color.GetB(),color.GetA()); }
-	inline sColor4c& operator *= (float f)			{ r=round(r*f); g=round(g*f); b=round(b*f); a=round(a*f); return *this; }
+	inline sColor4c& operator *= (float f)			{ r=xm::round(r*f); g=xm::round(g*f); b=xm::round(b*f); a=xm::round(a*f); return *this; }
 	inline sColor4c& operator += (sColor4c &p)		{ r+=p.r; g+=p.g; b+=p.b; a+=p.a; return *this; }
 	inline sColor4c& operator -= (sColor4c &p)		{ r-=p.r; g-=p.g; b-=p.b; a-=p.a; return *this; }
 	inline sColor4c operator + (sColor4c &p)		{ return sColor4c(r+p.r,g+p.g,b+p.b,a+p.a); }
 	inline sColor4c operator - (sColor4c &p)		{ return sColor4c(r-p.r,g-p.g,b-p.b,a-p.a); }
 	inline sColor4c operator * (int f) const 		{ return sColor4c(r*f,g*f,b*f,a*f); }
 	inline sColor4c operator / (int f) const 		{ if(f!=0) f=(1<<16)/f; else f=1<<16; return sColor4c((r*f)>>16,(g*f)>>16,(b*f)>>16,(a*f)>>16); }
-	inline DWORD  RGBA() const 						{ return ((const DWORD*)this)[0]; }
-	inline DWORD& RGBA()							{ return ((DWORD*)this)[0]; }
+	inline uint32_t  RGBA() const 						{ return ((const uint32_t*)this)[0]; }
+	inline uint32_t& RGBA()							{ return ((uint32_t*)this)[0]; }
 	unsigned char& operator[](int i)				{ return ((unsigned char*)this)[i];}
 
-	inline void interpolate(const sColor4c &u,const sColor4c &v,float f) { r=round(u.r+(v.r-u.r)*f); g=round(u.g+(v.g-u.g)*f); b=round(u.b+(v.b-u.b)*f); a=round(u.a+(v.a-u.a)*f); }
+	inline void interpolate(const sColor4c &u,const sColor4c &v,float f) { r=xm::round(u.r+(v.r-u.r)*f); g=xm::round(u.g+(v.g-u.g)*f); b=xm::round(u.b+(v.b-u.b)*f); a=xm::round(u.a+(v.a-u.a)*f); }
 };
 
 sColor4f::sColor4f(const sColor4c& color) 
@@ -217,13 +218,13 @@ inline float GetDistFromPointToLine(Vect3f& Point,Vect3f& aLine,Vect3f& bLine)
 {
 	Vect3f v=bLine-aLine, n; 
 	n.cross( v, Point-aLine );
-	return sqrtf( n.norm2() / v.norm2() );
+	return xm::sqrt(n.norm2() / v.norm2());
 }
 inline float GetDistRaySphere(Vect3f& PointRay,Vect3f& DirectionRay,Vect3f& PosSphere,float Radius)
 {
 	Vect3f vRaySphere=PosSphere-PointRay, n;
 	n.cross( DirectionRay, vRaySphere );
-	float d = sqrtf( n.norm2()/DirectionRay.norm2() );
+	float d = xm::sqrt(n.norm2() / DirectionRay.norm2());
 	if( d > Radius || vRaySphere.dot(DirectionRay)<0 ) return -1;
 	return d;
 }
@@ -240,7 +241,7 @@ inline float LinearInterpolate(float a,float b,float x)
 }
 inline float CosInterpolate(float a,float b,float x)
 {
-	float f=(1-cosf(x*3.14159f))*0.5f;
+	float f= (1- xm::cos(x * 3.14159f)) * 0.5f;
 	return a*(1-f)+b*f;
 }
 inline float ArcLengthInterpolate(float a,float b,float x)
@@ -445,7 +446,7 @@ inline void BuildMatrixProjectByPlane(MatXf &m,const sPlane4f &p,const Vect3f& v
 const float _0_47 = 0.47f;
 const float _1_47 = 1.47f;
 inline float FastInvSqrt(float x)
-{ // return 1/sqrt(x)
+{ // return 1/xm::sqrt(x)
     const float x2 = x * 0.5F;
     const float threehalfs = 1.5F;
 
@@ -467,9 +468,9 @@ inline float FastInvSqrt(float x)
 
 		mov     y, eax                      // y
 		fld     _0_47                       // 0.47
-		fmul    DWORD PTR x                 // x*0.47
+		fmul    uint32_t PTR x                 // x*0.47
 
-		fld     DWORD PTR y
+		fld     uint32_t PTR y
 		fld     st(0)                       // y y x*0.47
 		fmul    st(0), st(1)                // y*y y x*0.47
 
@@ -498,19 +499,29 @@ inline float CrossLine(float x1,float y1,float m1,float n1,
 					   float x2,float y2,float m2,float n2)
 {
 	float f = n2*m1-n1*m2;
-	if( fabs(f)<0.0001f ) return -1e30f; // parallel
+	if(xm::abs(f) < 0.0001f ) return -1e30f; // parallel
 	return (m2*(y1-y2)-n2*(x1-x2))/f;
 }
 
+#ifndef PERIMETER_D3D9
+class CMatrix {
+    float _11, _12, _13, _14,
+          _21, _22, _23, _24,
+          _31, _32, _33, _34,
+          _41, _42, _43, _44;
+#else //PERIMETER_D3D9
 #ifdef PERIMETER_EXODUS
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 // D3DXMATRIX = CMatrix -> D3DMATRIX
 #include <d3d9types.h>
 class CMatrix : public D3DMATRIX {
-#else
+#else //PERIMETER_EXODUS
 // CMatrix -> D3DXMATRIX -> D3DMATRIX 
 #include <d3dx9math.h>
 class CMatrix : public D3DXMATRIX {
-#endif
+#endif //PERIMETER_EXODUS
+#endif //PERIMETER_D3D9
 public:
     operator void*() { return reinterpret_cast<void*>(this); }
     //operator D3DXMATRIX*() { return reinterpret_cast<D3DXMATRIX*>(this); }

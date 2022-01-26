@@ -118,10 +118,10 @@ sColor4c XCOL(sColor4c color, int intensity = 255, int alpha = 255);
 /////////////////////////////////////////////////////////////////////////////////
 void add_watch(const char* var, const char* value);
 
-std::ostrstream& watch_buffer();
-#define watch(var) { watch_buffer().seekp(0); watch_buffer() << var; watch_buffer() << '\0'; add_watch(#var, watch_buffer().str()); }
-#define watch_i(var, index) { watch_buffer().seekp(0); watch_buffer() << #var << "[" << index << "]"; watch_buffer() << '\0'; string name(watch_buffer().str()); watch_buffer().seekp(0); watch_buffer() << var; watch_buffer() << '\0'; add_watch(name.c_str(), watch_buffer().str()); }
-#define watch_gi(var, index, group) { watch_buffer()().seekp(0); watch_buffer()() << #group << "." << #var << "[" << index << "]"; watch_buffer()() << '\0'; string name(watch_buffer()().str()); watch_buffer()().seekp(0); watch_buffer()() << var; watch_buffer()() << '\0'; add_watch(name.c_str(), watch_buffer()().str()); }
+XBuffer& watch_buffer();
+#define watch(var) { watch_buffer().set(0); watch_buffer() <= var; watch_buffer() < '\0'; add_watch(#var, watch_buffer().address()); }
+#define watch_i(var, index) { watch_buffer().set(0); watch_buffer() < #var < "[" <= index < "]"; watch_buffer() < '\0'; string name(watch_buffer().address()); watch_buffer().set(0); watch_buffer() <= var; watch_buffer() < '\0'; add_watch(name.c_str(), watch_buffer().address()); }
+#define watch_gi(var, index, group) { watch_buffer()().set(0); watch_buffer()() << #group << "." << #var << "[" << index << "]"; watch_buffer()() << '\0'; string name(watch_buffer()().address()); watch_buffer()().set(0); watch_buffer()() << var; watch_buffer()() << '\0'; add_watch(name.c_str(), watch_buffer()().address()); }
 void show_watch();
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -146,10 +146,11 @@ void show_watch();
 //	_FORCE_NET_LOG_ - to force network log under _FINAL_VERSION_
 /////////////////////////////////////////////////////////////////////////////////
 
-//#define _FORCE_NET_LOG_
+#define _FORCE_NET_LOG_
 
-#if (!defined(_FINAL_VERSION_) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
+#if (!defined(_FINAL_VERSION_) || defined(PERIMETER_DEBUG) || defined(_FORCE_NET_LOG_)) && !defined(_GEOTOOL_)
 #define _DO_LOG_
+//#define NET_LOG_EXHAUSTIVE
 #endif
 
 #ifdef _DO_LOG_
@@ -158,8 +159,7 @@ extern XBuffer log_buffer;
 extern bool net_log_mode;
 extern XBuffer net_log_buffer;
 void check_determinacy_quant(bool start);
-///#define log_var(var) { if(log_mode){ watch_buffer().seekp(0); watch_buffer() << var; watch_buffer() << '\0'; log_buffer < #var < ": " < watch_buffer().str() < "\n"; } if(net_log_mode){ watch_buffer().seekp(0); watch_buffer() << var; watch_buffer() << '\0'; net_log_buffer < #var < ": " < watch_buffer().str() < "\n"; } }
-#define log_var(var) { if(log_mode || net_log_mode) { watch_buffer().seekp(0); watch_buffer() << var; watch_buffer() << '\0'; if(log_mode) { log_buffer < #var < ": " < watch_buffer().str() < "\n"; } if(net_log_mode){ net_log_buffer < #var < ": " < watch_buffer().str() < "\n"; } } }
+#define log_var(var) { if(log_mode || net_log_mode) { watch_buffer().set(0); watch_buffer() <= var; watch_buffer() < '\0'; if(log_mode) { log_buffer < #var < ": " < watch_buffer().address() < "\n"; } if(net_log_mode){ net_log_buffer < #var < ": " < watch_buffer().address() < "\n"; } } }
 #define log_var_crc(address, size)	log_var(crc32((const unsigned char*)address, size, startCRC32))
 #else
 inline void check_determinacy_quant(bool start){}
@@ -218,23 +218,32 @@ extern RandomGenerator terEffectRND;
 
 inline int logicRNDi(int x, const char* file, int line)
 {
-	//log_var(file);
-	//log_var(line);
-	//log_var(logicRND.get());
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
+    log_var(filename);
+    log_var(line);
+    log_var(logicRND.get());
+#endif
 	return logicRND(x);
 }
 inline float logicRNDf(const char* file, int line)
 {
-	//log_var(file);
-	//log_var(line);
-	//log_var(logicRND.get());
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
+    log_var(filename);
+    log_var(line);
+    log_var(logicRND.get());
+#endif
 	return logicRND.frnd();
 }
 inline float logicRNDfa(const char* file, int line)
 {
-	//log_var(file);
-	//log_var(line);
-	//log_var(logicRND.get());
+#ifdef NET_LOG_EXHAUSTIVE
+    std::string filename = std::filesystem::u8path(file).filename().u8string();
+    log_var(filename);
+	log_var(line);
+	log_var(logicRND.get());
+#endif
 	return logicRND.frand();
 }
 

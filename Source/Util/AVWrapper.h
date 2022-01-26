@@ -1,7 +1,9 @@
 #ifndef PERIMETER_AVWRAPPER_H
 #define PERIMETER_AVWRAPPER_H
 
+#include <list>
 #include <string>
+#include <SDL_audio.h>
 
 // FFMPEG include
 #ifdef __cplusplus
@@ -10,6 +12,13 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/imgutils.h>
+#ifdef PERIMETER_FFMPEG_MOVIE
+#include <libswscale/swscale.h>
+#include <libavutil/opt.h>
+#include <libavfilter/avfilter.h>
+#include <libavfilter/buffersink.h>
+#include <libavfilter/buffersrc.h>
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -28,8 +37,48 @@ extern "C" {
 enum AVWrapperType {
     None,
     Audio,
-    Video,
-    AudioVideo
+    Video
+};
+
+class AVWrapper;
+class AVWrapperFrame {
+protected:
+    friend class AVWrapper;
+    ///Ref to wrapper
+    AVWrapper* wrapper = nullptr;
+    ///Frame data
+    AVFrame *frame = nullptr;
+    ///Frame type
+    AVWrapperType type = AVWrapperType::None;
+    ///Time for this frame in stream time base
+    AVRational time_base = av_make_q(1, 1);
+public:
+    AVWrapperFrame();
+    ~AVWrapperFrame();
+    
+    ///@return frame type
+    AVWrapperType getType() const { return type; }
+
+    ///@return buffer size required to contain the frame content
+    size_t getBufferSize() const;
+
+    ///@return frame presentation time base
+    AVRational getTimeBase() const;
+    
+    ///@return frame presentation time
+    double getPresentationTime() const;
+
+    ///@return frame PTS value
+    int64_t getPTS() const;
+
+    /**
+     * Copies the current frame content into provided buffer if any
+     * If buffer pointed at is null, it allocates it before copying and sets the buffer pointer 
+     * 
+     * @param buffer the buffer that will contain the frame data
+     * @return written bytes, negative for errors
+     */
+    size_t copyBuffer(uint8_t** buffer) const;
 };
 
 /**
@@ -37,19 +86,66 @@ enum AVWrapperType {
  */
 class AVWrapper
 {
+protected:
+    friend class AVWrapperFrame;
+    ///Format context
+    AVFormatContext* formatCtx = nullptr;
+    ///Video codec context
+    AVCodecContext* videoCodecCtx = nullptr;
+    ///Audio codec context
+    AVCodecContext* audioCodecCtx = nullptr;
+    ///Video codec
+    AVCodec* videoCodec = nullptr;
+    ///Audio codec
+    AVCodec* audioCodec = nullptr;
+    ///Packet used for stream
+    AVPacket* streamPacket = nullptr; 
+    ///Audio next pts for frames that lack it
+    int64_t audioNextPTS = AV_NOPTS_VALUE;
+#ifdef PERIMETER_FFMPEG_MOVIE
+    ///Software scaler context
+    SwsContext* swsCtx = nullptr;
+    ///Software scaler output frame width
+    int swsWidth = 0;
+    ///Software scaler output frame height
+    int swsHeight = 0;
+    ///Software scaler output frame format
+    AVPixelFormat swsFormat = AV_PIX_FMT_NONE;
+    ///Audio converter output channels
+    int swrChannels = 0;
+    ///Audio converter output channel layout
+    int64_t swrChannelLayout = 0;
+    ///Audio converter output rate
+    int swrSampleRate = 0;
+    ///Audio converter output format
+    AVSampleFormat swrFormat = AV_SAMPLE_FMT_NONE;
+    ///Audio converter filter graph
+    AVFilterGraph *filterGraph = nullptr;
+    AVFilterContext *buffersinkCtx = nullptr;
+    AVFilterContext *buffersrcCtx = nullptr;
+#endif
+
+    ///Called when end is reached
+    void onEnd();
+    
+    ///Called when a frame is decoded
+    void handleFrame(AVWrapperFrame* frame);
+    
+    ///Pulls audio from filtergraph and creates frames
+    void pullFilterAudio();
 public:
-    std::string file_path;
-    AVFormatContext *formatCtx = nullptr;
-    AVCodecContext *videoCodecCtx = nullptr;
-    AVCodecContext *audioCodecCtx = nullptr;
-    AVCodec *videoCodec = nullptr;
-    AVCodec *audioCodec = nullptr;
-    //Stores current decoded frames
-    AVFrame *videoFrame = nullptr;
-    AVFrame *audioFrame = nullptr;
-    //Indexes for stream types
+    ///Index for video stream
     int videoStream = -1;
+    ///Index for audio stream
     int audioStream = -1;
+    ///File that was opened
+    std::string file_path;
+    ///True if we reached end of packets
+    bool end = false;
+    ///List of video frames available, must be deleted upon removing from list
+    std::list<AVWrapperFrame*> videoFrames;
+    ///List of audio frames available, must be deleted upon removing from list
+    std::list<AVWrapperFrame*> audioFrames;
     
     AVWrapper() = default;
 
@@ -59,23 +155,48 @@ public:
 
     static void init();
     
+    ///Opens file 
     int open(const std::string& path, AVWrapperType need);
+    
+    ///Setups software scaler for video
+    bool setupVideoScaler(int width, int height, AVPixelFormat format, int flags);
+    
+    /////Build the audio converter to convert into desired format
+    bool setupAudioConverter(AVSampleFormat dst_format, int dst_channels, int dst_frequency);
+    
+    ///Closes opened file and contexts
     int close();
     
-    ///Loads the next packet, returns type of frame decoded
-    AVWrapperType readPacket() const;
+    ///Loads the next packet
+    ///@param drain true to flush when finishing the decoding instead of providing a packet
+    void readPacket(bool drain = false);
+
+    ///Clears audio and video frames
+    void clearFrames();
+
+    ///Get video codec width
+    int getVideoWidth() const;
+
+    ///Get video codec height
+    int getVideoHeight() const;
+
+    ///Get video codec bpp
+    int getVideoBPP() const;
+
+    ///Get the duration of file in seconds
+    double getDuration() const;
+
+    ///Provides approximate audio format from LIBAV to SDL
+    static SDL_AudioFormat toSDLAudioFormat(AVSampleFormat fmt);
     
-    ///Returns the buffer size required to contain the video frame buffer
-    size_t getVideoFrameBufferSize() const;
-    
-    /**
-     * Copies the current videoFrame content into provided buffer if any
-     * If buffer pointed at is null, it allocates it before copying and sets the buffer pointer 
-     * 
-     * @param buffer the buffer that will contain the image data
-     * @return av_image_copy_to_buffer result, negative for errors
-     */
-    int getVideoFrameBuffer(uint8_t** buffer) const;
+    ///Provides approximate audio format from SDL to LIBAV
+    static AVSampleFormat fromSDLAudioFormat(SDL_AudioFormat fmt, bool planar);
 };
+
+static bool AVWrapperFrame_compare(const AVWrapperFrame* first, const AVWrapperFrame* second) {
+    float f = first->getPresentationTime();
+    float s = second->getPresentationTime();
+    return f < s;
+}
 
 #endif //PERIMETER_AVWRAPPER_H

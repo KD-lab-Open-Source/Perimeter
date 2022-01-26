@@ -100,12 +100,12 @@ sTypeField GlobalBlockID[]=
 sTypeVariable GlobalTypeVariable[]=
 {
 	{	0,						0		},
-	{	MF_TYPE_CHAR,			sizeof(char)				},
-	{	MF_TYPE_UCHAR,			sizeof(unsigned char)		},
-	{	MF_TYPE_SHORT,			sizeof(short)				},
-	{	MF_TYPE_USHORT,			sizeof(unsigned short)		},
-	{	MF_TYPE_INT,			sizeof(int)					},
-	{	MF_TYPE_UINT,			sizeof(unsigned int)		},
+    {	MF_TYPE_CHAR,			sizeof(int8_t)				},
+    {	MF_TYPE_UCHAR,			sizeof(uint8_t)				},
+	{	MF_TYPE_SHORT,			sizeof(int16_t)				},
+	{	MF_TYPE_USHORT,			sizeof(uint16_t)			},
+	{	MF_TYPE_INT,			sizeof(int32_t)				},
+	{	MF_TYPE_UINT,			sizeof(uint32_t)			},
 	{	MF_TYPE_FLOAT,			sizeof(float)				},
 	{	MF_TYPE_DOUBLE,			sizeof(double)				},
 	{	MF_TYPE_STRING,			-1							},
@@ -115,10 +115,10 @@ sTypeVariable GlobalTypeVariable[]=
 	{	MF_TYPE_FLOAT5,			5*sizeof(float)				},
 	{	MF_TYPE_FLOAT12,		12*sizeof(float)			},
 	{	MF_TYPE_FLOAT13,		13*sizeof(float)			},
-	{	MF_TYPE_INT3,			3*sizeof(int)				},
-	{	MF_TYPE_INT4,			4*sizeof(int)				},
-	{	MF_TYPE_USHORT3,		3*sizeof(unsigned short)	},
-	{	MF_TYPE_USHORT4,		4*sizeof(unsigned short)	},
+	{	MF_TYPE_INT3,			3*sizeof(int32_t)			},
+	{	MF_TYPE_INT4,			4*sizeof(int32_t)			},
+	{	MF_TYPE_USHORT3,		3*sizeof(uint16_t)			},
+	{	MF_TYPE_USHORT4,		4*sizeof(uint16_t)			},
 	
 	{	0,						0		}
 };

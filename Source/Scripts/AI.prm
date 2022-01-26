@@ -6,16 +6,16 @@ section AIPrm ( declaration = "Game\Scripts\AI.hi", definition = "Game\Scripts\A
 int ai_frame_attach_time = 10000; // ms
 int ai_building_pause = 200; // ms
 
-float ai_brigadier_move_to_point_offset = 40; // не доезжают до точки копания
-float ai_brigadier_width = 40; // ширина бригадира в шеренге
+float ai_brigadier_move_to_point_offset = 40; // РЅРµ РґРѕРµР·Р¶Р°СЋС‚ РґРѕ С‚РѕС‡РєРё РєРѕРїР°РЅРёСЏ
+float ai_brigadier_width = 40; // С€РёСЂРёРЅР° Р±СЂРёРіР°РґРёСЂР° РІ С€РµСЂРµРЅРіРµ
 
 ///////////////////////////////////////////
-//		Копание и размещение зданий
+//		РљРѕРїР°РЅРёРµ Рё СЂР°Р·РјРµС‰РµРЅРёРµ Р·РґР°РЅРёР№
 ///////////////////////////////////////////
 int ai_border_offset = 6; // in map's scale
 int ai_scan_step = 64;
 float ai_scan_size_of_step_factor = 2;
-int ai_scan_step_unable_to_find = 16; // При этом шаге прекращается сканирование, считая, что нужной позиции нет
+int ai_scan_step_unable_to_find = 16; // РџСЂРё СЌС‚РѕРј С€Р°РіРµ РїСЂРµРєСЂР°С‰Р°РµС‚СЃСЏ СЃРєР°РЅРёСЂРѕРІР°РЅРёРµ, СЃС‡РёС‚Р°СЏ, С‡С‚Рѕ РЅСѓР¶РЅРѕР№ РїРѕР·РёС†РёРё РЅРµС‚
 int ai_scan_step_min = 4;
 int ai_placement_iterations_per_quant = 200;
 int ai_extra_dig_size = 10;
@@ -23,25 +23,25 @@ float ai_additional_toolzer_radius = 40;
 float ai_connection_radius_tolerance = 5;
 int cancelConstructionTime = 10*60*1000; // ms
 float moveBrigadiersToInstallFrameOffsetFactor[2] = { 0, .3 };
-float checkLevelingAreaFactor = 0.7; // отношение zero/tolzer, при котором будет перерассчитываться область копания
-int checkLevelingAreaInitial = 150000; // Минимальная площадь, при которой не будет сбрасываться область копания
+float checkLevelingAreaFactor = 0.7; // РѕС‚РЅРѕС€РµРЅРёРµ zero/tolzer, РїСЂРё РєРѕС‚РѕСЂРѕРј Р±СѓРґРµС‚ РїРµСЂРµСЂР°СЃСЃС‡РёС‚С‹РІР°С‚СЊСЃСЏ РѕР±Р»Р°СЃС‚СЊ РєРѕРїР°РЅРёСЏ
+int checkLevelingAreaInitial = 150000; // РњРёРЅРёРјР°Р»СЊРЅР°СЏ РїР»РѕС‰Р°РґСЊ, РїСЂРё РєРѕС‚РѕСЂРѕР№ РЅРµ Р±СѓРґРµС‚ СЃР±СЂР°СЃС‹РІР°С‚СЊСЃСЏ РѕР±Р»Р°СЃС‚СЊ РєРѕРїР°РЅРёСЏ
 
 struct PlaceOpPrm
 {
 	PlacementStrategy placementStrategy = PLACEMENT_STRATEGY_CORE;
 	int buildingsMax = 0;
 
-	float scanRadius = 0; // берется размер модели
+	float scanRadius = 0; // Р±РµСЂРµС‚СЃСЏ СЂР°Р·РјРµСЂ РјРѕРґРµР»Рё
 	float boundExtraSize = 5;
 
 	float workFactor = -5;
-	float frameDistanceFactor = 0; // до фрейма
-	float enemyDistanceFactor = 0; // до ближайшего вражеского здания
-	float filthDistanceFactor = 0; // до ближайшего спота скверны
-	float worldBuildingDistanceFactor = 0; // до ближайшего нейтрального здания
-	float corridorDistanceFactor = 0; // до коридора
+	float frameDistanceFactor = 0; // РґРѕ С„СЂРµР№РјР°
+	float enemyDistanceFactor = 0; // РґРѕ Р±Р»РёР¶Р°Р№С€РµРіРѕ РІСЂР°Р¶РµСЃРєРѕРіРѕ Р·РґР°РЅРёСЏ
+	float filthDistanceFactor = 0; // РґРѕ Р±Р»РёР¶Р°Р№С€РµРіРѕ СЃРїРѕС‚Р° СЃРєРІРµСЂРЅС‹
+	float worldBuildingDistanceFactor = 0; // РґРѕ Р±Р»РёР¶Р°Р№С€РµРіРѕ РЅРµР№С‚СЂР°Р»СЊРЅРѕРіРѕ Р·РґР°РЅРёСЏ
+	float corridorDistanceFactor = 0; // РґРѕ РєРѕСЂРёРґРѕСЂР°
 
-	float sameTypeDistanceFactor = 0; // сумма обратных расстояний до своих зданий того же типа
+	float sameTypeDistanceFactor = 0; // СЃСѓРјРјР° РѕР±СЂР°С‚РЅС‹С… СЂР°СЃСЃС‚РѕСЏРЅРёР№ РґРѕ СЃРІРѕРёС… Р·РґР°РЅРёР№ С‚РѕРіРѕ Р¶Рµ С‚РёРїР°
 	float connectBuildingFactor = 0;
 	float escapeMakingZeroLayerFactor = 0;
 	float corePlacementCompactness = 1;
@@ -96,21 +96,21 @@ struct AiPrm
 		{
 			placementStrategy = PLACEMENT_STRATEGY_PLANT;
 			boundExtraSize = 5;
-			frameDistanceFactor = -1; // Расположиться максимально близко к фрейму
+			frameDistanceFactor = -1; // Р Р°СЃРїРѕР»РѕР¶РёС‚СЊСЃСЏ РјР°РєСЃРёРјР°Р»СЊРЅРѕ Р±Р»РёР·РєРѕ Рє С„СЂРµР№РјСѓ
 		},
 
 		{
 			placementStrategy = PLACEMENT_STRATEGY_COMMANDER;
 			buildingsMax = 5;
 			boundExtraSize = 5;
-			frameDistanceFactor = -1; // Расположиться максимально близко к фрейму
+			frameDistanceFactor = -1; // Р Р°СЃРїРѕР»РѕР¶РёС‚СЊСЃСЏ РјР°РєСЃРёРјР°Р»СЊРЅРѕ Р±Р»РёР·РєРѕ Рє С„СЂРµР№РјСѓ
 		},
 				
 		{
 			placementStrategy = PLACEMENT_STRATEGY_STATION;
 			buildingsMax = 1;
 			boundExtraSize = 5;
-			frameDistanceFactor = -1; // Расположиться максимально близко к фрейму
+			frameDistanceFactor = -1; // Р Р°СЃРїРѕР»РѕР¶РёС‚СЊСЃСЏ РјР°РєСЃРёРјР°Р»СЊРЅРѕ Р±Р»РёР·РєРѕ Рє С„СЂРµР№РјСѓ
 		},
 
 		{
@@ -119,7 +119,7 @@ struct AiPrm
 			enemyDistanceFactor = -200;
 			filthDistanceFactor = -200;
 			boundExtraSize = 2;
-			sameTypeDistanceFactor = -50000; // Удаляться от других пушек
+			sameTypeDistanceFactor = -50000; // РЈРґР°Р»СЏС‚СЊСЃСЏ РѕС‚ РґСЂСѓРіРёС… РїСѓС€РµРє
 			workFactor = -1000;
 		},
 		{
@@ -127,7 +127,7 @@ struct AiPrm
 			scanRadius = 200;
 			enemyDistanceFactor = -200;
 			boundExtraSize = 2;
-			sameTypeDistanceFactor = -50000; // Удаляться от других пушек
+			sameTypeDistanceFactor = -50000; // РЈРґР°Р»СЏС‚СЊСЃСЏ РѕС‚ РґСЂСѓРіРёС… РїСѓС€РµРє
 			workFactor = -1000;
 		},
 		{
@@ -135,7 +135,7 @@ struct AiPrm
 			scanRadius = 200;
 			filthDistanceFactor = -200;
 			boundExtraSize = 2;
-			sameTypeDistanceFactor = -50000; // Удаляться от других пушек
+			sameTypeDistanceFactor = -50000; // РЈРґР°Р»СЏС‚СЊСЃСЏ РѕС‚ РґСЂСѓРіРёС… РїСѓС€РµРє
 			workFactor = -1000;
 		},
 		{
@@ -143,7 +143,7 @@ struct AiPrm
 			scanRadius = 200;
 			enemyDistanceFactor = -100000;
 			boundExtraSize = 2;
-			sameTypeDistanceFactor = -10000; // Удаляться от других пушек
+			sameTypeDistanceFactor = -10000; // РЈРґР°Р»СЏС‚СЊСЃСЏ РѕС‚ РґСЂСѓРіРёС… РїСѓС€РµРє
 			workFactor = -1000;
 		},
 		{
@@ -205,7 +205,7 @@ ClusterFindPrm defenceMapPathFind =
 //////////////////////////////////////
 //			Squad
 //////////////////////////////////////
-// Геометрия сквада
+// Р“РµРѕРјРµС‚СЂРёСЏ СЃРєРІР°РґР°
 float squad_described_radius_min = 16;
 float squad_described_radius_max = 100;
 

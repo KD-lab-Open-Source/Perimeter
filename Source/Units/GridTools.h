@@ -270,16 +270,23 @@ public:
 		float factor_;
 	};
 
-	struct TargetOrderingOp
-	{
-		bool operator() (const Target& t0,const Target& t1){
-			return t0.factor() > t1.factor();
-		}
-	};
+    struct TargetOrderingOp {
+        bool operator() (const Target& t0,const Target& t1) {
+            float t0factor = t0.factor();
+            float t1factor = t1.factor();
+            unsigned int t0unitID = t0.unit()->unitID();
+            unsigned int t1unitID = t1.unit()->unitID();
+            unsigned int t0playerID = t0.unit()->playerID();
+            unsigned int t1playerID = t1.unit()->playerID();
+            return std::tie(t0factor, t0unitID, t0playerID)
+                 > std::tie(t1factor, t1unitID, t1playerID);
+        }
+    };
 
 	typedef std::list<Target> TargetContainer;
 	const TargetContainer& targets() const { return targets_; }
-	void sortTargets(){ targets_.sort(TargetOrderingOp()); }
+    
+	void sortTargets() { targets_.sort(TargetOrderingOp()); }
 
 private:
 

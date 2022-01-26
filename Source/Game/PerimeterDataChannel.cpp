@@ -7,7 +7,6 @@ extern float CAMERA_SCROLL_SPEED_DELTA,CAMERA_BORDER_SCROLL_SPEED_DELTA;
 
 extern int terCurrentServerIP;
 extern int terCurrentServerPort;
-extern char* terCurrentServerName;
 
 extern float terMapLevelLOD;
 extern int terDrawMeshShadow;
@@ -71,19 +70,10 @@ void PerimeterDataChannelLoad()
 //	terObjectReflection = ini.getInt("Graphics","ObjectReflection");
 	terGraphicsGamma = ini.getFloat("Graphics","Gamma");
 	terShowTips = ini.getInt("Game","ShowTips");
-    ini_no_check.getInt("Game","GrabInput", terGrabInput);
+    ini_no_check.getInt("Graphics","GrabInput", terGrabInput);
     check_command_line_parameter("GrabInput", terGrabInput);
     ini_no_check.getInt("Game","RunBackground", applicationRunBackground);
     check_command_line_parameter("RunBackground", applicationRunBackground);
-
-	//Network
-	const char* s = ini_no_check.get("Network","ServerName");
-	if(s){
-		terCurrentServerName = new char[strlen(s) + 1];
-		strcpy(terCurrentServerName,s);
-	}
-	else 
-		terCurrentServerName = NULL;
 
 	CAMERA_SCROLL_SPEED_DELTA = CAMERA_BORDER_SCROLL_SPEED_DELTA = ini.getInt("Game","ScrollRate");
 	CAMERA_MOUSE_ANGLE_SPEED_DELTA = ini_no_check.getFloat("Game","MouseLookRate");
@@ -98,9 +88,10 @@ void PerimeterDataChannelSave()
 	IniManager ini("Perimeter.ini");
 
 	//GameSection
-	ini.putInt("Game", "ShowTips", terShowTips);
-	ini.putInt("Game", "ScrollRate", round(CAMERA_SCROLL_SPEED_DELTA));
-	ini.putFloat("Game", "MouseLookRate", round(CAMERA_MOUSE_ANGLE_SPEED_DELTA));
+    ini.putInt("Game", "ShowTips", terShowTips);
+    ini.putInt("Game", "RunBackground", applicationRunBackground);
+	ini.putInt("Game", "ScrollRate", xm::round(CAMERA_SCROLL_SPEED_DELTA));
+	ini.putFloat("Game", "MouseLookRate", xm::round(CAMERA_MOUSE_ANGLE_SPEED_DELTA));
 //	ini.putFloat("Game", "GameSpeed", gameShell->getSpeed());
 	
 	//GraphicsSection
@@ -121,12 +112,12 @@ void PerimeterDataChannelSave()
 //	ini.putInt("Graphics","BPP", terBitPerPixel);
 
 
-//	ini.putInt("Graphics","MapLevelLOD", round(terMapLevelLOD));
+//	ini.putInt("Graphics","MapLevelLOD", xm::round(terMapLevelLOD));
 //	ini.putInt("Graphics","DrawMeshShadow", terDrawMeshShadow);
 //	ini.putInt("Graphics","ShadowType", terShadowType);
 
-	ini.putInt("Graphics","NearDistanceLOD", round(terNearDistanceLOD));
-	ini.putInt("Graphics","FarDistanceLOD", round(terFarDistanceLOD));
+	ini.putInt("Graphics", "NearDistanceLOD", xm::round(terNearDistanceLOD));
+	ini.putInt("Graphics", "FarDistanceLOD", xm::round(terFarDistanceLOD));
 
 
 	ini.putInt("Graphics","MipMapBlur", terMipMapBlur);
@@ -134,8 +125,5 @@ void PerimeterDataChannelSave()
 //	ini.putInt("Graphics","MapReflection", terMapReflection);
 //	ini.putInt("Graphics","ObjectReflection", terObjectReflection);
 //	ini.putFloat("Graphics","Gamma", terGraphicsGamma);
-
-	//Network
-	ini.put("Network","ServerName", terCurrentServerName);
 }
 

@@ -92,7 +92,7 @@ public:
 	const char* get_token();	
 	void put_token();	
 	void skip_token(const char* token) { if(strcmp(get_token(), token)) throw expected_token(token); }
-	friend XBuffer& operator<= (XBuffer& os, const Parser& p) { char full[MAX_PATH]; _fullpath( full, p.fname.c_str(), MAX_PATH ); os < full < '(' <= p.line < ") : "; return os; }
+	friend XBuffer& operator<= (XBuffer& os, const Parser& p);
 	operator const char*() const { return current_token; }
 };
 
@@ -184,7 +184,7 @@ public:
 	    //Don't add zeroes in round numbers
         SetDigits(-XB_DEFDIGITS);
 	}
-	void check_line() { if(tell() - offset_ > line_lenght){ (*this) < " \r\n "; offset_ = tell(); } }
+	void check_line() { if(tell() - offset_ > line_lenght){ (*this) < " \n "; offset_ = tell(); } }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////

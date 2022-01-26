@@ -809,7 +809,7 @@ CGraphObject* CEmitterTimeline::HitTest(const CPoint& pt)
 		m_CurPoint = -1;
 		for(int i=0;i<m_points.size();++i)
 		{
-			if (abs(pt.x - m_points[i].x)<=4 && abs(pt.y - m_points[i].y)<=4)
+			if (xm::abs(pt.x - m_points[i].x) <= 4 && xm::abs(pt.y - m_points[i].y) <= 4)
 			{
 				m_CurPoint = i;
 				if (m_CurPoint)
@@ -1323,7 +1323,7 @@ return ;
 	if(fValueMax >= 20.0f)	fTickDeltaY *= 2;
 	if(fValueMax >= 40.0f)	fTickDeltaY *= 2;
 
-	nTickCount = round(fValueMax/fTickDeltaY);
+	nTickCount = xm::round(fValueMax/fTickDeltaY);
 	float fDeltaY = float(_nGraphHeight - _spacing)/nTickCount;
 	int   nTickX1 = _spacing_left;
 	nTickY1 = rcClient.Height() - n_x_axis_bottom_space;

@@ -1,19 +1,17 @@
 //** 1999 Creator - Balmer **//
-#include "tweaks.h"
-//#include "StdAfx.h"
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
 #include <vector>
 #include <string>
+#include <cstring>
+#include <cstdio>
+#include <memory>
 #include "xmath.h"
 
-#include <cstdio>
 #include "Saver.h"
 
 #include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <io.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
+#include "files/files.h"
 
 #undef WR
 #define WR(x) fwrite(&x,sizeof(x),1,f);
@@ -40,7 +38,7 @@ bool CSaver::Init(const char* name)
 	return f!=nullptr;
 }
 
-void CSaver::push(const unsigned long id)
+void CSaver::push(uint32_t id)
 {
 	fwrite(&id,sizeof(id),1,f);
 	push();
@@ -48,7 +46,7 @@ void CSaver::push(const unsigned long id)
 
 void CSaver::push()
 {
-	DWORD w=0;
+	uint32_t w=0;
 	WR(w);
     long t = ftell(f);
 
@@ -60,10 +58,10 @@ void CSaver::pop()
     long t = ftell(f);
 
 	int n=p.size()-1;
-	DWORD min=p[n];
+	uint32_t min=p[n];
     long tt=min-4;
     fseek(f,tt,SEEK_SET);
-	DWORD size=DWORD(t)-min;
+	uint32_t size=uint32_t(t)-min;
 	WR(size);
 
 	p.pop_back();
@@ -73,7 +71,7 @@ void CSaver::pop()
 }
 
 /////////////////////////////////////////////////
-CLoadDirectory::CLoadDirectory(BYTE* data,DWORD _size)
+CLoadDirectory::CLoadDirectory(uint8_t* data,uint32_t _size)
 		:begin(data),cur(NULL),size(_size)
 {
 }
@@ -92,7 +90,7 @@ CLoadData* CLoadDirectory::next()
 	if(cur==NULL)cur=begin;
 
 	CLoadData* cl=(CLoadData*)cur;
-	cur+=cl->size+2*sizeof(DWORD);
+	cur+=cl->size+2*sizeof(uint32_t);
 	return cl;
 }
 
@@ -107,15 +105,15 @@ CLoadDirectoryFile::~CLoadDirectoryFile()
 	delete begin;
 }
 
-bool CLoadDirectoryFile::Load(LPCSTR filename)
+bool CLoadDirectoryFile::Load(const char* filename)
 {
-	int file=_open(filename,_O_RDONLY|_O_BINARY);
+	int file= file_open(filename, _O_RDONLY | _O_BINARY);
 	if(file==-1)return false;
 
 	size=_lseek(file,0,SEEK_END);
 	if(size<0)return false;
 	_lseek(file,0,SEEK_SET);
-	begin=new BYTE[size];
+	begin=new uint8_t[size];
 	_read(file,begin,size);
 	_close(file);
 
@@ -126,7 +124,7 @@ bool CLoadDirectoryFile::Load(LPCSTR filename)
 
 
 ///////////////////
-void SaveString(CSaver& s,LPCSTR str,DWORD ido)
+void SaveString(CSaver& s,const char* str,uint32_t ido)
 {
 	if(str==NULL)return;
 	s.push(ido);

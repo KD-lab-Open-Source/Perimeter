@@ -6,29 +6,36 @@ on:
 
 env:
   buildDir: '${{ github.workspace }}/build/'
+  outDir: '${{ github.workspace }}/artifact/'
 
 jobs:
   build:
     strategy:
       matrix:
-        build_type: [Debug, Release]
         env: [
-          {bits: 64, arch: amd64},
-          {bits: 32, arch: x86}
+          #{bits: 32, arch_installed: x86, build_type: Debug,   arch_name: x86, arch: x86},
+          {bits: 64, arch_installed: x64, build_type: Debug,   arch_name: x86, arch: amd64},
+          #{bits: 64, arch_installed: x64, build_type: Debug,   arch_name: ARM, arch: amd64_arm64},
+          {bits: 32, arch_installed: x86, build_type: Release, arch_name: x86, arch: x86},
+          {bits: 64, arch_installed: x64, build_type: Release, arch_name: x86, arch: amd64},
+          #{bits: 64, arch_installed: x64, build_type: Release, arch_name: ARM, arch: amd64_arm64}
         ]
-    name: ${{matrix.build_type}} ${{matrix.env.bits}} bits
+    name: ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{matrix.env.arch}}-windows
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: lukka/get-cmake@latest
-      - name: Restore from cache and run vcpkg
-        uses: lukka/run-vcpkg@v7
+      - name: Restore artifacts, or run vcpkg, build (and cache artifacts as post step)
+        uses: lukka/run-vcpkg@v10
+        id: runvcpkg
         with:
-          setupOnly: true
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
-          vcpkgTriplet: ${{matrix.env.arch}}-windows
-          vcpkgGitCommitId: 92b42c4c680defe94f1665a847d04ded890f372e
+          appendedCacheKey: '${{ env.VCPKG_DEFAULT_TRIPLET }}'
+          vcpkgGitCommitId: 1085a57da0725c19e19586025438e8c16f34c890
+          vcpkgJsonGlob: 'vcpkg.json'
+          runVcpkgInstall: false
       - name: Configure developer command prompt
         uses: ilammy/msvc-dev-cmd@v1
         with:
@@ -37,14 +44,23 @@ jobs:
         run: |
           mkdir ${{ env.buildDir }}
           cd ${{ env.buildDir }}
-          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake ..
       - name: Build the project
         run: |
           cd ${{ env.buildDir }}
           nmake
+      - name: Prepare artifact folder
+        run: |
+          mkdir ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/ogg.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbis.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/vorbisfile.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swscale-5.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}vcpkg_installed/${{matrix.env.arch_installed}}-windows/bin/swresample-3.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}Source/*.dll ${{ env.outDir }}
+          copy ${{ env.buildDir }}Source/*.exe ${{ env.outDir }}
+          copy ${{ env.buildDir }}Source/*.pdb ${{ env.outDir }}
       - uses: actions/upload-artifact@v2
         with:
-          name: Perimeter MSVC ${{matrix.build_type}} ${{matrix.env.bits}} bits
-          path: |
-            ${{ env.buildDir }}Source/*.dll
-            ${{ env.buildDir }}Source/*.exe
+          name: Perimeter MSVC ${{matrix.env.build_type}} ${{matrix.env.arch_name}} ${{matrix.env.bits}} bits
+          path: ${{ env.outDir }}

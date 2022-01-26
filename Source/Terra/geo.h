@@ -3,7 +3,7 @@
 
 #include "xmath.h"
 
-const char Path2TTerraResource[]="RESOURCE\\Tools\\";
+const std::string Path2TTerraResource="RESOURCE\\Tools\\";
 
 class CGeoInfluence {
 	//unsigned char* inVxG;
@@ -92,8 +92,8 @@ struct CWormFormLib {
 			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 			for(j=0; j<WSXSY; j++){
 				//float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-				//float f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
-				//(*FormWormsNew)[i][j]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				//float f=exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
+				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 				int hh=VBitMap1.getPreciseColor(j, i);
 				(*FormWormsNew)[i][j]=hh<<8;
 			}
@@ -110,8 +110,8 @@ struct CWormFormLib {
 			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 			for(j=0; j<WSXSY; j++){
 				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-				float f=expf(-(fabsf(x*x)+fabsf(y*y))/(0.4f*0.4f));
-				(*FormWormsNew)[i][j]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4f * 0.4f));
+				(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 			}
 		}
 	};
@@ -185,10 +185,10 @@ struct elementGeoBreak {
 		xend=xbeg=_xbeg; yend=ybeg=_ybeg;
 		//sx=_sx; sy=_sy;
 		//time=0;
-		//bLong=sqrt(sx*sx+sy*sy);
-		numSections=round(_lenght/(float)DENSITY_NOISE);//bLong/DENSITY_NOISE;
-		dx_step=round(_lenght*cosf(alpha))*(1<<16)/numSections;//sx*(1<<16)/numSections;
-		dy_step=round(_lenght*sinf(alpha))*(1<<16)/numSections;//sy*(1<<16)/numSections;
+		//bLong=xm::sqrt(sx*sx+sy*sy);
+		numSections=xm::round(_lenght/(float)DENSITY_NOISE);//bLong/DENSITY_NOISE;
+		dx_step= xm::round(_lenght * xm::cos(alpha)) * (1 << 16) / numSections;//sx*(1<<16)/numSections;
+		dy_step= xm::round(_lenght * xm::sin(alpha)) * (1 << 16) / numSections;//sy*(1<<16)/numSections;
 		xp=new int [numSections+1];//1 это начальная точка
 		yp=new int [numSections+1];
 		xp[0]=xbeg;
@@ -205,8 +205,8 @@ struct elementGeoBreak {
 		int x_cur=xbeg<<16;
 		int y_cur=ybeg<<16;
 
-		if(abs(sx)>=abs(sy)){
-			int stepdy=sy*(1<<16)/abs(sx);
+		if(xm::abs(sx) >= xm::abs(sy)){
+			int stepdy= sy * (1<<16) / xm::abs(sx);
 			int stepdx;
 			if(sx>0)stepdx=1; else stepdx=-1;
 			for(int i=0; i!=sx; i+=stepdx, x_cur+=stepdx<<16, y_cur+=stepdy){
@@ -233,8 +233,8 @@ struct elementGeoBreak {
 			}
 		}
 		else { // sy_real> sx_real
-			if(abs(sy)>abs(sx)){
-				int stepdx=sx*(1<<16)/abs(sy);
+			if(xm::abs(sy) > xm::abs(sx)){
+				int stepdx= sx * (1<<16) / xm::abs(sy);
 				int stepdy;
 				if(sy>0)stepdy=1; else stepdy=-1;
 				for(int i=0; i!=sy; i+=stepdy, y_cur+=stepdy<<16, x_cur+=stepdx){
@@ -271,7 +271,8 @@ struct elementGeoBreak {
 
 			int offGrid=vMap.offsetGBuf(vMap.XCYCLG(x_recomend>>kmGrid), vMap.YCYCLG(y_recomend>>kmGrid));
 			int curHeight=vMap.GVBuf[offGrid];
-			if( abs(curHeight-beginHeight)>DELTA_H_BREAK_GEOBREAK || abs(curHeight-oldHeight)>DELTA_H_STEP_BREAK_GEOBREAK || 
+			if(xm::abs(curHeight - beginHeight) > DELTA_H_BREAK_GEOBREAK ||
+                    xm::abs(curHeight - oldHeight) > DELTA_H_STEP_BREAK_GEOBREAK || 
 				(vMap.GABuf[offGrid] & GRIDAT_MASK_HARDNESS) == 0 ) numSections=headSection;//return END_QUANT;
 			oldHeight=curHeight;
 
@@ -281,13 +282,13 @@ struct elementGeoBreak {
 			int y_cur=yp[headSection-1]<<16;
 			//Noising
 			//double alpha=atan((double)sy_real/(double)sx_real);
-			float ss=sqrtf(float(sy_real*sy_real+sx_real*sx_real));
+			float ss= xm::sqrt(float(sy_real * sy_real + sx_real * sx_real));
 			float cosAlpha=(float)sx_real/ss;
 			float sinAlpha=(float)sy_real/ss;
 			int nx=(DENSITY_NOISE>>1) + XRnd(DENSITY_NOISE>>1); //DENSITY_NOISE;//
 			int ny=XRnd(8)-4;
-			sx_real=round((float)nx*cosAlpha+ (float)ny*sinAlpha);
-			sy_real=round(-(-(float)nx*sinAlpha+ (float)ny*cosAlpha));
+			sx_real=xm::round((float)nx*cosAlpha+ (float)ny*sinAlpha);
+			sy_real=xm::round(-(-(float)nx*sinAlpha+ (float)ny*cosAlpha));
 			//sx_real=sx_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sx_real<0) sx_real=0;
 			//sy_real=sy_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sy_real<0) sy_real=0;
 			//DrawLine
@@ -358,13 +359,13 @@ struct singleGeoBreak {
 	singleGeoBreak(int _xbeg, int _ybeg, int _sx, int _sy){//
 		sx=_sx; sy=_sy;
 
-		lenght=round(sqrtf((float)(sx*sx+sy*sy)));
+		lenght=xm::round(xm::sqrt((float) (sx * sx + sy * sy)));
 		//if(lenght<DENSITY_NOISE)lenght=DENSITY_NOISE; //Минимальная длинна
 
 		//alpha=_alpha;
 		xend=xbeg=_xbeg; yend=ybeg=_ybeg;
 
-		numSections=round(lenght/(float)DENSITY_NOISE);
+		numSections=xm::round(lenght/(float)DENSITY_NOISE);
 		dx_step=_sx*(1<<16)/numSections;//sx*(1<<16)/numSections;
 		dy_step=_sy*(1<<16)/numSections;//sy*(1<<16)/numSections;
 		xp=new int [numSections+1];//1 это начальная точка
@@ -382,9 +383,9 @@ struct singleGeoBreak {
 		int x_cur=xbeg<<16;
 		int y_cur=ybeg<<16;
 
-		if(abs(sx)>=abs(sy)){
+		if(xm::abs(sx) >= xm::abs(sy)){
 			if(sx!=0){
-				int stepdy=sy*(1<<16)/abs(sx);
+				int stepdy= sy * (1<<16) / xm::abs(sx);
 				int stepdx;
 				if(sx>0)stepdx=1; else stepdx=-1;
 				for(int i=0; i!=sx; i+=stepdx, x_cur+=stepdx<<16, y_cur+=stepdy){
@@ -413,8 +414,8 @@ struct singleGeoBreak {
 			else vMap.SDig(vMap.XCYCL(x_cur>>16), vMap.YCYCL(y_cur>>16), 6);
 		}
 		else { // sy_real> sx_real
-			if(abs(sy)>abs(sx)){
-				int stepdx=sx*(1<<16)/abs(sy);
+			if(xm::abs(sy) > xm::abs(sx)){
+				int stepdx= sx * (1<<16) / xm::abs(sy);
 				int stepdy;
 				if(sy>0)stepdy=1; else stepdy=-1;
 				for(int i=0; i!=sy; i+=stepdy, y_cur+=stepdy<<16, x_cur+=stepdx){
@@ -466,32 +467,32 @@ struct srBmp{
 	float alpha;
 	srBmp(float _alpha, int _sx, int _sy){
 		alpha=_alpha;
-		float ssY=tanf(_alpha)*1.0f;
-		if(fabs(ssY)<=1.0){//step dx=1 or -1
-			if(cos(_alpha)>=0) { stpX=1<<16; stpY=round(ssY*(1<<16)); }
-			else { stpX=-(1<<16); stpY=round(ssY*(-(1<<16))); }
-			begShiftX=-stpX*round((_sy/2)*cos(_alpha)*sin(_alpha))+ (_sx/2)*stpX ;
-			begShiftY=(stpX*(_sy/2))-stpY*round((_sy/2)*cos(_alpha)*sin(_alpha))+ (_sx/2)*stpY ;
+		float ssY= xm::tan(_alpha) * 1.0f;
+		if(xm::abs(ssY) <= 1.0){//step dx=1 or -1
+			if(xm::cos(_alpha)>=0) { stpX=1<<16; stpY=xm::round(ssY*(1<<16)); }
+			else { stpX=-(1<<16); stpY=xm::round(ssY*(-(1<<16))); }
+			begShiftX=-stpX*xm::round((_sy/2)*xm::cos(_alpha)*xm::sin(_alpha))+ (_sx/2)*stpX ;
+			begShiftY=(stpX*(_sy/2))-stpY*xm::round((_sy/2)*xm::cos(_alpha)*xm::sin(_alpha))+ (_sx/2)*stpY ;
 			begShiftX=-begShiftX>>16; begShiftY=-begShiftY>>16;
 			begShiftX<<=16; begShiftY<<=16;
 		}
 		else { //step dy=1 or -1
-			if(sin(_alpha)>=0){ stpY=1<<16; stpX=round((1<<16)*1.0/ssY); }
-			else { stpY=-(1<<16); stpX=round((-(1<<16))*1.0/ssY); }
-			begShiftX=(-stpY*(_sy/2))+stpX*round((_sy/2)*sin(_alpha)*cos(_alpha)) + (_sx/2)*stpX;
-			begShiftY=stpY*round((_sy/2)*sin(_alpha)*cos(_alpha)) + (_sx/2)*stpY;
+			if(xm::sin(_alpha)>=0){ stpY=1<<16; stpX=xm::round((1<<16)*1.0/ssY); }
+			else { stpY=-(1<<16); stpX=xm::round((-(1<<16))*1.0/ssY); }
+			begShiftX=(-stpY*(_sy/2))+stpX*xm::round((_sy/2)*xm::sin(_alpha)*xm::cos(_alpha)) + (_sx/2)*stpX;
+			begShiftY=stpY*xm::round((_sy/2)*xm::sin(_alpha)*xm::cos(_alpha)) + (_sx/2)*stpY;
 			begShiftX=-begShiftX>>16; begShiftY=-begShiftY>>16;
 			begShiftX<<=16; begShiftY<<=16;
 		}
 	};
 	inline void setStr(int y){
 		if(stpX==(1<<16)|| stpX==(-(1<<16))){
-			bsx=-stpX*round(y*cos(alpha)*sin(alpha));
-			bsy=(stpX*y)-stpY*round(y*cos(alpha)*sin(alpha));
+			bsx=-stpX*xm::round(y*xm::cos(alpha)*xm::sin(alpha));
+			bsy=(stpX*y)-stpY*xm::round(y*xm::cos(alpha)*xm::sin(alpha));
 		}
 		else {
-			bsx=(-stpY*y)+stpX*round(y*sin(alpha)*cos(alpha));
-			bsy=stpY*round(y*sin(alpha)*cos(alpha));
+			bsx=(-stpY*y)+stpX*xm::round(y*xm::sin(alpha)*xm::cos(alpha));
+			bsy=stpY*xm::round(y*xm::sin(alpha)*xm::cos(alpha));
 		}
 	};
 /*	inline int getX(int x){
@@ -710,8 +711,8 @@ struct sUPoligonN {
 		nElAET=0;
 	};
 	void addAETRecord(char idxFrom, char idxTo, char dir) {
-		int dx=round((1<<16)*(allPntArr[idxTo].x-allPntArr[idxFrom].x)/(allPntArr[idxTo].y-allPntArr[idxFrom].y));
-		int checkX=round(allPntArr[idxFrom].x*(1<<16)) + dx;
+		int dx=xm::round((1<<16)*(allPntArr[idxTo].x-allPntArr[idxFrom].x)/(allPntArr[idxTo].y-allPntArr[idxFrom].y));
+		int checkX=xm::round(allPntArr[idxFrom].x*(1<<16)) + dx;
 		int i;
 		for(i=0; i<nElAET; i++) {
 			if(   checkX < (AET[i].x+AET[i].dx) ) break;
@@ -719,7 +720,7 @@ struct sUPoligonN {
 		int k;
 		for(k=i; k<nElAET; k++) AET[k+1]=AET[k];
 		nElAET++;
-		AET[i].x=round(allPntArr[idxFrom].x*(1<<16));
+		AET[i].x=xm::round(allPntArr[idxFrom].x*(1<<16));
 		AET[i].dx=dx;
 		AET[i].dir=dir;
 		AET[i].idxFrom=idxFrom;
@@ -1051,7 +1052,7 @@ protected:
 };
 
 
-const float ANT_RAD_IN_CELL_ARR=(2*M_PI)/ANT_MAX_MESH2VMAPDATE;
+const float ANT_RAD_IN_CELL_ARR=(2*XM_PI)/ANT_MAX_MESH2VMAPDATE;
 /*
 struct s_AntBirthGeoAction {
 	static s_Mesh2VMapDate* MMDateArr[ANT_MAX_MESH2VMAPDATE];

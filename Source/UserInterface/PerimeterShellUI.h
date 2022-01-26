@@ -5,7 +5,7 @@
 
 #include "tweaks.h"
 #include "GameShellSq.h"
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "Universe.h"
 #include "qd_textdb.h"
 #include "SourceUIResolution.h"
@@ -21,6 +21,7 @@ enum
 };
 
 class CShellWindow;
+struct LocalizedText;
 
 typedef void(*EVENTPROC)(CShellWindow* pWnd, InterfaceEventCode code, int param);
 typedef int(*DYNCALLBACK)(float,float);
@@ -515,9 +516,9 @@ class CUITabSheet : public CShellWindow
 
 	int   m_nTabHover;
 	bool  m_bLabelHover;
-	DWORD m_nVisiblePagesBits;
-	DWORD m_nEnabledPagesBits;
-	DWORD m_nSelectedPagesBits;
+	uint32_t m_nVisiblePagesBits;
+	uint32_t m_nEnabledPagesBits;
+	uint32_t m_nSelectedPagesBits;
 	std::vector<float> flashTimers;
 	int   m_nActivePage;
 
@@ -976,7 +977,7 @@ class ChatWindow : public CShellWindow {
 	int CheckClick(float _x,float  _y);
 	/// возвращает длину части строки, которая влезет в окно по ширине
 	/// если строка войдёт целиком, то возвращает -1
-	int GetStringBreak(const char* str, bool ignore_spaces = false) const;
+	int GetStringBreak(const std::string& str, bool ignore_spaces = false) const;
 
 public:
 	ChatWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
@@ -985,7 +986,7 @@ public:
 	void updateScroller();
 
 	void Clear();
-	void AddString(const char* cb);
+	void AddString(const LocalizedText* text);
 
 	int GetRowCount(){
 		return m_data.size();
@@ -1045,9 +1046,6 @@ public:
 class CSliderWindow : public CShellWindow
 {
 public:
-
-	bool			sounded;
-
 	int				bPress;
 	float			pos;
 	int				target;
@@ -1070,7 +1068,7 @@ public:
 	~CSliderWindow();
 	virtual void draw(int bFocus);
 	virtual int  HitTest(float _x, float _y);
-	virtual void OnLButtonDown(float _x, float _y);
+    virtual void OnLButtonDown(float _x, float _y);
 	virtual void Load(const sqshControl* attr);
 	virtual void OnWindow(int enable);
 	virtual int EffectSupported() {
@@ -1099,7 +1097,7 @@ public:
 	virtual int  EffectSupported(){
 		return effectButtonsFadeIn|effectButtonsFadeOut;
 	}
-	void SetText(LPCTSTR lpszText){
+	void SetText(const char* lpszText){
 		m_data = lpszText;
 	}
 	const char* GetText(){
@@ -1127,12 +1125,14 @@ public:
 	void OnChar(char key);
 
 	bool alliesOnlyMode;
-	std::string getModePostfix() const {
-		return alliesOnlyMode ? qdTextDB::instance().getText("Interface.Tips.ToClanPostfix") : qdTextDB::instance().getText("Interface.Tips.ToAllPostfix");
+
+    static const char* getModePostfix(bool clanOnly) {
+		return qdTextDB::instance().getText(clanOnly ? "Interface.Tips.ToClanPostfix" : "Interface.Tips.ToAllPostfix");
 	}
+
 protected:
-	std::string getModePrefix() const {
-		return alliesOnlyMode ? qdTextDB::instance().getText("Interface.Tips.ToClanPrefix") : qdTextDB::instance().getText("Interface.Tips.ToAllPrefix");
+	const char* getModePrefix() const {
+		return qdTextDB::instance().getText(alliesOnlyMode ? "Interface.Tips.ToClanPrefix" : "Interface.Tips.ToAllPrefix");
 	}
 };
 
@@ -1422,7 +1422,7 @@ public:
 	virtual int  HitTest(float _x, float _y){
 		return 0;
 	}
-	void addString(const std::string& newString);
+	void addString(const LocalizedText* newString);
 	void draw(int bFocus);
 };
 
@@ -1644,7 +1644,7 @@ class CShellIconManager
 	int cutSceneAnimStep;
 	int cutSceneAnimTimer;
 
-	MpegSound* speechSound;
+	SpeechPlayer* speechSound;
 	bool resultMusicStarted;
 
 	void onCutSceneStart();
@@ -1664,6 +1664,7 @@ public:
 	std::string hold;
 	std::string units;
 	std::string totalTime;
+    ShellControlID initialMenu;
 
 	LogicData::sProgress& GetProgress(terUnitAttributeID n_struct);
 	float			m_fEffectTime;
@@ -1753,9 +1754,9 @@ public:
 
 	void onSizeChanged();
 
-	void addChatString(const std::string& newChatString);
+	void addChatString(const LocalizedText* newChatString);
 
-	void showHintDisconnect(const std::string& players, int showTime, bool disconnected);
+	void showHintChat(const LocalizedText* text, int showTime);
 	void showHint(const char* text, int showTime, ActionTask::Type actionType = ActionTask::ASSIGNED);
 	void setTask(const char* text, ActionTask::Type actionType = ActionTask::ASSIGNED);
 
@@ -1773,8 +1774,7 @@ public:
 	void forceDraw();
 
 	float playSpeech(const char* id);
-	bool isSpeechPlay();
-	void playMusic(const char* musicNamePath);
+	void playGameOverSound(const char* path);
 	void setupAudio();
 	void speedChanged(float speed);
 
@@ -1840,12 +1840,12 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param);
 int OnLBUpWorkarea(float,float);
 int OnLBDownWorkarea(float,float);
 int OnRBDownWorkarea(float,float);
-STARFORCE_API_NEW int OnMouseMoveRegionEdit(float x, float y);
-STARFORCE_API_NEW int OnMouseMoveRegionEdit2(float x, float y);
-STARFORCE_API_NEW void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param);
+int OnMouseMoveRegionEdit(float x, float y);
+int OnMouseMoveRegionEdit2(float x, float y);
+void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnCluster1(CShellWindow* pWnd, InterfaceEventCode code, int param);
-STARFORCE_API_NEW void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonStructure(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnButtonTogether(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1863,11 +1863,17 @@ void OnButtonGotoBase(CShellWindow* pWnd, InterfaceEventCode code, int param);
 //start
 void showSingleMenu(CShellWindow* pWnd);
 void onMMSingleButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
+//addons
+void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsApplyButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsEnableCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMAddonsBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //briefing
 void onMMNomadNameBriefing(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1886,7 +1892,14 @@ void onMMBattleButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLoadButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLoadReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
+//content chooser
+void fillContentChooserList();
+void onMMContentChooserButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMContentChooserList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMContentChooserSelectButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+
 //profile
+void fillProfileList();
 void onMMNewProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMDelProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMSelectProfileButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1957,24 +1970,28 @@ void onMMDelSaveReplayButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 
 void onMMTaskButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//name input
-void onMMApplyNameBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMConnectionTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//join game
+void onMMMultiplayerJoinNextBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//lan
-STARFORCE_API_NEW void onMMGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanCreateGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//multiplayer list
+void onMMMultiplayerListGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListDirectButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerListBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-//create game
-void onMMLanMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMLanGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMCreateLanBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+//multiplayer host
+void fillMultiplayerHostList();
+void onMMMultiplayerHostDelButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerHostMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerHostNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerHostTypeCombo(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMMultiplayerHostBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //lobby
-void onMMLobby(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void fillMultiplayerLobbyList();
+void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1985,28 +2002,6 @@ void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-
-//online
-void onMMOnlineGameList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineCreateGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineJoinButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-
-//create online game
-void onMMOnlineMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineCreateButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param);
-
-//online lobby
-void onMMOnlineLobby(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbySlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyHCButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
-void onMMOnlineLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //options
 void onMMGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2026,6 +2021,9 @@ void OnSliderSoundVolume(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void OnSliderMusicVolume(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //graphics
+void OnComboGraphicsUIAnchor(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGraphicsInputGrab(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGraphicsFog(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboGraphicsSettings(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnGraphicsCustomBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnGraphicsApplyBtn(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2060,6 +2058,7 @@ void OnComboSoundMusic(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnComboSoundEffects(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnComboGameTooltips(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void OnComboGameRunBackground(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 void OnSliderScrollRate(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnSliderAngleSens(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2073,7 +2072,7 @@ void OnSplashScreenKeyLast(CShellWindow* pWnd, InterfaceEventCode code, int para
 void OnButtonTerrainBuild(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnButtonSpeed(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
-STARFORCE_API void exitToInterfaceMessage(CShellWindow* pWnd);
+void exitToInterfaceMessage(CShellWindow* pWnd);
 
 void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void OnFrameTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2247,15 +2246,15 @@ inline void draw_point(const Vect2i& a, const sColor4f& c = sColor4f(0, 0, 0, 1)
 
 inline void draw_circle(Vect2i& v, int r, sColor4c& c)
 {
-	float dp = M_PI/40, phi = dp;
+	float dp = XM_PI/40, phi = dp;
 	int x1 = r + v.x;
 	int y1 = v.y;
 	int x, y;
 
-	while(phi < 2*M_PI)
+	while(phi < 2*XM_PI)
 	{
-		x = r*cos(phi) + v.x;
-		y = r*sin(phi) + v.y;
+		x = r*xm::cos(phi) + v.x;
+		y = r*xm::sin(phi) + v.y;
 
 		terRenderDevice->DrawLine(x, y, x1, y1, c);
 
@@ -2273,39 +2272,6 @@ inline std::string getTextFromBase(const char *keyStr) {
 	const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
 	return (*stringFromBase) ? stringFromBase : keyStr;
 }
-
-#ifdef _DEMO_
-	inline bool isForbidden(int id) {
-		switch (id) {
-			case UNIT_ATTRIBUTE_GUN_SCUM_DISRUPTOR:
-			case UNIT_ATTRIBUTE_GUN_FILTH_NAVIGATOR:
-			case UNIT_ATTRIBUTE_GUN_BALLISTIC:
-
-			case UNIT_ATTRIBUTE_HARKBACK_STATION1:
-			case UNIT_ATTRIBUTE_HARKBACK_STATION2:
-			case UNIT_ATTRIBUTE_HARKBACK_STATION3:
-
-			case UNIT_ATTRIBUTE_SUBTERRA_STATION1:
-			case UNIT_ATTRIBUTE_SUBTERRA_STATION2:
-
-			case UNIT_ATTRIBUTE_GUN_SUBCHASER:
-			case UNIT_ATTRIBUTE_SCUMER:
-			case UNIT_ATTRIBUTE_DIGGER:
-			case UNIT_ATTRIBUTE_PIERCER:
-			case UNIT_ATTRIBUTE_EXTIRPATOR:
-
-			case UNIT_ATTRIBUTE_SCUM_THROWER:
-			case UNIT_ATTRIBUTE_FILTH_SPOT0:
-			case UNIT_ATTRIBUTE_FILTH_SPOT1:
-			case UNIT_ATTRIBUTE_FILTH_SPOT2:
-			case UNIT_ATTRIBUTE_FILTH_SPOT3:
-
-				return true;
-			default:
-				return false;
-		}
-	}
-#endif
 
 //inline cTextureScale* createTextureScale(const char* texture)
 //{

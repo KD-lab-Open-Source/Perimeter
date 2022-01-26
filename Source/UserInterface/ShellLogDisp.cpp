@@ -255,10 +255,10 @@ void CShellLogicDispatcher::quant(bool game_active)
 
 	if(m_hModel && !_bMenuMode)
 	{
-		tvModelPosition.rot() *=Mat3f((M_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
+		tvModelPosition.rot() *=Mat3f((XM_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
 		m_hModel->SetPosition(tvModelPosition);
 //		MatXf mat=m_hModel->GetPosition();
-//		mat.rot() *=Mat3f((M_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
+//		mat.rot() *=Mat3f((XM_PI/15)*frame_time.delta()/small_model_rate, Z_AXIS);
 //		m_hModel->SetPosition(mat);
 	}
 }
@@ -312,7 +312,7 @@ void CShellLogicDispatcher::draw()
 		if(debug_show_mouse_position){
 			Vect3f v;
 			if(terCamera->cursorTrace(gameShell->mousePosition(),v))
-				p+=sprintf(p,"mouse=(%i,%i,%i)\n",round(v.x),round(v.y),round(v.z));
+				p+=sprintf(p, "mouse=(%i,%i,%i)\n", xm::round(v.x), xm::round(v.y), xm::round(v.z));
 		}
 
 		xassert(p-s<sizeof(s));
@@ -762,7 +762,7 @@ void CShellLogicDispatcher::SetUnitView(const AttributeBase* pInfo, bool bPowerO
 			else if(strlen(pModelData->channel))
 				m_hModel->SetChannel(pModelData->channel, true);
 			float t = (float)frame_time()/2000.f;
-			m_hModel->SetPhase(t - floorf(t));
+			m_hModel->SetPhase(t - xm::floor(t));
 		}
 
 		return;

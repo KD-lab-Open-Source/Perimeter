@@ -7,6 +7,12 @@
 #pragma warning( disable : 4244 4018)
 #pragma warning( disable : 4554 4996)
 
+// disable FP contractions
+#ifdef _MSC_VER
+#pragma fp_contract (off)
+#endif
+#pragma STDC FP_CONTRACT OFF
+
 #ifdef __ICL
 #pragma warning( disable : 880 1125)
 #endif
@@ -37,8 +43,8 @@
 #endif //FORCEINLINE
 
 #ifndef _WIN32
-//Apply non MSVC specific tweaks
-#include "../Exodus/msvc.h"
+//TODO strcasecmp is part of POSIX, which is good enough for now
+#define stricmp strcasecmp
 #endif
 
 //Select per platform path separator
@@ -49,6 +55,8 @@
 #define PATH_SEP '/'
 #define PATH_SEP_STR "/"
 #endif
+
+#include "types.h"
 
 #ifdef PERIMETER_EXODUS
 //Apply exodus specific tweaks

@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "Font.h"
+#include "files/files.h"
 
 int sVertexXYZ::fmt		=	D3DFVF_XYZ;
 int sVertexXYZD::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE;
@@ -26,10 +27,10 @@ int sVertexDot3::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2
 int sVertexXYZINT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB1|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
 int sVertexXYZW4INT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB5|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
 
-BYTE& cSkinVertex::GetWeight(int idx)
+uint8_t& cSkinVertex::GetWeight(int idx)
 {
 	VISASSERT(num_weight>0);
-	BYTE* b=(BYTE*)(7+cur);
+	uint8_t* b=(uint8_t*)(7 + cur);
 	switch(idx)
 	{
 	case 0:
@@ -122,11 +123,12 @@ cD3DRender::cD3DRender()
 cD3DRender::~cD3DRender()
 {
 	Done();
+    gb_RenderDevice3D=nullptr;
 }
 
 bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
 {
-	DWORD Adapter=0;
+	uint32_t Adapter=0;
 	if(!lpD3D)
 	{
 		//lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Временно, когда появится специфичное для 9.0c переправить обратно
@@ -139,7 +141,7 @@ bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
 		return true;
 
 	D3DFORMAT BackBufferFormat=GetBackBufferFormat(Mode);
-	UINT modes=lpD3D->GetAdapterModeCount(Adapter,BackBufferFormat);
+	uint32_t modes=lpD3D->GetAdapterModeCount(Adapter, BackBufferFormat);
 
 	for(int i=0;i<modes;i++)
 	{
@@ -177,7 +179,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 		
 	if(lpD3D==0) return 2;
 	D3DDISPLAYMODE d3ddm;
-	DWORD Adapter=0/*D3DADAPTER_DEFAULT*/;
+	uint32_t Adapter=0/*D3DADAPTER_DEFAULT*/;
 	RDERR(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 	if(Mode&RENDERDEVICE_MODE_WINDOW) {
 		if(d3ddm.Format==D3DFMT_X8R8G8B8||d3ddm.Format==D3DFMT_R8G8B8||d3ddm.Format==D3DFMT_A8R8G8B8)
@@ -192,7 +194,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 //	if(TexFmtData[SURFMT_RENDERMAP].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLORALPHA].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLOR].TexFmtD3D==D3DFMT_UNKNOWN)
 //		return 5; // don't support render to texture
 	RDCALL(lpD3D->GetDeviceCaps(Adapter,D3DDEVTYPE_HAL,&DeviceCaps));
-	ZeroMemory(&d3dpp,sizeof(d3dpp));
+    memset(&d3dpp, 0, sizeof(d3dpp));
 	d3dpp.BackBufferWidth			= xScr=xscr;
 	d3dpp.BackBufferHeight			= yScr=yscr;
 	d3dpp.MultiSampleType			= D3DMULTISAMPLE_NONE;
@@ -208,7 +210,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 
 	bSupportVertexShaderHardware=bSupportVertexShader=(D3DSHADER_VERSION_MAJOR(DeviceCaps.VertexShaderVersion)>=1);
 
-	DWORD mt=D3DCREATE_FPU_PRESERVE;
+	uint32_t mt=D3DCREATE_FPU_PRESERVE;
 
 	if(RenderMode&RENDERDEVICE_MODE_MULTITHREAD)
 		mt|=D3DCREATE_MULTITHREADED;
@@ -276,6 +278,13 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	Flush();
 
 	dtFixed=new DrawTypeFixedPipeline;
+
+    /*
+     * These don't work properly under Vulkan in MacOS, disable them for now
+     * Bump mapping and Self shadow are disabled by not loading shaders
+     * Bump chaos is disabled manually elsewhere
+     */
+#ifndef __APPLE__
 	if(DeviceCaps.PixelShaderVersion>= D3DPS_VERSION(2,0) && lpD3D->CheckDeviceFormat(Adapter,D3DDEVTYPE_HAL,d3ddm.Format,0,D3DRTYPE_TEXTURE,D3DFMT_D16)==0)
 		dtAdvanceOriginal=new DrawTypeGeforceFX;
 	else
@@ -288,6 +297,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	else
 	if( DeviceCaps.PixelShaderVersion>= D3DPS_VERSION(1,4))
 		dtAdvanceOriginal=new DrawTypeRadeon8500;
+#endif
 
 	VISASSERT(occlusion_query.empty());
 
@@ -306,12 +316,12 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 
 D3DFORMAT cD3DRender::GetBackBufferFormat(int Mode)
 {
-	DWORD Adapter=0;
+	uint32_t Adapter=0;
 	D3DFORMAT BackBufferFormat=D3DFMT_X8R8G8B8;
 	if(Mode&RENDERDEVICE_MODE_WINDOW)
 	{
 		D3DDISPLAYMODE d3ddm;
-		DWORD Adapter=0;
+		uint32_t Adapter=0;
 		RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 		BackBufferFormat = d3ddm.Format;
 	}else
@@ -360,7 +370,7 @@ void cD3DRender::UpdateRenderMode()
 	d3dpp.Windowed					= (RenderMode&(RENDERDEVICE_MODE_WINDOW|RENDERDEVICE_MODE_ONEBACKBUFFER))?TRUE:FALSE;
 
 	D3DDISPLAYMODE d3ddm;
-	DWORD Adapter=0;
+	uint32_t Adapter=0;
 	RDCALL(lpD3D->GetAdapterDisplayMode(Adapter,&d3ddm));
 	if(RenderMode&RENDERDEVICE_MODE_COMPRESS)
 	{
@@ -1000,8 +1010,8 @@ void cD3DRender::FlushLine3D()
 {
 	if(lines3d.empty())return;
 
-	DWORD prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	DWORD prev_fog=GetRenderState(D3DRS_FOGENABLE);
+	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
+	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_FOGENABLE,FALSE);
 	SetNoMaterial(ALPHA_BLEND);
@@ -1038,8 +1048,8 @@ void cD3DRender::FlushPoint3D()
 {
 	if(points3d.empty())return;
 
-	DWORD prev_zfunc=GetRenderState(D3DRS_ZFUNC);
-	DWORD prev_fog=GetRenderState(D3DRS_FOGENABLE);
+	uint32_t prev_zfunc=GetRenderState(D3DRS_ZFUNC);
+	uint32_t prev_fog=GetRenderState(D3DRS_FOGENABLE);
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_FOGENABLE,FALSE);
 	SetNoMaterial(ALPHA_BLEND);
@@ -1315,7 +1325,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 	else
 		SetNoMaterial(blend_mode,phase,Tex2,Tex1,mode);
 
-	DWORD index1=GetTextureStageState(1,D3DTSS_TEXCOORDINDEX);
+	uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
 	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
 	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,1);
 
@@ -1383,7 +1393,7 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *
     if(hWnd==0) return;
 #ifndef PERIMETER_EXODUS
 	HDC hDC=0;
-    HFONT hFont=CreateFont(size,0,0,0,bold?FW_BOLD:FW_NORMAL,italic,underline,0, ANSI_CHARSET,
+    HFONT hFont=CreateFontA(size,0,0,0,bold?FW_BOLD:FW_NORMAL,italic,underline,0, ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,VARIABLE_PITCH,FontName);
 	if(hFont==0) return;
 
@@ -1392,10 +1402,12 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b,char *
     SetTextColor(hDC,RGB(r,g,b));
 	SetBkMode(hDC,TRANSPARENT);
 	RECT rect={xScrMin,yScrMin,xScrMax,yScrMax};
-	RDCALL(!ExtTextOut(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlen(string),0));
+	RDCALL(!ExtTextOutA(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlenA(string),0));
 	SelectObject(hDC,hFontOld);
 	DeleteObject(hFont);
 	ReleaseDC(hWnd,hDC);
+#else
+    //TODO implement this
 #endif
 }
 
@@ -1408,8 +1420,10 @@ void cD3DRender::OutText(int x,int y,const char *string,int r,int g,int b)
 	SetTextColor(hDC,RGB(r,g,b));
 	SetBkMode(hDC,TRANSPARENT);
 	RECT rect={xScrMin,yScrMin,xScrMax,yScrMax};
-	RDCALL(!ExtTextOut(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlen(string),0));
+	RDCALL(!ExtTextOutA(hDC,x,y,ETO_CLIPPED,&rect,string,lstrlenA(string),0));
 	ReleaseDC(hWnd,hDC);
+#else
+    //TODO implement this
 #endif
 }
 
@@ -1419,7 +1433,7 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 	if(fGamma<=0) fGamma=1.f; else fGamma=1/fGamma;
     for(int i=0;i<256;i++)
     {
-		int dwGamma=round(65536*(fStart+(fFinish-fStart)*pow(i/255.f,fGamma)));
+		int dwGamma= xm::round(65536 * (fStart + (fFinish - fStart) * xm::pow(i / 255.f, fGamma)));
 		if(dwGamma<0) dwGamma=0; else if(dwGamma>65535) dwGamma=65535;
         gamma.red[i]=gamma.green[i]=gamma.blue[i]=dwGamma;
     }
@@ -1790,7 +1804,7 @@ cVertexBufferInternal::~cVertexBufferInternal()
 {
 }
 
-BYTE* cVertexBufferInternal::Lock(int minvertex)
+uint8_t* cVertexBufferInternal::Lock(int minvertex)
 {
 	MTG();
 	void* min_index=NULL;
@@ -1806,7 +1820,7 @@ BYTE* cVertexBufferInternal::Lock(int minvertex)
 		cur_min_vertex=0;
 	}
 
-	return (BYTE*)min_index;
+	return (uint8_t*)min_index;
 }
 
 void cVertexBufferInternal::Unlock(int num_write_vertex)
@@ -1829,14 +1843,14 @@ void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
 	xassert(vertexsize==vb.size);
 }
 
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type,UINT Count,const MatXf &m)
+void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
 {
 	MTG();
 	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,m);
 	DrawPrimitive(Type,Count);
 }
 
-void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type,UINT Count)
+void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count)
 {
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
@@ -1845,7 +1859,7 @@ void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type,UINT Count)
 	RDCALL(rd->lpD3DDevice->DrawPrimitive((D3DPRIMITIVETYPE)Type,start_vertex,Count));
 }
 
-void cVertexBufferInternal::DrawIndexedPrimitive(UINT Count)
+void cVertexBufferInternal::DrawIndexedPrimitive(uint32_t Count)
 {
 	MTG();
 	cD3DRender* rd=gb_RenderDevice3D;
@@ -1897,7 +1911,7 @@ void* cQuadBufferInternal::Get()
 		BeginDraw();
 	}
 
-	BYTE* cur=start_vertex+vertex_index*vb.size;
+	uint8_t* cur= start_vertex + vertex_index * vb.size;
 	vertex_index+=4;
 	return cur;
 }
@@ -1961,7 +1975,7 @@ void cD3DRender::InitStandartIB()
 
 void cD3DRender::SaveStates(const char* fname)
 {
-	FILE* f=fopen(convert_path_resource(fname).c_str(),"wt");
+	FILE* f=fopen(convert_path_content(fname).c_str(),"wt");
 	fprintf(f,"Render state\n");
 #define W(s) {DWORD d;RDCALL(lpD3DDevice->GetRenderState(s,&d));fprintf(f,"%s=%x\n",#s,d); }
 	W(D3DRS_ZENABLE);
@@ -2243,7 +2257,7 @@ void cD3DRender::SetDialogBoxMode(bool enable)
 	if(enable)
 		RenderMode|=RENDERDEVICE_MODE_ONEBACKBUFFER;
 	else
-		RenderMode&=~(DWORD)RENDERDEVICE_MODE_ONEBACKBUFFER;
+		RenderMode&=~(uint32_t)RENDERDEVICE_MODE_ONEBACKBUFFER;
 
 	KillFocus();
 	SetFocus(false);

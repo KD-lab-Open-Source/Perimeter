@@ -93,9 +93,9 @@ void terFrameChild::Quant()
 
 Vect2f terFrameChild::homePosition() 
 {
-	float a = (2*M_PI*slotNumber_)/5;
+	float a = (2*XM_PI*slotNumber_)/5;
 	float r = FramePoint->attr().mmpHomePositionRadius;
-	return FramePoint->position2D() + Vect2f(r*cos(a), r*sin(a));
+	return FramePoint->position2D() + Vect2f(r*xm::cos(a), r*xm::sin(a));
 }
 
 void terFrameChild::executeCommand(const UnitCommand& command)
@@ -171,11 +171,11 @@ SaveUnitData* terFrameChild::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFrameChild::universalLoad(const SaveUnitData* baseData)
+void terFrameChild::universalLoad(SaveUnitData* baseData)
 {
 	terUnitReal::universalLoad(baseData);
 
-	const SaveUnitFrameChildData* data = dynamic_cast<const SaveUnitFrameChildData*>(baseData);
+	SaveUnitFrameChildData* data = dynamic_cast<SaveUnitFrameChildData*>(baseData);
 	if(data){
 		alarmStatus_ = data->alarmStatus;
 	}

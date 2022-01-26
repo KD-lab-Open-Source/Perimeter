@@ -13,7 +13,7 @@ public:
 
 	void setRealModel(int modelIndex, float scale);
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 	void SetPrm(struct terFilthVolcanoStruct* prm_){prm=prm_;}
 protected:
 	terFilthVolcanoStruct* prm;
@@ -36,7 +36,7 @@ public:
 
 	void SetFreeDestroy();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 
 	void DestroyLink();
 

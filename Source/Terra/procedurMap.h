@@ -138,11 +138,12 @@ public:
 
 
     SERIALIZE(ar) {
-		int tID;
-		tID=basePMO.pmoID;
+		int tID=basePMO.pmoID;
 		ar & WRAP_OBJECT(tID);
-		basePMO.pmoID=(PMOperatinID)tID;
-		switch(basePMO.pmoID){
+        if (ar.isInput()) {
+            basePMO.pmoID = static_cast<PMOperatinID>(tID);
+        }
+		switch (basePMO.pmoID) {
 		case PMO_ID_NONE:
 			break;
 		case PMO_ID_TOOLZER:

@@ -24,7 +24,7 @@ terFilthSwarmRat::terFilthSwarmRat(terFilthSpot* spot,const Vect3f& pos,int atta
 	attack_period=attack_period_;
 	BirthProcessPoint=NULL;
 	if(!terCheckFilthChaos(position) && SpotPoint->initialGeoprocess())
-		BirthProcessPoint = new s_WaspBirthGeoAction(round(position.x),round(position.y), 4);
+		BirthProcessPoint = new s_WaspBirthGeoAction(xm::round(position.x), xm::round(position.y), 4);
 
 	sound.Init("Filth_Move_Rat");
 	sound.SetPos(To3D(pos));
@@ -143,7 +143,8 @@ void terFilthSwarmRat::Quant()
 				if(TargetCount < 0){
 					TargetPosition.x = vMap.H_SIZE / 4 + terLogicRND(vMap.H_SIZE / 2);
 					TargetPosition.y = vMap.V_SIZE / 4 + terLogicRND(vMap.V_SIZE / 2);
-					TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(round(TargetPosition.x)),vMap.YCYCL(round(TargetPosition.y))) >> VX_FRACTION);
+					TargetPosition.z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(TargetPosition.x)), vMap.YCYCL(
+                            xm::round(TargetPosition.y))) >> VX_FRACTION);
 					TargetCount = 100;
 				}
 				v = TargetPosition;
@@ -164,7 +165,7 @@ void terFilthSwarmRat::Quant()
 			{
 				ChangeAngleCount--;
 				if(ChangeAngleCount <= 0){
-					float delta_angle=terFilthRatPrm.noise_angle_delta*(M_PI/180.0f);
+					float delta_angle=terFilthRatPrm.noise_angle_delta*(XM_PI/180.0f);
 					if(DeltaAngle > 0)
 						DeltaAngle = -terLogicRNDfrand() * delta_angle;
 					else
@@ -175,8 +176,8 @@ void terFilthSwarmRat::Quant()
 				nv.x = -v2.y;
 				nv.y = v2.x;
 				nv.z = 0;
-				nv *= sinf(DeltaAngle);
-				v2 *= cosf(DeltaAngle);
+				nv *= xm::sin(DeltaAngle);
+				v2 *= xm::cos(DeltaAngle);
 				v = v2;
 				v += nv;
 				v += v1;
@@ -242,17 +243,17 @@ void terFilthSwarmRat::GenerationProcess()
 	int num = gen.Quant();
 
 	for(int i = 0;i < num;i++){
-		float a = terLogicRNDfrand()*M_PI*2.0f;
+		float a = terLogicRNDfrand()*XM_PI*2.0f;
 		float r = terFilthRatPrm.CreatureGenerationRadius;
 		Vect3f v;
 		v = position;
 		v.z = 0;
 		if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE)
 		{
-			if(SpotPoint && SpotPoint->terCheckFilthPoint(round(v.x),round(v.y)))
+			if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y)))
 			{
 				terFilthRat* p = safe_cast<terFilthRat*>(player->buildUnit(GetUnitID()));
-				p->setPose(Se3f(QuatF(terLogicRNDfrand()*M_PI, Vect3f::K), v), false);
+				p->setPose(Se3f(QuatF(terLogicRNDfrand()*XM_PI, Vect3f::K), v), false);
 				p->SetAttackPeriod(attack_period);
 				p->Start();
 				unitList.push_back(p);
@@ -329,7 +330,7 @@ void terFilthRat::Quant()
 	if(free_destroy && !DeathProcessPoint && FilthStatus==FILTH_RAT_STATUS_RUN)
 	{
 		FilthStatus=FILTH_RAT_STATUS_STOP;
-		DeathProcessPoint = c3DSGeoActionCreator::Build(round(position().x),round(position().y), angleZ(),&geo_ant_death);
+		DeathProcessPoint = c3DSGeoActionCreator::Build(xm::round(position().x), xm::round(position().y), angleZ(), &geo_ant_death);
 	}
 
 	if(DeathProcessPoint)
@@ -365,7 +366,7 @@ void terFilthRat::Quant()
 		float dz=position().z-pos.z;
 		if(dz<0)
 		{
-			last_x_angle=M_PI*0.5f;
+			last_x_angle=XM_PI*0.5f;
 		}
 
 		if(dz>0)
@@ -419,7 +420,7 @@ void terFilthRat::SetFreeDestroy()
 	if(FilthStatus!=FILTH_RAT_STATUS_DEATH)
 	{
 		if(!terCheckFilthChaos(position()))
-			DeathProcessPoint = c3DSGeoActionCreator::Build(round(position().x),round(position().y), angleZ(),&geo_ant_death);
+			DeathProcessPoint = c3DSGeoActionCreator::Build(xm::round(position().x), xm::round(position().y), angleZ(), &geo_ant_death);
 			
 		StartDeath();
 	}
@@ -461,10 +462,10 @@ SaveUnitData* terFilthSwarmRat::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmRat::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmRat::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmRat* data = safe_cast<const SaveFilthSwarmRat*>(baseData);
+	SaveFilthSwarmRat* data = safe_cast<SaveFilthSwarmRat*>(baseData);
 
 	gen.Load(data->generate);
 	DeltaAngle=data->DeltaAngle;
@@ -477,9 +478,10 @@ void terFilthSwarmRat::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthRat* unit = safe_cast<terFilthRat*>(player->buildUnit((*it)->attributeID));
-		unitList.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthRat* unit = safe_cast<terFilthRat*>(player->loadUnit(*it));
+        if (std::find(unitList.begin(), unitList.end(), unit) == unitList.end()) {
+            unitList.push_back(unit);
+        }
 	}
 }
 
@@ -501,9 +503,9 @@ SaveUnitData* terFilthRat::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthRat::universalLoad(const SaveUnitData* baseData)
+void terFilthRat::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthRat* data = safe_cast<const SaveFilthRat*>(baseData);
+	SaveFilthRat* data = safe_cast<SaveFilthRat*>(baseData);
 
 	FilthStatus=(terFilthRatStatusType)data->FilthStatus;
 	TargetPosition=data->TargetPosition;

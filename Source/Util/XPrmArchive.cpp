@@ -1,6 +1,6 @@
 #include "StdAfx.h"
-
 #include "XPrmArchive.h"
+#include "files/files.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //			String Util
@@ -76,7 +76,7 @@ inline std::string& collapse_spec_chars(std::string& s)
 //			ScriptParser
 ///////////////////////////////////////////////////////////////////////////////////////
 XPrmOArchive::XPrmOArchive(const char* fname) :
-buffer_(10, 1)
+buffer_(10, true)
 {
 	open(fname);
 }
@@ -88,7 +88,9 @@ XPrmOArchive::~XPrmOArchive()
 
 void XPrmOArchive::open(const char* fname)
 {
-	fileName_ = fname;
+    if (fname) {
+        fileName_ = fname;
+    }
 	buffer_.alloc(10000);
 	buffer_.SetDigits(6);
 }
@@ -96,6 +98,9 @@ void XPrmOArchive::open(const char* fname)
 bool XPrmOArchive::close()
 {
 	xassert(offset_.empty() && "Block isnt closed");
+    if (fileName_.empty()) {
+        return true;
+    }
 	XStream ff(0);
 	if(ff.open(fileName_.c_str(), XS_IN)){
 		if(ff.size() == buffer_.tell()){
@@ -112,23 +117,74 @@ bool XPrmOArchive::close()
 }
 
 //////////////////////////////////////////////////////
+void XPrmOArchive::saveString(const char* value) {
+    buffer_ < value;
+}
+
 void XPrmOArchive::saveStringEnclosed(const char* prmString)
 {
 	if(prmString){
 		std::string s1 = prmString;
 		expand_spec_chars(s1);
 		buffer_ < "\"" < s1.c_str() < "\"";
-	}
-	else
-		buffer_ < "0";
+	} else {
+        buffer_ < "0";
+    }
+}
+
+void XPrmOArchive::openNode(const char* name) {
+    if(name) {
+        buffer_ < offset_.c_str() < name;
+        buffer_ < " = ";
+    }
+}
+
+void XPrmOArchive::closeNode(const char* name) {
+    if (name) {
+        buffer_ < (binary_friendly ? ";" : ";\r\n");
+    }
+}
+
+void XPrmOArchive::openBracket() {
+    if (binary_friendly) {
+        buffer_ < "{\n";
+    } else {
+        buffer_ < "{\r\n";
+        offset_ += "\t";
+    }
+}
+
+void XPrmOArchive::closeBracket() {
+    if (!binary_friendly) {
+        offset_.pop_back();
+    }
+    buffer_ < offset_.c_str() < "}";
+}
+
+void XPrmOArchive::openCollection(int counter){
+    openBracket();
+    buffer_ < offset_.c_str() <= counter < (binary_friendly ? ";" : ";\r\n");
+}
+
+void XPrmOArchive::closeCollection(bool erasePrevComma) {
+    if(erasePrevComma){
+        buffer_ -= (binary_friendly ? 1 : 3);
+        if (!binary_friendly) {
+            buffer_ < "\r\n";
+        }
+    }
+    closeBracket();
 }
 
 //////////////////////////////////////////////
 XPrmIArchive::XPrmIArchive(const char* fname) :
 buffer_(10, 1)
 {
-	if(fname && !open(fname))
-		ErrH.Abort("File not found: ", XERR_USER, 0, fname);
+	if(fname && !open(fname)) {
+        ErrH.Abort("File not found: ", XERR_USER, 0, fname);
+    } else {
+        reset();
+    }
 }
 
 XPrmIArchive::~XPrmIArchive() 
@@ -140,15 +196,22 @@ bool XPrmIArchive::open(const char* fname)
 {
 	fileName_ = fname;
 	XStream ff(0);
-	if(!ff.open(convert_path_resource(fname), XS_IN))
+    std::string path = convert_path_content(fname);
+    if (path.empty()) path = convert_path_native(fname);
+	if(!ff.open(path, XS_IN))
 		return false;
 	buffer_.alloc(ff.size() + 1);
 	ff.read(buffer_.address(), ff.size());
 	buffer_[(int)ff.size()] = 0;
-	replaced_symbol = 0;
-	putTokenOffset_ = 0;
-	readingStarts_.push_back(0);
+    reset();
 	return true;
+}
+
+void XPrmIArchive::reset() {
+    replaced_symbol = 0;
+    putTokenOffset_ = 0;
+    readingStarts_.clear();
+    readingStarts_.push_back(0);
 }
 
 void XPrmIArchive::close()

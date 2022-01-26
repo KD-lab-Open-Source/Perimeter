@@ -63,7 +63,7 @@ BOOL TETreeDlg::OnInitDialog()
 }
 
 
-void TETreeDlg::OnSize(UINT nType, int cx, int cy)
+void TETreeDlg::OnSize(uint32_t nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 	if (tree_.m_hWnd)

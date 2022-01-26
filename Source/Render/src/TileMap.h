@@ -19,7 +19,7 @@ enum eAttributeTile
 struct sTile : public sAttribute
 {
 	int bumpTileID;
-	BYTE zmin,zmax;
+	uint8_t zmin,zmax;
 
 	std::vector<std::vector<Vect2s> > region_point;//region_point[player][point]
 
@@ -125,7 +125,10 @@ public:
 	void DrawLightmapShadow(cCamera *DrawNode);
 	cTexture* GetShadowMap();
 	cTexture* GetLightMap();
-	LPDIRECT3DSURFACE9 GetZBuffer();
+
+#ifdef PERIMETER_D3D9
+    IDirect3DSurface9* GetZBuffer();
+#endif
 	void FixShadowMapCamera(cCamera *DrawNode);
 
 	void RegisterUpdateMap(UpdateMapFunction f,void* data);

@@ -365,15 +365,15 @@ cLogicObject* cLogicGeneric::GetElement(const char *pFName)
 	int nChannel;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
-		char* cur=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
-		_strlwr(cur);
+		std::string& cur = MeshScene.ChannelLibrary[nChannel]->name;
+        cur = string_to_lower(cur.c_str());
 	}
 /*	// поиск и установка первым канала анимации с именем "main"
 	int nChannelMain=-1;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
-		char* cur=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
-		_strlwr(cur);
+		std::string& cur = MeshScene.ChannelLibrary[nChannel]->name;
+        cur = string_to_lower(cur.c_str());
 		if(stricmp(cur,"main")==0)
 			nChannelMain=nChannel;
 	}

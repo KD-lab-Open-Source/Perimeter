@@ -2,17 +2,18 @@
 
 struct ScriptParam;
 #include "SoftwareBuffer.h"
+#include "SoundInternal.h"
 
 struct SNDOneBuffer
 {
 	ScriptParam* script;
 
 	Vect3f pos,velocity;
-	float volume;
+    float volume;
+    float frequency;
 
-	LPDIRECTSOUNDBUFFER buffer;
-	DWORD nSamplesPerSec;//Частота сэмпла см. WAVEFORMATEX
-	DWORD nAvgBytesPerSec;//Количество байтов в секунду
+    SND_Sample* buffer;
+	uint32_t nSamplesPerSec;//Частота сэмпла см. WAVEFORMATEX
 
 	VirtualSound3D* p3DBuffer;
 
@@ -26,11 +27,11 @@ struct SNDOneBuffer
 	SNDOneBuffer();
 	~SNDOneBuffer();
 
-	inline HRESULT RecalculatePos();
+	inline bool RecalculatePos();
 	inline void RecalculateVolume();
 
 	//Автоматическое задание нестандартной частоты
-	HRESULT PlayPreprocessing();
+	void PlayPreprocessing();
 
 	bool SetFrequency(float frequency);
 };
@@ -61,7 +62,7 @@ struct ScriptParam
 		belligerent_dependency(false)
 	{};
 
-	void LoadSound(const char* name);
+	void LoadSound(const std::string& name);
 
 	void Release();
 
@@ -69,7 +70,7 @@ struct ScriptParam
 	void RecalculateClipDistance();
 
 	MTSection* GetLock(){return &mtlock;};
-	std::vector<LPDIRECTSOUNDBUFFER>& GetSounds(){ASSERT(mtlock.is_lock());return sounds;}
+	std::vector<SND_Sample*>& GetSounds(){ASSERT(mtlock.is_lock());return sounds;}
 	std::vector<SNDOneBuffer>& GetBuffer(){ASSERT(mtlock.is_lock());return soundbuffer;}
 
 	bool incBelligerentIndex(int idx){ xassert(idx >= 0 && idx < belligerentIndex_.size()); belligerentIndex_[idx]++; return true; }
@@ -80,7 +81,7 @@ struct ScriptParam
 protected:
 	MTSection mtlock;
 	//Звуки, которые выбираются при загрузке по RND
-	std::vector<LPDIRECTSOUNDBUFFER> sounds;
+	std::vector<SND_Sample*> sounds;
 	std::vector<SNDOneBuffer> soundbuffer;
 	// количество звуков для разных воюющих сторон
 	std::vector<int> belligerentIndex_;
@@ -92,7 +93,7 @@ class SNDScript
 {
 	struct ltstr
 	{
-	  bool operator()(LPCSTR s1,LPCSTR s2) const
+	  bool operator()(const char* s1, const char* s2) const
 	  {
 		return strcmp(s1, s2) < 0;
 	  }
@@ -102,11 +103,11 @@ class SNDScript
 	static std::string locDataPath;
 
 public:
-	typedef std::map<LPCSTR, ScriptParam*, ltstr> MapScript;
+	typedef std::map<const char*, ScriptParam*, ltstr> MapScript;
 
 	struct OneScript
 	{
-		LPSTR name;
+        char* name;
 		//Один раз инициализировали, много раз использовали
 		//не добавлять и не удалять а процессе работы
 		std::vector<ScriptParam> sounds;
@@ -124,11 +125,11 @@ public:
 	~SNDScript();
 
 	bool AddScript(const struct SoundScriptPrm* prm);
-	bool RemoveScript(LPCSTR name);
+	bool RemoveScript(const char* name);
 	void RemoveAll();
 
-	ScriptParam* Find(LPCSTR name);
-	bool FindFree(LPCSTR name,ScriptParam*& script,int& nfree);
+	ScriptParam* Find(const char* name);
+	bool FindFree(const char* name, ScriptParam*& script, int& nfree);
 
 	void PauseAllPlayed(int pause_level);
 	void PlayByLevel(int pause_level);
@@ -148,9 +149,9 @@ protected:
 	void ParseSoundScriptPrm(const struct SoundScriptPrm* prm,
 		std::vector<ScriptParam>& vc);
 
-	bool RemoveScriptInternal(LPCSTR name);
+	bool RemoveScriptInternal(const char* name);
 	
-	static const char* filePath(const ScriptParam* prm,const char* file_name,int belligerent_index = 0);
+	static std::string filePath(const ScriptParam* prm,const char* file_name,int belligerent_index = 0);
 };
 
 extern SNDScript script3d;

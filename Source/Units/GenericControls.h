@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #ifndef __PERIMETER_GENERIC_CONTROLS_
 #define __PERIMETER_GENERIC_CONTROLS_
 
@@ -57,10 +55,11 @@ public:
 	void SetMapUpdatedCount(int count){ MapUpdatedCount = count; }
 
 	//-----------------------------------------------------
-	// Команды
+	// РљРѕРјР°РЅРґС‹
 	typedef std::list<UnitCommand> CommandList;
 	CommandList& commandList(){ return commandList_; }
-	CommandID lastCommand() const { return commandList_.empty() ? COMMAND_ID_NONE : commandList_.back().commandID(); }
+    const UnitCommand* lastCommand() const { return commandList_.empty() ? nullptr : &commandList_.back(); }
+    CommandID lastCommandID() const { return commandList_.empty() ? COMMAND_ID_NONE : commandList_.back().commandID(); }
 	const UnitCommand* findCommand(CommandID commandID) const;
 	
 	void commandOutcoming(const UnitCommand& command);
@@ -69,7 +68,7 @@ public:
 	virtual void executeCommand(const UnitCommand& command);
 
 	//------------------------------------------
-	//	Интерфейс
+	//	РРЅС‚РµСЂС„РµР№СЃ
 	virtual bool selectAble() const;
 	bool selected() const { return selected_; }
 	float life() const { return damageMolecula().elementCount() ? clamp(float(damageMolecula().aliveElementCount())/float(damageMolecula().elementCount()), 0, 1) : 0; }
@@ -82,13 +81,13 @@ public:
 	virtual void Mark(){ marked_ = true; }
 	virtual void Unmark(){ marked_ = false; }
 	
-	virtual void ShowInfo() {} // Вывод интерфейсной инфы: путь, лайф-бар
+	virtual void ShowInfo() {} // Р’С‹РІРѕРґ РёРЅС‚РµСЂС„РµР№СЃРЅРѕР№ РёРЅС„С‹: РїСѓС‚СЊ, Р»Р°Р№С„-Р±Р°СЂ
 
 	//-----------------------------------------------------
-	//	Интерполяция
+	//	РРЅС‚РµСЂРїРѕР»СЏС†РёСЏ
 	terInterpolationBase* avatar() const { return avatar_; }
 	
-	virtual void AvatarQuant();//Специально для Seeler: ни в коем случае не вызывать явно AvatarQuant()
+	virtual void AvatarQuant();//РЎРїРµС†РёР°Р»СЊРЅРѕ РґР»СЏ Seeler: РЅРё РІ РєРѕРµРј СЃР»СѓС‡Р°Рµ РЅРµ РІС‹Р·С‹РІР°С‚СЊ СЏРІРЅРѕ AvatarQuant()
 	virtual void AvatarInterpolation();
 	
 	virtual void UpdateSkinColor();
@@ -99,7 +98,7 @@ public:
 	virtual void setRealModel(int modelIndex, float scale) {} 
 
 	virtual SaveUnitData* universalSave(SaveUnitData* data);
-	virtual void universalLoad(const SaveUnitData* data);
+	virtual void universalLoad(SaveUnitData* data);
 
 	virtual void Collision(terUnitBase* p) {}
 
@@ -109,9 +108,9 @@ public:
 	virtual void WriteDebugInfo(XBuffer& buf) {}
 
 	//-----------------------------------------------------
-	//	Координаты
-	virtual void setPose(const Se3f& pose, bool initPose); // true - инициализация - выставление в первый раз с изменением z
-														   // основная функция координатных фич, все остальные сеттеры - просто short-cuts	
+	//	РљРѕРѕСЂРґРёРЅР°С‚С‹
+	virtual void setPose(const Se3f& pose, bool initPose); // true - РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ - РІС‹СЃС‚Р°РІР»РµРЅРёРµ РІ РїРµСЂРІС‹Р№ СЂР°Р· СЃ РёР·РјРµРЅРµРЅРёРµРј z
+														   // РѕСЃРЅРѕРІРЅР°СЏ С„СѓРЅРєС†РёСЏ РєРѕРѕСЂРґРёРЅР°С‚РЅС‹С… С„РёС‡, РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЃРµС‚С‚РµСЂС‹ - РїСЂРѕСЃС‚Рѕ short-cuts	
 	const Se3f& pose() const { return pose_; }
 
 	const Vect3f& position() const { return pose_.trans(); }
@@ -144,7 +143,7 @@ public:
 	void changeRepairRequest(int delta){ repairRequested_ += delta; if(repairRequested_ < 0) repairRequested_ = 0; }
 	void clearRepairRequest(){ repairRequested_ = 0; }
 
-	/// возвращает true, если юнит ремонтируется как здание (строительными блоками)
+	/// РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЋРЅРёС‚ СЂРµРјРѕРЅС‚РёСЂСѓРµС‚СЃСЏ РєР°Рє Р·РґР°РЅРёРµ (СЃС‚СЂРѕРёС‚РµР»СЊРЅС‹РјРё Р±Р»РѕРєР°РјРё)
 	virtual bool needBuildingRepair() const { return false; }
 
 	//-----------------------------------------------------
@@ -234,16 +233,16 @@ public:
 	void DeleteInterpolator();
 	virtual bool needCrater() const { return true; }
 
-	const AttributeBase& attr() const {
+	virtual const AttributeBase& attr() const {
 		return *attr_;
 	}
 
 	VIRTUAL_SERIALIZE(ar) {
-		ar & TRANSLATE_NAME(attr_, "attribute", "Свойство");
+		ar & TRANSLATE_NAME(attr_, "attribute", "РЎРІРѕР№СЃС‚РІРѕ");
 //		ar & WRAP_OBJECT(position_);
 //		ar & WRAP_OBJECT(orientaion);
 //		ar & WRAP_OBJECT(radius);
-		ar & TRANSLATE_OBJECT(label_, "Метка");
+		ar & TRANSLATE_OBJECT(label_, "РњРµС‚РєР°");
 	}
 
 protected:
@@ -274,17 +273,17 @@ private:
 
 	DamageMolecula damageMolecula_;
 
-	/// количество элементов, которое потенциально может быть выбито
+	/// РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ, РєРѕС‚РѕСЂРѕРµ РїРѕС‚РµРЅС†РёР°Р»СЊРЅРѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІС‹Р±РёС‚Рѕ
 	/** 
-	рассчитывается на основе того, сколько в данный момент в юнит целится
-	ракет, пушек и т.д.
+	СЂР°СЃСЃС‡РёС‚С‹РІР°РµС‚СЃСЏ РЅР° РѕСЃРЅРѕРІРµ С‚РѕРіРѕ, СЃРєРѕР»СЊРєРѕ РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ РІ СЋРЅРёС‚ С†РµР»РёС‚СЃСЏ
+	СЂР°РєРµС‚, РїСѓС€РµРє Рё С‚.Рґ.
 	*/
 	int possibleDamage_;
 
-	/// заказанный ремонт
+	/// Р·Р°РєР°Р·Р°РЅРЅС‹Р№ СЂРµРјРѕРЅС‚
 	/**
-	для зданий и фрейма - количество элементов
-	в летящих к ним строительных блоках
+	РґР»СЏ Р·РґР°РЅРёР№ Рё С„СЂРµР№РјР° - РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ
+	РІ Р»РµС‚СЏС‰РёС… Рє РЅРёРј СЃС‚СЂРѕРёС‚РµР»СЊРЅС‹С… Р±Р»РѕРєР°С…
 	*/
 	int repairRequested_;
 
@@ -313,6 +312,6 @@ bool removeNotAlive(UnitList& unitList)
 	return false;
 }
 
-typedef std::list<terUnitBase*> UnitList; // используется свойство сохранения итераторов
+typedef std::list<terUnitBase*> UnitList; // РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ СЃРІРѕР№СЃС‚РІРѕ СЃРѕС…СЂР°РЅРµРЅРёСЏ РёС‚РµСЂР°С‚РѕСЂРѕРІ
 
 #endif

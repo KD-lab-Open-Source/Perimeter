@@ -64,9 +64,9 @@ void terUnitGeneric::setPose(const Se3f& pose, bool initPose)
 	terUnitBase::setPose(pose, initPose);
 
 	if(inserted())
-		universe()->UnitGrid.Move(*this, round(position().x), round(position().y), round(radius()));
+		universe()->UnitGrid.Move(*this, xm::round(position().x), xm::round(position().y), xm::round(radius()));
 	else
-		universe()->UnitGrid.Insert(*this, round(position().x), round(position().y), round(radius()));
+		universe()->UnitGrid.Insert(*this, xm::round(position().x), xm::round(position().y), xm::round(radius()));
 }
 
 void terUnitGeneric::Quant()
@@ -129,13 +129,15 @@ void terUnitGeneric::explode()
 		int num = db.count;
 
 		if(db.countRnd == -1)
-			num += round(pow(radius() / 4,1.5f));
+			num += static_cast<int>(xm::round(xm::pow(radius() / 4.0f, 1.5f)));
 		else
 			num += terLogicRND(db.countRnd);
 
 		for(int j = 0; j < num; j++){
 			Vect3f v;
-			v.setSpherical(terLogicRNDfrand() * M_PI * 2.0f,M_PI * 0.45 * terLogicRNDfrand(),terLogicRNDfrand() * db.speed);
+            float vpsi = terLogicRNDfrand() * XM_PI * 2.0f;
+            float vtheta = static_cast<float>(XM_PI * 0.45f * terLogicRNDfrand());
+			v.setSpherical(vpsi, vtheta, terLogicRNDfrand() * db.speed);
 
 			terProjectileBase* p = safe_cast<terProjectileBase*>(Player->buildUnit(db.debrisID)); // RND внутри
 			p->setSource(NULL,(Vect3f&)position(),v);
@@ -277,9 +279,9 @@ SaveUnitData* terCrater::universalSave(SaveUnitData* base_data)
 	return data;
 }
 
-void terCrater::universalLoad(const SaveUnitData* base_data)
+void terCrater::universalLoad(SaveUnitData* base_data)
 {
-	const SaveCraterData* data = safe_cast<const SaveCraterData*>(base_data);
+	SaveCraterData* data = safe_cast<SaveCraterData*>(base_data);
 	terUnitBase::universalLoad(data);
 
 	toolzer_.universalLoad(&data->toolzer);

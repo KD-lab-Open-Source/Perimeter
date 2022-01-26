@@ -98,7 +98,9 @@ private:
 class BinaryOArchive 
 {
 public:
-	BinaryOArchive(const char* fname, int version = 0);
+    bool binary_friendly = true; //Useless, just to make it par with XPrmOArchive
+    
+	BinaryOArchive(const char* fname = nullptr, int version = 0);
 	~BinaryOArchive();
 
 	void open(const char* fname, int version = 0); 
@@ -119,6 +121,10 @@ public:
 	bool laterThan(int version) const {
 		return true;
 	}
+
+    XBuffer& buffer() {
+        return buffer_;
+    }
 
 	template<class T>
     BinaryOArchive& operator<<(const T & t){
@@ -156,7 +162,7 @@ public:
 
 private:
 	XBuffer buffer_;
-	std::string fileName_;
+	std::string fileName_ = "";
 
 	///////////////////////////////////
 	void saveString(const char* value) {
@@ -322,6 +328,10 @@ public:
 	bool laterThan(int version) const {
 		return version_ > version;
 	}
+
+    XBuffer& buffer() {
+        return buffer_;
+    }
 
 	template<class T>
     BinaryIArchive& operator>>(T& t){

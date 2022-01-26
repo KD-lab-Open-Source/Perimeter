@@ -1,11 +1,11 @@
 #include "StdAfx.h"
 #include "ReelManager.h"
 #include "Runtime.h"
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "GameShell.h"
 #include "GameShellSq.h"
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 //extern GameShell* gameShell;
 
 ReelManager::ReelManager() {
@@ -20,63 +20,52 @@ ReelManager::~ReelManager() {
 	RELEASE(bgTexture);
 }
 
-void ReelManager::showModal(const char* binkFileName, const char* soundFileName, bool stopBGMusic, int alpha) {
-#ifndef _DEMO_
-	bink = PlayBink::Create();
-	if(!bink->Init(binkFileName))
+void ReelManager::showModal(const char* videoFileName, const char* soundFileName, bool stopBGMusic, int alpha) {
+	player = new VideoPlayer();
+	if(!player->Init(videoFileName))
 	{
-		delete bink;
+		delete player;
 		return;
 	}
+    //Not required to set volume as its globally set from terSoundVolume
 	if (stopBGMusic) {
 		gb_Music.Stop();
-//		bink->SetVolume(max(terMusicVolume, terSoundVolume));
+//		player->SetVolume(max(terMusicVolume, terSoundVolume));
 //	} else {
-//		bink->SetVolume(0);
+//		player->SetVolume(0);
 	}
-	bink->SetVolume(max(terMusicVolume, terSoundVolume));
+	//player->SetVolume(max(terMusicVolume, terSoundVolume));
 
 	std::string soundPath = soundFileName ? soundFileName : "";
 
 	if (!soundPath.empty() && soundPath != "empty" && stopBGMusic) {
-		int ret = gb_Music.OpenToPlay(soundFileName);
-		xassert(ret);
+		int ret = gb_Music.OpenToPlay(soundFileName, true);
+        if (!ret) {
+            fprintf(stderr, "showModal error opening sound %s\n", soundFileName);
+        }
 	}
 
 	Vect2i showSize;
 	Vect2i showPos;
-	int screenWidth = terRenderDevice->GetSizeX();
-	int screenHeight = terRenderDevice->GetSizeY();
 	switch (sizeType) {
 		case REAL_SIZE:
 			showPos = pos;
-			showSize = bink->GetSize();
+			player->getSize(showSize);
 			bgTexture = gb_VisGeneric->CreateTextureScreen();
 			if (!bgTexture)	{
-				xassert_s(0, "Cannot create background texture to play bink file");
+				xassert_s(0, "Cannot create background texture to play video file");
 				return;
 			}
 			break;
 		case FULL_SCREEN:
 			{
-				showSize = bink->GetSize();
+				player->getSize(showSize);
 				if (alpha < 255) {
 					bgTexture = gb_VisGeneric->CreateTextureScreen();
 					if (!bgTexture)	{
-						xassert_s(0, "Cannot create background texture to play bink file");
+						xassert_s(0, "Cannot create background texture to play video file");
 						return;
 					}
-				}
-				float realRatio = showSize.x / (float) showSize.y;
-				float screenRatio = screenWidth / (float) screenHeight;
-				if (realRatio >= screenRatio) {
-					showSize.x = screenWidth;
-					showSize.y = screenWidth / realRatio;
-					showPos.set(0, int((screenHeight - showSize.y) / 2.0f));
-				} else {
-					showSize.y = screenHeight;
-					showSize.x = screenHeight * realRatio;
-					showPos.set(int((screenWidth - showSize.x) / 2.0f), 0);
 				}
 			}
 			break;
@@ -85,33 +74,42 @@ void ReelManager::showModal(const char* binkFileName, const char* soundFileName,
 			showSize = size;
 			bgTexture = gb_VisGeneric->CreateTextureScreen();
 			if (!bgTexture)	{
-				xassert_s(0, "Cannot create background texture to play bink file");
+				xassert_s(0, "Cannot create background texture to play video file");
 				return;
 			}
 	}
 
 	visible = true;
-	while (isVisible() && !bink->IsEnd()) {
-#ifndef PERIMETER_EXODUS
-        //TODO is this necessary under SDL2 in Win32? maybe we should poll SDL2 events?
-        MSG msg;
-		if ( PeekMessage(&msg, 0, 0, 0, PM_REMOVE) ) {
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-			continue;
-		} 
-#endif
-        if ( bink->CalcNextFrame() ) {
+	while (isVisible() && !player->IsEnd()) {
+        app_event_poll();
+        
+        if (player->Update() ) {
+            int screenWidth = terRenderDevice->GetSizeX();
+            int screenHeight = terRenderDevice->GetSizeY();
+            if (sizeType == FULL_SCREEN) {
+                float realRatio = static_cast<float>(showSize.x) / static_cast<float>(showSize.y);
+                float screenRatio = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
+                if (realRatio >= screenRatio) {
+                    showSize.x = screenWidth;
+                    showSize.y = static_cast<int>(static_cast<float>(screenWidth) / realRatio);
+                    showPos.set(0, static_cast<int>(static_cast<float>(screenHeight - showSize.y) / 2.0f));
+                } else {
+                    showSize.y = screenHeight;
+                    showSize.x = static_cast<int>(static_cast<float>(screenHeight) * realRatio);
+                    showPos.set(static_cast<int>(static_cast<float>(screenWidth - showSize.x) / 2.0f), 0);
+                }
+            }
+            
             terRenderDevice->Fill(0, 0, 0, 0);
             terRenderDevice->BeginScene();
             if (bgTexture) {
                 terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,
-                                            screenWidth / (float)bgTexture->GetWidth(),
-                                            screenHeight / (float)bgTexture->GetHeight(),
+                                            static_cast<float>(screenWidth) / static_cast<float>(bgTexture->GetWidth()),
+                                            static_cast<float>(screenHeight) / static_cast<float>(bgTexture->GetHeight()),
                                             bgTexture);
             }
 
-            bink->Draw(showPos.x, showPos.y, showSize.x, showSize.y, alpha);
+            player->Draw(showPos.x, showPos.y, showSize.x, showSize.y, alpha);
 
             terRenderDevice->EndScene();
             terRenderDevice->Flush();
@@ -123,15 +121,14 @@ void ReelManager::showModal(const char* binkFileName, const char* soundFileName,
 	terRenderDevice->EndScene();
 	terRenderDevice->Flush();
 
-	delete bink;
-	bink = NULL;
+	delete player;
+    player = NULL;
 	RELEASE(bgTexture);
 
 	if (soundFileName && strlen(soundFileName) && stopBGMusic) {
 		gb_Music.Stop();
 	}
 	hide();
-#endif
 }
 
 void ReelManager::showPictureModal(const char* pictureFileName, int stableTime) {
@@ -143,7 +140,7 @@ void ReelManager::showPictureModal(const char* pictureFileName, int stableTime) 
 /*
 	bgTexture = gb_VisGeneric->CreateTextureScreen();
 	if (!bgTexture)	{
-		xassert_s(0, "Cannot create background texture to play bink file");
+		xassert_s(0, "Cannot create background texture to play video file");
 		return;
 	}
 */
@@ -152,14 +149,8 @@ void ReelManager::showPictureModal(const char* pictureFileName, int stableTime) 
 	float maxTime = SPLASH_FADE_IN_TIME + stableTime + SPLASH_FADE_OUT_TIME;
 	visible = true;
 	while (isVisible()) {
-#ifndef PERIMETER_EXODUS
-        MSG msg;
-		if ( PeekMessage(&msg, 0, 0, 0, PM_REMOVE) ) {
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-			continue;
-		}
-#endif
+        app_event_poll();
+        
         double timeElapsed = clockf() - startTime;
         if (timeElapsed > SPLASH_REEL_ABORT_DISABLED_TIME) {
             gameShell->reelAbortEnabled = true;
@@ -177,11 +168,11 @@ void ReelManager::showPictureModal(const char* pictureFileName, int stableTime) 
 */
             int alpha = 0;
             if (timeElapsed <= SPLASH_FADE_IN_TIME) {
-                alpha = round(255.0f * timeElapsed / SPLASH_FADE_IN_TIME);
+                alpha = xm::round(255.0f * timeElapsed / SPLASH_FADE_IN_TIME);
             } else if (stableTime < 0 || timeElapsed <= (SPLASH_FADE_IN_TIME + stableTime)) {
                 alpha = 255;
             } else {
-                alpha = round(255.0f * (maxTime - timeElapsed) / SPLASH_FADE_OUT_TIME);
+                alpha = xm::round(255.0f * (maxTime - timeElapsed) / SPLASH_FADE_OUT_TIME);
             }
             float dy = screenHeight / (float)screenWidth;
             terRenderDevice->DrawSprite(0, 0, screenWidth, screenHeight, 0, 0,

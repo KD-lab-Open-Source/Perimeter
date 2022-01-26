@@ -83,7 +83,7 @@ void LinkTubule::updateColor(const Vect3f& cameraPos) {
 	elasticLink->sphere2->GetColor( 0, &d2 );
 	d = (d1 + d2) * 0.5f;
 	if (state == BLINKING) {
-		float f = 2 * fmod(timeElapsed, BUILDING_LINK_BLINKING_PERIOD) / BUILDING_LINK_BLINKING_PERIOD;
+		float f = 2 * xm::fmod(timeElapsed, BUILDING_LINK_BLINKING_PERIOD) / BUILDING_LINK_BLINKING_PERIOD;
 		d.a *= (f > 1) ? (2.0f - f) : f;
 	}
 	elasticLink->SetColor( 0, &d );

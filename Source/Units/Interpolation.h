@@ -69,7 +69,7 @@ class AngleInterpolationOp
 public:
 	void operator()(float& angle, const float& angle0, const float& angle1, float t) const 
 	{ 
-		angle = cycle(angle0 + getDist(angle1, angle0, 2*M_PI)*t, 2*M_PI);
+		angle = cycle(angle0 + getDist(angle1, angle0, 2*XM_PI)*t, 2*XM_PI);
 	}
 };
 
@@ -381,7 +381,7 @@ public:
 	void setSoundEventID(SoundEventID id){ soundEventID_ = id; }
 
 	void universalSave(struct SaveNodeController& data) const;
-	void universalLoad(const SaveNodeController& data);
+	void universalLoad(SaveNodeController& data);
 
 	void writeDebugInfo(XBuffer& buf);
 

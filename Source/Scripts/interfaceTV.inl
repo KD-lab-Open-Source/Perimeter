@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//параметры камеры и моделей в окошке
+//РїР°СЂР°РјРµС‚СЂС‹ РєР°РјРµСЂС‹ Рё РјРѕРґРµР»РµР№ РІ РѕРєРѕС€РєРµ
 
 //------------------------------------------------------
-// параметры камеры и моделей в окошке - по умолчанию
+// РїР°СЂР°РјРµС‚СЂС‹ РєР°РјРµСЂС‹ Рё РјРѕРґРµР»РµР№ РІ РѕРєРѕС€РєРµ - РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 
 struct InterfaceTV
 {
@@ -21,7 +21,7 @@ struct InterfaceTV
 
 InterfaceTV interfaceTV_Frame = 
 {
-	//фрейм
+	//С„СЂРµР№Рј
 	radius = 200;
 	angle_x = 30;
 	pos_dy = 70;
@@ -29,7 +29,7 @@ InterfaceTV interfaceTV_Frame =
 };
 InterfaceTV interfaceTV_Core = 
 {
-	//генератор
+	//РіРµРЅРµСЂР°С‚РѕСЂ
 	radius = 150;
 	angle_x =50;
 	pos_dy = -12;
@@ -38,7 +38,7 @@ InterfaceTV interfaceTV_Core =
 };
 InterfaceTV interfaceTV_Transmitter = 
 {
-	//ретранслятор
+	//СЂРµС‚СЂР°РЅСЃР»СЏС‚РѕСЂ
 	radius = 200;
 	angle_x =50;
 	pos_dy = -5;
@@ -46,42 +46,42 @@ InterfaceTV interfaceTV_Transmitter =
 };
 InterfaceTV interfaceTV_CommandCenter = 
 {
-	//комм. центр
+	//РєРѕРјРј. С†РµРЅС‚СЂ
 	angle_x =50;
 	radius = 115;
 	pos_dy = -7;
 };
 InterfaceTV interfaceTV_StaticBomb = 
 {
-	//строение-бомба
+	//СЃС‚СЂРѕРµРЅРёРµ-Р±РѕРјР±Р°
 	angle_x =50;
 	radius = 115;
 	pos_dy = -7;
 };
 InterfaceTV interfaceTV_PlantSoldier = 
 {
-	//з.солдат
+	//Р·.СЃРѕР»РґР°С‚
 	angle_x =50;
 	radius = 90;
 	pos_dy = -10;
 };
 InterfaceTV interfaceTV_PlantOfficer = 
 {
-	//з.офф.
+	//Р·.РѕС„С„.
 	angle_x =50;
 	radius = 90;
 	pos_dy = 10;
 };
 InterfaceTV interfaceTV_PlantTechnician = 
 {
-	//з.техн.
+	//Р·.С‚РµС…РЅ.
 	angle_x =50;
 	radius = 90;
 	pos_dy = 8;
 };
 InterfaceTV interfaceTV_Amplifier = 
 {
-	//усилитель
+	//СѓСЃРёР»РёС‚РµР»СЊ
 	angle_x =50;
 	radius = 200;
 	pos_dy = 3;
@@ -372,21 +372,21 @@ InterfaceTV interfaceTV_LabSubterra2 =
 };
 InterfaceTV interfaceTV_Soldier = 
 {
-	//солдат
+	//СЃРѕР»РґР°С‚
 	angle_x =50;
 	radius = 85;
 	pos_dy = -3;
 };
 InterfaceTV interfaceTV_TerrainMaster = 
 {
-	//бригадир
+	//Р±СЂРёРіР°РґРёСЂ
 	angle_x =50;
 	radius = 70;
 	pos_dy = 10;
 };
 InterfaceTV interfaceTV_BuildMaster = 
 {
-	//прораб
+	//РїСЂРѕСЂР°Р±
 	angle_x =50;
 	radius = 80;
 	pos_dy = 10;
@@ -498,6 +498,6 @@ float small_camera_rect_dy  = 115.0f / 768.0f;
 
 float small_model_rate = 200;
 
-//параметры камеры и моделей в окошке
+//РїР°СЂР°РјРµС‚СЂС‹ РєР°РјРµСЂС‹ Рё РјРѕРґРµР»РµР№ РІ РѕРєРѕС€РєРµ
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

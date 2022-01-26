@@ -17,16 +17,16 @@
 
 const int WORM_TIME_CHANGE_ANGLE=50;
 const int WORM_DTIME_CHANGE_ANGLE=25;
-const float WORM_DANGLE=M_PI*0.3f;
+const float WORM_DANGLE=XM_PI*0.3f;
 
 terFilthSwarmWorm::terFilthSwarmWorm(terFilthSpot* spot,const Vect3f& pos,int attack_period_)
 : terFilthSwarm(spot,pos)
 {
 	attack_period=attack_period_;
-	pWorm=new CGeoWorm(round(position.x)-WSXSY05,round(position.y)-WSXSY05);
+	pWorm=new CGeoWorm(xm::round(position.x) - WSXSY05, xm::round(position.y) - WSXSY05);
 
 	speed=2.0f;
-	angle=terLogicRNDfrand()*2*M_PI;
+	angle=terLogicRNDfrand()*2*XM_PI;
 	change_angle=WORM_TIME_CHANGE_ANGLE;
 	pWormModel=NULL;
 	first=true;
@@ -161,46 +161,46 @@ void terFilthSwarmWorm::Move()
 	if(change_angle<=0)
 	{
 		angle+=terLogicRNDfrnd()*WORM_DANGLE;
-		change_angle=round(WORM_TIME_CHANGE_ANGLE+terLogicRNDfrnd()*WORM_DTIME_CHANGE_ANGLE);
+		change_angle= xm::round(WORM_TIME_CHANGE_ANGLE + terLogicRNDfrnd() * WORM_DTIME_CHANGE_ANGLE);
 	}
 
 	if(TargetPoint)
 	{
 		Vect3f delta=TargetPoint->position()-position;
-		float a=atan2(delta.y,delta.x);
+		float a=xm::atan2(delta.y,delta.x);
 
-		a=uncycle(a,angle,2*M_PI);
+		a=uncycle(a,angle,2*XM_PI);
 
-		Vect2f p(cosf(a),sinf(a)),p1(delta.x,delta.y);
+		Vect2f p(xm::cos(a), xm::sin(a)),p1(delta.x, delta.y);
 		p1.normalize(1);
 		float f=p.dot(p1);
 
 		float t=0.1f;
 		angle=a*t+angle*(1-t);
 	}else
-		angle=cycle(angle,2*M_PI);
+		angle=cycle(angle,2*XM_PI);
 
-	Vect2f dx(cosf(angle)*speed,sinf(angle)*speed);
+	Vect2f dx(xm::cos(angle) * speed, xm::sin(angle) * speed);
 
 	position.x+=dx.x;
 	position.y+=dx.y;
 
 	position.x=clamp(position.x,0,vMap.H_SIZE);
 	position.y=clamp(position.y,0,vMap.V_SIZE);
-	pWorm->step(round(position.x)-WSXSY05,round(position.y)-WSXSY05,angle);
+	pWorm->step(xm::round(position.x) - WSXSY05, xm::round(position.y) - WSXSY05, angle);
 }
 
 bool terFilthSwarmWorm::isMoveToChaos()
 {
 	float len=WSXSY05;
-	Vect2f dx(cosf(angle)*len,sinf(angle)*len);
+	Vect2f dx(xm::cos(angle) * len, xm::sin(angle) * len);
 
 	Vect3f pos(position.x+dx.x,position.y+dx.y,0);
 	pos=To3D(pos);
 	if(show_filth_debug)
 		show_vector(pos,2,GREEN);
 
-	return terCheckFilthChaos(round(pos.x),round(pos.y));
+	return terCheckFilthChaos(xm::round(pos.x), xm::round(pos.y));
 }
 
 //////////////////////////////////////////////////////////
@@ -240,11 +240,11 @@ void terFilthWorm::StartAttack()
 {
 	setAttack(true);
 
-	pWormOut=new CWormOut(round(position().x),round(position().y));
+	pWormOut=new CWormOut(xm::round(position().x), xm::round(position().y));
 	realAvatar()->setChain(terLogicRND(2)?CHAIN_BUILD1:CHAIN_BUILD2);
 
 	Se3f pos=pose();
-	pos.rot().set(M_PI*terLogicRNDfrnd(),Vect3f(0,0,1));
+	pos.rot().set(XM_PI*terLogicRNDfrnd(),Vect3f(0,0,1));
 	setPose(pos,false);
 }
 
@@ -346,7 +346,7 @@ void terFilthWorm::Quant()
 		int end_radius=5;
 		terSphericalCollisionOperatorWorm op(this,end_radius);
 		Vect3f pos=GetEndPos();
-		universe()->UnitGrid.Scan(round(pos.x), round(pos.y), end_radius, op);
+		universe()->UnitGrid.Scan(xm::round(pos.x), xm::round(pos.y), end_radius, op);
 	}
 
 	sound.SetPos(To3D(position()));
@@ -427,10 +427,10 @@ SaveUnitData* terFilthSwarmWorm::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmWorm::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmWorm::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmWorm* data = safe_cast<const SaveFilthSwarmWorm*>(baseData);
+	SaveFilthSwarmWorm* data = safe_cast<SaveFilthSwarmWorm*>(baseData);
 
 	attack_period=data->attack_period;
 	change_angle=data->change_angle;
@@ -441,8 +441,8 @@ void terFilthSwarmWorm::universalLoad(const SaveUnitData* baseData)
 
 	if(data->pWormModel)
 	{
-		pWormModel = safe_cast<terFilthWorm*>(player->buildUnit(data->pWormModel->attributeID));
-		pWormModel->universalLoad(data->pWormModel);
+		pWormModel = safe_cast<terFilthWorm*>(player->loadUnit(data->pWormModel, false));
+        pWormModel->universalLoad(data->pWormModel);
 	}
 }
 
@@ -454,9 +454,9 @@ SaveUnitData* terFilthWorm::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthWorm::universalLoad(const SaveUnitData* baseData)
+void terFilthWorm::universalLoad(SaveUnitData* baseData)
 {
 	terFilthGeneric::universalLoad(baseData);
-	const SaveFilthVorm* data = safe_cast<const SaveFilthVorm*>(baseData);
+	SaveFilthVorm* data = safe_cast<SaveFilthVorm*>(baseData);
 	Start();//?????
 }

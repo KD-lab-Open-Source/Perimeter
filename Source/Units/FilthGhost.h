@@ -26,7 +26,7 @@ struct terFilthGhost : terFilthGeneric
 	void Attack(terUnitBase* TargetPoint);
 
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	cLine3d* laser;
 	void RequestAttackQuant();
@@ -63,7 +63,7 @@ struct terFilthSwarmGhost : terFilthSwarm
 	void SetFreeDestroy();
 
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	void SnakeMove();
 	void GenerationProcess();

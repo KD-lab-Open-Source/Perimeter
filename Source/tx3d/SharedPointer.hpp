@@ -7,6 +7,8 @@
  *
  *	@author Alexander Porechnov (scm)
  */
+ 
+#include "xerrhand.h"
 
 #pragma once
 
@@ -21,12 +23,19 @@ namespace tx3d {
 			virtual ~SharedPointer() {}
 
 			void referenced() {
+				if (useCount == -1) {
+					ErrH.Abort("Attempted to use deleted pointer");
+				}
 				useCount++;
 			}
 
 			void released() {
+				if (useCount < 0)  {
+					ErrH.Abort("Attempted double free");
+				}
 				useCount--;
-				if (useCount == 0) {
+				if (useCount <= 0) {
+					useCount = -1;
 					delete this;
 				}
 			}

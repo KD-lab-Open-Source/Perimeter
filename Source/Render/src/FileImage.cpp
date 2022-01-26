@@ -1,24 +1,22 @@
 #include "tweaks.h"
-#include <windows.h>
 #include <stdio.h>
 #include <cstdint>
-#include <assert.h>
+#include <memory>
+#include "xmath.h"
 
 #ifdef PERIMETER_FFMPEG
 #include "AVWrapper.h"
-#else
+#else // PERIMETER_FFMPEG
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 #include <vfw.h>		// AVI include
+#endif //_WIN32
 #include <math.h>
 #include <sys/types.h>
 #include "xutil.h"
-#endif
+#endif //PERIMETER_FFMPEG
 
-#ifdef _WIN32
-//For _open etc
-#include <io.h>
-#endif
-
-//#include <setjmp.h>		// JPG include
 #include "xutil.h"
 #include "FileImage.h"
 
@@ -27,6 +25,8 @@
 
 #include <SDL_image.h>
 
+#include "files/files.h"
+
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
 #include <iostream>
@@ -34,28 +34,10 @@
 
 int ResourceFileRead(const char *fname,char *&buf,int &size);
 
-#ifndef ABS
-#define ABS(a)										((a)>=0?(a):-(a))
-#endif // ABS
-#ifndef SIGN
-#define SIGN(a)										((a)>0?1:((a)<0)?-1:0)
-#endif // SIGN
+#define FI_ABS(a)										((a)>=0?(a):-(a))
+#define FI_SIGN(a)										((a)>0?1:((a)<0)?-1:0)
 
 extern bool ResourceIsZIP();
-
-void SetExtension(const char *fnameOld,const char *extension,char *fnameNew)
-{
-	strcpy(fnameNew,fnameOld);
-	int l;
-	for(l=strlen(fnameNew)-1;l>=0 && fnameNew[l]!='\\' && fnameNew[l]!='/';l--)
-		if(fnameNew[l]=='.')
-			break;
-	if(l>=0&&fnameNew[l]=='.') 
-		strcpy(&fnameNew[l+1],extension);
-	else
-		strcat(fnameNew,extension);
-}
-
 
 void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst,
 							  void *pSrc,int bppSrc,int bplSrc,int acSrc,int asSrc,int xSrc,int ySrc)
@@ -87,7 +69,7 @@ void cFileImage_GetFrameAlpha(void *pDst,int bppDst,int bplDst,int acDst,int asD
 	char *dst=(char*)pDst,*src=(char*)pSrc;
 	for(int jDst=0,jSrc=0;jDst<yDst;jDst++,jSrc+=dj)
 	{
-		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(ABS(jSrc)>>16)*SIGN(dj);
+		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(FI_ABS(jSrc)>>16)*FI_SIGN(dj);
 		for(int iDst=0,iSrc=0;iDst<xDst;iDst++,iSrc+=di)
 		{
 			unsigned int alpha=0,color=0;
@@ -141,7 +123,7 @@ void cFileImage_GetFrame(void *pDst,int bppDst,int bplDst,int rcDst,int rsDst,in
 	char *dst=(char*)pDst,*src=(char*)pSrc;
 	for(int jDst=0,jSrc=0;jDst<yDst;jDst++,jSrc+=dj)
 	{
-		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(ABS(jSrc)>>16)*SIGN(dj);
+		int ofsCurDst=ofsDst+jDst*bplDst,ofsCurSrc=ofsSrc+bplSrc*(FI_ABS(jSrc)>>16)*FI_SIGN(dj);
 		for(int iDst=0,iSrc=0;iDst<xDst;iDst++,iSrc+=di)
 		{
 			unsigned int r=0,g=0,b=0,color=0;
@@ -219,7 +201,7 @@ uint8_t flags;
 bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int byte_per_pixel)
 {
 	bool bHasAlpha=false;
-	int file=_open(filename,_O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY,_S_IREAD|_S_IWRITE);
+	int file= file_open(filename, _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
 	if(file==-1)
 	{
 		return false;
@@ -239,7 +221,7 @@ bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int by
 	Hdr.bitsPerPixel=(unsigned char)(byte_per_pixel*8);
 	Hdr.flags=(bHasAlpha?8:0)|0x20;
 
-	unsigned long Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
+	uint32_t Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
 
 	_write(file,&Hdr,18);
 	_write(file,buf,Numbytes);
@@ -252,7 +234,7 @@ bool SaveTga(const char* filename,int width,int height,unsigned char* buf,int by
 bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 			 int& byte_per_pixel)
 {
-	int file=_open(filename,_O_RDONLY|_O_BINARY);
+	int file= file_open(filename, _O_RDONLY | _O_BINARY);
 	if(file==-1)
 	{
 		return false;
@@ -268,7 +250,7 @@ bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 	dx=Hdr.width;
 	dy=Hdr.height;
 
-	unsigned long Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
+    uint32_t Numbytes=Hdr.width*Hdr.height*(Hdr.bitsPerPixel>>3);
 
 	buf=new unsigned char[Hdr.width*Hdr.height*byte_per_pixel];
 	_read(file,buf,Numbytes);
@@ -371,17 +353,17 @@ public:
 			cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
 								ImageData,1,GetX()  ,8,0,8,0,8,0,GetX(),dy);
 /*		{
-//			SaveTga("save.tga",GetX(),GetY(),(BYTE*)ImageData,1);
+//			SaveTga("save.tga",GetX(),GetY(),(uint8_t*)ImageData,1);
 
 			for(int y=0;y<GetY();y++)
 			{
-				DWORD* out=(DWORD*)(bplDst*y+(BYTE*)pointer);
-				BYTE* in;
+				uint32_t* out=(uint32_t*)(bplDst*y+(uint8_t*)pointer);
+				uint8_t* in;
 
 				if(tga->flags&0x20)
-					in=y*GetX()+(BYTE*)ImageData;
+					in=y*GetX()+(uint8_t*)ImageData;
 				else
-					in=(GetY()-1-y)*GetX()+(BYTE*)ImageData;
+					in=(GetY()-1-y)*GetX()+(uint8_t*)ImageData;
 
 				for(int x=0;x<GetX();x++,out++,in++)
 				{
@@ -413,7 +395,7 @@ public:
 class cAVIImage : public cFileImage
 {
     AVWrapper wrapper;
-    int tpf; //Cached time per frame
+    int tpf = 1; //Cached time per frame
     std::vector<uint8_t*> frames;
     
 public:
@@ -432,7 +414,7 @@ public:
     }
     
     virtual int load(const char *fname) {
-        std::string aviname = convert_path_resource(fname);
+        std::string aviname = convert_path_content(fname);
         if (aviname.empty()) {
             //VisError <<"cAVIImage File not found:"<<aviname<<VERR_END;
             return 1; // Couldn't open file
@@ -444,35 +426,32 @@ public:
             return ret;
         }
 
-        x = wrapper.videoCodecCtx->width;
-        y = wrapper.videoCodecCtx->height;
+        x = wrapper.getVideoWidth();
+        y = wrapper.getVideoHeight();
         
         //Set time (milliseconds of total duration)
-        time = static_cast<int>(round(
-            static_cast<float>(wrapper.formatCtx->duration) / AV_TIME_BASE * 1000.0f
+        time = static_cast<int>(xm::round(
+            wrapper.getDuration() * 1000.0f
         ));
         
         //Set bpp
-        bpp = wrapper.videoCodecCtx->bits_per_coded_sample;
+        bpp = wrapper.getVideoBPP();
 
-        //Set length (amount of frames), this seems to be the only way to get for now
-        bool reading = true;
-        while (reading) {
-            AVWrapperType type = wrapper.readPacket();
-            switch (type) {
-                case None:
-                    reading = false;
-                    break;
-                case Audio:
-                    break;
-                case Video:
-                case AudioVideo:
-                    uint8_t* buffer = nullptr;
-                    wrapper.getVideoFrameBuffer(&buffer);
-                    frames.emplace_back(buffer);
-                    break;
-            }
+        //Read all wrapper packets
+        while (!wrapper.end) {
+            wrapper.readPacket();
         }
+        //Discard any audio frames
+        wrapper.audioFrames.clear();
+        //Order video frames
+        wrapper.videoFrames.sort(AVWrapperFrame_compare);
+        for (auto frame : wrapper.videoFrames) {
+            //Read video frame and make buffer
+            uint8_t* buffer = nullptr;
+            frame->copyBuffer(&buffer);
+            frames.emplace_back(buffer);
+        }
+        wrapper.close();
         length = static_cast<int>(frames.size());
 
         if (length <= 1) {
@@ -534,8 +513,8 @@ public:
 #else
 class cAVIImage : public cFileImage
 {
-	IGetFrame	*Frame;
-	IAVIStream	*pavi;
+	IGetFrame	*Frame = nullptr;
+	IAVIStream	*pavi = nullptr;
 public:
 	cAVIImage()															{ Frame=0; pavi=0; }
 	virtual ~cAVIImage()												{ close(); }
@@ -548,9 +527,17 @@ public:
 	virtual int load(const char *fname)
 	{
 		AVISTREAMINFO FAR psi;
+        
+        std::string aviname = convert_path_content(fname);
+        if (aviname.empty()) {
+            return 1; // Couldn't find file
+        }
 
-		HRESULT hr=AVIStreamOpenFromFile(&pavi,fname,streamtypeVIDEO,0,OF_READ,NULL);
-		if(hr) return 1;
+		HRESULT hr=AVIStreamOpenFromFileA(&pavi,aviname.c_str(),streamtypeVIDEO,0,OF_READ,NULL);
+		if (hr) {
+            fprintf(stderr, "cAVIImage couldn't open: %s %s\n", fname, aviname.c_str());
+            return 1;
+        }
 		time=AVIStreamLengthTime(pavi);
 		AVIStreamInfo(pavi,&psi,sizeof(AVISTREAMINFO FAR));
 		x=psi.rcFrame.right-psi.rcFrame.left;
@@ -576,8 +563,8 @@ public:
 		if(bpp!=32) return -2;
 		PAVISTREAM pcomp=0;
 		PAVIFILE fAVI=0;
-		remove(fname);
-		err = AVIFileOpen(&fAVI,fname,OF_CREATE|OF_WRITE,NULL);
+		std::remove(fname);
+		err = AVIFileOpenA(&fAVI,fname,OF_CREATE|OF_WRITE,NULL);
 		if(err)
 			return 1;
 		AVISTREAMINFO avi;
@@ -666,12 +653,12 @@ class cAVIXImage : public cFileImage
 {
 	struct AVIX
 	{
-		DWORD avix;
-		DWORD X;
-		DWORD Y;
-		DWORD bpp;
-		DWORD numframe;
-		DWORD time;
+		uint32_t avix;
+		uint32_t X;
+		uint32_t Y;
+		uint32_t bpp;
+		uint32_t numframe;
+		uint32_t time;
 		char p[1];
 	}* data;
 public:
@@ -686,10 +673,11 @@ public:
 	{
 		char* buf;
 		int size;
-		char name[512];
-		strcpy(name,fname);
-		strcat(name,"x");
-		int ret=ResourceFileRead(name,buf,size);
+		std::string name = fname;
+        if (endsWith(name, ".avi")) {
+            name += 'x';
+        }
+		int ret=ResourceFileRead(name.c_str(),buf,size);
 		if(ret)
 			return ret;
 		data=(AVIX*)buf;
@@ -1081,7 +1069,7 @@ public:
     ///Loads from file
     virtual int load(const char *fname)
     {
-        std::string file_path = convert_path_resource(fname);
+        std::string file_path = convert_path_content(fname);
         if (file_path.empty()) {
             return 1;
         }
@@ -1219,7 +1207,7 @@ public:
     
     virtual int load(const char *fname)
     {
-        std::string file_path = convert_path_resource(fname);
+        std::string file_path = convert_path_content(fname);
         XStream s;
         s.open(file_path);
         s.read(&data, sizeof(ANIHeader));
@@ -1332,7 +1320,7 @@ public:
         int lowest_delay = 0;
         for (int i = 0; i < data.steps; ++i) {
             //Convert jiffies (1/60 sec) to ms
-            frame_delay[i] = static_cast<uint32_t>(round((static_cast<float>(frame_delay[i]) / 60.0) * 1000));
+            frame_delay[i] = static_cast<uint32_t>(xm::round((static_cast<float>(frame_delay[i]) / 60.0) * 1000));
             int v = frame_delay[i];
             time += v;
             if (lowest_delay == 0 || v < lowest_delay) {
@@ -1394,18 +1382,22 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // реализация интерфейса cFileImage
-cFileImage* cFileImage::Create(const char *fname)
+cFileImage* cFileImage::Create(const std::string& fname)
 {
-    std::string path(fname);
-	_strlwr(path.data());
-    fname = path.c_str();
-	if(strstr(fname,".tga")) {
+    std::string path = string_to_lower(fname.c_str());
+	if(endsWith(path,".tga")) {
         return new cTGAImage;
-    } else if(strstr(fname,".avi")) {
-        return ResourceIsZIP()?(cFileImage*)new cAVIXImage:(cFileImage*)new cAVIImage;
-    } else if(strstr(fname,".cur") || strstr(fname,".ani")) {
+    } else if(endsWith(path,".avi")) {
+        if (ResourceIsZIP() && convert_path_content(path).empty()) {
+            return new cAVIXImage;
+        } else {
+            return new cAVIImage;
+        }
+    } else if(endsWith(path,".avix")) {
+        return new cAVIXImage;
+    } else if(endsWith(path,".cur") || endsWith(path,".ani")) {
 	    //Since we don't know which ".cur" files are actually CUR or ANI... we do runtime checking
-        std::string file_path = convert_path_resource(fname);
+        std::string file_path = convert_path_content(path);
         char type[4];
         XStream s;
         s.open(file_path);
@@ -1416,8 +1408,10 @@ cFileImage* cFileImage::Create(const char *fname)
         } else {
             return new cSDLImage;
         }
-    } else if(strstr(fname,".jpg") || strstr(fname,".jpe") || strstr(fname,".png")) {
+    } else if(endsWith(path,".jpg") || endsWith(path,".jpe") || endsWith(path,".png")) {
         return new cSDLImage;
+    } else {
+        fprintf(stderr, "Unknown image type %s\n", fname.c_str());
     }
 	return nullptr;
 }
@@ -1449,30 +1443,6 @@ void GetFilePath(const char *FullName,char *path)
 		l--;
 	memcpy(path,FullName,l);
 	path[l]=0;
-}
-void GetFileVirginName(const char *FullName,char *name)
-{
-	name[0]=0;
-	GetFileName(FullName,name);
-	if(name==0||name[0]==0) return;
-	int l=strlen(name)-1;
-	while(l>=0&&name[l]!='.') 
-		l--;
-	name[l]=0; l--;
-	while(l>=0&&'0'<=name[l]&&name[l]<='9')
-		l--;
-	name[l+1]=0;
-}
-int CmpFileVirginName(const char *fname1,const char *fname2)
-{
-	char name1[1024],name2[1024];
-	GetFileName(fname1,name1); _strlwr(name1);
-	GetFileName(fname2,name2); _strlwr(name2);
-	int l1=strlen(name1),l2=strlen(name2);
-	if(l1!=l2) return 0;
-	while(l1>=0&&(name1[l1]==name2[l1]||('0'<=name1[l1]&&name1[l1]<='9'&&'0'<=name2[l1]&&name2[l1]<='9')))
-		l1--;
-	return l1<0;
 }
 #ifdef _UTILTVA_
 int ResourceFileRead(const char *filename,char *&buf,int &size)
@@ -1524,10 +1494,10 @@ bool cAviScaleFileImage::Init(const char* fName)
 		n_count = t3;
 		const int x_count = x/rdx;
 
-		dat = new UINT[x*y*n_count];
+		dat = new uint32_t[x * y * n_count];
 		if (dat)	
 		{
-			UINT* lpBuf = new  UINT[dx*dy];
+			uint32_t* lpBuf = new  uint32_t[dx * dy];
 			if (lpBuf) 
 			{
 				int time=0;
@@ -1540,7 +1510,7 @@ bool cAviScaleFileImage::Init(const char* fName)
 					const int offset_y = rdy*(i/x_count)*this->x + rdx*(i%x_count);
 					for(int y=0; y<dy; ++y)
 					{
-						UINT* p = dat + (int)((y+1)*x) + offset_y;
+						uint32_t* p = dat + (int)((y + 1) * x) + offset_y;
 						memcpy(p+1, lpBuf + (int)(y*dx), dx*sizeof(*lpBuf));
 						*(p) = lpBuf[(int)(y*dx)];
 						*(p+(int)dx+1)= lpBuf[(int)(y*dx+dx-1)];

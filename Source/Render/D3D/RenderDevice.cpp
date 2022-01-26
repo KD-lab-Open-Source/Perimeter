@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "xutil.h"
+#include "files/files.h"
 
 #include "Font.h"
 
@@ -70,7 +71,7 @@ return "Unknown error";
 
 void RDOpenLog(char *fname="RenderDevice.!!!")
 {
-	fRD=fopen(convert_path(fname).c_str(),"wt");
+	fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
 	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
 }
 int RDWriteLog(HRESULT err,char *exp,char *file,int line)
@@ -202,8 +203,8 @@ void BuildBumpMap(int xs,int ys,void *pSrc,void *pDst,int fmtBumpMap)
             switch( fmtBumpMap )
             {
                 case D3DFMT_V8U8:
-                    *dst++ = (BYTE)iDu;
-                    *dst++ = (BYTE)iDv;
+                    *dst++ = (uint8_t)iDu;
+                    *dst++ = (uint8_t)iDv;
                     break;
 
                 case D3DFMT_L6V5U5:
@@ -214,10 +215,10 @@ void BuildBumpMap(int xs,int ys,void *pSrc,void *pDst,int fmtBumpMap)
                     break;
 
                 case D3DFMT_X8L8V8U8:
-                    *dst++ = (BYTE)iDu;
-                    *dst++ = (BYTE)iDv;
-                    *dst++ = (BYTE)uL;
-                    *dst++ = (BYTE)0L;
+                    *dst++ = (uint8_t)iDu;
+                    *dst++ = (uint8_t)iDv;
+                    *dst++ = (uint8_t)uL;
+                    *dst++ = (uint8_t)0L;
                     break;
             }
         }
@@ -238,12 +239,12 @@ void BuildDot3Map(int xs,int ys,void *pSrc,void *pDst)
 			Vect3f a(scale,0,hr-hl),b(0,scale,hu-hd);
 			Vect3f n; n.cross(a,b); n.normalize(); 
 			n=(n+Vect3f(1,1,1))*TexNormal;
-			dst[i+j*xs]=((int)round(n.x)<<16)|((int)round(n.y)<<8)|((int)round(n.z)<<0);
+			dst[i+j*xs]= ((int) xm::round(n.x) << 16) | ((int) xm::round(n.y) << 8) | ((int) xm::round(n.z) << 0);
 		}
 }
 
 unsigned int ColorByNormal(Vect3f n);
-Vect3f NormalByColor(DWORD d);
+Vect3f NormalByColor(uint32_t d);
 
 void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst,
 				 int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int Attr)

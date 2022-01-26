@@ -28,6 +28,5 @@
 #include "../src/TileMap.h"
 
 #include "../inc/IncTerra.h"
-#include "../client/ExternalObj.h" //TODO duplicated
 
 #include "../3dx/Node3DX.h"

@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "CameraManager.h"
@@ -26,12 +24,12 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeFrame, "Ôðåéì");
+REGISTER_CLASS(AttributeBase, AttributeFrame, "Ð¤Ñ€ÐµÐ¹Ð¼");
 
 AttributeFrame::AttributeFrame()
 {
 	heightMax = 30;
-	accumulatedEnergyInitial = 1; // 0..1, òîëüêî äëÿ âíîâü óñòàíîâëåííîãî ôðåéìà, èíà÷å - â ðåäàêòîðå ìèññèé
+	accumulatedEnergyInitial = 1; // 0..1, Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ Ð²Ð½Ð¾Ð²ÑŒ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½Ð½Ð¾Ð³Ð¾ Ñ„Ñ€ÐµÐ¹Ð¼Ð°, Ð¸Ð½Ð°Ñ‡Ðµ - Ð² Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¾Ñ€Ðµ Ð¼Ð¸ÑÑÐ¸Ð¹
 	repairElementsPerQuant = FrameRepairElementsPerQuant;
 
 	oneStepMovement = 5;
@@ -341,7 +339,7 @@ void terFrame::Quant()
 	}
 
 	float percent = 0.05f;
-	if(fmodf(spiralLevelPrev_, percent) > percent/2 && fmodf(spiralLevel(), percent) < percent/2)
+	if(xm::fmod(spiralLevelPrev_, percent) > percent / 2 && xm::fmod(spiralLevel(), percent) < percent / 2)
 		Player->soundEvent(SOUND_VOICE_SPIRAL_CHARGING);
 
 	spiralLevelPrev_ = spiralLevel();
@@ -634,9 +632,9 @@ SaveUnitData* terFrame::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFrame::universalLoad(const SaveUnitData* baseData)
+void terFrame::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitFrameData* data = safe_cast<const SaveUnitFrameData*>(baseData);
+	SaveUnitFrameData* data = safe_cast<SaveUnitFrameData*>(baseData);
 	terUnitReal::universalLoad(data);
 	
 	spiralConsumer_.setProgress(data->spiralLevel);
@@ -657,6 +655,7 @@ void terFrame::universalLoad(const SaveUnitData* baseData)
 		RequestStatus = ATTACHED;
 	
 	if(data->squad){
+        if (!data->unitID) data->squad->unitID = 0;
 		SquadPoint->universalLoad(data->squad);
 		SquadPoint->Start();
 	}
@@ -665,9 +664,7 @@ void terFrame::universalLoad(const SaveUnitData* baseData)
 		SaveUnitData* childData = data->frameSlots[i];
 		terFrameSlot& slot = frameSlots_[i];
 		if(childData){
-			terFrameChild* unit = safe_cast<terFrameChild*>(Player->buildUnit(childData->attributeID));
-			unit->universalLoad(childData);
-			unit->Start();
+			terFrameChild* unit = safe_cast<terFrameChild*>(Player->loadUnit(childData));
 			unit->SetFramePoint(this);
 			unit->setSlotNumber(i);
 
@@ -676,7 +673,7 @@ void terFrame::universalLoad(const SaveUnitData* baseData)
 			slot.ProductionID = unit->attr().ID;
 		}
 		
-		const SaveFrameSlotData& slotData = data->slotsData[i];
+		SaveFrameSlotData& slotData = data->slotsData[i];
 		if(slotData.status != -1){
 			slot.status_ = (terFrameSlot::Status)slotData.status;
 			slot.ProductionID = slotData.productionID;
@@ -722,22 +719,24 @@ void terFrame::GetInterfaceFrameProduction(int* phase,int* id,terUnitBase* unit[
 		}
 	}
 
-	switch(lastCommand()){
-	case COMMAND_ID_BUILD_MASTER_INC:
-	case COMMAND_ID_TERRAIN_MASTER_INC:{
-		const UnitCommand& command = *findCommand(lastCommand());
-		if(frameSlots_[command.commandData()].status_ == terFrameSlot::STATUS_FREE){
-			phase[command.commandData()] = 1;
-			id[command.commandData()] = command.commandID() - COMMAND_ID_BUILD_MASTER_INC;
-		}
-		else{
-			if(frameSlots_[command.commandData()].status_== terFrameSlot::STATUS_COMPLETE)
-				id[command.commandData()] = command.commandID() - COMMAND_ID_BUILD_MASTER_INC;
-		}
-		break; }
-    default:
-        break;
-	}
+    const UnitCommand* cmd = lastCommand();
+    if (cmd) {
+        CommandID cmdID = cmd->commandID();
+        switch (cmdID) {
+            case COMMAND_ID_BUILD_MASTER_INC:
+            case COMMAND_ID_TERRAIN_MASTER_INC: {
+                if (frameSlots_[cmd->commandData()].status_ == terFrameSlot::STATUS_FREE) {
+                    phase[cmd->commandData()] = 1;
+                    id[cmd->commandData()] = cmdID - COMMAND_ID_BUILD_MASTER_INC;
+                } else if (frameSlots_[cmd->commandData()].status_ == terFrameSlot::STATUS_COMPLETE) {
+                    id[cmd->commandData()] = cmdID - COMMAND_ID_BUILD_MASTER_INC;
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
 }
 
 //---------------------------------------
@@ -745,7 +744,7 @@ int terFrame::GetInterfaceLegionMode()
 {
 	int stop = 0;
 	int move = 0;
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_STOP:
 		stop = 1;
 		break;
@@ -842,14 +841,14 @@ bool terFrame::canTeleportate() const
 
 bool terFrame::analyzeTerrain()
 {
-	int D = clamp((int)round(Vect2f(BodyPoint->boxMax()).norm()) >> kmGrid, 1, 1000);
-	int x0 = (int)round(position().x) >> kmGrid;
-	int y0 = (int)round(position().y) >> kmGrid;
+	int D = clamp((int) xm::round(Vect2f(BodyPoint->boxMax()).norm()) >> kmGrid, 1, 1000);
+	int x0 = (int) xm::round(position().x) >> kmGrid;
+	int y0 = (int) xm::round(position().y) >> kmGrid;
 	int z0 = vMap.hZeroPlast;
 	int dzMax = attr().heightMax;
 	for(int y = -D; y <= D; y++)
 		for(int x = -D; x <= D; x++){
-			if(abs(vMap.GVBuf[vMap.offsetGBufC(x + x0, y + y0)] - z0) > dzMax)
+			if(xm::abs(vMap.GVBuf[vMap.offsetGBufC(x + x0, y + y0)] - z0) > dzMax)
 				return false;
 		}
 

@@ -13,12 +13,12 @@ public:
 	{
 		int x,y;//Левая верхняя точка.
 		int xcenter,ycenter;//Не обязательно попадает в кластер
-		BYTE walk;//Сложность продвижения по этому куску
+		uint8_t walk;//Сложность продвижения по этому куску
 		bool temp_set;//Можно ли писать в link
-		DWORD self_id;
+		uint32_t self_id;
 
 		std::vector<Cluster*> link;//С кем связанны.
-		std::vector<DWORD> index_link;//индекс в массиве all_cluster
+		std::vector<uint32_t> index_link;//индекс в массиве all_cluster
 
 		inline Cluster(){temp_set=true;}
 
@@ -43,7 +43,7 @@ public:
 	~ClusterFind();
 
 	// Доступ к карте для заполнения перед Set/SetLater
-	BYTE* GetWalkMap(){ return walk_map; }
+	uint8_t* GetWalkMap(){ return walk_map; }
 
 	//Создать сеть кластеров по walk_map
 	void Set(bool enable_smooting);
@@ -117,8 +117,8 @@ public:
 
 protected:
 	int dx,dy;
-	DWORD* pmap;
-	BYTE* walk_map;
+	uint32_t* pmap;
+	uint8_t* walk_map;
 
 	enum{
 		max_cell_in_front=64,
@@ -133,8 +133,8 @@ protected:
 
 	std::vector<Cluster> all_cluster;
 
-	BYTE* is_used;//Для SoftPath
-	DWORD is_used_size;
+	uint8_t* is_used;//Для SoftPath
+	uint32_t is_used_size;
 	int is_used_xmin,is_used_xmax,is_used_ymin,is_used_ymax;
 
 	//для SetLater
@@ -148,7 +148,7 @@ protected:
 	void Relink();
 	void Smooting();
 	//Добавлять, если temp_set==true
-	std::vector<DWORD> vtemp_set;//Для ClusterOne
+	std::vector<uint32_t> vtemp_set;//Для ClusterOne
 	void ClusterOne(int x,int y,int id,Cluster& c);
 
 	//Возвращает true, если нашёл путь на два шага вперёд
@@ -161,15 +161,15 @@ protected:
 		L_COMPLETE
 	};
 
-	LINE_RET Line(int xfrom,int yfrom,int xto,int yto,
-			DWORD prev,DWORD eq,int& xeq,int& yeq,bool enable_add_one=false);
+	LINE_RET Line(int xfrom, int yfrom, int xto, int yto,
+                  uint32_t prev, uint32_t eq, int& xeq, int& yeq, bool enable_add_one=false);
 
-	bool LineWalk(int xfrom,int yfrom,int xto,int yto,
-					   BYTE max_walk);
+	bool LineWalk(int xfrom, int yfrom, int xto, int yto,
+                  uint8_t max_walk);
 
 	//То-же поиск волной. Ищет ячейки соприкасающиеся с to.
-	void FindClusterFront(int x,int y,DWORD to,
-		std::vector<Front>& front);
+	void FindClusterFront(int x, int y, uint32_t to,
+                          std::vector<Front>& front);
 
 	void SoftPath(std::vector<Cluster*>& in_path,Vect2i from,Vect2i to,
 		std::vector<Vect2i>& out_path);
@@ -183,7 +183,7 @@ protected:
 
 template<class ClusterHeuristic>
 void SoftPath2(std::vector<Vect2i>& out_path,
-               int dx,int dy,BYTE* walk_map,
+               int dx, int dy, uint8_t* walk_map,
                ClusterHeuristic& heuristic)
 {
     //for(int iteration=0;iteration<2;iteration++)
@@ -223,8 +223,8 @@ void SoftPath2(std::vector<Vect2i>& out_path,
 
 //Ещё большее сглаживание пути
 template<class ClusterHeuristic>
-float HeuristicLine(int xfrom,int yfrom,int xto,int yto,
-                    int dx,int dy,BYTE* walk_map,ClusterHeuristic& heuristic,
+float HeuristicLine(int xfrom, int yfrom, int xto, int yto,
+                    int dx, int dy, uint8_t* walk_map, ClusterHeuristic& heuristic,
                     bool& debug_xor )
 {
     float x,y;
@@ -239,21 +239,21 @@ float HeuristicLine(int xfrom,int yfrom,int xto,int yto,
     lx=xto-xfrom;
     ly=yto-yfrom;
     int t,maxt;
-    if(fabsf(lx)>fabsf(ly))
+    if(xm::abs(lx) > xm::abs(ly))
     {
-        maxt=fabsf(lx);
-        ly=ly/fabsf(lx);
+        maxt= xm::abs(lx);
+        ly= ly / xm::abs(lx);
         lx=(lx>0)?+1:-1;
     }else
     {
-        maxt=fabsf(ly);
-        lx=lx/fabsf(ly);
+        maxt= xm::abs(ly);
+        lx= lx / xm::abs(ly);
         ly=(ly>0)?+1:-1;
     }
 
-    float sq_mul=sqrtf(sqr(lx)+sqr(ly));
+    float sq_mul= xm::sqrt(sqr(lx) + sqr(ly));
     float len=0;
-    BYTE walk_from,walk_to;
+    uint8_t walk_from,walk_to;
     walk_from=walk_map[yfrom*dx+xfrom];
 
     debug_xor=false;
@@ -262,7 +262,7 @@ float HeuristicLine(int xfrom,int yfrom,int xto,int yto,
     {
         x+=lx;y+=ly;
 
-        int ix=round(x),iy=round(y);
+        int ix= xm::round(x),iy= xm::round(y);
         xassert(ix>=0 && ix<dx && iy>=0 && iy<dy);
 
         walk_to=walk_map[iy*dx+ix];

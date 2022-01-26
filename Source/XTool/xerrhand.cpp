@@ -1,20 +1,26 @@
 #include <list>
-#include <cfloat>
 #include <iostream>
-#include <sstream>
 #include <filesystem>
 #include <csignal>
+#include <sstream>
+#include <vector>
 #include <SDL.h>
+#include "files/files.h"
+
 #ifdef _WIN32 //For Windows specific exHandler code
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #include <process.h>
 #include <crtdbg.h>
+#include <cfloat>
+#include <sstream>
 #endif
 #include "tweaks.h"
 #include "xstream.h"
 #include "xerrhand.h"
+#include "xutl.h"
 
-static void (*assert_restore_graphics_function)() = 0;
+static void (*assert_restore_graphics_function)() = nullptr;
 
 #if (!defined(_FINAL_VERSION_) || defined(_DEBUG) || defined(PERIMETER_DEBUG_ASSERT)) && !defined(NASSERT)
 void SetAssertRestoreGraphicsFunction(void(*func)())
@@ -29,8 +35,12 @@ char convBuf[CONV_BUFFER_LEN + 1];
 #ifndef OPTION_DISABLE_STACKTRACE
 #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED 1
 #include "boost/stacktrace.hpp"
-#include "tweaks.h"
 
+#endif
+
+#if defined(_WIN32) && (defined(_M_IX86) || defined (_M_AMD64))
+//Specific to Windows X86/X86_64 archs
+#define USE_ORIGINAL_HANDLER
 #endif
 
 #ifndef _WIN32
@@ -45,12 +55,10 @@ char *defprefix 	= "XHANDLER  INFORM";
 char *exceptMSG 	= "EXCEPTION OCCURED";
 char *rterrorMSG	= "RUN-TIME ERROR";
 
-#pragma warning (disable : 4073)
-#pragma init_seg(lib)
 XErrorHandler ErrH;
 
-//All the Win32 specific error handling
-#ifdef _WIN32
+//All the Win32 on x86/64 specific error handling
+#ifdef USE_ORIGINAL_HANDLER
 void win32_break(char* error,char* msg) {
     std::cerr << "--------------------------------\n";
     std::cerr << error << "\n";
@@ -101,8 +109,8 @@ char* uctoa(uint8_t a)
 long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 {
     fprintf(stderr, "exHandler\n");
-	_clearfp();
-	_controlfp( _controlfp(0,0) & ~(0), _MCW_EM );
+	//_clearfp();
+	//_controlfp( _controlfp(0,0) & ~(0), _MCW_EM );
 	SetUnhandledExceptionFilter(NULL);
 
 	static char msg[10000];
@@ -152,13 +160,13 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
     strcat(msg, dwtoa((uint32_t) except_info->ExceptionRecord->ExceptionAddress));
 #endif
 
-	static int attempt_to_show_context = 0;
-	if(!attempt_to_show_context){
+	static int attempted_to_show_context = 0;
+	if(!attempted_to_show_context){
 		PCONTEXT p = except_info -> ContextRecord;
 		if((p -> ContextFlags & CONTEXT_INTEGER) && (p -> ContextFlags & CONTEXT_CONTROL) &&
 			(p -> ContextFlags & CONTEXT_CONTROL)){
+            attempted_to_show_context = 1;
 #ifdef PERIMETER_ARCH_64
-            attempt_to_show_context = 1;
             strcat(msg,"\r\n\r\nRegisters:\r\n");
             strcat(msg,"RAX="); strcat(msg, qwtoa(p -> Rax));
             strcat(msg,"  CS="); strcat(msg, wtoa(p -> SegCs));
@@ -194,7 +202,6 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
                 strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
             }
 #else
-			attempt_to_show_context = 1;
 			strcat(msg,"\r\n\r\nRegisters:\r\n");
 			strcat(msg,"EAX="); strcat(msg, dwtoa(p -> Eax));
 			strcat(msg,"  CS="); strcat(msg, wtoa(p -> SegCs));
@@ -241,7 +248,7 @@ long APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 	return EXCEPTION_EXECUTE_HANDLER;
 #endif
 }
-#endif //_WIN32
+#endif //USE_ORIGINAL_HANDLER
 
 void setSignalHandler(sighandler signalHandler) {
     signal(SIGSEGV, signalHandler);
@@ -347,6 +354,24 @@ void handleSignal(int sig) {
     raise(sig);
 }
 
+std::string decodeStackAddress(const void* addr) {
+    std::string line;
+#ifndef OPTION_DISABLE_STACKTRACE
+    //Create frame and try to decode data
+    boost::stacktrace::frame frame(addr);
+    line += boost::stacktrace::detail::to_hex_array(frame.address()).data();
+    line += "|" + frame.name();
+    std::string detail = boost::stacktrace::detail::to_string(&frame, 1);
+    std::string::size_type detail_size = detail.size();
+    if (10 <= detail_size) {
+        //Remove the start number and end newline
+        line += "|" + detail.substr(4, detail_size - 5);
+    }
+#endif
+
+    return line;
+}
+
 void getStackTrace(std::ostringstream& stream) {
 #ifndef OPTION_DISABLE_STACKTRACE
     //Get current
@@ -356,22 +381,27 @@ void getStackTrace(std::ostringstream& stream) {
         return;
     }
     //Write lines
-    for (size_t i = 0; i < st.size(); ++i) {
+    std::string cmdline = "stack_reference=";
+    cmdline += boost::stacktrace::detail::to_hex_array(reinterpret_cast<const void*>(&decodeStackAddress)).data();
+    cmdline += " stack_frames=";
+    for (size_t i = 0; i < st.size(); ++i) {        
         //Just store the name instead of full name as we don't really care our own name
         if (i == 0) {
             stream << "getStackTrace <- last call" << std::endl;
             continue;
         }
 
-        //Pull the stacktrace info
-        std::string line = boost::stacktrace::detail::to_string(&st.as_vector()[i], 1);
-        std::string::size_type size = line.size();
-        if (10 <= size) {
-            //Remove the start number and end newline
-            line = line.substr(4, size - 5);
-            stream << line << std::endl;
-        }
+        //Pull the stacktrace info and decode
+        const boost::stacktrace::frame& frame = st.as_vector()[i];
+        
+        cmdline += boost::stacktrace::detail::to_hex_array(frame.address()).data();
+        cmdline += ",";
+        
+        std::string line = decodeStackAddress(frame.address());
+        stream << line << std::endl;
     }
+    
+    stream << cmdline << std::endl;
 #else
     stream << "OPTION_DISABLE_STACKTRACE set, no stacktrace available" << std::endl;
 #endif
@@ -382,38 +412,55 @@ XErrorHandler::XErrorHandler() {
     crash_func = nullptr;
     restore_func = nullptr;
     state = 0;
-
-#ifndef __HAIKU__
-    log_name = "logfile.txt";
-#else
-    log_name = GET_PREF_PATH();
-	log_name += "/logfile.txt";
-#endif
-	if (std::filesystem::exists(log_name)) {
-        log_file.open(log_name.c_str(), std::ios::out | std::ios::trunc);
-        log_file.close();
+    log_path.clear();
+    const char* lop_path_ptr = GET_PREF_PATH();
+    if (lop_path_ptr) {
+        log_path = lop_path_ptr;
+        SDL_free((void*) lop_path_ptr);
+    }
+    log_path += "logfile.txt";
+	if (std::filesystem::exists(std::filesystem::u8path(log_path))) {
+        std::error_code error;
+        std::filesystem::remove(std::filesystem::u8path(log_path), error);
+        if (error) {
+           fprintf(stderr, "Error deleting log file: %d %s at %s\n",  error.value(), error.message().c_str(), log_path.c_str());
+        }
     }
 
     //Register handler
-#ifdef _WIN32
+#ifdef USE_ORIGINAL_HANDLER
     SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
 #else
     setTerminateHandler(handleTerminate);
 #endif
     setSignalHandler(handleSignal);
-    
-    initialized = true;
 }
 
 XErrorHandler::~XErrorHandler() {
-    if(log_file.is_open()) {
-        log_file.close();
+}
+
+void XErrorHandler::RedirectStdio() const {
+    if (log_path.empty() || check_command_line("no_console_redirect") != nullptr) {
+        return;
     }
+    //Check if we should redirect stdio
+    printf("Redirecting console stdio output into log file at %s, to prevent this pass arg no_console_redirect=1\n", log_path.c_str());
+
+    //Reopen streams, Win32 needs wide char version to handle cyrilic
+#ifdef _WIN32
+    std::u16string log_path_16 = utf8_to_utf16(log_path.c_str());
+    const wchar_t* log_path_wchar = checked_reinterpret_cast_ptr<const char16_t, const wchar_t>(log_path_16.c_str()); 
+    _wfreopen(log_path_wchar, L"a", stdout);
+    _wfreopen(log_path_wchar, L"a", stderr);
+#else
+    freopen(log_path.c_str(), "a", stdout);
+    freopen(log_path.c_str(), "a", stderr);
+#endif
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)
 {
-    fprintf(stderr, "XErrorHandler::Abort called!");
+    fprintf(stderr, "XErrorHandler::Abort called!\n");
 	if (restore_func) {
 		restore_func();
 		restore_func = nullptr;
@@ -431,34 +478,22 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
     if (subj) {
         stream << "Subj: " << subj << std::endl;
     }
+    stream << "Clock: " << clocki() << std::endl;
 
-    std::string basePath = SDL_GetBasePath();
+    std::string crash_path = get_content_root_path_str() + CRASH_DIR;
     std::list<std::string> linesStackTrace;
     stream << std::endl << "Call stack:" << std::endl;
     getStackTrace(stream);
     stream << std::endl << "Please send:" << std::endl <<
-            " - This message" << std::endl <<
-            " - Log file from " << basePath << log_name.c_str() << std::endl <<
-            " - Crash files from " << basePath << CRASH_DIR << std::endl <<
+           " - This message" << std::endl <<
+           " - Log file from " << log_path.c_str() << std::endl <<
+           " - Crash files from " << crash_path << std::endl <<
             "To https://t.me/PerimeterGame or https://github.com/KD-lab-Open-Source/Perimeter" << std::endl;
     std::string str =  stream.str();
 
-    //Write to log, only if constructor was called since static code can also cause issues before we are constructed
-    if (initialized) {
-        log_file.open(log_name.c_str(), std::ios::out | std::ios::app);
-        log_file << str;
-        log_file.close();
-    }
-
     fprintf(stderr, "%s\n", str.c_str());
 
-    int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                             "Perimeter error",
-                             str.c_str(),
-                             nullptr);
-    if (err) {
-        SDL_PRINT_ERROR("Creating error window");
-    }
+    ShowErrorMessage(str.c_str());
 
     if (crash_func) {
         //Store pointer before calling to avoid cyclic calls in case handler fails
@@ -473,6 +508,18 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 
 void XErrorHandler::Abort(const std::string& message, int code, int val, const char* subj) {
     Abort(message.c_str(), code, val, subj);
+}
+
+bool XErrorHandler::ShowErrorMessage(const char* message) {
+    int err = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                                       "Perimeter error",
+                                       message,
+                                       nullptr);
+    if (err) {
+        SDL_PRINT_ERROR("Creating error window");
+    }
+
+    return err != 0;
 }
 
 void XErrorHandler::Exit()

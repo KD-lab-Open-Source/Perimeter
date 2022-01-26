@@ -10,46 +10,68 @@
 #include <iostream>
 #endif
 
-void XBuffer::alloc(unsigned int sz)
+void XBuffer::alloc(size_t sz)
 {
     free();
-	buf = (char*)malloc(size = sz);
+    size = sz;
+    if (size) {
+        buf = static_cast<char*>(malloc(size));
+        *buf = 0;
+    }
 	offset = 0L;
 	digits = XB_DEFDIGITS;
-	MakeFree = 1;
-	if(size) *buf = 0;
+	automatic_free = true;
 }
 
-XBuffer::XBuffer(unsigned int sz, int automatic_realloc_) {
+void XBuffer::realloc(size_t sz) {
+    if (buf && sz) {
+        size = sz;
+        buf = static_cast<char*>(std::realloc(buf, size));
+    } else {
+        alloc(sz);
+    }
+}
+
+XBuffer::XBuffer(size_t sz, bool automatic_realloc_) {
     buf = nullptr;
-    MakeFree = 1;
-    alloc(sz);
+    automatic_free = true;
+    size = sz;
+    offset = 0L;
+    alloc(size);
     digits = XB_DEFDIGITS;
     automatic_realloc = automatic_realloc_;
 }
 
-XBuffer::XBuffer(void* p,int sz)
+XBuffer::XBuffer(void* p, size_t sz)
 {
-	buf = (char*)p;
+	buf = static_cast<char*>(p);
 	size = sz;
-	offset = 0;
+	offset = 0L;
 	digits = XB_DEFDIGITS;
-	MakeFree = 0;
-	automatic_realloc = 0;
+	automatic_free = false;
+	automatic_realloc = false;
 }
 
-void XBuffer::free(void)
+///Copy constructor that handles buffer copying
+XBuffer::XBuffer(const XBuffer& buffer): XBuffer(buffer.size, buffer.automatic_realloc) {
+    memmove(buf, buffer.buf, size);
+    offset = buffer.offset;
+    digits = buffer.digits;
+}
+
+void XBuffer::free()
 {
-	if(MakeFree && buf){
+	if (automatic_free && buf) {
 		::free(buf);
-		buf = NULL;
+		buf = nullptr;
     }
 }
 
-void XBuffer::fill(char fc)
-{ memset(buf,fc,size); }
+void XBuffer::fill(char fc) {
+    memset(buf,fc,size);
+}
 
-void XBuffer::set(int off,int mode)
+void XBuffer::set(size_t off, int mode)
 {
 	switch(mode){
 		case XB_BEG:
@@ -61,10 +83,12 @@ void XBuffer::set(int off,int mode)
 		case XB_END:
 			offset = size - off;
 			break;
-		}
+        default:
+            break;
+    }
 }
 
-unsigned int XBuffer::read(void* s, unsigned int len) 
+size_t XBuffer::read(void* s, size_t len) 
 {	
 	memcpy(s, buf + offset, len); 
 	offset += len; 
@@ -73,18 +97,19 @@ unsigned int XBuffer::read(void* s, unsigned int len)
 
 void XBuffer::handleOutOfSize()
 {
-	if(automatic_realloc)
-		buf = (char*)realloc(buf, size *= 2);
-	else {
+	if (automatic_realloc) {
+        this->realloc(size == 0 ? 256 : size * 2);
+    } else {
 		xassert(0 && "Out of XBuffer");
 		ErrH.Abort("Out of XBuffer");
 	}
 }
 
-unsigned int XBuffer::write(const void* s, unsigned int len, int bin_flag) 
+size_t XBuffer::write(const void* s, size_t len, bool bin_flag) 
 {	
-	while(offset + len >= size) 
-		handleOutOfSize();
+	while(offset + len > size) {
+        handleOutOfSize();
+    }
 
 	memcpy(buf + offset, s, len);
 	offset += len;

@@ -4,6 +4,7 @@
 #include "NParticle.h"
 #include "VisError.h"
 #include <algorithm>
+#include "files/files.h"
 
 enum eTextureMapType
 { /* texture map in 3dSMAX */
@@ -591,14 +592,10 @@ int cStatic3dx::LoadMaterialsNum(CLoadDirectory rd)
 
 void cStatic3dx::LoadMaterials(CLoadDirectory rd,int num_materials)
 {
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	_splitpath(file_name.c_str(),drive,dir,fname,ext);
-	std::string path_name=drive;
-	path_name+=dir;
-	path_name+="TEXTURES\\";
+	std::string path_name;
+    split_path_parent(file_name, path_name);
+	path_name += "TEXTURES";
+    path_name += PATH_SEP;
 
 	int cur_mat=0;
 	materials.resize(num_materials);
@@ -658,7 +655,7 @@ void cStaticMaterial::Load(CLoadDirectory rd,const char* path_name)
 	case C3DX_MATERIAL_TEXTUREMAP:
 		{
 			CLoadIterator it(ld);
-			DWORD slot=-1;
+			uint32_t slot=-1;
 			std::string name;
 			it>>slot;
 			it>>name;
@@ -1027,7 +1024,7 @@ void cStaticVisibilityChainGroup::CalcBumpST()
 		edge02.set( v2.GetPos().x-v0.GetPos().x, v2.GetTexel().x-v0.GetTexel().x, v2.GetTexel().y-v0.GetTexel().y );
 
 		cp.cross(edge01,edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.GetBumpS().x += -cp.y / cp.x;
 			v0.GetBumpT().x += -cp.z / cp.x;
@@ -1044,7 +1041,7 @@ void cStaticVisibilityChainGroup::CalcBumpST()
 		edge02.set( v2.GetPos().y-v0.GetPos().y, v2.GetTexel().x-v0.GetTexel().x, v2.GetTexel().y-v0.GetTexel().y );
 
 		cp.cross(edge01, edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.GetBumpS().y += -cp.y / cp.x;
 			v0.GetBumpT().y += -cp.z / cp.x;
@@ -1061,7 +1058,7 @@ void cStaticVisibilityChainGroup::CalcBumpST()
 		edge02.set( v2.GetPos().z-v0.GetPos().z, v2.GetTexel().x-v0.GetTexel().x, v2.GetTexel().y-v0.GetTexel().y );
 
 		cp.cross(edge01,edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.GetBumpS().z += -cp.y / cp.x;
 			v0.GetBumpT().z += -cp.z / cp.x;

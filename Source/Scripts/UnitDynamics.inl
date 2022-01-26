@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 //		UnitDynamics.inl
 //
-// Îïèñâàåò äèíàìè÷åñêîå ïîâåäåíèå þíèòîâ.
-// Âñå äàííûå áóäóò âñòðàèâàòüñÿ
-// â terUnitAttributeData.
+// ÐžÐ¿Ð¸ÑÐ²Ð°ÐµÑ‚ Ð´Ð¸Ð½Ð°Ð¼Ð¸Ñ‡ÐµÑÐºÐ¾Ðµ Ð¿Ð¾Ð²ÐµÐ´ÐµÐ½Ð¸Ðµ ÑŽÐ½Ð¸Ñ‚Ð¾Ð².
+// Ð’ÑÐµ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð±ÑƒÐ´ÑƒÑ‚ Ð²ÑÑ‚Ñ€Ð°Ð¸Ð²Ð°Ñ‚ÑŒÑÑ
+// Ð² terUnitAttributeData.
 ////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ struct RigidBodyPrm
 		float omega_increment = 0.01;
 		float omega_disperse = 0.05;
 	delegate:
-		void set() { phase = terLogicRNDfrnd()*M_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
+		void set() { phase = terLogicRNDfrnd()*XM_PI; omega += terLogicRNDfrnd()*omega*omega_disperse; }
 		float operator() (float dt, float velocity){ return amplitude*sin(phase += omega*(1 + omega_increment*velocity)*dt)/(1 + amplitude_decrement*velocity); }
 	};
 
@@ -96,13 +96,13 @@ struct RigidBodyPrm
 	////////////////////////////////////////////////
 	//		General Controls
 	////////////////////////////////////////////////
-	// Íå ïåðåìåùàåòñÿ ïî x, y. Ïåðåìåùàåòñÿ ïî z è îðèåíòàöèÿ.
+	// ÐÐµ Ð¿ÐµÑ€ÐµÐ¼ÐµÑ‰Ð°ÐµÑ‚ÑÑ Ð¿Ð¾ x, y. ÐŸÐµÑ€ÐµÐ¼ÐµÑ‰Ð°ÐµÑ‚ÑÑ Ð¿Ð¾ z Ð¸ Ð¾Ñ€Ð¸ÐµÐ½Ñ‚Ð°Ñ†Ð¸Ñ.
 	int unmovable = 0; 
-	// Ðàçðåøàåòñÿ çàñûïàòü, åñëè íåò òî÷åê óïðàâëåíèÿ	
+	// Ð Ð°Ð·Ñ€ÐµÑˆÐ°ÐµÑ‚ÑÑ Ð·Ð°ÑÑ‹Ð¿Ð°Ñ‚ÑŒ, ÐµÑÐ»Ð¸ Ð½ÐµÑ‚ Ñ‚Ð¾Ñ‡ÐµÐº ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ	
 	int enable_sleeping = 1;
-	// Íåíàïðàâëåííûé, äâèãàåòñÿ â ëþáóþ ñòîðîíó
+	// ÐÐµÐ½Ð°Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð½Ñ‹Ð¹, Ð´Ð²Ð¸Ð³Ð°ÐµÑ‚ÑÑ Ð² Ð»ÑŽÐ±ÑƒÑŽ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ñƒ
 	int isotropic = 0;
-	// Óïðàâëÿåòñÿ òî÷êàìè, èíà÷å ñâîáîäíûé îáúåêò
+	// Ð£Ð¿Ñ€Ð°Ð²Ð»ÑÐµÑ‚ÑÑ Ñ‚Ð¾Ñ‡ÐºÐ°Ð¼Ð¸, Ð¸Ð½Ð°Ñ‡Ðµ ÑÐ²Ð¾Ð±Ð¾Ð´Ð½Ñ‹Ð¹ Ð¾Ð±ÑŠÐµÐºÑ‚
 	int controled_by_points = 1;
 	
 	// Obstacle On/Off
@@ -118,7 +118,7 @@ struct RigidBodyPrm
 	AverageParameter obstacle_turn_avr = {};
 	float avoid_obstacle_rudder_speed = 10;
 
-	// Îñòàíîâêà 
+	// ÐžÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ° 
 	float brake_damping = 6;//3.5;
 	float point_control_slow_distance = 20;
 	float point_control_slow_factor = 0.1;
@@ -153,7 +153,7 @@ struct RigidBodyPrm
 	float deep_penetration_dz = 10;
 	float box_delta_y = 4;
 
-	// Ãðàâèöàïà
+	// Ð“Ñ€Ð°Ð²Ð¸Ñ†Ð°Ð¿Ð°
 	int gravicap_enabled = 1;
 	float gravicap_pitch_roll_threshould = 0.6;
 	int gravicap_dz_treshould = 40;
@@ -162,7 +162,7 @@ struct RigidBodyPrm
 	Oscillator gravicap_oscillator_pitch = { amplitude = 0.5; };
 	Oscillator gravicap_oscillator_roll = { amplitude = 0.25; };
 
-	// Êåíãóðó
+	// ÐšÐµÐ½Ð³ÑƒÑ€Ñƒ
 	int kangaroo_property = 1;
 	int kangaroo_allow_on_me = 1; 
 	float kangaroo_delta_z = -3;
@@ -189,7 +189,7 @@ struct RigidBodyPrm
 	float minimize_theta = 0;
 	float upper_theta = 90; // degrees
 	float lower_theta = -45; // degrees
-	float distance_correction_factor = 0.96; // èç-çà îøèáêè èíòåãðèðîâàíèÿ ñíàðÿäû ÷óòü-÷óòü ïåðåëåòàþò.
+	float distance_correction_factor = 0.96; // Ð¸Ð·-Ð·Ð° Ð¾ÑˆÐ¸Ð±ÐºÐ¸ Ð¸Ð½Ñ‚ÐµÐ³Ñ€Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ ÑÐ½Ð°Ñ€ÑÐ´Ñ‹ Ñ‡ÑƒÑ‚ÑŒ-Ñ‡ÑƒÑ‚ÑŒ Ð¿ÐµÑ€ÐµÐ»ÐµÑ‚Ð°ÑŽÑ‚.
 	int keep_direction_time = 0;
 	int ground_colliding_delay = 100;
 
@@ -213,7 +213,7 @@ struct RigidBodyPrm
 
 
 /////////////////////////////////////////////////////////////////////////////////
-// Ïðåäóñòàíîâêè ïàðàìåòðîâ âñåõ òåë
+// ÐŸÑ€ÐµÐ´ÑƒÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ¸ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ð¾Ð² Ð²ÑÐµÑ… Ñ‚ÐµÐ»
 /////////////////////////////////////////////////////////////////////////////////
 struct RigidBodyTable
 {
@@ -221,7 +221,7 @@ struct RigidBodyTable
 	/////////////////////////////////////
 	//	RigidBody Templates
 	/////////////////////////////////////
-	// Îáû÷íûå íàçåìíûå þíèòû
+	// ÐžÐ±Ñ‹Ñ‡Ð½Ñ‹Ðµ Ð½Ð°Ð·ÐµÐ¼Ð½Ñ‹Ðµ ÑŽÐ½Ð¸Ñ‚Ñ‹
 	struct GroundUnitPrm : RigidBodyPrm
 	{
 		name = "Unit Ground"; 
@@ -229,7 +229,7 @@ struct RigidBodyTable
 		analyse_force_field_obstacle = 0;
 	};
 
-	// Ñòàòè÷åñêèå íàçåìíûå þíèòû
+	// Ð¡Ñ‚Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð½Ð°Ð·ÐµÐ¼Ð½Ñ‹Ðµ ÑŽÐ½Ð¸Ñ‚Ñ‹
 	struct StaticGroundUnitPrm : GroundUnitPrm
 	{
 		name = "Building"; 
@@ -240,7 +240,7 @@ struct RigidBodyTable
 		forward_velocity_max = 0; 
 	};
 
-	// Ëåòàþùèå þíèòû
+	// Ð›ÐµÑ‚Ð°ÑŽÑ‰Ð¸Ðµ ÑŽÐ½Ð¸Ñ‚Ñ‹
 	struct FlyingUnitPrm : GroundUnitPrm
 	{
 		name = "Unit Flying"; 
@@ -263,7 +263,7 @@ struct RigidBodyTable
 		flying_down_without_way_points = 0;
 	};
 
-	// Ðàêåòû
+	// Ð Ð°ÐºÐµÑ‚Ñ‹
 	struct RocketPrm : RigidBodyPrm  
 	{
 		name = "Rocket"; 
@@ -287,7 +287,7 @@ struct RigidBodyTable
 		is_point_reached_radius_max = 0;
 	};
 
-	// Ñíàðÿäû
+	// Ð¡Ð½Ð°Ñ€ÑÐ´Ñ‹
 	struct MissilePrm : RigidBodyPrm
 	{
 		name = "Missile"; 
@@ -308,7 +308,7 @@ struct RigidBodyTable
 	/////////////////////////////////////////////////////////////////////////////////
 	//			Ground Units
 	/////////////////////////////////////////////////////////////////////////////////
-	// ôðåéì
+	// Ñ„Ñ€ÐµÐ¹Ð¼
 	GroundUnitPrm FramePrm = 
 	{
 		name = "Unit Frame";
@@ -333,7 +333,7 @@ struct RigidBodyTable
 		analyse_body_obstacle = 0;
 	};
 
-	// Êîâø
+	// ÐšÐ¾Ð²Ñˆ
 	GroundUnitPrm TruckPrm = 
 	{
 		name = "Unit Truck";
@@ -348,7 +348,7 @@ struct RigidBodyTable
 		enable_show = 0;
 	};
 
-	// Áëîê
+	// Ð‘Ð»Ð¾Ðº
 	GroundUnitPrm BlockPrm = 
 	{
 		name = "Unit Block"; 
@@ -362,14 +362,14 @@ struct RigidBodyTable
 		enable_show = 0;
 	};
 	
-	// Áðèãàäèð
+	// Ð‘Ñ€Ð¸Ð³Ð°Ð´Ð¸Ñ€
 	GroundUnitPrm TerrainMasterPrm = 
 	{
 		//name = "TerrainMaster"; 
 		forward_velocity_max = 20;
 	};
 
-	// Ïðîðàá
+	// ÐŸÑ€Ð¾Ñ€Ð°Ð±
 	FlyingUnitPrm BuildMasterPrm = 
 	{
 		//name = "BuildMaster"; 
@@ -377,21 +377,21 @@ struct RigidBodyTable
 	};
 
 
-	// ñîëäàò
+	// ÑÐ¾Ð»Ð´Ð°Ñ‚
 	GroundUnitPrm SoldierPrm = 
 	{
 		//name = "Soldier"; 
 		forward_velocity_max = 160;
 	};
 
-	 // òåõíèê
+	 // Ñ‚ÐµÑ…Ð½Ð¸Ðº
 	GroundUnitPrm TechnicPrm =
 	{
 		//name = "Technic"; 
 		forward_velocity_max = 160;
 	};
 																									
-	// îôèöåð
+	// Ð¾Ñ„Ð¸Ñ†ÐµÑ€
 	FlyingUnitPrm OfficerPrm = 
 	{
 		//name = "Officer"; 
@@ -399,7 +399,7 @@ struct RigidBodyTable
 		flying_height = 50;
 	};
 
-	//Ïåðôîðàòîð
+	//ÐŸÐµÑ€Ñ„Ð¾Ñ€Ð°Ñ‚Ð¾Ñ€
 	GroundUnitPrm PerforatorPrm = 
 	{
 		//name = "Perforator"; 
@@ -553,7 +553,7 @@ struct RigidBodyTable
 		analyse_force_field_obstacle = 0;
 	};
 
-	// Îáåêò îêðóæåíèÿ
+	// ÐžÐ±ÐµÐºÑ‚ Ð¾ÐºÑ€ÑƒÐ¶ÐµÐ½Ð¸Ñ
 	GroundUnitPrm EnvironmentPrm = 
 	{
 		name = "Environment"; 
@@ -629,9 +629,9 @@ struct RigidBodyTable
 	};
 
 	/////////////////////////////////////
-	//		Òâàðè
+	//		Ð¢Ð²Ð°Ñ€Ð¸
 	/////////////////////////////////////
-	// Ïàóê
+	// ÐŸÐ°ÑƒÐº
 	struct GroundFilth : GroundUnitPrm 
 	{
 		name = "Filth Ground";
@@ -730,7 +730,7 @@ struct RigidBodyTable
 	/////////////////////////////////////
 	//				Missiles
 	/////////////////////////////////////
-	// Ñíàðÿä ãàóáèöû
+	// Ð¡Ð½Ð°Ñ€ÑÐ´ Ð³Ð°ÑƒÐ±Ð¸Ñ†Ñ‹
 	MissilePrm HowitzerMissilePrm = 
 	{
 		name = "Missile Howitzer"; 
@@ -738,7 +738,7 @@ struct RigidBodyTable
 		lower_theta = 45;
 	};
 
-	// Áîìáà
+	// Ð‘Ð¾Ð¼Ð±Ð°
 	MissilePrm BombMissilePrm = 
 	{
 		name = "Missile Bomb"; 
@@ -748,7 +748,7 @@ struct RigidBodyTable
 		lower_theta = -90;
 	};
 
-	// Áàëëèñòè÷åñêàÿ ðàêåòà (ñíàðÿä)
+	// Ð‘Ð°Ð»Ð»Ð¸ÑÑ‚Ð¸Ñ‡ÐµÑÐºÐ°Ñ Ñ€Ð°ÐºÐµÑ‚Ð° (ÑÐ½Ð°Ñ€ÑÐ´)
 	MissilePrm BallisticMissilePrm = 
 	{
 		name = "Missile GunBallistic";
@@ -877,7 +877,7 @@ struct RigidBodyTable
 		//name = "CorpseDynamic"; 
 	};
 
-delegate: // Ðàññìàòðèâàåì ïîñëåäîâàòåëüíîñòü ðàñïîëîæåííûõ ðÿäîì ñòðóêòóð êàê ìàññèâ
+delegate: // Ð Ð°ÑÑÐ¼Ð°Ñ‚Ñ€Ð¸Ð²Ð°ÐµÐ¼ Ð¿Ð¾ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ Ñ€Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð½Ñ‹Ñ… Ñ€ÑÐ´Ð¾Ð¼ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€ ÐºÐ°Ðº Ð¼Ð°ÑÑÐ¸Ð²
 	int size() const { xassert(sizeof(*this) % sizeof(RigidBodyPrm) == 0); return sizeof(*this)/sizeof(RigidBodyPrm); }
 	const RigidBodyPrm& operator[](int i) const { xassert(i >= 0 && i < size()); return ((RigidBodyPrm*)this)[i]; }
 };

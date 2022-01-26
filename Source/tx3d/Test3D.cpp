@@ -10,7 +10,7 @@
 
 #include "stdafxTX3D.h"
 #include "Test3D.hpp"
-#include <cmath>
+#include "xmath.h"
 
 using namespace tx3d;
 
@@ -58,7 +58,7 @@ void Test3D::getColor(Vector3D* destClr, const Vector3D &v) {
 	}
 	*destClr = diffColor; 
 //	*destClr *= (( 1.0 + noise ) / 2.0);
-	*destClr *= (( 1.0 + cos(3.1415926 * (shiftedV.x + noise)) ) / 2.0);
+	*destClr *= (( 1.0 + xm::cos(3.1415926 * (shiftedV.x + noise)) ) / 2.0);
 	*destClr += bgColor;
 
 }
@@ -93,7 +93,7 @@ float Test3D::interpolate() {
 }
 
 float Test3D::cosInterpolate(float h1, float h2, float shift) {
-	coss = (1.0 - cos(shift * 3.1415926)) * 0.5;
+	coss = (1.0 - xm::cos(shift * 3.1415926)) * 0.5;
 	return h1 * (1.0 - coss) + h2 * coss;
 }
 

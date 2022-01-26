@@ -1,7 +1,9 @@
 #include "StdAfxRD.h"
 #include "FileImage.h"
+#include "files/files.h"
+#include "SystemUtil.h"
 
-LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x,int y,eSurfaceFormat TextureFormat,int MipMap,bool enable_assert,DWORD attribute)
+LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat TextureFormat, int MipMap, bool enable_assert, uint32_t attribute)
 {
 	LPDIRECT3DTEXTURE9 lpTexture=0;
 
@@ -51,10 +53,10 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x,int y,eSurfaceFormat TextureF
 	return lpTexture;
 }
 
-inline BYTE ByteInterpolate(BYTE a,BYTE b,BYTE factor)
+inline uint8_t ByteInterpolate(uint8_t a, uint8_t b, uint8_t factor)
 {
 //	float f=factor/255.0f;
-//	return round(a+(int(b-a))*f);
+//	return xm::round(a+(int(b-a))*f);
 	return a+(int(b-a))*int(factor)/255;
 }
 
@@ -106,7 +108,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 	VISASSERT((dx==dxout && dy==dyout)||(Texture->GetNumberMipMap()==1) );
 	bool resample=!(dx==dxout && dy==dyout);
-	DWORD dither=(RenderMode&RENDERDEVICE_MODE_RGB16)?D3DX_FILTER_DITHER:0;
+	uint32_t dither= (RenderMode & RENDERDEVICE_MODE_RGB16) ? D3DX_FILTER_DITHER : 0;
 	bool is_alpha_test=false;
 	bool is_alpha_blend=false;
 	bool is_skin=Texture->skin_color.a==255;
@@ -147,10 +149,59 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 			ApplySkinColor(lpBuf,dx,dy,Texture->skin_color);
 		}
 
-        //Convert grayscale bump map into normal map
+        //We need to convert grayscale bumpmap to normalmap
 		if(Texture->GetAttribute(TEXTURE_BUMP) && !Texture->GetAttribute(TEXTURE_NORMAL))
 		{
-			ConvertDot3(lpBuf,dx,dy,1.0e-2f*current_bump_scale);
+            //Get key of cache for this texture file and the file to store/retrieve the cache
+            std::string key;
+            filesystem_entry* entry = get_content_entry(Texture->GetName());
+            if (entry) key = entry->key;
+            if (key.empty()) key = convert_path_native(Texture->GetName());
+            key = string_to_lower(key.c_str());
+            string_replace_all(key, PATH_SEP_STR, "_");
+            key = std::string("cache") + PATH_SEP + "bump" + PATH_SEP + key +  ".bin";
+            std::string path = convert_path_content(key, true);
+            xassert(!path.empty());
+
+            //Attempt to use cache since it takes some time to convert big files
+            int64_t len = static_cast<int64_t>(dxy * sizeof(uint32_t));
+            XStream ff(0);
+            bool usable = !path.empty() && ff.open(path, XS_IN) && 0 < ff.size();
+            if (usable) {
+                std::string sourcefile = convert_path_content(Texture->GetName());
+                //If empty then the texture was loaded from .pak so assume is older than cache
+                if (!sourcefile.empty()) {
+                    auto cachetime = std::filesystem::last_write_time(std::filesystem::u8path(path));
+                    auto sourcetime = std::filesystem::last_write_time(std::filesystem::u8path(sourcefile));
+                    //Mark as not usable if source file is modified after cache creation
+                    usable = sourcetime <= cachetime;
+                }
+            }
+            if (usable) {
+                //Load file and uncompress it
+                XBuffer buf(ff.size(), true);
+                XBuffer dest = XBuffer(len, true);
+                ff.read(buf.address(), ff.size());
+                if (buf.uncompress(dest) == 0 && dest.tell() == len) {
+                    memcpy(lpBuf, dest.address(), len);
+                } else {
+                    usable = false;
+                }
+            }
+            
+            if (!usable) {
+                //Convert grayscale bump map into normal map and cache it
+                ConvertDot3(lpBuf, dx, dy, 1.0e-2f * current_bump_scale);
+                if (ff.open(path, XS_OUT)) {
+                    XBuffer buf(lpBuf, len);
+                    buf.set(len);
+                    XBuffer compressed(len, true);
+                    if (buf.compress(compressed) == 0) {
+                        ff.write(compressed, compressed.tell());
+                    }
+                }
+            }
+            ff.close();            
 		}
 
 		RECT rect={0,0,dx,dy};
@@ -201,10 +252,10 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
     return 0;
 }
 
-int cD3DRender::CreateCubeTexture(class cTexture *Texture,LPCSTR fname)
+int cD3DRender::CreateCubeTexture(class cTexture *Texture, const char* fname)
 {
 	LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;
-	if(FAILED(D3DXCreateCubeTextureFromFile(lpD3DDevice,fname,&pCubeTexture)))
+	if(FAILED(D3DXCreateCubeTextureFromFileA(lpD3DDevice, fname, &pCubeTexture)))
 		return 1;
 
 	Texture->BitMap.push_back((IDirect3DTexture9*)pCubeTexture);
@@ -243,16 +294,21 @@ int cD3DRender::DeleteTexture(cTexture *Texture)
 }
 bool cD3DRender::SetScreenShot(const char *fname)
 {
+#ifndef PERIMETER_EXODUS
 	LPDIRECT3DSURFACE9 lpRenderSurface=0;
 	RDCALL(lpD3DDevice->GetRenderTarget(0,&lpRenderSurface));
-	HRESULT hr=D3DXSaveSurfaceToFile(fname,D3DXIFF_BMP,lpRenderSurface,NULL,NULL);
-	//HRESULT hr=D3DXSaveSurfaceToFile(fname,D3DXIFF_PNG,lpRenderSurface,NULL,NULL);
+	HRESULT hr=D3DXSaveSurfaceToFileA(fname,D3DXIFF_BMP,lpRenderSurface,NULL,NULL);
 	
 	RELEASE(lpRenderSurface);
 	return SUCCEEDED(hr);
+#else
+    //TODO implement this
+    fprintf(stderr, "Called unimplemented cD3DRender::SetScreenShot\n");
+    return false;
+#endif
 }
 
-void* cD3DRender::LockTexture(class cTexture *Texture,int& Pitch)
+void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch)
 {
 	D3DLOCKED_RECT d3dLockRect;
 	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);
@@ -262,7 +318,7 @@ void* cD3DRender::LockTexture(class cTexture *Texture,int& Pitch)
 	return d3dLockRect.pBits;
 }
 
-void* cD3DRender::LockTexture(class cTexture *Texture,int& Pitch,Vect2i lock_min,Vect2i lock_size)
+void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size)
 {
 	D3DLOCKED_RECT d3dLockRect;
 	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);
@@ -292,7 +348,7 @@ unsigned int ColorByNormal(Vect3f n)
 
 	return z+(x<<8)+(y<<16);
 }
-Vect3f NormalByColor(DWORD d)
+Vect3f NormalByColor(uint32_t d)
 {
 	Vect3f v;
 	v.y = ((d>> 16) & 0xFF);
@@ -306,7 +362,7 @@ Vect3f NormalByColor(DWORD d)
 void cD3DRender::ConvertDot3(uint32_t* ibuf,int dx,int dy,float h_mul)
 {
 	const int byte_per_pixel=4;
-	BYTE* buf=(BYTE*)ibuf;
+	uint8_t* buf=(uint8_t*)ibuf;
 #define GET(x,y) buf[(clamp(x,0,dx-1)+dx*clamp(y,0,dy-1))*byte_per_pixel]
     uint32_t* out=new uint32_t[dx*dy];
 

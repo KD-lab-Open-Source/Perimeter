@@ -60,10 +60,10 @@ protected:
 	ClusterFind* path_finder2;
 	ClusterFind* path_hard_map;
 
-	void rebuildWalkMap(BYTE* walk_map);
+	void rebuildWalkMap(uint8_t* walk_map);
 
 	cTexture* pWalkMap;
-	void updateWalkMap(BYTE* walk_map);
+	void updateWalkMap(uint8_t* walk_map);
 
 	void updateHardMap();
 };

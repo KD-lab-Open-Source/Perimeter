@@ -137,7 +137,7 @@ void cObjectNode::CalcBorder(Vect3f& Min,Vect3f& Max)
 		cObjectNode *ObjNode=child;
 		ObjNode->CalcBorder();
 		MatXf ChildOriginalMatrix=ObjNode->GetLocalMatrix();
-		if(fabs(ObjNode->GlobalBound.min.x)<1e20f)
+		if(xm::abs(ObjNode->GlobalBound.min.x) < 1e20f)
 		{
 			Vect3f min,max;
 			ChildOriginalMatrix.xformPoint(ObjNode->GlobalBound.min,min);
@@ -333,7 +333,7 @@ bool cObjectNode::IntersectSphere(const Vect3f& xp0,const Vect3f& xp1)
 	float B=d.x*l.x+d.y*l.y+d.z*l.z;
 	float det=B*B-A*C;
 	if(det<0)return false;
-	det=sqrtf(det);
+	det= xm::sqrt(det);
 	float t1=(-B+det)/A;
 	float t2=(-B-det)/A;
 	if((t1>1||t1<0)&&(t2>1||t2<0)) return false;

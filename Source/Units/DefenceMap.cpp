@@ -7,7 +7,7 @@
 #include "Runtime.h"
 
 DefenceMap::DefenceMap(int hsize,int vsize) 
-: Map2D<BYTE, 4>(hsize, vsize, 0)
+: Map2D<uint8_t, 4>(hsize, vsize, 0)
 { 
 	path_finder = new ClusterFind(sizeX(), sizeY(), defenceMapPathFind.clusterSize);
 	path_finder2 = new ClusterFind(sizeX(), sizeY(), defenceMapPathFind.clusterSize);
@@ -42,16 +42,16 @@ bool DefenceMap::recalcMapQuant()
 void DefenceMap::addGun(const Vect2f& positionWorld, float radiusWorld)
 {
 	Vect2i position = w2m(positionWorld);
-	int radius = w2m(round(radiusWorld) + defenceMapPathFind.gunExtraRadius);
+	int radius = w2m(xm::round(radiusWorld) + defenceMapPathFind.gunExtraRadius);
 	for(int y = -radius; y <= radius; y++){
 		int yc = position.y + y;
 		if(yc < 0 || yc >= sizeY())
 			continue;
-		int delta = round(sqrtf(sqr(radius) - sqr(y)));
+		int delta = xm::round(xm::sqrt(sqr(radius) - sqr(y)));
 		int xl = clamp(position.x - delta, 0, sizeX() - 1);
 		int xr = clamp(position.x + delta, 0, sizeX() - 1);
 		for(int x = xl; x <= xr; x++){
-			BYTE& byte = (*this)(x, yc);
+			uint8_t& byte = (*this)(x, yc);
 			byte |= (byte + 1) & ClusterFind::DOWN_MASK;
 		}
 	}
@@ -80,11 +80,11 @@ public:
 	//Предполагаемые затраты на продвижение из pos1 к окончанию
 	float GetH(Node* pos)
 	{
-		return sqrtf(sqr(pos->xcenter - center_.xi())+
-					sqr(pos->ycenter - center_.yi()))*gmul;
+		return xm::sqrt(sqr(pos->xcenter - center_.xi()) +
+                        sqr(pos->ycenter - center_.yi())) * gmul;
 	}
 
-	float operator()(BYTE walk_from,BYTE walk_to)
+	float operator()(uint8_t walk_from, uint8_t walk_to)
 	{
 		if((walk_from^walk_to)&ClusterFind::UP_MASK)
 			return 1000.0f;
@@ -97,8 +97,8 @@ public:
 	{
 		float mul=(pos2->walk&ClusterFind::DOWN_MASK)+gmul;
 
-		float f=sqrtf(sqr(pos1->xcenter-pos2->xcenter)+
-					sqr(pos1->ycenter-pos2->ycenter))*mul;
+		float f= xm::sqrt(sqr(pos1->xcenter - pos2->xcenter) +
+                          sqr(pos1->ycenter - pos2->ycenter)) * mul;
 
 		if((pos1->walk^pos2->walk)&ClusterFind::UP_MASK)
 			f+=1000.0f;
@@ -219,14 +219,14 @@ terUnitBase* DefenceMap::findPathToTarget(const Vect2i& from_w, const UnitList& 
 		return targets.front();
 }
 
-void DefenceMap::rebuildWalkMap(BYTE* walk_map)
+void DefenceMap::rebuildWalkMap(uint8_t* walk_map)
 {
 	memcpy(walk_map, map(), sizeY()*sizeX());
 }
 
 void DefenceMap::analizeChaos()
 {
-	const BYTE value = 64;
+	const uint8_t value = 64;
 
 	for(int x = 0; x < sizeX(); x++)
 		(*this)(x, 0) = (*this)(x, sizeY() - 1) = value;
@@ -248,7 +248,7 @@ void DefenceMap::analizeChaos()
 
 void DefenceMap::analizeField(int playerID)
 {
-	const BYTE value = 64;
+	const uint8_t value = 64;
 
 	if(field_dispatcher){
 		xassert(FieldDispatcher::scale == tileSizeShl);

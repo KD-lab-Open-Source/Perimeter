@@ -8,14 +8,11 @@
  *	@author Alexander Porechnov (scm)
  */
 
-#pragma once
-
 #ifndef _TX3D_TEXTURE3DUTILS_H
 #define _TX3D_TEXTURE3DUTILS_H
 
+#include "xmath.h"
 #include "Vector3D.hpp"
-
-#include <cmath>
 
 namespace tx3d {
 
@@ -26,70 +23,16 @@ namespace tx3d {
 			}
 
 			static long round(float f) {
-                return (long) std::round(f);
-                /*
-				long res;
-
-				_asm {
-					fld		f
-					fistp	[dword ptr res]	
-				};
-
-				return res;
-                */
+                return static_cast<long>(xm::round(f));
 			}
 
 			static void round(float f, long* res) {
-                *res = (long) std::round(f);
-                /*
-				_asm {
-					fld		f
-					fistp	[res]	
-				};
-                */
+                *res = static_cast<long>(xm::round(f));
 			}
 
 			static long floor(float f) {
-                return (long) std::floor(f);
-                /*
-				long res;
-				float h = 0.5f - 1.e-6f;
-				_asm {
-					fld		h
-
-					fld		f
-					fsub	st(0), st(1)
-					fistp	[dword ptr res]	
-
-					fstp	st(0)
-				};
-
-				return res;
-                */
+                return static_cast<long>(xm::floor(f));
 			}
-
-			/* TODO unused?
-			static float ffloor(float f, float h = 0.5f) {
-				long xi;
-				float res;
-
-				_asm {
-					lea		esi, f
-						
-					fld		[dword ptr h]
-
-					fld		[dword ptr esi]
-					fsub	st(0), st(1)
-					fistp	[dword ptr xi]	
-					fild	[dword ptr xi]	
-					fstp	[dword ptr res]	
-
-					fstp	st(0)
-				};
-
-				return res;
-			}
-			*/
 
 			static Vector3D convertHSBtoRGB(const Vector3D& hsbColor);
 

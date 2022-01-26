@@ -73,7 +73,7 @@ public:
 	virtual void kill(){ }
 
 	virtual SaveWeaponData* universalSave(SaveWeaponData* data);
-	virtual void universalLoad(const SaveWeaponData* data);
+	virtual void universalLoad(SaveWeaponData* data);
 
 	int missileCount() const { return missileCount_; }
 

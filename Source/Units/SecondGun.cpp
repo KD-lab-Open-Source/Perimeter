@@ -65,16 +65,16 @@ public:
 	AimAngleController() : object_(NULL), logicTile_(NULL)
 	{
 		value_ = valueDefault_ = 0.0f;
-		speed_ = M_PI * 0.2f;
-		valuePrecision_ = M_PI * 0.001f;
+		speed_ = XM_PI * 0.2f;
+		valuePrecision_ = XM_PI * 0.001f;
 		valueInterpolator_ = 0;
 
 		valueMin_ = 0.0f;
-		valueMax_ = M_PI * 2.0f;
+		valueMax_ = XM_PI * 2.0f;
 	}
 
-	bool operator == (float val) const { return (fabs(getDeltaAngle(val,value_)) <= valuePrecision_); }
-	bool operator != (float val) const { return (fabs(getDeltaAngle(val,value_)) > valuePrecision_); }
+	bool operator == (float val) const { return (xm::abs(getDeltaAngle(val, value_)) <= valuePrecision_); }
+	bool operator != (float val) const { return (xm::abs(getDeltaAngle(val, value_)) > valuePrecision_); }
 
 	bool checkAngle(float angle) const
 	{
@@ -518,7 +518,7 @@ class terWeaponScumTwister : public WeaponOmnidirectionalBase
 {
 public:
 	terWeaponScumTwister(terUnitReal* owner);
-	~terWeaponScumTwister();
+	~terWeaponScumTwister() override;
 
 	void quant();
 
@@ -531,7 +531,7 @@ public:
 	void destroyLink();
 
 	SaveWeaponData* universalSave(SaveWeaponData* data);
-	void universalLoad(const SaveWeaponData* data);
+	void universalLoad(SaveWeaponData* data);
 
 private:
 
@@ -543,6 +543,7 @@ class terWeaponScumSplitter : public WeaponOmnidirectionalBase
 {
 public:
 	terWeaponScumSplitter(terUnitReal* owner) : WeaponOmnidirectionalBase(owner), missile_(NULL), targetPos_(0,0,0) { }
+    ~terWeaponScumSplitter() override;
 
 	void quant();
 
@@ -550,6 +551,7 @@ public:
 	int estimatedDamage() const { return 0; }
 	
 	void destroyLink();
+    void kill();
 
 private:
 
@@ -591,17 +593,19 @@ class terWeaponScumDisruptor : public WeaponOmnidirectionalBase
 {
 public:
 	terWeaponScumDisruptor(terUnitReal* owner);
+    ~terWeaponScumDisruptor();
 
 	bool fire(const Vect3f& to,terUnitBase* target);
 	int estimatedDamage() const { return 0; }
 
 	void disable();
 	void quant();
+    void kill();
 	
 	void destroyLink();
 
 	SaveWeaponData* universalSave(SaveWeaponData* data);
-	void universalLoad(const SaveWeaponData* data);
+	void universalLoad(SaveWeaponData* data);
 
 private:
 
@@ -622,7 +626,7 @@ public:
 	void quant();
 
 	SaveWeaponData* universalSave(SaveWeaponData* data);
-	void universalLoad(const SaveWeaponData* data);
+	void universalLoad(SaveWeaponData* data);
 
 private:
 
@@ -704,20 +708,20 @@ bool AimControllerDirectional::init(cLogicObject* logic_root,cObjectNodeRoot* mo
 		xassert(ret);
 	}
 
-	psi_.setSpeed(setup.turnSpeed[0]*M_PI);
-	theta_.setSpeed(setup.turnSpeed[1]*M_PI);
+	psi_.setSpeed(setup.turnSpeed[0]*XM_PI);
+	theta_.setSpeed(setup.turnSpeed[1]*XM_PI);
 	
-	psi_.setLimits(setup.psiLimit[0]*M_PI,setup.psiLimit[1]*M_PI);
-	theta_.setLimits(setup.thetaLimit[0]*M_PI,setup.thetaLimit[1]*M_PI);
+	psi_.setLimits(setup.psiLimit[0]*XM_PI,setup.psiLimit[1]*XM_PI);
+	theta_.setLimits(setup.thetaLimit[0]*XM_PI,setup.thetaLimit[1]*XM_PI);
 
-	psi_.setPrecision(setup.targetingPrecision[0]*M_PI);
-	theta_.setPrecision(setup.targetingPrecision[1]*M_PI);
+	psi_.setPrecision(setup.targetingPrecision[0]*XM_PI);
+	theta_.setPrecision(setup.targetingPrecision[1]*XM_PI);
 
-	psi_.setDefaultValue(setup.defaultAngles[0]*M_PI);
-	theta_.setDefaultValue(setup.defaultAngles[1]*M_PI);
+	psi_.setDefaultValue(setup.defaultAngles[0]*XM_PI);
+	theta_.setDefaultValue(setup.defaultAngles[1]*XM_PI);
 
-	psi_.setValue(setup.defaultAngles[0]*M_PI);
-	theta_.setValue(setup.defaultAngles[1]*M_PI);
+	psi_.setValue(setup.defaultAngles[0]*XM_PI);
+	theta_.setValue(setup.defaultAngles[1]*XM_PI);
 
 	psi_.setChain("main");
 	theta_.setChain("main");
@@ -848,7 +852,7 @@ SaveWeaponData* terWeapon::universalSave(SaveWeaponData* data)
 	return data;
 }
 
-void terWeapon::universalLoad(const SaveWeaponData* data)
+void terWeapon::universalLoad(SaveWeaponData* data)
 {
 	if(!data) return;
 
@@ -1109,6 +1113,11 @@ void terWeapon::fireEvent(const Vect3f& to,terUnitBase* target)
 
 	firePosition_ = to;
 	fireTarget_ = target;
+    log_var(firePosition_);
+    if (fireTarget_) {
+        log_var(fireTarget_->playerID());
+        log_var(fireTarget_->unitID());
+    }
 
 	bool call_fire = true;
 	if(setup_.hasFireController()){
@@ -1384,7 +1393,8 @@ bool terWeaponFreezeLaser::fire(const Vect3f& to,terUnitBase* target)
 	xassert(owner());
 
 	if(target){
-		target->SetFreezeCount(round(float(terOfficerFreezeTime)/float(target->damageMolecula().elementCount())));
+		target->SetFreezeCount(
+                xm::round(float(terOfficerFreezeTime) / float(target->damageMolecula().elementCount())));
 		owner()->DestroyLink();
 	}
 
@@ -1497,11 +1507,11 @@ void terWeaponScumHeater::quant()
 		if(missileID() != UNIT_ATTRIBUTE_NONE){ // crater
 			Vect3f pos = owner()->position();
 
-			float angle = terLogicRNDfrand()*M_PI*2;
+			float angle = terLogicRNDfrand()*XM_PI*2;
 			float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-			pos.x += dist * cos(angle);
-			pos.y += dist * sin(angle);
+			pos.x += dist * xm::cos(angle);
+			pos.y += dist * xm::sin(angle);
 			pos.z = 0;
 
 			if(field_dispatcher->getIncludingCluster(pos) == owner()->includingCluster()){
@@ -1550,11 +1560,11 @@ void terWeaponConductor::quant()
 			if(missileID() != UNIT_ATTRIBUTE_NONE){ // crater
 				Vect3f pos = owner()->position();
 
-				float angle = terLogicRNDfrand()*M_PI*2;
+				float angle = terLogicRNDfrand()*XM_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-				pos.x += dist * cos(angle);
-				pos.y += dist * sin(angle);
+				pos.x += dist * xm::cos(angle);
+				pos.y += dist * xm::sin(angle);
 				pos.z = 0;
 
 				if(field_dispatcher->getIncludingCluster(pos) == owner()->includingCluster()){
@@ -1571,11 +1581,11 @@ void terWeaponConductor::quant()
 			for(int i = 0; i < 5; i++){
 				Vect2f pos = owner()->position2D();
 
-				float angle = terLogicRNDfrand()*M_PI*2;
+				float angle = terLogicRNDfrand()*XM_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-				pos.x += dist * cos(angle);
-				pos.y += dist * sin(angle);
+				pos.x += dist * xm::cos(angle);
+				pos.y += dist * xm::sin(angle);
 
 				vect.push_back(To3D(pos));
 			}
@@ -1614,6 +1624,10 @@ terWeaponScumTwister::terWeaponScumTwister(terUnitReal* owner) : WeaponOmnidirec
 
 terWeaponScumTwister::~terWeaponScumTwister()
 {
+    if(missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
 }
 
 void terWeaponScumTwister::quant()
@@ -1642,11 +1656,11 @@ void terWeaponScumTwister::quant()
 
 				Vect3f pos = missile_->position();
 
-				float angle = terLogicRNDfrand()*M_PI*2;
+				float angle = terLogicRNDfrand()*XM_PI*2;
 				float dist = terLogicRNDfrand()*setup().accuracyRadius;
 
-				pos.x += dist * cos(angle);
-				pos.y += dist * sin(angle);
+				pos.x += dist * xm::cos(angle);
+				pos.y += dist * xm::sin(angle);
 
 				p->setPose(Se3f(QuatF::ID,pos),true);
 				p->Start();
@@ -1658,7 +1672,7 @@ void terWeaponScumTwister::quant()
 	else {
 		if(missile_){
 			missile_->Kill();
-			missile_ = NULL;
+			missile_ = nullptr;
 		}
 	}
 	
@@ -1681,7 +1695,7 @@ SaveWeaponData* terWeaponScumTwister::universalSave(SaveWeaponData* data)
 	return data;
 }
 
-void terWeaponScumTwister::universalLoad(const SaveWeaponData* data)
+void terWeaponScumTwister::universalLoad(SaveWeaponData* data)
 {
 	WeaponOmnidirectionalBase::universalLoad(data);
 
@@ -1703,7 +1717,7 @@ void terWeaponScumTwister::destroyLink()
 	WeaponOmnidirectionalBase::destroyLink();
 
 	if(missile_ && !missile_->alive()){
-		missile_ = NULL;
+		missile_ = nullptr;
 		reloadStart();
 
 		setFireAnimationMode(false);
@@ -1715,10 +1729,10 @@ void terWeaponScumTwister::unload()
 	WeaponOmnidirectionalBase::unload();
 
 	if(isSwitchedOn()){
-		if(missile_)
-			missile_->Kill();
-
-		missile_ = NULL;
+		if(missile_) {
+            missile_->Kill();
+            missile_ = nullptr;
+        }
 
 		reloadStart();
 	}
@@ -1726,13 +1740,20 @@ void terWeaponScumTwister::unload()
 
 void terWeaponScumTwister::kill()
 {
-	if(missile_)
-		missile_->Kill();
-
-	missile_ = NULL;
+	if(missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
 }
 
 //-------------------------------------------------------
+
+terWeaponScumSplitter::~terWeaponScumSplitter() {
+    if(missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
+}
 
 void terWeaponScumSplitter::quant()
 {
@@ -1747,11 +1768,11 @@ void terWeaponScumSplitter::quant()
 					missile_ = owner()->Player->buildUnit(missileID());
 
 					Vect3f pos = targetPos_;
-					float angle = terLogicRNDfrand()*M_PI*2;
+					float angle = terLogicRNDfrand()*XM_PI*2;
 					float radius = setup().accuracyRadius * terLogicRNDfrand();
 
-					pos.x += radius * cos(angle);
-					pos.y += radius * sin(angle);
+					pos.x += radius * xm::cos(angle);
+					pos.y += radius * xm::sin(angle);
 
 					missile_->setPose(Se3f(QuatF(angle,Vect3f::K),pos),true);
 					missile_->Start();
@@ -1764,7 +1785,7 @@ void terWeaponScumSplitter::quant()
 	else {
 		if(missile_){
 			missile_->Kill();
-			missile_ = NULL;
+			missile_ = nullptr;
 		}
 	}
 	
@@ -1777,7 +1798,7 @@ void terWeaponScumSplitter::destroyLink()
 	WeaponOmnidirectionalBase::destroyLink();
 
 	if(missile_ && !missile_->alive()){
-		missile_ = NULL;
+		missile_ = nullptr;
 		reloadStart();
 
 		setFireAnimationMode(false);
@@ -1789,6 +1810,13 @@ bool terWeaponScumSplitter::fire(const Vect3f& to,terUnitBase* target)
 	switchOn();
 	targetPos_ = (target) ? target->position() : to;
 	return true;
+}
+
+void terWeaponScumSplitter::kill() {
+    if (missile_) {
+        missile_->Kill();
+        missile_ = nullptr;
+    }
 }
 
 //-------------------------------------------------------
@@ -1885,6 +1913,14 @@ terWeaponScumDisruptor::terWeaponScumDisruptor(terUnitReal* owner) : WeaponOmnid
 {
 }
 
+terWeaponScumDisruptor::~terWeaponScumDisruptor()
+{
+    if(missile_) {
+        missile_->SetFreeDestroy();
+        missile_ = nullptr;
+    }
+}
+
 SaveWeaponData* terWeaponScumDisruptor::universalSave(SaveWeaponData* data)
 {
 	if(isSwitchedOn() && missile_){
@@ -1899,7 +1935,7 @@ SaveWeaponData* terWeaponScumDisruptor::universalSave(SaveWeaponData* data)
 	return data;
 }
 
-void terWeaponScumDisruptor::universalLoad(const SaveWeaponData* data)
+void terWeaponScumDisruptor::universalLoad(SaveWeaponData* data)
 {
 	WeaponOmnidirectionalBase::universalLoad(data);
 
@@ -1915,7 +1951,7 @@ void terWeaponScumDisruptor::quant()
 	if(!isSwitchedOn()){
 		if(missile_){
 			missile_->SetFreeDestroy();
-			missile_ = NULL;
+            missile_ = nullptr;
 		}
 	}
 }
@@ -1923,10 +1959,10 @@ void terWeaponScumDisruptor::quant()
 void terWeaponScumDisruptor::disable()
 {
 	if(isSwitchedOn()){
-		if(missile_)
-			missile_->SetFreeDestroy();
-
-		missile_ = NULL;
+		if(missile_) {
+            missile_->SetFreeDestroy();
+            missile_ = nullptr;
+        }
 
 		reloadStart();
 	}
@@ -1938,8 +1974,9 @@ void terWeaponScumDisruptor::destroyLink()
 {
 	WeaponOmnidirectionalBase::destroyLink();
 
-	if(missile_ && !missile_->alive())
-		missile_ = NULL;
+	if(missile_ && !missile_->alive()) {
+        missile_ = nullptr;
+    }
 }
 
 bool terWeaponScumDisruptor::fire(const Vect3f& to,terUnitBase* target)
@@ -1951,10 +1988,11 @@ bool terWeaponScumDisruptor::fire(const Vect3f& to,terUnitBase* target)
 
 	Vect3f trg_pos = (target) ? target->position() : to;
 
+    /*
+    //Adjust discharge speed by distance
 	float dist_factor = owner()->position().distance(trg_pos) / 1000.0f;
-	float life_time = reloadConsumption().energy() / (10.0f * setup().dischargeSpeed * dist_factor);
-
 	setDischargeSpeed(setup().dischargeSpeed * dist_factor);
+    */
 
 	missile_->setParameters(&terScumDisruptorPrm);
 	missile_->setPosition(trg_pos);
@@ -1966,6 +2004,13 @@ bool terWeaponScumDisruptor::fire(const Vect3f& to,terUnitBase* target)
 	switchOn();
 
 	return true;
+}
+
+void terWeaponScumDisruptor::kill() {
+    if (missile_) {
+        missile_->SetFreeDestroy();
+        missile_ = nullptr;
+    }
 }
 
 //-------------------------------------------------------
@@ -2024,11 +2069,11 @@ SaveWeaponData* terWeaponFilthNavigator::universalSave(SaveWeaponData* base_data
 	return base_data;
 }
 
-void terWeaponFilthNavigator::universalLoad(const SaveWeaponData* base_data)
+void terWeaponFilthNavigator::universalLoad(SaveWeaponData* base_data)
 {
 	WeaponOmnidirectionalBase::universalLoad(base_data);
 
-	if(const SaveWeaponFilthNavigatorData* data = dynamic_cast<const SaveWeaponFilthNavigatorData*>(base_data)){
+	if(SaveWeaponFilthNavigatorData* data = dynamic_cast<SaveWeaponFilthNavigatorData*>(base_data)){
 		prmIndex_ = data->prmIndex;
 	}
 }
@@ -2047,11 +2092,11 @@ bool terWeaponFilthSpot::fire(const Vect3f& to,terUnitBase* target)
 
 	Vect3f trg_pos = (target) ? target->position() : to;
 
-	float angle = terLogicRNDfrand()*M_PI*2;
+	float angle = terLogicRNDfrand()*XM_PI*2;
 	float radius = setup().accuracyRadius * terLogicRNDfrand();
 
-	trg_pos.x += radius * cos(angle);
-	trg_pos.y += radius * sin(angle);
+	trg_pos.x += radius * xm::cos(angle);
+	trg_pos.y += radius * xm::sin(angle);
 
 	p->setParameters(&terFilthMutationsPrm[setup().weaponIndex]);
 	p->setPosition(trg_pos);

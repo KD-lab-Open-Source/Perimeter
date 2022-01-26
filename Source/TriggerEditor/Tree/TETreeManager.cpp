@@ -12,7 +12,7 @@ TETreeManager::~TETreeManager(void)
 {
 }
 
-bool TETreeManager::create(CFrameWnd* pParent, DWORD dwStyle)
+bool TETreeManager::create(CFrameWnd* pParent, uint32_t dwStyle)
 {
 	parentFrame_ = pParent;
 
@@ -28,7 +28,7 @@ bool TETreeManager::create(CFrameWnd* pParent, DWORD dwStyle)
 	return true;
 }
 
-void TETreeManager::dockBar(UINT dockBarID)
+void TETreeManager::dockBar(uint32_t dockBarID)
 {
 	parentFrame_->DockControlBar(&dialogBar_, dockBarID);
 }

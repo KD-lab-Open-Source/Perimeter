@@ -3,7 +3,7 @@
 #include "procedurMap.h"
 
 BEGIN_ENUM_DESCRIPTOR(PMOperatinID, "PMOperatinID")
-#include "procedurMap-1251.inl"
+REGISTER_ENUM(PMO_ID_NONE, "ничего");
 REGISTER_ENUM(PMO_ID_TOOLZER, "toolzer");
 REGISTER_ENUM(PMO_ID_GEO, "geo");
 END_ENUM_DESCRIPTOR(PMOperatinID)

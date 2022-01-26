@@ -83,6 +83,8 @@
 #include "FilthVolcano.h"
 #include "../HT/ht.h"
 
+#include <set>
+
 //-------------------------------------
 terPlayer::terPlayer(const PlayerData& playerData) 
 : structure_column_(vMap.V_SIZE), 
@@ -93,24 +95,20 @@ defenceMap_(vMap.H_SIZE, vMap.V_SIZE),
 playerStrategyIndex_(0)
 {
 	MTINIT(lock_burn_zeroplast);
-	playerID_ = playerData.playerID;
-	clan_ = playerData.clan != -1 ? playerData.clan : playerID_;
-	setDifficulty(DIFFICULTY_HARD);
-	isWorld_ = playerData.realPlayerType == REAL_PLAYER_TYPE_WORLD;
-	name_ = playerData.name();
-	compAndUserID_ = playerData.compAndUserID;
-	handicap_ = playerData.handicap/100.;
 
-	controlEnabled_ = true;
-	ignoreIntfCommands = false;
+    isAI_ = false;
+    
+    setPlayerData(playerData);
 
-	UnitCount = 0;
+    setDifficulty(DIFFICULTY_HARD);
+    
+    controlEnabled_ = true;
+    ignoreIntfCommands = false;
 
-	setColorIndex(playerData.colorIndex);
-	belligerent_ = playerData.belligerent;
+    UnitCount = 0;
 	
 	const AttributeBase* coreAttr = unitAttribute(UNIT_ATTRIBUTE_CORE);
-	EnergyData.setEnergyPerArea(coreAttr->MakeEnergy/(10*sqr(coreAttr->ZeroLayerRadius)*M_PI));
+	EnergyData.setEnergyPerArea(coreAttr->MakeEnergy/(10*sqr(coreAttr->ZeroLayerRadius)*XM_PI));
 	
 	TrustMap = new terTerraformDispatcher(this);
 
@@ -139,7 +137,6 @@ playerStrategyIndex_(0)
 	totalDefenceMode_ = false;
 
 	active_ = false;
-	isAI_ = false;
 
 #ifndef _FINAL_VERSION_
 	if(active()){
@@ -202,25 +199,45 @@ void terPlayer::setTriggerChains(const SavePlayerManualData& data)
 		FOR_EACH(data.triggerChainNames, i){
 			triggerChains_.push_back(TriggerChain());
 			triggerChains_.back().load(*i);
-			triggerChains_.back().initializeCameraTrigger(playerID());
 		}
-	}
-	else
-		triggerChains_.push_back(data.triggerChainOld);
+	} else {
+        triggerChains_.push_back(data.triggerChainOld);
+    }
 }
 
-void terPlayer::refreshCameraTrigger(const char* triggerName)
+void terPlayer::initializeCameraTrigger(const char* triggerName)
 {
 	if(triggerChains_.empty())
 		return;
-	TriggerChain& strategy = triggerChains_.front();
-	Trigger* trigger = strategy.find(triggerName);
-	if(!trigger->action)
-		trigger->action = new ActionSetCamera;
-	XBuffer name;
-	name < triggerName <= playerStrategyIndex();
-	safe_cast<ActionSetCamera*>(trigger->action())->cameraSplineName = name;
-	trigger->setState(Trigger::CHECKING);
+    TriggerChain& strategy = triggerChains_.front();
+    Trigger* trigger;
+    trigger = strategy.find(triggerName);
+    trigger->setState(Trigger::CHECKING);
+    if(!trigger->action)
+        trigger->action = new ActionSetCamera;
+    safe_cast<ActionSetCamera*>(trigger->action())->cameraSplineName = triggerName + std::to_string(playerStrategyIndex());
+    strategy.activateTrigger(trigger);
+
+    //Disable Camera trigger if UserCamera is used as sometimes it may run after UserCamera
+    if (strcmp(triggerName, "UserCamera") == 0) {
+        trigger = strategy.find("Camera");
+        if (!trigger) {
+            return;
+        }
+        trigger->action = nullptr;
+    }
+}
+
+void terPlayer::setPlayerData(const PlayerData& playerData) {
+    playerID_ = playerData.playerID;
+    clan_ = playerData.clan != -1 ? playerData.clan : playerID_;
+    isWorld_ = playerData.realPlayerType == REAL_PLAYER_TYPE_WORLD;
+    name_ = playerData.name();
+    handicap_ = playerData.handicap/100.;
+    setColorIndex(playerData.colorIndex);
+    belligerent_ = playerData.belligerent;
+
+    setAI(playerData.realPlayerType == REAL_PLAYER_TYPE_AI || playerData.realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI);
 }
 
 void terPlayer::setAI(bool isAI)
@@ -234,9 +251,11 @@ int terPlayer::registerUnitID(int unitID)
 { 
 	UnitCount = max(unitID, UnitCount); 
 	UnitList::iterator ui;
-	FOR_EACH(Units, ui)
-		if(unitID == (*ui)->unitID())
-			return ++UnitCount;
+	for (auto unit : Units) {
+        if (unitID == unit->unitID()) {
+            return ++UnitCount;
+        }
+    }
 	return unitID;
 }
 
@@ -262,22 +281,61 @@ void terPlayer::Quant()
 
 	voiceDispatcher_.quant();
 
-	UnitList::iterator ui;
-	FOR_EACH(Units,ui)
-		if((*ui)->alive()){
-			log_var("Quant");
-			log_var(getEnumName((*ui)->attr().ID));
-			(*ui)->Quant();
-			log_var(vMap.getChAreasInformationCRC());
-			log_var(terLogicRNDfrnd());
-			log_var((*ui)->position());
-		}
+    log_var("=== PlayerQuant Start ===");
+    log_var(playerID());
+	for (auto ui : Units) {
+        if (ui->alive()) {
+            log_var(getEnumName(ui->attr().ID));
+            log_var(ui->unitID());
+            ui->Quant();
+            log_var(terLogicRNDfrnd());
+            log_var(ui->position());
+#if defined(PERIMETER_DEBUG) || defined(NET_LOG_EXHAUSTIVE)
+            log_var(vMap.getChAreasInformationCRC());
+#endif
+        }
+    }
+    log_var("=== PlayerQuant End ===");
 
 	rebuildDefenceMapQuant();
 	chooseEnemyQuant();
 	
 	if(frame())
 		lastFramePosition_ = frame()->position2D();
+    
+    if (frameClearedFlag) {
+        frameClearedFlag = false;
+        
+        if(gameShell->CurrentMission.isMultiPlayer() && !isWorld()) {
+            //bool isHost = gameShell->getNetClient() && gameShell->getNetClient()->isHost();
+            int active_clan = -1;
+            std::set<int> clans;
+            for (auto player: universe()->Players) {
+                if (!player->frame() || player->isWorld()) {
+                    continue;
+                }
+                clans.emplace(player->clan());
+                if (player->active()) {
+                    active_clan = player->clan();
+                }
+            }
+
+            if (active()) {
+                //Our frame went kaput, stop accepting commands from the grave
+                universe()->setShouldIgnoreIntfCommands(true);
+            }
+
+            if (clans.size() < 2) {
+                if (active_clan == -1) {
+                    //Our clan is dead, only one clan is left so game is over for all
+                    _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT, false);
+                } else {
+                    //Last enemy of our clan got destroyed so we are the winners
+                    _pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY, false);
+                }
+            }
+        }
+    }
 }
 
 void terPlayer::DestroyLink()
@@ -335,16 +393,21 @@ void terPlayer::MoveQuant()
 	}
 	BrigadierWorking = 0;
 
-	UnitList::iterator ui;
-	FOR_EACH(Units,ui)
-	if((*ui)->alive())
-	{
-		log_var("MoveQuant");
-		log_var(getEnumName((*ui)->attr().ID));
-		(*ui)->MoveQuant();
-		log_var(vMap.getChAreasInformationCRC());
-		log_var(terLogicRNDfrnd());
-	}
+    log_var("=== MoveQuant Start ===");
+    log_var(playerID());
+	for (auto ui : Units) {
+        if (ui->alive()) {
+            log_var(getEnumName(ui->attr().ID));
+            log_var(ui->unitID());
+            ui->MoveQuant();
+            log_var(terLogicRNDfrnd());
+            log_var(ui->position());
+#if defined(PERIMETER_DEBUG) || defined(NET_LOG_EXHAUSTIVE)
+            log_var(vMap.getChAreasInformationCRC());
+#endif
+        }
+    }
+    log_var("=== MoveQuant End ===");
 }
 
 void terPlayer::AvatarQuant()
@@ -382,10 +445,20 @@ void terPlayer::ShowInfo()
 
 terUnitBase* terPlayer::buildUnit(terUnitAttributeID id)
 {
-	terUnitBase* p = createUnit(UnitTemplate(unitAttribute(id), this));
-	p->setRealModel(0, 1);
-	addUnit(p);
-	return p;
+    terUnitBase* p = createUnit(UnitTemplate(unitAttribute(id), this));
+    p->setRealModel(0, 1);
+    addUnit(p);
+    return p;
+}
+
+terUnitBase* terPlayer::loadUnit(SaveUnitData* data, bool auto_load)
+{
+    terUnitBase* p = buildUnit(data->attributeID);
+    if (auto_load) {
+        p->universalLoad(data);
+        p->Start();
+    }
+    return p;
 }
 
 void terPlayer::addUnit(terUnitBase* unit)
@@ -437,23 +510,8 @@ void terPlayer::clearFrame()
 	if(!frame())
 		return;
 
-	frame_ = 0; 
-
-	if(gameShell->CurrentMission.isMultiPlayer()){
-		if(active())
-			_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT, false); 
-		else{
-			bool victory = true;
-			PlayerVect::iterator pi;
-			FOR_EACH(universe()->Players, pi)
-				if((*pi)->frame() && (*pi)->clan() != clan()){
-					victory = false;
-					break;
-				}
-			if(victory)
-				_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY, false); 
-		}
-	}
+	frame_ = nullptr;
+    frameClearedFlag = true;
 }
 
 void terPlayer::killAllUnits()
@@ -637,13 +695,11 @@ terUnitBase* terPlayer::createUnit(const UnitTemplate& data)
 
 void terPlayer::incomingCommandRegion(const netCommand4G_Region& reg)
 {
-	//Region Buffer можно сделать глобальным
-	XBuffer RegionBuffer(5000, 1);
-	RegionBuffer.init();
-	RegionBuffer.write(reg.pData_, reg.dataSize_);
+	//Create XBuffer without allocating
+	XBuffer RegionBuffer(reg.pData_, reg.dataSize_);
 	RegionBuffer.set(0);
 	MetaRegionLock lock(RegionPoint);
-	RegionPoint->load(RegionBuffer);
+    RegionPoint->loadEditing(RegionBuffer);
 	if(MT_IS_LOGIC())
 		RasterizeRegion();
 	else
@@ -688,7 +744,7 @@ terUnitBase* terPlayer::traceUnit(const Vect2f& pos)
 
 void terPlayer::ChangeRegion(XBuffer& out)
 {
-	universe()->sendCommand(netCommand4G_Region(playerID(), out));
+	universe()->sendCommand(new netCommand4G_Region(playerID(), out));
 }
 
 //-------------------------------------
@@ -920,32 +976,23 @@ void terPlayer::loadWorld(const SavePrm& data)
 {
 	SaveUnitDataList::const_iterator i;
 	FOR_EACH(data.environment.objects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.filth.objects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.nobodysBuildings.objects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.worldObjects.alphaPotentials, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 }
 
-void terPlayer::saveWorld(SavePrm& data)
-{
+void terPlayer::saveWorld(SavePrm& data) const {
 	MTL();
 	UnitList::const_iterator ui;
 	FOR_EACH(Units,ui){
@@ -970,85 +1017,76 @@ void terPlayer::saveWorld(SavePrm& data)
 	}
 }
 
-void terPlayer::universalLoad(const SavePlayerData& data)
+void terPlayer::universalLoad(SavePlayerData& data)
 {
 	if(data.frame){
-		terUnitBase* unit = buildUnit(data.frame->attributeID);
-		unit->universalLoad(data.frame);
-		unit->Start();
+		loadUnit(data.frame);
 	}
 
 	SaveUnitDataList::const_iterator i;
 	FOR_EACH(data.buildings, i){
-		terUnitBase* building = buildUnit((*i)->attributeID);
-		building->universalLoad(*i);
-		building->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.commonObjects, i){
-		terUnitBase* unit = buildUnit((*i)->attributeID);
-		unit->universalLoad(*i);
-		unit->Start();
+		loadUnit(*i);
 	}
 
 	FOR_EACH(data.catchedFrames, i){
-		terUnitBase* frame;
-		terBelligerent frameBelligerent = safe_cast<const SaveUnitFrameData*>(&**i)->belligerent;
+        /*
+        //TODO review this, probably fixes the captured frames changing belligerent when reloading saves but maybe was
+        //commented already for a reason
+		terBelligerent frameBelligerent = safe_cast<SaveUnitFrameData*>(&**i)->belligerent;
 		if(frameBelligerent != belligerent()){
 			//attributes_.set(frameBelligerent, unitAttributeDataTable);
 			frame = buildUnit(UNIT_ATTRIBUTE_FRAME);
 			//attributes_.set(belligerent(), unitAttributeDataTable);
-		}
-		else
-			frame = buildUnit(UNIT_ATTRIBUTE_FRAME);
+		} else {
+            frame = buildUnit(UNIT_ATTRIBUTE_FRAME);
+        }
 		frame->universalLoad(*i);
-		frame->Start();
+        */
+        loadUnit(*i);
 	}
 
 	(SavePlayerStats&)stats = data.playerStats;
 
 	if(!data.currentTriggerChains.empty()){ // userSave
 		triggerChains_ = data.currentTriggerChains;
-		//TriggerChains::iterator tci;
-		//FOR_EACH(triggerChains_, tci)
-		//	tci->initializeCameraTrigger(playerID());
 	}
 }
 
-void terPlayer::universalSave(SavePlayerData& data, bool userSave)
-{
+void terPlayer::universalSave(SavePlayerData& data, bool userSave) const {
 	if(frame())
 		data.frame = frame()->universalSave(data.frame);
 	
 	for(int i = 0;i < UNIT_ATTRIBUTE_STRUCTURE_MAX;i++){
-		terBuildingList::iterator bi;
-		FOR_EACH(buildingList(i),bi){
-			if((*bi)->dockMode() == DOCK_MODE_NONE){
-				data.buildings.push_back((*bi)->universalSave(0));
+		for (auto& bi : buildingList(i)) {
+			if(bi->dockMode() == DOCK_MODE_NONE){
+				data.buildings.push_back(bi->universalSave(0));
 				xassert(data.buildings.back());
-			}
-			else 
-				xassert_s(0 && "Игнорируется запись здания: ", (*bi)->attr().internalName());
-		}
-	}
-	
-	UnitList::iterator ui;
-	FOR_EACH(Units, ui){
-		if((*ui)->attr().ID == UNIT_ATTRIBUTE_FRAME && *ui != frame()){
-			data.catchedFrames.push_back((*ui)->universalSave(0));
-		}
-		else if((*ui)->attr().saveAsCommonObject){
-			data.commonObjects.push_back((*ui)->universalSave(0));
+			} else {
+                xassert_s(0 && "Ignoring building entry: ", (*bi)->attr().internalName(false));
+            }
 		}
 	}
 
-	data.compAndUserID = compAndUserID_;
-	data.playerStats = stats;
+	for (auto& ui : Units) {
+		if (ui->attr().ID == UNIT_ATTRIBUTE_FRAME && ui != frame()){
+			data.catchedFrames.push_back(ui->universalSave(0));
+		}
+		else if(ui->attr().saveAsCommonObject){
+			data.commonObjects.push_back(ui->universalSave(0));
+		}
+	}
 
-	if(userSave)
-		data.currentTriggerChains = triggerChains_;
-	else
-		data.currentTriggerChains.clear();
+	data.playerStats = stats;    
+
+	if(userSave) {
+        data.currentTriggerChains = triggerChains_;
+    } else {
+        data.currentTriggerChains.clear();
+    }
 }
 
 
@@ -1118,7 +1156,7 @@ RigidBody* GetMissileTest(RigidBody* object,RigidBody* source,RigidBody* target)
 	r = object->radius();
 
 	terMissileTestOperator op(object,source,target);
-	universe()->UnitGrid.ConditionScan(round(x), round(y), round(r), op);
+	universe()->UnitGrid.ConditionScan(xm::round(x), xm::round(y), xm::round(r), op);
 	return (op.HitPoint);
 }
 

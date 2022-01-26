@@ -78,7 +78,7 @@ TEGrid const& TriggerEditorView::getGrid() const{
 	return getTriggerEditorLogic()->getGrid();
 }
 
-HDC TriggerEditorView::getDC() const{
+void* TriggerEditorView::getDC() const{
 	return deviceContext_;
 }
 
@@ -289,8 +289,8 @@ void TriggerEditorView::setScale(float fOldScale, float fNewScale)
 	else
 	{
 		//иначе стягиваем(расстягиваем) к(от) неподвижной точки
-		ptViewportOrg.x = ptConst.x - 
-			round((ptConst.x - ptViewportOrg.x)*fOldScale/fNewScale);
+		ptViewportOrg.x = ptConst.x -
+                xm::round((ptConst.x - ptViewportOrg.x) * fOldScale / fNewScale);
 	}
 	if(workArea.Height() <= rectClient.Height())
 	{
@@ -299,8 +299,8 @@ void TriggerEditorView::setScale(float fOldScale, float fNewScale)
 	}
 	else
 	{
-		ptViewportOrg.y = ptConst.y - 
-			round((ptConst.y - ptViewportOrg.y)*fOldScale/fNewScale);
+		ptViewportOrg.y = ptConst.y -
+                xm::round((ptConst.y - ptViewportOrg.y) * fOldScale / fNewScale);
 
 	}
 

@@ -120,7 +120,7 @@ void cMeshTri::CalcBumpST()
 		edge02.set( v2.pos.x-v0.pos.x, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
 
 		cp.cross(edge01,edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.S.x += -cp.y / cp.x;
 			v0.T.x += -cp.z / cp.x;
@@ -137,7 +137,7 @@ void cMeshTri::CalcBumpST()
 		edge02.set( v2.pos.y-v0.pos.y, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
 
 		cp.cross(edge01, edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.S.y += -cp.y / cp.x;
 			v0.T.y += -cp.z / cp.x;
@@ -154,7 +154,7 @@ void cMeshTri::CalcBumpST()
 		edge02.set( v2.pos.z-v0.pos.z, v2.u1()-v0.u1(), v2.v1()-v0.v1() );
 
 		cp.cross(edge01,edge02);
-		if ( fabs(cp.x) > FLT_EPS )
+		if (xm::abs(cp.x) > FLT_EPS )
 		{
 			v0.S.z += -cp.y / cp.x;
 			v0.T.z += -cp.z / cp.x;

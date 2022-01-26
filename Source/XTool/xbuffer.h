@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cstring>
+#include "types.h"
 
 #ifndef NULL
 #define NULL	0L
@@ -28,84 +29,153 @@
 struct XBuffer
 {
 	char* buf;
-	unsigned int size;
-	unsigned int offset;
+	size_t size;
+	size_t offset;
 	int digits;
-	int MakeFree;
-	int automatic_realloc;
+	bool automatic_free;
+	bool automatic_realloc;
 
-	XBuffer(unsigned int sz = XB_DEFSIZE, int automatic_realloc_ = 0);
-	XBuffer(void* p,int sz);
-	~XBuffer(void){ free(); }
+	explicit XBuffer(size_t sz = XB_DEFSIZE, bool automatic_realloc_ = false);
+	XBuffer(void* p, size_t sz);
+    XBuffer(const XBuffer& buffer);
+    ~XBuffer() { free(); }
+    
+    ///Copy and swap operator
+    XBuffer& operator=(XBuffer v) {
+        std::swap(buf, v.buf);
+        std::swap(size, v.size);
+        std::swap(offset, v.offset);
+        std::swap(digits, v.digits);
+        std::swap(automatic_free, v.automatic_free);
+        std::swap(automatic_realloc, v.automatic_realloc);
+        return *this;
+    }
 
 	void SetDigits(int d) { digits = d; }
 
-	void alloc(unsigned int sz);
-	void free(void);
+	void alloc(size_t sz);
+    void realloc(size_t sz);
+	void free();
 	void fill(char fc = '\0');
-	void set(int off,int mode = XB_BEG);
-	void init(void){ offset = 0; *buf = 0; }
-	int search(char* what,int mode = XB_FORWARD,int cs = XB_CASEON);
-	int end() const { return (offset > size); }
+	void set(size_t off, int mode = XB_BEG);
+	void init() { offset = 0; *buf = 0; }
+    size_t search(char* what,int mode = XB_FORWARD, int cs = XB_CASEON);
+    size_t end() const { return (offset > size); }
 
-	unsigned int tell(void) const { return offset; }
-	unsigned int length(void) const { return size; }
-	char* address(){ return buf; }
+	size_t tell() const { return offset; }
+	size_t length() const { return size; }
+	char* address() const { return buf; }
 
-	unsigned int read(void* s, unsigned int len);
-	unsigned int write(const void* s, unsigned int len, int bin_flag = 1);
+	size_t read(void* s, size_t len);
+	size_t write(const void* s, size_t len, bool bin_flag = true);
 	void handleOutOfSize();
+
+    template<typename T> XBuffer& write(const T& v){ while(offset + sizeof(T) > size) handleOutOfSize(); memcpy(&buf[offset], &v, sizeof(T)); offset += sizeof(T); return *this; }
+    template<typename T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
 	
 	XBuffer& operator< (const char* v);
 	XBuffer& operator< (char v) { return write(v); }
-	XBuffer& operator< (unsigned char v) { return write(v); }
-	XBuffer& operator< (short v) { return write(v); }
-	XBuffer& operator< (unsigned short v) { return write(v); }
-	XBuffer& operator< (int v ) { return write(v); }
-	XBuffer& operator< (unsigned int v) { return write(v); }
-	XBuffer& operator< (long v) { return write(v); }
-	XBuffer& operator< (unsigned long v) { return write(v); }
-    XBuffer& operator< (unsigned long long v) { return write(v); }
+    XBuffer& operator< (int8_t v) { return write(v); }
+	XBuffer& operator< (uint8_t v) { return write(v); }
+	XBuffer& operator< (int16_t v) { return write(v); }
+	XBuffer& operator< (uint16_t v) { return write(v); }
+	XBuffer& operator< (int32_t v ) { return write(v); }
+	XBuffer& operator< (uint32_t v) { return write(v); }
+	XBuffer& operator< (int64_t v) { return write(v); }
+	XBuffer& operator< (uint64_t v) { return write(v); }
 	XBuffer& operator< (float v) { return write(v); }
-	XBuffer& operator< (double v) { return write(v); }
-    XBuffer& operator< (long double v) { return write(v); }
+    XBuffer& operator< (double v) { return write(v); }
+    XBuffer& operator< (const XBuffer& v) {
+        uint32_t len = v.tell();
+        if (len == 0 && 0 < v.length()) {
+            len = v.length();
+        }
+        write(len);
+        if (len) {
+            write(v.address(), len);
+        }
+        return *this;
+    }
 
 	XBuffer& operator> (char* v);
 	XBuffer& operator> (char& v) { return read(v); }
-	XBuffer& operator> (unsigned char& v) { return read(v); }
-	XBuffer& operator> (short& v) { return read(v); }
-	XBuffer& operator> (unsigned short& v) { return read(v); }
-	XBuffer& operator> (int& v) { return read(v); }
-	XBuffer& operator> (unsigned int& v) { return read(v); }
-	XBuffer& operator> (long& v) { return read(v); }
-	XBuffer& operator> (unsigned long& v) { return read(v); }
-    XBuffer& operator> (unsigned long long& v) { return read(v); }
+    XBuffer& operator> (int8_t& v) { return read(v); }
+	XBuffer& operator> (uint8_t& v) { return read(v); }
+	XBuffer& operator> (int16_t& v) { return read(v); }
+	XBuffer& operator> (uint16_t& v) { return read(v); }
+	XBuffer& operator> (int32_t& v) { return read(v); }
+	XBuffer& operator> (uint32_t& v) { return read(v); }
+	XBuffer& operator> (int64_t& v) { return read(v); }
+	XBuffer& operator> (uint64_t& v) { return read(v); }
 	XBuffer& operator> (float& v) { return read(v); }
 	XBuffer& operator> (double& v) { return read(v); }
-    XBuffer& operator> (long double& v) { return read(v); }
+    XBuffer& operator> (XBuffer& v) {
+        uint32_t len = 0;
+        read(len);
+        if (len) {
+            while(v.tell() + len > v.length()) {
+                v.handleOutOfSize();
+            }
+            read(v.address(), len);
+            v.set(len, XB_CUR);
+        }
+        return *this;
+    }
 
     template<typename T>
     XBuffer& operator<= (T var) {
         std::string str = std::to_string(var);
-        write(str.c_str(), str.length(), 0);
+        write(str.c_str(), str.length(), false);
+        return *this;
+    }
+    XBuffer& operator<= (const char* var) {
+        write(var, strlen(var), false);
+        return *this;
+    }
+    XBuffer& operator<= (const std::string& var) {
+        write(var.c_str(), var.length(), false);
         return *this;
     }
 	XBuffer& operator<= (float);
 	XBuffer& operator<= (double);
-	XBuffer& operator<= (long double);
 
-	XBuffer& operator>= (char&);
-	XBuffer& operator>= (unsigned char&);
-	XBuffer& operator>= (short&);
-	XBuffer& operator>= (unsigned short&);
-	XBuffer& operator>= (int&);
-	XBuffer& operator>= (unsigned int&);
-	XBuffer& operator>= (long&);
-	XBuffer& operator>= (unsigned long&);
-    XBuffer& operator>= (unsigned long long&);
+    XBuffer& operator>= (char&);
+    XBuffer& operator>= (int8_t&);
+    XBuffer& operator>= (uint8_t&);
+	XBuffer& operator>= (int16_t&);
+	XBuffer& operator>= (uint16_t&);
+	XBuffer& operator>= (int32_t&);
+	XBuffer& operator>= (uint32_t&);
+	XBuffer& operator>= (int64_t&);
+	XBuffer& operator>= (uint64_t&);
 	XBuffer& operator>= (float&);
 	XBuffer& operator>= (double&);
-    XBuffer& operator>= (long double&);
+
+#ifdef _WIN32
+    //These are required for Windows which doesn't allow "long" to be implicitly casted to std types...
+    XBuffer& operator> (long& v) { return this->operator>(checked_reinterpret_cast_ref<long, int32_t>(v)); }
+    XBuffer& operator> (unsigned long& v) { return this->operator>(checked_reinterpret_cast_ref<unsigned long, uint32_t>(v)); }
+    XBuffer& operator>= (long& v) { return this->operator>=(checked_reinterpret_cast_ref<long, int32_t>(v)); };
+    XBuffer& operator>= (unsigned long& v) { return this->operator>=(checked_reinterpret_cast_ref<unsigned long, uint32_t>(v)); };
+#endif
+
+    /**
+     * Compresses this buffer into output
+     * 
+     * @param output the buffer to contain the compressed data 
+     * @param len amount of compressed bytes written into output, null to ignore
+     * @return 0 if OK
+     */
+    int compress(XBuffer& output, uint32_t* len = nullptr) const;
+
+    /**
+     * Decompresses this buffer into output
+     * 
+     * @param output the buffer to contain the decompressed data 
+     * @param len amount of decompressed bytes written into output, null to ignore
+     * @return 0 if OK
+     */
+    int uncompress(XBuffer& output, uint32_t* len = nullptr);
 
 	operator const char* () const { return buf; }
 	const char* operator ()(int offs){ return buf + offs; }
@@ -120,11 +190,8 @@ struct XBuffer
 	char& operator[](int ind){ return buf[ind]; }
 	char& operator()(){ return buf[offset]; }
 
-	template<typename T> XBuffer& write(const T& v){ while(offset + sizeof(T) >= size) handleOutOfSize(); memcpy(&buf[offset], &v, sizeof(T)); offset += sizeof(T); return *this; }
-	template<typename T> XBuffer& read(T& v){ memcpy(&v, &buf[offset], sizeof(T)); offset += sizeof(T); return *this; }
-
 private:
-	char convBuf[XB_CONV_BUFFER_LEN + 1];
+	char convBuf[XB_CONV_BUFFER_LEN + 1] = "";
 };
 
 

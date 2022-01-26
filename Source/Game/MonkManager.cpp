@@ -92,7 +92,7 @@ void MonkManager::collision()
 		{
 			int x = p->position().xi();
 			int y = p->position().yi();
-			int r = round(p->radius());
+			int r = xm::round(p->radius());
 
 			terMonkCollisionOperator op(p);
 			grid.Scan(x, y, r, op);

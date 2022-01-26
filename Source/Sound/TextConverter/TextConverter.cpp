@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	int f=_open( inname, _O_RDONLY |_O_BINARY);
+	int f= file_open(inname, _O_RDONLY | _O_BINARY);
 	if(f==-1)
 	{
 		message_printf("cannot open %s",inname);
@@ -76,8 +76,8 @@ int main(int argc, char* argv[])
 	}
 
 	remove(outname);
-	f=_open( outname, _O_RDWR | _O_CREAT | _O_TRUNC | _O_BINARY, 
-                      _S_IREAD | _S_IWRITE );
+	f= file_open(outname, _O_RDWR | _O_CREAT | _O_TRUNC | _O_BINARY,
+                 _S_IREAD | _S_IWRITE);
 	if(f==-1)
 	{
 		message_printf("Не могу записать %s",outname);

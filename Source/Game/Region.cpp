@@ -18,7 +18,7 @@ void Shape::circle(int radius)
 	clear();
 	reserve(radius*2 + 1);
 	for(int y = -radius; y <= radius; y++){
-		int x = round(sqrtf(sqr(radius) - sqr(y)));
+		int x = xm::round(xm::sqrt(sqr(radius) - sqr(y)));
 		push_back(Interval(-x, 1 + x));
 		}
 }
@@ -113,13 +113,17 @@ CellLine& CellLine::operator=(const CellLine& line)
 void CellLine::find_interval(const Interval& in, iterator& il, iterator& ir_)
 {
 	// find [il, ir_) of Intervals wich intersects in
-	FOR_EACH(*this, il)
-		if(il->xr >= in.xl)
-			break;
+    for (il = this->begin(); il != this->end(); ++il) {
+        if (il->xr >= in.xl) {
+            break;
+        }
+    }
 
-	for(ir_ = il; ir_ != end(); ++ir_)
-		if(ir_->xl > in.xr)
-			break;
+	for(ir_ = il; ir_ != end(); ++ir_) {
+        if (ir_->xl > in.xr) {
+            break;
+        }
+    }
 }
 
 void CellLine::add(const Interval& in, Region* region)
@@ -706,7 +710,7 @@ bool Region::initSpline()
 	} while(cell != handle_ || by_left != by_left0);
 
 	float segment_len = region_segment_length;
-	int n = round(perimeter/segment_len);
+	int n = xm::round(perimeter / segment_len);
 	if(!n)
 		return 0;
 	segment_len -= (n*segment_len - (perimeter - region_perimeter_epsilon))/n;
@@ -976,7 +980,7 @@ void RegionDispatcher::shapeToolzer()
 
 void RegionDispatcher::moveToolzer(const Point& p_)
 {
-	Point p(round(p_.x), round(p_.y));
+	Point p(xm::round(p_.x), xm::round(p_.y));
 	toolzer.move(p - toolzer_pos);
 	toolzer_pos = p;
 }
@@ -991,14 +995,14 @@ void RegionDispatcher::line(const Point& p0, const Point& p1, float radius, int 
 	float len = delta.norm();
 	if(len < FLT_EPS)
 		return;
-	int steps = round(len/(radius*toolzer_lineto_radius_factor));
+	int steps = xm::round(len / (radius * toolzer_lineto_radius_factor));
 	if(steps < 1)
 		steps = 1;
 	delta.normalize(len/(float)steps);
 
 	for(int i = 0; i <= steps; i++)
 	{
-		Point pos(round(p0.x + delta.x*i), round(p0.y + delta.y*i));
+		Point pos(xm::round(p0.x + delta.x * i), xm::round(p0.y + delta.y * i));
 		circle.move(pos - prev_pos);
 		prev_pos = pos;
 		edit_column.operate(circle, operation);
@@ -1177,7 +1181,7 @@ int CycledHermite::reset()
 float CycledHermite::suggest_dt(float len)
 {
 	float dt = len*suggest_factor;
-	int n = round(t_max_/dt);
+	int n = xm::round(t_max_ / dt);
 	xassert(n);
 	return dt - (n*dt - t_max_)/n;
 }
@@ -1186,7 +1190,7 @@ void CycledHermite::set(float t)
 {
 	xassert(size() >= 4);
 	t = cycle(t + offset);
-	int i = round(u = floor(t));
+	int i = xm::round(u = xm::floor(t));
 	u = t - u;
 	if(index != i){
 		index = i;
@@ -1249,7 +1253,7 @@ void CycledHermite::getBorder(vector<Vect2s>& border, float scale)
 		}
 		else
 		{
-			if(fabs(vf.x - (float)v0.x) > fabs(vf.y - (float)v0.y))
+			if(xm::abs(vf.x - (float) v0.x) > xm::abs(vf.y - (float) v0.y))
 				border.push_back(Vect2s(v.x , v0.y));
 			else
 				border.push_back(Vect2s(v0.x , v.y));
@@ -1344,11 +1348,11 @@ void Region::rasterize(Column& rast_column)
 		spline().find_x_min_max(t_up, x_min, t_down, x_max);
 		spline().find_y_min_max(t_up, y_up, t_down, y_down);
 
-		x0 = clamp(floor(x_min) - 1, 0, INT_INF);
-		x1 = ceil(x_max) + 1;
+		x0 = clamp(xm::floor(x_min) - 1, 0, INT_INF);
+		x1 = xm::ceil(x_max) + 1;
 
-		y0 = floor(y_up);
-		y1 = ceil(y_down);
+		y0 = xm::floor(y_up);
+		y1 = xm::ceil(y_down);
 
 		if(y0 < 0)
 			y0 = 0;
@@ -1370,16 +1374,16 @@ void Region::rasterize(Column& rast_column)
 		float t_max = spline().t_max() - dt/2;
 		float t = 0;
 		Point p = spline()(0);
-		int xc0 = round(p.x);
-		int yc0 = round(p.y);
+		int xc0 = xm::round(p.x);
+		int yc0 = xm::round(p.y);
 		int xc = xc0;
 		int yc = yc0;
 		int dy = 1;
 		PUT(xc, yc);
 		do {
 			Point p = spline()(t);
-			int x = round(p.x);
-			int y = round(p.y);
+			int x = xm::round(p.x);
+			int y = xm::round(p.y);
 			if(dy == 1){
 				if(yc < y){
 					PUT(xc, yc);
@@ -1482,14 +1486,14 @@ void CycledHermite::find_x_min_max(float& t_min, float& x_min, float& t_max, flo
 
 		float t18 = -x2+x_1;
 		float t17 = -3.0*x1+3.0*x0-t18;
-		if(fabs(t17) < FLT_EPS)
+		if(xm::abs(t17) < FLT_EPS)
 			continue;
 		t17 = 1.f/t17/3.0;
 		float t16 = x2-4.0*x1-2.0*x_1+5.0*x0;
 		float t10 = x2*x2+t18*x_1+(10.0*x_1-11.0*x2+25.0*x1)*x1+(-49.0*x1+10.0*x2-11.0*x_1+25.0*x0)*x0;
 		if(t10 < 0)
 			continue;
-		t10 = sqrt(t10);
+		t10 = xm::sqrt(t10);
 		
 		float u = (-t10+t16)*t17;
 		if(u > 0 && u < 1.f){
@@ -1546,14 +1550,14 @@ void CycledHermite::find_y_min_max(float& t_min, float& y_min, float& t_max, flo
 
 		float t18 = -y2+y_1;
 		float t17 = -3.0*y1+3.0*y0-t18;
-		if(fabs(t17) < FLT_EPS)
+		if(xm::abs(t17) < FLT_EPS)
 			continue;
 		t17 = 1.f/t17/3.0;
 		float t16 = y2-4.0*y1-2.0*y_1+5.0*y0;
 		float t10 = y2*y2+t18*y_1+(10.0*y_1-11.0*y2+25.0*y1)*y1+(-49.0*y1+10.0*y2-11.0*y_1+25.0*y0)*y0;
 		if(t10 < 0)
 			continue;
-		t10 = sqrt(t10);
+		t10 = xm::sqrt(t10);
 		
 		float u = (-t10+t16)*t17;
 		if(u > 0 && u < 1.f){
@@ -1611,7 +1615,7 @@ RegionDispatcher::Segment::ClipResult RegionDispatcher::Segment::clip(Segment& b
     float t11 = p1[0]*border.p0[1];
     float t13 = border.p0[0]*p1[1];
     float t15 = p1[0]*border.p1[1]-t11-t5+t6-border.p1[0]*p1[1]+t3+t13-t4;
-	if(fabsf(t15) < FLT_EPS)
+	if(xm::abs(t15) < FLT_EPS)
 	{
 		xassert(0);
 		return Inside;
@@ -1643,20 +1647,20 @@ RegionDispatcher::Segment::ClipResult RegionDispatcher::Segment::clip(Segment& b
 
 RegionDispatcher::Segment::ClipResult RegionDispatcher::Segment::clip(const Point& p, float radius, Segment& rest)
 {
-	// p0 + (p1 - p0)*t = p + radius*[cos(alpha), sin(alpha)]
+	// p0 + (p1 - p0)*t = p + radius*[xm::cos(alpha), xm::sin(alpha)]
 	Point dp = p1 - p0;
 	Point dp1 = p0 - p;
-	// So, dp1 + dp*t = radius*[cos(alpha), sin(alpha)], 
+	// So, dp1 + dp*t = radius*[xm::cos(alpha), xm::sin(alpha)], 
 	// Excluding alpha: (dp1 + dp*t)^2 = radius^2
 	float a = dp.norm2();
 	float b = 2*dp1.dot(dp);
 	float c = dp1.norm2() - radius*radius;
 	float D = b*b - 4*a*c;
-	if(fabsf(a) < FLT_EPS)
+	if(xm::abs(a) < FLT_EPS)
 		return Inside;
 	if(D <= 0)
 		return Outside;
-	D = sqrtf(D);
+	D = xm::sqrt(D);
 	float t1 = (-b - D)/(2*a);
 	float t2 = (-b + D)/(2*a);
 

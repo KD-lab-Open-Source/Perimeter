@@ -3,13 +3,13 @@
 
 inline float cycle(float f, float size) 
 { 
-	return fmod(fmod(f, size) + size, size); 
+	return xm::fmod(xm::fmod(f, size) + size, size); 
 }
 
 inline float getDist(float v0, float v1, float size) 
 {
-	float d = fmod(v0 - v1, size);
-	float ad = (float)fabs(d);
+	float d = xm::fmod(v0 - v1, size);
+	float ad = (float) xm::abs(d);
 	float dd = size - ad;
 	if(ad <= dd) return d;
 	return d < 0 ? d + size : d - size;
@@ -22,18 +22,18 @@ inline float uncycle(float f1, float f0, float size)
 
 inline float getDeltaAngle(float to,float from)
 {
-	return getDist(to, from, 2*M_PI);
+	return getDist(to, from, 2*XM_PI);
 }
 
 inline float cycleAngle(float a)
 {
-	return cycle(a, 2*M_PI);
+	return cycle(a, 2*XM_PI);
 }
 
 
 inline bool isEq(float x, float y)
 { 
-	return fabsf(x - y) < FLT_EPS; 
+	return xm::abs(x - y) < FLT_EPS; 
 }
 
 inline bool isLess(float x, float y)

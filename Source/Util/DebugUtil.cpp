@@ -25,7 +25,7 @@ Vect3f To3D(const Vect2f& pos)
 	p.x=pos.x;
 	p.y=pos.y;
 
-	int x = round(pos.x), y = round(pos.y);
+	int x = xm::round(pos.x), y = xm::round(pos.y);
 	if(x >= 0 && x < vMap.H_SIZE && y >= 0 && y < vMap.V_SIZE)
 		p.z=vMap.GVBuf[vMap.offsetGBuf(x>>kmGrid,y>>kmGrid)];
 	else
@@ -79,14 +79,14 @@ void clip_pixel(int x1,int y1,sColor4c color, int size)
 void clip_circle_3D(const Vect3f& vc, float radius, sColor4c color)
 {
 	float segment_length = 3;
-	int N = round(2*M_PI*radius/segment_length);
+	int N = xm::round(2*XM_PI*radius/segment_length);
 	if(N < 10)
 		N = 10;
-	float dphi = 2*M_PI/N;
+	float dphi = 2*XM_PI/N;
 	Vect3f v0 = vc + Vect3f(radius,0,0);
-	for(float phi = dphi;phi < 2*M_PI + dphi/2; phi += dphi)
+	for(float phi = dphi;phi < 2*XM_PI + dphi/2; phi += dphi)
 	{
-		Vect3f v1 = vc + Vect3f(cos(phi), sin(phi),0)*radius;
+		Vect3f v1 = vc + Vect3f(xm::cos(phi), xm::sin(phi),0)*radius;
 		terRenderDevice->DrawLine(v0, v1,color);
 		v0 = v1;
 	}
@@ -95,7 +95,7 @@ void clip_circle_3D(const Vect3f& vc, float radius, sColor4c color)
 
 int intensity_by_dist(float z)
 {
-	int i = round(255.*(1. - (z - show_vector_zmin)/(show_vector_zmax - show_vector_zmin)));
+	int i = xm::round(255. * (1. - (z - show_vector_zmin) / (show_vector_zmax - show_vector_zmin)));
 	if(i < 0)
 		i = 0;
 	if(i > 255)
@@ -176,10 +176,10 @@ void ShowDispatcher::draw()
 //			Watch System
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-std::ostrstream& watch_buffer()
+XBuffer& watch_buffer()
 {
 	const int buffer_size = 10000;
-	static std::ostrstream buffer(new char[buffer_size], buffer_size);
+	static XBuffer buffer(buffer_size);
 	return buffer;
 }
 

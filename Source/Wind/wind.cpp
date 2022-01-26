@@ -32,10 +32,10 @@ void cmGrid::InitGrid(int w,int h, int shift_)
 //------------------------------------------------------------------
 template<class Op> void cmGrid::Scan(float xp,float yp,float r,Op& op)
 {
-	int xb = max(round(xp-r)>>shift, 0);
-	int y = max(round(yp-r)>>shift, 0);
-	int x_lim = min(round(xp+r)>>shift, x_count-1);
-	int y_lim = min(round(yp+r)>>shift, y_count-1);
+	int xb = max(xm::round(xp - r) >> shift, 0);
+	int y = max(xm::round(yp - r) >> shift, 0);
+	int x_lim = min(xm::round(xp + r) >> shift, x_count - 1);
+	int y_lim = min(xm::round(yp + r) >> shift, y_count - 1);
 	for(;y<y_lim; ++y)
 	{
 		int ym = y*x_count;
@@ -58,11 +58,11 @@ Vect2f cmGrid::GetVelocity(float x, float y, float z)
 }*/
 Vect3f cmGrid::GetVelocity(Vect3f& p)
 {
-	float surz = mapw->GetZ(round(p.x),round(p.y));
+	float surz = mapw->GetZ(xm::round(p.x), xm::round(p.y));
 	if (p.z<surz)
 		return Vect3f::ZERO;
-	int x =	round(p.x)&(-ng);
-	int y =	round(p.y)&(-ng);
+	int x = xm::round(p.x) & (-ng);
+	int y = xm::round(p.y) & (-ng);
 	if (x>p.x) x-=ng;
 	if (y>p.y) y-=ng;
 	float kx = (p.x - x)/ng;
@@ -128,11 +128,11 @@ void cQuantumWind::operator()(WindNode& nd, float x, float y)
 {
 	x-=pos.x;
 	y-=pos.y;
-	float r1 = sqrt(x*x+y*y);
+	float r1 = xm::sqrt(x*x+y*y);
 	if (r1>=r) return;
 	Vect2f nr1(x,y); FastNormalize(nr1);
 	Vect2f nv(vel);	 FastNormalize(nv);
-	float ca = /*sqrt*/(abs(nv.dot(nr1)));
+	float ca = /*xm::sqrt*/(abs(nv.dot(nr1)));
 	float r1r = r1/r;
 	float k = (1 - r1r*ca);
 	nd.vel.x+=vel.x*k;
@@ -150,13 +150,13 @@ void cQuantumWind::Animate(float dt)
 }
 bool cQuantumWind::IsLive()
 {
-	return sqrt(vel.x*vel.x + vel.y*vel.y)>10;
+	return xm::sqrt(vel.x*vel.x + vel.y*vel.y)>10;
 }
 
 void cQuantumWind::Draw()
 {
 	xassert(ef);
-	ef->SetPosition(MatXf(Mat3f(M_PI/2+atan2(vel.y,vel.x),Z_AXIS), Vect3f(pos.x, pos.y, surf_z + maxz)));
+	ef->SetPosition(MatXf(Mat3f(XM_PI/2+xm::atan2(vel.y,vel.x),Z_AXIS), Vect3f(pos.x, pos.y, surf_z + maxz)));
 }
 
 //====================================================================
@@ -164,16 +164,16 @@ void cQuantumWindW::operator()(WindNode& nd, float x, float y)
 {
 	x-=pos.x;
 	y-=pos.y;
-	float r1 = sqrt(x*x+y*y);
+	float r1 = xm::sqrt(x*x+y*y);
 	if (r1>=r) return;
-	float k = sin(r1/r*M_PI);
+	float k = xm::sin(r1 / r * XM_PI);
 	nd.vel.x += w*y*k;
 	nd.vel.y += -w*x*k;
 	float ss = 0.3f+rnd.frand()*0.3f;
 	if (r1>ss*r)
 	{
 		Vect2f next(x+nd.vel.x*dtime, y+ nd.vel.y*dtime);
-		float nr = sqrt(sqr(next.x)+sqr(next.y));
+		float nr = xm::sqrt(sqr(next.x)+sqr(next.y));
 		if(r1<nr)
 		{
 			next = next - next*(nr/r1);
@@ -243,8 +243,8 @@ void cMapWind::Animate(float dt)
 	{
 		cQuantumWind* q = *it;
 		q->Animate(dt);
-		int x = round(q->pos.x);
-		int y = round(q->pos.y);
+		int x = xm::round(q->pos.x);
+		int y = xm::round(q->pos.y);
 		if (x>=map_width || y>=map_heigth ||!q->IsLive())
 		{
 			delete q;
@@ -313,7 +313,7 @@ void cMapWind::CreateQuant(Vect2f& pos, Vect2f& vel, float max_z, float r, float
 	t->ef = terMapPoint->GetScene()->CreateEffect(*wind,NULL,1.0f,false);
 	xassert(t->ef);
 	t->ef->SetAutoDeleteAfterLife(true);
-	t->surf_z = GetZ(round(pos.x),round(pos.y));
+	t->surf_z = GetZ(xm::round(pos.x), xm::round(pos.y));
 	t->ef->AddZ(t->maxz);
 	t->Draw();
 	wind->RelativeScale(50/r);
@@ -334,7 +334,7 @@ void cMapWind::CreateQuantW(Vect2f& pos, Vect2f& vel, float max_z, float r, floa
 	t->ef = terMapPoint->GetScene()->CreateEffect(*trn,NULL,1.0f,false);
 	xassert(t->ef);
 	t->ef->SetAutoDeleteAfterLife(true);
-	t->surf_z = GetZ(round(pos.x),round(pos.y));
+	t->surf_z = GetZ(xm::round(pos.x), xm::round(pos.y));
 	t->Draw();
 	trn->RelativeScale(50/r);
 	quants.push_back(t);
@@ -352,7 +352,7 @@ void cMapWind::Init(int w, int h, int n,cWater* pWater_)
 		cObject3dx* obj = terScene->CreateObject3dx("resource\\balmer\\wind.3DX");
 		float x = rnd(200)+1000;
 		float y = rnd(200)+1000;
-		MatXf pos(Mat3f(rnd.frand()*2*M_PI,Z_AXIS), Vect3f(x,y,GetZ(x,y)));
+		MatXf pos(Mat3f(rnd.frand()*2*XM_PI,Z_AXIS), Vect3f(x,y,GetZ(x,y)));
 		obj->SetPosition(pos);
 		obj->Update();
 		obj->SetScale(rnd.frand()*0.5f+0.3f);
@@ -406,10 +406,10 @@ void cMapWind::Space(int mode)
 }
 
 
-void cMapWind::GetSpeed(BYTE* data,int pitch,float mul)
+void cMapWind::GetSpeed(uint8_t* data, int pitch, float mul)
 {
 	Vect2i size=grid.GetSize();
-	BYTE* curdata=data;
+	uint8_t* curdata=data;
 	WindNode* nd = grid.nds;
 	for(int y=0;y<size.y;y++)
 	{
@@ -417,8 +417,8 @@ void cMapWind::GetSpeed(BYTE* data,int pitch,float mul)
 		{
 			Vect2f& vel=nd->vel;
 			++nd;
-			float f=fabs(vel.x)+fabs(vel.y);
-			int p=round(f*mul);
+			float f= xm::abs(vel.x) + xm::abs(vel.y);
+			int p=xm::round(f*mul);
 			p=clamp(p,0,255);
 			curdata[x]=p;
 		}

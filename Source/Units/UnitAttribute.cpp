@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include <filesystem>
 #include "StdAfx.h"
 
@@ -15,19 +13,24 @@
 #include "InterfaceScript.h"
 #include "GameContent.h"
 #include "BelligerentSelect.h"
+#include "files/files.h"
+#include "crc.h"
+#include "../PluginMAX/ZIPStream.h"
 
 ///////////////////////////////////////////////////////////////
 class EffectLibraryDispatcher
 {
 public:
 	EffectLibraryDispatcher(){ 
-		set_textures_path("RESOURCE\\FX\\TEXTURES");
+		set_textures_path(convert_path_native("RESOURCE\\FX\\TEXTURES").c_str());
 	}
 	~EffectLibraryDispatcher(){ }
 
-	/// добавляет библиотеку эффектов и загружает ее
+	/// РґРѕР±Р°РІР»СЏРµС‚ Р±РёР±Р»РёРѕС‚РµРєСѓ СЌС„С„РµРєС‚РѕРІ Рё Р·Р°РіСЂСѓР¶Р°РµС‚ РµРµ
 	const EffectLibrary* register_library(const char* lib_name)
 	{
+        if (lib_name == nullptr || *lib_name == '\0') return nullptr;
+        
 		EffectLibraryContainer::iterator it = libraries_.find(lib_name);
 		if(it != libraries_.end())
 			return &it -> second;
@@ -48,14 +51,14 @@ public:
 		return lp;
 	}
 
-	/// устанавливает путь к текстурам
+	/// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РїСѓС‚СЊ Рє С‚РµРєСЃС‚СѓСЂР°Рј
 	void set_textures_path(const char* path){ textures_path_ = path; }
 
 private:
 	typedef std::map<std::string,EffectLibrary> EffectLibraryContainer;
 	EffectLibraryContainer libraries_;
 
-	/// относительный путь к текстурам
+	/// РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Р№ РїСѓС‚СЊ Рє С‚РµРєСЃС‚СѓСЂР°Рј
 	std::string textures_path_;
 };
 
@@ -69,7 +72,7 @@ float AttributeBase::energyPerElement_ = 0;
 
 SINGLETON_PRM(AttributeLibrary, "AttributeLibrary", "Scripts\\AttributeLibrary") attributeLibrary;
 
-REGISTER_CLASS(AttributeBase, AttributeBase, "Базовые свойства")
+REGISTER_CLASS(AttributeBase, AttributeBase, "Р‘Р°Р·РѕРІС‹Рµ СЃРІРѕР№СЃС‚РІР°")
 
 AttributeBase::AttributeBase() : 
 EffectLib(0)
@@ -90,7 +93,7 @@ EffectLib(0)
 	MilitaryUnit = 0;
 	UnitClass = UNIT_CLASS_IGNORE;
 	AttackClass = UNIT_CLASS_IGNORE;
-	enemyWorld = 0; // Оъекты, принадлежащие миру, будут атаковаться. Скверна.
+	enemyWorld = 0; // РћСЉРµРєС‚С‹, РїСЂРёРЅР°РґР»РµР¶Р°С‰РёРµ РјРёСЂСѓ, Р±СѓРґСѓС‚ Р°С‚Р°РєРѕРІР°С‚СЊСЃСЏ. РЎРєРІРµСЂРЅР°.
 
 	SoundCycled = 1;
 
@@ -102,7 +105,7 @@ EffectLib(0)
 	ExcludeCollision = 0;
 	CollisionGroup = 0;
 
-	MakeEnergy = 0; // в секунду
+	MakeEnergy = 0; // РІ СЃРµРєСѓРЅРґСѓ
 	energyCapacity = 0;
 
 	ConnectionRadius = 0;
@@ -152,12 +155,14 @@ void AttributeBase::init()
         case UNIT_ATTRIBUTE_FRAME:
             switch (belligerent) {
                 case BELLIGERENT_EMPIRE4:
-                    if (terGameContent & GAME_CONTENT::PERIMETER && terGameContent & GAME_CONTENT::PERIMETER_ET) {
+                    if (terGameContentAvailable & GAME_CONTENT::PERIMETER && terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
                         //Okay this is Perimeter with ET extra content, use infected model we previously mapped from ET
                         std::string& logicName = modelData.logicName.value();
-                        logicName.insert(logicName.find('.'), "_infected");
-                        std::string& modelName = modelData.modelName.value();
-                        modelName.insert(modelName.find('.'), "_infected");
+                        if (logicName.find("_infected.") == std::string::npos) {
+                            logicName.insert(logicName.find('.'), "_infected");
+                            std::string& modelName = modelData.modelName.value();
+                            modelName.insert(modelName.find('.'), "_infected");
+                        }
                     }
                     break;
                 default:
@@ -232,19 +237,16 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
     if(!modelData.logicName)
 		return;
 
-	if(!(logicTime == FileTime(modelData.logicName))){
-		logicTime = FileTime(modelData.logicName);
-		cLogicObject* logic = terLogicGeneric->GetElement(modelData.logicName);
-		xassert(logic);
-		logic->SetPosition(MatXf::ID);
-		logic->SetScale(Vect3f(1,1,1));
-		logic->Update();
-	
-		boundRadiusOriginal = logic->GetBoundRadius();
-		logic->GetBoundBox(logicObjectBoundOriginal);
+    cLogicObject* logic = terLogicGeneric->GetElement(modelData.logicName);
+    xassert(logic);
+    logic->SetPosition(MatXf::ID);
+    logic->SetScale(Vect3f(1,1,1));
+    logic->Update();
 
-		logic->Release();
-	}
+    boundRadiusOriginal = logic->GetBoundRadius();
+    logic->GetBoundBox(logicObjectBoundOriginal);
+
+    logic->Release();
 
 	modelScale = 1;
 	if(attribute.ID == UNIT_ATTRIBUTE_FRAME || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_ALPHA || attribute.ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)
@@ -272,9 +274,7 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 	Vect3f deltaBound = logicObjectBound.max - logicObjectBound.min;
 	xassert_s(deltaBound.x > FLT_MIN && deltaBound.y > FLT_MIN && deltaBound.z > FLT_MIN && "Zero size bound", modelData.logicName);
 
-	if(attribute.InstallBound && !(modelTime == FileTime(modelData.modelName))) { // || modelScaleOld != modelScale)){
-		modelTime = FileTime(modelData.modelName);
-
+	if(attribute.InstallBound || modelScaleOld != modelScale) {
 		cObjectNodeRoot* model = createObject(modelData.modelName, attribute.belligerent);
 
 		int vertex_num = 0;
@@ -355,7 +355,7 @@ void GeometryAttribute::initGeometryAttribute(const ModelData& modelData, const 
 			BasementMax.x = BasementMax.x + 1;
 			BasementMin.y = BasementMin.y - 1;
 			BasementMax.y = BasementMax.y + 1;
-			BasementInscribedRadius = min(min(fabsf(BasementMin.x), fabsf(BasementMin.y)), min(BasementMax.x, BasementMax.y));
+			BasementInscribedRadius = min(min(xm::abs(BasementMin.x), xm::abs(BasementMin.y)), min(BasementMax.x, BasementMax.y));
 		}
 
 		model->Release();
@@ -641,6 +641,54 @@ const DamageMolecula& DamageMolecula::operator=(const SaveDamageMolecula& data)
 }
 
 //---------------------------------
+
+uint32_t contentCRC = 0;
+std::map<std::string, uint32_t> contentFiles;
+
+uint32_t get_content_crc() {
+    return contentCRC;
+}
+
+const std::map<std::string, uint32_t>& get_content_list() {
+    return contentFiles;
+}
+
+void collect_model_crc(const ModelData& modelData) {
+    std::string line = convert_path_posix(modelData.logicName.value());
+    line = string_to_lower(line.c_str());
+
+    //Read logic model data and create CRC
+    ZIPStream ff;
+    XBuffer buf;
+    if (!ff.open(line.c_str())) return;
+    buf.alloc(ff.size());
+    ff.read(buf.address(), ff.size());
+    
+    //Record CRCs
+    uint32_t lineCRC = crc32(reinterpret_cast<const unsigned char*>(buf.address()), ff.size(), startCRC32);
+    contentCRC = crc32(reinterpret_cast<const unsigned char*>(&lineCRC), sizeof(lineCRC), contentCRC);
+    contentFiles[line] = lineCRC;
+}
+
+void collect_content_crc() {
+    contentCRC = 0;
+    contentFiles.clear();
+    for (auto& i : attributeLibrary().map()) {
+        AttributeBase* attribute = i.second;
+        if (attribute->ID == UNIT_ATTRIBUTE_NONE) continue;
+        //Avoid loading stuff that user may not have
+        if (unavailableContentUnitAttribute(attribute->ID, terGameContentSelect) 
+        || unavailableContentBelligerent(attribute->belligerent)) {
+            continue;
+        }
+        collect_model_crc(attribute->modelData);
+        for (auto& model : attribute->additionalModelsData) {
+            collect_model_crc(model);
+        }
+    }
+}
+
+//---------------------------------
 //void initAttributes()
 //{ 
 //	AttributeLibrary::
@@ -660,9 +708,13 @@ const DamageMolecula& DamageMolecula::operator=(const SaveDamageMolecula& data)
 //	}
 //}
 
-const char* AttributeBase::internalName() const
+const char* AttributeBase::internalName(bool alt) const
 {
-	return getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(ID);
+    if (alt) {
+        return getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(ID);
+    } else {
+        return getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(ID);
+    }
 }
 
 bool AttributeBase::enabledByBelligerent(terBelligerent belligerentIn) const
@@ -694,47 +746,44 @@ void AttributeBase::initIntfBalanceData(const AttributeBase* missile)
 	}
 }
 
-FileTime::FileTime(const char* fname)
-{
-    if (!fname) {
-        dwLowDateTime = 0;
-        dwHighDateTime = 0;
-        return;
-    }
-    std::error_code error;
-    auto ftime = std::filesystem::last_write_time(convert_path_resource(fname).c_str(), error);
-    if (error) {
-#if PERIMETER_DEBUG
-        fprintf(stderr, "Error reading %s: %d %s\n", fname, error.value(), error.message().c_str());
-#endif
-        dwLowDateTime = 0;
-        dwHighDateTime = 0;
-        return;
-    }
-    auto duration = ftime.time_since_epoch();
-    int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
-    EpochToFileTime(nanos, this);
-}
-
-
-void copyAttributes();
+void copyAttributes(bool);
 void copyInterfaceAttributes();
-void copyRigidBodyTable();
+void copyRigidBodyTable(bool);
 void copyInterfaceAttributesIndispensable();
 
-void initAttributes()
+void initInterfaceAttributes() {
+    interfaceAttr();
+    copyInterfaceAttributes();
+    copyInterfaceAttributesIndispensable();
+}
+
+void initAttributes(XBuffer* scriptsSerialized)
 {
-	globalAttr();
-	interfaceAttr();
 //	soundScriptTable();
 
+    //Clear previous data
+    rigidBodyPrmLibrary().map().clear();
+    attributeLibrary().map().clear();
     
-    int use_attrs=IniManager("Perimeter.ini", false).getInt("Game","UseAttributes");
-    check_command_line_parameter("use_attributes", use_attrs);
-    if (!use_attrs) {
-        copyRigidBodyTable();
-        copyAttributes();
-        copyInterfaceAttributes();
+    if (scriptsSerialized) {
+        //Deserialize from buffer
+        XPrmIArchive ia;
+        std::swap(ia.buffer(), *scriptsSerialized);
+        ia.buffer().set(0);
+        ia >> WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+        ia >> WRAP_NAME(attributeLibrary(), "attributeLibrary");
+        ia >> WRAP_NAME(globalAttr(), "globalAttr");
+    } else {
+        //Deserialize from files
+        SingletonPrm<RigidBodyPrmLibrary>::load();
+        SingletonPrm<AttributeLibrary>::load();
+        SingletonPrm<GlobalAttributes>::load();
+
+        //Copy hardcoded data in this executable that is missing in files
+        int override=IniManager("Perimeter.ini", false).getInt("Game","OverrideAttributes");
+        check_command_line_parameter("override_attributes", override);
+        copyRigidBodyTable(override);
+        copyAttributes(override);
     }
 
 //	rigidBodyPrmLibrary.edit();
@@ -742,17 +791,22 @@ void initAttributes()
 //	interfaceAttr.edit();
 //	ErrH.Exit();
 
-	copyInterfaceAttributesIndispensable();
-
 	const AttributeBase* blockAttr = attributeLibrary().find(UNIT_ATTRIBUTE_BUILDING_BLOCK); 
     AttributeBase::setBuildCost(buildingBlockConsumption.energy*buildingBlockConsumption.time/(10*DamageMolecula(blockAttr->damageMolecula).elementCount()));
 
-	AttributeLibrary::Map::iterator i;
-	FOR_EACH(attributeLibrary().map(), i){
-		AttributeBase* attribute = i->second;
-		if(attribute->ID != UNIT_ATTRIBUTE_NONE)
-			attribute->initIntfBalanceData((attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE) ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0);
+    for (auto& i : attributeLibrary().map()) {
+		AttributeBase* attribute = i.second;
+		if(attribute->ID != UNIT_ATTRIBUTE_NONE) {
+            attribute->initIntfBalanceData(
+                (attribute->weaponSetup.missileID != UNIT_ATTRIBUTE_NONE)
+                ? attributeLibrary().find(AttributeIDBelligerent(attribute->weaponSetup.missileID)) : 0
+            );
+        }
 	}
+
+    if (!scriptsSerialized) {
+        collect_content_crc();
+    }
 }
 
 /////////////////////////////////////////
@@ -760,7 +814,7 @@ void initAttributes()
 /////////////////////////////////////////
 ConsumptionData buildingBlockConsumption;
 FieldPrm fieldPrm;
-DebugScales debuScales; // Отладочное масштабирование
+DebugScales debuScales; // РћС‚Р»Р°РґРѕС‡РЅРѕРµ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
 DifficultyPrm difficultyPrmArray[DIFFICULTY_MAX];
 TrucksIntrumentParameter trucksIntrumentParameter;
 SoundEventsPrm soundEventsPrm;
@@ -776,7 +830,7 @@ REGISTER_ENUM_ENCLOSED(RigidBodyPrm, DEBRIS, "DEBRIS");
 END_ENUM_DESCRIPTOR_ENCLOSED(RigidBodyPrm, RigidBodyType)
 
 BEGIN_ENUM_DESCRIPTOR(ToolzerActionID, "ToolzerActionID")
-REGISTER_ENUM(TOOLZER_NONE, "никакого воздействия");
+REGISTER_ENUM(TOOLZER_NONE, "РЅРёРєР°РєРѕРіРѕ РІРѕР·РґРµР№СЃС‚РІРёСЏ");
 REGISTER_ENUM(TOOLZER_4ZP, "toolzerAligmentTerrain4ZP");
 REGISTER_ENUM(TOOLZER_VH, "toolzerAligmentTerrainVariableH");
 REGISTER_ENUM(TOOLZER_H, "toolzerChangeTerHeight");
@@ -793,10 +847,10 @@ END_ENUM_DESCRIPTOR(ToolzerBuildingDamageMode)
 
 BEGIN_ENUM_DESCRIPTOR(ToolzerPhaseID, "ToolzerPhaseID")
 REGISTER_ENUM(TOOLZER_PHASE_NONE, "TOOLZER_PHASE_NONE");
-REGISTER_ENUM(TOOLZER_PHASE_DEFAULT, "универсальное имя");
-REGISTER_ENUM(TOOLZER_PHASE_START_MOVE, "включается в момент начала движения");
-REGISTER_ENUM(TOOLZER_PHASE_MOVE, "включается во время движения");
-REGISTER_ENUM(TOOLZER_PHASE_END_MOVE, "включается в момент остановки");
+REGISTER_ENUM(TOOLZER_PHASE_DEFAULT, "СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕРµ РёРјСЏ");
+REGISTER_ENUM(TOOLZER_PHASE_START_MOVE, "РІРєР»СЋС‡Р°РµС‚СЃСЏ РІ РјРѕРјРµРЅС‚ РЅР°С‡Р°Р»Р° РґРІРёР¶РµРЅРёСЏ");
+REGISTER_ENUM(TOOLZER_PHASE_MOVE, "РІРєР»СЋС‡Р°РµС‚СЃСЏ РІРѕ РІСЂРµРјСЏ РґРІРёР¶РµРЅРёСЏ");
+REGISTER_ENUM(TOOLZER_PHASE_END_MOVE, "РІРєР»СЋС‡Р°РµС‚СЃСЏ РІ РјРѕРјРµРЅС‚ РѕСЃС‚Р°РЅРѕРІРєРё");
 END_ENUM_DESCRIPTOR(ToolzerPhaseID)
 
 BEGIN_ENUM_DESCRIPTOR(PopupFormatGroup, "PopupFormatGroup")

@@ -174,9 +174,9 @@ void terUnitTruck::AvatarQuant()
 
 		TruckPoint->setPhase((float)(TruckVolume) / (float)(IronDiggerVolume));
 		if(FireSoundPoint && FireFactor > 0.0001f){
-			FireSoundPoint->play();
 			FireSoundPoint->setVolume(FireFactor);
 			FireSoundPoint->setFrequency(FireFactor);
+            FireSoundPoint->play();
 		}
 	}
 }
@@ -203,7 +203,7 @@ void terUnitTruck::WayPointController()
 
 	if(Terraform){
 		if(!Terraform->Alive()){
-			terMapGridReplaceOperator op(round(position().x),round(position().y),Player);
+			terMapGridReplaceOperator op(xm::round(position().x), xm::round(position().y), Player);
 			Player->TrustMap->TrustGrid.Scan(op.PositionX, op.PositionY, 0, op);
 			Terraform->UnitPoint = NULL;
 			if(op.MapPoint){
@@ -323,7 +323,7 @@ void terUnitTruck::WayPointController()
 				if(!FindFillTarget() && !FindFillGarbage()){
 					if(TrustMasterPoint)
 						BodyPoint->way_points.push_back(TrustMasterPoint->position());
-					PutGarbageToolPoint->quant(round(position().x),round(position().y));
+					PutGarbageToolPoint->quant(xm::round(position().x), xm::round(position().y));
 					TruckVolume--;
 				}
 			}else{
@@ -389,7 +389,7 @@ void terUnitTruck::WayPointController()
 	}
 
 	if(!action){
-		terMapGridAccelerateOperator acc_op(round(position().x),round(position().y),Player);
+		terMapGridAccelerateOperator acc_op(xm::round(position().x), xm::round(position().y), Player);
 		Player->TrustMap->TrustGrid.Scan(acc_op.PositionX, acc_op.PositionY, 0, acc_op);
 		if(acc_op.MapPoint){
 			if(TruckVolume < IronDiggerVolume && acc_op.MapPoint->CheckDigPosition(acc_op.PositionX,acc_op.PositionY)){
@@ -430,8 +430,8 @@ int terFillScanGarbage(int cx,int cy,int sx,int sy,int& x,int& y,class RegionMet
 int terUnitTruck::FindDigGarbage()
 {
 	MetaRegionLock lock(Player->RegionPoint);
-	int x = round(position().x);
-	int y = round(position().y);
+	int x = xm::round(position().x);
+	int y = xm::round(position().y);
 	for(int i = 0;i < vMap.H_SIZE / 2;i += TRUST_MAP_GARBAGE_SIZE){
 		int cx,cy;
 		if(terDigScanGarbage(x,y,i,i,cx,cy,Player->RegionPoint,Player)){
@@ -447,8 +447,8 @@ int terUnitTruck::FindFillGarbage()
 {
 	MetaRegionLock lock(Player->RegionPoint);
 
-	int x = round(position().x);
-	int y = round(position().y);
+	int x = xm::round(position().x);
+	int y = xm::round(position().y);
 	for(int i = 0;i < vMap.H_SIZE / 2;i += TRUST_MAP_GARBAGE_SIZE){
 		int cx,cy;
 		if(terFillScanGarbage(x,y,i,i,cx,cy,Player->RegionPoint,Player)){

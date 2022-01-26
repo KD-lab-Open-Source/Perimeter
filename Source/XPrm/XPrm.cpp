@@ -83,12 +83,12 @@ int main(int argc, char* argv[])
 	}
     catch(const std::exception& exc)
     {
-        std::cout << "Internal error occured:" << exc.what() << "\r\n";
+        std::cout << "Internal error occured:" << exc.what() << "\n";
         return 1;
     }
 	catch(...)
 	{
-        std::cout << "Internal error occured\r\n";
+        std::cout << "Internal error occured\n";
 		return 1;
 	}
 

@@ -95,7 +95,7 @@ protected:
 	void addUnitOrSquadToSelection(terUnitBase* p);
 	int calcGroupPriority(UnitList& unit_list);
 
-	bool CanAttackUnit(terUnitBase* pUnit, terUnitBase* pTarget);
+	static bool CanAttackUnit(terUnitBase* pUnit, terUnitBase* pTarget);
 
 	void cancelActions();
 

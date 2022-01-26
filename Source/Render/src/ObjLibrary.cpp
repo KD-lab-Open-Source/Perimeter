@@ -6,6 +6,7 @@
 #include "ObjLight.h"
 #include "MeshBank.h"
 #include "NParticle.h"
+#include "files/files.h"
 
 bool is_old_model=false;
 bool WinVGIsOldModel()
@@ -17,7 +18,7 @@ int ResourceFileRead(const char *fname,char *&buf,int &size)
 {
 	buf=0; size=0;
 	ZIPStream f;
-	if(!f.open(convert_path_resource(fname).c_str())) {
+	if(!f.open(fname)) {
 	    f.close();
 	    return -1; 
 	}
@@ -193,28 +194,35 @@ static void ReadMeshTri(int time,cObjMesh *Mesh,sObjectMesh *ObjectMesh,cAllMesh
 	}
 }
 
-cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,char* attr=NULL)
+cTexture* LoadTextureDef(const char* name,const char* path,const char* def_path,char* attr=nullptr)
 {
-	char full_name[512];
-	strcpy(full_name,path);
-	strcat(full_name,name);
+	std::string path_name(path);
+    path_name += name;
+    std::string defpath_name;
 
 	bool enable_error=GetTexLibrary()->EnableError(false);
 
-	cTexture *Texture=GetTexLibrary()->GetElement(full_name,attr);
+	cTexture *Texture=GetTexLibrary()->GetElement(path_name.c_str(),attr);
 	if(Texture==nullptr)
 	{
 		if(def_path)
 		{
-			strcpy(full_name,def_path);
-			strcat(full_name,name);
-			Texture=GetTexLibrary()->GetElement(full_name,attr);
+            defpath_name = def_path;
+            defpath_name += name;
+			Texture=GetTexLibrary()->GetElement(defpath_name.c_str(),attr);
 		}
+
 		if(Texture==nullptr)
 		{
-			strcpy(full_name,path);
-			strcat(full_name,name);
-			m3derror()<<"Texture not found - "<<full_name<<VERR_END;
+            auto err = m3derror();
+			err << "Texture not found - " << path_name;
+            if (!defpath_name.empty()) {
+                err << " - " << defpath_name;
+            }
+            if (attr) {
+                err << " - " << attr;
+            }
+            err << VERR_END;
 		}
 	}
 
@@ -249,7 +257,7 @@ cMeshBank* ReadMeshMat(cAllMeshBank *pBanks,sObjectMesh *ObjectMesh,cMaterialObj
 		 ReflectionName[512]="",BumpName[512]="";
 	for(int nSubTex=0;nSubTex<Material->SubTexMap.length();nSubTex++)
 	{
-		LPCSTR name=GetFileName(Material->SubTexMap[nSubTex]->name.c_str());
+		const char* name=GetFileName(Material->SubTexMap[nSubTex]->name.c_str());
 		switch(Material->SubTexMap[nSubTex]->ID)
 		{
 			case TEXMAP_DI:
@@ -487,7 +495,7 @@ void ReadAnimNode(sChannelAnimation *Channel,sLodObject *LodObject,cAnimChannelN
 	for(int i=0;i<AnimChain->GetNumberVisible();i++)
 	{
 		AnimChain->GetVisible(i).time=AnimationVisibility[i][0]-StartTime;
-		AnimChain->GetVisible(i).visible=round(AnimationVisibility[i][1]);
+		AnimChain->GetVisible(i).visible= xm::round(AnimationVisibility[i][1]);
 	}
 
 	if(NodeObject->AnimationPosition.length()>1 || 
@@ -502,7 +510,7 @@ void ReadAnimNode(sChannelAnimation *Channel,sLodObject *LodObject,cAnimChannelN
 		for(int nFrame=0;nFrame<Channel->NumberFrame;nFrame++)
 		{
 			MatXf Matrix;
-			int TimeFrame=round(nFrame*AnimTime);
+			int TimeFrame= xm::round(nFrame * AnimTime);
 			GetMatrixObj(StartTime+TimeFrame,Matrix,LodObject,NodeObject);
 			AnimChain->GetMatrix(nFrame).time=TimeFrame;
 			AnimChain->GetMatrix(nFrame).mat=Matrix;
@@ -626,19 +634,30 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
 		return NULL;
 	}
 
-	std::string fname = convert_path(pFileName);
+	std::string fname;
+    std::string DefPath;
     std::string TexturePath;
-	_strlwr(fname.data());
-
     std::string DefTexturePath;
-    std::string DefPath = std::filesystem::path(fname).parent_path().string() + PATH_SEP + "textures" + PATH_SEP;
-	_strlwr(DefPath.data());
-
+    
+    filesystem_entry* model_entry = get_content_entry(pFileName);
+    if (model_entry) {
+        fname = model_entry->path_content;
+        DefPath = std::filesystem::u8path(model_entry->key).parent_path().u8string() + PATH_SEP + "textures" + PATH_SEP;
+    } else {
+        fname = pFileName;
+        DefPath = std::filesystem::u8path(convert_path_native(fname)).parent_path().u8string() + PATH_SEP + "textures" + PATH_SEP;
+    }
+    fname = string_to_lower(fname.c_str());
+    DefPath = string_to_lower(DefPath.c_str());
 
 	if(pTexturePath) 
 	{
-        TexturePath = convert_path(pTexturePath);
-		_strlwr(TexturePath.data());
+        if (model_entry) {
+            TexturePath = convert_path_content(pTexturePath);
+        } else {
+            TexturePath = pTexturePath;
+        }
+        TexturePath = string_to_lower(TexturePath.c_str());
 		if(stricmp(TexturePath.c_str(),DefPath.c_str())!=0)
 			DefTexturePath=DefPath;
 	}
@@ -776,15 +795,15 @@ cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,con
 	int nChannel;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
-		char* name=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
-		_strlwr(name);
+        std::string& name = MeshScene.ChannelLibrary[nChannel]->name;
+        name = string_to_lower(name.c_str());
 	}
 /*	// поиск и установка первым канала анимации с именем "main"
 	int nChannelMain=-1;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{
-		char* name=(char*)MeshScene.ChannelLibrary[nChannel]->name.c_str();
-		_strlwr(name);
+        std::string& name = MeshScene.ChannelLibrary[nChannel]->name;
+        name = string_to_lower(name.c_str());
 		if(stricmp(name,"main")==0)
 			nChannelMain=nChannel;
 	}
@@ -993,13 +1012,10 @@ cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,con
 
 cObjectNodeRoot* cObjLibrary::LoadLod(const char *in_filename,const char *TexturePath)
 {
-	char path_buffer[MAX_PATH];
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	_splitpath(in_filename,drive,dir,fname,ext);
-	strcat(fname,"_lod");
-	_makepath(path_buffer,drive,dir,fname,ext);
-	return GetElementInternal(path_buffer,TexturePath,false);
+    std::string path_buffer = in_filename;
+    size_t pos = path_buffer.rfind('.');
+    if (pos != std::string::npos) {
+        path_buffer.insert(pos, "_lod");
+    }
+	return GetElementInternal(path_buffer.c_str(),TexturePath,false);
 }

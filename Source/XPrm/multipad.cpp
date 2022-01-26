@@ -23,7 +23,7 @@ BEGIN_MESSAGE_MAP(CMultiPadApp, CWinApp)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BOOL CMultiPadApp::InitInstance()
+bool CMultiPadApp::InitInstance()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
@@ -101,7 +101,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-static UINT indicators[] =
+static uint32_t indicators[] =
 {
 	ID_SEPARATOR, ID_INDICATOR_CAPS, ID_INDICATOR_NUM, ID_INDICATOR_SCRL
 };
@@ -109,7 +109,7 @@ static UINT indicators[] =
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	((m_StatusBar.Create(this) &&
-		m_StatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT)))
+		m_StatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(uint32_t)))
 	  ? 0 : -1);
 	return CMDIFrameWnd::OnCreate(lpCreateStruct);
 }
@@ -131,7 +131,7 @@ void CPadDoc::Serialize(CArchive& ar)
 	((CEditView*)m_viewList.GetHead())->SerializeRaw(ar);
 }
 
-void CPadDoc::SetModifiedFlag(BOOL bModified)
+void CPadDoc::SetModifiedFlag(bool bModified)
 {
 	string title = GetTitle();
 	if(title[title.size() - 1] == '*')
@@ -162,7 +162,7 @@ BEGIN_MESSAGE_MAP(ShowProfileDialog, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BOOL ShowProfileDialog::OnInitDialog()
+bool ShowProfileDialog::OnInitDialog()
 {
 	ShowWindow(SW_MAXIMIZE);
 	SetDlgItemText(IDC_SHOW_PROFILE_EDIT, text_buffer);
@@ -171,7 +171,7 @@ BOOL ShowProfileDialog::OnInitDialog()
 	return CDialog::OnInitDialog();
 }
 
-void ShowProfileDialog::OnSize(UINT nType, int cx, int cy) 
+void ShowProfileDialog::OnSize(uint32_t nType, int cx, int cy) 
 {
 	CDialog::OnSize(nType, cx, cy);
 
@@ -184,12 +184,12 @@ void ShowProfileDialog::OnOK()
 {
 	GetDlgItemText(IDC_SHOW_PROFILE_EDIT, text_buffer);
 	fstream prof("profile", ios::app | ios::binary);
-	prof << "\r\n\r\n=========================================================================================\r\n";
+	prof << "\n\n=========================================================================================\n";
 	time_t aclock;
 	time( &aclock );                 /* Get time in seconds */
 	prof << asctime( localtime( &aclock ) ) << endl;
 	prof << text_buffer << endl; 
-	prof << "=========================================================================================\r\n";
+	prof << "=========================================================================================\n";
 	CDialog::OnOK();
 }
 
@@ -248,7 +248,7 @@ void ShowTextDialog::setText(const char* text)
 		}
 }
 
-void ShowTextDialog::OnSize(UINT nType, int cx, int cy) 
+void ShowTextDialog::OnSize(uint32_t nType, int cx, int cy) 
 {
 	CDialog::OnSize(nType, cx, cy);
 

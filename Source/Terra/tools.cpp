@@ -94,8 +94,8 @@ void BitMap::place(char* name,int x,int y,int _force,int _mode,int _border,int _
 		vMap.regRender(x,y,x + sx,y + sy);
 	}
 	else {
-		int ddx=round(sin((double)alpha*3.1415926535/180)*(1<<16));
-		int ddy=round(cos((double)alpha*3.1415926535/180)*(1<<16));
+		int ddx=round(xm::sin((double)alpha*3.1415926535/180)*(1<<16));
+		int ddy=xm::round(xm::cos((double)alpha*3.1415926535/180)*(1<<16));
 		int xbegr,xbeg=x*(1<<16) - (sx/2)*ddx + (sy/2)*ddy;
 		int ybegr,ybeg=y*(1<<16) - (sy/2)*ddx - (sx/2)*ddy;
 		xbegr=xbeg;ybegr=ybeg;
@@ -353,7 +353,7 @@ void sVBitMap::put(int VBMmode, int VBMlevel, int VBMnoiseLevel, int VBMnoiseAmp
 			int c=getPreciseColor(xx,yy);//getColor(xx,yy);//
 			//if(c!=-1) *b=c;
 			if(c>0) {
-				int vv,v=round((float)c/kZ);
+				int vv,v=xm::round((float)c/kZ);
 				v=VBMinverse ? -v : v;
 				v+=VBMlevel;
 				if(VBMnoiseLevel && VBMnoiseAmp){

@@ -1,29 +1,25 @@
 #include "StdAfxRD.h"
 #include "Font.h"
 #include "FileImage.h"
-#include "../../PluginMAX/Src/StreamBuffer.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <io.h>
 #include <stdio.h>
-#include <direct.h>
 #include "SystemUtil.h"
-#include "FileImage.h"
 
 #ifndef ASSERT
 #define ASSERT(x) VISASSERT(x)
 #endif 
 
 #include "../gemsiii/filter.h"
-//#include "../../Terra/tgai.h"
+#include "files/files.h"
 
-static char* cache_dir="cache_font";
+static char* cache_dir="cache/font";
 
 class cFontImage:public cFileImage
 {
-	BYTE* ImageData;
+	uint8_t* ImageData;
 public:
 
 	cFontImage()
@@ -48,7 +44,7 @@ public:
 	}
 
 	//Если убрать &, то начинает падать в release в VC7.1 (Microsoft Visual C++ .NET   69586-335-0000007-18787) 
-	virtual void Create(BYTE* gray_in,const Vect2i& size)
+	virtual void Create(uint8_t* gray_in, const Vect2i& size)
 	{
 		x=size.x;
 		y=size.y;
@@ -56,7 +52,7 @@ public:
 
 		if(ImageData)delete ImageData;
 		size_t sz2=size.x*size.y;
-		ImageData=new BYTE[sz2];
+		ImageData=new uint8_t[sz2];
 		for(int i=0;i<sz2;i++)
 			ImageData[i]=gray_in[i];
 	}
@@ -81,10 +77,10 @@ cFontInternal::~cFontInternal()
 	RELEASE(pTexture);
 }
 
-bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class cFontImage* FontImage)
+bool cFontInternal::CreateImage(const char* filename, const char* fontname, int height, class cFontImage* FontImage)
 {
 	ZIPStream rd;
-	if(!rd.open(convert_path_resource(filename).c_str()))
+	if(!rd.open(convert_path_content(filename).c_str()))
 	{
 		return false;
 	}
@@ -114,7 +110,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	{
 		int width;
 		int real_width;
-		BYTE* bits;
+		uint8_t* bits;
 	};
 #ifdef _MSC_VER
 #pragma pack(pop,1)
@@ -133,7 +129,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 		rd.read(&c.width,4);
 		c.real_width=(c.width+7)/8;
 		int size_size=c.real_width*real_height;
-		c.bits=new BYTE[size_size];
+		c.bits=new uint8_t[size_size];
 		rd.read(c.bits,size_size);
 	}
 	rd.close();
@@ -158,7 +154,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	Vect2i size(0,0);
 
 	float mul=height/float(real_height);
-	int yborder=max((int)round(2*mul),2);
+	int yborder=max((int) xm::round(2 * mul), 2);
 	int sz;
 	for(sz=0;sz<sizes_size;sz++)
 	{
@@ -168,7 +164,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 		for(i=char_min;i<char_max;i++)
 		{
 
-			int dx=(int)round(chars[i].width*mul+2);
+			int dx=(int) xm::round(chars[i].width * mul + 2);
 			if(x+dx>size.x)
 			{
 				y+=(height+yborder);
@@ -193,8 +189,8 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	FontHeight=height/float(size.y);
 
 	//Создаём текстуру
-	Vect2i real_size((int)round(size.x/mul),(int)round(size.y/mul));
-	BYTE* gray_in=new BYTE[real_size.x*real_size.y];
+	Vect2i real_size((int) xm::round(size.x / mul), (int) xm::round(size.y / mul));
+	uint8_t* gray_in=new uint8_t[real_size.x * real_size.y];
 	memset(gray_in,0,real_size.x*real_size.y);
 
 	int x=0,y=0;
@@ -202,7 +198,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	{
 
 		int w=chars[i].width;
-		int dx=(int)round(w*mul+2);
+		int dx=(int) xm::round(w * mul + 2);
 		if(x+dx>size.x)
 		{
 			y+=(height+yborder);
@@ -234,7 +230,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	for(i=0;i<256;i++)
 		delete chars[i].bits;
 
-	BYTE* gray_out=new BYTE[size.x*size.y];
+	uint8_t* gray_out=new uint8_t[size.x * size.y];
 
 //	TGAHEAD h;
 //	h.save3layers("file_in.tga",real_size.x,real_size.y,gray_in,gray_in,gray_in);
@@ -251,7 +247,7 @@ bool cFontInternal::CreateImage(LPCSTR filename,LPCSTR fontname,int height,class
 	return true;
 }
 
-bool cFontInternal::CreateTexture(LPCSTR fontname,LPCSTR filename,int height)
+bool cFontInternal::CreateTexture(const char* fontname, const char* filename, int height)
 {
 	if(pTexture)
 		delete pTexture;
@@ -307,43 +303,45 @@ bool cFontImage::Load(const char* fname)
 bool cFontInternal::Save(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+=PATH_SEP;
-	ffont=cache_dir;ffont+=PATH_SEP;
+    std::string cache_path = convert_path_content(cache_dir, false);
+    xassert(!cache_path.empty());
+	ftga=cache_path;ftga+=PATH_SEP;
+	ffont=cache_path;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
-    create_directories(cache_dir);
 
 	if(!fnt.Save(ftga.c_str()))
 		return false;
-	int file=_open(ffont.c_str(),_O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY,_S_IREAD|_S_IWRITE);
+	int file= file_open(ffont.c_str(), _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
 	if(file==-1)
 		return false;
 
-	DWORD size=Font.size();
+	uint32_t size=Font.size();
 	_write(file,&FontHeight,sizeof(FontHeight));
 	_write(file,&size,sizeof(size));
 	_write(file,&Font[0],size*sizeof(Vect3f));
 	_close(file);
-    scan_resource_paths(fname);
+    scan_resource_paths(cache_path);
 	return true;
 }
 
 bool cFontInternal::Load(const char* fname,cFontImage& fnt)
 {
 	std::string ftga,ffont;
-	ftga=cache_dir;ftga+=PATH_SEP;
-	ffont=cache_dir;ffont+=PATH_SEP;
+    std::string cache_path = convert_path_content(cache_dir, true);
+	ftga=cache_path;ftga+=PATH_SEP;
+	ffont=cache_path;ffont+=PATH_SEP;
 	ftga+=fname; ftga+=".tga";
 	ffont+=fname;ffont+=".xfont";
 
 	if(!fnt.Load(ftga.c_str()))
 		return false;
 
-	int file=_open(ffont.c_str(),_O_RDONLY|_O_BINARY);
+	int file= file_open(ffont.c_str(), _O_RDONLY | _O_BINARY);
 	if(file==-1)
 		return false;
 
-	DWORD size=0;
+	uint32_t size=0;
 	_read(file,&FontHeight,sizeof(FontHeight));
 	_read(file,&size,sizeof(size));
 	Font.resize(size);
@@ -359,84 +357,38 @@ void str_replace_slash(char* str)
 			*p='_';
 }
 
-void str_add_slash(char* str)
-{
-	int len=strlen(str);
-	if(len>0)
-	{
-		if(str[len-1]!='/' && str[len-1]!='\\')
-		{
-			str[len]=PATH_SEP;
-			str[len+1]=0;
-		}
-	}
-}
-
-bool cFontInternal::Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int h,bool silentErr)
+bool cFontInternal::Create(const std::string& root_dir, const std::string& locale_, const std::string& fname, int h, bool silentErr)
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
     xassert(0<ScreenY);
 
-	int height=(int)round((float)(h*ScreenY)/768.0f);
+	int height=(int) xm::round((float) (h * ScreenY) / 768.0f);
 	statement_height=h;
+    locale=locale_;
+    font_name=string_to_lower(fname.c_str());
 
-	char prefix[MAX_PATH];
-	char texture_name[MAX_PATH];
-	char fontname[MAX_PATH];
-	prefix[0]=0;
-	texture_name[0]=0;
+    std::string font_path = locale + PATH_SEP + "Fonts" + PATH_SEP;
+    
+    //Create texture name for caching
+    std::string texture_name = font_path + font_name + "-" + std::to_string(height);
+    texture_name = string_to_lower(texture_name.c_str());
+    str_replace_slash(texture_name.data());
+    
+    //Get path for font
+    font_path = root_dir + font_path + font_name + ".font";
 
-	if(root_dir)
+	if(!CreateTexture(texture_name.c_str(),font_path.c_str(),height))
 	{
-		strcpy(prefix,root_dir);
-		str_add_slash(prefix);
-		str_replace_slash(prefix);
-		_strlwr(prefix);
-	}
-/*
-	if(root_dir)
-	{
-		strcpy(texture_name,root_dir);
-		str_add_slash(texture_name);
-	}
-*/
-	if(language_dir)
-	{
-		strcat(texture_name,language_dir);
-		str_add_slash(texture_name);
-	}
-	
-
-	strcpy(fontname,texture_name);
-	strcat(fontname,fname);
-	strcat(fontname,".font");
-
-	int len=strlen(texture_name);
-	sprintf(texture_name+len,"%s-%i",fname,height);
-	_strlwr(texture_name);
-	str_replace_slash(texture_name);
-	// @caiiiycuk: need to check
-	char *p;
-	char *c;
-	for(p=prefix,c=texture_name;*p;p++,c++)
-	{
-		if(*p!=*c)
-			break;
-	}
-
-	if(!CreateTexture(c,fontname,height))
-	{
-		if(!silentErr) VisError<<"Cannot load font: "<< fontname <<VERR_END;
+		if(!silentErr) VisError<<"Cannot load font: "<< font_path <<VERR_END;
 		return false;
 	}
 
-	font_name=fname;
-	_strlwr(font_name.data());
 	return true;
 }
 
-bool cFontInternal::Reload(LPCSTR root_dir,LPCSTR language_dir)
+bool cFontInternal::Reload(const char* root_dir)
 {
+    std::string l=locale;
 	std::string f=font_name;
-	return Create(root_dir,language_dir,f.c_str(),GetStatementHeight());
+	return Create(root_dir,l,f,GetStatementHeight());
 }

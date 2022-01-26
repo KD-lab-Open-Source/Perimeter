@@ -31,7 +31,7 @@ void CScaleBar::AddCombo()
 	m_wndCombo.SetFont(&m_font, FALSE);
 }
 
-bool CScaleBar::Create(CWnd* pparent, DWORD id)
+bool CScaleBar::Create(CWnd* pparent, uint32_t id)
 {
 	if (!CreateEx(pparent, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
 		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC, 

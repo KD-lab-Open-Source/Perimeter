@@ -3,6 +3,7 @@
 
 #include "GenericControls.h"
 #include "AITileMap.h"
+#include "NetIncludes.h"
 #include "Universe.h"
 #include "Player.h"
 

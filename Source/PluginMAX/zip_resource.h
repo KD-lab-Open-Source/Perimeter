@@ -7,7 +7,7 @@
 
 class XZIP_FileHeader 
 {
-	char* fileName;
+	std::string fileName;
 	unsigned dataOffset;
 	unsigned dataSize;
 
@@ -20,7 +20,7 @@ public:
 	unsigned size() const { return dataSize; }
 	unsigned offset() const { return dataOffset; }
 	char* data() const { return extData; }
-	const char* name() const { return fileName; }
+	const char* name() const { return fileName.c_str(); }
 
 	void save(XStream& fh);
 
@@ -48,7 +48,7 @@ class XZIP_Resource
 
 	XZIP_FileHeader* find(const char* fname);
 public:
-	int open(const char* fname,XStream& fh,int mode = 0);
+	int open(const std::string& fname,XStream& fh,int mode = 0);
 
 	void LoadHeaders();
 	void LoadIndex();

@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include <stdafx.h>
 #include "ExportMesh.h"
 #include "DebugDlg.h"
@@ -115,7 +113,7 @@ void ExportMesh::DeleteSingularPolygon(vector<FaceEx>& faces)
 {
 	int deleted=0;
 	for(int i=0;i<faces.size();i++)
-	{ // удаление вырожденных треугольников
+	{ // СѓРґР°Р»РµРЅРёРµ РІС‹СЂРѕР¶РґРµРЅРЅС‹С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
 		FaceEx &p=faces[i];
 		if(p.vert[0]==p.vert[1] || 
 		   p.vert[0]==p.vert[2] || 
@@ -149,7 +147,7 @@ bool ExportMesh::ExportOneMesh()
 		}
 	}
 
-	DeleteSingularPolygon(faces);//Потом включить
+	DeleteSingularPolygon(faces);//РџРѕС‚РѕРј РІРєР»СЋС‡РёС‚СЊ
 
 	for(int i=0;i<faces.size();i++)
 	{
@@ -161,7 +159,7 @@ bool ExportMesh::ExportOneMesh()
 		}
 	}
 
-	int num_bones_vertex[max_bones+2];//Количество вертексов с таким количеством bones
+	int num_bones_vertex[max_bones+2];//РљРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС‚РµРєСЃРѕРІ СЃ С‚Р°РєРёРј РєРѕР»РёС‡РµСЃС‚РІРѕРј bones
 	for(i=0;i<max_bones+2;i++)
 		num_bones_vertex[i]=0;
 
@@ -336,7 +334,7 @@ bool ExportMesh::ExportOneMesh()
 
 	if(new_vertex.size()>65535)
 	{
-		Msg("Error: %s %i vertex. Количество вершин в объекте слишком велико.\n",name,new_vertex.size());
+		Msg("Error: %s %i vertex. РљРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ РІ РѕР±СЉРµРєС‚Рµ СЃР»РёС€РєРѕРј РІРµР»РёРєРѕ.\n",name,new_vertex.size());
 		return false;
 	}
 
@@ -478,7 +476,7 @@ int ExportMesh::NumCashed(sPolygon* polygon,int n_polygon)
 //*
 void ExportMesh::SortPolygon(sPolygon* polygon,int n_polygon)
 {
-	//Не забыть попробовать сортировку по большему количесту точек.
+	//РќРµ Р·Р°Р±С‹С‚СЊ РїРѕРїСЂРѕР±РѕРІР°С‚СЊ СЃРѕСЂС‚РёСЂРѕРІРєСѓ РїРѕ Р±РѕР»СЊС€РµРјСѓ РєРѕР»РёС‡РµСЃС‚Сѓ С‚РѕС‡РµРє.
 	int prev_cashed=NumCashed(polygon,n_polygon);
 	int sorted=0;
 
@@ -523,7 +521,7 @@ void ExportMesh::SortPolygon(sPolygon* polygon,int n_polygon)
 /*/
 void ExportMesh::SortPolygon(sPolygon* polygon,int n_polygon)
 {
-	//Не забыть попробовать сортировку по большему количесту точек.
+	//РќРµ Р·Р°Р±С‹С‚СЊ РїРѕРїСЂРѕР±РѕРІР°С‚СЊ СЃРѕСЂС‚РёСЂРѕРІРєСѓ РїРѕ Р±РѕР»СЊС€РµРјСѓ РєРѕР»РёС‡РµСЃС‚Сѓ С‚РѕС‡РµРє.
 	int prev_cashed=NumCashed(polygon,n_polygon);
 	int sorted=0;
 

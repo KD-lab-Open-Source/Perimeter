@@ -1,8 +1,6 @@
 #pragma once
 #include "tweaks.h"
 
-#include <windows.h>
-
 #ifndef _DEBUG
 
 #define ASSERT( expr ) ( (void)0 )
@@ -23,12 +21,9 @@ int __cdecl AssertFail(char szErr[], char szFileName[], int nLine, char szMessag
 
 #endif//_DEBUG 
 
-void ERRORM(BOOL b,char *format, ...);
-
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <io.h>
 #include <stdio.h>
 #include <vector>
 

@@ -5,11 +5,11 @@ struct cNode3dx
 {
 	MatXf pos;
 	float phase;
-	BYTE chain;
-	BYTE index_scale;
-	BYTE index_position;
-	BYTE index_rotation;
-	BYTE additional_transform;//255 - нет добавки
+	uint8_t chain;
+	uint8_t index_scale;
+	uint8_t index_position;
+	uint8_t index_rotation;
+	uint8_t additional_transform;//255 - нет добавки
 	bool IsAdditionalTransform(){return additional_transform!=255;}
 
 	cNode3dx();
@@ -112,7 +112,7 @@ protected:
 	struct EffectData
 	{
 		cEffect* pEffect;
-		BYTE index_visibility;
+		uint8_t index_visibility;
 		float prev_phase;
 		EffectData():pEffect(0),index_visibility(255){}//255 - неинициализированн.
 	};

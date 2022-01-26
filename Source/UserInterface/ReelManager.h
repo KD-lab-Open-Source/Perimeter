@@ -3,7 +3,7 @@
 #ifndef _REELMANAGER_H
 #define _REELMANAGER_H
 
-#include "PlayBink.h"
+#include "VideoPlayer.h"
 
 class ReelManager {
 	public:
@@ -14,7 +14,7 @@ class ReelManager {
 		};
 		ReelManager();
 		~ReelManager();
-		void showModal(const char* binkFileName, const char* soundFileName, bool stopBGMusic = true, int alpha = 255);
+		void showModal(const char* videoFileName, const char* soundFileName, bool stopBGMusic = true, int alpha = 255);
 		void showPictureModal(const char* pictureFileName, int stableTime);
 		bool isVisible() const {
 			return visible;
@@ -27,7 +27,7 @@ class ReelManager {
 		SizeType sizeType;
 	protected:
 		bool visible;
-		PlayBink* bink;
+		VideoPlayer* player;
 		cTexture* bgTexture;
 		double startTime;
 };

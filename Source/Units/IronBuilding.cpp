@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "Runtime.h"
@@ -20,8 +18,8 @@
 #include "XPrmArchive.h"
 #include "BinaryArchive.h"
 
-REGISTER_CLASS(AttributeBase, AttributeBuilding, "«‰‡ÌËÂ");
-REGISTER_CLASS(AttributeBase, AttributeSquad, "—Í‚‡‰");
+REGISTER_CLASS(AttributeBase, AttributeBuilding, "–ó–¥–∞–Ω–∏–µ");
+REGISTER_CLASS(AttributeBase, AttributeSquad, "–°–∫–≤–∞–¥");
 
 AttributeBuilding::AttributeBuilding() 
 {
@@ -88,9 +86,9 @@ SaveUnitData* terBuilding::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terBuilding::universalLoad(const SaveUnitData* baseData)
+void terBuilding::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitBuildingData* data = safe_cast<const SaveUnitBuildingData*>(baseData);
+	SaveUnitBuildingData* data = safe_cast<SaveUnitBuildingData*>(baseData);
 	terUnitReal::universalLoad(data);
 
 	setBuildingStatus(data->buildingStatusBV);
@@ -140,7 +138,7 @@ int terBuilding::repairRequest() const
 	if(!(buildingStatus() & BUILDING_STATUS_HOLD_CONSTRUCTION)){
 		int element_count = damageMolecula().deadElementCount();
 		if(element_count){
-			element_count = round(float(element_count) / attr().constructionSpeedCoeff + 0.5f) - repairRequested();
+			element_count = xm::round(float(element_count) / attr().constructionSpeedCoeff + 0.5f) - repairRequested();
 			return (element_count > 0) ? element_count : 0;
 		}
 	}
@@ -209,7 +207,7 @@ ChainID terBuilding::chainRequest() const
 	}
 	else {
 		if(!attr().isUpgrade && attr().MakingChainNum != -1){
-			int chain_index = floor(damageMolecula().phase() * float(attr().MakingChainNum));
+			int chain_index = xm::floor(damageMolecula().phase() * float(attr().MakingChainNum));
 			return ChainID(CHAIN_BUILD1 + chain_index);
 		}
 		else
@@ -282,7 +280,7 @@ void terBuilding::MapUpdateHit(float x0,float y0,float x1,float y1)
 
 int terBuilding::damageMoleculaRepair(int element_count)
 {
-	element_count = round(float(element_count) * attr().constructionSpeedCoeff);
+	element_count = xm::round(float(element_count) * attr().constructionSpeedCoeff);
 	int ret = terUnitGeneric::damageMoleculaRepair(element_count);
 
 	if(!isConstructed()){
@@ -460,7 +458,7 @@ terIconBuilding::~terIconBuilding()
 void terIconBuilding::quant()
 {
 	model_->SetAttr(ATTRUNKOBJ_IGNORE);
-	phase_ = fmod(phase_ + (float)(frame_time.delta())/terModelBuildingSpeed, 1.0f);
+	phase_ = xm::fmod(phase_ + (float)(frame_time.delta())/terModelBuildingSpeed, 1.0f);
 }
 
 void terIconBuilding::show(const Vect3f& pos)
@@ -469,7 +467,7 @@ void terIconBuilding::show(const Vect3f& pos)
 	Mat3f mat;
 	mat.xpose(terCamera->GetCamera()->GetMatrix().rot());
 
-	model_->SetPosition(MatXf(mat*Mat3f(M_PI, Z_AXIS), pos));
+	model_->SetPosition(MatXf(mat*Mat3f(XM_PI, Z_AXIS), pos));
 	
 	model_->ClearAttr(ATTRUNKOBJ_IGNORE);
 	model_->SetPhase(phase_);
@@ -524,7 +522,7 @@ void terBuilding::setCanselConstructionTime(int time)
 
 int terBuilding::isPluggedIn()
 {
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_POWER_ON:
 		return 1;
 	case COMMAND_ID_POWER_OFF:
@@ -605,7 +603,7 @@ void terBuildingHologram::Quant()
 	terUnitBase::Quant();
 
 	if(MasterPoint && !(MasterPoint->isConstructed())){
-		ConstructionScale += 0.1f * M_PI;
+		ConstructionScale += 0.1f * XM_PI;
 	}
 	else
 		Kill();
@@ -624,7 +622,7 @@ void terBuildingHologram::AvatarQuant()
 	if(MasterPoint)
 		real_avatar->setBuild(1.0f - MasterPoint->damageMolecula().phase()*0.8f);
 
-	real_avatar->setHologram(0.5f + sinf(ConstructionScale)*0.5f);
+	real_avatar->setHologram(0.5f + xm::sin(ConstructionScale) * 0.5f);
 	real_avatar->setTexture(Player->HologramPoint);
 
 	real_avatar->setPhase(1.0f);
@@ -744,10 +742,10 @@ void terBuildingUninstall::Quant()
 
 	terInterpolationUninstall* p = safe_cast<terInterpolationUninstall*>(avatar());
 	p->setSight(sight_);
-	p->setHologram(0.5f + sinf(hologram_)*0.5f);
+	p->setHologram(0.5f + xm::sin(hologram_) * 0.5f);
 	p->setTexture(Player->HologramPoint);
 
-	hologram_ += 0.1f * M_PI;
+	hologram_ += 0.1f * XM_PI;
 
 	if(!lifeTimer_())
 		Kill();

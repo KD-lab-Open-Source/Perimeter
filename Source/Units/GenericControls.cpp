@@ -111,15 +111,16 @@ void terUnitBase::setDamage(const DamageData& damage,terUnitBase* agressor)
 
 void terUnitBase::setPose(const Se3f& pose, bool initPose) 
 {
-	pose_.trans().x = clamp(pose.trans().x, radius(), (vMap.H_SIZE - 1) - radius());
-	pose_.trans().y = clamp(pose.trans().y, radius(), (vMap.V_SIZE - 1) - radius());
+	pose_.trans().x = clamp(pose.trans().x, radius(), static_cast<float>(vMap.H_SIZE - 1) - radius());
+	pose_.trans().y = clamp(pose.trans().y, radius(), static_cast<float>(vMap.V_SIZE - 1) - radius());
 	pose_.trans().z = pose.trans().z;
 	pose_.rot() = pose.rot();
 
 	updateIncludingCluster();
 
-	log_var(attr().internalName());
-	log_var(pose);
+    log_var(unitID());
+    log_var(pose_.rot());
+    log_var(pose_.trans());
 }
 
 void terUnitBase::updateIncludingCluster()
@@ -248,19 +249,15 @@ void terUnitBase::commandOutcoming(const UnitCommand& commandIn)
 void terUnitBase::commandOutcomingLogic(const UnitCommand& commandIn)
 {
 	if(Player->controlEnabled()) {
-		if(!universe()->multiPlayer()){
-			//executeCommand(commandIn);
-			UnitCommand command = commandIn;
-			command.prepareToSend();
-			universe()->sendCommand(netCommand4G_UnitCommand(*this, command));
-		}
-		else{
-			UnitCommand command = commandIn;
-			command.prepareToSend();
-			commandList().push_back(command);
-			universe()->sendCommand(netCommand4G_UnitCommand(*this, command));
-		}
-	}
+        UnitCommand command = commandIn;
+        command.prepareToSend();
+        if (universe()->multiPlayer()) {
+            commandList().push_back(command);
+        } else {
+            //executeCommand(commandIn);
+        }
+        universe()->sendCommand(new netCommand4G_UnitCommand(playerID(), *this, command));
+    }
 }
 
 void terUnitBase::executeCommand(const UnitCommand& command)
@@ -335,7 +332,7 @@ SaveUnitData* terUnitBase::universalSave(SaveUnitData* data)
 	return data;
 }
 
-void terUnitBase::universalLoad(const SaveUnitData* data)
+void terUnitBase::universalLoad(SaveUnitData* data)
 {
     Se3f pose(data->orientaion, data->position);
 	setPose(pose, true);

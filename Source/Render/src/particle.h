@@ -36,7 +36,7 @@ public:
 	virtual void Update();
 	virtual void Free();
 
-	FORCEINLINE unsigned int rand()
+	FORCEINLINE unsigned int parrand()
 	{
 		return(((RandomVal = RandomVal * 214013L + 2531011L) >> 16) & RAND_MAX);
 	}

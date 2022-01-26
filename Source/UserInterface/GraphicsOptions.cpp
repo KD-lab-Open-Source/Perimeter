@@ -19,7 +19,7 @@ extern int terScreenSizeX;
 extern int terScreenSizeY;
 extern bool terEnableBumpChaos;
 
-STARFORCE_API void SetShadowType(int shadow_map,int shadow_size,bool update);
+void SetShadowType(int shadow_map,int shadow_size,bool update);
 
 GraphOptionsManager* GraphOptionsManager::instance = 0;
 
@@ -115,8 +115,18 @@ void CustomGraphOptions::apply() {
 void GraphOptions::load(const char* sectionName, const char* iniFileName) {
 	customOptions.load(sectionName, iniFileName);
 
-    IniManager iniManager(iniFileName);
+    IniManager iniManager(iniFileName, false);
     colorDepth = iniManager.getInt("Graphics", "BPP");
+    uiAnchor = iniManager.getInt("Graphics", "UIAnchor");
+    if (uiAnchor < 0 || uiAnchor >= SHELL_ANCHOR_DEFAULT) {
+        uiAnchor = SHELL_ANCHOR_CENTER;
+    }
+    int grabInputVal = 1;
+    iniManager.getInt("Graphics", "GrabInput", grabInputVal);
+    grabInput = grabInputVal != 0;
+    int fogEnableVal = 1;
+    iniManager.getInt("Graphics", "FogEnable", fogEnableVal);
+    fogEnable = fogEnableVal != 0;
     
     std::set<DisplayMode> resSet;
 	resolutions.clear();
@@ -145,7 +155,7 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
         if (smallest.x == 0 || current.w < smallest.x) {
             smallest.x = current.w;
         }
-        if (smallest.y == 0 || current.w < smallest.y) {
+        if (smallest.y == 0 || current.h < smallest.y) {
             smallest.y = current.h;
         }
     }
@@ -157,14 +167,16 @@ void GraphOptions::load(const char* sectionName, const char* iniFileName) {
     
     //Dump set into vector and order it, dont add window modes that are smaller
     for (DisplayMode res : resSet) {
-        if (smallest.x != 0 && smallest.x < res.x) continue;
-        if (smallest.y != 0 && smallest.y < res.y) continue;
+        if (!res.fullscreen) {
+            if (smallest.x != 0 && smallest.x < res.x) continue;
+            if (smallest.y != 0 && smallest.y < res.y) continue;
+        }
         resolutions.emplace_back(res);
     }
     
     std::sort(resolutions.begin(), resolutions.end());
 
-#if PERIMETER_DEBUG
+#if defined(PERIMETER_DEBUG)
     printf("Current mode %s\n", resolution.text().c_str());
     for (DisplayMode& res : resolutions) {
         printf("- %s\n", res.text().c_str());
@@ -196,8 +208,19 @@ void GraphOptions::apply() {
         }
         terScreenSizeX = resolution.x;
         terScreenSizeY = resolution.y;
-		gameShell->updateResolution(change_depth, change_size, change_display_mode || change_size);
+        change_display_mode |= change_size;
+		gameShell->updateResolution(change_depth, change_size, change_display_mode);
 	}
+    
+    if (terGrabInput != grabInput) {
+        terGrabInput = grabInput;
+        if (terGrabInput && !terFullScreen) {
+            SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+        } else {
+            SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
+        }
+    }
+    
 	customOptions.apply();
 }
 
@@ -214,6 +237,9 @@ void GraphOptions::save(const char* iniFileName) {
     iniManager.putInt("Graphics", "ScreenSizeY", resolution.y);
     iniManager.putInt("Graphics", "ScreenRefresh", terScreenRefresh);
 	iniManager.putInt("Graphics", "BPP", colorDepth);
+    iniManager.putInt("Graphics", "UIAnchor", uiAnchor);
+    iniManager.putInt("Graphics", "GrabInput", grabInput ? 1 : 0);
+    iniManager.putInt("Graphics", "FogEnable", fogEnable ? 1 : 0);
 }
 
 void GraphOptionsManager::load() {

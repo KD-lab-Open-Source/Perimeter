@@ -8,8 +8,8 @@
 #include "Scripts/Mutation.hi"
 
 static float volume_power = 3;
-static float Volume(float radius) { return 4./3*M_PI*pow(radius/debuScales.spheres, 3); }
-static float Radius(float volume) { return pow(volume*0.75/M_PI, 1./3.)*debuScales.spheres; }
+static float Volume(float radius) { return 4./3*XM_PI*xm::pow(radius/debuScales.spheres, 3); }
+static float Radius(float volume) { return xm::pow(volume * 0.75 / XM_PI, 1. / 3.) * debuScales.spheres; }
 
 MutationProcess::Sphere::Sphere()
 {
@@ -75,8 +75,8 @@ float MutationProcess::Sphere::calcZ()
 {
 	int xi = pose.trans().xi();
 	int yi = pose.trans().yi();
-	float radius = round(radius0*scale1);
-	int delta = round(radius);
+	float radius = xm::round(radius0 * scale1);
+	int delta = xm::round(radius);
 	float zh = max(max(max(height(xi - delta, yi), height(xi + delta, yi)), max(height(xi, yi - delta), height(xi, yi + delta))), height(xi, yi));
 	return max(zh, GetRealHeight(pose.trans().x, pose.trans().y, radius)) + radius + mutation_sphere_delta_z;
 }

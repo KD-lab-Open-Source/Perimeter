@@ -39,7 +39,7 @@ public:
         this->legacy = legacy_;
         this->x = x_;
         this->y = y_;
-        this->mx = round(static_cast<float>(y_) * MAIN_MENU_RATIO);
+        this->mx = xm::round(static_cast<float>(y_) * MAIN_MENU_RATIO);
     }
 
     FORCEINLINE void set(const UIResolution& v) {
@@ -100,12 +100,12 @@ inline Vect2f relativeUV(float x, float y, cTexture *texture, SHELL_ANCHOR ancho
 
 inline int absoluteX(float x) {
     if (x >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
-    return round(x * terRenderDevice->GetSizeX());
+    return xm::round(x * terRenderDevice->GetSizeX());
 }
 
 inline int absoluteY(float y) {
     if (y >= 2.0f) y /= SQSH_COORD_HEIGHT_SCALE;
-    return round(y * terRenderDevice->GetSizeY());
+    return xm::round(y * terRenderDevice->GetSizeY());
 }
 
 int absoluteUIPosX(float x, SHELL_ANCHOR anchor);

@@ -12,26 +12,17 @@
 #include "ReelManager.h"
 #include <SDL_events.h>
 
+struct LocalizedText;
 class MissionEditor;
 
 struct CommandLineData {
-
-	CommandLineData(
-		bool host = false,
-		std::string name = "",
-		bool p2p = true,
-		std::string ip = "",
-		GUID gameID = GUID(),
-		std::string roomName = "",
-		std::string password = "" );
-
-	bool host;
-	std::string name;
-	bool p2p;
-	std::string ip;
-	GUID gameID;
-	std::string roomName;
-	std::string password;
+    bool server;
+    std::string save;
+    std::string address;
+    std::string playerName;
+    std::string roomName;
+    std::string password;
+    bool publicHost;
 };
 
 //------------------------------------------
@@ -46,14 +37,15 @@ public:
 	void GameStart(const MissionDescription& mission);
 	void GameClose();
 	void done();
-	void terminate() { GameContinue = false; }
+	void terminate();
 
-	void startOnline(CommandLineData data);
-	void startWithScreen(int id);
+	void startCmdline(const CommandLineData& data);
+	void switchToInitialMenu();
 
-	void LANGameStart(const MissionDescription& mission);
+	void MultiplayerGameStart(const MissionDescription& mission);
+    void MultiplayerGameRestore(const MissionDescription& mission);
 
-	bool universalSave(const char* name, bool userSave);
+	bool universalSave(const char* name, bool userSave, MissionDescription* missionOutput = nullptr);
 	SavePrm& savePrm() { return savePrm_; }
 	const SaveManualData& manualData() { return savePrm_.manualData; }
 	
@@ -177,9 +169,9 @@ public:
 	cFont* debugFont() const { return debugFont_; }
 	void setSideArrowsVisible(bool visible);
 
-	void createNetClient(PNetCenter::e_PNCWorkMode _workMode, const char* playerName = 0, const char* InternetAddress=0, const char* password = 0);
+	void createNetClient();
 	PNetCenter* getNetClient();
-	void stopNetClient();
+	void destroyNetClient();
 
 	bool triggersDisabled() const { return triggersDisabled_; }
 	void setTriggersDisabled() { triggersDisabled_ = true; }
@@ -219,7 +211,7 @@ public:
 		return logicUpdater;
 	}
 
-	void showReelModal(const char* binkFileName, const char* soundFileName, bool localized = false, bool stopBGMusic = true, int alpha = 255);
+	void showReelModal(const char* videoFileName, const char* soundFileName, bool localized = false, bool stopBGMusic = true, int alpha = 255);
 	void showPictureModal(const char* pictureFileName, bool localized, int stableTime);
 
 	void changeControlState(const std::vector<SaveControlData>& newControlStates, bool reset_controls);
@@ -236,13 +228,6 @@ public:
 
 	//-----Network function-----
 	void NetQuant();
-
-	enum e_NetCenterConstructorReturnCode {
-		NCC_RC_OK,
-		NCC_RC_NICK_ERR,
-		NCC_RC_DIRECTPLAY_INIT_ERR
-	};
-	void callBack_NetCenterConstructorReturnCode(e_NetCenterConstructorReturnCode retCode);
 	enum e_CreateGameReturnCode {
 		CG_RC_OK,
 		CG_RC_CREATE_HOST_ERR
@@ -250,28 +235,33 @@ public:
 	void callBack_CreateGameReturnCode(e_CreateGameReturnCode retCode);
 	enum e_JoinGameReturnCode {
 		JG_RC_OK,
+        JG_RC_SIGNATURE_ERR,
 		JG_RC_PASSWORD_ERR,
 		JG_RC_CONNECTION_ERR,
 		JG_RC_GAME_IS_RUN_ERR,
 		JG_RC_GAME_IS_FULL_ERR,
-		JG_RC_GAME_NOT_EQUAL_VERSION_ERR
+		JG_RC_GAME_NOT_EQUAL_VERSION_ERR,
+        JG_RC_GAME_NOT_EQUAL_CONTENT_ERR,
+        JG_RC_GAME_NOT_EQUAL_ARCH_ERR
 	};
-	void callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode);
+	void callBack_JoinGameReturnCode(e_JoinGameReturnCode retCode, std::string extraInfo);
 	
 	void showConnectFailedInGame(const std::string& playerList);
 	void hideConnectFailedInGame(bool connectionRestored = true);
 
-	void playerDisconnected(std::string& playerName, bool disconnectOrExit);
+    void serverMessage(LocalizedText* message);
 
 	enum GeneralErrorType {
 		GENERAL_CONNECTION_FAILED,
-		HOST_TERMINATED
+        CLIENT_DROPPED,
+		HOST_TERMINATED,
+        DESYNC
 	};
 	void generalErrorOccured(GeneralErrorType error);
 
 	void abnormalNetCenterTermination();
 
-	void addStringToChatWindow(int clanNum, const char* newString);
+	void addStringToChatWindow(bool clanOnly, const std::string& newString, const std::string& locale);
 
 	//-----end of network function----
 
@@ -279,8 +269,6 @@ public:
 
 	void setCutSceneMode(bool on, bool animated = true);
 	bool isCutSceneMode();
-
-	static void SetFontDirectory();
 
 	void prepareForInGameMenu();
 
@@ -328,8 +316,6 @@ private:
 	class PNetCenter* NetClient;
 		
 	MissionEditor* missionEditor_;
-
-	std::string defaultSaveName_;
 
 	int synchroByClock_;
 	int framePeriod_;

@@ -36,7 +36,7 @@ struct terFilthDragon : terFilthGeneric
 	void SetSwarm(terFilthSwarmDragon* swarm_);
 	float GetSight(){return timerDieFree.phase();}
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	terFilthSwarmDragon* swarm;
 	terAnimationPhaseIteratorType ObjectAnimation;
@@ -83,7 +83,7 @@ struct terFilthDragonHead : terFilthSpline
 
 	void checkField();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	bool IsEndInvisibly();
 	terAnimationPhaseIteratorType ObjectAnimation;
@@ -120,7 +120,7 @@ struct terFilthSwarmDragon : terFilthSwarm
 
 	void SetPrm(terFilthDragonStruct* prm_){prm=prm_;};
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	terFilthDragonHead* HeadPoint;
 	struct s_WaspBirthGeoAction* BirthProcessPoint;

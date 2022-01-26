@@ -306,7 +306,7 @@ void SetPosRotationKeyTime(int nPoint, float tm, float tm_old, T& key)
 	T::value_type* pp = 0;
 	T::iterator i;
 	FOR_EACH(key, i)
-		if(fabs(i->time - tm_old) < 0.001f)
+		if(xm::fabs(i->time - tm_old) < 0.001f)
 		{
 			pp = &*i;
 			break;
@@ -321,7 +321,7 @@ void RemovePosRotationKey(float tm, T& key)
 {
 	T::iterator i;
 	FOR_EACH(key, i)
-		if(fabs(i->time - tm) < 0.001f)
+		if(xm::fabs(i->time - tm) < 0.001f)
 		{
 			key.erase(i);
 			break;

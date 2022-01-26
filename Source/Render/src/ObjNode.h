@@ -191,8 +191,8 @@ public:
 	int	attribute;
 
 	float		phase;
-	DWORD		diffuse;
-	DWORD		ambient;
+	uint32_t		diffuse;
+	uint32_t		ambient;
 
 	cObjectNodeRoot* root;
 

@@ -35,8 +35,8 @@ struct terFilthSpotParameters {
 #endif  // __XScript_struct_terFilthSpotParameters__
 terFilthSwarmParameter terFilthAntBaseParameter = { 50.f 
  , 20, 10, 1 };
-terFilthSwarmParameter terFilthAnt2BaseParameter = { 50.f, 20, 10 
- , 1 };
+terFilthSwarmParameter terFilthAnt2BaseParameter = { 50.f, 20, 10, 1 
+  };
 terFilthSwarmParameter terFilthWaspBaseParameter = { 100.f, 20, 20, 30 };
 #ifndef __XScript_struct_terFilthWaspStruct__
 #define __XScript_struct_terFilthWaspStruct__
@@ -61,8 +61,8 @@ terFilthWaspStruct terFilthWaspEyePrm = { 80.f
  , 100.f, 120.f, 20.f, 60.f, 50.f, 30.f, 30.f, 100.f, 0.5f };
 terFilthSwarmParameter terFilthDragonBaseParameter = { 100.f 
  , 5, 1, 1 };
-terFilthSwarmParameter terFilthDragonBaseParameter2 = { 100.f, 5, 1 
- , 1 };
+terFilthSwarmParameter terFilthDragonBaseParameter2 = { 100.f, 5, 1, 1 
+  };
 #ifndef __XScript_struct_terFilthDragonStruct__
 #define __XScript_struct_terFilthDragonStruct__
 #pragma pack( push, __XScript_struct_pack__, 4 )
@@ -120,8 +120,8 @@ struct terFilthEyeStruct {
 #endif  // __XScript_struct_terFilthEyeStruct__
 terFilthEyeStruct terFilthEyePrm = { 100.f 
  , -50.f, 0.3f, 1.f };
-terFilthSwarmParameter terFilthCrowBaseParameter = { 100.f 
- , 1, 30, 1 };
+terFilthSwarmParameter terFilthCrowBaseParameter = { 100.f, 1 
+ , 30, 1 };
 #ifndef __XScript_struct_terFilthCrowStruct__
 #define __XScript_struct_terFilthCrowStruct__
 #pragma pack( push, __XScript_struct_pack__, 4 )

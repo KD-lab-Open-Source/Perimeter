@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <vector>
+#include "files/files.h"
 #include "tweaks.h"
 #include "xutl.h"
 #include "xstream.h"
@@ -19,7 +21,7 @@ std::fstream *open_file(const char* name, unsigned f)
     if (f & XS_APPEND)
         mode |= std::ios::app;
 
-    return new std::fstream(name, mode);
+    return new std::fstream(std::filesystem::u8path(name), mode);
 }
 
 int XStream::open(const char* name, unsigned f) {
@@ -28,6 +30,7 @@ int XStream::open(const char* name, unsigned f) {
 
 int XStream::open(const std::string& name, unsigned f)
 {
+    close();
     /*
 	DWORD fa = 0;
 	DWORD fs = 0;
@@ -67,12 +70,12 @@ int XStream::open(const std::string& name, unsigned f)
 #endif
 
 
-    //Do a conversion for Windows -> POSIX paths
-    std::string path = convert_path(name.c_str());
+    //Do a conversion to native path format
+    std::string path = convert_path_native(name);
 
-    std::fstream *file = open_file(path.c_str(), f);
+    std::fstream *file = path.empty() ? nullptr : open_file(path.c_str(), f);
     handler = file;
-    if (file->is_open()) {
+    if (file && file->is_open()) {
         fname = path;
         pos = file->tellg();
         eofFlag = 0;
@@ -92,8 +95,10 @@ int XStream::open(const std::string& name, unsigned f)
     return 1;
 }
 
-int XStream::open(XStream* owner,long s,long ext_sz)
+int XStream::open(XStream* owner,int64_t s,int64_t ext_sz)
 {
+    close();
+    free_handler = false;
 	fname = owner -> fname;
 	handler = owner -> handler;
 	pos = 0;
@@ -122,14 +127,14 @@ void XStream::close()
 #ifdef XSTREAM_DEBUG
     fprintf(stderr, "DBG: XStream::close %s\n", fname.c_str());
 #endif
-    if(handler == nullptr)
-        return;
-
-    if (handler->is_open())
-        handler->close();
-
-    delete handler;
+    if (handler && free_handler) {
+        if (handler->is_open()) {
+            handler->close();
+        }
+        delete handler;
+    }
     handler = nullptr;
+    free_handler = true;
     fname.clear();
     pos = 0L;
     eofFlag = 1;

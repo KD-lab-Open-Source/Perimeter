@@ -77,8 +77,8 @@ const float RegionPathDeltaDistance = 90.0f;
 
 bool bWasShiftUnpressed = false;
 
-STARFORCE_API_NEW void OnToolzerSizeChange(float y);
-STARFORCE_API_NEW void CancelEditWorkarea();
+void OnToolzerSizeChange(float y);
+void CancelEditWorkarea();
 
 void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
@@ -106,7 +106,7 @@ void OnButtonWorkArea(CShellWindow* pWnd, InterfaceEventCode code, int param)
 			xassert(0);
 		}
 
-		bool replay = gameShell->CurrentMission.gameType_ == GT_playRellGame;
+		bool replay = gameShell->CurrentMission.gameType_ == GT_PLAY_RELL;
 
 		CancelEditWorkarea();
 
@@ -155,7 +155,7 @@ bool CShellIconManager::getCurrentEnabledOperation() {
 
 int OnLBUpWorkarea(float,float)
 {
-	if (gameShell->CurrentMission.gameType_ != GT_playRellGame) {
+	if (gameShell->CurrentMission.gameType_ != GT_PLAY_RELL) {
 		MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
 		_pShellDispatcher->RegionEndEdit();
 	}
@@ -164,7 +164,7 @@ int OnLBUpWorkarea(float,float)
 
 int OnLBDownWorkarea(float x,float y)
 {
-	if (gameShell->CurrentMission.gameType_ != GT_playRellGame) {
+	if (gameShell->CurrentMission.gameType_ != GT_PLAY_RELL) {
 		bWasShiftUnpressed = false;
 
 		if(_pShellDispatcher->m_nEditRegion != editRegion1)
@@ -198,13 +198,17 @@ int OnRBDownWorkarea(float,float)
 	return 0;
 }
 
-STARFORCE_API_NEW void CancelEditWorkarea()
+void CancelEditWorkarea()
 {
 	if (!universe()) {
 		return;
 	}
 	MetaRegionLock lock(_pShellDispatcher->regionMetaDispatcher());
-	bool replay = gameShell->CurrentMission.gameType_ == GT_playRellGame;
+    if (_pShellDispatcher->m_nEditRegion == editRegionNone) {
+        return;
+    }
+    
+	bool replay = gameShell->CurrentMission.gameType_ == GT_PLAY_RELL;
 	if (!replay) {
 		_pShellDispatcher->regionMetaDispatcher()->endLine();
 
@@ -224,7 +228,7 @@ STARFORCE_API_NEW void CancelEditWorkarea()
 	((CShellComplexPushButton*)_shellIconManager.GetWnd(SQSH_WORKAREA4_ID))->SetCheck(0);
 }
 
-STARFORCE_API_NEW int OnMouseMoveRegionEdit(float x, float y)
+int OnMouseMoveRegionEdit(float x, float y)
 {
 	if (_pShellDispatcher->m_bCanFlip) {
 		if((_shellIconManager.m_nMouseButtonsState & MK_LBUTTON) && !bWasShiftUnpressed)
@@ -268,7 +272,7 @@ STARFORCE_API_NEW int OnMouseMoveRegionEdit(float x, float y)
 	return 1;
 }
 
-STARFORCE_API_NEW int OnMouseMoveRegionEdit2(float x, float y)
+int OnMouseMoveRegionEdit2(float x, float y)
 {
 	if(!_pShellDispatcher->m_bTolzerFirstClick)
 	{
@@ -288,7 +292,7 @@ STARFORCE_API_NEW int OnMouseMoveRegionEdit2(float x, float y)
 	return 1;
 }
 
-STARFORCE_API_NEW void OnToolzerSizeChange(float y)
+void OnToolzerSizeChange(float y)
 {
 	int s = SIGN(y);
 	RegionMetaDispatcher* disp=_pShellDispatcher->regionMetaDispatcher();
@@ -299,7 +303,7 @@ STARFORCE_API_NEW void OnToolzerSizeChange(float y)
 	_shellCursorManager.SetSize(r);
 }
 
-STARFORCE_API_NEW void ToolzerSizeChangeQuant()
+void ToolzerSizeChangeQuant()
 {
 //	if(_pShellDispatcher->m_nEditRegion == editRegion1 && isAltPressed())
 //	{
@@ -422,7 +426,7 @@ void CShellLogicDispatcher::OnMouseIdle()
 	}
 }
 
-STARFORCE_API_NEW void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param)
+void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	if(code == EVENT_PRESSED)
 	{
@@ -430,67 +434,65 @@ STARFORCE_API_NEW void OnButtonSell(CShellWindow* pWnd, InterfaceEventCode code,
 	}
 }
 
-void CheckSelectDefaultSquad(bool bEmptyCheck = false)
+terUnitSquad* CheckSelectDefaultSquad(bool select = true)
 {
 	CUITabSheet* pSquadSheet = (CUITabSheet*)_shellIconManager.GetWnd(SQSH_TAB_SQUAD_ID);
 
 	terUnitSquad* pSquad = GetSquadByNumber(pSquadSheet->GetActivePage());
 
-	if(pSquad && !(bEmptyCheck && pSquad->Empty()))
-		universe()->SelectSquad(pSquad);
+	if (pSquad && select) {
+        universe()->SelectSquad(pSquad);
+    }
+    
+    return pSquad;
 }
 
-inline void ChancelUnits(int nAtomID)
-{
-	universe()->makeCommand(isShiftPressed() ? COMMAND_ID_PRODUCTION_DEC_10 : COMMAND_ID_PRODUCTION_DEC, nAtomID);
-}
-
-STARFORCE_API_NEW void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param)
+void OnButtonLegion(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
 	int nAtomID = pWnd->ID - SQSH_SOLDIER_ID + MUTATION_ATOM_SOLDIER;
 
 	if(code == EVENT_PRESSED)
 	{
-		CheckSelectDefaultSquad();
+        terUnitSquad* pSquad = CheckSelectDefaultSquad(false);
+        if (!pSquad) return;
 
-		CShellAtomButton* pBtn = (CShellAtomButton*)pWnd;
-		if(pBtn->GetPause())
-		{
+		CShellAtomButton* pBtn = dynamic_cast<CShellAtomButton*>(pWnd);
+        CommandID cmdID = COMMAND_ID_NONE;
+		if(pBtn->GetPause()) {
 			pBtn->Pause(false);
-			universe()->makeCommand(COMMAND_ID_PRODUCTION_PAUSE_OFF, nAtomID);
-		}
-		else
-		{
+            cmdID = COMMAND_ID_PRODUCTION_PAUSE_OFF;
+		} else {
 //			SND2DPlaySound("training");
-
-			universe()->makeCommand((isShiftPressed() || param == 10) ? COMMAND_ID_PRODUCTION_INC_10 : COMMAND_ID_PRODUCTION_INC, nAtomID);
+			cmdID = (isShiftPressed() || param == 10) ? COMMAND_ID_PRODUCTION_INC_10 : COMMAND_ID_PRODUCTION_INC;
 		}
+        if (cmdID != COMMAND_ID_NONE) {
+            pSquad->commandOutcoming(UnitCommand(cmdID, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
+        }
 	}
 	else if(code == EVENT_RPRESSED)
 	{
-		CheckSelectDefaultSquad();
+        terUnitSquad* pSquad = CheckSelectDefaultSquad(false);
+        if (!pSquad) return;
 
-		CShellAtomButton* pBtn = (CShellAtomButton*)pWnd;
+		CShellAtomButton* pBtn = dynamic_cast<CShellAtomButton*>(pWnd);
 		if (!pBtn->GetPause() && pBtn->isEnabled()) {
 			if (pBtn->CanPause()) {
 				pBtn->Pause(true);
-				universe()->makeCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, nAtomID);
+                pSquad->commandOutcoming(UnitCommand(COMMAND_ID_PRODUCTION_PAUSE_ON, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
 			} else {
 				int nReqCount = isShiftPressed() ? 10 : 1;
-				for(int i=0; i<nReqCount; i++)
-					universe()->makeCommand(COMMAND_ID_BASIC_UNIT_DESTROY, nAtomID);
-//				ChancelUnits(nAtomID);
+				for(int i=0; i<nReqCount; i++) {
+                    pSquad->commandOutcoming(UnitCommand(COMMAND_ID_BASIC_UNIT_DESTROY, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
+                }
 			}
 		} else {
-			int nReqCount = isShiftPressed() ? 10 : 1;
-			for(int i=0; i<nReqCount; i++)
-				universe()->makeCommand(COMMAND_ID_PRODUCTION_DEC, nAtomID);
-//			ChancelUnits(nAtomID);
+            CommandID cmdID = (isShiftPressed() || param == 10) ? COMMAND_ID_PRODUCTION_DEC_10 : COMMAND_ID_PRODUCTION_DEC;
+            pSquad->commandOutcoming(UnitCommand(cmdID, nAtomID, COMMAND_SELECTED_MODE_NEGATIVE));
 		}
 	}
 }
 
-STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
+terUnitAttributeID Button2StructureID(int nBtnID)
 {
 	terUnitAttributeID n_struct = UNIT_ATTRIBUTE_NONE;
 
@@ -534,7 +536,7 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 		n_struct = UNIT_ATTRIBUTE_FLY_STATION1;
 		break;
     case SQSH_STATION_ELECTRO_LAB_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION1;
         }
         break;
@@ -567,7 +569,7 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 		n_struct = UNIT_ATTRIBUTE_GUN_SUBCHASER;
 		break;
     case SQSH_GUN_ELECTRO_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_CANNON;
         }
         break;
@@ -605,12 +607,12 @@ STARFORCE_API_NEW terUnitAttributeID Button2StructureID(int nBtnID)
 
 
     case SQSH_SELPANEL_UPGRADE_ELECTRO1_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION2;
         }
         break;
     case SQSH_SELPANEL_UPGRADE_ELECTRO2_ID:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n_struct = UNIT_ATTRIBUTE_ELECTRO_STATION3;
         }
         break;
@@ -694,7 +696,7 @@ int Structure2ButtonID(int i)
 		id = SQSH_STATION3_ID;
 		break;
     case UNIT_ATTRIBUTE_ELECTRO_STATION1:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             id = SQSH_STATION_ELECTRO_LAB_ID;
         }
         break;
@@ -726,7 +728,7 @@ int Structure2ButtonID(int i)
 		id = SQSH_GUN_LASER_ID;
 		break;
     case UNIT_ATTRIBUTE_ELECTRO_CANNON:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             id = SQSH_GUN_ELECTRO_ID;
         }
         break;
@@ -874,7 +876,7 @@ int Structure2ButtonID_(int i)// только для подсказок по с�
 	return id;
 }
 
-STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id)
+terUnitAttributeID Button2LegionID(int id)
 {
 	terUnitAttributeID n = UNIT_ATTRIBUTE_NONE;
 	switch(id)
@@ -965,17 +967,17 @@ STARFORCE_API_NEW terUnitAttributeID Button2LegionID(int id)
 		n = UNIT_ATTRIBUTE_SCUM_HEATER;
 		break;
     case SQSH_SQUAD_UNIT26:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n = UNIT_ATTRIBUTE_IMPALER;
         }
         break;
     case SQSH_SQUAD_UNIT27:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n = UNIT_ATTRIBUTE_EFLAIR;
         }
         break;
     case SQSH_SQUAD_UNIT28:
-        if (terGameContent & GAME_CONTENT::PERIMETER_ET) {
+        if (terGameContentAvailable & GAME_CONTENT::PERIMETER_ET) {
             n = UNIT_ATTRIBUTE_CONDUCTOR;
         }
         break;
@@ -1226,7 +1228,6 @@ void OnButtonDisintegrate(CShellWindow* pWnd, InterfaceEventCode code, int param
 }
 
 void OnButtonTogether(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-//	joinSelectedToSquad( GetSquadByNumber(((CUITabSheet*)GetWnd(SQSH_TAB_SQUAD_ID))->GetActivePage()) );
 	if (code == EVENT_PRESSED) {
 		CUITabSheet* pSquadSheet = (CUITabSheet*)_shellIconManager.GetWnd(SQSH_TAB_SQUAD_ID);
 		int nActivePage = pSquadSheet->GetActivePage();
@@ -1508,23 +1509,17 @@ void OnFrameTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void EnterInMissionMenu()
 {
 	gameShell->prepareForInGameMenu();
+    
+    bool notMulti = gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::MULTIPLAYER;
 
 	_shellIconManager.GetWnd(SQSH_MM_INMISSION_SAVE_BTN)->Enable(
-			gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::LAN
-		&&	gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::REPLAY );
+            gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::REPLAY
+    );
 
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_LOAD_BTN)->Enable(
-			gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::LAN );
+	_shellIconManager.GetWnd(SQSH_MM_INMISSION_LOAD_BTN)->Enable(notMulti);
 
-
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_RESTART_BTN)->Enable(
-			gameShell->currentSingleProfile.getLastGameType() != UserSingleProfile::LAN );
-
-
-#ifdef _DEMO_
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_SAVE_BTN)->Enable(false);
-	_shellIconManager.GetWnd(SQSH_MM_INMISSION_LOAD_BTN)->Enable(false);
-#endif
+	_shellIconManager.GetWnd(SQSH_MM_INMISSION_RESTART_BTN)->Enable(notMulti);
+    
 
 	_shellIconManager.SwitchMenuScreens(-1, SQSH_MM_INMISSION_SCR);
 }

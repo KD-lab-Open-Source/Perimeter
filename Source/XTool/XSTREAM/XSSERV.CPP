@@ -7,10 +7,10 @@ static char *seekMSG	= "BAD SEEK";
 static char *flushMSG	= "FLUSH FILE BUFFERS ERROR";
 static char *sizeMSG	= "FILE SIZE CALCULATION ERROR";
 
-long XStream::seek(long offset, int dir)
+int64_t XStream::seek(int64_t offset, int dir)
 {
     /*
-	long ret;
+	int64_t ret;
 
 	if(extSize != -1){
 		switch(dir){
@@ -43,7 +43,7 @@ long XStream::seek(long offset, int dir)
         <<" addr:"<<handler<<" curo:"<<offset<<std::endl;
     debug.close();*/
 
-    long ret=0;
+    int64_t ret=0;
     if(extSize != -1){
         switch (dir) {
             case XS_BEG:
@@ -143,10 +143,10 @@ void XStream::flush()
     handler->flush();
 }
 
-long XStream::size() const
+int64_t XStream::size() const
 {
     /*
-	long tmp = extSize;
+	int64_t tmp = extSize;
 	
 	if(tmp == -1){
 		tmp=GetFileSize(handler,0);
@@ -158,9 +158,10 @@ long XStream::size() const
      */
     
     //std::cout<<"XStream::size()"<<std::endl;
-    long tmp = extSize;
-    long int tmp2;
+    int64_t tmp = extSize;
+    int64_t tmp2;
     if(tmp == -1){
+        xassert(handler);
         //tmp=GetFileSize(handler,0);
         if (handler->flags() & std::ios::in) {
             tmp2 = handler->tellg();

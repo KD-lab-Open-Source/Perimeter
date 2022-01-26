@@ -1,7 +1,6 @@
 #include "stdafxTr.h"
 
 ///NOISE FUNCTION II
-#include <math.h>
 //#include <list.h>
 
 #include "pnint.h"
@@ -18,6 +17,7 @@
 #ifdef _PERIMETER_
 #include "../Render/inc/IRenderDevice.h"
 #endif //_PERIMETER_
+#include "files/files.h"
 
 extern float noise3(float vec[]);
 static float turbulenceG(float *v, float freq)
@@ -28,28 +28,28 @@ static float turbulenceG(float *v, float freq)
 		vec[0] = freq * v[0];
 		vec[1] = freq * v[1];
 		vec[2] = freq * v[2];
-		t += (float) fabs(noise3(vec)) / freq;
+		t += (float) xm::abs(noise3(vec)) / freq;
 	}
 	return t;
 }
 
 static float bias(float a, float b)
 {
-	return (float)powf(a, log(b) / log(0.5));
+	return (float)xm::pow(a, xm::log(b) / xm::log(0.5));
 }
 
 static float gain(float a, float b)
 {
-	float p = (float)( log(1. - b) / log(0.5) );
+	float p = (float)( xm::log(1. - b) / xm::log(0.5) );
 
 	if (a < .001)
 		return 0.;
 	else if (a > .999)
 		return 1.;
 	if (a < 0.5)
-		return (float) (powf(2 * a, p) / 2);
+		return (float) (xm::pow(2 * a, p) / 2);
 	else
-		return (float) (1. - powf(2 * (1. - a), p) / 2);
+		return (float) (1. - xm::pow(2 * (1. - a), p) / 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ static void gaussFilter(int * alt_buff, double filter_scaling, int xy_size)
 	double filter_scaling_inv_2 = sqr(1/filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -136,8 +136,8 @@ static void gaussFilter(int * alt_buff, double filter_scaling, int xy_size)
 				for(x = -H;x < H;x++){
 					f += filter_array[H + y][H + x]*double(alt_buff[((yy + y)&border_mask)*xy_size + ((xx + x)&border_mask)]);
 					}
-			unsigned char c = round(f*norma_inv);
-			new_alt_buff[((yy)*xy_size) + (xx)] = round(f*norma_inv);
+			unsigned char c = xm::round(f * norma_inv);
+			new_alt_buff[((yy)*xy_size) + (xx)] = xm::round(f * norma_inv);
 			}
 	}
 	//cout <<endl<<endl;
@@ -165,7 +165,7 @@ float turbulence2(float point[2], float lofreq, float hifreq)
 	t = 0; 
 	for (freq = lofreq ; freq < hifreq ; freq *= 2.) {
 extern float noise2(float vec[2]);
-		t += fabs(noise2(p)) / freq; 
+		t += xm::abs(noise2(p)) / freq; 
 		p[0] *= 2.; 
 		p[1] *= 2.; 
 	} 
@@ -195,8 +195,8 @@ void geoInfluence(int x,int y)
 			float y=(float)(i-XYGG_SIZE05)/(float)XYGG_SIZE05;
 			for(j=0; j<XYGG_SIZE; j++){
 				float x=(float)(j-XYGG_SIZE05)/(float)XYGG_SIZE05; 
-				float f=exp(-(fabsf(x*x*x)+fabsf(y*y*y))/(0.4*0.4));
-				GeoGrid[i][j]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				float f=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.4 * 0.4));
+				GeoGrid[i][j]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
 			}
 		}
 		//float da=a90/(XYGG_SIZE05-(XYGG_SIZE05>>2));
@@ -206,7 +206,7 @@ void geoInfluence(int x,int y)
 			xx = xRad[i];
 			yy = yRad[i];
 			for(j = 0; j < max; j++) {
-				GeoGrid[(XYGG_SIZE05 + yy[j]) & clip_mask_GG][(XYGG_SIZE05 + xx[j]) & clip_mask_GG]=(XRnd(max)<<13)+(1<<15);//round((float)MAX_H*((XRnd(XYGG_SIZE05-i)+1)/(i+1)) )//*cos(a))>>15;
+				GeoGrid[(XYGG_SIZE05 + yy[j]) & clip_mask_GG][(XYGG_SIZE05 + xx[j]) & clip_mask_GG]=(XRnd(max)<<13)+(1<<15);//xm::round((float)MAX_H*((XRnd(XYGG_SIZE05-i)+1)/(i+1)) )//*xm::cos(a))>>15;
 			}
 			//a+=da;
 			//if(a>a90)a=a90;
@@ -306,9 +306,9 @@ extern float turbulence(float point[3], float lofreq, float hifreq);
 			VAR[2]=time/kmt;
 			float tmp;
 			//tmp=turbulence(VAR,4)*256*2;
-			//tmp=((float)sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,8))+1)*127.5; 
-			/////tmp=(float) (1+sin(VAR[0]*VAR[1]*VAR[2]+turbulence(VAR,0.1,1)))*127.5; 
-			tmp=((float)sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR, 0.1f, 1.6f))+1)*127.5f; 
+			//tmp=((float)xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,8))+1)*127.5; 
+			/////tmp=(float) (1+xm::sin(VAR[0]*VAR[1]*VAR[2]+turbulence(VAR,0.1,1)))*127.5; 
+			tmp=((float)xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR, 0.1f, 1.6f))+1)*127.5f; 
 			dh=(tmp*tV)/200.0;
 			//vMap.voxSet((x+j-r) & vMap.clip_mask_x,(y+i-r) & vMap.clip_mask_y,dh);
 			int V=dh*GeoGrid[i>>kmGG][j>>kmGG]>>(16);
@@ -368,8 +368,8 @@ struct sTemplateGeoInfluence {
 
 					float tmp;
 					float var=(VAR[2]*NOISE_DIVIDER)*(VAR[0]*NOISE_DIVIDER)*(VAR[1]*NOISE_DIVIDER);
-					tmp=((float)sin(var+turbulence01_08(VAR))+1)*127.5f;
-					int dh=round((tmp*kmNewVx)/200.0);
+					tmp=((float)xm::sin(var+turbulence01_08(VAR))+1)*127.5f;
+					int dh=xm::round((tmp*kmNewVx)/200.0);
 					int V=dh*tmpltGeo[cnt]>>(16);
 					V+=(tmpltGeo[cnt]>>7)*kmNewVx/200;
 					//V+=h_begin;
@@ -444,8 +444,8 @@ void CGeoInfluence::prepTmplt(void)
 		float y=(float)(i-sy05)/(float)sy05;
 		for(j=0; j<sx; j++){
 			float x=(float)(j-sx05)/(float)sx05; 
-			float f=exp(-(fabsf(x*x*x)+fabsf(y*y*y))/(0.4*0.4));
-			tmpltGeo[cnt]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+			float f=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.4 * 0.4));
+			tmpltGeo[cnt]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
 			cnt++;
 		}
 	}
@@ -487,14 +487,14 @@ int CGeoInfluence::quant(int deltaTime)
 
 				float tmp;
 				//tmp=turbulence(VAR,4)*256*2;
-				//tmp=((float)sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,8))+1)*127.5; 
-				/////tmp=(float) (1+sin(VAR[0]*VAR[1]*VAR[2]+turbulence(VAR,0.1,1)))*127.5; 
-				//tmp=((float)sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR, 0.1f, 1.6f))+1)*127.5f; 
+				//tmp=((float)xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR,8))+1)*127.5; 
+				/////tmp=(float) (1+xm::sin(VAR[0]*VAR[1]*VAR[2]+turbulence(VAR,0.1,1)))*127.5; 
+				//tmp=((float)xm::sin(VAR[2]*VAR[0]*VAR[1]+turbulence(VAR, 0.1f, 1.6f))+1)*127.5f; 
 
 				///float var=VAR[2]*VAR[0]*VAR[1];
 				float var=(VAR[2]*NOISE_DIVIDER)*(VAR[0]*NOISE_DIVIDER)*(VAR[1]*NOISE_DIVIDER);
-				tmp=((float)sin(var+((float)turbulence01_08(VAR)) )+1)*127.5f;
-				int dh=round((tmp*kmNewVx)/200.0);
+				tmp=((float)xm::sin(var+((float)turbulence01_08(VAR)) )+1)*127.5f;
+				int dh= xm::round((tmp * kmNewVx) / 200.0);
 
 				//vMap.voxSet((x+j-r) & vMap.clip_mask_x,(y+i-r) & vMap.clip_mask_y,dh);
 				V+=dh*tmpltGeo[cnt]>>(16);
@@ -526,7 +526,8 @@ int CGeoInfluence::quant(int deltaTime)
 				fl=1;
 				for(int m=0; m<256; m++){
 					float x=(float)m/128;//Диапазон от 0 до 2
-					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
+					k_dh[m]= xm::round(
+                            (-0.1f + xm::exp(-xm::abs((x - 1) * (x - 1) * (x - 1)) / (0.4f * 0.4f))) * (1 << 16));
 				}
 
 			}
@@ -597,13 +598,13 @@ CWormOut::CWormOut(int _x, int _y)
 		float y=(float)(i-sy05)/(float)sy05;
 		for(j=0; j<sx_; j++){
 			float x=(float)(j-sx05)/(float)sx05; 
-			float f0=exp(-(fabsf(x*x*x)+fabsf(y*y*y))/(0.4*0.4));
-			//tmpltVx[cnt]=round(f0*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+			float f0=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.4 * 0.4));
+			//tmpltVx[cnt]=xm::round(f0*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 
-			float f=1.0f*(1.0f-sqrt(x*x+y*y));
+			float f=1.0f*(1.0f-xm::sqrt(x*x+y*y));
 			if(f<0)f=0;
 			f=(f0+f)/2;
-			tmpltVx[cnt]=round(f*(float)(1<<16));
+			tmpltVx[cnt]= xm::round(f * (float) (1 << 16));
 
 			cnt++;
 		}
@@ -655,7 +656,7 @@ bool CWormOut::quant()
 			int const addHeight=127*kmNewVx/200*tmpltVx[cnt]>>(16);
 			if( h_begin + addHeight + V > Vold) {
 
-				int dh=round(((30)*kmNewVx)/200.0);
+				int dh=xm::round(((30)*kmNewVx)/200.0);
 				//int dh=( ((40<<VX_FRACTION)*tmpltVx[cnt])>>16)+ kmNewVx;//
 				//if(tmpltVx[cnt]) {
 					V+=dh;
@@ -672,7 +673,7 @@ bool CWormOut::quant()
 
 				float tmp=10<<VX_FRACTION;
 
-				int dh=round((tmp*kmNewVx)/200.0);
+				int dh= xm::round((tmp * kmNewVx) / 200.0);
 
 				V+=(dh*tmpltVx[cnt]>>16);
 			}
@@ -692,7 +693,8 @@ bool CWormOut::quant()
 				fl=1;
 				for(int m=0; m<256; m++){
 					float x=(float)m/128;//Диапазон от 0 до 2
-					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
+					k_dh[m]= xm::round(
+                            (-0.1f + xm::exp(-xm::abs((x - 1) * (x - 1) * (x - 1)) / (0.4f * 0.4f))) * (1 << 16));
 				}
 
 			}
@@ -815,8 +817,8 @@ struct CWormForm {
 			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 			for(j=0; j<WSXSY; j++){
 				//float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-				//float f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
-				//(*FormWormsNew)[i][j]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				//float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
+				//(*FormWormsNew)[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 				int hh=VBitMap.getPreciseColor(j, i);
 				(*FormWormsNew)[i][j]=hh<<8;
 			}
@@ -833,8 +835,8 @@ struct CWormForm {
 			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 			for(j=0; j<WSXSY; j++){
 				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-				float f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
-				(*FormWormsNew)[i][j]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4 * 0.4));
+				(*FormWormsNew)[i][j]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
 			}
 		}
 	};
@@ -868,7 +870,7 @@ void worms(int x, int y)
 		fl=1;
 		for(int m=0; m<256; m++){
 			float x=(float)m/256;//Диапазон от 0 до 1
-			k_dh[m]=(0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16);//(1.2+0.05*sin(2*tan(x*50)))
+			k_dh[m]= (0.99+0.1*xm::sin(x*50)) * xm::exp(-xm::abs((x) * (x) * (x)) / (0.4f * 0.4f)) * (1 << 16);//(1.2+0.05*xm::sin(2*tan(x*50)))
 		}
 	}
 
@@ -878,8 +880,8 @@ void worms(int x, int y)
 //			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 //			for(j=0; j<WSXSY; j++){
 //				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-//				float f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
-//				FormWorms[i][j]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+//				float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
+//				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 //			}
 /*			for(j=WSXSY>>1; j<WSXSY; j++){
 				int t=(WSXSY-j)*FormWorms[WSXSY-1][j]/(WSXSY>>1);
@@ -921,11 +923,11 @@ void worms(int x, int y)
 	else{
 		if(FormWormsNew==&FormWorms1){ FormWormsNew=&FormWorms2; FormWormsOld=&FormWorms1;}
 		else { FormWormsNew=&FormWorms1; FormWormsOld=&FormWorms2;}
-		float curAlpha=atan2f(x-xold, yold-y);
+		float curAlpha= xm::atan2(static_cast<float>(x - xold), static_cast<float>(yold - y));
 		static float alpha=0;
 		float dAlpha=alpha-curAlpha;
 		alpha=curAlpha;
-//		if(fabs(dAlpha) > (5.0*(3.14/180.0)) ){
+//		if(xm::abs(dAlpha) > (5.0*(3.14/180.0)) ){
 			wormForm.put2WF2();
 //		}
 //		else {
@@ -1147,7 +1149,7 @@ loc_notOverlapped: ;
 static const float STEP_WORM=5.0;
 static const float K_FRND=2.0;
 static const float MIN_SPEED=0.5;
-static const float MAX_TURN_ANGLE=30*(M_PI/180.0);
+static const float MAX_TURN_ANGLE=30*(XM_PI/180.0);
 CGeoWorm::CGeoWorm(int xBeg, int yBeg, int xTrgt, int yTrgt)
 {
 	FormWormsNew=&FormWorms1;
@@ -1156,7 +1158,7 @@ CGeoWorm::CGeoWorm(int xBeg, int yBeg, int xTrgt, int yTrgt)
 	xOld=xBeg; yOld=yBeg;
 	counter=0;
 	cPosition=tPosition=Vect3f::ZERO;
-	cDirection=FRnd()* M_PI * 2.0f;
+	cDirection=FRnd()* XM_PI * 2.0f;
 	cSpeed=MIN_SPEED + K_FRND*FRnd();
 }
 
@@ -1172,15 +1174,15 @@ int CGeoWorm::quant()
 		period=MIN_WORM_PERIOD+XRnd(MAX_WORM_ADDPERIOD);
 	}
 LGWQ_1:
-	cDirection=addAngle+noise1(counter/40.0)* M_PI * 2.0f;
+	cDirection=addAngle+noise1(counter/40.0)* XM_PI * 2.0f;
 	cSpeed=0.5 + 0.5*noise1(counter/10.0);
 	float x, y;
 	float dd=cSpeed*STEP_WORM;
-	x=xOld+cos(cDirection)*dd;
-	y=yOld+sin(cDirection)*dd;
+	x=xOld+xm::cos(cDirection)*dd;
+	y=yOld+xm::sin(cDirection)*dd;
 	if(x<0 || (x+WSXSY)>vMap.H_SIZE || y<0 || (y+WSXSY)>vMap.V_SIZE){
 		if(addAngle>0) addAngle=0;
-		else addAngle=M_PI;
+		else addAngle=XM_PI;
 		goto LGWQ_1;
 	}
 	step(x,y);
@@ -1216,7 +1218,8 @@ void CGeoWorm::step(int x, int y, float angle)
 		fl=1;
 		for(int m=0; m<256; m++){
 			float x=(float)m/256;//Диапазон от 0 до 1
-			k_dh[m]=round( (0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16) );//(1.2+0.05*sin(2*tan(x*50)))
+			k_dh[m]= xm::round(
+                    (0.99 + 0.1 * xm::sin(x * 50)) * xm::exp(-xm::abs((x) * (x) * (x)) / (0.4f * 0.4f)) * (1 << 16));//(1.2+0.05*xm::sin(2*tan(x*50)))
 		}
 	}
 
@@ -1225,8 +1228,8 @@ void CGeoWorm::step(int x, int y, float angle)
 //			float y=(float)(i-WSXSY05)/(float)WSXSY05;
 //			for(j=0; j<WSXSY; j++){
 //				float x=(float)(j-WSXSY05)/(float)WSXSY05; 
-//				float f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
-//				FormWorms[i][j]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+//				float f=xm::exp(-(fabsf(x*x)+xm::absf(y*y))/(0.4*0.4));
+//				FormWorms[i][j]=xm::round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
 //			}
 /*			for(j=WSXSY>>1; j<WSXSY; j++){
 				int t=(WSXSY-j)*FormWorms[WSXSY-1][j]/(WSXSY>>1);
@@ -1272,11 +1275,11 @@ void CGeoWorm::step(int x, int y, float angle)
 		static float alpha=0;
 		float dAlpha=alpha-curAlpha;
 		alpha=curAlpha;
-//		if(fabs(dAlpha) > (15.0*(3.14/180.0)) ){
+//		if(xm::abs(dAlpha) > (15.0*(3.14/180.0)) ){
 			wormFormLib.put2WF2(FormWormsNew);
 //		}
 //		else {
-//			wormFormLib.put2WF(alpha+M_PI/2, FormWormsNew);
+//			wormFormLib.put2WF(alpha+XM_PI/2, FormWormsNew);
 //		}
 		//ter.restore();
 
@@ -1582,7 +1585,7 @@ void gBreak(int xbeg, int ybeg, char fl_first)
 	//static int fl_first=0;
 	static geoBreak1 * gb=0;//, * gb1, *gb2, *gb3, *gb4, *gb5, *gb6;
 	if(fl_first==1){
-		srand( 7 );
+		//srand( 7 );
 		x=xbeg; y=ybeg;
 		if(!gb) delete gb;
 		gb=new geoBreak1(xbeg, ybeg);
@@ -1605,8 +1608,8 @@ void singleGeoBreak::geoLine2(int xbeg, int ybeg, int sx, int sy, int deltaH)
 	int x_cur=xbeg<<16;
 	int y_cur=ybeg<<16;
 
-	if(abs(sx)>=abs(sy)){
-		int stepdy=sy*(1<<16)/abs(sx);
+	if(xm::abs(sx) >= xm::abs(sy)){
+		int stepdy= sy * (1<<16) / xm::abs(sx);
 		int stepdx;
 		if(sx>0)stepdx=1; else stepdx=-1;
 		for(int i=0; i!=sx; i+=stepdx, x_cur+=stepdx<<16, y_cur+=stepdy){
@@ -1614,8 +1617,8 @@ void singleGeoBreak::geoLine2(int xbeg, int ybeg, int sx, int sy, int deltaH)
 		}
 	}
 	else { // sy_real> sx_real
-		if(abs(sy)>abs(sx)){
-			int stepdx=sx*(1<<16)/abs(sy);
+		if(xm::abs(sy) > xm::abs(sx)){
+			int stepdx= sx * (1<<16) / xm::abs(sy);
 			int stepdy;
 			if(sy>0)stepdy=1; else stepdy=-1;
 			for(int i=0; i!=sy; i+=stepdy, y_cur+=stepdy<<16, x_cur+=stepdx){
@@ -1653,7 +1656,7 @@ void singleGeoBreak::breakGeoLine3(int * xp, int * yp, int maxPnt, int deltaH, i
 
 			if(sx<=0) continue;
 
-			int stepdy=sy*(1<<16)/abs(sx);
+			int stepdy= sy * (1<<16) / xm::abs(sx);
 			int stepdx;
 			if(sx>0)stepdx=1; else stepdx=-1;
 			for(int i=0; i!=sx; i+=stepdx, x_cur+=stepdx<<16, y_cur+=stepdy){
@@ -1710,7 +1713,7 @@ void singleGeoBreak::breakGeoLine3(int * xp, int * yp, int maxPnt, int deltaH, i
 	}
 	else { // sy_real> sx_real
 		if(abs(sy)>abs(sx)){
-			int stepdx=sx*(1<<16)/abs(sy);
+			int stepdx=sx*(1<<16)/xm::abs(sy);
 			int stepdy;
 			if(sy>0)stepdy=1; else stepdy=-1;
 			for(int i=0; i!=sy; i+=stepdy, y_cur+=stepdy<<16, x_cur+=stepdx){
@@ -1739,7 +1742,7 @@ eReturnQuantResult singleGeoBreak::quant(void)
 	headSection+=1;
 	static int beg_offfsety=0;
 	if(headSection <= numSections){//Идет рост трещины
-		const float dispersionAngle=40.f*M_PI/180.f;
+		const float dispersionAngle=40.f*XM_PI/180.f;
 		const float dispersionAngle05=dispersionAngle/2.f;
 		const float dispersionAngle025=dispersionAngle/4.f;
 		int x_recomend=xbeg+(dx_step*headSection>>16);
@@ -1750,11 +1753,11 @@ eReturnQuantResult singleGeoBreak::quant(void)
 		int x_cur=xp[headSection-1]<<16;
 		int y_cur=yp[headSection-1]<<16;
 		if(headSection < numSections){
-			float ss=sqrtf(sy_real*sy_real+sx_real*sx_real);
+			float ss= xm::sqrt(static_cast<float>(sy_real * sy_real + sx_real * sx_real));
 			float cosAlpha=(float)sx_real/ss;
 			float sinAlpha=(float)sy_real/ss;
 			//Noising
-			double alpha=atan(sinAlpha/cosAlpha);//atan((double)sy_real/(double)sx_real);
+			double alpha=xm::atan(sinAlpha/cosAlpha);//atan((double)sy_real/(double)sx_real);
 			alpha=alpha+(frnd(dispersionAngle05)-dispersionAngle05);
 			//int nx=(DENSITY_NOISE>>1) + XRnd(DENSITY_NOISE>>1); //DENSITY_NOISE;//
 			//int ny=XRnd(8)-4;
@@ -1762,8 +1765,8 @@ eReturnQuantResult singleGeoBreak::quant(void)
 			//sy_real=-(-(float)nx*sinAlpha+ (float)ny*cosAlpha);
 			//sx_real=sx_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sx_real<0) sx_real=0;
 			//sy_real=sy_real+ XRnd(DENSITY_NOISE<<1)- (DENSITY_NOISE<<1);// if(sy_real<0) sy_real=0;
-			sx_real=sx_real/2+ cos(alpha)*(XRnd(DENSITY_NOISE<<1)+ (DENSITY_NOISE<<1))/2;// if(sx_real<0) sx_real=0;
-			sy_real=sy_real/2+ sin(alpha)*(XRnd(DENSITY_NOISE<<1)+ (DENSITY_NOISE<<1))/2;// if(sy_real<0) sy_real=0;
+			sx_real=sx_real/2 + xm::cos(alpha) * (XRnd(DENSITY_NOISE << 1) + (DENSITY_NOISE << 1)) / 2;// if(sx_real<0) sx_real=0;
+			sy_real=sy_real/2 + xm::sin(alpha) * (XRnd(DENSITY_NOISE << 1) + (DENSITY_NOISE << 1)) / 2;// if(sy_real<0) sy_real=0;
 		}
 		//DrawLine
 		geoLine(xp[headSection-1], yp[headSection-1]+beg_offfsety, sx_real, sy_real);
@@ -1839,7 +1842,7 @@ static void gaussFilter4LS(unsigned short * alt_buff, double filter_scaling, int
 	double filter_scaling_inv_2 = sqr(1/filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -1860,8 +1863,8 @@ static void gaussFilter4LS(unsigned short * alt_buff, double filter_scaling, int
 					else h=0;
 					f += filter_array[H + y][H + x]*double(h);
 					}
-			unsigned char c = round(f*norma_inv);
-			new_alt_buff[((yy)*x_size) + (xx)] = round(f*norma_inv);
+			unsigned char c = xm::round(f * norma_inv);
+			new_alt_buff[((yy)*x_size) + (xx)] = xm::round(f * norma_inv);
 			}
 	}
 	//cout <<endl<<endl;
@@ -1880,7 +1883,7 @@ static void gaussFilter4LS(short * in_buff, short * out_buff, double filter_scal
 	double filter_scaling_inv_2 = sqr(1/filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -1901,8 +1904,8 @@ static void gaussFilter4LS(short * in_buff, short * out_buff, double filter_scal
 					else h=0;
 					f += filter_array[H + y][H + x]*double(h);
 					}
-			unsigned char c = round(f*norma_inv);
-			out_buff[((yy)*x_size) + (xx)] = round(f*norma_inv);
+			unsigned char c = xm::round(f * norma_inv);
+			out_buff[((yy)*x_size) + (xx)] = xm::round(f * norma_inv);
 			}
 	}
 }
@@ -1920,7 +1923,7 @@ static void gaussFilter4LS(int begx, int begy,  int x_size, int y_size, short * 
 	double filter_scaling_inv_2 = sqr(1/filter_scaling);
 	for(y = -H;y < H;y++)
 		for(x = -H;x < H;x++){
-			f = exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
+			f = xm::exp(-(sqr((double)x) + sqr((double)y))*filter_scaling_inv_2);
 			norma += f;
 			filter_array[H + y][H + x] = f;
 			}
@@ -1938,7 +1941,7 @@ static void gaussFilter4LS(int begx, int begy,  int x_size, int y_size, short * 
 						f += filter_array[H + y][H + x]*(double)vMap.SGetAlt(off);
 					}
 				}
-				unsigned short v = round(f*norma_inv);
+				unsigned short v = xm::round(f * norma_inv);
 				int off=vMap.offsetBuf( vMap.XCYCL(xx+begx), vMap.YCYCL(yy+begy));
 				if(vMap.VxDBuf[off]==0) vMap.SPutAltGeo(off, v);
 				else vMap.SPutAltDam(off, v);
@@ -1964,11 +1967,11 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 {
 	int i;
 	short maxDH=0;
-	unsigned char maxDir=(BYTE)-1;
+	unsigned char maxDir=(uint8_t)-1;
 	short startH=vMap.GVBuf[vMap.offsetGBuf(xg, yg)];
 	for(i=0; i<COUNT_DIRECT_TSTBRK; i++){
 		short h=vMap.GVBuf[vMap.offsetGBufC(xg+SDir[i].x, yg+SDir[i].y)];
-		short cMaxDH=(int)abs(h-startH)*KDir[i]>>16;
+		short cMaxDH= (int) xm::abs(h - startH) * KDir[i] >> 16;
 		if( cMaxDH > maxDH) { maxDH=cMaxDH; maxDir=i; }
 	}
 	if(maxDH < DELTA_BREAKAWAY) return NULL;
@@ -1992,7 +1995,7 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 			if(DH>0){ if(dh>maxDH) { maxDH=dh; maxDir=d;} } //можно с оптимизить разложив на на 2 цикла
 			else { if(dh<maxDH) { maxDH=dh; maxDir=d;} }
 		}
-		if(abs(maxDH) < DELTA_BREAKAWAY2) break;
+		if(xm::abs(maxDH) < DELTA_BREAKAWAY2) break;
 		curX+=SDir[maxDir].x;
 		curY+=SDir[maxDir].y;
 		curH=vMap.GVBuf[vMap.offsetGBufC(curX, curY)];
@@ -2015,7 +2018,7 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 			if(DH>0){ if(dh>maxDH) {maxDH=dh; maxDir=d;} } //можно с оптимизить разложив на на 2 цикла
 			else { if(dh<maxDH) {maxDH=dh; maxDir=d;} }
 		}
-		if(abs(maxDH) < DELTA_BREAKAWAY2) break;
+		if(xm::abs(maxDH) < DELTA_BREAKAWAY2) break;
 		curX=curX+SDir[maxDir].x;
 		curY=curY+SDir[maxDir].y;
 		curH=vMap.GVBuf[vMap.offsetGBufC(curX, curY)];
@@ -2024,15 +2027,15 @@ CLandslip* testBreakaway(int xg, int yg, int radLS)
 	int endLSY=vMap.YCYCLG(curY);
 	short endH=vMap.GVBuf[vMap.offsetGBuf(endLSX, endLSY)];
 	short begH=vMap.GVBuf[vMap.offsetGBuf(begLSX, begLSY)];
-	if(abs(endH-begH)<MIN_DELTAH_LANDSLIP) return NULL;
+	if(xm::abs(endH - begH) < MIN_DELTAH_LANDSLIP) return NULL;
 	CLandslip* lsp;
 	if(begH>endH){ //обвал идет с beg point
-		float al=atan2f( endLSY-begLSY, endLSX-begLSX);
-		lsp=new CLandslip((begLSX<<kmGrid)+2, (begLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, endH<<VX_FRACTION, begH<<VX_FRACTION, (float)M_PI+al );
+		float al=xm::atan2(static_cast<float>(endLSY-begLSY), static_cast<float>(endLSX-begLSX));
+		lsp=new CLandslip((begLSX<<kmGrid)+2, (begLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, endH<<VX_FRACTION, begH<<VX_FRACTION, (float)XM_PI+al );
 	}
 	else{ //обвал идет с end point
-		float al=atan2f( begLSY-endLSY, begLSX-endLSX);
-		lsp=new CLandslip((endLSX<<kmGrid)+2, (endLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, begH<<VX_FRACTION, endH<<VX_FRACTION, (float)M_PI+al );
+		float al= xm::atan2(static_cast<float>(begLSY - endLSY), static_cast<float>(begLSX - endLSX));
+		lsp=new CLandslip((endLSX<<kmGrid)+2, (endLSY<<kmGrid)+2, radLS/*40*/, radLS/*40*/, begH<<VX_FRACTION, endH<<VX_FRACTION, (float)XM_PI+al );
 	}
 	return lsp;
 }
@@ -2079,9 +2082,9 @@ CLandslip::CLandslip(int _x, int _y, int _sx, int _sy, int _hmin, int _hmax, flo
 	x=_x; y=_y;
 	sx=_sx; sy=_sy;
 	hmin=_hmin; hmax=_hmax;
-	deltaHLS=round(KH_LANDSLIP*(hmax-hmin));
+	deltaHLS= xm::round(KH_LANDSLIP * (hmax - hmin));
 	hminLS=hmax-deltaHLS;
-	direction=_direction;//_direction*M_PI/180.0f;
+	direction=_direction;//_direction*XM_PI/180.0f;
 	speed=BEGIN_SPEED_LANDSLIP;
 	cntQuant=0;
 	xPrec=x<<16; yPrec=y<<16;
@@ -2109,13 +2112,13 @@ CLandslip::CLandslip(int _x, int _y, int _sx, int _sy, int _hmin, int _hmax, flo
 			float yy=(float)rbmp.getY(j)/(sy/2)/(1<<16);
 
 //			if(j<sx/2) { xx=0; yy=(float)rbmp.getY(sx/2)/(sy/2)/(1<<16);}
-//			float f=exp(-(fabsf(xx*xx*xx*xx)+fabsf(yy*yy*yy*yy))/(0.4*0.4));
+//			float f=xm::exp(-(fabsf(xx*xx*xx*xx)+xm::absf(yy*yy*yy*yy))/(0.4*0.4));
 			float f=(float)tmpltGeo[cnt]/(float)(1<<16);
 			//int curV=hmax-(deltaHLS*tmpltGeo[cnt]>>16);
-			int dh=round(deltaHLS*f);
+			int dh= xm::round(deltaHLS * f);
 			surVx[cnt]=-1; //Обнуление
 			if(dh>0){
-				int curV=hmax-round(deltaHLS*f);
+				int curV= hmax - xm::round(deltaHLS * f);
 				if(curV<0)curV=0;
 				if(v>curV) {
 					*(deltaVx+cnt)=v-curV ;
@@ -2157,11 +2160,11 @@ void CLandslip::prepTmplt(void)
 			float x;
 			if(j<sx/2) x=0;
 			else x=(float)(j-sx05)/(float)sx05; 
-			float f=exp(-(fabsf(x*x*x)+fabsf(y*y*y))/(0.3*0.3));
+			float f=xm::exp(-(xm::abs(x * x * x) + xm::abs(y * y * y)) / (0.3 * 0.3));
 			if(j<sx/2) {
 				f=f+0.5f*(float)(sx/2-j)/(sx/2);
 			}
-			tmpltGeo[cnt]=round(f*(float)(1<<16));//(1<<16)+XRnd(1<<14);
+			tmpltGeo[cnt]= xm::round(f * (float) (1 << 16));//(1<<16)+XRnd(1<<14);
 			cnt++;
 		}
 	}
@@ -2170,9 +2173,9 @@ void CLandslip::prepTmplt(void)
 int CLandslip::geoQuant(void)
 {
 //Отладка вращающегося битмапа постоянной высоты
-/*	static float al=0;//M_PI/4.0;//+M_PI/18.0;
+/*	static float al=0;//XM_PI/4.0;//+XM_PI/18.0;
 	srBmp rbmp(al, sx, sy);
-	al=al+M_PI/18.0;
+	al=al+XM_PI/18.0;
 	unsigned char* geo=vMap.VxGBuf;
 	unsigned char* dam=vMap.VxDBuf;
 	unsigned char* atr=vMap.AtrBuf;
@@ -2195,7 +2198,7 @@ int CLandslip::geoQuant(void)
 //		}
 //		else {
 //			bsx=(-rbmp.stpY*i)+rbmp.stpX*round(i*sin(rbmp.alpha)*cos(rbmp.alpha));
-//			bsy=rbmp.stpY*round(i*sin(rbmp.alpha)*cos(rbmp.alpha));
+//			bsy=rbmp.stpY*xm::round(i*xm::sin(rbmp.alpha)*xm::cos(rbmp.alpha));
 //		}
 		rbmp.setStr(i);
 		for(j=0; j<sx; j++){
@@ -2227,13 +2230,13 @@ int CLandslip::geoQuant(void)
 
 	int xoldPrec=xPrec, yoldPrec=yPrec;
 
-	srBmp rbmpT(direction , sx, sy);//+ (M_PI/180)*(2-XRnd(4))
+	srBmp rbmpT(direction , sx, sy);//+ (XM_PI/180)*(2-XRnd(4))
 //расчет максимального битмапа
 	rbmpT.setStr(0);
-	int x1=abs(rbmpT.getX(0));
-	int y1=abs(rbmpT.getY(0));
-	int x2=abs(rbmpT.getX(sx-1));
-	int y2=abs(rbmpT.getY(sy-1));
+	int x1= xm::abs(rbmpT.getX(0));
+	int y1= xm::abs(rbmpT.getY(0));
+	int x2= xm::abs(rbmpT.getX(sx - 1));
+	int y2= xm::abs(rbmpT.getY(sy - 1));
 	if(x1 < x2) x1=x2;
 	if(y1 < y2) y1=y2;
 	int bsx=((x1>>16)+8)*2;//8 - граница
@@ -2303,10 +2306,10 @@ int CLandslip::geoQuant(void)
 		}
 	}
 
-	xPrec=xPrec+ -rbmpT.stpX; //speed*cos(M_PI+direction);
-	yPrec=yPrec+ -rbmpT.stpY; //speed*sin(M_PI+direction);
-	x=vMap.XCYCL(xPrec>>16);//vMap.XCYCL(round(xPrec));
-	y=vMap.YCYCL(yPrec>>16);//vMap.YCYCL(round(yPrec));
+	xPrec=xPrec+ -rbmpT.stpX; //speed*xm::cos(XM_PI+direction);
+	yPrec=yPrec+ -rbmpT.stpY; //speed*xm::sin(XM_PI+direction);
+	x=vMap.XCYCL(xPrec>>16);//vMap.XCYCL(xm::round(xPrec));
+	y=vMap.YCYCL(yPrec>>16);//vMap.YCYCL(xm::round(yPrec));
 
 	int bxPrec=bxoldPrec + -rbmpT.stpX;
 	int byPrec=byoldPrec + -rbmpT.stpY;
@@ -2433,7 +2436,7 @@ int CLandslip::geoQuant(void)
 			v|=*(atr+off) &VX_FRACTION_MASK;
 			int dsm=outBuf[cnt]-buf[cnt];
 			v+=dsm;
-			if( abs(dsm)< ((1<<VX_FRACTION)+(1<<(VX_FRACTION-1)) ) ){
+			if( xm::abs(dsm)< ((1<<VX_FRACTION)+(1<<(VX_FRACTION-1)) ) ){
 				if(dam[off]!=0) *(dam+off)=v>>VX_FRACTION;
 				else *(geo+off)=v>>VX_FRACTION;
 				*(atr+off)= (*(atr+off)&(~VX_FRACTION_MASK)) | (v&VX_FRACTION_MASK);
@@ -2468,10 +2471,10 @@ int CLandslip::quant(void)
 
 	//нахождение реальных размеров измененной области
 	rbmp.setStr(0);
-	int x1=abs(rbmp.getX(0));
-	int y1=abs(rbmp.getY(0));
-	int x2=abs(rbmp.getX(sx-1));
-	int y2=abs(rbmp.getY(sy-1));
+	int x1= xm::abs(rbmp.getX(0));
+	int y1= xm::abs(rbmp.getY(0));
+	int x2= xm::abs(rbmp.getX(sx - 1));
+	int y2= xm::abs(rbmp.getY(sy - 1));
 	if(x1 < x2) x1=x2;
 	if(y1 < y2) y1=y2;
 	int bsx=((x1>>16)+2)*2;//8 - граница
@@ -2553,12 +2556,10 @@ sTVolcano::sTVolcano(int _x, int _y, int _sx, int _sy)
 //	else kScl=((MAX_VX_HEIGHT-h_begin)<<16)/(MAX_VX_HEIGHT);
 
 
-	const int kFirstScale = round((0.55f+frnd(0.15f))*(float)(1<<16));
+	const int kFirstScale = xm::round((0.55f + frnd(0.15f)) * (float) (1 << 16));
 	max_template_volcano_height = 0;
-	XBuffer tfb;
-	tfb < Path2TTerraResource < "volcano.dat";
 	XStream fo(0);
-	fo.open(convert_path_resource(tfb), XS_IN);
+	fo.open(convert_path_content(Path2TTerraResource + "volcano.dat"), XS_IN);
 	unsigned short buf[256*2];
 	cnt = 0;
 	for(i = 0; i < tv_arraySY*tv_keyPoints; i++){
@@ -2617,7 +2618,8 @@ int sTVolcano::quant()
 				fl=1;
 				for(int m=0; m < 256; m++){
 					float x = (float)m/128;//Диапазон от 0 до 2
-					k_dh[m] = round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
+					k_dh[m] = xm::round(
+                            (-0.1f + xm::exp(-xm::abs((x - 1) * (x - 1) * (x - 1)) / (0.4f * 0.4f))) * (1 << 16));
 				}
 			}
 
@@ -2692,11 +2694,11 @@ const int analyze_terrain_upper_dz_max=16<<VX_FRACTION;
 const int analyze_terrain_lower_dz_min=-(16<<VX_FRACTION);
 static void analyzeTerrain(Vect3f& position, float radius, Vect3f& outOrientation)
 {
-	int D = round(radius);// >> kmGrid;
+	int D = xm::round(radius);// >> kmGrid;
 	if(!D) D = 1;
-	int x0 = round(position.x);// >> kmGrid;
-	int y0 = round(position.y);// >> kmGrid;
-	int z0 = round(position.z*(1<<VX_FRACTION));
+	int x0 = xm::round(position.x);// >> kmGrid;
+	int y0 = xm::round(position.y);// >> kmGrid;
+	int z0 = xm::round(position.z * (1 << VX_FRACTION));
 
 	int Sz = 0, Sxz = 0, Syz = 0;
 	for(int y = -D; y <= D; y++)
@@ -2750,10 +2752,8 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 		numPreImage=NUMBER_PRE_IMAGE;
 		preImage=new unsigned short[tb_arraySX*tb_arraySY*tb_keyPoints*numPreImage];
 
-        XBuffer cb;
-        cb < Path2TTerraResource < "bub.dat";
 		XStream fi;
-		fi.open(convert_path_resource(cb), XS_IN);
+		fi.open(convert_path_content(Path2TTerraResource + "bub.dat"), XS_IN);
 		fi.seek(0,XS_BEG);
 		//unsigned short buf[][256*2];
 		fi.read(preImage, tb_keyPoints * tb_arraySY*tb_arraySX*sizeof(unsigned short)*numPreImage);
@@ -2810,7 +2810,7 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 	h_begin=(vmin+vmax)/2;
 
 /*		//int kScl=((MAX_VX_HEIGHT-h_begin)<<16)/(MAX_VX_HEIGHT);
-	int kScl=round(1.5f*(float)(1<<16));
+	int kScl=xm::round(1.5f*(float)(1<<16));
 	XStream fo;
 	fo.open("bub.dat", XS_IN);
 	fo.seek(0,XS_BEG);
@@ -2832,7 +2832,7 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 	Vect3f position(x, y, (float)h_begin/(float)(1<<VX_FRACTION));
 	Vect3f outOrientation;
 	analyzeTerrain(position, sx/2, outOrientation);
-	//h_begin=round(position.z*(1<<VX_FRACTION));
+	//h_begin=xm::round(position.z*(1<<VX_FRACTION));
 	float A=outOrientation.x;
 	float B=outOrientation.y;
 	float C=-outOrientation.z;
@@ -2840,12 +2840,12 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 
 	unsigned short* curPreImage=preImage+tb_arraySX*tb_arraySY*tb_keyPoints*XRnd(numPreImage);
 	cnt=0;
-	////!int kScl=round(1.8f*(float)(1<<16));
-	int kScl=round(2.4f*(float)(1<<16));
+	////!int kScl=xm::round(1.8f*(float)(1<<16));
+	int kScl= xm::round(2.4f * (float) (1 << 16));
 	float fidx=(float)tb_arraySX/(float)sx;
 	float fidy=(float)tb_arraySY/(float)sy;
-	if(fidx > fidy){ kScl=round(kScl/fidy);}
-	else { kScl=round(kScl/fidx); }
+	if(fidx > fidy){ kScl= xm::round(kScl / fidy);}
+	else { kScl= xm::round(kScl / fidx); }
 	int i_dx = (tb_arraySX << 16)/sx;
 	int i_dy = (tb_arraySY << 16)/sy;
 	int fx,fy;
@@ -2857,10 +2857,10 @@ sTBubble::sTBubble(int _x, int _y, int _sx, int _sy, bool _flag_occurrenceGeo)
 			unsigned short* pi=curPreImage+(m*tb_arraySY*tb_arraySX)+(fy>>16)*tb_arraySX;
 			for(j = 0; j < sx; j++) {
 				array[cnt]=( (*(pi+(fx>>16)))*kScl )>>16;
-				//if(array[cnt]) array[cnt]+=round( (-(A*(j-sx/2) + B*(i-sy/2) + D)/C) * (1<<VX_FRACTION) - h_begin );//
+				//if(array[cnt]) array[cnt]+=xm::round( (-(A*(j-sx/2) + B*(i-sy/2) + D)/C) * (1<<VX_FRACTION) - h_begin );//
 				if(m==0){
 					float as=(-(A*(j-sx/2) + B*(i-sy/2) + D)/C);
-					substare[cnt]=round( (-(A*(j-sx/2) + B*(i-sy/2) + D)/C ) * (1<<VX_FRACTION) );
+					substare[cnt]= xm::round((-(A * (j - sx / 2) + B * (i - sy / 2) + D) / C) * (1 << VX_FRACTION));
 				}
 				fx+=i_dx;
 				cnt++;
@@ -2916,7 +2916,8 @@ int sTBubble::quant(void)
 				fl=1;
 				for(int m=0; m<256; m++){
 					float x=(float)m/128;//Диапазон от 0 до 2
-					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
+					k_dh[m]= xm::round(
+                            (-0.1f + xm::exp(-xm::abs((x - 1) * (x - 1) * (x - 1)) / (0.4f * 0.4f))) * (1 << 16));
 				}
 
 			}
@@ -3006,13 +3007,13 @@ void bubble(int x, int y)
 			float y=(float)(i-bubleWSXSY05)/(float)bubleWSXSY05;
 			for(j=0; j<bubleWSXSY; j++){
 				float x=(float)(j-bubleWSXSY05)/(float)bubleWSXSY05; 
-				float f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
-				bubleWormForm[i][j]=round(f*(float)(1<<14)); //15 //(1<<16)+XRnd(1<<14);
+				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4 * 0.4));
+				bubleWormForm[i][j]= xm::round(f * (float) (1 << 14)); //15 //(1<<16)+XRnd(1<<14);
 			}
 		}
 		for(int m=0; m<256; m++){
 			float x=(float)m/256;//Диапазон от 0 до 1
-			k_dh[m]=(0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16);//(1.2+0.05*sin(2*tan(x*50)))
+			k_dh[m]= (0.99+0.1*xm::sin(x*50)) * xm::exp(-xm::abs((x) * (x) * (x)) / (0.4f * 0.4f)) * (1 << 16);//(1.2+0.05*xm::sin(2*tan(x*50)))
 		}
 	}
 
@@ -3025,10 +3026,10 @@ void bubble(int x, int y)
 
 	static int begX=0, begY=0; 
 	static float curX=x, curY=y;
-	static float begAngle=-M_PI/10.;
+	static float begAngle=-XM_PI/10.;
 	static int step=0;
 //	if(begX!=x || begY!=y){
-//		begAngle+=M_PI/4;
+//		begAngle+=XM_PI/4;
 //		begX=x; begY=y;
 //		curX=begX; curY=begY;
 //	};
@@ -3036,15 +3037,15 @@ void bubble(int x, int y)
 	const float averageSpeed=3.0;//4
 	const float deltaSpeed=2.0;
 	float SPEED=averageSpeed+frnd(deltaSpeed);
-	curX+=cos(begAngle)*SPEED;
-	curY+=sin(begAngle)*SPEED;
+	curX+=xm::cos(begAngle)*SPEED;
+	curY+=xm::sin(begAngle)*SPEED;
 	int i,j;
 
 //Выпячивание
 	//worms(curX-32, curY-32);
 	float kOffset=4.;//8
-	int curIX=round(curX - cos(begAngle)*SPEED*(float)kOffset);
-	int curIY=round(curY - sin(begAngle)*SPEED*(float)kOffset);
+	int curIX=xm::round(curX - xm::cos(begAngle)*SPEED*(float)kOffset);
+	int curIY=xm::round(curY - xm::sin(begAngle)*SPEED*(float)kOffset);
 	int minV;
 	minV=MAX_VX_HEIGHT;
 	for(i = curIY-bubleWSXSY05; i < curIY+bubleWSXSY05; i++) {
@@ -3057,8 +3058,8 @@ void bubble(int x, int y)
 	}
 
 	float K_FLUCTUATION=1.f;
-	////!int curKFluct=round((1.5+frnd(K_FLUCTUATION))*(1<<16));
-	int curKFluct=round((3.0+frnd(K_FLUCTUATION))*(1<<16));
+	////!int curKFluct=xm::round((1.5+frnd(K_FLUCTUATION))*(1<<16));
+	int curKFluct= xm::round((3.0 + frnd(K_FLUCTUATION)) * (1 << 16));
 
 	int xx,yy;
 	for(i = curIY-bubleWSXSY05, yy=0; i < curIY+bubleWSXSY05; i++, yy++){
@@ -3096,16 +3097,16 @@ void bubble(int x, int y)
 	int num_bubble=XRnd(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
 	for(i=0; i<num_bubble; i++){
 		if(num_el_arr>=MAX_EL_ARR-1) return;
-		float dirAngl=fabsRnd(2*M_PI);
+		float dirAngl=fabsRnd(2*XM_PI);
 		float MAX_D=50.f;
-		float r=abs((sqrt(-log(0.020f+fabsRnd(1.f-0.021f)))-1.f)*MAX_D);
-		float addx=cos(dirAngl)*r;
-		float addy=sin(dirAngl)*r;
+		float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1.f)*MAX_D);
+		float addx=xm::cos(dirAngl)*r;
+		float addy=xm::sin(dirAngl)*r;
 		float MAX_ADDON_R=12.f;
-		int addon=XRnd( round(MAX_ADDON_R*(1.0-r/MAX_D)) );//abs((sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//XRnd(round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
+		int addon=XRnd(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//XRnd(xm::round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
 		bool flag_occurrenceGeo=0;
 		if(r <= 0.5*MAX_D && XRnd(10)>0) flag_occurrenceGeo=1;
-		bubArr[num_el_arr]=new sTBubble(round(curX+addx),round(curY+addy),6+addon,6+addon, flag_occurrenceGeo);
+		bubArr[num_el_arr]=new sTBubble(xm::round(curX+addx),xm::round(curY+addy),6+addon,6+addon, flag_occurrenceGeo);
 		num_el_arr++;
 	}
 
@@ -3122,20 +3123,20 @@ void bubble(int x, int y)
 	float dAddonR=MAX_ADDON_R/(float)SIZE_TAIL;
 	for(k=TAIL_OFFSET; k< SIZE_TAIL+TAIL_OFFSET; k+=3 ){
 		if(step-k<0) break;
-		int curTX=round(curX- cos(begAngle)*SPEED*(float)k);
-		int curTY=round(curY- sin(begAngle)*SPEED*(float)k);
-		num_bubble=round(maxQuantTailBubble);
+		int curTX=xm::round(curX- xm::cos(begAngle)*SPEED*(float)k);
+		int curTY=xm::round(curY- xm::sin(begAngle)*SPEED*(float)k);
+		num_bubble=xm::round(maxQuantTailBubble);
 		for(i=0; i<num_bubble; i++){
 			if(num_el_arr>=MAX_EL_ARR-1) return;
-			float dirAngl=fabsRnd(2*M_PI);
+			float dirAngl=fabsRnd(2*XM_PI);
 			float MAX_D=tailR;
-			float r=abs((sqrt(-log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
-			float addx=cos(dirAngl)*r;
-			float addy=sin(dirAngl)*r;
-			int addon=XRnd( round(MAX_ADDON_R*(1.0-r/MAX_D)) );//abs((sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*curAddonR); //XRnd(round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
+			float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
+			float addx=xm::cos(dirAngl)*r;
+			float addy=xm::sin(dirAngl)*r;
+			int addon=XRnd( xm::round(MAX_ADDON_R*(1.0-r/MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*curAddonR); //XRnd(round(MAX_ADDON_R));//XRnd( xm::round(MAX_ADDON_R*(r/MAX_D)) );
 			bool flag_occurrenceGeo=0;
 			if(r <= 0.5*BEGIN_TAIL_R && XRnd(10)>0) flag_occurrenceGeo=1;
-			bubArr[num_el_arr]=new sTBubble(round(curTX+addx), round(curTY+addy),4+addon, 4+addon);
+			bubArr[num_el_arr]=new sTBubble(xm::round(curTX+addx), xm::round(curTY+addy),4+addon, 4+addon);
 			num_el_arr++;
 		}
 		maxQuantTailBubble-=dQuantTailBubble;
@@ -3185,8 +3186,8 @@ void bubble(int x, int y)
 sTorpedo::sTorpedo(int x, int y)
 {
 
-	float angl=fabsRnd(M_PI*2);
-	Vect2f tmp(cos(angl), sin(angl));
+	float angl=fabsRnd(XM_PI*2);
+	Vect2f tmp(xm::cos(angl), xm::sin(angl));
 	init(x, y, tmp);
 }
 
@@ -3201,7 +3202,7 @@ void sTorpedo::init(int _x, int _y, Vect2f& _direction)
 	curX=beginX; curY=beginY;
 	for(int m=0; m<CTORPEDO_MAX_EL_ARR; m++) bubArr[m]=0;
 	num_el_arr=0;
-	//begAngle=_begAngle;//-M_PI/10.;
+	//begAngle=_begAngle;//-XM_PI/10.;
 	direction=_direction;
 	direction.normalize(1.);
 	step=0;
@@ -3218,14 +3219,14 @@ bool sTorpedo::quant(void)
 			float y=(float)(i-bubleWSXSY05)/(float)bubleWSXSY05;
 			for(j=0; j<bubleWSXSY; j++){
 				float x=(float)(j-bubleWSXSY05)/(float)bubleWSXSY05; 
-				float f=exp(-(fabsf(x*x)+fabsf(y*y))/(0.4*0.4));
-				//bubleWormForm[i][j]=round((f*0.7f)*(float)(1<<14)); //15 //(1<<16)+XRnd(1<<14);
-				bubleWormForm[i][j]=round(f*(float)(1<<14)); //15 //(1<<16)+XRnd(1<<14);
+				float f=xm::exp(-(xm::abs(x * x) + xm::abs(y * y)) / (0.4 * 0.4));
+				//bubleWormForm[i][j]=xm::round((f*0.7f)*(float)(1<<14)); //15 //(1<<16)+XRnd(1<<14);
+				bubleWormForm[i][j]= xm::round(f * (float) (1 << 14)); //15 //(1<<16)+XRnd(1<<14);
 			}
 		}
 		for(int m=0; m<256; m++){
 			float x=(float)m/256;//Диапазон от 0 до 1
-			k_dh[m]=(0.99+0.1*sin(x*50))* exp(-fabsf((x)*(x)*(x))/(0.4f*0.4f))*(1<<16);//(1.2+0.05*sin(2*tan(x*50)))
+			k_dh[m]= (0.99+0.1*xm::sin(x*50)) * xm::exp(-xm::abs((x) * (x) * (x)) / (0.4f * 0.4f)) * (1 << 16);//(1.2+0.05*xm::sin(2*tan(x*50)))
 		}
 	}
 
@@ -3234,8 +3235,8 @@ bool sTorpedo::quant(void)
 	const float averageSpeed=3.0;//4
 	const float deltaSpeed=2.0;
 	float SPEED=averageSpeed+frnd(deltaSpeed);
-	curX+=/*cos(begAngle)*/direction.x*SPEED;
-	curY+=/*sin(begAngle)*/direction.y*SPEED;
+	curX+=/*xm::cos(begAngle)*/direction.x*SPEED;
+	curY+=/*xm::sin(begAngle)*/direction.y*SPEED;
 	const int BORDER=bubleWSXSY;
 	if(curX < BORDER || curX+BORDER>=vMap.H_SIZE) return 0;
 	if(curY < BORDER || curY+BORDER>=vMap.V_SIZE) return 0;
@@ -3243,8 +3244,8 @@ bool sTorpedo::quant(void)
 
 //Выпячивание
 	float kOffset=4.;//8
-	int curIX=round(curX - /*cos(begAngle)*/direction.x*SPEED*(float)kOffset);
-	int curIY=round(curY - /*sin(begAngle)*/direction.y*SPEED*(float)kOffset);
+	int curIX=xm::round(curX - /*xm::cos(begAngle)*/direction.x*SPEED*(float)kOffset);
+	int curIY=xm::round(curY - /*xm::sin(begAngle)*/direction.y*SPEED*(float)kOffset);
 ////	worms(curX-32, curY-32);
 	int minV;
 	minV=MAX_VX_HEIGHT;
@@ -3262,8 +3263,8 @@ bool sTorpedo::quant(void)
 	if(countZERO>Maximum_quantity_of_points_of_zero_height_for_permeability) return 0;
 
 	float K_FLUCTUATION=1.f;
-	////!int curKFluct=round((1.5+frnd(K_FLUCTUATION))*(1<<16));
-	int curKFluct=round((3.0+frnd(K_FLUCTUATION))*(1<<16));
+	////!int curKFluct=xm::round((1.5+frnd(K_FLUCTUATION))*(1<<16));
+	int curKFluct= xm::round((3.0 + frnd(K_FLUCTUATION)) * (1 << 16));
 
 	int xx,yy;
 	for(i = curIY-bubleWSXSY05, yy=0; i < curIY+bubleWSXSY05; i++, yy++){
@@ -3312,16 +3313,16 @@ bool sTorpedo::quant(void)
 	int num_bubble=XRnd(MAX_QUANT_BUBBLE-MIN_QUANT_BUBBLE)+MIN_QUANT_BUBBLE;
 	for(i=0; i<num_bubble; i++){
 		if(num_el_arr>=CTORPEDO_MAX_EL_ARR) break;
-		float dirAngl=fabsRnd(2*M_PI);
+		float dirAngl=fabsRnd(2*XM_PI);
 		float MAX_D=50.f;
-		float r=abs((sqrt(-log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
-		float addx=cos(dirAngl)*r;
-		float addy=sin(dirAngl)*r;
+		float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
+		float addx=xm::cos(dirAngl)*r;
+		float addy=xm::sin(dirAngl)*r;
 		float MAX_ADDON_R=12.f;
-		int addon=XRnd( round(MAX_ADDON_R*(1.0-r/MAX_D)) );//abs((sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//XRnd(round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
+		int addon=XRnd(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*MAX_ADDON_R);//XRnd(round(MAX_ADDON_R));//XRnd( xm::round(MAX_ADDON_R*(r/MAX_D)) );
 		bool flag_occurrenceGeo=0;
 		if(r <= 0.5*MAX_D && XRnd(10)>0) flag_occurrenceGeo=1;
-		if(insert2Arr(round(curX+addx),round(curY+addy),6+addon,6+addon, flag_occurrenceGeo)==0) break;
+		if(insert2Arr(xm::round(curX+addx),xm::round(curY+addy),6+addon,6+addon, flag_occurrenceGeo)==0) break;
 	}
 
 	int k=0;
@@ -3337,20 +3338,20 @@ bool sTorpedo::quant(void)
 	float dAddonR=MAX_ADDON_R/(float)SIZE_TAIL;
 	for(k=TAIL_OFFSET; k< SIZE_TAIL+TAIL_OFFSET; k+=3 ){
 		if(step-k<0) break;
-		int curTX=round(curX- direction.x*SPEED*(float)k);
-		int curTY=round(curY- direction.y*SPEED*(float)k);
-		num_bubble=round(maxQuantTailBubble);
+		int curTX=xm::round(curX- direction.x*SPEED*(float)k);
+		int curTY=xm::round(curY- direction.y*SPEED*(float)k);
+		num_bubble=xm::round(maxQuantTailBubble);
 		for(i=0; i<num_bubble; i++){
 			if(num_el_arr>=CTORPEDO_MAX_EL_ARR) break;
-			float dirAngl=fabsRnd(2*M_PI);
+			float dirAngl=fabsRnd(2*XM_PI);
 			float MAX_D=tailR;
-			float r=abs((sqrt(-log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
-			float addx=cos(dirAngl)*r;
-			float addy=sin(dirAngl)*r;
-			int addon=XRnd( round(MAX_ADDON_R*(1.0-r/MAX_D)) );//abs((sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*curAddonR); //XRnd(round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
+			float r=xm::abs((xm::sqrt(-xm::log(0.020f+fabsRnd(1.f-0.021f)))-1)*MAX_D);
+			float addx=xm::cos(dirAngl)*r;
+			float addy=xm::sin(dirAngl)*r;
+			int addon=XRnd(xm::round(MAX_ADDON_R * (1.0 - r / MAX_D)) );//xm::abs((xm::sqrt(-log(0.020+fabsRnd(1.-0.021)))-1)*curAddonR); //XRnd(xm::round(MAX_ADDON_R));//XRnd( round(MAX_ADDON_R*(r/MAX_D)) );
 			bool flag_occurrenceGeo=0;
 			if(r <= 0.5*BEGIN_TAIL_R && XRnd(10)>0) flag_occurrenceGeo=1;
-			if(insert2Arr(round(curTX+addx), round(curTY+addy),4+addon, 4+addon)==0) break;
+			if(insert2Arr(xm::round(curTX+addx), xm::round(curTY+addy),4+addon, 4+addon)==0) break;
 		}
 		maxQuantTailBubble-=dQuantTailBubble;
 		tailR-=dTailR;
@@ -3554,7 +3555,7 @@ loc_begDraw2Part:
 	if(sx>sy) radius=sx/2;
 	else radius=sy/2;
 	analyzeTerrain(position, radius, outOrientation);
-	//h_begin=round(position.z*(1<<VX_FRACTION));
+	//h_begin=xm::round(position.z*(1<<VX_FRACTION));
 	float A=outOrientation.x;
 	float B=outOrientation.y;
 	float C=-outOrientation.z;
@@ -3567,13 +3568,16 @@ loc_begDraw2Part:
 			xx=vMap.XCYCL(leftBorder+j);
 			if(arrayVx[i*sx+j]>0){
 				float as=(-(A*(float)(j-sx/2) + B*(float)(i-sy/2) + D)/C);
-				arrayVx[i*sx+j]-=round(as*(float)(1<<VX_FRACTION));
+				arrayVx[i*sx+j]-= xm::round(as * (float) (1 << VX_FRACTION));
 			}
 		}
 	}
-	pArr[0].z=round( (-(A*(pArr[0].x-leftBorder-sx/2) + B*(pArr[0].y-upBorder-sy/2) + D)/C) *(1<<VX_FRACTION) );
-	pArr[1].z=round( (-(A*(pArr[1].x-leftBorder-sx/2) + B*(pArr[1].y-upBorder-sy/2) + D)/C) *(1<<VX_FRACTION) );
-	pArr[2].z=round( (-(A*(pArr[2].x-leftBorder-sx/2) + B*(pArr[2].y-upBorder-sy/2) + D)/C) *(1<<VX_FRACTION) );
+	pArr[0].z= xm::round((-(A * (pArr[0].x - leftBorder - sx / 2) + B * (pArr[0].y - upBorder - sy / 2) + D) / C) *
+                             (1 << VX_FRACTION));
+	pArr[1].z= xm::round((-(A * (pArr[1].x - leftBorder - sx / 2) + B * (pArr[1].y - upBorder - sy / 2) + D) / C) *
+                             (1 << VX_FRACTION));
+	pArr[2].z= xm::round((-(A * (pArr[2].x - leftBorder - sx / 2) + B * (pArr[2].y - upBorder - sy / 2) + D) / C) *
+                             (1 << VX_FRACTION));
 
 
 	curAngleG=0;
@@ -3603,7 +3607,7 @@ void sUPoligon::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 	if(rightBorder<c.x)rightBorder=c.x;
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return; //Прерывание если нет полигона
+	if(xm::round(DY) < 1.f) return; //Прерывание если нет полигона
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -3615,7 +3619,7 @@ void sUPoligon::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 	d1=(c.x-a.x) / DY;
 	float DY1=b.y-a.y;
 	float DY2=c.y-b.y;
-	if(round(DY1)>0){
+	if(xm::round(DY1) > 0){
 		d2=(b.x-a.x) / DY1;
 		if (d1<d2) { 
 			dxL=d1; dxR=d2; 
@@ -3626,8 +3630,8 @@ void sUPoligon::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 			flag_left_long=0;
 		}
 		xLp=xRp=a.x;
-		for(yWrk=round(a.y); yWrk<round(b.y); yWrk++){
-			xL=round(xLp-BORDER_P); xR=round(xRp+BORDER_P);
+		for(yWrk= xm::round(a.y); yWrk < xm::round(b.y); yWrk++){
+			xL= xm::round(xLp - BORDER_P); xR= xm::round(xRp + BORDER_P);
 			if(xL!=xR){
 				for(xWrk=xL; xWrk<=xR; xWrk++) {
 					int dy,dx,v=0;
@@ -3654,7 +3658,7 @@ void sUPoligon::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 		}
 		goto loc_begDraw2Part;
 	}
-	if(round(DY2)>0) {
+	if(xm::round(DY2) > 0) {
 		d2=(c.x-b.x) / DY2;
 		if(flag_left_long==1) {
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -3664,8 +3668,8 @@ void sUPoligon::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 			xLp=b.x; dxL=(c.x-b.x) / DY2;
 		}
 loc_begDraw2Part:
-		for(yWrk=round(b.y); yWrk<=round(c.y); yWrk++){
-			xL=round(xLp-BORDER_P); xR=round(xRp+BORDER_P);
+		for(yWrk= xm::round(b.y); yWrk <= xm::round(c.y); yWrk++){
+			xL= xm::round(xLp - BORDER_P); xR= xm::round(xRp + BORDER_P);
 			if(xL!=xR){
 				for(xWrk=xL; xWrk<=xR; xWrk++) {
 					int dy,dx,v=0;
@@ -3718,9 +3722,9 @@ void sUPoligon::quant(float angle_grad)
 	result.cross(v_o, v_2);
 	if(result.z<0) angle_grad=-angle_grad;
 
-	//static float planeAngle=0.5f*M_PI/180.f;//0.f;
-	//planeAngle-=0.5f*M_PI/180.f;
-	float planeAngle=angle_grad*M_PI/180.f;
+	//static float planeAngle=0.5f*XM_PI/180.f;//0.f;
+	//planeAngle-=0.5f*XM_PI/180.f;
+	float planeAngle=angle_grad*XM_PI/180.f;
 	QuatF wQuat(planeAngle, qVect);
 /*		for(i=0; i<sy; i++){
 		yy=vMap.YCYCL(upBorder+i);
@@ -3732,7 +3736,7 @@ void sUPoligon::quant(float angle_grad)
 				Vect3f out(0,0,0);
 				wQuat.xform(in, out);
 				int wx=vMap.XCYCL(round(out.x)+o_x);
-				int wy=vMap.YCYCL(round(out.y)+o_y);
+				int wy=vMap.YCYCL(xm::round(out.y)+o_y);
 				int wz=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 				wz+=100<<VX_FRACTION;
 				//int vv=vMap.SGetAlt(wx,wy);
@@ -3753,17 +3757,17 @@ void sUPoligon::quant(float angle_grad)
 	curz=(float)pArr[0].z/(1<<VX_FRACTION);
 	in.set(pArr[0].x-o_x, pArr[0].y-o_y, curz-o_z);
 	wQuat.xform(in, out);
-	a.x=vMap.XCYCL(round(out.x)+o_x);
-	a.y=vMap.YCYCL(round(out.y)+o_y);
-	//a.z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+	a.x=vMap.XCYCL(xm::round(out.x) + o_x);
+	a.y=vMap.YCYCL(xm::round(out.y) + o_y);
+	//a.z=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 	a.z=out.z+o_z;
 
 	curz=(float)pArr[1].z/(1<<VX_FRACTION);
 	in.set(pArr[1].x-o_x, pArr[1].y-o_y, curz-o_z);
 	wQuat.xform(in, out);
-	b.x=vMap.XCYCL(round(out.x)+o_x);
-	b.y=vMap.YCYCL(round(out.y)+o_y);
-	//b.z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+	b.x=vMap.XCYCL(xm::round(out.x) + o_x);
+	b.y=vMap.YCYCL(xm::round(out.y) + o_y);
+	//b.z=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 	b.z=out.z+o_z;
 
 	Vect2f buckupB=b;
@@ -3771,9 +3775,9 @@ void sUPoligon::quant(float angle_grad)
 	curz=(float)pArr[2].z/(1<<VX_FRACTION);
 	in.set(pArr[2].x-o_x, pArr[2].y-o_y, curz-o_z);
 	wQuat.xform(in, out);
-	c.x=vMap.XCYCL(round(out.x)+o_x);
-	c.y=vMap.YCYCL(round(out.y)+o_y);
-	//c.z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+	c.x=vMap.XCYCL(xm::round(out.x) + o_x);
+	c.y=vMap.YCYCL(xm::round(out.y) + o_y);
+	//c.z=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 	c.z=out.z+o_z;
 
 	//Построение плоскости по 3-м точкам
@@ -3801,7 +3805,7 @@ void sUPoligon::quant(float angle_grad)
 	if(b.y > c.y ) { tmp=b; b=c; c=tmp; tmpu=b_u; b_u=c_u; c_u=tmpu; tmpv=b_v; b_v=c_v; c_v=tmpv;}
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return; //Прерывание если нет полигона
+	if(xm::round(DY) < 1.f) return; //Прерывание если нет полигона
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -3820,13 +3824,13 @@ void sUPoligon::quant(float angle_grad)
 	d1=(c.x-a.x) / DY;
 	float DY1=b.y-a.y;
 	float DY2=c.y-b.y;
-	if(round(DY1)>0){
+	if(xm::round(DY1) > 0){
 		d2=(b.x-a.x) / DY1;
 		if (d1<d2) { 
 			dxL=d1; dxR=d2; 
 			flag_left_long=1;
-			dzL=(round(c.z)-round(a.z)) / DY;
-			dzR=(round(b.z)-round(a.z)) / DY1;
+			dzL= (xm::round(c.z) - xm::round(a.z)) / DY;
+			dzR= (xm::round(b.z) - xm::round(a.z)) / DY1;
 			duL=(c_u-a_u) / DY;
 			duR=(b_u-a_u) / DY1;
 			dvL=(c_v-a_v) / DY;
@@ -3846,11 +3850,11 @@ void sUPoligon::quant(float angle_grad)
 		zLp=zRp=a.z;
 		uLp=uRp=a_u;
 		vLp=vRp=a_v;
-		for(yWrk=round(a.y); yWrk<round(b.y); yWrk++){
-			xL=round(xLp); xR=round(xRp);
+		for(yWrk= xm::round(a.y); yWrk < xm::round(b.y); yWrk++){
+			xL= xm::round(xLp); xR= xm::round(xRp);
 			if(xL!=xR){
 				float zCur=zLp;
-				float dzCur=(round(zRp)-round(zLp))/(float)(xR-xL);
+				float dzCur= (xm::round(zRp) - xm::round(zLp)) / (float) (xR - xL);
 				float uCur=uLp;
 				float duCur=(uRp-uLp)/(float)(xR-xL);
 				float vCur=vLp;
@@ -3858,18 +3862,20 @@ void sUPoligon::quant(float angle_grad)
 				for(xWrk=xL; xWrk<=xR; xWrk++) {
 					//short addVx=arrayVx[(vMap.XCYCL(xWrk)-leftBorder) + sx*(vMap.YCYCL(yWrk)-upBorder)];
 					short addVx;
-					float u0=floor(uCur);
+					float u0=xm::floor(uCur);
 					float ddu=uCur-u0;
-					int u=round(u0);
-					float v0=floor(vCur);
+					int u= xm::round(u0);
+					float v0=xm::floor(vCur);
 					float ddv=vCur-v0;
-					int v=round(v0);
-					addVx=round( (arrayVx[u+v*sx]*(1-ddu)+arrayVx[u+1+v*sx]*ddu) *(1-ddv) +
-								 (arrayVx[u+(v+1)*sx]*(1-ddu)+arrayVx[u+1+(v+1)*sx]*ddu) *ddv );
-					//addVx=arrayVx[round(uCur)+round(vCur)*sx];
+					int v= xm::round(v0);
+					addVx= xm::round((arrayVx[u + v * sx] * (1 - ddu) + arrayVx[u + 1 + v * sx] * ddu) * (1 - ddv) +
+                                         (arrayVx[u + (v + 1) * sx] * (1 - ddu) + arrayVx[u + 1 + (v + 1) * sx] * ddu) *
+                                         ddv);
+					//addVx=arrayVx[xm::round(uCur)+round(vCur)*sx];
 					//addVx=0;
-					//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), round(zCur*(1<<VX_FRACTION)+addVx) );
-					vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), round( (-(cD+cA*xWrk+cB*yWrk)/cC)*(1<<VX_FRACTION)+addVx) );
+					//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), xm::round(zCur*(1<<VX_FRACTION)+addVx) );
+					vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk),
+                                 xm::round((-(cD + cA * xWrk + cB * yWrk) / cC) * (1 << VX_FRACTION) + addVx) );
 					//arrayVx[cnt++]=vx;
 					zCur+=dzCur;
 					uCur+=duCur;
@@ -3911,7 +3917,7 @@ void sUPoligon::quant(float angle_grad)
 		}
 		goto loc_begDraw2Part;
 	}
-	if(round(DY2)>0) {
+	if(xm::round(DY2) > 0) {
 		d2=(c.x-b.x) / DY2;
 		if(flag_left_long==1) {
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -3927,8 +3933,8 @@ void sUPoligon::quant(float angle_grad)
 			vLp=b_v; dvL=(c_v-b_v) / DY2;
 		}
 loc_begDraw2Part:
-		for(yWrk=round(b.y); yWrk<=round(c.y); yWrk++){
-			xL=round(xLp); xR=round(xRp);
+		for(yWrk= xm::round(b.y); yWrk <= xm::round(c.y); yWrk++){
+			xL= xm::round(xLp); xR= xm::round(xRp);
 			if(xL!=xR){
 				float zCur=zLp;
 				float dzCur=(zRp-zLp)/(float)(xR-xL);
@@ -3939,18 +3945,20 @@ loc_begDraw2Part:
 				for(xWrk=xL; xWrk<=xR; xWrk++) {
 					//short addVx=arrayVx[(vMap.XCYCL(xWrk)-leftBorder) + sx*(vMap.YCYCL(yWrk)-upBorder)];
 					short addVx;
-					float u0=floor(uCur);
+					float u0=xm::floor(uCur);
 					float ddu=uCur-u0;
-					int u=round(u0);
-					float v0=floor(vCur);
+					int u= xm::round(u0);
+					float v0=xm::floor(vCur);
 					float ddv=vCur-v0;
-					int v=round(v0);
-					addVx=round( (arrayVx[u+v*sx]*(1-ddu)+arrayVx[u+1+v*sx]*ddu) *(1-ddv) +
-								 (arrayVx[u+(v+1)*sx]*(1-ddu)+arrayVx[u+1+(v+1)*sx]*ddu) *ddv );
-					//addVx=arrayVx[round(uCur)+round(vCur)*sx];
+					int v= xm::round(v0);
+					addVx= xm::round((arrayVx[u + v * sx] * (1 - ddu) + arrayVx[u + 1 + v * sx] * ddu) * (1 - ddv) +
+                                         (arrayVx[u + (v + 1) * sx] * (1 - ddu) + arrayVx[u + 1 + (v + 1) * sx] * ddu) *
+                                         ddv);
+					//addVx=arrayVx[xm::round(uCur)+round(vCur)*sx];
 					//addVx=0;
-					//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), round(zCur*(1<<VX_FRACTION)+addVx) );
-					vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), round( (-(cD+cA*xWrk+cB*yWrk)/cC)*(1<<VX_FRACTION)+addVx) );
+					//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), xm::round(zCur*(1<<VX_FRACTION)+addVx) );
+					vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk),
+                                 xm::round((-(cD + cA * xWrk + cB * yWrk) / cC) * (1 << VX_FRACTION) + addVx) );
 					//arrayVx[cnt++]=vx;
 					zCur+=dzCur;
 					uCur+=duCur;
@@ -4005,7 +4013,7 @@ bool poiligonUP(int _x, int _y)
 
 	//static int begX=0, begY=0; 
 	//static float curX=x, curY=y;
-	static float begAngle=-M_PI/10.;
+	static float begAngle=-XM_PI/10.;
 
 
 	const int MAX_CROSS_POINT=20;
@@ -4021,16 +4029,16 @@ bool poiligonUP(int _x, int _y)
 		bool flag_right=1;
 		const float AVERAGE_SPEED=50.0;//4
 		const float DELTA_SPEED=40.0;
-		const float MIN_ANGLE_NORMAL=5.f*(M_PI/180.f);
-		const float MAX_ANGLE_NORMAL=50.f*(M_PI/180.f);
+		const float MIN_ANGLE_NORMAL=5.f*(XM_PI/180.f);
+		const float MAX_ANGLE_NORMAL=50.f*(XM_PI/180.f);
 		Vect2f curPoint(_x,_y);
 		for(i=0; i<=MAX_CROSS_POINT; i++){
 			float angleNorm=MIN_ANGLE_NORMAL+fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
 			if(!flag_right)angleNorm=-angleNorm;
 			float angl=begAngle+angleNorm;
 			Vect2f normal;
-			float normal_x=1.0*cos(angl);
-			float normal_y=1.0*sin(angl);
+			float normal_x=1.0*xm::cos(angl);
+			float normal_y=1.0*xm::sin(angl);
 			float C=-(normal_x*curPoint.x+normal_y*curPoint.y);
 			Vect3f curABC(normal_x, normal_y, C);
 
@@ -4045,8 +4053,8 @@ bool poiligonUP(int _x, int _y)
 			prevPoint=curPoint;
 			flag_right^=1;
 			float SPEED=AVERAGE_SPEED+frnd(DELTA_SPEED);
- 			curPoint.x+=cos(begAngle)*SPEED;
-			curPoint.y+=sin(begAngle)*SPEED;
+ 			curPoint.x+=xm::cos(begAngle)*SPEED;
+			curPoint.y+=xm::sin(begAngle)*SPEED;
 		}
 		flag_init=1;
 	}
@@ -4069,18 +4077,18 @@ bool poiligonUP(int _x, int _y)
 			v2+=pointArr[step];
 
 
-			//arr[0].x= round(pointArr[step-1].x);
-			//arr[0].y= round(pointArr[step-1].y);
-			arr[0].x= round(v1.x);
-			arr[0].y= round(v1.y);
+			//arr[0].x= xm::round(pointArr[step-1].x);
+			//arr[0].y= xm::round(pointArr[step-1].y);
+			arr[0].x= xm::round(v1.x);
+			arr[0].y= xm::round(v1.y);
 
-			arr[1].x= round(pointArr[step].x);
-			arr[1].y= round(pointArr[step].y);
+			arr[1].x= xm::round(pointArr[step].x);
+			arr[1].y= xm::round(pointArr[step].y);
 
-			//arr[2].x= round(pointArr[step+1].x);
-			//arr[2].y= round(pointArr[step+1].y);
-			arr[2].x= round(v2.x);
-			arr[2].y= round(v2.y);
+			//arr[2].x= xm::round(pointArr[step+1].x);
+			//arr[2].y= xm::round(pointArr[step+1].y);
+			arr[2].x= xm::round(v2.x);
+			arr[2].y= xm::round(v2.y);
 
 			sUPoligon* tmp=new sUPoligon(arr);
 			poligonArr.push_back(tmp);
@@ -4102,7 +4110,7 @@ bool poiligonUP(int _x, int _y)
 
 sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int _x, int _y
 {
-	//const float begAngle=fabsRnd(2*M_PI);//-M_PI/10.;
+	//const float begAngle=fabsRnd(2*XM_PI);//-XM_PI/10.;
 
 	const int MAX_CROSS_POINT=20;
 	const int MAX_EARTH_POLIGON=MAX_CROSS_POINT-2;
@@ -4113,16 +4121,16 @@ sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int
 	bool flag_right=1;
 	const float AVERAGE_SPEED=70.0;//4
 	const float DELTA_SPEED=30.0;
-	const float MIN_ANGLE_NORMAL=15.f*(M_PI/180.f);
-	const float MAX_ANGLE_NORMAL=40.f*(M_PI/180.f);
+	const float MIN_ANGLE_NORMAL=15.f*(XM_PI/180.f);
+	const float MAX_ANGLE_NORMAL=40.f*(XM_PI/180.f);
 	Vect2f curPoint(begPoint);
 	for(int i=0; i<=MAX_CROSS_POINT; i++){
 		float angleNorm=MIN_ANGLE_NORMAL+fabsRnd(MAX_ANGLE_NORMAL-MIN_ANGLE_NORMAL);
 		if(!flag_right)angleNorm=-angleNorm;
 		float angl=begAngle+angleNorm;
 		Vect2f normal;
-		float normal_x=1.0*cos(angl);
-		float normal_y=1.0*sin(angl);
+		float normal_x=1.0*xm::cos(angl);
+		float normal_y=1.0*xm::sin(angl);
 		float C=-(normal_x*curPoint.x+normal_y*curPoint.y);
 		Vect3f curABC(normal_x, normal_y, C);
 
@@ -4137,8 +4145,8 @@ sGeoFault::sGeoFault(const Vect2f& begPoint, float begAngle, float aLenght)//int
 		prevPoint=curPoint;
 		flag_right^=1;
 		float SPEED=AVERAGE_SPEED+frnd(DELTA_SPEED);
- 		curPoint.x+=cos(begAngle)*SPEED;
-		curPoint.y+=sin(begAngle)*SPEED;
+ 		curPoint.x+=xm::cos(begAngle)*SPEED;
+		curPoint.y+=xm::sin(begAngle)*SPEED;
 		if(curPoint.distance(begPoint) > aLenght) break;
 	}
 	fstep=1.f;
@@ -4150,8 +4158,8 @@ bool sGeoFault::quant()
 {
 	if(pointArr.size()>=3){
 		//for(; i<pointArr.size()-1; step++) 
-		if( step!=round(fstep) ){
-			step=round(fstep);
+		if(step != xm::round(fstep) ){
+			step= xm::round(fstep);
 
 			if(step<pointArr.size()-1) { //от второго до предпоследнего
 				point4UP arr[3];
@@ -4183,24 +4191,24 @@ bool sGeoFault::quant()
 				v22+=pointArr[step];
 
 				point4UP addArr[2];
-				addArr[0].x= round(v11.x);
-				addArr[0].y= round(v11.y);
-				addArr[1].x= round(v22.x);
-				addArr[1].y= round(v22.y);
+				addArr[0].x= xm::round(v11.x);
+				addArr[0].y= xm::round(v11.y);
+				addArr[1].x= xm::round(v22.x);
+				addArr[1].y= xm::round(v22.y);
 
 
-				//arr[0].x= round(pointArr[step-1].x);
-				//arr[0].y= round(pointArr[step-1].y);
-				arr[0].x= round(v1.x);
-				arr[0].y= round(v1.y);
+				//arr[0].x= xm::round(pointArr[step-1].x);
+				//arr[0].y= xm::round(pointArr[step-1].y);
+				arr[0].x= xm::round(v1.x);
+				arr[0].y= xm::round(v1.y);
 
-				arr[1].x= round(pointArr[step].x);
-				arr[1].y= round(pointArr[step].y);
+				arr[1].x= xm::round(pointArr[step].x);
+				arr[1].y= xm::round(pointArr[step].y);
 
-				//arr[2].x= round(pointArr[step+1].x);
-				//arr[2].y= round(pointArr[step+1].y);
-				arr[2].x= round(v2.x);
-				arr[2].y= round(v2.y);
+				//arr[2].x= xm::round(pointArr[step+1].x);
+				//arr[2].y= xm::round(pointArr[step+1].y);
+				arr[2].x= xm::round(v2.x);
+				arr[2].y= xm::round(v2.y);
 
 				sUPoligonN* tmp=new sUPoligonN(arr, 2, addArr); // 
 				poligonArr.push_back(tmp);
@@ -4253,7 +4261,7 @@ void poiligonUPOld(int x0, int y0)
 
 ///////////////////////////////////////////////////////////////////
 //Круговое вспучивание
-#define GRAD2RADF(a)  ((a)*M_PI/180.f)
+#define GRAD2RADF(a)  ((a)*XM_PI/180.f)
 sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 {
 	const int MIN_BEG_RADIUS_GEO_POLIGONS=10;
@@ -4264,7 +4272,7 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 	const int MIN_GEO_POLIGONS=5;
 	const int MAX_GEO_POLIGONS=9;
 
-	//const float MAX_ANGLE_GEO_POLIGON=70.f*(M_PI/180.f);
+	//const float MAX_ANGLE_GEO_POLIGON=70.f*(XM_PI/180.f);
 
 	int numPoligons=MIN_GEO_POLIGONS + XRnd(MAX_GEO_POLIGONS-MIN_GEO_POLIGONS);
 
@@ -4278,12 +4286,12 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 		angleArr[i]=MIN_ANGLE_GEO_POLIGON+fabsRnd(DELTA_ANGLE_GEO_POLIGON);
 		sumNorm+=angleArr[i];
 	}
-	sumNorm=2.f*M_PI/sumNorm;
+	sumNorm=2.f*XM_PI/sumNorm;
 	for(i=0; i<numPoligons; i++){
 		angleArr[i]*=sumNorm;
 	}
 
-	float begAngle=(float)XRnd(360)*M_PI/180.f;
+	float begAngle=(float)XRnd(360)*XM_PI/180.f;
 
 	Vect2f pnt1, pnt2, pnt3, pnt4;
 	point4UP arr[3];
@@ -4296,23 +4304,23 @@ sGeoSwelling::sGeoSwelling(int xCentre, int yCentre)
 	for(i=0; i<numPoligons; i++){
 
 		curRad=MIN_BEG_RADIUS_GEO_POLIGONS+XRnd(MAX_BEG_RADIUS_GEO_POLIGONS-MIN_BEG_RADIUS_GEO_POLIGONS);
-		addArr[0].x= curXC + round(curRad*cos(curAngle));
-		addArr[0].y= curYC + round(curRad*sin(curAngle));
+		addArr[0].x= curXC + xm::round(curRad*xm::cos(curAngle));
+		addArr[0].y= curYC + xm::round(curRad*xm::sin(curAngle));
 
 		curRad=MIN_BEG_RADIUS_GEO_POLIGONS+XRnd(MAX_BEG_RADIUS_GEO_POLIGONS-MIN_BEG_RADIUS_GEO_POLIGONS);
-		addArr[1].x= curXC + round(curRad*cos(curAngle+angleArr[i]));
-		addArr[1].y= curYC + round(curRad*sin(curAngle+angleArr[i]));
+		addArr[1].x= curXC + xm::round(curRad*xm::cos(curAngle+angleArr[i]));
+		addArr[1].y= curYC + xm::round(curRad*xm::sin(curAngle+angleArr[i]));
 
 		curRad=MIN_END_RADIUS_GEO_POLIGONS+XRnd(MAX_END_RADIUS_GEO_POLIGONS-MIN_END_RADIUS_GEO_POLIGONS);
-		arr[0].x= curXC + round(curRad*cos(curAngle));
-		arr[0].y= curYC + round(curRad*sin(curAngle));
+		arr[0].x= curXC + xm::round(curRad*xm::cos(curAngle));
+		arr[0].y= curYC + xm::round(curRad*xm::sin(curAngle));
 
 		arr[1].x= curXC;
 		arr[1].y= curYC;
 
 		curRad=MIN_END_RADIUS_GEO_POLIGONS+XRnd(MAX_END_RADIUS_GEO_POLIGONS-MIN_END_RADIUS_GEO_POLIGONS);
-		arr[2].x= curXC + round(curRad*cos(curAngle+angleArr[i]));
-		arr[2].y= curYC + round(curRad*sin(curAngle+angleArr[i]));
+		arr[2].x= curXC + xm::round(curRad*xm::cos(curAngle+angleArr[i]));
+		arr[2].y= curYC + xm::round(curRad*xm::sin(curAngle+angleArr[i]));
 
 		sUPoligonNSpec* tmp=new sUPoligonNSpec(arr, 2, addArr);
 		poligonArr.push_back(tmp);
@@ -4472,7 +4480,7 @@ loc_begDraw2Part:
 	if(sx>sy) radius=sx/2;
 	else radius=sy/2;
 	analyzeTerrain(position, radius, outOrientation);
-	//h_begin=round(position.z*(1<<VX_FRACTION));
+	//h_begin=xm::round(position.z*(1<<VX_FRACTION));
 	float A=outOrientation.x;
 	float B=outOrientation.y;
 	float C=-outOrientation.z;
@@ -4485,15 +4493,23 @@ loc_begDraw2Part:
 			xx=vMap.XCYCL(leftBorder+j);
 			if(arrayVx[i*sx+j]>0){
 				float as=(-(A*(float)(j-sx/2) + B*(float)(i-sy/2) + D)/C);
-				arrayVx[i*sx+j]-=round(as*(float)(1<<VX_FRACTION));
+				arrayVx[i*sx+j]-= xm::round(as * (float) (1 << VX_FRACTION));
 			}
 		}
 	}
-	basePntArr[0].z=round( (-(A*(basePntArr[0].x-leftBorder-sx/2) + B*(basePntArr[0].y-upBorder-sy/2) + D)/C) *(1<<VX_FRACTION) );
-	basePntArr[1].z=round( (-(A*(basePntArr[1].x-leftBorder-sx/2) + B*(basePntArr[1].y-upBorder-sy/2) + D)/C) *(1<<VX_FRACTION) );
-	basePntArr[2].z=round( (-(A*(basePntArr[2].x-leftBorder-sx/2) + B*(basePntArr[2].y-upBorder-sy/2) + D)/C) *(1<<VX_FRACTION) );
+	basePntArr[0].z= xm::round(
+            (-(A * (basePntArr[0].x - leftBorder - sx / 2) + B * (basePntArr[0].y - upBorder - sy / 2) + D) / C) *
+            (1 << VX_FRACTION));
+	basePntArr[1].z= xm::round(
+            (-(A * (basePntArr[1].x - leftBorder - sx / 2) + B * (basePntArr[1].y - upBorder - sy / 2) + D) / C) *
+            (1 << VX_FRACTION));
+	basePntArr[2].z= xm::round(
+            (-(A * (basePntArr[2].x - leftBorder - sx / 2) + B * (basePntArr[2].y - upBorder - sy / 2) + D) / C) *
+            (1 << VX_FRACTION));
 	for(i=0; i<nElAddPntArr; i++){
-		addPntArr[i].z=round( (-(A*(addPntArr[i].x-leftBorder-sx/2) + B*(addPntArr[i].y-upBorder-sy/2) + D)/C) *(1<<VX_FRACTION) );
+		addPntArr[i].z= xm::round(
+                (-(A * (addPntArr[i].x - leftBorder - sx / 2) + B * (addPntArr[i].y - upBorder - sy / 2) + D) / C) *
+                (1 << VX_FRACTION));
 	}
 	if(nElAddPntArr==0){
 		oldPoint1=Vect2f(basePntArr[1].x, basePntArr[1].y);
@@ -4531,7 +4547,7 @@ void sUPoligonN::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 	if(rightBorder<c.x)rightBorder=c.x;
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return; //Прерывание если нет полигона
+	if(xm::round(DY) < 1.f) return; //Прерывание если нет полигона
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -4543,7 +4559,7 @@ void sUPoligonN::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 	d1=(c.x-a.x) / DY;
 	float DY1=b.y-a.y;
 	float DY2=c.y-b.y;
-	if(round(DY1)>0){
+	if(xm::round(DY1) > 0){
 		d2=(b.x-a.x) / DY1;
 		if (d1<d2) { 
 			dxL=d1; dxR=d2; 
@@ -4554,8 +4570,8 @@ void sUPoligonN::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 			flag_left_long=0;
 		}
 		xLp=xRp=a.x;
-		for(yWrk=round(a.y); yWrk<round(b.y); yWrk++){
-			xL=round(xLp-BORDER_P); xR=round(xRp+BORDER_P);
+		for(yWrk= xm::round(a.y); yWrk < xm::round(b.y); yWrk++){
+			xL= xm::round(xLp - BORDER_P); xR= xm::round(xRp + BORDER_P);
 			if(xL!=xR){
 				for(xWrk=xL; xWrk<=xR; xWrk++) {
 					int dy,dx,v=0;
@@ -4582,7 +4598,7 @@ void sUPoligonN::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 		}
 		goto loc_begDraw2Part;
 	}
-	if(round(DY2)>0) {
+	if(xm::round(DY2) > 0) {
 		d2=(c.x-b.x) / DY2;
 		if(flag_left_long==1) {
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -4592,8 +4608,8 @@ void sUPoligonN::smoothPoligon(Vect2f a, Vect2f b, Vect2f c)
 			xLp=b.x; dxL=(c.x-b.x) / DY2;
 		}
 loc_begDraw2Part:
-		for(yWrk=round(b.y); yWrk<=round(c.y); yWrk++){
-			xL=round(xLp-BORDER_P); xR=round(xRp+BORDER_P);
+		for(yWrk= xm::round(b.y); yWrk <= xm::round(c.y); yWrk++){
+			xL= xm::round(xLp - BORDER_P); xR= xm::round(xRp + BORDER_P);
 			if(xL!=xR){
 				for(xWrk=xL; xWrk<=xR; xWrk++) {
 					int dy,dx,v=0;
@@ -4678,9 +4694,9 @@ bool sUPoligonN::quant(float angle_grad)
 	result.cross(v_o, v_2);
 	if(result.z<0) angle_grad=-angle_grad;
 
-	//static float planeAngle=0.5f*M_PI/180.f;//0.f;
-	//planeAngle-=0.5f*M_PI/180.f;
-	float planeAngle=angle_grad*M_PI/180.f;
+	//static float planeAngle=0.5f*XM_PI/180.f;//0.f;
+	//planeAngle-=0.5f*XM_PI/180.f;
+	float planeAngle=angle_grad*XM_PI/180.f;
 	QuatF wQuat(planeAngle, qVect);
 
 /*//Проверка правильности поворота полигона - кватернионом
@@ -4695,7 +4711,7 @@ bool sUPoligonN::quant(float angle_grad)
 				wQuat.xform(in, out);
 				int wx=vMap.XCYCL(round(out.x)+o_x);
 				int wy=vMap.YCYCL(round(out.y)+o_y);
-				int wz=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+				int wz=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 				wz+=100<<VX_FRACTION;
 				//int vv=vMap.SGetAlt(wx,wy);
 				//if (vv) vMap.SPutAltDam(wx,wy,(wz+vv)>>1);
@@ -4715,17 +4731,17 @@ bool sUPoligonN::quant(float angle_grad)
 	curz=(float)basePntArr[0].z/(1<<VX_FRACTION);
 	in.set(basePntArr[0].x-o_x, basePntArr[0].y-o_y, curz-o_z);
 	wQuat.xform(in, out);
-	a.x=vMap.XCYCL(round(out.x)+o_x);
-	a.y=vMap.YCYCL(round(out.y)+o_y);
-	//a.z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+	a.x=vMap.XCYCL(xm::round(out.x) + o_x);
+	a.y=vMap.YCYCL(xm::round(out.y) + o_y);
+	//a.z=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 	a.z=out.z+o_z;
 
 	curz=(float)basePntArr[1].z/(1<<VX_FRACTION);
 	in.set(basePntArr[1].x-o_x, basePntArr[1].y-o_y, curz-o_z);
 	wQuat.xform(in, out);
-	b.x=vMap.XCYCL(round(out.x)+o_x);
-	b.y=vMap.YCYCL(round(out.y)+o_y);
-	//b.z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+	b.x=vMap.XCYCL(xm::round(out.x) + o_x);
+	b.y=vMap.YCYCL(xm::round(out.y) + o_y);
+	//b.z=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 	b.z=out.z+o_z;
 
 	Vect2f buckupB=b;
@@ -4733,9 +4749,9 @@ bool sUPoligonN::quant(float angle_grad)
 	curz=(float)basePntArr[2].z/(1<<VX_FRACTION);
 	in.set(basePntArr[2].x-o_x, basePntArr[2].y-o_y, curz-o_z);
 	wQuat.xform(in, out);
-	c.x=vMap.XCYCL(round(out.x)+o_x);
-	c.y=vMap.YCYCL(round(out.y)+o_y);
-	//c.z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+	c.x=vMap.XCYCL(xm::round(out.x) + o_x);
+	c.y=vMap.YCYCL(xm::round(out.y) + o_y);
+	//c.z=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 	c.z=out.z+o_z;
 
 	allPntArr[0]=a;
@@ -4743,9 +4759,9 @@ bool sUPoligonN::quant(float angle_grad)
 		curz=(float)addPntArr[i].z/(1<<VX_FRACTION);
 		in.set(addPntArr[i].x-o_x, addPntArr[i].y-o_y, curz-o_z);
 		wQuat.xform(in, out);
-		allPntArr[i+1].x=vMap.XCYCL(round(out.x)+o_x);
-		allPntArr[i+1].y=vMap.YCYCL(round(out.y)+o_y);
-		//allPntArr[i+1].z=round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
+		allPntArr[i+1].x=vMap.XCYCL(xm::round(out.x) + o_x);
+		allPntArr[i+1].y=vMap.YCYCL(xm::round(out.y) + o_y);
+		//allPntArr[i+1].z=xm::round(out.z*(1<<VX_FRACTION))+(o_z<<VX_FRACTION);
 		allPntArr[i+1].z=out.z+o_z;
 	}
 	allPntArr[nElAddPntArr+1]=c; //последний элемент
@@ -4777,7 +4793,7 @@ bool sUPoligonN::quant(float angle_grad)
 	if(b.y > c.y ) { tmp=b; b=c; c=tmp; tmpu=b_u; b_u=c_u; c_u=tmpu; tmpv=b_v; b_v=c_v; c_v=tmpv;}
 
 	float DY=(c.y-a.y);
-	if(round(DY)<1.f) return 0; //Прерывание если нет полигона
+	if(xm::round(DY) < 1.f) return 0; //Прерывание если нет полигона
 	float d1,d2;
 	float dxL,dxR;
 	float xLp,xRp;
@@ -4797,13 +4813,13 @@ bool sUPoligonN::quant(float angle_grad)
 	float DY1=b.y-a.y;
 	float DY2=c.y-b.y;
 	int curIdxCPArr=0;
-	if(round(DY1)>0){
+	if(xm::round(DY1) > 0){
 		d2=(b.x-a.x) / DY1;
 		if (d1<d2) { 
 			dxL=d1; dxR=d2; 
 			flag_left_long=1;
-			dzL=(round(c.z)-round(a.z)) / DY;
-			dzR=(round(b.z)-round(a.z)) / DY1;
+			dzL= (xm::round(c.z) - xm::round(a.z)) / DY;
+			dzR= (xm::round(b.z) - xm::round(a.z)) / DY1;
 			duL=(c_u-a_u) / DY;
 			duR=(b_u-a_u) / DY1;
 			dvL=(c_v-a_v) / DY;
@@ -4823,7 +4839,7 @@ bool sUPoligonN::quant(float angle_grad)
 		zLp=zRp=a.z;
 		uLp=uRp=a_u;
 		vLp=vRp=a_v;
-		for(yWrk=round(a.y); yWrk<round(b.y); yWrk++){
+		for(yWrk= xm::round(a.y); yWrk < xm::round(b.y); yWrk++){
 			for(;curIdxCPArr<nElCritPntArr && yWrk>=allPntArr[critPntArr[curIdxCPArr]].y; curIdxCPArr++){
 				char idxTo;
 				idxTo=critPntArr[curIdxCPArr]-1;
@@ -4833,12 +4849,12 @@ bool sUPoligonN::quant(float angle_grad)
 				if( idxTo>=nElAllPntArr) idxTo=0;
 				addAETRecord(critPntArr[curIdxCPArr], idxTo, +1);
 			}
-			xL=round(xLp); xR=round(xRp);
+			xL= xm::round(xLp); xR= xm::round(xRp);
 			int offY=vMap.offsetBuf(0, vMap.YCYCL(yWrk));
 			int offGY=vMap.offsetGBuf(0, vMap.YCYCL(yWrk)>>kmGrid);
 			if(xL!=xR){
 				float zCur=zLp;
-				float dzCur=(round(zRp)-round(zLp))/(float)(xR-xL);
+				float dzCur= (xm::round(zRp) - xm::round(zLp)) / (float) (xR - xL);
 				float uCur=uLp;
 				float duCur=(uRp-uLp)/(float)(xR-xL);
 				float vCur=vLp;
@@ -4859,18 +4875,20 @@ bool sUPoligonN::quant(float angle_grad)
 						/*else*/ {
 							//short addVx=arrayVx[(vMap.XCYCL(xWrk)-leftBorder) + sx*(vMap.YCYCL(yWrk)-upBorder)];
 							short addVx;
-							float u0=floor(uCur);
+							float u0=xm::floor(uCur);
 							float ddu=uCur-u0;
-							int u=round(u0);
-							float v0=floor(vCur);
+							int u= xm::round(u0);
+							float v0=xm::floor(vCur);
 							float ddv=vCur-v0;
-							int v=round(v0);
-							addVx=round( (arrayVx[u+v*sx]*(1-ddu)+arrayVx[u+1+v*sx]*ddu) *(1-ddv) +
-										 (arrayVx[u+(v+1)*sx]*(1-ddu)+arrayVx[u+1+(v+1)*sx]*ddu) *ddv );
-							//addVx=arrayVx[round(uCur)+round(vCur)*sx];
+							int v= xm::round(v0);
+							addVx= xm::round(
+                                    (arrayVx[u + v * sx] * (1 - ddu) + arrayVx[u + 1 + v * sx] * ddu) * (1 - ddv) +
+                                    (arrayVx[u + (v + 1) * sx] * (1 - ddu) + arrayVx[u + 1 + (v + 1) * sx] * ddu) * ddv);
+							//addVx=arrayVx[round(uCur)+xm::round(vCur)*sx];
 							//addVx=0;
-							//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), round(zCur*(1<<VX_FRACTION)+addVx) );
-							unsigned short VVV=round( (-(cD+cA*xWrk+cB*yWrk)/cC)*(1<<VX_FRACTION)+addVx);
+							//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), xm::round(zCur*(1<<VX_FRACTION)+addVx) );
+							unsigned short VVV= xm::round(
+                                    (-(cD + cA * xWrk + cB * yWrk) / cC) * (1 << VX_FRACTION) + addVx);
 							if(VVV>MAX_VX_HEIGHT){ VVV=MAX_VX_HEIGHT; flag_abort=1; }
 							//vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), VVV );
 							SPutAlt4G(offY+vMap.XCYCL(xWrk), VVV);
@@ -4884,11 +4902,11 @@ bool sUPoligonN::quant(float angle_grad)
 			}
 			for(i=0; i<nElAET; i++){
 				AET[i].x+=AET[i].dx;
-				if(yWrk>=round(allPntArr[AET[i].idxTo].y)){
+				if(yWrk >= xm::round(allPntArr[AET[i].idxTo].y)){
 					char idx=AET[i].idxTo+AET[i].dir;
 					if(idx<0)idx=nElAllPntArr-1;
 					if(idx>=nElAllPntArr)idx=0;
-					if(round(allPntArr[idx].y)>yWrk) { //удаляем и добавляем ребро
+					if(xm::round(allPntArr[idx].y) > yWrk) { //удаляем и добавляем ребро
 						char idxFrom=AET[i].idxTo;
 						char dir=AET[i].dir;
 						//Соптимизировать
@@ -4937,7 +4955,7 @@ bool sUPoligonN::quant(float angle_grad)
 		}
 		goto loc_begDraw2Part;
 	}
-	if(round(DY2)>0) {
+	if(xm::round(DY2) > 0) {
 		d2=(c.x-b.x) / DY2;
 		if(flag_left_long==1) {
 			xRp=b.x; dxR=(c.x-b.x) / DY2;
@@ -4953,7 +4971,7 @@ bool sUPoligonN::quant(float angle_grad)
 			vLp=b_v; dvL=(c_v-b_v) / DY2;
 		}
 loc_begDraw2Part:
-		for(yWrk=round(b.y); yWrk<=round(c.y); yWrk++){
+		for(yWrk= xm::round(b.y); yWrk <= xm::round(c.y); yWrk++){
 			for(;curIdxCPArr<nElCritPntArr && yWrk>=allPntArr[critPntArr[curIdxCPArr]].y; curIdxCPArr++){
 				char idxTo;
 				idxTo=critPntArr[curIdxCPArr]-1;
@@ -4963,7 +4981,7 @@ loc_begDraw2Part:
 				if( idxTo>=nElAllPntArr) idxTo=0;
 				addAETRecord(critPntArr[curIdxCPArr], idxTo, +1);
 			}
-			xL=round(xLp); xR=round(xRp);
+			xL= xm::round(xLp); xR= xm::round(xRp);
 			int offY=vMap.offsetBuf(0, vMap.YCYCL(yWrk));
 			int offGY=vMap.offsetGBuf(0, vMap.YCYCL(yWrk)>>kmGrid);
 			if(xL!=xR){
@@ -4989,19 +5007,21 @@ loc_begDraw2Part:
 						/*else*/ {
 							//short addVx=arrayVx[(vMap.XCYCL(xWrk)-leftBorder) + sx*(vMap.YCYCL(yWrk)-upBorder)];
 							short addVx;
-							float u0=floor(uCur);
+							float u0=xm::floor(uCur);
 							float ddu=uCur-u0;
-							int u=round(u0);
-							float v0=floor(vCur);
+							int u= xm::round(u0);
+							float v0=xm::floor(vCur);
 							float ddv=vCur-v0;
-							int v=round(v0);
-							addVx=round( (arrayVx[u+v*sx]*(1-ddu)+arrayVx[u+1+v*sx]*ddu) *(1-ddv) +
-										 (arrayVx[u+(v+1)*sx]*(1-ddu)+arrayVx[u+1+(v+1)*sx]*ddu) *ddv );
-							//addVx=arrayVx[round(uCur)+round(vCur)*sx];
+							int v= xm::round(v0);
+							addVx= xm::round(
+                                    (arrayVx[u + v * sx] * (1 - ddu) + arrayVx[u + 1 + v * sx] * ddu) * (1 - ddv) +
+                                    (arrayVx[u + (v + 1) * sx] * (1 - ddu) + arrayVx[u + 1 + (v + 1) * sx] * ddu) * ddv);
+							//addVx=arrayVx[round(uCur)+xm::round(vCur)*sx];
 							//addVx=0;
-							//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), round(zCur*(1<<VX_FRACTION)+addVx) );
-							///////vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), round( (-(cD+cA*xWrk+cB*yWrk)/cC)*(1<<VX_FRACTION)+addVx) );
-							unsigned short VVV=round( (-(cD+cA*xWrk+cB*yWrk)/cC)*(1<<VX_FRACTION)+addVx);
+							//vMap.SPutAltDam(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), xm::round(zCur*(1<<VX_FRACTION)+addVx) );
+							///////vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), xm::round( (-(cD+cA*xWrk+cB*yWrk)/cC)*(1<<VX_FRACTION)+addVx) );
+							unsigned short VVV= xm::round(
+                                    (-(cD + cA * xWrk + cB * yWrk) / cC) * (1 << VX_FRACTION) + addVx);
 							if(VVV>MAX_VX_HEIGHT){ VVV=MAX_VX_HEIGHT; flag_abort=1; }
 							//vMap.SPutAlt(vMap.XCYCL(xWrk), vMap.YCYCL(yWrk), VVV );
 							SPutAlt4G(offY+vMap.XCYCL(xWrk), VVV);
@@ -5015,11 +5035,11 @@ loc_begDraw2Part:
 			}
 			for(i=0; i<nElAET; i++){
 				AET[i].x+=AET[i].dx;
-				if(yWrk>=round(allPntArr[AET[i].idxTo].y)){
+				if(yWrk >= xm::round(allPntArr[AET[i].idxTo].y)){
 					char idx=AET[i].idxTo+AET[i].dir;
 					if(idx<0)idx=nElAllPntArr-1;
 					if(idx>=nElAllPntArr)idx=0;
-					if(round(allPntArr[idx].y)>yWrk) { //удаляем и добавляем ребро
+					if(xm::round(allPntArr[idx].y) > yWrk) { //удаляем и добавляем ребро
 						char idxFrom=AET[i].idxTo;
 						char dir=AET[i].dir;
 						//Соптимизировать
@@ -5222,9 +5242,9 @@ void meshM2VM::rotateAndScaling(int XA, int YA, int ZA, float kX, float kY, floa
 	//A_shape.set(Vect3f(0.5,-0.5,-0.5), Vect3f::ZERO);
 	A_shape.set(Vect3f(kX, kY, -kZ), Vect3f::ZERO);
 
-	A_shape = Mat3f((float)XA*(M_PI/180.0),X_AXIS)*A_shape;
-	A_shape = Mat3f((float)-YA*(M_PI/180.0),Y_AXIS)*A_shape;
-	A_shape = Mat3f((float)ZA*(M_PI/180.0),Z_AXIS)*A_shape;
+	A_shape = Mat3f((float)XA*(XM_PI/180.0),X_AXIS)*A_shape;
+	A_shape = Mat3f((float)-YA*(XM_PI/180.0),Y_AXIS)*A_shape;
+	A_shape = Mat3f((float)ZA*(XM_PI/180.0),Z_AXIS)*A_shape;
 
 	matrix=A_shape;
 /*	matrix.xx=A_shape[0][0];
@@ -5322,9 +5342,9 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 	}
 	for (i = 0; i < numVrtx; i++){
 		vrtx[i].z1=(maxZ-minZ)-(vrtx[i].z1-minZ);
-		vrtx[i].x=round((vrtx[i].sx-minX)*(1<<16));
-		vrtx[i].y=round((vrtx[i].sy-minY)*(1<<16));
-		vrtx[i].z=round(vrtx[i].z1*(1<<16));
+		vrtx[i].x= xm::round((vrtx[i].sx - minX) * (1 << 16));
+		vrtx[i].y= xm::round((vrtx[i].sy - minY) * (1 << 16));
+		vrtx[i].z= xm::round(vrtx[i].z1 * (1 << 16));
 	}
 
 	if( ((maxX-minX)<=0) || ((maxY-minY)<=0) ) return 0;
@@ -5503,7 +5523,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 				}
 			}
 			if(h!=0) {
-				//KFArr[offY+j]=round(h*preFraction) + addH;
+				//KFArr[offY+j]=xm::round(h*preFraction) + addH;
 				if(flag_inverse==0) KFArr[offY+j]= ((h/(SCALING4PUT2EARCH*SCALING4PUT2EARCH))>>(16-VX_FRACTION)) + addH;
 				else KFArr[offY+j]= -((h/(SCALING4PUT2EARCH*SCALING4PUT2EARCH))>>(16-VX_FRACTION)) + addH;
 			}
@@ -5530,7 +5550,7 @@ bool meshM2VM::put2KF(int quality, short * KFArr, int sxKF, int syKF, bool flag_
 		if (b->sy > c->sy) { tmpv = b; b = c; c = tmpv; }
 
 		// грань нулевой высоты рисовать не будем
-		if (round(c->sy) <= round(a->sy)) continue;
+		if (round(c->sy) <= xm::round(a->sy)) continue;
 
 		int current_sx, current_sy;
 		float tmp, k, x_start, x_end;
@@ -5900,13 +5920,11 @@ void s_Mesh2VMapDispather::deleteEarthUnit(s_EarthUnit* eu, bool autoDeleteMVMDa
 
 meshM2VM* s_Mesh2VMapDispather::getMeshFrom3DS(const char * name3DS)
 {
-	char cb[MAX_PATH];
-	strcpy(cb, Path2TTerraResource);
-	strcat(cb, name3DS);
+    std::string path = Path2TTerraResource + name3DS;
 
 	std::list<meshM2VM*>::iterator mi;
 	for(mi=meshList.begin(); mi!=meshList.end(); mi++){
-		if(stricmp(cb, (*mi)->fname3DS)==0) break;
+		if(stricmp(path.c_str(), (*mi)->fname3DS)==0) break;
 	}
 	if(mi!=meshList.end()){
 		return *mi;
@@ -5915,7 +5933,7 @@ meshM2VM* s_Mesh2VMapDispather::getMeshFrom3DS(const char * name3DS)
 		meshM2VM* pMesh=new meshM2VM();
 
 
-		pMesh->load(cb);
+		pMesh->load(path.c_str());
 		meshList.push_back(pMesh);
 		return pMesh;
 	}
@@ -5982,10 +6000,10 @@ void s_EarthUnit::init(int xMap, int yMap)
 	int radiusAnalization;
 	if(meshDate->sizeX > meshDate->sizeX) radiusAnalization=meshDate->sizeX/2;
 	else radiusAnalization=meshDate->sizeY/2;
-	radiusAnalization=round((float)radiusAnalization*(2.f/3.f));
+	radiusAnalization= xm::round((float) radiusAnalization * (2.f / 3.f));
 	
 	analyzeTerrain(position, radiusAnalization, outOrientation);
-	//h_begin=round(position.z*(1<<VX_FRACTION));
+	//h_begin=xm::round(position.z*(1<<VX_FRACTION));
 	float A=outOrientation.x;
 	float B=outOrientation.y;
 	float C=-outOrientation.z;
@@ -5997,7 +6015,7 @@ void s_EarthUnit::init(int xMap, int yMap)
 	for(i = 0; i < meshDate->sizeY; i++){
 		for(j = 0; j < meshDate->sizeX; j++) {
 			float as=(-(A*(j-sx05) + B*(i-sy05) + D)/C);
-			substare[cnt]=round( (-(A*(j-sx05) + B*(i-sy05) + D)/C ) * (1<<VX_FRACTION) );
+			substare[cnt]= xm::round((-(A * (j - sx05) + B * (i - sy05) + D) / C) * (1 << VX_FRACTION));
 			cnt++;
 		}
 	}
@@ -6104,7 +6122,7 @@ bool s_EarthUnit::quant()
 		for(i = 0; i < meshDate->sizeY; i++){
 			for(j = 0; j < meshDate->sizeX; j++) {
 				float as=(-(A*(j-sx05) + B*(i-sy05) + D)/C);
-				substare[cnt]=round( (-(A*(j-sx05) + B*(i-sy05) + D)/C ) * (1<<VX_FRACTION) );
+				substare[cnt]= xm::round((-(A * (j - sx05) + B * (i - sy05) + D) / C) * (1 << VX_FRACTION));
 				cnt++;
 			}
 		}
@@ -6152,7 +6170,8 @@ bool s_EarthUnit::quant()
 				fl=1;
 				for(int m=0; m<256; m++){
 					float x=(float)m/128;//Диапазон от 0 до 2
-					k_dh[m]=round((-0.1f+exp(-fabsf((x-1)*(x-1)*(x-1))/(0.4f*0.4f)))*(1<<16));
+					k_dh[m]= xm::round(
+                            (-0.1f + xm::exp(-xm::abs((x - 1) * (x - 1) * (x - 1)) / (0.4f * 0.4f))) * (1 << 16));
 				}
 
 			}
@@ -6299,12 +6318,12 @@ c3DSGeoAction* c3DSGeoActionCreator::BuildD(short xc, short yc, float orientatio
 	}
 
 	s_EarthUnit* pEarthUnit=NULL;
-	float tmp=fmod(orientation, 2*M_PI);
-	if(tmp<0)tmp+=2*M_PI;
+	float tmp=xm::fmod(orientation, static_cast<float>(2*XM_PI));
+	if(tmp<0)tmp+=2*XM_PI;
 
-	float ANT_RAD_IN_CELL_ARR=(2*M_PI)/cache->MMDateArr.size();
+	float ANT_RAD_IN_CELL_ARR=(2*XM_PI)/cache->MMDateArr.size();
 
-	int granulateOrientation=round(tmp/ANT_RAD_IN_CELL_ARR);
+	int granulateOrientation= xm::round(tmp / ANT_RAD_IN_CELL_ARR);
 	if(granulateOrientation>=cache->MMDateArr.size())
 		granulateOrientation=cache->MMDateArr.size()-1;
 
@@ -6354,8 +6373,8 @@ s_AntBirthGeoAction::s_AntBirthGeoAction(short xc, short yc, float orientation)
 
 	//pEarthUnit=mesh2VMapDispather.getEarthUnit(1);
 	//pEarthUnit->init(xc, yc);
-	float tmp=fmod(orientation, 2*M_PI);
-	if(tmp<0)tmp+=2*M_PI;
+	float tmp=fmod(orientation, 2*XM_PI);
+	if(tmp<0)tmp+=2*XM_PI;
 	int granulateOrientation=round(tmp/ANT_RAD_IN_CELL_ARR);
 	if(granulateOrientation>=ANT_MAX_MESH2VMAPDATE)granulateOrientation=ANT_MAX_MESH2VMAPDATE-1;
 	if(MMDateArr[granulateOrientation]==0){
@@ -6388,9 +6407,9 @@ s_AntDeathGeoAction::s_AntDeathGeoAction(short xc, short yc, float orientation)
 	//pEarthUnit=mesh2VMapDispather.getEarthUnit(2);
 	//pEarthUnit->init(xc, yc);
 
-	float tmp=fmod(orientation, 2*M_PI);
-	if(tmp<0)tmp+=2*M_PI;
-	int granulateOrientation=round(tmp/ANT_RAD_IN_CELL_ARR);
+	float tmp=fmod(orientation, 2*XM_PI);
+	if(tmp<0)tmp+=2*XM_PI;
+	int granulateOrientation=xm::round(tmp/ANT_RAD_IN_CELL_ARR);
 	if(granulateOrientation>=ANT_MAX_MESH2VMAPDATE)granulateOrientation=ANT_MAX_MESH2VMAPDATE-1;
 	if(MMDateArr[granulateOrientation]==0){
 		pEarthUnit=mesh2VMapDispather.getEarthUnit(0);
@@ -6426,24 +6445,24 @@ s_HeadGeoAction::s_HeadGeoAction(void)
 	Vect3f orient(0,0,0);
 	pEarthUnit->meshDate->command_setKeyFrame(0, "", 20, orient, scaling, 0, 0);
 	pEarthUnit->meshDate->command_setKeyFrame(1, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 5*(M_PI/180.f);
+	orient.x= 5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(2, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 5*(M_PI/180.f); orient.y= 5*(M_PI/180.f);
+	orient.x= 5*(XM_PI/180.f); orient.y= 5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(3, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 5*(M_PI/180.f); orient.y= 5*(M_PI/180.f); orient.z= 5*(M_PI/180.f);
+	orient.x= 5*(XM_PI/180.f); orient.y= 5*(XM_PI/180.f); orient.z= 5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(4, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 3*(M_PI/180.f); orient.y= 2*(M_PI/180.f); orient.z= 2*(M_PI/180.f);
+	orient.x= 3*(XM_PI/180.f); orient.y= 2*(XM_PI/180.f); orient.z= 2*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(5, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 0*(M_PI/180.f); orient.y= 0*(M_PI/180.f); orient.z= 0*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= 0*(XM_PI/180.f); orient.z= 0*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(6, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= -2*(M_PI/180.f); orient.y= -2*(M_PI/180.f); orient.z= -3*(M_PI/180.f);
+	orient.x= -2*(XM_PI/180.f); orient.y= -2*(XM_PI/180.f); orient.z= -3*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(7, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 0*(M_PI/180.f); orient.y= -5*(M_PI/180.f); orient.z= -5*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= -5*(XM_PI/180.f); orient.z= -5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(8, "head.M3D", 2, orient, scaling, 0, 0);
-	orient.x= 0*(M_PI/180.f); orient.y= 0*(M_PI/180.f); orient.z= -5*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= 0*(XM_PI/180.f); orient.z= -5*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(9, "head.M3D", 2, orient, scaling, 0, 0, 1, INT_MAX);
 
-	orient.x= 0*(M_PI/180.f); orient.y= 0*(M_PI/180.f); orient.z= 0*(M_PI/180.f);
+	orient.x= 0*(XM_PI/180.f); orient.y= 0*(XM_PI/180.f); orient.z= 0*(XM_PI/180.f);
 	pEarthUnit->meshDate->command_setKeyFrame(9, "head.M3D", 10, orient, scaling, 0, 0);
 	scaling.x=scaling.y=2.f;
 	scaling.z=0.5f;
@@ -6481,8 +6500,8 @@ const short SGEOWAVE_LONG_WAVE=18;
 const float	SGEOWAVE_SPEED_WAVE=2.;
 const float	SGEOWAVE_MAX_WAVE_AMPLITUDE=6<<VX_FRACTION;
 
-const long SGEOWAVE_MAX_TOTAL_RADIUS=100;
-const long SGEOWAVE_MAX_RADIUS=SGEOWAVE_MAX_TOTAL_RADIUS-SGEOWAVE_LONG_WAVE;
+const int32_t SGEOWAVE_MAX_TOTAL_RADIUS=100;
+const int32_t SGEOWAVE_MAX_RADIUS=SGEOWAVE_MAX_TOTAL_RADIUS-SGEOWAVE_LONG_WAVE;
 
 sGeoWave::sGeoWave(short _x, short _y, short _maxRadius)
 {
@@ -6513,17 +6532,17 @@ bool sGeoWave::quant(void)
 
 	int i, j;
 	if(step>0){
-		short curBegRadWave=1 + round(SGEOWAVE_SPEED_WAVE*(float)(step-1));
+		short curBegRadWave= 1 + xm::round(SGEOWAVE_SPEED_WAVE * (float) (step - 1));
 		float curMaxAmpWave=calcMaxAmpWave(curBegRadWave);
 		for(i = 0; i < SGEOWAVE_LONG_WAVE; i++){
-			long curAmp=round(curMaxAmpWave * sin( (float)i*((2*M_PI)/SGEOWAVE_LONG_WAVE) ) );
+            int32_t curAmp= xm::round(curMaxAmpWave * xm::sin((float) i * ((2 * XM_PI) / SGEOWAVE_LONG_WAVE)));
 			int curRad=curBegRadWave+i;
 			int max = maxRad[curRad];
 			int* xx = xRad[curRad];
 			int* yy = yRad[curRad];
 			for(j = 0;j < max;j++) {
 				int offB=vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j]));
-				long V=vMap.SGetAlt(offB);
+                int32_t V=vMap.SGetAlt(offB);
 				V-=curAmp;
 				if(V<0)V=0;
 				vMap.SPutAlt(offB, V);
@@ -6531,7 +6550,7 @@ bool sGeoWave::quant(void)
 		}
 	}
 
-	short curBegRadWave=1 + round(SGEOWAVE_SPEED_WAVE*(float)(step));
+	short curBegRadWave= 1 + xm::round(SGEOWAVE_SPEED_WAVE * (float) (step));
 	if( (curBegRadWave >= maxRadius) || (curBegRadWave >= SGEOWAVE_MAX_RADIUS) ) {
 		short renderRad=curBegRadWave+SGEOWAVE_LONG_WAVE;
 		damagingBuildingsTolzer(x, y, maxRadius+SGEOWAVE_LONG_WAVE);
@@ -6542,14 +6561,14 @@ bool sGeoWave::quant(void)
 
 	float curMaxAmpWave=calcMaxAmpWave(curBegRadWave);
 	for(i = 0; i < SGEOWAVE_LONG_WAVE; i++){
-		long curAmp=round(curMaxAmpWave * sin( (float)i*((2*M_PI)/SGEOWAVE_LONG_WAVE) ) );
+        int32_t curAmp= xm::round(curMaxAmpWave * xm::sin((float) i * ((2 * XM_PI) / SGEOWAVE_LONG_WAVE)));
 		int curRad=curBegRadWave+i;
 		int max = maxRad[curRad];
 		int* xx = xRad[curRad];
 		int* yy = yRad[curRad];
 		for(j = 0;j < max;j++) {
 			int offB=vMap.offsetBuf(vMap.XCYCL(x + xx[j]), vMap.YCYCL(y + yy[j]));
-			long V=vMap.SGetAlt(offB);
+            int32_t V=vMap.SGetAlt(offB);
 			V+=curAmp+XRnd(1<<4);
 			//vMap.SPutAlt(offB, V);
 			if(V<0)V=0;

@@ -27,7 +27,7 @@ void terExternalQuant()
 	gameShell->BuildingInstaller.ShowCircle();
 	
 
-	terExternalEnergyTextureStart = fmod(terExternalEnergyTextureStart + (float)scale_time.delta()*0.001f*GAME_SHELL_SHOW_REGION_U_SPEED + 1.0f,1.0f);
+	terExternalEnergyTextureStart = xm::fmod(terExternalEnergyTextureStart + (float)scale_time.delta()*0.001f*GAME_SHELL_SHOW_REGION_U_SPEED + 1.0f,1.0f);
 	terExternalEnergyTextureEnd = terExternalEnergyTextureStart + GAME_SHELL_SHOW_REGION_U_STEP;
 
 	gbCircleShow->Quant();
@@ -177,7 +177,7 @@ void cCircleShow::Clear()
 
 void cCircleShow::Quant()
 {
-	u_begin=fmod(u_begin + (float)scale_time.delta()*0.001f*RegionUSpeedDotted + 1.0f,1.0f);
+	u_begin=xm::fmod(u_begin + (float)scale_time.delta()*0.001f*RegionUSpeedDotted + 1.0f,1.0f);
 }
 
 void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circleColor)
@@ -188,10 +188,10 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		Vect2f tp,dn;
 
-		int num_du = round((2.0f * r * M_PI) / circleColor.length);
+		int num_du = xm::round((2.0f * r * XM_PI) / circleColor.length);
 		if(num_du<2)
 			return;
-		int num_da = round((2.0f * r * M_PI) / region_show_spline_space);
+		int num_da = xm::round((2.0f * r * XM_PI) / region_show_spline_space);
 		if(num_da<2)
 			return;
 
@@ -205,7 +205,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			diffuse.a = (alpha > 255) ? 255.0f : alpha;
 		}
 
-		float da = M_PI * 2.0f / (float)(num_da);
+		float da = XM_PI * 2.0f / (float)(num_da);
 		float du=num_du/ (float)(num_da);
 		float a=0, u=0;
 
@@ -227,8 +227,8 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		for(int i = 0;i <= num_da;i++)
 		{
-			dn.x = cosf(a);
-			dn.y = sinf(a);
+			dn.x = xm::cos(a);
+			dn.y = xm::sin(a);
 
 			tp.x = pos.x + dn.x*r;
 			tp.y = pos.y + dn.y*r;
@@ -236,7 +236,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			dn.x *= width;
 			dn.y *= width;
 
-			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(round(tp.x)),vMap.YCYCL(round(tp.y))) >> VX_FRACTION);
+			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 
 			p1.pos.set(tp.x-dn.x,tp.y-dn.y,z0);
 			p1.u1() = selection ? v_pos : u;
@@ -253,7 +253,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 		strip.End();
 
 	} else {
-		int num = round(2.0f * r / region_show_spline_space);
+		int num = xm::round(2.0f * r / region_show_spline_space);
 		if (num < 2) {
 			return;
 		}
@@ -274,7 +274,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 		float x2 = x1 + width;
 		float y = pos.y - r;
 		for (int i = 0; i <= num; i++) {
-			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(round(pos.x)),vMap.YCYCL(round(y))) >> VX_FRACTION);
+			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(pos.x)), vMap.YCYCL(xm::round(y))) >> VX_FRACTION);
 			p1.pos.set(x1, y, z0);
 			p1.u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
@@ -296,7 +296,7 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 		float y2 = y1 + width;
 		float x = pos.x - r;
 		for (int i = 0; i <= num; i++) {
-			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(round(x)),vMap.YCYCL(round(pos.y))) >> VX_FRACTION);
+			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(x)), vMap.YCYCL(xm::round(pos.y))) >> VX_FRACTION);
 			p1.pos.set(x, y1, z0);
 			p1.u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
@@ -355,8 +355,8 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 			pp1=tp;//+dn;
 			pp2=tp-dn*kdn;
 
-			z1 = (float)(vMap.GetAlt(vMap.XCYCL(round(pp1.x)),vMap.YCYCL(round(pp1.y))) >> VX_FRACTION);
-			z2 = (float)(vMap.GetAlt(vMap.XCYCL(round(pp2.x)),vMap.YCYCL(round(pp2.y))) >> VX_FRACTION);
+			z1 = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(pp1.x)), vMap.YCYCL(xm::round(pp1.y))) >> VX_FRACTION);
+			z2 = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(pp2.x)), vMap.YCYCL(xm::round(pp2.y))) >> VX_FRACTION);
 			z=max(z1,z2);
 			smoothz[i++]=z;
 
@@ -386,7 +386,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 
 		if(umap<1)umap=1;
 
-		float kumap=round(umap)/umap;
+		float kumap= xm::round(umap) / umap;
 		kumap/=ulen;
 
 		bool first=true;
@@ -497,7 +497,7 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 			tp = region->spline()(t);
 			dn = region->spline().inward_normal(t)*0.02f;
 
-			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(round(tp.x)),vMap.YCYCL(round(tp.y))) >> VX_FRACTION);
+			float z0 = ZFIX+(float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 
 			p0.pos.set(tp.x+dn.x,tp.y+dn.y,z0);
 			p0.v1() = v_pos;
@@ -541,7 +541,7 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 			tp = region->spline()(t);
 			dn = region->spline().inward_normal(t)*0.02f;
 
-			float z0 = (float)(vMap.GetAlt(vMap.XCYCL(round(tp.x)),vMap.YCYCL(round(tp.y))) >> VX_FRACTION);
+			float z0 = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 			if(z0<vMap.hZeroPlast)
 				z0=vMap.hZeroPlast;
 			z0+=ZFIX;
@@ -590,7 +590,7 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 		do{
 			tp = region->spline()(t);
 
-			float z0 = (float)(vMap.GetAlt(vMap.XCYCL(round(tp.x)),vMap.YCYCL(round(tp.y))) >> VX_FRACTION);
+			float z0 = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(tp.x)), vMap.YCYCL(xm::round(tp.y))) >> VX_FRACTION);
 			if(z0>zero)
 				z0=zero;
 

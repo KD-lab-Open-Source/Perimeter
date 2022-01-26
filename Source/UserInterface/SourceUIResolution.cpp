@@ -2,6 +2,7 @@
 #include "StdAfx.h"
 #include "SourceUIResolution.h"
 #include <sstream>
+#include "files/files.h"
 
 bool has_custom_resolutions = false;
 UIResolution source_ui_resolution(true, 0, 0);
@@ -39,16 +40,16 @@ int absoluteUIPosX(float x, SHELL_ANCHOR anchor) {
             break;
         }
     }
-    return round(x);
+    return xm::round(x);
 }
 
 int absoluteUISizeX(float x, SHELL_ANCHOR anchor) {
     if (x >= 2.0f) x /= SQSH_COORD_WIDTH_SCALE;
     if (anchor == SHELL_ANCHOR_DEFAULT) anchor = shell_anchor;
     if (anchor == SHELL_ANCHOR_SCALED) {
-        return round(x * terRenderDevice->GetSizeX());
+        return xm::round(x * terRenderDevice->GetSizeX());
     } else {
-        return round(x * getUIX(anchor) * source_ui_factor.y);
+        return xm::round(x * getUIX(anchor) * source_ui_factor.y);
     }
 }
 
@@ -71,10 +72,10 @@ void initSourceUIResolution() {
     }
     
     //Scan for extra resolutions
-    for (const auto & entry : get_resource_paths_directory("resource/icons/intf")) {
-        std::filesystem::path entry_path(entry.second);
+    for (const auto & entry : get_content_entries_directory("resource/icons/intf")) {
+        std::filesystem::path entry_path = std::filesystem::u8path(entry->path_content);
         if (std::filesystem::is_directory(entry_path)) {
-            std::string name = entry_path.filename().string();
+            std::string name = entry_path.filename().u8string();
             size_t pos = name.find('x');
             if (pos == std::string::npos) {
                 continue;

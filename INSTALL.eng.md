@@ -17,10 +17,15 @@ We have several CI in github which can serve as hint and examples.
 
 ### Main dependencies
 
+- C++17 compiler
 - CMake
 - SDL2
-- libvorbis
-- boost
+- SDL2_image
+- SDL2_net
+- SDL2_mixer
+- FFmpeg (avcodec / avformat / avfilter / avutils / swscale)
+- Boost
+- ZLIB
 
 ### Automatic dependencies
 
@@ -33,7 +38,7 @@ These dependencies are downloaded and compiled automatically if needed by CMake 
 
 # Windows + Visual Studio (MSVC)
 
-Recommended method.
+Recommended method on Windows. 
 
 ### Requirements
 
@@ -53,8 +58,6 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
 
 # Windows + MinGW/MSYS
 
-May generate bigger binaries than MSVC. Has support for stack traces which is useful during crashes.
-
 ### Requirements
 
 - CMake
@@ -66,13 +69,14 @@ May generate bigger binaries than MSVC. Has support for stack traces which is us
   - lld
   - libbacktrace
 
-Packages: `gcc cmake make ninja SDL2 libvorbis boost lld libbacktrace`
+Packages: `gcc cmake make ninja SDL2 SDL2_image SDL2_net SDL2_mixer boost lld libbacktrace zlib`
 
 ### Instructions
 
 - `mkdir build`
 - `cd build`
 - `cmake -G Ninja ..`
+- `ninja dependencies`
 - `ninja -j4` (replace 4 with number of logical cores in your computer)
 
 ### Launching the game
@@ -82,7 +86,7 @@ Copy generated perimeter.exe executable and required libraries .dll's to the gam
 
 # Linux
 
-Still experimental support, it uses libraries like dxvk-native and some libraries to supply Windows platform stuff.
+Experimental support, it uses dxvk-native for D3D9 API and some libraries to supply Windows platform stuff.
 
 ### Requirements
 
@@ -96,17 +100,49 @@ Still experimental support, it uses libraries like dxvk-native and some librarie
   - vulkan headers (for DXVK)
   - glsllang-tools (for DXVK which needs glslangValidator program) 
 
-Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glslang-tools lld libsdl2-dev libogg-dev libvorbis-dev libboost-dev`
+Packages in Debian/Ubuntu: `build-essential ninja cmake meson libvulkan-dev glslang-tools lld cmake meson zlib1g-dev
+libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev libboost-dev
+libavcodec-dev libavformat-dev libavfilter-dev libswscale-dev`
 
 ### Instructions
 
 - `mkdir build`
 - `cd build`
 - `cmake -G Ninja ..`
+- `ninja dependencies`
 - `ninja -j$(nproc --all)` or `ninja -j4` (replace 4 with number of logical cores in your computer)
 
 ### Launching the game
-Copy generated perimeter executable to the game directory or run executable while current directory is the game directory.
+Run executable while current directory is the game directory or pass content= with game path.
+
+---
+
+# MacOS
+
+Experimental support, it uses dxvk-native for D3D9 API and some libraries to supply Windows platform stuff.
+
+### Requirements
+
+- Main dependencies +
+  - gcc
+  - make
+  - ninja
+  - meson
+  - libbacktrace
+  - Vulkan SDK or MoltenVK (for DXVK)
+
+Packages in MacPorts: `ninja cmake meson ffmpeg boost libsdl2-dev libsdl2-image-dev libsdl2-net-dev libsdl2-mixer-dev zlib`
+
+### Instructions
+
+- `mkdir build`
+- `cd build`
+- `cmake -G Ninja ..`
+- `ninja dependencies`
+- `ninja -j$(nproc --all)` or `ninja -j4` (replace 4 with number of logical cores in your computer)
+
+### Launching the game
+Run executable while current directory is the game directory or pass content= with game path.
 
 ---
 

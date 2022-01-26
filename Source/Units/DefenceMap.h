@@ -6,7 +6,7 @@
 
 class ClusterFind;
 
-class DefenceMap : public Map2D<BYTE, 4>
+class DefenceMap : public Map2D<uint8_t, 4>
 {
 public:
 	DefenceMap(int hsize, int vsize);
@@ -30,7 +30,7 @@ protected:
 	ClusterFind* path_finder;
 	ClusterFind* path_finder2;
 
-	void rebuildWalkMap(BYTE* walk_map);
+	void rebuildWalkMap(uint8_t* walk_map);
 };
 
 

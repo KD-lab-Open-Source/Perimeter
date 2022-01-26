@@ -25,7 +25,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <math.h>
 #include <xmath.h>
 
 #include <vector>

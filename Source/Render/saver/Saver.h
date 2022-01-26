@@ -6,19 +6,19 @@
 class CSaver
 {
 	std::vector<long> p;
-	DWORD m_Data;
+	uint32_t m_Data;
 public:
 	FILE* f;
 	CSaver(const char* name);
 	CSaver();
 	~CSaver();
 
-	DWORD GetData(){return m_Data;}
-	DWORD SetData(DWORD dat){return m_Data = dat;}
+	uint32_t GetData(){return m_Data;}
+	uint32_t SetData(uint32_t dat){return m_Data = dat;}
 
 	bool Init(const char* name);
 
-	void push(const unsigned long id);//Вызывать при начале записи блока
+	void push(uint32_t id);//Вызывать при начале записи блока
 	void pop();//Вызывать при окончании записи блока
 
 protected:
@@ -27,16 +27,23 @@ public:
 	inline CSaver& operator<<(const char *x);
 	inline CSaver& operator<<(const std::string& x){*this<<x.c_str(); return *this;}
 	inline CSaver& operator<<(bool x){WR(x); return *this;};
-	inline CSaver& operator<<(char x){WR(x); return *this;};
-	inline CSaver& operator<<(unsigned char x){WR(x); return *this;};
-	inline CSaver& operator<<(int x){WR(x); return *this;};
-	inline CSaver& operator<<(unsigned int x){WR(x); return *this;};
-	inline CSaver& operator<<(short x){WR(x); return *this;};
-	inline CSaver& operator<<(unsigned short x){WR(x); return *this;};
-	inline CSaver& operator<<(long x){WR(x); return *this;};
-	inline CSaver& operator<<(unsigned long x){WR(x);return *this;};
+    inline CSaver& operator<<(char x){WR(x); return *this;};
+    inline CSaver& operator<<(int8_t x){WR(x); return *this;};
+    inline CSaver& operator<<(uint8_t x){WR(x); return *this;};
+	inline CSaver& operator<<(int16_t x){WR(x); return *this;};
+	inline CSaver& operator<<(uint16_t x){WR(x); return *this;};
+    inline CSaver& operator<<(int32_t x){WR(x); return *this;};
+    inline CSaver& operator<<(uint32_t x){WR(x);return *this;};
+    inline CSaver& operator<<(int64_t x){WR(x); return *this;};
+    inline CSaver& operator<<(uint64_t x){WR(x);return *this;};
 	inline CSaver& operator<<(const float& x){WR(x);return *this;};
 	inline CSaver& operator<<(const double& x){WR(x);return *this;};
+
+#ifdef _WIN32
+    //These are required for Windows which doesn't allow "long" to be implicitly casted to std types...
+    inline CSaver& operator<<(long x){ return this->operator<<(static_cast<int32_t>(x));};
+    inline CSaver& operator<<(unsigned long x){ return this->operator<<(static_cast<uint32_t>(x));};
+#endif
 
 	inline CSaver& operator<<(Vect3f& x){WR(x);return *this;};
 	inline CSaver& operator<<(Vect2f& x){WR(x);return *this;};
@@ -44,7 +51,7 @@ public:
 };
 #undef WR
 #define WR(x) fwrite(&x,sizeof(x),1,s.f);
-//#define WRC(x) {DWORD w=x; fwrite(&w,sizeof(w),1,s.f);}
+//#define WRC(x) {uint32_t w=x; fwrite(&w,sizeof(w),1,s.f);}
 
 inline CSaver& CSaver::operator<<(const char *x)
 {
@@ -53,15 +60,15 @@ inline CSaver& CSaver::operator<<(const char *x)
 	return *this;
 }
 
-void SaveString(CSaver& s,LPCSTR str,DWORD ido);
+void SaveString(CSaver& s, const char* str,uint32_t ido);
 
 #pragma pack(1)
 #pragma warning(disable: 4200)
 struct CLoadData
 {
-	DWORD id;
+	uint32_t id;
 	int size;
-	BYTE data[];
+	uint8_t data[];
 };
 
 #pragma warning(default: 4200)
@@ -70,10 +77,10 @@ struct CLoadData
 class CLoadDirectory
 {
 protected:
-	BYTE *begin,*cur;
+	uint8_t *begin,*cur;
 	int size;
 public:
-	CLoadDirectory(BYTE* data,DWORD _size);
+	CLoadDirectory(uint8_t* data,uint32_t _size);
 	CLoadDirectory(CLoadData* ld);
 	CLoadData* next();
 };
@@ -83,7 +90,7 @@ class CLoadDirectoryFile:public CLoadDirectory
 public:
 	CLoadDirectoryFile();
 	~CLoadDirectoryFile();
-	bool Load(LPCSTR filename);
+	bool Load(const char* filename);
 };
 
 ///Читает лишь в случае, если rd_cur_pos+sizeof(x)<=ld->size
@@ -96,22 +103,29 @@ public:
 	CLoadIterator(CLoadData* _ld):ld(_ld),rd_cur_pos(0){};
 	inline void operator>>(bool& i){RD(i);}
 	inline void operator>>(char& i){RD(i);}
-	inline void operator>>(unsigned char& i){RD(i);}
-	inline void operator>>(short& i){RD(i);}
-	inline void operator>>(unsigned short& i){RD(i);}
-	inline void operator>>(int& i){RD(i);}
-	inline void operator>>(unsigned int& i){RD(i);}
-	inline void operator>>(long& i){RD(i);}
-	inline void operator>>(unsigned long& i){RD(i);}
+    inline void operator>>(int8_t& i){RD(i);}
+	inline void operator>>(uint8_t& i){RD(i);}
+	inline void operator>>(int16_t& i){RD(i);}
+	inline void operator>>(uint16_t& i){RD(i);}
+	inline void operator>>(int32_t& i){RD(i);}
+	inline void operator>>(uint32_t& i){RD(i);}
+	inline void operator>>(int64_t& i){RD(i);}
+	inline void operator>>(uint64_t& i){RD(i);}
 	inline void operator>>(float& i){RD(i);}
 	inline void operator>>(double& i){RD(i);}
 	inline void operator>>(void *& i){RD(i);}
 
-	LPCSTR LoadString()
+#ifdef _WIN32
+    //These are required for Windows which doesn't allow "long" to be implicitly casted to std types...
+    inline void operator>>(long x){ return this->operator>>(checked_reinterpret_cast_ref<long, int32_t>(x));};
+    inline void operator>>(unsigned long x){ return this->operator>>(checked_reinterpret_cast_ref<unsigned long, uint32_t>(x));};
+#endif
+
+	const char* LoadString()
 	{
 		if(rd_cur_pos>=ld->size)return "";
 
-		LPCSTR s=(LPCSTR)(ld->data+rd_cur_pos);
+		const char* s=(const char*)(ld->data+rd_cur_pos);
 		rd_cur_pos+=strlen(s)+1;
 		return s;
 	}
@@ -125,7 +139,7 @@ public:
 template<class T>
 void operator>>(CLoadIterator& it, std::vector<T>& v)
 {
-	DWORD size=0;
+	uint32_t size=0;
 	it>>size;
 	v.resize(size);
 	for(int i=0;i<size;i++)
@@ -137,7 +151,7 @@ void operator>>(CLoadIterator& it, std::vector<T>& v)
 template<class T>
 CSaver& operator<<(CSaver& s, std::vector<T>& v)
 {
-	DWORD size=v.size();
+	uint32_t size=v.size();
 	s<<size;
 	typename std::vector<T>::iterator it;
 	FOR_EACH(v,it)

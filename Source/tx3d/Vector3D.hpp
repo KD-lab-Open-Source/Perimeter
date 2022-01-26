@@ -14,7 +14,7 @@
 #define _TX3D_VECTORC3D_H
 
 #include "tweaks.h"
-#include <cmath>
+#include "xmath.h"
 
 namespace tx3d {
 
@@ -24,14 +24,13 @@ namespace tx3d {
 			Vector3D(float x = 0.0, float y = 0.0, float z = 0.0) : x(x), y(y), z(z) {}
 
 			float scalar() const {
-				return
-					(float) sqrt(x * x + y * y + z * z);
+				return static_cast<float>(xm::sqrt(x * x + y * y + z * z));
 			}
 
 			void abs() {
-				x = (float) fabs(x);
-				y = (float) fabs(y);
-				z = (float) fabs(z);
+				x = static_cast<float>(xm::abs(x));
+				y = static_cast<float>(xm::abs(y));
+				z = static_cast<float>(xm::abs(z));
 			}
 
 			void operator &= (const Vector3D& v) {

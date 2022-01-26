@@ -57,8 +57,8 @@ void terFilthSwarmVolcano::SetPrm(terFilthVolcanoStruct* prm_)
 	prm=prm_;
 	if(first) {
 		int size=prm->volcano_size;
-		//BirthProcessPoint = new CGeoInfluence(round(position.x)-size/2,round(position.y)-size/2, size,size);
-		BirthProcessPoint = new sTVolcano(round(position.x),round(position.y), 128, 128);
+		//BirthProcessPoint = new CGeoInfluence(round(position.x)-size/2,xm::round(position.y)-size/2, size,size);
+		BirthProcessPoint = new sTVolcano(xm::round(position.x), xm::round(position.y), 128, 128);
 	}
 }
 
@@ -109,7 +109,7 @@ void terFilthSwarmVolcano::GenerationProcess()
 		creature_num--;
 		xassert(creature_num>=0);
 		Vect3f pos=To3D(position);
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(pos.x),round(pos.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(pos.x), xm::round(pos.y)))
 		{
 			
 			terFilthVolcano* p = safe_cast<terFilthVolcano*>(player->buildUnit(GetUnitID()));
@@ -122,17 +122,17 @@ void terFilthSwarmVolcano::GenerationProcess()
 				float fdelta=prm->speed_max_horizontal-prm->speed_min_horizontal;
 
 				float speed=fmin+fdelta*terLogicRNDfrand();
-				float angle=terLogicRNDfrand()*2*M_PI;
+				float angle=terLogicRNDfrand()*2*XM_PI;
 
 
-				float x=speed*cos(angle);
-				float y=speed*sin(angle);
+				float x=speed*xm::cos(angle);
+				float y=speed*xm::sin(angle);
 				float z=prm->speed_min_vertical+
 					(prm->speed_max_vertical-prm->speed_min_vertical)*terLogicRNDfrand();
 				
 				Vect3f vel(x,y,z);
 				Vect3f set_pos=pos;//-vel*0.1f;
-				p->setPose(Se3f(QuatF(terLogicRNDfrand()*M_PI, Vect3f::K), set_pos), false);
+				p->setPose(Se3f(QuatF(terLogicRNDfrand()*XM_PI, Vect3f::K), set_pos), false);
 
 				p->GetRigidBodyPoint()->setVelocity(vel);
 			}
@@ -166,8 +166,6 @@ terFilthVolcano::terFilthVolcano(const UnitTemplate& data)
 	bool b=sound.Init("Missile_Fly_Vulcan");
 	sound.SetPos(position());
 	sound.Play();
-	xassert(b);
-
 }
 
 terFilthVolcano::~terFilthVolcano()
@@ -213,7 +211,7 @@ void terFilthVolcano::Quant()
 		cEffect* effect=terScene->CreateEffect(*key,NULL,Scale,true);
 		effect->SetPosition(MatXf(Mat3f::ID,position()));
 		
-		bool chaos=terCheckFilthChaos(round(position().x),round(position().y));
+		bool chaos=terCheckFilthChaos(xm::round(position().x), xm::round(position().y));
 		if(begin_wait_destroy && !chaos)
 		{
 			begin_wait_destroy--;
@@ -263,10 +261,10 @@ SaveUnitData* terFilthSwarmVolcano::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmVolcano::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmVolcano::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmVolcano* data = safe_cast<const SaveFilthSwarmVolcano*>(baseData);
+	SaveFilthSwarmVolcano* data = safe_cast<SaveFilthSwarmVolcano*>(baseData);
 	generation_period=data->generation_period;
 	creature_num=data->creature_num;
 
@@ -274,11 +272,13 @@ void terFilthSwarmVolcano::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		const SaveUnitData* one_base_data=*it;
-		const SaveFilthVolcano* one_data = safe_cast<const SaveFilthVolcano*>(one_base_data);
-		terFilthVolcano* unit = safe_cast<terFilthVolcano*>(player->buildUnit((*it)->attributeID));
-		unit->SetPrm(prm);
-		unitList.push_back(unit);
+		SaveUnitData* one_base_data=*it;
+		SaveFilthVolcano* one_data = safe_cast<SaveFilthVolcano*>(one_base_data);
+		terFilthVolcano* unit = safe_cast<terFilthVolcano*>(player->loadUnit(*it, false));
+        unit->SetPrm(prm);
+        if (std::find(unitList.begin(), unitList.end(), unit) == unitList.end()) {
+            unitList.push_back(unit);
+        }
 		unit->universalLoad(*it);
 	}
 }
@@ -292,9 +292,9 @@ SaveUnitData* terFilthVolcano::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthVolcano::universalLoad(const SaveUnitData* baseData)
+void terFilthVolcano::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthVolcano* data = safe_cast<const SaveFilthVolcano*>(baseData);
+	SaveFilthVolcano* data = safe_cast<SaveFilthVolcano*>(baseData);
 	begin_wait_destroy=data->begin_wait_destroy;
 	time_from_last_damage=data->time_from_last_damage;
 

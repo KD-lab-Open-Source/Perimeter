@@ -1,9 +1,135 @@
 #ifndef __P2P_INTERFACE_H__
 #define __P2P_INTERFACE_H__
 
-#include "ConnectionDP.h"
-#include "EventBufferDP.h"
+#include <Localization.h>
+#include "NetIncludes.h"
+#include "NetComEventBuffer.h"
 #include "CommonEvents.h"
+#include "ServerList.h"
+
+/**
+ 
+ Notes and info about networking:
+ 
+ Single player games don't use PNetCenter, this is only (re)created when multiplayer menu is opened.
+ 
+ Game follows Server/Client architecture, where the host/server that creates the lobby is the authority
+ in the multiplayer game session.
+
+ Both Host and Client use PNetCenter but some parts are specific to the role of game in the network game. 
+
+ ---
+
+ Events act as messages between host and client, some messages are used by both (4G) while others are for host (4H)
+ or to client (4C) only. To see a list of event IDs check terEventID enum in CommonEvents.h
+ 
+ Events destined for oneself are directly fed into in-buffer without passing to network stack, there is no a internal
+ client/socket connected to server in host machine. 
+
+ ---
+ 
+ The contact is established by clients when socket is opened to the listening port at server, then the client must send
+ a NetConnectionInfo to provide the details about the client such as the version, system arch, player name, password etc
+ 
+ The server must always respond with NetConnectionInfoResponse even when the connection can't be kept because is already
+ maxed or other reasons such as unstable connection or incompatible arch. This lets client know what the reason of
+ refusal was and to inform the player. In case of success the server sends NetConnectionInfoResponse with OK and the
+ client is added into server list of players.
+ 
+ ---
+ 
+ Player actions are sent to server in events form which are then processed and/or relayed to the rest of clients
+ when advancing a quant, a quant is the logic step/update unit in game. The clients must acknowledge the quant once
+ finished and provide a signature, this signature is checked by server to know if desync occurred.
+ 
+ Things that cause desync:
+ - Different computation result giving different values in a operation
+ - Doing or not doing something compared to the rest of clients
+ 
+ Examples of things that can cause problems:
+ - Using math functions like sin/cos/atan... from std library instead of a common one, as each OS or libc implementation
+ may provide different results.
+ - Sort operations that result in stalemate ordering (same values between elements compare) since some sort implementation
+ may decide to place them differently from others, this has occurred on auto targeting when sorted by same distance as
+ some units where selected differently due to the array order being different between clients.
+ - Code similar to Vect3(terLogicRNDfrnd(), terLogicRNDfrnd(), terLogicRNDfrnd()) as order which terLogicRNDfrnd are called
+ per arg might be different, first call might go to z instead of x like it happens in MacOS M1, assigning x and y individually
+ before calling Vect3 constructor solved it.
+ - Anything that may depend on render/visual side of game, locale, or any value that is not synchronized and same between clients.
+
+ Once a small desync occurs the effect cascades as next values are affected by previous ones until the effects are magnified
+ and entire game becomes different, this is why is important to ensure all results are the same and all operations are done
+ in same way and order, as long as the result of a function doesn't differ ever and function doesn't produce any different
+ side effect  it doesn't matter if the way of computing is different. This allows having game working between different
+ CPU architectures and OS'es.
+ 
+ All floating operations must conform IEEE-754 and code must be compiled with proper flags to ensure this. 
+ (for example SSE in x86)
+
+ ---
+
+ Current network stack is the following:
+ 
++---------------------------------------------------+
+|                                                   |
+|                     Host Game                     |
+|                                                   |
++---------------------------------------------------+
+|                                                   |
+|                     PNetCenter                    |
+|                                                   |
++---------------------------------------------------+
+|                                                   |
+|                NetConnectionHandler               |
+|                                                   |
++---------------+-+---------------+-+---------------+
+|               | |               | |               |
+| NetConnection | | NetConnection | |      ...      |
+|               | |               | |               |
++---------------+ +---------------+ +---------------+
+|               | |               | |               |
+|    SDL_net    | |    SDL_net    | |      ...      |
+|               | |               | |               |
++---------------+ +---------------+ +---------------+
+|               | |               | |               |
+|  OS/Hardware  | |  OS/Hardware  | |      ...      |
+|               | |               | |               |
++-------^-------+ +-------^-------+ +-------^-------+
+        |                 |                 |
+        |                 |                 |
+        |                 |                 |  <-------- TCP/IPv4
+        |                 |                 |
+        |                 |                 |
++-------v-------+ +-------v-------+ +-------v-------+
+|               | |               | |               |
+|  OS/Hardware  | |  OS/Hardware  | |      ...      |
+|               | |               | |               |
++---------------+ +---------------+ +---------------+
+|               | |               |         .
+|    SDL_net    | |    SDL_net    |         .
+|               | |               |         .
++---------------+ +---------------+
+|               | |               |
+| NetConnection | | NetConnection |
+|               | |               |
++---------------+ +---------------+
+|               | |               |
+| NetCo.Handler | | NetCo.Handler |
+|               | |               |
++---------------+ +---------------+
+|               | |               |
+|   PNetCenter  | |   PNetCenter  |
+|               | |               |
++---------------+ +---------------+
+|               | |               |
+|  Client Game  | |  Client Game  |
+|               | |               |
++---------------+ +---------------+
+
+ */
+
+extern const int PNC_DESYNC_RESTORE_ATTEMPTS;
+extern const int PNC_DESYNC_RESTORE_MODE_FULL;
 
 #ifdef PERIMETER_DEBUG
 #define LogMsg(...) fprintf(stdout, __VA_ARGS__)
@@ -11,73 +137,39 @@
 #define LogMsg(...)
 #endif
 
-#define _DBG_COMMAND_LIST
+class CAutoLock
+{
+    SDL_mutex* m_pCs;
+
+public:
+    CAutoLock(SDL_mutex* pCs) : m_pCs(pCs) {
+        SDL_LockMutex(m_pCs);
+    }
+    ~CAutoLock() {
+        SDL_UnlockMutex(m_pCs);
+    }
+};
 
 // {DF006380-BF70-4397-9A18-51133CEEE3B6}
 
-bool checkInetAddress(const char* ipStr);
+int InternalServerThread(void* lpParameter);
 
-int InternalServerThread(LPVOID lpParameter);
-#ifndef PERIMETER_EXODUS
-HRESULT WINAPI DirectPlayMessageHandler(PVOID pvUserContext, DWORD dwMessageId, PVOID pMsgBuffer);
-#endif
-
-extern const GUID guidPerimeterGame;
-
-struct sGameStatusInfo{
-	sGameStatusInfo(){
-		set(0,0, false, 0, -1);
-	}
-	sGameStatusInfo(char _maxPlayers, int _curPlayers, bool _flag_gameRun, int _ping, int _worldID){
-		set(_maxPlayers, _curPlayers, _flag_gameRun, _ping, _worldID);
-	}
-	void set(char _maxPlayers, int _curPlayers, bool _flag_gameRun, int _ping, int _worldID){
-		maximumPlayers=_maxPlayers;
-		currrentPlayers=_curPlayers;
-		flag_gameRun=_flag_gameRun;
-		ping=_ping;
-		worldID=_worldID;
-	}
-	char maximumPlayers;
-	char currrentPlayers;
-	bool flag_gameRun;
-	int ping;
-	int worldID;
+enum e_PNCDesyncState {
+    PNC_DESYNC_NONE,
+    PNC_DESYNC_DETECTED,
+    PNC_DESYNC_NOTIFIED,
+    PNC_DESYNC_ACKNOLEDGED,
+    PNC_DESYNC_SENT_RESTORE,
+    PNC_DESYNC_RESTORE_FINISHED,
+    PNC_DESYNC_RESTORE_FAILED
 };
-
-struct sGameHostInfo {
-	GUID gameHostGUID;
-	std::string hostName;
-	std::string port;
-	std::string gameName;
-	//bool flag_gameRun;
-	sGameStatusInfo gameStatusInfo;
-	void* pData;
-	sGameHostInfo(GUID _gameHostID, const char * _hostName, const char * _port, const char * _gameName, const sGameStatusInfo& gsi, void* _pData=0){ //int _ping, bool _flag_gameRun=0
-		set(_gameHostID, _hostName, _port, _gameName, gsi, _pData);
-	}
-	void set(GUID _gameHostGUID, const char * _hostName, const char * _port, const char * _gameName, const sGameStatusInfo& gsi, void* _pData=0){
-		gameStatusInfo=gsi;
-		hostName=_hostName;
-		port=_port;
-		gameName=_gameName;
-		gameHostGUID=_gameHostGUID;
-		pData=_pData;
-	}
-};
-
-
 
 struct PClientData
 {
-//	PNetCenter* m_pGame;
-//	CRITICAL_SECTION  m_csLock;
-
-	char   m_szDescription[PERIMETER_CLIENT_DESCR_SIZE];
-	///HANDLE m_hReady;
+	char playerName[PLAYER_MAX_NAME_LEN];
 	bool m_flag_Ready;
 	unsigned int clientGameCRC;
-	DPNID  dpnidPlayer;
+	NETID  netidPlayer;
 
 	//OutputEventBuffer out_buffer;
 	//InputEventBuffer  in_buffer;
@@ -94,10 +186,16 @@ struct PClientData
 
 	unsigned int lastTimeBackPacket;
 
-	unsigned int missionDescriptionIdx;
 	unsigned int confirmQuant;
+    
+    //Desync recovery vars
+    int desync_amount;
+    int desync_last_time;
+    e_PNCDesyncState desync_state;
+    std::unique_ptr<MissionDescription> desync_missionDescription;
+    XBuffer desync_netlog;
 
-	PClientData(unsigned int mdIdx, DPNID dpnid, const char* descr="simple client");
+	PClientData(const char* name, NETID netid);
 	~PClientData();
 
 };
@@ -122,39 +220,29 @@ enum e_PNCInterfaceCommands {
 	PNC_INTERFACE_COMMAND_CONNECTION_DROPPED,
 	PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT,
 	PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED,
-
-	PNC_INTERFACE_COMMAND_CONNECT_OK,
-	PNC_INTERFACE_COMMAND_CONNECT_ERR_INCORRECT_VERSION,
-	PNC_INTERFACE_COMMAND_CONNECT_ERR_GAME_STARTED,
-	PNC_INTERFACE_COMMAND_CONNECT_ERR_GAME_FULL,
-	PNC_INTERFACE_COMMAND_CONNECT_ERR_PASSWORD,
-	PNC_INTERFACE_COMMAND_CONNECT_ERR,
+    PNC_INTERFACE_COMMAND_INFO_MESSAGE,
 
 	PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME,
-	PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED
+	PNC_INTERFACE_COMMAND_CRITICAL_ERROR_GAME_TERMINATED,
+    PNC_INTERFACE_COMMAND_DESYNC
 
 };
 struct sPNCInterfaceCommand {
 	e_PNCInterfaceCommands icID;
-	std::string textInfo;
+    std::unique_ptr<LocalizedText> text = nullptr;
 
-	sPNCInterfaceCommand(){
-		icID=PNC_INTERFACE_COMMAND_NONE;
-	}
-	sPNCInterfaceCommand(e_PNCInterfaceCommands _icID, const char* str=0){
+    sPNCInterfaceCommand() {
+        icID = PNC_INTERFACE_COMMAND_NONE;
+    }
+	explicit sPNCInterfaceCommand(e_PNCInterfaceCommands _icID, std::unique_ptr<LocalizedText> text_ = nullptr){
 		icID=_icID;
-		if(str) textInfo=str;
-	}
-	sPNCInterfaceCommand(const sPNCInterfaceCommand& donor){
-		icID=donor.icID;
-		textInfo=donor.textInfo;
+		if (text_) text=std::move(text_);
 	}
 };
 
 enum e_PNCInternalCommand{
 	PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST,
 	PNC_COMMAND__STOP_HOST_AND_ABORT_GAME_AND_START_FIND_HOST,
-	PNC_COMMAND__STOP_HOST_AND_ABORT_GAME_AND_END,
 
 	//PNCC_START_FIND_HOST,
 	PNC_COMMAND__CONNECT_2_HOST_AND_STOP_FIND_HOST,
@@ -173,7 +261,8 @@ enum e_PNCInternalCommand{
 	PNC_COMMAND__ABORT_PROGRAM,
 	
 	PNC_COMMAND__END_GAME,
-	PNC_COMMAND__START_FIND_HOST
+	PNC_COMMAND__START_FIND_HOST,
+    PNC_COMMAND__DESYNC
 
 };
 
@@ -185,7 +274,6 @@ enum e_PNCState{
 	PNC_STATE__CLIENT_FIND_HOST=1,
 
 	PNC_STATE__CONNECTION=2,
-	//PNC_STATE__INFINITE_CONNECTION_2_IP=3,
 	PNC_STATE__CLIENT_TUNING_GAME=4,
 	PNC_STATE__CLIENT_LOADING_GAME=PNC_State_GameRun|5,
 	PNC_STATE__CLIENT_GAME=PNC_State_GameRun|6,
@@ -207,8 +295,12 @@ enum e_PNCState{
 	PNC_STATE__NEWHOST_PHASE_A=PNC_State_GameRun|PNC_State_Host|15,
 	PNC_STATE__NEWHOST_PHASE_B=PNC_State_GameRun|PNC_State_Host|16,
 
+    //Desync states
+    PNC_STATE__CLIENT_DESYNC=PNC_State_GameRun|17,
+    PNC_STATE__HOST_DESYNC=PNC_State_GameRun|PNC_State_Host|18,
+
 	// Состояние завершения
-	PNC_STATE__ENDING_GAME=17
+	PNC_STATE__ENDING_GAME=19
 };
 
 enum e_PNCStateClient{
@@ -245,80 +337,52 @@ enum e_PNCStateHost{
 	PNC_STATE_NEWHOST__WAIT_GAME_DATA=PNC_State_Host|6
 };
 
+struct InputPacket;
 
 class PNetCenter {
+private:
+    ServerList serverList;
+    NetConnectionHandler connectionHandler;
+
 public:
-	enum e_PNCWorkMode{
-		PNCWM_LAN,
-		PNCWM_ONLINE_P2P,
-	};
 	std::list<e_PNCInternalCommand> internalCommandList;
 	HANDLE hSecondThreadInitComplete;
 	HANDLE hCommandExecuted;
-	std::list<sPNCInterfaceCommand> interfaceCommandList;
+	std::list<sPNCInterfaceCommand*> interfaceCommandList;
 
-	//typedef hash_map<DPNID, PClientData*> ClientMapType;
+	//typedef hash_map<NETID, PClientData*> ClientMapType;
 	typedef std::vector<PClientData*> ClientMapType;
 
-	e_PNCWorkMode workMode;
-
 	e_PNCState m_state;
-	const char* getStrWorkMode();
-	const char* getStrState();
-
-
-	e_PNCStateClient m_clientState;
-	e_PNCStateClient m_previsionClientState;
-	e_PNCStateHost m_hostState;
-	e_PNCStateHost m_previsionHostState;
-	void setClientStateAndStorePrevisionState(e_PNCStateClient state){
-		m_previsionClientState=m_clientState;
-		m_clientState=state;
-	}
-	void restorePrevisionClientState(){
-		m_clientState=m_previsionClientState;
-	}
-
-	void setHostStateAndStorePrevisionState(e_PNCStateHost state){
-		m_previsionHostState=m_hostState;
-		m_hostState=state;
-	}
-	void restorePrevisionHostState(){
-		m_hostState=m_previsionHostState;
-	}
-
-	unsigned char m_amountPlayersInHost; //info only
-	unsigned char m_amountPlayerInDP;  //info only
+	const char* getStrState() const;
 
 	//int m_quantPeriod;
-	unsigned long m_nextQuantTime;
+	size_t m_nextQuantTime;
+
+    //Use server listing to get servers or broadcast server to listing
+    bool publicServerHost;
 
 	//bool flag_missionDescriptionUpdate;
-	MissionDescription hostMissionDescription;
+	MissionDescription* hostMissionDescription = nullptr;
 
 	MissionDescription clientMissionDescription; //Only 1
-
-
-	//for command PNCC_START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST
-	PlayerData internalPlayerData;
 
 	//string m_missionName;
 	
 	ClientMapType  m_clients;
-	//DPNID          m_dpnidGroupGame; //Этот DPNID используется для отправки сообщений всей группе
+	//NETID          m_netidGroupGame; //Этот NETID используется для отправки сообщений всей группе
 
 	//int            m_nServerPause;
 	int            m_nQuantCommandCounter;
 
 	//int            m_nWorldID;
-	std::string    m_GameName;
+    std::string    m_GameName;
+    std::string    m_PlayerName;
 	bool           m_bStarted;
 
 	std::list<netCommandGeneral*>   m_CommandList;
-	std::list<netCommand4G_ForcedDefeat*> m_DeletePlayerCommand;
 
 	void ClearCommandList();
-	void ClearDeletePlayerGameCommand();
 
 
 	///HANDLE             m_hPlayerListReady;
@@ -326,54 +390,36 @@ public:
 	//list<PPlayerData>  m_PlayerStartList;
 
 
-	/*PNetCenter(XDPConnection* cnn, LPCTSTR lpszName, const char* missionName, unsigned char amountOfPlayers, DPNID _dpnidCG);*/
-	PNetCenter(e_PNCWorkMode _workMode, const char* playerName=0, const char* InternetAddress=0, const char* password = 0);
-	//PNetCenter(XDPConnection* cnn, LPCTSTR lpszName, const MissionDescription& md, DPNID _dpnidCG);
+	PNetCenter();
 	~PNetCenter();
 
-	void DisconnectAndStartFindHost(void);
-	void StopServerAndStartFindHost(void);
+	void DisconnectAndStartFindHost();
+	void StopServerAndStartFindHost();
 
 
 	void UpdateBattleData();
 	void UpdateCurrentMissionDescription4C();
 	void CheckClients();
 	void DumpClients();
-	void WaitForAllClientsReady(int ms);
 	void ResetAllClients();
 
 //	void QuantTimeProc();
 	//Host !!!
-	void SendEvent(netCommandGeneral& event, DPNID dpnid, bool flag_guaranted=1);
-	void PutGameCommand2Queue_andAutoDelete(netCommandGame* pCommand);
+	void SendEvent(netCommandGeneral& event, NETID destination);
+	void PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame* pCommand);
 
 
-///	void SetGameSpeedScale(float scale, DPNID dpnidFrom);
+///	void SetGameSpeedScale(float scale, NETID netidFrom);
 
-	void Start();
-///	void Quant();
-	int AddClient(PlayerData& pd, const DPNID dpnid, const char* descr);
+	int AddClient(PlayerData& pd);
 	void ClearClients();
-
-	void setDPNIDInClientsDate(const int missionDescriptionIdx, DPNID dpnid);
-	void DeleteClientByMissionDescriptionIdx(const int missionDescriptionIdx);
-	void DeleteClientByDPNID(const DPNID dpnid, DWORD dwReason);
-
-
-#ifndef PERIMETER_EXODUS
-	HRESULT DirectPlayMessageHandler(DWORD dwMessageId, PVOID pMsgBuffer);
-#endif
-
-//	bool DbgPause();
+    void ExitClient(NETID netid);
+	void DeleteClient(NETID netid, bool normalExit);
 
 	//void StartGame();
 	void LLogicQuant();
 
-	GUID m_gameHostID;
-
-
     SDL_mutex* m_GeneralLock;
-
 
 	//Game(first) Thread
 	InOutNetComBuffer  in_ClientBuf;
@@ -385,15 +431,13 @@ public:
 	void clearInOutClientHostBuffers();
 
 	bool ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution);
-	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, const char* str=0);
+	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_ptr<LocalizedText> text = nullptr);
 
-	void CreateGame(const char* gameName, const char* missionName, const char* playerName, terBelligerent belligerent, unsigned int color, float gameSpeed=1.0f, const char* password="");
+	void CreateGame(const NetAddress& connection, const std::string& gameName, MissionDescription* mission, const std::string& playerName, const std::string& password="");
 
-	void JoinGame(GUID _gameHostID, const char* playerName, terBelligerent belligerent, unsigned int color);
-	void JoinGame(const char* strIP, const char* playerName, terBelligerent belligerent, unsigned int color, const char* password="");
+	void JoinGame(const NetAddress& connection, const std::string& playerName, const std::string& password="");
 
-	void refreshLanGameHostList();
-	std::vector<sGameHostInfo*>& getGameHostList();
+	std::vector<GameHostInfo>& getGameHostList();
 
 	void SendEvent(const netCommandGeneral* event);
 	void SendEventSync(const netCommandGeneral* event);
@@ -402,41 +446,43 @@ public:
 
 	void ServerTimeControl(float scale);
 	void changePlayerBelligerent(int idxPlayerData, terBelligerent newBelligerent);
-	void changePlayerColor(int idxPlayerData, int newColorIndex);
+	void changePlayerColor(int idxPlayerData, int newColorIndex, bool direction);
 	void changeRealPlayerType(int idxPlayerData, RealPlayerType newRealPlayerType);
 	void changePlayerDifficulty(int idxPlayerData, Difficulty difficulty);
 	void changePlayerClan(int idxPlayerData, int clan);
 	void changePlayerHandicap(int idxPlayerData, int handicap);
+    void changePlayerSeat(int idxPlayerData);
 	void changeMap(const char* missionName);
 
 
-	bool StartLoadTheGame(void);
-	void GameIsReady(void);
+	void StartLoadTheGame(bool state);
+	void GameIsReady();
 
 
 	void P2PIQuant();
 	void HandlerInputNetCommand();
 
-	//DPNID m_playerDPNID; //Информация на клиенте присланный его DPNID
+	//NETID m_playerNETID; //Информация на клиенте присланный его NETID
 
 
 	HANDLE hSecondThread;
 	//Second Thread
-	bool SecondThread(void);
-	void ClearClientData(void){
+	bool SecondThread();
+	void ClearClientData(){
 		ClientMapType::iterator p;
 		for(p=m_clients.begin(); p!=m_clients.end(); p++){
 			delete *p;
 		}
 		m_clients.clear();
 	}
-	bool AddClientToMigratedHost(const DPNID _dpnid, unsigned int _curLastQuant, unsigned int _confirmQuant);
+	bool AddClientToMigratedHost(const NETID _netid, unsigned int _curLastQuant, unsigned int _confirmQuant);
 
 
-	MissionDescription curMD; //1t
-	MissionDescription& getCurrentMissionDescription(void){
-		return curMD;
+	MissionDescription lobbyMissionDescription;
+	const MissionDescription& getLobbyMissionDescription() {
+		return lobbyMissionDescription;
 	};
+
 	unsigned int m_numberGameQuant; //Кванты на хосте Кванты считаются с 1-цы!
 	void HostReceiveQuant();
 	void ClientPredReceiveQuant();
@@ -461,93 +507,43 @@ public:
 		else return 0;
 	}
 
-	void reEnumPlayers(int IP);
+    bool isSaveGame() {
+        return lobbyMissionDescription.gameType_ == GT_MULTI_PLAYER_LOAD;
+    }
 
-#ifndef PERIMETER_EXODUS
-	//ConnectionDP
-    //DPNHANDLE m_hEnumAsyncOp;
-	std::vector<DPNHANDLE> m_hEnumAsyncOp_Arr;
-	IDirectPlay8Peer*	m_pDPPeer;
-
-	long m_nClientSgnCheckError;
-#endif
-	
-    DPNID	m_hostDPNID;
-    DPNID	m_localDPNID;
+    NETID	m_hostNETID;
+    NETID	m_localNETID;
     bool flag_connected;
 
 	void FinishGame(void);
 	void StartFindHost(void);
 
-	//DP interface
-	bool Init(void);
-	int ServerStart(const char* _name, int port);
+	bool Init();
+    bool ServerStart();
 	void SetConnectionTimeout(int ms);
-	void RemovePlayer(DPNID dpnid);
-#ifndef PERIMETER_EXODUS
-    void SetServerInfo(void* pb, int sz); //TODO Apparently unused
-    int GetConnectionTimeout(void); //TODO Apparently unused
-    GUID getHostGUIDInstance(); //TODO Apparently unused
-    int GetServerInfo(void* pb);
-	bool GetConnectionInfo(DPN_CONNECTION_INFO& info);
-	bool FindHost(const char* lpszHost);
-#endif
-	void Close(bool flag_immediatle=1);
-	int Connect(GUID _hostID); //const char* lpszHost, int port)
-	int Connect(unsigned int ip);//, int port
+	void RemovePlayer(NETID netid);
+    
+	void Close(bool flag_immediate=1);
+	bool Connect();
 
-	bool isConnected();
-	int Send(const char* buffer, int size, DPNID dpnid, bool flag_guaranted=1);
-	bool StartFindHostDP(const char* lpszHost="");
-	void StopFindHostDP(void);
-	void reStartFindPlayers(int ip);
-	
-#ifndef PERIMETER_EXODUS
-	struct INTERNAL_HOST_ENUM_INFO {
-		DPN_APPLICATION_DESC* pAppDesc;
-		IDirectPlay8Address*  pHostAddr;
-		IDirectPlay8Address*  pDeviceAddr;
-		sGameStatusInfo gameStatusInfo;
-		unsigned int timeLastRespond;
-
-		INTERNAL_HOST_ENUM_INFO(DPNMSG_ENUM_HOSTS_RESPONSE* pDpn);
-		~INTERNAL_HOST_ENUM_INFO();
-	};
-
-	std::vector<INTERNAL_HOST_ENUM_INFO*> internalFoundHostList;
-#endif
-	void clearInternalFoundHostList(void);
-
-	std::vector<std::string> needHostList;
-
-	std::vector<sGameHostInfo*> gameHostList;
-	void clearGameHostList(void){
-		std::vector<sGameHostInfo*>::iterator p;
-		for(p=gameHostList.begin(); p!=gameHostList.end(); p++){
-			delete *p;
-		}
-		gameHostList.erase(gameHostList.begin(), gameHostList.end());
-	}
-
+	bool isConnected() const;
+    size_t Send(const char* buffer, size_t size, NETID destination);
 
 	unsigned int flag_LockIputPacket;
 	void LockInputPacket(void);
 	void UnLockInputPacket(void);
+    void ClearInputPacketList();
 
-	std::list<XDPacket> m_DPPacketList;
-	bool PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf);
-	bool PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf, DPNID& returnDPNID);
+	std::list<InputPacket*> m_InputPacketList;
+	bool PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf, NETID& returnNETID);
 
-	std::string fixedInternetAddress;
-
-
-	unsigned long internalIP; ///!!!! Временно!!!!
+    NetAddress hostConnection;
 
 	//Host Date
-	unsigned long hostGeneralCommandCounter;
+	size_t hostGeneralCommandCounter;
 	unsigned int quantConfirmation;
 
-	DPNID dpnidClientWhichWeWait; //dpnid игрока которому хост при миграции посылает команду прислать игровые комманды; нужен чтобы в случае выхода переслать комманду другому
+	NETID netidClientWhichWeWait; //netid игрока которому хост при миграции посылает команду прислать игровые комманды; нужен чтобы в случае выхода переслать комманду другому
 
 	//Host info //TODO originally for gamespy, we should use this for public listed hosts in future
 	const char* getMissionName();
@@ -556,6 +552,9 @@ public:
 	int getNumPlayers();
 	int getMaxPlayers();
 	int getHostPort();
+    bool hasPassword() {
+        return !gamePassword.empty();
+    }
 	enum e_perimeterGameState{
 		PGS_OPEN_WAITING,
 		PGS_CLOSE_WAITING,
@@ -572,15 +571,9 @@ public:
 		}
 	}
 	std::string gamePassword;
-	bool isPassword(void){
-		if(gamePassword.empty()) return false;
-		else return true;
-	}
 
 	//Network settings
 	bool flag_NetworkSimulation;
-
-	DWORD m_dwPort;
 	bool flag_HostMigrate;
 	bool flag_NoUseDPNSVR;
 	int m_DPSigningLevel;//0-none 1-fast signed 2-full signed
@@ -594,7 +587,10 @@ public:
 	bool clientInPacketPause;
 
 	//Chat
-	void chatMessage(int userID, const char* str);
+	void chatMessage(bool clanOnly, const std::string& text, const std::string& locale);
+
+    //NetConnection stuff
+    void handleIncomingClientConnection(NetConnection* connection);
 };
 
 

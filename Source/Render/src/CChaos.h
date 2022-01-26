@@ -37,7 +37,7 @@ class cChaos:public cIUnkObj
 	class PSChaos* pPS;
 public:
 
-	cChaos(Vect2f size,LPCSTR str_tex0,LPCSTR str_tex1,LPCSTR str_bump,int tile,bool enable_bump);
+	cChaos(Vect2f size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enable_bump);
 	~cChaos();
 	
 	virtual void Animate(float dt);
@@ -59,8 +59,8 @@ protected:
 	double sfmod(double a,double b)
 	{
 		if(a>0)
-			return fmod(a,b);
-		return b-fmod(-a,b);
+			return xm::fmod(a,b);
+		return b-xm::fmod(-a,b);
 	}
 
 };
@@ -89,7 +89,7 @@ class CBox:public cIUnkObj
 
 	bool enable_face[6];
 public:
-	CBox(Vect3f size,LPCSTR str_cube);
+	CBox(Vect3f size, const char* str_cube);
 	~CBox();
 	virtual void Animate(float dt);
 	virtual void PreDraw(cCamera *DrawNode);
@@ -102,7 +102,7 @@ class CSkySpere:public cIUnkObj
 {
 	cObjectNodeRoot* pSkySphere;
 public:
-	CSkySpere(cObjLibrary* pObj,LPCSTR str_name,LPCSTR str_texture,int h_size);
+	CSkySpere(cObjLibrary* pObj, const char* str_name, const char* str_texture, int h_size);
 	~CSkySpere();
 	virtual void Animate(float dt);
 	virtual void PreDraw(cCamera *DrawNode);

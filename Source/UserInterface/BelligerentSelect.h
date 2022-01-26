@@ -30,6 +30,7 @@ static terBelligerent SelectableBelligerents[] = {
 };
 
 uint8_t getBelligerentIndex(terBelligerent belligerent);
+uint8_t getSelectableBelligerentIndex(terBelligerent belligerent);
 terBelligerent getBelligerentFromIndex(uint8_t index);
 std::string getBelligerentName(terBelligerent belligerent);
 BELLIGERENT_FACTION getBelligerentFaction(terBelligerent belligerent);

@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "IronBuilding.h"
 #include "Nature.h"
 
@@ -19,7 +17,7 @@ public:
 
 	VIRTUAL_SERIALIZE(ar) {
         AttributeBuilding::serialize_template(ar);
-		if(ar.openBlock("attributeCorridor", "Коридор")){
+		if(ar.openBlock("attributeCorridor", "РљРѕСЂРёРґРѕСЂ")){
 			ar & TRANSLATE_OBJECT(disappearingTime, "disappearingTime");
 			ar & TRANSLATE_OBJECT(disappearingHeight, "disappearingHeight");
 			ar & TRANSLATE_OBJECT(distanceThreshould, "distanceThreshould");
@@ -81,7 +79,7 @@ public:
 	void MoveQuant();
 	void Quant();
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 	void checkConnection();
 
 	void ShowInfo();
@@ -114,7 +112,7 @@ public:
 	bool readyToTeleportate() const;
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 	
 	void checkConnection();
 

@@ -1,6 +1,7 @@
 #ifndef __WINVIDEO_H__
 #define __WINVIDEO_H__
-#ifndef PERIMETER_EXODUS
+
+/* TODO unused, remove this and WinVideo.cpp
 
 struct IGraphBuilder;
 struct IMediaControl;
@@ -54,6 +55,7 @@ protected:
 	IDirect3DTexture9* pRenderTexture;
 	IDirect3DSurface9 *pSysSurface;
 };
-#endif
+
+*/
 
 #endif //__WINVIDEO_H__

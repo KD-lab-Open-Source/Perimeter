@@ -23,27 +23,29 @@ typedef Grid2D<terUnitGeneric, 5, GridVector<terUnitGeneric, 8> > terUnitGridTyp
 class terUniverse : public terHyperSpace
 {
 public:
-	terUniverse(PNetCenter* net_client, MissionDescription& mission, SavePrm& data,  PROGRESSCALLBACK loadProgressUpdate);
+	terUniverse(PNetCenter* net_client, MissionDescription& mission, PROGRESSCALLBACK loadProgressUpdate);
 
 	~terUniverse();
 
+    void clear();
 	void Quant();
 	void AvatarQuant();
 	void PrepareQuant();
 	void triggerQuant();
 
-	bool universalSave(const MissionDescription& mission, bool userSave);
+    bool universalLoad(MissionDescription& mission, SavePrm& data, PROGRESSCALLBACK loadProgressUpdate);
+	bool universalSave(MissionDescription& mission, bool userSave) const;
 	void relaxLoading();
 
 	void addLinkToResolve(const SaveUnitLink* link) { saveUnitLinks_.push_back(link); }
 
-	terPlayer* activePlayer() { return active_player_; }
+	terPlayer* activePlayer() const { return active_player_; }
 	terBelligerent activeBelligerent() const { xassert(active_player_); return active_player_->belligerent(); }
 
 	void SetActivePlayer(int id);
 
-	terPlayer* findPlayer(int playerID) { xassert(playerID >= 0 && playerID < Players.size()); return Players[playerID]; }
-	terPlayer* worldPlayer() { xassert(!Players.empty() && Players.back()->isWorld()); return Players.back(); }
+	terPlayer* findPlayer(int playerID) const { xassert(playerID >= 0 && playerID < Players.size()); return Players[playerID]; }
+	terPlayer* worldPlayer() const { xassert(!Players.empty() && Players.back()->isWorld()); return Players.back(); }
 
 	terUnitBase* findUnit(const terUnitID& unitID);
 	terUnitBase* findUnit(terUnitAttributeID id);
@@ -148,8 +150,6 @@ private:
 	ChangeOwnerList changeOwnerList;
 
 	RegionMetaDispatcher* activeRegionDispatcher_;
-
-	std::string loadedGmpName_;
 
 	MultiBodyDispatcher multibody_dispatcher;
 

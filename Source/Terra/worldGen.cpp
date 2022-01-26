@@ -136,11 +136,11 @@ void vrtMap::r_net_init(void)
 					R_NET_MAP(y,x) = (unsigned short)XRnd(max_alt - 1);
 					break;
 				case 2:
-//					  R_NET_MAP(y,x) = (unsigned char)((max_alt - 1)*((x + y)*QUANT)/abs(x*QUANT - H_SIZE/2 - 1));
+//					  R_NET_MAP(y,x) = (unsigned char)((max_alt - 1)*((x + y)*QUANT)/xm::abs(x*QUANT - H_SIZE/2 - 1));
 					R_NET_MAP(y,x) = (unsigned short)XRnd(max_alt - 1);
 					break;
 				case 3:
-//					  R_NET_MAP(y,x) = (unsigned char)((max_alt - 1)*((x + y)*QUANT)/abs(x*QUANT - H_SIZE/2 - 1));
+//					  R_NET_MAP(y,x) = (unsigned char)((max_alt - 1)*((x + y)*QUANT)/xm::abs(x*QUANT - H_SIZE/2 - 1));
 					R_NET_MAP(y,x) = p -> minAlt + (unsigned short)XRnd(p -> maxAlt - p -> minAlt);
 					break;
 				}

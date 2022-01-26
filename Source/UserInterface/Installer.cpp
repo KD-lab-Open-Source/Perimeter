@@ -253,10 +253,10 @@ void terBuildingInstaller::InitTexture()
 	if(pTexture == 0)return;
 
 	int Pitch;
-	BYTE* buf = (BYTE*)pTexture->LockTexture(Pitch);
+	uint8_t* buf = (uint8_t*)pTexture->LockTexture(Pitch);
 	for(int y=0;y<dy;y++)
 	{
-		DWORD* c = (DWORD*)(buf+y*Pitch);
+        uint32_t * c = (uint32_t*)(buf + y * Pitch);
 		for(int x = 0; x < dx; x++,c++)
 			*c = 0;
 	}
@@ -278,7 +278,7 @@ void terBuildingInstaller::SetBuildPosition(const Vect2f& mousePos, terPlayer* p
 			v.y = clamp(v.y, radius, vMap.V_SIZE - radius);
 			visible_ = 1;
 
-			SetBuildPosition(v, round(cycle(angle_set, 2*M_PI)/(M_PI/4))*(M_PI/4), player);
+			SetBuildPosition(v, xm::round(cycle(angle_set, 2 * XM_PI) / (XM_PI / 4)) * (XM_PI / 4), player);
 
 			ObjectPoint->ClearAttr(ATTRUNKOBJ_IGNORE);
 
@@ -342,7 +342,7 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 	}
 
 	int Pitch;
-	BYTE* buf = (BYTE*)pTexture->LockTexture(Pitch);
+	uint8_t* buf = (uint8_t*)pTexture->LockTexture(Pitch);
 
 	sColor4c cempty(0,0,0,0);
 	sColor4c cgood = valid() ? sColor4c(0,255,0,128) : sColor4c(200,128,128,128);
@@ -350,7 +350,7 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 	char* p = BaseBuff;
 	for(int i = 0;i < BaseBuffSY;i++)
 	{
-		DWORD* c = (DWORD*)(buf+i*Pitch);
+        uint32_t * c = (uint32_t*)(buf + i * Pitch);
 		for(int j = 0;j < BaseBuffSX;j++)
 		{
 			if((*p) & 1){

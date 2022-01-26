@@ -238,23 +238,23 @@ void vrtMap::recalcArea2Grid(int xl, int yt, int xr, int yb )
 }
 
 
-void vrtMap::saveGrid(XStream & ff)
+void vrtMap::saveGrid(XBuffer& ff)
 {
-	int i;//,j,kx,ky;
-	char flag_taller_h_zp=0;
-	for(i=0; i<(GV_SIZE); i++){
+	for (int i=0; i<(GV_SIZE); i++) {
 		ff.write(&GVBuf[offsetGBuf(0,i)], (GH_SIZE)*sizeof(GVBuf[0]));
 		ff.write(&GABuf[offsetGBuf(0,i)], (GH_SIZE)*sizeof(GABuf[0]));
 	}
 }
 
-void vrtMap::loadGrid(XStream & ff)
+void vrtMap::loadGrid(XBuffer & ff)
 {
-	int i;//,j,kx,ky;
-	char flag_taller_h_zp=0;
-	for(i=0; i<(GV_SIZE); i++){
-		ff.read(&GVBuf[offsetGBuf(0,i)], (GH_SIZE)*sizeof(GVBuf[0]));
-		ff.read(&GABuf[offsetGBuf(0,i)], (GH_SIZE)*sizeof(GABuf[0]));
+    int GVLen = GH_SIZE*sizeof(GVBuf[0]);
+    int GALen = GH_SIZE*sizeof(GABuf[0]);
+	for (int i=0; i<(GV_SIZE); i++)  {
+        if (ff.tell() + GVLen >= ff.length()) break;
+		ff.read(&GVBuf[offsetGBuf(0,i)], GVLen);
+        if (ff.tell() + GALen >= ff.length()) break;
+		ff.read(&GABuf[offsetGBuf(0,i)], GALen);
 		//for(j=0; j<GH_SIZE; j++){
 		//	GABuf[offsetGBuf(j,i)] &= ~(GRIDAT_BUILDING|GRIDAT_BASE_OF_BUILDING_CORRUPT);
 		//}

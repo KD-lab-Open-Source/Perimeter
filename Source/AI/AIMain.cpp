@@ -54,9 +54,6 @@ aiLog_(0)
 	installingFrame_ = false;
 
 	onlyIfCoreDamaged_ = true;
-
-	if(player_data.realPlayerType == REAL_PLAYER_TYPE_AI)
-		setAI(true);
 }
 
 AIPlayer::~AIPlayer()

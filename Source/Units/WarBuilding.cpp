@@ -169,7 +169,7 @@ void terBuildingMilitary::MoveQuant()
 bool terBuildingMilitary::findTarget()
 {
 	terUnitGridTeamOffensiveOperator op(this);
-	universe()->UnitGrid.Scan(round(position().x), round(position().y), round(attr().sightRadius()), op);
+	universe()->UnitGrid.Scan(xm::round(position().x), xm::round(position().y), xm::round(attr().sightRadius()), op);
 
 	targetsScanTimer_.start(static_gun_targets_scan_period);
 
@@ -186,7 +186,7 @@ int terBuildingMilitary::GetInterfaceLegionMode()
 	int stop = 0;
 	int attack = 0;
 
-	switch(lastCommand()){
+	switch (lastCommandID()) {
 	case COMMAND_ID_POINT:
 	case COMMAND_ID_OBJECT:
 		attack = 1;
@@ -194,10 +194,8 @@ int terBuildingMilitary::GetInterfaceLegionMode()
 	case COMMAND_ID_STOP:
 		stop = 1;
 		break;
-	case COMMAND_ID_NONE:
-		break;
-	//default:
-		//xassert(0);
+	default:
+        break;
 	}
 
 	if(stop)
@@ -244,11 +242,11 @@ SaveUnitData* terBuildingMilitary::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terBuildingMilitary::universalLoad(const SaveUnitData* baseData)
+void terBuildingMilitary::universalLoad(SaveUnitData* baseData)
 {
 	terBuildingPowered::universalLoad(baseData);
 	
-	const SaveUnitBuildingMilitaryData* data = dynamic_cast<const SaveUnitBuildingMilitaryData*>(baseData);
+	SaveUnitBuildingMilitaryData* data = dynamic_cast<SaveUnitBuildingMilitaryData*>(baseData);
 	if(data){
 		data->attackTarget.setLink((terUnitBase*&)attackTarget_);
 		data->lastAttackTarget.setLink((terUnitBase*&)lastAttackTarget_);

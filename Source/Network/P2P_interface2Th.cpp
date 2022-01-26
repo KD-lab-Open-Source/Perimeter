@@ -1,61 +1,64 @@
-#include "StdAfx.h"
+#include "NetIncludes.h"
 
 #include "Runtime.h"
 #include "P2P_interface.h"
+#include "NetConnectionAux.h"
 
-#include "GameShell.h"
 #include "Universe.h"
 
-#include "lmcons.h"
-
-#include "../Terra/terra.h"
-
 #include <algorithm>
+#include <set>
 #include <SDL.h>
-
+#include "files/files.h"
 
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
+const int PNC_DESYNC_RESTORE_ATTEMPTS = 8;
+const int PNC_DESYNC_RESTORE_MODE_PARTIAL = 0; //2; TODO set back once partial load is finished 
+const int PNC_DESYNC_RESTORE_ATTEMPTS_TIME = 5 * 60 * 1000; //5 mins
+const int PNC_DESYNC_RESTORE_MODE_FULL = PNC_DESYNC_RESTORE_MODE_PARTIAL + 1; 
 
+std::string colorComponentToString(float component) {
+    uint8_t val = static_cast<uint8_t>(xm::round(255 * component));
+    char buff[3];
+    snprintf(buff, 3, "%x", val);
+    buff[2] = 0;
+    if (strlen(buff) > 1) {
+        return buff;
+    } else {
+        return std::string("0") + buff;
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-PClientData::PClientData(unsigned int mdIdx, DPNID dpnid, const char* descr)// : out_buffer(1000000), in_buffer(1000000)
+PClientData::PClientData(const char* name, NETID netid)
 {
-	missionDescriptionIdx=mdIdx;
-//	m_pGame = game;
-	dpnidPlayer = dpnid;
-	strncpy(m_szDescription, descr, PERIMETER_CLIENT_DESCR_SIZE);
-	///m_hReady = CreateEvent(0, TRUE, FALSE, 0);
-	m_flag_Ready=0;
-//	InitializeCriticalSection(&m_csLock);
+    strncpy(playerName, name, PLAYER_MAX_NAME_LEN);
+    netidPlayer = netid;
+	m_flag_Ready=false;
 	lagQuant=0;
 	lastExecuteQuant=0;
 	curLastQuant=0;
 	lastTimeBackPacket=clocki();
 	confirmQuant=0;
+    
+    desync_amount=0;
+    desync_last_time = 0;
+    desync_state=PNC_DESYNC_NONE;
+    desync_missionDescription=nullptr;
+    desync_netlog.alloc(0);
 
-	requestPause=0;
-	clientPause=0;
+	requestPause=false;
+	clientPause=false;
 	timeRequestPause=0;
 
 }
-PClientData::~PClientData()
-{
-	///CloseHandle(m_hReady);
-//	DeleteCriticalSection(&m_csLock);
-}
 
+PClientData::~PClientData() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////
-
-//XBuffer exchangeBuff(1024);
-
-//const char nameEventServerReady="EventServerReady";
-///HANDLE hServerReady;//m_hReady;
-///HANDLE hStartServer;
-///GUID hostGUIDInstance;
 
 void PNetCenter::clearInOutClientHostBuffers()
 {
@@ -66,10 +69,9 @@ void PNetCenter::clearInOutClientHostBuffers()
 	out_HostBuf.reset();
 }
 
-
 //TestThread
 /*int flaaaag=0;
-DWORD WINAPI TestServerThread(LPVOID lpParameter)
+uint32_t WINAPI TestServerThread(void* lpParameter)
 {
 	PNetCenter* pPNetCenter=(PNetCenter*)lpParameter;
 	while(1){
@@ -88,16 +90,22 @@ DWORD WINAPI TestServerThread(LPVOID lpParameter)
 }
 */
 
+extern SDL_threadID net_thread_id;
+
 //Second thread
-int InternalServerThread(LPVOID lpParameter)
+int InternalServerThread(void* lpParameter)
 {
 /*	// TEST thread!!!!
 	DWORD ThreadId;
 	HANDLE  hTestThread=CreateThread( NULL, 0, TestServerThread, lpParameter, 0, &ThreadId);
 */
 
+    net_thread_id = SDL_ThreadID();
+
 	PNetCenter* pPNetCenter=(PNetCenter*)lpParameter;
 	pPNetCenter->SecondThread();
+
+    net_thread_id = -1;
     
 	//We are creating it with SDL thread, so we need to manually signal it
     SetEvent(pPNetCenter->hSecondThread);
@@ -108,20 +116,21 @@ XBuffer BUFFER_LOG(10000,1);
 
 bool PNetCenter::SecondThread(void)
 {
-	XDPInit();
+    xassert(net_thread_id == SDL_ThreadID());
+
+#ifdef _WIN32
+    //TODO is this necessary?
+    CoInitializeEx(0, COINIT_MULTITHREADED);
+#endif
 
 	Init();
 
-	////xassert(0&&"QQQQQQQQQQQQ");
-
-	StartFindHostDP();
 	m_state=PNC_STATE__CLIENT_FIND_HOST;
-
 
 	//Инициализация завершена - XDPConnection создан
 	SetEvent(hSecondThreadInitComplete);
 
-	bool flag_end=0;
+	bool flag_end = false;
 
 	while(!flag_end){
 		CAutoLock* _pLock=new CAutoLock(m_GeneralLock);
@@ -150,7 +159,7 @@ bool PNetCenter::SecondThread(void)
 				{
 					flag_LockIputPacket=0;
 					flag_SkipProcessingGameCommand=0;
-					m_DPPacketList.clear();
+					ClearInputPacketList();
 					clearInOutClientHostBuffers();
 					m_bStarted = false;
 					if(m_state==PNC_STATE__CLIENT_FIND_HOST){
@@ -164,7 +173,7 @@ bool PNetCenter::SecondThread(void)
 					m_bStarted = false;
 
 					///if(m_state==PNC_STATE__CLIENT_TUNING_GAME || m_state==PNC_STATE__CLIENT_LOADING_GAME || m_state==PNC_STATE__CLIENT_GAME){
-					flag_end=1;
+					flag_end= true;
 					///}
 					///else xassert(0&&"Disconnect: command order error(not game)");
 				}
@@ -174,60 +183,56 @@ bool PNetCenter::SecondThread(void)
 				{
 					flag_LockIputPacket=0;
 					flag_SkipProcessingGameCommand=0;
-					m_DPPacketList.clear();
+					ClearInputPacketList();
 					clearInOutClientHostBuffers();
 					m_bStarted = false;
 
 					////if(WaitForSingleObject(hStartServer, INFINITE) != WAIT_OBJECT_0) xassert(0&&"Network server: run error.");
 					m_state=PNC_STATE__HOST_TUNING_GAME; //Необходимо для DPN_MSGID_ENUM_HOSTS_QUERY чтоб сразу выдавал правильную инфу
-					StopFindHostDP();
+					serverList.stopHostFind();
 
-					LogMsg("starting server...");
+					LogMsg("starting server...\n");
 					if(!isConnected()) {
 						//m_pConnection->Init();
-						ServerStart(m_GameName.c_str(), PERIMETER_DEFAULT_PORT);//
-						//SetConnectionTimeout(TIMEOUT_DISCONNECT); //30s //3600000
+						if (ServerStart()) {
+                            LogMsg("...started OK\n");
+                        }
 					}
-					LogMsg("started\n");
 
-#ifndef PERIMETER_EXODUS
-                    //TODO Unused?
-					GameInfo* pGameInfo = new GameInfo;
-					//pGameInfo->id = m_dpnidGroupGame;
-					strncpy(pGameInfo->Name, m_GameName.c_str(), PERIMETER_CONTROL_NAME_SIZE );
-
-					SetServerInfo(pGameInfo, sizeof(GameInfo));
-					delete pGameInfo;
-#endif
-
-				//	pNewGame->AddClient(nccg.createPlayerData_, 0/*dpnid*/, nccg.computerName_);
+				//	pNewGame->AddClient(nccg.createPlayerData_, 0/*netid*/, nccg.computerName_);
 				//	pNewGame->StartGame();
 
 					///hostGUIDInstance=getHostGUIDInstance();
-					///m_dpnidGroupGame = m_pConnection->CreateGroup();
+					///m_netidGroupGame = m_pConnection->CreateGroup();
 
 					////SetEvent(hServerReady);
 
 					ClearClients();
-					if(AddClient(internalPlayerData, m_localDPNID, m_GameName.c_str())==-1){
+                    PlayerData pd;
+                    pd.set(m_PlayerName, m_localNETID);
+					if(AddClient(pd)==-1){
 						xassert(0&&"Error connect host 2 missionDescription");
 						ErrH.Abort("Network: General error 2!");
 					}
 
+					LogMsg("New game <%s> for start...\n", m_GameName.c_str());
 
-					//PNCS_CREATING_GAME
-					LogMsg("Start player list : \n");
-					//m_flag_PlayerListReady=0;
-
-
-					LogMsg("New game <%s> world=%d. for start...\n", m_GameName.c_str(), -1/*m_nWorldID*/);
-
-					hostMissionDescription.clearAllPlayerGameReady();
-					hostMissionDescription.setChanged();
-
+					hostMissionDescription->clearAllPlayerGameReady();
+					hostMissionDescription->setChanged();
 				}
 				SetEvent(hCommandExecuted);
 				break;
+            case PNC_COMMAND__DESYNC:
+                {
+                    flag_SkipProcessingGameCommand = true;
+                    if (isHost()) {
+                        m_state=PNC_STATE__HOST_DESYNC;
+                    } else {
+                        m_state=PNC_STATE__CLIENT_DESYNC;
+                    }
+                }
+                SetEvent(hCommandExecuted);
+                break;
 			case PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST:
 				{
 					///if(m_state==PNC_STATE__CONNECTION || m_state==PNC_STATE__CLIENT_TUNING_GAME || m_state==PNC_STATE__CLIENT_LOADING_GAME || m_state==PNC_STATE__CLIENT_GAME){
@@ -240,10 +245,12 @@ bool PNetCenter::SecondThread(void)
 					m_bStarted = false;
 					if(isConnected()) {
 						Close();
-						Init();//Close DirectPlay-я выполняет полную деинициализацию
 					}
-					StartFindHostDP();
-					m_state=PNC_STATE__CLIENT_FIND_HOST;
+                    if (m_state == PNC_STATE__CONNECTION) {
+                        //Avoid calling connect twice until PNC_COMMAND__START_FIND_HOST is processed
+                        m_state = PNC_STATE__CLIENT_FIND_HOST;
+                    }
+                    ExecuteInternalCommand(PNC_COMMAND__START_FIND_HOST, false);
 				}
 				SetEvent(hCommandExecuted);
 				break;
@@ -255,21 +262,19 @@ bool PNetCenter::SecondThread(void)
 						if(isHost()){
 							//Гарантированная отсылка последнего кванта
 							netCommandNextQuant com(m_numberGameQuant, 0, hostGeneralCommandCounter, 0);
-							SendEvent(com, DPNID_ALL_PLAYERS_GROUP, true);
+							SendEvent(com, NETID_ALL);
 						}
+                        
+                        //Send exit event to everyone connected (host or clients)
+                        netCommand4G_Exit ex(m_localNETID);
+                        SendEvent(ex, NETID_ALL);
 					}
 				}
 				break;
 			case PNC_COMMAND__START_FIND_HOST:
 				{
-					StartFindHostDP();
+                    serverList.startHostFind();
 					m_state=PNC_STATE__CLIENT_FIND_HOST;
-				}
-				SetEvent(hCommandExecuted);
-				break;
-			case PNC_COMMAND__STOP_HOST_AND_ABORT_GAME_AND_END:
-				{
-					///m_pConnection->DestroyGroup(m_dpnidGroupGame);
 				}
 				SetEvent(hCommandExecuted);
 				break;
@@ -300,17 +305,27 @@ bool PNetCenter::SecondThread(void)
 				break;
 			}
 		}
+        
+        if (flag_connected) {
+            //Check connection states
+            connectionHandler.pollConnections();
 
-		if(isHost()){
-			HostReceiveQuant();
-		}
-		else {//Client receive quant!
-			ClientPredReceiveQuant();
-		}
+            //Host/Client quant
+            if (isHost()) {
+                HostReceiveQuant();
+            } else {
+                ClientPredReceiveQuant();
+            }
+        }
 
 		delete _pLock;
 
 		if(flag_end) break; //для быстрого выхода
+        
+        //Accept any new incoming connections
+        if (flag_connected && isHost()) {
+            connectionHandler.acceptConnection();
+        }
 
 		//Logic quant
 		
@@ -332,62 +347,77 @@ bool PNetCenter::SecondThread(void)
 		//end logic quant
 	}
 
-
-
-	StopFindHostDP();
+	serverList.stopHostFind();
 
 	SetConnectionTimeout(1);//Для быстрого завершения
 	//if(m_pConnection->Connected()) m_pConnection->Close();
 	Close();
 
-	XDPClose();
+#ifdef _WIN32
+    CoUninitialize();
+#endif
 
-
-	return 0;
-}
-
-
-
-
-
-
-void PNetCenter::Start()
-{
+	return false;
 }
 
 
 void PNetCenter::UpdateBattleData()
 {
-	//!!! Сервер не может нормально сконфигурить игру
-	///MissionDescription battle(m_missionName.c_str());
+    //Load current attributes into host mission
+    XPrmOArchive oaScripts;
+    oaScripts.binary_friendly = true;
+    oaScripts << WRAP_NAME(rigidBodyPrmLibrary(), "rigidBodyPrmLibrary");
+    oaScripts << WRAP_NAME(attributeLibrary(), "attributeLibrary");
+    oaScripts << WRAP_NAME(globalAttr(), "globalAttr");
+    std::swap(hostMissionDescription->scriptsData, oaScripts.buffer());
 
-	if(hostMissionDescription.gameType_==GT_createMPGame){
+    MissionDescription& mission = *hostMissionDescription;
+	if (mission.gameType_ == GT_MULTI_PLAYER_CREATE) {
 		//Random xchg
 		////random_shuffle(missionDescription.playersData, missionDescription.playersData+missionDescription.playersAmount);
-		hostMissionDescription.shufflePlayers();
+		mission.shufflePlayers();
+	} else if (mission.gameType_ == GT_MULTI_PLAYER_LOAD) {
+        //Set the current allocated client player names
+        for(int i=0; i<mission.playerAmountScenarioMax; i++) {
+            PlayerData& pd = mission.playersData[i];
+            if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+                for (auto client : m_clients) {
+                    if (client->netidPlayer == pd.netid) {
+                        pd.setName(client->playerName);
+                        pd.setNameInitial(client->playerName);
+                        break;
+                    }
+                }
+            }
+        }
 	}
-	else if(hostMissionDescription.gameType_==GT_loadMPGame){
-	}
-	hostMissionDescription.packPlayerIDs();
-	for(int i=0; i<hostMissionDescription.playerAmountScenarioMax; i++){
-		if(hostMissionDescription.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-			hostMissionDescription.activePlayerID=hostMissionDescription.playersData[i].playerID;
-			netCommand4C_StartLoadGame nccsl(hostMissionDescription);
-			SendEvent(nccsl, hostMissionDescription.playersData[i].dpnid);//m_dpnidGroupGame);
+    mission.packPlayerIDs();
+    
+	for(int i=0; i<mission.playerAmountScenarioMax; i++){
+        PlayerData& pd = mission.playersData[i];
+        //Close open positions
+        if (pd.realPlayerType == REAL_PLAYER_TYPE_OPEN) {
+            pd.realPlayerType = REAL_PLAYER_TYPE_CLOSE;
+        }
+        //Send data
+		if (pd.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+			netCommand4C_StartLoadGame nccsl(mission, pd.playerID);
+            printf("Sending to %d %d %lu\n", i, pd.playerID, pd.netid);
+			SendEvent(nccsl, pd.netid);
 		}
 	}
+    mission.activePlayerID = mission.findPlayer(m_localNETID);
 
 	LogMsg("Sent battle info\n");
 }
 
 void PNetCenter::UpdateCurrentMissionDescription4C()
 {
-	MissionDescription curMD=hostMissionDescription;
-	for(int i=0; i<curMD.playerAmountScenarioMax; i++){
-		if(curMD.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-			curMD.activePlayerID=curMD.playersData[i].playerID;
-			netCommand4C_CurrentMissionDescriptionInfo nccmd(curMD);
-			SendEvent(nccmd, curMD.playersData[i].dpnid);//m_dpnidGroupGame);
+	const MissionDescription& md = *hostMissionDescription;
+	for(int i=0; i<md.playerAmountScenarioMax; i++){
+		if(md.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+			netCommand4C_CurrentMissionDescriptionInfo nccmd(md, md.playersData[i].playerID);
+			SendEvent(nccmd, md.playersData[i].netid);
 		}
 	}
 }
@@ -396,13 +426,11 @@ void PNetCenter::CheckClients()
 	ClientMapType::iterator i = m_clients.begin();
 	while(i != m_clients.end())
 	{
-		///if(WaitForSingleObject(i->second->m_hReady, 0) == WAIT_TIMEOUT)
 		if(!((*i)->m_flag_Ready))
 		{
-			LogMsg("Client 0x%X(%s) is not ready. removing.\n", (*i)->dpnidPlayer, (*i)->m_szDescription);
+			LogMsg("Client NID %lu is not ready. removing.\n", (*i)->netidPlayer);
 
-			///m_pConnection->DelPlayerFromGroup(m_dpnidGroupGame, i->second->dpnidPlayer);
-			RemovePlayer((*i)->dpnidPlayer);
+			RemovePlayer((*i)->netidPlayer);
 
 			delete *i;
 			m_clients.erase(i++);
@@ -411,25 +439,13 @@ void PNetCenter::CheckClients()
 			i++;
 	}
 }
-void PNetCenter::WaitForAllClientsReady(int ms)
-{
-/*
-	HANDLE hh[16];
-	int k = 0;
-	ClientMapType::iterator i;
-	FOR_EACH(m_clients, i)
-		hh[k++] = i->second->m_hReady;
 
-	WaitForMultipleObjects(k, hh, TRUE, ms);
-*/
-}
 void PNetCenter::ResetAllClients()
 {
 	unsigned int curTime=clocki();
 	ClientMapType::iterator k;
 	for(k=m_clients.begin(); k!=m_clients.end(); k++){
-		///ResetEvent(i->second->m_hReady);
-		(*k)->m_flag_Ready=0;
+		(*k)->m_flag_Ready=false;
 		(*k)->lastTimeBackPacket=curTime;//Необходимо для корректного начального таймаута
 		(*k)->backGameInf2List.clear();
 	}
@@ -437,61 +453,60 @@ void PNetCenter::ResetAllClients()
 
 void PNetCenter::DumpClients()
 {
-	LogMsg("Dumping clients---------------------------\n");
+	LogMsg("List of clients -------------------------\n");
 	ClientMapType::iterator i;
 	FOR_EACH(m_clients, i)
 	{
-		LogMsg("Client 0x%X(%s)\n", (*i)->dpnidPlayer, (*i)->m_szDescription);
+        LogMsg("Client NID %lu\n", (*i)->netidPlayer);
 	}
-	LogMsg("End of clients---------------------------\n");
+	LogMsg("-----------------------------------------\n");
 }
 
 
 
 
 
-bool PNetCenter::AddClientToMigratedHost(const DPNID _dpnid, unsigned int _curLastQuant, unsigned int _confirmQuant)
+bool PNetCenter::AddClientToMigratedHost(const NETID _netid, unsigned int _curLastQuant, unsigned int _confirmQuant)
 {
 	//поиск есть-ли такой клиент
 	ClientMapType::iterator p;
 	for(p=m_clients.begin(); p!=m_clients.end(); p++){
-		if( (*p)->dpnidPlayer == _dpnid) return 0;
+		if( (*p)->netidPlayer == _netid) return 0;
 	}
 
-	int idxPlayerData=hostMissionDescription.findPlayer(_dpnid);
+	int idxPlayerData=hostMissionDescription->findPlayer(_netid);
 	if(idxPlayerData!=-1){
-		PClientData* pPCD=new PClientData(idxPlayerData, _dpnid);
+        PlayerData& pd = hostMissionDescription->playersData[idxPlayerData];
+		PClientData* pPCD=new PClientData(pd.name(), _netid);
 		m_clients.push_back(pPCD);
-		//m_pConnection->AddPlayerToGroup(m_dpnidGroupGame, dpnid);
+		//m_pConnection->AddPlayerToGroup(m_netidGroupGame, netid);
 		pPCD->curLastQuant=_curLastQuant;//m_clientNumberGameQuant;
 		pPCD->confirmQuant=_confirmQuant;
-		hostMissionDescription.playersData[idxPlayerData].flag_playerStartReady=1;
+		pd.flag_playerStartReady = true;
 
-		hostMissionDescription.setChanged();
+		hostMissionDescription->setChanged();
 
-		LogMsg("ReJoin client 0x%X for game %s\n", _dpnid, m_GameName.c_str());
+		LogMsg("ReJoin client NID %lu PID %d for game %s\n", _netid, idxPlayerData, m_GameName.c_str());
 
 		return 1;
 	}
 	else {
-		LogMsg("client 0x%X for game %s id denied\n", _dpnid, m_GameName.c_str());
+		LogMsg("Client NID %lu for game %s id denied\n", _netid, m_GameName.c_str());
 		return 0;
 	}
 }
 
 
-void PNetCenter::SendEvent(netCommandGeneral& event, DPNID dpnid, bool flag_guaranted)
+void PNetCenter::SendEvent(netCommandGeneral& event, NETID destination)
 {
-	//if(isHost()){
-		if(dpnid!=m_localDPNID){
-			out_HostBuf.putNetCommand(&event);
-			out_HostBuf.send(*this, dpnid, flag_guaranted);
-		}
-		if( (dpnid==m_localDPNID) || (dpnid==DPNID_ALL_PLAYERS_GROUP /*m_dpnidGroupGame*/) ){
-			in_ClientBuf.putNetCommand(&event);
-		}
-	//}
+    if (destination != m_localNETID ) {
+        out_HostBuf.putNetCommand(&event);
+        out_HostBuf.send(*this, destination);
+    }
 
+    if( (destination == m_localNETID) || (destination == NETID_ALL) ){
+        in_ClientBuf.putNetCommand(&event);
+    }
 }
 
 //void PNetCenter::StartGame()
@@ -519,21 +534,14 @@ void PNetCenter::LLogicQuant()
 	switch(m_state) {
 
 	case PNC_STATE__CONNECTION:
-        if(internalIP) {
-            if(!Connect(internalIP)) {
-                ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
-                //ErrH.Abort("Unable to find multiplayer server");
-            }
+        if(!Connect()) {
+            ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
+            //ErrH.Abort("Unable to find multiplayer server");
         } else {
-            if(!Connect(m_gameHostID)) {
-                ExecuteInternalCommand(PNC_COMMAND__DISCONNECT_AND_ABORT_GAME_AND_END_START_FIND_HOST, false);
-                //ErrH.Abort("Unable to find multiplayer server");
-            }
+            serverList.stopHostFind();
+            m_state = PNC_STATE__CLIENT_TUNING_GAME;
+            SetEvent(hCommandExecuted);
         }
-		//SetConnectionTimeout(TIMEOUT_DISCONNECT);//30s//3600000
-		StopFindHostDP();
-		m_state=PNC_STATE__CLIENT_TUNING_GAME;
-		SetEvent(hCommandExecuted);
 		break;
 	case PNC_STATE__HOST_TUNING_GAME:
 		{
@@ -541,12 +549,12 @@ void PNetCenter::LLogicQuant()
 
 			m_numberGameQuant= 1;//!
 
-			if(hostMissionDescription.isChanged()){
+			if(hostMissionDescription->isChanged()){
 				UpdateCurrentMissionDescription4C();
-				hostMissionDescription.clearChanged();
+				hostMissionDescription->clearChanged();
 			}
 			///if(m_flag_PlayerListReady)//end waite
-			if(hostMissionDescription.isAllRealPlayerStartReady()){
+			if(hostMissionDescription->isAllRealPlayerStartReady()){
 
 				LogMsg("Game Started\n");
 
@@ -554,12 +562,7 @@ void PNetCenter::LLogicQuant()
 				UpdateBattleData();
 				//ReleaseAllPlayers
 
-
 				LogMsg("Wait for all clients ready. \n");
-				///WaitForAllClientsReady(nWaitClientsReady*1000);
-
-				//Для удаления игроков отпавших при загрузке
-				ClearDeletePlayerGameCommand();
 
 				m_state=PNC_STATE__HOST_LOADING_GAME;
 			}
@@ -569,27 +572,30 @@ void PNetCenter::LLogicQuant()
 		{
 			CAutoLock _lock(m_GeneralLock); //! Lock
 
-			bool flag_ready=1;
+			bool flag_ready = true;
 			ClientMapType::iterator i;
-			for(i=m_clients.begin(); i!=m_clients.end(); i++){
-				flag_ready&=(*i)->m_flag_Ready;
-				if(flag_ready) 
-					if( (*m_clients.begin())->clientGameCRC != (*i)->clientGameCRC ) {
-						XBuffer buf;
-						buf < "Game of the player " <= (*i)->dpnidPlayer < "does not meet to game of the player " <= (*m_clients.begin())->dpnidPlayer;
-						xxassert(0 , buf.buf);
-					}
+			for (i=m_clients.begin(); i!=m_clients.end(); i++) {
+                PClientData* client = *i;
+				flag_ready &= client->m_flag_Ready;
+				if (flag_ready) {
+                    if ((*m_clients.begin())->clientGameCRC != (*i)->clientGameCRC) {
+                        XBuffer buf;
+                        buf < "Game of the player " <= (*i)->netidPlayer < "does not meet to game of the player " <=
+                        (*m_clients.begin())->netidPlayer;
+                        xxassert(0, buf.buf);
+                    }
+                }
 			}
-			if(flag_ready){
+			if (flag_ready) {
 				CheckClients();
 				DumpClients();
 
 
 				///terEventBeginCommand ev_begin(m_nQuantDelay/100, 0);
-				///SendEvent(ev_begin, m_dpnidGroupGame);
+				///SendEvent(ev_begin, m_netidGroupGame);
 
 				///netCommandStartGame event;
-				///SendEvent(event, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
+				///SendEvent(event, NETID_ALL_PLAYERS_GROUP/*m_netidGroupGame*/);
 				LogMsg("Go! go! go!\n");
 
 				ResetAllClients();
@@ -612,22 +618,30 @@ void PNetCenter::LLogicQuant()
 		{
 			CAutoLock _lock(m_GeneralLock); //! Lock
 
-			///list<netCommand4H_BackGameInformation*>::iterator m;
+			bool client_desync = false;
 			std::vector<netCommand4H_BackGameInformation2> & firstList=(*m_clients.begin())->backGameInf2List;
 			while(!firstList.empty()) { //проверка что первый список не пустой
-				ClientMapType::iterator k=m_clients.begin();
-				k++;
 				unsigned int countCompare=0;
-				for(; k!=m_clients.end(); k++){
-					std::vector<netCommand4H_BackGameInformation2> &  secondList=(*k)->backGameInf2List;
-					if(!secondList.empty()){
-						if( *firstList.begin() == *secondList.begin() ) countCompare++;//if( (**firstList.begin()).equalVData(**secondList.begin()) )
-						else {
-							if( (*firstList.begin()).quant_ != (*secondList.begin()).quant_ ) {
+				for (auto client : m_clients) {
+					std::vector<netCommand4H_BackGameInformation2> &  secondList=client->backGameInf2List;
+					if(!secondList.empty()) {
+                        
+#if defined(PERIMETER_DEBUG) && 0
+                        if (quantConfirmation > 20) {
+                            client_desync = true;
+                            if (client->netidPlayer != m_hostNETID) {
+                                (*secondList.begin()).signature_ = 0;
+                            }
+                        }
+#endif
+						if( *firstList.begin() == *secondList.begin() ) {
+                            countCompare++;//if( (**firstList.begin()).equalVData(**secondList.begin()) )
+                        } else {
+                            if( (*firstList.begin()).quant_ != (*secondList.begin()).quant_ ) {
 								//xassert(0 && "Unmatched number quants");
-								XStream f("outnet.log", XS_OUT);
+								XStream f(convert_path_content("outnet.log", true), XS_OUT);
+                                f < currentVersion < "\r\n";
 								f.write(BUFFER_LOG.address(), BUFFER_LOG.tell());
-								f < currentVersion < "\r\n";
 								f < "Unmatched number quants !" < "\n";
 								std::vector<netCommand4H_BackGameInformation2>::iterator q;
 								for(q=firstList.begin(); q!=firstList.end(); q++){
@@ -638,42 +652,74 @@ void PNetCenter::LLogicQuant()
 								}
 								f.close();
 
-								XBuffer to(1024,1);
-								to < "Unmatched number quants !" < "N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
-                                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
+                                XBuffer to(1024,true);
+								to < "Unmatched number quants ! N1=" <= (*firstList.begin()).quant_ < " N2=" <=(*secondList.begin()).quant_;
+                                fprintf(stderr, "Error network synchronization with %llX: %s\n", client->netidPlayer, to.address());
 								ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
-								return;
-							}
-							else {
-								// Сравнение для netCommand4H_BackGameInformation2
-								if( (*firstList.begin()).signature_ != (*secondList.begin()).signature_ ){
-								    netCommandGeneral ev = netCommand4C_SaveLog();
-									SendEvent(ev, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
-									XBuffer to(1024,1);
-									XStream f("outnet.log", XS_OUT);
-									f < currentVersion < "\r\n";
-									f < "Unmatched game quants !" < "on Quant=" <= (*firstList.begin()).quant_;
-									f.close();
-
-									to < "Unmatched game quants !" < "on Quant=" <= (*firstList.begin()).quant_;
-                                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error network synchronization", to, nullptr);
-									ExecuteInternalCommand(PNC_COMMAND__ABORT_PROGRAM, false);
-									return;
-								}
-							}
-							///else xassert(0 && "Нераспознанная десинхронизация");
+                                return;
+							} else if ((*firstList.begin()).signature_ != (*secondList.begin()).signature_) {
+                                switch (client->desync_state) {
+                                    case PNC_DESYNC_NONE:
+                                    case PNC_DESYNC_RESTORE_FINISHED:
+                                        client->desync_amount++;
+                                        if (client->desync_amount > PNC_DESYNC_RESTORE_ATTEMPTS) {
+                                            client->desync_state = PNC_DESYNC_RESTORE_FAILED;
+                                            std::string gameID = std::to_string(time(nullptr)) + "_failed";
+                                            netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
+                                            ev_notify.desync_amount = client->desync_amount;
+                                            SendEvent(ev_notify, client->netidPlayer);
+                                            fprintf(stderr, "Failed to recover network synchronization with %llX after %d times\n", client->netidPlayer, client->desync_amount);
+                                        } else {
+                                            client_desync |= true;
+                                            if (client->desync_last_time && clocki() - client->desync_last_time >
+                                                PNC_DESYNC_RESTORE_ATTEMPTS_TIME) {
+                                                client->desync_amount = 1;
+                                            }
+                                            client->desync_state = PNC_DESYNC_DETECTED;
+                                            fprintf(stderr, "Error network synchronization with %llX: "
+                                                            "Unmatched game quants signatures ! Quant=%u\n",
+                                                    client->netidPlayer, (*firstList.begin()).quant_);
+                                        }
+                                        client->desync_last_time = clocki();
+                                        break;
+                                    case PNC_DESYNC_RESTORE_FAILED:
+                                        //Take it as valid for now
+                                        countCompare++;
+                                        break;
+                                    case PNC_DESYNC_DETECTED:
+                                        break;
+                                    default: 
+                                        xassert(0 && "Unexpected desync state");
+                                        countCompare++;
+                                        break;
+                                }
+							} else {
+                                xassert(0 && "Unknown desync reason");
+                            }
 						}
 					}
 					else goto end_while_01; //break; //завершение while если один из спмсков кончится раньше первого
 				}
+                
+                if (client_desync) {
+                    ExecuteInternalCommand(PNC_COMMAND__DESYNC, false);
+                    return;
+                }
+                
 				if(countCompare+1>=m_clients.size()) {
-						quantConfirmation=(*(*m_clients.begin())->backGameInf2List.begin()).quant_;
+                    quantConfirmation=(*(*m_clients.begin())->backGameInf2List.begin()).quant_;
 					//erase begin elements
-					for(k=m_clients.begin(); k!=m_clients.end(); k++){
-						std::vector<netCommand4H_BackGameInformation2> &  secondList=(*k)->backGameInf2List;
-						BUFFER_LOG <= (*secondList.begin()).quant_ < " " <= (*secondList.begin()).replay_ < " " <= (*secondList.begin()).state_< "\n";
+					for(auto client : m_clients) {
+						std::vector<netCommand4H_BackGameInformation2>& list=client->backGameInf2List;
+						BUFFER_LOG <= (*list.begin()).quant_ < " " <= (*list.begin()).replay_
+						           < " " <= (*list.begin()).signature_ < " " <= (*list.begin()).state_< "\n";
 						///delete *secondList.begin();
-						secondList.erase(secondList.begin());
+						list.erase(list.begin());
+                        if (client->desync_state == PNC_DESYNC_RESTORE_FINISHED) {
+                            //If we are here then is resynced
+                            fprintf(stdout, "Client network synchronization restored with %llX\n", client->netidPlayer);
+                            client->desync_state = PNC_DESYNC_NONE;
+                        }
 					}
 				}
 			}
@@ -681,20 +727,19 @@ void PNetCenter::LLogicQuant()
 end_while_01:;
 
 			std::string notResponceClientList;
-			ClientMapType::iterator k;
 			unsigned int maxInternalLagQuant=0;
 			unsigned short minClientExecutionQuat=m_numberGameQuant;
-			for(k=m_clients.begin(); k!=m_clients.end(); k++){
-				if((*k)->lagQuant > maxInternalLagQuant) {//Для подгонки всех клиентов
-					maxInternalLagQuant=(*k)->lagQuant; 
+			for (auto& client : m_clients) {
+				if(client->lagQuant > maxInternalLagQuant) {//Для подгонки всех клиентов
+					maxInternalLagQuant=client->lagQuant; 
 				}
-				if((*k)->lastExecuteQuant < minClientExecutionQuat) {//Для подгонки всех клиентов
-					minClientExecutionQuat=(*k)->lastExecuteQuant;
+				if(client->lastExecuteQuant < minClientExecutionQuat) {//Для подгонки всех клиентов
+					minClientExecutionQuat=client->lastExecuteQuant;
 				}
-				if(clocki() > ((*k)->lastTimeBackPacket + TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION)){
-					DPNID d=(*k)->dpnidPlayer;
-					int n=hostMissionDescription.findPlayer(d);
-					if(n!=-1) { notResponceClientList+=hostMissionDescription.playersData[n].name(); notResponceClientList+=' '; }
+				if(clocki() > (client->lastTimeBackPacket + TIMEOUT_CLIENT_OR_SERVER_RECEIVE_INFORMATION)){
+					NETID d=client->netidPlayer;
+					int n=hostMissionDescription->findPlayer(d);
+					if(n!=-1) { notResponceClientList+=hostMissionDescription->playersData[n].name(); notResponceClientList+=' '; }
 				}
 			}
 			/// Подгонка под всех клиентов !
@@ -714,6 +759,7 @@ end_while_01:;
 			bool flag_requestPause=0;
 			bool flag_changePause=0;
 			int curPlayer=0;
+            ClientMapType::iterator k;
 			for(k=m_clients.begin(); k!=m_clients.end(); k++){
 				flag_requestPause|=(*k)->requestPause;
 				flag_changePause|=((*k)->requestPause!=(*k)->clientPause);
@@ -721,15 +767,15 @@ end_while_01:;
 				if((*k)->requestPause){
 					xassert(curPlayer<NETWORK_PLAYERS_MAX);
 					if(curPlayer<NETWORK_PLAYERS_MAX){
-						int idx=hostMissionDescription.findPlayer((*k)->dpnidPlayer);
+						int idx=hostMissionDescription->findPlayer((*k)->netidPlayer);
 						xassert(idx!=-1);
-						if(idx!=-1) playersIDArr[curPlayer++]=hostMissionDescription.playersData[idx].playerID;
+						if(idx!=-1) playersIDArr[curPlayer++]=hostMissionDescription->playersData[idx].playerID;
 					}
 				}
 			}
 			for(k=m_clients.begin(); k!=m_clients.end(); k++){
 				if((*k)->requestPause && ((clocki()-(*k)->timeRequestPause) > MAX_TIME_PAUSE_GAME) ) {
-					RemovePlayer((*k)->dpnidPlayer); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
+					RemovePlayer((*k)->netidPlayer); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
 					break;//по одному клиенту за квант!
 				}
 			}
@@ -737,24 +783,16 @@ end_while_01:;
 			if(hostPause && (!flag_requestPause) ){
 				//Отмена паузы
 				netCommand4C_Pause ncp(playersIDArr, false);
-				SendEvent(ncp, DPNID_ALL_PLAYERS_GROUP);
+				SendEvent(ncp, NETID_ALL);
 				hostPause=false;
 			}
 			else if(flag_changePause && flag_requestPause){
 				netCommand4C_Pause ncp(playersIDArr, true);
-				SendEvent(ncp, DPNID_ALL_PLAYERS_GROUP);
+				SendEvent(ncp, NETID_ALL);
 				hostPause=true;
 			}
 			if(hostPause)
 				break;
-
-			//перенесение всех команд удаления в список комманд на выполнение
-			std::list<netCommand4G_ForcedDefeat*>::iterator p;
-			for(p=m_DeletePlayerCommand.begin(); p!=m_DeletePlayerCommand.end(); p++){
-				PutGameCommand2Queue_andAutoDelete(*p);
-			}
-			m_DeletePlayerCommand.clear();
-
 
 			//Установка последней команде, признака, последняя
 			if(!m_CommandList.empty()){
@@ -763,7 +801,7 @@ end_while_01:;
 				if((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND || (*p)->EventID==NETCOM_4G_ID_REGION || (*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT){
 					(static_cast<netCommandGame*>(*p))->setFlagLastCommandInQuant();
 				}
-				else xassert("Error in commands list on server");
+				else xassert(0 && "Error in commands list on server");
 			}
 
 			///hostGeneralCommandCounter+=m_CommandList.size(); //сейчас добавляется при PutGameCommand2Queue_andAutoDelete
@@ -807,12 +845,7 @@ end_while_01:;
 				std::list<netCommandGeneral*>::iterator i;
 				FOR_EACH(m_CommandList, i)
 				{
-					if((**i).EventID==NETCOM_ID_NEXT_QUANT || (**i).EventID==NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
-						SendEvent(**i, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/, false);//Не гарантированная доставка!!!
-					}
-					else { 
-						SendEvent(**i, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
-					}
+                    SendEvent(**i, NETID_ALL);
 					delete *i;
 				}
 
@@ -823,18 +856,177 @@ end_while_01:;
 			m_numberGameQuant++;
 		}
 		break;
+    case PNC_STATE__HOST_DESYNC: {
+        CAutoLock _lock(m_GeneralLock); //! Lock
+        
+        int highest_amount = 0;
+        bool waiting_ack = false;
+        bool waiting_restore = false;
+        std::set<PClientData*> to_notify;
+        std::set<PClientData*> to_restore;
+        for (auto& client : m_clients) {
+            switch (client->desync_state) {
+                case PNC_DESYNC_DETECTED:
+                    highest_amount = std::max(highest_amount, client->desync_amount);
+                    to_notify.emplace(client);
+                    break;
+                case PNC_DESYNC_NOTIFIED:
+                    highest_amount = std::max(highest_amount, client->desync_amount);
+                    waiting_ack = true;
+                    break;
+                case PNC_DESYNC_ACKNOLEDGED:
+                    highest_amount = std::max(highest_amount, client->desync_amount);
+                    to_restore.emplace(client);
+                    break;
+                case PNC_DESYNC_SENT_RESTORE:
+                    waiting_restore = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        if (!to_notify.empty()) {
+            for (auto& client : m_clients) {
+                //We need to notify host to obtain its save
+                //Or when notifying everyone due to full restore
+                if (client->netidPlayer == m_hostNETID || highest_amount >= PNC_DESYNC_RESTORE_MODE_FULL) {
+                    to_notify.emplace(client);
+                }
+            }
+            
+            //Send notify first
+            std::string gameID = std::to_string(time(nullptr));
+            netCommand4C_DesyncNotify ev_notify = netCommand4C_DesyncNotify(gameID);
+            for (auto& client : to_notify) {
+                if (client->netidPlayer == m_hostNETID) {
+                    ev_notify.desync_amount = highest_amount;
+                } else {
+                    ev_notify.desync_amount = client->desync_amount;
+                }
+                SendEvent(ev_notify, client->netidPlayer);
+                
+                client->desync_state = PNC_DESYNC_NOTIFIED;
+            }
+        } else if (!waiting_ack && !to_restore.empty()) {
+            //Find host client data
+            PClientData* clientHost = nullptr;
+            for (auto& client: m_clients) {
+                if (client->netidPlayer == m_hostNETID) {
+                    clientHost = client;
+                }
+            }
+            
+            //Check if we should include everyone
+            if (highest_amount >= PNC_DESYNC_RESTORE_MODE_FULL) {
+                for (auto& client: m_clients) {
+                    switch (client->desync_state) {
+                        case PNC_DESYNC_NONE:
+                        case PNC_DESYNC_DETECTED:
+                        case PNC_DESYNC_ACKNOLEDGED:
+                            to_restore.emplace(client);
+                            break;
+                    }
+                }
+            }
+            
+            //We create a copy in event and save host state into it
+            if (!clientHost || !clientHost->desync_missionDescription) {
+                ErrH.Abort("Host client unavailable or doesn't contain mission description");
+            }
+
+            //Save the data for debugging
+            std::string crash_dir = CRASH_DIR;
+            terminate_with_char(crash_dir, PATH_SEP);
+            crash_dir += "desync_" + std::to_string(time(nullptr)) + "_" + std::to_string(m_localNETID) + "_restore" + PATH_SEP;
+            fprintf(stderr, "Dumped desync restore data at: %s\n", crash_dir.c_str());
+            create_directories(crash_dir);
+            for (auto& client : to_restore) {
+                std::string path = crash_dir + std::to_string(client->netidPlayer) + "_" + client->playerName;
+                
+                if (client->desync_netlog.tell()) {
+                    XStream ffnl(setExtension(path, "log").c_str(), XS_OUT, 0);
+                    ffnl.write(client->desync_netlog.address(), client->desync_netlog.tell());
+                    ffnl.close();
+                }
+                
+                if (client->desync_missionDescription == nullptr) {
+                    continue;
+                }
+                MissionDescription mission(*client->desync_missionDescription);
+                
+                client->desync_missionDescription->setSaveName(path.c_str());
+
+                XStream ffp(setExtension(path, "prm").c_str(), XS_OUT, 0);
+                ffp.write(mission.saveData, mission.saveData.length());
+                ffp.close();
+
+                XStream ffb(setExtension(path, "bin").c_str(), XS_OUT, 0);
+                ffb.write(mission.binaryData, mission.binaryData.length());
+                ffb.close();
+
+                //Load save data into IA and deserialize
+                SavePrm savePrm;
+                if (mission.saveData.length()) {
+                    XPrmIArchive ia;
+                    std::swap(ia.buffer(), mission.saveData);
+                    ia.buffer().set(0);
+                    ia >> WRAP_NAME(savePrm, "SavePrm");
+                }
+                client->desync_missionDescription->saveMission(savePrm, true);
+            }
+
+            //Clear host buffers
+            ClearInputPacketList();
+            clearInOutClientHostBuffers();
+            flag_SkipProcessingGameCommand=false;
+            
+            //Create restore event
+            netCommand4C_DesyncRestore ev_restore = netCommand4C_DesyncRestore(std::move(clientHost->desync_missionDescription));
+            if (highest_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
+                ev_restore.missionDescription->gameType_ = GT_MULTI_PLAYER_RESTORE_PARTIAL;
+            } else {
+                ev_restore.missionDescription->gameType_ = GT_MULTI_PLAYER_RESTORE_FULL;
+            }
+            
+            //Send the restore event to each desynced client
+            for (auto& client : to_restore) {
+                client->desync_missionDescription = nullptr;
+                client->desync_state = PNC_DESYNC_SENT_RESTORE;
+                client->desync_netlog.alloc(0);
+                
+                ev_restore.desync_amount = highest_amount;
+                
+                int playerID = ev_restore.missionDescription->findPlayer(client->netidPlayer);
+                ev_restore.missionDescription->activePlayerID = playerID;
+                SendEvent(ev_restore, client->netidPlayer);
+            }
+
+            if (highest_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
+                //Clear old backGame2Infos
+                unsigned int curTime=clocki();
+                for (auto& client : to_restore) {
+                    client->m_flag_Ready=false;
+                    client->lastTimeBackPacket=curTime;
+                    client->backGameInf2List.clear();
+                }
+                ClearCommandList();
+                flag_SkipProcessingGameCommand = false;
+            } else {
+                //Proceed like loading a game
+                m_state = PNC_STATE__HOST_LOADING_GAME;                
+            }
+        } else if (!waiting_ack && !waiting_restore) {            
+            //No clients pending or restoring, continue hosting game
+            m_state=PNC_STATE__HOST_GAME;
+        }
+        break;
+    }
+    case PNC_STATE__CLIENT_FIND_HOST:
 	case PNC_STATE__CLIENT_TUNING_GAME: 
-		break;
 	case PNC_STATE__CLIENT_LOADING_GAME:
-		ClearDeletePlayerGameCommand(); /// ???????
-		break;
-	case PNC_STATE__CLIENT_GAME:
-		{
-		}
-		break;
-	case PNC_STATE__END:
-		{
-		}
+    case PNC_STATE__CLIENT_GAME:
+    case PNC_STATE__CLIENT_DESYNC:
 		break;
 	case PNC_STATE__NEWHOST_PHASE_0:
 		{
@@ -849,10 +1041,10 @@ end_while_01:;
 				}
 				flag_SkipProcessingGameCommand=1;
 				//По идее список пуст т.к. только выполнился ClientPredReceiveQuant
-				m_DPPacketList.clear();
+                ClearInputPacketList();
 			}
 
-			///m_dpnidGroupGame=m_groupDPNID;
+			///m_netidGroupGame=m_groupNETID;
 			//Разблокирование входных пакетов, заблокированных при поступлении сообщения о смене Host-а
 			//Необходимо для того, чтобы не пропустить сообщение о reJoin-е
 			UnLockInputPacket();
@@ -862,8 +1054,8 @@ end_while_01:;
 
 			ClearClientData();
 			//Т.к. миграция разрешается только после START_LOAD_GAME clientMissionDescription корректен
-			hostMissionDescription=clientMissionDescription;
-			hostMissionDescription.clearAllPlayerStartReady();
+			*hostMissionDescription = clientMissionDescription;
+			hostMissionDescription->clearAllPlayerStartReady();
 			//missionDescription.clearAllPlayerGameReady();
 			//clientMissionDescription
 
@@ -874,7 +1066,7 @@ end_while_01:;
 				CAutoLock _lock(m_GeneralLock); //! Lock
 				clearInOutClientHostBuffers();
 			}
-			if(AddClientToMigratedHost(m_localDPNID, universe()->getCurrentGameQuant(), universe()->getConfirmQuant()) ){
+			if(AddClientToMigratedHost(m_localNETID, universe()->getCurrentGameQuant(), universe()->getConfirmQuant()) ){
 				m_state=PNC_STATE__NEWHOST_PHASE_A;
 			}
 			else {
@@ -892,11 +1084,11 @@ end_while_01:;
 
 			bool result=1;
 			///m_pConnection->refreshGroupMember();
-			///list<DPNID>::iterator p;
+			///list<NETID>::iterator p;
 			///for(p=m_pConnection->gameGroupMemberList.begin(); p!=m_pConnection->gameGroupMemberList.end(); p++){
 			///	result&=(missionDescription.isPlayerStartReady(*p));
 			///}
-			if(hostMissionDescription.isAllRealPlayerStartReady()){
+			if(hostMissionDescription->isAllRealPlayerStartReady()){
 				result=1;
 			}
 			else result=0;
@@ -905,7 +1097,7 @@ end_while_01:;
 				unsigned int maxConfirmedQuant=0;
 				///unsigned int maxQuant=0;
 				///unsigned int minQuant=UINT_MAX;
-				///DPNID maxQuantClientDPNID=0;
+				///NETID maxQuantClientNETID=0;
 				ClientMapType::iterator p;
 				for(p=m_clients.begin(); p!=m_clients.end(); p++){
 					if((*p)->confirmQuant > maxConfirmedQuant){
@@ -913,19 +1105,19 @@ end_while_01:;
 					}
 					/*if((*p)->curLastQuant >= maxQuant){
 						maxQuant=(*p)->curLastQuant;
-						maxQuantClientDPNID=(*p)->dpnidPlayer;
+						maxQuantClientNETID=(*p)->netidPlayer;
 					}
 					if((*p)->curLastQuant <= minQuant){
 						minQuant=(*p)->curLastQuant;
 					}*/
 				}
 				netCommand4C_sendLog2Host ncslh(maxConfirmedQuant+1);
-				SendEvent(ncslh, DPNID_ALL_PLAYERS_GROUP);
+				SendEvent(ncslh, NETID_ALL);
 
 				///minQuant+=1; //Запрос следующего кванта за мин квантом
 				///netCommand4C_RequestLastQuantsCommands nc(minQuant);
-				///SendEvent(nc, maxQuantClientDPNID);
-				dpnidClientWhichWeWait=-1;//maxQuantClientDPNID;
+				///SendEvent(nc, maxQuantClientNETID);
+				netidClientWhichWeWait=-1;//maxQuantClientNETID;
 
 
 				m_beginWaitTime=clocki();
@@ -937,15 +1129,15 @@ end_while_01:;
 		{
 			//if( ((clocki()-m_beginWaitTime) > MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST) ) {
 			//}
-			if( (dpnidClientWhichWeWait==-1) || (hostMissionDescription.findPlayer(dpnidClientWhichWeWait)==-1) ){ //игрок выбыл до прихода нужных хосту игровых комманд
+			if( (netidClientWhichWeWait==-1) || (hostMissionDescription->findPlayer(netidClientWhichWeWait)==-1) ){ //игрок выбыл до прихода нужных хосту игровых комманд
 				unsigned int maxQuant=0;
 				unsigned int minQuant=UINT_MAX;
-				DPNID maxQuantClientDPNID=0;
+				NETID maxQuantClientNETID=NETID_NONE;
 				ClientMapType::iterator p;
 				for(p=m_clients.begin(); p!=m_clients.end(); p++){
 					if((*p)->curLastQuant >= maxQuant){
 						maxQuant=(*p)->curLastQuant;
-						maxQuantClientDPNID=(*p)->dpnidPlayer;
+						maxQuantClientNETID=(*p)->netidPlayer;
 					}
 					if((*p)->curLastQuant <= minQuant){
 						minQuant=(*p)->curLastQuant;
@@ -953,8 +1145,8 @@ end_while_01:;
 				}
 				minQuant+=1; //Запрос следующего кванта за мин квантом
 				netCommand4C_RequestLastQuantsCommands nc(minQuant);
-				SendEvent(nc, maxQuantClientDPNID);
-				dpnidClientWhichWeWait=maxQuantClientDPNID;
+				SendEvent(nc, maxQuantClientNETID);
+				netidClientWhichWeWait=maxQuantClientNETID;
 			}
 		}
 		break;
@@ -971,7 +1163,7 @@ end_while_01:;
 				}
 				flag_SkipProcessingGameCommand=1;
 				//По идее список пуст т.к. только выполнился ClientPredReceiveQuant
-				m_DPPacketList.clear();
+                ClearInputPacketList();
 			}
 
 			//Разблокирование входных пакетов, заблокированных при поступлении сообщения о смене Host-а
@@ -994,7 +1186,7 @@ end_while_01:;
 			static unsigned char bandPassFilter=0;
 			if((bandPassFilter&0x7)==0){//каждый 8й квант
 				netCommand4H_ReJoinRequest ncrjr(universe()->getCurrentGameQuant(), universe()->getConfirmQuant() );
-				SendEvent(ncrjr, m_hostDPNID);
+				SendEvent(ncrjr, m_hostNETID);
 				///m_state=PNC_STATE__CLIENT_GAME;
 			}
 			bandPassFilter++;
@@ -1005,17 +1197,19 @@ end_while_01:;
 			}
 		}
 		break;
+    case PNC_STATE__NONE:
+    case PNC_STATE__END:
 	case PNC_STATE__NET_CENTER_CRITICAL_ERROR:
 		{
+            LogMsg("Final state, closing: %s\n", getStrState());
 			//Close(false);
-			//ExecuteInternalCommand(PNC_COMMAND__END, false);
+			ExecuteInternalCommand(PNC_COMMAND__END, false);
 		}
 		break;
 	case PNC_STATE__ENDING_GAME:
 		{
-			StopFindHostDP();
+			serverList.stopHostFind();
 			Close(false);
-			Init();//Close DirectPlay-я выполняет полную деинициализацию
 			CAutoLock _lock(m_GeneralLock); //! Lock
 			ClearClients();
 			m_state=PNC_STATE__NONE;
@@ -1023,47 +1217,44 @@ end_while_01:;
 		SetEvent(hCommandExecuted);
 		break;
 	default:
-		{
-		}
 		break;
-							 
-	}
-	
+	}	
 }
 
 void PNetCenter::ClientPredReceiveQuant()
 {
-	if(!out_ClientBuf.isEmpty()) out_ClientBuf.send(*this, m_hostDPNID);
+	if(!out_ClientBuf.isEmpty()) out_ClientBuf.send(*this, m_hostNETID);
 
-	///PutInputPacket2NetBuffer(in_ClientBuf);
 	if(flag_LockIputPacket) return; //return 0;
 	int cnt=0;
-	std::list<XDPacket>::iterator p=m_DPPacketList.begin();
-	while(p!=m_DPPacketList.end()){
-		if(p->dpnid==m_hostDPNID){
+	std::list<InputPacket*>::iterator p=m_InputPacketList.begin();
+	while(p != m_InputPacketList.end()){
+        InputPacket* packet = *p;
+		if(packet->netid==m_hostNETID){
 
 			//отфильтровывание команды
-			InOutNetComBuffer tmp(2048, true);
-			tmp.putBufferPacket(p->buffer, p->size);
-			if(tmp.currentNetCommandID()==NETCOM_4C_ID_START_LOAD_GAME){
+			InOutNetComBuffer tmp(packet->address(),packet->tell());
+            int cmd = tmp.currentNetCommandID();
+			if (cmd == NETCOM_4C_ID_START_LOAD_GAME) {
 				ExecuteInternalCommand(PNC_COMMAND__CLIENT_STARTING_LOAD_GAME, false);
-			}
-			else if(tmp.currentNetCommandID()==NETCOM_ID_NEXT_QUANT){
-				if(m_state==PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_AB){
+			} else if (cmd == NETCOM_ID_NEXT_QUANT) {
+				if (m_state == PNC_STATE__CLIENT_RESTORE_GAME_AFTE_CHANGE_HOST_PHASE_AB) {
 					m_state=PNC_STATE__CLIENT_GAME;
 				}
 			}
 
 			//комманды клиенту
-			if(in_ClientBuf.putBufferPacket(p->buffer, p->size)){
-				p=m_DPPacketList.erase(p);
+			if (in_ClientBuf.putBufferPacket(packet->address(), packet->tell())) {
+                delete packet;
+				p=m_InputPacketList.erase(p);
 				cnt++;
-			}
-			else break;
-		}
-		else {
-			xassert(0&&"Commands not from a host!");
-			p=m_DPPacketList.erase(p);
+			} else {
+                break;
+            }
+		} else {
+			fprintf(stderr, "Received packet from non-host! %llu\n", packet->netid);
+            delete packet;
+			p=m_InputPacketList.erase(p);
 		}
 	}
 	///return (cnt!=0);
@@ -1074,7 +1265,7 @@ void PNetCenter::HostReceiveQuant()
 {
 	if(flag_LockIputPacket) return; //return 0;
 
-	DPNID dpnid=m_localDPNID;
+	NETID netid=m_localNETID;
 	do { //Первый проход для внутреннего клиента
 
 
@@ -1083,14 +1274,14 @@ void PNetCenter::HostReceiveQuant()
 
 		///ClientMapType::iterator i;
 		///FOR_EACH(m_clients, i)
-		///	i->second->NetHandlerProc(dpnid);
+		///	i->second->NetHandlerProc(netid);
 
 
 		ClientMapType::iterator p;
 		for(p=m_clients.begin(); p!=m_clients.end(); p++){
-			//if(in_buffer.receive(*m_pConnection, dpnid)) 
-			/////////////in_HostBuf.receive(*m_pConnection, dpnid);
-			if(dpnid==(*p)->dpnidPlayer) {
+			//if(in_buffer.receive(*m_pConnection, netid))
+			/////////////in_HostBuf.receive(*m_pConnection, netid);
+			if(netid==(*p)->netidPlayer) {
 				while(in_HostBuf.currentNetCommandID()) {
 					netLog <= in_HostBuf.currentNetCommandID() < "\n";
 					switch(in_HostBuf.currentNetCommandID()) {
@@ -1106,14 +1297,14 @@ void PNetCenter::HostReceiveQuant()
 								for(int i=0; i<NETWORK_PLAYERS_MAX; i++) playersIDArr[i]=netCommand4C_Pause::NOT_PLAYER_ID;
 								playersIDArr[0]=nc_rp.playerID;
 								netCommand4C_Pause ncp(playersIDArr, true);
-								SendEvent(ncp, DPNID_ALL_PLAYERS_GROUP);
+								SendEvent(ncp, NETID_ALL_PLAYERS_GROUP);
 								(*p)->requestPause=true;
 							}
 							else if((*p)->requestPause && (!nc_rp.pause) ){
 								int playersIDArr[NETWORK_PLAYERS_MAX];
 								for(int i=0; i<NETWORK_PLAYERS_MAX; i++) playersIDArr[i]=netCommand4C_Pause::NOT_PLAYER_ID;
 								netCommand4C_Pause ncp(playersIDArr, false);
-								SendEvent(ncp, DPNID_ALL_PLAYERS_GROUP);
+								SendEvent(ncp, NETID_ALL_PLAYERS_GROUP);
 								(*p)->requestPause=false;
 							}*/
 
@@ -1122,35 +1313,62 @@ void PNetCenter::HostReceiveQuant()
 					case NETCOM_4H_ID_CHANGE_REAL_PLAYER_TYPE:
 						{
 							netCommand4H_ChangeRealPlayerType ncChRT(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME) break;
 
-							hostMissionDescription.setChanged();
-							if(dpnid==m_hostDPNID){
+							if(netid==m_hostNETID){
+                                bool isSave = isSaveGame();
+                                MissionDescription& mission = *hostMissionDescription;
+                                mission.setChanged();
 								xassert(ncChRT.idxPlayerData_ < NETWORK_PLAYERS_MAX);
-								if( ncChRT.idxPlayerData_!=hostMissionDescription.findPlayer(m_hostDPNID) ){//Проверка на то, что меняется не у Host-а
-									if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER) ncChRT.newRealPlayerType_=REAL_PLAYER_TYPE_OPEN; //Дополнительная проверка
-									if(hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+                                //Проверка на то, что меняется не у Host-а / check that we are not changing host
+								if (ncChRT.idxPlayerData_!=mission.findPlayer(m_hostNETID)) {
+                                    PlayerData& pd = mission.playersData[ncChRT.idxPlayerData_];
+                                    //Eject player
+									if (pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER) {
 										//Отбрасывание игрока
-										DPNID delPlayerDPNID=hostMissionDescription.playersData[ncChRT.idxPlayerData_].dpnid;
-										hostMissionDescription.disconnect2PlayerData(ncChRT.idxPlayerData_);
-										hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
-										RemovePlayer(delPlayerDPNID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
-
-									}
-									else if(hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType==REAL_PLAYER_TYPE_AI){ //Если был AI
-										if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_CLOSE){
-											//Закрывать AI
-											hostMissionDescription.disconnect2PlayerData(ncChRT.idxPlayerData_);
-										}
-									}
-									else { //Если был Close Или Open
-										if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_AI){ 
-											hostMissionDescription.connectAI2PlayersData(ncChRT.idxPlayerData_);
-										}
-										else if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_CLOSE){
-											hostMissionDescription.playersData[ncChRT.idxPlayerData_].realPlayerType=ncChRT.newRealPlayerType_;
-										}
-									}
+										NETID delPlayerNETID=pd.netid;
+										mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
+                                        if (isSave) {
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_PLAYER_AI) {
+                                                pd.realPlayerType = pd.realPlayerType;
+                                            }
+                                        } else {
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
+                                                pd.realPlayerType = pd.realPlayerType;
+                                            }
+                                        }
+										RemovePlayer(delPlayerNETID);
+									} else if (pd.realPlayerType==REAL_PLAYER_TYPE_PLAYER_AI) {
+                                        if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN) {
+                                            mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
+                                            pd.realPlayerType=ncChRT.newRealPlayerType_;
+                                        }
+                                    }
+                                    
+                                    if (isSave) {
+                                        if (pd.realPlayerType==REAL_PLAYER_TYPE_OPEN && ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER_AI) {
+                                            pd.realPlayerType = ncChRT.newRealPlayerType_;
+                                        }
+                                    } else {
+                                        if(ncChRT.newRealPlayerType_==REAL_PLAYER_TYPE_PLAYER) {
+                                            ncChRT.newRealPlayerType_ = REAL_PLAYER_TYPE_OPEN;
+                                        }
+                                        if (pd.realPlayerType == REAL_PLAYER_TYPE_AI) { //Если был AI
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN
+                                             || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
+                                                //Закрывать AI
+                                                mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
+                                                pd.realPlayerType=ncChRT.newRealPlayerType_;
+                                            }
+                                        } else { //Если был Close Или Open
+                                            if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_AI) {
+                                                mission.connectAI2PlayersData(ncChRT.idxPlayerData_);
+                                            } else if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN ||
+                                                       ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
+                                                pd.realPlayerType = ncChRT.newRealPlayerType_;
+                                            }
+                                        }
+                                    }
 								}
 							}
 						}
@@ -1158,125 +1376,197 @@ void PNetCenter::HostReceiveQuant()
 					case NETCOM_4H_ID_CHANGE_PLAYER_BELLIGERENT:
 						{
 							netCommand4H_ChangePlayerBelligerent  ncChB(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChB.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerBelligerent(ncChB.idxPlayerData_, ncChB.newBelligerent_);//
-							else hostMissionDescription.changePlayerBelligerent(dpnid, ncChB.newBelligerent_);//
+                            int playerIndex = netid == m_hostNETID ? ncChB.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+                            hostMissionDescription->changePlayerBelligerent(playerIndex, ncChB.newBelligerent_);
 						}
 						break;
-
 					case NETCOM_4H_ID_CHANGE_PLAYER_COLOR:
 						{
 							netCommand4H_ChangePlayerColor  ncChC(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять цвет любого
-							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerColor(ncChC.idxPlayerData_, ncChC.newColor_);
-							else hostMissionDescription.changePlayerColor(dpnid, ncChC.newColor_);
+                            int playerIndex = netid == m_hostNETID ? ncChC.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerColor(playerIndex, ncChC.newColor_, ncChC.direction);
 						}
 						break;
 					case NETCOM_4H_ID_CHANGE_PLAYER_DIFFICULTY:
 						{
 							netCommand4H_ChangePlayerDifficulty ncChD(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChD.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerDifficulty(ncChD.idxPlayerData_, ncChD.difficulty_);
-							else hostMissionDescription.changePlayerDifficulty(dpnid, ncChD.difficulty_);
+                            int playerIndex = netid == m_hostNETID ? ncChD.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerDifficulty(playerIndex, ncChD.difficulty_);
 						}
 						break;
 					case NETCOM_4H_ID_CHANGE_PLAYER_CLAN:
 						{
 							netCommand4H_ChangePlayerClan ncChC(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerClan(ncChC.idxPlayerData_, ncChC.clan_);
-							else hostMissionDescription.changePlayerClan(dpnid, ncChC.clan_);
+                            int playerIndex = netid == m_hostNETID ? ncChC.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerClan(playerIndex, ncChC.clan_);
 						}
 						break;
 					case NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP:
 						{
 							netCommand4H_ChangePlayerHandicap ncChH(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 							xassert(ncChH.idxPlayerData_ < NETWORK_PLAYERS_MAX);
 							//Host может менять у любого
-							if(dpnid==m_hostDPNID) hostMissionDescription.changePlayerHandicap(ncChH.idxPlayerData_, ncChH.handicap_);
-							else hostMissionDescription.changePlayerHandicap(dpnid, ncChH.handicap_);
+                            int playerIndex = netid == m_hostNETID ? ncChH.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
+							hostMissionDescription->changePlayerHandicap(playerIndex, ncChH.handicap_);
 						}
 						break;
+                    case NETCOM_4H_ID_CHANGE_PLAYER_SEAT:
+                        {
+                            netCommand4H_ChangePlayerSeat ncChS(in_HostBuf);
+                            if (m_state!=PNC_STATE__HOST_TUNING_GAME || !isSaveGame()) break;
+
+                            MissionDescription& mission = *hostMissionDescription;
+                            xassert(ncChS.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+                            //Check if player who wants to change seat is the sender
+                            int originIndex = mission.findPlayer(netid);
+                            if (originIndex != -1 && ncChS.idxPlayerData_ < NETWORK_PLAYERS_MAX) {
+                                PlayerData& origin = mission.playersData[originIndex];
+                                PlayerData& destination = mission.playersData[ncChS.idxPlayerData_];
+                                bool allowed = false;
+                                switch (destination.realPlayerType) {
+                                    case REAL_PLAYER_TYPE_OPEN:
+                                    case REAL_PLAYER_TYPE_PLAYER:
+                                    case REAL_PLAYER_TYPE_PLAYER_AI:
+                                        allowed = true;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (!origin.flag_playerStartReady && !destination.flag_playerStartReady) {
+                                    //Swap the players
+                                    std::string originName = origin.name();
+                                    if (destination.realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
+                                        origin.setName(destination.name());
+                                    } else {
+                                        origin.setName(origin.nameInitial());
+                                    }
+                                    destination.setName(originName);
+                                    std::swap(origin.netid, destination.netid);
+                                    std::swap(origin.realPlayerType, destination.realPlayerType);
+                                    mission.setChanged();
+                                }
+                            }
+                        }
+                        break;
 					case NETCOM_4H_ID_CHANGE_MAP:
 						{
 							netCommand4H_ChangeMap nc_changeMap(in_HostBuf);
-							if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
-							hostMissionDescription.setChanged();
-							if(dpnid==m_hostDPNID){//только Host может менять карту
+							hostMissionDescription->setChanged();
+							if(netid==m_hostNETID){//только Host может менять карту
 								int i;
 								for(i=0; i< nc_changeMap.missionDescription_.playerAmountScenarioMax; i++){
-									nc_changeMap.missionDescription_.playersData[i]=hostMissionDescription.playersData[i];
+                                    if (i < hostMissionDescription->playerAmountScenarioMax) {
+                                        nc_changeMap.missionDescription_.playersData[i] = hostMissionDescription->playersData[i];
+                                    } else {
+                                        //Don't copy from previous description since this slot wasnt used and may contain unknown data
+                                        nc_changeMap.missionDescription_.playersData[i].realPlayerType = REAL_PLAYER_TYPE_OPEN;
+                                    }
 								}
+                                //Remove players that exceed scenario max
 								for(i; i< NETWORK_PLAYERS_MAX; i++){
-									if(hostMissionDescription.playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
-										DPNID delPlayerDPNID=hostMissionDescription.playersData[i].dpnid;
-										hostMissionDescription.disconnect2PlayerData(i);
-										//hostMissionDescription.playersData[i].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
-										RemovePlayer(delPlayerDPNID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
+									if(hostMissionDescription->playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
+										NETID delPlayerNETID=hostMissionDescription->playersData[i].netid;
+										hostMissionDescription->disconnect2PlayerData(i);
+										//hostMissionDescription->playersData[i].realPlayerType=REAL_PLAYER_TYPE_CLOSE;
+										RemovePlayer(delPlayerNETID); //Полное удаление по DPN_MSGID_DESTROY_PLAYER
 									}
 								}
-								hostMissionDescription=nc_changeMap.missionDescription_;
+								*hostMissionDescription = nc_changeMap.missionDescription_;
 							}
 						}
 						break;
 					case NETCOM_4H_ID_START_LOAD_GAME:
 						{
-							hostMissionDescription.setChanged();
-
 							netCommand4H_StartLoadGame ncslg(in_HostBuf);
-							hostMissionDescription.setPlayerStartReady(dpnid);
-							///StartGame();
+                            if(m_state!=PNC_STATE__HOST_TUNING_GAME) break;
+                            
+							hostMissionDescription->setPlayerStartReady(netid, ncslg.ready != 0);
 						}
 						break;
 					case NETCOMC_ID_PLAYER_READY:
 						{
-							hostMissionDescription.setChanged();
+							hostMissionDescription->setChanged();
 
 							netCommandC_PlayerReady event(in_HostBuf);
-							(*p)->m_flag_Ready=1;
+							(*p)->m_flag_Ready=true;
 							(*p)->clientGameCRC=event.gameCRC_;
 
-							LogMsg("Player 0x%X(%s) (GCRC=0x%X) reported ready\n", dpnid, (*p)->m_szDescription, (*p)->clientGameCRC);
-							///SetEvent(m_hReady);
+                            LogMsg("Player 0x%X (GCRC=0x%X) reported ready\n", netid, (*p)->clientGameCRC);
+                            
+                            //Flag the client as restore finished if was desynced
+                            for (auto& client : m_clients) {
+                                if (client->netidPlayer == netid
+                                && client->desync_state != PNC_DESYNC_NONE
+                                && client->desync_state != PNC_DESYNC_RESTORE_FINISHED) {
+                                    xassert(client->desync_state == PNC_DESYNC_SENT_RESTORE);
+                                    if (client->netidPlayer == m_hostNETID) {
+                                        //Host always restores OK
+                                        client->desync_state = PNC_DESYNC_NONE;
+                                    } else {
+                                        client->desync_state = PNC_DESYNC_RESTORE_FINISHED;
+                                    }
+                                    break;
+                                }
+                            }
 						}
 						break;
+                    case NETCOM_4H_ID_DESYNC_ACKNOWLEDGE:
+                        {
+                            hostMissionDescription->setChanged();
+
+                            netCommand4H_DesyncAcknowledge event(in_HostBuf);
+                            
+                            LogMsg("Desync Ack %llu\n", netid);
+
+                            //Flag the client as acknowledged
+                            for (auto& client : m_clients) {
+                                if (client->netidPlayer == netid) {
+                                    xassert(client->desync_state == PNC_DESYNC_NOTIFIED);
+                                    client->desync_state = PNC_DESYNC_ACKNOLEDGED;
+                                    client->desync_missionDescription = std::move(event.missionDescription);
+                                    std::swap(client->desync_netlog, event.netlog);
+                                    break;
+                                }
+                            }
+
+                        }
+                        break;
 
 					case NETCOM_4G_ID_UNIT_COMMAND:
 						{
-							netCommand4G_UnitCommand * pCommand = new netCommand4G_UnitCommand(in_HostBuf);
-							//pCommand->setCurCommandQuant(m_numberGameQuant);
-							//m_CommandList.push_back(pCommand);
-							//m_nQuantCommandCounter++;
-							PutGameCommand2Queue_andAutoDelete(pCommand);
+							netCommand4G_UnitCommand* pCommand = new netCommand4G_UnitCommand(in_HostBuf);
+							PutGameCommand2Queue_andAutoDelete(netid, pCommand);
 						}
 						break;
 					case NETCOM_4G_ID_REGION:
 						{
 							netCommand4G_Region* pCommand=new netCommand4G_Region(in_HostBuf);
-							//pCommand->setCurCommandQuant(m_numberGameQuant);
-							//m_CommandList.push_back(pCommand);
-							//m_nQuantCommandCounter++;
-							PutGameCommand2Queue_andAutoDelete(pCommand);
+							PutGameCommand2Queue_andAutoDelete(netid, pCommand);
 						}
 						break;
 					case NETCOM_4H_ID_BACK_GAME_INFORMATION:
@@ -1340,24 +1630,24 @@ void PNetCenter::HostReceiveQuant()
 							}
 							//Запуск продолжения
 							netCommand4C_ContinueGameAfterHostMigrate ncContinueGame;
-							SendEvent(ncContinueGame, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
+							SendEvent(ncContinueGame, NETID_ALL);
 							//Выполнение команд, которые не у всех были выполнены
 							for(m_numberGameQuant=nci.beginQuantCommandTransmit; m_numberGameQuant<=nci.endQuantCommandTransmit; m_numberGameQuant++){
 								m_nQuantCommandCounter=0;
 								std::vector<netCommandGame*>::iterator p;
 								for(p=tmpListGameCommands.begin(); p!=tmpListGameCommands.end(); p++){
 									if((*p)->curCommandQuant_==m_numberGameQuant) {
-										SendEvent(**p, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
+										SendEvent(**p, NETID_ALL);
 										m_nQuantCommandCounter++;
 									}
 								}
 								//netCommandNextQuant netCommandNextQuant(m_numberGameQuant, m_nQuantCommandCounter, netCommandNextQuant::NOT_QUANT_CONFIRMATION);
-								//SendEvent(netCommandNextQuant, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
+								//SendEvent(netCommandNextQuant, NETID_ALL_PLAYERS_GROUP/*m_netidGroupGame*/);
 
 							}
 							hostGeneralCommandCounter=nci.finGeneraCommandCounter;
 							netCommandNextQuant netCommandNextQuant(nci.endQuantCommandTransmit, m_nQuantCommandCounter, hostGeneralCommandCounter, netCommandNextQuant::NOT_QUANT_CONFIRMATION);
-							SendEvent(netCommandNextQuant, DPNID_ALL_PLAYERS_GROUP/*m_dpnidGroupGame*/);
+							SendEvent(netCommandNextQuant, NETID_ALL);
 
 							terHyperSpace::clearListGameCommands(tmpListGameCommands);
 
@@ -1373,7 +1663,7 @@ void PNetCenter::HostReceiveQuant()
 							int playersIDArr[NETWORK_PLAYERS_MAX];
 							for(int m=0; m<NETWORK_PLAYERS_MAX; m++) playersIDArr[m]=netCommand4C_Pause::NOT_PLAYER_ID;
 							netCommand4C_Pause ncp(playersIDArr, false);
-							SendEvent(ncp, DPNID_ALL_PLAYERS_GROUP);
+							SendEvent(ncp, NETID_ALL);
 
 							m_state=PNC_STATE__HOST_GAME;
 						}
@@ -1381,16 +1671,54 @@ void PNetCenter::HostReceiveQuant()
 					case NETCOM_4G_ID_CHAT_MESSAGE:
 						{
 							netCommand4G_ChatMessage nc_ChatMessage(in_HostBuf);
-							SendEvent(nc_ChatMessage, DPNID_ALL_PLAYERS_GROUP);
+                            
+                            //Get player data that send this
+                            int playerID = hostMissionDescription->findPlayer(netid);
+                            if (playerID != -1) {
+                                nc_ChatMessage.playerID = playerID;
+                                const auto& playerData = hostMissionDescription->playersData[playerID];
+                                const auto& pc = playerColors[playerData.colorIndex].unitColor;
+                                
+                                //Add color and name of player to text
+                                std::string text = "&"
+                                   + colorComponentToString(pc[0])
+                                   + colorComponentToString(pc[1])
+                                   + colorComponentToString(pc[2])
+                                   + playerData.name()
+                                   + "&FFFFFF: "
+                                   + nc_ChatMessage.text;
+                                nc_ChatMessage.text = text;
+                                
+                                //Find if we need to send to sender clan or everyone (sender included)
+                                if (nc_ChatMessage.clanOnly) {
+                                    for (const auto& missionPlayer : hostMissionDescription->playersData) {
+                                        if (missionPlayer.clan == playerData.clan && missionPlayer.netid) {
+                                            SendEvent(nc_ChatMessage, missionPlayer.netid);
+                                        }
+                                    }
+                                } else {
+                                    SendEvent(nc_ChatMessage, NETID_ALL);
+                                }
+                            }
 						}
 						break;
 					case EVENT_ID_SERVER_TIME_CONTROL:
 						{
 							terEventControlServerTime event(in_HostBuf);
 
-		///					m_pGame->SetGameSpeedScale(event.scale, dpnidPlayer);
+		///					m_pGame->SetGameSpeedScale(event.scale, netidPlayer);
 						}
 						break;
+                    case NETCOM_4G_ID_EXIT:
+                        {
+                            netCommand4G_Exit event(in_HostBuf);
+                            xassert(event.netid == netid);
+                            if (event.netid == netid) {
+                                SendEvent(event, NETID_ALL);
+                                ExitClient(netid);
+                            }
+                        }
+                        break;
 					case NETCOM_4H_ID_REJOIN_REQUEST:
 						{
 							//Опустошение лишней команды(сейчас клиент продолжает посылать ее до NEXT_QUANT)
@@ -1410,15 +1738,15 @@ void PNetCenter::HostReceiveQuant()
 				break; //for-a
 			}
 		}
-		if(p==m_clients.end()){ //Ни один существующий клиент не соответствует DPNID
+		if(p==m_clients.end()){ //Ни один существующий клиент не соответствует NETID
 			while(in_HostBuf.currentNetCommandID()) {
 				if(in_HostBuf.currentNetCommandID()==NETCOMC_ID_JOIN_REQUEST){
-					//HandleNewPlayer(dpnid);
-					netCommandC_JoinRequest nc(in_HostBuf);
+					//HandleNewPlayer(netid);
+					//netCommandC_JoinRequest nc(in_HostBuf);
 				}
 				else if(in_HostBuf.currentNetCommandID()==NETCOM_4H_ID_REJOIN_REQUEST && m_state==PNC_STATE__NEWHOST_PHASE_A){
 					netCommand4H_ReJoinRequest nc(in_HostBuf);
-					AddClientToMigratedHost(dpnid, nc.currentLastQuant, nc.confirmedQuant);
+					AddClientToMigratedHost(netid, nc.currentLastQuant, nc.confirmedQuant);
 				}
 				else if(in_HostBuf.currentNetCommandID()==NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS){
 					netCommand4H_ResponceLastQuantsCommands nci(in_HostBuf);
@@ -1432,7 +1760,7 @@ void PNetCenter::HostReceiveQuant()
 			}
 		}
 		
-	}while(PutInputPacket2NetBuffer(in_HostBuf, dpnid)!=0);
+	}while(PutInputPacket2NetBuffer(in_HostBuf, netid)!=0);
 }
 
 
@@ -1441,35 +1769,27 @@ void PNetCenter::UnLockInputPacket(void)
 	if(flag_LockIputPacket) flag_LockIputPacket--;
 }
 
-bool PNetCenter::PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf)
-{
-/*	if(flag_LockIputPacket) return 0;
-	int cnt=0;
-
-	list<XDPacket>::iterator p=m_DPPacketList.begin();
-	while(p!=m_DPPacketList.end()){
-		if(netBuf.putBufferPacket(p->buffer, p->size)){
-			p=m_DPPacketList.erase(p);
-			cnt++;
-		}
-		else break;
-	}
-	return (cnt!=0);*/
-	return 1;
+void PNetCenter::ClearInputPacketList() {
+    for (auto packet : m_InputPacketList) {
+        delete packet;
+    }
+    m_InputPacketList.clear();
 }
 
-bool PNetCenter::PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf, DPNID& returnDPNID)
+bool PNetCenter::PutInputPacket2NetBuffer(InOutNetComBuffer& netBuf, NETID& returnNETID)
 {
 	if(flag_LockIputPacket) return 0;
 
 	int cnt=0;
-	std::list<XDPacket>::iterator p=m_DPPacketList.begin();
-	if(p!=m_DPPacketList.end()){
-		returnDPNID=p->dpnid;
-		while(p!=m_DPPacketList.end()){
-			if(returnDPNID==p->dpnid){
-				if(netBuf.putBufferPacket(p->buffer, p->size)){
-					p=m_DPPacketList.erase(p);
+	std::list<InputPacket*>::iterator p=m_InputPacketList.begin();
+	if(p != m_InputPacketList.end()){
+		returnNETID=(*p)->netid;
+		while(p != m_InputPacketList.end()){
+            InputPacket* packet = *p;
+			if(returnNETID==packet->netid){
+				if(netBuf.putBufferPacket(packet->address(), packet->tell())) {
+                    delete packet;
+					p=m_InputPacketList.erase(p);
 					cnt++;
 				}
 				else break;

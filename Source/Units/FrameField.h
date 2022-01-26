@@ -38,7 +38,7 @@ public:
 	const MonkList& monks() { return monks_; }
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 	void UpdateAvatar();
 
 	void ChangeUnitOwner(terPlayer* player);

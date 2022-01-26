@@ -464,7 +464,7 @@ void copy(AttributeBase& d, const scripts_export::terUnitAttributeData& s)
 	}
 }
 
-void copyAttributes()
+void copyAttributes(bool override)
 {
 	for(int i = 0; i < scripts_export::unitAttributeDataTable.size(); i++){
 		const scripts_export::terUnitAttributeData& src = scripts_export::unitAttributeDataTable[i];
@@ -488,10 +488,13 @@ void copyAttributes()
 
 		copy(*data, src);
 		data->init();
-		attributeLibrary().add(AttributeIDBelligerent(data->ID, data->belligerent), data);
-		if(data->belligerent != BELLIGERENT_NONE &&
-		  !attributeLibrary().find(AttributeIDBelligerent(data->ID, BELLIGERENT_NONE)))
-			attributeLibrary().add(AttributeIDBelligerent(data->ID, BELLIGERENT_NONE), data);
+        AttributeIDBelligerent attr(data->ID, data->belligerent);
+        if (override || !attributeLibrary().find(attr)) {
+            attributeLibrary().add(attr, data);
+        }
+        if (data->belligerent != BELLIGERENT_NONE && !attributeLibrary().find(AttributeIDBelligerent(data->ID, BELLIGERENT_NONE))) {
+            attributeLibrary().add(AttributeIDBelligerent(data->ID, BELLIGERENT_NONE), data);
+        }
 	}
 }
 
@@ -583,12 +586,14 @@ void copy(RigidBodyPrm& d, const scripts_export::RigidBodyPrm& s)
 	d.enable_show = s.enable_show;
 }
 
-void copyRigidBodyTable()
+void copyRigidBodyTable(bool override)
 {
 	for(int i = 0; i < scripts_export::rigidBodyTable.size(); i++){
 		ShareHandle<RigidBodyPrm> data = new RigidBodyPrm;
 		copy(*data, scripts_export::rigidBodyTable[i]);
-		rigidBodyPrmLibrary().add((const char*)data->name, data);
+        if (override || !rigidBodyPrmLibrary().find(data->name.value())) {
+            rigidBodyPrmLibrary().add(data->name.value(), data);
+        }
 	}
 }
 
@@ -882,6 +887,7 @@ UnitInterfacePrm interface_frame_uninstalled;
 
 void copyInterfaceAttributesIndispensable()
 {
+    //This extracts some specific info that will be used later in game
 	copy(interface_squad1_prm, scripts_export::interface_squad1_prm);
 	copy(interface_squad3_prm, scripts_export::interface_squad3_prm);
 	copy(interface_frame_uninstalled, scripts_export::interface_frame_uninstalled);

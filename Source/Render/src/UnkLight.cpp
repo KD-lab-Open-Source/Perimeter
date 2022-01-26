@@ -26,7 +26,7 @@ void cUnkLight::PreDraw(cCamera *DrawNode)
 { 
 	if( NumberKey ) 
 	{
-		int nKey = round( floor( NumberKey*fmodf( CurrentTime/TimeLife, 0.999f ) ) );
+		int nKey = xm::round( xm::floor( NumberKey* xm::fmod(CurrentTime / TimeLife, 0.999f) ) );
 		VISASSERT( 0<=nKey && nKey<NumberKey );
 		GetRadius() = max(Key[nKey].rotate.x,1.0f);
 

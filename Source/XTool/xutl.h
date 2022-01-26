@@ -4,41 +4,26 @@
 
 #define GET_PREF_PATH() SDL_GetPrefPath("KD Vision", "Perimeter")
 #define PRINTF_FLOATING_FORMAT "%.*f"
-#define PRINTF_LONG_FLOATING_FORMAT "%.*Lf"
+
+struct XBuffer;
 
 unsigned int XRnd(unsigned int m);
 void XRndSet(unsigned int m);
 unsigned int XRndGet();
 
-/*
-__forceinline int BitSR(int x)
-{
-	int return_var;
-	_asm {
-		mov eax, x
-		cdq
-		xor eax,edx
-		sub     eax,edx
-		bsr     eax,eax
-		mov [return_var],eax
-	}
-	return return_var;
-}
-*/
+///Get high performance counter
+uint64_t getPerformanceCounter();
 
-// Copied C version from Vangers
-// TODO(amdmi3): very inefficient; rewrite
-inline int BitSR(int x) {
-    unsigned int a = abs(x);
-    for (int i = 31; i > 0; i--)
-        if (a & (1 << i))
-            return i;
+///How much ticks are in one second in high performance counter
+uint64_t getPerformanceFrequency();
 
-    return 0;
-}
-
+///Initializes clock
 void initclock();
+
+///Current time in integer ms since start
 int clocki();
+
+///Current time in fractional ms since start
 double clockf();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,63 +37,21 @@ extern int __argc;
 extern std::vector<const char*> __argv;
 #endif
 
-static void setup_argcv(int argc, char *argv[]) {
-#ifndef _WIN32
-    for(int i = 0; i < argc; i ++){
-        //printf("%d %s\n", i, argv[i]);
-        __argv.push_back(argv[i]);
-        __argc++;
-    }
-#endif
-}
+///Stores argc/argv from main()
+void setup_argcv(int argc, char *argv[]);
 
-inline const char* check_command_line(const char* switch_str)
-{
-    for(int i = 1; i < __argc; i ++){
-        const char* s = strstr(__argv[i], switch_str);
-        if(s) {
-            s += strlen(switch_str);
-            if (*s == '=') s += 1;
-            return s;
-        }
-    }
-    return nullptr;
-}
-
-//https://docs.microsoft.com/en-gb/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
-struct _FILETIME;
-void EpochToFileTime(int64_t epoch, _FILETIME* pft);
+///Returns the value by the switch name from key=value at argv
+const char* check_command_line(const char* switch_str);
 
 bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags = 0);
 
-//Converts Windows/POSIX to native path
-std::string convert_path(const char* path);
+int MessageBoxChoice(const char* title, const char* message, const std::vector<std::string>& buttons, uint32_t flags = 0);
 
-//Do a conversion for Windows -> POSIX paths
-std::string convert_path_posix(const char* path);
+//Convert UTF-8 into UTF-16
+std::u16string utf8_to_utf16(const char* str);
 
-//Do a conversion for RESOURCE paths
-std::string convert_path_resource(const char* path, bool parent_only = false);
-
-//Obtain pairs of lowercase and original path from Resource paths cache which match the path start
-std::vector<std::pair<std::string, std::string>> get_resource_paths_recursive(std::string path);
-
-//Obtain pairs of lowercase and original path from Resource paths cache which match the path start,
-//only if
-std::vector<std::pair<std::string, std::string>> get_resource_paths_directory(std::string path);
-
-//Clears the current loaded resource paths
-void clear_resource_paths();
-
-//Sets the current resources root path
-void set_content_root_path(const std::string& path);
- 
-//Returns the current resources root path
-const std::string& get_content_root_path();
-
-//Scans source dir and creates resource paths cache, it can update only a certain subdirectory to avoid rescanning all files
-//Removes the source path in each scanned path before saving to internal resource path list to destination path
-bool scan_resource_paths(std::string destination_path = "", std::string source_path = "");
+//Convert UTF-16 into UTF-8
+std::string utf16_to_utf8(const std::u16string& str);
 
 //Adds char to string in end if not present
 void terminate_with_char(std::string& buffer, char chr);
@@ -118,6 +61,9 @@ void terminate_float_text(char* buffer, size_t max, int digits);
 
 //Replaces all "from" in "text" with "to"
 void string_replace_all(std::string& text, const std::string& from, const std::string& to);
+
+//Changes string to lowercase
+std::string string_to_lower(const char* str);
 
 static bool startsWith(const std::string& str, const std::string& prefix)
 {
@@ -130,5 +76,17 @@ static bool endsWith(const std::string& str, const std::string& suffix)
     //SRC: https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c
     return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
 }
+
+//Converts string to double, same as strtod
+double string_to_double(const char* in, char** end);
+
+//Converts string to float, same as strtof
+float string_to_float(const char* in, char** end);
+
+//Encodes a float using "raw format" in text form
+void encode_raw_float(XBuffer* buffer, float value);
+
+//Encodes a double using "raw format" in text form
+void encode_raw_double(XBuffer* buffer, double value);
 
 #endif

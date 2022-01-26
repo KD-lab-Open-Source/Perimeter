@@ -4,6 +4,17 @@
 #include "GameShellSq.h"
 #include "Config.h"
 #include "xutil.h"
+#include "files/files.h"
+#include "GameContent.h"
+
+std::string getMissionNumberKey() {
+    std::string missionNumberKey = "lastMissionNumber";
+    GAME_CONTENT content = getGameContentCampaign();
+    if (content != terGameContentBase) {
+        missionNumberKey += "_" + getGameContentEnumName(terGameContentSelect);
+    }
+    return missionNumberKey;
+}
 
 UserSingleProfile::UserSingleProfile() :
 		currentMissionNumber(-1),
@@ -25,7 +36,7 @@ void UserSingleProfile::setLastMissionNumber(int newMissionNumber) {
 	profiles[currentProfileIndex].lastMissionNumber = newMissionNumber;
 	std::string path = getProfileIniPath(currentProfileIndex);
 	IniManager man( path.c_str(), true );
-	man.putInt("General", "lastMissionNumber", newMissionNumber);
+	man.putInt("General", getMissionNumberKey().c_str(), newMissionNumber);
 }
 
 void UserSingleProfile::scanProfiles() {
@@ -33,13 +44,16 @@ void UserSingleProfile::scanProfiles() {
 
 	int maxIndex = -1;
 
-    for (const auto & entry : std::filesystem::directory_iterator(getAllSavesDirectory())) {
-        if (entry.is_directory()) {
-            std::string path = entry.path().filename().string();
-            profiles.emplace_back(Profile(path));
+    for (const auto & entry : get_content_entries_directory(getAllSavesDirectory())) {
+        if (entry->is_directory) {
+            std::string path = std::filesystem::u8path(entry->path_content).filename().u8string();
+            std::string path_lwr = string_to_lower(path.c_str());
+            if (startsWith(path_lwr, "profile")) {
+                profiles.emplace_back(Profile(path));
+            }
         }
     }
-	for (int i = 0, s = profiles.size(); i < s; i++) {
+	for (size_t i = 0, s = profiles.size(); i < s; i++) {
 		loadProfile(i);
 		maxIndex = max(maxIndex, profiles[i].dirIndex);
 	}
@@ -78,20 +92,23 @@ void UserSingleProfile::addProfile(const std::string& name) {
 	std::string path = root + newProfile.dirName;
 	std::string origin = root + PATH_SEP + "DefaultPlayerData";
     std::error_code error;
-    std::filesystem::create_directories(path, error);
+    create_directories(path, &error);
 	if( error ) {
         ErrH.Abort("Can't create profile directory: ", XERR_USER, error.value(), error.message().c_str());
 	} else {
         std::string path_data = path + PATH_SEP + "data";
-        std::filesystem::copy_file(origin, path_data, error);
+        std::filesystem::copy_file(
+                std::filesystem::u8path(origin),
+                std::filesystem::u8path(path_data),
+                error
+        );
         if (error) {
             ErrH.Abort("Can't copy new profile: ", XERR_USER, error.value(), error.message().c_str());
         } else {
-            scan_resource_paths(path);
             profiles.push_back( newProfile );
             IniManager man( path_data.c_str(), true );
             man.put("General", "name", name.c_str());
-            man.putInt("General", "lastMissionNumber", firstMissionNumber);
+            man.putInt("General", getMissionNumberKey().c_str(), firstMissionNumber);
             if (i == freeInds.size()) {
                 freeInds.push_back(true);
             } else {
@@ -105,7 +122,7 @@ void UserSingleProfile::addProfile(const std::string& name) {
 bool UserSingleProfile::removeDir(const std::string& dir) {
     std::error_code error;
     std::string allSaves = getAllSavesDirectory();
-    std::filesystem::path target_path = allSaves + PATH_SEP + dir;
+    std::filesystem::path target_path = std::filesystem::u8path(allSaves + PATH_SEP + dir);
     std::filesystem::remove_all(target_path, error);
     if( error ) {
         ErrH.Abort("Can't remove profile directory: ", XERR_USER, error.value(), error.message().c_str());
@@ -137,29 +154,37 @@ void UserSingleProfile::setCurrentProfileIndex(int index) {
 	currentProfileIndex = index;
 }
 
-void UserSingleProfile::deleteSave(const std::string& name) {
-    std::string savesDir = getSavesDirectory();
-	std::string fullName = savesDir + name;
-	std::remove( (fullName + ".spg").c_str() );
-	std::remove( (fullName + ".gmp").c_str() );
-	std::remove( (fullName + ".dat").c_str() );
-	std::remove( (fullName + ".sph").c_str() );
-    scan_resource_paths(savesDir);
+void UserSingleProfile::deleteSave(const std::string& path) {
+    for (auto& ext : {"spg", "bin", "sph", "gmp", "dat"}) {
+        std::string path_ext = setExtension(path, ext);
+        std::remove(path_ext.c_str());
+    }
+    std::filesystem::path path_path = std::filesystem::u8path(path);
+    scan_resource_paths(path_path.parent_path().u8string());
 }
 
 std::string UserSingleProfile::getAllSavesDirectory() {
-    return convert_path_resource("RESOURCE") + PATH_SEP + "Saves" + PATH_SEP;
+    return convert_path_content("Resource/Saves") + PATH_SEP;
 }
 
 std::string UserSingleProfile::getSavesDirectory() const {
-	return getAllSavesDirectory() + profiles[currentProfileIndex].dirName + PATH_SEP;
+    std::string savesDir = getAllSavesDirectory();
+    if (getLastGameType() == UserSingleProfile::MULTIPLAYER) {
+        //Workaround for when inside multiplayer
+        savesDir += "Multiplayer";
+    } else {
+        savesDir += profiles[currentProfileIndex].dirName;
+    }
+	return savesDir + PATH_SEP;
 }
 
 void UserSingleProfile::loadProfile(int index) {
 	std::string path = getProfileIniPath(index);
 	IniManager man(path.c_str(), false);
 	profiles[index].name = man.get("General","name");
-	profiles[index].lastMissionNumber = man.getInt("General","lastMissionNumber");
+    int missionNumber = firstMissionNumber;
+    man.getInt("General", getMissionNumberKey().c_str(), missionNumber);
+	profiles[index].lastMissionNumber = missionNumber;
 	profiles[index].difficulty = (Difficulty)man.getInt("General","difficulty");
 }
 

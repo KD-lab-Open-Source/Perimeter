@@ -14,6 +14,7 @@
 
 #include "PerimeterSound.h"
 #include "GameShell.h"
+#include "codepages/codepages.h"
 
 #include "FilthAnts.h"
 #include "FilthWasp.h"
@@ -71,12 +72,12 @@ bool terFilthSpot::terCheckFilthPoint(int x,int y)
 
 bool terCheckFilthZero(const Vect3f& pos)
 {
-	return terCheckFilthZero(round(pos.x),round(pos.y));
+	return terCheckFilthZero(xm::round(pos.x), xm::round(pos.y));
 }
 
 bool terCheckFilthChaos(const Vect3f& pos)
 {
-	return terCheckFilthChaos(round(pos.x),round(pos.y));
+	return terCheckFilthChaos(xm::round(pos.x), xm::round(pos.y));
 }
 
 terFilthSpot::terFilthSpot(const UnitTemplate& data) : terUnitBase(data)
@@ -200,9 +201,9 @@ SaveUnitData* terFilthSpot::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSpot::universalLoad(const SaveUnitData* baseData)
+void terFilthSpot::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitFilthData* data = safe_cast<const SaveUnitFilthData*>(baseData);
+	SaveUnitFilthData* data = safe_cast<SaveUnitFilthData*>(baseData);
 	terUnitBase::universalLoad(data);
 
 	setRadius(data->radius);
@@ -245,11 +246,16 @@ void terFilthSpot::universalLoad(const SaveUnitData* baseData)
 		}
 	}
 
+    for (auto existing : swarm_list) {
+        delete existing;
+    }
+    swarm_list.clear();
+    
 	FilthSwarmListType& new_swarm=swarm_list;
 	SaveUnitDataList::const_iterator it;
 	FOR_EACH(data->swarmList,it)
 	{
-		const SaveFilthSwarm* swarm_data=safe_cast<const SaveFilthSwarm*>(it->get());
+		SaveFilthSwarm* swarm_data=safe_cast<SaveFilthSwarm*>(it->get());
 		switch(FilthParamID){
 			case FILTH_SPOT_ID_ANTS:
 			case FILTH_SPOT_ID_ANTS2:
@@ -387,7 +393,7 @@ void terFilthSpot::DestroyLink()
 
 void terFilthSpot::SoundActivate()
 {
-	float z = (float)(vMap.GetAlt(vMap.XCYCL(round(position().x)),vMap.YCYCL(round(position().y))) >> VX_FRACTION);
+	float z = (float)(vMap.GetAlt(vMap.XCYCL(xm::round(position().x)), vMap.YCYCL(xm::round(position().y))) >> VX_FRACTION);
     Vect3f v;
 	switch(FilthParamID){
 		case FILTH_SPOT_ID_ANTS:
@@ -417,7 +423,7 @@ void terFilthSpot::GenerationProcess()
 	int i;
 
 	int num = BaseParam->SwarmMax;
-	int period=round((attack_period+terLogicRND(delta_attack_period))*10.0f);
+	int period= xm::round((attack_period + terLogicRND(delta_attack_period)) * 10.0f);
 
 	switch(FilthParamID){
 		case FILTH_SPOT_ID_ANTS:
@@ -426,14 +432,14 @@ void terFilthSpot::GenerationProcess()
 		case FILTH_SPOT_ID_A_SPIDER:
 			for(i = 0;i < num;i++)
 			{
-				float a = terLogicRNDfrand()*M_PI*2.0f;
+				float a = terLogicRNDfrand()*XM_PI*2.0f;
 				float r = BaseParam->SwarmRadius;
-				v.x = cosf(a) * r;
-				v.y = sinf(a) * r;
+				v.x = xm::cos(a) * r;
+				v.y = xm::sin(a) * r;
 				v += position();
 				v.z = 0;
 				if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE){
-					if(terCheckFilthPoint(round(v.x),round(v.y))){
+					if(terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 						terFilthSwarmAnt* p = new terFilthSwarmAnt(this,v,period);
 						new_swarm.push_back(p);
 					}
@@ -453,7 +459,7 @@ void terFilthSpot::GenerationProcess()
 				v += position();
 				v.z = 0;
 				if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE){
-					if(terCheckFilthPoint(round(v.x),round(v.y))){
+					if(terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 						terFilthSwarmRat* p = new terFilthSwarmRat(this,v,period);
 						new_swarm.push_back(p);
 					}
@@ -467,7 +473,7 @@ void terFilthSpot::GenerationProcess()
 			{
 				if(hole_pos.empty())
 				{
-					float a = terLogicRNDfrand()*M_PI*2.0f;
+					float a = terLogicRNDfrand()*XM_PI*2.0f;
 					for(int i=0;i<BaseParam->SwarmMax;i++)
 					{
 						HoleStruct v;
@@ -499,7 +505,7 @@ void terFilthSpot::GenerationProcess()
 				v = position();
 				v.z = 0;
 				if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE){
-					if(terCheckFilthPoint(round(v.x),round(v.y))){
+					if(terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 						terFilthSwarmGhost* p = new terFilthSwarmGhost(this,v,period);
 						new_swarm.push_back(p);
 					}
@@ -511,7 +517,7 @@ void terFilthSpot::GenerationProcess()
 				v = position();
 				v.z = 0;
 				if(v.x > 0 && v.y > 0 && v.x < vMap.H_SIZE && v.y < vMap.V_SIZE){
-					if(terCheckFilthPoint(round(v.x),round(v.y))){
+					if(terCheckFilthPoint(round(v.x),xm::round(v.y))){
 						terFilthSwarmEye* p = new terFilthSwarmEye(this,v,period);
 						new_swarm.push_back(p);
 					}
@@ -550,7 +556,7 @@ void terFilthSpot::GenerationProcess()
 			{
 				v = position();
 				v.z = 0;
-				if(terCheckFilthPoint(round(v.x),round(v.y))){
+				if(terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 					terFilthSwarmDaemon* p = new terFilthSwarmDaemon(this,v,period);
 					new_swarm.push_back(p);
 				}
@@ -561,7 +567,7 @@ void terFilthSpot::GenerationProcess()
 			{
 				v = position();
 				v.z = 0;
-				if(terCheckFilthPoint(round(v.x),round(v.y))){
+				if(terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 					terFilthSwarmWorm* p = new terFilthSwarmWorm(this,v,period);
 					new_swarm.push_back(p);
 				}
@@ -572,7 +578,7 @@ void terFilthSpot::GenerationProcess()
 			{
 				v = position();
 				v.z = 0;
-				if(terCheckFilthPoint(round(v.x),round(v.y))){
+				if(terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 					terFilthSwarmShark* p = new terFilthSwarmShark(this,v,period);
 					new_swarm.push_back(p);
 				}
@@ -584,7 +590,7 @@ void terFilthSpot::GenerationProcess()
 				v = position();
 				v.z = 0;
 				creature_generation_period=attack_period*10.0f;
-				if(terCheckFilthPoint(round(v.x),round(v.y))){
+				if(terCheckFilthPoint(xm::round(v.x), xm::round(v.y))){
 				    Vect3f v3 = To3D(v);
 					SND3DPlaySound("Proc_Geo_Vulcan",&v3);
 					terFilthSwarmVolcano* p = new terFilthSwarmVolcano(this,v,create_first);
@@ -612,7 +618,7 @@ void terFilthSpot::GenerationProcess()
 			(*it)->SetAttackWidth(attack_width,attack_direction);
 			(*it)->SetAttackTarget(pExclusiveAttackUnit);
 
-			int num=round(creatures/(float)size);
+			int num= xm::round(creatures / (float) size);
 
 			(*it)->SetCreatureGeneration(num,creature_generation_period);
 			(*it)->SetPlayer(Player);
@@ -732,7 +738,7 @@ void terFilthSpot::GetDifficity(int& creature_num_,float& sleep_mul)
 		difficity=universe()->worldPlayer()->difficultyPrm().filthDensity;
 	xassert(creature_num>0);
 	xassert(difficity>0 && difficity<10);
-	creature_num_=max((int)round(creature_num*difficity),1);
+	creature_num_=max((int) xm::round(creature_num * difficity), 1);
 	sleep_mul=max(creature_num_/(creature_num*difficity),1.0f);
 }
 
@@ -758,18 +764,28 @@ void terFilthSpot::ShowInfo()
 {
 	if(gameShell->missionEditor())
 	{
-		Vect3f e,w;
+        std::string text;
+        const std::string& locale = getLocale();
+        if (locale == "russian") {
+            text = convertToCodepage("Скверна: ", locale);
+            text += convertToCodepage(getEnumDescriptor(FILTH_SPOT_ID_NONE).nameAlt(FilthParamID), locale);
+            text += "\n";
+        } else {
+            text = "Scourge:\n";
+        }
+        text += getEnumDescriptor(FILTH_SPOT_ID_NONE).name(FilthParamID);
+        Vect3f e,w;
 		terCamera->GetCamera()->ConvertorWorldToViewPort(&position(),&w,&e);
 		terRenderDevice->SetFont(gameShell->debugFont());
 		if(selected())
 		{
-			terRenderDevice->OutText(round(e.x),round(e.y),"Filth",sColor4f(1.0f,1.0f,1.0f,1.0f));
-			terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,sColor4c(255,255,255,255),0);
+			terRenderDevice->OutText(xm::round(e.x),xm::round(e.y),text.c_str(),sColor4f(1.0f,1.0f,1.0f,1.0f));
+			terRenderDevice->DrawRectangle(xm::round(e.x) - 2,xm::round(e.y) - 2,4,4,sColor4c(255,255,255,255),0);
 
 			if(attack_width>0)
 			{
-				float a=attack_direction*M_PI/180.0f;
-				Vect3f direction(cos(a),sin(a),0);
+				float a=attack_direction*XM_PI/180.0f;
+				Vect3f direction(xm::cos(a),xm::sin(a),0);
 				Vect3f norm(direction.y,-direction.x,0);
 				terRenderDevice->DrawLine(To3D(position()),To3D(position()+direction*20),RED);
 
@@ -781,8 +797,8 @@ void terFilthSpot::ShowInfo()
 			}
 		}else
 		{
-			terRenderDevice->OutText(round(e.x),round(e.y),"Filth",sColor4f(1.0f,1.0f,1.0f,0.5f));
-			terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,pathColor,0);
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 0.5f));
+			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 		}
 		terRenderDevice->SetFont(0);
 	}
@@ -968,7 +984,7 @@ terUnitBase* terFilthSwarm::CalcDistance(terUnitBase* unit,float& dist,const Vec
 		float t=p.x*direction.x+p.y*direction.y;
 		if(t<0)
 			return NULL;
-		float n=fabsf(p.x*direction.y-p.y*direction.x);
+		float n= xm::abs(p.x * direction.y - p.y * direction.x);
 		if(n>attack_width)
 			return NULL;
 	}
@@ -995,8 +1011,8 @@ void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int m
 		return;
 
 	int target_list_size=0;
-	float a=attack_direction*M_PI/180.0f;
-	Vect2f direction(cos(a),sin(a));
+	float a=attack_direction*XM_PI/180.0f;
+	Vect2f direction(xm::cos(a),xm::sin(a));
 
 	//На фрэйм нападать только, если нет других целей.
 	float md = FLT_MAX;
@@ -1004,7 +1020,7 @@ void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int m
 
 	for(int iteration=0;iteration<2;iteration++)
 	{
-		DWORD ignore_unit_class=(iteration==0)?UNIT_CLASS_FRAME:~(DWORD)UNIT_CLASS_FRAME;
+		uint32_t ignore_unit_class= (iteration == 0) ? UNIT_CLASS_FRAME : ~(uint32_t)UNIT_CLASS_FRAME;
 		FOR_EACH(universe()->Players, pi)
 		{
 			terPlayer* player=*pi;
@@ -1031,7 +1047,7 @@ void terFilthSwarm::FindComplexTarget(std::list<terUnitBase*>& target_list,int m
 					continue;
 				if(player->isWorld())
 				{
-					ignore_unit_class=~(DWORD)UNIT_CLASS_STRUCTURE_ENVIRONMENT;
+					ignore_unit_class=~(uint32_t)UNIT_CLASS_STRUCTURE_ENVIRONMENT;
 				}
 				break;
 			default:
@@ -1278,10 +1294,10 @@ SaveUnitData* terFilthSpline::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSpline::universalLoad(const SaveUnitData* baseData)
+void terFilthSpline::universalLoad(SaveUnitData* baseData)
 {
 	terFilthGeneric::universalLoad(baseData);
-	const SaveFilthSpline* data = safe_cast<const SaveFilthSpline*>(baseData);
+	SaveFilthSpline* data = safe_cast<SaveFilthSpline*>(baseData);
 	delta_time=data->delta_time;
 	cur_way_point=data->cur_way_point;
 	acceleration=data->acceleration;
@@ -1321,9 +1337,9 @@ int terGenerate::Quant()
 	GenerationFactor += GenerationSpeed;
 	int num;
 	if(GenerationCount)
-		num=round(floor(GenerationFactor));
+		num= xm::round(xm::floor(GenerationFactor));
 	else
-		num=round(GenerationFactor);
+		num= xm::round(GenerationFactor);
 	GenerationFactor -= (float)num;
 	return num;
 }
@@ -1352,9 +1368,9 @@ SaveUnitData* terFilthSwarm::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarm::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarm::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthSwarm* data = safe_cast<const SaveFilthSwarm*>(baseData);
+	SaveFilthSwarm* data = safe_cast<SaveFilthSwarm*>(baseData);
 	position=data->position;
 	attack_width=data->attack_width;
 	attack_direction=data->attack_direction;

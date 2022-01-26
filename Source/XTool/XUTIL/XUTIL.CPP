@@ -1,24 +1,29 @@
 
 #include <fstream>
 #include <cstring>
-#include <SDL.h>
-#include <filesystem>
+#include <codecvt>
+#include <locale>
 #include <algorithm>
-#include <unordered_map>
+#include <SDL.h>
+#include <cwchar>
+#include <cwctype>
 #include "tweaks.h"
 #ifdef _WIN32 
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #endif
 #include "xutil.h"
+#include "xmath.h"
+
+std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> utf8cvt;
 
 #ifndef _WIN32
+bool argcv_setup_done = false;
 int __argc = 0;
 std::vector<const char*> __argv;
 #endif
 
 static unsigned int XRndValue = 83838383;
-
-static const std::string curdir_path = std::string(".") + PATH_SEP;
 
 unsigned int XRnd(unsigned int m)
 { 
@@ -38,19 +43,46 @@ unsigned int XRndGet()
 	return XRndValue;
 }
 
-void EpochToFileTime(int64_t epoch, _FILETIME* pft) {
-    int64_t ll = (epoch * 10000000LL) + 116444736000000000LL;
-    pft->dwLowDateTime = (unsigned short) ll;
-    pft->dwHighDateTime = (unsigned short) (ll >> 32);
+void setup_argcv(int argc, char *argv[]) {
+#ifndef _WIN32
+    for(int i = 0; i < argc; i ++){
+        //printf("%d %s\n", i, argv[i]);
+        __argv.push_back(argv[i]);
+        __argc++;
+    }
+    argcv_setup_done = true;
+#endif
 }
 
-bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) {
-    const SDL_MessageBoxButtonData buttons[] = {
-            /* .flags, .buttonid, .text */
-            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Yes" },
-            { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "No"  },
-    };
+const char* check_command_line(const char* switch_str) {
+#ifndef _WIN32
+    if (!argcv_setup_done) {
+        fprintf(stderr, "Called check_command_line %s before setup_argcv\n", switch_str);
+    }
+#endif
+    std::string switch_key(switch_str);
+    switch_key += "=";
+    for(int i = 1; i < __argc; i ++){
+        const char* arg = __argv[i];
+        if (startsWith(arg, "tmp_")) {
+            arg += 4;
+        }
+        if (startsWith(arg, switch_key)) {
+            arg += switch_key.length();
+            return arg;
+        }
+    }
+    return nullptr;
+}
 
+//TODO reconfigure this based on current locale using yes/no in qdTextDB and use this as default values
+static SDL_MessageBoxButtonData messageBoxQuestionButtons[] = {
+        /* .flags, .buttonid, .text */
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "YES / ДА" },
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "NO / НЕТ"  },
+};
+
+bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) {
     if (flags == 0) {
         flags = SDL_MESSAGEBOX_INFORMATION;
     }
@@ -60,8 +92,8 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
             nullptr, /* .window */
             title, /* .title */
             message, /* .message */
-            SDL_arraysize(buttons), /* .numbuttons */
-            buttons, /* .buttons */
+            SDL_arraysize(messageBoxQuestionButtons), /* .numbuttons */
+            messageBoxQuestionButtons, /* .buttons */
             nullptr /* .colorScheme */
     };
 
@@ -74,278 +106,56 @@ bool MessageBoxQuestion(const char* title, const char* message, uint32_t flags) 
     return choice == 1;
 }
 
-std::string convert_path(const char* path) {
-    std::string conv;
-    size_t size = strlen(path);
-    for (int i = 0; i < size; ++i) {
-#ifdef _WIN32
-        conv.push_back(path[i] == '/' ? PATH_SEP : path[i]);
-#else
-        conv.push_back(path[i] == '\\' ? PATH_SEP : path[i]);
-#endif
+int MessageBoxChoice(const char* title, const char* message, const std::vector<std::string>& buttons, uint32_t flags) {
+    if (flags == 0) {
+        flags = SDL_MESSAGEBOX_INFORMATION;
+    }
+    
+    std::vector<SDL_MessageBoxButtonData> buttonData;
+    int i = 1;
+    for (auto& button : buttons) {
+        buttonData.push_back({ 0, i, button.c_str() });
+        i++;
+    }
+
+    const SDL_MessageBoxData data = {
+            flags, /* .flags */
+            nullptr, /* .window */
+            title, /* .title */
+            message, /* .message */
+            static_cast<int>(buttonData.size()), /* .numbuttons */
+            buttonData.data(), /* .buttons */
+            nullptr /* .colorScheme */
+    };
+
+    int choice = 0;
+    int err = SDL_ShowMessageBox(&data, &choice);
+    if (err) {
+        fprintf(stdout, "MessageBoxChoice: %s\n", title);
+        SDL_PRINT_ERROR("Creating MessageBoxQuestion window");
+    }
+    
+    return choice;
+}
+
+std::u16string utf8_to_utf16(const char* str) {
+    std::u16string conv;
+    try {
+        conv = utf8cvt.from_bytes(str);
+    } catch (std::exception& e) {
+        fprintf(stderr, "utf8_to_utf16 exception %s with input '%s'\n", e.what(), str);
     }
     return conv;
 }
 
-std::string convert_path_posix(const char* path) {
+std::string utf16_to_utf8(const std::u16string& str) {
     std::string conv;
-    size_t size = strlen(path);
-    for (int i = 0; i < size; ++i) {
-        conv.push_back(path[i] == '\\' ? '/' : path[i]);
+    try {
+        conv = utf8cvt.to_bytes(str);
+    } catch (std::exception& e) {
+        fprintf(stderr, "utf16_to_utf8 exception %s\n", e.what());
     }
     return conv;
-}
-
-void prepare_path(std::string& res_path, const std::string& source_path) {
-    res_path = convert_path(res_path.c_str());
-    if (res_path == "." || res_path == source_path) {
-        res_path.clear();
-    }
-    if (res_path.empty()) {
-        return;
-    }
-    
-    if (!source_path.empty()) {
-        size_t root_pos = res_path.find(source_path);
-        if (root_pos != std::string::npos && root_pos == 0) {
-            res_path.erase(0, source_path.size());
-        }
-    }
-    
-    //Remove ./ since it screws with setExtention
-    size_t path_pos = res_path.find(curdir_path);
-    if (path_pos != std::string::npos && path_pos == 0) {
-        res_path.erase(0, curdir_path.size());
-    }
-}
-
-///Adds a new internal path relative to root path
-std::string add_resource_path_internal(std::unordered_map<std::string, std::string>& paths,
-                                       std::string res_path,
-                                       const std::string& destination_path, 
-                                       const std::string& source_path,
-                                       bool replace_files, bool replace_dirs) {
-    
-    //Use destination path directly if not empty
-    std::string path_lwr = destination_path;
-    if (path_lwr.empty() || endsWith(path_lwr, PATH_SEP_STR)) {
-        //Make relative path from res_path
-        path_lwr = res_path;
-        prepare_path(path_lwr, source_path);
-        path_lwr = destination_path + path_lwr;
-    }
-    
-    //Lowercase it for case-insensitive path matching
-    strlwr(path_lwr.data());
-    if (startsWith(path_lwr, "resource")
-        || startsWith(path_lwr, "cache_font")
-        || startsWith(path_lwr, "addons")
-        || startsWith(path_lwr, "scripts")
-        || endsWith(path_lwr, ".ini")) {
-        //Remove ./ from res path since it can mess with some code dealing with extensions
-        prepare_path(res_path, "");
-
-        bool path_is_directory = std::filesystem::is_directory(std::filesystem::path(res_path));
-
-        //Create absolute path too
-        std::string res_path_lwr = convert_path(res_path.c_str());
-        strlwr(res_path_lwr.data());
-        
-        //Check if an override occurs
-        std::string prev_path = paths[path_lwr];
-        std::string prev_path_abs;
-        if (!prev_path.empty() && prev_path != res_path) {
-            if ((path_is_directory && !replace_dirs) || (!path_is_directory && !replace_files)) {
-                //printf("Not replacing path %s with %s\n", prev_path.c_str(), res_path.c_str());
-                return "";
-            }
-            
-            //printf("Replacing path %s with %s\n", prev_path.c_str(), res_path.c_str());
-            
-            //TODO override old absolute paths with the new path until proper struct is implemented to group paths
-            std::filesystem::path prev_path_path(prev_path);
-            if (prev_path_path.is_absolute()) {
-                prev_path_abs = convert_path_resource(path_lwr.c_str());
-                strlwr(prev_path_abs.data());
-            }
-        }
-        
-        //Store path relative and absolute internal paths pointing the real FS path
-        paths[res_path_lwr] = paths[path_lwr] = res_path;
-        if (!prev_path_abs.empty()) {
-            paths[prev_path_abs] = res_path;
-        }
-        if (path_is_directory) {
-            //In case of path pointing a dir, store PATH_SEP terminated too
-            terminate_with_char(path_lwr, PATH_SEP);
-            terminate_with_char(res_path_lwr, PATH_SEP);
-            paths[res_path_lwr] = paths[path_lwr] = res_path + PATH_SEP;
-            if (!prev_path_abs.empty()) {
-                terminate_with_char(prev_path_abs, PATH_SEP);
-                paths[prev_path_abs] = res_path;
-            }
-        }
-    }
-    return path_lwr;
-}
-
-//Since some code may call this statically, we use a flag to know if this is the first time
-bool resourcePathsFirstScan = true;
-std::unordered_map<std::string, std::string> resourcePaths;
-std::string content_root_path;
-
-bool scan_resource_paths(std::string destination_path, std::string source_path) {
-    //Use destination as source path assuming its a call to refresh subdir resources in root
-    if (source_path.empty() && !destination_path.empty()) {
-        source_path = destination_path;
-    }
-    bool same_paths = source_path == destination_path;
-    bool replace_files = !same_paths;
-    
-    //Remove root or any other stuff from source before adding
-    prepare_path(source_path, content_root_path);
-    if (!content_root_path.empty() && content_root_path != curdir_path) {
-        source_path = content_root_path + source_path;
-    }
-    
-    //Prepare destination too
-    prepare_path(destination_path, content_root_path);
-    strlwr(destination_path.data());
-
-    //If is actually a file then just add it
-    if (std::filesystem::is_regular_file(std::filesystem::path(source_path))) {
-        std::string source_parent_path = std::filesystem::path(source_path).parent_path().string();
-        terminate_with_char(source_parent_path, PATH_SEP);
-        add_resource_path_internal(resourcePaths,
-                                   source_path,
-                                   destination_path,
-                                   source_parent_path,
-                                   true, false);
-        resourcePathsFirstScan = false;
-        return true;
-    }
-
-    //We need this to scan dirs in current dir
-    if (content_root_path == curdir_path) {
-        source_path = curdir_path + source_path;
-    }
-    
-    //Check if is actually a dir
-    if (!std::filesystem::is_directory(source_path)) {
-        return false;
-    }
-    terminate_with_char(source_path, PATH_SEP);
-    terminate_with_char(destination_path, PATH_SEP);
-
-    std::unordered_map<std::string, std::string> paths;
-    if (replace_files) {
-        paths = resourcePaths;
-    } else {
-        //Remove all paths that match with path to scan by not including them
-        for (const auto& entry: resourcePaths) {
-            if (!startsWith(entry.second, source_path)) {
-                paths.insert(entry);
-            }
-        }
-    }
-
-    //Add path as resource since iterator wont add it
-    if (!destination_path.empty() && same_paths) {
-        add_resource_path_internal(paths, source_path, destination_path, source_path, replace_files, false);
-    }
-    
-    //Do recursive search on source path
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::path(source_path))) {
-        if (entry.is_regular_file() || entry.is_directory()) {
-            add_resource_path_internal(paths, entry.path().string(), destination_path, source_path, replace_files, false);
-        }
-    }
-    
-    //Store collected paths
-    resourcePaths = paths;
-    resourcePathsFirstScan = false;
-    return true;
-}
-
-bool scan_resource_paths(const std::string& path) {
-    return scan_resource_paths(path, path);
-}
-
-std::vector<std::pair<std::string, std::string>> get_resource_paths_recursive(std::string path) {
-    prepare_path(path, content_root_path);
-    strlwr(path.data());
-    std::vector<std::pair<std::string, std::string>> paths;
-    for (const auto& entry : resourcePaths) {
-        if (startsWith(entry.first, path)) {
-            paths.emplace_back(entry);
-        }
-    }
-    return paths;
-}
-
-std::vector<std::pair<std::string, std::string>> get_resource_paths_directory(std::string path) {
-    prepare_path(path, content_root_path);
-    strlwr(path.data());
-    terminate_with_char(path, PATH_SEP);
-    std::vector<std::pair<std::string, std::string>> paths;
-    for (const auto& entry : resourcePaths) {
-        if (startsWith(entry.first, path)) {
-            //Only add paths that don't have any separator, we use posix sep because internals are always posix
-            std::string entry_path = entry.first;
-            prepare_path(entry_path, path);
-            if (entry_path.empty()) continue;
-            
-            size_t pos = entry_path.find(PATH_SEP);
-            if (pos != std::string::npos) continue;
-            
-            paths.emplace_back(entry);
-        }
-    }
-    return paths;
-}
-
-void clear_resource_paths() {
-    resourcePathsFirstScan = true;
-    resourcePaths.clear();
-}
-
-void set_content_root_path(const std::string& path) {
-    content_root_path = path;
-    terminate_with_char(content_root_path, PATH_SEP);
-}
-
-const std::string& get_content_root_path() {
-    return content_root_path;
-}
-
-std::string convert_path_resource(const char* path, bool parent_only) {
-    if (resourcePathsFirstScan) {
-        //Avoid potential crash if we are called during static init
-        fprintf(stderr, "Called convert_path_resource before scan_resource_paths! '%s'\n", path);
-        if (check_command_line("convert_path_resource_debug")) {
-            ErrH.Abort("convert_path_resource_debug");
-        }
-        return "";
-    }
-    std::string conv = convert_path(path);
-    if (startsWith(conv, curdir_path)) {
-        conv.erase(0, 2);
-    }
-    std::string result;
-    if (parent_only) {
-        //Search the parent and append filename
-        std::filesystem::path path_fs(conv);
-        conv = path_fs.parent_path().string();
-        strlwr(conv.data());
-        result = resourcePaths[conv];
-        if (!result.empty()) {
-            result += PATH_SEP + path_fs.filename().string();
-        }
-    } else {
-        strlwr(conv.data());
-        result = resourcePaths[conv];
-    }
-    return result;
 }
 
 void terminate_with_char(std::string& buffer, const char chr) {
@@ -427,3 +237,160 @@ void string_replace_all(std::string& text, const std::string& from, const std::s
 
     text.swap(newString);
 }
+
+std::string string_to_lower(const char* str) {
+    std::u16string conv = utf8_to_utf16(str);
+    if (conv.empty()) return str;
+    
+    //Process each UTF16 code
+    for (int i = 0; i < conv.size(); ++i) {
+        auto c = conv[i];
+        c = std::towlower(c);
+        conv[i] = c;
+    }
+
+    //Convert UTF-16 into UTF-8
+    std::string output = utf16_to_utf8(conv);
+    
+    return output;
+}
+
+//Converts string to float/double manually since we can't rely on stdlib for deterministic results
+template<typename FT, typename IT, typename UIT>
+FT string_to_floating(const char* in, char** end) {
+    char* ptr = const_cast<char*>(in);
+    if (end) {
+        *end = ptr;
+    }
+    if (!in) return 0;
+    FT value = 0; //Stores final value
+    UIT integer = 0; //Stores integer part
+    UIT fraction = 0; //Stores fraction part
+    IT floating = -1; //Amount of numbers to shift the fraction part
+    IT exponent = 0; //Amount of numbers to shift the value
+    bool negative = false;
+    bool raw = false;
+    bool foundNumber = false;
+    UIT tmp;
+    char tmpstr[2] = { 0, 0 };
+    
+    while (*ptr != 0) {
+        char c = *ptr;
+        
+        //Ignore whitespaces
+        if (!foundNumber) {
+            switch (c) {
+                case ' ':
+                case '+':
+                case '\n':
+                case '\r':
+                case '\t':
+                    ptr++;
+                    continue;
+                default:
+                    foundNumber = true;
+                    break;
+            }
+        }
+        
+        if ('0' <= c && c <= '9') {
+            //Is a digit
+            tmpstr[0] = c;
+            tmp = strtoul(tmpstr, nullptr, 10);
+            if (floating != -1) {
+                floating++;
+                fraction *= 10;
+                fraction += tmp;
+            } else {
+                integer *= 10;
+                integer += tmp;
+            }
+        } else if ('.' == c && floating == -1) {
+            xassert(!raw);
+            //Switch to floating mode
+            floating = 0;
+        } else if ('e' == c || 'E' == c) {
+            xassert(!raw);
+            //Advance e
+            ptr++;
+            //Get exponent and break
+            exponent = strtol(ptr, &ptr, 10);
+            break;
+        } else if (c == '-' && !negative) {
+            xassert(!raw);
+            negative = true;
+        } else if (c == 'X' && !raw) {
+            xassert(!negative);
+            xassert(floating == -1);
+            xassert(exponent == 0);
+            raw = true;
+        } else {
+            //Finished here
+            break;
+        }
+        ptr++;
+    }
+
+    if (end) {
+        *end = ptr;
+    }
+    
+    if (raw) {
+        //Write IT binary value into FT type
+        UIT* value_raw = checked_reinterpret_cast_ptr<FT, UIT>(&value);
+        *value_raw = integer;
+    } else {
+        //Assemble all parts
+        if (floating != -1 && fraction != 0) {
+            value = static_cast<FT>(fraction);
+            value /= static_cast<FT>(xm::pow(10.0, static_cast<double>(floating)));
+        }
+        value += static_cast<FT>(integer);
+        if (exponent != 0) {
+            value *= static_cast<FT>(xm::pow(10.0, static_cast<double>(exponent)));
+        }
+        if (negative) {
+            value = -value;
+        }
+    }
+    
+    return value;
+}
+
+double string_to_double(const char* in, char** end) {
+    double value = static_cast<double>(string_to_floating<double, int64_t, uint64_t>(in, end));
+#if defined(PERIMETER_DEBUG) && 0
+    char* ptr = *end;
+    size_t len = ptr - in;
+        if (len == 0) {
+            printf("empty? ");
+            len = 5;
+        }
+        ptr = (char*) malloc(len);
+        ptr = strncpy(ptr, in, len - 1);
+        printf("string_to_float: '%s' -> %f\n", ptr, value);
+    
+        //Check against strtod
+        double other = strtod(in, &ptr);
+        xassert(xm::round(other * 100) == xm::round(value * 100));
+        if (end) {
+            xassert(ptr == *end);
+        }
+#endif
+    return value;
+}
+
+float string_to_float(const char* in, char** end) {
+    return static_cast<float>(string_to_floating<float, int32_t, uint32_t>(in, end));
+}
+
+void encode_raw_float(XBuffer* buffer, float value) {
+    uint32_t* value_raw = checked_reinterpret_cast_ptr<float, uint32_t>(&value);
+    (*buffer) < 'X' <= (*value_raw);
+}
+
+void encode_raw_double(XBuffer* buffer, double value) {
+    uint64_t* value_raw = checked_reinterpret_cast_ptr<double, uint64_t>(&value);
+    (*buffer) < 'X' <= (*value_raw);
+}
+

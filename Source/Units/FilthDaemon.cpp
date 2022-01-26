@@ -164,7 +164,7 @@ void terFilthSwarmDaemon::Generate()
 		return;
 	GenerationCount--;
 	GenerationFactor += GenerationSpeed;
-	int num = round(floor(GenerationFactor));
+	int num = xm::round(xm::floor(GenerationFactor));
 
 
 	for(int i = 0;i < num;i++)
@@ -176,7 +176,7 @@ void terFilthSwarmDaemon::Generate()
 		Vect3f pos=init_pos[ip];
 		init_pos.erase(init_pos.begin()+ip);
 
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(pos.x),round(pos.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(pos.x), xm::round(pos.y)))
 		{
 			terFilthDaemon* p;
 			p = safe_cast<terFilthDaemon*>(player->buildUnit(GetUnitID()));
@@ -229,7 +229,7 @@ void terFilthDaemon::Start()
 	if(false)
 	{
 		geo_effect=new demonToolzer(32);
-		geo_effect->start(round(position().x),round(position().y));
+		geo_effect->start(xm::round(position().x), xm::round(position().y));
 	}
 
 	sound.Init("Filth_Move_Daemon");
@@ -250,7 +250,7 @@ void terFilthDaemon::MoveQuant()
 	float dt=0.1f;
 	Vect3f pos=position();
 
-	float angle=atan2(direction.y,direction.x)-M_PI*0.5f;
+	float angle=xm::atan2(direction.y,direction.x)-XM_PI*0.5f;
 	QuatF rot(angle,Vect3f(0,0,1));
 
 	if(mul_speed<1.0f)
@@ -302,7 +302,7 @@ void terFilthDaemon::MoveQuant()
 		p.phase=realAvatar()->phase();
 
 		Vect3f dd=p.pos.trans()-back;
-//		xassert(fabs(dd.x)<10 && fabs(dd.y)<10);
+//		xassert(fabs(dd.x)<10 && xm::abs(dd.y)<10);
 
 		object_pos.push_back(p);
 		object_pos.pop_front();
@@ -493,10 +493,10 @@ SaveUnitData* terFilthSwarmDaemon::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmDaemon::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmDaemon::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmDaemon* data = safe_cast<const SaveFilthSwarmDaemon*>(baseData);
+	SaveFilthSwarmDaemon* data = safe_cast<SaveFilthSwarmDaemon*>(baseData);
 	must_init_pos=data->must_init_pos;
 	init_pos=data->init_pos;
 	attack_pos=data->attack_pos;
@@ -516,9 +516,10 @@ void terFilthSwarmDaemon::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unit_list,it)
 	if(*it)
 	{
-		terFilthDaemon* unit = safe_cast<terFilthDaemon*>(player->buildUnit((*it)->attributeID));
-		unit_list.push_back(unit);
-		unit->universalLoad(*it);
+		terFilthDaemon* unit = safe_cast<terFilthDaemon*>(player->loadUnit(*it));
+        if (std::find(unit_list.begin(), unit_list.end(), unit) == unit_list.end()) {
+            unit_list.push_back(unit);
+        }
 	}
 }
 
@@ -537,10 +538,10 @@ SaveUnitData* terFilthDaemon::universalSave(SaveUnitData* baseData)
 	return data;	
 }
 
-void terFilthDaemon::universalLoad(const SaveUnitData* baseData)
+void terFilthDaemon::universalLoad(SaveUnitData* baseData)
 {
 	terFilthGeneric::universalLoad(baseData);
-	const SaveFilthDaemon* data = safe_cast<const SaveFilthDaemon*>(baseData);
+	SaveFilthDaemon* data = safe_cast<SaveFilthDaemon*>(baseData);
 
 	free_destroy=data->free_destroy;
 	on_zeroplast=data->on_zeroplast;

@@ -25,7 +25,7 @@ public:
 	void ChangeUnitOwner(terPlayer* player);
 
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 
 protected:
 

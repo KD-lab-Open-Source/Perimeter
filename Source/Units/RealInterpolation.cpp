@@ -141,7 +141,7 @@ void terInterpolationReal::universalSave(struct SaveInterpolationReal& data) con
 	}
 }
 
-void terInterpolationReal::universalLoad(const SaveInterpolationReal& data)
+void terInterpolationReal::universalLoad(SaveInterpolationReal& data)
 {
 	node.universalLoad(data.node);
 
@@ -215,7 +215,7 @@ void terInterpolationReal::SetModel(const char* name,float scale)
 {
 	PhaseControlList.clear();
 
-	xassert(fabs(scale) > 1e-6);
+	xassert(xm::abs(scale) > 1e-6);
 	cObjectNodeRoot* NewObjectPoint = createObject(name, Owner->Player->belligerent());
 	if(scale > 0)
 		NewObjectPoint->SetScale(Vect3f(scale,scale,scale));
@@ -451,10 +451,22 @@ void terSoundController::update()
 		sound_->SetFrequency(frequency_.x1());
 
 	if(terSoundEnable){
+        /*
+        if (needStart_) {
+            if(!isPlaying_)
+                isPlaying_ = sound_->Play(cycled_);
+            else
+                isPlaying_ = sound_->IsPlayed();
+
+            needStart_ = false;
+        } else if(isPlaying_) {
+            isPlaying_ = sound_->IsPlayed();
+        }
+        */
 		if(cycled_){
 			if(needStart_){
 				if(!isPlaying_)
-					isPlaying_ = sound_->Play(1);
+					isPlaying_ = sound_->Play(true);
 
 				needStart_ = false;
 			}
@@ -466,7 +478,7 @@ void terSoundController::update()
 		else {
 			if(needStart_){
 				if(!isPlaying_)
-					isPlaying_ = sound_->Play(0);
+					isPlaying_ = sound_->Play(false);
 				else
 					isPlaying_ = sound_->IsPlayed();
 

@@ -2,11 +2,6 @@
 #define _PERIMETER_COMMON_EVENTS_
 
 
-const char SIMPLE_GAME_CURRENT_VERSION[]= 
-#include "../version.h"
-;
-
-extern const unsigned int INTERNAL_BUILD_VERSION;
 //-------------------------------
 
 // Адаптация строк для передачи по сети
@@ -26,8 +21,7 @@ public:
 	const std::string& operator()() const { return value_; }
 };
 
-//old inline XBuffer& operator > (XBuffer& in, StringInWrapper& str) { str() = in(in.tell()); in += str().size() + 1; return in; }
-inline XBuffer& operator > (XBuffer& in, StringInWrapper str) { str() = in(in.tell()); in += str().size() + 1; return in; }
+inline XBuffer& operator > (XBuffer& in, StringInWrapper&& str) { str() = in(in.tell()); in += str().size() + 1; return in; }
 inline XBuffer& operator < (XBuffer& out, const StringOutWrapper& str) { out < str().c_str() < '\0'; return out; }
 
 
@@ -52,12 +46,14 @@ enum terEventID
 	NETCOM_4G_ID_UNIT_COMMAND,
 	NETCOM_4G_ID_REGION,
 	NETCOM_4G_ID_FORCED_DEFEAT,
-
+    NETCOM_4G_ID_EXIT,
 	NETCOM_4G_ID_CHAT_MESSAGE,
 
 	NETCOM_4H_ID_BACK_GAME_INFORMATION,
 	NETCOM_4C_ID_DISPLAY_DISTRINC_AREAS,
-	NETCOM_4C_ID_SAVE_LOG,
+    NETCOM_4C_ID_DESYNC_NOTIFY,
+    NETCOM_4H_ID_DESYNC_ACKNOWLEDGE,
+    NETCOM_4C_ID_DESYNC_RESTORE,  
 	NETCOM_4C_ID_SEND_LOG_2_HOST,
 
 	NETCOM_4H_ID_BACK_GAME_INFORMATION_2,
@@ -69,9 +65,6 @@ enum terEventID
 
 	NETCOM_ID_NEXT_QUANT,
 
-	EVENT_ID_VERSION,
-	EVENT_ID_ERROR,
-
 	////---
 	NETCOMC_ID_JOIN_REQUEST,
 	NETCOM_4C_ID_JOIN_RESPONSE,
@@ -80,10 +73,8 @@ enum terEventID
 	NETCOM_4C_ID_REJOIN_RESPONCE,
 	NETCOM_4C_ID_REQUEST_LAST_QUANTS_COMMANDS,
 	NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS,
-	//NETCOM_4C_ID_REJOIN_RESPONSE,
 
 	NETCOMC_ID_PLAYER_READY,
-	NETCOM_ID_START_GAME,
 	NETCOM_4C_ID_CONTINUE_GAME_AFTER_HOST_MIGRATE,
 
 	NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO,
@@ -92,13 +83,11 @@ enum terEventID
 	NETCOM_4H_ID_CHANGE_REAL_PLAYER_TYPE,
 	NETCOM_4H_ID_CHANGE_PLAYER_DIFFICULTY,
 	NETCOM_4H_ID_CHANGE_PLAYER_CLAN,
-	NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP,
+    NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP,
+    NETCOM_4H_ID_CHANGE_PLAYER_SEAT,
 	NETCOM_4H_ID_CHANGE_MAP,
 
 	NETCOM_4H_ID_START_LOAD_GAME,
-
-	EVENT_ID_CREATE_GAME,
-	NETCOM_4H_ID_CREATE_GAME,
 
 	NETCOM_4C_ID_ALIFE_PACKET,
 	NETCOM_4H_ID_ALIFE_PACKET,
@@ -115,7 +104,10 @@ struct netCommandGeneral
 	terEventID EventID;
 
 	netCommandGeneral(terEventID event_id) { EventID = event_id; }
-	virtual ~netCommandGeneral() {}
+	virtual ~netCommandGeneral() = default;
+
+    netCommandGeneral(const netCommandGeneral&) = delete;
+    netCommandGeneral& operator=(netCommandGeneral const&) = delete;
 
 	virtual void Write(XBuffer& out) const {}
 };
@@ -124,7 +116,24 @@ struct netCommandGeneral
 
 struct terEventPing : netCommandGeneral
 {
-	terEventPing() : netCommandGeneral(EVENT_ID_PING){ };
+    terEventPing() : netCommandGeneral(EVENT_ID_PING){ };
+};
+
+//-------------------------------
+
+struct netCommand4G_Exit : netCommandGeneral
+{
+    NETID netid;
+    explicit netCommand4G_Exit(NETID netid_) : netCommandGeneral(NETCOM_4G_ID_EXIT), netid(netid_) {
+    }
+    
+    explicit netCommand4G_Exit(XBuffer& in) : netCommandGeneral(NETCOM_4G_ID_EXIT) {
+        in.read(&netid, sizeof(netid));
+    }
+
+    void Write(XBuffer& out) const override {
+        out.write(&netid, sizeof(netid));
+    }
 };
 
 //-------------------------------------------
@@ -133,15 +142,16 @@ struct netCommand4C_StartLoadGame : netCommandGeneral {
 
 	MissionDescription missionDescription_;
 
-	netCommand4C_StartLoadGame(MissionDescription& missionDescription) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
+	netCommand4C_StartLoadGame(const MissionDescription& missionDescription, int playerID) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
 		missionDescription_=missionDescription;
+        missionDescription_.activePlayerID = playerID;
 	}
 
 	netCommand4C_StartLoadGame(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_START_LOAD_GAME) {
 		missionDescription_.read(in);
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		missionDescription_.write(out);
 	}
 };
@@ -149,11 +159,21 @@ struct netCommand4C_StartLoadGame : netCommandGeneral {
 //////////////////////////////////////////////////////////////////////////////////////////////
 class netCommandGame : public netCommandGeneral {
 public:
-	netCommandGame(terEventID event_id) : netCommandGeneral(event_id) {
+    unsigned int PlayerID_ = 0;
+    unsigned int curCommandQuant_ = -1;
+    unsigned int curCommandCounter_ = -1;
+    bool flag_lastCommandInQuant_ = false;
+    
+	explicit netCommandGame(unsigned int playerID, terEventID event_id) : netCommandGeneral(event_id), PlayerID_(playerID) {
 	}
-	unsigned int curCommandQuant_;
-	unsigned int curCommandCounter_;
-	bool flag_lastCommandInQuant_;
+
+    explicit netCommandGame(terEventID event_id, XBuffer& in) : netCommandGame(0, event_id) {
+        in.read(&PlayerID_, sizeof(PlayerID_));
+        in.read(&curCommandQuant_, sizeof(curCommandQuant_));
+        in.read(&curCommandCounter_, sizeof(curCommandCounter_));
+        in.read(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+    }
+    
 	void setCurCommandQuantAndCounter(unsigned int ccq, unsigned int ccc){
 		curCommandQuant_=ccq;
 		curCommandCounter_=ccc;
@@ -161,71 +181,54 @@ public:
 	void setFlagLastCommandInQuant(){
 		flag_lastCommandInQuant_=true;
 	}
+
 	bool operator == (const netCommandGame &secop) const;
+    
+    void Write(XBuffer& out) const override {
+        out.write(&PlayerID_, sizeof(PlayerID_));
+        out.write(&curCommandQuant_, sizeof(curCommandQuant_));
+        out.write(&curCommandCounter_, sizeof(curCommandCounter_));
+        out.write(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+    }
 };
 
 //Внимание ! можно защитить простым "плавающим" паролем
 class netCommand4G_ForcedDefeat : public netCommandGame
 {
 public:
-	netCommand4G_ForcedDefeat(const int _userID) : netCommandGame(NETCOM_4G_ID_FORCED_DEFEAT){
-		curCommandQuant_=-1;
-		curCommandCounter_=-1;
-		userID=_userID;
-		flag_lastCommandInQuant_=0;
+
+	explicit netCommand4G_ForcedDefeat(unsigned int playerID) : netCommandGame(playerID, NETCOM_4G_ID_FORCED_DEFEAT){
 	}
-	netCommand4G_ForcedDefeat(XBuffer& in) : netCommandGame(NETCOM_4G_ID_FORCED_DEFEAT){
-		in.read(&curCommandQuant_, sizeof(curCommandQuant_));
-		in.read(&curCommandCounter_, sizeof(curCommandCounter_));
-		in.read(&userID, sizeof(userID));
-		in.read(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+
+	explicit netCommand4G_ForcedDefeat(XBuffer& in) : netCommandGame(NETCOM_4G_ID_FORCED_DEFEAT, in){
 	}
-	void Write(XBuffer& out) const{
-		out.write(&curCommandQuant_, sizeof(curCommandQuant_));
-		out.write(&curCommandCounter_, sizeof(curCommandCounter_));
-		out.write(&userID, sizeof(userID));
-		out.write(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+
+	void Write(XBuffer& out) const override {
+        netCommandGame::Write(out);
 	}
-	int userID;
-	bool operator == (const netCommand4G_ForcedDefeat &secop) const{
-		return (memcmp(this, &secop, sizeof(*this))==0);
-	}
+
+    bool operator == (const netCommand4G_ForcedDefeat &secop) const{
+        return(curCommandQuant_	==secop.curCommandQuant_		&&
+        curCommandCounter_		==secop.curCommandCounter_		&&
+        flag_lastCommandInQuant_==secop.flag_lastCommandInQuant_);
+    }
 };
 
 class netCommand4G_UnitCommand : public netCommandGame
 {
 public:
-	netCommand4G_UnitCommand(const terUnitID& owner, const UnitCommand& unitCommand)
-					: netCommandGame(NETCOM_4G_ID_UNIT_COMMAND), owner_(owner), unitCommand_(unitCommand) {
-		curCommandQuant_=-1;
-		curCommandCounter_=-1;
-		flag_lastCommandInQuant_=0;
+	netCommand4G_UnitCommand(unsigned int playerID, const terUnitID& owner, const UnitCommand& unitCommand)
+					: netCommandGame(playerID, NETCOM_4G_ID_UNIT_COMMAND), owner_(owner), unitCommand_(unitCommand) {
 	}
-	netCommand4G_UnitCommand(XBuffer& in) : netCommandGame(NETCOM_4G_ID_UNIT_COMMAND){
-		in.read(&curCommandQuant_, sizeof(curCommandQuant_));
-		in.read(&curCommandCounter_, sizeof(curCommandCounter_));
-		in.read(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+	explicit netCommand4G_UnitCommand(XBuffer& in) : netCommandGame(NETCOM_4G_ID_UNIT_COMMAND, in){
 		in.read(&owner_, sizeof(owner_));
 		unitCommand_.Read(in);
-		//in.read(*this);
 	}
 	
-	void Write(XBuffer& out) const{
-		out.write(&curCommandQuant_, sizeof(curCommandQuant_));
-		out.write(&curCommandCounter_, sizeof(curCommandCounter_));
-		out.write(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+	void Write(XBuffer& out) const override {
+        netCommandGame::Write(out);
 		out.write(&owner_, sizeof(owner_));
 		unitCommand_.Write(out);
-		//out.write(*this);
-	}
-
-	netCommand4G_UnitCommand(const netCommand4G_UnitCommand& donor) : netCommandGame(NETCOM_4G_ID_UNIT_COMMAND){
-		curCommandQuant_=donor.curCommandQuant_;
-		curCommandCounter_=donor.curCommandCounter_;
-		flag_lastCommandInQuant_=donor.flag_lastCommandInQuant_;
-		owner_=donor.owner_;
-		unitCommand_=donor.unitCommand_;
-		//memcpy(this, &donor, sizeof(*this));
 	}
 
 	bool operator == (const netCommand4G_UnitCommand &secop) const{
@@ -248,54 +251,35 @@ private:
 
 struct netCommand4G_Region : public netCommandGame {
 public:
-	netCommand4G_Region(unsigned int playerID, XBuffer& out) : netCommandGame(NETCOM_4G_ID_REGION) {
-		playerID_=playerID;
-		curCommandQuant_=-1;
-		curCommandCounter_=-1;
-		flag_lastCommandInQuant_=0;
+	netCommand4G_Region(unsigned int playerID, XBuffer& out) : netCommandGame(playerID, NETCOM_4G_ID_REGION) {
 		dataSize_=out.tell();
 		pData_=new unsigned char[dataSize_];
 		memcpy(pData_, out, dataSize_);
 	}
-	netCommand4G_Region(XBuffer& in) : netCommandGame(NETCOM_4G_ID_REGION){
-		in.read(&playerID_, sizeof(playerID_));
-		in.read(&curCommandQuant_, sizeof(curCommandQuant_));
-		in.read(&curCommandCounter_, sizeof(curCommandCounter_));
-		in.read(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+	netCommand4G_Region(XBuffer& in) : netCommandGame(NETCOM_4G_ID_REGION, in){
 		in.read(&dataSize_, sizeof(dataSize_));
 		pData_=new unsigned char[dataSize_];
 		in.read(pData_, dataSize_);
 	}
-	~netCommand4G_Region(void){
+	~netCommand4G_Region() override {
 		delete pData_;
-		pData_=0;
+		pData_= nullptr;
 	}
 	
-	void Write(XBuffer& out) const{
-		out.write(&playerID_, sizeof(playerID_));
-		out.write(&curCommandQuant_, sizeof(curCommandQuant_));
-		out.write(&curCommandCounter_, sizeof(curCommandCounter_));
-		out.write(&flag_lastCommandInQuant_, sizeof(flag_lastCommandInQuant_));
+	void Write(XBuffer& out) const override {
+        netCommandGame::Write(out);
 		out.write(&dataSize_, sizeof(dataSize_));
 		out.write(pData_, dataSize_);
 	}
 
-	netCommand4G_Region(const netCommand4G_Region& donor) : netCommandGame(NETCOM_4G_ID_REGION){
-		memcpy(this, &donor, sizeof(*this));
-		pData_=new unsigned char[dataSize_];
-		memcpy(pData_, donor.pData_, dataSize_);
-	}
-
 	bool operator == (const netCommand4G_Region &secop) const{
-		return(playerID_			==secop.playerID_					&&
-			curCommandQuant_		==secop.curCommandQuant_			&&
+		return(curCommandQuant_		==secop.curCommandQuant_			&&
 			curCommandCounter_		==secop.curCommandCounter_			&&
 			flag_lastCommandInQuant_==secop.flag_lastCommandInQuant_	&&
 			dataSize_				==secop.dataSize_					&&
 			(memcmp(pData_, secop.pData_, dataSize_)==0) );
 	}
 
-	unsigned int playerID_;
 	unsigned int dataSize_;
 	unsigned char* pData_;
 };
@@ -305,32 +289,33 @@ public:
 class netCommand4G_ChatMessage : public netCommandGeneral
 {
 public:
-	netCommand4G_ChatMessage(const int _userID, const char* textStr) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
-		userID=_userID;
-		dataSize_=strlen(textStr)+1;
-		pData_=new char[dataSize_];
-		memcpy(pData_, textStr, dataSize_);
+	netCommand4G_ChatMessage(const bool clanOnly_, const std::string& text_, const std::string& locale_) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
+        playerID = -1; //Added by host
+        clanOnly = clanOnly_;
+        text = text_;
+        locale = locale_;
 	}
+    
 	netCommand4G_ChatMessage(XBuffer& in) : netCommandGeneral(NETCOM_4G_ID_CHAT_MESSAGE){
-		in.read(&userID, sizeof(userID));
-		in.read(&dataSize_, sizeof(dataSize_));
-		pData_=new char[dataSize_];
-		in.read(pData_, dataSize_);
+        in.read(&playerID, sizeof(playerID));
+        in.read(&clanOnly, sizeof(clanOnly));
+		in > StringInWrapper(text);
+        in > StringInWrapper(locale);
 	}
-	void Write(XBuffer& out) const{
-		out.write(&userID, sizeof(userID));
-		out.write(&dataSize_, sizeof(dataSize_));
-		out.write(pData_, dataSize_);
+    
+    ~netCommand4G_ChatMessage() = default;
+    
+	void Write(XBuffer& out) const override {
+        out.write(&playerID, sizeof(playerID));
+        out.write(&clanOnly, sizeof(clanOnly));
+		out < StringOutWrapper(text);
+        out < StringOutWrapper(locale);
 	}
-	const char* getText(){
-		if(dataSize_>0){
-			pData_[dataSize_-1]=0;
-		}
-		return pData_;
-	}
-	int userID;
-	unsigned int dataSize_;
-	char* pData_;
+    
+	int playerID;
+    bool clanOnly;
+    std::string text;
+    std::string locale;
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -361,7 +346,7 @@ public:
 		delete pGData_;
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&quant_, sizeof(quant_));
 		out.write(&VDataSize_, sizeof(VDataSize_));
 		out.write(pVData_, VDataSize_);
@@ -400,7 +385,7 @@ public:
 	~netCommand4H_SimpleBackGameInformation(void){
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&quant_, sizeof(quant_));
 		out.write(&signature_, sizeof(signature_));
 	}
@@ -413,6 +398,9 @@ public:
 
 struct netCommand4H_BackGameInformation2 : public netCommandGeneral {
 public:
+    netCommand4H_BackGameInformation2 () : netCommandGeneral(NETCOM_4H_ID_BACK_GAME_INFORMATION_2) {
+    }
+    
 	netCommand4H_BackGameInformation2 (unsigned int lagQuant, unsigned int quant, unsigned int signature, bool replay=0, int state=0) : netCommandGeneral(NETCOM_4H_ID_BACK_GAME_INFORMATION_2){
 		lagQuant_=lagQuant;
 		quant_=quant;
@@ -420,15 +408,30 @@ public:
 		replay_=replay;
 		state_=state;
 	}
-	netCommand4H_BackGameInformation2 (XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_BACK_GAME_INFORMATION_2){
-		in.read(&lagQuant_, sizeof(lagQuant_));
-		in.read(&quant_, sizeof(quant_));
-		in.read(&signature_, sizeof(signature_));
-		in.read(&replay_, sizeof(replay_));
-		in.read(&state_, sizeof(state_));
-	}
+    netCommand4H_BackGameInformation2 (XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_BACK_GAME_INFORMATION_2){
+        in.read(&lagQuant_, sizeof(lagQuant_));
+        in.read(&quant_, sizeof(quant_));
+        in.read(&signature_, sizeof(signature_));
+        in.read(&replay_, sizeof(replay_));
+        in.read(&state_, sizeof(state_));
+    }
+    netCommand4H_BackGameInformation2& operator=(const netCommand4H_BackGameInformation2& other) {
+        lagQuant_ = other.lagQuant_;
+        quant_ = other.quant_;
+        signature_ = other.signature_;
+        replay_ = other.replay_;
+        state_ = other.state_;
+        return *this;
+    }
+    netCommand4H_BackGameInformation2 (const netCommand4H_BackGameInformation2& other) : netCommandGeneral(NETCOM_4H_ID_BACK_GAME_INFORMATION_2) {
+        lagQuant_ = other.lagQuant_;
+        quant_ = other.quant_;
+        signature_ = other.signature_;
+        replay_ = other.replay_;
+        state_ = other.state_;
+    }
 
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&lagQuant_, sizeof(lagQuant_));
 		out.write(&quant_, sizeof(quant_));
 		out.write(&signature_, sizeof(signature_));
@@ -441,11 +444,12 @@ public:
 		return ( (quant_ == secop.quant_) && 
 			(signature_== secop.signature_) );
 	}
-	unsigned int lagQuant_;
-	unsigned int quant_;
-	unsigned int signature_;
-	unsigned int replay_;
-	unsigned int state_;
+
+	unsigned int lagQuant_ = 0;
+	unsigned int quant_ = 0;
+	unsigned int signature_ = 0;
+	unsigned int replay_ = 0;
+	unsigned int state_ = 0;
 };
 
 
@@ -465,7 +469,7 @@ public:
 		delete pDAData_;
 	}
 	
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&DASize_, sizeof(DASize_));
 		out.write(pDAData_, DASize_);
 	}
@@ -474,18 +478,69 @@ public:
 	unsigned char* pDAData_;
 };
 
-struct netCommand4C_SaveLog : public netCommandGeneral {
+///Sent from server when client is detected to be desynced
+struct netCommand4C_DesyncNotify : public netCommandGeneral {
 public:
-	netCommand4C_SaveLog() : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
-		v=0;
-	}
-	netCommand4C_SaveLog(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_SAVE_LOG){
-		in > v;
-	}
-	void Write(XBuffer& out) const {
-		out < v;
-	};
-	int v;
+    int desync_amount;
+    std::string gameID;
+
+    netCommand4C_DesyncNotify(const std::string& gameID_) : netCommandGeneral(NETCOM_4C_ID_DESYNC_NOTIFY) {
+        desync_amount = 0;
+        gameID = gameID_;
+    }
+
+    netCommand4C_DesyncNotify(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_DESYNC_NOTIFY) {
+        in > desync_amount;
+        in > StringInWrapper(gameID);
+    }
+
+    void Write(XBuffer& out) const override {
+        out < desync_amount;
+        out < StringOutWrapper(gameID);
+    };
+};
+
+///Sent to server to share the state of client and also acknowledge that its now in desync state
+struct netCommand4H_DesyncAcknowledge : public netCommandGeneral {
+public:
+    std::unique_ptr<MissionDescription> missionDescription;
+    XBuffer netlog = XBuffer(0, true);
+
+    netCommand4H_DesyncAcknowledge(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
+    }
+
+    netCommand4H_DesyncAcknowledge(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_DESYNC_ACKNOWLEDGE) {
+        missionDescription = std::make_unique<MissionDescription>();
+        missionDescription->read(in);
+        in > netlog;
+    }
+
+    void Write(XBuffer& out) const override {
+        missionDescription->write(out);
+        out < netlog;
+    }
+};
+
+///Sent by server to restore client state from same state
+struct netCommand4C_DesyncRestore : public netCommandGeneral {
+public:
+    int desync_amount;
+    std::unique_ptr<MissionDescription> missionDescription;
+
+    netCommand4C_DesyncRestore(std::unique_ptr<MissionDescription> missionDescription_) : missionDescription(std::move(missionDescription_)), netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE) {
+        desync_amount = 0;
+    }
+
+    netCommand4C_DesyncRestore(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_DESYNC_RESTORE) {
+        in > desync_amount;
+        missionDescription = std::make_unique<MissionDescription>();
+        missionDescription->read(in);
+    }
+
+    void Write(XBuffer& out) const override {
+        out < desync_amount;
+        missionDescription->write(out);
+    }
 };
 
 struct netCommand4C_sendLog2Host : public netCommandGeneral {
@@ -496,7 +551,7 @@ public:
 	netCommand4C_sendLog2Host (XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_SEND_LOG_2_HOST){
 		in > begQuant;
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out < begQuant;
 	};
 	unsigned int begQuant;
@@ -516,7 +571,7 @@ struct netCommand4H_RequestPause : netCommandGeneral
 		in.read(&playerID, sizeof(playerID));
 		in.read(&pause, sizeof(pause));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&playerID, sizeof(playerID));
 		out.write(&pause, sizeof(pause));
 	}
@@ -535,7 +590,7 @@ struct netCommand4C_Pause : netCommandGeneral
 		in.read(&playersIDArr[0], sizeof(playersIDArr));
 		in.read(&pause, sizeof(pause));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&playersIDArr[0], sizeof(playersIDArr));
 		out.write(&pause, sizeof(pause));
 	}
@@ -548,12 +603,12 @@ struct netCommandNextQuant : netCommandGeneral
 	unsigned int numberQuant_;
 	unsigned int amountCommandsPerQuant_;
 	unsigned int quantConfirmation_;
-	unsigned long globalCommandCounter_;
+	unsigned int globalCommandCounter_;
 	bool flag_pause_;
 	float kTime_;
 
 
-	netCommandNextQuant(unsigned int numberQuant, unsigned int amountCommandsPerQuant, unsigned long globalCommandCounter, unsigned int quantConfirmation=NOT_QUANT_CONFIRMATION, bool flag_pause=0, float kTime=1.f) : netCommandGeneral(NETCOM_ID_NEXT_QUANT){
+	netCommandNextQuant(unsigned int numberQuant, unsigned int amountCommandsPerQuant, unsigned int globalCommandCounter, unsigned int quantConfirmation=NOT_QUANT_CONFIRMATION, bool flag_pause=0, float kTime=1.f) : netCommandGeneral(NETCOM_ID_NEXT_QUANT){
 		numberQuant_=numberQuant;
 		amountCommandsPerQuant_=amountCommandsPerQuant;
 		quantConfirmation_=quantConfirmation;
@@ -570,7 +625,7 @@ struct netCommandNextQuant : netCommandGeneral
 		in.read(&kTime_, sizeof(kTime_));
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&numberQuant_, sizeof(numberQuant_));
 		out.write(&amountCommandsPerQuant_, sizeof(amountCommandsPerQuant_));
 		out.write(&quantConfirmation_, sizeof(quantConfirmation_));
@@ -580,140 +635,7 @@ struct netCommandNextQuant : netCommandGeneral
 	}
 };
 
-
-//------------------------------
-
-struct terEventVersion : netCommandGeneral
-{
-	unsigned int Version;
-
-	terEventVersion(unsigned int version) : netCommandGeneral(EVENT_ID_VERSION) { 
-		Version = version; 
-	}
-	terEventVersion(XBuffer& in);
-
-	void Write(XBuffer& out) const;
-};
-
 //---------------------------------
-
-struct terEventError : netCommandGeneral
-{
-	unsigned int PlayerID;
-	unsigned int ErrorCode;
-
-	terEventError(unsigned int player_id,unsigned int error_code) : netCommandGeneral(EVENT_ID_ERROR) {
-		ErrorCode = error_code;
-		PlayerID = player_id;
-	}
-	terEventError(XBuffer& in);
-
-	void Write(XBuffer& out) const;
-};
-
-
-//Сейчас фактически не используется т.к. запускается её внутренний аналог - ExecuteInternalCommand(PNC_COMMAND__START_HOST_AND_CREATE_GAME_AND_STOP_FIND_HOST, true);
-struct netCommand4H_CreateGame : netCommandGeneral {
-	MissionDescription missionDescription_;
-	PlayerData createPlayerData_;
-	char gameName_[MAX_MULTIPALYER_GAME_NAME];
-	char computerName_[MAX_COMPUTERNAME_LENGTH+1];
-	unsigned int internalNumverVersion_;
-	char simpleGameVersion_[sizeof(SIMPLE_GAME_CURRENT_VERSION)];
-
-	netCommand4H_CreateGame(const char* gameName, const char * computerName, MissionDescription& missionDescription, PlayerData& createPlayerData) : netCommandGeneral(NETCOM_4H_ID_CREATE_GAME) {
-		strncpy(gameName_, gameName, MAX_MULTIPALYER_GAME_NAME);
-		strncpy(computerName_, computerName, MAX_COMPUTERNAME_LENGTH+1);
-		missionDescription_=missionDescription;
-		createPlayerData_=createPlayerData;
-		internalNumverVersion_=INTERNAL_BUILD_VERSION;
-		strncpy(simpleGameVersion_, SIMPLE_GAME_CURRENT_VERSION, sizeof(simpleGameVersion_));
-	}
-
-	netCommand4H_CreateGame(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CREATE_GAME) {
-		in.read(gameName_, MAX_MULTIPALYER_GAME_NAME);
-		in.read(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		missionDescription_.read(in);
-		in.read(&createPlayerData_, sizeof(createPlayerData_));
-		in.read(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		in.read(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-	void Write(XBuffer& out) const {
-		out.write(gameName_, MAX_MULTIPALYER_GAME_NAME);
-		out.write(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		missionDescription_.write(out);
-		out.write(&createPlayerData_, sizeof(createPlayerData_));
-		out.write(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		out.write(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-};
-
-
-
-
-struct netCommandC_JoinRequest : netCommandGeneral
-{
-	//DWORD hostGameID_;
-	PlayerData joinPlayerData_;
-	char computerName_[MAX_COMPUTERNAME_LENGTH+1];
-	unsigned int internalNumverVersion_;
-	char simpleGameVersion_[sizeof(SIMPLE_GAME_CURRENT_VERSION)];
-
-	netCommandC_JoinRequest(/*DWORD hostGameID,*/ PlayerData& joinPlayerData, const char* computerName) : netCommandGeneral(NETCOMC_ID_JOIN_REQUEST) {
-		//hostGameID_=hostGameID;
-		joinPlayerData_=joinPlayerData;
-		strncpy(computerName_, computerName, MAX_COMPUTERNAME_LENGTH+1);
-		internalNumverVersion_=INTERNAL_BUILD_VERSION;
-		strncpy(simpleGameVersion_, SIMPLE_GAME_CURRENT_VERSION, sizeof(simpleGameVersion_));
-	}
-	netCommandC_JoinRequest(XBuffer& in) : netCommandGeneral(NETCOMC_ID_JOIN_REQUEST){
-		//in.read(&hostGameID_, sizeof(hostGameID_));
-		in.read(&joinPlayerData_, sizeof(joinPlayerData_));
-		in.read(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		in.read(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		in.read(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-
-	void Write(XBuffer& out) const{
-		//out.write(&hostGameID_, sizeof(hostGameID_));
-		out.write(&joinPlayerData_, sizeof(joinPlayerData_));
-		out.write(computerName_, MAX_COMPUTERNAME_LENGTH+1);
-		out.write(&internalNumverVersion_, sizeof(internalNumverVersion_));
-		out.write(&simpleGameVersion_, sizeof(simpleGameVersion_));
-	}
-};
-
-enum netCommandJoinRequestResult{
-	NCJRR_OK,
-	NCJRR_INCORRECT_VERSION,
-	NCJRR_GAME_CLOSED
-};
-
-struct netCommand4C_JoinResponse : netCommandGeneral
-{
-	DPNID playerDPNID_;
-	DPNID groupDPNID_;
-	netCommandJoinRequestResult result_;
-	netCommand4C_JoinResponse(DPNID playerDPNID, DPNID groupDPNID, netCommandJoinRequestResult result) : netCommandGeneral(NETCOM_4C_ID_JOIN_RESPONSE) { 
-		playerDPNID_=playerDPNID;
-		groupDPNID_=groupDPNID;
-		result_=result;
-	}
-	netCommand4C_JoinResponse(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_JOIN_RESPONSE) {
-		in.read(&playerDPNID_, sizeof(playerDPNID_));
-		in.read(&groupDPNID_, sizeof(groupDPNID_));
-		in.read(&result_, sizeof(result_));
-	}
-
-	void Write(XBuffer& out) const {
-		out.write(&playerDPNID_, sizeof(playerDPNID_));
-		out.write(&groupDPNID_, sizeof(groupDPNID_));
-		out.write(&result_, sizeof(result_));
-	}
-};
-
-
-
 
 struct netCommand4H_ReJoinRequest : netCommandGeneral
 {
@@ -728,7 +650,7 @@ struct netCommand4H_ReJoinRequest : netCommandGeneral
 		in.read(&confirmedQuant, sizeof(confirmedQuant));
 	}
 
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&currentLastQuant, sizeof(currentLastQuant));
 		out.write(&confirmedQuant, sizeof(confirmedQuant));
 	}
@@ -736,15 +658,15 @@ struct netCommand4H_ReJoinRequest : netCommandGeneral
 
 struct netCommand4C_ReJoineResponce : netCommandGeneral
 {
-	DPNID hostDPNID_;
-	netCommand4C_ReJoineResponce(DPNID hostDPNID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONCE) {
-		hostDPNID_=hostDPNID;
+	NETID hostNETID_;
+	netCommand4C_ReJoineResponce(NETID hostNETID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONCE) {
+		hostNETID_=hostNETID;
 	}
 	netCommand4C_ReJoineResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONCE){
-		in.read(&hostDPNID_, sizeof(hostDPNID_));
+		in.read(&hostNETID_, sizeof(hostNETID_));
 	}
-	void Write(XBuffer& out) const{
-		out.write(&hostDPNID_, sizeof(hostDPNID_));
+	void Write(XBuffer& out) const override {
+		out.write(&hostNETID_, sizeof(hostNETID_));
 	}
 };
 
@@ -758,7 +680,7 @@ struct netCommand4C_RequestLastQuantsCommands : netCommandGeneral
 		in.read(&beginQunat_, sizeof(beginQunat_));
 	}
 
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&beginQunat_, sizeof(beginQunat_));
 	}
 };
@@ -769,14 +691,14 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 	unsigned int endQuantCommandTransmit;
 	unsigned int finGeneraCommandCounter;
 	unsigned int sizeCommandBuf;
-	unsigned char* pData;
+	char* pData;
 
-	netCommand4H_ResponceLastQuantsCommands(unsigned int _bQC, unsigned int _eQC, unsigned int _fGCC, unsigned int _szBuf, unsigned char* _pData) : netCommandGeneral(NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS) {
+	netCommand4H_ResponceLastQuantsCommands(unsigned int _bQC, unsigned int _eQC, unsigned int _fGCC, unsigned int _szBuf, char* _pData) : netCommandGeneral(NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS) {
 		beginQuantCommandTransmit=_bQC;
 		endQuantCommandTransmit=_eQC;
 		finGeneraCommandCounter=_fGCC;
 		sizeCommandBuf=_szBuf;
-		pData= new unsigned char[sizeCommandBuf];
+		pData= new char[sizeCommandBuf];
 		memcpy(pData, _pData, sizeCommandBuf);
 	}
 	netCommand4H_ResponceLastQuantsCommands(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_RESPONCE_LAST_QUANTS_COMMANDS) {
@@ -784,13 +706,13 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 		in.read(&endQuantCommandTransmit, sizeof(endQuantCommandTransmit));
 		in.read(&finGeneraCommandCounter,sizeof(finGeneraCommandCounter));
 		in.read(&sizeCommandBuf, sizeof(sizeCommandBuf));
-		pData= new unsigned char[sizeCommandBuf];
+		pData= new char[sizeCommandBuf];
 		in.read(pData, sizeCommandBuf);
 	}
 	~netCommand4H_ResponceLastQuantsCommands(void){
 		delete pData;
 	}
-	void Write(XBuffer& out) const{
+	void Write(XBuffer& out) const override {
 		out.write(&beginQuantCommandTransmit, sizeof(beginQuantCommandTransmit));
 		out.write(&endQuantCommandTransmit, sizeof(endQuantCommandTransmit));
 		out.write(&finGeneraCommandCounter,sizeof(finGeneraCommandCounter));
@@ -801,20 +723,20 @@ struct netCommand4H_ResponceLastQuantsCommands : netCommandGeneral
 /*
 struct netCommand4C_ReJoinResponse : netCommandGeneral
 {
-	DPNID playerDPNID_;
-	DPNID groupDPNID_;
-	netCommand4C_JoinResponse(DPNID playerDPNID, DPNID groupDPNID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) { 
-		playerDPNID_=playerDPNID;
-		groupDPNID_=groupDPNID;
+	NETID playerNETID_;
+	NETID groupNETID_;
+	netCommand4C_JoinResponse(NETID playerNETID, NETID groupNETID) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) {
+		playerNETID_=playerNETID;
+		groupNETID_=groupNETID;
 	}
 	netCommand4C_ReJoinResponse(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_REJOIN_RESPONSE) {
-		in.read(&playerDPNID_, sizeof(playerDPNID_));
-		in.read(&groupDPNID_, sizeof(groupDPNID_));
+		in.read(&playerNETID_, sizeof(playerNETID_));
+		in.read(&groupNETID_, sizeof(groupNETID_));
 	}
 
-	void Write(XBuffer& out) const {
-		out.write(&playerDPNID_, sizeof(playerDPNID_));
-		out.write(&groupDPNID_, sizeof(groupDPNID_));
+	void Write(XBuffer& out) const override {
+		out.write(&playerNETID_, sizeof(playerNETID_));
+		out.write(&groupNETID_, sizeof(groupNETID_));
 	}
 };
 */
@@ -830,7 +752,7 @@ struct netCommandC_PlayerReady : netCommandGeneral
 	netCommandC_PlayerReady(XBuffer& in) : netCommandGeneral(NETCOMC_ID_PLAYER_READY){
 		in.read(&gameCRC_, sizeof(gameCRC_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&gameCRC_, sizeof(gameCRC_));
 	}
 };
@@ -840,7 +762,7 @@ struct netCommandStartGame : netCommandGeneral
 {
 	netCommandStartGame() : netCommandGeneral(NETCOM_ID_START_GAME){}
 	netCommandStartGame(XBuffer& in) : netCommandGeneral(NETCOM_ID_START_GAME){}
-	//void Write(XBuffer& out) const;
+	//void Write(XBuffer& out) const override;
 };
 */
 struct netCommand4C_AlifePacket : netCommandGeneral
@@ -864,7 +786,7 @@ struct netCommand4C_ClientIsNotResponce : netCommandGeneral
 	netCommand4C_ClientIsNotResponce(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CLIENT_IS_NOT_RESPONCE){
 		in > StringInWrapper(clientNotResponceList);
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out < StringOutWrapper(clientNotResponceList);
 	}
 	std::string clientNotResponceList;
@@ -877,29 +799,30 @@ struct netCommand4C_ContinueGameAfterHostMigrate : netCommandGeneral
 {
 	netCommand4C_ContinueGameAfterHostMigrate() : netCommandGeneral(NETCOM_4C_ID_CONTINUE_GAME_AFTER_HOST_MIGRATE){}
 	netCommand4C_ContinueGameAfterHostMigrate(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CONTINUE_GAME_AFTER_HOST_MIGRATE){}
-	//void Write(XBuffer& out) const;
+	//void Write(XBuffer& out) const override;
 };
 
 struct netCommand4H_StartLoadGame : netCommandGeneral
 {
-	netCommand4H_StartLoadGame() : netCommandGeneral(NETCOM_4H_ID_START_LOAD_GAME){
-		v=0;
+    uint32_t ready;
+	netCommand4H_StartLoadGame(bool state) : netCommandGeneral(NETCOM_4H_ID_START_LOAD_GAME){
+        ready=state?1:0;
 	}
 	netCommand4H_StartLoadGame(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_START_LOAD_GAME){
-		in > v;
+		in > ready;
 	}
-	void Write(XBuffer& out) const {
-		out < v;
+	void Write(XBuffer& out) const override {
+		out < ready;
 	};
-	int v;
 };
 
 struct netCommand4C_CurrentMissionDescriptionInfo : netCommandGeneral
 {
 	MissionDescription missionDescription_;
 
-	netCommand4C_CurrentMissionDescriptionInfo(MissionDescription& missionDescription) : netCommandGeneral(NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO) {
+	netCommand4C_CurrentMissionDescriptionInfo(const MissionDescription& missionDescription, int playerID) : netCommandGeneral(NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO) {
 		missionDescription_=missionDescription;
+        missionDescription_.activePlayerID = playerID;
 	}
 
 	netCommand4C_CurrentMissionDescriptionInfo(XBuffer& in) : netCommandGeneral(NETCOM_4C_ID_CUR_MISSION_DESCRIPTION_INFO) {
@@ -907,11 +830,10 @@ struct netCommand4C_CurrentMissionDescriptionInfo : netCommandGeneral
 		missionDescription_.simpleRead(in);
 	}
 
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		//missionDescription_.write(out);
 		missionDescription_.simpleWrite(out);
 	}
-
 };
 
 struct netCommand4H_ChangePlayerBelligerent : netCommandGeneral
@@ -924,7 +846,7 @@ struct netCommand4H_ChangePlayerBelligerent : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&newBelligerent_, sizeof(newBelligerent_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&newBelligerent_, sizeof(newBelligerent_));
 	};
@@ -934,20 +856,24 @@ struct netCommand4H_ChangePlayerBelligerent : netCommandGeneral
 
 struct netCommand4H_ChangePlayerColor : netCommandGeneral
 {
-	netCommand4H_ChangePlayerColor(int idxPlayerData, int newColor) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_COLOR){
+	netCommand4H_ChangePlayerColor(int idxPlayerData, int newColor, bool direction_) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_COLOR){
 		idxPlayerData_=idxPlayerData;
 		newColor_=newColor;
+        direction=direction_;
 	}
 	netCommand4H_ChangePlayerColor(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_COLOR){
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&newColor_, sizeof(newColor_));
+        in.read(&direction, sizeof(direction));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&newColor_, sizeof(newColor_));
+        out.write(&direction, sizeof(direction));
 	};
 	int idxPlayerData_;
 	int newColor_;
+    bool direction;
 };
 
 
@@ -961,7 +887,7 @@ struct netCommand4H_ChangeRealPlayerType : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&newRealPlayerType_, sizeof(newRealPlayerType_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&newRealPlayerType_, sizeof(newRealPlayerType_));
 	};
@@ -979,7 +905,7 @@ struct netCommand4H_ChangePlayerDifficulty : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&difficulty_, sizeof(difficulty_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&difficulty_, sizeof(difficulty_));
 	};
@@ -996,7 +922,7 @@ struct netCommand4H_ChangePlayerClan : netCommandGeneral
 		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
 		in.read(&clan_, sizeof(clan_));
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
 		out.write(&clan_, sizeof(clan_));
 	};
@@ -1007,23 +933,37 @@ struct netCommand4H_ChangePlayerClan : netCommandGeneral
 
 struct netCommand4H_ChangePlayerHandicap : netCommandGeneral
 {
-	netCommand4H_ChangePlayerHandicap(int idxPlayerData, int handicap) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
-		idxPlayerData_=idxPlayerData;
-		handicap_=handicap;
-	}
-	netCommand4H_ChangePlayerHandicap(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
-		in.read(&idxPlayerData_, sizeof(idxPlayerData_));
-		in.read(&handicap_, sizeof(handicap_));
-	}
-	void Write(XBuffer& out) const {
-		out.write(&idxPlayerData_, sizeof(idxPlayerData_));
-		out.write(&handicap_, sizeof(handicap_));
-	};
-	int idxPlayerData_;
-	int handicap_;
+    netCommand4H_ChangePlayerHandicap(int idxPlayerData, int handicap) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
+        idxPlayerData_=idxPlayerData;
+        handicap_=handicap;
+    }
+    netCommand4H_ChangePlayerHandicap(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_HANDICAP){
+        in.read(&idxPlayerData_, sizeof(idxPlayerData_));
+        in.read(&handicap_, sizeof(handicap_));
+    }
+    void Write(XBuffer& out) const override {
+        out.write(&idxPlayerData_, sizeof(idxPlayerData_));
+        out.write(&handicap_, sizeof(handicap_));
+    };
+    int idxPlayerData_;
+    int handicap_;
 };
 
+struct netCommand4H_ChangePlayerSeat : netCommandGeneral
+{
+    netCommand4H_ChangePlayerSeat(int idxPlayerData) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_SEAT){
+        idxPlayerData_=idxPlayerData;
+    }
+    netCommand4H_ChangePlayerSeat(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_PLAYER_SEAT){
+        in > idxPlayerData_;
+    }
+    void Write(XBuffer& out) const override {
+        out < idxPlayerData_;
+    };
+    int idxPlayerData_;
+};
 
+///Command sent to host when a map is selected from list, establishes the hostMissionDescription
 struct netCommand4H_ChangeMap : netCommandGeneral
 {
 	MissionDescription missionDescription_;
@@ -1034,14 +974,10 @@ struct netCommand4H_ChangeMap : netCommandGeneral
 	netCommand4H_ChangeMap(XBuffer& in) : netCommandGeneral(NETCOM_4H_ID_CHANGE_MAP){
 		missionDescription_.read(in);
 	}
-	void Write(XBuffer& out) const {
+	void Write(XBuffer& out) const override {
 		missionDescription_.write(out);
 	}
 };
-
-
-
-
 
 struct terEventControlServerTime : netCommandGeneral
 {
@@ -1050,18 +986,8 @@ struct terEventControlServerTime : netCommandGeneral
 	terEventControlServerTime(float s) : netCommandGeneral(EVENT_ID_SERVER_TIME_CONTROL){ scale = s; }
 	terEventControlServerTime(XBuffer& in);
 
-	void Write(XBuffer& out) const ;
+	void Write(XBuffer& out) const override;
 };
-
-//-------------------------------
-
-#ifndef PERIMETER_EXODUS
-struct GameInfo
-{
-	DWORD id;
-	char  Name[PERIMETER_CONTROL_NAME_SIZE];
-};
-#endif
 
 //-------------------------------
 

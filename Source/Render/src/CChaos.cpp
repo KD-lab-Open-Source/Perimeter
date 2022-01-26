@@ -1,7 +1,7 @@
 #include "StdAfxRD.h"
 #include "CChaos.h"
 
-cChaos::cChaos(Vect2f g_size,LPCSTR str_tex0,LPCSTR str_tex1,LPCSTR str_bump,int tile,bool enablebump_)
+cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enablebump_)
 :cIUnkObj(KIND_NULL)
 {
 	plane_size=g_size;
@@ -88,10 +88,10 @@ void cChaos::RenderAllTexture()
 	{
 		cD3DRender* rd=gb_RenderDevice3D;
 
-		BOOL fog=rd->GetRenderState(D3DRS_FOGENABLE);
+		bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 		rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
-		DWORD zenable=rd->GetRenderState(D3DRS_ZENABLE);
-		DWORD zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE); 
+		uint32_t zenable=rd->GetRenderState(D3DRS_ZENABLE);
+		uint32_t zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE); 
 		RenderTexture();
 		RenderTex0();
 		rd->SetRenderState(D3DRS_FOGENABLE, fog);
@@ -108,7 +108,7 @@ void cChaos::PreDraw(cCamera *DrawNode)
 void cChaos::Draw(cCamera *DrawNode)
 {
 	cD3DRender* rd=DrawNode->GetRenderDevice3D();
-	BOOL fog=rd->GetRenderState(D3DRS_FOGENABLE);
+	bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 //	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 /*
 		rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
@@ -225,11 +225,11 @@ void cChaos::Draw(cCamera *DrawNode)
 	}
 
 	float woldsize=max(plane_size.x,plane_size.y);
-	DWORD fogcolor=rd->GetRenderState(D3DRS_FOGCOLOR);
-	DWORD fogstart=rd->GetRenderState(D3DRS_FOGSTART);
-	DWORD fogend=rd->GetRenderState(D3DRS_FOGEND);
-	DWORD tablemode=rd->GetRenderState(D3DRS_FOGTABLEMODE);
-	DWORD vertexmode=rd->GetRenderState( D3DRS_FOGVERTEXMODE);
+	uint32_t fogcolor=rd->GetRenderState(D3DRS_FOGCOLOR);
+	uint32_t fogstart=rd->GetRenderState(D3DRS_FOGSTART);
+	uint32_t fogend=rd->GetRenderState(D3DRS_FOGEND);
+	uint32_t tablemode=rd->GetRenderState(D3DRS_FOGTABLEMODE);
+	uint32_t vertexmode=rd->GetRenderState(D3DRS_FOGVERTEXMODE);
 
 //	rd->SetRenderState(D3DRS_FOGENABLE, TRUE);
 
@@ -346,14 +346,14 @@ void cChaos::InitBumpTexture1(cTexture* pTex)
 {
 	int Pitch;
 	int dx=pTex->GetWidth(),dy=pTex->GetHeight();
-	BYTE* pBuffer=(BYTE*)pTex->LockTexture(Pitch);
+	uint8_t* pBuffer=(uint8_t*)pTex->LockTexture(Pitch);
 
 	float cx=64.0f/dx,cy=64.0f/dy;
 	float cx1=60.0f/dx,cy1=60.0f/dy;
 
 	struct VU
 	{
-		BYTE v,u;
+		uint8_t v,u;
 	};
 
 	VISASSERT(sizeof(VU)==2);
@@ -365,11 +365,11 @@ void cChaos::InitBumpTexture1(cTexture* pTex)
 		for(int ix=0;ix<dx;ix++,p++)
 		{
 			float du,dv;
-			du=0;//cos((ix+iy)*cx*M_PI)+cos((ix-iy)*cx1*M_PI);
-			dv=0;//sin((ix+iy)*cy*M_PI)+sin((ix-iy)*cy1*M_PI);
+			du=0;//cos((ix+iy)*cx*XM_PI)+xm::cos((ix-iy)*cx1*XM_PI);
+			dv=0;//sin((ix+iy)*cy*XM_PI)+xm::sin((ix-iy)*cy1*XM_PI);
 			
-			p->u=round(du*16);
-			p->v=round(dv*16);
+			p->u= xm::round(du * 16);
+			p->v= xm::round(dv * 16);
 		}
 
 		pBuffer+=Pitch;
@@ -382,7 +382,7 @@ void cChaos::InitBumpTexture2(cTexture* pTex)
 {
 	int Pitch;
 	int dx=pTex->GetWidth(),dy=pTex->GetHeight();
-	BYTE* pBuffer=pTex->LockTexture(Pitch);
+	uint8_t* pBuffer=pTex->LockTexture(Pitch);
 
 	float cx=32.0f/dx,cy=32.0f/dy;
 
@@ -400,11 +400,11 @@ void cChaos::InitBumpTexture2(cTexture* pTex)
 		for(int ix=0;ix<dx;ix++,p++)
 		{
 			float du,dv;
-			du=cos(iy*cx*M_PI)*0.9f;
-			dv=sin(iy*cy*M_PI)*0.9f;
+			du= xm::cos(iy * cx * XM_PI) * 0.9f;
+			dv= xm::sin(iy * cy * XM_PI) * 0.9f;
 			
-			p->u=round((du+1)*64);
-			p->v=round((dv+1)*64);
+			p->u= xm::round((du + 1) * 64);
+			p->v= xm::round((dv + 1) * 64);
 		}
 
 		pBuffer+=Pitch;
@@ -419,13 +419,13 @@ void cChaos::ConvertToBump(cTexture*& pOut,cTexture* pIn)
 	pOut=gb_VisGeneric->CreateBumpTexture(dx,dy);
 
 	int PitchIn,PitchOut;
-	BYTE* pBufferIn=pIn->LockTexture(PitchIn);
-	BYTE* pBufferOut=pOut->LockTexture(PitchOut);
+	uint8_t* pBufferIn=pIn->LockTexture(PitchIn);
+	uint8_t* pBufferOut=pOut->LockTexture(PitchOut);
 
 	for(int iy=0;iy<dy;iy++)
 	{
-		BYTE* pi=pBufferIn;
-		BYTE* po=pBufferOut;
+		uint8_t* pi=pBufferIn;
+		uint8_t* po=pBufferOut;
 
 		for(int ix=0;ix<dx;ix++)
 		{
@@ -470,11 +470,11 @@ void cChaos::RenderTex0()
 	rd->SetRenderTarget(pTex0,NULL);
 
 	float umin,vmin,umin1,vmin1;
-	umin=1-fmodf(time*0.1f,1.0f);
-	vmin=1-fmodf(time*0.2f,1.0f);
+	umin=1- xm::fmod(time * 0.1f, 1.0f);
+	vmin=1- xm::fmod(time * 0.2f, 1.0f);
 
-	umin1=fmodf(time*0.1f,1.0f);
-	vmin1=fmodf(time*0.2f,1.0f);
+	umin1= xm::fmod(time * 0.1f, 1.0f);
+	vmin1= xm::fmod(time * 0.2f, 1.0f);
 	
 	rd->DrawSprite2(0,0,pTexRender->GetWidth(),pTexRender->GetHeight(),
 					umin,vmin,1,1,
@@ -488,7 +488,7 @@ void cChaos::RenderTex0()
 //////////////////////
 int CBox::CubeVector::fmt=D3DFVF_XYZ|D3DFVF_TEX1;
 
-CBox::CBox(Vect3f size,LPCSTR str_cube)
+CBox::CBox(Vect3f size, const char* str_cube)
 :cIUnkObj(KIND_NULL)
 {
 	sz_rect=size;
@@ -572,7 +572,7 @@ void CBox::Draw(cCamera *DrawNode)
 		D3DXMATRIX matView = matViewSave;
 		D3DXMATRIX matProj = matViewSave;
 		matView._41 = matView._42 = matView._43 = 0.0f;
-		D3DXMatrixPerspectiveFovLH( &matProj, M_PI/2, 1.0f, 0.5f, 10000.0f );
+		D3DXMatrixPerspectiveFovLH( &matProj, XM_PI/2, 1.0f, 0.5f, 10000.0f );
 		rd->lpD3DDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 		rd->lpD3DDevice->SetTransform( D3DTS_VIEW,       &matView );
 
@@ -586,7 +586,7 @@ void CBox::Draw(cCamera *DrawNode)
 
 	rd->SetFVF(CubeVector::fmt);
 
-	DWORD zfunc=rd->GetRenderState(D3DRS_ZFUNC);
+	uint32_t zfunc=rd->GetRenderState(D3DRS_ZFUNC);
 	if(!reflection)
 		rd->SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 
@@ -758,7 +758,7 @@ void CBox::CreateVB()
 ///////////////////////////////////////////////
 #include "ObjLibrary.h"
 #include "ObjMesh.h"
-CSkySpere::CSkySpere(cObjLibrary* pObj,LPCSTR str_name,LPCSTR str_texture,int h_size)
+CSkySpere::CSkySpere(cObjLibrary* pObj, const char* str_name, const char* str_texture, int h_size)
 :cIUnkObj(KIND_NULL)
 {
 	pSkySphere=pObj->GetElement(str_name,str_texture);
@@ -804,9 +804,9 @@ void CSkySpere::PreDraw(cCamera *DrawNode)
 void CSkySpere::Draw(cCamera *DrawNode)
 {
 	cD3DRender* rd=DrawNode->GetRenderDevice3D();
-	DWORD zfunc=rd->GetRenderState(D3DRS_ZFUNC);
-	DWORD zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE);
-	BOOL fog=rd->GetRenderState(D3DRS_FOGENABLE);
+	uint32_t zfunc=rd->GetRenderState(D3DRS_ZFUNC);
+	uint32_t zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE);
+    bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 	rd->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 	rd->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);

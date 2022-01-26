@@ -66,7 +66,7 @@ void cOcclusionQuery::Test(const Vect3f& pos)
 bool cOcclusionQuery::IsVisible()
 {
 //	return true;
-	DWORD point=0;
+	uint32_t point=0;
 	// Stupidly block until we have a query result
 //	pQuery->GetData((void *) &point, sizeof(DWORD), D3DGETDATA_FLUSH);
 	if(!draw)
@@ -81,7 +81,7 @@ bool cOcclusionQuery::IsVisible()
 
 	for(int i=0;i<10;i++)
 	{
-		if(pQuery->GetData((void *) &point, sizeof(DWORD), D3DGETDATA_FLUSH) != S_FALSE)
+		if(pQuery->GetData((void *) &point, sizeof(uint32_t), D3DGETDATA_FLUSH) != S_FALSE)
 			break;
 		Sleep(1);//FOR Radeon 7500, 8500
 	}

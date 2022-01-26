@@ -16,7 +16,7 @@
 //		File/Paths
 /////////////////////////////////////////////////////////////////////////////////
 
-bool create_directories(const char* path, std::error_code* error = nullptr);
+bool create_directories(const std::string& path, std::error_code* error = nullptr);
 
 /////////////////////////////////////////////////////////////////////////////////
 //		Key Press
@@ -56,7 +56,7 @@ struct sKey {
 
     explicit sKey(SDL_Keysym keysym, bool set_by_async_funcs = false);
 
-	sKey(int fullkey_ = 0, bool set_by_async_funcs = false);
+	sKey(int key_ = 0, bool set_by_async_funcs = false);
 	
 	bool pressed() const {
 		return isPressed(key) && !(ctrl ^ isControlPressed()) && !(shift ^ isShiftPressed()) && !(menu ^ isAltPressed());
@@ -71,11 +71,19 @@ extern HWND hWndVisGeneric;
 inline void RestoreFocus() { SDL_RaiseWindow(sdlWindow); }
 
 // ---   Ini file   ------------------------------
+
+uint32_t ReadIniString(const char* section, const char* key, const char* defaultVal,
+                       char* returnBuffer, uint32_t bufferSize, const std::string& filePath);
+
+uint32_t WriteIniString(const char* section, const char* key, const char* value, const std::string& filePath);
+
 class IniManager
 {
+private:
 	std::string fname_;
 	bool check_existence_;
     bool is_full_path;
+    std::string getFilePath();
 public:
 	explicit IniManager(const char* fname, bool check_existence = true, bool full_path = false);
 	const char* get(const char* section, const char* key);
@@ -90,28 +98,36 @@ public:
 };
 
 // ---  Files ------------------------------
-inline std::string setExtention(const char* file_name, const char* extention)
+inline std::string setExtension(const std::string& file_name, const char* extension)
 {
 	std::string str = file_name;
-	size_t pos = str.rfind(".");
-	if(pos != std::string::npos)
-		str.erase(pos, str.size());
-	return str + "." + extention;
+	size_t pos = str.rfind('.');
+	if(pos != std::string::npos) {
+        str.erase(pos, str.size());
+    }
+    if (extension) {
+        str += ".";
+        str += extension;
+    }
+	return str;
 }
 
-inline std::string getExtention(const char* file_name)
+inline std::string getExtension(const std::string& file_name, bool process)
 {
 	std::string str = file_name;
-	size_t pos = str.rfind(".");
-	if(pos != std::string::npos){
+	size_t pos = str.rfind('.');
+	if (pos != std::string::npos) {
 		str.erase(0, pos + 1);
-		strlwr((char*)str.c_str());
-		while(isspace(str[str.size() - 1]))
-			str.erase(str.size() - 1);
+        if (process) {
+            str = string_to_lower(str.c_str());
+            while (isspace(str[str.size() - 1])) {
+                str.erase(str.size() - 1);
+            }
+        }
 		return str;
-	}
-	else
-		return "";
+	} else {
+        return "";
+    }
 }
 
 // --- Settings ------

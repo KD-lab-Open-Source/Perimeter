@@ -45,12 +45,13 @@ SaveUnitData* terBuildingCommandCenter::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terBuildingCommandCenter::universalLoad(const SaveUnitData* baseData)
+void terBuildingCommandCenter::universalLoad(SaveUnitData* baseData)
 {
-	const SaveUnitCommandCenterData* data = safe_cast<const SaveUnitCommandCenterData*>(baseData);
+	SaveUnitCommandCenterData* data = safe_cast<SaveUnitCommandCenterData*>(baseData);
 	terBuildingPowered::universalLoad(data);
 	
-	if(data->squad){
+	if (data->squad) {
+        if (!data->unitID) data->squad->unitID = 0; 
 		SquadPoint->universalLoad(data->squad);
 		SquadPoint->Start();
 	}

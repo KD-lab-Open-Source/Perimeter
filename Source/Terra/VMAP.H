@@ -238,10 +238,12 @@ struct vrtMap {
 		ar & WRAP_OBJECT(G_ZL);
 		ar & WRAP_OBJECT(B_ZL);
 		ar & WRAP_OBJECT(A_ZL);
-		colZeroPlast.r=R_ZL;
-		colZeroPlast.g=G_ZL;
-		colZeroPlast.b=B_ZL;
-		colZeroPlast.alpha=A_ZL;
+        if (ar.isInput()) {
+            colZeroPlast.r = R_ZL;
+            colZeroPlast.g = G_ZL;
+            colZeroPlast.b = B_ZL;
+            colZeroPlast.alpha = A_ZL;
+        }
 
 		ar & WRAP_OBJECT(GeonetMESH);
 		ar & WRAP_OBJECT(NOISE_AMPL);
@@ -271,7 +273,7 @@ struct vrtMap {
 	unsigned char* SurBuf;
 	unsigned char* RnrBuf;
 
-	unsigned long* SupBuf;
+	uint32_t* SupBuf;
 
 
 	unsigned char* LvdTex;
@@ -293,8 +295,8 @@ struct vrtMap {
 	tColor colZeroPlast;
 
 	void initGrid(void);
-	void loadGrid(XStream & ff);
-	void saveGrid(XStream & ff);
+	void loadGrid(XBuffer& ff);
+	void saveGrid(XBuffer& ff);
 	void recalcArea2Grid(int xl, int yt, int xr, int yb );
 	void loadHardness2Grid(void);
 	void loadHardness(void);
@@ -354,7 +356,8 @@ struct vrtMap {
 	short clipXLeft, clipXRight, clipYTop, clipYBottom; 
 #endif
 
-	int maxWorld,cWorld;
+	uint32_t maxWorld;
+    int32_t cWorld;
 	std::vector<vrtWorld> wTable;
 
 
@@ -382,12 +385,11 @@ struct vrtMap {
 	bool saveAllWorldAs(const char* _patch2world);
 #endif
 	bool worldChanged;
-	bool loadGameMap(const char* fname, bool flag_FastLoad=1);
-	bool saveGameMap(const char* fname);
+	bool loadGameMap(XBuffer& ff, bool flag_FastLoad=1);
+	bool saveGameMap(XBuffer& ff);
 
-	void getWorldList(std::vector<const char*>& world_list) { world_list.clear(); for(int i = 0; i < maxWorld; i++) world_list.push_back(wTable[i].name.c_str()); }
 	int getWorldID(const char* world_name) { for(int i = 0; i < maxWorld; i++) if(stricmp(wTable[i].name.c_str(), world_name) == 0) return i; return -1; }
-	const char* getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name.c_str(); }
+	const std::string& getWorldName(int world_id) { xassert(world_id >= 0 && world_id < maxWorld); return wTable[world_id].name; }
 
 	enum eSurfaceMode{
 		Geologic,
@@ -497,12 +499,12 @@ struct vrtMap {
 	void newSave(const char* dirName);
 
 
-	bool IsChanged(void) { return worldChanged;}
+	bool IsChanged() { return worldChanged;}
 
 	bool IsHardWCC(Vect2i crd){
 		unsigned short p = GABuf[offsetGBuf(w2mClampX(crd.x), w2mClampY(crd.y))];
-		if((p & GRIDAT_MASK_HARDNESS) == GRIDAT_MASK_HARDNESS) return 0;
-		else return 1;
+		if((p & GRIDAT_MASK_HARDNESS) == GRIDAT_MASK_HARDNESS) return false;
+		else return true;
 	}
 
 	bool IsFullLoad(void) { return (VxGBuf!=0);}
@@ -685,7 +687,7 @@ struct vrtMap {
 #endif
 		return col32;
 	}
-	void drawTile(char* Texture, unsigned long pitch,int xstart,int ystart,int xend,int yend,int step);
+	//void drawTile(char* Texture, unsigned long pitch,int xstart,int ystart,int xend,int yend,int step);
 	bool TstZP(int off){
 		if( (AtrBuf[off]&At_ZPMASK)==At_ZEROPLAST ) return 1;
 		else return 0;

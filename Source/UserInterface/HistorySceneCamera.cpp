@@ -31,7 +31,7 @@ CameraPosition CameraPosition::operator+(const CameraPosition& pos) const {
 void CameraPosition::interpolate(const CameraPosition& pos0, const CameraPosition& pos1, float t, CameraPosition* res) {
 	res->pivotPosition.interpolate(pos0.pivotPosition, pos1.pivotPosition, t);
 	res->psi = pos0.psi + (pos1.psi - pos0.psi) * t;
-	res->theta = cycle(pos0.theta + getDist(pos1.theta, pos0.theta, 2 * M_PI) * t, 2 * M_PI);
+	res->theta = cycle(pos0.theta + getDist(pos1.theta, pos0.theta, 2 * XM_PI) * t, 2 * XM_PI);
 	res->distanceToPivot = pos0.distanceToPivot + (pos1.distanceToPivot - pos0.distanceToPivot) * t;
 }
 
@@ -84,10 +84,10 @@ void HistorySceneCamera::reset() {
 	shouldClearAtEnd = false;
 	followNomadMode = false;
 	tracking = false;
-//	position = CameraPosition(Vect3f(0, 0, 0), 6.209f + M_PI, -1.516f - M_PI / 2.0f, 2000*HISTORY_SCENE_SCALE);
+//	position = CameraPosition(Vect3f(0, 0, 0), 6.209f + XM_PI, -1.516f - XM_PI / 2.0f, 2000*HISTORY_SCENE_SCALE);
 	position = CameraPosition(
 			Vect3f(HISTORY_SCENE_CENTER_X * HISTORY_SCENE_SCALE, HISTORY_SCENE_CENTER_Y * HISTORY_SCENE_SCALE, -HISTORY_SCENE_CENTER_Z * HISTORY_SCENE_SCALE),
-			HISTORY_SCENE_PSI + M_PI, -HISTORY_SCENE_THETA - M_PI / 2.0f, HISTORY_SCENE_DISTANCE * HISTORY_SCENE_SCALE );
+			HISTORY_SCENE_PSI + XM_PI, -HISTORY_SCENE_THETA - XM_PI / 2.0f, HISTORY_SCENE_DISTANCE * HISTORY_SCENE_SCALE );
 	path.clear();
 	waitingList.clear();
 }
@@ -116,7 +116,7 @@ void HistorySceneCamera::update() {
 	//restrict radius
 
 	MatXf matrix = MatXf::ID;
-	matrix.rot() = Mat3f(position.theta, X_AXIS) * Mat3f(M_PI / 2 - position.psi, Z_AXIS);
+	matrix.rot() = Mat3f(position.theta, X_AXIS) * Mat3f(XM_PI / 2 - position.psi, Z_AXIS);
 	matrix *= MatXf(Mat3f::ID, -pos);	
 
 	setMatrixToCamera(camera, matrix);
@@ -191,28 +191,28 @@ void HistorySceneCamera::quant(const Vect2f& mousePos, float dt) {
 		
 		if (
 				g_controls_converter.key(CTRL_CAMERA_MOVE_UP).pressed()
-			||	fabs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP ) {
+			|| xm::abs(mousePos.y + 0.5f) < CAMERA_BORDER_SCROLL_AREA_UP ) {
 
 			position.theta -= HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if (
 				g_controls_converter.key(CTRL_CAMERA_MOVE_DOWN).pressed()
-			||	fabs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN ) {
+			|| xm::abs(mousePos.y - 0.5f) < CAMERA_BORDER_SCROLL_AREA_DN ) {
 
 			position.theta += HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if (
 				g_controls_converter.key(CTRL_CAMERA_MOVE_LEFT).pressed()
-			||	fabs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
+			|| xm::abs(mousePos.x - 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
 
 			position.psi += HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
 		
 		if ( 
 				g_controls_converter.key(CTRL_CAMERA_MOVE_RIGHT).pressed()
-			||	fabs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
+			|| xm::abs(mousePos.x + 0.5f) < CAMERA_BORDER_SCROLL_AREA_HORZ ) {
 
 			position.psi -= HISTORY_CAMERA_ANGLE_SPEED_DELTA * dt;
 		}
@@ -403,8 +403,8 @@ std::string HistorySceneCamera::posToString(const CameraPosition& pos) {
 		str,
 		"x=%f y=%f z=%f psi=%f theta=%f dist=%f",
 		pos.distanceToPivot/HISTORY_SCENE_SCALE,
-		-pos.theta - M_PI / 2.0f,
-		pos.psi - M_PI,
+		-pos.theta - XM_PI / 2.0f,
+		pos.psi - XM_PI,
 		pos.pivotPosition.x*HISTORY_SCENE_SCALE,
 		pos.pivotPosition.y*HISTORY_SCENE_SCALE,
 		pos.pivotPosition.z*HISTORY_SCENE_SCALE

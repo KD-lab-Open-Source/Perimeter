@@ -1,25 +1,17 @@
 #include "StdAfx.h"
-
 #include "Umath.h"
 #include "IVisGeneric.h"
-#include "VisGenericDefine.h"
-#include "IRenderDevice.h"
-
-#include "CameraManager.h"
-
-#include "terra.h"
+#include "NetIncludes.h"
 #include "Runtime.h"
-
 #include "UnitAttribute.h"
-#include "GenericControls.h"
 #include "Universe.h"
 #include "GameShell.h"
 
-#include "PlayOgg.h"
+#include "AudioPlayer.h"
 #include "Config.hi"
 
 
-extern MpegSound gb_Music;
+extern MusicPlayer gb_Music;
 extern std::string strMusic;
 extern SyncroTimer global_time;
 
@@ -37,7 +29,7 @@ class MusicClass
 
 	bool active;
 
-	MpegSound* mpeg;
+	MusicPlayer* mpeg;
 public:
 	MusicClass()
 	{
@@ -57,11 +49,11 @@ public:
 		active=false;
 	}
 
-	bool Play(PLAY play, LPCSTR default_fname)
+	bool Play(PLAY play, const char* default_fname)
 	{
 		if(!terMusicEnable)
 			return false;
-		LPCSTR fname = gameShell->manualData().soundTracks[play].fileName();
+		const char* fname = gameShell->manualData().soundTracks[play].fileName();
 		if(fname==NULL)
 			fname=default_fname;
 
@@ -99,7 +91,7 @@ public:
 		on_cluster=global_time();
 	}
 
-	inline int change_time(){return round(music_change_time*1000);}
+	inline int change_time(){return xm::round(music_change_time * 1000);}
 
 	void Quant()
 	{

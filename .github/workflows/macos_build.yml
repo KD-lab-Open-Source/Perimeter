@@ -1,0 +1,110 @@
+name: MacOS Build
+
+on:
+  push:
+  pull_request:
+
+env:
+  VULKAN_SDK_VERSION: '1.2.198.1'
+  VULKAN_LIB_VERSION: '1.2.198'
+  MACOSX_DEPLOYMENT_TARGET: '10.15'
+  GH_CACHE_KEY: 8
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [
+          #{build_type: Debug,   arch_name: Apple Silicon, arch_apple: arm64, arch: aarch64},
+          #{build_type: Release, arch_name: Apple Silicon, arch_apple: arm64, arch: aarch64},
+          {build_type: Debug,   arch_name: Intel, arch_apple: x86_64, arch: x86_64},
+          {build_type: Release, arch_name: Intel, arch_apple: x86_64, arch: x86_64}
+        ]
+    name: ${{matrix.build_type}} ${{matrix.env.arch_name}}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install libs
+        run: |
+          brew install ninja yasm dylibbundler \
+          libogg libvorbis libvpx boost meson cmake zlib \
+          sdl2 sdl2_image sdl2_mixer sdl2_net
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: |
+            vulkansdk-macos.dmg
+            ffmpeg
+          key: MacOS-${{matrix.env.arch_apple}}-${{ env.VULKAN_SDK_VERSION }}-${{ env.GH_CACHE_KEY }}
+      - name: download Vulkan SDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          wget https://sdk.lunarg.com/sdk/download/${{ env.VULKAN_SDK_VERSION }}/mac/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}.dmg?Human=true -O vulkansdk-macos.dmg
+      - name: install Vulkan SDK
+        run: |
+          hdiutil attach vulkansdk-macos.dmg
+          sudo /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
+          hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
+      - name: ffmpeg -- download
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: git clone --depth 1 --branch n4.4.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+      - name: ffmpeg -- configure
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./configure --enable-shared --prefix=/usr/local 
+          --cc="clang"
+          --arch=${{matrix.env.arch}}
+          --extra-cflags="-arch ${{matrix.env.arch_apple}}"
+          --extra-ldflags="-arch ${{matrix.env.arch_apple}}"
+          --target-os=darwin
+          --sysroot=$(xcrun --sdk macosx --show-sdk-path)
+          --disable-everything
+          --enable-swscale
+          --enable-swresample
+          --enable-zlib
+          --enable-libvpx
+          --enable-libvorbis
+          --enable-demuxer=avi,rawvideo,bink,matroska
+          --enable-decoder=png,rawvideo,bink,binkaudio_dct,vorbis,opus,vp8,vp9
+          --enable-parser=png,vp9
+          --enable-filter=aresample,aformat
+          --enable-protocol=file
+          --disable-d3d11va
+          --disable-dxva2
+          --disable-doc --disable-ffplay --disable-ffprobe --disable-ffmpeg
+          --disable-static --disable-bzlib --disable-libopenjpeg --disable-iconv
+        working-directory: ffmpeg
+      - name: ffmpeg -- build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: make -j4
+        working-directory: ffmpeg
+      - name: ffmpeg -- install
+        run: sudo make install
+        working-directory: ffmpeg
+      - name: perimeter -- create build dir
+        run: mkdir build
+      - name: perimeter -- configure
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_OSX_ARCHITECTURES=${{matrix.env.arch_apple}}
+        working-directory: build
+      - name: perimeter -- build dependencies
+        run: ninja dependencies
+        working-directory: build
+      - name: perimeter -- build project
+        run: ninja
+        working-directory: build
+      - name: perimeter -- strip binary
+        run: strip -x Source/Perimeter
+        working-directory: build
+      - name: perimeter -- package app
+        run: macos/package.sh
+        env:
+          TEMPLATE_DIR: "macos/Perimeter.app.template"
+          BUILD_DIR: "build"
+          APP_DIR: "Perimeter.app"
+          LIB_DIR: "/usr/local/lib"
+      - name: perimeter -- release tar
+        run: tar -cvf Perimeter.app.tar Perimeter.app
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Perimeter MacOS ${{matrix.env.build_type}} ${{matrix.env.arch_name}}
+          path: Perimeter.app.tar

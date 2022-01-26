@@ -137,7 +137,7 @@ void ToolzerController::showDebugInfo(const Vect3f& position) const
 
 void ToolzerActionOp::operator ()(const struct ToolzerActionData& action,float scale)
 {
-	int radius = round(scale * float(action.rad));
+	int radius = xm::round(scale * float(action.rad));
 
 	switch(action.actionID){
 	case TOOLZER_4ZP:
@@ -228,7 +228,7 @@ SaveToolzerControllerData* ToolzerController::universalSave(SaveToolzerControlle
 	return data;
 }
 
-void ToolzerController::universalLoad(const SaveToolzerControllerData* data)
+void ToolzerController::universalLoad(SaveToolzerControllerData* data)
 {
 	scale_ = data->scale;
 	currentStep_ = data->currentStep;

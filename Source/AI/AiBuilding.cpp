@@ -124,28 +124,35 @@ void AIPlayer::applyRegionChanges()
 
 void AIPlayer::installFrame()
 {
-	if(!frame())
-		return;
-
+	if(!frame() || frame()->attached()) {
+        return;
+    }
+    
+    installingFrame_ = true;
+    
+    if (frame()->attaching()) {
+        return;
+    }
+    
 	MetaRegionLock lock(RegionPoint);
 	ZeroRegionPoint->operateByCircle(frame()->position2D(), frame()->attr().ZeroLayerRadius, 1);
 	ZeroRegionPoint->postOperateAnalyze();
 	applyRegionChanges();
 
 	MoveBrigadiersToPoint(frame()->position2D() + Vect2f(moveBrigadiersToInstallFrameOffsetFactor)*frame()->radius(), ai_brigadier_move_to_point_offset);
-	installingFrame_ = true;
 }
 
 bool AIPlayer::installFrameQuant()
 {
-	if(!frame())
-		return true;
+	if (!installingFrame_ || !frame() || frame()->attached()) {
+        installingFrame_ = false;
+        return true;
+    }
 
-	if(installingFrame_ && frame()->basementReady() && frame()->GetRigidBodyPoint()->velocity().norm() < 0.1f){
-		frame()->executeCommand(UnitCommand(COMMAND_ID_FRAME_ATTACH, 0));
-		installingFrame_ = false;
-		return true;
+	if (!frame()->attaching() && frame()->basementReady() && frame()->GetRigidBodyPoint()->velocity().norm() < 0.1f) {
+        frame()->executeCommand(UnitCommand(COMMAND_ID_FRAME_ATTACH, 0));
 	}
+
 	return false;
 }
 
@@ -180,7 +187,7 @@ void AIPlayer::findWhereToDigQuant()
 				if(place_scan_op->found()) {
 					if(scanStep_ > ai_scan_step_min) {
 						Vect2i pos = place_scan_op->bestPosition(); 
-						Vect2i off((int)round(ai_scan_size_of_step_factor*scanStep_), (int)round(ai_scan_size_of_step_factor*scanStep_));
+						Vect2i off((int) xm::round(ai_scan_size_of_step_factor * scanStep_), (int) xm::round(ai_scan_size_of_step_factor * scanStep_));
 						startPlace(place_scan_op, pos - off, pos + off, scanStep_/2);
 					}
 					else{
@@ -257,7 +264,7 @@ void AIPlayer::CircleShape::make(int radius_)
 	clear();
 	reserve(radius*2 + 1);
 	for(int y = -radius; y <= radius; y++){
-		int x = round(sqrtf(sqr(radius) - sqr(y)));
+		int x = xm::round(xm::sqrt(sqr(radius) - sqr(y)));
 		push_back(Interval(-x, 1 + x));
 	}
 }

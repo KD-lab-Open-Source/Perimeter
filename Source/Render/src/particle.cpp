@@ -48,7 +48,7 @@ void cParticle::PreDraw(cCamera *DrawNode)
 		pUpdate=RAND_MAX;
 	}else
 		pUpdate=RAND_MAX/10;
-	if(dTime&&(rand()<pUpdate)) 
+	if(dTime&&(parrand() < pUpdate)) 
 	{
 //		start_timer(Particle_Update,1);
 		Bound.min.set(1e30f,1e30f,1e30f);
@@ -120,7 +120,7 @@ void cParticle::Draw(cCamera *DrawNode)
 
 	float d=DrawNode->GetPos().distance(GetGlobalMatrix().trans()+(Bound.min+Bound.max)*0.5f);
 	float ScrScale=DrawNode->GetFocusViewPort().x/d;
-	int nLOD=round(0.5f*8*ScrScale*(1-Option_NearDistanceLOD*0.1f));
+	int nLOD= xm::round(0.5f * 8 * ScrScale * (1 - Option_NearDistanceLOD * 0.1f));
 	float dt=CurrentTime/TimeLife,dt1=dt-1;
 
 	for(int i=0;i<Particle.size();i++)
@@ -130,16 +130,16 @@ void cParticle::Draw(cCamera *DrawNode)
 		if((i&0x00000007)>=nLOD) continue;
 		sVertexXYZDT1 *v=&Vertex[nVertex];
 		float phase=dt-Particle[i].time;
-		sParticleKey &key=Key[(int)round(phase*(NumberKey-1))];
+		sParticleKey &key=Key[(int) xm::round(phase * (NumberKey - 1))];
 		VISASSERT(0<=phase&&phase<=1);
 		DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.x,-key.rotate.y,0),sx);
 		DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.y,+key.rotate.x,0),sy);
 
 		Vect3f v0,v1,v2,v3;
-		sColor4c color((int)round(GetDiffuse().r*key.diffuse.r),
-					   (int)round(GetDiffuse().g*key.diffuse.g),
-					   (int)round(GetDiffuse().b*key.diffuse.b),
-					   (int)round(GetDiffuse().a*key.diffuse.a));
+		sColor4c color((int) xm::round(GetDiffuse().r * key.diffuse.r),
+					   (int) xm::round(GetDiffuse().g * key.diffuse.g),
+					   (int) xm::round(GetDiffuse().b * key.diffuse.b),
+					   (int) xm::round(GetDiffuse().a * key.diffuse.a));
 		
 		v0=Particle[i].pos-sx-sy;
 		v1=Particle[i].pos-sx+sy;

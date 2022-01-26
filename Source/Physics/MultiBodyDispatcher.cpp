@@ -152,7 +152,8 @@ int Contact::set(float penetration_, const Vect3f& cp1_, const Vect3f& cp2_, Rig
 		float h1 = body1->position().z + dh1;
 		float h2 = body2->position().z + dh2;
 		if(k1 && k2){
-			if(fabs(h2 - h1) < kangaroo_max_height_switch && fabs(body1->mass_inv - body2->mass_inv) > kangaroo_min_mass_switch)
+			if(xm::abs(h2 - h1) < kangaroo_max_height_switch &&
+                    xm::abs(body1->mass_inv - body2->mass_inv) > kangaroo_min_mass_switch)
 				if(body2->mass_inv < body1->mass_inv)
 					k2 = 0;
 				else 
@@ -164,7 +165,7 @@ int Contact::set(float penetration_, const Vect3f& cp1_, const Vect3f& cp2_, Rig
 					k1 = 0;
 			}
 		if(k1){
-			body1->kangaroo_height = max(body1->kangaroo_height, (int)round(h2));
+			body1->kangaroo_height = max(body1->kangaroo_height, (int) xm::round(h2));
 			body1->kangaroo_mode = 1;
 			if(!body1->controlled()){
 				Vect3f delta = body1->position() - body2->position();
@@ -175,7 +176,7 @@ int Contact::set(float penetration_, const Vect3f& cp1_, const Vect3f& cp2_, Rig
 				}
 			}
 		else{
-			body2->kangaroo_height = max(body2->kangaroo_height, (int)round(h1));
+			body2->kangaroo_height = max(body2->kangaroo_height, (int) xm::round(h1));
 			body2->kangaroo_mode = 1;
 			if(!body2->controlled()){
 				Vect3f delta = body2->position() - body1->position();
@@ -193,10 +194,12 @@ int Contact::set(float penetration_, const Vect3f& cp1_, const Vect3f& cp2_, Rig
 	if(!body1->prm().analyse_body_obstacle || !body2->prm().analyse_body_obstacle)
 		return 0;
 
+    /* TODO this seems to mess flying units when colliding specially Bombies, Im not smart enough to figure out the purpose of obstacle points
 	if(body1->controlled())
 		body1->add_obstacle_point(body1->position() + cp1g);
 	if(body2->controlled())
 		body2->add_obstacle_point(body2->position() + cp2g);
+    */
 
 	show(RED);
 	normal.z = 0;
@@ -238,7 +241,7 @@ void Contact::resolve()
 			float t5 = normal[1];
 			Azz += (body2->mass_inv+t8*t8*body2->TOI_inv)*t6*t6+normal[2]*normal[2]*body2->mass_inv+(-2.0*t8*body2->TOI_inv*t7*t6+(body2->mass_inv+t7*t7*body2->TOI_inv)*t5)*t5;
 			}
-		Azz = fabs(Azz) > FLT_EPS ? 1.f/Azz : 0;
+		Azz = xm::abs(Azz) > FLT_EPS ? 1.f / Azz : 0;
 		Azz_inited = 1;
 		}
 

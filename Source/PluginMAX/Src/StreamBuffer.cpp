@@ -5,60 +5,8 @@
 #include <memory.h>
 #include <assert.h>
 #include <stdio.h>
-#include <math.h>
 #include "StreamBuffer.h"
-
-#define STREAM_BUFFER_RESIZE					1024
-
-#
-
-inline double StringToFloat(char *buf)
-{
-	int i;
-	double a=0;
-	if(buf[0]==0) return a;
-	double f_sign,f_int=0,f_fract=0,f_power=0;
-	for(i=0;buf[i]!='+'&&buf[i]!='-'&&buf[i]<'0'&&buf[i]>'9';i++)
-		if(buf[i]) return a;
-	// вычислене целой части
-	if(buf[i]=='-') { f_sign=-1; i++; } else { if(buf[i]=='+') i++; f_sign=1; }
-	for(;buf[i]&&'0'<=buf[i]&&buf[i]<='9';i++)
-		f_int=(f_int*10)+(buf[i]-'0');
-	if(buf[i]==0) 
-	{
-		assert(std::isfinite(a));
-		return a=f_sign*f_int;
-	}
-	// вычислене дробной части
-	if(buf[i]=='.'||buf[i]==',')
-	{ 
-		i++;
-		for(double f_count=0.1f;buf[i]&&'0'<=buf[i]&&buf[i]<='9';i++,f_count*=0.1f)
-			f_fract+=(buf[i]-'0')*f_count;
-	}
-	if(buf[i]==0) 
-	{
-		assert(std::isfinite(a));
-		return a=f_sign*(f_int+f_fract);
-	}
-	// вычисление степени числа
-	if(buf[i]=='e')
-	{
-		i++;
-		double f_sign_power;
-		if(buf[i]==0) 
-		{
-			assert(std::isfinite(a));
-			return a=f_sign*(f_int+f_fract);
-		}
-		if(buf[i]=='-') { f_sign_power=-1; i++; } else { if(buf[i]=='+') i++; f_sign_power=1; }
-		for(;buf[i]&&'0'<=buf[i]&&buf[i]<='9';i++)
-			f_power=(f_power*10)+(buf[i]-'0');
-		f_power=pow(10.,f_power*f_sign_power);
-	}
-	assert(std::isfinite(a));
-	return a=f_sign*(f_int+f_fract)*f_power;
-}
+#include "xmath.h"
 
 cStream::cStream()
 {
@@ -220,14 +168,6 @@ cStream& cStream::operator << (double a)
 	write(buf,strlen(buf));
 	return *this; 
 }
-cStream& cStream::operator << (long double a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	sprintf(buf,"%Lf",a);
-	write(buf,strlen(buf));
-	return *this; 
-}
 cStream& cStream::operator << (const char *a)
 { 
 	assert(lpBuffer); 
@@ -313,14 +253,6 @@ cStream& cStream::operator >> (double &a)
 	char buf[256];
 	(*this)>>buf;
 	a=(double)StringToFloat(buf);
-	return *this; 
-}
-cStream& cStream::operator >> (long double &a)
-{ 
-	assert(lpBuffer); 
-	char buf[256];
-	(*this)>>buf;
-	a=(long double)StringToFloat(buf);
 	return *this; 
 }
 cStream& cStream::operator >> (char *buf)

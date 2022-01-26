@@ -181,7 +181,7 @@ void FieldDispatcher::UpdateTile()
 	tile_global = 0;
 	for(int yt = 0; yt < tileMapSizeY(); yt++)
 		for(int xt = 0; xt < tileMapSizeX(); xt++){
-			BYTE& cur_tile = tile_map_(xt, yt);
+			uint8_t& cur_tile = tile_map_(xt, yt);
 			cur_tile = 0;
 			int tile_size = t2m(1);
 			int x_begin = t2m(xt);
@@ -382,7 +382,7 @@ int FieldDispatcher::getIncludingCluster(const Vect3f& r)
 	float yf = floorf(y);
 	
 	int xi = clamp(round(xf), 1, mapSizeX() - 2);
-	int yi = clamp(round(yf), 1, mapSizeY() - 2);
+	int yi = clamp(xm::round(yf), 1, mapSizeY() - 2);
 	
 	float dx = x - xf;
 	float dy = y - yf;
@@ -395,8 +395,8 @@ int FieldDispatcher::getIncludingCluster(const Vect3f& r)
   	float x = r.x*inv_scale_shl;
 	float y = r.y*inv_scale_shl;
 
-	int xi=round(x-0.5f);
-	int yi=round(y-0.5f);
+	int xi= xm::round(x - 0.5f);
+	int yi= xm::round(y - 0.5f);
 	float dx = x - xi;
 	float dy = y - yi;
 	
@@ -418,8 +418,8 @@ float FieldDispatcher::getGraphZ(float r_x,float r_y)
 	float x = r_x*inv_scale_shl;
 	float y = r_y*inv_scale_shl;
 
-	int xi=round(x-0.5f);
-	int yi=round(y-0.5f);
+	int xi= xm::round(x - 0.5f);
+	int yi= xm::round(y - 0.5f);
 	float dx = x - xi;
 	float dy = y - yi;
 	
@@ -521,7 +521,7 @@ float ray_triangle_intersection(const Vect3f points[3], const Vect3f& origin, co
 	float t44 = b[1];
 	float t43 = b[2];
 	float t36 = t51*t48+t50*t46+t49*t47;
-	if(fabs(t36) < FLT_EPS)
+	if(xm::abs(t36) < FLT_EPS)
 		return FLT_INF;
 	t36 = 1/t36;
 	float t2 = -((t40*t44-t43*t41)*t48+(t45*t41-t42*t44)*t46+(t42*t43-t45*t40)*t47)*t36;
@@ -577,7 +577,7 @@ int FieldDispatcher::castRay(const Vect3f& origin, const Vect3f& direction_or_po
 		return ray_cell_intersection(x1, y1, t_zero, origin, direction, intersection, normal);
 
 	const int F_PREC = 16;
-	if(abs(x2 - x1) > abs(y2 - y1)){
+	if(xm::abs(x2 - x1) > xm::abs(y2 - y1)){
 		int a = x2 - x1;
 		int b = y2 - y1;
 		int x = x1;
@@ -631,7 +631,7 @@ int FieldDispatcher::calcPenalty(const Vect3f& center, float radius, float feedb
 {
 	int xc = w2m(center.xi());
 	int yc = w2m(center.yi());
-	int D = ((int)round(radius) >> scale) + 1;
+	int D = ((int) xm::round(radius) >> scale) + 1;
 	float d_best = FLT_INF;
 	int x_best, y_best;
 	const Vect3f* n_best;
@@ -639,14 +639,14 @@ int FieldDispatcher::calcPenalty(const Vect3f& center, float radius, float feedb
 		for(int x = xc - D; x <= xc + D; x++){
 			const Vect3f& n = normal(x, y);
 			float d = n.x*(center.x - m2w(x)) + n.y*(center.y - m2w(y)) + n.z*(center.z - height(x, y));
-			if(fabs(d_best) > fabs(d)){
+			if(xm::abs(d_best) > xm::abs(d)){
 				d_best = d;
 				x_best = x;
 				y_best = y;
 				n_best = &n;
 				}
 			}
-	if(fabs(d_best) < radius){
+	if(xm::abs(d_best) < radius){
 		f = *n_best*(d_best*force_field_penalty_stiffness);
 		r.set(m2w(x_best), m2w(y_best), height(x_best, y_best));
 		return 1;
@@ -736,7 +736,7 @@ void FieldCluster::Animate(float dt)
 
 	switch(animate_type){
 	case FIELD_STARTING:
-		CurrentDiffuse.a = round(Diffuse.a*phase);
+		CurrentDiffuse.a = xm::round(Diffuse.a * phase);
 		if(phase >= 1)
 			animate_type = FIELD_STARTED;
 		break;
@@ -744,7 +744,7 @@ void FieldCluster::Animate(float dt)
 		CurrentDiffuse = Diffuse;
 		break;
 	case FIELD_STOPPING:
-		CurrentDiffuse.a = round(Diffuse.a*(1 - phase));
+		CurrentDiffuse.a = xm::round(Diffuse.a * (1 - phase));
 		if(phase >= 1)
 			animate_type = FIELD_STOPPED;
 		break;

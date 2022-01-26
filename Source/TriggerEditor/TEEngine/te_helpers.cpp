@@ -21,10 +21,10 @@
 namespace te_h{
 
 
-BYTE check_inters(const CPoint& a, const CPoint& b, const CPoint* pts, 
-				  float* pkx, float *pky)
+uint8_t check_inters(const CPoint& a, const CPoint& b, const CPoint* pts,
+                          float* pkx, float *pky)
 {
-	for(BYTE i = 0; i < 3; ++i)
+	for(uint8_t i = 0; i < 3; ++i)
 	{
 		if(cross_segms(a, b, pts[i], pts[i+1],pkx, pky))
 			return i;
@@ -69,17 +69,17 @@ void getLinkTriangle(CPoint const& pt_from, CPoint const& pt_to, TRIANGLE &trg)
 	ort_f.normalize(10.f);//получаем  единичные вектор * параметр функции
 	Vect2f normal(ort_f.y, -ort_f.x);
 
-	const CPoint ort_x2((int)round(ort_f.x)<<1, (int)round(ort_f.y)<<1);
+	const CPoint ort_x2((int) xm::round(ort_f.x) << 1, (int) xm::round(ort_f.y) << 1);
     //точка, к которой будет сходиться стрела
 	trg[0] = pt_to;
 	trg[1] = CPoint(pt_to - ort_x2);
 	trg[2] = CPoint(pt_to - ort_x2);
 
-	trg[1].x += (int)round(normal.x)>>1;
-	trg[1].y += (int)round(normal.y)>>1;
+	trg[1].x += (int) xm::round(normal.x) >> 1;
+	trg[1].y += (int) xm::round(normal.y) >> 1;
 
-	trg[2].x += (int)round(-normal.x)>>1;
-	trg[2].y += (int)round(-normal.y)>>1;
+	trg[2].x += (int) xm::round(-normal.x) >> 1;
+	trg[2].y += (int) xm::round(-normal.y) >> 1;
 }
 
 CPoint const getLinkBegin(Trigger const& ownedTrigger, TriggerLink const& link)
@@ -103,7 +103,7 @@ CSize getLinkOffset(const CPoint& ptFrom, const CPoint& ptTo,
 
 	float kx = 0.f;
 
-	BYTE bSide = check_inters(ptFrom, ptTo,pts, &kx, NULL);
+	uint8_t bSide = check_inters(ptFrom, ptTo, pts, &kx, NULL);
 	ASSERT(0.f<= kx&&kx<=1.f);
 
 	CSize dir = ptTo - ptFrom;

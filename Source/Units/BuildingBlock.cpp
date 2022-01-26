@@ -43,7 +43,7 @@ void terUnitBuildingBlock::AvatarQuant()
 	avatar()->setPose(BodyPoint->pose());
 
 	realAvatar()->setBuild(0.5f);
-	realAvatar()->setHologram(0.5f + sinf(ConstructionScale) * 0.5f);
+	realAvatar()->setHologram(0.5f + xm::sin(ConstructionScale) * 0.5f);
 	realAvatar()->setTexture(Player->HologramPoint);
 
 	switch(ChainMode){
@@ -57,9 +57,9 @@ void terUnitBuildingBlock::AvatarQuant()
 	realAvatar()->setPhase(ChainAnimation.phase());
 
 	if(FireSoundPoint && fireFactor_ > 0.0001f){
-		FireSoundPoint->play();
 		FireSoundPoint->setVolume(fireFactor_);
 		FireSoundPoint->setFrequency(fireFactor_);
+        FireSoundPoint->play();
 	}
 }
 
@@ -67,7 +67,7 @@ void terUnitBuildingBlock::Quant()
 {
 	terUnitReal::Quant();
 
-	ConstructionScale += 0.1f * M_PI;
+	ConstructionScale += 0.1f * XM_PI;
 
 	average(fireFactor_, (float)(BlockMode == BUILDING_BLOCK_MODE_WORK), 0.2f);
 }

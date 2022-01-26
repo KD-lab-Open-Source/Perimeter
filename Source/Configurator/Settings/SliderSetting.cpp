@@ -48,7 +48,7 @@ UINT SliderSetting::getValueId() const{
 
 int SliderSetting::storeValueToWnd(float storeValue) const
 {
-	return round(storeValue*100);
+	return xm::round(storeValue * 100);
 }
 
 float SliderSetting::wndValueToStore(int value) const

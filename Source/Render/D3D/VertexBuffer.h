@@ -12,14 +12,14 @@ public:
 	~cVertexBufferInternal();
 	void Destroy();
 
-	BYTE* Lock(int minvertex);
+	uint8_t* Lock(int minvertex);
 	void Unlock(int num_write_vertex);
 	inline int GetSize(){return numvertex-cur_min_vertex;};
 
 	void Create(int bytesize,int vertexsize,int fmt);
-	void DrawPrimitive(PRIMITIVETYPE Type,UINT Count,const MatXf &m);
-	void DrawPrimitive(PRIMITIVETYPE Type,UINT Count);
-	void DrawIndexedPrimitive(UINT Count);
+	void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m);
+	void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count);
+	void DrawIndexedPrimitive(uint32_t Count);
 };
 
 template <class vertex>
@@ -38,12 +38,12 @@ public:
 		buf.Create(bytesize,sizeof(vertex),vertex::fmt);
 	}
 
-	inline void DrawPrimitive(PRIMITIVETYPE Type,UINT Count,const MatXf &m)
+	inline void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
 	{
 		buf.DrawPrimitive(Type,Count,m);
 	}
 
-	inline void DrawPrimitive(PRIMITIVETYPE Type,UINT Count)
+	inline void DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count)
 	{
 		buf.DrawPrimitive(Type,Count);
 	}
@@ -52,7 +52,7 @@ public:
 
 class cQuadBufferInternal:protected cVertexBufferInternal
 {
-	BYTE* start_vertex;
+	uint8_t* start_vertex;
 	int vertex_index;
 public:
 	cQuadBufferInternal();

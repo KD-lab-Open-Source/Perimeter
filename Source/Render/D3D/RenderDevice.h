@@ -20,45 +20,6 @@ inline int Power2up(int n)
 
 const int POLYGONMAX=1024;
 
-enum eMaterialMode
-{
-	MAT_COLOR_ADD_SPECULAR	=1<<4,	
-
-	MAT_ALPHA_ADDBLENDALPHA	=1<<5,	
-	MAT_ALPHA_BLEND			=1<<6,	
-	MAT_ALPHA_ADDBLEND		=1<<7,	
-	MAT_ALPHA_SUBBLEND		=1<<29,
-	MAT_BUMP				=1<<9,
-    MAT_NORMAL				=1<<10,
-
-	MAT_ALPHA_TEST			=1<<8,
-
-	MAT_IS_BLEND			= MAT_ALPHA_ADDBLENDALPHA|MAT_ALPHA_BLEND|MAT_ALPHA_ADDBLEND|MAT_ALPHA_SUBBLEND,
-	// only d3d version
-	// render type
-	MAT_TEXMATRIX_STAGE1	=1<<16,
-	MAT_TEXNORMAL_STAGE2	=1<<18,
-	
-	MAT_RENDER_SPHEREMAP	=1<<22,
-	MAT_LIGHT				=1<<31
-};
-
-enum eRenderStateCullMode
-{
-    RENDERSTATE_CULL_NONE	=	1,
-    RENDERSTATE_CULL_CW		=	2,
-    RENDERSTATE_CULL_CCW	=	3,
-    RENDERSTATE_CULL_FORCE	=	0x7fffffff,
-};
-enum eRenderStateTextureAddress 
-{
-    TADDRESS_WRAP			= 1,
-    TADDRESS_MIRROR			= 2,
-    TADDRESS_CLAMP			= 3,
-    TADDRESS_BORDER			= 4,
-    TADDRESS_FORCE_DWORD	= 0x7fffffff, 
-};
-
 struct sTextureFormatData
 {
 	int rBitCount,gBitCount,bBitCount,aBitCount;
@@ -82,23 +43,6 @@ struct sTextureFormatData
 	}
 };
 
-struct sDataRenderMaterial
-{
-	sColor4f	Ambient;
-	sColor4f	Diffuse;
-	sColor4f	Specular;
-	sColor4f	Emissive;
-	float		Power;
-
-	float Phase;
-	int			mat;//eMaterialMode
-	cTexture	*Tex[2];
-	MatXf		TexMatrix;
-	float		MaterialAnimPhase;
-
-	sDataRenderMaterial()			{ Phase=0; MaterialAnimPhase=0; }
-};
-
 class cIUnkClass;
 class cObjMesh;
 
@@ -120,7 +64,7 @@ public:
 	virtual void SetDefaultFont(cFont *pFont);
 
 	virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true)	{ return -1; }
-	virtual int CreateCubeTexture(class cTexture *Texture,LPCSTR fname)			{ return -1;};
+	virtual int CreateCubeTexture(class cTexture *Texture, const char* fname)			{ return -1;};
 	virtual int DeleteTexture(class cTexture *Texture)							{ return -1; }
 	virtual void* LockTexture(class cTexture *Texture,int& Pitch)				{VISASSERT(0);return NULL;}
 	virtual void UnlockTexture(class cTexture *Texture)							{VISASSERT(0);}
@@ -151,9 +95,9 @@ public:
 
 	virtual void RestoreDeviceIfLost()											{ }
 
-	DWORD GetRenderMode(){return RenderMode;}
+	uint32_t GetRenderMode(){return RenderMode;}
 
-	virtual LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, UINT SrcData) {return NULL;}
+	virtual LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData) {return NULL;}
 
 	virtual void SetDialogBoxMode(bool enable)=0;
 //protected:
@@ -166,7 +110,7 @@ public:
 
 	bool				bActiveScene;
 	bool				bWireFrame;
-	DWORD				nSupportTexture;
+	uint32_t				nSupportTexture;
 
 	float				kShadow;
 protected:
@@ -192,7 +136,7 @@ void BuildBumpMap(int x,int y,void *pSrc,void *pDst,int fmtBumpMap);
 extern class cURenderDevice *gb_RenderDevice;
 
 //Величина visMap должна быть TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,BYTE* visMap,bool clear);
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear);
 void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box);
 
 enum TILEMAP_DRAW

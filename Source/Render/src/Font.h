@@ -8,24 +8,25 @@ public:
 	cFontInternal(int kind=KIND_FONT);
 	virtual ~cFontInternal();
 
-	bool Create(LPCSTR root_dir,LPCSTR language_dir,LPCSTR fname,int h,bool silentErr=0);
+	bool Create(const std::string& root_dir, const std::string& locale, const std::string& fname, int h, bool silentErr=false);
 	
 	virtual cTexture* GetTexture()		{return pTexture;};
 	virtual float GetHeight()			{return FontHeight*GetTexture()->GetHeight();}
-	bool Reload(LPCSTR root_dir,LPCSTR language_dir);
+	bool Reload(const char* root_dir);
 
 	std::vector<Vect3f>		Font; // x,y - position, z - font width
 	float				FontHeight;
 
 	std::string font_name;
-	int GetStatementHeight(){return statement_height;};
+    std::string locale;
+	int GetStatementHeight() const {return statement_height;};
 protected:
 	int statement_height;
 	cTexture* pTexture;
 	friend class cFont;
 	
-	bool CreateTexture(LPCSTR fontname,LPCSTR fname,int height);
-	bool CreateImage(LPCSTR filename,LPCSTR fontname,int height,class cFontImage* image);
+	bool CreateTexture(const char* fontname, const char* fname, int height);
+	bool CreateImage(const char* filename, const char* fontname, int height, class cFontImage* image);
 	bool Save(const char* fname,cFontImage& fnt);
 	bool Load(const char* fname,cFontImage& fnt);
 };

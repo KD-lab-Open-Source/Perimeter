@@ -18,9 +18,9 @@ const string CosInterpolator3D::TYPE_NAME = "Cosine";
 
 float CosInterpolator3D::interpolate(const Vector3D &v) {
 	//TODO: optimization needed
-	xi = (int) floor(v.x);
-	yi = (int) floor(v.y);
-	zi = (int) floor(v.z);
+	xi = xm::floor(v.x);
+	yi = xm::floor(v.y);
+	zi = xm::floor(v.z);
 	xd = v.x - xi;
 	yd = v.y - yi;
 	zd = v.z - zi;
@@ -97,7 +97,7 @@ float CosInterpolator3D::interpolate(const Vector3D &v) {
 }
 
 float CosInterpolator3D::cosInterpolate(float h1, float h2, float shift) {
-	coss = (1.0 - cos(shift * 3.1415926)) * 0.5;
+	coss = (1.0 - xm::cos(shift * 3.1415926)) * 0.5;
 	return h1 * (1.0 - coss) + h2 * coss;
 }
 

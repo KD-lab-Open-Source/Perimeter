@@ -7,7 +7,7 @@ public:
 	~terGeoControl();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void Start();
 	void Quant();
@@ -46,7 +46,7 @@ public:
 	~terGeoInfluence();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void Quant();
 	void Generate(float time);
@@ -62,7 +62,7 @@ public:
 	~terGeoBreak();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void Quant();
 	void Generate(float time);
@@ -79,7 +79,7 @@ public:
 	~terGeoFault();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void Quant();
 	void Generate(float time);
@@ -100,7 +100,7 @@ public:
 	~terGeoHead();
 
 	SaveUnitData* universalSave(SaveUnitData* data);
-	void universalLoad(const SaveUnitData* data);
+	void universalLoad(SaveUnitData* data);
 
 	void Quant();
 	void Generate(float time);

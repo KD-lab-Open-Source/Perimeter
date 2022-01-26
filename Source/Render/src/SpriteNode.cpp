@@ -34,7 +34,8 @@ void cSpriteNode::Draw(cCamera *DrawNode)
 		DrawNode->GetScene()->GetLighting(GetGlobalMatrix().trans(),fDiffuse,fSpecular);
 		Diffuse.set(fDiffuse*GetDiffuse());
 	}else
-		Diffuse.set(GetDiffuse().GetR(),GetDiffuse().GetG(),GetDiffuse().GetB(),round(255*GetDiffuse().a*GetIntensity()));
+		Diffuse.set(GetDiffuse().GetR(), GetDiffuse().GetG(), GetDiffuse().GetB(),
+                    xm::round(255 * GetDiffuse().a * GetIntensity()));
 
 	cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice->GetBufferXYZDT1();
 	sVertexXYZDT1 *v=buf->Lock(4);

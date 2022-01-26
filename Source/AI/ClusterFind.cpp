@@ -37,15 +37,15 @@ ClusterFind::ClusterFind(int _dx,int _dy,int _max_distance)
 {
 	dx=_dx;dy=_dy;
 	max_distance=_max_distance;
-	pmap=new DWORD[dx*dy];
+	pmap=new uint32_t[dx * dy];
 	pone=new Front[max_cell_in_front];
 	ptwo=new Front[max_cell_in_front];
 	size_one=size_two=0;
 
-	walk_map=new BYTE[dx*dy];
+	walk_map=new uint8_t[dx * dy];
 
 	is_used_size=dx*dy;
-	is_used=new BYTE[is_used_size];
+	is_used=new uint8_t[is_used_size];
 	memset(is_used,0,is_used_size);
 
 	is_used_xmin=dx;
@@ -94,7 +94,7 @@ void ClusterFind::Set(bool enable_smooting)
 	{
 		for(int x=0;x<dx;x++)
 		{
-			DWORD p=pmap[y*dx+x];
+			uint32_t p=pmap[y * dx + x];
 			if(p==0)
 			{
 				all_cluster.resize(cur_num+1);
@@ -124,7 +124,7 @@ void ClusterFind::Relink()
 
 		for(int i=0;i<size;i++)
 		{
-			DWORD il=c.index_link[i];
+			uint32_t il=c.index_link[i];
 			xassert(//il>=0 && 
 				il<all_cluster.size());
 			c.link[i]=&all_cluster[il];
@@ -146,7 +146,7 @@ void ClusterFind::CheckAllLink()
 		xassert(c.ycenter>=0 && c.ycenter<4096);
 		xassert(/*c.self_id>=0 &&*/	c.self_id<8192);
 
-		std::vector<DWORD>::iterator itd;
+		std::vector<uint32_t>::iterator itd;
 		FOR_EACH(c.index_link,itd)
 		{
 			xassert(/* *itd>=0 && */*itd<all_cluster.size());
@@ -172,7 +172,7 @@ void ClusterFind::ClusterOne(int x,int y,int id,Cluster& c)
 
 	int num_point=1;
 	pmap[y*dx+x]=id;
-	BYTE weq=walk_map[y*dx+x];
+	uint8_t weq=walk_map[y * dx + x];
 
 	c.x=x;c.y=y;
 	c.xcenter=x;
@@ -192,16 +192,16 @@ void ClusterFind::ClusterOne(int x,int y,int id,Cluster& c)
 		for(int j=0;j<size_one;j++)
 		{
 			Front& pos=pone[j];
-			DWORD& p=pmap[pos.y*dx+pos.x];
+            uint32_t & p=pmap[pos.y * dx + pos.x];
 
 			for(int k=0;k<size_child;k++)
 			{
-				DWORD xx=pos.x+sx[k],yy=pos.y+sy[k];
+				uint32_t xx= pos.x + sx[k],yy= pos.y + sy[k];
 				if(xx>=dx || yy>=dy)continue;
 
-				DWORD addp=yy*dx+xx;
-				DWORD& pd=pmap[addp];
-				BYTE w=walk_map[addp];
+				uint32_t addp= yy * dx + xx;
+                uint32_t & pd=pmap[addp];
+				uint8_t w=walk_map[addp];
 
 				if(pd!=0)
 				{
@@ -241,10 +241,10 @@ void ClusterFind::ClusterOne(int x,int y,int id,Cluster& c)
 	c.ycenter/=num_point;
 	c.temp_set=true;
 
-	std::vector<DWORD>::iterator it;
+	std::vector<uint32_t>::iterator it;
 	FOR_EACH(vtemp_set,it)
 	{
-		DWORD d=*it;
+		uint32_t d=*it;
 		xassert(d<all_cluster.size());
 		Cluster& cd=all_cluster[d];
 		cd.temp_set=true;
@@ -321,9 +321,9 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 	xassert(up.x>=0 && up.x<dx && up.y>=0 && up.y<dy);
 	xassert(up_to.x>=0 && up_to.x<dx && up_to.y>=0 && up_to.y<dy);
 
-	DWORD qfrom=pmap[from.y*dx+from.x];
-	DWORD qcenter=pmap[up.y*dx+up.x];
-	DWORD qto=pmap[up_to.y*dx+up_to.x];
+	uint32_t qfrom=pmap[from.y * dx + from.x];
+	uint32_t qcenter=pmap[up.y * dx + up.x];
+	uint32_t qto=pmap[up_to.y * dx + up_to.x];
 
 	Vect2i out;
 	LINE_RET ret;
@@ -380,8 +380,8 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 	FOR_EACH(front,it)
 	{
 		Front c=*it;
-		float d=sqrtf(sqr(from.x-c.x)+sqr(from.y-c.y));
-		d+=sqrtf(sqr(to.x-c.x)+sqr(to.y-c.y));
+		float d= xm::sqrt(sqr(from.x - c.x) + sqr(from.y - c.y));
+		d+= xm::sqrt(sqr(to.x - c.x) + sqr(to.y - c.y));
 		if(distance>d)
 		{
 			f=c;
@@ -391,7 +391,7 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 	
 	for(int i=0;i<size_child8;i++)
 	{
-		DWORD xx=f.x+sx8[i],yy=f.y+sy8[i];
+		uint32_t xx= f.x + sx8[i],yy= f.y + sy8[i];
 		if(xx<dx && yy<dy)
 		{
 			if(pmap[yy*dx+xx]==qcenter)
@@ -408,14 +408,14 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 
 	{
 		std::vector<Vect2i> p;
-		BYTE cur=is_used[f.y*dx+f.x];
+		uint8_t cur=is_used[f.y * dx + f.x];
 
 		Vect2i cf=f;
-		for(BYTE b=cur-1;b>=2;b--)
+		for(uint8_t b= cur - 1; b >= 2; b--)
 		{
 			for(int i=0;i<size_child8;i++)
 			{
-				DWORD xx=cf.x+sx8[i],yy=cf.y+sy8[i];
+				uint32_t xx= cf.x + sx8[i],yy= cf.y + sy8[i];
 				if(xx<dx && yy<dy)
 				{
 					if(is_used[yy*dx+xx]==b)
@@ -516,13 +516,13 @@ bool ClusterFind::IterativeFindPath(Vect2i from, Vect2i center,
 class EmptyHeuristic
 {
 public:
-	inline float operator()(BYTE from,BYTE to){return 0;}
+	inline float operator()(uint8_t from, uint8_t to){return 0;}
 };
 
 ClusterFind::LINE_RET 
-	ClusterFind::Line(int xfrom,int yfrom,int xto,int yto,
-					   DWORD prev,DWORD eq,int& xeq,int& yeq,
-					   bool enable_add_one)
+	ClusterFind::Line(int xfrom, int yfrom, int xto, int yto,
+                      uint32_t prev, uint32_t eq, int& xeq, int& yeq,
+                      bool enable_add_one)
 {
 	float x,y;
 	float lx,ly;
@@ -542,26 +542,26 @@ ClusterFind::LINE_RET
 	lx=xto-xfrom;
 	ly=yto-yfrom;
 	int t,maxt;
-	if(fabsf(lx)>fabsf(ly))
+	if(xm::abs(lx) > xm::abs(ly))
 	{
-		maxt=fabsf(lx);
-		ly=ly/fabsf(lx);
+		maxt= xm::abs(lx);
+		ly= ly / xm::abs(lx);
 		lx=(lx>0)?+1:-1;
 	}else
 	{
-		maxt=fabsf(ly);
-		lx=lx/fabsf(ly);
+		maxt= xm::abs(ly);
+		lx= lx / xm::abs(ly);
 		ly=(ly>0)?+1:-1;
 	}
 
 	Cluster& cprev=all_cluster[prev-1];
 	Cluster& ceq=all_cluster[eq-1];
 
-	BYTE max_walk=max(cprev.walk,ceq.walk);
+	uint8_t max_walk=max(cprev.walk, ceq.walk);
 #ifdef CF_UP_BIT
 	//Не считать непроходимым поле, 
 	//если юнит направился сквозь него
-	BYTE xor_mask=((cprev.walk^ceq.walk)&UP_MASK)?0:UP_MASK;
+	uint8_t xor_mask= ((cprev.walk ^ ceq.walk) & UP_MASK) ? 0 : UP_MASK;
 #endif
 
 	//Надо вынести, так как эвристическая строчка и зависит от level_detail
@@ -572,8 +572,8 @@ ClusterFind::LINE_RET
 	for(t=0;t<=maxt;t++)
 	{
 		//Здесь использовать x,y
-		int ix=round(x),iy=round(y);
-		DWORD q=pmap[iy*dx+ix];
+		int ix= xm::round(x),iy= xm::round(y);
+		uint32_t q=pmap[iy * dx + ix];
 		Cluster& cur=all_cluster[q-1];
 
 #ifdef CF_UP_BIT
@@ -608,8 +608,8 @@ ClusterFind::LINE_RET
 	return L_COMPLETE;
 }
 
-bool ClusterFind::LineWalk(int xfrom,int yfrom,int xto,int yto,
-					   BYTE max_walk)
+bool ClusterFind::LineWalk(int xfrom, int yfrom, int xto, int yto,
+                           uint8_t max_walk)
 {
 	int dirx=xto-xfrom,diry=yto-yfrom;
 
@@ -631,7 +631,7 @@ bool ClusterFind::LineWalk(int xfrom,int yfrom,int xto,int yto,
 	for(t=0;t<=maxt;t++)
 	{
 		//Здесь использовать x,y
-		BYTE w=walk_map[y*dx+x];
+		uint8_t w=walk_map[y * dx + x];
 		if(w>max_walk)
 			return false;
 	
@@ -655,8 +655,8 @@ bool ClusterFind::LineWalk(int xfrom,int yfrom,int xto,int yto,
 }
 
 
-void ClusterFind::FindClusterFront(int x,int y,DWORD to,
-	std::vector<Front>& front)
+void ClusterFind::FindClusterFront(int x, int y, uint32_t to,
+                                   std::vector<Front>& front)
 {
 	{
 		if(is_used_xmin<=is_used_xmax)
@@ -681,7 +681,7 @@ void ClusterFind::FindClusterFront(int x,int y,DWORD to,
 	size_one=1;
 
 	int num_point=1;
-	DWORD id=pmap[y*dx+x];
+	uint32_t id=pmap[y * dx + x];
 
 	is_used[y*dx+x]=1;
 
@@ -696,18 +696,18 @@ void ClusterFind::FindClusterFront(int x,int y,DWORD to,
 		for(int j=0;j<size_one;j++)
 		{
 			Front& pos=pone[j];
-			DWORD& p=pmap[pos.y*dx+pos.x];
+            uint32_t & p=pmap[pos.y * dx + pos.x];
 
 			bool enable_add=false;
 
 			for(int k=0;k<size_child8;k++)
 			{
-				DWORD xx=pos.x+sx8[k],yy=pos.y+sy8[k];
+				uint32_t xx= pos.x + sx8[k],yy= pos.y + sy8[k];
 				if(xx>=dx || yy>=dy)continue;
 
-				DWORD addp=yy*dx+xx;
-				DWORD& pd=pmap[addp];
-				BYTE& w=is_used[addp];
+				uint32_t addp= yy * dx + xx;
+                uint32_t & pd=pmap[addp];
+				uint8_t& w=is_used[addp];
 
 				if(pd!=id)
 				{
@@ -751,7 +751,7 @@ void ClusterFind::Smooting()
 
 	for(int y=1;y<dy-1;y++)
 	{
-		BYTE* p=walk_map+y*dx;
+		uint8_t* p= walk_map + y * dx;
 		for(int x=1;x<dx-1;x++)
 		{
 			int b=p[x];
@@ -854,7 +854,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 			for(j=0;j>=imin;j--)
 			{
 				c=in_path[j];
-				len_from+=sqrtf(sqr(c.x-cur.x)+sqr(c.y-cur.y));
+				len_from+= xm::sqrt(sqr(c.x - cur.x) + sqr(c.y - cur.y));
 				cur=c;
 			}
 
@@ -862,7 +862,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 			for(j=0;j<=imax;j++)
 			{
 				c=in_path[j];
-				len_to+=sqrtf(sqr(c.x-cur.x)+sqr(c.y-cur.y));
+				len_to+= xm::sqrt(sqr(c.x - cur.x) + sqr(c.y - cur.y));
 				cur=c;
 			}
 
@@ -886,7 +886,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 		cf.dx=c1.x-c0.x;
 		cf.dy=c1.y-c0.y;
 
-		float len=sqrtf(sqr(cf.dx)+sqr(cf.dy));
+		float len= xm::sqrt(sqr(cf.dx) + sqr(cf.dy));
 		float mul=(left)?1:-1;
 		cf.cs= (cf.dy/len)*mul;
 		cf.sn=-(cf.dx/len)*mul;
@@ -899,7 +899,7 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 	bool no_all_escape;
 
 	const bool badd=true;
-	const BYTE cmax_walk=4;
+	const uint8_t cmax_walk=4;
 
 	do
 	{
@@ -921,8 +921,8 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 
 				Vect2i cur;//Рассчитать
 				cur=in_path[i];
-				cur.x+=round(cf.cs*curd);
-				cur.y+=round(cf.sn*curd);
+				cur.x+= xm::round(cf.cs * curd);
+				cur.y+= xm::round(cf.sn * curd);
 
 
 				if(cur.x<0)cur.x=0;
@@ -938,9 +938,9 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 
 					Vect2i p0=in_path[i-1];
 
-					BYTE wfrom=walk_map[p0.y*dx+p0.x],
+					uint8_t wfrom=walk_map[p0.y * dx + p0.x],
 						 wto  =walk_map[p1.y*dx+p1.x];
-					BYTE max_walk=max(wfrom,wto);
+					uint8_t max_walk=max(wfrom, wto);
 					if(badd)max_walk=max(max_walk,cmax_walk);
 
 					if(!LineWalk(prev.x,prev.y,cur.x,cur.y,max_walk))
@@ -954,9 +954,9 @@ max_distance - желаемый сдвиг (равен расстоянию ме
 					Vect2i& next=out_path[i+1];
 
 					Vect2i p2=in_path[i+1];
-					BYTE wfrom=walk_map[p1.y*dx+p1.x],
+					uint8_t wfrom=walk_map[p1.y * dx + p1.x],
 						 wto  =walk_map[p2.y*dx+p2.x];
-					BYTE max_walk=max(wfrom,wto);
+					uint8_t max_walk=max(wfrom, wto);
 					if(badd)max_walk=max(max_walk,cmax_walk);
 
 					if(!LineWalk(cur.x,cur.y,next.x,next.y,max_walk))
@@ -1029,7 +1029,7 @@ bool ClusterFind::SetLaterQuant()
 	{
 		for(int x = 0;x<dx;x++)
 		{
-			DWORD p = pmap[y*dx+x];
+			uint32_t p = pmap[y * dx + x];
 			if(p==0)
 			{
 				all_cluster.resize(set_later_cur_num+1);

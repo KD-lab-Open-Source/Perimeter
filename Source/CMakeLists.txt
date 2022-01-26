@@ -11,17 +11,28 @@ SET(perimeter_LINK_LIBS
         #Libraries
         ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
+        ${SDL2_MIXER_LIBRARY}
+        ${SDL2_NET_LIBRARY}
 )
 
 IF(FFMPEG_FOUND)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBRARIES})
+    IF(OPTION_FFMPEG_MOVIES)
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${FFMPEG_LIBSWSCALE_LIBRARIES} ${FFMPEG_LIBAVFILTER_LIBRARIES})
+    ENDIF()
 ENDIF()
+
+#simpleini
+FetchContent_Declare(simpleini
+        GIT_REPOSITORY    https://github.com/brofield/simpleini
+        GIT_TAG           origin/master
+        GIT_SHALLOW       ON
+)
+FetchContent_MakeAvailable(simpleini)
+INCLUDE_DIRECTORIES(${simpleini_SOURCE_DIR})
 
 IF(NOT PERIMETER_WINDOWS)
     #Non Windows target specifics
-    
-    INCLUDE(FetchContent)
-    INCLUDE(ExternalProject)    
 
     #pevents retrieval
     FetchContent_Declare(pevents
@@ -40,14 +51,25 @@ IF(NOT PERIMETER_WINDOWS)
 
     IF (OPTION_DXVK)
         MESSAGE("Using DXVK-native for D3D9 API")
+
+        SET(DXVK_NATIVE_BUILD_COMMAND meson)
+        IF (MACOS AND CMAKE_OSX_ARCHITECTURES)
+            #Cross compile script, this assumes CMAKE_OSX_ARCHITECTURES only contains 1 arch
+            SET(DXVK_NATIVE_BUILD_COMMAND
+                    ${PROJECT_SOURCE_DIR}/macos/dxvk-native.sh
+                    ${CMAKE_OSX_ARCHITECTURES}
+                    ${PROJECT_SOURCE_DIR}/macos/
+            )
+        ENDIF()
         #DXVK-native wrapper lib retrieval and building
+        #TODO change this to upstream once changes are merged
         ExternalProject_Add(dxvk-native
-                GIT_REPOSITORY    https://github.com/Joshua-Ashton/dxvk-native
-                GIT_TAG           origin/master
+                GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
+                GIT_TAG           "aed08f8e5f4b069514dc4068b91e624cd4e0a495"
                 GIT_SHALLOW       ON
                 BUILD_ALWAYS      OFF
                 CONFIGURE_HANDLED_BY_BUILD ON
-                CONFIGURE_COMMAND meson ../dxvk-native
+                CONFIGURE_COMMAND ${DXVK_NATIVE_BUILD_COMMAND} ../dxvk-native -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
                 BUILD_COMMAND     ninja
                 INSTALL_COMMAND   ""
         )
@@ -56,7 +78,11 @@ IF(NOT PERIMETER_WINDOWS)
                 "${SOURCE_DIR}/include/native/directx"
                 "${SOURCE_DIR}/include/native/windows"
         )
-        set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+        IF (MACOS)
+            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.dylib)
+        ELSE()
+            set(DXVK_NATIVE_D3D9_LIB ${BINARY_DIR}/src/d3d9/libdxvk_d3d9.so)
+        ENDIF()
     
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
         INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
@@ -81,10 +107,10 @@ ADD_SUBDIRECTORY("Network")
 IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus ExodusD3D9)
-ELSE()
-    ADD_SUBDIRECTORY("PlayOgg")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} PlayOgg)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
+    IF (NOT OPTION_HEADLESS)
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ExodusD3D9)
+    ENDIF()
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
     ADD_SUBDIRECTORY("TriggerEditor")
@@ -92,7 +118,7 @@ ENDIF()
 
 #Add Windows and DirectX libs
 IF(PERIMETER_WINDOWS)
-    #Select 64 or 32 compiled libs
+    #DirectX 64 or 32 libs
     IF(PERIMETER_ARCH_64)
         MESSAGE("Linking against DirectX 64 bits")
         SET(LIBS_MSDXSDK ${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Lib/x64)
@@ -103,15 +129,9 @@ IF(PERIMETER_WINDOWS)
     LINK_DIRECTORIES(BEFORE ${LIBS_MSDXSDK})
 
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-        #DirectX libs
         ${LIBS_MSDXSDK}/d3d9.lib
         ${LIBS_MSDXSDK}/d3dx9.lib
-        ${LIBS_MSDXSDK}/dsound.lib
         ${LIBS_MSDXSDK}/DxErr.lib
-
-        #Windows libs
-        winmm
-        wsock32
     )
     
     #Use these libs as AVI fallback
@@ -125,13 +145,16 @@ IF(PERIMETER_WINDOWS)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
             legacy_stdio_definitions
         )
+    ELSE()
+        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+            mingw32
+        )
     ENDIF()
 ENDIF()
 
 INCLUDE_DIRECTORIES(
     "${PROJECT_SOURCE_DIR}/Source/Game"
     "${PROJECT_SOURCE_DIR}/Source/XTool"
-    "${PROJECT_SOURCE_DIR}/Source/PlayOgg"
     "${PROJECT_SOURCE_DIR}/Source/XPrm" #For Statistics.h
     "${PROJECT_SOURCE_DIR}/Source/Util"
     "${PROJECT_SOURCE_DIR}/Source/Render/inc"
@@ -156,7 +179,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Game/CameraManager.cpp
         Game/MonkManager.cpp
         Game/MusicManager.cpp
-        Game/PlayBink.cpp
+        Game/VideoPlayer.cpp
         Game/qd_textdb.cpp
         Units/Economic.cpp
         Game/Player.cpp
@@ -216,16 +239,16 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Util/DebugUtil.cpp
         Util/EditArchive.cpp
         Util/MissionDescription.cpp
-        Util/SaveSQSH-1251.cpp
-        Util/SaveConditions-1251.cpp
-        Util/SaveActions-1251.cpp
-        Util/SaveOthers-1251.cpp
+        Util/SaveSQSH.cpp
+        Util/SaveConditions.cpp
+        Util/SaveActions.cpp
+        Util/SaveOthers.cpp
         Util/Save.cpp
         Util/AVWrapper.cpp
-        Game/StdAfx.cpp
         Util/SynchroTimer.cpp
         Util/SystemUtil.cpp
         Util/XPrmArchive.cpp
+        Util/Localization.cpp
         UserInterface/BGScene.cpp
         UserInterface/chaos.cpp
         UserInterface/controls.cpp
@@ -257,11 +280,15 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         UserInterface/BelligerentSelect.cpp
         UserInterface/BattleMenu.cpp
         UserInterface/GraphicsOptions.cpp
-        UserInterface/LanMenu.cpp
         UserInterface/MainMenu.cpp
+        UserInterface/Menu/SingleMenu.cpp
+        UserInterface/Menu/AddonsMenu.cpp
+        UserInterface/Menu/MultiplayerList.cpp
+        UserInterface/Menu/MultiplayerHost.cpp
+        UserInterface/Menu/MultiplayerJoin.cpp
+        UserInterface/Menu/MultiplayerLobby.cpp
         UserInterface/MessageBox.cpp
         UserInterface/MonoSelect.cpp
-        UserInterface/OnlineMenu.cpp
         UserInterface/OptionsMenu.cpp
         Physics/Missile.cpp
         Physics/MultiBodyDispatcher.cpp
@@ -280,7 +307,7 @@ SET(perimeter_SRCS ${perimeter_SRCS}
         Units/EnergyConsumer.cpp
         TriggerEditor/TriggerExport.cpp
         Units/Triggers.cpp
-)
+        UserInterface/Menu/MultiplayerCommon.cpp)
 
 ADD_EXECUTABLE(perimeter ${PERIMETER_EXE_FLAGS} ${perimeter_SRCS})
 
@@ -292,7 +319,7 @@ ENDIF()
 #Add gperftools
 IF(OPTION_GPERFTOOLS)
     MESSAGE("WARNING: Linking gperftools")
-    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc)
+    SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} -ltcmalloc -lprofiler)
 ENDIF()
 
 #Add XPrmLib if Debug build
@@ -301,30 +328,35 @@ IF(PERIMETER_DEBUG)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} XPrmLib)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(perimeter  ${perimeter_LINK_LIBS})
+#Add SDL2 main
+SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
+    ${SDL2MAIN_LIBRARY}
+)
 
-IF(NOT PERIMETER_DEBUG)
-    IF (MSVC_CL_BUILD)
-        MESSAGE("Scripts won't be checked under MSVC yet")
-    ELSE()
-        ADD_DEPENDENCIES(dependencies ScriptsCheck)
-        MESSAGE("Scripts will be checked")
-    ENDIF()
-ELSEIF(OPTION_PROCESS_SCRIPTS)
+TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
+
+IF(OPTION_PROCESS_SCRIPTS)
     ADD_DEPENDENCIES(dependencies ScriptsCompile)
     MESSAGE("Scripts will be compiled")
 ELSE()
-    MESSAGE("Not compiling or checking Scripts")
+    MESSAGE("Not compiling Scripts")
 ENDIF()
+IF(OPTION_CHECK_SCRIPTS)
+    ADD_DEPENDENCIES(dependencies ScriptsCheck)
+    MESSAGE("Scripts will be checked")
+ELSE()
+    MESSAGE("Not checking Scripts")
+ENDIF()
+
 IF(NOT PERIMETER_WINDOWS)
     #Make Exodus D3D9 depend on lib that provides D3D9 API
     IF (OPTION_DXVK)
         ADD_DEPENDENCIES(ExodusD3D9 dxvk-native)
     ENDIF()
-    #Make other modules depend on Exodus D3D9
-    ADD_DEPENDENCIES(dependencies ExodusD3D9)
-ELSE()
-    ADD_DEPENDENCIES(PlayOgg dependencies)
+    IF (NOT OPTION_HEADLESS)
+        #Make other modules depend on Exodus D3D9
+        ADD_DEPENDENCIES(dependencies ExodusD3D9)
+    ENDIF()
 ENDIF()
 ADD_DEPENDENCIES(PluginMAX dependencies)
 ADD_DEPENDENCIES(Terra dependencies)
@@ -333,3 +365,4 @@ ADD_DEPENDENCIES(Render dependencies)
 ADD_DEPENDENCIES(Sound dependencies)
 ADD_DEPENDENCIES(Network dependencies)
 ADD_DEPENDENCIES(perimeter dependencies)
+target_compile_options(perimeter PUBLIC ${PERIMETER_COMPILE_OPTIONS})

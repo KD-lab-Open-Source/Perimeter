@@ -14,25 +14,30 @@
 
 #include "GameShell.h"
 
-#include "WinVideo.h"
 #include "Config.h"
 
 #include "PerimeterSound.h"
-#include "PlayOgg.h"
 #include "Controls.h"
 
 #include "MusicManager.h"
 
-#include "UnitAttribute.h"
 #include "PerimeterShellUI.h"
 
 #include "../PluginMAX/ZIPStream.h"
 
 #include "Universe.h"
 #include "../resource.h"
+#include "files/files.h"
+#include "Localization.h"
+#include "codepages/codepages.h"
 
 #include <SDL.h>
+#include <SDL_image.h>
+
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#define execv _execv
 //Needed for extracting HWND from SDL_Window, in Linux it gives conflict due to XErrorHandler
 #include <SDL_syswm.h>
 #endif
@@ -48,7 +53,7 @@
 #include "GameContent.h"
 
 const char* currentVersion = 
-"Ver "
+"Version "
 #include "../version.h"
 #ifdef _FINAL_VERSION_
 " Final"
@@ -64,19 +69,9 @@ const char* currentVersion =
 " (" __DATE__ " " __TIME__ ")"
 ;
 
-#ifdef _SINGLE_DEMO_
-const char* currentShortVersion = 
-"Комтек'04 демо, v"
+const char* currentShortVersion =
 #include "../version.h"
 ;
-#endif
-
-#ifndef _DEMO_
-const char* currentShortVersion = 
-"v"
-#include "../version.h"
-;
-#endif
 
 static int terMissionEdit = 0;
 
@@ -97,7 +92,7 @@ int terScreenSizeX = 800;
 int terScreenSizeY = 600;
 float terGraphicsGamma = 1;
 int terGrabInput = 1;
-int applicationRunBackground = 0;
+int applicationRunBackground = 1;
 
 int terDrawMeshShadow = 2;
 int terShadowType	= 0;
@@ -115,6 +110,8 @@ Vect2i lastWindowSize(0,0);
 int lastWindowResize = 0;
 
 static bool applicationHasFocus_ = true;
+bool applicationRestartFlag = false;
+std::vector<std::string> applicationRestartArgs;
 
 SDL_Window* sdlWindow = nullptr;
 HWND hWndVisGeneric = nullptr;
@@ -128,8 +125,6 @@ SyncroTimer scale_time;
 void PerimeterDataChannelLoad();
 void PerimeterDataChannelSave();
 
-void SDL_event_poll();
-
 bool applicationHasFocus()
 {
 	return applicationHasFocus_;
@@ -140,7 +135,7 @@ bool applicationIsGo()
 	return applicationHasFocus() || (gameShell && gameShell->alwaysRun());
 }
 
-STARFORCE_API void SetShadowType(int shadow_map,int shadow_size,bool update)
+void SetShadowType(int shadow_map,int shadow_size,bool update)
 {
 	static int old_shadow_control=-1;
 	// 0 - planar map
@@ -191,7 +186,16 @@ void RestoreGDI()
         SDL_ShowWindow(sdlWindow);
 	}
 
-}	
+}
+
+void request_application_restart(std::vector<std::string>* args) {
+    applicationRestartFlag = true;
+    if (args) {
+        applicationRestartArgs = *args;
+    } else {
+        applicationRestartArgs.clear();
+    }
+}
 
 void InternalErrorHandler()
 {
@@ -229,22 +233,21 @@ void refresh_window_size(bool update_resolution) {
 void CrashHandler()
 {
     if (gameShell && universe()) {
-        std::string crash = std::string(CRASH_DIR) + PATH_SEP + std::to_string(time(nullptr)) + "_";
-        
-        //First attempt to save reel
+        std::string crash = CRASH_DIR;
+        terminate_with_char(crash, PATH_SEP);
+        crash += std::to_string(time(nullptr)) + "_";
+
+        //Attempt to save reel
         terHyperSpace::SAVE_REPLAY_RESULT statereel = universe()->savePlayReel((crash + "reel").c_str());
         fprintf(stderr, "Crash reel result: %d\n", statereel);
 
         //Attempt to save state
-        MissionDescription mission(gameShell->CurrentMission);
-        mission.setSaveName((crash + "save").c_str());
-        mission.missionNumber = gameShell->currentSingleProfile.getCurrentMissionNumber();
-        bool statesave = universe()->universalSave(mission, true);
+        bool statesave = gameShell->universalSave((crash + "save").c_str(), true);
         fprintf(stderr, "Crash save result: %d\n", statesave);
     }
 }
 
-void initAttributes();
+void initInterfaceAttributes();
 
 void HTManager::init()
 {
@@ -258,12 +261,12 @@ void HTManager::init()
 	
 	//xt_get_cpuid();
 	//xt_getMMXstatus();
-	initclock();
 
 	allocation_tracking("before");
 
-	if(IniManager("Perimeter.ini").getInt("Game","ZIP"))
-		ZIPOpen("resource.pak");
+	if (IniManager("Perimeter.ini").getInt("Game","ZIP")) {
+        ZIPOpen("resource.pak");
+    }
 
 	PerimeterDataChannelLoad();
 
@@ -274,7 +277,8 @@ void HTManager::init()
 
 	initGraphics();
 
-	initAttributes();
+    initInterfaceAttributes();
+    initAttributes();
 
 	allocation_tracking("PerimeterGraphicsInit");
 	
@@ -370,6 +374,7 @@ void PerimeterSetupDisplayMode() {
 #if PERIMETER_DEBUG
     printf("PerimeterSetupDisplayMode\n");
 #endif
+    SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
     bool windowFullscreen = SDL_GetWindowFlags(sdlWindow)&WINDOW_FULLSCREEN_FLAG;
     
     //Create display mode with current settings
@@ -449,6 +454,11 @@ void PerimeterSetupDisplayMode() {
 #if PERIMETER_DEBUG
             printf("SDL_SetWindowSize\n");
 #endif
+            
+            //Grab window
+            if (terGrabInput) {
+                SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
+            }
         }
     }
 
@@ -456,7 +466,7 @@ void PerimeterSetupDisplayMode() {
     SDL_GetWindowSize(sdlWindow, &terScreenSizeX, &terScreenSizeY);
 }
 
-HWND PerimeterCreateWindow() {
+void PerimeterCreateWindow() {
     Uint32 window_flags = SDL_WINDOW_HIDDEN;
 #ifndef _WIN32
     //On non Windows we use dxvk-native which uses Vulkan
@@ -493,7 +503,32 @@ HWND PerimeterCreateWindow() {
     }
 
     //Setup window icon
-    //TODO SDL_SetWindowIcon(sdlWindow, icon);
+    std::string icon_path;
+    const char* icon_path_str = check_command_line("icon");
+    if (icon_path_str) icon_path = icon_path_str;
+    if (icon_path.empty()) {
+        icon_path = convert_path_content("resource/icons/icon.png");
+    }
+    if (icon_path.empty()) {
+        const char* icon_path_ptr = GET_PREF_PATH();
+        if (icon_path_ptr) {
+            icon_path += "icon.png";
+            SDL_free((void*) icon_path_ptr);
+        }
+    }
+    if (!icon_path.empty()) {
+        if (std::filesystem::exists(std::filesystem::u8path(icon_path))) {
+            SDL_Surface* icon = IMG_Load(icon_path.c_str());
+            if (icon) {
+                SDL_SetWindowIcon(sdlWindow, icon);
+                SDL_FreeSurface(icon);
+            } else {
+                fprintf(stderr, "Window icon IMG_Load error: %s\n", IMG_GetError());
+            }
+        } else {
+            printf("Window icon not found in resource/icons/icon.png or in %s\n", icon_path.c_str());
+        }
+    }
     
     //Show the window
     SDL_ShowWindow(sdlWindow);
@@ -502,7 +537,7 @@ HWND PerimeterCreateWindow() {
     PerimeterSetupDisplayMode();
     
     //Grab input
-    if (terGrabInput) {
+    if (terGrabInput && !terFullScreen) {
         SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
     }
 
@@ -512,10 +547,10 @@ HWND PerimeterCreateWindow() {
 	SDL_VERSION(&wm_info.version);
 	SDL_GetWindowWMInfo(sdlWindow, &wm_info);
 	
-    return wm_info.info.win.window;
+    hWndVisGeneric = wm_info.info.win.window;
 #else
     //dxvk-native uses HWND as SDL2 window handle, so this is allowed
-    return reinterpret_cast<HWND>(sdlWindow);
+    hWndVisGeneric = static_cast<HWND>(sdlWindow);
 #endif
 }
 
@@ -536,7 +571,7 @@ cInterfaceRenderDevice* SetGraph()
 //	if(HTManager::instance()->IsUseHT())
 		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
 
-    hWndVisGeneric = PerimeterCreateWindow();
+    PerimeterCreateWindow();
 
     int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,hWndVisGeneric,terScreenRefresh);
 	if(error)
@@ -550,21 +585,13 @@ cInterfaceRenderDevice* SetGraph()
 
 //--------------------------------
 
-void GameShell::SetFontDirectory()
-{
-	terVisGeneric->SetFontRootDirectory("RESOURCE\\LocData");
-	std::string dir=getLocDataPath();
-	dir+="Fonts";
-	terVisGeneric->SetFontDirectory(dir.c_str());
-}
-
 void HTManager::initGraphics()
 {
     initSourceUIResolution();
 	terLogicGeneric = CreateILogicGeneric();
 	terVisGeneric = CreateIVisGeneric();
 	terVisGeneric->SetMapLevel(terMapLevelLOD);
-	GameShell::SetFontDirectory();
+    terVisGeneric->SetFontRootDirectory(getLocRootPath());
 
 	terVisGeneric->SetEffectLibraryPath("RESOURCE\\FX","RESOURCE\\FX\\TEXTURES");
 
@@ -661,15 +688,20 @@ void HTManager::finitGraphics()
 
 //--------------------------------
 
-STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
+void InitSound(bool sound, bool music, bool firstTime)
 {
 	terSoundEnable = sound;
 	terMusicEnable = music;
+    int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
+    int chunkSizeFactor = 12; //1056 bytes under 2 channel 22khz 16 bits 
 
 	if (firstTime) {
 		IniManager ini("Perimeter.ini");
 		terSoundVolume = ini.getFloat("Sound","SoundVolume");
 		terMusicVolume = ini.getFloat("Sound","MusicVolume");
+        IniManager ini_no("Perimeter.ini", false);
+        ini_no.getInt("Sound","MixChannels", mixChannels);
+        ini_no.getInt("Sound","ChunkSize", chunkSizeFactor);
 	}
 
 	if(terSoundEnable  || terMusicEnable){
@@ -677,7 +709,7 @@ STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
 
 		SNDSetLocDataDirectory(getLocDataPath().c_str());
 
-		if(!inited){
+		if(!inited && check_command_line("disable_sound") == nullptr){
 			inited = 1;
 
 			SNDSetSoundDirectory("RESOURCE\\SOUNDS\\EFF\\");
@@ -685,10 +717,12 @@ STARFORCE_API void InitSound(bool sound, bool music, bool firstTime)
 			if(terEnableSoundLog)
 				SNDEnableErrorLog("sound.txt");
 
-			if(SNDInitSound(hWndVisGeneric,true,true)){
+			if(SNDInitSound(mixChannels, chunkSizeFactor)){
 				SNDScriptPrmEnableAll();
-				MpegInitLibrary(SNDGetDirectSound());
-			}
+			} else {
+                terMusicEnable = false;
+                terSoundEnable = false;
+            }
 		}
 	
 		SetVolumeMusic( terMusicVolume );
@@ -725,53 +759,101 @@ void FinitSound()
 	if(!terSoundEnable && !terMusicEnable)
 		return;
 
-	MpegDeinitLibrary();
 	SNDReleaseSound();
 }
 
-//--------------------------------
+//------------------------------
 
-void checkSingleRunning()
-{
-#if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG) && !defined(PERIMETER_EXODUS)
-    //NOTE: with PERIMETER_EXODUS this is disabled due to pevents not supporting named events
-    
-	static HANDLE hSingularEvent = 0;
-	static char psSingularEventName[] = "Perimeter";
+void decode_stacktrace() {
+    const char* stackframes_str = check_command_line("stack_frames");
+    if (stackframes_str) {
+        uint64_t frame_offset = 0;
+        const char* sdlmain_frame_str = check_command_line("stack_reference");
+        if (sdlmain_frame_str) {
+            frame_offset = strtoull(sdlmain_frame_str, nullptr,16);
+        }
+        
+        //Parse each frame address
+        XBuffer buf((char*) stackframes_str, strlen(stackframes_str));
+        while (!buf.end()) {
+            char* p = buf.address() + buf.offset;
+            if (*p == ',') p++;
+            if (*p == '\0') break;
+            uint64_t addr = strtoull(p, &p, 16);
+            buf.offset += p - (buf.address() + buf.offset);
+            
+            //Apply offset if any and correct to our one
+            if (frame_offset) {
+                addr -= frame_offset;
+                addr += reinterpret_cast<uint64_t>(&decodeStackAddress);
+            }
 
-    hSingularEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, psSingularEventName);
-    if(!hSingularEvent){
-		hSingularEvent = CreateEvent(0, TRUE, TRUE, psSingularEventName);
+            std::string line = decodeStackAddress(reinterpret_cast<void*>(addr));
+            if (line.empty()) continue;
+            printf("%s\n", line.c_str());
+        }
+        
+        ErrH.Exit();
     }
-	else{
-		HWND hwnd = FindWindow(0, psSingularEventName);
-		if(hwnd)
-			SetForegroundWindow(hwnd);
-		ErrH.Exit();
-	}
-#endif
 }
 
 //------------------------------
-int main(int argc, char *argv[])
-{
+#ifndef _WIN32
+int main(int argc, char *argv[]) {
     //Call SDL main init
     SDL_SetMainReady();
-    
+
+    return SDL_main(argc, argv);
+}
+#endif
+
+int SDL_main(int argc, char *argv[])
+{
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
 
-    //Check if only one instance is running
-    checkSingleRunning();
+    //Decode stacktrace if requested
+    decode_stacktrace();
+
+    //Init clock
+    initclock();
     
-    //Create crash folder
-    std::filesystem::create_directories(CRASH_DIR);
+    //Redirect stdio and print version
+    ErrH.RedirectStdio();
+    printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
+
+    //Start SDL stuff
+    int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+    if (sdlresult < 0) {
+        ErrH.Abort("Error initializing SDL", XERR_CRITICAL, sdlresult, SDL_GetError());
+    }
+    sdlresult = SDLNet_Init();
+    if (sdlresult < 0) {
+        ErrH.Abort("Error initializing SDLNet", XERR_CRITICAL, sdlresult, SDLNet_GetError());
+    }
 
     //Do game content detection
     detectGameContent();
 
+    //Create some folders
+    for (std::string path : {
+        CRASH_DIR,
+        "cache",
+        "cache/font",
+        "cache/bump",
+    }) {
+        path = convert_path_native(path);
+        bool ok = create_directories(path);
+        xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
+    }
+    std::string path = convert_path_content("resource/saves/") + "Multiplayer";
+    if (!std::filesystem::exists(std::filesystem::u8path(path))) {
+        bool ok = create_directories(path);
+        xassert(ok || std::filesystem::is_directory(std::filesystem::u8path(path)));
+    }
+
     //Load perimeter parameters
-    int xprmcompiler=IniManager("Perimeter.ini", false).getInt("Game","XPrmCompiler");
+    int xprmcompiler = IniManager("Perimeter.ini", false).getInt("Game", "XPrmCompiler");
     check_command_line_parameter("xprm_compiler", xprmcompiler);
     if (xprmcompiler) {
         reload_parameters();
@@ -779,41 +861,24 @@ int main(int argc, char *argv[])
 
     g_controls_converter.LoadKeyNameTable();
 
-    //Start SDL stuff
-    int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    if (sdlresult < 0) {
-        ErrH.Abort("Error initializing SDL", XERR_CRITICAL, sdlresult, SDL_GetError());
-    }
-    
-	int ht=IniManager("Perimeter.ini").getInt("Game","HT");
-	check_command_line_parameter("HT", ht);
-	HTManager* runtime_object = new HTManager(ht);
-	runtime_object->setUseHT(ht?true:false);
+    int ht = IniManager("Perimeter.ini").getInt("Game", "HT");
+    check_command_line_parameter("HT", ht);
+    HTManager* runtime_object = new HTManager(ht);
+    runtime_object->setUseHT(ht ? true : false);
 
-	xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
+    xassert(!(gameShell && gameShell->alwaysRun() && terFullScreen));
 
-	bool run = true;
-	while(run){
-        SDL_event_poll();
+    bool run = true;
+    while (run) {
+        app_event_poll();
 
-#ifndef PERIMETER_EXODUS
-	    //TODO is this necessary under SDL2 in Win32?
-        MSG msg;
-		if(PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)){
-			if(!GetMessage(&msg, NULL, 0, 0))
-				break;
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-			continue;
-		}
-#endif
         //NetworkPause handler
-        static bool runapp=true;
-        if (applicationIsGo()!=runapp){
-            if(gameShell && (!gameShell->alwaysRun()) ){
-                if(gameShell->getNetClient()){
-                    if(gameShell->getNetClient()->setPause(!applicationHasFocus()))
-                        runapp=applicationIsGo();
+        static bool runapp = true;
+        if (applicationIsGo() != runapp) {
+            if (gameShell && (!gameShell->alwaysRun())) {
+                if (gameShell->getNetClient()) {
+                    if (gameShell->getNetClient()->setPause(!applicationHasFocus()))
+                        runapp = applicationIsGo();
                 }
             }
         }
@@ -830,18 +895,61 @@ int main(int argc, char *argv[])
             WaitMessage();
 #endif
         }
-	}
+    }
 
-	delete runtime_object;
+    delete runtime_object;
 	
+    SDLNet_Quit();
 	SDL_Quit();
+    
+    if (applicationRestartFlag) {
+        //NOTE: execv is used since is the only reasonable way to reset all state as launching again
+        //doesn't seem to work due to some parts of code not being properly cleanup during shutdown
+        applicationRestartFlag = false;
+        
+        //Copy the args that launched this game
+        std::vector<char*> exec_argv;
+        for (int i = 0; i < __argc; ++i) {
+            if (startsWith(__argv[i], "tmp_")) {
+                //These are passed internally and are not supposed to pass into next instance
+                continue;
+            }
+            
+            size_t len = strlen(__argv[i]) + 1;
+            char* str = static_cast<char*>(malloc(len));
+            strcpy(str, __argv[i]);
+            exec_argv.emplace_back(str);
+        }
+        
+        //Add extra args
+        for (auto const& arg : applicationRestartArgs) {
+            size_t len = arg.length() + 1;
+            char* str = static_cast<char*>(malloc(len));
+            strcpy(str, arg.c_str());
+            exec_argv.emplace_back(str);
+        }
+
+        //execv last arg must be null for termination
+        exec_argv.emplace_back(nullptr);
+        
+        //launch ourselves again, execution of this process stops here
+        printf("Restarting:");
+        for (auto const& str : exec_argv) {
+            if (str) printf(" %s", str);
+        }
+        printf("\n");
+        int ret = execv(exec_argv[0], exec_argv.data());
+        
+        //We shouldn't reach this
+        ErrH.Abort("Error restarting the application", XERR_USER, ret);
+    }
 
 	return 0;
 }
 
 //--------------------------------
 
-void SDL_event_poll() {
+void app_event_poll() {
     //Check if window resizing has been calm down and propagate event
     if (0 < lastWindowResize) {
         lastWindowResize--;
@@ -882,7 +990,7 @@ void SDL_event_poll() {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN: {
                 //Grab window at click if window is resizable and is not already grabbed
-                if (terGrabInput && applicationHasFocus_ && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
+                if (terGrabInput && !terFullScreen && applicationHasFocus_ && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
                     SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
                 }
                 break;
@@ -952,7 +1060,8 @@ void SDL_event_poll() {
 
 void setLogicFp()
 {
-	_controlfp(_PC_24, _MCW_PC);
+#ifdef _WIN32
+	//_controlfp(_PC_24, _MCW_PC);
 
 #ifndef _FINAL_VERSION_
 	static int enable = IniManager("Perimeter.ini").getInt("Game","ControlFpEnable");
@@ -960,6 +1069,7 @@ void setLogicFp()
 		_controlfp( _controlfp(0,0) & ~(EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL |  EM_INVALID),  _MCW_EM ); 
 		_clearfp();
 	}
+#endif
 #endif
 }
 
@@ -970,7 +1080,7 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
 
 #ifndef PERIMETER_EXODUS
-	OPENFILENAME ofn;
+	OPENFILENAMEA ofn;
 	memset(&ofn,0,sizeof(ofn));
 	char fname[2048];
 	strcpy(fname,filename.c_str());
@@ -984,7 +1094,7 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 	ofn.lpstrInitialDir = initialDir;
 	ofn.Flags = OFN_PATHMUSTEXIST|OFN_HIDEREADONLY|OFN_EXPLORER|OFN_NOCHANGEDIR;
 	ofn.lpstrDefExt = extention;
-	if(!GetOpenFileName(&ofn))
+	if(!GetOpenFileNameA(&ofn))
 		return false;
 	filename = fname;
 	return true;
@@ -1000,7 +1110,7 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 	filter < title < '\0' < "*." < extention < '\0' < '\0';
 
 #ifndef PERIMETER_EXODUS
-	OPENFILENAME ofn;
+	OPENFILENAMEA ofn;
 	memset(&ofn,0,sizeof(ofn));
 	char fname[2048];
 	strcpy(fname,filename.c_str());
@@ -1014,7 +1124,7 @@ bool saveFileDialog(std::string& filename, const char* initialDir, const char* e
 	ofn.lpstrInitialDir = initialDir;
 	ofn.Flags = OFN_PATHMUSTEXIST|OFN_HIDEREADONLY|OFN_EXPLORER|OFN_NOCHANGEDIR;
 	ofn.lpstrDefExt = extention;
-	if(!GetSaveFileName(&ofn))
+	if(!GetSaveFileNameA(&ofn))
 		return false;
 	filename = fname;
 	return true;
@@ -1033,8 +1143,10 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
-	FOR_EACH(items, i)
-		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
+	FOR_EACH(items, i) {
+        std::string text = convertToCodepage(*i, getLocale());
+		AppendMenuA(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
+    }
 	
 	Vect2i ps = gameShell->convertToScreenAbsolute(gameShell->mousePosition());
 	int index = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, ps.x, ps.y, 0, hWndVisGeneric, 0);
@@ -1047,6 +1159,7 @@ const char* popupMenu(std::vector<const char*> items) // returns zero if cancel
 		return 0;
 #else
     //TODO
+    fprintf(stderr, "popupMenu not implemented for this platform\n");
     return 0;
 #endif
 }
@@ -1060,8 +1173,10 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 	HMENU hMenu = CreatePopupMenu();
 	
 	std::vector<const char*>::iterator i;
-	FOR_EACH(items, i)
-		AppendMenu(hMenu, MF_STRING, 1 + i - items.begin(), *i);
+	FOR_EACH(items, i) {
+        std::string text = convertToCodepage(*i, getLocale());
+		AppendMenuA(hMenu, MF_STRING, 1 + i - items.begin(), text.c_str());
+    }
 	
 	Vect2i ps = gameShell->convertToScreenAbsolute(gameShell->mousePosition());
 	int index = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, ps.x, ps.y, 0, hWndVisGeneric, 0);
@@ -1074,6 +1189,7 @@ int popupMenuIndex(std::vector<const char*> items) // returns -1 if cancel
 		return -1;
 #else
     //TODO
+    fprintf(stderr, "popupMenuIndex not implemented for this platform\n");
     return -1;
 #endif
 }
@@ -1100,7 +1216,7 @@ static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPara
 			HWND h;
 
 			h=GetDlgItem(hwnd,IDC_INPUT_TEXT);
-			GetWindowText(h,tmpstr,256);
+			GetWindowTextA(h,tmpstr,256);
 			editTextString = tmpstr;
 
 			EndDialog(hwnd,IDOK);
@@ -1116,7 +1232,7 @@ static INT_PTR CALLBACK DialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPara
 		{
 			HWND h;
 			h=GetDlgItem(hwnd,IDC_INPUT_TEXT);
-			SetWindowText(h, editTextString.c_str());
+			SetWindowTextA(h, editTextString.c_str());
 		}
 		return TRUE;
 	}
@@ -1129,44 +1245,21 @@ const char* editText(const char* defaultValue)
 	editTextString = defaultValue;
 #ifndef PERIMETER_EXODUS
 	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT),hWndVisGeneric,DialogProc);
+#else
+    //TODO
+    fprintf(stderr, "editText not implemented for this platform\n");
 #endif
 	return editTextString.c_str();
 }
 
-const char* editTextMultiLine(const char* defaultValue, HWND hwnd)
+const char* editTextMultiLine(const char* defaultValue, void* hwnd)
 {
 	editTextString = defaultValue;
 #ifndef PERIMETER_EXODUS
-	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE),hwnd,DialogProc);
+	DialogBox(GetModuleHandle(0),MAKEINTRESOURCE(IDD_DIALOG_INPUT_TEXT_MULTILINE), static_cast<HWND>(hwnd), DialogProc);
+#else
+    //TODO
+    fprintf(stderr, "editTextMultiLine not implemented for this platform\n");
 #endif
 	return editTextString.c_str();
-}
-
-std::string locale;
-
-const std::string getLocale() {
-    if (locale.empty()) {
-        locale = getStringSettings("Locale");
-        if (locale.empty()) {
-            locale = IniManager("Perimeter.ini", false).get("Game","DefaultLanguage");
-            if (locale.empty()) {
-                locale = "English";
-            }
-        }
-        if (locale.empty()
-            || (convert_path_resource(("RESOURCE\\LocData\\" + locale + "\\").c_str()).empty())) {
-            //Apparently on Steam the DefaultLanguage is Russian which gives issues when downloading game as non russian
-            //so we try switching it in case we don't found on gamedata, in case English fails use Russian by default
-            if (locale == "English") {
-                locale = "Russian";
-            } else {
-                locale = "English";
-            }
-        }
-    }
-    return locale;
-}
-
-const std::string getLocDataPath() {
-    return "Resource/LocData/" + getLocale() + "/";
 }

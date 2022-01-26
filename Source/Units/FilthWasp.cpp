@@ -29,13 +29,13 @@ void terFilthSwarmWasp::SetHole(std::vector<terFilthSpot::HoleStruct>& hole_posi
 	{
 		Vect3f v(hole_position_[i].pos.x,hole_position_[i].pos.y,0);
 
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(v.x),round(v.y)) && 
-			!terCheckFilthChaos(round(v.x),round(v.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(v.x), xm::round(v.y)) &&
+           !terCheckFilthChaos(xm::round(v.x), xm::round(v.y)))
 		{
 			hole_position.push_back(v);
 
 			if(SpotPoint->initialGeoprocess() && !hole_position_[i].inited)
-				wasp_hole_point.push_back(new s_WaspBirthGeoAction(round(v.x),round(v.y),4));
+				wasp_hole_point.push_back(new s_WaspBirthGeoAction(xm::round(v.x), xm::round(v.y), 4));
 			hole_position_[i].inited=true;
 		}
 	}
@@ -208,7 +208,7 @@ void terFilthSwarmWasp::GenerationProcess()
 		int holei=terLogicRND(hole_position.size());
 		Vect3f pos(hole_position[holei].x,hole_position[holei].y,0);
 
-		if(SpotPoint && SpotPoint->terCheckFilthPoint(round(pos.x),round(pos.y)))
+		if(SpotPoint && SpotPoint->terCheckFilthPoint(xm::round(pos.x), xm::round(pos.y)))
 		{
 			terFilthWasp* p = safe_cast<terFilthWasp*>(player->buildUnit(GetUnitID()));
 			p->SetSwarm(this);
@@ -379,7 +379,7 @@ void terFilthWasp::addWayPoint()
 	if(begin_move)
 	{
 		float dz=prev_pos_z.z-prev_pos.z;
-		if(fabsf(dz)>speed)
+		if(xm::abs(dz) > speed)
 		{
 			Vect3f pos=prev_pos;
 			pos+=n;
@@ -443,10 +443,10 @@ SaveUnitData* terFilthSwarmWasp::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthSwarmWasp::universalLoad(const SaveUnitData* baseData)
+void terFilthSwarmWasp::universalLoad(SaveUnitData* baseData)
 {
 	terFilthSwarm::universalLoad(baseData);
-	const SaveFilthSwarmWasp* data = safe_cast<const SaveFilthSwarmWasp*>(baseData);
+	SaveFilthSwarmWasp* data = safe_cast<SaveFilthSwarmWasp*>(baseData);
 
 	unit_id=data->unit_id;
 	gen.Load(data->generate);
@@ -461,9 +461,11 @@ void terFilthSwarmWasp::universalLoad(const SaveUnitData* baseData)
 	FOR_EACH(data->unitList,it)
 	if(*it)
 	{
-		terFilthWasp* unit = safe_cast<terFilthWasp*>(player->buildUnit((*it)->attributeID));
-		unit->SetSwarm(this);
-		unit_list.push_back(unit);
+		terFilthWasp* unit = safe_cast<terFilthWasp*>(player->loadUnit(*it, false));
+        if (std::find(unit_list.begin(), unit_list.end(), unit) == unit_list.end()) {
+            unit->SetSwarm(this);
+            unit_list.push_back(unit);
+        }
 		unit->universalLoad(*it);
 	}
 }
@@ -487,9 +489,9 @@ SaveUnitData* terFilthWasp::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terFilthWasp::universalLoad(const SaveUnitData* baseData)
+void terFilthWasp::universalLoad(SaveUnitData* baseData)
 {
-	const SaveFilthWasp* data = safe_cast<const SaveFilthWasp*>(baseData);
+	SaveFilthWasp* data = safe_cast<SaveFilthWasp*>(baseData);
 
 	target_position=data->target_position;
 	center_position=data->center_position;

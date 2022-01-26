@@ -1,5 +1,3 @@
-// TODO: change encoding to utf-8
-
 #include "StdAfx.h"
 
 #include "CameraManager.h"
@@ -97,7 +95,7 @@ AIPlayer* Condition::getPlayer(AIPlayer& aiPlayer, AIPlayerType playerType)
 	case AI_PLAYER_TYPE_WORLD:
 		return safe_cast<AIPlayer*>(universe()->worldPlayer());
 	default:
-		xassert(0 && "Недопустимое значение типа игрока - 'Любой игрок'");
+		xassert(0 && "РќРµРґРѕРїСѓСЃС‚РёРјРѕРµ Р·РЅР°С‡РµРЅРёРµ С‚РёРїР° РёРіСЂРѕРєР° - 'Р›СЋР±РѕР№ РёРіСЂРѕРє'");
 		return &aiPlayer;
 	}
 }
@@ -302,7 +300,7 @@ bool ConditionObjectNearObjectByLabel::check(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 		return false;
 	}												
 	else{
@@ -319,7 +317,7 @@ bool ConditionObjectNearObjectByLabel::check(AIPlayer& aiPlayer)
 
 bool ConditionWeaponIsFiring::check(AIPlayer& aiPlayer)
 {
-	xassert(isBuilding(gun) && "'Спецоружие стреляет' - указать пушку");
+	xassert(isBuilding(gun) && "'РЎРїРµС†РѕСЂСѓР¶РёРµ СЃС‚СЂРµР»СЏРµС‚' - СѓРєР°Р·Р°С‚СЊ РїСѓС€РєСѓ");
 	terBuildingList& list = aiPlayer.buildingList(gun);
 	if(list.empty())
 		return false;
@@ -365,7 +363,7 @@ bool ConditionOutOfEnergyCapacity::check(AIPlayer& aiPlayer)
 bool ConditionNumberOfBuildingByCoresCapacity::check(AIPlayer& aiPlayer)
 {
 	AIPlayer* player = getPlayer(aiPlayer, playerType);
-	return compare((int)round(player->countUnits(building)*factor), player->countUnits(building2), compareOp);
+	return compare((int) xm::round(player->countUnits(building) * factor), player->countUnits(building2), compareOp);
 }
 
 void ConditionUnitClassUnderAttack::checkEvent(AIPlayer& aiPlayer, const Event& event)
@@ -538,7 +536,7 @@ bool ConditionDifficultyLevel::check(AIPlayer& aiPlayer)
 //------------------------------------------------------
 void ActionDelay::activate(AIPlayer& aiPlayer) 
 { 
-	timer.start(scaleByDifficulty ? round(aiPlayer.difficultyPrm().triggerDelayFactor*delay*1000) : delay*1000); 
+	timer.start(scaleByDifficulty ? xm::round(aiPlayer.difficultyPrm().triggerDelayFactor * delay * 1000) : delay * 1000); 
 }
 
 bool ActionDelay::workedOut(AIPlayer& aiPlayer)
@@ -737,7 +735,7 @@ terUnitBase* ActionSellBuilding::findBuilding(AIPlayer& aiPlayer) const
 			}
 			break;
 		case AI_SELL_IF_GUN_CANT_REACH_BUILDINGS: 
-			xassert(0 && "Нельзя в стратегии продажи пушек указывать любое здание");
+			xassert(0 && "РќРµР»СЊР·СЏ РІ СЃС‚СЂР°С‚РµРіРёРё РїСЂРѕРґР°Р¶Рё РїСѓС€РµРє СѓРєР°Р·С‹РІР°С‚СЊ Р»СЋР±РѕРµ Р·РґР°РЅРёРµ");
 			break;
 		}
 	}
@@ -786,7 +784,7 @@ void ActionUpgradeOmega::activate(AIPlayer& aiPlayer)
 //-------------------------------------
 bool ActionChargeCores::automaticCondition(AIPlayer& aiPlayer) const 
 {
-	// !!! Расчитано пока только на зарядку всех
+	// !!! Р Р°СЃС‡РёС‚Р°РЅРѕ РїРѕРєР° С‚РѕР»СЊРєРѕ РЅР° Р·Р°СЂСЏРґРєСѓ РІСЃРµС…
 	terBuildingList& cores = aiPlayer.buildingList(UNIT_ATTRIBUTE_CORE);
 	terBuildingList::iterator ci;
 	FOR_EACH(cores, ci)
@@ -1007,10 +1005,10 @@ bool ActionSquadAttack::workedOut(AIPlayer& aiPlayer)
 				if(ignoreLastTarget)
 					lastTarget_ = target;
 				if(target){
-					#ifndef _FINAL_
-						//XBuffer buf;
-						//buf < "Не назначен класс атаки у " < getEnumNameAlt(squad->currentMutation())
-						//	< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
+					#ifndef _FINAL_VERSION_
+						//XBuffer buf(512, true);
+						//buf < "РќРµ РЅР°Р·РЅР°С‡РµРЅ РєР»Р°СЃСЃ Р°С‚Р°РєРё Сѓ " < getEnumNameAlt(squad->currentMutation())
+						//	< ", С‡С‚РѕР±С‹ Р°С‚Р°РєРѕРІР°С‚СЊ " < getEnumNameAlt(target->attr().ID);
 						//xassert_s(squad->squadUnits().front()->checkFireClass(target), buf);
 					#endif
 					if(!path.empty()){
@@ -1105,10 +1103,10 @@ void ActionAttackBySpecialWeapon::activate(AIPlayer& aiPlayer)
 	if(unit){
 		terBuildingMilitary* warBuilding = safe_cast<terBuildingMilitary*>(unit);
 		terUnitBase* target = findTarget(aiPlayer, warBuilding->position2D(), unit->attr().fireRadiusMin());
-		#ifndef _FINAL_
-			XBuffer buf;
-			buf < "Не назначен класс атаки у " < getEnumNameAlt(unit->attr().ID)
-				< ", чтобы атаковать " < getEnumNameAlt(target->attr().ID);
+		#ifndef _FINAL_VERSION_
+			XBuffer buf(512, true);
+			buf < "РќРµ РЅР°Р·РЅР°С‡РµРЅ РєР»Р°СЃСЃ Р°С‚Р°РєРё Сѓ " < getEnumNameAlt(unit->attr().ID)
+				< ", С‡С‚РѕР±С‹ Р°С‚Р°РєРѕРІР°С‚СЊ " < getEnumNameAlt(target->attr().ID);
 			xassert_s(unit->checkFireClass(target), buf);
 		#endif
 		if(target)
@@ -1151,11 +1149,10 @@ void ActionSetCamera::activate(AIPlayer& aiPlayer)
 		gameShell->setSkipCutScene(false);
 		terCamera->SetCameraFollow(0);
 		std::string camera = cameraSplineName.value();
-		if(camera == "Camera0" || camera == "Camera1" || camera == "Camera2" || camera == "Camera3"){
-			XBuffer buffer;
-			buffer < "Camera" <= aiPlayer.playerStrategyIndex();
-			camera = buffer;
-		}
+		if ((startsWith(camera, "Camera") && camera.length() == 7)
+         || (startsWith(camera, "UserCamera") && camera.length() == 11)) {
+			camera = camera.substr(0, camera.length() - 1) + std::to_string(aiPlayer.playerStrategyIndex());
+        }
 		const SaveCameraSplineData* spline = gameShell->manualData().findCameraSpline(camera.c_str());
 		if(spline){
 			xassert(!spline->path.empty());
@@ -1166,7 +1163,7 @@ void ActionSetCamera::activate(AIPlayer& aiPlayer)
 			}
 			else{
 				terCamera->loadPath(*spline, smoothTransition);
-				terCamera->startReplayPath(round(stepTime*1000), cycles);
+				terCamera->startReplayPath(xm::round(stepTime * 1000), cycles);
 			}
 		}
 	}
@@ -1190,15 +1187,15 @@ void ActionOscillateCamera::activate(AIPlayer& aiPlayer)
 
 void ActionVictory::activate(AIPlayer& aiPlayer) 
 { 
-	if(aiPlayer.active()){
+	if (aiPlayer.active() && !universe()->multiPlayer()) {
 		gameShell->setTriggersDisabled();
 		_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_VICTORY); 
 	}
 } 
 
 void ActionDefeat::activate(AIPlayer& aiPlayer) 
-{ 
-	if(aiPlayer.active()){
+{
+	if (aiPlayer.active() && !universe()->multiPlayer()) {
 		gameShell->setTriggersDisabled();
 		_pShellDispatcher->OnInterfaceMessage(UNIVERSE_INTERFACE_MESSAGE_GAME_DEFEAT); 
 	}
@@ -1238,7 +1235,7 @@ void ActionRepareObjectByLabel::activate(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 	}
 	else{
 		unit->setDamageMolecula(unit->attr().damageMolecula);
@@ -1250,7 +1247,7 @@ void ActionActivateObjectByLabel::activate(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 	}
 	else{
 		unit->setActivity(true);
@@ -1261,7 +1258,7 @@ void ActionDeactivateObjectByLabel::activate(AIPlayer& aiPlayer)
 {
 	terUnitBase* unit = universe()->findUnitByLabel(label);
 	if(!unit){
-		xassert_s(0 && "Объект по метке не найден: ", label);
+		xassert_s(0 && "РћР±СЉРµРєС‚ РїРѕ РјРµС‚РєРµ РЅРµ РЅР°Р№РґРµРЅ: ", label);
 	}
 	else{
 		unit->setActivity(false);
@@ -1276,7 +1273,7 @@ bool ActionMessage::workedOut(AIPlayer& aiPlayer)
 				return true;
 			started_ = true;
 			float soundDuration = _shellIconManager.playSpeech(messageID);
-			int time = (syncroBySound && soundDuration ? round(soundDuration*1000) + speechDurationAddition : duration*1000);
+			int time = syncroBySound && 0 < soundDuration ? static_cast<int>(xm::round(soundDuration * 1000.0f)) + speechDurationAddition : duration * 1000;
 			_shellIconManager.showHint(messageID, time);
 			if(duration)
 				durationTimer.start(time);
@@ -1293,7 +1290,7 @@ void ActionTask::activate(AIPlayer& aiPlayer)
 		return;
 
 	float soundDuration = _shellIconManager.playSpeech(taskID);
-	int time = (syncroBySound && soundDuration ? round(soundDuration*1000) + speechDurationAddition : duration*1000);
+	int time = syncroBySound && 0 < soundDuration ? static_cast<int>(xm::round(soundDuration * 1000.0f)) + speechDurationAddition : duration * 1000;
 	if(showTips)
 		_shellIconManager.showHint(taskID, time, type);
 	_shellIconManager.setTask(taskID, type);
@@ -1324,7 +1321,7 @@ terUnitBase* ActionSetCameraAtObject::findUnit(AIPlayer& aiPlayer)
 			unit = universe()->findUnit(object);
 	}
 
-	xassert(unit && "Самера на объект: объект не найден");
+	xassert(unit && "РЎР°РјРµСЂР° РЅР° РѕР±СЉРµРєС‚: РѕР±СЉРµРєС‚ РЅРµ РЅР°Р№РґРµРЅ");
 
 	return unit;
 }
@@ -1372,7 +1369,7 @@ bool ActionSetCameraAtObject::workedOut(AIPlayer& aiPlayer)
 			if(unit){
 				SaveCameraSplineData spline;
 				spline.path.push_back(SaveCameraData());
-				CameraCoordinate coord(unit->position2D(), cycle(terCamera->coordinate().psi(), 2*M_PI) + 2*M_PI, terCamera->coordinate().theta(), terCamera->coordinate().distance());
+				CameraCoordinate coord(unit->position2D(), cycle(terCamera->coordinate().psi(), 2*XM_PI) + 2*XM_PI, terCamera->coordinate().theta(), terCamera->coordinate().distance());
 				coord.save(spline.path.back());
 				terCamera->loadPath(spline, true);
 				terCamera->startReplayPath(turnTime*1000, 1);
@@ -1478,13 +1475,15 @@ void ActionSetControlEnabled::activate(AIPlayer& aiPlayer)
 //------------------------------------------------------
 void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 {
-	if((action && action->onlyIfAI() && !aiPlayer.isAI()) || (gameShell->triggersDisabled() && aiPlayer.active()) || gameShell->missionEditor())
-		return;
+	if((action && action->onlyIfAI() && !aiPlayer.isAI()) || (gameShell->triggersDisabled() && aiPlayer.active()) || gameShell->missionEditor()) {
+        triggerChain.addLogRecord(*this, (std::string("Skip: ") + name()).c_str());
+        return;
+    }
 
 	switch(state_){
 	case SLEEPING:
 	case DONE:{
-		// Входящие стрелки одного цвета - И, разных - ИЛИ
+		// Р’С…РѕРґСЏС‰РёРµ СЃС‚СЂРµР»РєРё РѕРґРЅРѕРіРѕ С†РІРµС‚Р° - Р, СЂР°Р·РЅС‹С… - РР›Р
 		std::vector<int> conditions(STRATEGY_COLOR_MAX, 0);
 		FOR_EACH_AUTO(incomingLinks_, li)
 			conditions[(*li)->getType()] |= (*li)->active() ? 1 : 2;
@@ -1492,7 +1491,7 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 		FOR_EACH_AUTO(conditions, bi)
 			if(*bi == 1){
 				state_ = CHECKING;
-				triggerChain.addLogRecord(*this, (std::string("П: ") + name()).c_str());
+				triggerChain.addLogRecord(*this, (std::string("Process: ") + name()).c_str());
 				break;
 			}
 		
@@ -1503,19 +1502,21 @@ void Trigger::quant(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 	case CHECKING:
 		if((!condition || condition->checkDebug(aiPlayer)) && (!action || action->automaticCondition(aiPlayer))){
 			activate(aiPlayer, triggerChain);
-			triggerChain.addLogRecord(*this, (std::string("С: ") + name()).c_str());
+			triggerChain.addLogRecord(*this, (std::string("Start: ") + name()).c_str());
 		}
 		else
 			break;
 
 	case WORKING:
 		if(!action || action->workedOut(aiPlayer)){
-			FOR_EACH_AUTO(outcomingLinks_, li)
-				li->activate(triggerChain);
+			FOR_EACH_AUTO(outcomingLinks_, li) {
+                li->activate(triggerChain);
+            }
 			state_ = DONE;
-			if(!active())
-				triggerChain.deactivateTrigger(this);
-			triggerChain.addLogRecord(*this, (std::string("Ф: ") + name()).c_str());
+			if(!active()) {
+                triggerChain.deactivateTrigger(this);
+            }
+			triggerChain.addLogRecord(*this, (std::string("Finish: ") + name()).c_str());
 		}
 		break;
 	}
@@ -1533,16 +1534,16 @@ void Trigger::activate(AIPlayer& aiPlayer, TriggerChain& triggerChain)
 		condition->clear();
 
 	FOR_EACH_AUTO(incomingLinks_, li){
-		if((*li)->active()){ // Деактивировать связи из родительского триггера других цветов
+		if((*li)->active()){ // Р”РµР°РєС‚РёРІРёСЂРѕРІР°С‚СЊ СЃРІСЏР·Рё РёР· СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ С‚СЂРёРіРіРµСЂР° РґСЂСѓРіРёС… С†РІРµС‚РѕРІ
 			Trigger* trigger = (*li)->parent;
             FOR_EACH_AUTO(trigger->outcomingLinks_, lj)
 				if(lj->getType() != (*li)->getType() && !lj->autoRestarted()){
-					if(lj->child && lj->child->state_ == CHECKING) // Выключить другие триггера
+					if(lj->child && lj->child->state_ == CHECKING) // Р’С‹РєР»СЋС‡РёС‚СЊ РґСЂСѓРіРёРµ С‚СЂРёРіРіРµСЂР°
 						lj->child->state_ = lj->child->executionCounter_ ? DONE : SLEEPING;
 					lj->deactivate(triggerChain);
 				}
 			}
-		if(!(*li)->autoRestarted()) // Деактивировать, если тонкая
+		if(!(*li)->autoRestarted()) // Р”РµР°РєС‚РёРІРёСЂРѕРІР°С‚СЊ, РµСЃР»Рё С‚РѕРЅРєР°СЏ
 			(*li)->deactivate(triggerChain);
 		}
 	
@@ -1593,22 +1594,14 @@ void TriggerChain::initializeTriggersAndLinks()
 	find("START")->state_ = Trigger::CHECKING;
 }
 
-void TriggerChain::initializeCameraTrigger(int playerIndex)
-{
-	Trigger* trigger = find("Camera");
-	trigger->state_ = Trigger::CHECKING;
-	if(!trigger->action)
-		trigger->action = new ActionSetCamera;
-	XBuffer buf;
-	buf < "Camera" <= playerIndex;
-	safe_cast<ActionSetCamera*>(trigger->action())->cameraSplineName = buf;
-	activateTrigger(trigger);
-}
-
 void TriggerChain::quant(AIPlayer& aiPlayer)
 {
-	for(int i = 0; i < activeTriggers_.size(); i++)
-		activeTriggers_[i]->quant(aiPlayer, *this);
+#ifdef PERIMETER_DEBUG
+    //printf("TCQ: %s %ld\n", aiPlayer.name(), activeTriggers_.size());
+#endif
+	for(int i = 0; i < activeTriggers_.size(); i++) {
+        activeTriggers_[i]->quant(aiPlayer, *this);
+    }
 }
 
 void TriggerChain::checkEvent(AIPlayer& aiPlayer, const Event& event)
@@ -1620,13 +1613,18 @@ void TriggerChain::checkEvent(AIPlayer& aiPlayer, const Event& event)
 
 void TriggerChain::activateTrigger(Trigger* trigger)
 {
-	if(std::find(activeTriggers_.begin(), activeTriggers_.end(), trigger) == activeTriggers_.end())
-		activeTriggers_.push_back(trigger);
+	if (std::find(activeTriggers_.begin(), activeTriggers_.end(), trigger) == activeTriggers_.end()) {
+        activeTriggers_.push_back(trigger);
+        addLogRecord(*trigger, (std::string("Activate: ") + trigger->name()).c_str());
+    }
 }
 
 void TriggerChain::deactivateTrigger(Trigger* trigger)
 {
-	activeTriggers_.erase(remove(activeTriggers_.begin(), activeTriggers_.end(), trigger), activeTriggers_.end());
+	auto it = activeTriggers_.erase(remove(activeTriggers_.begin(), activeTriggers_.end(), trigger), activeTriggers_.end());
+    if (it != activeTriggers_.end()) {
+        addLogRecord(*trigger, (std::string("Discard: ") + trigger->name()).c_str());
+    }
 }
 
 //------------------------------------------------------
@@ -1643,46 +1641,76 @@ const char* SaveManualData::popupCameraSplineName() const
 
 SaveCameraSplineData* SaveManualData::findCameraSpline(const char* name)
 {
-	std::vector<SaveCameraSplineData>::iterator ci;
-	FOR_EACH(cameras, ci)
-		if(!strcmp(name, ci->name))
-			return &*ci;
+    for (SaveCameraSplineData& ci : cameras) {
+        if(!strcmp(name, ci.name)) {
+            return &ci;
+        }
+    }
 	return 0;
 }
 
 const SaveCameraSplineData* SaveManualData::findCameraSpline(const char* name) const
 {
-	std::vector<SaveCameraSplineData>::const_iterator ci;
-	FOR_EACH(cameras, ci)
-		if(!strcmp(name, ci->name))
-			return &*ci;
-	return 0;
+    for (const SaveCameraSplineData& ci : cameras) {
+        if(!strcmp(name, ci.name)) {
+            return &ci;
+        }
+    }
+	return nullptr;
 }
 
 void SaveManualData::saveCamera(int playerID, const char* triggerName)
 {
-	if(playerID >= players.size())
-		return;
+	if(playerID >= players.size()) {
+        return;
+    }
 	XBuffer name;
 	name < triggerName <= playerID;
 	SaveCameraSplineData* spline = findCameraSpline(name);
 	if(!spline){
-		cameras.push_back(SaveCameraSplineData());
+        cameras.emplace_back();
 		spline = &cameras.back();
 	}
 	spline->name = name;
 	spline->set(terCamera->coordinate().position(), terCamera->coordinate().psi(), terCamera->coordinate().theta(), terCamera->coordinate().distance());
 }
 
+void SaveManualData::copyCamera(int playerID, const char* triggerName, const char* sourceTriggerName) {
+    if(playerID >= players.size()) {
+        return;
+    }
+    std::string sourceSplineName = sourceTriggerName + std::to_string(playerID);
+    if (!findCameraSpline(sourceSplineName.c_str())) {
+        return;
+    }
+    std::string name = triggerName + std::to_string(playerID);
+    SaveCameraSplineData* spline = findCameraSpline(name.c_str());
+    if(!spline){
+        cameras.emplace_back();
+        spline = &cameras.back();
+    }
+    //Get pointer after potential allocation
+    SaveCameraSplineData* sourceSpline = findCameraSpline(sourceSplineName.c_str());
+    spline->name = name;
+    spline->position = sourceSpline->position;
+    spline->angle = sourceSpline->angle;
+    spline->distance = sourceSpline->distance;
+    spline->path.clear();
+    for (const auto& path : sourceSpline->path) {
+        spline->path.emplace_back(path);
+    }
+    spline->useAsSpline = sourceSpline->useAsSpline;
+}
+
 //------------------------------------------------------
-const char* editTextMultiLine(HWND hwnd, const char* initialString)
+const char* editTextMultiLine(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = editTextMultiLine(initialString, hwnd);
 	return name.c_str();
 }
 
-const char* editTextDbID(HWND hwnd, const char* initialString, const char* topMask)
+const char* editTextDbID(void* hwnd, const char* initialString, const char* topMask)
 {
 	static std::string name;
 	name = initialString;
@@ -1727,27 +1755,27 @@ const char* editTextDbID(HWND hwnd, const char* initialString, const char* topMa
 	return name.c_str();
 }
 
-const char* editMessageID(HWND hwnd, const char* initialString)
+const char* editMessageID(void* hwnd, const char* initialString)
 {
 	return editTextDbID(hwnd, initialString, "Mission Tips");
 }
 
-const char* editTaskID(HWND hwnd, const char* initialString)
+const char* editTaskID(void* hwnd, const char* initialString)
 {
 	return editTextDbID(hwnd, initialString, "Mission Tasks");
 }
 
-const char* editMissionDescriptionID(HWND hwnd, const char* initialString)
+const char* editMissionDescriptionID(void* hwnd, const char* initialString)
 {
 	return editTextDbID(hwnd, initialString, "Mission Description");
 }
 
-const char* editModelNameDialog(HWND hwnd, const char* initialString)
+const char* editModelNameDialog(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
 	if(openFileDialog(name, "Resourse\\Missions", "m3d", "Mission Name")){
-		strlwr((char*)name.c_str());
+        name = string_to_lower(name.c_str());
         size_t pos = name.find("resource");
 		if(pos != std::string::npos)
 			name.erase(0, pos);
@@ -1756,12 +1784,12 @@ const char* editModelNameDialog(HWND hwnd, const char* initialString)
 	return 0;
 }
 
-const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
+const char* editTriggerChainNameDialog(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
 	if(openFileDialog(name, "Scripts" PATH_SEP_STR "Triggers", "scr", "Trigger Chain Name")){
-		strlwr((char*)name.c_str());
+        name = string_to_lower(name.c_str());
 		size_t pos = name.rfind(PATH_SEP);
 		if(pos != std::string::npos)
 			name.erase(0, pos + 1);
@@ -1770,7 +1798,7 @@ const char* editTriggerChainNameDialog(HWND hwnd, const char* initialString)
 	return 0;
 }
 
-const char* editLabelDialog(HWND hwnd, const char* initialString)
+const char* editLabelDialog(void* hwnd, const char* initialString)
 {
 	static std::string name;
 	name = initialString;
@@ -1791,7 +1819,7 @@ const char* editLabelDialog(HWND hwnd, const char* initialString)
 	return name.c_str();
 }
 
-const char* editCameraSplineName(HWND hwnd, const char* initialString)
+const char* editCameraSplineName(void* hwnd, const char* initialString)
 {
 	return gameShell->manualData().popupCameraSplineName();
 }
@@ -1826,7 +1854,7 @@ const char* editCameraSplineName(HWND hwnd, const char* initialString)
 //	static string name;
 //	name = gameShell->CurrentMission.saveName();
 //	name.erase(name.size() - 4, name.size()); 
-//	strlwr((char*)name.c_str());
+//	string_to_lower((char*)name.c_str());
 //	string subString = "resource\\";
 //	size_t pos = name.find(subString);
 //	xassert(pos != string::npos);

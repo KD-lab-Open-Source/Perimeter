@@ -4,7 +4,6 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(tx3d_SRCS
-        stdafxTX3D.cpp
         Clouds.cpp
         Colorizer3DFactory.cpp
         Empty.cpp
@@ -49,3 +48,4 @@ SET(tx3d_SRCS
 )
 
 ADD_LIBRARY(tx3d STATIC ${tx3d_SRCS})
+target_compile_options(tx3d PUBLIC ${PERIMETER_COMPILE_OPTIONS})

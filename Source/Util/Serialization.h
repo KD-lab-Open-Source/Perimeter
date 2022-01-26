@@ -9,6 +9,22 @@
 #include "SerializationMacro.h"
 #include "xutl.h"
 
+extern unsigned int crc32(const unsigned char *address, unsigned int size, unsigned int crc);
+
+//Does serialization of T into OArchive format and computes CRC of the output buffer
+template<class OArchive, class T>
+static uint32_t getSerializationCRC(T& t, uint32_t crc, int floatDigits = 0) {
+    OArchive ar;
+    ar.binary_friendly = true;
+    XBuffer& buf = ar.buffer();
+    if (floatDigits) {
+        buf.SetDigits(floatDigits);
+    }
+    ar << makeObjectWrapper(t, 0, 0);
+    crc = crc32(reinterpret_cast<const unsigned char*>(buf.address()), buf.tell(), crc);
+    return crc;
+}
+
 //Previously typeid(CLASS_T).name() was used which is not portable, so we attempt to ignore the extra struct/class
 static void extract_type_name(std::string& name) {
     if (startsWith(name, "struct ")) {
@@ -203,7 +219,8 @@ public:
 		return (Enum)0;
 	}
 
-	std::string nameCombination(int bitVector) const {
+    template<typename BV>
+	std::string nameCombination(BV bitVector) const {
 		std::string value;
 		for(typename KeyToName::const_iterator i = keyToName.begin(); i != keyToName.end(); ++i)
 			if((bitVector & i->first) == i->first){
@@ -226,6 +243,39 @@ public:
 			}
 		return value;
 	}
+
+    template<typename BV>
+    std::vector<Enum> keyCombination(BV bitVector) const {
+        std::vector<Enum> keys;
+        for(typename KeyToName::const_iterator i = keyToName.begin(); i != keyToName.end(); ++i) {
+            if ((bitVector & i->first) == i->first) {
+                bitVector &= ~i->first;
+                keys.emplace_back(static_cast<Enum>(i->first.value()));
+            }
+        }
+        return keys;
+    }
+
+    std::vector<Enum> keysFromNameCombination(const std::string& str) const {
+        std::vector<Enum> vec;
+        std::string buf;
+        for (size_t i = 0; i < str.length(); ++i) {
+            const char c = str[i];
+            if (c == ' ') continue;
+            if (c == '|') {
+                Enum val = keyByName(buf.c_str());
+                vec.emplace_back(val);
+                buf.clear();
+                continue;
+            }
+            buf += c;
+        }
+        if (!buf.empty()) {
+            Enum val = keyByName(buf.c_str());
+            vec.emplace_back(val);
+        }
+        return vec;
+    }
 
 	const char* comboList() const { return comboList_.c_str(); }
 	const char* comboListAlt() const { return comboListAlt_.c_str(); }
@@ -264,6 +314,10 @@ private:
 		bool operator<(const Key& rhs) const {
 			return bitsNumber_ == rhs.bitsNumber_ ? value_ < rhs.value_ : bitsNumber_ > rhs.bitsNumber_;
 		}
+
+        int value() const {
+            return value_;
+        }
 
 		operator int () const {
 			return value_;
@@ -342,11 +396,12 @@ public:
 		value_ = value; zeroPointer_ = false; return *this; 
 	}
 	operator const char*() const { 
-		return !zeroPointer_ ? value_.c_str() : 0; 
+		return zeroPointer_ ? nullptr : value_.c_str(); 
 	}
 
 	std::string& value() { return value_; }
 	const std::string& value() const { return value_; }
+    bool empty() const { return zeroPointer_ ? true : value_.empty() ; }
 
 private:
 	std::string value_;
@@ -357,7 +412,7 @@ private:
 //////////////////////////////////////////////////////////////
 //	Строка с вызовом пользовательской функции редактирования
 //////////////////////////////////////////////////////////////
-typedef const char* (*CustomValueFunc)(HWND hWndParent, const char* initialString);
+typedef const char* (*CustomValueFunc)(void* hWndParent, const char* initialString);
 
 class CustomString
 {
@@ -498,15 +553,13 @@ template<class T>
 class SingletonPrm 
 {
 public:
-	static void save() {
-		return saveParameters(instance());
-	}
+    static void load() {
+        return loadParameters(instance());
+    }
 
-	/* troublesome, since EditArchive is declared on another .h which requires this header, we use normal edit(ea)
-	static bool edit() {
-		return edit(EditArchive());
-	}
-    */
+    static void save() {
+        return saveParameters(instance());
+    }
 
 	static bool edit(EditArchive& ea) {
 		return editParameters(instance(), ea);

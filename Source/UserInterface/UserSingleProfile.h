@@ -22,7 +22,7 @@ class UserSingleProfile {
 			SCENARIO,
 			BATTLE,
 			SURVIVAL,
-			LAN,
+			MULTIPLAYER,
 			REPLAY,
 			UNDEFINED
 		};

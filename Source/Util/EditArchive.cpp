@@ -43,7 +43,7 @@ EditIArchive::~EditIArchive()
 
 ////////////////////////////////////////
 EditArchive::EditArchive()
-: hwnd_(0),
+: hwnd_(nullptr),
 treeControlSetup_(0, 0, 800, 1000, "treeControlSetup")
 {
 	outputNode_ = 0;

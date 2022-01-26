@@ -63,7 +63,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 	}else
 	{
 		//Три сэмпла выбираются
-		//x=0.5+0.4*sin(2*PI/3*i),y=0.5+0.4*cos(2*PI/3*i)
+		//x=0.5+0.4*xm::sin(2*PI/3*i),y=0.5+0.4*xm::cos(2*PI/3*i)
 
 		matTexAdj._41 = 0.5f + 0.1f/shadow_map_size;
 		matTexAdj._42 = 0.5f + 0.1f/shadow_map_size;
@@ -153,7 +153,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 	}else
 	{
 		//Три сэмпла выбираются
-		//x=0.5+0.4*sin(2*PI/3*i),y=0.5+0.4*cos(2*PI/3*i)
+		//x=0.5+0.4*xm::sin(2*PI/3*i),y=0.5+0.4*xm::cos(2*PI/3*i)
 
 		matTexAdj._41 = 0.5f + c1/shadow_map_size;
 		matTexAdj._42 = 0.5f + c1/shadow_map_size;

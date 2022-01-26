@@ -1,14 +1,16 @@
 #pragma once
 
+class SND_Sample;
+
 class VirtualSound3D
 {
 protected:
-	LPDIRECTSOUNDBUFFER pSound;
+	SND_Sample* pSound;
 public:
 	VirtualSound3D():pSound(NULL){};
 	virtual ~VirtualSound3D(){};
 	
-	virtual bool Init(LPDIRECTSOUNDBUFFER ptr);
+	virtual bool Init(SND_Sample* ptr);
 
 	virtual float GetMaxDistance()=0;
 	virtual float GetMinDistance()=0;
@@ -22,7 +24,7 @@ public:
 	virtual bool IsPlaying()=0;
 	virtual bool Play(bool cycled)=0;
 	virtual bool Stop()=0;
-	virtual bool SetFrequency(DWORD dwFrequency)=0;
+	virtual bool SetFrequency(float frequency)=0;
 
 	virtual bool SetVolume(float vol)=0;//vol=0..1
 
@@ -47,21 +49,11 @@ class SoftSound3D:public VirtualSound3D
 	bool pause;
 	float volume;
 	float set_volume;
-
-	double begin_play_sound,last_start_stop;
-
-	DWORD BytePerSample;
-	DWORD nSamplesPerSec,//frequency==nSamplesPerSec
-		nAvgBytesPerSec,dwBufferBytes;
-
-	DWORD RealFrequency;
-
-	DWORD GetCurPos(double curtime);
 public:
 	SoftSound3D();
 	~SoftSound3D();
 
-	bool Init(LPDIRECTSOUNDBUFFER ptr);
+	bool Init(SND_Sample* ptr);
 
 	float GetMaxDistance();
 	float GetMinDistance();
@@ -75,7 +67,7 @@ public:
 	bool IsPlaying();
 	bool Play(bool cycled);
 	bool Stop();
-	bool SetFrequency(DWORD dwFrequency);
+	bool SetFrequency(float frequency);
 	bool SetVolume(float vol);
 
 	void RecalculatePos();
@@ -83,8 +75,5 @@ public:
 
 	Vect3f VectorToListener();
 	void SetClipDistance(float _clip_distance){clip_distance=_clip_distance;};
-	void Pause(bool p)
-	{
-		pause=p;
-	}
+	void Pause(bool p);
 };

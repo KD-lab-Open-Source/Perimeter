@@ -1,8 +1,6 @@
 // OptTree.cpp : implementation file
 //
 
-// TODO: change encoding to utf-8
-
 #include "stdafx.h"
 #include "EffectTool.h"
 #include "OptTree.h"
@@ -58,14 +56,14 @@ float COptTree::SetParamSpiral(CKeyPos& kp)
 	int size = kp.size();
 	if (size<2) return 0 ;
 	Vect3f cnt = GetKeyPosCenter(kp);
-	float ang = acos(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize().dot(Vect3f(kp[1].pos.x,kp[1].pos.y,0).Normalize()));
+	float ang = xm::acos(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize().dot(Vect3f(kp[1].pos.x,kp[1].pos.y,0).Normalize()));
 	Write(IX_SpAngle,R2G(ang));
-	float alpha = acos(Vect3f(1,0,0).dot(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize()));
+	float alpha = xm::acos(Vect3f(1,0,0).dot(Vect3f(kp[0].pos.x,kp[0].pos.y,0).Normalize()));
 	Write(IX_SpHeight1,kp[0].pos.z);
 	Write(IX_SpHeight2,kp[size-1].pos.z);
-	float r = sqrt(pow(kp[0].pos.x-cnt.x,2)+pow(kp[0].pos.y-cnt.y,2));
+	float r = xm::sqrt(xm::pow(kp[0].pos.x-cnt.x,2)+xm::pow(kp[0].pos.y-cnt.y,2));
 	Write(IX_SpRadius1,r);
-	r = sqrt(pow(kp[size-1].pos.x-cnt.x,2)+pow(kp[size-1].pos.y-cnt.y,2));
+	r = xm::sqrt(xm::pow(kp[size-1].pos.x-cnt.x,2)+xm::pow(kp[size-1].pos.y-cnt.y,2));
 	Write(IX_SpRadius2,r);
 	Write(IX_SpCompress,1);
 	return alpha;
@@ -313,15 +311,15 @@ const nPOS_TYPE = 7;
 const nOUT_TYPE = 3;
 const nTYPE_DIRECTION = 4;
 const nPOINTS_LOCATION = 2;
-char* EMMITER_TYPE[nEMMITER_TYPE] = {"Базовый","Поверхность","Сплайн","Свет"};
+char* EMMITER_TYPE[nEMMITER_TYPE] = {"Р‘Р°Р·РѕРІС‹Р№","РџРѕРІРµСЂС…РЅРѕСЃС‚СЊ","РЎРїР»Р°Р№РЅ","РЎРІРµС‚"};
 char* VEL_TYPE[9] = {"Box","Cylinder","Sphere","Line","Normal in","Normal out",
 					"Normal in out","Vertical","Normal 3D Model"};
 char* SPLINE_ENDING[nSPLINE_ENDING] = {"Closed", "Free", "Cycled"};
-char* YN[] = {"Нет","Да"};
+char* YN[] = {"РќРµС‚","Р”Р°"};
 char* POS_TYPE[nPOS_TYPE] = {"Box","Cylinder","Sphere","Line","Ring","3DModel","3DModelInside"};
-char* OUT_TYPE[nOUT_TYPE] = {"Умножение","Сложение","Вычитание"};
-char* TYPE_DIRECTION[nTYPE_DIRECTION] = {"Перемещение","Случайное","Фигура 1","Фигура 2"};
-char* POINTS_LOCATION[nPOINTS_LOCATION] = {"Вручную","Спираль"};
+char* OUT_TYPE[nOUT_TYPE] = {"РЈРјРЅРѕР¶РµРЅРёРµ","РЎР»РѕР¶РµРЅРёРµ","Р’С‹С‡РёС‚Р°РЅРёРµ"};
+char* TYPE_DIRECTION[nTYPE_DIRECTION] = {"РџРµСЂРµРјРµС‰РµРЅРёРµ","РЎР»СѓС‡Р°Р№РЅРѕРµ","Р¤РёРіСѓСЂР° 1","Р¤РёРіСѓСЂР° 2"};
+char* POINTS_LOCATION[nPOINTS_LOCATION] = {"Р’СЂСѓС‡РЅСѓСЋ","РЎРїРёСЂР°Р»СЊ"};
 */
 CTreeListItem* COptTree::FindItem(DWORD id,CTreeListItem* item)
 {
@@ -425,8 +423,8 @@ void COptTree::InitTreeList()
 		AddItem(IX_Scale,			STI_EDIT, 1, 1000, true);
 		AddItem(IX_Rate,			STI_EDIT, 1, 100, true);
 		AddItem(IX_ShowFigure,		STI_CHECKBOX);
-		AddItem(IX_SpriteBlend, 	STI_COMBO,"Умножение,Сложение,Вычитание,");
-		AddItem(IX_PosType,			STI_COMBO, "Box,Cylinder,Sphere,Line,Ring,3DModel,3DModelInside,По эмитеру,");
+		AddItem(IX_SpriteBlend, 	STI_COMBO,"РЈРјРЅРѕР¶РµРЅРёРµ,РЎР»РѕР¶РµРЅРёРµ,Р’С‹С‡РёС‚Р°РЅРёРµ,");
+		AddItem(IX_PosType,			STI_COMBO, "Box,Cylinder,Sphere,Line,Ring,3DModel,3DModelInside,РџРѕ СЌРјРёС‚РµСЂСѓ,");
 		AddItem(IX_X, 				STI_EDIT,0,+1e10,true);
 		AddItem(IX_Y, 				STI_EDIT,0,+1e10,true);
 		AddItem(IX_Z, 				STI_EDIT,0,+1e10,true);
@@ -435,9 +433,9 @@ void COptTree::InitTreeList()
 		AddItem(IX_ThetaMin, 		STI_EDIT, -90, 90, true);
 		AddItem(IX_ThetaMax, 		STI_EDIT, -90, 90, true);
 		AddItem(IX_UseLight, 		STI_CHECKBOX);
-		AddItem(IX_EmitterType, 	STI_COMBO,"Базовый,Поверхность,Сплайн,Свет,");
+		AddItem(IX_EmitterType, 	STI_COMBO,"Р‘Р°Р·РѕРІС‹Р№,РџРѕРІРµСЂС…РЅРѕСЃС‚СЊ,РЎРїР»Р°Р№РЅ,РЎРІРµС‚,");
 		AddItem(IX_PointsCount, 	STI_EDIT, 1, 100, true);
-		AddItem(IX_PointLoc,		STI_COMBO,"Вручную,Спираль,");
+		AddItem(IX_PointLoc,		STI_COMBO,"Р’СЂСѓС‡РЅСѓСЋ,РЎРїРёСЂР°Р»СЊ,");
 		AddItem(IX_SpRadius1, 		STI_EDIT,0,1000,true);
 		AddItem(IX_SpRadius2, 		STI_EDIT,0,1000,true);
 		AddItem(IX_SpHeight1, 		STI_EDIT,0,10000,true);
@@ -452,7 +450,7 @@ void COptTree::InitTreeList()
 		AddItem(IX_Mul,				STI_GRAPH,graph_min, graph_max);
 		AddItem(IX_VelType,			STI_COMBO,"Box,Cylinder,Sphere,Line,Normal in,Normal out,Normal in out,Vertical,Normal 3D Model,Invariably,");
 		AddItem(IX_SplineEnding,	STI_COMBO,"Closed,Free,Cycled,");
-		AddItem(IX_SplTypeDirection,STI_COMBO,"Перемещение,Случайное,Фигура 1,Фигура 2,");
+		AddItem(IX_SplTypeDirection,STI_COMBO,"РџРµСЂРµРјРµС‰РµРЅРёРµ,РЎР»СѓС‡Р°Р№РЅРѕРµ,Р¤РёРіСѓСЂР° 1,Р¤РёРіСѓСЂР° 2,");
 		AddItem(IX_Size,			STI_GRAPH,0, graph_max);
 		AddItem(IX_Gravitation,		STI_GRAPH,graph_min, graph_max);
 		AddItem(IX_AngleVel,		STI_GRAPH,graph_min, graph_max);
@@ -536,7 +534,7 @@ bool COptTree::onBeginLabelEdit(CTreeListCtrl& source, CHANGE_LABEL_NOTIFY_INFO*
 	return onRequestCtrl(source,info)!=TLM_STATIC&&info->iCol==1;
 }
 
-	//! Уведомляет о том, что редактирование закончено
+	//! РЈРІРµРґРѕРјР»СЏРµС‚ Рѕ С‚РѕРј, С‡С‚Рѕ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ Р·Р°РєРѕРЅС‡РµРЅРѕ
 bool COptTree::onEndLabelEdit(CTreeListCtrl& source, CHANGE_LABEL_NOTIFY_INFO* info)
 {
 	if (info->text=="") return false;
@@ -773,7 +771,7 @@ void COptTree::SetControlsData(bool show /*= true*/, bool update /*= false*/)
 //		if (pActiveEmitter->data->particle_position.type==EMP_OTHER_EMITTER)
 		{
 			CEffectData* ek = pDoc->m_pActiveEffect;
-			CString s = "не связан,";
+			CString s = "РЅРµ СЃРІСЏР·Р°РЅ,";
 			CString cur = pActiveEmitter->data->other.c_str();
 			vector<CEmitterData*>::iterator it;
 			int ix=0,i=0;
@@ -1080,9 +1078,9 @@ void COptTree::ShowOptEmiter()
 	
 	if (B[0])
 	{
-		item = InsertItem("Cеткa",IX_ShowGrid);
-		item = InsertItem("Мир",IX_ShowWorld);
-		item = InsertItem("Масштаб",IX_Scale);
+		item = InsertItem("CРµС‚Рєa",IX_ShowGrid);
+		item = InsertItem("РњРёСЂ",IX_ShowWorld);
+		item = InsertItem("РњР°СЃС€С‚Р°Р±",IX_Scale);
 		item = InsertItem("P",IX_Rate);
 	}
 	GetDocument()->m_EnableButForAll = (GetDocument()->m_nCurrentParticlePoint == 0) && 
@@ -1141,11 +1139,11 @@ void COptTree::ShowOptEmiter()
 			b1 = pActiveEmitter->data->num_particle.size()>1;
 			if (B[0])
 			{
-				InsertItem("Показать",IX_ShowFigure);
+				InsertItem("РџРѕРєР°Р·Р°С‚СЊ",IX_ShowFigure);
 				InsertItem("Blending",IX_SpriteBlend);
-				InsertItem("Распределение",IX_PosType);
+				InsertItem("Р Р°СЃРїСЂРµРґРµР»РµРЅРёРµ",IX_PosType);
 				if (intV(IX_PosType)==EMP_OTHER_EMITTER)
-					InsertItem("Связь",IX_OtherEmiter);
+					InsertItem("РЎРІСЏР·СЊ",IX_OtherEmiter);
 				else
 				{
 					if (bX) InsertItem("X",IX_X);
@@ -1158,8 +1156,8 @@ void COptTree::ShowOptEmiter()
 						InsertItem("Teta min", IX_ThetaMin);
 						InsertItem("Teta max", IX_ThetaMax);
 					}
-					InsertItem("Заполнение", IX_Filling);
-					item = InsertItem("Фиксировать", IX_Fix_Pos);
+					InsertItem("Р—Р°РїРѕР»РЅРµРЅРёРµ", IX_Filling);
+					item = InsertItem("Р¤РёРєСЃРёСЂРѕРІР°С‚СЊ", IX_Fix_Pos);
 					if (boolV(IX_Fix_Pos))
 					{
 						InsertItem("dx",IX_Fix_X);
@@ -1171,29 +1169,29 @@ void COptTree::ShowOptEmiter()
 		}
 		if (B[1])
 		{
-			item = InsertItem("Освещение",IX_UseLight);
-			item = InsertItem("Эмитер",IX_NONE);
-			InsertItem("Тип",IX_EmitterType,item); 
-			InsertItem("Кол-во точек",IX_PointsCount,item);
+			item = InsertItem("РћСЃРІРµС‰РµРЅРёРµ",IX_UseLight);
+			item = InsertItem("Р­РјРёС‚РµСЂ",IX_NONE);
+			InsertItem("РўРёРї",IX_EmitterType,item); 
+			InsertItem("РљРѕР»-РІРѕ С‚РѕС‡РµРє",IX_PointsCount,item);
 			if ((intV(IX_PointsCount)>1 && theApp.scene.m_ToolMode == CD3DScene::TOOL_POSITION)
 					||((!b&&!bl) && theApp.scene.m_ToolMode == CD3DScene::TOOL_SPLINE))
 			{
-				CTreeListItem* it = InsertItem("Расположение",IX_PointLoc,item);
+				CTreeListItem* it = InsertItem("Р Р°СЃРїРѕР»РѕР¶РµРЅРёРµ",IX_PointLoc,item);
 				if (intV(IX_PointLoc) == SPIRAL)
 				{
-					InsertItem("Радиус 1",IX_SpRadius1,it);
-					InsertItem("Радиус 2",IX_SpRadius2,it);
-					InsertItem("Высота 1",IX_SpHeight1,it);
-					InsertItem("Высота 2",IX_SpHeight2,it);
-					InsertItem("Угол",	  IX_SpAngle,it);
-					InsertItem("Cжатие",  IX_SpCompress,it);
+					InsertItem("Р Р°РґРёСѓСЃ 1",IX_SpRadius1,it);
+					InsertItem("Р Р°РґРёСѓСЃ 2",IX_SpRadius2,it);
+					InsertItem("Р’С‹СЃРѕС‚Р° 1",IX_SpHeight1,it);
+					InsertItem("Р’С‹СЃРѕС‚Р° 2",IX_SpHeight2,it);
+					InsertItem("РЈРіРѕР»",	  IX_SpAngle,it);
+					InsertItem("CР¶Р°С‚РёРµ",  IX_SpCompress,it);
 					treeList.Expand(it,TLIS_EXPANDED);
 				}
 			}
-			InsertItem("Т жизни",IX_EmitterTimeLife,item);
+			InsertItem("Рў Р¶РёР·РЅРё",IX_EmitterTimeLife,item);
 			if (bl) 
 			{
-				CTreeListItem* it = InsertItem("Размер",IX_Size,item);
+				CTreeListItem* it = InsertItem("Р Р°Р·РјРµСЂ",IX_Size,item);
 				if (it)
 				{
 					treeList.SetItemImage(it, 1);
@@ -1201,44 +1199,44 @@ void COptTree::ShowOptEmiter()
 				}
 			}
 			treeList.Expand(item,TLIS_EXPANDED);
-			item = InsertItem("Генерация",IX_NONE);
-			if (!bl) InsertItem("Кол-во частиц",IX_ParticlesCount,item);
- 			if (!bl) InsertItem("Непрерывно",IX_Prolonged,item);
-			InsertItem("Зациклить",IX_PlayCycled,item);
+			item = InsertItem("Р“РµРЅРµСЂР°С†РёСЏ",IX_NONE);
+			if (!bl) InsertItem("РљРѕР»-РІРѕ С‡Р°СЃС‚РёС†",IX_ParticlesCount,item);
+ 			if (!bl) InsertItem("РќРµРїСЂРµСЂС‹РІРЅРѕ",IX_Prolonged,item);
+			InsertItem("Р—Р°С†РёРєР»РёС‚СЊ",IX_PlayCycled,item);
 			treeList.Expand(item,TLIS_EXPANDED);
 
 			if (b||!bl||(!b&&!bl))
 			{
-				if (!b&&!bl) item = InsertItem("Скорость",IX_NONE);
-				else item = InsertItem("Скорость",IX_Velocity);
+				if (!b&&!bl) item = InsertItem("РЎРєРѕСЂРѕСЃС‚СЊ",IX_NONE);
+				else item = InsertItem("РЎРєРѕСЂРѕСЃС‚СЊ",IX_Velocity);
 				if (b)
 				{
-					InsertItem("Множитель",IX_Mul,item); 
-					InsertItem("Распределн.",IX_VelType,item);
+					InsertItem("РњРЅРѕР¶РёС‚РµР»СЊ",IX_Mul,item); 
+					InsertItem("Р Р°СЃРїСЂРµРґРµР»РЅ.",IX_VelType,item);
 				}
 				if (!b&&!bl) 
 				{
-					InsertItem("Сплайн",IX_SplineEnding,item);
-					InsertItem("Движение", IX_SplTypeDirection, item);
+					InsertItem("РЎРїР»Р°Р№РЅ",IX_SplineEnding,item);
+					InsertItem("Р”РІРёР¶РµРЅРёРµ", IX_SplTypeDirection, item);
 				}
 				treeList.Expand(item,TLIS_EXPANDED);
 			}
 
 			if (!bl||b)
 			{
-				item = InsertItem("Частица",IX_NONE);
-				if (!bl) InsertItem("Размер",IX_Size,item);		
-				if (b)	 InsertItem("Гравитация",IX_Gravitation,item);	
-				if (!bl) InsertItem("Вращение",IX_AngleVel,item);	
-				if (!bl) InsertItem("Относительно",IX_Realtive,item);	
-				CTreeListItem* it = InsertItem("Шлейф",IX_Plume,item);
+				item = InsertItem("Р§Р°СЃС‚РёС†Р°",IX_NONE);
+				if (!bl) InsertItem("Р Р°Р·РјРµСЂ",IX_Size,item);		
+				if (b)	 InsertItem("Р“СЂР°РІРёС‚Р°С†РёСЏ",IX_Gravitation,item);	
+				if (!bl) InsertItem("Р’СЂР°С‰РµРЅРёРµ",IX_AngleVel,item);	
+				if (!bl) InsertItem("РћС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ",IX_Realtive,item);	
+				CTreeListItem* it = InsertItem("РЁР»РµР№С„",IX_Plume,item);
 				if (boolV(IX_Plume))
 				{
-					InsertItem("Интервал",IX_PlInterval,item);
-					InsertItem("Гибкость",IX_PlTracesCount,item);
-					if (bz)InsertItem("Cглаживать",IX_PlSmooth, item);
-//					InsertItem("Растяжение", IX_PlTimeScale,item);
-//					InsertItem("Размер",IX_PlSizeScale,item);
+					InsertItem("РРЅС‚РµСЂРІР°Р»",IX_PlInterval,item);
+					InsertItem("Р“РёР±РєРѕСЃС‚СЊ",IX_PlTracesCount,item);
+					if (bz)InsertItem("CРіР»Р°Р¶РёРІР°С‚СЊ",IX_PlSmooth, item);
+//					InsertItem("Р Р°СЃС‚СЏР¶РµРЅРёРµ", IX_PlTimeScale,item);
+//					InsertItem("Р Р°Р·РјРµСЂ",IX_PlSizeScale,item);
 				}
 
 				treeList.Expand(item,TLIS_EXPANDED);
@@ -1246,22 +1244,22 @@ void COptTree::ShowOptEmiter()
 			
 			if (!bl||(b&&bFirstPoint)||(!bl&&bFirstPoint))	
 			{
-				item = InsertItem("Разброс",IX_NONE);
-				if (!bl) InsertItem("Размер",IX_DeltaSize,item);
-				if (!bl) InsertItem("Время",IX_DeltaLifeTime,item);
-				if (b)   InsertItem("Скорость",IX_DeltaVel,item);
-				if (!bl) InsertItem("Ротор",IX_AngleChaos,item);
+				item = InsertItem("Р Р°Р·Р±СЂРѕСЃ",IX_NONE);
+				if (!bl) InsertItem("Р Р°Р·РјРµСЂ",IX_DeltaSize,item);
+				if (!bl) InsertItem("Р’СЂРµРјСЏ",IX_DeltaLifeTime,item);
+				if (b)   InsertItem("РЎРєРѕСЂРѕСЃС‚СЊ",IX_DeltaVel,item);
+				if (!bl) InsertItem("Р РѕС‚РѕСЂ",IX_AngleChaos,item);
 				treeList.Expand(item,TLIS_EXPANDED);
 			}
 
 			if(bz)
 			{
-				item = InsertItem("Поверхность",IX_NONE);
-				InsertItem("Высота",IX_SurAddZ,item);
-				InsertItem("Угол",IX_SurAngle,item);
-				InsertItem("Центр",IX_SurCenter,item);
-				InsertItem("Поле",IX_SurUseForceField,item);
-				InsertItem("Плоский",IX_SurPlanar,item);
+				item = InsertItem("РџРѕРІРµСЂС…РЅРѕСЃС‚СЊ",IX_NONE);
+				InsertItem("Р’С‹СЃРѕС‚Р°",IX_SurAddZ,item);
+				InsertItem("РЈРіРѕР»",IX_SurAngle,item);
+				InsertItem("Р¦РµРЅС‚СЂ",IX_SurCenter,item);
+				InsertItem("РџРѕР»Рµ",IX_SurUseForceField,item);
+				InsertItem("РџР»РѕСЃРєРёР№",IX_SurPlanar,item);
 				treeList.Expand(item,TLIS_EXPANDED);
 			}
 		}
@@ -1284,7 +1282,7 @@ int RBNum(UINT num,USHORT n=2)
 	int i=1;
 	while(t/=10) i++;
 	if (i<n) return num;
-	return (num/round(pow(10,i-n)))*pow(10,i-n);
+	return (num/round(xm::pow(10,i-n)))*xm::pow(10,i-n);
 }
 			  
 void COptTree::SetFps(float fps)

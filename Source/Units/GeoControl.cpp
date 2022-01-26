@@ -16,6 +16,7 @@
 #include "GameShell.h"
 
 #include "GeoControl.h"
+#include "codepages/codepages.h"
 
 terGeoControl::terGeoControl(const UnitTemplate& data):terUnitBase(data)
 {
@@ -50,9 +51,9 @@ SaveUnitData* terGeoControl::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoControl::universalLoad(const SaveUnitData* baseData)
+void terGeoControl::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoControl* data = safe_cast<const SaveGeoControl*>(baseData);
+	SaveGeoControl* data = safe_cast<SaveGeoControl*>(baseData);
 	terUnitBase::universalLoad(data);
 
 	sleep_ = data->sleep;
@@ -155,14 +156,24 @@ void terGeoControl::ShowInfo()
 		Vect3f e,w;
 		terCamera->GetCamera()->ConvertorWorldToViewPort(&position(),&w,&e);
 		terRenderDevice->SetFont(gameShell->debugFont());
+        std::string text;
+        const std::string& locale = getLocale();
+        if (locale == "russian") {
+            text = convertToCodepage("Гео: ", locale);
+            text += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr().ID), locale);
+            text += "\n";
+        } else {
+            text = "Geo:\n";
+        }
+        text += getEnumDescriptor(UNIT_ATTRIBUTE_NONE).name(attr().ID);
 		if(selected())
 		{
-			terRenderDevice->OutText(round(e.x),round(e.y),"Geo",sColor4f(1.0f,1.0f,1.0f,1.0f));
-			terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,sColor4c(255,255,255,255),0);
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, sColor4c(255, 255, 255, 255), 0);
 		}else
 		{
-			terRenderDevice->OutText(round(e.x),round(e.y),"Geo",sColor4f(1.0f,1.0f,1.0f,0.5f));
-			terRenderDevice->DrawRectangle(round(e.x) - 2,round(e.y) - 2,4,4,pathColor,0);
+			terRenderDevice->OutText(xm::round(e.x), xm::round(e.y), text.c_str(), sColor4f(1.0f, 1.0f, 1.0f, 0.5f));
+			terRenderDevice->DrawRectangle(xm::round(e.x) - 2, xm::round(e.y) - 2, 4, 4, pathColor, 0);
 		}
 		terRenderDevice->SetFont(0);
 	}
@@ -189,9 +200,9 @@ SaveUnitData* terGeoInfluence::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoInfluence::universalLoad(const SaveUnitData* baseData)
+void terGeoInfluence::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoInfluence* data = safe_cast<const SaveGeoInfluence*>(baseData);
+	SaveGeoInfluence* data = safe_cast<SaveGeoInfluence*>(baseData);
 	terGeoControl::universalLoad(data);
 	setRadius(data->geoRadius);
 }
@@ -213,7 +224,7 @@ void terGeoInfluence::Generate(float time)
 	if(mount)
 		return;
 
-	mount=new CGeoInfluence(round(position().x-radius()),round(position().y-radius()),radius()*2,radius()*2);
+	mount=new CGeoInfluence(xm::round(position().x - radius()), xm::round(position().y - radius()), radius() * 2, radius() * 2);
 }
 
 void terGeoInfluence::Stop()
@@ -249,9 +260,9 @@ SaveUnitData* terGeoBreak::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoBreak::universalLoad(const SaveUnitData* baseData)
+void terGeoBreak::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoBreak* data = safe_cast<const SaveGeoBreak*>(baseData);
+	SaveGeoBreak* data = safe_cast<SaveGeoBreak*>(baseData);
 	terGeoControl::universalLoad(data);
 	setRadius(data->geoRadius);
 	num_break = data->num_break;
@@ -273,7 +284,7 @@ void terGeoBreak::Generate(float time)
 	if(mount)
 		return;
 
-	mount=new geoBreak1(round(position().x-radius()),round(position().y-radius()),radius(),num_break);
+	mount=new geoBreak1(xm::round(position().x - radius()), xm::round(position().y - radius()), radius(), num_break);
 }
 
 void terGeoBreak::Stop()
@@ -310,9 +321,9 @@ SaveUnitData* terGeoFault::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoFault::universalLoad(const SaveUnitData* baseData)
+void terGeoFault::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoFault* data = safe_cast<const SaveGeoFault*>(baseData);
+	SaveGeoFault* data = safe_cast<SaveGeoFault*>(baseData);
 	terGeoControl::universalLoad(data);
 	length=data->length;
 	angle=data->angle;
@@ -334,8 +345,8 @@ void terGeoFault::Generate(float time)
 	if(mount)
 		return;
 
-	Vect2f p(round(position().x),round(position().y));
-	mount=new sGeoFault(p,angle*M_PI/180.0f,length);
+	Vect2f p(xm::round(position().x), xm::round(position().y));
+	mount=new sGeoFault(p,angle*XM_PI/180.0f,length);
 }
 
 void terGeoFault::Stop()
@@ -355,7 +366,7 @@ void terGeoFault::ShowInfo()
 	{
 		if(selected())
 		{
-			float a=angle*M_PI/180.0f;
+			float a=angle*XM_PI/180.0f;
 			Mat3f mat(a,Z_AXIS);
 
 			const float len=30;
@@ -391,9 +402,9 @@ SaveUnitData* terGeoHead::universalSave(SaveUnitData* baseData)
 	return data;
 }
 
-void terGeoHead::universalLoad(const SaveUnitData* baseData)
+void terGeoHead::universalLoad(SaveUnitData* baseData)
 {
-	const SaveGeoBreak* data = safe_cast<const SaveGeoBreak*>(baseData);
+	SaveGeoBreak* data = safe_cast<SaveGeoBreak*>(baseData);
 	terGeoControl::universalLoad(data);
 	setRadius(data->geoRadius);
 }
@@ -405,7 +416,7 @@ void terGeoHead::Quant()
 	terGeoControl::Quant();
 	if(mount)
 	{
-		mount->quant(round(position().x),round(position().y));
+		mount->quant(xm::round(position().x), xm::round(position().y));
 	}
 }
 
@@ -415,7 +426,7 @@ void terGeoHead::Generate(float time)
 		return;
 
 	mount=new s_HeadGeoAction;
-	mount->init(round(position().x),round(position().y),radius());
+	mount->init(xm::round(position().x), xm::round(position().y), radius());
 }
 
 void terGeoHead::Stop()

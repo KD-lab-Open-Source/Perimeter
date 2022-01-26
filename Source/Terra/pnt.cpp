@@ -7,7 +7,6 @@ By Ken Perlin, New York University
 *****************************************************************/ 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 
 #define DOT(a,b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) 
 #define B 256 
@@ -68,28 +67,27 @@ float noise3D(float vec[3])
 
 	return 1.5f * lerp(sz, c, d); /* interpolate in z */ 
 }
+/*
 void initNoise() 
 { 
-	/*long random();*/ 
 	int i, j, k; 
 	float v[3], s; 
-	/* Create an array of random gradient vectors uniformly on the unit sphere */ 
-	/*srandom(1);*/ 
-	srand(1); 
+	// Create an array of random gradient vectors uniformly on the unit sphere 
+	//srand(1); 
 	for (i = 0 ; i < B ; i++) {
 		do {
-			/* Choose uniformly in a cube */ 
+			//Choose uniformly in a cube 
 			for (j=0 ; j<3 ; j++)
 				v[j] = (float)((rand() % (B + B)) - B) / B;
 			s = DOT(v,v); 
 		} while (s > 1.0); 
-		/* If not in sphere try again */ 
-		s = (float)sqrt(s); 
-		for (j = 0 ; j < 3 ; j++) /* Else normalize */ 
+		// If not in sphere try again
+		s = (float)xm::sqrt(s); 
+		for (j = 0 ; j < 3 ; j++) // Else normalize 
 			g[i][j] = v[j] / s; 
 	} 
 
-	/* Create a pseudorandom permutation of [1..B] */ 
+	// Create a pseudorandom permutation of [1..B] 
 	for (i = 0 ; i < B ; i++) 
 		p[i] = i; 
 	for (i = B ; i > 0 ; i -= 2) { 
@@ -98,13 +96,14 @@ void initNoise()
 		p[j] = k; 
 	} 
 
-	/* Extend g and p arrays to allow for faster indexing */ 
+	// Extend g and p arrays to allow for faster indexing
 	for (i = 0 ; i < B + 2 ; i++) {
 		p[B + i] = p[i]; 
 		for (j = 0 ; j < 3 ; j++) 
 			g[B + i][j] = g[i][j]; 
 	} 
 } 
+*/
 
 float turbulence(float point[3], float lofreq, float hifreq) 
 { 
@@ -117,14 +116,13 @@ float turbulence(float point[3], float lofreq, float hifreq)
 	t = 0; 
 	for (freq = lofreq ; freq < hifreq ; freq *= 2.) {
 extern float noise3(float vec[3]);
-		t += (float)fabs(noise3(p)) / freq; 
+		t += (float) xm::abs(noise3(p)) / freq; 
 		p[0] *= 2.; 
 		p[1] *= 2.; 
 		p[2] *= 2.; 
 	} 
-	return t - 0.3f; /* readjust to make mean value = 0.0 */ 
+	return t - 0.3f; // readjust to make mean value = 0.0 
 } 
-
 
 //turbulence(VAR, 0.1f, 1.6f)
 /*float turbulence01_08(float point[3])
@@ -148,7 +146,7 @@ extern float noise3(float vec[3]);
 	point[0] *= 2.; 
 	point[1] *= 2.; 
 	point[2] *= 2.; 
-	t += fabs(noise3(point)) *1.25f; 
+	t += xm::abs(noise3(point)) *1.25f; 
 	return t - 0.3; 
 } */
 

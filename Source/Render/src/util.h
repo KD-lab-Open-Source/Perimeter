@@ -5,10 +5,10 @@ inline char* TestFirstName(const char *name,char *string)
 {
 	if(name==0||string==0) return 0;
 	int LengthName=strlen(name),LengthString=strlen(string);
-	_strlwr((char*)name);
+	std::string name_lwr = string_to_lower(name);
 	if(LengthName<LengthString) return 0;
 	for(int i=0;i<LengthString;i++)
-		if(name[i]!=string[i]) return 0;
+		if(name_lwr[i]!=string[i]) return 0;
 	return (char*)name+LengthString;
 }
 inline const char* GetFileName(const char *str)

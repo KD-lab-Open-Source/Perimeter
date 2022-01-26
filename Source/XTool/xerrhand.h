@@ -31,12 +31,10 @@
 struct XErrorHandler
 {
 	unsigned state;
-	bool initialized = false;
 
 	const char* prefix;
 
-    std::string log_name;
-    std::fstream log_file;
+    std::string log_path;
 
 	void (*restore_func)();
     void (*crash_func)();
@@ -44,15 +42,19 @@ struct XErrorHandler
      XErrorHandler();
     ~XErrorHandler();
 
+    void RedirectStdio() const;
 	void	 SetPrefix(const char* s);
 	void	 SetRestore(void (*rf)());
     void	 SetCrash(void (*cf)());
 	void	 SetState(int s){state=s;}
 	void	 Abort(const char* message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
     void	 Abort(const std::string& message, int code = XERR_USER, int addval = -1, const char* subj = NULL);
+    bool     ShowErrorMessage(const char* message);
 	void	 Exit();
 	void	 RTC(const char *file,unsigned int line, const char *expr);
 };
+
+std::string decodeStackAddress(const void* addr);
 
 extern XErrorHandler ErrH;
 

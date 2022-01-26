@@ -1,4 +1,3 @@
-#ifndef PERIMETER_EXODUS
 // do not define "namespace std" before <amstream.h> include, otherwise compile error: 'byte': ambiguous symbol
 #include <amstream.h>	// DirectShow multimedia stream interfaces
 
@@ -269,4 +268,3 @@ bool sVideoWrite::WriteFrame()
 	iCurStreamPos++;
 	return true;
 }
-#endif

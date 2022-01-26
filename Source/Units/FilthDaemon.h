@@ -21,7 +21,7 @@ struct terFilthDaemon:terFilthGeneric
 	bool is_berserk(){return on_zeroplast && berserk_mode;}
 	bool isDestroyed(){return free_destroy;}
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 public:
 	bool free_destroy;
 	bool on_zeroplast;
@@ -64,7 +64,7 @@ struct terFilthSwarmDaemon: terFilthSwarm
 	terUnitAttributeID GetUnitID();
 	void SetFreeDestroy();
 	SaveUnitData* universalSave(SaveUnitData* baseData);
-	void universalLoad(const SaveUnitData* baseData);
+	void universalLoad(SaveUnitData* baseData);
 protected:
 	void Generate();
 

@@ -76,7 +76,7 @@ protected:
 	int interpolation_timer_;
 	float interpolation_factor_;
 
-	HANDLE end_logic;
+	SDL_semaphore* end_logic;
 
 	struct DELETE_DATA
 	{

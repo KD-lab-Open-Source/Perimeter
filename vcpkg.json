@@ -2,16 +2,23 @@
 	"name": "perimeter",
 	"version": "2.0.0",
 	"dependencies": [
+		"zlib",
 		"boost-stacktrace",
 		"boost-iterator",
 		"boost-type-index",
 		"libvorbis",
+		"libvpx",
 		"sdl2",
 		"sdl2-image",
 		{
+			"name": "sdl2-mixer",
+			"features": [ "dynamic-load", "libvorbis" ]
+		},
+		"sdl2-net",
+		{
 			"name": "ffmpeg",
 			"default-features": false,
-			"features": [ "avcodec", "avformat" ]
+			"features": [ "avcodec", "avformat", "avfilter", "swscale", "swresample" ]
 		}
 	]
 }

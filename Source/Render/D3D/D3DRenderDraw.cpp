@@ -57,7 +57,7 @@ void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 	{
 		LPDIRECT3DSURFACE9 pZBuffer=DrawNode->GetZBuffer();
 		SetRenderTarget(DrawNode->GetRenderTarget(),pZBuffer);
-		DWORD color=0;
+		uint32_t color=0;
 		if(pDrawNode->GetAttribute(ATTRCAMERA_SHADOW))
 		{
 			if(Option_ShadowType==SHADOW_MAP_SELF && 
@@ -268,7 +268,7 @@ void cD3DRender::ChangeTextColor(const char* &str,sColor4c& diffuse)
 			return;
 		}
 
-		DWORD s=0;
+		uint32_t s=0;
 		int i;
 		for(i=1;i<=6;i++)
 		{
@@ -293,7 +293,7 @@ float cD3DRender::GetFontLength(const char *string)
 	for(const char* str=string;*str;str++)
 	{
 		ChangeTextColor(str,diffuse);
-		BYTE c=(unsigned char)*str;
+		uint8_t c=(unsigned char)*str;
 		if(!c || c==10)break;
 		if(c<32)continue;
 		xOfs+=xSize*cf->Font[c].z-1;
@@ -336,9 +336,9 @@ void cD3DRender::OutTextRect(int x,int y,const char *string,int align,Vect2f& bm
 		{
 			float StringWidth = GetFontLength( str );
 			if( align==0 )
-				xOfs -= round(StringWidth*0.5f);
+				xOfs -= xm::round(StringWidth * 0.5f);
 			else
-				xOfs -= round(StringWidth);
+				xOfs -= xm::round(StringWidth);
 		}
 		for( ; *str!=10 ; str++ )
 		{
@@ -419,9 +419,9 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 		{
 			float StringWidth = GetFontLength( str );
 			if( align==0 )
-				xOfs -= round(StringWidth*0.5f);
+				xOfs -= xm::round(StringWidth * 0.5f);
 			else
-				xOfs -= round(StringWidth);
+				xOfs -= xm::round(StringWidth);
 		}
 		for( ; *str!=10 ; str++ )
 		{
@@ -478,7 +478,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	SetNoMaterial(blend_mode,phase,pTexture,CurrentFont->GetTexture(),mode);
 //	SetNoMaterial(blend_mode,phase,pTexture);
 
-	DWORD index1=GetTextureStageState(1,D3DTSS_TEXCOORDINDEX);
+	uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
 	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,1);
 	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,0);
 	SetRenderState(RS_BILINEAR,0);
@@ -515,9 +515,9 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 		{
 			float StringWidth = GetFontLength( str );
 			if( align==0 )
-				xOfs -= round(StringWidth*0.5f);
+				xOfs -= xm::round(StringWidth * 0.5f);
 			else
-				xOfs -= round(StringWidth);
+				xOfs -= xm::round(StringWidth);
 		}
 		for( ; *str!=10 ; str++ )
 		{
