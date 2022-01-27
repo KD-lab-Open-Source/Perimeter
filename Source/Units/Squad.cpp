@@ -763,6 +763,8 @@ void terUnitSquad::ChangeUnitOwner(terPlayer* player)
 {
 	terUnitBase::ChangeUnitOwner(player);
 
+    mutation_process.clear();    
+
 	while(!Units.empty())
 		Units.front()->Kill();
 
