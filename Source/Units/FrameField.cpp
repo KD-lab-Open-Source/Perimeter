@@ -291,7 +291,11 @@ void terProtector::showDebugInfo()
 			break;
 		}
 		if(canStartField())
-			str += " canStartField";
+			str += " CSF";
+
+        str += " EC:" + std::to_string(enableCharge_);
+        str += " WC:" + std::to_string(startWhenCharged_);
+        str += " ZC:" + std::to_string(reinitZeroCounter_);
 
 		show_text(position(), str.c_str(), CYAN);
 	}

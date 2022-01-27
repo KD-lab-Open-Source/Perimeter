@@ -12,6 +12,7 @@ typedef std::vector<class terProtector*> ProtectorList;
 bool removeNotAliveMonk(MonkList& unitList);
 
 //--------------------------
+///Class for building known as Ядро / Energy Core / Generator
 class terProtector : public terBuildingEnergy
 {
 public:

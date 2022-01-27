@@ -1130,6 +1130,8 @@ void terUnitReal::ChangeUnitOwner(terPlayer* player)
 	if(weapon_)
 		weapon_->changePlayer(player);
 
+    productionConsumption_.changePlayer(player);
+
 	DockingSlotList::iterator di;
 	FOR_EACH(DockList, di)
 		if(di->UnitPoint)
