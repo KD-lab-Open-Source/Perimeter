@@ -244,8 +244,6 @@ void terUniverse::Quant()
 	watch(global_time()/float(frame_time() + 1));
 
 	global_time.next_frame();
-	
-	show_dispatcher.clear();
 
 	triggerQuant();
 

@@ -806,7 +806,7 @@ void GameShell::Show()
 
 		terRenderDevice->SetDrawTransform(terCamera->GetCamera());
 		if(debug_show_mode){
-            MTAuto lock(HTManager::instance()->GetLockLogic());
+            show_dispatcher.clear();
 			universe()->showDebugInfo();
 			show_dispatcher.draw();
 		}
