@@ -320,11 +320,6 @@ void terPlayer::Quant()
                 }
             }
 
-            if (active()) {
-                //Our frame went kaput, stop accepting commands from the grave
-                universe()->setShouldIgnoreIntfCommands(true);
-            }
-
             if (clans.size() < 2) {
                 if (active_clan == -1) {
                     //Our clan is dead, only one clan is left so game is over for all

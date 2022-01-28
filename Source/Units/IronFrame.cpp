@@ -573,9 +573,11 @@ void terFrame::Kill()
 
 	installer_.Clear();
 
-	for(int i = 0;i < FRAME_SLOTS_MAX;i++)
-		if(frameSlots_[i].UnitPoint)
-			frameSlots_[i].UnitPoint->Kill();
+	for(int i = 0;i < FRAME_SLOTS_MAX;i++) {
+        if (frameSlots_[i].UnitPoint) {
+            frameSlots_[i].UnitPoint->Kill();
+        }
+    }
 
 	SquadPoint->Kill();
 
@@ -587,6 +589,14 @@ void terFrame::ChangeUnitOwner(terPlayer* player)
 {
 	terUnitReal::ChangeUnitOwner(player);
 	catched_ = true;
+
+    for (int i = 0;i < FRAME_SLOTS_MAX;i++) {
+        if (frameSlots_[i].UnitPoint) {
+            frameSlots_[i].UnitPoint->damageMoleculaKill();
+        }
+    }
+
+    SquadPoint->ChangeUnitOwner(player);
 
 	antigravConsumer_.detach();
 	movementConsumption_.detach();
