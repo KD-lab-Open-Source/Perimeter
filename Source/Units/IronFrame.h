@@ -111,7 +111,8 @@ public:
 	void WayPointStart();
 	void WayPointController();
 
-	void Kill();
+    void explode();
+    void Kill();
 	void ChangeUnitOwner(terPlayer* player);
 
 	void executeCommand(const UnitCommand& command);

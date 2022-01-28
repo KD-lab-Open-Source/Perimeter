@@ -563,6 +563,19 @@ void terFrame::AvatarQuant()
 //	ShowEnergy();
 }
 
+void terFrame::explode() {
+    terUnitReal::explode();
+    
+    //Explode the stuff, this way we dont explode attached units while on Kill
+    for(int i = 0;i < FRAME_SLOTS_MAX;i++) {
+        if (frameSlots_[i].UnitPoint) {
+            frameSlots_[i].UnitPoint->explode();
+        }
+    }
+    
+    SquadPoint->explode();
+}
+
 void terFrame::Kill()
 {
 	terUnitReal::Kill();
