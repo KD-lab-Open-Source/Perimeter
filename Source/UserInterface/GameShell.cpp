@@ -1591,10 +1591,10 @@ void GameShell::ControlPressed(int key)
 		//temp
 		if(_shellIconManager.IsInterface() && interfaceShowFlag_)
 		{
-			if(MainMenuEnable)
+			//if(MainMenuEnable)
 				EnterInMissionMenu();
-			else if(!missionEditor() && !NetClient)
-				GameContinue = false;
+			//else if(!missionEditor() && !NetClient)
+			//	GameContinue = false;
 		}
 		return;
 	}
