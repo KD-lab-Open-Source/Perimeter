@@ -268,7 +268,7 @@ terFilthVolcanoStruct terFilthVolcanoScumDisruptorPrm=
 	speed_max_vertical=300;
 
 	unit_id=UNIT_ATTRIBUTE_FILTH_VOLCANO_SCUM_DISRUPTOR;
-	collision_damage_rate=0.5;
+	collision_damage_rate=0.6;
 };
 
 terFilthSwarmParameter terFilthVolcanoBaseParameter= 
@@ -282,7 +282,7 @@ terFilthSpotParameters terScumDisruptorPrm =
 	spotID = FILTH_SPOT_ID_VOLCANO_SCUM_DISRUPTOR;
 	creatureNum = 150;
 	attackPeriod = 50;
-	sleepPeriod = 10;
+	sleepPeriod = 50;
 };
 
 struct terFilthAntsStruct
