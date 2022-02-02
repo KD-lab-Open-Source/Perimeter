@@ -58,7 +58,6 @@ HistoryScene::~HistoryScene() {
 
 void HistoryScene::loadProgram(const string& fileName) {
 	interpreter->setPaused(true);
-//	interpreter->loadProgram("RESOURCE\\scenario.hst");
 	if (!interpreter->loadProgram(fileName.c_str())) {
 		ErrH.Abort( (fileName + " not found!").c_str() );
 	}

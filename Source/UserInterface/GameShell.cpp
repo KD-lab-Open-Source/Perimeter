@@ -2618,25 +2618,31 @@ void GameShell::setLocalizedFontSizes() {
 }
 
 void GameShell::preLoad() {
-    historyScene.loadProgram("RESOURCE\\scenario.hst");
-    bwScene.loadProgram("RESOURCE\\menu.hst");
-	std::string path = getLocDataPath() + "Text\\Texts.btdb";
+    const std::string& locale = getLocale();
+    if (get_content_entry("RESOURCE/scenario_" + locale + ".hst")) {
+        historyScene.loadProgram("RESOURCE/scenario_" + locale + ".hst");
+    } else {
+        historyScene.loadProgram("RESOURCE/scenario.hst");
+    }
+    bwScene.loadProgram("RESOURCE/menu.hst");
 #ifdef _FINAL_VERSION_
     const char* comments_path = nullptr;
 #else
-    const char* comments_path = "RESOURCE\\Texts_comments.btdb";
+    const char* comments_path = "RESOURCE/Texts_comments.btdb";
 #endif
-    qdTextDB::instance().load(getLocale(), path.c_str(), comments_path, true, true, false);
+    std::string path = getLocDataPath() + "Text" + PATH_SEP + "Texts.btdb";
+    qdTextDB::instance().load(locale, path.c_str(), comments_path, true, true, false);
 
     //Load texts, don't delete already loaded ones but replace existing ones
     for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
         std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
         std::string name = entry_path.filename().u8string();
         name = string_to_lower(name.c_str());
-        if (name == "texts.btdb") continue;
+        //Ignore the main text file since its already loaded and also any . starting file like .DS_Store
+        if (name == "texts.btdb" || name[0] == '.') continue;
         bool replace = name.rfind("_noreplace.") == std::string::npos;
         bool txt = getExtension(name, true) == "txt";
-        qdTextDB::instance().load(getLocale(), entry->path_content.c_str(), nullptr, false, replace, txt);
+        qdTextDB::instance().load(locale, entry->path_content.c_str(), nullptr, false, replace, txt);
     }
     
     //Load the builtin texts that might not be provided by addons
