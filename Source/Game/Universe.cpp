@@ -1052,7 +1052,12 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
                 data.manualData.copyCamera(i, "UserCamera", "Camera");
             }
         }
-	}
+	} else {
+        //Clear soundtracks so players don't get wrong belligerent soundtracks
+        for (int i = 0; i < 3; i++) {
+            data.manualData.soundTracks[i].clear();
+        }
+    }
 
 	PlayerVect playersToSave(NETWORK_PLAYERS_MAX, nullptr);
 	for(int i = 0; i < data.manualData.players.size(); i++){

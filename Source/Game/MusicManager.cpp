@@ -146,8 +146,7 @@ void MusicQuant()
 
 SoundTrack::SoundTrack() 
 {
-	randomChoice = 0;
-	index = 0;
+	clear();
 }
 
 const char* SoundTrack::fileName() const 
