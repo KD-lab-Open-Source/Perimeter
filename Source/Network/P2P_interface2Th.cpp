@@ -982,6 +982,7 @@ end_while_01:;
             flag_SkipProcessingGameCommand=false;
             
             //Create restore event
+            clientHost->desync_missionDescription->setSaveName("");
             netCommand4C_DesyncRestore ev_restore = netCommand4C_DesyncRestore(std::move(clientHost->desync_missionDescription));
             if (highest_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
                 ev_restore.missionDescription->gameType_ = GT_MULTI_PLAYER_RESTORE_PARTIAL;
