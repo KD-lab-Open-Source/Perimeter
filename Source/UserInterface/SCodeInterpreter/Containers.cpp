@@ -11,7 +11,12 @@ void Worlds::addNewWorld(World* world) {
 }
 World* Worlds::getWorldBySysName(const std::string& sysName) {
 	std::map<std::string, World*>::iterator it = worlds.find(sysName);
-	return it != worlds.end() ? it->second : 0;
+	if (it != worlds.end()) {
+        return it->second;
+    }
+    fprintf(stderr, "Attempted to find a non existing World '%s' in Chain\n", sysName.c_str());
+    
+    return nullptr;
 }
 void Worlds::clear() {
 	std::map <std::string, World*>::iterator it;
