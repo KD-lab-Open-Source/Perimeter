@@ -1444,6 +1444,13 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 void GameShell::KeyPressed(sKey& Key)
 {
+    if (Key.fullkey == (VK_F12|KBD_SHIFT|KBD_CTRL)) {
+        //Restart game now
+        request_application_restart();
+        terminate();
+        return;
+    }
+    
 	if(missionEditor_ && missionEditor_->keyPressed(Key))
 		return;
 
@@ -1490,7 +1497,7 @@ void GameShell::KeyPressed(sKey& Key)
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
-		if ( Key.fullkey == VK_INSERT ) {
+		if ( Key.fullkey == VK_INSERT || Key.fullkey == (VK_SPACE | KBD_CTRL) ) {
 			if (chatEdit->isVisible()) {
 				if (!chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = true;
@@ -1507,7 +1514,7 @@ void GameShell::KeyPressed(sKey& Key)
 				chatEdit->alliesOnlyMode = true;
 			}
 			return;
-		} else if ( Key.fullkey == (VK_INSERT | KBD_CTRL) ) {
+		} else if ( Key.fullkey == (VK_INSERT | KBD_CTRL) || (!chatEdit->isVisible() && Key.fullkey == VK_SPACE)) {
 			if (chatEdit->isVisible()) {
 				if (chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = false;
