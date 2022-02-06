@@ -339,18 +339,22 @@ void onMMDifficultyCombo(CShellWindow* pWnd, InterfaceEventCode code, int param)
     }
 }
 
+void goToMissionWorkaround(int missionNumber) {
+    //Weird workaround by trial and error for Perimeter (not ET) first mission but works for ET too
+    //this basically jumpstarts the history to the first mission while showing the intro vid
+    historyScene.goToMission(0);
+    int year = historyScene.getController()->getMissionYear(missionNumber);
+    year = std::max(0, year-2);
+    historyScene.getController()->goToYear(year);
+}
+
 void launchCurrentMission(CShellWindow* pWnd) {
     CListBoxWindow* list = (CListBoxWindow*) _shellIconManager.GetWnd(SQSH_MM_MISSION_LIST);
     int missionNumber = list->GetCurSel();
     if ( gameShell->briefingEnabled && missionNumber >= firstMissionNumber) {
         historyScene.setMissionNumberToExecute(missionNumber);
         if (missionNumber == 0 || missionNumber == firstMissionNumber) {
-            //Weird workaround by trial and error for Perimeter (not ET) first mission but works for ET too
-            //this basically jumpstarts the history to the first mission while showing the intro vid
-            historyScene.goToMission(0);
-            int year = historyScene.getController()->getMissionYear(missionNumber);
-            year = std::max(0, year-2);
-            historyScene.getController()->goToYear(year);
+            goToMissionWorkaround(missionNumber);
         } else {
             //Start after finishing the prev mission, so we can see all the plot and also not have screwed up
             //dialog or camera
@@ -359,7 +363,12 @@ void launchCurrentMission(CShellWindow* pWnd) {
         historyScene.hideText();
         _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, SQSH_MM_BRIEFING_SCR);
     } else {
-        historyScene.goToMission(missionNumber);
+        if (missionNumber < firstMissionNumber) {
+            //If before first mission (like tutorial) just go to mission after this to avoid year 0 after completing it
+            goToMissionWorkaround(missionNumber + 1);
+        } else {
+            goToMissionWorkaround(missionNumber);
+        }
         missionToExec = MissionDescription( ("RESOURCE\\MISSIONS\\" + historyScene.getMission(missionNumber).fileName).c_str() );
 
         //NOTE: should be removed when difficulty will be implemented for each separate player
