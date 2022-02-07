@@ -342,7 +342,7 @@ BOOL CTLCDragWnd::DrawDragWnd( CDC* pDC )
 
 void CTLCDragWnd::DrawItem( CDC* pDC, CRect rcItem, CTreeListItem* pItem )
 {
-	//! ðèñóåì òîëüêî âûáðàííûå
+	//! Ñ€Ð¸ÑÑƒÐµÐ¼ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð²Ñ‹Ð±Ñ€Ð°Ð½Ð½Ñ‹Ðµ
 	if (!pItem->GetSelected()) 
 		return;
 	// draw item background
@@ -616,7 +616,7 @@ void CTLCDragWnd::DrawItemTree( CDC* pDC, CRect rcColumn, CTreeListItem* pItem, 
 											pDC, 
 											rcGraph, 
 											rcTree, 
-											TLL_TOP | TLL_BOTTOM );				// ©§
+											TLL_TOP | TLL_BOTTOM );				// Â©Â§
 			}
 		}
 	}
@@ -632,30 +632,30 @@ void CTLCDragWnd::DrawItemTree( CDC* pDC, CRect rcColumn, CTreeListItem* pItem, 
 			if( m_pTreeListCtrl->m_dwStyle&TLC_ROOTLINE )
 			{
 				if( pItem->m_pPrev == NULL && pItem->m_pNext == NULL )
-					m_pTreeListCtrl->DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );						// ©¥ ( right part )
+					m_pTreeListCtrl->DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );						// Â©Ò ( right part )
 				else if( pItem->m_pPrev == NULL )
 					m_pTreeListCtrl->DrawItemTreeLine( pDC, 
 													rcGraph, 
 													rcTree, 
-													TLL_RIGHT | TLL_BOTTOM );	// ©³
+													TLL_RIGHT | TLL_BOTTOM );	// Â©Ñ–
 				else if( pItem->m_pNext == NULL )
 					m_pTreeListCtrl->DrawItemTreeLine( 
 													pDC, 
 													rcGraph, 
 													rcTree, 
 													TLL_RIGHT | TLL_TOP 
-													);				// ©»
+													);				// Â©Â»
 				else
 					m_pTreeListCtrl->DrawItemTreeLine( 
 													pDC, 
 													rcGraph, 
 													rcTree, 
 													TLL_RIGHT | TLL_TOP | TLL_BOTTOM 
-													);// ©Ç
+													);// Â©Ð—
 			}
 			else
 			{
-				m_pTreeListCtrl->DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );							// ©¥ ( right part )
+				m_pTreeListCtrl->DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );							// Â©Ò ( right part )
 			}
 		}
 		else
@@ -667,14 +667,14 @@ void CTLCDragWnd::DrawItemTree( CDC* pDC, CRect rcColumn, CTreeListItem* pItem, 
 												rcGraph, 
 												rcTree, 
 												TLL_RIGHT | TLL_TOP 
-												);					// ©»
+												);					// Â©Â»
 			else
 				m_pTreeListCtrl->DrawItemTreeLine( 
 												pDC, 
 												rcGraph, 
 												rcTree, 
 												TLL_RIGHT | TLL_TOP | TLL_BOTTOM 
-												);	// ©Ç
+												);	// Â©Ð—
 		}
 		
 /*
