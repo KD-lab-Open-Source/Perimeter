@@ -806,7 +806,9 @@ void GameShell::Show()
 
 		terRenderDevice->SetDrawTransform(terCamera->GetCamera());
 		if(debug_show_mode){
-            show_dispatcher.clear();
+            if (debug_show_mode != 2) {
+                show_dispatcher.clear();
+            }
 			universe()->showDebugInfo();
 			show_dispatcher.draw();
 		}

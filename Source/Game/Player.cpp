@@ -875,8 +875,23 @@ void terPlayer::showDebugInfo()
 	FOR_EACH(Units,ui)
 		(*ui)->showDebugInfo();
 
-	if(showDebugPlayer.field_regions)
-		field_region_.getEditColumn().show(CYAN);
+    if(showDebugPlayer.field_regions == 1) {
+        field_region_.getEditColumn().show(CYAN);
+    }
+    if(showDebugPlayer.field_regions == 2) {
+        field_region_.getRasterizeColumn().show(CYAN);
+    }
+    if(showDebugPlayer.field_regions == 3) {
+        for (auto ci : clusters_) {
+            Vect3f pos;
+            ci.region()->show(BLUE, RED);
+            for (auto gen : ci.generators()) {
+                pos = gen->position();
+                show_vector(pos, RED);
+            }
+            show_text(pos, std::to_string(ci.region()->numCells()).c_str(), WHITE);
+        }
+    }
 
 	if(showDebugPlayer.field_region_border){
 		ClusterList::const_iterator ci;
