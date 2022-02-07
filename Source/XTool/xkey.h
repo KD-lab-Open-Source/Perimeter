@@ -41,6 +41,7 @@
 #define VK_INSERT         0x2D
 #define VK_DELETE         0x2E
 //#define VK_HELP           0x2F
+#define VK_EQUALS         0x3D
 
 /* VK_0 thru VK_9 are the same as ASCII '0' thru '9' (0x30 - 0x39) */
 /* VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A) */
@@ -117,17 +118,26 @@
 
 
 // Some additional virtual keycodes...
-//#define VK_OEM_COMMA	0xBC
-//#define VK_OEM_PERIOD	0xBE
-//#define VK_OEM_SCROLL	0x91
-//#define VK_OEM_MINUS	0xBD
-//#define VK_OEM_5_		0x0C
-//#define VK_OEM_PLUS		0xBB
 //#define VK_OEM_ALT		0x12
-
-#define VK_SLASH	0xBF
-#define VK_BKSLASH	0x5C
-#define VK_TILDE	0xC0
+//VK_OEM_1
+#define VK_SEMICOLON	0xBA
+#define VK_PLUS         0xBB
+#define VK_COMMA        0xBC
+#define VK_MINUS        0xBD
+#define VK_PERIOD       0xBE
+//VK_OEM_2
+#define VK_SLASH        0xBF
+#define VK_LESS         0xE2
+//VK_OEM_3
+#define VK_TILDE        0xC0
+//VK_OEM_4
+#define VK_LEFTBRACKET  0xDB
+//VK_OEM_5
+#define VK_BKSLASH      0xDC
+//VK_OEM_6
+#define VK_RIGHTBRACKET 0xDD
+//VK_OEM_7
+#define VK_QUOTE        0xDE
 //#define VK_LBR		0x5B
 //#define VK_RBR		0x5D
 

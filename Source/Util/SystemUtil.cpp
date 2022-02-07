@@ -76,6 +76,16 @@ bool isPressed(uint32_t key) {
         case VK_TILDE:          keycode = SDLK_BACKQUOTE; break;
         case VK_SLASH:          keycode = SDLK_SLASH; break;
         case VK_BKSLASH:        keycode = SDLK_BACKSLASH; break;
+        case VK_SEMICOLON:      keycode = SDLK_SEMICOLON; break;
+        case VK_QUOTE:          keycode = SDLK_QUOTE; break;
+        case VK_LEFTBRACKET:    keycode = SDLK_LEFTBRACKET; break;
+        case VK_RIGHTBRACKET:   keycode = SDLK_RIGHTBRACKET; break;
+        case VK_PLUS:           keycode = SDLK_PLUS; break;
+        case VK_COMMA:          keycode = SDLK_COMMA; break;
+        case VK_PERIOD:         keycode = SDLK_PERIOD; break;
+        case VK_MINUS:          keycode = SDLK_MINUS; break;
+        case VK_LESS:           keycode = SDLK_LESS; break;
+        case VK_EQUALS:         keycode = SDLK_EQUALS; break;
         case VK_NUMPAD0:        keycode = SDLK_KP_0; break;
         case VK_NUMPAD1:        keycode = SDLK_KP_1; break;
         case VK_NUMPAD2:        keycode = SDLK_KP_2; break;
@@ -90,15 +100,9 @@ bool isPressed(uint32_t key) {
         case VK_DIVIDE:         keycode = SDLK_KP_DIVIDE; break;
         case VK_NUMLOCK:        keycode = SDLK_NUMLOCKCLEAR; break;
         case VK_SCROLL:         keycode = SDLK_SCROLLLOCK; break;
-        case VK_ADD:
-            keycodes.emplace_back(SDLK_PLUS);
-            keycodes.emplace_back(SDLK_KP_PLUS);
-            break;
+        case VK_ADD:            keycode = SDLK_KP_PLUS; break;
         case VK_SEPARATOR:      keycode = SDLK_SEPARATOR; break;
-        case VK_SUBTRACT:
-            keycodes.emplace_back(SDLK_MINUS);
-            keycodes.emplace_back(SDLK_KP_MINUS);
-            break;
+        case VK_SUBTRACT:       keycode = SDLK_KP_MINUS; break;
         default:
 #if defined(PERIMETER_DEBUG) && 0
             printf("Unknown VK keycode requested %u\n", key);
@@ -172,6 +176,16 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_BACKQUOTE:    key = VK_TILDE; break;
         case SDLK_SLASH:        key = VK_SLASH; break;
         case SDLK_BACKSLASH:    key = VK_BKSLASH; break;
+        case SDLK_SEMICOLON:    key = VK_SEMICOLON; break;
+        case SDLK_QUOTE:        key = VK_QUOTE; break;
+        case SDLK_LEFTBRACKET:  key = VK_LEFTBRACKET; break;
+        case SDLK_RIGHTBRACKET: key = VK_RIGHTBRACKET; break;
+        case SDLK_PLUS:         key = VK_PLUS; break;
+        case SDLK_COMMA:        key = VK_COMMA; break;
+        case SDLK_PERIOD:       key = VK_PERIOD; break;
+        case SDLK_MINUS:        key = VK_MINUS; break;
+        case SDLK_LESS:         key = VK_LESS; break;
+        case SDLK_EQUALS:       key = VK_EQUALS; break;
         case SDLK_KP_0:         key = VK_NUMPAD0; break;
         case SDLK_KP_1:         key = VK_NUMPAD1; break;
         case SDLK_KP_2:         key = VK_NUMPAD2; break;
@@ -186,11 +200,9 @@ sKey::sKey(SDL_Keysym keysym, bool set_by_async_funcs) {
         case SDLK_KP_DIVIDE:    key = VK_DIVIDE; break;
         case SDLK_NUMLOCKCLEAR: key = VK_NUMLOCK; break;
         case SDLK_SCROLLLOCK:   key = VK_SCROLL; break;
-        case SDLK_KP_PLUS:
-        case SDLK_PLUS:         key = VK_ADD; break;
+        case SDLK_KP_PLUS:      key = VK_ADD; break;
         case SDLK_SEPARATOR:    key = VK_SEPARATOR; break;
-        case SDLK_KP_MINUS:
-        case SDLK_MINUS:        key = VK_SUBTRACT; break;
+        case SDLK_KP_MINUS:     key = VK_SUBTRACT; break;
         default:
             //Apparently game uses uppercase ASCII codes for keys
             uint8_t byte = keysym.sym & 0xFF;
