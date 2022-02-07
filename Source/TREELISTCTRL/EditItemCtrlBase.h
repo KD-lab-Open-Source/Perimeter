@@ -3,7 +3,7 @@
 
 class CTreeListCtrl;
 
-//данные из контрола должны получаться через метод GetWindowText
+//РґР°РЅРЅС‹Рµ РёР· РєРѕРЅС‚СЂРѕР»Р° РґРѕР»Р¶РЅС‹ РїРѕР»СѓС‡Р°С‚СЊСЃСЏ С‡РµСЂРµР· РјРµС‚РѕРґ GetWindowText
 class EditItemCtrlBase :public CWnd
 {
 public:

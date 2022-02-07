@@ -34,8 +34,8 @@ void SwapArrayElements(CPtrArray& arr, INT_PTR iFirst, INT_PTR iSecond)
 	arr[iFirst] = arr[iSecond];
 	arr[iSecond] = t;
 }
-UINT const CTreeListCtrl::DRAG_DELAY = INT_MAX;//через какое время drag and drop начнется 
-							//даже без движения
+UINT const CTreeListCtrl::DRAG_DELAY = INT_MAX;//С‡РµСЂРµР· РєР°РєРѕРµ РІСЂРµРјСЏ drag and drop РЅР°С‡РЅРµС‚СЃСЏ 
+							//РґР°Р¶Рµ Р±РµР· РґРІРёР¶РµРЅРёСЏ
 namespace {
 	bool IsKeyPressed(int dwKey){
 		return (GetAsyncKeyState(dwKey)>>15 != 0);
@@ -2538,7 +2538,7 @@ void CTreeListCtrl::DrawBkgndBmp( CDC* pDC, RECT const& rcClip, HBITMAP hBkgnd )
 
 void CTreeListCtrl::GetCellBkColor(int iRow, COLORREF* color) const
 {
-	//! Рисуем фоны для ячеек
+	//! Р РёСЃСѓРµРј С„РѕРЅС‹ РґР»СЏ СЏС‡РµРµРє
 	if( !(CWnd::GetStyle()&WS_DISABLED) )
 	{
 		if( m_dwStyle&TLC_DOUBLECOLOR )
@@ -2664,7 +2664,7 @@ void CTreeListCtrl::DrawItems( CDC* pDC, CRect rcClip )
 			continue;
 		}
 
-		//! Рисуем фоны для ячеек
+		//! Р РёСЃСѓРµРј С„РѕРЅС‹ РґР»СЏ СЏС‡РµРµРє
 		if( !(m_dwStyle&TLC_BKGNDIMAGE) )
 		{
 			COLORREF color;
@@ -2698,7 +2698,7 @@ void CTreeListCtrl::DrawItems( CDC* pDC, CRect rcClip )
 			pDC->LineTo( rcItem.right-1, rcItem.top - 1);
 		}
 	}
-// Дорисовываем сетку до конца окна, после того как кончились узлы
+// Р”РѕСЂРёСЃРѕРІС‹РІР°РµРј СЃРµС‚РєСѓ РґРѕ РєРѕРЅС†Р° РѕРєРЅР°, РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє РєРѕРЅС‡РёР»РёСЃСЊ СѓР·Р»С‹
 	for( int iGrid=GetVisibleCount(); 
 		iGrid<= nFirstRow + nShowRows; 
 		++iGrid )
@@ -2735,7 +2735,7 @@ void CTreeListCtrl::PrepareInfoForItemPaintCycle(ITEM_CUSTOM_DRAW_INFO* pcdi,
 												 CTreeListItem const* pItem,
 												 CRect const& rcItem)
 {
-	//! Рисуем фоны для ячеек
+	//! Р РёСЃСѓРµРј С„РѕРЅС‹ РґР»СЏ СЏС‡РµРµРє
 	if( !(m_dwStyle&TLC_BKGNDIMAGE) )
 		GetCellBkColor(iRow, &pcdi->clrTextBk);
 	pcdi->clrText = getNormalTextColor();
@@ -3143,7 +3143,7 @@ void CTreeListCtrl::DrawItemTree( CDC* pDC,
 		if( pCheckItem->m_pNext != NULL )
 		{
 			if( iLevel != 1 || m_dwStyle&TLC_ROOTLINE )
-				DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_TOP | TLL_BOTTOM );	// ©§
+				DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_TOP | TLL_BOTTOM );	// В©В§
 		}
 	}
 
@@ -3158,28 +3158,28 @@ void CTreeListCtrl::DrawItemTree( CDC* pDC,
 			if( m_dwStyle&TLC_ROOTLINE )
 			{
 				if( pItem->m_pPrev == NULL && pItem->m_pNext == NULL )
-					DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );						// ©Ґ ( right part )
+					DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );						// В©Тђ ( right part )
 				else if( pItem->m_pPrev == NULL )
-					DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT | TLL_BOTTOM );			// ©і
+					DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT | TLL_BOTTOM );			// В©С–
 				else if( pItem->m_pNext == NULL )
-					DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT | TLL_TOP );				// ©»
+					DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT | TLL_TOP );				// В©В»
 				else
 					DrawItemTreeLine( pDC, rcGraph, rcTree, 
-									TLL_RIGHT | TLL_TOP | TLL_BOTTOM );	// ©З
+									TLL_RIGHT | TLL_TOP | TLL_BOTTOM );	// В©Р—
 			}
 			else
 			{
-				DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );							// ©Ґ ( right part )
+				DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT );							// В©Тђ ( right part )
 			}
 		}
 		else
 		{
 			// child item of other items ( not root item )
 			if( pItem->m_pNext == NULL )
-				DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT | TLL_TOP );					// ©»
+				DrawItemTreeLine( pDC, rcGraph, rcTree, TLL_RIGHT | TLL_TOP );					// В©В»
 			else
 				DrawItemTreeLine( pDC, rcGraph, rcTree, 
-									TLL_RIGHT | TLL_TOP | TLL_BOTTOM );		// ©З
+									TLL_RIGHT | TLL_TOP | TLL_BOTTOM );		// В©Р—
 		}
 		
 		// draw button of child item of root item
@@ -3812,7 +3812,7 @@ bool CTreeListCtrl::DeleteAllItems()
 	bool bDelte = true;
 	if (m_dwStyle&TLC_TREELIST) 
 		DeleteItem( TLI_ROOT );
-	else{//! если дерево работает как список
+	else{//! РµСЃР»Рё РґРµСЂРµРІРѕ СЂР°Р±РѕС‚Р°РµС‚ РєР°Рє СЃРїРёСЃРѕРє
 		DeleteAllListItems();
 	}
 
@@ -4203,7 +4203,7 @@ void CTreeListCtrl::DeselectAll(CTreeListItem const* pItem)
 	{
 		CTreeListItem* pi = reinterpret_cast<CTreeListItem*>(arr[iItem]);
 		if (!SelectItemAux(pi, 0, SI_DESELECT))
-			m_arSelects.Add(pi);//У некоторых могли откзаться снимать выделение
+			m_arSelects.Add(pi);//РЈ РЅРµРєРѕС‚РѕСЂС‹С… РјРѕРіР»Рё РѕС‚РєР·Р°С‚СЊСЃСЏ СЃРЅРёРјР°С‚СЊ РІС‹РґРµР»РµРЅРёРµ
 	}
 }
 
@@ -4242,8 +4242,8 @@ void CTreeListCtrl::ShiftSelection(CTreeListItem* pItem,
 	CTreeListItem *selectionBase = GetShiftSelectionBase();
 	if (m_arSelects.GetSize() == 1&&selectionBase == pItem) 
 	{
-		//если выделен только один и кликнули на него
-		//ничего не делаем
+		//РµСЃР»Рё РІС‹РґРµР»РµРЅ С‚РѕР»СЊРєРѕ РѕРґРёРЅ Рё РєР»РёРєРЅСѓР»Рё РЅР° РЅРµРіРѕ
+		//РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°РµРј
 		return;
 	}
 	if (bClearSelection) 
@@ -4754,7 +4754,7 @@ void CTreeListCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 	SetFocus();
 
 	CWnd::OnRButtonDown(nFlags, point);
-//посутпаем как в CListCtrl
+//РїРѕСЃСѓС‚РїР°РµРј РєР°Рє РІ CListCtrl
 	CRect rcText;
 	if (GetModifiedItem())
 		FinishModify();

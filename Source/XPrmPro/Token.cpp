@@ -674,7 +674,7 @@ void ArrayVariable::init(Compiler& comp)
 	if(!size_var_name.empty())
 		const_cast<IntVariable*>(dynamic_cast<const IntVariable*>(comp.context().find_local(size_var_name.c_str())))->set(current_size);
 
-	while(size() < declare_size){ // äîáàâëÿåì íåäîñòàþùèå ýëåìåíòû
+	while(size() < declare_size){ // Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ Ð½ÐµÐ´Ð¾ÑÑ‚Ð°ÑŽÑ‰Ð¸Ðµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹
 //		Variable* v = type.create("");
 //		push_back(v);
 	}

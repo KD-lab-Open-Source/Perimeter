@@ -320,7 +320,7 @@ ScriptParser& ScriptParser::operator>>(const char* str)
 
 bool ScriptParser::findSection(const char* sectionName)
 {
-	// Оптимизировано для последовательной записи
+	// РћРїС‚РёРјРёР·РёСЂРѕРІР°РЅРѕ РґР»СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕР№ Р·Р°РїРёСЃРё
 	for(int i = 0; i < 2; i++){
 		SmartName name("");
 		(*this) >> name;
