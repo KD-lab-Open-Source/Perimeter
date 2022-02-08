@@ -75,7 +75,7 @@ void MissionDescription::init()
 	globalTime = 1;
 	gameSpeed = 0;
 	gamePaused = false;
-	originalSaveName = 0;
+	originalSaveName = "";
 	worldID_ = -1;
 	gameType_ = GT_SINGLE_PLAYER;
 	flag_missionDescriptionUpdate = true;
@@ -179,6 +179,11 @@ void MissionDescription::read(XBuffer& in)
     in > StringInWrapper(missionName_);
     in > StringInWrapper(missionDescriptionID.value());
     in > StringInWrapper(savePathKey_);
+    const uint16_t ver_307[]  = {3, 0, 7};
+    if (compare_versions(ver_307, version.value().c_str())) {
+        //Above 3.0.7 replays have original save path
+        in > StringInWrapper(originalSaveName.value());        
+    }
 	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
         playersData[i].read(in);
     }
@@ -215,9 +220,11 @@ void MissionDescription::write(XBuffer& out) const
     out < StringOutWrapper(worldName_.value());
     out < StringOutWrapper(missionName_);
     out < StringOutWrapper(missionDescriptionID.value());
-    out < StringOutWrapper(savePathKey_); 
-	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
-		playersData[i].write(out);
+    out < StringOutWrapper(savePathKey_);
+    out < StringOutWrapper(originalSaveName.value());
+	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+        playersData[i].write(out);
+    }
 	out.write(&playersShufflingIndices[0], sizeof(playersShufflingIndices[0])*NETWORK_PLAYERS_MAX);
     out.write(&gameType_,sizeof(gameType_));
     out.write(&gameContent,sizeof(gameContent));
@@ -234,7 +241,11 @@ void MissionDescription::write(XBuffer& out) const
 
 void MissionDescription::simpleRead(XBuffer& in) 
 {
-    in > StringInWrapper(worldName_.value()) > StringInWrapper(missionName_) > StringInWrapper(savePathKey_);
+    in > StringInWrapper(version.value());
+    in > StringInWrapper(worldName_.value());
+    in > StringInWrapper(missionName_);
+    in > StringInWrapper(savePathKey_);
+    in > StringInWrapper(originalSaveName.value());
 	unsigned char tmp;
 	int i;
     std::string tmp_str;
@@ -262,7 +273,11 @@ void MissionDescription::simpleRead(XBuffer& in)
 
 void MissionDescription::simpleWrite(XBuffer& out) const 
 {
-    out < StringOutWrapper(worldName_.value()) < StringOutWrapper(missionName_) < StringOutWrapper(savePathKey_);
+    out < StringOutWrapper(version.value());
+    out < StringOutWrapper(worldName_.value());
+    out < StringOutWrapper(missionName_);
+    out < StringOutWrapper(savePathKey_);
+    out < StringOutWrapper(originalSaveName.value());
 	unsigned char tmp;
 	int i;
 	for(i=0; i<NETWORK_PLAYERS_MAX; i++){

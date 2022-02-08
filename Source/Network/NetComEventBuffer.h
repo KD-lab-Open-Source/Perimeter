@@ -33,7 +33,6 @@ public:
 		return result;
 	}
 	void reset();//?
-	int write2File(XStream& fout);
 	void putNetCommand(const netCommandGeneral* event);//out
 	bool putBufferPacket(char* buf, unsigned int size);//in
 	int currentNetCommandID();//in

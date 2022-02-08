@@ -73,6 +73,8 @@ const char* currentShortVersion =
 #include "../version.h"
 ;
 
+uint16_t currentVersionNumbers[] = {0, 0, 0};
+
 static int terMissionEdit = 0;
 
 cLogicGeneric* terLogicGeneric = NULL;
@@ -812,15 +814,18 @@ int SDL_main(int argc, char *argv[])
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
 
-    //Decode stacktrace if requested
-    decode_stacktrace();
-
     //Init clock
     initclock();
+
+    //Decode stacktrace if requested
+    decode_stacktrace();
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
     printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
+
+    //Parse version string
+    decode_version(currentShortVersion, currentVersionNumbers);
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);

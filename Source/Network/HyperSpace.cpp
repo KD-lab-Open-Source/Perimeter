@@ -191,6 +191,72 @@ bool isCorrectPlayReelFile(const char* fname)
     return checkPlayReelMagic(fi);
 }
 
+size_t terHyperSpace::serializeGameCommands(XBuffer& out) const {
+    //Store the accumulated quants from replay + current one
+    unsigned int quants = endQuant_inReplayListGameCommands + lastQuant_inFullListGameCommands;
+    size_t result = out.write(&quants, sizeof(quants));
+
+    InOutNetComBuffer out_buffer(1024, true);
+    //First we write any previously saved commands from before save
+    for (auto p : replayListGameCommands) {
+        out_buffer.putNetCommand(p);
+    }
+    //We save the actions done since loading game, applying offset of replay
+    {
+        //Lock!
+        CAutoLock lock(m_FullListGameCommandLock);
+        for (auto p: fullListGameCommands) {
+            int ccq = p->curCommandQuant_;
+            int ccc = p->curCommandCounter_;
+            //We shouldnt be modifying the game commands inside const func before writing but we make a pinky swear that we leave them as is after
+            p->setCurCommandQuantAndCounter(ccq + endQuant_inReplayListGameCommands, ccc);
+            out_buffer.putNetCommand(p);
+            p->setCurCommandQuantAndCounter(ccq, ccc);
+        }
+    }
+
+    result += out.write(out_buffer.buf, out_buffer.filled_size);
+    out_buffer.init();
+    out_buffer.reset();
+    return result;
+}
+
+void terHyperSpace::deserializeGameCommands(XBuffer& in, size_t len) {
+    len -= in.read(&endQuant_inReplayListGameCommands, sizeof(endQuant_inReplayListGameCommands));
+    xassert(len >= 0);
+    
+    InOutNetComBuffer in_buffer(len, true); //проверить необходимость автоувелечения!
+    in_buffer.putBufferPacket(in.address()+in.tell(), len);
+
+    while(in_buffer.currentNetCommandID()!=NETCOM_ID_NONE) {
+        terEventID event = (terEventID)in_buffer.currentNetCommandID();
+        switch(event){
+            case NETCOM_4G_ID_UNIT_COMMAND:
+            {
+                netCommand4G_UnitCommand*  pnc= new netCommand4G_UnitCommand(in_buffer);
+                replayListGameCommands.push_back(pnc);
+            }
+                break;
+            case NETCOM_4G_ID_REGION:
+            {
+                netCommand4G_Region*  pnc= new netCommand4G_Region(in_buffer);
+                replayListGameCommands.push_back(pnc);
+            }
+                break;
+            case NETCOM_4G_ID_FORCED_DEFEAT:
+            {
+                netCommand4G_ForcedDefeat* pnc=new netCommand4G_ForcedDefeat(in_buffer);
+                replayListGameCommands.push_back(pnc);
+            }
+
+            default:
+                xassert(0&&"Incorrect commanf in playReel file!");
+                break;
+        }
+        in_buffer.nextNetCommand();
+    }
+}
+
 bool terHyperSpace::loadPlayReel(const char* fname)
 {
 	XStream fi(convert_path_content(fname), XS_IN);
@@ -198,55 +264,20 @@ bool terHyperSpace::loadPlayReel(const char* fname)
 	if(!checkPlayReelMagic(fi)) ErrH.Abort("Incorrect play reel file!:", XERR_USER, 0, fname);
 
 	int sizeOtherData=fi.size()-fi.tell();
-	XBuffer mdBuf(sizeOtherData);
-	fi.read(mdBuf.address(), sizeOtherData);
+	XBuffer buf(sizeOtherData, true);
+	fi.read(buf.address(), sizeOtherData);
 	//curMission.read(mdBuf);
 	MissionDescription temp;
-	temp.read(mdBuf);
+	temp.read(buf);
+    
+    size_t sizePlayReelData = sizeOtherData - buf.tell();
+    deserializeGameCommands(buf, sizePlayReelData);
 
-	mdBuf.read(&endQuant_inReplayListGameCommands, sizeof(endQuant_inReplayListGameCommands));
-
-	int sizePlayReelData=sizeOtherData-mdBuf.tell();
-	xassert(sizePlayReelData >= 0);
-//	unsigned char* tbuf=new unsigned char[sizePlayReelData];
-//	fi.read(tbuf, sizePlayReelData);
-	InOutNetComBuffer in_buffer(sizePlayReelData, 1); //проверить необходимость автоувелечения!
-	in_buffer.putBufferPacket(mdBuf.address()+mdBuf.tell(), sizePlayReelData);
-//	delete [] tbuf;
-
-	while(in_buffer.currentNetCommandID()!=NETCOM_ID_NONE) {
-		terEventID event = (terEventID)in_buffer.currentNetCommandID();
-		switch(event){
-		case NETCOM_4G_ID_UNIT_COMMAND: 
-			{
-				netCommand4G_UnitCommand*  pnc= new netCommand4G_UnitCommand(in_buffer);
-				replayListGameCommands.push_back(pnc);
-			}
-			break;
-		case NETCOM_4G_ID_REGION:
-			{
-				netCommand4G_Region*  pnc= new netCommand4G_Region(in_buffer);
-				replayListGameCommands.push_back(pnc);
-			}
-			break;
-		case NETCOM_4G_ID_FORCED_DEFEAT:
-			{
-				netCommand4G_ForcedDefeat* pnc=new netCommand4G_ForcedDefeat(in_buffer);
-				replayListGameCommands.push_back(pnc);
-			}
-
-		default:
-			xassert(0&&"Incorrect commanf in playReel file!");
-			break;
-		}
-		in_buffer.nextNetCommand();
-	}
 	curRePlayPosition=replayListGameCommands.begin();
 	return true;
 }
 
-terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
-{
+terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname) const {
 
 	XStream fo(0);
     std::string path = convert_path_content(fname, true);
@@ -260,31 +291,24 @@ terHyperSpace::SAVE_REPLAY_RESULT terHyperSpace::savePlayReel(const char* fname)
 		return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
 	}
 
-	XBuffer mdBuf(512, 1);
-	//curMission.write(mdBuf);
-	gameShell->CurrentMission.write(mdBuf);
-	fo.write(mdBuf.address(), mdBuf.tell());
+	XBuffer buf(1024, true);
+    //Copy current mission
+	MissionDescription md = gameShell->CurrentMission;
+    //Set original save of this mission for replay, so the replay starts with initial state and all actions can be applied
+    md.setSaveName(md.originalSaveName);
+    
+    //Write mission header
+    md.write(buf);
+	fo.write(buf.address(), buf.tell());
 	if (fo.ioError()) {
 		return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
 	}
 
-	fo.write(&lastQuant_inFullListGameCommands, sizeof(lastQuant_inFullListGameCommands));
-	if (fo.ioError()) {
-		return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
-	}
-
-
-	std::vector<netCommandGame*>::iterator p;
-	InOutNetComBuffer out_buffer(1024,1);
-	{
-		//Lock!
-		CAutoLock lock(m_FullListGameCommandLock);
-		for(p=fullListGameCommands.begin(); p!=fullListGameCommands.end(); p++){
-			//xassert( ((*p)->EventID==NETCOM_4G_ID_UNIT_COMMAND) || ((*p)->EventID==NETCOM_4G_ID_REGION) || ((*p)->EventID==NETCOM_4G_ID_FORCED_DEFEAT) );
-			out_buffer.putNetCommand((*p));
-		}
-	}
-	out_buffer.write2File(fo);
+    //Write game commands
+    buf.init();
+    serializeGameCommands(buf);
+    fo.write(buf.address(), buf.tell());
+    
     if (fo.ioError()) {
         return SAVE_REPLAY_RW_ERROR_OR_DISK_FULL;
     } else {

@@ -54,6 +54,30 @@ void setup_argcv(int argc, char *argv[]) {
 #endif
 }
 
+void decode_version(const char* version_str, uint16_t version[3]) {
+    XBuffer buf(const_cast<char*>(version_str), strlen(version_str) + 1);
+    char c;
+    buf >= version[0];
+    buf > c; if (c != '.') ErrH.Abort("Can't parse version", XERR_CRITICAL, 0, version_str);
+    buf >= version[1];
+    buf > c; if (c != '.') ErrH.Abort("Can't parse version", XERR_CRITICAL, 1, version_str);
+    buf >= version[2];
+}
+
+int compare_versions(const uint16_t left[3], const uint16_t right[3]) {
+    for (int i = 0; i < 3; ++i) {
+        if (left[i] < right[i]) return i + 1;
+        else if (left[i] > right[i]) return -(i + 1);
+    }
+    return 0;
+}
+
+int compare_versions(const uint16_t left[3], const char* right) {
+    static uint16_t version[3];
+    decode_version(right, version);
+    return compare_versions(left, version);
+}
+
 const char* check_command_line(const char* switch_str) {
 #ifndef _WIN32
     if (!argcv_setup_done) {

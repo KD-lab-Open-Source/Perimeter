@@ -599,6 +599,11 @@ void MissionDescription::refresh() {
     } else if (0 <= worldID_) {
         worldName_ = vMap.getWorldName(worldID_);
     }
+    
+    if (!originalSaveName) {
+        std::string name = string_to_lower(savePathKey_.c_str());
+        originalSaveName = strstr(name.c_str(), "resource");
+    }
 }
 
 void MissionDescription::loadDescription() {    
@@ -798,6 +803,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
             compressedData.set(0);
             if (compressedData.uncompress(uncompressedData) == 0) {
                 binaryDataLoaded = true;
+                uncompressedData.realloc(uncompressedData.tell());
                 uncompressedData.set(0);
                 uncompressedData > binarySavePrmBinary;
                 binarySavePrmBinary.realloc(binarySavePrmBinary.tell());
@@ -808,6 +814,17 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
                 uncompressedData > binaryRegionData;
                 binaryRegionData.realloc(binaryRegionData.tell());
                 binaryRegionData.set(0);
+                //Added in 3.0.8, was not present before
+                if (uncompressedData.tell() < uncompressedData.length()) {
+                    XBuffer replayData(0, true);
+                    uncompressedData > replayData;
+                    //Do not deserialize save replay data if we are loading an replay since we already load it
+                    if (!flag_rePlayReel && replayData.tell()) {
+                        replayData.realloc(replayData.tell());
+                        replayData.set(0);
+                        deserializeGameCommands(replayData, replayData.length());
+                    }
+                }
             } else {
                 fprintf(stderr, "Error decompressing binary save data!\n");
             }
@@ -1150,6 +1167,14 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
         binaryData.set(sizeof(REGION_DATA_FILE_VERSION));
         binaryData < changedCounter;
         binaryData.set(size);
+    }
+    uncompressedData < binaryData;
+    binaryData.set(0);
+    
+    //---------------------
+    // Replay data
+    if (userSave) {
+        serializeGameCommands(binaryData);
     }
     uncompressedData < binaryData;
     binaryData.set(0);

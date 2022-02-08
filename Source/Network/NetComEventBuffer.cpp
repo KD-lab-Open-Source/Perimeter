@@ -73,14 +73,6 @@ int InOutNetComBuffer::send(PNetCenter& conn, NETID destination)
 	return sent;
 }
 
-int InOutNetComBuffer::write2File(XStream& fout)
-{
-	int result=fout.write(buf, filled_size);
-	init();
-	reset();
-	return result;
-}
-
 //Out
 void InOutNetComBuffer::putNetCommand(const netCommandGeneral* event)
 {
