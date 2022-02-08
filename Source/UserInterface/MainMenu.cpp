@@ -2052,7 +2052,8 @@ int saveGame_(float i, float) {
     size_t ii = static_cast<size_t>(i);
 	gameShell->currentSingleProfile.deleteSave(savedGames[ii].savePathContent());
 	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[ii].missionName();
-	if ( gameShell->universalSave(saveName.c_str(), true) ) {
+    bool user_save = !gameShell->missionEditor();
+	if ( gameShell->universalSave(saveName.c_str(), user_save) ) {
 		hideMessageBox();
 		_shellIconManager.AddDynamicHandler( toSaveQuant, CBCODE_QUANT );
 //		_shellIconManager.SwitchMenuScreens( SQSH_MM_SAVE_GAME_SCR, SQSH_MM_INMISSION_SCR );
@@ -2122,7 +2123,8 @@ void onMMSaveGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 			showMessageBox();
 		} else {
 			std::string path = gameShell->currentSingleProfile.getSavesDirectory() + input->getText();
-			if ( gameShell->universalSave(path.c_str(), true) ) {
+			bool user_save = !gameShell->missionEditor();
+			if ( gameShell->universalSave(path.c_str(), user_save) ) {
 				_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_INMISSION_SCR );
 			} else {
 				setupOkMessageBox(
