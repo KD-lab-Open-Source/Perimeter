@@ -1090,9 +1090,9 @@ void terPlayer::universalSave(SavePlayerData& data, bool userSave) const {
 		}
 	}
 
-	data.playerStats = stats;    
 
 	if(userSave) {
+        data.playerStats = stats;
         data.currentTriggerChains = triggerChains_;
     } else {
         data.currentTriggerChains.clear();
