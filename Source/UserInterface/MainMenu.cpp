@@ -296,6 +296,15 @@ std::string checkMissingContent(MissionDescription& mission) {
         //Game content is OK but we still don't have this map
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
         msg += mission.worldName();
+    } else if (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent())) {
+        //Game content is OK but we still don't have this save
+        msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
+        if (mission.savePathContent().empty()) {
+            msg += "Key: " + mission.savePathKey();
+            msg += "\nWorld: " + mission.worldName();
+        } else {
+            msg += mission.savePathContent();
+        }
     }
     
     return msg;
