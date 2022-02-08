@@ -26,6 +26,9 @@
 #include <stdarg.h>     // for va_start
 #include "GameContent.h"
 #include "Localization.h"
+#include "MainMenu.h"
+#include "HistoryScene.h"
+#include "BelligerentSelect.h"
 
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
@@ -959,8 +962,6 @@ void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
 
 	fillTaskWnd();
 }
-#include "HistoryScene.h"
-#include "BelligerentSelect.h"
 
 extern HistoryScene historyScene;
 void CShellIconManager::fillTaskWnd() {
@@ -978,7 +979,7 @@ void CShellIconManager::fillTaskWnd() {
     }
     
     if (taskTxt.empty()) {
-        taskTxt = gameShell->CurrentMission.worldName();
+        taskTxt = getMapName(gameShell->CurrentMission.worldName().c_str());
     }
     
     if (!taskTxt.empty()) {

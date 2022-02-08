@@ -37,12 +37,7 @@ void fillMultiplayerLobbyList() {
     list->Clear();
     if (!gameShell->getNetClient()->isSaveGame()) {
         for (int i = 0; i < multiplayerMaps.size(); i++) {
-            std::string name = "MapNames.";
-            name += multiplayerMaps[i].missionName();
-            name = qdTextDB::instance().getText(name.c_str());
-            if (name.empty()) {
-                name = multiplayerMaps[i].missionName();
-            }
+            std::string name = getMapName(multiplayerMaps[i].missionName().c_str());
             list->AddString(name.c_str(), 0);
         }
     }

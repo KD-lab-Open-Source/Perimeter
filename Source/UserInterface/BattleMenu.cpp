@@ -39,12 +39,7 @@ void loadBattleList() {
 	}
 }
 std::string getSurvivalText(int pos) {
-	std::string name = "MapNames.";
-	name += battleMaps[pos].missionName();
-	name = qdTextDB::instance().getText(name.c_str());
-	if (name.empty()) {
-		name = battleMaps[pos].missionName();
-	}
+	std::string name = getMapName(battleMaps[pos].missionName().c_str());
 	return name + qdTextDB::instance().getText("Interface.Menu.Messages.SurvivalRecord") + formatTimeWithHour(gameShell->currentSingleProfile.getRecord(battleMaps[pos].missionName()));
 }
 
@@ -97,12 +92,7 @@ void onBattleMenuOpening() {
         s = battleMaps.size();
 
 	for (int i = 0; i < s; i++) {
-		std::string name = "MapNames.";
-		name += battleMaps[i].missionName();
-		name = qdTextDB::instance().getText(name.c_str());
-		if (name.empty()) {
-			name = battleMaps[i].missionName();
-		}
+		std::string name = getMapName(battleMaps[i].missionName().c_str());
 		list->AddString(name.c_str(), 0 );
 	}
 

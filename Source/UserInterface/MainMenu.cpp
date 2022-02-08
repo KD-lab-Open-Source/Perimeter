@@ -64,11 +64,18 @@ std::string getOriginalMissionName(const std::string& originalSaveName) {
 }
 
 std::string getItemTextFromBase(const char *keyStr) {
-	std::string key("Interface.Menu.ComboItems.");
-	key += keyStr;
-	const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
-	return (*stringFromBase) ? stringFromBase : "";
+    std::string key("Interface.Menu.ComboItems.");
+    key += keyStr;
+    const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
+    return (*stringFromBase) ? stringFromBase : "";
 //	return (*stringFromBase) ? stringFromBase : keyStr;
+}
+
+const char* getMapName(const char* keyStr) {
+    std::string key("MapNames.");
+    key += keyStr;
+    const char* text = qdTextDB::instance().getText(key.c_str());
+    return (text && *text) ? text : keyStr;
 }
 
 void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
