@@ -1,5 +1,8 @@
 #include "StdAfxRD.h"
 #include "AnimChannelNode.h"
+#ifdef PERIMETER_DEBUG_ASSERT
+#include <cmath>
+#endif
 
 cAnimChainNode::cAnimChainNode()
 {

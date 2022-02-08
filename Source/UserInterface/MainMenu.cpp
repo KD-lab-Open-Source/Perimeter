@@ -507,7 +507,7 @@ void fillStatsLists() {
 
 	std::vector<terPlayer*>& players = universe()->Players;
 	terPlayer* player;
-	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+	for (int i = 0; i < gameShell->CurrentMission.playersData.size(); i++) {
 		int playerID = gameShell->CurrentMission.playersData[i].playerID;
 		if (( gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
               || gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI

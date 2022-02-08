@@ -168,6 +168,8 @@ public:
 
 	void shufflePlayers();
 
+    void fitPlayerArrays();
+
 	PlayerData& getActivePlayerData();
 
     void clearData();
@@ -195,10 +197,10 @@ public:
 	PrmString version;
 	CustomString missionDescriptionID;
 	EnumWrapper<Difficulty> difficulty;
-	PlayerData playersData[4];
+    std::vector<PlayerData> playersData;
 	int missionNumber;
 	int playerAmountScenarioMax;
-	int playersShufflingIndices[4];
+	std::vector<int> playersShufflingIndices;
 	int activePlayerID;
 	int globalTime;
 	float gameSpeed;

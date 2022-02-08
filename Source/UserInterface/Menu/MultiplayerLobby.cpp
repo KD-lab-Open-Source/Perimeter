@@ -227,6 +227,14 @@ void onMMLobbySlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void setClan(CComboWindow* combo, int number) {
     const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
     if (showPlayerControls(currMission, number)) {
+        std::string clan = getItemTextFromBase("Clan");
+        if (combo->size != currMission.playerAmountScenarioMax) {
+            combo->Array.clear();
+            for (int i = 0; i < currMission.playerAmountScenarioMax; i++) {
+                combo->Array.emplace_back(clan + std::to_string(i + 1));
+            }
+            combo->size = combo->Array.size();
+        }
 		combo->Show(true);
         combo->Enable(isEditAllowed(currMission, number));
 		combo->pos = currMission.playersData[number].clan;
@@ -253,13 +261,8 @@ void setupClan(CComboWindow* combo, int number, bool direction) {
 void setupClanButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
 	if( code == EVENT_CREATEWND ) {
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		std::string clan = getItemTextFromBase("Clan");
-		char buff[30 + 1];
-		for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
-			sprintf(buff, "%d", (i + 1));
-			pCombo->Array.push_back( (clan + buff).c_str() );
-		}
-		pCombo->size = NETWORK_PLAYERS_MAX;
+        pCombo->Array.clear();
+		pCombo->size = pCombo->Array.size();
 		pCombo->pos = 0;
 	} else if (code == EVENT_UNPRESSED) {
 		setupClan((CComboWindow*) pWnd, number, true);
@@ -456,7 +459,7 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 		}
 		((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP_DESCR_TXT))->setText( currMission.missionDescription() );
 	
-		for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+		for (int i = 0; i < UI_PLAYERS_MAX; i++) {
 			setFrm(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_FRM_BTN + i)), i);
 			setClr(((CColorComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLR_BTN + i)), _shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLR_BG + i), i);
 			setSlot(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_SLOT_BTN + i)), i);

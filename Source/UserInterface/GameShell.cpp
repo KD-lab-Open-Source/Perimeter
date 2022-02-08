@@ -422,7 +422,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 	cVisGeneric::SetAssertEnabled(false);
 	CurrentMission = mission;
 
-	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+	for (int i = 0; i < CurrentMission.playersData.size(); i++) {
 		PlayerData* data = &CurrentMission.playersData[i];
         std::string playerName;
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
@@ -1301,6 +1301,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		}
 		break;
 		}
+    case 'S' | KBD_CTRL | KBD_SHIFT: {
+        std::string saveName = CurrentMission.savePathContent();
+        universalSave(saveName.c_str(), false);
+    } break;
 
 	case 'O' | KBD_CTRL: {
 		std::string saveName = CurrentMission.savePathKey();
@@ -2179,7 +2183,7 @@ void terGameShellShowEnergy()
 //-----------------------------------------------
 void CShellLogicDispatcher::init()
 {
-	alwaysShowLifeBars = false;
+	alwaysShowLifeBars = IniManager("Perimeter.ini", false).getInt("Game","ShowLifeBars");
 	m_pShowExternal[GAME_SHELL_SHOW_REGION_MAIN] = terScene->CreateExternalObj(terGameShellShowRegionMain,RegionMain.texture);
 	m_pShowExternal[GAME_SHELL_SHOW_REGION_MAIN_ALPHA] = terScene->CreateExternalObj(terGameShellShowRegionMainAlpha,sRegionTextureEnergy);
 	m_pShowExternal[GAME_SHELL_SHOW_REGION_MAIN_ALPHA]->SetSortPass(true);

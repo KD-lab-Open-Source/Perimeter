@@ -28,7 +28,7 @@ extern BGScene bgScene;
 
 std::vector<MissionDescription> battleMaps;
 int defaultBattleMapCount = 0;
-MonoSelect battleColors(4, playerAllowedColorSize);
+MonoSelect battleColors(UI_PLAYERS_MAX, playerAllowedColorSize);
 
 //battle menu
 void loadBattleList() {
@@ -208,6 +208,7 @@ void onMMMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		}
 	}
 }
+
 void onMMBattleGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
 		int pos = ((CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MAP_LIST))->GetCurSel();
@@ -233,27 +234,37 @@ void onMMBattleClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 void onMMBattleFirstSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_CREATEWND ) {
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		pCombo->Array.push_back( getItemTextFromBase("Player").c_str() );
+		pCombo->Array.emplace_back(getItemTextFromBase("Player"));
 		pCombo->size = 1;
 		pCombo->pos = 0;
 	} else if ( code == EVENT_DRAWWND ) {
 		int maxCount = battleMaps[((CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_MAP_LIST))->GetCurSel()].playerAmountScenarioMax;
-		for (int i = 1; i < 4; i++) {
-			_shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_SLOT_BTN + i)->Show(maxCount > i);
-		}
-		setSlotVisible(1, battleColors.getPosition(1) != -1);
-		setSlotVisible(2, battleColors.getPosition(2) != -1);
-		setSlotVisible(3, battleColors.getPosition(3) != -1);
+		for (int i = 1; i < UI_PLAYERS_MAX; i++) {
+			_shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_SLOT_BTN + i)->Show(i < maxCount);
+            setSlotVisible(i, battleColors.getPosition(i) != -1);
+            
+            //Setup clan combo if amount of map doesn't match
+            CComboWindow *pCombo = dynamic_cast<CComboWindow*>(_shellIconManager.GetWnd(SQSH_MM_BATTLE_PLAYER1_CLAN_BTN + i));
+            if (pCombo->size != maxCount) {
+                pCombo->Array.clear();
+                std::string clan = getItemTextFromBase("Clan");
+                for (int i = 0; i < maxCount; i++) {
+                    pCombo->Array.emplace_back(clan + std::to_string(i + 1));
+                }
+                pCombo->size = pCombo->Array.size();
+                pCombo->pos = i;
+            }
+        }
 	}
 }
 
 void onMMBattleSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	CComboWindow *pCombo = (CComboWindow*) pWnd;
 	if( code == EVENT_CREATEWND ) {
-		pCombo->Array.push_back( getItemTextFromBase("Closed").c_str() );
-		pCombo->Array.push_back( getItemTextFromBase("AI (Easy)").c_str() );
-		pCombo->Array.push_back( getItemTextFromBase("AI (Normal)").c_str() );
-        pCombo->Array.push_back( getItemTextFromBase("AI (Hard)").c_str() );
+		pCombo->Array.emplace_back( getItemTextFromBase("Closed") );
+		pCombo->Array.emplace_back( getItemTextFromBase("AI (Easy)") );
+		pCombo->Array.emplace_back( getItemTextFromBase("AI (Normal)") );
+        pCombo->Array.emplace_back( getItemTextFromBase("AI (Hard)") );
 		pCombo->size = pCombo->Array.size();
 		pCombo->pos = 0;
 	} else if ( (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) && intfCanHandleInput() ) {
@@ -263,23 +274,20 @@ void onMMBattleSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMBattleClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_CREATEWND ) {
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		std::string clan = getItemTextFromBase("Clan");
-		char buff[30 + 1];
-		for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
-			sprintf(buff, "%d", (i + 1));
-			pCombo->Array.push_back( (clan + buff).c_str() );
-		}
-		pCombo->size = NETWORK_PLAYERS_MAX;
-		pCombo->pos = 3 - (SQSH_MM_BATTLE_PLAYER4_CLAN_BTN - pWnd->ID);
+        std::string clan = getItemTextFromBase("Clan");
+        pCombo->Array.clear();
+        pCombo->Array.push_back(clan + "1");
+		pCombo->size = pCombo->Array.size();
+		pCombo->pos = 0;
 	}
 }
 void onMMBattleHCButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if( code == EVENT_CREATEWND ) {
 		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		pCombo->Array.push_back( "100%" );
-		pCombo->Array.push_back( "70%" );
-		pCombo->Array.push_back( "50%" );
-		pCombo->Array.push_back( "30%" );
+		pCombo->Array.emplace_back("100%" );
+		pCombo->Array.emplace_back("70%" );
+		pCombo->Array.emplace_back("50%" );
+		pCombo->Array.emplace_back("30%" );
 		pCombo->size = 4;
 		pCombo->pos = 0;
 	}

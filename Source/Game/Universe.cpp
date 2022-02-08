@@ -629,9 +629,12 @@ void MissionDescription::loadDescription() {
                     return;
                 bia >> WRAP_NAME(*this, "MissionDescriptionPrm");
             }
+            
+            //Adjust arrays
+            fitPlayerArrays();
 
             // Установка АИ
-            for (int i = 0; i < min(NETWORK_PLAYERS_MAX, playerAmountScenarioMax); i++) {
+            for (int i = 0; i < playerAmountScenarioMax; i++) {
                 PlayerData& pd = playersData[i];
                 pd.flag_playerStartReady = false;
                 pd.flag_playerGameReady = false;
@@ -714,7 +717,8 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 
 	if(!userSave){
 		data.activePlayerID = 0;
-		for(int i = 0; i < NETWORK_PLAYERS_MAX; i++){
+        data.fitPlayerArrays();
+		for (int i = 0; i < data.playersData.size(); i++) {
 			data.playersData[i].playerID = i;
 			data.playersData[i].colorIndex = i;
 			data.playersShufflingIndices[i] = i;
@@ -925,7 +929,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     gameShell->changeControlState(manualData.controls, true);
 
     // Загрузка игроков
-    xassert(manualData.players.size() <= NETWORK_PLAYERS_MAX);
+    xassert(manualData.players.size() <= mission.playersData.size());
     PlayerData worldPlayerData;
     worldPlayerData.set("World", NETID_NONE, 0, BELLIGERENT_EXODUS0, playerWorldColorIdx, REAL_PLAYER_TYPE_WORLD);
     
@@ -1076,8 +1080,8 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
         }
     }
 
-	PlayerVect playersToSave(NETWORK_PLAYERS_MAX, nullptr);
-	for(int i = 0; i < data.manualData.players.size(); i++){
+	PlayerVect playersToSave(mission.playersData.size(), nullptr);
+	for(int i = 0; i < mission.playersData.size(); i++){
 		if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI){

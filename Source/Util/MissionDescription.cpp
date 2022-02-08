@@ -92,6 +92,7 @@ MissionDescription::MissionDescription()
 MissionDescription::MissionDescription(const char* fname, GameType gameType)
 : missionDescriptionID(editMissionDescriptionID)
 {
+    init();
     setChanged();
     xassert(fname);
 
@@ -179,15 +180,31 @@ void MissionDescription::read(XBuffer& in)
     in > StringInWrapper(missionName_);
     in > StringInWrapper(missionDescriptionID.value());
     in > StringInWrapper(savePathKey_);
+    playersData.clear();
+    playersShufflingIndices.clear();
     const uint16_t ver_307[]  = {3, 0, 7};
-    if (compare_versions(ver_307, version.value().c_str())) {
-        //Above 3.0.7 replays have original save path
-        in > StringInWrapper(originalSaveName.value());        
+    if (0 < compare_versions(ver_307, version.value().c_str())) {
+        //In 3.0.8+ replays have original save path and allow dynamic sized players data and indices
+        in > StringInWrapper(originalSaveName.value());
+        uint32_t playersDataLen = 0;
+        in > playersDataLen;
+        for (uint32_t i = 0; i < playersDataLen; i++) {
+            playersData.emplace_back();
+            playersShufflingIndices.emplace_back();
+            playersData[i].read(in);
+            in.read(&playersShufflingIndices[i], sizeof(playersShufflingIndices[0]));
+        }
+    } else {
+        //Older format have always 4 players data and indices in non interleaved way
+        for(int i = 0; i < 4; i++) {
+            playersData.emplace_back();
+            playersData[i].read(in);
+        }
+        for(int i = 0; i < 4; i++) {
+            playersShufflingIndices.emplace_back();
+            in.read(&playersShufflingIndices[i], sizeof(playersShufflingIndices[0]));
+        }
     }
-	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
-        playersData[i].read(in);
-    }
-	in.read(&playersShufflingIndices[0], sizeof(playersShufflingIndices[0])*NETWORK_PLAYERS_MAX);
 	in.read(&gameType_,sizeof(gameType_));
     in.read(&gameContent,sizeof(gameContent));
     uint32_t difficultyVal = 0;
@@ -222,10 +239,12 @@ void MissionDescription::write(XBuffer& out) const
     out < StringOutWrapper(missionDescriptionID.value());
     out < StringOutWrapper(savePathKey_);
     out < StringOutWrapper(originalSaveName.value());
-	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+    uint32_t playersDataLen = static_cast<uint32_t>(playersData.size());
+    out < playersDataLen;
+	for (int i = 0; i < playersDataLen; i++) {
         playersData[i].write(out);
+        out.write(&playersShufflingIndices[i], sizeof(playersShufflingIndices[0]));
     }
-	out.write(&playersShufflingIndices[0], sizeof(playersShufflingIndices[0])*NETWORK_PLAYERS_MAX);
     out.write(&gameType_,sizeof(gameType_));
     out.write(&gameContent,sizeof(gameContent));
     uint32_t difficultyVal = difficulty.value();
@@ -247,9 +266,11 @@ void MissionDescription::simpleRead(XBuffer& in)
     in > StringInWrapper(savePathKey_);
     in > StringInWrapper(originalSaveName.value());
 	unsigned char tmp;
-	int i;
+    in.read(&tmp, sizeof(tmp)); uint32_t playersDataLen = tmp;
     std::string tmp_str;
-	for(i=0; i<NETWORK_PLAYERS_MAX; i++){
+    playersData.clear();
+	for (uint32_t i=0; i < playersDataLen; i++) {
+        playersData.emplace_back();
 		in.read(&tmp, sizeof(tmp)); playersData[i].playerID=(int)tmp;
 		in.read(&tmp, sizeof(tmp)); playersData[i].realPlayerType=(RealPlayerType)tmp;
 		in.read(&tmp, sizeof(tmp)); playersData[i].belligerent=(terBelligerent)tmp;
@@ -279,8 +300,8 @@ void MissionDescription::simpleWrite(XBuffer& out) const
     out < StringOutWrapper(savePathKey_);
     out < StringOutWrapper(originalSaveName.value());
 	unsigned char tmp;
-	int i;
-	for(i=0; i<NETWORK_PLAYERS_MAX; i++){
+    tmp=(unsigned char)playersData.size();		out.write(&tmp, sizeof(tmp));
+	for (int i=0; i<playersData.size(); i++){
 		tmp=(unsigned char)playersData[i].playerID;			out.write(&tmp, sizeof(tmp));
 		tmp=(unsigned char)playersData[i].realPlayerType;	out.write(&tmp, sizeof(tmp));
 		tmp=(unsigned char)playersData[i].belligerent;		out.write(&tmp, sizeof(tmp));
@@ -412,10 +433,9 @@ int MissionDescription::getUniquePlayerColor(int playerIdx, int begColor, bool d
 
 int MissionDescription::getUniquePlayerClan()
 {
-	int i, c;
-	for(c=0; c<NETWORK_PLAYERS_MAX; c++){
+	for (int c=0; c < playersData.size(); c++) {
 		bool error=0;
-		for(i=0; i<playerAmountScenarioMax; i++){
+		for (int i=0; i<playerAmountScenarioMax; i++) {
 			if(playersData[i].realPlayerType==REAL_PLAYER_TYPE_AI || playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
 				if(playersData[i].clan==c) {
 					error=1;
@@ -641,10 +661,10 @@ void MissionDescription::packPlayerIDs()
 {
 	setChanged();
 	int id = 0;
-	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
+	for(int i = 0; i < playersData.size(); i++)
 		if(playersData[i].realPlayerType != REAL_PLAYER_TYPE_CLOSE && playersData[i].realPlayerType != REAL_PLAYER_TYPE_OPEN)
 			playersData[i].playerID = id++;
-	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
+	for(int i = 0; i < playersData.size(); i++)
 		if(playersData[i].realPlayerType == REAL_PLAYER_TYPE_CLOSE || playersData[i].realPlayerType == REAL_PLAYER_TYPE_OPEN)
 			playersData[i].playerID = id++;
 }
@@ -652,8 +672,9 @@ void MissionDescription::packPlayerIDs()
 void MissionDescription::setSinglePlayerDifficulty(Difficulty difficutyIn)
 {
 	difficulty = difficutyIn;
-	for(int i = 0; i < NETWORK_PLAYERS_MAX; i++)
-		playersData[i].difficulty = difficutyIn;
+	for (int i = 0; i < playersData.size(); i++) {
+        playersData[i].difficulty = difficutyIn;
+    }
 }
 
 void MissionDescription::shufflePlayers()
@@ -665,4 +686,20 @@ void MissionDescription::clearData() {
     saveData.alloc(0);
     binaryData.alloc(0);
     scriptsData.alloc(0);
+}
+
+void MissionDescription::fitPlayerArrays() {
+    if (playerAmountScenarioMax < 0) return;
+    //This ensures there can't be more player's than possible colors
+    playerAmountScenarioMax = std::min(playerAmountScenarioMax, playerAllowedColorSize);
+    while (playersData.size() < playerAmountScenarioMax) {
+        playersData.emplace_back();
+    }
+    while (playersShufflingIndices.size() != playersData.size()) {
+        if (playersShufflingIndices.size() < playersData.size()) {
+            playersShufflingIndices.emplace_back(playersShufflingIndices.size());
+        } else {
+            playersShufflingIndices.pop_back();
+        }
+    }
 }

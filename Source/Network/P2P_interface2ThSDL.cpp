@@ -62,7 +62,10 @@ void PNetCenter::RemovePlayer(NETID netid)
         ExecuteInterfaceCommand(PNC_INTERFACE_COMMAND_HOST_TERMINATED_GAME);
     } else {
         NetConnection* connection = connectionHandler.getConnection(netid);
-        connection->close();
+        xassert(connection);
+        if (connection) {
+            connection->close();
+        }
     }
 }
 
