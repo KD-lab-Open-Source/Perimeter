@@ -7,14 +7,16 @@ class MonoSelect {
 
 	public:
 
-		MonoSelect(int slotCount, int selectSize);
+		MonoSelect();
 
-		void reset();
+		void reset(int slotCount, int selectSize);
+        void resize(int slotCount);
 		int putPrevious(int slotNumber);
 		int putNext(int slotNumber);
 		void disable(int slotNumber);
 		int enable(int slotNumber);
 		int getPosition(int slotNumber);
+        bool setPosition(int slotNumber, int pos);
 
 	protected:
 		bool hasPosition(int pos, int slotNumber);
@@ -27,7 +29,7 @@ class MonoSelect {
 			return pos;
 		}
 
-		int selectSize;
+		int selectSize = 0;
 		std::vector<int> slotPositions;
 
 };

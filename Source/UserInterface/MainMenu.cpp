@@ -17,7 +17,6 @@
 #include "Silicon.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
-#include "MonoSelect.h"
 #include "../HT/ht.h"
 #include "qd_textdb.h"
 
@@ -443,14 +442,7 @@ void prepareHeadList(int listID, const std::vector<std::string>& mVect, float* w
 	}
 	list->SetCurSel(0);
 }
-/* TODO unused?
-void fillColumnStatsList(int listID, int columnNumber, const std::vector<std::string>& mVect) {
-	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
-	for (int i = 0, s = mVect.size(); i < s; i++) {
-		list->AddString( mVect[i].c_str(), columnNumber );
-	}
-}
-*/
+
 void fillRowStatsListWindow(int listID, int rowNumber, const std::vector<std::string>& mVect, int race, const sColor4c& clr) {
 	CStatListBoxWindow* list = (CStatListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->AddRace( race, clr );
@@ -508,6 +500,7 @@ void fillStatsLists() {
 	std::vector<terPlayer*>& players = universe()->Players;
 	terPlayer* player;
 	for (int i = 0; i < gameShell->CurrentMission.playersData.size(); i++) {
+        if (i >= 9) break; //TODO add paging to stats screen to handle more than 9 players
 		int playerID = gameShell->CurrentMission.playersData[i].playerID;
 		if (( gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
               || gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI

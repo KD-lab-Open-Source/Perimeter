@@ -386,6 +386,9 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
        "Ctrl-F9 - start / stop playback\n"
        "Ctrl-Shift-F9 - Clear Current Spline\n"
        "Ctrl-Alt-F9 - write current spline ",
+       //Used for all langs
+       "Interface.Menu.ButtonLabels.<<<=<<<",
+       "Interface.Menu.ButtonLabels.>>>=>>>",
        //Empty to not mess with ,'s
        ""
    }, false, locale);

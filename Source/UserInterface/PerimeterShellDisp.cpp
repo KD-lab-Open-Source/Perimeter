@@ -172,6 +172,10 @@ _handlertbl[] = {
 	{SQSH_MM_BATTLE_PLAYER2_HC_BTN, onMMBattleHCButton},
 	{SQSH_MM_BATTLE_PLAYER3_HC_BTN, onMMBattleHCButton},
 	{SQSH_MM_BATTLE_PLAYER4_HC_BTN, onMMBattleHCButton},
+
+    {SQSH_MM_BATTLE_PLAYER_PAGE_TXT, onMMBattlePageText},
+    {SQSH_MM_BATTLE_PLAYER_PAGE_NEXT_BTN, onMMBattlePageNextButton},
+    {SQSH_MM_BATTLE_PLAYER_PAGE_PREV_BTN, onMMBattlePagePrevButton},
 	
 	{SQSH_MM_BATTLE_GO_BTN, onMMBattleGoButton},
 	{SQSH_MM_BACK_FROM_BATTLE_BTN, onMMBackButton},

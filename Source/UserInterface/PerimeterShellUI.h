@@ -1942,6 +1942,9 @@ void onMMBattleSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMBattleClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBattleHCButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBattleGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMBattlePageNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMBattlePagePrevButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMBattlePageText(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //load game
 void onMMLoadMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);

@@ -1,19 +1,29 @@
 #include "StdAfx.h"
 #include "MonoSelect.h"
 
-MonoSelect::MonoSelect(int slotCount, int selectSize) : selectSize(selectSize) {
-	xassert(slotCount <= selectSize);
-	slotPositions.resize(slotCount);
-	reset();
+MonoSelect::MonoSelect() {
+	reset(0, 0);
 }
 
-void MonoSelect::reset() {
-	for (int i = 0, s = slotPositions.size(); i < s; i++) {
+void MonoSelect::reset(int slotCount, int _selectSize) {
+    this->selectSize = _selectSize;
+    resize(slotCount);
+	for (size_t i = 0, s = slotPositions.size(); i < s; i++) {
 		slotPositions[i] = -1;
 	}
 }
 
+void MonoSelect::resize(int slotCount) {
+    slotCount = std::min(slotCount,selectSize);
+    size_t oldSize = slotPositions.size();
+    slotPositions.resize(slotCount);
+    for (size_t i = oldSize, s = slotPositions.size(); i < s; i++) {
+        slotPositions[i] = -1;
+    }
+}
+
 int MonoSelect::putPrevious(int slotNumber) {
+    if (slotNumber >= slotPositions.size()) return -1;
 	int res = slotPositions[slotNumber];
 
 	for (int p = (selectSize - 1); p >= 0; p--) {
@@ -29,7 +39,7 @@ int MonoSelect::putPrevious(int slotNumber) {
 }
 
 int MonoSelect::putNext(int slotNumber) {
-
+    if (slotNumber >= slotPositions.size()) return -1;
 	int res = slotPositions[slotNumber];
 
 	for (int p = 0; p < selectSize; p++) {
@@ -45,11 +55,18 @@ int MonoSelect::putNext(int slotNumber) {
 }
 
 int MonoSelect::getPosition(int slotNumber) {
+    if (slotNumber >= slotPositions.size()) return -1;
 	return slotPositions[slotNumber];
 }
 
+bool MonoSelect::setPosition(int slotNumber, int pos) {
+    if (slotNumber >= slotPositions.size() || hasPosition(pos, slotNumber)) return false;
+    slotPositions[slotNumber] = pos;
+    return true;
+}
+
 bool MonoSelect::hasPosition(int pos, int slotNumber) {
-	for (int i = 0, s = slotPositions.size(); i < s; i++) {
+	for (size_t i = 0, s = slotPositions.size(); i < s; i++) {
 		if ( i != slotNumber && slotPositions[i] == pos ) {
 			return true;
 		}
@@ -58,6 +75,7 @@ bool MonoSelect::hasPosition(int pos, int slotNumber) {
 }
 
 void MonoSelect::disable(int slotNumber) {
+    if (slotNumber >= slotPositions.size()) return;
 	slotPositions[slotNumber] = -1;
 }
 
