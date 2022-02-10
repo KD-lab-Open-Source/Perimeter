@@ -929,13 +929,12 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     gameShell->changeControlState(manualData.controls, true);
 
     // Загрузка игроков
-    xassert(manualData.players.size() <= mission.playersData.size());
     PlayerData worldPlayerData;
     worldPlayerData.set("World", NETID_NONE, 0, BELLIGERENT_EXODUS0, playerWorldColorIdx, REAL_PLAYER_TYPE_WORLD);
     
     //Load each player
     std::vector<int> playerLoadIndices;
-    for(int i = 0; i < manualData.players.size(); i++){
+    for(int i = 0; i < mission.playersData.size(); i++){
         if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
@@ -945,7 +944,9 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
             }
 
             terPlayer* player = addPlayer(mission.playersData[i]);
-            player->setTriggerChains(manualData.players[playerIndex]);
+            if (playerIndex < manualData.players.size()) {
+                player->setTriggerChains(manualData.players[playerIndex]);
+            }
             player->setPlayerStrategyIndex(playerIndex);
             playerLoadIndices.push_back(playerIndex);
             if(data.players.size() > playerIndex){

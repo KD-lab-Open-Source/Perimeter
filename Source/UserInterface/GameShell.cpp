@@ -613,10 +613,14 @@ bool GameShell::universalSave(const char* name, bool userSave, MissionDescriptio
     }
     mission->missionNumber = currentSingleProfile.getCurrentMissionNumber();
     mission->gameContent = mission->missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
-    if(userSave){
+    if (userSave) {
         mission->globalTime = global_time();
         mission->gameSpeed = game_speed ? game_speed : game_speed_to_resume;
         mission->gamePaused = !gamePausedByMenu && !game_speed;
+    } else {
+        mission->globalTime = 0;
+        mission->gameSpeed = 1;
+        mission->gamePaused = false;
     }
     mission->setSaveName(name ? name : "");
     bool result = universe()->universalSave(*mission, userSave);
