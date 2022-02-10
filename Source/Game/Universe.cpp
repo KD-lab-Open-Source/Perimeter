@@ -1126,7 +1126,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     
     //Binary data file content
     XBuffer uncompressedData(10240, true);
-    XBuffer binaryData(10240, true);
+    XBuffer binaryData(0, true);
 
     //---------------------
     // Save Prm Binary
@@ -1143,6 +1143,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     }
     uncompressedData < binaryData;
     binaryData.set(0);
+    binaryData.realloc(0);
 
 	if (gameShell->missionEditor() && gameShell->missionEditor()->hardnessChanged()){
 		gameShell->missionEditor()->clearHardnessChanged();
@@ -1175,6 +1176,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     }
     uncompressedData < binaryData;
     binaryData.set(0);
+    binaryData.realloc(0);
     
     //---------------------
     // Replay data
@@ -1183,6 +1185,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     }
     uncompressedData < binaryData;
     binaryData.set(0);
+    binaryData.realloc(0);
 
     //---------------------
     //Compress and save binary data into file
