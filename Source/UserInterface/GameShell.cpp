@@ -304,8 +304,10 @@ windowClientSize_(1024, 768)
         }
         
         terminate_with_char(path, PATH_SEP);
-		std::string spgPath = setExtension(path + name, "spg");
-        //spgPath = convert_path_content(spgPath, true);
+		std::string spgPath = convert_path_content(setExtension(path + name, "spg"));
+        if (spgPath.empty()) {
+            spgPath = setExtension(path + name, "spg");
+        }
 
 		if (!XStream(0).open(spgPath)) {
             if (name != "XXX") {
@@ -533,10 +535,13 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	game_speed_to_resume = game_speed;
 
-	if(CurrentMission.gameSpeed){
+    if (missionEditor()) {
+        setSpeed(0);
+    } else if (0 < CurrentMission.gameSpeed) {
 		setSpeed(CurrentMission.gameSpeed);
-		if(CurrentMission.gamePaused)
-			pauseGame();
+		if(CurrentMission.gamePaused) {
+            pauseGame();
+        }
 	}
 
 	startResourceDispatcher();
