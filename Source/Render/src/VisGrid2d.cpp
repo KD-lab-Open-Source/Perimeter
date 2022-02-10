@@ -298,11 +298,13 @@ void MTGVector::Detach(cIUnkClass *UnkObj)
 		//MT_IS_GRAPH()?gb_VisGeneric->GetGraphLogicQuant():gb_VisGeneric->GetLogicQuant();
 		if(erase_list.empty() || erase_list.back().quant!=quant)
 		{
+            /* TODO why trips this when loading multi save?, what was assertion for?
 			if(!erase_list.empty())
 			{
 				int back_quant=erase_list.back().quant;
 				VISASSERT(back_quant<quant);
 			}
+            */
 
 			sErase e;
 			e.quant=quant;

@@ -270,7 +270,7 @@ static sqshControl _controls_55[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 465, -1, 0, 0, 0, 0, { "", "" }, "SOUND EFFECTS", 0.f 
+  }, "mainmenu_button", "", "", 470, -1, 0, 0, 0, 0, { "", "" }, "SOUND EFFECTS", 0.f 
  , 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -282,7 +282,7 @@ static sqshControl _controls_55[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 464, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 469, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -318,7 +318,7 @@ static sqshControl _controls_55[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press" 
- , "", "", 466, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", "", 471, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -341,7 +341,7 @@ static sqshControl _controls_55[] = { { SQSH_MOVE_BUTTON_TYPE
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button" 
- , "", "", 469, -1, 0, 0, 0, 0, { "", "" }, "MUSIC", 0.f, 0.02083333f, SHELL_ALIGN_LEFT 
+ , "", "", 474, -1, 0, 0, 0, 0, { "", "" }, "MUSIC", 0.f, 0.02083333f, SHELL_ALIGN_LEFT 
  , SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -352,7 +352,7 @@ static sqshControl _controls_55[] = { { SQSH_MOVE_BUTTON_TYPE
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
- , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 468, -1 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 473, -1 
  , 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255 
  , 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -388,7 +388,7 @@ static sqshControl _controls_55[] = { { SQSH_MOVE_BUTTON_TYPE
  , 447.f, 456.f, 16.f, 27.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 470, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 475, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -449,7 +449,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button" 
- , "", "", 388, -1, 0, 0, 0, 0, { "", "" }, "LANDSCAPE DETAILS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT 
+ , "", "", 393, -1, 0, 0, 0, 0, { "", "" }, "LANDSCAPE DETAILS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT 
  , SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -460,7 +460,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
- , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 387, -1 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 392, -1 
  , 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255 
  , 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -484,7 +484,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 463, -1, 0, 0, 0, 0, { "", "" }, "REFLECTIONS", 0.f 
+  }, "mainmenu_button", "", "", 468, -1, 0, 0, 0, 0, { "", "" }, "REFLECTIONS", 0.f 
  , 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -496,7 +496,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 462, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 467, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -519,7 +519,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 392, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 397, -1, 0, 0, 0, 0, { "", "" 
   }, "OCCLUSION", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0 
  , 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
@@ -531,7 +531,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 391, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 396, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -554,7 +554,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 394, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 399, -1, 0, 0, 0, 0, { "", "" 
   }, "POINT LIGHT", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -566,7 +566,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 393, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 398, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -589,7 +589,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 461, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 466, -1, 0, 0, 0, 0, { "", "" 
   }, "SHADOW TYPE", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -601,7 +601,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 460, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 465, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -624,7 +624,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 459, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 464, -1, 0, 0, 0, 0, { "", "" 
   }, "SHADOW QUALITY", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255 
  , 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -636,7 +636,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 458, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 463, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -659,7 +659,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
- , 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 396, -1, 0, 0, 0, 0, { "" 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 401, -1, 0, 0, 0, 0, { "" 
  , "" }, "SHADOW SAMPLES", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2 
  , 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -671,7 +671,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 395, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 400, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -694,7 +694,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 398, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 403, -1, 0, 0, 0, 0, { "", "" 
   }, "BUMP MAPPING", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -706,7 +706,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 397, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 402, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -729,7 +729,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 400, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 405, -1, 0, 0, 0, 0, { "", "" 
   }, "BUMP CHAOS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -741,7 +741,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 399, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 404, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -777,7 +777,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press" 
- , "", "", 389, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", "", 394, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -800,7 +800,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 402, -1, 0, 0, 0, 0, { "", "" }, "COMPRESS TEXTURES" 
+  }, "mainmenu_button", "", "", 407, -1, 0, 0, 0, 0, { "", "" }, "COMPRESS TEXTURES" 
  , 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0 
  , 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -812,7 +812,7 @@ static sqshControl _controls_54[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 401, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 406, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -896,7 +896,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 455, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 460, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -919,7 +919,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, "mainmenu_button", "", "", 406, -1, 0, 0, 0, 0, { "", "" }, "SETTINGS", 0.f 
+ , 0 }, "mainmenu_button", "", "", 411, -1, 0, 0, 0, 0, { "", "" }, "SETTINGS", 0.f 
  , 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -931,7 +931,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 405, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 410, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -954,7 +954,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 446, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 451, -1, 0, 0, 0, 0, { "", "" 
   }, "GRAB INPUT", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -966,7 +966,7 @@ static sqshControl _controls_53[] = { { SQSH_MOVE_BUTTON_TYPE, SQSH_MM_RAMKA
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 445, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 450, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1098,7 +1098,7 @@ static sqshControl _controls_52[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 433, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 438, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1134,7 +1134,7 @@ static sqshControl _controls_52[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press" 
- , "", "", 435, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", "", 440, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -1157,7 +1157,7 @@ static sqshControl _controls_52[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 442, -1, 0, 0, 0, 0, { "", "" }, "RUN IN BACKGROUND" 
+  }, "mainmenu_button", "", "", 447, -1, 0, 0, 0, 0, { "", "" }, "RUN IN BACKGROUND" 
  , 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0 
  , 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1169,7 +1169,7 @@ static sqshControl _controls_52[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 441, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 446, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1192,7 +1192,7 @@ static sqshControl _controls_52[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 440, -1, 0, 0, 0, 0, { "", "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 445, -1, 0, 0, 0, 0, { "", "" 
   }, "TOOL TIPS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0 
  , 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
@@ -1204,7 +1204,7 @@ static sqshControl _controls_52[] = { { SQSH_MOVE_BUTTON_TYPE
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
- , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 439, -1, 0, 0, 0, 0, { "", "" }, "" 
+ , 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 444, -1, 0, 0, 0, 0, { "", "" }, "" 
  , 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1613,7 +1613,7 @@ static sqshControl _controls_46[] = { { SQSH_SCALE_BUTTON_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 486, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 491, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1625,7 +1625,7 @@ static sqshControl _controls_46[] = { { SQSH_SCALE_BUTTON_TYPE
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, "mainmenu_button", "", "", 485, -1, 0, 0, 0, 0, { "", "" }, "MOD ENABLE STATE" 
+ , 0 }, "mainmenu_button", "", "", 490, -1, 0, 0, 0, 0, { "", "" }, "MOD ENABLE STATE" 
  , 0.f, 0.00911458f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0 
  , 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1736,7 +1736,7 @@ static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 465, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 470, -1, 0 
  , 0, 0, 0, { "", "" }, "SOUND EFFECTS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1749,7 +1749,7 @@ static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 464, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 469, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1786,7 +1786,7 @@ static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 8.f, 8.f, 0.f, 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 466, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 471, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -1809,7 +1809,7 @@ static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 469, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 474, -1, 0 
  , 0, 0, 0, { "", "" }, "MUSIC", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -1822,7 +1822,7 @@ static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 468, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 473, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -1858,7 +1858,7 @@ static sqshControl _controls_44[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 8.f, 8.f, 0.f, 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 470, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 475, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -2029,7 +2029,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 388, -1, 0, 0, 0, 0, { "", "" }, "LANDSCAPE DETAILS" 
+  }, "mainmenu_button", "", "", 393, -1, 0, 0, 0, 0, { "", "" }, "LANDSCAPE DETAILS" 
  , 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0 
  , 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2041,7 +2041,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 387, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 392, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2065,7 +2065,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 463, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 468, -1, 0 
  , 0, 0, 0, { "", "" }, "REFLECTIONS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2078,7 +2078,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 462, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 467, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2102,7 +2102,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 392, -1, 0, 0, 0, 0, { "", "" }, "OCCLUSION", 0.f, 0.02083333f 
+  }, "mainmenu_button", "", "", 397, -1, 0, 0, 0, 0, { "", "" }, "OCCLUSION", 0.f, 0.02083333f 
  , SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0 
  , 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
@@ -2114,7 +2114,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 391, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 396, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2138,7 +2138,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 394, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 399, -1, 0 
  , 0, 0, 0, { "", "" }, "POINT LIGHT", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2151,7 +2151,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 393, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 398, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2175,7 +2175,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 461, -1, 0, 0, 0, 0, { "", "" }, "SHADOW TYPE", 0.f 
+  }, "mainmenu_button", "", "", 466, -1, 0, 0, 0, 0, { "", "" }, "SHADOW TYPE", 0.f 
  , 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2187,7 +2187,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 460, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 465, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2211,7 +2211,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 459, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 464, -1, 0 
  , 0, 0, 0, { "", "" }, "SHADOW QUALITY", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2224,7 +2224,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 458, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 463, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2248,7 +2248,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, "mainmenu_button", "", "", 396, -1, 0, 0, 0, 0, { "", "" }, "SHADOW SAMPLES" 
+ , 0 }, "mainmenu_button", "", "", 401, -1, 0, 0, 0, 0, { "", "" }, "SHADOW SAMPLES" 
  , 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0 
  , 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2261,7 +2261,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 395, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 400, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -2284,7 +2284,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 398, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 403, -1, 0 
  , 0, 0, 0, { "", "" }, "BUMP MAPPING", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2297,7 +2297,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 397, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 402, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2321,7 +2321,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 400, -1, 0, 0, 0, 0, { "", "" }, "BUMP CHAOS", 0.f 
+  }, "mainmenu_button", "", "", 405, -1, 0, 0, 0, 0, { "", "" }, "BUMP CHAOS", 0.f 
  , 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2333,7 +2333,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 399, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 404, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2370,7 +2370,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 8.f, 8.f, 0.f, 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 389, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 394, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -2393,7 +2393,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 402, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 407, -1, 0 
  , 0, 0, 0, { "", "" }, "COMPRESS TEXTURES", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2406,7 +2406,7 @@ static sqshControl _controls_42[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 401, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 406, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2543,7 +2543,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 8.f, 8.f, 0.f, 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 455, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 460, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -2566,7 +2566,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 406, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 411, -1, 0 
  , 0, 0, 0, { "", "" }, "SETTINGS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2579,7 +2579,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 405, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 410, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -2602,7 +2602,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 450, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 455, -1, 0 
  , 0, 0, 0, { "", "" }, "RESOLUTION", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2615,7 +2615,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 449, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 454, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_RIGHT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2639,7 +2639,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 452, -1, 0, 0, 0, 0, { "", "" }, "COLOR DEPTH", 0.f 
+  }, "mainmenu_button", "", "", 457, -1, 0, 0, 0, 0, { "", "" }, "COLOR DEPTH", 0.f 
  , 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2651,7 +2651,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 451, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 456, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2675,7 +2675,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 444, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 449, -1, 0 
  , 0, 0, 0, { "", "" }, "UI POSITION", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2688,7 +2688,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 443, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 448, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2712,7 +2712,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 446, -1, 0, 0, 0, 0, { "", "" }, "GRAB INPUT", 0.f 
+  }, "mainmenu_button", "", "", 451, -1, 0, 0, 0, 0, { "", "" }, "GRAB INPUT", 0.f 
  , 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2724,7 +2724,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 445, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 450, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2748,7 +2748,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 448, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 453, -1, 0 
  , 0, 0, 0, { "", "" }, "FOG", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2761,7 +2761,7 @@ static sqshControl _controls_40[] = { { SQSH_GENERAL_WND_TYPE
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 447, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 452, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2909,7 +2909,7 @@ static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 8.f, 8.f, 0.f, 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 433, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 438, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -2945,7 +2945,7 @@ static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 8.f, 8.f, 0.f, 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "" 
- , "", 435, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , "", 440, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -2968,7 +2968,7 @@ static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 440, -1, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", 445, -1, 0 
  , 0, 0, 0, { "", "" }, "TOOL TIPS", 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT 
  , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -2981,7 +2981,7 @@ static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "button_press", "", "", 439, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
+  }, "button_press", "", "", 444, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -3005,7 +3005,7 @@ static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 442, -1, 0, 0, 0, 0, { "", "" }, "RUN IN BACKGROUND" 
+  }, "mainmenu_button", "", "", 447, -1, 0, 0, 0, 0, { "", "" }, "RUN IN BACKGROUND" 
  , 0.f, 0.02083333f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0 
  , 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -3017,7 +3017,7 @@ static sqshControl _controls_38[] = { { SQSH_GENERAL_WND_TYPE, SQSH_MM_RAMKA, 2
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
- , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 441, -1, 0, 0 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", 446, -1, 0, 0 
  , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 1, 255, 0 
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -3331,8 +3331,20 @@ static sqshControl _controls_34[] = { { SQSH_SCALE_BUTTON_TYPE
  , 0.f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f 
  , 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
-  }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_COMBO_TYPE 
- , SQSH_MM_LOBBY_PLAYER1_SLOT_BTN, 3, 3, 0.18554688f, 0.16536458f, 0.11328125f, 0.04166667f 
+  }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_PUSH_BUTTON_TYPE 
+ , SQSH_MM_LOBBY_PLAYER_PAGE_PREV_BTN, 2, 3, 0.43945312f, 0.12239583f, 0.04101562f 
+ , 0.02604167f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
+  }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, "mainmenu_button", "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "<<<", 81.f, 11.f 
+ , SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0 
+ , 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "" 
+ , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
+  }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_TEXT_WINDOW_TYPE 
+ , SQSH_MM_LOBBY_PLAYER_PAGE_TXT, 3, 3, 0.48046875f, 0.12369792f, 0.04882812f, 0.02604167f 
  , 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f, 1024.f, 1024.f, 0.33105469f 
  , 0.20442708f, 0.125f, 0.16666667f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f 
  , 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "" 
@@ -3340,11 +3352,23 @@ static sqshControl _controls_34[] = { { SQSH_SCALE_BUTTON_TYPE
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press", "", "", -1, -1, 0, 0 
- , 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 1, 255, 0, 0 
+ , 0, 0, { "", "" }, "", 81.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_CENTER, 1, 255 
+ , 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" 
+  }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
+ , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
+ , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_LOBBY_PLAYER_PAGE_NEXT_BTN, 2, 3, 0.52929688f 
+ , 0.12239583f, 0.04101562f, 0.02604167f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+ , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
+  }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", -1, -1, 0, 0, 0, 0 
+ , { "", "" }, ">>>", 81.f, 11.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 2, 255, 0, 0 
  , 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
-  }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 1, 0, 1, HITTEST_DEFAULT 
- , 0 }, { SQSH_COMBO_TYPE, SQSH_MM_LOBBY_PLAYER2_SLOT_BTN, 3, 3, 0.18554688f, 0.26953125f 
+  }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
+ , 0 }, { SQSH_COMBO_TYPE, SQSH_MM_LOBBY_PLAYER1_SLOT_BTN, 3, 3, 0.18554688f, 0.16536458f 
  , 0.11328125f, 0.04166667f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f 
  , 1024.f, 1024.f, 0.33105469f, 0.20442708f, 0.125f, 0.16666667f, 0, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
@@ -3353,6 +3377,18 @@ static sqshControl _controls_34[] = { { SQSH_SCALE_BUTTON_TYPE
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, "button_press", "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_LEFT 
+ , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
+ , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
+  }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
+ , 0, "" } }, 1, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_COMBO_TYPE, SQSH_MM_LOBBY_PLAYER2_SLOT_BTN 
+ , 3, 3, 0.18554688f, 0.26953125f, 0.11328125f, 0.04166667f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi" 
+ , 0.f, 0.f, 1024.f, 1024.f, 0.33105469f, 0.20442708f, 0.125f, 0.16666667f, 0, 0 } 
+ , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, "button_press", "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_LEFT 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -3921,7 +3957,7 @@ static sqshControl _controls_32[] = { { SQSH_SCALE_BUTTON_TYPE
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button" 
- , "", "", 329, -1, 0, 0, 0, 0, { "", "" }, "Name", 0.f, 0.00911458f, SHELL_ALIGN_RIGHT 
+ , "", "", 331, -1, 0, 0, 0, 0, { "", "" }, "Name", 0.f, 0.00911458f, SHELL_ALIGN_RIGHT 
  , SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -3958,7 +3994,7 @@ static sqshControl _controls_32[] = { { SQSH_SCALE_BUTTON_TYPE
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button" 
- , "", "", 331, -1, 0, 0, 0, 0, { "", "" }, "Password", 0.f, 0.00911458f, SHELL_ALIGN_RIGHT 
+ , "", "", 333, -1, 0, 0, 0, 0, { "", "" }, "Password", 0.f, 0.00911458f, SHELL_ALIGN_RIGHT 
  , SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -3995,7 +4031,7 @@ static sqshControl _controls_32[] = { { SQSH_SCALE_BUTTON_TYPE
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button" 
- , "", "", 330, -1, 0, 0, 0, 0, { "", "" }, "Port", 0.f, 0.00911458f, SHELL_ALIGN_RIGHT 
+ , "", "", 332, -1, 0, 0, 0, 0, { "", "" }, "Port", 0.f, 0.00911458f, SHELL_ALIGN_RIGHT 
  , SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -4024,28 +4060,28 @@ static sqshControl _controls_32[] = { { SQSH_SCALE_BUTTON_TYPE
  , 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" } 
  , { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_NONE 
- , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_MULTIPLAYER_HOST_TYPE, 2, 3, 0.20214844f, 0.28645833f 
- , 0.29296875f, 0.0546875f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f 
+ , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_MULTIPLAYER_HOST_TYPE, 2, 3, 0.20214844f, 0.2890625f 
+ , 0.29296875f, 0.0390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f 
  , 1024.f, 1024.f, 0.33105469f, 0.20442708f, 0.125f, 0.16666667f, 0, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
-  }, "mainmenu_button", "", "", 328, -1, 0, 0, 0, 0, { "", "" }, "SERVER TYPE", 0.f 
+  }, "mainmenu_button", "", "", 330, -1, 0, 0, 0, 0, { "", "" }, "SERVER TYPE", 0.f 
  , 0.00911458f, SHELL_ALIGN_LEFT, SHELL_ALIGN_LEFT, 2, 255, 0, 0, 255, 255, 0, 0, 255 
  , 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0 
  , "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_COMBO_TYPE 
- , SQSH_MM_MULTIPLAYER_HOST_TYPE_COMBO, 2, 3, 0.20214844f, 0.3203125f, 0.29296875f 
- , 0.04166667f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f, 1024.f, 1024.f 
+ , SQSH_MM_MULTIPLAYER_HOST_TYPE_COMBO, 2, 3, 0.20214844f, 0.32552083f, 0.29296875f 
+ , 0.0390625f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f, 1024.f, 1024.f 
  , 0.33105469f, 0.20442708f, 0.125f, 0.16666667f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
  , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button" 
- , "", "", 327, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.01171875f, SHELL_ALIGN_LEFT 
+ , "", "", 329, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.01171875f, SHELL_ALIGN_LEFT 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -6268,7 +6304,43 @@ static sqshControl _controls_15[] = { { SQSH_SCALE_BUTTON_TYPE
  , 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
- , 0 }, { SQSH_COMBO_TYPE, SQSH_MM_BATTLE_PLAYER1_SLOT_BTN, 1, 3, 0.18261719f, 0.52734375f 
+ , 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_BATTLE_PLAYER_PAGE_PREV_BTN, 2, 3, 0.43945312f 
+ , 0.49348958f, 0.04101562f, 0.02604167f, 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+ , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
+  }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", -1, -1, 0, 0, 0, 0 
+ , { "", "" }, "<<<", 81.f, 11.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT, 2, 255, 0, 0 
+ , 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "" 
+ , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
+  }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
+ , 0 }, { SQSH_TEXT_WINDOW_TYPE, SQSH_MM_BATTLE_PLAYER_PAGE_TXT, 3, 3, 0.48046875f 
+ , 0.49479167f, 0.04882812f, 0.02604167f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi" 
+ , 0.f, 0.f, 1024.f, 1024.f, 0.33105469f, 0.20442708f, 0.125f, 0.16666667f, 0, 0 } 
+ , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
+ , 0 }, "button_press", "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 81.f, 0.f, SHELL_ALIGN_CENTER 
+ , SHELL_ALIGN_CENTER, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
+ , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
+  }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
+ , 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_PUSH_BUTTON_TYPE, SQSH_MM_BATTLE_PLAYER_PAGE_NEXT_BTN 
+ , 2, 3, 0.52929688f, 0.49348958f, 0.04101562f, 0.02604167f, 0.f, 0.f, { "", 0.f, 0.f 
+ , 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+ , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
+  }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
+ , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "mainmenu_button", "", "", -1, -1 
+ , 0, 0, 0, 0, { "", "" }, ">>>", 81.f, 11.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , 2, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
+ , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
+ , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
+ , 0 }, { SQSH_COMBO_TYPE, SQSH_MM_BATTLE_PLAYER1_SLOT_BTN, 2, 3, 0.18261719f, 0.52734375f 
  , 0.10742188f, 0.04166667f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi", 0.f, 0.f 
  , 1024.f, 1024.f, 0.33105469f, 0.20442708f, 0.125f, 0.16666667f, 0, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
@@ -6552,18 +6624,6 @@ static sqshControl _controls_15[] = { { SQSH_SCALE_BUTTON_TYPE
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, "button_press", "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER 
- , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
- , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
-  }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
- , 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_TEXT_WINDOW_TYPE, SQSH_MM_BATTLE_SURVIVAL_TXT 
- , 3, 3, 0.18261719f, 0.77473958f, 0.546875f, 0.08333333f, 0.f, 0.f, { "resource\\icons\\MainMenu\\tv.avi" 
- , 0.f, 0.f, 1024.f, 1024.f, 0.33105469f, 0.20442708f, 0.125f, 0.16666667f, 0, 0 } 
- , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
- , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
- , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
- , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
- , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, "button_press", "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 0.7f, 0.f, SHELL_ALIGN_LEFT 
  , SHELL_ALIGN_LEFT, 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "" 
  , EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" 
   }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
@@ -9538,7 +9598,7 @@ sqshControlContainer _sqsh_controls[] = { { SQSH_GENERAL_TYPE
  , 0 }, 8, _controls_13, 3, _bgObjects_14, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_STATIC_ID 
   }, { SQSH_MULTITEX_WINDOW, 142, 0, 2, 0, 0, 1024, 768, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, 37, _controls_15, 5, _bgObjects_16, SQSH_MM_BATTLE_GO_BTN, SQSH_STATIC_ID, SQSH_MM_BACK_FROM_BATTLE_BTN 
+ , 0 }, 39, _controls_15, 5, _bgObjects_16, SQSH_MM_BATTLE_GO_BTN, SQSH_STATIC_ID, SQSH_MM_BACK_FROM_BATTLE_BTN 
   }, { SQSH_MULTITEX_WINDOW, 156, 0, 2, 0, 0, 1024, 768, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, 14, _controls_17, 5, _bgObjects_18, SQSH_MM_LOAD_GO_BTN, SQSH_STATIC_ID, SQSH_MM_BACK_FROM_LOAD_BTN 
@@ -9585,7 +9645,7 @@ sqshControlContainer _sqsh_controls[] = { { SQSH_GENERAL_TYPE
  , SQSH_MM_MULTIPLAYER_HOST_NEXT_BTN, SQSH_STATIC_ID, SQSH_MM_BACK_FROM_MULTIPLAYER_HOST_BTN 
   }, { SQSH_MULTITEX_WINDOW, 146, 0, 2, 0, 0, 1024, 768, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, 58, _controls_34, 5, _bgObjects_35, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_MM_BACK_FROM_LOBBY_BTN 
+ , 0 }, 61, _controls_34, 5, _bgObjects_35, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_MM_BACK_FROM_LOBBY_BTN 
   }, { SQSH_MULTITEX_WINDOW, 147, 0, 2, 0, 0, 1024, 768, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, 12, _controls_36, 3, _bgObjects_37, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_MM_BACK_FROM_OPTIONS_BTN 
@@ -9634,18 +9694,18 @@ sqshControlContainer _sqsh_controls[] = { { SQSH_GENERAL_TYPE
   }, { SQSH_MULTITEX_WINDOW, 162, 0, 2, 0, 0, 1024, 768, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
  , 0 }, 3, _controls_56, 3, _bgObjects_57, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_MM_BACK_CREDITS_BTN 
-  }, { SQSH_SPLASHSCREEN, 473, 2, 2, 0, 0, 1, 1, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+  }, { SQSH_SPLASHSCREEN, 478, 2, 2, 0, 0, 1, 1, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, 0, 0, 0, 0, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_STATIC_ID }, { SQSH_SPLASHSCREEN 
- , 474, 2, 2, 0, 0, 1, 1, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 0, 0 
+ , 479, 2, 2, 0, 0, 1, 1, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 0, 0 
   }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, 0, 0, 0, 0, SQSH_STATIC_ID 
- , SQSH_STATIC_ID, SQSH_STATIC_ID }, { SQSH_SPLASHSCREEN, 475, 2, 2, 0, 0, 1, 1, { "" 
+ , SQSH_STATIC_ID, SQSH_STATIC_ID }, { SQSH_SPLASHSCREEN, 480, 2, 2, 0, 0, 1, 1, { "" 
  , 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, 0, 0, 0, 0, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_STATIC_ID 
-  }, { SQSH_SPLASHSCREEN, 476, 2, 2, 0, 0, 1, 1, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+  }, { SQSH_SPLASHSCREEN, 481, 2, 2, 0, 0, 1, 1, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
  , 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, 0, 0, 0, 0, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_STATIC_ID }, { SQSH_SPLASHSCREEN 
- , 477, 2, 2, 0, 0, 1, 1, { "resource\\icons\\logo.tga", 0.f, 0.f, 1024.f, 768.f, 0.f 
+ , 482, 2, 2, 0, 0, 1, 1, { "resource\\icons\\logo.tga", 0.f, 0.f, 1024.f, 768.f, 0.f 
  , 0.f, 0.f, 0.f, 0, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
   }, 0, 0, 0, 0, SQSH_STATIC_ID, SQSH_STATIC_ID, SQSH_STATIC_ID } };
 int _sqsh_sheet_count = 2;
@@ -9903,7 +9963,7 @@ struct InterfaceScriptExportPrm_ParameterSection : ParameterSection
 	add_dependency(".\\Scripts\\InterfaceScriptExport.prm");
 	add_dependency(".\\Scripts\\SquadShellEnums.inl");
 	add_dependency(".\\Scripts\\UnitAttribute.inl");
-	description = 849458385;
+	description = 3950929366;
 	reserve(30);
 	add(&_bgObjects_57, "_bgObjects_57", 3844408190);
 	add(&_controls_56, "_controls_56", 3934345913);
@@ -9928,7 +9988,7 @@ struct InterfaceScriptExportPrm_ParameterSection : ParameterSection
 	add(&_bgObjects_37, "_bgObjects_37", 2291390590);
 	add(&_controls_36, "_controls_36", 1603917897);
 	add(&_bgObjects_35, "_bgObjects_35", 557649451);
-	add(&_controls_34, "_controls_34", 4215083363);
+	add(&_controls_34, "_controls_34", 2744451995);
 	add(&_bgObjects_33, "_bgObjects_33", 2308932611);
 	add(&_controls_32, "_controls_32", 3669823847);
 	add(&_bgObjects_31, "_bgObjects_31", 2657388169);
@@ -9947,7 +10007,7 @@ struct InterfaceScriptExportPrm_ParameterSection : ParameterSection
 	add(&_bgObjects_18, "_bgObjects_18", 1886919291);
 	add(&_controls_17, "_controls_17", 3345813861);
 	add(&_bgObjects_16, "_bgObjects_16", 1490718802);
-	add(&_controls_15, "_controls_15", 4148533437);
+	add(&_controls_15, "_controls_15", 1533100497);
 	add(&_bgObjects_14, "_bgObjects_14", 2629999998);
 	add(&_controls_13, "_controls_13", 1649006665);
 	add(&_bgObjects_12, "_bgObjects_12", 3878979229);
@@ -9986,7 +10046,7 @@ struct InterfaceScriptExportPrm_ParameterSection : ParameterSection
 	add(&optionsUp, "optionsUp", 1199352564);
 	add(&optionsStep, "optionsStep", 2147965020);
 	add(&_sqsh_control_count, "_sqsh_control_count", 1611044955);
-	add(&_sqsh_controls, "_sqsh_controls", 1233690660);
+	add(&_sqsh_controls, "_sqsh_controls", 540120702);
 	add(&_sqsh_sheet_count, "_sqsh_sheet_count", 878183638);
 	add(&_sqsh_sheets, "_sqsh_sheets", 4086170788);
 	add(&squad_icon_count, "squad_icon_count", 3142965791);

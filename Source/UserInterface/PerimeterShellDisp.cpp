@@ -267,6 +267,10 @@ _handlertbl[] = {
 	{SQSH_MM_LOBBY_CHAT_INPUT, onMMLobbyChatInputButton},
 	{SQSH_MM_LOBBY_MAP_LIST, onMMLobbyMapList},
 
+    {SQSH_MM_LOBBY_PLAYER_PAGE_TXT, onMMLobbyPageText},
+    {SQSH_MM_LOBBY_PLAYER_PAGE_NEXT_BTN, onMMLobbyPageNextButton},
+    {SQSH_MM_LOBBY_PLAYER_PAGE_PREV_BTN, onMMLobbyPagePrevButton},
+
 	//options
 	{SQSH_MM_OPTIONS_GAME_BTN, onMMGameButton},
 	{SQSH_MM_OPTIONS_GRAPHICS_BTN, onMMGraphicsButton},

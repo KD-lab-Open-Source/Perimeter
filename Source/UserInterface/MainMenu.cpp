@@ -1104,8 +1104,7 @@ int SwitchMenuScreenQuant1( float, float ) {
                     break;
                 case SQSH_MM_MULTIPLAYER_LOBBY_SCR:
                     {
-                        fillMultiplayerLobbyList();
-                        ((ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT))->Clear();
+                        setupMultiplayerLobby();
                     }
                     break;
                 case SQSH_MM_MULTIPLAYER_HOST_SCR:

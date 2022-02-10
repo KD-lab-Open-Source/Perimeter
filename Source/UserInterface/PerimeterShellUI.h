@@ -1993,7 +1993,7 @@ void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code,
 void onMMMultiplayerHostBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //lobby
-void fillMultiplayerLobbyList();
+void setupMultiplayerLobby();
 void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2005,6 +2005,9 @@ void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLobbyPageNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLobbyPagePrevButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLobbyPageText(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //options
 void onMMGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
