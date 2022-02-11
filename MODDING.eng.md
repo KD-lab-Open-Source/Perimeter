@@ -86,3 +86,33 @@ and apply values while game is running.
 However, this runtime compiler has limitations such as not able to load changes to array or object structures like
 changing size, adding or removing fields so those changes need to be applied by calling ScriptsCompile step or
 OPTION_PROCESS_SCRIPTS in cmake and then recompiling the game executable.
+
+## Locale based scenario.hst
+
+Game will use `Resource/scenario_LOCALE.hst` such as `Resource/scenario_russian.hst` when language is russian and this
+file exists instead of the generic `Resource/scenario.hst`, this is useful for russian language as the european and
+russian campaigns are different.
+
+## Custom texts and translations
+
+Mods can supply new language/translation texts or replace existing texts with own version by creating a .txt file at
+`Resource/LocData/LANGUAGE/Text/MyTexts.txt` such as `Resource/LocData/English/Text/Texts.txt` and providing each entry
+as a line like this:
+```
+Game.Text.ID.To.Use=The visible text to show when game requests Text ID
+Other.Text.ID=Another text entry
+```
+
+You can add a new line by adding `\n` like `TextID=Line 1\nLine 2\nLine 3`
+
+If you need to show the ` \ ` character itself you can write `\\`
+
+Game allows coloring text by using &RRGGBB format before the text to color, some examples:
+`Previous color text&FF0000Red Text&0000FFBlue Text&FFFFFFWhite Text`
+
+The .txt files must be encoded as UTF-8 for all languages, the game handles any required conversions internally.
+
+Original custom `.btdb` format is also accepted but `.txt` may be lot easier to handle by modders.
+
+If you don't wish to replace existing texts if game already has loaded them you can add `_noreplace` to the file name
+such as `MyTexts_noreplace.txt` or `MyTexts_noreplace.btdb` 
