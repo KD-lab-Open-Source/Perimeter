@@ -44,6 +44,9 @@ There is instructions available in:
 
 ## Enhancements from original game
 
+
+- Modding support
+  - [English](MODDING.eng.md)
 - Bugfixes
 - Right click on morph units to request basic units required
 - Automatic game assets searching in these paths order:
@@ -53,13 +56,7 @@ There is instructions available in:
   - Executable path
   - Windows: %AppData%\\Roaming\\KD Vision\\Perimeter\\Content
   - Previous used content stored in settings
-- Addons system that overlay files in original resources without altering them:
-  - Example: file placed in Addons/AddonName/Resource/Icons/logo.tga will replace usage of
-    Resource/Icons/logo.tga file.
-  - Uses may include adding custom textures, models, resolutions, maps, scripts...
-  - Perimeter ET Scripts and Resources can also be added as an addon to include extra units in main game and missions
-  - Addons can be enabled/disabled from main menu
-- 64 bits support and experimental support for non x86 CPUs
+- Support for 64 bits and other CPUs architectures than x86
 - Frame selection in battle/multiplayer menu and new colors
 - Experimental widescreen and custom resolutions support:
   - Game scans Resource/Icons/intf for XxY named folders such as 1920x1080 and adds as selectable option
@@ -78,6 +75,7 @@ There is instructions available in:
   - Support for saving and continuing multiplayer saves
   - Experimental recovery mechanism for desyncs
 - Experimental support for MacOS
+- More than 4 player maps supported
 
 ## Repository contents
 

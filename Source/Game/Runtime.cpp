@@ -819,6 +819,8 @@ void show_help() {
             "    start_splash=0/1 - Enables or disables intro movies\n"
             "    convert=1 - Saves opened map and closes game\n"
             "\n"
+            "    More info and source code: https://github.com/KD-lab-Open-Source/Perimeter\n"
+            "\n"
             "Multiplayer:\n"
             "    server=IP:PORT - Opens game in server mode and binds to address\n"
             "    connect=IP:PORT - Connects to provided server address\n"
