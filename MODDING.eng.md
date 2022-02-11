@@ -6,6 +6,11 @@ in a easier and cleaner manner than previously was possible when dealing with ga
 This file intends to document about some engine internals and changes done recently, any corrections or 
 updates to reflect current state of capabilities are welcomed.
 
+## Command line
+
+Running the game in console/terminal and adding /? or --help or -h displays available parameters that can be added
+when launching the game. This may be useful to test some options or use alternate modes like Mission Editor.
+
 ## Mods folder
 
 Game now loads mods (each is a folder containing everything) that are located inside "mods" folder.
