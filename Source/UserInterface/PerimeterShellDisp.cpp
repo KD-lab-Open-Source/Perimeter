@@ -78,7 +78,8 @@ _handlertbl[] = {
     {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
 	{SQSH_MM_OPTIONS_BTN, onMMOptionsButton},
 	{SQSH_MM_CREDITS_BTN, onMMCreditsButton},
-	{SQSH_MM_QUIT_BTN, onMMQuitButton},
+    {SQSH_MM_QUIT_BTN, onMMQuitButton},
+    {SQSH_MM_LANG_BTN, onMMLangButton},
 
 	//single player menu
 	{SQSH_MM_PROFILE_BTN, onMMProfileButton},

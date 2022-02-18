@@ -24,6 +24,7 @@
 #include "MessageBox.h"
 #include "BelligerentSelect.h"
 #include "GameContent.h"
+#include "codepages/codepages.h"
 
 extern char _bCursorVisible;
 extern char _bMenuMode;
@@ -1635,6 +1636,22 @@ void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	}
 }
 
+void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+	if( code == EVENT_SHOWWND ) {
+        CShellPushButton* btn = dynamic_cast<CShellPushButton*>(pWnd);
+        if (btn->labelText.empty()) {
+            std::string locale = getLocale();
+            locale = string_to_capitalize(locale.c_str());
+            string_replace_all(locale, "Russian", "Русский");
+            btn->setText(convertToCodepage(locale.c_str(), getLocale()));
+        }
+    } else if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
+        //Reset locale and restart game so it shows lang selector
+        putStringSettings("Locale", "");
+        request_application_restart();
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, RESTART_GAME);
+    }
+}
 
 //end mission menu
 void onMMResumeButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {

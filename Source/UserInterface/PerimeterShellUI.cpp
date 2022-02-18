@@ -882,9 +882,13 @@ void CShellPushButton::Load(const sqshControl* attr)
 	CShellWindow::Load(attr);
 	target = attr->target;
 //	labelText = getTextFromBase(m_attr->text);
-	std::string key("Interface.Menu.ButtonLabels.");
-	key += m_attr->text;
-	labelText = qdTextDB::instance().getText(key.c_str());
+    if (strcmp(m_attr->text, " ") == 0) {
+        labelText = "";
+    } else {
+        std::string key("Interface.Menu.ButtonLabels.");
+        key += m_attr->text;
+        labelText = qdTextDB::instance().getText(key.c_str());
+    }
 
 	txtdy = absoluteY(attr->txt_dy);
 

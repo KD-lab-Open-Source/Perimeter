@@ -262,6 +262,27 @@ void string_replace_all(std::string& text, const std::string& from, const std::s
     text.swap(newString);
 }
 
+std::string string_to_capitalize(const char* str) {
+    std::u16string conv = utf8_to_utf16(str);
+    if (conv.empty()) return str;
+
+    //Process each UTF16 code
+    for (int i = 0; i < conv.size(); ++i) {
+        auto c = conv[i];
+        if (i == 0) {
+            c = std::towupper(c);
+        } else {
+            c = std::towlower(c);
+        }
+        conv[i] = c;
+    }
+
+    //Convert UTF-16 into UTF-8
+    std::string output = utf16_to_utf8(conv);
+
+    return output;
+}
+
 std::string string_to_lower(const char* str) {
     std::u16string conv = utf8_to_utf16(str);
     if (conv.empty()) return str;

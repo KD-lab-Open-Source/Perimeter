@@ -1868,6 +1868,7 @@ void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //addons
 void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param);

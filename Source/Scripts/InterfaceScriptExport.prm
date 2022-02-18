@@ -4020,6 +4020,14 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_OPTIONS_BTN; x=leftSolidEdge; y=(startUp + startStep * 3)/768; sx=leftSolidWidth; sy=64/768; text="OPTIONS"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 		sqshControl_ScaleButton { x=leftSolidEdge; y=(startUp + startStep * 4)/768; sx=leftSolidWidth; sy=64/768; state = SQSH_ENABLED; ystart=64/768; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_CREDITS_BTN; x=leftSolidEdge; y=(startUp + startStep * 4)/768; sx=leftSolidWidth; sy=64/768; text="CREDITS"; txt_dy = 13/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+		
+		//Exit/Lang buttons
+		//{type = SQSH_SCALE_BUTTON_TYPE; id = SQSH_MM_RAMKA;   x=middleSeparateBottomBtn.x;  y=middleSeparateBottomBtn.y; sx=middleSeparateBottomBtn.sx; sy=middleSeparateBottomBtn.sy; hitTestMode = HITTEST_NONE; },
+        //{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_LANG_BTN; x=middleSeparateBottomBtn.x;  y=middleSeparateBottomBtn.y; sx=middleSeparateBottomBtn.sx; sy=middleSeparateBottomBtn.sy; text=" "; font_group=2; txt_dx=134; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button"; bgObject = {name = "group skip"; chainName = "skip";};image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;}; },
+
+		sqshControl_ScaleButton { x=rightBottomBtn.x;  y=rightBottomBtn.y; sx=rightBottomBtn.sx; sy=rightBottomBtn.sy; ystart=51/768; },
+		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_LANG_BTN;			x=rightBottomBtn.x;  y=rightBottomBtn.y; sx=rightBottomBtn.sx; sy=rightBottomBtn.sy; text=" "; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
+
 		sqshControl_ScaleButton { x=leftBottomBtn.x;  y=leftBottomBtn.y; sx=leftBottomBtn.sx; sy=leftBottomBtn.sy; ystart=51/768; },
 		{type = SQSH_PUSH_BUTTON_TYPE; id = SQSH_MM_QUIT_BTN;	 x=leftBottomBtn.x;  y=leftBottomBtn.y; sx=leftBottomBtn.sx; sy=leftBottomBtn.sy; text="EXIT"; font_group=2; txt_dy = 9/768; state = SQSH_ENABLED; sound = "mainmenu_button";image={texture="resource\\icons\\MainMenu\\tv.avi";dx=339/1024;dy=157/768;dsx=128/1024;dsy=128/768;hasResolutionVersion=0;};},
 
@@ -4028,6 +4036,7 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 	};
 	bgObjects = new BGObj[] {
 		{name = "group start"; chainName = "start screen";},
+		{name = "group next"; chainName = "next";},
 		{name = "group back"; chainName = "back";},
 		{name = "group background"; chainName = "background on";}
 	};

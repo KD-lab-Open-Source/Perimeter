@@ -247,6 +247,7 @@ enum ShellControlID
 	SQSH_MM_OPTIONS_BTN,
 	SQSH_MM_CREDITS_BTN,
 	SQSH_MM_QUIT_BTN,
+    SQSH_MM_LANG_BTN,
 	SQSH_MM_VERSION_TXT,
 	
 	//single player menu
