@@ -381,6 +381,7 @@ public:
 	bool           m_bStarted;
 
 	std::list<netCommandGeneral*>   m_CommandList;
+    std::list<netCommandGame*>   m_QueuedGameCommands;
 
 	void ClearCommandList();
 
@@ -429,6 +430,7 @@ public:
 	InOutNetComBuffer  in_HostBuf;
 	InOutNetComBuffer  out_HostBuf;
 	void clearInOutClientHostBuffers();
+    void ClearQueuedGameCommands();
 
 	bool ExecuteInternalCommand(e_PNCInternalCommand ic, bool waitExecution);
 	bool ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_ptr<LocalizedText> text = nullptr);

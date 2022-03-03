@@ -316,10 +316,10 @@ void PNetCenter::ExitClient(NETID netid) {
     NetConnection* conn = connectionHandler.getConnection(netid);
     if (conn && !conn->is_closed()) {
         conn->close();
-        DeleteClient(netid, true);
         //Mark it as closed, since we processed the client
         conn->state = NC_STATE_CLOSED;
     }
+    DeleteClient(netid, true);
 }
 
 void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
@@ -327,15 +327,14 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
     if(isHost()){
         hostMissionDescription->setChanged();
 
-        if(m_bStarted){
+        if (m_bStarted) {
             //idx == playerID (на всякий случай);
             int idx=hostMissionDescription->findPlayer(netid);
-            xassert(idx!=-1);
-            if(idx!=-1){
+            //xassert(idx!=-1);
+            if (normalExit && idx!=-1) {
                 int playerID=hostMissionDescription->playersData[idx].playerID;
-                //netCommand4G_ForcedDefeat* pncfd=new netCommand4G_ForcedDefeat(playerID);
-                //PutGameCommand2Queue_andAutoDelete(pncfd);
-                //m_DeletePlayerCommand.push_back(pncfd);
+                netCommand4G_ForcedDefeat* pncfd=new netCommand4G_ForcedDefeat(playerID);
+                m_QueuedGameCommands.push_back(pncfd);
             }
         }
 
@@ -343,17 +342,14 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
         ClientMapType::iterator p;
         for(p=m_clients.begin(); p!= m_clients.end(); p++) {
             if((*p)->netidPlayer==netid) {
-                LogMsg("Client NID %lu disconnecting-", (*p)->netidPlayer);
+                LogMsg("Client NID %lu disconnecting\n", (*p)->netidPlayer);
                 delete *p;
                 m_clients.erase(p);
                 break;
             }
         }
 
-        if(hostMissionDescription->disconnectPlayer2PlayerDataByNETID(netid))
-                LogMsg("OK\n");
-        else
-                LogMsg("error in missionDescription\n");
+        hostMissionDescription->disconnectPlayer2PlayerDataByNETID(netid);
     }
     else {
         if (netid == NETID_HOST) {
@@ -363,7 +359,7 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
     }
     if(m_bStarted){
         int idx=clientMissionDescription.findPlayer(netid);
-        xassert(idx!=-1);
+        //xassert(idx!=-1);
         if(idx!=-1){
             //отсылка сообщения о том, что игрок вышел
             PlayerData& pd = clientMissionDescription.playersData[idx];

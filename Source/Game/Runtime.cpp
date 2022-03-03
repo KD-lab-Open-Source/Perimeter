@@ -1110,8 +1110,17 @@ void app_event_poll() {
         
         if (closing) {
             if(gameShell) {
-                gameShell->terminate();
+                if (gameShell->GameActive) {
+                    //When game is running we want to gracefully shutdown the game by showing main menu
+                    sKey k(VK_ESCAPE, true);
+                    gameShell->KeyPressed(k);
+                    gameShell->KeyUnpressed(k);
+                } else {
+                    //Terminate it
+                    gameShell->terminate();
+                }
             } else {
+                //No gameshell available, manually close stuff
                 SDL_ShowCursor(SDL_TRUE);
                 SDL_DestroyWindow(sdlWindow);
                 sdlWindow = nullptr;

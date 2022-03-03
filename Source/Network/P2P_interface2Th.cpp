@@ -561,6 +561,7 @@ void PNetCenter::LLogicQuant()
 				//LockAllPlayers
 				UpdateBattleData();
 				//ReleaseAllPlayers
+                ClearQueuedGameCommands();
 
 				LogMsg("Wait for all clients ready. \n");
 
@@ -794,6 +795,12 @@ end_while_01:;
 			if(hostPause)
 				break;
 
+			//перенесение всех команд удаления в список комманд на выполнение
+			for(auto p=m_QueuedGameCommands.begin(); p != m_QueuedGameCommands.end(); p++){
+				PutGameCommand2Queue_andAutoDelete(NETID_HOST, *p);
+			}
+            m_QueuedGameCommands.clear();
+
 			//Установка последней команде, признака, последняя
 			if(!m_CommandList.empty()){
 				std::list<netCommandGeneral*>::iterator p=m_CommandList.end();
@@ -1023,9 +1030,11 @@ end_while_01:;
         }
         break;
     }
+    case PNC_STATE__CLIENT_LOADING_GAME:
+        ClearQueuedGameCommands(); /// TODO is this need? copied from original code
+        break;
     case PNC_STATE__CLIENT_FIND_HOST:
 	case PNC_STATE__CLIENT_TUNING_GAME: 
-	case PNC_STATE__CLIENT_LOADING_GAME:
     case PNC_STATE__CLIENT_GAME:
     case PNC_STATE__CLIENT_DESYNC:
 		break;

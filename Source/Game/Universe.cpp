@@ -464,8 +464,11 @@ bool terUniverse::forcedDefeat(int playerID)
 {
 	terPlayer* player = findPlayer(playerID);
 	xassert(player);
-	if(player->frame())
-		player->frame()->Kill();
+    terFrame* frame = player ? player->frame() : nullptr;
+	if (frame) {
+        frame->explode();
+        frame->Kill();
+    }
 	return true;
 }
 
