@@ -944,7 +944,7 @@ struct sItem
 
 class ChatWindow : public CShellWindow {
 
-	std::vector<std::string>	m_data;
+	std::vector<LocalizedText>	m_data;
 	int				m_bScroller;
 	int				m_nTopItem;
 	float			m_fStringHeight;
@@ -966,6 +966,9 @@ class ChatWindow : public CShellWindow {
 	Vect2f			dudv;
 
 	int currentScrollDirection;
+
+    cFont*       m_hFont1250;
+    cFont*       m_hFont1251;
 
 	enum
 	{

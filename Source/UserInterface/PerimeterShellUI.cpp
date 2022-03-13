@@ -3855,9 +3855,39 @@ void CStatListBoxWindow::draw(int bFocus) {
 }
 //////////////////////////////////////////
 
+void setupLocaleFonts(cFont*& m_hFont1250, cFont*& m_hFont1251, int size) {
+    _RELEASE(m_hFont1250);
+    _RELEASE(m_hFont1251);
+
+    m_hFont1250 = nullptr;
+    for (auto locale : getLocales()) {
+        locale = string_to_lower(locale.c_str());
+        if (locale == "russian") {
+            continue; //1251 font, we need non russian
+        }
+        m_hFont1250 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false, locale);
+        if (m_hFont1250) {
+            break;
+        }
+    }
+    m_hFont1251 = terVisGeneric->CreateFont(sqshShellMainFont1, size, true, "russian");
+
+    if (m_hFont1250 == nullptr && m_hFont1251 == nullptr) {
+        //Not supposed to happen
+        xassert(0);
+        m_hFont1250 = m_hFont1251 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false);
+    } else if (m_hFont1250 == nullptr) {
+        m_hFont1250 = m_hFont1251;
+    } else if (m_hFont1251 == nullptr) {
+        m_hFont1251 = m_hFont1250;
+    }
+}
+
 ChatWindow::ChatWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(id, pParent, p)
 {
-	m_hFont = 0;
+    m_hFont = nullptr;
+    m_hFont1250 = nullptr;
+    m_hFont1251 = nullptr;
 	m_bScroller = 0;
 	m_nTopItem = 0;
 	m_fStringHeight = listBoxRowHeight;
@@ -3869,7 +3899,9 @@ ChatWindow::ChatWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(
 }
 ChatWindow::~ChatWindow()
 {
-	_RELEASE(m_hFont);
+    _RELEASE(m_hFont);
+    _RELEASE(m_hFont1250);
+    _RELEASE(m_hFont1251);
 	_RELEASE(thumbTexture);
 	RELEASE(m_hTextureBG);
 }
@@ -3901,9 +3933,11 @@ void ChatWindow::Clear()
 
 void ChatWindow::AddString(const LocalizedText* localizedText)
 {
-    //TODO deal with locale
+    //Set font for GetStringBreak
+    terRenderDevice->SetFont(localizedText->locale == "russian" ? m_hFont1251 : m_hFont1250);
+
     std::string text = localizedText->text;
-	int break_len = GetStringBreak(text);
+    int break_len = GetStringBreak(text);
 
 	if(break_len != -1){
 		std::string text1 = text.substr(break_len, text.size() - break_len);
@@ -3911,24 +3945,24 @@ void ChatWindow::AddString(const LocalizedText* localizedText)
 		int break_len1 = GetStringBreak(text1);
 		if(break_len1 != -1){
 			break_len1 = GetStringBreak(text, true);
-			m_data.push_back(text.substr(0, break_len1));
-			m_data.push_back(text.substr(break_len1, text.size() - break_len1));
+			m_data.emplace_back(text.substr(0, break_len1), localizedText->locale);
+			m_data.emplace_back(text.substr(break_len1, text.size() - break_len1), localizedText->locale);
 		}
 		else {
-			m_data.push_back(text.substr(0, break_len));
-			m_data.push_back(text1);
+			m_data.emplace_back(text.substr(0, break_len), localizedText->locale);
+			m_data.emplace_back(text1, localizedText->locale);
 		}
-	}
-	else {
-        m_data.push_back(localizedText->text);
+	} else {
+        m_data.emplace_back(*localizedText);
     }
+
+    terRenderDevice->SetFont(nullptr);
 
 	updateScroller();
 }
 
 int ChatWindow::GetStringBreak(const std::string& str, bool ignore_spaces) const
 {
-	terRenderDevice->SetFont(m_hFont);
 
 	float x = sx - vScrollSX - txtdx;
     const char* textStart = str.c_str();
@@ -3952,8 +3986,6 @@ int ChatWindow::GetStringBreak(const std::string& str, bool ignore_spaces) const
 			}
 		}
 	}
-
-	terRenderDevice->SetFont(nullptr);
 
 	return -1;
 }
@@ -3983,10 +4015,7 @@ void ChatWindow::Load(const sqshControl* attr)
 
 	m_fStringHeight = absoluteY(18);
 
-	_RELEASE(m_hFont);
-
-	//!!!
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, 16);
+    setupLocaleFonts(m_hFont1250, m_hFont1251, 16);
 
 	if (m_hTexture) {
 		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
@@ -4098,8 +4127,6 @@ void ChatWindow::draw(int bFocus)
 		draw_rect_empty( Vect2i(x, y), Vect2i(x + sx,y + sy), sColor4f(1, 1, 0, 1) );
 	}
 
-	terRenderDevice->SetFont(m_hFont);
-
 	int i, sz = m_data.size();
 	float y_str = y;
 
@@ -4111,11 +4138,16 @@ void ChatWindow::draw(int bFocus)
 	{
 		if(y_str+m_fStringHeight > y+sy)
 			break;
-
-		std::string toStr = getValidatedText(m_data[i], _sx_client - txtdx);
+        
+        const LocalizedText& text = m_data[i];
+        cFont* font = text.locale == "russian" ? m_hFont1251 : m_hFont1250;
+        
+        terRenderDevice->SetFont(font);
+        
+		std::string toStr = getValidatedText(text.text, _sx_client - txtdx);
 //		string toStr = getValidatedText(m_data[i], _sx_client - txtdx - m_fStringHeight/2);
 
-		float yS = y_str + m_fStringHeight / 2 - m_hFont->GetHeight() / 2;
+		float yS = y_str + m_fStringHeight / 2 - font->GetHeight() / 2;
 
         sColor4f color(1, 1, 1, Alpha);
 		if (m_hTextureBG) {
@@ -4131,7 +4163,7 @@ void ChatWindow::draw(int bFocus)
 		y_str += m_fStringHeight;
 	}
 
-	terRenderDevice->SetFont(0);
+	terRenderDevice->SetFont(nullptr);
 	if(m_handler)
 		m_handler(this, EVENT_DRAWWND, 0);
 }
@@ -5153,6 +5185,12 @@ void CChatInGameEditWindow::Load(const sqshControl* attr) {
 	CEditWindow::Load(attr);
 	_RELEASE(m_hPopupTexture);
 	m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
+    _RELEASE(m_hFont);
+    if (m_attr->font_group == 4) {
+        m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, 16);
+    } else {
+        m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, editBoxFontSize);
+    }
 }
 
 void CChatInGameEditWindow::draw(int bFocus) {
@@ -5877,13 +5915,13 @@ void CHintWindow::drawHint(bool cutScene) {
 }
 
 CChatInfoWindow::CChatInfoWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p) {
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, HINT_FONT_SIZE);
+	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, HINT_FONT_SIZE); //TODO FONT
 	m_nTimeToDisplay = -1;
 }
 
 CChatInfoWindow::~CChatInfoWindow()
 {
-	_RELEASE(m_hFont);
+	_RELEASE(m_hFont); //TODO FONT
 }
 
 void CChatInfoWindow::addString(const LocalizedText* newString) {
@@ -5905,7 +5943,7 @@ void CChatInfoWindow::draw(int bFocus) {
 		if ( !textData.empty() ) {
 			float curY = y;
 
-			terRenderDevice->SetFont(m_hFont);
+			terRenderDevice->SetFont(m_hFont); //TODO FONT
 
 			char* strToScr = new char[textData.length() + 1];
 			strcpy(strToScr, textData.c_str());

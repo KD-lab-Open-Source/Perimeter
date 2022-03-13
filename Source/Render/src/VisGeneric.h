@@ -53,7 +53,7 @@ public:
 
 	//Создаёт фонт. height - высота фонта в логических единицах.
 	//в 1024x768 логическая единица равна пикселю.
-    cFont* CreateFont(const char *TextureFileName,int height=20, bool silentErr=0, std::string locale="");
+    cFont* CreateFont(const char *TextureFileName,int height=20, bool silentErr=false, std::string locale="");
 	virtual cFont* CreateDebugFont();
 
 	// функции для работы со спрайтами
