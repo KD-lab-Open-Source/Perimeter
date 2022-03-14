@@ -1547,7 +1547,7 @@ void GameShell::KeyPressed(sKey& Key)
 			}
 			return;
 		} else if (chatEdit->isVisible()) {
-			if (Key.fullkey == VK_ESCAPE) {
+			if (Key.fullkey == VK_ESCAPE || (Key.fullkey == VK_RETURN && chatEdit->getText().empty())) {
 				chatEdit->Show(0);
 				_shellIconManager.SetFocus(0);
 				chatInfo->setTime(CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT);
