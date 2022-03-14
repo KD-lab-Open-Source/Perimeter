@@ -247,6 +247,7 @@ void terHyperSpace::deserializeGameCommands(XBuffer& in, size_t len) {
             {
                 netCommand4G_ForcedDefeat* pnc=new netCommand4G_ForcedDefeat(in_buffer);
                 replayListGameCommands.push_back(pnc);
+                break;
             }
 
             default:
