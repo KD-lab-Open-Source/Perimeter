@@ -995,6 +995,7 @@ public:
 	virtual void Load(const sqshControl* attr);
 	virtual void draw(int bFocus);
 
+    void OnMouseWheel(int delta);
 	virtual void OnLButtonDown(float _x, float _y);
 	virtual void OnLButtonDblClk(float _x, float _y);
 	

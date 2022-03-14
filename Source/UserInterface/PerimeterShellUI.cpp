@@ -3995,7 +3995,7 @@ void ChatWindow::Load(const sqshControl* attr)
 	txtdy = absoluteY(attr->txt_dy);
 	vScrollSX = absoluteUISizeX(attr->xstart, anchor);
 	vScrollSY = absoluteY(attr->ystart);
-	vScrollThmbSX = relativeX(attr->image_h.ix, anchor);
+	vScrollThmbSX = absoluteUISizeX(attr->image_h.ix, anchor);
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
@@ -4134,6 +4134,23 @@ void ChatWindow::draw(int bFocus)
 	terRenderDevice->SetFont(0);
 	if(m_handler)
 		m_handler(this, EVENT_DRAWWND, 0);
+}
+
+void ChatWindow::OnMouseWheel(int delta)
+{
+    if ( !(state & SQSH_VISIBLE) || !m_bScroller ) return;
+
+    m_nTopItem += delta;
+
+    if(m_nTopItem < 0) {
+        m_nTopItem = 0;
+    } else if(m_nTopItem + int(sy/m_fStringHeight) > m_data.size()) {
+        m_nTopItem = max(m_data.size() - int(sy/m_fStringHeight), 0);
+    }
+    
+    m_fScrollerThumbPos = y + vScrollSY + 1 + float(m_nTopItem)/(m_data.size() - int(sy/m_fStringHeight))*(sy - 2*vScrollSY - vScrollThmbSY);
+
+    CShellWindow::OnMouseWheel(delta);
 }
 
 void ChatWindow::OnLButtonDown(float _x, float _y)
