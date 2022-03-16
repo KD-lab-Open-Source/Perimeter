@@ -9,6 +9,8 @@
 
 [![Join the chat at https://t.me/PerimeterGame](https://patrolavia.github.io/telegram-badge/chat.svg)](https://t.me/PerimeterGame)
 
+Discord: https://discord.com/invite/jg9G7cp
+
 ## About
 
 Perimeter is a real-time strategy video game with unique gameplay elements such as terraforming deformable terrain,
