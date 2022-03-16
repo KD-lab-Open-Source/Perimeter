@@ -980,6 +980,7 @@ void GameShell::EventHandler(SDL_Event& event) {
             break;
     }
 */
+    //Sets the SDL2 text input mode according to current text edit mode in UI
     if (_shellIconManager.isInEditMode() != SDL_IsTextInputActive()) {
         if (_shellIconManager.isInEditMode()) {
             SDL_StartTextInput();
@@ -1058,24 +1059,40 @@ void GameShell::EventHandler(SDL_Event& event) {
         }
         case SDL_KEYDOWN: {
         case SDL_KEYUP:
+            bool editMode = _shellIconManager.isInEditMode();
             SDL_KeyboardEvent key = event.key;
             s = sKey(key.keysym, true);
-            if (key.state == SDL_PRESSED) {
-                KeyPressed(s);
-
-                //We need to send certain keys when editing as SDL_TEXTINPUT don't receive them
-                if (_shellIconManager.isInEditMode()) {
-                    switch (s.key) {
-                        case VK_BACK:
-                        case VK_RETURN:
-                            _shellIconManager.OnChar(static_cast<char>(s.key));
-                            break;
-                        default:
-                            break;
+            if (editMode && s.fullkey == ('V' | KBD_CTRL)) {
+                //Pasting keycombo, discard normal keydown/up
+                if (key.state == SDL_PRESSED && SDL_HasClipboardText()) {
+                    char* text = SDL_GetClipboardText();
+                    if (text && *text != '\0') {
+                        std::string codepaged = convertToCodepage(text, getLocale());
+                        for (auto& c : codepaged) {
+                            if (0 <= c && c < ' ') break;
+                            _shellIconManager.OnChar(c);
+                        }
                     }
+                    SDL_free(text);
                 }
             } else {
-                KeyUnpressed(s);
+                if (key.state == SDL_PRESSED) {
+                    KeyPressed(s);
+
+                    //We need to send certain keys when editing as SDL_TEXTINPUT don't receive them
+                    if (editMode) {
+                        switch (s.key) {
+                            case VK_BACK:
+                            case VK_RETURN:
+                                _shellIconManager.OnChar(static_cast<char>(s.key));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                } else {
+                    KeyUnpressed(s);
+                }
             }
             break;
         }
