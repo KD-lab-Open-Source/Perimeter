@@ -319,7 +319,9 @@ void PNetCenter::ExitClient(NETID netid) {
         //Mark it as closed, since we processed the client
         conn->state = NC_STATE_CLOSED;
     }
-    DeleteClient(netid, true);
+    if (m_state != PNC_STATE__NONE) {
+        DeleteClient(netid, true);
+    }
 }
 
 void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
