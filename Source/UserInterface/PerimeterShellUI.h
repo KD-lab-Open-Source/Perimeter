@@ -943,7 +943,9 @@ struct sItem
 */
 
 class ChatWindow : public CShellWindow {
-
+    
+protected:
+    bool            scroll_left;
 	std::vector<LocalizedText>	m_data;
 	int				m_bScroller;
 	int				m_nTopItem;
@@ -977,10 +979,12 @@ class ChatWindow : public CShellWindow {
 		thumb_dn
 	};
 
-	int CheckClick(float _x,float  _y);
+    virtual int CheckClick(float _x,float  _y);
 	/// возвращает длину части строки, которая влезет в окно по ширине
 	/// если строка войдёт целиком, то возвращает -1
 	int GetStringBreak(const std::string& str, bool ignore_spaces = false) const;
+    
+    void setupLocaleFonts(int size);
 
 public:
 	ChatWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
@@ -994,6 +998,8 @@ public:
 	int GetRowCount(){
 		return m_data.size();
 	}
+    
+    void drawText(float Alpha);
 
 	virtual void Load(const sqshControl* attr);
 	virtual void draw(int bFocus);
@@ -1402,31 +1408,31 @@ public:
 	void drawHint(bool cutScene);
 };
 
-class CChatInfoWindow : public CShellWindow
+class CChatInfoWindow : public ChatWindow
 {
-
-	std::string textData;
+    cTexture* m_hPopupTexture;
 	int   m_nTimeToDisplay;
 
 public:
 	CChatInfoWindow(int id, CShellWindow* pParent, EVENTPROC p);
 	~CChatInfoWindow();
 
-	void clear() {
-		textData = "";
-	}
 	void setTime(int time) {
 		m_nTimeToDisplay = time;
 	}
+    
 	void updateTime(int time) {
 		if (m_nTimeToDisplay >= 0 && m_nTimeToDisplay < time) {
 			m_nTimeToDisplay = time;
 		}
 	}
-	virtual int  HitTest(float _x, float _y){
-		return 0;
-	}
-	void addString(const LocalizedText* newString);
+    
+    int CheckClick(float _x,float  _y) override;
+    
+	int HitTest(float _x, float _y) override;
+
+    void Load(const sqshControl* attr);
+    
 	void draw(int bFocus);
 };
 

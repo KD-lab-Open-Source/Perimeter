@@ -889,7 +889,7 @@ void CShellIconManager::addChatString(const LocalizedText* newChatString) {
 	}
 	xassert(wnd);
 	if (wnd) {
-		wnd->addString(newChatString);
+		wnd->AddString(newChatString);
 		wnd->Show(true);
 		wnd->updateTime(3000);
 	}
@@ -903,7 +903,7 @@ void CShellIconManager::showHintChat(const LocalizedText* text, int showTime) {
 		wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
 	}
 	if (wnd) {
-		wnd->addString(text);
+		wnd->AddString(text);
 		wnd->Show(true);
 		wnd->updateTime(showTime);
 	}

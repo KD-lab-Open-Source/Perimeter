@@ -1955,8 +1955,12 @@ void GameShell::MouseRightUnpressed(const Vect2f& pos)
 
 void GameShell::MouseWheel(int delta)
 {
-	if(!_bMenuMode && GameActive && !isScriptReelEnabled())
-		terCamera->mouseWheel(delta);
+	if(!_bMenuMode && GameActive && !isScriptReelEnabled()) {
+        CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
+        if (!chatInfo || !chatInfo->isVisible() || !chatInfo->HitTest(mousePosition().x+0.5f, mousePosition().y+0.5f)) {
+            terCamera->mouseWheel(delta);
+        }
+    }
 	if (historyScene.ready()) {
 		historyScene.getCamera()->mouseWheel(delta);
 	}

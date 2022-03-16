@@ -3922,10 +3922,30 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{
 			type = SQSH_CHATINFO_WND_TYPE;
 			id = SQSH_CHAT_INFO_ID;
-			x = 10/1024;
-			y = (555 - 22)/768;
-			sx = 400/1024;
-			sy = 460/768;
+			x = 8/1024;
+			y = 400/768;
+			sx = 600/1024;
+			sy = 109/768;
+            txt_dx = 16/1024;
+            txt_dy = 0;
+            xstart = 12/1024;
+            ystart = 4/768;
+            /*
+            image_check = {
+                texture="resource\\icons\\MainMenu\\tv.avi";
+                _ix = 0; _iy = 0; ix = 24; iy = 24;
+                dx=339/1024; dy=157/768; dsx=128/1024; dsy=128/768;
+                hasResolutionVersion=0;
+            };
+            */
+            image = {
+                texture="resource\\icons\\MainMenu\\Main_menu.tga";
+                _ix = 0; _iy = 992; ix = 226; iy = 26;
+            };
+            image_h = {
+                texture="resource\\icons\\MainMenu\\Main_menu.tga";
+                _ix = 328; _iy = 427; ix = 24; iy = 30;
+            };
 			state = SQSH_ENABLED;
 		},
 		{
@@ -3950,9 +3970,9 @@ sqshControlContainer _sqsh_controls[int _sqsh_control_count] = {
 		{
 			type = SQSH_INGAME_CHAT_EDIT_BOX_TYPE;
 			id = SQSH_INGAME_CHAT_EDIT_ID;
-			x = 10/1024;
-			y = (555 - 18)/768;
-			sx= 400/1024;
+			x = 8/1024;
+			y = (400 + 109 + 8)/768;
+			sx= 600/1024;
 			sy= 18.0f / 768.0f;
 			alnum = 0; font_group = 4;
 			txt_align=SHELL_ALIGN_LEFT;

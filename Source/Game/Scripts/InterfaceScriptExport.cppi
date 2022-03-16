@@ -9510,14 +9510,15 @@ static sqshControl _controls_2[] = { { SQSH_BACKGROUND_TYPE, SQSH_BACKGRND_ID
  , 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_CHATINFO_WND_TYPE 
- , SQSH_CHAT_INFO_ID, 2, 3, 0.00976562f, 0.69401042f, 0.390625f, 0.59895833f, 0.f, 0.f 
- , { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
+ , SQSH_CHAT_INFO_ID, 2, 3, 0.0078125f, 0.52083333f, 0.5859375f, 0.14192708f, 0.01171875f 
+ , 0.00520833f, { "resource\\icons\\MainMenu\\Main_menu.tga", 0.f, 992.f, 226.f, 26.f 
+ , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "resource\\icons\\MainMenu\\Main_menu.tga", 328.f 
+ , 427.f, 24.f, 30.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f 
+ , 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 
+  }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f 
  , 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f 
- , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
- , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
- , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
- , 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press" 
- , "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 0.f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
+ , 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, "button_press" 
+ , "", "", -1, -1, 0, 0, 0, 0, { "", "" }, "", 0.015625f, 0.f, SHELL_ALIGN_CENTER, SHELL_ALIGN_LEFT 
  , 1, 255, 0, 0, 255, 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT 
@@ -9544,7 +9545,7 @@ static sqshControl _controls_2[] = { { SQSH_BACKGROUND_TYPE, SQSH_BACKGRND_ID
  , 255, 0, 0, 255, 900.f, 0, 255, 0, 64, 6, { { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED, 0, "" }, { "", EVENT_PRESSED 
  , 0, "" }, { "", EVENT_PRESSED, 0, "" } }, 0, 0, 1, HITTEST_DEFAULT, 0 }, { SQSH_INGAME_CHAT_EDIT_BOX_TYPE 
- , SQSH_INGAME_CHAT_EDIT_ID, 3, 3, 0.00976562f, 0.69921875f, 0.390625f, 0.0234375f 
+ , SQSH_INGAME_CHAT_EDIT_ID, 3, 3, 0.0078125f, 0.67317708f, 0.5859375f, 0.0234375f 
  , 0.f, 0.f, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f 
  , 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f 
  , 0.f, 0.f, 0.f, 0.f, 1, 0 }, { "", 0.f, 0.f, 1024.f, 1024.f, 0.f, 0.f, 0.f, 0.f, 1 
