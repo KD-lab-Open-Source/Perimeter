@@ -146,6 +146,7 @@ windowClientSize_(1024, 768)
 	MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 
     IniManager("Perimeter.ini", false).getInt("Game","DoubleClickTime", doubleClickTime);
+    IniManager("Perimeter.ini", false).getInt("Game","DoubleClickDistance", doubleClickDistance);
 
 	debug_allow_replay = true; //IniManager("Perimeter.ini", false).getInt("Game","EnableReplay");
 
@@ -996,7 +997,9 @@ void GameShell::EventHandler(SDL_Event& event) {
             bool pressed = event.button.state == SDL_PRESSED;
             bool doubleClick = false;
             if (!pressed) {
-                doubleClick = (clockf() - lastClickTime) < doubleClickTime && lastClickButton == event.button.button;
+                float dist = xm::abs(event.button.x - lastClickPosition.x) + xm::abs(event.button.y - lastClickPosition.y);
+                doubleClick = (clockf() - lastClickTime) < doubleClickTime && dist < doubleClickDistance && lastClickButton == event.button.button;
+                lastClickPosition.set(event.button.x, event.button.y);
                 lastClickTime = clockf();
                 if (doubleClick) lastClickTime -= doubleClickTime;
                 lastClickButton = event.button.button;
