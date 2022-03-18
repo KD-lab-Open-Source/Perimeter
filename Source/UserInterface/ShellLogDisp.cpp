@@ -606,7 +606,7 @@ int CShellLogicDispatcher::OnLButtonDblClk(float x, float y)
 			if (!fr->attached() && fr->basementReady()) {
 				universe()->makeCommand(COMMAND_ID_FRAME_ATTACH,0);
 			}
-		} else {
+		} else if (isShiftPressed()) {
 			universe()->select.allLikeUnitToSelection(_pUnitHover());
 		}
 	}
