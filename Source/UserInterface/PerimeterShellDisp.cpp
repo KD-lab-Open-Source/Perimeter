@@ -1151,11 +1151,11 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 //			if (gameShell->GameActive) {
 //				gameShell->pauseGame(true);
 //			}
-#ifdef PERIMETER_DEBUG
+//#ifdef PERIMETER_DEBUG
 			((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentVersion);
-#else
-            ((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentShortVersion);
-#endif
+//#else
+//            ((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentShortVersion);
+//#endif
 		}
 		break;
 

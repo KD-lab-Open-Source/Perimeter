@@ -57,14 +57,9 @@ const char* currentVersion =
 #include "../version.h"
 #ifdef _FINAL_VERSION_
 " Final"
-#else
-" Debug"
-#endif
-#ifdef PERIMETER_EXODUS
-" Exodus"
 #endif
 #ifdef PERIMETER_DEBUG
-" (DBG)"
+" Debug"
 #endif
 " (" __DATE__ " " __TIME__ ")"
 ;
