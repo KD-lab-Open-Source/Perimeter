@@ -66,7 +66,7 @@ IF(NOT PERIMETER_WINDOWS)
         ExternalProject_Add(dxvk-native
                 GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
                 GIT_TAG           "2e91e784a86bc1355100518cd90eee48433551ac"
-                GIT_SHALLOW       ON
+                GIT_SHALLOW       OFF
                 BUILD_ALWAYS      OFF
                 CONFIGURE_HANDLED_BY_BUILD ON
                 CONFIGURE_COMMAND ${DXVK_NATIVE_BUILD_COMMAND} ../dxvk-native --buildtype=release -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
