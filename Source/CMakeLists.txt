@@ -65,7 +65,7 @@ IF(NOT PERIMETER_WINDOWS)
         #TODO change this to upstream once changes are merged
         ExternalProject_Add(dxvk-native
                 GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
-                GIT_TAG           "aed08f8e5f4b069514dc4068b91e624cd4e0a495"
+                GIT_TAG           "2e91e784a86bc1355100518cd90eee48433551ac"
                 GIT_SHALLOW       ON
                 BUILD_ALWAYS      OFF
                 CONFIGURE_HANDLED_BY_BUILD ON
