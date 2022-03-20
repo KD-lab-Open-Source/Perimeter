@@ -98,7 +98,6 @@ bool MissionEditor::keyPressed(const sKey& Key)
 	switch(Key.fullkey)
 	{
 	case 'Q':
-	case '1':
 		setPlayer(0);
 		return true;
 	case VK_TILDE:
@@ -106,15 +105,11 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		setPlayer(-1);
 		return true;
 	case 'E':
-	case '2':
 		setPlayer(1);
 		return true;
-	case '3':
-		setPlayer(2);
-		return true;
-	case '4':
-		setPlayer(3);
-		return true;
+    case '0':
+        setPlayer(isShiftPressed() ? 19 : 9);
+        return true;
 
 	case 'V': 
 	case 'X': 
@@ -218,6 +213,15 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		return true; 
 
 	}
+    
+    //Player selector 0 and Tilde are handled in switch above
+    if ('1' <= Key.fullkey && Key.fullkey <= '9') {
+        setPlayer(Key.fullkey - '1');
+        return true;
+    } else if (('1' + KBD_SHIFT) <= Key.fullkey && Key.fullkey <= ('9' + KBD_SHIFT)) {
+        setPlayer(Key.fullkey - ('1' + KBD_SHIFT) + 10);
+        return true;
+    }
 
 	return false;
 }

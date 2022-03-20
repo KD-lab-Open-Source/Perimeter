@@ -57,14 +57,9 @@ const char* currentVersion =
 #include "../version.h"
 #ifdef _FINAL_VERSION_
 " Final"
-#else
-" Debug"
-#endif
-#ifdef PERIMETER_EXODUS
-" Exodus"
 #endif
 #ifdef PERIMETER_DEBUG
-" (DBG)"
+" Debug"
 #endif
 " (" __DATE__ " " __TIME__ ")"
 ;
@@ -72,6 +67,8 @@ const char* currentVersion =
 const char* currentShortVersion =
 #include "../version.h"
 ;
+
+uint16_t currentVersionNumbers[] = {0, 0, 0};
 
 static int terMissionEdit = 0;
 
@@ -798,6 +795,57 @@ void decode_stacktrace() {
 }
 
 //------------------------------
+
+void show_help() {
+    printf(
+            "Modding and debugging:\n"
+            "    mods=0 - Disables mods folder loading\n"
+            "    edit=1 - Enables mission editor mode, use map loading args or file open dialog will appear\n"
+            "    mainmenu=0/1 - Enables/disables main menu, needs to obtain what map to load via args if not enabled\n"
+            "    icon=path/of/icon - Provide alternate window/app icon to use\n"
+            "    no_console_redirect=1 - Prints logs in stdio instead of log file\n"
+            "    content_debug=1 - Shows debug info about content and mods loading\n"
+            "    content_dump_debug=1 - Writes internal content filesystem mapping into a file\n"
+            "    stack_frames/stack_reference - Parameters provided by crash dumps to allow reconstructing stacktrace using same binary\n"
+            "    xprm_compiler - Enables runtime XPrm compilation and compiler for .prm files\n"
+            "    not_triggerchains_binary=1 - Disallows loading triggerchain stored in .bin instead of .spg\n"
+            "    debug_key_handler=1 - Enables debug key handler\n"
+            "    explore=1 - Opens Debug.prm editor and closes game\n"
+            "    start_splash=0/1 - Enables or disables intro movies\n"
+            "    convert=1 - Saves opened map and closes game\n"
+            "\n"
+            "    More info and source code: https://github.com/KD-lab-Open-Source/Perimeter\n"
+            "\n"
+            "Multiplayer:\n"
+            "    server=IP:PORT - Opens game in server mode and binds to address\n"
+            "    connect=IP:PORT - Connects to provided server address\n"
+            "    password=Password - Password to use as server or connecting to server\n"
+            "    name=Name - Player name to use as server or connecting to server\n"
+            "    save=savegame - Multiplayer save name to use to resume as server\n"
+            "    room=Room - Game/room name for server, computed from server player name if empty\n"
+          //"    public=1 - Sets server to broadcast into public list\n" //TODO unimplemented yet
+            "\n"
+            "Map loading args:\n"
+            "    open=path/inside/Resource - Relative path inside resource, like Saves/Profile0/mysave\n"
+            "    save=path/inside/Resource/Saves - Relative path inside saves, like Profile0/mysave\n"
+            "    mission=path/inside/Resource/Missions - Relative path inside missions, like 00EASTER\n"
+            "\n"
+            "General arguments:\n"
+            "    resx=1280 resy=720 - Allows setting resolution to use\n"
+            "    uianchor=0/1/2/3 - Controls UI anchoring when aspect ratio is wider than 4:3\n"
+            "    GrabInput=0/1 - Controls window input grabbing\n"
+            "    RunBackground=0/1 - Enables or disables running game while not focused\n"
+            "    disable_sound=1 - Disables sound in this launch\n"
+            "    initial_menu= - Tells game to load this menu screen as initial menu, examples can be SINGLE, MULTIPLAYER_LIST, BATTLE...\n"
+            "    content=path/of/game - Use this path for game data/content (must contain Resource, Scripts...)\n"
+            "    clearlocale=1 - Clears current default and displays language dialog\n"
+            "    locale=Russian - Use different language than current default\n"
+            "    --help -h /? - This help\n"
+   );
+    ErrH.Exit();
+}
+
+//------------------------------
 #ifndef _WIN32
 int main(int argc, char *argv[]) {
     //Call SDL main init
@@ -809,18 +857,29 @@ int main(int argc, char *argv[]) {
 
 int SDL_main(int argc, char *argv[])
 {
+    //Show help if requested
+    for(int i = 0; i < argc; i ++) {
+        std::string arg = string_to_lower(argv[i]);
+        if (arg == "help" || arg == "--help" || arg == "-h" || arg == "/?") {
+            show_help();
+        }
+    }
+    
     //We need to copy argc/argv so they can be accessed later via check_command_line etc
     setup_argcv(argc, argv);
 
-    //Decode stacktrace if requested
-    decode_stacktrace();
-
     //Init clock
     initclock();
+
+    //Decode stacktrace if requested
+    decode_stacktrace();
     
     //Redirect stdio and print version
     ErrH.RedirectStdio();
     printf("Perimeter %s - %s\n", currentShortVersion, currentVersion);
+
+    //Parse version string
+    decode_version(currentShortVersion, currentVersionNumbers);
 
     //Start SDL stuff
     int sdlresult = SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
@@ -1046,8 +1105,17 @@ void app_event_poll() {
         
         if (closing) {
             if(gameShell) {
-                gameShell->terminate();
+                if (gameShell->GameActive) {
+                    //When game is running we want to gracefully shutdown the game by showing main menu
+                    sKey k(VK_ESCAPE, true);
+                    gameShell->KeyPressed(k);
+                    gameShell->KeyUnpressed(k);
+                } else {
+                    //Terminate it
+                    gameShell->terminate();
+                }
             } else {
+                //No gameshell available, manually close stuff
                 SDL_ShowCursor(SDL_TRUE);
                 SDL_DestroyWindow(sdlWindow);
                 sdlWindow = nullptr;

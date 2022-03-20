@@ -247,7 +247,10 @@ IF(NOT MSVC_CL_BUILD)
     ENDIF()
 
     add_compile_options(-Wno-unknown-pragmas) #TODO we should remove these pragmas?
-    add_compile_options(-Werror=dangling-else)
+    IF (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "e2k")
+        #Compiler for Elbrus don't support this option
+        add_compile_options(-Werror=dangling-else)
+    ENDIF()
     add_compile_options(-Werror=return-type)
     # add_compile_options(-Werror=switch) #TODO enable for strict check of switch block
     # add_compile_options(-Werror=write-strings) #TODO enable this again

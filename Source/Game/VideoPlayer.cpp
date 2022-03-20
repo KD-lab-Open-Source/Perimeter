@@ -189,7 +189,7 @@ bool VideoPlayer::Init(const char* path) {
     std::string path_str = convert_path_content(path);
     if (path_str.empty()) {
         fprintf(stderr,  "Video file not found %s\n", path);
-        xassert(0);
+        //xassert(0);
         return false;
     }
 

@@ -882,9 +882,13 @@ void CShellPushButton::Load(const sqshControl* attr)
 	CShellWindow::Load(attr);
 	target = attr->target;
 //	labelText = getTextFromBase(m_attr->text);
-	std::string key("Interface.Menu.ButtonLabels.");
-	key += m_attr->text;
-	labelText = qdTextDB::instance().getText(key.c_str());
+    if (strcmp(m_attr->text, " ") == 0) {
+        labelText = "";
+    } else {
+        std::string key("Interface.Menu.ButtonLabels.");
+        key += m_attr->text;
+        labelText = qdTextDB::instance().getText(key.c_str());
+    }
 
 	txtdy = absoluteY(attr->txt_dy);
 
@@ -3853,7 +3857,10 @@ void CStatListBoxWindow::draw(int bFocus) {
 
 ChatWindow::ChatWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(id, pParent, p)
 {
-	m_hFont = 0;
+    scroll_left = false;
+    m_hFont = nullptr;
+    m_hFont1250 = nullptr;
+    m_hFont1251 = nullptr;
 	m_bScroller = 0;
 	m_nTopItem = 0;
 	m_fStringHeight = listBoxRowHeight;
@@ -3865,14 +3872,16 @@ ChatWindow::ChatWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(
 }
 ChatWindow::~ChatWindow()
 {
-	_RELEASE(m_hFont);
+    _RELEASE(m_hFont);
+    _RELEASE(m_hFont1250);
+    _RELEASE(m_hFont1251);
 	_RELEASE(thumbTexture);
 	RELEASE(m_hTextureBG);
 }
 
 int ChatWindow::CheckClick(float fx,float  fy)
 {
-	if(!m_bScroller)
+	if(!m_bScroller || vScrollSY <= 0)
 		return thumb_none;
 
 	float _x = fx * terRenderDevice->GetSizeX();
@@ -3897,9 +3906,11 @@ void ChatWindow::Clear()
 
 void ChatWindow::AddString(const LocalizedText* localizedText)
 {
-    //TODO deal with locale
+    //Set font for GetStringBreak
+    terRenderDevice->SetFont(localizedText->locale == "russian" ? m_hFont1251 : m_hFont1250);
+
     std::string text = localizedText->text;
-	int break_len = GetStringBreak(text);
+    int break_len = GetStringBreak(text);
 
 	if(break_len != -1){
 		std::string text1 = text.substr(break_len, text.size() - break_len);
@@ -3907,24 +3918,24 @@ void ChatWindow::AddString(const LocalizedText* localizedText)
 		int break_len1 = GetStringBreak(text1);
 		if(break_len1 != -1){
 			break_len1 = GetStringBreak(text, true);
-			m_data.push_back(text.substr(0, break_len1));
-			m_data.push_back(text.substr(break_len1, text.size() - break_len1));
+			m_data.emplace_back(text.substr(0, break_len1), localizedText->locale);
+			m_data.emplace_back(text.substr(break_len1, text.size() - break_len1), localizedText->locale);
 		}
 		else {
-			m_data.push_back(text.substr(0, break_len));
-			m_data.push_back(text1);
+			m_data.emplace_back(text.substr(0, break_len), localizedText->locale);
+			m_data.emplace_back(text1, localizedText->locale);
 		}
-	}
-	else {
-        m_data.push_back(localizedText->text);
+	} else {
+        m_data.emplace_back(*localizedText);
     }
+
+    terRenderDevice->SetFont(nullptr);
 
 	updateScroller();
 }
 
 int ChatWindow::GetStringBreak(const std::string& str, bool ignore_spaces) const
 {
-	terRenderDevice->SetFont(m_hFont);
 
 	float x = sx - vScrollSX - txtdx;
     const char* textStart = str.c_str();
@@ -3948,8 +3959,6 @@ int ChatWindow::GetStringBreak(const std::string& str, bool ignore_spaces) const
 			}
 		}
 	}
-
-	terRenderDevice->SetFont(nullptr);
 
 	return -1;
 }
@@ -3977,12 +3986,7 @@ void ChatWindow::Load(const sqshControl* attr)
 	_RELEASE(thumbTexture);
 	_RELEASE(m_hTextureBG);
 
-	m_fStringHeight = absoluteY(18);
-
-	_RELEASE(m_hFont);
-
-	//!!!
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, 16);
+    setupLocaleFonts(16);
 
 	if (m_hTexture) {
 		m_vTexPos[1] = relativeUV(attr->image.ix, attr->image.iy, m_hTexture, anchor);
@@ -3991,7 +3995,7 @@ void ChatWindow::Load(const sqshControl* attr)
 	txtdy = absoluteY(attr->txt_dy);
 	vScrollSX = absoluteUISizeX(attr->xstart, anchor);
 	vScrollSY = absoluteY(attr->ystart);
-	vScrollThmbSX = relativeX(attr->image_h.ix, anchor);
+	vScrollThmbSX = absoluteUISizeX(attr->image_h.ix, anchor);
 	vScrollThmbSY = relativeY(attr->image_h.iy);
 	if ( strlen(attr->image_h.texture) ) {
 		thumbTexture = terVisGeneric->CreateTexture( getImageFileName(&(attr->image_h)).c_str() );
@@ -4018,6 +4022,39 @@ void ChatWindow::Load(const sqshControl* attr)
 		dudv.x = 1.0f / tsx;
 		dudv.y = 1.0f / tsy;
 	}
+}
+
+void ChatWindow::setupLocaleFonts(int size) {
+    _RELEASE(m_hFont1250);
+    _RELEASE(m_hFont1251);
+
+    m_hFont1250 = m_hFont1251 = nullptr;
+    for (auto locale : getLocales()) {
+        locale = string_to_lower(locale.c_str());
+        if (startsWith(locale, "russian")) {
+            if (m_hFont1251) {
+                continue;
+            }
+            m_hFont1251 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false, locale);
+        } else {
+            if (m_hFont1250) {
+                continue;
+            }
+            m_hFont1250 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false, locale);
+        }
+    }
+
+    if (m_hFont1250 == nullptr && m_hFont1251 == nullptr) {
+        //Not supposed to happen
+        xassert(0);
+        m_hFont1250 = m_hFont1251 = terVisGeneric->CreateFont(sqshShellMainFont1, size, false);
+    } else if (m_hFont1250 == nullptr) {
+        m_hFont1250 = m_hFont1251;
+    } else if (m_hFont1251 == nullptr) {
+        m_hFont1251 = m_hFont1250;
+    }
+
+    m_fStringHeight = absoluteY(size + 2);
 }
 
 void ChatWindow::draw(int bFocus)
@@ -4047,7 +4084,10 @@ void ChatWindow::draw(int bFocus)
 	else 
 		{ Alpha=1.0f; if (!OnEffectStop(m_effect)) return; }
 
+    drawText(Alpha);
+}
 
+void ChatWindow::drawText(float Alpha) {
 	if (currentScrollDirection != thumb_none) {
 		if (isPressed(VK_LBUTTON)) {
 			if (m_ftime >= scrollSpeed) {
@@ -4070,20 +4110,20 @@ void ChatWindow::draw(int bFocus)
 		}
 	}
 
-	float _sx_client = sx - vScrollSX;
 	if(m_bScroller)
 	{
 		//нужен скроллер
-
+        float scrollerX = scroll_left ? x : (x + sx - vScrollSX);
 		if (m_hTextureBG) {
 			terRenderDevice->DrawSprite2(
-				x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y,
+                scrollerX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y,
                 m_vTexBGPos.x, m_vTexBGPos.y, m_vTexBGSize.x, m_vTexBGSize.y,
                 thumbTexture, m_hTextureBG,
                 mapTextureWeight, Alpha * scaleButtonAlpha, xm::fmod(m_ftime, 1000) / 1000,
                 COLOR_MOD, ALPHA_ADDBLENDALPHA);
 		} else {
-			DrawSprite(x + sx - vScrollSX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, 
+			DrawSprite(
+                scrollerX, m_fScrollerThumbPos, vScrollThmbSX, vScrollThmbSY, 
 				thumbUV.x, thumbUV.y, thumbDUDV.x, thumbDUDV.y, 
 				thumbTexture, sColor4c(255,255,255,Alpha*255) );
 		}
@@ -4094,24 +4134,28 @@ void ChatWindow::draw(int bFocus)
 		draw_rect_empty( Vect2i(x, y), Vect2i(x + sx,y + sy), sColor4f(1, 1, 0, 1) );
 	}
 
-	terRenderDevice->SetFont(m_hFont);
-
-	int i, sz = m_data.size();
+	int sz = m_data.size();
 	float y_str = y;
 
 	if (!m_bScroller) {
 		y_str += sy - m_data.size() * m_fStringHeight;
 	}
 
-	for(i = m_nTopItem; i < sz; i++)
+	for(int i = m_nTopItem; i < sz; i++)
 	{
 		if(y_str+m_fStringHeight > y+sy)
 			break;
+        
+        const LocalizedText& text = m_data[i];
+        cFont* font = text.locale == "russian" ? m_hFont1251 : m_hFont1250;
+        
+        terRenderDevice->SetFont(font);
 
-		std::string toStr = getValidatedText(m_data[i], _sx_client - txtdx);
+        float maxwidth = sx - txtdx - (scroll_left ? 0 : vScrollSX);
+		std::string toStr = getValidatedText(text.text, maxwidth);
 //		string toStr = getValidatedText(m_data[i], _sx_client - txtdx - m_fStringHeight/2);
 
-		float yS = y_str + m_fStringHeight / 2 - m_hFont->GetHeight() / 2;
+		float yS = y_str + m_fStringHeight / 2 - font->GetHeight() / 2;
 
         sColor4f color(1, 1, 1, Alpha);
 		if (m_hTextureBG) {
@@ -4127,9 +4171,26 @@ void ChatWindow::draw(int bFocus)
 		y_str += m_fStringHeight;
 	}
 
-	terRenderDevice->SetFont(0);
+	terRenderDevice->SetFont(nullptr);
 	if(m_handler)
 		m_handler(this, EVENT_DRAWWND, 0);
+}
+
+void ChatWindow::OnMouseWheel(int delta)
+{
+    if ( !(state & SQSH_VISIBLE) || !m_bScroller ) return;
+
+    m_nTopItem += delta;
+
+    if(m_nTopItem < 0) {
+        m_nTopItem = 0;
+    } else if(m_nTopItem + int(sy/m_fStringHeight) > m_data.size()) {
+        m_nTopItem = max(m_data.size() - int(sy/m_fStringHeight), 0);
+    }
+    
+    m_fScrollerThumbPos = y + vScrollSY + 1 + float(m_nTopItem)/(m_data.size() - int(sy/m_fStringHeight))*(sy - 2*vScrollSY - vScrollThmbSY);
+
+    CShellWindow::OnMouseWheel(delta);
 }
 
 void ChatWindow::OnLButtonDown(float _x, float _y)
@@ -5122,7 +5183,7 @@ void CEditWindow::OnChar(char key)
 
 CChatInGameEditWindow::CChatInGameEditWindow(int id, CShellWindow* pParent, EVENTPROC p) : CEditWindow(id, pParent, p) {
 	alliesOnlyMode = false;
-	m_hPopupTexture = 0;
+	m_hPopupTexture = nullptr;
 }
 CChatInGameEditWindow::~CChatInGameEditWindow() {
 	_RELEASE(m_hPopupTexture);
@@ -5130,8 +5191,18 @@ CChatInGameEditWindow::~CChatInGameEditWindow() {
 
 void CChatInGameEditWindow::Load(const sqshControl* attr) {
 	CEditWindow::Load(attr);
+
+    x = absoluteX(m_attr->x);
+    
 	_RELEASE(m_hPopupTexture);
 	m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
+    
+    _RELEASE(m_hFont);
+    if (m_attr->font_group == 4) {
+        m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, 16);
+    } else {
+        m_hFont = terVisGeneric->CreateFont(sqshShellMainFont2, editBoxFontSize);
+    }
 }
 
 void CChatInGameEditWindow::draw(int bFocus) {
@@ -5855,20 +5926,41 @@ void CHintWindow::drawHint(bool cutScene) {
 	}
 }
 
-CChatInfoWindow::CChatInfoWindow(int id, CShellWindow* pParent, EVENTPROC p) : CShellWindow(id, pParent, p) {
-	m_hFont = terVisGeneric->CreateFont(sqshShellMainFont1, HINT_FONT_SIZE);
+CChatInfoWindow::CChatInfoWindow(int id, CShellWindow* pParent, EVENTPROC p) : ChatWindow(id, pParent, p) {
+    scroll_left = true;
 	m_nTimeToDisplay = -1;
+    m_hPopupTexture = nullptr;
 }
 
 CChatInfoWindow::~CChatInfoWindow()
 {
-	_RELEASE(m_hFont);
+    _RELEASE(m_hPopupTexture);
 }
 
-void CChatInfoWindow::addString(const LocalizedText* newString) {
-    //TODO deal with locale
-	textData += '\n';
-	textData += newString->text; 
+int CChatInfoWindow::CheckClick(float fx,float  fy)
+{
+    return thumb_none;
+}
+
+int CChatInfoWindow::HitTest(float x, float y) {
+    if (state & SQSH_VISIBLE && m_nTimeToDisplay <= 0) {
+        return ChatWindow::HitTest(x, y);
+    }
+    return 0;
+}
+
+void CChatInfoWindow::Load(const sqshControl* attr) {
+    ChatWindow::Load(attr);
+
+    x = absoluteX(m_attr->x);
+    vScrollThmbSX /= 2;
+    vScrollThmbSY /= 2;
+    
+    _RELEASE(m_hPopupTexture);
+    m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
+    
+    setupLocaleFonts(HINT_FONT_SIZE);
+    updateScroller();
 }
 
 void CChatInfoWindow::draw(int bFocus) {
@@ -5881,40 +5973,17 @@ void CChatInfoWindow::draw(int bFocus) {
 			}
 		}
 
-		if ( !textData.empty() ) {
-			float curY = y;
+        float alpha = 1;
+        if (m_nTimeToDisplay >= 0 &&  m_nTimeToDisplay < CHATINFO_FADE_TIME) {
+            alpha *= m_nTimeToDisplay / CHATINFO_FADE_TIME;
+        }
 
-			terRenderDevice->SetFont(m_hFont);
-
-			char* strToScr = new char[textData.length() + 1];
-			strcpy(strToScr, textData.c_str());
-
-			char* strTestEnterBegin = strToScr;
-			char* strTestEnter;
-			while ( (strTestEnter = strchr(strTestEnterBegin, '\n')) != NULL ) {
-				*strTestEnter = 0;
-				formatPlainStr(strTestEnterBegin, sx);
-				*strTestEnter = '\n';
-				strTestEnterBegin = strTestEnter + 1;
-			}
-			formatPlainStr(strTestEnterBegin, sx);
-
-			Vect2f v1, v2;
-			OutTextRect(0, 0 , strToScr, -1, v1, v2);
-			curY -= (v2.y - v1.y);
-
-			float alpha = 1;
-			if (m_nTimeToDisplay >= 0 &&  m_nTimeToDisplay < CHATINFO_FADE_TIME) {
-				alpha *= m_nTimeToDisplay / CHATINFO_FADE_TIME;
-			}
-			int x1, y1, x2, y2; 
-			terRenderDevice->GetClipRect(&x1, &y1, &x2, &y2);
-			terRenderDevice->SetClipRect(x, y - sy, x + sx, y);
-			terRenderDevice->OutText(x, curY, strToScr, sColor4f(1, 1, 1, alpha), -1);
-			terRenderDevice->SetClipRect(x1, y1, x2, y2);
-
-			terRenderDevice->SetFont(0);
-			delete[] strToScr;
+        //terRenderDevice->DrawSprite(x, y + vScrollSY, vScrollThmbSX, sy - vScrollSY, 0, 0, 1, 1, m_hPopupTexture, sColor4c(255, 255, 255, alpha*255));
+        
+        terRenderDevice->DrawSprite(x, y, sx, sy, 0, 0, 1, 1, m_hPopupTexture, sColor4c(255, 255, 255, alpha*255));
+        
+		if ( GetRowCount() ) {
+            drawText(alpha);
 		}
 	}
 }

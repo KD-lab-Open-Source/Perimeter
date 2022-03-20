@@ -7,6 +7,7 @@ struct LocalizedText {
 
     LocalizedText() = default;
     explicit LocalizedText(const std::string& text) : text(text) {}
+    explicit LocalizedText(const std::string& text, const std::string& locale) : text(text), locale(locale) {}
     
     void set(const std::string& text_, const std::string& locale_) {
         text = text_;

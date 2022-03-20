@@ -343,9 +343,11 @@ private:
 	MeasurementTimer lastSkipTime_;
 
     //Double clicking vars
+    int doubleClickDistance = 10;
     int doubleClickTime = 300;
     int lastClickButton = 0;
     double lastClickTime = 0;
+    Vect2f lastClickPosition = Vect2f::ZERO;
 
 	//---------------------------------
 	void ShotsScan();

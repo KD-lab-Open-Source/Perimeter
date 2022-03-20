@@ -298,10 +298,24 @@ void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newStrin
     if (_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT)) {
         _shellIconManager.AddDynamicHandler( addStringToChatWindowQuant, CBCODE_QUANT );
     } else {
-        //This is done on client side so the text can have local language
-        toChatText.text.insert(0, " ")
-        .insert(0, CChatInGameEditWindow::getModePostfix(clanOnly))
-        .insert(0, "&FFFFFF");
+        //We add postfix on client side so the text can have local language
+        std::string postfix;
+        if (clanOnly) {
+            if ((getLocale() == "russian" && locale == "russian") ||
+                (getLocale() != "russian" && locale != "russian")) {
+                postfix = CChatInGameEditWindow::getModePostfix(clanOnly);
+            }
+            if (postfix.empty()) {
+                //We can't display this text as belongs to another codepage or language has empty text
+                //so we just add simple ASCII text which is common in both codepages
+                postfix = "clan";
+            }
+        }
+        if (!postfix.empty()) {
+            toChatText.text.insert(0, " ")
+            .insert(0, postfix)
+            .insert(0, "&FFFFFF");
+        }
         _shellIconManager.AddDynamicHandler( addStringToChatHintWindowQuant, CBCODE_QUANT );
     }
 }

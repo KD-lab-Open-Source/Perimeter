@@ -160,7 +160,8 @@ public:
 	void addUnit(terUnitLegionary* unit, bool set_position);
 	void removeUnit(terUnitLegionary* unit);
 	void addSquad(terUnitSquad* squad);
-	void Kill();
+    void Kill();
+    void explode();
 	
 	bool Empty() const { return Units.empty(); }
 	bool emptyForMutation() const { return !squadMutationMolecula().elementCount(); }

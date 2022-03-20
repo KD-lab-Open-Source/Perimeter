@@ -32,6 +32,13 @@ void qdTextDB::clear() {
     texts_.clear();
 }
 
+qdTextDB::qdText* qdTextDB::get_entry(const char* id_str, qdText* default_text) {
+    if (0 < texts_.count(id_str)) {
+        return &texts_.at(id_str);
+    }
+    return default_text;
+}
+
 const char* qdTextDB::getText(const char* text_id) const
 {
     if (text_id != nullptr && *(text_id) != 0) {
@@ -139,7 +146,7 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
             lines.emplace_back(acc_line);
         }
         
-        load_lines(lines, replace_old_texts);
+        load_lines(lines, replace_old_texts, locale);
     } else {
         bool russian = locale == "russian";
         int text_cnt;
@@ -230,14 +237,33 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
         std::string id_str = line.substr(0, pos);
         if (id_str.empty()) continue;
         id_str = string_to_lower(id_str.c_str());
-
-        std::string txt_str = line.substr(pos + 1);
-        if (txt_str.empty()) continue;
-        if (!locale.empty()) {
-            txt_str = convertToCodepage(txt_str.c_str(), locale);
+        std::string line_str = line.substr(pos + 1);
+        if (line_str.empty()) continue;
+        
+        qdText entry;
+        
+        //Check where this string goes to
+        if (endsWith(id_str, ".text_audio")) {
+            string_replace_all(id_str, ".text_audio", "");
+            entry = *get_entry(id_str.c_str(), &entry);
+            entry.sound_ = line_str;
+        } else if (endsWith(id_str, ".text_comment")) {
+            string_replace_all(id_str, ".text_comment", "");
+            entry = *get_entry(id_str.c_str(), &entry);
+#ifdef _FINAL_VERSION_
+            continue;
+#else
+            entry.comment_ = line_str;
+#endif
+        } else {
+            entry = *get_entry(id_str.c_str(), &entry);
+            if (!locale.empty()) {
+                line_str = convertToCodepage(line_str.c_str(), locale);
+            }
+            entry.text_ = line_str;
         }
 
-        add_entry(id_str, qdText(txt_str, ""), replace_old_texts);
+        add_entry(id_str, entry, replace_old_texts);
     }
 }
 
@@ -360,9 +386,12 @@ void qdTextDB::load_supplementary_texts(const std::string& locale) {
        "Ctrl-F9 - start / stop playback\n"
        "Ctrl-Shift-F9 - Clear Current Spline\n"
        "Ctrl-Alt-F9 - write current spline ",
+       //Used for all langs
+       "Interface.Menu.ButtonLabels.<<<=<<<",
+       "Interface.Menu.ButtonLabels.>>>=>>>",
        //Empty to not mess with ,'s
        ""
-   }, false);
+   }, false, locale);
 }
 
 void qdTextDB::getIdList(const char* mask, IdList& idList)

@@ -17,7 +17,6 @@
 #include "Silicon.h"
 #include "HistoryScene.h"
 #include "BGScene.h"
-#include "MonoSelect.h"
 #include "../HT/ht.h"
 #include "qd_textdb.h"
 
@@ -25,6 +24,7 @@
 #include "MessageBox.h"
 #include "BelligerentSelect.h"
 #include "GameContent.h"
+#include "codepages/codepages.h"
 
 extern char _bCursorVisible;
 extern char _bMenuMode;
@@ -64,11 +64,18 @@ std::string getOriginalMissionName(const std::string& originalSaveName) {
 }
 
 std::string getItemTextFromBase(const char *keyStr) {
-	std::string key("Interface.Menu.ComboItems.");
-	key += keyStr;
-	const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
-	return (*stringFromBase) ? stringFromBase : "";
+    std::string key("Interface.Menu.ComboItems.");
+    key += keyStr;
+    const char* stringFromBase = qdTextDB::instance().getText(key.c_str());
+    return (*stringFromBase) ? stringFromBase : "";
 //	return (*stringFromBase) ? stringFromBase : keyStr;
+}
+
+const char* getMapName(const char* keyStr) {
+    std::string key("MapNames.");
+    key += keyStr;
+    const char* text = qdTextDB::instance().getText(key.c_str());
+    return (text && *text) ? text : keyStr;
 }
 
 void processInterfaceMessage(terUniverseInterfaceMessage id, int wndIDToHide = -1) {
@@ -296,6 +303,15 @@ std::string checkMissingContent(MissionDescription& mission) {
         //Game content is OK but we still don't have this map
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
         msg += mission.worldName();
+    } else if (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent())) {
+        //Game content is OK but we still don't have this save
+        msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
+        if (mission.savePathContent().empty()) {
+            msg += "Key: " + mission.savePathKey();
+            msg += "\nWorld: " + mission.worldName();
+        } else {
+            msg += mission.savePathContent();
+        }
     }
     
     return msg;
@@ -427,14 +443,7 @@ void prepareHeadList(int listID, const std::vector<std::string>& mVect, float* w
 	}
 	list->SetCurSel(0);
 }
-/* TODO unused?
-void fillColumnStatsList(int listID, int columnNumber, const std::vector<std::string>& mVect) {
-	CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(listID);
-	for (int i = 0, s = mVect.size(); i < s; i++) {
-		list->AddString( mVect[i].c_str(), columnNumber );
-	}
-}
-*/
+
 void fillRowStatsListWindow(int listID, int rowNumber, const std::vector<std::string>& mVect, int race, const sColor4c& clr) {
 	CStatListBoxWindow* list = (CStatListBoxWindow*)_shellIconManager.GetWnd(listID);
 	list->AddRace( race, clr );
@@ -491,7 +500,8 @@ void fillStatsLists() {
 
 	std::vector<terPlayer*>& players = universe()->Players;
 	terPlayer* player;
-	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+	for (int i = 0; i < gameShell->CurrentMission.playersData.size(); i++) {
+        if (i >= 9) break; //TODO add paging to stats screen to handle more than 9 players
 		int playerID = gameShell->CurrentMission.playersData[i].playerID;
 		if (( gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
               || gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
@@ -1095,8 +1105,7 @@ int SwitchMenuScreenQuant1( float, float ) {
                     break;
                 case SQSH_MM_MULTIPLAYER_LOBBY_SCR:
                     {
-                        fillMultiplayerLobbyList();
-                        ((ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT))->Clear();
+                        setupMultiplayerLobby();
                     }
                     break;
                 case SQSH_MM_MULTIPLAYER_HOST_SCR:
@@ -1627,6 +1636,22 @@ void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	}
 }
 
+void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+	if( code == EVENT_SHOWWND ) {
+        CShellPushButton* btn = dynamic_cast<CShellPushButton*>(pWnd);
+        if (btn->labelText.empty()) {
+            std::string locale = getLocale();
+            locale = string_to_capitalize(locale.c_str());
+            string_replace_all(locale, "Russian", "Русский");
+            btn->setText(convertToCodepage(locale.c_str(), getLocale()));
+        }
+    } else if( code == EVENT_UNPRESSED && intfCanHandleInput() ) {
+        //Reset locale and restart game so it shows lang selector
+        putStringSettings("Locale", "");
+        request_application_restart();
+        _shellIconManager.SwitchMenuScreens(pWnd->m_pParent->ID, RESTART_GAME);
+    }
+}
 
 //end mission menu
 void onMMResumeButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
@@ -2052,7 +2077,8 @@ int saveGame_(float i, float) {
     size_t ii = static_cast<size_t>(i);
 	gameShell->currentSingleProfile.deleteSave(savedGames[ii].savePathContent());
 	std::string saveName = gameShell->currentSingleProfile.getSavesDirectory() + savedGames[ii].missionName();
-	if ( gameShell->universalSave(saveName.c_str(), true) ) {
+    bool user_save = !gameShell->missionEditor();
+	if ( gameShell->universalSave(saveName.c_str(), user_save) ) {
 		hideMessageBox();
 		_shellIconManager.AddDynamicHandler( toSaveQuant, CBCODE_QUANT );
 //		_shellIconManager.SwitchMenuScreens( SQSH_MM_SAVE_GAME_SCR, SQSH_MM_INMISSION_SCR );
@@ -2122,7 +2148,8 @@ void onMMSaveGameGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 			showMessageBox();
 		} else {
 			std::string path = gameShell->currentSingleProfile.getSavesDirectory() + input->getText();
-			if ( gameShell->universalSave(path.c_str(), true) ) {
+			bool user_save = !gameShell->missionEditor();
+			if ( gameShell->universalSave(path.c_str(), user_save) ) {
 				_shellIconManager.SwitchMenuScreens( pWnd->m_pParent->ID, SQSH_MM_INMISSION_SCR );
 			} else {
 				setupOkMessageBox(

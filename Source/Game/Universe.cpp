@@ -244,8 +244,6 @@ void terUniverse::Quant()
 	watch(global_time()/float(frame_time() + 1));
 
 	global_time.next_frame();
-	
-	show_dispatcher.clear();
 
 	triggerQuant();
 
@@ -466,8 +464,11 @@ bool terUniverse::forcedDefeat(int playerID)
 {
 	terPlayer* player = findPlayer(playerID);
 	xassert(player);
-	if(player->frame())
-		player->frame()->Kill();
+    terFrame* frame = player ? player->frame() : nullptr;
+	if (frame) {
+        frame->explode();
+        frame->Kill();
+    }
 	return true;
 }
 
@@ -601,6 +602,11 @@ void MissionDescription::refresh() {
     } else if (0 <= worldID_) {
         worldName_ = vMap.getWorldName(worldID_);
     }
+    
+    if (!originalSaveName) {
+        std::string name = string_to_lower(savePathKey_.c_str());
+        originalSaveName = strstr(name.c_str(), "resource");
+    }
 }
 
 void MissionDescription::loadDescription() {    
@@ -626,9 +632,12 @@ void MissionDescription::loadDescription() {
                     return;
                 bia >> WRAP_NAME(*this, "MissionDescriptionPrm");
             }
+            
+            //Adjust arrays
+            fitPlayerArrays();
 
             // Установка АИ
-            for (int i = 0; i < min(NETWORK_PLAYERS_MAX, playerAmountScenarioMax); i++) {
+            for (int i = 0; i < playerAmountScenarioMax; i++) {
                 PlayerData& pd = playersData[i];
                 pd.flag_playerStartReady = false;
                 pd.flag_playerGameReady = false;
@@ -711,7 +720,8 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 
 	if(!userSave){
 		data.activePlayerID = 0;
-		for(int i = 0; i < NETWORK_PLAYERS_MAX; i++){
+        data.fitPlayerArrays();
+		for (int i = 0; i < data.playersData.size(); i++) {
 			data.playersData[i].playerID = i;
 			data.playersData[i].colorIndex = i;
 			data.playersShufflingIndices[i] = i;
@@ -800,6 +810,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
             compressedData.set(0);
             if (compressedData.uncompress(uncompressedData) == 0) {
                 binaryDataLoaded = true;
+                uncompressedData.realloc(uncompressedData.tell());
                 uncompressedData.set(0);
                 uncompressedData > binarySavePrmBinary;
                 binarySavePrmBinary.realloc(binarySavePrmBinary.tell());
@@ -810,6 +821,17 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
                 uncompressedData > binaryRegionData;
                 binaryRegionData.realloc(binaryRegionData.tell());
                 binaryRegionData.set(0);
+                //Added in 3.0.8, was not present before
+                if (uncompressedData.tell() < uncompressedData.length()) {
+                    XBuffer replayData(0, true);
+                    uncompressedData > replayData;
+                    //Do not deserialize save replay data if we are loading an replay since we already load it
+                    if (!flag_rePlayReel && replayData.tell()) {
+                        replayData.realloc(replayData.tell());
+                        replayData.set(0);
+                        deserializeGameCommands(replayData, replayData.length());
+                    }
+                }
             } else {
                 fprintf(stderr, "Error decompressing binary save data!\n");
             }
@@ -910,13 +932,12 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
     gameShell->changeControlState(manualData.controls, true);
 
     // Загрузка игроков
-    xassert(manualData.players.size() <= NETWORK_PLAYERS_MAX);
     PlayerData worldPlayerData;
     worldPlayerData.set("World", NETID_NONE, 0, BELLIGERENT_EXODUS0, playerWorldColorIdx, REAL_PLAYER_TYPE_WORLD);
     
     //Load each player
     std::vector<int> playerLoadIndices;
-    for(int i = 0; i < manualData.players.size(); i++){
+    for(int i = 0; i < mission.playersData.size(); i++){
         if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI) {
@@ -926,7 +947,9 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
             }
 
             terPlayer* player = addPlayer(mission.playersData[i]);
-            player->setTriggerChains(manualData.players[playerIndex]);
+            if (playerIndex < manualData.players.size()) {
+                player->setTriggerChains(manualData.players[playerIndex]);
+            }
             player->setPlayerStrategyIndex(playerIndex);
             playerLoadIndices.push_back(playerIndex);
             if(data.players.size() > playerIndex){
@@ -1054,10 +1077,15 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
                 data.manualData.copyCamera(i, "UserCamera", "Camera");
             }
         }
-	}
+	} else {
+        //Clear soundtracks so players don't get wrong belligerent soundtracks
+        for (int i = 0; i < 3; i++) {
+            data.manualData.soundTracks[i].clear();
+        }
+    }
 
-	PlayerVect playersToSave(NETWORK_PLAYERS_MAX, nullptr);
-	for(int i = 0; i < data.manualData.players.size(); i++){
+	PlayerVect playersToSave(mission.playersData.size(), nullptr);
+	for(int i = 0; i < mission.playersData.size(); i++){
 		if (mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_AI
             || mission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER_AI){
@@ -1101,7 +1129,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     
     //Binary data file content
     XBuffer uncompressedData(10240, true);
-    XBuffer binaryData(10240, true);
+    XBuffer binaryData(0, true);
 
     //---------------------
     // Save Prm Binary
@@ -1118,6 +1146,7 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     }
     uncompressedData < binaryData;
     binaryData.set(0);
+    binaryData.realloc(0);
 
 	if (gameShell->missionEditor() && gameShell->missionEditor()->hardnessChanged()){
 		gameShell->missionEditor()->clearHardnessChanged();
@@ -1150,6 +1179,16 @@ bool terUniverse::universalSave(MissionDescription& mission, bool userSave) cons
     }
     uncompressedData < binaryData;
     binaryData.set(0);
+    binaryData.realloc(0);
+    
+    //---------------------
+    // Replay data
+    if (userSave) {
+        serializeGameCommands(binaryData);
+    }
+    uncompressedData < binaryData;
+    binaryData.set(0);
+    binaryData.realloc(0);
 
     //---------------------
     //Compress and save binary data into file

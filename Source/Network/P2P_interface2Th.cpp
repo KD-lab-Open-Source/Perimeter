@@ -561,6 +561,7 @@ void PNetCenter::LLogicQuant()
 				//LockAllPlayers
 				UpdateBattleData();
 				//ReleaseAllPlayers
+                ClearQueuedGameCommands();
 
 				LogMsg("Wait for all clients ready. \n");
 
@@ -794,6 +795,12 @@ end_while_01:;
 			if(hostPause)
 				break;
 
+			//перенесение всех команд удаления в список комманд на выполнение
+			for(auto p=m_QueuedGameCommands.begin(); p != m_QueuedGameCommands.end(); p++){
+				PutGameCommand2Queue_andAutoDelete(NETID_HOST, *p);
+			}
+            m_QueuedGameCommands.clear();
+
 			//Установка последней команде, признака, последняя
 			if(!m_CommandList.empty()){
 				std::list<netCommandGeneral*>::iterator p=m_CommandList.end();
@@ -982,6 +989,7 @@ end_while_01:;
             flag_SkipProcessingGameCommand=false;
             
             //Create restore event
+            clientHost->desync_missionDescription->setSaveName("");
             netCommand4C_DesyncRestore ev_restore = netCommand4C_DesyncRestore(std::move(clientHost->desync_missionDescription));
             if (highest_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
                 ev_restore.missionDescription->gameType_ = GT_MULTI_PLAYER_RESTORE_PARTIAL;
@@ -1022,9 +1030,11 @@ end_while_01:;
         }
         break;
     }
+    case PNC_STATE__CLIENT_LOADING_GAME:
+        ClearQueuedGameCommands(); /// TODO is this need? copied from original code
+        break;
     case PNC_STATE__CLIENT_FIND_HOST:
 	case PNC_STATE__CLIENT_TUNING_GAME: 
-	case PNC_STATE__CLIENT_LOADING_GAME:
     case PNC_STATE__CLIENT_GAME:
     case PNC_STATE__CLIENT_DESYNC:
 		break;
@@ -1319,7 +1329,7 @@ void PNetCenter::HostReceiveQuant()
                                 bool isSave = isSaveGame();
                                 MissionDescription& mission = *hostMissionDescription;
                                 mission.setChanged();
-								xassert(ncChRT.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+								xassert(ncChRT.idxPlayerData_ < mission.playersData.size());
                                 //Проверка на то, что меняется не у Host-а / check that we are not changing host
 								if (ncChRT.idxPlayerData_!=mission.findPlayer(m_hostNETID)) {
                                     PlayerData& pd = mission.playersData[ncChRT.idxPlayerData_];
@@ -1379,7 +1389,7 @@ void PNetCenter::HostReceiveQuant()
 							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
 							hostMissionDescription->setChanged();
-							xassert(ncChB.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+							xassert(ncChB.idxPlayerData_ < hostMissionDescription->playersData.size());
 							//Host может менять у любого
                             int playerIndex = netid == m_hostNETID ? ncChB.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
                             hostMissionDescription->changePlayerBelligerent(playerIndex, ncChB.newBelligerent_);
@@ -1391,7 +1401,7 @@ void PNetCenter::HostReceiveQuant()
 							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
 							hostMissionDescription->setChanged();
-							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+							xassert(ncChC.idxPlayerData_ < hostMissionDescription->playersData.size());
 							//Host может менять цвет любого
                             int playerIndex = netid == m_hostNETID ? ncChC.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
 							hostMissionDescription->changePlayerColor(playerIndex, ncChC.newColor_, ncChC.direction);
@@ -1403,7 +1413,7 @@ void PNetCenter::HostReceiveQuant()
 							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
 							hostMissionDescription->setChanged();
-							xassert(ncChD.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+							xassert(ncChD.idxPlayerData_ < hostMissionDescription->playersData.size());
 							//Host может менять у любого
                             int playerIndex = netid == m_hostNETID ? ncChD.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
 							hostMissionDescription->changePlayerDifficulty(playerIndex, ncChD.difficulty_);
@@ -1415,7 +1425,7 @@ void PNetCenter::HostReceiveQuant()
 							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
 							hostMissionDescription->setChanged();
-							xassert(ncChC.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+							xassert(ncChC.idxPlayerData_ < hostMissionDescription->playersData.size());
 							//Host может менять у любого
                             int playerIndex = netid == m_hostNETID ? ncChC.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
 							hostMissionDescription->changePlayerClan(playerIndex, ncChC.clan_);
@@ -1427,7 +1437,7 @@ void PNetCenter::HostReceiveQuant()
 							if (m_state!=PNC_STATE__HOST_TUNING_GAME || isSaveGame()) break;
 
 							hostMissionDescription->setChanged();
-							xassert(ncChH.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+							xassert(ncChH.idxPlayerData_ < hostMissionDescription->playersData.size());
 							//Host может менять у любого
                             int playerIndex = netid == m_hostNETID ? ncChH.idxPlayerData_ : hostMissionDescription->findPlayer(netid);
 							hostMissionDescription->changePlayerHandicap(playerIndex, ncChH.handicap_);
@@ -1439,10 +1449,10 @@ void PNetCenter::HostReceiveQuant()
                             if (m_state!=PNC_STATE__HOST_TUNING_GAME || !isSaveGame()) break;
 
                             MissionDescription& mission = *hostMissionDescription;
-                            xassert(ncChS.idxPlayerData_ < NETWORK_PLAYERS_MAX);
+                            xassert(ncChS.idxPlayerData_ < mission.playersData.size());
                             //Check if player who wants to change seat is the sender
                             int originIndex = mission.findPlayer(netid);
-                            if (originIndex != -1 && ncChS.idxPlayerData_ < NETWORK_PLAYERS_MAX) {
+                            if (originIndex != -1 && ncChS.idxPlayerData_ < mission.playersData.size()) {
                                 PlayerData& origin = mission.playersData[originIndex];
                                 PlayerData& destination = mission.playersData[ncChS.idxPlayerData_];
                                 bool allowed = false;
@@ -1488,7 +1498,7 @@ void PNetCenter::HostReceiveQuant()
                                     }
 								}
                                 //Remove players that exceed scenario max
-								for(i; i< NETWORK_PLAYERS_MAX; i++){
+								for(i; i< hostMissionDescription->playersData.size(); i++){
 									if(hostMissionDescription->playersData[i].realPlayerType==REAL_PLAYER_TYPE_PLAYER){
 										NETID delPlayerNETID=hostMissionDescription->playersData[i].netid;
 										hostMissionDescription->disconnect2PlayerData(i);

@@ -48,7 +48,6 @@ public:
 	static qdTextDB& instance();
 
 private:
-
 	class qdText
 	{
     public:
@@ -62,6 +61,9 @@ private:
 		std::string comment_;
 #endif
 	};
+
+    /// Obtain qdText for this entry if exists
+    qdTextDB::qdText* get_entry(const char* id_str, qdText* default_text);
 
     void add_entry(const std::string& id_str, const qdText& text, bool replace_old_texts);
 

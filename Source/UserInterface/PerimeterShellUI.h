@@ -943,8 +943,10 @@ struct sItem
 */
 
 class ChatWindow : public CShellWindow {
-
-	std::vector<std::string>	m_data;
+    
+protected:
+    bool            scroll_left;
+	std::vector<LocalizedText>	m_data;
 	int				m_bScroller;
 	int				m_nTopItem;
 	float			m_fStringHeight;
@@ -967,6 +969,9 @@ class ChatWindow : public CShellWindow {
 
 	int currentScrollDirection;
 
+    cFont*       m_hFont1250;
+    cFont*       m_hFont1251;
+
 	enum
 	{
 		thumb_none,
@@ -974,10 +979,12 @@ class ChatWindow : public CShellWindow {
 		thumb_dn
 	};
 
-	int CheckClick(float _x,float  _y);
+    virtual int CheckClick(float _x,float  _y);
 	/// возвращает длину части строки, которая влезет в окно по ширине
 	/// если строка войдёт целиком, то возвращает -1
 	int GetStringBreak(const std::string& str, bool ignore_spaces = false) const;
+    
+    void setupLocaleFonts(int size);
 
 public:
 	ChatWindow(int id, CShellWindow* pParent, EVENTPROC p = 0);
@@ -991,10 +998,13 @@ public:
 	int GetRowCount(){
 		return m_data.size();
 	}
+    
+    void drawText(float Alpha);
 
 	virtual void Load(const sqshControl* attr);
 	virtual void draw(int bFocus);
 
+    void OnMouseWheel(int delta);
 	virtual void OnLButtonDown(float _x, float _y);
 	virtual void OnLButtonDblClk(float _x, float _y);
 	
@@ -1398,31 +1408,31 @@ public:
 	void drawHint(bool cutScene);
 };
 
-class CChatInfoWindow : public CShellWindow
+class CChatInfoWindow : public ChatWindow
 {
-
-	std::string textData;
+    cTexture* m_hPopupTexture;
 	int   m_nTimeToDisplay;
 
 public:
 	CChatInfoWindow(int id, CShellWindow* pParent, EVENTPROC p);
 	~CChatInfoWindow();
 
-	void clear() {
-		textData = "";
-	}
 	void setTime(int time) {
 		m_nTimeToDisplay = time;
 	}
+    
 	void updateTime(int time) {
 		if (m_nTimeToDisplay >= 0 && m_nTimeToDisplay < time) {
 			m_nTimeToDisplay = time;
 		}
 	}
-	virtual int  HitTest(float _x, float _y){
-		return 0;
-	}
-	void addString(const LocalizedText* newString);
+    
+    int CheckClick(float _x,float  _y) override;
+    
+	int HitTest(float _x, float _y) override;
+
+    void Load(const sqshControl* attr);
+    
 	void draw(int bFocus);
 };
 
@@ -1868,6 +1878,7 @@ void onMMAddonsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMQuitButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMOptionsButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLangButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //addons
 void onMMAddonsList(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1942,6 +1953,9 @@ void onMMBattleSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMBattleClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBattleHCButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMBattleGoButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMBattlePageNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMBattlePagePrevButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMBattlePageText(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //load game
 void onMMLoadMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -1990,7 +2004,7 @@ void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code,
 void onMMMultiplayerHostBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //lobby
-void fillMultiplayerLobbyList();
+void setupMultiplayerLobby();
 void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
@@ -2002,6 +2016,9 @@ void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param
 void onMMLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyChatInputButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
 void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLobbyPageNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLobbyPagePrevButton(CShellWindow* pWnd, InterfaceEventCode code, int param);
+void onMMLobbyPageText(CShellWindow* pWnd, InterfaceEventCode code, int param);
 
 //options
 void onMMGameButton(CShellWindow* pWnd, InterfaceEventCode code, int param);

@@ -9,6 +9,7 @@ class terBuildingCommandCenter : public terBuildingPowered
 public:
 	terBuildingCommandCenter(const UnitTemplate& data);
 
+    void explode();
 	void Kill();
 
 	void setPose(const Se3f& pose, bool initPose);

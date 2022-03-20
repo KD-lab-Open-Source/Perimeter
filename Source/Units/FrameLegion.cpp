@@ -13,6 +13,11 @@ terBuildingCommandCenter::terBuildingCommandCenter(const UnitTemplate& data) : t
 	SquadPoint->setCommander(this);
 }
 
+void terBuildingCommandCenter::explode() {
+    terBuildingPowered::explode();
+    SquadPoint->explode();
+}
+
 void terBuildingCommandCenter::Kill()
 {
 	terBuildingPowered::Kill();

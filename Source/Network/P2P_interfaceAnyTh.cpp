@@ -104,6 +104,15 @@ void PNetCenter::PutGameCommand2Queue_andAutoDelete(NETID netid, netCommandGame*
 	m_nQuantCommandCounter++;
 }
 
+void PNetCenter::ClearQueuedGameCommands()
+{
+    for(auto p=m_QueuedGameCommands.begin(); p != m_QueuedGameCommands.end(); p++){
+        delete *p;
+    }
+    m_QueuedGameCommands.clear();
+}
+
+
 bool PNetCenter::ExecuteInterfaceCommand(e_PNCInterfaceCommands ic, std::unique_ptr<LocalizedText> text)
 {
 	{

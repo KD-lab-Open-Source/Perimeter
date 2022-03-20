@@ -15,6 +15,9 @@
 
 extern BGScene bgScene;
 
+//We can only show 4 simultaneous player in UI, so we use paging to allow seeing more
+int lobbyPlayersPage = -1;
+
 extern std::string getItemTextFromBase(const char *keyStr);
 
 bool isEditAllowed(const MissionDescription& mission, int number) {
@@ -25,24 +28,47 @@ bool isEditAllowed(const MissionDescription& mission, int number) {
            || (gameShell->getNetClient()->isHost() && mission.playersData[number].realPlayerType == REAL_PLAYER_TYPE_AI);
 }
 
+///Updates buttons and page text controls, also ensures page is not out of bounds
+void updateLobbyPageControls() {
+    const MissionDescription& mission = gameShell->getNetClient()->getLobbyMissionDescription();
+    int maxPage = (mission.playersAmountScenarioMax() - 1) / UI_PLAYERS_MAX;
+    if (lobbyPlayersPage < 0) {
+        lobbyPlayersPage = 0;
+        for (int i = 0; i < mission.playerAmountScenarioMax; ++i) {
+            if (mission.playersData[i].playerID == mission.activePlayerID) {
+                lobbyPlayersPage = i / UI_PLAYERS_MAX;
+                break;
+            }
+        }
+    } else if (lobbyPlayersPage >= maxPage) {
+        lobbyPlayersPage = maxPage;
+    }
+
+    CShellPushButton* prev_btn = ((CShellPushButton*) _shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER_PAGE_PREV_BTN));
+    prev_btn->Show(0 < lobbyPlayersPage);
+    CShellPushButton* next_btn = ((CShellPushButton*) _shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER_PAGE_NEXT_BTN));
+    next_btn->Show(lobbyPlayersPage < maxPage);
+    CTextWindow* textWindow = ((CTextWindow*) _shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER_PAGE_TXT));
+    textWindow->Show(0 < maxPage);
+    if (maxPage) {
+        std::string pagetext = std::to_string(lobbyPlayersPage + 1) + " / " + std::to_string(maxPage + 1);
+        textWindow->SetText(pagetext.c_str());
+    }
+}
+
 bool showPlayerControls(const MissionDescription& mission, int number) {
     return 0 <= number && number < mission.playerAmountScenarioMax
     && (mission.gameType_ == GT_MULTI_PLAYER_LOAD || mission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_OPEN)
     && mission.playersData[number].realPlayerType != REAL_PLAYER_TYPE_CLOSE;
 }
 
-void fillMultiplayerLobbyList() {
+void setupMultiplayerLobby() {
     CListBoxWindow* list = (CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST);
     list->NewItem(1);
     list->Clear();
     if (!gameShell->getNetClient()->isSaveGame()) {
         for (int i = 0; i < multiplayerMaps.size(); i++) {
-            std::string name = "MapNames.";
-            name += multiplayerMaps[i].missionName();
-            name = qdTextDB::instance().getText(name.c_str());
-            if (name.empty()) {
-                name = multiplayerMaps[i].missionName();
-            }
+            std::string name = getMapName(multiplayerMaps[i].missionName().c_str());
             list->AddString(name.c_str(), 0);
         }
     }
@@ -51,6 +77,8 @@ void fillMultiplayerLobbyList() {
     } else {
         list->SetCurSel(0);
     }
+
+    ((ChatWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_CHAT_TEXT))->Clear();
 }
 
 void onMMMultiplayerGameSpeedSlider(CShellWindow* pWnd, InterfaceEventCode code, int param) {
@@ -67,16 +95,6 @@ void onMMLobbyMapList(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 			std::string missionName = std::string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[param].missionName();
 			gameShell->getNetClient()->changeMap(missionName.c_str());
 		}
-/*
-        CListBoxWindow* list = (CListBoxWindow*)pWnd; 
-		int pos = list->GetCurSel();
-		if (pos >= 0 && pos < multiplayerMaps.size()) {
-			checkMissionDescription(pos, multiplayerMaps);
-			string missionName = string("RESOURCE\\MULTIPLAYER\\") + multiplayerMaps[pos].missionName();
-			gameShell->getNetClient()->changeMap(missionName.c_str());
-
-		}
-*/
 	}		
 }
 
@@ -97,14 +115,15 @@ void setFrm(CComboWindow* combo, int number) {
 }
 
 void onMMLobbyFrmButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-    setupFrameButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN, true);
+    int number = pWnd->ID - SQSH_MM_LOBBY_PLAYER1_FRM_BTN;
+    setupFrameButton(pWnd, code, UI_PLAYERS_MAX * lobbyPlayersPage + number, true);
 }
 
 void setSlot(CComboWindow* combo, int number) {
     const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
     const PlayerData& pd = currMission.playersData[number];
     bool isSave = gameShell->getNetClient()->isSaveGame();
-	if ( currMission.playerAmountScenarioMax > number ) {
+	if ( 0 <= number && number < currMission.playerAmountScenarioMax) {
 		combo->Show(true);
         bool isHost = gameShell->getNetClient()->isHost();
         bool slotEnable = isHost && currMission.activePlayerID != number;
@@ -152,6 +171,7 @@ void setSlot(CComboWindow* combo, int number) {
 		combo->Show(false);
 	}
 }
+
 void setupSlot(CComboWindow* combo, int number, bool direction) {
     if (gameShell->getNetClient()->isSaveGame()) {
         const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
@@ -208,30 +228,36 @@ void setupSlot(CComboWindow* combo, int number, bool direction) {
         }
     }
 }
-void setupSlotButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-	if( code == EVENT_CREATEWND ) {
-		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		pCombo->Array.emplace_back( getItemTextFromBase("Open").c_str() );
-		pCombo->Array.emplace_back( getItemTextFromBase("Player").c_str() );
-		pCombo->Array.emplace_back( getItemTextFromBase("Closed").c_str() );
-		pCombo->Array.emplace_back( getItemTextFromBase("AI (Easy)").c_str() );
-		pCombo->Array.emplace_back( getItemTextFromBase("AI (Normal)").c_str() );
-        pCombo->Array.emplace_back( getItemTextFromBase("AI (Hard)").c_str() );
-		pCombo->size = pCombo->Array.size();
-		pCombo->pos = 0;
-	} else if (code == EVENT_UNPRESSED) {
-		setupSlot((CComboWindow*) pWnd, number, true);
-	} else if (code == EVENT_RUNPRESSED) {
-		setupSlot((CComboWindow*) pWnd, number, false);
-	}
-}
+
 void onMMLobbySlotButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	setupSlotButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_SLOT_BTN);
+    if( code == EVENT_CREATEWND ) {
+        CComboWindow *pCombo = (CComboWindow*) pWnd;
+        pCombo->Array.emplace_back( getItemTextFromBase("Open").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("Player").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("Closed").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("AI (Easy)").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("AI (Normal)").c_str() );
+        pCombo->Array.emplace_back( getItemTextFromBase("AI (Hard)").c_str() );
+        pCombo->size = pCombo->Array.size();
+        pCombo->pos = 0;
+    } else if (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) {
+        bool direction = code == EVENT_UNPRESSED;
+        int number = pWnd->ID - SQSH_MM_LOBBY_PLAYER1_SLOT_BTN;
+        setupSlot((CComboWindow*) pWnd, UI_PLAYERS_MAX * lobbyPlayersPage + number, direction);
+    }
 }
 
 void setClan(CComboWindow* combo, int number) {
     const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
     if (showPlayerControls(currMission, number)) {
+        std::string clan = getItemTextFromBase("Clan");
+        if (combo->size != currMission.playerAmountScenarioMax) {
+            combo->Array.clear();
+            for (int i = 0; i < currMission.playerAmountScenarioMax; i++) {
+                combo->Array.emplace_back(clan + std::to_string(i + 1));
+            }
+            combo->size = combo->Array.size();
+        }
 		combo->Show(true);
         combo->Enable(isEditAllowed(currMission, number));
 		combo->pos = currMission.playersData[number].clan;
@@ -255,26 +281,18 @@ void setupClan(CComboWindow* combo, int number, bool direction) {
 	gameShell->getNetClient()->changePlayerClan(number, newPos);
 //	gameShell->getNetClient()->changeRealPlayerType(number, RealPlayerType(newPos));
 }
-void setupClanButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-	if( code == EVENT_CREATEWND ) {
-		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		std::string clan = getItemTextFromBase("Clan");
-		char buff[30 + 1];
-		for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
-			sprintf(buff, "%d", (i + 1));
-			pCombo->Array.push_back( (clan + buff).c_str() );
-		}
-		pCombo->size = NETWORK_PLAYERS_MAX;
-		pCombo->pos = 0;
-	} else if (code == EVENT_UNPRESSED) {
-		setupClan((CComboWindow*) pWnd, number, true);
-	} else if (code == EVENT_RUNPRESSED) {
-		setupClan((CComboWindow*) pWnd, number, false);
-	}
-}
 
 void onMMLobbyClanButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	setupClanButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_CLAN_BTN);
+    if( code == EVENT_CREATEWND ) {
+        CComboWindow *pCombo = (CComboWindow*) pWnd;
+        pCombo->Array.clear();
+        pCombo->size = pCombo->Array.size();
+        pCombo->pos = 0;
+    } else if (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) {
+        bool direction = code == EVENT_UNPRESSED;
+        int number = pWnd->ID - SQSH_MM_LOBBY_PLAYER1_CLAN_BTN;
+        setupClan((CComboWindow*) pWnd, UI_PLAYERS_MAX * lobbyPlayersPage + number, direction);
+    }
 }
 
 void setHC(CComboWindow* combo, int number) {
@@ -327,24 +345,21 @@ void setupHC(CComboWindow* combo, int number, bool direction) {
 	}
 	gameShell->getNetClient()->changePlayerHandicap(number, handicap);
 }
-void setupHCButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-	if( code == EVENT_CREATEWND ) {
-		CComboWindow *pCombo = (CComboWindow*) pWnd;
-		pCombo->Array.push_back( "100%" );
-		pCombo->Array.push_back( "70%" );
-		pCombo->Array.push_back( "50%" );
-		pCombo->Array.push_back( "30%" );
-		pCombo->size = 4;
-		pCombo->pos = 0;
-	} else if (code == EVENT_UNPRESSED) {
-		setupHC((CComboWindow*) pWnd, number, true);
-	} else if (code == EVENT_RUNPRESSED) {
-		setupHC((CComboWindow*) pWnd, number, false);
-	}
-}
 
 void onMMLobbyHCButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	setupHCButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_HC_BTN);
+    if( code == EVENT_CREATEWND ) {
+        CComboWindow *pCombo = (CComboWindow*) pWnd;
+        pCombo->Array.emplace_back( "100%" );
+        pCombo->Array.emplace_back( "70%" );
+        pCombo->Array.emplace_back( "50%" );
+        pCombo->Array.emplace_back( "30%" );
+        pCombo->size = 4;
+        pCombo->pos = 0;
+    } else if (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) {
+        bool direction = code == EVENT_UNPRESSED;
+        int number = pWnd->ID - SQSH_MM_LOBBY_PLAYER1_HC_BTN;
+        setupHC((CComboWindow*) pWnd, UI_PLAYERS_MAX * lobbyPlayersPage + number, direction);
+    }
 }
 
 void setClr(CColorComboWindow* combo, CShellWindow* bg, int number) {
@@ -374,15 +389,13 @@ void setupClr(CColorComboWindow* combo, int number, bool direction) {
 	}
 	gameShell->getNetClient()->changePlayerColor(number, newPos, direction);
 }
-void setupClrButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-	if (code == EVENT_UNPRESSED) {
-		setupClr((CColorComboWindow*) pWnd, number, true);
-	} else if (code == EVENT_RUNPRESSED) {
-		setupClr((CColorComboWindow*) pWnd, number, false);
-	}
-}
+
 void onMMLobbyClrButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	setupClrButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_CLR_BTN);
+    if (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) {
+        bool direction = code == EVENT_UNPRESSED;
+        int number = pWnd->ID - SQSH_MM_LOBBY_PLAYER1_CLR_BTN;
+        setupClr((CColorComboWindow*) pWnd, UI_PLAYERS_MAX * lobbyPlayersPage + number, direction);
+    }
 }
 
 void setName(CShellPushButton* btn, int number) {
@@ -406,17 +419,16 @@ void setName(CShellPushButton* btn, int number) {
 		btn->Show(false);
 	}
 }
+
 void setupName(CComboWindow* combo, int number) {
     gameShell->getNetClient()->changePlayerSeat(number);
 }
-void setupNameButton(CShellWindow* pWnd, InterfaceEventCode code, int number) {
-	if (code == EVENT_UNPRESSED) {
-		setupName((CComboWindow*) pWnd, number);
-	}
-}
 
 void onMMLobbyNameButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
-	setupNameButton(pWnd, code, pWnd->ID - SQSH_MM_LOBBY_PLAYER1_NAME_BTN);
+    if (code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) {
+        int number = pWnd->ID - SQSH_MM_LOBBY_PLAYER1_NAME_BTN;
+        setupName((CComboWindow*) pWnd, UI_PLAYERS_MAX * lobbyPlayersPage + number);
+    }
 }
 
 void setReady(CShellWindow* wnd, int number) {
@@ -444,9 +456,9 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
         btn->setText(gameShell->getNetClient()->m_GameName);
         
 		const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-//		((CPushButton*)pWnd)->setText(currMission.missionDescription());
-
+        CTextWindow* descWnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP_DESCR_TXT);
 		if (gameShell->getNetClient()->isHost() && !gameShell->getNetClient()->isSaveGame()) {
+            descWnd->Show(0);
 			setLobbyMapListVisible(true);
 			_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP)->Show(0);
 			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_HOST_GAME_MAP))->setWorldID( currMission.worldID() );
@@ -458,17 +470,34 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 			setLobbyMapListVisible(false);
 			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP))->setWorldID( currMission.worldID() );
 			_shellIconManager.GetWnd(SQSH_MM_LOBBY_HOST_GAME_MAP)->Show(0);
+
+            descWnd->Show(1);
+            std::string text = currMission.missionName();
+            /*
+            std::string text = currMission.missionDescription();
+            if (text.empty()) {
+                text = qdTextDB::instance().getText("Interface.Menu.Messages.Battle");
+            }
+            text = currMission.missionName() + "\n\n" + text;
+            */
+            descWnd->setText(text);
 		}
-		((CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP_DESCR_TXT))->setText( currMission.missionDescription() );
+
+        updateLobbyPageControls();
 	
-		for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
-			setFrm(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_FRM_BTN + i)), i);
-			setClr(((CColorComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLR_BTN + i)), _shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLR_BG + i), i);
-			setSlot(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_SLOT_BTN + i)), i);
-			setName(((CShellPushButton*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_NAME_BTN + i)), i);
-			setClan(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLAN_BTN + i)), i);
-			setHC(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_HC_BTN + i)), i);
-			setReady(_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_READY_BTN + i), i);
+		for (int u = 0; u < UI_PLAYERS_MAX; u++) {
+            int i = UI_PLAYERS_MAX * lobbyPlayersPage + u;
+			setFrm(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_FRM_BTN + u)), i);
+			setClr(
+                ((CColorComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLR_BTN + u)), 
+                _shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLR_BG + u),
+                i
+            );
+			setSlot(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_SLOT_BTN + u)), i);
+			setName(((CShellPushButton*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_NAME_BTN + u)), i);
+			setClan(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_CLAN_BTN + u)), i);
+			setHC(((CComboWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_HC_BTN + u)), i);
+			setReady(_shellIconManager.GetWnd(SQSH_MM_LOBBY_PLAYER1_READY_BTN + u), i);
 		}
 	}
 }
@@ -504,4 +533,40 @@ void onMMLobbyBackButton(CShellWindow* pWnd, InterfaceEventCode code, int param)
 			gameShell->GameContinue = 0;
 		}
 	}
+}
+
+void setLobbyPage(bool direction) {
+    if (direction) {
+        const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
+        int maxPage = (currMission.playersAmountScenarioMax() - 1) / UI_PLAYERS_MAX;
+        if (0 < maxPage && lobbyPlayersPage < maxPage) {
+            lobbyPlayersPage = std::min(lobbyPlayersPage + 1, maxPage);
+            updateLobbyPageControls();
+        }
+    } else {
+        if (0 < lobbyPlayersPage) {
+            lobbyPlayersPage--;
+            updateLobbyPageControls();
+        }
+    }
+}
+
+void onMMLobbyPageNextButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if ((code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) && intfCanHandleInput()) {
+        setLobbyPage(true);
+    }
+}
+
+void onMMLobbyPagePrevButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if ((code == EVENT_UNPRESSED || code == EVENT_RUNPRESSED) && intfCanHandleInput()) {
+        setLobbyPage(false);
+    }
+}
+
+void onMMLobbyPageText(CShellWindow* pWnd, InterfaceEventCode code, int param) {
+    if (code == EVENT_UNPRESSED && intfCanHandleInput()) {
+        setLobbyPage(true);
+    } else if (code == EVENT_RUNPRESSED && intfCanHandleInput()) {
+        setLobbyPage(false);
+    }
 }

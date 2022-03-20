@@ -40,6 +40,18 @@ extern std::vector<const char*> __argv;
 ///Stores argc/argv from main()
 void setup_argcv(int argc, char *argv[]);
 
+///Decodes string version X.Y.Z into [X, Y, Z] int array
+void decode_version(const char* version_str, uint16_t version[3]);
+
+///Compares 2 int arrays and shows positive 1 starting index if right is higher, neg if left is higher
+/// left 3,1,2 right 3,2,1 will return 2
+/// left 3,0,2 right 3,0,0 will return -3 
+/// left 3,0,2 right 3,0,2 will return 0
+int compare_versions(const uint16_t left[3], const uint16_t right[3]);
+
+///Compares int array and string, same as compare_versions above
+int compare_versions(const uint16_t left[3], const char* right);
+
 ///Returns the value by the switch name from key=value at argv
 const char* check_command_line(const char* switch_str);
 
@@ -61,6 +73,9 @@ void terminate_float_text(char* buffer, size_t max, int digits);
 
 //Replaces all "from" in "text" with "to"
 void string_replace_all(std::string& text, const std::string& from, const std::string& to);
+
+//Changes string to Capitalized
+std::string string_to_capitalize(const char* str);
 
 //Changes string to lowercase
 std::string string_to_lower(const char* str);

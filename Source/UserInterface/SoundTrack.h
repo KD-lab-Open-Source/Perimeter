@@ -6,7 +6,14 @@ class SoundTrack
 public:
 	SoundTrack();
 
-	bool empty() const { return fileNames.empty(); }
+    bool empty() const { return fileNames.empty(); }
+
+    void clear() {
+        randomChoice = false;
+        index = 0;
+        fileName_.clear();
+        fileNames.clear();
+    }
 
 	const char* fileName() const;
 

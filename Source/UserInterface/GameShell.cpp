@@ -146,6 +146,7 @@ windowClientSize_(1024, 768)
 	MainMenuEnable = IniManager("Perimeter.ini").getInt("Game","MainMenu");
 
     IniManager("Perimeter.ini", false).getInt("Game","DoubleClickTime", doubleClickTime);
+    IniManager("Perimeter.ini", false).getInt("Game","DoubleClickDistance", doubleClickDistance);
 
 	debug_allow_replay = true; //IniManager("Perimeter.ini", false).getInt("Game","EnableReplay");
 
@@ -304,8 +305,10 @@ windowClientSize_(1024, 768)
         }
         
         terminate_with_char(path, PATH_SEP);
-		std::string spgPath = setExtension(path + name, "spg");
-        //spgPath = convert_path_content(spgPath, true);
+		std::string spgPath = convert_path_content(setExtension(path + name, "spg"));
+        if (spgPath.empty()) {
+            spgPath = setExtension(path + name, "spg");
+        }
 
 		if (!XStream(0).open(spgPath)) {
             if (name != "XXX") {
@@ -422,7 +425,7 @@ void GameShell::GameStart(const MissionDescription& mission)
 	cVisGeneric::SetAssertEnabled(false);
 	CurrentMission = mission;
 
-	for (int i = 0; i < NETWORK_PLAYERS_MAX; i++) {
+	for (int i = 0; i < CurrentMission.playersData.size(); i++) {
 		PlayerData* data = &CurrentMission.playersData[i];
         std::string playerName;
 		if (data->realPlayerType == REAL_PLAYER_TYPE_PLAYER && *(data->name()) == 0) {
@@ -533,10 +536,13 @@ void GameShell::GameStart(const MissionDescription& mission)
 
 	game_speed_to_resume = game_speed;
 
-	if(CurrentMission.gameSpeed){
+    if (missionEditor()) {
+        setSpeed(0);
+    } else if (0 < CurrentMission.gameSpeed) {
 		setSpeed(CurrentMission.gameSpeed);
-		if(CurrentMission.gamePaused)
-			pauseGame();
+		if(CurrentMission.gamePaused) {
+            pauseGame();
+        }
 	}
 
 	startResourceDispatcher();
@@ -613,10 +619,14 @@ bool GameShell::universalSave(const char* name, bool userSave, MissionDescriptio
     }
     mission->missionNumber = currentSingleProfile.getCurrentMissionNumber();
     mission->gameContent = mission->missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
-    if(userSave){
+    if (userSave) {
         mission->globalTime = global_time();
         mission->gameSpeed = game_speed ? game_speed : game_speed_to_resume;
         mission->gamePaused = !gamePausedByMenu && !game_speed;
+    } else {
+        mission->globalTime = 0;
+        mission->gameSpeed = 1;
+        mission->gamePaused = false;
     }
     mission->setSaveName(name ? name : "");
     bool result = universe()->universalSave(*mission, userSave);
@@ -806,7 +816,9 @@ void GameShell::Show()
 
 		terRenderDevice->SetDrawTransform(terCamera->GetCamera());
 		if(debug_show_mode){
-            MTAuto lock(HTManager::instance()->GetLockLogic());
+            if (debug_show_mode != 2) {
+                show_dispatcher.clear();
+            }
 			universe()->showDebugInfo();
 			show_dispatcher.draw();
 		}
@@ -969,6 +981,7 @@ void GameShell::EventHandler(SDL_Event& event) {
             break;
     }
 */
+    //Sets the SDL2 text input mode according to current text edit mode in UI
     if (_shellIconManager.isInEditMode() != SDL_IsTextInputActive()) {
         if (_shellIconManager.isInEditMode()) {
             SDL_StartTextInput();
@@ -984,7 +997,9 @@ void GameShell::EventHandler(SDL_Event& event) {
             bool pressed = event.button.state == SDL_PRESSED;
             bool doubleClick = false;
             if (!pressed) {
-                doubleClick = (clockf() - lastClickTime) < doubleClickTime && lastClickButton == event.button.button;
+                float dist = xm::abs(event.button.x - lastClickPosition.x) + xm::abs(event.button.y - lastClickPosition.y);
+                doubleClick = (clockf() - lastClickTime) < doubleClickTime && dist < doubleClickDistance && lastClickButton == event.button.button;
+                lastClickPosition.set(event.button.x, event.button.y);
                 lastClickTime = clockf();
                 if (doubleClick) lastClickTime -= doubleClickTime;
                 lastClickButton = event.button.button;
@@ -1047,24 +1062,40 @@ void GameShell::EventHandler(SDL_Event& event) {
         }
         case SDL_KEYDOWN: {
         case SDL_KEYUP:
+            bool editMode = _shellIconManager.isInEditMode();
             SDL_KeyboardEvent key = event.key;
             s = sKey(key.keysym, true);
-            if (key.state == SDL_PRESSED) {
-                KeyPressed(s);
-
-                //We need to send certain keys when editing as SDL_TEXTINPUT don't receive them
-                if (_shellIconManager.isInEditMode()) {
-                    switch (s.key) {
-                        case VK_BACK:
-                        case VK_RETURN:
-                            _shellIconManager.OnChar(static_cast<char>(s.key));
-                            break;
-                        default:
-                            break;
+            if (editMode && s.fullkey == ('V' | KBD_CTRL)) {
+                //Pasting keycombo, discard normal keydown/up
+                if (key.state == SDL_PRESSED && SDL_HasClipboardText()) {
+                    char* text = SDL_GetClipboardText();
+                    if (text && *text != '\0') {
+                        std::string codepaged = convertToCodepage(text, getLocale());
+                        for (auto& c : codepaged) {
+                            if (0 <= c && c < ' ') break;
+                            _shellIconManager.OnChar(c);
+                        }
                     }
+                    SDL_free(text);
                 }
             } else {
-                KeyUnpressed(s);
+                if (key.state == SDL_PRESSED) {
+                    KeyPressed(s);
+
+                    //We need to send certain keys when editing as SDL_TEXTINPUT don't receive them
+                    if (editMode) {
+                        switch (s.key) {
+                            case VK_BACK:
+                            case VK_RETURN:
+                                _shellIconManager.OnChar(static_cast<char>(s.key));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                } else {
+                    KeyUnpressed(s);
+                }
             }
             break;
         }
@@ -1299,6 +1330,10 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		}
 		break;
 		}
+    case 'S' | KBD_CTRL | KBD_SHIFT: {
+        std::string saveName = CurrentMission.savePathContent();
+        universalSave(saveName.c_str(), false);
+    } break;
 
 	case 'O' | KBD_CTRL: {
 		std::string saveName = CurrentMission.savePathKey();
@@ -1444,6 +1479,13 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 
 void GameShell::KeyPressed(sKey& Key)
 {
+    if (Key.fullkey == (VK_F12|KBD_SHIFT|KBD_CTRL)) {
+        //Restart game now
+        request_application_restart();
+        terminate();
+        return;
+    }
+    
 	if(missionEditor_ && missionEditor_->keyPressed(Key))
 		return;
 
@@ -1490,7 +1532,7 @@ void GameShell::KeyPressed(sKey& Key)
 	if (gameShell->currentSingleProfile.getLastGameType() == UserSingleProfile::MULTIPLAYER) {
 		CChatInGameEditWindow* chatEdit = (CChatInGameEditWindow*) _shellIconManager.GetWnd(SQSH_INGAME_CHAT_EDIT_ID);
 		CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
-		if ( Key.fullkey == VK_INSERT ) {
+		if ( Key.fullkey == VK_INSERT || Key.fullkey == (VK_SPACE | KBD_CTRL) ) {
 			if (chatEdit->isVisible()) {
 				if (!chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = true;
@@ -1507,7 +1549,7 @@ void GameShell::KeyPressed(sKey& Key)
 				chatEdit->alliesOnlyMode = true;
 			}
 			return;
-		} else if ( Key.fullkey == (VK_INSERT | KBD_CTRL) ) {
+		} else if ( Key.fullkey == (VK_INSERT | KBD_CTRL) || (!chatEdit->isVisible() && Key.fullkey == VK_SPACE)) {
 			if (chatEdit->isVisible()) {
 				if (chatEdit->alliesOnlyMode) {
 					chatEdit->alliesOnlyMode = false;
@@ -1525,7 +1567,7 @@ void GameShell::KeyPressed(sKey& Key)
 			}
 			return;
 		} else if (chatEdit->isVisible()) {
-			if (Key.fullkey == VK_ESCAPE) {
+			if (Key.fullkey == VK_ESCAPE || (Key.fullkey == VK_RETURN && chatEdit->getText().empty())) {
 				chatEdit->Show(0);
 				_shellIconManager.SetFocus(0);
 				chatInfo->setTime(CHATINFO_VISIBLE_TIME_AFTER_HIDE_EDIT);
@@ -1584,10 +1626,10 @@ void GameShell::ControlPressed(int key)
 		//temp
 		if(_shellIconManager.IsInterface() && interfaceShowFlag_)
 		{
-			if(MainMenuEnable)
+			//if(MainMenuEnable)
 				EnterInMissionMenu();
-			else if(!missionEditor() && !NetClient)
-				GameContinue = false;
+			//else if(!missionEditor() && !NetClient)
+			//	GameContinue = false;
 		}
 		return;
 	}
@@ -1933,8 +1975,12 @@ void GameShell::MouseRightUnpressed(const Vect2f& pos)
 
 void GameShell::MouseWheel(int delta)
 {
-	if(!_bMenuMode && GameActive && !isScriptReelEnabled())
-		terCamera->mouseWheel(delta);
+	if(!_bMenuMode && GameActive && !isScriptReelEnabled()) {
+        CChatInfoWindow* chatInfo = (CChatInfoWindow*) _shellIconManager.GetWnd(SQSH_CHAT_INFO_ID);
+        if (!chatInfo || !chatInfo->isVisible() || !chatInfo->HitTest(mousePosition().x+0.5f, mousePosition().y+0.5f)) {
+            terCamera->mouseWheel(delta);
+        }
+    }
 	if (historyScene.ready()) {
 		historyScene.getCamera()->mouseWheel(delta);
 	}
@@ -2170,7 +2216,7 @@ void terGameShellShowEnergy()
 //-----------------------------------------------
 void CShellLogicDispatcher::init()
 {
-	alwaysShowLifeBars = false;
+	alwaysShowLifeBars = IniManager("Perimeter.ini", false).getInt("Game","ShowLifeBars");
 	m_pShowExternal[GAME_SHELL_SHOW_REGION_MAIN] = terScene->CreateExternalObj(terGameShellShowRegionMain,RegionMain.texture);
 	m_pShowExternal[GAME_SHELL_SHOW_REGION_MAIN_ALPHA] = terScene->CreateExternalObj(terGameShellShowRegionMainAlpha,sRegionTextureEnergy);
 	m_pShowExternal[GAME_SHELL_SHOW_REGION_MAIN_ALPHA]->SetSortPass(true);
@@ -2618,25 +2664,31 @@ void GameShell::setLocalizedFontSizes() {
 }
 
 void GameShell::preLoad() {
-    historyScene.loadProgram("RESOURCE\\scenario.hst");
-    bwScene.loadProgram("RESOURCE\\menu.hst");
-	std::string path = getLocDataPath() + "Text\\Texts.btdb";
+    const std::string& locale = getLocale();
+    if (get_content_entry("RESOURCE/scenario_" + locale + ".hst")) {
+        historyScene.loadProgram("RESOURCE/scenario_" + locale + ".hst");
+    } else {
+        historyScene.loadProgram("RESOURCE/scenario.hst");
+    }
+    bwScene.loadProgram("RESOURCE/menu.hst");
 #ifdef _FINAL_VERSION_
     const char* comments_path = nullptr;
 #else
-    const char* comments_path = "RESOURCE\\Texts_comments.btdb";
+    const char* comments_path = "RESOURCE/Texts_comments.btdb";
 #endif
-    qdTextDB::instance().load(getLocale(), path.c_str(), comments_path, true, true, false);
+    std::string path = getLocDataPath() + "Text" + PATH_SEP + "Texts.btdb";
+    qdTextDB::instance().load(locale, path.c_str(), comments_path, true, true, false);
 
     //Load texts, don't delete already loaded ones but replace existing ones
     for (const auto& entry : get_content_entries_directory(getLocDataPath() + "Text")) {
         std::filesystem::path entry_path = std::filesystem::u8path(entry->key);
         std::string name = entry_path.filename().u8string();
         name = string_to_lower(name.c_str());
-        if (name == "texts.btdb") continue;
+        //Ignore the main text file since its already loaded and also any . starting file like .DS_Store
+        if (name == "texts.btdb" || name[0] == '.') continue;
         bool replace = name.rfind("_noreplace.") == std::string::npos;
         bool txt = getExtension(name, true) == "txt";
-        qdTextDB::instance().load(getLocale(), entry->path_content.c_str(), nullptr, false, replace, txt);
+        qdTextDB::instance().load(locale, entry->path_content.c_str(), nullptr, false, replace, txt);
     }
     
     //Load the builtin texts that might not be provided by addons

@@ -45,6 +45,75 @@ bool mapContentPath(const std::string& source, const std::string& destination, c
     );
 }
 
+bool checkMappingPath(const std::string& path) {
+    if (path.empty()) return false;
+    
+    std::string path_lower = convert_path_posix(string_to_lower(path.c_str()));
+    bool allowed = false;
+    
+    //Check if contains ..
+    size_t pos = path_lower.find("..");
+    if (pos != std::string::npos) {
+        if (content_debug_flag) {
+            printf("Mapping path contains .. which is disallowed: %s\n", path.c_str());
+        }
+        return false;
+    }
+    
+    //Check if path starts with any allowed way to start
+    for (auto& start : {"resource/", "scripts/", "mods/"}) {
+        if (startsWith(path_lower, start)) {
+            allowed = true;
+            break;
+        }
+    }
+
+    if (content_debug_flag && !allowed) {
+        printf("Mapping path doesn't start with allowed dirs: %s\n", path.c_str());
+    }
+    
+    return allowed;
+}
+
+void loadMappings(const std::string& path, const filesystem_scan_options* options = nullptr) {
+    XStream fh(0);
+    if (!fh.open(path, XS_IN)) {
+        fprintf(stderr, "Error loading content mapping: %s\n", path.c_str());
+        return;
+    }
+    std::string acc_line;
+    char c = 0;
+
+    do {
+        //Read char
+        fh.read(&c,1);
+        
+        if (c == '\n') {
+            //Newline, parse accumulated text
+            size_t pos = acc_line.find('=');
+            if (pos != std::string::npos) {
+                std::string src = acc_line.substr(0, pos);
+                std::string dst = acc_line.substr(pos + 1);
+                if (checkMappingPath(src) && checkMappingPath(dst)) {
+                    mapContentPath(src, dst, options);
+                } 
+            }
+            
+            //Clear it
+            acc_line.clear();
+            continue;
+        } else if (c == '#' && acc_line.empty()) {
+            //This is a comment, skip
+            continue;
+        } else {
+            //Append current char
+            acc_line += c;
+        }
+    } while(!fh.eof());
+
+    printf("Applied content mapping: %s\n", path.c_str());
+}
+
 void findGameContent() {
     //Get the path where game content is located by scanning diff paths
     std::vector<std::string> paths;
@@ -142,10 +211,6 @@ void findGameContent() {
 
 void addGameContent(GAME_CONTENT content) {
     terGameContentAvailable = static_cast<GAME_CONTENT>(terGameContentAvailable | content);
-}
-
-///Common addon loading code
-void loadAddonCommon(const std::string& addonName, const std::string& addonDir) {
 }
 
 ///Load ET content selectively
@@ -351,6 +416,22 @@ void loadAddon(const std::string& addonName, const std::string& addonDir) {
     }
 }
 
+///Common addon loading code
+void loadAddonCommon(const std::string& addonName, const std::string& addonDir) {
+    if (!convert_path_content(addonDir + "Resource/Missions/01x4.spg").empty()) {
+        loadAddonET(addonName, addonDir);
+    } else {
+        loadAddon(addonName, addonDir);
+    }
+
+    std::string mapping = convert_path_content(addonDir + "content_mapping.txt");
+    if (!mapping.empty()) {
+        loadMappings(mapping);
+    }
+
+    printf("Loaded mod: %s\n", addonName.c_str());
+}
+
 void applyWorkarounds() {
     std::map<std::string, std::string> paths;
     std::string locpath = getLocDataPath();
@@ -434,13 +515,6 @@ void detectGameContent() {
     for (std::string& addonName : addons) {
         std::string addonDir = std::string("mods") + PATH_SEP + addonName + PATH_SEP;
         loadAddonCommon(addonName, addonDir);
-        if (!convert_path_content(addonDir + "Resource/Missions/01x4.spg").empty()) {
-            loadAddonET(addonName, addonDir);
-        } else {
-            loadAddon(addonName, addonDir);
-        }
-        
-        printf("Loaded mod: %s\n", addonName.c_str());
     }
     
     //Do some workarounds

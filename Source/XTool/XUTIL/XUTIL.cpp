@@ -54,6 +54,30 @@ void setup_argcv(int argc, char *argv[]) {
 #endif
 }
 
+void decode_version(const char* version_str, uint16_t version[3]) {
+    XBuffer buf(const_cast<char*>(version_str), strlen(version_str) + 1);
+    char c;
+    buf >= version[0];
+    buf > c; if (c != '.') ErrH.Abort("Can't parse version", XERR_CRITICAL, 0, version_str);
+    buf >= version[1];
+    buf > c; if (c != '.') ErrH.Abort("Can't parse version", XERR_CRITICAL, 1, version_str);
+    buf >= version[2];
+}
+
+int compare_versions(const uint16_t left[3], const uint16_t right[3]) {
+    for (int i = 0; i < 3; ++i) {
+        if (left[i] < right[i]) return i + 1;
+        else if (left[i] > right[i]) return -(i + 1);
+    }
+    return 0;
+}
+
+int compare_versions(const uint16_t left[3], const char* right) {
+    static uint16_t version[3];
+    decode_version(right, version);
+    return compare_versions(left, version);
+}
+
 const char* check_command_line(const char* switch_str) {
 #ifndef _WIN32
     if (!argcv_setup_done) {
@@ -236,6 +260,27 @@ void string_replace_all(std::string& text, const std::string& from, const std::s
     newString += text.substr(lastPos);
 
     text.swap(newString);
+}
+
+std::string string_to_capitalize(const char* str) {
+    std::u16string conv = utf8_to_utf16(str);
+    if (conv.empty()) return str;
+
+    //Process each UTF16 code
+    for (int i = 0; i < conv.size(); ++i) {
+        auto c = conv[i];
+        if (i == 0) {
+            c = std::towupper(c);
+        } else {
+            c = std::towlower(c);
+        }
+        conv[i] = c;
+    }
+
+    //Convert UTF-16 into UTF-8
+    std::string output = utf16_to_utf8(conv);
+
+    return output;
 }
 
 std::string string_to_lower(const char* str) {

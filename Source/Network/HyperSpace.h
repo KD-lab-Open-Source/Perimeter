@@ -115,6 +115,8 @@ public:
 	void sendListGameCommand2Host(unsigned int begQuant, unsigned int endQuant=UINT_MAX);
 	void putInputGameCommand2fullListGameCommandAndCheckAllowedRun(netCommandGame* pnc);
 
+    size_t serializeGameCommands(XBuffer& out) const;
+    void deserializeGameCommands(XBuffer& in, size_t len);
 
 	bool loadPlayReel(const char* fname);
 
@@ -123,9 +125,9 @@ public:
 		SAVE_REPLAY_RW_ERROR_OR_DISK_FULL,
 		SAVE_REPLAY_RW_ERROR
 	};
-	SAVE_REPLAY_RESULT savePlayReel(const char* fname);
-	void autoSavePlayReel(void);
-	void allSavePlayReel(void);
+	SAVE_REPLAY_RESULT savePlayReel(const char* fname) const;
+	void autoSavePlayReel();
+	void allSavePlayReel();
 	bool flag_stopSavePlayReel;
 	void stopPlayReel() { flag_stopSavePlayReel=true; }
 

@@ -474,8 +474,9 @@ private:
 			);
 			int countOld = ar.openCollection();
 			if(count < countOld){
-				xassert(0 && "Array size too short");
-				ErrH.Abort("Array size too short");
+				ErrH.Abort("Array size too short expected "
+                + std::to_string(count) + " got " + std::to_string(countOld)
+                + " at " + std::to_string(ar.buffer().tell()));
 			}
 			for(int i = 0; i < countOld; ++i)
 				ar.loadElement(t[i]);

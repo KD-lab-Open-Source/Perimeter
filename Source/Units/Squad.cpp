@@ -163,12 +163,19 @@ void terUnitSquad::removeUnit(terUnitLegionary* unit)
 		}
 }
 
+void terUnitSquad::explode() {
+    for (auto unit : Units) {
+        unit->explode();
+    }
+}
+
 void terUnitSquad::Kill()
 {
 	mutation_process.clear();
 
-	while(!Units.empty()) 
-		Units.front()->Kill();
+	while (!Units.empty()) {
+        Units.front()->Kill();
+    }
 
 	terUnitBase::Kill();
 }
@@ -763,8 +770,13 @@ void terUnitSquad::ChangeUnitOwner(terPlayer* player)
 {
 	terUnitBase::ChangeUnitOwner(player);
 
-	while(!Units.empty())
-		Units.front()->Kill();
+    mutation_process.clear();
+
+    while (!Units.empty()) {
+        auto unit = Units.front();
+        unit->explode();
+        unit->Kill();
+    }
 
 	atomsRequested_ = atomsPaused_ = atomsProgress_ = DamageMolecula();
 }

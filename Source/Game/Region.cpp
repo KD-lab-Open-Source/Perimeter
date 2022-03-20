@@ -75,23 +75,23 @@ Cell* Cell::cw(bool& by_left)
 void Cell::show(sColor4c color) const
 {
 	show_line(Vect3f(xl, y, vMap.hZeroPlast), Vect3f(xr, y, vMap.hZeroPlast), color);
-//	for(int x = xl; x <= xr; x++)
-//		show_vector(Vect3f(x, y, vMap.hZeroPlast), vMap.leveled(vMap.offsetBuf(x, y)) ? color : RED);
+	for(int x = xl; x <= xr; x++)
+		show_vector(Vect3f(x, y, vMap.hZeroPlast), vMap.leveled(vMap.offsetBuf(x, y)) ? color : RED);
 
-//	if(l_cw){
-//		Cell& c = *l_cw;
-//		if(y != c.y)
-//			show_line(Vect3f(xl, y, 0), Vect3f(xl, c.y, 0), YELLOW);
-//		else
-//			show_line(Vect3f(xl, y - 0.25, 0), Vect3f(c.xr, c.y - 0.25, 0), YELLOW);
-//	}
-//	if(r_cw){
-//		Cell& c = *r_cw;
-//		if(y != c.y)
-//			show_line(Vect3f(xr, y, 0), Vect3f(xr, c.y, 0), RED);
-//		else
-//			show_line(Vect3f(xr, y + 0.25, 0), Vect3f(c.xl, c.y + 0.25, 0), RED);
-//	}
+	if(l_cw){
+		Cell& c = *l_cw;
+		if(y != c.y)
+			show_line(Vect3f(xl, y, vMap.hZeroPlast), Vect3f(xl, c.y, vMap.hZeroPlast), YELLOW);
+		else
+			show_line(Vect3f(xl, y - 0.25, vMap.hZeroPlast), Vect3f(c.xr, c.y - 0.25, vMap.hZeroPlast), GREEN);
+	}
+	if(r_cw){
+		Cell& c = *r_cw;
+		if(y != c.y)
+			show_line(Vect3f(xr, y, vMap.hZeroPlast), Vect3f(xr, c.y, vMap.hZeroPlast), RED);
+		else
+			show_line(Vect3f(xr, y + 0.25, vMap.hZeroPlast), Vect3f(c.xl, c.y + 0.25, vMap.hZeroPlast), MAGENTA);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -26,6 +26,9 @@
 #include <stdarg.h>     // for va_start
 #include "GameContent.h"
 #include "Localization.h"
+#include "MainMenu.h"
+#include "HistoryScene.h"
+#include "BelligerentSelect.h"
 
 extern UnitInterfacePrm interface_squad1_prm;
 extern UnitInterfacePrm interface_squad3_prm;
@@ -75,7 +78,8 @@ _handlertbl[] = {
     {SQSH_MM_ADDONS_BTN, onMMAddonsButton},
 	{SQSH_MM_OPTIONS_BTN, onMMOptionsButton},
 	{SQSH_MM_CREDITS_BTN, onMMCreditsButton},
-	{SQSH_MM_QUIT_BTN, onMMQuitButton},
+    {SQSH_MM_QUIT_BTN, onMMQuitButton},
+    {SQSH_MM_LANG_BTN, onMMLangButton},
 
 	//single player menu
 	{SQSH_MM_PROFILE_BTN, onMMProfileButton},
@@ -169,6 +173,10 @@ _handlertbl[] = {
 	{SQSH_MM_BATTLE_PLAYER2_HC_BTN, onMMBattleHCButton},
 	{SQSH_MM_BATTLE_PLAYER3_HC_BTN, onMMBattleHCButton},
 	{SQSH_MM_BATTLE_PLAYER4_HC_BTN, onMMBattleHCButton},
+
+    {SQSH_MM_BATTLE_PLAYER_PAGE_TXT, onMMBattlePageText},
+    {SQSH_MM_BATTLE_PLAYER_PAGE_NEXT_BTN, onMMBattlePageNextButton},
+    {SQSH_MM_BATTLE_PLAYER_PAGE_PREV_BTN, onMMBattlePagePrevButton},
 	
 	{SQSH_MM_BATTLE_GO_BTN, onMMBattleGoButton},
 	{SQSH_MM_BACK_FROM_BATTLE_BTN, onMMBackButton},
@@ -259,6 +267,10 @@ _handlertbl[] = {
 	{SQSH_MM_BACK_FROM_LOBBY_BTN, onMMLobbyBackButton},
 	{SQSH_MM_LOBBY_CHAT_INPUT, onMMLobbyChatInputButton},
 	{SQSH_MM_LOBBY_MAP_LIST, onMMLobbyMapList},
+
+    {SQSH_MM_LOBBY_PLAYER_PAGE_TXT, onMMLobbyPageText},
+    {SQSH_MM_LOBBY_PLAYER_PAGE_NEXT_BTN, onMMLobbyPageNextButton},
+    {SQSH_MM_LOBBY_PLAYER_PAGE_PREV_BTN, onMMLobbyPagePrevButton},
 
 	//options
 	{SQSH_MM_OPTIONS_GAME_BTN, onMMGameButton},
@@ -877,7 +889,7 @@ void CShellIconManager::addChatString(const LocalizedText* newChatString) {
 	}
 	xassert(wnd);
 	if (wnd) {
-		wnd->addString(newChatString);
+		wnd->AddString(newChatString);
 		wnd->Show(true);
 		wnd->updateTime(3000);
 	}
@@ -891,7 +903,7 @@ void CShellIconManager::showHintChat(const LocalizedText* text, int showTime) {
 		wnd = (CChatInfoWindow*)GetWnd(SQSH_CHAT_INFO_ID);
 	}
 	if (wnd) {
-		wnd->addString(text);
+		wnd->AddString(text);
 		wnd->Show(true);
 		wnd->updateTime(showTime);
 	}
@@ -959,8 +971,6 @@ void CShellIconManager::setTask(const char* id, ActionTask::Type actionType) {
 
 	fillTaskWnd();
 }
-#include "HistoryScene.h"
-#include "BelligerentSelect.h"
 
 extern HistoryScene historyScene;
 void CShellIconManager::fillTaskWnd() {
@@ -978,7 +988,7 @@ void CShellIconManager::fillTaskWnd() {
     }
     
     if (taskTxt.empty()) {
-        taskTxt = gameShell->CurrentMission.worldName();
+        taskTxt = getMapName(gameShell->CurrentMission.worldName().c_str());
     }
     
     if (!taskTxt.empty()) {
@@ -1141,11 +1151,11 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 //			if (gameShell->GameActive) {
 //				gameShell->pauseGame(true);
 //			}
-#ifdef PERIMETER_DEBUG
+//#ifdef PERIMETER_DEBUG
 			((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentVersion);
-#else
-            ((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentShortVersion);
-#endif
+//#else
+//            ((CTextWindow*) GetWnd(SQSH_MM_VERSION_TXT))->setText(currentShortVersion);
+//#endif
 		}
 		break;
 

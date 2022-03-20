@@ -983,7 +983,8 @@ enum BuildingStatus
 };
 
 enum {
-	NETWORK_PLAYERS_MAX = 4,
+    UI_PLAYERS_MAX = 4, //Max players per page
+    NETWORK_PLAYERS_MAX = UI_PLAYERS_MAX * 4, //Max players allowed in server //TODO maybe move this to .ini?
 	PERIMETER_CONTROL_NAME_SIZE = 64,
 	PLAYER_MAX_NAME_LEN = 64
 };
