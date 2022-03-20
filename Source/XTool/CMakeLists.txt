@@ -22,18 +22,18 @@ SET(XTool_SRCS
     xmath/xmath.cpp
     xmath/gamemath.cpp
     xmath/std.cpp
-    XBUFFER/XBCNVIN.CPP
-    XBUFFER/XBCNVOUT.CPP
-    XBUFFER/XBCORE.CPP
-    XBUFFER/XBSEARCH.CPP
-    XSTREAM/XSCNVOUT.CPP
-    XSTREAM/XSSERV.CPP
-    XSTREAM/XSRDWR.CPP
-    XSTREAM/XSCNVIN.CPP
-    XSTREAM/XSENLV.CPP
-    XSTREAM/XSCORE.CPP
+    XBUFFER/XBCNVIN.cpp
+    XBUFFER/XBCNVOUT.cpp
+    XBUFFER/XBCORE.cpp
+    XBUFFER/XBSEARCH.cpp
+    XSTREAM/XSCNVOUT.cpp
+    XSTREAM/XSSERV.cpp
+    XSTREAM/XSRDWR.cpp
+    XSTREAM/XSCNVIN.cpp
+    XSTREAM/XSENLV.cpp
+    XSTREAM/XSCORE.cpp
     xerrhand.cpp
-    XUTIL/XUTIL.CPP
+    XUTIL/XUTIL.cpp
     XUTIL/XClock.cpp
     files/files.cpp
     codepages/codepages.cpp

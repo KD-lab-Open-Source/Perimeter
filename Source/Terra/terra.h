@@ -65,7 +65,7 @@ const int BIZARRE_ALT_MAP	= 0;
 const int NOISELEVEL	       = 0xFFff;//256;
 
 
-#include "VMAP.H"
+#include "VMAP.h"
 #include "tools.h"
 //#include "sur_scr.h"
 #include "tgai.h"
