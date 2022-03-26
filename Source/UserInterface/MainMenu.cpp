@@ -500,7 +500,7 @@ void fillStatsLists() {
 
 	std::vector<terPlayer*>& players = universe()->Players;
 	terPlayer* player;
-	for (int i = 0; i < gameShell->CurrentMission.playersData.size(); i++) {
+	for (int i = 0; i < gameShell->CurrentMission.playerAmountScenarioMax; i++) {
         if (i >= 9) break; //TODO add paging to stats screen to handle more than 9 players
 		int playerID = gameShell->CurrentMission.playersData[i].playerID;
 		if (( gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
