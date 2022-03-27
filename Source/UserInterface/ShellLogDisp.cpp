@@ -606,7 +606,8 @@ int CShellLogicDispatcher::OnLButtonDblClk(float x, float y)
 			if (!fr->attached() && fr->basementReady()) {
 				universe()->makeCommand(COMMAND_ID_FRAME_ATTACH,0);
 			}
-		} else if (isShiftPressed()) {
+		} else if (!_pUnitHover()->isBuilding() || isShiftPressed()) {
+            //Allow selecting same type unit if not a building or shift is pressed on building
 			universe()->select.allLikeUnitToSelection(_pUnitHover());
 		}
 	}
