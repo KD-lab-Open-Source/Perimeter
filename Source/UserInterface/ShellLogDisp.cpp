@@ -230,25 +230,18 @@ void CShellLogicDispatcher::quant(bool game_active)
 			++i;
 	}
 
-	if(m_nEditRegion != editRegionNone)
-	{
-		if(isControlPressed())
-		{
-			if(!m_bToolzerSizeChangeMode)
-			{
-				//начало изменения размера
-				m_bToolzerSizeChangeMode = true;
-				gameShell->setMousePressControl(Vect2f(m_fMouseCurrentX, m_fMouseCurrentY));
-			}
-		}
-		else if(m_bToolzerSizeChangeMode)
-		{
-			//конец изменения размера
-			gameShell->setCursorPosition(Vect2f(gameShell->mousePressControl().x - 0.5f, gameShell->mousePressControl().y - 0.5f));
-			gameShell->MouseMove(Vect2f(gameShell->mousePressControl().x - 0.5f, gameShell->mousePressControl().y - 0.5f), Vect2f::ZERO);
-			m_bToolzerSizeChangeMode = false;
-		}
-	}
+	if (m_nEditRegion != editRegionNone && isControlPressed()) {
+        if(!m_bToolzerSizeChangeMode) {
+            //начало изменения размера
+            m_bToolzerSizeChangeMode = true;
+            gameShell->setMousePressControl(Vect2f(m_fMouseCurrentX, m_fMouseCurrentY));
+        }
+	} else if(m_bToolzerSizeChangeMode) {
+        //конец изменения размера
+        gameShell->setCursorPosition(Vect2f(gameShell->mousePressControl().x - 0.5f, gameShell->mousePressControl().y - 0.5f));
+        gameShell->MouseMove(Vect2f(gameShell->mousePressControl().x - 0.5f, gameShell->mousePressControl().y - 0.5f), Vect2f::ZERO);
+        m_bToolzerSizeChangeMode = false;
+    }
 
 	if(GetSelectedUnitsCount() == 0)
 		SetUnitView(0, false);
