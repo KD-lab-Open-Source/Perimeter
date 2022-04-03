@@ -1105,7 +1105,7 @@ void app_event_poll() {
         
         if (closing) {
             if(gameShell) {
-                if (gameShell->GameActive) {
+                if (gameShell->GameActive && !isShiftPressed()) {
                     //When game is running we want to gracefully shutdown the game by showing main menu
                     sKey k(VK_ESCAPE, true);
                     gameShell->KeyPressed(k);
