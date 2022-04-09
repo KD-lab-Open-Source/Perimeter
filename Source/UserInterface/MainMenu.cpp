@@ -1029,6 +1029,9 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOADING_MISSION_SCR:
 					{
+                        if (!bgScene.inited()) {
+                            StartSpace();
+                        }
 
 						CTextWindow* txtWnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_MISSION_DESCR_TXT);
 

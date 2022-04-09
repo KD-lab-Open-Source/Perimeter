@@ -58,7 +58,6 @@ int SwitchMultiplayerToRestoreQuant(float, float ) {
         } else {
             gb_Music.FadeVolume(_fEffectButtonTotalTime * 0.001f);
             HTManager::instance()->GameClose();
-            StartSpace();
             _shellIconManager.SetModalWnd(0);
             _shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
             _shellIconManager.SwitchMenuScreens(-1, SQSH_MM_LOADING_MISSION_SCR);
