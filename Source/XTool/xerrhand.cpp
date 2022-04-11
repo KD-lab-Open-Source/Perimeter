@@ -456,6 +456,9 @@ void XErrorHandler::RedirectStdio() const {
     freopen(log_path.c_str(), "a", stdout);
     freopen(log_path.c_str(), "a", stderr);
 #endif
+    //Disable buffering because we don't flush, specially if crash happens
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)
