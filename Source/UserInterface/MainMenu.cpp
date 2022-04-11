@@ -1031,6 +1031,7 @@ int SwitchMenuScreenQuant1( float, float ) {
 				case SQSH_MM_LOADING_MISSION_SCR:
 					{
                         if (!bgScene.inited()) {
+                            //bgScene.init(terVisGeneric);
                             StartSpace();
                         }
 
