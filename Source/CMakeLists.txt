@@ -8,11 +8,6 @@ SET(perimeter_LINK_LIBS
         Render
         Sound
         Network
-        #Libraries
-        ${SDL2_LIBRARY}
-        ${SDL2_IMAGE_LIBRARY}
-        ${SDL2_MIXER_LIBRARY}
-        ${SDL2_NET_LIBRARY}
 )
 
 IF(FFMPEG_FOUND)
@@ -328,9 +323,14 @@ IF(PERIMETER_DEBUG)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} XPrmLib)
 ENDIF()
 
-#Add SDL2 main
-SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-    ${SDL2MAIN_LIBRARY}
+SET(perimeter_LINK_LIBS
+        #Libraries
+        ${perimeter_LINK_LIBS}
+        ${SDL2MAIN_LIBRARY}
+        ${SDL2_LIBRARY}
+        ${SDL2_IMAGE_LIBRARY}
+        ${SDL2_MIXER_LIBRARY}
+        ${SDL2_NET_LIBRARY}
 )
 
 TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})
