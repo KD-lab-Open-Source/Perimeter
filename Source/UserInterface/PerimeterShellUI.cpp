@@ -3873,8 +3873,7 @@ ChatWindow::ChatWindow(int id, CShellWindow* pParent, EVENTPROC p):CShellWindow(
 ChatWindow::~ChatWindow()
 {
     _RELEASE(m_hFont);
-    _RELEASE(m_hFont1250);
-    _RELEASE(m_hFont1251);
+    freeLocaleFonts();
 	_RELEASE(thumbTexture);
 	RELEASE(m_hTextureBG);
 }
@@ -4024,9 +4023,17 @@ void ChatWindow::Load(const sqshControl* attr)
 	}
 }
 
-void ChatWindow::setupLocaleFonts(int size) {
+void ChatWindow::freeLocaleFonts() {
+    if (m_hFont1250 != nullptr && m_hFont1250 == m_hFont1251) {
+        //Avoid double free if font are same
+        m_hFont1251 = nullptr;
+    }
     _RELEASE(m_hFont1250);
     _RELEASE(m_hFont1251);
+}
+
+void ChatWindow::setupLocaleFonts(int size) {
+    freeLocaleFonts();
 
     m_hFont1250 = m_hFont1251 = nullptr;
     for (auto locale : getLocales()) {
