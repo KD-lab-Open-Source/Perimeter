@@ -964,13 +964,18 @@ end_while_01:;
                 
                 client->desync_missionDescription->setSaveName(path.c_str());
 
-                XStream ffp(setExtension(path, "prm").c_str(), XS_OUT, 0);
-                ffp.write(mission.saveData, mission.saveData.length());
-                ffp.close();
+                //Save client mission data if any
+                if (mission.saveData.length()) {
+                    XStream ffp(setExtension(path, "prm").c_str(), XS_OUT, 0);
+                    ffp.write(mission.saveData, mission.saveData.length());
+                    ffp.close();
+                }
 
-                XStream ffb(setExtension(path, "bin").c_str(), XS_OUT, 0);
-                ffb.write(mission.binaryData, mission.binaryData.length());
-                ffb.close();
+                if (mission.binaryData.length()) {
+                    XStream ffb(setExtension(path, "bin").c_str(), XS_OUT, 0);
+                    ffb.write(mission.binaryData, mission.binaryData.length());
+                    ffb.close();
+                }
 
                 //Load save data into IA and deserialize
                 SavePrm savePrm;
