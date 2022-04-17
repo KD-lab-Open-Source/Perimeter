@@ -1154,12 +1154,12 @@ bool _setupFileDialog(std::string& filename, const char* initialDir, const char*
     UTF8_TO_WCHAR(title, title);
     
 	std::u16string filter = utf8_to_utf16(title);
-	filter += '\0';
-    filter += '*';
-    filter += '.';
+	filter += static_cast<char16_t>('\0');
+    filter += static_cast<char16_t>('*');
+    filter += static_cast<char16_t>('.');
     filter += utf8_to_utf16(extention);
-    filter += '\0';
-    filter += '\0';
+    filter += static_cast<char16_t>('\0');
+    filter += static_cast<char16_t>('\0');
 
     OPENFILENAMEW ofn;
     memset(&ofn,0,sizeof(OPENFILENAMEW));
