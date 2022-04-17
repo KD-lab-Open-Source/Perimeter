@@ -496,13 +496,13 @@ int MissionDescription::connectLoadPlayer2PlayersData(PlayerData& pd)
 	int result=-1;
     
     //Try match by name first
-    std::string pd_name = string_to_lower(pd.name());
+    std::string pd_name = pd.name(); //TODO use string_to_lower once names are UTF8
     for (int i=0; i<playerAmountScenarioMax; i++) {
         PlayerData& player = playersData[i];
         if (player.realPlayerType!=REAL_PLAYER_TYPE_OPEN) {
             continue;
         }
-        std::string name = string_to_lower(player.nameInitial());
+        std::string name = player.nameInitial(); //TODO use string_to_lower once names are UTF8
         if (name==pd_name) {
             player.setName(pd.name());
             player.realPlayerType=REAL_PLAYER_TYPE_PLAYER;
