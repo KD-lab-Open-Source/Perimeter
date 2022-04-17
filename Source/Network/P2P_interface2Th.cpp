@@ -949,7 +949,7 @@ end_while_01:;
             fprintf(stderr, "Dumped desync restore data at: %s\n", crash_dir.c_str());
             create_directories(crash_dir);
             for (auto& client : to_restore) {
-                std::string path = crash_dir + std::to_string(client->netidPlayer) + "_" + client->playerName;
+                std::string path = crash_dir + std::to_string(client->netidPlayer);
                 
                 if (client->desync_netlog.tell()) {
                     XStream ffnl(setExtension(path, "log").c_str(), XS_OUT, 0);
