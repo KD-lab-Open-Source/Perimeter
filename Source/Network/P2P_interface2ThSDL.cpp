@@ -366,7 +366,7 @@ void PNetCenter::DeleteClient(NETID netid, bool normalExit) {
             //отсылка сообщения о том, что игрок вышел
             PlayerData& pd = clientMissionDescription.playersData[idx];
             std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
-                pd.name()
+                pd.name(), getLocale()
             );
             ExecuteInterfaceCommand(
                 normalExit ? PNC_INTERFACE_COMMAND_INFO_PLAYER_EXIT : PNC_INTERFACE_COMMAND_INFO_PLAYER_DISCONNECTED,

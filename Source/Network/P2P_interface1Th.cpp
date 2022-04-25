@@ -433,7 +433,8 @@ void PNetCenter::HandlerInputNetCommand()
                 fprintf(stderr, "%d Error network synchronization, dumped at: %s\n", clocki(), crash_dir.c_str());
 
                 std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
-                        qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization")
+                        qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization"),
+                        getLocale()
                 );
                 text->text += " " + std::to_string(nc.desync_amount);
                 ExecuteInterfaceCommand(
