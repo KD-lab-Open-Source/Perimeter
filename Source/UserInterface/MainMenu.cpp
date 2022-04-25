@@ -284,7 +284,7 @@ void checkMissionDescription(int index, std::vector<MissionDescription>& mVect, 
 		mVect[index] = MissionDescription(filepath, gameType);
 	}
 }
-std::string checkMissingContent(MissionDescription& mission) {
+std::string checkMissingContent(const MissionDescription& mission) {
     std::string msg;
     std::vector<GAME_CONTENT> missingContent;
     
@@ -303,7 +303,8 @@ std::string checkMissingContent(MissionDescription& mission) {
         //Game content is OK but we still don't have this map
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
         msg += mission.worldName();
-    } else if (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent())) {
+    } else if (mission.saveData.length() == 0 && (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent()))) {
+        //If has saveData ignore since is packed already
         //Game content is OK but we still don't have this save
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
         if (mission.savePathContent().empty()) {

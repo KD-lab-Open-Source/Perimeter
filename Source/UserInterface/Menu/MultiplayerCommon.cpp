@@ -101,8 +101,6 @@ int exitToMultiplayerScreenAction(float, float ) {
 
 int multiplayerMapNotFoundQuant(float, float ) {
     if (menuChangingDone) {
-        setupOkMessageBox(exitToMultiplayerScreenAction, 0,
-                          qdTextDB::instance().getText("Interface.Menu.Messages.CantFindMap"), MBOX_EXIT);
         gameShell->getNetClient()->FinishGame();
         gameShell->getNetClient()->StartFindHost();
         showMessageBox();
@@ -112,8 +110,9 @@ int multiplayerMapNotFoundQuant(float, float ) {
 }
 
 void GameShell::MultiplayerGameStart(const MissionDescription& mission) {
-    if (!isWorldIDValid(mission.worldID())
-        || (mission.gameType_ == GT_MULTI_PLAYER_CREATE && getMultiplayerMapNumber(mission.missionName()) == -1)) {
+    std::string missingContent = checkMissingContent(mission);
+    if (!missingContent.empty()) {
+        setupOkMessageBox(exitToMultiplayerScreenAction, 0, missingContent, MBOX_EXIT);
         _shellIconManager.AddDynamicHandler(multiplayerMapNotFoundQuant, CBCODE_QUANT);
     } else {
         missionToExec = mission;
