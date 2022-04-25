@@ -375,13 +375,22 @@ bool MissionDescription::setPlayerStartReady(NETID netid, bool state)
 
 bool MissionDescription::isAllRealPlayerStartReady()
 {
-	bool result = true;
+    int players = 0;
 	for (unsigned int i=0; i<playerAmountScenarioMax; i++) {
-		if (playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
-            result &= playersData[i].flag_playerStartReady;
+        switch (playersData[i].realPlayerType) {
+            case REAL_PLAYER_TYPE_PLAYER:
+                if (!playersData[i].flag_playerStartReady) {
+                    return false;
+                }
+            case REAL_PLAYER_TYPE_AI:
+            case REAL_PLAYER_TYPE_PLAYER_AI:
+                players++;
+                break;
+            default:
+                break;
         }
 	}
-	return result;
+	return 1 < players;
 }
 
 int MissionDescription::playersAmount() const 
