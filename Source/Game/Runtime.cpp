@@ -798,6 +798,7 @@ void decode_stacktrace() {
 
 void show_help() {
     printf(
+            "Perimeter %s\n%s\n\n"
             "Modding and debugging:\n"
             "    mods=0 - Disables mods folder loading\n"
             "    edit=1 - Enables mission editor mode, use map loading args or file open dialog will appear\n"
@@ -840,8 +841,12 @@ void show_help() {
             "    content=path/of/game - Use this path for game data/content (must contain Resource, Scripts...)\n"
             "    clearlocale=1 - Clears current default and displays language dialog\n"
             "    locale=Russian - Use different language than current default\n"
+            "    --version -v - Shows version\n"
             "    --help -h /? - This help\n"
-   );
+            ,
+            currentShortVersion,
+            currentVersion
+    );
     ErrH.Exit();
 }
 
@@ -862,6 +867,9 @@ int SDL_main(int argc, char *argv[])
         std::string arg = string_to_lower(argv[i]);
         if (arg == "help" || arg == "--help" || arg == "-h" || arg == "/?") {
             show_help();
+        } else if (arg == "--version" || arg == "-v") {
+            printf("Perimeter %s\n%s\n", currentShortVersion, currentVersion);
+            ErrH.Exit();
         }
     }
     
