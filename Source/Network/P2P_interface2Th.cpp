@@ -1345,11 +1345,11 @@ void PNetCenter::HostReceiveQuant()
 										mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
                                         if (isSave) {
                                             if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_PLAYER_AI) {
-                                                pd.realPlayerType = pd.realPlayerType;
+                                                pd.realPlayerType = ncChRT.newRealPlayerType_;
                                             }
                                         } else {
                                             if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
-                                                pd.realPlayerType = pd.realPlayerType;
+                                                pd.realPlayerType = ncChRT.newRealPlayerType_;
                                             }
                                         }
 										RemovePlayer(delPlayerNETID);
