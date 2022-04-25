@@ -180,7 +180,7 @@ windowClientSize_(1024, 768)
 	briefingEnabled = !(disableBriefing || check_command_line("disableBriefing"));
 
 	terCamera->setRestriction(IniManager("Perimeter.ini").getInt("Game","CameraRestriction") && !mission_edit);
-	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial || check_command_line("debug_key_handler");
+	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial;
 
 	shotNumber_ = -1;
 	recordMovie_ = false;
@@ -1489,12 +1489,15 @@ void GameShell::KeyPressed(sKey& Key)
 	if(missionEditor_ && missionEditor_->keyPressed(Key))
 		return;
 
-#ifdef PERIMETER_DEBUG
 	if (Key.fullkey == (VK_F1|KBD_SHIFT|KBD_CTRL)) {
-		EnableDebugKeyHandlersInitial = EnableDebugKeyHandlers ^= 1;
+#ifndef PERIMETER_DEBUG
+        if (check_command_line("debug_key_handler"))
+#endif
+        {
+		    EnableDebugKeyHandlersInitial = EnableDebugKeyHandlers ^= 1;
+        }
 		return;
 	}
-#endif
 
 	if(_bMenuMode){
 		if(EnableDebugKeyHandlers){
