@@ -513,7 +513,7 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if (code == EVENT_DRAWWND){
         const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-        bool enable = currMission.playersAmount() > 1;
+        bool enable = true;
         //Lock host enable until all slots are closed
         if (gameShell->getNetClient()->isHost() && currMission.gameType_ == GT_MULTI_PLAYER_LOAD) {
             for (int i = 0; i < currMission.playerAmountScenarioMax; ++i) {
