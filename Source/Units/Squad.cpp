@@ -378,43 +378,46 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 																		 				   
 	switch(command.commandID()){
 	case COMMAND_ID_OBJECT:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
-			clearOrders();
+		if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+            clearOrders();
+        }
 		if(command.unit()) {
-			if(isEnemy(command.unit())){
-				addTarget(command.unit());									  
-				if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
-					soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
-			}
-			else {
-				if(dynamic_cast<terUnitLegionary*>(command.unit()))
-					setSquadToFollow(command.unit());
-				else if(command.unit()->Player->isWorld())
-					addTarget(command.unit());
-				else
-					addWayPoint(command.unit()->position());
+			if (isEnemy(command.unit())) {
+				addTarget(command.unit());
+                if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+                    soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
+                }
+			} else {
+				if (dynamic_cast<terUnitLegionary*>(command.unit())) {
+                    setSquadToFollow(command.unit());
+                } else if(command.unit()->Player->isWorld()) {
+                    addTarget(command.unit());
+                } else {
+                    addWayPoint(command.unit()->position(), command.selectionMode() & COMMAND_SELECTED_MODE_OVERRIDE);
+                }
             }
         }
 		break;
 																			 
 	case COMMAND_ID_PATROL:
-		if(patrolPoints_.empty() || (patrolIndex_ == 1 && patrolPoints_.empty()))
-			addWayPoint(command.position());
+		if (patrolPoints_.empty() || (patrolIndex_ == 1 && patrolPoints_.empty())) {
+            addWayPoint(command.position());
+        }
 		patrolPoints_.push_back(command.position());
 		break;															  
 	case COMMAND_ID_ATTACK:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE){
+        if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
 			clearOrders();
 			soundEvent(SOUND_VOICE_SQUAD_ATTACKS);
 		}
 		addTarget(command.position());
 		break;																			  
-	case COMMAND_ID_POINT:	
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE){
+	case COMMAND_ID_POINT:
+        if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
 			clearOrders();					
 			soundEvent(SOUND_VOICE_SQUAD_MOVES);
 		}
-		addWayPoint(command.position());
+		addWayPoint(command.position(), command.selectionMode() & COMMAND_SELECTED_MODE_OVERRIDE);
 		break;
 
 	case COMMAND_ID_RETURN_TO_BASE:
@@ -434,7 +437,7 @@ void terUnitSquad::executeCommand(const UnitCommand& command)
 	case COMMAND_ID_STOP: 
 		clearOrders();
 		fireStop();
-		addWayPoint(position2D());
+		addWayPoint(position2D(), true);
 		clearOrders();
 		break; 
 
@@ -1524,20 +1527,25 @@ void terUnitSquad::clearWayPoints()
 			(*it)->stop();
 }
 
-void terUnitSquad::addWayPoint(const Vect2f& point)
+void terUnitSquad::addWayPoint(const Vect2f& point, bool bypassPathfinder)
 {
 	Vect2iVect pathFindList;
-	if(squadMutationMolecula().elementCount() && !isFlying() 
-	  && ai_tile_map->findPath(wayPoints_.empty() ? position2D() : wayPoints_.back(), point, pathFindList, AITileMap::PATH_NORMAL)){
-		Vect2iVect::iterator i;
-		FOR_EACH(pathFindList, i)
-			wayPoints_.push_back(*i);
-	}
-	else
-		wayPoints_.push_back(point);
+    
+    if (squadMutationMolecula().elementCount() <= 0 || isFlying()) {
+        bypassPathfinder = true;
+    }
+    
+	if (!bypassPathfinder && ai_tile_map->findPath(wayPoints_.empty() ? position2D() : wayPoints_.back(), point, pathFindList, AITileMap::PATH_NORMAL)) {
+        for (auto& i : pathFindList) {
+            wayPoints_.push_back(i);
+        }
+	} else {
+        wayPoints_.push_back(point);
+    }
 
-	if(unitsWayPoinsSize_ < 2)
-		recalcWayPoints();
+	if (unitsWayPoinsSize_ < 2) {
+        recalcWayPoints();
+    }
 }
 
 void terUnitSquad::clearTargets()

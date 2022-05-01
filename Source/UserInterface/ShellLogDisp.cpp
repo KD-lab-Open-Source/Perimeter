@@ -147,7 +147,7 @@ void CShellLogicDispatcher::quant(bool game_active)
 							m_fMousePressY - 0.5f,
 							m_fMouseCurrentX - 0.5f,
 							m_fMouseCurrentY - 0.5f,
-							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 //		} else {
 //			universe()->select.selectCurrentSelection();
 		}
@@ -427,7 +427,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 	case SHELL_PICK_UNIT_TARGET:
 		if(terCamera->cursorTrace(Vect2f(m_fMouseCurrentX-0.5f, m_fMouseCurrentY-0.5f), v))
 		{
-			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, COMMAND_SELECTED_MODE_SINGLE);
+			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, COMMAND_SELECTED_MODE_NONE);
 			m_nPickAction = SHELL_PICK_NONE;
 			setArrowCursor();
 			bRet = true;
@@ -470,7 +470,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 			{
 				if(m_nPickData == 1)
 				{
-					universe()->makeCommandSubtle(COMMAND_ID_PATROL, v, COMMAND_SELECTED_MODE_SINGLE);
+					universe()->makeCommandSubtle(COMMAND_ID_PATROL, v, COMMAND_SELECTED_MODE_NONE);
 					m_nPickData = 0;
 				}
 				else
@@ -491,7 +491,7 @@ bool CShellLogicDispatcher::TranslatePickAction()
 					&&	unitNeedRepairOrBuild(_pUnitHover())
 				) {
 
-				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(), COMMAND_SELECTED_MODE_SINGLE);
+				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(), COMMAND_SELECTED_MODE_NONE);
 			}
 
 			m_nPickAction = SHELL_PICK_NONE;
@@ -530,7 +530,7 @@ int CShellLogicDispatcher::OnLButtonDown(float x, float y)
 				//над юнитом
 				if (_pUnitHover->playerID() == pPlayer->playerID()) {
 					//свой
-					universe()->select.unitToSelection(_pUnitHover(), isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+					universe()->select.unitToSelection(_pUnitHover(), isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 					SoundOnUnitPick(_pUnitHover());
 				} else {
 					//чужой
@@ -574,7 +574,7 @@ int CShellLogicDispatcher::OnLButtonUp(float x, float y)
 							m_fMousePressY - 0.5f,
 							m_fMouseCurrentX - 0.5f,
 							m_fMouseCurrentY - 0.5f,
-							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+							isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 			SoundOnUnitPick(_pUnitHover());
 		}
 	
@@ -638,13 +638,15 @@ int CShellLogicDispatcher::OnRButtonDown(float x, float y)
 				return 0;
 			}
 //			if (_pUnitHover() && _pUnitHover->Attribute.ID != UNIT_ATTRIBUTE_STATIC_NATURE && (_pUnitHover->playerID() != pPlayer->playerID())) {
+            CommandSelectionMode mode = isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE;
+            if (isControlPressed()) mode = static_cast<CommandSelectionMode>(mode | COMMAND_SELECTED_MODE_OVERRIDE);
 			if (_pUnitHover() && _pUnitHover->attr().ID != UNIT_ATTRIBUTE_STATIC_NATURE) {
-				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(),  !isShiftPressed() ? COMMAND_SELECTED_MODE_SINGLE : COMMAND_SELECTED_MODE_NEGATIVE);
+				universe()->makeCommand(COMMAND_ID_OBJECT, _pUnitHover(), mode);
  				//SoundOnSetUnitEnemy(pSelected);
 			} else if (GetSelectedUnit() && !GetSelectedUnit()->isBuilding()) {
 				Vect3f v;
 				if (terCamera->cursorTrace(Vect2f(m_fMouseCurrentX-0.5f, m_fMouseCurrentY-0.5f), v)) {
-					universe()->makeCommandSubtle(COMMAND_ID_POINT, v, !isShiftPressed() ? COMMAND_SELECTED_MODE_SINGLE : COMMAND_SELECTED_MODE_NEGATIVE);
+					universe()->makeCommandSubtle(COMMAND_ID_POINT, v, mode);
 					SoundOnSetUnitTarget(GetSelectedUnit());
 				}
 			}

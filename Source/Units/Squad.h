@@ -189,7 +189,7 @@ public:
 	
 	// Передвижение
 	void clearWayPoints();
-	void addWayPoint(const Vect2f& way_point);
+	void addWayPoint(const Vect2f& way_point, bool bypassPathfinder = false);
 	void goHome();
 	bool noWayPoints() const { return wayPoints_.empty(); }
 	int wayPointsNumber() const { return wayPoints_.size(); }

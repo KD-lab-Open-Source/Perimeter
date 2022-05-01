@@ -710,15 +710,16 @@ void terUnitReal::executeCommand(const UnitCommand& command)
 
 	switch(command.commandID()){
 	case COMMAND_ID_POINT:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE){
+		if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
 			wayPoints_.clear();
 			soundEvent(SOUND_VOICE_UNIT_MOVE);
 		}
 		wayPoints_.push_back(command.position());
 		break;
 	case COMMAND_ID_OBJECT:
-		if(command.selectionMode() == COMMAND_SELECTED_MODE_SINGLE)
-			wayPoints_.clear();
+		if ((command.selectionMode() & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
+            wayPoints_.clear();
+        }
 		targetUnit_ = safe_cast<terUnitBase*>(command.unit());
 		break;
 	case COMMAND_ID_STOP: 

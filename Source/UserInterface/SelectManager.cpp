@@ -90,39 +90,37 @@ void cSelectManager::areaToSelection(float x0, float y0, float x1, float y1, int
 		terUnitBase* unit = player->traceUnit(Vect2f(x0, y0));
 		if (unit) {
 			unitToSelection(unit, mode);
-		} else if (mode == COMMAND_SELECTED_MODE_SINGLE) {
+		} else if ((mode & COMMAND_SELECTED_MODE_NEGATIVE) == 0) {
 			//deselect and clear temp
 			clear(TEMP_SELECTION_GROUP_NUMBER);
 			clear();
 		}
 	} else {
-		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty()) {
-			mode = COMMAND_SELECTED_MODE_SINGLE;
+		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty() && (mode & COMMAND_SELECTED_MODE_NEGATIVE)) {
+			mode ^= COMMAND_SELECTED_MODE_NEGATIVE;
 		}
 		//deselect and clear temp
 		clear(TEMP_SELECTION_GROUP_NUMBER);
-		switch (mode) {
-			case COMMAND_SELECTED_MODE_SINGLE:
-				clear();
-				MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER]);
-				filterSelection();
-				break;
-			case COMMAND_SELECTED_MODE_NEGATIVE:
-				UnitList unit_list;
-				MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, unit_list);
-				filterSelectionList(unit_list, selectedGroupPriority);
-				
-				UnitList::iterator unitIter;
-				UnitList::iterator unitIter1;
-				FOR_EACH (unit_list, unitIter) {
-					unitIter1 = findInSelection(*unitIter);
-					if (unitIter1 == SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
-						SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].push_back(*unitIter);
-					} else {
-						erase(unitIter1);
-					}
-				}
-				break;
+		if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
+            UnitList unit_list;
+            MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, unit_list);
+            filterSelectionList(unit_list, selectedGroupPriority);
+
+            UnitList::iterator unitIter;
+            UnitList::iterator unitIter1;
+            FOR_EACH (unit_list, unitIter) {
+                unitIter1 = findInSelection(*unitIter);
+                if (unitIter1 == SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
+                    SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].push_back(*unitIter);
+                } else {
+                    erase(unitIter1);
+                }
+            }
+        } else {
+            clear();
+            MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER]);
+            filterSelection();
+                
 		}
 		selectCurrentSelection();
 	}
@@ -132,35 +130,32 @@ void cSelectManager::unitToSelection(terUnitBase* p, int mode, bool passSquad) {
 	cancelActions();
 	CSELECT_AUTOLOCK();
 	if (p->alive() && p->selectAble() && p->playerID() == player->playerID() && (passSquad || p->attr().ID != UNIT_ATTRIBUTE_SQUAD)) {
-		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty()) {
-			mode = COMMAND_SELECTED_MODE_SINGLE;
-		}
+		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty() && (mode & COMMAND_SELECTED_MODE_NEGATIVE)) {
+            mode ^= COMMAND_SELECTED_MODE_NEGATIVE;
+        }
 		//deselect and clear temp
 		clear(TEMP_SELECTION_GROUP_NUMBER);
-		switch (mode) {
-			case COMMAND_SELECTED_MODE_SINGLE:
-				clear();
-				selectedGroupPriority = getUnitSelectionPriority(p);
-				addUnitOrSquadToSelection(p);
-				break;
-			case COMMAND_SELECTED_MODE_NEGATIVE:
-				int unitPriority = getUnitSelectionPriority(p);
-				if (p->GetSquadPoint() && p->attr().MilitaryUnit) {
-					p = p->GetSquadPoint();
-				}
-				UnitList::iterator unitIter = findInSelection(p);
-				if (unitIter != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
-					erase(unitIter);
-				} else {
-					if (unitPriority == selectedGroupPriority) {
-						addToSelection(p);
-					} else {
-						clear();
-						selectedGroupPriority = unitPriority;
-						addToSelection(p);
-					}
-				}
-				break;
+        if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
+            int unitPriority = getUnitSelectionPriority(p);
+            if (p->GetSquadPoint() && p->attr().MilitaryUnit) {
+                p = p->GetSquadPoint();
+            }
+            UnitList::iterator unitIter = findInSelection(p);
+            if (unitIter != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
+                erase(unitIter);
+            } else {
+                if (unitPriority == selectedGroupPriority) {
+                    addToSelection(p);
+                } else {
+                    clear();
+                    selectedGroupPriority = unitPriority;
+                    addToSelection(p);
+                }
+            }
+        } else {
+            clear();
+            selectedGroupPriority = getUnitSelectionPriority(p);
+            addUnitOrSquadToSelection(p);
 		}
 		selectCurrentSelection();
 	}
@@ -215,44 +210,41 @@ void cSelectManager::selectInAreaAndCurrentSelection(float x0, float y0, float x
 		terUnitBase* unit = player->traceUnit(Vect2f(x0, y0));
 		if (unit) {
 			selectUnitAndCurrentSelection(unit, mode);
-		} else if (mode == COMMAND_SELECTED_MODE_NEGATIVE) {
+		} else if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
 			clear(TEMP_SELECTION_GROUP_NUMBER);
 			selectCurrentSelection();
 		}
 	} else {
-		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty()) {
-			mode = COMMAND_SELECTED_MODE_SINGLE;
-		}
+		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty() && (mode & COMMAND_SELECTED_MODE_NEGATIVE)) {
+            mode ^= COMMAND_SELECTED_MODE_NEGATIVE;
+        }
 		UnitList unit_list;
 		UnitList::iterator unitIter;
 		clear(TEMP_SELECTION_GROUP_NUMBER);
-		switch (mode) {
-			case COMMAND_SELECTED_MODE_SINGLE:
-				//!!!
-				clear();
-				MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, unit_list);
-				filterSelectionList(unit_list);
-				
-				FOR_EACH (unit_list, unitIter) {
-					(*unitIter)->Select();
-					SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(*unitIter);
-				}
-				break;
-			case COMMAND_SELECTED_MODE_NEGATIVE:
-				MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, unit_list);
-				filterSelectionList(unit_list, selectedGroupPriority);
-				
-				selectCurrentSelection();
-				FOR_EACH (unit_list, unitIter) {
-					if (findInSelection(*unitIter) == SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
-						(*unitIter)->Select();
-						SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(*unitIter);
-					} else {
-						(*unitIter)->Deselect();
-					}
-				}
-				break;
-		}
+        if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
+            MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, unit_list);
+            filterSelectionList(unit_list, selectedGroupPriority);
+
+            selectCurrentSelection();
+            FOR_EACH (unit_list, unitIter) {
+                if (findInSelection(*unitIter) == SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
+                    (*unitIter)->Select();
+                    SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(*unitIter);
+                } else {
+                    (*unitIter)->Deselect();
+                }
+            }
+        } else {
+            //!!!
+            clear();
+            MakeSelectionList(x0 - 0.001f, y0 - 0.001f, x1 + 0.001f, y1 + 0.001f, unit_list);
+            filterSelectionList(unit_list);
+
+            FOR_EACH (unit_list, unitIter) {
+                (*unitIter)->Select();
+                SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(*unitIter);
+            }
+        }
 	}
 }
 
@@ -260,36 +252,33 @@ void cSelectManager::selectUnitAndCurrentSelection(terUnitBase* p, int mode) {
 	cancelActions();
 	CSELECT_AUTOLOCK();
 	if (p->alive() && p->selectAble() && p->playerID() == player->playerID() && p->attr().ID != UNIT_ATTRIBUTE_SQUAD) {
-		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty()) {
-			mode = COMMAND_SELECTED_MODE_SINGLE;
+		if (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].empty() && (mode & COMMAND_SELECTED_MODE_NEGATIVE)) {
+			mode ^= COMMAND_SELECTED_MODE_NEGATIVE;
 		}
-		switch (mode) {
-			case COMMAND_SELECTED_MODE_SINGLE:
-				p->Select();
-				clear(TEMP_SELECTION_GROUP_NUMBER);
-				//!!!
-//				selectCurrentSelection();
-				clear();
-				SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(p);
-				break;
-			case COMMAND_SELECTED_MODE_NEGATIVE:
-				int unitPriority = getUnitSelectionPriority(p);
-				if (p->GetSquadPoint() && p->attr().MilitaryUnit) {
-					p = p->GetSquadPoint();
-				}
-				if (findInSelection(p) != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
-					//можно заменить на выборочный селект
-					selectCurrentSelection();
-					p->Deselect();
-				} else {
-					clear(TEMP_SELECTION_GROUP_NUMBER);
-					if (unitPriority == selectedGroupPriority) {
-						selectCurrentSelection();
-					}
-					p->Select();
-					SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(p);
-				}
-				break;
+        if (mode & COMMAND_SELECTED_MODE_NEGATIVE) {
+            int unitPriority = getUnitSelectionPriority(p);
+            if (p->GetSquadPoint() && p->attr().MilitaryUnit) {
+                p = p->GetSquadPoint();
+            }
+            if (findInSelection(p) != SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER].end()) {
+                //можно заменить на выборочный селект
+                selectCurrentSelection();
+                p->Deselect();
+            } else {
+                clear(TEMP_SELECTION_GROUP_NUMBER);
+                if (unitPriority == selectedGroupPriority) {
+                    selectCurrentSelection();
+                }
+                p->Select();
+                SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(p);
+            }
+        } else {
+            p->Select();
+            clear(TEMP_SELECTION_GROUP_NUMBER);
+            //!!!
+            //selectCurrentSelection();
+            clear();
+            SelectGroupLists[TEMP_SELECTION_GROUP_NUMBER].push_back(p);
 		}
 
 	}
@@ -416,7 +405,7 @@ void cSelectManager::makeCommand2DWithCanAttackFilter(const Vect3f& position) {
 	UnitList::iterator ui;
 	FOR_EACH (SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER], ui) {
 		if (CanAttackUnit(*ui, 0)) {
-			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_POINT, To3D(position), 0, COMMAND_SELECTED_MODE_SINGLE));
+			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_POINT, To3D(position), 0, COMMAND_SELECTED_MODE_NONE));
 		}
 	}
 }
@@ -425,7 +414,7 @@ void cSelectManager::makeCommandWithCanAttackFilter(const Vect3f& position) {
 	UnitList::iterator ui;
 	FOR_EACH(SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER], ui) {
 		if (CanAttackUnit(*ui, 0)) {
-			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_ATTACK, position, 0, COMMAND_SELECTED_MODE_SINGLE));
+			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_ATTACK, position, 0, COMMAND_SELECTED_MODE_NONE));
 		}
 	}
 }
@@ -434,7 +423,7 @@ void cSelectManager::makeCommandWithCanAttackFilter(terUnitBase* actionObject) {
 	UnitList::iterator ui;
 	FOR_EACH(SelectGroupLists[CURRENT_SELECTION_GROUP_NUMBER], ui) {
 		if (CanAttackUnit(*ui, actionObject)) {
-			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_OBJECT, actionObject, 0, COMMAND_SELECTED_MODE_SINGLE));
+			(*ui)->commandOutcoming(UnitCommand(COMMAND_ID_OBJECT, actionObject, 0, COMMAND_SELECTED_MODE_NONE));
 		}
 	}
 }

@@ -1238,7 +1238,7 @@ void OnButtonTogether(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 		UnitList::const_iterator selIt;
 		for (selIt = selList.begin(); selIt != selList.end(); selIt++) {
 			if ((*selIt) != pSquadSelected && !((terUnitSquad*)(*selIt))->Empty() && ((terUnitSquad*)(*selIt))->isBase()) {
-				pSquadSelected->commandOutcoming(UnitCommand(COMMAND_ID_ADD_SQUAD, *selIt, COMMAND_SELECTED_MODE_SINGLE));
+				pSquadSelected->commandOutcoming(UnitCommand(COMMAND_ID_ADD_SQUAD, *selIt, COMMAND_SELECTED_MODE_NONE));
 			}
 		}
 	}
@@ -1356,15 +1356,16 @@ void OnMapWindowClicked(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 		if (x > 0 && y > 0 && x < vMap.H_SIZE && y < vMap.V_SIZE && gameShell->m_ShellDispatcher.GetSelectedUnit() && !gameShell->m_ShellDispatcher.GetSelectedUnit()->isBuilding()) {
 			Vect3f v(x, y, 0);
-			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, COMMAND_SELECTED_MODE_SINGLE);
+			universe()->makeCommandSubtle(COMMAND_ID_POINT, v, isControlPressed() ? COMMAND_SELECTED_MODE_OVERRIDE : COMMAND_SELECTED_MODE_NONE);
 		}
 	}
 }
 
 void OnButtonGotoBase(CShellWindow* pWnd, InterfaceEventCode code, int param)
 {
-	if(code == EVENT_PRESSED)
-		universe()->makeCommand(COMMAND_ID_RETURN_TO_BASE, 0, COMMAND_SELECTED_MODE_SINGLE);
+	if(code == EVENT_PRESSED) {
+        universe()->makeCommand(COMMAND_ID_RETURN_TO_BASE, 0, isControlPressed() ? COMMAND_SELECTED_MODE_OVERRIDE : COMMAND_SELECTED_MODE_NONE);
+    }
 }
 
 static CShellWindow* _pBtnLastRequest = 0;
@@ -1418,7 +1419,7 @@ void OnButtonTerrainBuild(CShellWindow* pWnd, InterfaceEventCode code, int param
 //			HT-SELECT!!!
 			if (mt_interface_quant) {
 				TerrainButtonData* slotData = &(gameShell->getLogicUpdater().getLogicData()->slots[nSlot]);
-				universe()->select.unitToSelection(slotData->unit, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE);
+				universe()->select.unitToSelection(slotData->unit, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE);
 			}
 		}
 	}
@@ -1468,7 +1469,7 @@ void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		SquadPageData& squad_data=logicData->squads[param];
 		
 		if (squad_data.enabled) {
-			universe()->select.unitToSelection(pSquad, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_SINGLE, true);
+			universe()->select.unitToSelection(pSquad, isShiftPressed() ? COMMAND_SELECTED_MODE_NEGATIVE : COMMAND_SELECTED_MODE_NONE, true);
 //			universe()->DeselectAll();
 	
 //			universe()->SelectSquad(pSquad);
@@ -1490,7 +1491,7 @@ void OnSquadTabEvent(CShellWindow* pWnd, InterfaceEventCode code, int param)
 		UnitList::const_iterator selIt;
 		for (selIt = selList.begin(); selIt != selList.end(); selIt++) {
 			if ((*selIt) != pSquad) {
-				(*selIt)->commandOutcoming(UnitCommand(COMMAND_ID_FOLLOW_SQUAD, pSquad, 0, COMMAND_SELECTED_MODE_SINGLE));
+				(*selIt)->commandOutcoming(UnitCommand(COMMAND_ID_FOLLOW_SQUAD, pSquad, 0, COMMAND_SELECTED_MODE_NONE));
 			}
 		}
 	}
@@ -1629,7 +1630,7 @@ void OnButtonBackToFrame(CShellWindow* pWnd, InterfaceEventCode code, int param)
 
 		if(pUnit){
 			pUnit->soundEvent(SOUND_VOICE_MMP_BACK_TO_FRAME);
-			universe()->makeCommand(COMMAND_ID_OBJECT, universe()->activePlayer()->frame(), COMMAND_SELECTED_MODE_SINGLE);
+			universe()->makeCommand(COMMAND_ID_OBJECT, universe()->activePlayer()->frame(), COMMAND_SELECTED_MODE_NONE);
 		}
 	}
 }

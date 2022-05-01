@@ -242,7 +242,7 @@ void AIPlayer::MoveBrigadiersToPoint(const Vect2f& pos,float radius)
 	float width = (-0.5f - (float)BrigadierList.size()/2)*ai_brigadier_width;
 	UnitList::iterator ui;
 	FOR_EACH(BrigadierList,ui)
-		(*ui)->executeCommand(UnitCommand(COMMAND_ID_POINT, To3D(target + normal*(width += ai_brigadier_width)), 0, COMMAND_SELECTED_MODE_SINGLE));
+		(*ui)->executeCommand(UnitCommand(COMMAND_ID_POINT, To3D(target + normal*(width += ai_brigadier_width)), 0, COMMAND_SELECTED_MODE_NONE));
 }
 
 Vect2f AIPlayer::GetBrigadierCenter()
