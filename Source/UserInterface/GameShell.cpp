@@ -2739,7 +2739,7 @@ void GameShell::editParameters()
 	bool reloadParameters = false;
 	savePrm().manualData.zeroLayerHeight = vMap.hZeroPlast;
     
-    bool russian = getLocale() == "russian";
+    bool russian = startsWith(getLocale(), "russian");
 	const char* header = russian ? "Заголовок миссии" : "Mission header";
 	const char* mission = russian ? "Миссия" : "Mission";
 	const char* missionAll = russian ? "Миссия все данные" : "Mission all data";

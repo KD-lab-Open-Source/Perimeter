@@ -3906,7 +3906,7 @@ void ChatWindow::Clear()
 void ChatWindow::AddString(const LocalizedText* localizedText)
 {
     //Set font for GetStringBreak
-    terRenderDevice->SetFont(localizedText->locale == "russian" ? m_hFont1251 : m_hFont1250);
+    terRenderDevice->SetFont(startsWith(localizedText->locale, "russian") ? m_hFont1251 : m_hFont1250);
 
     std::string text = localizedText->text;
     int break_len = GetStringBreak(text);
@@ -4154,7 +4154,7 @@ void ChatWindow::drawText(float Alpha) {
 			break;
         
         const LocalizedText& text = m_data[i];
-        cFont* font = text.locale == "russian" ? m_hFont1251 : m_hFont1250;
+        cFont* font = startsWith(text.locale, "russian") ? m_hFont1251 : m_hFont1250;
         
         terRenderDevice->SetFont(font);
 

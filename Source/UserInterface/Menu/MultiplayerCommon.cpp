@@ -299,8 +299,8 @@ void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newStrin
         //We add postfix on client side so the text can have local language
         std::string postfix;
         if (clanOnly) {
-            if ((getLocale() == "russian" && locale == "russian") ||
-                (getLocale() != "russian" && locale != "russian")) {
+            //Only add postfix if my locale and msg locale are both russian or both non russian as encoding mixing is not allowed
+            if (startsWith(getLocale(), "russian") == startsWith(locale, "russian")) {
                 postfix = CChatInGameEditWindow::getModePostfix(clanOnly);
             }
             if (postfix.empty()) {
