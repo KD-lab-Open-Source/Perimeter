@@ -183,7 +183,7 @@ ELSE()
         #ARM32/ARM64
         IF (NOT PERIMETER_ARCH_64)
             MESSAGE("CPU is ARM, using VFP WARNING: untested")
-            add_compile_options(-mfpmath=vfp)
+            add_compile_options(-mfpu=vfp)
         ENDIF()
     ENDIF()
 ENDIF()
