@@ -20,7 +20,12 @@ uint32_t NetAddress::crc() const {
 }
 
 uint16_t NetAddress::port() const {
+#if SDL_DATA_ALIGNED
+    //In SDL2_net When SDL_DATA_ALIGNED is set it uses SDLNet_Read16 without const, probably a mistake
+    return SDLNet_Read16(const_cast<Uint16*>(&addr.port));
+#else
     return SDLNet_Read16(&addr.port);
+#endif
 }
 
 std::string NetAddress::getString() const {
