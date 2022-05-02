@@ -205,7 +205,11 @@ void MissionDescription::read(XBuffer& in)
             in.read(&playersShufflingIndices[i], sizeof(playersShufflingIndices[0]));
         }
     }
-	in.read(&gameType_,sizeof(gameType_));
+    GameType tmp_type;
+    in.read(&tmp_type, sizeof(tmp_type));
+    if (gameType_ != GT_PLAY_RELL) {
+        gameType_ = tmp_type;
+    }
     in.read(&gameContent,sizeof(gameContent));
     uint32_t difficultyVal = 0;
     in > difficultyVal; difficulty.value() = static_cast<Difficulty>(difficultyVal);

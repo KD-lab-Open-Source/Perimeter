@@ -612,8 +612,7 @@ void MissionDescription::refresh() {
 void MissionDescription::loadDescription() {    
     if (gameType_ == GT_PLAY_RELL) {
         init();
-        getMissionDescriptionInThePlayReelFile(playReelPath().c_str(), *this);
-        //Set this again otherwise the game type of replay is set
+        //Set this again after init
         gameType_ = GT_PLAY_RELL;
     } else {
         if (!savePathContent_.empty()) {
