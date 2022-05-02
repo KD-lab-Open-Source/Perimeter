@@ -2062,7 +2062,7 @@ void GameShell::MakeShot()
 	fname <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
 	shotNumber_++;
     std::string path = convert_path_native(terScreenShotsPath) + PATH_SEP + terScreenShotName + fname.address();
-	terRenderDevice->SetScreenShot(fname);
+	terRenderDevice->SetScreenShot(path.c_str());
 }
 
 void GameShell::startStopRecordMovie()
