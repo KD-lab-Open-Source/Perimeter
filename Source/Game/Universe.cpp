@@ -583,7 +583,7 @@ int terUniverse::SelectUnit(terUnitBase* p)
 //---------------------------------------------------------
 
 void MissionDescription::refresh() {
-    if(gameType_ != GT_PLAY_RELL){
+    //if(gameType_ != GT_PLAY_RELL){
         if (!savePathKey_.empty()) {
             savePathContent_ = resolve_mission_path(savePathKey_);
         }
@@ -593,9 +593,11 @@ void MissionDescription::refresh() {
                 missionDescriptionStr_ = missionDescriptionID;
             }
         }
-    }
+    //}
 
-    version = currentShortVersion;
+    if (version.empty()) {
+        version = currentShortVersion;
+    }
 
     if (!worldName_.empty()) {
         worldID_ = vMap.getWorldID(worldName_.value().c_str());
@@ -614,6 +616,7 @@ void MissionDescription::loadDescription() {
         init();
         //Set this again after init
         gameType_ = GT_PLAY_RELL;
+        getMissionDescriptionInThePlayReelFile(playReelPath().c_str(), *this);
     } else {
         if (!savePathContent_.empty()) {
             if (getExtension(savePathContent_, true) == "spg") {
@@ -712,6 +715,8 @@ bool MissionDescription::loadMission(SavePrm& savePrm) const
 bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) const 
 {
 	MissionDescription data = *this;
+    
+    data.version = currentShortVersion;
     
     data.gameContent = missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
 

@@ -355,7 +355,15 @@ void setupReplayDescWnd(int index, std::vector<MissionDescription>& mVect, int m
         text = missingContent;
     } else {
         text = mission.missionDescription();
+
+        int diff = compare_versions(currentVersionNumbers, mission.version.value().c_str());
+        if (0 != diff) {
+            if (!text.empty()) text += "\n\n";
+            text += qdTextDB::instance().getText("Interface.Menu.Messages.ReplayGameVersionDifferent");
+            text += " " + mission.version.value();
+        }
     }
+    
 	((CTextWindow*)_shellIconManager.GetWnd(mapDescrWndID))->setText( text );
 	if (inputWndID != -1) {
 		CEditWindow* input = (CEditWindow*)_shellIconManager.GetWnd(inputWndID);

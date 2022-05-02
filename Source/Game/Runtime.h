@@ -55,6 +55,7 @@ void SetShadowType(int shadow_map,int shadow_size,bool update);
 
 extern const char* currentVersion;
 extern const char* currentShortVersion;
+extern uint16_t currentVersionNumbers[];
 
 //-------------------------------------------------
 bool openFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title);
