@@ -32,7 +32,7 @@ MissionEditor::MissionEditor()
 
 MissionEditor::~MissionEditor()
 {
-    const char* msg = getLocale() == "russian" ? "Редактирование неразрушаемости незаписано. Записать?" : "Editing hardness unsaved. Write?";
+    const char* msg = startsWith(getLocale(), "russian") ? "Редактирование неразрушаемости незаписано. Записать?" : "Editing hardness unsaved. Write?";
     if (hardnessChanged_ && MessageBoxQuestion("Mission Editor", msg)) {
         vMap.saveHardness();
     }
@@ -129,7 +129,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		return true;
 		
 	case VK_DELETE: {
-        bool russian = getLocale() == "russian";
+        bool russian = startsWith(getLocale(), "russian");
         if (editingHardness_) {
             if (MessageBoxQuestion("MissionEditor", russian ? "Стереть всю неразрушаемость?" : "Erase all hardness?")) {
                 clearHardness();
@@ -142,7 +142,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
     }
 
 	case 'D': {
-        const char* msg = getLocale() == "russian" ? "Удалить выделенный объект?" : "Delete selected objects?";
+        const char* msg = startsWith(getLocale(), "russian") ? "Удалить выделенный объект?" : "Delete selected objects?";
         if (universe()->selectedObject() && MessageBoxQuestion("MissionEditor", msg)) {
             universe()->DeleteSelectedObjects();
             _pUnitHover = 0;
@@ -297,7 +297,7 @@ terFilthSpotID SelectFilth()
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
-    bool russian = getLocale() == "russian";
+    bool russian = startsWith(getLocale(), "russian");
 	std::vector<const char*> filth;
 	for (int i=0;i<sz;i++) {
         if (russian) {
@@ -331,7 +331,7 @@ terUnitAttributeID SelectGeo()
 	};
 	int sz=sizeof(name)/sizeof(name[0]);
 
-    bool russian = getLocale() == "russian";
+    bool russian = startsWith(getLocale(), "russian");
     std::vector<const char*> filth;
     for (int i=0;i<sz;i++) {
         if (russian) {
@@ -355,7 +355,7 @@ void MissionEditor::createUnit()
 	terUnitAttributeID attributeID = UNIT_ATTRIBUTE_NONE;
 	const char* modelDirectory = 0;
 
-    bool russian = getLocale() == "russian";
+    bool russian = startsWith(getLocale(), "russian");
 	const char* itemBuildings = russian ? "Здания" : "Buildings";
 	const char* itemNature = russian ? "Деревья" : "Nature";
 	const char* itemFilth = russian ? "Скверна" : "Scourge";
@@ -462,7 +462,7 @@ void MissionEditor::createUnit()
 const char* MissionEditor::info()
 {
     const std::string& locale = getLocale();
-    bool russian = locale == "russian";
+    bool russian = startsWith(locale, "russian");
     info_.clear();
     
     //TODO use qdTextDB instead of hardcoding texts here

@@ -433,7 +433,8 @@ void PNetCenter::HandlerInputNetCommand()
                 fprintf(stderr, "%d Error network synchronization, dumped at: %s\n", clocki(), crash_dir.c_str());
 
                 std::unique_ptr<LocalizedText> text = std::make_unique<LocalizedText>(
-                        qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization")
+                        qdTextDB::instance().getText("Interface.Menu.Messages.Multiplayer.Nonsinchronization"),
+                        getLocale()
                 );
                 text->text += " " + std::to_string(nc.desync_amount);
                 ExecuteInterfaceCommand(
@@ -441,16 +442,9 @@ void PNetCenter::HandlerInputNetCommand()
                         std::move(text)
                 );
 
-#if !defined(PERIMETER_DEBUG) && !defined(_DO_LOG_)
                 //Do not send binary and script data to host except host itself
-                if (m_localNETID != m_hostNETID) {
-                    md->binaryData.alloc(0);
-                    md->scriptsData.alloc(0);
-                }
-#endif
-
-                //Trim some data in partial mode
-                if (nc.desync_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
+                //Also trim some data in partial mode
+                if (m_localNETID != m_hostNETID || nc.desync_amount < PNC_DESYNC_RESTORE_MODE_FULL) {
                     md->binaryData.alloc(0);
                     md->scriptsData.alloc(0);
                 }

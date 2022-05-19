@@ -766,7 +766,7 @@ void terFilthSpot::ShowInfo()
 	{
         std::string text;
         const std::string& locale = getLocale();
-        if (locale == "russian") {
+        if (startsWith(locale, "russian")) {
             text = convertToCodepage("Скверна: ", locale);
             text += convertToCodepage(getEnumDescriptor(FILTH_SPOT_ID_NONE).nameAlt(FilthParamID), locale);
             text += "\n";

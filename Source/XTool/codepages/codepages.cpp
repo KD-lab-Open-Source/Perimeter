@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include "codepages.h"
+#include "xutl.h"
 
 bool isCodepageInit = false;
 typedef std::unordered_map<char32_t, uint8_t> CodepageMap;
@@ -14,7 +15,7 @@ void initCodePages();
 
 uint16_t localeToCodepage(const std::string& locale) {
     //Russian language uses 1251, the rest of languages which game was released uses 1250
-    if (locale == "russian") {
+    if (startsWith(locale, "russian")) {
         return 1251;
     } else {
         return 1250;

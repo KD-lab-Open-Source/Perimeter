@@ -116,3 +116,19 @@ Original custom `.btdb` format is also accepted but `.txt` may be lot easier to 
 
 If you don't wish to replace existing texts if game already has loaded them you can add `_noreplace` to the file name
 such as `MyTexts_noreplace.txt` or `MyTexts_noreplace.btdb` 
+
+## Stack Traces
+
+Perimeter Release builds contain basic function names but it seems that in some OSes (Win10/11) the stacktrace
+isn't properly printed, still is possible to reconstruct the stacktrace with proper symbol names by using the
+a specific part of logfile.txt with same binary that stacktrace was made with. We can know what binary was by ensuring
+that the version+date matches the one we are using like for example: `Version 3.0.10 Final (Apr 10 2022 00:39:40)`
+
+Then we pick this line from logfile.txt:
+`stack_reference=0x00007FF6176E4100 stack_frames=0x00007FF6176E4AFB,0x00007FF6176E5183,0x00007FF6176E545C,.......`
+
+and call the binary with it like:
+`perimeter stack_reference=0x00007FF6176E4100 stack_frames=0x00007FF6176E4AFB,0x0000.......`
+
+which should print us a stacktrace with function names if your OS works with them, on Linux+WINE it seems to be possible
+to reconstruct stacktraces with function names.

@@ -949,7 +949,7 @@ end_while_01:;
             fprintf(stderr, "Dumped desync restore data at: %s\n", crash_dir.c_str());
             create_directories(crash_dir);
             for (auto& client : to_restore) {
-                std::string path = crash_dir + std::to_string(client->netidPlayer) + "_" + client->playerName;
+                std::string path = crash_dir + std::to_string(client->netidPlayer);
                 
                 if (client->desync_netlog.tell()) {
                     XStream ffnl(setExtension(path, "log").c_str(), XS_OUT, 0);
@@ -964,13 +964,18 @@ end_while_01:;
                 
                 client->desync_missionDescription->setSaveName(path.c_str());
 
-                XStream ffp(setExtension(path, "prm").c_str(), XS_OUT, 0);
-                ffp.write(mission.saveData, mission.saveData.length());
-                ffp.close();
+                //Save client mission data if any
+                if (mission.saveData.length()) {
+                    XStream ffp(setExtension(path, "prm").c_str(), XS_OUT, 0);
+                    ffp.write(mission.saveData, mission.saveData.length());
+                    ffp.close();
+                }
 
-                XStream ffb(setExtension(path, "bin").c_str(), XS_OUT, 0);
-                ffb.write(mission.binaryData, mission.binaryData.length());
-                ffb.close();
+                if (mission.binaryData.length()) {
+                    XStream ffb(setExtension(path, "bin").c_str(), XS_OUT, 0);
+                    ffb.write(mission.binaryData, mission.binaryData.length());
+                    ffb.close();
+                }
 
                 //Load save data into IA and deserialize
                 SavePrm savePrm;
@@ -1340,11 +1345,11 @@ void PNetCenter::HostReceiveQuant()
 										mission.disconnect2PlayerData(ncChRT.idxPlayerData_);
                                         if (isSave) {
                                             if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_PLAYER_AI) {
-                                                pd.realPlayerType = pd.realPlayerType;
+                                                pd.realPlayerType = ncChRT.newRealPlayerType_;
                                             }
                                         } else {
                                             if (ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_OPEN || ncChRT.newRealPlayerType_ == REAL_PLAYER_TYPE_CLOSE) {
-                                                pd.realPlayerType = pd.realPlayerType;
+                                                pd.realPlayerType = ncChRT.newRealPlayerType_;
                                             }
                                         }
 										RemovePlayer(delPlayerNETID);

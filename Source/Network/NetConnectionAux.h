@@ -49,7 +49,10 @@ public:
 
         //Release build - 0 (1) bit
 #if defined(_FINAL_VERSION_) && !defined(PERIMETER_DEBUG)
-        val |= 1;
+        //Don't set if debug_key_handler is active in Release
+        if (!check_command_line("debug_key_handler")) {
+            val |= 1;
+        }
 #endif
 
         //Compiler type - 1-7 (7) bits
@@ -66,7 +69,7 @@ public:
         xassert(compiler <= 0x7F);
         val |= compiler<<1;
 
-        //OS type - 8-15 (8) bits
+        //OS type - 8-16 (8) bits
         arch_flags os;
 #if defined(__linux__)
         os = 1;

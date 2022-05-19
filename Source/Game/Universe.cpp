@@ -713,12 +713,11 @@ bool MissionDescription::loadMission(SavePrm& savePrm) const
 bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) const 
 {
 	MissionDescription data = *this;
-
-    data.playerAmountScenarioMax = static_cast<int>(!userSave ? savePrm.manualData.players.size() : universe()->Players.size() - 1);
     
     data.gameContent = missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
 
-	if(!userSave){
+	if(!userSave) {
+        data.playerAmountScenarioMax = static_cast<int>(savePrm.manualData.players.size());
 		data.activePlayerID = 0;
         data.fitPlayerArrays();
 		for (int i = 0; i < data.playersData.size(); i++) {

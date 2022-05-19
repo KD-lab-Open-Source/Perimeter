@@ -158,7 +158,7 @@ void terGeoControl::ShowInfo()
 		terRenderDevice->SetFont(gameShell->debugFont());
         std::string text;
         const std::string& locale = getLocale();
-        if (locale == "russian") {
+        if (startsWith(locale, "russian")) {
             text = convertToCodepage("Гео: ", locale);
             text += convertToCodepage(getEnumDescriptor(UNIT_ATTRIBUTE_NONE).nameAlt(attr().ID), locale);
             text += "\n";

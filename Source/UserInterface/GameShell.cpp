@@ -180,7 +180,7 @@ windowClientSize_(1024, 768)
 	briefingEnabled = !(disableBriefing || check_command_line("disableBriefing"));
 
 	terCamera->setRestriction(IniManager("Perimeter.ini").getInt("Game","CameraRestriction") && !mission_edit);
-	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial || check_command_line("debug_key_handler");
+	EnableDebugKeyHandlers = EnableDebugKeyHandlersInitial;
 
 	shotNumber_ = -1;
 	recordMovie_ = false;
@@ -1489,12 +1489,15 @@ void GameShell::KeyPressed(sKey& Key)
 	if(missionEditor_ && missionEditor_->keyPressed(Key))
 		return;
 
-#ifdef PERIMETER_DEBUG
 	if (Key.fullkey == (VK_F1|KBD_SHIFT|KBD_CTRL)) {
-		EnableDebugKeyHandlersInitial = EnableDebugKeyHandlers ^= 1;
+#ifndef PERIMETER_DEBUG
+        if (check_command_line("debug_key_handler"))
+#endif
+        {
+		    EnableDebugKeyHandlersInitial = EnableDebugKeyHandlers ^= 1;
+        }
 		return;
 	}
-#endif
 
 	if(_bMenuMode){
 		if(EnableDebugKeyHandlers){
@@ -2059,7 +2062,7 @@ void GameShell::MakeShot()
 	fname <= shotNumber_/1000 % 10 <= shotNumber_/100 % 10 <= shotNumber_/10 % 10 <= shotNumber_ % 10 < terScreenShotExt;
 	shotNumber_++;
     std::string path = convert_path_native(terScreenShotsPath) + PATH_SEP + terScreenShotName + fname.address();
-	terRenderDevice->SetScreenShot(fname);
+	terRenderDevice->SetScreenShot(path.c_str());
 }
 
 void GameShell::startStopRecordMovie()
@@ -2736,7 +2739,7 @@ void GameShell::editParameters()
 	bool reloadParameters = false;
 	savePrm().manualData.zeroLayerHeight = vMap.hZeroPlast;
     
-    bool russian = getLocale() == "russian";
+    bool russian = startsWith(getLocale(), "russian");
 	const char* header = russian ? "Заголовок миссии" : "Mission header";
 	const char* mission = russian ? "Миссия" : "Mission";
 	const char* missionAll = russian ? "Миссия все данные" : "Mission all data";

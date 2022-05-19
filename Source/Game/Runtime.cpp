@@ -798,6 +798,7 @@ void decode_stacktrace() {
 
 void show_help() {
     printf(
+            "Perimeter %s\n%s\n\n"
             "Modding and debugging:\n"
             "    mods=0 - Disables mods folder loading\n"
             "    edit=1 - Enables mission editor mode, use map loading args or file open dialog will appear\n"
@@ -840,8 +841,12 @@ void show_help() {
             "    content=path/of/game - Use this path for game data/content (must contain Resource, Scripts...)\n"
             "    clearlocale=1 - Clears current default and displays language dialog\n"
             "    locale=Russian - Use different language than current default\n"
+            "    --version -v - Shows version\n"
             "    --help -h /? - This help\n"
-   );
+            ,
+            currentShortVersion,
+            currentVersion
+    );
     ErrH.Exit();
 }
 
@@ -862,6 +867,9 @@ int SDL_main(int argc, char *argv[])
         std::string arg = string_to_lower(argv[i]);
         if (arg == "help" || arg == "--help" || arg == "-h" || arg == "/?") {
             show_help();
+        } else if (arg == "--version" || arg == "-v") {
+            printf("Perimeter %s\n%s\n", currentShortVersion, currentVersion);
+            ErrH.Exit();
         }
     }
     
@@ -1105,7 +1113,7 @@ void app_event_poll() {
         
         if (closing) {
             if(gameShell) {
-                if (gameShell->GameActive) {
+                if (gameShell->GameActive && !isShiftPressed()) {
                     //When game is running we want to gracefully shutdown the game by showing main menu
                     sKey k(VK_ESCAPE, true);
                     gameShell->KeyPressed(k);
@@ -1142,30 +1150,57 @@ void setLogicFp()
 }
 
 //-------------------------------------------------
+#ifndef PERIMETER_EXODUS
+//TODO remove this ifdef block once dialog stuff is ported
+
+bool _setupFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title, bool save) {
+    std::u16string u16string_filename = utf8_to_utf16(filename.c_str());
+    u16string_filename.resize(2048);
+
+    UTF8_TO_WCHAR(initialDir, initialDir);
+    UTF8_TO_WCHAR(extention, extention);
+    UTF8_TO_WCHAR(title, title);
+    
+	std::u16string filter = utf8_to_utf16(title);
+	filter += static_cast<char16_t>('\0');
+    filter += static_cast<char16_t>('*');
+    filter += static_cast<char16_t>('.');
+    filter += utf8_to_utf16(extention);
+    filter += static_cast<char16_t>('\0');
+    filter += static_cast<char16_t>('\0');
+
+    OPENFILENAMEW ofn;
+    memset(&ofn,0,sizeof(OPENFILENAMEW));
+    ofn.lpstrFile = checked_reinterpret_cast_ptr<char16_t, wchar_t>(u16string_filename.data());
+    ofn.nMaxFile = u16string_filename.capacity()-1;
+    ofn.lStructSize = sizeof(OPENFILENAMEW);
+    ofn.hwndOwner = hWndVisGeneric;
+    std::string fullTitle = save ? "Save: " : "Open: ";
+    fullTitle += title;
+    UTF8_TO_WCHAR(fullTitle, fullTitle.c_str());
+    ofn.lpstrTitle = wchar_fullTitle;
+    ofn.lpstrFilter = checked_reinterpret_cast_ptr<char16_t, wchar_t>(filter.data());;
+    ofn.lpstrInitialDir = wchar_initialDir;
+    ofn.Flags = OFN_PATHMUSTEXIST|OFN_HIDEREADONLY|OFN_EXPLORER|OFN_NOCHANGEDIR;
+    ofn.lpstrDefExt = wchar_extention;
+    
+    if (save) {
+        if (!GetSaveFileNameW(&ofn))
+            return false;
+    } else {
+        if (!GetOpenFileNameW(&ofn))
+            return false;
+    }
+    
+    filename = utf16_to_utf8(u16string_filename);
+    return true;
+}
+#endif
+
 bool openFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
 {
-	XBuffer filter;
-	filter < title < '\0' < "*." < extention < '\0' < '\0';
-
 #ifndef PERIMETER_EXODUS
-	OPENFILENAMEA ofn;
-	memset(&ofn,0,sizeof(ofn));
-	char fname[2048];
-	strcpy(fname,filename.c_str());
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = hWndVisGeneric;
-	std::string fullTitle = std::string("Open: ") + title;
-	ofn.lpstrTitle = fullTitle.c_str();
-	ofn.lpstrFilter = filter;
-	ofn.lpstrFile = fname;
-	ofn.nMaxFile = sizeof(fname)-1;
-	ofn.lpstrInitialDir = initialDir;
-	ofn.Flags = OFN_PATHMUSTEXIST|OFN_HIDEREADONLY|OFN_EXPLORER|OFN_NOCHANGEDIR;
-	ofn.lpstrDefExt = extention;
-	if(!GetOpenFileNameA(&ofn))
-		return false;
-	filename = fname;
-	return true;
+    return _setupFileDialog(filename, initialDir, extention, title, false);
 #else
 	//TODO
 	return false;
@@ -1174,28 +1209,8 @@ bool openFileDialog(std::string& filename, const char* initialDir, const char* e
 
 bool saveFileDialog(std::string& filename, const char* initialDir, const char* extention, const char* title)
 {
-	XBuffer filter;
-	filter < title < '\0' < "*." < extention < '\0' < '\0';
-
 #ifndef PERIMETER_EXODUS
-	OPENFILENAMEA ofn;
-	memset(&ofn,0,sizeof(ofn));
-	char fname[2048];
-	strcpy(fname,filename.c_str());
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = hWndVisGeneric;
-	std::string fullTitle = std::string("Save: ") + title;
-	ofn.lpstrTitle = fullTitle.c_str();
-	ofn.lpstrFilter = filter;
-	ofn.lpstrFile = fname;
-	ofn.nMaxFile = sizeof(fname)-1;
-	ofn.lpstrInitialDir = initialDir;
-	ofn.Flags = OFN_PATHMUSTEXIST|OFN_HIDEREADONLY|OFN_EXPLORER|OFN_NOCHANGEDIR;
-	ofn.lpstrDefExt = extention;
-	if(!GetSaveFileNameA(&ofn))
-		return false;
-	filename = fname;
-	return true;
+    return _setupFileDialog(filename, initialDir, extention, title, true);
 #else
     //TODO
     return false;

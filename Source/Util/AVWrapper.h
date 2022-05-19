@@ -12,6 +12,7 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/imgutils.h>
+#include <libavutil/channel_layout.h>
 #ifdef PERIMETER_FFMPEG_MOVIE
 #include <libswscale/swscale.h>
 #include <libavutil/opt.h>
@@ -23,7 +24,6 @@ extern "C" {
 }
 #endif
 
-// compatability with newer libavcodec
 #if LIBAVCODEC_VERSION_MAJOR < 57
 #define AV_FRAME_ALLOC avcodec_alloc_frame
 #define AV_PACKET_UNREF av_free_packet

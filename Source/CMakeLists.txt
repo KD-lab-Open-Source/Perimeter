@@ -8,11 +8,6 @@ SET(perimeter_LINK_LIBS
         Render
         Sound
         Network
-        #Libraries
-        ${SDL2_LIBRARY}
-        ${SDL2_IMAGE_LIBRARY}
-        ${SDL2_MIXER_LIBRARY}
-        ${SDL2_NET_LIBRARY}
 )
 
 IF(FFMPEG_FOUND)
@@ -66,7 +61,7 @@ IF(NOT PERIMETER_WINDOWS)
         ExternalProject_Add(dxvk-native
                 GIT_REPOSITORY    https://github.com/IonAgorria/dxvk-native
                 GIT_TAG           "2e91e784a86bc1355100518cd90eee48433551ac"
-                GIT_SHALLOW       ON
+                GIT_SHALLOW       OFF
                 BUILD_ALWAYS      OFF
                 CONFIGURE_HANDLED_BY_BUILD ON
                 CONFIGURE_COMMAND ${DXVK_NATIVE_BUILD_COMMAND} ../dxvk-native --buildtype=release -Denable_d3d11=false -Denable_d3d10=false -Denable_dxgi=false
@@ -328,9 +323,14 @@ IF(PERIMETER_DEBUG)
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} XPrmLib)
 ENDIF()
 
-#Add SDL2 main
-SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS}
-    ${SDL2MAIN_LIBRARY}
+SET(perimeter_LINK_LIBS
+        #Libraries
+        ${perimeter_LINK_LIBS}
+        ${SDL2MAIN_LIBRARY}
+        ${SDL2_LIBRARY}
+        ${SDL2_IMAGE_LIBRARY}
+        ${SDL2_MIXER_LIBRARY}
+        ${SDL2_NET_LIBRARY}
 )
 
 TARGET_LINK_LIBRARIES(perimeter ${perimeter_LINK_LIBS})

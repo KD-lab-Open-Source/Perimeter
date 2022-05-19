@@ -984,6 +984,7 @@ protected:
 	/// если строка войдёт целиком, то возвращает -1
 	int GetStringBreak(const std::string& str, bool ignore_spaces = false) const;
     
+    void freeLocaleFonts();
     void setupLocaleFonts(int size);
 
 public:

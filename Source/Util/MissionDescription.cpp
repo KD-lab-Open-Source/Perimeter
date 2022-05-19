@@ -375,13 +375,22 @@ bool MissionDescription::setPlayerStartReady(NETID netid, bool state)
 
 bool MissionDescription::isAllRealPlayerStartReady()
 {
-	bool result = true;
+    int players = 0;
 	for (unsigned int i=0; i<playerAmountScenarioMax; i++) {
-		if (playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER) {
-            result &= playersData[i].flag_playerStartReady;
+        switch (playersData[i].realPlayerType) {
+            case REAL_PLAYER_TYPE_PLAYER:
+                if (!playersData[i].flag_playerStartReady) {
+                    return false;
+                }
+            case REAL_PLAYER_TYPE_AI:
+            case REAL_PLAYER_TYPE_PLAYER_AI:
+                players++;
+                break;
+            default:
+                break;
         }
 	}
-	return result;
+	return 1 < players;
 }
 
 int MissionDescription::playersAmount() const 
@@ -496,13 +505,13 @@ int MissionDescription::connectLoadPlayer2PlayersData(PlayerData& pd)
 	int result=-1;
     
     //Try match by name first
-    std::string pd_name = string_to_lower(pd.name());
+    std::string pd_name = pd.name(); //TODO use string_to_lower once names are UTF8
     for (int i=0; i<playerAmountScenarioMax; i++) {
         PlayerData& player = playersData[i];
         if (player.realPlayerType!=REAL_PLAYER_TYPE_OPEN) {
             continue;
         }
-        std::string name = string_to_lower(player.nameInitial());
+        std::string name = player.nameInitial(); //TODO use string_to_lower once names are UTF8
         if (name==pd_name) {
             player.setName(pd.name());
             player.realPlayerType=REAL_PLAYER_TYPE_PLAYER;

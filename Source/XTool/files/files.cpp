@@ -31,7 +31,7 @@ bool first_scan_flag = true;
 
 filesystem_entries_map filesystem_entries;
 
-std::filesystem::path content_root_path;
+std::filesystem::path content_root_path = std::filesystem::path();
 std::string content_root_path_str;
 
 void filesystem_entry::set(filesystem_entry* entry) {

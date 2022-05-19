@@ -58,7 +58,6 @@ int SwitchMultiplayerToRestoreQuant(float, float ) {
         } else {
             gb_Music.FadeVolume(_fEffectButtonTotalTime * 0.001f);
             HTManager::instance()->GameClose();
-            StartSpace();
             _shellIconManager.SetModalWnd(0);
             _shellIconManager.LoadControlsGroup(SHELL_LOAD_GROUP_MENU);
             _shellIconManager.SwitchMenuScreens(-1, SQSH_MM_LOADING_MISSION_SCR);
@@ -102,8 +101,6 @@ int exitToMultiplayerScreenAction(float, float ) {
 
 int multiplayerMapNotFoundQuant(float, float ) {
     if (menuChangingDone) {
-        setupOkMessageBox(exitToMultiplayerScreenAction, 0,
-                          qdTextDB::instance().getText("Interface.Menu.Messages.CantFindMap"), MBOX_EXIT);
         gameShell->getNetClient()->FinishGame();
         gameShell->getNetClient()->StartFindHost();
         showMessageBox();
@@ -113,8 +110,9 @@ int multiplayerMapNotFoundQuant(float, float ) {
 }
 
 void GameShell::MultiplayerGameStart(const MissionDescription& mission) {
-    if (!isWorldIDValid(mission.worldID())
-        || (mission.gameType_ == GT_MULTI_PLAYER_CREATE && getMultiplayerMapNumber(mission.missionName()) == -1)) {
+    std::string missingContent = checkMissingContent(mission);
+    if (!missingContent.empty()) {
+        setupOkMessageBox(exitToMultiplayerScreenAction, 0, missingContent, MBOX_EXIT);
         _shellIconManager.AddDynamicHandler(multiplayerMapNotFoundQuant, CBCODE_QUANT);
     } else {
         missionToExec = mission;
@@ -301,8 +299,8 @@ void GameShell::addStringToChatWindow(bool clanOnly, const std::string& newStrin
         //We add postfix on client side so the text can have local language
         std::string postfix;
         if (clanOnly) {
-            if ((getLocale() == "russian" && locale == "russian") ||
-                (getLocale() != "russian" && locale != "russian")) {
+            //Only add postfix if my locale and msg locale are both russian or both non russian as encoding mixing is not allowed
+            if (startsWith(getLocale(), "russian") == startsWith(locale, "russian")) {
                 postfix = CChatInGameEditWindow::getModePostfix(clanOnly);
             }
             if (postfix.empty()) {

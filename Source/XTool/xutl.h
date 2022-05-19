@@ -104,4 +104,8 @@ void encode_raw_float(XBuffer* buffer, float value);
 //Encodes a double using "raw format" in text form
 void encode_raw_double(XBuffer* buffer, double value);
 
+#define UTF8_TO_WCHAR(VAR, VAL) \
+    std::u16string u16string_##VAR = utf8_to_utf16(VAL); \
+    const wchar_t* wchar_##VAR = checked_reinterpret_cast_ptr<const char16_t, const wchar_t>( u16string_##VAR.c_str());
+
 #endif

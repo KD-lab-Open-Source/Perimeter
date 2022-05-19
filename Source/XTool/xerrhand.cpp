@@ -448,14 +448,16 @@ void XErrorHandler::RedirectStdio() const {
 
     //Reopen streams, Win32 needs wide char version to handle cyrilic
 #ifdef _WIN32
-    std::u16string log_path_16 = utf8_to_utf16(log_path.c_str());
-    const wchar_t* log_path_wchar = checked_reinterpret_cast_ptr<const char16_t, const wchar_t>(log_path_16.c_str()); 
-    _wfreopen(log_path_wchar, L"a", stdout);
-    _wfreopen(log_path_wchar, L"a", stderr);
+    UTF8_TO_WCHAR(log_path, log_path.c_str())
+    _wfreopen(wchar_log_path, L"a", stdout);
+    _wfreopen(wchar_log_path, L"a", stderr);
 #else
     freopen(log_path.c_str(), "a", stdout);
     freopen(log_path.c_str(), "a", stderr);
 #endif
+    //Disable buffering because we don't flush, specially if crash happens
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
 }
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj)

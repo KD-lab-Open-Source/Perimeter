@@ -454,33 +454,41 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 	if (code == EVENT_DRAWWND) {
         CPushButton* btn = reinterpret_cast<CPushButton*>(pWnd);
         btn->setText(gameShell->getNetClient()->m_GameName);
-        
+
 		const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
+        std::string missingContent = checkMissingContent(currMission);
         CTextWindow* descWnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP_DESCR_TXT);
 		if (gameShell->getNetClient()->isHost() && !gameShell->getNetClient()->isSaveGame()) {
             descWnd->Show(0);
 			setLobbyMapListVisible(true);
 			_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP)->Show(0);
-			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_HOST_GAME_MAP))->setWorldID( currMission.worldID() );
+            CShowMapWindow* mapWindow = ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_HOST_GAME_MAP));
+            mapWindow->setWorldID( missingContent.empty() ? currMission.worldID() : -2 );
 			int pos = getMultiplayerMapNumber(currMission.missionName());
 			if (pos != -1) {
 				((CListBoxWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_MAP_LIST))->SetCurSelPassive(pos);
 			}
 		} else {
 			setLobbyMapListVisible(false);
-			((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP))->setWorldID( currMission.worldID() );
+            CShowMapWindow* mapWindow = ((CShowMapWindow*)_shellIconManager.GetWnd(SQSH_MM_LOBBY_GAME_MAP));
+            mapWindow->setWorldID( missingContent.empty() ? currMission.worldID() : -2 );
 			_shellIconManager.GetWnd(SQSH_MM_LOBBY_HOST_GAME_MAP)->Show(0);
 
-            descWnd->Show(1);
-            std::string text = currMission.missionName();
-            /*
-            std::string text = currMission.missionDescription();
-            if (text.empty()) {
-                text = qdTextDB::instance().getText("Interface.Menu.Messages.Battle");
-            }
-            text = currMission.missionName() + "\n\n" + text;
-            */
+            std::string text;
+            if (missingContent.empty()) {
+                text = currMission.missionName();
+                /*
+                std::string text = currMission.missionDescription();
+                if (text.empty()) {
+                    text = qdTextDB::instance().getText("Interface.Menu.Messages.Battle");
+                }
+                text = currMission.missionName() + "\n\n" + text;
+                */
+            } else {
+                text = missingContent;
+            }   
             descWnd->setText(text);
+            descWnd->Show(1);
 		}
 
         updateLobbyPageControls();
@@ -505,7 +513,7 @@ void onMMLobbyGameNameButton(CShellWindow* pWnd, InterfaceEventCode code, int pa
 void onMMLobbyStartButton(CShellWindow* pWnd, InterfaceEventCode code, int param) {
 	if (code == EVENT_DRAWWND){
         const MissionDescription& currMission = gameShell->getNetClient()->getLobbyMissionDescription();
-        bool enable = currMission.playersAmount() > 1;
+        bool enable = true;
         //Lock host enable until all slots are closed
         if (gameShell->getNetClient()->isHost() && currMission.gameType_ == GT_MULTI_PLAYER_LOAD) {
             for (int i = 0; i < currMission.playerAmountScenarioMax; ++i) {

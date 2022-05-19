@@ -2134,12 +2134,17 @@ void terUnitSquad::addSquad(terUnitSquad* squad)
     || !squad->mutationFinished() || !squad->isBase()) {
         return;
     }
-	
+
+    float my_mutation_energy = mutationEnergy_;
+    float squad_mutation_energy = squad->mutationEnergy_;
 	while(!squad->Units.empty()){
 		terUnitLegionary* unit = squad->Units.front();
 		squad->removeUnit(unit);
 		addUnit(unit, false);
 	}
+    //addUnit fills the full value of atoms in the unit so the original mutation energy info of unit is lost
+    //we want to add squad energy as squad may have all or some units without energy
+    mutationEnergy_ = my_mutation_energy + squad_mutation_energy;
 }
 
 void terUnitSquad::ShowCircles() 

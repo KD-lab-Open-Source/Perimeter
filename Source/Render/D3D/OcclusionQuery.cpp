@@ -36,7 +36,14 @@ bool cOcclusionQuery::Init()
 		return false;
 	HRESULT hr;
 	hr=gb_RenderDevice3D->lpD3DDevice->CreateQuery(D3DQUERYTYPE_OCCLUSION,&pQuery);
-	return SUCCEEDED(hr);
+    if (SUCCEEDED(hr)) {
+        return true;
+    } else {
+        printf("Failed cOcclusionQuery::Init %d\n", pQuery != nullptr);
+        pQuery = nullptr;
+        //RELEASE(pQuery);
+        return false;
+    }
 }
 
 void cOcclusionQuery::Done()

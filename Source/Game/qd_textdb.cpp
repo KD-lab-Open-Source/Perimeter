@@ -148,7 +148,7 @@ bool qdTextDB::load(const std::string& locale, const char* file_name, const char
         
         load_lines(lines, replace_old_texts, locale);
     } else {
-        bool russian = locale == "russian";
+        bool russian = startsWith(locale, "russian");
         int text_cnt;
         fh > text_cnt;
 
@@ -269,7 +269,7 @@ void qdTextDB::load_lines(const std::vector<std::string>& lines, bool replace_ol
 
 void qdTextDB::load_supplementary_texts(const std::string& locale) {
     //Load per language texts
-    if (locale == "russian") {
+    if (startsWith(locale, "russian")) {
         load_lines({
            "GAME_CONTENT.PERIMETER=Периметр",
            "GAME_CONTENT.PERIMETER_ET=Периметр: Завет Императора",

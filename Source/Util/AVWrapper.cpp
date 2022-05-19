@@ -209,8 +209,13 @@ int AVWrapper::open(const std::string& path, AVWrapperType need) {
     }
     
     // Find video and/or audio stream
+#if LIBAVCODEC_VERSION_MAJOR < 59
     videoStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_VIDEO, -1, -1, &videoCodec, 0);
     audioStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_AUDIO, -1, -1, &audioCodec, 0);
+#else
+    videoStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_VIDEO, -1, -1, const_cast<const AVCodec**>(&videoCodec), 0);
+    audioStream = av_find_best_stream(formatCtx, AVMEDIA_TYPE_AUDIO, -1, -1, const_cast<const AVCodec**>(&audioCodec), 0);
+#endif
 
     //Attempt to load video codec
     if (videoStream < 0) {

@@ -284,7 +284,7 @@ void checkMissionDescription(int index, std::vector<MissionDescription>& mVect, 
 		mVect[index] = MissionDescription(filepath, gameType);
 	}
 }
-std::string checkMissingContent(MissionDescription& mission) {
+std::string checkMissingContent(const MissionDescription& mission) {
     std::string msg;
     std::vector<GAME_CONTENT> missingContent;
     
@@ -303,7 +303,8 @@ std::string checkMissingContent(MissionDescription& mission) {
         //Game content is OK but we still don't have this map
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
         msg += mission.worldName();
-    } else if (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent())) {
+    } else if (mission.saveData.length() == 0 && (mission.savePathContent().empty() || !get_content_entry(mission.savePathContent()))) {
+        //If has saveData ignore since is packed already
         //Game content is OK but we still don't have this save
         msg = qdTextDB::instance().getText("Interface.Menu.Messages.WorldMissing");
         if (mission.savePathContent().empty()) {
@@ -500,7 +501,7 @@ void fillStatsLists() {
 
 	std::vector<terPlayer*>& players = universe()->Players;
 	terPlayer* player;
-	for (int i = 0; i < gameShell->CurrentMission.playersData.size(); i++) {
+	for (int i = 0; i < gameShell->CurrentMission.playerAmountScenarioMax; i++) {
         if (i >= 9) break; //TODO add paging to stats screen to handle more than 9 players
 		int playerID = gameShell->CurrentMission.playersData[i].playerID;
 		if (( gameShell->CurrentMission.playersData[i].realPlayerType == REAL_PLAYER_TYPE_PLAYER
@@ -1029,6 +1030,10 @@ int SwitchMenuScreenQuant1( float, float ) {
 					break;
 				case SQSH_MM_LOADING_MISSION_SCR:
 					{
+                        if (!bgScene.inited()) {
+                            //bgScene.init(terVisGeneric);
+                            StartSpace();
+                        }
 
 						CTextWindow* txtWnd = (CTextWindow*)_shellIconManager.GetWnd(SQSH_MM_MISSION_DESCR_TXT);
 
