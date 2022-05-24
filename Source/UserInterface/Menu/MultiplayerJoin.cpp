@@ -99,7 +99,7 @@ int joinHostHandler( float, float ) {
         } else {
             CEditWindow* playerNameInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_NAME_INPUT));
             std::string playerName = playerNameInput->GetText();
-            CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_HOST_PASSWORD_INPUT));
+            CEditWindow* passwordInput = dynamic_cast<CEditWindow*>(_shellIconManager.GetWnd(SQSH_MM_MULTIPLAYER_JOIN_PASSWORD_INPUT));
             std::string password = passwordInput->getText();
             gameShell->getNetClient()->JoinGame(conn, playerName, password);
         }
