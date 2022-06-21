@@ -716,8 +716,6 @@ bool MissionDescription::saveMission(const SavePrm& savePrm, bool userSave) cons
 {
 	MissionDescription data = *this;
     
-    data.version = currentShortVersion;
-    
     data.gameContent = missionNumber < 0 ? terGameContentSelect : getGameContentCampaign();
 
 	if(!userSave) {

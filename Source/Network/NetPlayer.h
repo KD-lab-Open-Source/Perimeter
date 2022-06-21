@@ -175,7 +175,14 @@ public:
     void clearData();
 
     SERIALIZE(ar) {
-        ar & WRAP_OBJECT(version);
+        if (ar.isOutput()) {
+            //Always output current version which is serialized with
+            extern const char* currentShortVersion;
+            PrmString versionOutput = currentShortVersion;
+            ar & WRAP_OBJECT(versionOutput);
+        } else if (ar.isInput()) {
+            ar & WRAP_OBJECT(version);
+        }
         ar & TRANSLATE_NAME(worldName_, "worldName", "Имя мира");
         ar & TRANSLATE_NAME(missionDescriptionID, "missionDescription", "Описание миссии");
         ar & TRANSLATE_OBJECT(difficulty, "Уровень сложности");

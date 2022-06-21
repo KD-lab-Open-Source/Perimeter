@@ -66,7 +66,7 @@ void PlayerData::write(XBuffer& out) const
 //-------------------------------------------------
 void MissionDescription::init()
 {
-	version = currentShortVersion;
+    version = currentShortVersion;
 	worldName_ = "";
 	difficulty = DIFFICULTY_HARD;
 	missionNumber = - 1;
@@ -237,7 +237,7 @@ void MissionDescription::read(XBuffer& in)
 
 void MissionDescription::write(XBuffer& out) const 
 {
-    out < StringOutWrapper(version.value());
+    out < StringOutWrapper(currentShortVersion);
     out < StringOutWrapper(worldName_.value());
     out < StringOutWrapper(missionName_);
     out < StringOutWrapper(missionDescriptionID.value());
@@ -298,7 +298,7 @@ void MissionDescription::simpleRead(XBuffer& in)
 
 void MissionDescription::simpleWrite(XBuffer& out) const 
 {
-    out < StringOutWrapper(version.value());
+    out < StringOutWrapper(currentShortVersion);
     out < StringOutWrapper(worldName_.value());
     out < StringOutWrapper(missionName_);
     out < StringOutWrapper(savePathKey_);
