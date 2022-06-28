@@ -28,5 +28,3 @@
 #include "../src/TileMap.h"
 
 #include "../inc/IncTerra.h"
-
-#include "../3dx/Node3DX.h"

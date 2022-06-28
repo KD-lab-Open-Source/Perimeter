@@ -49,10 +49,6 @@ protected:
 	void CreateIB();
 	void CreateVB();
 
-	void InitBumpTexture1(cTexture* pTex);
-	void InitBumpTexture2(cTexture* pTex);
-	void ConvertToBump(cTexture*& pOut,cTexture* pIn);
-
 	void RenderTexture();
 	void RenderTex0();
 
@@ -63,39 +59,6 @@ protected:
 		return b-xm::fmod(-a,b);
 	}
 
-};
-
-
-class CBox:public cIUnkObj
-{
-	int			box_face;
-	std::vector<cTexture*> pBox;
-
-	int num_vertex;
-	int num_index;
-	sPtrVertexBuffer vb;
-	sPtrIndexBuffer ib;
-
-	
-	struct CubeVector
-	{
-		Vect3f pos;
-		Vect2f t;
-		static int fmt;
-	};
-
-	Vect3f sz_rect;
-	bool fov90;
-
-	bool enable_face[6];
-public:
-	CBox(Vect3f size, const char* str_cube);
-	~CBox();
-	virtual void Animate(float dt);
-	virtual void PreDraw(cCamera *DrawNode);
-	virtual void Draw(cCamera *DrawNode);
-protected:
-	void CreateVB();
 };
 
 class CSkySpere:public cIUnkObj

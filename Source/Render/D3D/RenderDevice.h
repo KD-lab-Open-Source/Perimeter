@@ -64,7 +64,6 @@ public:
 	virtual void SetDefaultFont(cFont *pFont);
 
 	virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true)	{ return -1; }
-	virtual int CreateCubeTexture(class cTexture *Texture, const char* fname)			{ return -1;};
 	virtual int DeleteTexture(class cTexture *Texture)							{ return -1; }
 	virtual void* LockTexture(class cTexture *Texture,int& Pitch)				{VISASSERT(0);return NULL;}
 	virtual void UnlockTexture(class cTexture *Texture)							{VISASSERT(0);}

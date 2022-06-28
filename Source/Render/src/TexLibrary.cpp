@@ -529,21 +529,12 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 	} auto_delete(buf);
 
 	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(uint32_t*)buf);
-	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP)
-	{
-		LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;
-		if(FAILED(D3DXCreateCubeTextureFromFileInMemory(gb_RenderDevice3D->lpD3DDevice, buf, size, &pCubeTexture)))
-		{
-			Error(Texture);
-			Texture->Release();
-			return false;
-		}
-
-		Texture->BitMap.push_back((IDirect3DTexture9*)pCubeTexture);
-		return true;
-	}else
-	{
-		LPDIRECT3DTEXTURE9 pTexture=gb_RenderDevice->CreateTextureFromMemory(buf,size);
+	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP) {
+        Error(Texture);
+        Texture->Release();
+        return false;
+	} else {
+		LPDIRECT3DTEXTURE9 pTexture=gb_RenderDevice3D->CreateTextureFromMemory(buf,size);
 		if(!pTexture)
 		{
 			Error(Texture);

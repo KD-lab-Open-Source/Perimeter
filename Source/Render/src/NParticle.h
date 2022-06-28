@@ -831,22 +831,6 @@ class cEffect:public cIUnkObjScale
 		virtual void Update();
 		cObjectNode* GetNode(){return observer?node:NULL;}
 	} link;
-
-	class EffectObserverLink3dx:protected ObserverLink
-	{
-		class cObject3dx* object;
-		int node;
-		cEffect* effect;
-	public:
-		EffectObserverLink3dx():object(0),node(-1),effect(0){}
-		void SetParent(cEffect* effect_){effect=effect_;}
-
-		void Link(class cObject3dx* object,int inode);
-		virtual void Update();
-
-		bool IsInitialized(){return object!=0;}
-		const MatXf& GetRootMatrix();
-	} link3dx;
 public:
 	cEffect();
 	~cEffect();
@@ -887,7 +871,6 @@ public:
 	inline float GetParticleRate()const{return particle_rate;}
 
 	void LinkToNode(class cObjectNode* node);
-	void LinkToNode(class cObject3dx* object,int inode);
 	inline float GetParticleRateReal()const;
 
 	std::vector<Vect3f>& GetPos(){return begin_position;}

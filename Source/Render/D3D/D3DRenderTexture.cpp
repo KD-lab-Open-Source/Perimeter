@@ -252,17 +252,6 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
     return 0;
 }
 
-int cD3DRender::CreateCubeTexture(class cTexture *Texture, const char* fname)
-{
-	LPDIRECT3DCUBETEXTURE9 pCubeTexture=NULL;
-	if(FAILED(D3DXCreateCubeTextureFromFileA(lpD3DDevice, fname, &pCubeTexture)))
-		return 1;
-
-	Texture->BitMap.push_back((IDirect3DTexture9*)pCubeTexture);
-		
-	return 0;
-}
-
 int cD3DRender::CreateBumpTexture(class cTexture *Texture)
 {
 	IDirect3DTexture9* lpTexture=NULL;

@@ -3,7 +3,6 @@
 #include "cZPlane.h"
 #include "NParticle.h"
 #include "SpriteNode.h"
-#include "../3dx/Node3DX.h"
 
 class cObjectNodeRoot;
 class terUnitBase;
@@ -24,8 +23,6 @@ public:
 	virtual int GetTime();
 	// функции для работы с объектами
 	virtual cObjectNodeRoot* CreateObject(const char* fname,const char *TexturePath=NULL);
-	virtual cObject3dx* CreateObject3dx(const char* fname,const char *TexturePath=NULL);
-	virtual cObject3dx* CreateLogic3dx(const char* fname);
 	// функции для работы с объектами
 	virtual cIUnkClass* CreateSprite(const char* TexFName);
 	virtual cSpriteManager* CreateSpriteManager(const char* TexFName);
@@ -46,14 +43,12 @@ public:
 
 	//Берет размеры по модели
 	virtual cEffect* CreateScaledEffect(EffectKey& el,cObjectNodeRoot* models,bool auto_delete_after_life=false);
-	virtual cEffect* CreateScaledEffect(EffectKey& el,cObject3dx* models,bool auto_delete_after_life=false);
 
 	// функции для работы с полигональным объектом
 	virtual cPlane* CreatePlaneObj();
 
 	virtual cIUnkClass* CreateZPlaneObj(const char* Tex0,const char* Tex1,float k0,float k1,int op,float v0x,float v0y,float v1x,float v1y);
 	virtual class cChaos* CreateChaos(Vect2f size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enable_bump);
-	virtual cIUnkClass* CreateBox(Vect3f size, const char* str_cube);
 	virtual cIUnkClass* CreateSkySpere(const char* str_name, const char* str_texture, int h_size);
 
 	// функции для работы с диспетчером регионов

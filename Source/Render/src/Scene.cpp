@@ -1,4 +1,8 @@
 #include "StdAfxRD.h"
+
+#include <climits>
+#include <typeinfo>
+
 #include "Scene.h"
 #include "TileMap.h"
 #include "ObjNode.h"
@@ -9,16 +13,7 @@
 #include "ObjLibrary.h"
 #include "cZPlane.h"
 #include "CChaos.h"
-
-#include <climits>
 #include "../client/Silicon.h"
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-// non-standard header : https://developercommunity.visualstudio.com/t/msvc-142328019-is-missing-include-typeinfoh/734566
-#include <typeinfo.h>
-#else
-#include <typeinfo>
-#endif
-#include "../3dx/Lib3dx.h"
 
 FILE *gb_fSceneLog=NULL;
 
@@ -430,24 +425,6 @@ cObjectNodeRoot* cScene::CreateObject(const char *fname,const char *TexturePath)
 	return UObj;
 }
 
-cObject3dx* cScene::CreateObject3dx(const char* fname,const char *TexturePath)
-{
-	cStatic3dx *pStatic=pLibrary3dx->GetElement(fname,TexturePath,false);
-	if(pStatic==0) return 0;
-
-	cObject3dx *pObject=new cObject3dx(pStatic);
-	AttachObj(pObject);
-	return pObject;
-}
-
-cObject3dx* cScene::CreateLogic3dx(const char* fname)
-{
-	cStatic3dx *pStatic=pLibrary3dx->GetElement(fname,NULL,true);
-	if(pStatic==0) return 0;
-	cObject3dx *pObject=new cObject3dx(pStatic);
-	return pObject;
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////
 cIUnkClass* cScene::CreateSprite(const char *TexFName)
 {
@@ -490,13 +467,6 @@ cChaos* cScene::CreateChaos(Vect2f size, const char* str_tex0, const char* str_t
 	return p;
 }
 
-cIUnkClass* cScene::CreateBox(Vect3f size, const char* str_cube)
-{
-	CBox* p=new CBox(size,str_cube);
-	AttachObj(p);
-	return p;
-}
-
 cIUnkClass* cScene::CreateSkySpere(const char* str_name, const char* str_texture, int h_size)
 {
 	CSkySpere* p=new CSkySpere(GetObjLibrary(),str_name,str_texture,h_size);
@@ -508,6 +478,7 @@ cPlane* cScene::CreatePlaneObj()
 {
 	cPlane *PlaneObj=new cPlane;
 	AttachObj(PlaneObj);
+    
 	return PlaneObj;
 }
 
@@ -543,13 +514,6 @@ cEffect* cScene::CreateScaledEffect(EffectKey& el,cObjectNodeRoot* models,bool a
 {
 	VISASSERT(models);
 	float scale=models->GetScale().x;
-	return CreateEffect(el,models,scale,auto_delete_after_life);
-}
-
-cEffect* cScene::CreateScaledEffect(EffectKey& el,cObject3dx* models,bool auto_delete_after_life)
-{
-	VISASSERT(models);
-	float scale=models->GetScale();
 	return CreateEffect(el,models,scale,auto_delete_after_life);
 }
 

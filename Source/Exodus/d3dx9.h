@@ -20,12 +20,6 @@ HRESULT WINAPI D3DXLoadSurfaceFromMemory(IDirect3DSurface9 *dst_surface,
                                          DWORD filter, D3DCOLOR color_key);
 HRESULT D3DXCreateTextureFromFileInMemory(IDirect3DDevice9 *device, const void *srcdata, UINT srcdatasize, struct IDirect3DTexture9 **texture);
 
-HRESULT D3DXCreateCubeTextureFromFileA(IDirect3DDevice9 *device,
-                                       const char *srcfile, struct IDirect3DCubeTexture9 **cube);
-
-HRESULT D3DXCreateCubeTextureFromFileInMemory(struct IDirect3DDevice9 *device,
-                                              const void *data, UINT datasize, struct IDirect3DCubeTexture9 **texture);
-
 //Math Methods
 
 #endif //PERIMETER_D3DX9_H

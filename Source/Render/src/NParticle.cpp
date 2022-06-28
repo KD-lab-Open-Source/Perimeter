@@ -1944,7 +1944,6 @@ cEffect::cEffect()
 :cIUnkObjScale(NULL)
 {
 	link.SetParent(this);
-	link3dx.SetParent(this);
 	time=0;
 	auto_delete_after_life=false;
 	particle_rate=1;
@@ -2277,18 +2276,8 @@ void cEffect::LinkToNode(class cObjectNode* node)
 		SetPosition(node->GetGlobalPosition());
 }
 
-void cEffect::LinkToNode(class cObject3dx* object,int inode)
-{
-	link3dx.Link(object,inode);
-	if(object)
-		link3dx.Update();
-}
-
 const MatXf& cEffect::GetCenter3DModel()
 {
-	if(link3dx.IsInitialized())
-		return link3dx.GetRootMatrix();
-
 	if(link.GetNode())
 		return link.GetNode()->GetRootNode()->GetLocalMatrix();
 	return GetGlobalMatrix();
@@ -2307,27 +2296,6 @@ void cEffect::EffectObserverLink::Link(class cObjectNode* node_)
 void cEffect::EffectObserverLink::Update()
 {
 	effect->SetPosition(node->GetGlobalPosition());
-}
-
-void cEffect::EffectObserverLink3dx::Link(class cObject3dx* object_,int inode)
-{
-	if(observer)observer->BreakLink(this);
-	object=object_;
-	node=inode;
-
-	if(object)
-		object->AddLink(this);
-}
-
-const MatXf& cEffect::EffectObserverLink3dx::GetRootMatrix()
-{
-	return object->GetPosition();
-}
-
-void cEffect::EffectObserverLink3dx::Update()
-{
-	const MatXf& mat=object->GetNodePosition(node);
-	effect->SetPosition(mat);
 }
 
 void cEffect::StopAndReleaseAfterEnd()

@@ -145,7 +145,6 @@ public:
 private:
 	int			logic_quant,graph_logic_quant;
 	cObjLibrary				*ObjLibrary;
-	class cLib3dx			*Lib3dx;
 	std::string font_root_directory;
 	std::vector<class cFontInternal*>	fonts;
 	friend class cD3DRender;

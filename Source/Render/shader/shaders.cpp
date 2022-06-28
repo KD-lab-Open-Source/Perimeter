@@ -336,6 +336,3 @@ void VSChaos::SetFog()
 #include "ShadersRadeon9700.inl"
 #include "ShadersPS14.inl"
 #include "ShadersGeforceFX.inl"
-
-#include "ShaderSkin.inl"
-#include "ShaderWater.inl"

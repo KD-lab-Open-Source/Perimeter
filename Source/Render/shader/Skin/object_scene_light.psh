@@ -1,7 +1,0 @@
-#include "../shade.inl"
-ps.1.1
-
-def c0,1,0,0,0
-tex t0   //texture
-mad r0, t0, v0, v1
-//mov r0,v0

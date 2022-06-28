@@ -3,11 +3,7 @@
 #include "ObjLibrary.h"
 #include "Scene.h"
 #include "Font.h"
-#include "../3dx/Lib3dx.h"
 #include "Localization.h"
-
-void Init3dxshader();
-void Done3dxshader();
 
 static void get_string(char*& str,char* s)
 {
@@ -119,7 +115,6 @@ cVisGeneric::cVisGeneric() : cUnknownClass(KIND_UI_VISGENERIC)//: SceneArray(KIN
 	// инициализация глобальных переменых
 	shaders=NULL;
 	ObjLibrary=new cObjLibrary();
-	Lib3dx=new cLib3dx;
 
 	FILE* f=fopen("VisGeneric.cfg","rt");
 	if( !f ) return;
@@ -181,10 +176,8 @@ cVisGeneric::~cVisGeneric()
 	FOR_EACH(effect_library,it)
 		delete (*it);
 
-	Done3dxshader();
 	ReleaseShaders();
 	RELEASE(ObjLibrary); 
-	delete Lib3dx;
 	ClearData();
 	gb_VisGeneric=0;
 	MTDONE(lock_effect_library);
@@ -267,7 +260,6 @@ void cVisGeneric::SetData(cInterfaceRenderDevice *pData)
 	cURenderDevice *IRenderDevice=(cURenderDevice*)pData;
 	VISASSERT(IRenderDevice&&IRenderDevice->GetKind(KIND_UI_RENDERDEVICE));
 	InitShaders();
-	Init3dxshader();
 }
 void cVisGeneric::ClearData()
 { // функция для работы с окном вывода

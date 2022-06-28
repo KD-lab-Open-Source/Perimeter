@@ -33,10 +33,6 @@ SET(Render_SRCS
         src/ObjNode.cpp
         src/ShadowVolume.cpp
         src/NParticle.cpp
-        3dx/Interpolator3dx.cpp
-        3dx/Lib3dx.cpp
-        3dx/Node3DX.cpp
-        3dx/Static3DX.cpp
         src/FileImage.cpp
         src/TexLibrary.cpp
         src/Texture.cpp
