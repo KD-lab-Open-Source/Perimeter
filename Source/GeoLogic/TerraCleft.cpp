@@ -16,8 +16,8 @@ const int cleftNodeBias    = 15;
 const int cleftBreakWidth =  4;
 const int cleftDepthMultipler = 10;
 
-RECT& LineAA(int Xd, int Yd, int Xf, int Yf, RECT& r);
-RECT& geoLine(int xbeg, int ybeg, int sx, int sy, int width, RECT& r);
+sRect& LineAA(int Xd, int Yd, int Xf, int Yf, sRect& r);
+sRect& geoLine(int xbeg, int ybeg, int sx, int sy, int width, sRect& r);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -30,7 +30,7 @@ inline int _xnoise1()
 	return terLogicRND(2*cleftChunkPosBias) - cleftChunkPosBias;
 }
 
-inline void union_rect(RECT& rDst, RECT& r1, RECT& r2)
+inline void union_rect(sRect& rDst, sRect& r1, sRect& r2)
 {
 	rDst.left  = (std::min)(r1.left, r2.left);
 	rDst.right = (std::max)(r1.right, r2.right);
@@ -58,7 +58,7 @@ inline void update_map(int left, int right, int top, int bottom)
 		}
 	}
 }
-inline void update_map(const RECT& r)
+inline void update_map(const sRect& r)
 {
 //	update_map(r.left, r.right, r.top, r.bottom);
 
@@ -114,7 +114,7 @@ CTerraCleft& CTerraCleft::attach(CTerraCleft& cleft)
 	return cleft;
 }
 
-int CTerraCleft::quant(RECT& r)
+int CTerraCleft::quant(sRect& r)
 {
 	if(m_points.size() >= cleftChunkCount)
 		return 0;
@@ -124,16 +124,16 @@ int CTerraCleft::quant(RECT& r)
 	Vect2i& b = m_points.back();
 
 
-	RECT r2;
+	sRect r2;
 	if(a != b)
 		union_rect(r, r, LineAA(a.x, a.y, b.x, b.y, r2));
 
 	return 1;
 }
 
-int CTerraCleft::quant_g(RECT& r)
+int CTerraCleft::quant_g(sRect& r)
 {
-	RECT r2;
+	sRect r2;
 
 	width+=(1<<11)+(1<<10)+(1<<12) + 1;
 
@@ -285,7 +285,7 @@ void CTerraCleftSystem::init(int type, const Vect2i& pos1, const Vect2i& pos2)
 
 int CTerraCleftSystem::quant()
 {
-	RECT rUpdate = {INT_MAX, INT_MAX, -INT_MAX, -INT_MAX};
+	sRect rUpdate = {INT_MAX, INT_MAX, -INT_MAX, -INT_MAX};
 	int nstops;
 
 	CleftList::iterator it;

@@ -93,7 +93,7 @@ public:
 
 	void changeOwner(terUnitBase* unit, terPlayer* player);
 
-	void updateClusterColumn(const struct sRect& rect);
+	void updateClusterColumn(const struct sRectS& rect);
 	const Column& clusterColumn() const { return cluster_column_; }
 
 	int quantCounter() const { return quant_counter_; }

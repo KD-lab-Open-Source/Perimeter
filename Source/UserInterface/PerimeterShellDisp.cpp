@@ -2044,15 +2044,15 @@ void CShellIconManager::quant(float dTime)
 	ProcessDynQueue(CBCODE_QUANT);
 }
 
-inline int _is_track(RECT& rc)
+inline int _is_track(sRect& rc)
 {
 	return rc.left || rc.top || rc.right || rc.bottom;
 }
-inline int rect_width(RECT& rc)
+inline int rect_width(sRect& rc)
 {
 	return rc.right - rc.left;
 }
-inline int rect_height(RECT& rc)
+inline int rect_height(sRect& rc)
 {
 	return rc.bottom - rc.top;
 }

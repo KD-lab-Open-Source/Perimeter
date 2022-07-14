@@ -2,7 +2,9 @@
 #include "FileImage.h"
 #include "files/files.h"
 
+#ifdef PERIMETER_D3D9
 #include "ddraw.h"
+#endif
 
 #ifdef TEXTURE_NOTFREE
 struct BeginNF
@@ -332,6 +334,7 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
 
 bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 {
+#ifdef PERIMETER_D3D9
 	{
 		std::vector<IDirect3DTexture9*>::iterator it;
 		FOR_EACH(Texture->BitMap,it)
@@ -340,12 +343,14 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		}
 		Texture->BitMap.clear();
 	}
+#endif
 		
 	bool bump=Texture->GetAttribute(MAT_BUMP)?true:false;
 	bool pos_bump=gb_VisGeneric->PossibilityBump();
 
 	if(bump && !pos_bump)
 	{
+#ifdef PERIMETER_D3D9
 		//Эта текстура никогда не должна использоваться, make small texture.
 		cTexture* pMini=GetElement("RESOURCE\\Models\\Main\\TEXTURES\\028r.tga");
 		if(pMini && !pMini->BitMap.empty() && pMini->BitMap.front())
@@ -354,6 +359,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 			Texture->BitMap[0]->AddRef();
 		}
 		RELEASE(pMini);
+#endif
 		return true;
 	}
 /*
@@ -528,6 +534,7 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		}
 	} auto_delete(buf);
 
+#ifdef PERIMETER_D3D9
 	DDSURFACEDESC2* ddsd=(DDSURFACEDESC2*)(1+(uint32_t*)buf);
 	if(ddsd->ddsCaps.dwCaps2&DDSCAPS2_CUBEMAP) {
         Error(Texture);
@@ -550,4 +557,7 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		Texture->BitMap.push_back(pTexture);
 		return true;
 	}
+#else
+    return false;
+#endif
 }

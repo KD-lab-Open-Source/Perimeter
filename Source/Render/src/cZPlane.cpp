@@ -115,28 +115,28 @@ void cZPlane::Draw(cCamera *DrawNode)
 	{
 		float a=Frame0s.GetPhase();
 
-		D3DXMATRIX mat;
-		memset(mat,0,sizeof(mat));
-		mat._11=mat._22=mat._33=mat._44=1;
+		Mat4f mat;
+		memset(&mat,0,sizeof(mat));
+		mat.xx=mat.yy=mat.zz=mat.ww=1;
 
-		mat._31 = sfmod(speed0x*a,s0);
-		mat._32 = sfmod(speed0y*a,s0);
+		mat.zx = sfmod(speed0x*a,s0);
+		mat.zy = sfmod(speed0y*a,s0);
 		
-		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE0,&mat));
+		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE0, reinterpret_cast<const D3DMATRIX*>(&mat)));
 		rd->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 	}
 
 	{
 		float a=Frame1s.GetPhase();
 
-		D3DXMATRIX mat;
-		memset(mat,0,sizeof(mat));
-		mat._11=mat._22=mat._33=mat._44=1;
+		Mat4f mat;
+		memset(&mat,0,sizeof(mat));
+        mat.xx=mat.yy=mat.zz=mat.ww=1;
 
-		mat._31 = sfmod(speed1x*a,s0);
-		mat._32 = sfmod(speed1y*a,s0);
+		mat.zx = sfmod(speed1x*a,s0);
+		mat.zy = sfmod(speed1y*a,s0);
 		
-		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE1,&mat));
+		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE1, reinterpret_cast<const D3DMATRIX*>(&mat)));
 		rd->SetTextureStageState( 1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 	}
 

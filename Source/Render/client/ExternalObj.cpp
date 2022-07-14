@@ -23,8 +23,8 @@ void cExternalObj::PreDraw(cCamera *DrawNode)
 }
 void cExternalObj::Draw(cCamera *DrawNode)
 {
+#ifdef PERIMETER_D3D9
 	cInterfaceRenderDevice *Render=DrawNode->GetRenderDevice();
-	extern void terExternalShowCall(int ObjType,void *pointer,int TestSizePerByte);
 
 	Render->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
 
@@ -39,9 +39,12 @@ void cExternalObj::Draw(cCamera *DrawNode)
 	uint32_t zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
 	if(sort_pass)
 		gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+#endif
 
 	func();
-	
+
+#ifdef PERIMETER_D3D9
 	gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, zwrite );
 	Render->SetRenderState(RS_CULLMODE,-1);
+#endif
 }

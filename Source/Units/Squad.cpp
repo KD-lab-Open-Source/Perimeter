@@ -1494,7 +1494,7 @@ void terUnitSquad::repositionToAttack(AttackPoint& attackPoint, bool repeated)
 	else{
 		float min_radius = currentAttribute()->fireRadiusMin();
 		float max_radius = currentAttribute()->fireRadius();// - formationRadius()*2*clamp(position_generator.numLines() - 1, 0.5, 100);
-		xassert_s(min_radius < max_radius, (string("Недостаточный радиус атаки у ") + currentAttribute()->internalName()).c_str());
+		xassert_s(min_radius < max_radius, (std::string("Insufficient attack range ") + currentAttribute()->internalName(false)).c_str());
 
 		if(dist < min_radius)
 			optimalRadius_ = min_radius*(1 + squad_reposition_to_attack_radius_tolerance);

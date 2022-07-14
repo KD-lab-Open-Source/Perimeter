@@ -78,7 +78,7 @@ class cTileMap : public cUnkObj
 	float debug_fade_interval;
 	std::list<DebugRect> debug_rect;
 public:
-	CMatrix			matLightMap;
+	Mat4f			matLightMap;
 
 	cTileMap(cScene* pScene,TerraInterface* terra);
 	virtual ~cTileMap();

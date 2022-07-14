@@ -22,14 +22,6 @@ enum
 
 inline uint32_t F2DW( float f ) { return *((uint32_t*)&f); }
 
-FORCEINLINE void cD3DRender_SetMatrix(D3DXMATRIX & mat,const MatXf &m)
-{
-	mat._11=m.rot()[0][0],	mat._12=m.rot()[1][0],	mat._13=m.rot()[2][0],	mat._14=0;
-	mat._21=m.rot()[0][1],	mat._22=m.rot()[1][1],	mat._23=m.rot()[2][1],	mat._24=0;
-	mat._31=m.rot()[0][2],	mat._32=m.rot()[1][2],	mat._33=m.rot()[2][2],	mat._34=0;
-	mat._41=m.trans().x,	mat._42=m.trans().y,	mat._43=m.trans().z,	mat._44=1;
-}
-
 #include "PoolManager.h"
 #include "OcclusionQuery.h"
 
@@ -218,9 +210,9 @@ public:
     // //// cInterfaceRenderDevice impls end ////
     
 	FORCEINLINE void SetMatrix(int type, const MatXf &m) {
-		D3DXMATRIX mat;
-		cD3DRender_SetMatrix(mat,m);
-		RDCALL(lpD3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)type,&mat));
+		Mat4f mat;
+        Mat4fSetTransposedMatXf(mat, m);
+		RDCALL(lpD3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)type, reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
 
 	void SetAdvance();//Вызывать при изменении Option_ShadowType Option_EnableBump
@@ -354,17 +346,18 @@ public:
     
 	void SetBlendState(eBlendMode blend);
 
-	void SetVertexShaderConstant(int StartRegister,const D3DXMATRIX *pMat);
-	void SetVertexShaderConstant(int StartRegister,const D3DXVECTOR4 *pVect);
-	void SetPixelShaderConstant(int StartRegister,const D3DXVECTOR4 *pVect);
+	void SetVertexShaderConstant(int StartRegister,const Mat4f *pMat);
+	void SetVertexShaderConstant(int StartRegister,const Vect4f *pVect);
+	void SetPixelShaderConstant(int StartRegister,const Vect4f *pVect);
 
-	inline void SetTextureTransform(int Stage,D3DXMATRIX *matTexSpace)
+	inline void SetTextureTransform(int Stage,Mat4f *matTexSpace)
 	{
 		float det=1;
-		D3DXMATRIX mat,matViewInv;	// matViewWorld=matWorld*matView=matView, because matWorld==ID
-		D3DXMatrixInverse(&matViewInv,&det,&DrawNode->matView);
-		D3DXMatrixMultiply(&mat,&matViewInv,matTexSpace);
-		RDCALL(lpD3DDevice->SetTransform( D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0+Stage), &mat ));
+		Mat4f mat,matViewInv;	// matViewWorld=matWorld*matView=matView, because matWorld==ID
+		Mat4fInverse(&matViewInv,&det,&DrawNode->matView);
+        mat = matViewInv * *matTexSpace;
+		RDCALL(lpD3DDevice->SetTransform(D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0+Stage),
+                                         reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
    
 	inline void DrawPrimitiveUP(D3DPRIMITIVETYPE Type, uint32_t Count, void* pVertex, uint32_t Size)

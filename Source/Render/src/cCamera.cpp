@@ -10,17 +10,23 @@
 class CameraShader
 {
 public:
+#ifdef PERIMETER_D3D9
 	PSShowMap* pShowMap;
+#endif
 
 	CameraShader()
 	{
+#ifdef PERIMETER_D3D9
 		pShowMap=new PSShowMap;
 		pShowMap->Restore();
+#endif
 	}
 
 	~CameraShader()
 	{
+#ifdef PERIMETER_D3D9
 		if(pShowMap)delete pShowMap;
+#endif
 	}
 
 };
@@ -41,7 +47,6 @@ void cVisGeneric::ReleaseShaders()
 	}
 }
 
-void GetStack(std::string& out);
 cCamera::cCamera(cScene *UClass) : cUnknownClass(KIND_DRAWNODE)
 {
 	Identity(GlobalMatrix);
@@ -183,7 +188,9 @@ void cCamera::DrawScene()
 
 				}
 
+#ifdef PERIMETER_D3D9
 				RenderDevice->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
+#endif
 			}
 
 			if(nType==SCENENODE_OBJECTSORT_NOZ)
@@ -209,6 +216,7 @@ void cCamera::DrawScene()
 				{
 					std::vector<cIUnkClass*>::iterator it;
 
+#ifdef PERIMETER_D3D9
 					uint32_t zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 					gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, D3DCMP_GREATER);
 					uint32_t zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
@@ -216,15 +224,18 @@ void cCamera::DrawScene()
 					uint32_t fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
 					gb_RenderDevice3D->SetRenderState(D3DRS_FOGENABLE,FALSE);
 					gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
+#endif
 			
 					FOR_EACH(obj,it)
 					{
 						(*it)->Draw(this);
 					}
 
+#ifdef PERIMETER_D3D9
 					gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, zfunc );
 					gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, zwrite );
 					gb_RenderDevice3D->SetRenderState( D3DRS_FOGENABLE,fogenable);
+#endif
 				}
 
 				RenderDevice->SetRenderState( RS_CULLMODE, -1 );
@@ -244,7 +255,9 @@ void cCamera::DrawScene()
 	if(!Parent)
 	if(Option_DebugShowShadowVolume)
 	{
+#ifdef PERIMETER_D3D9
 		RenderDevice->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
+#endif
 		RenderDevice->SetNoMaterial(ALPHA_BLEND);
 		
 		for(int i=0;i<ShadowTestArray.size();i++)
@@ -343,23 +356,23 @@ void cCamera::Update()
 		if(GetAttribute(ATTRCAMERA_PERSPECTIVE))
 		{
 			float zc=zPlane.y/(zPlane.y-zPlane.x);
-			matProj._11=2*Focus.x*ScaleViewPort.x/(Clip.xmax()-Clip.xmin());
-			matProj._22=2*Focus.y*ScaleViewPort.y/(Clip.ymax()-Clip.ymin());
-			matProj._33=zc;
-			matProj._43=-zc*zPlane.x;
+			matProj.xx=2*Focus.x*ScaleViewPort.x/(Clip.xmax()-Clip.xmin());
+			matProj.yy=2*Focus.y*ScaleViewPort.y/(Clip.ymax()-Clip.ymin());
+			matProj.zz=zc;
+			matProj.wz=-zc*zPlane.x;
 
-			matProj._31=0;
-			matProj._32=0;
-			matProj._34=1;
+			matProj.zx=0;
+			matProj.zy=0;
+			matProj.zw=1;
 		}else
 		{
-			matProj._11=2*Focus.x*ScaleViewPort.x/(Clip.xmax()-Clip.xmin());
-			matProj._22=2*Focus.y*ScaleViewPort.y/(Clip.ymax()-Clip.ymin());
-			matProj._33=1/(zPlane.y-zPlane.x);
-			matProj._43=zPlane.x/(zPlane.x-zPlane.y);
-			matProj._41=0;
-			matProj._42=0;
-			matProj._44=1;
+			matProj.xx=2*Focus.x*ScaleViewPort.x/(Clip.xmax()-Clip.xmin());
+			matProj.yy=2*Focus.y*ScaleViewPort.y/(Clip.ymax()-Clip.ymin());
+			matProj.zz=1/(zPlane.y-zPlane.x);
+			matProj.wz=zPlane.x/(zPlane.x-zPlane.y);
+			matProj.wx=0;
+			matProj.wy=0;
+			matProj.ww=1;
 		}
 	}
 
@@ -369,14 +382,10 @@ void cCamera::Update()
 	vp.Height = xm::round((GetCenterY() + Clip.ymax()) * RenderSize.y) - vp.Y;
 	vp.MinZ=0; vp.MaxZ=1;
 
-	matView.set( 
-		GetMatrix().rot()[0][0], GetMatrix().rot()[1][0], GetMatrix().rot()[2][0], 0,
-		GetMatrix().rot()[0][1], GetMatrix().rot()[1][1], GetMatrix().rot()[2][1], 0,
-		GetMatrix().rot()[0][2], GetMatrix().rot()[1][2], GetMatrix().rot()[2][2], 0,
-		GetMatrix().trans().x,   GetMatrix().trans().y,   GetMatrix().trans().z,   1 );
+    Mat4fSetTransposedMatXf(matView, GetMatrix());
 	matViewProj = matView * matProj;
 
-	CMatrix matScr( 
+	Mat4f matScr( 
 		+vp.Width/2,			0,					0,				0,
 		0,					-vp.Height/2,			0,				0,
 		0,						0,				vp.MaxZ-vp.MinZ,	0,
@@ -592,7 +601,7 @@ void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,Vect3f *pv,Vect3f *pe)
 	if(pw==0) return;
 	if(pv==0) pv=&pv0;
 	if(pe==0) pe=&pe0;
-	matViewProjScr.Convert( *pw, *pv, *pe );
+    Mat4fConvert(matViewProjScr, *pw, *pv, *pe);
 }
 
 void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f *pe,int *ScreenRadius)
@@ -600,7 +609,7 @@ void cCamera::ConvertorWorldToViewPort(const Vect3f *pw,float WorldRadius,Vect3f
 	Vect3f pv,pe0;
 	if(pw==0) return;
 	if(pe==0) pe=&pe0;
-	matViewProjScr.Convert( *pw, pv, *pe );
+    Mat4fConvert(matViewProjScr,*pw, pv, *pe );
 	if(ScreenRadius) *ScreenRadius= xm::round(WorldRadius * GetFocusViewPort().x / pv.z);
 }
 
@@ -1411,21 +1420,23 @@ void cCameraPlanarLight::DrawScene()
 	RenderDevice->SetGlobalLight(NULL);
 
 	RenderDevice->SetRenderState( RS_ZWRITEENABLE, FALSE );
+#ifdef PERIMETER_D3D9
 	uint32_t ZFUNC=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 	gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, CMP_ALWAYS );
 
 
     uint32_t fogenable = 0;
-#ifdef PERIMETER_D3D9
     cD3DRender* d3drender = dynamic_cast<cD3DRender*>(GetRenderDevice());
     if (d3drender) fogenable = d3drender->GetRenderState(D3DRS_FOGENABLE);
-#endif
 	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
+#endif
 	
 	RenderDevice->Draw(GetScene());
 
+#ifdef PERIMETER_D3D9
 	gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, ZFUNC );
 	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
+#endif
 }
 
 void TempDrawShadow(cCamera* camera)
@@ -1433,6 +1444,7 @@ void TempDrawShadow(cCamera* camera)
 	if(!camera->GetAttribute(ATTRCAMERA_SHADOWMAP))
 		return;
 
+#ifdef PERIMETER_D3D9
 	gb_RenderDevice3D->SetPixelShader(NULL);
 	gb_RenderDevice3D->SetVertexShader(NULL);
 	gb_RenderDevice3D->SetFVF(sVertexXYZWD::fmt);
@@ -1459,4 +1471,5 @@ void TempDrawShadow(cCamera* camera)
 
 	gb_RenderDevice3D->SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
 	gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL );
+#endif
 }

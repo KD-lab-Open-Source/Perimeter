@@ -1,8 +1,6 @@
 #ifndef PERIMETER_D3DX9_H
 #define PERIMETER_D3DX9_H
 
-#include "d3dx9math.h"
-
 enum D3DXIMAGE_FILEFORMAT {
     D3DXIFF_BMP         = 0
 };

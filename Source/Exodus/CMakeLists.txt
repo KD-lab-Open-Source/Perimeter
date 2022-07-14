@@ -14,7 +14,6 @@ target_compile_options(Exodus PUBLIC ${PERIMETER_COMPILE_OPTIONS})
 
 SET(ExodusD3D9_SRCS
         d3dx9.cpp
-        d3dx9math.cpp
 )
 
 ADD_LIBRARY(ExodusD3D9 STATIC ${ExodusD3D9_SRCS})

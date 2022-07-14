@@ -30,7 +30,7 @@ void sWinVideo::SetWin(void *hWnd,int x,int y,int xsize,int ysize)
 		pVideoWindow->put_Owner((OAHWND)hWnd);
 		pVideoWindow->put_WindowStyle(WS_CHILD|WS_CLIPSIBLINGS);
 
-		RECT grc={x,y,xsize,ysize};
+		sRect grc={x, y, xsize, ysize};
 		if(grc.right==0||grc.bottom==0) GetClientRect((HWND)hWnd, &grc);
 		pVideoWindow->SetWindowPosition(grc.left,grc.top,grc.right,grc.bottom);
 	}
@@ -237,7 +237,7 @@ bool sVideoWrite::Open(const char* file_name,int sizex,int sizey)
 
 bool sVideoWrite::WriteFrame()
 {
-	RECT rc;
+	sRect rc;
 	SetRect(&rc, 0, 0, size.x, size.y); 
 
 	IDirect3DSurface9 *pDestSurface=NULL;

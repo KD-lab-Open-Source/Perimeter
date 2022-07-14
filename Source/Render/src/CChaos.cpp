@@ -221,24 +221,24 @@ void cChaos::Draw(cCamera *DrawNode)
 		rd->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, 0);
 		rd->SetTextureStageState( 1, D3DTSS_TEXCOORDINDEX, 1);
 		float umin,vmin;
-		D3DXMATRIX mat;
+		Mat4f mat;
 
 		umin=sfmod(time*stime_tex0.x*uvmul,1.0f);
 		vmin=sfmod(time*stime_tex0.y*uvmul,1.0f);
-		memset(mat,0,sizeof(mat));
-		mat._11=mat._22=mat._33=mat._44=1;
-		mat._31 = umin;
-		mat._32 = vmin;
-		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE0,&mat));
+		memset(&mat,0,sizeof(mat));
+        mat.xx=mat.yy=mat.zz=mat.ww=1;
+		mat.zx = umin;
+		mat.zy = vmin;
+		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE0, reinterpret_cast<const D3DMATRIX*>(&mat)));
 		rd->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 
 		umin=sfmod(time*stime_tex1.x*uvmul,1.0f);
 		vmin=sfmod(time*stime_tex1.y*uvmul,1.0f);
-		memset(mat,0,sizeof(mat));
-		mat._11=mat._22=mat._33=mat._44=1;
-		mat._31 = umin;
-		mat._32 = vmin;
-		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE1,&mat));
+		memset(&mat,0,sizeof(mat));
+        mat.xx=mat.yy=mat.zz=mat.ww=1;
+		mat.zx = umin;
+		mat.zy = vmin;
+		RDCALL(rd->lpD3DDevice->SetTransform(D3DTS_TEXTURE1, reinterpret_cast<const D3DMATRIX*>(&mat)));
 		rd->SetTextureStageState( 1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 
 	}

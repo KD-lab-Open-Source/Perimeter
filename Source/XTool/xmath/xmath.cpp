@@ -79,6 +79,15 @@ const Mat3d Mat3d::ID   (Vect3d(1, 1, 1), Vect3d::ZERO);
 const Mat3f Mat3f::ZERO (Vect3f::ZERO, Vect3f::ZERO);
 const Mat3f Mat3f::ID   (Vect3f(1, 1, 1), Vect3f::ZERO);
 
+const Mat4f Mat4f::ZERO (0, 0, 0, 0,
+                         0, 0, 0, 0,
+                         0, 0, 0, 0,
+                         0, 0, 0, 0);
+const Mat4f Mat4f::ID   (1, 0, 0, 0,
+                         0, 1, 0, 0,
+                         0, 0, 1, 0,
+                         0, 0, 0, 1);
+
 const MatXd MatXd::ID   (Mat3d::ID, Vect3d::ZERO);
 
 const MatXf MatXf::ID   (Mat3f::ID, Vect3f::ZERO);

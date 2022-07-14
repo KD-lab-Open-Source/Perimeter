@@ -278,7 +278,7 @@ void terUniverse::Quant()
 		}
 	changeOwnerList.clear();
 
-	std::list<sRect>::iterator i_area;
+	std::list<sRectS>::iterator i_area;
 	FOR_EACH(vMap.changedAreas,i_area){
 		terMapUnitUpdateOperator unit_op((int)(i_area->x),(int)(i_area->y),(int)(i_area->x + i_area->dx),(int)(i_area->y + i_area->dy));
 		UnitGrid.Scan(unit_op.x0, unit_op.y0, unit_op.x1, unit_op.y1, unit_op);
@@ -301,7 +301,7 @@ void terUniverse::Quant()
 	clearLinkAndDelete();
 
 	cluster_column_.setUnchanged();
-	std::list<sRect>::iterator rc;
+	std::list<sRectS>::iterator rc;
 	FOR_EACH(vMap.changedAreas,rc){
 		ai_tile_map->UpdateRect(rc->x,rc->y,rc->dx,rc->dy);
 		updateClusterColumn(*rc);
@@ -1021,7 +1021,7 @@ bool terUniverse::universalLoad(MissionDescription& missionToLoad, SavePrm& data
 
     ai_tile_map->InitialUpdate();
     cluster_column_.setUnchanged();
-    updateClusterColumn(sRect(0, 0, vMap.H_SIZE, vMap.V_SIZE));
+    updateClusterColumn(sRectS(0, 0, vMap.H_SIZE, vMap.V_SIZE));
 
     //-----------------
     vMap.WorldRender();
@@ -1433,7 +1433,7 @@ float GetRealHeight(float x,float y,float r)
 	return op.Height;
 }
 
-void terUniverse::updateClusterColumn(const sRect& rect)
+void terUniverse::updateClusterColumn(const sRectS& rect)
 {
 	int x0 = rect.x;
 	int y0 = rect.y;

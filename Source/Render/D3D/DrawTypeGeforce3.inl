@@ -250,10 +250,10 @@ void DrawTypeGeforce3::SetMaterial(float Phase,cTexture *Texture0,cTexture *Text
 
 	if(Data->mat&MAT_BUMP)
 	{
-		D3DXVECTOR4 specular(Data->Specular.r,Data->Specular.g,Data->Specular.b,Data->Power);
-		gb_RenderDevice3D->SetPixelShaderConstant(4,(D3DXVECTOR4*)&Data->Ambient);
-		gb_RenderDevice3D->SetPixelShaderConstant(5,(D3DXVECTOR4*)&Data->Diffuse);
-		gb_RenderDevice3D->SetPixelShaderConstant(6,&specular);
+		Vect4f specular(Data->Specular.r,Data->Specular.g,Data->Specular.b,Data->Power);
+		gb_RenderDevice3D->SetPixelShaderConstant(4, reinterpret_cast<const Vect4f*>(&Data->Ambient));
+		gb_RenderDevice3D->SetPixelShaderConstant(5, reinterpret_cast<const Vect4f*>(&Data->Diffuse));
+		gb_RenderDevice3D->SetPixelShaderConstant(6, &specular);
 	}
 
 	bool is_bump=IsBump(Data);
@@ -319,7 +319,7 @@ void DrawTypeGeforce3::DeleteShadowTexture()
 
 void DrawTypeGeforce3::SetTileColor(sColor4f c)
 {
-	D3DXVECTOR4 cf(c.r,c.g,c.b,c.a);
+	Vect4f cf(c.r,c.g,c.b,c.a);
 	gb_RenderDevice3D->SetPixelShaderConstant(2,&cf);
 }
 

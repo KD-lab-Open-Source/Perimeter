@@ -209,7 +209,7 @@ void BaseTEDrawer::DrawTrigger(TriggerEditorView* source, CDC* pdc,
 	else
 		oldbr = pdc->SelectObject(defaultTriggerBrush_);
 
-	POINT const ellipce = {6,6};
+	sPoint const ellipce = {6, 6};
 	pdc->RoundRect(&r,ellipce);
 
 	int idef = source->scaleX(RECT_INCREASE);
@@ -289,9 +289,9 @@ void BaseTEDrawer::DrawLink(TriggerEditorView* source, HDC dc, CPoint pf,
 	}
 }
 
-void BaseTEDrawer::DrawTriggerLinks(TriggerEditorView* source, 
-									CDC* pdc, 
-									RECT const& rcEle, 
+void BaseTEDrawer::DrawTriggerLinks(TriggerEditorView* source,
+									CDC* pdc,
+									sRect const& rcEle,
 									Trigger const& trigger) const
 {
 	CPoint center = te_h::get_center(rcEle);

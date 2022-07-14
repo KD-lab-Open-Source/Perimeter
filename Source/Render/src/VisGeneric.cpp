@@ -242,8 +242,10 @@ void cVisGeneric::SetShadowType(eShadowType p,int shadow_size)
 	Option_DrawMeshShadow=shadow_size;
 	CalcIsShadowMap();
 
+#ifdef PERIMETER_D3D9
 	if(gb_RenderDevice3D)
 		gb_RenderDevice3D->SetAdvance();
+#endif
 }
 
 
@@ -607,6 +609,7 @@ bool cVisGeneric::IsEnablePointLight()
 
 cTexture* cVisGeneric::CreateTextureScreen()
 {
+#ifdef PERIMETER_D3D9
 	LPDIRECT3DDEVICE9 device=gb_RenderDevice3D->lpD3DDevice;
 	HRESULT hr;
 	int dx=gb_RenderDevice3D->GetSizeX();
@@ -667,6 +670,9 @@ cTexture* cVisGeneric::CreateTextureScreen()
 	RELEASE(sys_surface);
 
 	return pTextureBackground;
+#else
+    return nullptr;
+#endif
 }
 
 void cVisGeneric::SetGlobalParticleRate(float r)
@@ -785,7 +791,9 @@ MTTexObjAutoLock::MTTexObjAutoLock()
 void cVisGeneric::SetShadowHint(int hint)
 {
 	Option_ShadowHint=hint;
+#ifdef PERIMETER_D3D9
 	gb_RenderDevice3D->RestoreShader();
+#endif
 }
 
 int cVisGeneric::GetShadowHint()

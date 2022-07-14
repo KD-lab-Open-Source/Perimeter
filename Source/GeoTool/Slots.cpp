@@ -75,7 +75,7 @@ void CSlots::init(int btnCount) {
 
 CSlotButton* CSlots::addNewButton() {
 	buttonCount++;
-	RECT wndRect;
+	sRect wndRect;
 	GetWindowRect(&wndRect);
 	wndRect.right = 
 		  wndRect.left

@@ -140,9 +140,9 @@ int TEFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	if (!mainToolBar_.CreateEx(this, TBSTYLE_FLAT, WS_CHILD /*| WS_VISIBLE */| CBRS_TOP
-		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC, 
-		CRect(0, 0, 0, 0), IDR_TE_MAIN_TOOLBAR) ||
-		!mainToolBar_.LoadToolBar(IDR_TE_MAIN_TOOLBAR))
+		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
+                               sRect(0, 0, 0, 0), IDR_TE_MAIN_TOOLBAR) ||
+        !mainToolBar_.LoadToolBar(IDR_TE_MAIN_TOOLBAR))
 	{
 		TRACE0("Failed to create main toolbar\n");
 		return -1;      // fail to create
@@ -244,7 +244,7 @@ void TEFrame::updateViewSize()
 {
 	ASSERT(IsWindow(m_hWnd));
 	ASSERT(triggerEditorView_);
-	CRect r;
+	sRect r;
 	GetClientRect(&r);
 	triggerEditorView_->MoveWindow(r);
 }

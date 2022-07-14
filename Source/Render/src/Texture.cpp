@@ -32,7 +32,7 @@ uint8_t* cTexture::LockTexture(int& Pitch)
 
 uint8_t* cTexture::LockTexture(int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size)
 {
-	return static_cast<uint8_t*>(gb_RenderDevice3D->LockTexture(this, Pitch, lock_min, lock_size));
+	return static_cast<uint8_t*>(gb_RenderDevice->LockTexture(this, Pitch, lock_min, lock_size));
 }
 
 void cTexture::UnlockTexture()

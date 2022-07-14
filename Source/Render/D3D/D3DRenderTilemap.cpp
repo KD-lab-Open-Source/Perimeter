@@ -882,13 +882,12 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 		cTexture* pShadowMap=pShadowMapCamera->GetRenderTarget();
 		int width=pShadowMap->GetWidth();
 		float tOffs = 0;//(0.5f / width);
-		D3DXMATRIX matTexAdj(0.5f,    0.0f,        0.0f,        0.0f,
-							 0.0f,   -0.5f,        0.0f,        0.0f,
-							 0.0f,    0.0f,        0.0f,        0.0f,
-						   0.5f+tOffs,0.5f +tOffs, 1.0f,        1.0f);
+		Mat4f matTexAdj(0.5f,    0.0f,        0.0f,        0.0f,
+						0.0f,   -0.5f,        0.0f,        0.0f,
+						0.0f,    0.0f,        0.0f,        0.0f,
+						0.5f+tOffs,0.5f +tOffs, 1.0f,        1.0f);
 
-		D3DXMATRIX mat;
-		D3DXMatrixMultiply(&mat,&pShadowMapCamera->matViewProj,&matTexAdj);
+		Mat4f mat = pShadowMapCamera->matViewProj * matTexAdj;
 		
 		// set texture coord 1
 		gb_RenderDevice3D->SetTextureTransform(1, &mat);

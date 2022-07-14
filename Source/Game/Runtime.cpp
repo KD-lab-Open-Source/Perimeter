@@ -200,7 +200,7 @@ void InternalErrorHandler()
         SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
     }
 #ifndef _FINAL_VERSION_
-    RestoreGDI();
+    RestoreGDI(); //TODO is this necessary anymore?
 	if(universe()) universe()->allSavePlayReel();
 #endif
 }
@@ -1087,9 +1087,6 @@ void app_event_poll() {
             }
             case SDL_WINDOWEVENT: {
                 switch (event.window.event) {
-                    case SDL_WINDOWEVENT_SHOWN: {
-                        break;
-                    }
                     case SDL_WINDOWEVENT_RESIZED:
                     case SDL_WINDOWEVENT_SIZE_CHANGED: {
                         if (0 <= lastWindowResize) {
@@ -1120,9 +1117,23 @@ void app_event_poll() {
                         closing = true;
                         break;
                     }
+                    case SDL_WINDOWEVENT_TAKE_FOCUS:
+                    case SDL_WINDOWEVENT_ENTER:
+                    case SDL_WINDOWEVENT_LEAVE:
+                    case SDL_WINDOWEVENT_EXPOSED:
+                    case SDL_WINDOWEVENT_SHOWN:
+                    case SDL_WINDOWEVENT_HIDDEN: {
+                        break;
+                    }
                     default:
                         break;
                 }
+                break;
+            }
+            case SDL_KEYUP:
+            case SDL_KEYDOWN:
+            case SDL_MOUSEBUTTONUP:
+            case SDL_MOUSEMOTION: {
                 break;
             }
             case SDL_QUIT: {
@@ -1137,10 +1148,15 @@ void app_event_poll() {
         if (closing) {
             if (gameShell) {
                 if (gameShell->GameActive && !isShiftPressed() && terRenderDevice->GetRenderSelection() != DEVICE_HEADLESS) {
+#ifdef PERIMETER_DEBUG
+                    //Nobody got time for this
+                    gameShell->terminate();
+#else
                     //When game is running we want to gracefully shutdown the game by showing main menu
                     sKey k(VK_ESCAPE, true);
                     gameShell->KeyPressed(k);
                     gameShell->KeyUnpressed(k);
+#endif
                 } else {
                     //Terminate it
                     gameShell->terminate();

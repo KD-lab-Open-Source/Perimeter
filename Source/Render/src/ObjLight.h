@@ -11,7 +11,9 @@ class cObjLight : public cObjectNode
 
 	double fade;
 	double prev_time;
+#ifdef PERIMETER_D3D9
 	cOcclusionQuery occlusion;
+#endif
 public:
 	cObjLight();
 	virtual ~cObjLight();

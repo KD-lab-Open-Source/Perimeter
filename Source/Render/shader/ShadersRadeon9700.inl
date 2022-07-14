@@ -42,7 +42,7 @@ void VS9700ObjectSceneLight::GetHandle()
 	VAR_HANDLE(vLightDirection);
 }
 
-void VS9700ObjectSceneLight::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
+void VS9700ObjectSceneLight::Select(const Mat4f* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	if(light)
 	{
@@ -58,16 +58,16 @@ void VS9700ObjectSceneLight::Select(const D3DXMATRIX* matlight,float shadow_map_
 
 void VS9700ObjectSceneLight::SetMaterial(sDataRenderMaterial *Data)
 {
-	SetVector(vAmbient,(D3DXVECTOR4*)&Data->Ambient);
-	SetVector(vDiffuse,(D3DXVECTOR4*)&Data->Diffuse);
-	SetVector(vSpecular,(D3DXVECTOR4*)&Data->Specular);
+	SetVector(vAmbient, reinterpret_cast<const Vect4f*>(&Data->Ambient));
+	SetVector(vDiffuse, reinterpret_cast<const Vect4f*>(&Data->Diffuse));
+	SetVector(vSpecular, reinterpret_cast<const Vect4f*>(&Data->Specular));
 	SetFloat(fSpecularPower,Data->Power);
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    Vect4f cam(p.x,p.y,p.z,0);
     SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    Vect4f light(l.x,l.y,l.z,0);
     SetVector(vLightDirection,&light);
 }
 
@@ -86,7 +86,7 @@ void VS9700ObjectSceneLight2::GetHandle()
 
 void VS9700ObjectSceneLight2::SetTextureTransform(MatXf& m)
 {
-	D3DXVECTOR4 u(m.rot()[0][0],m.rot()[1][0],m.trans().x,0),
+	Vect4f u(m.rot()[0][0],m.rot()[1][0],m.trans().x,0),
 				v(m.rot()[0][1],m.rot()[1][1],m.trans().y,0);
 	SetVector(vUtrans,&u);
 	SetVector(vVtrans,&v);
@@ -108,21 +108,21 @@ void VS9700ObjectSceneBump::GetHandle()
 
 }
 
-void VS9700ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
+void VS9700ObjectSceneBump::Select(const Mat4f* matlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
-	D3DXMATRIX mat;
-	cD3DRender_SetMatrix(mat,*world);
-	D3DXMatrixInverse(&mat,NULL,&mat);
+	Mat4f mat;
+    Mat4fSetTransposedMatXf(mat, *world);
+	Mat4fInverse(&mat,NULL,&mat);
 	SetMatrix(mInvWorld,&mat);
 
 	Vect3f l;
-	D3DXVECTOR3 out;
+	Vect3f out;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
 	l=-l;
 
-	D3DXVec3TransformNormal(&out,(D3DXVECTOR3*)&l,&mat);
-	D3DXVec3Normalize(&out,&out);
-    D3DXVECTOR4 lv(out.x,out.y,out.z,0);
+    Vect3fTransformNormal(&out, &l, &mat);
+    Vect3fNormalize(&out, &out);
+    Vect4f lv(out.x,out.y,out.z,0);
     SetVector(vLightDirectionInvWorld,&lv);
 
 	if(light)
@@ -140,11 +140,11 @@ void VS9700ObjectSceneBump::Select(const D3DXMATRIX* matlight,float shadow_map_s
 void VS9700ObjectSceneBump::SetMaterial(sDataRenderMaterial *Data)
 {
 	Vect3f p=gb_RenderDevice3D->GetDrawNode()->GetPos();
-    D3DXVECTOR4 cam(p.x,p.y,p.z,0);
+    Vect4f cam(p.x,p.y,p.z,0);
 	SetVector(vCameraPos,&cam);
 	Vect3f l;
 	gb_RenderDevice3D->GetDrawNode()->GetLighting(l);
-    D3DXVECTOR4 light(l.x,l.y,l.z,0);
+    Vect4f light(l.x,l.y,l.z,0);
     SetVector(vLightDirection,&light);
 }
 
@@ -165,9 +165,9 @@ void VS9700ObjectSceneBumpNoShadow::RestoreShader()
 
 void VS9700TileMapShadow::Select(const MatXf& world)
 {
-	D3DXMATRIX mat;
-	cD3DRender_SetMatrix(mat,world);
-	D3DXMatrixMultiply(&mat,&mat,&gb_RenderDevice3D->GetDrawNode()->matViewProj);
+	Mat4f mat;
+    Mat4fSetTransposedMatXf(mat, world);
+	mat *= gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	SetMatrix(mWVP,&mat);
 	cVertexShader::Select();
 }
@@ -206,47 +206,48 @@ void VS9700TileMapScene::GetHandle()
 
 void VS9700TileMapScene::SetWorldSize(Vect2f sz)
 {
-    D3DXVECTOR4 v(1/sz.x,1/sz.y,0,0);
+    Vect4f v(1/sz.x,1/sz.y,0,0);
     SetVector(fInvWorldSize,&v);
 }
 
-void VS9700TileMapScene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
+void VS9700TileMapScene::Select(const Mat4f* pmatlight,float shadow_map_size,const MatXf* world, std::vector<cUnkLight*>* light)
 {
 	//c0-c3 - матрица преобразования в экранные координаты (view_proj_matrix)
-	D3DXMATRIX mat;
+	Mat4f mat;
 	if(world)
 	{
-		cD3DRender_SetMatrix(mat,*world);
+        Mat4fSetTransposedMatXf(mat, *world);
 		SetMatrix(mWorld,&mat);//for light
 		SetMatrix(mView, &gb_RenderDevice3D->GetDrawNode()->matView);
 
-		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&mat,&mat, &gb_RenderDevice3D->GetDrawNode()->matViewProj);
+        Mat4fSetTransposedMatXf(mat, *world);
+		mat *= gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	}else
 	{
-		mat=*(D3DXMATRIX*) &gb_RenderDevice3D->GetDrawNode()->matViewProj;
+		mat = gb_RenderDevice3D->GetDrawNode()->matViewProj;
 	}
 
 	SetMatrix(mWVP,&mat);
 
-	D3DXMATRIX matlight;
+	Mat4f matlight;
 	if(world)
 	{
-		cD3DRender_SetMatrix(mat,*world);
-		D3DXMatrixMultiply(&matlight,&mat,pmatlight);
-	}else
-		matlight=*pmatlight;
+        Mat4fSetTransposedMatXf(mat, *world);
+		matlight = mat * *pmatlight;
+	} else {
+        matlight = *pmatlight;
+    }
 
 	SetMatrix(mWorldToLight,&matlight);
 
 	float fTexelOffs = (0.5f / shadow_map_size);
 	float fix= 0;//(1.0f / shadow_map_size);
-	D3DXMATRIX matTexAdj(0.5f,      0.0f,        0.0f,        0.0f,
-						 0.0f,     -0.5f,        0.0f,        0.0f,
-						 0.0f,      0.0f,        0.0f,        0.0f,
+	Mat4f matTexAdj(0.5f,      0.0f,        0.0f,        0.0f,
+                    0.0f,     -0.5f,        0.0f,        0.0f,
+                    0.0f,      0.0f,        0.0f,        0.0f,
 					0.5f + fTexelOffs,0.5f + fTexelOffs+fix,1.0f, 1.0f);
 
-	D3DXMatrixMultiply(&mat, &matlight, &matTexAdj);
+	mat = matlight * matTexAdj;
 
 	SetMatrix(mShadow,&mat);
 

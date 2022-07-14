@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <d3d9.h>
 #include <xerrhand.h>
+#include "xmath.h"
 #include "d3dx9.h"
 
 #define WARN(...) fprintf(stdout, __VA_ARGS__)

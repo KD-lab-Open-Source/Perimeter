@@ -436,8 +436,8 @@ void HistoryScene::drawPopup() {
 	Vect2f mousePos = historyCamera->getMousePos();
 	World* w = traceWorld(mousePos);
 
-	POINT pt = {xm::round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()),
-                xm::round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
+	sPoint pt = {xm::round((mousePos.x + 0.5f) * terRenderDevice->GetSizeX()),
+                 xm::round((mousePos.y + 0.5f) * terRenderDevice->GetSizeY()) };
 
 	//TODO is this needed to port?
 	//ClientToScreen(hWndVisGeneric, &pt);

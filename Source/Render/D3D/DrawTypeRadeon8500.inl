@@ -231,9 +231,9 @@ void DrawTypeRadeon8500::SetMaterialTilemap(cTileMap *TileMap)
 {
 	cTexture* pShadowMap=pShadow->GetRenderTarget();
 
-	D3DXVECTOR3 pos(100,100,0);
-	D3DXVECTOR4 out;
-	D3DXVec3Transform(&out,&pos,&pShadow->matViewProj);
+	Vect3f pos(100,100,0);
+	Vect4f out;
+    pShadow->matViewProj.xform(pos, out);
 
 	gb_RenderDevice3D->SetTexture(pShadowMap,0,1);
 	gb_RenderDevice3D->SetTexture(pShadowMap,0,2);
@@ -265,7 +265,7 @@ void DrawTypeRadeon8500::SetMaterialTilemapShadow()
 
 void DrawTypeRadeon8500::SetTileColor(sColor4f c)
 {
-	D3DXVECTOR4 cf(c.r,c.g,c.b,c.a);
+	Vect4f cf(c.r,c.g,c.b,c.a);
 	gb_RenderDevice3D->SetPixelShaderConstant(2,&cf);
 }
 
@@ -275,10 +275,10 @@ void DrawTypeRadeon8500::SetMaterial(float Phase,cTexture *Texture0,cTexture *Te
 
 	if(Data->mat&MAT_BUMP)
 	{
-//		gb_RenderDevice3D->SetPixelShaderConstant(20,(D3DXVECTOR4*)&Data->Ambient);
-		gb_RenderDevice3D->SetPixelShaderConstant(5,(D3DXVECTOR4*)&Data->Diffuse);
-		gb_RenderDevice3D->SetPixelShaderConstant(6,(D3DXVECTOR4*)&Data->Specular);
-//		gb_RenderDevice3D->SetPixelShaderConstant(23,&D3DXVECTOR4(0,0,0,Data->Power));
+//		gb_RenderDevice3D->SetPixelShaderConstant(20,(Vect4f*)&Data->Ambient);
+		gb_RenderDevice3D->SetPixelShaderConstant(5, reinterpret_cast<const Vect4f*>(&Data->Diffuse));
+		gb_RenderDevice3D->SetPixelShaderConstant(6, reinterpret_cast<const Vect4f*>(&Data->Specular));
+//		gb_RenderDevice3D->SetPixelShaderConstant(23,&Vect4f(0,0,0,Data->Power));
 	}
 
 	bool is_bump=IsBump(Data);

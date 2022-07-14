@@ -2150,13 +2150,13 @@ public:
 class Mat4f 
 {
 
+public:
+
   // (stored in row-major order)
   float xx, xy, xz, xw,
        yx, yy, yz, yw,
        zx, zy, zz, zw,
        wx, wy, wz, ww;
-
-public:
 
   // constructors //////////////////////////////////////////////////////////////
 
@@ -2219,7 +2219,7 @@ public:
   xm_inline float& operator ()(int i,int j){ return (&xx)[(i - 1)*4 + j - 1]; }
 
   //  Determinant  of matrix  /////////
-  xm_inline float det() const;
+  //xm_inline float det() const;
 
   //  Mat4f - Mat4f multiplication  ///////////
   Mat4f& mult(const Mat4f& M, const Mat4f& N);     // M * N	   [!]
@@ -2234,9 +2234,9 @@ public:
   xm_inline friend Mat4f xpose(const Mat4f& M) { Mat4f N; return N.xpose(M); }
 
   //  Invertion  ////////////////////
-  int  invert();  // this^-1, returns one if the matrix was not invertible, otherwise zero.
-  int  invert(const Mat4f& M);    // M^-1	   [!]
-  xm_inline friend Mat4f invert(const Mat4f& M) { Mat4f N; N.invert(M); return N; }
+  //int  invert();  // this^-1, returns one if the matrix was not invertible, otherwise zero.
+  //int  invert(const Mat4f& M);    // M^-1	   [!]
+  //xm_inline friend Mat4f invert(const Mat4f& M) { Mat4f N; N.invert(M); return N; }
 
 
   // Transforming Vect4f ///////////////////////////////////////////////////////

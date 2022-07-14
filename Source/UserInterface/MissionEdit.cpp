@@ -209,9 +209,8 @@ bool MissionEditor::keyPressed(const sKey& Key)
 	case VK_ESCAPE | KBD_SHIFT:
 		if(editingHardness_) {
             hardnessPolygon_.clear();
+            return true;
         }
-		return true; 
-
 	}
     
     //Player selector 0 and Tilde are handled in switch above

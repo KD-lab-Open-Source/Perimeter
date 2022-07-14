@@ -1076,7 +1076,7 @@ void terPlayer::universalSave(SavePlayerData& data, bool userSave) const {
 				data.buildings.push_back(bi->universalSave(0));
 				xassert(data.buildings.back());
 			} else {
-                xassert_s(0 && "Ignoring building entry: ", (*bi)->attr().internalName(false));
+                xassert_s(0 && "Ignoring building entry: ", bi->attr().internalName(false));
             }
 		}
 	}

@@ -136,7 +136,7 @@ public:
 	
 	inline int GetHReflection(){VISASSERT(GetAttr(ATTRCAMERA_REFLECTION));return h_reflection;}
 
-	CMatrix			matProj,matView,matViewProj,matViewProjScr;
+	Mat4f			matProj,matView,matViewProj,matViewProjScr;
 	sViewPort		vp;
 
 	void GetFrustumPoint(Vect3f& p00,Vect3f& p01,Vect3f& p10,Vect3f& p11,Vect3f& d00,Vect3f& d01,Vect3f& d10,Vect3f& d11,float rmul=1.0f);

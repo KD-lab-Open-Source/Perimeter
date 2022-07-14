@@ -148,7 +148,7 @@ void CSlotButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 	pDC->DrawFrameControl(&lpDIS->rcItem, DFC_BUTTON, type);
 
-	RECT rect(lpDIS->rcItem);
+	sRect rect(lpDIS->rcItem);
 	rect.left += 3;
 	rect.right -= 3;
 	rect.top += 3;

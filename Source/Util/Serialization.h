@@ -73,8 +73,8 @@ enum ArchiveType
 };
 
 /////////////////////////////////////////////////
-#ifndef _FINAL_VERSION_
-#define xassertStr(exp, str) { string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
+#ifdef PERIMETER_DEBUG
+#define xassertStr(exp, str) { std::string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
 #else
 #define xassertStr(exp, str) 
 #endif
@@ -207,7 +207,7 @@ public:
 		NameToKey::const_iterator i = nameToKey.find(name);
 		if(i != nameToKey.end())
 			return (Enum)i->second;
-		xassertStr(!strlen(name) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + name).c_str());
+		//xassertStr(!strlen(name) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + name).c_str());
 		return (Enum)0;
 	}
 
@@ -215,7 +215,7 @@ public:
 		NameToKey::const_iterator i = nameAltToKey.find(nameAlt);
 		if(i != nameAltToKey.end())
 			return (Enum)i->second;
-		xassertStr(!strlen(nameAlt) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + nameAlt).c_str());
+		//xassertStr(!strlen(nameAlt) && "Unknown enum identificator will be ignored: ", (typeName_ + "::" + nameAlt).c_str());
 		return (Enum)0;
 	}
 

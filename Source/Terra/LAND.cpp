@@ -697,7 +697,7 @@ int vrtMap::renderBox(int LowX,int LowY,int HiX,int HiY, int changed)//int sizeX
 	int minX=LowX;
 #ifdef _PERIMETER_
 //#ifdef KRON_CRITICAL_SECTION
-	sRect ChRrAr(LowX, LowY, sizeX, sizeY);
+	sRectS ChRrAr(LowX, LowY, sizeX, sizeY);
 	changedAreas.push_back(ChRrAr);
 	renderAreas.push_back(ChRrAr);
 
@@ -742,12 +742,12 @@ int vrtMap::renderBox(int LowX,int LowY,int HiX,int HiY, int changed)//int sizeX
 //#include "Statistics.h"
 #endif
 
-static bool operator< (const sRect& lo, const sRect& ro){
+static bool operator< (const sRectS& lo, const sRectS& ro){
 	return lo.y < ro.y;
 };
 
 struct xSort {
-	sRect* pRA;
+	sRectS* pRA;
 	bool operator< (const xSort& ro)const{
 		return (pRA->x) < (ro.pRA->x);
 	};
@@ -769,8 +769,8 @@ void vrtMap::renderQuant()
 
 	int listSize=renderAreas.size();
 	if(!listSize) return;
-	std::vector<sRect> RAVec(listSize);
-	std::list<sRect>::iterator q;
+	std::vector<sRectS> RAVec(listSize);
+	std::list<sRectS>::iterator q;
 	int i;
 	int j,k;
 	for(i=0, q=renderAreas.begin(); i<listSize; i++, q++){

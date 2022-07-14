@@ -1304,8 +1304,8 @@ void CSlotPropertiesDialog::updatePreviewLabel(TextureNode* txNode) {
 void CSlotPropertiesDialog::OnRclickTree(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	*pResult = 0;
-  	POINT point;
-  	POINT pointInTree;
+  	sPoint point;
+  	sPoint pointInTree;
 	GetCursorPos(&point);
 	pointInTree = point;
 	mainTree.ScreenToClient(&pointInTree);

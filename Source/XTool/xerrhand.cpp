@@ -296,7 +296,12 @@ void handleSignal(int sig) {
             sigName = "Illegal instruction";
             break;
         case SIGTERM:
+#ifdef PERIMETER_DEBUG
+            ErrH.Exit();
+            return;
+#else
             sigName = "Termination";
+#endif
             break;
 #ifdef SIGBUS
         case SIGBUS:

@@ -11,16 +11,6 @@
 
 #include "Silicon.h"
 
-inline void xFormPoint(D3DMATRIX &m,const Vect3f &in,Vect4f &out)
-{
-	out.x=m._11*in.x+m._21*in.y+m._31*in.z+m._41;
-	out.y=m._12*in.x+m._22*in.y+m._32*in.z+m._42;
-	out.z=m._13*in.x+m._23*in.y+m._33*in.z+m._43;
-	out.w=m._14*in.x+m._24*in.y+m._34*in.z+m._44;
-	if(out.w!=0) out.w=1/out.w; else out.w=1e-30f;
-	out.x*=out.w; out.y*=out.w; out.z*=out.w;
-}
-
 void cD3DRender::SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer)
 {
 	for( int nPasses=0; nPasses<nSupportTexture; nPasses++ ) 
@@ -113,8 +103,8 @@ void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 
 void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 {
-	RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,(D3DXMATRIX*)&pDrawNode->matProj));
-	RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,(D3DXMATRIX*)&pDrawNode->matView));
+	RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matProj)));
+	RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matView)));
 	RDCALL(lpD3DDevice->SetViewport((D3DVIEWPORT9*)&pDrawNode->vp));
 	if(pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION)==0)
 		SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);	// прямое изображение
@@ -127,21 +117,21 @@ void cD3DRender::DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data)
 	SetMatrix(D3DTS_WORLD,Mesh->GetGlobalMatrix());
 	if(Data->mat&MAT_TEXMATRIX_STAGE1)
 	{
-		D3DXMATRIX mat;
+		Mat4f mat;
 		MatXf &m=Data->TexMatrix;
-		memset(mat,0,sizeof(mat));
-		mat._11 = m.rot()[0][0],	mat._12 = m.rot()[0][1];
-		mat._21 = m.rot()[1][0],	mat._22 = m.rot()[1][1];
-		mat._31 = m.trans().x,		mat._32 = m.trans().y;
-		RDCALL(lpD3DDevice->SetTransform(D3DTS_TEXTURE0,&mat));
+		memset(&mat,0,sizeof(mat));
+		mat.xx = m.rot()[0][0],	mat.xy = m.rot()[0][1];
+		mat.yx = m.rot()[1][0],	mat.yy = m.rot()[1][1];
+		mat.zx = m.trans().x,	mat.zy = m.trans().y;
+		RDCALL(lpD3DDevice->SetTransform(D3DTS_TEXTURE0, reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
 
 	if(Data->mat&MAT_RENDER_SPHEREMAP)
 	{ // сферический мапинг
-		D3DXMATRIX mat;
-		memset(mat,0,sizeof(mat));
-		mat._11=mat._22=mat._41=mat._42=0.5f;
-		RDCALL(lpD3DDevice->SetTransform( D3DTS_TEXTURE1, &mat ));
+		Mat4f mat;
+		memset(&mat,0,sizeof(mat));
+		mat.xx=mat.yy=mat.wx=mat.wy=0.5f;
+		RDCALL(lpD3DDevice->SetTransform(D3DTS_TEXTURE1, reinterpret_cast<const D3DMATRIX*>(&mat)));
 	}
 
 	if(Option_DrawMeshScreen)

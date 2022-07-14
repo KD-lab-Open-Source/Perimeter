@@ -102,13 +102,13 @@ int TEGrid::toCellTop(int y) const{
 	return toCellEdge(y, iCellHeight_, iAmongCellsH_);
 }
 
-void TEGrid::toCellLeftTop(POINT* point) const
+void TEGrid::toCellLeftTop(sPoint* point) const
 {
 	point->x = toCellLeft(point->x);
 	point->y = toCellTop(point->y);
 }
 
-CPoint const TEGrid::getCellByPoint(POINT const& p) const{
+CPoint const TEGrid::getCellByPoint(sPoint const& p) const{
 	CPoint const sz(getHorzCellIndex(p.x), getVertCellIndex(p.y));
 	return sz;
 }

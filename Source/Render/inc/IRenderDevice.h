@@ -60,21 +60,17 @@ struct sTextureFormatData
     int rBitCount,gBitCount,bBitCount,aBitCount;
     int rBitShift,gBitShift,bBitShift,aBitShift;
     int BytePerPixel;
+    uint32_t FormatID;
 
-#ifdef PERIMETER_D3D9
-    D3DFORMAT TexFmtD3D;
-#endif
-
-    sTextureFormatData& Set(int bpp,int rcount,int gcount,int bcount,int acount,int rshift,int gshift,int bshift,int ashift,int texFmtD3D=-1)
+    sTextureFormatData& Set(int bpp,int rcount,int gcount,int bcount,int acount,int rshift,int gshift,int bshift,int ashift, uint32_t formatID=-1)
     {
         BytePerPixel=bpp;
         rBitCount=rcount; gBitCount=gcount; bBitCount=bcount; aBitCount=acount;
         rBitShift=rshift; gBitShift=gshift;	bBitShift=bshift; aBitShift=ashift;
-#ifdef PERIMETER_D3D9
-        TexFmtD3D=(D3DFORMAT)texFmtD3D;
-#endif
+        FormatID = formatID;
         return *this;
     }
+
     void Get(int &bpp,int &rcount,int &gcount,int &bcount,int &acount,int &rshift,int &gshift,int &bshift,int &ashift)
     {
         bpp=BytePerPixel;

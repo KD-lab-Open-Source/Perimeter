@@ -113,13 +113,13 @@ void cTileMap::CreateLightmap()
 
 	float SizeLightMap=terra->SizeX();
 	float focus=1/SizeLightMap;
-	matLightMap.identity();
-	matLightMap._11 *= focus;
-	matLightMap._21 *= focus;
-	matLightMap._31 *= focus;
-	matLightMap._12 *= focus;
-	matLightMap._22 *= focus;
-	matLightMap._32 *= focus;
+	matLightMap = Mat4f::ID;
+	matLightMap.xx *= focus;
+	matLightMap.yx *= focus;
+	matLightMap.zx *= focus;
+	matLightMap.xy *= focus;
+	matLightMap.yy *= focus;
+	matLightMap.zy *= focus;
 
 	GetTexLibrary()->Compact();
 }
@@ -291,7 +291,9 @@ void cTileMap::AddLightCamera(cCamera *DrawNode)
 	DrawNode->AttachChild(ShadowDrawNode);
 	ShadowDrawNode->SetAttribute(ATTRCAMERA_SHADOWMAP|ATTRUNKOBJ_NOLIGHT);
 	ShadowDrawNode->ClearAttribute(ATTRCAMERA_PERSPECTIVE|ATTRCAMERA_ZMINMAX|ATTRCAMERA_SHOWCLIP);
+#ifdef PERIMETER_D3D9
 	ShadowDrawNode->SetRenderTarget(GetShadowMap(),GetZBuffer());
+#endif
 
 
 //	Vect2f z=CalcZ(DrawNode);
@@ -404,19 +406,19 @@ void cTileMap::FixShadowMapCamera(cCamera *DrawNode)
 }
 
 
-sBox6f CalcZMinMax(const D3DXMATRIX* look)
+sBox6f CalcZMinMax(const Mat4f* look)
 {
-	D3DXVECTOR3 in[8]=
+	Vect3f in[8]=
 	{
-	D3DXVECTOR3(-1,	1,	0),
-	D3DXVECTOR3(1,	1,	0),
-	D3DXVECTOR3(-1,	-1,	0),
-	D3DXVECTOR3(1,	-1,	0),
+	Vect3f(-1,	1,	0),
+	Vect3f(1,	1,	0),
+	Vect3f(-1,	-1,	0),
+	Vect3f(1,	-1,	0),
 
-	D3DXVECTOR3(-1,	1,	1),
-	D3DXVECTOR3(1,	1,	1),
-	D3DXVECTOR3(-1,	-1,	1),
-	D3DXVECTOR3(1,	-1,	1),
+	Vect3f(-1,	1,	1),
+	Vect3f(1,	1,	1),
+	Vect3f(-1,	-1,	1),
+	Vect3f(1,	-1,	1),
 	};
 
 	sBox6f box;
@@ -424,8 +426,8 @@ sBox6f CalcZMinMax(const D3DXMATRIX* look)
 
 	for(int i=0;i<8;i++)
 	{
-		D3DXVECTOR4 out;
-		D3DXVec3Transform(&out,in+i,look);
+		Vect4f out;
+        look->xform(in[i], out);
 		out.x/=out.w;
 		out.y/=out.w;
 		out.z/=out.w;
@@ -445,23 +447,14 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	DrawNode->GetScene()->GetLighting(&LightDirection);
 	ShadowDrawNode->SetAttribute(ATTRCAMERA_PERSPECTIVE|ATTRCAMERA_NOT_CALC_PROJ);
 
-	D3DXVECTOR4 light_in,light_out;
+	Vect4f light_in,light_out;
 	light_in.x=-LightDirection.x;
 	light_in.y=-LightDirection.y;
 	light_in.z=-LightDirection.z;
 	light_in.w=0;
 
-	D3DXMATRIX look_light,look_proj;
-	D3DXVec4Transform(&light_out,&light_in,&DrawNode->matViewProj);
-
-	{
-		Vect2f zplane=DrawNode->GetZPlane();
-		float dist=(zplane.x+zplane.y)/(zplane.y-zplane.x);
-
-		//float d=D3DXVec3Length((D3DXVECTOR3*)&light_out);
-		float d=D3DXVec4Length(&light_out);
-		int k=0;
-	}
+	Mat4f look_light,look_proj;
+    DrawNode->matViewProj.xform(light_in, light_out);
 
 	ShadowDrawNode->PutAttribute(ATTRCAMERA_ZINVERT,light_out.w<0);
 //	if(minus)light_out.w=-light_out.w;
@@ -470,19 +463,16 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	light_out.z/=light_out.w;
 	light_out.w/=light_out.w;
 
-    D3DXVECTOR3 a(light_out.x,light_out.y,light_out.z);
-    D3DXVECTOR3 b(0,0,0.5f);
-    D3DXVECTOR3 c(0,0,-1);
-	D3DXMatrixLookAtLH(&look_light,
+    Vect3f a(light_out.x,light_out.y,light_out.z);
+    Vect3f b(0,0,0.5f);
+    Vect3f c(0,0,-1);
+	Mat4fLookAtLH(&look_light,
 		&a, &b, &c
 	);
 
 	sBox6f box=::CalcZMinMax(&look_light);
 
 	Vect3f fix=(box.max-box.min)*0.05f;
-/*
-	D3DXMatrixPerspectiveFovLH(&look_proj,XM_PI/3,1, (box.min.z-fix.z),(box.max.z+fix.z));
-/*/
 	{
 		float zf=box.max.z+fix.z;
 		float zn=box.min.z-fix.z;
@@ -490,28 +480,24 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 			  h=2/(box.max.y-box.min.y);
 
 		float zz=zf/(zf-zn);
-		look_proj=D3DXMATRIX(
+		look_proj=Mat4f(
 			w,	0,	0,	0,
 			0,	h,	0,	0,
 			0,	0, zz,	1,
 			0,	0,-zn*zz,0
 			);
 	}
-/**/
-	D3DXMATRIX proj;
-	D3DXMatrixMultiply(&proj, &look_light, &look_proj);
-	//proj=*(D3DXMATRIX*)DrawNode->matViewProj;
-	D3DXMatrixMultiply(&ShadowDrawNode->matProj, &DrawNode->matProj, &proj);
+
+	Mat4f proj;
+	proj = look_light * look_proj;
+	//proj=*(Mat4f*)DrawNode->matViewProj;
+	ShadowDrawNode->matProj = DrawNode->matProj * proj;
 //	ShadowDrawNode.matProj=DrawNode->matProj;
 
 	{
-		float f=D3DXMatrixDeterminant(&look_proj);
-		D3DXVECTOR4 t(0,0,0.5f,1),out;
+		Vect4f t(0,0,0.5f,1),out;
 
-		D3DXVec4Transform(&out,&t,&proj);
-
-		int k=0;
-
+        proj.xform(t, out);
 	}
 
 	//MP*MVL*P*MV
@@ -523,17 +509,17 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	ShadowDrawNode->SetFrustum(&center,&clip, &Focus, &zplane);
 	ShadowDrawNode->SetPosition(DrawNode->GetMatrix());
 
-	D3DXVECTOR4 out;
-    D3DXVECTOR3 v(1024,1024,0);
-	D3DXVec3Transform(&out,&v,&ShadowDrawNode->matProj);
+	Vect4f out;
+    Vect3f v(1024,1024,0);
+    ShadowDrawNode->matViewProj.xform(v, out);
 
 	Vect3f p[8];
 	DrawNode->GetFrustumPoint(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]);
 	int i;
 	for(i=0;i<8;i++)
 	{
-		D3DXVECTOR4 pOut,pN;
-		D3DXVec3Transform(&pOut,(D3DXVECTOR3*)(p+i),&DrawNode->matViewProj);
+		Vect4f pOut,pN;
+        DrawNode->matViewProj.xform(p[i], pOut);
 
 		pN.x=pOut.x/pOut.w;
 		pN.y=pOut.y/pOut.w;
@@ -544,23 +530,23 @@ void cTileMap::CalcShadowMapCameraProective(cCamera *DrawNode)
 	}
 
 
-	D3DXVECTOR3 in[8]=
+	Vect3f in[8]=
 	{
-	D3DXVECTOR3(-1,	1,	0),
-	D3DXVECTOR3(1,	1,	0),
-	D3DXVECTOR3(-1,	-1,	0),
-	D3DXVECTOR3(1,	-1,	0),
+	Vect3f(-1,	1,	0),
+	Vect3f(1,	1,	0),
+	Vect3f(-1,	-1,	0),
+	Vect3f(1,	-1,	0),
 
-	D3DXVECTOR3(-1,	1,	1),
-	D3DXVECTOR3(1,	1,	1),
-	D3DXVECTOR3(-1,	-1,	1),
-	D3DXVECTOR3(1,	-1,	1),
+	Vect3f(-1,	1,	1),
+	Vect3f(1,	1,	1),
+	Vect3f(-1,	-1,	1),
+	Vect3f(1,	-1,	1),
 	};
 
 	for(i=0;i<8;i++)
 	{
-		D3DXVECTOR4 pOut,pN;
-		D3DXVec3Transform(&pOut,in+i,&proj);
+		Vect4f pOut,pN;
+        proj.xform(in[i], pOut);
 
 		pN.x=pOut.x/pOut.w;
 		pN.y=pOut.y/pOut.w;

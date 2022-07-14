@@ -287,7 +287,7 @@ Vect3f Runtime::getDirection(Vect3f& cameraPos, Vect2f& cursor) {
 }
 
 bool Runtime::getViewportPos(Vect2f* pos) {
-	POINT Point;
+	sPoint Point;
 	GetCursorPos(&Point);
 	window->ScreenToClient(&Point);
 	if (Point.x < 0 || Point.y < 0) {

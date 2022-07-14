@@ -40,7 +40,8 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 		Pool=D3DPOOL_DEFAULT;
 	}
 
-	HRESULT hr=lpD3DDevice->CreateTexture(x,y,MipMap,Usage,TexFmtData[TextureFormat].TexFmtD3D,Pool,&lpTexture,NULL);
+    D3DFORMAT fmt = static_cast<D3DFORMAT>(TexFmtData[TextureFormat].FormatID);
+	HRESULT hr=lpD3DDevice->CreateTexture(x, y, MipMap, Usage, fmt, Pool, &lpTexture, NULL);
 	if(FAILED(hr))
 	{
 		if(enable_assert)
@@ -79,7 +80,7 @@ void ApplySkinColor(uint32_t* buffer,int dx,int dy,sColor4c skin_color)
 int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert)
 { // только создает в памяти поверхности 
 	sTextureFormatData &tfd = TexFmtData[Texture->GetFmt()];
-	if(Texture->GetX()==0||tfd.TexFmtD3D==0) return 1;
+	if(Texture->GetX()==0||tfd.FormatID==0) return 1;
 
 	if(Texture->GetWidth()>dwSuportMaxSizeTextureX) Texture->SetWidth(dwSuportMaxSizeTextureX);
 	if(Texture->GetHeight()>dwSuportMaxSizeTextureY) Texture->SetHeight(dwSuportMaxSizeTextureY);
