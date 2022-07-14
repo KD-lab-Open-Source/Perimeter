@@ -204,16 +204,21 @@ void cMeshStatic::EndBuildMesh(bool bump)
 	gb_RenderDevice->CreateVertexBuffer(vb,n_vertex,bump?sVertexDot3::fmt:sVertexXYZNT1::fmt);
 
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(vb);
-	int i;
-	for(i=0;i<n_vertex;i++)
-		GetVertex(pVertex,i)=temp->vertex[i];
-	gb_RenderDevice->UnlockVertexBuffer(vb);
+    if (pVertex) {
+        for (int i = 0; i < n_vertex; i++) {
+            GetVertex(pVertex, i) = temp->vertex[i];
+        }
+        gb_RenderDevice->UnlockVertexBuffer(vb);
+    }
 
 	gb_RenderDevice->CreateIndexBuffer(ib,n_polygon);
 	sPolygon *IndexPolygon=gb_RenderDevice->LockIndexBuffer(ib);
-	for(i=0;i<n_polygon;i++)
-		IndexPolygon[i]=temp->polygons[i];
-	gb_RenderDevice->UnlockIndexBuffer(ib);
+    if (IndexPolygon) {
+        for (int i = 0; i < n_polygon; i++) {
+            IndexPolygon[i] = temp->polygons[i];
+        }
+        gb_RenderDevice->UnlockIndexBuffer(ib);
+    }
 
 	std::vector<cMeshTri*>::iterator it;
 	FOR_EACH(meshes,it)

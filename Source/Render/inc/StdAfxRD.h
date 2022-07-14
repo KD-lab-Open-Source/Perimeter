@@ -24,9 +24,6 @@
 #include "../../PluginMAX/Src/BaseClass.h"
 #include "../inc/IVisGenericInternal.h"
 #include "IRenderDevice.h"
-#ifdef PERIMETER_D3D9
-#include "RenderDevice.h"
-#endif
 #include "../src/VisError.h"
 #include "../inc/VisGenericDefine.h"
 #include "../inc/RenderMT.h"
@@ -108,7 +105,7 @@ extern class cVisGeneric		*gb_VisGeneric;
 #endif
 
 #ifdef PERIMETER_D3D9
-#include "D3DRender.h"
+#include "../D3D/D3DRender.h"
 #endif
 
 int ResourceFileRead(const char *fname,char *&buf,int &size);

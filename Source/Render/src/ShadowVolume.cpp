@@ -232,113 +232,117 @@ void ShadowVolume::DrawVolume(cCamera *camera,const MatXf& mat,Vect3f light_dir,
 	mat_inv.invert(mat.rot());
 	Vect3f olight=mat_inv*light_dir;
 
-	cVertexBuffer<sVertexXYZDT1>* pBuf=NULL;
-	sVertexXYZDT1 *Vertex=NULL;
-	int nVertex=0;
-	sColor4c color(0,0,0,128);
-
-	if(!line)
-	{
-		pBuf=camera->GetRenderDevice()->GetBufferXYZDT1();
-		Vertex=pBuf->Lock();
-	}
-
-	for(unsigned int i=0; i < edge.size(); i++)
-	{
-		sv_edge & we = edge[i];
-//		if(we.w[0] == -1 || we.w[1] == -1)
-//		   continue;
-
-		sv_triangle& p0 = triangle[we.w[0]];
-		float f0 = //p0.n.GetDistance(olight);
-					p0.n.A*olight.x+p0.n.B*olight.y+p0.n.C*olight.z;
-			
-		float f1 = -f0;
-		if(we.w[1] != -1)
-		{
-			sv_triangle& p1 = triangle[we.w[1]];
-			f1 = p1.n.A*olight.x+p1.n.B*olight.y+p1.n.C*olight.z;
-				//p1.n.GetDistance(olight);
-		}
-
-
-		int edge[2];
-
-		if(f0 >= 0 && f1 < 0)
-		{
-			edge[0] = we.e[1];
-			edge[1] = we.e[0];
-		}
-		else if(f1 >= 0 && f0 < 0)
-		{
-			edge[0] = we.e[0];
-			edge[1] = we.e[1];
-		}
-		else
-		{
-			if(line)
-			{
-				edge[0] = we.e[0];
-				edge[1] = we.e[1];
-			}else
-			continue;
-		}
-		
-		Vect3f& pn0 = vertex[edge[0]];
-		Vect3f& pn1 = vertex[edge[1]];
-
-		if(line)
-		{
-			if(we.w[1] == -1)
-				gb_RenderDevice->DrawLine(mat*pn0,mat*pn1,sColor4c(255,0,0,255));
-			else
-				gb_RenderDevice->DrawLine(mat*pn0,mat*pn1,sColor4c(255,255,255,255));
-		}else
-		{
-			sVertexXYZDT1 *v=&Vertex[nVertex];
-			Vect3f v2=pn0+olight*1000;
-			Vect3f v3=pn1+olight*1000;
-			v[0].pos=pn0; v[0].diffuse=color;
-			v[1].pos=pn1; v[1].diffuse=color;
-			v[2].pos=v2; v[2].diffuse=color;
-
-			v[3].pos=pn1; v[3].diffuse=color;
-			v[4].pos=v3; v[4].diffuse=color;
-			v[5].pos=v2; v[5].diffuse=color;
-
-			nVertex+=6;
-
-			if(nVertex+6>=pBuf->GetSize())
-			{
-				pBuf->Unlock(nVertex);
-				pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,mat);
-				Vertex=pBuf->Lock();
-				nVertex=0;
-			}
-
-		}
-/*
-		// local segment
-		glVertex4f(pn0.x, pn0.y, pn0.z, 1);
-		glVertex4f(pn1.x, pn1.y, pn1.z, 1);
-
-		// segment projected to infinity
-		glVertex4f(pn1.x*olight[3] - olight[0],
-			pn1.y*olight[3] - olight[1],
-			pn1.z*olight[3] - olight[2],
-			0);
-		glVertex4f(pn0.x*olight[3] - olight[0],
-			pn0.y*olight[3] - olight[1],
-			pn0.z*olight[3] - olight[2],
-			0);
-*/
-	}
-
-	if(!line)
-	{
-		pBuf->Unlock(nVertex);
-		if(nVertex>0)
-			pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,mat);
-	}
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        cVertexBuffer<sVertexXYZDT1>* pBuf= nullptr;
+        sVertexXYZDT1 *Vertex= nullptr;
+        int nVertex=0;
+        sColor4c color(0,0,0,128);
+    
+        if(!line) {
+            cD3DRender* rd = dynamic_cast<cD3DRender*>(camera->GetRenderDevice());
+            pBuf=rd->GetBufferXYZDT1();
+            Vertex=pBuf->Lock();
+        }
+    
+        for(unsigned int i=0; i < edge.size(); i++)
+        {
+            sv_edge & we = edge[i];
+    //		if(we.w[0] == -1 || we.w[1] == -1)
+    //		   continue;
+    
+            sv_triangle& p0 = triangle[we.w[0]];
+            float f0 = //p0.n.GetDistance(olight);
+                        p0.n.A*olight.x+p0.n.B*olight.y+p0.n.C*olight.z;
+                
+            float f1 = -f0;
+            if(we.w[1] != -1)
+            {
+                sv_triangle& p1 = triangle[we.w[1]];
+                f1 = p1.n.A*olight.x+p1.n.B*olight.y+p1.n.C*olight.z;
+                    //p1.n.GetDistance(olight);
+            }
+    
+    
+            int edge[2];
+    
+            if(f0 >= 0 && f1 < 0)
+            {
+                edge[0] = we.e[1];
+                edge[1] = we.e[0];
+            }
+            else if(f1 >= 0 && f0 < 0)
+            {
+                edge[0] = we.e[0];
+                edge[1] = we.e[1];
+            }
+            else
+            {
+                if(line)
+                {
+                    edge[0] = we.e[0];
+                    edge[1] = we.e[1];
+                }else
+                continue;
+            }
+            
+            Vect3f& pn0 = vertex[edge[0]];
+            Vect3f& pn1 = vertex[edge[1]];
+    
+            if(line)
+            {
+                if(we.w[1] == -1)
+                    gb_RenderDevice->DrawLine(mat*pn0,mat*pn1,sColor4c(255,0,0,255));
+                else
+                    gb_RenderDevice->DrawLine(mat*pn0,mat*pn1,sColor4c(255,255,255,255));
+            }else
+            {
+                sVertexXYZDT1 *v=&Vertex[nVertex];
+                Vect3f v2=pn0+olight*1000;
+                Vect3f v3=pn1+olight*1000;
+                v[0].pos=pn0; v[0].diffuse=color;
+                v[1].pos=pn1; v[1].diffuse=color;
+                v[2].pos=v2; v[2].diffuse=color;
+    
+                v[3].pos=pn1; v[3].diffuse=color;
+                v[4].pos=v3; v[4].diffuse=color;
+                v[5].pos=v2; v[5].diffuse=color;
+    
+                nVertex+=6;
+    
+                if(nVertex+6>=pBuf->GetSize())
+                {
+                    pBuf->Unlock(nVertex);
+                    pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,mat);
+                    Vertex=pBuf->Lock();
+                    nVertex=0;
+                }
+    
+            }
+    /*
+            // local segment
+            glVertex4f(pn0.x, pn0.y, pn0.z, 1);
+            glVertex4f(pn1.x, pn1.y, pn1.z, 1);
+    
+            // segment projected to infinity
+            glVertex4f(pn1.x*olight[3] - olight[0],
+                pn1.y*olight[3] - olight[1],
+                pn1.z*olight[3] - olight[2],
+                0);
+            glVertex4f(pn0.x*olight[3] - olight[0],
+                pn0.y*olight[3] - olight[1],
+                pn0.z*olight[3] - olight[2],
+                0);
+    */
+        }
+    
+        if(!line)
+        {
+            pBuf->Unlock(nVertex);
+            if(nVertex>0)
+                pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,mat);
+        }
+    }
+#endif
 }
 

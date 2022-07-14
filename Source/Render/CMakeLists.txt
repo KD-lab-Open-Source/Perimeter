@@ -48,9 +48,10 @@ SET(Render_SRCS
         src/Scene.cpp
         src/VisGeneric.cpp
         src/VisGrid2d.cpp
+        src/RenderDevice.cpp
 )
 
-IF (NOT OPTION_HEADLESS)
+IF (OPTION_D3D9)
     INCLUDE_DIRECTORIES(
         "D3D"
     )
@@ -65,7 +66,6 @@ IF (NOT OPTION_HEADLESS)
         D3D/DrawType.cpp
         D3D/OcclusionQuery.cpp
         D3D/PoolManager.cpp
-        D3D/RenderDevice.cpp
         D3D/clip/ClippingMesh.cpp
     )
 ENDIF()

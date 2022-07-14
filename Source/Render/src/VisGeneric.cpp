@@ -257,8 +257,7 @@ cScene* cVisGeneric::CreateScene()
 //////////////////////////////////////////////////////////////////////////////////////////
 void cVisGeneric::SetData(cInterfaceRenderDevice *pData)
 { // функция для работы с окном вывода
-	cURenderDevice *IRenderDevice=(cURenderDevice*)pData;
-	VISASSERT(IRenderDevice&&IRenderDevice->GetKind(KIND_UI_RENDERDEVICE));
+	VISASSERT(pData&&pData->GetKind(KIND_UI_RENDERDEVICE));
 	InitShaders();
 }
 void cVisGeneric::ClearData()
@@ -322,7 +321,7 @@ void cVisGeneric::CalcIsShadowMap()
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-cURenderDevice* cVisGeneric::GetRenderDevice()
+cInterfaceRenderDevice* cVisGeneric::GetRenderDevice()
 {
 	return gb_RenderDevice;
 }
@@ -478,13 +477,21 @@ bool cVisGeneric::GetShowType(eShowType type)
 
 bool cVisGeneric::PossibilityBump()
 {
-	return gb_RenderDevice3D->hasAdvanceDrawType();
+#ifdef PERIMETER_D3D9
+	return gb_RenderDevice3D && gb_RenderDevice3D->hasAdvanceDrawType();
+#else
+    return false;
+#endif
 }
 
 void cVisGeneric::SetEnableBump(bool enable)
 {
 	Option_EnableBump=enable;
-	gb_RenderDevice3D->SetAdvance();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->SetAdvance();
+    }
+#endif
 }
 
 bool cVisGeneric::GetEnableBump()
@@ -541,27 +548,39 @@ void cVisGeneric::SetLinkEffectToModel(bool link)
 
 void cVisGeneric::SetAnisotropic(bool b)
 {
-	gb_RenderDevice3D->SetAnisotropic(b);
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->SetAnisotropic(b);
+    }
+#endif
 }
 
 bool cVisGeneric::GetAnisotropic()
 {
-	return gb_RenderDevice3D->GetAnisotropic();
+#ifdef PERIMETER_D3D9
+	return gb_RenderDevice3D && gb_RenderDevice3D->GetAnisotropic();
+#else
+    return false;
+#endif
 }
 
 void cVisGeneric::EnableOcclusion(bool b)
 {
 	Option_EnableOcclusion=b;
-	if(gb_RenderDevice3D)
-	{
-		if(!gb_RenderDevice3D->ReinitOcclusion())
-			Option_EnableOcclusion=false;
+#ifdef PERIMETER_D3D9
+	if (gb_RenderDevice3D && !gb_RenderDevice3D->ReinitOcclusion()) {
+        Option_EnableOcclusion=false;
 	}
+#endif
 }
 
 bool cVisGeneric::PossibilityOcclusion()
 {
-	return gb_RenderDevice3D->PossibilityOcclusion();
+#ifdef PERIMETER_D3D9
+	return gb_RenderDevice3D ? gb_RenderDevice3D->PossibilityOcclusion() : false;
+#else
+    return false;
+#endif
 }
 
 bool cVisGeneric::IsEnableOcclusion()
@@ -580,11 +599,11 @@ void cVisGeneric::EnablePointLight(bool enable)
 {
 	Option_EnablePointLight=enable;
 }
+
 bool cVisGeneric::IsEnablePointLight()
 {
 	return Option_EnablePointLight;
 }
-
 
 cTexture* cVisGeneric::CreateTextureScreen()
 {
@@ -658,26 +677,35 @@ void cVisGeneric::SetGlobalParticleRate(float r)
 
 bool cVisGeneric::PossibilityShadowMapSelf4x4()
 {
-	if(gb_RenderDevice3D->dtAdvanceOriginal)
-	{
+#ifdef PERIMETER_D3D9
+	if (gb_RenderDevice3D &&gb_RenderDevice3D->dtAdvanceOriginal) {
 		eDrawID id=gb_RenderDevice3D->dtAdvanceOriginal->GetID();
 		return id==DT_RADEON9700 || id==DT_GEFORCEFX;
 	}
+#endif
 	return false;
 }
 
 void cVisGeneric::SetShadowMapSelf4x4(bool b4x4)
 {
 	Option_ShadowMapSelf4x4=b4x4;
-	gb_RenderDevice3D->RestoreShader();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->RestoreShader();
+    }
+#endif
 }
 
 bool cVisGeneric::PossibilityBumpChaos()
 {
+#ifdef PERIMETER_D3D9
 #ifdef __APPLE__
     return false;
 #else
-	return gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP;
+	return gb_RenderDevice3D && (gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP);
+#endif
+#else
+    return false;
 #endif
 }
 

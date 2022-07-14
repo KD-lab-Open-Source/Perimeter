@@ -1,5 +1,11 @@
 #include "StdAfxRD.h"
+#ifdef PERIMETER_D3D9
+#include "shader/shaders.h"
+#endif
 #include "CChaos.h"
+#include "VertexFormat.h"
+
+typedef sVertexXYZDT2 VTYPE;
 
 cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enablebump_)
 :cIUnkObj(KIND_NULL)
@@ -9,10 +15,11 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 	time=0;
 
 	enablebump=BUMP_NONE;
-	pVS=NULL;
-	pPS=NULL;
+#ifdef PERIMETER_D3D9
+	pVS=nullptr;
+	pPS=nullptr;
 
-	if(enablebump_)
+	if(enablebump_ && gb_RenderDevice3D)
 	{
 		if(gb_RenderDevice3D->DeviceCaps.PixelShaderVersion>= D3DPS_VERSION(2,0))
 			enablebump=BUMP_PS14;
@@ -20,6 +27,7 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 		if(gb_RenderDevice3D->DeviceCaps.TextureOpCaps|D3DTEXOPCAPS_BUMPENVMAP)
 			enablebump=BUMP_RENDERTARGET;
 	}
+#endif
 
 	stime_tex0.x=stime_tex0.y=0.005f;
 	stime_tex1.x=0;
@@ -31,10 +39,12 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 	pTexBump=NULL;
 	if(enablebump==BUMP_PS14)
 	{
-		pVS=new VSChaos;
+#ifdef PERIMETER_D3D9
+		pVS=new VSChaos();
 		pVS->Restore();
-		pPS=new PSChaos;
+		pPS=new PSChaos();
 		pPS->Restore();
+#endif
 		pTexBump=GetTexLibrary()->GetElement(str_bump,"NoMipMap NoBlur");
 	}
 
@@ -65,10 +75,12 @@ cChaos::cChaos(Vect2f g_size, const char* str_tex0, const char* str_tex1, const 
 
 cChaos::~cChaos()
 {
+#ifdef PERIMETER_D3D9
 	delete pVS;
 	delete pPS;
-	gb_RenderDevice3D->DeleteIndexBuffer(ib);
-	gb_RenderDevice3D->DeleteVertexBuffer(vb);
+#endif
+	gb_RenderDevice->DeleteIndexBuffer(ib);
+	gb_RenderDevice->DeleteVertexBuffer(vb);
 	RELEASE(pTex0);
 	RELEASE(pTexRender);
 	RELEASE(pTexBump);
@@ -86,7 +98,9 @@ void cChaos::RenderAllTexture()
 {
 	if(enablebump==BUMP_RENDERTARGET)
 	{
+#ifdef PERIMETER_D3D9
 		cD3DRender* rd=gb_RenderDevice3D;
+        if (!rd) return;
 
 		bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 		rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
@@ -97,6 +111,7 @@ void cChaos::RenderAllTexture()
 		rd->SetRenderState(D3DRS_FOGENABLE, fog);
 		rd->SetRenderState( D3DRS_ZENABLE, zenable);
 		rd->SetRenderState( D3DRS_ZWRITEENABLE, zwriteenable); 
+#endif
 	}
 }
 
@@ -107,7 +122,11 @@ void cChaos::PreDraw(cCamera *DrawNode)
 
 void cChaos::Draw(cCamera *DrawNode)
 {
-	cD3DRender* rd=DrawNode->GetRenderDevice3D();
+#ifdef PERIMETER_D3D9
+	cD3DRender* rd= dynamic_cast<cD3DRender*>(DrawNode->GetRenderDevice());
+    if (!rd) {
+        return;
+    }
 	bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
 //	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
 /*
@@ -258,37 +277,40 @@ void cChaos::Draw(cCamera *DrawNode)
 	rd->SetTexture(NULL,0,3);
 	rd->SetVertexShader(NULL);
 	rd->SetPixelShader(NULL);
+#endif
 }
 
 void cChaos::CreateIB()
 {
-	gb_RenderDevice3D->CreateIndexBuffer(ib,size*size*2);
-	sPolygon* p=gb_RenderDevice3D->LockIndexBuffer(ib);
+	gb_RenderDevice->CreateIndexBuffer(ib,size*size*2);
+	sPolygon* p=gb_RenderDevice->LockIndexBuffer(ib);
+    if (!p) return;
 
 	int vbwidth=size+1;
-	for(int y=0;y<size;y++)
-	for(int x=0;x<size;x++)
-	{
-		int i0=x+y*vbwidth;
-		p->p1=i0;
-		p->p2=i0+vbwidth;
-		p->p3=i0+1;
-		p++;
-		p->p1=i0+1;
-		p->p2=i0+vbwidth;
-		p->p3=i0+vbwidth+1;
-		p++;
-	}
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
+            int i0 = x + y * vbwidth;
+            p->p1 = i0;
+            p->p2 = i0 + vbwidth;
+            p->p3 = i0 + 1;
+            p++;
+            p->p1 = i0 + 1;
+            p->p2 = i0 + vbwidth;
+            p->p3 = i0 + vbwidth + 1;
+            p++;
+        };
+    }
 	
-	gb_RenderDevice3D->UnlockIndexBuffer(ib);
+	gb_RenderDevice->UnlockIndexBuffer(ib);
 }
 
 void cChaos::CreateVB()
 {
-	gb_RenderDevice3D->CreateVertexBuffer(vb,(size+1)*(size+1),VTYPE::fmt,false);
+	gb_RenderDevice->CreateVertexBuffer(vb, (size+1)*(size+1), VTYPE::fmt, false);
 
-	VTYPE* pVertex=(VTYPE*)gb_RenderDevice3D->LockVertexBuffer(vb);
-	xassert(sizeof(VTYPE)==vb.size);
+	VTYPE* pVertex=(VTYPE*)gb_RenderDevice->LockVertexBuffer(vb);
+    if (!pVertex) return;
+	xassert(sizeof(VTYPE)==vb.ptr->VertexSize);
 
 	int smin=-(size/sub_div/2),smax=size/sub_div+smin;
 	int xmin=smin*plane_size.x,xmax=smax*plane_size.x,
@@ -339,12 +361,14 @@ void cChaos::CreateVB()
 		}
 	}
 	
-	gb_RenderDevice3D->UnlockVertexBuffer(vb);
+	gb_RenderDevice->UnlockVertexBuffer(vb);
 }
 
 void cChaos::RenderTexture()
 {
+#ifdef PERIMETER_D3D9
 	cD3DRender* rd=gb_RenderDevice3D;
+    if (!rd) return;
 	
 	rd->SetRenderTarget(pTexRender,NULL);
 
@@ -360,12 +384,14 @@ void cChaos::RenderTexture()
 					umin1,vmin1,1,1,
 					pTexBump,pTexBump,sColor4c(255,255,255,255),0,COLOR_ADD);
 	rd->RestoreRenderTarget();
+#endif
 }
 
 void cChaos::RenderTex0()
 {
 #ifdef PERIMETER_D3D9
 	cD3DRender* rd=gb_RenderDevice3D;
+    if (!rd) return;
 
 	rd->SetRenderTarget(pTex0,NULL);
 
@@ -433,7 +459,9 @@ void CSkySpere::PreDraw(cCamera *DrawNode)
 
 void CSkySpere::Draw(cCamera *DrawNode)
 {
-	cD3DRender* rd=DrawNode->GetRenderDevice3D();
+#ifdef PERIMETER_D3D9
+	cD3DRender* rd = dynamic_cast<cD3DRender*>(DrawNode->GetRenderDevice());
+    if (!rd) return;
 	uint32_t zfunc=rd->GetRenderState(D3DRS_ZFUNC);
 	uint32_t zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE);
     bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
@@ -456,5 +484,5 @@ void CSkySpere::Draw(cCamera *DrawNode)
 	rd->SetRenderState(D3DRS_ZWRITEENABLE, zwriteenable);
 	DrawNode->SetZPlaneTemp(zplane);
 	rd->SetDrawNode(DrawNode);
-
+#endif
 }

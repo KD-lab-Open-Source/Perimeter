@@ -47,7 +47,7 @@ typedef LONG_PTR LPARAM;
 */
 #endif //_WIN32
 
-#ifdef PERIMETER_HEADLESS
+#ifndef PERIMETER_D3D9
 struct POINT {
     int32_t x;
     int32_t y;

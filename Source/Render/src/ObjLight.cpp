@@ -92,21 +92,26 @@ void cObjLight::Draw(cCamera *DrawNode)
                      xm::round(GetDiffuse().a * alpha));
 	float radius=GetRadius()*GetGlobalMatrix().rot().xcol().norm();
 
-	cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice->GetBufferXYZDT1();
-	sVertexXYZDT1 *v=buf->Lock(4);
-	Vect3f sx=radius*DrawNode->GetWorldI(),sy=radius*DrawNode->GetWorldJ();
-	v[0].pos=GetGlobalMatrix().trans()+sx+sy; v[0].u1()=0, v[0].v1()=0; 
-	v[1].pos=GetGlobalMatrix().trans()+sx-sy; v[1].u1()=0, v[1].v1()=1;
-	v[2].pos=GetGlobalMatrix().trans()-sx+sy; v[2].u1()=1, v[2].v1()=0;
-	v[3].pos=GetGlobalMatrix().trans()-sx-sy; v[3].u1()=1, v[3].v1()=1;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
-	buf->Unlock(4);
-
-	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,GetPhase(),GetTexture());
-	buf->DrawPrimitive(PT_TRIANGLESTRIP,2,MatXf::ID);
-
-	if(occlusion.IsInit())
-		gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC,zfunc);
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice3D->GetBufferXYZDT1();
+        sVertexXYZDT1 *v=buf->Lock(4);
+        Vect3f sx=radius*DrawNode->GetWorldI(),sy=radius*DrawNode->GetWorldJ();
+        v[0].pos=GetGlobalMatrix().trans()+sx+sy; v[0].u1()=0, v[0].v1()=0; 
+        v[1].pos=GetGlobalMatrix().trans()+sx-sy; v[1].u1()=0, v[1].v1()=1;
+        v[2].pos=GetGlobalMatrix().trans()-sx+sy; v[2].u1()=1, v[2].v1()=0;
+        v[3].pos=GetGlobalMatrix().trans()-sx-sy; v[3].u1()=1, v[3].v1()=1;
+        v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
+        buf->Unlock(4);
+    
+        gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,GetPhase(),GetTexture());
+        buf->DrawPrimitive(PT_TRIANGLESTRIP,2,MatXf::ID);
+    
+        if(occlusion.IsInit()) {
+            gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC, zfunc);
+        }
+    }
+#endif
 
 }
 

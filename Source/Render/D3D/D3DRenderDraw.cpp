@@ -52,7 +52,8 @@ void cD3DRender::RestoreRenderTarget()
 
 void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 {
-	if((DrawNode=pDrawNode)==0||lpD3DDevice==0) return;
+	if (DrawNode==pDrawNode||lpD3DDevice==0) return;
+    cInterfaceRenderDevice::SetDrawNode(pDrawNode);
 	if(DrawNode->GetRenderTarget())
 	{
 		LPDIRECT3DSURFACE9 pZBuffer=DrawNode->GetZBuffer();
@@ -281,33 +282,6 @@ void cD3DRender::ChangeTextColor(const char* &str,sColor4c& diffuse)
 		diffuse.RGBA()|=s;
 		str+=i;
 	}
-}
-
-float cD3DRender::GetFontLength(const char *string)
-{ 
-	cFontInternal* cf=CurrentFont->GetInternal();
-	float xOfs=0;
-	float xSize = CurrentFont->GetScale().x*(1<<CurrentFont->GetTexture()->GetX());
-	sColor4c diffuse(0,0,0,0);
-
-	for(const char* str=string;*str;str++)
-	{
-		ChangeTextColor(str,diffuse);
-		uint8_t c=(unsigned char)*str;
-		if(!c || c==10)break;
-		if(c<32)continue;
-		xOfs+=xSize*cf->Font[c].z-1;
-	}
-
-	return xOfs; 
-}
-
-float cD3DRender::GetCharLength(const char c)
-{
-	char str[2];
-	str[0]=c;
-	str[1]=0;
-	return GetFontLength(str);
 }
 
 void cD3DRender::OutTextRect(int x,int y,const char *string,int align,Vect2f& bmin,Vect2f& bmax)

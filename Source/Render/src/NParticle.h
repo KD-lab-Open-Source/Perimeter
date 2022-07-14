@@ -4,11 +4,14 @@
 #include "NParticleKey.h"
 #include "observer.h"
 #include "Texture.h"
-#define EXPORT_TO_GAME 1
+#include "VertexFormat.h"
+
 #ifndef _FINAL_VERSION_
 	#define NEED_TREANGLE_COUNT 
 	#define EFFECTTOOL
 #endif
+
+const int EXPORT_TO_GAME = 1;
 
 class cEffect;
 
@@ -496,6 +499,8 @@ public:
 
 	bool IsVisible(cCamera *pCamera);
 
+    float GetPlumeInterval() const { return PlumeInterval; }
+    int GetTraceCount() const { return TraceCount; }
 
 protected:
 
@@ -535,13 +540,6 @@ protected:
 	bool  chPlume;
 	int   TraceCount;
 	float PlumeInterval;
-
-	template<class nParticle> int PutToBuf(nParticle& p, Vect3f& npos, float& dt,
-										cQuadBuffer<sVertexXYZDT1>*& pBuf, 
-										const sColor4c& color, const Vect3f& PosCamera,
-										const float& size, const cTextureAviScale::RECT& rt,
-										const uint8_t planar, MatXf* iGM = NULL);
-
 
 	enum 
 	{

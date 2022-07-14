@@ -4,7 +4,7 @@
 
 class cScene;
 class cObjLibrary;
-class cURenderDevice;
+class cInterfaceRenderDevice;
 class cTexture;
 class cTextureScale;
 class cFont;
@@ -42,7 +42,7 @@ public:
 	// общие функции
 	virtual void SetData(cInterfaceRenderDevice *pData1);
 	virtual void ClearData();
-	cURenderDevice* GetRenderDevice();
+    cInterfaceRenderDevice* GetRenderDevice();
 	// функции для работы со сценой
 	virtual cScene* CreateScene();
 

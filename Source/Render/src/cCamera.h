@@ -110,8 +110,8 @@ public:
 	void AttachFirst(cIUnkClass* zpalne);
 	void AttachNoRecursive(int pos,cIUnkClass* pbox);
 
-	inline cURenderDevice* GetRenderDevice()					{ return RenderDevice; }
-	inline class cD3DRender* GetRenderDevice3D()				{ return (class cD3DRender*)RenderDevice; }
+	inline cInterfaceRenderDevice* GetRenderDevice()					{ return RenderDevice; }
+
 	// инлайновые функции доступа к полям класса
 	inline cIUnkClass*& GetDraw(int pos,int number)				{ return DrawArray[pos][number]; }
 	inline int GetNumberDraw(int pos)							{ return DrawArray[pos].size(); }
@@ -190,7 +190,7 @@ protected:
 	cScene			*IParent;														// интерфейс породивший данный класс
 
 	//cCamera
-	cURenderDevice				*RenderDevice;				// устройство растеризации
+    cInterfaceRenderDevice		*RenderDevice;				// устройство растеризации
 	cTexture					*RenderTarget;				// поверхность на которую выводится
 	IDirect3DSurface9*			pZBuffer;
 	Vect2f						RenderSize;					// размеры устройства вывода

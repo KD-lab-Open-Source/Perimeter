@@ -1,5 +1,5 @@
 #pragma once
-//interface IDirect3DTexture9;
+
 struct IDirect3DTexture9;
 
 class cTexture : public cUnknownClass, public sAttribute

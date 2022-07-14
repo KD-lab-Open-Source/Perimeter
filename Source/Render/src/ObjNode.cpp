@@ -490,8 +490,10 @@ void cObjectNode::UpdateMatrix()
 
 void cObjectNode::AddShadow(MatXf mat,cMeshTri* Tri)
 {
-	if(!(gb_RenderDevice->GetRenderMode()&RENDERDEVICE_MODE_STRENCIL))
+#ifdef PERIMETER_D3D9
+	if (!gb_RenderDevice3D || !(gb_RenderDevice3D->GetRenderMode()&RENDERDEVICE_MODE_STRENCIL))
 		return;
+#endif
 	bool anim=false;
 	if(AnimChannel)
 	for(int i=0;i<AnimChannel->GetNumberChannel();i++)

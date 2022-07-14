@@ -35,7 +35,7 @@ struct cMeshStatic:public cUnknownClass
 
 	void EndBuildMesh(bool bump);
 protected:
-	inline sVertexXYZNT1& GetVertex(void *pVertex,int n)	{ return ((sVertexXYZNT1*)((char*)pVertex+n*vb.size))[0]; }
+	inline sVertexXYZNT1& GetVertex(void *pVertex,int n)	{ return ((sVertexXYZNT1*)((char*)pVertex+n*vb.ptr->VertexSize))[0]; }
 	void SortPolygon(sPolygon* polygon,int n_polygon);
 	void DeleteSingularPolygon(std::vector<Vect3f> &Vertex, std::vector<sPolygon> &Polygon,
 		std::vector<sPolygon> &TexPoly, std::vector<Vect2f> &Texel);

@@ -144,7 +144,6 @@ protected:
 	void SetBuffer(const Vect2i &size,int zeroplastnumber);
 
 	////////////////////
-	void SetLightMap(cTexture* p);
 	void CreateLightmap();
 
 	void AddLightCamera(cCamera *DrawNode);
@@ -177,3 +176,11 @@ protected:
 	};
 	std::vector<UpdateMapData> func_update_map;
 };
+
+class cCamera;
+
+//TODO currently implemented inside D3DRenderTilemap, move to generic
+//Величина visMap должна быть TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear);
+void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box);
+

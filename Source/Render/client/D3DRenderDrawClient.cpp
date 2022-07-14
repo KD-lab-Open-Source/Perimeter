@@ -114,7 +114,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 	float t=ffd->InterpolationFactor();
 	float t_=1-t;
 
-	LPDIRECT3DVERTEXBUFFER9 vb=pfd->vb.ptr->p;
+	LPDIRECT3DVERTEXBUFFER9 vb=static_cast<LPDIRECT3DVERTEXBUFFER9>(pfd->vb.ptr->p);
 	SetStreamSource(pfd->vb);
 
 	uint32_t AlphaTest = GetRenderState(D3DRS_ALPHATESTENABLE);
@@ -154,7 +154,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 			float phase = ffd->GetFrame()->GetPhase();
 			
 			sVertexXYZDT2* pv;
-			int bytepagesize = pfd->pagesize*pfd->vb.size;
+			int bytepagesize = pfd->pagesize*pfd->vb.ptr->VertexSize;
 			if(pfd->curpage<pfd->pagenumber){
 				RDCALL(vb->Lock(pfd->curpage*bytepagesize,bytepagesize,
 					(void**)&pv,D3DLOCK_NOOVERWRITE));

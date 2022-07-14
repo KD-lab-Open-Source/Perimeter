@@ -1,5 +1,15 @@
 #pragma once
 
+enum PRIMITIVETYPE
+{
+    PT_POINTLIST = 1,
+    PT_LINELIST = 2,
+    PT_LINESTRIP = 3,
+    PT_TRIANGLELIST = 4,
+    PT_TRIANGLESTRIP = 5,
+    PT_TRIANGLEFAN = 6,
+};
+
 class cVertexBufferInternal
 {
 protected:

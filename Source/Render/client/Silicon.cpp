@@ -320,8 +320,9 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		return;
 	float dz = length/line_size;
 
-	int nVertex=0;
-
+	
+#ifdef PERIMETER_D3D9
+    if (!gb_RenderDevice3D) return;
 	DrawStripT2 strip;
 
 	uint32_t old_cull;
@@ -354,12 +355,12 @@ void ElasticLink::Draw(cCamera *DrawNode)
 		vtx0.v1()=0; vtx1.v1()=1;
 		vtx0.u2()=   vtx1.u2()=(u2+=du2);
 		vtx0.v2()=(v2+=dv2);vtx1.v2()=v2+1;
-		nVertex+=2;
 		strip.Set(vtx0,vtx1);
 	}
 
 	strip.End();
 	gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE, old_cull);
+#endif
 }
 
 

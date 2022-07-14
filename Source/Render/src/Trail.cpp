@@ -41,6 +41,7 @@ void cTrail::Draw(cCamera *DrawNode)
 	if(Particle.size()<2)
 		return;
 
+#ifdef PERIMETER_D3D9
 	DrawStrip strip;
 	gb_RenderDevice->SetNoMaterial(GetAttribute(ATTRUNKOBJ_ADDBLEND)?ALPHA_ADDBLEND:ALPHA_BLEND,0,GetTexture());
 
@@ -92,6 +93,7 @@ void cTrail::Draw(cCamera *DrawNode)
 	}
 
 	strip.End();
+#endif
 }
 void cTrail::SetData(const Vect3f* pPos,const Vect3f* pVelocity)
 {

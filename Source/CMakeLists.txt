@@ -44,7 +44,7 @@ IF(NOT PERIMETER_WINDOWS)
             "${pevents_SOURCE_DIR}/src"
     )
 
-    IF (OPTION_DXVK)
+    IF (OPTION_D3D9)
         MESSAGE("Using DXVK-native for D3D9 API")
 
         SET(DXVK_NATIVE_BUILD_COMMAND meson)
@@ -81,13 +81,14 @@ IF(NOT PERIMETER_WINDOWS)
     
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ${DXVK_NATIVE_D3D9_LIB})
         INCLUDE_DIRECTORIES("${DXVK_NATIVE_INCLUDE_DIRS}")
-    ELSE()
-        MESSAGE("Not using D3D9 API providing library")
     ENDIF()
-ELSE()
+ELSEIF(OPTION_D3D9)
     #DirectX SDK libs
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/MSDXSDK_02_06/Include")
 ENDIF()
+
+#This is the only way I know to force download of external project from any targets
+ADD_CUSTOM_TARGET(dependencies ALL)
 
 ADD_SUBDIRECTORY("XPrm")
 ADD_SUBDIRECTORY("Scripts")
@@ -103,8 +104,13 @@ IF(PERIMETER_EXODUS)
     MESSAGE("Using Exodus wrapper - WARNING: EXPERIMENTAL!")
     ADD_SUBDIRECTORY("Exodus")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
-    IF (NOT OPTION_HEADLESS)
+    IF (OPTION_D3D9)
         SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ExodusD3D9)
+
+        #Make Exodus D3D9 depend on lib that provides D3D9 API
+        ADD_DEPENDENCIES(ExodusD3D9 dxvk-native)
+        #Make other modules depend on Exodus D3D9
+        ADD_DEPENDENCIES(dependencies ExodusD3D9)
     ENDIF()
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
@@ -166,9 +172,6 @@ INCLUDE_DIRECTORIES(
     "${PROJECT_SOURCE_DIR}/Source/tx3d"
     "${PROJECT_SOURCE_DIR}/Source/Game/Scripts"
 )
-
-#This is the only way I know to force download of external project from any targets
-ADD_CUSTOM_TARGET(dependencies ALL)
 
 SET(perimeter_SRCS ${perimeter_SRCS}
         Game/CameraManager.cpp
@@ -348,16 +351,6 @@ ELSE()
     MESSAGE("Not checking Scripts")
 ENDIF()
 
-IF(NOT PERIMETER_WINDOWS)
-    #Make Exodus D3D9 depend on lib that provides D3D9 API
-    IF (OPTION_DXVK)
-        ADD_DEPENDENCIES(ExodusD3D9 dxvk-native)
-    ENDIF()
-    IF (NOT OPTION_HEADLESS)
-        #Make other modules depend on Exodus D3D9
-        ADD_DEPENDENCIES(dependencies ExodusD3D9)
-    ENDIF()
-ENDIF()
 ADD_DEPENDENCIES(PluginMAX dependencies)
 ADD_DEPENDENCIES(Terra dependencies)
 ADD_DEPENDENCIES(tx3d dependencies)

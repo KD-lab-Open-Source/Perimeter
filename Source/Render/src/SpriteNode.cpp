@@ -37,19 +37,23 @@ void cSpriteNode::Draw(cCamera *DrawNode)
 		Diffuse.set(GetDiffuse().GetR(), GetDiffuse().GetG(), GetDiffuse().GetB(),
                     xm::round(255 * GetDiffuse().a * GetIntensity()));
 
-	cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice->GetBufferXYZDT1();
-	sVertexXYZDT1 *v=buf->Lock(4);
-
-	Vect3f sx=GetScale().x*DrawNode->GetWorldI(),sy=GetScale().y*DrawNode->GetWorldJ();
-	v[0].pos=GetGlobalMatrix().trans()+sx+sy; v[0].u1()=0, v[0].v1()=0; 
-	v[1].pos=GetGlobalMatrix().trans()+sx-sy; v[1].u1()=0, v[1].v1()=1;
-	v[2].pos=GetGlobalMatrix().trans()-sx+sy; v[2].u1()=1, v[2].v1()=0;
-	v[3].pos=GetGlobalMatrix().trans()-sx-sy; v[3].u1()=1, v[3].v1()=1;
-	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
-	buf->Unlock(4);
-
-	gb_RenderDevice->SetNoMaterial(ALPHA_BLEND,GetFrame()->GetPhase(),GetTexture());
-	buf->DrawPrimitive(PT_TRIANGLESTRIP,2,MatXf::ID);
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice3D->GetBufferXYZDT1();
+        sVertexXYZDT1 *v=buf->Lock(4);
+    
+        Vect3f sx=GetScale().x*DrawNode->GetWorldI(),sy=GetScale().y*DrawNode->GetWorldJ();
+        v[0].pos=GetGlobalMatrix().trans()+sx+sy; v[0].u1()=0, v[0].v1()=0; 
+        v[1].pos=GetGlobalMatrix().trans()+sx-sy; v[1].u1()=0, v[1].v1()=1;
+        v[2].pos=GetGlobalMatrix().trans()-sx+sy; v[2].u1()=1, v[2].v1()=0;
+        v[3].pos=GetGlobalMatrix().trans()-sx-sy; v[3].u1()=1, v[3].v1()=1;
+        v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=Diffuse;
+        buf->Unlock(4);
+    
+        gb_RenderDevice->SetNoMaterial(ALPHA_BLEND,GetFrame()->GetPhase(),GetTexture());
+        buf->DrawPrimitive(PT_TRIANGLESTRIP,2,MatXf::ID);
+    }
+#endif
 }
 
 
@@ -80,30 +84,36 @@ void cSpriteManager::PreDraw(cCamera *camera)
 void cSpriteManager::Draw(cCamera *camera)
 {
 	MTEnter lock(sprite_lock);
-	cQuadBuffer<sVertexXYZDT1>* quad=gb_RenderDevice->GetQuadBufferXYZDT1();
-	gb_RenderDevice->SetNoMaterial(ALPHA_BLEND,GetFrame()->GetPhase(),GetTexture());
+    
+    gb_RenderDevice->SetNoMaterial(ALPHA_BLEND,GetFrame()->GetPhase(),GetTexture());
 
-	quad->BeginDraw();
-	std::list<cSprite>::iterator it;
-	FOR_EACH(sprites,it)
-	{
-		cSprite& s=*it;
-		if(s.ignore)
-			continue;
-		if(!camera->TestVisible(s.pos,s.radius))
-			continue;
-
-		sVertexXYZDT1* v=quad->Get();
-		Vect3f sx=s.radius*camera->GetWorldI(),
-			   sy=s.radius*camera->GetWorldJ();
-		
-		v[0].pos=s.pos+sx+sy; v[0].u1()=0, v[0].v1()=0; 
-		v[1].pos=s.pos+sx-sy; v[1].u1()=0, v[1].v1()=1;
-		v[2].pos=s.pos-sx+sy; v[2].u1()=1, v[2].v1()=0;
-		v[3].pos=s.pos-sx-sy; v[3].u1()=1, v[3].v1()=1;
-		v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=s.color;
-	}
-	quad->EndDraw();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        cQuadBuffer<sVertexXYZDT1>* quad=gb_RenderDevice3D->GetQuadBufferXYZDT1();
+    
+        quad->BeginDraw();
+        std::list<cSprite>::iterator it;
+        FOR_EACH(sprites,it)
+        {
+            cSprite& s=*it;
+            if(s.ignore)
+                continue;
+            if(!camera->TestVisible(s.pos,s.radius))
+                continue;
+    
+            sVertexXYZDT1* v=quad->Get();
+            Vect3f sx=s.radius*camera->GetWorldI(),
+                   sy=s.radius*camera->GetWorldJ();
+            
+            v[0].pos=s.pos+sx+sy; v[0].u1()=0, v[0].v1()=0; 
+            v[1].pos=s.pos+sx-sy; v[1].u1()=0, v[1].v1()=1;
+            v[2].pos=s.pos-sx+sy; v[2].u1()=1, v[2].v1()=0;
+            v[3].pos=s.pos-sx-sy; v[3].u1()=1, v[3].v1()=1;
+            v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=s.color;
+        }
+        quad->EndDraw();
+    }
+#endif
 }
 
 cSprite* cSpriteManager::Create()

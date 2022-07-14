@@ -20,7 +20,7 @@ OPTION(OPTION_LINKER_LLD "Use LLD linker in unix based compilers" ON)
 OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
 OPTION(OPTION_HEADLESS "Enable headless mode (no window or rendering)" OFF)
-OPTION(OPTION_DXVK "Use dxvk-native for D3D9 API in Linux" ON)
+OPTION(OPTION_D3D9 "Enable D3D9 renderer using dxvk-native in Linux or DirectX in Windows" ON)
 OPTION(OPTION_FFMPEG_MOVIES "Use FFMPEG to decode ingame movies" ON)
 
 # Compiler detections
@@ -66,12 +66,11 @@ ELSE()
     SET(PERIMETER_EXODUS_SOUND ON)
 ENDIF()
 
-IF(OPTION_HEADLESS)
-    MESSAGE("Compiling headless build")
-    SET(OPTION_DXVK OFF)
-    add_definitions(-DPERIMETER_HEADLESS)
-ELSE()
+IF (OPTION_D3D9)
+    MESSAGE("D3D9 renderer: Enabled")
     ADD_DEFINITIONS(-DPERIMETER_D3D9)
+ELSE()
+    MESSAGE("D3D9 renderer: Disabled")
 ENDIF()
 
 #To allow downloading deps
@@ -164,7 +163,7 @@ ELSE()
     MESSAGE("WARNING: FFMPEG not found!, movies unavailable!")
 ENDIF()
 
-#Required for more compilant floating point math
+#Required for more compliant floating point math
 IF(MSVC_CL_BUILD)
     add_compile_options(/fp:precise)
 ELSE()

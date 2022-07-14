@@ -2,100 +2,43 @@
 #include "Font.h"
 #include "files/files.h"
 
+#define CVBP(x) static_cast<LPDIRECT3DVERTEXBUFFER9>(x)
+#define CIBP(x) static_cast<LPDIRECT3DINDEXBUFFER9>(x)
+
+const int POLYGONMAX=1024;
+
 int sVertexXYZ::fmt		=	D3DFVF_XYZ;
 int sVertexXYZD::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE;
 int sVertexXYZT1::fmt	=	D3DFVF_XYZ|D3DFVF_TEX1;
-int sVertexXYZDS::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_SPECULAR;
-int sVertexXYZDST1::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX1;
-int sVertexXYZDST2::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX2;
 int sVertexXYZDT1::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1;
 int sVertexXYZDT2::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX2;
 int sVertexXYZN::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL;
-int sVertexXYZND::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE;
-int sVertexXYZNDS::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_SPECULAR;
-int sVertexXYZNDST1::fmt=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX1;
-int sVertexXYZNDST2::fmt=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_SPECULAR|D3DFVF_TEX2;
 int sVertexXYZNT1::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
 int sVertexXYZW::fmt	=	D3DFVF_XYZRHW;
 int sVertexXYZWD::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE;
-int sVertexXYZWT1::fmt	=	D3DFVF_XYZRHW|D3DFVF_TEX1;
 int sVertexXYZWDT1::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1;
 int sVertexXYZWDT2::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX2;
-int sVertexXYZDP::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_PSIZE;
 int sVertexDot3::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)| D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
 
-int sVertexXYZINT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB1|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
-int sVertexXYZW4INT1::fmt	=	D3DFVF_XYZ|D3DFVF_XYZB5|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
+cD3DRender *gb_RenderDevice3D = nullptr;
 
-uint8_t& cSkinVertex::GetWeight(int idx)
-{
-	VISASSERT(num_weight>0);
-	uint8_t* b=(uint8_t*)(7 + cur);
-	switch(idx)
-	{
-	case 0:
-		return b[2];
-	case 1:
-		return b[1];
-	case 2:
-		return b[0];
-	case 3:
-		return b[3];
-	}
-
-	VISASSERT(0);
-	return b[0];
-}
-int cSkinVertex::GetFormat()
-{
-	//int fmt=D3DFVF_XYZ|D3DFVF_LASTBETA_UBYTE4|D3DFVF_NORMAL|D3DFVF_TEX1;
-	int fmt=D3DFVF_XYZ|D3DFVF_LASTBETA_D3DCOLOR|D3DFVF_NORMAL;
-	
-	switch(num_weight+1)
-	{
-	case 1:
-		fmt|=D3DFVF_XYZB1;
-		break;
-	case 2:
-		xassert(0);
-	case 3:
-	case 4:
-	case 5:
-		fmt|=D3DFVF_XYZB1|D3DFVF_DIFFUSE;
-		break;
-	default:
-		xassert(0);
-	}
-
-	if(bump)
-		fmt|=D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
-	else
-		fmt|=D3DFVF_TEX1;
-	return fmt;
-}
-
-class cD3DRender *gb_RenderDevice3D=NULL;
 void IsDeleteAllDefaultTextures();
-
-int GetMaskBitCount(unsigned int BitMask)
-{
-	int BitCount;
-    for(BitCount=0;BitMask;BitMask>>=1)
-        BitCount+=(BitMask&0x1);
-	return BitCount;
-}
-int GetMaskBitShift(unsigned int BitMask)
-{
-	if(BitMask==0) return 0;
-	int BitShift;
-    for(BitShift=0;(BitMask&1)==0;BitMask>>=1)
-        BitShift++;
-	return BitShift;
-}
 
 cD3DRender::cD3DRender()
 {
-	gb_RenderDevice3D=this;
+    NumberPolygon=0;
+    NumDrawObject=0;
+    Buffer.New(600000);//-> Buffer=600000,MaxVertexSize=10*4,VertexNumMin=Buffer/MaxVertexSize=600000/40=15000
+    RenderMode=0;
+    xScr=yScr=0;
+    xScrMin=yScrMin=xScrMax=yScrMax=0;
+
+    bActiveScene=0;
+    bWireFrame=0;
+    nSupportTexture=0;
+
+    DrawNode=0;
+    DefaultFont=CurrentFont=0;
 	hWnd=0;
 	
 	lpD3D=0;
@@ -123,44 +66,55 @@ cD3DRender::cD3DRender()
 cD3DRender::~cD3DRender()
 {
 	Done();
+    Buffer.Delete();
+    VISASSERT(RenderMode==0);
+    VISASSERT(xScr==0&&yScr==0&&xScrMin==0&&yScrMin==0&&xScrMax==0&&yScrMax==0);
+    VISASSERT(xScr==0&&yScr==0);
     gb_RenderDevice3D=nullptr;
 }
 
-bool cD3DRender::CheckDeviceType(int xscr,int yscr,int Mode)
-{
-	uint32_t Adapter=0;
-	if(!lpD3D)
-	{
-		//lpD3D=Direct3DCreate9(D3D9b_SDK_VERSION);//Временно, когда появится специфичное для 9.0c переправить обратно
-		lpD3D=Direct3DCreate9(D3D_SDK_VERSION);
-		if(!lpD3D)
-			return false;
-	}
+int cD3DRender::GetSizeFromFmt(int fmt) {
+    int size=0;
 
-	if(Mode&RENDERDEVICE_MODE_WINDOW)
-		return true;
+    int position=fmt&D3DFVF_POSITION_MASK;
+    switch(position)
+    {
+        case D3DFVF_XYZ:
+            size+=3*sizeof(float);
+            break;
+        case D3DFVF_XYZRHW:
+        case D3DFVF_XYZW:
+        case D3DFVF_XYZB1:
+            size+=4*sizeof(float);
+            break;
+        case D3DFVF_XYZB2:
+            size+=5*sizeof(float);
+            break;
+        case D3DFVF_XYZB3:
+            size+=6*sizeof(float);
+            break;
+        case D3DFVF_XYZB4:
+            size+=7*sizeof(float);
+            break;
+        case D3DFVF_XYZB5:
+            size+=8*sizeof(float);
+            break;
+        default:
+            xassert(0);
+    }
 
-	D3DFORMAT BackBufferFormat=GetBackBufferFormat(Mode);
-	uint32_t modes=lpD3D->GetAdapterModeCount(Adapter, BackBufferFormat);
+    if(fmt&D3DFVF_NORMAL) size+=3*sizeof(float);
+    if(fmt&D3DFVF_DIFFUSE) size+=sizeof(unsigned int);
+    if(fmt&D3DFVF_SPECULAR) size+=sizeof(unsigned int);
 
-	for(int i=0;i<modes;i++)
-	{
-		D3DDISPLAYMODE mode;
-		if(FAILED(lpD3D->EnumAdapterModes(Adapter,
-				BackBufferFormat,
-				i,
-				&mode
-		)))
-			return false;
-
-		if(mode.Width==xscr && mode.Height==yscr && 
-			mode.Format==BackBufferFormat)
-			return true;
-	}
-
-	return false;
+    size += ((fmt & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT) * 2 * sizeof(float);
+    for(int i=0;i<4;i++)
+    {
+        if((fmt&D3DFVF_TEXCOORDSIZE3(i))==D3DFVF_TEXCOORDSIZE3(i))
+            size+=sizeof(float);
+    }
+    return size;
 }
-
 
 int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz)
 { 
@@ -190,9 +144,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 
 	if(!(RenderMode&RENDERDEVICE_MODE_RGB32))
 		RenderMode|=RENDERDEVICE_MODE_RGB16;
-		
-//	if(TexFmtData[SURFMT_RENDERMAP].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLORALPHA].TexFmtD3D==D3DFMT_UNKNOWN||TexFmtData[SURFMT_COLOR].TexFmtD3D==D3DFMT_UNKNOWN)
-//		return 5; // don't support render to texture
+
 	RDCALL(lpD3D->GetDeviceCaps(Adapter,D3DDEVTYPE_HAL,&DeviceCaps));
     memset(&d3dpp, 0, sizeof(d3dpp));
 	d3dpp.BackBufferWidth			= xScr=xscr;
@@ -566,7 +518,7 @@ int cD3DRender::Done()
 */	
 	LibVB.clear();
 	LibIB.clear();
-	TexLibrary.Free();
+	TexLibrary->Free();
 	
 	bActiveScene=0;
 	RELEASE(lpD3DDevice);
@@ -643,14 +595,14 @@ void cD3DRender::RestoreDeviceIfLost()
     }
 }
 
-int cD3DRender::Flush(HWND wnd)
+int cD3DRender::Flush(bool wnd)
 { 
 	if(bActiveScene) EndScene();
 	MTG();
 	RestoreDeviceIfLost();
 
 	//RDCALL(lpD3DDevice->Present(NULL,NULL,wnd,NULL))
-	lpD3DDevice->Present(NULL,NULL,wnd,NULL);
+	lpD3DDevice->Present(NULL,NULL,wnd ? hWnd : nullptr, NULL);
 
 	if(Option_DrawNumberPolygon) 
 	{
@@ -660,34 +612,34 @@ int cD3DRender::Flush(HWND wnd)
 		
 		int dbg_MemVertexBuffer=0,dbg_NumVertexBuffer=0;
 
-		for(int i=0; i<LibVB.size(); i++ )
-			if( LibVB[i]->p )
-			{
-				D3DVERTEXBUFFER_DESC dsc;
-				LibVB[i]->p->GetDesc( &dsc );
-				dbg_MemVertexBuffer += dsc.Size;
-				dbg_NumVertexBuffer++;
-			}
+        for (int i = 0; i < LibVB.size(); i++) {
+            if (LibVB[i]->p) {
+                D3DVERTEXBUFFER_DESC dsc;
+                CVBP(LibVB[i]->p)->GetDesc(&dsc);
+                dbg_MemVertexBuffer += dsc.Size;
+                dbg_NumVertexBuffer++;
+            };
+        }
 		sprintf(str,"vb=%i,nvb=%i",dbg_MemVertexBuffer,dbg_NumVertexBuffer);
 		OutText(10,80,str);
 
 		int dbg_MemIndexBuffer=0,dbg_NumIndexBuffer=0;
 		int i;
-		for(i=0; i<LibIB.size(); i++ )
-			if( LibIB[i]->p )
-			{
-				D3DINDEXBUFFER_DESC dsc;
-				LibIB[i]->p->GetDesc( &dsc );
-				dbg_MemIndexBuffer += dsc.Size;
-				dbg_NumIndexBuffer++;
-			}
+        for (i = 0; i < LibIB.size(); i++) {
+            if (LibIB[i]->p) {
+                D3DINDEXBUFFER_DESC dsc;
+                CIBP(LibIB[i]->p)->GetDesc(&dsc);
+                dbg_MemIndexBuffer += dsc.Size;
+                dbg_NumIndexBuffer++;
+            };
+        }
 		sprintf(str,"ib=%i,nib=%i",dbg_MemIndexBuffer,dbg_NumIndexBuffer);
 		OutText(10,60,str);
 
 		int dbg_MemTexture=0;
-		for( i=0; i<TexLibrary.GetNumberTexture(); i++ )
+		for( i=0; i<TexLibrary->GetNumberTexture(); i++ )
 		{
-			cTexture* pTexture=TexLibrary.GetTexture(i);
+			cTexture* pTexture=TexLibrary->GetTexture(i);
 			if(pTexture)
 			for(int nFrame=0;nFrame<pTexture->GetNumberFrame();nFrame++)
 			if( pTexture->GetDDSurface(nFrame)) 
@@ -1443,20 +1395,9 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 
 void cD3DRender::CreateVertexBuffer(sPtrVertexBuffer &vb,int NumberVertex,int format,int dynamic)
 {
-	int size = GetSizeFromFmt(format);
-	CreateVertexBufferBySizeFormat(vb,NumberVertex,size,format,dynamic);
-}
-
-void cD3DRender::CreateVertexBufferBySize(struct sPtrVertexBuffer &vb,int NumberVertex,int size,int dynamic)
-{
-	CreateVertexBufferBySizeFormat(vb,NumberVertex,size,0,dynamic);
-}
-
-void cD3DRender::CreateVertexBufferBySizeFormat(struct sPtrVertexBuffer &vb,int NumberVertex,int size,int format,int dynamic)
-{
+    int size = GetSizeFromFmt(format);
 	xassert(NumberVertex>=0 || NumberVertex<=65536);
 	vb.ptr=LibVB.NewSlot();
-	vb.size = size;
 
 	sSlotVB& s=*vb.ptr;
 	s.VertexSize=size;
@@ -1464,10 +1405,13 @@ void cD3DRender::CreateVertexBufferBySizeFormat(struct sPtrVertexBuffer &vb,int 
 	s.dynamic = dynamic;
 	s.NumberVertex=NumberVertex;
 	s.p=NULL;
-	if(dynamic)
-		RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex*vb.size,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY,format,D3DPOOL_DEFAULT,&s.p,NULL))
-	else
-		RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex*vb.size,D3DUSAGE_WRITEONLY,format,D3DPOOL_MANAGED,&s.p,NULL))
+	if (dynamic) {
+        RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex * size, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
+                                               format, D3DPOOL_DEFAULT, reinterpret_cast<LPDIRECT3DVERTEXBUFFER9*>(&s.p), NULL))
+    } else {
+        RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex * size, D3DUSAGE_WRITEONLY,
+                                               format, D3DPOOL_MANAGED, reinterpret_cast<LPDIRECT3DVERTEXBUFFER9*>(&s.p), NULL))
+    }
 }
 
 void cD3DRender::DeleteVertexBuffer(sPtrVertexBuffer &vb)
@@ -1476,7 +1420,10 @@ void cD3DRender::DeleteVertexBuffer(sPtrVertexBuffer &vb)
 	if(!vb.IsInit()) return;
 	sSlotVB& s=*vb.ptr;
 	VISASSERT(s.init);
-	RELEASE(s.p); 
+    if (s.p) {
+        CVBP(s.p)->Release();
+        s.p = nullptr;
+    }
 	LibVB.DeleteSlot(vb.ptr);
 	vb.ptr=NULL;
 }
@@ -1488,7 +1435,10 @@ void cD3DRender::DeleteDynamicVertexBuffer()
 		sSlotVB& s=*LibVB[i];
 		if(s.init && s.dynamic)
 		{
-			RELEASE(s.p);
+            if (s.p) {
+                CVBP(s.p)->Release();
+                s.p = nullptr;
+            }
 		}
 	}
 }
@@ -1501,7 +1451,7 @@ void cD3DRender::RestoreDynamicVertexBuffer()
 		if(s.init && s.dynamic)
 		{
 			VISASSERT(s.p==NULL);
-			RDCALL(lpD3DDevice->CreateVertexBuffer(s.NumberVertex*s.VertexSize,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY,s.fmt,D3DPOOL_DEFAULT,&s.p,NULL))
+			RDCALL(lpD3DDevice->CreateVertexBuffer(s.NumberVertex*s.VertexSize,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY, s.fmt, D3DPOOL_DEFAULT,reinterpret_cast<LPDIRECT3DVERTEXBUFFER9*>(&s.p), NULL))
 		}
 	}
 }
@@ -1510,20 +1460,20 @@ void* cD3DRender::LockVertexBuffer(sPtrVertexBuffer &vb)
 {
 	void *p=0;
 	VISASSERT( vb.IsInit() && vb.ptr->p );
-	RDCALL(vb.ptr->p->Lock(0,0,&p, vb.ptr->dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
+	RDCALL(CVBP(vb.ptr->p)->Lock(0,0,&p, vb.ptr->dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
 	return p;
 }
 void cD3DRender::UnlockVertexBuffer(sPtrVertexBuffer &vb)
 {
 	VISASSERT( vb.IsInit() && vb.ptr->p );
-	RDCALL(vb.ptr->p->Unlock());
+	RDCALL(CVBP(vb.ptr->p)->Unlock());
 }
 void cD3DRender::CreateIndexBuffer(sPtrIndexBuffer& ib,int NumberPolygon,int size)
 {
 	DeleteIndexBuffer(ib);
 
 	sSlotIB* slot=LibIB.NewSlot();
-	RDCALL(lpD3DDevice->CreateIndexBuffer(NumberPolygon*size,D3DUSAGE_WRITEONLY,D3DFMT_INDEX16,D3DPOOL_MANAGED,&slot->p,NULL));
+	RDCALL(lpD3DDevice->CreateIndexBuffer(NumberPolygon*size, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED,reinterpret_cast<LPDIRECT3DINDEXBUFFER9*>(&slot->p), NULL));
 	ib.ptr=slot;
 }
 void cD3DRender::DeleteIndexBuffer(sPtrIndexBuffer &ib)
@@ -1531,21 +1481,24 @@ void cD3DRender::DeleteIndexBuffer(sPtrIndexBuffer &ib)
 	if(!ib.IsInit()) return;
 	sSlotIB& s=*ib.ptr;
 	VISASSERT(s.init);
-	RELEASE(s.p);
+    if (s.p) {
+        CIBP(s.p)->Release();
+        s.p = nullptr;
+    }
 	LibIB.DeleteSlot(ib.ptr);
-	ib.ptr=NULL;
+	ib.ptr=nullptr;
 }
 sPolygon* cD3DRender::LockIndexBuffer(sPtrIndexBuffer &ib)
 {
 	void *p=0;
 	VISASSERT( ib.IsInit() && ib.ptr->p );
-	ib.ptr->p->Lock(0,0,&p,0);
+    CIBP(ib.ptr->p)->Lock(0,0,&p,0);
 	return (sPolygon*)p;
 }
 void cD3DRender::UnlockIndexBuffer(sPtrIndexBuffer &ib)
 {
 	VISASSERT( ib.IsInit() && ib.ptr->p );
-	ib.ptr->p->Unlock();
+    CIBP(ib.ptr->p)->Unlock();
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)
@@ -1580,9 +1533,9 @@ int cD3DRender::KillFocus()
 	if(dtAdvanceOriginal)
 		dtAdvanceOriginal->DeleteShadowTexture();
 
-	for(int i=0;i<TexLibrary.GetNumberTexture();i++)
+	for(int i=0;i<TexLibrary->GetNumberTexture();i++)
 	{
-		cTexture* pTexture=TexLibrary.GetTexture(i);
+		cTexture* pTexture=TexLibrary->GetTexture(i);
 		if(pTexture&&pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT))
 			DeleteTexture(pTexture);
 	}
@@ -1620,13 +1573,13 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 
 	RDCALL(lpD3DDevice->EvictManagedResources());
 	 
-	for(int i=0;i<TexLibrary.GetNumberTexture();i++)
+	for(int i=0;i<TexLibrary->GetNumberTexture();i++)
 	{
-		cTexture* pTexture=TexLibrary.GetTexture(i);
-		if(pTexture && pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT))
-		{
-			if(pTexture->GetRef()>1)
-				CreateTexture(pTexture,0,-1,-1);
+		cTexture* pTexture=TexLibrary->GetTexture(i);
+		if(pTexture && pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT)) {
+			if (pTexture->GetRef()>1) {
+                CreateTexture(pTexture, 0, -1, -1);
+            }
 		}
 	}
 
@@ -1769,21 +1722,6 @@ void cD3DRender::InitVertexBuffers()
 	BufferXYZWDT2.Create(sizemin);
 	BufferXYZOcclusion.Create(sizemin);
 }
-////////////////////////////////////////////////////////////
-
-void sPtrVertexBuffer::Destroy()
-{
-	if(ptr)
-		gb_RenderDevice->DeleteVertexBuffer(*this);
-	ptr=NULL;
-}
-
-sPtrIndexBuffer::~sPtrIndexBuffer()
-{
-	if(ptr)
-		gb_RenderDevice->DeleteIndexBuffer(*this);
-	ptr=NULL;
-}
 
 ////////////////////////////////////////////////////////////
 cVertexBufferInternal::cVertexBufferInternal()
@@ -1812,7 +1750,8 @@ uint8_t* cVertexBufferInternal::Lock(int minvertex)
 	LPDIRECT3DVERTEXBUFFER9 pvb=gb_RenderDevice3D->GetVB(vb);
 	if(GetSize()>minvertex)
 	{
-		RDCALL(pvb->Lock(cur_min_vertex*vb.size,GetSize()*vb.size,
+        short size = vb.ptr->VertexSize;
+		RDCALL(pvb->Lock(cur_min_vertex*size,GetSize()*size,
 			&min_index,D3DLOCK_NOOVERWRITE));
 	}else
 	{
@@ -1840,7 +1779,6 @@ void cVertexBufferInternal::Create(int bytesize,int vertexsize,int _fmt)
 	numvertex=bytesize/vertexsize;
 	fmt=_fmt;
 	gb_RenderDevice3D->CreateVertexBuffer(vb,numvertex,fmt,TRUE);
-	xassert(vertexsize==vb.size);
 }
 
 void cVertexBufferInternal::DrawPrimitive(PRIMITIVETYPE Type, uint32_t Count, const MatXf &m)
@@ -1911,7 +1849,7 @@ void* cQuadBufferInternal::Get()
 		BeginDraw();
 	}
 
-	uint8_t* cur= start_vertex + vertex_index * vb.size;
+	uint8_t* cur= start_vertex + vertex_index * vb.ptr->VertexSize;
 	vertex_index+=4;
 	return cur;
 }
@@ -1927,7 +1865,7 @@ void cQuadBufferInternal::EndDraw()
 void DrawStrip::Begin()
 {
 	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,MatXf::ID);
-	buf=gb_RenderDevice->GetBufferXYZDT1();
+	buf=gb_RenderDevice3D->GetBufferXYZDT1();
 	pointer=buf->Lock(8);
 	num=0;
 }
@@ -1944,7 +1882,7 @@ void DrawStrip::End()
 void DrawStripT2::Begin(const MatXf& mat)
 {
 	gb_RenderDevice3D->SetMatrix(D3DTS_WORLD,mat);
-	buf=gb_RenderDevice->GetBufferXYZDT2();
+	buf=gb_RenderDevice3D->GetBufferXYZDT2();
 	pointer=buf->Lock(8);
 	num=0;
 }
@@ -2250,15 +2188,3 @@ void IsDeleteAllDefaultTextures()
 }
 #endif 
 
-void cD3DRender::SetDialogBoxMode(bool enable)
-{
-	if(RenderMode&RENDERDEVICE_MODE_WINDOW)
-		return;
-	if(enable)
-		RenderMode|=RENDERDEVICE_MODE_ONEBACKBUFFER;
-	else
-		RenderMode&=~(uint32_t)RENDERDEVICE_MODE_ONEBACKBUFFER;
-
-	KillFocus();
-	SetFocus(false);
-}

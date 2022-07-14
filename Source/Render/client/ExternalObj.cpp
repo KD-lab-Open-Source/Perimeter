@@ -23,7 +23,7 @@ void cExternalObj::PreDraw(cCamera *DrawNode)
 }
 void cExternalObj::Draw(cCamera *DrawNode)
 {
-	cURenderDevice *Render=DrawNode->GetRenderDevice();
+	cInterfaceRenderDevice *Render=DrawNode->GetRenderDevice();
 	extern void terExternalShowCall(int ObjType,void *pointer,int TestSizePerByte);
 
 	Render->SetRenderState( RS_CULLMODE, D3DCULL_NONE );

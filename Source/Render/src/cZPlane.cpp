@@ -12,7 +12,11 @@ cZPlane::cZPlane()
 
 	pTex0=pTex1=NULL;
 	texturek0=texturek1=1;
+#ifdef PERIMETER_D3D9
 	stage2op=D3DTOP_ADDSIGNED;
+#else
+    stage2op=0;
+#endif
 
 	speed0x=speed0y=1.0f;
 }
@@ -62,7 +66,9 @@ void cZPlane::PreDraw(cCamera *DrawNode)
 
 void cZPlane::Draw(cCamera *DrawNode)
 {
-	cD3DRender* rd=DrawNode->GetRenderDevice3D();
+#ifdef PERIMETER_D3D9
+	cD3DRender* rd = dynamic_cast<cD3DRender*>(DrawNode->GetRenderDevice());
+    if (!rd) return;
 	sVertexXYZDT2 *v=(sVertexXYZDT2*)rd->GetStripBuffer();
 
 	const int nvertex=4;
@@ -143,6 +149,7 @@ void cZPlane::Draw(cCamera *DrawNode)
 
 	rd->SetSamplerState( 0, D3DSAMP_ADDRESSU , D3DTADDRESS_WRAP);
 	rd->SetSamplerState( 0, D3DSAMP_ADDRESSV , D3DTADDRESS_WRAP);
+#endif
 }
 
 //////////////////////////cPlane//////////////////////////////
@@ -172,8 +179,10 @@ void cPlane::PreDraw(cCamera *DrawNode)
 
 void cPlane::Draw(cCamera *DrawNode)
 {
+#ifdef PERIMETER_D3D9
 	cD3DRender* rd=(cD3DRender*)DrawNode->GetRenderDevice();
-	cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice->GetBufferXYZDT1();
+    if (!rd) return;
+	cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice3D->GetBufferXYZDT1();
 
 	sVertexXYZDT1* vertex=buf->Lock(4);
 	vertex[0].pos.set(0,0,0);
@@ -202,6 +211,7 @@ void cPlane::Draw(cCamera *DrawNode)
 
 	buf->DrawPrimitive(PT_TRIANGLESTRIP,2,GetGlobalMatrix());
 	rd->SetRenderState(RS_BILINEAR,1);
+#endif
 }
 
 void cPlane::SetUV(float _umin,float _vmin,float _umax,float _vmax)

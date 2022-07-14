@@ -111,70 +111,87 @@ void cParticle::Draw(cCamera *DrawNode)
 {
 	Particle.clear();
 //	start_timer(Draw_Particle,1);
-	int nVertex=0;
-	cVertexBuffer<sVertexXYZDT1>* pBuf=DrawNode->GetRenderDevice()->GetBufferXYZDT1();
+	int nVertex=0;;
 
-	DrawNode->GetRenderDevice()->SetNoMaterial(GetAttribute(ATTRUNKOBJ_ADDBLEND)?ALPHA_ADDBLENDALPHA:ALPHA_BLEND,
+    DrawNode->GetRenderDevice()->SetNoMaterial(GetAttribute(ATTRUNKOBJ_ADDBLEND)?ALPHA_ADDBLENDALPHA:ALPHA_BLEND,
 				GetFrame()->GetPhase(),GetTexture());
-	sVertexXYZDT1 *Vertex=pBuf->Lock();
+
+#ifdef PERIMETER_D3D9
+    cVertexBuffer<sVertexXYZDT1>* pBuf = nullptr;
+    cD3DRender* rdd3d = dynamic_cast<cD3DRender*>(DrawNode->GetRenderDevice());
+    if (rdd3d) {
+        pBuf = rdd3d->GetBufferXYZDT1();
+    }
+	sVertexXYZDT1* Vertex=pBuf ? pBuf->Lock() : nullptr;
+#endif
 
 	float d=DrawNode->GetPos().distance(GetGlobalMatrix().trans()+(Bound.min+Bound.max)*0.5f);
 	float ScrScale=DrawNode->GetFocusViewPort().x/d;
 	int nLOD= xm::round(0.5f * 8 * ScrScale * (1 - Option_NearDistanceLOD * 0.1f));
 	float dt=CurrentTime/TimeLife,dt1=dt-1;
 
-	for(int i=0;i<Particle.size();i++)
-	if(dt1<=Particle[i].time)
-	{
-		Vect3f sx,sy;
-		if((i&0x00000007)>=nLOD) continue;
-		sVertexXYZDT1 *v=&Vertex[nVertex];
-		float phase=dt-Particle[i].time;
-		sParticleKey &key=Key[(int) xm::round(phase * (NumberKey - 1))];
-		VISASSERT(0<=phase&&phase<=1);
-		DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.x,-key.rotate.y,0),sx);
-		DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.y,+key.rotate.x,0),sy);
+    for (int i = 0; i < Particle.size(); i++) {
+        if (dt1 <= Particle[i].time) {
+            if ((i & 0x00000007) >= nLOD) continue;
+#ifdef PERIMETER_D3D9
+            if (!Vertex) continue;
+            Vect3f sx,sy;
+            sVertexXYZDT1 *v=&Vertex[nVertex];
+            float phase=dt-Particle[i].time;
+            sParticleKey &key=Key[(int) xm::round(phase * (NumberKey - 1))];
+            VISASSERT(0<=phase&&phase<=1);
+            DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.x,-key.rotate.y,0),sx);
+            DrawNode->GetMatrix().invXformVect(Vect3f(+key.rotate.y,+key.rotate.x,0),sy);
+    
+            Vect3f v0,v1,v2,v3;
+            sColor4c color((int) xm::round(GetDiffuse().r * key.diffuse.r),
+                           (int) xm::round(GetDiffuse().g * key.diffuse.g),
+                           (int) xm::round(GetDiffuse().b * key.diffuse.b),
+                           (int) xm::round(GetDiffuse().a * key.diffuse.a));
+            
+            v0=Particle[i].pos-sx-sy;
+            v1=Particle[i].pos-sx+sy;
+            v2=Particle[i].pos+sx-sy;
+            v3=Particle[i].pos+sx+sy;
+    
+            v[0].pos=v0; v[0].GetTexel().set(key.TexPos.x,key.TexPos.y); 
+            v[0].diffuse=color;
+            v[1].pos=v1; v[1].GetTexel().set(key.TexPos.x,key.TexPos.y+TexSize.y);
+            v[1].diffuse=color;
+            v[2].pos=v2; v[2].GetTexel().set(key.TexPos.x+TexSize.x,key.TexPos.y);
+            v[2].diffuse=color;
+    
+            v[3].pos=v1; v[3].GetTexel().set(key.TexPos.x,key.TexPos.y+TexSize.y);
+            v[3].diffuse=color;
+            v[4].pos=v2; v[4].GetTexel().set(key.TexPos.x+TexSize.x,key.TexPos.y);
+            v[4].diffuse=color;
+            v[5].pos=v3; v[5].GetTexel().set(key.TexPos.x+TexSize.x,key.TexPos.y+TexSize.y);
+            v[5].diffuse=color;
+    
+            nVertex+=6;
+    
+            if(nVertex+6>=pBuf->GetSize())
+            {
+                pBuf->Unlock(nVertex);
+                pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,GetGlobalMatrix());
+                Vertex=pBuf->Lock();
+                nVertex=0;
+            }
+#endif
+        } else {
+            SetFreeParticle(i);
+        }
+    }
 
-		Vect3f v0,v1,v2,v3;
-		sColor4c color((int) xm::round(GetDiffuse().r * key.diffuse.r),
-					   (int) xm::round(GetDiffuse().g * key.diffuse.g),
-					   (int) xm::round(GetDiffuse().b * key.diffuse.b),
-					   (int) xm::round(GetDiffuse().a * key.diffuse.a));
-		
-		v0=Particle[i].pos-sx-sy;
-		v1=Particle[i].pos-sx+sy;
-		v2=Particle[i].pos+sx-sy;
-		v3=Particle[i].pos+sx+sy;
-
-		v[0].pos=v0; v[0].GetTexel().set(key.TexPos.x,key.TexPos.y); 
-		v[0].diffuse=color;
-		v[1].pos=v1; v[1].GetTexel().set(key.TexPos.x,key.TexPos.y+TexSize.y);
-		v[1].diffuse=color;
-		v[2].pos=v2; v[2].GetTexel().set(key.TexPos.x+TexSize.x,key.TexPos.y);
-		v[2].diffuse=color;
-
-		v[3].pos=v1; v[3].GetTexel().set(key.TexPos.x,key.TexPos.y+TexSize.y);
-		v[3].diffuse=color;
-		v[4].pos=v2; v[4].GetTexel().set(key.TexPos.x+TexSize.x,key.TexPos.y);
-		v[4].diffuse=color;
-		v[5].pos=v3; v[5].GetTexel().set(key.TexPos.x+TexSize.x,key.TexPos.y+TexSize.y);
-		v[5].diffuse=color;
-
-		nVertex+=6;
-
-		if(nVertex+6>=pBuf->GetSize())
-		{
-			pBuf->Unlock(nVertex);
-			pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,GetGlobalMatrix());
-			Vertex=pBuf->Lock();
-			nVertex=0;
-		}
-	}else
-		SetFreeParticle(i);
-
-	pBuf->Unlock(nVertex);
-	if(nVertex>0)
-		pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,GetGlobalMatrix());
+#ifdef PERIMETER_D3D9
+    if (pBuf) {
+	    pBuf->Unlock(nVertex);
+	    if(nVertex>0) {
+		    pBuf->DrawPrimitive(PT_TRIANGLELIST,nVertex/3,GetGlobalMatrix());
+        }
+    }
+#endif
+    
 //	stop_timer(Draw_Particle,1);
 }
 

@@ -3,7 +3,6 @@
 #include "StdAfx.h"
 #include "SystemUtil.h"
 #include "files/files.h"
-#include "../Render/D3D/RenderDevice.h"
 #include "Runtime.h"
 #include "Sample.h"
 #include "VideoPlayer.h"

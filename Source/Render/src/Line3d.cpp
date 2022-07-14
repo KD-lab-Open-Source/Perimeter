@@ -29,6 +29,7 @@ void cLine3d::Draw(cCamera *DrawNode)
 {
 	MTEnter mtlock(lock);
 	if(Vertex.size()<2) return;
+#ifdef PERIMETER_D3D9
 	DrawStrip strip;
 	
 	if(DrawNode->GetCameraPass()==SCENENODE_OBJECTSORT_NOZ)
@@ -70,6 +71,7 @@ void cLine3d::Draw(cCamera *DrawNode)
 	}
 
 	strip.End();
+#endif
 }
 
 void cLine3d::UpdateVertex(int num_vertex, sVertexLine* varray)

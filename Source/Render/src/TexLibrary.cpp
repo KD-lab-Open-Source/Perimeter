@@ -21,7 +21,7 @@ static BeginNF begin_nf;
 
 cTexLibrary* GetTexLibrary()
 {
-	return &gb_RenderDevice->TexLibrary;
+	return gb_RenderDevice->GetTexLibrary();
 }
 
 cTexLibrary::cTexLibrary()
@@ -348,7 +348,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 	{
 		//Эта текстура никогда не должна использоваться, make small texture.
 		cTexture* pMini=GetElement("RESOURCE\\Models\\Main\\TEXTURES\\028r.tga");
-		if(pMini)
+		if(pMini && !pMini->BitMap.empty() && pMini->BitMap.front())
 		{
 			Texture->BitMap.push_back(pMini->BitMap.front());
 			Texture->BitMap[0]->AddRef();

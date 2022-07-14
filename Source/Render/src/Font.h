@@ -11,7 +11,9 @@ public:
 	bool Create(const std::string& root_dir, const std::string& locale, const std::string& fname, int h, bool silentErr=false);
 	
 	virtual cTexture* GetTexture()		{return pTexture;};
-	virtual float GetHeight()			{return FontHeight*GetTexture()->GetHeight();}
+	virtual float GetHeight()			{
+        return FontHeight*(GetTexture() ? GetTexture()->GetHeight() : 1);
+    }
 	bool Reload(const char* root_dir);
 
 	std::vector<Vect3f>		Font; // x,y - position, z - font width
@@ -37,7 +39,7 @@ public:
 	cFont(cFontInternal* p):cUnknownClass(KIND_FONT),pFont(p),Scale(1,1){};
 	virtual ~cFont(){};
 
-	virtual cTexture* GetTexture(){return pFont->pTexture;};
+	virtual cTexture* GetTexture(){return pFont->GetTexture(); };
 	virtual float GetHeight()	  {return pFont->GetHeight(); }
 
 	virtual Vect2f GetScale() const     { return Scale; }

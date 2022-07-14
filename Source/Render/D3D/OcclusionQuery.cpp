@@ -6,7 +6,9 @@ cOcclusionQuery::cOcclusionQuery()
 	draw=false;
 	pQuery=NULL;
 	Init();
-	gb_RenderDevice3D->occlusion_query.push_back(this);
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->occlusion_query.push_back(this);
+    }
 }
 
 cOcclusionQuery::~cOcclusionQuery()
@@ -53,7 +55,10 @@ void cOcclusionQuery::Done()
 
 void cOcclusionQuery::Test(const Vect3f& pos)
 {
-//	return;
+    if (gb_RenderDevice3D == nullptr) {
+        return;
+    }
+    
 	gb_RenderDevice3D->SetNoMaterial(ALPHA_BLEND,0,NULL);
 
 	gb_RenderDevice3D->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_ZERO);

@@ -42,6 +42,7 @@ void cUnkLight::Draw(cCamera *DrawNode)
 {
 	if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION)&&(GetGlobalMatrix().trans().z<DrawNode->GetHReflection()))
 		return;
+#ifdef PERIMETER_D3D9
 	DrawStrip strip;
 	gb_RenderDevice->SetNoMaterial(ALPHA_ADDBLEND,0,GetTexture());
 
@@ -76,6 +77,7 @@ void cUnkLight::Draw(cCamera *DrawNode)
 	}
 
 	strip.End();
+#endif
 }
 const MatXf& cUnkLight::GetPosition() const
 {

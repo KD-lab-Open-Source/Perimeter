@@ -321,9 +321,10 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 	float t_max;
 	Vect2f tp,dn,pp1,pp2;
 	float z1,z2,z;
-	
-	if(!(region->spline().empty())){
-		cQuadBuffer<sVertexXYZDT1>* quad=terRenderDevice->GetQuadBufferXYZDT1();
+
+#ifdef PERIMETER_D3D9
+    cQuadBuffer<sVertexXYZDT1>* quad=terRenderDevice->GetQuadBufferXYZDT1();
+	if (quad && !(region->spline().empty())) {
 		quad->BeginDraw();
 
 		dt = region->spline().suggest_dt(region_show_spline_space);
@@ -468,6 +469,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 
 		quad->EndDraw();
 	}
+#endif
 
 	Region::iterator i;
 	FOR_EACH(*region, i)

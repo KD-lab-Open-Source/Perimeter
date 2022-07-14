@@ -175,7 +175,7 @@ bool MissionEditor::keyPressed(const sKey& Key)
 		else{
 			terUnitBase* unit = universe()->selectedObject();
 			if(unit){
-				terRenderDevice->Flush(hWndVisGeneric);
+				terRenderDevice->Flush(true);
                 SDL_ShowCursor(SDL_TRUE);
 				ShareHandle<SaveUnitData> data = unit->universalSave(0);
                 HWND hwnd = static_cast<HWND>(hWndVisGeneric);

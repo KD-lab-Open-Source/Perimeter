@@ -6,6 +6,7 @@
 
 class cObjectNodeRoot;
 class terUnitBase;
+class cEffect;
 #include "VisGrid2d.h"
 
 class cScene : public cUnknownClass

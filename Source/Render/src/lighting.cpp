@@ -58,6 +58,7 @@ void cLighting::Draw(cCamera *pCamera)
 
 void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 {
+#ifdef PERIMETER_D3D9
 /*
 	sColor4c color(255,255,255);
 	for(int i=1;i<position.size();i++)
@@ -130,6 +131,7 @@ void cLighting::OneLight::Draw(cCamera *pCamera,cLighting* parent)
 		strip.Set(v1,v2);
 	}
 	strip.End();
+#endif
 }
 
 void cLighting::Animate(float dt)

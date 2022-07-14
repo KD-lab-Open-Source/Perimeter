@@ -207,7 +207,7 @@ void InternalErrorHandler()
 
 void refresh_window_size(bool update_resolution) {
     Vect2i size;
-    if (terFullScreen) {
+    if (terFullScreen || !sdlWindow) {
         size.x = terScreenSizeX;
         size.y = terScreenSizeY;
     } else {
@@ -553,7 +553,23 @@ void PerimeterCreateWindow() {
 
 cInterfaceRenderDevice* SetGraph()
 {
-	cInterfaceRenderDevice *IRenderDevice=CreateIRenderDevice();
+    const char* graph_str = check_command_line("graph");
+    std::string graph(graph_str ? graph_str : "");
+
+    eRenderDeviceSelection deviceSelection;
+    if (graph == "dx" || graph == "d3d" || graph == "dx9" || graph == "d3d9") {
+        deviceSelection = DEVICE_D3D9;
+    } else if (graph == "headless" || graph == "none" || graph == "null" || graph == "nowindow") {
+        deviceSelection = DEVICE_HEADLESS;
+    } else {
+#ifdef PERIMETER_D3D9
+        deviceSelection = DEVICE_D3D9;
+#else
+        deviceSelection = DEVICE_HEADLESS;
+#endif
+    }
+    
+	cInterfaceRenderDevice *IRenderDevice = CreateIRenderDevice(deviceSelection);
 
 	int ModeRender=0;
 	if (!isTrueFullscreen()) {
@@ -568,7 +584,9 @@ cInterfaceRenderDevice* SetGraph()
 //	if(HTManager::instance()->IsUseHT())
 		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
 
-    PerimeterCreateWindow();
+    if (deviceSelection != DEVICE_HEADLESS) {
+        PerimeterCreateWindow();
+    }
 
     int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,hWndVisGeneric,terScreenRefresh);
 	if(error)
@@ -666,8 +684,9 @@ void HTManager::finitGraphics()
 		terVisGeneric->ClearData();
 	if(terVisGeneric)
 		terVisGeneric->Release();
-	if(terRenderDevice)
-		terRenderDevice->Release();
+	if(terRenderDevice) {
+        terRenderDevice->Release();
+    }
 	if(terLogicGeneric)
 		terLogicGeneric->Release();
 
@@ -689,6 +708,10 @@ void InitSound(bool sound, bool music, bool firstTime)
 {
 	terSoundEnable = sound;
 	terMusicEnable = music;
+    if (terRenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
+        terSoundEnable = terMusicEnable = false;
+    }
+    
     int mixChannels = 30; //Default SDL_mixer is 8, DirectSound has 31
     int chunkSizeFactor = 12; //1056 bytes under 2 channel 22khz 16 bits 
 
@@ -1025,13 +1048,13 @@ void app_event_poll() {
         }
     }
     
-    uint32_t windowID = SDL_GetWindowID(sdlWindow);
+    uint32_t windowID = sdlWindow ? SDL_GetWindowID(sdlWindow) : 0;
 
     //Iterate each SDL event that we may have queued since last poll
     SDL_Event event;
     bool closing = false;
     while (SDL_PollEvent(&event) == 1) {
-        if (event.window.windowID && (!sdlWindow || event.window.windowID != windowID)) {
+        if (sdlWindow && event.window.windowID && event.window.windowID != windowID) {
             //Event is for a window that is not current or window is not available
             continue;
         }
@@ -1057,7 +1080,7 @@ void app_event_poll() {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN: {
                 //Grab window at click if window is resizable and is not already grabbed
-                if (terGrabInput && !terFullScreen && applicationHasFocus_ && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
+                if (terGrabInput && !terFullScreen && applicationHasFocus_ && sdlWindow && SDL_GetWindowGrab(sdlWindow) == SDL_FALSE) {
                     SDL_SetWindowGrab(sdlWindow, SDL_TRUE);
                 }
                 break;
@@ -1080,7 +1103,7 @@ void app_event_poll() {
                         break;
                     }
                     case SDL_WINDOWEVENT_FOCUS_LOST: {
-                        if (terGrabInput) {
+                        if (terGrabInput && sdlWindow) {
                             SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
                         }
                         if (!applicationRunBackground) {
@@ -1112,8 +1135,8 @@ void app_event_poll() {
         }
         
         if (closing) {
-            if(gameShell) {
-                if (gameShell->GameActive && !isShiftPressed()) {
+            if (gameShell) {
+                if (gameShell->GameActive && !isShiftPressed() && terRenderDevice->GetRenderSelection() != DEVICE_HEADLESS) {
                     //When game is running we want to gracefully shutdown the game by showing main menu
                     sKey k(VK_ESCAPE, true);
                     gameShell->KeyPressed(k);

@@ -31,8 +31,10 @@ cTileMap::~cTileMap()
 	RELEASE(terra);
 	RELEASE(ShadowDrawNode);
 	RELEASE(LightDrawNode);
-	gb_RenderDevice3D->Delete(this);
-	if(Tile) { delete [] Tile; Tile=0; }
+#ifdef PERIMETER_D3D9
+    gb_RenderDevice->Delete(this);
+#endif
+	if(Tile) { delete [] Tile; Tile=nullptr; }
 	MTDONE(lock_update_rect);
 }
 
@@ -43,45 +45,71 @@ int cTileMap::CheckLightMapType()
 
 cTexture* cTileMap::GetShadowMap()
 {
-	if(CheckLightMapType())
-		return gb_RenderDevice3D->dtAdvance->GetShadowMap();
-	return gb_RenderDevice3D->dtFixed->GetShadowMap();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        if (CheckLightMapType()) {
+            return gb_RenderDevice3D->dtAdvance->GetShadowMap();
+        } else {
+            return gb_RenderDevice3D->dtFixed->GetShadowMap();
+        }
+    }
+#endif
+    return nullptr;
 }
 
 cTexture* cTileMap::GetLightMap()
 {
-	if(CheckLightMapType())
-		return gb_RenderDevice3D->dtAdvance->GetLightMap();
-	return gb_RenderDevice3D->dtFixed->GetLightMap();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        if (CheckLightMapType()) {
+            return gb_RenderDevice3D->dtAdvance->GetLightMap();
+        } else {
+            return gb_RenderDevice3D->dtFixed->GetLightMap();
+        }
+    }
+#endif
+    return nullptr;
 }
 
-LPDIRECT3DSURFACE9 cTileMap::GetZBuffer()
+#ifdef PERIMETER_D3D9
+IDirect3DSurface9* cTileMap::GetZBuffer()
 {
-	if(CheckLightMapType())
-		return gb_RenderDevice3D->dtAdvance->GetZBuffer();
-	return gb_RenderDevice3D->dtFixed->GetZBuffer();
+    if (gb_RenderDevice3D) {
+        if (CheckLightMapType()) {
+            return gb_RenderDevice3D->dtAdvance->GetZBuffer();
+        } else {
+            return gb_RenderDevice3D->dtFixed->GetZBuffer();
+        }
+    }
+    return nullptr;
 }
+#endif
 
 void cTileMap::CreateLightmap()
 {
-	gb_RenderDevice3D->dtFixed->DeleteShadowTexture();
-	gb_RenderDevice3D->dtAdvance->DeleteShadowTexture();
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->dtFixed->DeleteShadowTexture();
+        gb_RenderDevice3D->dtAdvance->DeleteShadowTexture();
+    }
 
 	int width=256<<(Option_DrawMeshShadow-1);
 
 	LightMapType=CheckLightMapType();
 
-	if(Option_DrawMeshShadow>0)
+	if(Option_DrawMeshShadow>0 && gb_RenderDevice3D)
 	{
 		DrawType* draw=gb_RenderDevice3D->dtFixed;
-		if(LightMapType)
-			draw=gb_RenderDevice3D->dtAdvance;
+		if(LightMapType) {
+            draw = gb_RenderDevice3D->dtAdvance;
+        }
 
 		if(!draw->CreateShadowTexture(width))
 		{
 			gb_VisGeneric->SetShadowType((eShadowType)(int)Option_ShadowType,0);
 		}
 	}
+#endif
 
 	float SizeLightMap=terra->SizeX();
 	float focus=1/SizeLightMap;
@@ -107,7 +135,7 @@ void cTileMap::PreDraw(cCamera *DrawNode)
 	BuildRegionPoint();
 
 	DrawNode->Attach(SCENENODE_OBJECT_TILEMAP,this);
-	gb_RenderDevice3D->PreDraw(this);
+	gb_RenderDevice->PreDraw(this);
 }
 
 void cTileMap::Draw(cCamera *DrawNode)
@@ -115,34 +143,33 @@ void cTileMap::Draw(cCamera *DrawNode)
 	if(!Option_ShowType[SHOW_TILEMAP])
 		return;
 
-	cD3DRender *Render=gb_RenderDevice3D;
 	if(DrawNode->GetAttribute(ATTRCAMERA_SHADOW))
 	{
-		Render->Draw(GetScene()); // рисовать источники света
+        gb_RenderDevice->Draw(GetScene()); // рисовать источники света
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_SHADOWMAP))
 	{
 		if(Option_ShadowType==SHADOW_MAP_SELF)
-			Render->Draw(this,ALPHA_TEST,TILEMAP_ALL,true);
+			gb_RenderDevice->Draw(this, ALPHA_TEST, TILEMAP_ALL, true);
 	}
 	else if(DrawNode->GetAttribute(ATTRCAMERA_REFLECTION))
 	{ // рисовать отражение
-		Render->SetRenderState(RS_ALPHAREF,254/*GetRefSurface()*/);
-		Render->SetRenderState(RS_ALPHAFUNC,D3DCMP_GREATER);
-		Render->Draw(this,ALPHA_TEST,TILEMAP_NOZEROPLAST,false);
-		Render->SetRenderState(RS_ALPHAFUNC,D3DCMP_GREATER);
-		Render->SetRenderState(RS_ALPHAREF,0);
+		gb_RenderDevice->SetRenderState(RS_ALPHAREF, 254/*GetRefSurface()*/);
+		gb_RenderDevice->SetRenderState(RS_ALPHAFUNC, CMP_GREATER);
+		gb_RenderDevice->Draw(this, ALPHA_TEST, TILEMAP_NOZEROPLAST, false);
+		gb_RenderDevice->SetRenderState(RS_ALPHAFUNC, CMP_GREATER);
+		gb_RenderDevice->SetRenderState(RS_ALPHAREF, 0);
 	}else
 	{
 		if(GetAttribute(ATTRUNKOBJ_REFLECTION))
 		{ // рисовать прямое изображение
-			Render->SetRenderState(RS_ALPHAREF,1);
-			Render->Draw(this,ALPHA_BLEND,TILEMAP_ZEROPLAST,false);
-			Render->Draw(this,ALPHA_NONE,TILEMAP_NOZEROPLAST,false);
-			Render->SetRenderState(RS_ALPHAREF,0);
+			gb_RenderDevice->SetRenderState(RS_ALPHAREF, 1);
+			gb_RenderDevice->Draw(this, ALPHA_BLEND, TILEMAP_ZEROPLAST, false);
+			gb_RenderDevice->Draw(this, ALPHA_NONE, TILEMAP_NOZEROPLAST, false);
+			gb_RenderDevice->SetRenderState(RS_ALPHAREF, 0);
 		}else
 		{
-			Render->Draw(this,ALPHA_NONE,TILEMAP_ALL,false);
+			gb_RenderDevice->Draw(this, ALPHA_NONE, TILEMAP_ALL, false);
 		}
 	}
 
@@ -163,19 +190,19 @@ void cTileMap::Draw(cCamera *DrawNode)
 				std::vector<Vect2s>::iterator it;
 				FOR_EACH(point,it)
 				{
-					Render->DrawPoint(Vect3f(it->x,it->y,zeroh),sColor4c(0,255,255,100));
+					gb_RenderDevice->DrawPoint(Vect3f(it->x, it->y, zeroh), sColor4c(0, 255, 255, 100));
 				}
 			}
 		}
 
-		Render->FlushPrimitive3D();
+		gb_RenderDevice->FlushPrimitive3D();
 
 		cFont* pFont=gb_VisGeneric->CreateDebugFont();
-		Render->SetFont(pFont);
+		gb_RenderDevice->SetFont(pFont);
 		char s[128];
 		sprintf(s,"point=%i",npoint);
-		Render->OutText(10,50,s,sColor4f(1,1,1,1));
-		Render->SetFont(NULL);
+		gb_RenderDevice->OutText(10, 50, s, sColor4f(1, 1, 1, 1));
+		gb_RenderDevice->SetFont(NULL);
 		pFont->Release();
 	}
 
@@ -216,13 +243,13 @@ void cTileMap::SetBuffer(const Vect2i &size,int zeroplastnumber_)
 	for(int i=0;i<zeroplastnumber;i++)
 		zeroplast_color[i]=sColor4f(0,1,0,1);
 
-	if(Tile) { gb_RenderDevice3D->Delete(this); delete Tile; }
+	if(Tile) { gb_RenderDevice->Delete(this); delete Tile; }
 	TileNumber.set(size.x/GetTileSize().x,size.y/GetTileSize().y);
 	VISASSERT(TileNumber.x*GetTileSize().x==size.x);
 	VISASSERT(TileNumber.y*GetTileSize().y==size.y);
 
 	Tile=new sTile[GetTileNumber().x*GetTileNumber().y];
-	gb_RenderDevice3D->Create(this);
+	gb_RenderDevice->Create(this);
 
 	UpdateMap(Vect2i(0,0), Vect2i(size.x-1,size.y-1));
 }
@@ -230,17 +257,18 @@ void cTileMap::SetBuffer(const Vect2i &size,int zeroplastnumber_)
 
 void cTileMap::DrawLightmapShadow(cCamera *DrawNode)
 {
-	
-	if(Option_DrawMeshShadow && GetShadowMap()==0 && gb_RenderDevice->nSupportTexture>1)
-	{
+	if (Option_DrawMeshShadow && GetShadowMap()==nullptr
+#ifdef PERIMETER_D3D9
+    && gb_RenderDevice3D && gb_RenderDevice3D->nSupportTexture>1
+#endif
+    ) {
 		CreateLightmap();
-	}else 
-	if(GetShadowMap())
-	if( (256<<(Option_DrawMeshShadow-1))!=GetShadowMap()->GetWidth() || 
-		LightMapType!=CheckLightMapType())
-	{
-		CreateLightmap();
-	}
+	} else if (GetShadowMap()) {
+        if ((256 << (Option_DrawMeshShadow - 1)) != GetShadowMap()->GetWidth() ||
+            LightMapType != CheckLightMapType()) {
+            CreateLightmap();
+        }
+    }
 
 	if(GetShadowMap()) 
 	{ // shadow

@@ -360,7 +360,7 @@ void str_replace_slash(char* str)
 bool cFontInternal::Create(const std::string& root_dir, const std::string& locale_, const std::string& fname, int h, bool silentErr)
 {
 	int ScreenY=gb_RenderDevice->GetSizeY();
-    xassert(0<ScreenY);
+    xassert(0<=ScreenY);
 
 	int height=(int) xm::round((float) (h * ScreenY) / 768.0f);
 	statement_height=h;
@@ -377,6 +377,10 @@ bool cFontInternal::Create(const std::string& root_dir, const std::string& local
     //Get path for font
     font_path = root_dir + font_path + font_name + ".font";
 
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
+        return true;
+    }
+    
 	if(!CreateTexture(texture_name.c_str(),font_path.c_str(),height))
 	{
 		if(!silentErr) VisError<<"Cannot load font: "<< font_path <<VERR_END;

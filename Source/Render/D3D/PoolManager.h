@@ -154,7 +154,7 @@ class IndexPool:public Pool
 protected:
 	enum{VPOOL_MAX_VTX_PER_POOL = 65536/4,};
 
-	IDirect3DIndexBuffer9* ib;
+    LPDIRECT3DINDEXBUFFER9 ib;
 	int page_size;
 public:
 	IndexPool();

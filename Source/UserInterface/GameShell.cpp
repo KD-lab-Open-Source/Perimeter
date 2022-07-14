@@ -1236,7 +1236,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 #ifndef _FINAL_VERSION_
 	case VK_RETURN | KBD_CTRL: 
 	case VK_RETURN | KBD_CTRL | KBD_SHIFT: {
-		terRenderDevice->Flush(hWndVisGeneric);
+		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		//setUseAlternativeNames(true);
 		static TriggerEditor triggerEditor(triggerInterface());
@@ -1273,7 +1273,7 @@ bool GameShell::DebugKeyPressed(sKey& Key)
 		break;
 
 	case VK_F6:
-		terRenderDevice->Flush( hWndVisGeneric );
+		terRenderDevice->Flush(true);
         SDL_ShowCursor(SDL_TRUE);
 		profiler_start_stop();
         SDL_ShowCursor(SDL_FALSE);
@@ -2733,7 +2733,7 @@ void GameShell::createChaos() {
 
 void GameShell::editParameters()
 {
-	terRenderDevice->Flush(hWndVisGeneric);
+	terRenderDevice->Flush(true);
     SDL_ShowCursor(SDL_TRUE);
 
 	bool reloadParameters = false;

@@ -505,6 +505,7 @@ inline float CrossLine(float x1,float y1,float m1,float n1,
 
 #ifndef PERIMETER_D3D9
 class CMatrix {
+public:
     float _11, _12, _13, _14,
           _21, _22, _23, _24,
           _31, _32, _33, _34,

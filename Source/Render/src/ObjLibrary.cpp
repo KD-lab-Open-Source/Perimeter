@@ -791,7 +791,11 @@ cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,con
 	MeshScene.Read(f);
 	f.Close();
 
-	gb_RenderDevice3D->SetCurrentConvertDot3Mul(MeshScene.bump_scale);
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->SetCurrentConvertDot3Mul(MeshScene.bump_scale);
+    }
+#endif
 	int nChannel;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{

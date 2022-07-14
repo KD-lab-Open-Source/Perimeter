@@ -389,13 +389,13 @@ NetConnection* NetConnectionHandler::getConnection(NETID netid) const {
 bool NetConnectionHandler::startListening(uint16_t port) {
     stopListening();
     stopConnections();
-
-#ifdef PERIMETER_HEADLESS
-    max_connections = NETWORK_PLAYERS_MAX;
-#else
-    //Remove one since host is player too
-    max_connections = NETWORK_PLAYERS_MAX - 1;
-#endif
+    
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_HEADLESS) {
+        max_connections = NETWORK_PLAYERS_MAX;
+    } else {
+        //Remove one since host is player too
+        max_connections = NETWORK_PLAYERS_MAX - 1;
+    }
 
     IPaddress addr;
     addr.host = INADDR_ANY;

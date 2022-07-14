@@ -141,7 +141,7 @@ void VertexPool::Create(const PoolParameter* p)
 
 	page_size = vp->number_vertex;
 	vertex_format = vp->vertex_format;
-	vertex_size = gb_RenderDevice3D->GetSizeFromFmt(vertex_format);
+	vertex_size = cD3DRender::GetSizeFromFmt(vertex_format);
 	SetTotal(VPOOL_MAX_VTX_PER_POOL / page_size);
 
 	RDCALL(gb_RenderDevice3D->lpD3DDevice->CreateVertexBuffer(

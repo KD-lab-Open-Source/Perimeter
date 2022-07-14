@@ -2,7 +2,7 @@
 #include <climits>
 #include "tweaks.h"
 
-#ifndef PERIMETER_HEADLESS
+#ifdef PERIMETER_D3D9
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #endif

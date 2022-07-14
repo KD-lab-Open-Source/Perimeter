@@ -29,12 +29,13 @@ class cChaos:public cIUnkObj
 
 	sPtrIndexBuffer ib;
 
-	typedef sVertexXYZDT2 VTYPE;
 	sPtrVertexBuffer vb;
 	Vect2f plane_size;
 
+#ifdef PERIMETER_D3D9
 	class VSChaos* pVS;
 	class PSChaos* pPS;
+#endif
 public:
 
 	cChaos(Vect2f size, const char* str_tex0, const char* str_tex1, const char* str_bump, int tile, bool enable_bump);

@@ -27,8 +27,9 @@ public:
 
 void cVisGeneric::InitShaders()
 {
-	if(!shaders)
-		shaders=new CameraShader;
+	if (!shaders && gb_RenderDevice->GetRenderSelection() != DEVICE_HEADLESS) {
+        shaders = new CameraShader;
+    }
 }
 
 void cVisGeneric::ReleaseShaders()
@@ -87,7 +88,7 @@ void TempDrawShadow(cCamera* p);
 
 void cCamera::DrawScene()
 {
-	if(IsBadClip())return;
+	if(IsBadClip() || RenderDevice->GetRenderSelection() == DEVICE_HEADLESS) return;
 	if(!Parent)
 	{
 		RenderDevice->FlushPrimitive3D();
@@ -133,7 +134,11 @@ void cCamera::DrawScene()
 
 	RenderDevice->SetRenderState( RS_ZWRITEENABLE, TRUE );
 
-	uint32_t fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
+    uint32_t fogenable = 0;
+#ifdef PERIMETER_D3D9
+    cD3DRender* d3drender = dynamic_cast<cD3DRender*>(GetRenderDevice());
+    if (d3drender) fogenable = d3drender->GetRenderState(D3DRS_FOGENABLE);
+#endif
 	if(GetAttribute(ATTRCAMERA_SHADOW|ATTRCAMERA_SHADOWMAP|ATTRCAMERA_SHADOW_STRENCIL))
 		RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 	
@@ -574,7 +579,7 @@ void cCamera::UpdateVieport()
 	ScaleViewPort.set(1,RenderSize.x/RenderSize.y);
 }
 
-void cCamera::SetRenderTarget(cTexture *pTexture,LPDIRECT3DSURFACE9 pZBuf)
+void cCamera::SetRenderTarget(cTexture *pTexture, LPDIRECT3DSURFACE9 pZBuf)
 {
 	RenderTarget=pTexture;
 	pZBuffer=pZBuf;
@@ -686,7 +691,11 @@ void cCamera::DrawSortObject()
 
 	stable_sort(SortArray.begin(),SortArray.end(),ObjectSortByRadius());
 
-	uint32_t fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
+    uint32_t fogenable = 0;
+#ifdef PERIMETER_D3D9
+    cD3DRender* d3drender = dynamic_cast<cD3DRender*>(GetRenderDevice());
+    if (d3drender) fogenable = d3drender->GetRenderState(D3DRS_FOGENABLE);
+#endif
 	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 
 	std::vector<ObjectSort>::iterator it;
@@ -917,7 +926,9 @@ void cCamera::DrawSortMaterialShadowStrencil()
 {
 	cMeshBank *CurBank=NULL;
 
-	cD3DRender* rd=GetRenderDevice3D();
+#ifdef PERIMETER_D3D9
+    cD3DRender* rd = dynamic_cast<cD3DRender*>(GetRenderDevice());
+    if (!rd) return;
 
 	rd->SetNoMaterial(ALPHA_NONE);
 
@@ -964,6 +975,7 @@ void cCamera::DrawSortMaterialShadowStrencil()
     rd->SetRenderState( D3DRS_ZWRITEENABLE,     TRUE );
     rd->SetRenderState( D3DRS_STENCILENABLE,    FALSE );
     rd->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
+#endif
 
 	DrawShadowPlane();
 }
@@ -977,7 +989,9 @@ void cCamera::DrawSortMaterialShadowStrencilOneSide()
 
 void cCamera::DrawShadowPlane()
 {
-	cD3DRender* rd=GetRenderDevice3D();
+#ifdef PERIMETER_D3D9
+    cD3DRender* rd = dynamic_cast<cD3DRender*>(GetRenderDevice());
+    if (!rd) return;
 	uint32_t fog=rd->GetRenderState(D3DRS_FOGENABLE);
     // Set renderstates (disable z-buffering, enable stencil, disable fog, and
     // turn on alphablending)
@@ -1027,6 +1041,7 @@ void cCamera::DrawShadowPlane()
     rd->SetRenderState( D3DRS_STENCILENABLE,    FALSE );
     rd->SetRenderState( D3DRS_FOGENABLE,        fog );
     rd->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
+#endif
 }
 
 void cCamera::AttachFirst(cIUnkClass* zpalne)
@@ -1155,8 +1170,12 @@ eTestVisible cCamera::TestVisibleComplete(const Vect3f &min,const Vect3f &max)
 
 void cCamera::ClearZBuffer()
 {
-	cD3DRender* render=GetRenderDevice3D();
-	RDCALL(render->lpD3DDevice->Clear(0,NULL,D3DCLEAR_ZBUFFER, 0xFFFFFFFF, 1, 0));
+#ifdef PERIMETER_D3D9
+	cD3DRender* render = dynamic_cast<cD3DRender*>(GetRenderDevice());
+    if (render) {
+        RDCALL(render->lpD3DDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0xFFFFFFFF, 1, 0));
+    }
+#endif
 }
 
 void cCamera::ShowClip()
@@ -1394,9 +1413,13 @@ void cCameraPlanarLight::DrawScene()
 	RenderDevice->SetRenderState( RS_ZWRITEENABLE, FALSE );
 	uint32_t ZFUNC=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 	gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, CMP_ALWAYS );
-	
 
-	uint32_t fogenable=GetRenderDevice3D()->GetRenderState(D3DRS_FOGENABLE);
+
+    uint32_t fogenable = 0;
+#ifdef PERIMETER_D3D9
+    cD3DRender* d3drender = dynamic_cast<cD3DRender*>(GetRenderDevice());
+    if (d3drender) fogenable = d3drender->GetRenderState(D3DRS_FOGENABLE);
+#endif
 	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
 	
 	RenderDevice->Draw(GetScene());

@@ -125,7 +125,7 @@ void VS14Scene::Select(const D3DXMATRIX* pmatlight,float shadow_map_size,const M
 	const float c1=0.1f,c2=0.9f,c3=0.5f;
 //	const c1=0.1-0.4f,c2=0.9f+0.4f,c3=0.5f+0.4f;
 
-	if(gb_RenderDevice3D->GetTexture(1)==gb_RenderDevice3D->GetTexture(2))
+	if(gb_RenderDevice3D->GetTextureD3D(1) == gb_RenderDevice3D->GetTextureD3D(2))
 	{
 		//Четыре сэмпла выбираются
 		float fC1 = c1 / shadow_map_size;
