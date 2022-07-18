@@ -28,23 +28,27 @@ void cExternalObj::Draw(cCamera *DrawNode)
 
 	Render->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
 
-	if(GetTexture()->GetAttribute(TEXTURE_ALPHA_BLEND|TEXTURE_ALPHA_TEST))
-	{
+	if(GetTexture()->GetAttribute(TEXTURE_ALPHA_BLEND|TEXTURE_ALPHA_TEST)) {
 		Render->SetNoMaterial(ALPHA_BLEND,GetFrame()->GetPhase(),GetTexture());
-	}else
-	{
+	} else {
 		Render->SetNoMaterial(ALPHA_NONE,GetFrame()->GetPhase(),GetTexture());
 	}
 
-	uint32_t zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
-	if(sort_pass)
-		gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+	uint32_t zwrite=0;
+    if (gb_RenderDevice3D) {
+        zwrite = gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
+        if (sort_pass) {
+            gb_RenderDevice3D->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+        }
+    }
 #endif
 
 	func();
 
 #ifdef PERIMETER_D3D9
-	gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, zwrite );
-	Render->SetRenderState(RS_CULLMODE,-1);
+    if (gb_RenderDevice3D) {
+        gb_RenderDevice3D->SetRenderState(D3DRS_ZWRITEENABLE, zwrite);
+        Render->SetRenderState(RS_CULLMODE, -1);
+    }
 #endif
 }

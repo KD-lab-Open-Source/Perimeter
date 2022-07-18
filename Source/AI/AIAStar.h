@@ -40,7 +40,7 @@ public:
 	{
 		TypeH g;//Затраты на продвижение до этой точки
 		TypeH h;//Предполагаемые затраты на продвижение до финиша
-		DWORD used;
+		uint32_t used;
 		OnePoint* parent;
 		bool is_open;
 
@@ -56,7 +56,7 @@ protected:
 	OnePoint* chart;
 	type_point_map open_map;
 
-	DWORD is_used_num;//Если is_used_num==used, то ячейка используется
+	uint32_t is_used_num;//Если is_used_num==used, то ячейка используется
 
 	int num_point_examine;//количество посещённых ячеек
 	int num_find_erase;//Сколько суммарно искали ячейки для удаления
@@ -71,7 +71,7 @@ public:
 
 	//Debug
 	OnePoint* GetInternalBuffer(){return chart;};
-	DWORD GetUsedNum(){return is_used_num;}
+	uint32_t GetUsedNum(){return is_used_num;}
 protected:
 	void clear();
 	inline sPoint PosBy(OnePoint* p)
@@ -302,7 +302,7 @@ public:
 	{
 		TypeH g;//Затраты на продвижение до этой точки
 		TypeH h;//Предполагаемые затраты на продвижение до финиша
-		DWORD used;
+		uint32_t used;
 		OnePoint* parent;
 		bool is_open;
 
@@ -315,7 +315,7 @@ protected:
 	std::vector<OnePoint> chart;
 	type_point_map open_map;
 
-	DWORD is_used_num;//Если is_used_num==used, то ячейка используется
+	uint32_t is_used_num;//Если is_used_num==used, то ячейка используется
 
 	int num_point_examine;//количество посещённых ячеек
 	int num_find_erase;//Сколько суммарно искали ячейки для удаления
@@ -332,7 +332,7 @@ public:
 
 	//Debug
 	OnePoint* GetInternalBuffer(){return chart;};
-	DWORD GetUsedNum(){return is_used_num;}
+	uint32_t GetUsedNum(){return is_used_num;}
 protected:
 	void clear();
 	inline Node* PosBy(OnePoint* p)

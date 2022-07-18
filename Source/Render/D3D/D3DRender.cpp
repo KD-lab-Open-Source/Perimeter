@@ -7,24 +7,24 @@
 
 const int POLYGONMAX=1024;
 
-int sVertexXYZ::fmt		=	D3DFVF_XYZ;
-int sVertexXYZD::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE;
-int sVertexXYZT1::fmt	=	D3DFVF_XYZ|D3DFVF_TEX1;
-int sVertexXYZDT1::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1;
-int sVertexXYZDT2::fmt	=	D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX2;
-int sVertexXYZN::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL;
-int sVertexXYZNT1::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
-int sVertexXYZW::fmt	=	D3DFVF_XYZRHW;
-int sVertexXYZWD::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE;
-int sVertexXYZWDT1::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1;
-int sVertexXYZWDT2::fmt	=	D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX2;
-int sVertexDot3::fmt	=	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)| D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
+int sVertexXYZ::fmt     = D3DFVF_XYZ;
+int sVertexXYZD::fmt    = D3DFVF_XYZ|D3DFVF_DIFFUSE;
+int sVertexXYZT1::fmt   = D3DFVF_XYZ|D3DFVF_TEX1;
+int sVertexXYZDT1::fmt  = D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1;
+int sVertexXYZDT2::fmt  = D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX2;
+int sVertexXYZN::fmt    = D3DFVF_XYZ|D3DFVF_NORMAL;
+int sVertexXYZNT1::fmt  = D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
+int sVertexXYZW::fmt    = D3DFVF_XYZRHW;
+int sVertexXYZWD::fmt   = D3DFVF_XYZRHW|D3DFVF_DIFFUSE;
+int sVertexXYZWDT1::fmt = D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1;
+int sVertexXYZWDT2::fmt = D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX2;
+int sVertexDot3::fmt    = D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)| D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
 
 cD3DRender *gb_RenderDevice3D = nullptr;
 
 void IsDeleteAllDefaultTextures();
 
-cD3DRender::cD3DRender()
+cD3DRender::cD3DRender() : cInterfaceRenderDevice()
 {
     NumberPolygon=0;
     NumDrawObject=0;
@@ -70,10 +70,9 @@ cD3DRender::~cD3DRender()
     VISASSERT(RenderMode==0);
     VISASSERT(xScr==0&&yScr==0&&xScrMin==0&&yScrMin==0&&xScrMax==0&&yScrMax==0);
     VISASSERT(xScr==0&&yScr==0);
-    gb_RenderDevice3D=nullptr;
 }
 
-int cD3DRender::GetSizeFromFmt(int fmt) {
+int cD3DRender::GetSizeFromFormat(int fmt) const {
     int size=0;
 
     int position=fmt&D3DFVF_POSITION_MASK;
@@ -116,15 +115,17 @@ int cD3DRender::GetSizeFromFmt(int fmt) {
     return size;
 }
 
-int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz)
+int cD3DRender::Init(int xscr,int yscr,int Mode,void* hWnd,int RefreshRateInHz)
 { 
-	if(lphWnd==0) return 1;
-	Done();
+    int ret = cInterfaceRenderDevice::Init(xscr, yscr, Mode, hWnd, RefreshRateInHz);
+    if (ret != 0) return ret;
+    if (hWnd == nullptr) return 1;
+    gb_RenderDevice3D = this;
 
 	memset(CurrentTexture,0,sizeof(CurrentTexture));
 	memset(ArrayRenderState,0xEF,sizeof(ArrayRenderState));
 
-	hWnd=(HWND)lphWnd;
+	this->hWnd=(HWND)hWnd;
 	RenderMode=Mode;
 
 	if(!lpD3D)
@@ -152,7 +153,7 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	d3dpp.MultiSampleType			= D3DMULTISAMPLE_NONE;
 	d3dpp.MultiSampleQuality		= 0;
 	d3dpp.SwapEffect				= D3DSWAPEFFECT_DISCARD;
-	d3dpp.hDeviceWindow				= (HWND)lphWnd;
+	d3dpp.hDeviceWindow				= this->hWnd;
 
 	d3dpp.EnableAutoDepthStencil	= TRUE;
 	d3dpp.Flags						= D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
@@ -224,8 +225,6 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 	BeginScene();
 	DrawRectangle(0,0,xScr-1,yScr-1,sColor4c(0,0,0,255));
 	EndScene();
-	
-	VISASSERT(gb_RenderDevice==this);
 
 	Flush();
 
@@ -262,6 +261,8 @@ int cD3DRender::Init(int xscr,int yscr,int Mode,void *lphWnd,int RefreshRateInHz
 		if(!(dtAdvanceOriginal && (dtAdvanceOriginal->GetID()!=DT_GEFORCE3 && dtAdvanceOriginal->GetID()!=DT_GEFORCEFX)))
 			bSupportTableFog=false;
 	}
+    
+    gb_RenderDevice3D = this;
 
 	return 0;
 }
@@ -518,7 +519,9 @@ int cD3DRender::Done()
 */	
 	LibVB.clear();
 	LibIB.clear();
-	TexLibrary->Free();
+    if (TexLibrary) {
+        TexLibrary->Free();
+    }
 	
 	bActiveScene=0;
 	RELEASE(lpD3DDevice);
@@ -526,8 +529,10 @@ int cD3DRender::Done()
 	
 	xScr=yScr=xScrMin=yScrMin=xScrMax=yScrMax=0;
 	hWnd=0;	RenderMode=0;
-
-	return 0;
+    
+    gb_RenderDevice3D=nullptr;
+    
+	return cInterfaceRenderDevice::Done();
 }
 int cD3DRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax)
 {
@@ -1395,7 +1400,7 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 
 void cD3DRender::CreateVertexBuffer(sPtrVertexBuffer &vb,int NumberVertex,int format,int dynamic)
 {
-    int size = GetSizeFromFmt(format);
+    int size = GetSizeFromFormat(format);
 	xassert(NumberVertex>=0 || NumberVertex<=65536);
 	vb.ptr=LibVB.NewSlot();
 

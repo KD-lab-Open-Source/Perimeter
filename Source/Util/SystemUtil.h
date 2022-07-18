@@ -64,10 +64,15 @@ struct sKey {
 };
 
 
+#ifdef _WIN32
+//TODO get rid of HWND once we have ingame dev UI
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#endif
+extern HWND hWndVisGeneric;
 
 // ---   Focus   ------------------------------
 extern SDL_Window* sdlWindow;
-extern HWND hWndVisGeneric;
 inline void RestoreFocus() { SDL_RaiseWindow(sdlWindow); }
 
 // ---   Ini file   ------------------------------

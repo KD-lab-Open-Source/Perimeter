@@ -49,7 +49,7 @@ treeControlSetup_(0, 0, 800, 1000, "treeControlSetup")
 	outputNode_ = 0;
 }
 
-EditArchive::EditArchive(HWND hwnd, const TreeControlSetup& treeControlSetup)
+EditArchive::EditArchive(void* hwnd, const TreeControlSetup& treeControlSetup)
 : hwnd_(hwnd),
 treeControlSetup_(treeControlSetup)
 {

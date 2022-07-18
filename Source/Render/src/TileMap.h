@@ -131,7 +131,11 @@ public:
 #endif
 	void FixShadowMapCamera(cCamera *DrawNode);
 
-	void RegisterUpdateMap(UpdateMapFunction f,void* data);
+    //Величина visMap должна быть TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
+    static void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear);
+    static void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize, Mat3f& direction,sBox6f& box);
+
+    void RegisterUpdateMap(UpdateMapFunction f,void* data);
 	void UnRegisterUpdateMap(UpdateMapFunction f,void* data);
 protected:
 	struct FixShadowDrawNodeParam
@@ -158,9 +162,6 @@ protected:
 	int CheckLightMapType();
 
 	void BuildRegionPoint();
-#if defined(_MSC_VER) && (_MSC_VER >= 1900)
-	friend void cTileMapBorderCall(void* data, Vect2f& p);
-#endif
 
 	Vect3f To3D(const Vect2f& pos);
 	void DrawLines();
@@ -178,9 +179,3 @@ protected:
 };
 
 class cCamera;
-
-//TODO currently implemented inside D3DRenderTilemap, move to generic
-//Величина visMap должна быть TileMap->GetTileNumber().x*visMapDy=TileMap->GetTileNumber().y
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear);
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box);
-

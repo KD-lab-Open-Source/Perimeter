@@ -505,6 +505,7 @@ cEmitterInt::~cEmitterInt()
 {
 }
 
+#ifdef PERIMETER_D3D9
 template<class nParticle> FORCEINLINE int ParticlePutToBuf(cEmitterBase* emitter, nParticle& p, Vect3f& npos, float& dt,
                                                                  cQuadBuffer<sVertexXYZDT1>*& pBuf,
                                                                  const sColor4c& color, const Vect3f& PosCamera,
@@ -617,7 +618,7 @@ template<class nParticle> FORCEINLINE int ParticlePutToBuf(cEmitterBase* emitter
 	}
 	return false;
 }
-
+#endif
 
 const cTextureAviScale::RECT cTextureAviScale::RECT::ID(0.0f, 0.0f, 1.0f, 1.0f);
 void cEmitterInt::Draw(cCamera *pCamera)

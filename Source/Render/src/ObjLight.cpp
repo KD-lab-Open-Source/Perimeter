@@ -28,6 +28,7 @@ cObjLight::~cObjLight()
 
 void cObjLight::OcclusionTest()
 {
+#ifdef PERIMETER_D3D9
 	if(occlusion.IsInit())
 	{
 		bool occlude=occlusion.IsVisible();
@@ -45,6 +46,7 @@ void cObjLight::OcclusionTest()
 		if(fade>1)
 			fade=1;
 	}
+#endif
 }
 
 void cObjLight::PreDraw(cCamera *DrawNode)
@@ -79,20 +81,24 @@ void cObjLight::Draw(cCamera *DrawNode)
 
 	float alpha=255.0f*GetIntensity();
 
-	uint32_t zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
+#ifdef PERIMETER_D3D9
+    //TODO
+	uint32_t zfunc=0;
+    
+    if (gb_RenderDevice3D) {
+        zfunc = gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
 
-	if(occlusion.IsInit() && !DrawNode->GetParent())
-	{
-		occlusion.Test(GetGlobalMatrix().trans());
-		alpha*=fade;
-		gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
-	}
+        if (occlusion.IsInit() && !DrawNode->GetParent()) {
+            occlusion.Test(GetGlobalMatrix().trans());
+            alpha *= fade;
+            gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+        }
+    }
 
 	sColor4c Diffuse(xm::round(GetDiffuse().r * alpha), xm::round(GetDiffuse().g * alpha), xm::round(GetDiffuse().b * alpha),
                      xm::round(GetDiffuse().a * alpha));
 	float radius=GetRadius()*GetGlobalMatrix().rot().xcol().norm();
 
-#ifdef PERIMETER_D3D9
     if (gb_RenderDevice3D) {
         cVertexBuffer<sVertexXYZDT1>* buf=gb_RenderDevice3D->GetBufferXYZDT1();
         sVertexXYZDT1 *v=buf->Lock(4);

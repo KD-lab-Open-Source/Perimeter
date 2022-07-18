@@ -73,7 +73,7 @@ enum ArchiveType
 };
 
 /////////////////////////////////////////////////
-#ifdef PERIMETER_DEBUG
+#ifdef PERIMETER_DEBUG_ASSERT
 #define xassertStr(exp, str) { std::string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
 #else
 #define xassertStr(exp, str) 

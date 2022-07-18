@@ -11,21 +11,23 @@ class CameraShader
 {
 public:
 #ifdef PERIMETER_D3D9
-	PSShowMap* pShowMap;
+	PSShowMap* pShowMap = nullptr;
 #endif
 
 	CameraShader()
 	{
 #ifdef PERIMETER_D3D9
-		pShowMap=new PSShowMap;
-		pShowMap->Restore();
+        if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+            pShowMap = new PSShowMap;
+            pShowMap->Restore();
+        }
 #endif
 	}
 
 	~CameraShader()
 	{
 #ifdef PERIMETER_D3D9
-		if(pShowMap)delete pShowMap;
+		delete pShowMap;
 #endif
 	}
 
@@ -588,7 +590,7 @@ void cCamera::UpdateVieport()
 	ScaleViewPort.set(1,RenderSize.x/RenderSize.y);
 }
 
-void cCamera::SetRenderTarget(cTexture *pTexture, LPDIRECT3DSURFACE9 pZBuf)
+void cCamera::SetRenderTarget(cTexture *pTexture, IDirect3DSurface9* pZBuf)
 {
 	RenderTarget=pTexture;
 	pZBuffer=pZBuf;
@@ -812,14 +814,20 @@ void cCamera::DrawSortMaterial()
 	cMeshSortingPhase* cur_mat=ar.front();
 
 	cur_mat->GetMaterial(&Data);
-
-	DrawType* draw=gb_RenderDevice3D->dtAdvance;
-
+    
 	cCamera* pShadow=FindCildCamera(ATTRCAMERA_SHADOWMAP);
 
 	bool use_shadow=pShadow && !GetAttribute(ATTRCAMERA_REFLECTION) && Option_IsShadowMap;
+    
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice->GetRenderSelection() != DEVICE_D3D9) {
+        //TODO
+        return;
+    }
+    DrawType* draw=gb_RenderDevice3D->dtAdvance;
 	draw->BeginDraw(use_shadow);
 	draw->SetSimplyMaterial(cur_mat->GetFront(),&Data);
+#endif
 
 	if(GetAttribute(ATTRCAMERA_REFLECTION))
 	{
@@ -836,7 +844,9 @@ void cCamera::DrawSortMaterial()
 				cur_mat=s;
 				cur_mat->GetMaterial(&Data);
 
+#ifdef PERIMETER_D3D9
 				draw->SetSimplyMaterial(cur_mat->GetFront(),&Data);
+#endif
 				change_mat++;
 			}
 
@@ -844,8 +854,10 @@ void cCamera::DrawSortMaterial()
 			{
 				if(pMesh->GetGlobalMatrix().trans().z<GetHReflection())
 					continue;
-				
+
+#ifdef PERIMETER_D3D9
 				draw->DrawNoMaterial(pMesh,&Data);
+#endif
 				draw_object++;
 			}
 		}
@@ -863,19 +875,25 @@ void cCamera::DrawSortMaterial()
 				cur_mat=s;
 				cur_mat->GetMaterial(&Data);
 
+#ifdef PERIMETER_D3D9
 				draw->SetSimplyMaterial(cur_mat->GetFront(),&Data);
+#endif
 				change_mat++;
 			}
 
 			for(cObjMesh* pMesh=s->GetFront();pMesh;pMesh=pMesh->GetNextSorting())
 			{
+#ifdef PERIMETER_D3D9
 				draw->DrawNoMaterial(pMesh,&Data);
+#endif
 				draw_object++;
 			}
 		}
 	}
-
+    
+#ifdef PERIMETER_D3D9
 	draw->EndDraw();
+#endif
 }
 
 struct SortMaterialByShadowTexture
@@ -897,6 +915,7 @@ void cCamera::DrawSortMaterialShadow()
 	std::sort(ar.begin(),ar.end(),SortMaterialByShadowTexture());
 	cMeshBank *CurBank=NULL;
 
+#ifdef PERIMETER_D3D9
 	DrawType* draw=gb_RenderDevice3D->dtFixed;
 	if(GetAttribute(ATTRCAMERA_SHADOWMAP))
 		draw=gb_RenderDevice3D->dtAdvance;
@@ -929,6 +948,7 @@ void cCamera::DrawSortMaterialShadow()
 	}
 
 	draw->EndDrawShadow();
+#endif
 }
 
 void cCamera::DrawSortMaterialShadowStrencil()
@@ -1249,13 +1269,12 @@ void cCamera::InitGridTest(int grid_dx,int grid_dy,int grid_size)
 void cCamera::CalcTestForGrid()
 {
 	Vect2i TileSize(1<<TestGridShl,1<<TestGridShl);
-	calcVisMap(this,TestGridSize,TileSize,pTestGrid,true);
+    cTileMap::calcVisMap(this,TestGridSize,TileSize,pTestGrid,true);
 
-	std::vector<cCamera*>::iterator it_c;
-	FOR_EACH(child,it_c)
-	{
-		if((*it_c)->GetAttribute(ATTRCAMERA_SHADOWMAP))
-			calcVisMap(*it_c,TestGridSize,TileSize,pTestGrid,false);
+    for (auto it_c : child) {
+		if (it_c->GetAttribute(ATTRCAMERA_SHADOWMAP)) {
+            cTileMap::calcVisMap(it_c, TestGridSize, TileSize, pTestGrid, false);
+        }
 	}
 
 }
@@ -1278,7 +1297,7 @@ void cCamera::DrawTestGrid()
 		if(pTestGrid[y*dx+x])
 		{
 			int xx=x*mul+minx,yy=y*mul+miny;
-			gb_RenderDevice3D->DrawRectangle(xx,yy,mul,mul,sColor4c(r,g,b,a));
+			gb_RenderDevice->DrawRectangle(xx,yy,mul,mul,sColor4c(r,g,b,a));
 		}
 	}
 }
@@ -1297,15 +1316,19 @@ void cCamera::DrawShadowDebug()
 		cCamera* pShadow=FindCildCamera((Option_ShowRenderTextureDBG!=2)?ATTRCAMERA_SHADOWMAP:ATTRCAMERA_SHADOW);
 		if(pShadow && pShadow->GetRenderTarget())
 		{
+#ifdef PERIMETER_D3D9
 			uint32_t fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
 			RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
+#endif
 
 			if(Option_ShowRenderTextureDBG!=4)
 			{
+#ifdef PERIMETER_D3D9
 				gb_RenderDevice3D->SetPixelShader(NULL);
+#endif
 				const int size=256;
 				float mi=0.0f,ma=1.0f;
-				gb_RenderDevice3D->DrawSprite(0,60,size,size,
+				gb_RenderDevice->DrawSprite(0,60,size,size,
 						mi,mi,ma-mi,ma-mi,pShadow->GetRenderTarget());
 			}else
 			{
@@ -1317,6 +1340,7 @@ void cCamera::DrawShadowDebug()
 				float du=ma-mi,dv=ma-mi;
 
 				RenderDevice->SetNoMaterial(ALPHA_NONE,0);
+#ifdef PERIMETER_D3D9
 				gb_VisGeneric->GetShaders()->pShowMap->Select();
 				gb_RenderDevice3D->SetTexture(0,gb_RenderDevice3D->dtAdvance->GetTZBuffer());
 
@@ -1335,10 +1359,12 @@ void cCamera::DrawShadowDebug()
 				BufferXYZWDT1.Unlock(4);
 
 				BufferXYZWDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
+#endif
 			}
-
+#ifdef PERIMETER_D3D9
 			gb_RenderDevice3D->SetPixelShader(NULL);
 			RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
+#endif
 		}
 	}
 }

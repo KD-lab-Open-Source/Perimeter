@@ -311,7 +311,7 @@ void drawCMesh(CMesh& cmesh)
 	}
 }
 
-void calcVisMap(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
+void calcVisMapD3D(cCamera *DrawNode, CMesh& cmesh, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
 {
 	APolygons poly;
 	cmesh.BuildPolygon(poly);
@@ -354,19 +354,14 @@ sBox6f calcBoundInDirection(CMesh& cmesh,Mat3f& m)
 	return box;
 }
 
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
+void calcVisMapD3D(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear)
 {
 	CMesh cmesh;
 	calcCMesh(DrawNode,TileNumber,TileSize,cmesh);
-	calcVisMap(DrawNode,cmesh,TileNumber,TileSize,visMap,clear);
+	calcVisMapD3D(DrawNode,cmesh,TileNumber,TileSize,visMap,clear);
 }
 
-void calcVisMap(cCamera *DrawNode, cTileMap *TileMap, uint8_t* visMap, bool clear)
-{
-	calcVisMap(DrawNode, TileMap->GetTileNumber(),TileMap->GetTileSize(),visMap,clear);
-}
-
-void calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box)
+void calcVisMapD3D(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box)
 {
 	CMesh cmesh;
 	calcCMesh(DrawNode,TileNumber,TileSize,cmesh);
@@ -929,7 +924,7 @@ void cTileMapRender::DrawBump(cCamera* DrawNode,eBlendMode MatMode,TILEMAP_DRAW 
 
 	gb_RenderDevice3D->SetFVF(BUMP_VTXFORMAT);
 
-	calcVisMap(DrawNode, TileMap, visMap, true);
+    calcVisMapD3D(DrawNode, TileMap->GetTileNumber(),TileMap->GetTileSize(),visMap,true);
 
 	uint32_t minfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MINFILTER);
 	uint32_t magfilter1=gb_RenderDevice3D->GetSamplerState(1, D3DSAMP_MAGFILTER);

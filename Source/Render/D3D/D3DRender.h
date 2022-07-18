@@ -79,8 +79,6 @@ public:
     VertexPoolManager* GetVertexPool() { return &vertex_pool_manager; }
     IndexPoolManager* GetIndexPool() { return &index_pool_manager; }
 
-    static int GetSizeFromFmt(int fmt);
-
     virtual cVertexBuffer<sVertexXYZDT1>* GetBufferXYZDT1() { return &BufferXYZDT1; }
     virtual cVertexBuffer<sVertexXYZDT2>* GetBufferXYZDT2() { return &BufferXYZDT2; }
     virtual cVertexBuffer<sVertexXYZWD>* GetBufferXYZWD() { return &BufferXYZWD; }
@@ -94,13 +92,15 @@ public:
         return DEVICE_D3D9;
     }
 
+    int GetSizeFromFormat(int fmt) const override;
+
     cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() override {return &QuadBufferXYZDT1 ;}
     cVertexBuffer<sVertexXYZD>* GetBufferXYZD() override { return &BufferXYZD; }
 
     void* GetStripBuffer() override { return &Buffer[0]; }
     int GetStripBufferLen() override { return Buffer.length(); }
     
-	int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) override;
+	int Init(int xScr,int yScr,int mode,void* hWnd=0, int RefreshRateInHz=0) override;
 	bool ChangeSize(int xScr,int yScr,int mode) override;
 	int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override;
 	int SetClipRect(int xmin,int ymin,int xmax,int ymax) override;
@@ -167,7 +167,6 @@ public:
 	
 	void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) override;
 	void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0) override;
-	HWND GetWindowHandle() override { return hWnd;}
 	bool SetScreenShot(const char *fname) override;
 	void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
 		cTexture *Texture,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override;
@@ -408,8 +407,6 @@ public:
 			return NULL;
 		return pTexture;
 	}
-
-	int CreateTextureU16V16(class cTexture *Texture,bool defaultpool);
 
 	void SetCurrentConvertDot3Mul(float scale){current_bump_scale=scale;};
 	bool ReinitOcclusion();

@@ -262,16 +262,6 @@ int cD3DRender::CreateBumpTexture(class cTexture *Texture)
 	return 0;
 }
 
-int cD3DRender::CreateTextureU16V16(class cTexture *Texture,bool defaultpool)
-{
-	IDirect3DTexture9* lpTexture=NULL;
-	RDCALL(lpD3DDevice->CreateTexture(Texture->GetWidth(),Texture->GetHeight(),
-		1,0,D3DFMT_V16U16 ,defaultpool?D3DPOOL_DEFAULT:D3DPOOL_MANAGED,&lpTexture,NULL))
-	Texture->BitMap[0]=lpTexture;
-	return 0;
-}
-
-
 int cD3DRender::DeleteTexture(cTexture *Texture)
 { // только освобождает в памяти поверхности 
 	for(int nFrame=0;nFrame<Texture->GetNumberFrame();nFrame++)
@@ -328,25 +318,6 @@ void cD3DRender::UnlockTexture(class cTexture *Texture)
 {
 	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);
 	RDCALL(lpSurface->UnlockRect(0));
-}
-
-unsigned int ColorByNormal(Vect3f n)
-{
-	unsigned int x=((n.x+1)*127.5f);
-	unsigned int y=((n.y+1)*127.5f);
-	unsigned int z=((n.z+1)*127.5f);
-
-	return z+(x<<8)+(y<<16);
-}
-Vect3f NormalByColor(uint32_t d)
-{
-	Vect3f v;
-	v.y = ((d>> 16) & 0xFF);
-	v.x = ((d>> 8) & 0xFF);
-	v.z = ((d) & 0xFF);
-	v*= (1/127.5f);
-	v-=Vect3f(1,1,1);
-	return v;
 }
 
 void cD3DRender::ConvertDot3(uint32_t* ibuf,int dx,int dy,float h_mul)

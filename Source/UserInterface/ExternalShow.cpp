@@ -9,6 +9,7 @@
 #include "CameraManager.h"
 #include "ExternalShow.h"
 #include "../HT/ht.h"
+#include "StdAfxRD.h"
 
 #define ZFIX 2.0f
 
@@ -215,8 +216,10 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 
 		bool selection = (circleColor.dotted == 4);
 
+#ifdef PERIMETER_D3D9
 		DrawStrip strip;
 		strip.Begin();
+#endif
 
 		float v_pos = 0;
 		sVertexXYZDT1 p1,p2;
@@ -246,11 +249,15 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			p2.u1() = selection ? v_pos : p1.u1();
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
+#ifdef PERIMETER_D3D9
 			strip.Set(p1,p2);
+#endif
 			a += da;
 			u+=du;
 		}
+#ifdef PERIMETER_D3D9
 		strip.End();
+#endif
 
 	} else {
 		int num = xm::round(2.0f * r / region_show_spline_space);
@@ -267,8 +274,10 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 		p2.diffuse = diffuse;
 		p2.v1() = 0.05f;
 
+#ifdef PERIMETER_D3D9
 		DrawStrip vertStrip;
 		vertStrip.Begin();
+#endif
 
 		float x1 = pos.x - width / 2.0f;
 		float x2 = x1 + width;
@@ -283,14 +292,18 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			p2.u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
+#ifdef PERIMETER_D3D9
 			vertStrip.Set(p1,p2);
+#endif
 			y += region_show_spline_space;
 		}
 
+#ifdef PERIMETER_D3D9
 		vertStrip.End();
 
 		DrawStrip horizStrip;
 		horizStrip.Begin();
+#endif
 
 		float y1 = pos.y - width / 2.0f;
 		float y2 = y1 + width;
@@ -305,11 +318,15 @@ void cCircleShow::CircleShow(const Vect3f& pos,float r, const CircleColor& circl
 			p2.u1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
+#ifdef PERIMETER_D3D9
 			horizStrip.Set(p1,p2);
+#endif
 			x += region_show_spline_space;
 		}
 
+#ifdef PERIMETER_D3D9
 		horizStrip.End();
+#endif
 	}
 }
 
@@ -323,7 +340,7 @@ void terExternalRegionShowUniform(Region* region,sColor4c color)
 	float z1,z2,z;
 
 #ifdef PERIMETER_D3D9
-    cQuadBuffer<sVertexXYZDT1>* quad=terRenderDevice->GetQuadBufferXYZDT1();
+    cQuadBuffer<sVertexXYZDT1>* quad=gb_RenderDevice3D ? gb_RenderDevice3D->GetQuadBufferXYZDT1() : nullptr;
 	if (quad && !(region->spline().empty())) {
 		quad->BeginDraw();
 
@@ -481,8 +498,10 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp,dn;
+#ifdef PERIMETER_D3D9
 		DrawStrip strip;
 		strip.Begin();
+#endif
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -509,10 +528,14 @@ void terExternalRegionShowLine(Region* region,sColor4c diffuse)
 			p1.v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
+#ifdef PERIMETER_D3D9
 			strip.Set(p0,p1);
-		}while((t += dt) < t_max);
+#endif
+		} while((t += dt) < t_max);
 
+#ifdef PERIMETER_D3D9
 		strip.End();
+#endif
 	}
 
 	Region::iterator i;
@@ -525,8 +548,10 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp,dn;
+#ifdef PERIMETER_D3D9
 		DrawStrip strip;
-		strip.Begin();
+        strip.Begin();
+#endif
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -556,10 +581,14 @@ void terExternalRegionShowLineZeroplast(Region* region,sColor4c diffuse)
 			p1.v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
+#ifdef PERIMETER_D3D9
 			strip.Set(p0,p1);
-		}while((t += dt) < t_max);
+#endif
+		} while((t += dt) < t_max);
 
+#ifdef PERIMETER_D3D9
 		strip.End();
+#endif
 	}
 
 	Region::iterator i;
@@ -573,8 +602,10 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 	if(!(region->spline().empty()))
 	{
 		Vect2f tp;
+#ifdef PERIMETER_D3D9
 		DrawStrip strip;
 		strip.Begin();
+#endif
 
 		float v_pos = 0;
 		float dt = region->spline().suggest_dt(region_show_spline_space);
@@ -604,10 +635,14 @@ void terExternalRegionShowLineZeroplastVertical(Region* region,sColor4c diffuse)
 			p1.v1() = v_pos;
 			v_pos += GAME_SHELL_SHOW_REGION_V_STEP;
 
+#ifdef PERIMETER_D3D9
 			strip.Set(p0,p1);
-		}while((t += dt) < t_max);
+#endif
+		} while((t += dt) < t_max);
 
+#ifdef PERIMETER_D3D9
 		strip.End();
+#endif
 	}
 
 	Region::iterator i;
@@ -663,6 +698,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 }
 /*/
 
+#ifdef PERIMETER_D3D9
 inline void AddTriangle(cVertexBuffer<sVertexXYZD>& buf,sVertexXYZD*& v,sVertexXYZD p[3],int& primitive)
 {
 	v[0]=p[0];
@@ -679,20 +715,24 @@ inline void AddTriangle(cVertexBuffer<sVertexXYZD>& buf,sVertexXYZD*& v,sVertexX
 		v=buf.Lock();
 	}
 }
+#endif
 
 void terExternalRegionShowColumn(Column* column,sColor4c color)
 {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
-	cVertexBuffer<sVertexXYZD>& buf=*terRenderDevice->GetBufferXYZD();
+    
+#ifdef PERIMETER_D3D9
+    if (!gb_RenderDevice3D) return;
+	cVertexBuffer<sVertexXYZD>& buf=*gb_RenderDevice3D->GetBufferXYZD();
+	sVertexXYZD* v=buf.Lock();
+#endif
 
 	float z=vMap.hZeroPlast-ZFIX;
 	int primitive=0;
 
-	std::vector<CellLine>::iterator it_line;
-	sVertexXYZD* v=buf.Lock();
-
 	int profile_num=0;
 
+    std::vector<CellLine>::iterator it_line;
 	FOR_EACH(*column,it_line)
 	{
 		CellLine* cell=&*it_line;
@@ -748,7 +788,9 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 				{
 					p[1]=p[2];
 					p[2].pos.set(cn.xl,cn.y,z);
+#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
+#endif
 					i++;
 				}
 
@@ -756,14 +798,18 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 				{
 					p[1]=p[2];
 					p[2].pos.set(cn.xr,cn.y,z);
+#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
+#endif
 					i++;
 				}
 			}
 
 			p[1]=p[2];
 			p[2].pos.set(c.xr,c.y+1,z);
+#ifdef PERIMETER_D3D9
 			AddTriangle(buf,v,p,primitive);
+#endif
 			i++;
 
 			bool first=true;
@@ -784,7 +830,9 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 					else
 						p[0]=p[1];
 					p[1].pos.set(cn.xl,c.y,z);
+#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
+#endif
 					i++;
 				}
 
@@ -795,7 +843,9 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 					else
 						p[0]=p[1];
 					p[1].pos.set(cn.xr,c.y,z);
+#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
+#endif
 					i++;
 				}
 			}
@@ -810,7 +860,9 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 				p[1].pos.set(c.xr,c.y,z);
 			}
 
+#ifdef PERIMETER_D3D9
 			AddTriangle(buf,v,p,primitive);
+#endif
 			i++;
 
 			if(i>4)
@@ -820,9 +872,11 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 		}
 	}
 
+#ifdef PERIMETER_D3D9
 	buf.Unlock(primitive*3);
 	if(primitive)
 		buf.DrawPrimitive(PT_TRIANGLELIST,primitive);
+#endif
 }
 /**/
 

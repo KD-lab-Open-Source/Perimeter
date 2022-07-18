@@ -206,7 +206,7 @@ inline Vect3f to3D(const Vect2f& pos, float z) { return Vect3f(pos.x, pos.y, z);
 
 
 #undef xassert_s
-#ifdef PERIMETER_DEBUG
+#ifdef PERIMETER_DEBUG_ASSERT
 #define xassert_s(exp, str) { std::string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
 #else
 #define xassert_s(exp, str) 

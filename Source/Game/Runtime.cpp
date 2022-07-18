@@ -680,15 +680,19 @@ void HTManager::finitGraphics()
 	terRenderDevice->SetDefaultFont(NULL);
 	terRenderDevice->SetFont(NULL);
 	RELEASE(pDefaultFont);
-	if(terVisGeneric)
-		terVisGeneric->ClearData();
-	if(terVisGeneric)
-		terVisGeneric->Release();
-	if(terRenderDevice) {
+	if(terVisGeneric) {
+        terVisGeneric->ClearData();
+    }
+	if(terVisGeneric) {
+        terVisGeneric->Release();
+    }
+	if (terRenderDevice) {
+        terRenderDevice->Done();
         terRenderDevice->Release();
     }
-	if(terLogicGeneric)
-		terLogicGeneric->Release();
+	if(terLogicGeneric) {
+        terLogicGeneric->Release();
+    }
 
 	terRenderDevice = NULL;
 	terVisGeneric = NULL;

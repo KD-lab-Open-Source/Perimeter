@@ -5,6 +5,28 @@
 #include "../../Game/Region.h"
 #include "Font.h"
 
+#ifdef PERIMETER_D3D9
+//D3D9 specific render code
+void calcVisMapD3D(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear);
+void calcVisMapD3D(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize,Mat3f& direction,sBox6f& box);
+#endif
+
+void cTileMap::calcVisMap(cCamera *DrawNode, Vect2i TileNumber, Vect2i TileSize, uint8_t* visMap, bool clear) {
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+#ifdef PERIMETER_D3D9
+        calcVisMapD3D(DrawNode, TileNumber, TileSize, visMap, clear);
+#endif
+    }
+}
+
+void cTileMap::calcVisMap(cCamera *DrawNode, Vect2i TileNumber,Vect2i TileSize, Mat3f& direction,sBox6f& box) {
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+#ifdef PERIMETER_D3D9
+        calcVisMapD3D(DrawNode, TileNumber, TileSize, direction, box);
+#endif
+    }
+}
+
 cTileMap::cTileMap(cScene* pScene,TerraInterface* terra_) : cUnkObj(KIND_TILEMAP)
 {
 	MTINIT(lock_update_rect);
@@ -329,7 +351,7 @@ void cTileMap::CalcShadowMapCamera(cCamera *DrawNode)
 	Mat3f LightMatrixInv;
 	sBox6f box;
 	LightMatrixInv.invert(LightMatrix.rot());
-	calcVisMap(DrawNode,GetTileNumber(),GetTileSize(),LightMatrix.rot(),box);
+    cTileMap::calcVisMap(DrawNode,GetTileNumber(),GetTileSize(),LightMatrix.rot(),box);
 
 	Vect2f prevz(box.min.z,box.max.z);
 	box.min.z-=bound_z;

@@ -67,10 +67,7 @@ public:
 
 	//Возвращает 32 битную текстуру, в которой хранится изображение экрана.
 	virtual cTexture* CreateTextureScreen();
-
-	//Текстура в формате U16V16
-	virtual cTexture* CreateTextureU16V16(int sizex,int sizey,bool deafultpool);
-
+    
 	void SetEffectLibraryPath(const char* effect_path,const char* texture_path);
 	EffectLibrary* GetEffectLibrary(const char* filename,bool quiet=false);
 

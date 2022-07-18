@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Font.h"
 #include "Localization.h"
+#include "SystemUtil.h"
 
 static void get_string(char*& str,char* s)
 {
@@ -436,7 +437,7 @@ void DebugMemInfo()
 
 	p+=sprintf(p,"summary size=%i.\n",summary_size);
 	p+=sprintf(p,"summary num=%i.\n",summary_num);
-	MessageBox(gb_RenderDevice->GetWindowHandle(),text,"Memory info",MB_OK);
+	MessageBox(static_cast<HWND>(hWndVisGeneric),text,"Memory info",MB_OK);
 #endif //_DEBUG
 }
 
@@ -811,26 +812,4 @@ bool GetAllTriangle(const char* filename, std::vector<Vect3f>& point, std::vecto
 	root->GetAllTriangle(point,polygon);
 	root->Release();
 	return true;
-}
-
-cTexture* cVisGeneric::CreateTextureU16V16(int sizex,int sizey,bool deafultpool)
-{
-	cTexture *Texture=new cTexture;
-	Texture->SetNumberMipMap(1);
-	Texture->SetAttribute(TEXTURE_U16V16);
-	if(deafultpool)
-		Texture->SetAttribute(TEXTURE_D3DPOOL_DEFAULT);
-
-	Texture->BitMap.resize(1);
-	Texture->BitMap[0]=0;
-	Texture->SetWidth(sizex);
-	Texture->SetHeight(sizey);
-
-	if(gb_RenderDevice3D->CreateTextureU16V16(Texture,deafultpool))
-	{
-		delete Texture;
-		return NULL;
-	}
-
-	return Texture;
 }

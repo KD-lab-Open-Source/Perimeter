@@ -86,6 +86,8 @@ struct sTextureFormatData
 class cIUnkClass;
 class cObjMesh;
 
+unsigned int ColorByNormal(Vect3f n);
+Vect3f NormalByColor(uint32_t d);
 void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst,
                  int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int Blur=0);
 
@@ -216,20 +218,22 @@ public:
 
     virtual eRenderDeviceSelection GetRenderSelection() const = 0;
 
+    virtual int GetSizeFromFormat(int fmt) const = 0;
+
 #ifdef PERIMETER_D3D9
     virtual cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() = 0;
     virtual cVertexBuffer<sVertexXYZD>* GetBufferXYZD() = 0;
 #endif
 
-    virtual int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) = 0;
+    virtual int Init(int xScr,int yScr,int mode, void* hWnd = nullptr, int RefreshRateInHz=0);
+    virtual int Done();
+
     virtual bool ChangeSize(int xScr,int yScr,int mode) = 0;
     virtual int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) = 0;
     virtual int SetClipRect(int xmin,int ymin,int xmax,int ymax) = 0;
     virtual void SetDrawTransform(class cCamera *pDrawNode) = 0;
 
     virtual bool IsFullScreen() = 0;
-
-    virtual int Done() = 0;
 
     virtual int BeginScene() = 0;
     virtual int EndScene() = 0;
@@ -269,7 +273,6 @@ public:
 
     virtual void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) = 0;
     virtual void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName/*="Arial"*/,int size=12,int bold=0,int italic=0,int underline=0) = 0;
-    virtual HWND GetWindowHandle() = 0;
     virtual bool SetScreenShot(const char *fname) = 0;
     virtual int SetRenderState(eRenderStateOption option,int value) = 0;
     virtual void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) = 0;

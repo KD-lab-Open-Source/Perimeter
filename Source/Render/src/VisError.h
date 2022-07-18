@@ -16,8 +16,8 @@ private:
 extern cVisError VisError;
 
 #undef xassert_s
-#ifndef _FINAL_VERSION_
-#define xassert_s(exp, str) { string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
+#ifdef PERIMETER_DEBUG_ASSERT
+#define xassert_s(exp, str) { std::string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
 #else
 #define xassert_s(exp, str) 
 #endif

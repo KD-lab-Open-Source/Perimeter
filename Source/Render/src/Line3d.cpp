@@ -30,6 +30,8 @@ void cLine3d::Draw(cCamera *DrawNode)
 	MTEnter mtlock(lock);
 	if(Vertex.size()<2) return;
 #ifdef PERIMETER_D3D9
+    //TODO
+    if (!gb_RenderDevice3D) return;
 	DrawStrip strip;
 	
 	if(DrawNode->GetCameraPass()==SCENENODE_OBJECTSORT_NOZ)

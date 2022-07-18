@@ -6,26 +6,25 @@ class cEmptyRender : public cInterfaceRenderDevice
 {
 public:
     cEmptyRender() = default;
-    ~cEmptyRender() override = default;
+    ~cEmptyRender() override;
 
     eRenderDeviceSelection GetRenderSelection() const override {
         return DEVICE_HEADLESS;
     }
+    
+    int GetSizeFromFormat(int fmt) const override;
 
 #ifdef PERIMETER_D3D9
     cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() override { return nullptr; }
     cVertexBuffer<sVertexXYZD>* GetBufferXYZD() override { return nullptr; }
 #endif
 
-    int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) override { return 0; }
     bool ChangeSize(int xScr,int yScr,int mode) override {return false;};
     int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override { return -1; }
     int SetClipRect(int xmin,int ymin,int xmax,int ymax) override { return -1; }
     void SetDrawTransform(class cCamera *pDrawNode) override {}
 
     bool IsFullScreen() override { return false; }
-
-    int Done() override { return 0; } // закрытие графического режима
 
     int BeginScene() override { return -1; }
     int EndScene() override { return -1; }
@@ -66,7 +65,6 @@ public:
 
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) override { }
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName/*="Arial"*/,int size=12,int bold=0,int italic=0,int underline=0) override { }
-    HWND GetWindowHandle() override { return 0; }
     bool SetScreenShot(const char *fname) override { return false; }
     int SetRenderState(eRenderStateOption option,int value) override { return -1; }
     void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) override { }

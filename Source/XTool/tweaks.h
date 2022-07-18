@@ -10,8 +10,9 @@
 // disable FP contractions
 #ifdef _MSC_VER
 #pragma fp_contract (off)
-#endif
+#else
 #pragma STDC FP_CONTRACT OFF
+#endif
 
 #ifdef __ICL
 #pragma warning( disable : 880 1125)

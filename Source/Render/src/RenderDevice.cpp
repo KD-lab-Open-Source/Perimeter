@@ -4,8 +4,26 @@
 #include "files/files.h"
 
 #include "Font.h"
+#include "IRenderDevice.h"
 
-FILE* fRD=NULL;
+
+#ifndef PERIMETER_D3D9
+//TODO remove this once this mess is sorted out
+int sVertexXYZ::fmt     = 1;
+int sVertexXYZD::fmt    = 2;
+int sVertexXYZT1::fmt   = 3;
+int sVertexXYZDT1::fmt  = 4;
+int sVertexXYZDT2::fmt  = 5;
+int sVertexXYZN::fmt    = 6;
+int sVertexXYZNT1::fmt  = 7;
+int sVertexXYZW::fmt    = 8;
+int sVertexXYZWD::fmt   = 9;
+int sVertexXYZWDT1::fmt = 10;
+int sVertexXYZWDT2::fmt = 11;
+int sVertexDot3::fmt    = 12;
+#endif
+
+FILE* fRD= nullptr;
 
 #ifndef _FINAL_VERSION_
 char* GetErrorText(HRESULT hr)
@@ -69,13 +87,15 @@ return "Unknown error";
 
 void RDOpenLog(char *fname="RenderDevice.!!!")
 {
+#ifndef _FINAL_VERSION_
 	fRD=fopen(convert_path_content(fname, true).c_str(),"wt");
 	fprintf(fRD,"----------------- Compilation data: %s time: %s -----------------\n",__DATE__,__TIME__);
+#endif
 }
 int RDWriteLog(HRESULT err,char *exp,char *file,int line)
 {
 #ifndef _FINAL_VERSION_
-	if(fRD==0) RDOpenLog();
+	if (fRD==nullptr) RDOpenLog();
 	fprintf(fRD,"%s line: %i - %s = 0x%X , %s\n",file,line,exp,err,GetErrorText(err));
 	fflush(fRD);
 #endif
@@ -84,7 +104,7 @@ int RDWriteLog(HRESULT err,char *exp,char *file,int line)
 void RDWriteLog(char *exp,int size)
 {
 #ifndef _FINAL_VERSION_
-	if(fRD==0) RDOpenLog();
+	if (fRD==nullptr) RDOpenLog();
 	if(size==-1)
 		size=strlen(exp);
 	fwrite(exp,size,1,fRD);
@@ -108,15 +128,34 @@ sPtrIndexBuffer::~sPtrIndexBuffer()
 }
 
 cInterfaceRenderDevice::cInterfaceRenderDevice() : cUnknownClass(KIND_UI_RENDERDEVICE) {
-    TexLibrary = new cTexLibrary();    
 }
 
 cInterfaceRenderDevice::~cInterfaceRenderDevice() {
-    VISASSERT(CurrentFont==0 || CurrentFont==DefaultFont);
+    //Subclasses must call Done before reaching this destructor or we will have problems due to deleted virtuals
+    if (gb_RenderDevice) {
+        xassert_s(gb_RenderDevice == nullptr, "RenderDevice not properly cleared");
+        gb_RenderDevice = nullptr;
+        Done();
+    }
+}
+
+int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* hWnd, int RefreshRateInHz) {
+    Done();
+    gb_RenderDevice = this;
+    TexLibrary = new cTexLibrary();
+    return 0;
+}
+
+int cInterfaceRenderDevice::Done() {
+    VISASSERT(CurrentFont == nullptr || CurrentFont == DefaultFont);
     if (TexLibrary) {
         delete TexLibrary;
         TexLibrary = nullptr;
     }
+    if (gb_RenderDevice) {
+        gb_RenderDevice = nullptr;
+    }
+    return 0;
 }
 
 cTexture* cInterfaceRenderDevice::GetTexture(int n) {
@@ -165,8 +204,25 @@ float cInterfaceRenderDevice::GetCharLength(const char c)
     return GetFontLength(str);
 }
 
-unsigned int ColorByNormal(Vect3f n);
-Vect3f NormalByColor(uint32_t d);
+unsigned int ColorByNormal(Vect3f n)
+{
+    unsigned int x=((n.x+1)*127.5f);
+    unsigned int y=((n.y+1)*127.5f);
+    unsigned int z=((n.z+1)*127.5f);
+
+    return z+(x<<8)+(y<<16);
+}
+
+Vect3f NormalByColor(uint32_t d)
+{
+    Vect3f v;
+    v.y = ((d>> 16) & 0xFF);
+    v.x = ((d>> 8) & 0xFF);
+    v.z = ((d) & 0xFF);
+    v*= (1/127.5f);
+    v-=Vect3f(1,1,1);
+    return v;
+}
 
 void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst,
 				 int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int Attr)
@@ -304,7 +360,7 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 // cEmptyRender impl
 
 void cEmptyRender::CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVertex,int fmt,int dynamic) {
-    int size = cD3DRender::GetSizeFromFmt(fmt);
+    int size = GetSizeFromFormat(fmt);
     vb.ptr=new sSlotVB();
 
     sSlotVB& s = *vb.ptr;
@@ -360,32 +416,50 @@ sPolygon* cEmptyRender::LockIndexBuffer(struct sPtrIndexBuffer &ib) {
 void cEmptyRender::UnlockIndexBuffer(struct sPtrIndexBuffer &ib) {
 }
 
+int cEmptyRender::GetSizeFromFormat(int fmt) const {
+    //TODO remove this once this mess is sorted out
+    if      (fmt == sVertexXYZ::fmt) return sizeof(sVertexXYZ);
+    else if (fmt == sVertexXYZD::fmt) return sizeof(sVertexXYZD);
+    else if (fmt == sVertexXYZT1::fmt) return sizeof(sVertexXYZT1);
+    else if (fmt == sVertexXYZDT1::fmt) return sizeof(sVertexXYZDT1);
+    else if (fmt == sVertexXYZDT2::fmt) return sizeof(sVertexXYZDT2);
+    else if (fmt == sVertexXYZN::fmt) return sizeof(sVertexXYZN);
+    else if (fmt == sVertexXYZNT1::fmt) return sizeof(sVertexXYZNT1);
+    else if (fmt == sVertexXYZW::fmt) return sizeof(sVertexXYZW);
+    else if (fmt == sVertexXYZWD::fmt) return sizeof(sVertexXYZWD);
+    else if (fmt == sVertexXYZWDT1::fmt) return sizeof(sVertexXYZWDT1);
+    else if (fmt == sVertexXYZWDT2::fmt) return sizeof(sVertexXYZWDT2);
+    else if (fmt == sVertexDot3::fmt) return sizeof(sVertexDot3);
+    return 0;
+}
+
+cEmptyRender::~cEmptyRender() {
+    Done();
+}
+
 // Render device selection
 
 cInterfaceRenderDevice *gb_RenderDevice = nullptr;
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection) {
-    gb_RenderDevice = nullptr;
+    cInterfaceRenderDevice* device = nullptr;
     //TODO make this runtime selectable
     switch (selection) {
         case DEVICE_D3D9:
 #ifdef PERIMETER_D3D9
-            gb_RenderDevice3D = new cD3DRender();
-            gb_RenderDevice = gb_RenderDevice3D;
-#else
-            ErrH.Abort("D3D9 render device support was not enabled", XERR_USER, selection);
+            device = new cD3DRender();
 #endif
             printf("Selected render: d3d9");
             break;
         case DEVICE_HEADLESS:
-            gb_RenderDevice = new cEmptyRender();
+            device = new cEmptyRender();
             printf("Selected render: none");
             break;
         default:
             break;
     }
-    if (!gb_RenderDevice) {
+    if (!device) {
         ErrH.Abort("Unknown render device selected", XERR_USER, selection);
     }
-    return gb_RenderDevice;
+    return device;
 }
