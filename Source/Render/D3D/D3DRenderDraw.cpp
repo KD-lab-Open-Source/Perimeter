@@ -19,7 +19,7 @@ void cD3DRender::SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer)
 	}
 
 	LPDIRECT3DSURFACE9 lpDDSurface=0;
-	RDCALL((target->GetDDSurface(0))->GetSurfaceLevel(0,&lpDDSurface));
+	RDCALL((target->GetFrameImage(0)).d3d->GetSurfaceLevel(0,&lpDDSurface));
 	RDCALL(lpD3DDevice->SetRenderTarget(0,lpDDSurface));
 	RDCALL(lpD3DDevice->SetDepthStencilSurface(pZBuffer));
 
@@ -201,7 +201,7 @@ void cD3DRender::DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wire
 	SetNoMaterial(ALPHA_BLEND);
 
 	RDCALL(lpD3DDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,0,8,12,
-		p,D3DFMT_INDEX16,v,sizeof(v[0])));
+		p,PERIMETER_D3D_INDEX_FMT,v,sizeof(v[0])));
 	
 	if(wireframe) SetRenderState(D3DRS_FILLMODE,bWireFrame==0?D3DFILL_SOLID:D3DFILL_WIREFRAME);
 	SetRenderState( RS_ZWRITEENABLE, TRUE );

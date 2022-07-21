@@ -2,11 +2,11 @@
 
 #include <cstdint>
 #include "Unknown.h"
-#include "VertexFormat.h"
 
 enum eRenderDeviceSelection {
     DEVICE_D3D9,
-    DEVICE_HEADLESS
+    DEVICE_HEADLESS,
+    DEVICE_SOKOL
 };
 
 //Возвращает минимальное число,являющееся степенью двойки и не меньше, чем n
@@ -20,7 +20,15 @@ inline int Power2up(int n)
 
 struct sSlotVB
 {
-    void* p;
+    union {
+        void* buf;
+#ifdef PERIMETER_D3D9
+        struct IDirect3DVertexBuffer9* d3d;
+#endif
+#ifdef PERIMETER_SOKOL
+        struct SokolBuffer* sg;
+#endif
+    };
     char dynamic;
     bool init;
     int fmt;
@@ -29,8 +37,17 @@ struct sSlotVB
 };
 struct sSlotIB
 {
-    void* p;
+    union {
+        void* buf;
+#ifdef PERIMETER_D3D9
+        struct IDirect3DIndexBuffer9* d3d;
+#endif
+#ifdef PERIMETER_SOKOL
+        struct SokolBuffer* sg;
+#endif
+    };
     bool init;
+    int NumberIndices;
 };
 struct sPtrVertexBuffer
 {
@@ -78,10 +95,6 @@ struct sTextureFormatData
         rshift=rBitShift; gshift=gBitShift;	bshift=bBitShift; ashift=aBitShift;
     }
 };
-
-#ifdef PERIMETER_D3D9
-#include "../D3D/VertexBuffer.h"
-#endif
 
 class cIUnkClass;
 class cObjMesh;
@@ -173,11 +186,13 @@ enum eBlendMode
     ALPHA_MUL,
 };
 
+using indices_t = uint16_t;
+
 struct sPolygon
 {
-    uint16_t p1,p2,p3;
-    uint16_t& operator[](int i){return *(i+&p1);}
-    inline void set(uint16_t i1,uint16_t i2,uint16_t i3){ p1=i1; p2=i2; p3=i3; }
+    indices_t p1,p2,p3;
+    indices_t& operator[](int i){return *(i+&p1);}
+    inline void set(indices_t i1,indices_t i2,indices_t i3){ p1=i1; p2=i2; p3=i3; }
 };
 
 class cFont;
@@ -189,11 +204,12 @@ class cCamera;
 class cInterfaceRenderDevice : public cUnknownClass
 {
 protected:
-    cTexLibrary* TexLibrary;
-    cFont* CurrentFont;
-    cFont* DefaultFont;
-    cCamera *DrawNode;
-    uint32_t RenderMode;
+    cTexLibrary* TexLibrary = nullptr;
+    cFont* CurrentFont = nullptr;
+    cFont* DefaultFont = nullptr;
+    cCamera *DrawNode = nullptr;
+    Vect2i ScreenSize = { 0, 0 };
+    uint32_t RenderMode = 0;
 
 public:
     cInterfaceRenderDevice();
@@ -206,6 +222,11 @@ public:
 
     eModeRenderDevice GetRenderMode() { return static_cast<eModeRenderDevice>(RenderMode); }
 
+    virtual bool IsFullScreen() { return (RenderMode&RENDERDEVICE_MODE_WINDOW) == 0; }
+    
+    virtual int GetSizeX() { return ScreenSize.x; };
+    virtual int GetSizeY() { return ScreenSize.y; };
+
     inline cCamera* GetDrawNode() { return DrawNode; }
     virtual void SetDrawNode(cCamera* node) { DrawNode = node; };
 
@@ -213,27 +234,20 @@ public:
     virtual void SetDefaultFont(cFont *pFont);
     virtual float GetFontLength(const char *string);
     virtual float GetCharLength(const char c);
-    
+
+    virtual size_t GetSizeFromFormat(uint32_t fmt) const;
+
     // Decl only methods
 
     virtual eRenderDeviceSelection GetRenderSelection() const = 0;
 
-    virtual int GetSizeFromFormat(int fmt) const = 0;
-
-#ifdef PERIMETER_D3D9
-    virtual cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() = 0;
-    virtual cVertexBuffer<sVertexXYZD>* GetBufferXYZD() = 0;
-#endif
-
-    virtual int Init(int xScr,int yScr,int mode, void* hWnd = nullptr, int RefreshRateInHz=0);
+    virtual int Init(int xScr,int yScr,int mode, void* wnd = nullptr, int RefreshRateInHz=0);
     virtual int Done();
 
     virtual bool ChangeSize(int xScr,int yScr,int mode) = 0;
     virtual int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) = 0;
     virtual int SetClipRect(int xmin,int ymin,int xmax,int ymax) = 0;
     virtual void SetDrawTransform(class cCamera *pDrawNode) = 0;
-
-    virtual bool IsFullScreen() = 0;
 
     virtual int BeginScene() = 0;
     virtual int EndScene() = 0;
@@ -242,10 +256,6 @@ public:
     virtual int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) = 0;
 
     // вспомогательные функции, могут быть не реализованы
-    virtual int	GetSizeX() = 0;
-    virtual int	GetSizeY() = 0;
-    virtual void* GetStripBuffer() = 0;
-    virtual int GetStripBufferLen() = 0;
     virtual void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) = 0;
     virtual void DrawPixel(int x1,int y1,sColor4c color) = 0;
     virtual void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) = 0;
@@ -290,22 +300,13 @@ public:
                              cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) = 0;
     virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                              cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) = 0;
-
-    virtual void DrawSpriteScale(int x,int y,int dx,int dy,float u,float v,
-                                 cTextureScale *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) = 0;
-    virtual void DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,
-                                  cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0) = 0;
-    virtual void DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,float u1,float v1,
-                                  cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD) = 0;
-
+    
     virtual void Draw(class cScene *Scene) = 0;
 
     virtual void Draw(class FieldDispatcher *ffd) = 0;
     virtual void CreateFFDData(class FieldDispatcher *rd) = 0;
     virtual void DeleteFFDData(class FieldDispatcher *rd) = 0;
     virtual void Draw(class ElasticSphere *es) = 0;
-
-    virtual int GetDrawNumberPolygon() = 0;
 
     virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true) = 0;
     virtual int DeleteTexture(class cTexture *Texture) = 0;
@@ -328,7 +329,7 @@ public:
     virtual void DeleteVertexBuffer(struct sPtrVertexBuffer &vb) = 0;
     virtual void* LockVertexBuffer(struct sPtrVertexBuffer &vb) = 0;
     virtual void UnlockVertexBuffer(struct sPtrVertexBuffer &vb) = 0;
-    virtual void CreateIndexBuffer(struct sPtrIndexBuffer& ib,int NumberIndex,int size=sizeof(sPolygon)) = 0;
+    virtual void CreateIndexBuffer(struct sPtrIndexBuffer& ib,int NumberPolygon,int size=sizeof(sPolygon)) = 0;
     virtual void DeleteIndexBuffer(struct sPtrIndexBuffer &ib) = 0;
     virtual sPolygon* LockIndexBuffer(struct sPtrIndexBuffer &ib) = 0;
     virtual void UnlockIndexBuffer(struct sPtrIndexBuffer &ib) = 0;

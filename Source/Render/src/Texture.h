@@ -1,6 +1,15 @@
 #pragma once
 
-struct IDirect3DTexture9;
+//Universal handle for diff backends
+union TextureImage {
+    void* ptr;
+#ifdef PERIMETER_D3D9
+    struct IDirect3DTexture9* d3d;
+#endif
+#ifdef PERIMETER_SOKOL
+    struct sg_image* sg;
+#endif
+};
 
 class cTexture : public cUnknownClass, public sAttribute
 {	// класс с анимацией, является динамическим указателем, то есть может удалzться через Release()
@@ -10,7 +19,7 @@ class cTexture : public cUnknownClass, public sAttribute
 	int			number_mipmap;
 public:
 	sColor4c	skin_color;
-	std::vector<IDirect3DTexture9*>	BitMap;
+	std::vector<TextureImage> frames;
 
 	cTexture(const char *TexName=0);
 	~cTexture();
@@ -21,7 +30,7 @@ public:
 
 	inline int GetTimePerFrame();
 	inline void SetTimePerFrame(int tpf);
-	inline int GetNumberFrame() {return BitMap.size(); };
+	inline int GetNumberFrame() {return frames.size();};
 	inline int GetX() const{return _x;};
 	inline int GetY() const{return _y;};
 	inline int GetWidth()const{return 1<<GetX();};
@@ -33,7 +42,10 @@ public:
 	inline bool IsAlpha();
 	inline bool IsAlphaTest();
 
-	IDirect3DTexture9*& GetDDSurface(int n);
+    TextureImage& GetFrameImage(int n) {
+        return frames[n];
+    }
+    
 	inline void New(int number);
 	inline eSurfaceFormat GetFmt();
 

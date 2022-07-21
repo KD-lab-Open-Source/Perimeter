@@ -5,6 +5,7 @@ PROJECT(perimeter)
 
 SET(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
+set(CMAKE_C_STANDARD 11)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS ON)
@@ -21,6 +22,8 @@ OPTION(OPTION_DEBUG_ASSERT "Enable debug assertions" OFF)
 OPTION(OPTION_GPERFTOOLS "Link executable with gperftools for debugging" OFF)
 OPTION(OPTION_HEADLESS "Enable headless mode (no window or rendering)" OFF)
 OPTION(OPTION_D3D9 "Enable D3D9 renderer using dxvk-native in Linux or DirectX in Windows" ON)
+OPTION(OPTION_SOKOL "Enable Sokol GFX based renderer" ON)
+OPTION(OPTION_PROCESS_SHADERS "Re-Process game shaders" OFF)
 OPTION(OPTION_FFMPEG_MOVIES "Use FFMPEG to decode ingame movies" ON)
 
 # Compiler detections
@@ -71,6 +74,13 @@ IF (OPTION_D3D9)
     ADD_DEFINITIONS(-DPERIMETER_D3D9)
 ELSE()
     MESSAGE("D3D9 renderer: Disabled")
+ENDIF()
+
+IF (OPTION_SOKOL)
+    MESSAGE("Sokol renderer: Enabled - WARNING: EXPERIMENTAL!")
+    ADD_DEFINITIONS(-DPERIMETER_SOKOL)
+ELSE()
+    MESSAGE("Sokol renderer: Disabled")
 ENDIF()
 
 #To allow downloading deps

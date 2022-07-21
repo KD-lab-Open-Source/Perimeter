@@ -225,9 +225,9 @@ void IndexPool::Create(const PoolParameter* p)
 	SetTotal(VPOOL_MAX_VTX_PER_POOL / page_size);
 
 	RDCALL(gb_RenderDevice3D->lpD3DDevice->CreateIndexBuffer(
-		total_pages * page_size * sizeof(int16_t),
+		total_pages * page_size * sizeof(indices_t),
 		D3DUSAGE_WRITEONLY,
-		D3DFMT_INDEX16,
+		PERIMETER_D3D_INDEX_FMT,
 		D3DPOOL_DEFAULT,
 		&ib,NULL
 	));
@@ -256,8 +256,8 @@ void* IndexPool::LockPage(int page)
 	VISASSERT(page >= 0 && page < total_pages);
 
 	RDCALL(ib->Lock(
-		sizeof(int16_t)* page_size * page, // offset, bytes
-		sizeof(int16_t)* page_size, // size, bytes
+		sizeof(indices_t)* page_size * page, // offset, bytes
+		sizeof(indices_t)* page_size, // size, bytes
 		&ptr,
 		D3DLOCK_NOSYSLOCK
 	));
@@ -272,8 +272,8 @@ void IndexPool::UnlockPage(int page)
 
 void IndexPool::GetUsedMemory(int& total,int& free)
 {
-	total=page_size*total_pages*sizeof(int16_t);
-	free=page_size*free_pages*sizeof(int16_t);
+	total=page_size*total_pages*sizeof(indices_t);
+	free=page_size*free_pages*sizeof(indices_t);
 }
 
 

@@ -114,7 +114,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 	float t=ffd->InterpolationFactor();
 	float t_=1-t;
 
-	LPDIRECT3DVERTEXBUFFER9 vb=static_cast<LPDIRECT3DVERTEXBUFFER9>(pfd->vb.ptr->p);
+	LPDIRECT3DVERTEXBUFFER9 vb=pfd->vb.ptr->d3d;
 	SetStreamSource(pfd->vb);
 
 	uint32_t AlphaTest = GetRenderState(D3DRS_ALPHATESTENABLE);

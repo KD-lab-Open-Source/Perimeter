@@ -300,8 +300,8 @@ cTexture* cVisGeneric::CreateBumpTexture(int sizex,int sizey)
 {
 	cTexture *Texture=new cTexture;
 
-	Texture->BitMap.resize(1);
-	Texture->BitMap[0]=0;
+	Texture->frames.resize(1);
+	Texture->frames[0].ptr = nullptr;
 	Texture->SetWidth(sizex);
 	Texture->SetHeight(sizey);
 
@@ -619,7 +619,7 @@ cTexture* cVisGeneric::CreateTextureScreen()
 	int dx_plain_surface=dx;
 	int dy_plain_surface=dy;
 #ifndef PERIMETER_EXODUS
-	if(!gb_RenderDevice3D->IsFullScreen())
+	if(!gb_RenderDevice->IsFullScreen())
 	{
 		dx_plain_surface=GetSystemMetrics(SM_CXSCREEN);
 		dy_plain_surface=GetSystemMetrics(SM_CYSCREEN);

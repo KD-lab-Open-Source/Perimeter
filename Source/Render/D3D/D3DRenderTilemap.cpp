@@ -19,7 +19,7 @@
 #define BUMP_VTXSIZE   sizeof(BUMP_VTXTYPE)
 #define BUMP_IDXTYPE   unsigned short
 #define BUMP_IDXSIZE   sizeof(BUMP_IDXTYPE)
-#define BUMP_IDXFMT    D3DFMT_INDEX16
+#define BUMP_IDXFMT    PERIMETER_D3D_INDEX_FMT
 
 static int bumpGeoScale[TILEMAP_LOD] = { 1, 2, 3, 4, 5 };
 static int bumpTexScale[TILEMAP_LOD] = { 0, 0, 1, 2, 3 };
@@ -1654,7 +1654,7 @@ void sBumpTile::CalcPoint(cTileMap *TileMap)
 			gb_RenderDevice3D->GetIndexPool()->CreatePage(sBumpTile::index[cur].index,num2);
 
 			sPolygon* p=gb_RenderDevice3D->GetIndexPool()->LockPage(sBumpTile::index[cur].index);
-			memcpy(p,&(index[i][0]),num*sizeof(int16_t));
+			memcpy(p,&(index[i][0]),num*sizeof(indices_t));
 			gb_RenderDevice3D->GetIndexPool()->UnlockPage(sBumpTile::index[cur].index);
 
 			sBumpTile::index[cur].nindex=num;

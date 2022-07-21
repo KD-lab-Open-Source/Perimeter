@@ -116,15 +116,16 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 	for(int i=0;i<Texture->GetNumberFrame();i++)
 	{
-		if(Texture->GetDDSurface(i)) 
-			Texture->GetDDSurface(i)->Release(); 
-		if(Texture->BitMap[i]==0) 
-			Texture->BitMap[i]=CreateSurface(
-						dx_surface,dy_surface,
-						Texture->GetFmt(),Texture->GetNumberMipMap(),enable_assert,
-						Texture->GetAttribute());
-		if(Texture->BitMap[i]==0) 
-			return 2;
+        IDirect3DTexture9*& tex = Texture->GetFrameImage(i).d3d;
+		if (tex) tex->Release(); 
+		if (tex == nullptr) {
+            tex = CreateSurface(
+                    dx_surface, dy_surface,
+                    Texture->GetFmt(), Texture->GetNumberMipMap(), enable_assert,
+                    Texture->GetAttribute()
+            );
+        }
+		if(tex == nullptr) return 2;
 		if(FileImage==0) continue;
 
 		uint32_t* lpBuf = new uint32_t[dxy];
@@ -207,7 +208,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 		RECT rect={0,0,dx,dy};
 
-		LPDIRECT3DTEXTURE9 lpD3DTexture=Texture->GetDDSurface(i);
+		LPDIRECT3DTEXTURE9& lpD3DTexture=Texture->GetFrameImage(i).d3d;
 		LPDIRECT3DSURFACE9 lpSurface = NULL;
 		RDCALL( lpD3DTexture->GetSurfaceLevel( 0, &lpSurface ) );
 
@@ -258,18 +259,19 @@ int cD3DRender::CreateBumpTexture(class cTexture *Texture)
 	IDirect3DTexture9* lpTexture=NULL;
 	RDCALL(lpD3DDevice->CreateTexture(Texture->GetWidth(),Texture->GetHeight(),
 					1,0,D3DFMT_V8U8 ,D3DPOOL_MANAGED,&lpTexture,NULL))
-	Texture->BitMap[0]=lpTexture;
+	Texture->frames[0].d3d=lpTexture;
 	return 0;
 }
 
 int cD3DRender::DeleteTexture(cTexture *Texture)
 { // только освобождает в памяти поверхности 
-	for(int nFrame=0;nFrame<Texture->GetNumberFrame();nFrame++)
-		if(Texture->GetDDSurface(nFrame)) 
-		{
-			Texture->GetDDSurface(nFrame)->Release();
-			Texture->GetDDSurface(nFrame)=0;
-		}
+	for(int nFrame=0;nFrame<Texture->GetNumberFrame();nFrame++) {
+        IDirect3DTexture9*& tex = Texture->GetFrameImage(nFrame).d3d;
+        if (tex) {
+            tex->Release();
+            tex = nullptr;
+        }
+    }
 	return 0;
 }
 bool cD3DRender::SetScreenShot(const char *fname)
@@ -291,7 +293,7 @@ bool cD3DRender::SetScreenShot(const char *fname)
 void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch)
 {
 	D3DLOCKED_RECT d3dLockRect;
-	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);
+	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
 	RDCALL(lpSurface->LockRect(0,&d3dLockRect,0,0));
 
 	Pitch=d3dLockRect.Pitch;
@@ -301,7 +303,7 @@ void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch)
 void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size)
 {
 	D3DLOCKED_RECT d3dLockRect;
-	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);
+	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
 	RECT rc;
 	rc.left=lock_min.x;
 	rc.top=lock_min.y;
@@ -316,7 +318,7 @@ void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch, const Vect2i&
 
 void cD3DRender::UnlockTexture(class cTexture *Texture)
 {
-	IDirect3DTexture9* lpSurface=Texture->GetDDSurface(0);
+	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
 	RDCALL(lpSurface->UnlockRect(0));
 }
 

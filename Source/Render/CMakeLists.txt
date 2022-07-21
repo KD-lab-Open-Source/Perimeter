@@ -72,6 +72,11 @@ ENDIF()
 
 SET(Render_LINK_LIBS PluginMAX)
 
+IF (OPTION_SOKOL)
+    INCLUDE("sokol/CMakeLists.txt")
+    SET(Render_LINK_LIBS ${Render_LINK_LIBS} RenderSokol)
+ENDIF()
+
 ADD_LIBRARY(Render STATIC ${Render_SRCS})
 target_compile_options(Render PUBLIC ${PERIMETER_COMPILE_OPTIONS})
 

@@ -463,12 +463,19 @@ void PerimeterSetupDisplayMode() {
     SDL_GetWindowSize(sdlWindow, &terScreenSizeX, &terScreenSizeY);
 }
 
-void PerimeterCreateWindow() {
+void PerimeterCreateWindow(eRenderDeviceSelection deviceSelection) {
+    if (deviceSelection == DEVICE_HEADLESS) {
+        return;
+    }
     Uint32 window_flags = SDL_WINDOW_HIDDEN;
+    if (deviceSelection == DEVICE_D3D9) {
 #ifndef _WIN32
-    //On non Windows we use dxvk-native which uses Vulkan
-    window_flags |= SDL_WINDOW_VULKAN;
+        //On non Windows we use dxvk-native which uses Vulkan
+        window_flags |= SDL_WINDOW_VULKAN;
 #endif
+    } else if (deviceSelection == DEVICE_SOKOL) {
+        window_flags |= SDL_WINDOW_OPENGL;
+    }
     if (terFullScreen) {
         window_flags |= WINDOW_FULLSCREEN_FLAG;
     }
@@ -559,13 +566,19 @@ cInterfaceRenderDevice* SetGraph()
     eRenderDeviceSelection deviceSelection;
     if (graph == "dx" || graph == "d3d" || graph == "dx9" || graph == "d3d9") {
         deviceSelection = DEVICE_D3D9;
+    } else if (graph == "sokol" || graph == "gl" || graph == "gles" || graph == "metal") {
+        deviceSelection = DEVICE_SOKOL;
     } else if (graph == "headless" || graph == "none" || graph == "null" || graph == "nowindow") {
         deviceSelection = DEVICE_HEADLESS;
     } else {
 #ifdef PERIMETER_D3D9
         deviceSelection = DEVICE_D3D9;
 #else
+#ifdef PERIMETER_SOKOL
+        deviceSelection = DEVICE_SOKOL;
+#else
         deviceSelection = DEVICE_HEADLESS;
+#endif
 #endif
     }
     
@@ -584,11 +597,15 @@ cInterfaceRenderDevice* SetGraph()
 //	if(HTManager::instance()->IsUseHT())
 		ModeRender|=RENDERDEVICE_MODE_MULTITHREAD;
 
-    if (deviceSelection != DEVICE_HEADLESS) {
-        PerimeterCreateWindow();
-    }
+    PerimeterCreateWindow(deviceSelection);
 
-    int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,hWndVisGeneric,terScreenRefresh);
+    void* wnd;
+    if (deviceSelection == DEVICE_D3D9) {
+        wnd = hWndVisGeneric;
+    } else {
+        wnd = sdlWindow;
+    }
+    int error = IRenderDevice->Init(terScreenSizeX,terScreenSizeY,ModeRender,wnd,terScreenRefresh);
 	if(error)
 	{
         fprintf(stderr, "SetGraph init error: %d\n", error);

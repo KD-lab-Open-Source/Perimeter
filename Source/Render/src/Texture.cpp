@@ -40,11 +40,6 @@ void cTexture::UnlockTexture()
 	gb_VisGeneric->GetRenderDevice()->UnlockTexture(this);
 }
 
-IDirect3DTexture9*& cTexture::GetDDSurface(int n)
-{
-	return BitMap[n];
-}
-
 void cTexture::SetName(const char *Name)
 {
 	if(Name)name=Name;

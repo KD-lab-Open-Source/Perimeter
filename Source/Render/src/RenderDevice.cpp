@@ -5,23 +5,7 @@
 
 #include "Font.h"
 #include "IRenderDevice.h"
-
-
-#ifndef PERIMETER_D3D9
-//TODO remove this once this mess is sorted out
-int sVertexXYZ::fmt     = 1;
-int sVertexXYZD::fmt    = 2;
-int sVertexXYZT1::fmt   = 3;
-int sVertexXYZDT1::fmt  = 4;
-int sVertexXYZDT2::fmt  = 5;
-int sVertexXYZN::fmt    = 6;
-int sVertexXYZNT1::fmt  = 7;
-int sVertexXYZW::fmt    = 8;
-int sVertexXYZWD::fmt   = 9;
-int sVertexXYZWDT1::fmt = 10;
-int sVertexXYZWDT2::fmt = 11;
-int sVertexDot3::fmt    = 12;
-#endif
+#include "sokol/SokolRender.h"
 
 FILE* fRD= nullptr;
 
@@ -139,9 +123,12 @@ cInterfaceRenderDevice::~cInterfaceRenderDevice() {
     }
 }
 
-int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* hWnd, int RefreshRateInHz) {
+int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
     Done();
     gb_RenderDevice = this;
+    ScreenSize.x = xScr;
+    ScreenSize.y = yScr;
+    RenderMode = mode;
     TexLibrary = new cTexLibrary();
     return 0;
 }
@@ -149,6 +136,7 @@ int cInterfaceRenderDevice::Init(int xScr, int yScr, int mode, void* hWnd, int R
 int cInterfaceRenderDevice::Done() {
     VISASSERT(CurrentFont == nullptr || CurrentFont == DefaultFont);
     if (TexLibrary) {
+        TexLibrary->Free();
         delete TexLibrary;
         TexLibrary = nullptr;
     }
@@ -202,6 +190,19 @@ float cInterfaceRenderDevice::GetCharLength(const char c)
     str[0]=c;
     str[1]=0;
     return GetFontLength(str);
+}
+
+size_t cInterfaceRenderDevice::GetSizeFromFormat(uint32_t fmt) const {
+    size_t size=0;
+    
+    if (fmt&VERTEX_FMT_XYZ) size += sizeof(float) * 3;
+    if (fmt&VERTEX_FMT_W) size += sizeof(float);
+    if (fmt&VERTEX_FMT_NORMAL) size += sizeof(float) * 3;
+    if (fmt&VERTEX_FMT_DIFFUSE) size += sizeof(uint32_t);
+    if (fmt&VERTEX_FMT_TEX1) size += sizeof(float) * 2;
+    if (fmt&VERTEX_FMT_TEX2) size += sizeof(float) * 2;
+    if (fmt&VERTEX_FMT_DOT3) size += sizeof(float) * 3 * 3;
+    return size;
 }
 
 unsigned int ColorByNormal(Vect3f n)
@@ -360,7 +361,7 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 // cEmptyRender impl
 
 void cEmptyRender::CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVertex,int fmt,int dynamic) {
-    int size = GetSizeFromFormat(fmt);
+    size_t size = GetSizeFromFormat(fmt);
     vb.ptr=new sSlotVB();
 
     sSlotVB& s = *vb.ptr;
@@ -369,14 +370,14 @@ void cEmptyRender::CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVert
     s.fmt=fmt;
     s.dynamic = dynamic;
     s.NumberVertex=NumberVertex;
-    s.p = malloc(NumberVertex * size);
+    s.buf = malloc(NumberVertex * size);
 }
 
 void cEmptyRender::DeleteVertexBuffer(struct sPtrVertexBuffer &vb) {
     if (vb.ptr) {
-        if (vb.ptr->p) {
-            free(vb.ptr->p);
-            vb.ptr->p = nullptr;
+        if (vb.ptr->buf) {
+            free(vb.ptr->buf);
+            vb.ptr->buf = nullptr;
         }
         delete vb.ptr;
         vb.ptr = nullptr;
@@ -384,25 +385,26 @@ void cEmptyRender::DeleteVertexBuffer(struct sPtrVertexBuffer &vb) {
 }
 
 void* cEmptyRender::LockVertexBuffer(struct sPtrVertexBuffer &vb) {
-    return vb.ptr ? vb.ptr->p : nullptr;
+    return vb.ptr ? vb.ptr->buf : nullptr;
 }
 
 void cEmptyRender::UnlockVertexBuffer(struct sPtrVertexBuffer &vb) {
 }
 
-void cEmptyRender::CreateIndexBuffer(struct sPtrIndexBuffer& ib,int NumberIndex,int size) {
+void cEmptyRender::CreateIndexBuffer(struct sPtrIndexBuffer& ib,int NumberPolygon,int size) {
     ib.ptr=new sSlotIB();
 
     sSlotIB& s = *ib.ptr;
     s.init = true;
-    s.p = malloc(NumberIndex * size);
+    s.NumberIndices = NumberPolygon * size;
+    s.buf = malloc(s.NumberIndices * sizeof(indices_t));
 }
 
 void cEmptyRender::DeleteIndexBuffer(struct sPtrIndexBuffer &ib) {
     if (ib.ptr) {
-        if (ib.ptr->p) {
-            free(ib.ptr->p);
-            ib.ptr->p = nullptr;
+        if (ib.ptr->buf) {
+            free(ib.ptr->buf);
+            ib.ptr->buf = nullptr;
         }
         delete ib.ptr;
         ib.ptr = nullptr;
@@ -410,27 +412,10 @@ void cEmptyRender::DeleteIndexBuffer(struct sPtrIndexBuffer &ib) {
 }
 
 sPolygon* cEmptyRender::LockIndexBuffer(struct sPtrIndexBuffer &ib) {
-    return ib.ptr ? static_cast<sPolygon*>(ib.ptr->p) : nullptr;
+    return ib.ptr ? static_cast<sPolygon*>(ib.ptr->buf) : nullptr;
 }
 
 void cEmptyRender::UnlockIndexBuffer(struct sPtrIndexBuffer &ib) {
-}
-
-int cEmptyRender::GetSizeFromFormat(int fmt) const {
-    //TODO remove this once this mess is sorted out
-    if      (fmt == sVertexXYZ::fmt) return sizeof(sVertexXYZ);
-    else if (fmt == sVertexXYZD::fmt) return sizeof(sVertexXYZD);
-    else if (fmt == sVertexXYZT1::fmt) return sizeof(sVertexXYZT1);
-    else if (fmt == sVertexXYZDT1::fmt) return sizeof(sVertexXYZDT1);
-    else if (fmt == sVertexXYZDT2::fmt) return sizeof(sVertexXYZDT2);
-    else if (fmt == sVertexXYZN::fmt) return sizeof(sVertexXYZN);
-    else if (fmt == sVertexXYZNT1::fmt) return sizeof(sVertexXYZNT1);
-    else if (fmt == sVertexXYZW::fmt) return sizeof(sVertexXYZW);
-    else if (fmt == sVertexXYZWD::fmt) return sizeof(sVertexXYZWD);
-    else if (fmt == sVertexXYZWDT1::fmt) return sizeof(sVertexXYZWDT1);
-    else if (fmt == sVertexXYZWDT2::fmt) return sizeof(sVertexXYZWDT2);
-    else if (fmt == sVertexDot3::fmt) return sizeof(sVertexDot3);
-    return 0;
 }
 
 cEmptyRender::~cEmptyRender() {
@@ -449,7 +434,13 @@ cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection) {
 #ifdef PERIMETER_D3D9
             device = new cD3DRender();
 #endif
-            printf("Selected render: d3d9");
+            printf("Selected render: D3D9");
+            break;
+        case DEVICE_SOKOL:
+#ifdef PERIMETER_SOKOL
+            device = new cSokolRender();
+#endif
+            printf("Selected render: Sokol");
             break;
         case DEVICE_HEADLESS:
             device = new cEmptyRender();

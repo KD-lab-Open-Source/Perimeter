@@ -42,9 +42,10 @@ inline void cTexture::SetTimePerFrame(int tpf)
 
 inline void cTexture::New(int number)						
 { 
-	BitMap.resize(number); 
-	for(unsigned i=0;i<BitMap.size();i++) 
-		BitMap[i]=0; 
+	frames.resize(number); 
+	for(unsigned i=0;i<frames.size();i++) {
+        frames[i].ptr = nullptr;
+    }
 }
 inline eSurfaceFormat cTexture::GetFmt()					
 { 

@@ -5,6 +5,9 @@
 #ifdef PERIMETER_D3D9
 #include "ddraw.h"
 #endif
+#ifdef PERIMETER_SOKOL
+#include <sokol_gfx.h>
+#endif
 
 #ifdef TEXTURE_NOTFREE
 struct BeginNF
@@ -124,8 +127,8 @@ cTexture* cTexLibrary::CreateTexture(int sizex,int sizey,bool alpha,bool default
 	if(default_pool)
 		Texture->SetAttribute(TEXTURE_D3DPOOL_DEFAULT);
 
-	Texture->BitMap.resize(1);
-	Texture->BitMap[0]=0;
+	Texture->frames.resize(1);
+	Texture->frames[0].ptr=nullptr;
 	Texture->SetWidth(sizex);
 	Texture->SetHeight(sizey);
 
@@ -334,29 +337,38 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
 
 bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 {
-#ifdef PERIMETER_D3D9
 	{
-		std::vector<IDirect3DTexture9*>::iterator it;
-		FOR_EACH(Texture->BitMap,it)
+		for (auto frame : Texture->frames)
 		{
-			(*it)->Release();
-		}
-		Texture->BitMap.clear();
-	}
+#ifdef PERIMETER_D3D9
+            if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+                frame.d3d->Release();
+            }
 #endif
+#ifdef PERIMETER_SOKOL
+            if (gb_RenderDevice->GetRenderSelection() == DEVICE_SOKOL) {
+                sg_destroy_image(*frame.sg);
+                delete frame.sg;
+            }
+#endif
+            frame.ptr = nullptr;
+		}
+		Texture->frames.clear();
+	}
 		
 	bool bump=Texture->GetAttribute(MAT_BUMP)?true:false;
 	bool pos_bump=gb_VisGeneric->PossibilityBump();
 
 	if(bump && !pos_bump)
 	{
-#ifdef PERIMETER_D3D9
+#if 0 //#ifdef PERIMETER_D3D9
+        //TODO what is this? is even need?
 		//Эта текстура никогда не должна использоваться, make small texture.
 		cTexture* pMini=GetElement("RESOURCE\\Models\\Main\\TEXTURES\\028r.tga");
-		if(pMini && !pMini->BitMap.empty() && pMini->BitMap.front())
+		if(pMini && !pMini->frames.empty() && pMini->frames.front().d3d)
 		{
-			Texture->BitMap.push_back(pMini->BitMap.front());
-			Texture->BitMap[0]->AddRef();
+			Texture->frames.push_back(pMini->frames.front());
+			Texture->frames[0].d3d->AddRef();
 		}
 		RELEASE(pMini);
 #endif
@@ -554,7 +566,7 @@ bool cTexLibrary::ReLoadDDS(cTexture* Texture)
 		Texture->SetWidth(desc.Width);
 		Texture->SetHeight(desc.Height);
 
-		Texture->BitMap.push_back(pTexture);
+		Texture->frames.emplace_back().d3d = pTexture;
 		return true;
 	}
 #else

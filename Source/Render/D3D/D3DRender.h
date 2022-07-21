@@ -39,7 +39,6 @@ private:
 
     int							NumberPolygon,NumDrawObject;
     int                         xScrMin,yScrMin,xScrMax,yScrMax;
-    int							xScr,yScr;//Величина экрана
     
     virtual void Draw(class FieldDispatcher *rd, uint8_t transparent);
 
@@ -79,10 +78,21 @@ public:
     VertexPoolManager* GetVertexPool() { return &vertex_pool_manager; }
     IndexPoolManager* GetIndexPool() { return &index_pool_manager; }
 
+    //Used for sprites, light, particles and shadow volume
     virtual cVertexBuffer<sVertexXYZDT1>* GetBufferXYZDT1() { return &BufferXYZDT1; }
+    //Used for elastic links in psychosphere
     virtual cVertexBuffer<sVertexXYZDT2>* GetBufferXYZDT2() { return &BufferXYZDT2; }
+    //For primitive drawing
     virtual cVertexBuffer<sVertexXYZWD>* GetBufferXYZWD() { return &BufferXYZWD; }
+    //Used for debug shadow drawing
     virtual cVertexBuffer<sVertexXYZWDT1>* GetBufferXYZWDT1() { return &BufferXYZWDT1; };
+
+    cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() {return &QuadBufferXYZDT1 ;}
+    //Used for drawing terraform filling
+    cVertexBuffer<sVertexXYZD>* GetBufferXYZD() { return &BufferXYZD; }
+    
+    void* GetStripBuffer() { return &Buffer[0]; }
+    int GetStripBufferLen() { return Buffer.length(); }
     
     virtual void SaveStates(const char* fname="states.txt");
 
@@ -91,16 +101,8 @@ public:
     eRenderDeviceSelection GetRenderSelection() const override {
         return DEVICE_D3D9;
     }
-
-    int GetSizeFromFormat(int fmt) const override;
-
-    cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() override {return &QuadBufferXYZDT1 ;}
-    cVertexBuffer<sVertexXYZD>* GetBufferXYZD() override { return &BufferXYZD; }
-
-    void* GetStripBuffer() override { return &Buffer[0]; }
-    int GetStripBufferLen() override { return Buffer.length(); }
     
-	int Init(int xScr,int yScr,int mode,void* hWnd=0, int RefreshRateInHz=0) override;
+	int Init(int xScr,int yScr,int mode, void* wnd=0, int RefreshRateInHz=0) override;
 	bool ChangeSize(int xScr,int yScr,int mode) override;
 	int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override;
 	int SetClipRect(int xmin,int ymin,int xmax,int ymax) override;
@@ -116,7 +118,7 @@ public:
 	void DeleteVertexBuffer(sPtrVertexBuffer &vb) override;
 	void* LockVertexBuffer(sPtrVertexBuffer &vb) override;
 	void UnlockVertexBuffer(sPtrVertexBuffer &vb) override;
-	void CreateIndexBuffer(sPtrIndexBuffer& ib,int NumberVertex,int size=sizeof(sPolygon)) override;
+	void CreateIndexBuffer(sPtrIndexBuffer& ib,int NumberPolygon,int size=sizeof(sPolygon)) override;
 	void DeleteIndexBuffer(sPtrIndexBuffer &ib) override;
 	sPolygon* LockIndexBuffer(sPtrIndexBuffer &ib) override;
 	void UnlockIndexBuffer(sPtrIndexBuffer &ib) override;
@@ -151,8 +153,6 @@ public:
 	int SetRenderState(eRenderStateOption option,int value) override;
 
 	// вспомогательные функции, могут быть не реализованы
-    int GetSizeX() override { return xScr; };
-    int GetSizeY() override { return yScr; };
 	void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
 	void DrawPixel(int x1,int y1,sColor4c color) override;
 	void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override;
@@ -177,13 +177,6 @@ public:
 	void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
 		cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) override;
 
-	void DrawSpriteScale(int x,int y,int dx,int dy,float u,float v,
-		cTextureScale *Texture,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override;
-	void DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,
-		cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0) override;
-	void DrawSpriteScale2(int x,int y,int dx,int dy,float u,float v,float u1,float v1,
-		cTextureScale *Tex1,cTextureScale *Tex2,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD) override;
-
     void DrawIndexedPrimitive(sPtrVertexBuffer &vb,int OfsVertex,int nVertex,const sPtrIndexBuffer& ib,int nOfsPolygon,int nPolygon) override {
         SetFVF(vb);
         SetIndices(ib);
@@ -191,8 +184,6 @@ public:
         RDCALL(lpD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,0,OfsVertex,nVertex,3*nOfsPolygon,nPolygon));
         NumberPolygon+=nPolygon;
     }
-    
-	bool IsFullScreen() override { return (RenderMode&RENDERDEVICE_MODE_WINDOW) == 0; }
 
     bool IsEnableSelfShadow() override;
 
@@ -203,10 +194,11 @@ public:
     void DrawPoint(const Vect3f &v1,sColor4c color) override;
     
     void FlushPrimitive3D() override;
-    
-    int GetDrawNumberPolygon() override { return NumberPolygon; };
 
     // //// cInterfaceRenderDevice impls end ////
+
+    //This converts flag based vertex format to D3D9 FVF format
+    static uint32_t GetD3DFVFFromFormat(uint32_t fmt) ;
     
 	FORCEINLINE void SetMatrix(int type, const MatXf &m) {
 		Mat4f mat;
@@ -248,7 +240,7 @@ public:
 			nFrame=0;
 
 		VISASSERT(0<=nFrame&&nFrame<Texture->GetNumberFrame()&&bActiveScene);
-		SetTexture(dwStage,Texture->GetDDSurface(nFrame));
+		SetTexture(dwStage,Texture->GetFrameImage(nFrame).d3d);
 	}
 
 	inline void SetTexture(uint32_t dwStage, IDirect3DBaseTexture9 *pTexture)
@@ -277,9 +269,10 @@ public:
 	inline void SetFVF(uint32_t handle)
 	{
 		xassert(handle);
-		if(handle!=CurrentFVF)
+        uint32_t fvf = GetD3DFVFFromFormat(handle);
+		if(fvf!=CurrentFVF)
 		{
-			RDCALL(lpD3DDevice->SetFVF(CurrentFVF=handle));
+			RDCALL(lpD3DDevice->SetFVF(CurrentFVF=fvf));
 		}
 	}
 
@@ -364,10 +357,7 @@ public:
 		RDCALL(lpD3DDevice->DrawPrimitiveUP(Type,Count,pVertex,Size));
 	}
 
-	FORCEINLINE LPDIRECT3DVERTEXBUFFER9 GetVB(const sPtrVertexBuffer& vb)
-	{
-		return static_cast<LPDIRECT3DVERTEXBUFFER9>(vb.ptr->p);
-	}
+	FORCEINLINE LPDIRECT3DVERTEXBUFFER9 GetVB(const sPtrVertexBuffer& vb) { return vb.ptr->d3d;	}
 
 	inline void SetIndices(LPDIRECT3DINDEXBUFFER9 pIndexData)
 	{
@@ -378,14 +368,11 @@ public:
 		}
 	}
 
-	inline void SetIndices(const sPtrIndexBuffer& ib)
-	{
-		SetIndices(static_cast<LPDIRECT3DINDEXBUFFER9>(ib.ptr->p));
-	}
-
+	inline void SetIndices(const sPtrIndexBuffer& ib) { SetIndices(ib.ptr->d3d); }
+    
 	inline void SetStreamSource(const sPtrVertexBuffer& vb)
 	{
-		RDCALL(lpD3DDevice->SetStreamSource(0,static_cast<LPDIRECT3DVERTEXBUFFER9>(vb.ptr->p),0,vb.ptr->VertexSize));
+		RDCALL(lpD3DDevice->SetStreamSource(0,vb.ptr->d3d,0,vb.ptr->VertexSize));
 	}
 
 	virtual void DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data);
