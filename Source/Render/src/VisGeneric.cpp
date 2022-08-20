@@ -731,7 +731,7 @@ void cVisGeneric::ReloadAllFont()
 	}
 }
 
-cFont* cVisGeneric::CreateFont(const char* TextureFileName, int h, bool silentErr, std::string locale)
+cFont* cVisGeneric::CreateGameFont(const char* TextureFileName, int height, bool silentErr, std::string locale)
 {
 	if(TextureFileName==nullptr||TextureFileName[0]==0) return nullptr;
     
@@ -745,14 +745,14 @@ cFont* cVisGeneric::CreateFont(const char* TextureFileName, int h, bool silentEr
 		cFontInternal* f=*it;
 		if(stricmp(f->font_name.c_str(),TextureFileName)==0
         && f->locale==locale
-        && f->GetStatementHeight()==h)
+        && f->GetStatementHeight() == height)
 		{
 			return new cFont(f);
 		}
 	}
 
 	cFontInternal *UObj=new cFontInternal;
-	if(!UObj->Create(font_root_directory,locale,TextureFileName,h,silentErr))
+	if(!UObj->Create(font_root_directory, locale, TextureFileName, height, silentErr))
 	{
 		delete UObj;
 		return NULL;

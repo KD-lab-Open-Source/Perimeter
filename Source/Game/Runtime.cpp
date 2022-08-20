@@ -641,7 +641,7 @@ void HTManager::initGraphics()
     sColor4f b(1,1,1,1);
 	terLight->SetColor(&a, &b);
 
-	pDefaultFont=terVisGeneric->CreateFont("Arial",12);
+	pDefaultFont= terVisGeneric->CreateGameFont("Arial", 12);
 	xassert(pDefaultFont);
 	terRenderDevice->SetDefaultFont(pDefaultFont);
 	

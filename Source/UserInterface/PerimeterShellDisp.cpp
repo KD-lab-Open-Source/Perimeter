@@ -537,7 +537,7 @@ void CShellCursorManager::Load()
 
 	SetActiveCursor(arrow);	
 
-	m_hFontCursorWorkarea = terVisGeneric->CreateFont(sqshShellMainFont, sqshCursorWorkAreaSize);
+	m_hFontCursorWorkarea = terVisGeneric->CreateGameFont(sqshShellMainFont, sqshCursorWorkAreaSize);
 }
 void CShellCursorManager::SetActiveCursor(int cursor, char bPermanent)
 {
@@ -1137,10 +1137,10 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 	}
 
 	//post load
-	hFontMainmenu1 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size1);
-	hFontMainmenu2 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size2);
-	hFontMainmenu3 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size3);
-	hFontMainmenu4 = terVisGeneric->CreateFont(shell_main_menu_font, shell_main_menu_font_size4);
+	hFontMainmenu1 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size1);
+	hFontMainmenu2 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size2);
+	hFontMainmenu3 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size3);
+	hFontMainmenu4 = terVisGeneric->CreateGameFont(shell_main_menu_font, shell_main_menu_font_size4);
 
 	switch(nGroup)
 	{
@@ -1164,8 +1164,8 @@ void CShellIconManager::LoadControlsGroup(int nGroup, bool force)
 			_shellCursorManager.m_bShowSideArrows = 1;
 			_bMenuMode = 0;
 
-			m_hFontPopup = terVisGeneric->CreateFont(sqshFontPopup, infoWndFontSize);
-			m_hFontCountDownTime = terVisGeneric->CreateFont(sqshFontCountDownTime, sqshFontCountDownTimeSize);
+			m_hFontPopup = terVisGeneric->CreateGameFont(sqshFontPopup, infoWndFontSize);
+			m_hFontCountDownTime = terVisGeneric->CreateGameFont(sqshFontCountDownTime, sqshFontCountDownTimeSize);
 			m_hPopupTexture = terVisGeneric->CreateTexture(sPopupTexture);
 
 			PostLoadTabSheets();

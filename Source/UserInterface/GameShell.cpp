@@ -217,7 +217,7 @@ windowClientSize_(1024, 768)
 	mousePressControl_ = Vect2f::ZERO;
 	mapMoveStartPoint_ = Vect3f::ZERO;
 
-	debugFont_ = terVisGeneric->CreateFont(sqshFontPopup, 15);
+	debugFont_ = terVisGeneric->CreateGameFont(sqshFontPopup, 15);
 
 	hotKeyManager = new HotKeyManager();
 	_shellCursorManager.Load();
@@ -707,7 +707,7 @@ bool GameShell::showEnergy() const
 
 void TestText()
 {
-	cFont* pFont=terVisGeneric->CreateFont(sqshFontPopup, 70);
+	cFont* pFont= terVisGeneric->CreateGameFont(sqshFontPopup, 70);
 	cTexture* pTexture=terVisGeneric->CreateTexture("RESOURCE\\Models\\MENU\\Textures\\tv.avi");
 	terRenderDevice->SetFont(pFont);
 
@@ -2292,7 +2292,7 @@ void CShellLogicDispatcher::updateSmallCamera() {
 
 void CShellLogicDispatcher::initFonts() {
 	_RELEASE(m_hFontUnitsLabel);
-	m_hFontUnitsLabel = terVisGeneric->CreateFont(sqshShellMainFont1);
+	m_hFontUnitsLabel = terVisGeneric->CreateGameFont(sqshShellMainFont1);
 }
 
 void CShellLogicDispatcher::close()

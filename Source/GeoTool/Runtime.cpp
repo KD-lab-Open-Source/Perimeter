@@ -461,7 +461,7 @@ int Runtime::initRenderDevice(CWnd *wnd) {
 	string dir = "resource\\LocData\\English\\Fonts";
 	gb_IVisGeneric->SetFontDirectory(dir.c_str());
 
-	pFont = gb_IVisGeneric->CreateFont("Arial", 20);
+	pFont = gb_IVisGeneric->CreateGameFont("Arial", 20);
 
 	setup();
 	createTileMap();

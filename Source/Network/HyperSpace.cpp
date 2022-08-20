@@ -43,8 +43,8 @@ public:
 	}
 	cFont* getFont(){
 		if(!pfont) {
-			pfont=terVisGeneric->CreateFont("Courier New", 16, 1);//Тихая ошибка
-			if(!pfont)pfont=terVisGeneric->CreateFont("Arial", 16);
+			pfont= terVisGeneric->CreateGameFont("Courier New", 16, 1);//Тихая ошибка
+			if(!pfont)pfont= terVisGeneric->CreateGameFont("Arial", 16);
 		}
 		return pfont;
 	}

@@ -11,6 +11,10 @@
 #include <SDL.h>
 #include "files/files.h"
 
+#ifdef _WIN32
+#include <combaseapi.h>
+#endif
+
 const unsigned int MAX_TIME_WAIT_RESTORE_GAME_AFTER_MIGRATE_HOST=10000;//10sec
 const int PNC_DESYNC_RESTORE_ATTEMPTS = 8;
 const int PNC_DESYNC_RESTORE_MODE_PARTIAL = 0; //2; TODO set back once partial load is finished 
