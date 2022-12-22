@@ -105,12 +105,10 @@ IF(PERIMETER_EXODUS)
     ADD_SUBDIRECTORY("Exodus")
     SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} Exodus)
     IF (OPTION_D3D9)
-        SET(perimeter_LINK_LIBS ${perimeter_LINK_LIBS} ExodusD3D9)
-
-        #Make Exodus D3D9 depend on lib that provides D3D9 API
-        ADD_DEPENDENCIES(ExodusD3D9 dxvk-native)
-        #Make other modules depend on Exodus D3D9
-        ADD_DEPENDENCIES(dependencies ExodusD3D9)
+        #Make Exodus depend on lib that provides D3D9 API
+        ADD_DEPENDENCIES(Exodus dxvk-native)
+        #Make other modules depend on Exodus
+        ADD_DEPENDENCIES(dependencies Exodus)
     ENDIF()
 ENDIF()
 if(NOT OPTION_FINAL_VERSION)
