@@ -12,7 +12,7 @@
 		"sdl2-image",
 		{
 			"name": "sdl2-mixer",
-			"features": [ "dynamic-load", "libvorbis" ]
+			"features": [ "libvorbis" ]
 		},
 		"sdl2-net",
 		{

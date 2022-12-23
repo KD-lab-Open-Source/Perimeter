@@ -33,7 +33,7 @@ jobs:
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           appendedCacheKey: '${{ env.VCPKG_DEFAULT_TRIPLET }}'
-          vcpkgGitCommitId: bd1ef2df46303989eeb048eb7aa9b816aa46365e
+          vcpkgGitCommitId: 6adca01a3fadca0cc0b80f03ec57c7c3a0be5c02
           vcpkgJsonGlob: 'vcpkg.json'
           runVcpkgInstall: false
       - name: Configure developer command prompt
