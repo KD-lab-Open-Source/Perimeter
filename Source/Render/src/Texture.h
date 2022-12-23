@@ -52,7 +52,6 @@ public:
 	uint8_t* LockTexture(int& Pitch);
 	uint8_t* LockTexture(int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size);
 	void UnlockTexture();
-	virtual bool IsScaleTexture(){return false;}
 	virtual bool IsAviScaleTexture(){return false;}
 };
 
@@ -104,41 +103,3 @@ public:
 	}
 	virtual bool IsAviScaleTexture(){return true;}
 }; 
-class cTextureScale:public cTexture
-{
-	Vect2f scale;
-	Vect2f uvscale;
-	Vect2f inv_size;
-public:
-	cTextureScale(const char *TexName=0):cTexture(TexName)
-	{
-		scale.set(1,1);
-		uvscale.set(1,1);
-		inv_size.set(1,1);
-	}
-
-	inline Vect2f GetCreateScale(){return scale;};
-	inline const Vect2f& GetUVScale(){return uvscale;}
-	virtual bool IsScaleTexture(){return true;}
-	virtual bool IsAviScaleTexture(){return false;}
-
-	void SetScale(Vect2f scale_,Vect2f uvscale_)
-	{
-		scale=scale_;
-		uvscale=uvscale_;
-		inv_size.x=1.0f/GetWidth();
-		inv_size.y=1.0f/GetHeight();
-	}
-
-	void ConvertUV(float& u,float& v)
-	{
-		u*=uvscale.x;
-		v*=uvscale.y;
-	}
-
-	void DXY2DUV(int dx,int dy,float& du,float& dv)
-	{
-		du=dx*inv_size.x;
-		dv=dy*inv_size.y;
-	}
-};

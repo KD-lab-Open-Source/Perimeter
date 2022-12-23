@@ -1,7 +1,6 @@
 #pragma once
 
 class cTexture;
-class cTextureScale;
 
 class cTexLibrary
 {
@@ -15,8 +14,6 @@ public:
 	bool EnableError(bool enable);
 	cTexture* GetElementAviScale(const char* TextureName,char *pMode =0);
 	cTexture* GetElement(const char *pTextureName,char *pMode=0);
-	cTextureScale* GetElementScale(const char *pTextureName,Vect2f scale);
-	cTexture* GetElementColor(const char *pTextureName,sColor4c color,char *pMode=0);
 
 	inline int GetNumberTexture()							{ return textures.size(); }
 	inline cTexture* GetTexture(int number)					{ return textures[number]; }

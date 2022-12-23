@@ -1,5 +1,6 @@
 #include "StdAfxRD.h"
 #include "xutil.h"
+#include "VertexFormat.h"
 #include "EmptyRenderDevice.h"
 #include "files/files.h"
 
@@ -203,6 +204,15 @@ size_t cInterfaceRenderDevice::GetSizeFromFormat(uint32_t fmt) const {
     if (fmt&VERTEX_FMT_TEX2) size += sizeof(float) * 2;
     if (fmt&VERTEX_FMT_DOT3) size += sizeof(float) * 3 * 3;
     return size;
+}
+
+void cInterfaceRenderDevice::DrawSprite2(int x, int y, int dx, int dy, float u, float v, float du, float dv,
+                             cTexture *Tex1, cTexture *Tex2, const sColor4c &ColorMul, float phase)
+{
+    DrawSprite2(x, y, dx, dy,
+                u, v, du, dv,
+                u, v, du, dv,
+                Tex1, Tex2, ColorMul, phase);
 }
 
 unsigned int ColorByNormal(Vect3f n)

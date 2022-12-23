@@ -63,8 +63,6 @@ public:
 
     void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override { }
-    void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0) override { }
     void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                              cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE)	override { }
     void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
@@ -76,13 +74,10 @@ public:
     void DeleteFFDData(class FieldDispatcher *rd) override { }
     void Draw(class ElasticSphere *es) override { }
 
-    int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true) override { return 0; }
+    int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override { return 0; }
     int DeleteTexture(class cTexture *Texture) override { return 0; }
     void* LockTexture(class cTexture *Texture, int& Pitch) override { return nullptr; }
-    void* LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size) override { return nullptr; }
     void UnlockTexture(class cTexture *Texture) override {}
-
-    int CreateBumpTexture(class cTexture *Texture) override { return 0; }
 
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override {};
     void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,

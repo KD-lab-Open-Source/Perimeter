@@ -384,18 +384,17 @@ bool VideoPlayer::InternalUpdate() {
 void VideoPlayer::WriteVideoFrame(AVWrapperFrame* frame) {
     //Lock texture
     int pitch=0;
-    static const Vect2i lockMin = Vect2i(0,0);
-    static Vect2i lockMax;
-    getSize(lockMax);
-    uint8_t* ptr = pTexture->LockTexture(pitch,lockMin,lockMax);
+    static Vect2i size;
+    getSize(size);
+    uint8_t* ptr = pTexture->LockTexture(pitch);
 
     //Dump frame into texture
     frame->copyBuffer(&ptr);
 
     //Fix pitch, since texture itself has extra padding we need to relocate the scanlines to corresponding position
-    int bufferPitch = lockMax.x * 4;
+    int bufferPitch = size.x * 4;
     if (bufferPitch < pitch) {
-        for (int y = lockMax.y - 1; 0 <= y; y--) {
+        for (int y = size.y - 1; 0 <= y; y--) {
             memmove(
                     ptr + pitch * y,
                     ptr + bufferPitch * y,

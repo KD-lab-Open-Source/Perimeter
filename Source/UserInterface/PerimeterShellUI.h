@@ -2291,10 +2291,4 @@ inline std::string getTextFromBase(const char *keyStr) {
 	return (*stringFromBase) ? stringFromBase : keyStr;
 }
 
-//inline cTextureScale* createTextureScale(const char* texture)
-//{
-//	return terVisGeneric->CreateTextureScale( texture,  Vect2f(terRenderDevice->GetSizeX() / SQSH_COORD_WIDTH_SCALE,terRenderDevice->GetSizeY() / SQSH_COORD_HEIGHT_SCALE));
-//}
-
-
 #endif //_PERIMETERSHELLUI_H

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "VertexFormat.h"
 #include "ShadowVolume.h"
 
 class cMeshTri

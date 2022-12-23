@@ -273,7 +273,7 @@ bool cFontInternal::CreateTexture(const char* fontname, const char* filename, in
 	pTexture->SetHeight(FontImage.GetY());
 
 	bool err=false;
-	err=err || gb_VisGeneric->GetRenderDevice()->CreateTexture(pTexture,&FontImage,-1,-1)!=0;
+	err=err || gb_VisGeneric->GetRenderDevice()->CreateTexture(pTexture,&FontImage)!=0;
 
 	if(err)
 	{

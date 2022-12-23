@@ -111,7 +111,7 @@ cTexture* cTexLibrary::CreateRenderTexture(int width, int height, uint32_t attr,
 	Texture->SetNumberMipMap(1);
 	Texture->SetAttribute(attr);
 
-	int err=gb_RenderDevice->CreateTexture(Texture,NULL,-1,-1,enable_assert);
+	int err=gb_RenderDevice->CreateTexture(Texture,NULL,enable_assert);
 	if(err) { Texture->Release(); return 0; }
 	textures.push_back(Texture); Texture->IncRef();
 	return Texture;
@@ -132,7 +132,7 @@ cTexture* cTexLibrary::CreateTexture(int sizex,int sizey,bool alpha,bool default
 	Texture->SetWidth(sizex);
 	Texture->SetHeight(sizey);
 
-	if(gb_RenderDevice->CreateTexture(Texture,NULL,-1,-1))
+	if(gb_RenderDevice->CreateTexture(Texture,NULL))
 	{
 		delete Texture;
 		return NULL;
@@ -179,7 +179,7 @@ cTexture* cTexLibrary::GetElementAviScale(const char* TextureName,char *pMode)
 	Texture->New(1);
 	Texture->Init(avi_images.GetFramesCount(), avi_images.GetXFrame(), avi_images.GetYFrame(), avi_images.GetX(), avi_images.GetY());
 	Texture->SetTimePerFrame(0);
-	if (gb_VisGeneric->GetRenderDevice()->CreateTexture(Texture,&avi_images,-1,-1)!=0)
+	if (gb_VisGeneric->GetRenderDevice()->CreateTexture(Texture,&avi_images)!=0)
 	{
 		delete Texture;
 		return NULL;
@@ -213,74 +213,6 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 	{
 		return nullptr;
 	}
-
-	textures.push_back(Texture); Texture->IncRef();
-	return Texture;
-}
-
-cTexture* cTexLibrary::GetElementColor(const char *TextureName,sColor4c color,char *pMode)
-{
-	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
-	xassert(color.a==0 || color.a==255);
-	if(color.a==0)
-	{//Без Skin color
-		color.set(255,255,255,0);
-	}
-
-	for(int i=0;i<GetNumberTexture();i++)
-	{
-		cTexture* cur=GetTexture(i);
-		xassert(cur->GetX()>=0 && cur->GetX()<=15);
-		xassert(cur->GetY()>=0 && cur->GetY()<=15);
-		if( cur && stricmp(cur->GetName(),TextureName)==0 && 
-			cur->skin_color.RGBA()==color.RGBA())
-		{
-			cur->IncRef();
-			return cur;
-		}
-	}
-
-	cTexture *Texture=new cTexture(TextureName);
-	Texture->skin_color=color;
-
-	if(!LoadTexture(Texture,pMode,Vect2f(1.0f,1.0f)))
-	{
-		return NULL;
-	}
-
-	textures.push_back(Texture); Texture->IncRef();
-	return Texture;
-}
-
-cTextureScale* cTexLibrary::GetElementScale(const char *TextureName,Vect2f scale)
-{
-	MTAuto mtenter(&lock);
-	if(TextureName==0||TextureName[0]==0) return 0; // имя текстуры пустое
-	cTextureScale* Texture=NULL;
-
-	for(int i=0;i<GetNumberTexture();i++)
-	{
-		cTexture* cur=GetTexture(i);
-		if(!cur)
-			continue;
-
-		if( cur->IsScaleTexture() && stricmp(cur->GetName(),TextureName)==0)
-		{
-			cur->IncRef();
-			Texture=(cTextureScale*)cur;
-			if((Texture->GetCreateScale()-scale).norm2()<1e-8f)
-				return Texture;
-		}
-	}
-
-	if(!Texture)
-		Texture=new cTextureScale(TextureName);
-	else
-		gb_RenderDevice->DeleteTexture(Texture);
-
-	if(!LoadTexture(Texture,"NoMipMap NoBlur",scale))
-		return NULL;
 
 	textures.push_back(Texture); Texture->IncRef();
 	return Texture;
@@ -375,7 +307,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		return true;
 	}
 /*
-	if(Option_FavoriteLoadDDS && !bump && !Texture->IsScaleTexture())
+	if(Option_FavoriteLoadDDS && !bump)
 	{
 		char drive[_MAX_DRIVE];
 		char dir[_MAX_DIR];
@@ -462,26 +394,7 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 		Texture->SetTimePerFrame((FileImage->GetTime()-1)/(FileImage->GetLength()-1));
 	Texture->SetWidth(FileImage->GetX()),Texture->SetHeight(FileImage->GetY());
 
-	int err=1;
-	if(Texture->IsScaleTexture())
-	{
-		int dx_out= xm::round(Texture->GetWidth() * kscale.x);
-		int dy_out= xm::round(Texture->GetHeight() * kscale.y);
-		int newx=Power2up(dx_out);
-		int newy=Power2up(dy_out);
-		Vect2f uvscale;
-		uvscale.x=((kscale.x*Texture->GetWidth())/newx);
-		uvscale.y=((kscale.y*Texture->GetHeight())/newy);
-
-		err=gb_RenderDevice->CreateTexture(Texture,FileImage,dx_out,dy_out);
-		Texture->SetWidth(newx);
-		Texture->SetHeight(newy);
-		((cTextureScale*)Texture)->SetScale(kscale,uvscale);
-	}
-	else
-	{
-		err=gb_RenderDevice->CreateTexture(Texture,FileImage,-1,-1);
-	}
+	int err=gb_RenderDevice->CreateTexture(Texture,FileImage);
 
 	delete FileImage;
 	if(err)
@@ -496,12 +409,6 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 
 bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 {
-	if(Texture->IsScaleTexture())
-	{
-		cTextureScale* p=(cTextureScale*)Texture;
-		return ReLoadTexture(Texture,p->GetCreateScale());
-	}
-
 	return ReLoadTexture(Texture,Vect2f(1,1));
 }
 

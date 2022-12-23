@@ -77,7 +77,7 @@ void ApplySkinColor(uint32_t* buffer,int dx,int dy,sColor4c skin_color)
 	}
 }
 
-int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert)
+int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert)
 { // только создает в памяти поверхности 
 	sTextureFormatData &tfd = TexFmtData[Texture->GetFmt()];
 	if(Texture->GetX()==0||tfd.FormatID==0) return 1;
@@ -88,27 +88,8 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 	int dx=Texture->GetWidth(),dy=Texture->GetHeight();
 	int dxy=dx*dy;
 
-	int dx_surface,dy_surface;
 
-	if(dxout<0)
-	{
-		dx_surface=dxout=dx;
-	}else
-	{
-		dx_surface=Power2up(dxout);
-	}
-
-	if(dyout<0)
-	{
-		dy_surface=dyout=dy;
-	}else
-	{
-		dy_surface=Power2up(dyout);
-	}
-
-
-	VISASSERT((dx==dxout && dy==dyout)||(Texture->GetNumberMipMap()==1) );
-	bool resample=!(dx==dxout && dy==dyout);
+	VISASSERT((Texture->GetNumberMipMap()>=1));
 	uint32_t dither= (RenderMode & RENDERDEVICE_MODE_RGB16) ? D3DX_FILTER_DITHER : 0;
 	bool is_alpha_test=false;
 	bool is_alpha_blend=false;
@@ -120,7 +101,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		if (tex) tex->Release(); 
 		if (tex == nullptr) {
             tex = CreateSurface(
-                    dx_surface, dy_surface,
+                    dx, dy,
                     Texture->GetFmt(), Texture->GetNumberMipMap(), enable_assert,
                     Texture->GetAttribute()
             );
@@ -212,10 +193,10 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		LPDIRECT3DSURFACE9 lpSurface = NULL;
 		RDCALL( lpD3DTexture->GetSurfaceLevel( 0, &lpSurface ) );
 
-		RECT rect_out={0,0,dxout,dyout};
+		RECT rect_out={0,0,dx,dy};
 		RDCALL( D3DXLoadSurfaceFromMemory( lpSurface, NULL, &rect_out,
 			lpBuf, D3DFMT_A8R8G8B8, 4*rect.right, NULL, &rect, 
-			(resample?D3DX_FILTER_TRIANGLE:D3DX_FILTER_POINT)|dither
+			D3DX_FILTER_POINT|dither
 			, 0 ));
 
 		if(Texture->GetNumberMipMap()>1) // построение мип мапов
@@ -224,15 +205,14 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 				LPDIRECT3DSURFACE9 lpSurfaceNext = NULL;
 				RDCALL( lpD3DTexture->GetSurfaceLevel( nMipMap, &lpSurfaceNext ) );
 				RECT rect={0,0,dx>>nMipMap,dy>>nMipMap};
-				RECT rect_out={0,0,dxout>>nMipMap,dyout>>nMipMap};
 				unsigned int *lpBufNext = new unsigned int [rect.right*rect.bottom];
 
 				{
 					BuildMipMap( rect.right,rect.bottom,4, 8*rect.right,lpBuf, 4*rect.right,lpBufNext, 
 						8,8,8,8, 16,8,0,24, Texture->GetAttribute(TEXTURE_MIPMAP_POINT|TEXTURE_MIPMAPBLUR|TEXTURE_BLURWHITE));
-					RDCALL( D3DXLoadSurfaceFromMemory( lpSurfaceNext, NULL, &rect_out,
+					RDCALL( D3DXLoadSurfaceFromMemory( lpSurfaceNext, NULL, &rect,
 						lpBufNext, D3DFMT_A8R8G8B8, 4*rect.right, NULL, &rect, 
-						(resample?D3DX_FILTER_TRIANGLE:D3DX_FILTER_POINT)|dither
+						D3DX_FILTER_POINT|dither
 						, 0 ));
 				}
 				delete[] lpBuf; lpSurface->Release();
@@ -252,15 +232,6 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		Texture->SetAttribute(TEXTURE_MIPMAP_POINT|TEXTURE_ALPHA_TEST);
 	}
     return 0;
-}
-
-int cD3DRender::CreateBumpTexture(class cTexture *Texture)
-{
-	IDirect3DTexture9* lpTexture=NULL;
-	RDCALL(lpD3DDevice->CreateTexture(Texture->GetWidth(),Texture->GetHeight(),
-					1,0,D3DFMT_V8U8 ,D3DPOOL_MANAGED,&lpTexture,NULL))
-	Texture->frames[0].d3d=lpTexture;
-	return 0;
 }
 
 int cD3DRender::DeleteTexture(cTexture *Texture)
@@ -295,22 +266,6 @@ void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch)
 	D3DLOCKED_RECT d3dLockRect;
 	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
 	RDCALL(lpSurface->LockRect(0,&d3dLockRect,0,0));
-
-	Pitch=d3dLockRect.Pitch;
-	return d3dLockRect.pBits;
-}
-
-void* cD3DRender::LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size)
-{
-	D3DLOCKED_RECT d3dLockRect;
-	IDirect3DTexture9*& lpSurface=Texture->GetFrameImage(0).d3d;
-	RECT rc;
-	rc.left=lock_min.x;
-	rc.top=lock_min.y;
-	rc.right=lock_min.x+lock_size.x;
-	rc.bottom=lock_min.y+lock_size.y;
-
-	RDCALL(lpSurface->LockRect(0,&d3dLockRect,&rc,0));
 
 	Pitch=d3dLockRect.Pitch;
 	return d3dLockRect.pBits;

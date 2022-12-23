@@ -197,7 +197,6 @@ struct sPolygon
 
 class cFont;
 class cTexture;
-class cTextureScale;
 class cTexLibrary;
 class cCamera;
 
@@ -295,7 +294,7 @@ public:
     virtual void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                             cTexture *Texture,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) = 0;
     virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0) = 0;
+                             cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0);
     virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                              cTexture *Tex1,cTexture *Tex2,const sColor4c& ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) = 0;
     virtual void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
@@ -308,13 +307,10 @@ public:
     virtual void DeleteFFDData(class FieldDispatcher *rd) = 0;
     virtual void Draw(class ElasticSphere *es) = 0;
 
-    virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true) = 0;
+    virtual int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) = 0;
     virtual int DeleteTexture(class cTexture *Texture) = 0;
     virtual void* LockTexture(class cTexture *Texture, int& Pitch) = 0;
-    virtual void* LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size) = 0;
     virtual void UnlockTexture(class cTexture *Texture) = 0;
-
-    virtual int CreateBumpTexture(class cTexture *Texture) = 0;
     
     virtual void SetGlobalFog(const sColor4f &color,const Vect2f &v) = 0;
     virtual void SetGlobalLight(Vect3f *vLight, sColor4f *Ambient = nullptr,

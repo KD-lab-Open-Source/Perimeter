@@ -276,11 +276,6 @@ cTexture* cVisGeneric::CreateTexture(const char *TextureName)
 	return GetTexLibrary()->GetElement(TextureName,"NoMipMap NoBlur");
 }
 
-cTextureScale* cVisGeneric::CreateTextureScale(const char *TextureName,Vect2f scale)
-{
-	return GetTexLibrary()->GetElementScale(TextureName,scale);
-}
-
 cTexture* cVisGeneric::CreateRenderTexture(int width,int height,int attr,bool enable_assert)
 {
 	return GetTexLibrary()->CreateRenderTexture(width,height,attr,enable_assert);
@@ -294,24 +289,6 @@ cTexture* cVisGeneric::CreateTexture(int sizex,int sizey,bool alpha)
 cTexture* cVisGeneric::CreateTextureDefaultPool(int sizex,int sizey,bool alpha)
 {
 	return GetTexLibrary()->CreateTextureDefaultPool(sizex,sizey,alpha);
-}
-
-cTexture* cVisGeneric::CreateBumpTexture(int sizex,int sizey)
-{
-	cTexture *Texture=new cTexture;
-
-	Texture->frames.resize(1);
-	Texture->frames[0].ptr = nullptr;
-	Texture->SetWidth(sizex);
-	Texture->SetHeight(sizey);
-
-	if(GetRenderDevice()->CreateBumpTexture(Texture))
-	{
-		delete Texture;
-		return NULL;
-	}
-
-	return Texture;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////

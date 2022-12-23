@@ -6,7 +6,6 @@ class cScene;
 class cObjLibrary;
 class cInterfaceRenderDevice;
 class cTexture;
-class cTextureScale;
 class cFont;
 class EffectLibrary;
 
@@ -59,9 +58,7 @@ public:
 	// функции для работы со спрайтами
 	virtual cTexture* CreateTexture(const char *TextureName);
 	virtual cTexture* CreateTexture(int sizex,int sizey,bool alpha);//Всегда 32 битная текстура
-	virtual cTexture* CreateBumpTexture(int sizex,int sizey);
 	virtual cTexture* CreateRenderTexture(int width,int height,int attr=0,bool enable_assert=true);
-	virtual cTextureScale* CreateTextureScale(const char *TextureName,Vect2f scale);
 
 	virtual cTexture* CreateTextureDefaultPool(int sizex,int sizey,bool alpha);//Всегда 32 битная текстура
 

@@ -1182,13 +1182,6 @@ void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float 
 	BufferXYZWDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
 }
 
-void cD3DRender::DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-		cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul,float phase)
-{
-	DrawSprite2(x,y,dx,dy,u,v,du,dv,u,v,du,dv,
-		Tex1,Tex2,ColorMul,phase);
-}
-
 void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 							 float u0,float v0,float du0,float dv0,
 							 float u1,float v1,float du1,float dv1,
@@ -1554,7 +1547,7 @@ bool cD3DRender::SetFocus(bool wait,bool focus_error)
 		cTexture* pTexture=TexLibrary->GetTexture(i);
 		if(pTexture && pTexture->GetAttribute(TEXTURE_D3DPOOL_DEFAULT)) {
 			if (pTexture->GetRef()>1) {
-                CreateTexture(pTexture, 0, -1, -1);
+                CreateTexture(pTexture, 0);
             }
 		}
 	}

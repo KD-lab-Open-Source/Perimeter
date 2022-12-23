@@ -68,13 +68,10 @@ public:
     void DeleteIndexBuffer(sPtrIndexBuffer &ib) override;
     sPolygon* LockIndexBuffer(sPtrIndexBuffer &ib) override;
     void UnlockIndexBuffer(sPtrIndexBuffer &ib) override;
-    int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,int dxout,int dyout,bool enable_assert=true) override;
+    int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
     int DeleteTexture(class cTexture *Texture) override;
     void* LockTexture(class cTexture *Texture, int& Pitch) override;
-    void* LockTexture(class cTexture *Texture, int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size) override;
     void UnlockTexture(class cTexture *Texture) override;
-
-    int CreateBumpTexture(class cTexture *Texture) override;
 
     /*
     void SetGlobalFog(const sColor4f &color,const Vect2f &v) override;
@@ -117,8 +114,6 @@ public:
 
     void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                     cTexture *Texture,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override;
-    void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,
-                     cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0) override;
     void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                      cTexture *Tex1,cTexture *Tex2,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) override;
     void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
