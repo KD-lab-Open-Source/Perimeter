@@ -75,6 +75,9 @@ else()
     set(RenderSokol_LINK_LIBS GL)
 endif()
 
+#Required for SDL_GL_* funcs called during render init
+set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY})
+
 add_library(RenderSokol STATIC
     sokol/SokolRender.cpp
     sokol/SokolRenderTexture.cpp

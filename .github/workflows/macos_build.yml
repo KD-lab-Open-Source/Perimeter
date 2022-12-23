@@ -1,14 +1,12 @@
 name: MacOS Build
 
 on:
-  push:
+  #push:
   pull_request:
 
 env:
-  VULKAN_SDK_VERSION: '1.2.198.1'
-  VULKAN_LIB_VERSION: '1.2.198'
   MACOSX_DEPLOYMENT_TARGET: '10.15'
-  GH_CACHE_KEY: 8
+  GH_CACHE_KEY: 9
 
 jobs:
   build:
@@ -34,18 +32,8 @@ jobs:
         id: cache
         with:
           path: |
-            vulkansdk-macos.dmg
             ffmpeg
-          key: MacOS-${{matrix.env.arch_apple}}-${{ env.VULKAN_SDK_VERSION }}-${{ env.GH_CACHE_KEY }}
-      - name: download Vulkan SDK
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          wget https://sdk.lunarg.com/sdk/download/${{ env.VULKAN_SDK_VERSION }}/mac/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}.dmg?Human=true -O vulkansdk-macos.dmg
-      - name: install Vulkan SDK
-        run: |
-          hdiutil attach vulkansdk-macos.dmg
-          sudo /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
-          hdiutil detach /Volumes/vulkansdk-macos-${{ env.VULKAN_SDK_VERSION }}
+          key: MacOS-${{matrix.env.arch_apple}}-${{ env.GH_CACHE_KEY }}
       - name: ffmpeg -- download
         if: steps.cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch n4.4.1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
@@ -84,7 +72,7 @@ jobs:
       - name: perimeter -- create build dir
         run: mkdir build
       - name: perimeter -- configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_OSX_ARCHITECTURES=${{matrix.env.arch_apple}}
+        run: cmake .. -G Ninja -DOPTION_D3D9=OFF -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DCMAKE_OSX_ARCHITECTURES=${{matrix.env.arch_apple}}
         working-directory: build
       - name: perimeter -- build dependencies
         run: ninja dependencies

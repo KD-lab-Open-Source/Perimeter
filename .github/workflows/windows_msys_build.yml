@@ -120,13 +120,8 @@ jobs:
           cp /mingw${{matrix.env.bits}}/bin/swscale-*.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/swresample-*.dll perimeter/bin/
           cp /mingw${{matrix.env.bits}}/bin/zlib1.dll perimeter/bin/
-          cp /SDL2_image/SDL2_image.dll perimeter/bin/
-          cp /SDL2_image/libjpeg-9.dll perimeter/bin/
-          cp /SDL2_image/libpng16-16.dll perimeter/bin/
-          cp /SDL2_mixer/SDL2_mixer.dll perimeter/bin/
-          cp /SDL2_mixer/libogg-0.dll perimeter/bin/
-          cp /SDL2_mixer/libvorbis-0.dll perimeter/bin/
-          cp /SDL2_mixer/libvorbisfile-3.dll perimeter/bin/
+          cp /SDL2_image/*.dll perimeter/bin/
+          cp /SDL2_mixer/*.dll perimeter/bin/
           cp build/Source/perimeter.exe perimeter/bin/
       - name: perimeter -- strip binary
         run: strip -g -x perimeter/bin/perimeter.exe
