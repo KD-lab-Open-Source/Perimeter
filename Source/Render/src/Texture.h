@@ -7,14 +7,15 @@ union TextureImage {
     struct IDirect3DTexture9* d3d;
 #endif
 #ifdef PERIMETER_SOKOL
-    struct sg_image* sg;
+    struct SokolTexture2D* sg;
 #endif
 };
 
 class cTexture : public cUnknownClass, public sAttribute
 {	// класс с анимацией, является динамическим указателем, то есть может удалzться через Release()
 	std::string		name;				// имя файла из которого загружена текстура
-	short		_x,_y;				// битовый размер текстуры
+    short		_x,_y;				// битовый размер текстуры
+    short		_w,_h;				// битовый размер текстуры
 	int			TimePerFrame;		// фремя проигрывания
 	int			number_mipmap;
 public:
@@ -34,8 +35,8 @@ public:
 	inline int GetNumberFrame() {return frames.size();};
 	inline int GetX() const{return _x;};
 	inline int GetY() const{return _y;};
-	inline int GetWidth()const{return 1<<GetX();};
-	inline int GetHeight()const{return 1<<GetY();};
+	inline int GetWidth()const{return _w;};
+	inline int GetHeight()const{return _h;};
 
 	void SetWidth(int xTex);
 	void SetHeight(int yTex);
@@ -51,9 +52,10 @@ public:
 	inline eSurfaceFormat GetFmt();
 
 	uint8_t* LockTexture(int& Pitch);
-	uint8_t* LockTexture(int& Pitch, const Vect2i& lock_min, const Vect2i& lock_size);
 	void UnlockTexture();
 	virtual bool IsAviScaleTexture(){return false;}
+    
+    void ConvertBumpToNormal(uint8_t* buffer);
 };
 
 class cTextureAviScale : public cTexture
@@ -103,4 +105,6 @@ public:
 		return pos[i];
 	}
 	virtual bool IsAviScaleTexture(){return true;}
-}; 
+};
+
+void ApplySkinColor(uint8_t* buffer,int dx,int dy,sColor4c skin_color);

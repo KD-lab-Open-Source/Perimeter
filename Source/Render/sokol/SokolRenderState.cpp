@@ -43,7 +43,7 @@ int cSokolRender::EndScene() {
         //Get pipeline
         const SokolPipeline* pipeline = &pipelines[command.vertex_fmt];
         if (pipeline->vertex_fmt <= 0) {
-            //Not implemented
+            //Not implemented vertex format
             continue;
         }
         shader_funcs* shader = pipeline->shader_funcs;
@@ -54,7 +54,7 @@ int cSokolRender::EndScene() {
         //hmm_mat4 view = HMM_Translate(state->camera);
         //vs_params.mvp = HMM_MultiplyMat4(proj, view);
 
-        //Apply pipeline`
+        //Apply pipeline
         sg_apply_pipeline(pipeline->pipeline);
         
         //Apply bindings
@@ -97,10 +97,10 @@ int cSokolRender::EndScene() {
 
         //Draw
         if (command.index_buffer) {
-            sg_draw(0, command.index_buffer->elements, 1);
+            sg_draw(0, static_cast<int>(command.index_buffer->elements), 1);
         } else {
             xassert(0);
-            sg_draw(0, command.vertex_buffer->elements, 1);
+            sg_draw(0, static_cast<int>(command.vertex_buffer->elements), 1);
         }
     }
     commands.clear();

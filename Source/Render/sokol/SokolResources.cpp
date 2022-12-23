@@ -91,8 +91,10 @@ void SokolBuffer::update() {
 
 SokolTexture2D::SokolTexture2D(const sg_image_desc& desc) {
     image = sg_make_image(desc);
+    pixel_format = desc.pixel_format;
+    //For non-immutable textures we need somewhere to hold CPU side data until is flushed into GPU
     if (desc.usage != SG_USAGE_IMMUTABLE) {
-        data_len = desc.width * desc.height * sokol_pixelformat_bytesize(desc.pixel_format);
+        data_len = desc.width * desc.height * sokol_pixelformat_bytesize(pixel_format);
         data = malloc(data_len);
     }
 }
@@ -103,6 +105,7 @@ SokolTexture2D::~SokolTexture2D() {
 }
 
 void SokolTexture2D::update() {
+    xassert(!locked);
     if (dirty) {
         dirty = false;
         sg_image_data imageData;

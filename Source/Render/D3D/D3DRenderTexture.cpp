@@ -54,29 +54,6 @@ LPDIRECT3DTEXTURE9 cD3DRender::CreateSurface(int x, int y, eSurfaceFormat Textur
 	return lpTexture;
 }
 
-inline uint8_t ByteInterpolate(uint8_t a, uint8_t b, uint8_t factor)
-{
-//	float f=factor/255.0f;
-//	return xm::round(a+(int(b-a))*f);
-	return a+(int(b-a))*int(factor)/255;
-}
-
-void ApplySkinColor(uint32_t* buffer,int dx,int dy,sColor4c skin_color)
-{
-	uint32_t* cur=buffer;
-	for(int y=0;y<dy;y++)
-	{
-		for(int x=0;x<dx;x++,cur++)
-		{
-			sColor4c& c=*(sColor4c*)cur;
-			c.r=ByteInterpolate(c.r,skin_color.r,c.a);
-			c.g=ByteInterpolate(c.g,skin_color.g,c.a);
-			c.b=ByteInterpolate(c.b,skin_color.b,c.a);
-			c.a=255;
-		}
-	}
-}
-
 int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert)
 { // только создает в памяти поверхности 
 	sTextureFormatData &tfd = TexFmtData[Texture->GetFmt()];
@@ -85,8 +62,9 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 	if(Texture->GetWidth()>dwSuportMaxSizeTextureX) Texture->SetWidth(dwSuportMaxSizeTextureX);
 	if(Texture->GetHeight()>dwSuportMaxSizeTextureY) Texture->SetHeight(dwSuportMaxSizeTextureY);
 	
-	int dx=Texture->GetWidth(),dy=Texture->GetHeight();
-	int dxy=dx*dy;
+	int dx=Texture->GetWidth();
+    int dy=Texture->GetHeight();
+    size_t tex_len = dx * dy * 4;
 
 
 	VISASSERT((Texture->GetNumberMipMap()>=1));
@@ -109,22 +87,31 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		if(tex == nullptr) return 2;
 		if(FileImage==0) continue;
 
-		uint32_t* lpBuf = new uint32_t[dxy];
-		memset(lpBuf,0xFF,dxy*sizeof(lpBuf[0]));
+		uint8_t* lpBuf = new uint8_t[tex_len];
+		memset(lpBuf, 0xFF, tex_len);
 		FileImage->GetTexture(lpBuf,i*Texture->GetTimePerFrame(),4,4*dx,
 			8,8,8,8, 16,8,0,24, dx, dy );
+
 		if(Texture->IsAlpha() || Texture->IsAlphaTest())// загрузка только прозрачности
 		{
+            uint32_t* buf32 = reinterpret_cast<uint32_t*>(lpBuf);
 			FileImage->GetTextureAlpha(lpBuf,i*Texture->GetTimePerFrame(),4,4*dx,
 				8, 24, dx, dy );
-			int n;
-			for(n=0; n<dxy; n++ )
-				if( (lpBuf[n]>>24)!=255 && (lpBuf[n]>>24)!=0 )
-					break;
-			if( n>=dxy )
-				is_alpha_test=true;
-			else
-				is_alpha_blend=true;
+            
+            // We need to check alpha color bytes
+            bool finished_early = false;
+            for (size_t n = 3; n < tex_len; n += 4) {
+                uint8_t alpha = lpBuf[n];
+                if (alpha != 255 && alpha != 0) {
+                    finished_early = true;
+                }
+            }
+
+            if (finished_early) {
+                is_alpha_blend = true;
+            } else {
+                is_alpha_test = true;
+            }
 		}
 
 		if(is_skin)
@@ -133,59 +120,9 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 		}
 
         //We need to convert grayscale bumpmap to normalmap
-		if(Texture->GetAttribute(TEXTURE_BUMP) && !Texture->GetAttribute(TEXTURE_NORMAL))
-		{
-            //Get key of cache for this texture file and the file to store/retrieve the cache
-            std::string key;
-            filesystem_entry* entry = get_content_entry(Texture->GetName());
-            if (entry) key = entry->key;
-            if (key.empty()) key = convert_path_native(Texture->GetName());
-            key = string_to_lower(key.c_str());
-            string_replace_all(key, PATH_SEP_STR, "_");
-            key = std::string("cache") + PATH_SEP + "bump" + PATH_SEP + key +  ".bin";
-            std::string path = convert_path_content(key, true);
-            xassert(!path.empty());
-
-            //Attempt to use cache since it takes some time to convert big files
-            int64_t len = static_cast<int64_t>(dxy * sizeof(uint32_t));
-            XStream ff(0);
-            bool usable = !path.empty() && ff.open(path, XS_IN) && 0 < ff.size();
-            if (usable) {
-                std::string sourcefile = convert_path_content(Texture->GetName());
-                //If empty then the texture was loaded from .pak so assume is older than cache
-                if (!sourcefile.empty()) {
-                    auto cachetime = std::filesystem::last_write_time(std::filesystem::u8path(path));
-                    auto sourcetime = std::filesystem::last_write_time(std::filesystem::u8path(sourcefile));
-                    //Mark as not usable if source file is modified after cache creation
-                    usable = sourcetime <= cachetime;
-                }
-            }
-            if (usable) {
-                //Load file and uncompress it
-                XBuffer buf(ff.size(), true);
-                XBuffer dest = XBuffer(len, true);
-                ff.read(buf.address(), ff.size());
-                if (buf.uncompress(dest) == 0 && dest.tell() == len) {
-                    memcpy(lpBuf, dest.address(), len);
-                } else {
-                    usable = false;
-                }
-            }
-            
-            if (!usable) {
-                //Convert grayscale bump map into normal map and cache it
-                ConvertDot3(lpBuf, dx, dy, 1.0e-2f * Texture->bump_scale);
-                if (ff.open(path, XS_OUT)) {
-                    XBuffer buf(lpBuf, len);
-                    buf.set(len);
-                    XBuffer compressed(len, true);
-                    if (buf.compress(compressed) == 0) {
-                        ff.write(compressed, compressed.tell());
-                    }
-                }
-            }
-            ff.close();            
-		}
+        if(Texture->GetAttribute(TEXTURE_BUMP) && !Texture->GetAttribute(TEXTURE_NORMAL)) {
+            Texture->ConvertBumpToNormal(lpBuf);
+        }
 
 		RECT rect={0,0,dx,dy};
 
@@ -205,7 +142,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 				LPDIRECT3DSURFACE9 lpSurfaceNext = NULL;
 				RDCALL( lpD3DTexture->GetSurfaceLevel( nMipMap, &lpSurfaceNext ) );
 				RECT rect={0,0,dx>>nMipMap,dy>>nMipMap};
-				unsigned int *lpBufNext = new unsigned int [rect.right*rect.bottom];
+				uint8_t *lpBufNext = new uint8_t[rect.right * rect.bottom * 4];
 
 				{
 					BuildMipMap( rect.right,rect.bottom,4, 8*rect.right,lpBuf, 4*rect.right,lpBufNext, 
@@ -277,43 +214,3 @@ void cD3DRender::UnlockTexture(class cTexture *Texture)
 	RDCALL(lpSurface->UnlockRect(0));
 }
 
-void cD3DRender::ConvertDot3(uint32_t* ibuf,int dx,int dy,float h_mul)
-{
-	const int byte_per_pixel=4;
-	uint8_t* buf=(uint8_t*)ibuf;
-#define GET(x,y) buf[(clamp(x,0,dx-1)+dx*clamp(y,0,dy-1))*byte_per_pixel]
-    uint32_t* out=new uint32_t[dx*dy];
-
-	for(int y=0;y<dy;y++)
-	for(int x=0;x<dx;x++)
-	{
-		Vect3f dl,dn,dsum(0,0,0);
-		int h00=GET(x,y);
-		int h01=GET(x+1,y);
-		int h0m=GET(x-1,y);
-		int h10=GET(x,y+1);
-		int hm0=GET(x,y-1);
-
-		dl.set(0,1,(h01-h00)*h_mul);
-		dn.set(0,-dl.z,dl.y);
-		dsum+=dn.normalize();
-
-		dl.set(0,1,(h00-h0m)*h_mul);
-		dn.set(0,-dl.z,dl.y);
-		dsum+=dn.normalize();
-
-		dl.set(1,0,(h10-h00)*h_mul);
-		dn.set(-dl.z,0,dl.x);
-		dsum+=dn.normalize();
-
-		dl.set(1,0,(h00-hm0)*h_mul);
-		dn.set(-dl.z,0,dl.x);
-		dsum+=dn.normalize();
-
-		out[x+y*dx]=ColorByNormal(dsum.normalize());
-	}
-
-	memcpy(buf,out,dx*dy*byte_per_pixel);
-	delete[] out;
-#undef GET
-}

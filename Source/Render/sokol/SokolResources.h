@@ -28,10 +28,12 @@ struct SokolBuffer {
 };
 
 struct SokolTexture2D {
+    sg_pixel_format pixel_format;
     sg_image image = {};
     void* data = nullptr;
     size_t data_len = 0;
     bool dirty = true;
+    bool locked = false;
 
     explicit SokolTexture2D(const sg_image_desc& desc);
     SokolTexture2D(const SokolTexture2D&) = delete;

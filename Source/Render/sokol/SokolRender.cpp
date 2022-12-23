@@ -207,6 +207,7 @@ int cSokolRender::Done() {
 
 int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
     //TODO
+    printf("cSokolRender::SetGamma not implemented!\n");
     return -1;
 }
 

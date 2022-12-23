@@ -7,6 +7,7 @@
 #endif
 #ifdef PERIMETER_SOKOL
 #include <sokol_gfx.h>
+#include "sokol/SokolResources.h"
 #endif
 
 #ifdef TEXTURE_NOTFREE
@@ -275,7 +276,6 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 #endif
 #ifdef PERIMETER_SOKOL
             if (gb_RenderDevice->GetRenderSelection() == DEVICE_SOKOL) {
-                sg_destroy_image(*frame.sg);
                 delete frame.sg;
             }
 #endif

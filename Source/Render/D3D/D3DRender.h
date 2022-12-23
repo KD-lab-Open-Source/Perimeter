@@ -469,8 +469,6 @@ protected:
 	void InitStandartIB();
 	void GetTilemapTextureMemory(int& total,int& free);
 
-	void ConvertDot3(unsigned int* buf,int dx,int dy,float h_mul);
-
 	void UpdateRenderMode();
 
 	D3DFORMAT GetBackBufferFormat(int Mode);
