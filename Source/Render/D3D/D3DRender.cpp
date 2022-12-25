@@ -42,7 +42,6 @@ cD3DRender::cD3DRender() : cInterfaceRenderDevice()
 	dtFixed=NULL;
 	dtAdvance=NULL;
 	dtAdvanceOriginal=NULL;
-	current_bump_scale=1.0f;
 	texture_interpolation=D3DTEXF_LINEAR;
 }
 

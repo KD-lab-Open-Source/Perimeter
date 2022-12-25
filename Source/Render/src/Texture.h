@@ -18,6 +18,7 @@ class cTexture : public cUnknownClass, public sAttribute
 	int			TimePerFrame;		// фремя проигрывания
 	int			number_mipmap;
 public:
+    float       bump_scale = 1;
 	sColor4c	skin_color;
 	std::vector<TextureImage> frames;
 

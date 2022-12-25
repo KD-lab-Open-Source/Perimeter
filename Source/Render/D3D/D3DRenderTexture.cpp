@@ -174,7 +174,7 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
             
             if (!usable) {
                 //Convert grayscale bump map into normal map and cache it
-                ConvertDot3(lpBuf, dx, dy, 1.0e-2f * current_bump_scale);
+                ConvertDot3(lpBuf, dx, dy, 1.0e-2f * Texture->bump_scale);
                 if (ff.open(path, XS_OUT)) {
                     XBuffer buf(lpBuf, len);
                     buf.set(len);

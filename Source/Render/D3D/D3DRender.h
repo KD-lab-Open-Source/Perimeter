@@ -390,7 +390,6 @@ public:
 		return pTexture;
 	}
 
-	void SetCurrentConvertDot3Mul(float scale){current_bump_scale=scale;};
 	bool ReinitOcclusion();
 	bool PossibilityOcclusion();
 
@@ -448,7 +447,6 @@ protected:
 	cVertexBuffer<sVertexXYZ>	 BufferXYZOcclusion;
 
 	sPtrIndexBuffer standart_ib;
-	float current_bump_scale;
 
 	std::vector<cOcclusionQuery*> occlusion_query;
 

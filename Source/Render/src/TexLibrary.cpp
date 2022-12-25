@@ -209,7 +209,7 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 
 	cTexture *Texture=new cTexture(path.c_str());
 
-	if(!LoadTexture(Texture,pMode,Vect2f(1.0f,1.0f)))
+	if(!LoadTexture(Texture,pMode))
 	{
 		return nullptr;
 	}
@@ -218,7 +218,7 @@ cTexture* cTexLibrary::GetElement(const char* TextureName,char *pMode)
 	return Texture;
 }
 
-bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
+bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode)
 {
 	// тест наличия текстуры
 	if(pMode&&strstr((char*)pMode,"NoMipMap"))
@@ -226,24 +226,20 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
 	else 
 		Texture->SetNumberMipMap(Option_MipMapLevel);
 
-	if(Option_MipMapBlur && pMode)
-	if(strstr(pMode,"MipMapBlur") && strstr(pMode,"MipMapNoBlur")==0)
+	if(Option_MipMapBlur && pMode && strstr(pMode,"MipMapBlur") && strstr(pMode,"MipMapNoBlur")==0)
 	{
 		Texture->SetAttribute(TEXTURE_MIPMAPBLUR);
 		if(pMode&&strstr(pMode,"MipMapBlurWhite")) 
 			Texture->SetAttribute(TEXTURE_BLURWHITE);
 	}
 
-	if(pMode)
-	{
-		if(strstr(pMode,"UVBump"))
-		{
-			Texture->SetAttribute(TEXTURE_UVBUMP);
-		}
-	}
+	if(pMode && strstr(pMode, "UVBump")) {
+        Texture->SetAttribute(TEXTURE_UVBUMP);
+    }
 
-    if(pMode&&strstr(pMode,"Bump")) {
+    if(pMode&&strstr(pMode,"Bump")) {        
         Texture->SetAttribute(MAT_BUMP);
+        Texture->bump_scale = current_bump_scale;
         
         //If file with _normal name is found, set attribute for normal
         std::string textpathstr = convert_path_content(Texture->GetName());
@@ -264,10 +260,10 @@ bool cTexLibrary::LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale)
     if(pMode&&strstr(pMode,"Normal"))
         Texture->SetAttribute(MAT_NORMAL);
 
-	return ReLoadTexture(Texture,kscale);
+	return ReLoadTexture(Texture);
 }
 
-bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
+bool cTexLibrary::ReLoadTexture(cTexture* Texture)
 {
 	{
 		for (auto frame : Texture->frames)
@@ -405,11 +401,6 @@ bool cTexLibrary::ReLoadTexture(cTexture* Texture,Vect2f kscale)
 	}
 
 	return true;
-}
-
-bool cTexLibrary::ReLoadTexture(cTexture* Texture)
-{
-	return ReLoadTexture(Texture,Vect2f(1,1));
 }
 
 void cTexLibrary::Error(cTexture* Texture)

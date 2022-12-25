@@ -694,6 +694,7 @@ cObjectNodeRoot* cObjLibrary::GetElementInternal(const char* pFileName,const cha
 	}else
 	{
 		ObjNode=LoadM3D(fname.c_str(),TexturePath.c_str(),DefTexturePath.c_str(),enable_error_not_found);
+        GetTexLibrary()->SetCurrentBumpScale(1);
 	}
 
 	cObjectNodeRoot *tmp=NULL;
@@ -791,11 +792,8 @@ cAllMeshBank* cObjLibrary::LoadM3D(const char *fname,const char *TexturePath,con
 	MeshScene.Read(f);
 	f.Close();
 
-#ifdef PERIMETER_D3D9
-    if (gb_RenderDevice3D) {
-        gb_RenderDevice3D->SetCurrentConvertDot3Mul(MeshScene.bump_scale);
-    }
-#endif
+    GetTexLibrary()->SetCurrentBumpScale(MeshScene.bump_scale);
+
 	int nChannel;
 	for(nChannel=0;nChannel<MeshScene.ChannelLibrary.length();nChannel++)
 	{

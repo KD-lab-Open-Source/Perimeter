@@ -24,14 +24,17 @@ public:
 
 	MTSection* GetLock(){return &lock;}
 	void ReloadAllTexture();
+    
+    void SetCurrentBumpScale(float scale) { current_bump_scale = scale; }
 private:
 	cTexture* CreateTexture(int sizex,int sizey,bool alpha,bool default_pool);
 	bool enable_error;
+    float current_bump_scale = 1;
 	std::vector<cTexture*> textures;
+    std::map<std::string, float> texture_bump_scale;
 	void FreeOne(FILE* f);
 
-	bool LoadTexture(cTexture* Texture,char *pMode,Vect2f kscale);
-	bool ReLoadTexture(cTexture* Texture,Vect2f kscale);
+	bool LoadTexture(cTexture* Texture,char *pMode);
 	bool ReLoadTexture(cTexture* Texture);
 
 	void Error(cTexture* Texture);
