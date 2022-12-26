@@ -1,6 +1,7 @@
 #include <vector>
 #include "xmath.h"
 #include "Umath.h"
+#include "StdAfxRD.h"
 #include "sokol_gfx.h"
 #include "SokolResources.h"
 #include "IRenderDevice.h"
@@ -9,6 +10,10 @@
 #include "xerrhand.h"
 #include "SokolShaders.h"
 #include "VertexFormat.h"
+#include "Texture.h"
+
+const int PERIMETER_SOKOL_VERTEXES_COUNT = 10240;
+const int PERIMETER_SOKOL_POLYGON_COUNT = 20480;
 
 int cSokolRender::BeginScene() {
     if (ActiveScene) {
@@ -26,6 +31,8 @@ int cSokolRender::EndScene() {
         return 1;
     }
     ActiveScene = false;
+    
+    FinishActiveCommand();
 
     //Begin pass
     sg_pass_action pass_action = {};
@@ -37,9 +44,16 @@ int cSokolRender::EndScene() {
             fill_color.a
     };
     sg_begin_default_pass(&pass_action, ScreenSize.x, ScreenSize.y);
+    
+    std::vector<SokolBuffer*> owned_buffers;
 
     //Iterate each command
     for (const auto& command : commands) {
+        if (command.owned_buffers) {
+            if (command.vertex_buffer) owned_buffers.emplace_back(command.vertex_buffer);
+            if (command.index_buffer) owned_buffers.emplace_back(command.index_buffer);
+        }
+        
         //Nothing to draw
         if (!command.elements) {
             continue;
@@ -76,21 +90,22 @@ int cSokolRender::EndScene() {
             command.index_buffer->update();
             bindings.index_buffer = command.index_buffer->buffer;
         }
-        bindings.index_buffer = command.index_buffer->buffer;
         
         //Bind images for samplers
         if (pipeline->vertex_fmt & VERTEX_FMT_TEX1) {
-            xassert(command.texture_1);
-            if (command.texture_1) {
+            SokolTexture2D* tex = command.textures[0];
+            xassert(tex);
+            if (tex) {
                 int slot = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
-                bindings.fs_images[slot] = command.texture_1->image;
+                bindings.fs_images[slot] = tex->image;
             }
         }
         if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-            xassert(command.texture_2);
-            if (command.texture_1) {
+            SokolTexture2D* tex = command.textures[1];
+            xassert(tex);
+            if (tex) {
                 int slot = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex1");
-                bindings.fs_images[slot] = command.texture_2->image;
+                bindings.fs_images[slot] = tex->image;
             }
         }
         sg_apply_bindings(&bindings);
@@ -103,10 +118,15 @@ int cSokolRender::EndScene() {
         //Draw
         sg_draw(0, static_cast<int>(command.elements), 1);
     }
-    commands.clear();
 
     //End pass
     sg_end_pass();
+    
+    for (auto buf : owned_buffers) {
+        delete buf;
+    }
+    
+    commands.clear();
 
     return 1;
 }
@@ -136,4 +156,70 @@ int cSokolRender::Flush(bool wnd) {
     SDL_GL_SwapWindow(sdlWindow);
 
     return 0;
+}
+
+void cSokolRender::FinishActiveCommand() {
+    if (polygonsCount) {
+        commands.emplace_back();
+        SokolCommand& cmd = commands.back();
+        cmd.vertex_fmt = vertexBuffer.fmt;
+        cmd.elements = polygonsCount * 3;
+        memcpy(cmd.textures, textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
+        //Transfer buffers to command
+        cmd.owned_buffers = true;
+        cmd.vertex_buffer = vertexBuffer.sg;
+        cmd.index_buffer = indexBuffer.sg;
+        vertexBuffer.sg = nullptr;
+        indexBuffer.sg = nullptr;
+    }
+    
+    vertexesCount = 0;
+    polygonsCount = 0;
+}
+
+void cSokolRender::SetupVertexBuffer(size_t& NumberVertex, size_t& NumberPolygons, uint32_t vertex_fmt) {
+    if (vertexBuffer.sg
+    && vertexBuffer.fmt == vertex_fmt
+    && NumberVertex + vertexesCount < vertexBuffer.NumberVertex
+    && NumberPolygons + polygonsCount < indexBuffer.NumberPolygons) {
+        //We can use current buffers
+
+        int nv = NumberVertex;
+        int np = NumberPolygons;
+        NumberVertex = vertexesCount;
+        NumberPolygons = polygonsCount;
+        vertexesCount += nv;
+        polygonsCount += np;
+        return;
+    }
+    
+    FinishActiveCommand();
+
+    vertexesCount = NumberVertex;
+    polygonsCount = NumberPolygons;
+    NumberVertex = NumberPolygons = 0;
+    
+    //Create buffers
+    DeleteVertexBuffer(vertexBuffer);
+    DeleteIndexBuffer(indexBuffer);
+    CreateVertexBuffer(vertexBuffer, PERIMETER_SOKOL_VERTEXES_COUNT, vertex_fmt, true);
+    CreateIndexBuffer(indexBuffer, PERIMETER_SOKOL_POLYGON_COUNT);
+}
+
+void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
+                                 eColorMode color_mode) {
+    if (Texture0) {
+        int nAllFrame = Texture0->GetNumberFrame();
+        int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
+        textures[0] = Texture0->GetFrameImage(nFrame).sg;
+    } else {
+        textures[0] = nullptr;
+    }
+    if (Texture1) {
+        int nAllFrame = Texture1->GetNumberFrame();
+        int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
+        textures[1] = Texture1->GetFrameImage(nFrame).sg;
+    } else {
+        textures[1] = nullptr;
+    }
 }

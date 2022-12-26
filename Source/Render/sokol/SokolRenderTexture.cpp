@@ -1,18 +1,13 @@
 #include <vector>
 #include "xmath.h"
 #include "Umath.h"
-//#include "xerrhand.h"
 #include "StdAfxRD.h"
-#include <SDL.h>
 #include "sokol_gfx.h"
 #include "IRenderDevice.h"
 #include "EmptyRenderDevice.h"
 #include "SokolRender.h"
 #include "FileImage.h"
 #include "SokolResources.h"
-#include "files/files.h"
-//#include "Src/BaseClass.h"
-//#include "Texture.h"
 
 int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool enable_assert) {
     bool is_alpha_test = false;

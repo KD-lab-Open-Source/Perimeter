@@ -4,6 +4,8 @@
 #include "sokol_gfx.h"
 #include <SDL_video.h>
 
+#define PERIMETER_SOKOL_TEXTURES 2
+
 struct SokolPipeline {
     //VERTEX_FMT_* flags used as index for this pipeline
     uint32_t vertex_fmt;
@@ -16,8 +18,8 @@ struct SokolPipeline {
 struct SokolCommand {
     uint32_t vertex_fmt = 0;
     size_t elements = 0;
-    struct SokolTexture2D* texture_1 = nullptr;
-    struct SokolTexture2D* texture_2 = nullptr;
+    struct SokolTexture2D* textures[PERIMETER_SOKOL_TEXTURES];
+    bool owned_buffers = false;
     struct SokolBuffer* vertex_buffer = nullptr;
     struct SokolBuffer* index_buffer = nullptr;
 };
@@ -33,6 +35,17 @@ private:
     sColor4f fill_color;
     std::vector<SokolCommand> commands;
     std::vector<SokolPipeline> pipelines;
+    
+    //Active command
+    struct SokolTexture2D* textures[PERIMETER_SOKOL_TEXTURES];
+    VertexBuffer vertexBuffer;
+    IndexBuffer indexBuffer;
+    size_t vertexesCount = 0;
+    size_t polygonsCount = 0;
+
+    //Commands handling
+    void FinishActiveCommand();
+    void SetupVertexBuffer(size_t& NumberVertex, size_t& NumberPolygons, uint32_t vertex_fmt);
     
 public:
     cSokolRender();
@@ -112,6 +125,7 @@ public:
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName="Arial",int size=12,int bold=0,int italic=0,int underline=0) override;
     
     bool SetScreenShot(const char *fname) override;
+    */
 
     void DrawSprite(int x,int y,int dx,int dy,float u,float v,float du,float dv,
                     cTexture *Texture,const sColor4c &ColorMul=sColor4c(255,255,255,255),float phase=0,eBlendMode mode=ALPHA_NONE) override;
@@ -120,12 +134,15 @@ public:
     void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
                      cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) override;
 
+    /*
     void DrawIndexedPrimitive(sPtrVertexBuffer &vb,int OfsVertex,int nVertex,const sPtrIndexBuffer& ib,int nOfsPolygon,int nPolygon) override;
 
     bool IsEnableSelfShadow() override;
+    */
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
 
+    /*
     void SetDrawTransform(class cCamera *DrawNode) override;
     void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
     void DrawPoint(const Vect3f &v1,sColor4c color) override;

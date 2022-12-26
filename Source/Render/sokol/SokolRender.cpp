@@ -212,6 +212,7 @@ int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
 }
 
 void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, int NumberVertex, int fmt, int dynamic) {
+    xassert(!vb.sg);
     size_t size = GetSizeFromFormat(fmt);
 
     sg_buffer_desc desc = {};
@@ -246,6 +247,7 @@ void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
 }
 
 void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, int NumberPolygons) {
+    xassert(!ib.sg);
     ib.NumberPolygons = NumberPolygons;
     ib.NumberIndices = ib.NumberPolygons * sPolygon::PN;
     
