@@ -97,7 +97,7 @@ class VertexPool:public Pool
 protected:
 	enum{VPOOL_MAX_VTX_PER_POOL = 65536/4,};
 
-	LPDIRECT3DVERTEXBUFFER9 vb;
+    IDirect3DVertexBuffer9* vb;
 	int page_size;
 	int vertex_format;
 	int vertex_size;
@@ -154,7 +154,7 @@ class IndexPool:public Pool
 protected:
 	enum{VPOOL_MAX_VTX_PER_POOL = 65536/4,};
 
-    LPDIRECT3DINDEXBUFFER9 ib;
+    IDirect3DIndexBuffer9* ib;
 	int page_size;
 public:
 	IndexPool();

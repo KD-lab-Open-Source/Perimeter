@@ -211,7 +211,7 @@ int cSokolRender::SetGamma(float fGamma, float fStart, float fFinish) {
     return -1;
 }
 
-void cSokolRender::CreateVertexBuffer(sPtrVertexBuffer& vb, int NumberVertex, int fmt, int dynamic) {
+void cSokolRender::CreateVertexBuffer(VertexBuffer& vb, int NumberVertex, int fmt, int dynamic) {
     size_t size = GetSizeFromFormat(fmt);
 
     sg_buffer_desc desc = {};
@@ -220,68 +220,57 @@ void cSokolRender::CreateVertexBuffer(sPtrVertexBuffer& vb, int NumberVertex, in
     desc.usage = dynamic ? SG_USAGE_STREAM : SG_USAGE_DYNAMIC;
     desc.label = "CreateVertexBuffer";
 
-    vb.ptr = new sSlotVB();
-    sSlotVB& s = *vb.ptr;
-    s.init = true;
-    s.VertexSize = size;
-    s.fmt = fmt;
-    s.dynamic = dynamic;
-    s.NumberVertex = NumberVertex;
-    s.sg = new SokolBuffer(NumberVertex, desc);
+    vb.VertexSize = size;
+    vb.fmt = fmt;
+    vb.dynamic = dynamic;
+    vb.NumberVertex = NumberVertex;
+    vb.sg = new SokolBuffer(desc);
 }
 
-void cSokolRender::DeleteVertexBuffer(sPtrVertexBuffer &vb) {
-    if (vb.ptr) {
-        delete vb.ptr->sg;
-        delete vb.ptr;
-        vb.ptr = nullptr;
-    }
+void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
+    delete vb.sg;
+    vb.sg = nullptr;
 }
 
-void* cSokolRender::LockVertexBuffer(sPtrVertexBuffer &vb) {
-    if (!vb.ptr) return nullptr;
-    xassert(!vb.ptr->sg->locked);
-    vb.ptr->sg->dirty = true;
-    vb.ptr->sg->locked = true;
-    return static_cast<sPolygon*>(vb.ptr->sg->data);
+void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
+    if (!vb.sg) return nullptr;
+    xassert(!vb.sg->locked);
+    vb.sg->dirty = true;
+    vb.sg->locked = true;
+    return static_cast<sPolygon*>(vb.sg->data);
 }
 
-void cSokolRender::UnlockVertexBuffer(sPtrVertexBuffer &vb) {
-    xassert(vb.ptr->sg->locked);
-    vb.ptr->sg->locked = false;
+void cSokolRender::UnlockVertexBuffer(VertexBuffer &vb) {
+    xassert(vb.sg->locked);
+    vb.sg->locked = false;
 }
 
-void cSokolRender::CreateIndexBuffer(sPtrIndexBuffer& ib,int NumberPolygon,int size ) {
+void cSokolRender::CreateIndexBuffer(IndexBuffer& ib, int NumberPolygons) {
+    ib.NumberPolygons = NumberPolygons;
+    ib.NumberIndices = ib.NumberPolygons * sPolygon::PN;
+    
     sg_buffer_desc desc = {};
-    desc.size = NumberPolygon * size * sizeof(indices_t);
+    desc.size = ib.NumberIndices * sizeof(indices_t);
     desc.type = SG_BUFFERTYPE_INDEXBUFFER;
     desc.usage = SG_USAGE_DYNAMIC;
     desc.label = "CreateIndexBuffer";
-
-    ib.ptr=new sSlotIB();
-    sSlotIB& s = *ib.ptr;
-    s.init = true;
-    s.NumberIndices = NumberPolygon * size;
-    s.sg = new SokolBuffer(s.NumberIndices, desc);
+    ib.sg = new SokolBuffer(desc);
 }
 
-void cSokolRender::DeleteIndexBuffer(sPtrIndexBuffer &ib) {
-    if (ib.ptr) {
-        delete ib.ptr->sg;
-        delete ib.ptr;
-        ib.ptr = nullptr;
-    }
+void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
+    delete ib.sg;
+    ib.sg = nullptr;
 }
 
-sPolygon* cSokolRender::LockIndexBuffer(sPtrIndexBuffer &ib) {
-    if (!ib.ptr) return nullptr;
-    xassert(!ib.ptr->sg->locked);
-    ib.ptr->sg->dirty = true;
-    ib.ptr->sg->locked = true;
-    return static_cast<sPolygon*>(ib.ptr->sg->data);
+sPolygon* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
+    if (!ib.sg) return nullptr;
+    xassert(!ib.sg->locked);
+    ib.sg->dirty = true;
+    ib.sg->locked = true;
+    return static_cast<sPolygon*>(ib.sg->data);
 }
 
-void cSokolRender::UnlockIndexBuffer(sPtrIndexBuffer &ib) {
-    xassert(ib.ptr->sg->locked);
-    ib.ptr->sg->locked = false;
+void cSokolRender::UnlockIndexBuffer(IndexBuffer &ib) {
+    xassert(ib.sg->locked);
+    ib.sg->locked = false;
 }

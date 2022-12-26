@@ -1043,7 +1043,7 @@ void cObjectNodeRoot::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPo
 
 	//Довольно криво, предполагается, что у одного cObjectNodeRoot один cMeshStatic 
 	cMeshStatic* bank=root->GetMeshBank(0)->GetBank();
-	point.resize(bank->vb.ptr->NumberVertex);
+	point.resize(bank->vb.NumberVertex);
 
 	polygon.resize(bank->ib_polygon);
 	sPolygon *IndexPolygon=gb_RenderDevice->LockIndexBuffer(bank->ib);

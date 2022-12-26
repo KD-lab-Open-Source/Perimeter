@@ -67,7 +67,7 @@ size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     }
 }
 
-SokolBuffer::SokolBuffer(size_t elements, const sg_buffer_desc& desc): elements(elements) {
+SokolBuffer::SokolBuffer(const sg_buffer_desc& desc) {
     buffer = sg_make_buffer(desc);
     if (desc.usage != SG_USAGE_IMMUTABLE) {
         data_len = desc.size;

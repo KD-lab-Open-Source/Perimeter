@@ -93,7 +93,7 @@ void cMeshTri::SetPosition(const MatXf &matrix)
 
 void cMeshTri::CalcBumpST()
 {
-	if(vb->ptr->VertexSize!=sizeof(sVertexDot3))
+	if(vb->VertexSize!=sizeof(sVertexDot3))
 	{
 		VISASSERT(0);
 		return;

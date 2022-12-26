@@ -18,27 +18,36 @@ inline int Power2up(int n)
     return i;
 }
 
-struct sSlotVB
-{
+class VertexBuffer {
+public:
     union {
-        void* buf;
+        void* buf = nullptr;
 #ifdef PERIMETER_D3D9
         struct IDirect3DVertexBuffer9* d3d;
 #endif
+        
 #ifdef PERIMETER_SOKOL
         struct SokolBuffer* sg;
 #endif
     };
-    char dynamic;
-    bool init;
-    int fmt;
-    int VertexSize;
-    int NumberVertex;
+    bool dynamic = false;
+    int fmt = 0;
+    int VertexSize = 0;
+    int NumberVertex = 0;
+    
+    VertexBuffer() = default;
+    ~VertexBuffer() {
+        Destroy();
+    }
+    NO_COPY_CONSTRUCTOR(VertexBuffer)
+    
+    void Destroy();
 };
-struct sSlotIB
-{
+
+class IndexBuffer {
+public:
     union {
-        void* buf;
+        void* buf = nullptr;
 #ifdef PERIMETER_D3D9
         struct IDirect3DIndexBuffer9* d3d;
 #endif
@@ -46,30 +55,12 @@ struct sSlotIB
         struct SokolBuffer* sg;
 #endif
     };
-    bool init;
-    int NumberIndices;
-};
-struct sPtrVertexBuffer
-{
-    sSlotVB* ptr = nullptr;
-    sPtrVertexBuffer() = default;
-    ~sPtrVertexBuffer() {
-        Destroy();
-    }
-    inline bool IsInit() {
-        return ptr!=nullptr;
-    }
-    void Destroy();
-};
-
-struct sPtrIndexBuffer
-{
-    sSlotIB* ptr = nullptr;
-    sPtrIndexBuffer() = default;
-    ~sPtrIndexBuffer();
-    inline bool IsInit() {
-        return ptr!=nullptr;
-    }
+    int NumberPolygons = 0;
+    int NumberIndices = 0;
+    
+    IndexBuffer() = default;
+    ~IndexBuffer();
+    NO_COPY_CONSTRUCTOR(IndexBuffer)
 };
 
 struct sTextureFormatData
@@ -190,8 +181,9 @@ using indices_t = uint16_t;
 
 struct sPolygon
 {
+    static const size_t PN = 3;
     indices_t p1,p2,p3;
-    indices_t& operator[](int i){return *(i+&p1);}
+    indices_t& operator[](size_t i) { return *(i+&p1); }
     inline void set(indices_t i1,indices_t i2,indices_t i3){ p1=i1; p2=i2; p3=i3; }
 };
 
@@ -319,16 +311,16 @@ public:
     virtual bool IsEnableSelfShadow() = 0;
     
     virtual void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) = 0;
-    virtual void DrawIndexedPrimitive(struct sPtrVertexBuffer &vb,int OfsVertex,int nVertex,const struct sPtrIndexBuffer& ib,int nOfsPolygon,int nPolygon) = 0;
+    virtual void DrawIndexedPrimitive(class VertexBuffer &vb, int OfsVertex, int nVertex, const class IndexBuffer& ib, int nOfsPolygon, int nPolygon) = 0;
 
-    virtual void CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVertex,int fmt,int dynamic=0) = 0;
-    virtual void DeleteVertexBuffer(struct sPtrVertexBuffer &vb) = 0;
-    virtual void* LockVertexBuffer(struct sPtrVertexBuffer &vb) = 0;
-    virtual void UnlockVertexBuffer(struct sPtrVertexBuffer &vb) = 0;
-    virtual void CreateIndexBuffer(struct sPtrIndexBuffer& ib,int NumberPolygon,int size=sizeof(sPolygon)) = 0;
-    virtual void DeleteIndexBuffer(struct sPtrIndexBuffer &ib) = 0;
-    virtual sPolygon* LockIndexBuffer(struct sPtrIndexBuffer &ib) = 0;
-    virtual void UnlockIndexBuffer(struct sPtrIndexBuffer &ib) = 0;
+    virtual void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) = 0;
+    virtual void DeleteVertexBuffer(class VertexBuffer &vb) = 0;
+    virtual void* LockVertexBuffer(class VertexBuffer &vb) = 0;
+    virtual void UnlockVertexBuffer(class VertexBuffer &vb) = 0;
+    virtual void CreateIndexBuffer(class IndexBuffer& ib, int NumberPolygon) = 0;
+    virtual void DeleteIndexBuffer(class IndexBuffer &ib) = 0;
+    virtual sPolygon* LockIndexBuffer(class IndexBuffer &ib) = 0;
+    virtual void UnlockIndexBuffer(class IndexBuffer &ib) = 0;
 };
 
 cInterfaceRenderDevice* CreateIRenderDevice(eRenderDeviceSelection selection);

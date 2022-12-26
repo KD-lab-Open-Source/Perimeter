@@ -68,4 +68,8 @@
 #define THREAD_ID DWORD
 #endif
 
+#define NO_COPY_CONSTRUCTOR(T) \
+    T(const T&) = delete; \
+    T& operator=(T const&) = delete;
+
 #endif // __TWEAKS_H__

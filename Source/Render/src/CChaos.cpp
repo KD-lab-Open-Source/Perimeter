@@ -282,7 +282,7 @@ void cChaos::Draw(cCamera *DrawNode)
 
 void cChaos::CreateIB()
 {
-	gb_RenderDevice->CreateIndexBuffer(ib,size*size*2);
+	gb_RenderDevice->CreateIndexBuffer(ib, size*size*2);
 	sPolygon* p=gb_RenderDevice->LockIndexBuffer(ib);
     if (!p) return;
 
@@ -310,7 +310,7 @@ void cChaos::CreateVB()
 
 	VTYPE* pVertex=(VTYPE*)gb_RenderDevice->LockVertexBuffer(vb);
     if (!pVertex) return;
-	xassert(sizeof(VTYPE)==vb.ptr->VertexSize);
+	xassert(sizeof(VTYPE)==vb.VertexSize);
 
 	int smin=-(size/sub_div/2),smax=size/sub_div+smin;
 	int xmin=smin*plane_size.x,xmax=smax*plane_size.x,

@@ -13,7 +13,7 @@ enum PRIMITIVETYPE
 class cVertexBufferInternal
 {
 protected:
-	sPtrVertexBuffer vb;
+	VertexBuffer vb;
 	int numvertex;
 	int fmt;
 	int cur_min_vertex,start_vertex;

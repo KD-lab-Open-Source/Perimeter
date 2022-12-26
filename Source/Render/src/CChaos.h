@@ -27,9 +27,9 @@ class cChaos:public cIUnkObj
 		sub_div=5,
 	};
 
-	sPtrIndexBuffer ib;
+	IndexBuffer ib;
 
-	sPtrVertexBuffer vb;
+	VertexBuffer vb;
 	Vect2f plane_size;
 
 #ifdef PERIMETER_D3D9

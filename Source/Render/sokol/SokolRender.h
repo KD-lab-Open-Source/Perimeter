@@ -15,6 +15,7 @@ struct SokolPipeline {
 
 struct SokolCommand {
     uint32_t vertex_fmt = 0;
+    size_t elements = 0;
     struct SokolTexture2D* texture_1 = nullptr;
     struct SokolTexture2D* texture_2 = nullptr;
     struct SokolBuffer* vertex_buffer = nullptr;
@@ -60,14 +61,14 @@ public:
     
     int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 
-    void CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVertex,int fmt,int dynamic=0) override;
-    void DeleteVertexBuffer(sPtrVertexBuffer &vb) override;
-    void* LockVertexBuffer(sPtrVertexBuffer &vb) override;
-    void UnlockVertexBuffer(sPtrVertexBuffer &vb) override;
-    void CreateIndexBuffer(sPtrIndexBuffer& ib,int NumberPolygon,int size=sizeof(sPolygon)) override;
-    void DeleteIndexBuffer(sPtrIndexBuffer &ib) override;
-    sPolygon* LockIndexBuffer(sPtrIndexBuffer &ib) override;
-    void UnlockIndexBuffer(sPtrIndexBuffer &ib) override;
+    void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) override;
+    void DeleteVertexBuffer(VertexBuffer &vb) override;
+    void* LockVertexBuffer(VertexBuffer &vb) override;
+    void UnlockVertexBuffer(VertexBuffer &vb) override;
+    void CreateIndexBuffer(IndexBuffer& ib, int NumberPolygon) override;
+    void DeleteIndexBuffer(IndexBuffer &ib) override;
+    sPolygon* LockIndexBuffer(IndexBuffer &ib) override;
+    void UnlockIndexBuffer(IndexBuffer &ib) override;
     int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
     int DeleteTexture(class cTexture *Texture) override;
     void* LockTexture(class cTexture *Texture, int& Pitch) override;

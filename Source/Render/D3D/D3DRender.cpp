@@ -477,15 +477,8 @@ int cD3DRender::Done()
 		sSlotVB& s=LibVB[i];
 		VISASSERT(!s.init);
 	}
-
-	for(i=0;i<LibIB.size();i++)
-	{
-		sSlotIB& s=LibIB[i];
-		VISASSERT(!s.init);
-	}
 */	
 	LibVB.clear();
-	LibIB.clear();
 
     int ret = cInterfaceRenderDevice::Done();
 	
@@ -594,6 +587,7 @@ int cD3DRender::Flush(bool wnd)
 		sprintf(str,"vb=%i,nvb=%i",dbg_MemVertexBuffer,dbg_NumVertexBuffer);
 		OutText(10,80,str);
 
+        /*
 		int dbg_MemIndexBuffer=0,dbg_NumIndexBuffer=0;
 		int i;
         for (i = 0; i < LibIB.size(); i++) {
@@ -606,9 +600,10 @@ int cD3DRender::Flush(bool wnd)
         }
 		sprintf(str,"ib=%i,nib=%i",dbg_MemIndexBuffer,dbg_NumIndexBuffer);
 		OutText(10,60,str);
+        */
 
 		int dbg_MemTexture=0;
-		for( i=0; i<TexLibrary->GetNumberTexture(); i++ )
+		for(int i=0; i<TexLibrary->GetNumberTexture(); i++ )
 		{
 			cTexture* pTexture=TexLibrary->GetTexture(i);
 			if(pTexture)
@@ -1358,54 +1353,46 @@ int cD3DRender::SetGamma(float fGamma,float fStart,float fFinish)
 	return 0;
 }
 
-void cD3DRender::CreateVertexBuffer(sPtrVertexBuffer &vb,int NumberVertex,int format,int dynamic)
+void cD3DRender::CreateVertexBuffer(VertexBuffer &vb, int NumberVertex, int format, int dynamic)
 {
     size_t size = GetSizeFromFormat(format);
 	xassert(NumberVertex>=0 || NumberVertex<=65536);
-	vb.ptr=LibVB.NewSlot();
-
-	sSlotVB& s=*vb.ptr;
-	s.VertexSize=size;
-	s.fmt=format;
-	s.dynamic = dynamic;
-	s.NumberVertex=NumberVertex;
-	s.buf=NULL;
+    
+	vb.VertexSize = size;
+	vb.fmt = format;
+	vb.dynamic = dynamic;
+	vb.NumberVertex = NumberVertex;
+	vb.buf = nullptr;
+    LibVB.emplace_back(&vb);
     
     uint32_t fvf = GetD3DFVFFromFormat(format);
 	if (dynamic) {
         RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex * size, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
-                                               fvf, D3DPOOL_DEFAULT, &s.d3d, NULL))
+                                               fvf, D3DPOOL_DEFAULT, &vb.d3d, NULL))
     } else {
         RDCALL(lpD3DDevice->CreateVertexBuffer(NumberVertex * size, D3DUSAGE_WRITEONLY,
-                                               fvf, D3DPOOL_MANAGED, &s.d3d, NULL))
+                                               fvf, D3DPOOL_MANAGED, &vb.d3d, NULL))
     }
 }
 
-void cD3DRender::DeleteVertexBuffer(sPtrVertexBuffer &vb)
+void cD3DRender::DeleteVertexBuffer(VertexBuffer &vb)
 {
 	MTG();
-	if(!vb.IsInit()) return;
-	sSlotVB& s=*vb.ptr;
-	VISASSERT(s.init);
-    if (s.d3d) {
-        s.d3d->Release();
-        s.d3d = nullptr;
+    if (vb.d3d) {
+        vb.d3d->Release();
+        vb.d3d = nullptr;
     }
-	LibVB.DeleteSlot(vb.ptr);
-	vb.ptr=NULL;
+    std::remove(LibVB.begin(), LibVB.end(), &vb);
 }
 
 void cD3DRender::DeleteDynamicVertexBuffer()
 {
 	for(int i=0;i<LibVB.size();i++)
 	{
-		sSlotVB& s=*LibVB[i];
-		if(s.init && s.dynamic)
-		{
-            if (s.d3d) {
-                s.d3d->Release();
-                s.d3d = nullptr;
-            }
+        VertexBuffer* s = LibVB[i];
+		if (s && s->dynamic && s->d3d) {
+            s->d3d->Release();
+            s->d3d = nullptr;
 		}
 	}
 }
@@ -1414,59 +1401,55 @@ void cD3DRender::RestoreDynamicVertexBuffer()
 {
 	for(int i=0;i<LibVB.size();i++)
 	{
-		sSlotVB& s=*LibVB[i];
-		if(s.init && s.dynamic)
-		{
-			VISASSERT(s.d3d==NULL);
-			RDCALL(lpD3DDevice->CreateVertexBuffer(s.NumberVertex*s.VertexSize,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY, s.fmt, D3DPOOL_DEFAULT,&s.d3d, NULL))
+		VertexBuffer* s = LibVB[i];
+		if (s && s->dynamic && s->NumberVertex) {
+            if (s->d3d) {
+                s->d3d->Release();
+                s->d3d = nullptr;
+            }
+			RDCALL(lpD3DDevice->CreateVertexBuffer(s->NumberVertex*s->VertexSize,D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY, s->fmt, D3DPOOL_DEFAULT,&s->d3d, NULL))
 		}
 	}
 }
 
-void* cD3DRender::LockVertexBuffer(sPtrVertexBuffer &vb)
+void* cD3DRender::LockVertexBuffer(VertexBuffer &vb)
 {
 	void *p=0;
-	VISASSERT( vb.IsInit() && vb.ptr->d3d );
-	RDCALL(vb.ptr->d3d->Lock(0,0,&p, vb.ptr->dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
+	VISASSERT( vb.d3d );
+	RDCALL(vb.d3d->Lock(0,0,&p, vb.dynamic ? D3DLOCK_NOSYSLOCK|D3DLOCK_DISCARD : 0 ));
 	return p;
 }
-void cD3DRender::UnlockVertexBuffer(sPtrVertexBuffer &vb)
+void cD3DRender::UnlockVertexBuffer(VertexBuffer &vb)
 {
-	VISASSERT( vb.IsInit() && vb.ptr->d3d );
-	RDCALL(vb.ptr->d3d->Unlock());
+	VISASSERT( vb.d3d );
+	RDCALL(vb.d3d->Unlock());
 }
-void cD3DRender::CreateIndexBuffer(sPtrIndexBuffer& ib,int NPolygons,int size)
+void cD3DRender::CreateIndexBuffer(IndexBuffer& ib, int NumberPolygons)
 {
 	DeleteIndexBuffer(ib);
-
-	sSlotIB* slot=LibIB.NewSlot();
-    slot->NumberIndices = NPolygons * size;
-	RDCALL(lpD3DDevice->CreateIndexBuffer(NPolygons*size, D3DUSAGE_WRITEONLY, PERIMETER_D3D_INDEX_FMT, D3DPOOL_MANAGED,&slot->d3d, NULL));
-	ib.ptr=slot;
+    ib.NumberPolygons = NumberPolygons;
+    ib.NumberIndices = ib.NumberPolygons * sPolygon::PN;
+    ib.buf = nullptr;
+	RDCALL(lpD3DDevice->CreateIndexBuffer(ib.NumberIndices * sizeof(indices_t), D3DUSAGE_WRITEONLY, PERIMETER_D3D_INDEX_FMT, D3DPOOL_MANAGED,&ib.d3d, NULL));
 }
-void cD3DRender::DeleteIndexBuffer(sPtrIndexBuffer &ib)
+void cD3DRender::DeleteIndexBuffer(IndexBuffer &ib)
 {
-	if(!ib.IsInit()) return;
-	sSlotIB& s=*ib.ptr;
-	VISASSERT(s.init);
-    if (s.d3d) {
-        s.d3d->Release();
-        s.d3d = nullptr;
+    if (ib.d3d) {
+        ib.d3d->Release();
+        ib.d3d = nullptr;
     }
-	LibIB.DeleteSlot(ib.ptr);
-	ib.ptr=nullptr;
 }
-sPolygon* cD3DRender::LockIndexBuffer(sPtrIndexBuffer &ib)
+sPolygon* cD3DRender::LockIndexBuffer(IndexBuffer &ib)
 {
 	void *p=0;
-	VISASSERT( ib.IsInit() && ib.ptr->d3d );
-    ib.ptr->d3d->Lock(0,0,&p,0);
+	VISASSERT( ib.d3d );
+    ib.d3d->Lock(0,0,&p,0);
 	return (sPolygon*)p;
 }
-void cD3DRender::UnlockIndexBuffer(sPtrIndexBuffer &ib)
+void cD3DRender::UnlockIndexBuffer(IndexBuffer &ib)
 {
-	VISASSERT( ib.IsInit() && ib.ptr->d3d );
-    ib.ptr->d3d->Unlock();
+	VISASSERT( ib.d3d );
+    ib.d3d->Unlock();
 }
 
 void cD3DRender::SetGlobalFog(const sColor4f &color,const Vect2f &v)
@@ -1520,6 +1503,7 @@ int cD3DRender::KillFocus()
 
 bool cD3DRender::SetFocus(bool wait,bool focus_error)
 {
+    fprintf(stdout, "cD3DRender::SetFocus\n");
 	{
 		HRESULT hres=D3D_OK;
 		int imax=wait?10:1;
@@ -1715,10 +1699,10 @@ uint8_t* cVertexBufferInternal::Lock(int minvertex)
 	MTG();
 	void* min_index=NULL;
 
-	LPDIRECT3DVERTEXBUFFER9 pvb=gb_RenderDevice3D->GetVB(vb);
+    IDirect3DVertexBuffer9* pvb=gb_RenderDevice3D->GetVB(vb);
 	if(GetSize()>minvertex)
 	{
-        short size = vb.ptr->VertexSize;
+        short size = vb.VertexSize;
 		RDCALL(pvb->Lock(cur_min_vertex*size,GetSize()*size,
 			&min_index,D3DLOCK_NOOVERWRITE));
 	}else
@@ -1817,7 +1801,7 @@ void* cQuadBufferInternal::Get()
 		BeginDraw();
 	}
 
-	uint8_t* cur= start_vertex + vertex_index * vb.ptr->VertexSize;
+	uint8_t* cur= start_vertex + vertex_index * vb.VertexSize;
 	vertex_index+=4;
 	return cur;
 }

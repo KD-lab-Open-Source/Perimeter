@@ -183,11 +183,11 @@ void cObjMesh::GetAllNormals(std::vector<Vect3f>& point)
 int cObjMesh::GetAllTriangle(std::vector<Vect3f>& point, std::vector<sPolygon>& polygon)
 {
 	if(!Tri)return 0;
-	if(point.size()!=Tri->vb->ptr->NumberVertex)
+	if(point.size()!=Tri->vb->NumberVertex)
 	{
 		return 0;
 	}
-	VISASSERT(point.size()==Tri->vb->ptr->NumberVertex);
+	VISASSERT(point.size()==Tri->vb->NumberVertex);
 
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(*Tri->vb);
 	int imin=Tri->OffsetVertex,

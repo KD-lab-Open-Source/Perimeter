@@ -98,18 +98,20 @@ void RDWriteLog(char *exp,int size)
 #endif
 }
 
-void sPtrVertexBuffer::Destroy()
+void VertexBuffer::Destroy()
 {
-    if(ptr)
+    if(buf) {
         gb_RenderDevice->DeleteVertexBuffer(*this);
-    ptr=NULL;
+    }
+    buf = nullptr;
 }
 
-sPtrIndexBuffer::~sPtrIndexBuffer()
+IndexBuffer::~IndexBuffer()
 {
-    if(ptr)
+    if(buf) {
         gb_RenderDevice->DeleteIndexBuffer(*this);
-    ptr=NULL;
+    }
+    buf = nullptr;
 }
 
 cInterfaceRenderDevice::cInterfaceRenderDevice() : cUnknownClass(KIND_UI_RENDERDEVICE) {
@@ -370,62 +372,48 @@ void BuildMipMap(int x,int y,int bpp,int bplSrc,void *pSrc,int bplDst,void *pDst
 
 // cEmptyRender impl
 
-void cEmptyRender::CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVertex,int fmt,int dynamic) {
+void cEmptyRender::CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic) {
     size_t size = GetSizeFromFormat(fmt);
-    vb.ptr=new sSlotVB();
 
-    sSlotVB& s = *vb.ptr;
-    s.init = true;
-    s.VertexSize=size;
-    s.fmt=fmt;
-    s.dynamic = dynamic;
-    s.NumberVertex=NumberVertex;
-    s.buf = malloc(NumberVertex * size);
+    vb.VertexSize=size;
+    vb.fmt=fmt;
+    vb.dynamic = dynamic;
+    vb.NumberVertex=NumberVertex;
+    vb.buf = malloc(NumberVertex * size);
 }
 
-void cEmptyRender::DeleteVertexBuffer(struct sPtrVertexBuffer &vb) {
-    if (vb.ptr) {
-        if (vb.ptr->buf) {
-            free(vb.ptr->buf);
-            vb.ptr->buf = nullptr;
-        }
-        delete vb.ptr;
-        vb.ptr = nullptr;
+void cEmptyRender::DeleteVertexBuffer(class VertexBuffer &vb) {
+    if (vb.buf) {
+        free(vb.buf);
+        vb.buf = nullptr;
     }
 }
 
-void* cEmptyRender::LockVertexBuffer(struct sPtrVertexBuffer &vb) {
-    return vb.ptr ? vb.ptr->buf : nullptr;
+void* cEmptyRender::LockVertexBuffer(class VertexBuffer &vb) {
+    return vb.buf;
 }
 
-void cEmptyRender::UnlockVertexBuffer(struct sPtrVertexBuffer &vb) {
+void cEmptyRender::UnlockVertexBuffer(class VertexBuffer &vb) {
 }
 
-void cEmptyRender::CreateIndexBuffer(struct sPtrIndexBuffer& ib,int NumberPolygon,int size) {
-    ib.ptr=new sSlotIB();
-
-    sSlotIB& s = *ib.ptr;
-    s.init = true;
-    s.NumberIndices = NumberPolygon * size;
-    s.buf = malloc(s.NumberIndices * sizeof(indices_t));
+void cEmptyRender::CreateIndexBuffer(class IndexBuffer& ib, int NumberPolygons) {
+    ib.NumberPolygons = NumberPolygons;
+    ib.NumberIndices = ib.NumberPolygons * sPolygon::PN;
+    ib.buf = malloc(ib.NumberIndices * sizeof(indices_t));
 }
 
-void cEmptyRender::DeleteIndexBuffer(struct sPtrIndexBuffer &ib) {
-    if (ib.ptr) {
-        if (ib.ptr->buf) {
-            free(ib.ptr->buf);
-            ib.ptr->buf = nullptr;
-        }
-        delete ib.ptr;
-        ib.ptr = nullptr;
+void cEmptyRender::DeleteIndexBuffer(class IndexBuffer &ib) {
+    if (ib.buf) {
+        free(ib.buf);
+        ib.buf = nullptr;
     }
 }
 
-sPolygon* cEmptyRender::LockIndexBuffer(struct sPtrIndexBuffer &ib) {
-    return ib.ptr ? static_cast<sPolygon*>(ib.ptr->buf) : nullptr;
+sPolygon* cEmptyRender::LockIndexBuffer(class IndexBuffer &ib) {
+    return static_cast<sPolygon*>(ib.buf);
 }
 
-void cEmptyRender::UnlockIndexBuffer(struct sPtrIndexBuffer &ib) {
+void cEmptyRender::UnlockIndexBuffer(class IndexBuffer &ib) {
 }
 
 cEmptyRender::~cEmptyRender() {

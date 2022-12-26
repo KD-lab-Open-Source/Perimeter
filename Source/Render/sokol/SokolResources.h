@@ -11,16 +11,14 @@
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt);
 
 struct SokolBuffer {
-    size_t elements;
     sg_buffer buffer = {};
     void* data = nullptr;
     size_t data_len = 0;
     bool dirty = true;
     bool locked = false;
 
-    explicit SokolBuffer(size_t elements, const sg_buffer_desc& desc);
-    SokolBuffer(const SokolBuffer&) = delete;
-    SokolBuffer& operator=(SokolBuffer const&) = delete;
+    explicit SokolBuffer(const sg_buffer_desc& desc);
+    NO_COPY_CONSTRUCTOR(SokolBuffer)
 
     ~SokolBuffer();
     
@@ -36,8 +34,7 @@ struct SokolTexture2D {
     bool locked = false;
 
     explicit SokolTexture2D(const sg_image_desc& desc);
-    SokolTexture2D(const SokolTexture2D&) = delete;
-    SokolTexture2D& operator=(SokolTexture2D const&) = delete;
+    NO_COPY_CONSTRUCTOR(SokolTexture2D)
 
     ~SokolTexture2D();
 

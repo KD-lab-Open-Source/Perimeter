@@ -86,16 +86,16 @@ public:
     bool IsEnableSelfShadow() override { return false; }
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override {}
-    void DrawIndexedPrimitive(struct sPtrVertexBuffer &vb,int OfsVertex,int nVertex,const struct sPtrIndexBuffer& ib,int nOfsPolygon,int nPolygon) override {}
+    void DrawIndexedPrimitive(class VertexBuffer &vb, int OfsVertex, int nVertex, const class IndexBuffer& ib, int nOfsPolygon, int nPolygon) override {}
 
-    void CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVertex,int fmt,int dynamic=0) override;
-    void DeleteVertexBuffer(struct sPtrVertexBuffer &vb) override;
-    void* LockVertexBuffer(struct sPtrVertexBuffer &vb) override;
-    void UnlockVertexBuffer(struct sPtrVertexBuffer &vb) override;
-    void CreateIndexBuffer(struct sPtrIndexBuffer& ib,int NumberPolygon,int size=sizeof(sPolygon)) override;
-    void DeleteIndexBuffer(struct sPtrIndexBuffer &ib) override;
-    sPolygon* LockIndexBuffer(struct sPtrIndexBuffer &ib) override;
-    void UnlockIndexBuffer(struct sPtrIndexBuffer &ib) override;
+    void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) override;
+    void DeleteVertexBuffer(class VertexBuffer &vb) override;
+    void* LockVertexBuffer(class VertexBuffer &vb) override;
+    void UnlockVertexBuffer(class VertexBuffer &vb) override;
+    void CreateIndexBuffer(class IndexBuffer& ib, int NumberPolygon) override;
+    void DeleteIndexBuffer(class IndexBuffer &ib) override;
+    sPolygon* LockIndexBuffer(class IndexBuffer &ib) override;
+    void UnlockIndexBuffer(class IndexBuffer &ib) override;
 };
 
 #endif //PERIMETER_EMPTYRENDERDEVICE_H

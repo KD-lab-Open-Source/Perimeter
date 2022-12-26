@@ -79,10 +79,10 @@ endif()
 set(RenderSokol_LINK_LIBS ${RenderSokol_LINK_LIBS} ${SDL2_LIBRARY})
 
 add_library(RenderSokol STATIC
+    sokol/SokolResources.cpp
     sokol/SokolRender.cpp
     sokol/SokolRenderTexture.cpp
     sokol/SokolRenderState.cpp
-    sokol/SokolResources.cpp
     sokol/SokolImpl.cpp
 )
 

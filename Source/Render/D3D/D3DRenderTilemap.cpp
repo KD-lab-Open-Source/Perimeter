@@ -163,7 +163,7 @@ class cTileMapRender
 	cTileMap *TileMap;
 	std::vector<sBumpTile*> bumpTiles;
 	std::vector<int> bumpDyingTiles;
-	LPDIRECT3DINDEXBUFFER9 tilemapIB;
+	IDirect3DIndexBuffer9* tilemapIB;
 	int index_offset[TILEMAP_LOD];
 	int index_size[TILEMAP_LOD];
 

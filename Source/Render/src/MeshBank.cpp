@@ -211,7 +211,7 @@ void cMeshStatic::EndBuildMesh(bool bump)
         gb_RenderDevice->UnlockVertexBuffer(vb);
     }
 
-	gb_RenderDevice->CreateIndexBuffer(ib,n_polygon);
+	gb_RenderDevice->CreateIndexBuffer(ib, n_polygon);
 	sPolygon *IndexPolygon=gb_RenderDevice->LockIndexBuffer(ib);
     if (IndexPolygon) {
         for (int i = 0; i < n_polygon; i++) {

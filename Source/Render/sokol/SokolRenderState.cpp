@@ -40,6 +40,11 @@ int cSokolRender::EndScene() {
 
     //Iterate each command
     for (const auto& command : commands) {
+        //Nothing to draw
+        if (!command.elements) {
+            continue;
+        }
+        
         //Get pipeline
         const SokolPipeline* pipeline = &pipelines[command.vertex_fmt];
         if (pipeline->vertex_fmt <= 0) {
@@ -96,12 +101,7 @@ int cSokolRender::EndScene() {
         sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, &vs_params_range);
 
         //Draw
-        if (command.index_buffer) {
-            sg_draw(0, static_cast<int>(command.index_buffer->elements), 1);
-        } else {
-            xassert(0);
-            sg_draw(0, static_cast<int>(command.vertex_buffer->elements), 1);
-        }
+        sg_draw(0, static_cast<int>(command.elements), 1);
     }
     commands.clear();
 

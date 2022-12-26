@@ -6,8 +6,8 @@ class FFDData
 {
 public:
 	int xsize,ysize;
-	sPtrIndexBuffer ib;
-	sPtrVertexBuffer vb;
+	IndexBuffer ib;
+	VertexBuffer vb;
 	int pagesize;//in vertex
 	int pagenumber;
 	int curpage;
@@ -114,7 +114,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 	float t=ffd->InterpolationFactor();
 	float t_=1-t;
 
-	LPDIRECT3DVERTEXBUFFER9 vb=pfd->vb.ptr->d3d;
+    IDirect3DVertexBuffer9* vb=pfd->vb.d3d;
 	SetStreamSource(pfd->vb);
 
 	uint32_t AlphaTest = GetRenderState(D3DRS_ALPHATESTENABLE);
@@ -154,7 +154,7 @@ void cD3DRender::Draw(FieldDispatcher *ffd, uint8_t transparent)
 			float phase = ffd->GetFrame()->GetPhase();
 			
 			sVertexXYZDT2* pv;
-			int bytepagesize = pfd->pagesize*pfd->vb.ptr->VertexSize;
+			int bytepagesize = pfd->pagesize*pfd->vb.VertexSize;
 			if(pfd->curpage<pfd->pagenumber){
 				RDCALL(vb->Lock(pfd->curpage*bytepagesize,bytepagesize,
 					(void**)&pv,D3DLOCK_NOOVERWRITE));

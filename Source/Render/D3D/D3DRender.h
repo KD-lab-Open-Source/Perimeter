@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SlotManager.h"
 #include "../shader/shaders.h"
 #include "DrawType.h"
 #include "VertexFormat.h"
@@ -114,14 +113,14 @@ public:
 	int Flush(bool wnd=false) override;
 	int SetGamma(float fGamma,float fStart=0.f,float fFinish=1.f) override;
 	
-	void CreateVertexBuffer(struct sPtrVertexBuffer &vb,int NumberVertex,int fmt,int dynamic=0) override;
-	void DeleteVertexBuffer(sPtrVertexBuffer &vb) override;
-	void* LockVertexBuffer(sPtrVertexBuffer &vb) override;
-	void UnlockVertexBuffer(sPtrVertexBuffer &vb) override;
-	void CreateIndexBuffer(sPtrIndexBuffer& ib,int NumberPolygon,int size=sizeof(sPolygon)) override;
-	void DeleteIndexBuffer(sPtrIndexBuffer &ib) override;
-	sPolygon* LockIndexBuffer(sPtrIndexBuffer &ib) override;
-	void UnlockIndexBuffer(sPtrIndexBuffer &ib) override;
+	void CreateVertexBuffer(class VertexBuffer &vb, int NumberVertex, int fmt, int dynamic=0) override;
+	void DeleteVertexBuffer(VertexBuffer &vb) override;
+	void* LockVertexBuffer(VertexBuffer &vb) override;
+	void UnlockVertexBuffer(VertexBuffer &vb) override;
+	void CreateIndexBuffer(IndexBuffer& ib, int NumberPolygon) override;
+	void DeleteIndexBuffer(IndexBuffer &ib) override;
+	sPolygon* LockIndexBuffer(IndexBuffer &ib) override;
+	void UnlockIndexBuffer(IndexBuffer &ib) override;
 	int CreateTexture(class cTexture *Texture,class cFileImage *FileImage,bool enable_assert=true) override;
 	int DeleteTexture(class cTexture *Texture) override;
 	void* LockTexture(class cTexture *Texture, int& Pitch) override;
@@ -172,7 +171,7 @@ public:
 	void DrawSprite2(int x,int y,int dx,int dy,float u,float v,float du,float dv,float u1,float v1,float du1,float dv1,
 		cTexture *Tex1,cTexture *Tex2,float lerp_factor,float alpha=1,float phase=0,eColorMode mode=COLOR_MOD,eBlendMode blend_mode=ALPHA_NONE) override;
 
-    void DrawIndexedPrimitive(sPtrVertexBuffer &vb,int OfsVertex,int nVertex,const sPtrIndexBuffer& ib,int nOfsPolygon,int nPolygon) override {
+    void DrawIndexedPrimitive(VertexBuffer &vb, int OfsVertex, int nVertex, const IndexBuffer& ib, int nOfsPolygon, int nPolygon) override {
         SetFVF(vb);
         SetIndices(ib);
         SetStreamSource(vb);
@@ -271,9 +270,9 @@ public:
 		}
 	}
 
-	inline void SetFVF(sPtrVertexBuffer& vb)
+	inline void SetFVF(VertexBuffer& vb)
 	{
-		SetFVF(vb.ptr->fmt);
+		SetFVF(vb.fmt);
 	}
 
 	FORCEINLINE void SetRenderState(D3DRENDERSTATETYPE State, unsigned int Value)
@@ -352,9 +351,9 @@ public:
 		RDCALL(lpD3DDevice->DrawPrimitiveUP(Type,Count,pVertex,Size));
 	}
 
-	FORCEINLINE LPDIRECT3DVERTEXBUFFER9 GetVB(const sPtrVertexBuffer& vb) { return vb.ptr->d3d;	}
+	FORCEINLINE IDirect3DVertexBuffer9* GetVB(const VertexBuffer& vb) { return vb.d3d;	}
 
-	inline void SetIndices(LPDIRECT3DINDEXBUFFER9 pIndexData)
+	inline void SetIndices(IDirect3DIndexBuffer9* pIndexData)
 	{
 		if(CurrentIndexBuffer!=pIndexData)
 		{
@@ -363,11 +362,11 @@ public:
 		}
 	}
 
-	inline void SetIndices(const sPtrIndexBuffer& ib) { SetIndices(ib.ptr->d3d); }
+	inline void SetIndices(const IndexBuffer& ib) { SetIndices(ib.d3d); }
     
-	inline void SetStreamSource(const sPtrVertexBuffer& vb)
+	inline void SetStreamSource(const VertexBuffer& vb)
 	{
-		RDCALL(lpD3DDevice->SetStreamSource(0,vb.ptr->d3d,0,vb.ptr->VertexSize));
+		RDCALL(lpD3DDevice->SetStreamSource(0,vb.d3d,0,vb.VertexSize));
 	}
 
 	virtual void DrawNoMaterial(cObjMesh *Mesh,sDataRenderMaterial *Data);
@@ -377,7 +376,7 @@ public:
 	void SetRenderTarget(cTexture* target,LPDIRECT3DSURFACE9 pZBuffer);
 	void RestoreRenderTarget();
 
-	sPtrIndexBuffer& GetStandartIB(){return standart_ib;}
+	IndexBuffer& GetStandartIB(){return standart_ib;}
 
 	LPDIRECT3DTEXTURE9 CreateTextureFromMemory(void* pSrcData, uint32_t SrcData)
 	{
@@ -399,15 +398,14 @@ protected:
 	void FlushLine3D();
 	void FlushPoint3D();
 
-    LPDIRECT3DINDEXBUFFER9		CurrentIndexBuffer;
+    IDirect3DIndexBuffer9*		CurrentIndexBuffer;
 	IDirect3DVertexShader9* 	CurrentVertexShader;	// vertex shader
 	IDirect3DPixelShader9*		CurrentPixelShader;
 	uint32_t						CurrentFVF;
 	int							CurrentCullMode;
 	int							CurrentBumpMap,CurrentMod4; // поддерживаемые тип текстурных операций
 
-	cSlotManagerInit<sSlotVB>	LibVB;
-	cSlotManagerInit<sSlotIB>	LibIB;
+	std::vector<VertexBuffer*>	LibVB;
 	
 	uint32_t				ArrayRenderState[RENDERSTATE_MAX];
 	uint32_t				ArrayTextureStageState[TEXTURE_MAX][TEXTURESTATE_MAX];
@@ -446,7 +444,7 @@ protected:
 
 	cVertexBuffer<sVertexXYZ>	 BufferXYZOcclusion;
 
-	sPtrIndexBuffer standart_ib;
+	IndexBuffer standart_ib;
 
 	std::vector<cOcclusionQuery*> occlusion_query;
 
