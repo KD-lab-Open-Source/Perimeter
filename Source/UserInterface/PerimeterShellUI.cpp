@@ -2968,12 +2968,12 @@ void CMapWindow::drawBitmap(sColor4c* bitmap) {
 		sColor4c* line = bitmap;
 		int x1 = 0;
 		sColor4c clr1;
-		clr1.RGBA() = 0;
+        clr1.v = 0;
 
 		for (int xMap = 0; xMap < w; xMap++, line++) {
 			sColor4c nclr = *line;
-			if (nclr.RGBA() != clr1.RGBA()) {
-				if (clr1.RGBA()) {
+			if (nclr.v != clr1.v) {
+				if (clr1.v) {
 					terRenderDevice->DrawLine(x + x1, y + yMap, x + xMap, y + yMap, clr1);
 				}
 				clr1 = nclr;

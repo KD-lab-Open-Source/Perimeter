@@ -355,11 +355,11 @@ void terBuildingInstaller::UpdateInfo(cCamera *DrawNode)
 		{
 			if((*p) & 1){
 				if((*p) & 2)
-					*c = cgood.RGBA();
+					*c = cgood.ARGB();
 				else
-					*c = cbad.RGBA();
+					*c = cbad.ARGB();
 			}else
-				*c = cempty.RGBA();
+				*c = cempty.ARGB();
 			p++;
 			c++;
 		}

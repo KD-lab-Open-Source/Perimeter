@@ -1252,7 +1252,7 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 		SetTextureStageState(0,D3DTSS_COLOROP,D3DTOP_MODULATECOLOR_ADDALPHA);
 		SetTextureStageState(0,D3DTSS_COLORARG1,D3DTA_TFACTOR);
 		SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TEXTURE);
-		SetRenderState(D3DRS_TEXTUREFACTOR,lerp.RGBA());
+		SetRenderState(D3DRS_TEXTUREFACTOR, lerp.ARGB());
 
 		SetTextureStageState(1,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
 		SetTextureStageState(1,D3DTSS_ALPHAARG1,D3DTA_TEXTURE);

@@ -268,8 +268,7 @@ void cD3DRender::ChangeTextColor(const char* &str,sColor4c& diffuse)
 			s=(s<<4)+a;
 		}
 
-		diffuse.RGBA()&=0xFF000000;
-		diffuse.RGBA()|=s;
+        diffuse.ARGB((diffuse.a<<24)|s);
 		str+=i;
 	}
 }
@@ -451,7 +450,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 		SetTextureStageState(0,D3DTSS_COLOROP,D3DTOP_MODULATECOLOR_ADDALPHA);
 		SetTextureStageState(0,D3DTSS_COLORARG1,D3DTA_TFACTOR);
 		SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TEXTURE);
-		SetRenderState(D3DRS_TEXTUREFACTOR,lerp.RGBA());
+		SetRenderState(D3DRS_TEXTUREFACTOR, lerp.ARGB());
 
 		SetTextureStageState(1,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
 		SetTextureStageState(1,D3DTSS_ALPHAARG1,D3DTA_TEXTURE);

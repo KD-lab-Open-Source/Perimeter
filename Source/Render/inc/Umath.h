@@ -2,6 +2,7 @@
 #define __UMATH_H__
 
 #include "xmath.h"
+#include <SDL_endian.h>
 
 #define ABS(a)										((a) >= 0 ? (a) :-(a))
 
@@ -40,7 +41,12 @@ struct sColor4f
 
 struct sColor4c
 {
-	unsigned char b,g,r,a;
+    union {
+        struct {
+            uint8_t b, g, r, a;
+        };
+        uint32_t v;
+    };
 	
 	sColor4c()										{ }
 	sColor4c(const sColor4f& color)					{ set(color.GetR(),color.GetG(),color.GetB(),color.GetA()); }
@@ -58,9 +64,11 @@ struct sColor4c
 	inline sColor4c operator - (sColor4c &p)		{ return sColor4c(r-p.r,g-p.g,b-p.b,a-p.a); }
 	inline sColor4c operator * (int f) const 		{ return sColor4c(r*f,g*f,b*f,a*f); }
 	inline sColor4c operator / (int f) const 		{ if(f!=0) f=(1<<16)/f; else f=1<<16; return sColor4c((r*f)>>16,(g*f)>>16,(b*f)>>16,(a*f)>>16); }
-	inline uint32_t  RGBA() const 						{ return ((const uint32_t*)this)[0]; }
-	inline uint32_t& RGBA()							{ return ((uint32_t*)this)[0]; }
 	unsigned char& operator[](int i)				{ return ((unsigned char*)this)[i];}
+    inline uint32_t ARGB() const                    { return SDL_SwapLE32(v); }
+    inline void ARGB(uint32_t argb)                 { v = SDL_SwapLE32(argb); }
+    inline uint32_t RGBA() const                    { return (SDL_SwapLE32(v) & 0xFFFFFF) << 8 | a; }
+    inline uint32_t ABGR() const                    { return (SDL_SwapBE32(v) & 0xFFFFFF00)  >> 8 | a << 24; }
 
 	inline void interpolate(const sColor4c &u,const sColor4c &v,float f) { r=xm::round(u.r+(v.r-u.r)*f); g=xm::round(u.g+(v.g-u.g)*f); b=xm::round(u.b+(v.b-u.b)*f); a=xm::round(u.a+(v.a-u.a)*f); }
 };

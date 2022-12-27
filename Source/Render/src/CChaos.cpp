@@ -334,7 +334,7 @@ void cChaos::CreateVB()
 				vout->pos.x=ix*deltax+xmin;
 				vout->pos.y=iy*deltay+ymin;
 				vout->pos.z=0;
-				vout->diffuse.RGBA()=0xFFFFFFFF;
+                vout->diffuse.v=0xFFFFFFFF;
 				vout->u1()=ix*du;
 				vout->v1()=iy*dv;
 				vout->u2()=ix*du*uvmul;
@@ -352,7 +352,7 @@ void cChaos::CreateVB()
 				vout->pos.x=ix*deltax+xmin;
 				vout->pos.y=iy*deltay+ymin;
 				vout->pos.z=0;
-				vout->diffuse.RGBA()=0xFFFFFFFF;
+                vout->diffuse.v=0xFFFFFFFF;
 				vout->u1()=ix*du*uvmul;
 				vout->v1()=iy*dv*uvmul;
 				vout->u2()=ix*du*uvmul;
