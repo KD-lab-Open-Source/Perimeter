@@ -202,7 +202,7 @@ bool VideoPlayer::Init(const char* path) {
     wrapper->setupVideoScaler(
         wrapper->getVideoWidth(),
         wrapper->getVideoHeight(),
-        AVPixelFormat::AV_PIX_FMT_BGRA,
+        gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9 ? AVPixelFormat::AV_PIX_FMT_BGRA : AVPixelFormat::AV_PIX_FMT_RGBA,
         SWS_BILINEAR
     );
     

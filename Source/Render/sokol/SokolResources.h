@@ -22,7 +22,7 @@ struct SokolBuffer {
 
     ~SokolBuffer();
     
-    void update();
+    void update(size_t len);
 };
 
 struct SokolTexture2D {

@@ -23,11 +23,15 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             delete img;
             img = nullptr;
         }
+        std::string label = Texture->GetName() + std::to_string(i); 
         sg_image_desc desc = {};
+        desc.label = label.c_str();
         desc.width = dx;
         desc.height = dy;
+        desc.wrap_u = desc.wrap_v = SG_WRAP_CLAMP_TO_BORDER; //SG_WRAP_MIRRORED_REPEAT;
         desc.pixel_format = SG_PIXELFORMAT_RGBA8;
         desc.num_mipmaps = Texture->GetNumberMipMap();
+        desc.min_filter = desc.mag_filter = desc.num_mipmaps ? SG_FILTER_NEAREST : SG_FILTER_NEAREST_MIPMAP_LINEAR;
 
         if (!FileImage) {
             desc.usage = SG_USAGE_DYNAMIC;
@@ -54,6 +58,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
                     uint8_t alpha = buf[n];
                     if (alpha != 255 && alpha != 0) {
                         finished_early = true;
+                        break;
                     }
                 }
 
@@ -78,7 +83,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
 
             //Load mipmaps    
             if (1 < desc.num_mipmaps) {
-                for (int nMipMap = 1; nMipMap < Texture->GetNumberMipMap(); nMipMap++) {
+                for (int nMipMap = 1; nMipMap < desc.num_mipmaps; nMipMap++) {
                     int mmw = dx >> nMipMap;
                     int mmh = dy >> nMipMap;
                     size_t bufNextLen = mmw * mmh * 4;

@@ -16,36 +16,55 @@ struct SokolPipeline {
 };
 
 struct SokolCommand {
+    SokolCommand() = default;
+    ~SokolCommand();
+    void Clear();
+    NO_COPY_CONSTRUCTOR(SokolCommand)
+    
     uint32_t vertex_fmt = 0;
-    size_t elements = 0;
+    size_t vertex_size = 0;
+    size_t vertices = 0;
+    size_t indices = 0;
     struct SokolTexture2D* textures[PERIMETER_SOKOL_TEXTURES];
     bool owned_buffers = false;
     struct SokolBuffer* vertex_buffer = nullptr;
     struct SokolBuffer* index_buffer = nullptr;
+    bool owned_mvp;
+    Mat4f* mvp;
 };
 
 //TODO once implemented all use inherit from cInterfaceRenderDevice
 class cSokolRender: public cEmptyRender {
-private:    
+private:
+    //SDL context
     SDL_Window* sdlWindow = nullptr;
     SDL_GLContext sdlGlContext = nullptr;
     
+    //State
     bool ActiveScene = false;
-    
     sColor4f fill_color;
-    std::vector<SokolCommand> commands;
-    std::vector<SokolPipeline> pipelines;
+    std::vector<SokolCommand*> commands;
+    Vect2i viewportPos;
+    Vect2i viewportSize;
+    Mat4f orthoMat;
+
+    //Pipeline
+    std::vector<SokolPipeline*> pipelines;
+    void register_pipeline(uint32_t vertex_fmt, shader_funcs* shader_funcs);
     
     //Active command
-    struct SokolTexture2D* textures[PERIMETER_SOKOL_TEXTURES];
+    SokolCommand activeCommand;
     VertexBuffer vertexBuffer;
     IndexBuffer indexBuffer;
-    size_t vertexesCount = 0;
-    size_t polygonsCount = 0;
 
     //Commands handling
-    void FinishActiveCommand();
-    void SetupVertexBuffer(size_t& NumberVertex, size_t& NumberPolygons, uint32_t vertex_fmt);
+    void ClearCommands();
+    void FinishCommand();
+    void PrepareBuffers(size_t NumberVertex, size_t NumberIndices, uint32_t vertex_fmt);
+    void SetupMatrix(Mat4f* mat, bool command_owned);
+
+    //Updates internal state after init/resolution change
+    int UpdateRenderMode();
     
 public:
     cSokolRender();
@@ -60,12 +79,12 @@ public:
     int Init(int xScr,int yScr,int mode,void *hWnd=0,int RefreshRateInHz=0) override;
     bool ChangeSize(int xScr,int yScr,int mode) override;
 
-    /*
     int GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) override;
     int SetClipRect(int xmin,int ymin,int xmax,int ymax) override;
-     */
     
     int Done() override;
+
+    void SetDrawNode(cCamera *pDrawNode) override;
 
     int BeginScene() override;
     int EndScene() override;
@@ -111,9 +130,11 @@ public:
 
     void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
     void DrawPixel(int x1,int y1,sColor4c color) override;
+    */
     void DrawRectangle(int x,int y,int dx,int dy,sColor4c color,bool outline=false) override;
     void FlushPrimitive2D() override;
 
+    /*
     void ChangeTextColor(const char* &str,sColor4c& diffuse) override;
 
     void OutText(int x,int y,const char *string,const sColor4f& color,int align=-1,eBlendMode blend_mode=ALPHA_BLEND) override;
@@ -142,8 +163,8 @@ public:
 
     void SetNoMaterial(eBlendMode blend,float Phase=0,cTexture *Texture0=0,cTexture *Texture1=0,eColorMode color_mode=COLOR_MOD) override;
 
-    /*
     void SetDrawTransform(class cCamera *DrawNode) override;
+    /*
     void DrawLine(const Vect3f &v1,const Vect3f &v2,sColor4c color) override;
     void DrawPoint(const Vect3f &v1,sColor4c color) override;
 

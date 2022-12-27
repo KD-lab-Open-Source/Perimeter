@@ -12,8 +12,9 @@
 #include "VertexFormat.h"
 #include "Texture.h"
 
-const int PERIMETER_SOKOL_VERTEXES_COUNT = 10240;
-const int PERIMETER_SOKOL_POLYGON_COUNT = 20480;
+const int PERIMETER_SOKOL_POLYGON_COUNT = 10240;
+const int PERIMETER_SOKOL_VERTEXES_COUNT = PERIMETER_SOKOL_POLYGON_COUNT * 4;
+static_assert(PERIMETER_SOKOL_VERTEXES_COUNT <= std::numeric_limits<indices_t>::max());
 
 int cSokolRender::BeginScene() {
     if (ActiveScene) {
@@ -31,8 +32,8 @@ int cSokolRender::EndScene() {
         return 1;
     }
     ActiveScene = false;
-    
-    FinishActiveCommand();
+
+    FinishCommand();
 
     //Begin pass
     sg_pass_action pass_action = {};
@@ -45,33 +46,35 @@ int cSokolRender::EndScene() {
     };
     sg_begin_default_pass(&pass_action, ScreenSize.x, ScreenSize.y);
     
-    std::vector<SokolBuffer*> owned_buffers;
+    sg_apply_viewport(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
+    sg_apply_scissor_rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y, true);
 
     //Iterate each command
-    for (const auto& command : commands) {
-        if (command.owned_buffers) {
-            if (command.vertex_buffer) owned_buffers.emplace_back(command.vertex_buffer);
-            if (command.index_buffer) owned_buffers.emplace_back(command.index_buffer);
-        }
-        
+    for (const auto& command : commands) {        
         //Nothing to draw
-        if (!command.elements) {
+        if (!command->vertices) {
             continue;
         }
         
         //Get pipeline
-        const SokolPipeline* pipeline = &pipelines[command.vertex_fmt];
-        if (pipeline->vertex_fmt <= 0) {
+        const SokolPipeline* pipeline = pipelines[command->vertex_fmt];
+        if (pipeline == nullptr) {
             //Not implemented vertex format
+            xxassert(0, "cSokolRender::EndScene missing pipeline for format " + std::to_string(command->vertex_fmt));
             continue;
         }
         shader_funcs* shader = pipeline->shader_funcs;
 
-        //Calculate camera stuff
+        //Camera/projection
         vs_params_t vs_params;
-        //hmm_mat4 proj = HMM_Orthographic(0, state->canvas.X, state->canvas.Y, 0, 10, -10);
-        //hmm_mat4 view = HMM_Translate(state->camera);
-        //vs_params.mvp = HMM_MultiplyMat4(proj, view);
+        if (command->mvp) {
+            vs_params.un_mvp = *command->mvp;
+        } else if (DrawNode) {
+            vs_params.un_mvp = DrawNode->matViewProj;
+        } else {
+            xxassert(0, "cSokolRender::EndScene missing mvp");
+            continue;
+        }
 
         //Apply pipeline
         sg_apply_pipeline(pipeline->pipeline);
@@ -80,32 +83,39 @@ int cSokolRender::EndScene() {
         sg_bindings bindings = {};
         
         //Bind vertex and index buffer, ensure they are updated
-        if (!command.vertex_buffer) {
-            xassert(0);
+        if (!command->vertex_buffer) {
+            xxassert(0, "cSokolRender::EndScene missing vertex_buffer");
             continue;
         }
-        command.vertex_buffer->update();
-        bindings.vertex_buffers[0] = command.vertex_buffer->buffer;
-        if (command.index_buffer) {
-            command.index_buffer->update();
-            bindings.index_buffer = command.index_buffer->buffer;
+        if (!command->index_buffer) {
+            xxassert(0, "cSokolRender::EndScene missing index_buffer");
+            continue;
         }
+        command->vertex_buffer->update(command->vertices * command->vertex_size);
+        bindings.vertex_buffers[0] = command->vertex_buffer->buffer;
+        command->index_buffer->update(command->indices * sizeof(indices_t));
+        bindings.index_buffer = command->index_buffer->buffer;
         
         //Bind images for samplers
         if (pipeline->vertex_fmt & VERTEX_FMT_TEX1) {
-            SokolTexture2D* tex = command.textures[0];
-            xassert(tex);
+            SokolTexture2D* tex = command->textures[0];
             if (tex) {
+                if (tex->data) tex->update();
                 int slot = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
                 bindings.fs_images[slot] = tex->image;
+            } else {
+                xxassert(0, "cSokolRender::EndScene missing texture0");                
             }
         }
         if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
-            SokolTexture2D* tex = command.textures[1];
+            SokolTexture2D* tex = command->textures[1];
             xassert(tex);
             if (tex) {
+                if (tex->data) tex->update();
                 int slot = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex1");
                 bindings.fs_images[slot] = tex->image;
+            } else {
+                xxassert(0, "cSokolRender::EndScene missing texture1");
             }
         }
         sg_apply_bindings(&bindings);
@@ -116,17 +126,13 @@ int cSokolRender::EndScene() {
         sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, &vs_params_range);
 
         //Draw
-        sg_draw(0, static_cast<int>(command.elements), 1);
+        sg_draw(0, static_cast<int>(command->indices), 1);
     }
 
     //End pass
     sg_end_pass();
-    
-    for (auto buf : owned_buffers) {
-        delete buf;
-    }
-    
-    commands.clear();
+
+    ClearCommands();
 
     return 1;
 }
@@ -158,68 +164,163 @@ int cSokolRender::Flush(bool wnd) {
     return 0;
 }
 
-void cSokolRender::FinishActiveCommand() {
-    if (polygonsCount) {
-        commands.emplace_back();
-        SokolCommand& cmd = commands.back();
-        cmd.vertex_fmt = vertexBuffer.fmt;
-        cmd.elements = polygonsCount * 3;
-        memcpy(cmd.textures, textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
-        //Transfer buffers to command
-        cmd.owned_buffers = true;
-        cmd.vertex_buffer = vertexBuffer.sg;
-        cmd.index_buffer = indexBuffer.sg;
-        vertexBuffer.sg = nullptr;
-        indexBuffer.sg = nullptr;
-    }
-    
-    vertexesCount = 0;
-    polygonsCount = 0;
-}
-
-void cSokolRender::SetupVertexBuffer(size_t& NumberVertex, size_t& NumberPolygons, uint32_t vertex_fmt) {
-    if (vertexBuffer.sg
-    && vertexBuffer.fmt == vertex_fmt
-    && NumberVertex + vertexesCount < vertexBuffer.NumberVertex
-    && NumberPolygons + polygonsCount < indexBuffer.NumberPolygons) {
-        //We can use current buffers
-
-        int nv = NumberVertex;
-        int np = NumberPolygons;
-        NumberVertex = vertexesCount;
-        NumberPolygons = polygonsCount;
-        vertexesCount += nv;
-        polygonsCount += np;
+void cSokolRender::FinishCommand() {
+    if (!activeCommand.indices) {
         return;
     }
     
-    FinishActiveCommand();
-
-    vertexesCount = NumberVertex;
-    polygonsCount = NumberPolygons;
-    NumberVertex = NumberPolygons = 0;
+    //Create command to be send
+    SokolCommand* cmd = new SokolCommand();
+    cmd->vertices = activeCommand.vertices;
+    cmd->indices = activeCommand.indices;
+    cmd->vertex_fmt = vertexBuffer.fmt;
+    cmd->vertex_size = vertexBuffer.VertexSize;
+    memcpy(cmd->textures, activeCommand.textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
+    cmd->owned_mvp = activeCommand.owned_mvp;
+    cmd->mvp = activeCommand.mvp;
     
-    //Create buffers
-    DeleteVertexBuffer(vertexBuffer);
-    DeleteIndexBuffer(indexBuffer);
-    CreateVertexBuffer(vertexBuffer, PERIMETER_SOKOL_VERTEXES_COUNT, vertex_fmt, true);
+    //Transfer buffers to command
+    cmd->owned_buffers = true;
+    cmd->vertex_buffer = vertexBuffer.sg;
+    cmd->index_buffer = indexBuffer.sg;
+    vertexBuffer.sg = nullptr;
+    indexBuffer.sg = nullptr;
+    
+    //Submit command and recreate active command 
+    commands.emplace_back(cmd);
+    
+    activeCommand.Clear();
+    CreateVertexBuffer(vertexBuffer, PERIMETER_SOKOL_VERTEXES_COUNT, vertexBuffer.fmt, true);
     CreateIndexBuffer(indexBuffer, PERIMETER_SOKOL_POLYGON_COUNT);
+}
+
+void cSokolRender::PrepareBuffers(size_t NumberVertex, size_t NumberIndices, uint32_t vertex_fmt) {
+    if (indexBuffer.sg && vertexBuffer.sg
+    && vertexBuffer.fmt == vertex_fmt
+    && NumberVertex + activeCommand.vertices < vertexBuffer.NumberVertex
+    && NumberIndices + activeCommand.indices < indexBuffer.NumberIndices) {
+        //We can use current buffers
+        return;
+    }
+
+    FinishCommand();
+    
+    //Recreate buffers
+    if (!vertexBuffer.sg || vertexBuffer.fmt != vertex_fmt) {
+        DeleteVertexBuffer(vertexBuffer);
+        CreateVertexBuffer(vertexBuffer, PERIMETER_SOKOL_VERTEXES_COUNT, vertex_fmt, true);
+    }
+    if (!indexBuffer.sg) {
+        CreateIndexBuffer(indexBuffer, PERIMETER_SOKOL_POLYGON_COUNT);
+    }
+}
+
+void cSokolRender::SetupMatrix(Mat4f* mat, bool command_owned) {
+    if (activeCommand.mvp != mat) {
+        FinishCommand();
+    }
+
+    activeCommand.owned_mvp = command_owned;
+    activeCommand.mvp = mat; 
 }
 
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
                                  eColorMode color_mode) {
+    SokolTexture2D* tex0 = nullptr;
+    SokolTexture2D* tex1 = nullptr; 
     if (Texture0) {
         int nAllFrame = Texture0->GetNumberFrame();
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
-        textures[0] = Texture0->GetFrameImage(nFrame).sg;
-    } else {
-        textures[0] = nullptr;
+        tex0 = Texture0->GetFrameImage(nFrame).sg;
     }
     if (Texture1) {
         int nAllFrame = Texture1->GetNumberFrame();
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
-        textures[1] = Texture1->GetFrameImage(nFrame).sg;
-    } else {
-        textures[1] = nullptr;
+        tex1 = Texture1->GetFrameImage(nFrame).sg;
+    }
+    
+    if (tex0 != activeCommand.textures[0]
+     || tex1 != activeCommand.textures[1]) {
+        FinishCommand();
+        activeCommand.textures[0] = tex0;
+        activeCommand.textures[1] = tex1;
     }
 }
+
+
+void cSokolRender::SetDrawNode(cCamera *pDrawNode)
+{
+    if (DrawNode==pDrawNode) return;
+    cInterfaceRenderDevice::SetDrawNode(pDrawNode);
+    /* TODO
+    if (DrawNode->GetRenderTarget()) {
+        LPDIRECT3DSURFACE9 pZBuffer=DrawNode->GetZBuffer();
+        SetRenderTarget(DrawNode->GetRenderTarget(),pZBuffer);
+        uint32_t color=0;
+        if(pDrawNode->GetAttribute(ATTRCAMERA_SHADOW))
+        {
+            if(Option_ShadowType==SHADOW_MAP_SELF &&
+               (dtAdvance->GetID()==DT_RADEON8500 ||
+                dtAdvance->GetID()==DT_RADEON9700
+               ))
+            {
+                color=D3DCOLOR_RGBA(0,0,0,255);
+                kShadow=0.25f;
+            }else
+            if(CurrentMod4==D3DTOP_MODULATE4X)
+            {
+                color=D3DCOLOR_RGBA(63,63,63,255);
+                kShadow=0.25f;
+            }
+            else if(CurrentMod4==D3DTOP_MODULATE2X)
+            {
+                color=D3DCOLOR_RGBA(127,127,127,255);
+                kShadow=0.5f;
+            }else
+            {
+                color=D3DCOLOR_RGBA(255,255,255,255);
+                kShadow=1.f;
+            }
+        }else
+        {
+//			color=D3DCOLOR_RGBA(63,63,63,255);
+//			kShadow=0.25f;
+            color=D3DCOLOR_RGBA(255,255,255,255);
+            kShadow=1.3f;
+        }
+
+        if(!pDrawNode->GetAttribute(ATTRCAMERA_NOCLEARTARGET))
+        {
+            if(!pZBuffer)
+            {
+                RDCALL(lpD3DDevice->Clear(0,NULL,D3DCLEAR_TARGET,color,1,0));
+            }else
+            {
+                RDCALL(lpD3DDevice->Clear(0,NULL,D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color,
+                                          pDrawNode->GetAttribute(ATTRCAMERA_ZINVERT)?0:1, 0));
+            }
+        }
+    }
+    else
+    {
+        RestoreRenderTarget();
+    }
+    */
+
+    SetDrawTransform(pDrawNode);
+}
+
+void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
+{
+    viewportPos.x = pDrawNode->vp.X;
+    viewportPos.y = pDrawNode->vp.Y;
+    viewportSize.x = pDrawNode->vp.Width;
+    viewportSize.y = pDrawNode->vp.Height;
+    /* TODO check note about facing/culling in pipeline desc
+    if(pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION)==0)
+        SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);
+    else
+        SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CCW);
+    */  
+}
+

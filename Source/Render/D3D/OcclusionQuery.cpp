@@ -34,7 +34,7 @@ cOcclusionQuery::~cOcclusionQuery()
 bool cOcclusionQuery::Init()
 {
 	RELEASE(pQuery);
-	if(!Option_EnableOcclusion)
+	if(!gb_RenderDevice3D || !Option_EnableOcclusion)
 		return false;
 	HRESULT hr;
 	hr=gb_RenderDevice3D->lpD3DDevice->CreateQuery(D3DQUERYTYPE_OCCLUSION,&pQuery);

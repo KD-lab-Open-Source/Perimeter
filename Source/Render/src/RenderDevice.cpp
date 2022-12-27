@@ -100,7 +100,7 @@ void RDWriteLog(char *exp,int size)
 
 void VertexBuffer::Destroy()
 {
-    if(buf) {
+    if (buf && gb_RenderDevice) {
         gb_RenderDevice->DeleteVertexBuffer(*this);
     }
     buf = nullptr;
@@ -108,7 +108,7 @@ void VertexBuffer::Destroy()
 
 IndexBuffer::~IndexBuffer()
 {
-    if(buf) {
+    if (buf && gb_RenderDevice) {
         gb_RenderDevice->DeleteIndexBuffer(*this);
     }
     buf = nullptr;

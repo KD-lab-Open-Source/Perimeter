@@ -179,13 +179,16 @@ enum eBlendMode
 
 using indices_t = uint16_t;
 
-struct sPolygon
-{
+struct sPolygon {
     static const size_t PN = 3;
-    indices_t p1,p2,p3;
-    indices_t& operator[](size_t i) { return *(i+&p1); }
-    inline void set(indices_t i1,indices_t i2,indices_t i3){ p1=i1; p2=i2; p3=i3; }
+    indices_t p1, p2, p3;
+    inline void set(indices_t i1,indices_t i2,indices_t i3) { p1=i1; p2=i2; p3=i3; }
 };
+
+inline sPolygon* BufferSeekPolygon(sPolygon* p, size_t indices) {
+    indices_t* i = &reinterpret_cast<indices_t*>(p)[indices];
+    return reinterpret_cast<sPolygon*>(i);
+}
 
 class cFont;
 class cTexture;

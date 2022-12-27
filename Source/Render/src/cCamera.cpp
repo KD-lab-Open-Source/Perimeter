@@ -357,27 +357,67 @@ void cCamera::Update()
 	if(!GetAttribute(ATTRCAMERA_NOT_CALC_PROJ))
 	{
 		memset(&matProj,0,sizeof(matProj));
-		if(GetAttribute(ATTRCAMERA_PERSPECTIVE))
-		{
-			float zc=zPlane.y/(zPlane.y-zPlane.x);
-			matProj.xx=2*Focus.x*ScaleViewPort.x/(Clip.xmax()-Clip.xmin());
-			matProj.yy=2*Focus.y*ScaleViewPort.y/(Clip.ymax()-Clip.ymin());
-			matProj.zz=zc;
-			matProj.wz=-zc*zPlane.x;
+        matProj.xx = 2 * Focus.x * ScaleViewPort.x / (Clip.xmax() - Clip.xmin());
+        matProj.yy = 2 * Focus.y * ScaleViewPort.y / (Clip.ymax() - Clip.ymin());
+        float zn = zPlane.x;
+        float zf = zPlane.y;
+        if (GetAttribute(ATTRCAMERA_PERSPECTIVE)) {
+            float zc = zf / (zf - zn);
+            if (1||gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+                matProj.zz = zc;
+                matProj.wz = -zc * zn;
+                
+                matProj.zx = 0;
+                matProj.zy = 0;
+                matProj.zw = 1;
+            } else {
+                /*/
+                float Right = 0, Bottom = 0;
+                float Left = RenderSize.x, Top = RenderSize.y;
+                zn = 10.0f; zf = -10.0f;
+                matProj[0][0] = 2.0f / (Right - Left);
+                matProj[1][1] = 2.0f / (Top - Bottom);
+                matProj[2][2] = 2.0f / (zn - zf);
+                matProj[3][3] = 1.0f;
+                matProj[0][3] = (Left + Right) / (Left - Right);
+                matProj[1][3] = (Bottom + Top) / (Bottom - Top);
+                matProj[2][3] = (zf + zn) / (zn - zf);
+                //*/
+                
+                /*/
+                matProj.xx = 2.0 * zn / RenderSize.x;
+                matProj.yy = 2.0 * zn / RenderSize.y;
+                /*/
+                float co = 1.73205066;
+                matProj.xx = co / (RenderSize.x / RenderSize.y);
+                matProj.yy = co;
+                //*/
 
-			matProj.zx=0;
-			matProj.zy=0;
-			matProj.zw=1;
-		}else
-		{
-			matProj.xx=2*Focus.x*ScaleViewPort.x/(Clip.xmax()-Clip.xmin());
-			matProj.yy=2*Focus.y*ScaleViewPort.y/(Clip.ymax()-Clip.ymin());
-			matProj.zz=1/(zPlane.y-zPlane.x);
-			matProj.wz=zPlane.x/(zPlane.x-zPlane.y);
-			matProj.wx=0;
-			matProj.wy=0;
-			matProj.ww=1;
-		}
+                //*/
+                //matProj.zz = zc;
+                //matProj.wz = zn * zc;
+                //matProj.zw = 1;
+                /*/
+                matProj.wz = -1.0f;
+                matProj.zz = (zn + zf) / (zn - zf);
+                matProj.zw = (2.0f * zn * zf) / (zn - zf);
+                //*/
+                
+                matProj.zz = zc;
+                matProj.wz = -zc * zn;
+
+                matProj.zx = 0;
+                matProj.zy = 0;
+                matProj.zw = 1;
+            }
+        } else {
+            matProj.zz = 1 / (zf - zn);
+            matProj.wz = zn / (zn - zf);
+            
+            matProj.wx = 0;
+            matProj.wy = 0;
+            matProj.ww = 1;
+        }
 	}
 
 	vp.X = xm::round((GetCenterX() + Clip.xmin()) * RenderSize.x);
@@ -1052,13 +1092,13 @@ void cCamera::DrawShadowPlane()
 	sVertexXYZD* pv=buf->Lock();
 	int x1=vp.X,y1=vp.Y;
 	int x2=x1+vp.Width,y2=y1+vp.Height;
-	pv[0].x=x1; pv[0].y=y1; pv[0].z=0.001f; pv[0].w=0.001f; pv[0].diffuse=diffuse;
-	pv[2].x=x1; pv[2].y=y2; pv[1].z=0.001f; pv[1].w=0.001f; pv[1].diffuse=diffuse;
-	pv[1].x=x2; pv[1].y=y1; pv[2].z=0.001f; pv[2].w=0.001f; pv[2].diffuse=diffuse;
+	pv[0].x=x1; pv[0].y=y1; pv[0].z=0.001f; pv[0].diffuse=diffuse;
+	pv[2].x=x1; pv[2].y=y2; pv[1].z=0.001f; pv[1].diffuse=diffuse;
+	pv[1].x=x2; pv[1].y=y1; pv[2].z=0.001f; pv[2].diffuse=diffuse;
 
-	pv[3].x=x2; pv[3].y=y1; pv[3].z=0.001f; pv[3].w=0.001f; pv[3].diffuse=diffuse;
-	pv[5].x=x1; pv[5].y=y2; pv[4].z=0.001f; pv[4].w=0.001f; pv[4].diffuse=diffuse;
-	pv[4].x=x2; pv[4].y=y2; pv[5].z=0.001f; pv[5].w=0.001f; pv[5].diffuse=diffuse;
+	pv[3].x=x2; pv[3].y=y1; pv[3].z=0.001f; pv[3].diffuse=diffuse;
+	pv[5].x=x1; pv[5].y=y2; pv[4].z=0.001f; pv[4].diffuse=diffuse;
+	pv[4].x=x2; pv[4].y=y2; pv[5].z=0.001f; pv[5].diffuse=diffuse;
 	const int npoint=6;
 	buf->Unlock(npoint);
 	buf->DrawPrimitive(PT_TRIANGLELIST,npoint/3);

@@ -80,13 +80,16 @@ SokolBuffer::~SokolBuffer() {
     if (data) free(data);
 }
 
-void SokolBuffer::update() {
+void SokolBuffer::update(size_t len) {
     xassert(!locked);
-    if (dirty) {
-        dirty = false;
-        sg_range range = {data, data_len};
-        sg_update_buffer(buffer, &range);
-    }
+    if (!dirty) return;
+    dirty = false;
+    xassert(data);
+    if (!data) return;
+    
+    if (len == 0 || len > data_len) len = data_len;
+    sg_range range = {data, len};
+    sg_update_buffer(buffer, &range);
 }
 
 SokolTexture2D::SokolTexture2D(const sg_image_desc& desc) {
@@ -106,10 +109,12 @@ SokolTexture2D::~SokolTexture2D() {
 
 void SokolTexture2D::update() {
     xassert(!locked);
-    if (dirty) {
-        dirty = false;
-        sg_image_data imageData;
-        imageData.subimage[0][0] = {data, data_len};
-        sg_update_image(image, &imageData);
-    }
+    if (!dirty) return;
+    dirty = false;
+    xassert(data);
+    if (!data) return;
+    
+    sg_image_data imageData;
+    imageData.subimage[0][0] = {data, data_len};
+    sg_update_image(image, &imageData);
 }

@@ -24,11 +24,7 @@ void main() {
     gl_Position = un_mvp * vs_position;
     fs_normal = vs_normal;
     
-    #if defined(SOKOL_GLSL)
-    fs_uv0 = vec2(vs_texcoord0.x, 1.0f - vs_texcoord0.y);
-    #else //SOKOL_GLSL
     fs_uv0 = vs_texcoord0;
-    #endif //SOKOL_GLSL
 }
 @end
 

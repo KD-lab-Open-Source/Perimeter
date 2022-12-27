@@ -56,7 +56,7 @@ void bind_vertex_fmt(SokolPipelineContext& ctx, sg_pipeline_desc& desc, uint32_t
 
 }
 
-void register_pipeline(std::vector<SokolPipeline> pipelines, uint32_t vertex_fmt, shader_funcs* shader_funcs) {
+void cSokolRender::register_pipeline(uint32_t vertex_fmt, shader_funcs* shader_funcs) {
     SokolPipelineContext ctx = { vertex_fmt, shader_funcs };
     
     //Common part of pipeline desc
@@ -64,14 +64,20 @@ void register_pipeline(std::vector<SokolPipeline> pipelines, uint32_t vertex_fmt
     desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
     desc.depth.write_enabled = true;
     desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES,
-    desc.index_type = SG_INDEXTYPE_UINT32,
-    desc.cull_mode = SG_CULLMODE_BACK;
+    desc.index_type = sizeof(indices_t) == 2 ? SG_INDEXTYPE_UINT16 : SG_INDEXTYPE_UINT32,
+    //TODO pipeline with _BACK and put CW/CCW behind a pipeline flag to create both variants
+    desc.cull_mode = SG_CULLMODE_NONE;
+    desc.face_winding = SG_FACEWINDING_CW;
+    
+    auto& blend0 = desc.colors[0].blend;
+    blend0.enabled = true;
+    blend0.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
+    blend0.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+    blend0.src_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
+    blend0.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
     
     //Get shader desc and make shader
     const sg_shader_desc* shader_desc = ctx.shader_funcs->shader_desc(sg_query_backend());
-#ifdef PERIMETER_DEBUG
-    fprintf(stderr, "register_pipeline: '%s' shader\n", shader_desc->label);
-#endif
     desc.shader = sg_make_shader(shader_desc);
     desc.label = shader_desc->label;
     
@@ -106,25 +112,37 @@ void register_pipeline(std::vector<SokolPipeline> pipelines, uint32_t vertex_fmt
     bind_vertex_fmt(ctx, desc, VERTEX_FMT_DOT3);
     
     //Created, store on our pipelines
-    SokolPipeline pipeline = {
+    SokolPipeline* pipeline = new SokolPipeline {
             ctx.vertex_fmt,
             sg_make_pipeline(desc),
             ctx.shader_funcs
     };
-    if (pipeline.pipeline.id == SG_INVALID_ID) {
+    if (pipeline->pipeline.id == SG_INVALID_ID) {
         fprintf(stderr, "register_pipeline: invalid pipeline ID pipeline '%s'\n", desc.label);
         return;
     }
-    xassert(pipelines[ctx.vertex_fmt].vertex_fmt == 0);
-    pipelines[ctx.vertex_fmt] = pipeline;
+    if (pipeline->vertex_fmt == 0) {
+        fprintf(stderr, "register_pipeline: invalid pipeline vertex format '%s'\n", desc.label);
+        return;
+    }
+    if (pipelines[pipeline->vertex_fmt] != nullptr) {
+        fprintf(stderr, "register_pipeline: '%s' pipeline already registered at '%d'\n", desc.label, pipeline->vertex_fmt);
+        xassert(0);
+    }
+    pipelines[pipeline->vertex_fmt] = pipeline;
 #ifdef PERIMETER_DEBUG
-    fprintf(stderr, "register_pipeline: '%s' registered\n", desc.label);
+    printf("register_pipeline: '%s' registered at %d\n", desc.label, pipeline->vertex_fmt);
 #endif
 }
 
 cSokolRender::cSokolRender() = default;
 
-cSokolRender::~cSokolRender() = default;
+cSokolRender::~cSokolRender() {
+    ClearCommands();
+    for (auto pipeline : pipelines) {
+        delete pipeline;
+    }
+};
 
 int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
     int res = cInterfaceRenderDevice::Init(xScr, yScr, mode, wnd, RefreshRateInHz);
@@ -132,7 +150,10 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
         return res;
     }
 
-    commands.clear();
+    ClearCommands();
+    for (auto pipeline : pipelines) {
+        delete pipeline;
+    }
     pipelines.clear();
     pipelines.resize(VERTEX_FMT_MAX);
     
@@ -156,21 +177,22 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     //Init sokol gfx
     {
         sg_desc desc = {};
-        desc.buffer_pool_size = 1024 * 2; //1024 is enough for PGW+PET game
+        desc.buffer_pool_size = 2048 * 2; //2048 is enough for PGW+PET game
         desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
         desc.shader_pool_size = desc.pipeline_pool_size = 16,
+        desc.context.color_format = SG_PIXELFORMAT_RGBA8;
         sg_setup(&desc);
     }
 
     //Register a pipeline for each vertex format in game
-    register_pipeline(pipelines, sVertexXYZD::fmt,      &shader_color);
-    register_pipeline(pipelines, sVertexXYZDT1::fmt,    &shader_color_tex1);
-    register_pipeline(pipelines, sVertexXYZDT2::fmt,    &shader_color_tex2);
-    register_pipeline(pipelines, sVertexXYZT1::fmt,     &shader_tex1);
-    register_pipeline(pipelines, sVertexXYZNT1::fmt,    &shader_normal);
-    register_pipeline(pipelines, sVertexDot3::fmt,      &shader_normal_dot3);
-    
-    return false;
+    register_pipeline(sVertexXYZD::fmt,      &shader_color);
+    register_pipeline(sVertexXYZDT1::fmt,    &shader_color_tex1);
+    register_pipeline(sVertexXYZDT2::fmt,    &shader_color_tex2);
+    register_pipeline(sVertexXYZT1::fmt,     &shader_tex1);
+    register_pipeline(sVertexXYZNT1::fmt,    &shader_normal);
+    register_pipeline(sVertexDot3::fmt,      &shader_normal_dot3);
+
+    return UpdateRenderMode();
 }
 
 bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
@@ -184,8 +206,14 @@ bool cSokolRender::ChangeSize(int xScr, int yScr, int mode) {
     ScreenSize.y = yScr;
     RenderMode &= ~mode_mask;
     RenderMode |= mode;
-    //TODO
-    return true;
+    
+    return UpdateRenderMode() == 0;
+}
+
+int cSokolRender::UpdateRenderMode() {
+    orthoMat = Mat4f::ID;
+    SetOrthographic(orthoMat, ScreenSize.x, -ScreenSize.y, -10, 10);
+    return 0;
 }
 
 int cSokolRender::Done() {
@@ -227,7 +255,10 @@ void cSokolRender::DeleteVertexBuffer(VertexBuffer &vb) {
 }
 
 void* cSokolRender::LockVertexBuffer(VertexBuffer &vb) {
-    if (!vb.sg) return nullptr;
+    if (!vb.sg) {
+        xassert(0);
+        return nullptr;
+    }
     xassert(!vb.sg->locked);
     vb.sg->dirty = true;
     vb.sg->locked = true;
@@ -258,7 +289,10 @@ void cSokolRender::DeleteIndexBuffer(IndexBuffer &ib) {
 }
 
 sPolygon* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
-    if (!ib.sg) return nullptr;
+    if (!ib.sg) {
+        xassert(0);
+        return nullptr;
+    }
     xassert(!ib.sg->locked);
     ib.sg->dirty = true;
     ib.sg->locked = true;
@@ -268,4 +302,46 @@ sPolygon* cSokolRender::LockIndexBuffer(IndexBuffer &ib) {
 void cSokolRender::UnlockIndexBuffer(IndexBuffer &ib) {
     xassert(ib.sg->locked);
     ib.sg->locked = false;
+}
+
+void cSokolRender::ClearCommands() {
+    for (auto command : commands) {
+        delete command;
+    }
+    commands.clear();
+}
+
+int cSokolRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) {
+    *xmin=viewportPos.x; *xmax=viewportSize.x + viewportPos.x;
+    *ymin=viewportPos.y; *ymax=viewportSize.y + viewportPos.y;
+    return 0;
+}
+
+int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
+    viewportPos.x = xmin;
+    viewportPos.y = ymin;
+    viewportSize.x = xmax-xmin;
+    viewportSize.y = ymax-ymin;
+    return 0;
+}
+
+SokolCommand::~SokolCommand() {
+    Clear();
+}
+
+void SokolCommand::Clear() {
+    if (owned_buffers) {
+        delete vertex_buffer;
+        delete index_buffer;
+        owned_buffers = false;
+    }
+    vertex_buffer = nullptr;
+    index_buffer = nullptr;
+    if (owned_mvp) {
+        delete mvp;
+        owned_mvp = false;
+    }
+    mvp = nullptr;
+    vertices = 0;
+    indices = 0;
 }

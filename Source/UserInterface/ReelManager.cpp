@@ -4,6 +4,7 @@
 #include "AudioPlayer.h"
 #include "GameShell.h"
 #include "GameShellSq.h"
+#include "CameraManager.h"
 
 extern MusicPlayer gb_Music;
 //extern GameShell* gameShell;
@@ -79,6 +80,7 @@ void ReelManager::showModal(const char* videoFileName, const char* soundFileName
 			}
 	}
 
+    terRenderDevice->SetDrawNode(terCamera->GetCamera());
 	visible = true;
 	while (isVisible() && !player->IsEnd()) {
         app_event_poll();

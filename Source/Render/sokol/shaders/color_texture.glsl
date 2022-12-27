@@ -7,7 +7,7 @@ uniform vs_params {
 };
 
 //Vertex Buffer inputs
-in vec4 vs_position;
+in vec3 vs_position;
 #if defined(SHADER_COLOR)
 in vec4 vs_color;
 #endif
@@ -30,27 +30,17 @@ layout(location=2) out vec2 fs_uv1;
 #endif
 
 void main() {
-    gl_Position = un_mvp * vs_position;
+    gl_Position = un_mvp * vec4(vs_position, 1.0f);
 
     #if defined(SHADER_COLOR)
     fs_color = vs_color;
     #endif
-    
-    #if defined(SOKOL_GLSL)
-    #if defined(SHADER_TEX_1) || defined(SHADER_TEX_2)
-    fs_uv0 = vec2(vs_texcoord0.x, 1.0f - vs_texcoord0.y);
-    #endif
-    #if defined(SHADER_TEX_2)
-    fs_uv1 = vec2(vs_texcoord1.x, 1.0f - vs_texcoord1.y);
-    #endif
-    #else //SOKOL_GLSL
     #if defined(SHADER_TEX_1) || defined(SHADER_TEX_2)
     fs_uv0 = vs_texcoord0;
     #endif  
     #if defined(SHADER_TEX_2)
     fs_uv1 = vs_texcoord1;
     #endif
-    #endif //SOKOL_GLSL
 }
 @end
 
