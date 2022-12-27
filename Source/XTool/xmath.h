@@ -575,7 +575,7 @@ public:
 
   // constructors //////////////////////////////////////////////////////////////
 
-  xm_inline Vect3f() {}
+  xm_inline Vect3f() = default;
   xm_inline Vect3f(float x_, float y_, float z_) {x = x_; y = y_; z = z_;}
   xm_inline Vect3f(const Vect2f& v, float z_) { x = v.x; y = v.y; z = z_;}
 

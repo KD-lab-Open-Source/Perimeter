@@ -17,7 +17,10 @@
 
 struct sVertexXYZ
 {
-	Vect3f	pos;
+    union {
+        Vect3f pos;
+        struct { float x, y, z; };
+    };
 	const static int fmt = VERTEX_FMT_XYZ;;
 };
 
@@ -27,13 +30,16 @@ struct sVertexXYZT1: public sVertexXYZ
 	inline float& u1()					{ return uv[0]; }
 	inline float& v1()					{ return uv[1]; }
 	inline Vect2f& GetTexel()			{ return *((Vect2f*)&uv[0]); }
-	inline Vect2f& GetTexel1()			{ return *((Vect2f*)&uv[0]); }
 	const static int fmt = sVertexXYZ::fmt|VERTEX_FMT_TEX1;
 };
 
 struct sVertexXYZD : public sVertexXYZ
 {
     sColor4c	diffuse;
+    inline int& xi()					{ return *((int*)&x); }
+    inline int& yi()					{ return *((int*)&y); }
+    inline int& zi()					{ return *((int*)&z); }
+    Vect3f& GetPos()					{ return *(Vect3f*)&x; }
     const static int fmt = sVertexXYZ::fmt|VERTEX_FMT_DIFFUSE;
 };
 struct sVertexXYZDT1 : public sVertexXYZD
@@ -42,7 +48,6 @@ struct sVertexXYZDT1 : public sVertexXYZD
 	inline float& u1()					{ return uv[0]; }
 	inline float& v1()					{ return uv[1]; }
 	inline Vect2f& GetTexel()			{ return *((Vect2f*)&uv[0]); }
-	inline Vect2f& GetTexel1()			{ return *((Vect2f*)&uv[0]); }
 	const static int fmt = sVertexXYZD::fmt|VERTEX_FMT_TEX1;
 };
 struct sVertexXYZDT2 : public sVertexXYZDT1
