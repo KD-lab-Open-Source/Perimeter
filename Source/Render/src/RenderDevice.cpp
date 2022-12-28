@@ -199,7 +199,6 @@ size_t cInterfaceRenderDevice::GetSizeFromFormat(uint32_t fmt) const {
     size_t size=0;
     
     if (fmt&VERTEX_FMT_XYZ) size += sizeof(float) * 3;
-    if (fmt&VERTEX_FMT_W) size += sizeof(float);
     if (fmt&VERTEX_FMT_NORMAL) size += sizeof(float) * 3;
     if (fmt&VERTEX_FMT_DIFFUSE) size += sizeof(uint32_t);
     if (fmt&VERTEX_FMT_TEX1) size += sizeof(float) * 2;

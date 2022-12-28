@@ -11,7 +11,7 @@ void cSokolRender::DrawSprite(int x1, int y1, int dx, int dy, float u1, float v1
 
     size_t vertices = 4;
     size_t polygons = 2;
-    SetupVertexBuffer(vertices, polygons, sVertexXYZWDT1::fmt);
+    SetupVertexBuffer(vertices, polygons, sVertexXYZDT1::fmt);
     
     int x2=x1+dx,y2=y1+dy;
 
@@ -20,7 +20,7 @@ void cSokolRender::DrawSprite(int x1, int y1, int dx, int dy, float u1, float v1
         mode=ALPHA_BLEND;
     SetNoMaterial(mode,phase,Texture);
 
-    sVertexXYZWDT1* v = static_cast<sVertexXYZWDT1*>(LockVertexBuffer(vertexBuffer));
+    sVertexXYZDT1* v = static_cast<sVertexXYZDT1*>(LockVertexBuffer(vertexBuffer));
     v = &v[vertices];
     v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
     v[0].w=v[1].w=v[2].w=v[3].w=0.001f;

@@ -250,6 +250,8 @@ Vect3f HermitSplineDerivation2(float t,const Vect3f& p0,const Vect3f& p1,const V
 
 void CheckMatrix(const MatXf& m);
 
+void SetOrthographic(Mat4f& out, int width, int height, int near, int far);
+
 inline MatXf GetMatrix(const Vect3f& Pos,const Vect3f& Angle)
 {
 	return MatXf(

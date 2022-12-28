@@ -91,7 +91,7 @@ cCamera::~cCamera()
 	delete pTestGrid;
 }
 
-void TempDrawShadow(cCamera* p);
+//void TempDrawShadow(cCamera* p);
 
 void cCamera::DrawScene()
 {
@@ -269,8 +269,10 @@ void cCamera::DrawScene()
 
 	RenderDevice->FlushPrimitive3D();
 
+#if 0
 	if(Option_ShowRenderTextureDBG==3)
 		TempDrawShadow(this);
+#endif
 	
 	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
 
@@ -1046,8 +1048,8 @@ void cCamera::DrawShadowPlane()
 
     // Draw a big, gray square
 	sColor4c diffuse(0,0,0,0x7f);
-	cVertexBuffer<sVertexXYZWD>* buf=rd->GetBufferXYZWD();
-	sVertexXYZWD* pv=buf->Lock();
+	cVertexBuffer<sVertexXYZD>* buf=rd->GetBufferXYZD();
+	sVertexXYZD* pv=buf->Lock();
 	int x1=vp.X,y1=vp.Y;
 	int x2=x1+vp.Width,y2=y1+vp.Height;
 	pv[0].x=x1; pv[0].y=y1; pv[0].z=0.001f; pv[0].w=0.001f; pv[0].diffuse=diffuse;
@@ -1341,14 +1343,14 @@ void cCamera::DrawShadowDebug()
 
 				RenderDevice->SetNoMaterial(ALPHA_NONE,0);
 #ifdef PERIMETER_D3D9
+                gb_RenderDevice3D->UseOrthographic();
 				gb_VisGeneric->GetShaders()->pShowMap->Select();
 				gb_RenderDevice3D->SetTexture(0,gb_RenderDevice3D->dtAdvance->GetTZBuffer());
 
 				sColor4c ColorMul=sColor4c(255,255,255,255);
-				cVertexBuffer<sVertexXYZWDT1>& BufferXYZWDT1=*gb_RenderDevice3D->GetBufferXYZWDT1();
-				sVertexXYZWDT1* v=BufferXYZWDT1.Lock(4);
+				cVertexBuffer<sVertexXYZDT1>& BufferXYZDT1=*gb_RenderDevice3D->GetBufferXYZDT1();
+				sVertexXYZDT1* v=BufferXYZDT1.Lock(4);
 				v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-				v[0].w=v[1].w=v[2].w=v[3].w=0.001f;
 				v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
 				v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 				v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
@@ -1356,9 +1358,9 @@ void cCamera::DrawShadowDebug()
 				v[1].u1()=u1;    v[1].v1()=v1+dv;
 				v[2].u1()=u1+du; v[2].v1()=v1;
 				v[3].u1()=u1+du; v[3].v1()=v1+dv;
-				BufferXYZWDT1.Unlock(4);
+				BufferXYZDT1.Unlock(4);
 
-				BufferXYZWDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
+				BufferXYZDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
 #endif
 			}
 #ifdef PERIMETER_D3D9
@@ -1465,22 +1467,23 @@ void cCameraPlanarLight::DrawScene()
 #endif
 }
 
+#if 0 
+//TODO remove this?
 void TempDrawShadow(cCamera* camera)
 {
 	if(!camera->GetAttribute(ATTRCAMERA_SHADOWMAP))
 		return;
 
-#ifdef PERIMETER_D3D9
 	gb_RenderDevice3D->SetPixelShader(NULL);
 	gb_RenderDevice3D->SetVertexShader(NULL);
-	gb_RenderDevice3D->SetFVF(sVertexXYZWD::fmt);
+	gb_RenderDevice3D->SetFVF(sVertexXYZD::fmt);
 
 	gb_RenderDevice3D->SetRenderState(D3DRS_ZWRITEENABLE,FALSE);
 	gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC,D3DCMP_GREATER);
 
 	for(int c=255;c>=0;c-=4)
 	{
-		sVertexXYZWD Vertex[4];
+		sVertexXYZD Vertex[4];
 		float xOfs=0,yOfs=0;
 		const int size=camera->vp.Width;
 		Vertex[0].x=xOfs;     Vertex[0].y=yOfs;     
@@ -1497,5 +1500,5 @@ void TempDrawShadow(cCamera* camera)
 
 	gb_RenderDevice3D->SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
 	gb_RenderDevice3D->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL );
-#endif
 }
+#endif

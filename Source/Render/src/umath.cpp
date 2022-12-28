@@ -89,6 +89,16 @@ void CheckMatrix(const MatXf& Matrix)
     */
 }
 
+void SetOrthographic(Mat4f& out, int width, int height, int znear, int zfar) {
+    out.xx = 2.0f / static_cast<float>(width);
+    out.yy = 2.0f / static_cast<float>(height);
+    out.zz = 2.0f / static_cast<float>(znear - zfar);
+    out.ww = 1.0f;
+    out.wx =  width < 0 ? 1.0f : -1.0f;
+    out.wy = height < 0 ? 1.0f : -1.0f;
+    out.wz = static_cast<float>(zfar + znear) / static_cast<float>(znear - zfar);
+}
+
 void Vect3fNormalize(Vect3f* out, const Vect3f* pv) {
     float norm = pv->norm();
     if (norm == 0) {

@@ -30,11 +30,7 @@ void bind_vertex_fmt(SokolPipelineContext& ctx, sg_pipeline_desc& desc, uint32_t
     
     switch (fmt_flag) {
         case VERTEX_FMT_XYZ:
-            if (fmt & VERTEX_FMT_W) {
-                bind_attr_slot(ctx, desc, "vs_position", SG_VERTEXFORMAT_FLOAT4);
-            } else {
-                bind_attr_slot(ctx, desc, "vs_position", SG_VERTEXFORMAT_FLOAT3);
-            }
+            bind_attr_slot(ctx, desc, "vs_position", SG_VERTEXFORMAT_FLOAT3);
             break;
         case VERTEX_FMT_DIFFUSE:
             bind_attr_slot(ctx, desc, "vs_color", SG_VERTEXFORMAT_UBYTE4N);
@@ -171,9 +167,6 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     register_pipeline(pipelines, sVertexXYZDT1::fmt,    &shader_color_tex1);
     register_pipeline(pipelines, sVertexXYZDT2::fmt,    &shader_color_tex2);
     register_pipeline(pipelines, sVertexXYZT1::fmt,     &shader_tex1);
-    register_pipeline(pipelines, sVertexXYZWD::fmt,     &shader_color);
-    register_pipeline(pipelines, sVertexXYZWDT1::fmt,   &shader_color_tex1);
-    register_pipeline(pipelines, sVertexXYZWDT2::fmt,   &shader_color_tex2);
     register_pipeline(pipelines, sVertexXYZNT1::fmt,    &shader_normal);
     register_pipeline(pipelines, sVertexDot3::fmt,      &shader_normal_dot3);
     

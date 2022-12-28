@@ -103,6 +103,7 @@ void cD3DRender::SetDrawNode(cCamera *pDrawNode)
 
 void cD3DRender::SetDrawTransform(class cCamera *pDrawNode)
 {
+    isOrthoSet = false;
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matProj)));
 	RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW,reinterpret_cast<const D3DMATRIX*>(&pDrawNode->matView)));
 	RDCALL(lpD3DDevice->SetViewport((D3DVIEWPORT9*)&pDrawNode->vp));
@@ -340,6 +341,8 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	sColor4c diffuse(color);
 	cFontInternal* cf=CurrentFont->GetInternal();
 
+    if (!isOrthoSet) UseOrthographic();
+
 /*
 	SetNoMaterial(blend_mode,0,CurrentFont->GetTexture());
 /*/
@@ -373,7 +376,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 
 	float v_add=cf->FontHeight+1/(double)(1<<cf->GetTexture()->GetY());
 
-	QuadBufferXYZWDT1.BeginDraw();
+	QuadBufferXYZDT1.BeginDraw();
 
 	for( const char* str=string; *str; str++, yOfs+=ySize)
 	{
@@ -397,8 +400,8 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 			if(c<32)continue;
 			Vect3f& size=cf->Font[c];
 
-			sVertexXYZWDT1* v=QuadBufferXYZWDT1.Get();
-			sVertexXYZWDT1 &v1=v[1],&v2=v[0],
+			sVertexXYZDT1* v=QuadBufferXYZDT1.Get();
+			sVertexXYZDT1 &v1=v[1],&v2=v[0],
 						   &v3=v[2],&v4=v[3];
 
 			v1.x=v4.x=xOfs;
@@ -412,12 +415,11 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 			v3.v1()=v4.v1()=v1.v1()+v_add;
 			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=diffuse;
 			v1.z=v2.z=v3.z=v4.z=0.001f;
-			v1.w=v2.w=v3.w=v4.w=0.001f;
 		}
 	}
 LABEL_DRAW:
 
-	QuadBufferXYZWDT1.EndDraw();
+	QuadBufferXYZDT1.EndDraw();
 }
 
 void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,int align,eBlendMode blend_mode,
@@ -436,6 +438,8 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	sColor4c diffuse(color);
 	sColor4c lerp(255*lerp_factor,255*lerp_factor,255*lerp_factor,255*(1-lerp_factor));
 	cFontInternal* cf=CurrentFont->GetInternal();
+
+    if (!isOrthoSet) UseOrthographic();
 
 //	SetNoMaterial(blend_mode,phase,CurrentFont->GetTexture(),pTexture,mode);
 	SetNoMaterial(blend_mode,phase,pTexture,CurrentFont->GetTexture(),mode);
@@ -469,7 +473,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 
 	float v_add=cf->FontHeight+1/(double)(1<<cf->GetTexture()->GetY());
 
-	QuadBufferXYZWDT2.BeginDraw();
+	QuadBufferXYZDT2.BeginDraw();
 
 	for( const char* str=string; *str; str++, yOfs+=ySize)
 	{
@@ -492,8 +496,8 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 			if(c<32)continue;
 			Vect3f& size=cf->Font[c];
 
-			sVertexXYZWDT2* v=QuadBufferXYZWDT2.Get();
-			sVertexXYZWDT2 &v1=v[1],&v2=v[0],
+			sVertexXYZDT2* v=QuadBufferXYZDT2.Get();
+			sVertexXYZDT2 &v1=v[1],&v2=v[0],
 						   &v3=v[2],&v4=v[3];
 
 			float x0,x1,y0,y1;
@@ -511,7 +515,6 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 			v3.v1()=v4.v1()=v1.v1()+v_add;
 			v1.diffuse=v2.diffuse=v3.diffuse=v4.diffuse=diffuse;
 			v1.z=v2.z=v3.z=v4.z=0.001f;
-			v1.w=v2.w=v3.w=v4.w=0.001f;
 
 			v1.u2()=v4.u2()=(x0-x)*duv.x+uv.x;
 			v1.v2()=v2.v2()=(y0-y)*duv.y+uv.y;
@@ -523,7 +526,7 @@ void cD3DRender::OutText(int x,int y,const char *string,const sColor4f& color,in
 	}
 LABEL_DRAW:
 
-	QuadBufferXYZWDT2.EndDraw();
+	QuadBufferXYZDT2.EndDraw();
 	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
 	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,index1);
 

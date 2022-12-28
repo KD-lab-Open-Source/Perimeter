@@ -68,12 +68,6 @@ uint32_t cD3DRender::GetD3DFVFFromFormat(uint32_t fmt) {
             return D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX2;
         case sVertexXYZNT1::fmt:
             return D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
-        case sVertexXYZWD::fmt:
-            return D3DFVF_XYZRHW|D3DFVF_DIFFUSE;
-        case sVertexXYZWDT1::fmt:
-            return D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1;
-        case sVertexXYZWDT2::fmt:
-            return D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX2;
         case sVertexDot3::fmt:
             return D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX4
                   |D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3);
@@ -386,6 +380,9 @@ void cD3DRender::UpdateRenderMode()
 	{
 		TexFmtData[SURFMT_U16V16].Set(4, 16,16,16,16, 0,0,0,16,D3DFMT_V16U16);
 	}
+
+    ortho = Mat4f::ZERO;
+    SetOrthographic(ortho, ScreenSize.x, -ScreenSize.y, 10, -10);
 }
 
 bool cD3DRender::ChangeSize(int xscr, int yscr, int mode)
@@ -463,13 +460,9 @@ int cD3DRender::Done()
 	DeleteIndexBuffer(standart_ib);
 	BufferXYZDT1.Destroy();
 	BufferXYZDT2.Destroy();
-	BufferXYZWD.Destroy();
 	BufferXYZD.Destroy();
-	BufferXYZWDT1.Destroy();
-	BufferXYZWDT2.Destroy();
 	QuadBufferXYZDT1.Destroy();
-	QuadBufferXYZWDT1.Destroy();
-	QuadBufferXYZWDT2.Destroy();
+	QuadBufferXYZDT2.Destroy();
 	BufferXYZOcclusion.Destroy();
 /*
 	for(int i=0;i<LibVB.size();i++)
@@ -1040,33 +1033,33 @@ void cD3DRender::FlushPixel()
 	SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_ALWAYS);
 	SetRenderState(D3DRS_ALPHATESTENABLE,FALSE);
+    if (!isOrthoSet) UseOrthographic();
 
 	int npoint=0;
-	sVertexXYZWD* v=BufferXYZWD.Lock();
+	sVertexXYZD* v=BufferXYZD.Lock();
 	std::vector<PointStruct>::iterator it;
 	FOR_EACH(points,it)
 	{
 		PointStruct& p=*it;
-		sVertexXYZWD& cv=v[npoint];
+		sVertexXYZD& cv=v[npoint];
 		cv.x=p.x;
 		cv.y=p.y;
 		cv.z=0.001f;
-		cv.w=0.001f;
 		cv.diffuse=p.diffuse;
 
 		npoint++;
-		if(npoint>=BufferXYZWD.GetSize())
+		if(npoint>=BufferXYZD.GetSize())
 		{
-			BufferXYZWD.Unlock(npoint);
-			BufferXYZWD.DrawPrimitive(PT_POINTLIST,npoint);
-			v=BufferXYZWD.Lock();
+			BufferXYZD.Unlock(npoint);
+			BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
+			v=BufferXYZD.Lock();
 			npoint=0;
 		}
 	}
 
-	BufferXYZWD.Unlock(npoint);
+	BufferXYZD.Unlock(npoint);
 	if(npoint)
-		BufferXYZWD.DrawPrimitive(PT_POINTLIST,npoint);
+		BufferXYZD.DrawPrimitive(PT_POINTLIST,npoint);
 
 	points.clear();
 }
@@ -1075,34 +1068,34 @@ void cD3DRender::FlushLine()
 {
 	if(lines.empty())return;
 	SetNoMaterial(ALPHA_BLEND);
+    if (!isOrthoSet) UseOrthographic();
 
 	VISASSERT((lines.size()&1)==0);
 	int npoint=0;
-	sVertexXYZWD* v=BufferXYZWD.Lock();
+	sVertexXYZD* v=BufferXYZD.Lock();
 	std::vector<PointStruct>::iterator it;
 	FOR_EACH(lines,it)
 	{
 		PointStruct& p=*it;
-		sVertexXYZWD& cv=v[npoint];
+		sVertexXYZD& cv=v[npoint];
 		cv.x=p.x;
 		cv.y=p.y;
 		cv.z=0.001f;
-		cv.w=0.001f;
 		cv.diffuse=p.diffuse;
 
 		npoint++;
-		if(((npoint&1)==0) && npoint>=BufferXYZWD.GetSize()-2)
+		if(((npoint&1)==0) && npoint>=BufferXYZD.GetSize()-2)
 		{
-			BufferXYZWD.Unlock(npoint);
-			BufferXYZWD.DrawPrimitive(PT_LINELIST,npoint/2);
-			v=BufferXYZWD.Lock();
+			BufferXYZD.Unlock(npoint);
+			BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
+			v=BufferXYZD.Lock();
 			npoint=0;
 		}
 	}
 
-	BufferXYZWD.Unlock(npoint);
+	BufferXYZD.Unlock(npoint);
 	if(npoint)
-		BufferXYZWD.DrawPrimitive(PT_LINELIST,npoint/2);
+		BufferXYZD.DrawPrimitive(PT_LINELIST,npoint/2);
 
 	lines.clear();
 }
@@ -1111,36 +1104,37 @@ void cD3DRender::FlushFilledRect()
 {
 	if(rectangles.empty())return;
 	SetNoMaterial(ALPHA_BLEND);
+    if (!isOrthoSet) UseOrthographic();
 
 	int npoint=0;
-	sVertexXYZWD* v=BufferXYZWD.Lock();
+	sVertexXYZD* v=BufferXYZD.Lock();
 	std::vector<RectStruct>::iterator it;
 	FOR_EACH(rectangles,it)
 	{
 		RectStruct& p=*it;
 
-		sVertexXYZWD* pv=v+npoint;
-		pv[0].x=p.x1; pv[0].y=p.y1; pv[0].z=0.001f; pv[0].w=0.001f; pv[0].diffuse=p.diffuse;
-		pv[1].x=p.x1; pv[1].y=p.y2; pv[1].z=0.001f; pv[1].w=0.001f; pv[1].diffuse=p.diffuse;
-		pv[2].x=p.x2; pv[2].y=p.y1; pv[2].z=0.001f; pv[2].w=0.001f; pv[2].diffuse=p.diffuse;
+		sVertexXYZD* pv=v+npoint;
+		pv[0].x=p.x1; pv[0].y=p.y1; pv[0].z=0.001f; pv[0].diffuse=p.diffuse;
+		pv[1].x=p.x1; pv[1].y=p.y2; pv[1].z=0.001f; pv[1].diffuse=p.diffuse;
+		pv[2].x=p.x2; pv[2].y=p.y1; pv[2].z=0.001f; pv[2].diffuse=p.diffuse;
 
-		pv[3].x=p.x2; pv[3].y=p.y1; pv[3].z=0.001f; pv[3].w=0.001f; pv[3].diffuse=p.diffuse;
-		pv[4].x=p.x1; pv[4].y=p.y2; pv[4].z=0.001f; pv[4].w=0.001f; pv[4].diffuse=p.diffuse;
-		pv[5].x=p.x2; pv[5].y=p.y2; pv[5].z=0.001f; pv[5].w=0.001f; pv[5].diffuse=p.diffuse;
+		pv[3].x=p.x2; pv[3].y=p.y1; pv[3].z=0.001f; pv[3].diffuse=p.diffuse;
+		pv[4].x=p.x1; pv[4].y=p.y2; pv[4].z=0.001f; pv[4].diffuse=p.diffuse;
+		pv[5].x=p.x2; pv[5].y=p.y2; pv[5].z=0.001f; pv[5].diffuse=p.diffuse;
 
 		npoint+=6;
-		if(npoint>=BufferXYZWD.GetSize()-6)
+		if(npoint>=BufferXYZD.GetSize()-6)
 		{
-			BufferXYZWD.Unlock(npoint);
-			BufferXYZWD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
-			v=BufferXYZWD.Lock();
+			BufferXYZD.Unlock(npoint);
+			BufferXYZD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
+			v=BufferXYZD.Lock();
 			npoint=0;
 		}
 	}
 
-	BufferXYZWD.Unlock(npoint);
+	BufferXYZD.Unlock(npoint);
 	if(npoint)
-		BufferXYZWD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
+		BufferXYZD.DrawPrimitive(PT_TRIANGLELIST,npoint/3);
 
 	rectangles.clear();
 }
@@ -1160,10 +1154,10 @@ void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float 
 	if(mode<=ALPHA_TEST && alpha)
 		mode=ALPHA_BLEND;
 	SetNoMaterial(mode,phase,Texture);
+    if (!isOrthoSet) UseOrthographic();
 
-	sVertexXYZWDT1* v=BufferXYZWDT1.Lock(4);
-	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].w=v[1].w=v[2].w=v[3].w=0.001f;
+	sVertexXYZDT1* v=BufferXYZDT1.Lock(4);
+	v[0].z=v[1].z=v[2].z=v[3].z=1;
 	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
 	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
@@ -1171,9 +1165,9 @@ void cD3DRender::DrawSprite(int x1,int y1,int dx,int dy,float u1,float v1,float 
 	v[1].u1()=u1;    v[1].v1()=v1+dv;
 	v[2].u1()=u1+du; v[2].v1()=v1;
 	v[3].u1()=u1+du; v[3].v1()=v1+dv;
-	BufferXYZWDT1.Unlock(4);
+	BufferXYZDT1.Unlock(4);
 
-	BufferXYZWDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
+	BufferXYZDT1.DrawPrimitive(PT_TRIANGLESTRIP,2);
 }
 
 void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
@@ -1196,9 +1190,10 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 	else
 		SetNoMaterial(blend_mode,phase,Tex1,Tex2,mode);
 
-	sVertexXYZWDT2* v=BufferXYZWDT2.Lock(4);
+    if (!isOrthoSet) UseOrthographic();
+
+	sVertexXYZDT2* v=BufferXYZDT2.Lock(4);
 	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].w=v[1].w=v[2].w=v[3].w=0.001f;
 	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
 	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
@@ -1212,9 +1207,9 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 	v[1].u2()=u1;     v[1].v2()=v1+dv1;
 	v[2].u2()=u1+du1; v[2].v2()=v1;
 	v[3].u2()=u1+du1; v[3].v2()=v1+dv1;
-	BufferXYZWDT2.Unlock(4);
+	BufferXYZDT2.Unlock(4);
 	
-	BufferXYZWDT2.DrawPrimitive(PT_TRIANGLESTRIP,2);
+	BufferXYZDT2.DrawPrimitive(PT_TRIANGLESTRIP,2);
 }
 
 void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
@@ -1236,6 +1231,8 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 		SetNoMaterial((ColorMul.a<255)?ALPHA_BLEND:ALPHA_NONE,phase,Tex2,Tex1,mode);
 	else
 		SetNoMaterial(blend_mode,phase,Tex2,Tex1,mode);
+    
+    if (!isOrthoSet) UseOrthographic();
 
 	uint32_t index1=GetTextureStageState(1, D3DTSS_TEXCOORDINDEX);
 	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
@@ -1258,9 +1255,8 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 		SetTextureStageState(1,D3DTSS_COLORARG2,D3DTA_CURRENT);
 	}
 
-	sVertexXYZWDT2* v=BufferXYZWDT2.Lock(4);
+	sVertexXYZDT2* v=BufferXYZDT2.Lock(4);
 	v[0].z=v[1].z=v[2].z=v[3].z=0.001f;
-	v[0].w=v[1].w=v[2].w=v[3].w=0.001f;
 	v[0].diffuse=v[1].diffuse=v[2].diffuse=v[3].diffuse=ColorMul;
 	v[0].x=v[1].x=-0.5f+(float)x1; v[0].y=v[2].y=-0.5f+(float)y1; 
 	v[3].x=v[2].x=-0.5f+(float)x2; v[1].y=v[3].y=-0.5f+(float)y2; 
@@ -1274,9 +1270,9 @@ void cD3DRender::DrawSprite2(int x1,int y1,int dx,int dy,
 	v[1].u2()=u0;     v[1].v2()=v0+dv0;
 	v[2].u2()=u0+du0; v[2].v2()=v0;
 	v[3].u2()=u0+du0; v[3].v2()=v0+dv0;
-	BufferXYZWDT2.Unlock(4);
+	BufferXYZDT2.Unlock(4);
 	
-	BufferXYZWDT2.DrawPrimitive(PT_TRIANGLESTRIP,2);
+	BufferXYZDT2.DrawPrimitive(PT_TRIANGLESTRIP,2);
 
 	SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,0);
 	SetTextureStageState(1,D3DTSS_TEXCOORDINDEX,index1);
@@ -1664,14 +1660,9 @@ void cD3DRender::InitVertexBuffers()
 	const int sizemin=8192;
 	BufferXYZDT1.Create(size);
 	BufferXYZDT2.Create(sizemin);
-	BufferXYZWD.Create(sizemin);
 	BufferXYZD.Create(sizemin);
 	QuadBufferXYZDT1.Create();
-	QuadBufferXYZWDT1.Create();
-	QuadBufferXYZWDT2.Create();
-
-	BufferXYZWDT1.Create(sizemin);
-	BufferXYZWDT2.Create(sizemin);
+	QuadBufferXYZDT2.Create();
 	BufferXYZOcclusion.Create(sizemin);
 }
 
@@ -2021,6 +2012,14 @@ void cD3DRender::SaveStates(const char* fname)
 	}
 #undef W
 	fclose(f);
+}
+
+void cD3DRender::UseOrthographic() {
+    if (isOrthoSet) return;
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(&Mat4f::ID)));
+    RDCALL(lpD3DDevice->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(&ortho)));
+    isOrthoSet = true;
 }
 
 bool cD3DRender::PossibleAnisotropic()

@@ -39,10 +39,12 @@ private:
     int							NumberPolygon,NumDrawObject;
     int                         xScrMin,yScrMin,xScrMax,yScrMax;
     
+    Mat4f ortho;
+    bool isOrthoSet = false;
+    
     virtual void Draw(class FieldDispatcher *rd, uint8_t transparent);
 
 public:
-
     bool				bActiveScene;
     bool				bWireFrame;
     uint32_t				nSupportTexture;
@@ -77,23 +79,21 @@ public:
     VertexPoolManager* GetVertexPool() { return &vertex_pool_manager; }
     IndexPoolManager* GetIndexPool() { return &index_pool_manager; }
 
-    //Used for sprites, light, particles and shadow volume
+    //Used for sprites, light, particles and shadow volume, debug shadow drawing
     virtual cVertexBuffer<sVertexXYZDT1>* GetBufferXYZDT1() { return &BufferXYZDT1; }
     //Used for elastic links in psychosphere
     virtual cVertexBuffer<sVertexXYZDT2>* GetBufferXYZDT2() { return &BufferXYZDT2; }
-    //For primitive drawing
-    virtual cVertexBuffer<sVertexXYZWD>* GetBufferXYZWD() { return &BufferXYZWD; }
-    //Used for debug shadow drawing
-    virtual cVertexBuffer<sVertexXYZWDT1>* GetBufferXYZWDT1() { return &BufferXYZWDT1; };
-
+    
     cQuadBuffer<sVertexXYZDT1>* GetQuadBufferXYZDT1() {return &QuadBufferXYZDT1 ;}
-    //Used for drawing terraform filling
+    //Used for drawing terraform filling and primitive drawing
     cVertexBuffer<sVertexXYZD>* GetBufferXYZD() { return &BufferXYZD; }
     
     void* GetStripBuffer() { return &Buffer[0]; }
     int GetStripBufferLen() { return Buffer.length(); }
     
     virtual void SaveStates(const char* fname="states.txt");
+    
+    void UseOrthographic();
 
     // //// cInterfaceRenderDevice impls start ////
 
@@ -197,7 +197,18 @@ public:
 	FORCEINLINE void SetMatrix(int type, const MatXf &m) {
 		Mat4f mat;
         Mat4fSetTransposedMatXf(mat, m);
-		RDCALL(lpD3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)type, reinterpret_cast<const D3DMATRIX*>(&mat)));
+        D3DTRANSFORMSTATETYPE tsType = static_cast<D3DTRANSFORMSTATETYPE>(type);
+		RDCALL(lpD3DDevice->SetTransform(tsType, reinterpret_cast<const D3DMATRIX*>(&mat)));
+        if (isOrthoSet) {
+            switch (tsType) {
+                case D3DTS_WORLD:
+                case D3DTS_VIEW:
+                case D3DTS_PROJECTION:
+                    isOrthoSet = false;
+                default:
+                    break;
+            }
+        }
 	}
 
 	void SetAdvance();//Вызывать при изменении Option_ShadowType Option_EnableBump
@@ -434,13 +445,9 @@ protected:
 
 	cVertexBuffer<sVertexXYZDT1> BufferXYZDT1;
 	cVertexBuffer<sVertexXYZDT2> BufferXYZDT2;
-	cVertexBuffer<sVertexXYZWD>	 BufferXYZWD;
 	cVertexBuffer<sVertexXYZD>	 BufferXYZD;
-	cVertexBuffer<sVertexXYZWDT1>	 BufferXYZWDT1;
-	cVertexBuffer<sVertexXYZWDT2>	 BufferXYZWDT2;
 	cQuadBuffer<sVertexXYZDT1>	 QuadBufferXYZDT1;
-	cQuadBuffer<sVertexXYZWDT1>	 QuadBufferXYZWDT1;
-	cQuadBuffer<sVertexXYZWDT2>	 QuadBufferXYZWDT2;
+	cQuadBuffer<sVertexXYZDT2>	 QuadBufferXYZDT2;
 
 	cVertexBuffer<sVertexXYZ>	 BufferXYZOcclusion;
 
