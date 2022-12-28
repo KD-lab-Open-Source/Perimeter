@@ -282,7 +282,7 @@ bool LoadTGA(const char* filename,int& dx,int& dy,unsigned char*& buf,
 
 class cTGAImage : public cFileImage
 {
-	void	  *ImageData;
+    uint8_t	  *ImageData;
 	TGAHeader *tga;
 public:
 	cTGAImage()	
@@ -308,13 +308,12 @@ public:
 	virtual int load(void *pointer,int size)
 	{
 		close();
-		tga=(TGAHeader*)pointer;
+		tga=static_cast<TGAHeader*>(pointer);
 		x=tga->width;
 		y=tga->height;
 		bpp=tga->bitsPerPixel;
 		int colormapsize=(tga->countColorMapEntries*tga->numberOfBitsPerColorMapEntry)/8;
-		ImageData=(void*)(18+colormapsize+(char*)pointer);
-		int BytePerPixel=bpp/8;
+		ImageData=(18+colormapsize+static_cast<uint8_t*>(pointer));
 		return 0;
 	}
 	virtual int save(char *fname,void *pointer,int bpp,int x,int y,int length=1,int time=0)
@@ -323,7 +322,8 @@ public:
 			return -1;
 		return 0;
 	}
-	virtual int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
+	
+	int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
 	{
 		int dy=(tga->flags&0x20)?GetY():-GetY();
 		if(GetBitPerPixel()==24)
@@ -337,7 +337,8 @@ public:
 									ImageData,2,GetX()*2,31,0,GetX(),dy);
 		return 0;
 	}
-	virtual int GetTexture(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+	
+	int GetTextureRGB(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override
 	{ 
 		int dy=(tga->flags&0x20)?GetY():-GetY();
 		if(GetBitPerPixel()==24)
@@ -475,7 +476,7 @@ public:
         return frames[i];
     }
 
-    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) {
+    int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override {
         uint8_t* data = getFrameDataFromTime(t);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
@@ -489,7 +490,7 @@ public:
         return 0;
     }
 
-    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst) {
+    int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override {
         uint8_t* data = getFrameDataFromTime(t);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
@@ -606,7 +607,8 @@ public:
 		if(fAVI) AVIFileRelease(fAVI); fAVI=0;
 		return 0; 
 	}
-	virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
+	
+	int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
 	{
 		BITMAPINFO *pbmi=(BITMAPINFO*)AVIStreamGetFrame(Frame,AVIStreamTimeToSample(pavi,t%time));
 		if(GetBitPerPixel()==24)
@@ -620,7 +622,8 @@ public:
 									((unsigned char*)pbmi->bmiColors),2,GetX()*2,31,0,GetX(),-y);
 		return 0;
 	}
-	virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+	
+	int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override
 	{
 		BITMAPINFO *pbmi=(BITMAPINFO*)AVIStreamGetFrame(Frame,AVIStreamTimeToSample(pavi,t%time));
 		if(pbmi->bmiHeader.biCompression) return 1;
@@ -693,7 +696,9 @@ public:
 	{ 
 		return 0; 
 	}
-	virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
+	
+	
+	int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
 	{
 		void *pbmi=GetFrameByte((t/GetTimePerFrame())%length);
 		if(GetBitPerPixel()==24)
@@ -707,7 +712,9 @@ public:
 									pbmi,2,GetX()*2,31,0,GetX(),y);
 		return 0;
 	}
-	virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+	
+	
+	int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override
 	{
 		void *pbmi=GetFrameByte((t/GetTimePerFrame())%length);
 		if(GetBitPerPixel()==24)
@@ -1112,7 +1119,7 @@ public:
         return 0;
     }
 
-    virtual int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) {
+    int GetTextureAlpha(void *pointer,int t,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override {
         uint8_t* pbmi = static_cast<uint8_t*>(image->pixels);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
@@ -1126,7 +1133,7 @@ public:
         return 0;
     }
 
-    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst) {
+    int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override {
         uint8_t* pbmi = static_cast<uint8_t*>(image->pixels);
         if(GetBitPerPixel()==24)
             cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,
@@ -1375,8 +1382,8 @@ public:
         return getFrameFromTime(t)->GetTextureAlpha(pointer, t, bppDst, bplDst, acDst, asDst, xDst, yDst);
     }
 
-    virtual int GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst) {
-        return getFrameFromTime(t)->GetTexture(pointer, t, bppDst, bplDst, rc, gc, bc, ac, rs, gs, bs, as, xDst, yDst);
+    virtual int GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) {
+        return getFrameFromTime(t)->GetTextureRGB(pointer, t, bppDst, bplDst, rc, gc, bc, rs, gs, bs, xDst, yDst);
     }
 };
 
@@ -1503,8 +1510,8 @@ bool cAviScaleFileImage::Init(const char* fName)
 				int time=0;
 				for(int i=0;i<n_count;++i)
 				{
-					FileImage->GetTexture(lpBuf,time,4,4*dx,
-							8,8,8,8, 16,8,0,24, dx, dy );
+					FileImage->GetTextureRGB(lpBuf,time,4,4*dx,
+							8,8,8, 16,8,0, dx, dy );
 					FileImage->GetTextureAlpha(lpBuf,time,4,4*dx,
 							8, 24, dx, dy );
 					const int offset_y = rdy*(i/x_count)*this->x + rdx*(i%x_count);
@@ -1532,7 +1539,7 @@ cAviScaleFileImage::~cAviScaleFileImage()
 	delete[] dat;
 }
 
-int cAviScaleFileImage::GetTexture(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+int cAviScaleFileImage::GetTextureRGB(void *pointer,int t,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst)
 {
 	xassert(dat!=0);
 //	cFileImage_GetFrame(pointer,bppDst,bplDst,rc,rs,gc,gs,bc,bs,xDst,yDst,

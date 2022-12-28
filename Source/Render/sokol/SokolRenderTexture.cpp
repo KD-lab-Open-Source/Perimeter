@@ -39,8 +39,9 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
             uint8_t* buf = new uint8_t[tex_len];
             buffers.push_back(buf);
             memset(buf, 0xFF, tex_len);
-            FileImage->GetTexture(buf, i * Texture->GetTimePerFrame(), 4, 4 * dx,
-                                  8, 8, 8, 8, 16, 8, 0, 24, dx, dy);
+            //Load in RGBA
+            FileImage->GetTextureRGB(buf, i * Texture->GetTimePerFrame(), 4, 4 * dx,
+                                     8, 8, 8, 0, 8, 16, dx, dy);
 
             //If it has alpha then load it
             if (Texture->IsAlpha() || Texture->IsAlphaTest()) {

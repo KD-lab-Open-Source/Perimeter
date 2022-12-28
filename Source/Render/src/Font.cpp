@@ -31,13 +31,13 @@ public:
 		delete ImageData;
 	}
 
-	virtual int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst)
+	int GetTextureAlpha(void *pointer,int time,int bppDst,int bplDst,int acDst,int asDst,int xDst,int yDst) override
 	{
 		cFileImage_GetFrameAlpha(pointer,bppDst,bplDst,acDst,asDst,xDst,yDst,
 								ImageData,1,GetX(),8,0,GetX(),GetY());
 		return 0;
 	}
-	virtual int GetTexture(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int ac,int rs,int gs,int bs,int as,int xDst,int yDst)
+	int GetTextureRGB(void *pointer,int time,int bppDst,int bplDst,int rc,int gc,int bc,int rs,int gs,int bs,int xDst,int yDst) override
 	{ 
 		memset(pointer,0xFF,yDst*bplDst);
 		return 0;

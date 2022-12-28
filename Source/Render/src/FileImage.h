@@ -18,9 +18,9 @@ public:
 	virtual int close()															{ return -1; }
 	virtual int GetTextureAlpha(void *pointer,int time,int bpp,int bpl,
 		int aBitCount=8,int aBitShift=24,int xSize=-1,int ySize=-1)				{ return -1; }
-	virtual int GetTexture(void *pointer,int time,int bpp,int bpl,
-		int rBitCount,int gBitCount,int bBitCount,int aBitCount,
-		int rBitShift,int gBitShift,int bBitShift,int aBitShift,
+	virtual int GetTextureRGB(void *pointer,int time,int bpp,int bpl,
+		int rBitCount,int gBitCount,int bBitCount,
+		int rBitShift,int gBitShift,int bBitShift,
 		int xSize=-1,int ySize=-1)												{ return -1; }
 	inline int GetX()															{ if(x>=0) return x; return -x; }
 	inline int GetY()															{ if(y>=0) return y; return -y; }
@@ -50,9 +50,9 @@ public:
 	{
 		return 0;
 	}
-	virtual int GetTexture(void *pointer,int time,int bpp,int bpl,
-		int rBitCount,int gBitCount,int bBitCount,int aBitCount,
-		int rBitShift,int gBitShift,int bBitShift,int aBitShift,
+	virtual int GetTextureRGB(void *pointer,int time,int bpp,int bpl,
+		int rBitCount,int gBitCount,int bBitCount,
+		int rBitShift,int gBitShift,int bBitShift,
 		int xSize=-1,int ySize=-1);
 };
 

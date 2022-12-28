@@ -89,8 +89,9 @@ int cD3DRender::CreateTexture(class cTexture *Texture,class cFileImage *FileImag
 
 		uint8_t* lpBuf = new uint8_t[tex_len];
 		memset(lpBuf, 0xFF, tex_len);
-		FileImage->GetTexture(lpBuf,i*Texture->GetTimePerFrame(),4,4*dx,
-			8,8,8,8, 16,8,0,24, dx, dy );
+        //Load in BGRA
+		FileImage->GetTextureRGB(lpBuf,i*Texture->GetTimePerFrame(),4,4*dx,
+                                 8,8,8, 16,8,0, dx, dy );
 
 		if(Texture->IsAlpha() || Texture->IsAlphaTest())// загрузка только прозрачности
 		{
