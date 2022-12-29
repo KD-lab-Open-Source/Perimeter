@@ -2,6 +2,7 @@
 #include "xmath.h"
 #include "Umath.h"
 #include "StdAfxRD.h"
+#include "VertexFormat.h"
 #include "sokol_gfx.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"

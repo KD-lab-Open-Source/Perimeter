@@ -10,10 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         env: [
-          {build_type: Debug, arch: x86_64},
-          {build_type: Release, arch: x86_64}
+          {build_type: Debug, arch: x86_64, cmake: "-DOPTION_D3D9=OFF"},
+          {build_type: Debug, arch: x86_64, cmake: "-DOPTION_SOKOL=OFF"},
+          {build_type: Release, arch: x86_64, cmake: ""}
         ]
-    name: ${{matrix.env.build_type}} ${{matrix.env.arch}}
+    name: ${{matrix.env.build_type}} ${{matrix.env.arch}} ${{matrix.env.cmake}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -24,7 +25,7 @@ jobs:
       - name: create build dir
         run: mkdir build
       - name: configure
-        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} -DOPTION_DEBUG_ASSERT=ON
+        run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.env.build_type}} ${{matrix.env.cmake}} -DOPTION_DEBUG_ASSERT=ON
         working-directory: build
       - name: build dependencies
         run: ninja dependencies
@@ -35,7 +36,7 @@ jobs:
       - name: Package
         run: |
           mkdir perimeter
-          cp build/Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so perimeter/
+          if [[ -f "build/Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so" ]]; then cp build/Source/dxvk-native-prefix/src/dxvk-native-build/src/d3d9/libdxvk_d3d9.so perimeter/; fi
           cp build/Source/perimeter perimeter/
           chmod 777 perimeter/perimeter
       - name: Strip binary

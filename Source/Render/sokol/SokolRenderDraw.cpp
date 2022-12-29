@@ -1,4 +1,5 @@
 #include "StdAfxRD.h"
+#include "VertexFormat.h"
 #include "IRenderDevice.h"
 #include "SokolRender.h"
 

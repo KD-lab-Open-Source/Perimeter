@@ -5,7 +5,9 @@
 #include "Font.h"
 #include "IRenderDevice.h"
 #include "EmptyRenderDevice.h"
+#ifdef PERIMETER_SOKOL
 #include "sokol/SokolRender.h"
+#endif
 
 FILE* fRD= nullptr;
 
