@@ -12,6 +12,7 @@ struct shader_funcs {
 #include "sokol/shaders/color_tex1.h"
 #include "sokol/shaders/color_tex2.h"
 #include "sokol/shaders/normal.h"
+#include "sokol/shaders/terrain.h"
 
 #define SOKOL_SHADER(MODULE_NAME) extern shader_funcs shader_##MODULE_NAME; 
 #define SOKOL_SHADER_IMPL(MODULE_NAME) \
@@ -26,6 +27,7 @@ shader_funcs shader_##MODULE_NAME = { \
 SOKOL_SHADER(color_tex1);
 SOKOL_SHADER(color_tex2);
 SOKOL_SHADER(normal);
+SOKOL_SHADER(terrain);
 
 //All shaders should use same vs_params_t and fs_params_t format, so we take one as reference
 using vs_params_t = color_tex2_vs_params_t;

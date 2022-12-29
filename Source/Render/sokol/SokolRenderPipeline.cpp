@@ -213,6 +213,7 @@ void cSokolRender::RegisterPipelines() {
         RegisterPipeline(GetPipelineID(PIPELINE_TYPE_STANDARD, sVertexXYZDT1::fmt, mode), &shader_color_tex1);
         RegisterPipeline(GetPipelineID(PIPELINE_TYPE_STANDARD, sVertexXYZDT2::fmt, mode), &shader_color_tex2);
         //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_STANDARD, sVertexXYZNT1::fmt, mode), &shader_normal);
+        //RegisterPipeline(GetPipelineID(PIPELINE_TYPE_TERRAIN,  sVertexXYZ::fmt,    mode), &shader_terrain);
         total += 4;
     }
     printf("cSokolRender::RegisterPipelines done, total: %d\n", total);

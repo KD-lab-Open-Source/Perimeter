@@ -8,3 +8,4 @@
 SOKOL_SHADER_IMPL(color_tex1);
 SOKOL_SHADER_IMPL(color_tex2);
 SOKOL_SHADER_IMPL(normal);
+SOKOL_SHADER_IMPL(terrain);

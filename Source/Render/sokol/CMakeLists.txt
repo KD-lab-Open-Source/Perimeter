@@ -55,6 +55,7 @@ IF (OPTION_PROCESS_SHADERS)
     PERIMETER_SOKOL_SHDC(color_texture      color_tex1   "")
     PERIMETER_SOKOL_SHDC(color_texture      color_tex2   "SHADER_TEX_2")
     PERIMETER_SOKOL_SHDC(normal_texture     normal       "")
+    PERIMETER_SOKOL_SHDC(terrain            terrain      "")
 ENDIF()
 
 #Use OpenGL Core 3.3 in Windows, Linux and MacOS
