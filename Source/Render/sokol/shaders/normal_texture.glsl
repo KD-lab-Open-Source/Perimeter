@@ -10,11 +10,6 @@ uniform vs_params {
 in vec4 vs_position;
 in vec3 vs_normal;
 in vec2 vs_texcoord0;
-#if defined(SHADER_DOT3)
-in vec3 vs_dot3_0;
-in vec3 vs_dot3_1;
-in vec3 vs_dot3_2;
-#endif
 
 //Fragment shader outputs
 layout(location=0) out vec3 fs_normal;

@@ -11,6 +11,7 @@
 #define VERTEX_FMT_TEX2                (1<<4)
 //TODO Special flag for Dot3 required data in D3D, need to review how to implement bumpmapping in Sokol
 #define VERTEX_FMT_DOT3                (1<<5)
+using vertex_fmt_t = uint8_t;
 
 #define VERTEX_FMT_MAX                 ((1<<6)-1)
 

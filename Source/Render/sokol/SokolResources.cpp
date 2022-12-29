@@ -2,14 +2,6 @@
 #include "xmath.h"
 #include "sokol_gfx.h"
 #include "SokolResources.h"
-#include "SokolShaders.h"
-
-SOKOL_SHADER_IMPL(color);
-SOKOL_SHADER_IMPL(color_tex1);
-SOKOL_SHADER_IMPL(color_tex2);
-SOKOL_SHADER_IMPL(tex1);
-SOKOL_SHADER_IMPL(normal);
-SOKOL_SHADER_IMPL(normal_dot3);
 
 size_t sokol_pixelformat_bytesize(sg_pixel_format fmt) {
     switch (fmt) {

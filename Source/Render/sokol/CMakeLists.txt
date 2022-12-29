@@ -52,12 +52,9 @@ IF (OPTION_PROCESS_SHADERS)
         )
     ENDMACRO(PERIMETER_SOKOL_SHDC)
 
-    PERIMETER_SOKOL_SHDC(color_texture      color        "SHADER_COLOR")
-    PERIMETER_SOKOL_SHDC(color_texture      color_tex1   "SHADER_COLOR:SHADER_TEX_1")
-    PERIMETER_SOKOL_SHDC(color_texture      color_tex2   "SHADER_COLOR:SHADER_TEX_2")
-    PERIMETER_SOKOL_SHDC(color_texture      tex1         "SHADER_TEX_1")
+    PERIMETER_SOKOL_SHDC(color_texture      color_tex1   "")
+    PERIMETER_SOKOL_SHDC(color_texture      color_tex2   "SHADER_TEX_2")
     PERIMETER_SOKOL_SHDC(normal_texture     normal       "")
-    PERIMETER_SOKOL_SHDC(normal_texture     normal_dot3  "SHADER_DOT3")
 ENDIF()
 
 #Use OpenGL Core 3.3 in Windows, Linux and MacOS
@@ -84,6 +81,7 @@ add_library(RenderSokol STATIC
     sokol/SokolRenderTexture.cpp
     sokol/SokolRenderState.cpp
     sokol/SokolRenderDraw.cpp
+    sokol/SokolRenderPipeline.cpp
     sokol/SokolImpl.cpp
 )
 

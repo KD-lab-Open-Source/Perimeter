@@ -5,8 +5,8 @@
 #include "sokol_gfx.h"
 #include "SokolResources.h"
 #include "IRenderDevice.h"
-#include "EmptyRenderDevice.h"
 #include "SokolRender.h"
+#include "SokolRenderPipeline.h"
 #include "xerrhand.h"
 #include "SokolShaders.h"
 #include "VertexFormat.h"
@@ -57,24 +57,13 @@ int cSokolRender::EndScene() {
         }
         
         //Get pipeline
-        const SokolPipeline* pipeline = pipelines[command->vertex_fmt];
+        const SokolPipeline* pipeline = pipelines[command->pipeline_id];
         if (pipeline == nullptr) {
             //Not implemented vertex format
-            xxassert(0, "cSokolRender::EndScene missing pipeline for format " + std::to_string(command->vertex_fmt));
+            xxassert(0, "cSokolRender::EndScene missing pipeline for " + std::to_string(command->pipeline_id));
             continue;
         }
         shader_funcs* shader = pipeline->shader_funcs;
-
-        //Camera/projection
-        vs_params_t vs_params;
-        if (command->mvp) {
-            vs_params.un_mvp = *command->mvp;
-        } else if (DrawNode) {
-            vs_params.un_mvp = DrawNode->matViewProj;
-        } else {
-            xxassert(0, "cSokolRender::EndScene missing mvp");
-            continue;
-        }
 
         //Apply pipeline
         sg_apply_pipeline(pipeline->pipeline);
@@ -97,14 +86,18 @@ int cSokolRender::EndScene() {
         bindings.index_buffer = command->index_buffer->buffer;
         
         //Bind images for samplers
-        if (pipeline->vertex_fmt & VERTEX_FMT_TEX1) {
-            SokolTexture2D* tex = command->textures[0];
+        int slot_tex0 = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
+        if (0 <= slot_tex0) {
+            SokolTexture2D* tex = emptyTexture;
+            if (pipeline->vertex_fmt & VERTEX_FMT_TEX1) {
+                tex = command->textures[0];
+            }
             if (tex) {
                 if (tex->data) tex->update();
-                int slot = shader->image_slot(SG_SHADERSTAGE_FS, "un_tex0");
-                bindings.fs_images[slot] = tex->image;
+                bindings.fs_images[slot_tex0] = tex->image;
             } else {
-                xxassert(0, "cSokolRender::EndScene missing texture0");                
+                xxassert(0, "cSokolRender::EndScene missing texture0");
+                continue;
             }
         }
         if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
@@ -116,14 +109,38 @@ int cSokolRender::EndScene() {
                 bindings.fs_images[slot] = tex->image;
             } else {
                 xxassert(0, "cSokolRender::EndScene missing texture1");
+                continue;
             }
         }
         sg_apply_bindings(&bindings);
         
         //Apply VS uniforms
-        sg_range vs_params_range = SG_RANGE(vs_params);
         int vs_params_slot = shader->uniformblock_slot(SG_SHADERSTAGE_VS, "vs_params");
-        sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, &vs_params_range);
+        if (0 <= vs_params_slot) {
+            vs_params_t vs_params;
+            //Camera/projection
+            if (command->vs_mvp) {
+                vs_params.un_mvp = *command->vs_mvp;
+            } else if (DrawNode) {
+                vs_params.un_mvp = DrawNode->matViewProj;
+            } else {
+                xxassert(0, "cSokolRender::EndScene missing mvp");
+                continue;
+            }
+            sg_range vs_params_range = SG_RANGE(vs_params);
+            sg_apply_uniforms(SG_SHADERSTAGE_VS, vs_params_slot, &vs_params_range);
+        }
+
+        //Apply FS uniforms, currently only for shader with 2 texures
+        if (pipeline->vertex_fmt & VERTEX_FMT_TEX2) {
+            int fs_params_slot = shader->uniformblock_slot(SG_SHADERSTAGE_FS, "fs_params");
+            if (0 <= fs_params_slot) {
+                fs_params_t fs_params;
+                fs_params.un_mode = command->fs_mode;
+                sg_range fs_params_range = SG_RANGE(fs_params);
+                sg_apply_uniforms(SG_SHADERSTAGE_FS, fs_params_slot, &fs_params_range);
+            }
+        }
 
         //Draw
         sg_draw(0, static_cast<int>(command->indices), 1);
@@ -171,13 +188,20 @@ void cSokolRender::FinishCommand() {
     
     //Create command to be send
     SokolCommand* cmd = new SokolCommand();
+    cmd->pipeline_id = GetPipelineID(
+        activePipelineType,
+        vertexBuffer.fmt,
+        activePipelineBlend,
+        activePipelineCull,
+        activePipelineFaceCCW
+    );
     cmd->vertices = activeCommand.vertices;
     cmd->indices = activeCommand.indices;
-    cmd->vertex_fmt = vertexBuffer.fmt;
     cmd->vertex_size = vertexBuffer.VertexSize;
     memcpy(cmd->textures, activeCommand.textures, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
     cmd->owned_mvp = activeCommand.owned_mvp;
-    cmd->mvp = activeCommand.mvp;
+    cmd->vs_mvp = activeCommand.vs_mvp;
+    cmd->fs_mode = activeCommand.fs_mode;
     
     //Transfer buffers to command
     cmd->owned_buffers = true;
@@ -194,7 +218,7 @@ void cSokolRender::FinishCommand() {
     CreateIndexBuffer(indexBuffer, PERIMETER_SOKOL_POLYGON_COUNT);
 }
 
-void cSokolRender::PrepareBuffers(size_t NumberVertex, size_t NumberIndices, uint32_t vertex_fmt) {
+void cSokolRender::PrepareBuffers(size_t NumberVertex, size_t NumberIndices, vertex_fmt_t vertex_fmt) {
     if (indexBuffer.sg && vertexBuffer.sg
     && vertexBuffer.fmt == vertex_fmt
     && NumberVertex + activeCommand.vertices < vertexBuffer.NumberVertex
@@ -215,20 +239,32 @@ void cSokolRender::PrepareBuffers(size_t NumberVertex, size_t NumberIndices, uin
     }
 }
 
-void cSokolRender::SetupMatrix(Mat4f* mat, bool command_owned) {
-    if (activeCommand.mvp != mat) {
+void cSokolRender::SetVSUniformMatrix(Mat4f* mat, bool command_owned) {
+    if (activeCommand.vs_mvp != mat) {
         FinishCommand();
     }
-
     activeCommand.owned_mvp = command_owned;
-    activeCommand.mvp = mat; 
+    activeCommand.vs_mvp = mat;
+}
+
+void cSokolRender::SetFSUniformMode(int mode) {
+    if (activeCommand.fs_mode != mode) {
+        FinishCommand();
+    }
+    activeCommand.fs_mode = mode;
 }
 
 void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Texture0, cTexture* Texture1,
                                  eColorMode color_mode) {
-    SokolTexture2D* tex0 = nullptr;
+    SokolTexture2D* tex0 = emptyTexture;
     SokolTexture2D* tex1 = nullptr; 
     if (Texture0) {
+        if (blend == ALPHA_NONE && Texture0->IsAlphaTest()) {
+            blend = ALPHA_TEST;
+        } 
+        if (blend <= ALPHA_TEST && Texture0->IsAlpha()) {
+            blend = ALPHA_BLEND;
+        }
         int nAllFrame = Texture0->GetNumberFrame();
         int nFrame = 1 < nAllFrame ? static_cast<int>(0.999f * Phase * nAllFrame) : 0;
         tex0 = Texture0->GetFrameImage(nFrame).sg;
@@ -239,9 +275,11 @@ void cSokolRender::SetNoMaterial(eBlendMode blend, float Phase, cTexture* Textur
         tex1 = Texture1->GetFrameImage(nFrame).sg;
     }
     
-    if (tex0 != activeCommand.textures[0]
+    if (activePipelineBlend != blend
+     || tex0 != activeCommand.textures[0]
      || tex1 != activeCommand.textures[1]) {
         FinishCommand();
+        activePipelineBlend = blend;
         activeCommand.textures[0] = tex0;
         activeCommand.textures[1] = tex1;
     }
@@ -316,11 +354,11 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     viewportPos.y = pDrawNode->vp.Y;
     viewportSize.x = pDrawNode->vp.Width;
     viewportSize.y = pDrawNode->vp.Height;
-    /* TODO check note about facing/culling in pipeline desc
-    if(pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION)==0)
-        SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CW);
-    else
-        SetRenderState(D3DRS_CULLMODE,CurrentCullMode=D3DCULL_CCW);
-    */  
+    bool face_ccw = pDrawNode->GetAttribute(ATTRCAMERA_REFLECTION) != 0;
+    if (!activePipelineCull || activePipelineFaceCCW != face_ccw) {
+        FinishCommand();
+        activePipelineCull = true;
+        activePipelineFaceCCW = face_ccw;
+    }
 }
 

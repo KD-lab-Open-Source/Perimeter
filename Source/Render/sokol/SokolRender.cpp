@@ -1,147 +1,18 @@
-#include <vector>
+#include "StdAfxRD.h"
 #include "xmath.h"
 #include "Umath.h"
 #include "sokol_gfx.h"
 #include "SokolResources.h"
 #include "IRenderDevice.h"
-#include "EmptyRenderDevice.h"
 #include "SokolRender.h"
+#include "SokolRenderPipeline.h"
 #include "xerrhand.h"
 #include "SokolShaders.h"
-#include "VertexFormat.h"
-
-struct SokolPipelineContext {
-    uint32_t vertex_fmt;
-    struct shader_funcs* shader_funcs;
-};
-
-void bind_attr_slot(SokolPipelineContext& ctx, sg_pipeline_desc& desc, const char* attr_name, sg_vertex_format sokol_format) {
-    int attr_slot = ctx.shader_funcs->attr_slot(attr_name);
-    if (attr_slot < 0) {
-        fprintf(stderr, "bind_attr_slot: '%s' slot not found at pipeline '%s'\n", attr_name, desc.label);
-    } else {
-        desc.layout.attrs[attr_slot].format = sokol_format;
-    }
-}
-
-void bind_vertex_fmt(SokolPipelineContext& ctx, sg_pipeline_desc& desc, uint32_t fmt_flag) {
-    uint32_t fmt = ctx.vertex_fmt;
-    if ((fmt & fmt_flag) == 0) return;
-    
-    switch (fmt_flag) {
-        case VERTEX_FMT_XYZ:
-            bind_attr_slot(ctx, desc, "vs_position", SG_VERTEXFORMAT_FLOAT3);
-            break;
-        case VERTEX_FMT_DIFFUSE:
-            bind_attr_slot(ctx, desc, "vs_color", SG_VERTEXFORMAT_UBYTE4N);
-            break;
-        case VERTEX_FMT_TEX1:
-            bind_attr_slot(ctx, desc, "vs_texcoord0", SG_VERTEXFORMAT_FLOAT2);
-            break;
-        case VERTEX_FMT_TEX2:
-            bind_attr_slot(ctx, desc, "vs_texcoord1", SG_VERTEXFORMAT_FLOAT2);
-            break;
-        case VERTEX_FMT_NORMAL:
-            bind_attr_slot(ctx, desc, "vs_normal", SG_VERTEXFORMAT_FLOAT2);
-            break;
-        case VERTEX_FMT_DOT3:
-            bind_attr_slot(ctx, desc, "vs_dot3_0", SG_VERTEXFORMAT_FLOAT3);
-            bind_attr_slot(ctx, desc, "vs_dot3_1", SG_VERTEXFORMAT_FLOAT3);
-            bind_attr_slot(ctx, desc, "vs_dot3_2", SG_VERTEXFORMAT_FLOAT3);
-            break;
-        default:
-            fprintf(stderr, "bind_vertex_fmt: unregistered fmt '%d'\n", fmt_flag);
-            break;
-    }
-
-}
-
-void cSokolRender::register_pipeline(uint32_t vertex_fmt, shader_funcs* shader_funcs) {
-    SokolPipelineContext ctx = { vertex_fmt, shader_funcs };
-    
-    //Common part of pipeline desc
-    sg_pipeline_desc desc = {};
-    desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
-    desc.depth.write_enabled = true;
-    desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES,
-    desc.index_type = sizeof(indices_t) == 2 ? SG_INDEXTYPE_UINT16 : SG_INDEXTYPE_UINT32,
-    //TODO pipeline with _BACK and put CW/CCW behind a pipeline flag to create both variants
-    desc.cull_mode = SG_CULLMODE_NONE;
-    desc.face_winding = SG_FACEWINDING_CW;
-    
-    auto& blend0 = desc.colors[0].blend;
-    blend0.enabled = true;
-    blend0.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
-    blend0.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-    blend0.src_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
-    blend0.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-    
-    //Get shader desc and make shader
-    const sg_shader_desc* shader_desc = ctx.shader_funcs->shader_desc(sg_query_backend());
-    desc.shader = sg_make_shader(shader_desc);
-    desc.label = shader_desc->label;
-    
-    //Shader sanity checks
-    if (desc.shader.id == SG_INVALID_ID) {
-        fprintf(stderr, "register_pipeline: invalid shader ID pipeline '%s'\n", desc.label);
-        return;
-    }
-    if (ctx.shader_funcs->uniformblock_slot(SG_SHADERSTAGE_VS, "vs_params") != 0) {
-        fprintf(stderr, "register_pipeline: 'vs_params' uniform slot is not 0 at pipeline '%s'\n", desc.label);
-        return;
-    }
-    if (ctx.shader_funcs->uniformblock_size(SG_SHADERSTAGE_VS, "vs_params") != sizeof(vs_params_t)) {
-        fprintf(stderr, "register_pipeline: 'vs_params' uniform size doesnt match at pipeline '%s'\n", desc.label);
-        return;
-    }
-    if (ctx.vertex_fmt & VERTEX_FMT_TEX1 && ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex0") < 0) {
-        fprintf(stderr, "register_pipeline: 'un_tex0' image slot not found at pipeline '%s'\n", desc.label);
-        return;
-    }
-    if (ctx.vertex_fmt & VERTEX_FMT_TEX2 && ctx.shader_funcs->image_slot(SG_SHADERSTAGE_FS, "un_tex1") < 0) {
-        fprintf(stderr, "register_pipeline: 'un_tex1' image slot not found at pipeline '%s'\n", desc.label);
-        return;
-    }
-    
-    //We bind required attributes into layout of pipeline if provided fmt needs so
-    bind_vertex_fmt(ctx, desc, VERTEX_FMT_XYZ);
-    bind_vertex_fmt(ctx, desc, VERTEX_FMT_DIFFUSE);
-    bind_vertex_fmt(ctx, desc, VERTEX_FMT_TEX1);
-    bind_vertex_fmt(ctx, desc, VERTEX_FMT_TEX2);
-    bind_vertex_fmt(ctx, desc, VERTEX_FMT_NORMAL);
-    bind_vertex_fmt(ctx, desc, VERTEX_FMT_DOT3);
-    
-    //Created, store on our pipelines
-    SokolPipeline* pipeline = new SokolPipeline {
-            ctx.vertex_fmt,
-            sg_make_pipeline(desc),
-            ctx.shader_funcs
-    };
-    if (pipeline->pipeline.id == SG_INVALID_ID) {
-        fprintf(stderr, "register_pipeline: invalid pipeline ID pipeline '%s'\n", desc.label);
-        return;
-    }
-    if (pipeline->vertex_fmt == 0) {
-        fprintf(stderr, "register_pipeline: invalid pipeline vertex format '%s'\n", desc.label);
-        return;
-    }
-    if (pipelines[pipeline->vertex_fmt] != nullptr) {
-        fprintf(stderr, "register_pipeline: '%s' pipeline already registered at '%d'\n", desc.label, pipeline->vertex_fmt);
-        xassert(0);
-    }
-    pipelines[pipeline->vertex_fmt] = pipeline;
-#ifdef PERIMETER_DEBUG
-    printf("register_pipeline: '%s' registered at %d\n", desc.label, pipeline->vertex_fmt);
-#endif
-}
 
 cSokolRender::cSokolRender() = default;
 
 cSokolRender::~cSokolRender() {
-    ClearCommands();
-    for (auto pipeline : pipelines) {
-        delete pipeline;
-    }
+    Done();
 };
 
 int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateInHz) {
@@ -151,13 +22,15 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     }
 
     ClearCommands();
-    for (auto pipeline : pipelines) {
-        delete pipeline;
-    }
-    pipelines.clear();
-    pipelines.resize(VERTEX_FMT_MAX);
+    ClearPipelines();
     
     sdlWindow = static_cast<SDL_Window*>(wnd);
+    
+    //Init some state
+    activePipelineType = PIPELINE_TYPE_STANDARD;
+    activePipelineBlend = ALPHA_NONE;
+    activePipelineCull = false;
+    activePipelineFaceCCW = false;
     
     //Set some attributes before context creation
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -177,20 +50,32 @@ int cSokolRender::Init(int xScr, int yScr, int mode, void* wnd, int RefreshRateI
     //Init sokol gfx
     {
         sg_desc desc = {};
+        desc.pipeline_pool_size = PIPELINE_ID_MAX,
+        desc.shader_pool_size = 4,
         desc.buffer_pool_size = 2048 * 2; //2048 is enough for PGW+PET game
         desc.image_pool_size = 1024 * 4; //1024 is enough for PGW+PET game
-        desc.shader_pool_size = desc.pipeline_pool_size = 16,
         desc.context.color_format = SG_PIXELFORMAT_RGBA8;
         sg_setup(&desc);
     }
+    
+    //Create empty texture
+    sg_image_desc desc = {};
+    desc.label = "EmptySlotTexture";
+    desc.width = desc.height = 64;
+    desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
+    desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+    desc.num_mipmaps = 1;
+    desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
+    desc.usage = SG_USAGE_IMMUTABLE;
+    size_t buf_len = desc.height * desc.width * sokol_pixelformat_bytesize(desc.pixel_format);
+    uint8_t* buf = new uint8_t[buf_len];
+    memset(buf, 0xFF, buf_len);
+    desc.data.subimage[0][0] = { buf, buf_len };
+    emptyTexture = new SokolTexture2D(desc);
+    delete[] buf;
 
     //Register a pipeline for each vertex format in game
-    register_pipeline(sVertexXYZD::fmt,      &shader_color);
-    register_pipeline(sVertexXYZDT1::fmt,    &shader_color_tex1);
-    register_pipeline(sVertexXYZDT2::fmt,    &shader_color_tex2);
-    register_pipeline(sVertexXYZT1::fmt,     &shader_tex1);
-    register_pipeline(sVertexXYZNT1::fmt,    &shader_normal);
-    register_pipeline(sVertexDot3::fmt,      &shader_normal_dot3);
+    RegisterPipelines();
 
     return UpdateRenderMode();
 }
@@ -218,6 +103,11 @@ int cSokolRender::UpdateRenderMode() {
 
 int cSokolRender::Done() {
     int ret = cInterfaceRenderDevice::Done();
+    ClearCommands();
+    ClearPipelines();
+    shaders.clear();
+    delete emptyTexture;
+    emptyTexture = nullptr;
     sg_shutdown();
     if (sdlGlContext != nullptr) {
         SDL_GL_DeleteContext(sdlGlContext);
@@ -311,6 +201,14 @@ void cSokolRender::ClearCommands() {
     commands.clear();
 }
 
+void cSokolRender::ClearPipelines() {
+    for (auto pipeline : pipelines) {
+        delete pipeline;
+    }
+    pipelines.clear();
+    pipelines.resize(PIPELINE_ID_MAX);
+}
+
 int cSokolRender::GetClipRect(int *xmin,int *ymin,int *xmax,int *ymax) {
     *xmin=viewportPos.x; *xmax=viewportSize.x + viewportPos.x;
     *ymin=viewportPos.y; *ymax=viewportSize.y + viewportPos.y;
@@ -323,6 +221,13 @@ int cSokolRender::SetClipRect(int xmin,int ymin,int xmax,int ymax) {
     viewportSize.x = xmax-xmin;
     viewportSize.y = ymax-ymin;
     return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+SokolCommand::SokolCommand() {
+    Clear();
+    memset(textures, 0, PERIMETER_SOKOL_TEXTURES * sizeof(SokolTexture2D*));
 }
 
 SokolCommand::~SokolCommand() {
@@ -338,10 +243,11 @@ void SokolCommand::Clear() {
     vertex_buffer = nullptr;
     index_buffer = nullptr;
     if (owned_mvp) {
-        delete mvp;
+        delete vs_mvp;
         owned_mvp = false;
     }
-    mvp = nullptr;
+    vs_mvp = nullptr;
+    fs_mode = 0;
     vertices = 0;
     indices = 0;
 }

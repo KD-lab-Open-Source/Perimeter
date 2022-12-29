@@ -1,8 +1,6 @@
 #include "StdAfxRD.h"
 #include "IRenderDevice.h"
-#include "EmptyRenderDevice.h"
 #include "SokolRender.h"
-#include "VertexFormat.h"
 
 void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool outline) {
     VISASSERT(ActiveScene);
@@ -14,7 +12,7 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
     else if (y1 < 0 || y2 > ScreenSize.y) return;
 
     SetNoMaterial(ALPHA_BLEND);
-    SetupMatrix(&orthoMat, false);
+    SetVSUniformMatrix(&orthoMat, false);
 
     /* TODO
     if (outline) {
@@ -42,10 +40,10 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         activeCommand.indices += 24;
     } else {
     */
-        PrepareBuffers(4, 6, sVertexXYZD::fmt);
+        PrepareBuffers(4, 6, sVertexXYZDT1::fmt);
         size_t vc = activeCommand.vertices;
 
-        sVertexXYZD* v = static_cast<sVertexXYZD*>(LockVertexBuffer(vertexBuffer));
+        sVertexXYZDT1* v = static_cast<sVertexXYZDT1*>(LockVertexBuffer(vertexBuffer));
         v = &v[vc];
         v[0].z=v[1].z=v[2].z=v[3].z=0;
         v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=color.ABGR();
@@ -53,6 +51,11 @@ void cSokolRender::DrawRectangle(int x1,int y1,int dx,int dy,sColor4c color,bool
         v[0].y=v[2].y=static_cast<float>(y1);
         v[3].x=v[2].x=static_cast<float>(x2);
         v[1].y=v[3].y=static_cast<float>(y2);
+        
+        v[0].u1()=0.0f; v[0].v1()=0.0f;
+        v[1].u1()=0.0f; v[1].v1()=1.0f;
+        v[2].u1()=1.0f; v[2].v1()=0.0f;
+        v[3].u1()=1.0f; v[3].v1()=1.0f;
         UnlockVertexBuffer(vertexBuffer);
 
         sPolygon* p = BufferSeekPolygon(LockIndexBuffer(indexBuffer), activeCommand.indices);
@@ -85,7 +88,7 @@ void cSokolRender::DrawSprite(int x1, int y1, int dx, int dy, float u1, float v1
     SetNoMaterial(mode,phase,Texture);
 
     PrepareBuffers(4, 6, sVertexXYZDT1::fmt);
-    SetupMatrix(&orthoMat, false);
+    SetVSUniformMatrix(&orthoMat, false);
     size_t vc = activeCommand.vertices;
 
     sVertexXYZDT1* v = static_cast<sVertexXYZDT1*>(LockVertexBuffer(vertexBuffer));
@@ -132,9 +135,9 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     SetNoMaterial(blend_mode, phase, Tex1, Tex2, mode);
 
     PrepareBuffers(4, 6, sVertexXYZDT1::fmt);
-    SetupMatrix(&orthoMat, false);
+    SetVSUniformMatrix(&orthoMat, false);
     size_t vc = activeCommand.vertices;
-    SetupMatrix(&orthoMat, false);
+    SetVSUniformMatrix(&orthoMat, false);
 
     sVertexXYZDT2* v = static_cast<sVertexXYZDT2*>(LockVertexBuffer(vertexBuffer));
     v = &v[vc];
@@ -163,8 +166,6 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
     activeCommand.vertices += 4;
     activeCommand.indices += 6;
-    
-    DrawRectangle(x1, y1, dx, dy, sColor4c(0,255,0,24));
 }
 
 void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
@@ -181,52 +182,35 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
     if (0 <= dy) { if (y2<0 || y1>ScreenSize.y) return; }
     else if (y1 < 0 || y2 > ScreenSize.y) return;
 
-    sColor4f lerp(lerp_factor,lerp_factor,lerp_factor,1-lerp_factor);
-    sColor4c ColorMul(sColor4f(1,1,1,alpha) * lerp);
-    if (blend_mode == ALPHA_NONE && alpha < 255) {
+    sColor4c diffuse(sColor4f(1.0f, alpha, lerp_factor, (1.0f - lerp_factor)));
+    if (blend_mode == ALPHA_NONE && alpha < 1.0f) {
         blend_mode = ALPHA_BLEND;
     }
     SetNoMaterial(blend_mode, phase, Tex1, Tex2, mode);
 
-    /* TODO 
-    {
-        SetTextureStageState(0,D3DTSS_COLOROP,D3DTOP_MODULATECOLOR_ADDALPHA);
-        SetTextureStageState(0,D3DTSS_COLORARG1,D3DTA_TFACTOR);
-        SetTextureStageState(0,D3DTSS_COLORARG2,D3DTA_TEXTURE);
-        SetRenderState(D3DRS_TEXTUREFACTOR, lerp.ARGB());
-
-        SetTextureStageState(1,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
-        SetTextureStageState(1,D3DTSS_ALPHAARG1,D3DTA_TEXTURE);
-        SetTextureStageState(1,D3DTSS_ALPHAARG2,D3DTA_DIFFUSE);
-
-//		SetTextureStageState(1,D3DTSS_COLOROP,D3DTOP_MODULATE);
-        SetTextureStageState(1,D3DTSS_COLORARG1,D3DTA_TEXTURE);
-        SetTextureStageState(1,D3DTSS_COLORARG2,D3DTA_CURRENT);
-    }
-    */
-
     PrepareBuffers(4, 6, sVertexXYZDT2::fmt);
-    SetupMatrix(&orthoMat, false);
+    SetVSUniformMatrix(&orthoMat, false);
+    SetFSUniformMode(PERIMETER_SOKOL_FS_MODE_MOD_COLOR_ADD_ALPHA); //Use special color mixing
     size_t vc = activeCommand.vertices;
     
     sVertexXYZDT2* v = static_cast<sVertexXYZDT2*>(LockVertexBuffer(vertexBuffer));
     v = &v[vc];
     v[0].z=v[1].z=v[2].z=v[3].z=0;
-    v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=ColorMul.ABGR();
+    v[0].diffuse.v=v[1].diffuse.v=v[2].diffuse.v=v[3].diffuse.v=diffuse.ABGR();
     v[0].x=v[1].x=static_cast<float>(x1);
     v[0].y=v[2].y=static_cast<float>(y1);
     v[3].x=v[2].x=static_cast<float>(x2);
     v[1].y=v[3].y=static_cast<float>(y2);
 
-    v[0].u1()=u1;     v[0].v1()=v1;
-    v[1].u1()=u1;     v[1].v1()=v1+dv1;
-    v[2].u1()=u1+du1; v[2].v1()=v1;
-    v[3].u1()=u1+du1; v[3].v1()=v1+dv1;
+    v[0].u1()=u0;     v[0].v1()=v0;
+    v[1].u1()=u0;     v[1].v1()=v0+dv0;
+    v[2].u1()=u0+du0; v[2].v1()=v0;
+    v[3].u1()=u0+du0; v[3].v1()=v0+dv0;
 
-    v[0].u2()=u0;     v[0].v2()=v0;
-    v[1].u2()=u0;     v[1].v2()=v0+dv0;
-    v[2].u2()=u0+du0; v[2].v2()=v0;
-    v[3].u2()=u0+du0; v[3].v2()=v0+dv0;
+    v[0].u2()=u1;     v[0].v2()=v1;
+    v[1].u2()=u1;     v[1].v2()=v1+dv1;
+    v[2].u2()=u1+du1; v[2].v2()=v1;
+    v[3].u2()=u1+du1; v[3].v2()=v1+dv1;
     UnlockVertexBuffer(vertexBuffer);
 
     sPolygon* p = BufferSeekPolygon(LockIndexBuffer(indexBuffer), activeCommand.indices);
@@ -236,6 +220,4 @@ void cSokolRender::DrawSprite2(int x1,int y1,int dx,int dy,
 
     activeCommand.vertices += 4;
     activeCommand.indices += 6;
-    
-    DrawRectangle(x1, y1, dx, dy, sColor4c(0,0,255,24));
 }

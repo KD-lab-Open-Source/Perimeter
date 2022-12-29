@@ -4,7 +4,6 @@
 #include "StdAfxRD.h"
 #include "sokol_gfx.h"
 #include "IRenderDevice.h"
-#include "EmptyRenderDevice.h"
 #include "SokolRender.h"
 #include "FileImage.h"
 #include "SokolResources.h"
@@ -28,7 +27,7 @@ int cSokolRender::CreateTexture(cTexture* Texture, cFileImage* FileImage, bool e
         desc.label = label.c_str();
         desc.width = dx;
         desc.height = dy;
-        desc.wrap_u = desc.wrap_v = SG_WRAP_CLAMP_TO_BORDER; //SG_WRAP_MIRRORED_REPEAT;
+        desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
         desc.pixel_format = SG_PIXELFORMAT_RGBA8;
         desc.num_mipmaps = Texture->GetNumberMipMap();
         desc.min_filter = desc.mag_filter = desc.num_mipmaps ? SG_FILTER_NEAREST : SG_FILTER_NEAREST_MIPMAP_LINEAR;

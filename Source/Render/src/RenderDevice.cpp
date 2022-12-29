@@ -1,11 +1,10 @@
 #include "StdAfxRD.h"
 #include "xutil.h"
 #include "VertexFormat.h"
-#include "EmptyRenderDevice.h"
 #include "files/files.h"
-
 #include "Font.h"
 #include "IRenderDevice.h"
+#include "EmptyRenderDevice.h"
 #include "sokol/SokolRender.h"
 
 FILE* fRD= nullptr;
@@ -213,7 +212,8 @@ void cInterfaceRenderDevice::DrawSprite2(int x, int y, int dx, int dy, float u, 
     DrawSprite2(x, y, dx, dy,
                 u, v, du, dv,
                 u, v, du, dv,
-                Tex1, Tex2, ColorMul, phase);
+                Tex1, Tex2, ColorMul, phase,
+                COLOR_MOD, ALPHA_NONE);
 }
 
 unsigned int ColorByNormal(Vect3f n)

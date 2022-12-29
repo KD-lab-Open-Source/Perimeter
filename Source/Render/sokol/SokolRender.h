@@ -4,24 +4,20 @@
 #include "sokol_gfx.h"
 #include <SDL_video.h>
 
-#define PERIMETER_SOKOL_TEXTURES 2
+using pipeline_id_t = uint32_t;
 
-struct SokolPipeline {
-    //VERTEX_FMT_* flags used as index for this pipeline
-    uint32_t vertex_fmt;
-    //Created pipeline for this
-    sg_pipeline pipeline;
-    //Shader functions to retrieve info
-    struct shader_funcs* shader_funcs;
-};
+const int PERIMETER_SOKOL_FS_MODE_NORMAL = 0;
+const int PERIMETER_SOKOL_FS_MODE_MOD_COLOR_ADD_ALPHA = 1;
+
+const int PERIMETER_SOKOL_TEXTURES = 2;
 
 struct SokolCommand {
-    SokolCommand() = default;
+    SokolCommand();
     ~SokolCommand();
     void Clear();
     NO_COPY_CONSTRUCTOR(SokolCommand)
     
-    uint32_t vertex_fmt = 0;
+    pipeline_id_t pipeline_id = 0;
     size_t vertex_size = 0;
     size_t vertices = 0;
     size_t indices = 0;
@@ -29,39 +25,55 @@ struct SokolCommand {
     bool owned_buffers = false;
     struct SokolBuffer* vertex_buffer = nullptr;
     struct SokolBuffer* index_buffer = nullptr;
-    bool owned_mvp;
-    Mat4f* mvp;
+    bool owned_mvp = false;
+    Mat4f* vs_mvp = nullptr;
+    int fs_mode = 0;
 };
 
-//TODO once implemented all use inherit from cInterfaceRenderDevice
+//TODO once implemented all use inherit from cInterfaceRenderDevice and remove this include
+#include "EmptyRenderDevice.h"
 class cSokolRender: public cEmptyRender {
 private:
     //SDL context
     SDL_Window* sdlWindow = nullptr;
     SDL_GLContext sdlGlContext = nullptr;
     
-    //State
+    //Renderer state
     bool ActiveScene = false;
     sColor4f fill_color;
     std::vector<SokolCommand*> commands;
     Vect2i viewportPos;
     Vect2i viewportSize;
     Mat4f orthoMat;
-
-    //Pipeline
-    std::vector<SokolPipeline*> pipelines;
-    void register_pipeline(uint32_t vertex_fmt, shader_funcs* shader_funcs);
     
-    //Active command
+    //Empty texture when texture slot is unused
+    SokolTexture2D* emptyTexture = nullptr;
+
+    //Pipelines
+    std::map<std::string, sg_shader> shaders;
+    std::vector<struct SokolPipeline*> pipelines;
+    static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, uint8_t mode);
+    static pipeline_id_t GetPipelineID(uint8_t type, uint8_t vertex_fmt, eBlendMode blend, bool cull, bool face_ccw);
+    static void GetPipelineIDParts(pipeline_id_t id, uint8_t* type, uint8_t* vertex_fmt, eBlendMode* blend, bool* cull, bool* face_ccw);
+    void ClearPipelines();
+    void RegisterPipelines();
+    void RegisterPipeline(pipeline_id_t id, struct shader_funcs* shader_funcs);
+    
+    //Active pipeline/command state
     SokolCommand activeCommand;
     VertexBuffer vertexBuffer;
     IndexBuffer indexBuffer;
+    uint8_t activePipelineType = 0;
+    eBlendMode activePipelineBlend = ALPHA_NONE;
+    bool activePipelineCull = false;
+    bool activePipelineFaceCCW = false;
 
     //Commands handling
     void ClearCommands();
     void FinishCommand();
-    void PrepareBuffers(size_t NumberVertex, size_t NumberIndices, uint32_t vertex_fmt);
-    void SetupMatrix(Mat4f* mat, bool command_owned);
+    void PrepareBuffers(size_t NumberVertex, size_t NumberIndices, vertex_fmt_t vertex_fmt);
+    void SetVSUniformMatrix(Mat4f* mat, bool command_owned);
+    void SetFSUniformMode(int mode);
 
     //Updates internal state after init/resolution change
     int UpdateRenderMode();
