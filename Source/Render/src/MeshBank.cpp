@@ -201,7 +201,13 @@ void cMeshStatic::EndBuildMesh(bool bump)
 	int n_vertex=temp->vertex.size();
 	int n_polygon=temp->polygons.size();
 
-	gb_RenderDevice->CreateVertexBuffer(vb,n_vertex,bump?sVertexDot3::fmt:sVertexXYZNT1::fmt);
+    int fmt = sVertexXYZNT1::fmt;
+#ifdef PERIMETER_D3D9
+    if (bump && gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+        fmt = sVertexDot3::fmt;
+    }
+#endif
+    gb_RenderDevice->CreateVertexBuffer(vb, n_vertex, fmt);
 
 	void *pVertex=gb_RenderDevice->LockVertexBuffer(vb);
     if (pVertex) {

@@ -4,16 +4,17 @@
 #pragma pack(push,1)
 #endif
 
-#define VERTEX_FMT_XYZ                 (1<<0)
-#define VERTEX_FMT_NORMAL              (1<<1)
-#define VERTEX_FMT_DIFFUSE             (1<<2)
-#define VERTEX_FMT_TEX1                (1<<3)
-#define VERTEX_FMT_TEX2                (1<<4)
-//TODO Special flag for Dot3 required data in D3D, need to review how to implement bumpmapping in Sokol
-#define VERTEX_FMT_DOT3                (1<<5)
 using vertex_fmt_t = uint8_t;
+const static vertex_fmt_t VERTEX_FMT_XYZ       = (1<<0);
+const static vertex_fmt_t VERTEX_FMT_NORMAL    = (1<<1);
+const static vertex_fmt_t VERTEX_FMT_DIFFUSE   = (1<<2);
+const static vertex_fmt_t VERTEX_FMT_TEX1      = (1<<3);
+const static vertex_fmt_t VERTEX_FMT_TEX2      = (1<<4);
+#ifdef PERIMETER_D3D9
+const static vertex_fmt_t VERTEX_FMT_DOT3      = (1<<5);
+#endif
 
-#define VERTEX_FMT_MAX                 ((1<<6)-1)
+const static vertex_fmt_t VERTEX_FMT_MAX       = (1<<6)-1;
 
 struct sVertexXYZ
 {
@@ -23,32 +24,33 @@ struct sVertexXYZ
     };
 	const static int fmt = VERTEX_FMT_XYZ;
 };
-
-struct sVertexXYZT1: public sVertexXYZ
-{ 
-	float			uv[2];
-	inline float& u1()					{ return uv[0]; }
-	inline float& v1()					{ return uv[1]; }
-	inline Vect2f& GetTexel()			{ return *((Vect2f*)&uv[0]); }
-	const static int fmt = sVertexXYZ::fmt|VERTEX_FMT_TEX1;
-};
-
+#ifdef PERIMETER_D3D9
+//For primitives
 struct sVertexXYZD : public sVertexXYZ
+#else
+struct sVertexXYZDT1 : public sVertexXYZ
+#endif
 {
     sColor4c	diffuse;
     inline int& xi()					{ return *((int*)&x); }
     inline int& yi()					{ return *((int*)&y); }
     inline int& zi()					{ return *((int*)&z); }
     Vect3f& GetPos()					{ return *(Vect3f*)&x; }
-    const static int fmt = sVertexXYZ::fmt|VERTEX_FMT_DIFFUSE;
+#ifdef PERIMETER_D3D9
+    const static vertex_fmt_t fmt = sVertexXYZ::fmt|VERTEX_FMT_DIFFUSE;
 };
 struct sVertexXYZDT1 : public sVertexXYZD
 {
+#endif
 	float			uv[2];
 	inline float& u1()					{ return uv[0]; }
 	inline float& v1()					{ return uv[1]; }
 	inline Vect2f& GetTexel()			{ return *((Vect2f*)&uv[0]); }
-	const static int fmt = sVertexXYZD::fmt|VERTEX_FMT_TEX1;
+#ifdef PERIMETER_D3D9
+	const static vertex_fmt_t fmt = sVertexXYZD::fmt|VERTEX_FMT_TEX1;
+#else
+    const static vertex_fmt_t fmt = sVertexXYZ::fmt|VERTEX_FMT_DIFFUSE|VERTEX_FMT_TEX1;
+#endif
 };
 struct sVertexXYZDT2 : public sVertexXYZDT1
 {
@@ -56,7 +58,7 @@ struct sVertexXYZDT2 : public sVertexXYZDT1
 	inline float& u2()					{ return uv2[0]; }
 	inline float& v2()					{ return uv2[1]; }
 	inline Vect2f& GetTexel2()			{ return *((Vect2f*)&uv2[0]); }
-	const static int fmt = sVertexXYZDT1::fmt|VERTEX_FMT_TEX2;
+	const static vertex_fmt_t fmt = sVertexXYZDT1::fmt|VERTEX_FMT_TEX2;
 };
 struct sVertexXYZNT1 : public sVertexXYZ
 {
@@ -65,16 +67,27 @@ struct sVertexXYZNT1 : public sVertexXYZ
 	inline Vect2f& GetTexel()			{ return *(Vect2f*)&uv[0]; }
 	inline float& u1()					{ return uv[0]; }
 	inline float& v1()					{ return uv[1]; }
-	const static int fmt = sVertexXYZ::fmt|VERTEX_FMT_NORMAL|VERTEX_FMT_TEX1;
+	const static vertex_fmt_t fmt = sVertexXYZ::fmt|VERTEX_FMT_NORMAL|VERTEX_FMT_TEX1;
 };
-
+#ifdef PERIMETER_D3D9
+//Used for rendering terrain
+struct sVertexXYZT1: public sVertexXYZ
+{ 
+	float			uv[2];
+	inline float& u1()					{ return uv[0]; }
+	inline float& v1()					{ return uv[1]; }
+	inline Vect2f& GetTexel()			{ return *((Vect2f*)&uv[0]); }
+	const static vertex_fmt_t fmt = sVertexXYZ::fmt|VERTEX_FMT_TEX1;
+};
+//Used for bump mapping
 struct sVertexDot3:public sVertexXYZNT1
 {
 	Vect3f S;
 	Vect3f T;
 	Vect3f SxT;
-	const static int fmt = sVertexXYZNT1::fmt|VERTEX_FMT_DOT3;
+	const static vertex_fmt_t fmt = sVertexXYZNT1::fmt|VERTEX_FMT_DOT3;
 };
+#endif
 
 #ifdef _MSC_VER
 #pragma pack(pop)

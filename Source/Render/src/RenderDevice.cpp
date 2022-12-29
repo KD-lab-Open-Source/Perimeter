@@ -202,7 +202,10 @@ size_t cInterfaceRenderDevice::GetSizeFromFormat(uint32_t fmt) const {
     if (fmt&VERTEX_FMT_DIFFUSE) size += sizeof(uint32_t);
     if (fmt&VERTEX_FMT_TEX1) size += sizeof(float) * 2;
     if (fmt&VERTEX_FMT_TEX2) size += sizeof(float) * 2;
+#ifdef PERIMETER_D3D9
     if (fmt&VERTEX_FMT_DOT3) size += sizeof(float) * 3 * 3;
+#endif
+
     return size;
 }
 

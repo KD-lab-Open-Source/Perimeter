@@ -715,17 +715,13 @@ inline void AddTriangle(cVertexBuffer<sVertexXYZD>& buf,sVertexXYZD*& v,sVertexX
 		v=buf.Lock();
 	}
 }
-#endif
 
-void terExternalRegionShowColumn(Column* column,sColor4c color)
+void terExternalRegionShowColumnD3D(Column* column,sColor4c color)
 {
 	terRenderDevice->SetNoMaterial(ALPHA_BLEND);
     
-#ifdef PERIMETER_D3D9
-    if (!gb_RenderDevice3D) return;
 	cVertexBuffer<sVertexXYZD>& buf=*gb_RenderDevice3D->GetBufferXYZD();
 	sVertexXYZD* v=buf.Lock();
-#endif
 
 	float z=vMap.hZeroPlast-ZFIX;
 	int primitive=0;
@@ -788,9 +784,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 				{
 					p[1]=p[2];
 					p[2].pos.set(cn.xl,cn.y,z);
-#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
-#endif
 					i++;
 				}
 
@@ -798,18 +792,14 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 				{
 					p[1]=p[2];
 					p[2].pos.set(cn.xr,cn.y,z);
-#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
-#endif
 					i++;
 				}
 			}
 
 			p[1]=p[2];
 			p[2].pos.set(c.xr,c.y+1,z);
-#ifdef PERIMETER_D3D9
 			AddTriangle(buf,v,p,primitive);
-#endif
 			i++;
 
 			bool first=true;
@@ -830,9 +820,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 					else
 						p[0]=p[1];
 					p[1].pos.set(cn.xl,c.y,z);
-#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
-#endif
 					i++;
 				}
 
@@ -843,9 +831,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 					else
 						p[0]=p[1];
 					p[1].pos.set(cn.xr,c.y,z);
-#ifdef PERIMETER_D3D9
 					AddTriangle(buf,v,p,primitive);
-#endif
 					i++;
 				}
 			}
@@ -860,9 +846,7 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 				p[1].pos.set(c.xr,c.y,z);
 			}
 
-#ifdef PERIMETER_D3D9
 			AddTriangle(buf,v,p,primitive);
-#endif
 			i++;
 
 			if(i>4)
@@ -872,13 +856,23 @@ void terExternalRegionShowColumn(Column* column,sColor4c color)
 		}
 	}
 
-#ifdef PERIMETER_D3D9
 	buf.Unlock(primitive*3);
 	if(primitive)
 		buf.DrawPrimitive(PT_TRIANGLELIST,primitive);
-#endif
 }
-/**/
+#endif
+
+void terExternalRegionShowColumn(Column* column, sColor4c color) {
+
+#ifdef PERIMETER_D3D9
+    if (gb_RenderDevice->GetRenderSelection() == DEVICE_D3D9) {
+        terExternalRegionShowColumnD3D(column, color);
+        return;
+    }
+#endif
+    
+    //TODO implement using vertex+index system
+}
 
 terRegionColumnMain::terRegionColumnMain()
 {
