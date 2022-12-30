@@ -145,7 +145,8 @@ public:
 	void PreDraw(cTileMap *TileMap) override;
 	void Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow) override;
 	int Delete(class cTileMap *TileMap) override;
-
+    
+    int GetRenderState(eRenderStateOption option) override;
 	int SetRenderState(eRenderStateOption option,int value) override;
 
 	// вспомогательные функции, могут быть не реализованы

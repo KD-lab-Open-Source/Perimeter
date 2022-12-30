@@ -53,6 +53,7 @@ public:
     void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) override { }
     void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName/*="Arial"*/,int size=12,int bold=0,int italic=0,int underline=0) override { }
     bool SetScreenShot(const char *fname) override { return false; }
+    int GetRenderState(eRenderStateOption option) { return 0; }
     int SetRenderState(eRenderStateOption option,int value) override { return -1; }
     void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) override { }
 

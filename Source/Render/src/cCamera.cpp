@@ -141,13 +141,9 @@ void cCamera::DrawScene()
 
 	RenderDevice->SetRenderState( RS_ZWRITEENABLE, TRUE );
 
-    uint32_t fogenable = 0;
-#ifdef PERIMETER_D3D9
-    cD3DRender* d3drender = dynamic_cast<cD3DRender*>(GetRenderDevice());
-    if (d3drender) fogenable = d3drender->GetRenderState(D3DRS_FOGENABLE);
-#endif
+    uint32_t fogenable = RenderDevice->GetRenderState(RS_FOGENABLE);
 	if(GetAttribute(ATTRCAMERA_SHADOW|ATTRCAMERA_SHADOWMAP|ATTRCAMERA_SHADOW_STRENCIL))
-		RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
+		RenderDevice->SetRenderState(RS_FOGENABLE,false);
 	
 //	if(GetAttribute(ATTRCAMERA_ZMINMAX))
 //	{
@@ -183,16 +179,14 @@ void cCamera::DrawScene()
 				{
 
 					std::vector<cIUnkClass*>::iterator it;
-					FOR_EACH(arZPlane,it)
-					{
-						(*it)->Draw(this);
-					}
+
+                    for (cIUnkClass* it : arZPlane) {
+                        it->Draw(this);
+                    }
 
 				}
 
-#ifdef PERIMETER_D3D9
-				RenderDevice->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
-#endif
+				RenderDevice->SetRenderState( RS_CULLMODE, CULL_NONE );
 			}
 
 			if(nType==SCENENODE_OBJECTSORT_NOZ)
@@ -200,12 +194,10 @@ void cCamera::DrawScene()
 			}else
 			{
 				std::vector<cIUnkClass*>& obj=DrawArray[nType];
-				std::vector<cIUnkClass*>::iterator it;
-		
-				FOR_EACH(obj,it)
-				{
-					(*it)->Draw(this);
-				}
+
+                for (cIUnkClass* it : obj) {
+                    it->Draw(this);
+                }
 			}
 
 			if( nType == SCENENODE_OBJECTSPECIAL )
@@ -216,28 +208,21 @@ void cCamera::DrawScene()
 				std::vector<cIUnkClass*>& obj=DrawArray[SCENENODE_OBJECTSORT_NOZ];
 				if(!obj.empty())
 				{
-					std::vector<cIUnkClass*>::iterator it;
-
-#ifdef PERIMETER_D3D9
-					uint32_t zfunc=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
-					gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, D3DCMP_GREATER);
-					uint32_t zwrite=gb_RenderDevice3D->GetRenderState(D3DRS_ZWRITEENABLE);
-					gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
-					uint32_t fogenable=gb_RenderDevice3D->GetRenderState(D3DRS_FOGENABLE);
-					gb_RenderDevice3D->SetRenderState(D3DRS_FOGENABLE,FALSE);
-					gb_RenderDevice3D->SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
-#endif
+					int zfunc=RenderDevice->GetRenderState(RS_ZFUNC);
+					RenderDevice->SetRenderState(RS_ZFUNC, CMP_GREATER);
+					int zwrite=RenderDevice->GetRenderState(RS_ZWRITEENABLE);
+					RenderDevice->SetRenderState(RS_ZWRITEENABLE, false);
+					int fogenable2=RenderDevice->GetRenderState(RS_FOGENABLE);
+					RenderDevice->SetRenderState(RS_FOGENABLE, false);
+					RenderDevice->SetRenderState(RS_CULLMODE, CULL_NONE);
 			
-					FOR_EACH(obj,it)
-					{
-						(*it)->Draw(this);
-					}
+                    for (cIUnkClass* it : obj) {
+                        it->Draw(this);
+                    }
 
-#ifdef PERIMETER_D3D9
-					gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, zfunc );
-					gb_RenderDevice3D->SetRenderState( D3DRS_ZWRITEENABLE, zwrite );
-					gb_RenderDevice3D->SetRenderState( D3DRS_FOGENABLE,fogenable);
-#endif
+					RenderDevice->SetRenderState(RS_ZFUNC, zfunc);
+					RenderDevice->SetRenderState(RS_ZWRITEENABLE, zwrite);
+					RenderDevice->SetRenderState(RS_FOGENABLE,fogenable2);
 				}
 
 				RenderDevice->SetRenderState( RS_CULLMODE, -1 );
@@ -257,9 +242,7 @@ void cCamera::DrawScene()
 	if(!Parent)
 	if(Option_DebugShowShadowVolume)
 	{
-#ifdef PERIMETER_D3D9
-		RenderDevice->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
-#endif
+		RenderDevice->SetRenderState(RS_CULLMODE, CULL_NONE);
 		RenderDevice->SetNoMaterial(ALPHA_BLEND);
 		
 		for(int i=0;i<ShadowTestArray.size();i++)
@@ -312,9 +295,9 @@ void cCamera::DrawScene()
 
 void cCamera::Set2DRenderState()
 {
-  	RenderDevice->SetRenderState(RS_BILINEAR,FALSE);
-  	RenderDevice->SetRenderState(RS_ZFUNC,CMP_ALWAYS);
-	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
+  	RenderDevice->SetRenderState(RS_BILINEAR, false);
+  	RenderDevice->SetRenderState(RS_ZFUNC, CMP_ALWAYS);
+	RenderDevice->SetRenderState(RS_FOGENABLE, false);
 }
 
 void cCamera::PreDrawScene()
@@ -738,18 +721,14 @@ void cCamera::SetCopy(cCamera* DrawNode)
 void cCamera::DrawSortObject()
 {
 	camerapass=SCENENODE_OBJECTSORT;
-	RenderDevice->SetRenderState( RS_ZWRITEENABLE, FALSE );
+	RenderDevice->SetRenderState( RS_ZWRITEENABLE,  false );
 //	RenderDevice->SetRenderState(RS_ZFUNC,CMP_LESSEQUAL);
 //	RenderDevice->SetRenderState( RS_CULLMODE, D3DCULL_NONE );
 
 	stable_sort(SortArray.begin(),SortArray.end(),ObjectSortByRadius());
 
-    uint32_t fogenable = 0;
-#ifdef PERIMETER_D3D9
-    cD3DRender* d3drender = dynamic_cast<cD3DRender*>(GetRenderDevice());
-    if (d3drender) fogenable = d3drender->GetRenderState(D3DRS_FOGENABLE);
-#endif
-	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
+    uint32_t fogenable = RenderDevice->GetRenderState(RS_FOGENABLE);
+	RenderDevice->SetRenderState(RS_FOGENABLE, false);
 
 	std::vector<ObjectSort>::iterator it;
 	FOR_EACH( SortArray, it )
@@ -768,8 +747,8 @@ void cCamera::DrawSortObject()
 		}
 	}
 
-	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
-	RenderDevice->SetRenderState( RS_ZWRITEENABLE, TRUE );
+	RenderDevice->SetRenderState(RS_FOGENABLE, fogenable);
+	RenderDevice->SetRenderState( RS_ZWRITEENABLE, true );
 //	RenderDevice->SetRenderState( RS_CULLMODE, -1 );
 }
 
@@ -1000,14 +979,16 @@ void cCamera::DrawSortMaterialShadowStrencil()
 #ifdef PERIMETER_D3D9
     cD3DRender* rd = dynamic_cast<cD3DRender*>(GetRenderDevice());
     if (!rd) return;
+#endif
 
-	rd->SetNoMaterial(ALPHA_NONE);
+    RenderDevice->SetNoMaterial(ALPHA_NONE);
 
     // Disable z-buffer writes (note: z-testing still occurs), and enable the
     // stencil-buffer
-    rd->SetRenderState( D3DRS_ZWRITEENABLE,  FALSE );
-    rd->SetRenderState( D3DRS_STENCILENABLE, TRUE );
+    RenderDevice->SetRenderState( RS_ZWRITEENABLE,  false );
+    RenderDevice->SetRenderState( RS_STENCILENABLE, true );
 
+#ifdef PERIMETER_D3D9
     // Dont bother with interpolating color
     rd->SetRenderState( D3DRS_SHADEMODE,     D3DSHADE_FLAT );
 
@@ -1025,28 +1006,34 @@ void cCamera::DrawSortMaterialShadowStrencil()
     rd->SetRenderState( D3DRS_STENCILWRITEMASK, 0xffffffff );
 
     // Make sure that no pixels get drawn to the frame buffer
-    rd->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+    rd->SetRenderState( D3DRS_ALPHABLENDENABLE, true );
     rd->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
     rd->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+#endif
 
     // Draw front-side of shadow volume in stencil/z only
-    rd->SetRenderState( D3DRS_CULLMODE,   D3DCULL_CW );
-    rd->SetRenderState( D3DRS_STENCILPASS,D3DSTENCILOP_INCR );
+    RenderDevice->SetRenderState( RS_CULLMODE, CULL_CW );
+#ifdef PERIMETER_D3D9
+    rd->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_INCR );
+#endif
 	DrawSortMaterialShadowStrencilOneSide();
     // Now reverse cull order so back sides of shadow volume are written.
 
     // Decrement stencil buffer value
-	rd->SetRenderState( D3DRS_CULLMODE,   D3DCULL_CCW );
-    rd->SetRenderState( D3DRS_STENCILPASS,D3DSTENCILOP_DECR );
+	RenderDevice->SetRenderState( RS_CULLMODE, CULL_CCW );
+#ifdef PERIMETER_D3D9
+    rd->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_DECR );
+#endif
 	DrawSortMaterialShadowStrencilOneSide();
 
     // Restore render states
+#ifdef PERIMETER_D3D9
     rd->SetRenderState( D3DRS_SHADEMODE, D3DSHADE_GOURAUD );
-    rd->SetRenderState( D3DRS_CULLMODE,  D3DCULL_CCW );
-    rd->SetRenderState( D3DRS_ZWRITEENABLE,     TRUE );
-    rd->SetRenderState( D3DRS_STENCILENABLE,    FALSE );
-    rd->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
 #endif
+    RenderDevice->SetRenderState( RS_CULLMODE, CULL_CCW );
+    RenderDevice->SetRenderState( RS_ZWRITEENABLE,     true );
+    RenderDevice->SetRenderState( RS_STENCILENABLE,    false );
+    RenderDevice->SetRenderState( RS_ALPHABLENDENABLE, false );
 
 	DrawShadowPlane();
 }
@@ -1487,24 +1474,18 @@ void cCameraPlanarLight::DrawScene()
 	RenderDevice->SetDrawNode(this);
 	RenderDevice->SetGlobalLight(NULL);
 
-	RenderDevice->SetRenderState( RS_ZWRITEENABLE, FALSE );
-#ifdef PERIMETER_D3D9
-	uint32_t ZFUNC=gb_RenderDevice3D->GetRenderState(D3DRS_ZFUNC);
-	gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, CMP_ALWAYS );
+	RenderDevice->SetRenderState(RS_ZWRITEENABLE, false);
+	uint32_t zfunc = RenderDevice->GetRenderState(RS_ZFUNC);
+    RenderDevice->SetRenderState(RS_ZFUNC, CMP_ALWAYS);
 
 
-    uint32_t fogenable = 0;
-    cD3DRender* d3drender = dynamic_cast<cD3DRender*>(GetRenderDevice());
-    if (d3drender) fogenable = d3drender->GetRenderState(D3DRS_FOGENABLE);
-	RenderDevice->SetRenderState(RS_FOGENABLE,FALSE);
-#endif
+    uint32_t fogenable = RenderDevice->GetRenderState(RS_FOGENABLE);
+	RenderDevice->SetRenderState(RS_FOGENABLE,false);
 	
 	RenderDevice->Draw(GetScene());
 
-#ifdef PERIMETER_D3D9
-	gb_RenderDevice3D->SetRenderState( D3DRS_ZFUNC, ZFUNC );
+    RenderDevice->SetRenderState( RS_ZFUNC, zfunc );
 	RenderDevice->SetRenderState(RS_FOGENABLE,fogenable);
-#endif
 }
 
 #if 0 

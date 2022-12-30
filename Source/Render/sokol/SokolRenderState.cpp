@@ -363,3 +363,36 @@ void cSokolRender::SetDrawTransform(class cCamera *pDrawNode)
     }
 }
 
+int cSokolRender::GetRenderState(eRenderStateOption option) {
+    switch(option) {
+        case RS_FILLMODE:
+            //TODO return WireFrame;
+            return 0;
+        case RS_CULLMODE:
+            return activePipelineCull;
+        case RS_BILINEAR:
+            return 1;
+    }
+    return 0;
+}
+
+int cSokolRender::SetRenderState(eRenderStateOption option, int value) {
+    VISASSERT(ActiveScene);
+    switch(option) {
+        case RS_FILLMODE:
+            //TODO WireFrame = value == FILL_WIREFRAME;
+            break;
+        case RS_CULLMODE:
+            if (0<=value) {
+                eCullMode cull = static_cast<eCullMode>(value);
+                if (cull != activePipelineCull) {
+                    FinishCommand();
+                }
+                activePipelineCull = cull;
+            } 
+            break;
+        case RS_BILINEAR:
+            break;
+    }
+    return 0;
+}

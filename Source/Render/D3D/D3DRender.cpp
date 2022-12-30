@@ -825,6 +825,9 @@ void cD3DRender::SetGlobalLight(Vect3f *vLight,sColor4f *Ambient,sColor4f *Diffu
 	lpD3DDevice->SetLight(0,&GlobalLight);
 	lpD3DDevice->LightEnable(0,TRUE);
 }
+int cD3DRender::GetRenderState(eRenderStateOption option) {
+    return GetRenderState((D3DRENDERSTATETYPE)option);
+}
 int cD3DRender::SetRenderState(eRenderStateOption option,int value)
 { 
     if(lpD3DDevice==0||!bActiveScene) return 1;

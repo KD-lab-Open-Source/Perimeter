@@ -3304,7 +3304,7 @@ void CShellIconManager::ShowUpgradeBuildProcessIcons(terUnitBase* pUnit)
 		return;
 
 	if (pUnit->attr().isUpgrade || pUnit->attr().ID == UNIT_ATTRIBUTE_CORRIDOR_OMEGA)	{
-		GetWnd(pUnit->attr().interfacePrm.upgrading_button_id)->Enable(FALSE);
+		GetWnd(pUnit->attr().interfacePrm.upgrading_button_id)->Enable(false);
 		_shellIconManager.GetWnd(SQSH_SELPANEL_SELL_ID)->Show(pUnit->attr().ID != UNIT_ATTRIBUTE_CORRIDOR_OMEGA);
 		_shellIconManager.GetWnd(pUnit->attr().interfacePrm.upgrading_button_id)->Show(TRUE);
 		terBuilding* b = safe_cast<terBuilding*>(pUnit);
@@ -3337,7 +3337,7 @@ void CShellIconManager::UpdateSelectionIcons()
 		SQSH_SELPANEL_UPGRADE_EMPIRE1_ID,SQSH_SELPANEL_UPGRADE_EMPIRE2_ID,
 		SQSH_SELPANEL_UPGRADE_HARKBACK1_ID,SQSH_SELPANEL_UPGRADE_HARKBACK2_ID };
 
-	ShowControls(FALSE, ids, sizeof(ids)/sizeof(ShellControlID));
+	ShowControls(false, ids, sizeof(ids)/sizeof(ShellControlID));
 
 	const UnitInterfacePrm* unit_prm = 0;
 	UnitInterfaceActions    actions;

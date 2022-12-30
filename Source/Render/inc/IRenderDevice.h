@@ -137,7 +137,8 @@ enum eRenderStateOption
     RS_FOGCOLOR                 = 34,   /* D3DCOLOR */
     RS_FOGSTART                 = 36,   /* Fog start (for both vertex and pixel fog) */
     RS_FOGEND                   = 37,   /* Fog end      */
-    RS_BILINEAR					= 1024,	/* SetTextureStageState(0, D3DTSS_MINFILTER|D3DTSS_MAGFILTER, value ) */
+    RS_STENCILENABLE            = 52,
+    RS_BILINEAR					= 1024,	/* Change min/mag filter */
 };
 
 enum eFillMode
@@ -278,6 +279,7 @@ public:
     virtual void OutText(int x,int y,const char *string,int r=255,int g=255,int b=255) = 0;
     virtual void OutText(int x,int y,const char *string,int r,int g,int b,char *FontName/*="Arial"*/,int size=12,int bold=0,int italic=0,int underline=0) = 0;
     virtual bool SetScreenShot(const char *fname) = 0;
+    virtual int GetRenderState(eRenderStateOption option) = 0;
     virtual int SetRenderState(eRenderStateOption option,int value) = 0;
     virtual void DrawBound(const MatXf &Matrix,Vect3f &min,Vect3f &max,bool wireframe=0,const sColor4c& Color=sColor4c(255,255,255,255)) = 0;
 

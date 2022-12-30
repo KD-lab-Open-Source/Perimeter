@@ -98,20 +98,15 @@ void cChaos::RenderAllTexture()
 {
 	if(enablebump==BUMP_RENDERTARGET)
 	{
-#ifdef PERIMETER_D3D9
-		cD3DRender* rd=gb_RenderDevice3D;
-        if (!rd) return;
-
-		bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
-		rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
-		uint32_t zenable=rd->GetRenderState(D3DRS_ZENABLE);
-		uint32_t zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE); 
+		bool fog=gb_RenderDevice->GetRenderState(RS_FOGENABLE);
+        gb_RenderDevice->SetRenderState(RS_FOGENABLE, false);
+		int zenable=gb_RenderDevice->GetRenderState(RS_ZENABLE);
+		int zwriteenable=gb_RenderDevice->GetRenderState(RS_ZWRITEENABLE); 
 		RenderTexture();
 		RenderTex0();
-		rd->SetRenderState(D3DRS_FOGENABLE, fog);
-		rd->SetRenderState( D3DRS_ZENABLE, zenable);
-		rd->SetRenderState( D3DRS_ZWRITEENABLE, zwriteenable); 
-#endif
+		gb_RenderDevice->SetRenderState(RS_FOGENABLE, fog);
+		gb_RenderDevice->SetRenderState(RS_ZENABLE, zenable);
+		gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, zwriteenable); 
 	}
 }
 
@@ -282,7 +277,7 @@ void cChaos::Draw(cCamera *DrawNode)
 
 void cChaos::CreateIB()
 {
-	gb_RenderDevice->CreateIndexBuffer(ib, size*size*2);
+	gb_RenderDevice->CreateIndexBuffer(ib, size*size*2*sPolygon::PN);
 	sPolygon* p=gb_RenderDevice->LockIndexBuffer(ib);
     if (!p) return;
 
@@ -459,19 +454,16 @@ void CSkySpere::PreDraw(cCamera *DrawNode)
 
 void CSkySpere::Draw(cCamera *DrawNode)
 {
-#ifdef PERIMETER_D3D9
-	cD3DRender* rd = dynamic_cast<cD3DRender*>(DrawNode->GetRenderDevice());
-    if (!rd) return;
-	uint32_t zfunc=rd->GetRenderState(D3DRS_ZFUNC);
-	uint32_t zwriteenable=rd->GetRenderState(D3DRS_ZWRITEENABLE);
-    bool fog=rd->GetRenderState(D3DRS_FOGENABLE);
-	rd->SetRenderState(D3DRS_FOGENABLE, FALSE);
-	rd->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-	rd->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	int zfunc=gb_RenderDevice->GetRenderState(RS_ZFUNC);
+	int zwriteenable=gb_RenderDevice->GetRenderState(RS_ZWRITEENABLE);
+    bool fog=gb_RenderDevice->GetRenderState(RS_FOGENABLE);
+	gb_RenderDevice->SetRenderState(RS_FOGENABLE, false);
+	gb_RenderDevice->SetRenderState(RS_ZFUNC, CMP_ALWAYS);
+	gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, false);
 
 	Vect2f zplane=DrawNode->GetZPlane();
 	DrawNode->SetZPlaneTemp(Vect2f(zplane.x,zplane.y*10));
-	rd->SetDrawNode(DrawNode);
+    gb_RenderDevice->SetDrawNode(DrawNode);
 
 	std::vector<cObjMesh*>& meshes=pSkySphere->GetMeshChild();
 	std::vector<cObjMesh*>::iterator it;
@@ -479,10 +471,9 @@ void CSkySpere::Draw(cCamera *DrawNode)
 	FOR_EACH(meshes,it)
 		(*it)->Draw(DrawNode);
 
-	rd->SetRenderState(D3DRS_FOGENABLE, fog);
-	rd->SetRenderState(D3DRS_ZFUNC, zfunc);
-	rd->SetRenderState(D3DRS_ZWRITEENABLE, zwriteenable);
+	gb_RenderDevice->SetRenderState(RS_FOGENABLE, fog);
+	gb_RenderDevice->SetRenderState(RS_ZFUNC, zfunc);
+	gb_RenderDevice->SetRenderState(RS_ZWRITEENABLE, zwriteenable);
 	DrawNode->SetZPlaneTemp(zplane);
-	rd->SetDrawNode(DrawNode);
-#endif
+    gb_RenderDevice->SetDrawNode(DrawNode);
 }

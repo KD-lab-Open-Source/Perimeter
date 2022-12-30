@@ -1449,7 +1449,7 @@ bool vrtMap::saveAllWorldAs(const char* _patch2world)
 	XBuffer strIn, strOut;
 	strIn < wTable[0].dir < "\\" < worldIniFile;
 	strOut < _patch2world < "\\" < worldIniFile;
-	if(!CopyFile(strIn, strOut, FALSE)){
+	if(!CopyFile(strIn, strOut, false)){
 		return 0;
 	}
 	free(wTable[0].name);
@@ -3100,7 +3100,7 @@ void vrtMap::saveMapWithOtherSize4To2(const char* _patch2New2x2World)
 	XBuffer strIn, strOut;
 	strIn < wTable[0].dir < "\\" < worldIniFile;
 	strOut < _patch2New2x2World < "\\" < worldIniFile;
-	if(!CopyFile(strIn, strOut, FALSE)){
+	if(!CopyFile(strIn, strOut, false)){
 		return;// 0;
 	}
 	XBuffer tbuf;

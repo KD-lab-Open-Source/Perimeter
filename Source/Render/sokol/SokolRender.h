@@ -137,9 +137,12 @@ public:
     void PreDraw(cTileMap *TileMap) override;
     void Draw(cTileMap *TileMap,eBlendMode MatMode,TILEMAP_DRAW tile_draw,bool shadow) override;
     int Delete(class cTileMap *TileMap) override;
+    */
 
+    int GetRenderState(eRenderStateOption option) override;
     int SetRenderState(eRenderStateOption option,int value) override;
 
+    /*
     void DrawLine(int x1,int y1,int x2,int y2,sColor4c color) override;
     void DrawPixel(int x1,int y1,sColor4c color) override;
     */
